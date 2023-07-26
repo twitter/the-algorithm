@@ -1,73 +1,73 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.media.MediaKeyUtil
-import com.twitter.tweetypie.media.MediaMetadataRequest
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
-import java.nio.ByteBuffer
+impowt c-com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.media.mediakeyutiw
+i-impowt com.twittew.tweetypie.media.mediametadatawequest
+i-impowt c-com.twittew.tweetypie.wepositowy._
+i-impowt com.twittew.tweetypie.thwiftscawa._
+impowt java.nio.bytebuffew
 
-object MediaInfoHydrator {
-  type Ctx = MediaEntityHydrator.Uncacheable.Ctx
-  type Type = MediaEntityHydrator.Uncacheable.Type
+object mediainfohydwatow {
+  type ctx = m-mediaentityhydwatow.uncacheabwe.ctx
+  type type = mediaentityhydwatow.uncacheabwe.type
 
-  private[this] val log = Logger(getClass)
+  pwivate[this] v-vaw wog = woggew(getcwass)
 
-  def apply(repo: MediaMetadataRepository.Type, stats: StatsReceiver): Type = {
-    val attributableUserCounter = stats.counter("attributable_user")
+  d-def appwy(wepo: mediametadatawepositowy.type, nyaa~~ stats: statsweceivew): t-type = {
+    vaw attwibutabweusewcountew = s-stats.countew("attwibutabwe_usew")
 
-    ValueHydrator[MediaEntity, Ctx] { (curr, ctx) =>
-      val request =
-        toMediaMetadataRequest(
-          mediaEntity = curr,
-          tweetId = ctx.tweetId,
-          extensionsArgs = ctx.opts.extensionsArgs
+    v-vawuehydwatow[mediaentity, nyaa~~ ctx] { (cuww, :3 ctx) =>
+      vaw wequest =
+        tomediametadatawequest(
+          m-mediaentity = cuww, 😳😳😳
+          tweetid = ctx.tweetid, (˘ω˘)
+          extensionsawgs = ctx.opts.extensionsawgs
         )
 
-      request match {
-        case None => Stitch.value(ValueState.unmodified(curr))
+      w-wequest match {
+        c-case nyone => s-stitch.vawue(vawuestate.unmodified(cuww))
 
-        case Some(req) =>
-          repo(req).liftToTry.map {
-            case Return(metadata) =>
-              if (metadata.attributableUserId.nonEmpty) attributableUserCounter.incr()
+        c-case some(weq) =>
+          w-wepo(weq).wifttotwy.map {
+            case wetuwn(metadata) =>
+              if (metadata.attwibutabweusewid.nonempty) a-attwibutabweusewcountew.incw()
 
-              ValueState.delta(
-                curr,
-                metadata.updateEntity(
-                  mediaEntity = curr,
-                  tweetUserId = ctx.userId,
-                  includeAdditionalMetadata = ctx.includeAdditionalMetadata
+              vawuestate.dewta(
+                cuww, ^^
+                m-metadata.updateentity(
+                  mediaentity = cuww, :3
+                  tweetusewid = ctx.usewid, -.-
+                  incwudeadditionawmetadata = c-ctx.incwudeadditionawmetadata
                 )
               )
 
-            case Throw(ex) if !PartialEntityCleaner.isPartialMedia(curr) =>
-              log.info("Ignored media info repo failure, media entity already hydrated", ex)
-              ValueState.unmodified(curr)
+            case thwow(ex) i-if !pawtiawentitycweanew.ispawtiawmedia(cuww) =>
+              wog.info("ignowed m-media info wepo f-faiwuwe, 😳 media entity awweady hydwated", mya ex)
+              vawuestate.unmodified(cuww)
 
-            case Throw(ex) =>
-              log.error("Media info hydration failed", ex)
-              ValueState.partial(curr, MediaEntityHydrator.hydratedField)
+            c-case thwow(ex) =>
+              w-wog.ewwow("media info hydwation f-faiwed", (˘ω˘) ex)
+              v-vawuestate.pawtiaw(cuww, >_< mediaentityhydwatow.hydwatedfiewd)
           }
       }
     }
   }
 
-  def toMediaMetadataRequest(
-    mediaEntity: MediaEntity,
-    tweetId: TweetId,
-    extensionsArgs: Option[ByteBuffer]
-  ): Option[MediaMetadataRequest] =
-    mediaEntity.isProtected.map { isProtected =>
-      val mediaKey = MediaKeyUtil.get(mediaEntity)
+  d-def tomediametadatawequest(
+    m-mediaentity: mediaentity, -.-
+    tweetid: t-tweetid, 🥺
+    extensionsawgs: o-option[bytebuffew]
+  ): option[mediametadatawequest] =
+    m-mediaentity.ispwotected.map { i-ispwotected =>
+      vaw mediakey = mediakeyutiw.get(mediaentity)
 
-      MediaMetadataRequest(
-        tweetId = tweetId,
-        mediaKey = mediaKey,
-        isProtected = isProtected,
-        extensionsArgs = extensionsArgs
+      mediametadatawequest(
+        tweetid = tweetid, (U ﹏ U)
+        mediakey = mediakey, >w<
+        ispwotected = i-ispwotected, mya
+        e-extensionsawgs = extensionsawgs
       )
     }
 }

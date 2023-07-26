@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt
 
-import com.twitter.util.Time
+impowt com.twittew.utiw.time
 
-trait HasExpirationTime {
-  def expirationTime: Option[Time] = None
+t-twait hasexpiwationtime {
+  d-def expiwationtime: o-option[time] = n-nyone
 
-  final def expirationTimeInMillis: Option[Long] = expirationTime.map(_.inMillis)
+  finaw d-def expiwationtimeinmiwwis: o-option[wong] = e-expiwationtime.map(_.inmiwwis)
 }

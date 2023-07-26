@@ -1,65 +1,65 @@
-package com.twitter.tweetypie.caching
+package com.twittew.tweetypie.caching
 
-import scala.collection.mutable
-import com.twitter.util.Future
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.Runner
-import com.twitter.stitch.FutureRunner
-import com.twitter.stitch.Group
+impowt scawa.cowwection.mutabwe
+i-impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stitch.wunnew
+i-impowt com.twittew.stitch.futuwewunnew
+i-impowt c-com.twittew.stitch.gwoup
 
 /**
- * Workaround for a infelicity in the implementation of [[Stitch.async]].
+ * w-wowkawound f-fow a infewicity in the impwementation of [[stitch.async]]. (U ﹏ U)
  *
- * This has the same semantics to [[Stitch.async]], with the exception
- * that interrupts to the main computation will not interrupt the
- * async call.
+ * this has the same semantics to [[stitch.async]], 😳 w-with the exception
+ * that intewwupts to the m-main computation wiww nyot intewwupt t-the
+ * async caww. (ˆ ﻌ ˆ)♡
  *
- * The problem that this implementation solves is that we do not want
- * async calls grouped together with synchronous calls. See the
- * mailing list thread [1] for discussion. This may eventually be
- * fixed in Stitch.
+ * the pwobwem that this impwementation s-sowves is that we do nyot want
+ * a-async cawws g-gwouped togethew with synchwonous cawws. 😳😳😳 see the
+ * maiwing wist thwead [1] fow d-discussion. (U ﹏ U) this may eventuawwy be
+ * fixed in stitch. (///ˬ///✿)
  */
-private[caching] object StitchAsync {
-  // Contains a deferred Stitch that we want to run asynchronously
-  private[this] class AsyncCall(deferred: => Stitch[_]) {
-    def call(): Stitch[_] = deferred
+pwivate[caching] object s-stitchasync {
+  // contains a-a defewwed stitch t-that we want t-to wun asynchwonouswy
+  p-pwivate[this] cwass asynccaww(defewwed: => stitch[_]) {
+    d-def caww(): stitch[_] = defewwed
   }
 
-  private object AsyncGroup extends Group[AsyncCall, Unit] {
-    override def runner(): Runner[AsyncCall, Unit] =
-      new FutureRunner[AsyncCall, Unit] {
-        // All of the deferred calls of any type. When they are
-        // executed in `run`, the normal Stitch batching and deduping
-        // will occur.
-        private[this] val calls = new mutable.ArrayBuffer[AsyncCall]
+  pwivate o-object asyncgwoup extends gwoup[asynccaww, 😳 unit] {
+    ovewwide def wunnew(): wunnew[asynccaww, unit] =
+      n-nyew futuwewunnew[asynccaww, 😳 unit] {
+        // aww of the defewwed c-cawws of any t-type. σωσ when they a-awe
+        // exekawaii~d in `wun`, rawr x3 the nyowmaw stitch batching a-and deduping
+        // w-wiww occuw.
+        p-pwivate[this] vaw c-cawws = nyew mutabwe.awwaybuffew[asynccaww]
 
-        def add(call: AsyncCall): Stitch[Unit] = {
-          // Just remember the deferred call.
-          calls.append(call)
+        def add(caww: a-asynccaww): stitch[unit] = {
+          // just w-wemembew the defewwed caww.
+          cawws.append(caww)
 
-          // Since we don't wait for the completion of the effect,
-          // just return a constant value.
-          Stitch.Unit
+          // s-since we don't wait fow t-the compwetion of the effect, OwO
+          // j-just w-wetuwn a constant vawue. /(^•ω•^)
+          stitch.unit
         }
 
-        def run(): Future[_] = {
-          // The future returned from this innter invocation of
-          // Stitch.run is not linked to the returned future, so these
-          // effects are not linked to the outer Run in which this
-          // method was invoked.
-          Stitch.run {
-            Stitch.traverse(calls) { asyncCall: AsyncCall =>
-              asyncCall
-                .call()
-                .liftToTry // So that an exception will not interrupt the other calls
+        def wun(): futuwe[_] = {
+          // the futuwe wetuwned fwom t-this inntew i-invocation of
+          // stitch.wun i-is nyot winked t-to the wetuwned f-futuwe, 😳😳😳 so these
+          // effects awe nyot winked to the o-outew wun in which this
+          // method was invoked. ( ͡o ω ͡o )
+          stitch.wun {
+            s-stitch.twavewse(cawws) { asynccaww: a-asynccaww =>
+              a-asynccaww
+                .caww()
+                .wifttotwy // s-so that an exception w-wiww nyot intewwupt t-the othew c-cawws
             }
           }
-          Future.Unit
+          f-futuwe.unit
         }
       }
   }
 
-  def apply(call: => Stitch[_]): Stitch[Unit] =
-    // Group together all of the async calls
-    Stitch.call(new AsyncCall(call), AsyncGroup)
+  def appwy(caww: => stitch[_]): stitch[unit] =
+    // g-gwoup togethew a-aww of the async c-cawws
+    stitch.caww(new a-asynccaww(caww), >_< asyncgwoup)
 }

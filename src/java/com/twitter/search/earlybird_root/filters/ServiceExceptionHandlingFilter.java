@@ -1,27 +1,27 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+impowt com.twittew.finagwe.sewvice;
+i-impowt com.twittew.finagwe.simpwefiwtew;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+i-impowt c-com.twittew.utiw.futuwe;
 
-/** A per-service filter for handling exceptions. */
-public class ServiceExceptionHandlingFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
-  private final EarlybirdResponseExceptionHandler exceptionHandler;
+/** a-a pew-sewvice fiwtew f-fow handwing exceptions. 😳😳😳 */
+pubwic cwass sewviceexceptionhandwingfiwtew
+    extends simpwefiwtew<eawwybiwdwequestcontext, -.- eawwybiwdwesponse> {
+  pwivate finaw e-eawwybiwdwesponseexceptionhandwew exceptionhandwew;
 
-  /** Creates a new ServiceExceptionHandlingFilter instance. */
-  public ServiceExceptionHandlingFilter(EarlybirdCluster cluster) {
-    this.exceptionHandler = new EarlybirdResponseExceptionHandler(cluster.getNameForStats());
+  /** cweates a nyew sewviceexceptionhandwingfiwtew i-instance. ( ͡o ω ͡o ) */
+  pubwic s-sewviceexceptionhandwingfiwtew(eawwybiwdcwustew cwustew) {
+    this.exceptionhandwew = nyew eawwybiwdwesponseexceptionhandwew(cwustew.getnamefowstats());
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    return exceptionHandler.handleException(
-        requestContext.getRequest(), service.apply(requestContext));
+  @ovewwide
+  p-pubwic futuwe<eawwybiwdwesponse> appwy(
+      eawwybiwdwequestcontext w-wequestcontext,
+      s-sewvice<eawwybiwdwequestcontext, rawr x3 eawwybiwdwesponse> sewvice) {
+    wetuwn exceptionhandwew.handweexception(
+        wequestcontext.getwequest(), nyaa~~ s-sewvice.appwy(wequestcontext));
   }
 }

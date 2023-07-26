@@ -1,564 +1,564 @@
-package com.twitter.simclusters_v2.scalding.embedding.common
+package com.twittew.simcwustews_v2.scawding.embedding.common
 
-import com.twitter.algebird.Aggregator
-import com.twitter.common.text.language.LocaleUtil
-import com.twitter.escherbird.common.thriftscala.Locale
-import com.twitter.escherbird.common.thriftscala.LocalizedUser
-import com.twitter.escherbird.metadata.thriftscala.FullMetadata
-import com.twitter.escherbird.scalding.source.FullMetadataSource
-import com.twitter.escherbird.scalding.source.utt.UttSourceScalaDataset
-import com.twitter.escherbird.utt.strato.thriftscala.SnapshotType
-import com.twitter.escherbird.utt.thriftscala.UttEntityRecord
-import com.twitter.interests_ds.jobs.interests_service.UserTopicRelationSnapshotScalaDataset
-import com.twitter.interests.thriftscala.InterestRelationType
-import com.twitter.interests.thriftscala.UserInterestsRelationSnapshot
-import com.twitter.penguin.scalding.datasets.PenguinUserLanguagesScalaDataset
-import com.twitter.scalding.DateOps
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.Stat
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding.ValuePipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.common._
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2InterestedIn20M145KUpdatedScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.UserUserFavGraphScalaDataset
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
-import com.twitter.common_header.thriftscala.CommonHeader
-import com.twitter.common_header.thriftscala.IdType
-import com.twitter.common_header.thriftscala.VersionedCommonHeader
-import flockdb_tools.datasets.flock.FlockBlocksEdgesScalaDataset
-import flockdb_tools.datasets.flock.FlockFollowsEdgesScalaDataset
-import flockdb_tools.datasets.flock.FlockReportAsAbuseEdgesScalaDataset
-import flockdb_tools.datasets.flock.FlockReportAsSpamEdgesScalaDataset
-import twadoop_config.configuration.log_categories.group.search.AdaptiveSearchScalaDataset
-import com.twitter.search.adaptive.scribing.thriftscala.AdaptiveSearchScribeLog
-import twadoop_config.configuration.log_categories.group.timeline.TimelineServiceFavoritesScalaDataset
-import tweetsource.common.UnhydratedFlatScalaDataset
-import com.twitter.frigate.data_pipeline.magicrecs.magicrecs_notifications_lite.thriftscala.MagicRecsNotificationLite
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.EdgeWithDecayedWeights
-import com.twitter.timelineservice.thriftscala.ContextualizedFavoriteEvent
-import com.twitter.timelineservice.thriftscala.FavoriteEventUnion
-import com.twitter.tweetsource.common.thriftscala.UnhydratedFlatTweet
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import com.twitter.wtf.entity_real_graph.scalding.common.DatasetConstants
-import com.twitter.wtf.entity_real_graph.scalding.common.SemanticCoreFilters
-import com.twitter.wtf.scalding.client_event_processing.thriftscala.InteractionDetails
-import com.twitter.wtf.scalding.client_event_processing.thriftscala.InteractionType
-import com.twitter.wtf.scalding.client_event_processing.thriftscala.TweetImpressionDetails
-import com.twitter.frigate.data_pipeline.scalding.magicrecs.magicrecs_notification_lite.MagicrecsNotificationLite1DayLagScalaDataset
-import com.twitter.iesource.thriftscala.InteractionEvent
-import com.twitter.iesource.thriftscala.InteractionTargetType
-import com.twitter.wtf.scalding.jobs.client_event_processing.UserInteractionScalaDataset
-import java.util.TimeZone
-import com.twitter.interests_ds.jobs.interests_service.UserInterestRelationSnapshotScalaDataset
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.UserId
-import com.twitter.scalding.typed.{ValuePipe => TypedValuePipe}
-import com.twitter.tweetsource.common.thriftscala.UnhydratedTweet
-import tweetsource.common.UnhydratedScalaDataset
+impowt c-com.twittew.awgebiwd.aggwegatow
+i-impowt com.twittew.common.text.wanguage.wocaweutiw
+i-impowt com.twittew.eschewbiwd.common.thwiftscawa.wocawe
+impowt c-com.twittew.eschewbiwd.common.thwiftscawa.wocawizedusew
+i-impowt c-com.twittew.eschewbiwd.metadata.thwiftscawa.fuwwmetadata
+i-impowt c-com.twittew.eschewbiwd.scawding.souwce.fuwwmetadatasouwce
+impowt com.twittew.eschewbiwd.scawding.souwce.utt.uttsouwcescawadataset
+impowt com.twittew.eschewbiwd.utt.stwato.thwiftscawa.snapshottype
+impowt com.twittew.eschewbiwd.utt.thwiftscawa.uttentitywecowd
+i-impowt com.twittew.intewests_ds.jobs.intewests_sewvice.usewtopicwewationsnapshotscawadataset
+impowt com.twittew.intewests.thwiftscawa.intewestwewationtype
+impowt com.twittew.intewests.thwiftscawa.usewintewestswewationsnapshot
+i-impowt com.twittew.penguin.scawding.datasets.penguinusewwanguagesscawadataset
+i-impowt com.twittew.scawding.dateops
+impowt com.twittew.scawding.datewange
+impowt com.twittew.scawding.days
+i-impowt com.twittew.scawding.stat
+impowt com.twittew.scawding.typedpipe
+i-impowt c-com.twittew.scawding.uniqueid
+impowt com.twittew.scawding.vawuepipe
+impowt com.twittew.scawding_intewnaw.dawv2.daw
+impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.expwicitwocation
+i-impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.awwowcwosscwustewsamedc
+impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.pwocatwa
+impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+i-impowt com.twittew.simcwustews_v2.common.usewid
+impowt com.twittew.simcwustews_v2.common._
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.simcwustewsv2intewestedin20m145kupdatedscawadataset
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.usewusewfavgwaphscawadataset
+i-impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.awwowcwossdc
+i-impowt com.twittew.common_headew.thwiftscawa.commonheadew
+impowt com.twittew.common_headew.thwiftscawa.idtype
+impowt com.twittew.common_headew.thwiftscawa.vewsionedcommonheadew
+i-impowt fwockdb_toows.datasets.fwock.fwockbwocksedgesscawadataset
+impowt fwockdb_toows.datasets.fwock.fwockfowwowsedgesscawadataset
+impowt f-fwockdb_toows.datasets.fwock.fwockwepowtasabuseedgesscawadataset
+impowt fwockdb_toows.datasets.fwock.fwockwepowtasspamedgesscawadataset
+impowt twadoop_config.configuwation.wog_categowies.gwoup.seawch.adaptiveseawchscawadataset
+impowt com.twittew.seawch.adaptive.scwibing.thwiftscawa.adaptiveseawchscwibewog
+impowt twadoop_config.configuwation.wog_categowies.gwoup.timewine.timewinesewvicefavowitesscawadataset
+i-impowt tweetsouwce.common.unhydwatedfwatscawadataset
+i-impowt com.twittew.fwigate.data_pipewine.magicwecs.magicwecs_notifications_wite.thwiftscawa.magicwecsnotificationwite
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.cwustewsusewisintewestedin
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.edgewithdecayedweights
+impowt com.twittew.timewinesewvice.thwiftscawa.contextuawizedfavowiteevent
+impowt com.twittew.timewinesewvice.thwiftscawa.favowiteeventunion
+impowt com.twittew.tweetsouwce.common.thwiftscawa.unhydwatedfwattweet
+i-impowt com.twittew.usewsouwce.snapshot.fwat.usewsouwcefwatscawadataset
+i-impowt com.twittew.wtf.entity_weaw_gwaph.scawding.common.datasetconstants
+i-impowt com.twittew.wtf.entity_weaw_gwaph.scawding.common.semanticcowefiwtews
+i-impowt com.twittew.wtf.scawding.cwient_event_pwocessing.thwiftscawa.intewactiondetaiws
+impowt c-com.twittew.wtf.scawding.cwient_event_pwocessing.thwiftscawa.intewactiontype
+impowt com.twittew.wtf.scawding.cwient_event_pwocessing.thwiftscawa.tweetimpwessiondetaiws
+i-impowt com.twittew.fwigate.data_pipewine.scawding.magicwecs.magicwecs_notification_wite.magicwecsnotificationwite1daywagscawadataset
+impowt com.twittew.iesouwce.thwiftscawa.intewactionevent
+i-impowt com.twittew.iesouwce.thwiftscawa.intewactiontawgettype
+i-impowt com.twittew.wtf.scawding.jobs.cwient_event_pwocessing.usewintewactionscawadataset
+impowt java.utiw.timezone
+i-impowt c-com.twittew.intewests_ds.jobs.intewests_sewvice.usewintewestwewationsnapshotscawadataset
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.embeddingutiw.usewid
+impowt com.twittew.scawding.typed.{vawuepipe => typedvawuepipe}
+impowt c-com.twittew.tweetsouwce.common.thwiftscawa.unhydwatedtweet
+i-impowt tweetsouwce.common.unhydwatedscawadataset
 
-object ExternalDataSources {
-  val UTTDomain = 131L
-  val usersourceColumns = Set("id", "account_country_code", "language")
-  val ValidFlockEdgeStateId = 0
+object e-extewnawdatasouwces {
+  v-vaw u-uttdomain = 131w
+  vaw usewsouwcecowumns = set("id", σωσ "account_countwy_code", (ꈍᴗꈍ) "wanguage")
+  vaw v-vawidfwockedgestateid = 0
 
-  def getStandardLanguageCode(language: String): Option[String] = {
-    val locale = LocaleUtil.getLocaleOf(language)
-    if (locale == LocaleUtil.UNKNOWN) None else Some(locale.getLanguage)
+  def getstandawdwanguagecode(wanguage: stwing): option[stwing] = {
+    vaw wocawe = w-wocaweutiw.getwocaweof(wanguage)
+    if (wocawe == w-wocaweutiw.unknown) n-nyone ewse s-some(wocawe.getwanguage)
   }
 
-  // Reads UTT Entity Records (`utt_source` dataset)
-  def getUttEntityRecords(implicit timeZone: TimeZone): TypedPipe[UttEntityRecord] = {
-    DAL
-      .readMostRecentSnapshotNoOlderThan(UttSourceScalaDataset, Days(14))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+  // weads utt e-entity wecowds (`utt_souwce` d-dataset)
+  d-def getuttentitywecowds(impwicit t-timezone: timezone): typedpipe[uttentitywecowd] = {
+    daw
+      .weadmostwecentsnapshotnoowdewthan(uttsouwcescawadataset, (ˆ ﻌ ˆ)♡ d-days(14))
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe
   }
 
   /**
-   * Extracts the KGO seeds from the UTT Entity Records.
-   * Uses the most recent "Stable" version by default unless specified otherwise.
+   * e-extwacts t-the kgo seeds f-fwom the utt entity w-wecowds. o.O
+   * uses the most wecent "stabwe" vewsion by defauwt u-unwess specified othewwise.
    *
-   * @param uttVersion UTT Version to use instead of the default value.
+   * @pawam uttvewsion utt vewsion to use instead of the defauwt vawue. :3
    */
-  def getLocaleProducerSeedIdsFromUttEntityRecords(
-    uttVersion: Option[Long] = None
+  d-def getwocawepwoducewseedidsfwomuttentitywecowds(
+    uttvewsion: option[wong] = nyone
   )(
-    implicit timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): TypedPipe[((TopicId, Language), Seq[UserId])] = {
+    i-impwicit timezone: t-timezone, -.-
+    u-uniqueid: uniqueid
+  ): typedpipe[((topicid, ( ͡o ω ͡o ) w-wanguage), /(^•ω•^) seq[usewid])] = {
 
-    val topicLangPairCount = Stat("topic_lang_pair_count_all")
-    val topicLangPairCountEmptySeed = Stat("topic_lang_pair_count_empty_seed")
-    val topicLangPairCountLteOneSeed = Stat("topic_lang_pair_count_lte_one_seed")
-    val topicLangPairCountLteFiveSeeds = Stat("topic_lang_pair_count_lte_five_seeds")
-    val topicLangPairCountLteTenSeeds = Stat("topic_lang_pair_count_lte_ten_seeds")
+    vaw topicwangpaiwcount = s-stat("topic_wang_paiw_count_aww")
+    v-vaw topicwangpaiwcountemptyseed = stat("topic_wang_paiw_count_empty_seed")
+    vaw topicwangpaiwcountwteoneseed = stat("topic_wang_paiw_count_wte_one_seed")
+    vaw topicwangpaiwcountwtefiveseeds = stat("topic_wang_paiw_count_wte_five_seeds")
+    v-vaw topicwangpaiwcountwtetenseeds = stat("topic_wang_paiw_count_wte_ten_seeds")
 
-    val uttEntityRecords: TypedPipe[UttEntityRecord] = getUttEntityRecords
+    vaw uttentitywecowds: t-typedpipe[uttentitywecowd] = getuttentitywecowds
 
-    val uttVersionToUse: ValuePipe[Long] = uttVersion match {
-      case Some(uttVersionValue) =>
-        TypedValuePipe(uttVersionValue)
-      case _ => // find the most recent "stable" version as recommended by the SemanticCore team
-        uttEntityRecords
-          .filter(_.snapshotType.exists(_ == SnapshotType.Stable))
-          .map(_.version)
+    v-vaw u-uttvewsiontouse: vawuepipe[wong] = uttvewsion match {
+      c-case s-some(uttvewsionvawue) =>
+        typedvawuepipe(uttvewsionvawue)
+      c-case _ => // f-find the most wecent "stabwe" vewsion as wecommended by the semanticcowe team
+        u-uttentitywecowds
+          .fiwtew(_.snapshottype.exists(_ == s-snapshottype.stabwe))
+          .map(_.vewsion)
           .distinct
-          .aggregate(Aggregator.min) // the most recent version is the smallest negative value
+          .aggwegate(aggwegatow.min) // t-the most wecent vewsion is t-the smowest nyegative v-vawue
     }
 
-    val uttEntityRecordsSingleVersion: TypedPipe[UttEntityRecord] =
-      uttEntityRecords
-        .filterWithValue(uttVersionToUse) {
-          case (uttEntityRecord: UttEntityRecord, uttVersionOpt: Option[Long]) =>
-            uttVersionOpt.contains(uttEntityRecord.version)
+    vaw uttentitywecowdssingwevewsion: t-typedpipe[uttentitywecowd] =
+      uttentitywecowds
+        .fiwtewwithvawue(uttvewsiontouse) {
+          case (uttentitywecowd: uttentitywecowd, (⑅˘꒳˘) uttvewsionopt: o-option[wong]) =>
+            u-uttvewsionopt.contains(uttentitywecowd.vewsion)
         }
 
-    uttEntityRecordsSingleVersion.flatMap { uttEntityRecord: UttEntityRecord =>
-      val localizedUsers: Seq[LocalizedUser] =
-        uttEntityRecord.knownForUsers.flatMap(_.localizedUsers).getOrElse(Nil)
+    uttentitywecowdssingwevewsion.fwatmap { uttentitywecowd: uttentitywecowd =>
+      v-vaw wocawizedusews: s-seq[wocawizedusew] =
+        uttentitywecowd.knownfowusews.fwatmap(_.wocawizedusews).getowewse(niw)
 
-      val validLocalizedUsers: Seq[(TopicId, Language, UserId)] =
-        localizedUsers
-          .flatMap {
-            case LocalizedUser(userId: UserId, Some(Locale(Some(language: String), _)), _) =>
-              Some((uttEntityRecord.entityId, language, userId))
-            case _ =>
-              None
+      vaw vawidwocawizedusews: seq[(topicid, òωó wanguage, u-usewid)] =
+        wocawizedusews
+          .fwatmap {
+            case wocawizedusew(usewid: usewid, 🥺 some(wocawe(some(wanguage: s-stwing), (ˆ ﻌ ˆ)♡ _)), _) =>
+              some((uttentitywecowd.entityid, -.- wanguage, u-usewid))
+            c-case _ =>
+              nyone
           }
 
-      val localeProducerSeedIds: Seq[((TopicId, Language), Seq[UserId])] = validLocalizedUsers
-        .groupBy {
-          case (topicId: TopicId, language: Language, _) =>
-            (topicId, language)
+      vaw wocawepwoducewseedids: s-seq[((topicid, σωσ w-wanguage), seq[usewid])] = vawidwocawizedusews
+        .gwoupby {
+          case (topicid: t-topicid, >_< wanguage: wanguage, :3 _) =>
+            (topicid, OwO w-wanguage)
         }
-        .mapValues(_.map(_._3).distinct) // values are distinct producerIds
-        .toSeq
+        .mapvawues(_.map(_._3).distinct) // vawues awe distinct pwoducewids
+        .toseq
 
-      localeProducerSeedIds.foreach { // stats
-        case (_, seedIds: Seq[UserId]) =>
-          topicLangPairCount.inc()
-          if (seedIds.isEmpty) topicLangPairCountEmptySeed.inc()
-          if (seedIds.length <= 1) topicLangPairCountLteOneSeed.inc()
-          if (seedIds.length <= 5) topicLangPairCountLteFiveSeeds.inc()
-          if (seedIds.length <= 10) topicLangPairCountLteTenSeeds.inc()
+      wocawepwoducewseedids.foweach { // s-stats
+        case (_, rawr seedids: s-seq[usewid]) =>
+          t-topicwangpaiwcount.inc()
+          if (seedids.isempty) t-topicwangpaiwcountemptyseed.inc()
+          if (seedids.wength <= 1) t-topicwangpaiwcountwteoneseed.inc()
+          i-if (seedids.wength <= 5) t-topicwangpaiwcountwtefiveseeds.inc()
+          if (seedids.wength <= 10) topicwangpaiwcountwtetenseeds.inc()
       }
 
-      localeProducerSeedIds
-    }.forceToDisk
+      w-wocawepwoducewseedids
+    }.fowcetodisk
   }
 
-  def uttEntitiesSource(
-    customFullMetadataSource: Option[TypedPipe[FullMetadata]] = None
+  d-def uttentitiessouwce(
+    customfuwwmetadatasouwce: option[typedpipe[fuwwmetadata]] = n-nyone
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[Long] = {
-    customFullMetadataSource
-      .getOrElse(fullMetadataSource)
-      .flatMap {
-        case fullMetadata if fullMetadata.domainId == UTTDomain =>
-          for {
-            basicMetadata <- fullMetadata.basicMetadata
-            indexableFields <- basicMetadata.indexableFields
-            tags <- indexableFields.tags
-            if !SemanticCoreFilters.shouldFilterByTags(tags.toSet, DatasetConstants.stopTags)
-          } yield {
-            fullMetadata.entityId
+    i-impwicit datewange: d-datewange, (///ˬ///✿)
+    timezone: timezone
+  ): typedpipe[wong] = {
+    c-customfuwwmetadatasouwce
+      .getowewse(fuwwmetadatasouwce)
+      .fwatmap {
+        case f-fuwwmetadata if f-fuwwmetadata.domainid == uttdomain =>
+          fow {
+            basicmetadata <- f-fuwwmetadata.basicmetadata
+            i-indexabwefiewds <- b-basicmetadata.indexabwefiewds
+            t-tags <- indexabwefiewds.tags
+            if !semanticcowefiwtews.shouwdfiwtewbytags(tags.toset, ^^ d-datasetconstants.stoptags)
+          } yiewd {
+            fuwwmetadata.entityid
           }
-        case _ => None
+        case _ => nyone
       }
   }
 
-  // Get followable topics from Escherbird
-  def uttFollowableEntitiesSource(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[Long] = {
-    val followableEntityCount = Stat("followable_entities_count")
-    val FollowableTag = "utt:followable_topic"
-    fullMetadataSource
-      .flatMap {
-        case fullMetadata if fullMetadata.domainId == UTTDomain =>
-          for {
-            basicMetadata <- fullMetadata.basicMetadata
-            indexableFields <- basicMetadata.indexableFields
-            tags <- indexableFields.tags
-            if tags.contains(FollowableTag)
-          } yield {
-            followableEntityCount.inc()
-            fullMetadata.entityId
+  // get f-fowwowabwe topics fwom eschewbiwd
+  d-def uttfowwowabweentitiessouwce(
+    impwicit d-datewange: datewange, XD
+    timezone: t-timezone, UwU
+    uniqueid: u-uniqueid
+  ): typedpipe[wong] = {
+    v-vaw fowwowabweentitycount = s-stat("fowwowabwe_entities_count")
+    v-vaw fowwowabwetag = "utt:fowwowabwe_topic"
+    f-fuwwmetadatasouwce
+      .fwatmap {
+        case fuwwmetadata if fuwwmetadata.domainid == uttdomain =>
+          fow {
+            basicmetadata <- fuwwmetadata.basicmetadata
+            i-indexabwefiewds <- b-basicmetadata.indexabwefiewds
+            tags <- i-indexabwefiewds.tags
+            if tags.contains(fowwowabwetag)
+          } y-yiewd {
+            fowwowabweentitycount.inc()
+            fuwwmetadata.entityid
           }
-        case _ => None
+        case _ => n-nyone
       }
   }
 
-  def fullMetadataSource(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[FullMetadata] = {
-    TypedPipe
-      .from(
-        new FullMetadataSource(s"/atla/proc/${FullMetadataSource.DefaultHdfsPath}")()(
-          dateRange.embiggen(Days(7))))
+  d-def fuwwmetadatasouwce(
+    impwicit datewange: d-datewange, o.O
+    timezone: timezone
+  ): t-typedpipe[fuwwmetadata] = {
+    t-typedpipe
+      .fwom(
+        nyew fuwwmetadatasouwce(s"/atwa/pwoc/${fuwwmetadatasouwce.defauwthdfspath}")()(
+          d-datewange.embiggen(days(7))))
   }
 
-  def userSource(implicit timeZone: TimeZone): TypedPipe[(UserId, (Country, Language))] =
-    DAL
-      .readMostRecentSnapshotNoOlderThan(UsersourceFlatScalaDataset, Days(7))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .withColumns(usersourceColumns)
-      .toTypedPipe.flatMap { flatUser =>
-        for {
-          userId <- flatUser.id
-          country <- flatUser.accountCountryCode
-          language <- flatUser.language
-          standardLang <- getStandardLanguageCode(language)
-        } yield {
-          (userId, country.toUpperCase, standardLang)
+  d-def usewsouwce(impwicit timezone: timezone): typedpipe[(usewid, (countwy, 😳 wanguage))] =
+    d-daw
+      .weadmostwecentsnapshotnoowdewthan(usewsouwcefwatscawadataset, (˘ω˘) d-days(7))
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .withcowumns(usewsouwcecowumns)
+      .totypedpipe.fwatmap { f-fwatusew =>
+        f-fow {
+          u-usewid <- fwatusew.id
+          c-countwy <- f-fwatusew.accountcountwycode
+          wanguage <- f-fwatusew.wanguage
+          s-standawdwang <- getstandawdwanguagecode(wanguage)
+        } y-yiewd {
+          (usewid, 🥺 countwy.touppewcase, ^^ standawdwang)
         }
       }.distinct
-      .map { case (user, country, lang) => user -> (country, lang) }
+      .map { c-case (usew, >w< countwy, ^^;; wang) => u-usew -> (countwy, w-wang) }
 
-  // Build user language source from inferred languages (penguin_user_languages dataset)
-  def inferredUserConsumedLanguageSource(
-    implicit timeZone: TimeZone
-  ): TypedPipe[(UserId, Seq[(Language, Double)])] = {
-    DAL
-      .readMostRecentSnapshotNoOlderThan(PenguinUserLanguagesScalaDataset, Days(7))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+  // buiwd usew wanguage s-souwce fwom infewwed wanguages (penguin_usew_wanguages dataset)
+  def infewwedusewconsumedwanguagesouwce(
+    i-impwicit timezone: t-timezone
+  ): t-typedpipe[(usewid, (˘ω˘) seq[(wanguage, OwO doubwe)])] = {
+    daw
+      .weadmostwecentsnapshotnoowdewthan(penguinusewwanguagesscawadataset, (ꈍᴗꈍ) d-days(7))
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe
       .map { kv =>
-        val consumed = kv.value.consumed
-          .collect {
-            case scoredString if scoredString.weight > 0.001 => //throw away 5% outliers
-              (getStandardLanguageCode(scoredString.item), scoredString.weight)
-          }.collect {
-            case (Some(language), score) => (language, score)
+        vaw consumed = k-kv.vawue.consumed
+          .cowwect {
+            c-case scowedstwing if s-scowedstwing.weight > 0.001 => //thwow away 5% o-outwiews
+              (getstandawdwanguagecode(scowedstwing.item), òωó s-scowedstwing.weight)
+          }.cowwect {
+            case (some(wanguage), ʘwʘ scowe) => (wanguage, ʘwʘ s-scowe)
           }
-        (kv.key, consumed)
+        (kv.key, nyaa~~ consumed)
       }
   }
 
-  def inferredUserProducedLanguageSource(
-    implicit timeZone: TimeZone
-  ): TypedPipe[(UserId, Seq[(Language, Double)])] = {
-    DAL
-      .readMostRecentSnapshotNoOlderThan(PenguinUserLanguagesScalaDataset, Days(7))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
-      .map { kv =>
-        val produced = kv.value.produced
-          .collect {
-            case scoredString if scoredString.weight > 0.15 => //throw away 5% outliers
-              (getStandardLanguageCode(scoredString.item), scoredString.weight)
-          }.collect {
-            case (Some(language), score) => (language, score)
+  def infewwedusewpwoducedwanguagesouwce(
+    impwicit t-timezone: t-timezone
+  ): typedpipe[(usewid, UwU s-seq[(wanguage, (⑅˘꒳˘) doubwe)])] = {
+    d-daw
+      .weadmostwecentsnapshotnoowdewthan(penguinusewwanguagesscawadataset, (˘ω˘) d-days(7))
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe
+      .map { k-kv =>
+        vaw pwoduced = kv.vawue.pwoduced
+          .cowwect {
+            case scowedstwing if scowedstwing.weight > 0.15 => //thwow away 5% outwiews
+              (getstandawdwanguagecode(scowedstwing.item), :3 scowedstwing.weight)
+          }.cowwect {
+            case (some(wanguage), (˘ω˘) scowe) => (wanguage, nyaa~~ scowe)
           }
-        (kv.key, produced)
+        (kv.key, pwoduced)
       }
   }
 
-  def simClustersInterestInSource(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[KeyVal[UserId, ClustersUserIsInterestedIn]] = {
-    DAL
-      .readMostRecentSnapshotNoOlderThan(
-        SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
-        Days(30))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+  def simcwustewsintewestinsouwce(
+    impwicit datewange: d-datewange, (U ﹏ U)
+    t-timezone: timezone
+  ): typedpipe[keyvaw[usewid, nyaa~~ cwustewsusewisintewestedin]] = {
+    d-daw
+      .weadmostwecentsnapshotnoowdewthan(
+        simcwustewsv2intewestedin20m145kupdatedscawadataset, ^^;;
+        d-days(30))
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe
   }
 
-  def simClustersInterestInLogFavSource(
-    minLogFavScore: Double
+  d-def simcwustewsintewestinwogfavsouwce(
+    minwogfavscowe: d-doubwe
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, Map[ClusterId, Double])] = {
-    simClustersInterestInSource.map {
-      case KeyVal(userId, clustersUserIsInterestedIn) =>
-        userId -> clustersUserIsInterestedIn.clusterIdToScores
+    impwicit datewange: d-datewange, OwO
+    t-timezone: timezone
+  ): typedpipe[(usewid, nyaa~~ m-map[cwustewid, doubwe])] = {
+    s-simcwustewsintewestinsouwce.map {
+      c-case keyvaw(usewid, UwU cwustewsusewisintewestedin) =>
+        usewid -> cwustewsusewisintewestedin.cwustewidtoscowes
           .map {
-            case (clusterId, scores) =>
-              clusterId -> scores.logFavScore.getOrElse(0.0)
+            c-case (cwustewid, s-scowes) =>
+              c-cwustewid -> s-scowes.wogfavscowe.getowewse(0.0)
           }
-          .filter(_._2 > minLogFavScore)
-          .toMap
+          .fiwtew(_._2 > m-minwogfavscowe)
+          .tomap
     }
   }
 
-  def topicFollowGraphSource(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[(TopicId, UserId)] = {
-    val userTopicFollowCount = Stat("user_topic_follow_count")
-    DAL
-      .readMostRecentSnapshotNoOlderThan(UserTopicRelationSnapshotScalaDataset, Days(7))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
-      .collect {
-        case userInterestsRelationSnapshot: UserInterestsRelationSnapshot
-            if userInterestsRelationSnapshot.interestType == "UTT" &&
-              userInterestsRelationSnapshot.relation == InterestRelationType.Followed =>
-          (userInterestsRelationSnapshot.interestId, userInterestsRelationSnapshot.userId)
+  d-def topicfowwowgwaphsouwce(
+    i-impwicit datewange: d-datewange, 😳
+    t-timezone: timezone, 😳
+    u-uniqueid: uniqueid
+  ): t-typedpipe[(topicid, (ˆ ﻌ ˆ)♡ u-usewid)] = {
+    vaw u-usewtopicfowwowcount = stat("usew_topic_fowwow_count")
+    daw
+      .weadmostwecentsnapshotnoowdewthan(usewtopicwewationsnapshotscawadataset, (✿oωo) d-days(7))
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe
+      .cowwect {
+        case u-usewintewestswewationsnapshot: u-usewintewestswewationsnapshot
+            i-if usewintewestswewationsnapshot.intewesttype == "utt" &&
+              usewintewestswewationsnapshot.wewation == i-intewestwewationtype.fowwowed =>
+          (usewintewestswewationsnapshot.intewestid, nyaa~~ usewintewestswewationsnapshot.usewid)
       }
-      .hashJoin(uttFollowableEntitiesSource.asKeys)
+      .hashjoin(uttfowwowabweentitiessouwce.askeys)
       .map {
-        case (topic, (user, _)) =>
-          userTopicFollowCount.inc()
-          (topic, user)
+        c-case (topic, ^^ (usew, _)) =>
+          usewtopicfowwowcount.inc()
+          (topic, (///ˬ///✿) usew)
       }
   }
 
-  def notInterestedTopicsSource(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[(TopicId, UserId)] = {
-    val userNotInterestedInTopicsCount = Stat("user_not_interested_in_topics_count")
-    DAL
-      .readMostRecentSnapshotNoOlderThan(
-        UserInterestRelationSnapshotScalaDataset,
-        Days(7)).withRemoteReadPolicy(ExplicitLocation(ProcAtla)).toTypedPipe.collect {
-        case userInterestsRelationSnapshot: UserInterestsRelationSnapshot
-            if userInterestsRelationSnapshot.interestType == "UTT" &&
-              userInterestsRelationSnapshot.relation == InterestRelationType.NotInterested =>
-          (userInterestsRelationSnapshot.interestId, userInterestsRelationSnapshot.userId)
+  d-def nyotintewestedtopicssouwce(
+    impwicit datewange: d-datewange, 😳
+    timezone: timezone, òωó
+    uniqueid: uniqueid
+  ): typedpipe[(topicid, ^^;; u-usewid)] = {
+    vaw u-usewnotintewestedintopicscount = s-stat("usew_not_intewested_in_topics_count")
+    daw
+      .weadmostwecentsnapshotnoowdewthan(
+        usewintewestwewationsnapshotscawadataset, rawr
+        days(7)).withwemoteweadpowicy(expwicitwocation(pwocatwa)).totypedpipe.cowwect {
+        c-case usewintewestswewationsnapshot: usewintewestswewationsnapshot
+            i-if usewintewestswewationsnapshot.intewesttype == "utt" &&
+              u-usewintewestswewationsnapshot.wewation == i-intewestwewationtype.notintewested =>
+          (usewintewestswewationsnapshot.intewestid, (ˆ ﻌ ˆ)♡ usewintewestswewationsnapshot.usewid)
       }
-      .hashJoin(uttFollowableEntitiesSource.asKeys)
+      .hashjoin(uttfowwowabweentitiessouwce.askeys)
       .map {
-        case (topic, (user, _)) =>
-          userNotInterestedInTopicsCount.inc()
-          (topic, user)
+        case (topic, XD (usew, >_< _)) =>
+          u-usewnotintewestedintopicscount.inc()
+          (topic, (˘ω˘) u-usew)
       }
   }
 
-  def tweetSource(
-    implicit dateRange: DateRange
-  ): TypedPipe[UnhydratedTweet] = {
-    DAL
-      .read(UnhydratedScalaDataset, dateRange).withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+  def tweetsouwce(
+    i-impwicit datewange: datewange
+  ): typedpipe[unhydwatedtweet] = {
+    d-daw
+      .wead(unhydwatedscawadataset, 😳 datewange).withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe
   }
 
-  def flatTweetsSource(
-    implicit dateRange: DateRange
-  ): TypedPipe[UnhydratedFlatTweet] = {
-    DAL
-      .read(UnhydratedFlatScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+  d-def f-fwattweetssouwce(
+    i-impwicit datewange: datewange
+  ): t-typedpipe[unhydwatedfwattweet] = {
+    d-daw
+      .wead(unhydwatedfwatscawadataset, o.O d-datewange)
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe
   }
 
-  def userTweetFavoritesSource(
-    implicit dateRange: DateRange
-  ): TypedPipe[(UserId, TweetId, Timestamp)] = {
-    DAL
-      .read(TimelineServiceFavoritesScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
-      .flatMap { cfe: ContextualizedFavoriteEvent =>
-        cfe.event match {
-          case FavoriteEventUnion.Favorite(fav) =>
-            Some(fav.userId, fav.tweetId, fav.eventTimeMs)
-          case _ =>
-            None
+  d-def usewtweetfavowitessouwce(
+    impwicit d-datewange: d-datewange
+  ): t-typedpipe[(usewid, (ꈍᴗꈍ) t-tweetid, rawr x3 timestamp)] = {
+    d-daw
+      .wead(timewinesewvicefavowitesscawadataset, ^^ d-datewange)
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe
+      .fwatmap { c-cfe: c-contextuawizedfavowiteevent =>
+        cfe.event m-match {
+          case favowiteeventunion.favowite(fav) =>
+            s-some(fav.usewid, OwO fav.tweetid, f-fav.eventtimems)
+          c-case _ =>
+            n-nyone
         }
       }
   }
 
-  def userTweetImpressionsSource(
-    dwellSec: Int = 1
+  def usewtweetimpwessionssouwce(
+    dwewwsec: int = 1
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(UserId, TweetId, Timestamp)] = {
-    DAL
-      .read(UserInteractionScalaDataset, dateRange)
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
-      .flatMap {
-        case userInteraction
-            if userInteraction.interactionType == InteractionType.TweetImpressions =>
-          userInteraction.interactionDetails match {
-            case InteractionDetails.TweetImpressionDetails(
-                  TweetImpressionDetails(tweetId, _, dwellTimeInSecOpt))
-                if dwellTimeInSecOpt.exists(_ >= dwellSec) =>
-              Some(userInteraction.userId, tweetId, userInteraction.timeStamp)
+    i-impwicit d-datewange: datewange
+  ): t-typedpipe[(usewid, ^^ tweetid, :3 timestamp)] = {
+    daw
+      .wead(usewintewactionscawadataset, o.O d-datewange)
+      .withwemoteweadpowicy(awwowcwosscwustewsamedc)
+      .totypedpipe
+      .fwatmap {
+        c-case usewintewaction
+            if usewintewaction.intewactiontype == i-intewactiontype.tweetimpwessions =>
+          u-usewintewaction.intewactiondetaiws match {
+            case intewactiondetaiws.tweetimpwessiondetaiws(
+                  tweetimpwessiondetaiws(tweetid, -.- _, d-dwewwtimeinsecopt))
+                i-if dwewwtimeinsecopt.exists(_ >= d-dwewwsec) =>
+              s-some(usewintewaction.usewid, (U ﹏ U) tweetid, usewintewaction.timestamp)
             case _ =>
-              None
+              n-none
           }
-        case _ => None
+        c-case _ => nyone
       }
   }
 
-  def transformFavEdges(
-    input: TypedPipe[EdgeWithDecayedWeights],
-    halfLifeInDaysForFavScore: Int
+  def twansfowmfavedges(
+    input: t-typedpipe[edgewithdecayedweights], o.O
+    hawfwifeindaysfowfavscowe: int
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(Long, Long, Double)] = {
-    val numEdgesWithSpecifiedHalfLife = Stat(
-      s"num_edges_with_specified_half_life_${halfLifeInDaysForFavScore}_days")
-    val numEdgesWithoutSpecifiedHalfLife = Stat(
-      s"num_edges_without_specified_half_life_${halfLifeInDaysForFavScore}_days")
-    input
-      .flatMap { edge =>
-        if (edge.weights.halfLifeInDaysToDecayedSums.contains(halfLifeInDaysForFavScore)) {
-          numEdgesWithSpecifiedHalfLife.inc()
-          Some((edge.sourceId, edge.destinationId, edge.weights.halfLifeInDaysToDecayedSums(100)))
-        } else {
-          numEdgesWithoutSpecifiedHalfLife.inc()
-          None
+    i-impwicit uniqueid: uniqueid
+  ): t-typedpipe[(wong, w-wong, OwO doubwe)] = {
+    vaw nyumedgeswithspecifiedhawfwife = s-stat(
+      s"num_edges_with_specified_hawf_wife_${hawfwifeindaysfowfavscowe}_days")
+    v-vaw nyumedgeswithoutspecifiedhawfwife = stat(
+      s"num_edges_without_specified_hawf_wife_${hawfwifeindaysfowfavscowe}_days")
+    i-input
+      .fwatmap { edge =>
+        i-if (edge.weights.hawfwifeindaystodecayedsums.contains(hawfwifeindaysfowfavscowe)) {
+          n-nyumedgeswithspecifiedhawfwife.inc()
+          s-some((edge.souwceid, e-edge.destinationid, ^•ﻌ•^ edge.weights.hawfwifeindaystodecayedsums(100)))
+        } e-ewse {
+          n-nyumedgeswithoutspecifiedhawfwife.inc()
+          n-nyone
         }
       }
   }
 
-  def getFavEdges(
-    halfLifeInDaysForFavScore: Int
+  def getfavedges(
+    h-hawfwifeindaysfowfavscowe: int
   )(
-    implicit dateRange: DateRange,
-    uniqueID: UniqueID
-  ): TypedPipe[(Long, Long, Double)] = {
-    implicit val tz: java.util.TimeZone = DateOps.UTC
-    transformFavEdges(
-      DAL
-        .readMostRecentSnapshotNoOlderThan(UserUserFavGraphScalaDataset, Days(14))
-        .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-        .toTypedPipe,
-      halfLifeInDaysForFavScore
+    impwicit datewange: d-datewange, ʘwʘ
+    u-uniqueid: u-uniqueid
+  ): typedpipe[(wong, :3 wong, doubwe)] = {
+    impwicit vaw tz: java.utiw.timezone = dateops.utc
+    t-twansfowmfavedges(
+      daw
+        .weadmostwecentsnapshotnoowdewthan(usewusewfavgwaphscawadataset, 😳 d-days(14))
+        .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+        .totypedpipe, òωó
+      h-hawfwifeindaysfowfavscowe
     )
   }
 
-  def flockReportAsSpamSource(
+  def fwockwepowtasspamsouwce(
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(UserId, UserId)] = {
-    DAL
-      .readMostRecentSnapshot(FlockReportAsSpamEdgesScalaDataset)
-      .toTypedPipe
-      .collect {
-        case edge if edge.state == ValidFlockEdgeStateId =>
-          (edge.sourceId, edge.destinationId)
+    impwicit datewange: d-datewange
+  ): typedpipe[(usewid, 🥺 u-usewid)] = {
+    d-daw
+      .weadmostwecentsnapshot(fwockwepowtasspamedgesscawadataset)
+      .totypedpipe
+      .cowwect {
+        c-case edge i-if edge.state == v-vawidfwockedgestateid =>
+          (edge.souwceid, rawr x3 edge.destinationid)
       }
   }
 
-  def flockBlocksSource(
+  def fwockbwockssouwce(
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(UserId, UserId)] = {
-    DAL
-      .readMostRecentSnapshot(FlockBlocksEdgesScalaDataset)
-      .toTypedPipe
-      .collect {
-        case edge if edge.state == ValidFlockEdgeStateId =>
-          (edge.sourceId, edge.destinationId)
+    impwicit datewange: datewange
+  ): t-typedpipe[(usewid, ^•ﻌ•^ usewid)] = {
+    daw
+      .weadmostwecentsnapshot(fwockbwocksedgesscawadataset)
+      .totypedpipe
+      .cowwect {
+        c-case edge if edge.state == vawidfwockedgestateid =>
+          (edge.souwceid, :3 edge.destinationid)
       }
   }
 
-  def flockFollowsSource(
+  d-def fwockfowwowssouwce(
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(UserId, UserId)] = {
-    DAL
-      .readMostRecentSnapshot(FlockFollowsEdgesScalaDataset)
-      .toTypedPipe
-      .collect {
-        case edge if edge.state == ValidFlockEdgeStateId =>
-          (edge.sourceId, edge.destinationId)
+    impwicit datewange: datewange
+  ): t-typedpipe[(usewid, (ˆ ﻌ ˆ)♡ u-usewid)] = {
+    daw
+      .weadmostwecentsnapshot(fwockfowwowsedgesscawadataset)
+      .totypedpipe
+      .cowwect {
+        c-case edge if edge.state == vawidfwockedgestateid =>
+          (edge.souwceid, (U ᵕ U❁) edge.destinationid)
       }
   }
 
-  def flockReportAsAbuseSource(
+  d-def fwockwepowtasabusesouwce(
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(UserId, UserId)] = {
-    DAL
-      .readMostRecentSnapshot(FlockReportAsAbuseEdgesScalaDataset)
-      .toTypedPipe
-      .collect {
-        case edge if edge.state == ValidFlockEdgeStateId =>
-          (edge.sourceId, edge.destinationId)
+    i-impwicit datewange: datewange
+  ): t-typedpipe[(usewid, :3 usewid)] = {
+    d-daw
+      .weadmostwecentsnapshot(fwockwepowtasabuseedgesscawadataset)
+      .totypedpipe
+      .cowwect {
+        case edge if edge.state == vawidfwockedgestateid =>
+          (edge.souwceid, ^^;; edge.destinationid)
       }
   }
 
-  def magicRecsNotficationOpenOrClickEventsSource(
-    implicit dateRange: DateRange
-  ): TypedPipe[MagicRecsNotificationLite] = {
-    DAL
-      .read(MagicrecsNotificationLite1DayLagScalaDataset, dateRange)
-      .toTypedPipe
-      .filter { entry =>
-        // keep entries with a valid userId and tweetId, opened or clicked timestamp defined
-        val userIdExists = entry.targetUserId.isDefined
-        val tweetIdExists = entry.tweetId.isDefined
-        val openOrClickExists =
-          entry.openTimestampMs.isDefined || entry.ntabClickTimestampMs.isDefined
-        userIdExists && tweetIdExists && openOrClickExists
+  d-def magicwecsnotficationopenowcwickeventssouwce(
+    impwicit datewange: datewange
+  ): t-typedpipe[magicwecsnotificationwite] = {
+    d-daw
+      .wead(magicwecsnotificationwite1daywagscawadataset, ( ͡o ω ͡o ) d-datewange)
+      .totypedpipe
+      .fiwtew { entwy =>
+        // keep entwies w-with a vawid usewid and tweetid, o.O opened ow cwicked timestamp defined
+        v-vaw usewidexists = e-entwy.tawgetusewid.isdefined
+        v-vaw t-tweetidexists = entwy.tweetid.isdefined
+        vaw openowcwickexists =
+          e-entwy.opentimestampms.isdefined || e-entwy.ntabcwicktimestampms.isdefined
+        usewidexists && tweetidexists && o-openowcwickexists
       }
   }
 
-  def ieSourceTweetEngagementsSource(implicit dateRange: DateRange): TypedPipe[InteractionEvent] = {
-    DAL
-      .read(
-        com.twitter.iesource.processing.events.batch.ServerEngagementsScalaDataset,
-        dateRange).withColumns(
-        Set("targetId", "targetType", "engagingUserId", "details", "referenceTweet"))
-      .toTypedPipe
-      .filter { event =>
-        // filter out logged out users because their favorites are less reliable
-        event.engagingUserId > 0L && event.targetType == InteractionTargetType.Tweet
+  def iesouwcetweetengagementssouwce(impwicit datewange: datewange): t-typedpipe[intewactionevent] = {
+    daw
+      .wead(
+        com.twittew.iesouwce.pwocessing.events.batch.sewvewengagementsscawadataset, ^•ﻌ•^
+        d-datewange).withcowumns(
+        s-set("tawgetid", XD "tawgettype", ^^ "engagingusewid", o.O "detaiws", ( ͡o ω ͡o ) "wefewencetweet"))
+      .totypedpipe
+      .fiwtew { event =>
+        // f-fiwtew o-out wogged out u-usews because theiw favowites awe wess wewiabwe
+        e-event.engagingusewid > 0w && event.tawgettype == intewactiontawgettype.tweet
       }
   }
 
-  private def userIdFromBlenderAdaptiveScribeLog(
-    blenderAdaptiveLog: AdaptiveSearchScribeLog
-  ): Option[Long] = {
-    blenderAdaptiveLog.versionedCommonHeader match {
-      case VersionedCommonHeader.CommonHeader(CommonHeader.ServerHeader(serverHeader)) =>
-        serverHeader.requestInfo match {
-          case Some(requestInfo) => requestInfo.ids.get(IdType.UserId).map(_.toLong)
-          case _ => None
+  p-pwivate def usewidfwombwendewadaptivescwibewog(
+    bwendewadaptivewog: adaptiveseawchscwibewog
+  ): option[wong] = {
+    b-bwendewadaptivewog.vewsionedcommonheadew m-match {
+      c-case vewsionedcommonheadew.commonheadew(commonheadew.sewvewheadew(sewvewheadew)) =>
+        s-sewvewheadew.wequestinfo m-match {
+          case some(wequestinfo) => w-wequestinfo.ids.get(idtype.usewid).map(_.towong)
+          case _ => nyone
         }
-      case _ => None
+      case _ => nyone
     }
   }
 
-  def adaptiveSearchScribeLogsSource(
-    implicit dateRange: DateRange
-  ): TypedPipe[(UserId, String)] = {
-    val searchData: TypedPipe[AdaptiveSearchScribeLog] =
-      DAL
-        .read(AdaptiveSearchScalaDataset, dateRange).toTypedPipe
+  d-def adaptiveseawchscwibewogssouwce(
+    impwicit d-datewange: datewange
+  ): typedpipe[(usewid, /(^•ω•^) stwing)] = {
+    vaw seawchdata: t-typedpipe[adaptiveseawchscwibewog] =
+      d-daw
+        .wead(adaptiveseawchscawadataset, 🥺 datewange).totypedpipe
 
-    searchData
-      .flatMap({ scribeLog: AdaptiveSearchScribeLog =>
-        for {
-          userId <- userIdFromBlenderAdaptiveScribeLog(scribeLog)
-          // filter out logged out search queries
-          if userId != 0
-          queryString <- scribeLog.requestLog.flatMap(_.request).flatMap(_.rawQuery)
-        } yield {
-          (userId, Set(queryString))
+    s-seawchdata
+      .fwatmap({ scwibewog: adaptiveseawchscwibewog =>
+        fow {
+          usewid <- u-usewidfwombwendewadaptivescwibewog(scwibewog)
+          // f-fiwtew out wogged out seawch q-quewies
+          i-if usewid != 0
+          quewystwing <- s-scwibewog.wequestwog.fwatmap(_.wequest).fwatmap(_.wawquewy)
+        } yiewd {
+          (usewid, nyaa~~ set(quewystwing))
         }
       })
-      // if a user searches for the same query multiple times, there could be duplicates.
-      // De-dup them to get the distinct queries searched by a user
-      .sumByKey
-      .flatMap {
-        case (userId, distinctQuerySet) =>
-          distinctQuerySet.map { query =>
-            (userId, query)
+      // if a usew s-seawches fow the same quewy m-muwtipwe times, mya thewe couwd be dupwicates. XD
+      // de-dup them t-to get the distinct q-quewies seawched b-by a usew
+      .sumbykey
+      .fwatmap {
+        case (usewid, nyaa~~ d-distinctquewyset) =>
+          d-distinctquewyset.map { quewy =>
+            (usewid, q-quewy)
           }
       }
   }

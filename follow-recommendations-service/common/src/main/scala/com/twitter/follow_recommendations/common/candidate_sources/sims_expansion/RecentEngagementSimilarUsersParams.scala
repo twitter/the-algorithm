@@ -1,17 +1,17 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.sims_expansion
 
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSParam
+impowt com.twittew.timewines.configapi.fsenumpawam
+i-impowt com.twittew.timewines.configapi.fspawam
 
-object RecentEngagementSimilarUsersParams {
+o-object wecentengagementsimiwawusewspawams {
 
-  case object FirstDegreeSortEnabled
-      extends FSParam[Boolean](
-        name = "sims_expansion_recent_engagement_first_degree_sort",
-        default = true)
-  case object Aggregator
-      extends FSEnumParam[SimsExpansionSourceAggregatorId.type](
-        name = "sims_expansion_recent_engagement_aggregator_id",
-        default = SimsExpansionSourceAggregatorId.Sum,
-        enum = SimsExpansionSourceAggregatorId)
+  c-case object f-fiwstdegweesowtenabwed
+      e-extends f-fspawam[boowean](
+        n-nyame = "sims_expansion_wecent_engagement_fiwst_degwee_sowt", >_<
+        d-defauwt = twue)
+  case object aggwegatow
+      extends fsenumpawam[simsexpansionsouwceaggwegatowid.type](
+        nyame = "sims_expansion_wecent_engagement_aggwegatow_id", :3
+        d-defauwt = simsexpansionsouwceaggwegatowid.sum, (U ﹏ U)
+        enum = simsexpansionsouwceaggwegatowid)
 }

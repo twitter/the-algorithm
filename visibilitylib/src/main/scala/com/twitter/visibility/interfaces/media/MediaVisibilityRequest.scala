@@ -1,10 +1,10 @@
-package com.twitter.visibility.interfaces.media
+package com.twittew.visibiwity.intewfaces.media
 
-import com.twitter.mediaservices.media_util.GenericMediaKey
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+impowt com.twittew.mediasewvices.media_utiw.genewicmediakey
+i-impowt c-com.twittew.visibiwity.modews.safetywevew
+i-impowt c-com.twittew.visibiwity.modews.viewewcontext
 
-case class MediaVisibilityRequest(
-  mediaKey: GenericMediaKey,
-  safetyLevel: SafetyLevel,
-  viewerContext: ViewerContext)
+c-case cwass mediavisibiwitywequest(
+  m-mediakey: g-genewicmediakey, UwU
+  s-safetywevew: safetywevew, rawr x3
+  viewewcontext: viewewcontext)

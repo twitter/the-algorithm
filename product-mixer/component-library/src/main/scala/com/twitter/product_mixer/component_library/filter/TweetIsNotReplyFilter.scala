@@ -1,36 +1,36 @@
-package com.twitter.product_mixer.component_library.filter
-import com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_tweetypie.IsReplyFeature
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+package com.twittew.pwoduct_mixew.component_wibwawy.fiwtew
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.candidate.tweet_tweetypie.iswepwyfeatuwe
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
 
 /**
- * Filters out tweets that is a reply to a tweet
+ * f-fiwtews out tweets that is a wepwy to a tweet
  */
-case class TweetIsNotReplyFilter[Candidate <: BaseTweetCandidate]()
-    extends Filter[PipelineQuery, Candidate] {
-  override val identifier: FilterIdentifier = FilterIdentifier("TweetIsNotReply")
+c-case cwass tweetisnotwepwyfiwtew[candidate <: b-basetweetcandidate]()
+    extends fiwtew[pipewinequewy, rawr x3 candidate] {
+  o-ovewwide vaw identifiew: f-fiwtewidentifiew = f-fiwtewidentifiew("tweetisnotwepwy")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
+  ovewwide def appwy(
+    quewy: pipewinequewy, mya
+    candidates: seq[candidatewithfeatuwes[candidate]]
+  ): s-stitch[fiwtewwesuwt[candidate]] = {
 
-    val (kept, removed) = candidates
-      .partition { candidate =>
-        !candidate.features.get(IsReplyFeature)
+    vaw (kept, nyaa~~ wemoved) = candidates
+      .pawtition { candidate =>
+        !candidate.featuwes.get(iswepwyfeatuwe)
       }
 
-    val filterResult = FilterResult(
-      kept = kept.map(_.candidate),
-      removed = removed.map(_.candidate)
+    vaw f-fiwtewwesuwt = fiwtewwesuwt(
+      k-kept = kept.map(_.candidate), (⑅˘꒳˘)
+      w-wemoved = w-wemoved.map(_.candidate)
     )
 
-    Stitch.value(filterResult)
+    s-stitch.vawue(fiwtewwesuwt)
   }
 
 }

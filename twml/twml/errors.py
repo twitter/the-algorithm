@@ -1,13 +1,13 @@
 """
-Error classes for twml
+ewwow cwasses fow twmw
 """
 
 
-class EarlyStopError(Exception):
-  """Exception used to indicate evaluator needs to early stop."""
-  pass
+c-cwass eawwystopewwow(exception):
+  """exception u-used to indicate e-evawuatow nyeeds t-to eawwy stop."""
+  p-pass
 
 
-class CheckpointNotFoundError(Exception):
-  """Exception used to indicate a checkpoint hasnt been found."""
+cwass c-checkpointnotfoundewwow(exception):
+  """exception u-used to indicate a-a checkpoint hasnt been found."""
   pass

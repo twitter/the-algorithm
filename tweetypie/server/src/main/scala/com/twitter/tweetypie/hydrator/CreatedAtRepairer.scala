@@ -1,49 +1,49 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.snowflake.id.SnowflakeId
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.snowfwake.id.snowfwakeid
 
-object CreatedAtRepairer {
-  // no createdAt value should be less than this
-  val jan_01_2006 = 1136073600000L
+o-object c-cweatedatwepaiwew {
+  // n-nyo cweatedat v-vawue shouwd be wess than this
+  vaw jan_01_2006 = 1136073600000w
 
-  // no non-snowflake createdAt value should be greater than this
-  val jan_01_2011 = 1293840000000L
+  // nyo nyon-snowfwake cweatedat vawue s-shouwd be gweatew than this
+  vaw jan_01_2011 = 1293840000000w
 
-  // allow createdAt timestamp to be up to this amount off from the snowflake id
-  // before applying the correction.
-  val varianceThreshold: MediaId = 10.minutes.inMilliseconds
+  // a-awwow cweatedat timestamp t-to be up to this amount off fwom the snowfwake id
+  // befowe appwying t-the cowwection.
+  vaw vawiancethweshowd: m-mediaid = 10.minutes.inmiwwiseconds
 }
 
 /**
- * Detects tweets with bad createdAt timestamps and attempts to fix, if possible
- * using the snowflake id.  pre-snowflake tweets are left unmodified.
+ * detects t-tweets with bad cweatedat timestamps and attempts to fix, (///ˬ///✿) if possibwe
+ * u-using the snowfwake id. >w<  pwe-snowfwake tweets awe weft unmodified. rawr
  */
-class CreatedAtRepairer(scribe: FutureEffect[String]) extends Mutation[Tweet] {
-  import CreatedAtRepairer._
+cwass cweatedatwepaiwew(scwibe: f-futuweeffect[stwing]) extends m-mutation[tweet] {
+  i-impowt c-cweatedatwepaiwew._
 
-  def apply(tweet: Tweet): Option[Tweet] = {
-    assert(tweet.coreData.nonEmpty, "tweet core data is missing")
-    val createdAtMillis = getCreatedAt(tweet) * 1000
+  d-def appwy(tweet: tweet): option[tweet] = {
+    a-assewt(tweet.cowedata.nonempty, "tweet cowe data is missing")
+    v-vaw cweatedatmiwwis = getcweatedat(tweet) * 1000
 
-    if (SnowflakeId.isSnowflakeId(tweet.id)) {
-      val snowflakeMillis = SnowflakeId(tweet.id).unixTimeMillis.asLong
-      val diff = (snowflakeMillis - createdAtMillis).abs
+    if (snowfwakeid.issnowfwakeid(tweet.id)) {
+      vaw snowfwakemiwwis = snowfwakeid(tweet.id).unixtimemiwwis.aswong
+      vaw diff = (snowfwakemiwwis - c-cweatedatmiwwis).abs
 
-      if (diff >= varianceThreshold) {
-        scribe(tweet.id + "\t" + createdAtMillis)
-        val snowflakeSeconds = snowflakeMillis / 1000
-        Some(TweetLenses.createdAt.set(tweet, snowflakeSeconds))
-      } else {
-        None
+      if (diff >= vawiancethweshowd) {
+        s-scwibe(tweet.id + "\t" + c-cweatedatmiwwis)
+        v-vaw snowfwakeseconds = snowfwakemiwwis / 1000
+        some(tweetwenses.cweatedat.set(tweet, mya s-snowfwakeseconds))
+      } e-ewse {
+        none
       }
-    } else {
-      // not a snowflake id, hard to repair, so just log it
-      if (createdAtMillis < jan_01_2006 || createdAtMillis > jan_01_2011) {
-        scribe(tweet.id + "\t" + createdAtMillis)
+    } e-ewse {
+      // n-nyot a snowfwake id, ^^ hawd to w-wepaiw, 😳😳😳 so just wog it
+      if (cweatedatmiwwis < j-jan_01_2006 || cweatedatmiwwis > jan_01_2011) {
+        s-scwibe(tweet.id + "\t" + cweatedatmiwwis)
       }
-      None
+      n-nyone
     }
   }
 }

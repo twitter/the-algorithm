@@ -1,75 +1,75 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.passbird.clientapplication.thriftscala.ClientApplication
-import com.twitter.passbird.clientapplication.thriftscala.GetClientApplicationsResponse
-import com.twitter.servo.cache.ScopedCacheKey
-import com.twitter.stitch.MapGroup
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.DeviceSource
+i-impowt com.twittew.passbiwd.cwientappwication.thwiftscawa.cwientappwication
+i-impowt c-com.twittew.passbiwd.cwientappwication.thwiftscawa.getcwientappwicationswesponse
+i-impowt com.twittew.sewvo.cache.scopedcachekey
+i-impowt com.twittew.stitch.mapgwoup
+i-impowt com.twittew.stitch.notfound
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.tweetypie.thwiftscawa.devicesouwce
 
-// converts the device source parameter value to lower-case, to make the cached
+// convewts the d-device souwce pawametew vawue to wowew-case, to m-make the cached
 // key case-insensitive
-case class DeviceSourceKey(param: String) extends ScopedCacheKey("t", "ds", 1, param.toLowerCase)
+c-case cwass devicesouwcekey(pawam: stwing) extends scopedcachekey("t", (ˆ ﻌ ˆ)♡ "ds", 1, p-pawam.towowewcase)
 
-object DeviceSourceRepository {
-  type Type = String => Stitch[DeviceSource]
+object d-devicesouwcewepositowy {
+  t-type type = stwing => stitch[devicesouwce]
 
-  type GetClientApplications = FutureArrow[Seq[Long], GetClientApplicationsResponse]
+  type getcwientappwications = f-futuweawwow[seq[wong], 😳😳😳 getcwientappwicationswesponse]
 
-  val DefaultUrl = "https://help.twitter.com/en/using-twitter/how-to-tweet#source-labels"
+  vaw defauwtuww = "https://hewp.twittew.com/en/using-twittew/how-to-tweet#souwce-wabews"
 
-  def formatUrl(name: String, url: String): String = s"""<a href="$url">$name</a>"""
+  def fowmatuww(name: s-stwing, (U ﹏ U) uww: stwing): stwing = s-s"""<a hwef="$uww">$name</a>"""
 
   /**
-   * Construct an html a tag from the client application
-   * name and url for the display field because some
-   * clients depend on this.
+   * c-constwuct a-an htmw a t-tag fwom the cwient appwication
+   * nyame and uww f-fow the dispway fiewd because some
+   * cwients d-depend on this. (///ˬ///✿)
    */
-  def deviceSourceDisplay(
-    name: String,
-    urlOpt: Option[String]
-  ): String =
-    urlOpt match {
-      case Some(url) => formatUrl(name = name, url = url) // data sanitized by passbird
-      case None =>
-        formatUrl(name = name, url = DefaultUrl) // data sanitized by passbird
+  def devicesouwcedispway(
+    nyame: stwing, 😳
+    uwwopt: option[stwing]
+  ): stwing =
+    u-uwwopt match {
+      case some(uww) => f-fowmatuww(name = n-nyame, 😳 u-uww = uww) // data sanitized by passbiwd
+      case nyone =>
+        f-fowmatuww(name = n-nyame, σωσ uww = defauwtuww) // d-data sanitized b-by passbiwd
     }
 
-  def toDeviceSource(app: ClientApplication): DeviceSource =
-    DeviceSource(
-      // The id field used to represent the id of a row
-      // in the now deprecated device_sources mysql table.
-      id = 0L,
-      parameter = "oauth:" + app.id,
-      internalName = "oauth:" + app.id,
-      name = app.name,
-      url = app.url.getOrElse(""),
-      display = deviceSourceDisplay(app.name, app.url),
-      clientAppId = Some(app.id)
+  def todevicesouwce(app: c-cwientappwication): devicesouwce =
+    d-devicesouwce(
+      // the id fiewd used to wepwesent the i-id of a wow
+      // in the nyow d-depwecated device_souwces mysqw t-tabwe.
+      i-id = 0w, rawr x3
+      pawametew = "oauth:" + app.id, OwO
+      intewnawname = "oauth:" + app.id, /(^•ω•^)
+      nyame = app.name, 😳😳😳
+      uww = app.uww.getowewse(""), ( ͡o ω ͡o )
+      d-dispway = d-devicesouwcedispway(app.name, >_< app.uww), >w<
+      cwientappid = some(app.id)
     )
 
-  def apply(
-    parseAppId: String => Option[Long],
-    getClientApplications: GetClientApplications
-  ): DeviceSourceRepository.Type = {
-    val getClientApplicationsGroup = new MapGroup[Long, DeviceSource] {
-      def run(ids: Seq[Long]): Future[Long => Try[DeviceSource]] =
-        getClientApplications(ids).map { response => id =>
-          response.found.get(id) match {
-            case Some(app) => Return(toDeviceSource(app))
-            case None => Throw(NotFound)
+  d-def appwy(
+    p-pawseappid: stwing => o-option[wong], rawr
+    getcwientappwications: getcwientappwications
+  ): devicesouwcewepositowy.type = {
+    v-vaw getcwientappwicationsgwoup = nyew mapgwoup[wong, 😳 devicesouwce] {
+      def wun(ids: seq[wong]): f-futuwe[wong => twy[devicesouwce]] =
+        g-getcwientappwications(ids).map { w-wesponse => id =>
+          w-wesponse.found.get(id) match {
+            c-case some(app) => w-wetuwn(todevicesouwce(app))
+            c-case none => thwow(notfound)
           }
         }
     }
 
-    appIdStr =>
-      parseAppId(appIdStr) match {
-        case Some(appId) =>
-          Stitch.call(appId, getClientApplicationsGroup)
-        case None =>
-          Stitch.exception(NotFound)
+    a-appidstw =>
+      pawseappid(appidstw) match {
+        c-case some(appid) =>
+          s-stitch.caww(appid, g-getcwientappwicationsgwoup)
+        c-case n-nyone =>
+          stitch.exception(notfound)
       }
   }
 }

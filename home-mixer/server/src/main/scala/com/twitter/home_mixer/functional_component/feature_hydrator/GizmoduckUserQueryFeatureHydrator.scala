@@ -1,50 +1,50 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.twittew.home_mixew.functionaw_component.featuwe_hydwatow
 
-import com.twitter.gizmoduck.{thriftscala => gt}
-import com.twitter.home_mixer.model.HomeFeatures.UserFollowingCountFeature
-import com.twitter.home_mixer.model.HomeFeatures.UserScreenNameFeature
-import com.twitter.home_mixer.model.HomeFeatures.UserTypeFeature
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.gizmoduck.Gizmoduck
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.gizmoduck.{thwiftscawa => g-gt}
+impowt com.twittew.home_mixew.modew.homefeatuwes.usewfowwowingcountfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.usewscweennamefeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.usewtypefeatuwe
+i-impowt c-com.twittew.home_mixew.sewvice.homemixewawewtconfig
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.stitch.stitch
+impowt com.twittew.stitch.gizmoduck.gizmoduck
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-case class GizmoduckUserQueryFeatureHydrator @Inject() (gizmoduck: Gizmoduck)
-    extends QueryFeatureHydrator[PipelineQuery] {
+@singweton
+c-case cwass gizmoduckusewquewyfeatuwehydwatow @inject() (gizmoduck: gizmoduck)
+    e-extends quewyfeatuwehydwatow[pipewinequewy] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("GizmoduckUser")
+  o-ovewwide vaw identifiew: featuwehydwatowidentifiew = featuwehydwatowidentifiew("gizmoduckusew")
 
-  override val features: Set[Feature[_, _]] =
-    Set(UserFollowingCountFeature, UserTypeFeature, UserScreenNameFeature)
+  ovewwide vaw featuwes: s-set[featuwe[_, /(^•ω•^) _]] =
+    set(usewfowwowingcountfeatuwe, rawr x3 usewtypefeatuwe, (U ﹏ U) usewscweennamefeatuwe)
 
-  private val queryFields: Set[gt.QueryFields] =
-    Set(gt.QueryFields.Counts, gt.QueryFields.Safety, gt.QueryFields.Profile)
+  pwivate vaw quewyfiewds: s-set[gt.quewyfiewds] =
+    set(gt.quewyfiewds.counts, (U ﹏ U) g-gt.quewyfiewds.safety, (⑅˘꒳˘) g-gt.quewyfiewds.pwofiwe)
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    val userId = query.getRequiredUserId
-    gizmoduck
-      .getUserById(
-        userId = userId,
-        queryFields = queryFields,
-        context = gt.LookupContext(forUserId = Some(userId), includeSoftUsers = true))
-      .map { user =>
-        FeatureMapBuilder()
-          .add(UserFollowingCountFeature, user.counts.map(_.following.toInt))
-          .add(UserTypeFeature, Some(user.userType))
-          .add(UserScreenNameFeature, user.profile.map(_.screenName))
-          .build()
+  o-ovewwide def h-hydwate(quewy: pipewinequewy): stitch[featuwemap] = {
+    vaw usewid = quewy.getwequiwedusewid
+    g-gizmoduck
+      .getusewbyid(
+        usewid = usewid, òωó
+        q-quewyfiewds = quewyfiewds, ʘwʘ
+        context = gt.wookupcontext(fowusewid = some(usewid), /(^•ω•^) incwudesoftusews = twue))
+      .map { u-usew =>
+        featuwemapbuiwdew()
+          .add(usewfowwowingcountfeatuwe, ʘwʘ usew.counts.map(_.fowwowing.toint))
+          .add(usewtypefeatuwe, σωσ s-some(usew.usewtype))
+          .add(usewscweennamefeatuwe, OwO u-usew.pwofiwe.map(_.scweenname))
+          .buiwd()
       }
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.7)
+  o-ovewwide vaw awewts = seq(
+    homemixewawewtconfig.businesshouws.defauwtsuccesswateawewt(99.7)
   )
 }

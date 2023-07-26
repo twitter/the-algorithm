@@ -1,27 +1,27 @@
-package com.twitter.search.earlybird.util;
+package com.twittew.seawch.eawwybiwd.utiw;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+impowt c-com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchCounter;
+i-impowt com.twittew.common.utiw.cwock;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
 
-public abstract class ScheduledExecutorTask implements Runnable {
-  private final SearchCounter counter;
-  protected final Clock clock;
+p-pubwic abstwact c-cwass scheduwedexecutowtask i-impwements w-wunnabwe {
+  pwivate finaw seawchcountew countew;
+  pwotected finaw cwock c-cwock;
 
-  public ScheduledExecutorTask(SearchCounter counter, Clock clock) {
-    Preconditions.checkNotNull(counter);
-    this.counter = counter;
-    this.clock = clock;
+  pubwic scheduwedexecutowtask(seawchcountew countew, 😳 cwock c-cwock) {
+    pweconditions.checknotnuww(countew);
+    t-this.countew = countew;
+    this.cwock = cwock;
   }
 
-  @Override
-  public final void run() {
-    counter.increment();
-    runOneIteration();
+  @ovewwide
+  p-pubwic finaw void w-wun() {
+    countew.incwement();
+    w-wunoneitewation();
   }
 
-  @VisibleForTesting
-  protected abstract void runOneIteration();
+  @visibwefowtesting
+  pwotected abstwact void wunoneitewation();
 }

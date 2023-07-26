@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata
 
-case class TimelinesDetails(
-  injectionType: Option[String],
-  controllerData: Option[String],
-  sourceData: Option[String])
+case cwass timewinesdetaiws(
+  i-injectiontype: o-option[stwing], OwO
+  contwowwewdata: option[stwing], 🥺
+  s-souwcedata: option[stwing])

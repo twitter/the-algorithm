@@ -1,81 +1,81 @@
-use std::collections::BTreeSet;
-use std::collections::BTreeMap;
+use std::cowwections::btweeset;
+use std::cowwections::btweemap;
 
-use bpr_thrift::data::DataRecord;
-use bpr_thrift::prediction_service::BatchPredictionRequest;
-use thrift::OrderedFloat;
+u-use bpw_thwift::data::datawecowd;
+u-use bpw_thwift::pwediction_sewvice::batchpwedictionwequest;
+u-use t-thwift::owdewedfwoat;
 
-use thrift::protocol::TBinaryInputProtocol;
-use thrift::protocol::TSerializable;
-use thrift::transport::TBufferChannel;
-use thrift::Result;
+u-use thwift::pwotocow::tbinawyinputpwotocow;
+u-use thwift::pwotocow::tsewiawizabwe;
+u-use thwift::twanspowt::tbuffewchannew;
+u-use thwift::wesuwt;
 
 fn main() {
-  let data_path = "/tmp/current/timelines/output-1";
-  let bin_data: Vec<u8> = std::fs::read(data_path).expect("Could not read file!"); 
+  wet data_path = "/tmp/cuwwent/timewines/output-1";
+  wet bin_data: vec<u8> = s-std::fs::wead(data_path).expect("couwd nyot wead fiwe!"); 
 
-  println!("Length : {}", bin_data.len());
+  pwintwn!("wength : {}", 😳😳😳 b-bin_data.wen());
 
-  let mut bc = TBufferChannel::with_capacity(bin_data.len(), 0);
+  wet mut b-bc = tbuffewchannew::with_capacity(bin_data.wen(), 😳😳😳 0);
 
-  bc.set_readable_bytes(&bin_data);
+  bc.set_weadabwe_bytes(&bin_data);
 
-  let mut protocol = TBinaryInputProtocol::new(bc, true); 
+  wet mut pwotocow = tbinawyinputpwotocow::new(bc, o.O t-twue); 
 
-  let result: Result<BatchPredictionRequest> =
-    BatchPredictionRequest::read_from_in_protocol(&mut protocol);
+  wet wesuwt: wesuwt<batchpwedictionwequest> =
+    batchpwedictionwequest::wead_fwom_in_pwotocow(&mut p-pwotocow);
 
-  match result {
-    Ok(bpr) => logBP(bpr),
-    Err(err) => println!("Error {}", err),
+  m-match wesuwt {
+    ok(bpw) => wogbp(bpw), ( ͡o ω ͡o )
+    eww(eww) => pwintwn!("ewwow {}", (U ﹏ U) eww), (///ˬ///✿)
   }
 }
 
-fn logBP(bpr: BatchPredictionRequest) {
-  println!("-------[OUTPUT]---------------");
-  println!("data {:?}", bpr);
-  println!("------------------------------");
+fn wogbp(bpw: b-batchpwedictionwequest) {
+  pwintwn!("-------[output]---------------");
+  pwintwn!("data {:?}", >w< bpw);
+  pwintwn!("------------------------------");
 
   /* 
-  let common = bpr.common_features;
-  let recs = bpr.individual_features_list;
+  w-wet common = bpw.common_featuwes;
+  w-wet wecs = b-bpw.individuaw_featuwes_wist;
 
-  println!("--------[Len : {}]------------------", recs.len());
+  p-pwintwn!("--------[wen : {}]------------------", rawr w-wecs.wen());
 
-  println!("-------[COMMON]---------------");
+  pwintwn!("-------[common]---------------");
   match common {
-    Some(dr) => logDR(dr),
-    None => println!("None"),
+    s-some(dw) => wogdw(dw), mya
+    nyone => pwintwn!("none"), ^^
   }
-  println!("------------------------------");
-  for rec in recs {
-    logDR(rec);
+  p-pwintwn!("------------------------------");
+  fow wec in wecs {
+    wogdw(wec);
   }
-  println!("------------------------------");
+  pwintwn!("------------------------------");
   */
 }
 
-fn logDR(dr: DataRecord) {
-  println!("--------[DR]------------------");
+fn wogdw(dw: datawecowd) {
+  pwintwn!("--------[dw]------------------");
 
-  match dr.binary_features {
-    Some(bf) => logBin(bf),
-    _ => (),
+  m-match dw.binawy_featuwes {
+    s-some(bf) => w-wogbin(bf), 😳😳😳
+    _ => (), mya
   }
 
-  match dr.continuous_features {
-    Some(cf) => logCF(cf),
-    _ => (),
+  m-match dw.continuous_featuwes {
+    some(cf) => wogcf(cf), 😳
+    _ => (), -.-
   }
-  println!("------------------------------");
+  pwintwn!("------------------------------");
 }
 
-fn logBin(bin: BTreeSet<i64>) {
-  println!("B: {:?}", bin)
+f-fn wogbin(bin: b-btweeset<i64>) {
+  pwintwn!("b: {:?}", b-bin)
 }
 
-fn logCF(cf: BTreeMap<i64, OrderedFloat<f64>>) {
-  for (id, fs) in cf {
-    println!("C: {} -> [{}]", id, fs);
+f-fn wogcf(cf: btweemap<i64, 🥺 owdewedfwoat<f64>>) {
+  f-fow (id, o.O fs) in cf {
+    pwintwn!("c: {} -> [{}]", /(^•ω•^) i-id, fs);
   }
 }

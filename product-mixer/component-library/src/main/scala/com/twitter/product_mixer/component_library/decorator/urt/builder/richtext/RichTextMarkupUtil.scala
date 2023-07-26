@@ -1,133 +1,133 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.wichtext
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ExternalUrl
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.UrlType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextAlignment
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextEntity
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Strong
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.extewnawuww
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.uww
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.uwwtype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtext
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtextawignment
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtextentity
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.stwong
 
 /*
- * RichTextMarkupUtil facilitates building a Product Mixer URT RichText object out of
- * a string with inline XML markup.
+ * wichtextmawkuputiw faciwitates b-buiwding a pwoduct mixew uwt wichtext object o-out of
+ * a stwing with inwine x-xmw mawkup. 😳😳😳
  *
- * This allows us to use a string like "Our system <a href="#promix">Product Mixer</a> is the <b>best</b>". Using
- * inline markup like this is advantageous since the string can go through translation/localization and the
- * translators will move the tags around in each language as appropriate.
+ * this awwows us to use a stwing wike "ouw system <a h-hwef="#pwomix">pwoduct mixew</a> i-is the <b>best</b>". OwO u-using
+ * inwine mawkup wike this is advantageous since the stwing can g-go thwough twanswation/wocawization and the
+ * twanswatows wiww move the tags awound in each wanguage a-as appwopwiate. 😳
  *
- * This class is derived from the OCF (onboarding/serve)'s RichTextUtil, but they diverge because:
- * - We generate ProMix URT structures, not OCF URT structures
- * - The OCF supports some internal OCF tags, like <data>
- * - The OCF has additional legacy support and processing that we don't need
+ * this c-cwass is dewived f-fwom the ocf (onboawding/sewve)'s w-wichtextutiw, 😳😳😳 b-but they divewge because:
+ * - we genewate pwomix u-uwt stwuctuwes, (˘ω˘) nyot ocf uwt stwuctuwes
+ * - t-the ocf suppowts some intewnaw ocf tags, ʘwʘ wike <data>
+ * - the ocf has additionaw wegacy suppowt a-and pwocessing that we don't nyeed
  */
 
-object RichTextMarkupUtil {
+o-object w-wichtextmawkuputiw {
 
-  // Matches a anchor element, extracting the 'a' tag and the display text.
-  // First group is the tag
-  // Second group is the display text
-  // Allows any character in the display text, but matches reluctantly
-  private val LinkAnchorRegex = """(?i)(?s)<a\s+href\s*=\s*"#([\w-]*)">(.*?)</a>""".r
+  // m-matches a anchow ewement, ( ͡o ω ͡o ) extwacting the 'a' tag and t-the dispway text. o.O
+  // f-fiwst gwoup is the tag
+  // s-second gwoup i-is the dispway text
+  // awwows a-any chawactew in the dispway text, >w< b-but matches wewuctantwy
+  pwivate vaw winkanchowwegex = """(?i)(?s)<a\s+hwef\s*=\s*"#([\w-]*)">(.*?)</a>""".w
 
-  // Matches a <b>bold text section</b>
-  private val BoldRegex = """(?i)(?s)<b>(.*?)</b>""".r
+  // m-matches a <b>bowd text section</b>
+  p-pwivate vaw bowdwegex = """(?i)(?s)<b>(.*?)</b>""".w
 
-  def richTextFromMarkup(
-    text: String,
-    linkMap: Map[String, String],
-    rtl: Option[Boolean] = None,
-    alignment: Option[RichTextAlignment] = None,
-    linkTypeMap: Map[String, UrlType] = Map.empty
-  ): RichText = {
+  d-def wichtextfwommawkup(
+    t-text: stwing, 😳
+    winkmap: map[stwing, stwing], 🥺
+    wtw: option[boowean] = nyone, rawr x3
+    awignment: option[wichtextawignment] = n-nyone, o.O
+    w-winktypemap: map[stwing, rawr u-uwwtype] = map.empty
+  ): w-wichtext = {
 
-    // Mutable!
-    var currentText = text
-    val entities = scala.collection.mutable.ArrayBuffer.empty[RichTextEntity]
+    // m-mutabwe! ʘwʘ
+    vaw cuwwenttext = text
+    vaw entities = scawa.cowwection.mutabwe.awwaybuffew.empty[wichtextentity]
 
-    // Using a while loop since we want to execute the regex after each iteration, so our indexes remain consistent
+    // u-using a whiwe woop since we want to exekawaii~ the wegex aftew each itewation, 😳😳😳 s-so ouw indexes wemain c-consistent
 
-    // Handle Links
-    var matchOpt = LinkAnchorRegex.findFirstMatchIn(currentText)
-    while (matchOpt.isDefined) {
-      matchOpt.foreach { linkMatch =>
-        val tag = linkMatch.group(1)
-        val displayText = linkMatch.group(2)
+    // h-handwe winks
+    v-vaw matchopt = winkanchowwegex.findfiwstmatchin(cuwwenttext)
+    w-whiwe (matchopt.isdefined) {
+      m-matchopt.foweach { w-winkmatch =>
+        v-vaw tag = winkmatch.gwoup(1)
+        vaw dispwaytext = winkmatch.gwoup(2)
 
-        currentText = currentText.substring(0, linkMatch.start) + displayText + currentText
-          .substring(linkMatch.end)
+        c-cuwwenttext = c-cuwwenttext.substwing(0, ^^;; w-winkmatch.stawt) + d-dispwaytext + c-cuwwenttext
+          .substwing(winkmatch.end)
 
-        adjustEntities(
-          entities,
-          linkMatch.start,
-          linkMatch.end - (linkMatch.start + displayText.length))
+        adjustentities(
+          entities, o.O
+          winkmatch.stawt, (///ˬ///✿)
+          w-winkmatch.end - (winkmatch.stawt + dispwaytext.wength))
 
         entities.append(
-          RichTextEntity(
-            fromIndex = linkMatch.start,
-            toIndex = linkMatch.start + displayText.length,
-            ref = linkMap.get(tag).map { url =>
-              Url(
-                urlType = linkTypeMap.getOrElse(tag, ExternalUrl),
-                url = url
+          wichtextentity(
+            fwomindex = winkmatch.stawt, σωσ
+            t-toindex = winkmatch.stawt + dispwaytext.wength,
+            wef = w-winkmap.get(tag).map { u-uww =>
+              u-uww(
+                uwwtype = winktypemap.getowewse(tag, nyaa~~ e-extewnawuww), ^^;;
+                uww = uww
               )
-            },
-            format = None
+            }, ^•ﻌ•^
+            f-fowmat = n-nyone
           )
         )
       }
-      matchOpt = LinkAnchorRegex.findFirstMatchIn(currentText)
+      matchopt = winkanchowwegex.findfiwstmatchin(cuwwenttext)
     }
 
-    // Handle Bold
-    matchOpt = BoldRegex.findFirstMatchIn(currentText)
-    while (matchOpt.isDefined) {
-      matchOpt.foreach { boldMatch =>
-        val text = boldMatch.group(1)
+    // handwe bowd
+    matchopt = bowdwegex.findfiwstmatchin(cuwwenttext)
+    whiwe (matchopt.isdefined) {
+      m-matchopt.foweach { bowdmatch =>
+        v-vaw text = bowdmatch.gwoup(1)
 
-        currentText =
-          currentText.substring(0, boldMatch.start) + text + currentText.substring(boldMatch.end)
+        c-cuwwenttext =
+          c-cuwwenttext.substwing(0, σωσ bowdmatch.stawt) + text + cuwwenttext.substwing(bowdmatch.end)
 
-        adjustEntities(entities, boldMatch.start, boldMatch.end - (boldMatch.start + text.length))
+        a-adjustentities(entities, -.- b-bowdmatch.stawt, ^^;; bowdmatch.end - (bowdmatch.stawt + text.wength))
 
-        entities.append(
-          RichTextEntity(
-            fromIndex = boldMatch.start,
-            toIndex = boldMatch.start + text.length,
-            ref = None,
-            format = Some(Strong),
+        e-entities.append(
+          w-wichtextentity(
+            fwomindex = bowdmatch.stawt, XD
+            toindex = bowdmatch.stawt + text.wength,
+            w-wef = n-none, 🥺
+            f-fowmat = some(stwong), òωó
           )
         )
       }
 
-      matchOpt = BoldRegex.findFirstMatchIn(currentText)
+      matchopt = bowdwegex.findfiwstmatchin(cuwwenttext)
     }
 
-    RichText(
-      currentText,
-      entities.sortBy(_.fromIndex).toList, // always return immutable copies!
-      rtl,
-      alignment
+    w-wichtext(
+      c-cuwwenttext, (ˆ ﻌ ˆ)♡
+      entities.sowtby(_.fwomindex).towist, // a-awways wetuwn immutabwe copies! -.-
+      wtw,
+      awignment
     )
   }
 
-  /* When we create a new entity, we need to adjust
-   * any already existing entities that have been moved.
-   * Entities cannot overlap, so we can just compare start positions.
+  /* when we cweate a-a nyew entity, w-we nyeed to adjust
+   * any awweady existing e-entities that have b-been moved. :3
+   * entities cannot ovewwap, so we can just compawe s-stawt positions. ʘwʘ
    */
-  private def adjustEntities(
-    entities: scala.collection.mutable.ArrayBuffer[RichTextEntity],
-    start: Int,
-    length: Int
-  ): Unit = {
-    for (i <- entities.indices) {
-      if (entities(i).fromIndex > start) {
-        val old = entities(i)
+  pwivate def adjustentities(
+    entities: scawa.cowwection.mutabwe.awwaybuffew[wichtextentity], 🥺
+    s-stawt: int, >_<
+    wength: int
+  ): unit = {
+    f-fow (i <- entities.indices) {
+      i-if (entities(i).fwomindex > stawt) {
+        vaw owd = entities(i)
         entities.update(
-          i,
-          entities(i).copy(
-            fromIndex = old.fromIndex - length,
-            toIndex = old.toIndex - length
+          i, ʘwʘ
+          e-entities(i).copy(
+            f-fwomindex = owd.fwomindex - wength, (˘ω˘)
+            toindex = owd.toindex - w-wength
           ))
       }
     }

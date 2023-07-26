@@ -1,36 +1,36 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.message
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.message
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageTextAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basestw
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.messageaction
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.messagetextaction
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cawwback
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object MessageTextActionBuilder {
-  val MessageTextActionClientEventInfoElement: String = "message-text-action"
+o-object messagetextactionbuiwdew {
+  vaw messagetextactioncwienteventinfoewement: stwing = "message-text-action"
 }
 
-case class MessageTextActionBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  textBuilder: BaseStr[Query, Candidate],
-  dismissOnClick: Boolean,
-  url: Option[String] = None,
-  clientEventInfo: Option[ClientEventInfo] = None,
-  onClickCallbacks: Option[List[Callback]] = None) {
+c-case cwass messagetextactionbuiwdew[-quewy <: p-pipewinequewy, (✿oωo) -candidate <: univewsawnoun[any]](
+  textbuiwdew: basestw[quewy, (ˆ ﻌ ˆ)♡ c-candidate], (˘ω˘)
+  dismissoncwick: b-boowean, (⑅˘꒳˘)
+  uww: o-option[stwing] = nyone, (///ˬ///✿)
+  cwienteventinfo: option[cwienteventinfo] = nyone, 😳😳😳
+  oncwickcawwbacks: option[wist[cawwback]] = n-nyone) {
 
-  def apply(
-    query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): MessageTextAction = MessageTextAction(
-    text = textBuilder(query, candidate, candidateFeatures),
-    action = MessageAction(
-      dismissOnClick,
-      url,
-      clientEventInfo,
-      onClickCallbacks
+  def appwy(
+    quewy: quewy, 🥺
+    candidate: candidate, mya
+    c-candidatefeatuwes: featuwemap
+  ): m-messagetextaction = m-messagetextaction(
+    t-text = textbuiwdew(quewy, 🥺 c-candidate, candidatefeatuwes), >_<
+    action = messageaction(
+      d-dismissoncwick, >_<
+      uww, (⑅˘꒳˘)
+      cwienteventinfo, /(^•ω•^)
+      oncwickcawwbacks
     )
   )
 }

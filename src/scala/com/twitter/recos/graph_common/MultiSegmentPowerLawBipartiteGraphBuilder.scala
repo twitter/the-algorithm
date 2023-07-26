@@ -1,64 +1,64 @@
-package com.twitter.recos.graph_common
+package com.twittew.wecos.gwaph_common
 
-import com.twitter.graphjet.stats.StatsReceiver
-import com.twitter.graphjet.bipartite.MultiSegmentPowerLawBipartiteGraph
+impowt com.twittew.gwaphjet.stats.statsweceivew
+i-impowt com.twittew.gwaphjet.bipawtite.muwtisegmentpowewwawbipawtitegwaph
 
 /**
- * The GraphBuilder builds a MultiSegmentPowerLawBipartiteGraph given a set of parameters.
+ * t-the gwaphbuiwdew b-buiwds a-a muwtisegmentpowewwawbipawtitegwaph g-given a set o-of pawametews. nyaa~~
  */
-object MultiSegmentPowerLawBipartiteGraphBuilder {
+o-object muwtisegmentpowewwawbipawtitegwaphbuiwdew {
 
   /**
-   * This encapsulates all the state needed to initialize the in-memory graph.
+   * t-this encapsuwates aww the state nyeeded to initiawize the in-memowy gwaph. (✿oωo)
    *
-   * @param maxNumSegments           is the maximum number of segments we'll add to the graph.
-   *                                 At that point, the oldest segments will start getting dropped
-   * @param maxNumEdgesPerSegment    determines when the implementation decides to fork off a
-   *                                 new segment
-   * @param expectedNumLeftNodes     is the expected number of left nodes that would be inserted in
+   * @pawam maxnumsegments           i-is the maximum nyumbew of segments we'ww a-add to the gwaph. ʘwʘ
+   *                                 at that p-point, (ˆ ﻌ ˆ)♡ the owdest segments wiww stawt getting dwopped
+   * @pawam maxnumedgespewsegment    d-detewmines when the impwementation d-decides t-to fowk off a
+   *                                 nyew segment
+   * @pawam expectednumweftnodes     is the e-expected nyumbew of weft nyodes that wouwd be insewted in
    *                                 the segment
-   * @param expectedMaxLeftDegree    is the maximum degree expected for any left node
-   * @param leftPowerLawExponent     is the exponent of the LHS power-law graph. see
-   *                                 [[com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgePool]]
-   *                                 for details
-   * @param expectedNumRightNodes    is the expected number of right nodes that would be inserted in
-   *                                 the segment
-   * @param expectedMaxRightDegree   is the maximum degree expected for any right node
-   * @param rightPowerLawExponent    is the exponent of the RHS power-law graph. see
-   *                                 [[com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgePool]]
-   *                                 for details
+   * @pawam e-expectedmaxweftdegwee    is the maximum d-degwee expected f-fow any weft nyode
+   * @pawam w-weftpowewwawexponent     i-is the exponent of the whs powew-waw gwaph. 😳😳😳 s-see
+   *                                 [[com.twittew.gwaphjet.bipawtite.edgepoow.powewwawdegweeedgepoow]]
+   *                                 fow detaiws
+   * @pawam expectednumwightnodes    i-is the expected nyumbew of wight nyodes that wouwd be insewted in
+   *                                 the s-segment
+   * @pawam expectedmaxwightdegwee   is t-the maximum degwee e-expected fow a-any wight nyode
+   * @pawam wightpowewwawexponent    is the exponent of the whs p-powew-waw gwaph. :3 s-see
+   *                                 [[com.twittew.gwaphjet.bipawtite.edgepoow.powewwawdegweeedgepoow]]
+   *                                 fow detaiws
    */
-  case class GraphBuilderConfig(
-    maxNumSegments: Int,
-    maxNumEdgesPerSegment: Int,
-    expectedNumLeftNodes: Int,
-    expectedMaxLeftDegree: Int,
-    leftPowerLawExponent: Double,
-    expectedNumRightNodes: Int,
-    expectedMaxRightDegree: Int,
-    rightPowerLawExponent: Double)
+  c-case cwass g-gwaphbuiwdewconfig(
+    maxnumsegments: i-int, OwO
+    maxnumedgespewsegment: i-int,
+    expectednumweftnodes: int, (U ﹏ U)
+    e-expectedmaxweftdegwee: int, >w<
+    w-weftpowewwawexponent: doubwe, (U ﹏ U)
+    e-expectednumwightnodes: i-int, 😳
+    expectedmaxwightdegwee: int, (ˆ ﻌ ˆ)♡
+    wightpowewwawexponent: doubwe)
 
   /**
-   * This apply function returns a mutuable bipartiteGraph
+   * this appwy function wetuwns a mutuabwe b-bipawtitegwaph
    *
-   * @param graphBuilderConfig         is the graph builder config
+   * @pawam g-gwaphbuiwdewconfig         is the gwaph b-buiwdew config
    *
    */
-  def apply(
-    graphBuilderConfig: GraphBuilderConfig,
-    statsReceiver: StatsReceiver
-  ): MultiSegmentPowerLawBipartiteGraph = {
-    new MultiSegmentPowerLawBipartiteGraph(
-      graphBuilderConfig.maxNumSegments,
-      graphBuilderConfig.maxNumEdgesPerSegment,
-      graphBuilderConfig.expectedNumLeftNodes,
-      graphBuilderConfig.expectedMaxLeftDegree,
-      graphBuilderConfig.leftPowerLawExponent,
-      graphBuilderConfig.expectedNumRightNodes,
-      graphBuilderConfig.expectedMaxRightDegree,
-      graphBuilderConfig.rightPowerLawExponent,
-      new ActionEdgeTypeMask(),
-      statsReceiver
+  d-def a-appwy(
+    gwaphbuiwdewconfig: gwaphbuiwdewconfig, 😳😳😳
+    statsweceivew: statsweceivew
+  ): muwtisegmentpowewwawbipawtitegwaph = {
+    n-nyew muwtisegmentpowewwawbipawtitegwaph(
+      gwaphbuiwdewconfig.maxnumsegments, (U ﹏ U)
+      gwaphbuiwdewconfig.maxnumedgespewsegment, (///ˬ///✿)
+      gwaphbuiwdewconfig.expectednumweftnodes, 😳
+      gwaphbuiwdewconfig.expectedmaxweftdegwee, 😳
+      g-gwaphbuiwdewconfig.weftpowewwawexponent, σωσ
+      gwaphbuiwdewconfig.expectednumwightnodes, rawr x3
+      g-gwaphbuiwdewconfig.expectedmaxwightdegwee, OwO
+      g-gwaphbuiwdewconfig.wightpowewwawexponent, /(^•ω•^)
+      n-nyew actionedgetypemask(), 😳😳😳
+      s-statsweceivew
     )
   }
 }

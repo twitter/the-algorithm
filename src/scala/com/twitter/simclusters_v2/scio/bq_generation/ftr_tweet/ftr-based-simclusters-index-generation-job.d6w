@@ -1,44 +1,44 @@
-class Profile(Struct):
-  project = Default(String, 'twttr-recos-ml-prod')
-  date = Required(String)
-  build_target = Required(String)
-  job_name = Required(String)
-  environment = Default(String, 'dev')
-  machine = Default(String, 'n2-standard-2')
+cwass pwofiwe(stwuct):
+  pwoject = d-defauwt(stwing, /(^•ω•^) 'twttw-wecos-mw-pwod')
+  d-date = w-wequiwed(stwing)
+  b-buiwd_tawget = w-wequiwed(stwing)
+  j-job_name = w-wequiwed(stwing)
+  e-enviwonment = defauwt(stwing, rawr 'dev')
+  machine = defauwt(stwing, OwO 'n2-standawd-2')
 
-SimClustersIndexGenerationJob = Job(
-   name='{{profile.job_name}}',
-   project='{{profile.project}}',
-   staging_bucket='{{profile.project}}',
-   service_account='{{profile.user_name}}-shdw@twttr-dp-svc-accounts.iam.gserviceaccount.com',
-   region='us-central1',
-   worker_config=WorkerConfig(
-       num_workers=2,
-       worker_machine_type='{{profile.machine}}',
-       worker_disk_type=WorkerDiskType('HDD'),
-   ),
-   extra_args={
-     "date": '{{profile.date}}'
-   },
-   service_identifier='twtr:svc:{{profile.user_name}}:{{profile.job_name}}:{{profile.environment}}:{{profile.cluster}}',
-   deployment_config=BatchDeploymentConfig(
-     role='{{profile.user_name}}',
-     environment='{{profile.environment}}',
-     build_target='{{profile.build_target}}',
-     gcp_deployment_credentials='/var/lib/tss/keys/{{profile.user_name}}/cloud/gcp/dp/shadow.json',
-     statebird_config=StatebirdConfig(
-       batch_width='PT2H',
-       first_time='{{profile.date}}',
-     ),
-     workflow_config=WorkflowConfig(
-      play=True,
-     ),
-     timeout='PT4H',
-     parallelism=1
+simcwustewsindexgenewationjob = j-job(
+   nyame='{{pwofiwe.job_name}}',
+   pwoject='{{pwofiwe.pwoject}}', (U ﹏ U)
+   s-staging_bucket='{{pwofiwe.pwoject}}', >_<
+   sewvice_account='{{pwofiwe.usew_name}}-shdw@twttw-dp-svc-accounts.iam.gsewviceaccount.com', rawr x3
+   w-wegion='us-centwaw1', mya
+   wowkew_config=wowkewconfig(
+       nyum_wowkews=2, nyaa~~
+       wowkew_machine_type='{{pwofiwe.machine}}', (⑅˘꒳˘)
+       w-wowkew_disk_type=wowkewdisktype('hdd'),
+   ), rawr x3
+   extwa_awgs={
+     "date": '{{pwofiwe.date}}'
+   }, (✿oωo)
+   s-sewvice_identifiew='twtw:svc:{{pwofiwe.usew_name}}:{{pwofiwe.job_name}}:{{pwofiwe.enviwonment}}:{{pwofiwe.cwustew}}', (ˆ ﻌ ˆ)♡
+   d-depwoyment_config=batchdepwoymentconfig(
+     wowe='{{pwofiwe.usew_name}}', (˘ω˘)
+     enviwonment='{{pwofiwe.enviwonment}}', (⑅˘꒳˘)
+     buiwd_tawget='{{pwofiwe.buiwd_tawget}}', (///ˬ///✿)
+     gcp_depwoyment_cwedentiaws='/vaw/wib/tss/keys/{{pwofiwe.usew_name}}/cwoud/gcp/dp/shadow.json', 😳😳😳
+     statebiwd_config=statebiwdconfig(
+       b-batch_width='pt2h', 🥺
+       fiwst_time='{{pwofiwe.date}}',
+     ), mya
+     wowkfwow_config=wowkfwowconfig(
+      pway=twue, 🥺
+     ), >_<
+     timeout='pt4h', >_<
+     pawawwewism=1
    )
 )
 
-jobs=[SimClustersIndexGenerationJob.bind(profile=Profile())]
+j-jobs=[simcwustewsindexgenewationjob.bind(pwofiwe=pwofiwe())]
 
 
 

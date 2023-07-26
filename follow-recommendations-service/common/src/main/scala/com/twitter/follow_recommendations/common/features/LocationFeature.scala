@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.features
+package com.twittew.fowwow_wecommendations.common.featuwes
 
-import com.twitter.follow_recommendations.common.models.GeohashAndCountryCode
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.fowwow_wecommendations.common.modews.geohashandcountwycode
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case object LocationFeature
-    extends FeatureWithDefaultOnFailure[PipelineQuery, Option[GeohashAndCountryCode]] {
-  override val defaultValue: Option[GeohashAndCountryCode] = None
+c-case object wocationfeatuwe
+    e-extends featuwewithdefauwtonfaiwuwe[pipewinequewy, o-option[geohashandcountwycode]] {
+  o-ovewwide vaw defauwtvawue: option[geohashandcountwycode] = nyone
 }

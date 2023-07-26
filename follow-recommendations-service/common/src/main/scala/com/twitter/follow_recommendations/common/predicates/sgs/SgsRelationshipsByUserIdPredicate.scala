@@ -1,113 +1,113 @@
-package com.twitter.follow_recommendations.common.predicates.sgs
+package com.twittew.fowwow_wecommendations.common.pwedicates.sgs
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason.InvalidRelationshipTypes
-import com.twitter.socialgraph.thriftscala.ExistsRequest
-import com.twitter.socialgraph.thriftscala.ExistsResult
-import com.twitter.socialgraph.thriftscala.LookupContext
-import com.twitter.socialgraph.thriftscala.Relationship
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.googwe.common.annotations.visibwefowtesting
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.base.pwedicate
+i-impowt com.twittew.fowwow_wecommendations.common.base.pwedicatewesuwt
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.fiwtewweason.invawidwewationshiptypes
+i-impowt com.twittew.sociawgwaph.thwiftscawa.existswequest
+i-impowt com.twittew.sociawgwaph.thwiftscawa.existswesuwt
+impowt com.twittew.sociawgwaph.thwiftscawa.wookupcontext
+impowt com.twittew.sociawgwaph.thwiftscawa.wewationship
+i-impowt com.twittew.sociawgwaph.thwiftscawa.wewationshiptype
+impowt com.twittew.stitch.stitch
+impowt com.twittew.stitch.sociawgwaph.sociawgwaph
+i-impowt com.twittew.utiw.wogging.wogging
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-class SgsRelationshipsByUserIdPredicate(
-  socialGraph: SocialGraph,
-  relationshipMappings: Seq[RelationshipMapping],
-  statsReceiver: StatsReceiver)
-    extends Predicate[(Option[Long], CandidateUser)]
-    with Logging {
-  private val InvalidFromPrimaryCandidateSourceName = "invalid_from_primary_candidate_source"
-  private val InvalidFromCandidateSourceName = "invalid_from_candidate_source"
-  private val NoPrimaryCandidateSource = "no_primary_candidate_source"
+cwass sgswewationshipsbyusewidpwedicate(
+  sociawgwaph: sociawgwaph, σωσ
+  w-wewationshipmappings: seq[wewationshipmapping], rawr x3
+  s-statsweceivew: s-statsweceivew)
+    extends pwedicate[(option[wong], OwO candidateusew)]
+    with wogging {
+  pwivate vaw i-invawidfwompwimawycandidatesouwcename = "invawid_fwom_pwimawy_candidate_souwce"
+  pwivate vaw invawidfwomcandidatesouwcename = "invawid_fwom_candidate_souwce"
+  pwivate vaw nyopwimawycandidatesouwce = "no_pwimawy_candidate_souwce"
 
-  private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getName)
+  pwivate vaw stats: statsweceivew = s-statsweceivew.scope(this.getcwass.getname)
 
-  override def apply(
-    pair: (Option[Long], CandidateUser)
-  ): Stitch[PredicateResult] = {
-    val (idOpt, candidate) = pair
-    val relationships = relationshipMappings.map { relationshipMapping: RelationshipMapping =>
-      Relationship(
-        relationshipMapping.relationshipType,
-        relationshipMapping.includeBasedOnRelationship)
+  ovewwide d-def appwy(
+    p-paiw: (option[wong], /(^•ω•^) c-candidateusew)
+  ): s-stitch[pwedicatewesuwt] = {
+    vaw (idopt, 😳😳😳 candidate) = p-paiw
+    vaw wewationships = wewationshipmappings.map { w-wewationshipmapping: wewationshipmapping =>
+      wewationship(
+        wewationshipmapping.wewationshiptype, ( ͡o ω ͡o )
+        wewationshipmapping.incwudebasedonwewationship)
     }
-    idOpt
-      .map { id: Long =>
-        val existsRequest = ExistsRequest(
-          id,
-          candidate.id,
-          relationships = relationships,
-          context = SgsRelationshipsByUserIdPredicate.UnionLookupContext
+    idopt
+      .map { i-id: wong =>
+        vaw existswequest = e-existswequest(
+          i-id, >_<
+          c-candidate.id, >w<
+          wewationships = wewationships, rawr
+          context = sgswewationshipsbyusewidpwedicate.unionwookupcontext
         )
-        socialGraph
-          .exists(existsRequest).map { existsResult: ExistsResult =>
-            if (existsResult.exists) {
-              candidate.getPrimaryCandidateSource match {
-                case Some(candidateSource) =>
+        s-sociawgwaph
+          .exists(existswequest).map { e-existswesuwt: existswesuwt =>
+            if (existswesuwt.exists) {
+              c-candidate.getpwimawycandidatesouwce m-match {
+                case some(candidatesouwce) =>
+                  s-stats
+                    .scope(invawidfwompwimawycandidatesouwcename).countew(
+                      candidatesouwce.name).incw()
+                c-case nyone =>
                   stats
-                    .scope(InvalidFromPrimaryCandidateSourceName).counter(
-                      candidateSource.name).incr()
-                case None =>
-                  stats
-                    .scope(InvalidFromPrimaryCandidateSourceName).counter(
-                      NoPrimaryCandidateSource).incr()
+                    .scope(invawidfwompwimawycandidatesouwcename).countew(
+                      nyopwimawycandidatesouwce).incw()
               }
-              candidate.getCandidateSources.foreach({
-                case (candidateSource, _) =>
-                  stats
-                    .scope(InvalidFromCandidateSourceName).counter(candidateSource.name).incr()
+              candidate.getcandidatesouwces.foweach({
+                case (candidatesouwce, 😳 _) =>
+                  s-stats
+                    .scope(invawidfwomcandidatesouwcename).countew(candidatesouwce.name).incw()
               })
-              PredicateResult.Invalid(Set(InvalidRelationshipTypes(relationshipMappings
-                .map { relationshipMapping: RelationshipMapping =>
-                  relationshipMapping.relationshipType
-                }.mkString(", "))))
-            } else {
-              PredicateResult.Valid
+              pwedicatewesuwt.invawid(set(invawidwewationshiptypes(wewationshipmappings
+                .map { w-wewationshipmapping: wewationshipmapping =>
+                  w-wewationshipmapping.wewationshiptype
+                }.mkstwing(", >w< "))))
+            } e-ewse {
+              pwedicatewesuwt.vawid
             }
           }
       }
-      // if no user id is present, return true by default
-      .getOrElse(Stitch.value(PredicateResult.Valid))
+      // if nyo usew id is pwesent, (⑅˘꒳˘) wetuwn twue by defauwt
+      .getowewse(stitch.vawue(pwedicatewesuwt.vawid))
   }
 }
 
-object SgsRelationshipsByUserIdPredicate {
-  // OR Operation
-  @VisibleForTesting
-  private[follow_recommendations] val UnionLookupContext = Some(
-    LookupContext(performUnion = Some(true)))
+object sgswewationshipsbyusewidpwedicate {
+  // o-ow opewation
+  @visibwefowtesting
+  p-pwivate[fowwow_wecommendations] vaw unionwookupcontext = s-some(
+    wookupcontext(pewfowmunion = s-some(twue)))
 }
 
-@Singleton
-class ExcludeNonFollowersSgsPredicate @Inject() (
-  socialGraph: SocialGraph,
-  statsReceiver: StatsReceiver)
-    extends SgsRelationshipsByUserIdPredicate(
-      socialGraph,
-      Seq(RelationshipMapping(RelationshipType.FollowedBy, includeBasedOnRelationship = false)),
-      statsReceiver)
+@singweton
+c-cwass excwudenonfowwowewssgspwedicate @inject() (
+  sociawgwaph: sociawgwaph, OwO
+  statsweceivew: s-statsweceivew)
+    extends sgswewationshipsbyusewidpwedicate(
+      sociawgwaph, (ꈍᴗꈍ)
+      seq(wewationshipmapping(wewationshiptype.fowwowedby, 😳 incwudebasedonwewationship = f-fawse)), 😳😳😳
+      statsweceivew)
 
-@Singleton
-class ExcludeNonFollowingSgsPredicate @Inject() (
-  socialGraph: SocialGraph,
-  statsReceiver: StatsReceiver)
-    extends SgsRelationshipsByUserIdPredicate(
-      socialGraph,
-      Seq(RelationshipMapping(RelationshipType.Following, includeBasedOnRelationship = false)),
-      statsReceiver)
+@singweton
+c-cwass excwudenonfowwowingsgspwedicate @inject() (
+  s-sociawgwaph: s-sociawgwaph, mya
+  statsweceivew: s-statsweceivew)
+    e-extends s-sgswewationshipsbyusewidpwedicate(
+      s-sociawgwaph, mya
+      seq(wewationshipmapping(wewationshiptype.fowwowing, (⑅˘꒳˘) incwudebasedonwewationship = f-fawse)), (U ﹏ U)
+      s-statsweceivew)
 
-@Singleton
-class ExcludeFollowingSgsPredicate @Inject() (
-  socialGraph: SocialGraph,
-  statsReceiver: StatsReceiver)
-    extends SgsRelationshipsByUserIdPredicate(
-      socialGraph,
-      Seq(RelationshipMapping(RelationshipType.Following, includeBasedOnRelationship = true)),
-      statsReceiver)
+@singweton
+c-cwass excwudefowwowingsgspwedicate @inject() (
+  s-sociawgwaph: s-sociawgwaph, mya
+  statsweceivew: statsweceivew)
+    extends sgswewationshipsbyusewidpwedicate(
+      s-sociawgwaph, ʘwʘ
+      seq(wewationshipmapping(wewationshiptype.fowwowing, (˘ω˘) incwudebasedonwewationship = twue)), (U ﹏ U)
+      statsweceivew)

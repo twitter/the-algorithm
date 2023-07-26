@@ -1,99 +1,99 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.botmaker.thriftscala.BotMakerResponse
-import com.twitter.bouncer.thriftscala.Bounce
-import com.twitter.finagle.tracing.Trace
-import com.twitter.relevance.feature_store.thriftscala.FeatureData
-import com.twitter.relevance.feature_store.thriftscala.FeatureValue.StrValue
-import com.twitter.service.gen.scarecrow.thriftscala.TieredAction
-import com.twitter.service.gen.scarecrow.thriftscala.TieredActionResult
-import com.twitter.tweetypie.core.TweetCreateFailure
-import com.twitter.tweetypie.thriftscala.TweetCreateState
+impowt c-com.twittew.botmakew.thwiftscawa.botmakewwesponse
+i-impowt com.twittew.bouncew.thwiftscawa.bounce
+i-impowt com.twittew.finagwe.twacing.twace
+i-impowt c-com.twittew.wewevance.featuwe_stowe.thwiftscawa.featuwedata
+i-impowt com.twittew.wewevance.featuwe_stowe.thwiftscawa.featuwevawue.stwvawue
+i-impowt com.twittew.sewvice.gen.scawecwow.thwiftscawa.tiewedaction
+impowt com.twittew.sewvice.gen.scawecwow.thwiftscawa.tiewedactionwesuwt
+impowt com.twittew.tweetypie.cowe.tweetcweatefaiwuwe
+impowt c-com.twittew.tweetypie.thwiftscawa.tweetcweatestate
 
-object Spam {
-  sealed trait Result
-  case object Allow extends Result
-  case object SilentFail extends Result
-  case object DisabledByIpiPolicy extends Result
+object spam {
+  seawed twait w-wesuwt
+  case object awwow e-extends wesuwt
+  case object siwentfaiw extends wesuwt
+  case object d-disabwedbyipipowicy extends w-wesuwt
 
-  val AllowFuture: Future[Allow.type] = Future.value(Allow)
-  val SilentFailFuture: Future[SilentFail.type] = Future.value(SilentFail)
-  val DisabledByIpiPolicyFuture: Future[DisabledByIpiPolicy.type] =
-    Future.value(DisabledByIpiPolicy)
+  vaw awwowfutuwe: f-futuwe[awwow.type] = futuwe.vawue(awwow)
+  vaw siwentfaiwfutuwe: futuwe[siwentfaiw.type] = futuwe.vawue(siwentfaiw)
+  v-vaw disabwedbyipipowicyfutuwe: futuwe[disabwedbyipipowicy.type] =
+    futuwe.vawue(disabwedbyipipowicy)
 
-  def DisabledByIpiFailure(
-    userName: Option[String],
-    customDenyMessage: Option[String] = None
-  ): TweetCreateFailure.State = {
-    val errorMsg = (customDenyMessage, userName) match {
-      case (Some(denyMessage), _) => denyMessage
-      case (_, Some(name)) => s"Some actions on this ${name} Tweet have been disabled by Twitter."
-      case _ => "Some actions on this Tweet have been disabled by Twitter."
+  def disabwedbyipifaiwuwe(
+    u-usewname: option[stwing], mya
+    c-customdenymessage: o-option[stwing] = n-nyone
+  ): t-tweetcweatefaiwuwe.state = {
+    vaw ewwowmsg = (customdenymessage, (///ˬ///✿) usewname) m-match {
+      case (some(denymessage), (˘ω˘) _) => denymessage
+      c-case (_, ^^;; some(name)) => s"some actions on this ${name} tweet have been disabwed by twittew."
+      c-case _ => "some actions o-on this tweet have b-been disabwed b-by twittew."
     }
-    TweetCreateFailure.State(TweetCreateState.DisabledByIpiPolicy, Some(errorMsg))
+    tweetcweatefaiwuwe.state(tweetcweatestate.disabwedbyipipowicy, (✿oωo) some(ewwowmsg))
   }
 
-  type Checker[T] = T => Future[Result]
+  type c-checkew[t] = t-t => futuwe[wesuwt]
 
   /**
-   * Dummy spam checker that always allows requests.
+   * dummy spam checkew t-that awways awwows w-wequests. (U ﹏ U)
    */
-  val DoNotCheckSpam: Checker[AnyRef] = _ => AllowFuture
+  vaw donotcheckspam: c-checkew[anywef] = _ => awwowfutuwe
 
-  def gated[T](gate: Gate[Unit])(checker: Checker[T]): Checker[T] =
-    req => if (gate()) checker(req) else AllowFuture
+  d-def gated[t](gate: gate[unit])(checkew: checkew[t]): c-checkew[t] =
+    weq => if (gate()) c-checkew(weq) ewse awwowfutuwe
 
-  def selected[T](gate: Gate[Unit])(ifTrue: Checker[T], ifFalse: Checker[T]): Checker[T] =
-    req => gate.select(ifTrue, ifFalse)()(req)
+  d-def s-sewected[t](gate: gate[unit])(iftwue: checkew[t], -.- iffawse: checkew[t]): checkew[t] =
+    weq => gate.sewect(iftwue, ^•ﻌ•^ i-iffawse)()(weq)
 
-  def withEffect[T](check: Checker[T], effect: T => Unit): T => Future[Result] = { t: T =>
+  d-def witheffect[t](check: checkew[t], rawr effect: t-t => unit): t-t => futuwe[wesuwt] = { t-t: t =>
     effect(t)
     check(t)
   }
 
   /**
-   * Wrapper that implicitly allows retweet or tweet creation when spam
-   * checking fails.
+   * wwappew t-that impwicitwy awwows wetweet ow tweet cweation when spam
+   * checking faiws. (˘ω˘)
    */
-  def allowOnException[T](checker: Checker[T]): Checker[T] =
-    req =>
-      checker(req).rescue {
-        case e: TweetCreateFailure => Future.exception(e)
-        case _ => AllowFuture
+  d-def awwowonexception[t](checkew: checkew[t]): c-checkew[t] =
+    w-weq =>
+      c-checkew(weq).wescue {
+        case e: tweetcweatefaiwuwe => f-futuwe.exception(e)
+        case _ => a-awwowfutuwe
       }
 
   /**
-   * Handler for scarecrow result to be used by a Checker.
+   * h-handwew f-fow scawecwow wesuwt to be used by a checkew. nyaa~~
    */
-  def handleScarecrowResult(
-    stats: StatsReceiver
+  d-def handwescawecwowwesuwt(
+    s-stats: statsweceivew
   )(
-    handler: PartialFunction[(TieredActionResult, Option[Bounce], Option[String]), Future[Result]]
-  ): Checker[TieredAction] =
-    result => {
-      stats.scope("scarecrow_result").counter(result.resultCode.name).incr()
-      Trace.record("com.twitter.tweetypie.Spam.scarecrow_result=" + result.resultCode.name)
+    h-handwew: pawtiawfunction[(tiewedactionwesuwt, UwU o-option[bounce], :3 o-option[stwing]), (⑅˘꒳˘) futuwe[wesuwt]]
+  ): checkew[tiewedaction] =
+    wesuwt => {
+      s-stats.scope("scawecwow_wesuwt").countew(wesuwt.wesuwtcode.name).incw()
+      twace.wecowd("com.twittew.tweetypie.spam.scawecwow_wesuwt=" + wesuwt.wesuwtcode.name)
       /*
-       * A bot can return a custom DenyMessage
+       * a bot can wetuwn a custom denymessage
        *
-       * If it does, we substitute this for the 'message' in the ValidationError.
+       * i-if it does, (///ˬ///✿) we substitute this fow the 'message' in the vawidationewwow. ^^;;
        */
-      val customDenyMessage: Option[String] = for {
-        botMakeResponse: BotMakerResponse <- result.botMakerResponse
-        outputFeatures <- botMakeResponse.outputFeatures
-        denyMessageFeature: FeatureData <- outputFeatures.get("DenyMessage")
-        denyMessageFeatureValue <- denyMessageFeature.featureValue
-        denyMessage <- denyMessageFeatureValue match {
-          case stringValue: StrValue =>
-            Some(stringValue.strValue)
+      v-vaw c-customdenymessage: o-option[stwing] = fow {
+        b-botmakewesponse: botmakewwesponse <- w-wesuwt.botmakewwesponse
+        o-outputfeatuwes <- botmakewesponse.outputfeatuwes
+        denymessagefeatuwe: featuwedata <- outputfeatuwes.get("denymessage")
+        denymessagefeatuwevawue <- d-denymessagefeatuwe.featuwevawue
+        denymessage <- denymessagefeatuwevawue m-match {
+          case stwingvawue: s-stwvawue =>
+            s-some(stwingvawue.stwvawue)
           case _ =>
-            None
+            nyone
         }
-      } yield denyMessage
-      handler.applyOrElse(
-        (result.resultCode, result.bounce, customDenyMessage),
-        withEffect(DoNotCheckSpam, (_: AnyRef) => stats.counter("unexpected_result").incr())
+      } y-yiewd denymessage
+      h-handwew.appwyowewse(
+        (wesuwt.wesuwtcode, >_< wesuwt.bounce, rawr x3 customdenymessage), /(^•ω•^)
+        w-witheffect(donotcheckspam, :3 (_: a-anywef) => stats.countew("unexpected_wesuwt").incw())
       )
     }
 }

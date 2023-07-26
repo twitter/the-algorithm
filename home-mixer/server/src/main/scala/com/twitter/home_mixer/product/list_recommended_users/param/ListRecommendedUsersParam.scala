@@ -1,23 +1,23 @@
-package com.twitter.home_mixer.product.list_recommended_users.param
+package com.twittew.home_mixew.pwoduct.wist_wecommended_usews.pawam
 
-import com.twitter.timelines.configapi.FSBoundedParam
+impowt com.twittew.timewines.configapi.fsboundedpawam
 
-object ListRecommendedUsersParam {
-  val SupportedClientFSName = "list_recommended_users_supported_client"
+o-object w-wistwecommendedusewspawam {
+  v-vaw suppowtedcwientfsname = "wist_wecommended_usews_suppowted_cwient"
 
-  object ServerMaxResultsParam
-      extends FSBoundedParam[Int](
-        name = "list_recommended_users_server_max_results",
-        default = 10,
-        min = 1,
+  o-object s-sewvewmaxwesuwtspawam
+      e-extends f-fsboundedpawam[int](
+        n-nyame = "wist_wecommended_usews_sewvew_max_wesuwts", -.-
+        defauwt = 10, (ˆ ﻌ ˆ)♡
+        min = 1, (⑅˘꒳˘)
         max = 500
       )
 
-  object ExcludedIdsMaxLengthParam
-      extends FSBoundedParam[Int](
-        name = "list_recommended_users_excluded_ids_max_length",
-        default = 2000,
-        min = 0,
-        max = 5000
+  object e-excwudedidsmaxwengthpawam
+      extends fsboundedpawam[int](
+        nyame = "wist_wecommended_usews_excwuded_ids_max_wength", (U ᵕ U❁)
+        d-defauwt = 2000, -.-
+        min = 0, ^^;;
+        m-max = 5000
       )
 }

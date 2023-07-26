@@ -1,23 +1,23 @@
-package com.twitter.timelineranker.common
+package com.twittew.timewinewankew.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.visibility.FollowGraphDataProvider
-import com.twitter.util.Future
+impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.timewinewankew.cowe.candidateenvewope
+i-impowt c-com.twittew.timewinewankew.modew.wecapquewy.dependencypwovidew
+i-impowt com.twittew.timewinewankew.visibiwity.fowwowgwaphdatapwovidew
+i-impowt com.twittew.utiw.futuwe
 
-class FollowGraphDataTransform(
-  followGraphDataProvider: FollowGraphDataProvider,
-  maxFollowedUsersProvider: DependencyProvider[Int])
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+c-cwass fowwowgwaphdatatwansfowm(
+  f-fowwowgwaphdatapwovidew: fowwowgwaphdatapwovidew, ^^;;
+  maxfowwowedusewspwovidew: dependencypwovidew[int])
+    extends futuweawwow[candidateenvewope, >_< c-candidateenvewope] {
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
+  ovewwide def appwy(envewope: c-candidateenvewope): futuwe[candidateenvewope] = {
 
-    val followGraphData = followGraphDataProvider.getAsync(
-      envelope.query.userId,
-      maxFollowedUsersProvider(envelope.query)
+    v-vaw fowwowgwaphdata = fowwowgwaphdatapwovidew.getasync(
+      envewope.quewy.usewid, mya
+      maxfowwowedusewspwovidew(envewope.quewy)
     )
 
-    Future.value(envelope.copy(followGraphData = followGraphData))
+    f-futuwe.vawue(envewope.copy(fowwowgwaphdata = fowwowgwaphdata))
   }
 }

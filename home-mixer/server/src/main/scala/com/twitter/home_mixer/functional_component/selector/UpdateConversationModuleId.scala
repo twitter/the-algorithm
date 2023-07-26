@@ -1,40 +1,40 @@
-package com.twitter.home_mixer.functional_component.selector
+package com.twittew.home_mixew.functionaw_component.sewectow
 
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtModulePresentation
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope.PartitionedCandidates
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.pwesentation.uwt.uwtmoduwepwesentation
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope.pawtitionedcandidates
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.moduwecandidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * This selector updates the id of the conversation modules to be the head of the module's id.
+ * this sewectow u-updates the id of the convewsation moduwes t-to be the head of the moduwe's i-id. 🥺
  */
-case class UpdateConversationModuleId(
-  override val pipelineScope: CandidateScope)
-    extends Selector[PipelineQuery] {
+case cwass updateconvewsationmoduweid(
+  ovewwide vaw pipewinescope: candidatescope)
+    e-extends sewectow[pipewinequewy] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val PartitionedCandidates(selectedCandidates, otherCandidates) =
-      pipelineScope.partition(remainingCandidates)
+  ovewwide d-def appwy(
+    q-quewy: pipewinequewy, >_<
+    wemainingcandidates: seq[candidatewithdetaiws], >_<
+    wesuwt: seq[candidatewithdetaiws]
+  ): sewectowwesuwt = {
+    v-vaw pawtitionedcandidates(sewectedcandidates, (⑅˘꒳˘) othewcandidates) =
+      pipewinescope.pawtition(wemainingcandidates)
 
-    val updatedCandidates = selectedCandidates.map {
-      case module @ ModuleCandidateWithDetails(candidates, presentationOpt, _) =>
-        val updatedPresentation = presentationOpt.map {
-          case urtModule @ UrtModulePresentation(timelineModule) =>
-            urtModule.copy(timelineModule =
-              timelineModule.copy(id = candidates.head.candidateIdLong))
+    vaw updatedcandidates = s-sewectedcandidates.map {
+      case m-moduwe @ moduwecandidatewithdetaiws(candidates, /(^•ω•^) p-pwesentationopt, rawr x3 _) =>
+        v-vaw updatedpwesentation = p-pwesentationopt.map {
+          case uwtmoduwe @ uwtmoduwepwesentation(timewinemoduwe) =>
+            u-uwtmoduwe.copy(timewinemoduwe =
+              timewinemoduwe.copy(id = candidates.head.candidateidwong))
         }
-        module.copy(presentation = updatedPresentation)
+        m-moduwe.copy(pwesentation = updatedpwesentation)
       case candidate => candidate
     }
 
-    SelectorResult(remainingCandidates = updatedCandidates ++ otherCandidates, result = result)
+    sewectowwesuwt(wemainingcandidates = updatedcandidates ++ o-othewcandidates, (U ﹏ U) wesuwt = wesuwt)
   }
 }

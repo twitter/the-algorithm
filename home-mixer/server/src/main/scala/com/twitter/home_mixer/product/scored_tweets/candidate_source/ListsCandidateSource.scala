@@ -1,26 +1,26 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_source
+package com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_souwce
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.timelineservice.TimelineService
-import com.twitter.timelineservice.{thriftscala => tls}
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.stitch.timewinesewvice.timewinesewvice
+i-impowt com.twittew.timewinesewvice.{thwiftscawa => t-tws}
 
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class ListsCandidateSource @Inject() (timelineService: TimelineService)
-    extends CandidateSource[Seq[tls.TimelineQuery], tls.Tweet] {
+@singweton
+cwass wistscandidatesouwce @inject() (timewinesewvice: timewinesewvice)
+    extends c-candidatesouwce[seq[tws.timewinequewy], mya tws.tweet] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("Lists")
+  ovewwide vaw identifiew: candidatesouwceidentifiew = c-candidatesouwceidentifiew("wists")
 
-  override def apply(requests: Seq[tls.TimelineQuery]): Stitch[Seq[tls.Tweet]] = {
-    val timelines = Stitch.traverse(requests) { request => timelineService.getTimeline(request) }
+  ovewwide d-def appwy(wequests: seq[tws.timewinequewy]): stitch[seq[tws.tweet]] = {
+    vaw timewines = stitch.twavewse(wequests) { w-wequest => timewinesewvice.gettimewine(wequest) }
 
-    timelines.map {
-      _.flatMap {
-        _.entries.collect { case tls.TimelineEntry.Tweet(tweet) => tweet }
+    t-timewines.map {
+      _.fwatmap {
+        _.entwies.cowwect { c-case tws.timewineentwy.tweet(tweet) => tweet }
       }
     }
   }

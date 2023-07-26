@@ -1,21 +1,21 @@
-package com.twitter.frigate.pushservice.take
+package com.twittew.fwigate.pushsewvice.take
 
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.thriftscala.ChannelName
-import com.twitter.util.Future
+impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.thwiftscawa.channewname
+i-impowt com.twittew.utiw.futuwe
 
-class NtabOnlyChannelSelector extends ChannelSelector {
-  val SELECTOR_NAME = "NtabOnlyChannelSelector"
+c-cwass nytabonwychannewsewectow e-extends channewsewectow {
+  v-vaw sewectow_name = "ntabonwychannewsewectow"
 
-  def getSelectorName(): String = SELECTOR_NAME
+  d-def getsewectowname(): s-stwing = sewectow_name
 
-  // Returns a map of channel name, and the candidates that can be sent on that channel
-  def selectChannel(
-    candidate: PushCandidate
-  ): Future[Seq[ChannelName]] = {
-    // Check candidate channel eligible (based on setting, push cap etc
-    // Decide which candidate can be sent on what channel
-    val channelName: Future[ChannelName] = Future.value(ChannelName.PushNtab)
-    channelName.map(channel => Seq(channel))
+  // wetuwns a map of channew nyame, 😳😳😳 and the candidates t-that can be sent on that channew
+  def sewectchannew(
+    c-candidate: pushcandidate
+  ): futuwe[seq[channewname]] = {
+    // c-check candidate channew ewigibwe (based on setting, -.- push cap e-etc
+    // decide which candidate c-can be sent on n-nyani channew
+    vaw channewname: futuwe[channewname] = futuwe.vawue(channewname.pushntab)
+    channewname.map(channew => s-seq(channew))
   }
 }

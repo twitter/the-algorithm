@@ -1,16 +1,16 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.twittew.simcwustews_v2.hdfs_souwces.injections
 
-import com.twitter.bijection.Bufferable
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.{
-  ScalaCompactThrift,
-  genericInjection
+impowt c-com.twittew.bijection.buffewabwe
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection.{
+  s-scawacompactthwift, σωσ
+  g-genewicinjection
 }
-import com.twitter.simclusters_v2.thriftscala.ClusterDetails
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.cwustewdetaiws
 
-object ClusterDetailsInjection {
-  val injection = KeyValInjection[(String, Int), ClusterDetails](
-    genericInjection(Bufferable.injectionOf[(String, Int)]),
-    ScalaCompactThrift(ClusterDetails)
+o-object cwustewdetaiwsinjection {
+  vaw injection = keyvawinjection[(stwing, >_< int), cwustewdetaiws](
+    genewicinjection(buffewabwe.injectionof[(stwing, :3 i-int)]),
+    scawacompactthwift(cwustewdetaiws)
   )
 }

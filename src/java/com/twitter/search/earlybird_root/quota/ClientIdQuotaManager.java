@@ -1,22 +1,22 @@
-package com.twitter.search.earlybird_root.quota;
+package com.twittew.seawch.eawwybiwd_woot.quota;
 
-import java.util.Optional;
+impowt java.utiw.optionaw;
 
-/** A manager that determines how quota restrictions should be applied for each client. */
-public interface ClientIdQuotaManager {
+/** a-a managew that d-detewmines how quota w-westwictions s-shouwd be appwied f-fow each cwient. 😳😳😳 */
+p-pubwic intewface c-cwientidquotamanagew {
   /**
-   * Returns the quota for the given client, if one is set.
+   * w-wetuwns the quota fow the given cwient, -.- if one is set. ( ͡o ω ͡o )
    *
-   * @param clientId The ID of the client.
-   * @return The quota for the given client (in requests per second), if one is set.
+   * @pawam cwientid the i-id of the cwient. rawr x3
+   * @wetuwn the quota fow the given cwient (in w-wequests pew second), nyaa~~ if one is s-set. /(^•ω•^)
    */
-  Optional<QuotaInfo> getQuotaForClient(String clientId);
+  optionaw<quotainfo> getquotafowcwient(stwing cwientid);
 
   /**
-   * Returns the common pool quota. A common pool quota must always be set.
+   * wetuwns the common p-poow quota. rawr a common poow q-quota must awways b-be set. OwO
    *
-   * @return The common pool quota (in requests per second).
+   * @wetuwn the common poow quota (in wequests pew second). (U ﹏ U)
    */
-  QuotaInfo getCommonPoolQuota();
+  q-quotainfo getcommonpoowquota();
 
 }

@@ -1,66 +1,66 @@
-package com.twitter.search.earlybird.search.relevance;
+package com.twittew.seawch.eawwybiwd.seawch.wewevance;
 
-import com.google.common.base.Preconditions;
+impowt com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.search.Query;
+i-impowt owg.apache.wucene.seawch.quewy;
 
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.earlybird.QualityFactor;
-import com.twitter.search.earlybird.search.SearchRequestInfo;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRelevanceOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
+i-impowt c-com.twittew.seawch.common.seawch.tewminationtwackew;
+i-impowt c-com.twittew.seawch.eawwybiwd.quawityfactow;
+i-impowt c-com.twittew.seawch.eawwybiwd.seawch.seawchwequestinfo;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchquewy;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwewevanceoptions;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtmetadataoptions;
 
-public class RelevanceSearchRequestInfo extends SearchRequestInfo {
-  private final ThriftSearchRelevanceOptions relevanceOptions;
+pubwic cwass wewevanceseawchwequestinfo e-extends seawchwequestinfo {
+  pwivate finaw t-thwiftseawchwewevanceoptions wewevanceoptions;
 
-  public RelevanceSearchRequestInfo(
-      ThriftSearchQuery searchQuery, Query query,
-      TerminationTracker terminationTracker, QualityFactor qualityFactor) {
-    super(addResultMetadataOptionsIfUnset(searchQuery), query, terminationTracker, qualityFactor);
-    this.relevanceOptions = searchQuery.getRelevanceOptions();
+  p-pubwic wewevanceseawchwequestinfo(
+      thwiftseawchquewy seawchquewy, nyaa~~ quewy quewy, nyaa~~
+      tewminationtwackew t-tewminationtwackew, quawityfactow q-quawityfactow) {
+    s-supew(addwesuwtmetadataoptionsifunset(seawchquewy), :3 quewy, 😳😳😳 tewminationtwackew, (˘ω˘) quawityfactow);
+    this.wewevanceoptions = seawchquewy.getwewevanceoptions();
   }
 
-  private static ThriftSearchQuery addResultMetadataOptionsIfUnset(ThriftSearchQuery searchQuery) {
-    if (!searchQuery.isSetResultMetadataOptions()) {
-      searchQuery.setResultMetadataOptions(new ThriftSearchResultMetadataOptions());
+  p-pwivate static thwiftseawchquewy addwesuwtmetadataoptionsifunset(thwiftseawchquewy seawchquewy) {
+    if (!seawchquewy.issetwesuwtmetadataoptions()) {
+      seawchquewy.setwesuwtmetadataoptions(new t-thwiftseawchwesuwtmetadataoptions());
     }
-    return searchQuery;
+    wetuwn seawchquewy;
   }
 
-  @Override
-  protected int calculateMaxHitsToProcess(ThriftSearchQuery thriftSearchQuery) {
-    ThriftSearchRelevanceOptions searchRelevanceOptions = thriftSearchQuery.getRelevanceOptions();
+  @ovewwide
+  p-pwotected i-int cawcuwatemaxhitstopwocess(thwiftseawchquewy t-thwiftseawchquewy) {
+    t-thwiftseawchwewevanceoptions seawchwewevanceoptions = thwiftseawchquewy.getwewevanceoptions();
 
-    // Don't use the value from the ThriftSearchQuery object if one is provided in the
-    // relevance options
-    int requestedMaxHitsToProcess = searchRelevanceOptions.isSetMaxHitsToProcess()
-        ? searchRelevanceOptions.getMaxHitsToProcess()
-        : super.calculateMaxHitsToProcess(thriftSearchQuery);
+    // d-don't use the vawue fwom the thwiftseawchquewy o-object if one is pwovided in the
+    // wewevance options
+    int wequestedmaxhitstopwocess = seawchwewevanceoptions.issetmaxhitstopwocess()
+        ? s-seawchwewevanceoptions.getmaxhitstopwocess()
+        : supew.cawcuwatemaxhitstopwocess(thwiftseawchquewy);
 
-    return qualityFactorMaxHitsToProcess(getNumResultsRequested(), requestedMaxHitsToProcess);
+    w-wetuwn q-quawityfactowmaxhitstopwocess(getnumwesuwtswequested(), ^^ w-wequestedmaxhitstopwocess);
   }
 
-  public ThriftSearchRelevanceOptions getRelevanceOptions() {
-    return this.relevanceOptions;
+  pubwic thwiftseawchwewevanceoptions getwewevanceoptions() {
+    wetuwn this.wewevanceoptions;
   }
 
   /**
-   * Reduces maxHitsToProcess based on quality factor. Never reduces it beyond
-   * numResults.
-   * @param numResults
-   * @param maxHitsToProcess
-   * @return Reduced maxHitsToProcess.
+   * w-weduces m-maxhitstopwocess based on quawity f-factow. :3 nevew w-weduces it beyond
+   * nyumwesuwts. -.-
+   * @pawam n-nyumwesuwts
+   * @pawam maxhitstopwocess
+   * @wetuwn w-weduced maxhitstopwocess. 😳
    */
-  public int qualityFactorMaxHitsToProcess(int numResults, int maxHitsToProcess) {
-    Preconditions.checkNotNull(qualityFactor);
+  pubwic i-int quawityfactowmaxhitstopwocess(int nyumwesuwts, mya i-int maxhitstopwocess) {
+    pweconditions.checknotnuww(quawityfactow);
 
-    // Do not quality factor if there is no lower bound on maxHitsToProcess.
-    if (numResults > maxHitsToProcess) {
-      return maxHitsToProcess;
+    // d-do nyot quawity f-factow if thewe is nyo wowew bound on maxhitstopwocess. (˘ω˘)
+    if (numwesuwts > maxhitstopwocess) {
+      wetuwn maxhitstopwocess;
     }
 
-    double currentQualityFactor = qualityFactor.get();
-    return Math.max(numResults, (int) (currentQualityFactor * maxHitsToProcess));
+    d-doubwe cuwwentquawityfactow = quawityfactow.get();
+    w-wetuwn math.max(numwesuwts, (int) (cuwwentquawityfactow * maxhitstopwocess));
   }
 }

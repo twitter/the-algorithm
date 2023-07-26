@@ -1,200 +1,200 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.servo.util.ExceptionCounter
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.EditState
-import com.twitter.tweetypie.core.ValueState
-import com.twitter.util.Try
+impowt c-com.twittew.sewvo.utiw.exceptioncountew
+i-impowt c-com.twittew.stitch.stitch
+impowt c-com.twittew.tweetypie.cowe.editstate
+i-impowt c-com.twittew.tweetypie.cowe.vawuestate
+i-impowt com.twittew.utiw.twy
 
 /**
- * A ValueHydrator hydrates a value of type `A`, with a hydration context of type `C`,
- * and produces a value of type ValueState[A] (ValueState encapsulates the value and
- * its associated HydrationState).
+ * a vawuehydwatow hydwates a vawue of type `a`, UwU with a h-hydwation context of type `c`, 😳😳😳
+ * and pwoduces a-a vawue of type vawuestate[a] (vawuestate e-encapsuwates the vawue and
+ * its associated hydwationstate). XD
  *
- * Because ValueHydrators take a value and produce a new value, they can easily be run
- * in sequence, but not in parallel. To run hydrators in parallel, see [[EditHydrator]].
+ * b-because vawuehydwatows t-take a vawue a-and pwoduce a nyew vawue, o.O they can easiwy be wun
+ * in sequence, (⑅˘꒳˘) but nyot in pawawwew. 😳😳😳 t-to wun hydwatows in pawawwew, nyaa~~ see [[edithydwatow]]. rawr
  *
- * A series of ValueHydrators of the same type may be run in sequence via
- * `ValueHydrator.inSequence`.
+ * a sewies of vawuehydwatows of t-the same type may be wun in sequence v-via
+ * `vawuehydwatow.insequence`. -.-
  *
  */
-class ValueHydrator[A, C] private (val run: (A, C) => Stitch[ValueState[A]]) {
+c-cwass vawuehydwatow[a, (✿oωo) c-c] pwivate (vaw w-wun: (a, /(^•ω•^) c) => stitch[vawuestate[a]]) {
 
   /**
-   * Apply this hydrator to a value, producing a ValueState.
+   * appwy t-this hydwatow to a vawue, 🥺 pwoducing a vawuestate. ʘwʘ
    */
-  def apply(a: A, ctx: C): Stitch[ValueState[A]] = run(a, ctx)
+  d-def appwy(a: a, UwU ctx: c): stitch[vawuestate[a]] = wun(a, XD ctx)
 
   /**
-   * Apply with an empty context: only used in tests.
+   * appwy with an e-empty context: onwy used in tests. (✿oωo)
    */
-  def apply(a: A)(implicit ev: Unit <:< C): Stitch[ValueState[A]] =
-    apply(a, ev(()))
+  d-def a-appwy(a: a)(impwicit e-ev: unit <:< c): stitch[vawuestate[a]] =
+    appwy(a, ev(()))
 
   /**
-   * Convert this ValueHydrator to the equivalent EditHydrator.
+   * convewt this vawuehydwatow t-to the e-equivawent edithydwatow. :3
    */
-  def toEditHydrator: EditHydrator[A, C] =
-    EditHydrator[A, C] { (a, ctx) => this.run(a, ctx).map(value => EditState(_ => value)) }
+  def toedithydwatow: e-edithydwatow[a, (///ˬ///✿) c-c] =
+    edithydwatow[a, nyaa~~ c-c] { (a, >w< ctx) => this.wun(a, -.- ctx).map(vawue => editstate(_ => v-vawue)) }
 
   /**
-   * Chains two ValueHydrators in sequence.
+   * chains two vawuehydwatows in s-sequence. (✿oωo)
    */
-  def andThen(next: ValueHydrator[A, C]): ValueHydrator[A, C] =
-    ValueHydrator[A, C] { (x0, ctx) =>
-      for {
-        r1 <- run(x0, ctx)
-        r2 <- next.run(r1.value, ctx)
-      } yield {
-        ValueState(r2.value, r1.state ++ r2.state)
+  def andthen(next: v-vawuehydwatow[a, (˘ω˘) c]): vawuehydwatow[a, c-c] =
+    v-vawuehydwatow[a, rawr c] { (x0, OwO ctx) =>
+      fow {
+        w1 <- wun(x0, ^•ﻌ•^ ctx)
+        w2 <- nyext.wun(w1.vawue, UwU ctx)
+      } yiewd {
+        v-vawuestate(w2.vawue, (˘ω˘) w-w1.state ++ w2.state)
       }
     }
 
   /**
-   * Executes this ValueHydrator conditionally based on a Gate.
+   * exekawaii~s this v-vawuehydwatow c-conditionawwy b-based on a gate. (///ˬ///✿)
    */
-  def ifEnabled(gate: Gate[Unit]): ValueHydrator[A, C] =
-    onlyIf((_, _) => gate())
+  def ifenabwed(gate: gate[unit]): vawuehydwatow[a, σωσ c-c] =
+    onwyif((_, /(^•ω•^) _) => gate())
 
   /**
-   * Executes this ValueHydrator conditionally based on a boolean function.
+   * exekawaii~s this vawuehydwatow c-conditionawwy based on a b-boowean function. 😳
    */
-  def onlyIf(cond: (A, C) => Boolean): ValueHydrator[A, C] =
-    ValueHydrator { (a, c) =>
-      if (cond(a, c)) {
-        run(a, c)
-      } else {
-        Stitch.value(ValueState.unit(a))
+  d-def onwyif(cond: (a, 😳 c-c) => boowean): vawuehydwatow[a, (⑅˘꒳˘) c-c] =
+    vawuehydwatow { (a, 😳😳😳 c-c) =>
+      i-if (cond(a, 😳 c-c)) {
+        wun(a, XD c)
+      } ewse {
+        s-stitch.vawue(vawuestate.unit(a))
       }
     }
 
   /**
-   * Converts a ValueHydrator of input type `A` to input type `Option[A]`.
+   * c-convewts a vawuehydwatow o-of input t-type `a` to input t-type `option[a]`. mya
    */
-  def liftOption: ValueHydrator[Option[A], C] =
-    liftOption(None)
+  def wiftoption: vawuehydwatow[option[a], ^•ﻌ•^ c] =
+    w-wiftoption(none)
 
   /**
-   * Converts a ValueHydrator of input type `A` to input type `Option[A]` with a
-   * default input value.
+   * convewts a vawuehydwatow of input type `a` to input type `option[a]` w-with a
+   * defauwt input vawue. ʘwʘ
    */
-  def liftOption(default: A): ValueHydrator[Option[A], C] =
-    liftOption(Some(default))
+  def wiftoption(defauwt: a): vawuehydwatow[option[a], ( ͡o ω ͡o ) c-c] =
+    wiftoption(some(defauwt))
 
-  private def liftOption(default: Option[A]): ValueHydrator[Option[A], C] = {
-    val none = Stitch.value(ValueState.unit(None))
+  p-pwivate def w-wiftoption(defauwt: option[a]): v-vawuehydwatow[option[a], mya c] = {
+    v-vaw nyone = s-stitch.vawue(vawuestate.unit(none))
 
-    ValueHydrator[Option[A], C] { (a, ctx) =>
-      a.orElse(default) match {
-        case Some(a) => this.run(a, ctx).map(s => s.map(Some.apply))
-        case None => none
+    vawuehydwatow[option[a], o.O c] { (a, ctx) =>
+      a.owewse(defauwt) match {
+        case s-some(a) => this.wun(a, (✿oωo) ctx).map(s => s-s.map(some.appwy))
+        case nyone => n-nyone
       }
     }
   }
 
   /**
-   * Converts a ValueHydrator of input type `A` to input type `Seq[A]`.
+   * c-convewts a vawuehydwatow of input type `a` to i-input type `seq[a]`. :3
    */
-  def liftSeq: ValueHydrator[Seq[A], C] =
-    ValueHydrator[Seq[A], C] { (as, ctx) =>
-      Stitch.traverse(as)(a => run(a, ctx)).map(rs => ValueState.sequence[A](rs))
+  def w-wiftseq: vawuehydwatow[seq[a], 😳 c] =
+    vawuehydwatow[seq[a], (U ﹏ U) c-c] { (as, mya ctx) =>
+      s-stitch.twavewse(as)(a => wun(a, (U ᵕ U❁) ctx)).map(ws => vawuestate.sequence[a](ws))
     }
 
   /**
-   * Produces a new ValueHydrator that collects stats on the hydration.
+   * pwoduces a nyew vawuehydwatow t-that cowwects s-stats on the h-hydwation. :3
    */
-  def observe(
-    stats: StatsReceiver,
-    mkExceptionCounter: (StatsReceiver, String) => ExceptionCounter = (stats, scope) =>
-      new ExceptionCounter(stats, scope)
-  ): ValueHydrator[A, C] = {
-    val callCounter = stats.counter("calls")
-    val noopCounter = stats.counter("noop")
-    val modifiedCounter = stats.counter("modified")
-    val partialCounter = stats.counter("partial")
-    val completedCounter = stats.counter("completed")
+  def obsewve(
+    s-stats: statsweceivew,
+    m-mkexceptioncountew: (statsweceivew, mya stwing) => exceptioncountew = (stats, s-scope) =>
+      nyew exceptioncountew(stats, OwO scope)
+  ): vawuehydwatow[a, (ˆ ﻌ ˆ)♡ c] = {
+    vaw c-cawwcountew = stats.countew("cawws")
+    v-vaw nyoopcountew = stats.countew("noop")
+    vaw modifiedcountew = s-stats.countew("modified")
+    v-vaw pawtiawcountew = stats.countew("pawtiaw")
+    vaw compwetedcountew = s-stats.countew("compweted")
 
-    val exceptionCounter = mkExceptionCounter(stats, "failures")
+    vaw exceptioncountew = mkexceptioncountew(stats, ʘwʘ "faiwuwes")
 
-    ValueHydrator[A, C] { (a, ctx) =>
-      this.run(a, ctx).respond {
-        case Return(ValueState(_, state)) =>
-          callCounter.incr()
+    vawuehydwatow[a, o.O c] { (a, UwU c-ctx) =>
+      this.wun(a, ctx).wespond {
+        case wetuwn(vawuestate(_, rawr x3 s-state)) =>
+          c-cawwcountew.incw()
 
-          if (state.isEmpty) {
-            noopCounter.incr()
-          } else {
-            if (state.modified) modifiedCounter.incr()
-            if (state.failedFields.nonEmpty) partialCounter.incr()
-            if (state.completedHydrations.nonEmpty) completedCounter.incr()
+          if (state.isempty) {
+            nyoopcountew.incw()
+          } ewse {
+            if (state.modified) modifiedcountew.incw()
+            i-if (state.faiwedfiewds.nonempty) p-pawtiawcountew.incw()
+            if (state.compwetedhydwations.nonempty) compwetedcountew.incw()
           }
-        case Throw(ex) =>
-          callCounter.incr()
-          exceptionCounter(ex)
+        case thwow(ex) =>
+          c-cawwcountew.incw()
+          exceptioncountew(ex)
       }
     }
   }
 
   /**
-   * Produces a new ValueHydrator that uses a lens to extract the value to hydrate,
-   * using this hydrator, and then to put the updated value back in the enclosing struct.
+   * p-pwoduces a nyew vawuehydwatow that uses a wens to extwact t-the vawue to hydwate,
+   * u-using this hydwatow, 🥺 a-and then to put the updated v-vawue back in the encwosing stwuct.
    */
-  def lensed[B](lens: Lens[B, A]): ValueHydrator[B, C] =
-    ValueHydrator[B, C] { (b, ctx) =>
-      this.run(lens.get(b), ctx).map {
-        case ValueState(value, state) =>
-          ValueState(lens.set(b, value), state)
+  d-def w-wensed[b](wens: w-wens[b, :3 a]): vawuehydwatow[b, c] =
+    vawuehydwatow[b, (ꈍᴗꈍ) c-c] { (b, 🥺 c-ctx) =>
+      this.wun(wens.get(b), (✿oωo) ctx).map {
+        c-case vawuestate(vawue, (U ﹏ U) s-state) =>
+          v-vawuestate(wens.set(b, :3 vawue), state)
       }
     }
 }
 
-object ValueHydrator {
+o-object vawuehydwatow {
 
   /**
-   * Create a ValueHydrator from a function that returns Stitch[ValueState[A]]
+   * cweate a-a vawuehydwatow f-fwom a function that wetuwns stitch[vawuestate[a]]
    */
-  def apply[A, C](f: (A, C) => Stitch[ValueState[A]]): ValueHydrator[A, C] =
-    new ValueHydrator[A, C](f)
+  def appwy[a, ^^;; c](f: (a, rawr c-c) => stitch[vawuestate[a]]): v-vawuehydwatow[a, 😳😳😳 c-c] =
+    n-nyew vawuehydwatow[a, (✿oωo) c](f)
 
   /**
-   * Produces a ValueState instance with the given value and an empty HydrationState
+   * p-pwoduces a vawuestate instance with the given vawue and an empty hydwationstate
    */
-  def unit[A, C]: ValueHydrator[A, C] =
-    ValueHydrator { (a, _) => Stitch.value(ValueState.unit(a)) }
+  def unit[a, OwO c]: v-vawuehydwatow[a, ʘwʘ c] =
+    vawuehydwatow { (a, (ˆ ﻌ ˆ)♡ _) => s-stitch.vawue(vawuestate.unit(a)) }
 
   /**
-   * Runs several ValueHydrators in sequence.
+   * wuns sevewaw v-vawuehydwatows in sequence. (U ﹏ U)
    */
-  def inSequence[A, C](bs: ValueHydrator[A, C]*): ValueHydrator[A, C] =
-    bs match {
-      case Seq(b) => b
-      case Seq(b1, b2) => b1.andThen(b2)
-      case _ => bs.reduceLeft(_.andThen(_))
+  d-def insequence[a, UwU c](bs: vawuehydwatow[a, c-c]*): v-vawuehydwatow[a, XD c-c] =
+    bs m-match {
+      case s-seq(b) => b
+      case seq(b1, ʘwʘ b2) => b1.andthen(b2)
+      case _ => bs.weduceweft(_.andthen(_))
     }
 
   /**
-   * Creates a `ValueHydrator` from a Mutation.  If the mutation returns None (indicating
-   * no change) the hydrator will return an ValueState.unmodified with the input value;
-   * otherwise, it will return an ValueState.modified with the mutated value.
-   * If the mutation throws an exception, it will be caught and lifted to Stitch.exception.
+   * cweates a `vawuehydwatow` fwom a mutation. rawr x3  if the mutation w-wetuwns none (indicating
+   * n-nyo change) the h-hydwatow wiww wetuwn an vawuestate.unmodified with t-the input vawue;
+   * othewwise, ^^;; it wiww wetuwn an vawuestate.modified w-with t-the mutated vawue. ʘwʘ
+   * if the mutation t-thwows an exception, (U ﹏ U) it wiww be caught and w-wifted to stitch.exception. (˘ω˘)
    */
-  def fromMutation[A, C](mutation: Mutation[A]): ValueHydrator[A, C] =
-    ValueHydrator[A, C] { (input, _) =>
-      Stitch.const(
-        Try {
-          mutation(input) match {
-            case None => ValueState.unmodified(input)
-            case Some(output) => ValueState.modified(output)
+  d-def fwommutation[a, (ꈍᴗꈍ) c](mutation: m-mutation[a]): v-vawuehydwatow[a, /(^•ω•^) c] =
+    vawuehydwatow[a, >_< c] { (input, _) =>
+      stitch.const(
+        t-twy {
+          m-mutation(input) m-match {
+            c-case nyone => v-vawuestate.unmodified(input)
+            case s-some(output) => v-vawuestate.modified(output)
           }
         }
       )
     }
 
   /**
-   * Creates a Hydrator from a non-`Stitch` producing function. If the function throws
-   * an error it will be caught and converted to a Throw.
+   * cweates a-a hydwatow fwom a-a nyon-`stitch` pwoducing function. σωσ i-if the function thwows
+   * an ewwow it w-wiww be caught and convewted to a-a thwow. ^^;;
    */
-  def map[A, C](f: (A, C) => ValueState[A]): ValueHydrator[A, C] =
-    ValueHydrator[A, C] { (a, ctx) => Stitch.const(Try(f(a, ctx))) }
+  d-def map[a, 😳 c](f: (a, >_< c) => vawuestate[a]): v-vawuehydwatow[a, -.- c] =
+    vawuehydwatow[a, UwU c-c] { (a, c-ctx) => stitch.const(twy(f(a, c-ctx))) }
 }

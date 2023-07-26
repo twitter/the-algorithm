@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-trait BaseFeedbackActionInfoBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]] {
+twait b-basefeedbackactioninfobuiwdew[-quewy <: p-pipewinequewy, σωσ -candidate <: u-univewsawnoun[any]] {
 
-  def apply(
-    query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): Option[FeedbackActionInfo]
+  d-def appwy(
+    quewy: quewy,
+    candidate: candidate, σωσ
+    candidatefeatuwes: featuwemap
+  ): o-option[feedbackactioninfo]
 }

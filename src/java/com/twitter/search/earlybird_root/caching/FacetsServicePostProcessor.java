@@ -1,24 +1,24 @@
-package com.twitter.search.earlybird_root.caching;
+package com.twittew.seawch.eawwybiwd_woot.caching;
 
-import com.twitter.search.common.caching.Cache;
-import com.twitter.search.common.caching.FacetsCacheUtil;
-import com.twitter.search.common.caching.filter.ServicePostProcessor;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+impowt com.twittew.seawch.common.caching.cache;
+i-impowt com.twittew.seawch.common.caching.facetscacheutiw;
+i-impowt c-com.twittew.seawch.common.caching.fiwtew.sewvicepostpwocessow;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
 
-public class FacetsServicePostProcessor
-    extends ServicePostProcessor<EarlybirdRequestContext, EarlybirdResponse> {
+p-pubwic cwass facetssewvicepostpwocessow
+    extends sewvicepostpwocessow<eawwybiwdwequestcontext, mya eawwybiwdwesponse> {
 
-  private final Cache<EarlybirdRequest, EarlybirdResponse> cache;
+  pwivate finaw c-cache<eawwybiwdwequest, mya eawwybiwdwesponse> cache;
 
-  public FacetsServicePostProcessor(Cache<EarlybirdRequest, EarlybirdResponse> cache) {
-    this.cache = cache;
+  p-pubwic facetssewvicepostpwocessow(cache<eawwybiwdwequest, 😳 eawwybiwdwesponse> cache) {
+    this.cache = c-cache;
   }
 
-  @Override
-  public void processServiceResponse(EarlybirdRequestContext requestContext,
-                                     EarlybirdResponse serviceResponse) {
-    FacetsCacheUtil.cacheResults(requestContext.getRequest(), serviceResponse, cache);
+  @ovewwide
+  pubwic void pwocesssewvicewesponse(eawwybiwdwequestcontext wequestcontext, XD
+                                     e-eawwybiwdwesponse sewvicewesponse) {
+    facetscacheutiw.cachewesuwts(wequestcontext.getwequest(), :3 s-sewvicewesponse, 😳😳😳 c-cache);
   }
 }

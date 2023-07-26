@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.suggestion
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.suggestion
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.suggestion.SpellingItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.suggestion.spewwingitem
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class SpellingItemMarshaller @Inject() (
-  textResultMarshaller: TextResultMarshaller,
-  spellingActionTypeMarshaller: SpellingActionTypeMarshaller) {
+@singweton
+c-cwass spewwingitemmawshawwew @inject() (
+  textwesuwtmawshawwew: t-textwesuwtmawshawwew, (U ᵕ U❁)
+  s-spewwingactiontypemawshawwew: spewwingactiontypemawshawwew) {
 
-  def apply(spellingItem: SpellingItem): urt.TimelineItemContent = {
-    urt.TimelineItemContent.Spelling(
-      urt.Spelling(
-        spellingResult = textResultMarshaller(spellingItem.textResult),
-        spellingAction = spellingItem.spellingActionType.map(spellingActionTypeMarshaller(_)),
-        originalQuery = spellingItem.originalQuery
+  def appwy(spewwingitem: spewwingitem): u-uwt.timewineitemcontent = {
+    uwt.timewineitemcontent.spewwing(
+      uwt.spewwing(
+        s-spewwingwesuwt = textwesuwtmawshawwew(spewwingitem.textwesuwt), -.-
+        s-spewwingaction = spewwingitem.spewwingactiontype.map(spewwingactiontypemawshawwew(_)), ^^;;
+        owiginawquewy = spewwingitem.owiginawquewy
       )
     )
   }

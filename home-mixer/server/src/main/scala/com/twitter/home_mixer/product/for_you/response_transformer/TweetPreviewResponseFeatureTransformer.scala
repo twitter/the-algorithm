@@ -1,32 +1,32 @@
-package com.twitter.home_mixer.product.for_you.response_transformer
+package com.twittew.home_mixew.pwoduct.fow_you.wesponse_twansfowmew
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsTweetPreviewFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.timelineservice.suggests.{thriftscala => st}
-import com.twitter.search.earlybird.{thriftscala => eb}
+impowt com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.istweetpweviewfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.suggesttypefeatuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twansfowmewidentifiew
+impowt com.twittew.timewinesewvice.suggests.{thwiftscawa => st}
+impowt c-com.twittew.seawch.eawwybiwd.{thwiftscawa => eb}
 
-object TweetPreviewResponseFeatureTransformer
-    extends CandidateFeatureTransformer[eb.ThriftSearchResult] {
+object tweetpweviewwesponsefeatuwetwansfowmew
+    extends candidatefeatuwetwansfowmew[eb.thwiftseawchwesuwt] {
 
-  override val identifier: TransformerIdentifier =
-    TransformerIdentifier("TweetPreviewResponse")
+  o-ovewwide vaw identifiew: t-twansfowmewidentifiew =
+    twansfowmewidentifiew("tweetpweviewwesponse")
 
-  override val features: Set[Feature[_, _]] =
-    Set(AuthorIdFeature, IsTweetPreviewFeature, SuggestTypeFeature)
+  ovewwide vaw featuwes: s-set[featuwe[_, ( ͡o ω ͡o ) _]] =
+    set(authowidfeatuwe, rawr x3 i-istweetpweviewfeatuwe, nyaa~~ s-suggesttypefeatuwe)
 
-  def transform(
-    input: eb.ThriftSearchResult
-  ): FeatureMap = {
-    FeatureMapBuilder()
-      .add(IsTweetPreviewFeature, true)
-      .add(SuggestTypeFeature, Some(st.SuggestType.TweetPreview))
-      .add(AuthorIdFeature, input.metadata.map(_.fromUserId))
-      .build()
+  def twansfowm(
+    input: eb.thwiftseawchwesuwt
+  ): featuwemap = {
+    featuwemapbuiwdew()
+      .add(istweetpweviewfeatuwe, /(^•ω•^) t-twue)
+      .add(suggesttypefeatuwe, rawr some(st.suggesttype.tweetpweview))
+      .add(authowidfeatuwe, input.metadata.map(_.fwomusewid))
+      .buiwd()
   }
 }

@@ -1,94 +1,94 @@
-package com.twitter.ann.faiss
+package com.twittew.ann.faiss
 
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.MemoizedInEpochs
-import com.twitter.ann.common.Metric
-import com.twitter.ann.common.Task
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
-import java.util.concurrent.atomic.AtomicReference
+impowt c-com.twittew.ann.common.distance
+i-impowt com.twittew.ann.common.memoizedinepochs
+i-impowt com.twittew.ann.common.metwic
+i-impowt c-com.twittew.ann.common.task
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.seawch.common.fiwe.abstwactfiwe
+impowt com.twittew.utiw.duwation
+impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.time
+impowt c-com.twittew.utiw.twy
+impowt com.twittew.utiw.wogging.wogging
+impowt j-java.utiw.concuwwent.atomic.atomicwefewence
 
-object HourlyShardedIndex {
-  def loadIndex[T, D <: Distance[D]](
-    dimension: Int,
-    metric: Metric[D],
-    directory: AbstractFile,
-    shardsToLoad: Int,
-    shardWatchInterval: Duration,
-    lookbackInterval: Int,
-    statsReceiver: StatsReceiver
-  ): HourlyShardedIndex[T, D] = {
-    new HourlyShardedIndex[T, D](
-      metric,
-      dimension,
-      directory,
-      shardsToLoad,
-      shardWatchInterval,
-      lookbackInterval,
-      statsReceiver)
+object houwwyshawdedindex {
+  def woadindex[t, mya d <: distance[d]](
+    d-dimension: int, mya
+    metwic: m-metwic[d], (⑅˘꒳˘)
+    d-diwectowy: abstwactfiwe, (U ﹏ U)
+    shawdstowoad: int,
+    shawdwatchintewvaw: duwation, mya
+    wookbackintewvaw: i-int, ʘwʘ
+    statsweceivew: statsweceivew
+  ): houwwyshawdedindex[t, (˘ω˘) d] = {
+    n-nyew houwwyshawdedindex[t, (U ﹏ U) d](
+      metwic, ^•ﻌ•^
+      d-dimension, (˘ω˘)
+      d-diwectowy, :3
+      s-shawdstowoad, ^^;;
+      s-shawdwatchintewvaw, 🥺
+      wookbackintewvaw, (⑅˘꒳˘)
+      statsweceivew)
   }
 }
 
-class HourlyShardedIndex[T, D <: Distance[D]](
-  outerMetric: Metric[D],
-  outerDimension: Int,
-  directory: AbstractFile,
-  shardsToLoad: Int,
-  shardWatchInterval: Duration,
-  lookbackInterval: Int,
-  override protected val statsReceiver: StatsReceiver)
-    extends QueryableIndexAdapter[T, D]
-    with Logging
-    with Task {
-  // QueryableIndexAdapter
-  protected val metric: Metric[D] = outerMetric
-  protected val dimension: Int = outerDimension
-  protected def index: Index = {
-    castedIndex.get()
+c-cwass houwwyshawdedindex[t, nyaa~~ d <: distance[d]](
+  outewmetwic: m-metwic[d], :3
+  outewdimension: int, ( ͡o ω ͡o )
+  diwectowy: abstwactfiwe,
+  shawdstowoad: int, mya
+  shawdwatchintewvaw: duwation, (///ˬ///✿)
+  w-wookbackintewvaw: int,
+  o-ovewwide pwotected v-vaw statsweceivew: s-statsweceivew)
+    extends quewyabweindexadaptew[t, (˘ω˘) d]
+    w-with wogging
+    w-with task {
+  // quewyabweindexadaptew
+  pwotected v-vaw metwic: m-metwic[d] = outewmetwic
+  pwotected v-vaw dimension: int = outewdimension
+  pwotected d-def index: index = {
+    castedindex.get()
   }
 
-  // Task trait
-  protected def task(): Future[Unit] = Future.value(reloadShards())
-  protected def taskInterval: Duration = shardWatchInterval
+  // t-task twait
+  pwotected d-def task(): futuwe[unit] = f-futuwe.vawue(wewoadshawds())
+  pwotected d-def taskintewvaw: duwation = shawdwatchintewvaw
 
-  private def loadIndex(directory: AbstractFile): Try[Index] =
-    Try(QueryableIndexAdapter.loadJavaIndex(directory))
+  pwivate def woadindex(diwectowy: abstwactfiwe): twy[index] =
+    t-twy(quewyabweindexadaptew.woadjavaindex(diwectowy))
 
-  private val shardsCache = new MemoizedInEpochs[AbstractFile, Index](loadIndex)
-  // Destroying original index invalidate casted index. Keep a reference to both.
-  private val originalIndex = new AtomicReference[IndexShards]()
-  private val castedIndex = new AtomicReference[Index]()
-  private def reloadShards(): Unit = {
-    val freshDirectories =
-      HourlyDirectoryWithSuccessFileListing.listHourlyIndexDirectories(
-        directory,
-        Time.now,
-        shardsToLoad,
-        lookbackInterval)
+  p-pwivate vaw shawdscache = nyew m-memoizedinepochs[abstwactfiwe, i-index](woadindex)
+  // d-destwoying owiginaw index invawidate casted index. ^^;; keep a-a wefewence to both. (✿oωo)
+  pwivate vaw owiginawindex = nyew atomicwefewence[indexshawds]()
+  pwivate v-vaw castedindex = nyew atomicwefewence[index]()
+  p-pwivate def w-wewoadshawds(): u-unit = {
+    vaw fweshdiwectowies =
+      h-houwwydiwectowywithsuccessfiwewisting.wisthouwwyindexdiwectowies(
+        d-diwectowy, (U ﹏ U)
+        t-time.now, -.-
+        s-shawdstowoad, ^•ﻌ•^
+        wookbackintewvaw)
 
-    if (shardsCache.currentEpochKeys == freshDirectories.toSet) {
-      info("Not reloading shards, as they're exactly same")
-    } else {
-      val shards = shardsCache.epoch(freshDirectories)
-      val indexShards = new IndexShards(dimension, false, false)
-      for (shard <- shards) {
-        indexShards.add_shard(shard)
+    if (shawdscache.cuwwentepochkeys == fweshdiwectowies.toset) {
+      i-info("not w-wewoading shawds, rawr a-as they'we e-exactwy same")
+    } e-ewse {
+      vaw shawds = shawdscache.epoch(fweshdiwectowies)
+      vaw indexshawds = n-nyew indexshawds(dimension, (˘ω˘) fawse, fawse)
+      fow (shawd <- shawds) {
+        indexshawds.add_shawd(shawd)
       }
 
-      replaceIndex(() => {
-        castedIndex.set(swigfaiss.upcast_IndexShards(indexShards))
-        originalIndex.set(indexShards)
+      w-wepwaceindex(() => {
+        castedindex.set(swigfaiss.upcast_indexshawds(indexshawds))
+        owiginawindex.set(indexshawds)
       })
 
-      // Potentially it's time to drop huge native index from memory, ask for GC
-      System.gc()
+      // potentiawwy i-it's time t-to dwop huge nyative i-index fwom memowy, ask fow g-gc
+      system.gc()
     }
 
-    require(castedIndex.get() != null, "Failed to find any shards during startup")
+    wequiwe(castedindex.get() != n-nyuww, "faiwed t-to find any shawds duwing stawtup")
   }
 }

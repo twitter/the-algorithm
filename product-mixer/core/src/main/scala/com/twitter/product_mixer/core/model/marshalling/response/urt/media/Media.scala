@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.media
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.media
 
-case class Media(
-  mediaEntity: Option[MediaEntity],
-  mediaKey: Option[MediaKey],
-  imagePossibleCropping: Option[List[Rect]],
-  aspectRatio: Option[AspectRatio])
+case c-cwass media(
+  m-mediaentity: option[mediaentity], o.O
+  m-mediakey: option[mediakey], (U ᵕ U❁)
+  i-imagepossibwecwopping: o-option[wist[wect]], (⑅˘꒳˘)
+  aspectwatio: o-option[aspectwatio])

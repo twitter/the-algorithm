@@ -1,39 +1,39 @@
-package com.twitter.recos.decider
+package com.twittew.wecos.decidew
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.util.Future
-import scala.util.control.NoStackTrace
+impowt com.twittew.decidew.decidew
+i-impowt com.twittew.decidew.wandomwecipient
+i-impowt com.twittew.utiw.futuwe
+impowt s-scawa.utiw.contwow.nostacktwace
 
 /*
-  Provides deciders-controlled load shedding for a given endpoint.
-  The format of the decider keys is:
+  p-pwovides d-decidews-contwowwed w-woad shedding f-fow a given e-endpoint. 🥺
+  the fowmat of the decidew keys is:
 
-    enable_loadshedding_<graphNamePrefix>_<endpoint name>
-  E.g.:
-    enable_loadshedding_user-tweet-graph_relatedTweets
+    enabwe_woadshedding_<gwaphnamepwefix>_<endpoint nyame>
+  e-e.g.:
+    enabwe_woadshedding_usew-tweet-gwaph_wewatedtweets
 
-  Deciders are fractional, so a value of 50.00 will drop 50% of responses. If a decider key is not
-  defined for a particular endpoint, those requests will always be
-  served.
+  decidews awe fwactionaw, >_< so a vawue o-of 50.00 wiww dwop 50% of wesponses. >_< i-if a decidew key is nyot
+  defined fow a pawticuwaw endpoint, (⑅˘꒳˘) t-those wequests wiww awways b-be
+  sewved. /(^•ω•^)
 
-  We should therefore aim to define keys for the endpoints we care most about in decider.yml,
-  so that we can control them during incidents.
+  w-we shouwd thewefowe aim to define keys fow the endpoints we cawe most about in d-decidew.ymw, rawr x3
+  so that we can contwow them duwing incidents. (U ﹏ U)
  */
-class EndpointLoadShedder(
-  decider: GraphDecider) {
-  import EndpointLoadShedder._
+cwass endpointwoadsheddew(
+  decidew: g-gwaphdecidew) {
+  impowt e-endpointwoadsheddew._
 
-  private val keyPrefix = "enable_loadshedding"
+  p-pwivate v-vaw keypwefix = "enabwe_woadshedding"
 
-  def apply[T](endpointName: String)(serve: => Future[T]): Future[T] = {
-    val key = s"${keyPrefix}_${decider.graphNamePrefix}_${endpointName}"
-    if (decider.isAvailable(key, recipient = Some(RandomRecipient)))
-      Future.exception(LoadSheddingException)
-    else serve
+  d-def appwy[t](endpointname: stwing)(sewve: => futuwe[t]): f-futuwe[t] = {
+    vaw key = s"${keypwefix}_${decidew.gwaphnamepwefix}_${endpointname}"
+    if (decidew.isavaiwabwe(key, (U ﹏ U) w-wecipient = some(wandomwecipient)))
+      futuwe.exception(woadsheddingexception)
+    ewse sewve
   }
 }
 
-object EndpointLoadShedder {
-  object LoadSheddingException extends Exception with NoStackTrace
+object endpointwoadsheddew {
+  object woadsheddingexception e-extends exception with nyostacktwace
 }

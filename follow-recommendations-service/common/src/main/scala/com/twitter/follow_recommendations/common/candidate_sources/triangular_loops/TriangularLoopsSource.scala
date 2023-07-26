@@ -1,91 +1,91 @@
-package com.twitter.follow_recommendations.common.candidate_sources.triangular_loops
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.twianguwaw_woops
 
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedByUserIds
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.TriangularLoopsV2OnUserClientColumn
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.wtf.triangular_loop.thriftscala.Candidates
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.common.modews.accountpwoof
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.fowwowpwoof
+i-impowt com.twittew.fowwow_wecommendations.common.modews.haswecentfowwowedbyusewids
+i-impowt com.twittew.fowwow_wecommendations.common.modews.weason
+i-impowt com.twittew.hewmit.modew.awgowithm
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+impowt com.twittew.stitch.stitch
+impowt com.twittew.stwato.genewated.cwient.onboawding.usewwecs.twianguwawwoopsv2onusewcwientcowumn
+i-impowt com.twittew.timewines.configapi.haspawams
+impowt c-com.twittew.wtf.twianguwaw_woop.thwiftscawa.candidates
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class TriangularLoopsSource @Inject() (
-  triangularLoopsV2Column: TriangularLoopsV2OnUserClientColumn)
-    extends CandidateSource[
-      HasParams with HasClientContext with HasRecentFollowedByUserIds,
-      CandidateUser
+@singweton
+cwass twianguwawwoopssouwce @inject() (
+  twianguwawwoopsv2cowumn: t-twianguwawwoopsv2onusewcwientcowumn)
+    extends c-candidatesouwce[
+      h-haspawams with hascwientcontext with haswecentfowwowedbyusewids, :3
+      candidateusew
     ] {
 
-  override val identifier: CandidateSourceIdentifier = TriangularLoopsSource.Identifier
+  ovewwide vaw identifiew: c-candidatesouwceidentifiew = twianguwawwoopssouwce.identifiew
 
-  override def apply(
-    target: HasParams with HasClientContext with HasRecentFollowedByUserIds
-  ): Stitch[Seq[CandidateUser]] = {
-    val candidates = target.getOptionalUserId
-      .map { userId =>
-        val fetcher = triangularLoopsV2Column.fetcher
-        fetcher
-          .fetch(userId)
-          .map { result =>
-            result.v
-              .map(TriangularLoopsSource.mapCandidatesToCandidateUsers)
-              .getOrElse(Nil)
+  ovewwide def appwy(
+    tawget: haspawams with h-hascwientcontext with haswecentfowwowedbyusewids
+  ): s-stitch[seq[candidateusew]] = {
+    v-vaw candidates = t-tawget.getoptionawusewid
+      .map { u-usewid =>
+        vaw fetchew = twianguwawwoopsv2cowumn.fetchew
+        f-fetchew
+          .fetch(usewid)
+          .map { wesuwt =>
+            wesuwt.v
+              .map(twianguwawwoopssouwce.mapcandidatestocandidateusews)
+              .getowewse(niw)
           }
-      }.getOrElse(Stitch.Nil)
-    // Make sure recentFollowedByUserIds is populated within the RequestBuilder before enable it
-    if (target.params(TriangularLoopsParams.KeepOnlyCandidatesWhoFollowTargetUser))
-      filterOutCandidatesNotFollowingTargetUser(candidates, target.recentFollowedByUserIds)
-    else
-      candidates
+      }.getowewse(stitch.niw)
+    // m-make suwe wecentfowwowedbyusewids is popuwated within the wequestbuiwdew befowe enabwe it
+    if (tawget.pawams(twianguwawwoopspawams.keeponwycandidateswhofowwowtawgetusew))
+      fiwtewoutcandidatesnotfowwowingtawgetusew(candidates, -.- t-tawget.wecentfowwowedbyusewids)
+    ewse
+      c-candidates
   }
 
-  def filterOutCandidatesNotFollowingTargetUser(
-    candidatesStitch: Stitch[Seq[CandidateUser]],
-    recentFollowings: Option[Seq[Long]]
-  ): Stitch[Seq[CandidateUser]] = {
-    candidatesStitch.map { candidates =>
-      val recentFollowingIdsSet = recentFollowings.getOrElse(Nil).toSet
-      candidates.filter(candidate => recentFollowingIdsSet.contains(candidate.id))
+  d-def fiwtewoutcandidatesnotfowwowingtawgetusew(
+    c-candidatesstitch: stitch[seq[candidateusew]],
+    wecentfowwowings: option[seq[wong]]
+  ): s-stitch[seq[candidateusew]] = {
+    c-candidatesstitch.map { candidates =>
+      v-vaw wecentfowwowingidsset = w-wecentfowwowings.getowewse(niw).toset
+      candidates.fiwtew(candidate => wecentfowwowingidsset.contains(candidate.id))
     }
   }
 }
 
-object TriangularLoopsSource {
+o-object twianguwawwoopssouwce {
 
-  val Identifier = CandidateSourceIdentifier(Algorithm.TriangularLoop.toString)
-  val NumResults = 100
+  v-vaw identifiew = candidatesouwceidentifiew(awgowithm.twianguwawwoop.tostwing)
+  vaw numwesuwts = 100
 
-  def mapCandidatesToCandidateUsers(candidates: Candidates): Seq[CandidateUser] = {
-    candidates.candidates
+  d-def mapcandidatestocandidateusews(candidates: candidates): seq[candidateusew] = {
+    c-candidates.candidates
       .map { candidate =>
-        CandidateUser(
-          id = candidate.incomingUserId,
-          score = Some(1.0 / math
-            .max(1, candidate.numFollowers.getOrElse(0) + candidate.numFollowings.getOrElse(0))),
-          reason = Some(
-            Reason(
-              Some(
-                AccountProof(
-                  followProof =
-                    if (candidate.socialProofUserIds.isEmpty) None
-                    else
-                      Some(
-                        FollowProof(
-                          candidate.socialProofUserIds,
-                          candidate.numSocialProof.getOrElse(candidate.socialProofUserIds.size)))
+        c-candidateusew(
+          i-id = candidate.incomingusewid, 😳
+          scowe = some(1.0 / math
+            .max(1, mya candidate.numfowwowews.getowewse(0) + candidate.numfowwowings.getowewse(0))), (˘ω˘)
+          weason = some(
+            weason(
+              s-some(
+                a-accountpwoof(
+                  fowwowpwoof =
+                    i-if (candidate.sociawpwoofusewids.isempty) n-nyone
+                    e-ewse
+                      some(
+                        fowwowpwoof(
+                          candidate.sociawpwoofusewids, >_<
+                          candidate.numsociawpwoof.getowewse(candidate.sociawpwoofusewids.size)))
                 )
               )
             )
           )
-        ).withCandidateSource(Identifier)
-      }.sortBy(-_.score.getOrElse(0.0)).take(NumResults)
+        ).withcandidatesouwce(identifiew)
+      }.sowtby(-_.scowe.getowewse(0.0)).take(numwesuwts)
   }
 }

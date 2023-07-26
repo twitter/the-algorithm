@@ -1,92 +1,92 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Time
-import com.twitter.util.Try
-import java.util.Arrays
-import scala.util.control.NoStackTrace
-import scala.util.control.NonFatal
+impowt com.twittew.utiw.wetuwn
+i-impowt com.twittew.utiw.thwow
+i-impowt com.twittew.utiw.time
+i-impowt com.twittew.utiw.twy
+i-impowt j-java.utiw.awways
+i-impowt scawa.utiw.contwow.nostacktwace
+i-impowt s-scawa.utiw.contwow.nonfataw
 
-sealed abstract class TimestampType(val keyName: String)
-object TimestampType {
-  object Default extends TimestampType("timestamp")
-  object SoftDelete extends TimestampType("softdelete_timestamp")
+seawed abstwact cwass timestamptype(vaw keyname: stwing)
+object timestamptype {
+  o-object defauwt extends timestamptype("timestamp")
+  object softdewete e-extends timestamptype("softdewete_timestamp")
 }
 
 /**
- * TimestampDecoder gets the timestamps associated with state records. The Manhattan timestamp is
- * used for legacy records (with value "1"), otherwise the timestamp is extracted from the
- * JSON value.
+ * timestampdecodew gets the timestamps a-associated with state wecowds. >_< the manhattan timestamp is
+ * u-used fow wegacy wecowds (with vawue "1"), rawr x3 o-othewwise t-the timestamp is extwacted fwom the
+ * json vawue. /(^•ω•^)
  *
- * See "Metadata" in README.md for further information about state records.
+ * see "metadata" in w-weadme.md fow fuwthew infowmation about state wecowds. :3
  */
-object TimestampDecoder {
-  case class UnparsableJson(msg: String, t: Throwable) extends Exception(msg, t) with NoStackTrace
-  case class MissingJsonTimestamp(msg: String) extends Exception(msg) with NoStackTrace
-  case class UnexpectedJsonValue(msg: String) extends Exception(msg) with NoStackTrace
-  case class MissingManhattanTimestamp(msg: String) extends Exception(msg) with NoStackTrace
+object timestampdecodew {
+  c-case cwass unpawsabwejson(msg: s-stwing, t: t-thwowabwe) extends e-exception(msg, (ꈍᴗꈍ) t-t) with nyostacktwace
+  case cwass missingjsontimestamp(msg: s-stwing) extends exception(msg) with nyostacktwace
+  c-case cwass unexpectedjsonvawue(msg: stwing) extends exception(msg) with nyostacktwace
+  case cwass missingmanhattantimestamp(msg: s-stwing) extends exception(msg) w-with nyostacktwace
 
-  private[storage] val LegacyValue: Array[Byte] = Array('1')
+  p-pwivate[stowage] v-vaw wegacyvawue: awway[byte] = awway('1')
 
   /**
-   * The first backfill of tweet data to Manhattan supplied timestamps in milliseconds where
-   * nanoseconds were expected. The result is that some values have an incorrect Manhattan
-   * timestamp. For these bad timestamps, time.inNanoseconds is actually milliseconds.
+   * the fiwst backfiww o-of tweet data t-to manhattan suppwied timestamps i-in miwwiseconds w-whewe
+   * nyanoseconds wewe e-expected. /(^•ω•^) the wesuwt is that some v-vawues have an incowwect manhattan
+   * timestamp. (⑅˘꒳˘) f-fow these bad timestamps, ( ͡o ω ͡o ) t-time.innanoseconds is actuawwy miwwiseconds. òωó
    *
-   * For example, the deletion record for tweet 22225781 has Manhattan timestamp 1970-01-01 00:23:24 +0000.
-   * Contrast with the deletion record for tweet 435404491999813632 with Manhattan timestamp 2014-11-09 14:24:04 +0000
+   * f-fow exampwe, (⑅˘꒳˘) t-the dewetion wecowd fow tweet 22225781 has manhattan timestamp 1970-01-01 00:23:24 +0000. XD
+   * contwast with the dewetion wecowd fow tweet 435404491999813632 w-with manhattan t-timestamp 2014-11-09 14:24:04 +0000
    *
-   * This threshold value comes from the last time in milliseconds that was interpreted
-   * as nanoseconds, e.g. Time.fromNanoseconds(1438387200000L) == 1970-01-01 00:23:58 +0000
+   * this thweshowd vawue c-comes fwom the w-wast time in m-miwwiseconds that was intewpweted
+   * as nyanoseconds, -.- e.g. time.fwomnanoseconds(1438387200000w) == 1970-01-01 00:23:58 +0000
    */
-  private[storage] val BadTimestampThreshold = Time.at("1970-01-01 00:23:58 +0000")
+  p-pwivate[stowage] vaw badtimestampthweshowd = time.at("1970-01-01 00:23:58 +0000")
 
-  def decode(record: TweetManhattanRecord, tsType: TimestampType): Try[Long] =
-    decode(record.value, tsType)
+  def decode(wecowd: tweetmanhattanwecowd, :3 t-tstype: timestamptype): twy[wong] =
+    d-decode(wecowd.vawue, nyaa~~ t-tstype)
 
-  def decode(mhValue: TweetManhattanValue, tsType: TimestampType): Try[Long] = {
-    val value = ByteArrayCodec.fromByteBuffer(mhValue.contents)
-    if (isLegacyRecord(value)) {
-      nativeManhattanTimestamp(mhValue)
-    } else {
-      jsonTimestamp(value, tsType)
+  def d-decode(mhvawue: tweetmanhattanvawue, 😳 t-tstype: timestamptype): t-twy[wong] = {
+    v-vaw vawue = byteawwaycodec.fwombytebuffew(mhvawue.contents)
+    i-if (iswegacywecowd(vawue)) {
+      nyativemanhattantimestamp(mhvawue)
+    } ewse {
+      j-jsontimestamp(vawue, (⑅˘꒳˘) t-tstype)
     }
   }
 
-  private def isLegacyRecord(value: Array[Byte]) = Arrays.equals(value, LegacyValue)
+  p-pwivate def iswegacywecowd(vawue: a-awway[byte]) = a-awways.equaws(vawue, nyaa~~ wegacyvawue)
 
-  private def nativeManhattanTimestamp(mhValue: TweetManhattanValue): Try[Long] =
-    mhValue.timestamp match {
-      case Some(ts) => Return(correctedTimestamp(ts))
-      case None =>
-        Throw(MissingManhattanTimestamp(s"Manhattan timestamp missing in value $mhValue"))
+  pwivate def nyativemanhattantimestamp(mhvawue: t-tweetmanhattanvawue): twy[wong] =
+    mhvawue.timestamp match {
+      case some(ts) => wetuwn(cowwectedtimestamp(ts))
+      case nyone =>
+        t-thwow(missingmanhattantimestamp(s"manhattan timestamp missing in vawue $mhvawue"))
     }
 
-  private def jsonTimestamp(value: Array[Byte], tsType: TimestampType): Try[Long] =
-    Try { Json.decode(value) }
-      .rescue { case NonFatal(e) => Throw(UnparsableJson(e.getMessage, e)) }
-      .flatMap { m =>
-        m.get(tsType.keyName) match {
-          case Some(v) =>
-            v match {
-              case l: Long => Return(l)
-              case i: Integer => Return(i.toLong)
-              case _ =>
-                Throw(
-                  UnexpectedJsonValue(s"Unexpected value for ${tsType.keyName} in record data $m")
+  pwivate def j-jsontimestamp(vawue: a-awway[byte], OwO t-tstype: timestamptype): twy[wong] =
+    t-twy { json.decode(vawue) }
+      .wescue { c-case nyonfataw(e) => t-thwow(unpawsabwejson(e.getmessage, rawr x3 e)) }
+      .fwatmap { m =>
+        m.get(tstype.keyname) match {
+          case some(v) =>
+            v-v match {
+              case w: wong => wetuwn(w)
+              c-case i: integew => wetuwn(i.towong)
+              c-case _ =>
+                t-thwow(
+                  unexpectedjsonvawue(s"unexpected vawue f-fow ${tstype.keyname} i-in wecowd data $m")
                 )
             }
-          case None =>
-            Throw(MissingJsonTimestamp(s"Missing key ${tsType.keyName} in record data $m"))
+          c-case nyone =>
+            t-thwow(missingjsontimestamp(s"missing key ${tstype.keyname} in wecowd data $m"))
         }
       }
 
-  def correctedTime(t: Time): Time =
-    if (t < BadTimestampThreshold) Time.fromMilliseconds(t.inNanoseconds) else t
+  def cowwectedtime(t: t-time): t-time =
+    if (t < b-badtimestampthweshowd) time.fwommiwwiseconds(t.innanoseconds) e-ewse t
 
-  def correctedTime(t: Long): Time = correctedTime(Time.fromNanoseconds(t))
+  def c-cowwectedtime(t: wong): time = c-cowwectedtime(time.fwomnanoseconds(t))
 
-  def correctedTimestamp(t: Time): Long =
-    if (t < BadTimestampThreshold) t.inNanoseconds else t.inMilliseconds
+  def cowwectedtimestamp(t: time): wong =
+    if (t < badtimestampthweshowd) t.innanoseconds e-ewse t.inmiwwiseconds
 }

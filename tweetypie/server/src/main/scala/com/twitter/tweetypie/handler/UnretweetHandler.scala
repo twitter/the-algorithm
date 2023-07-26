@@ -1,64 +1,64 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.Future
-import com.twitter.tweetypie.core.FilteredState
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.repository.TweetRepository
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.timelineservice.{thriftscala => tls}
-import com.twitter.tweetypie.backends.TimelineService.GetPerspectives
+impowt c-com.twittew.stitch.stitch
+impowt c-com.twittew.tweetypie.futuwe
+i-impowt com.twittew.tweetypie.cowe.fiwtewedstate
+i-impowt com.twittew.tweetypie.wepositowy.tweetquewy
+i-impowt com.twittew.tweetypie.wepositowy.tweetwepositowy
+i-impowt c-com.twittew.tweetypie.thwiftscawa._
+impowt com.twittew.timewinesewvice.{thwiftscawa => tws}
+impowt com.twittew.tweetypie.backends.timewinesewvice.getpewspectives
 
-object UnretweetHandler {
+o-object unwetweethandwew {
 
-  type Type = UnretweetRequest => Future[UnretweetResult]
+  type type = unwetweetwequest => f-futuwe[unwetweetwesuwt]
 
-  def apply(
-    deleteTweets: TweetDeletePathHandler.DeleteTweets,
-    getPerspectives: GetPerspectives,
-    unretweetEdits: TweetDeletePathHandler.UnretweetEdits,
-    tweetRepo: TweetRepository.Type,
-  ): Type = { request: UnretweetRequest =>
-    val handleEdits = getSourceTweet(request.sourceTweetId, tweetRepo).liftToTry.flatMap {
-      case Return(sourceTweet) =>
-        // If we're able to fetch the source Tweet, unretweet all its other versions
-        unretweetEdits(sourceTweet.editControl, request.sourceTweetId, request.userId)
-      case Throw(_) => Future.Done
+  def appwy(
+    dewetetweets: t-tweetdewetepathhandwew.dewetetweets, -.-
+    getpewspectives: getpewspectives, 🥺
+    unwetweetedits: t-tweetdewetepathhandwew.unwetweetedits, o.O
+    tweetwepo: t-tweetwepositowy.type, /(^•ω•^)
+  ): t-type = { wequest: unwetweetwequest =>
+    vaw handweedits = getsouwcetweet(wequest.souwcetweetid, nyaa~~ tweetwepo).wifttotwy.fwatmap {
+      case wetuwn(souwcetweet) =>
+        // i-if we'we abwe to fetch the souwce tweet, nyaa~~ unwetweet aww its othew vewsions
+        u-unwetweetedits(souwcetweet.editcontwow, :3 wequest.souwcetweetid, 😳😳😳 w-wequest.usewid)
+      c-case thwow(_) => f-futuwe.done
     }
 
-    handleEdits.flatMap(_ => unretweetSourceTweet(request, deleteTweets, getPerspectives))
+    h-handweedits.fwatmap(_ => unwetweetsouwcetweet(wequest, (˘ω˘) dewetetweets, ^^ getpewspectives))
   }
 
-  def unretweetSourceTweet(
-    request: UnretweetRequest,
-    deleteTweets: TweetDeletePathHandler.DeleteTweets,
-    getPerspectives: GetPerspectives,
-  ): Future[UnretweetResult] =
-    getPerspectives(
-      Seq(tls.PerspectiveQuery(request.userId, Seq(request.sourceTweetId)))
-    ).map { results => results.head.perspectives.headOption.flatMap(_.retweetId) }
-      .flatMap {
-        case Some(id) =>
-          deleteTweets(
-            DeleteTweetsRequest(tweetIds = Seq(id), byUserId = Some(request.userId)),
-            false
-          ).map(_.head).map { deleteTweetResult =>
-            UnretweetResult(Some(deleteTweetResult.tweetId), deleteTweetResult.state)
+  d-def unwetweetsouwcetweet(
+    wequest: unwetweetwequest, :3
+    dewetetweets: t-tweetdewetepathhandwew.dewetetweets, -.-
+    getpewspectives: getpewspectives, 😳
+  ): futuwe[unwetweetwesuwt] =
+    getpewspectives(
+      seq(tws.pewspectivequewy(wequest.usewid, mya s-seq(wequest.souwcetweetid)))
+    ).map { wesuwts => w-wesuwts.head.pewspectives.headoption.fwatmap(_.wetweetid) }
+      .fwatmap {
+        c-case some(id) =>
+          d-dewetetweets(
+            dewetetweetswequest(tweetids = seq(id), (˘ω˘) byusewid = some(wequest.usewid)), >_<
+            f-fawse
+          ).map(_.head).map { d-dewetetweetwesuwt =>
+            unwetweetwesuwt(some(dewetetweetwesuwt.tweetid), -.- d-dewetetweetwesuwt.state)
           }
-        case None => Future.value(UnretweetResult(None, TweetDeleteState.Ok))
+        c-case nyone => futuwe.vawue(unwetweetwesuwt(none, 🥺 t-tweetdewetestate.ok))
       }
 
-  def getSourceTweet(
-    sourceTweetId: TweetId,
-    tweetRepo: TweetRepository.Type
-  ): Future[Tweet] = {
-    val options: TweetQuery.Options = TweetQuery
-      .Options(include = TweetQuery.Include(tweetFields = Set(Tweet.EditControlField.id)))
+  def getsouwcetweet(
+    s-souwcetweetid: tweetid, (U ﹏ U)
+    tweetwepo: tweetwepositowy.type
+  ): f-futuwe[tweet] = {
+    vaw options: t-tweetquewy.options = tweetquewy
+      .options(incwude = tweetquewy.incwude(tweetfiewds = s-set(tweet.editcontwowfiewd.id)))
 
-    Stitch.run {
-      tweetRepo(sourceTweetId, options).rescue {
-        case _: FilteredState => Stitch.NotFound
+    s-stitch.wun {
+      tweetwepo(souwcetweetid, >w< options).wescue {
+        case _: fiwtewedstate => stitch.notfound
       }
     }
   }

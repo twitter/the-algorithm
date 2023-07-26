@@ -1,10 +1,10 @@
-package com.twitter.tweetypie.thriftscala.entities
+package com.twittew.tweetypie.thwiftscawa.entities
 
-object Implicits {
-  implicit val hashtagTextEntity: HashtagTextEntity.type = HashtagTextEntity
-  implicit val cashtagTextEntity: CashtagTextEntity.type = CashtagTextEntity
-  implicit val mentionTextEntity: MentionTextEntity.type = MentionTextEntity
-  implicit val urlTextEntity: UrlTextEntity.type = UrlTextEntity
-  implicit val mediaTextEntity: MediaTextEntity.type = MediaTextEntity
-  implicit val textRangeTextEntity: TextRangeEntityAdapter.type = TextRangeEntityAdapter
+object impwicits {
+  i-impwicit v-vaw hashtagtextentity: h-hashtagtextentity.type = h-hashtagtextentity
+  i-impwicit vaw c-cashtagtextentity: c-cashtagtextentity.type = c-cashtagtextentity
+  impwicit vaw mentiontextentity: mentiontextentity.type = mentiontextentity
+  impwicit vaw uwwtextentity: u-uwwtextentity.type = uwwtextentity
+  impwicit vaw mediatextentity: m-mediatextentity.type = mediatextentity
+  i-impwicit vaw textwangetextentity: textwangeentityadaptew.type = textwangeentityadaptew
 }

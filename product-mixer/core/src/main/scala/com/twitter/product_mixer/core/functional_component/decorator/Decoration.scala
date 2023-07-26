@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.functional_component.decorator
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.presentation.UniversalPresentation
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.univewsawpwesentation
 
 /**
- * Decoration associates specific [[UniversalPresentation]] with a candidate
+ * d-decowation a-associates specific [[univewsawpwesentation]] w-with a-a candidate
  */
-case class Decoration(
-  candidate: UniversalNoun[Any],
-  presentation: UniversalPresentation)
+c-case cwass decowation(
+  c-candidate: u-univewsawnoun[any], UwU
+  pwesentation: univewsawpwesentation)

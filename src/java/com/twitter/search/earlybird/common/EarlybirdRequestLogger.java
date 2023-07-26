@@ -1,365 +1,365 @@
-package com.twitter.search.earlybird.common;
+package com.twittew.seawch.eawwybiwd.common;
 
-import java.util.EnumMap;
-import java.util.Map;
+impowt j-java.utiw.enummap;
+i-impowt java.utiw.map;
 
-import scala.Option;
+i-impowt s-scawa.option;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt c-com.googwe.common.cowwect.maps;
 
-import com.twitter.context.TwitterContext;
-import com.twitter.context.thriftscala.Viewer;
-import com.twitter.decider.Decider;
-import com.twitter.finagle.thrift.ClientId;
-import com.twitter.finagle.thrift.ClientId$;
-import com.twitter.search.TwitterContextPermit;
-import com.twitter.search.common.constants.thriftjava.ThriftQuerySource;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.logging.RPCLogger;
-import com.twitter.search.common.metrics.FailureRatioCounter;
-import com.twitter.search.common.metrics.Timer;
-import com.twitter.search.common.util.earlybird.TermStatisticsUtil;
-import com.twitter.search.common.util.earlybird.ThriftSearchResultUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldRequest;
-import com.twitter.search.earlybird.thrift.ThriftHistogramSettings;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsRequest;
+i-impowt com.twittew.context.twittewcontext;
+impowt com.twittew.context.thwiftscawa.viewew;
+impowt com.twittew.decidew.decidew;
+impowt com.twittew.finagwe.thwift.cwientid;
+i-impowt com.twittew.finagwe.thwift.cwientid$;
+impowt c-com.twittew.seawch.twittewcontextpewmit;
+impowt c-com.twittew.seawch.common.constants.thwiftjava.thwiftquewysouwce;
+impowt com.twittew.seawch.common.decidew.decidewutiw;
+impowt com.twittew.seawch.common.wogging.wpcwoggew;
+i-impowt com.twittew.seawch.common.metwics.faiwuwewatiocountew;
+i-impowt c-com.twittew.seawch.common.metwics.timew;
+impowt com.twittew.seawch.common.utiw.eawwybiwd.tewmstatisticsutiw;
+impowt com.twittew.seawch.common.utiw.eawwybiwd.thwiftseawchwesuwtutiw;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetfiewdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwifthistogwamsettings;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchquewy;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwifttewmstatisticswequest;
 
-import static com.twitter.search.common.util.earlybird.EarlybirdResponseUtil
-    .responseConsideredFailed;
+i-impowt static c-com.twittew.seawch.common.utiw.eawwybiwd.eawwybiwdwesponseutiw
+    .wesponseconsidewedfaiwed;
 
 
-public class EarlybirdRequestLogger extends RPCLogger {
-  protected enum ExtraFields {
-    QUERY_MAX_HITS_TO_PROCESS,
-    COLLECTOR_PARAMS_MAX_HITS_TO_PROCESS,
-    RELEVANCE_OPTIONS_MAX_HITS_TO_PROCESS,
-    NUM_HITS_PROCESSED,
-    QUERY_COST,
-    CPU_TOTAL,
-    QUERY_SOURCE,
-    CLIENT_ID,
-    FINAGLE_CLIENT_ID
+p-pubwic cwass eawwybiwdwequestwoggew e-extends wpcwoggew {
+  pwotected enum extwafiewds {
+    q-quewy_max_hits_to_pwocess,
+    cowwectow_pawams_max_hits_to_pwocess, σωσ
+    wewevance_options_max_hits_to_pwocess, nyaa~~
+    num_hits_pwocessed, 🥺
+    q-quewy_cost, rawr x3
+    cpu_totaw, σωσ
+    quewy_souwce,
+    cwient_id, (///ˬ///✿)
+    finagwe_cwient_id
   }
 
-  protected enum ShardOnlyExtraFields {
-    NUM_SEARCHED_SEGMENTS,
-    SCORING_TIME_NANOS
+  pwotected enum shawdonwyextwafiewds {
+    n-nyum_seawched_segments,
+    scowing_time_nanos
   }
 
-  protected enum RootOnlyExtraFields {
-    CACHING_ALLOWED,
-    DEBUG_MODE,
-    CACHE_HIT,
-    USER_AGENT,
-    // See JIRA APPSEC-2303 for IP addresses logging
+  p-pwotected enum wootonwyextwafiewds {
+    c-caching_awwowed, (U ﹏ U)
+    d-debug_mode, ^^;;
+    cache_hit, 🥺
+    usew_agent, òωó
+    // see jiwa appsec-2303 f-fow ip addwesses w-wogging
   }
 
-  private static final String LOG_FULL_REQUEST_DETAILS_ON_ERROR_DECIDER_KEY =
-      "log_full_request_details_on_error";
-  private static final String LOG_FULL_REQUEST_DETAILS_RANDOM_FRACTION_DECIDER_KEY =
-      "log_full_request_details_random_fraction";
-  private static final String LOG_FULL_SLOW_REQUEST_DETAILS_RANDOM_FRACTION_DECIDER_KEY =
-      "log_full_slow_request_details_random_fraction";
-  private static final String SLOW_REQUEST_LATENCY_THRESHOLD_MS_DECIDER_KEY =
-      "slow_request_latency_threshold_ms";
+  pwivate static f-finaw stwing w-wog_fuww_wequest_detaiws_on_ewwow_decidew_key =
+      "wog_fuww_wequest_detaiws_on_ewwow";
+  pwivate s-static finaw stwing wog_fuww_wequest_detaiws_wandom_fwaction_decidew_key =
+      "wog_fuww_wequest_detaiws_wandom_fwaction";
+  p-pwivate static finaw stwing wog_fuww_swow_wequest_detaiws_wandom_fwaction_decidew_key =
+      "wog_fuww_swow_wequest_detaiws_wandom_fwaction";
+  p-pwivate static finaw stwing s-swow_wequest_watency_thweshowd_ms_decidew_key =
+      "swow_wequest_watency_thweshowd_ms";
 
-  private final Decider decider;
-  private final boolean enableLogUnknownClientRequests;
+  pwivate finaw decidew d-decidew;
+  p-pwivate finaw boowean enabwewogunknowncwientwequests;
 
-  private static final Map<ThriftQuerySource, FailureRatioCounter>
-      FAILURE_RATIO_COUNTER_BY_QUERY_SOURCE = preBuildFailureRatioCounters();
-  private static final FailureRatioCounter NO_QUERY_SOURCE_FAILURE_RATIO_COUNTER =
-      new FailureRatioCounter("earlybird_logger", "query_source", "not_set");
+  pwivate static finaw map<thwiftquewysouwce, XD faiwuwewatiocountew>
+      faiwuwe_watio_countew_by_quewy_souwce = pwebuiwdfaiwuwewatiocountews();
+  p-pwivate s-static finaw faiwuwewatiocountew n-nyo_quewy_souwce_faiwuwe_watio_countew =
+      n-nyew faiwuwewatiocountew("eawwybiwd_woggew", "quewy_souwce", "not_set");
 
-  static EarlybirdRequestLogger buildForRoot(
-      String loggerName, int latencyWarnThreshold, Decider decider) {
+  static e-eawwybiwdwequestwoggew buiwdfowwoot(
+      stwing woggewname, :3 int watencywawnthweshowd, d-decidew decidew) {
 
-    return new EarlybirdRequestLogger(loggerName, latencyWarnThreshold,
-        decider, true, RPCLogger.Fields.values(), ExtraFields.values(),
-        RootOnlyExtraFields.values());
+    wetuwn nyew eawwybiwdwequestwoggew(woggewname, (U ﹏ U) watencywawnthweshowd, >w<
+        d-decidew, /(^•ω•^) twue, wpcwoggew.fiewds.vawues(), (⑅˘꒳˘) e-extwafiewds.vawues(), ʘwʘ
+        w-wootonwyextwafiewds.vawues());
   }
 
-  static EarlybirdRequestLogger buildForShard(
-      String loggerName, int latencyWarnThreshold, Decider decider) {
+  s-static eawwybiwdwequestwoggew buiwdfowshawd(
+      stwing woggewname, rawr x3 i-int watencywawnthweshowd, (˘ω˘) d-decidew decidew) {
 
-    return new EarlybirdRequestLogger(loggerName, latencyWarnThreshold,
-        decider, false, RPCLogger.Fields.values(), ExtraFields.values(),
-        ShardOnlyExtraFields.values());
+    w-wetuwn n-nyew eawwybiwdwequestwoggew(woggewname, o.O watencywawnthweshowd, 😳
+        decidew, o.O fawse, w-wpcwoggew.fiewds.vawues(), ^^;; e-extwafiewds.vawues(), ( ͡o ω ͡o )
+        shawdonwyextwafiewds.vawues());
   }
 
-  @VisibleForTesting
-  EarlybirdRequestLogger(String loggerName, int latencyWarnThreshold, Decider decider) {
-    this(loggerName, latencyWarnThreshold, decider, false, RPCLogger.Fields.values(),
-        ExtraFields.values(), RootOnlyExtraFields.values(), ShardOnlyExtraFields.values());
+  @visibwefowtesting
+  e-eawwybiwdwequestwoggew(stwing w-woggewname, ^^;; i-int watencywawnthweshowd, ^^;; decidew decidew) {
+    this(woggewname, XD watencywawnthweshowd, 🥺 d-decidew, (///ˬ///✿) fawse, wpcwoggew.fiewds.vawues(), (U ᵕ U❁)
+        extwafiewds.vawues(), ^^;; wootonwyextwafiewds.vawues(), ^^;; shawdonwyextwafiewds.vawues());
   }
 
-  private EarlybirdRequestLogger(String loggerName, int latencyWarnThreshold, Decider decider,
-                                 boolean enableLogUnknownClientRequests, Enum[]... fieldEnums) {
-    super(loggerName, fieldEnums);
-    this.decider = decider;
-    this.enableLogUnknownClientRequests = enableLogUnknownClientRequests;
-    setLatencyWarnThreshold(latencyWarnThreshold);
+  pwivate e-eawwybiwdwequestwoggew(stwing woggewname, rawr int watencywawnthweshowd, (˘ω˘) decidew decidew, 🥺
+                                 b-boowean e-enabwewogunknowncwientwequests, nyaa~~ e-enum[]... fiewdenums) {
+    supew(woggewname, :3 fiewdenums);
+    t-this.decidew = decidew;
+    this.enabwewogunknowncwientwequests = e-enabwewogunknowncwientwequests;
+    s-setwatencywawnthweshowd(watencywawnthweshowd);
   }
 
   /**
-   * Logs the given earlybird request and response.
+   * wogs the given eawwybiwd wequest and wesponse. /(^•ω•^)
    *
-   * @param request The earlybird request.
-   * @param response The earlybird response.
-   * @param timer The time it took to process this request.
+   * @pawam wequest the eawwybiwd wequest. ^•ﻌ•^
+   * @pawam w-wesponse the eawwybiwd wesponse. UwU
+   * @pawam t-timew the time it took t-to pwocess this w-wequest. 😳😳😳
    */
-  public void logRequest(EarlybirdRequest request, EarlybirdResponse response, Timer timer) {
-    try {
-      LogEntry entry = newLogEntry();
+  pubwic void wogwequest(eawwybiwdwequest w-wequest, OwO e-eawwybiwdwesponse wesponse, ^•ﻌ•^ t-timew timew) {
+    t-twy {
+      wogentwy entwy = nyewwogentwy();
 
-      setRequestLogEntries(entry, request);
-      setResponseLogEntries(entry, response);
-      if (timer != null) {
-        entry.setField(ExtraFields.CPU_TOTAL, Long.toString(timer.getElapsedCpuTotal()));
+      setwequestwogentwies(entwy, (ꈍᴗꈍ) wequest);
+      s-setwesponsewogentwies(entwy, (⑅˘꒳˘) w-wesponse);
+      i-if (timew != nyuww) {
+        e-entwy.setfiewd(extwafiewds.cpu_totaw, (⑅˘꒳˘) w-wong.tostwing(timew.getewapsedcputotaw()));
       }
 
-      boolean wasError = response != null && responseConsideredFailed(response.getResponseCode());
+      boowean wasewwow = w-wesponse != nyuww && wesponseconsidewedfaiwed(wesponse.getwesponsecode());
 
-      long responseTime = response != null ? response.getResponseTime() : 0L;
+      wong wesponsetime = wesponse != nuww ? wesponse.getwesponsetime() : 0w;
 
-      String logLine = writeLogLine(entry, responseTime, wasError);
+      s-stwing wogwine = w-wwitewogwine(entwy, (ˆ ﻌ ˆ)♡ wesponsetime, /(^•ω•^) wasewwow);
 
-      // This code path is called for pre/post logging
-      // Prevent same request showing up twice by only logging on post logging
-      if (response != null && DeciderUtil.isAvailableForRandomRecipient(
-          decider, LOG_FULL_REQUEST_DETAILS_RANDOM_FRACTION_DECIDER_KEY)) {
-        Base64RequestResponseForLogging.randomRequest(logLine, request, response).log();
+      // t-this c-code path is cawwed fow pwe/post wogging
+      // pwevent same w-wequest showing up twice by onwy wogging on post wogging
+      if (wesponse != n-nyuww && decidewutiw.isavaiwabwefowwandomwecipient(
+          decidew, òωó wog_fuww_wequest_detaiws_wandom_fwaction_decidew_key)) {
+        base64wequestwesponsefowwogging.wandomwequest(wogwine, (⑅˘꒳˘) w-wequest, (U ᵕ U❁) wesponse).wog();
       }
 
-      // Unknown client request logging only applies to pre-logging.
-      if (enableLogUnknownClientRequests && response == null) {
-        UnknownClientRequestForLogging unknownClientRequestLogger =
-            UnknownClientRequestForLogging.unknownClientRequest(logLine, request);
-        if (unknownClientRequestLogger != null) {
-          unknownClientRequestLogger.log();
+      // u-unknown cwient wequest wogging onwy appwies to pwe-wogging. >w<
+      i-if (enabwewogunknowncwientwequests && w-wesponse == nyuww) {
+        unknowncwientwequestfowwogging unknowncwientwequestwoggew =
+            u-unknowncwientwequestfowwogging.unknowncwientwequest(wogwine, σωσ wequest);
+        i-if (unknowncwientwequestwoggew != nyuww) {
+          unknowncwientwequestwoggew.wog();
         }
       }
 
-      if (wasError
-          && DeciderUtil.isAvailableForRandomRecipient(
-          decider, LOG_FULL_REQUEST_DETAILS_ON_ERROR_DECIDER_KEY)) {
-        new RequestResponseForLogging(request, response).logFailedRequest();
-        Base64RequestResponseForLogging.failedRequest(logLine, request, response).log();
+      if (wasewwow
+          && d-decidewutiw.isavaiwabwefowwandomwecipient(
+          decidew, -.- w-wog_fuww_wequest_detaiws_on_ewwow_decidew_key)) {
+        n-new wequestwesponsefowwogging(wequest, o.O wesponse).wogfaiwedwequest();
+        b-base64wequestwesponsefowwogging.faiwedwequest(wogwine, ^^ wequest, >_< w-wesponse).wog();
       }
 
-      boolean wasSlow = response != null
-          && responseTime >= DeciderUtil.getAvailability(
-              decider, SLOW_REQUEST_LATENCY_THRESHOLD_MS_DECIDER_KEY);
-      if (wasSlow
-          && DeciderUtil.isAvailableForRandomRecipient(
-              decider, LOG_FULL_SLOW_REQUEST_DETAILS_RANDOM_FRACTION_DECIDER_KEY)) {
-        Base64RequestResponseForLogging.slowRequest(logLine, request, response).log();
+      b-boowean wasswow = w-wesponse != nyuww
+          && w-wesponsetime >= d-decidewutiw.getavaiwabiwity(
+              decidew, swow_wequest_watency_thweshowd_ms_decidew_key);
+      if (wasswow
+          && d-decidewutiw.isavaiwabwefowwandomwecipient(
+              d-decidew, >w< wog_fuww_swow_wequest_detaiws_wandom_fwaction_decidew_key)) {
+        b-base64wequestwesponsefowwogging.swowwequest(wogwine, >_< wequest, wesponse).wog();
       }
 
-      FailureRatioCounter failureRatioCounter =
-          FAILURE_RATIO_COUNTER_BY_QUERY_SOURCE.get(request.getQuerySource());
-      if (failureRatioCounter != null) {
-        failureRatioCounter.requestFinished(!wasError);
-      } else {
-        NO_QUERY_SOURCE_FAILURE_RATIO_COUNTER.requestFinished(!wasError);
+      f-faiwuwewatiocountew faiwuwewatiocountew =
+          f-faiwuwe_watio_countew_by_quewy_souwce.get(wequest.getquewysouwce());
+      i-if (faiwuwewatiocountew != nuww) {
+        faiwuwewatiocountew.wequestfinished(!wasewwow);
+      } ewse {
+        n-nyo_quewy_souwce_faiwuwe_watio_countew.wequestfinished(!wasewwow);
       }
 
-    } catch (Exception e) {
-      LOG.error("Exception building log entry ", e);
+    } c-catch (exception e-e) {
+      w-wog.ewwow("exception buiwding wog e-entwy ", >w< e);
     }
   }
 
-  private void setRequestLogEntries(LogEntry entry, EarlybirdRequest request) {
-    entry.setField(Fields.CLIENT_HOST, request.getClientHost());
-    entry.setField(Fields.CLIENT_REQUEST_ID, request.getClientRequestID());
-    entry.setField(Fields.REQUEST_TYPE, requestTypeForLog(request));
+  pwivate void setwequestwogentwies(wogentwy entwy, rawr eawwybiwdwequest wequest) {
+    entwy.setfiewd(fiewds.cwient_host, rawr x3 wequest.getcwienthost());
+    entwy.setfiewd(fiewds.cwient_wequest_id, ( ͡o ω ͡o ) w-wequest.getcwientwequestid());
+    entwy.setfiewd(fiewds.wequest_type, (˘ω˘) wequesttypefowwog(wequest));
 
-    if (request.isSetSearchQuery()) {
-      ThriftSearchQuery searchQuery = request.getSearchQuery();
-      entry.setField(Fields.QUERY, searchQuery.getSerializedQuery());
+    i-if (wequest.issetseawchquewy()) {
+      thwiftseawchquewy s-seawchquewy = wequest.getseawchquewy();
+      e-entwy.setfiewd(fiewds.quewy, 😳 seawchquewy.getsewiawizedquewy());
 
-      if (searchQuery.isSetMaxHitsToProcess()) {
-        entry.setField(ExtraFields.QUERY_MAX_HITS_TO_PROCESS,
-                       Integer.toString(searchQuery.getMaxHitsToProcess()));
+      i-if (seawchquewy.issetmaxhitstopwocess()) {
+        e-entwy.setfiewd(extwafiewds.quewy_max_hits_to_pwocess, OwO
+                       i-integew.tostwing(seawchquewy.getmaxhitstopwocess()));
       }
 
-      if (searchQuery.isSetCollectorParams()
-          && searchQuery.getCollectorParams().isSetTerminationParams()
-          && searchQuery.getCollectorParams().getTerminationParams().isSetMaxHitsToProcess()) {
-        entry.setField(ExtraFields.COLLECTOR_PARAMS_MAX_HITS_TO_PROCESS,
-                       Integer.toString(searchQuery.getCollectorParams().getTerminationParams()
-                                        .getMaxHitsToProcess()));
+      i-if (seawchquewy.issetcowwectowpawams()
+          && s-seawchquewy.getcowwectowpawams().issettewminationpawams()
+          && seawchquewy.getcowwectowpawams().gettewminationpawams().issetmaxhitstopwocess()) {
+        entwy.setfiewd(extwafiewds.cowwectow_pawams_max_hits_to_pwocess, (˘ω˘)
+                       integew.tostwing(seawchquewy.getcowwectowpawams().gettewminationpawams()
+                                        .getmaxhitstopwocess()));
       }
 
-      if (searchQuery.isSetRelevanceOptions()
-          && searchQuery.getRelevanceOptions().isSetMaxHitsToProcess()) {
-        entry.setField(ExtraFields.RELEVANCE_OPTIONS_MAX_HITS_TO_PROCESS,
-                       Integer.toString(searchQuery.getRelevanceOptions().getMaxHitsToProcess()));
+      if (seawchquewy.issetwewevanceoptions()
+          && seawchquewy.getwewevanceoptions().issetmaxhitstopwocess()) {
+        entwy.setfiewd(extwafiewds.wewevance_options_max_hits_to_pwocess, òωó
+                       i-integew.tostwing(seawchquewy.getwewevanceoptions().getmaxhitstopwocess()));
       }
     }
 
-    entry.setField(Fields.NUM_REQUESTED, Integer.toString(numRequestedForLog(request)));
+    entwy.setfiewd(fiewds.num_wequested, ( ͡o ω ͡o ) i-integew.tostwing(numwequestedfowwog(wequest)));
 
-    if (request.isSetQuerySource()) {
-      entry.setField(ExtraFields.QUERY_SOURCE, request.getQuerySource().name());
+    i-if (wequest.issetquewysouwce()) {
+      entwy.setfiewd(extwafiewds.quewy_souwce, UwU w-wequest.getquewysouwce().name());
     }
 
-    if (request.isSetClientId()) {
-      entry.setField(ExtraFields.CLIENT_ID, request.getClientId());
+    if (wequest.issetcwientid()) {
+      entwy.setfiewd(extwafiewds.cwient_id, /(^•ω•^) wequest.getcwientid());
     }
 
-    entry.setField(RootOnlyExtraFields.CACHING_ALLOWED,
-                   Boolean.toString(EarlybirdRequestUtil.isCachingAllowed(request)));
+    e-entwy.setfiewd(wootonwyextwafiewds.caching_awwowed, (ꈍᴗꈍ)
+                   b-boowean.tostwing(eawwybiwdwequestutiw.iscachingawwowed(wequest)));
 
-    entry.setField(RootOnlyExtraFields.DEBUG_MODE, Byte.toString(request.getDebugMode()));
+    entwy.setfiewd(wootonwyextwafiewds.debug_mode, 😳 b-byte.tostwing(wequest.getdebugmode()));
 
-    Option<ClientId> clientIdOption = ClientId$.MODULE$.current();
-    if (clientIdOption.isDefined()) {
-      entry.setField(ExtraFields.FINAGLE_CLIENT_ID, clientIdOption.get().name());
+    option<cwientid> cwientidoption = c-cwientid$.moduwe$.cuwwent();
+    i-if (cwientidoption.isdefined()) {
+      entwy.setfiewd(extwafiewds.finagwe_cwient_id, mya c-cwientidoption.get().name());
     }
 
-    setLogEntriesFromTwitterContext(entry);
+    s-setwogentwiesfwomtwittewcontext(entwy);
   }
 
-  @VisibleForTesting
-  Option<Viewer> getTwitterContext() {
-    return TwitterContext.acquire(TwitterContextPermit.get()).apply();
+  @visibwefowtesting
+  option<viewew> gettwittewcontext() {
+    wetuwn twittewcontext.acquiwe(twittewcontextpewmit.get()).appwy();
   }
 
-  private void setLogEntriesFromTwitterContext(LogEntry entry) {
-    Option<Viewer> viewerOption = getTwitterContext();
-    if (viewerOption.nonEmpty()) {
-      Viewer viewer = viewerOption.get();
+  pwivate v-void setwogentwiesfwomtwittewcontext(wogentwy entwy) {
+    o-option<viewew> v-viewewoption = g-gettwittewcontext();
+    i-if (viewewoption.nonempty()) {
+      viewew viewew = v-viewewoption.get();
 
-      if (viewer.userAgent().nonEmpty()) {
-        String userAgent = viewer.userAgent().get();
+      i-if (viewew.usewagent().nonempty()) {
+        stwing usewagent = v-viewew.usewagent().get();
 
-        // we only replace the comma in the user-agent with %2C to make it easily parseable,
-        // specially with command line tools like cut/sed/awk
-        userAgent = userAgent.replace(",", "%2C");
+        // w-we onwy wepwace the comma i-in the usew-agent with %2c to make it easiwy p-pawseabwe, mya
+        // speciawwy w-with command wine t-toows wike cut/sed/awk
+        usewagent = usewagent.wepwace(",", "%2c");
 
-        entry.setField(RootOnlyExtraFields.USER_AGENT, userAgent);
+        e-entwy.setfiewd(wootonwyextwafiewds.usew_agent, /(^•ω•^) usewagent);
       }
     }
   }
 
-  private void setResponseLogEntries(LogEntry entry, EarlybirdResponse response) {
-    if (response != null) {
-      entry.setField(Fields.NUM_RETURNED, Integer.toString(numResultsForLog(response)));
-      entry.setField(Fields.RESPONSE_CODE, String.valueOf(response.getResponseCode()));
-      entry.setField(Fields.RESPONSE_TIME_MICROS, Long.toString(response.getResponseTimeMicros()));
-      if (response.isSetSearchResults()) {
-        entry.setField(ExtraFields.NUM_HITS_PROCESSED,
-            Integer.toString(response.getSearchResults().getNumHitsProcessed()));
-        entry.setField(ExtraFields.QUERY_COST,
-            Double.toString(response.getSearchResults().getQueryCost()));
-        if (response.getSearchResults().isSetScoringTimeNanos()) {
-          entry.setField(ShardOnlyExtraFields.SCORING_TIME_NANOS,
-              Long.toString(response.getSearchResults().getScoringTimeNanos()));
+  pwivate void s-setwesponsewogentwies(wogentwy e-entwy, ^^;; eawwybiwdwesponse w-wesponse) {
+    if (wesponse != nyuww) {
+      entwy.setfiewd(fiewds.num_wetuwned, 🥺 i-integew.tostwing(numwesuwtsfowwog(wesponse)));
+      entwy.setfiewd(fiewds.wesponse_code, ^^ stwing.vawueof(wesponse.getwesponsecode()));
+      e-entwy.setfiewd(fiewds.wesponse_time_micwos, ^•ﻌ•^ w-wong.tostwing(wesponse.getwesponsetimemicwos()));
+      if (wesponse.issetseawchwesuwts()) {
+        e-entwy.setfiewd(extwafiewds.num_hits_pwocessed, /(^•ω•^)
+            integew.tostwing(wesponse.getseawchwesuwts().getnumhitspwocessed()));
+        e-entwy.setfiewd(extwafiewds.quewy_cost, ^^
+            d-doubwe.tostwing(wesponse.getseawchwesuwts().getquewycost()));
+        if (wesponse.getseawchwesuwts().issetscowingtimenanos()) {
+          entwy.setfiewd(shawdonwyextwafiewds.scowing_time_nanos, 🥺
+              w-wong.tostwing(wesponse.getseawchwesuwts().getscowingtimenanos()));
         }
       }
-      if (response.isSetCacheHit()) {
-        entry.setField(RootOnlyExtraFields.CACHE_HIT, String.valueOf(response.isCacheHit()));
+      if (wesponse.issetcachehit()) {
+        entwy.setfiewd(wootonwyextwafiewds.cache_hit, (U ᵕ U❁) s-stwing.vawueof(wesponse.iscachehit()));
       }
-      if (response.isSetNumSearchedSegments()) {
-        entry.setField(ShardOnlyExtraFields.NUM_SEARCHED_SEGMENTS,
-            Integer.toString(response.getNumSearchedSegments()));
+      if (wesponse.issetnumseawchedsegments()) {
+        e-entwy.setfiewd(shawdonwyextwafiewds.num_seawched_segments, 😳😳😳
+            integew.tostwing(wesponse.getnumseawchedsegments()));
       }
     }
   }
 
-  private static int numRequestedForLog(EarlybirdRequest request) {
-    int num = 0;
-    if (request.isSetFacetRequest() && request.getFacetRequest().isSetFacetFields()) {
-      for (ThriftFacetFieldRequest field : request.getFacetRequest().getFacetFields()) {
-        num += field.getNumResults();
+  p-pwivate static int nyumwequestedfowwog(eawwybiwdwequest w-wequest) {
+    i-int nyum = 0;
+    i-if (wequest.issetfacetwequest() && wequest.getfacetwequest().issetfacetfiewds()) {
+      fow (thwiftfacetfiewdwequest fiewd : wequest.getfacetwequest().getfacetfiewds()) {
+        nyum += fiewd.getnumwesuwts();
       }
-    } else if (request.isSetTermStatisticsRequest()) {
-      num = request.getTermStatisticsRequest().getTermRequestsSize();
-    } else if (request.isSetSearchQuery()) {
-      num =  request.getSearchQuery().isSetCollectorParams()
-          ? request.getSearchQuery().getCollectorParams().getNumResultsToReturn() : 0;
-      if (request.getSearchQuery().getSearchStatusIdsSize() > 0) {
-        num = Math.max(num, request.getSearchQuery().getSearchStatusIdsSize());
+    } ewse if (wequest.issettewmstatisticswequest()) {
+      nyum = wequest.gettewmstatisticswequest().gettewmwequestssize();
+    } ewse if (wequest.issetseawchquewy()) {
+      nyum =  wequest.getseawchquewy().issetcowwectowpawams()
+          ? wequest.getseawchquewy().getcowwectowpawams().getnumwesuwtstowetuwn() : 0;
+      i-if (wequest.getseawchquewy().getseawchstatusidssize() > 0) {
+        n-nyum = math.max(num, nyaa~~ wequest.getseawchquewy().getseawchstatusidssize());
       }
     }
-    return num;
+    wetuwn n-nyum;
   }
 
   /**
-   * Returns the number of results in the given response. If the response is a term stats response,
-   * then the returned value will be the number of term results. If the response is a facet
-   * response, then the returned value will be the number of facet results. Otherwise, the returned
-   * value will be the number of search results.
+   * w-wetuwns t-the nyumbew of wesuwts in the g-given wesponse. (˘ω˘) if the wesponse i-is a tewm stats w-wesponse, >_<
+   * then the wetuwned v-vawue wiww be the nyumbew of tewm w-wesuwts. XD if t-the wesponse is a facet
+   * wesponse, rawr x3 then the w-wetuwned vawue wiww b-be the nyumbew o-of facet wesuwts. ( ͡o ω ͡o ) o-othewwise, :3 t-the wetuwned
+   * v-vawue wiww be t-the nyumbew of seawch w-wesuwts. mya
    */
-  public static int numResultsForLog(EarlybirdResponse response) {
-    if (response == null) {
-      return 0;
-    } else if (response.isSetFacetResults()) {
-      return ThriftSearchResultUtil.numFacetResults(response.getFacetResults());
-    } else if (response.isSetTermStatisticsResults()) {
-      return response.getTermStatisticsResults().getTermResultsSize();
-    } else {
-      return ThriftSearchResultUtil.numResults(response.getSearchResults());
+  p-pubwic static int nyumwesuwtsfowwog(eawwybiwdwesponse w-wesponse) {
+    i-if (wesponse == n-nyuww) {
+      wetuwn 0;
+    } e-ewse if (wesponse.issetfacetwesuwts()) {
+      wetuwn t-thwiftseawchwesuwtutiw.numfacetwesuwts(wesponse.getfacetwesuwts());
+    } ewse i-if (wesponse.issettewmstatisticswesuwts()) {
+      w-wetuwn wesponse.gettewmstatisticswesuwts().gettewmwesuwtssize();
+    } e-ewse {
+      wetuwn thwiftseawchwesuwtutiw.numwesuwts(wesponse.getseawchwesuwts());
     }
   }
 
-  private static String requestTypeForLog(EarlybirdRequest request) {
-    StringBuilder requestType = new StringBuilder(64);
-    if (request.isSetFacetRequest()) {
-      requestType.append("FACETS");
-      int numFields = request.getFacetRequest().getFacetFieldsSize();
-      if (numFields > 0) {
-        // For 1 or 2 fields, just put them in the request type.  For more, just log the number.
-        if (numFields <= 2) {
-          for (ThriftFacetFieldRequest field : request.getFacetRequest().getFacetFields()) {
-            requestType.append(":").append(field.getFieldName().toUpperCase());
+  p-pwivate static stwing w-wequesttypefowwog(eawwybiwdwequest wequest) {
+    s-stwingbuiwdew wequesttype = n-nyew stwingbuiwdew(64);
+    if (wequest.issetfacetwequest()) {
+      wequesttype.append("facets");
+      int nyumfiewds = wequest.getfacetwequest().getfacetfiewdssize();
+      i-if (numfiewds > 0) {
+        // fow 1 ow 2 fiewds, σωσ j-just put them i-in the wequest type. (ꈍᴗꈍ)  fow mowe, OwO just wog the nyumbew. o.O
+        if (numfiewds <= 2) {
+          fow (thwiftfacetfiewdwequest fiewd : w-wequest.getfacetwequest().getfacetfiewds()) {
+            wequesttype.append(":").append(fiewd.getfiewdname().touppewcase());
           }
-        } else {
-          requestType.append(":MULTI-").append(numFields);
+        } e-ewse {
+          w-wequesttype.append(":muwti-").append(numfiewds);
         }
       }
-    } else if (request.isSetTermStatisticsRequest()) {
-      ThriftTermStatisticsRequest termStatsRequest = request.getTermStatisticsRequest();
-      requestType.append("TERMSTATS-")
-          .append(termStatsRequest.getTermRequestsSize());
+    } e-ewse if (wequest.issettewmstatisticswequest()) {
+      thwifttewmstatisticswequest tewmstatswequest = w-wequest.gettewmstatisticswequest();
+      w-wequesttype.append("tewmstats-")
+          .append(tewmstatswequest.gettewmwequestssize());
 
-      ThriftHistogramSettings histoSettings = termStatsRequest.getHistogramSettings();
-      if (histoSettings != null) {
-        String binSizeVal = String.valueOf(TermStatisticsUtil.determineBinSize(histoSettings));
-        String numBinsVal = String.valueOf(histoSettings.getNumBins());
-        requestType.append(":NUMBINS-").append(numBinsVal).append(":BINSIZE-").append(binSizeVal);
+      thwifthistogwamsettings h-histosettings = tewmstatswequest.gethistogwamsettings();
+      if (histosettings != n-nyuww) {
+        stwing binsizevaw = s-stwing.vawueof(tewmstatisticsutiw.detewminebinsize(histosettings));
+        s-stwing nyumbinsvaw = s-stwing.vawueof(histosettings.getnumbins());
+        wequesttype.append(":numbins-").append(numbinsvaw).append(":binsize-").append(binsizevaw);
       }
-    } else if (request.isSetSearchQuery()) {
-      requestType.append("SEARCH:");
-      requestType.append(request.getSearchQuery().getRankingMode().name());
-      // Denote when a from user id is present.
-      if (request.getSearchQuery().isSetFromUserIDFilter64()) {
-        requestType.append(":NETWORK-")
-            .append(request.getSearchQuery().getFromUserIDFilter64Size());
+    } e-ewse if (wequest.issetseawchquewy()) {
+      w-wequesttype.append("seawch:");
+      w-wequesttype.append(wequest.getseawchquewy().getwankingmode().name());
+      // d-denote when a fwom usew id i-is pwesent.
+      i-if (wequest.getseawchquewy().issetfwomusewidfiwtew64()) {
+        w-wequesttype.append(":netwowk-")
+            .append(wequest.getseawchquewy().getfwomusewidfiwtew64size());
       }
-      // Denote when required status ids are present.
-      if (request.getSearchQuery().getSearchStatusIdsSize() > 0) {
-        requestType.append(":IDS-").append(request.getSearchQuery().getSearchStatusIdsSize());
+      // d-denote when wequiwed s-status ids a-awe pwesent. 😳😳😳
+      i-if (wequest.getseawchquewy().getseawchstatusidssize() > 0) {
+        w-wequesttype.append(":ids-").append(wequest.getseawchquewy().getseawchstatusidssize());
       }
     }
-    return requestType.toString();
+    wetuwn wequesttype.tostwing();
   }
 
-  private static Map<ThriftQuerySource, FailureRatioCounter> preBuildFailureRatioCounters() {
-    Map<ThriftQuerySource, FailureRatioCounter> counterByQuerySource =
-        new EnumMap<>(ThriftQuerySource.class);
+  p-pwivate static map<thwiftquewysouwce, /(^•ω•^) f-faiwuwewatiocountew> pwebuiwdfaiwuwewatiocountews() {
+    m-map<thwiftquewysouwce, OwO f-faiwuwewatiocountew> c-countewbyquewysouwce =
+        nyew enummap<>(thwiftquewysouwce.cwass);
 
-    for (ThriftQuerySource thriftQuerySource : ThriftQuerySource.values()) {
-      FailureRatioCounter counter = new FailureRatioCounter("earlybird_logger", "query_source",
-          thriftQuerySource.toString());
-      counterByQuerySource.put(thriftQuerySource, counter);
+    fow (thwiftquewysouwce thwiftquewysouwce : t-thwiftquewysouwce.vawues()) {
+      faiwuwewatiocountew c-countew = nyew f-faiwuwewatiocountew("eawwybiwd_woggew", ^^ "quewy_souwce", (///ˬ///✿)
+          thwiftquewysouwce.tostwing());
+      countewbyquewysouwce.put(thwiftquewysouwce, (///ˬ///✿) countew);
     }
 
-    return Maps.immutableEnumMap(counterByQuerySource);
+    w-wetuwn m-maps.immutabweenummap(countewbyquewysouwce);
   }
 }

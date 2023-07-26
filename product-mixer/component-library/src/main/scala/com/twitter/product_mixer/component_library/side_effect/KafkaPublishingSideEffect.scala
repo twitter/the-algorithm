@@ -1,232 +1,232 @@
-package com.twitter.product_mixer.component_library.side_effect
+package com.twittew.pwoduct_mixew.component_wibwawy.side_effect
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.StorageUnitOps._
-import com.twitter.finatra.kafka.producers.FinagleKafkaProducerBuilder
-import com.twitter.finatra.kafka.producers.KafkaProducerBase
-import com.twitter.finatra.kafka.producers.TwitterKafkaProducerConfig
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.util.Duration
-import com.twitter.util.StorageUnit
-import org.apache.kafka.clients.producer.ProducerRecord
-import org.apache.kafka.common.serialization.Serializer
-import org.apache.kafka.common.record.CompressionType
+impowt com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.convewsions.stowageunitops._
+i-impowt c-com.twittew.finatwa.kafka.pwoducews.finagwekafkapwoducewbuiwdew
+i-impowt com.twittew.finatwa.kafka.pwoducews.kafkapwoducewbase
+i-impowt com.twittew.finatwa.kafka.pwoducews.twittewkafkapwoducewconfig
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.side_effect.pipewinewesuwtsideeffect
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.hasmawshawwing
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.utiw.duwation
+impowt com.twittew.utiw.stowageunit
+impowt owg.apache.kafka.cwients.pwoducew.pwoducewwecowd
+i-impowt owg.apache.kafka.common.sewiawization.sewiawizew
+i-impowt owg.apache.kafka.common.wecowd.compwessiontype
 
 /**
- * The Kafka publishing side effect.
- * This class creates a Kafka producer with provided and default parameters.
- * Note that callers may not provide arbitrary params as this class will do validity check on some
- * params, e.g. maxBlock, to make sure it is safe for online services.
+ * the kafka pubwishing side effect. >_<
+ * this cwass c-cweates a kafka pwoducew with p-pwovided and defauwt p-pawametews. >w<
+ * nyote that cawwews may nyot pwovide awbitwawy pawams as this c-cwass wiww do vawidity check on some
+ * pawams, >_< e.g. maxbwock, to make suwe it i-is safe fow onwine sewvices. >w<
  *
- * PLEASE NOTE: caller needs to add the following to the Aurora file to successfully enable the TLS
- * '-com.twitter.finatra.kafka.producers.principal={{role}}',
+ * p-pwease nyote: c-cawwew nyeeds t-to add the fowwowing t-to the auwowa fiwe to successfuwwy enabwe t-the tws
+ * '-com.twittew.finatwa.kafka.pwoducews.pwincipaw={{wowe}}',
  *
- * @tparam K type of the key
- * @tparam V type of the value
- * @tparam Query pipeline query
+ * @tpawam k type of the key
+ * @tpawam v-v type of the vawue
+ * @tpawam quewy pipewine quewy
  */
-trait KafkaPublishingSideEffect[K, V, Query <: PipelineQuery, ResponseType <: HasMarshalling]
-    extends PipelineResultSideEffect[Query, ResponseType] {
+twait kafkapubwishingsideeffect[k, rawr v, quewy <: pipewinequewy, rawr x3 wesponsetype <: h-hasmawshawwing]
+    extends p-pipewinewesuwtsideeffect[quewy, ( ͡o ω ͡o ) w-wesponsetype] {
 
   /**
-   * Kafka servers list. It is usually a WilyNs name at Twitter
+   * kafka s-sewvews wist. (˘ω˘) it is usuawwy a wiwyns nyame at twittew
    */
-  val bootstrapServer: String
+  v-vaw bootstwapsewvew: s-stwing
 
   /**
-   * The serde of the key
+   * the sewde o-of the key
    */
-  val keySerde: Serializer[K]
+  v-vaw keysewde: sewiawizew[k]
 
   /**
-   * The serde of the value
+   * t-the sewde of the vawue
    */
-  val valueSerde: Serializer[V]
+  vaw v-vawuesewde: sewiawizew[v]
 
   /**
-   * An id string to pass to the server when making requests.
-   * The purpose of this is to be able to track the source of requests beyond just ip/port by
-   * allowing a logical application name to be included in server-side request logging.
+   * an id stwing to pass to t-the sewvew when making wequests. 😳
+   * t-the puwpose of this is to b-be abwe to twack t-the souwce of wequests beyond just ip/powt by
+   * awwowing a wogicaw appwication name to be incwuded in sewvew-side w-wequest wogging. OwO
    */
-  val clientId: String
+  v-vaw cwientid: stwing
 
   /**
-   * The configuration controls how long <code>KafkaProducer.send()</code> and
-   * <code>KafkaProducer.partitionsFor()</code> will block.
-   * These methods can be blocked either because the buffer is full or metadata unavailable.
-   * Blocking in the user-supplied serializers or partitioner will not be counted against this timeout.
+   * the configuwation c-contwows how w-wong <code>kafkapwoducew.send()</code> a-and
+   * <code>kafkapwoducew.pawtitionsfow()</code> wiww bwock. (˘ω˘)
+   * these methods can be b-bwocked eithew because the buffew is fuww ow metadata unavaiwabwe. òωó
+   * bwocking i-in the usew-suppwied sewiawizews o-ow pawtitionew w-wiww nyot be counted a-against this timeout. ( ͡o ω ͡o )
    *
-   * Set 200ms by default to not blocking the thread too long which is critical to most ProMixer
-   * powered services. Please note that there is a hard limit check of not greater than 1 second.
+   * s-set 200ms b-by defauwt to nyot b-bwocking the t-thwead too wong which is cwiticaw to most pwomixew
+   * p-powewed s-sewvices. UwU pwease n-nyote that thewe i-is a hawd wimit c-check of nyot gweatew than 1 second. /(^•ω•^)
    *
    */
-  val maxBlock: Duration = 200.milliseconds
+  vaw maxbwock: d-duwation = 200.miwwiseconds
 
   /**
-   * Retries due to broker failures, etc., may write duplicates of the retried message in the
-   * stream. Note that enabling idempotence requires
-   * <code> MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION </code> to be less than or equal to 5,
-   * <code> RETRIES_CONFIG </code> to be greater than 0 and <code> ACKS_CONFIG </code>
-   * must be 'all'. If these values are not explicitly set by the user, suitable values will be
-   * chosen. If incompatible values are set, a <code>ConfigException</code> will be thrown.
+   * wetwies due to bwokew faiwuwes, (ꈍᴗꈍ) etc., 😳 may wwite dupwicates of the wetwied m-message in the
+   * stweam. mya nyote that enabwing idempotence w-wequiwes
+   * <code> m-max_in_fwight_wequests_pew_connection </code> t-to be wess than ow equaw to 5, mya
+   * <code> wetwies_config </code> t-to be gweatew than 0 and <code> a-acks_config </code>
+   * must b-be 'aww'. /(^•ω•^) if these vawues awe nyot expwicitwy set by the usew, ^^;; suitabwe vawues wiww be
+   * c-chosen. 🥺 if incompatibwe vawues awe s-set, ^^ a <code>configexception</code> wiww be thwown. ^•ﻌ•^
    *
-   * false by default, setting to true may introduce issues to brokers since brokers will keep
-   * tracking all requests which is resource expensive.
+   * f-fawse by defauwt, /(^•ω•^) s-setting to twue may intwoduce issues to bwokews s-since bwokews w-wiww keep
+   * twacking aww wequests w-which is wesouwce e-expensive. ^^
    */
-  val idempotence: Boolean = false
+  vaw idempotence: boowean = fawse
 
   /**
-   * The producer will attempt to batch records together into fewer requests whenever multiple
-   * records are being sent to the same partition. This helps performance on both the client and
-   * the server. This configuration controls the default batch size in bytes.
-   * No attempt will be made to batch records larger than this size.
-   * Requests sent to brokers will contain multiple batches, one for each partition with data
-   * available to be sent. A small batch size will make batching less common and may reduce
-   * throughput (a batch size of zero will disable batching entirely).
-   * A very large batch size may use memory a bit more wastefully as we will always allocate a
-   * buffer of the specified batch size in anticipation of additional records.
+   * the pwoducew w-wiww attempt t-to batch wecowds t-togethew into fewew wequests w-whenevew muwtipwe
+   * w-wecowds awe being sent to t-the same pawtition. 🥺 this hewps pewfowmance on both the cwient and
+   * the sewvew. (U ᵕ U❁) t-this configuwation c-contwows the defauwt batch size in bytes. 😳😳😳
+   * n-nyo attempt w-wiww be made to batch wecowds wawgew than this size. nyaa~~
+   * wequests s-sent to bwokews wiww contain muwtipwe batches, (˘ω˘) one fow each pawtition with d-data
+   * avaiwabwe to be sent. >_< a smow batch size w-wiww make batching w-wess common and may weduce
+   * thwoughput (a batch size of z-zewo wiww disabwe b-batching entiwewy). XD
+   * a vewy wawge batch size may use memowy a-a bit mowe wastefuwwy as we wiww a-awways awwocate a
+   * buffew of the specified batch size in a-anticipation of additionaw wecowds. rawr x3
    *
-   * Default 16KB which comes from Kafka's default
+   * defauwt 16kb w-which c-comes fwom kafka's defauwt
    */
-  val batchSize: StorageUnit = 16.kilobytes
+  v-vaw batchsize: stowageunit = 16.kiwobytes
 
   /**
-   * The producer groups together any records that arrive in between request transmissions into
-   * a single batched request. "Normally this occurs only under load when records arrive faster
-   * than they can be sent out. However in some circumstances the client may want to reduce the
-   * number of requests even under moderate load. This setting accomplishes this by adding a
-   * small amount of artificial delay&mdash;that is, rather than immediately sending out a record
-   * the producer will wait for up to the given delay to allow other records to be sent so that
-   * the sends can be batched together. This can be thought of as analogous to Nagle's algorithm
-   * in TCP. This setting gives the upper bound on the delay for batching: once we get
-   * BATCH_SIZE_CONFIG worth of records for a partition it will be sent immediately regardless
-   * of this setting, however if we have fewer than this many bytes accumulated for this
-   * partition we will 'linger' for the specified time waiting for more records to show up.
-   * This setting defaults to 0 (i.e. no delay). Setting LINGER_MS_CONFIG=5, for example,
-   * would have the effect of reducing the number of requests sent but would add up to 5ms of
-   * latency to records sent in the absence of load.
+   * t-the pwoducew g-gwoups togethew a-any wecowds that awwive i-in between wequest t-twansmissions into
+   * a singwe batched wequest. ( ͡o ω ͡o ) "nowmawwy this o-occuws onwy u-undew woad when w-wecowds awwive fastew
+   * than they can be sent o-out. :3 howevew in some ciwcumstances t-the cwient may w-want to weduce the
+   * numbew of wequests even undew modewate w-woad. mya this setting a-accompwishes t-this by adding a-a
+   * smow amount of awtificiaw d-deway&mdash;that is, σωσ wathew than immediatewy sending out a wecowd
+   * the pwoducew wiww wait f-fow up to the given deway to awwow o-othew wecowds to be sent so that
+   * t-the sends can be batched t-togethew. (ꈍᴗꈍ) this can be thought o-of as anawogous t-to nyagwe's awgowithm
+   * i-in tcp. OwO t-this setting g-gives the uppew bound on the deway fow batching: once we get
+   * batch_size_config wowth of wecowds fow a pawtition i-it wiww be s-sent immediatewy w-wegawdwess
+   * of this setting, o.O h-howevew if we have fewew than this many bytes accumuwated fow t-this
+   * pawtition w-we wiww 'wingew' fow the specified t-time waiting fow mowe wecowds to show up. 😳😳😳
+   * t-this setting d-defauwts to 0 (i.e. /(^•ω•^) nyo deway). OwO s-setting wingew_ms_config=5, ^^ fow e-exampwe, (///ˬ///✿)
+   * wouwd have the effect of weducing the nyumbew of wequests sent b-but wouwd add up t-to 5ms of
+   * w-watency to wecowds s-sent in the absence o-of woad. (///ˬ///✿)
    *
-   * Default 0ms, which is Kafka's default. If the record size is much larger than the batchSize,
-   * you may consider to enlarge both batchSize and linger to have better compression (only when
-   * compression is enabled.)
+   * defauwt 0ms, (///ˬ///✿) w-which is k-kafka's defauwt. ʘwʘ if the wecowd size i-is much wawgew t-than the batchsize, ^•ﻌ•^
+   * you m-may considew to enwawge both batchsize and wingew t-to have bettew compwession (onwy w-when
+   * compwession i-is enabwed.)
    */
-  val linger: Duration = 0.milliseconds
+  vaw w-wingew: duwation = 0.miwwiseconds
 
   /**
-   * The total bytes of memory the producer can use to buffer records waiting to be sent to the
-   * server. If records are sent faster than they can be delivered to the server the producer
-   * will block for MAX_BLOCK_MS_CONFIG after which it will throw an exception.
-   * This setting should correspond roughly to the total memory the producer will use, but is not
-   * a hard bound since not all memory the producer uses is used for buffering.
-   * Some additional memory will be used for compression (if compression is enabled) as well as
-   * for maintaining in-flight requests.
+   * the totaw bytes of memowy the pwoducew c-can use to b-buffew wecowds w-waiting to be sent to the
+   * sewvew. OwO if wecowds awe sent fastew t-than they can be dewivewed to the sewvew the p-pwoducew
+   * wiww b-bwock fow max_bwock_ms_config aftew which it w-wiww thwow an exception. (U ﹏ U)
+   * this s-setting shouwd c-cowwespond woughwy to the totaw memowy the pwoducew w-wiww use, (ˆ ﻌ ˆ)♡ but is nyot
+   * a hawd bound since n-nyot aww memowy t-the pwoducew uses is used fow b-buffewing. (⑅˘꒳˘)
+   * some additionaw m-memowy wiww be u-used fow compwession (if c-compwession is enabwed) as weww as
+   * fow maintaining in-fwight wequests. (U ﹏ U)
    *
-   * Default 32MB which is Kafka's default. Please consider to enlarge this value if the EPS and
-   * the per-record size is large (millions EPS with >1KB per-record size) in case the broker has
-   * issues (which fills the buffer pretty quickly.)
+   * defauwt 32mb which is kafka's defauwt. o.O pwease considew to enwawge this vawue if the eps and
+   * the pew-wecowd size is wawge (miwwions e-eps with >1kb p-pew-wecowd size) in case the bwokew has
+   * i-issues (which f-fiwws the buffew p-pwetty quickwy.)
    */
-  val bufferMemorySize: StorageUnit = 32.megabytes
+  vaw buffewmemowysize: s-stowageunit = 32.megabytes
 
   /**
-   * Producer compression type
+   * pwoducew c-compwession type
    *
-   * Default LZ4 which is a good tradeoff between compression and efficiency.
-   * Please be careful of choosing ZSTD, which the compression rate is better it might introduce
-   * huge burden to brokers once the topic is consumed, which needs decompression at the broker side.
+   * d-defauwt wz4 which is a-a good twadeoff between compwession a-and efficiency. mya
+   * p-pwease be cawefuw of choosing zstd, XD which t-the compwession w-wate is bettew i-it might intwoduce
+   * h-huge b-buwden to bwokews o-once the topic i-is consumed, which n-nyeeds decompwession a-at the bwokew side. òωó
    */
-  val compressionType: CompressionType = CompressionType.LZ4
+  v-vaw compwessiontype: c-compwessiontype = c-compwessiontype.wz4
 
   /**
-   * Setting a value greater than zero will cause the client to resend any request that fails
-   * with a potentially transient error
+   * setting a-a vawue gweatew than zewo wiww cause the cwient t-to wesend any wequest that faiws
+   * w-with a p-potentiawwy twansient e-ewwow
    *
-   * Default set to 3, to intentionally reduce the retries.
+   * defauwt set t-to 3, (˘ω˘) to intentionawwy weduce t-the wetwies. :3
    */
-  val retries: Int = 3
+  vaw wetwies: i-int = 3
 
   /**
-   * The amount of time to wait before attempting to retry a failed request to a given topic
-   * partition. This avoids repeatedly sending requests in a tight loop under some failure
-   * scenarios
+   * the amount o-of time to wait befowe attempting to wetwy a faiwed wequest to a given topic
+   * p-pawtition. OwO this avoids wepeatedwy s-sending wequests i-in a tight woop undew some faiwuwe
+   * scenawios
    */
-  val retryBackoff: Duration = 1.second
+  vaw wetwybackoff: d-duwation = 1.second
 
   /**
-   * The configuration controls the maximum amount of time the client will wait
-   * for the response of a request. If the response is not received before the timeout
-   * elapses the client will resend the request if necessary or fail the request if
-   * retries are exhausted.
+   * the configuwation c-contwows the m-maximum amount o-of time the cwient wiww wait
+   * fow the wesponse o-of a wequest. i-if the wesponse is nyot weceived b-befowe the timeout
+   * ewapses the cwient wiww w-wesend the wequest if nyecessawy o-ow faiw the w-wequest if
+   * w-wetwies awe exhausted. mya
    *
-   * Default 5 seconds which is intentionally low but not too low.
-   * Since Kafka's publishing is async this is in general safe (as long as the bufferMem is not full.)
+   * defauwt 5 seconds w-which is intentionawwy w-wow but n-nyot too wow.
+   * s-since kafka's pubwishing is a-async this is in g-genewaw safe (as w-wong as the buffewmem i-is nyot f-fuww.)
    */
-  val requestTimeout: Duration = 5.seconds
+  v-vaw wequesttimeout: d-duwation = 5.seconds
 
-  require(
-    maxBlock.inMilliseconds <= 1000,
-    "We intentionally set the maxBlock to be smaller than 1 second to not block the thread for too long!")
+  w-wequiwe(
+    maxbwock.inmiwwiseconds <= 1000, (˘ω˘)
+    "we i-intentionawwy set the maxbwock t-to be smowew than 1 second to nyot b-bwock the thwead f-fow too wong!")
 
-  lazy val kafkaProducer: KafkaProducerBase[K, V] = {
-    val jaasConfig = TwitterKafkaProducerConfig().configMap
-    val builder = FinagleKafkaProducerBuilder[K, V]()
-      .keySerializer(keySerde)
-      .valueSerializer(valueSerde)
-      .dest(bootstrapServer, 1.second) // NOTE: this method blocks!
-      .clientId(clientId)
-      .maxBlock(maxBlock)
-      .batchSize(batchSize)
-      .linger(linger)
-      .bufferMemorySize(bufferMemorySize)
-      .maxRequestSize(4.megabytes)
-      .compressionType(compressionType)
-      .enableIdempotence(idempotence)
-      .maxInFlightRequestsPerConnection(5)
-      .retries(retries)
-      .retryBackoff(retryBackoff)
-      .requestTimeout(requestTimeout)
-      .withConfig("acks", "all")
-      .withConfig("delivery.timeout.ms", requestTimeout + linger)
+  w-wazy vaw kafkapwoducew: kafkapwoducewbase[k, o.O v] = {
+    v-vaw jaasconfig = t-twittewkafkapwoducewconfig().configmap
+    v-vaw buiwdew = finagwekafkapwoducewbuiwdew[k, (✿oωo) v]()
+      .keysewiawizew(keysewde)
+      .vawuesewiawizew(vawuesewde)
+      .dest(bootstwapsewvew, (ˆ ﻌ ˆ)♡ 1.second) // nyote: t-this method bwocks! ^^;;
+      .cwientid(cwientid)
+      .maxbwock(maxbwock)
+      .batchsize(batchsize)
+      .wingew(wingew)
+      .buffewmemowysize(buffewmemowysize)
+      .maxwequestsize(4.megabytes)
+      .compwessiontype(compwessiontype)
+      .enabweidempotence(idempotence)
+      .maxinfwightwequestspewconnection(5)
+      .wetwies(wetwies)
+      .wetwybackoff(wetwybackoff)
+      .wequesttimeout(wequesttimeout)
+      .withconfig("acks", OwO "aww")
+      .withconfig("dewivewy.timeout.ms", 🥺 w-wequesttimeout + wingew)
 
-    builder.withConfig(jaasConfig).build()
+    b-buiwdew.withconfig(jaasconfig).buiwd()
   }
 
   /**
-   * Build the record to be published to Kafka from query, selections and response
-   * @param query PipelineQuery
-   * @param selectedCandidates Result after Selectors are executed
-   * @param remainingCandidates Candidates which were not selected
-   * @param droppedCandidates Candidates dropped during selection
-   * @param response Result after Unmarshalling
-   * @return A sequence of to-be-published ProducerRecords
+   * b-buiwd the wecowd to be pubwished to kafka fwom quewy, sewections a-and wesponse
+   * @pawam q-quewy p-pipewinequewy
+   * @pawam s-sewectedcandidates wesuwt aftew sewectows a-awe exekawaii~d
+   * @pawam w-wemainingcandidates candidates which wewe nyot sewected
+   * @pawam d-dwoppedcandidates candidates dwopped duwing s-sewection
+   * @pawam wesponse wesuwt a-aftew unmawshawwing
+   * @wetuwn a-a sequence of to-be-pubwished p-pwoducewwecowds
    */
-  def buildRecords(
-    query: Query,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: ResponseType
-  ): Seq[ProducerRecord[K, V]]
+  d-def buiwdwecowds(
+    q-quewy: quewy, mya
+    sewectedcandidates: s-seq[candidatewithdetaiws], 😳
+    w-wemainingcandidates: s-seq[candidatewithdetaiws], òωó
+    d-dwoppedcandidates: seq[candidatewithdetaiws], /(^•ω•^)
+    wesponse: w-wesponsetype
+  ): s-seq[pwoducewwecowd[k, v-v]]
 
-  final override def apply(
-    inputs: PipelineResultSideEffect.Inputs[Query, ResponseType]
-  ): Stitch[Unit] = {
-    val records = buildRecords(
-      query = inputs.query,
-      selectedCandidates = inputs.selectedCandidates,
-      remainingCandidates = inputs.remainingCandidates,
-      droppedCandidates = inputs.droppedCandidates,
-      response = inputs.response
+  finaw ovewwide def appwy(
+    i-inputs: pipewinewesuwtsideeffect.inputs[quewy, -.- wesponsetype]
+  ): stitch[unit] = {
+    v-vaw w-wecowds = buiwdwecowds(
+      q-quewy = inputs.quewy, òωó
+      sewectedcandidates = inputs.sewectedcandidates, /(^•ω•^)
+      wemainingcandidates = inputs.wemainingcandidates, /(^•ω•^)
+      d-dwoppedcandidates = inputs.dwoppedcandidates, 😳
+      w-wesponse = i-inputs.wesponse
     )
 
-    Stitch
-      .collect(
-        records
-          .map { record =>
-            Stitch.callFuture(kafkaProducer.send(record))
+    stitch
+      .cowwect(
+        wecowds
+          .map { w-wecowd =>
+            stitch.cawwfutuwe(kafkapwoducew.send(wecowd))
           }
       ).unit
   }

@@ -1,20 +1,20 @@
-package com.twitter.cr_mixer.module.core
+package com.twittew.cw_mixew.moduwe.cowe
 
-import com.twitter.inject.TwitterModule
+impowt c-com.twittew.inject.twittewmoduwe
 
-object CrMixerFlagName {
-  val SERVICE_FLAG = "cr_mixer.flag"
-  val DarkTrafficFilterDeciderKey = "thrift.dark.traffic.filter.decider_key"
+o-object cwmixewfwagname {
+  v-vaw s-sewvice_fwag = "cw_mixew.fwag"
+  v-vaw dawktwafficfiwtewdecidewkey = "thwift.dawk.twaffic.fiwtew.decidew_key"
 }
 
-object CrMixerFlagModule extends TwitterModule {
-  import CrMixerFlagName._
+o-object cwmixewfwagmoduwe e-extends t-twittewmoduwe {
+  impowt cwmixewfwagname._
 
-  flag[Boolean](name = SERVICE_FLAG, default = false, help = "This is a CR Mixer flag")
+  fwag[boowean](name = sewvice_fwag, (⑅˘꒳˘) defauwt = fawse, (U ᵕ U❁) hewp = "this i-is a cw mixew fwag")
 
-  flag[String](
-    name = DarkTrafficFilterDeciderKey,
-    default = "dark_traffic_filter",
-    help = "Dark traffic filter decider key"
+  fwag[stwing](
+    nyame = d-dawktwafficfiwtewdecidewkey, -.-
+    defauwt = "dawk_twaffic_fiwtew", ^^;;
+    h-hewp = "dawk twaffic fiwtew decidew key"
   )
 }

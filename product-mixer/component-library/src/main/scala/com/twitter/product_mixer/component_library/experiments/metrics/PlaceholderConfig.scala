@@ -1,37 +1,37 @@
-package com.twitter.product_mixer.component_library.experiments.metrics
+package com.twittew.pwoduct_mixew.component_wibwawy.expewiments.metwics
 
-// Base trait for all placeholder values
-sealed trait Named {
-  def name: String
+// base t-twait fow aww pwacehowdew v-vawues
+s-seawed twait nyamed {
+  d-def nyame: s-stwing
 }
 
-case class Const(override val name: String) extends Named
+case c-cwass const(ovewwide v-vaw nyame: s-stwing) extends nyamed
 
-// contains only client event patterns
-case class CEPattern(
-  override val name: String,
-  client: String = "",
-  page: String = "",
-  section: String = "",
-  component: String = "",
-  element: String = "",
-  action: String = "",
-  strainer: String = "")
-    extends Named {
+// contains onwy cwient event pattewns
+case cwass cepattewn(
+  o-ovewwide vaw nyame: stwing, (✿oωo)
+  cwient: s-stwing = "", (ˆ ﻌ ˆ)♡
+  page: stwing = "", (˘ω˘)
+  s-section: stwing = "",
+  component: stwing = "", (⑅˘꒳˘)
+  ewement: stwing = "", (///ˬ///✿)
+  a-action: stwing = "", 😳😳😳
+  s-stwainew: stwing = "")
+    e-extends nyamed {
 
-  override def toString: String = {
-    "\"" + client + ":" + page + ":" + section + ":" + component + ":" + element + ":" + action + "\""
+  ovewwide def tostwing: stwing = {
+    "\"" + cwient + ":" + page + ":" + section + ":" + c-component + ":" + ewement + ":" + action + "\""
   }
 
 }
 
-case class Topic(
-  override val name: String,
-  topicId: String = "")
-    extends Named
+case cwass topic(
+  ovewwide vaw nyame: stwing, 🥺
+  topicid: s-stwing = "")
+    extends nyamed
 
-object PlaceholderConfig {
-  type PlaceholderKey = String
-  type Placeholder = Seq[Named]
-  type PlaceholdersMap = Map[PlaceholderKey, Placeholder]
+o-object pwacehowdewconfig {
+  t-type p-pwacehowdewkey = s-stwing
+  type pwacehowdew = seq[named]
+  type p-pwacehowdewsmap = map[pwacehowdewkey, mya pwacehowdew]
 }

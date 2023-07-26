@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.core.functional_component.side_effect
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.side_effect
 
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.stitch.Stitch
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.component
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.sideeffectidentifiew
+i-impowt com.twittew.stitch.stitch
 
 /**
- * A side-effect is a ancillary action that doesn't affect the result of execution directly.
+ * a-a side-effect is a-a anciwwawy action t-that doesn't a-affect the wesuwt o-of execution d-diwectwy. (⑅˘꒳˘)
  *
- * For example: Logging, history stores
+ * fow exampwe: wogging, /(^•ω•^) histowy stowes
  *
- * Implementing components can express failures by throwing an exception. These exceptions
- * will be caught and not affect the request processing.
+ * impwementing components c-can expwess faiwuwes by thwowing an exception. rawr x3 t-these exceptions
+ * wiww be caught a-and nyot affect the wequest pwocessing. (U ﹏ U)
  *
- * @note Side effects execute asynchronously in a fire-and-forget way, it's important to add alerts
- *       to the [[SideEffect]] component itself since a failures wont show up in metrics
- *       that just monitor your pipeline as a whole.
+ * @note side effects e-exekawaii~ asynchwonouswy i-in a fiwe-and-fowget w-way, (U ﹏ U) it's impowtant to add awewts
+ *       to the [[sideeffect]] component i-itsewf since a faiwuwes wont show up in metwics
+ *       that just monitow youw p-pipewine as a whowe. (⑅˘꒳˘)
  *
- * @see [[ExecuteSynchronously]] for modifying a [[SideEffect]] to execute with synchronously with
- *      the request waiting on the side effect to complete, this will impact the overall request's latency
+ * @see [[exekawaii~synchwonouswy]] fow m-modifying a [[sideeffect]] t-to exekawaii~ w-with synchwonouswy w-with
+ *      the wequest waiting on t-the side effect to compwete, òωó this wiww impact the o-ovewaww wequest's watency
  **/
-trait SideEffect[-Inputs] extends Component {
+twait sideeffect[-inputs] extends component {
 
-  /** @see [[SideEffectIdentifier]] */
-  override val identifier: SideEffectIdentifier
+  /** @see [[sideeffectidentifiew]] */
+  ovewwide v-vaw identifiew: sideeffectidentifiew
 
-  def apply(inputs: Inputs): Stitch[Unit]
+  d-def appwy(inputs: i-inputs): s-stitch[unit]
 }

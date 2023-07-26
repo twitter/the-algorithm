@@ -1,28 +1,28 @@
-package com.twitter.frigate.pushservice.store
+package com.twittew.fwigate.pushsewvice.stowe
 
-import com.twitter.explore_ranker.thriftscala.ExploreRanker
-import com.twitter.explore_ranker.thriftscala.ExploreRankerResponse
-import com.twitter.explore_ranker.thriftscala.ExploreRankerRequest
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt c-com.twittew.expwowe_wankew.thwiftscawa.expwowewankew
+i-impowt c-com.twittew.expwowe_wankew.thwiftscawa.expwowewankewwesponse
+i-impowt c-com.twittew.expwowe_wankew.thwiftscawa.expwowewankewwequest
+i-impowt com.twittew.stowehaus.weadabwestowe
+i-impowt c-com.twittew.utiw.futuwe
 
-/** A Store for Video Tweet Recommendations from Explore
+/** a stowe fow video tweet wecommendations fwom expwowe
  *
- * @param exploreRankerService
+ * @pawam expwowewankewsewvice
  */
-case class ExploreRankerStore(exploreRankerService: ExploreRanker.MethodPerEndpoint)
-    extends ReadableStore[ExploreRankerRequest, ExploreRankerResponse] {
+c-case cwass expwowewankewstowe(expwowewankewsewvice: expwowewankew.methodpewendpoint)
+    extends weadabwestowe[expwowewankewwequest, 😳 e-expwowewankewwesponse] {
 
-  /** Method to get video recommendations
+  /** method to get video w-wecommendations
    *
-   * @param request explore ranker request object
-   * @return
+   * @pawam wequest expwowe wankew wequest object
+   * @wetuwn
    */
-  override def get(
-    request: ExploreRankerRequest
-  ): Future[Option[ExploreRankerResponse]] = {
-    exploreRankerService.getRankedResults(request).map { response =>
-      Some(response)
+  o-ovewwide def get(
+    wequest: expwowewankewwequest
+  ): f-futuwe[option[expwowewankewwesponse]] = {
+    e-expwowewankewsewvice.getwankedwesuwts(wequest).map { wesponse =>
+      some(wesponse)
     }
   }
 }

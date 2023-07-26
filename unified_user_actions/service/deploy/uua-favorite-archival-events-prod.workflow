@@ -1,66 +1,66 @@
 {
-  "role": "discode",
-  "name": "uua-favorite-archival-events-prod",
-  "config-files": [
-    "uua-favorite-archival-events.aurora"
-  ],
-  "build": {
-    "play": true,
-    "trigger": {
-      "cron-schedule": "0 17 * * 2"
-    },
+  "wowe": "discode", XD
+  "name": "uua-favowite-awchivaw-events-pwod", >_<
+  "config-fiwes": [
+    "uua-favowite-awchivaw-events.auwowa"
+  ], (ꈍᴗꈍ)
+  "buiwd": {
+    "pway": twue, ^•ﻌ•^
+    "twiggew": {
+      "cwon-scheduwe": "0 17 * * 2"
+    }, OwO
     "dependencies": [
       {
-        "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "wowe": "packew", 🥺
+        "name": "packew-cwient-no-pex", òωó
+        "vewsion": "watest"
       }
-    ],
+    ], o.O
     "steps": [
       {
-        "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-favorite-archival-events"
-      },
+        "type": "bazew-bundwe", (U ᵕ U❁)
+        "name": "bundwe", (⑅˘꒳˘)
+        "tawget": "unified_usew_actions/sewvice/swc/main/scawa:uua-favowite-awchivaw-events"
+      }, ( ͡o ω ͡o )
       {
-        "type": "packer",
-        "name": "uua-favorite-archival-events",
-        "artifact": "./dist/uua-favorite-archival-events.zip"
+        "type": "packew", UwU
+        "name": "uua-favowite-awchivaw-events", rawr x3
+        "awtifact": "./dist/uua-favowite-awchivaw-events.zip"
       }
     ]
-  },
-  "targets": [
+  }, rawr
+  "tawgets": [
     {
-      "type": "group",
-      "name": "prod",
-      "targets": [
+      "type": "gwoup", σωσ
+      "name": "pwod", σωσ
+      "tawgets": [
         {
-          "name": "uua-favorite-archival-events-prod-atla",
-          "key": "atla/discode/prod/uua-favorite-archival-events"
+          "name": "uua-favowite-awchivaw-events-pwod-atwa", >_<
+          "key": "atwa/discode/pwod/uua-favowite-awchivaw-events"
         },
         {
-          "name": "uua-favorite-archival-events-prod-pdxa",
-          "key": "pdxa/discode/prod/uua-favorite-archival-events"
+          "name": "uua-favowite-awchivaw-events-pwod-pdxa", :3
+          "key": "pdxa/discode/pwod/uua-favowite-awchivaw-events"
         }
       ]
     }
-  ],
-  "subscriptions": [
+  ], (U ﹏ U)
+  "subscwiptions": [
     {
-      "type": "SLACK",
-      "recipients": [
+      "type": "swack", -.-
+      "wecipients": [
         {
-          "to": "discode-oncall"
+          "to": "discode-oncaww"
         }
-      ],
-      "events": ["WORKFLOW_SUCCESS"]
-    },
+      ], (ˆ ﻌ ˆ)♡
+      "events": ["wowkfwow_success"]
+    }, (⑅˘꒳˘)
     {
-      "type": "SLACK",
-      "recipients": [{
-        "to": "discode-oncall"
-      }],
-      "events": ["*FAILED"]
+      "type": "swack", (U ᵕ U❁)
+      "wecipients": [{
+        "to": "discode-oncaww"
+      }], -.-
+      "events": ["*faiwed"]
     }
   ]
 }

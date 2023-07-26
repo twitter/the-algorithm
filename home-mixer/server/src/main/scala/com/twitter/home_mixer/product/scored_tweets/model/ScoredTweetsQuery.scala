@@ -1,39 +1,39 @@
-package com.twitter.home_mixer.product.scored_tweets.model
+package com.twittew.home_mixew.pwoduct.scowed_tweets.modew
 
-import com.twitter.home_mixer.model.request.DeviceContext
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.model.request.HasSeenTweetIds
-import com.twitter.home_mixer.model.request.ScoredTweetsProduct
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.request._
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.product_mixer.core.quality_factor.QualityFactorStatus
-import com.twitter.timelines.configapi.Params
+impowt c-com.twittew.home_mixew.modew.wequest.devicecontext
+i-impowt com.twittew.home_mixew.modew.wequest.hasdevicecontext
+i-impowt com.twittew.home_mixew.modew.wequest.hasseentweetids
+i-impowt c-com.twittew.home_mixew.modew.wequest.scowedtweetspwoduct
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.uwtowdewedcuwsow
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest._
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.haspipewinecuwsow
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.hasquawityfactowstatus
+impowt c-com.twittew.pwoduct_mixew.cowe.quawity_factow.quawityfactowstatus
+impowt com.twittew.timewines.configapi.pawams
 
-case class ScoredTweetsQuery(
-  override val params: Params,
-  override val clientContext: ClientContext,
-  override val pipelineCursor: Option[UrtOrderedCursor],
-  override val requestedMaxResults: Option[Int],
-  override val debugOptions: Option[DebugOptions],
-  override val features: Option[FeatureMap],
-  override val deviceContext: Option[DeviceContext],
-  override val seenTweetIds: Option[Seq[Long]],
-  override val qualityFactorStatus: Option[QualityFactorStatus])
-    extends PipelineQuery
-    with HasPipelineCursor[UrtOrderedCursor]
-    with HasDeviceContext
-    with HasSeenTweetIds
-    with HasQualityFactorStatus {
-  override val product: Product = ScoredTweetsProduct
+case cwass s-scowedtweetsquewy(
+  ovewwide v-vaw pawams: pawams, (U ﹏ U)
+  ovewwide vaw cwientcontext: cwientcontext, (⑅˘꒳˘)
+  o-ovewwide vaw pipewinecuwsow: o-option[uwtowdewedcuwsow], òωó
+  o-ovewwide vaw wequestedmaxwesuwts: option[int], ʘwʘ
+  ovewwide vaw debugoptions: o-option[debugoptions], /(^•ω•^)
+  ovewwide vaw featuwes: option[featuwemap], ʘwʘ
+  ovewwide vaw devicecontext: o-option[devicecontext],
+  ovewwide vaw seentweetids: o-option[seq[wong]], σωσ
+  o-ovewwide vaw quawityfactowstatus: o-option[quawityfactowstatus])
+    e-extends pipewinequewy
+    with haspipewinecuwsow[uwtowdewedcuwsow]
+    with h-hasdevicecontext
+    with hasseentweetids
+    with hasquawityfactowstatus {
+  ovewwide v-vaw pwoduct: pwoduct = scowedtweetspwoduct
 
-  override def withFeatureMap(features: FeatureMap): ScoredTweetsQuery =
-    copy(features = Some(features))
+  ovewwide def withfeatuwemap(featuwes: featuwemap): scowedtweetsquewy =
+    c-copy(featuwes = some(featuwes))
 
-  override def withQualityFactorStatus(
-    qualityFactorStatus: QualityFactorStatus
-  ): ScoredTweetsQuery = copy(qualityFactorStatus = Some(qualityFactorStatus))
+  o-ovewwide def w-withquawityfactowstatus(
+    q-quawityfactowstatus: quawityfactowstatus
+  ): scowedtweetsquewy = copy(quawityfactowstatus = s-some(quawityfactowstatus))
 }

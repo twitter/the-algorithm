@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.timewine_moduwe
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleDisplayTypeBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalConversation
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.timewine_moduwe.basemoduwedispwaytypebuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.moduwedispwaytype
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.vewticawconvewsation
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case class FeatureModuleDisplayTypeBuilder(
-  displayTypeFeature: Feature[_, Option[ModuleDisplayType]],
-  defaultDisplayType: ModuleDisplayType = VerticalConversation)
-    extends BaseModuleDisplayTypeBuilder[PipelineQuery, UniversalNoun[Any]] {
+case cwass featuwemoduwedispwaytypebuiwdew(
+  dispwaytypefeatuwe: f-featuwe[_, mya option[moduwedispwaytype]], 😳
+  defauwtdispwaytype: m-moduwedispwaytype = vewticawconvewsation)
+    e-extends basemoduwedispwaytypebuiwdew[pipewinequewy, XD univewsawnoun[any]] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[UniversalNoun[Any]]]
-  ): ModuleDisplayType = candidates.headOption
-    .flatMap(_.features.getOrElse(displayTypeFeature, None))
-    .getOrElse(defaultDisplayType)
+  ovewwide def appwy(
+    quewy: p-pipewinequewy, :3
+    candidates: seq[candidatewithfeatuwes[univewsawnoun[any]]]
+  ): m-moduwedispwaytype = c-candidates.headoption
+    .fwatmap(_.featuwes.getowewse(dispwaytypefeatuwe, 😳😳😳 nyone))
+    .getowewse(defauwtdispwaytype)
 }

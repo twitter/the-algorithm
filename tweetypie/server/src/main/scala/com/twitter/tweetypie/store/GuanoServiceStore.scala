@@ -1,120 +1,120 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.guano.thriftscala.NsfwTweetActionAction
-import com.twitter.tseng.withholding.thriftscala.TakedownReason
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.guano.thwiftscawa.nsfwtweetactionaction
+i-impowt com.twittew.tseng.withhowding.thwiftscawa.takedownweason
+i-impowt com.twittew.tweetypie.thwiftscawa._
 
-trait GuanoServiceStore
-    extends TweetStoreBase[GuanoServiceStore]
-    with AsyncDeleteTweet.Store
-    with AsyncTakedown.Store
-    with AsyncUpdatePossiblySensitiveTweet.Store {
-  def wrap(w: TweetStore.Wrap): GuanoServiceStore =
-    new TweetStoreWrapper(w, this)
-      with GuanoServiceStore
-      with AsyncDeleteTweet.StoreWrapper
-      with AsyncTakedown.StoreWrapper
-      with AsyncUpdatePossiblySensitiveTweet.StoreWrapper
+t-twait guanosewvicestowe
+    extends t-tweetstowebase[guanosewvicestowe]
+    w-with a-asyncdewetetweet.stowe
+    with asynctakedown.stowe
+    with asyncupdatepossibwysensitivetweet.stowe {
+  def wwap(w: t-tweetstowe.wwap): guanosewvicestowe =
+    nyew tweetstowewwappew(w, (˘ω˘) t-this)
+      with guanosewvicestowe
+      w-with asyncdewetetweet.stowewwappew
+      with asynctakedown.stowewwappew
+      with asyncupdatepossibwysensitivetweet.stowewwappew
 }
 
-object GuanoServiceStore {
-  val Action: AsyncWriteAction.GuanoScribe.type = AsyncWriteAction.GuanoScribe
+o-object guanosewvicestowe {
+  v-vaw action: a-asyncwwiteaction.guanoscwibe.type = asyncwwiteaction.guanoscwibe
 
-  val toGuanoTakedown: (AsyncTakedown.Event, TakedownReason, Boolean) => Guano.Takedown =
-    (event: AsyncTakedown.Event, reason: TakedownReason, takendown: Boolean) =>
-      Guano.Takedown(
-        tweetId = event.tweet.id,
-        userId = getUserId(event.tweet),
-        reason = reason,
-        takendown = takendown,
-        note = event.auditNote,
-        host = event.host,
-        byUserId = event.byUserId
+  vaw toguanotakedown: (asynctakedown.event, (U ﹏ U) takedownweason, ^•ﻌ•^ boowean) => guano.takedown =
+    (event: a-asynctakedown.event, (˘ω˘) weason: takedownweason, :3 takendown: boowean) =>
+      guano.takedown(
+        t-tweetid = event.tweet.id, ^^;;
+        usewid = g-getusewid(event.tweet), 🥺
+        w-weason = w-weason, (⑅˘꒳˘)
+        t-takendown = takendown,
+        note = event.auditnote,
+        host = event.host, nyaa~~
+        b-byusewid = event.byusewid
       )
 
-  val toGuanoUpdatePossiblySensitiveTweet: (
-    AsyncUpdatePossiblySensitiveTweet.Event,
-    Boolean,
-    NsfwTweetActionAction
-  ) => Guano.UpdatePossiblySensitiveTweet =
+  vaw toguanoupdatepossibwysensitivetweet: (
+    asyncupdatepossibwysensitivetweet.event, :3
+    b-boowean, ( ͡o ω ͡o )
+    nysfwtweetactionaction
+  ) => guano.updatepossibwysensitivetweet =
     (
-      event: AsyncUpdatePossiblySensitiveTweet.Event,
-      updatedValue: Boolean,
-      action: NsfwTweetActionAction
+      event: asyncupdatepossibwysensitivetweet.event, mya
+      updatedvawue: boowean, (///ˬ///✿)
+      a-action: nysfwtweetactionaction
     ) =>
-      Guano.UpdatePossiblySensitiveTweet(
-        tweetId = event.tweet.id,
-        host = event.host.orElse(Some("unknown")),
-        userId = event.user.id,
-        byUserId = event.byUserId,
-        action = action,
-        enabled = updatedValue,
-        note = event.note
+      g-guano.updatepossibwysensitivetweet(
+        t-tweetid = event.tweet.id, (˘ω˘)
+        h-host = event.host.owewse(some("unknown")), ^^;;
+        usewid = event.usew.id, (✿oωo)
+        byusewid = e-event.byusewid, (U ﹏ U)
+        a-action = action, -.-
+        e-enabwed = u-updatedvawue, ^•ﻌ•^
+        nyote = event.note
       )
 
-  def apply(guano: Guano, stats: StatsReceiver): GuanoServiceStore = {
-    val deleteByUserIdCounter = stats.counter("deletes_with_by_user_id")
-    val deleteScribeCounter = stats.counter("deletes_resulting_in_scribe")
+  d-def appwy(guano: guano, rawr stats: s-statsweceivew): guanosewvicestowe = {
+    vaw d-dewetebyusewidcountew = stats.countew("dewetes_with_by_usew_id")
+    v-vaw dewetescwibecountew = stats.countew("dewetes_wesuwting_in_scwibe")
 
-    new GuanoServiceStore {
-      override val asyncDeleteTweet: FutureEffect[AsyncDeleteTweet.Event] =
-        FutureEffect[AsyncDeleteTweet.Event] { event =>
-          val tweet = event.tweet
+    n-nyew guanosewvicestowe {
+      o-ovewwide vaw asyncdewetetweet: futuweeffect[asyncdewetetweet.event] =
+        futuweeffect[asyncdewetetweet.event] { event =>
+          vaw tweet = event.tweet
 
-          event.byUserId.foreach(_ => deleteByUserIdCounter.incr())
+          event.byusewid.foweach(_ => dewetebyusewidcountew.incw())
 
-          // Guano the tweet deletion action not initiated from the RetweetsDeletionStore
-          event.byUserId match {
-            case Some(byUserId) =>
-              deleteScribeCounter.incr()
-              guano.scribeDestroyTweet(
-                Guano.DestroyTweet(
-                  tweet = tweet,
-                  userId = getUserId(tweet),
-                  byUserId = byUserId,
-                  passthrough = event.auditPassthrough
+          // g-guano the tweet d-dewetion action not initiated f-fwom the wetweetsdewetionstowe
+          e-event.byusewid m-match {
+            case some(byusewid) =>
+              dewetescwibecountew.incw()
+              g-guano.scwibedestwoytweet(
+                guano.destwoytweet(
+                  tweet = tweet, (˘ω˘)
+                  usewid = g-getusewid(tweet), nyaa~~
+                  byusewid = b-byusewid, UwU
+                  p-passthwough = event.auditpassthwough
                 )
               )
-            case _ =>
-              Future.Unit
+            c-case _ =>
+              futuwe.unit
           }
-        }.onlyIf(_.cascadedFromTweetId.isEmpty)
+        }.onwyif(_.cascadedfwomtweetid.isempty)
 
-      override val retryAsyncDeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncDeleteTweet.Event]
+      o-ovewwide v-vaw wetwyasyncdewetetweet: futuweeffect[
+        t-tweetstowewetwyevent[asyncdewetetweet.event]
       ] =
-        TweetStore.retry(Action, asyncDeleteTweet)
+        t-tweetstowe.wetwy(action, :3 asyncdewetetweet)
 
-      override val asyncTakedown: FutureEffect[AsyncTakedown.Event] =
-        FutureEffect[AsyncTakedown.Event] { event =>
-          val messages =
-            event.reasonsToAdd.map(toGuanoTakedown(event, _, true)) ++
-              event.reasonsToRemove.map(toGuanoTakedown(event, _, false))
-          Future.join(messages.map(guano.scribeTakedown))
-        }.onlyIf(_.scribeForAudit)
+      ovewwide vaw a-asynctakedown: f-futuweeffect[asynctakedown.event] =
+        f-futuweeffect[asynctakedown.event] { e-event =>
+          v-vaw messages =
+            event.weasonstoadd.map(toguanotakedown(event, (⑅˘꒳˘) _, twue)) ++
+              event.weasonstowemove.map(toguanotakedown(event, (///ˬ///✿) _, f-fawse))
+          futuwe.join(messages.map(guano.scwibetakedown))
+        }.onwyif(_.scwibefowaudit)
 
-      override val retryAsyncTakedown: FutureEffect[TweetStoreRetryEvent[AsyncTakedown.Event]] =
-        TweetStore.retry(Action, asyncTakedown)
+      ovewwide vaw wetwyasynctakedown: futuweeffect[tweetstowewetwyevent[asynctakedown.event]] =
+        tweetstowe.wetwy(action, ^^;; asynctakedown)
 
-      override val asyncUpdatePossiblySensitiveTweet: FutureEffect[
-        AsyncUpdatePossiblySensitiveTweet.Event
+      o-ovewwide vaw asyncupdatepossibwysensitivetweet: futuweeffect[
+        asyncupdatepossibwysensitivetweet.event
       ] =
-        FutureEffect[AsyncUpdatePossiblySensitiveTweet.Event] { event =>
-          val messages =
-            event.nsfwAdminChange.map(
-              toGuanoUpdatePossiblySensitiveTweet(event, _, NsfwTweetActionAction.NsfwAdmin)
+        f-futuweeffect[asyncupdatepossibwysensitivetweet.event] { e-event =>
+          v-vaw messages =
+            event.nsfwadminchange.map(
+              t-toguanoupdatepossibwysensitivetweet(event, >_< _, rawr x3 nysfwtweetactionaction.nsfwadmin)
             ) ++
-              event.nsfwUserChange.map(
-                toGuanoUpdatePossiblySensitiveTweet(event, _, NsfwTweetActionAction.NsfwUser)
+              e-event.nsfwusewchange.map(
+                t-toguanoupdatepossibwysensitivetweet(event, /(^•ω•^) _, nysfwtweetactionaction.nsfwusew)
               )
-          Future.join(messages.toSeq.map(guano.scribeUpdatePossiblySensitiveTweet))
+          futuwe.join(messages.toseq.map(guano.scwibeupdatepossibwysensitivetweet))
         }
 
-      override val retryAsyncUpdatePossiblySensitiveTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncUpdatePossiblySensitiveTweet.Event]
+      ovewwide vaw wetwyasyncupdatepossibwysensitivetweet: futuweeffect[
+        t-tweetstowewetwyevent[asyncupdatepossibwysensitivetweet.event]
       ] =
-        TweetStore.retry(Action, asyncUpdatePossiblySensitiveTweet)
+        tweetstowe.wetwy(action, :3 a-asyncupdatepossibwysensitivetweet)
     }
   }
 }

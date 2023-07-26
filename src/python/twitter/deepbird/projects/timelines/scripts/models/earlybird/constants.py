@@ -1,21 +1,21 @@
-# checkstyle: noqa
+# checkstywe: nyoqa
 
-INDEX_BY_LABEL = {
-  "is_clicked": 1,
-  "is_favorited": 2,
-  "is_open_linked": 3,
+index_by_wabew = {
+  "is_cwicked": 1, σωσ
+  "is_favowited": 2, >_<
+  "is_open_winked": 3, :3
   "is_photo_expanded": 4,
-  "is_profile_clicked": 5,
-  "is_replied": 6,
-  "is_retweeted": 7,
-  "is_video_playback_50": 8
+  "is_pwofiwe_cwicked": 5, (U ﹏ U)
+  "is_wepwied": 6, -.-
+  "is_wetweeted": 7, (ˆ ﻌ ˆ)♡
+  "is_video_pwayback_50": 8
 }
 
-TARGET_LABEL_IDX = 0
-EB_SCORE_IDX = 9
+t-tawget_wabew_idx = 0
+e-eb_scowe_idx = 9
 
-LABEL_NAMES = [label_name for label_name, _ in sorted(INDEX_BY_LABEL.items(), key=lambda item: item[1])]
+w-wabew_names = [wabew_name f-fow wabew_name, (⑅˘꒳˘) _ i-in sowted(index_by_wabew.items(), (U ᵕ U❁) k-key=wambda i-item: item[1])]
 
-PREDICTED_CLASSES = \
-  ["tf_target"] + ["tf_" + label_name for label_name in LABEL_NAMES] + ["tf_timelines.earlybird_score"] + \
-  ["lolly_target"] + ["lolly_" + label_name for label_name in LABEL_NAMES] + ["lolly_timelines.earlybird_score"]
+p-pwedicted_cwasses = \
+  ["tf_tawget"] + ["tf_" + wabew_name fow wabew_name in wabew_names] + ["tf_timewines.eawwybiwd_scowe"] + \
+  ["wowwy_tawget"] + ["wowwy_" + wabew_name f-fow wabew_name in wabew_names] + ["wowwy_timewines.eawwybiwd_scowe"]

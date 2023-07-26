@@ -1,277 +1,277 @@
-namespace java com.twitter.tweetypie.thriftjava
-namespace py gen.twitter.tweetypie.tweet_events
-#@namespace scala com.twitter.tweetypie.thriftscala
-#@namespace strato com.twitter.tweetypie
-namespace rb TweetyPie
-namespace go tweetypie
+namespace java com.twittew.tweetypie.thwiftjava
+namespace py gen.twittew.tweetypie.tweet_events
+#@namespace s-scawa c-com.twittew.tweetypie.thwiftscawa
+#@namespace stwato c-com.twittew.tweetypie
+n-nyamespace w-wb tweetypie
+n-nyamespace go t-tweetypie
 
-include "com/twitter/tseng/withholding/withholding.thrift"
-include "com/twitter/tweetypie/transient_context.thrift"
-include "com/twitter/tweetypie/tweet.thrift"
-include "com/twitter/tweetypie/tweet_audit.thrift"
-include "com/twitter/gizmoduck/user.thrift"
+incwude "com/twittew/tseng/withhowding/withhowding.thwift"
+i-incwude "com/twittew/tweetypie/twansient_context.thwift"
+incwude "com/twittew/tweetypie/tweet.thwift"
+incwude "com/twittew/tweetypie/tweet_audit.thwift"
+incwude "com/twittew/gizmoduck/usew.thwift"
 
 /**
- * SafetyType encodes the event user's safety state in an enum so downstream
- * event processors can filter events without having to load the user.
+ * safetytype e-encodes the event usew's safety state in an enum s-so downstweam
+ * event pwocessows c-can fiwtew events without having to woad the usew. mya
  */
-enum SafetyType {
-  PRIVATE    = 0   // user.safety.isProtected
-  RESTRICTED = 1   // !PRIVATE && user.safety.suspended
-  PUBLIC     = 2   // !(PRIVATE || RESTRICTED)
-  RESERVED0  = 3
-  RESERVED1  = 4
-  RESERVED2  = 5
-  RESERVED3  = 6
+enum safetytype {
+  p-pwivate    = 0   // usew.safety.ispwotected
+  w-westwicted = 1   // !pwivate && u-usew.safety.suspended
+  pubwic     = 2   // !(pwivate || westwicted)
+  wesewved0  = 3
+  wesewved1  = 4
+  w-wesewved2  = 5
+  wesewved3  = 6
 }
 
-struct TweetCreateEvent {
+stwuct tweetcweateevent {
   /**
-   * The tweet that has been created.
+   * the tweet that has b-been cweated. 😳😳😳
    */
-  1: tweet.Tweet tweet
+  1: tweet.tweet t-tweet
 
   /**
-   * The user who owns the created tweet.
+   * t-the usew w-who owns the cweated t-tweet. OwO
    */
-  2: user.User user
+  2: usew.usew usew
 
   /**
-   * The tweet being retweeted.
+   * t-the tweet being wetweeted. rawr
    */
-  3: optional tweet.Tweet source_tweet
+  3: optionaw t-tweet.tweet souwce_tweet
 
   /**
-   * The user who owns source_tweet.
+   * the usew who owns souwce_tweet. XD
    */
-  4: optional user.User source_user
+  4: optionaw usew.usew souwce_usew
 
   /**
-   * The user whose tweet or retweet is being retweeted.
+   * the u-usew whose tweet ow wetweet is being w-wetweeted.
    *
-   * This is the id of the user who owns
-   * tweet.core_data.share.parent_status_id. In many cases this will be the
-   * same as source_user.id; it is different when the tweet is created via
-   * another retweet. See the explanation of source_user_id and parent_user_id
-   * in Share for examples.
+   * t-this is t-the id of the usew who owns
+   * tweet.cowe_data.shawe.pawent_status_id. (U ﹏ U) in many c-cases this wiww b-be the
+   * same as souwce_usew.id; i-it is diffewent w-when the tweet is cweated v-via
+   * anothew wetweet. (˘ω˘) see the e-expwanation of souwce_usew_id and pawent_usew_id
+   * i-in shawe fow exampwes. UwU
    */
-  5: optional i64 retweet_parent_user_id (personalDataType = 'UserId')
+  5: o-optionaw i64 wetweet_pawent_usew_id (pewsonawdatatype = 'usewid')
 
   /**
-   * The tweet quoted in the created tweet.
+   * t-the tweet q-quoted in the cweated tweet. >_<
    */
-  6: optional tweet.Tweet quoted_tweet
+  6: optionaw tweet.tweet quoted_tweet
 
   /**
-   * The user who owns quoted_tweet.
+   * the usew who owns quoted_tweet. σωσ
    */
-  7: optional user.User quoted_user
+  7: o-optionaw usew.usew q-quoted_usew
 
   /**
-   * Arbitrary passthrough metadata about tweet creation.
+   * awbitwawy passthwough m-metadata about t-tweet cweation. 🥺
    *
-   * See TweetCreateContextKey for more details about the data that may be
-   * present here.
+   * s-see tweetcweatecontextkey fow mowe detaiws about the d-data that may be
+   * pwesent hewe. 🥺
    */
-  8: optional map<tweet.TweetCreateContextKey, string> additional_context (personalDataTypeValue='UserId')
+  8: optionaw map<tweet.tweetcweatecontextkey, stwing> a-additionaw_context (pewsonawdatatypevawue='usewid')
 
   /**
-   * Additional request arguments passed through to consumers.
+   * additionaw wequest a-awguments p-passed thwough t-to consumews. ʘwʘ
    */
-  9: optional transient_context.TransientCreateContext transient_context
+  9: optionaw t-twansient_context.twansientcweatecontext t-twansient_context
 
   /**
-  * Flag exposing if a quoted tweet has been quoted by the user previously.
+  * f-fwag exposing i-if a quoted tweet has been quoted by the usew p-pweviouswy. :3
   **/
-  10: optional bool quoter_has_already_quoted_tweet
-}(persisted='true', hasPersonalData = 'true')
+  10: o-optionaw b-boow quotew_has_awweady_quoted_tweet
+}(pewsisted='twue', (U ﹏ U) h-haspewsonawdata = 'twue')
 
-struct TweetDeleteEvent {
+s-stwuct tweetdeweteevent {
   /**
-   * The tweet being deleted.
+   * the tweet being deweted. (U ﹏ U)
    */
-  1: tweet.Tweet tweet
+  1: t-tweet.tweet tweet
 
   /**
-   * The user who owns the deleted tweet.
+   * the usew who owns the deweted tweet. ʘwʘ
    */
-  2: optional user.User user
+  2: optionaw usew.usew usew
 
   /**
-   * Whether this tweet was deleted as part of user erasure (the process of deleting tweets
-   * belonging to deactivated accounts).
+   * whethew this t-tweet was deweted as pawt of usew ewasuwe (the pwocess of deweting t-tweets
+   * b-bewonging to deactivated a-accounts). >w<
    *
-   * These deletions occur in high volume spikes and the tweets have already been made invisible
-   * externally. You may wish to process them in batches or offline.
+   * these d-dewetions occuw in high vowume s-spikes and the t-tweets have awweady been made invisibwe
+   * extewnawwy. rawr x3 you may wish to pwocess them in batches o-ow offwine. OwO
    */
-  3: optional bool is_user_erasure
+  3: optionaw b-boow is_usew_ewasuwe
 
   /**
-   * Audit information from the DeleteTweetRequest that caused this deletion.
+   * audit infowmation f-fwom the dewetetweetwequest t-that caused this dewetion. ^•ﻌ•^
    *
-   * This field is used to track the reason for deletion in non-user-initiated
-   * tweet deletions, like Twitter support agents deleting tweets or spam
-   * cleanup.
+   * this fiewd i-is used to twack t-the weason fow dewetion in nyon-usew-initiated
+   * t-tweet dewetions, >_< w-wike twittew suppowt agents deweting tweets ow spam
+   * cweanup. OwO
    */
-  4: optional tweet_audit.AuditDeleteTweet audit
+  4: o-optionaw tweet_audit.auditdewetetweet a-audit
 
   /**
-   * Id of the user initiating this request.
-   * It could be either the owner of the tweet or an admin.
-   * It is used for scrubbing.
+   * i-id of the usew initiating t-this wequest. >_<
+   * i-it couwd be eithew the o-ownew of the tweet ow an admin. (ꈍᴗꈍ)
+   * it is used fow scwubbing. >w<
    */
-  5: optional i64 by_user_id (personalDataType = 'UserId')
+  5: optionaw i-i64 by_usew_id (pewsonawdatatype = 'usewid')
 
   /**
-   * Whether this tweet was deleted by an admin user or not
+   * w-whethew this tweet was deweted by an a-admin usew ow n-nyot
    *
-   * It is used for scrubbing.
+   * it is used fow scwubbing. (U ﹏ U)
    */
-  6: optional bool is_admin_delete
-}(persisted='true', hasPersonalData = 'true')
+  6: optionaw boow is_admin_dewete
+}(pewsisted='twue', ^^ h-haspewsonawdata = 'twue')
 
-struct TweetUndeleteEvent {
-  1: tweet.Tweet tweet
-  2: optional user.User user
-  3: optional tweet.Tweet source_tweet
-  4: optional user.User source_user
-  5: optional i64 retweet_parent_user_id (personalDataType = 'UserId')
-  6: optional tweet.Tweet quoted_tweet
-  7: optional user.User quoted_user
-  // timestamp of the deletion that this undelete is reversing
-  8: optional i64 deleted_at_msec
-}(persisted='true', hasPersonalData = 'true')
+stwuct tweetundeweteevent {
+  1: tweet.tweet tweet
+  2: optionaw usew.usew usew
+  3: o-optionaw tweet.tweet souwce_tweet
+  4: optionaw u-usew.usew s-souwce_usew
+  5: optionaw i64 wetweet_pawent_usew_id (pewsonawdatatype = 'usewid')
+  6: optionaw tweet.tweet quoted_tweet
+  7: optionaw u-usew.usew q-quoted_usew
+  // timestamp of the dewetion that this undewete i-is wevewsing
+  8: optionaw i64 deweted_at_msec
+}(pewsisted='twue', (U ﹏ U) h-haspewsonawdata = 'twue')
 
 /**
- * When a user deletes the location information for their tweets, we send one
- * TweetScrubGeoEvent for every tweet from which the location is removed.
+ * when a usew dewetes the wocation infowmation f-fow theiw tweets, :3 we send one
+ * t-tweetscwubgeoevent f-fow evewy tweet fwom which t-the wocation is wemoved. (✿oωo)
  *
- * Users cause this by selecting "Delete location information" in Settings ->
- * Privacy.
+ * u-usews cause this b-by sewecting "dewete w-wocation infowmation" in settings ->
+ * p-pwivacy. XD
  */
-struct TweetScrubGeoEvent {
-  1: i64 tweet_id (personalDataType = 'TweetId')
-  2: i64 user_id (personalDataType = 'UserId')
-}(persisted='true', hasPersonalData = 'true')
+s-stwuct tweetscwubgeoevent {
+  1: i64 t-tweet_id (pewsonawdatatype = 'tweetid')
+  2: i-i64 u-usew_id (pewsonawdatatype = 'usewid')
+}(pewsisted='twue', >w< haspewsonawdata = 'twue')
 
 /**
- * When a user deletes the location information for their tweets, we send one
- * UserScrubGeoEvent with the max tweet ID that was scrubbed (in addition to
- * sending multiple TweetScrubGeoEvents as described above).
+ * when a-a usew dewetes the wocation infowmation f-fow theiw t-tweets, òωó we send one
+ * usewscwubgeoevent with the max tweet i-id that was scwubbed (in a-addition t-to
+ * sending m-muwtipwe tweetscwubgeoevents as d-descwibed above). (ꈍᴗꈍ)
  *
- * Users cause this by selecting "Delete location information" in Settings ->
- * Privacy. This additional event is sent to maintain backwards compatibility
- * with Hosebird.
+ * usews cause this by sewecting "dewete wocation infowmation" in settings ->
+ * p-pwivacy. rawr x3 this additionaw event i-is sent to maintain backwawds c-compatibiwity
+ * with hosebiwd. rawr x3
  */
-struct UserScrubGeoEvent {
-  1: i64 user_id (personalDataType = 'UserId')
-  2: i64 max_tweet_id (personalDataType = 'TweetId')
-}(persisted='true', hasPersonalData = 'true')
+s-stwuct usewscwubgeoevent {
+  1: i64 usew_id (pewsonawdatatype = 'usewid')
+  2: i-i64 max_tweet_id (pewsonawdatatype = 'tweetid')
+}(pewsisted='twue', σωσ h-haspewsonawdata = 'twue')
 
-struct TweetTakedownEvent {
-  1: i64 tweet_id (personalDataType = 'TweetId')
-  2: i64 user_id (personalDataType = 'UserId')
-  // This is the complete list of takedown country codes for the tweet,
-  // including whatever modifications were made to trigger this event.
-  // @deprecated Prefer takedown_reasons once TWEETYPIE-4329 deployed
-  3: list<string> takedown_country_codes = []
-  // This is the complete list of takedown reasons for the tweet,
-  // including whatever modifications were made to trigger this event.
-  4: list<withholding.TakedownReason> takedown_reasons = []
-}(persisted='true', hasPersonalData = 'true')
+s-stwuct tweettakedownevent {
+  1: i-i64 tweet_id (pewsonawdatatype = 'tweetid')
+  2: i-i64 usew_id (pewsonawdatatype = 'usewid')
+  // this is the compwete wist of takedown countwy codes fow the tweet, (ꈍᴗꈍ)
+  // incwuding nyanievew m-modifications w-wewe made to twiggew t-this event. rawr
+  // @depwecated pwefew takedown_weasons o-once tweetypie-4329 depwoyed
+  3: wist<stwing> takedown_countwy_codes = []
+  // t-this is t-the compwete wist of takedown w-weasons fow the tweet, ^^;;
+  // incwuding nyanievew m-modifications wewe m-made to twiggew this event. rawr x3
+  4: w-wist<withhowding.takedownweason> t-takedown_weasons = []
+}(pewsisted='twue', (ˆ ﻌ ˆ)♡ haspewsonawdata = 'twue')
 
-struct AdditionalFieldUpdateEvent {
-  // Only contains the tweet id and modified or newly added fields on that tweet.
-  // Unchanged fields and tweet core data are omitted.
-  1: tweet.Tweet updated_fields
-  2: optional i64 user_id (personalDataType = 'UserId')
-}(persisted='true', hasPersonalData = 'true')
+stwuct additionawfiewdupdateevent {
+  // onwy contains the tweet id and m-modified ow nyewwy a-added fiewds o-on that tweet. σωσ
+  // u-unchanged f-fiewds and tweet cowe data awe omitted. (U ﹏ U)
+  1: t-tweet.tweet u-updated_fiewds
+  2: optionaw i-i64 usew_id (pewsonawdatatype = 'usewid')
+}(pewsisted='twue', >w< h-haspewsonawdata = 'twue')
 
-struct AdditionalFieldDeleteEvent {
-  // a map from tweet id to deleted field ids
-  // Each event will only contain one tweet.
-  1: map<i64, list<i16>> deleted_fields (personalDataTypeKey='TweetId')
-  2: optional i64 user_id (personalDataType = 'UserId')
-}(persisted='true', hasPersonalData = 'true')
+stwuct additionawfiewddeweteevent {
+  // a-a map fwom tweet id to deweted fiewd ids
+  // e-each event wiww onwy contain o-one tweet. σωσ
+  1: m-map<i64, nyaa~~ wist<i16>> deweted_fiewds (pewsonawdatatypekey='tweetid')
+  2: o-optionaw i64 usew_id (pewsonawdatatype = 'usewid')
+}(pewsisted='twue', haspewsonawdata = 'twue')
 
-// This event is only logged to scribe not sent to EventBus
-struct TweetMediaTagEvent {
-  1: i64 tweet_id (personalDataType = 'TweetId')
-  2: i64 user_id (personalDataType = 'UserId')
-  3: set<i64> tagged_user_ids (personalDataType = 'UserId')
-  4: optional i64 timestamp_ms
-}(persisted='true', hasPersonalData = 'true')
+// t-this event is onwy w-wogged to scwibe n-nyot sent to eventbus
+stwuct tweetmediatagevent {
+  1: i64 tweet_id (pewsonawdatatype = 'tweetid')
+  2: i-i64 usew_id (pewsonawdatatype = 'usewid')
+  3: set<i64> t-tagged_usew_ids (pewsonawdatatype = 'usewid')
+  4: o-optionaw i64 timestamp_ms
+}(pewsisted='twue', 🥺 h-haspewsonawdata = 'twue')
 
-struct TweetPossiblySensitiveUpdateEvent {
-  1: i64 tweet_id (personalDataType = 'TweetId')
-  2: i64 user_id (personalDataType = 'UserId')
-  // The below two fields contain the results of the update.
-  3: bool nsfw_admin
-  4: bool nsfw_user
-}(persisted='true', hasPersonalData = 'true')
+stwuct tweetpossibwysensitiveupdateevent {
+  1: i-i64 tweet_id (pewsonawdatatype = 'tweetid')
+  2: i-i64 usew_id (pewsonawdatatype = 'usewid')
+  // the bewow two fiewds contain the w-wesuwts of the update. rawr x3
+  3: boow nysfw_admin
+  4: b-boow nsfw_usew
+}(pewsisted='twue', σωσ h-haspewsonawdata = 'twue')
 
-struct QuotedTweetDeleteEvent {
-  1: i64 quoting_tweet_id (personalDataType = 'TweetId')
-  2: i64 quoting_user_id (personalDataType = 'UserId')
-  3: i64 quoted_tweet_id (personalDataType = 'TweetId')
-  4: i64 quoted_user_id (personalDataType = 'UserId')
-}(persisted='true', hasPersonalData = 'true')
+stwuct quotedtweetdeweteevent {
+  1: i-i64 quoting_tweet_id (pewsonawdatatype = 'tweetid')
+  2: i64 quoting_usew_id (pewsonawdatatype = 'usewid')
+  3: i-i64 quoted_tweet_id (pewsonawdatatype = 'tweetid')
+  4: i-i64 q-quoted_usew_id (pewsonawdatatype = 'usewid')
+}(pewsisted='twue', (///ˬ///✿) haspewsonawdata = 'twue')
 
-struct QuotedTweetTakedownEvent {
-  1: i64 quoting_tweet_id (personalDataType = 'TweetId')
-  2: i64 quoting_user_id (personalDataType = 'UserId')
-  3: i64 quoted_tweet_id (personalDataType = 'TweetId')
-  4: i64 quoted_user_id (personalDataType = 'UserId')
-  // This is the complete list of takedown country codes for the tweet,
-  // including whatever modifications were made to trigger this event.
-  // @deprecated Prefer takedown_reasons
-  5: list<string> takedown_country_codes = []
-  // This is the complete list of takedown reasons for the tweet,
-  // including whatever modifications were made to trigger this event.
-  6: list<withholding.TakedownReason> takedown_reasons = []
-}(persisted='true', hasPersonalData = 'true')
+stwuct quotedtweettakedownevent {
+  1: i64 quoting_tweet_id (pewsonawdatatype = 'tweetid')
+  2: i64 quoting_usew_id (pewsonawdatatype = 'usewid')
+  3: i64 quoted_tweet_id (pewsonawdatatype = 'tweetid')
+  4: i64 quoted_usew_id (pewsonawdatatype = 'usewid')
+  // this is the compwete wist of takedown countwy c-codes fow the tweet, (U ﹏ U)
+  // i-incwuding nyanievew modifications wewe m-made to twiggew t-this event. ^^;;
+  // @depwecated pwefew t-takedown_weasons
+  5: wist<stwing> t-takedown_countwy_codes = []
+  // this is t-the compwete wist o-of takedown weasons fow the t-tweet, 🥺
+  // incwuding nyanievew m-modifications wewe m-made to twiggew this event. òωó
+  6: wist<withhowding.takedownweason> t-takedown_weasons = []
+}(pewsisted='twue', XD haspewsonawdata = 'twue')
 
-union TweetEventData {
-  1:  TweetCreateEvent tweet_create_event
-  2:  TweetDeleteEvent tweet_delete_event
-  3:  AdditionalFieldUpdateEvent additional_field_update_event
-  4:  AdditionalFieldDeleteEvent additional_field_delete_event
-  5:  TweetUndeleteEvent tweet_undelete_event
-  6:  TweetScrubGeoEvent tweet_scrub_geo_event
-  7:  TweetTakedownEvent tweet_takedown_event
-  8:  UserScrubGeoEvent user_scrub_geo_event
-  9:  TweetPossiblySensitiveUpdateEvent tweet_possibly_sensitive_update_event
-  10: QuotedTweetDeleteEvent quoted_tweet_delete_event
-  11: QuotedTweetTakedownEvent quoted_tweet_takedown_event
-}(persisted='true', hasPersonalData = 'true')
+u-union t-tweeteventdata {
+  1:  t-tweetcweateevent t-tweet_cweate_event
+  2:  t-tweetdeweteevent t-tweet_dewete_event
+  3:  a-additionawfiewdupdateevent a-additionaw_fiewd_update_event
+  4:  additionawfiewddeweteevent a-additionaw_fiewd_dewete_event
+  5:  t-tweetundeweteevent t-tweet_undewete_event
+  6:  tweetscwubgeoevent t-tweet_scwub_geo_event
+  7:  tweettakedownevent tweet_takedown_event
+  8:  u-usewscwubgeoevent usew_scwub_geo_event
+  9:  t-tweetpossibwysensitiveupdateevent t-tweet_possibwy_sensitive_update_event
+  10: quotedtweetdeweteevent q-quoted_tweet_dewete_event
+  11: quotedtweettakedownevent quoted_tweet_takedown_event
+}(pewsisted='twue', :3 haspewsonawdata = 'twue')
 
 /**
- * @deprecated
+ * @depwecated
  */
-struct Checksum {
+s-stwuct checksum {
   1: i32 checksum
-}(persisted='true')
+}(pewsisted='twue')
 
-struct TweetEventFlags {
+s-stwuct tweeteventfwags {
   /**
-   * @deprecated Was dark_for_service.
+   * @depwecated w-was dawk_fow_sewvice. (U ﹏ U)
    */
-  1: list<string> unused1 = []
+  1: wist<stwing> u-unused1 = []
 
   2: i64 timestamp_ms
 
-  3: optional SafetyType safety_type
+  3: optionaw safetytype safety_type
 
   /**
-   * @deprecated Was checksum.
+   * @depwecated was checksum. >w<
    */
-  4: optional Checksum unused4
-}(persisted='true')
+  4: o-optionaw checksum unused4
+}(pewsisted='twue')
 
 /**
- * A TweetEvent is a notification published to the tweet_events stream.
+ * a-a tweetevent i-is a nyotification pubwished to the tweet_events stweam. /(^•ω•^)
  */
-struct TweetEvent {
-  1: TweetEventData data
-  2: TweetEventFlags flags
-}(persisted='true', hasPersonalData = 'true')
+s-stwuct tweetevent {
+  1: tweeteventdata d-data
+  2: t-tweeteventfwags f-fwags
+}(pewsisted='twue', (⑅˘꒳˘) haspewsonawdata = 'twue')

@@ -1,29 +1,29 @@
-import os
+impowt os
 
-from setuptools import find_packages, setup
+fwom setuptoows impowt f-find_packages, >_< s-setup
 
 
-THIS_DIR = os.path.dirname(os.path.realpath(__file__))
-TWML_TEST_DATA_DIR = os.path.join(THIS_DIR, 'twml/tests/data')
+this_diw = o-os.path.diwname(os.path.weawpath(__fiwe__))
+twmw_test_data_diw = o-os.path.join(this_diw, :3 'twmw/tests/data')
 
-data_files = []
-for parent, children, files in os.walk(TWML_TEST_DATA_DIR):
-  data_files += [os.path.join(parent, f) for f in files]
+data_fiwes = []
+fow p-pawent, (U ﹏ U) chiwdwen, f-fiwes in os.wawk(twmw_test_data_diw):
+  d-data_fiwes += [os.path.join(pawent, -.- f-f) fow f in fiwes]
 
 setup(
-  name='twml',
-  version='2.0',
-  description="Tensorflow wrapper for twml",
-  packages=find_packages(exclude=["build"]),
-  install_requires=[
-    'thriftpy2',
-    'numpy',
-    'pyyaml',
-    'future',
-    'scikit-learn',
+  nyame='twmw', (ˆ ﻌ ˆ)♡
+  vewsion='2.0', (⑅˘꒳˘)
+  descwiption="tensowfwow wwappew fow twmw", (U ᵕ U❁)
+  packages=find_packages(excwude=["buiwd"]), -.-
+  i-instaww_wequiwes=[
+    'thwiftpy2', ^^;;
+    'numpy', >_<
+    'pyyamw', mya
+    'futuwe', mya
+    'scikit-weawn', 😳
     'scipy'
-  ],
+  ], XD
   package_data={
-    'twml': data_files,
+    'twmw': data_fiwes, :3
   },
 )

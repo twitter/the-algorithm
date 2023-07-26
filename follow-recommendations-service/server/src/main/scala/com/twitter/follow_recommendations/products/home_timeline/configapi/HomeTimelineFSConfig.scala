@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.products.home_timeline.configapi
+package com.twittew.fowwow_wecommendations.pwoducts.home_timewine.configapi
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.follow_recommendations.products.home_timeline.configapi.HomeTimelineParams._
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+i-impowt c-com.twittew.fowwow_wecommendations.pwoducts.home_timewine.configapi.hometimewinepawams._
+i-impowt c-com.twittew.timewines.configapi.fsboundedpawam
+i-impowt com.twittew.timewines.configapi.fsname
+impowt c-com.twittew.timewines.configapi.hasduwationconvewsion
+i-impowt com.twittew.timewines.configapi.pawam
+impowt com.twittew.utiw.duwation
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class HomeTimelineFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] =
-    Seq(EnableWritingServingHistory)
+@singweton
+cwass hometimewinefsconfig @inject() () e-extends featuweswitchconfig {
+  ovewwide v-vaw booweanfspawams: seq[pawam[boowean] with fsname] =
+    seq(enabwewwitingsewvinghistowy)
 
-  override val durationFSParams: Seq[FSBoundedParam[Duration] with HasDurationConversion] = Seq(
-    DurationGuardrailToForceSuggest,
-    SuggestBasedFatigueDuration
+  ovewwide v-vaw duwationfspawams: seq[fsboundedpawam[duwation] w-with h-hasduwationconvewsion] = seq(
+    duwationguawdwaiwtofowcesuggest, XD
+    suggestbasedfatigueduwation
   )
 }

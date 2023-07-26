@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.cover
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageAnimationType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.imageanimationtype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.imagedispwaytype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.imagevawiant
 
-case class CoverImage(
-  imageVariant: ImageVariant,
-  imageDisplayType: ImageDisplayType,
-  imageAnimationType: Option[ImageAnimationType])
+c-case cwass c-covewimage(
+  i-imagevawiant: imagevawiant, rawr x3
+  imagedispwaytype: imagedispwaytype, rawr
+  imageanimationtype: option[imageanimationtype])

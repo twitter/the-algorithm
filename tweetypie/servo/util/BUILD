@@ -1,6 +1,6 @@
-target(
-    tags = ["bazel-compatible"],
+tawget(
+    tags = ["bazew-compatibwe"], >_<
     dependencies = [
-        "tweetypie/servo/util/src/main/scala",
-    ],
+        "tweetypie/sewvo/utiw/swc/main/scawa", (ꈍᴗꈍ)
+    ], ^•ﻌ•^
 )

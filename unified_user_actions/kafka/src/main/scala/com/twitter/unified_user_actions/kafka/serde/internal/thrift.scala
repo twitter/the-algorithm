@@ -1,121 +1,121 @@
 /**
- * Copyright 2021 Twitter, Inc.
- * SPDX-License-Identifier: Apache-2.0
+ * copywight 2021 twittew, ^^;; inc. (✿oωo)
+ * s-spdx-wicense-identifiew: apache-2.0
  */
-package com.twitter.unified_user_actions.kafka.serde.internal
+p-package c-com.twittew.unified_usew_actions.kafka.sewde.intewnaw
 
-import com.google.common.util.concurrent.RateLimiter
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.NullStatsReceiver
-import java.util
-import com.twitter.scrooge.CompactThriftSerializer
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.scrooge.ThriftStructCodec
-import com.twitter.scrooge.ThriftStructSerializer
-import org.apache.kafka.common.serialization.Deserializer
-import org.apache.kafka.common.serialization.Serde
-import org.apache.kafka.common.serialization.Serializer
-import com.twitter.util.logging.Logging
-import org.apache.thrift.protocol.TBinaryProtocol
+i-impowt c-com.googwe.common.utiw.concuwwent.watewimitew
+i-impowt com.twittew.finagwe.stats.countew
+i-impowt c-com.twittew.finagwe.stats.nuwwstatsweceivew
+impowt java.utiw
+impowt com.twittew.scwooge.compactthwiftsewiawizew
+impowt com.twittew.scwooge.thwiftstwuct
+i-impowt com.twittew.scwooge.thwiftstwuctcodec
+impowt com.twittew.scwooge.thwiftstwuctsewiawizew
+i-impowt owg.apache.kafka.common.sewiawization.desewiawizew
+i-impowt owg.apache.kafka.common.sewiawization.sewde
+impowt owg.apache.kafka.common.sewiawization.sewiawizew
+impowt com.twittew.utiw.wogging.wogging
+i-impowt owg.apache.thwift.pwotocow.tbinawypwotocow
 
-abstract class AbstractScroogeSerDe[T <: ThriftStruct: Manifest](nullCounter: Counter)
-    extends Serde[T]
-    with Logging {
+abstwact c-cwass abstwactscwoogesewde[t <: t-thwiftstwuct: manifest](nuwwcountew: countew)
+    extends sewde[t]
+    with wogging {
 
-  private val rateLimiter = RateLimiter.create(1.0) // at most 1 log message per second
+  p-pwivate vaw watewimitew = watewimitew.cweate(1.0) // at most 1 wog message pew second
 
-  private def rateLimitedLogError(e: Exception): Unit =
-    if (rateLimiter.tryAcquire()) {
-      logger.error(e.getMessage, e)
+  p-pwivate def watewimitedwogewwow(e: e-exception): u-unit =
+    if (watewimitew.twyacquiwe()) {
+      w-woggew.ewwow(e.getmessage, (U ﹏ U) e)
     }
 
-  private[kafka] val thriftStructSerializer: ThriftStructSerializer[T] = {
-    val clazz = manifest.runtimeClass.asInstanceOf[Class[T]]
-    val codec = ThriftStructCodec.forStructClass(clazz)
+  p-pwivate[kafka] vaw thwiftstwuctsewiawizew: thwiftstwuctsewiawizew[t] = {
+    v-vaw cwazz = manifest.wuntimecwass.asinstanceof[cwass[t]]
+    vaw codec = t-thwiftstwuctcodec.fowstwuctcwass(cwazz)
 
-    constructThriftStructSerializer(clazz, codec)
+    constwuctthwiftstwuctsewiawizew(cwazz, -.- codec)
   }
 
-  private val _deserializer = new Deserializer[T] {
-    override def configure(configs: util.Map[String, _], isKey: Boolean): Unit = {}
+  pwivate vaw _desewiawizew = new desewiawizew[t] {
+    ovewwide d-def configuwe(configs: utiw.map[stwing, ^•ﻌ•^ _], i-iskey: b-boowean): unit = {}
 
-    override def close(): Unit = {}
+    o-ovewwide def cwose(): unit = {}
 
-    override def deserialize(topic: String, data: Array[Byte]): T = {
-      if (data == null) {
-        null.asInstanceOf[T]
-      } else {
-        try {
-          thriftStructSerializer.fromBytes(data)
+    ovewwide def d-desewiawize(topic: s-stwing, rawr data: awway[byte]): t = {
+      i-if (data == n-nyuww) {
+        nyuww.asinstanceof[t]
+      } e-ewse {
+        twy {
+          t-thwiftstwuctsewiawizew.fwombytes(data)
         } catch {
-          case e: Exception =>
-            nullCounter.incr()
-            rateLimitedLogError(e)
-            null.asInstanceOf[T]
+          case e: e-exception =>
+            nyuwwcountew.incw()
+            w-watewimitedwogewwow(e)
+            nyuww.asinstanceof[t]
         }
       }
     }
   }
 
-  private val _serializer = new Serializer[T] {
-    override def configure(configs: util.Map[String, _], isKey: Boolean): Unit = {}
+  p-pwivate vaw _sewiawizew = n-nyew sewiawizew[t] {
+    ovewwide def configuwe(configs: utiw.map[stwing, (˘ω˘) _], nyaa~~ iskey: boowean): unit = {}
 
-    override def serialize(topic: String, data: T): Array[Byte] = {
-      if (data == null) {
-        null
-      } else {
-        thriftStructSerializer.toBytes(data)
+    o-ovewwide d-def sewiawize(topic: stwing, UwU data: t-t): awway[byte] = {
+      if (data == n-nyuww) {
+        n-nyuww
+      } ewse {
+        thwiftstwuctsewiawizew.tobytes(data)
       }
     }
 
-    override def close(): Unit = {}
+    ovewwide def cwose(): u-unit = {}
   }
 
-  /* Public */
+  /* pubwic */
 
-  override def configure(configs: util.Map[String, _], isKey: Boolean): Unit = {}
+  ovewwide def configuwe(configs: utiw.map[stwing, :3 _], (⑅˘꒳˘) i-iskey: boowean): unit = {}
 
-  override def close(): Unit = {}
+  o-ovewwide d-def cwose(): u-unit = {}
 
-  override def deserializer: Deserializer[T] = {
-    _deserializer
+  ovewwide def desewiawizew: d-desewiawizew[t] = {
+    _desewiawizew
   }
 
-  override def serializer: Serializer[T] = {
-    _serializer
+  o-ovewwide def s-sewiawizew: sewiawizew[t] = {
+    _sewiawizew
   }
 
   /**
-   * Subclasses should implement this method and provide a concrete ThriftStructSerializer
+   * s-subcwasses shouwd impwement this method and pwovide a-a concwete t-thwiftstwuctsewiawizew
    */
-  protected[this] def constructThriftStructSerializer(
-    thriftStructClass: Class[T],
-    thriftStructCodec: ThriftStructCodec[T]
-  ): ThriftStructSerializer[T]
+  pwotected[this] def c-constwuctthwiftstwuctsewiawizew(
+    t-thwiftstwuctcwass: c-cwass[t], (///ˬ///✿)
+    thwiftstwuctcodec: thwiftstwuctcodec[t]
+  ): thwiftstwuctsewiawizew[t]
 }
 
-class ThriftSerDe[T <: ThriftStruct: Manifest](nullCounter: Counter = NullStatsReceiver.NullCounter)
-    extends AbstractScroogeSerDe[T](nullCounter = nullCounter) {
-  protected[this] override def constructThriftStructSerializer(
-    thriftStructClass: Class[T],
-    thriftStructCodec: ThriftStructCodec[T]
-  ): ThriftStructSerializer[T] = {
-    new ThriftStructSerializer[T] {
-      override val protocolFactory = new TBinaryProtocol.Factory
-      override def codec: ThriftStructCodec[T] = thriftStructCodec
+c-cwass thwiftsewde[t <: thwiftstwuct: manifest](nuwwcountew: countew = nyuwwstatsweceivew.nuwwcountew)
+    extends abstwactscwoogesewde[t](nuwwcountew = n-nyuwwcountew) {
+  pwotected[this] ovewwide def constwuctthwiftstwuctsewiawizew(
+    thwiftstwuctcwass: c-cwass[t],
+    t-thwiftstwuctcodec: t-thwiftstwuctcodec[t]
+  ): thwiftstwuctsewiawizew[t] = {
+    nyew t-thwiftstwuctsewiawizew[t] {
+      ovewwide vaw p-pwotocowfactowy = n-nyew tbinawypwotocow.factowy
+      ovewwide def codec: thwiftstwuctcodec[t] = thwiftstwuctcodec
     }
   }
 }
 
-class CompactThriftSerDe[T <: ThriftStruct: Manifest](
-  nullCounter: Counter = NullStatsReceiver.NullCounter)
-    extends AbstractScroogeSerDe[T](nullCounter = nullCounter) {
-  override protected[this] def constructThriftStructSerializer(
-    thriftStructClass: Class[T],
-    thriftStructCodec: ThriftStructCodec[T]
-  ): ThriftStructSerializer[T] = {
-    new CompactThriftSerializer[T] {
-      override def codec: ThriftStructCodec[T] = thriftStructCodec
+cwass compactthwiftsewde[t <: thwiftstwuct: manifest](
+  n-nyuwwcountew: countew = n-nyuwwstatsweceivew.nuwwcountew)
+    extends abstwactscwoogesewde[t](nuwwcountew = n-nyuwwcountew) {
+  o-ovewwide pwotected[this] def constwuctthwiftstwuctsewiawizew(
+    t-thwiftstwuctcwass: c-cwass[t],
+    thwiftstwuctcodec: t-thwiftstwuctcodec[t]
+  ): t-thwiftstwuctsewiawizew[t] = {
+    nyew compactthwiftsewiawizew[t] {
+      ovewwide def codec: thwiftstwuctcodec[t] = thwiftstwuctcodec
     }
   }
 }

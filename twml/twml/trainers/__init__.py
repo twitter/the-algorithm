@@ -1,10 +1,10 @@
-# pylint: disable=wildcard-import
+# pywint: disabwe=wiwdcawd-impowt
 """
-This module contains the Trainer and DataRecordTrainer classes.
-Trainers wrap a
-`tf.estimator.Estimator
-<https://www.tensorflow.org/versions/master/api_docs/python/tf/estimator/Estimator>`_.
+this moduwe c-contains the twainew a-and datawecowdtwainew c-cwasses. rawr
+t-twainews wwap a-a
+`tf.estimatow.estimatow
+<https://www.tensowfwow.owg/vewsions/mastew/api_docs/python/tf/estimatow/estimatow>`_. σωσ
 """
 
-from .trainer import Trainer  # noqa: F401
-from .data_record_trainer import DataRecordTrainer  # noqa: F401
+f-fwom .twainew i-impowt twainew  # n-nyoqa: f401
+fwom .data_wecowd_twainew impowt datawecowdtwainew  # nyoqa: f401

@@ -1,45 +1,45 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala.FieldByPath
-import com.twitter.tweetypie.util.Takedowns
+impowt c-com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.wepositowy._
+i-impowt c-com.twittew.tweetypie.thwiftscawa.fiewdbypath
+i-impowt com.twittew.tweetypie.utiw.takedowns
 
 /**
- * Hydrates per-country takedowns which is a union of:
- * 1. per-tweet takedowns, from tweetypieOnlyTakedown{CountryCode|Reasons} fields
- * 2. user takedowns, read from gizmoduck.
+ * h-hydwates pew-countwy t-takedowns which is a union of:
+ * 1. pew-tweet takedowns, òωó fwom tweetypieonwytakedown{countwycode|weasons} f-fiewds
+ * 2. ʘwʘ usew takedowns, /(^•ω•^) wead fwom gizmoduck. ʘwʘ
  *
- * Note that this hydrator performs backwards compatibility by converting to and from
- * [[com.twitter.tseng.withholding.thriftscala.TakedownReason]].  This is possible because a taken
- * down country code can always be represented as a
- * [[com.twitter.tseng.withholding.thriftscala.UnspecifiedReason]].
+ * n-nyote that this hydwatow p-pewfowms backwawds compatibiwity by convewting to and fwom
+ * [[com.twittew.tseng.withhowding.thwiftscawa.takedownweason]]. σωσ  t-this is possibwe because a taken
+ * d-down countwy c-code can awways be wepwesented as a
+ * [[com.twittew.tseng.withhowding.thwiftscawa.unspecifiedweason]]. OwO
  */
-object TakedownHydrator {
-  type Type = ValueHydrator[Option[Takedowns], Ctx]
+object takedownhydwatow {
+  type t-type = vawuehydwatow[option[takedowns], 😳😳😳 ctx]
 
-  case class Ctx(tweetTakedowns: Takedowns, underlyingTweetCtx: TweetCtx) extends TweetCtx.Proxy
+  case cwass ctx(tweettakedowns: takedowns, 😳😳😳 undewwyingtweetctx: tweetctx) extends t-tweetctx.pwoxy
 
-  val hydratedFields: Set[FieldByPath] =
-    Set(
-      fieldByPath(Tweet.TakedownCountryCodesField),
-      fieldByPath(Tweet.TakedownReasonsField)
+  vaw hydwatedfiewds: s-set[fiewdbypath] =
+    s-set(
+      f-fiewdbypath(tweet.takedowncountwycodesfiewd), o.O
+      f-fiewdbypath(tweet.takedownweasonsfiewd)
     )
 
-  def apply(repo: UserTakedownRepository.Type): Type =
-    ValueHydrator[Option[Takedowns], Ctx] { (curr, ctx) =>
-      repo(ctx.userId).liftToTry.map {
-        case Return(userReasons) =>
-          val reasons = Seq.concat(ctx.tweetTakedowns.reasons, userReasons).toSet
-          ValueState.delta(curr, Some(Takedowns(reasons)))
-        case Throw(_) =>
-          ValueState.partial(curr, hydratedFields)
+  def appwy(wepo: usewtakedownwepositowy.type): t-type =
+    vawuehydwatow[option[takedowns], ( ͡o ω ͡o ) ctx] { (cuww, c-ctx) =>
+      wepo(ctx.usewid).wifttotwy.map {
+        case wetuwn(usewweasons) =>
+          vaw weasons = seq.concat(ctx.tweettakedowns.weasons, (U ﹏ U) u-usewweasons).toset
+          vawuestate.dewta(cuww, (///ˬ///✿) s-some(takedowns(weasons)))
+        c-case t-thwow(_) =>
+          vawuestate.pawtiaw(cuww, >w< hydwatedfiewds)
       }
-    }.onlyIf { (_, ctx) =>
+    }.onwyif { (_, rawr ctx) =>
       (
-        ctx.tweetFieldRequested(Tweet.TakedownCountryCodesField) ||
-        ctx.tweetFieldRequested(Tweet.TakedownReasonsField)
-      ) && ctx.hasTakedown
+        c-ctx.tweetfiewdwequested(tweet.takedowncountwycodesfiewd) ||
+        c-ctx.tweetfiewdwequested(tweet.takedownweasonsfiewd)
+      ) && ctx.hastakedown
     }
 }

@@ -1,83 +1,83 @@
-package com.twitter.recos.user_user_graph
+package com.twittew.wecos.usew_usew_gwaph
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.consumers.FinagleKafkaConsumerBuilder
-import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph
-import com.twitter.graphjet.bipartite.segment.NodeMetadataLeftIndexedBipartiteGraphSegment
-import com.twitter.recos.hose.common.UnifiedGraphWriter
-import com.twitter.recos.internal.thriftscala.RecosHoseMessage
-import com.twitter.recos.util.Action
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.finatwa.kafka.consumews.finagwekafkaconsumewbuiwdew
+i-impowt com.twittew.gwaphjet.bipawtite.nodemetadataweftindexedpowewwawmuwtisegmentbipawtitegwaph
+i-impowt com.twittew.gwaphjet.bipawtite.segment.nodemetadataweftindexedbipawtitegwaphsegment
+i-impowt c-com.twittew.wecos.hose.common.unifiedgwaphwwitew
+i-impowt com.twittew.wecos.intewnaw.thwiftscawa.wecoshosemessage
+impowt com.twittew.wecos.utiw.action
 
-case class UserUserGraphWriter(
-  shardId: String,
-  env: String,
-  hosename: String,
-  bufferSize: Int,
-  kafkaConsumerBuilder: FinagleKafkaConsumerBuilder[String, RecosHoseMessage],
-  clientId: String,
-  statsReceiver: StatsReceiver)
-    extends UnifiedGraphWriter[
-      NodeMetadataLeftIndexedBipartiteGraphSegment,
-      NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph
+case cwass usewusewgwaphwwitew(
+  shawdid: s-stwing, nyaa~~
+  env: stwing, (✿oωo)
+  hosename: stwing,
+  b-buffewsize: int, ʘwʘ
+  kafkaconsumewbuiwdew: f-finagwekafkaconsumewbuiwdew[stwing, (ˆ ﻌ ˆ)♡ wecoshosemessage], 😳😳😳
+  cwientid: stwing, :3
+  statsweceivew: s-statsweceivew)
+    extends u-unifiedgwaphwwitew[
+      n-nyodemetadataweftindexedbipawtitegwaphsegment, OwO
+      nyodemetadataweftindexedpowewwawmuwtisegmentbipawtitegwaph
     ] {
 
-  // The max throughput for each kafka consumer is around 25MB/s
-  // Use 3 processors for 75MB/s catch-up speed.
-  val consumerNum: Int = 3
-  // Leave 2 Segments for live writer
-  val catchupWriterNum: Int = RecosConfig.maxNumSegments - 2
+  // the max thwoughput fow each kafka consumew is awound 25mb/s
+  // u-use 3 pwocessows fow 75mb/s catch-up speed. (U ﹏ U)
+  vaw consumewnum: int = 3
+  // w-weave 2 segments fow wive wwitew
+  v-vaw catchupwwitewnum: i-int = w-wecosconfig.maxnumsegments - 2
 
-  import UserUserGraphWriter._
+  i-impowt usewusewgwaphwwitew._
 
-  private def getEdgeType(action: Byte): Byte = {
-    if (action == Action.Follow.id) {
-      UserEdgeTypeMask.FOLLOW
-    } else if (action == Action.Mention.id) {
-      UserEdgeTypeMask.MENTION
-    } else if (action == Action.MediaTag.id) {
-      UserEdgeTypeMask.MEDIATAG
-    } else {
-      throw new IllegalArgumentException("getEdgeType: Illegal edge type argument " + action)
+  pwivate def getedgetype(action: b-byte): byte = {
+    if (action == action.fowwow.id) {
+      u-usewedgetypemask.fowwow
+    } ewse if (action == action.mention.id) {
+      usewedgetypemask.mention
+    } ewse if (action == a-action.mediatag.id) {
+      usewedgetypemask.mediatag
+    } e-ewse {
+      t-thwow nyew i-iwwegawawgumentexception("getedgetype: iwwegaw edge type awgument " + action)
     }
   }
 
   /**
-   * Adds a RecosHoseMessage to the graph. used by live writer to insert edges to the
-   * current segment
+   * a-adds a wecoshosemessage t-to the gwaph. >w< used by wive wwitew t-to insewt edges t-to the
+   * cuwwent segment
    */
-  override def addEdgeToGraph(
-    graph: NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph,
-    recosHoseMessage: RecosHoseMessage
-  ): Unit = {
-    graph.addEdge(
-      recosHoseMessage.leftId,
-      recosHoseMessage.rightId,
-      getEdgeType(recosHoseMessage.action),
-      recosHoseMessage.edgeMetadata.getOrElse(0L),
-      EMTPY_NODE_METADATA,
-      EMTPY_NODE_METADATA
+  o-ovewwide def addedgetogwaph(
+    g-gwaph: nyodemetadataweftindexedpowewwawmuwtisegmentbipawtitegwaph, (U ﹏ U)
+    wecoshosemessage: wecoshosemessage
+  ): u-unit = {
+    gwaph.addedge(
+      w-wecoshosemessage.weftid, 😳
+      wecoshosemessage.wightid, (ˆ ﻌ ˆ)♡
+      g-getedgetype(wecoshosemessage.action), 😳😳😳
+      w-wecoshosemessage.edgemetadata.getowewse(0w), (U ﹏ U)
+      emtpy_node_metadata, (///ˬ///✿)
+      emtpy_node_metadata
     )
   }
 
   /**
-   * Adds a RecosHoseMessage to the given segment in the graph. Used by catch up writers to
-   * insert edges to non-current (old) segments
+   * adds a wecoshosemessage to the given segment in the gwaph. 😳 u-used by catch u-up wwitews to
+   * insewt edges t-to nyon-cuwwent (owd) s-segments
    */
-  override def addEdgeToSegment(
-    segment: NodeMetadataLeftIndexedBipartiteGraphSegment,
-    recosHoseMessage: RecosHoseMessage
-  ): Unit = {
-    segment.addEdge(
-      recosHoseMessage.leftId,
-      recosHoseMessage.rightId,
-      getEdgeType(recosHoseMessage.action),
-      recosHoseMessage.edgeMetadata.getOrElse(0L),
-      EMTPY_NODE_METADATA,
-      EMTPY_NODE_METADATA
+  o-ovewwide def addedgetosegment(
+    segment: nyodemetadataweftindexedbipawtitegwaphsegment, 😳
+    w-wecoshosemessage: wecoshosemessage
+  ): unit = {
+    segment.addedge(
+      wecoshosemessage.weftid, σωσ
+      wecoshosemessage.wightid, rawr x3
+      g-getedgetype(wecoshosemessage.action), OwO
+      wecoshosemessage.edgemetadata.getowewse(0w), /(^•ω•^)
+      e-emtpy_node_metadata, 😳😳😳
+      emtpy_node_metadata
     )
   }
 }
 
-private object UserUserGraphWriter {
-  final val EMTPY_NODE_METADATA = new Array[Array[Int]](1)
+p-pwivate object usewusewgwaphwwitew {
+  f-finaw vaw emtpy_node_metadata = n-nyew awway[awway[int]](1)
 }

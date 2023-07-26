@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-// intersection of recent followers and followed by
-trait HasMutualFollowedUserIds extends HasRecentFollowedUserIds with HasRecentFollowedByUserIds {
+// intewsection o-of wecent f-fowwowews and f-fowwowed by
+twait h-hasmutuawfowwowedusewids e-extends h-haswecentfowwowedusewids w-with h-haswecentfowwowedbyusewids {
 
-  lazy val recentMutualFollows: Seq[Long] =
-    recentFollowedUserIds.getOrElse(Nil).intersect(recentFollowedByUserIds.getOrElse(Nil))
+  wazy vaw wecentmutuawfowwows: seq[wong] =
+    wecentfowwowedusewids.getowewse(niw).intewsect(wecentfowwowedbyusewids.getowewse(niw))
 
-  lazy val numRecentMutualFollows: Int = recentMutualFollows.size
+  wazy vaw n-nyumwecentmutuawfowwows: int = wecentmutuawfowwows.size
 }

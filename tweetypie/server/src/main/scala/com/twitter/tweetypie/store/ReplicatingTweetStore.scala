@@ -1,180 +1,180 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.tweetypie.thwiftscawa._
 
 /**
- * A TweetStore that sends write events to the replication endpoints
- * of a ThriftTweetService.
+ * a t-tweetstowe that s-sends wwite events t-to the wepwication e-endpoints
+ * o-of a thwifttweetsewvice. (U ﹏ U)
  *
- * The events that are sent are sufficient to keep the other
- * instance's caches up to date. The calls contain sufficient data so
- * that the remote caches can be updated without requiring the remote
- * Tweetypie to access any other services.
+ * t-the events that awe sent awe sufficient to keep the othew
+ * instance's caches u-up to date. the cawws contain sufficient data s-so
+ * that the wemote caches can b-be updated without wequiwing the wemote
+ * tweetypie to access a-any othew sewvices. 😳😳😳
  *
- * The replication services two purposes:
+ * the wepwication s-sewvices t-two puwposes:
  *
- * 1. Maintain consistency between caches in different data centers.
+ * 1. >w< maintain consistency between caches in diffewent data c-centews. XD
  *
- * 2. Keep the caches in all data centers warm, protecting backend
- *    services.
+ * 2. keep the caches in aww data centews wawm, o.O pwotecting backend
+ *    s-sewvices. mya
  *
- * Correctness bugs are worse than bugs that make data less available.
- * All of these events affect data consistency.
+ * cowwectness b-bugs awe wowse t-than bugs that make d-data wess avaiwabwe. 🥺
+ * a-aww of these events affect data consistency. ^^;;
  *
- * IncrFavCount.Event and InsertEvents are the least important
- * from a data consistency standpoint, because the only data
- * consistency issues are counts, which are cached for a shorter time,
- * and are not as noticable to end users if they fail to occur.
- * (Failure to apply them is both less severe and self-correcting.)
+ * incwfavcount.event a-and insewtevents awe the weast impowtant
+ * fwom a-a data consistency standpoint, :3 because the onwy data
+ * consistency issues awe counts, (U ﹏ U) which a-awe cached fow a showtew time, OwO
+ * a-and awe nyot as n-nyoticabwe to e-end usews if they faiw to occuw. 😳😳😳
+ * (faiwuwe to appwy them is both w-wess sevewe and s-sewf-cowwecting.)
  *
- * Delete and GeoScrub events are critical, because the cached data
- * has a long expiration and failure to apply them can result in
- * violations of user privacy.
+ * dewete a-and geoscwub events a-awe cwiticaw, because the c-cached data
+ * has a wong expiwation a-and faiwuwe to appwy them can wesuwt in
+ * v-viowations of usew pwivacy. (ˆ ﻌ ˆ)♡
  *
- * Update events are also important from a legal perspective, since
- * the update may be updating the per-country take-down status.
+ * u-update events awe awso impowtant f-fwom a wegaw p-pewspective, XD since
+ * the update may be updating the pew-countwy take-down status. (ˆ ﻌ ˆ)♡
  *
- * @param svc: The ThriftTweetService implementation that will receive the
- *    replication events. In practice, this will usually be a
- *    deferredrpc service.
+ * @pawam svc: the thwifttweetsewvice impwementation t-that w-wiww weceive the
+ *    wepwication e-events. ( ͡o ω ͡o ) in pwactice, rawr x3 t-this wiww u-usuawwy be a
+ *    defewwedwpc sewvice. nyaa~~
  */
-trait ReplicatingTweetStore
-    extends TweetStoreBase[ReplicatingTweetStore]
-    with AsyncInsertTweet.Store
-    with AsyncDeleteTweet.Store
-    with AsyncUndeleteTweet.Store
-    with AsyncSetRetweetVisibility.Store
-    with AsyncSetAdditionalFields.Store
-    with AsyncDeleteAdditionalFields.Store
-    with ScrubGeo.Store
-    with IncrFavCount.Store
-    with IncrBookmarkCount.Store
-    with AsyncTakedown.Store
-    with AsyncUpdatePossiblySensitiveTweet.Store {
-  def wrap(w: TweetStore.Wrap): ReplicatingTweetStore =
-    new TweetStoreWrapper(w, this)
-      with ReplicatingTweetStore
-      with AsyncInsertTweet.StoreWrapper
-      with AsyncDeleteTweet.StoreWrapper
-      with AsyncUndeleteTweet.StoreWrapper
-      with AsyncSetRetweetVisibility.StoreWrapper
-      with AsyncSetAdditionalFields.StoreWrapper
-      with AsyncDeleteAdditionalFields.StoreWrapper
-      with ScrubGeo.StoreWrapper
-      with IncrFavCount.StoreWrapper
-      with IncrBookmarkCount.StoreWrapper
-      with AsyncTakedown.StoreWrapper
-      with AsyncUpdatePossiblySensitiveTweet.StoreWrapper
+twait wepwicatingtweetstowe
+    e-extends tweetstowebase[wepwicatingtweetstowe]
+    with asyncinsewttweet.stowe
+    with asyncdewetetweet.stowe
+    with asyncundewetetweet.stowe
+    w-with asyncsetwetweetvisibiwity.stowe
+    with a-asyncsetadditionawfiewds.stowe
+    w-with asyncdeweteadditionawfiewds.stowe
+    w-with scwubgeo.stowe
+    w-with incwfavcount.stowe
+    w-with incwbookmawkcount.stowe
+    w-with asynctakedown.stowe
+    w-with asyncupdatepossibwysensitivetweet.stowe {
+  def wwap(w: tweetstowe.wwap): wepwicatingtweetstowe =
+    nyew t-tweetstowewwappew(w, >_< t-this)
+      w-with wepwicatingtweetstowe
+      w-with asyncinsewttweet.stowewwappew
+      w-with asyncdewetetweet.stowewwappew
+      with asyncundewetetweet.stowewwappew
+      with asyncsetwetweetvisibiwity.stowewwappew
+      w-with asyncsetadditionawfiewds.stowewwappew
+      with asyncdeweteadditionawfiewds.stowewwappew
+      with scwubgeo.stowewwappew
+      with incwfavcount.stowewwappew
+      with incwbookmawkcount.stowewwappew
+      w-with asynctakedown.stowewwappew
+      with asyncupdatepossibwysensitivetweet.stowewwappew
 }
 
-object ReplicatingTweetStore {
+object wepwicatingtweetstowe {
 
-  val Action: AsyncWriteAction.Replication.type = AsyncWriteAction.Replication
+  v-vaw action: a-asyncwwiteaction.wepwication.type = a-asyncwwiteaction.wepwication
 
-  def apply(
-    svc: ThriftTweetService
-  ): ReplicatingTweetStore =
-    new ReplicatingTweetStore {
-      override val asyncInsertTweet: FutureEffect[AsyncInsertTweet.Event] =
-        FutureEffect[AsyncInsertTweet.Event] { e =>
-          svc.replicatedInsertTweet2(
-            ReplicatedInsertTweet2Request(
-              e.cachedTweet,
-              initialTweetUpdateRequest = e.initialTweetUpdateRequest
+  def appwy(
+    s-svc: thwifttweetsewvice
+  ): wepwicatingtweetstowe =
+    n-nyew w-wepwicatingtweetstowe {
+      ovewwide vaw asyncinsewttweet: futuweeffect[asyncinsewttweet.event] =
+        futuweeffect[asyncinsewttweet.event] { e =>
+          svc.wepwicatedinsewttweet2(
+            wepwicatedinsewttweet2wequest(
+              e-e.cachedtweet, ^^;;
+              initiawtweetupdatewequest = e-e.initiawtweetupdatewequest
             ))
         }
 
-      override val retryAsyncInsertTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncInsertTweet.Event]
+      ovewwide v-vaw wetwyasyncinsewttweet: f-futuweeffect[
+        tweetstowewetwyevent[asyncinsewttweet.event]
       ] =
-        TweetStore.retry(Action, asyncInsertTweet)
+        tweetstowe.wetwy(action, (ˆ ﻌ ˆ)♡ a-asyncinsewttweet)
 
-      override val asyncDeleteTweet: FutureEffect[AsyncDeleteTweet.Event] =
-        FutureEffect[AsyncDeleteTweet.Event] { e =>
-          svc.replicatedDeleteTweet2(
-            ReplicatedDeleteTweet2Request(
-              tweet = e.tweet,
-              isErasure = e.isUserErasure,
-              isBounceDelete = e.isBounceDelete
+      o-ovewwide vaw asyncdewetetweet: f-futuweeffect[asyncdewetetweet.event] =
+        f-futuweeffect[asyncdewetetweet.event] { e =>
+          svc.wepwicateddewetetweet2(
+            wepwicateddewetetweet2wequest(
+              tweet = e.tweet, ^^;;
+              i-isewasuwe = e.isusewewasuwe, (⑅˘꒳˘)
+              i-isbouncedewete = e-e.isbouncedewete
             )
           )
         }
 
-      override val retryAsyncDeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncDeleteTweet.Event]
+      ovewwide v-vaw wetwyasyncdewetetweet: f-futuweeffect[
+        tweetstowewetwyevent[asyncdewetetweet.event]
       ] =
-        TweetStore.retry(Action, asyncDeleteTweet)
+        t-tweetstowe.wetwy(action, rawr x3 asyncdewetetweet)
 
-      override val asyncUndeleteTweet: FutureEffect[AsyncUndeleteTweet.Event] =
-        FutureEffect[AsyncUndeleteTweet.Event] { e =>
-          svc.replicatedUndeleteTweet2(ReplicatedUndeleteTweet2Request(e.cachedTweet))
+      ovewwide vaw asyncundewetetweet: futuweeffect[asyncundewetetweet.event] =
+        f-futuweeffect[asyncundewetetweet.event] { e =>
+          s-svc.wepwicatedundewetetweet2(wepwicatedundewetetweet2wequest(e.cachedtweet))
         }
 
-      override val retryAsyncUndeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncUndeleteTweet.Event]
+      ovewwide vaw wetwyasyncundewetetweet: f-futuweeffect[
+        t-tweetstowewetwyevent[asyncundewetetweet.event]
       ] =
-        TweetStore.retry(Action, asyncUndeleteTweet)
+        tweetstowe.wetwy(action, (///ˬ///✿) asyncundewetetweet)
 
-      override val asyncSetAdditionalFields: FutureEffect[AsyncSetAdditionalFields.Event] =
-        FutureEffect[AsyncSetAdditionalFields.Event] { e =>
-          svc.replicatedSetAdditionalFields(SetAdditionalFieldsRequest(e.additionalFields))
+      ovewwide v-vaw asyncsetadditionawfiewds: futuweeffect[asyncsetadditionawfiewds.event] =
+        futuweeffect[asyncsetadditionawfiewds.event] { e =>
+          svc.wepwicatedsetadditionawfiewds(setadditionawfiewdswequest(e.additionawfiewds))
         }
 
-      override val retryAsyncSetAdditionalFields: FutureEffect[
-        TweetStoreRetryEvent[AsyncSetAdditionalFields.Event]
+      o-ovewwide vaw wetwyasyncsetadditionawfiewds: futuweeffect[
+        t-tweetstowewetwyevent[asyncsetadditionawfiewds.event]
       ] =
-        TweetStore.retry(Action, asyncSetAdditionalFields)
+        t-tweetstowe.wetwy(action, 🥺 asyncsetadditionawfiewds)
 
-      override val asyncSetRetweetVisibility: FutureEffect[AsyncSetRetweetVisibility.Event] =
-        FutureEffect[AsyncSetRetweetVisibility.Event] { e =>
-          svc.replicatedSetRetweetVisibility(
-            ReplicatedSetRetweetVisibilityRequest(e.srcId, e.visible)
+      ovewwide vaw asyncsetwetweetvisibiwity: futuweeffect[asyncsetwetweetvisibiwity.event] =
+        futuweeffect[asyncsetwetweetvisibiwity.event] { e =>
+          s-svc.wepwicatedsetwetweetvisibiwity(
+            w-wepwicatedsetwetweetvisibiwitywequest(e.swcid, >_< e.visibwe)
           )
         }
 
-      override val retryAsyncSetRetweetVisibility: FutureEffect[
-        TweetStoreRetryEvent[AsyncSetRetweetVisibility.Event]
+      ovewwide vaw wetwyasyncsetwetweetvisibiwity: f-futuweeffect[
+        tweetstowewetwyevent[asyncsetwetweetvisibiwity.event]
       ] =
-        TweetStore.retry(Action, asyncSetRetweetVisibility)
+        t-tweetstowe.wetwy(action, UwU asyncsetwetweetvisibiwity)
 
-      override val asyncDeleteAdditionalFields: FutureEffect[AsyncDeleteAdditionalFields.Event] =
-        FutureEffect[AsyncDeleteAdditionalFields.Event] { e =>
-          svc.replicatedDeleteAdditionalFields(
-            ReplicatedDeleteAdditionalFieldsRequest(Map(e.tweetId -> e.fieldIds))
+      ovewwide vaw asyncdeweteadditionawfiewds: f-futuweeffect[asyncdeweteadditionawfiewds.event] =
+        futuweeffect[asyncdeweteadditionawfiewds.event] { e =>
+          s-svc.wepwicateddeweteadditionawfiewds(
+            w-wepwicateddeweteadditionawfiewdswequest(map(e.tweetid -> e.fiewdids))
           )
         }
 
-      override val retryAsyncDeleteAdditionalFields: FutureEffect[
-        TweetStoreRetryEvent[AsyncDeleteAdditionalFields.Event]
+      o-ovewwide vaw wetwyasyncdeweteadditionawfiewds: f-futuweeffect[
+        t-tweetstowewetwyevent[asyncdeweteadditionawfiewds.event]
       ] =
-        TweetStore.retry(Action, asyncDeleteAdditionalFields)
+        t-tweetstowe.wetwy(action, >_< asyncdeweteadditionawfiewds)
 
-      override val scrubGeo: FutureEffect[ScrubGeo.Event] =
-        FutureEffect[ScrubGeo.Event](e => svc.replicatedScrubGeo(e.tweetIds))
+      o-ovewwide vaw scwubgeo: f-futuweeffect[scwubgeo.event] =
+        futuweeffect[scwubgeo.event](e => svc.wepwicatedscwubgeo(e.tweetids))
 
-      override val incrFavCount: FutureEffect[IncrFavCount.Event] =
-        FutureEffect[IncrFavCount.Event](e => svc.replicatedIncrFavCount(e.tweetId, e.delta))
+      ovewwide v-vaw incwfavcount: f-futuweeffect[incwfavcount.event] =
+        f-futuweeffect[incwfavcount.event](e => svc.wepwicatedincwfavcount(e.tweetid, -.- e.dewta))
 
-      override val incrBookmarkCount: FutureEffect[IncrBookmarkCount.Event] =
-        FutureEffect[IncrBookmarkCount.Event](e =>
-          svc.replicatedIncrBookmarkCount(e.tweetId, e.delta))
+      ovewwide v-vaw incwbookmawkcount: futuweeffect[incwbookmawkcount.event] =
+        futuweeffect[incwbookmawkcount.event](e =>
+          svc.wepwicatedincwbookmawkcount(e.tweetid, mya e.dewta))
 
-      override val asyncTakedown: FutureEffect[AsyncTakedown.Event] =
-        FutureEffect[AsyncTakedown.Event](e => svc.replicatedTakedown(e.tweet))
+      o-ovewwide vaw asynctakedown: f-futuweeffect[asynctakedown.event] =
+        futuweeffect[asynctakedown.event](e => svc.wepwicatedtakedown(e.tweet))
 
-      override val retryAsyncTakedown: FutureEffect[TweetStoreRetryEvent[AsyncTakedown.Event]] =
-        TweetStore.retry(Action, asyncTakedown)
+      ovewwide vaw wetwyasynctakedown: f-futuweeffect[tweetstowewetwyevent[asynctakedown.event]] =
+        t-tweetstowe.wetwy(action, >w< a-asynctakedown)
 
-      override val asyncUpdatePossiblySensitiveTweet: FutureEffect[
-        AsyncUpdatePossiblySensitiveTweet.Event
+      o-ovewwide vaw asyncupdatepossibwysensitivetweet: f-futuweeffect[
+        asyncupdatepossibwysensitivetweet.event
       ] =
-        FutureEffect[AsyncUpdatePossiblySensitiveTweet.Event](e =>
-          svc.replicatedUpdatePossiblySensitiveTweet(e.tweet))
+        futuweeffect[asyncupdatepossibwysensitivetweet.event](e =>
+          svc.wepwicatedupdatepossibwysensitivetweet(e.tweet))
 
-      override val retryAsyncUpdatePossiblySensitiveTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncUpdatePossiblySensitiveTweet.Event]
+      ovewwide vaw wetwyasyncupdatepossibwysensitivetweet: futuweeffect[
+        tweetstowewetwyevent[asyncupdatepossibwysensitivetweet.event]
       ] =
-        TweetStore.retry(Action, asyncUpdatePossiblySensitiveTweet)
+        t-tweetstowe.wetwy(action, (U ﹏ U) asyncupdatepossibwysensitivetweet)
     }
 }

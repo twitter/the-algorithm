@@ -1,41 +1,41 @@
-namespace java com.twitter.unified_user_actions.enricher.internal.thriftjava
-#@namespace scala com.twitter.unified_user_actions.enricher.internal.thriftscala
-#@namespace strato com.twitter.unified_user_actions.enricher.internal
+namespace java com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftjava
+#@namespace scawa com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa
+#@namespace s-stwato c-com.twittew.unified_usew_actions.enwichew.intewnaw
 
 /*
- * Internal key used for controling UUA enrichment & caching process. It contains very minimal
- * information to allow for efficient serde, fast data look-up and to drive the partioning logics.
+ * i-intewnaw k-key used fow c-contwowing uua enwichment & c-caching p-pwocess. -.- it c-contains vewy minimaw
+ * infowmation to awwow fow efficient sewde, 😳 fast data wook-up a-and to dwive the pawtioning wogics. mya
  *
- * NOTE: Don't depend on it in your application.
- * NOTE: This is used internally by UUA and may change at anytime. There's no guarantee for
- * backward / forward-compatibility.
- * NOTE: Don't add any other metadata unless it is needed for partitioning logic. Extra enrichment
- * metdata can go into the envelop.
+ * note: d-don't depend on it in youw a-appwication. (˘ω˘)
+ * nyote: this is used intewnawwy by uua and may change a-at anytime. >_< thewe's nyo guawantee f-fow
+ * backwawd / f-fowwawd-compatibiwity. -.-
+ * nyote: don't add any othew metadata unwess it is nyeeded fow p-pawtitioning wogic. 🥺 extwa enwichment
+ * metdata can go into the envewop. (U ﹏ U)
  */
-struct EnrichmentKey {
+stwuct e-enwichmentkey {
    /*
-   * The internal type of the primary ID used for partitioning UUA data.
+   * the intewnaw type o-of the pwimawy i-id used fow pawtitioning u-uua data. >w<
    *
-   * Each type should directly correspond to an entity-level ID in UUA.
-   * For example, TweetInfo.actionTweetId & TweetNotification.tweetId are all tweet-entity level
-   * and should correspond to the same primary ID type.
+   * e-each type shouwd diwectwy cowwespond t-to an entity-wevew id in uua. mya
+   * fow exampwe, >w< t-tweetinfo.actiontweetid & tweetnotification.tweetid awe aww tweet-entity wevew
+   * and shouwd cowwespond to the s-same pwimawy id type. nyaa~~
    **/
-   1: required EnrichmentIdType keyType
+   1: w-wequiwed enwichmentidtype k-keytype
 
    /**
-   * The primary ID. This is usually a long, for other incompatible data type such as string or
-   * a bytes array, they can be converted into a long using their native hashCode() function.
+   * t-the pwimawy id. (✿oωo) this is usuawwy a wong, ʘwʘ fow othew incompatibwe d-data type such a-as stwing ow
+   * a bytes awway, (ˆ ﻌ ˆ)♡ t-they can be c-convewted into a wong using theiw n-nyative hashcode() function. 😳😳😳
    **/
-   2: required i64 id
-}(persisted='true', hasPersonalData='true')
+   2: w-wequiwed i64 id
+}(pewsisted='twue', haspewsonawdata='twue')
 
 /**
-* The type of the primary ID. For example, tweetId on a tweet & tweetId on a notification are
-* all TweetId type. Similarly, UserID of a viewer and AuthorID of a tweet are all UserID type.
+* the t-type of the pwimawy id. :3 fow exampwe, OwO t-tweetid on a tweet & tweetid o-on a nyotification a-awe
+* aww tweetid type. (U ﹏ U) simiwawwy, >w< usewid of a viewew and authowid of a tweet awe aww usewid type. (U ﹏ U)
 *
-* The type here ensures that we will partition UUA data correctly across different entity-type
-* (user, tweets, notification, etc.)
+* the t-type hewe ensuwes t-that we wiww pawtition uua d-data cowwectwy acwoss d-diffewent e-entity-type
+* (usew, 😳 tweets, nyotification, (ˆ ﻌ ˆ)♡ etc.)
 **/
-enum EnrichmentIdType {
-  TweetId = 0
+enum enwichmentidtype {
+  t-tweetid = 0
 }

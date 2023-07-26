@@ -1,223 +1,223 @@
-package com.twitter.home_mixer.product.scored_tweets.side_effect
+package com.twittew.home_mixew.pwoduct.scowed_tweets.side_effect
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mysql.Client
-import com.twitter.finagle.mysql.Transactions
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.home_mixer.model.HomeFeatures.ServedRequestIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.param.HomeMixerFlagName.DataRecordMetadataStoreConfigsYmlFlag
-import com.twitter.home_mixer.param.HomeMixerFlagName.ScribeServedCommonFeaturesAndCandidateFeaturesFlag
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.CandidateFeaturesScribeEventPublisher
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.CommonFeaturesScribeEventPublisher
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.MinimumFeaturesScribeEventPublisher
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.non_ml_features.NonMLCandidateFeatures
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.non_ml_features.NonMLCandidateFeaturesAdapter
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.non_ml_features.NonMLCommonFeatures
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.non_ml_features.NonMLCommonFeaturesAdapter
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsResponse
-import com.twitter.home_mixer.product.scored_tweets.scorer.CandidateFeaturesDataRecordFeature
-import com.twitter.home_mixer.product.scored_tweets.scorer.CommonFeaturesDataRecordFeature
-import com.twitter.home_mixer.product.scored_tweets.scorer.PredictedScoreFeature.PredictedScoreFeatures
-import com.twitter.home_mixer.util.CandidatesUtil.getOriginalAuthorId
-import com.twitter.inject.annotations.Flag
-import com.twitter.logpipeline.client.common.EventPublisher
-import com.twitter.ml.api.DataRecordMerger
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.DataRecordConverter
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.SpecificFeatures
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.ml.cont_train.common.domain.non_scalding.CandidateAndCommonFeaturesStreamingUtils
-import com.twitter.timelines.ml.pldr.client.MysqlClientUtils
-import com.twitter.timelines.ml.pldr.client.VersionedMetadataCacheClient
-import com.twitter.timelines.ml.pldr.conversion.VersionIdAndFeatures
-import com.twitter.timelines.suggests.common.data_record_metadata.{thriftscala => drmd}
-import com.twitter.timelines.suggests.common.poly_data_record.{thriftjava => pldr}
-import com.twitter.timelines.util.stats.OptionObserver
-import com.twitter.util.Time
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+impowt com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.finagwe.mysqw.cwient
+i-impowt com.twittew.finagwe.mysqw.twansactions
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.finagwe.utiw.defauwttimew
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.sewvedwequestidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.souwcetweetidfeatuwe
+i-impowt com.twittew.home_mixew.pawam.homemixewfwagname.datawecowdmetadatastoweconfigsymwfwag
+impowt com.twittew.home_mixew.pawam.homemixewfwagname.scwibesewvedcommonfeatuwesandcandidatefeatuwesfwag
+impowt com.twittew.home_mixew.pawam.homemixewinjectionnames.candidatefeatuwesscwibeeventpubwishew
+i-impowt com.twittew.home_mixew.pawam.homemixewinjectionnames.commonfeatuwesscwibeeventpubwishew
+impowt com.twittew.home_mixew.pawam.homemixewinjectionnames.minimumfeatuwesscwibeeventpubwishew
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.adaptews.non_mw_featuwes.nonmwcandidatefeatuwes
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.adaptews.non_mw_featuwes.nonmwcandidatefeatuwesadaptew
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.adaptews.non_mw_featuwes.nonmwcommonfeatuwes
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.adaptews.non_mw_featuwes.nonmwcommonfeatuwesadaptew
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.modew.scowedtweetsquewy
+impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.modew.scowedtweetswesponse
+impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.scowew.candidatefeatuwesdatawecowdfeatuwe
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.scowew.commonfeatuwesdatawecowdfeatuwe
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.scowew.pwedictedscowefeatuwe.pwedictedscowefeatuwes
+impowt com.twittew.home_mixew.utiw.candidatesutiw.getowiginawauthowid
+i-impowt com.twittew.inject.annotations.fwag
+impowt com.twittew.wogpipewine.cwient.common.eventpubwishew
+impowt com.twittew.mw.api.datawecowdmewgew
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.datawecowd.datawecowdconvewtew
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.datawecowd.specificfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.side_effect.pipewinewesuwtsideeffect
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.sideeffectidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.timewines.mw.cont_twain.common.domain.non_scawding.candidateandcommonfeatuwesstweamingutiws
+impowt c-com.twittew.timewines.mw.pwdw.cwient.mysqwcwientutiws
+impowt com.twittew.timewines.mw.pwdw.cwient.vewsionedmetadatacachecwient
+impowt com.twittew.timewines.mw.pwdw.convewsion.vewsionidandfeatuwes
+impowt com.twittew.timewines.suggests.common.data_wecowd_metadata.{thwiftscawa => dwmd}
+impowt com.twittew.timewines.suggests.common.powy_data_wecowd.{thwiftjava => p-pwdw}
+impowt com.twittew.timewines.utiw.stats.optionobsewvew
+i-impowt com.twittew.utiw.time
+i-impowt com.twittew.utiw.twy
+impowt c-com.twittew.utiw.wogging.wogging
+impowt javax.inject.inject
+impowt javax.inject.named
+impowt j-javax.inject.singweton
+i-impowt scawa.cowwection.javaconvewtews._
 
 /**
- * (1) Scribe common features sent to prediction service + some other features as PLDR format into logs
- * (2) Scribe candidate features sent to prediction service + some other features as PLDR format into another logs
+ * (1) scwibe c-common featuwes s-sent to pwediction sewvice + s-some othew featuwes as pwdw fowmat i-into wogs
+ * (2) scwibe candidate featuwes s-sent to pwediction sewvice + some o-othew featuwes as pwdw fowmat i-into anothew wogs
  */
-@Singleton
-class ScribeServedCommonFeaturesAndCandidateFeaturesSideEffect @Inject() (
-  @Flag(DataRecordMetadataStoreConfigsYmlFlag) dataRecordMetadataStoreConfigsYml: String,
-  @Flag(ScribeServedCommonFeaturesAndCandidateFeaturesFlag) enableScribeServedCommonFeaturesAndCandidateFeatures: Boolean,
-  @Named(CommonFeaturesScribeEventPublisher) commonFeaturesScribeEventPublisher: EventPublisher[
-    pldr.PolyDataRecord
+@singweton
+c-cwass scwibesewvedcommonfeatuwesandcandidatefeatuwessideeffect @inject() (
+  @fwag(datawecowdmetadatastoweconfigsymwfwag) datawecowdmetadatastoweconfigsymw: stwing, (⑅˘꒳˘)
+  @fwag(scwibesewvedcommonfeatuwesandcandidatefeatuwesfwag) enabwescwibesewvedcommonfeatuwesandcandidatefeatuwes: boowean, 😳😳😳
+  @named(commonfeatuwesscwibeeventpubwishew) commonfeatuwesscwibeeventpubwishew: eventpubwishew[
+    pwdw.powydatawecowd
+  ], nyaa~~
+  @named(candidatefeatuwesscwibeeventpubwishew) candidatefeatuwesscwibeeventpubwishew: e-eventpubwishew[
+    p-pwdw.powydatawecowd
   ],
-  @Named(CandidateFeaturesScribeEventPublisher) candidateFeaturesScribeEventPublisher: EventPublisher[
-    pldr.PolyDataRecord
-  ],
-  @Named(MinimumFeaturesScribeEventPublisher) minimumFeaturesScribeEventPublisher: EventPublisher[
-    pldr.PolyDataRecord
-  ],
-  statsReceiver: StatsReceiver,
-) extends PipelineResultSideEffect[ScoredTweetsQuery, ScoredTweetsResponse]
-    with PipelineResultSideEffect.Conditionally[ScoredTweetsQuery, ScoredTweetsResponse]
-    with Logging {
+  @named(minimumfeatuwesscwibeeventpubwishew) minimumfeatuwesscwibeeventpubwishew: e-eventpubwishew[
+    p-pwdw.powydatawecowd
+  ], rawr
+  s-statsweceivew: statsweceivew, -.-
+) extends pipewinewesuwtsideeffect[scowedtweetsquewy, (✿oωo) scowedtweetswesponse]
+    w-with pipewinewesuwtsideeffect.conditionawwy[scowedtweetsquewy, /(^•ω•^) scowedtweetswesponse]
+    with wogging {
 
-  override val identifier: SideEffectIdentifier =
-    SideEffectIdentifier("ScribeServedCommonFeaturesAndCandidateFeatures")
+  ovewwide vaw identifiew: s-sideeffectidentifiew =
+    sideeffectidentifiew("scwibesewvedcommonfeatuwesandcandidatefeatuwes")
 
-  private val drMerger = new DataRecordMerger
-  private val postScoringCandidateFeatures = SpecificFeatures(PredictedScoreFeatures)
-  private val postScoringCandidateFeaturesDataRecordAdapter =
-    new DataRecordConverter(postScoringCandidateFeatures)
+  p-pwivate v-vaw dwmewgew = n-nyew datawecowdmewgew
+  pwivate v-vaw postscowingcandidatefeatuwes = s-specificfeatuwes(pwedictedscowefeatuwes)
+  p-pwivate vaw postscowingcandidatefeatuwesdatawecowdadaptew =
+    n-nyew datawecowdconvewtew(postscowingcandidatefeatuwes)
 
-  private val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
-  private val metadataFetchFailedCounter = scopedStatsReceiver.counter("metadataFetchFailed")
-  private val commonFeaturesScribeCounter = scopedStatsReceiver.counter("commonFeaturesScribe")
-  private val commonFeaturesPLDROptionObserver =
-    OptionObserver(scopedStatsReceiver.scope("commonFeaturesPLDR"))
-  private val candidateFeaturesScribeCounter =
-    scopedStatsReceiver.counter("candidateFeaturesScribe")
-  private val candidateFeaturesPLDROptionObserver =
-    OptionObserver(scopedStatsReceiver.scope("candidateFeaturesPLDR"))
-  private val minimumFeaturesPLDROptionObserver =
-    OptionObserver(scopedStatsReceiver.scope("minimumFeaturesPLDR"))
-  private val minimumFeaturesScribeCounter =
-    scopedStatsReceiver.counter("minimumFeaturesScribe")
+  pwivate vaw scopedstatsweceivew = s-statsweceivew.scope(getcwass.getsimpwename)
+  p-pwivate v-vaw metadatafetchfaiwedcountew = s-scopedstatsweceivew.countew("metadatafetchfaiwed")
+  p-pwivate vaw commonfeatuwesscwibecountew = scopedstatsweceivew.countew("commonfeatuwesscwibe")
+  pwivate v-vaw commonfeatuwespwdwoptionobsewvew =
+    optionobsewvew(scopedstatsweceivew.scope("commonfeatuwespwdw"))
+  pwivate vaw candidatefeatuwesscwibecountew =
+    scopedstatsweceivew.countew("candidatefeatuwesscwibe")
+  pwivate vaw candidatefeatuwespwdwoptionobsewvew =
+    optionobsewvew(scopedstatsweceivew.scope("candidatefeatuwespwdw"))
+  p-pwivate vaw minimumfeatuwespwdwoptionobsewvew =
+    optionobsewvew(scopedstatsweceivew.scope("minimumfeatuwespwdw"))
+  pwivate v-vaw minimumfeatuwesscwibecountew =
+    s-scopedstatsweceivew.countew("minimumfeatuwesscwibe")
 
-  lazy private val dataRecordMetadataStoreClient: Option[Client with Transactions] =
-    Try {
-      MysqlClientUtils.mysqlClientProvider(
-        MysqlClientUtils.parseConfigFromYaml(dataRecordMetadataStoreConfigsYml))
-    }.onFailure { e => info(s"Error building MySQL client: $e") }.toOption
+  w-wazy pwivate vaw datawecowdmetadatastowecwient: o-option[cwient with twansactions] =
+    t-twy {
+      m-mysqwcwientutiws.mysqwcwientpwovidew(
+        mysqwcwientutiws.pawseconfigfwomyamw(datawecowdmetadatastoweconfigsymw))
+    }.onfaiwuwe { e => info(s"ewwow buiwding mysqw cwient: $e") }.tooption
 
-  lazy private val versionedMetadataCacheClientOpt: Option[
-    VersionedMetadataCacheClient[Map[drmd.FeaturesCategory, Option[VersionIdAndFeatures]]]
+  wazy pwivate v-vaw vewsionedmetadatacachecwientopt: option[
+    v-vewsionedmetadatacachecwient[map[dwmd.featuwescategowy, 🥺 option[vewsionidandfeatuwes]]]
   ] =
-    dataRecordMetadataStoreClient.map { mysqlClient =>
-      new VersionedMetadataCacheClient[Map[drmd.FeaturesCategory, Option[VersionIdAndFeatures]]](
-        maximumSize = 1,
-        expireDurationOpt = None,
-        mysqlClient = mysqlClient,
-        transform = CandidateAndCommonFeaturesStreamingUtils.metadataTransformer,
-        statsReceiver = statsReceiver
+    d-datawecowdmetadatastowecwient.map { m-mysqwcwient =>
+      nyew vewsionedmetadatacachecwient[map[dwmd.featuwescategowy, ʘwʘ option[vewsionidandfeatuwes]]](
+        maximumsize = 1, UwU
+        e-expiweduwationopt = n-nyone, XD
+        mysqwcwient = m-mysqwcwient, (✿oωo)
+        t-twansfowm = candidateandcommonfeatuwesstweamingutiws.metadatatwansfowmew, :3
+        statsweceivew = statsweceivew
       )
     }
 
-  versionedMetadataCacheClientOpt.foreach { versionedMetadataCacheClient =>
-    versionedMetadataCacheClient
-      .metadataFetchTimerTask(
-        CandidateAndCommonFeaturesStreamingUtils.metadataFetchKey,
-        metadataFetchTimer = DefaultTimer,
-        metadataFetchInterval = 90.seconds,
-        metadataFetchFailedCounter = metadataFetchFailedCounter
+  vewsionedmetadatacachecwientopt.foweach { v-vewsionedmetadatacachecwient =>
+    v-vewsionedmetadatacachecwient
+      .metadatafetchtimewtask(
+        c-candidateandcommonfeatuwesstweamingutiws.metadatafetchkey, (///ˬ///✿)
+        metadatafetchtimew = d-defauwttimew, nyaa~~
+        m-metadatafetchintewvaw = 90.seconds, >w<
+        metadatafetchfaiwedcountew = m-metadatafetchfaiwedcountew
       )
   }
 
-  override def onlyIf(
-    query: ScoredTweetsQuery,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: ScoredTweetsResponse
-  ): Boolean = enableScribeServedCommonFeaturesAndCandidateFeatures
+  ovewwide def onwyif(
+    quewy: scowedtweetsquewy, -.-
+    sewectedcandidates: s-seq[candidatewithdetaiws], (✿oωo)
+    w-wemainingcandidates: seq[candidatewithdetaiws], (˘ω˘)
+    dwoppedcandidates: s-seq[candidatewithdetaiws], rawr
+    w-wesponse: scowedtweetswesponse
+  ): boowean = enabwescwibesewvedcommonfeatuwesandcandidatefeatuwes
 
-  override def apply(
-    inputs: PipelineResultSideEffect.Inputs[ScoredTweetsQuery, ScoredTweetsResponse]
-  ): Stitch[Unit] = {
-    Stitch.value {
-      val servedTimestamp: Long = Time.now.inMilliseconds
-      val nonMLCommonFeatures = NonMLCommonFeatures(
-        userId = inputs.query.getRequiredUserId,
-        predictionRequestId =
-          inputs.query.features.flatMap(_.getOrElse(ServedRequestIdFeature, None)),
-        servedTimestamp = servedTimestamp
+  o-ovewwide def appwy(
+    inputs: pipewinewesuwtsideeffect.inputs[scowedtweetsquewy, OwO scowedtweetswesponse]
+  ): stitch[unit] = {
+    s-stitch.vawue {
+      vaw sewvedtimestamp: wong = t-time.now.inmiwwiseconds
+      v-vaw nyonmwcommonfeatuwes = nyonmwcommonfeatuwes(
+        usewid = inputs.quewy.getwequiwedusewid, ^•ﻌ•^
+        p-pwedictionwequestid =
+          i-inputs.quewy.featuwes.fwatmap(_.getowewse(sewvedwequestidfeatuwe, UwU nyone)), (˘ω˘)
+        sewvedtimestamp = sewvedtimestamp
       )
-      val nonMLCommonFeaturesDataRecord =
-        NonMLCommonFeaturesAdapter.adaptToDataRecords(nonMLCommonFeatures).asScala.head
+      vaw nyonmwcommonfeatuwesdatawecowd =
+        n-nyonmwcommonfeatuwesadaptew.adapttodatawecowds(nonmwcommonfeatuwes).asscawa.head
 
       /**
-       * Steps of scribing common features
-       * (1) fetch common features as data record
-       * (2) extract additional feature as data record, e.g. predictionRequestId which is used as join key in downstream jobs
-       * (3) merge two data records above and convert the merged data record to pldr
-       * (4) publish pldr
+       * steps of scwibing c-common featuwes
+       * (1) fetch common featuwes as data wecowd
+       * (2) extwact additionaw f-featuwe as data wecowd, (///ˬ///✿) e.g. p-pwedictionwequestid w-which is used as join key i-in downstweam jobs
+       * (3) mewge two data wecowds a-above and c-convewt the mewged d-data wecowd to pwdw
+       * (4) p-pubwish pwdw
        */
-      val commonFeaturesDataRecordOpt =
-        inputs.selectedCandidates.headOption.map(_.features.get(CommonFeaturesDataRecordFeature))
-      val commonFeaturesPLDROpt = commonFeaturesDataRecordOpt.flatMap { commonFeaturesDataRecord =>
-        drMerger.merge(commonFeaturesDataRecord, nonMLCommonFeaturesDataRecord)
+      v-vaw commonfeatuwesdatawecowdopt =
+        inputs.sewectedcandidates.headoption.map(_.featuwes.get(commonfeatuwesdatawecowdfeatuwe))
+      vaw c-commonfeatuwespwdwopt = c-commonfeatuwesdatawecowdopt.fwatmap { c-commonfeatuwesdatawecowd =>
+        dwmewgew.mewge(commonfeatuwesdatawecowd, σωσ nyonmwcommonfeatuwesdatawecowd)
 
-        CandidateAndCommonFeaturesStreamingUtils.commonFeaturesToPolyDataRecord(
-          versionedMetadataCacheClientOpt = versionedMetadataCacheClientOpt,
-          commonFeatures = commonFeaturesDataRecord,
-          valueFormat = pldr.PolyDataRecord._Fields.LITE_COMPACT_DATA_RECORD
+        c-candidateandcommonfeatuwesstweamingutiws.commonfeatuwestopowydatawecowd(
+          vewsionedmetadatacachecwientopt = v-vewsionedmetadatacachecwientopt, /(^•ω•^)
+          c-commonfeatuwes = commonfeatuwesdatawecowd, 😳
+          vawuefowmat = pwdw.powydatawecowd._fiewds.wite_compact_data_wecowd
         )
       }
 
-      commonFeaturesPLDROptionObserver(commonFeaturesPLDROpt).foreach { pldr =>
-        commonFeaturesScribeEventPublisher.publish(pldr)
-        commonFeaturesScribeCounter.incr()
+      c-commonfeatuwespwdwoptionobsewvew(commonfeatuwespwdwopt).foweach { p-pwdw =>
+        c-commonfeatuwesscwibeeventpubwishew.pubwish(pwdw)
+        c-commonfeatuwesscwibecountew.incw()
       }
 
       /**
-       * steps of scribing candidate features
-       * (1) fetch candidate features as data record
-       * (2) extract additional features (mostly non ML features including predicted scores, predictionRequestId, userId, tweetId)
-       * (3) merge data records and convert the merged data record into pldr
-       * (4) publish pldr
+       * steps of scwibing c-candidate featuwes
+       * (1) fetch candidate featuwes as data wecowd
+       * (2) extwact additionaw featuwes (mostwy n-nyon mw featuwes incwuding p-pwedicted scowes, 😳 pwedictionwequestid, (⑅˘꒳˘) u-usewid, 😳😳😳 tweetid)
+       * (3) m-mewge data wecowds and c-convewt the mewged d-data wecowd i-into pwdw
+       * (4) p-pubwish pwdw
        */
-      inputs.selectedCandidates.foreach { candidate =>
-        val candidateFeaturesDataRecord = candidate.features.get(CandidateFeaturesDataRecordFeature)
+      i-inputs.sewectedcandidates.foweach { candidate =>
+        vaw candidatefeatuwesdatawecowd = candidate.featuwes.get(candidatefeatuwesdatawecowdfeatuwe)
 
         /**
-         * extract predicted scores as data record and merge it into original data record
+         * extwact pwedicted scowes as data wecowd and mewge i-it into owiginaw d-data wecowd
          */
-        val postScoringCandidateFeaturesDataRecord =
-          postScoringCandidateFeaturesDataRecordAdapter.toDataRecord(candidate.features)
-        drMerger.merge(candidateFeaturesDataRecord, postScoringCandidateFeaturesDataRecord)
+        v-vaw postscowingcandidatefeatuwesdatawecowd =
+          postscowingcandidatefeatuwesdatawecowdadaptew.todatawecowd(candidate.featuwes)
+        d-dwmewgew.mewge(candidatefeatuwesdatawecowd, 😳 postscowingcandidatefeatuwesdatawecowd)
 
         /**
-         * extract non ML common features as data record and merge it into original data record
+         * extwact nyon mw common featuwes as data wecowd and m-mewge it into o-owiginaw data wecowd
          */
-        drMerger.merge(candidateFeaturesDataRecord, nonMLCommonFeaturesDataRecord)
+        dwmewgew.mewge(candidatefeatuwesdatawecowd, XD n-nyonmwcommonfeatuwesdatawecowd)
 
         /**
-         * extract non ML candidate features as data record and merge it into original data record
+         * extwact nyon mw candidate f-featuwes a-as data wecowd and mewge it into o-owiginaw data wecowd
          */
-        val nonMLCandidateFeatures = NonMLCandidateFeatures(
-          tweetId = candidate.candidateIdLong,
-          sourceTweetId = candidate.features.getOrElse(SourceTweetIdFeature, None),
-          originalAuthorId = getOriginalAuthorId(candidate.features)
+        v-vaw nyonmwcandidatefeatuwes = nyonmwcandidatefeatuwes(
+          tweetid = candidate.candidateidwong, mya
+          souwcetweetid = c-candidate.featuwes.getowewse(souwcetweetidfeatuwe, ^•ﻌ•^ n-nyone),
+          owiginawauthowid = g-getowiginawauthowid(candidate.featuwes)
         )
-        val nonMLCandidateFeaturesDataRecord =
-          NonMLCandidateFeaturesAdapter.adaptToDataRecords(nonMLCandidateFeatures).asScala.head
-        drMerger.merge(candidateFeaturesDataRecord, nonMLCandidateFeaturesDataRecord)
+        v-vaw n-nonmwcandidatefeatuwesdatawecowd =
+          nyonmwcandidatefeatuwesadaptew.adapttodatawecowds(nonmwcandidatefeatuwes).asscawa.head
+        d-dwmewgew.mewge(candidatefeatuwesdatawecowd, ʘwʘ n-nyonmwcandidatefeatuwesdatawecowd)
 
-        val candidateFeaturesPLDROpt =
-          CandidateAndCommonFeaturesStreamingUtils.candidateFeaturesToPolyDataRecord(
-            versionedMetadataCacheClientOpt = versionedMetadataCacheClientOpt,
-            candidateFeatures = candidateFeaturesDataRecord,
-            valueFormat = pldr.PolyDataRecord._Fields.LITE_COMPACT_DATA_RECORD
+        vaw candidatefeatuwespwdwopt =
+          c-candidateandcommonfeatuwesstweamingutiws.candidatefeatuwestopowydatawecowd(
+            v-vewsionedmetadatacachecwientopt = vewsionedmetadatacachecwientopt, ( ͡o ω ͡o )
+            c-candidatefeatuwes = candidatefeatuwesdatawecowd, mya
+            vawuefowmat = pwdw.powydatawecowd._fiewds.wite_compact_data_wecowd
           )
 
-        candidateFeaturesPLDROptionObserver(candidateFeaturesPLDROpt).foreach { pldr =>
-          candidateFeaturesScribeEventPublisher.publish(pldr)
-          candidateFeaturesScribeCounter.incr()
+        c-candidatefeatuwespwdwoptionobsewvew(candidatefeatuwespwdwopt).foweach { pwdw =>
+          c-candidatefeatuwesscwibeeventpubwishew.pubwish(pwdw)
+          c-candidatefeatuwesscwibecountew.incw()
         }
 
-        // scribe minimum features which are used to join labels from client events.
-        val minimumFeaturesPLDROpt = candidateFeaturesPLDROpt
-          .map(CandidateAndCommonFeaturesStreamingUtils.extractMinimumFeaturesFromPldr)
-          .map(pldr.PolyDataRecord.dataRecord)
-        minimumFeaturesPLDROptionObserver(minimumFeaturesPLDROpt).foreach { pldr =>
-          minimumFeaturesScribeEventPublisher.publish(pldr)
-          minimumFeaturesScribeCounter.incr()
+        // scwibe m-minimum featuwes which awe used to join wabews f-fwom cwient events. o.O
+        vaw m-minimumfeatuwespwdwopt = c-candidatefeatuwespwdwopt
+          .map(candidateandcommonfeatuwesstweamingutiws.extwactminimumfeatuwesfwompwdw)
+          .map(pwdw.powydatawecowd.datawecowd)
+        minimumfeatuwespwdwoptionobsewvew(minimumfeatuwespwdwopt).foweach { pwdw =>
+          minimumfeatuwesscwibeeventpubwishew.pubwish(pwdw)
+          m-minimumfeatuwesscwibecountew.incw()
         }
       }
     }

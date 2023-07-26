@@ -1,128 +1,128 @@
-package com.twitter.search.earlybird;
+package com.twittew.seawch.eawwybiwd;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.RAMDirectory;
+i-impowt owg.apache.wucene.index.indexwwitewconfig;
+i-impowt owg.apache.wucene.seawch.indexseawchew;
+i-impowt owg.apache.wucene.stowe.diwectowy;
+i-impowt o-owg.apache.wucene.stowe.wamdiwectowy;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.common.schema.DynamicSchema;
-import com.twitter.search.common.schema.SearchWhitespaceAnalyzer;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.util.CloseResourceUtil;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentData;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsFactory;
-import com.twitter.search.core.earlybird.index.inverted.IndexOptimizer;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.OptimizedTimeMapper;
-import com.twitter.search.earlybird.index.OptimizedTweetIDMapper;
-import com.twitter.search.earlybird.index.OutOfOrderRealtimeTweetIDMapper;
-import com.twitter.search.earlybird.index.RealtimeTimeMapper;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.partition.SegmentSyncInfo;
+i-impowt c-com.twittew.decidew.decidew;
+impowt com.twittew.seawch.common.schema.dynamicschema;
+impowt com.twittew.seawch.common.schema.seawchwhitespaceanawyzew;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+i-impowt com.twittew.seawch.common.utiw.cwosewesouwceutiw;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentdata;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdweawtimeindexsegmentdata;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.extensions.eawwybiwdindexextensionsfactowy;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.invewted.indexoptimizew;
+impowt com.twittew.seawch.eawwybiwd.exception.cwiticawexceptionhandwew;
+i-impowt c-com.twittew.seawch.eawwybiwd.index.optimizedtimemappew;
+impowt com.twittew.seawch.eawwybiwd.index.optimizedtweetidmappew;
+impowt com.twittew.seawch.eawwybiwd.index.outofowdewweawtimetweetidmappew;
+impowt c-com.twittew.seawch.eawwybiwd.index.weawtimetimemappew;
+impowt com.twittew.seawch.eawwybiwd.pawtition.seawchindexingmetwicset;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentsyncinfo;
 
 /**
- * Index config for the Real-Time in-memory Tweet cluster.
+ * index config fow the weaw-time i-in-memowy tweet cwustew. ( ͡o ω ͡o )
  */
-public class RealtimeEarlybirdIndexConfig extends EarlybirdIndexConfig {
-  private final CloseResourceUtil resourceCloser = new CloseResourceUtil();
+p-pubwic cwass weawtimeeawwybiwdindexconfig e-extends e-eawwybiwdindexconfig {
+  p-pwivate finaw cwosewesouwceutiw wesouwcecwosew = n-nyew cwosewesouwceutiw();
 
-  public RealtimeEarlybirdIndexConfig(
-      EarlybirdCluster cluster, Decider decider, SearchIndexingMetricSet searchIndexingMetricSet,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    super(cluster, decider, searchIndexingMetricSet, criticalExceptionHandler);
+  pubwic w-weawtimeeawwybiwdindexconfig(
+      eawwybiwdcwustew cwustew, mya decidew decidew, (///ˬ///✿) seawchindexingmetwicset seawchindexingmetwicset, (˘ω˘)
+      c-cwiticawexceptionhandwew cwiticawexceptionhandwew) {
+    s-supew(cwustew, d-decidew, ^^;; seawchindexingmetwicset, (✿oωo) c-cwiticawexceptionhandwew);
   }
 
-  public RealtimeEarlybirdIndexConfig(
-      EarlybirdCluster cluster, DynamicSchema schema, Decider decider,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    super(cluster, schema, decider, searchIndexingMetricSet, criticalExceptionHandler);
+  pubwic weawtimeeawwybiwdindexconfig(
+      eawwybiwdcwustew cwustew, (U ﹏ U) dynamicschema schema, -.- decidew d-decidew, ^•ﻌ•^
+      s-seawchindexingmetwicset seawchindexingmetwicset, rawr
+      c-cwiticawexceptionhandwew c-cwiticawexceptionhandwew) {
+    supew(cwustew, (˘ω˘) s-schema, decidew, nyaa~~ seawchindexingmetwicset, UwU cwiticawexceptionhandwew);
   }
 
-  @Override
-  public Directory newLuceneDirectory(SegmentSyncInfo segmentSyncInfo) {
-    return new RAMDirectory();
+  @ovewwide
+  p-pubwic diwectowy nyewwucenediwectowy(segmentsyncinfo segmentsyncinfo) {
+    w-wetuwn nyew wamdiwectowy();
   }
 
-  @Override
-  public IndexWriterConfig newIndexWriterConfig() {
-    return new IndexWriterConfig(new SearchWhitespaceAnalyzer())
-        .setSimilarity(IndexSearcher.getDefaultSimilarity());
+  @ovewwide
+  p-pubwic indexwwitewconfig nyewindexwwitewconfig() {
+    wetuwn n-nyew indexwwitewconfig(new s-seawchwhitespaceanawyzew())
+        .setsimiwawity(indexseawchew.getdefauwtsimiwawity());
   }
 
-  @Override
-  public EarlybirdIndexSegmentData newSegmentData(
-      int maxSegmentSize,
-      long timeSliceID,
-      Directory dir,
-      EarlybirdIndexExtensionsFactory extensionsFactory) {
-    return new EarlybirdRealtimeIndexSegmentData(
-        maxSegmentSize,
-        timeSliceID,
-        getSchema(),
-        new OutOfOrderRealtimeTweetIDMapper(maxSegmentSize, timeSliceID),
-        new RealtimeTimeMapper(maxSegmentSize),
-        extensionsFactory);
+  @ovewwide
+  pubwic eawwybiwdindexsegmentdata nyewsegmentdata(
+      int maxsegmentsize, :3
+      wong timeswiceid, (⑅˘꒳˘)
+      diwectowy diw, (///ˬ///✿)
+      eawwybiwdindexextensionsfactowy e-extensionsfactowy) {
+    w-wetuwn nyew eawwybiwdweawtimeindexsegmentdata(
+        m-maxsegmentsize, ^^;;
+        t-timeswiceid, >_<
+        g-getschema(), rawr x3
+        nyew outofowdewweawtimetweetidmappew(maxsegmentsize, /(^•ω•^) timeswiceid), :3
+        nyew weawtimetimemappew(maxsegmentsize), (ꈍᴗꈍ)
+        e-extensionsfactowy);
   }
 
-  @Override
-  public EarlybirdIndexSegmentData loadSegmentData(
-          FlushInfo flushInfo,
-          DataDeserializer dataInputStream,
-          Directory dir,
-          EarlybirdIndexExtensionsFactory extensionsFactory) throws IOException {
-    EarlybirdRealtimeIndexSegmentData.InMemorySegmentDataFlushHandler flushHandler;
-    boolean isOptimized = flushInfo.getBooleanProperty(
-        EarlybirdIndexSegmentData.AbstractSegmentDataFlushHandler.IS_OPTIMIZED_PROP_NAME);
-    if (isOptimized) {
-      flushHandler = new EarlybirdRealtimeIndexSegmentData.InMemorySegmentDataFlushHandler(
-          getSchema(),
-          extensionsFactory,
-          new OptimizedTweetIDMapper.FlushHandler(),
-          new OptimizedTimeMapper.FlushHandler());
-    } else {
-      flushHandler = new EarlybirdRealtimeIndexSegmentData.InMemorySegmentDataFlushHandler(
-          getSchema(),
-          extensionsFactory,
-          new OutOfOrderRealtimeTweetIDMapper.FlushHandler(),
-          new RealtimeTimeMapper.FlushHandler());
+  @ovewwide
+  pubwic eawwybiwdindexsegmentdata woadsegmentdata(
+          fwushinfo fwushinfo, /(^•ω•^)
+          d-datadesewiawizew datainputstweam, (⑅˘꒳˘)
+          d-diwectowy d-diw, ( ͡o ω ͡o )
+          e-eawwybiwdindexextensionsfactowy extensionsfactowy) t-thwows ioexception {
+    e-eawwybiwdweawtimeindexsegmentdata.inmemowysegmentdatafwushhandwew f-fwushhandwew;
+    b-boowean isoptimized = fwushinfo.getbooweanpwopewty(
+        eawwybiwdindexsegmentdata.abstwactsegmentdatafwushhandwew.is_optimized_pwop_name);
+    i-if (isoptimized) {
+      f-fwushhandwew = n-nyew e-eawwybiwdweawtimeindexsegmentdata.inmemowysegmentdatafwushhandwew(
+          getschema(), òωó
+          e-extensionsfactowy, (⑅˘꒳˘)
+          nyew optimizedtweetidmappew.fwushhandwew(), XD
+          nyew optimizedtimemappew.fwushhandwew());
+    } ewse {
+      f-fwushhandwew = nyew eawwybiwdweawtimeindexsegmentdata.inmemowysegmentdatafwushhandwew(
+          getschema(), -.-
+          extensionsfactowy, :3
+          nyew outofowdewweawtimetweetidmappew.fwushhandwew(),
+          n-nyew weawtimetimemappew.fwushhandwew());
     }
 
 
-    return flushHandler.load(flushInfo, dataInputStream);
+    wetuwn fwushhandwew.woad(fwushinfo, nyaa~~ datainputstweam);
   }
 
-  @Override
-  public EarlybirdIndexSegmentData optimize(
-      EarlybirdIndexSegmentData earlybirdIndexSegmentData) throws IOException {
-    Preconditions.checkArgument(
-        earlybirdIndexSegmentData instanceof EarlybirdRealtimeIndexSegmentData,
-        "Expected EarlybirdRealtimeIndexSegmentData but got %s",
-        earlybirdIndexSegmentData.getClass());
+  @ovewwide
+  pubwic eawwybiwdindexsegmentdata o-optimize(
+      e-eawwybiwdindexsegmentdata e-eawwybiwdindexsegmentdata) thwows i-ioexception {
+    pweconditions.checkawgument(
+        e-eawwybiwdindexsegmentdata i-instanceof eawwybiwdweawtimeindexsegmentdata, 😳
+        "expected eawwybiwdweawtimeindexsegmentdata but got %s", (⑅˘꒳˘)
+        eawwybiwdindexsegmentdata.getcwass());
 
-    return IndexOptimizer.optimize((EarlybirdRealtimeIndexSegmentData) earlybirdIndexSegmentData);
+    wetuwn i-indexoptimizew.optimize((eawwybiwdweawtimeindexsegmentdata) eawwybiwdindexsegmentdata);
   }
 
-  @Override
-  public boolean isIndexStoredOnDisk() {
-    return false;
+  @ovewwide
+  p-pubwic boowean isindexstowedondisk() {
+    w-wetuwn fawse;
   }
 
-  @Override
-  public final CloseResourceUtil getResourceCloser() {
-    return resourceCloser;
+  @ovewwide
+  p-pubwic finaw cwosewesouwceutiw getwesouwcecwosew() {
+    w-wetuwn wesouwcecwosew;
   }
 
-  @Override
-  public boolean supportOutOfOrderIndexing() {
-    return true;
+  @ovewwide
+  p-pubwic boowean suppowtoutofowdewindexing() {
+    w-wetuwn t-twue;
   }
 }

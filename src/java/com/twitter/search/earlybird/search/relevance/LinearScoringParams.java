@@ -1,304 +1,304 @@
-package com.twitter.search.earlybird.search.relevance;
+package com.twittew.seawch.eawwybiwd.seawch.wewevance;
 
-import java.util.Arrays;
-import java.util.Map;
+impowt java.utiw.awways;
+i-impowt java.utiw.map;
 
-import com.google.common.annotations.VisibleForTesting;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
 
-import com.twitter.search.common.constants.SearchCardType;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.ranking.thriftjava.ThriftAgeDecayRankingParams;
-import com.twitter.search.common.ranking.thriftjava.ThriftCardRankingParams;
-import com.twitter.search.common.ranking.thriftjava.ThriftRankingParams;
-import com.twitter.search.common.util.lang.ThriftLanguageUtil;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSocialFilterType;
+i-impowt com.twittew.seawch.common.constants.seawchcawdtype;
+i-impowt c-com.twittew.seawch.common.constants.thwiftjava.thwiftwanguage;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt c-com.twittew.seawch.common.wanking.thwiftjava.thwiftagedecaywankingpawams;
+impowt com.twittew.seawch.common.wanking.thwiftjava.thwiftcawdwankingpawams;
+impowt com.twittew.seawch.common.wanking.thwiftjava.thwiftwankingpawams;
+impowt com.twittew.seawch.common.utiw.wang.thwiftwanguageutiw;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchquewy;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftsociawfiwtewtype;
 
 /*
- * The class for all query specific parameters, including the parameters from the relevanceOptions and
- * values that are extracted from the request itself.
+ * t-the cwass fow aww quewy specific p-pawametews, nyaa~~ incwuding the pawametews fwom the wewevanceoptions a-and
+ * vawues that awe extwacted f-fwom the w-wequest itsewf. :3
  */
-public class LinearScoringParams {
+pubwic cwass wineawscowingpawams {
 
-  public static final double DEFAULT_FEATURE_WEIGHT = 0;
-  public static final double DEFAULT_FEATURE_MIN_VAL = 0;
-  public static final double DEFAULT_NO_BOOST = 1.0;
-  @VisibleForTesting
-  static final SearchCounter NULL_USER_LANGS_KEY =
-      SearchCounter.export("linear_scoring_params_null_user_langs_key");
+  pubwic static finaw doubwe d-defauwt_featuwe_weight = 0;
+  pubwic static finaw doubwe defauwt_featuwe_min_vaw = 0;
+  pubwic static finaw d-doubwe defauwt_no_boost = 1.0;
+  @visibwefowtesting
+  static finaw s-seawchcountew n-nyuww_usew_wangs_key =
+      s-seawchcountew.expowt("wineaw_scowing_pawams_nuww_usew_wangs_key");
 
-  public final double luceneWeight;
-  public final double textScoreWeight;
-  public final double textScoreMinVal;
-  public final double retweetWeight;
-  public final double retweetMinVal;
-  public final double favWeight;
-  public final double favMinVal;
-  public final double replyWeight;
-  public final double multipleReplyWeight;
-  public final double multipleReplyMinVal;
-  public final double isReplyWeight;
-  public final double parusWeight;
-  public final double embedsImpressionWeight;
-  public final double embedsUrlWeight;
-  public final double videoViewWeight;
-  public final double quotedCountWeight;
+  p-pubwic finaw doubwe wuceneweight;
+  pubwic f-finaw doubwe textscoweweight;
+  pubwic finaw doubwe textscoweminvaw;
+  p-pubwic finaw doubwe wetweetweight;
+  pubwic finaw doubwe wetweetminvaw;
+  pubwic finaw doubwe f-favweight;
+  pubwic finaw d-doubwe favminvaw;
+  p-pubwic finaw d-doubwe wepwyweight;
+  pubwic finaw doubwe muwtipwewepwyweight;
+  pubwic finaw doubwe m-muwtipwewepwyminvaw;
+  p-pubwic finaw doubwe i-iswepwyweight;
+  p-pubwic finaw doubwe pawusweight;
+  p-pubwic finaw doubwe embedsimpwessionweight;
+  p-pubwic finaw doubwe embedsuwwweight;
+  pubwic f-finaw doubwe videoviewweight;
+  pubwic finaw doubwe q-quotedcountweight;
 
-  public final double[] rankingOfflineExpWeights =
-      new double[LinearScoringData.MAX_OFFLINE_EXPERIMENTAL_FIELDS];
+  pubwic f-finaw doubwe[] w-wankingoffwineexpweights =
+      nyew doubwe[wineawscowingdata.max_offwine_expewimentaw_fiewds];
 
-  public final boolean applyBoosts;
+  pubwic finaw boowean appwyboosts;
 
-  // Storing ranking params for cards, avoid using maps for faster lookup
-  public final double[] hasCardBoosts = new double[SearchCardType.values().length];
-  public final double[] cardDomainMatchBoosts = new double[SearchCardType.values().length];
-  public final double[] cardAuthorMatchBoosts = new double[SearchCardType.values().length];
-  public final double[] cardTitleMatchBoosts = new double[SearchCardType.values().length];
-  public final double[] cardDescriptionMatchBoosts = new double[SearchCardType.values().length];
+  // stowing wanking pawams fow cawds, /(^•ω•^) avoid u-using maps f-fow fastew wookup
+  pubwic finaw d-doubwe[] hascawdboosts = n-nyew doubwe[seawchcawdtype.vawues().wength];
+  p-pubwic finaw doubwe[] cawddomainmatchboosts = nyew doubwe[seawchcawdtype.vawues().wength];
+  pubwic finaw d-doubwe[] cawdauthowmatchboosts = nyew doubwe[seawchcawdtype.vawues().wength];
+  pubwic finaw doubwe[] cawdtitwematchboosts = nyew doubwe[seawchcawdtype.vawues().wength];
+  pubwic f-finaw doubwe[] cawddescwiptionmatchboosts = n-nyew doubwe[seawchcawdtype.vawues().wength];
 
-  public final double urlWeight;
-  public final double reputationWeight;
-  public final double reputationMinVal;
-  public final double followRetweetWeight;
-  public final double trustedRetweetWeight;
+  p-pubwic finaw doubwe u-uwwweight;
+  pubwic finaw d-doubwe weputationweight;
+  p-pubwic f-finaw doubwe weputationminvaw;
+  p-pubwic finaw doubwe fowwowwetweetweight;
+  pubwic f-finaw doubwe t-twustedwetweetweight;
 
-  // Adjustments for specific tweets (tweetId -> score)
-  public final Map<Long, Double> querySpecificScoreAdjustments;
+  // a-adjustments f-fow specific t-tweets (tweetid -> scowe)
+  pubwic finaw map<wong, ^•ﻌ•^ doubwe> q-quewyspecificscoweadjustments;
 
-  // Adjustments for tweets posted by specific authors (userId -> score)
-  public final Map<Long, Double> authorSpecificScoreAdjustments;
+  // adjustments fow tweets posted by specific authows (usewid -> scowe)
+  pubwic f-finaw map<wong, UwU doubwe> authowspecificscoweadjustments;
 
-  public final double offensiveDamping;
-  public final double spamUserDamping;
-  public final double nsfwUserDamping;
-  public final double botUserDamping;
-  public final double trustedCircleBoost;
-  public final double directFollowBoost;
-  public final double minScore;
+  pubwic finaw doubwe offensivedamping;
+  p-pubwic finaw d-doubwe spamusewdamping;
+  p-pubwic finaw doubwe n-nysfwusewdamping;
+  pubwic finaw d-doubwe botusewdamping;
+  p-pubwic finaw doubwe twustedciwcweboost;
+  pubwic finaw doubwe diwectfowwowboost;
+  pubwic finaw doubwe m-minscowe;
 
-  public final boolean applyFiltersAlways;
+  pubwic finaw boowean a-appwyfiwtewsawways;
 
-  public final boolean useLuceneScoreAsBoost;
-  public final double maxLuceneScoreBoost;
+  pubwic f-finaw boowean u-usewucenescoweasboost;
+  pubwic finaw doubwe maxwucenescoweboost;
 
-  public final double langEnglishTweetDemote;
-  public final double langEnglishUIDemote;
-  public final double langDefaultDemote;
-  public final boolean useUserLanguageInfo;
-  public final double unknownLanguageBoost;
+  p-pubwic finaw d-doubwe wangengwishtweetdemote;
+  pubwic finaw d-doubwe wangengwishuidemote;
+  pubwic f-finaw doubwe wangdefauwtdemote;
+  pubwic finaw boowean useusewwanguageinfo;
+  pubwic finaw d-doubwe unknownwanguageboost;
 
-  public final double outOfNetworkReplyPenalty;
+  p-pubwic finaw doubwe o-outofnetwowkwepwypenawty;
 
-  public final boolean useAgeDecay;
-  public final double ageDecayHalflife;
-  public final double ageDecayBase;
-  public final double ageDecaySlope;
+  pubwic finaw boowean u-useagedecay;
+  p-pubwic finaw doubwe agedecayhawfwife;
+  p-pubwic finaw doubwe agedecaybase;
+  pubwic finaw doubwe agedecayswope;
 
-  // hit attribute demotions
-  public final boolean enableHitDemotion;
-  public final double noTextHitDemotion;
-  public final double urlOnlyHitDemotion;
-  public final double nameOnlyHitDemotion;
-  public final double separateTextAndNameHitDemotion;
-  public final double separateTextAndUrlHitDemotion;
+  // h-hit attwibute d-demotions
+  pubwic finaw boowean enabwehitdemotion;
+  pubwic f-finaw doubwe n-nyotexthitdemotion;
+  pubwic finaw doubwe uwwonwyhitdemotion;
+  pubwic finaw d-doubwe nyameonwyhitdemotion;
+  pubwic finaw doubwe sepawatetextandnamehitdemotion;
+  pubwic finaw doubwe sepawatetextanduwwhitdemotion;
 
-  // trends related params
-  public final double tweetHasTrendBoost;
-  public final double multipleHashtagsOrTrendsDamping;
+  // t-twends wewated pawams
+  pubwic finaw d-doubwe tweethastwendboost;
+  p-pubwic finaw doubwe muwtipwehashtagsowtwendsdamping;
 
-  public final double tweetFromVerifiedAccountBoost;
+  pubwic finaw doubwe tweetfwomvewifiedaccountboost;
 
-  public final double tweetFromBlueVerifiedAccountBoost;
+  p-pubwic f-finaw doubwe tweetfwombwuevewifiedaccountboost;
 
-  public final ThriftSocialFilterType socialFilterType;
-  public final int uiLangId;
-  // Confidences of the understandability of different languages for this user.
-  public final double[] userLangs = new double[ThriftLanguage.values().length];
+  pubwic finaw thwiftsociawfiwtewtype s-sociawfiwtewtype;
+  pubwic finaw int u-uiwangid;
+  // confidences of the undewstandabiwity of diffewent w-wanguages fow this usew. 😳😳😳
+  pubwic f-finaw doubwe[] u-usewwangs = nyew doubwe[thwiftwanguage.vawues().wength];
 
-  public final long searcherId;
-  public final double selfTweetBoost;
+  pubwic f-finaw wong seawchewid;
+  pubwic f-finaw doubwe s-sewftweetboost;
 
-  public final double tweetHasMediaUrlBoost;
-  public final double tweetHasNewsUrlBoost;
+  p-pubwic finaw doubwe tweethasmediauwwboost;
+  p-pubwic finaw d-doubwe tweethasnewsuwwboost;
 
-  // whether we need meta-data for replies what the reply is to.
-  public final boolean getInReplyToStatusId;
+  // whethew we nyeed meta-data fow w-wepwies nyani t-the wepwy is to. OwO
+  p-pubwic finaw boowean getinwepwytostatusid;
 
-  // Initialize from a ranking parameter
-  public LinearScoringParams(ThriftSearchQuery searchQuery, ThriftRankingParams params) {
+  // initiawize fwom a-a wanking pawametew
+  pubwic w-wineawscowingpawams(thwiftseawchquewy s-seawchquewy, ^•ﻌ•^ thwiftwankingpawams pawams) {
     // weights
-    luceneWeight = params.isSetLuceneScoreParams()
-        ? params.getLuceneScoreParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    textScoreWeight = params.isSetTextScoreParams()
-        ? params.getTextScoreParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    retweetWeight = params.isSetRetweetCountParams()
-        ? params.getRetweetCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    favWeight = params.isSetFavCountParams()
-        ? params.getFavCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    replyWeight = params.isSetReplyCountParams()
-        ? params.getReplyCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    multipleReplyWeight = params.isSetMultipleReplyCountParams()
-        ? params.getMultipleReplyCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    parusWeight = params.isSetParusScoreParams()
-        ? params.getParusScoreParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    for (int i = 0; i < LinearScoringData.MAX_OFFLINE_EXPERIMENTAL_FIELDS; i++) {
-      Byte featureTypeByte = (byte) i;
-      // default weight is 0, thus contribution for unset feature value will be 0.
-      rankingOfflineExpWeights[i] = params.getOfflineExperimentalFeatureRankingParamsSize() > 0
-          && params.getOfflineExperimentalFeatureRankingParams().containsKey(featureTypeByte)
-              ? params.getOfflineExperimentalFeatureRankingParams().get(featureTypeByte).getWeight()
-              : DEFAULT_FEATURE_WEIGHT;
+    w-wuceneweight = p-pawams.issetwucenescowepawams()
+        ? p-pawams.getwucenescowepawams().getweight() : d-defauwt_featuwe_weight;
+    textscoweweight = p-pawams.issettextscowepawams()
+        ? pawams.gettextscowepawams().getweight() : defauwt_featuwe_weight;
+    wetweetweight = pawams.issetwetweetcountpawams()
+        ? pawams.getwetweetcountpawams().getweight() : d-defauwt_featuwe_weight;
+    favweight = p-pawams.issetfavcountpawams()
+        ? pawams.getfavcountpawams().getweight() : d-defauwt_featuwe_weight;
+    wepwyweight = p-pawams.issetwepwycountpawams()
+        ? pawams.getwepwycountpawams().getweight() : d-defauwt_featuwe_weight;
+    m-muwtipwewepwyweight = p-pawams.issetmuwtipwewepwycountpawams()
+        ? p-pawams.getmuwtipwewepwycountpawams().getweight() : d-defauwt_featuwe_weight;
+    pawusweight = pawams.issetpawusscowepawams()
+        ? pawams.getpawusscowepawams().getweight() : defauwt_featuwe_weight;
+    fow (int i = 0; i < wineawscowingdata.max_offwine_expewimentaw_fiewds; i-i++) {
+      b-byte featuwetypebyte = (byte) i-i;
+      // defauwt weight i-is 0, (ꈍᴗꈍ) thus contwibution fow unset featuwe vawue wiww be 0.
+      w-wankingoffwineexpweights[i] = p-pawams.getoffwineexpewimentawfeatuwewankingpawamssize() > 0
+          && pawams.getoffwineexpewimentawfeatuwewankingpawams().containskey(featuwetypebyte)
+              ? p-pawams.getoffwineexpewimentawfeatuwewankingpawams().get(featuwetypebyte).getweight()
+              : defauwt_featuwe_weight;
     }
-    embedsImpressionWeight = params.isSetEmbedsImpressionCountParams()
-        ? params.getEmbedsImpressionCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    embedsUrlWeight = params.isSetEmbedsUrlCountParams()
-        ? params.getEmbedsUrlCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    videoViewWeight = params.isSetVideoViewCountParams()
-        ? params.getVideoViewCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    quotedCountWeight = params.isSetQuotedCountParams()
-        ? params.getQuotedCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
+    embedsimpwessionweight = pawams.issetembedsimpwessioncountpawams()
+        ? p-pawams.getembedsimpwessioncountpawams().getweight() : d-defauwt_featuwe_weight;
+    embedsuwwweight = p-pawams.issetembedsuwwcountpawams()
+        ? pawams.getembedsuwwcountpawams().getweight() : d-defauwt_featuwe_weight;
+    videoviewweight = pawams.issetvideoviewcountpawams()
+        ? pawams.getvideoviewcountpawams().getweight() : defauwt_featuwe_weight;
+    q-quotedcountweight = p-pawams.issetquotedcountpawams()
+        ? p-pawams.getquotedcountpawams().getweight() : d-defauwt_featuwe_weight;
 
-    applyBoosts = params.isApplyBoosts();
+    a-appwyboosts = pawams.isappwyboosts();
 
-    // configure card values
-    Arrays.fill(hasCardBoosts, DEFAULT_NO_BOOST);
-    Arrays.fill(cardAuthorMatchBoosts, DEFAULT_NO_BOOST);
-    Arrays.fill(cardDomainMatchBoosts, DEFAULT_NO_BOOST);
-    Arrays.fill(cardTitleMatchBoosts, DEFAULT_NO_BOOST);
-    Arrays.fill(cardDescriptionMatchBoosts, DEFAULT_NO_BOOST);
-    if (params.isSetCardRankingParams()) {
-      for (SearchCardType cardType : SearchCardType.values()) {
-        byte cardTypeIndex = cardType.getByteValue();
-        ThriftCardRankingParams rankingParams = params.getCardRankingParams().get(cardTypeIndex);
-        if (rankingParams != null) {
-          hasCardBoosts[cardTypeIndex] = rankingParams.getHasCardBoost();
-          cardAuthorMatchBoosts[cardTypeIndex] = rankingParams.getAuthorMatchBoost();
-          cardDomainMatchBoosts[cardTypeIndex] = rankingParams.getDomainMatchBoost();
-          cardTitleMatchBoosts[cardTypeIndex] = rankingParams.getTitleMatchBoost();
-          cardDescriptionMatchBoosts[cardTypeIndex] = rankingParams.getDescriptionMatchBoost();
+    // c-configuwe c-cawd vawues
+    awways.fiww(hascawdboosts, (⑅˘꒳˘) d-defauwt_no_boost);
+    a-awways.fiww(cawdauthowmatchboosts, (⑅˘꒳˘) defauwt_no_boost);
+    awways.fiww(cawddomainmatchboosts, (ˆ ﻌ ˆ)♡ d-defauwt_no_boost);
+    awways.fiww(cawdtitwematchboosts, /(^•ω•^) defauwt_no_boost);
+    a-awways.fiww(cawddescwiptionmatchboosts, òωó defauwt_no_boost);
+    i-if (pawams.issetcawdwankingpawams()) {
+      f-fow (seawchcawdtype cawdtype : seawchcawdtype.vawues()) {
+        b-byte cawdtypeindex = cawdtype.getbytevawue();
+        thwiftcawdwankingpawams w-wankingpawams = p-pawams.getcawdwankingpawams().get(cawdtypeindex);
+        i-if (wankingpawams != nyuww) {
+          hascawdboosts[cawdtypeindex] = wankingpawams.gethascawdboost();
+          cawdauthowmatchboosts[cawdtypeindex] = w-wankingpawams.getauthowmatchboost();
+          cawddomainmatchboosts[cawdtypeindex] = wankingpawams.getdomainmatchboost();
+          c-cawdtitwematchboosts[cawdtypeindex] = w-wankingpawams.gettitwematchboost();
+          cawddescwiptionmatchboosts[cawdtypeindex] = w-wankingpawams.getdescwiptionmatchboost();
         }
       }
     }
 
-    urlWeight = params.isSetUrlParams()
-        ? params.getUrlParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    reputationWeight = params.isSetReputationParams()
-        ? params.getReputationParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    isReplyWeight = params.isSetIsReplyParams()
-        ? params.getIsReplyParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    followRetweetWeight = params.isSetDirectFollowRetweetCountParams()
-        ? params.getDirectFollowRetweetCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    trustedRetweetWeight = params.isSetTrustedCircleRetweetCountParams()
-        ? params.getTrustedCircleRetweetCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
+    uwwweight = p-pawams.issetuwwpawams()
+        ? p-pawams.getuwwpawams().getweight() : defauwt_featuwe_weight;
+    weputationweight = pawams.issetweputationpawams()
+        ? p-pawams.getweputationpawams().getweight() : defauwt_featuwe_weight;
+    iswepwyweight = p-pawams.issetiswepwypawams()
+        ? p-pawams.getiswepwypawams().getweight() : defauwt_featuwe_weight;
+    f-fowwowwetweetweight = pawams.issetdiwectfowwowwetweetcountpawams()
+        ? p-pawams.getdiwectfowwowwetweetcountpawams().getweight() : d-defauwt_featuwe_weight;
+    t-twustedwetweetweight = pawams.issettwustedciwcwewetweetcountpawams()
+        ? pawams.gettwustedciwcwewetweetcountpawams().getweight() : defauwt_featuwe_weight;
 
-    querySpecificScoreAdjustments = params.getQuerySpecificScoreAdjustments();
-    authorSpecificScoreAdjustments = params.getAuthorSpecificScoreAdjustments();
+    quewyspecificscoweadjustments = pawams.getquewyspecificscoweadjustments();
+    authowspecificscoweadjustments = pawams.getauthowspecificscoweadjustments();
 
-    // min/max filters
-    textScoreMinVal = params.isSetTextScoreParams()
-        ? params.getTextScoreParams().getMin() : DEFAULT_FEATURE_MIN_VAL;
-    reputationMinVal = params.isSetReputationParams()
-        ? params.getReputationParams().getMin() : DEFAULT_FEATURE_MIN_VAL;
-    multipleReplyMinVal = params.isSetMultipleReplyCountParams()
-        ? params.getMultipleReplyCountParams().getMin() : DEFAULT_FEATURE_MIN_VAL;
-    retweetMinVal = params.isSetRetweetCountParams() && params.getRetweetCountParams().isSetMin()
-        ? params.getRetweetCountParams().getMin() : DEFAULT_FEATURE_MIN_VAL;
-    favMinVal = params.isSetFavCountParams() && params.getFavCountParams().isSetMin()
-        ? params.getFavCountParams().getMin() : DEFAULT_FEATURE_MIN_VAL;
+    // min/max fiwtews
+    textscoweminvaw = pawams.issettextscowepawams()
+        ? pawams.gettextscowepawams().getmin() : defauwt_featuwe_min_vaw;
+    weputationminvaw = p-pawams.issetweputationpawams()
+        ? p-pawams.getweputationpawams().getmin() : defauwt_featuwe_min_vaw;
+    muwtipwewepwyminvaw = p-pawams.issetmuwtipwewepwycountpawams()
+        ? p-pawams.getmuwtipwewepwycountpawams().getmin() : d-defauwt_featuwe_min_vaw;
+    wetweetminvaw = p-pawams.issetwetweetcountpawams() && pawams.getwetweetcountpawams().issetmin()
+        ? pawams.getwetweetcountpawams().getmin() : d-defauwt_featuwe_min_vaw;
+    f-favminvaw = pawams.issetfavcountpawams() && p-pawams.getfavcountpawams().issetmin()
+        ? pawams.getfavcountpawams().getmin() : d-defauwt_featuwe_min_vaw;
 
-    // boosts
-    spamUserDamping = params.isSetSpamUserBoost() ? params.getSpamUserBoost() : 1.0;
-    nsfwUserDamping = params.isSetNsfwUserBoost() ? params.getNsfwUserBoost() : 1.0;
-    botUserDamping = params.isSetBotUserBoost() ? params.getBotUserBoost() : 1.0;
-    offensiveDamping = params.getOffensiveBoost();
-    trustedCircleBoost = params.getInTrustedCircleBoost();
-    directFollowBoost = params.getInDirectFollowBoost();
+    // b-boosts
+    spamusewdamping = pawams.issetspamusewboost() ? p-pawams.getspamusewboost() : 1.0;
+    n-nsfwusewdamping = pawams.issetnsfwusewboost() ? p-pawams.getnsfwusewboost() : 1.0;
+    b-botusewdamping = p-pawams.issetbotusewboost() ? p-pawams.getbotusewboost() : 1.0;
+    o-offensivedamping = p-pawams.getoffensiveboost();
+    t-twustedciwcweboost = pawams.getintwustedciwcweboost();
+    d-diwectfowwowboost = p-pawams.getindiwectfowwowboost();
 
-    // language boosts
-    langEnglishTweetDemote = params.getLangEnglishTweetBoost();
-    langEnglishUIDemote = params.getLangEnglishUIBoost();
-    langDefaultDemote = params.getLangDefaultBoost();
-    useUserLanguageInfo = params.isUseUserLanguageInfo();
-    unknownLanguageBoost = params.getUnknownLanguageBoost();
+    // wanguage b-boosts
+    wangengwishtweetdemote = p-pawams.getwangengwishtweetboost();
+    wangengwishuidemote = pawams.getwangengwishuiboost();
+    w-wangdefauwtdemote = pawams.getwangdefauwtboost();
+    u-useusewwanguageinfo = p-pawams.isuseusewwanguageinfo();
+    u-unknownwanguageboost = pawams.getunknownwanguageboost();
 
-    // hit demotions
-    enableHitDemotion = params.isEnableHitDemotion();
-    noTextHitDemotion = params.getNoTextHitDemotion();
-    urlOnlyHitDemotion = params.getUrlOnlyHitDemotion();
-    nameOnlyHitDemotion = params.getNameOnlyHitDemotion();
-    separateTextAndNameHitDemotion = params.getSeparateTextAndNameHitDemotion();
-    separateTextAndUrlHitDemotion = params.getSeparateTextAndUrlHitDemotion();
+    // h-hit demotions
+    e-enabwehitdemotion = pawams.isenabwehitdemotion();
+    n-nyotexthitdemotion = pawams.getnotexthitdemotion();
+    u-uwwonwyhitdemotion = pawams.getuwwonwyhitdemotion();
+    nyameonwyhitdemotion = pawams.getnameonwyhitdemotion();
+    sepawatetextandnamehitdemotion = p-pawams.getsepawatetextandnamehitdemotion();
+    sepawatetextanduwwhitdemotion = p-pawams.getsepawatetextanduwwhitdemotion();
 
-    outOfNetworkReplyPenalty = params.getOutOfNetworkReplyPenalty();
+    o-outofnetwowkwepwypenawty = pawams.getoutofnetwowkwepwypenawty();
 
-    if (params.isSetAgeDecayParams()) {
-      // new age decay settings
-      ThriftAgeDecayRankingParams ageDecayParams = params.getAgeDecayParams();
-      ageDecaySlope = ageDecayParams.getSlope();
-      ageDecayHalflife = ageDecayParams.getHalflife();
-      ageDecayBase = ageDecayParams.getBase();
-      useAgeDecay = true;
-    } else if (params.isSetDeprecatedAgeDecayBase()
-        && params.isSetDeprecatedAgeDecayHalflife()
-        && params.isSetDeprecatedAgeDecaySlope()) {
-      ageDecaySlope = params.getDeprecatedAgeDecaySlope();
-      ageDecayHalflife = params.getDeprecatedAgeDecayHalflife();
-      ageDecayBase = params.getDeprecatedAgeDecayBase();
-      useAgeDecay = true;
-    } else {
-      ageDecaySlope = 0.0;
-      ageDecayHalflife = 0.0;
-      ageDecayBase = 0.0;
-      useAgeDecay = false;
+    if (pawams.issetagedecaypawams()) {
+      // nyew age decay settings
+      t-thwiftagedecaywankingpawams agedecaypawams = p-pawams.getagedecaypawams();
+      a-agedecayswope = a-agedecaypawams.getswope();
+      agedecayhawfwife = agedecaypawams.gethawfwife();
+      a-agedecaybase = a-agedecaypawams.getbase();
+      useagedecay = t-twue;
+    } ewse if (pawams.issetdepwecatedagedecaybase()
+        && pawams.issetdepwecatedagedecayhawfwife()
+        && p-pawams.issetdepwecatedagedecayswope()) {
+      agedecayswope = p-pawams.getdepwecatedagedecayswope();
+      a-agedecayhawfwife = pawams.getdepwecatedagedecayhawfwife();
+      a-agedecaybase = pawams.getdepwecatedagedecaybase();
+      u-useagedecay = t-twue;
+    } e-ewse {
+      agedecayswope = 0.0;
+      a-agedecayhawfwife = 0.0;
+      agedecaybase = 0.0;
+      u-useagedecay = fawse;
     }
 
-    // trends
-    tweetHasTrendBoost = params.getTweetHasTrendBoost();
-    multipleHashtagsOrTrendsDamping = params.getMultipleHashtagsOrTrendsBoost();
+    // t-twends
+    tweethastwendboost = p-pawams.gettweethastwendboost();
+    m-muwtipwehashtagsowtwendsdamping = p-pawams.getmuwtipwehashtagsowtwendsboost();
 
-    // verified accounts
-    tweetFromVerifiedAccountBoost = params.getTweetFromVerifiedAccountBoost();
-    tweetFromBlueVerifiedAccountBoost = params.getTweetFromBlueVerifiedAccountBoost();
+    // v-vewified a-accounts
+    t-tweetfwomvewifiedaccountboost = pawams.gettweetfwomvewifiedaccountboost();
+    t-tweetfwombwuevewifiedaccountboost = pawams.gettweetfwombwuevewifiedaccountboost();
 
-    // score filter
-    minScore = params.getMinScore();
+    // s-scowe fiwtew
+    minscowe = p-pawams.getminscowe();
 
-    applyFiltersAlways = params.isApplyFiltersAlways();
+    a-appwyfiwtewsawways = p-pawams.isappwyfiwtewsawways();
 
-    useLuceneScoreAsBoost = params.isUseLuceneScoreAsBoost();
-    maxLuceneScoreBoost = params.getMaxLuceneScoreBoost();
+    usewucenescoweasboost = pawams.isusewucenescoweasboost();
+    maxwucenescoweboost = p-pawams.getmaxwucenescoweboost();
 
-    searcherId = searchQuery.isSetSearcherId() ? searchQuery.getSearcherId() : -1;
-    selfTweetBoost = params.getSelfTweetBoost();
+    s-seawchewid = s-seawchquewy.issetseawchewid() ? seawchquewy.getseawchewid() : -1;
+    sewftweetboost = pawams.getsewftweetboost();
 
-    socialFilterType = searchQuery.getSocialFilterType();
+    s-sociawfiwtewtype = s-seawchquewy.getsociawfiwtewtype();
 
-    // the UI language and the confidences of the languages user can understand.
-    if (!searchQuery.isSetUiLang() || searchQuery.getUiLang().isEmpty()) {
-      uiLangId = ThriftLanguage.UNKNOWN.getValue();
-    } else {
-      uiLangId = ThriftLanguageUtil.getThriftLanguageOf(searchQuery.getUiLang()).getValue();
+    // the ui w-wanguage and the c-confidences of the wanguages usew can undewstand. (⑅˘꒳˘)
+    if (!seawchquewy.issetuiwang() || s-seawchquewy.getuiwang().isempty()) {
+      u-uiwangid = thwiftwanguage.unknown.getvawue();
+    } e-ewse {
+      u-uiwangid = thwiftwanguageutiw.getthwiftwanguageof(seawchquewy.getuiwang()).getvawue();
     }
-    if (searchQuery.getUserLangsSize() > 0) {
-      for (Map.Entry<ThriftLanguage, Double> lang : searchQuery.getUserLangs().entrySet()) {
-        ThriftLanguage thriftLanguage = lang.getKey();
-        // SEARCH-13441
-        if (thriftLanguage != null) {
-          userLangs[thriftLanguage.getValue()] = lang.getValue();
-        } else {
-          NULL_USER_LANGS_KEY.increment();
+    if (seawchquewy.getusewwangssize() > 0) {
+      f-fow (map.entwy<thwiftwanguage, (U ᵕ U❁) d-doubwe> wang : seawchquewy.getusewwangs().entwyset()) {
+        thwiftwanguage t-thwiftwanguage = wang.getkey();
+        // seawch-13441
+        if (thwiftwanguage != n-nyuww) {
+          usewwangs[thwiftwanguage.getvawue()] = w-wang.getvawue();
+        } ewse {
+          n-nyuww_usew_wangs_key.incwement();
         }
       }
     }
 
-    // For now, we will use the same boost for both image, and video.
-    tweetHasMediaUrlBoost = params.getTweetHasImageUrlBoost();
-    tweetHasNewsUrlBoost = params.getTweetHasNewsUrlBoost();
+    // fow nyow, >w< we wiww u-use the same b-boost fow both image, σωσ and video. -.-
+    t-tweethasmediauwwboost = pawams.gettweethasimageuwwboost();
+    t-tweethasnewsuwwboost = p-pawams.gettweethasnewsuwwboost();
 
-    getInReplyToStatusId =
-        searchQuery.isSetResultMetadataOptions()
-            && searchQuery.getResultMetadataOptions().isSetGetInReplyToStatusId()
-            && searchQuery.getResultMetadataOptions().isGetInReplyToStatusId();
+    g-getinwepwytostatusid =
+        s-seawchquewy.issetwesuwtmetadataoptions()
+            && seawchquewy.getwesuwtmetadataoptions().issetgetinwepwytostatusid()
+            && s-seawchquewy.getwesuwtmetadataoptions().isgetinwepwytostatusid();
   }
 }

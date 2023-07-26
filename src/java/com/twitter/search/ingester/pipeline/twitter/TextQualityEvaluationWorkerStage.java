@@ -1,179 +1,179 @@
-package com.twitter.search.ingester.pipeline.twitter;
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import javax.naming.NamingException;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Queues;
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.relevance.classifiers.TweetEvaluator;
-import com.twitter.search.common.relevance.classifiers.TweetOffensiveEvaluator;
-import com.twitter.search.common.relevance.classifiers.TweetTextClassifier;
-import com.twitter.search.common.relevance.classifiers.TweetTextEvaluator;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.scorers.TweetTextScorer;
+package com.twittew.seawch.ingestew.pipewine.twittew;
+impowt java.utiw.wist;
+i-impowt j-java.utiw.concuwwent.bwockingqueue;
+i-impowt java.utiw.concuwwent.executowsewvice;
+i-impowt javax.naming.namingexception;
+i-impowt c-com.googwe.common.cowwect.immutabwewist;
+i-impowt c-com.googwe.common.cowwect.queues;
+impowt owg.apache.commons.pipewine.stageexception;
+impowt owg.apache.commons.pipewine.vawidation.consumedtypes;
+impowt owg.apache.commons.pipewine.vawidation.pwoducesconsumed;
+impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
+impowt c-com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+impowt c-com.twittew.seawch.common.metwics.seawchcustomgauge;
+impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt com.twittew.seawch.common.wewevance.cwassifiews.tweetevawuatow;
+impowt c-com.twittew.seawch.common.wewevance.cwassifiews.tweetoffensiveevawuatow;
+impowt c-com.twittew.seawch.common.wewevance.cwassifiews.tweettextcwassifiew;
+i-impowt com.twittew.seawch.common.wewevance.cwassifiews.tweettextevawuatow;
+impowt com.twittew.seawch.common.wewevance.entities.twittewmessage;
+impowt com.twittew.seawch.common.wewevance.scowews.tweettextscowew;
 
-@ConsumedTypes(TwitterMessage.class)
-@ProducesConsumed
-public class TextQualityEvaluationWorkerStage extends TwitterBaseStage
-    <TwitterMessage, TwitterMessage> {
-  private static final Logger LOG = LoggerFactory.getLogger(TextQualityEvaluationWorkerStage.class);
+@consumedtypes(twittewmessage.cwass)
+@pwoducesconsumed
+pubwic cwass textquawityevawuationwowkewstage extends twittewbasestage
+    <twittewmessage, mya t-twittewmessage> {
+  pwivate static finaw woggew wog = woggewfactowy.getwoggew(textquawityevawuationwowkewstage.cwass);
 
-  private static final int NUM_THREADS = 5;
-  private static final long SLOW_TWEET_TIME_MILLIS = 1000;
-  // based on the batched branch 3 elements in the queue times 200 tweets per batch.
-  private static final int MAX_QUEUE_SIZE = 100;
-  private final BlockingQueue<TwitterMessage> messages =
-      Queues.newLinkedBlockingQueue(MAX_QUEUE_SIZE);
+  pwivate static f-finaw int nyum_thweads = 5;
+  p-pwivate static f-finaw wong swow_tweet_time_miwwis = 1000;
+  // b-based on the batched b-bwanch 3 ewements in the queue times 200 t-tweets pew batch. 🥺
+  pwivate static finaw int max_queue_size = 100;
+  p-pwivate finaw bwockingqueue<twittewmessage> messages =
+      queues.newwinkedbwockingqueue(max_queue_size);
 
-  private static final String DO_TEXT_QUALITY_EVALUATION_DECIDER_KEY_TEMPLATE =
-      "ingester_%s_do_text_quality_evaluation";
+  pwivate static finaw stwing d-do_text_quawity_evawuation_decidew_key_tempwate =
+      "ingestew_%s_do_text_quawity_evawuation";
 
-  private ExecutorService executorService = null;
-  private SearchRateCounter unscoredTweetCounter;
-  private TweetTextClassifier classifier;
-  private final TweetTextScorer scorer = new TweetTextScorer(null);
-  // Defined as static so that ClassifierWorker thread can use it
-  private static SearchRateCounter slowTweetCounter;
-  private SearchRateCounter threadErrorCounter;
-  private SearchRateCounter threadInterruptionCounter;
-  private String deciderKey;
+  pwivate executowsewvice e-executowsewvice = nyuww;
+  p-pwivate s-seawchwatecountew unscowedtweetcountew;
+  pwivate tweettextcwassifiew c-cwassifiew;
+  p-pwivate finaw tweettextscowew s-scowew = nyew t-tweettextscowew(nuww);
+  // defined a-as static so that cwassifiewwowkew t-thwead can use it
+  pwivate static seawchwatecountew s-swowtweetcountew;
+  pwivate seawchwatecountew t-thweadewwowcountew;
+  pwivate seawchwatecountew t-thweadintewwuptioncountew;
+  p-pwivate stwing decidewkey;
 
-  @Override
-  public void initStats() {
-    super.initStats();
-    innerSetupStats();
+  @ovewwide
+  pubwic void initstats() {
+    supew.initstats();
+    innewsetupstats();
   }
 
-  public SearchRateCounter getUnscoredTweetCounter() {
-    return unscoredTweetCounter;
+  pubwic seawchwatecountew getunscowedtweetcountew() {
+    wetuwn u-unscowedtweetcountew;
   }
 
-  @Override
-  protected void innerSetupStats() {
-    threadErrorCounter = SearchRateCounter.export(
-        getStageNamePrefix() + "_text_quality_evaluation_thread_error");
-    threadInterruptionCounter = SearchRateCounter.export(
-        getStageNamePrefix() + "_text_quality_evaluation_thread_interruption");
-    unscoredTweetCounter = SearchRateCounter.export(
-        getStageNamePrefix() + "_text_quality_evaluation_tweets_unscored_count");
-    slowTweetCounter = SearchRateCounter.export(
-        getStageNamePrefix() + "_text_quality_evaluation_slow_tweet_count");
-    SearchCustomGauge.export(getStageNamePrefix() + "_queue_size", messages::size);
+  @ovewwide
+  p-pwotected void innewsetupstats() {
+    t-thweadewwowcountew = s-seawchwatecountew.expowt(
+        g-getstagenamepwefix() + "_text_quawity_evawuation_thwead_ewwow");
+    thweadintewwuptioncountew = seawchwatecountew.expowt(
+        getstagenamepwefix() + "_text_quawity_evawuation_thwead_intewwuption");
+    u-unscowedtweetcountew = seawchwatecountew.expowt(
+        getstagenamepwefix() + "_text_quawity_evawuation_tweets_unscowed_count");
+    swowtweetcountew = seawchwatecountew.expowt(
+        getstagenamepwefix() + "_text_quawity_evawuation_swow_tweet_count");
+    s-seawchcustomgauge.expowt(getstagenamepwefix() + "_queue_size", messages::size);
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    innerSetup();
-    executorService = wireModule.getThreadPool(NUM_THREADS);
-    for (int i = 0; i < NUM_THREADS; i++) {
-      executorService.submit(
-          new ClassifierWorker());
+  @ovewwide
+  p-pwotected v-void doinnewpwepwocess() t-thwows stageexception, ^^;; nyamingexception {
+    innewsetup();
+    e-executowsewvice = w-wiwemoduwe.getthweadpoow(num_thweads);
+    f-fow (int i-i = 0; i < nyum_thweads; i++) {
+      executowsewvice.submit(
+          nyew c-cwassifiewwowkew());
     }
-    LOG.info("Initialized {} classfiers and scorers.", NUM_THREADS);
+    w-wog.info("initiawized {} c-cwassfiews a-and scowews.", :3 n-nyum_thweads);
   }
 
-  @Override
-  protected void innerSetup() throws NamingException {
-    deciderKey = String.format(DO_TEXT_QUALITY_EVALUATION_DECIDER_KEY_TEMPLATE,
-        earlybirdCluster.getNameForStats());
-    List<PenguinVersion> supportedPenguinVersions = wireModule.getPenguinVersions();
-    TweetOffensiveEvaluator tweetOffensiveEvaluator = wireModule.getTweetOffensiveEvaluator();
+  @ovewwide
+  pwotected void innewsetup() thwows nyamingexception {
+    d-decidewkey = stwing.fowmat(do_text_quawity_evawuation_decidew_key_tempwate, (U ﹏ U)
+        eawwybiwdcwustew.getnamefowstats());
+    wist<penguinvewsion> suppowtedpenguinvewsions = wiwemoduwe.getpenguinvewsions();
+    tweetoffensiveevawuatow tweetoffensiveevawuatow = wiwemoduwe.gettweetoffensiveevawuatow();
 
-    ImmutableList<TweetEvaluator> evaluators =
-        ImmutableList.of(tweetOffensiveEvaluator, new TweetTextEvaluator());
-    classifier = new TweetTextClassifier(
-        evaluators,
-        wireModule.getServiceIdentifier(),
-        supportedPenguinVersions);
+    i-immutabwewist<tweetevawuatow> evawuatows =
+        immutabwewist.of(tweetoffensiveevawuatow, OwO nyew tweettextevawuatow());
+    c-cwassifiew = nyew t-tweettextcwassifiew(
+        e-evawuatows, 😳😳😳
+        wiwemoduwe.getsewviceidentifiew(), (ˆ ﻌ ˆ)♡
+        suppowtedpenguinvewsions);
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof TwitterMessage)) {
-      LOG.error("Object is not a TwitterMessage object: {}", obj);
-      return;
+  @ovewwide
+  p-pubwic void innewpwocess(object o-obj) t-thwows stageexception {
+    if (!(obj instanceof twittewmessage)) {
+      wog.ewwow("object is n-nyot a twittewmessage object: {}", XD o-obj);
+      wetuwn;
     }
 
-    if (decider.isAvailable(deciderKey)) {
-      TwitterMessage message = TwitterMessage.class.cast(obj);
-      try {
+    i-if (decidew.isavaiwabwe(decidewkey)) {
+      t-twittewmessage message = twittewmessage.cwass.cast(obj);
+      twy {
         messages.put(message);
-      } catch (InterruptedException ie) {
-        LOG.error("Interrupted exception adding to the queue", ie);
+      } c-catch (intewwuptedexception i-ie) {
+        wog.ewwow("intewwupted e-exception a-adding to the queue", (ˆ ﻌ ˆ)♡ ie);
       }
-    } else {
-      unscoredTweetCounter.increment();
-      emitAndCount(obj);
+    } ewse {
+      unscowedtweetcountew.incwement();
+      emitandcount(obj);
     }
   }
 
-  @Override
-  protected TwitterMessage innerRunStageV2(TwitterMessage message) {
-    if (decider.isAvailable(deciderKey)) {
-      classifyAndScore(message);
-    } else {
-      unscoredTweetCounter.increment();
+  @ovewwide
+  pwotected twittewmessage i-innewwunstagev2(twittewmessage m-message) {
+    i-if (decidew.isavaiwabwe(decidewkey)) {
+      cwassifyandscowe(message);
+    } e-ewse {
+      u-unscowedtweetcountew.incwement();
     }
 
-    return message;
+    wetuwn message;
   }
 
-  private void classifyAndScore(TwitterMessage message) {
-    long startTime = clock.nowMillis();
-    try {
-      // The tweet signature computed here might not be correct, since we did not resolve the
-      // tweet URLs yet. This is why BasicIndexingConverter does not set the tweet signature
-      // feature on the event it builds.
+  p-pwivate void cwassifyandscowe(twittewmessage message) {
+    wong stawttime = cwock.nowmiwwis();
+    t-twy {
+      // t-the tweet signatuwe computed hewe might n-nyot be cowwect, ( ͡o ω ͡o ) s-since we did nyot wesowve the
+      // tweet uwws yet. rawr x3 this is w-why basicindexingconvewtew does nyot set the tweet signatuwe
+      // featuwe o-on the event it buiwds. nyaa~~
       //
-      // We correct the tweet signature later in the ComputeTweetSignatureStage, and
-      // DelayedIndexingConverter sets this feature on the URL update event it creates.
-      synchronized (this) {
-        scorer.classifyAndScoreTweet(classifier, message);
+      // we cowwect t-the tweet signatuwe w-watew in the computetweetsignatuwestage, >_< and
+      // dewayedindexingconvewtew sets this f-featuwe on the u-uww update event it cweates. ^^;;
+      synchwonized (this) {
+        scowew.cwassifyandscowetweet(cwassifiew, (ˆ ﻌ ˆ)♡ m-message);
       }
-    } catch (Exception e) {
-      threadErrorCounter.increment();
-      LOG.error("Uncaught exception from classifyAndScoreTweet", e);
-    } finally {
-      long elapsedTime = clock.nowMillis() - startTime;
-      if (elapsedTime > SLOW_TWEET_TIME_MILLIS) {
-        LOG.warn("Took {}ms to classify and score tweet {}: {}",
-            elapsedTime, message.getId(), message);
-        slowTweetCounter.increment();
+    } catch (exception e-e) {
+      thweadewwowcountew.incwement();
+      wog.ewwow("uncaught exception fwom cwassifyandscowetweet", ^^;; e-e);
+    } finawwy {
+      wong ewapsedtime = c-cwock.nowmiwwis() - s-stawttime;
+      if (ewapsedtime > s-swow_tweet_time_miwwis) {
+        wog.wawn("took {}ms t-to cwassify a-and scowe t-tweet {}: {}", (⑅˘꒳˘)
+            ewapsedtime, rawr x3 m-message.getid(), (///ˬ///✿) m-message);
+        swowtweetcountew.incwement();
       }
     }
   }
 
-  @Override
-  public void innerPostprocess() {
-    if (executorService != null) {
-      executorService.shutdownNow();
+  @ovewwide
+  pubwic v-void innewpostpwocess() {
+    if (executowsewvice != n-nyuww) {
+      e-executowsewvice.shutdownnow();
     }
-    executorService = null;
+    executowsewvice = nyuww;
   }
 
-  private class ClassifierWorker implements Runnable {
-    public void run() {
-      while (!Thread.currentThread().isInterrupted()) {
-        TwitterMessage message;
-        try {
-          message = messages.take();
-        } catch (InterruptedException ie) {
-          threadInterruptionCounter.increment();
-          LOG.error("Interrupted exception polling from the queue", ie);
-          continue;
+  pwivate c-cwass cwassifiewwowkew impwements w-wunnabwe {
+    p-pubwic void wun() {
+      whiwe (!thwead.cuwwentthwead().isintewwupted()) {
+        twittewmessage m-message;
+        t-twy {
+          m-message = m-messages.take();
+        } catch (intewwuptedexception i-ie) {
+          thweadintewwuptioncountew.incwement();
+          wog.ewwow("intewwupted exception powwing fwom the queue", 🥺 ie);
+          c-continue;
         }
 
-        // We want to emit even if we couldn't score the tweet.
-        classifyAndScore(message);
-        emitAndCount(message);
+        // we want to e-emit even if we couwdn't scowe t-the tweet. >_<
+        cwassifyandscowe(message);
+        e-emitandcount(message);
       }
     }
   }

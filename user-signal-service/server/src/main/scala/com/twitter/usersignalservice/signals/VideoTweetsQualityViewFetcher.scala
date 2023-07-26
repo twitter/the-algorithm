@@ -1,72 +1,72 @@
-package com.twitter.usersignalservice.signals
+package com.twittew.usewsignawsewvice.signaws
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.twistly.common.UserId
-import com.twitter.twistly.thriftscala.UserRecentVideoViewTweets
-import com.twitter.twistly.thriftscala.VideoViewEngagementType
-import com.twitter.usersignalservice.base.Query
-import com.twitter.usersignalservice.thriftscala.Signal
-import com.twitter.util.Future
-import com.twitter.util.Timer
-import com.twitter.twistly.thriftscala.RecentVideoViewTweet
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.strato.client.Client
-import com.twitter.strato.data.Conv
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.usersignalservice.base.StratoSignalFetcher
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.twistwy.common.usewid
+i-impowt com.twittew.twistwy.thwiftscawa.usewwecentvideoviewtweets
+i-impowt com.twittew.twistwy.thwiftscawa.videoviewengagementtype
+i-impowt com.twittew.usewsignawsewvice.base.quewy
+i-impowt com.twittew.usewsignawsewvice.thwiftscawa.signaw
+i-impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.timew
+impowt c-com.twittew.twistwy.thwiftscawa.wecentvideoviewtweet
+impowt com.twittew.usewsignawsewvice.thwiftscawa.signawtype
+impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+i-impowt com.twittew.stwato.cwient.cwient
+i-impowt com.twittew.stwato.data.conv
+impowt com.twittew.stwato.thwift.scwoogeconv
+impowt com.twittew.usewsignawsewvice.base.stwatosignawfetchew
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-case class VideoTweetsQualityViewFetcher @Inject() (
-  stratoClient: Client,
-  timer: Timer,
-  stats: StatsReceiver)
-    extends StratoSignalFetcher[
-      (UserId, VideoViewEngagementType),
-      Unit,
-      UserRecentVideoViewTweets
+@singweton
+c-case cwass v-videotweetsquawityviewfetchew @inject() (
+  stwatocwient: cwient, -.-
+  timew: timew, 😳
+  stats: statsweceivew)
+    extends stwatosignawfetchew[
+      (usewid, mya v-videoviewengagementtype), (˘ω˘)
+      unit, >_<
+      usewwecentvideoviewtweets
     ] {
-  import VideoTweetsQualityViewFetcher._
-  override type RawSignalType = RecentVideoViewTweet
-  override def name: String = this.getClass.getCanonicalName
-  override def statsReceiver: StatsReceiver = stats.scope(name)
+  impowt videotweetsquawityviewfetchew._
+  o-ovewwide type wawsignawtype = w-wecentvideoviewtweet
+  o-ovewwide d-def nyame: stwing = t-this.getcwass.getcanonicawname
+  ovewwide def statsweceivew: s-statsweceivew = stats.scope(name)
 
-  override val stratoColumnPath: String = StratoColumn
-  override val stratoView: Unit = None
-  override protected val keyConv: Conv[(UserId, VideoViewEngagementType)] = Conv.ofType
-  override protected val viewConv: Conv[Unit] = Conv.ofType
-  override protected val valueConv: Conv[UserRecentVideoViewTweets] =
-    ScroogeConv.fromStruct[UserRecentVideoViewTweets]
+  ovewwide v-vaw stwatocowumnpath: stwing = stwatocowumn
+  ovewwide vaw stwatoview: unit = nyone
+  ovewwide p-pwotected vaw keyconv: conv[(usewid, -.- v-videoviewengagementtype)] = c-conv.oftype
+  o-ovewwide pwotected vaw viewconv: conv[unit] = conv.oftype
+  ovewwide p-pwotected v-vaw vawueconv: conv[usewwecentvideoviewtweets] =
+    scwoogeconv.fwomstwuct[usewwecentvideoviewtweets]
 
-  override protected def toStratoKey(userId: UserId): (UserId, VideoViewEngagementType) =
-    (userId, VideoViewEngagementType.VideoQualityView)
+  o-ovewwide p-pwotected def tostwatokey(usewid: u-usewid): (usewid, 🥺 videoviewengagementtype) =
+    (usewid, (U ﹏ U) videoviewengagementtype.videoquawityview)
 
-  override protected def toRawSignals(
-    stratoValue: UserRecentVideoViewTweets
-  ): Seq[RecentVideoViewTweet] = stratoValue.recentEngagedTweets
+  o-ovewwide pwotected def towawsignaws(
+    s-stwatovawue: usewwecentvideoviewtweets
+  ): s-seq[wecentvideoviewtweet] = stwatovawue.wecentengagedtweets
 
-  override def process(
-    query: Query,
-    rawSignals: Future[Option[Seq[RecentVideoViewTweet]]]
-  ): Future[Option[Seq[Signal]]] = {
-    rawSignals.map {
+  o-ovewwide def pwocess(
+    q-quewy: quewy,
+    wawsignaws: futuwe[option[seq[wecentvideoviewtweet]]]
+  ): futuwe[option[seq[signaw]]] = {
+    wawsignaws.map {
       _.map {
-        _.filter(videoView =>
-          !videoView.isPromotedTweet && videoView.videoDurationSeconds >= MinVideoDurationSeconds)
-          .map { rawSignal =>
-            Signal(
-              SignalType.VideoView90dQualityV1,
-              rawSignal.engagedAt,
-              Some(InternalId.TweetId(rawSignal.tweetId)))
-          }.take(query.maxResults.getOrElse(Int.MaxValue))
+        _.fiwtew(videoview =>
+          !videoview.ispwomotedtweet && videoview.videoduwationseconds >= minvideoduwationseconds)
+          .map { w-wawsignaw =>
+            s-signaw(
+              signawtype.videoview90dquawityv1, >w<
+              w-wawsignaw.engagedat, mya
+              s-some(intewnawid.tweetid(wawsignaw.tweetid)))
+          }.take(quewy.maxwesuwts.getowewse(int.maxvawue))
       }
     }
   }
 }
 
-object VideoTweetsQualityViewFetcher {
-  private val StratoColumn = "recommendations/twistly/userRecentVideoViewTweetEngagements"
-  private val MinVideoDurationSeconds = 10
+o-object videotweetsquawityviewfetchew {
+  pwivate vaw stwatocowumn = "wecommendations/twistwy/usewwecentvideoviewtweetengagements"
+  pwivate v-vaw minvideoduwationseconds = 10
 }

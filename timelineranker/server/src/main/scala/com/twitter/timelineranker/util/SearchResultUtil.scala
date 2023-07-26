@@ -1,123 +1,123 @@
-package com.twitter.timelineranker.util
+package com.twittew.timewinewankew.utiw
 
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
+impowt com.twittew.seawch.eawwybiwd.thwiftscawa.thwiftseawchwesuwt
+i-impowt c-com.twittew.timewines.modew.tweetid
+i-impowt com.twittew.timewines.modew.usewid
 
-object SearchResultUtil {
-  val DefaultScore = 0.0
-  def getScore(result: ThriftSearchResult): Double = {
-    result.metadata.flatMap(_.score).filterNot(_.isNaN).getOrElse(DefaultScore)
+o-object seawchwesuwtutiw {
+  v-vaw d-defauwtscowe = 0.0
+  d-def getscowe(wesuwt: t-thwiftseawchwesuwt): doubwe = {
+    wesuwt.metadata.fwatmap(_.scowe).fiwtewnot(_.isnan).getowewse(defauwtscowe)
   }
 
-  def isRetweet(result: ThriftSearchResult): Boolean = {
-    result.metadata.flatMap(_.isRetweet).getOrElse(false)
+  def iswetweet(wesuwt: thwiftseawchwesuwt): boowean = {
+    w-wesuwt.metadata.fwatmap(_.iswetweet).getowewse(fawse)
   }
 
-  def isReply(result: ThriftSearchResult): Boolean = {
-    result.metadata.flatMap(_.isReply).getOrElse(false)
+  def iswepwy(wesuwt: thwiftseawchwesuwt): b-boowean = {
+    wesuwt.metadata.fwatmap(_.iswepwy).getowewse(fawse)
   }
 
-  def isEligibleReply(result: ThriftSearchResult): Boolean = {
-    isReply(result) && !isRetweet(result)
+  d-def isewigibwewepwy(wesuwt: thwiftseawchwesuwt): boowean = {
+    iswepwy(wesuwt) && !iswetweet(wesuwt)
   }
 
-  def authorId(result: ThriftSearchResult): Option[UserId] = {
-    // fromUserId defaults to 0L if unset. None is cleaner
-    result.metadata.map(_.fromUserId).filter(_ != 0L)
+  def a-authowid(wesuwt: thwiftseawchwesuwt): o-option[usewid] = {
+    // f-fwomusewid defauwts to 0w if unset. nyone is cweanew
+    wesuwt.metadata.map(_.fwomusewid).fiwtew(_ != 0w)
   }
 
-  def referencedTweetAuthorId(result: ThriftSearchResult): Option[UserId] = {
-    // referencedTweetAuthorId defaults to 0L by default. None is cleaner
-    result.metadata.map(_.referencedTweetAuthorId).filter(_ != 0L)
+  def wefewencedtweetauthowid(wesuwt: t-thwiftseawchwesuwt): option[usewid] = {
+    // wefewencedtweetauthowid defauwts to 0w by defauwt. OwO n-nyone is cweanew
+    wesuwt.metadata.map(_.wefewencedtweetauthowid).fiwtew(_ != 0w)
   }
 
   /**
-   * Extended replies are replies, that are not retweets (see below), from a followed userId
-   * towards a non-followed userId.
+   * e-extended w-wepwies awe w-wepwies, that awe n-nyot wetweets (see bewow), 😳 fwom a fowwowed usewid
+   * t-towawds a nyon-fowwowed usewid. 😳😳😳
    *
-   * In Thrift SearchResult it is possible to have both isRetweet and isReply set to true,
-   * in the case of the retweeted reply. This is confusing edge case as the retweet object
-   * is not itself a reply, but the original tweet is reply.
+   * i-in thwift seawchwesuwt it is possibwe to have both iswetweet and iswepwy set to twue, (˘ω˘)
+   * in t-the case of the wetweeted wepwy. ʘwʘ t-this is confusing e-edge case as t-the wetweet object
+   * is nyot itsewf a wepwy, ( ͡o ω ͡o ) but the owiginaw t-tweet is wepwy. o.O
    */
-  def isExtendedReply(followedUserIds: Seq[UserId])(result: ThriftSearchResult): Boolean = {
-    isEligibleReply(result) &&
-    authorId(result).exists(followedUserIds.contains(_)) && // author is followed
-    referencedTweetAuthorId(result).exists(!followedUserIds.contains(_)) // referenced author is not
+  d-def isextendedwepwy(fowwowedusewids: seq[usewid])(wesuwt: t-thwiftseawchwesuwt): b-boowean = {
+    isewigibwewepwy(wesuwt) &&
+    a-authowid(wesuwt).exists(fowwowedusewids.contains(_)) && // authow is fowwowed
+    w-wefewencedtweetauthowid(wesuwt).exists(!fowwowedusewids.contains(_)) // wefewenced authow is nyot
   }
 
   /**
-   * If a tweet is a reply that is not a retweet, and both the user follows both the reply author
-   * and the reply parent's author
+   * i-if a tweet is a wepwy t-that is nyot a wetweet, >w< and both t-the usew fowwows b-both the wepwy authow
+   * and the wepwy pawent's authow
    */
-  def isInNetworkReply(followedUserIds: Seq[UserId])(result: ThriftSearchResult): Boolean = {
-    isEligibleReply(result) &&
-    authorId(result).exists(followedUserIds.contains(_)) && // author is followed
-    referencedTweetAuthorId(result).exists(followedUserIds.contains(_)) // referenced author is
+  def isinnetwowkwepwy(fowwowedusewids: seq[usewid])(wesuwt: thwiftseawchwesuwt): b-boowean = {
+    i-isewigibwewepwy(wesuwt) &&
+    authowid(wesuwt).exists(fowwowedusewids.contains(_)) && // a-authow is fowwowed
+    w-wefewencedtweetauthowid(wesuwt).exists(fowwowedusewids.contains(_)) // w-wefewenced authow is
   }
 
   /**
-   * If a tweet is a retweet, and user follows author of outside tweet but not following author of
-   * source/inner tweet. This tweet is also called oon-retweet
+   * if a tweet is a-a wetweet, and usew fowwows authow of outside tweet but nyot fowwowing authow of
+   * s-souwce/innew tweet. 😳 this t-tweet is awso cawwed o-oon-wetweet
    */
-  def isOutOfNetworkRetweet(followedUserIds: Seq[UserId])(result: ThriftSearchResult): Boolean = {
-    isRetweet(result) &&
-    authorId(result).exists(followedUserIds.contains(_)) && // author is followed
-    referencedTweetAuthorId(result).exists(!followedUserIds.contains(_)) // referenced author is not
+  d-def isoutofnetwowkwetweet(fowwowedusewids: seq[usewid])(wesuwt: t-thwiftseawchwesuwt): b-boowean = {
+    i-iswetweet(wesuwt) &&
+    a-authowid(wesuwt).exists(fowwowedusewids.contains(_)) && // authow is fowwowed
+    wefewencedtweetauthowid(wesuwt).exists(!fowwowedusewids.contains(_)) // w-wefewenced authow i-is nyot
   }
 
   /**
-   * From official documentation in thrift on sharedStatusId:
-   * When isRetweet (or packed features equivalent) is true, this is the status id of the
-   * original tweet. When isReply and getReplySource are true, this is the status id of the
-   * original tweet. In all other circumstances this is 0.
+   * f-fwom o-officiaw documentation i-in thwift on shawedstatusid:
+   * when iswetweet (ow packed f-featuwes equivawent) is twue, 🥺 this is the status id of the
+   * owiginaw tweet. rawr x3 when iswepwy a-and getwepwysouwce awe twue, o.O this is the status id of the
+   * owiginaw t-tweet. rawr in a-aww othew ciwcumstances t-this is 0. ʘwʘ
    *
-   * If a tweet is a retweet of a reply, this is the status id of the reply (the original tweet
-   * of the retweet), not the reply's in-reply-to tweet status id.
+   * if a tweet is a wetweet o-of a wepwy, 😳😳😳 this is the status i-id of the w-wepwy (the owiginaw tweet
+   * of the wetweet), ^^;; nyot the wepwy's in-wepwy-to tweet status id. o.O
    */
-  def getSourceTweetId(result: ThriftSearchResult): Option[TweetId] = {
-    result.metadata.map(_.sharedStatusId).filter(_ != 0L)
+  d-def getsouwcetweetid(wesuwt: thwiftseawchwesuwt): o-option[tweetid] = {
+    wesuwt.metadata.map(_.shawedstatusid).fiwtew(_ != 0w)
   }
 
-  def getRetweetSourceTweetId(result: ThriftSearchResult): Option[TweetId] = {
-    if (isRetweet(result)) {
-      getSourceTweetId(result)
-    } else {
-      None
+  d-def g-getwetweetsouwcetweetid(wesuwt: thwiftseawchwesuwt): option[tweetid] = {
+    i-if (iswetweet(wesuwt)) {
+      g-getsouwcetweetid(wesuwt)
+    } ewse {
+      n-none
     }
   }
 
-  def getInReplyToTweetId(result: ThriftSearchResult): Option[TweetId] = {
-    if (isReply(result)) {
-      getSourceTweetId(result)
-    } else {
-      None
+  d-def getinwepwytotweetid(wesuwt: thwiftseawchwesuwt): option[tweetid] = {
+    if (iswepwy(wesuwt)) {
+      getsouwcetweetid(wesuwt)
+    } e-ewse {
+      n-nyone
     }
   }
 
-  def getReplyRootTweetId(result: ThriftSearchResult): Option[TweetId] = {
-    if (isEligibleReply(result)) {
-      for {
-        meta <- result.metadata
-        extraMeta <- meta.extraMetadata
-        conversationId <- extraMeta.conversationId
-      } yield {
-        conversationId
+  d-def getwepwywoottweetid(wesuwt: thwiftseawchwesuwt): o-option[tweetid] = {
+    i-if (isewigibwewepwy(wesuwt)) {
+      fow {
+        m-meta <- wesuwt.metadata
+        extwameta <- meta.extwametadata
+        convewsationid <- extwameta.convewsationid
+      } yiewd {
+        convewsationid
       }
-    } else {
-      None
+    } e-ewse {
+      n-nyone
     }
   }
 
   /**
-   * For retweet: selfTweetId + sourceTweetId, (however selfTweetId is redundant here, since Health
-   * score retweet by tweetId == sourceTweetId)
-   * For replies: selfTweetId + immediate ancestor tweetId + root ancestor tweetId.
-   * Use set to de-duplicate the case when source tweet == root tweet. (like A->B, B is root and source).
+   * fow wetweet: sewftweetid + s-souwcetweetid, (///ˬ///✿) (howevew s-sewftweetid is wedundant hewe, σωσ since heawth
+   * scowe wetweet b-by tweetid == souwcetweetid)
+   * fow wepwies: sewftweetid + immediate ancestow t-tweetid + woot ancestow tweetid. nyaa~~
+   * use s-set to de-dupwicate t-the case when souwce tweet == woot tweet. ^^;; (wike a->b, ^•ﻌ•^ b is w-woot and souwce). σωσ
    */
-  def getOriginalTweetIdAndAncestorTweetIds(searchResult: ThriftSearchResult): Set[TweetId] = {
-    Set(searchResult.id) ++
-      SearchResultUtil.getSourceTweetId(searchResult).toSet ++
-      SearchResultUtil.getReplyRootTweetId(searchResult).toSet
+  d-def getowiginawtweetidandancestowtweetids(seawchwesuwt: thwiftseawchwesuwt): set[tweetid] = {
+    set(seawchwesuwt.id) ++
+      s-seawchwesuwtutiw.getsouwcetweetid(seawchwesuwt).toset ++
+      seawchwesuwtutiw.getwepwywoottweetid(seawchwesuwt).toset
   }
 }

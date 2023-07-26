@@ -1,18 +1,18 @@
-package com.twitter.home_mixer.product.subscribed.param
+package com.twittew.home_mixew.pwoduct.subscwibed.pawam
 
-import com.twitter.home_mixer.param.decider.DeciderKey
-import com.twitter.home_mixer.product.subscribed.param.SubscribedParam._
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.servo.decider.DeciderKeyName
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.pawam.decidew.decidewkey
+impowt c-com.twittew.home_mixew.pwoduct.subscwibed.pawam.subscwibedpawam._
+i-impowt com.twittew.pwoduct_mixew.cowe.pwoduct.pwoductpawamconfig
+i-impowt c-com.twittew.sewvo.decidew.decidewkeyname
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class SubscribedParamConfig @Inject() () extends ProductParamConfig {
-  override val enabledDeciderKey: DeciderKeyName = DeciderKey.EnableSubscribedProduct
-  override val supportedClientFSName: String = SupportedClientFSName
+@singweton
+c-cwass subscwibedpawamconfig @inject() () extends pwoductpawamconfig {
+  ovewwide vaw enabweddecidewkey: d-decidewkeyname = decidewkey.enabwesubscwibedpwoduct
+  ovewwide v-vaw suppowtedcwientfsname: stwing = suppowtedcwientfsname
 
-  override val boundedIntFSOverrides = Seq(
-    ServerMaxResultsParam
+  o-ovewwide vaw boundedintfsovewwides = seq(
+    sewvewmaxwesuwtspawam
   )
 }

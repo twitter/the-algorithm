@@ -1,101 +1,101 @@
-package com.twitter.unified_user_actions.adapter
+package com.twittew.unified_usew_actions.adaptew
 
-import com.twitter.clientapp.thriftscala.AmplifyDetails
-import com.twitter.clientapp.thriftscala.MediaDetails
-import com.twitter.clientapp.thriftscala.MediaType
-import com.twitter.mediaservices.commons.thriftscala.MediaCategory
-import com.twitter.unified_user_actions.adapter.client_event.VideoClientEventUtils.getVideoMetadata
-import com.twitter.unified_user_actions.adapter.client_event.VideoClientEventUtils.videoIdFromMediaIdentifier
-import com.twitter.unified_user_actions.thriftscala._
-import com.twitter.util.mock.Mockito
-import com.twitter.video.analytics.thriftscala._
-import org.junit.runner.RunWith
-import org.scalatest.funsuite.AnyFunSuite
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatestplus.junit.JUnitRunner
+impowt com.twittew.cwientapp.thwiftscawa.ampwifydetaiws
+i-impowt c-com.twittew.cwientapp.thwiftscawa.mediadetaiws
+impowt c-com.twittew.cwientapp.thwiftscawa.mediatype
+i-impowt com.twittew.mediasewvices.commons.thwiftscawa.mediacategowy
+i-impowt com.twittew.unified_usew_actions.adaptew.cwient_event.videocwienteventutiws.getvideometadata
+i-impowt c-com.twittew.unified_usew_actions.adaptew.cwient_event.videocwienteventutiws.videoidfwommediaidentifiew
+i-impowt com.twittew.unified_usew_actions.thwiftscawa._
+impowt com.twittew.utiw.mock.mockito
+impowt com.twittew.video.anawytics.thwiftscawa._
+impowt owg.junit.wunnew.wunwith
+i-impowt owg.scawatest.funsuite.anyfunsuite
+impowt owg.scawatest.matchews.shouwd.matchews
+i-impowt owg.scawatest.pwop.tabwedwivenpwopewtychecks
+impowt o-owg.scawatestpwus.junit.junitwunnew
 
-@RunWith(classOf[JUnitRunner])
-class VideoClientEventUtilsSpec
-    extends AnyFunSuite
-    with Matchers
-    with Mockito
-    with TableDrivenPropertyChecks {
+@wunwith(cwassof[junitwunnew])
+cwass videocwienteventutiwsspec
+    extends a-anyfunsuite
+    with matchews
+    w-with mockito
+    w-with tabwedwivenpwopewtychecks {
 
-  trait Fixture {
-    val mediaDetails = Seq[MediaDetails](
-      MediaDetails(
-        contentId = Some("456"),
-        mediaType = Some(MediaType.ConsumerVideo),
-        dynamicAds = Some(false)),
-      MediaDetails(
-        contentId = Some("123"),
-        mediaType = Some(MediaType.ConsumerVideo),
-        dynamicAds = Some(false)),
-      MediaDetails(
-        contentId = Some("789"),
-        mediaType = Some(MediaType.ConsumerVideo),
-        dynamicAds = Some(false))
+  twait fixtuwe {
+    vaw mediadetaiws = seq[mediadetaiws](
+      m-mediadetaiws(
+        contentid = some("456"), 😳
+        mediatype = some(mediatype.consumewvideo), 😳
+        dynamicads = s-some(fawse)), σωσ
+      mediadetaiws(
+        c-contentid = s-some("123"), rawr x3
+        mediatype = s-some(mediatype.consumewvideo),
+        d-dynamicads = some(fawse)), OwO
+      mediadetaiws(
+        contentid = s-some("789"), /(^•ω•^)
+        mediatype = some(mediatype.consumewvideo), 😳😳😳
+        d-dynamicads = some(fawse))
     )
 
-    val videoMetadata: TweetActionInfo = TweetActionInfo.TweetVideoWatch(
-      TweetVideoWatch(mediaType = Some(MediaType.ConsumerVideo), isMonetizable = Some(false)))
+    vaw videometadata: tweetactioninfo = tweetactioninfo.tweetvideowatch(
+      tweetvideowatch(mediatype = s-some(mediatype.consumewvideo), ( ͡o ω ͡o ) ismonetizabwe = s-some(fawse)))
 
-    val videoMetadataWithAmplifyDetailsVideoType: TweetActionInfo = TweetActionInfo.TweetVideoWatch(
-      TweetVideoWatch(
-        mediaType = Some(MediaType.ConsumerVideo),
-        isMonetizable = Some(false),
-        videoType = Some("content")))
+    v-vaw v-videometadatawithampwifydetaiwsvideotype: tweetactioninfo = tweetactioninfo.tweetvideowatch(
+      tweetvideowatch(
+        m-mediatype = s-some(mediatype.consumewvideo), >_<
+        ismonetizabwe = some(fawse), >w<
+        videotype = s-some("content")))
 
-    val validMediaIdentifier: MediaIdentifier = MediaIdentifier.MediaPlatformIdentifier(
-      MediaPlatformIdentifier(mediaId = 123L, mediaCategory = MediaCategory.TweetVideo))
+    v-vaw vawidmediaidentifiew: mediaidentifiew = m-mediaidentifiew.mediapwatfowmidentifiew(
+      mediapwatfowmidentifiew(mediaid = 123w, rawr m-mediacategowy = mediacategowy.tweetvideo))
 
-    val invalidMediaIdentifier: MediaIdentifier = MediaIdentifier.AmplifyCardIdentifier(
-      AmplifyCardIdentifier(vmapUrl = "", contentId = "")
+    vaw invawidmediaidentifiew: m-mediaidentifiew = mediaidentifiew.ampwifycawdidentifiew(
+      a-ampwifycawdidentifiew(vmapuww = "", 😳 contentid = "")
     )
   }
 
-  test("findVideoMetadata") {
-    new Fixture {
-      val testData = Table(
-        ("testType", "mediaId", "mediaItems", "amplifyDetails", "expectedOutput"),
-        ("emptyMediaDetails", "123", Seq[MediaDetails](), None, None),
-        ("mediaIdNotFound", "111", mediaDetails, None, None),
-        ("mediaIdFound", "123", mediaDetails, None, Some(videoMetadata)),
+  t-test("findvideometadata") {
+    n-nyew fixtuwe {
+      vaw testdata = tabwe(
+        ("testtype", >w< "mediaid", (⑅˘꒳˘) "mediaitems", OwO "ampwifydetaiws", (ꈍᴗꈍ) "expectedoutput"), 😳
+        ("emptymediadetaiws", 😳😳😳 "123", mya seq[mediadetaiws](), mya nyone, nyone), (⑅˘꒳˘)
+        ("mediaidnotfound", (U ﹏ U) "111", mediadetaiws, mya nyone, n-nyone), ʘwʘ
+        ("mediaidfound", "123", (˘ω˘) m-mediadetaiws, (U ﹏ U) nyone, s-some(videometadata)), ^•ﻌ•^
         (
-          "mediaIdFound",
-          "123",
-          mediaDetails,
-          Some(AmplifyDetails(videoType = Some("content"))),
-          Some(videoMetadataWithAmplifyDetailsVideoType))
+          "mediaidfound", (˘ω˘)
+          "123", :3
+          m-mediadetaiws, ^^;;
+          some(ampwifydetaiws(videotype = some("content"))), 🥺
+          s-some(videometadatawithampwifydetaiwsvideotype))
       )
 
-      forEvery(testData) {
+      fowevewy(testdata) {
         (
-          _: String,
-          mediaId: String,
-          mediaItems: Seq[MediaDetails],
-          amplifyDetails: Option[AmplifyDetails],
-          expectedOutput: Option[TweetActionInfo]
+          _: stwing, (⑅˘꒳˘)
+          mediaid: s-stwing, nyaa~~
+          mediaitems: seq[mediadetaiws], :3
+          ampwifydetaiws: option[ampwifydetaiws], ( ͡o ω ͡o )
+          expectedoutput: option[tweetactioninfo]
         ) =>
-          val actual = getVideoMetadata(mediaId, mediaItems, amplifyDetails)
-          assert(expectedOutput === actual)
+          v-vaw actuaw = getvideometadata(mediaid, mya m-mediaitems, (///ˬ///✿) a-ampwifydetaiws)
+          a-assewt(expectedoutput === actuaw)
       }
     }
   }
 
-  test("videoIdFromMediaIdentifier") {
-    new Fixture {
-      val testData = Table(
-        ("testType", "mediaIdentifier", "expectedOutput"),
-        ("validMediaIdentifierType", validMediaIdentifier, Some("123")),
-        ("invalidMediaIdentifierType", invalidMediaIdentifier, None)
+  t-test("videoidfwommediaidentifiew") {
+    n-nyew f-fixtuwe {
+      v-vaw testdata = tabwe(
+        ("testtype", (˘ω˘) "mediaidentifiew", ^^;; "expectedoutput"), (✿oωo)
+        ("vawidmediaidentifiewtype", (U ﹏ U) vawidmediaidentifiew, some("123")), -.-
+        ("invawidmediaidentifiewtype", ^•ﻌ•^ i-invawidmediaidentifiew, rawr n-nyone)
       )
 
-      forEvery(testData) {
-        (_: String, mediaIdentifier: MediaIdentifier, expectedOutput: Option[String]) =>
-          val actual = videoIdFromMediaIdentifier(mediaIdentifier)
-          assert(expectedOutput === actual)
+      fowevewy(testdata) {
+        (_: s-stwing, (˘ω˘) mediaidentifiew: m-mediaidentifiew, nyaa~~ e-expectedoutput: option[stwing]) =>
+          vaw actuaw = videoidfwommediaidentifiew(mediaidentifiew)
+          a-assewt(expectedoutput === actuaw)
       }
     }
   }

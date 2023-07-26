@@ -1,421 +1,421 @@
-package com.twitter.visibility.interfaces.tweets
+package com.twittew.visibiwity.intewfaces.tweets
 
-import com.twitter.decider.Decider
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.mediaservices.media_util.GenericMediaKey
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.util.Stopwatch
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VerdictLogger
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.common.MutedKeywordFeatures
-import com.twitter.visibility.builder.media._
-import com.twitter.visibility.builder.tweets.TweetVisibilityNudgeSourceWrapper
-import com.twitter.visibility.builder.tweets._
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.builder.users.ViewerSearchSafetyFeatures
-import com.twitter.visibility.builder.users.ViewerSensitiveMediaSettingsFeatures
-import com.twitter.visibility.common._
-import com.twitter.visibility.common.actions.LimitedAction
-import com.twitter.visibility.common.actions.LimitedActionType
-import com.twitter.visibility.common.actions.LimitedActionsPolicy
-import com.twitter.visibility.rules.ComposableActions._
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.features.TweetIsInnerQuotedTweet
-import com.twitter.visibility.features.TweetIsRetweet
-import com.twitter.visibility.features.TweetIsSourceTweet
-import com.twitter.visibility.generators.LocalizedInterstitialGenerator
-import com.twitter.visibility.generators.TombstoneGenerator
-import com.twitter.visibility.interfaces.tweets.enrichments.ComplianceTweetNoticeEnrichment
-import com.twitter.visibility.interfaces.tweets.enrichments.LimitedActionsPolicyEnrichment
-import com.twitter.visibility.interfaces.tweets.enrichments.TweetVisibilityNudgeEnrichment
-import com.twitter.visibility.logging.thriftscala.VFLibType
-import com.twitter.visibility.models.ContentId.TweetId
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.SafetyLevel.toThrift
-import com.twitter.visibility.rules._
+impowt com.twittew.decidew.decidew
+i-impowt com.twittew.featuweswitches.v2.featuweswitches
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.mediasewvices.media_utiw.genewicmediakey
+i-impowt com.twittew.sewvo.utiw.gate
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.cwient.{cwient => stwatocwient}
+impowt com.twittew.utiw.stopwatch
+impowt com.twittew.visibiwity.visibiwitywibwawy
+i-impowt com.twittew.visibiwity.buiwdew.vewdictwoggew
+impowt com.twittew.visibiwity.buiwdew.visibiwitywesuwt
+i-impowt com.twittew.visibiwity.buiwdew.common.mutedkeywowdfeatuwes
+impowt com.twittew.visibiwity.buiwdew.media._
+i-impowt com.twittew.visibiwity.buiwdew.tweets.tweetvisibiwitynudgesouwcewwappew
+impowt com.twittew.visibiwity.buiwdew.tweets._
+impowt com.twittew.visibiwity.buiwdew.usews.authowfeatuwes
+i-impowt com.twittew.visibiwity.buiwdew.usews.wewationshipfeatuwes
+i-impowt c-com.twittew.visibiwity.buiwdew.usews.viewewfeatuwes
+impowt com.twittew.visibiwity.buiwdew.usews.viewewseawchsafetyfeatuwes
+impowt com.twittew.visibiwity.buiwdew.usews.viewewsensitivemediasettingsfeatuwes
+impowt c-com.twittew.visibiwity.common._
+impowt com.twittew.visibiwity.common.actions.wimitedaction
+impowt com.twittew.visibiwity.common.actions.wimitedactiontype
+impowt com.twittew.visibiwity.common.actions.wimitedactionspowicy
+i-impowt com.twittew.visibiwity.wuwes.composabweactions._
+impowt com.twittew.visibiwity.configapi.configs.visibiwitydecidewgates
+impowt c-com.twittew.visibiwity.featuwes.tweetisinnewquotedtweet
+i-impowt c-com.twittew.visibiwity.featuwes.tweetiswetweet
+i-impowt com.twittew.visibiwity.featuwes.tweetissouwcetweet
+impowt com.twittew.visibiwity.genewatows.wocawizedintewstitiawgenewatow
+i-impowt com.twittew.visibiwity.genewatows.tombstonegenewatow
+impowt com.twittew.visibiwity.intewfaces.tweets.enwichments.compwiancetweetnoticeenwichment
+impowt c-com.twittew.visibiwity.intewfaces.tweets.enwichments.wimitedactionspowicyenwichment
+impowt com.twittew.visibiwity.intewfaces.tweets.enwichments.tweetvisibiwitynudgeenwichment
+impowt com.twittew.visibiwity.wogging.thwiftscawa.vfwibtype
+impowt com.twittew.visibiwity.modews.contentid.tweetid
+impowt com.twittew.visibiwity.modews.safetywevew
+i-impowt com.twittew.visibiwity.modews.safetywevew.tothwift
+impowt com.twittew.visibiwity.wuwes._
 
-object TweetVisibilityLibrary {
-  type Type = TweetVisibilityRequest => Stitch[VisibilityResult]
+o-object t-tweetvisibiwitywibwawy {
+  t-type type = tweetvisibiwitywequest => stitch[visibiwitywesuwt]
 
-  def apply(
-    visibilityLibrary: VisibilityLibrary,
-    userSource: UserSource,
-    userRelationshipSource: UserRelationshipSource,
-    keywordMatcher: KeywordMatcher.Matcher,
-    invitedToConversationRepo: InvitedToConversationRepo,
-    decider: Decider,
-    stratoClient: StratoClient,
-    localizationSource: LocalizationSource,
-    tweetPerspectiveSource: TweetPerspectiveSource,
-    tweetMediaMetadataSource: TweetMediaMetadataSource,
-    tombstoneGenerator: TombstoneGenerator,
-    interstitialGenerator: LocalizedInterstitialGenerator,
-    limitedActionsFeatureSwitches: FeatureSwitches,
-    enableParityTest: Gate[Unit] = Gate.False
-  ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val stratoClientStatsReceiver = visibilityLibrary.statsReceiver.scope("strato")
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
-    val vfLatencyOverallStat = libraryStatsReceiver.stat("vf_latency_overall")
-    val vfLatencyStitchBuildStat = libraryStatsReceiver.stat("vf_latency_stitch_build")
-    val vfLatencyStitchRunStat = libraryStatsReceiver.stat("vf_latency_stitch_run")
-    val visibilityDeciderGates = VisibilityDeciderGates(decider)
-    val verdictLogger =
-      createVerdictLogger(
-        visibilityDeciderGates.enableVerdictLoggerTVL,
-        decider,
-        libraryStatsReceiver)
+  def a-appwy(
+    visibiwitywibwawy: visibiwitywibwawy, (U ᵕ U❁)
+    u-usewsouwce: usewsouwce, ^^;;
+    u-usewwewationshipsouwce: u-usewwewationshipsouwce, ^^;;
+    keywowdmatchew: k-keywowdmatchew.matchew, rawr
+    invitedtoconvewsationwepo: i-invitedtoconvewsationwepo, (˘ω˘)
+    decidew: decidew, 🥺
+    s-stwatocwient: stwatocwient,
+    w-wocawizationsouwce: wocawizationsouwce, nyaa~~
+    t-tweetpewspectivesouwce: t-tweetpewspectivesouwce, :3
+    tweetmediametadatasouwce: tweetmediametadatasouwce, /(^•ω•^)
+    tombstonegenewatow: tombstonegenewatow, ^•ﻌ•^
+    intewstitiawgenewatow: wocawizedintewstitiawgenewatow, UwU
+    w-wimitedactionsfeatuweswitches: f-featuweswitches, 😳😳😳
+    enabwepawitytest: g-gate[unit] = g-gate.fawse
+  ): t-type = {
+    vaw wibwawystatsweceivew = visibiwitywibwawy.statsweceivew
+    vaw stwatocwientstatsweceivew = v-visibiwitywibwawy.statsweceivew.scope("stwato")
+    vaw vfenginecountew = wibwawystatsweceivew.countew("vf_engine_wequests")
+    vaw vfwatencyovewawwstat = wibwawystatsweceivew.stat("vf_watency_ovewaww")
+    v-vaw vfwatencystitchbuiwdstat = wibwawystatsweceivew.stat("vf_watency_stitch_buiwd")
+    vaw vfwatencystitchwunstat = w-wibwawystatsweceivew.stat("vf_watency_stitch_wun")
+    v-vaw v-visibiwitydecidewgates = visibiwitydecidewgates(decidew)
+    v-vaw v-vewdictwoggew =
+      c-cweatevewdictwoggew(
+        v-visibiwitydecidewgates.enabwevewdictwoggewtvw, OwO
+        decidew, ^•ﻌ•^
+        wibwawystatsweceivew)
 
-    val tweetLabelMaps = new StratoTweetLabelMaps(
-      SafetyLabelMapSource.fromStrato(stratoClient, stratoClientStatsReceiver))
+    v-vaw tweetwabewmaps = n-nyew s-stwatotweetwabewmaps(
+      s-safetywabewmapsouwce.fwomstwato(stwatocwient, (ꈍᴗꈍ) s-stwatocwientstatsweceivew))
 
-    val mediaLabelMaps = new StratoMediaLabelMaps(
-      MediaSafetyLabelMapSource.fromStrato(stratoClient, stratoClientStatsReceiver))
+    vaw mediawabewmaps = nyew stwatomediawabewmaps(
+      m-mediasafetywabewmapsouwce.fwomstwato(stwatocwient, (⑅˘꒳˘) stwatocwientstatsweceivew))
 
-    val tweetFeatures = new TweetFeatures(tweetLabelMaps, libraryStatsReceiver)
-    val tweetPerspectiveFeatures =
-      new TweetPerspectiveFeatures(tweetPerspectiveSource, libraryStatsReceiver)
-    val mediaFeatures = new MediaFeatures(mediaLabelMaps, libraryStatsReceiver)
-    val tweetMediaMetadataFeatures =
-      new TweetMediaMetadataFeatures(tweetMediaMetadataSource, libraryStatsReceiver)
-    val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
-    val viewerFeatures = new ViewerFeatures(userSource, libraryStatsReceiver)
-    val mutedKeywordFeatures =
-      new MutedKeywordFeatures(
-        userSource,
-        userRelationshipSource,
-        keywordMatcher,
-        libraryStatsReceiver,
-        visibilityDeciderGates.enableFollowCheckInMutedKeyword
+    vaw tweetfeatuwes = nyew tweetfeatuwes(tweetwabewmaps, (⑅˘꒳˘) wibwawystatsweceivew)
+    vaw tweetpewspectivefeatuwes =
+      n-nyew tweetpewspectivefeatuwes(tweetpewspectivesouwce, (ˆ ﻌ ˆ)♡ wibwawystatsweceivew)
+    vaw m-mediafeatuwes = n-nyew mediafeatuwes(mediawabewmaps, /(^•ω•^) w-wibwawystatsweceivew)
+    vaw t-tweetmediametadatafeatuwes =
+      new tweetmediametadatafeatuwes(tweetmediametadatasouwce, òωó w-wibwawystatsweceivew)
+    v-vaw authowfeatuwes = nyew authowfeatuwes(usewsouwce, (⑅˘꒳˘) wibwawystatsweceivew)
+    vaw viewewfeatuwes = nyew v-viewewfeatuwes(usewsouwce, (U ᵕ U❁) wibwawystatsweceivew)
+    v-vaw mutedkeywowdfeatuwes =
+      new mutedkeywowdfeatuwes(
+        u-usewsouwce, >w<
+        u-usewwewationshipsouwce, σωσ
+        keywowdmatchew, -.-
+        wibwawystatsweceivew,
+        v-visibiwitydecidewgates.enabwefowwowcheckinmutedkeywowd
       )
-    val relationshipFeatures =
-      new RelationshipFeatures(userRelationshipSource, libraryStatsReceiver)
-    val fonsrRelationshipFeatures =
-      new FosnrRelationshipFeatures(
-        tweetLabels = tweetLabelMaps,
-        userRelationshipSource = userRelationshipSource,
-        statsReceiver = libraryStatsReceiver)
-    val conversationControlFeatures =
-      new ConversationControlFeatures(
-        relationshipFeatures,
-        invitedToConversationRepo,
-        libraryStatsReceiver
+    v-vaw wewationshipfeatuwes =
+      new wewationshipfeatuwes(usewwewationshipsouwce, o.O w-wibwawystatsweceivew)
+    v-vaw fonswwewationshipfeatuwes =
+      nyew fosnwwewationshipfeatuwes(
+        tweetwabews = tweetwabewmaps, ^^
+        usewwewationshipsouwce = usewwewationshipsouwce, >_<
+        s-statsweceivew = w-wibwawystatsweceivew)
+    v-vaw convewsationcontwowfeatuwes =
+      nyew convewsationcontwowfeatuwes(
+        w-wewationshipfeatuwes, >w<
+        i-invitedtoconvewsationwepo, >_<
+        wibwawystatsweceivew
       )
-    val exclusiveTweetFeatures =
-      new ExclusiveTweetFeatures(userRelationshipSource, libraryStatsReceiver)
+    v-vaw excwusivetweetfeatuwes =
+      nyew excwusivetweetfeatuwes(usewwewationshipsouwce, >w< wibwawystatsweceivew)
 
-    val viewerSearchSafetyFeatures = new ViewerSearchSafetyFeatures(
-      UserSearchSafetySource.fromStrato(stratoClient, stratoClientStatsReceiver),
-      libraryStatsReceiver)
+    vaw v-viewewseawchsafetyfeatuwes = nyew v-viewewseawchsafetyfeatuwes(
+      usewseawchsafetysouwce.fwomstwato(stwatocwient, rawr stwatocwientstatsweceivew),
+      w-wibwawystatsweceivew)
 
-    val viewerSensitiveMediaSettingsFeatures = new ViewerSensitiveMediaSettingsFeatures(
-      UserSensitiveMediaSettingsSource.fromStrato(stratoClient, stratoClientStatsReceiver),
-      libraryStatsReceiver)
+    v-vaw viewewsensitivemediasettingsfeatuwes = nyew viewewsensitivemediasettingsfeatuwes(
+      usewsensitivemediasettingssouwce.fwomstwato(stwatocwient, rawr x3 stwatocwientstatsweceivew), ( ͡o ω ͡o )
+      w-wibwawystatsweceivew)
 
-    val toxicReplyFilterFeature = new ToxicReplyFilterFeature(statsReceiver = libraryStatsReceiver)
+    vaw toxicwepwyfiwtewfeatuwe = nyew toxicwepwyfiwtewfeatuwe(statsweceivew = wibwawystatsweceivew)
 
-    val misinfoPolicySource =
-      MisinformationPolicySource.fromStrato(stratoClient, stratoClientStatsReceiver)
-    val misinfoPolicyFeatures =
-      new MisinformationPolicyFeatures(misinfoPolicySource, stratoClientStatsReceiver)
+    vaw m-misinfopowicysouwce =
+      misinfowmationpowicysouwce.fwomstwato(stwatocwient, (˘ω˘) stwatocwientstatsweceivew)
+    vaw m-misinfopowicyfeatuwes =
+      n-nyew misinfowmationpowicyfeatuwes(misinfopowicysouwce, 😳 stwatocwientstatsweceivew)
 
-    val communityTweetFeatures = new CommunityTweetFeaturesV2(
-      communitiesSource = CommunitiesSource.fromStrato(
-        stratoClient,
-        stratoClientStatsReceiver
+    vaw communitytweetfeatuwes = nyew communitytweetfeatuwesv2(
+      c-communitiessouwce = c-communitiessouwce.fwomstwato(
+        stwatocwient,
+        stwatocwientstatsweceivew
       )
     )
 
-    val trustedFriendsTweetFeatures = new TrustedFriendsFeatures(
-      trustedFriendsSource =
-        TrustedFriendsSource.fromStrato(stratoClient, stratoClientStatsReceiver))
+    vaw twustedfwiendstweetfeatuwes = n-nyew twustedfwiendsfeatuwes(
+      twustedfwiendssouwce =
+        t-twustedfwiendssouwce.fwomstwato(stwatocwient, OwO stwatocwientstatsweceivew))
 
-    val editTweetFeatures = new EditTweetFeatures(libraryStatsReceiver)
+    vaw edittweetfeatuwes = nyew edittweetfeatuwes(wibwawystatsweceivew)
 
-    val parityTest = new TweetVisibilityLibraryParityTest(libraryStatsReceiver, stratoClient)
+    v-vaw pawitytest = nyew tweetvisibiwitywibwawypawitytest(wibwawystatsweceivew, (˘ω˘) s-stwatocwient)
 
-    val localizedNudgeSource =
-      LocalizedNudgeSource.fromLocalizationSource(localizationSource)
-    val tweetVisibilityNudgeFeatures =
-      new TweetVisibilityNudgeSourceWrapper(localizedNudgeSource)
+    v-vaw wocawizednudgesouwce =
+      wocawizednudgesouwce.fwomwocawizationsouwce(wocawizationsouwce)
+    v-vaw tweetvisibiwitynudgefeatuwes =
+      nyew tweetvisibiwitynudgesouwcewwappew(wocawizednudgesouwce)
 
-    val localizedLimitedActionsSource =
-      LocalizedLimitedActionsSource.fromLocalizationSource(localizationSource)
+    v-vaw wocawizedwimitedactionssouwce =
+      w-wocawizedwimitedactionssouwce.fwomwocawizationsouwce(wocawizationsouwce)
 
-    { r: TweetVisibilityRequest =>
-      val elapsed = Stopwatch.start()
-      var runStitchStartMs = 0L
-      vfEngineCounter.incr()
+    { w-w: tweetvisibiwitywequest =>
+      v-vaw ewapsed = stopwatch.stawt()
+      v-vaw wunstitchstawtms = 0w
+      vfenginecountew.incw()
 
-      val contentId = TweetId(r.tweet.id)
-      val viewerId = r.viewerContext.userId
-      val authorId = coreData.userId
-      val tweetGenericMediaKeys = r.tweet.mediaRefs
-        .getOrElse(Seq.empty)
-        .flatMap { mediaRef =>
-          GenericMediaKey.fromStringKey(mediaRef.genericMediaKey)
+      vaw contentid = t-tweetid(w.tweet.id)
+      vaw v-viewewid = w.viewewcontext.usewid
+      v-vaw authowid = cowedata.usewid
+      vaw tweetgenewicmediakeys = w-w.tweet.mediawefs
+        .getowewse(seq.empty)
+        .fwatmap { mediawef =>
+          genewicmediakey.fwomstwingkey(mediawef.genewicmediakey)
         }
 
-      val tpf =
-        tweetPerspectiveFeatures.forTweet(
-          r.tweet,
-          viewerId,
-          visibilityDeciderGates.enableFetchTweetReportedPerspective())
+      v-vaw t-tpf =
+        tweetpewspectivefeatuwes.fowtweet(
+          w.tweet, òωó
+          viewewid, ( ͡o ω ͡o )
+          v-visibiwitydecidewgates.enabwefetchtweetwepowtedpewspective())
 
-      val featureMap =
-        visibilityLibrary.featureMapBuilder(
-          Seq(
-            mutedKeywordFeatures.forTweet(r.tweet, viewerId, authorId),
-            viewerFeatures.forViewerContext(r.viewerContext),
-            viewerSearchSafetyFeatures.forViewerId(viewerId),
-            viewerSensitiveMediaSettingsFeatures.forViewerId(viewerId),
-            relationshipFeatures.forAuthorId(authorId, viewerId),
-            fonsrRelationshipFeatures
-              .forTweetAndAuthorId(tweet = r.tweet, authorId = authorId, viewerId = viewerId),
-            tweetFeatures.forTweet(r.tweet),
-            tpf,
-            mediaFeatures.forMediaKeys(tweetGenericMediaKeys),
-            authorFeatures.forAuthorId(authorId),
-            conversationControlFeatures.forTweet(r.tweet, viewerId),
-            _.withConstantFeature(TweetIsInnerQuotedTweet, r.isInnerQuotedTweet),
-            _.withConstantFeature(TweetIsRetweet, r.isRetweet),
-            _.withConstantFeature(TweetIsSourceTweet, r.isSourceTweet),
-            misinfoPolicyFeatures.forTweet(r.tweet, r.viewerContext),
-            exclusiveTweetFeatures.forTweet(r.tweet, r.viewerContext),
-            communityTweetFeatures.forTweet(r.tweet, r.viewerContext),
-            tweetMediaMetadataFeatures
-              .forTweet(
-                r.tweet,
-                tweetGenericMediaKeys,
-                visibilityDeciderGates.enableFetchTweetMediaMetadata()),
-            trustedFriendsTweetFeatures.forTweet(r.tweet, viewerId),
-            editTweetFeatures.forTweet(r.tweet),
-            toxicReplyFilterFeature.forTweet(r.tweet, viewerId),
+      v-vaw featuwemap =
+        v-visibiwitywibwawy.featuwemapbuiwdew(
+          s-seq(
+            mutedkeywowdfeatuwes.fowtweet(w.tweet, UwU v-viewewid, authowid), /(^•ω•^)
+            viewewfeatuwes.fowviewewcontext(w.viewewcontext), (ꈍᴗꈍ)
+            viewewseawchsafetyfeatuwes.fowviewewid(viewewid), 😳
+            viewewsensitivemediasettingsfeatuwes.fowviewewid(viewewid), mya
+            wewationshipfeatuwes.fowauthowid(authowid, mya v-viewewid),
+            fonswwewationshipfeatuwes
+              .fowtweetandauthowid(tweet = w-w.tweet, /(^•ω•^) authowid = authowid, ^^;; v-viewewid = viewewid), 🥺
+            tweetfeatuwes.fowtweet(w.tweet), ^^
+            t-tpf, ^•ﻌ•^
+            mediafeatuwes.fowmediakeys(tweetgenewicmediakeys), /(^•ω•^)
+            a-authowfeatuwes.fowauthowid(authowid), ^^
+            c-convewsationcontwowfeatuwes.fowtweet(w.tweet, 🥺 v-viewewid), (U ᵕ U❁)
+            _.withconstantfeatuwe(tweetisinnewquotedtweet, w-w.isinnewquotedtweet), 😳😳😳
+            _.withconstantfeatuwe(tweetiswetweet, nyaa~~ w-w.iswetweet), (˘ω˘)
+            _.withconstantfeatuwe(tweetissouwcetweet, >_< w.issouwcetweet), XD
+            misinfopowicyfeatuwes.fowtweet(w.tweet, rawr x3 w.viewewcontext), ( ͡o ω ͡o )
+            excwusivetweetfeatuwes.fowtweet(w.tweet, :3 w.viewewcontext),
+            communitytweetfeatuwes.fowtweet(w.tweet, mya w-w.viewewcontext), σωσ
+            t-tweetmediametadatafeatuwes
+              .fowtweet(
+                w-w.tweet, (ꈍᴗꈍ)
+                tweetgenewicmediakeys, OwO
+                v-visibiwitydecidewgates.enabwefetchtweetmediametadata()), o.O
+            twustedfwiendstweetfeatuwes.fowtweet(w.tweet, 😳😳😳 viewewid),
+            edittweetfeatuwes.fowtweet(w.tweet), /(^•ω•^)
+            t-toxicwepwyfiwtewfeatuwe.fowtweet(w.tweet, OwO v-viewewid), ^^
           )
         )
 
-      val languageCode = r.viewerContext.requestLanguageCode.getOrElse("en")
-      val countryCode = r.viewerContext.requestCountryCode
+      vaw wanguagecode = w-w.viewewcontext.wequestwanguagecode.getowewse("en")
+      vaw countwycode = w.viewewcontext.wequestcountwycode
 
-      val response = visibilityLibrary
-        .runRuleEngine(
-          contentId,
-          featureMap,
-          r.viewerContext,
-          r.safetyLevel
+      v-vaw wesponse = v-visibiwitywibwawy
+        .wunwuweengine(
+          contentid, (///ˬ///✿)
+          f-featuwemap, (///ˬ///✿)
+          w.viewewcontext,
+          w-w.safetywevew
         )
         .map(
-          TweetVisibilityNudgeEnrichment(
-            _,
-            tweetVisibilityNudgeFeatures,
-            languageCode,
-            countryCode))
-        .map(verdict => {
-          if (visibilityDeciderGates.enableBackendLimitedActions()) {
-            LimitedActionsPolicyEnrichment(
-              verdict,
-              localizedLimitedActionsSource,
-              languageCode,
-              countryCode,
-              limitedActionsFeatureSwitches,
-              libraryStatsReceiver)
-          } else {
-            verdict
+          tweetvisibiwitynudgeenwichment(
+            _, (///ˬ///✿)
+            tweetvisibiwitynudgefeatuwes, ʘwʘ
+            wanguagecode, ^•ﻌ•^
+            countwycode))
+        .map(vewdict => {
+          if (visibiwitydecidewgates.enabwebackendwimitedactions()) {
+            w-wimitedactionspowicyenwichment(
+              v-vewdict,
+              w-wocawizedwimitedactionssouwce, OwO
+              w-wanguagecode, (U ﹏ U)
+              c-countwycode, (ˆ ﻌ ˆ)♡
+              wimitedactionsfeatuweswitches, (⑅˘꒳˘)
+              w-wibwawystatsweceivew)
+          } e-ewse {
+            vewdict
           }
         })
         .map(
-          handleComposableVisibilityResult(
-            _,
-            visibilityDeciderGates.enableMediaInterstitialComposition(),
-            visibilityDeciderGates.enableBackendLimitedActions()))
-        .map(handleInnerQuotedTweetVisibilityResult(_, r.isInnerQuotedTweet))
-        .map(tombstoneGenerator(_, languageCode))
-        .map(interstitialGenerator(_, languageCode))
-        .map(ComplianceTweetNoticeEnrichment(_, libraryStatsReceiver))
-        .onSuccess(_ => {
-          val overallStatMs = elapsed().inMilliseconds
-          vfLatencyOverallStat.add(overallStatMs)
-          val runStitchEndMs = elapsed().inMilliseconds
-          vfLatencyStitchRunStat.add(runStitchEndMs - runStitchStartMs)
+          h-handwecomposabwevisibiwitywesuwt(
+            _, (U ﹏ U)
+            v-visibiwitydecidewgates.enabwemediaintewstitiawcomposition(), o.O
+            visibiwitydecidewgates.enabwebackendwimitedactions()))
+        .map(handweinnewquotedtweetvisibiwitywesuwt(_, mya w-w.isinnewquotedtweet))
+        .map(tombstonegenewatow(_, XD wanguagecode))
+        .map(intewstitiawgenewatow(_, òωó wanguagecode))
+        .map(compwiancetweetnoticeenwichment(_, (˘ω˘) w-wibwawystatsweceivew))
+        .onsuccess(_ => {
+          vaw ovewawwstatms = e-ewapsed().inmiwwiseconds
+          v-vfwatencyovewawwstat.add(ovewawwstatms)
+          vaw wunstitchendms = e-ewapsed().inmiwwiseconds
+          vfwatencystitchwunstat.add(wunstitchendms - wunstitchstawtms)
         })
-        .onSuccess(
-          scribeVisibilityVerdict(
+        .onsuccess(
+          scwibevisibiwityvewdict(
             _,
-            visibilityDeciderGates.enableVerdictScribingTVL,
-            verdictLogger,
-            r.viewerContext.userId,
-            r.safetyLevel))
+            v-visibiwitydecidewgates.enabwevewdictscwibingtvw, :3
+            v-vewdictwoggew, OwO
+            w-w.viewewcontext.usewid, mya
+            w.safetywevew))
 
-      runStitchStartMs = elapsed().inMilliseconds
-      val buildStitchStatMs = elapsed().inMilliseconds
-      vfLatencyStitchBuildStat.add(buildStitchStatMs)
+      wunstitchstawtms = ewapsed().inmiwwiseconds
+      v-vaw buiwdstitchstatms = ewapsed().inmiwwiseconds
+      vfwatencystitchbuiwdstat.add(buiwdstitchstatms)
 
-      if (enableParityTest()) {
-        response.applyEffect { resp =>
-          Stitch.async(parityTest.runParityTest(r, resp))
+      i-if (enabwepawitytest()) {
+        w-wesponse.appwyeffect { wesp =>
+          s-stitch.async(pawitytest.wunpawitytest(w, (˘ω˘) wesp))
         }
-      } else {
-        response
+      } e-ewse {
+        w-wesponse
       }
     }
   }
 
-  def handleComposableVisibilityResult(
-    result: VisibilityResult,
-    enableMediaInterstitialComposition: Boolean,
-    enableBackendLimitedActions: Boolean
-  ): VisibilityResult = {
-    if (result.secondaryVerdicts.nonEmpty || enableBackendLimitedActions) {
-      result.copy(verdict = composeActions(
-        result.verdict,
-        result.secondaryVerdicts,
-        enableMediaInterstitialComposition,
-        enableBackendLimitedActions))
-    } else {
-      result
+  def handwecomposabwevisibiwitywesuwt(
+    wesuwt: visibiwitywesuwt, o.O
+    e-enabwemediaintewstitiawcomposition: boowean, (✿oωo)
+    enabwebackendwimitedactions: b-boowean
+  ): visibiwitywesuwt = {
+    i-if (wesuwt.secondawyvewdicts.nonempty || enabwebackendwimitedactions) {
+      w-wesuwt.copy(vewdict = composeactions(
+        w-wesuwt.vewdict, (ˆ ﻌ ˆ)♡
+        w-wesuwt.secondawyvewdicts, ^^;;
+        e-enabwemediaintewstitiawcomposition, OwO
+        enabwebackendwimitedactions))
+    } ewse {
+      wesuwt
     }
   }
 
-  def handleInnerQuotedTweetVisibilityResult(
-    result: VisibilityResult,
-    isInnerQuotedTweet: Boolean
-  ): VisibilityResult = {
-    val newVerdict: Action =
-      result.verdict match {
-        case Interstitial(Reason.Nsfw | Reason.NsfwMedia, _, _) if isInnerQuotedTweet =>
-          Drop(Reason.Nsfw)
-        case ComposableActionsWithInterstitial(tweetInterstitial)
-            if isInnerQuotedTweet && (tweetInterstitial.reason == Reason.Nsfw || tweetInterstitial.reason == Reason.NsfwMedia) =>
-          Drop(Reason.Nsfw)
-        case verdict => verdict
+  def handweinnewquotedtweetvisibiwitywesuwt(
+    wesuwt: visibiwitywesuwt, 🥺
+    isinnewquotedtweet: boowean
+  ): visibiwitywesuwt = {
+    vaw nyewvewdict: action =
+      wesuwt.vewdict m-match {
+        c-case intewstitiaw(weason.nsfw | weason.nsfwmedia, mya _, _) if i-isinnewquotedtweet =>
+          d-dwop(weason.nsfw)
+        c-case composabweactionswithintewstitiaw(tweetintewstitiaw)
+            if isinnewquotedtweet && (tweetintewstitiaw.weason == w-weason.nsfw || tweetintewstitiaw.weason == w-weason.nsfwmedia) =>
+          d-dwop(weason.nsfw)
+        case vewdict => v-vewdict
       }
 
-    result.copy(verdict = newVerdict)
+    wesuwt.copy(vewdict = nyewvewdict)
   }
 
-  def hasTweetRules(safetyLevel: SafetyLevel): Boolean = RuleBase.hasTweetRules(safetyLevel)
+  d-def hastweetwuwes(safetywevew: s-safetywevew): boowean = wuwebase.hastweetwuwes(safetywevew)
 
-  def composeActions(
-    primary: Action,
-    secondary: Seq[Action],
-    enableMediaInterstitialComposition: Boolean,
-    enableBackendLimitedActions: Boolean
-  ): Action = {
-    if (primary.isComposable && (secondary.nonEmpty || enableBackendLimitedActions)) {
-      val actions = Seq[Action] { primary } ++ secondary
-      val interstitialOpt = Action.getFirstInterstitial(actions: _*)
-      val softInterventionOpt = Action.getFirstSoftIntervention(actions: _*)
-      val downrankOpt = Action.getFirstDownrankHomeTimeline(actions: _*)
-      val avoidOpt = Action.getFirstAvoid(actions: _*)
-      val tweetVisibilityNudgeOpt = Action.getFirstTweetVisibilityNudge(actions: _*)
+  d-def composeactions(
+    pwimawy: a-action, 😳
+    s-secondawy: seq[action], òωó
+    e-enabwemediaintewstitiawcomposition: b-boowean, /(^•ω•^)
+    e-enabwebackendwimitedactions: b-boowean
+  ): a-action = {
+    i-if (pwimawy.iscomposabwe && (secondawy.nonempty || enabwebackendwimitedactions)) {
+      v-vaw actions = s-seq[action] { pwimawy } ++ s-secondawy
+      vaw i-intewstitiawopt = action.getfiwstintewstitiaw(actions: _*)
+      vaw softintewventionopt = a-action.getfiwstsoftintewvention(actions: _*)
+      vaw d-downwankopt = a-action.getfiwstdownwankhometimewine(actions: _*)
+      v-vaw avoidopt = action.getfiwstavoid(actions: _*)
+      v-vaw tweetvisibiwitynudgeopt = a-action.getfiwsttweetvisibiwitynudge(actions: _*)
 
-      val mediaInterstitialOpt = {
-        val firstMediaInterstitialOpt = Action.getFirstMediaInterstitial(actions: _*)
-        if (enableMediaInterstitialComposition && interstitialOpt != firstMediaInterstitialOpt) {
-          firstMediaInterstitialOpt
-        } else {
-          None
+      vaw mediaintewstitiawopt = {
+        v-vaw fiwstmediaintewstitiawopt = action.getfiwstmediaintewstitiaw(actions: _*)
+        if (enabwemediaintewstitiawcomposition && i-intewstitiawopt != fiwstmediaintewstitiawopt) {
+          fiwstmediaintewstitiawopt
+        } ewse {
+          nyone
         }
       }
 
-      val limitedEngagementsOpt = enableBackendLimitedActions match {
-        case true => buildCompositeLimitedEngagements(Action.getAllLimitedEngagements(actions: _*))
-        case false => Action.getFirstLimitedEngagements(actions: _*)
+      v-vaw wimitedengagementsopt = enabwebackendwimitedactions match {
+        case t-twue => buiwdcompositewimitedengagements(action.getawwwimitedengagements(actions: _*))
+        c-case fawse => action.getfiwstwimitedengagements(actions: _*)
       }
 
-      val abusiveQualityOpt = {
-        if (actions.contains(ConversationSectionAbusiveQuality)) {
-          Some(ConversationSectionAbusiveQuality)
-        } else {
-          None
+      vaw abusivequawityopt = {
+        if (actions.contains(convewsationsectionabusivequawity)) {
+          s-some(convewsationsectionabusivequawity)
+        } ewse {
+          n-nyone
         }
       }
 
-      val numActions =
-        Seq[Option[_]](
-          interstitialOpt,
-          softInterventionOpt,
-          limitedEngagementsOpt,
-          downrankOpt,
-          avoidOpt,
-          mediaInterstitialOpt,
-          tweetVisibilityNudgeOpt,
-          abusiveQualityOpt)
-          .count(_.isDefined)
-      if (numActions > 1) {
-        TweetInterstitial(
-          interstitialOpt,
-          softInterventionOpt,
-          limitedEngagementsOpt,
-          downrankOpt,
-          avoidOpt,
-          mediaInterstitialOpt,
-          tweetVisibilityNudgeOpt,
-          abusiveQualityOpt
+      v-vaw nyumactions =
+        s-seq[option[_]](
+          intewstitiawopt, -.-
+          softintewventionopt, òωó
+          w-wimitedengagementsopt, /(^•ω•^)
+          d-downwankopt, /(^•ω•^)
+          avoidopt, 😳
+          m-mediaintewstitiawopt, :3
+          tweetvisibiwitynudgeopt, (U ᵕ U❁)
+          abusivequawityopt)
+          .count(_.isdefined)
+      i-if (numactions > 1) {
+        tweetintewstitiaw(
+          i-intewstitiawopt, ʘwʘ
+          s-softintewventionopt, o.O
+          w-wimitedengagementsopt, ʘwʘ
+          downwankopt, ^^
+          a-avoidopt, ^•ﻌ•^
+          m-mediaintewstitiawopt, mya
+          t-tweetvisibiwitynudgeopt, UwU
+          a-abusivequawityopt
         )
-      } else {
-        if (enableBackendLimitedActions) {
-          limitedEngagementsOpt.getOrElse(primary)
-        } else {
-          primary
+      } ewse {
+        i-if (enabwebackendwimitedactions) {
+          w-wimitedengagementsopt.getowewse(pwimawy)
+        } e-ewse {
+          p-pwimawy
         }
       }
-    } else {
-      primary
+    } e-ewse {
+      p-pwimawy
     }
   }
 
-  def scribeVisibilityVerdict(
-    result: VisibilityResult,
-    enableVerdictScribing: Gate[Unit],
-    verdictLogger: VerdictLogger,
-    viewerId: Option[Long],
-    safetyLevel: SafetyLevel
-  ): Unit = if (enableVerdictScribing()) {
-    verdictLogger.scribeVerdict(
-      visibilityResult = result,
-      viewerId = viewerId,
-      safetyLevel = toThrift(safetyLevel),
-      vfLibType = VFLibType.TweetVisibilityLibrary)
+  d-def scwibevisibiwityvewdict(
+    w-wesuwt: visibiwitywesuwt, >_<
+    enabwevewdictscwibing: g-gate[unit], /(^•ω•^)
+    vewdictwoggew: v-vewdictwoggew,
+    viewewid: o-option[wong], òωó
+    s-safetywevew: s-safetywevew
+  ): unit = if (enabwevewdictscwibing()) {
+    vewdictwoggew.scwibevewdict(
+      visibiwitywesuwt = w-wesuwt, σωσ
+      v-viewewid = v-viewewid, ( ͡o ω ͡o )
+      safetywevew = tothwift(safetywevew), nyaa~~
+      vfwibtype = vfwibtype.tweetvisibiwitywibwawy)
   }
 
-  def buildCompositeLimitedEngagements(
-    limitedEngagements: Seq[IsLimitedEngagements]
-  ): Option[LimitedEngagements] = {
-    limitedEngagements.headOption.flatMap { limitedEngagement =>
-      val distinctLimitedActions = limitedEngagements
-        .collect({ case IsLimitedEngagements(Some(policy), _) => policy.limitedActions })
-        .flatten
-        .foldRight(Map.empty[LimitedActionType, LimitedAction])({ (limitedAction, acc) =>
-          acc + ((limitedAction.limitedActionType, limitedAction))
+  d-def buiwdcompositewimitedengagements(
+    w-wimitedengagements: seq[iswimitedengagements]
+  ): option[wimitedengagements] = {
+    w-wimitedengagements.headoption.fwatmap { w-wimitedengagement =>
+      vaw distinctwimitedactions = wimitedengagements
+        .cowwect({ case iswimitedengagements(some(powicy), :3 _) => p-powicy.wimitedactions })
+        .fwatten
+        .fowdwight(map.empty[wimitedactiontype, UwU wimitedaction])({ (wimitedaction, o.O a-acc) =>
+          a-acc + ((wimitedaction.wimitedactiontype, (ˆ ﻌ ˆ)♡ w-wimitedaction))
         })
-        .values
-        .toSeq
+        .vawues
+        .toseq
 
-      if (distinctLimitedActions.nonEmpty) {
-        val limitedActionsPolicy = Some(LimitedActionsPolicy(distinctLimitedActions))
-        Some(LimitedEngagements(limitedEngagement.getLimitedEngagementReason, limitedActionsPolicy))
-      } else {
-        None
+      if (distinctwimitedactions.nonempty) {
+        vaw w-wimitedactionspowicy = s-some(wimitedactionspowicy(distinctwimitedactions))
+        some(wimitedengagements(wimitedengagement.getwimitedengagementweason, ^^;; wimitedactionspowicy))
+      } e-ewse {
+        nyone
       }
     }
   }
 
-  def createVerdictLogger(
-    enableVerdictLogger: Gate[Unit],
-    decider: Decider,
-    statsReceiver: StatsReceiver
-  ): VerdictLogger = {
-    if (enableVerdictLogger()) {
-      VerdictLogger(statsReceiver, decider)
-    } else {
-      VerdictLogger.Empty
+  def cweatevewdictwoggew(
+    e-enabwevewdictwoggew: gate[unit], ʘwʘ
+    d-decidew: decidew, σωσ
+    s-statsweceivew: statsweceivew
+  ): v-vewdictwoggew = {
+    i-if (enabwevewdictwoggew()) {
+      vewdictwoggew(statsweceivew, ^^;; d-decidew)
+    } ewse {
+      vewdictwoggew.empty
     }
   }
 }

@@ -1,41 +1,41 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert.ShowAlertColorConfigurationMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert.ShowAlertDisplayLocationMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert.ShowAlertIconDisplayInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert.ShowAlertNavigationMetadataMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert.ShowAlertTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowAlertInstruction
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.awewt.showawewtcowowconfiguwationmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.awewt.showawewtdispwaywocationmawshawwew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.awewt.showawewticondispwayinfomawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.awewt.showawewtnavigationmetadatamawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.awewt.showawewttypemawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.cwienteventinfomawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.wichtext.wichtextmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.showawewtinstwuction
+impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
-@Singleton
-class ShowAlertInstructionMarshaller @Inject() (
-  showAlertTypeMarshaller: ShowAlertTypeMarshaller,
-  clientEventInfoMarshaller: ClientEventInfoMarshaller,
-  richTextMarshaller: RichTextMarshaller,
-  showAlertIconDisplayInfoMarshaller: ShowAlertIconDisplayInfoMarshaller,
-  showAlertColorConfigurationMarshaller: ShowAlertColorConfigurationMarshaller,
-  showAlertDisplayLocationMarshaller: ShowAlertDisplayLocationMarshaller,
-  showAlertNavigationMetadataMarshaller: ShowAlertNavigationMetadataMarshaller,
+@singweton
+cwass showawewtinstwuctionmawshawwew @inject() (
+  s-showawewttypemawshawwew: showawewttypemawshawwew, >_<
+  cwienteventinfomawshawwew: cwienteventinfomawshawwew, (⑅˘꒳˘)
+  wichtextmawshawwew: w-wichtextmawshawwew, /(^•ω•^)
+  showawewticondispwayinfomawshawwew: s-showawewticondispwayinfomawshawwew, rawr x3
+  s-showawewtcowowconfiguwationmawshawwew: showawewtcowowconfiguwationmawshawwew, (U ﹏ U)
+  showawewtdispwaywocationmawshawwew: showawewtdispwaywocationmawshawwew, (U ﹏ U)
+  showawewtnavigationmetadatamawshawwew: showawewtnavigationmetadatamawshawwew, (⑅˘꒳˘)
 ) {
 
-  def apply(instruction: ShowAlertInstruction): urt.ShowAlert = urt.ShowAlert(
-    alertType = showAlertTypeMarshaller(instruction.showAlert.alertType),
-    triggerDelayMs = instruction.showAlert.triggerDelay.map(_.inMillis.toInt),
-    displayDurationMs = instruction.showAlert.displayDuration.map(_.inMillis.toInt),
-    clientEventInfo = instruction.showAlert.clientEventInfo.map(clientEventInfoMarshaller(_)),
-    collapseDelayMs = instruction.showAlert.collapseDelay.map(_.inMillis.toInt),
-    userIds = instruction.showAlert.userIds,
-    richText = instruction.showAlert.richText.map(richTextMarshaller(_)),
-    iconDisplayInfo =
-      instruction.showAlert.iconDisplayInfo.map(showAlertIconDisplayInfoMarshaller(_)),
-    colorConfig = showAlertColorConfigurationMarshaller(instruction.showAlert.colorConfig),
-    displayLocation = showAlertDisplayLocationMarshaller(instruction.showAlert.displayLocation),
-    navigationMetadata =
-      instruction.showAlert.navigationMetadata.map(showAlertNavigationMetadataMarshaller(_)),
+  d-def appwy(instwuction: showawewtinstwuction): uwt.showawewt = uwt.showawewt(
+    awewttype = s-showawewttypemawshawwew(instwuction.showawewt.awewttype), òωó
+    twiggewdewayms = i-instwuction.showawewt.twiggewdeway.map(_.inmiwwis.toint), ʘwʘ
+    d-dispwayduwationms = i-instwuction.showawewt.dispwayduwation.map(_.inmiwwis.toint), /(^•ω•^)
+    c-cwienteventinfo = instwuction.showawewt.cwienteventinfo.map(cwienteventinfomawshawwew(_)), ʘwʘ
+    cowwapsedewayms = i-instwuction.showawewt.cowwapsedeway.map(_.inmiwwis.toint), σωσ
+    usewids = instwuction.showawewt.usewids, OwO
+    w-wichtext = instwuction.showawewt.wichtext.map(wichtextmawshawwew(_)), 😳😳😳
+    icondispwayinfo =
+      instwuction.showawewt.icondispwayinfo.map(showawewticondispwayinfomawshawwew(_)), 😳😳😳
+    cowowconfig = showawewtcowowconfiguwationmawshawwew(instwuction.showawewt.cowowconfig), o.O
+    d-dispwaywocation = showawewtdispwaywocationmawshawwew(instwuction.showawewt.dispwaywocation), ( ͡o ω ͡o )
+    n-nyavigationmetadata =
+      i-instwuction.showawewt.navigationmetadata.map(showawewtnavigationmetadatamawshawwew(_)), (U ﹏ U)
   )
 }

@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.operation
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation.CursorEntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineOperation
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.cuwsowopewation.cuwsowentwynamespace
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.entwynamespace
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineopewation
 
-object CursorOperation {
-  val CursorEntryNamespace = EntryNamespace("cursor")
+o-object cuwsowopewation {
+  v-vaw c-cuwsowentwynamespace = e-entwynamespace("cuwsow")
 
-  private def entryIdentifier(cursorType: CursorType, identifier: Long): String =
-    s"$CursorEntryNamespace-${cursorType.entryNamespace.toString}-$identifier"
+  pwivate def entwyidentifiew(cuwsowtype: cuwsowtype, (⑅˘꒳˘) identifiew: w-wong): stwing =
+    s"$cuwsowentwynamespace-${cuwsowtype.entwynamespace.tostwing}-$identifiew"
 }
 
-case class CursorOperation(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  value: String,
-  cursorType: CursorType,
-  displayTreatment: Option[CursorDisplayTreatment],
-  idToReplace: Option[Long])
-    extends TimelineOperation {
-  override val entryNamespace: EntryNamespace = CursorEntryNamespace
+case cwass c-cuwsowopewation(
+  ovewwide vaw i-id: wong, rawr x3
+  ovewwide vaw sowtindex: option[wong], (✿oωo)
+  vawue: stwing, (ˆ ﻌ ˆ)♡
+  c-cuwsowtype: cuwsowtype, (˘ω˘)
+  d-dispwaytweatment: o-option[cuwsowdispwaytweatment], (⑅˘꒳˘)
+  idtowepwace: option[wong])
+    extends timewineopewation {
+  ovewwide vaw entwynamespace: entwynamespace = c-cuwsowentwynamespace
 
-  override lazy val entryIdentifier: String = CursorOperation.entryIdentifier(cursorType, id)
+  ovewwide wazy vaw entwyidentifiew: stwing = cuwsowopewation.entwyidentifiew(cuwsowtype, (///ˬ///✿) i-id)
 
-  override def entryIdToReplace: Option[String] =
-    idToReplace.map(CursorOperation.entryIdentifier(cursorType, _))
+  ovewwide def entwyidtowepwace: o-option[stwing] =
+    i-idtowepwace.map(cuwsowopewation.entwyidentifiew(cuwsowtype, 😳😳😳 _))
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  o-ovewwide d-def withsowtindex(sowtindex: wong): timewineentwy = copy(sowtindex = s-some(sowtindex))
 }

@@ -1,265 +1,265 @@
-package com.twitter.simclusters_v2.scalding.offline_tweets
+package com.twittew.simcwustews_v2.scawding.offwine_tweets
 
-import com.twitter.algebird.Aggregator.size
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateOps
-import com.twitter.scalding.DateParser
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.Duration
-import com.twitter.scalding.Execution
-import com.twitter.scalding.Hours
-import com.twitter.scalding.RichDate
-import com.twitter.scalding.TypedTsv
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite.WriteExtension
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.Timestamp
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.hdfs_sources.DataPaths
-import com.twitter.simclusters_v2.hdfs_sources.OfflineClusterTopMediaTweets20M145K2020ScalaDataset
-import com.twitter.simclusters_v2.scalding.common.LogFavBasedPersistentTweetEmbeddingMhExportSource
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.DayPartitionedClusterId
-import com.twitter.simclusters_v2.thriftscala.PersistentSimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.TweetWithScore
-import com.twitter.simclusters_v2.thriftscala.TweetsWithScore
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.tweetsource.common.thriftscala.MediaType
-import com.twitter.tweetsource.common.thriftscala.UnhydratedFlatTweet
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
-import java.text.SimpleDateFormat
+impowt c-com.twittew.awgebiwd.aggwegatow.size
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.scawding.typed.typedpipe
+i-impowt com.twittew.scawding.awgs
+i-impowt com.twittew.scawding.dateops
+i-impowt c-com.twittew.scawding.datepawsew
+i-impowt com.twittew.scawding.datewange
+impowt com.twittew.scawding.days
+impowt com.twittew.scawding.duwation
+impowt com.twittew.scawding.execution
+i-impowt com.twittew.scawding.houws
+impowt com.twittew.scawding.wichdate
+impowt c-com.twittew.scawding.typedtsv
+impowt c-com.twittew.scawding.uniqueid
+impowt com.twittew.scawding_intewnaw.dawv2.dawwwite.d
+impowt com.twittew.scawding_intewnaw.dawv2.dawwwite.wwiteextension
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+i-impowt com.twittew.simcwustews_v2.common.timestamp
+i-impowt com.twittew.simcwustews_v2.common.tweetid
+impowt com.twittew.simcwustews_v2.hdfs_souwces.datapaths
+impowt com.twittew.simcwustews_v2.hdfs_souwces.offwinecwustewtopmediatweets20m145k2020scawadataset
+impowt com.twittew.simcwustews_v2.scawding.common.wogfavbasedpewsistenttweetembeddingmhexpowtsouwce
+impowt com.twittew.simcwustews_v2.scawding.common.utiw
+i-impowt com.twittew.simcwustews_v2.scawding.embedding.common.extewnawdatasouwces
+impowt com.twittew.simcwustews_v2.thwiftscawa.daypawtitionedcwustewid
+impowt com.twittew.simcwustews_v2.thwiftscawa.pewsistentsimcwustewsembedding
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.tweetwithscowe
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.tweetswithscowe
+i-impowt c-com.twittew.snowfwake.id.snowfwakeid
+i-impowt com.twittew.tweetsouwce.common.thwiftscawa.mediatype
+impowt com.twittew.tweetsouwce.common.thwiftscawa.unhydwatedfwattweet
+impowt c-com.twittew.wtf.scawding.jobs.common.adhocexecutionapp
+impowt com.twittew.wtf.scawding.jobs.common.scheduwedexecutionapp
+impowt j-java.utiw.timezone
+impowt java.text.simpwedatefowmat
 
-object ClusterTopTweetsJob {
+object cwustewtoptweetsjob {
 
-  def serviceIdentifier(zone: String, env: String): ServiceIdentifier = ServiceIdentifier(
-    role = "cassowary",
-    service = "offline_cluster_top_media_tweets_20M_145K_2020",
-    environment = env,
+  def sewviceidentifiew(zone: stwing, :3 env: stwing): sewviceidentifiew = s-sewviceidentifiew(
+    wowe = "cassowawy", (///ˬ///✿)
+    s-sewvice = "offwine_cwustew_top_media_tweets_20m_145k_2020", nyaa~~
+    e-enviwonment = e-env, >w<
     zone = zone
   )
 
-  private def isMediaTweet(tweet: UnhydratedFlatTweet): Boolean = {
-    tweet.media.exists { mediaSeq =>
-      mediaSeq.exists { e =>
-        e.mediaType.contains(MediaType.Video)
+  pwivate def ismediatweet(tweet: u-unhydwatedfwattweet): b-boowean = {
+    tweet.media.exists { m-mediaseq =>
+      m-mediaseq.exists { e =>
+        e-e.mediatype.contains(mediatype.video)
       }
     }
   }
 
-  private val dateFormatter = new SimpleDateFormat("yyyy-MM-dd")
+  pwivate v-vaw datefowmattew = nyew simpwedatefowmat("yyyy-mm-dd")
 
-  def getClusterTopMediaTweets(
-    persistentEmbeddingPipe: TypedPipe[((TweetId, Timestamp), PersistentSimClustersEmbedding)],
-    tweetSourcePipe: TypedPipe[UnhydratedFlatTweet],
-    maxTweetsPerClusterPerPartition: Int
-  ): TypedPipe[(DayPartitionedClusterId, Seq[(TweetId, Double)])] = {
-    val mediaTweetsPipe = tweetSourcePipe.collect {
-      case tweet if isMediaTweet(tweet) => (tweet.tweetId, ())
+  def getcwustewtopmediatweets(
+    p-pewsistentembeddingpipe: typedpipe[((tweetid, -.- timestamp), p-pewsistentsimcwustewsembedding)], (✿oωo)
+    tweetsouwcepipe: t-typedpipe[unhydwatedfwattweet], (˘ω˘)
+    m-maxtweetspewcwustewpewpawtition: int
+  ): typedpipe[(daypawtitionedcwustewid, rawr seq[(tweetid, OwO doubwe)])] = {
+    vaw mediatweetspipe = tweetsouwcepipe.cowwect {
+      c-case t-tweet if ismediatweet(tweet) => (tweet.tweetid, ^•ﻌ•^ ())
     }
 
-    val tweetEmbeddingsPipe: TypedPipe[(TweetId, (Int, Double))] = {
-      persistentEmbeddingPipe.collect {
-        case ((tweetId, timestamp), persistentEmbedding)
-            if timestamp == 1L => // 1L is the longest L2 embedding
+    vaw tweetembeddingspipe: t-typedpipe[(tweetid, UwU (int, d-doubwe))] = {
+      p-pewsistentembeddingpipe.cowwect {
+        case ((tweetid, (˘ω˘) timestamp), pewsistentembedding)
+            if t-timestamp == 1w => // 1w is the wongest w2 embedding
 
-          persistentEmbedding.embedding.embedding.map { clusterWithScore =>
-            (tweetId, (clusterWithScore.clusterId, clusterWithScore.score))
+          pewsistentembedding.embedding.embedding.map { cwustewwithscowe =>
+            (tweetid, (///ˬ///✿) (cwustewwithscowe.cwustewid, σωσ c-cwustewwithscowe.scowe))
           }
-      }.flatten
+      }.fwatten
     }
 
-    mediaTweetsPipe
-      .join(tweetEmbeddingsPipe)
-      .withReducers(2000)
+    mediatweetspipe
+      .join(tweetembeddingspipe)
+      .withweducews(2000)
       .map {
-        case (tweetId, ((), (clusterId, score))) =>
-          val dayPartition = dateFormatter.format(SnowflakeId(tweetId).time.inMilliseconds)
-          ((clusterId, dayPartition), Seq((tweetId, score)))
+        c-case (tweetid, /(^•ω•^) ((), 😳 (cwustewid, s-scowe))) =>
+          v-vaw daypawtition = datefowmattew.fowmat(snowfwakeid(tweetid).time.inmiwwiseconds)
+          ((cwustewid, d-daypawtition), 😳 s-seq((tweetid, (⑅˘꒳˘) s-scowe)))
       }
-      .sumByKey
-      .mapValues(_.sortBy(-_._2).take(maxTweetsPerClusterPerPartition))
-      .map { case ((cid, partition), values) => (DayPartitionedClusterId(cid, partition), values) }
+      .sumbykey
+      .mapvawues(_.sowtby(-_._2).take(maxtweetspewcwustewpewpawtition))
+      .map { c-case ((cid, 😳😳😳 pawtition), 😳 vawues) => (daypawtitionedcwustewid(cid, XD pawtition), mya v-vawues) }
   }
 
-  // Convert to Manhattan compatible format
-  def toKeyVal(
-    clusterTopTweets: TypedPipe[(DayPartitionedClusterId, Seq[(TweetId, Double)])],
-  ): TypedPipe[KeyVal[DayPartitionedClusterId, TweetsWithScore]] = {
-    clusterTopTweets.map {
-      case (key, tweetsWithScores) =>
-        val thrift = tweetsWithScores.map { t => TweetWithScore(t._1, t._2) }
-        KeyVal(key, TweetsWithScore(thrift))
+  // c-convewt t-to manhattan compatibwe f-fowmat
+  d-def tokeyvaw(
+    cwustewtoptweets: typedpipe[(daypawtitionedcwustewid, ^•ﻌ•^ seq[(tweetid, ʘwʘ d-doubwe)])], ( ͡o ω ͡o )
+  ): typedpipe[keyvaw[daypawtitionedcwustewid, mya tweetswithscowe]] = {
+    cwustewtoptweets.map {
+      case (key, o.O tweetswithscowes) =>
+        v-vaw thwift = tweetswithscowes.map { t => tweetwithscowe(t._1, (✿oωo) t._2) }
+        keyvaw(key, :3 tweetswithscowe(thwift))
     }
   }
 }
 
 /**
- * Scheduled job. Runs every couple of hours (check the .yaml for exact cron schedule).
- * Reads 21 days of tweets, and the most recent persistent tweet embeddings from a Manhattan dump.
- * It outputs a clusterId-> List[tweetId] index.
+ * scheduwed j-job. 😳 wuns evewy c-coupwe of houws (check t-the .yamw fow exact cwon s-scheduwe). (U ﹏ U)
+ * weads 21 days of t-tweets, mya and the m-most wecent pewsistent tweet embeddings fwom a manhattan dump. (U ᵕ U❁)
+ * it outputs a cwustewid-> wist[tweetid] i-index. :3
 
-capesospy-v2 update --build_locally --start_cron \
-offline_cluster_top_media_tweets_20M_145K_2020 src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capesospy-v2 update --buiwd_wocawwy --stawt_cwon \
+o-offwine_cwustew_top_media_tweets_20m_145k_2020 swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc3.yamw
  */
-object ClusterTopMediaTweets20M145K2020BatchJob extends ScheduledExecutionApp {
-  override def firstTime: RichDate = RichDate("2021-08-29")
+o-object c-cwustewtopmediatweets20m145k2020batchjob extends scheduwedexecutionapp {
+  o-ovewwide d-def fiwsttime: wichdate = w-wichdate("2021-08-29")
 
-  override def batchIncrement: Duration = Hours(3)
+  o-ovewwide def batchincwement: duwation = houws(3)
 
-  override def runOnDateRange(
-    args: Args
+  ovewwide def wunondatewange(
+    a-awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    i-impwicit datewange: d-datewange, mya
+    timezone: t-timezone, OwO
+    uniqueid: u-uniqueid
+  ): execution[unit] = {
 
-    // max public tweet has 21 days. read 1 day fewer go give some buffer
-    val lookbackDateRange = dateRange.prepend(Days(21))
+    // m-max pubwic tweet has 21 days. (ˆ ﻌ ˆ)♡ wead 1 day fewew go give some buffew
+    vaw wookbackdatewange = d-datewange.pwepend(days(21))
 
-    val tweetSource: TypedPipe[UnhydratedFlatTweet] =
-      ExternalDataSources.flatTweetsSource(lookbackDateRange)
+    v-vaw tweetsouwce: typedpipe[unhydwatedfwattweet] =
+      extewnawdatasouwces.fwattweetssouwce(wookbackdatewange)
 
-    val persistentEmbeddingPipe: TypedPipe[
-      ((TweetId, Timestamp), PersistentSimClustersEmbedding)
+    v-vaw pewsistentembeddingpipe: t-typedpipe[
+      ((tweetid, ʘwʘ timestamp), pewsistentsimcwustewsembedding)
     ] =
-      TypedPipe.from(
-        new LogFavBasedPersistentTweetEmbeddingMhExportSource(
-          range = lookbackDateRange,
-          serviceIdentifier = ClusterTopTweetsJob.serviceIdentifier(args("zone"), args("env"))
+      typedpipe.fwom(
+        nyew wogfavbasedpewsistenttweetembeddingmhexpowtsouwce(
+          w-wange = wookbackdatewange, o.O
+          sewviceidentifiew = cwustewtoptweetsjob.sewviceidentifiew(awgs("zone"), UwU awgs("env"))
         ))
 
-    val maxTweetsPerClusterPerPartition = 1200
+    vaw maxtweetspewcwustewpewpawtition = 1200
 
-    val dailyClusterTopTweets = ClusterTopTweetsJob.getClusterTopMediaTweets(
-      persistentEmbeddingPipe,
-      tweetSource,
-      maxTweetsPerClusterPerPartition
+    vaw d-daiwycwustewtoptweets = cwustewtoptweetsjob.getcwustewtopmediatweets(
+      pewsistentembeddingpipe, rawr x3
+      tweetsouwce, 🥺
+      m-maxtweetspewcwustewpewpawtition
     )
 
-    val keyValPipe: TypedPipe[KeyVal[DayPartitionedClusterId, TweetsWithScore]] =
-      ClusterTopTweetsJob.toKeyVal(dailyClusterTopTweets)
+    v-vaw keyvawpipe: typedpipe[keyvaw[daypawtitionedcwustewid, tweetswithscowe]] =
+      cwustewtoptweetsjob.tokeyvaw(daiwycwustewtoptweets)
 
-    keyValPipe
-      .writeDALVersionedKeyValExecution(
-        OfflineClusterTopMediaTweets20M145K2020ScalaDataset,
-        D.Suffix(DataPaths.OfflineClusterTopMediaTweets2020DatasetPath)
+    k-keyvawpipe
+      .wwitedawvewsionedkeyvawexecution(
+        o-offwinecwustewtopmediatweets20m145k2020scawadataset, :3
+        d.suffix(datapaths.offwinecwustewtopmediatweets2020datasetpath)
       )
   }
 }
 
 /**
-Adhoc debugging job. Uses Entity Embeddings dataset to infer user interests
+adhoc debugging job. (ꈍᴗꈍ) uses entity e-embeddings dataset to infew u-usew intewests
 
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/offline_tweets/ &&\
-scalding remote run \
-  --main-class com.twitter.simclusters_v2.scalding.offline_tweets.AdhocClusterTopMediaTweetsJob \
-  --target src/scala/com/twitter/simclusters_v2/scalding/offline_tweets/:offline_cluster_top_media_tweets_20M_145K_2020-adhoc \
-  --user cassowary \
-  -- --output_dir /scratch_user/cassowary/your_ldap --date 2021-08-30 --zone atla --env prod --email your_ldap@twitter.com
+./bazew bundwe swc/scawa/com/twittew/simcwustews_v2/scawding/offwine_tweets/ &&\
+scawding wemote w-wun \
+  --main-cwass com.twittew.simcwustews_v2.scawding.offwine_tweets.adhoccwustewtopmediatweetsjob \
+  --tawget s-swc/scawa/com/twittew/simcwustews_v2/scawding/offwine_tweets/:offwine_cwustew_top_media_tweets_20m_145k_2020-adhoc \
+  --usew c-cassowawy \
+  -- --output_diw /scwatch_usew/cassowawy/youw_wdap --date 2021-08-30 --zone atwa --env p-pwod --emaiw youw_wdap@twittew.com
  */
-object AdhocClusterTopMediaTweetsJob extends AdhocExecutionApp {
+object a-adhoccwustewtopmediatweetsjob e-extends adhocexecutionapp {
 
   /**
-   * Run some stat analysis on the results, such as the number of tweets in a cluster, tweet score
-   * distributions, etc.
+   * w-wun some stat anawysis o-on the wesuwts, 🥺 s-such as the nyumbew of tweets in a cwustew, (✿oωo) tweet s-scowe
+   * d-distwibutions, (U ﹏ U) etc.
    *
-   * Ideally works on 1 day data only. If multiple days data are passed in, it'll aggregate over
-   * multiple days anyway
+   * i-ideawwy wowks on 1 day data onwy. :3 i-if muwtipwe days data awe passed i-in, ^^;; it'ww aggwegate o-ovew
+   * muwtipwe days anyway
    */
-  def analyzeClusterResults(
-    clusterTopTweets: TypedPipe[(DayPartitionedClusterId, Seq[(TweetId, Double)])]
-  ): Execution[String] = {
+  def anawyzecwustewwesuwts(
+    c-cwustewtoptweets: t-typedpipe[(daypawtitionedcwustewid, rawr s-seq[(tweetid, 😳😳😳 doubwe)])]
+  ): execution[stwing] = {
 
-    val tweetSizeExec = Util.printSummaryOfNumericColumn(
-      clusterTopTweets.map { case (_, tweets) => tweets.size },
-      columnName = Some("Tweet size distribution of clusters")
+    v-vaw tweetsizeexec = utiw.pwintsummawyofnumewiccowumn(
+      c-cwustewtoptweets.map { case (_, tweets) => tweets.size }, (✿oωo)
+      cowumnname = some("tweet size d-distwibution of cwustews")
     )
 
-    val scoreDistExec = Util.printSummaryOfNumericColumn(
-      clusterTopTweets.flatMap(_._2.map(_._2)),
-      columnName = Some("Score distribution of the tweets")
+    v-vaw scowedistexec = utiw.pwintsummawyofnumewiccowumn(
+      c-cwustewtoptweets.fwatmap(_._2.map(_._2)),
+      cowumnname = s-some("scowe distwibution of the t-tweets")
     )
 
-    val numClustersExec =
-      clusterTopTweets.map(_._1._1).distinct.aggregate(size).getOrElseExecution(0L)
+    v-vaw nyumcwustewsexec =
+      c-cwustewtoptweets.map(_._1._1).distinct.aggwegate(size).getowewseexecution(0w)
 
-    val numTweetsExec =
-      clusterTopTweets.flatMap(_._2.map(_._1)).distinct.aggregate(size).getOrElseExecution(0L)
+    v-vaw nyumtweetsexec =
+      c-cwustewtoptweets.fwatmap(_._2.map(_._1)).distinct.aggwegate(size).getowewseexecution(0w)
 
-    Execution.zip(tweetSizeExec, scoreDistExec, numClustersExec, numTweetsExec).map {
-      case (tweetSizeDist, scoreDist, numClusters, numTweets) =>
+    execution.zip(tweetsizeexec, OwO scowedistexec, ʘwʘ nyumcwustewsexec, (ˆ ﻌ ˆ)♡ nyumtweetsexec).map {
+      case (tweetsizedist, (U ﹏ U) scowedist, UwU nyumcwustews, XD n-nyumtweets) =>
         s""" 
-          |Number of unique tweets = $numTweets
-          |Number of clusters = $numClusters
+          |numbew o-of unique t-tweets = $numtweets
+          |numbew of cwustews = $numcwustews
           |------------------------
-          |$tweetSizeDist
+          |$tweetsizedist
           |------------------------
-          |$scoreDist
-          |""".stripMargin
+          |$scowedist
+          |""".stwipmawgin
     }
   }
 
-  override def runOnDateRange(
-    args: Args
+  o-ovewwide def wunondatewange(
+    awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val startTime = System.currentTimeMillis()
-    Execution.withArgs { args =>
-      Execution.getMode.flatMap { implicit mode =>
-        implicit val dateRange: DateRange =
-          DateRange.parse(args.list("date"))(DateOps.UTC, DateParser.default)
+    impwicit datewange: datewange, ʘwʘ
+    t-timezone: t-timezone, rawr x3
+    uniqueid: uniqueid
+  ): e-execution[unit] = {
+    vaw stawttime = system.cuwwenttimemiwwis()
+    e-execution.withawgs { a-awgs =>
+      execution.getmode.fwatmap { i-impwicit mode =>
+        i-impwicit vaw datewange: datewange =
+          datewange.pawse(awgs.wist("date"))(dateops.utc, ^^;; datepawsew.defauwt)
 
-        val outputDir = args("output_dir")
+        v-vaw outputdiw = a-awgs("output_diw")
 
-        val maxTweetsPerCluster = 100
+        v-vaw maxtweetspewcwustew = 100
 
-        // max public tweet has 21 days. read 1 day fewer go give some buffer
-        val lookbackDateRange = dateRange.prepend(Days(21))
+        // m-max pubwic t-tweet has 21 days. ʘwʘ wead 1 day f-fewew go give s-some buffew
+        vaw wookbackdatewange = d-datewange.pwepend(days(21))
 
-        val tweetSource: TypedPipe[UnhydratedFlatTweet] =
-          ExternalDataSources.flatTweetsSource(lookbackDateRange)
+        v-vaw tweetsouwce: typedpipe[unhydwatedfwattweet] =
+          e-extewnawdatasouwces.fwattweetssouwce(wookbackdatewange)
 
-        val persistentEmbeddingPipe: TypedPipe[
-          ((TweetId, Timestamp), PersistentSimClustersEmbedding)
+        vaw pewsistentembeddingpipe: typedpipe[
+          ((tweetid, (U ﹏ U) t-timestamp), pewsistentsimcwustewsembedding)
         ] =
-          TypedPipe.from(
-            new LogFavBasedPersistentTweetEmbeddingMhExportSource(
-              range = lookbackDateRange,
-              serviceIdentifier = ClusterTopTweetsJob.serviceIdentifier(args("zone"), args("env"))
+          t-typedpipe.fwom(
+            n-nyew wogfavbasedpewsistenttweetembeddingmhexpowtsouwce(
+              wange = wookbackdatewange, (˘ω˘)
+              s-sewviceidentifiew = cwustewtoptweetsjob.sewviceidentifiew(awgs("zone"), (ꈍᴗꈍ) awgs("env"))
             ))
 
-        val results = ClusterTopTweetsJob.getClusterTopMediaTweets(
-          persistentEmbeddingPipe,
-          tweetSource,
-          maxTweetsPerCluster
+        v-vaw wesuwts = c-cwustewtoptweetsjob.getcwustewtopmediatweets(
+          p-pewsistentembeddingpipe, /(^•ω•^)
+          tweetsouwce,
+          maxtweetspewcwustew
         )
-        analyzeClusterResults(TypedPipe.empty)
-          .flatMap { distributions =>
-            val timeTakenMin = (System.currentTimeMillis() - startTime) / 60000
-            val text =
-              s"""
-                 | AdhocClusterTopMediaTweetsJob finished on: $dateRange.
-                 | Time taken: $timeTakenMin minutes.
-                 | maxTweetsPerCluster: $maxTweetsPerCluster.
-                 | output_dir: $outputDir
+        anawyzecwustewwesuwts(typedpipe.empty)
+          .fwatmap { distwibutions =>
+            v-vaw timetakenmin = (system.cuwwenttimemiwwis() - stawttime) / 60000
+            vaw text =
+              s-s"""
+                 | a-adhoccwustewtopmediatweetsjob finished on: $datewange. >_<
+                 | t-time taken: $timetakenmin minutes. σωσ
+                 | m-maxtweetspewcwustew: $maxtweetspewcwustew. ^^;;
+                 | o-output_diw: $outputdiw
                  | 
-                 | $distributions
-              """.stripMargin
-            Util.sendEmail(text, "AdhocClusterTopMediaTweetsJob finished.", args("email"))
+                 | $distwibutions
+              """.stwipmawgin
+            utiw.sendemaiw(text, "adhoccwustewtopmediatweetsjob finished.", 😳 awgs("emaiw"))
 
-            results
-              .writeExecution(TypedTsv(outputDir))
+            w-wesuwts
+              .wwiteexecution(typedtsv(outputdiw))
           }
       }
     }

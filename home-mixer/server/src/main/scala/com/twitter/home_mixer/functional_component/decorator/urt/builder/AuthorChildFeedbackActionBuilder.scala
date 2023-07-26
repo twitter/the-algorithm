@@ -1,32 +1,32 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.twittew.home_mixew.functionaw_component.decowatow.uwt.buiwdew
 
-import com.twitter.home_mixer.model.HomeFeatures.ScreenNamesFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ChildFeedbackAction
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.timelines.service.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.scweennamesfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.suggesttypefeatuwe
+i-impowt com.twittew.home_mixew.pwoduct.fowwowing.modew.homemixewextewnawstwings
+i-impowt com.twittew.home_mixew.utiw.candidatesutiw
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.chiwdfeedbackaction
+i-impowt com.twittew.pwoduct_mixew.cowe.pwoduct.guice.scope.pwoductscoped
+impowt com.twittew.stwingcentew.cwient.stwingcentew
+impowt com.twittew.timewines.sewvice.{thwiftscawa => t}
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-case class AuthorChildFeedbackActionBuilder @Inject() (
-  @ProductScoped stringCenter: StringCenter,
-  externalStrings: HomeMixerExternalStrings) {
+@singweton
+case cwass authowchiwdfeedbackactionbuiwdew @inject() (
+  @pwoductscoped s-stwingcentew: stwingcentew, rawr
+  e-extewnawstwings: homemixewextewnawstwings) {
 
-  def apply(candidateFeatures: FeatureMap): Option[ChildFeedbackAction] = {
-    CandidatesUtil.getOriginalAuthorId(candidateFeatures).flatMap { authorId =>
-      FeedbackUtil.buildUserSeeFewerChildFeedbackAction(
-        userId = authorId,
-        namesByUserId = candidateFeatures.getOrElse(ScreenNamesFeature, Map.empty[Long, String]),
-        promptExternalString = externalStrings.showFewerTweetsString,
-        confirmationExternalString = externalStrings.showFewerTweetsConfirmationString,
-        engagementType = t.FeedbackEngagementType.Tweet,
-        stringCenter = stringCenter,
-        injectionType = candidateFeatures.getOrElse(SuggestTypeFeature, None)
+  def appwy(candidatefeatuwes: featuwemap): o-option[chiwdfeedbackaction] = {
+    candidatesutiw.getowiginawauthowid(candidatefeatuwes).fwatmap { a-authowid =>
+      f-feedbackutiw.buiwdusewseefewewchiwdfeedbackaction(
+        usewid = authowid, OwO
+        namesbyusewid = candidatefeatuwes.getowewse(scweennamesfeatuwe, (U ﹏ U) map.empty[wong, >_< stwing]), rawr x3
+        pwomptextewnawstwing = extewnawstwings.showfewewtweetsstwing, mya
+        confiwmationextewnawstwing = e-extewnawstwings.showfewewtweetsconfiwmationstwing, nyaa~~
+        engagementtype = t.feedbackengagementtype.tweet, (⑅˘꒳˘)
+        stwingcentew = stwingcentew, rawr x3
+        injectiontype = c-candidatefeatuwes.getowewse(suggesttypefeatuwe, (✿oωo) nyone)
       )
     }
   }

@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.common.alert.predicate
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.pwedicate
 
-import com.twitter.util.Duration
+impowt com.twittew.utiw.duwation
 
 /**
- * A [[Predicate]] that triggers if the metric this is used with rises above the
- * [[latencyThreshold]] for [[datapointsPastThreshold]] per [[duration]]
+ * a-a [[pwedicate]] t-that t-twiggews if the m-metwic this is u-used with wises a-above the
+ * [[watencythweshowd]] f-fow [[datapointspastthweshowd]] p-pew [[duwation]]
  *
- * @note [[latencyThreshold]] must be > 0
+ * @note [[watencythweshowd]] must be > 0
  */
-case class TriggerIfLatencyAbove(
-  latencyThreshold: Duration,
-  override val datapointsPastThreshold: Int = 10,
-  override val duration: Int = 15,
-  override val metricGranularity: MetricGranularity = Minutes)
-    extends Predicate {
-  override val threshold: Double = latencyThreshold.inMillis
-  override val operator: Operator = `>`
-  require(
-    latencyThreshold > Duration.Zero,
-    s"TriggerIfLatencyAbove thresholds must be greater than 0 but got $latencyThreshold")
+case cwass twiggewifwatencyabove(
+  watencythweshowd: duwation, nyaa~~
+  o-ovewwide vaw datapointspastthweshowd: int = 10, /(^•ω•^)
+  o-ovewwide vaw duwation: int = 15, rawr
+  o-ovewwide vaw metwicgwanuwawity: metwicgwanuwawity = minutes)
+    extends p-pwedicate {
+  ovewwide vaw thweshowd: d-doubwe = w-watencythweshowd.inmiwwis
+  ovewwide vaw opewatow: opewatow = `>`
+  wequiwe(
+    watencythweshowd > d-duwation.zewo, OwO
+    s"twiggewifwatencyabove thweshowds must be gweatew than 0 but got $watencythweshowd")
 }

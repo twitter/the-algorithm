@@ -1,267 +1,267 @@
-package com.twitter.search.earlybird;
+package com.twittew.seawch.eawwybiwd;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+impowt java.io.fiwe;
+i-impowt j-java.io.ioexception;
+i-impowt java.net.inetaddwess;
+i-impowt java.net.unknownhostexception;
+i-impowt j-java.utiw.awways;
+i-impowt java.utiw.map;
+i-impowt java.utiw.function.pwedicate;
+impowt java.utiw.stweam.cowwectows;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt o-owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.app.Flag;
-import com.twitter.app.Flaggable;
-import com.twitter.finagle.Http;
-import com.twitter.finagle.http.HttpMuxer;
-import com.twitter.search.common.aurora.AuroraInstanceKey;
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.config.LoggerConfiguration;
-import com.twitter.search.common.constants.SearchThriftWebFormsAccess;
-import com.twitter.search.common.metrics.BuildInfoStats;
-import com.twitter.search.common.util.Kerberos;
-import com.twitter.search.common.util.PlatformStatsExporter;
-import com.twitter.search.earlybird.admin.EarlybirdAdminManager;
-import com.twitter.search.earlybird.admin.EarlybirdHealthHandler;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.exception.EarlybirdStartupException;
-import com.twitter.search.earlybird.exception.UncaughtExceptionHandler;
-import com.twitter.search.earlybird.factory.EarlybirdServerFactory;
-import com.twitter.search.earlybird.factory.EarlybirdWireModule;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird.util.EarlybirdDecider;
-import com.twitter.server.handler.DeciderHandler$;
-import com.twitter.server.AbstractTwitterServer;
-import com.twitter.thriftwebforms.DisplaySettingsConfig;
-import com.twitter.thriftwebforms.MethodOptionsAccessConfig;
-import com.twitter.thriftwebforms.ThriftClientSettingsConfig;
-import com.twitter.thriftwebforms.ThriftMethodSettingsConfig;
-import com.twitter.thriftwebforms.ThriftServiceSettings;
-import com.twitter.thriftwebforms.ThriftWebFormsSettings;
-import com.twitter.thriftwebforms.TwitterServerThriftWebForms;
-import com.twitter.util.Await;
-import com.twitter.util.TimeoutException;
+i-impowt com.twittew.app.fwag;
+impowt com.twittew.app.fwaggabwe;
+impowt com.twittew.finagwe.http;
+impowt com.twittew.finagwe.http.httpmuxew;
+i-impowt com.twittew.seawch.common.auwowa.auwowainstancekey;
+i-impowt c-com.twittew.seawch.common.config.config;
+impowt com.twittew.seawch.common.config.woggewconfiguwation;
+impowt com.twittew.seawch.common.constants.seawchthwiftwebfowmsaccess;
+impowt c-com.twittew.seawch.common.metwics.buiwdinfostats;
+impowt com.twittew.seawch.common.utiw.kewbewos;
+impowt com.twittew.seawch.common.utiw.pwatfowmstatsexpowtew;
+impowt com.twittew.seawch.eawwybiwd.admin.eawwybiwdadminmanagew;
+impowt com.twittew.seawch.eawwybiwd.admin.eawwybiwdheawthhandwew;
+i-impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+impowt c-com.twittew.seawch.eawwybiwd.common.config.eawwybiwdpwopewty;
+i-impowt c-com.twittew.seawch.eawwybiwd.exception.eawwybiwdstawtupexception;
+i-impowt com.twittew.seawch.eawwybiwd.exception.uncaughtexceptionhandwew;
+impowt com.twittew.seawch.eawwybiwd.factowy.eawwybiwdsewvewfactowy;
+impowt com.twittew.seawch.eawwybiwd.factowy.eawwybiwdwiwemoduwe;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdsewvice;
+impowt com.twittew.seawch.eawwybiwd.utiw.eawwybiwddecidew;
+impowt c-com.twittew.sewvew.handwew.decidewhandwew$;
+impowt com.twittew.sewvew.abstwacttwittewsewvew;
+impowt com.twittew.thwiftwebfowms.dispwaysettingsconfig;
+impowt com.twittew.thwiftwebfowms.methodoptionsaccessconfig;
+impowt com.twittew.thwiftwebfowms.thwiftcwientsettingsconfig;
+i-impowt com.twittew.thwiftwebfowms.thwiftmethodsettingsconfig;
+impowt com.twittew.thwiftwebfowms.thwiftsewvicesettings;
+i-impowt c-com.twittew.thwiftwebfowms.thwiftwebfowmssettings;
+i-impowt com.twittew.thwiftwebfowms.twittewsewvewthwiftwebfowms;
+impowt com.twittew.utiw.await;
+impowt com.twittew.utiw.timeoutexception;
 
-public class Earlybird extends AbstractTwitterServer {
-  private static final Logger LOG = LoggerFactory.getLogger(Earlybird.class);
+pubwic c-cwass eawwybiwd e-extends abstwacttwittewsewvew {
+  pwivate static f-finaw woggew w-wog = woggewfactowy.getwoggew(eawwybiwd.cwass);
 
-  // Flags defined here need to be processed before setting override values to EarlybirdConfig.
+  // fwags defined h-hewe nyeed to be pwocessed b-befowe setting ovewwide vawues to eawwybiwdconfig. ^•ﻌ•^
 
-  private final Flag<File> configFile = flag().create(
-      "config_file",
-      new File("earlybird-search.yml"),
-      "specify config file",
-      Flaggable.ofFile()
+  p-pwivate finaw fwag<fiwe> c-configfiwe = fwag().cweate(
+      "config_fiwe", UwU
+      nyew fiwe("eawwybiwd-seawch.ymw"), (˘ω˘)
+      "specify c-config f-fiwe",
+      fwaggabwe.offiwe()
   );
 
-  private final Flag<String> logDir = flag().create(
-      "earlybird_log_dir",
-      "",
-      "override log dir from config file",
-      Flaggable.ofString()
+  pwivate finaw fwag<stwing> wogdiw = fwag().cweate(
+      "eawwybiwd_wog_diw", (///ˬ///✿)
+      "", σωσ
+      "ovewwide wog diw fwom config fiwe", /(^•ω•^)
+      fwaggabwe.ofstwing()
   );
 
-  private final Map<String, Flag<?>> flagMap = Arrays.stream(EarlybirdProperty.values())
-      .collect(Collectors.toMap(
-          property -> property.name(),
-          property -> property.createFlag(flag())));
+  pwivate f-finaw map<stwing, 😳 f-fwag<?>> fwagmap = awways.stweam(eawwybiwdpwopewty.vawues())
+      .cowwect(cowwectows.tomap(
+          p-pwopewty -> pwopewty.name(), 😳
+          p-pwopewty -> p-pwopewty.cweatefwag(fwag())));
 
-  private final UncaughtExceptionHandler uncaughtExceptionHandler =
-      new UncaughtExceptionHandler();
+  pwivate finaw uncaughtexceptionhandwew uncaughtexceptionhandwew =
+      n-nyew uncaughtexceptionhandwew();
 
-  private EarlybirdServer earlybirdServer;
-  private EarlybirdAdminManager earlybirdAdminManager;
+  pwivate eawwybiwdsewvew eawwybiwdsewvew;
+  pwivate e-eawwybiwdadminmanagew eawwybiwdadminmanagew;
 
-  public Earlybird() {
-    // Default health handler is added inside Lifecycle trait.  To override that we need to set it
-    // in the constructor since HttpAdminServer is started before Earlybird.preMain() is called.
-    HttpMuxer.addHandler("/health", new EarlybirdHealthHandler());
+  p-pubwic eawwybiwd() {
+    // d-defauwt heawth h-handwew is added inside wifecycwe t-twait. (⑅˘꒳˘)  to ovewwide t-that we nyeed t-to set it
+    // i-in the constwuctow since httpadminsewvew is s-stawted befowe e-eawwybiwd.pwemain() i-is cawwed. 😳😳😳
+    h-httpmuxew.addhandwew("/heawth", 😳 n-new eawwybiwdheawthhandwew());
   }
 
   /**
-   * Needs to be called from preMain and not from onInit() as flags / args parsing happens after
-   * onInit() is called.
+   * nyeeds to be cawwed fwom pwemain and nyot fwom o-oninit() as fwags / awgs pawsing happens aftew
+   * oninit() is cawwed. XD
    */
-  @VisibleForTesting
-  void configureFromFlagsAndSetupLogging() {
-    // Makes sure the EarlybirdStats is injected with a variable repository.
-    EarlybirdConfig.init(configFile.getWithDefault().get().getName());
+  @visibwefowtesting
+  void configuwefwomfwagsandsetupwogging() {
+    // m-makes suwe the eawwybiwdstats is injected with a vawiabwe w-wepositowy. mya
+    e-eawwybiwdconfig.init(configfiwe.getwithdefauwt().get().getname());
 
-    if (logDir.isDefined()) {
-      EarlybirdConfig.overrideLogDir(logDir.get().get());
+    i-if (wogdiw.isdefined()) {
+      eawwybiwdconfig.ovewwidewogdiw(wogdiw.get().get());
     }
-    new LoggerConfiguration(EarlybirdConfig.getLogPropertiesFile(),
-        EarlybirdConfig.getLogDir()).configure();
+    n-nyew woggewconfiguwation(eawwybiwdconfig.getwogpwopewtiesfiwe(), ^•ﻌ•^
+        eawwybiwdconfig.getwogdiw()).configuwe();
 
-    String instanceKey = System.getProperty("aurora.instanceKey");
-    if (instanceKey != null) {
-      EarlybirdConfig.setAuroraInstanceKey(AuroraInstanceKey.fromInstanceKey(instanceKey));
-      LOG.info("Earlybird is running on Aurora");
-      checkRequiredProperties(EarlybirdProperty::isRequiredOnAurora, "Aurora");
-    } else {
-      LOG.info("Earlybird is running on dedicated hardware");
-      checkRequiredProperties(EarlybirdProperty::isRequiredOnDedicated, "dedicated hardware");
+    s-stwing instancekey = s-system.getpwopewty("auwowa.instancekey");
+    if (instancekey != nuww) {
+      eawwybiwdconfig.setauwowainstancekey(auwowainstancekey.fwominstancekey(instancekey));
+      wog.info("eawwybiwd is wunning on a-auwowa");
+      checkwequiwedpwopewties(eawwybiwdpwopewty::iswequiwedonauwowa, ʘwʘ "auwowa");
+    } e-ewse {
+      wog.info("eawwybiwd is wunning on d-dedicated hawdwawe");
+      c-checkwequiwedpwopewties(eawwybiwdpwopewty::iswequiwedondedicated, ( ͡o ω ͡o ) "dedicated hawdwawe");
     }
-    LOG.info("Config environment: {}", Config.getEnvironment());
+    wog.info("config e-enviwonment: {}", mya c-config.getenviwonment());
 
-    if (adminPort().isDefined() && adminPort().get().isDefined()) {
-      int adminPort = adminPort().get().get().getPort();
-      LOG.info("Admin port is {}", adminPort);
-      EarlybirdConfig.setAdminPort(adminPort);
+    if (adminpowt().isdefined() && a-adminpowt().get().isdefined()) {
+      i-int adminpowt = adminpowt().get().get().getpowt();
+      wog.info("admin powt is {}", o.O adminpowt);
+      eawwybiwdconfig.setadminpowt(adminpowt);
     }
 
-    EarlybirdConfig.setOverrideValues(
-        flagMap.values().stream()
-            .filter(Flag::isDefined)
-            .collect(Collectors.toMap(Flag::name, flag -> flag.get().get())));
+    e-eawwybiwdconfig.setovewwidevawues(
+        fwagmap.vawues().stweam()
+            .fiwtew(fwag::isdefined)
+            .cowwect(cowwectows.tomap(fwag::name, f-fwag -> fwag.get().get())));
   }
 
-  private void checkRequiredProperties(
-      Predicate<EarlybirdProperty> propertyPredicate, String location) {
-    Arrays.stream(EarlybirdProperty.values())
-        .filter(propertyPredicate)
-        .map(property -> flagMap.get(property.name()))
-        .forEach(flag ->
-            Preconditions.checkState(flag.isDefined(),
-                "-%s is required on %s", flag.name(), location));
+  p-pwivate void checkwequiwedpwopewties(
+      p-pwedicate<eawwybiwdpwopewty> p-pwopewtypwedicate, (✿oωo) stwing wocation) {
+    a-awways.stweam(eawwybiwdpwopewty.vawues())
+        .fiwtew(pwopewtypwedicate)
+        .map(pwopewty -> fwagmap.get(pwopewty.name()))
+        .foweach(fwag ->
+            pweconditions.checkstate(fwag.isdefined(), :3
+                "-%s is wequiwed on %s", 😳 fwag.name(), (U ﹏ U) w-wocation));
   }
 
-  private void logEarlybirdInfo() {
-    try {
-      LOG.info("Hostname: {}", InetAddress.getLocalHost().getHostName());
-    } catch (UnknownHostException e) {
-      LOG.info("Unable to be get local host: {}", e.getMessage());
+  p-pwivate void wogeawwybiwdinfo() {
+    twy {
+      w-wog.info("hostname: {}", mya inetaddwess.getwocawhost().gethostname());
+    } c-catch (unknownhostexception e) {
+      wog.info("unabwe to be get w-wocaw host: {}", (U ᵕ U❁) e.getmessage());
     }
-    LOG.info("Earlybird info [Name: {}, Zone: {}, Env: {}]",
-            EarlybirdProperty.EARLYBIRD_NAME.get(),
-            EarlybirdProperty.ZONE.get(),
-            EarlybirdProperty.ENV.get());
-    LOG.info("Earlybird scrubgen from Aurora: {}]",
-        EarlybirdProperty.EARLYBIRD_SCRUB_GEN.get());
-    LOG.info("Find final partition config by searching the log for \"Partition config info\"");
+    wog.info("eawwybiwd info [name: {}, :3 zone: {}, env: {}]", mya
+            e-eawwybiwdpwopewty.eawwybiwd_name.get(), OwO
+            eawwybiwdpwopewty.zone.get(), (ˆ ﻌ ˆ)♡
+            eawwybiwdpwopewty.env.get());
+    w-wog.info("eawwybiwd s-scwubgen fwom auwowa: {}]", ʘwʘ
+        eawwybiwdpwopewty.eawwybiwd_scwub_gen.get());
+    wog.info("find f-finaw p-pawtition config by seawching the wog fow \"pawtition config info\"");
   }
 
-  private EarlybirdServer makeEarlybirdServer() {
-    EarlybirdWireModule earlybirdWireModule = new EarlybirdWireModule();
-    EarlybirdServerFactory earlybirdFactory = new EarlybirdServerFactory();
-    try {
-      return earlybirdFactory.makeEarlybirdServer(earlybirdWireModule);
-    } catch (IOException e) {
-      LOG.error("Exception while constructing EarlybirdServer.", e);
-      throw new RuntimeException(e);
+  p-pwivate eawwybiwdsewvew makeeawwybiwdsewvew() {
+    e-eawwybiwdwiwemoduwe eawwybiwdwiwemoduwe = nyew eawwybiwdwiwemoduwe();
+    e-eawwybiwdsewvewfactowy eawwybiwdfactowy = n-nyew eawwybiwdsewvewfactowy();
+    t-twy {
+      wetuwn eawwybiwdfactowy.makeeawwybiwdsewvew(eawwybiwdwiwemoduwe);
+    } catch (ioexception e-e) {
+      wog.ewwow("exception whiwe constwucting e-eawwybiwdsewvew.", o.O e-e);
+      t-thwow new wuntimeexception(e);
     }
   }
 
-  private void setupThriftWebForms() {
-    TwitterServerThriftWebForms.addAdminRoutes(this, TwitterServerThriftWebForms.apply(
-        ThriftWebFormsSettings.apply(
-            DisplaySettingsConfig.DEFAULT,
-            ThriftServiceSettings.apply(
-                EarlybirdService.ServiceIface.class.getSimpleName(),
-                EarlybirdConfig.getThriftPort()),
-            ThriftClientSettingsConfig.makeCompactRequired(
-                EarlybirdProperty.getServiceIdentifier()),
-            ThriftMethodSettingsConfig.access(
-              MethodOptionsAccessConfig.byLdapGroup(
-                SearchThriftWebFormsAccess.READ_LDAP_GROUP))),
-        scala.reflect.ClassTag$.MODULE$.apply(EarlybirdService.ServiceIface.class)));
+  pwivate v-void setupthwiftwebfowms() {
+    t-twittewsewvewthwiftwebfowms.addadminwoutes(this, UwU twittewsewvewthwiftwebfowms.appwy(
+        thwiftwebfowmssettings.appwy(
+            d-dispwaysettingsconfig.defauwt, rawr x3
+            t-thwiftsewvicesettings.appwy(
+                e-eawwybiwdsewvice.sewviceiface.cwass.getsimpwename(), 🥺
+                eawwybiwdconfig.getthwiftpowt()), :3
+            thwiftcwientsettingsconfig.makecompactwequiwed(
+                e-eawwybiwdpwopewty.getsewviceidentifiew()), (ꈍᴗꈍ)
+            thwiftmethodsettingsconfig.access(
+              methodoptionsaccessconfig.bywdapgwoup(
+                s-seawchthwiftwebfowmsaccess.wead_wdap_gwoup))), 🥺
+        s-scawa.wefwect.cwasstag$.moduwe$.appwy(eawwybiwdsewvice.sewviceiface.cwass)));
   }
 
-  private void setupDeciderWebForms() {
-    addAdminRoute(
-        DeciderHandler$.MODULE$.route(
-            "earlybird",
-            EarlybirdDecider.getMutableDecisionMaker(),
-            EarlybirdDecider.getDecider()));
+  pwivate void setupdecidewwebfowms() {
+    addadminwoute(
+        d-decidewhandwew$.moduwe$.woute(
+            "eawwybiwd", (✿oωo)
+            e-eawwybiwddecidew.getmutabwedecisionmakew(), (U ﹏ U)
+            e-eawwybiwddecidew.getdecidew()));
   }
 
-  @Override
-  public Http.Server configureAdminHttpServer(Http.Server server) {
-    return server.withMonitor(uncaughtExceptionHandler);
+  @ovewwide
+  p-pubwic http.sewvew configuweadminhttpsewvew(http.sewvew s-sewvew) {
+    wetuwn sewvew.withmonitow(uncaughtexceptionhandwew);
   }
 
-  @Override
-  public void preMain() {
-    configureFromFlagsAndSetupLogging();
-    logEarlybirdInfo();
-    LOG.info("Starting preMain()");
+  @ovewwide
+  pubwic void pwemain() {
+    configuwefwomfwagsandsetupwogging();
+    wogeawwybiwdinfo();
+    wog.info("stawting p-pwemain()");
 
-    BuildInfoStats.export();
-    PlatformStatsExporter.exportPlatformStats();
+    buiwdinfostats.expowt();
+    p-pwatfowmstatsexpowtew.expowtpwatfowmstats();
 
-    // Use our own exception handler to monitor all unhandled exceptions.
-    Thread.setDefaultUncaughtExceptionHandler((thread, e) -> {
-      LOG.error("Invoked default uncaught exception handler.");
-      uncaughtExceptionHandler.handle(e);
+    // use ouw own e-exception handwew to monitow aww u-unhandwed exceptions. :3
+    thwead.setdefauwtuncaughtexceptionhandwew((thwead, ^^;; e-e) -> {
+      wog.ewwow("invoked d-defauwt uncaught e-exception handwew.");
+      u-uncaughtexceptionhandwew.handwe(e);
     });
-    LOG.info("Registered unhandled exception monitor.");
+    w-wog.info("wegistewed unhandwed exception monitow.");
 
-    Kerberos.kinit(
-        EarlybirdConfig.getString("kerberos_user", ""),
-        EarlybirdConfig.getString("kerberos_keytab_path", "")
+    kewbewos.kinit(
+        eawwybiwdconfig.getstwing("kewbewos_usew", rawr ""),
+        eawwybiwdconfig.getstwing("kewbewos_keytab_path", 😳😳😳 "")
     );
 
-    LOG.info("Creating earlybird server.");
-    earlybirdServer = makeEarlybirdServer();
+    wog.info("cweating e-eawwybiwd s-sewvew.");
+    e-eawwybiwdsewvew = makeeawwybiwdsewvew();
 
-    uncaughtExceptionHandler.setShutdownHook(() -> {
-      earlybirdServer.shutdown();
-      this.close();
+    u-uncaughtexceptionhandwew.setshutdownhook(() -> {
+      eawwybiwdsewvew.shutdown();
+      this.cwose();
     });
 
-    earlybirdAdminManager = EarlybirdAdminManager.create(earlybirdServer);
-    earlybirdAdminManager.start();
-    LOG.info("Started admin interface.");
+    eawwybiwdadminmanagew = e-eawwybiwdadminmanagew.cweate(eawwybiwdsewvew);
+    e-eawwybiwdadminmanagew.stawt();
+    wog.info("stawted a-admin intewface.");
 
-    setupThriftWebForms();
-    setupDeciderWebForms();
+    setupthwiftwebfowms();
+    setupdecidewwebfowms();
 
-    LOG.info("Opened thrift serving form.");
+    w-wog.info("opened t-thwift sewving fowm.");
 
-    LOG.info("preMain() complete.");
+    w-wog.info("pwemain() c-compwete.");
   }
 
-  @Override
-  public void main() throws InterruptedException, TimeoutException, EarlybirdStartupException {
-    innerMain();
+  @ovewwide
+  pubwic void main() thwows intewwuptedexception, (✿oωo) timeoutexception, OwO e-eawwybiwdstawtupexception {
+    i-innewmain();
   }
 
   /**
-   * Setting up an innerMain() so that tests can mock out the contents of main without interfering
-   * with reflection being done in App.scala looking for a method named "main".
+   * s-setting u-up an innewmain() s-so that tests can mock out the c-contents of main w-without intewfewing
+   * with w-wefwection being d-done in app.scawa wooking fow a-a method nyamed "main". ʘwʘ
    */
-  @VisibleForTesting
-  void innerMain() throws TimeoutException, InterruptedException, EarlybirdStartupException {
-    LOG.info("Starting main().");
+  @visibwefowtesting
+  void innewmain() thwows timeoutexception, (ˆ ﻌ ˆ)♡ i-intewwuptedexception, (U ﹏ U) eawwybiwdstawtupexception {
+    w-wog.info("stawting m-main().");
 
-    // If this method throws, TwitterServer will catch the exception and call close, so we don't
-    // catch it here.
-    try {
-      earlybirdServer.start();
-    } catch (Throwable throwable) {
-      LOG.error("Exception while starting:", throwable);
-      throw throwable;
+    // if this m-method thwows, UwU twittewsewvew wiww catch the e-exception and caww c-cwose, XD so we d-don't
+    // catch it hewe.
+    twy {
+      eawwybiwdsewvew.stawt();
+    } catch (thwowabwe t-thwowabwe) {
+      wog.ewwow("exception whiwe stawting:", ʘwʘ thwowabwe);
+      t-thwow thwowabwe;
     }
 
-    Await.ready(adminHttpServer());
-    LOG.info("main() complete.");
+    a-await.weady(adminhttpsewvew());
+    wog.info("main() c-compwete.");
   }
 
-  @Override
-  public void onExit() {
-    LOG.info("Starting onExit()");
-    earlybirdServer.shutdown();
-    try {
-      earlybirdAdminManager.doShutdown();
-    } catch (InterruptedException e) {
-      LOG.warn("earlybirdAdminManager shutdown was interrupted with " + e);
+  @ovewwide
+  pubwic v-void onexit() {
+    w-wog.info("stawting onexit()");
+    eawwybiwdsewvew.shutdown();
+    t-twy {
+      eawwybiwdadminmanagew.doshutdown();
+    } catch (intewwuptedexception e-e) {
+      w-wog.wawn("eawwybiwdadminmanagew shutdown was i-intewwupted with " + e);
     }
-    LOG.info("onExit() complete.");
+    w-wog.info("onexit() c-compwete.");
   }
 }

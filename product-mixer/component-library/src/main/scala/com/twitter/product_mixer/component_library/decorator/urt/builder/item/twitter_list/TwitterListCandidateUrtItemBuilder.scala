@@ -1,41 +1,41 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.twitter_list
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.twittew_wist
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.twitter_list.TwitterListCandidateUrtItemBuilder.ListClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.TwitterListCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.TwitterListDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.TwitterListItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.twittew_wist.twittewwistcandidateuwtitembuiwdew.wistcwienteventinfoewement
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twittewwistcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.candidateuwtentwybuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventinfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.twittew_wist.twittewwistdispwaytype
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.twittew_wist.twittewwistitem
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object TwitterListCandidateUrtItemBuilder {
-  val ListClientEventInfoElement: String = "list"
+o-object twittewwistcandidateuwtitembuiwdew {
+  vaw wistcwienteventinfoewement: s-stwing = "wist"
 }
 
-case class TwitterListCandidateUrtItemBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, TwitterListCandidate],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, TwitterListCandidate]
-  ] = None,
-  displayType: Option[TwitterListDisplayType] = None)
-    extends CandidateUrtEntryBuilder[Query, TwitterListCandidate, TwitterListItem] {
+case c-cwass twittewwistcandidateuwtitembuiwdew[-quewy <: pipewinequewy](
+  cwienteventinfobuiwdew: basecwienteventinfobuiwdew[quewy, (⑅˘꒳˘) t-twittewwistcandidate], òωó
+  feedbackactioninfobuiwdew: o-option[
+    b-basefeedbackactioninfobuiwdew[quewy, ʘwʘ twittewwistcandidate]
+  ] = nyone, /(^•ω•^)
+  dispwaytype: option[twittewwistdispwaytype] = nyone)
+    e-extends candidateuwtentwybuiwdew[quewy, ʘwʘ twittewwistcandidate, σωσ twittewwistitem] {
 
-  override def apply(
-    query: Query,
-    twitterListCandidate: TwitterListCandidate,
-    candidateFeatures: FeatureMap
-  ): TwitterListItem = TwitterListItem(
-    id = twitterListCandidate.id,
-    sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-    clientEventInfo = clientEventInfoBuilder(
-      query,
-      twitterListCandidate,
-      candidateFeatures,
-      Some(ListClientEventInfoElement)),
-    feedbackActionInfo =
-      feedbackActionInfoBuilder.flatMap(_.apply(query, twitterListCandidate, candidateFeatures)),
-    displayType = displayType
+  ovewwide def appwy(
+    quewy: q-quewy, OwO
+    twittewwistcandidate: t-twittewwistcandidate, 😳😳😳
+    c-candidatefeatuwes: f-featuwemap
+  ): t-twittewwistitem = twittewwistitem(
+    id = t-twittewwistcandidate.id, 😳😳😳
+    sowtindex = nyone, o.O // s-sowt indexes awe automaticawwy set in the domain mawshawwew phase
+    cwienteventinfo = cwienteventinfobuiwdew(
+      q-quewy, ( ͡o ω ͡o )
+      twittewwistcandidate, (U ﹏ U)
+      c-candidatefeatuwes, (///ˬ///✿)
+      s-some(wistcwienteventinfoewement)),
+    f-feedbackactioninfo =
+      feedbackactioninfobuiwdew.fwatmap(_.appwy(quewy, >w< twittewwistcandidate, rawr candidatefeatuwes)), mya
+    d-dispwaytype = d-dispwaytype
   )
 }

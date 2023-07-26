@@ -1,45 +1,45 @@
-package com.twitter.visibility.util
+package com.twittew.visibiwity.utiw
 
-import com.twitter.abdecider.ABDeciderFactory
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.decider.Decider
-import com.twitter.decider.DeciderFactory
-import com.twitter.decider.LocalOverrides
-import com.twitter.logging._
+impowt com.twittew.abdecidew.abdecidewfactowy
+i-impowt com.twittew.abdecidew.woggingabdecidew
+i-impowt com.twittew.decidew.decidew
+i-impowt com.twittew.decidew.decidewfactowy
+i-impowt c-com.twittew.decidew.wocawuvwwides
+i-impowt com.twittew.wogging._
 
-object DeciderUtil {
-  val DefaultDeciderPath = "/config/com/twitter/visibility/decider.yml"
+o-object decidewutiw {
+  v-vaw defauwtdecidewpath = "/config/com/twittew/visibiwity/decidew.ymw"
 
-  private val zone = Option(System.getProperty("dc")).getOrElse("atla")
-  val DefaultDeciderOverlayPath: Some[String] = Some(
-    s"/usr/local/config/overlays/visibility-library/visibility-library/prod/$zone/decider_overlay.yml"
+  pwivate vaw zone = option(system.getpwopewty("dc")).getowewse("atwa")
+  vaw defauwtdecidewovewwaypath: s-some[stwing] = some(
+    s"/usw/wocaw/config/ovewways/visibiwity-wibwawy/visibiwity-wibwawy/pwod/$zone/decidew_ovewway.ymw"
   )
 
-  val DefaultABDeciderPath = "/usr/local/config/abdecider/abdecider.yml"
+  v-vaw defauwtabdecidewpath = "/usw/wocaw/config/abdecidew/abdecidew.ymw"
 
-  def mkDecider(
-    deciderBasePath: String = DefaultDeciderPath,
-    deciderOverlayPath: Option[String] = DefaultDeciderOverlayPath,
-    useLocalDeciderOverrides: Boolean = false,
-  ): Decider = {
-    val fileBased = new DeciderFactory(Some(deciderBasePath), deciderOverlayPath)()
-    if (useLocalDeciderOverrides) {
-      LocalOverrides.decider("visibility-library").orElse(fileBased)
-    } else {
-      fileBased
+  d-def mkdecidew(
+    decidewbasepath: stwing = defauwtdecidewpath, (˘ω˘)
+    d-decidewovewwaypath: option[stwing] = d-defauwtdecidewovewwaypath, (⑅˘꒳˘)
+    u-usewocawdecidewovewwides: boowean = fawse, (///ˬ///✿)
+  ): decidew = {
+    vaw fiwebased = n-nyew decidewfactowy(some(decidewbasepath), 😳😳😳 decidewovewwaypath)()
+    if (usewocawdecidewovewwides) {
+      wocawuvwwides.decidew("visibiwity-wibwawy").owewse(fiwebased)
+    } ewse {
+      fiwebased
     }
   }
 
-  def mkLocalDecider: Decider = mkDecider(deciderOverlayPath = None)
+  d-def mkwocawdecidew: decidew = m-mkdecidew(decidewovewwaypath = n-nyone)
 
-  def mkABDecider(
-    scribeLogger: Option[Logger],
-    abDeciderPath: String = DefaultABDeciderPath
-  ): LoggingABDecider = {
-    ABDeciderFactory(
-      abDeciderPath,
-      Some("production"),
-      scribeLogger = scribeLogger
-    ).buildWithLogging()
+  def mkabdecidew(
+    s-scwibewoggew: option[woggew], 🥺
+    a-abdecidewpath: stwing = defauwtabdecidewpath
+  ): woggingabdecidew = {
+    a-abdecidewfactowy(
+      abdecidewpath, mya
+      some("pwoduction"), 🥺
+      s-scwibewoggew = scwibewoggew
+    ).buiwdwithwogging()
   }
 }

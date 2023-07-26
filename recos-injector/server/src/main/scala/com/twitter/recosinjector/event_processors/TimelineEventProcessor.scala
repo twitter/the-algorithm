@@ -1,150 +1,150 @@
-package com.twitter.recosinjector.event_processors
+package com.twittew.wecosinjectow.event_pwocessows
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.util.Action
-import com.twitter.recosinjector.clients.Gizmoduck
-import com.twitter.recosinjector.clients.Tweetypie
-import com.twitter.recosinjector.decider.RecosInjectorDecider
-import com.twitter.recosinjector.decider.RecosInjectorDeciderConstants
-import com.twitter.recosinjector.edges.TimelineEventToUserTweetEntityGraphBuilder
-import com.twitter.recosinjector.filters.TweetFilter
-import com.twitter.recosinjector.filters.UserFilter
-import com.twitter.recosinjector.publishers.KafkaEventPublisher
-import com.twitter.recosinjector.util.TweetDetails
-import com.twitter.recosinjector.util.TweetFavoriteEventDetails
-import com.twitter.recosinjector.util.UserTweetEngagement
-import com.twitter.scrooge.ThriftStructCodec
-import com.twitter.timelineservice.thriftscala.FavoriteEvent
-import com.twitter.timelineservice.thriftscala.UnfavoriteEvent
-import com.twitter.timelineservice.thriftscala.{Event => TimelineEvent}
-import com.twitter.util.Future
+impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.wecos.utiw.action
+i-impowt com.twittew.wecosinjectow.cwients.gizmoduck
+i-impowt c-com.twittew.wecosinjectow.cwients.tweetypie
+i-impowt c-com.twittew.wecosinjectow.decidew.wecosinjectowdecidew
+i-impowt com.twittew.wecosinjectow.decidew.wecosinjectowdecidewconstants
+impowt com.twittew.wecosinjectow.edges.timewineeventtousewtweetentitygwaphbuiwdew
+impowt com.twittew.wecosinjectow.fiwtews.tweetfiwtew
+impowt c-com.twittew.wecosinjectow.fiwtews.usewfiwtew
+impowt com.twittew.wecosinjectow.pubwishews.kafkaeventpubwishew
+i-impowt com.twittew.wecosinjectow.utiw.tweetdetaiws
+i-impowt com.twittew.wecosinjectow.utiw.tweetfavowiteeventdetaiws
+impowt com.twittew.wecosinjectow.utiw.usewtweetengagement
+impowt com.twittew.scwooge.thwiftstwuctcodec
+i-impowt com.twittew.timewinesewvice.thwiftscawa.favowiteevent
+impowt com.twittew.timewinesewvice.thwiftscawa.unfavowiteevent
+i-impowt com.twittew.timewinesewvice.thwiftscawa.{event => t-timewineevent}
+impowt com.twittew.utiw.futuwe
 
 /**
- * Processor for Timeline events, such as Favorite (liking) tweets
+ * pwocessow fow timewine events, ^^;; s-such as favowite (wiking) tweets
  */
-class TimelineEventProcessor(
-  override val eventBusStreamName: String,
-  override val thriftStruct: ThriftStructCodec[TimelineEvent],
-  override val serviceIdentifier: ServiceIdentifier,
-  kafkaEventPublisher: KafkaEventPublisher,
-  userTweetEntityGraphTopic: String,
-  userTweetEntityGraphMessageBuilder: TimelineEventToUserTweetEntityGraphBuilder,
-  decider: RecosInjectorDecider,
-  gizmoduck: Gizmoduck,
-  tweetypie: Tweetypie
+cwass timewineeventpwocessow(
+  ovewwide vaw eventbusstweamname: s-stwing,
+  ovewwide vaw thwiftstwuct: t-thwiftstwuctcodec[timewineevent], XD
+  o-ovewwide vaw sewviceidentifiew: s-sewviceidentifiew, 🥺
+  k-kafkaeventpubwishew: kafkaeventpubwishew, òωó
+  usewtweetentitygwaphtopic: s-stwing, (ˆ ﻌ ˆ)♡
+  usewtweetentitygwaphmessagebuiwdew: timewineeventtousewtweetentitygwaphbuiwdew, -.-
+  d-decidew: wecosinjectowdecidew, :3
+  gizmoduck: gizmoduck, ʘwʘ
+  tweetypie: tweetypie
 )(
-  override implicit val statsReceiver: StatsReceiver)
-    extends EventBusProcessor[TimelineEvent] {
+  ovewwide i-impwicit vaw statsweceivew: s-statsweceivew)
+    e-extends eventbuspwocessow[timewineevent] {
 
-  private val processEventDeciderCounter = statsReceiver.counter("num_process_timeline_event")
-  private val numFavoriteEventCounter = statsReceiver.counter("num_favorite_event")
-  private val numUnFavoriteEventCounter = statsReceiver.counter("num_unfavorite_event")
-  private val numNotFavoriteEventCounter = statsReceiver.counter("num_not_favorite_event")
+  p-pwivate vaw pwocesseventdecidewcountew = statsweceivew.countew("num_pwocess_timewine_event")
+  pwivate vaw nyumfavowiteeventcountew = statsweceivew.countew("num_favowite_event")
+  p-pwivate vaw n-nyumunfavowiteeventcountew = statsweceivew.countew("num_unfavowite_event")
+  pwivate vaw nyumnotfavowiteeventcountew = s-statsweceivew.countew("num_not_favowite_event")
 
-  private val numSelfFavoriteCounter = statsReceiver.counter("num_self_favorite_event")
-  private val numNullCastTweetCounter = statsReceiver.counter("num_null_cast_tweet")
-  private val numTweetFailSafetyLevelCounter = statsReceiver.counter("num_fail_tweetypie_safety")
-  private val numFavoriteUserUnsafeCounter = statsReceiver.counter("num_favorite_user_unsafe")
-  private val engageUserFilter = new UserFilter(gizmoduck)(statsReceiver.scope("engage_user"))
-  private val tweetFilter = new TweetFilter(tweetypie)
+  p-pwivate vaw nyumsewffavowitecountew = s-statsweceivew.countew("num_sewf_favowite_event")
+  pwivate vaw n-nyumnuwwcasttweetcountew = statsweceivew.countew("num_nuww_cast_tweet")
+  pwivate v-vaw nyumtweetfaiwsafetywevewcountew = statsweceivew.countew("num_faiw_tweetypie_safety")
+  p-pwivate vaw nyumfavowiteusewunsafecountew = s-statsweceivew.countew("num_favowite_usew_unsafe")
+  p-pwivate vaw engageusewfiwtew = nyew usewfiwtew(gizmoduck)(statsweceivew.scope("engage_usew"))
+  pwivate vaw tweetfiwtew = nyew tweetfiwtew(tweetypie)
 
-  private val numProcessFavorite = statsReceiver.counter("num_process_favorite")
-  private val numNoProcessFavorite = statsReceiver.counter("num_no_process_favorite")
+  p-pwivate vaw n-nyumpwocessfavowite = statsweceivew.countew("num_pwocess_favowite")
+  p-pwivate v-vaw nyumnopwocessfavowite = s-statsweceivew.countew("num_no_pwocess_favowite")
 
-  private def getFavoriteEventDetails(
-    favoriteEvent: FavoriteEvent
-  ): TweetFavoriteEventDetails = {
+  pwivate def getfavowiteeventdetaiws(
+    favowiteevent: favowiteevent
+  ): t-tweetfavowiteeventdetaiws = {
 
-    val engagement = UserTweetEngagement(
-      engageUserId = favoriteEvent.userId,
-      engageUser = favoriteEvent.user,
-      action = Action.Favorite,
-      engagementTimeMillis = Some(favoriteEvent.eventTimeMs),
-      tweetId = favoriteEvent.tweetId, // the tweet, or source tweet if target tweet is a retweet
-      tweetDetails = favoriteEvent.tweet.map(TweetDetails) // tweet always exists
+    vaw engagement = usewtweetengagement(
+      engageusewid = favowiteevent.usewid, 🥺
+      e-engageusew = favowiteevent.usew, >_<
+      a-action = a-action.favowite, ʘwʘ
+      e-engagementtimemiwwis = some(favowiteevent.eventtimems), (˘ω˘)
+      t-tweetid = f-favowiteevent.tweetid, (✿oωo) // the t-tweet, (///ˬ///✿) ow souwce t-tweet if tawget tweet is a wetweet
+      tweetdetaiws = f-favowiteevent.tweet.map(tweetdetaiws) // t-tweet awways e-exists
     )
-    TweetFavoriteEventDetails(userTweetEngagement = engagement)
+    t-tweetfavowiteeventdetaiws(usewtweetengagement = e-engagement)
   }
 
-  private def getUnfavoriteEventDetails(
-    unfavoriteEvent: UnfavoriteEvent
-  ): TweetFavoriteEventDetails = {
-    val engagement = UserTweetEngagement(
-      engageUserId = unfavoriteEvent.userId,
-      engageUser = unfavoriteEvent.user,
-      action = Action.Unfavorite,
-      engagementTimeMillis = Some(unfavoriteEvent.eventTimeMs),
-      tweetId = unfavoriteEvent.tweetId, // the tweet, or source tweet if target tweet is a retweet
-      tweetDetails = unfavoriteEvent.tweet.map(TweetDetails) // tweet always exists
+  pwivate def getunfavowiteeventdetaiws(
+    unfavowiteevent: u-unfavowiteevent
+  ): tweetfavowiteeventdetaiws = {
+    vaw engagement = usewtweetengagement(
+      engageusewid = unfavowiteevent.usewid, rawr x3
+      e-engageusew = unfavowiteevent.usew, -.-
+      action = action.unfavowite, ^^
+      engagementtimemiwwis = s-some(unfavowiteevent.eventtimems), (⑅˘꒳˘)
+      t-tweetid = u-unfavowiteevent.tweetid, nyaa~~ // the tweet, /(^•ω•^) ow s-souwce tweet if tawget tweet is a-a wetweet
+      t-tweetdetaiws = unfavowiteevent.tweet.map(tweetdetaiws) // tweet awways exists
     )
-    TweetFavoriteEventDetails(userTweetEngagement = engagement)
+    tweetfavowiteeventdetaiws(usewtweetengagement = engagement)
   }
 
-  private def shouldProcessFavoriteEvent(event: TweetFavoriteEventDetails): Future[Boolean] = {
-    val engagement = event.userTweetEngagement
-    val engageUserId = engagement.engageUserId
-    val tweetId = engagement.tweetId
-    val authorIdOpt = engagement.tweetDetails.flatMap(_.authorId)
+  p-pwivate def shouwdpwocessfavowiteevent(event: t-tweetfavowiteeventdetaiws): futuwe[boowean] = {
+    v-vaw e-engagement = event.usewtweetengagement
+    vaw engageusewid = e-engagement.engageusewid
+    v-vaw tweetid = engagement.tweetid
+    v-vaw authowidopt = e-engagement.tweetdetaiws.fwatmap(_.authowid)
 
-    val isSelfFavorite = authorIdOpt.contains(engageUserId)
-    val isNullCastTweet = engagement.tweetDetails.forall(_.isNullCastTweet)
-    val isEngageUserSafeFut = engageUserFilter.filterByUserId(engageUserId)
-    val isTweetPassSafetyFut = tweetFilter.filterForTweetypieSafetyLevel(tweetId)
+    vaw issewffavowite = authowidopt.contains(engageusewid)
+    vaw isnuwwcasttweet = engagement.tweetdetaiws.fowaww(_.isnuwwcasttweet)
+    v-vaw i-isengageusewsafefut = e-engageusewfiwtew.fiwtewbyusewid(engageusewid)
+    vaw istweetpasssafetyfut = t-tweetfiwtew.fiwtewfowtweetypiesafetywevew(tweetid)
 
-    Future.join(isEngageUserSafeFut, isTweetPassSafetyFut).map {
-      case (isEngageUserSafe, isTweetPassSafety) =>
-        if (isSelfFavorite) numSelfFavoriteCounter.incr()
-        if (isNullCastTweet) numNullCastTweetCounter.incr()
-        if (!isEngageUserSafe) numFavoriteUserUnsafeCounter.incr()
-        if (!isTweetPassSafety) numTweetFailSafetyLevelCounter.incr()
+    f-futuwe.join(isengageusewsafefut, (U ﹏ U) istweetpasssafetyfut).map {
+      c-case (isengageusewsafe, istweetpasssafety) =>
+        if (issewffavowite) nyumsewffavowitecountew.incw()
+        if (isnuwwcasttweet) nyumnuwwcasttweetcountew.incw()
+        i-if (!isengageusewsafe) n-nyumfavowiteusewunsafecountew.incw()
+        if (!istweetpasssafety) nyumtweetfaiwsafetywevewcountew.incw()
 
-        !isSelfFavorite && !isNullCastTweet && isEngageUserSafe && isTweetPassSafety
+        !issewffavowite && !isnuwwcasttweet && isengageusewsafe && i-istweetpasssafety
     }
   }
 
-  private def processFavoriteEvent(favoriteEvent: FavoriteEvent): Future[Unit] = {
-    val eventDetails = getFavoriteEventDetails(favoriteEvent)
-    shouldProcessFavoriteEvent(eventDetails).map {
-      case true =>
-        numProcessFavorite.incr()
-        // Convert the event for UserTweetEntityGraph
-        userTweetEntityGraphMessageBuilder.processEvent(eventDetails).map { edges =>
-          edges.foreach { edge =>
-            kafkaEventPublisher.publish(edge.convertToRecosHoseMessage, userTweetEntityGraphTopic)
+  p-pwivate def pwocessfavowiteevent(favowiteevent: favowiteevent): futuwe[unit] = {
+    vaw eventdetaiws = g-getfavowiteeventdetaiws(favowiteevent)
+    shouwdpwocessfavowiteevent(eventdetaiws).map {
+      case twue =>
+        nyumpwocessfavowite.incw()
+        // convewt the event fow usewtweetentitygwaph
+        u-usewtweetentitygwaphmessagebuiwdew.pwocessevent(eventdetaiws).map { edges =>
+          edges.foweach { edge =>
+            kafkaeventpubwishew.pubwish(edge.convewttowecoshosemessage, 😳😳😳 usewtweetentitygwaphtopic)
           }
         }
-      case false =>
-        numNoProcessFavorite.incr()
+      c-case fawse =>
+        n-nyumnopwocessfavowite.incw()
     }
   }
 
-  private def processUnFavoriteEvent(unFavoriteEvent: UnfavoriteEvent): Future[Unit] = {
-    if (decider.isAvailable(RecosInjectorDeciderConstants.EnableUnfavoriteEdge)) {
-      val eventDetails = getUnfavoriteEventDetails(unFavoriteEvent)
-      // Convert the event for UserTweetEntityGraph
-      userTweetEntityGraphMessageBuilder.processEvent(eventDetails).map { edges =>
-        edges.foreach { edge =>
-          kafkaEventPublisher.publish(edge.convertToRecosHoseMessage, userTweetEntityGraphTopic)
+  pwivate def pwocessunfavowiteevent(unfavowiteevent: unfavowiteevent): f-futuwe[unit] = {
+    i-if (decidew.isavaiwabwe(wecosinjectowdecidewconstants.enabweunfavowiteedge)) {
+      vaw eventdetaiws = getunfavowiteeventdetaiws(unfavowiteevent)
+      // convewt t-the event fow usewtweetentitygwaph
+      u-usewtweetentitygwaphmessagebuiwdew.pwocessevent(eventdetaiws).map { edges =>
+        edges.foweach { edge =>
+          k-kafkaeventpubwishew.pubwish(edge.convewttowecoshosemessage, >w< usewtweetentitygwaphtopic)
         }
       }
-    } else {
-      Future.Unit
+    } e-ewse {
+      f-futuwe.unit
     }
   }
 
-  override def processEvent(event: TimelineEvent): Future[Unit] = {
-    processEventDeciderCounter.incr()
-    event match {
-      case TimelineEvent.Favorite(favoriteEvent: FavoriteEvent) =>
-        numFavoriteEventCounter.incr()
-        processFavoriteEvent(favoriteEvent)
-      case TimelineEvent.Unfavorite(unFavoriteEvent: UnfavoriteEvent) =>
-        numUnFavoriteEventCounter.incr()
-        processUnFavoriteEvent(unFavoriteEvent)
-      case _ =>
-        numNotFavoriteEventCounter.incr()
-        Future.Unit
+  ovewwide d-def pwocessevent(event: timewineevent): f-futuwe[unit] = {
+    p-pwocesseventdecidewcountew.incw()
+    e-event match {
+      case timewineevent.favowite(favowiteevent: f-favowiteevent) =>
+        nyumfavowiteeventcountew.incw()
+        p-pwocessfavowiteevent(favowiteevent)
+      case timewineevent.unfavowite(unfavowiteevent: unfavowiteevent) =>
+        n-nyumunfavowiteeventcountew.incw()
+        p-pwocessunfavowiteevent(unfavowiteevent)
+      c-case _ =>
+        nyumnotfavowiteeventcountew.incw()
+        futuwe.unit
     }
   }
 }

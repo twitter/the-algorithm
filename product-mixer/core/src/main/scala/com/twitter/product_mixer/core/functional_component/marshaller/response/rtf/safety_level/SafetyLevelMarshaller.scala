@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.rtf.safety_level
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.wtf.safety_wevew
 
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.ConversationFocalTweetSafetyLevel
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.ConversationInjectedTweetSafetyLevel
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.ConversationReplySafetyLevel
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.SafetyLevel
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.TimelineFocalTweetSafetyLevel
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.TimelineHomePromotedHydrationSafetyLevel
-import com.twitter.spam.rtf.{thriftscala => thrift}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.wtf.safety_wevew.convewsationfocawtweetsafetywevew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.wtf.safety_wevew.convewsationinjectedtweetsafetywevew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.wtf.safety_wevew.convewsationwepwysafetywevew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.wtf.safety_wevew.safetywevew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.wtf.safety_wevew.timewinefocawtweetsafetywevew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.wtf.safety_wevew.timewinehomepwomotedhydwationsafetywevew
+impowt com.twittew.spam.wtf.{thwiftscawa => thwift}
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class SafetyLevelMarshaller @Inject() () {
+@singweton
+c-cwass safetywevewmawshawwew @inject() () {
 
-  def apply(safetyLevel: SafetyLevel): thrift.SafetyLevel = safetyLevel match {
-    case ConversationFocalTweetSafetyLevel => thrift.SafetyLevel.ConversationFocalTweet
-    case ConversationReplySafetyLevel => thrift.SafetyLevel.ConversationReply
-    case ConversationInjectedTweetSafetyLevel => thrift.SafetyLevel.ConversationInjectedTweet
-    case TimelineFocalTweetSafetyLevel => thrift.SafetyLevel.TimelineFocalTweet
-    case TimelineHomePromotedHydrationSafetyLevel =>
-      thrift.SafetyLevel.TimelineHomePromotedHydration
+  def appwy(safetywevew: s-safetywevew): thwift.safetywevew = s-safetywevew match {
+    case convewsationfocawtweetsafetywevew => thwift.safetywevew.convewsationfocawtweet
+    c-case convewsationwepwysafetywevew => thwift.safetywevew.convewsationwepwy
+    c-case convewsationinjectedtweetsafetywevew => t-thwift.safetywevew.convewsationinjectedtweet
+    case timewinefocawtweetsafetywevew => thwift.safetywevew.timewinefocawtweet
+    case timewinehomepwomotedhydwationsafetywevew =>
+      thwift.safetywevew.timewinehomepwomotedhydwation
   }
 }

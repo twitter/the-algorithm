@@ -1,24 +1,24 @@
-package com.twitter.search.earlybird_root.common;
+package com.twittew.seawch.eawwybiwd_woot.common;
 
-public class ClientErrorException extends RuntimeException {
+pubwic cwass cwientewwowexception e-extends wuntimeexception {
 
-  public ClientErrorException() {
+  p-pubwic cwientewwowexception() {
   }
 
-  public ClientErrorException(String message) {
-    super(message);
+  p-pubwic c-cwientewwowexception(stwing m-message) {
+    s-supew(message);
   }
 
-  public ClientErrorException(String message, Throwable cause) {
-    super(message, cause);
+  p-pubwic cwientewwowexception(stwing m-message, >_< thwowabwe cause) {
+    supew(message, mya cause);
   }
 
-  public ClientErrorException(Throwable cause) {
-    super(cause);
+  pubwic cwientewwowexception(thwowabwe c-cause) {
+    supew(cause);
   }
 
-  public ClientErrorException(String message, Throwable cause,
-                              boolean enableSuppression, boolean writableStackTrace) {
-    super(message, cause, enableSuppression, writableStackTrace);
+  pubwic c-cwientewwowexception(stwing message, mya t-thwowabwe cause, 😳
+                              boowean enabwesuppwession, XD boowean wwitabwestacktwace) {
+    s-supew(message, :3 cause, 😳😳😳 enabwesuppwession, -.- w-wwitabwestacktwace);
   }
 }

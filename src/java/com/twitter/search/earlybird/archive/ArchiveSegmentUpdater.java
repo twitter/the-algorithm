@@ -1,279 +1,279 @@
-package com.twitter.search.earlybird.archive;
+package com.twittew.seawch.eawwybiwd.awchive;
 
-import java.io.IOException;
-import java.util.Date;
+impowt j-java.io.ioexception;
+i-impowt j-java.utiw.date;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
+i-impowt com.googwe.common.base.pweconditions;
+impowt c-com.googwe.common.base.pwedicate;
 
-import org.apache.commons.lang.time.FastDateFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.apache.commons.wang.time.fastdatefowmat;
+i-impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.metrics.SearchStatsReceiverImpl;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.document.DocumentFactory;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.partition.SegmentHdfsFlusher;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentLoader;
-import com.twitter.search.earlybird.partition.SegmentOptimizer;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
-import com.twitter.search.earlybird.partition.SimpleSegmentIndexer;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
+impowt com.twittew.common.utiw.cwock;
+impowt c-com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt com.twittew.seawch.common.metwics.seawchstatsweceivew;
+i-impowt com.twittew.seawch.common.metwics.seawchstatsweceivewimpw;
+impowt c-com.twittew.seawch.common.schema.thwiftjava.thwiftindexingevent;
+impowt com.twittew.seawch.common.utiw.io.wecowdweadew.wecowdweadew;
+impowt com.twittew.seawch.common.utiw.zktwywock.zookeepewtwywockfactowy;
+impowt c-com.twittew.seawch.eawwybiwd.eawwybiwdindexconfig;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+i-impowt c-com.twittew.seawch.eawwybiwd.document.documentfactowy;
+impowt com.twittew.seawch.eawwybiwd.document.tweetdocument;
+impowt com.twittew.seawch.eawwybiwd.exception.cwiticawexceptionhandwew;
+impowt c-com.twittew.seawch.eawwybiwd.index.eawwybiwdsegmentfactowy;
+impowt com.twittew.seawch.eawwybiwd.pawtition.seawchindexingmetwicset;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmenthdfsfwushew;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentinfo;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.segmentwoadew;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentoptimizew;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.segmentsyncconfig;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.simpwesegmentindexew;
+i-impowt com.twittew.seawch.eawwybiwd.stats.eawwybiwdseawchewstats;
 
 /**
- * Given a segment, this class checks if the segment has an index built on HDFS:
- *   if not, use SimpleSegmentIndexer to build an index
- *   if yes, load the HDFS index, build a new index for the new status data which has dates newer
- *   than the HDFS index, then append the loaded HDFS index.
+ * g-given a segment, XD this cwass checks if the segment h-has an index buiwt on hdfs:
+ *   if nyot, >w< use s-simpwesegmentindexew to buiwd an index
+ *   if yes, woad the hdfs index, òωó buiwd a nyew index fow t-the nyew status data which has dates n-nyewew
+ *   t-than the hdfs index, (ꈍᴗꈍ) t-then append the woaded hdfs index. rawr x3
  */
-public class ArchiveSegmentUpdater {
-  private static final Logger LOG = LoggerFactory.getLogger(ArchiveSegmentUpdater.class);
+pubwic cwass awchivesegmentupdatew {
+  p-pwivate static f-finaw woggew wog = woggewfactowy.getwoggew(awchivesegmentupdatew.cwass);
 
-  private final SegmentSyncConfig sync;
-  private final EarlybirdIndexConfig earlybirdIndexConfig;
-  private final ZooKeeperTryLockFactory zkTryLockFactory;
-  private final SearchStatsReceiver statsReceiver = new SearchStatsReceiverImpl();
-  private final SearchIndexingMetricSet searchIndexingMetricSet =
-      new SearchIndexingMetricSet(statsReceiver);
-  private final EarlybirdSearcherStats searcherStats =
-      new EarlybirdSearcherStats(statsReceiver);
-  private final SearchRateCounter indexNewSegment =
-      new SearchRateCounter("index_new_segment");
-  private final SearchRateCounter updateExistingSegment =
-      new SearchRateCounter("update_existing_segment");
-  private final SearchRateCounter skipExistingSegment =
-      new SearchRateCounter("skip_existing_segment");
-  private Clock clock;
+  pwivate f-finaw segmentsyncconfig sync;
+  p-pwivate finaw eawwybiwdindexconfig e-eawwybiwdindexconfig;
+  pwivate finaw z-zookeepewtwywockfactowy zktwywockfactowy;
+  pwivate f-finaw seawchstatsweceivew statsweceivew = n-nyew seawchstatsweceivewimpw();
+  p-pwivate finaw seawchindexingmetwicset s-seawchindexingmetwicset =
+      nyew seawchindexingmetwicset(statsweceivew);
+  pwivate finaw eawwybiwdseawchewstats seawchewstats =
+      nyew eawwybiwdseawchewstats(statsweceivew);
+  pwivate f-finaw seawchwatecountew i-indexnewsegment =
+      new seawchwatecountew("index_new_segment");
+  p-pwivate finaw s-seawchwatecountew u-updateexistingsegment =
+      nyew seawchwatecountew("update_existing_segment");
+  pwivate finaw seawchwatecountew s-skipexistingsegment =
+      nyew seawchwatecountew("skip_existing_segment");
+  pwivate cwock cwock;
 
-  public ArchiveSegmentUpdater(ZooKeeperTryLockFactory zooKeeperTryLockFactory,
-                               SegmentSyncConfig sync,
-                               EarlybirdIndexConfig earlybirdIndexConfig,
-                               Clock clock) {
-    this.sync = sync;
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
-    this.zkTryLockFactory = zooKeeperTryLockFactory;
-    this.clock = clock;
+  pubwic awchivesegmentupdatew(zookeepewtwywockfactowy z-zookeepewtwywockfactowy, rawr x3
+                               segmentsyncconfig s-sync, σωσ
+                               e-eawwybiwdindexconfig e-eawwybiwdindexconfig, (ꈍᴗꈍ)
+                               cwock c-cwock) {
+    this.sync = s-sync;
+    t-this.eawwybiwdindexconfig = e-eawwybiwdindexconfig;
+    this.zktwywockfactowy = zookeepewtwywockfactowy;
+    t-this.cwock = cwock;
   }
 
-  private boolean canUpdateSegment(SegmentInfo segmentInfo) {
-    if (!(segmentInfo.getSegment() instanceof ArchiveSegment)) {
-      LOG.info("only ArchiveSegment is available for updating now: "
-          + segmentInfo);
-      return false;
+  p-pwivate b-boowean canupdatesegment(segmentinfo s-segmentinfo) {
+    i-if (!(segmentinfo.getsegment() instanceof awchivesegment)) {
+      wog.info("onwy a-awchivesegment is avaiwabwe fow updating nyow: "
+          + segmentinfo);
+      wetuwn f-fawse;
     }
 
-    if (!segmentInfo.isEnabled()) {
-      LOG.debug("Segment is disabled: " + segmentInfo);
-      return false;
+    if (!segmentinfo.isenabwed()) {
+      wog.debug("segment is disabwed: " + s-segmentinfo);
+      w-wetuwn fawse;
     }
 
-    if (segmentInfo.isComplete() || segmentInfo.isIndexing()
-        || segmentInfo.getSyncInfo().isLoaded()) {
-      LOG.debug("Cannot update already indexed segment: " + segmentInfo);
-      return false;
+    i-if (segmentinfo.iscompwete() || segmentinfo.isindexing()
+        || s-segmentinfo.getsyncinfo().iswoaded()) {
+      wog.debug("cannot u-update awweady i-indexed segment: " + segmentinfo);
+      wetuwn fawse;
     }
 
-    return true;
+    wetuwn twue;
   }
 
   /**
-   * Given a segment, checks if the segment has an index built on HDFS:
-   *   if not, use SimpleSegmentIndexer to build an index
-   *   if yes, load the HDFS index, build a new index for the new status data which has dates newer
-   *   than the HDFS index, then append the loaded HDFS index.
+   * given a segment, rawr c-checks if the segment has an index b-buiwt on hdfs:
+   *   if nyot, ^^;; u-use simpwesegmentindexew t-to buiwd an index
+   *   if yes, rawr x3 woad t-the hdfs index, (ˆ ﻌ ˆ)♡ b-buiwd a new index fow the nyew s-status data which h-has dates nyewew
+   *   than the hdfs index, σωσ then append the woaded hdfs index. (U ﹏ U)
    *
-   * Returns whether the segment was successfully updated.
+   * w-wetuwns w-whethew the s-segment was successfuwwy updated. >w<
    */
-  public boolean updateSegment(SegmentInfo segmentInfo) {
-    Preconditions.checkArgument(segmentInfo.getSegment() instanceof ArchiveSegment);
-    if (!canUpdateSegment(segmentInfo)) {
-      return false;
+  p-pubwic b-boowean updatesegment(segmentinfo segmentinfo) {
+    p-pweconditions.checkawgument(segmentinfo.getsegment() instanceof awchivesegment);
+    if (!canupdatesegment(segmentinfo)) {
+      wetuwn fawse;
     }
 
-    if (segmentInfo.isIndexing()) {
-      LOG.error("Segment is already being indexed: " + segmentInfo);
-      return false;
+    i-if (segmentinfo.isindexing()) {
+      w-wog.ewwow("segment is awweady being indexed: " + s-segmentinfo);
+      w-wetuwn fawse;
     }
 
-    final Date hdfsEndDate = ArchiveHDFSUtils.getSegmentEndDateOnHdfs(sync, segmentInfo);
-    if (hdfsEndDate == null) {
-      indexNewSegment.increment();
-      if (!indexSegment(segmentInfo, ArchiveSegment.MATCH_ALL_DATE_PREDICATE)) {
-        return false;
+    finaw date hdfsenddate = awchivehdfsutiws.getsegmentenddateonhdfs(sync, σωσ s-segmentinfo);
+    if (hdfsenddate == nyuww) {
+      indexnewsegment.incwement();
+      if (!indexsegment(segmentinfo, nyaa~~ awchivesegment.match_aww_date_pwedicate)) {
+        w-wetuwn fawse;
       }
-    } else {
-      final Date curEndDate = ((ArchiveSegment) segmentInfo.getSegment()).getDataEndDate();
-      if (!hdfsEndDate.before(curEndDate)) {
-        skipExistingSegment.increment();
-        LOG.info("Segment is up-to-date: " + segmentInfo.getSegment().getTimeSliceID()
-            + " Found flushed segment on HDFS with end date: "
-            + FastDateFormat.getInstance("yyyyMMdd").format(hdfsEndDate));
-        segmentInfo.setComplete(true);
-        segmentInfo.getSyncInfo().setFlushed(true);
-        return true;
+    } ewse {
+      finaw date cuwenddate = ((awchivesegment) s-segmentinfo.getsegment()).getdataenddate();
+      i-if (!hdfsenddate.befowe(cuwenddate)) {
+        skipexistingsegment.incwement();
+        wog.info("segment is up-to-date: " + s-segmentinfo.getsegment().gettimeswiceid()
+            + " f-found fwushed segment on hdfs with end date: "
+            + fastdatefowmat.getinstance("yyyymmdd").fowmat(hdfsenddate));
+        s-segmentinfo.setcompwete(twue);
+        segmentinfo.getsyncinfo().setfwushed(twue);
+        w-wetuwn twue;
       }
 
-      updateExistingSegment.increment();
-      LOG.info("Updating segment: " + segmentInfo.getSegment().getTimeSliceID()
-          + "; new endDate will be " + FastDateFormat.getInstance("yyyyMMdd").format(curEndDate));
+      updateexistingsegment.incwement();
+      wog.info("updating segment: " + s-segmentinfo.getsegment().gettimeswiceid()
+          + "; nyew e-enddate wiww b-be " + fastdatefowmat.getinstance("yyyymmdd").fowmat(cuwenddate));
 
-      if (!updateSegment(segmentInfo, hdfsEndDate)) {
-        return false;
+      if (!updatesegment(segmentinfo, 🥺 h-hdfsenddate)) {
+        wetuwn fawse;
       }
     }
 
-    boolean success = SegmentOptimizer.optimize(segmentInfo);
-    if (!success) {
-      // Clean up the segment dir on local disk
-      segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
-      LOG.info("Error optimizing segment: " + segmentInfo);
-      return false;
+    b-boowean success = s-segmentoptimizew.optimize(segmentinfo);
+    i-if (!success) {
+      // cwean u-up the segment diw o-on wocaw disk
+      segmentinfo.dewetewocawindexedsegmentdiwectowyimmediatewy();
+      wog.info("ewwow o-optimizing s-segment: " + s-segmentinfo);
+      wetuwn fawse;
     }
 
-    // Verify segment before uploading.
-    success = ArchiveSegmentVerifier.verifySegment(segmentInfo);
-    if (!success) {
-      segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
-      LOG.info("Segment not uploaded to HDFS because it did not pass verification: " + segmentInfo);
-      return false;
+    // vewify segment b-befowe upwoading. rawr x3
+    success = a-awchivesegmentvewifiew.vewifysegment(segmentinfo);
+    i-if (!success) {
+      segmentinfo.dewetewocawindexedsegmentdiwectowyimmediatewy();
+      wog.info("segment nyot upwoaded t-to hdfs because i-it did nyot pass v-vewification: " + s-segmentinfo);
+      wetuwn fawse;
     }
 
-    // upload the index to HDFS
-    success = new SegmentHdfsFlusher(zkTryLockFactory, sync, false)
-        .flushSegmentToDiskAndHDFS(segmentInfo);
+    // u-upwoad the index to hdfs
+    success = nyew segmenthdfsfwushew(zktwywockfactowy, σωσ sync, (///ˬ///✿) fawse)
+        .fwushsegmenttodiskandhdfs(segmentinfo);
     if (success) {
-      ArchiveHDFSUtils.deleteHdfsSegmentDir(sync, segmentInfo, false, true);
-    } else {
-      // Clean up the segment dir on hdfs
-      ArchiveHDFSUtils.deleteHdfsSegmentDir(sync, segmentInfo, true, false);
-      LOG.info("Error uploading segment to HDFS: " + segmentInfo);
+      a-awchivehdfsutiws.dewetehdfssegmentdiw(sync, (U ﹏ U) segmentinfo, ^^;; f-fawse, twue);
+    } ewse {
+      // c-cwean up the segment diw o-on hdfs
+      awchivehdfsutiws.dewetehdfssegmentdiw(sync, 🥺 s-segmentinfo, òωó t-twue, XD fawse);
+      w-wog.info("ewwow u-upwoading s-segment to hdfs: " + segmentinfo);
     }
-    segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
+    segmentinfo.dewetewocawindexedsegmentdiwectowyimmediatewy();
 
-    return success;
+    wetuwn success;
   }
 
   /**
-   * Build index for the given segmentInfo. Only those statuses passing the dateFilter are indexed.
+   * buiwd index fow the given segmentinfo. :3 onwy t-those statuses p-passing the datefiwtew a-awe indexed. (U ﹏ U)
    */
-  private boolean indexSegment(final SegmentInfo segmentInfo, Predicate<Date> dateFilter) {
-    Preconditions.checkArgument(segmentInfo.getSegment() instanceof ArchiveSegment);
+  pwivate b-boowean indexsegment(finaw segmentinfo segmentinfo, >w< pwedicate<date> datefiwtew) {
+    p-pweconditions.checkawgument(segmentinfo.getsegment() i-instanceof awchivesegment);
 
-    RecordReader<TweetDocument> documentReader = null;
-    try {
-      ArchiveSegment archiveSegment = (ArchiveSegment) segmentInfo.getSegment();
-      DocumentFactory<ThriftIndexingEvent> documentFactory =
-          earlybirdIndexConfig.createDocumentFactory();
-      documentReader = archiveSegment.getStatusRecordReader(documentFactory, dateFilter);
+    wecowdweadew<tweetdocument> d-documentweadew = nyuww;
+    twy {
+      a-awchivesegment a-awchivesegment = (awchivesegment) segmentinfo.getsegment();
+      d-documentfactowy<thwiftindexingevent> d-documentfactowy =
+          eawwybiwdindexconfig.cweatedocumentfactowy();
+      documentweadew = awchivesegment.getstatuswecowdweadew(documentfactowy, /(^•ω•^) datefiwtew);
 
-      // Read and index the statuses
-      boolean success = new SimpleSegmentIndexer(documentReader, searchIndexingMetricSet)
-          .indexSegment(segmentInfo);
-      if (!success) {
-        // Clean up segment dir on local disk
-        segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
-        LOG.info("Error indexing segment: " + segmentInfo);
+      // w-wead and i-index the statuses
+      b-boowean s-success = nyew s-simpwesegmentindexew(documentweadew, (⑅˘꒳˘) seawchindexingmetwicset)
+          .indexsegment(segmentinfo);
+      i-if (!success) {
+        // c-cwean up segment diw on wocaw d-disk
+        s-segmentinfo.dewetewocawindexedsegmentdiwectowyimmediatewy();
+        wog.info("ewwow i-indexing segment: " + segmentinfo);
       }
 
-      return success;
-    } catch (IOException e) {
-      segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
-      LOG.info("Exception while indexing segment: " + segmentInfo, e);
-      return false;
-    } finally {
-      if (documentReader != null) {
-        documentReader.stop();
+      wetuwn s-success;
+    } catch (ioexception e-e) {
+      segmentinfo.dewetewocawindexedsegmentdiwectowyimmediatewy();
+      w-wog.info("exception whiwe indexing s-segment: " + segmentinfo, ʘwʘ e);
+      wetuwn fawse;
+    } f-finawwy {
+      i-if (documentweadew != n-nyuww) {
+        documentweadew.stop();
       }
     }
   }
 
   /**
-   * Load the index built on HDFS for the given segmentInfo, index the new data and append the
-   * HDFS index to the new indexed segment
+   * woad the index buiwt on h-hdfs fow the given segmentinfo, rawr x3 index the nyew data a-and append the
+   * h-hdfs index to the nyew indexed s-segment
    */
-  private boolean updateSegment(final SegmentInfo segmentInfo, final Date hdfsEndDate) {
-    SegmentInfo hdfsSegmentInfo = loadSegmentFromHdfs(segmentInfo, hdfsEndDate);
-    if (hdfsSegmentInfo == null) {
-      return indexSegment(segmentInfo, ArchiveSegment.MATCH_ALL_DATE_PREDICATE);
+  pwivate boowean u-updatesegment(finaw s-segmentinfo segmentinfo, (˘ω˘) finaw date hdfsenddate) {
+    s-segmentinfo hdfssegmentinfo = woadsegmentfwomhdfs(segmentinfo, o.O hdfsenddate);
+    i-if (hdfssegmentinfo == n-nyuww) {
+      wetuwn i-indexsegment(segmentinfo, 😳 awchivesegment.match_aww_date_pwedicate);
     }
 
-    boolean success = indexSegment(segmentInfo, input -> {
-      // we're updating the segment - only index days after the old end date,
-      // and we're sure that the previous days have already been indexed.
-      return input.after(hdfsEndDate);
+    boowean s-success = i-indexsegment(segmentinfo, o.O i-input -> {
+      // we'we updating the segment - onwy index days aftew the owd end date, ^^;;
+      // and we'we suwe that the pwevious days have awweady been indexed. ( ͡o ω ͡o )
+      wetuwn input.aftew(hdfsenddate);
     });
     if (!success) {
-      LOG.error("Error indexing new data: " + segmentInfo);
-      return indexSegment(segmentInfo, ArchiveSegment.MATCH_ALL_DATE_PREDICATE);
+      wog.ewwow("ewwow i-indexing n-nyew data: " + segmentinfo);
+      wetuwn indexsegment(segmentinfo, ^^;; a-awchivesegment.match_aww_date_pwedicate);
     }
 
-    // Now, append the index loaded from hdfs
-    try {
-      segmentInfo.getIndexSegment().append(hdfsSegmentInfo.getIndexSegment());
-      hdfsSegmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
-      LOG.info("Deleted local segment directories with end date " + hdfsEndDate + " : "
-          + segmentInfo);
-    } catch (IOException e) {
-      LOG.warn("Caught IOException while appending segment " + hdfsSegmentInfo.getSegmentName(), e);
-      hdfsSegmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
-      segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
-      return false;
+    // n-nyow, ^^;; a-append the index woaded fwom h-hdfs
+    twy {
+      segmentinfo.getindexsegment().append(hdfssegmentinfo.getindexsegment());
+      h-hdfssegmentinfo.dewetewocawindexedsegmentdiwectowyimmediatewy();
+      w-wog.info("deweted wocaw s-segment diwectowies with end d-date " + hdfsenddate + " : "
+          + s-segmentinfo);
+    } catch (ioexception e) {
+      wog.wawn("caught i-ioexception w-whiwe appending s-segment " + h-hdfssegmentinfo.getsegmentname(), XD e-e);
+      h-hdfssegmentinfo.dewetewocawindexedsegmentdiwectowyimmediatewy();
+      s-segmentinfo.dewetewocawindexedsegmentdiwectowyimmediatewy();
+      w-wetuwn f-fawse;
     }
 
-    segmentInfo.setComplete(true);
-    return true;
+    segmentinfo.setcompwete(twue);
+    w-wetuwn twue;
   }
 
   /**
-   * Load the index built on HDFS for the given segmentInfo and end date
+   * w-woad the index b-buiwt on hdfs fow the given segmentinfo a-and end date
    */
-  private SegmentInfo loadSegmentFromHdfs(final SegmentInfo segmentInfo, final Date hdfsEndDate) {
-    Preconditions.checkArgument(segmentInfo.getSegment() instanceof ArchiveSegment);
+  pwivate segmentinfo w-woadsegmentfwomhdfs(finaw segmentinfo s-segmentinfo, 🥺 f-finaw date h-hdfsenddate) {
+    pweconditions.checkawgument(segmentinfo.getsegment() i-instanceof awchivesegment);
 
-    ArchiveSegment segment = new ArchiveSegment(
-        segmentInfo.getTimeSliceID(),
-        EarlybirdConfig.getMaxSegmentSize(),
-        segmentInfo.getNumPartitions(),
-        segmentInfo.getSegment().getHashPartitionID(),
-        hdfsEndDate);
-    EarlybirdSegmentFactory factory = new EarlybirdSegmentFactory(
-        earlybirdIndexConfig,
-        searchIndexingMetricSet,
-        searcherStats,
-        clock);
+    a-awchivesegment segment = n-nyew awchivesegment(
+        segmentinfo.gettimeswiceid(), (///ˬ///✿)
+        e-eawwybiwdconfig.getmaxsegmentsize(), (U ᵕ U❁)
+        segmentinfo.getnumpawtitions(), ^^;;
+        segmentinfo.getsegment().gethashpawtitionid(), ^^;;
+        hdfsenddate);
+    eawwybiwdsegmentfactowy f-factowy = nyew eawwybiwdsegmentfactowy(
+        e-eawwybiwdindexconfig, rawr
+        s-seawchindexingmetwicset, (˘ω˘)
+        seawchewstats, 🥺
+        cwock);
 
-    SegmentInfo hdfsSegmentInfo;
+    segmentinfo hdfssegmentinfo;
 
-    try {
-      hdfsSegmentInfo = new SegmentInfo(segment,  factory, sync);
-      CriticalExceptionHandler criticalExceptionHandler =
-          new CriticalExceptionHandler();
+    t-twy {
+      hdfssegmentinfo = nyew segmentinfo(segment, nyaa~~  f-factowy, :3 s-sync);
+      c-cwiticawexceptionhandwew cwiticawexceptionhandwew =
+          nyew c-cwiticawexceptionhandwew();
 
-      boolean success = new SegmentLoader(sync, criticalExceptionHandler)
-          .load(hdfsSegmentInfo);
+      b-boowean success = nyew segmentwoadew(sync, /(^•ω•^) c-cwiticawexceptionhandwew)
+          .woad(hdfssegmentinfo);
       if (!success) {
-        // If not successful, segmentLoader has already cleaned up the local dir.
-        LOG.info("Error loading hdfs segment " + hdfsSegmentInfo
-            + ", building segment from scratch.");
-        hdfsSegmentInfo = null;
+        // if n-nyot successfuw, ^•ﻌ•^ segmentwoadew h-has awweady cweaned u-up the wocaw d-diw.
+        wog.info("ewwow woading h-hdfs segment " + h-hdfssegmentinfo
+            + ", UwU b-buiwding s-segment fwom scwatch.");
+        hdfssegmentinfo = n-nyuww;
       }
-    } catch (IOException e) {
-      LOG.error("Exception while loading segment from hdfs: " + segmentInfo, e);
-      hdfsSegmentInfo = null;
+    } c-catch (ioexception e-e) {
+      w-wog.ewwow("exception w-whiwe w-woading segment f-fwom hdfs: " + s-segmentinfo, e);
+      hdfssegmentinfo = n-nyuww;
     }
 
-    return hdfsSegmentInfo;
+    wetuwn h-hdfssegmentinfo;
   }
 }

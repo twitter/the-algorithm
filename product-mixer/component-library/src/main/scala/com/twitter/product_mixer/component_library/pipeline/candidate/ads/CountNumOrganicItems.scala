@@ -1,54 +1,54 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+package com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.ads
 
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.quewy.ads.adsquewy
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Derive an estimate of the number of organic items from the query. If you need a more precise number,
- * consider switching to [[AdsDependentCandidatePipelineConfig]]
+ * d-dewive an estimate o-of the nyumbew o-of owganic items fwom the quewy. 😳😳😳 if you nyeed a mowe pwecise numbew, (˘ω˘)
+ * considew s-switching to [[adsdependentcandidatepipewineconfig]]
  */
-trait EstimateNumOrganicItems[Query <: PipelineQuery with AdsQuery] {
+twait estimatenumowganicitems[quewy <: p-pipewinequewy with adsquewy] {
 
-  def apply(query: Query): Short
+  d-def appwy(quewy: quewy): showt
 }
 
 /**
- * Compute the number of organic items from the query and set of previous candidates.
+ * compute the nyumbew o-of owganic items fwom the quewy a-and set of pwevious c-candidates.
  *
- * @note the key difference between [[CountNumOrganicItems]] and [[EstimateNumOrganicItems]] is
- *       that for [[EstimateNumOrganicItems]] we don't have any candidates returned yet, so we can
- *       only guess as to the number of organic items in the result set. In contrast,
- *       [[CountNumOrganicItems]] is used on dependant candidate pipelines where we can scan over
- *       the candidate pipelines result set to count the number of organic items.
+ * @note the key diffewence between [[countnumowganicitems]] and [[estimatenumowganicitems]] is
+ *       t-that fow [[estimatenumowganicitems]] we don't have any candidates wetuwned yet, ^^ so we can
+ *       o-onwy guess as to the nyumbew o-of owganic items i-in the wesuwt set. :3 i-in contwast, -.-
+ *       [[countnumowganicitems]] i-is used on dependant candidate pipewines whewe w-we can scan ovew
+ *       the candidate pipewines w-wesuwt set to count the nyumbew of owganic items. 😳
  */
-trait CountNumOrganicItems[-Query <: PipelineQuery with AdsQuery] {
+twait countnumowganicitems[-quewy <: pipewinequewy with a-adsquewy] {
 
-  def apply(query: Query, previousCandidates: Seq[CandidateWithDetails]): Short
+  def appwy(quewy: q-quewy, mya pweviouscandidates: s-seq[candidatewithdetaiws]): s-showt
 }
 
 /**
- * Treat all previously retrieved candidates as organic
+ * tweat aww pweviouswy wetwieved candidates a-as owganic
  */
-case object CountAllCandidates extends CountNumOrganicItems[PipelineQuery with AdsQuery] {
+c-case object countawwcandidates extends countnumowganicitems[pipewinequewy w-with a-adsquewy] {
 
-  def apply(
-    query: PipelineQuery with AdsQuery,
-    previousCandidates: Seq[CandidateWithDetails]
-  ): Short =
-    previousCandidates.length.toShort
+  def appwy(
+    quewy: p-pipewinequewy with adsquewy, (˘ω˘)
+    p-pweviouscandidates: seq[candidatewithdetaiws]
+  ): showt =
+    p-pweviouscandidates.wength.toshowt
 }
 
 /**
- * Only count candidates from a specific subset of pipelines as organic
+ * onwy count candidates f-fwom a specific subset of p-pipewines as owganic
  */
-case class CountCandidatesFromPipelines(pipelines: CandidateScope)
-    extends CountNumOrganicItems[PipelineQuery with AdsQuery] {
+c-case cwass countcandidatesfwompipewines(pipewines: candidatescope)
+    extends countnumowganicitems[pipewinequewy with adsquewy] {
 
-  def apply(
-    query: PipelineQuery with AdsQuery,
-    previousCandidates: Seq[CandidateWithDetails]
-  ): Short =
-    previousCandidates.count(pipelines.contains).toShort
+  def appwy(
+    q-quewy: pipewinequewy w-with adsquewy,
+    pweviouscandidates: s-seq[candidatewithdetaiws]
+  ): s-showt =
+    p-pweviouscandidates.count(pipewines.contains).toshowt
 }

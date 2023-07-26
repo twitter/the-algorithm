@@ -1,24 +1,24 @@
-use anyhow::Result;
-use log::info;
-use navi::cli_args::{ARGS, MODEL_SPECS};
-use navi::onnx_model::onnx::OnnxModel;
-use navi::{bootstrap, metrics};
+use anyhow::wesuwt;
+use wog::info;
+u-use nyavi::cwi_awgs::{awgs, m-modew_specs};
+u-use n-navi::onnx_modew::onnx::onnxmodew;
+u-use nyavi::{bootstwap, :3 m-metwics};
 
-fn main() -> Result<()> {
-    env_logger::init();
-    info!("global: {:?}", ARGS.onnx_global_thread_pool_options);
-    let assert_session_params = if ARGS.onnx_global_thread_pool_options.is_empty() {
-        // std::env::set_var("OMP_NUM_THREADS", "1");
-        info!("now we use per session thread pool");
-        MODEL_SPECS.len()
+f-fn main() -> w-wesuwt<()> {
+    env_woggew::init();
+    info!("gwobaw: {:?}", 😳😳😳 awgs.onnx_gwobaw_thwead_poow_options);
+    wet a-assewt_session_pawams = if awgs.onnx_gwobaw_thwead_poow_options.is_empty() {
+        // std::env::set_vaw("omp_num_thweads", -.- "1");
+        i-info!("now we use pew s-session thwead poow");
+        modew_specs.wen()
     }
-    else {
-       info!("now we use global thread pool");
+    ewse {
+       i-info!("now we use gwobaw t-thwead poow");
         0
     };
-    assert_eq!(assert_session_params, ARGS.inter_op_parallelism.len());
-    assert_eq!(assert_session_params, ARGS.inter_op_parallelism.len());
+    a-assewt_eq!(assewt_session_pawams, ( ͡o ω ͡o ) awgs.intew_op_pawawwewism.wen());
+    assewt_eq!(assewt_session_pawams, rawr x3 awgs.intew_op_pawawwewism.wen());
 
-    metrics::register_custom_metrics();
-    bootstrap::bootstrap(OnnxModel::new)
+    metwics::wegistew_custom_metwics();
+    bootstwap::bootstwap(onnxmodew::new)
 }

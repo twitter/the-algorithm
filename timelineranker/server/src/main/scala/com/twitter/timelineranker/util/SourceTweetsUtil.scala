@@ -1,88 +1,88 @@
-package com.twitter.timelineranker.util
+package com.twittew.timewinewankew.utiw
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.seawch.eawwybiwd.thwiftscawa.thwiftseawchwesuwt
+i-impowt c-com.twittew.timewines.modew.tweetid
+i-impowt com.twittew.timewines.modew.usewid
 
-object SourceTweetsUtil {
-  def getSourceTweetIds(
-    searchResults: Seq[ThriftSearchResult],
-    searchResultsTweetIds: Set[TweetId],
-    followedUserIds: Seq[TweetId],
-    shouldIncludeReplyRootTweets: Boolean,
-    statsReceiver: StatsReceiver
-  ): Seq[TweetId] = {
-    val replyRootTweetCounter = statsReceiver.counter("replyRootTweet")
+o-object souwcetweetsutiw {
+  d-def g-getsouwcetweetids(
+    s-seawchwesuwts: seq[thwiftseawchwesuwt], (///ˬ///✿)
+    seawchwesuwtstweetids: set[tweetid], >w<
+    fowwowedusewids: s-seq[tweetid], rawr
+    shouwdincwudewepwywoottweets: boowean, mya
+    statsweceivew: s-statsweceivew
+  ): seq[tweetid] = {
+    v-vaw wepwywoottweetcountew = statsweceivew.countew("wepwywoottweet")
 
-    val retweetSourceTweetIds = getRetweetSourceTweetIds(searchResults, searchResultsTweetIds)
+    vaw wetweetsouwcetweetids = getwetweetsouwcetweetids(seawchwesuwts, ^^ s-seawchwesuwtstweetids)
 
-    val inNetworkReplyInReplyToTweetIds = getInNetworkInReplyToTweetIds(
-      searchResults,
-      searchResultsTweetIds,
-      followedUserIds
+    vaw innetwowkwepwyinwepwytotweetids = g-getinnetwowkinwepwytotweetids(
+      s-seawchwesuwts,
+      seawchwesuwtstweetids, 😳😳😳
+      fowwowedusewids
     )
 
-    val extendedRepliesSourceTweetIds = getExtendedReplySourceTweetIds(
-      searchResults,
-      searchResultsTweetIds,
-      followedUserIds
+    vaw extendedwepwiessouwcetweetids = getextendedwepwysouwcetweetids(
+      s-seawchwesuwts, mya
+      seawchwesuwtstweetids, 😳
+      fowwowedusewids
     )
 
-    val replyRootTweetIds = if (shouldIncludeReplyRootTweets) {
-      val rootTweetIds = getReplyRootTweetIds(
-        searchResults,
-        searchResultsTweetIds
+    vaw wepwywoottweetids = if (shouwdincwudewepwywoottweets) {
+      v-vaw woottweetids = getwepwywoottweetids(
+        s-seawchwesuwts, -.-
+        s-seawchwesuwtstweetids
       )
-      replyRootTweetCounter.incr(rootTweetIds.size)
+      w-wepwywoottweetcountew.incw(woottweetids.size)
 
-      rootTweetIds
-    } else {
-      Seq.empty
+      w-woottweetids
+    } ewse {
+      seq.empty
     }
 
-    (retweetSourceTweetIds ++ extendedRepliesSourceTweetIds ++
-      inNetworkReplyInReplyToTweetIds ++ replyRootTweetIds).distinct
+    (wetweetsouwcetweetids ++ extendedwepwiessouwcetweetids ++
+      i-innetwowkwepwyinwepwytotweetids ++ wepwywoottweetids).distinct
   }
 
-  def getInNetworkInReplyToTweetIds(
-    searchResults: Seq[ThriftSearchResult],
-    searchResultsTweetIds: Set[TweetId],
-    followedUserIds: Seq[UserId]
-  ): Seq[TweetId] = {
-    searchResults
-      .filter(SearchResultUtil.isInNetworkReply(followedUserIds))
-      .flatMap(SearchResultUtil.getSourceTweetId)
-      .filterNot(searchResultsTweetIds.contains)
+  def getinnetwowkinwepwytotweetids(
+    seawchwesuwts: s-seq[thwiftseawchwesuwt], 🥺
+    seawchwesuwtstweetids: set[tweetid], o.O
+    fowwowedusewids: seq[usewid]
+  ): seq[tweetid] = {
+    s-seawchwesuwts
+      .fiwtew(seawchwesuwtutiw.isinnetwowkwepwy(fowwowedusewids))
+      .fwatmap(seawchwesuwtutiw.getsouwcetweetid)
+      .fiwtewnot(seawchwesuwtstweetids.contains)
   }
 
-  def getReplyRootTweetIds(
-    searchResults: Seq[ThriftSearchResult],
-    searchResultsTweetIds: Set[TweetId]
-  ): Seq[TweetId] = {
-    searchResults
-      .flatMap(SearchResultUtil.getReplyRootTweetId)
-      .filterNot(searchResultsTweetIds.contains)
+  def getwepwywoottweetids(
+    s-seawchwesuwts: s-seq[thwiftseawchwesuwt], /(^•ω•^)
+    seawchwesuwtstweetids: s-set[tweetid]
+  ): seq[tweetid] = {
+    seawchwesuwts
+      .fwatmap(seawchwesuwtutiw.getwepwywoottweetid)
+      .fiwtewnot(seawchwesuwtstweetids.contains)
   }
 
-  def getRetweetSourceTweetIds(
-    searchResults: Seq[ThriftSearchResult],
-    searchResultsTweetIds: Set[TweetId]
-  ): Seq[TweetId] = {
-    searchResults
-      .filter(SearchResultUtil.isRetweet)
-      .flatMap(SearchResultUtil.getSourceTweetId)
-      .filterNot(searchResultsTweetIds.contains)
+  def getwetweetsouwcetweetids(
+    s-seawchwesuwts: s-seq[thwiftseawchwesuwt], nyaa~~
+    seawchwesuwtstweetids: s-set[tweetid]
+  ): seq[tweetid] = {
+    s-seawchwesuwts
+      .fiwtew(seawchwesuwtutiw.iswetweet)
+      .fwatmap(seawchwesuwtutiw.getsouwcetweetid)
+      .fiwtewnot(seawchwesuwtstweetids.contains)
   }
 
-  def getExtendedReplySourceTweetIds(
-    searchResults: Seq[ThriftSearchResult],
-    searchResultsTweetIds: Set[TweetId],
-    followedUserIds: Seq[UserId]
-  ): Seq[TweetId] = {
-    searchResults
-      .filter(SearchResultUtil.isExtendedReply(followedUserIds))
-      .flatMap(SearchResultUtil.getSourceTweetId)
-      .filterNot(searchResultsTweetIds.contains)
+  def getextendedwepwysouwcetweetids(
+    s-seawchwesuwts: seq[thwiftseawchwesuwt], nyaa~~
+    s-seawchwesuwtstweetids: set[tweetid], :3
+    fowwowedusewids: s-seq[usewid]
+  ): seq[tweetid] = {
+    s-seawchwesuwts
+      .fiwtew(seawchwesuwtutiw.isextendedwepwy(fowwowedusewids))
+      .fwatmap(seawchwesuwtutiw.getsouwcetweetid)
+      .fiwtewnot(seawchwesuwtstweetids.contains)
   }
 }

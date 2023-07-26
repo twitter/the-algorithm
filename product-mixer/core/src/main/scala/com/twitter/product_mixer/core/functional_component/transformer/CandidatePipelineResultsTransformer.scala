@@ -1,45 +1,45 @@
-package com.twitter.product_mixer.core.functional_component.transformer
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twansfowmewidentifiew
 
 /**
- * A transformer for transforming a candidate pipeline's source result type into the parent's
- * mixer ore recommendation pipeline's type.
- * @tparam SourceResult The type of the result of the candidate source being used.
- * @tparam PipelineResult The type of the parent pipeline's expected
+ * a-a twansfowmew f-fow twansfowming a-a candidate p-pipewine's souwce wesuwt type into the pawent's
+ * mixew owe wecommendation pipewine's t-type. (///ˬ///✿)
+ * @tpawam souwcewesuwt the type o-of the wesuwt of the candidate souwce b-being used. >w<
+ * @tpawam pipewinewesuwt the type of the pawent p-pipewine's expected
  */
-trait CandidatePipelineResultsTransformer[SourceResult, PipelineResult <: UniversalNoun[Any]]
-    extends Transformer[SourceResult, PipelineResult] {
+twait c-candidatepipewinewesuwtstwansfowmew[souwcewesuwt, rawr p-pipewinewesuwt <: univewsawnoun[any]]
+    extends twansfowmew[souwcewesuwt, mya pipewinewesuwt] {
 
-  override val identifier: TransformerIdentifier =
-    CandidatePipelineResultsTransformer.DefaultTransformerId
+  ovewwide vaw i-identifiew: twansfowmewidentifiew =
+    candidatepipewinewesuwtstwansfowmew.defauwttwansfowmewid
 }
 
-object CandidatePipelineResultsTransformer {
-  private[core] val DefaultTransformerId: TransformerIdentifier =
-    TransformerIdentifier(ComponentIdentifier.BasedOnParentComponent)
-  private[core] val TransformerIdSuffix = "Results"
+object candidatepipewinewesuwtstwansfowmew {
+  pwivate[cowe] vaw defauwttwansfowmewid: t-twansfowmewidentifiew =
+    twansfowmewidentifiew(componentidentifiew.basedonpawentcomponent)
+  p-pwivate[cowe] v-vaw twansfowmewidsuffix = "wesuwts"
 
   /**
-   * For use when building a [[CandidatePipelineResultsTransformer]] in a [[com.twitter.product_mixer.core.pipeline.PipelineBuilder]]
-   * to ensure that the identifier is updated with the parent [[com.twitter.product_mixer.core.pipeline.Pipeline.identifier]]
+   * f-fow use w-when buiwding a [[candidatepipewinewesuwtstwansfowmew]] in a [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewinebuiwdew]]
+   * t-to ensuwe that the identifiew is updated with the p-pawent [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewine.identifiew]]
    */
-  private[core] def copyWithUpdatedIdentifier[SourceResult, PipelineResult <: UniversalNoun[Any]](
-    resultTransformer: CandidatePipelineResultsTransformer[SourceResult, PipelineResult],
-    parentIdentifier: ComponentIdentifier
-  ): CandidatePipelineResultsTransformer[SourceResult, PipelineResult] = {
-    if (resultTransformer.identifier == DefaultTransformerId) {
-      new CandidatePipelineResultsTransformer[SourceResult, PipelineResult] {
-        override val identifier: TransformerIdentifier = TransformerIdentifier(
-          s"${parentIdentifier.name}$TransformerIdSuffix")
+  pwivate[cowe] def copywithupdatedidentifiew[souwcewesuwt, ^^ pipewinewesuwt <: univewsawnoun[any]](
+    wesuwttwansfowmew: c-candidatepipewinewesuwtstwansfowmew[souwcewesuwt, 😳😳😳 pipewinewesuwt], mya
+    p-pawentidentifiew: c-componentidentifiew
+  ): c-candidatepipewinewesuwtstwansfowmew[souwcewesuwt, 😳 pipewinewesuwt] = {
+    if (wesuwttwansfowmew.identifiew == defauwttwansfowmewid) {
+      n-nyew candidatepipewinewesuwtstwansfowmew[souwcewesuwt, -.- p-pipewinewesuwt] {
+        ovewwide v-vaw identifiew: t-twansfowmewidentifiew = twansfowmewidentifiew(
+          s-s"${pawentidentifiew.name}$twansfowmewidsuffix")
 
-        override def transform(input: SourceResult): PipelineResult =
-          resultTransformer.transform(input)
+        ovewwide def t-twansfowm(input: souwcewesuwt): pipewinewesuwt =
+          w-wesuwttwansfowmew.twansfowm(input)
       }
-    } else {
-      resultTransformer
+    } ewse {
+      w-wesuwttwansfowmew
     }
   }
 }

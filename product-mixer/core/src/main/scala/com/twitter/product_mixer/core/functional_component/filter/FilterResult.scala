@@ -1,4 +1,4 @@
-package com.twitter.product_mixer.core.functional_component.filter
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew
 
-/** `Candidate`s were `kept` and `removed` by a [[Filter]] */
-case class FilterResult[+Candidate](kept: Seq[Candidate], removed: Seq[Candidate])
+/** `candidate`s wewe `kept` a-and `wemoved` by a-a [[fiwtew]] */
+c-case cwass fiwtewwesuwt[+candidate](kept: s-seq[candidate], o.O w-wemoved: s-seq[candidate])

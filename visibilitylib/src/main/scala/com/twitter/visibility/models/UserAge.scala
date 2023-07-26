@@ -1,15 +1,15 @@
-package com.twitter.visibility.models
+package com.twittew.visibiwity.modews
 
-case class UserAge(ageInYears: Option[Int]) {
-  def hasAge: Boolean = ageInYears.isDefined
+case cwass u-usewage(ageinyeaws: o-option[int]) {
+  d-def hasage: b-boowean = ageinyeaws.isdefined
 
-  def isGte(ageToCompare: Int): Boolean =
-    ageInYears
-      .collectFirst {
-        case age if age > ageToCompare => true
-      }.getOrElse(false)
+  d-def isgte(agetocompawe: i-int): b-boowean =
+    a-ageinyeaws
+      .cowwectfiwst {
+        case age if age > agetocompawe => twue
+      }.getowewse(fawse)
 
-  def unapply(userAge: UserAge): Option[Int] = {
-    ageInYears
+  def u-unappwy(usewage: usewage): option[int] = {
+    ageinyeaws
   }
 }

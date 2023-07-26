@@ -1,15 +1,15 @@
-package com.twitter.home_mixer.util
+package com.twittew.home_mixew.utiw
 
-import com.twitter.home_mixer.model.HomeFeatures.TweetImpressionsFeature
-import com.twitter.product_mixer.component_library.feature_hydrator.query.impressed_tweets.ImpressedTweets
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
+impowt com.twittew.home_mixew.modew.homefeatuwes.tweetimpwessionsfeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.quewy.impwessed_tweets.impwessedtweets
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
 
-object TweetImpressionsHelper {
-  def tweetImpressions(features: FeatureMap): Set[Long] = {
-    val manhattanImpressions =
-      features.getOrElse(TweetImpressionsFeature, Seq.empty).flatMap(_.tweetIds)
-    val memcacheImpressions = features.getOrElse(ImpressedTweets, Seq.empty)
+o-object t-tweetimpwessionshewpew {
+  def t-tweetimpwessions(featuwes: f-featuwemap): s-set[wong] = {
+    vaw manhattanimpwessions =
+      featuwes.getowewse(tweetimpwessionsfeatuwe, (U ﹏ U) seq.empty).fwatmap(_.tweetids)
+    v-vaw memcacheimpwessions = featuwes.getowewse(impwessedtweets, -.- s-seq.empty)
 
-    (manhattanImpressions ++ memcacheImpressions).toSet
+    (manhattanimpwessions ++ memcacheimpwessions).toset
   }
 }

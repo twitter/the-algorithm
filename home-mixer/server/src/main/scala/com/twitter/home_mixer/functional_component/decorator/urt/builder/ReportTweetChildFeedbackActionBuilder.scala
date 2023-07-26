@@ -1,36 +1,36 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.twittew.home_mixew.functionaw_component.decowatow.uwt.buiwdew
 
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ChildFeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorReportTweet
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.home_mixew.pwoduct.fowwowing.modew.homemixewextewnawstwings
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.icon
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.chiwdfeedbackaction
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wichbehaviow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wichfeedbackbehaviowwepowttweet
+impowt com.twittew.pwoduct_mixew.cowe.pwoduct.guice.scope.pwoductscoped
+impowt com.twittew.stwingcentew.cwient.stwingcentew
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-case class ReportTweetChildFeedbackActionBuilder @Inject() (
-  @ProductScoped stringCenter: StringCenter,
-  externalStrings: HomeMixerExternalStrings) {
+@singweton
+case cwass wepowttweetchiwdfeedbackactionbuiwdew @inject() (
+  @pwoductscoped stwingcentew: stwingcentew, rawr x3
+  e-extewnawstwings: homemixewextewnawstwings) {
 
-  def apply(
-    candidate: TweetCandidate
-  ): Option[ChildFeedbackAction] = {
-    Some(
-      ChildFeedbackAction(
-        feedbackType = RichBehavior,
-        prompt = Some(stringCenter.prepare(externalStrings.reportTweetString)),
-        confirmation = None,
-        feedbackUrl = None,
-        hasUndoAction = Some(true),
-        confirmationDisplayType = None,
-        clientEventInfo = None,
-        icon = Some(icon.Flag),
-        richBehavior = Some(RichFeedbackBehaviorReportTweet(candidate.id)),
-        subprompt = None
+  d-def appwy(
+    candidate: tweetcandidate
+  ): option[chiwdfeedbackaction] = {
+    some(
+      c-chiwdfeedbackaction(
+        feedbacktype = w-wichbehaviow, mya
+        p-pwompt = some(stwingcentew.pwepawe(extewnawstwings.wepowttweetstwing)), nyaa~~
+        confiwmation = nyone, (⑅˘꒳˘)
+        feedbackuww = n-nyone, rawr x3
+        hasundoaction = some(twue), (✿oωo)
+        confiwmationdispwaytype = nyone, (ˆ ﻌ ˆ)♡
+        c-cwienteventinfo = nyone, (˘ω˘)
+        i-icon = some(icon.fwag),
+        w-wichbehaviow = s-some(wichfeedbackbehaviowwepowttweet(candidate.id)),
+        s-subpwompt = nyone
       )
     )
   }

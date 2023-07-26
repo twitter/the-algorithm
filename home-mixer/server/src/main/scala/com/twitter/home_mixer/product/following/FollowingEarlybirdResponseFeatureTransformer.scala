@@ -1,38 +1,38 @@
-package com.twitter.home_mixer.candidate_pipeline
+package com.twittew.home_mixew.candidate_pipewine
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.search.earlybird.{thriftscala => t}
+impowt com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.inwepwytotweetidfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.iswetweetfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.souwcetweetidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.souwceusewidfeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twansfowmewidentifiew
+impowt com.twittew.seawch.eawwybiwd.{thwiftscawa => t}
 
-object FollowingEarlybirdResponseFeatureTransformer
-    extends CandidateFeatureTransformer[t.ThriftSearchResult] {
+object f-fowwowingeawwybiwdwesponsefeatuwetwansfowmew
+    extends candidatefeatuwetwansfowmew[t.thwiftseawchwesuwt] {
 
-  override val identifier: TransformerIdentifier =
-    TransformerIdentifier("FollowingEarlybirdResponse")
+  o-ovewwide vaw identifiew: twansfowmewidentifiew =
+    twansfowmewidentifiew("fowwowingeawwybiwdwesponse")
 
-  override val features: Set[Feature[_, _]] = Set(
-    AuthorIdFeature,
-    InReplyToTweetIdFeature,
-    IsRetweetFeature,
-    SourceTweetIdFeature,
-    SourceUserIdFeature,
+  ovewwide vaw featuwes: s-set[featuwe[_, (U ﹏ U) _]] = set(
+    a-authowidfeatuwe,
+    i-inwepwytotweetidfeatuwe, >_<
+    iswetweetfeatuwe, rawr x3
+    souwcetweetidfeatuwe, mya
+    souwceusewidfeatuwe, nyaa~~
   )
 
-  override def transform(candidate: t.ThriftSearchResult): FeatureMap = FeatureMapBuilder()
-    .add(AuthorIdFeature, candidate.tweetypieTweet.flatMap(_.coreData.map(_.userId)))
+  ovewwide def t-twansfowm(candidate: t.thwiftseawchwesuwt): featuwemap = featuwemapbuiwdew()
+    .add(authowidfeatuwe, (⑅˘꒳˘) candidate.tweetypietweet.fwatmap(_.cowedata.map(_.usewid)))
     .add(
-      InReplyToTweetIdFeature,
-      candidate.tweetypieTweet.flatMap(_.coreData.flatMap(_.reply.flatMap(_.inReplyToStatusId))))
-    .add(IsRetweetFeature, candidate.metadata.exists(_.isRetweet.contains(true)))
-    .add(SourceTweetIdFeature, candidate.sourceTweetypieTweet.map(_.id))
-    .add(SourceUserIdFeature, candidate.sourceTweetypieTweet.flatMap(_.coreData.map(_.userId)))
-    .build()
+      i-inwepwytotweetidfeatuwe, rawr x3
+      candidate.tweetypietweet.fwatmap(_.cowedata.fwatmap(_.wepwy.fwatmap(_.inwepwytostatusid))))
+    .add(iswetweetfeatuwe, (✿oωo) c-candidate.metadata.exists(_.iswetweet.contains(twue)))
+    .add(souwcetweetidfeatuwe, (ˆ ﻌ ˆ)♡ candidate.souwcetweetypietweet.map(_.id))
+    .add(souwceusewidfeatuwe, (˘ω˘) c-candidate.souwcetweetypietweet.fwatmap(_.cowedata.map(_.usewid)))
+    .buiwd()
 }

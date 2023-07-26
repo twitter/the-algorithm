@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.core.controllers
+package com.twittew.pwoduct_mixew.cowe.contwowwews
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.common.alert.NotificationGroup
-import com.twitter.product_mixer.core.functional_component.common.alert.Source
+impowt com.fastewxmw.jackson.annotation.jsonignowepwopewties
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.awewt
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.notificationgwoup
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.souwce
 
 /**
- * Simple representation for an [[Alert]] used for Product Mixer's JSON API, which in turn is
- * consumed by our monitoring script generation job and Turntable.
+ * simpwe w-wepwesentation f-fow an [[awewt]] u-used fow pwoduct m-mixew's json api, mya which in tuwn is
+ * consumed by ouw monitowing scwipt genewation j-job and tuwntabwe. 🥺
  *
- * @note not all mixers will upgrade at the same time so new fields should be added with backwards
- *       compatibility in mind.
+ * @note nyot aww m-mixews wiww upgwade at the same t-time so nyew fiewds shouwd be added with backwawds
+ *       compatibiwity i-in mind. >_<
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
-private[core] case class AlertConfig(
-  source: Source,
-  metricType: String,
-  notificationGroup: NotificationGroup,
-  warnPredicate: PredicateConfig,
-  criticalPredicate: PredicateConfig,
-  runbookLink: Option[String],
-  metricSuffix: Option[String])
+@jsonignowepwopewties(ignoweunknown = twue)
+pwivate[cowe] c-case cwass awewtconfig(
+  s-souwce: souwce, >_<
+  metwictype: stwing, (⑅˘꒳˘)
+  nyotificationgwoup: nyotificationgwoup, /(^•ω•^)
+  wawnpwedicate: p-pwedicateconfig, rawr x3
+  cwiticawpwedicate: pwedicateconfig, (U ﹏ U)
+  wunbookwink: option[stwing], (U ﹏ U)
+  m-metwicsuffix: option[stwing])
 
-private[core] object AlertConfig {
+p-pwivate[cowe] o-object awewtconfig {
 
-  /** Represent this [[Alert]] as an [[AlertConfig]] case class */
-  private[core] def apply(alert: Alert): AlertConfig =
-    AlertConfig(
-      alert.source,
-      alert.alertType.metricType,
-      alert.notificationGroup,
-      PredicateConfig(alert.warnPredicate),
-      PredicateConfig(alert.criticalPredicate),
-      alert.runbookLink,
-      alert.metricSuffix
+  /** wepwesent t-this [[awewt]] a-as an [[awewtconfig]] case cwass */
+  pwivate[cowe] d-def appwy(awewt: awewt): awewtconfig =
+    a-awewtconfig(
+      awewt.souwce, (⑅˘꒳˘)
+      awewt.awewttype.metwictype, òωó
+      awewt.notificationgwoup, ʘwʘ
+      pwedicateconfig(awewt.wawnpwedicate), /(^•ω•^)
+      pwedicateconfig(awewt.cwiticawpwedicate), ʘwʘ
+      awewt.wunbookwink, σωσ
+      a-awewt.metwicsuffix
     )
 }

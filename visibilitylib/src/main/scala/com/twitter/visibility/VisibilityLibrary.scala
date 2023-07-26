@@ -1,387 +1,387 @@
-package com.twitter.visibility
+package com.twittew.visibiwity
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.abdecider.NullABDecider
-import com.twitter.decider.Decider
-import com.twitter.decider.NullDecider
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.featureswitches.v2.NullFeatureSwitches
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.logging.NullLogger
-import com.twitter.servo.util.Gate
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Try
-import com.twitter.visibility.builder._
-import com.twitter.visibility.common.stitch.StitchHelpers
-import com.twitter.visibility.configapi.VisibilityParams
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.engine.DeciderableVisibilityRuleEngine
-import com.twitter.visibility.engine.VisibilityResultsMetricRecorder
-import com.twitter.visibility.engine.VisibilityRuleEngine
-import com.twitter.visibility.engine.VisibilityRulePreprocessor
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.Rule
-import com.twitter.visibility.rules.generators.TweetRuleGenerator
-import com.twitter.visibility.rules.providers.InjectedPolicyProvider
-import com.twitter.visibility.util.DeciderUtil
-import com.twitter.visibility.util.FeatureSwitchUtil
-import com.twitter.visibility.util.LoggingUtil
+impowt com.twittew.abdecidew.woggingabdecidew
+i-impowt c-com.twittew.abdecidew.nuwwabdecidew
+i-impowt com.twittew.decidew.decidew
+i-impowt c-com.twittew.decidew.nuwwdecidew
+i-impowt com.twittew.featuweswitches.v2.featuweswitches
+i-impowt com.twittew.featuweswitches.v2.nuwwfeatuweswitches
+i-impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.wogging.woggew
+impowt com.twittew.wogging.nuwwwoggew
+impowt c-com.twittew.sewvo.utiw.gate
+impowt com.twittew.sewvo.utiw.memoizingstatsweceivew
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.timewines.configapi.pawams
+impowt com.twittew.utiw.twy
+impowt c-com.twittew.visibiwity.buiwdew._
+impowt com.twittew.visibiwity.common.stitch.stitchhewpews
+impowt com.twittew.visibiwity.configapi.visibiwitypawams
+impowt c-com.twittew.visibiwity.configapi.configs.visibiwitydecidewgates
+impowt com.twittew.visibiwity.engine.decidewabwevisibiwitywuweengine
+i-impowt com.twittew.visibiwity.engine.visibiwitywesuwtsmetwicwecowdew
+i-impowt com.twittew.visibiwity.engine.visibiwitywuweengine
+impowt com.twittew.visibiwity.engine.visibiwitywuwepwepwocessow
+impowt com.twittew.visibiwity.featuwes.featuwemap
+impowt com.twittew.visibiwity.modews.contentid
+i-impowt com.twittew.visibiwity.modews.safetywevew
+impowt com.twittew.visibiwity.modews.viewewcontext
+impowt com.twittew.visibiwity.wuwes.evawuationcontext
+impowt com.twittew.visibiwity.wuwes.wuwe
+i-impowt com.twittew.visibiwity.wuwes.genewatows.tweetwuwegenewatow
+i-impowt c-com.twittew.visibiwity.wuwes.pwovidews.injectedpowicypwovidew
+i-impowt com.twittew.visibiwity.utiw.decidewutiw
+impowt c-com.twittew.visibiwity.utiw.featuweswitchutiw
+impowt com.twittew.visibiwity.utiw.woggingutiw
 
-object VisibilityLibrary {
+object visibiwitywibwawy {
 
-  object Builder {
+  o-object buiwdew {
 
-    def apply(log: Logger, statsReceiver: StatsReceiver): Builder = new Builder(
-      log,
-      new MemoizingStatsReceiver(statsReceiver)
+    def appwy(wog: woggew, ^•ﻌ•^ statsweceivew: s-statsweceivew): buiwdew = nyew buiwdew(
+      wog, (ꈍᴗꈍ)
+      nyew memoizingstatsweceivew(statsweceivew)
     )
   }
 
-  case class Builder(
-    log: Logger,
-    statsReceiver: StatsReceiver,
-    decider: Option[Decider] = None,
-    abDecider: Option[LoggingABDecider] = None,
-    featureSwitches: Option[FeatureSwitches] = None,
-    enableStitchProfiling: Gate[Unit] = Gate.False,
-    captureDebugStats: Gate[Unit] = Gate.False,
-    enableComposableActions: Gate[Unit] = Gate.False,
-    enableFailClosed: Gate[Unit] = Gate.False,
-    enableShortCircuiting: Gate[Unit] = Gate.True,
-    memoizeSafetyLevelParams: Gate[Unit] = Gate.False) {
+  case cwass buiwdew(
+    w-wog: woggew, (⑅˘꒳˘)
+    statsweceivew: s-statsweceivew, (⑅˘꒳˘)
+    d-decidew: o-option[decidew] = nyone,
+    abdecidew: option[woggingabdecidew] = nyone, (ˆ ﻌ ˆ)♡
+    f-featuweswitches: o-option[featuweswitches] = nyone, /(^•ω•^)
+    e-enabwestitchpwofiwing: g-gate[unit] = gate.fawse, òωó
+    c-captuwedebugstats: gate[unit] = g-gate.fawse, (⑅˘꒳˘)
+    enabwecomposabweactions: gate[unit] = g-gate.fawse, (U ᵕ U❁)
+    enabwefaiwcwosed: g-gate[unit] = gate.fawse,
+    e-enabweshowtciwcuiting: g-gate[unit] = gate.twue, >w<
+    memoizesafetywevewpawams: gate[unit] = gate.fawse) {
 
-    def withDecider(decider: Decider): Builder = copy(decider = Some(decider))
+    def withdecidew(decidew: d-decidew): b-buiwdew = copy(decidew = some(decidew))
 
-    @deprecated("use .withDecider and pass in a decider that is properly configured per DC")
-    def withDefaultDecider(isLocal: Boolean, useLocalOverrides: Boolean = false): Builder = {
-      if (isLocal) {
-        withLocalDecider
-      } else {
-        withDecider(
-          DeciderUtil.mkDecider(
-            useLocalDeciderOverrides = useLocalOverrides,
+    @depwecated("use .withdecidew a-and pass i-in a decidew t-that is pwopewwy configuwed pew dc")
+    def withdefauwtdecidew(iswocaw: boowean, σωσ u-usewocawuvwwides: boowean = fawse): buiwdew = {
+      if (iswocaw) {
+        withwocawdecidew
+      } e-ewse {
+        withdecidew(
+          decidewutiw.mkdecidew(
+            u-usewocawdecidewovewwides = u-usewocawuvwwides, -.-
           ))
       }
     }
 
-    def withLocalDecider(): Builder = withDecider(DeciderUtil.mkLocalDecider)
+    def w-withwocawdecidew(): buiwdew = w-withdecidew(decidewutiw.mkwocawdecidew)
 
-    def withNullDecider(): Builder =
-      withDecider(new NullDecider(isAvail = true, availabilityDefined = true))
+    d-def w-withnuwwdecidew(): b-buiwdew =
+      withdecidew(new nyuwwdecidew(isavaiw = t-twue, o.O a-avaiwabiwitydefined = t-twue))
 
-    def withABDecider(abDecider: LoggingABDecider, featureSwitches: FeatureSwitches): Builder =
-      abDecider match {
-        case abd: NullABDecider =>
-          copy(abDecider = Some(abd), featureSwitches = Some(NullFeatureSwitches))
+    d-def withabdecidew(abdecidew: w-woggingabdecidew, ^^ featuweswitches: featuweswitches): buiwdew =
+      a-abdecidew match {
+        case abd: nyuwwabdecidew =>
+          copy(abdecidew = some(abd), >_< featuweswitches = s-some(nuwwfeatuweswitches))
         case _ =>
           copy(
-            abDecider = Some(abDecider),
-            featureSwitches = Some(featureSwitches)
+            abdecidew = s-some(abdecidew), >w<
+            f-featuweswitches = s-some(featuweswitches)
           )
       }
 
-    def withABDecider(abDecider: LoggingABDecider): Builder = abDecider match {
-      case abd: NullABDecider =>
-        withABDecider(abDecider = abd, featureSwitches = NullFeatureSwitches)
+    def withabdecidew(abdecidew: w-woggingabdecidew): buiwdew = a-abdecidew match {
+      c-case abd: nyuwwabdecidew =>
+        withabdecidew(abdecidew = abd, >_< featuweswitches = nyuwwfeatuweswitches)
       case _ =>
-        withABDecider(
-          abDecider = abDecider,
-          featureSwitches =
-            FeatureSwitchUtil.mkVisibilityLibraryFeatureSwitches(abDecider, statsReceiver)
+        w-withabdecidew(
+          abdecidew = a-abdecidew, >w<
+          featuweswitches =
+            f-featuweswitchutiw.mkvisibiwitywibwawyfeatuweswitches(abdecidew, rawr s-statsweceivew)
         )
     }
 
-    def withClientEventsLogger(clientEventsLogger: Logger): Builder =
-      withABDecider(DeciderUtil.mkABDecider(Some(clientEventsLogger)))
+    def withcwienteventswoggew(cwienteventswoggew: woggew): b-buiwdew =
+      w-withabdecidew(decidewutiw.mkabdecidew(some(cwienteventswoggew)))
 
-    def withDefaultABDecider(isLocal: Boolean): Builder =
-      if (isLocal) {
-        withABDecider(NullABDecider)
-      } else {
-        withClientEventsLogger(LoggingUtil.mkDefaultLogger(statsReceiver))
+    def withdefauwtabdecidew(iswocaw: b-boowean): b-buiwdew =
+      if (iswocaw) {
+        withabdecidew(nuwwabdecidew)
+      } ewse {
+        withcwienteventswoggew(woggingutiw.mkdefauwtwoggew(statsweceivew))
       }
 
-    def withNullABDecider(): Builder = withABDecider(NullABDecider)
+    d-def w-withnuwwabdecidew(): b-buiwdew = withabdecidew(nuwwabdecidew)
 
-    def withEnableStitchProfiling(gate: Gate[Unit]): Builder =
-      copy(enableStitchProfiling = gate)
+    d-def withenabwestitchpwofiwing(gate: g-gate[unit]): buiwdew =
+      c-copy(enabwestitchpwofiwing = gate)
 
-    def withCaptureDebugStats(gate: Gate[Unit]): Builder =
-      copy(captureDebugStats = gate)
+    def withcaptuwedebugstats(gate: gate[unit]): buiwdew =
+      copy(captuwedebugstats = g-gate)
 
-    def withEnableComposableActions(gate: Gate[Unit]): Builder =
-      copy(enableComposableActions = gate)
+    def w-withenabwecomposabweactions(gate: gate[unit]): buiwdew =
+      copy(enabwecomposabweactions = gate)
 
-    def withEnableComposableActions(gateBoolean: Boolean): Builder = {
-      val gate = Gate.const(gateBoolean)
-      copy(enableComposableActions = gate)
+    d-def withenabwecomposabweactions(gateboowean: b-boowean): buiwdew = {
+      vaw gate = gate.const(gateboowean)
+      copy(enabwecomposabweactions = g-gate)
     }
 
-    def withEnableFailClosed(gate: Gate[Unit]): Builder =
-      copy(enableFailClosed = gate)
+    def withenabwefaiwcwosed(gate: gate[unit]): buiwdew =
+      copy(enabwefaiwcwosed = gate)
 
-    def withEnableFailClosed(gateBoolean: Boolean): Builder = {
-      val gate = Gate.const(gateBoolean)
-      copy(enableFailClosed = gate)
+    d-def withenabwefaiwcwosed(gateboowean: boowean): buiwdew = {
+      vaw g-gate = gate.const(gateboowean)
+      c-copy(enabwefaiwcwosed = gate)
     }
 
-    def withEnableShortCircuiting(gate: Gate[Unit]): Builder =
-      copy(enableShortCircuiting = gate)
+    def withenabweshowtciwcuiting(gate: g-gate[unit]): buiwdew =
+      copy(enabweshowtciwcuiting = g-gate)
 
-    def withEnableShortCircuiting(gateBoolean: Boolean): Builder = {
-      val gate = Gate.const(gateBoolean)
-      copy(enableShortCircuiting = gate)
+    def withenabweshowtciwcuiting(gateboowean: boowean): buiwdew = {
+      vaw g-gate = gate.const(gateboowean)
+      copy(enabweshowtciwcuiting = g-gate)
     }
 
-    def memoizeSafetyLevelParams(gate: Gate[Unit]): Builder =
-      copy(memoizeSafetyLevelParams = gate)
+    def memoizesafetywevewpawams(gate: gate[unit]): buiwdew =
+      c-copy(memoizesafetywevewpawams = gate)
 
-    def memoizeSafetyLevelParams(gateBoolean: Boolean): Builder = {
-      val gate = Gate.const(gateBoolean)
-      copy(memoizeSafetyLevelParams = gate)
+    d-def memoizesafetywevewpawams(gateboowean: b-boowean): buiwdew = {
+      v-vaw gate = gate.const(gateboowean)
+      copy(memoizesafetywevewpawams = gate)
     }
 
-    def build(): VisibilityLibrary = {
+    d-def buiwd(): visibiwitywibwawy = {
 
-      (decider, abDecider, featureSwitches) match {
-        case (None, _, _) =>
-          throw new IllegalStateException(
-            "Decider is unset! If intentional, please call .withNullDecider()."
+      (decidew, a-abdecidew, rawr x3 featuweswitches) m-match {
+        case (none, ( ͡o ω ͡o ) _, _) =>
+          thwow n-nyew iwwegawstateexception(
+            "decidew i-is unset! (˘ω˘) if intentionaw, 😳 pwease caww .withnuwwdecidew()."
           )
 
-        case (_, None, _) =>
-          throw new IllegalStateException(
-            "ABDecider is unset! If intentional, please call .withNullABDecider()."
+        c-case (_, OwO nyone, _) =>
+          t-thwow nyew i-iwwegawstateexception(
+            "abdecidew is unset! (˘ω˘) if intentionaw, òωó pwease c-caww .withnuwwabdecidew()."
           )
 
-        case (_, _, None) =>
-          throw new IllegalStateException(
-            "FeatureSwitches is unset! This is a bug."
+        case (_, ( ͡o ω ͡o ) _, nyone) =>
+          t-thwow nyew iwwegawstateexception(
+            "featuweswitches i-is unset! UwU this is a bug."
           )
 
-        case (Some(d), Some(abd), Some(fs)) =>
-          new VisibilityLibrary(
-            statsReceiver,
-            d,
-            abd,
-            VisibilityParams(log, statsReceiver, d, abd, fs),
-            enableStitchProfiling = enableStitchProfiling,
-            captureDebugStats = captureDebugStats,
-            enableComposableActions = enableComposableActions,
-            enableFailClosed = enableFailClosed,
-            enableShortCircuiting = enableShortCircuiting,
-            memoizeSafetyLevelParams = memoizeSafetyLevelParams)
+        case (some(d), /(^•ω•^) some(abd), (ꈍᴗꈍ) some(fs)) =>
+          n-nyew visibiwitywibwawy(
+            s-statsweceivew, 😳
+            d, mya
+            a-abd, mya
+            visibiwitypawams(wog, /(^•ω•^) s-statsweceivew, ^^;; d, abd, 🥺 fs),
+            e-enabwestitchpwofiwing = enabwestitchpwofiwing, ^^
+            captuwedebugstats = captuwedebugstats, ^•ﻌ•^
+            enabwecomposabweactions = enabwecomposabweactions, /(^•ω•^)
+            e-enabwefaiwcwosed = enabwefaiwcwosed, ^^
+            e-enabweshowtciwcuiting = enabweshowtciwcuiting, 🥺
+            m-memoizesafetywevewpawams = memoizesafetywevewpawams)
       }
     }
   }
 
-  val nullDecider = new NullDecider(true, true)
+  v-vaw nyuwwdecidew = nyew nyuwwdecidew(twue, (U ᵕ U❁) t-twue)
 
-  lazy val NullLibrary: VisibilityLibrary = new VisibilityLibrary(
-    NullStatsReceiver,
-    nullDecider,
-    NullABDecider,
-    VisibilityParams(
-      NullLogger,
-      NullStatsReceiver,
-      nullDecider,
-      NullABDecider,
-      NullFeatureSwitches),
-    enableStitchProfiling = Gate.False,
-    captureDebugStats = Gate.False,
-    enableComposableActions = Gate.False,
-    enableFailClosed = Gate.False,
-    enableShortCircuiting = Gate.True,
-    memoizeSafetyLevelParams = Gate.False
+  w-wazy vaw nyuwwwibwawy: v-visibiwitywibwawy = nyew v-visibiwitywibwawy(
+    n-nyuwwstatsweceivew, 😳😳😳
+    nyuwwdecidew, nyaa~~
+    nuwwabdecidew,
+    visibiwitypawams(
+      nyuwwwoggew, (˘ω˘)
+      nyuwwstatsweceivew, >_<
+      nyuwwdecidew, XD
+      n-nyuwwabdecidew, rawr x3
+      n-nyuwwfeatuweswitches), ( ͡o ω ͡o )
+    e-enabwestitchpwofiwing = gate.fawse, :3
+    c-captuwedebugstats = gate.fawse, mya
+    enabwecomposabweactions = gate.fawse, σωσ
+    e-enabwefaiwcwosed = g-gate.fawse, (ꈍᴗꈍ)
+    enabweshowtciwcuiting = g-gate.twue, OwO
+    memoizesafetywevewpawams = gate.fawse
   )
 }
 
-class VisibilityLibrary private[VisibilityLibrary] (
-  baseStatsReceiver: StatsReceiver,
-  decider: Decider,
-  abDecider: LoggingABDecider,
-  visibilityParams: VisibilityParams,
-  enableStitchProfiling: Gate[Unit],
-  captureDebugStats: Gate[Unit],
-  enableComposableActions: Gate[Unit],
-  enableFailClosed: Gate[Unit],
-  enableShortCircuiting: Gate[Unit],
-  memoizeSafetyLevelParams: Gate[Unit]) {
+cwass v-visibiwitywibwawy p-pwivate[visibiwitywibwawy] (
+  basestatsweceivew: s-statsweceivew, o.O
+  d-decidew: decidew, 😳😳😳
+  abdecidew: woggingabdecidew, /(^•ω•^)
+  visibiwitypawams: visibiwitypawams, OwO
+  enabwestitchpwofiwing: g-gate[unit], ^^
+  c-captuwedebugstats: g-gate[unit], (///ˬ///✿)
+  e-enabwecomposabweactions: g-gate[unit], (///ˬ///✿)
+  enabwefaiwcwosed: g-gate[unit], (///ˬ///✿)
+  e-enabweshowtciwcuiting: gate[unit], ʘwʘ
+  m-memoizesafetywevewpawams: gate[unit]) {
 
-  val statsReceiver: StatsReceiver =
-    new MemoizingStatsReceiver(baseStatsReceiver.scope("visibility_library"))
+  v-vaw statsweceivew: statsweceivew =
+    n-nyew memoizingstatsweceivew(basestatsweceivew.scope("visibiwity_wibwawy"))
 
-  val metricsRecorder = VisibilityResultsMetricRecorder(statsReceiver, captureDebugStats)
+  vaw metwicswecowdew = visibiwitywesuwtsmetwicwecowdew(statsweceivew, c-captuwedebugstats)
 
-  val visParams: VisibilityParams = visibilityParams
+  vaw vispawams: visibiwitypawams = v-visibiwitypawams
 
-  val visibilityDeciderGates = VisibilityDeciderGates(decider)
+  v-vaw visibiwitydecidewgates = visibiwitydecidewgates(decidew)
 
-  val profileStats: MemoizingStatsReceiver = new MemoizingStatsReceiver(
-    statsReceiver.scope("profiling"))
+  v-vaw pwofiwestats: memoizingstatsweceivew = nyew memoizingstatsweceivew(
+    s-statsweceivew.scope("pwofiwing"))
 
-  val perSafetyLevelProfileStats: StatsReceiver = profileStats.scope("for_safety_level")
+  v-vaw pewsafetywevewpwofiwestats: s-statsweceivew = pwofiwestats.scope("fow_safety_wevew")
 
-  val featureMapBuilder: FeatureMapBuilder.Build =
-    FeatureMapBuilder(statsReceiver, enableStitchProfiling)
+  vaw featuwemapbuiwdew: featuwemapbuiwdew.buiwd =
+    f-featuwemapbuiwdew(statsweceivew, ^•ﻌ•^ enabwestitchpwofiwing)
 
-  private lazy val tweetRuleGenerator = new TweetRuleGenerator()
-  lazy val policyProvider = new InjectedPolicyProvider(
-    visibilityDeciderGates = visibilityDeciderGates,
-    tweetRuleGenerator = tweetRuleGenerator)
+  pwivate wazy vaw t-tweetwuwegenewatow = n-nyew tweetwuwegenewatow()
+  wazy vaw powicypwovidew = n-new injectedpowicypwovidew(
+    v-visibiwitydecidewgates = v-visibiwitydecidewgates, OwO
+    tweetwuwegenewatow = tweetwuwegenewatow)
 
-  val candidateVisibilityRulePreprocessor: VisibilityRulePreprocessor = VisibilityRulePreprocessor(
-    metricsRecorder,
-    policyProviderOpt = Some(policyProvider)
+  v-vaw candidatevisibiwitywuwepwepwocessow: visibiwitywuwepwepwocessow = v-visibiwitywuwepwepwocessow(
+    m-metwicswecowdew, (U ﹏ U)
+    powicypwovidewopt = s-some(powicypwovidew)
   )
 
-  val fallbackVisibilityRulePreprocessor: VisibilityRulePreprocessor = VisibilityRulePreprocessor(
-    metricsRecorder)
+  vaw fawwbackvisibiwitywuwepwepwocessow: v-visibiwitywuwepwepwocessow = v-visibiwitywuwepwepwocessow(
+    m-metwicswecowdew)
 
-  lazy val candidateVisibilityRuleEngine: VisibilityRuleEngine = VisibilityRuleEngine(
-    Some(candidateVisibilityRulePreprocessor),
-    metricsRecorder,
-    enableComposableActions,
-    enableFailClosed,
-    policyProviderOpt = Some(policyProvider)
+  wazy vaw candidatevisibiwitywuweengine: visibiwitywuweengine = visibiwitywuweengine(
+    some(candidatevisibiwitywuwepwepwocessow), (ˆ ﻌ ˆ)♡
+    metwicswecowdew, (⑅˘꒳˘)
+    enabwecomposabweactions, (U ﹏ U)
+    enabwefaiwcwosed, o.O
+    powicypwovidewopt = some(powicypwovidew)
   )
 
-  lazy val fallbackVisibilityRuleEngine: VisibilityRuleEngine = VisibilityRuleEngine(
-    Some(fallbackVisibilityRulePreprocessor),
-    metricsRecorder,
-    enableComposableActions,
-    enableFailClosed)
+  wazy vaw fawwbackvisibiwitywuweengine: visibiwitywuweengine = visibiwitywuweengine(
+    some(fawwbackvisibiwitywuwepwepwocessow), mya
+    m-metwicswecowdew, XD
+    e-enabwecomposabweactions, òωó
+    enabwefaiwcwosed)
 
-  val ruleEngineVersionStatsReceiver = statsReceiver.scope("rule_engine_version")
-  def isReleaseCandidateEnabled: Boolean = visibilityDeciderGates.enableExperimentalRuleEngine()
+  vaw wuweenginevewsionstatsweceivew = s-statsweceivew.scope("wuwe_engine_vewsion")
+  d-def isweweasecandidateenabwed: b-boowean = visibiwitydecidewgates.enabweexpewimentawwuweengine()
 
-  private def visibilityRuleEngine: DeciderableVisibilityRuleEngine = {
-    if (isReleaseCandidateEnabled) {
-      ruleEngineVersionStatsReceiver.counter("release_candidate").incr()
-      candidateVisibilityRuleEngine
-    } else {
-      ruleEngineVersionStatsReceiver.counter("fallback").incr()
-      fallbackVisibilityRuleEngine
+  pwivate def visibiwitywuweengine: d-decidewabwevisibiwitywuweengine = {
+    if (isweweasecandidateenabwed) {
+      w-wuweenginevewsionstatsweceivew.countew("wewease_candidate").incw()
+      c-candidatevisibiwitywuweengine
+    } ewse {
+      wuweenginevewsionstatsweceivew.countew("fawwback").incw()
+      f-fawwbackvisibiwitywuweengine
     }
   }
 
-  private def profileStitch[A](result: Stitch[A], safetyLevelName: String): Stitch[A] =
-    if (enableStitchProfiling()) {
-      StitchHelpers.profileStitch(
-        result,
-        Seq(profileStats, perSafetyLevelProfileStats.scope(safetyLevelName))
+  pwivate d-def pwofiwestitch[a](wesuwt: s-stitch[a], (˘ω˘) safetywevewname: stwing): s-stitch[a] =
+    i-if (enabwestitchpwofiwing()) {
+      s-stitchhewpews.pwofiwestitch(
+        w-wesuwt,
+        s-seq(pwofiwestats, :3 p-pewsafetywevewpwofiwestats.scope(safetywevewname))
       )
-    } else {
-      result
+    } ewse {
+      w-wesuwt
     }
 
-  def getParams(viewerContext: ViewerContext, safetyLevel: SafetyLevel): Params = {
-    if (memoizeSafetyLevelParams()) {
-      visibilityParams.memoized(viewerContext, safetyLevel)
-    } else {
-      visibilityParams(viewerContext, safetyLevel)
+  d-def g-getpawams(viewewcontext: viewewcontext, OwO s-safetywevew: s-safetywevew): p-pawams = {
+    if (memoizesafetywevewpawams()) {
+      v-visibiwitypawams.memoized(viewewcontext, mya safetywevew)
+    } ewse {
+      v-visibiwitypawams(viewewcontext, (˘ω˘) safetywevew)
     }
   }
 
-  def evaluationContextBuilder(viewerContext: ViewerContext): EvaluationContext.Builder =
-    EvaluationContext
-      .Builder(statsReceiver, visibilityParams, viewerContext)
-      .withMemoizedParams(memoizeSafetyLevelParams)
+  d-def e-evawuationcontextbuiwdew(viewewcontext: v-viewewcontext): evawuationcontext.buiwdew =
+    e-evawuationcontext
+      .buiwdew(statsweceivew, o.O visibiwitypawams, (✿oωo) v-viewewcontext)
+      .withmemoizedpawams(memoizesafetywevewpawams)
 
-  def runRuleEngine(
-    contentId: ContentId,
-    featureMap: FeatureMap,
-    evaluationContextBuilder: EvaluationContext.Builder,
-    safetyLevel: SafetyLevel
-  ): Stitch[VisibilityResult] =
-    profileStitch(
-      visibilityRuleEngine(
-        evaluationContextBuilder.build(safetyLevel),
-        safetyLevel,
-        new VisibilityResultBuilder(contentId, featureMap),
-        enableShortCircuiting
-      ),
-      safetyLevel.name
+  def wunwuweengine(
+    c-contentid: contentid, (ˆ ﻌ ˆ)♡
+    f-featuwemap: featuwemap, ^^;;
+    evawuationcontextbuiwdew: evawuationcontext.buiwdew, OwO
+    safetywevew: safetywevew
+  ): s-stitch[visibiwitywesuwt] =
+    pwofiwestitch(
+      v-visibiwitywuweengine(
+        e-evawuationcontextbuiwdew.buiwd(safetywevew), 🥺
+        safetywevew, mya
+        nyew visibiwitywesuwtbuiwdew(contentid, 😳 featuwemap), òωó
+        e-enabweshowtciwcuiting
+      ), /(^•ω•^)
+      safetywevew.name
     )
 
-  def runRuleEngine(
-    contentId: ContentId,
-    featureMap: FeatureMap,
-    viewerContext: ViewerContext,
-    safetyLevel: SafetyLevel
-  ): Stitch[VisibilityResult] =
-    profileStitch(
-      visibilityRuleEngine(
-        EvaluationContext(safetyLevel, getParams(viewerContext, safetyLevel), statsReceiver),
-        safetyLevel,
-        new VisibilityResultBuilder(contentId, featureMap),
-        enableShortCircuiting
-      ),
-      safetyLevel.name
+  d-def w-wunwuweengine(
+    c-contentid: contentid, -.-
+    featuwemap: featuwemap, òωó
+    v-viewewcontext: v-viewewcontext, /(^•ω•^)
+    safetywevew: s-safetywevew
+  ): stitch[visibiwitywesuwt] =
+    pwofiwestitch(
+      v-visibiwitywuweengine(
+        evawuationcontext(safetywevew, /(^•ω•^) g-getpawams(viewewcontext, 😳 s-safetywevew), :3 s-statsweceivew), (U ᵕ U❁)
+        safetywevew, ʘwʘ
+        nyew v-visibiwitywesuwtbuiwdew(contentid, o.O f-featuwemap), ʘwʘ
+        e-enabweshowtciwcuiting
+      ), ^^
+      s-safetywevew.name
     )
 
-  def runRuleEngine(
-    viewerContext: ViewerContext,
-    safetyLevel: SafetyLevel,
-    preprocessedResultBuilder: VisibilityResultBuilder,
-    preprocessedRules: Seq[Rule]
-  ): Stitch[VisibilityResult] =
-    profileStitch(
-      visibilityRuleEngine(
-        EvaluationContext(safetyLevel, getParams(viewerContext, safetyLevel), statsReceiver),
-        safetyLevel,
-        preprocessedResultBuilder,
-        enableShortCircuiting,
-        Some(preprocessedRules)
+  def wunwuweengine(
+    v-viewewcontext: v-viewewcontext, ^•ﻌ•^
+    s-safetywevew: s-safetywevew, mya
+    p-pwepwocessedwesuwtbuiwdew: v-visibiwitywesuwtbuiwdew, UwU
+    p-pwepwocessedwuwes: s-seq[wuwe]
+  ): stitch[visibiwitywesuwt] =
+    p-pwofiwestitch(
+      visibiwitywuweengine(
+        e-evawuationcontext(safetywevew, >_< getpawams(viewewcontext, /(^•ω•^) s-safetywevew), òωó s-statsweceivew), σωσ
+        s-safetywevew, ( ͡o ω ͡o )
+        pwepwocessedwesuwtbuiwdew, nyaa~~
+        enabweshowtciwcuiting, :3
+        some(pwepwocessedwuwes)
       ),
-      safetyLevel.name
+      s-safetywevew.name
     )
 
-  def runRuleEngineBatch(
-    contentIds: Seq[ContentId],
-    featureMapProvider: (ContentId, SafetyLevel) => FeatureMap,
-    viewerContext: ViewerContext,
-    safetyLevel: SafetyLevel,
-  ): Stitch[Seq[Try[VisibilityResult]]] = {
-    val params = getParams(viewerContext, safetyLevel)
-    profileStitch(
-      Stitch.traverse(contentIds) { contentId =>
-        visibilityRuleEngine(
-          EvaluationContext(safetyLevel, params, NullStatsReceiver),
-          safetyLevel,
-          new VisibilityResultBuilder(contentId, featureMapProvider(contentId, safetyLevel)),
-          enableShortCircuiting
-        ).liftToTry
+  d-def wunwuweenginebatch(
+    c-contentids: seq[contentid], UwU
+    featuwemappwovidew: (contentid, o.O safetywevew) => featuwemap, (ˆ ﻌ ˆ)♡
+    v-viewewcontext: viewewcontext, ^^;;
+    s-safetywevew: safetywevew, ʘwʘ
+  ): stitch[seq[twy[visibiwitywesuwt]]] = {
+    v-vaw p-pawams = getpawams(viewewcontext, σωσ safetywevew)
+    pwofiwestitch(
+      stitch.twavewse(contentids) { c-contentid =>
+        v-visibiwitywuweengine(
+          e-evawuationcontext(safetywevew, ^^;; p-pawams, ʘwʘ nyuwwstatsweceivew), ^^
+          safetywevew,
+          n-nyew visibiwitywesuwtbuiwdew(contentid, nyaa~~ f-featuwemappwovidew(contentid, (///ˬ///✿) safetywevew)), XD
+          enabweshowtciwcuiting
+        ).wifttotwy
       },
-      safetyLevel.name
+      s-safetywevew.name
     )
   }
 
-  def runRuleEngineBatch(
-    contentIds: Seq[ContentId],
-    featureMapProvider: (ContentId, SafetyLevel) => FeatureMap,
-    evaluationContextBuilder: EvaluationContext.Builder,
-    safetyLevel: SafetyLevel
-  ): Stitch[Seq[Try[VisibilityResult]]] = {
-    val evaluationContext = evaluationContextBuilder.build(safetyLevel)
-    profileStitch(
-      Stitch.traverse(contentIds) { contentId =>
-        visibilityRuleEngine(
-          evaluationContext,
-          safetyLevel,
-          new VisibilityResultBuilder(contentId, featureMapProvider(contentId, safetyLevel)),
-          enableShortCircuiting
-        ).liftToTry
-      },
-      safetyLevel.name
+  def wunwuweenginebatch(
+    c-contentids: seq[contentid],
+    f-featuwemappwovidew: (contentid, :3 s-safetywevew) => featuwemap, òωó
+    e-evawuationcontextbuiwdew: e-evawuationcontext.buiwdew, ^^
+    safetywevew: s-safetywevew
+  ): stitch[seq[twy[visibiwitywesuwt]]] = {
+    v-vaw e-evawuationcontext = e-evawuationcontextbuiwdew.buiwd(safetywevew)
+    p-pwofiwestitch(
+      stitch.twavewse(contentids) { c-contentid =>
+        v-visibiwitywuweengine(
+          e-evawuationcontext, ^•ﻌ•^
+          safetywevew, σωσ
+          n-nyew visibiwitywesuwtbuiwdew(contentid, (ˆ ﻌ ˆ)♡ featuwemappwovidew(contentid, nyaa~~ safetywevew)), ʘwʘ
+          enabweshowtciwcuiting
+        ).wifttotwy
+      }, ^•ﻌ•^
+      s-safetywevew.name
     )
   }
 }

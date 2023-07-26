@@ -1,47 +1,47 @@
-package com.twitter.product_mixer.core.functional_component.gate
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.gate
 
 /**
- * A [[Gate]] controls if a pipeline or other component is executed.
+ * a [[gate]] c-contwows if a p-pipewine ow othew c-component is e-exekawaii~d. o.O
  *
- * Application logic should usually use `GateResult.continue: Boolean` to interpret a GateResult. `continue` will be
- * true if we should continue with execution, and false if we should stop.
+ * a-appwication wogic s-shouwd usuawwy u-use `gatewesuwt.continue: b-boowean` to intewpwet a gatewesuwt. ( ͡o ω ͡o ) `continue` wiww be
+ * twue if w-we shouwd continue with execution, (U ﹏ U) and fawse if w-we shouwd stop. (///ˬ///✿)
  *
- * You can case match against the `GateResult` to understand how exactly execution happened. See `object GateResult`
- * below, but this is useful if you want to know if we are continuing due to the skip or main predicates.
+ * you can case m-match against the `gatewesuwt` to undewstand how exactwy execution h-happened. >w< see `object gatewesuwt`
+ * b-bewow, rawr b-but this is usefuw if you want to know if we awe continuing due to the skip ow m-main pwedicates.
  */
-sealed trait GateResult {
+seawed twait gatewesuwt {
 
-  /** Should we continue? */
-  val continue: Boolean
+  /** shouwd we continue? */
+  v-vaw continue: boowean
 }
 
-object GateResult {
+object g-gatewesuwt {
 
   /**
-   * Continue Execution
+   * c-continue e-execution
    *
-   * the Skip predicate evaluated to true,
-   * so we Skipped execution of the Main predicate and should continue
+   * t-the skip pwedicate evawuated to twue, mya
+   * s-so we skipped execution of the main pwedicate and s-shouwd continue
    */
-  case object Skipped extends GateResult {
-    override val continue = true
+  case object skipped extends gatewesuwt {
+    ovewwide vaw continue = t-twue
   }
 
   /**
-   * Continue Execution
+   * continue execution
    *
-   * the main predicate evaluated to true
+   * t-the main pwedicate e-evawuated to t-twue
    */
-  case object Continue extends GateResult {
-    override val continue = true
+  case object continue extends gatewesuwt {
+    ovewwide v-vaw continue = t-twue
   }
 
   /**
-   * Stop execution
+   * stop execution
    *
-   * the main predicate evaluated to false
+   * t-the main pwedicate e-evawuated to fawse
    */
-  case object Stop extends GateResult {
-    override val continue = false
+  c-case object stop extends gatewesuwt {
+    o-ovewwide vaw continue = fawse
   }
 }

@@ -1,31 +1,31 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow.serving;
-option cc_enable_arenas = true;
+package tensowfwow.sewving;
+option cc_enabwe_awenas = t-twue;
 
-import "tensorflow_serving/apis/classification.proto";
-import "tensorflow_serving/apis/get_model_metadata.proto";
-import "tensorflow_serving/apis/inference.proto";
-import "tensorflow_serving/apis/predict.proto";
-import "tensorflow_serving/apis/regression.proto";
+i-impowt "tensowfwow_sewving/apis/cwassification.pwoto";
+i-impowt "tensowfwow_sewving/apis/get_modew_metadata.pwoto";
+i-impowt "tensowfwow_sewving/apis/infewence.pwoto";
+i-impowt "tensowfwow_sewving/apis/pwedict.pwoto";
+i-impowt "tensowfwow_sewving/apis/wegwession.pwoto";
 
-// open source marker; do not remove
-// PredictionService provides access to machine-learned models loaded by
-// model_servers.
-service PredictionService {
-  // Classify.
-  rpc Classify(ClassificationRequest) returns (ClassificationResponse);
+// o-open s-souwce mawkew; do nyot wemove
+// pwedictionsewvice pwovides access to machine-weawned m-modews woaded by
+// modew_sewvews. (U ﹏ U)
+sewvice p-pwedictionsewvice {
+  // cwassify. >_<
+  w-wpc cwassify(cwassificationwequest) wetuwns (cwassificationwesponse);
 
-  // Regress.
-  rpc Regress(RegressionRequest) returns (RegressionResponse);
+  // wegwess. rawr x3
+  wpc wegwess(wegwessionwequest) w-wetuwns (wegwessionwesponse);
 
-  // Predict -- provides access to loaded TensorFlow model.
-  rpc Predict(PredictRequest) returns (PredictResponse);
+  // pwedict -- pwovides a-access to woaded t-tensowfwow modew. mya
+  wpc pwedict(pwedictwequest) wetuwns (pwedictwesponse);
 
-  // MultiInference API for multi-headed models.
-  rpc MultiInference(MultiInferenceRequest) returns (MultiInferenceResponse);
+  // muwtiinfewence api fow muwti-headed m-modews.
+  wpc muwtiinfewence(muwtiinfewencewequest) wetuwns (muwtiinfewencewesponse);
 
-  // GetModelMetadata - provides access to metadata for loaded models.
-  rpc GetModelMetadata(GetModelMetadataRequest)
-      returns (GetModelMetadataResponse);
+  // getmodewmetadata - pwovides a-access to metadata fow woaded m-modews. nyaa~~
+  wpc getmodewmetadata(getmodewmetadatawequest)
+      w-wetuwns (getmodewmetadatawesponse);
 }

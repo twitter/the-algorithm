@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tile
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tiwe
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.BadgeMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.StandardTileContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.badgemawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tiwe.standawdtiwecontent
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class StandardTileContentMarshaller @Inject() (
-  badgeMarshaller: BadgeMarshaller) {
+@singweton
+c-cwass standawdtiwecontentmawshawwew @inject() (
+  badgemawshawwew: badgemawshawwew) {
 
-  def apply(standardTileContent: StandardTileContent): urt.TileContentStandard =
-    urt.TileContentStandard(
-      title = standardTileContent.title,
-      supportingText = standardTileContent.supportingText,
-      badge = standardTileContent.badge.map(badgeMarshaller(_))
+  def appwy(standawdtiwecontent: s-standawdtiwecontent): uwt.tiwecontentstandawd =
+    uwt.tiwecontentstandawd(
+      t-titwe = standawdtiwecontent.titwe, (ˆ ﻌ ˆ)♡
+      suppowtingtext = standawdtiwecontent.suppowtingtext, (⑅˘꒳˘)
+      b-badge = standawdtiwecontent.badge.map(badgemawshawwew(_))
     )
 }

@@ -1,9 +1,9 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [],
-    exports = [],
+scawa_wibwawy(
+    souwces = ["*.scawa"], òωó
+    compiwew_option_sets = ["fataw_wawnings"], o.O
+    p-pwatfowm = "java8", (U ᵕ U❁)
+    s-stwict_deps = t-twue, (⑅˘꒳˘)
+    tags = ["bazew-compatibwe"], ( ͡o ω ͡o )
+    d-dependencies = [], UwU
+    e-expowts = [], rawr x3
 )

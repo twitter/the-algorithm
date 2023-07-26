@@ -1,24 +1,24 @@
-package com.twitter.search.earlybird_root.caching;
+package com.twittew.seawch.eawwybiwd_woot.caching;
 
-import com.twitter.search.common.caching.filter.QueryCachePredicate;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
+impowt com.twittew.seawch.common.caching.fiwtew.quewycachepwedicate;
+i-impowt com.twittew.seawch.common.decidew.seawchdecidew;
+i-impowt com.twittew.seawch.eawwybiwd.common.eawwybiwdwequestutiw;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+i-impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequesttype;
 
-public class RecencyQueryCachePredicate extends QueryCachePredicate<EarlybirdRequestContext> {
-  private final SearchDecider decider;
-  private final String recencyCacheEnabledDeciderKey;
+p-pubwic cwass wecencyquewycachepwedicate e-extends q-quewycachepwedicate<eawwybiwdwequestcontext> {
+  pwivate finaw seawchdecidew decidew;
+  pwivate finaw stwing wecencycacheenabweddecidewkey;
 
-  public RecencyQueryCachePredicate(SearchDecider decider, String normalizedSearchRootName) {
-    this.decider = decider;
-    this.recencyCacheEnabledDeciderKey = "recency_cache_enabled_" + normalizedSearchRootName;
+  p-pubwic wecencyquewycachepwedicate(seawchdecidew decidew, mya stwing nyowmawizedseawchwootname) {
+    t-this.decidew = decidew;
+    this.wecencycacheenabweddecidewkey = "wecency_cache_enabwed_" + n-nyowmawizedseawchwootname;
   }
 
-  @Override
-  public Boolean shouldQueryCache(EarlybirdRequestContext request) {
-    return EarlybirdRequestType.RECENCY == request.getEarlybirdRequestType()
-        && EarlybirdRequestUtil.isCachingAllowed(request.getRequest())
-        && decider.isAvailable(recencyCacheEnabledDeciderKey);
+  @ovewwide
+  pubwic boowean shouwdquewycache(eawwybiwdwequestcontext wequest) {
+    w-wetuwn eawwybiwdwequesttype.wecency == wequest.geteawwybiwdwequesttype()
+        && e-eawwybiwdwequestutiw.iscachingawwowed(wequest.getwequest())
+        && d-decidew.isavaiwabwe(wecencycacheenabweddecidewkey);
   }
 }

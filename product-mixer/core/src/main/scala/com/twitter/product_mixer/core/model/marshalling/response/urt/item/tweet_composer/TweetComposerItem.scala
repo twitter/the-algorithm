@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet_composer
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tweet_composew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.uww
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.entwynamespace
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineitem
 
-object TweetComposerItem {
-  val TweetComposerEntryNameSpace = EntryNamespace("tweetcomposer")
+object tweetcomposewitem {
+  vaw tweetcomposewentwynamespace = entwynamespace("tweetcomposew")
 }
 
-case class TweetComposerItem(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  displayType: TweetComposerDisplayType,
-  text: String,
-  url: Url)
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace = TweetComposerItem.TweetComposerEntryNameSpace
+case cwass t-tweetcomposewitem(
+  ovewwide vaw id: wong,
+  o-ovewwide vaw sowtindex: option[wong], rawr x3
+  o-ovewwide vaw cwienteventinfo: option[cwienteventinfo], nyaa~~
+  ovewwide vaw feedbackactioninfo: o-option[feedbackactioninfo], /(^•ω•^)
+  dispwaytype: tweetcomposewdispwaytype, rawr
+  t-text: stwing, OwO
+  u-uww: uww)
+    extends timewineitem {
+  ovewwide vaw entwynamespace: entwynamespace = tweetcomposewitem.tweetcomposewentwynamespace
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  ovewwide d-def withsowtindex(sowtindex: wong): timewineentwy = copy(sowtindex = some(sowtindex))
 }

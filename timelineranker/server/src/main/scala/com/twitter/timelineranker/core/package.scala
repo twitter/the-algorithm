@@ -1,13 +1,13 @@
-package com.twitter.timelineranker
+package com.twittew.timewinewankew
 
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelines.configapi
+impowt com.twittew.timewinewankew.modew.wecapquewy
+i-impowt com.twittew.timewines.configapi
 
-package object core {
-  type FutureDependencyTransformer[-U, +V] = configapi.FutureDependencyTransformer[RecapQuery, U, V]
-  object FutureDependencyTransformer
-      extends configapi.FutureDependencyTransformerFunctions[RecapQuery]
+p-package o-object cowe {
+  t-type futuwedependencytwansfowmew[-u, rawr +v] = c-configapi.futuwedependencytwansfowmew[wecapquewy, σωσ u-u, σωσ v]
+  object f-futuwedependencytwansfowmew
+      e-extends configapi.futuwedependencytwansfowmewfunctions[wecapquewy]
 
-  type DependencyTransformer[-U, +V] = configapi.DependencyTransformer[RecapQuery, U, V]
-  object DependencyTransformer extends configapi.DependencyTransformerFunctions[RecapQuery]
+  type dependencytwansfowmew[-u, >_< +v] = configapi.dependencytwansfowmew[wecapquewy, :3 u, v]
+  object dependencytwansfowmew extends configapi.dependencytwansfowmewfunctions[wecapquewy]
 }

@@ -1,534 +1,534 @@
-package com.twitter.frigate.pushservice.params
+package com.twittew.fwigate.pushsewvice.pawams
 
-import com.twitter.rux.common.context.thriftscala.ExperimentKey
-import com.twitter.timelines.configapi.Param
-import com.twitter.timelines.configapi.decider.BooleanDeciderParam
+impowt com.twittew.wux.common.context.thwiftscawa.expewimentkey
+impowt c-com.twittew.timewines.configapi.pawam
+i-impowt c-com.twittew.timewines.configapi.decidew.booweandecidewpawam
 
-object PushParams {
+o-object pushpawams {
 
   /**
-   * Disable ML models in filtering
+   * d-disabwe mw modews i-in fiwtewing
    */
-  object DisableMlInFilteringParam extends BooleanDeciderParam(DeciderKey.disableMLInFiltering)
+  o-object disabwemwinfiwtewingpawam e-extends booweandecidewpawam(decidewkey.disabwemwinfiwtewing)
 
   /**
-   * Disable ML models in ranking, use random ranking instead
-   * This param is used for ML holdback and training data collection
+   * disabwe mw modews in wanking, (˘ω˘) use wandom wanking i-instead
+   * this pawam is used fow mw howdback a-and twaining data cowwection
    */
-  object UseRandomRankingParam extends Param(false)
+  o-object usewandomwankingpawam extends pawam(fawse)
 
   /**
-   * Disable feature hydration, ML ranking, and ML filtering
-   * Use default order from candidate source
-   * This param is for service continuity
+   * disabwe featuwe hydwation, OwO m-mw wanking, (ꈍᴗꈍ) and mw fiwtewing
+   * u-use defauwt owdew f-fwom candidate souwce
+   * this pawam is fow sewvice continuity
    */
-  object DisableAllRelevanceParam extends BooleanDeciderParam(DeciderKey.disableAllRelevance)
+  object d-disabweawwwewevancepawam extends booweandecidewpawam(decidewkey.disabweawwwewevance)
 
   /**
-   * Disable ML heavy ranking
-   * Use default order from candidate source
-   * This param is for service continuity
+   * disabwe mw heavy wanking
+   * u-use defauwt owdew fwom candidate s-souwce
+   * this p-pawam is fow s-sewvice continuity
    */
-  object DisableHeavyRankingParam extends BooleanDeciderParam(DeciderKey.disableHeavyRanking)
+  o-object disabweheavywankingpawam extends b-booweandecidewpawam(decidewkey.disabweheavywanking)
 
   /**
-   * Restrict ML light ranking by selecting top3 candidates
-   * Use default order from candidate source
-   * This param is for service continuity
+   * westwict mw wight wanking by s-sewecting top3 candidates
+   * use defauwt owdew fwom candidate souwce
+   * this pawam is fow sewvice c-continuity
    */
-  object RestrictLightRankingParam extends BooleanDeciderParam(DeciderKey.restrictLightRanking)
+  object w-westwictwightwankingpawam e-extends b-booweandecidewpawam(decidewkey.westwictwightwanking)
 
   /**
-   * Downsample ML light ranking scribed candidates
+   * downsampwe mw wight wanking scwibed candidates
    */
-  object DownSampleLightRankingScribeCandidatesParam
-      extends BooleanDeciderParam(DeciderKey.downSampleLightRankingScribeCandidates)
+  o-object d-downsampwewightwankingscwibecandidatespawam
+      extends booweandecidewpawam(decidewkey.downsampwewightwankingscwibecandidates)
 
   /**
-   * Set it to true only for Android only ranking experiments
+   * set i-it to twue onwy f-fow andwoid onwy wanking expewiments
    */
-  object AndroidOnlyRankingExperimentParam extends Param(false)
+  o-object andwoidonwywankingexpewimentpawam extends p-pawam(fawse)
 
   /**
-   * Enable the user_tweet_entity_graph tweet candidate source.
+   * enabwe the usew_tweet_entity_gwaph t-tweet candidate souwce. òωó
    */
-  object UTEGTweetCandidateSourceParam
-      extends BooleanDeciderParam(DeciderKey.entityGraphTweetRecsDeciderKey)
+  o-object utegtweetcandidatesouwcepawam
+      e-extends b-booweandecidewpawam(decidewkey.entitygwaphtweetwecsdecidewkey)
 
   /**
-   * Enable writes to Notification Service
+   * enabwe wwites to nyotification sewvice
    */
-  object EnableWritesToNotificationServiceParam
-      extends BooleanDeciderParam(DeciderKey.enablePushserviceWritesToNotificationServiceDeciderKey)
+  object enabwewwitestonotificationsewvicepawam
+      extends b-booweandecidewpawam(decidewkey.enabwepushsewvicewwitestonotificationsewvicedecidewkey)
 
   /**
-   * Enable writes to Notification Service for all employees
+   * e-enabwe wwites to nyotification s-sewvice f-fow aww empwoyees
    */
-  object EnableWritesToNotificationServiceForAllEmployeesParam
-      extends BooleanDeciderParam(
-        DeciderKey.enablePushserviceWritesToNotificationServiceForAllEmployeesDeciderKey)
+  o-object enabwewwitestonotificationsewvicefowawwempwoyeespawam
+      extends booweandecidewpawam(
+        d-decidewkey.enabwepushsewvicewwitestonotificationsewvicefowawwempwoyeesdecidewkey)
 
   /**
-   * Enable writes to Notification Service for everyone
+   * enabwe wwites to notification sewvice fow evewyone
    */
-  object EnableWritesToNotificationServiceForEveryoneParam
-      extends BooleanDeciderParam(
-        DeciderKey.enablePushserviceWritesToNotificationServiceForEveryoneDeciderKey)
+  object e-enabwewwitestonotificationsewvicefowevewyonepawam
+      extends b-booweandecidewpawam(
+        decidewkey.enabwepushsewvicewwitestonotificationsewvicefowevewyonedecidewkey)
 
   /**
-   * Enable fatiguing MR for Ntab caret click
+   * e-enabwe f-fatiguing mw fow ntab cawet cwick
    */
-  object EnableFatigueNtabCaretClickingParam extends Param(true)
+  o-object e-enabwefatiguentabcawetcwickingpawam e-extends pawam(twue)
 
   /**
-   * Param for disabling in-network Tweet candidates
+   * p-pawam fow disabwing in-netwowk tweet candidates
    */
-  object DisableInNetworkTweetCandidatesParam extends Param(false)
+  o-object d-disabweinnetwowktweetcandidatespawam e-extends p-pawam(fawse)
 
   /**
-   * Decider controlled param to enable prompt feedback response NO predicate
+   * d-decidew contwowwed pawam to enabwe pwompt feedback wesponse n-nyo pwedicate
    */
-  object EnablePromptFeedbackFatigueResponseNoPredicate
-      extends BooleanDeciderParam(
-        DeciderKey.enablePromptFeedbackFatigueResponseNoPredicateDeciderKey)
+  object enabwepwomptfeedbackfatiguewesponsenopwedicate
+      extends booweandecidewpawam(
+        decidewkey.enabwepwomptfeedbackfatiguewesponsenopwedicatedecidewkey)
 
   /**
-   * Enable hydration and generation of Social context (TF, TR) based candidates for Earlybird Tweets
+   * e-enabwe hydwation and genewation of sociaw context (tf, ʘwʘ t-tw) based candidates f-fow eawwybiwd t-tweets
    */
-  object EarlyBirdSCBasedCandidatesParam
-      extends BooleanDeciderParam(DeciderKey.enableUTEGSCForEarlybirdTweetsDecider)
+  object eawwybiwdscbasedcandidatespawam
+      e-extends booweandecidewpawam(decidewkey.enabweutegscfoweawwybiwdtweetsdecidew)
 
   /**
-   * Param to allow reduce to one social proof for tweet param in UTEG
+   * pawam t-to awwow weduce t-to one sociaw pwoof fow tweet pawam in uteg
    */
-  object AllowOneSocialProofForTweetInUTEGParam extends Param(true)
+  object awwowonesociawpwooffowtweetinutegpawam extends pawam(twue)
 
   /**
-   * Param to query UTEG for out network tweets only
+   * pawam to quewy u-uteg fow out netwowk tweets o-onwy
    */
-  object OutNetworkTweetsOnlyForUTEGParam extends Param(false)
+  object outnetwowktweetsonwyfowutegpawam e-extends pawam(fawse)
 
-  object EnablePushSendEventBus extends BooleanDeciderParam(DeciderKey.enablePushSendEventBus)
+  o-object enabwepushsendeventbus extends b-booweandecidewpawam(decidewkey.enabwepushsendeventbus)
 
   /**
-   * Enable RUX Tweet landing page for push open on iOS
+   * e-enabwe wux tweet wanding p-page fow push open o-on ios
    */
-  object EnableRuxLandingPageIOSParam extends Param[Boolean](true)
+  object enabwewuxwandingpageiospawam extends pawam[boowean](twue)
 
   /**
-   * Enable RUX Tweet landing page for push open on Android
+   * enabwe wux tweet wanding page fow p-push open on andwoid
    */
-  object EnableRuxLandingPageAndroidParam extends Param[Boolean](true)
+  o-object e-enabwewuxwandingpageandwoidpawam extends pawam[boowean](twue)
 
   /**
-   * Param to decide which ExperimentKey to be encoded into Rux landing page context object.
-   * The context object is sent to rux-api and rux-api applies logic (e.g. show reply module on
-   * rux landing page or not) accordingly based on the experiment key.
+   * pawam t-to decide which e-expewimentkey to be encoded i-into wux wanding page context object. ʘwʘ
+   * the context object is sent to wux-api a-and wux-api appwies w-wogic (e.g. show wepwy moduwe on
+   * wux w-wanding page ow n-nyot) accowdingwy based on the expewiment key. nyaa~~
    */
-  object RuxLandingPageExperimentKeyIOSParam extends Param[Option[ExperimentKey]](None)
-  object RuxLandingPageExperimentKeyAndroidParam extends Param[Option[ExperimentKey]](None)
+  object wuxwandingpageexpewimentkeyiospawam e-extends pawam[option[expewimentkey]](none)
+  object wuxwandingpageexpewimentkeyandwoidpawam extends pawam[option[expewimentkey]](none)
 
   /**
-   * Param to enable MR Tweet Fav Recs
+   * pawam to enabwe m-mw tweet fav wecs
    */
-  object MRTweetFavRecsParam extends BooleanDeciderParam(DeciderKey.enableTweetFavRecs)
+  object mwtweetfavwecspawam e-extends b-booweandecidewpawam(decidewkey.enabwetweetfavwecs)
 
   /**
-   * Param to enable MR Tweet Retweet Recs
+   * pawam to enabwe mw tweet wetweet wecs
    */
-  object MRTweetRetweetRecsParam extends BooleanDeciderParam(DeciderKey.enableTweetRetweetRecs)
+  object m-mwtweetwetweetwecspawam e-extends booweandecidewpawam(decidewkey.enabwetweetwetweetwecs)
 
   /**
-   * Param to disable writing to NTAB
+   * pawam to disabwe wwiting t-to nytab
    * */
-  object DisableWritingToNTAB extends Param[Boolean](default = false)
+  object disabwewwitingtontab e-extends pawam[boowean](defauwt = fawse)
 
   /**
-   * Param to show RUX landing page as a modal on iOS
+   * pawam to show wux wanding page a-as a modaw on ios
    */
-  object ShowRuxLandingPageAsModalOnIOS extends Param[Boolean](default = false)
+  object s-showwuxwandingpageasmodawonios e-extends pawam[boowean](defauwt = fawse)
 
   /**
-   * Param to enable mr end to end scribing
+   * p-pawam to enabwe mw end to e-end scwibing
    */
-  object EnableMrRequestScribing extends BooleanDeciderParam(DeciderKey.enableMrRequestScribing)
+  o-object enabwemwwequestscwibing e-extends booweandecidewpawam(decidewkey.enabwemwwequestscwibing)
 
   /**
-   * Param to enable scribing of high quality candidate scores
+   * pawam to enabwe s-scwibing of high q-quawity candidate scowes
    */
-  object EnableHighQualityCandidateScoresScribing
-      extends BooleanDeciderParam(DeciderKey.enableHighQualityCandidateScoresScribing)
+  object enabwehighquawitycandidatescowesscwibing
+      e-extends b-booweandecidewpawam(decidewkey.enabwehighquawitycandidatescowesscwibing)
 
   /**
-   * Decider controlled param to pNeg multimodal predictions for F1 tweets
+   * d-decidew contwowwed pawam to pneg muwtimodaw p-pwedictions fow f1 tweets
    */
-  object EnablePnegMultimodalPredictionForF1Tweets
-      extends BooleanDeciderParam(DeciderKey.enablePnegMultimodalPredictionForF1Tweets)
+  o-object enabwepnegmuwtimodawpwedictionfowf1tweets
+      e-extends booweandecidewpawam(decidewkey.enabwepnegmuwtimodawpwedictionfowf1tweets)
 
   /**
-   * Decider controlled param to scribe oonFav score for F1 tweets
+   * decidew contwowwed pawam t-to scwibe oonfav s-scowe fow f1 t-tweets
    */
-  object EnableScribeOonFavScoreForF1Tweets
-      extends BooleanDeciderParam(DeciderKey.enableScribingOonFavScoreForF1Tweets)
+  o-object enabwescwibeoonfavscowefowf1tweets
+      extends booweandecidewpawam(decidewkey.enabwescwibingoonfavscowefowf1tweets)
 
   /**
-   * Param to enable htl user aggregates extended hydration
+   * p-pawam to enabwe htw usew aggwegates extended hydwation
    */
-  object EnableHtlOfflineUserAggregatesExtendedHydration
-      extends BooleanDeciderParam(DeciderKey.enableHtlOfflineUserAggregateExtendedFeaturesHydration)
+  object enabwehtwoffwineusewaggwegatesextendedhydwation
+      extends booweandecidewpawam(decidewkey.enabwehtwoffwineusewaggwegateextendedfeatuweshydwation)
 
   /**
-   * Param to enable predicate detailed info scribing
+   * p-pawam to enabwe pwedicate detaiwed i-info scwibing
    */
-  object EnablePredicateDetailedInfoScribing
-      extends BooleanDeciderParam(DeciderKey.enablePredicateDetailedInfoScribing)
+  object e-enabwepwedicatedetaiwedinfoscwibing
+      extends b-booweandecidewpawam(decidewkey.enabwepwedicatedetaiwedinfoscwibing)
 
   /**
-   * Param to enable predicate detailed info scribing
+   * pawam to enabwe p-pwedicate detaiwed i-info scwibing
    */
-  object EnablePushCapInfoScribing
-      extends BooleanDeciderParam(DeciderKey.enablePredicateDetailedInfoScribing)
+  o-object e-enabwepushcapinfoscwibing
+      e-extends booweandecidewpawam(decidewkey.enabwepwedicatedetaiwedinfoscwibing)
 
   /**
-   * Param to enable user signal language feature hydration
+   * pawam to enabwe usew signaw wanguage featuwe hydwation
    */
-  object EnableUserSignalLanguageFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableUserSignalLanguageFeatureHydration)
+  object enabweusewsignawwanguagefeatuwehydwation
+      extends b-booweandecidewpawam(decidewkey.enabweusewsignawwanguagefeatuwehydwation)
 
   /**
-   * Param to enable user preferred language feature hydration
+   * p-pawam t-to enabwe usew pwefewwed wanguage f-featuwe hydwation
    */
-  object EnableUserPreferredLanguageFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableUserPreferredLanguageFeatureHydration)
+  object enabweusewpwefewwedwanguagefeatuwehydwation
+      extends booweandecidewpawam(decidewkey.enabweusewpwefewwedwanguagefeatuwehydwation)
 
   /**
-   * Param to enable ner erg feature hydration
+   * p-pawam to e-enabwe nyew ewg featuwe hydwation
    */
-  object EnableNerErgFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableNerErgFeaturesHydration)
+  o-object enabwenewewgfeatuwehydwation
+      extends booweandecidewpawam(decidewkey.enabwenewewgfeatuweshydwation)
 
   /**
-   * Param to enable inline action on push copy for Android
+   * p-pawam to enabwe i-inwine action on push copy f-fow andwoid
    */
-  object MRAndroidInlineActionOnPushCopyParam extends Param[Boolean](default = true)
+  o-object mwandwoidinwineactiononpushcopypawam extends pawam[boowean](defauwt = twue)
 
   /**
-   * Param to enable hydrating mr user semantic core embedding features
+   * pawam to enabwe hydwating mw u-usew semantic cowe e-embedding featuwes
    * */
-  object EnableMrUserSemanticCoreFeaturesHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrUserSemanticCoreFeaturesHydration)
+  o-object enabwemwusewsemanticcowefeatuweshydwation
+      e-extends b-booweandecidewpawam(decidewkey.enabwemwusewsemanticcowefeatuweshydwation)
 
   /**
-   * Param to enable hydrating mr user semantic core embedding features filtered by 0.0000001
+   * pawam to enabwe h-hydwating m-mw usew semantic cowe embedding f-featuwes fiwtewed b-by 0.0000001
    * */
-  object EnableMrUserSemanticCoreNoZeroFeaturesHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrUserSemanticCoreNoZeroFeaturesHydration)
+  object e-enabwemwusewsemanticcowenozewofeatuweshydwation
+      extends booweandecidewpawam(decidewkey.enabwemwusewsemanticcowenozewofeatuweshydwation)
 
   /*
-   * Param to enable days since user's recent resurrection features hydration
+   * pawam to e-enabwe days since usew's wecent w-wesuwwection featuwes h-hydwation
    */
-  object EnableDaysSinceRecentResurrectionFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableDaysSinceRecentResurrectionFeatureHydration)
+  object e-enabwedayssincewecentwesuwwectionfeatuwehydwation
+      extends booweandecidewpawam(decidewkey.enabwedayssincewecentwesuwwectionfeatuwehydwation)
 
   /*
-   * Param to enable days since user past aggregates features hydration
+   * p-pawam t-to enabwe days s-since usew past aggwegates featuwes hydwation
    */
-  object EnableUserPastAggregatesFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableUserPastAggregatesFeatureHydration)
+  object e-enabweusewpastaggwegatesfeatuwehydwation
+      extends booweandecidewpawam(decidewkey.enabweusewpastaggwegatesfeatuwehydwation)
 
   /*
-   * Param to enable mr user simcluster features (v2020) hydration
+   * pawam t-to enabwe mw usew s-simcwustew featuwes (v2020) hydwation
    * */
-  object EnableMrUserSimclusterV2020FeaturesHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrUserSimclusterV2020FeaturesHydration)
+  object enabwemwusewsimcwustewv2020featuweshydwation
+      e-extends booweandecidewpawam(decidewkey.enabwemwusewsimcwustewv2020featuweshydwation)
 
   /*
-   * Param to enable mr user simcluster features (v2020) hydration
+   * p-pawam t-to enabwe mw usew simcwustew featuwes (v2020) h-hydwation
    * */
-  object EnableMrUserSimclusterV2020NoZeroFeaturesHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrUserSimclusterV2020NoZeroFeaturesHydration)
+  object enabwemwusewsimcwustewv2020nozewofeatuweshydwation
+      extends booweandecidewpawam(decidewkey.enabwemwusewsimcwustewv2020nozewofeatuweshydwation)
 
   /*
-   * Param to enable HTL topic engagement realtime aggregate features
+   * p-pawam t-to enabwe htw topic engagement w-weawtime aggwegate featuwes
    * */
-  object EnableTopicEngagementRealTimeAggregatesFeatureHydration
-      extends BooleanDeciderParam(
-        DeciderKey.enableTopicEngagementRealTimeAggregatesFeatureHydration)
+  o-object enabwetopicengagementweawtimeaggwegatesfeatuwehydwation
+      e-extends b-booweandecidewpawam(
+        decidewkey.enabwetopicengagementweawtimeaggwegatesfeatuwehydwation)
 
-  object EnableUserTopicAggregatesFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableUserTopicAggregatesFeatureHydration)
+  object enabweusewtopicaggwegatesfeatuwehydwation
+      extends booweandecidewpawam(decidewkey.enabweusewtopicaggwegatesfeatuwehydwation)
 
   /**
-   * Param to enable user author RTA feature hydration
+   * pawam to enabwe usew authow wta featuwe hydwation
    */
-  object EnableHtlUserAuthorRTAFeaturesFromFeatureStoreHydration
-      extends BooleanDeciderParam(DeciderKey.enableHtlUserAuthorRealTimeAggregateFeatureHydration)
+  object enabwehtwusewauthowwtafeatuwesfwomfeatuwestowehydwation
+      extends booweandecidewpawam(decidewkey.enabwehtwusewauthowweawtimeaggwegatefeatuwehydwation)
 
   /**
-   * Param to enable duration since last visit features
+   * pawam to enabwe d-duwation since w-wast visit featuwes
    */
-  object EnableDurationSinceLastVisitFeatures
-      extends BooleanDeciderParam(DeciderKey.enableDurationSinceLastVisitFeatureHydration)
+  object enabweduwationsincewastvisitfeatuwes
+      extends booweandecidewpawam(decidewkey.enabweduwationsincewastvisitfeatuwehydwation)
 
-  object EnableTweetAnnotationFeaturesHydration
-      extends BooleanDeciderParam(DeciderKey.enableTweetAnnotationFeatureHydration)
+  o-object e-enabwetweetannotationfeatuweshydwation
+      e-extends booweandecidewpawam(decidewkey.enabwetweetannotationfeatuwehydwation)
 
   /**
-   * Param to Enable visibility filtering through SpaceVisibilityLibrary from SpacePredicate
+   * p-pawam to enabwe visibiwity f-fiwtewing thwough s-spacevisibiwitywibwawy fwom s-spacepwedicate
    */
-  object EnableSpaceVisibilityLibraryFiltering
-      extends BooleanDeciderParam(DeciderKey.enableSpaceVisibilityLibraryFiltering)
+  object enabwespacevisibiwitywibwawyfiwtewing
+      e-extends b-booweandecidewpawam(decidewkey.enabwespacevisibiwitywibwawyfiwtewing)
 
   /*
-   * Param to enable user topic follow feature set hydration
+   * pawam to enabwe usew topic fowwow f-featuwe set h-hydwation
    * */
-  object EnableUserTopicFollowFeatureSetHydration
-      extends BooleanDeciderParam(DeciderKey.enableUserTopicFollowFeatureSet)
+  o-object enabweusewtopicfowwowfeatuwesethydwation
+      e-extends b-booweandecidewpawam(decidewkey.enabweusewtopicfowwowfeatuweset)
 
   /*
-   * Param to enable onboarding new user feature set hydration
+   * p-pawam t-to enabwe onboawding n-nyew usew f-featuwe set hydwation
    * */
-  object EnableOnboardingNewUserFeatureSetHydration
-      extends BooleanDeciderParam(DeciderKey.enableOnboardingNewUserFeatureSet)
+  object enabweonboawdingnewusewfeatuwesethydwation
+      e-extends b-booweandecidewpawam(decidewkey.enabweonboawdingnewusewfeatuweset)
 
   /*
-   * Param to enable mr user author sparse continuous feature set hydration
+   * p-pawam to enabwe mw usew authow spawse c-continuous featuwe set hydwation
    * */
-  object EnableMrUserAuthorSparseContFeatureSetHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrUserAuthorSparseContFeatureSet)
+  object enabwemwusewauthowspawsecontfeatuwesethydwation
+      e-extends booweandecidewpawam(decidewkey.enabwemwusewauthowspawsecontfeatuweset)
 
   /*
-   * Param to enable mr user topic sparse continuous feature set hydration
+   * p-pawam to e-enabwe mw usew t-topic spawse continuous featuwe s-set hydwation
    * */
-  object EnableMrUserTopicSparseContFeatureSetHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrUserTopicSparseContFeatureSet)
+  object enabwemwusewtopicspawsecontfeatuwesethydwation
+      e-extends booweandecidewpawam(decidewkey.enabwemwusewtopicspawsecontfeatuweset)
 
   /*
-   * Param to enable penguin language feature set hydration
+   * pawam t-to enabwe penguin wanguage featuwe s-set hydwation
    * */
-  object EnableUserPenguinLanguageFeatureSetHydration
-      extends BooleanDeciderParam(DeciderKey.enableUserPenguinLanguageFeatureSet)
+  object enabweusewpenguinwanguagefeatuwesethydwation
+      extends booweandecidewpawam(decidewkey.enabweusewpenguinwanguagefeatuweset)
 
   /*
-   * Param to enable user engaged tweet tokens feature hydration
+   * pawam t-to enabwe usew engaged tweet t-tokens featuwe h-hydwation
    * */
-  object EnableMrUserEngagedTweetTokensFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrUserEngagedTweetTokensFeaturesHydration)
+  object enabwemwusewengagedtweettokensfeatuwehydwation
+      extends booweandecidewpawam(decidewkey.enabwemwusewengagedtweettokensfeatuweshydwation)
 
   /*
-   * Param to enable candidate tweet tokens feature hydration
+   * pawam to enabwe c-candidate tweet tokens featuwe h-hydwation
    * */
-  object EnableMrCandidateTweetTokensFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrCandidateTweetTokensFeaturesHydration)
+  o-object enabwemwcandidatetweettokensfeatuwehydwation
+      e-extends booweandecidewpawam(decidewkey.enabwemwcandidatetweettokensfeatuweshydwation)
 
   /*
-   * Param to enable mr user hashspace embedding feature set hydration
+   * pawam to enabwe mw usew hashspace e-embedding featuwe s-set hydwation
    * */
-  object EnableMrUserHashspaceEmbeddingFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrUserHashspaceEmbeddingFeatureSet)
+  object e-enabwemwusewhashspaceembeddingfeatuwehydwation
+      extends booweandecidewpawam(decidewkey.enabwemwusewhashspaceembeddingfeatuweset)
 
   /*
-   * Param to enable mr tweet sentiment feature set hydration
+   * p-pawam to enabwe mw tweet sentiment f-featuwe s-set hydwation
    * */
-  object EnableMrTweetSentimentFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrTweetSentimentFeatureSet)
+  o-object enabwemwtweetsentimentfeatuwehydwation
+      e-extends b-booweandecidewpawam(decidewkey.enabwemwtweetsentimentfeatuweset)
 
   /*
-   * Param to enable mr tweet_author aggregates feature set hydration
+   * p-pawam to enabwe m-mw tweet_authow aggwegates featuwe s-set hydwation
    * */
-  object EnableMrTweetAuthorAggregatesFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrTweetAuthorAggregatesFeatureSet)
+  o-object e-enabwemwtweetauthowaggwegatesfeatuwehydwation
+      e-extends booweandecidewpawam(decidewkey.enabwemwtweetauthowaggwegatesfeatuweset)
 
   /**
-   * Param to enable twistly aggregated features
+   * p-pawam to enabwe t-twistwy aggwegated f-featuwes
    */
-  object EnableTwistlyAggregatesFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableTwistlyAggregatesFeatureHydration)
+  o-object enabwetwistwyaggwegatesfeatuwehydwation
+      extends b-booweandecidewpawam(decidewkey.enabwetwistwyaggwegatesfeatuwehydwation)
 
   /**
-   * Param to enable tweet twhin favoriate features
+   * pawam to e-enabwe tweet twhin favowiate featuwes
    */
-  object EnableTweetTwHINFavFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableTweetTwHINFavFeaturesHydration)
+  object e-enabwetweettwhinfavfeatuwehydwation
+      e-extends booweandecidewpawam(decidewkey.enabwetweettwhinfavfeatuweshydwation)
 
   /*
-   * Param to enable mr user geo feature set hydration
+   * p-pawam to enabwe mw usew geo featuwe set hydwation
    * */
-  object EnableUserGeoFeatureSetHydration
-      extends BooleanDeciderParam(DeciderKey.enableUserGeoFeatureSet)
+  o-object enabweusewgeofeatuwesethydwation
+      e-extends booweandecidewpawam(decidewkey.enabweusewgeofeatuweset)
 
   /*
-   * Param to enable mr author geo feature set hydration
+   * p-pawam to enabwe mw authow geo featuwe set hydwation
    * */
-  object EnableAuthorGeoFeatureSetHydration
-      extends BooleanDeciderParam(DeciderKey.enableAuthorGeoFeatureSet)
+  o-object e-enabweauthowgeofeatuwesethydwation
+      extends b-booweandecidewpawam(decidewkey.enabweauthowgeofeatuweset)
 
   /*
-   * Param to ramp up mr user geo feature set hydration
+   * p-pawam to wamp up mw usew geo featuwe set hydwation
    * */
-  object RampupUserGeoFeatureSetHydration
-      extends BooleanDeciderParam(DeciderKey.rampupUserGeoFeatureSet)
+  o-object wampupusewgeofeatuwesethydwation
+      e-extends booweandecidewpawam(decidewkey.wampupusewgeofeatuweset)
 
   /*
-   * Param to ramp up mr author geo feature set hydration
+   * p-pawam t-to wamp up mw authow geo featuwe set hydwation
    * */
-  object RampupAuthorGeoFeatureSetHydration
-      extends BooleanDeciderParam(DeciderKey.rampupAuthorGeoFeatureSet)
+  o-object w-wampupauthowgeofeatuwesethydwation
+      extends booweandecidewpawam(decidewkey.wampupauthowgeofeatuweset)
 
   /*
-   *  Decider controlled param to enable Pop Geo Tweets
+   *  d-decidew contwowwed pawam to enabwe pop g-geo tweets
    * */
-  object PopGeoCandidatesDecider extends BooleanDeciderParam(DeciderKey.enablePopGeoTweets)
+  object popgeocandidatesdecidew e-extends booweandecidewpawam(decidewkey.enabwepopgeotweets)
 
   /**
-   * Decider controlled param to enable Trip Geo Tweets
+   * d-decidew contwowwed p-pawam to enabwe t-twip geo tweets
    */
-  object TripGeoTweetCandidatesDecider
-      extends BooleanDeciderParam(DeciderKey.enableTripGeoTweetCandidates)
+  object twipgeotweetcandidatesdecidew
+      e-extends booweandecidewpawam(decidewkey.enabwetwipgeotweetcandidates)
 
   /**
-   * Decider controlled param to enable ContentRecommenderMixerAdaptor
+   * decidew contwowwed p-pawam to e-enabwe contentwecommendewmixewadaptow
    */
-  object ContentRecommenderMixerAdaptorDecider
-      extends BooleanDeciderParam(DeciderKey.enableContentRecommenderMixerAdaptor)
+  o-object c-contentwecommendewmixewadaptowdecidew
+      extends booweandecidewpawam(decidewkey.enabwecontentwecommendewmixewadaptow)
 
   /**
-   * Decider controlled param to enable GenericCandidateAdaptor
+   * d-decidew c-contwowwed pawam t-to enabwe genewiccandidateadaptow
    */
-  object GenericCandidateAdaptorDecider
-      extends BooleanDeciderParam(DeciderKey.enableGenericCandidateAdaptor)
+  object g-genewiccandidateadaptowdecidew
+      extends booweandecidewpawam(decidewkey.enabwegenewiccandidateadaptow)
 
   /**
-   * Decider controlled param to enable dark traffic to ContentMixer for Trip Geo Tweets
+   * d-decidew c-contwowwed pawam t-to enabwe dawk twaffic to contentmixew fow twip geo tweets
    */
-  object TripGeoTweetContentMixerDarkTrafficDecider
-      extends BooleanDeciderParam(DeciderKey.enableTripGeoTweetContentMixerDarkTraffic)
+  object twipgeotweetcontentmixewdawktwafficdecidew
+      extends b-booweandecidewpawam(decidewkey.enabwetwipgeotweetcontentmixewdawktwaffic)
 
   /*
-   *  Decider controlled param to enable Pop Geo Tweets
+   *  decidew c-contwowwed p-pawam to enabwe pop geo tweets
    * */
-  object TrendsCandidateDecider extends BooleanDeciderParam(DeciderKey.enableTrendsTweets)
+  object t-twendscandidatedecidew extends booweandecidewpawam(decidewkey.enabwetwendstweets)
 
   /*
-   *  Decider controlled param to enable INS Traffic
+   *  d-decidew c-contwowwed p-pawam to enabwe i-ins twaffic
    **/
-  object EnableInsTrafficDecider extends BooleanDeciderParam(DeciderKey.enableInsTraffic)
+  o-object enabweinstwafficdecidew extends booweandecidewpawam(decidewkey.enabweinstwaffic)
 
   /**
-   * Param to enable assigning pushcap with ML predictions (read from MH table).
-   * Disabling will fallback to only use heuristics and default values.
+   * pawam to enabwe assigning pushcap with m-mw pwedictions (wead fwom mh tabwe). UwU
+   * d-disabwing wiww fawwback to onwy use heuwistics and defauwt v-vawues.
    */
-  object EnableModelBasedPushcapAssignments
-      extends BooleanDeciderParam(DeciderKey.enableModelBasedPushcapAssignments)
+  object enabwemodewbasedpushcapassignments
+      extends booweandecidewpawam(decidewkey.enabwemodewbasedpushcapassignments)
 
   /**
-   * Param to enable twhin user engagement feature hydration
+   * pawam to enabwe twhin u-usew engagement f-featuwe hydwation
    */
-  object EnableTwHINUserEngagementFeaturesHydration
-      extends BooleanDeciderParam(DeciderKey.enableTwHINUserEngagementFeaturesHydration)
+  object e-enabwetwhinusewengagementfeatuweshydwation
+      extends booweandecidewpawam(decidewkey.enabwetwhinusewengagementfeatuweshydwation)
 
   /**
-   * Param to enable twhin user follow feature hydration
+   * pawam to enabwe t-twhin usew fowwow f-featuwe hydwation
    */
-  object EnableTwHINUserFollowFeaturesHydration
-      extends BooleanDeciderParam(DeciderKey.enableTwHINUserFollowFeaturesHydration)
+  object enabwetwhinusewfowwowfeatuweshydwation
+      e-extends booweandecidewpawam(decidewkey.enabwetwhinusewfowwowfeatuweshydwation)
 
   /**
-   * Param to enable twhin author follow feature hydration
+   * pawam to enabwe twhin a-authow fowwow featuwe hydwation
    */
-  object EnableTwHINAuthorFollowFeaturesHydration
-      extends BooleanDeciderParam(DeciderKey.enableTwHINAuthorFollowFeaturesHydration)
+  object enabwetwhinauthowfowwowfeatuweshydwation
+      e-extends booweandecidewpawam(decidewkey.enabwetwhinauthowfowwowfeatuweshydwation)
 
   /**
-   * Param to enable calls to the IsTweetTranslatable strato column
+   * pawam to enabwe cawws to the istweettwanswatabwe s-stwato cowumn
    */
-  object EnableIsTweetTranslatableCheck
-      extends BooleanDeciderParam(DeciderKey.enableIsTweetTranslatable)
+  o-object enabweistweettwanswatabwecheck
+      e-extends booweandecidewpawam(decidewkey.enabweistweettwanswatabwe)
 
   /**
-   * Decider controlled param to enable mr tweet simcluster feature set hydration
+   * decidew contwowwed pawam to enabwe m-mw tweet simcwustew featuwe set hydwation
    */
-  object EnableMrTweetSimClusterFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrTweetSimClusterFeatureSet)
+  object enabwemwtweetsimcwustewfeatuwehydwation
+      extends b-booweandecidewpawam(decidewkey.enabwemwtweetsimcwustewfeatuweset)
 
   /**
-   * Decider controlled param to enable real graph v2 feature set hydration
+   * d-decidew contwowwed p-pawam to enabwe w-weaw gwaph v2 featuwe set hydwation
    */
-  object EnableRealGraphV2FeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableRealGraphV2FeatureHydration)
+  object enabweweawgwaphv2featuwehydwation
+      extends b-booweandecidewpawam(decidewkey.enabweweawgwaphv2featuwehydwation)
 
   /**
-   * Decider controlled param to enable Tweet BeT feature set hydration
+   * d-decidew contwowwed pawam to enabwe tweet bet f-featuwe set hydwation
    */
-  object EnableTweetBeTFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableTweetBeTFeatureHydration)
+  object enabwetweetbetfeatuwehydwation
+      extends b-booweandecidewpawam(decidewkey.enabwetweetbetfeatuwehydwation)
 
   /**
-   * Decider controlled param to enable mr user tweet topic feature set hydration
+   * decidew contwowwed pawam to enabwe m-mw usew tweet t-topic featuwe set hydwation
    */
-  object EnableMrOfflineUserTweetTopicAggregateHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrOfflineUserTweetTopicAggregate)
+  o-object enabwemwoffwineusewtweettopicaggwegatehydwation
+      e-extends booweandecidewpawam(decidewkey.enabwemwoffwineusewtweettopicaggwegate)
 
   /**
-   * Decider controlled param to enable mr tweet simcluster feature set hydration
+   * d-decidew contwowwed pawam to enabwe mw t-tweet simcwustew featuwe set hydwation
    */
-  object EnableMrOfflineUserTweetSimClusterAggregateHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrOfflineUserTweetSimClusterAggregate)
+  object enabwemwoffwineusewtweetsimcwustewaggwegatehydwation
+      e-extends booweandecidewpawam(decidewkey.enabwemwoffwineusewtweetsimcwustewaggwegate)
 
   /**
-   * Decider controlled param to enable user send time features
+   * decidew contwowwed pawam to enabwe usew send t-time featuwes
    */
-  object EnableUserSendTimeFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableUserSendTimeFeatureHydration)
+  o-object enabweusewsendtimefeatuwehydwation
+      e-extends booweandecidewpawam(decidewkey.enabweusewsendtimefeatuwehydwation)
 
   /**
-   * Decider controlled param to enable mr user utc send time aggregate features
+   * d-decidew c-contwowwed pawam to enabwe m-mw usew utc send time aggwegate featuwes
    */
-  object EnableMrUserUtcSendTimeAggregateFeaturesHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrUserUtcSendTimeAggregateFeaturesHydration)
+  o-object enabwemwusewutcsendtimeaggwegatefeatuweshydwation
+      extends booweandecidewpawam(decidewkey.enabwemwusewutcsendtimeaggwegatefeatuweshydwation)
 
   /**
-   * Decider controlled param to enable mr user local send time aggregate features
+   * d-decidew contwowwed pawam to enabwe mw usew w-wocaw send time a-aggwegate featuwes
    */
-  object EnableMrUserLocalSendTimeAggregateFeaturesHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrUserLocalSendTimeAggregateFeaturesHydration)
+  object e-enabwemwusewwocawsendtimeaggwegatefeatuweshydwation
+      extends b-booweandecidewpawam(decidewkey.enabwemwusewwocawsendtimeaggwegatefeatuweshydwation)
 
   /**
-   * Decider controlled param to enable BQML report model predictions for F1 tweets
+   * d-decidew contwowwed pawam to e-enabwe bqmw wepowt m-modew pwedictions fow f1 tweets
    */
-  object EnableBqmlReportModelPredictionForF1Tweets
-      extends BooleanDeciderParam(DeciderKey.enableBqmlReportModelPredictionForF1Tweets)
+  o-object enabwebqmwwepowtmodewpwedictionfowf1tweets
+      extends booweandecidewpawam(decidewkey.enabwebqmwwepowtmodewpwedictionfowf1tweets)
 
   /**
-   * Decider controlled param to enable user Twhin embedding feature hydration
+   * decidew contwowwed p-pawam to enabwe usew twhin e-embedding featuwe hydwation
    */
-  object EnableUserTwhinEmbeddingFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableUserTwhinEmbeddingFeatureHydration)
+  object enabweusewtwhinembeddingfeatuwehydwation
+      e-extends b-booweandecidewpawam(decidewkey.enabweusewtwhinembeddingfeatuwehydwation)
 
   /**
-   * Decider controlled param to enable author follow Twhin embedding feature hydration
+   * d-decidew contwowwed pawam t-to enabwe authow f-fowwow twhin embedding featuwe h-hydwation
    */
-  object EnableAuthorFollowTwhinEmbeddingFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableAuthorFollowTwhinEmbeddingFeatureHydration)
+  object enabweauthowfowwowtwhinembeddingfeatuwehydwation
+      e-extends booweandecidewpawam(decidewkey.enabweauthowfowwowtwhinembeddingfeatuwehydwation)
 
-  object EnableScribingMLFeaturesAsDataRecord
-      extends BooleanDeciderParam(DeciderKey.enableScribingMLFeaturesAsDataRecord)
-
-  /**
-   * Decider controlled param to enable feature hydration for Verified related feature
-   */
-  object EnableAuthorVerifiedFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableAuthorVerifiedFeatureHydration)
+  object e-enabwescwibingmwfeatuwesasdatawecowd
+      extends b-booweandecidewpawam(decidewkey.enabwescwibingmwfeatuwesasdatawecowd)
 
   /**
-   * Decider controlled param to enable feature hydration for creator subscription related feature
+   * decidew contwowwed pawam to enabwe featuwe hydwation fow v-vewified wewated f-featuwe
    */
-  object EnableAuthorCreatorSubscriptionFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableAuthorCreatorSubscriptionFeatureHydration)
+  object enabweauthowvewifiedfeatuwehydwation
+      extends booweandecidewpawam(decidewkey.enabweauthowvewifiedfeatuwehydwation)
 
   /**
-   * Decider controlled param to direct MH+Memcache hydration for the UserFeaturesDataset
+   * decidew c-contwowwed pawam to enabwe f-featuwe hydwation f-fow cweatow subscwiption wewated featuwe
    */
-  object EnableDirectHydrationForUserFeatures
-      extends BooleanDeciderParam(DeciderKey.enableDirectHydrationForUserFeatures)
+  object enabweauthowcweatowsubscwiptionfeatuwehydwation
+      extends booweandecidewpawam(decidewkey.enabweauthowcweatowsubscwiptionfeatuwehydwation)
+
+  /**
+   * d-decidew contwowwed pawam to diwect mh+memcache h-hydwation fow the usewfeatuwesdataset
+   */
+  o-object enabwediwecthydwationfowusewfeatuwes
+      e-extends booweandecidewpawam(decidewkey.enabwediwecthydwationfowusewfeatuwes)
 }

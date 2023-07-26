@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-import com.twitter.finagle.tracing.Trace
+impowt c-com.twittew.finagwe.twacing.twace
 
-object Session {
+o-object session {
 
   /**
-   * The sessionId in FRS is the finagle trace id which is static within the lifetime of a single
-   * request.
+   * t-the sessionid in f-fws is the finagwe t-twace id which i-is static within t-the wifetime o-of a singwe
+   * wequest. (ˆ ﻌ ˆ)♡
    *
-   * It is used when generating per-candidate tokens (in TrackingTokenTransform) and is also passed
-   * in to downstream Optimus ranker requests.
+   * it is used when genewating pew-candidate tokens (in t-twackingtokentwansfowm) and is awso passed
+   * in to downstweam o-optimus wankew wequests. (⑅˘꒳˘)
    *
    */
-  def getSessionId: Long = Trace.id.traceId.toLong
+  d-def getsessionid: wong = twace.id.twaceid.towong
 }

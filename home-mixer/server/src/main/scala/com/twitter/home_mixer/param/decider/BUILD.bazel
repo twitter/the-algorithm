@@ -1,10 +1,26 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "servo/decider",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], òωó
+    compiwew_option_sets = ["fataw_wawnings"], o.O
+    s-stwict_deps = t-twue, (U ᵕ U❁)
+    t-tags = ["bazew-compatibwe"], (⑅˘꒳˘)
+    d-dependencies = [
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/functionaw_component/candidate_souwce", ( ͡o ω ͡o )
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/functionaw_component/decowatow/uwt/buiwdew", UwU
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/functionaw_component/featuwe_hydwatow", rawr x3
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/functionaw_component/fiwtew", rawr
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/functionaw_component/gate", σωσ
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/functionaw_component/quewy_twansfowmew", σωσ
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/modew", >_<
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/modew/wequest", :3
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/sewvice", (U ﹏ U)
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/candidate_souwce/tweetconvosvc", -.-
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/decowatow/uwt", (ˆ ﻌ ˆ)♡
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/fiwtew", (⑅˘꒳˘)
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/gate", (U ᵕ U❁)
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/candidate",
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/twansfowmew", -.-
+    ], ^^;;
+    e-expowts = [
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/candidate_souwce/tweetconvosvc", >_<
+    ], mya
 )

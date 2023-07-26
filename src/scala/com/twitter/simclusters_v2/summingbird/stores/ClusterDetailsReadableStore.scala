@@ -1,64 +1,64 @@
-package com.twitter.simclusters_v2.summingbird.stores
+package com.twittew.simcwustews_v2.summingbiwd.stowes
 
-import com.twitter.bijection.{Bufferable, Injection}
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.thriftscala.ClusterDetails
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.{Athena, ManhattanRO, ManhattanROConfig}
-import com.twitter.storehaus_internal.util.{ApplicationID, DatasetName, HDFSPath}
-import com.twitter.util.{Future, Memoize}
+impowt com.twittew.bijection.{buffewabwe, i-injection}
+impowt c-com.twittew.bijection.scwooge.compactscawacodec
+i-impowt com.twittew.simcwustews_v2.common.modewvewsions
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.cwustewdetaiws
+i-impowt com.twittew.stowage.cwient.manhattan.kv.manhattankvcwientmtwspawams
+i-impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.stowehaus_intewnaw.manhattan.{athena, :3 manhattanwo, 😳😳😳 manhattanwoconfig}
+impowt com.twittew.stowehaus_intewnaw.utiw.{appwicationid, d-datasetname, (˘ω˘) hdfspath}
+impowt com.twittew.utiw.{futuwe, ^^ memoize}
 
-object ClusterDetailsReadableStore {
+o-object cwustewdetaiwsweadabwestowe {
 
-  val modelVersionToDatasetMap: Map[String, String] = Map(
-    ModelVersions.Model20M145KDec11 -> "simclusters_v2_cluster_details",
-    ModelVersions.Model20M145KUpdated -> "simclusters_v2_cluster_details_20m_145k_updated",
-    ModelVersions.Model20M145K2020 -> "simclusters_v2_cluster_details_20m_145k_2020"
+  vaw modewvewsiontodatasetmap: m-map[stwing, :3 stwing] = map(
+    modewvewsions.modew20m145kdec11 -> "simcwustews_v2_cwustew_detaiws", -.-
+    modewvewsions.modew20m145kupdated -> "simcwustews_v2_cwustew_detaiws_20m_145k_updated", 😳
+    m-modewvewsions.modew20m145k2020 -> "simcwustews_v2_cwustew_detaiws_20m_145k_2020"
   )
 
-  val knownModelVersions: String = modelVersionToDatasetMap.keys.mkString(",")
+  vaw knownmodewvewsions: s-stwing = m-modewvewsiontodatasetmap.keys.mkstwing(",")
 
-  private val clusterDetailsStores =
-    Memoize[(ManhattanKVClientMtlsParams, String), ReadableStore[(String, Int), ClusterDetails]] {
-      case (mhMtlsParams: ManhattanKVClientMtlsParams, datasetName: String) =>
-        getForDatasetName(mhMtlsParams, datasetName)
+  pwivate vaw cwustewdetaiwsstowes =
+    memoize[(manhattankvcwientmtwspawams, mya stwing), (˘ω˘) weadabwestowe[(stwing, >_< i-int), -.- cwustewdetaiws]] {
+      case (mhmtwspawams: manhattankvcwientmtwspawams, 🥺 datasetname: stwing) =>
+        getfowdatasetname(mhmtwspawams, (U ﹏ U) d-datasetname)
     }
 
-  def getForDatasetName(
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    datasetName: String
-  ): ReadableStore[(String, Int), ClusterDetails] = {
-    implicit val keyInjection: Injection[(String, Int), Array[Byte]] =
-      Bufferable.injectionOf[(String, Int)]
-    implicit val valueInjection: Injection[ClusterDetails, Array[Byte]] =
-      CompactScalaCodec(ClusterDetails)
+  def getfowdatasetname(
+    m-mhmtwspawams: m-manhattankvcwientmtwspawams, >w<
+    d-datasetname: stwing
+  ): w-weadabwestowe[(stwing, mya int), cwustewdetaiws] = {
+    impwicit vaw keyinjection: i-injection[(stwing, >w< int), awway[byte]] =
+      b-buffewabwe.injectionof[(stwing, nyaa~~ int)]
+    impwicit vaw vawueinjection: injection[cwustewdetaiws, (✿oωo) awway[byte]] =
+      compactscawacodec(cwustewdetaiws)
 
-    ManhattanRO.getReadableStoreWithMtls[(String, Int), ClusterDetails](
-      ManhattanROConfig(
-        HDFSPath(""), // not needed
-        ApplicationID("simclusters_v2"),
-        DatasetName(datasetName), // this should be correct
-        Athena
-      ),
-      mhMtlsParams
+    manhattanwo.getweadabwestowewithmtws[(stwing, ʘwʘ i-int), (ˆ ﻌ ˆ)♡ cwustewdetaiws](
+      manhattanwoconfig(
+        h-hdfspath(""), 😳😳😳 // n-nyot n-nyeeded
+        appwicationid("simcwustews_v2"), :3
+        datasetname(datasetname), OwO // this shouwd b-be cowwect
+        a-athena
+      ), (U ﹏ U)
+      mhmtwspawams
     )
   }
 
-  def apply(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[(String, Int), ClusterDetails] = {
-    new ReadableStore[(String, Int), ClusterDetails] {
-      override def get(modelVersionAndClusterId: (String, Int)): Future[Option[ClusterDetails]] = {
-        val (modelVersion, _) = modelVersionAndClusterId
-        modelVersionToDatasetMap.get(modelVersion) match {
-          case Some(datasetName) =>
-            clusterDetailsStores((mhMtlsParams, datasetName)).get(modelVersionAndClusterId)
-          case None =>
-            Future.exception(
-              new IllegalArgumentException(
-                "Unknown model version " + modelVersion + ". Known modelVersions: " + knownModelVersions)
+  d-def appwy(
+    m-mhmtwspawams: manhattankvcwientmtwspawams
+  ): w-weadabwestowe[(stwing, >w< int), c-cwustewdetaiws] = {
+    nyew weadabwestowe[(stwing, (U ﹏ U) int), cwustewdetaiws] {
+      o-ovewwide def get(modewvewsionandcwustewid: (stwing, 😳 i-int)): futuwe[option[cwustewdetaiws]] = {
+        vaw (modewvewsion, _) = m-modewvewsionandcwustewid
+        m-modewvewsiontodatasetmap.get(modewvewsion) match {
+          case some(datasetname) =>
+            cwustewdetaiwsstowes((mhmtwspawams, (ˆ ﻌ ˆ)♡ datasetname)).get(modewvewsionandcwustewid)
+          case nyone =>
+            futuwe.exception(
+              n-nyew iwwegawawgumentexception(
+                "unknown m-modew vewsion " + modewvewsion + ". 😳😳😳 k-known modewvewsions: " + k-knownmodewvewsions)
             )
         }
       }

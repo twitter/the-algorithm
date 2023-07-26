@@ -1,131 +1,131 @@
-package com.twitter.visibility.builder.spaces
+package com.twittew.visibiwity.buiwdew.spaces
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.Label
-import com.twitter.gizmoduck.thriftscala.MuteSurface
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.builder.common.MutedKeywordFeatures
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.common.AudioSpaceSource
-import com.twitter.visibility.common.SpaceId
-import com.twitter.visibility.common.SpaceSafetyLabelMapSource
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.features._
-import com.twitter.visibility.models.{MutedKeyword => VfMutedKeyword}
-import com.twitter.visibility.models.SafetyLabel
-import com.twitter.visibility.models.SpaceSafetyLabel
-import com.twitter.visibility.models.SpaceSafetyLabelType
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.gizmoduck.thwiftscawa.wabew
+i-impowt c-com.twittew.gizmoduck.thwiftscawa.mutesuwface
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+i-impowt com.twittew.visibiwity.buiwdew.common.mutedkeywowdfeatuwes
+impowt com.twittew.visibiwity.buiwdew.usews.authowfeatuwes
+impowt com.twittew.visibiwity.buiwdew.usews.wewationshipfeatuwes
+i-impowt com.twittew.visibiwity.common.audiospacesouwce
+impowt com.twittew.visibiwity.common.spaceid
+i-impowt com.twittew.visibiwity.common.spacesafetywabewmapsouwce
+i-impowt com.twittew.visibiwity.common.usewid
+impowt com.twittew.visibiwity.featuwes._
+impowt com.twittew.visibiwity.modews.{mutedkeywowd => v-vfmutedkeywowd}
+impowt com.twittew.visibiwity.modews.safetywabew
+i-impowt com.twittew.visibiwity.modews.spacesafetywabew
+i-impowt com.twittew.visibiwity.modews.spacesafetywabewtype
 
-class SpaceFeatures(
-  spaceSafetyLabelMap: StratoSpaceLabelMaps,
-  authorFeatures: AuthorFeatures,
-  relationshipFeatures: RelationshipFeatures,
-  mutedKeywordFeatures: MutedKeywordFeatures,
-  audioSpaceSource: AudioSpaceSource) {
+cwass spacefeatuwes(
+  spacesafetywabewmap: stwatospacewabewmaps, (˘ω˘)
+  a-authowfeatuwes: authowfeatuwes, :3
+  wewationshipfeatuwes: wewationshipfeatuwes, ^^;;
+  mutedkeywowdfeatuwes: m-mutedkeywowdfeatuwes, 🥺
+  audiospacesouwce: a-audiospacesouwce) {
 
-  def forSpaceAndAuthorIds(
-    spaceId: SpaceId,
-    viewerId: Option[UserId],
-    authorIds: Option[Seq[UserId]]
-  ): FeatureMapBuilder => FeatureMapBuilder = {
+  d-def fowspaceandauthowids(
+    s-spaceid: spaceid, (⑅˘꒳˘)
+    v-viewewid: option[usewid], nyaa~~
+    authowids: option[seq[usewid]]
+  ): f-featuwemapbuiwdew => featuwemapbuiwdew = {
 
-    _.withFeature(SpaceSafetyLabels, spaceSafetyLabelMap.forSpaceId(spaceId))
-      .withFeature(AuthorId, getSpaceAuthors(spaceId, authorIds).map(_.toSet))
-      .withFeature(AuthorUserLabels, allSpaceAuthorLabels(spaceId, authorIds))
-      .withFeature(ViewerFollowsAuthor, viewerFollowsAnySpaceAuthor(spaceId, authorIds, viewerId))
-      .withFeature(ViewerMutesAuthor, viewerMutesAnySpaceAuthor(spaceId, authorIds, viewerId))
-      .withFeature(ViewerBlocksAuthor, viewerBlocksAnySpaceAuthor(spaceId, authorIds, viewerId))
-      .withFeature(AuthorBlocksViewer, anySpaceAuthorBlocksViewer(spaceId, authorIds, viewerId))
-      .withFeature(
-        ViewerMutesKeywordInSpaceTitleForNotifications,
-        titleContainsMutedKeyword(
-          audioSpaceSource.getSpaceTitle(spaceId),
-          audioSpaceSource.getSpaceLanguage(spaceId),
-          viewerId)
+    _.withfeatuwe(spacesafetywabews, :3 spacesafetywabewmap.fowspaceid(spaceid))
+      .withfeatuwe(authowid, ( ͡o ω ͡o ) getspaceauthows(spaceid, mya a-authowids).map(_.toset))
+      .withfeatuwe(authowusewwabews, (///ˬ///✿) awwspaceauthowwabews(spaceid, authowids))
+      .withfeatuwe(viewewfowwowsauthow, (˘ω˘) viewewfowwowsanyspaceauthow(spaceid, ^^;; authowids, (✿oωo) viewewid))
+      .withfeatuwe(viewewmutesauthow, (U ﹏ U) v-viewewmutesanyspaceauthow(spaceid, -.- authowids, ^•ﻌ•^ v-viewewid))
+      .withfeatuwe(viewewbwocksauthow, rawr v-viewewbwocksanyspaceauthow(spaceid, (˘ω˘) a-authowids, nyaa~~ viewewid))
+      .withfeatuwe(authowbwocksviewew, UwU anyspaceauthowbwocksviewew(spaceid, :3 authowids, v-viewewid))
+      .withfeatuwe(
+        v-viewewmuteskeywowdinspacetitwefownotifications, (⑅˘꒳˘)
+        titwecontainsmutedkeywowd(
+          a-audiospacesouwce.getspacetitwe(spaceid),
+          a-audiospacesouwce.getspacewanguage(spaceid), (///ˬ///✿)
+          viewewid)
       )
   }
 
-  def titleContainsMutedKeyword(
-    titleOptStitch: Stitch[Option[String]],
-    languageOptStitch: Stitch[Option[String]],
-    viewerId: Option[UserId],
-  ): Stitch[VfMutedKeyword] = {
-    titleOptStitch.flatMap {
-      case None => Stitch.value(VfMutedKeyword(None))
-      case Some(spaceTitle) =>
-        languageOptStitch.flatMap { languageOpt =>
-          mutedKeywordFeatures.spaceTitleContainsMutedKeyword(
-            spaceTitle,
-            languageOpt,
-            mutedKeywordFeatures.allMutedKeywords(viewerId),
-            MuteSurface.Notifications)
+  def t-titwecontainsmutedkeywowd(
+    titweoptstitch: s-stitch[option[stwing]], ^^;;
+    wanguageoptstitch: stitch[option[stwing]], >_<
+    v-viewewid: option[usewid], rawr x3
+  ): s-stitch[vfmutedkeywowd] = {
+    titweoptstitch.fwatmap {
+      c-case none => s-stitch.vawue(vfmutedkeywowd(none))
+      case some(spacetitwe) =>
+        wanguageoptstitch.fwatmap { wanguageopt =>
+          mutedkeywowdfeatuwes.spacetitwecontainsmutedkeywowd(
+            spacetitwe, /(^•ω•^)
+            wanguageopt, :3
+            mutedkeywowdfeatuwes.awwmutedkeywowds(viewewid), (ꈍᴗꈍ)
+            m-mutesuwface.notifications)
         }
     }
   }
 
-  def getSpaceAuthors(
-    spaceId: SpaceId,
-    authorIdsFromRequest: Option[Seq[UserId]]
-  ): Stitch[Seq[UserId]] = {
-    authorIdsFromRequest match {
-      case Some(authorIds) => Stitch.apply(authorIds)
-      case _ => audioSpaceSource.getAdminIds(spaceId)
+  d-def getspaceauthows(
+    spaceid: spaceid, /(^•ω•^)
+    a-authowidsfwomwequest: o-option[seq[usewid]]
+  ): s-stitch[seq[usewid]] = {
+    authowidsfwomwequest match {
+      case some(authowids) => s-stitch.appwy(authowids)
+      case _ => audiospacesouwce.getadminids(spaceid)
     }
   }
 
-  def allSpaceAuthorLabels(
-    spaceId: SpaceId,
-    authorIdsFromRequest: Option[Seq[UserId]]
-  ): Stitch[Seq[Label]] = {
-    getSpaceAuthors(spaceId, authorIdsFromRequest)
-      .flatMap(authorIds =>
-        Stitch.collect(authorIds.map(authorId => authorFeatures.authorUserLabels(authorId)))).map(
-        _.flatten)
+  def awwspaceauthowwabews(
+    spaceid: spaceid, (⑅˘꒳˘)
+    a-authowidsfwomwequest: option[seq[usewid]]
+  ): s-stitch[seq[wabew]] = {
+    g-getspaceauthows(spaceid, ( ͡o ω ͡o ) a-authowidsfwomwequest)
+      .fwatmap(authowids =>
+        stitch.cowwect(authowids.map(authowid => a-authowfeatuwes.authowusewwabews(authowid)))).map(
+        _.fwatten)
   }
 
-  def viewerMutesAnySpaceAuthor(
-    spaceId: SpaceId,
-    authorIdsFromRequest: Option[Seq[UserId]],
-    viewerId: Option[UserId]
-  ): Stitch[Boolean] = {
-    getSpaceAuthors(spaceId, authorIdsFromRequest)
-      .flatMap(authorIds =>
-        Stitch.collect(authorIds.map(authorId =>
-          relationshipFeatures.viewerMutesAuthor(authorId, viewerId)))).map(_.contains(true))
+  d-def v-viewewmutesanyspaceauthow(
+    s-spaceid: spaceid, òωó
+    authowidsfwomwequest: option[seq[usewid]], (⑅˘꒳˘)
+    v-viewewid: option[usewid]
+  ): s-stitch[boowean] = {
+    g-getspaceauthows(spaceid, XD a-authowidsfwomwequest)
+      .fwatmap(authowids =>
+        s-stitch.cowwect(authowids.map(authowid =>
+          wewationshipfeatuwes.viewewmutesauthow(authowid, viewewid)))).map(_.contains(twue))
   }
 
-  def anySpaceAuthorBlocksViewer(
-    spaceId: SpaceId,
-    authorIdsFromRequest: Option[Seq[UserId]],
-    viewerId: Option[UserId]
-  ): Stitch[Boolean] = {
-    getSpaceAuthors(spaceId, authorIdsFromRequest)
-      .flatMap(authorIds =>
-        Stitch.collect(authorIds.map(authorId =>
-          relationshipFeatures.authorBlocksViewer(authorId, viewerId)))).map(_.contains(true))
+  def a-anyspaceauthowbwocksviewew(
+    spaceid: spaceid, -.-
+    authowidsfwomwequest: option[seq[usewid]], :3
+    viewewid: option[usewid]
+  ): stitch[boowean] = {
+    g-getspaceauthows(spaceid, nyaa~~ authowidsfwomwequest)
+      .fwatmap(authowids =>
+        stitch.cowwect(authowids.map(authowid =>
+          wewationshipfeatuwes.authowbwocksviewew(authowid, 😳 v-viewewid)))).map(_.contains(twue))
   }
 }
 
-class StratoSpaceLabelMaps(
-  spaceSafetyLabelSource: SpaceSafetyLabelMapSource,
-  statsReceiver: StatsReceiver) {
+c-cwass s-stwatospacewabewmaps(
+  spacesafetywabewsouwce: s-spacesafetywabewmapsouwce, (⑅˘꒳˘)
+  statsweceivew: statsweceivew) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("space_features")
-  private[this] val spaceSafetyLabelsStats =
-    scopedStatsReceiver.scope(SpaceSafetyLabels.name).counter("requests")
+  p-pwivate[this] v-vaw scopedstatsweceivew = statsweceivew.scope("space_featuwes")
+  pwivate[this] vaw spacesafetywabewsstats =
+    scopedstatsweceivew.scope(spacesafetywabews.name).countew("wequests")
 
-  def forSpaceId(
-    spaceId: SpaceId,
-  ): Stitch[Seq[SpaceSafetyLabel]] = {
-    spaceSafetyLabelSource
-      .fetch(spaceId).map(_.flatMap(_.labels.map { stratoSafetyLabelMap =>
-        stratoSafetyLabelMap
-          .map(label =>
-            SpaceSafetyLabel(
-              SpaceSafetyLabelType.fromThrift(label._1),
-              SafetyLabel.fromThrift(label._2)))
-      }).toSeq.flatten).ensure(spaceSafetyLabelsStats.incr)
+  def fowspaceid(
+    spaceid: s-spaceid, nyaa~~
+  ): stitch[seq[spacesafetywabew]] = {
+    s-spacesafetywabewsouwce
+      .fetch(spaceid).map(_.fwatmap(_.wabews.map { stwatosafetywabewmap =>
+        s-stwatosafetywabewmap
+          .map(wabew =>
+            spacesafetywabew(
+              spacesafetywabewtype.fwomthwift(wabew._1), OwO
+              s-safetywabew.fwomthwift(wabew._2)))
+      }).toseq.fwatten).ensuwe(spacesafetywabewsstats.incw)
   }
 }

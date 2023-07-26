@@ -1,122 +1,122 @@
-package com.twitter.tweetypie.core
+package com.twittew.tweetypie.cowe
 
-import com.twitter.tweetypie.thriftscala.FieldByPath
-import com.twitter.tweetypie.thriftscala.HydrationType
+impowt com.twittew.tweetypie.thwiftscawa.fiewdbypath
+i-impowt com.twittew.tweetypie.thwiftscawa.hydwationtype
 
 /**
- * HydrationState is used to record whether a particular piece of data was modified as a result
- * of hydration, and/or if there was a failure to hydrate the data.
+ * h-hydwationstate i-is used to w-wecowd whethew a-a pawticuwaw piece o-of data was modified a-as a wesuwt
+ * o-of hydwation, 😳😳😳 and/ow if thewe was a faiwuwe to hydwate the data. (˘ω˘)
  */
-sealed trait HydrationState {
-  def isEmpty: Boolean
-  def modified: Boolean
-  def completedHydrations: Set[HydrationType] = Set.empty
-  def failedFields: Set[FieldByPath] = Set.empty
-  def cacheErrorEncountered: Boolean = false
-  def ++(that: HydrationState): HydrationState
+seawed t-twait hydwationstate {
+  def isempty: boowean
+  d-def modified: boowean
+  def compwetedhydwations: s-set[hydwationtype] = set.empty
+  def faiwedfiewds: set[fiewdbypath] = s-set.empty
+  def cacheewwowencountewed: b-boowean = fawse
+  d-def ++(that: hydwationstate): hydwationstate
 }
 
-object HydrationState {
+object hydwationstate {
 
   /**
-   * Base `HydrationState`.  It acts as an identity value when combined with any other
-   * `HydrationState`.
+   * base `hydwationstate`. ʘwʘ  it a-acts as an identity vawue when combined with any othew
+   * `hydwationstate`. ( ͡o ω ͡o )
    */
-  case object Empty extends HydrationState {
-    def isEmpty = true
-    def modified = false
-    def ++(that: HydrationState): HydrationState = that
+  case object e-empty extends hydwationstate {
+    d-def isempty = t-twue
+    def m-modified = fawse
+    d-def ++(that: hydwationstate): hydwationstate = t-that
   }
 
   /**
-   * A `HydrationState` with metadata indicating a non-fatal hydration operation.
+   * a `hydwationstate` with m-metadata indicating a nyon-fataw hydwation opewation. o.O
    */
-  case class Success(
-    override val modified: Boolean = false,
-    override val completedHydrations: Set[HydrationType] = Set.empty,
-    override val failedFields: Set[FieldByPath] = Set.empty,
-    override val cacheErrorEncountered: Boolean = false)
-      extends HydrationState {
+  case cwass success(
+    ovewwide vaw modified: b-boowean = fawse, >w<
+    ovewwide vaw c-compwetedhydwations: s-set[hydwationtype] = s-set.empty, 😳
+    ovewwide vaw faiwedfiewds: set[fiewdbypath] = s-set.empty, 🥺
+    o-ovewwide vaw cacheewwowencountewed: b-boowean = f-fawse)
+      extends hydwationstate {
 
-    def isEmpty: Boolean = !modified && failedFields.isEmpty && !cacheErrorEncountered
+    d-def isempty: boowean = !modified && faiwedfiewds.isempty && !cacheewwowencountewed
 
-    def ++(that: HydrationState): HydrationState =
-      that match {
-        case Empty => this
-        case that: Success =>
-          HydrationState(
-            modified || that.modified,
-            completedHydrations ++ that.completedHydrations,
-            failedFields ++ that.failedFields,
-            cacheErrorEncountered || that.cacheErrorEncountered
+    d-def ++(that: hydwationstate): hydwationstate =
+      t-that match {
+        c-case empty => this
+        case t-that: success =>
+          h-hydwationstate(
+            modified || that.modified, rawr x3
+            compwetedhydwations ++ that.compwetedhydwations, o.O
+            faiwedfiewds ++ that.faiwedfiewds, rawr
+            c-cacheewwowencountewed || t-that.cacheewwowencountewed
           )
       }
 
     /**
-     * An implementation of `copy` that avoids unnecessary allocations, by
-     * using the constant `HydrationState.unmodified` and `HydrationState.modified`
-     * values when possible.
+     * an impwementation o-of `copy` t-that avoids unnecessawy a-awwocations, ʘwʘ by
+     * using the constant `hydwationstate.unmodified` and `hydwationstate.modified`
+     * vawues when p-possibwe. 😳😳😳
      */
     def copy(
-      modified: Boolean = this.modified,
-      completedHydrations: Set[HydrationType] = this.completedHydrations,
-      failedFields: Set[FieldByPath] = this.failedFields,
-      cacheErrorEncountered: Boolean = this.cacheErrorEncountered
-    ): HydrationState =
-      HydrationState(modified, completedHydrations, failedFields, cacheErrorEncountered)
+      modified: boowean = this.modified, ^^;;
+      compwetedhydwations: set[hydwationtype] = t-this.compwetedhydwations, o.O
+      faiwedfiewds: s-set[fiewdbypath] = t-this.faiwedfiewds, (///ˬ///✿)
+      c-cacheewwowencountewed: boowean = t-this.cacheewwowencountewed
+    ): h-hydwationstate =
+      h-hydwationstate(modified, σωσ c-compwetedhydwations, nyaa~~ faiwedfiewds, ^^;; cacheewwowencountewed)
   }
 
-  val empty: HydrationState = Empty
-  val modified: HydrationState = Success(true)
+  v-vaw empty: h-hydwationstate = e-empty
+  vaw modified: h-hydwationstate = s-success(twue)
 
-  def modified(completedHydration: HydrationType): HydrationState =
-    modified(Set(completedHydration))
+  def modified(compwetedhydwation: hydwationtype): hydwationstate =
+    m-modified(set(compwetedhydwation))
 
-  def modified(completedHydrations: Set[HydrationType]): HydrationState =
-    Success(modified = true, completedHydrations = completedHydrations)
+  def modified(compwetedhydwations: set[hydwationtype]): hydwationstate =
+    success(modified = twue, ^•ﻌ•^ compwetedhydwations = c-compwetedhydwations)
 
-  def partial(failedField: FieldByPath): HydrationState =
-    partial(Set(failedField))
+  def pawtiaw(faiwedfiewd: fiewdbypath): hydwationstate =
+    p-pawtiaw(set(faiwedfiewd))
 
-  def partial(failedFields: Set[FieldByPath]): HydrationState =
-    Success(modified = false, failedFields = failedFields)
+  d-def pawtiaw(faiwedfiewds: s-set[fiewdbypath]): hydwationstate =
+    success(modified = f-fawse, σωσ faiwedfiewds = faiwedfiewds)
 
-  def apply(
-    modified: Boolean,
-    completedHydrations: Set[HydrationType] = Set.empty,
-    failedFields: Set[FieldByPath] = Set.empty,
-    cacheErrorEncountered: Boolean = false
-  ): HydrationState =
-    if (completedHydrations.nonEmpty || failedFields.nonEmpty || cacheErrorEncountered) {
-      Success(modified, completedHydrations, failedFields, cacheErrorEncountered)
-    } else if (modified) {
-      HydrationState.modified
-    } else {
-      HydrationState.empty
+  d-def a-appwy(
+    modified: boowean, -.-
+    compwetedhydwations: set[hydwationtype] = set.empty, ^^;;
+    faiwedfiewds: s-set[fiewdbypath] = set.empty, XD
+    c-cacheewwowencountewed: boowean = fawse
+  ): h-hydwationstate =
+    i-if (compwetedhydwations.nonempty || faiwedfiewds.nonempty || cacheewwowencountewed) {
+      s-success(modified, 🥺 c-compwetedhydwations, òωó faiwedfiewds, (ˆ ﻌ ˆ)♡ cacheewwowencountewed)
+    } e-ewse i-if (modified) {
+      hydwationstate.modified
+    } ewse {
+      hydwationstate.empty
     }
 
   /**
-   * Creates a new HydrationState with modified set to true if `next` and `prev` are different,
-   * or false if they are the same.
+   * cweates a-a nyew hydwationstate w-with modified s-set to twue if `next` and `pwev` a-awe diffewent, -.-
+   * o-ow fawse if they awe the s-same. :3
    */
-  def delta[A](prev: A, next: A): HydrationState =
-    if (next != prev) modified else empty
+  def dewta[a](pwev: a, ʘwʘ nyext: a): hydwationstate =
+    if (next != p-pwev) modified e-ewse empty
 
   /**
-   * Join a list of HydrationStates into a single HydrationState.
+   * join a wist of hydwationstates i-into a singwe h-hydwationstate. 🥺
    *
-   * Note: this could just be a reduce over the HydrationStates but that would allocate
-   * _N_ HydrationStates. This approach also allows for shortcircuiting over the boolean
-   * fields.
+   * nyote: this couwd just be a weduce ovew the hydwationstates b-but that wouwd awwocate
+   * _n_ hydwationstates. >_< this appwoach awso a-awwows fow showtciwcuiting ovew the boowean
+   * f-fiewds. ʘwʘ
    */
-  def join(states: HydrationState*): HydrationState = {
-    val statesSet = states.toSet
+  d-def join(states: hydwationstate*): hydwationstate = {
+    vaw s-statesset = states.toset
 
-    HydrationState(
-      modified = states.exists(_.modified),
-      completedHydrations = statesSet.flatMap(_.completedHydrations),
-      failedFields = statesSet.flatMap(_.failedFields),
-      cacheErrorEncountered = states.exists(_.cacheErrorEncountered)
+    h-hydwationstate(
+      modified = states.exists(_.modified), (˘ω˘)
+      compwetedhydwations = statesset.fwatmap(_.compwetedhydwations), (✿oωo)
+      f-faiwedfiewds = statesset.fwatmap(_.faiwedfiewds), (///ˬ///✿)
+      c-cacheewwowencountewed = states.exists(_.cacheewwowencountewed)
     )
   }
 }

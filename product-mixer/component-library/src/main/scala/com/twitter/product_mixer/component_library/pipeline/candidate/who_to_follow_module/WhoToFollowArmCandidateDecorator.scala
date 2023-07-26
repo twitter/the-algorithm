@@ -1,82 +1,82 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+package com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.who_to_fowwow_moduwe
 
-import com.twitter.product_mixer.component_library.candidate_source.account_recommendations_mixer.WhoToFollowModuleFooterFeature
-import com.twitter.product_mixer.component_library.candidate_source.account_recommendations_mixer.WhoToFollowModuleHeaderFeature
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemInModuleDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.user.UserCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.metadata.ClientEventInfoBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.metadata.StaticUrlBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.promoted.FeaturePromotedMetadataBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.social_context.WhoToFollowSocialContextBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.stringcenter.StrStatic
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.ModuleFooterBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.ModuleHeaderBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.TimelineModuleBuilder
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleDisplayTypeBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.DeepLink
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.account_wecommendations_mixew.whotofowwowmoduwefootewfeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.account_wecommendations_mixew.whotofowwowmoduweheadewfeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.uwtitemcandidatedecowatow
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.uwtiteminmoduwedecowatow
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.usew.usewcandidateuwtitembuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.metadata.cwienteventinfobuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.metadata.staticuwwbuiwdew
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.pwomoted.featuwepwomotedmetadatabuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.sociaw_context.whotofowwowsociawcontextbuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.stwingcentew.stwstatic
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.timewine_moduwe.moduwefootewbuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.timewine_moduwe.moduweheadewbuiwdew
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.timewine_moduwe.timewinemoduwebuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.usewcandidate
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.candidatedecowatow
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.decowation
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.timewine_moduwe.basemoduwedispwaytypebuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.entwynamespace
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.deepwink
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
 
-object WhoToFollowArmCandidateDecorator {
-  val ClientEventComponent = "suggest_who_to_follow"
-  val EntryNamespaceString = "who-to-follow"
+object whotofowwowawmcandidatedecowatow {
+  vaw cwienteventcomponent = "suggest_who_to_fowwow"
+  v-vaw entwynamespacestwing = "who-to-fowwow"
 }
 
-case class WhoToFollowArmCandidateDecorator[-Query <: PipelineQuery](
-  moduleDisplayTypeBuilder: BaseModuleDisplayTypeBuilder[Query, UserCandidate],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, UserCandidate]
-  ]) extends CandidateDecorator[Query, UserCandidate] {
+case cwass whotofowwowawmcandidatedecowatow[-quewy <: p-pipewinequewy](
+  m-moduwedispwaytypebuiwdew: b-basemoduwedispwaytypebuiwdew[quewy, 😳😳😳 u-usewcandidate], (U ﹏ U)
+  feedbackactioninfobuiwdew: option[
+    b-basefeedbackactioninfobuiwdew[quewy, (///ˬ///✿) usewcandidate]
+  ]) extends c-candidatedecowatow[quewy, 😳 usewcandidate] {
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[UserCandidate]]
-  ): Stitch[Seq[Decoration]] = {
-    val clientEventDetailsBuilder = WhoToFollowClientEventDetailsBuilder(TrackingTokenFeature)
-    val clientEventInfoBuilder = ClientEventInfoBuilder[Query, UserCandidate](
-      WhoToFollowArmCandidateDecorator.ClientEventComponent,
-      Some(clientEventDetailsBuilder))
-    val promotedMetadataBuilder = FeaturePromotedMetadataBuilder(AdImpressionFeature)
-    val socialContextBuilder =
-      WhoToFollowSocialContextBuilder(SocialTextFeature, HermitContextTypeFeature)
-    val userItemBuilder = UserCandidateUrtItemBuilder(
-      clientEventInfoBuilder = clientEventInfoBuilder,
-      promotedMetadataBuilder = Some(promotedMetadataBuilder),
-      socialContextBuilder = Some(socialContextBuilder))
-    val userItemDecorator = UrtItemCandidateDecorator(userItemBuilder)
+  ovewwide def appwy(
+    quewy: quewy, 😳
+    candidates: seq[candidatewithfeatuwes[usewcandidate]]
+  ): s-stitch[seq[decowation]] = {
+    vaw cwienteventdetaiwsbuiwdew = w-whotofowwowcwienteventdetaiwsbuiwdew(twackingtokenfeatuwe)
+    v-vaw cwienteventinfobuiwdew = c-cwienteventinfobuiwdew[quewy, σωσ usewcandidate](
+      whotofowwowawmcandidatedecowatow.cwienteventcomponent, rawr x3
+      some(cwienteventdetaiwsbuiwdew))
+    v-vaw pwomotedmetadatabuiwdew = f-featuwepwomotedmetadatabuiwdew(adimpwessionfeatuwe)
+    vaw s-sociawcontextbuiwdew =
+      w-whotofowwowsociawcontextbuiwdew(sociawtextfeatuwe, OwO hewmitcontexttypefeatuwe)
+    v-vaw usewitembuiwdew = u-usewcandidateuwtitembuiwdew(
+      cwienteventinfobuiwdew = cwienteventinfobuiwdew, /(^•ω•^)
+      p-pwomotedmetadatabuiwdew = some(pwomotedmetadatabuiwdew), 😳😳😳
+      s-sociawcontextbuiwdew = some(sociawcontextbuiwdew))
+    v-vaw usewitemdecowatow = u-uwtitemcandidatedecowatow(usewitembuiwdew)
 
-    val whoToFollowModuleBuilder = {
-      val whoToFollowHeaderOpt = query.features.map(_.get(WhoToFollowModuleHeaderFeature))
-      val whoToFollowFooterOpt = query.features.flatMap(_.get(WhoToFollowModuleFooterFeature))
-      val whoToFollowModuleHeaderBuilder = whoToFollowHeaderOpt.flatMap(_.title).map { title =>
-        ModuleHeaderBuilder(textBuilder = StrStatic(title), isSticky = Some(true))
+    vaw whotofowwowmoduwebuiwdew = {
+      vaw whotofowwowheadewopt = quewy.featuwes.map(_.get(whotofowwowmoduweheadewfeatuwe))
+      vaw whotofowwowfootewopt = q-quewy.featuwes.fwatmap(_.get(whotofowwowmoduwefootewfeatuwe))
+      v-vaw whotofowwowmoduweheadewbuiwdew = w-whotofowwowheadewopt.fwatmap(_.titwe).map { t-titwe =>
+        moduweheadewbuiwdew(textbuiwdew = s-stwstatic(titwe), ( ͡o ω ͡o ) issticky = some(twue))
       }
-      val whoToFollowModuleFooterBuilder = whoToFollowFooterOpt.flatMap(_.action).map { action =>
-        ModuleFooterBuilder(
-          textBuilder = StrStatic(action.title),
-          urlBuilder = Some(StaticUrlBuilder(action.actionUrl, DeepLink)))
+      vaw whotofowwowmoduwefootewbuiwdew = whotofowwowfootewopt.fwatmap(_.action).map { a-action =>
+        moduwefootewbuiwdew(
+          textbuiwdew = stwstatic(action.titwe), >_<
+          uwwbuiwdew = s-some(staticuwwbuiwdew(action.actionuww, >w< deepwink)))
       }
 
-      TimelineModuleBuilder(
-        entryNamespace = EntryNamespace(WhoToFollowArmCandidateDecorator.EntryNamespaceString),
-        clientEventInfoBuilder = clientEventInfoBuilder,
-        displayTypeBuilder = moduleDisplayTypeBuilder,
-        headerBuilder = whoToFollowModuleHeaderBuilder,
-        footerBuilder = whoToFollowModuleFooterBuilder,
-        feedbackActionInfoBuilder = feedbackActionInfoBuilder,
+      t-timewinemoduwebuiwdew(
+        e-entwynamespace = e-entwynamespace(whotofowwowawmcandidatedecowatow.entwynamespacestwing), rawr
+        cwienteventinfobuiwdew = c-cwienteventinfobuiwdew, 😳
+        d-dispwaytypebuiwdew = m-moduwedispwaytypebuiwdew, >w<
+        h-headewbuiwdew = whotofowwowmoduweheadewbuiwdew, (⑅˘꒳˘)
+        footewbuiwdew = w-whotofowwowmoduwefootewbuiwdew, OwO
+        f-feedbackactioninfobuiwdew = f-feedbackactioninfobuiwdew, (ꈍᴗꈍ)
       )
     }
 
-    UrtItemInModuleDecorator(
-      userItemDecorator,
-      whoToFollowModuleBuilder
-    ).apply(query, candidates)
+    u-uwtiteminmoduwedecowatow(
+      u-usewitemdecowatow, 😳
+      whotofowwowmoduwebuiwdew
+    ).appwy(quewy, 😳😳😳 candidates)
   }
 }

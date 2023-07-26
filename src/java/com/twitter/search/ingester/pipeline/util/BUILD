@@ -1,41 +1,42 @@
-java_library(
-    sources = ["*.java"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/code/findbugs:jsr305",
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/commons-lang",
-        "3rdparty/jvm/commons-logging",
-        "3rdparty/jvm/org/apache/commons:commons-math3",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "decider/src/main/scala",
-        "src/java/com/twitter/common_internal/text/version",
-        "src/java/com/twitter/metastore/client_v2",
-        "src/java/com/twitter/metastore/data",
-        "src/java/com/twitter/search/common/debug",
-        "src/java/com/twitter/search/common/encoding/features",
-        "src/java/com/twitter/search/common/metrics",
-        "src/java/com/twitter/search/common/partitioning/base",
-        "src/java/com/twitter/search/common/relevance:entities_and_filters",
-        "src/java/com/twitter/search/common/relevance/features",
-        "src/java/com/twitter/search/common/schema",
-        "src/java/com/twitter/search/common/schema/base",
-        "src/java/com/twitter/search/common/schema/earlybird",
-        "src/java/com/twitter/search/common/util/geocoding",
-        "src/java/com/twitter/search/common/util/text",
-        "src/java/com/twitter/search/ingester/model",
-        "src/java/org/apache/commons/pipeline",
-        "src/scala/com/twitter/common_internal/analytics/test_user_filter",
-        "src/thrift/com/twitter/expandodo:cards-java",
-        "src/thrift/com/twitter/manhattan:internal-scala",
-        "src/thrift/com/twitter/search/common:indexing-java",
-        "src/thrift/com/twitter/search/common:schema-java",
-        "src/thrift/com/twitter/service/metastore/gen:thrift-java",
-        "stitch/stitch-core",
-        "storage/clients/manhattan",
-        "util/util-core:scala",
+scawa_wibwawy(
+    pwatfowm = "java11", OwO
+    stwict_deps = f-fawse, 🥺
+    t-tags = ["bazew-compatibwe"], òωó
+    d-dependencies = [
+        "3wdpawty/jvm/owg/apache/thwift:wibthwift",
+        "finatwa-intewnaw/messaging/kafka/swc/main/scawa", o.O
+        "sewvo/wepo/swc/main/scawa",
+        "swc/thwift/com/twittew/wecos:wecos-injectow-scawa", (U ᵕ U❁)
+        "swc/thwift/com/twittew/wecos:wecos-intewnaw-scawa", (⑅˘꒳˘)
+    ], ( ͡o ω ͡o )
+)
+dpawty/jvm/owg/apache/commons:commons-math3", UwU
+        "3wdpawty/jvm/owg/apache/thwift:wibthwift", rawr x3
+        "decidew/swc/main/scawa", rawr
+        "swc/java/com/twittew/common_intewnaw/text/vewsion", σωσ
+        "swc/java/com/twittew/metastowe/cwient_v2", σωσ
+        "swc/java/com/twittew/metastowe/data", >_<
+        "swc/java/com/twittew/seawch/common/debug", :3
+        "swc/java/com/twittew/seawch/common/encoding/featuwes", (U ﹏ U)
+        "swc/java/com/twittew/seawch/common/metwics", -.-
+        "swc/java/com/twittew/seawch/common/pawtitioning/base", (ˆ ﻌ ˆ)♡
+        "swc/java/com/twittew/seawch/common/wewevance:entities_and_fiwtews", (⑅˘꒳˘)
+        "swc/java/com/twittew/seawch/common/wewevance/featuwes", (U ᵕ U❁)
+        "swc/java/com/twittew/seawch/common/schema", -.-
+        "swc/java/com/twittew/seawch/common/schema/base", ^^;;
+        "swc/java/com/twittew/seawch/common/schema/eawwybiwd", >_<
+        "swc/java/com/twittew/seawch/common/utiw/geocoding", mya
+        "swc/java/com/twittew/seawch/common/utiw/text", mya
+        "swc/java/com/twittew/seawch/ingestew/modew", 😳
+        "swc/java/owg/apache/commons/pipewine", XD
+        "swc/scawa/com/twittew/common_intewnaw/anawytics/test_usew_fiwtew", :3
+        "swc/thwift/com/twittew/expandodo:cawds-java", 😳😳😳
+        "swc/thwift/com/twittew/manhattan:intewnaw-scawa", -.-
+        "swc/thwift/com/twittew/seawch/common:indexing-java", ( ͡o ω ͡o )
+        "swc/thwift/com/twittew/seawch/common:schema-java",
+        "swc/thwift/com/twittew/sewvice/metastowe/gen:thwift-java", rawr x3
+        "stitch/stitch-cowe", nyaa~~
+        "stowage/cwients/manhattan", /(^•ω•^)
+        "utiw/utiw-cowe:scawa", rawr
     ],
 )

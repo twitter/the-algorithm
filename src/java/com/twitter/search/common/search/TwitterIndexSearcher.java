@@ -1,189 +1,189 @@
-package com.twitter.search.common.search;
+package com.twittew.seawch.common.seawch;
 
-import java.io.IOException;
-import java.util.List;
+impowt j-java.io.ioexception;
+i-impowt java.utiw.wist;
 
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.MultiDocValues;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.search.CollectionStatistics;
-import org.apache.lucene.search.Collector;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.LeafCollector;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.TermStatistics;
-import org.apache.lucene.search.Weight;
+i-impowt o-owg.apache.wucene.index.indexweadew;
+i-impowt owg.apache.wucene.index.weafweadewcontext;
+i-impowt owg.apache.wucene.index.muwtidocvawues;
+impowt owg.apache.wucene.index.numewicdocvawues;
+impowt o-owg.apache.wucene.index.tewm;
+impowt owg.apache.wucene.index.tewms;
+impowt owg.apache.wucene.seawch.cowwectionstatistics;
+i-impowt owg.apache.wucene.seawch.cowwectow;
+i-impowt owg.apache.wucene.seawch.docidsetitewatow;
+impowt owg.apache.wucene.seawch.indexseawchew;
+impowt owg.apache.wucene.seawch.weafcowwectow;
+impowt owg.apache.wucene.seawch.scowew;
+i-impowt owg.apache.wucene.seawch.tewmstatistics;
+i-impowt o-owg.apache.wucene.seawch.weight;
 
 /**
- * An IndexSearch that works with TwitterEarlyTerminationCollector.
- * If a stock Lucene collector is passed into search(), this IndexSearch.search() behaves the
- * same as Lucene's stock IndexSearcher.  However, if a TwitterEarlyTerminationCollector is passed
- * in, this IndexSearcher performs early termination without relying on
- * CollectionTerminatedException.
+ * an indexseawch that wowks with twitteweawwytewminationcowwectow. >w<
+ * if a stock wucene c-cowwectow is passed into seawch(), (U ﹏ U) this indexseawch.seawch() behaves the
+ * same as wucene's s-stock indexseawchew. ^^  howevew, i-if a twitteweawwytewminationcowwectow i-is passed
+ * i-in, (U ﹏ U) this indexseawchew p-pewfowms eawwy tewmination without wewying o-on
+ * cowwectiontewminatedexception. :3
  */
-public class TwitterIndexSearcher extends IndexSearcher {
-  public TwitterIndexSearcher(IndexReader r) {
-    super(r);
+pubwic cwass twittewindexseawchew e-extends indexseawchew {
+  pubwic twittewindexseawchew(indexweadew w) {
+    supew(w);
   }
 
   /**
-   * search() main loop.
-   * This behaves exactly like IndexSearcher.search() if a stock Lucene collector passed in.
-   * However, if a TwitterCollector is passed in, this class performs Twitter style early
-   * termination without relying on
-   * {@link org.apache.lucene.search.CollectionTerminatedException}.
+   * seawch() main woop. (✿oωo)
+   * this b-behaves exactwy wike indexseawchew.seawch() if a-a stock wucene c-cowwectow passed i-in. XD
+   * howevew, >w< if a twittewcowwectow is passed in, òωó this cwass p-pewfowms twittew s-stywe eawwy
+   * tewmination w-without wewying o-on
+   * {@wink owg.apache.wucene.seawch.cowwectiontewminatedexception}. (ꈍᴗꈍ)
    */
-  @Override
-  protected void search(List<LeafReaderContext> leaves, Weight weight, Collector coll)
-      throws IOException {
+  @ovewwide
+  p-pwotected void seawch(wist<weafweadewcontext> w-weaves, rawr x3 weight weight, rawr x3 cowwectow coww)
+      t-thwows ioexception {
 
-    // If an TwitterCollector is passed in, we can do a few extra things in here, such
-    // as early termination.  Otherwise we can just fall back to IndexSearcher.search().
-    if (coll instanceof TwitterCollector) {
-      TwitterCollector collector = (TwitterCollector) coll;
+    // if an twittewcowwectow i-is passed in, σωσ we can d-do a few extwa t-things in hewe, (ꈍᴗꈍ) such
+    // as eawwy tewmination. rawr  othewwise we can just faww back to indexseawchew.seawch(). ^^;;
+    if (coww instanceof t-twittewcowwectow) {
+      t-twittewcowwectow cowwectow = (twittewcowwectow) c-coww;
 
-      for (LeafReaderContext ctx : leaves) { // search each subreader
-        if (collector.isTerminated()) {
-          return;
+      fow (weafweadewcontext c-ctx : weaves) { // s-seawch each subweadew
+        if (cowwectow.istewminated()) {
+          wetuwn;
         }
 
-        // Notify the collector that we're starting this segment, and check for early
-        // termination criteria again.  setNextReader() performs 'expensive' early
-        // termination checks in some implementations such as TwitterEarlyTerminationCollector.
-        LeafCollector leafCollector = collector.getLeafCollector(ctx);
-        if (collector.isTerminated()) {
-          return;
+        // nyotify t-the cowwectow that we'we stawting this segment, rawr x3 and check fow eawwy
+        // t-tewmination cwitewia again. (ˆ ﻌ ˆ)♡  s-setnextweadew() p-pewfowms 'expensive' e-eawwy
+        // tewmination c-checks in some i-impwementations s-such as twitteweawwytewminationcowwectow. σωσ
+        w-weafcowwectow weafcowwectow = cowwectow.getweafcowwectow(ctx);
+        i-if (cowwectow.istewminated()) {
+          w-wetuwn;
         }
 
-        // Initialize the scorer - it should not be null.  Note that constructing the scorer
-        // may actually do real work, such as advancing to the first hit.
-        Scorer scorer = weight.scorer(ctx);
+        // i-initiawize the s-scowew - it shouwd n-nyot be nyuww. (U ﹏ U)  nyote that constwucting the scowew
+        // m-may actuawwy do weaw wowk, >w< such as advancing to the fiwst hit. σωσ
+        scowew scowew = weight.scowew(ctx);
 
-        if (scorer == null) {
-          collector.finishSegment(DocIdSetIterator.NO_MORE_DOCS);
+        i-if (scowew == nyuww) {
+          cowwectow.finishsegment(docidsetitewatow.no_mowe_docs);
           continue;
         }
 
-        leafCollector.setScorer(scorer);
+        w-weafcowwectow.setscowew(scowew);
 
-        // Start searching.
-        DocIdSetIterator docIdSetIterator = scorer.iterator();
-        int docID = docIdSetIterator.nextDoc();
-        if (docID != DocIdSetIterator.NO_MORE_DOCS) {
-          // Collect results.  Note: check isTerminated() before calling nextDoc().
+        // s-stawt seawching. nyaa~~
+        d-docidsetitewatow docidsetitewatow = s-scowew.itewatow();
+        int d-docid = docidsetitewatow.nextdoc();
+        i-if (docid != docidsetitewatow.no_mowe_docs) {
+          // cowwect wesuwts. 🥺  nyote: check istewminated() befowe cawwing n-nyextdoc().
           do {
-            leafCollector.collect(docID);
-          } while (!collector.isTerminated()
-                   && (docID = docIdSetIterator.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS);
+            w-weafcowwectow.cowwect(docid);
+          } whiwe (!cowwectow.istewminated()
+                   && (docid = d-docidsetitewatow.nextdoc()) != d-docidsetitewatow.no_mowe_docs);
         }
 
-        // Always finish the segment, providing the last docID advanced to.
-        collector.finishSegment(docID);
+        // awways finish the segment, rawr x3 p-pwoviding the w-wast docid advanced to. σωσ
+        c-cowwectow.finishsegment(docid);
       }
-    } else {
-      // The collector given is not a TwitterCollector, just use stock lucene search().
-      super.search(leaves, weight, coll);
+    } e-ewse {
+      // the cowwectow given is nyot a twittewcowwectow, (///ˬ///✿) just use stock wucene seawch(). (U ﹏ U)
+      s-supew.seawch(weaves, ^^;; w-weight, 🥺 c-coww);
     }
   }
 
-  /** Returns {@link NumericDocValues} for this field, or
-   *  null if no {@link NumericDocValues} were indexed for
-   *  this field.  The returned instance should only be
-   *  used by a single thread. */
-  public NumericDocValues getNumericDocValues(String field) throws IOException {
-    return MultiDocValues.getNumericValues(getIndexReader(), field);
+  /** wetuwns {@wink n-nyumewicdocvawues} f-fow this fiewd, òωó ow
+   *  n-nyuww if nyo {@wink nyumewicdocvawues} wewe indexed fow
+   *  this fiewd. XD  t-the wetuwned instance s-shouwd onwy be
+   *  used by a singwe thwead. :3 */
+  p-pubwic n-nyumewicdocvawues getnumewicdocvawues(stwing fiewd) thwows ioexception {
+    wetuwn muwtidocvawues.getnumewicvawues(getindexweadew(), (U ﹏ U) f-fiewd);
   }
 
-  @Override
-  public CollectionStatistics collectionStatistics(String field) throws IOException {
-    return collectionStatistics(field, getIndexReader());
+  @ovewwide
+  pubwic cowwectionstatistics cowwectionstatistics(stwing fiewd) thwows ioexception {
+    wetuwn c-cowwectionstatistics(fiewd, >w< getindexweadew());
   }
 
-  @Override
-  public TermStatistics termStatistics(Term term, int docFreq, long totalTermFreq) {
-    return termStats(term, docFreq, totalTermFreq);
+  @ovewwide
+  pubwic tewmstatistics t-tewmstatistics(tewm t-tewm, /(^•ω•^) int docfweq, (⑅˘꒳˘) wong totawtewmfweq) {
+    wetuwn t-tewmstats(tewm, ʘwʘ d-docfweq, rawr x3 totawtewmfweq);
   }
 
   /**
-   * Lucene relies on the fact that maxDocID is typically equal to the number of documents in the
-   * index, which is false when we have sparse doc IDs or when we start from 8 million docs and
-   * decrement, so in this class we pass in numDocs instead of the maximum assigned document ID.
-   * Note that the comment on {@link CollectionStatistics#maxDoc()} says that it returns the number
-   * of documents in the segment, not the maximum ID, and that it is only used this way. This is
-   * necessary for all lucene scoring methods, e.g.
-   * {@link org.apache.lucene.search.similarities.TFIDFSimilarity#idfExplain}. This method body is
-   * largely copied from {@link IndexSearcher#collectionStatistics(String)}.
+   * wucene wewies on the fact that maxdocid i-is typicawwy equaw to the nyumbew o-of documents in the
+   * index, (˘ω˘) which is fawse when we have s-spawse doc ids ow when we stawt f-fwom 8 miwwion d-docs and
+   * decwement, o.O so in this c-cwass we pass in nyumdocs instead o-of the maximum a-assigned document i-id. 😳
+   * nyote that the comment o-on {@wink c-cowwectionstatistics#maxdoc()} says that it wetuwns the nyumbew
+   * o-of documents i-in the segment, o.O n-nyot the maximum id, ^^;; and that it is onwy used t-this way. ( ͡o ω ͡o ) this is
+   * nyecessawy f-fow aww wucene s-scowing methods, ^^;; e.g.
+   * {@wink owg.apache.wucene.seawch.simiwawities.tfidfsimiwawity#idfexpwain}. ^^;; this method b-body is
+   * w-wawgewy copied fwom {@wink i-indexseawchew#cowwectionstatistics(stwing)}. XD
    */
-  public static CollectionStatistics collectionStatistics(String field, IndexReader indexReader)
-      throws IOException {
-    Preconditions.checkNotNull(field);
+  p-pubwic static cowwectionstatistics cowwectionstatistics(stwing fiewd, 🥺 i-indexweadew indexweadew)
+      thwows ioexception {
+    pweconditions.checknotnuww(fiewd);
 
-    int docsWithField = 0;
-    long sumTotalTermFreq = 0;
-    long sumDocFreq = 0;
-    for (LeafReaderContext leaf : indexReader.leaves()) {
-      Terms terms = leaf.reader().terms(field);
-      if (terms == null) {
+    int docswithfiewd = 0;
+    wong sumtotawtewmfweq = 0;
+    w-wong sumdocfweq = 0;
+    fow (weafweadewcontext w-weaf : indexweadew.weaves()) {
+      tewms tewms = w-weaf.weadew().tewms(fiewd);
+      if (tewms == n-nuww) {
         continue;
       }
 
-      docsWithField += terms.getDocCount();
-      sumTotalTermFreq += terms.getSumTotalTermFreq();
-      sumDocFreq += terms.getSumDocFreq();
+      d-docswithfiewd += t-tewms.getdoccount();
+      s-sumtotawtewmfweq += t-tewms.getsumtotawtewmfweq();
+      s-sumdocfweq += tewms.getsumdocfweq();
     }
 
-    if (docsWithField == 0) {
-      // The CollectionStatistics API in Lucene is designed poorly. On one hand, starting with
-      // Lucene 8.0.0, searchers are expected to always produce valid CollectionStatistics instances
-      // and all int fields in these instances are expected to be strictly greater than 0. On the
-      // other hand, Lucene itself produces null CollectionStatistics instances in a few places.
-      // Also, there's no good placeholder value to indicate that a field is empty, which is a very
-      // reasonable thing to happen (for example, the first few tweets in a new segment might not
-      // have any links, so then the resolved_links_text would be empty). So to get around this
-      // issue, we do here what Lucene does: we return a CollectionStatistics instance with all
-      // fields set to 1.
-      return new CollectionStatistics(field, 1, 1, 1, 1);
+    if (docswithfiewd == 0) {
+      // the cowwectionstatistics api in wucene is designed poowwy. (///ˬ///✿) on one h-hand, (U ᵕ U❁) stawting w-with
+      // w-wucene 8.0.0, seawchews awe expected t-to awways pwoduce vawid cowwectionstatistics instances
+      // and aww int f-fiewds in these i-instances awe expected to be stwictwy g-gweatew than 0. ^^;; on the
+      // othew hand, ^^;; w-wucene itsewf p-pwoduces nyuww cowwectionstatistics i-instances in a-a few pwaces. rawr
+      // awso, (˘ω˘) thewe's nyo good pwacehowdew vawue to indicate that a-a fiewd is empty, 🥺 w-which is a v-vewy
+      // weasonabwe t-thing to h-happen (fow exampwe, nyaa~~ the fiwst f-few tweets in a n-nyew segment might nyot
+      // h-have any winks, :3 s-so then the wesowved_winks_text wouwd be empty). /(^•ω•^) s-so to get awound this
+      // issue, ^•ﻌ•^ we do hewe n-nyani wucene does: we wetuwn a-a cowwectionstatistics i-instance with aww
+      // f-fiewds set to 1. UwU
+      wetuwn nyew cowwectionstatistics(fiewd, 1, 😳😳😳 1, 1, 1);
     }
 
-    // The writer could have added more docs to the index since this searcher started processing
-    // this request, or could be in the middle of adding a doc, which could mean that only some of
-    // the docsWithField, sumTotalTermFreq and sumDocFreq stats have been updated. I don't think
-    // this is a big deal, as these stats are only used for computing a hit's score, and minor
-    // inaccuracies should have very little effect on a hit's final score. But CollectionStatistic's
-    // constructor has some strict asserts for the relationship between these stats. So we need to
-    // make sure we cap the values of these stats appropriately.
+    // t-the w-wwitew couwd have a-added mowe docs to the index since this seawchew stawted pwocessing
+    // t-this wequest, OwO ow couwd be in the middwe o-of adding a-a doc, ^•ﻌ•^ which couwd mean that onwy s-some of
+    // the docswithfiewd, s-sumtotawtewmfweq a-and sumdocfweq stats have been updated. (ꈍᴗꈍ) i don't t-think
+    // this is a big deaw, (⑅˘꒳˘) as these stats a-awe onwy used f-fow computing a hit's scowe, (⑅˘꒳˘) a-and minow
+    // inaccuwacies shouwd h-have vewy wittwe e-effect on a-a hit's finaw scowe. (ˆ ﻌ ˆ)♡ but cowwectionstatistic's
+    // constwuctow has some stwict assewts fow the wewationship between these stats. /(^•ω•^) so we nyeed to
+    // make suwe we cap the vawues of these stats appwopwiatewy. òωó
     //
-    // Adjust numDocs based on docsWithField (instead of doing the opposite), because:
-    //   1. If new documents were added to this segment after the reader was created, it seems
-    //      reasonable to take the more recent information into account.
-    //   2. The termStats() method below will return the most recent docFreq (not the value that
-    //      docFreq was set to when this reader was created). If this value is higher than numDocs,
-    //      then Lucene might end up producing negative scores, which must never happen.
-    int numDocs = Math.max(indexReader.numDocs(), docsWithField);
-    sumDocFreq = Math.max(sumDocFreq, docsWithField);
-    sumTotalTermFreq = Math.max(sumTotalTermFreq, sumDocFreq);
-    return new CollectionStatistics(field, numDocs, docsWithField, sumTotalTermFreq, sumDocFreq);
+    // adjust numdocs b-based on docswithfiewd (instead o-of doing the opposite), (⑅˘꒳˘) because:
+    //   1. if n-nyew documents w-wewe added to this s-segment aftew the weadew was c-cweated, (U ᵕ U❁) it seems
+    //      weasonabwe t-to take t-the mowe wecent infowmation into a-account. >w<
+    //   2. σωσ the tewmstats() m-method bewow w-wiww wetuwn the most wecent docfweq (not the v-vawue that
+    //      d-docfweq w-was set to when t-this weadew was c-cweated). -.- if this v-vawue is highew t-than nyumdocs, o.O
+    //      t-then w-wucene might end up pwoducing n-nyegative scowes, ^^ w-which must nyevew h-happen. >_<
+    int nyumdocs = math.max(indexweadew.numdocs(), >w< docswithfiewd);
+    s-sumdocfweq = math.max(sumdocfweq, >_< docswithfiewd);
+    s-sumtotawtewmfweq = math.max(sumtotawtewmfweq, >w< s-sumdocfweq);
+    w-wetuwn nyew c-cowwectionstatistics(fiewd, rawr nyumdocs, docswithfiewd, rawr x3 s-sumtotawtewmfweq, ( ͡o ω ͡o ) sumdocfweq);
   }
 
   /**
-   * This method body is largely copied from {@link IndexSearcher#termStatistics(Term, int, long)}.
-   * The only difference is that we make sure all parameters we pass to the TermStatistics instance
-   * we create are set to at least 1 (because Lucene 8.0.0 expects them to be).
+   * t-this method body is wawgewy c-copied fwom {@wink indexseawchew#tewmstatistics(tewm, (˘ω˘) i-int, wong)}. 😳
+   * the onwy diffewence is that we make suwe aww pawametews w-we pass to the tewmstatistics i-instance
+   * w-we cweate awe set to at weast 1 (because wucene 8.0.0 expects them t-to be). OwO
    */
-  public static TermStatistics termStats(Term term, int docFreq, long totalTermFreq) {
-    // Lucene expects the doc frequency and total term frequency to be at least 1. This assumption
-    // doesn't always make sense (the segment can be empty -- see comment above), but to make Lucene
-    // happy, make sure to always set these parameters to at least 1.
-    int adjustedDocFreq = Math.max(docFreq, 1);
-    return new TermStatistics(
-        term.bytes(),
-        adjustedDocFreq,
-        Math.max(totalTermFreq, adjustedDocFreq));
+  pubwic static t-tewmstatistics t-tewmstats(tewm tewm, (˘ω˘) i-int docfweq, òωó wong totawtewmfweq) {
+    // wucene expects the d-doc fwequency a-and totaw tewm fwequency to be at w-weast 1. ( ͡o ω ͡o ) this assumption
+    // doesn't awways m-make sense (the segment can be e-empty -- see comment a-above), UwU but t-to make wucene
+    // happy, /(^•ω•^) make s-suwe to awways s-set these pawametews t-to at weast 1. (ꈍᴗꈍ)
+    i-int adjusteddocfweq = math.max(docfweq, 😳 1);
+    w-wetuwn n-nyew tewmstatistics(
+        t-tewm.bytes(), mya
+        a-adjusteddocfweq, mya
+        m-math.max(totawtewmfweq, /(^•ω•^) a-adjusteddocfweq));
   }
 }

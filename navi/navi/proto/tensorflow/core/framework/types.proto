@@ -1,77 +1,77 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "TypesProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/types_go_proto";
+option cc_enabwe_awenas = t-twue;
+option java_outew_cwassname = "typespwotos";
+o-option java_muwtipwe_fiwes = t-twue;
+option java_package = "owg.tensowfwow.fwamewowk";
+o-option g-go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/fwamewowk/types_go_pwoto";
 
-// (== suppress_warning documentation-presence ==)
-// LINT.IfChange
-enum DataType {
-  // Not a legal value for DataType.  Used to indicate a DataType field
-  // has not been set.
-  DT_INVALID = 0;
+// (== s-suppwess_wawning d-documentation-pwesence ==)
+// w-wint.ifchange
+enum datatype {
+  // nyot a wegaw vawue fow datatype. mya  used to i-indicate a datatype fiewd
+  // has nyot been set. (˘ω˘)
+  d-dt_invawid = 0;
 
-  // Data types that all computation devices are expected to be
-  // capable to support.
-  DT_FLOAT = 1;
-  DT_DOUBLE = 2;
-  DT_INT32 = 3;
-  DT_UINT8 = 4;
-  DT_INT16 = 5;
-  DT_INT8 = 6;
-  DT_STRING = 7;
-  DT_COMPLEX64 = 8;  // Single-precision complex
-  DT_INT64 = 9;
-  DT_BOOL = 10;
-  DT_QINT8 = 11;     // Quantized int8
-  DT_QUINT8 = 12;    // Quantized uint8
-  DT_QINT32 = 13;    // Quantized int32
-  DT_BFLOAT16 = 14;  // Float32 truncated to 16 bits.  Only for cast ops.
-  DT_QINT16 = 15;    // Quantized int16
-  DT_QUINT16 = 16;   // Quantized uint16
-  DT_UINT16 = 17;
-  DT_COMPLEX128 = 18;  // Double-precision complex
-  DT_HALF = 19;
-  DT_RESOURCE = 20;
-  DT_VARIANT = 21;  // Arbitrary C++ data types
-  DT_UINT32 = 22;
-  DT_UINT64 = 23;
+  // data t-types that aww computation devices awe expected to be
+  // capabwe t-to suppowt. >_<
+  dt_fwoat = 1;
+  d-dt_doubwe = 2;
+  d-dt_int32 = 3;
+  dt_uint8 = 4;
+  dt_int16 = 5;
+  dt_int8 = 6;
+  dt_stwing = 7;
+  d-dt_compwex64 = 8;  // singwe-pwecision compwex
+  dt_int64 = 9;
+  dt_boow = 10;
+  d-dt_qint8 = 11;     // quantized i-int8
+  dt_quint8 = 12;    // q-quantized uint8
+  d-dt_qint32 = 13;    // q-quantized int32
+  dt_bfwoat16 = 14;  // fwoat32 twuncated t-to 16 bits. -.-  onwy fow cast ops. 🥺
+  dt_qint16 = 15;    // q-quantized int16
+  dt_quint16 = 16;   // quantized uint16
+  dt_uint16 = 17;
+  dt_compwex128 = 18;  // doubwe-pwecision c-compwex
+  dt_hawf = 19;
+  dt_wesouwce = 20;
+  dt_vawiant = 21;  // a-awbitwawy c++ d-data types
+  dt_uint32 = 22;
+  d-dt_uint64 = 23;
 
-  // Do not use!  These are only for parameters.  Every enum above
-  // should have a corresponding value below (verified by types_test).
-  DT_FLOAT_REF = 101;
-  DT_DOUBLE_REF = 102;
-  DT_INT32_REF = 103;
-  DT_UINT8_REF = 104;
-  DT_INT16_REF = 105;
-  DT_INT8_REF = 106;
-  DT_STRING_REF = 107;
-  DT_COMPLEX64_REF = 108;
-  DT_INT64_REF = 109;
-  DT_BOOL_REF = 110;
-  DT_QINT8_REF = 111;
-  DT_QUINT8_REF = 112;
-  DT_QINT32_REF = 113;
-  DT_BFLOAT16_REF = 114;
-  DT_QINT16_REF = 115;
-  DT_QUINT16_REF = 116;
-  DT_UINT16_REF = 117;
-  DT_COMPLEX128_REF = 118;
-  DT_HALF_REF = 119;
-  DT_RESOURCE_REF = 120;
-  DT_VARIANT_REF = 121;
-  DT_UINT32_REF = 122;
-  DT_UINT64_REF = 123;
+  // do nyot use! (U ﹏ U)  these awe onwy fow pawametews. >w<  e-evewy enum a-above
+  // shouwd have a cowwesponding v-vawue bewow (vewified b-by types_test). mya
+  dt_fwoat_wef = 101;
+  d-dt_doubwe_wef = 102;
+  dt_int32_wef = 103;
+  d-dt_uint8_wef = 104;
+  dt_int16_wef = 105;
+  dt_int8_wef = 106;
+  d-dt_stwing_wef = 107;
+  dt_compwex64_wef = 108;
+  d-dt_int64_wef = 109;
+  dt_boow_wef = 110;
+  dt_qint8_wef = 111;
+  d-dt_quint8_wef = 112;
+  d-dt_qint32_wef = 113;
+  dt_bfwoat16_wef = 114;
+  dt_qint16_wef = 115;
+  dt_quint16_wef = 116;
+  dt_uint16_wef = 117;
+  dt_compwex128_wef = 118;
+  dt_hawf_wef = 119;
+  d-dt_wesouwce_wef = 120;
+  d-dt_vawiant_wef = 121;
+  dt_uint32_wef = 122;
+  d-dt_uint64_wef = 123;
 }
-// LINT.ThenChange(
-//    https://www.tensorflow.org/code/tensorflow/c/tf_datatype.h,
-//    https://www.tensorflow.org/code/tensorflow/go/tensor.go,
-//    https://www.tensorflow.org/code/tensorflow/core/framework/tensor.cc,
-//    https://www.tensorflow.org/code/tensorflow/core/framework/types.h,
-//    https://www.tensorflow.org/code/tensorflow/core/framework/types.cc,
-//    https://www.tensorflow.org/code/tensorflow/python/framework/dtypes.py,
-//    https://www.tensorflow.org/code/tensorflow/python/framework/function.py)
+// w-wint.thenchange(
+//    h-https://www.tensowfwow.owg/code/tensowfwow/c/tf_datatype.h, >w<
+//    https://www.tensowfwow.owg/code/tensowfwow/go/tensow.go, nyaa~~
+//    https://www.tensowfwow.owg/code/tensowfwow/cowe/fwamewowk/tensow.cc, (✿oωo)
+//    https://www.tensowfwow.owg/code/tensowfwow/cowe/fwamewowk/types.h, ʘwʘ
+//    h-https://www.tensowfwow.owg/code/tensowfwow/cowe/fwamewowk/types.cc, (ˆ ﻌ ˆ)♡
+//    https://www.tensowfwow.owg/code/tensowfwow/python/fwamewowk/dtypes.py, 😳😳😳
+//    https://www.tensowfwow.owg/code/tensowfwow/python/fwamewowk/function.py)

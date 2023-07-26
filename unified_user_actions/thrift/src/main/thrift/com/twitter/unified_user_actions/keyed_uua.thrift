@@ -1,22 +1,22 @@
-namespace java com.twitter.unified_user_actions.thriftjava
-#@namespace scala com.twitter.unified_user_actions.thriftscala
-#@namespace strato com.twitter.unified_user_actions
+namespace java com.twittew.unified_usew_actions.thwiftjava
+#@namespace scawa com.twittew.unified_usew_actions.thwiftscawa
+#@namespace s-stwato com.twittew.unified_usew_actions
 
-include "com/twitter/unified_user_actions/action_info.thrift"
-include "com/twitter/unified_user_actions/common.thrift"
-include "com/twitter/unified_user_actions/metadata.thrift"
+i-incwude "com/twittew/unified_usew_actions/action_info.thwift"
+i-incwude "com/twittew/unified_usew_actions/common.thwift"
+i-incwude "com/twittew/unified_usew_actions/metadata.thwift"
 
 /*
- * This is mainly for View Counts project, which only require minimum fields for now.
- * The name KeyedUuaTweet indicates the value is about a Tweet, not a Moment or other entities.
+ * t-this is mainwy f-fow view counts p-pwoject, >_< which o-onwy wequiwe minimum fiewds fow nyow. rawr x3
+ * the nyame keyeduuatweet indicates t-the vawue is about a tweet, mya nyot a moment ow othew e-entities. nyaa~~
  */
-struct KeyedUuaTweet {
-   /* A user refers to either a logged in / logged out user */
-   1: required common.UserIdentifier userIdentifier
-   /* The tweet that received the action from the user */
-   2: required i64 tweetId(personalDataType='TweetId')
-   /* The type of action which took place */
-   3: required action_info.ActionType actionType
-   /* Useful for event level analysis and joins */
-   4: required metadata.EventMetadata eventMetadata
-}(persisted='true', hasPersonalData='true')
+stwuct keyeduuatweet {
+   /* a-a usew wefews to eithew a wogged in / wogged out usew */
+   1: w-wequiwed common.usewidentifiew u-usewidentifiew
+   /* t-the tweet that weceived the action fwom the usew */
+   2: wequiwed i64 tweetid(pewsonawdatatype='tweetid')
+   /* t-the type of action which took pwace */
+   3: wequiwed action_info.actiontype actiontype
+   /* usefuw fow event w-wevew anawysis and joins */
+   4: w-wequiwed metadata.eventmetadata e-eventmetadata
+}(pewsisted='twue', (⑅˘꒳˘) h-haspewsonawdata='twue')

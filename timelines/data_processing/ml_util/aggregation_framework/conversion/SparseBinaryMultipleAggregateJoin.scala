@@ -1,109 +1,109 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.convewsion
 
-import com.twitter.bijection.Injection
-import com.twitter.ml.api._
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup.sparseFeature
-import scala.collection.JavaConverters._
+impowt com.twittew.bijection.injection
+i-impowt c-com.twittew.mw.api._
+i-impowt c-com.twittew.mw.api.featuwe
+i-impowt c-com.twittew.mw.api.utiw.swichdatawecowd
+i-impowt c-com.twittew.scawding.typed.typedpipe
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.typedaggwegategwoup.spawsefeatuwe
+impowt scawa.cowwection.javaconvewtews._
 
-case class SparseJoinConfig(
-  aggregates: DataSetPipe,
-  sparseKey: Feature.SparseBinary,
-  mergePolicies: SparseBinaryMergePolicy*)
+case cwass spawsejoinconfig(
+  a-aggwegates: datasetpipe, 😳
+  spawsekey: f-featuwe.spawsebinawy, (ˆ ﻌ ˆ)♡
+  mewgepowicies: s-spawsebinawymewgepowicy*)
 
-object SparseBinaryMultipleAggregateJoin {
-  type CommonMap = (String, ((Feature.SparseBinary, String), DataRecord))
+object spawsebinawymuwtipweaggwegatejoin {
+  type commonmap = (stwing, 😳😳😳 ((featuwe.spawsebinawy, (U ﹏ U) stwing), (///ˬ///✿) datawecowd))
 
-  def apply(
-    source: DataSetPipe,
-    commonKey: Feature[_],
-    joinConfigs: Set[SparseJoinConfig],
-    rightJoin: Boolean = false,
-    isSketchJoin: Boolean = false,
-    numSketchJoinReducers: Int = 0
-  ): DataSetPipe = {
-    val emptyPipe: TypedPipe[CommonMap] = TypedPipe.empty
-    val aggregateMaps: Set[TypedPipe[CommonMap]] = joinConfigs.map { joinConfig =>
-      joinConfig.aggregates.records.map { record =>
-        val sparseKeyValue =
-          SRichDataRecord(record).getFeatureValue(sparseFeature(joinConfig.sparseKey)).toString
-        val commonKeyValue = SRichDataRecord(record).getFeatureValue(commonKey).toString
-        (commonKeyValue, ((joinConfig.sparseKey, sparseKeyValue), record))
+  d-def appwy(
+    souwce: d-datasetpipe, 😳
+    c-commonkey: featuwe[_], 😳
+    joinconfigs: set[spawsejoinconfig],
+    wightjoin: boowean = fawse,
+    i-issketchjoin: boowean = fawse, σωσ
+    nyumsketchjoinweducews: int = 0
+  ): datasetpipe = {
+    v-vaw emptypipe: typedpipe[commonmap] = t-typedpipe.empty
+    v-vaw a-aggwegatemaps: s-set[typedpipe[commonmap]] = joinconfigs.map { joinconfig =>
+      joinconfig.aggwegates.wecowds.map { w-wecowd =>
+        vaw spawsekeyvawue =
+          swichdatawecowd(wecowd).getfeatuwevawue(spawsefeatuwe(joinconfig.spawsekey)).tostwing
+        v-vaw commonkeyvawue = swichdatawecowd(wecowd).getfeatuwevawue(commonkey).tostwing
+        (commonkeyvawue, rawr x3 ((joinconfig.spawsekey, OwO spawsekeyvawue), /(^•ω•^) wecowd))
       }
     }
 
-    val commonKeyToAggregateMap = aggregateMaps
-      .foldLeft(emptyPipe) {
-        case (union: TypedPipe[CommonMap], next: TypedPipe[CommonMap]) =>
-          union ++ next
+    vaw commonkeytoaggwegatemap = aggwegatemaps
+      .fowdweft(emptypipe) {
+        c-case (union: typedpipe[commonmap], 😳😳😳 n-nyext: t-typedpipe[commonmap]) =>
+          u-union ++ nyext
       }
-      .group
-      .toList
+      .gwoup
+      .towist
       .map {
-        case (commonKeyValue, aggregateTuples) =>
-          (commonKeyValue, aggregateTuples.toMap)
+        case (commonkeyvawue, ( ͡o ω ͡o ) aggwegatetupwes) =>
+          (commonkeyvawue, >_< aggwegatetupwes.tomap)
       }
 
-    val commonKeyToRecordMap = source.records
-      .map { record =>
-        val commonKeyValue = SRichDataRecord(record).getFeatureValue(commonKey).toString
-        (commonKeyValue, record)
+    vaw commonkeytowecowdmap = s-souwce.wecowds
+      .map { w-wecowd =>
+        vaw c-commonkeyvawue = s-swichdatawecowd(wecowd).getfeatuwevawue(commonkey).tostwing
+        (commonkeyvawue, >w< wecowd)
       }
 
-    // rightJoin is not supported by Sketched, so rightJoin will be ignored if isSketchJoin is set
-    implicit val string2Byte = (value: String) => Injection[String, Array[Byte]](value)
-    val intermediateRecords = if (isSketchJoin) {
-      commonKeyToRecordMap.group
-        .sketch(numSketchJoinReducers)
-        .leftJoin(commonKeyToAggregateMap)
-        .toTypedPipe
-    } else if (rightJoin) {
-      commonKeyToAggregateMap
-        .rightJoin(commonKeyToRecordMap)
-        .mapValues(_.swap)
-        .toTypedPipe
-    } else {
-      commonKeyToRecordMap.leftJoin(commonKeyToAggregateMap).toTypedPipe
+    // w-wightjoin is nyot s-suppowted by sketched, rawr so wightjoin wiww be ignowed i-if issketchjoin is set
+    impwicit v-vaw stwing2byte = (vawue: stwing) => injection[stwing, 😳 awway[byte]](vawue)
+    v-vaw intewmediatewecowds = i-if (issketchjoin) {
+      commonkeytowecowdmap.gwoup
+        .sketch(numsketchjoinweducews)
+        .weftjoin(commonkeytoaggwegatemap)
+        .totypedpipe
+    } ewse if (wightjoin) {
+      commonkeytoaggwegatemap
+        .wightjoin(commonkeytowecowdmap)
+        .mapvawues(_.swap)
+        .totypedpipe
+    } ewse {
+      commonkeytowecowdmap.weftjoin(commonkeytoaggwegatemap).totypedpipe
     }
 
-    val joinedRecords = intermediateRecords
+    vaw joinedwecowds = intewmediatewecowds
       .map {
-        case (commonKeyValue, (inputRecord, aggregateTupleMapOpt)) =>
-          aggregateTupleMapOpt.foreach { aggregateTupleMap =>
-            joinConfigs.foreach { joinConfig =>
-              val sparseKeyValues = Option(
-                SRichDataRecord(inputRecord)
-                  .getFeatureValue(joinConfig.sparseKey)
-              ).map(_.asScala.toList)
-                .getOrElse(List.empty[String])
+        c-case (commonkeyvawue, >w< (inputwecowd, (⑅˘꒳˘) a-aggwegatetupwemapopt)) =>
+          aggwegatetupwemapopt.foweach { a-aggwegatetupwemap =>
+            j-joinconfigs.foweach { j-joinconfig =>
+              vaw spawsekeyvawues = option(
+                swichdatawecowd(inputwecowd)
+                  .getfeatuwevawue(joinconfig.spawsekey)
+              ).map(_.asscawa.towist)
+                .getowewse(wist.empty[stwing])
 
-              val aggregateRecords = sparseKeyValues.flatMap { sparseKeyValue =>
-                aggregateTupleMap.get((joinConfig.sparseKey, sparseKeyValue))
+              v-vaw aggwegatewecowds = spawsekeyvawues.fwatmap { spawsekeyvawue =>
+                aggwegatetupwemap.get((joinconfig.spawsekey, OwO spawsekeyvawue))
               }
 
-              joinConfig.mergePolicies.foreach { mergePolicy =>
-                mergePolicy.mergeRecord(
-                  inputRecord,
-                  aggregateRecords,
-                  joinConfig.aggregates.featureContext
+              j-joinconfig.mewgepowicies.foweach { mewgepowicy =>
+                m-mewgepowicy.mewgewecowd(
+                  i-inputwecowd, (ꈍᴗꈍ)
+                  a-aggwegatewecowds, 😳
+                  joinconfig.aggwegates.featuwecontext
                 )
               }
             }
           }
-          inputRecord
+          i-inputwecowd
       }
 
-    val joinedFeatureContext = joinConfigs
-      .foldLeft(source.featureContext) {
-        case (left, joinConfig) =>
-          joinConfig.mergePolicies.foldLeft(left) {
-            case (soFar, mergePolicy) =>
-              mergePolicy.mergeContext(soFar, joinConfig.aggregates.featureContext)
+    v-vaw joinedfeatuwecontext = joinconfigs
+      .fowdweft(souwce.featuwecontext) {
+        c-case (weft, 😳😳😳 j-joinconfig) =>
+          joinconfig.mewgepowicies.fowdweft(weft) {
+            case (sofaw, mya m-mewgepowicy) =>
+              m-mewgepowicy.mewgecontext(sofaw, mya j-joinconfig.aggwegates.featuwecontext)
           }
       }
 
-    DataSetPipe(joinedRecords, joinedFeatureContext)
+    d-datasetpipe(joinedwecowds, (⑅˘꒳˘) j-joinedfeatuwecontext)
   }
 }

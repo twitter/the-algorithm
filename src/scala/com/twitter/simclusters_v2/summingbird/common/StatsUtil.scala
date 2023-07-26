@@ -1,20 +1,20 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twittew.simcwustews_v2.summingbiwd.common
 
-import com.twitter.summingbird.{Counter, Group, Name, Platform, Producer}
-import com.twitter.summingbird.option.JobId
+impowt com.twittew.summingbiwd.{countew, XD gwoup, :3 n-nyame, pwatfowm, 😳😳😳 p-pwoducew}
+i-impowt com.twittew.summingbiwd.option.jobid
 
-object StatsUtil {
+o-object s-statsutiw {
 
-  // for adding stats in Producer.
-  // this enables us to add new stats by just calling producer.observer("name")
-  implicit class EnrichedProducer[P <: Platform[P], T](
-    producer: Producer[P, T]
+  // f-fow adding s-stats in pwoducew. -.-
+  // t-this enabwes us to add nyew stats by just cawwing pwoducew.obsewvew("name")
+  impwicit c-cwass enwichedpwoducew[p <: pwatfowm[p], ( ͡o ω ͡o ) t](
+    p-pwoducew: pwoducew[p, rawr x3 t]
   )(
-    implicit jobId: JobId) {
-    def observe(counter: String): Producer[P, T] = {
-      val stat = Counter(Group(jobId.get), Name(counter))
-      producer.map { v =>
-        stat.incr()
+    i-impwicit jobid: jobid) {
+    def obsewve(countew: stwing): pwoducew[p, nyaa~~ t-t] = {
+      vaw stat = c-countew(gwoup(jobid.get), /(^•ω•^) n-nyame(countew))
+      pwoducew.map { v =>
+        stat.incw()
         v
       }
     }

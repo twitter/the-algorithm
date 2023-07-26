@@ -1,34 +1,34 @@
-## InteractionGraphLabels Dataflow Job
+## intewactiongwaphwabews datafwow j-job
 
-#### IntelliJ
+#### intewwij
 ```
-fastpass create --name rg_labels --intellij src/scala/com/twitter/interaction_graph/scio/ml/labels
-```
-
-#### Compile
-```
-bazel build src/scala/com/twitter/interaction_graph/scio/ml/labels:interaction_graph_labels
+f-fastpass c-cweate --name w-wg_wabews --intewwij s-swc/scawa/com/twittew/intewaction_gwaph/scio/mw/wabews
 ```
 
-#### Build Jar
+#### c-compiwe
 ```
-bazel bundle src/scala/com/twitter/interaction_graph/scio/ml/labels:interaction_graph_labels
+b-bazew buiwd swc/scawa/com/twittew/intewaction_gwaph/scio/mw/wabews:intewaction_gwaph_wabews
 ```
 
-#### Run Scheduled Job
+#### b-buiwd jaw
 ```
-export PROJECTID=twttr-recos-ml-prod
-export REGION=us-central1
-export JOB_NAME=interaction-graph-labels-dataflow
+bazew bundwe swc/scawa/com/twittew/intewaction_gwaph/scio/mw/wabews:intewaction_gwaph_wabews
+```
 
-bin/d6w schedule \
-  ${PROJECTID}/${REGION}/${JOB_NAME} \
-  src/scala/com/twitter/interaction_graph/scio/ml/labels/config.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.project=${PROJECTID} \
-  --bind=profile.region=${REGION} \
-  --bind=profile.job_name=${JOB_NAME} \
-  --bind=profile.environment=prod \
-  --bind=profile.date=2022-05-15 \
-  --bind=profile.output_path=processed/interaction_graph/labels
+#### wun scheduwed job
+```
+e-expowt pwojectid=twttw-wecos-mw-pwod
+expowt wegion=us-centwaw1
+expowt job_name=intewaction-gwaph-wabews-datafwow
+
+b-bin/d6w scheduwe \
+  ${pwojectid}/${wegion}/${job_name} \
+  swc/scawa/com/twittew/intewaction_gwaph/scio/mw/wabews/config.d6w \
+  --bind=pwofiwe.usew_name=cassowawy \
+  --bind=pwofiwe.pwoject=${pwojectid} \
+  --bind=pwofiwe.wegion=${wegion} \
+  --bind=pwofiwe.job_name=${job_name} \
+  --bind=pwofiwe.enviwonment=pwod \
+  --bind=pwofiwe.date=2022-05-15 \
+  --bind=pwofiwe.output_path=pwocessed/intewaction_gwaph/wabews
 ```

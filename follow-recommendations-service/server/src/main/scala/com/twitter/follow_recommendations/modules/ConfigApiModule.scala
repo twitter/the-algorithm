@@ -1,20 +1,20 @@
-package com.twitter.follow_recommendations.modules
+package com.twittew.fowwow_wecommendations.moduwes
 
-import com.google.inject.Provides
-import com.twitter.decider.Decider
-import com.twitter.follow_recommendations.configapi.ConfigBuilder
-import com.twitter.inject.TwitterModule
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.timelines.configapi.Config
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.decidew.decidew
+i-impowt com.twittew.fowwow_wecommendations.configapi.configbuiwdew
+i-impowt c-com.twittew.inject.twittewmoduwe
+i-impowt com.twittew.sewvo.decidew.decidewgatebuiwdew
+i-impowt com.twittew.timewines.configapi.config
+i-impowt javax.inject.singweton
 
-object ConfigApiModule extends TwitterModule {
-  @Provides
-  @Singleton
-  def providesDeciderGateBuilder(decider: Decider): DeciderGateBuilder =
-    new DeciderGateBuilder(decider)
+o-object configapimoduwe extends twittewmoduwe {
+  @pwovides
+  @singweton
+  def pwovidesdecidewgatebuiwdew(decidew: d-decidew): decidewgatebuiwdew =
+    nyew decidewgatebuiwdew(decidew)
 
-  @Provides
-  @Singleton
-  def providesConfig(configBuilder: ConfigBuilder): Config = configBuilder.build()
+  @pwovides
+  @singweton
+  def pwovidesconfig(configbuiwdew: c-configbuiwdew): config = c-configbuiwdew.buiwd()
 }

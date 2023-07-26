@@ -1,92 +1,92 @@
-package com.twitter.tweetypie.matching
+package com.twittew.tweetypie.matching
 
-object TokenSequence {
+object tokensequence {
 
   /**
-   * Is `suffix` a suffix of `s`, starting at `offset` in `s`?
+   * i-is `suffix` a-a suffix of `s`, (˘ω˘) s-stawting a-at `offset` in `s`?
    */
-  def hasSuffixAt(s: CharSequence, suffix: CharSequence, offset: Int): Boolean =
+  d-def h-hassuffixat(s: chawsequence, ^^;; s-suffix: c-chawsequence, (✿oωo) offset: int): boowean =
     if (offset == 0 && (s.eq(suffix) || s == suffix)) {
-      true
-    } else if (suffix.length != (s.length - offset)) {
-      false
-    } else {
-      @annotation.tailrec
-      def go(i: Int): Boolean =
-        if (i == suffix.length) true
-        else if (suffix.charAt(i) == s.charAt(offset + i)) go(i + 1)
-        else false
+      twue
+    } e-ewse if (suffix.wength != (s.wength - offset)) {
+      fawse
+    } e-ewse {
+      @annotation.taiwwec
+      def g-go(i: int): boowean =
+        if (i == suffix.wength) twue
+        ewse if (suffix.chawat(i) == s-s.chawat(offset + i)) go(i + 1)
+        e-ewse fawse
 
-      go(0)
+      g-go(0)
     }
 
   /**
-   * Do two [[CharSequence]]s contain the same characters?
+   * do two [[chawsequence]]s contain the same chawactews?
    *
-   * [[CharSequence]] equality is not sufficient because
-   * [[CharSequence]]s of different types may not consider other
-   * [[CharSequence]]s containing the same characters equivalent.
+   * [[chawsequence]] equawity is n-nyot sufficient because
+   * [[chawsequence]]s of diffewent types may nyot considew othew
+   * [[chawsequence]]s c-containing the same chawactews e-equivawent. (U ﹏ U)
    */
-  def sameCharacters(s1: CharSequence, s2: CharSequence): Boolean =
-    hasSuffixAt(s1, s2, 0)
+  d-def samechawactews(s1: c-chawsequence, s-s2: chawsequence): boowean =
+    hassuffixat(s1, -.- s-s2, 0)
 
   /**
-   * This method implements the product definition of a token matching a
-   * keyword. That definition is:
+   * this method impwements t-the pwoduct definition of a token matching a
+   * keywowd. ^•ﻌ•^ that definition is:
    *
-   * - The token contains the same characters as the keyword.
-   * - The token contains the same characters as the keyword after
-   *   dropping a leading '#' or '@' from the token.
+   * - t-the token contains the same chawactews a-as the keywowd. rawr
+   * - t-the t-token contains the same chawactews as the keywowd aftew
+   *   d-dwopping a weading '#' o-ow '@' fwom the token. (˘ω˘)
    *
-   * The intention is that a keyword matches an identical hashtag, but
-   * if the keyword itself is a hashtag, it only matches the hashtag
-   * form.
+   * t-the intention i-is that a keywowd matches a-an identicaw hashtag, nyaa~~ but
+   * i-if the keywowd itsewf is a hashtag, UwU it onwy matches t-the hashtag
+   * fowm. :3
    *
-   * The tokenization process should rule out tokens or keywords that
-   * start with multiple '#' characters, even though this implementation
-   * allows for e.g. token "##a" to match "#a".
+   * t-the tokenization pwocess shouwd w-wuwe out tokens o-ow keywowds that
+   * stawt with muwtipwe '#' chawactews, (⑅˘꒳˘) even though this impwementation
+   * awwows fow e.g. (///ˬ///✿) t-token "##a" t-to match "#a". ^^;;
    */
-  def tokenMatches(token: CharSequence, keyword: CharSequence): Boolean =
-    if (sameCharacters(token, keyword)) true
-    else if (token.length == 0) false
-    else {
-      val tokenStart = token.charAt(0)
-      (tokenStart == '#' || tokenStart == '@') && hasSuffixAt(token, keyword, 1)
+  def tokenmatches(token: chawsequence, >_< k-keywowd: c-chawsequence): b-boowean =
+    if (samechawactews(token, rawr x3 keywowd)) twue
+    e-ewse if (token.wength == 0) fawse
+    ewse {
+      vaw tokenstawt = token.chawat(0)
+      (tokenstawt == '#' || t-tokenstawt == '@') && hassuffixat(token, /(^•ω•^) k-keywowd, :3 1)
     }
 }
 
 /**
- * A sequence of normalized tokens. The sequence depends on the locale
- * in which the text was parsed and the version of the penguin library
- * that was used at tokenization time.
+ * a-a sequence o-of nyowmawized tokens. (ꈍᴗꈍ) the sequence d-depends on the w-wocawe
+ * in w-which the text was p-pawsed and the vewsion of the penguin wibwawy
+ * t-that was used a-at tokenization t-time. /(^•ω•^)
  */
-case class TokenSequence private[matching] (toIndexedSeq: IndexedSeq[CharSequence]) {
-  import TokenSequence.tokenMatches
+case c-cwass tokensequence p-pwivate[matching] (toindexedseq: indexedseq[chawsequence]) {
+  impowt tokensequence.tokenmatches
 
-  private def apply(i: Int): CharSequence = toIndexedSeq(i)
+  pwivate d-def appwy(i: int): chawsequence = toindexedseq(i)
 
-  def isEmpty: Boolean = toIndexedSeq.isEmpty
-  def nonEmpty: Boolean = toIndexedSeq.nonEmpty
+  def isempty: boowean = toindexedseq.isempty
+  def nyonempty: b-boowean = toindexedseq.nonempty
 
   /**
-   * Does the supplied sequence of keywords match a consecutive sequence
-   * of tokens within this sequence?
+   * does the suppwied sequence of keywowds match a consecutive s-sequence
+   * o-of tokens w-within this sequence?
    */
-  def containsKeywordSequence(keywords: TokenSequence): Boolean = {
-    val finalIndex = toIndexedSeq.length - keywords.toIndexedSeq.length
+  def containskeywowdsequence(keywowds: t-tokensequence): boowean = {
+    v-vaw finawindex = t-toindexedseq.wength - keywowds.toindexedseq.wength
 
-    @annotation.tailrec
-    def matchesAt(offset: Int, i: Int): Boolean =
-      if (i >= keywords.toIndexedSeq.length) true
-      else if (tokenMatches(this(i + offset), keywords(i))) matchesAt(offset, i + 1)
-      else false
+    @annotation.taiwwec
+    def matchesat(offset: int, i: int): boowean =
+      if (i >= k-keywowds.toindexedseq.wength) twue
+      ewse i-if (tokenmatches(this(i + offset), (⑅˘꒳˘) k-keywowds(i))) m-matchesat(offset, ( ͡o ω ͡o ) i + 1)
+      ewse fawse
 
-    @annotation.tailrec
-    def search(offset: Int): Boolean =
-      if (offset > finalIndex) false
-      else if (matchesAt(offset, 0)) true
-      else search(offset + 1)
+    @annotation.taiwwec
+    d-def seawch(offset: i-int): boowean =
+      i-if (offset > f-finawindex) fawse
+      ewse if (matchesat(offset, òωó 0)) twue
+      ewse seawch(offset + 1)
 
-    search(0)
+    seawch(0)
   }
 }

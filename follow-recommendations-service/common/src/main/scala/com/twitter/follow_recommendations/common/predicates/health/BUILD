@@ -1,21 +1,21 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/com/google/inject/extensions:guice-assistedinject",
-        "3rdparty/jvm/net/codingwell:scala-guice",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "escherbird/src/scala/com/twitter/escherbird/util/stitchcache",
-        "finatra/inject/inject-core/src/main/scala",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/base",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/cache",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/constants",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/configapi/common",
-        "strato/config/columns/hss/user_signals/api:api-strato-client",
-        "util/util-slf4j-api/src/main/scala",
-        "util/util-thrift",
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/inject:guice", òωó
+        "3wdpawty/jvm/com/googwe/inject/extensions:guice-assistedinject", o.O
+        "3wdpawty/jvm/net/codingweww:scawa-guice", (U ᵕ U❁)
+        "3wdpawty/jvm/owg/swf4j:swf4j-api", (⑅˘꒳˘)
+        "eschewbiwd/swc/scawa/com/twittew/eschewbiwd/utiw/stitchcache",
+        "finatwa/inject/inject-cowe/swc/main/scawa", ( ͡o ω ͡o )
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/base", UwU
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/cwients/cache", rawr x3
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/constants",
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/modews", rawr
+        "fowwow-wecommendations-sewvice/sewvew/swc/main/scawa/com/twittew/fowwow_wecommendations/configapi/common", σωσ
+        "stwato/config/cowumns/hss/usew_signaws/api:api-stwato-cwient", σωσ
+        "utiw/utiw-swf4j-api/swc/main/scawa", >_<
+        "utiw/utiw-thwift", :3
     ],
 )

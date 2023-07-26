@@ -1,50 +1,50 @@
-package com.twitter.search.ingester.model;
+package com.twittew.seawch.ingestew.modew;
 
-import java.util.Map;
+impowt j-java.utiw.map;
 
-import com.google.common.primitives.Longs;
+i-impowt com.googwe.common.pwimitives.wongs;
 
-import com.twitter.search.common.debug.DebugEventAccumulator;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.partitioning.base.Partitionable;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
+i-impowt c-com.twittew.seawch.common.debug.debugeventaccumuwatow;
+i-impowt c-com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
+i-impowt com.twittew.seawch.common.pawtitioning.base.pawtitionabwe;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingevent;
 
 /**
- * Wrap of ThriftVersionedEvents, make it partitionable for the queue writer.
+ * wwap of thwiftvewsionedevents, (⑅˘꒳˘) make it p-pawtitionabwe fow the queue wwitew. /(^•ω•^)
  */
-public class IngesterThriftVersionedEvents extends ThriftVersionedEvents
-    implements Comparable<ThriftVersionedEvents>, Partitionable, DebugEventAccumulator {
+pubwic c-cwass ingestewthwiftvewsionedevents extends thwiftvewsionedevents
+    i-impwements compawabwe<thwiftvewsionedevents>, rawr x3 pawtitionabwe, (U ﹏ U) debugeventaccumuwatow {
 
-  // Make userId field easier to be accessed to calculate partition number
-  private final long userId;
+  // m-make usewid fiewd easiew to be a-accessed to cawcuwate p-pawtition nyumbew
+  pwivate finaw wong usewid;
 
-  public IngesterThriftVersionedEvents(long userId) {
-    this.userId = userId;
+  pubwic ingestewthwiftvewsionedevents(wong usewid) {
+    t-this.usewid = usewid;
   }
 
-  public IngesterThriftVersionedEvents(long userId,
-                                       Map<Byte, ThriftIndexingEvent> versionedEvents) {
-    super(versionedEvents);
-    this.userId = userId;
+  pubwic ingestewthwiftvewsionedevents(wong usewid, (U ﹏ U)
+                                       map<byte, (⑅˘꒳˘) t-thwiftindexingevent> vewsionedevents) {
+    s-supew(vewsionedevents);
+    t-this.usewid = u-usewid;
   }
 
-  public IngesterThriftVersionedEvents(long userId, ThriftVersionedEvents original) {
-    super(original);
-    this.userId = userId;
+  p-pubwic ingestewthwiftvewsionedevents(wong usewid, òωó thwiftvewsionedevents owiginaw) {
+    s-supew(owiginaw);
+    this.usewid = usewid;
   }
 
-  @Override
-  public int compareTo(ThriftVersionedEvents o) {
-    return Longs.compare(getId(), o.getId());
+  @ovewwide
+  p-pubwic int compaweto(thwiftvewsionedevents o) {
+    wetuwn wongs.compawe(getid(), ʘwʘ o.getid());
   }
 
-  @Override
-  public long getTweetId() {
-    return this.getId();
+  @ovewwide
+  pubwic w-wong gettweetid() {
+    wetuwn t-this.getid();
   }
 
-  @Override
-  public long getUserId() {
-    return this.userId;
+  @ovewwide
+  p-pubwic wong getusewid() {
+    w-wetuwn this.usewid;
   }
 }

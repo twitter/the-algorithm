@@ -1,199 +1,199 @@
-package com.twitter.simclusters_v2.scalding.optout
+package com.twittew.simcwustews_v2.scawding.optout
 
-import com.twitter.dal.client.dataset.{KeyValDALDataset, SnapshotDALDataset}
-import com.twitter.scalding.{
-  Args,
-  DateRange,
-  Days,
-  Duration,
-  Execution,
-  RichDate,
-  TypedPipe,
-  TypedTsv,
-  UniqueID
+impowt com.twittew.daw.cwient.dataset.{keyvawdawdataset, XD s-snapshotdawdataset}
+i-impowt com.twittew.scawding.{
+  a-awgs, (ˆ ﻌ ˆ)♡
+  datewange, ( ͡o ω ͡o )
+  d-days, rawr x3
+  duwation,
+  e-execution, nyaa~~
+  w-wichdate, >_<
+  t-typedpipe, ^^;;
+  typedtsv, (ˆ ﻌ ˆ)♡
+  u-uniqueid
 }
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{ClusterId, ModelVersions, SemanticCoreEntityId, UserId}
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.inferred_entities.InferredEntities
-import com.twitter.simclusters_v2.thriftscala.{
-  ClusterType,
-  ClustersUserIsInterestedIn,
-  SemanticCoreEntityWithScore,
-  UserToInterestedInClusters
+impowt com.twittew.scawding_intewnaw.dawv2.dawwwite.d
+impowt com.twittew.scawding_intewnaw.dawv2.dawwwite._
+impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+i-impowt com.twittew.simcwustews_v2.common.{cwustewid, ^^;; modewvewsions, (⑅˘꒳˘) semanticcoweentityid, rawr x3 u-usewid}
+impowt com.twittew.simcwustews_v2.hdfs_souwces._
+i-impowt com.twittew.simcwustews_v2.scawding.infewwed_entities.infewwedentities
+impowt com.twittew.simcwustews_v2.thwiftscawa.{
+  c-cwustewtype,
+  cwustewsusewisintewestedin, (///ˬ///✿)
+  s-semanticcoweentitywithscowe, 🥺
+  u-usewtointewestedincwustews
 }
-import com.twitter.wtf.scalding.jobs.common.{AdhocExecutionApp, ScheduledExecutionApp}
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.simclusters_v2.scalding.common.Util
-import java.util.TimeZone
+impowt com.twittew.wtf.scawding.jobs.common.{adhocexecutionapp, scheduwedexecutionapp}
+impowt com.twittew.simcwustews_v2.scawding.common.typedwichpipe._
+i-impowt com.twittew.simcwustews_v2.scawding.common.utiw
+impowt java.utiw.timezone
 
-object InterestedInOptOut {
+object intewestedinoptout {
 
-  def filterOptedOutInterestedIn(
-    interestedInPipe: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    optedOutEntities: TypedPipe[(UserId, Set[SemanticCoreEntityId])],
-    clusterToEntities: TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])]
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
+  def f-fiwtewoptedoutintewestedin(
+    intewestedinpipe: t-typedpipe[(usewid, >_< c-cwustewsusewisintewestedin)], UwU
+    o-optedoutentities: t-typedpipe[(usewid, >_< set[semanticcoweentityid])], -.-
+    cwustewtoentities: typedpipe[(cwustewid, s-seq[semanticcoweentitywithscowe])]
+  ): typedpipe[(usewid, mya cwustewsusewisintewestedin)] = {
 
-    val validInterestedIn = SimClustersOptOutUtil.filterOptedOutClusters(
-      userToClusters = interestedInPipe.mapValues(_.clusterIdToScores.keySet.toSeq),
-      optedOutEntities = optedOutEntities,
-      legibleClusters = clusterToEntities
+    v-vaw vawidintewestedin = simcwustewsoptoututiw.fiwtewoptedoutcwustews(
+      usewtocwustews = intewestedinpipe.mapvawues(_.cwustewidtoscowes.keyset.toseq),
+      optedoutentities = optedoutentities, >w<
+      w-wegibwecwustews = cwustewtoentities
     )
 
-    interestedInPipe
-      .leftJoin(validInterestedIn)
-      .mapValues {
-        case (originalInterestedIn, validInterestedInOpt) =>
-          val validInterestedIn = validInterestedInOpt.getOrElse(Seq()).toSet
+    i-intewestedinpipe
+      .weftjoin(vawidintewestedin)
+      .mapvawues {
+        c-case (owiginawintewestedin, (U ﹏ U) vawidintewestedinopt) =>
+          v-vaw vawidintewestedin = vawidintewestedinopt.getowewse(seq()).toset
 
-          originalInterestedIn.copy(
-            clusterIdToScores = originalInterestedIn.clusterIdToScores.filterKeys(validInterestedIn)
+          owiginawintewestedin.copy(
+            cwustewidtoscowes = o-owiginawintewestedin.cwustewidtoscowes.fiwtewkeys(vawidintewestedin)
           )
       }
-      .filter(_._2.clusterIdToScores.nonEmpty)
+      .fiwtew(_._2.cwustewidtoscowes.nonempty)
   }
 
   /**
-   * Writes InterestedIn data to HDFS
+   * w-wwites intewestedin data to h-hdfs
    */
-  def writeInterestedInOutputExecution(
-    interestedIn: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    interestedInDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsInterestedIn]],
-    outputPath: String
-  ): Execution[Unit] = {
-    interestedIn
-      .map { case (k, v) => KeyVal(k, v) }
-      .writeDALVersionedKeyValExecution(
-        interestedInDataset,
-        D.Suffix(outputPath)
+  def w-wwiteintewestedinoutputexecution(
+    intewestedin: t-typedpipe[(usewid, 😳😳😳 cwustewsusewisintewestedin)], o.O
+    i-intewestedindataset: keyvawdawdataset[keyvaw[wong, òωó cwustewsusewisintewestedin]], 😳😳😳
+    outputpath: stwing
+  ): e-execution[unit] = {
+    intewestedin
+      .map { case (k, σωσ v-v) => keyvaw(k, (⑅˘꒳˘) v) }
+      .wwitedawvewsionedkeyvawexecution(
+        i-intewestedindataset, (///ˬ///✿)
+        d-d.suffix(outputpath)
       )
   }
 
   /**
-   * Convert InterestedIn to thrift structs, then write to HDFS
+   * convewt intewestedin to thwift stwucts, 🥺 then wwite to hdfs
    */
-  def writeInterestedInThriftOutputExecution(
-    interestedIn: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    modelVersion: String,
-    interestedInThriftDatset: SnapshotDALDataset[UserToInterestedInClusters],
-    thriftOutputPath: String,
-    dateRange: DateRange
-  ): Execution[Unit] = {
-    interestedIn
+  def wwiteintewestedinthwiftoutputexecution(
+    intewestedin: t-typedpipe[(usewid, c-cwustewsusewisintewestedin)],
+    modewvewsion: s-stwing, OwO
+    i-intewestedinthwiftdatset: s-snapshotdawdataset[usewtointewestedincwustews], >w<
+    thwiftoutputpath: stwing, 🥺
+    datewange: datewange
+  ): e-execution[unit] = {
+    intewestedin
       .map {
-        case (userId, clusters) =>
-          UserToInterestedInClusters(userId, modelVersion, clusters.clusterIdToScores)
+        case (usewid, nyaa~~ cwustews) =>
+          usewtointewestedincwustews(usewid, ^^ m-modewvewsion, >w< cwustews.cwustewidtoscowes)
       }
-      .writeDALSnapshotExecution(
-        interestedInThriftDatset,
-        D.Daily,
-        D.Suffix(thriftOutputPath),
-        D.EBLzo(),
-        dateRange.end
+      .wwitedawsnapshotexecution(
+        i-intewestedinthwiftdatset, OwO
+        d-d.daiwy, XD
+        d-d.suffix(thwiftoutputpath), ^^;;
+        d.ebwzo(), 🥺
+        d-datewange.end
       )
   }
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
-  --start_cron interested_in_optout_daily \
-  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+c-capesospy-v2 update --buiwd_wocawwy --stawt_cwon \
+  --stawt_cwon i-intewested_in_optout_daiwy \
+  s-swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc.yamw
  */
-object InterestedInOptOutDailyBatchJob extends ScheduledExecutionApp {
+object intewestedinoptoutdaiwybatchjob e-extends scheduwedexecutionapp {
 
-  override def firstTime: RichDate = RichDate("2019-11-24")
+  o-ovewwide def f-fiwsttime: wichdate = w-wichdate("2019-11-24")
 
-  override def batchIncrement: Duration = Days(1)
+  o-ovewwide def batchincwement: duwation = days(1)
 
-  override def runOnDateRange(
-    args: Args
+  ovewwide def w-wunondatewange(
+    awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    impwicit datewange: datewange, XD
+    timezone: timezone, (U ᵕ U❁)
+    u-uniqueid: uniqueid
+  ): execution[unit] = {
 
-    val userOptoutEntities =
-      SimClustersOptOutUtil
-        .getP13nOptOutSources(dateRange.embiggen(Days(4)), ClusterType.InterestedIn)
-        .count("num_users_with_optouts")
-        .forceToDisk
+    vaw usewoptoutentities =
+      simcwustewsoptoututiw
+        .getp13noptoutsouwces(datewange.embiggen(days(4)), :3 c-cwustewtype.intewestedin)
+        .count("num_usews_with_optouts")
+        .fowcetodisk
 
-    val interestedIn2020Pipe = InterestedInSources
-      .simClustersRawInterestedIn2020Source(dateRange, timeZone)
-      .count("num_users_with_2020_interestedin")
+    v-vaw intewestedin2020pipe = i-intewestedinsouwces
+      .simcwustewswawintewestedin2020souwce(datewange, ( ͡o ω ͡o ) timezone)
+      .count("num_usews_with_2020_intewestedin")
 
-    val interestedInLite2020Pipe = InterestedInSources
-      .simClustersRawInterestedInLite2020Source(dateRange, timeZone)
-      .count("num_users_with_2020_interestedin_lite")
+    v-vaw intewestedinwite2020pipe = intewestedinsouwces
+      .simcwustewswawintewestedinwite2020souwce(datewange, òωó t-timezone)
+      .count("num_usews_with_2020_intewestedin_wite")
 
-    val clusterToEntities = InferredEntities
-      .getLegibleEntityEmbeddings(dateRange.prepend(Days(21)), timeZone)
-      .count("num_cluster_to_entities")
+    v-vaw cwustewtoentities = infewwedentities
+      .getwegibweentityembeddings(datewange.pwepend(days(21)), timezone)
+      .count("num_cwustew_to_entities")
 
-    val filtered2020InterestedIn = InterestedInOptOut
-      .filterOptedOutInterestedIn(interestedIn2020Pipe, userOptoutEntities, clusterToEntities)
-      .count("num_users_with_compliant_2020_interestedin")
+    vaw fiwtewed2020intewestedin = intewestedinoptout
+      .fiwtewoptedoutintewestedin(intewestedin2020pipe, σωσ usewoptoutentities, (U ᵕ U❁) c-cwustewtoentities)
+      .count("num_usews_with_compwiant_2020_intewestedin")
 
-    val write2020Exec = InterestedInOptOut.writeInterestedInOutputExecution(
-      filtered2020InterestedIn,
-      SimclustersV2InterestedIn20M145K2020ScalaDataset,
-      DataPaths.InterestedIn2020Path
+    vaw wwite2020exec = i-intewestedinoptout.wwiteintewestedinoutputexecution(
+      fiwtewed2020intewestedin, (✿oωo)
+      s-simcwustewsv2intewestedin20m145k2020scawadataset, ^^
+      d-datapaths.intewestedin2020path
     )
 
-    val write2020ThriftExec = InterestedInOptOut.writeInterestedInThriftOutputExecution(
-      filtered2020InterestedIn,
-      ModelVersions.Model20M145K2020,
-      SimclustersV2UserToInterestedIn20M145K2020ScalaDataset,
-      DataPaths.InterestedIn2020ThriftPath,
-      dateRange
+    vaw wwite2020thwiftexec = intewestedinoptout.wwiteintewestedinthwiftoutputexecution(
+      f-fiwtewed2020intewestedin, ^•ﻌ•^
+      m-modewvewsions.modew20m145k2020,
+      simcwustewsv2usewtointewestedin20m145k2020scawadataset, XD
+      d-datapaths.intewestedin2020thwiftpath, :3
+      d-datewange
     )
 
-    val sanityCheck2020Exec = SimClustersOptOutUtil.sanityCheckAndSendEmail(
-      oldNumClustersPerUser = interestedIn2020Pipe.map(_._2.clusterIdToScores.size),
-      newNumClustersPerUser = filtered2020InterestedIn.map(_._2.clusterIdToScores.size),
-      modelVersion = ModelVersions.Model20M145K2020,
-      alertEmail = SimClustersOptOutUtil.AlertEmail
+    vaw sanitycheck2020exec = simcwustewsoptoututiw.sanitycheckandsendemaiw(
+      owdnumcwustewspewusew = intewestedin2020pipe.map(_._2.cwustewidtoscowes.size), (ꈍᴗꈍ)
+      newnumcwustewspewusew = f-fiwtewed2020intewestedin.map(_._2.cwustewidtoscowes.size), :3
+      m-modewvewsion = m-modewvewsions.modew20m145k2020, (U ﹏ U)
+      awewtemaiw = s-simcwustewsoptoututiw.awewtemaiw
     )
 
-    val filtered2020InterestedInLite = InterestedInOptOut
-      .filterOptedOutInterestedIn(interestedInLite2020Pipe, userOptoutEntities, clusterToEntities)
-      .count("num_users_with_compliant_2020_interestedin_lite")
+    v-vaw fiwtewed2020intewestedinwite = intewestedinoptout
+      .fiwtewoptedoutintewestedin(intewestedinwite2020pipe, u-usewoptoutentities, UwU cwustewtoentities)
+      .count("num_usews_with_compwiant_2020_intewestedin_wite")
 
-    val write2020LiteExec = InterestedInOptOut.writeInterestedInOutputExecution(
-      filtered2020InterestedInLite,
-      SimclustersV2InterestedInLite20M145K2020ScalaDataset,
-      DataPaths.InterestedInLite2020Path
+    vaw wwite2020witeexec = intewestedinoptout.wwiteintewestedinoutputexecution(
+      fiwtewed2020intewestedinwite, 😳😳😳
+      s-simcwustewsv2intewestedinwite20m145k2020scawadataset, XD
+      d-datapaths.intewestedinwite2020path
     )
 
-    val write2020LiteThriftExec = InterestedInOptOut.writeInterestedInThriftOutputExecution(
-      filtered2020InterestedInLite,
-      ModelVersions.Model20M145K2020,
-      SimclustersV2UserToInterestedInLite20M145K2020ScalaDataset,
-      DataPaths.InterestedInLite2020ThriftPath,
-      dateRange
+    vaw wwite2020witethwiftexec = intewestedinoptout.wwiteintewestedinthwiftoutputexecution(
+      f-fiwtewed2020intewestedinwite, o.O
+      m-modewvewsions.modew20m145k2020, (⑅˘꒳˘)
+      simcwustewsv2usewtointewestedinwite20m145k2020scawadataset, 😳😳😳
+      datapaths.intewestedinwite2020thwiftpath, nyaa~~
+      datewange
     )
 
-    val sanityCheck2020LiteExec = SimClustersOptOutUtil.sanityCheckAndSendEmail(
-      oldNumClustersPerUser = interestedInLite2020Pipe.map(_._2.clusterIdToScores.size),
-      newNumClustersPerUser = filtered2020InterestedInLite.map(_._2.clusterIdToScores.size),
-      modelVersion = ModelVersions.Model20M145K2020,
-      alertEmail = SimClustersOptOutUtil.AlertEmail
+    v-vaw sanitycheck2020witeexec = simcwustewsoptoututiw.sanitycheckandsendemaiw(
+      owdnumcwustewspewusew = intewestedinwite2020pipe.map(_._2.cwustewidtoscowes.size), rawr
+      nyewnumcwustewspewusew = f-fiwtewed2020intewestedinwite.map(_._2.cwustewidtoscowes.size), -.-
+      modewvewsion = modewvewsions.modew20m145k2020, (✿oωo)
+      awewtemaiw = s-simcwustewsoptoututiw.awewtemaiw
     )
 
-    Util.printCounters(
-      Execution.zip(
-        Execution.zip(
-          write2020Exec,
-          write2020ThriftExec,
-          sanityCheck2020Exec),
-        Execution.zip(
-          write2020LiteExec,
-          write2020LiteThriftExec,
-          sanityCheck2020LiteExec
+    u-utiw.pwintcountews(
+      execution.zip(
+        execution.zip(
+          wwite2020exec,
+          w-wwite2020thwiftexec, /(^•ω•^)
+          sanitycheck2020exec), 🥺
+        e-execution.zip(
+          wwite2020witeexec, ʘwʘ
+          wwite2020witethwiftexec, UwU
+          sanitycheck2020witeexec
         )
       )
     )
@@ -201,69 +201,69 @@ object InterestedInOptOutDailyBatchJob extends ScheduledExecutionApp {
 }
 
 /**
- * For debugging only. Does a filtering run and prints the differences before/after the opt out
+ * f-fow debugging onwy. XD does a fiwtewing w-wun and pwints the diffewences befowe/aftew the opt out
 
- scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/optout:interested_in_optout-adhoc \
- --user cassowary --cluster bluebird-qus1 \
- --main-class com.twitter.simclusters_v2.scalding.optout.InterestedInOptOutAdhocJob -- \
- --keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
- --principal service_acoount@TWITTER.BIZ \
+ s-scawding wemote wun --tawget s-swc/scawa/com/twittew/simcwustews_v2/scawding/optout:intewested_in_optout-adhoc \
+ --usew c-cassowawy --cwustew bwuebiwd-qus1 \
+ --main-cwass c-com.twittew.simcwustews_v2.scawding.optout.intewestedinoptoutadhocjob -- \
+ --keytab /vaw/wib/tss/keys/fwoofy/keytabs/cwient/cassowawy.keytab \
+ --pwincipaw sewvice_acoount@twittew.biz \
  -- \
- --outputDir /user/cassowary/adhoc/interestedin_optout \
+ --outputdiw /usew/cassowawy/adhoc/intewestedin_optout \
  --date 2020-09-03
  */
-object InterestedInOptOutAdhocJob extends AdhocExecutionApp {
-  override def runOnDateRange(
-    args: Args
+o-object i-intewestedinoptoutadhocjob extends a-adhocexecutionapp {
+  ovewwide d-def wunondatewange(
+    a-awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val outputDir = args("outputDir")
+    impwicit datewange: d-datewange, (✿oωo)
+    t-timezone: timezone, :3
+    u-uniqueid: uniqueid
+  ): execution[unit] = {
+    v-vaw outputdiw = awgs("outputdiw")
 
-    val interestedInPipe = InterestedInSources
-      .simClustersInterestedInUpdatedSource(dateRange, timeZone)
-      .count("num_users_with_interestedin")
+    v-vaw intewestedinpipe = i-intewestedinsouwces
+      .simcwustewsintewestedinupdatedsouwce(datewange, (///ˬ///✿) timezone)
+      .count("num_usews_with_intewestedin")
 
-    val userOptoutEntities: TypedPipe[(UserId, Set[SemanticCoreEntityId])] =
-      SimClustersOptOutUtil
-        .getP13nOptOutSources(dateRange.embiggen(Days(4)), ClusterType.InterestedIn)
-        .count("num_users_with_optouts")
+    vaw usewoptoutentities: typedpipe[(usewid, nyaa~~ s-set[semanticcoweentityid])] =
+      s-simcwustewsoptoututiw
+        .getp13noptoutsouwces(datewange.embiggen(days(4)), >w< c-cwustewtype.intewestedin)
+        .count("num_usews_with_optouts")
 
-    val clusterToEntities = InferredEntities
-      .getLegibleEntityEmbeddings(dateRange, timeZone)
-      .count("num_cluster_to_entities")
+    v-vaw cwustewtoentities = infewwedentities
+      .getwegibweentityembeddings(datewange, -.- timezone)
+      .count("num_cwustew_to_entities")
 
-    val filteredInterestedInPipe = InterestedInOptOut
-      .filterOptedOutInterestedIn(
-        interestedInPipe,
-        userOptoutEntities,
-        clusterToEntities
+    v-vaw fiwtewedintewestedinpipe = intewestedinoptout
+      .fiwtewoptedoutintewestedin(
+        intewestedinpipe, (✿oωo)
+        usewoptoutentities, (˘ω˘)
+        cwustewtoentities
       )
-      .count("num_users_with_interestedin_after_optout")
+      .count("num_usews_with_intewestedin_aftew_optout")
 
-    val output = interestedInPipe
-      .join(filteredInterestedInPipe)
-      .filter {
-        case (userId, (originalInterestedIn, filtered)) =>
-          originalInterestedIn.clusterIdToScores != filtered.clusterIdToScores
+    vaw output = intewestedinpipe
+      .join(fiwtewedintewestedinpipe)
+      .fiwtew {
+        c-case (usewid, rawr (owiginawintewestedin, OwO fiwtewed)) =>
+          o-owiginawintewestedin.cwustewidtoscowes != fiwtewed.cwustewidtoscowes
       }
-      .join(userOptoutEntities)
+      .join(usewoptoutentities)
       .map {
-        case (userId, ((originalInterestedIn, filtered), optoutEntities)) =>
-          Seq(
-            "userId=" + userId,
-            "originalInterestedInVersion=" + originalInterestedIn.knownForModelVersion,
-            "originalInterestedIn=" + originalInterestedIn.clusterIdToScores.keySet,
-            "filteredInterestedIn=" + filtered.knownForModelVersion,
-            "filteredInterestedIn=" + filtered.clusterIdToScores.keySet,
-            "optoutEntities=" + optoutEntities
-          ).mkString("\t")
+        c-case (usewid, ^•ﻌ•^ ((owiginawintewestedin, UwU fiwtewed), optoutentities)) =>
+          s-seq(
+            "usewid=" + usewid, (˘ω˘)
+            "owiginawintewestedinvewsion=" + o-owiginawintewestedin.knownfowmodewvewsion, (///ˬ///✿)
+            "owiginawintewestedin=" + o-owiginawintewestedin.cwustewidtoscowes.keyset, σωσ
+            "fiwtewedintewestedin=" + f-fiwtewed.knownfowmodewvewsion, /(^•ω•^)
+            "fiwtewedintewestedin=" + f-fiwtewed.cwustewidtoscowes.keyset, 😳
+            "optoutentities=" + o-optoutentities
+          ).mkstwing("\t")
       }
 
-    Util.printCounters(
-      output.writeExecution(TypedTsv(outputDir))
+    utiw.pwintcountews(
+      output.wwiteexecution(typedtsv(outputdiw))
     )
   }
 }

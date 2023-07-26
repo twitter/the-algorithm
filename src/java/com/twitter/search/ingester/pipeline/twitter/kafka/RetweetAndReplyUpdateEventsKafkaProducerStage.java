@@ -1,24 +1,24 @@
-package com.twitter.search.ingester.pipeline.twitter.kafka;
+package com.twittew.seawch.ingestew.pipewine.twittew.kafka;
 
-import org.apache.commons.pipeline.validation.ConsumedTypes;
+impowt o-owg.apache.commons.pipewine.vawidation.consumedtypes;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.ingester.model.IngesterThriftVersionedEvents;
+i-impowt c-com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
+i-impowt com.twittew.seawch.ingestew.modew.ingestewthwiftvewsionedevents;
 
-@ConsumedTypes(ThriftVersionedEvents.class)
-public class RetweetAndReplyUpdateEventsKafkaProducerStage extends KafkaProducerStage
-    <IngesterThriftVersionedEvents> {
-  public RetweetAndReplyUpdateEventsKafkaProducerStage(String kafkaTopic, String clientId,
-                                            String clusterPath) {
-    super(kafkaTopic, clientId, clusterPath);
+@consumedtypes(thwiftvewsionedevents.cwass)
+p-pubwic c-cwass wetweetandwepwyupdateeventskafkapwoducewstage e-extends kafkapwoducewstage
+    <ingestewthwiftvewsionedevents> {
+  p-pubwic wetweetandwepwyupdateeventskafkapwoducewstage(stwing kafkatopic, ^^;; stwing cwientid, >_<
+                                            stwing c-cwustewpath) {
+    supew(kafkatopic, mya cwientid, mya c-cwustewpath);
   }
 
-  public RetweetAndReplyUpdateEventsKafkaProducerStage() {
-    super();
+  pubwic w-wetweetandwepwyupdateeventskafkapwoducewstage() {
+    supew();
   }
 
-  @Override
-  protected void innerRunFinalStageOfBranchV2(IngesterThriftVersionedEvents events) {
-    super.tryToSendEventsToKafka(events);
+  @ovewwide
+  pwotected void innewwunfinawstageofbwanchv2(ingestewthwiftvewsionedevents e-events) {
+    supew.twytosendeventstokafka(events);
   }
 }

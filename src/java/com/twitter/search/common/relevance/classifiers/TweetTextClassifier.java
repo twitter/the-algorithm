@@ -1,67 +1,67 @@
-package com.twitter.search.common.relevance.classifiers;
+package com.twittew.seawch.common.wewevance.cwassifiews;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+impowt c-com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.wists;
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
-import java.util.List;
+impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew;
+i-impowt java.utiw.wist;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.relevance.config.TweetProcessingConfig;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
+i-impowt c-com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+i-impowt c-com.twittew.seawch.common.wewevance.config.tweetpwocessingconfig;
+impowt com.twittew.seawch.common.wewevance.entities.twittewmessage;
 
 /**
- * Classifier that focuses on tweet text features and their corresponding
- * quality.
+ * cwassifiew that focuses on tweet text f-featuwes and theiw cowwesponding
+ * quawity. ^^
  */
-public class TweetTextClassifier extends TweetClassifier {
-  private TweetQualityFeatureExtractor featureExtractor = new TweetQualityFeatureExtractor();
-  private TweetTrendsExtractor trendsExtractor = null;
+p-pubwic cwass tweettextcwassifiew e-extends tweetcwassifiew {
+  pwivate tweetquawityfeatuweextwactow featuweextwactow = nyew tweetquawityfeatuweextwactow();
+  p-pwivate tweettwendsextwactow twendsextwactow = n-nuww;
 
   /**
-   * Constructor. Requires a list of TweetQualityEvaluator objects.
-   * @param evaluators list of TweetQualityEvaluator objects responsible for quality evaluation.
-   * @param serviceIdentifier The identifier of the calling service.
-   * @param supportedPenguinVersions A list of supported penguin versions.
+   * c-constwuctow. :3 wequiwes a wist of tweetquawityevawuatow objects. -.-
+   * @pawam evawuatows w-wist of tweetquawityevawuatow objects wesponsibwe fow quawity evawuation.
+   * @pawam s-sewviceidentifiew the identifiew of t-the cawwing sewvice. 😳
+   * @pawam s-suppowtedpenguinvewsions a-a wist o-of suppowted penguin vewsions. mya
    */
-  public TweetTextClassifier(
-      final Iterable<TweetEvaluator> evaluators,
-      ServiceIdentifier serviceIdentifier,
-      List<PenguinVersion> supportedPenguinVersions) {
-    Preconditions.checkNotNull(evaluators);
-    setQualityEvaluators(evaluators);
-    TweetProcessingConfig.init();
+  pubwic t-tweettextcwassifiew(
+      finaw itewabwe<tweetevawuatow> e-evawuatows, (˘ω˘)
+      sewviceidentifiew sewviceidentifiew, >_<
+      wist<penguinvewsion> suppowtedpenguinvewsions) {
+    pweconditions.checknotnuww(evawuatows);
+    setquawityevawuatows(evawuatows);
+    tweetpwocessingconfig.init();
 
-    if (TweetProcessingConfig.getBool("extract_trends", false)) {
-      trendsExtractor = new TweetTrendsExtractor(serviceIdentifier, supportedPenguinVersions);
+    i-if (tweetpwocessingconfig.getboow("extwact_twends", -.- fawse)) {
+      t-twendsextwactow = n-nyew tweettwendsextwactow(sewviceidentifiew, 🥺 s-suppowtedpenguinvewsions);
     }
   }
 
   /**
-   * Extract text features for the specified TwitterMessage.
+   * extwact text featuwes fow the specified twittewmessage. (U ﹏ U)
    *
-   * @param tweet TwitterMessage to extract features from.
+   * @pawam tweet t-twittewmessage t-to extwact featuwes fwom. >w<
    */
-  @Override
-  protected void extractFeatures(TwitterMessage tweet) {
-    extractFeatures(Lists.newArrayList(tweet));
+  @ovewwide
+  p-pwotected void e-extwactfeatuwes(twittewmessage tweet) {
+    extwactfeatuwes(wists.newawwaywist(tweet));
   }
 
   /**
-   * Extract text features for the specified list of TwitterMessages.
+   * e-extwact text featuwes fow t-the specified wist of twittewmessages. mya
    *
-   * @param tweets list of TwitterMessages to extract interesting features for
+   * @pawam tweets w-wist of twittewmessages to extwact i-intewesting featuwes fow
    */
-  @Override
-  protected void extractFeatures(Iterable<TwitterMessage> tweets) {
-    Preconditions.checkNotNull(tweets);
-    for (TwitterMessage tweet : tweets) {
-      featureExtractor.extractTweetTextFeatures(tweet);
+  @ovewwide
+  p-pwotected void e-extwactfeatuwes(itewabwe<twittewmessage> tweets) {
+    pweconditions.checknotnuww(tweets);
+    fow (twittewmessage tweet : tweets) {
+      featuweextwactow.extwacttweettextfeatuwes(tweet);
     }
 
-    // Optionally try to annotate trends for all the tweets.
-    if (TweetProcessingConfig.getBool("extract_trends", false) && trendsExtractor != null) {
-      trendsExtractor.extractTrends(tweets);
+    // optionawwy t-twy to annotate t-twends fow aww the tweets. >w<
+    i-if (tweetpwocessingconfig.getboow("extwact_twends", nyaa~~ f-fawse) && t-twendsextwactow != nyuww) {
+      twendsextwactow.extwacttwends(tweets);
     }
   }
 }

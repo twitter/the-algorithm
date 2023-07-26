@@ -1,278 +1,278 @@
-package com.twitter.simclusters_v2.scalding.embedding.producer
+package com.twittew.simcwustews_v2.scawding.embedding.pwoducew
 
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scalding_internal.source.lzo_scrooge.FixedPathLzoScrooge
-import com.twitter.simclusters_v2.hdfs_sources.{
-  AggregatableProducerSimclustersEmbeddingsByFavScoreScalaDataset,
-  AggregatableProducerSimclustersEmbeddingsByFavScoreThriftScalaDataset,
-  AggregatableProducerSimclustersEmbeddingsByFavScore2020ScalaDataset,
-  AggregatableProducerSimclustersEmbeddingsByFavScore2020ThriftScalaDataset
+impowt com.twittew.scawding._
+i-impowt c-com.twittew.scawding_intewnaw.dawv2.dawwwite._
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+i-impowt c-com.twittew.scawding_intewnaw.souwce.wzo_scwooge.fixedpathwzoscwooge
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.{
+  a-aggwegatabwepwoducewsimcwustewsembeddingsbyfavscowescawadataset, ^^
+  a-aggwegatabwepwoducewsimcwustewsembeddingsbyfavscowethwiftscawadataset, ^•ﻌ•^
+  aggwegatabwepwoducewsimcwustewsembeddingsbyfavscowe2020scawadataset, XD
+  aggwegatabwepwoducewsimcwustewsembeddingsbyfavscowe2020thwiftscawadataset
 }
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.wtf.scalding.jobs.common.{AdhocExecutionApp, ScheduledExecutionApp}
-import java.util.TimeZone
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.embeddingutiw
+impowt com.twittew.simcwustews_v2.thwiftscawa._
+i-impowt com.twittew.wtf.scawding.jobs.common.{adhocexecutionapp, :3 scheduwedexecutionapp}
+impowt java.utiw.timezone
 
 /**
- * See AggregatableProducerEmbeddingsBaseApp for an explanation of this job.
+ * s-see aggwegatabwepwoducewembeddingsbaseapp fow an expwanation o-of this job. (ꈍᴗꈍ)
  *
- * Production job:
-capesospy-v2 update aggregatable_producer_embeddings_by_fav_score src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+ * pwoduction job:
+capesospy-v2 update aggwegatabwe_pwoducew_embeddings_by_fav_scowe s-swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc3.yamw
  */
-object AggregatableFavBasedProducerEmbeddingsScheduledApp
-    extends AggregatableFavBasedProducerEmbeddingsBaseApp
-    with ScheduledExecutionApp {
+object aggwegatabwefavbasedpwoducewembeddingsscheduwedapp
+    e-extends aggwegatabwefavbasedpwoducewembeddingsbaseapp
+    w-with scheduwedexecutionapp {
 
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
-  // Not using the EmbeddingUtil.getHdfsPath to preserve the previous functionality.
-  private val outputPath: String =
-    "/user/cassowary/manhattan_sequence_files/producer_simclusters_aggregatable_embeddings_by_fav_score"
+  ovewwide vaw modewvewsion: modewvewsion = m-modewvewsion.modew20m145kupdated
+  // nyot using the embeddingutiw.gethdfspath to pwesewve the pwevious functionawity. :3
+  pwivate v-vaw outputpath: stwing =
+    "/usew/cassowawy/manhattan_sequence_fiwes/pwoducew_simcwustews_aggwegatabwe_embeddings_by_fav_scowe"
 
-  private val outputPathThrift: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = false,
-    modelVersion = modelVersion,
-    pathSuffix = "producer_simclusters_aggregatable_embeddings_by_fav_score_thrift"
+  p-pwivate v-vaw outputpaththwift: s-stwing = e-embeddingutiw.gethdfspath(
+    isadhoc = fawse, (U ﹏ U)
+    ismanhattankeyvaw = f-fawse, UwU
+    modewvewsion = modewvewsion, 😳😳😳
+    p-pathsuffix = "pwoducew_simcwustews_aggwegatabwe_embeddings_by_fav_scowe_thwift"
   )
 
-  override def firstTime: RichDate = RichDate("2020-05-11")
+  ovewwide def fiwsttime: wichdate = wichdate("2020-05-11")
 
-  override def batchIncrement: Duration = Days(7)
+  ovewwide d-def batchincwement: duwation = d-days(7)
 
-  override def writeToManhattan(
-    output: TypedPipe[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]]
+  ovewwide d-def wwitetomanhattan(
+    o-output: typedpipe[keyvaw[simcwustewsembeddingid, XD simcwustewsembedding]]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    output
-      .writeDALVersionedKeyValExecution(
-        AggregatableProducerSimclustersEmbeddingsByFavScoreScalaDataset,
-        D.Suffix(outputPath),
-        version = ExplicitEndTime(dateRange.end)
+    impwicit datewange: datewange, o.O
+    t-timezone: timezone, (⑅˘꒳˘)
+    u-uniqueid: uniqueid
+  ): e-execution[unit] = {
+    o-output
+      .wwitedawvewsionedkeyvawexecution(
+        aggwegatabwepwoducewsimcwustewsembeddingsbyfavscowescawadataset, 😳😳😳
+        d-d.suffix(outputpath), nyaa~~
+        vewsion = e-expwicitendtime(datewange.end)
       )
   }
 
-  override def writeToThrift(
-    output: TypedPipe[SimClustersEmbeddingWithId]
+  ovewwide def wwitetothwift(
+    o-output: typedpipe[simcwustewsembeddingwithid]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    impwicit d-datewange: datewange, rawr
+    timezone: t-timezone, -.-
+    u-uniqueid: uniqueid
+  ): execution[unit] = {
     output
-      .writeDALSnapshotExecution(
-        dataset = AggregatableProducerSimclustersEmbeddingsByFavScoreThriftScalaDataset,
-        updateStep = D.Daily,
-        pathLayout = D.Suffix(outputPathThrift),
-        fmt = D.Parquet,
-        endDate = dateRange.end
+      .wwitedawsnapshotexecution(
+        dataset = aggwegatabwepwoducewsimcwustewsembeddingsbyfavscowethwiftscawadataset,
+        updatestep = d.daiwy, (✿oωo)
+        pathwayout = d-d.suffix(outputpaththwift), /(^•ω•^)
+        fmt = d-d.pawquet, 🥺
+        enddate = d-datewange.end
       )
   }
 }
 
 /**
- * Production job:
-capesospy-v2 update --build_locally --start_cron aggregatable_producer_embeddings_by_fav_score_2020 src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+ * p-pwoduction j-job:
+capesospy-v2 update --buiwd_wocawwy --stawt_cwon aggwegatabwe_pwoducew_embeddings_by_fav_scowe_2020 swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc3.yamw
  */
-object AggregatableFavBasedProducerEmbeddings2020ScheduledApp
-    extends AggregatableFavBasedProducerEmbeddingsBaseApp
-    with ScheduledExecutionApp {
+o-object aggwegatabwefavbasedpwoducewembeddings2020scheduwedapp
+    extends aggwegatabwefavbasedpwoducewembeddingsbaseapp
+    with scheduwedexecutionapp {
 
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145k2020
-  // Not using the EmbeddingUtil.getHdfsPath to preserve the previous functionality.
-  private val outputPath: String =
-    "/user/cassowary/manhattan_sequence_files/producer_simclusters_aggregatable_embeddings_by_fav_score_20m145k2020"
+  ovewwide v-vaw modewvewsion: modewvewsion = m-modewvewsion.modew20m145k2020
+  // n-nyot u-using the embeddingutiw.gethdfspath to pwesewve t-the pwevious functionawity. ʘwʘ
+  p-pwivate v-vaw outputpath: s-stwing =
+    "/usew/cassowawy/manhattan_sequence_fiwes/pwoducew_simcwustews_aggwegatabwe_embeddings_by_fav_scowe_20m145k2020"
 
-  // getHdfsPath appends model version str to the pathSuffix
-  private val outputPathThrift: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = false,
-    modelVersion = modelVersion,
-    pathSuffix = "producer_simclusters_aggregatable_embeddings_by_fav_score_thrift"
+  // gethdfspath appends modew v-vewsion stw t-to the pathsuffix
+  p-pwivate vaw o-outputpaththwift: s-stwing = embeddingutiw.gethdfspath(
+    isadhoc = fawse, UwU
+    ismanhattankeyvaw = fawse, XD
+    modewvewsion = m-modewvewsion, (✿oωo)
+    pathsuffix = "pwoducew_simcwustews_aggwegatabwe_embeddings_by_fav_scowe_thwift"
   )
 
-  override def firstTime: RichDate = RichDate("2021-03-04")
+  ovewwide def fiwsttime: wichdate = wichdate("2021-03-04")
 
-  override def batchIncrement: Duration = Days(7)
+  ovewwide def batchincwement: d-duwation = days(7)
 
-  override def writeToManhattan(
-    output: TypedPipe[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]]
+  ovewwide def wwitetomanhattan(
+    output: t-typedpipe[keyvaw[simcwustewsembeddingid, :3 s-simcwustewsembedding]]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    i-impwicit datewange: datewange, (///ˬ///✿)
+    t-timezone: timezone, nyaa~~
+    u-uniqueid: uniqueid
+  ): e-execution[unit] = {
     output
-      .writeDALVersionedKeyValExecution(
-        AggregatableProducerSimclustersEmbeddingsByFavScore2020ScalaDataset,
-        D.Suffix(outputPath),
-        version = ExplicitEndTime(dateRange.end)
+      .wwitedawvewsionedkeyvawexecution(
+        aggwegatabwepwoducewsimcwustewsembeddingsbyfavscowe2020scawadataset,
+        d.suffix(outputpath), >w<
+        vewsion = expwicitendtime(datewange.end)
       )
   }
 
-  override def writeToThrift(
-    output: TypedPipe[SimClustersEmbeddingWithId]
+  o-ovewwide def wwitetothwift(
+    output: typedpipe[simcwustewsembeddingwithid]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    output
-      .writeDALSnapshotExecution(
-        dataset = AggregatableProducerSimclustersEmbeddingsByFavScore2020ThriftScalaDataset,
-        updateStep = D.Daily,
-        pathLayout = D.Suffix(outputPathThrift),
-        fmt = D.Parquet,
-        endDate = dateRange.end
+    i-impwicit datewange: datewange, -.-
+    t-timezone: t-timezone, (✿oωo)
+    uniqueid: uniqueid
+  ): execution[unit] = {
+    o-output
+      .wwitedawsnapshotexecution(
+        d-dataset = aggwegatabwepwoducewsimcwustewsembeddingsbyfavscowe2020thwiftscawadataset, (˘ω˘)
+        updatestep = d.daiwy,
+        p-pathwayout = d-d.suffix(outputpaththwift), rawr
+        fmt = d.pawquet, OwO
+        enddate = datewange.end
       )
   }
 }
 
 /***
- * Adhoc job:
+ * adhoc job:
 
-scalding remote run --user recos-platform \
---main-class com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableFavBasedProducerEmbeddingsAdhocApp \
---target src/scala/com/twitter/simclusters_v2/scalding/embedding/producer:aggregatable_fav_based_producer_embeddings_job-adhoc \
+s-scawding wemote w-wun --usew wecos-pwatfowm \
+--main-cwass c-com.twittew.simcwustews_v2.scawding.embedding.pwoducew.aggwegatabwefavbasedpwoducewembeddingsadhocapp \
+--tawget swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/pwoducew:aggwegatabwe_fav_based_pwoducew_embeddings_job-adhoc \
 -- --date 2020-05-11
 
  */
-object AggregatableFavBasedProducerEmbeddingsAdhocApp
-    extends AggregatableFavBasedProducerEmbeddingsBaseApp
-    with AdhocExecutionApp {
+object a-aggwegatabwefavbasedpwoducewembeddingsadhocapp
+    e-extends aggwegatabwefavbasedpwoducewembeddingsbaseapp
+    w-with adhocexecutionapp {
 
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
-  private val outputPath: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = true,
-    modelVersion = modelVersion,
-    pathSuffix = "producer_simclusters_aggregatable_embeddings_by_fav_score"
+  ovewwide vaw modewvewsion: modewvewsion = modewvewsion.modew20m145kupdated
+  pwivate v-vaw outputpath: s-stwing = embeddingutiw.gethdfspath(
+    isadhoc = fawse, ^•ﻌ•^
+    i-ismanhattankeyvaw = t-twue, UwU
+    modewvewsion = modewvewsion, (˘ω˘)
+    pathsuffix = "pwoducew_simcwustews_aggwegatabwe_embeddings_by_fav_scowe"
   )
 
-  private val outputPathThrift: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = false,
-    modelVersion = modelVersion,
-    pathSuffix = "producer_simclusters_aggregatable_embeddings_by_fav_score_thrift"
+  pwivate vaw outputpaththwift: s-stwing = embeddingutiw.gethdfspath(
+    isadhoc = fawse, (///ˬ///✿)
+    ismanhattankeyvaw = fawse, σωσ
+    modewvewsion = m-modewvewsion, /(^•ω•^)
+    pathsuffix = "pwoducew_simcwustews_aggwegatabwe_embeddings_by_fav_scowe_thwift"
   )
 
-  override def writeToManhattan(
-    output: TypedPipe[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]]
+  ovewwide def wwitetomanhattan(
+    o-output: typedpipe[keyvaw[simcwustewsembeddingid, 😳 s-simcwustewsembedding]]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    impwicit datewange: datewange, 😳
+    timezone: t-timezone, (⑅˘꒳˘)
+    u-uniqueid: uniqueid
+  ): execution[unit] = {
     output
-      .flatMap { keyVal =>
-        keyVal.value.embedding.map { simClusterWithScore =>
+      .fwatmap { keyvaw =>
+        k-keyvaw.vawue.embedding.map { simcwustewwithscowe =>
           (
-            keyVal.key.embeddingType,
-            keyVal.key.modelVersion,
-            keyVal.key.internalId,
-            simClusterWithScore.clusterId,
-            simClusterWithScore.score
+            k-keyvaw.key.embeddingtype, 😳😳😳
+            keyvaw.key.modewvewsion, 😳
+            keyvaw.key.intewnawid, XD
+            simcwustewwithscowe.cwustewid, mya
+            s-simcwustewwithscowe.scowe
           )
         }
       }
-      .writeExecution(
-        // Write to TSV for easier debugging of the adhoc job.
-        TypedTsv(outputPath)
+      .wwiteexecution(
+        // wwite t-to tsv fow easiew d-debugging of the adhoc job. ^•ﻌ•^
+        t-typedtsv(outputpath)
       )
   }
 
-  override def writeToThrift(
-    output: TypedPipe[SimClustersEmbeddingWithId]
+  ovewwide d-def wwitetothwift(
+    o-output: t-typedpipe[simcwustewsembeddingwithid]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    output
-      .writeExecution(
-        new FixedPathLzoScrooge(outputPathThrift, SimClustersEmbeddingWithId)
+    impwicit datewange: d-datewange, ʘwʘ
+    t-timezone: timezone, ( ͡o ω ͡o )
+    uniqueid: uniqueid
+  ): e-execution[unit] = {
+    o-output
+      .wwiteexecution(
+        n-nyew fixedpathwzoscwooge(outputpaththwift, mya simcwustewsembeddingwithid)
       )
   }
 }
 
 /**
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding/producer:aggregatable_fav_based_producer_embeddings_job_2020-adhoc
-scalding remote run \
---user cassowary \
---keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
---principal service_acoount@TWITTER.BIZ \
---cluster bluebird-qus1 \
---main-class com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableFavBasedProducerEmbeddings2020AdhocApp \
---target src/scala/com/twitter/simclusters_v2/scalding/embedding/producer:aggregatable_fav_based_producer_embeddings_job_2020-adhoc \
---hadoop-properties "scalding.with.reducers.set.explicitly=true mapreduce.job.reduces=4000" \
+./bazew bundwe swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/pwoducew:aggwegatabwe_fav_based_pwoducew_embeddings_job_2020-adhoc
+s-scawding wemote wun \
+--usew c-cassowawy \
+--keytab /vaw/wib/tss/keys/fwoofy/keytabs/cwient/cassowawy.keytab \
+--pwincipaw sewvice_acoount@twittew.biz \
+--cwustew b-bwuebiwd-qus1 \
+--main-cwass com.twittew.simcwustews_v2.scawding.embedding.pwoducew.aggwegatabwefavbasedpwoducewembeddings2020adhocapp \
+--tawget swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/pwoducew:aggwegatabwe_fav_based_pwoducew_embeddings_job_2020-adhoc \
+--hadoop-pwopewties "scawding.with.weducews.set.expwicitwy=twue mapweduce.job.weduces=4000" \
 -- --date 2020-06-28
  */
-object AggregatableFavBasedProducerEmbeddings2020AdhocApp
-    extends AggregatableFavBasedProducerEmbeddingsBaseApp
-    with AdhocExecutionApp {
+o-object a-aggwegatabwefavbasedpwoducewembeddings2020adhocapp
+    e-extends a-aggwegatabwefavbasedpwoducewembeddingsbaseapp
+    with adhocexecutionapp {
 
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145k2020
-  private val outputPath: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = true,
-    modelVersion = modelVersion,
-    pathSuffix = "producer_simclusters_aggregatable_embeddings_by_fav_score"
+  o-ovewwide vaw modewvewsion: modewvewsion = modewvewsion.modew20m145k2020
+  pwivate vaw outputpath: stwing = embeddingutiw.gethdfspath(
+    i-isadhoc = fawse, o.O
+    i-ismanhattankeyvaw = twue, (✿oωo)
+    modewvewsion = m-modewvewsion, :3
+    pathsuffix = "pwoducew_simcwustews_aggwegatabwe_embeddings_by_fav_scowe"
   )
 
-  private val outputPathThrift: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = false,
-    modelVersion = modelVersion,
-    pathSuffix = "producer_simclusters_aggregatable_embeddings_by_fav_score_thrift"
+  pwivate vaw outputpaththwift: s-stwing = embeddingutiw.gethdfspath(
+    i-isadhoc = fawse, 😳
+    i-ismanhattankeyvaw = f-fawse, (U ﹏ U)
+    m-modewvewsion = m-modewvewsion, mya
+    pathsuffix = "pwoducew_simcwustews_aggwegatabwe_embeddings_by_fav_scowe_thwift"
   )
 
-  override def writeToManhattan(
-    output: TypedPipe[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]]
+  ovewwide def wwitetomanhattan(
+    output: typedpipe[keyvaw[simcwustewsembeddingid, (U ᵕ U❁) simcwustewsembedding]]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    output
-      .flatMap { keyVal =>
-        keyVal.value.embedding.map { simClusterWithScore =>
+    impwicit datewange: datewange,
+    t-timezone: t-timezone, :3
+    u-uniqueid: uniqueid
+  ): execution[unit] = {
+    o-output
+      .fwatmap { keyvaw =>
+        keyvaw.vawue.embedding.map { simcwustewwithscowe =>
           (
-            keyVal.key.embeddingType,
-            keyVal.key.modelVersion,
-            keyVal.key.internalId,
-            simClusterWithScore.clusterId,
-            simClusterWithScore.score
+            k-keyvaw.key.embeddingtype, mya
+            k-keyvaw.key.modewvewsion, OwO
+            keyvaw.key.intewnawid,
+            s-simcwustewwithscowe.cwustewid, (ˆ ﻌ ˆ)♡
+            simcwustewwithscowe.scowe
           )
         }
       }
-      .writeExecution(
-        // Write to TSV for easier debugging of the adhoc job.
-        TypedTsv(outputPath)
+      .wwiteexecution(
+        // wwite to tsv fow easiew d-debugging of the a-adhoc job. ʘwʘ
+        typedtsv(outputpath)
       )
   }
 
-  override def writeToThrift(
-    output: TypedPipe[SimClustersEmbeddingWithId]
+  o-ovewwide d-def wwitetothwift(
+    output: typedpipe[simcwustewsembeddingwithid]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    output
-      .writeExecution(
-        new FixedPathLzoScrooge(outputPathThrift, SimClustersEmbeddingWithId)
+    impwicit datewange: datewange, o.O
+    t-timezone: timezone, UwU
+    u-uniqueid: u-uniqueid
+  ): e-execution[unit] = {
+    o-output
+      .wwiteexecution(
+        nyew fixedpathwzoscwooge(outputpaththwift, rawr x3 s-simcwustewsembeddingwithid)
       )
   }
 }
 
-trait AggregatableFavBasedProducerEmbeddingsBaseApp extends AggregatableProducerEmbeddingsBaseApp {
-  override val userToProducerScoringFn: NeighborWithWeights => Double =
-    _.favScoreHalfLife100Days.getOrElse(0.0)
-  override val userToClusterScoringFn: UserToInterestedInClusterScores => Double =
-    _.favScore.getOrElse(0.0)
-  override val embeddingType: EmbeddingType = EmbeddingType.AggregatableFavBasedProducer
+t-twait aggwegatabwefavbasedpwoducewembeddingsbaseapp extends a-aggwegatabwepwoducewembeddingsbaseapp {
+  o-ovewwide vaw usewtopwoducewscowingfn: n-neighbowwithweights => doubwe =
+    _.favscowehawfwife100days.getowewse(0.0)
+  ovewwide vaw usewtocwustewscowingfn: u-usewtointewestedincwustewscowes => doubwe =
+    _.favscowe.getowewse(0.0)
+  o-ovewwide vaw e-embeddingtype: embeddingtype = embeddingtype.aggwegatabwefavbasedpwoducew
 }

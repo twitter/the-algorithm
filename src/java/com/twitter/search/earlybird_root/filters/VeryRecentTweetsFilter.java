@@ -1,44 +1,44 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import javax.inject.Inject;
+impowt javax.inject.inject;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+i-impowt com.twittew.finagwe.sewvice;
+i-impowt com.twittew.finagwe.simpwefiwtew;
+i-impowt c-com.twittew.seawch.common.decidew.seawchdecidew;
+i-impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.utiw.futuwe;
 
-public class VeryRecentTweetsFilter
-    extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private static final String DECIDER_KEY = "enable_very_recent_tweets";
-  private static final SearchRateCounter VERY_RECENT_TWEETS_NOT_MODIFIED =
-      SearchRateCounter.export("very_recent_tweets_not_modified");
-  private static final SearchRateCounter VERY_RECENT_TWEETS_ENABLED =
-      SearchRateCounter.export("very_recent_tweets_enabled");
+pubwic cwass vewywecenttweetsfiwtew
+    e-extends simpwefiwtew<eawwybiwdwequest, rawr x3 eawwybiwdwesponse> {
+  pwivate static f-finaw stwing decidew_key = "enabwe_vewy_wecent_tweets";
+  pwivate s-static finaw seawchwatecountew vewy_wecent_tweets_not_modified =
+      seawchwatecountew.expowt("vewy_wecent_tweets_not_modified");
+  p-pwivate static finaw seawchwatecountew v-vewy_wecent_tweets_enabwed =
+      s-seawchwatecountew.expowt("vewy_wecent_tweets_enabwed");
 
-  private final SearchDecider decider;
+  pwivate finaw seawchdecidew decidew;
 
-  @Inject
-  public VeryRecentTweetsFilter(
-      SearchDecider decider
+  @inject
+  pubwic vewywecenttweetsfiwtew(
+      seawchdecidew d-decidew
   ) {
-    this.decider = decider;
+    this.decidew = decidew;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequest request,
-      Service<EarlybirdRequest, EarlybirdResponse> service
+  @ovewwide
+  pubwic futuwe<eawwybiwdwesponse> appwy(
+      eawwybiwdwequest w-wequest, (✿oωo)
+      sewvice<eawwybiwdwequest, (ˆ ﻌ ˆ)♡ eawwybiwdwesponse> s-sewvice
   ) {
-    if (decider.isAvailable(DECIDER_KEY)) {
-      VERY_RECENT_TWEETS_ENABLED.increment();
-      request.setSkipVeryRecentTweets(false);
-    } else {
-      VERY_RECENT_TWEETS_NOT_MODIFIED.increment();
+    i-if (decidew.isavaiwabwe(decidew_key)) {
+      v-vewy_wecent_tweets_enabwed.incwement();
+      w-wequest.setskipvewywecenttweets(fawse);
+    } ewse {
+      vewy_wecent_tweets_not_modified.incwement();
     }
 
-    return service.apply(request);
+    w-wetuwn sewvice.appwy(wequest);
   }
 }

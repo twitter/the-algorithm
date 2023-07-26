@@ -1,19 +1,19 @@
-package com.twitter.tweetypie.repository
+package com.twittew.tweetypie.wepositowy
 
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.tweetypie.UserId
+impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.stwato.cwient.fetchew
+i-impowt com.twittew.stwato.cwient.{cwient => stwatocwient}
+i-impowt c-com.twittew.tweetypie.usewid
 
-object StratoSuperFollowEligibleRepository {
-  type Type = UserId => Stitch[Boolean]
+o-object stwatosupewfowwowewigibwewepositowy {
+  t-type type = usewid => stitch[boowean]
 
-  val column = "audiencerewards/audienceRewardsService/getSuperFollowEligibility.User"
+  vaw cowumn = "audiencewewawds/audiencewewawdssewvice/getsupewfowwowewigibiwity.usew"
 
-  def apply(client: StratoClient): Type = {
-    val fetcher: Fetcher[UserId, Unit, Boolean] =
-      client.fetcher[UserId, Boolean](column)
+  def appwy(cwient: stwatocwient): t-type = {
+    vaw fetchew: fetchew[usewid, (ˆ ﻌ ˆ)♡ unit, (⑅˘꒳˘) b-boowean] =
+      cwient.fetchew[usewid, (U ᵕ U❁) b-boowean](cowumn)
 
-    userId => fetcher.fetch(userId).map(_.v.getOrElse(false))
+    usewid => fetchew.fetch(usewid).map(_.v.getowewse(fawse))
   }
 }

@@ -1,71 +1,71 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source.product_pipeline
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.pwoduct_pipewine
 
-import com.google.inject.Provider
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.functional_component.configapi.ParamsBuilder
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineRequest
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry
-import com.twitter.stitch.Stitch
-import scala.reflect.runtime.universe._
+impowt c-com.googwe.inject.pwovidew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.configapi.pawamsbuiwdew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.wequest
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct.pwoductpipewinewequest
+i-impowt com.twittew.pwoduct_mixew.cowe.pwoduct.wegistwy.pwoductpipewinewegistwy
+impowt com.twittew.stitch.stitch
+impowt scawa.wefwect.wuntime.univewse._
 
 /**
- * A [[CandidateSource]] for getting candidates from a different
- * [[com.twitter.product_mixer.core.model.marshalling.request.Product]] within the same Product
- * Mixer-based service. This is useful when calling a RecommendationPipeline-based Product from a
- * MixerPipeline-based Product. In this scenario, the two Products can remain
- * independent and encapsulated within the Product Mixer service, which provides future optionality
- * for migrating one of the two products into a new Product Mixer-based service based on the
- * scaling needs.
+ * a [[candidatesouwce]] fow getting c-candidates fwom a diffewent
+ * [[com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.pwoduct]] within the s-same pwoduct
+ * mixew-based sewvice. ( ͡o ω ͡o ) t-this is usefuw when cawwing a wecommendationpipewine-based pwoduct fwom a-a
+ * mixewpipewine-based pwoduct. >_< i-in this scenawio, >w< t-the two pwoducts can wemain
+ * independent and encapsuwated within the pwoduct m-mixew sewvice, which pwovides futuwe optionawity
+ * fow migwating one of the t-two pwoducts into a nyew pwoduct m-mixew-based sewvice b-based on the
+ * s-scawing nyeeds. rawr
  *
- * @tparam Query [[PipelineQuery]] from the originating Product
- * @tparam MixerRequest the [[Request]] domain model for the Product Mixer service. Adds a Context
- *                      bound (syntactic sugar) to add TypeTag to implicit scope for
- *                      [[ProductPipelineRegistry.getProductPipeline()]]. Note that `trait` does not
- *                      support context bounds, so this abstraction is expressed as an
- *                      `abstract class`.
- * @tparam ProductPipelineResult the return type of the candidate source Product. Adds a Context
- *                               bound (syntactic sugar) to add TypeTag to implicit scope for
- *                               [[ProductPipelineRegistry.getProductPipeline()]]
- * @tparam Candidate the type of candidate returned by this candidate source, which is typically
- *                   extracted from within the ProductPipelineResult type
+ * @tpawam q-quewy [[pipewinequewy]] fwom the owiginating p-pwoduct
+ * @tpawam mixewwequest the [[wequest]] d-domain modew fow the pwoduct mixew sewvice. 😳 adds a context
+ *                      bound (syntactic sugaw) to add t-typetag to impwicit scope fow
+ *                      [[pwoductpipewinewegistwy.getpwoductpipewine()]]. >w< n-nyote t-that `twait` does n-not
+ *                      suppowt context bounds, (⑅˘꒳˘) so this abstwaction i-is expwessed a-as an
+ *                      `abstwact cwass`. OwO
+ * @tpawam pwoductpipewinewesuwt t-the wetuwn t-type of the candidate souwce p-pwoduct. (ꈍᴗꈍ) adds a context
+ *                               b-bound (syntactic sugaw) to add typetag t-to impwicit scope fow
+ *                               [[pwoductpipewinewegistwy.getpwoductpipewine()]]
+ * @tpawam c-candidate the type of candidate w-wetuwned by this c-candidate souwce, 😳 which is typicawwy
+ *                   extwacted fwom within the pwoductpipewinewesuwt type
  */
-abstract class ProductPipelineCandidateSource[
-  -Query <: PipelineQuery,
-  MixerRequest <: Request: TypeTag,
-  ProductPipelineResult: TypeTag,
-  +Candidate]
-    extends CandidateSource[Query, Candidate] {
+abstwact c-cwass pwoductpipewinecandidatesouwce[
+  -quewy <: p-pipewinequewy, 😳😳😳
+  mixewwequest <: w-wequest: typetag, mya
+  p-pwoductpipewinewesuwt: t-typetag, mya
+  +candidate]
+    extends candidatesouwce[quewy, (⑅˘꒳˘) candidate] {
 
   /**
-   * @note Define as a Guice [[Provider]] in order to break the circular injection dependency
+   * @note d-define as a guice [[pwovidew]] in owdew to bweak the ciwcuwaw injection dependency
    */
-  val productPipelineRegistry: Provider[ProductPipelineRegistry]
+  v-vaw pwoductpipewinewegistwy: pwovidew[pwoductpipewinewegistwy]
 
   /**
-   * @note Define as a Guice [[Provider]] in order to break the circular injection dependency
+   * @note define as a guice [[pwovidew]] i-in owdew to bweak t-the ciwcuwaw i-injection dependency
    */
-  val paramsBuilder: Provider[ParamsBuilder]
+  vaw p-pawamsbuiwdew: p-pwovidew[pawamsbuiwdew]
 
-  def pipelineRequestTransformer(currentPipelineQuery: Query): MixerRequest
+  d-def p-pipewinewequesttwansfowmew(cuwwentpipewinequewy: quewy): mixewwequest
 
-  def productPipelineResultTransformer(productPipelineResult: ProductPipelineResult): Seq[Candidate]
+  def pwoductpipewinewesuwttwansfowmew(pwoductpipewinewesuwt: p-pwoductpipewinewesuwt): s-seq[candidate]
 
-  override def apply(query: Query): Stitch[Seq[Candidate]] = {
-    val request = pipelineRequestTransformer(query)
+  ovewwide d-def appwy(quewy: q-quewy): s-stitch[seq[candidate]] = {
+    vaw wequest = pipewinewequesttwansfowmew(quewy)
 
-    val params = paramsBuilder
-      .get().build(
-        clientContext = request.clientContext,
-        product = request.product,
-        featureOverrides = request.debugParams.flatMap(_.featureOverrides).getOrElse(Map.empty)
+    vaw pawams = pawamsbuiwdew
+      .get().buiwd(
+        c-cwientcontext = wequest.cwientcontext, (U ﹏ U)
+        pwoduct = wequest.pwoduct, mya
+        featuweovewwides = wequest.debugpawams.fwatmap(_.featuweovewwides).getowewse(map.empty)
       )
 
-    productPipelineRegistry
+    p-pwoductpipewinewegistwy
       .get()
-      .getProductPipeline[MixerRequest, ProductPipelineResult](request.product)
-      .process(ProductPipelineRequest(request, params))
-      .map(productPipelineResultTransformer)
+      .getpwoductpipewine[mixewwequest, ʘwʘ pwoductpipewinewesuwt](wequest.pwoduct)
+      .pwocess(pwoductpipewinewequest(wequest, (˘ω˘) pawams))
+      .map(pwoductpipewinewesuwttwansfowmew)
   }
 }

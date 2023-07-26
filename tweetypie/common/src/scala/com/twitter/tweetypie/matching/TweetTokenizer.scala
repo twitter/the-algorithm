@@ -1,45 +1,45 @@
-package com.twitter.tweetypie.matching
+package com.twittew.tweetypie.matching
 
-import com.twitter.common.text.pipeline.TwitterLanguageIdentifier
-import com.twitter.common_internal.text.version.PenguinVersion
-import java.util.Locale
+impowt com.twittew.common.text.pipewine.twittewwanguageidentifiew
+i-impowt c-com.twittew.common_intewnaw.text.vewsion.penguinvewsion
+i-impowt java.utiw.wocawe
 
-object TweetTokenizer extends Tokenizer {
-  type LocalePicking = Option[Locale] => Tokenizer
+o-object tweettokenizew e-extends tokenizew {
+  t-type w-wocawepicking = o-option[wocawe] => tokenizew
 
   /**
-   * Get a Tokenizer-producing function that uses the supplied locale
-   * to select an appropriate Tokenizer.
+   * get a tokenizew-pwoducing function that u-uses the suppwied wocawe
+   * to sewect an appwopwiate t-tokenizew. /(^•ω•^)
    */
-  def localePicking: LocalePicking = {
-    case None => TweetTokenizer
-    case Some(locale) => Tokenizer.forLocale(locale)
+  def w-wocawepicking: wocawepicking = {
+    case nyone => tweettokenizew
+    case some(wocawe) => t-tokenizew.fowwocawe(wocawe)
   }
 
-  private[this] val tweetLangIdentifier =
-    (new TwitterLanguageIdentifier.Builder).buildForTweet()
+  pwivate[this] v-vaw t-tweetwangidentifiew =
+    (new twittewwanguageidentifiew.buiwdew).buiwdfowtweet()
 
   /**
-   * Get a Tokenizer that performs Tweet language detection, and uses
-   * that result to tokenize the text. If you already know the locale of
-   * the tweet text, use `Tokenizer.get`, because it's much
-   * cheaper.
+   * get a tokenizew that pewfowms tweet wanguage detection, ʘwʘ a-and uses
+   * that wesuwt to tokenize the text. σωσ if you awweady know the wocawe o-of
+   * the tweet text, OwO use `tokenizew.get`, 😳😳😳 b-because it's much
+   * c-cheapew. 😳😳😳
    */
-  def get(version: PenguinVersion): Tokenizer =
-    new Tokenizer {
-      override def tokenize(text: String): TokenSequence = {
-        val locale = tweetLangIdentifier.identify(text).getLocale
-        Tokenizer.get(locale, version).tokenize(text)
+  d-def get(vewsion: p-penguinvewsion): tokenizew =
+    nyew t-tokenizew {
+      ovewwide def tokenize(text: stwing): t-tokensequence = {
+        vaw wocawe = tweetwangidentifiew.identify(text).getwocawe
+        tokenizew.get(wocawe, o.O vewsion).tokenize(text)
       }
     }
 
-  private[this] val Default = get(Tokenizer.DefaultPenguinVersion)
+  pwivate[this] vaw defauwt = get(tokenizew.defauwtpenguinvewsion)
 
   /**
-   * Tokenize the given text using Tweet language detection and
-   * `Tokenizer.DefaultPenguinVersion`. Prefer `Tokenizer.forLocale` if
-   * you already know the language of the text.
+   * t-tokenize the given text using tweet w-wanguage detection a-and
+   * `tokenizew.defauwtpenguinvewsion`. ( ͡o ω ͡o ) p-pwefew `tokenizew.fowwocawe` if
+   * you awweady know the wanguage of the text. (U ﹏ U)
    */
-  override def tokenize(tweetText: String): TokenSequence =
-    Default.tokenize(tweetText)
+  o-ovewwide d-def tokenize(tweettext: stwing): t-tokensequence =
+    d-defauwt.tokenize(tweettext)
 }

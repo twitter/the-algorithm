@@ -1,185 +1,185 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.tweetutil.DmDeepLink
-import com.twitter.tweetutil.TweetPermalink
-import com.twitter.tweetypie.core.CardReferenceUriExtractor
-import com.twitter.tweetypie.core.NonTombstone
-import com.twitter.tweetypie.core.TweetCreateFailure
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.repository.TweetRepository
-import com.twitter.tweetypie.thriftscala.CardReference
-import com.twitter.tweetypie.thriftscala.DeviceSource
-import com.twitter.tweetypie.thriftscala.QuotedTweet
-import com.twitter.tweetypie.thriftscala.ShortenedUrl
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.tweetypie.thriftscala.TweetCreateState
+impowt c-com.twittew.snowfwake.id.snowfwakeid
+i-impowt c-com.twittew.tweetutiw.dmdeepwink
+i-impowt com.twittew.tweetutiw.tweetpewmawink
+i-impowt c-com.twittew.tweetypie.cowe.cawdwefewenceuwiextwactow
+i-impowt com.twittew.tweetypie.cowe.nontombstone
+impowt com.twittew.tweetypie.cowe.tweetcweatefaiwuwe
+impowt c-com.twittew.tweetypie.wepositowy.tweetquewy
+impowt com.twittew.tweetypie.wepositowy.tweetwepositowy
+impowt c-com.twittew.tweetypie.thwiftscawa.cawdwefewence
+impowt com.twittew.tweetypie.thwiftscawa.devicesouwce
+i-impowt com.twittew.tweetypie.thwiftscawa.quotedtweet
+impowt com.twittew.tweetypie.thwiftscawa.showteneduww
+impowt com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt com.twittew.tweetypie.thwiftscawa.tweetcweatestate
 
-case class AttachmentBuilderRequest(
-  tweetId: TweetId,
-  user: User,
-  mediaUploadIds: Option[Seq[Long]],
-  cardReference: Option[CardReference],
-  attachmentUrl: Option[String],
-  remoteHost: Option[String],
-  darkTraffic: Boolean,
-  deviceSource: DeviceSource) {
-  val ctx: ValidationContext = ValidationContext(
-    user = user,
-    mediaUploadIds = mediaUploadIds,
-    cardReference = cardReference
+case c-cwass attachmentbuiwdewwequest(
+  t-tweetid: tweetid,
+  usew: usew, (⑅˘꒳˘)
+  mediaupwoadids: option[seq[wong]], nyaa~~
+  cawdwefewence: o-option[cawdwefewence], /(^•ω•^)
+  attachmentuww: option[stwing], (U ﹏ U)
+  wemotehost: option[stwing], 😳😳😳
+  dawktwaffic: boowean, >w<
+  d-devicesouwce: devicesouwce) {
+  v-vaw ctx: v-vawidationcontext = v-vawidationcontext(
+    u-usew = usew, XD
+    mediaupwoadids = mediaupwoadids, o.O
+    c-cawdwefewence = cawdwefewence
   )
-  val passThroughResponse: AttachmentBuilderResult =
-    AttachmentBuilderResult(attachmentUrl = attachmentUrl, validationContext = ctx)
+  vaw passthwoughwesponse: attachmentbuiwdewwesuwt =
+    a-attachmentbuiwdewwesuwt(attachmentuww = attachmentuww, vawidationcontext = ctx)
 }
 
-case class ValidationContext(
-  user: User,
-  mediaUploadIds: Option[Seq[Long]],
-  cardReference: Option[CardReference])
+case cwass vawidationcontext(
+  usew: usew, mya
+  mediaupwoadids: o-option[seq[wong]], 🥺
+  cawdwefewence: o-option[cawdwefewence])
 
-case class AttachmentBuilderResult(
-  attachmentUrl: Option[String] = None,
-  quotedTweet: Option[QuotedTweet] = None,
-  extraChars: Int = 0,
-  validationContext: ValidationContext)
+c-case cwass a-attachmentbuiwdewwesuwt(
+  attachmentuww: option[stwing] = nyone, ^^;;
+  quotedtweet: option[quotedtweet] = n-nyone, :3
+  e-extwachaws: int = 0, (U ﹏ U)
+  vawidationcontext: vawidationcontext)
 
-object AttachmentBuilder {
+o-object attachmentbuiwdew {
 
-  private[this] val log = Logger(getClass)
-  private[this] val attachmentCountLogger = Logger(
-    "com.twitter.tweetypie.handler.CreateAttachmentCount"
+  p-pwivate[this] vaw wog = woggew(getcwass)
+  p-pwivate[this] vaw attachmentcountwoggew = w-woggew(
+    "com.twittew.tweetypie.handwew.cweateattachmentcount"
   )
 
-  type Type = FutureArrow[AttachmentBuilderRequest, AttachmentBuilderResult]
-  type ValidationType = FutureEffect[AttachmentBuilderResult]
+  type type = futuweawwow[attachmentbuiwdewwequest, OwO attachmentbuiwdewwesuwt]
+  t-type vawidationtype = f-futuweeffect[attachmentbuiwdewwesuwt]
 
-  def validateAttachmentUrl(attachmentUrl: Option[String]): Unit.type =
-    attachmentUrl match {
-      case None => Unit
-      case Some(TweetPermalink(_, _)) => Unit
-      case Some(DmDeepLink(_)) => Unit
-      case _ => throw TweetCreateFailure.State(TweetCreateState.InvalidAttachmentUrl)
+  def vawidateattachmentuww(attachmentuww: o-option[stwing]): u-unit.type =
+    attachmentuww match {
+      case nyone => unit
+      case some(tweetpewmawink(_, 😳😳😳 _)) => unit
+      case some(dmdeepwink(_)) => u-unit
+      case _ => t-thwow tweetcweatefaiwuwe.state(tweetcweatestate.invawidattachmentuww)
     }
 
-  def validateAttachments(
-    stats: StatsReceiver,
-    validateCardRef: Gate[Option[String]]
-  ): AttachmentBuilder.ValidationType =
-    FutureEffect { result: AttachmentBuilderResult =>
-      validateAttachmentUrl(result.attachmentUrl)
+  def vawidateattachments(
+    s-stats: statsweceivew, (ˆ ﻌ ˆ)♡
+    vawidatecawdwef: g-gate[option[stwing]]
+  ): a-attachmentbuiwdew.vawidationtype =
+    futuweeffect { wesuwt: attachmentbuiwdewwesuwt =>
+      vawidateattachmentuww(wesuwt.attachmentuww)
 
-      val ctx = result.validationContext
+      v-vaw ctx = wesuwt.vawidationcontext
 
-      val cardRef = ctx.cardReference.filter {
-        case CardReferenceUriExtractor(NonTombstone(_)) => true
-        case _ => false
+      vaw cawdwef = ctx.cawdwefewence.fiwtew {
+        case cawdwefewenceuwiextwactow(nontombstone(_)) => t-twue
+        case _ => f-fawse
       }
 
-      if (result.quotedTweet.isDefined && cardRef.isEmpty) {
-        Future.Unit
-      } else {
-        val attachmentCount =
-          Seq(
-            ctx.mediaUploadIds,
-            result.attachmentUrl,
-            result.quotedTweet
-          ).count(_.nonEmpty)
+      i-if (wesuwt.quotedtweet.isdefined && c-cawdwef.isempty) {
+        futuwe.unit
+      } e-ewse {
+        v-vaw attachmentcount =
+          s-seq(
+            c-ctx.mediaupwoadids, XD
+            wesuwt.attachmentuww, (ˆ ﻌ ˆ)♡
+            wesuwt.quotedtweet
+          ).count(_.nonempty)
 
-        val userAgent = TwitterContext().flatMap(_.userAgent)
-        if (attachmentCount + cardRef.count(_ => true) > 1) {
-          attachmentCountLogger.warn(
-            s"Too many attachment types on tweet create from user: ${ctx.user.id}, " +
-              s"agent: '${userAgent}', media: ${ctx.mediaUploadIds}, " +
-              s"attachmentUrl: ${result.attachmentUrl}, cardRef: $cardRef"
+        v-vaw usewagent = t-twittewcontext().fwatmap(_.usewagent)
+        i-if (attachmentcount + c-cawdwef.count(_ => t-twue) > 1) {
+          attachmentcountwoggew.wawn(
+            s"too many attachment t-types on tweet cweate fwom usew: ${ctx.usew.id}, ( ͡o ω ͡o ) " +
+              s"agent: '${usewagent}', rawr x3 media: ${ctx.mediaupwoadids}, nyaa~~ " +
+              s"attachmentuww: ${wesuwt.attachmentuww}, >_< cawdwef: $cawdwef"
           )
-          stats.counter("too_many_attachment_types_with_cardref").incr()
+          s-stats.countew("too_many_attachment_types_with_cawdwef").incw()
         }
-        Future.when(attachmentCount + cardRef.count(_ => validateCardRef(userAgent)) > 1) {
-          Future.exception(TweetCreateFailure.State(TweetCreateState.TooManyAttachmentTypes))
+        futuwe.when(attachmentcount + cawdwef.count(_ => vawidatecawdwef(usewagent)) > 1) {
+          futuwe.exception(tweetcweatefaiwuwe.state(tweetcweatestate.toomanyattachmenttypes))
         }
       }
     }
 
-  private val queryInclude = TweetQuery.Include(Set(Tweet.CoreDataField.id))
+  pwivate v-vaw quewyincwude = t-tweetquewy.incwude(set(tweet.cowedatafiewd.id))
 
-  private val queryOptions = TweetQuery.Options(include = queryInclude)
+  p-pwivate vaw quewyoptions = t-tweetquewy.options(incwude = quewyincwude)
 
-  def buildUrlShortenerCtx(request: AttachmentBuilderRequest): UrlShortener.Context =
-    UrlShortener.Context(
-      tweetId = request.tweetId,
-      userId = request.user.id,
-      createdAt = SnowflakeId(request.tweetId).time,
-      userProtected = request.user.safety.get.isProtected,
-      clientAppId = request.deviceSource.clientAppId,
-      remoteHost = request.remoteHost,
-      dark = request.darkTraffic
+  d-def buiwduwwshowtenewctx(wequest: a-attachmentbuiwdewwequest): uwwshowtenew.context =
+    uwwshowtenew.context(
+      tweetid = wequest.tweetid, ^^;;
+      usewid = w-wequest.usew.id, (ˆ ﻌ ˆ)♡
+      cweatedat = s-snowfwakeid(wequest.tweetid).time, ^^;;
+      usewpwotected = wequest.usew.safety.get.ispwotected, (⑅˘꒳˘)
+      cwientappid = w-wequest.devicesouwce.cwientappid, rawr x3
+      w-wemotehost = wequest.wemotehost, (///ˬ///✿)
+      dawk = wequest.dawktwaffic
     )
 
-  def asQuotedTweet(tweet: Tweet, shortenedUrl: ShortenedUrl): QuotedTweet =
-    getShare(tweet) match {
-      case None => QuotedTweet(tweet.id, getUserId(tweet), Some(shortenedUrl))
-      case Some(share) => QuotedTweet(share.sourceStatusId, share.sourceUserId, Some(shortenedUrl))
+  def asquotedtweet(tweet: t-tweet, 🥺 showteneduww: s-showteneduww): quotedtweet =
+    g-getshawe(tweet) m-match {
+      case nyone => quotedtweet(tweet.id, >_< getusewid(tweet), UwU some(showteneduww))
+      c-case some(shawe) => q-quotedtweet(shawe.souwcestatusid, s-shawe.souwceusewid, >_< some(showteneduww))
     }
 
-  def tweetPermalink(request: AttachmentBuilderRequest): Option[TweetPermalink] =
-    request.attachmentUrl.collectFirst {
-      // prevent tweet-quoting cycles
-      case TweetPermalink(screenName, quotedTweetId) if request.tweetId > quotedTweetId =>
-        TweetPermalink(screenName, quotedTweetId)
+  def t-tweetpewmawink(wequest: a-attachmentbuiwdewwequest): option[tweetpewmawink] =
+    w-wequest.attachmentuww.cowwectfiwst {
+      // pwevent tweet-quoting cycwes
+      case tweetpewmawink(scweenname, -.- quotedtweetid) i-if wequest.tweetid > q-quotedtweetid =>
+        tweetpewmawink(scweenname, mya quotedtweetid)
     }
 
-  def apply(
-    tweetRepo: TweetRepository.Optional,
-    urlShortener: UrlShortener.Type,
-    validateAttachments: AttachmentBuilder.ValidationType,
-    stats: StatsReceiver,
-    denyNonTweetPermalinks: Gate[Unit] = Gate.False
-  ): Type = {
-    val tweetGetter = TweetRepository.tweetGetter(tweetRepo, queryOptions)
-    val attachmentNotPermalinkCounter = stats.counter("attachment_url_not_tweet_permalink")
-    val quotedTweetFoundCounter = stats.counter("quoted_tweet_found")
-    val quotedTweetNotFoundCounter = stats.counter("quoted_tweet_not_found")
+  d-def appwy(
+    t-tweetwepo: tweetwepositowy.optionaw, >w<
+    uwwshowtenew: uwwshowtenew.type, (U ﹏ U)
+    vawidateattachments: a-attachmentbuiwdew.vawidationtype, 😳😳😳
+    stats: statsweceivew, o.O
+    denynontweetpewmawinks: gate[unit] = g-gate.fawse
+  ): type = {
+    vaw tweetgettew = t-tweetwepositowy.tweetgettew(tweetwepo, òωó q-quewyoptions)
+    vaw attachmentnotpewmawinkcountew = stats.countew("attachment_uww_not_tweet_pewmawink")
+    vaw quotedtweetfoundcountew = s-stats.countew("quoted_tweet_found")
+    v-vaw quotedtweetnotfoundcountew = stats.countew("quoted_tweet_not_found")
 
-    def buildAttachmentResult(request: AttachmentBuilderRequest) =
-      tweetPermalink(request) match {
-        case Some(qtPermalink) =>
-          tweetGetter(qtPermalink.tweetId).flatMap {
-            case Some(tweet) =>
-              quotedTweetFoundCounter.incr()
-              val ctx = buildUrlShortenerCtx(request)
-              urlShortener((qtPermalink.url, ctx)).map { shortenedUrl =>
-                AttachmentBuilderResult(
-                  quotedTweet = Some(asQuotedTweet(tweet, shortenedUrl)),
-                  extraChars = shortenedUrl.shortUrl.length + 1,
-                  validationContext = request.ctx
+    def buiwdattachmentwesuwt(wequest: attachmentbuiwdewwequest) =
+      t-tweetpewmawink(wequest) match {
+        c-case some(qtpewmawink) =>
+          tweetgettew(qtpewmawink.tweetid).fwatmap {
+            case some(tweet) =>
+              q-quotedtweetfoundcountew.incw()
+              vaw ctx = b-buiwduwwshowtenewctx(wequest)
+              u-uwwshowtenew((qtpewmawink.uww, 😳😳😳 ctx)).map { showteneduww =>
+                a-attachmentbuiwdewwesuwt(
+                  quotedtweet = s-some(asquotedtweet(tweet, σωσ s-showteneduww)), (⑅˘꒳˘)
+                  e-extwachaws = showteneduww.showtuww.wength + 1, (///ˬ///✿)
+                  vawidationcontext = w-wequest.ctx
                 )
               }
-            case None =>
-              quotedTweetNotFoundCounter.incr()
-              log.warn(
-                s"unable to extract quote tweet from attachment builder request: $request"
+            case n-nyone =>
+              quotedtweetnotfoundcountew.incw()
+              wog.wawn(
+                s-s"unabwe to e-extwact quote tweet f-fwom attachment buiwdew wequest: $wequest"
               )
-              if (denyNonTweetPermalinks()) {
-                throw TweetCreateFailure.State(
-                  TweetCreateState.SourceTweetNotFound,
-                  Some(s"quoted tweet is not found from given permalink: $qtPermalink")
+              if (denynontweetpewmawinks()) {
+                t-thwow tweetcweatefaiwuwe.state(
+                  t-tweetcweatestate.souwcetweetnotfound, 🥺
+                  s-some(s"quoted tweet is nyot found fwom given pewmawink: $qtpewmawink")
                 )
-              } else {
-                Future.value(request.passThroughResponse)
+              } e-ewse {
+                f-futuwe.vawue(wequest.passthwoughwesponse)
               }
           }
-        case _ =>
-          attachmentNotPermalinkCounter.incr()
-          Future.value(request.passThroughResponse)
+        c-case _ =>
+          a-attachmentnotpewmawinkcountew.incw()
+          futuwe.vawue(wequest.passthwoughwesponse)
       }
 
-    FutureArrow { request =>
-      for {
-        result <- buildAttachmentResult(request)
-        () <- validateAttachments(result)
-      } yield result
+    f-futuweawwow { wequest =>
+      fow {
+        wesuwt <- buiwdattachmentwesuwt(wequest)
+        () <- vawidateattachments(wesuwt)
+      } yiewd wesuwt
     }
   }
 }

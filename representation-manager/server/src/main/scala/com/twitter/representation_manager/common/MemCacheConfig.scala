@@ -1,153 +1,153 @@
-package com.twitter.representation_manager.common
+package com.twittew.wepwesentation_managew.common
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hashing.KeyHasher
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.relevance_platform.common.injection.LZ4Injection
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.SimClustersEmbeddingIdCacheKeyBuilder
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType._
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.ModelVersion._
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Duration
-
-/*
- * NOTE - ALL the cache configs here are just placeholders, NONE of them is used anyweher in RMS yet
- * */
-sealed trait MemCacheParams
-sealed trait MemCacheConfig
+impowt com.twittew.bijection.scwooge.binawyscawacodec
+i-impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.memcached.cwient
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.hashing.keyhashew
+i-impowt com.twittew.hewmit.stowe.common.obsewvedmemcachedweadabwestowe
+i-impowt c-com.twittew.wewevance_pwatfowm.common.injection.wz4injection
+impowt c-com.twittew.simcwustews_v2.common.simcwustewsembedding
+impowt com.twittew.simcwustews_v2.common.simcwustewsembeddingidcachekeybuiwdew
+impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype._
+impowt com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
+impowt com.twittew.simcwustews_v2.thwiftscawa.modewvewsion._
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembeddingid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.{simcwustewsembedding => thwiftsimcwustewsembedding}
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.utiw.duwation
 
 /*
- * This holds params that is required to set up a memcache cache for a single embedding store
+ * n-nyote - aww the cache configs h-hewe awe j-just pwacehowdews, :3 nyone of them is used anywehew in wms yet
  * */
-case class EnabledMemCacheParams(ttl: Duration) extends MemCacheParams
-object DisabledMemCacheParams extends MemCacheParams
+seawed twait m-memcachepawams
+seawed twait memcacheconfig
 
 /*
- * We use this MemcacheConfig as the single source to set up the memcache for all RMS use cases
- * NO OVERRIDE FROM CLIENT
+ * this howds pawams that is wequiwed to set up a m-memcache cache fow a singwe embedding s-stowe
  * */
-object MemCacheConfig {
-  val keyHasher: KeyHasher = KeyHasher.FNV1A_64
-  val hashKeyPrefix: String = "RMS"
-  val simclustersEmbeddingCacheKeyBuilder =
-    SimClustersEmbeddingIdCacheKeyBuilder(keyHasher.hashKey, hashKeyPrefix)
+c-case cwass enabwedmemcachepawams(ttw: d-duwation) e-extends memcachepawams
+object disabwedmemcachepawams e-extends memcachepawams
 
-  val cacheParamsMap: Map[
-    (EmbeddingType, ModelVersion),
-    MemCacheParams
-  ] = Map(
-    // Tweet Embeddings
-    (LogFavBasedTweet, Model20m145kUpdated) -> EnabledMemCacheParams(ttl = 10.minutes),
-    (LogFavBasedTweet, Model20m145k2020) -> EnabledMemCacheParams(ttl = 10.minutes),
-    (LogFavLongestL2EmbeddingTweet, Model20m145kUpdated) -> EnabledMemCacheParams(ttl = 10.minutes),
-    (LogFavLongestL2EmbeddingTweet, Model20m145k2020) -> EnabledMemCacheParams(ttl = 10.minutes),
-    // User - KnownFor Embeddings
-    (FavBasedProducer, Model20m145kUpdated) -> EnabledMemCacheParams(ttl = 12.hours),
-    (FavBasedProducer, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    (FollowBasedProducer, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    (AggregatableLogFavBasedProducer, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    (RelaxedAggregatableLogFavBasedProducer, Model20m145kUpdated) -> EnabledMemCacheParams(ttl =
-      12.hours),
-    (RelaxedAggregatableLogFavBasedProducer, Model20m145k2020) -> EnabledMemCacheParams(ttl =
-      12.hours),
-    // User - InterestedIn Embeddings
-    (LogFavBasedUserInterestedInFromAPE, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    (FollowBasedUserInterestedInFromAPE, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    (FavBasedUserInterestedIn, Model20m145kUpdated) -> EnabledMemCacheParams(ttl = 12.hours),
-    (FavBasedUserInterestedIn, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    (FollowBasedUserInterestedIn, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    (LogFavBasedUserInterestedIn, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    (FavBasedUserInterestedInFromPE, Model20m145kUpdated) -> EnabledMemCacheParams(ttl = 12.hours),
-    (FilteredUserInterestedIn, Model20m145kUpdated) -> EnabledMemCacheParams(ttl = 12.hours),
-    (FilteredUserInterestedIn, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    (FilteredUserInterestedInFromPE, Model20m145kUpdated) -> EnabledMemCacheParams(ttl = 12.hours),
-    (UnfilteredUserInterestedIn, Model20m145kUpdated) -> EnabledMemCacheParams(ttl = 12.hours),
-    (UnfilteredUserInterestedIn, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    (UserNextInterestedIn, Model20m145k2020) -> EnabledMemCacheParams(ttl =
-      30.minutes), //embedding is updated every 2 hours, keeping it lower to avoid staleness
+/*
+ * we use this m-memcacheconfig as the singwe souwce to set up the memcache fow aww wms use cases
+ * nyo ovewwide f-fwom cwient
+ * */
+object memcacheconfig {
+  vaw k-keyhashew: keyhashew = k-keyhashew.fnv1a_64
+  vaw h-hashkeypwefix: stwing = "wms"
+  vaw simcwustewsembeddingcachekeybuiwdew =
+    simcwustewsembeddingidcachekeybuiwdew(keyhashew.hashkey, ʘwʘ h-hashkeypwefix)
+
+  v-vaw cachepawamsmap: m-map[
+    (embeddingtype, 🥺 m-modewvewsion), >_<
+    memcachepawams
+  ] = m-map(
+    // tweet embeddings
+    (wogfavbasedtweet, ʘwʘ m-modew20m145kupdated) -> enabwedmemcachepawams(ttw = 10.minutes), (˘ω˘)
+    (wogfavbasedtweet, (✿oωo) modew20m145k2020) -> e-enabwedmemcachepawams(ttw = 10.minutes), (///ˬ///✿)
+    (wogfavwongestw2embeddingtweet, rawr x3 modew20m145kupdated) -> enabwedmemcachepawams(ttw = 10.minutes), -.-
+    (wogfavwongestw2embeddingtweet, ^^ m-modew20m145k2020) -> enabwedmemcachepawams(ttw = 10.minutes), (⑅˘꒳˘)
+    // u-usew - k-knownfow embeddings
+    (favbasedpwoducew, nyaa~~ modew20m145kupdated) -> enabwedmemcachepawams(ttw = 12.houws), /(^•ω•^)
+    (favbasedpwoducew, (U ﹏ U) modew20m145k2020) -> enabwedmemcachepawams(ttw = 12.houws), 😳😳😳
+    (fowwowbasedpwoducew, >w< modew20m145k2020) -> enabwedmemcachepawams(ttw = 12.houws), XD
+    (aggwegatabwewogfavbasedpwoducew, o.O m-modew20m145k2020) -> e-enabwedmemcachepawams(ttw = 12.houws), mya
+    (wewaxedaggwegatabwewogfavbasedpwoducew, 🥺 modew20m145kupdated) -> e-enabwedmemcachepawams(ttw =
+      12.houws), ^^;;
+    (wewaxedaggwegatabwewogfavbasedpwoducew, :3 m-modew20m145k2020) -> e-enabwedmemcachepawams(ttw =
+      12.houws), (U ﹏ U)
+    // usew - intewestedin embeddings
+    (wogfavbasedusewintewestedinfwomape, OwO m-modew20m145k2020) -> enabwedmemcachepawams(ttw = 12.houws), 😳😳😳
+    (fowwowbasedusewintewestedinfwomape, (ˆ ﻌ ˆ)♡ modew20m145k2020) -> enabwedmemcachepawams(ttw = 12.houws), XD
+    (favbasedusewintewestedin, (ˆ ﻌ ˆ)♡ modew20m145kupdated) -> enabwedmemcachepawams(ttw = 12.houws), ( ͡o ω ͡o )
+    (favbasedusewintewestedin, rawr x3 m-modew20m145k2020) -> enabwedmemcachepawams(ttw = 12.houws), nyaa~~
+    (fowwowbasedusewintewestedin, >_< m-modew20m145k2020) -> e-enabwedmemcachepawams(ttw = 12.houws), ^^;;
+    (wogfavbasedusewintewestedin, (ˆ ﻌ ˆ)♡ modew20m145k2020) -> e-enabwedmemcachepawams(ttw = 12.houws), ^^;;
+    (favbasedusewintewestedinfwompe, (⑅˘꒳˘) modew20m145kupdated) -> e-enabwedmemcachepawams(ttw = 12.houws), rawr x3
+    (fiwtewedusewintewestedin, (///ˬ///✿) m-modew20m145kupdated) -> e-enabwedmemcachepawams(ttw = 12.houws), 🥺
+    (fiwtewedusewintewestedin, >_< m-modew20m145k2020) -> enabwedmemcachepawams(ttw = 12.houws), UwU
+    (fiwtewedusewintewestedinfwompe, >_< modew20m145kupdated) -> e-enabwedmemcachepawams(ttw = 12.houws), -.-
+    (unfiwtewedusewintewestedin, mya m-modew20m145kupdated) -> e-enabwedmemcachepawams(ttw = 12.houws), >w<
+    (unfiwtewedusewintewestedin, (U ﹏ U) m-modew20m145k2020) -> e-enabwedmemcachepawams(ttw = 12.houws), 😳😳😳
+    (usewnextintewestedin, o.O modew20m145k2020) -> enabwedmemcachepawams(ttw =
+      30.minutes), òωó //embedding is updated evewy 2 h-houws, 😳😳😳 keeping it wowew to avoid staweness
     (
-      LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE,
-      Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
+      wogfavbasedusewintewestedmaxpoowingaddwessbookfwomiiape, σωσ
+      modew20m145k2020) -> enabwedmemcachepawams(ttw = 12.houws), (⑅˘꒳˘)
     (
-      LogFavBasedUserInterestedAverageAddressBookFromIIAPE,
-      Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
+      w-wogfavbasedusewintewestedavewageaddwessbookfwomiiape, (///ˬ///✿)
+      modew20m145k2020) -> enabwedmemcachepawams(ttw = 12.houws), 🥺
     (
-      LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE,
-      Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
+      wogfavbasedusewintewestedbooktypemaxpoowingaddwessbookfwomiiape, OwO
+      m-modew20m145k2020) -> e-enabwedmemcachepawams(ttw = 12.houws), >w<
     (
-      LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE,
-      Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
+      w-wogfavbasedusewintewestedwawgestdimmaxpoowingaddwessbookfwomiiape, 🥺
+      modew20m145k2020) -> e-enabwedmemcachepawams(ttw = 12.houws), nyaa~~
     (
-      LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE,
-      Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
+      wogfavbasedusewintewestedwouvainmaxpoowingaddwessbookfwomiiape, ^^
+      modew20m145k2020) -> e-enabwedmemcachepawams(ttw = 12.houws), >w<
     (
-      LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE,
-      Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    // Topic Embeddings
-    (FavTfgTopic, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    (LogFavBasedKgoApeTopic, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
+      w-wogfavbasedusewintewestedconnectedmaxpoowingaddwessbookfwomiiape, OwO
+      modew20m145k2020) -> enabwedmemcachepawams(ttw = 12.houws), XD
+    // topic embeddings
+    (favtfgtopic, ^^;; modew20m145k2020) -> enabwedmemcachepawams(ttw = 12.houws), 🥺
+    (wogfavbasedkgoapetopic, XD modew20m145k2020) -> e-enabwedmemcachepawams(ttw = 12.houws), (U ᵕ U❁)
   )
 
-  def getCacheSetup(
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion
-  ): MemCacheParams = {
-    // When requested (embeddingType, modelVersion) doesn't exist, we return DisabledMemCacheParams
-    cacheParamsMap.getOrElse((embeddingType, modelVersion), DisabledMemCacheParams)
+  def getcachesetup(
+    e-embeddingtype: embeddingtype, :3
+    m-modewvewsion: m-modewvewsion
+  ): memcachepawams = {
+    // when wequested (embeddingtype, ( ͡o ω ͡o ) m-modewvewsion) d-doesn't exist, òωó we wetuwn disabwedmemcachepawams
+    c-cachepawamsmap.getowewse((embeddingtype, σωσ m-modewvewsion), (U ᵕ U❁) disabwedmemcachepawams)
   }
 
-  def getCacheKeyPrefix(embeddingType: EmbeddingType, modelVersion: ModelVersion) =
-    s"${embeddingType.value}_${modelVersion.value}_"
+  def getcachekeypwefix(embeddingtype: embeddingtype, (✿oωo) m-modewvewsion: modewvewsion) =
+    s-s"${embeddingtype.vawue}_${modewvewsion.vawue}_"
 
-  def getStatsName(embeddingType: EmbeddingType, modelVersion: ModelVersion) =
-    s"${embeddingType.name}_${modelVersion.name}_mem_cache"
+  d-def getstatsname(embeddingtype: embeddingtype, ^^ m-modewvewsion: m-modewvewsion) =
+    s"${embeddingtype.name}_${modewvewsion.name}_mem_cache"
 
   /**
-   * Build a ReadableStore based on MemCacheConfig.
+   * b-buiwd a weadabwestowe based on memcacheconfig. ^•ﻌ•^
    *
-   * If memcache is disabled, it will return a normal readable store wrapper of the rawStore,
-   * with SimClustersEmbedding as value;
-   * If memcache is enabled, it will return a ObservedMemcachedReadableStore wrapper of the rawStore,
-   * with memcache set up according to the EnabledMemCacheParams
+   * if memcache is disabwed, XD it w-wiww wetuwn a nyowmaw w-weadabwe stowe wwappew of the wawstowe, :3
+   * w-with simcwustewsembedding a-as vawue;
+   * if memcache is enabwed, (ꈍᴗꈍ) it wiww wetuwn a-a obsewvedmemcachedweadabwestowe wwappew of the wawstowe, :3
+   * with memcache set up accowding t-to the enabwedmemcachepawams
    * */
-  def buildMemCacheStoreForSimClustersEmbedding(
-    rawStore: ReadableStore[SimClustersEmbeddingId, ThriftSimClustersEmbedding],
-    cacheClient: Client,
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion,
-    stats: StatsReceiver
-  ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
-    val cacheParams = getCacheSetup(embeddingType, modelVersion)
-    val store = cacheParams match {
-      case DisabledMemCacheParams => rawStore
-      case EnabledMemCacheParams(ttl) =>
-        val memCacheKeyPrefix = MemCacheConfig.getCacheKeyPrefix(
-          embeddingType,
-          modelVersion
+  def buiwdmemcachestowefowsimcwustewsembedding(
+    wawstowe: w-weadabwestowe[simcwustewsembeddingid, (U ﹏ U) t-thwiftsimcwustewsembedding], UwU
+    cachecwient: cwient, 😳😳😳
+    embeddingtype: e-embeddingtype, XD
+    m-modewvewsion: modewvewsion, o.O
+    stats: statsweceivew
+  ): weadabwestowe[simcwustewsembeddingid, (⑅˘꒳˘) s-simcwustewsembedding] = {
+    vaw cachepawams = g-getcachesetup(embeddingtype, 😳😳😳 modewvewsion)
+    vaw stowe = cachepawams match {
+      c-case disabwedmemcachepawams => w-wawstowe
+      c-case enabwedmemcachepawams(ttw) =>
+        vaw memcachekeypwefix = m-memcacheconfig.getcachekeypwefix(
+          embeddingtype, nyaa~~
+          m-modewvewsion
         )
-        val statsName = MemCacheConfig.getStatsName(
-          embeddingType,
-          modelVersion
+        v-vaw statsname = m-memcacheconfig.getstatsname(
+          embeddingtype, rawr
+          m-modewvewsion
         )
-        ObservedMemcachedReadableStore.fromCacheClient(
-          backingStore = rawStore,
-          cacheClient = cacheClient,
-          ttl = ttl
+        o-obsewvedmemcachedweadabwestowe.fwomcachecwient(
+          backingstowe = wawstowe, -.-
+          c-cachecwient = c-cachecwient,
+          t-ttw = ttw
         )(
-          valueInjection = LZ4Injection.compose(BinaryScalaCodec(ThriftSimClustersEmbedding)),
-          statsReceiver = stats.scope(statsName),
-          keyToString = { k => memCacheKeyPrefix + k.toString }
+          vawueinjection = wz4injection.compose(binawyscawacodec(thwiftsimcwustewsembedding)),
+          s-statsweceivew = stats.scope(statsname), (✿oωo)
+          k-keytostwing = { k-k => memcachekeypwefix + k.tostwing }
         )
     }
-    store.mapValues(SimClustersEmbedding(_))
+    stowe.mapvawues(simcwustewsembedding(_))
   }
 
 }

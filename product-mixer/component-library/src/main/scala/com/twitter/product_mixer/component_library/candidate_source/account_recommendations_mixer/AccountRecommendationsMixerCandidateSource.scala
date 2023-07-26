@@ -1,57 +1,57 @@
-package com.twitter.product_mixer.component_library.candidate_source.account_recommendations_mixer
+package com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.account_wecommendations_mixew
 
-import com.twitter.account_recommendations_mixer.{thriftscala => t}
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.account_wecommendations_mixew.{thwiftscawa => t-t}
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.usewcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwcewithextwactedfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidateswithsouwcefeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.stitch.stitch
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-object WhoToFollowModuleHeaderFeature extends Feature[UserCandidate, t.Header]
-object WhoToFollowModuleFooterFeature extends Feature[UserCandidate, Option[t.Footer]]
-object WhoToFollowModuleDisplayOptionsFeature
-    extends Feature[UserCandidate, Option[t.DisplayOptions]]
+object whotofowwowmoduweheadewfeatuwe e-extends featuwe[usewcandidate, òωó t-t.headew]
+object whotofowwowmoduwefootewfeatuwe extends featuwe[usewcandidate, o-option[t.footew]]
+object w-whotofowwowmoduwedispwayoptionsfeatuwe
+    e-extends featuwe[usewcandidate, ʘwʘ option[t.dispwayoptions]]
 
-@Singleton
-class AccountRecommendationsMixerCandidateSource @Inject() (
-  accountRecommendationsMixer: t.AccountRecommendationsMixer.MethodPerEndpoint)
-    extends CandidateSourceWithExtractedFeatures[
-      t.AccountRecommendationsMixerRequest,
-      t.RecommendedUser
+@singweton
+cwass accountwecommendationsmixewcandidatesouwce @inject() (
+  accountwecommendationsmixew: t.accountwecommendationsmixew.methodpewendpoint)
+    e-extends candidatesouwcewithextwactedfeatuwes[
+      t.accountwecommendationsmixewwequest, /(^•ω•^)
+      t.wecommendedusew
     ] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier(name = "AccountRecommendationsMixer")
+  ovewwide vaw identifiew: candidatesouwceidentifiew =
+    c-candidatesouwceidentifiew(name = "accountwecommendationsmixew")
 
-  override def apply(
-    request: t.AccountRecommendationsMixerRequest
-  ): Stitch[CandidatesWithSourceFeatures[t.RecommendedUser]] = {
-    Stitch
-      .callFuture(accountRecommendationsMixer.getWtfRecommendations(request))
-      .map { response: t.WhoToFollowResponse =>
-        responseToCandidatesWithSourceFeatures(
-          response.userRecommendations,
-          response.header,
-          response.footer,
-          response.displayOptions)
+  ovewwide d-def appwy(
+    w-wequest: t.accountwecommendationsmixewwequest
+  ): s-stitch[candidateswithsouwcefeatuwes[t.wecommendedusew]] = {
+    s-stitch
+      .cawwfutuwe(accountwecommendationsmixew.getwtfwecommendations(wequest))
+      .map { wesponse: t.whotofowwowwesponse =>
+        w-wesponsetocandidateswithsouwcefeatuwes(
+          wesponse.usewwecommendations, ʘwʘ
+          wesponse.headew, σωσ
+          wesponse.footew, OwO
+          w-wesponse.dispwayoptions)
       }
   }
 
-  private def responseToCandidatesWithSourceFeatures(
-    userRecommendations: Seq[t.RecommendedUser],
-    header: t.Header,
-    footer: Option[t.Footer],
-    displayOptions: Option[t.DisplayOptions],
-  ): CandidatesWithSourceFeatures[t.RecommendedUser] = {
-    val features = FeatureMapBuilder()
-      .add(WhoToFollowModuleHeaderFeature, header)
-      .add(WhoToFollowModuleFooterFeature, footer)
-      .add(WhoToFollowModuleDisplayOptionsFeature, displayOptions)
-      .build()
-    CandidatesWithSourceFeatures(userRecommendations, features)
+  pwivate def wesponsetocandidateswithsouwcefeatuwes(
+    usewwecommendations: seq[t.wecommendedusew], 😳😳😳
+    headew: t.headew, 😳😳😳
+    f-footew: option[t.footew], o.O
+    d-dispwayoptions: o-option[t.dispwayoptions], ( ͡o ω ͡o )
+  ): c-candidateswithsouwcefeatuwes[t.wecommendedusew] = {
+    vaw featuwes = featuwemapbuiwdew()
+      .add(whotofowwowmoduweheadewfeatuwe, (U ﹏ U) headew)
+      .add(whotofowwowmoduwefootewfeatuwe, (///ˬ///✿) footew)
+      .add(whotofowwowmoduwedispwayoptionsfeatuwe, >w< d-dispwayoptions)
+      .buiwd()
+    c-candidateswithsouwcefeatuwes(usewwecommendations, rawr featuwes)
   }
 }

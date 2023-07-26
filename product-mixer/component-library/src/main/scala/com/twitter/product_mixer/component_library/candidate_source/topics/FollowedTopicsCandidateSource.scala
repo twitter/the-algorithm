@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.component_library.candidate_source.topics
+package com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.topics
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyViewFetcherSeqSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.interests.FollowedTopicsGetterClientColumn
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.stwato.stwatokeyviewfetchewseqsouwce
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.stwato.cwient.fetchew
+i-impowt c-com.twittew.stwato.genewated.cwient.intewests.fowwowedtopicsgettewcwientcowumn
+i-impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
-@Singleton
-class FollowedTopicsCandidateSource @Inject() (
-  column: FollowedTopicsGetterClientColumn)
-    extends StratoKeyViewFetcherSeqSource[
-      Long,
-      Unit,
-      Long
+@singweton
+cwass fowwowedtopicscandidatesouwce @inject() (
+  cowumn: fowwowedtopicsgettewcwientcowumn)
+    extends s-stwatokeyviewfetchewseqsouwce[
+      wong, ^^;;
+      unit, >_<
+      wong
     ] {
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("FollowedTopics")
+  o-ovewwide vaw identifiew: c-candidatesouwceidentifiew = candidatesouwceidentifiew("fowwowedtopics")
 
-  override val fetcher: Fetcher[Long, Unit, Seq[Long]] = column.fetcher
+  ovewwide vaw fetchew: fetchew[wong, mya u-unit, mya seq[wong]] = cowumn.fetchew
 }

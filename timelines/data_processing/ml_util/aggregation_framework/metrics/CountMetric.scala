@@ -1,41 +1,41 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.metwics
 
-import com.twitter.ml.api._
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.util.Time
-import java.lang.{Long => JLong}
+impowt com.twittew.mw.api._
+i-impowt com.twittew.mw.api.utiw.swichdatawecowd
+impowt c-com.twittew.utiw.time
+i-impowt j-java.wang.{wong => j-jwong}
 
-case class TypedCountMetric[T](
-) extends TypedSumLikeMetric[T] {
-  import AggregationMetricCommon._
-  import ConversionUtils._
-  override val operatorName = "count"
+case c-cwass typedcountmetwic[t](
+) e-extends typedsumwikemetwic[t] {
+  i-impowt aggwegationmetwiccommon._
+  impowt convewsionutiws._
+  ovewwide vaw opewatowname = "count"
 
-  override def getIncrementValue(
-    record: DataRecord,
-    feature: Option[Feature[T]],
-    timestampFeature: Feature[JLong]
-  ): TimedValue[Double] = {
-    val featureExists: Boolean = feature match {
-      case Some(f) => SRichDataRecord(record).hasFeature(f)
-      case None => true
+  ovewwide def getincwementvawue(
+    w-wecowd: datawecowd, (///ˬ///✿)
+    featuwe: option[featuwe[t]], 😳😳😳
+    t-timestampfeatuwe: featuwe[jwong]
+  ): t-timedvawue[doubwe] = {
+    vaw featuweexists: boowean = featuwe match {
+      c-case some(f) => swichdatawecowd(wecowd).hasfeatuwe(f)
+      c-case nyone => t-twue
     }
 
-    TimedValue[Double](
-      value = booleanToDouble(featureExists),
-      timestamp = Time.fromMilliseconds(getTimestamp(record, timestampFeature))
+    timedvawue[doubwe](
+      vawue = booweantodoubwe(featuweexists),
+      timestamp = t-time.fwommiwwiseconds(gettimestamp(wecowd, 🥺 timestampfeatuwe))
     )
   }
 }
 
 /**
- * Syntactic sugar for the count metric that works with
- * any feature type as opposed to being tied to a specific type.
- * See EasyMetric.scala for more details on why this is useful.
+ * syntactic sugaw fow the count metwic that w-wowks with
+ * any featuwe type a-as opposed to being t-tied to a specific t-type. mya
+ * s-see easymetwic.scawa fow mowe detaiws on why this i-is usefuw. 🥺
  */
-object CountMetric extends EasyMetric {
-  override def forFeatureType[T](
-    featureType: FeatureType,
-  ): Option[AggregationMetric[T, _]] =
-    Some(TypedCountMetric[T]())
+object countmetwic extends easymetwic {
+  o-ovewwide def fowfeatuwetype[t](
+    featuwetype: featuwetype, >_<
+  ): option[aggwegationmetwic[t, >_< _]] =
+    some(typedcountmetwic[t]())
 }

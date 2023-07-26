@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.operation
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.opewation
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorDisplayTreatment
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.cuwsowdispwaytweatment
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class CursorDisplayTreatmentMarshaller @Inject() () {
+@singweton
+c-cwass cuwsowdispwaytweatmentmawshawwew @inject() () {
 
-  def apply(treatment: CursorDisplayTreatment): urt.CursorDisplayTreatment =
-    urt.CursorDisplayTreatment(
-      actionText = treatment.actionText,
-      labelText = treatment.labelText
+  d-def appwy(tweatment: c-cuwsowdispwaytweatment): uwt.cuwsowdispwaytweatment =
+    uwt.cuwsowdispwaytweatment(
+      actiontext = tweatment.actiontext, σωσ
+      w-wabewtext = tweatment.wabewtext
     )
 }

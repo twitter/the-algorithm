@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.assembler.models
+package com.twittew.fowwow_wecommendations.assembwew.modews
 
-import com.twitter.follow_recommendations.{thriftscala => t}
+impowt c-com.twittew.fowwow_wecommendations.{thwiftscawa => t-t}
 
-case class Action(text: String, actionURL: String) {
-  lazy val toThrift: t.Action = {
-    t.Action(text, actionURL)
+case cwass a-action(text: s-stwing, ( ͡o ω ͡o ) actionuww: s-stwing) {
+  w-wazy vaw tothwift: t-t.action = {
+    t-t.action(text, UwU actionuww)
   }
 }

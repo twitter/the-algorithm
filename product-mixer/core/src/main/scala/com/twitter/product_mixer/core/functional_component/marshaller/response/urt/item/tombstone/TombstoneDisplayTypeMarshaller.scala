@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tombstone
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tombstone
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.DisconnectedRepliesAncestor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.DisconnectedRepliesDescendant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.Inline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.NonCompliant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.TombstoneDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.TweetUnavailable
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tombstone.disconnectedwepwiesancestow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tombstone.disconnectedwepwiesdescendant
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tombstone.inwine
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tombstone.noncompwiant
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tombstone.tombstonedispwaytype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tombstone.tweetunavaiwabwe
+impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class TombstoneDisplayTypeMarshaller @Inject() () {
+@singweton
+cwass tombstonedispwaytypemawshawwew @inject() () {
 
-  def apply(tombstoneDisplayType: TombstoneDisplayType): urt.TombstoneDisplayType =
-    tombstoneDisplayType match {
-      case TweetUnavailable => urt.TombstoneDisplayType.TweetUnavailable
-      case DisconnectedRepliesAncestor => urt.TombstoneDisplayType.DisconnectedRepliesAncestor
-      case DisconnectedRepliesDescendant => urt.TombstoneDisplayType.DisconnectedRepliesDescendant
-      case Inline => urt.TombstoneDisplayType.Inline
-      case NonCompliant => urt.TombstoneDisplayType.NonCompliant
+  def appwy(tombstonedispwaytype: t-tombstonedispwaytype): uwt.tombstonedispwaytype =
+    tombstonedispwaytype match {
+      c-case tweetunavaiwabwe => u-uwt.tombstonedispwaytype.tweetunavaiwabwe
+      case disconnectedwepwiesancestow => uwt.tombstonedispwaytype.disconnectedwepwiesancestow
+      case disconnectedwepwiesdescendant => u-uwt.tombstonedispwaytype.disconnectedwepwiesdescendant
+      case inwine => u-uwt.tombstonedispwaytype.inwine
+      c-case nyoncompwiant => uwt.tombstonedispwaytype.noncompwiant
     }
 }

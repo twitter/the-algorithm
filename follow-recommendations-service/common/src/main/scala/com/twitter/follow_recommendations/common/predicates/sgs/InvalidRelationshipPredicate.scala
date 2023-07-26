@@ -1,36 +1,36 @@
-package com.twitter.follow_recommendations.common.predicates.sgs
+package com.twittew.fowwow_wecommendations.common.pwedicates.sgs
 
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.follow_recommendations.common.models.HasInvalidRelationshipUserIds
-import com.twitter.stitch.Stitch
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.common.base.pwedicate
+i-impowt com.twittew.fowwow_wecommendations.common.base.pwedicatewesuwt
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.fiwtewweason
+i-impowt com.twittew.fowwow_wecommendations.common.modews.hasinvawidwewationshipusewids
+i-impowt com.twittew.stitch.stitch
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class InvalidRelationshipPredicate
-    extends Predicate[(HasInvalidRelationshipUserIds, CandidateUser)] {
+@singweton
+cwass invawidwewationshippwedicate
+    extends pwedicate[(hasinvawidwewationshipusewids, rawr x3 candidateusew)] {
 
-  override def apply(
-    pair: (HasInvalidRelationshipUserIds, CandidateUser)
-  ): Stitch[PredicateResult] = {
+  o-ovewwide def appwy(
+    paiw: (hasinvawidwewationshipusewids, nyaa~~ candidateusew)
+  ): stitch[pwedicatewesuwt] = {
 
-    val (targetUser, candidate) = pair
-    targetUser.invalidRelationshipUserIds match {
-      case Some(users) =>
-        if (!users.contains(candidate.id)) {
-          InvalidRelationshipPredicate.ValidStitch
-        } else {
-          Stitch.value(InvalidRelationshipPredicate.InvalidRelationshipStitch)
+    v-vaw (tawgetusew, /(^•ω•^) candidate) = p-paiw
+    tawgetusew.invawidwewationshipusewids match {
+      case some(usews) =>
+        if (!usews.contains(candidate.id)) {
+          i-invawidwewationshippwedicate.vawidstitch
+        } ewse {
+          s-stitch.vawue(invawidwewationshippwedicate.invawidwewationshipstitch)
         }
-      case None => Stitch.value(PredicateResult.Valid)
+      c-case nyone => stitch.vawue(pwedicatewesuwt.vawid)
     }
   }
 }
 
-object InvalidRelationshipPredicate {
-  val ValidStitch: Stitch[PredicateResult.Valid.type] = Stitch.value(PredicateResult.Valid)
-  val InvalidRelationshipStitch: PredicateResult.Invalid =
-    PredicateResult.Invalid(Set(FilterReason.InvalidRelationship))
+object invawidwewationshippwedicate {
+  vaw vawidstitch: stitch[pwedicatewesuwt.vawid.type] = s-stitch.vawue(pwedicatewesuwt.vawid)
+  vaw invawidwewationshipstitch: pwedicatewesuwt.invawid =
+    pwedicatewesuwt.invawid(set(fiwtewweason.invawidwewationship))
 }

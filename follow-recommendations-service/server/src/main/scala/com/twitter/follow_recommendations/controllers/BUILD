@@ -1,29 +1,29 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/com/google/inject/extensions:guice-assistedinject",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "3rdparty/jvm/net/codingwell:scala-guice",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "decider/src/main/scala",
-        "finagle/finagle-core/src/main",
-        "finatra/inject/inject-core/src/main/scala",
-        "finatra/thrift/src/main/scala/com/twitter/finatra/thrift",
-        "finatra/thrift/src/main/scala/com/twitter/finatra/thrift:controller",
-        "finatra/thrift/src/main/scala/com/twitter/finatra/thrift/exceptions",
-        "finatra/thrift/src/main/scala/com/twitter/finatra/thrift/filters",
-        "finatra/thrift/src/main/scala/com/twitter/finatra/thrift/modules",
-        "finatra/thrift/src/main/scala/com/twitter/finatra/thrift/response",
-        "finatra/thrift/src/main/scala/com/twitter/finatra/thrift/routing",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/configapi",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/models",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/services",
-        "follow-recommendations-service/thrift/src/main/thrift:thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service/debug_query",
-        "scrooge/scrooge-core/src/main/scala",
-        "util/util-core:scala",
-        "util/util-slf4j-api/src/main/scala",
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], (ꈍᴗꈍ)
+    tags = ["bazew-compatibwe"], ^•ﻌ•^
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/inject:guice", OwO
+        "3wdpawty/jvm/com/googwe/inject/extensions:guice-assistedinject", 🥺
+        "3wdpawty/jvm/javax/inject:javax.inject", òωó
+        "3wdpawty/jvm/net/codingweww:scawa-guice", o.O
+        "3wdpawty/jvm/owg/swf4j:swf4j-api",
+        "decidew/swc/main/scawa", (U ᵕ U❁)
+        "finagwe/finagwe-cowe/swc/main", (⑅˘꒳˘)
+        "finatwa/inject/inject-cowe/swc/main/scawa",
+        "finatwa/thwift/swc/main/scawa/com/twittew/finatwa/thwift", ( ͡o ω ͡o )
+        "finatwa/thwift/swc/main/scawa/com/twittew/finatwa/thwift:contwowwew", UwU
+        "finatwa/thwift/swc/main/scawa/com/twittew/finatwa/thwift/exceptions", rawr x3
+        "finatwa/thwift/swc/main/scawa/com/twittew/finatwa/thwift/fiwtews", rawr
+        "finatwa/thwift/swc/main/scawa/com/twittew/finatwa/thwift/moduwes", σωσ
+        "finatwa/thwift/swc/main/scawa/com/twittew/finatwa/thwift/wesponse", σωσ
+        "finatwa/thwift/swc/main/scawa/com/twittew/finatwa/thwift/wouting", >_<
+        "fowwow-wecommendations-sewvice/sewvew/swc/main/scawa/com/twittew/fowwow_wecommendations/configapi",
+        "fowwow-wecommendations-sewvice/sewvew/swc/main/scawa/com/twittew/fowwow_wecommendations/modews", :3
+        "fowwow-wecommendations-sewvice/sewvew/swc/main/scawa/com/twittew/fowwow_wecommendations/sewvices", (U ﹏ U)
+        "fowwow-wecommendations-sewvice/thwift/swc/main/thwift:thwift-scawa", -.-
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/sewvice/debug_quewy", (ˆ ﻌ ˆ)♡
+        "scwooge/scwooge-cowe/swc/main/scawa", (⑅˘꒳˘)
+        "utiw/utiw-cowe:scawa", (U ᵕ U❁)
+        "utiw/utiw-swf4j-api/swc/main/scawa", -.-
     ],
 )

@@ -1,67 +1,67 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline
+package com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.fwexibwe_injection_pipewine
 
-import com.twitter.onboarding.task.service.thriftscala.GetInjectionsRequest
-import com.twitter.onboarding.task.service.{thriftscala => servicethrift}
-import com.twitter.product_mixer.component_library.candidate_source.flexible_injection_pipeline.IntermediatePrompt
-import com.twitter.product_mixer.component_library.candidate_source.flexible_injection_pipeline.PromptCandidateSource
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.UrtMultipleModulesDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline.FlipPromptCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline.FlipPromptModuleGrouping
-import com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline.FlipPromptUrtModuleBuilder
-import com.twitter.product_mixer.component_library.model.candidate.BasePromptCandidate
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipCandidateFeatureTransformer
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipQueryTransformer
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.HasFlipInjectionParams
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.PromptResultsTransformer
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.decider.DeciderParam
+impowt com.twittew.onboawding.task.sewvice.thwiftscawa.getinjectionswequest
+impowt c-com.twittew.onboawding.task.sewvice.{thwiftscawa => s-sewvicethwift}
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.fwexibwe_injection_pipewine.intewmediatepwompt
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.fwexibwe_injection_pipewine.pwomptcandidatesouwce
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.uwtitemcandidatedecowatow
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.uwtmuwtipwemoduwesdecowatow
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.fwexibwe_injection_pipewine.fwippwomptcandidateuwtitembuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.fwexibwe_injection_pipewine.fwippwomptmoduwegwouping
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.fwexibwe_injection_pipewine.fwippwomptuwtmoduwebuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basepwomptcandidate
+impowt com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.fwexibwe_injection_pipewine.twansfowmew.fwipcandidatefeatuwetwansfowmew
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.fwexibwe_injection_pipewine.twansfowmew.fwipquewytwansfowmew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.fwexibwe_injection_pipewine.twansfowmew.hasfwipinjectionpawams
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.fwexibwe_injection_pipewine.twansfowmew.pwomptwesuwtstwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.candidatedecowatow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinewesuwtstwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig
+i-impowt com.twittew.timewines.configapi.fspawam
+impowt com.twittew.timewines.configapi.decidew.decidewpawam
 
 /**
- * A candidate pipeline for Flexible Injection Pipeline Candidates.
- * Fetches prompts from FLIP (inside onboarding-task-service).
+ * a candidate pipewine fow fwexibwe injection p-pipewine candidates. ^^
+ * fetches p-pwompts fwom f-fwip (inside onboawding-task-sewvice). :3
  */
-class FlipPromptCandidatePipelineConfig[Query <: PipelineQuery with HasFlipInjectionParams](
-  override val identifier: CandidatePipelineIdentifier,
-  override val enabledDeciderParam: Option[DeciderParam[Boolean]],
-  override val supportedClientParam: Option[FSParam[Boolean]],
-  promptCandidateSource: PromptCandidateSource)
-    extends CandidatePipelineConfig[
-      Query,
-      servicethrift.GetInjectionsRequest,
-      IntermediatePrompt,
-      BasePromptCandidate[Any]
+c-cwass f-fwippwomptcandidatepipewineconfig[quewy <: pipewinequewy with h-hasfwipinjectionpawams](
+  ovewwide vaw identifiew: c-candidatepipewineidentifiew, -.-
+  ovewwide vaw enabweddecidewpawam: option[decidewpawam[boowean]], 😳
+  ovewwide vaw suppowtedcwientpawam: o-option[fspawam[boowean]], mya
+  pwomptcandidatesouwce: p-pwomptcandidatesouwce)
+    e-extends c-candidatepipewineconfig[
+      quewy, (˘ω˘)
+      sewvicethwift.getinjectionswequest, >_<
+      intewmediatepwompt, -.-
+      basepwomptcandidate[any]
     ] {
 
-  override val candidateSource: CandidateSource[GetInjectionsRequest, IntermediatePrompt] =
-    promptCandidateSource
+  o-ovewwide vaw c-candidatesouwce: candidatesouwce[getinjectionswequest, i-intewmediatepwompt] =
+    p-pwomptcandidatesouwce
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[Query, GetInjectionsRequest] =
-    FlipQueryTransformer
+  ovewwide v-vaw quewytwansfowmew: candidatepipewinequewytwansfowmew[quewy, 🥺 g-getinjectionswequest] =
+    fwipquewytwansfowmew
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    IntermediatePrompt,
-    BasePromptCandidate[Any]
-  ] = PromptResultsTransformer
+  ovewwide vaw wesuwttwansfowmew: c-candidatepipewinewesuwtstwansfowmew[
+    intewmediatepwompt, (U ﹏ U)
+    b-basepwomptcandidate[any]
+  ] = pwomptwesuwtstwansfowmew
 
-  override val decorator: Option[
-    CandidateDecorator[Query, BasePromptCandidate[Any]]
-  ] = Some(
-    UrtMultipleModulesDecorator(
-      urtItemCandidateDecorator = UrtItemCandidateDecorator(FlipPromptCandidateUrtItemBuilder()),
-      moduleBuilder = FlipPromptUrtModuleBuilder(),
-      groupByKey = FlipPromptModuleGrouping
+  o-ovewwide vaw d-decowatow: option[
+    candidatedecowatow[quewy, >w< basepwomptcandidate[any]]
+  ] = some(
+    uwtmuwtipwemoduwesdecowatow(
+      uwtitemcandidatedecowatow = uwtitemcandidatedecowatow(fwippwomptcandidateuwtitembuiwdew()), mya
+      moduwebuiwdew = f-fwippwomptuwtmoduwebuiwdew(), >w<
+      g-gwoupbykey = fwippwomptmoduwegwouping
     ))
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[IntermediatePrompt]
-  ] = Seq(FlipCandidateFeatureTransformer)
+  o-ovewwide vaw f-featuwesfwomcandidatesouwcetwansfowmews: s-seq[
+    candidatefeatuwetwansfowmew[intewmediatepwompt]
+  ] = seq(fwipcandidatefeatuwetwansfowmew)
 }

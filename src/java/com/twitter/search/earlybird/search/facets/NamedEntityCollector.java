@@ -1,49 +1,49 @@
-package com.twitter.search.earlybird.search.facets;
+package com.twittew.seawch.eawwybiwd.seawch.facets;
 
-import java.util.List;
-import java.util.Map;
+impowt java.utiw.wist;
+i-impowt j-java.utiw.map;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
+i-impowt com.googwe.common.cowwect.immutabwewist;
+i-impowt com.googwe.common.cowwect.immutabwemap;
+i-impowt com.googwe.common.cowwect.wists;
 
-import org.apache.commons.lang.StringUtils;
+i-impowt o-owg.apache.commons.wang.stwingutiws;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.earlybird.thrift.NamedEntitySource;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultNamedEntity;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt com.twittew.seawch.eawwybiwd.thwift.namedentitysouwce;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwt;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtnamedentity;
 
-public class NamedEntityCollector extends AbstractFacetTermCollector {
-  private static final Map<String, NamedEntitySource> NAMED_ENTITY_WITH_TYPE_FIELDS =
-      ImmutableMap.of(
-          EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_TEXT_FIELD.getFieldName(),
-          NamedEntitySource.TEXT,
-          EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_URL_FIELD.getFieldName(),
-          NamedEntitySource.URL);
+p-pubwic cwass nyamedentitycowwectow extends abstwactfacettewmcowwectow {
+  pwivate s-static finaw map<stwing, nyamedentitysouwce> n-nyamed_entity_with_type_fiewds =
+      immutabwemap.of(
+          eawwybiwdfiewdconstant.named_entity_with_type_fwom_text_fiewd.getfiewdname(), (⑅˘꒳˘)
+          nyamedentitysouwce.text, (///ˬ///✿)
+          e-eawwybiwdfiewdconstant.named_entity_with_type_fwom_uww_fiewd.getfiewdname(), 😳😳😳
+          nyamedentitysouwce.uww);
 
-  private List<ThriftSearchResultNamedEntity> namedEntities = Lists.newArrayList();
+  p-pwivate wist<thwiftseawchwesuwtnamedentity> n-nyamedentities = wists.newawwaywist();
 
-  @Override
-  public boolean collect(int docID, long termID, int fieldID) {
+  @ovewwide
+  pubwic boowean cowwect(int docid, wong tewmid, 🥺 i-int fiewdid) {
 
-    String term = getTermFromFacet(termID, fieldID, NAMED_ENTITY_WITH_TYPE_FIELDS.keySet());
-    if (StringUtils.isEmpty(term)) {
-      return false;
+    stwing tewm = gettewmfwomfacet(tewmid, mya fiewdid, 🥺 named_entity_with_type_fiewds.keyset());
+    i-if (stwingutiws.isempty(tewm)) {
+      wetuwn f-fawse;
     }
 
-    int index = term.lastIndexOf(":");
-    namedEntities.add(new ThriftSearchResultNamedEntity(
-        term.substring(0, index),
-        term.substring(index + 1),
-        NAMED_ENTITY_WITH_TYPE_FIELDS.get(findFacetName(fieldID))));
+    i-int index = tewm.wastindexof(":");
+    n-nyamedentities.add(new t-thwiftseawchwesuwtnamedentity(
+        tewm.substwing(0, >_< index),
+        t-tewm.substwing(index + 1), >_<
+        nyamed_entity_with_type_fiewds.get(findfacetname(fiewdid))));
 
-    return true;
+    wetuwn twue;
   }
 
-  @Override
-  public void fillResultAndClear(ThriftSearchResult result) {
-    getExtraMetadata(result).setNamedEntities(ImmutableList.copyOf(namedEntities));
-    namedEntities.clear();
+  @ovewwide
+  pubwic v-void fiwwwesuwtandcweaw(thwiftseawchwesuwt wesuwt) {
+    getextwametadata(wesuwt).setnamedentities(immutabwewist.copyof(namedentities));
+    nyamedentities.cweaw();
   }
 }

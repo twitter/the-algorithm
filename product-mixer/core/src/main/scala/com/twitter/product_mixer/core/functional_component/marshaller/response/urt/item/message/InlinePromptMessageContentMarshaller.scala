@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.message
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.SocialContextMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.InlinePromptMessageContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.sociawcontextmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.wichtext.wichtextmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.inwinepwomptmessagecontent
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class InlinePromptMessageContentMarshaller @Inject() (
-  messageTextActionMarshaller: MessageTextActionMarshaller,
-  richTextMarshaller: RichTextMarshaller,
-  socialContextMarshaller: SocialContextMarshaller,
-  userFacepileMarshaller: UserFacepileMarshaller) {
+@singweton
+cwass i-inwinepwomptmessagecontentmawshawwew @inject() (
+  m-messagetextactionmawshawwew: messagetextactionmawshawwew, nyaa~~
+  wichtextmawshawwew: wichtextmawshawwew, /(^•ω•^)
+  sociawcontextmawshawwew: s-sociawcontextmawshawwew, rawr
+  usewfacepiwemawshawwew: usewfacepiwemawshawwew) {
 
-  def apply(inlinePromptMessageContent: InlinePromptMessageContent): urt.MessageContent =
-    urt.MessageContent.InlinePrompt(
-      urt.InlinePrompt(
-        headerText = inlinePromptMessageContent.headerText,
-        bodyText = inlinePromptMessageContent.bodyText,
-        primaryButtonAction =
-          inlinePromptMessageContent.primaryButtonAction.map(messageTextActionMarshaller(_)),
-        secondaryButtonAction =
-          inlinePromptMessageContent.secondaryButtonAction.map(messageTextActionMarshaller(_)),
-        headerRichText = inlinePromptMessageContent.headerRichText.map(richTextMarshaller(_)),
-        bodyRichText = inlinePromptMessageContent.bodyRichText.map(richTextMarshaller(_)),
-        socialContext = inlinePromptMessageContent.socialContext.map(socialContextMarshaller(_)),
-        userFacepile = inlinePromptMessageContent.userFacepile.map(userFacepileMarshaller(_))
+  d-def appwy(inwinepwomptmessagecontent: inwinepwomptmessagecontent): u-uwt.messagecontent =
+    uwt.messagecontent.inwinepwompt(
+      uwt.inwinepwompt(
+        headewtext = i-inwinepwomptmessagecontent.headewtext,
+        bodytext = inwinepwomptmessagecontent.bodytext, OwO
+        p-pwimawybuttonaction =
+          i-inwinepwomptmessagecontent.pwimawybuttonaction.map(messagetextactionmawshawwew(_)), (U ﹏ U)
+        secondawybuttonaction =
+          inwinepwomptmessagecontent.secondawybuttonaction.map(messagetextactionmawshawwew(_)), >_<
+        headewwichtext = inwinepwomptmessagecontent.headewwichtext.map(wichtextmawshawwew(_)), rawr x3
+        b-bodywichtext = inwinepwomptmessagecontent.bodywichtext.map(wichtextmawshawwew(_)), mya
+        sociawcontext = inwinepwomptmessagecontent.sociawcontext.map(sociawcontextmawshawwew(_)), nyaa~~
+        usewfacepiwe = inwinepwomptmessagecontent.usewfacepiwe.map(usewfacepiwemawshawwew(_))
       )
     )
 }

@@ -1,149 +1,149 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "tensorflow/core/framework/tensor.proto";
+impowt "tensowfwow/cowe/fwamewowk/tensow.pwoto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "SummaryProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/summary_go_proto";
+o-option c-cc_enabwe_awenas = t-twue;
+option j-java_outew_cwassname = "summawypwotos";
+o-option j-java_muwtipwe_fiwes = t-twue;
+option j-java_package = "owg.tensowfwow.fwamewowk";
+option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/fwamewowk/summawy_go_pwoto";
 
-// Metadata associated with a series of Summary data
-message SummaryDescription {
-  // Hint on how plugins should process the data in this series.
-  // Supported values include "scalar", "histogram", "image", "audio"
-  string type_hint = 1;
+// metadata associated with a-a sewies of summawy data
+message summawydescwiption {
+  // h-hint on how pwugins s-shouwd pwocess the data in this sewies. 😳😳😳
+  // suppowted vawues incwude "scawaw", o.O "histogwam", òωó "image", "audio"
+  s-stwing type_hint = 1;
 }
 
-// Serialization format for histogram module in
-// core/lib/histogram/histogram.h
-message HistogramProto {
-  double min = 1;
-  double max = 2;
-  double num = 3;
-  double sum = 4;
-  double sum_squares = 5;
+// sewiawization f-fowmat f-fow histogwam moduwe in
+// cowe/wib/histogwam/histogwam.h
+message histogwampwoto {
+  doubwe min = 1;
+  d-doubwe max = 2;
+  doubwe nyum = 3;
+  doubwe sum = 4;
+  doubwe sum_squawes = 5;
 
-  // Parallel arrays encoding the bucket boundaries and the bucket values.
-  // bucket(i) is the count for the bucket i.  The range for
+  // p-pawawwew awways encoding t-the bucket b-boundawies and t-the bucket vawues. 😳😳😳
+  // b-bucket(i) is the count fow the bucket i. σωσ  t-the wange fow
   // a bucket is:
-  //   i == 0:  -DBL_MAX .. bucket_limit(0)
-  //   i != 0:  bucket_limit(i-1) .. bucket_limit(i)
-  repeated double bucket_limit = 6 [packed = true];
-  repeated double bucket = 7 [packed = true];
+  //   i == 0:  -dbw_max .. b-bucket_wimit(0)
+  //   i != 0:  bucket_wimit(i-1) .. bucket_wimit(i)
+  wepeated doubwe bucket_wimit = 6 [packed = twue];
+  wepeated d-doubwe bucket = 7 [packed = twue];
 }
 
-// A SummaryMetadata encapsulates information on which plugins are able to make
-// use of a certain summary value.
-message SummaryMetadata {
-  message PluginData {
-    // The name of the plugin this data pertains to.
-    string plugin_name = 1;
+// a-a summawymetadata e-encapsuwates i-infowmation on which pwugins awe abwe to make
+// use of a-a cewtain summawy v-vawue. (⑅˘꒳˘)
+message summawymetadata {
+  m-message pwugindata {
+    // t-the nyame of the pwugin this d-data pewtains to.
+    stwing pwugin_name = 1;
 
-    // The content to store for the plugin. The best practice is for this to be
-    // a binary serialized protocol buffer.
-    bytes content = 2;
+    // t-the content to stowe fow the pwugin. (///ˬ///✿) the best p-pwactice is fow this to be
+    // a-a binawy sewiawized pwotocow b-buffew. 🥺
+    bytes c-content = 2;
   }
 
-  // Data that associates a summary with a certain plugin.
-  PluginData plugin_data = 1;
+  // data that associates a summawy with a cewtain pwugin. OwO
+  pwugindata pwugin_data = 1;
 
-  // Display name for viewing in TensorBoard.
-  string display_name = 2;
+  // dispway nyame f-fow viewing i-in tensowboawd. >w<
+  stwing dispway_name = 2;
 
-  // Longform readable description of the summary sequence. Markdown supported.
-  string summary_description = 3;
+  // w-wongfowm weadabwe d-descwiption of t-the summawy sequence. 🥺 mawkdown suppowted. nyaa~~
+  stwing summawy_descwiption = 3;
 
-  // Class of data stored in this time series. Required for compatibility with
-  // TensorBoard's generic data facilities (`DataProvider`, et al.). This value
-  // imposes constraints on the dtype and shape of the corresponding tensor
-  // values. See `DataClass` docs for details.
-  DataClass data_class = 4;
+  // c-cwass of data stowed in this time sewies. ^^ wequiwed fow compatibiwity with
+  // t-tensowboawd's genewic data faciwities (`datapwovidew`, e-et aw.). >w< t-this vawue
+  // i-imposes constwaints on the dtype a-and shape of t-the cowwesponding t-tensow
+  // vawues. OwO s-see `datacwass` docs fow detaiws. XD
+  datacwass d-data_cwass = 4;
 }
 
-enum DataClass {
-  // Unknown data class, used (implicitly) for legacy data. Will not be
-  // processed by data ingestion pipelines.
-  DATA_CLASS_UNKNOWN = 0;
-  // Scalar time series. Each `Value` for the corresponding tag must have
-  // `tensor` set to a rank-0 tensor of type `DT_FLOAT` (float32).
-  DATA_CLASS_SCALAR = 1;
-  // Tensor time series. Each `Value` for the corresponding tag must have
-  // `tensor` set. The tensor value is arbitrary, but should be small to
-  // accommodate direct storage in database backends: an upper bound of a few
-  // kilobytes is a reasonable rule of thumb.
-  DATA_CLASS_TENSOR = 2;
-  // Blob sequence time series. Each `Value` for the corresponding tag must
-  // have `tensor` set to a rank-1 tensor of bytestring dtype.
-  DATA_CLASS_BLOB_SEQUENCE = 3;
+e-enum datacwass {
+  // u-unknown d-data cwass, ^^;; u-used (impwicitwy) fow wegacy data. 🥺 wiww nyot be
+  // pwocessed b-by data ingestion pipewines. XD
+  data_cwass_unknown = 0;
+  // scawaw time sewies. (U ᵕ U❁) each `vawue` fow t-the cowwesponding tag must have
+  // `tensow` set to a wank-0 tensow of type `dt_fwoat` (fwoat32). :3
+  d-data_cwass_scawaw = 1;
+  // t-tensow time sewies. ( ͡o ω ͡o ) e-each `vawue` fow the cowwesponding t-tag must have
+  // `tensow` s-set. òωó the tensow v-vawue is awbitwawy, σωσ but shouwd be smow to
+  // accommodate diwect stowage in database backends: a-an uppew bound of a few
+  // k-kiwobytes is a weasonabwe wuwe o-of thumb.
+  data_cwass_tensow = 2;
+  // b-bwob sequence time sewies. (U ᵕ U❁) each `vawue` f-fow the cowwesponding t-tag must
+  // have `tensow` s-set to a wank-1 t-tensow of bytestwing dtype. (✿oωo)
+  data_cwass_bwob_sequence = 3;
 }
 
-// A Summary is a set of named values to be displayed by the
-// visualizer.
+// a summawy is a set of nyamed v-vawues to be d-dispwayed by the
+// v-visuawizew. ^^
 //
-// Summaries are produced regularly during training, as controlled by
-// the "summary_interval_secs" attribute of the training operation.
-// Summaries are also produced at the end of an evaluation.
-message Summary {
-  message Image {
-    // Dimensions of the image.
+// summawies a-awe pwoduced weguwawwy d-duwing twaining, as contwowwed b-by
+// the "summawy_intewvaw_secs" attwibute of the twaining opewation. ^•ﻌ•^
+// summawies awe awso p-pwoduced at the e-end of an evawuation. XD
+message summawy {
+  message i-image {
+    // d-dimensions of the image. :3
     int32 height = 1;
     int32 width = 2;
-    // Valid colorspace values are
-    //   1 - grayscale
-    //   2 - grayscale + alpha
-    //   3 - RGB
-    //   4 - RGBA
-    //   5 - DIGITAL_YUV
-    //   6 - BGRA
-    int32 colorspace = 3;
-    // Image data in encoded format.  All image formats supported by
-    // image_codec::CoderUtil can be stored here.
-    bytes encoded_image_string = 4;
+    // vawid c-cowowspace vawues awe
+    //   1 - gwayscawe
+    //   2 - gwayscawe + awpha
+    //   3 - wgb
+    //   4 - wgba
+    //   5 - d-digitaw_yuv
+    //   6 - bgwa
+    int32 cowowspace = 3;
+    // i-image data in encoded f-fowmat. (ꈍᴗꈍ)  aww image fowmats suppowted by
+    // image_codec::codewutiw c-can b-be stowed hewe. :3
+    bytes encoded_image_stwing = 4;
   }
 
-  message Audio {
-    // Sample rate of the audio in Hz.
-    float sample_rate = 1;
-    // Number of channels of audio.
-    int64 num_channels = 2;
-    // Length of the audio in frames (samples per channel).
-    int64 length_frames = 3;
-    // Encoded audio data and its associated RFC 2045 content type (e.g.
-    // "audio/wav").
-    bytes encoded_audio_string = 4;
-    string content_type = 5;
+  message audio {
+    // s-sampwe wate of the audio in hz. (U ﹏ U)
+    f-fwoat sampwe_wate = 1;
+    // numbew of channews of audio. UwU
+    int64 nyum_channews = 2;
+    // w-wength of the audio in fwames (sampwes p-pew c-channew). 😳😳😳
+    int64 wength_fwames = 3;
+    // e-encoded audio data a-and its associated w-wfc 2045 content t-type (e.g.
+    // "audio/wav"). XD
+    bytes encoded_audio_stwing = 4;
+    s-stwing c-content_type = 5;
   }
 
-  message Value {
-    // This field is deprecated and will not be set.
-    string node_name = 7;
+  message vawue {
+    // t-this fiewd is d-depwecated and w-wiww nyot be set. o.O
+    stwing nyode_name = 7;
 
-    // Tag name for the data. Used by TensorBoard plugins to organize data. Tags
-    // are often organized by scope (which contains slashes to convey
-    // hierarchy). For example: foo/bar/0
-    string tag = 1;
+    // tag nyame f-fow the data. (⑅˘꒳˘) used by tensowboawd p-pwugins to owganize d-data. 😳😳😳 tags
+    // awe often owganized by scope (which contains s-swashes to c-convey
+    // hiewawchy). nyaa~~ f-fow exampwe: f-foo/baw/0
+    stwing tag = 1;
 
-    // Contains metadata on the summary value such as which plugins may use it.
-    // Take note that many summary values may lack a metadata field. This is
-    // because the FileWriter only keeps a metadata object on the first summary
-    // value with a certain tag for each tag. TensorBoard then remembers which
-    // tags are associated with which plugins. This saves space.
-    SummaryMetadata metadata = 9;
+    // c-contains metadata on the summawy vawue such as which pwugins may use it.
+    // take n-nyote that many summawy vawues m-may wack a metadata fiewd. rawr this i-is
+    // because the fiwewwitew o-onwy keeps a metadata object on t-the fiwst summawy
+    // v-vawue w-with a cewtain t-tag fow each tag. -.- t-tensowboawd then wemembews which
+    // tags awe associated with which pwugins. (✿oωo) this saves space.
+    summawymetadata m-metadata = 9;
 
-    // Value associated with the tag.
-    oneof value {
-      float simple_value = 2;
-      bytes obsolete_old_style_histogram = 3;
-      Image image = 4;
-      HistogramProto histo = 5;
-      Audio audio = 6;
-      TensorProto tensor = 8;
+    // v-vawue a-associated with the tag. /(^•ω•^)
+    o-oneof vawue {
+      fwoat simpwe_vawue = 2;
+      bytes obsowete_owd_stywe_histogwam = 3;
+      image image = 4;
+      h-histogwampwoto h-histo = 5;
+      audio audio = 6;
+      tensowpwoto t-tensow = 8;
     }
   }
 
-  // Set of values for the summary.
-  repeated Value value = 1;
+  // set of vawues fow the summawy.
+  w-wepeated v-vawue vawue = 1;
 }

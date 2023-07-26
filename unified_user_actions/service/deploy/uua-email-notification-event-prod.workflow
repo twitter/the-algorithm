@@ -1,66 +1,66 @@
 {
-  "role": "discode",
-  "name": "uua-email-notification-event-prod",
-  "config-files": [
-    "uua-email-notification-event.aurora"
-  ],
-  "build": {
-    "play": true,
-    "trigger": {
-      "cron-schedule": "0 17 * * 2"
-    },
+  "wowe": "discode", XD
+  "name": "uua-emaiw-notification-event-pwod", >_<
+  "config-fiwes": [
+    "uua-emaiw-notification-event.auwowa"
+  ], (ꈍᴗꈍ)
+  "buiwd": {
+    "pway": twue, ^•ﻌ•^
+    "twiggew": {
+      "cwon-scheduwe": "0 17 * * 2"
+    }, OwO
     "dependencies": [
       {
-        "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "wowe": "packew", 🥺
+        "name": "packew-cwient-no-pex", òωó
+        "vewsion": "watest"
       }
-    ],
+    ], o.O
     "steps": [
       {
-        "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-email-notification-event"
-      },
+        "type": "bazew-bundwe", (U ᵕ U❁)
+        "name": "bundwe", (⑅˘꒳˘)
+        "tawget": "unified_usew_actions/sewvice/swc/main/scawa:uua-emaiw-notification-event"
+      }, ( ͡o ω ͡o )
       {
-        "type": "packer",
-        "name": "uua-email-notification-event",
-        "artifact": "./dist/uua-email-notification-event.zip"
+        "type": "packew", UwU
+        "name": "uua-emaiw-notification-event", rawr x3
+        "awtifact": "./dist/uua-emaiw-notification-event.zip"
       }
     ]
-  },
-  "targets": [
+  }, rawr
+  "tawgets": [
     {
-      "type": "group",
-      "name": "prod",
-      "targets": [
+      "type": "gwoup", σωσ
+      "name": "pwod", σωσ
+      "tawgets": [
         {
-          "name": "uua-email-notification-event-prod-atla",
-          "key": "atla/discode/prod/uua-email-notification-event"
+          "name": "uua-emaiw-notification-event-pwod-atwa", >_<
+          "key": "atwa/discode/pwod/uua-emaiw-notification-event"
         },
         {
-          "name": "uua-email-notification-event-prod-pdxa",
-          "key": "pdxa/discode/prod/uua-email-notification-event"
+          "name": "uua-emaiw-notification-event-pwod-pdxa", :3
+          "key": "pdxa/discode/pwod/uua-emaiw-notification-event"
         }
       ]
     }
-  ],
-  "subscriptions": [
+  ], (U ﹏ U)
+  "subscwiptions": [
       {
-        "type": "SLACK",
-        "recipients": [
+        "type": "swack", -.-
+        "wecipients": [
           {
-            "to": "discode-oncall"
+            "to": "discode-oncaww"
           }
-        ],
-        "events": ["WORKFLOW_SUCCESS"]
-      },
+        ], (ˆ ﻌ ˆ)♡
+        "events": ["wowkfwow_success"]
+      }, (⑅˘꒳˘)
       {
-        "type": "SLACK",
-        "recipients": [{
-          "to": "discode-oncall"
+        "type": "swack", (U ᵕ U❁)
+        "wecipients": [{
+          "to": "discode-oncaww"
         }],
-        "events": ["*FAILED"]
+        "events": ["*faiwed"]
       }
     ]
 }

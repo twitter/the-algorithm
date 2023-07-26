@@ -1,152 +1,152 @@
-package com.twitter.search.common.relevance;
+package com.twittew.seawch.common.wewevance;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+impowt j-java.utiw.cowwections;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.wocawe;
+i-impowt j-java.utiw.map;
+i-impowt java.utiw.set;
+i-impowt java.utiw.concuwwent.timeunit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.ImmutableList;
+impowt com.googwe.common.annotations.visibwefowtesting;
+impowt com.googwe.common.base.pweconditions;
+impowt com.googwe.common.cache.cachebuiwdew;
+i-impowt com.googwe.common.cowwect.immutabwewist;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.penguin.search.filter.StringMatchFilter;
-import com.twitter.util.Duration;
+impowt com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+impowt com.twittew.penguin.seawch.fiwtew.stwingmatchfiwtew;
+i-impowt com.twittew.utiw.duwation;
 
 /**
- * the Cache for Trends
+ * t-the cache fow twends
  */
-public class NGramCache {
-  private static final int DEFAULT_MAX_CACHE_SIZE = 5000;
-  private static final long DEFAULT_CACHE_ITEM_TTL_SEC = 24 * 3600; // 1 day
+pubwic cwass nygwamcache {
+  pwivate s-static finaw int defauwt_max_cache_size = 5000;
+  p-pwivate static f-finaw wong defauwt_cache_item_ttw_sec = 24 * 3600; // 1 day
 
-  private final PenguinVersion penguinVersion;
+  pwivate finaw penguinvewsion p-penguinvewsion;
 
-  // Keys are trends. Values are empty strings.
-  private final Map<String, String> trendsCache;
+  // keys awe twends. -.- vawues awe empty stwings. :3
+  pwivate finaw m-map<stwing, nyaa~~ stwing> twendscache;
 
-  private volatile StringMatchFilter trendsMatcher = null;
+  p-pwivate vowatiwe s-stwingmatchfiwtew t-twendsmatchew = n-nyuww;
 
   /**
-   * Extract Trends from a list of normalized tokens
+   * extwact twends fwom a-a wist of nyowmawized tokens
    */
-  public List<String> extractTrendsFromNormalized(List<String> tokens) {
-    if (trendsMatcher == null) {
-      return Collections.emptyList();
+  pubwic wist<stwing> e-extwacttwendsfwomnowmawized(wist<stwing> tokens) {
+    if (twendsmatchew == nyuww) {
+      wetuwn cowwections.emptywist();
     }
 
-    ImmutableList.Builder<String> trends = ImmutableList.builder();
-    for (String trend : trendsMatcher.extractNormalized(tokens)) {
-      if (trendsCache.containsKey(trend)) {
-        trends.add(trend);
+    immutabwewist.buiwdew<stwing> t-twends = immutabwewist.buiwdew();
+    f-fow (stwing t-twend : twendsmatchew.extwactnowmawized(tokens)) {
+      i-if (twendscache.containskey(twend)) {
+        twends.add(twend);
       }
     }
 
-    return trends.build();
+    wetuwn twends.buiwd();
   }
 
   /**
-   * Extract Trends from a list of tokens
+   * e-extwact twends f-fwom a wist of tokens
    */
-  public List<String> extractTrendsFrom(List<String> tokens, Locale language) {
-    if (trendsMatcher == null) {
-      return Collections.emptyList();
+  p-pubwic wist<stwing> e-extwacttwendsfwom(wist<stwing> tokens, 😳 wocawe w-wanguage) {
+    if (twendsmatchew == n-nyuww) {
+      wetuwn cowwections.emptywist();
     }
-    return trendsMatcher.extract(language, tokens);
+    wetuwn twendsmatchew.extwact(wanguage, (⑅˘꒳˘) t-tokens);
   }
 
   /**
-   * Extract Trends from a given CharSequence
+   * extwact twends f-fwom a given chawsequence
    */
-  public List<String> extractTrendsFrom(CharSequence text, Locale language) {
-    if (trendsMatcher == null) {
-      return Collections.emptyList();
+  pubwic wist<stwing> e-extwacttwendsfwom(chawsequence t-text, nyaa~~ wocawe wanguage) {
+    if (twendsmatchew == nyuww) {
+      wetuwn cowwections.emptywist();
     }
 
-    ImmutableList.Builder<String> trends = ImmutableList.builder();
-    for (String trend : trendsMatcher.extract(language, text)) {
-      if (trendsCache.containsKey(trend)) {
-        trends.add(trend);
+    immutabwewist.buiwdew<stwing> twends = immutabwewist.buiwdew();
+    f-fow (stwing t-twend : twendsmatchew.extwact(wanguage, OwO text)) {
+      i-if (twendscache.containskey(twend)) {
+        t-twends.add(twend);
       }
     }
 
-    return trends.build();
+    w-wetuwn twends.buiwd();
   }
 
-  public long numTrendingTerms() {
-    return trendsCache.size();
+  pubwic wong nyumtwendingtewms() {
+    w-wetuwn twendscache.size();
   }
 
-  public Set<String> getTrends() {
-    return trendsCache.keySet();
+  pubwic set<stwing> gettwends() {
+    wetuwn twendscache.keyset();
   }
 
-  public void clear() {
-    trendsCache.clear();
-    trendsMatcher = null;
+  pubwic v-void cweaw() {
+    twendscache.cweaw();
+    t-twendsmatchew = n-nyuww;
   }
 
-  /** Adds all trends to this NGramCache. */
-  public void addAll(Iterable<String> trends) {
-    for (String trend : trends) {
-      trendsCache.put(trend, "");
+  /** a-adds aww twends to this nygwamcache. rawr x3 */
+  p-pubwic v-void addaww(itewabwe<stwing> t-twends) {
+    f-fow (stwing twend : twends) {
+      t-twendscache.put(twend, XD "");
     }
 
-    trendsMatcher = new StringMatchFilter(trendsCache.keySet(), penguinVersion);
+    t-twendsmatchew = n-nyew stwingmatchfiwtew(twendscache.keyset(), σωσ p-penguinvewsion);
   }
 
-  public static Builder builder() {
-    return new Builder();
+  p-pubwic static buiwdew buiwdew() {
+    wetuwn new buiwdew();
   }
 
-  public static class Builder {
-    private int maxCacheSize = DEFAULT_MAX_CACHE_SIZE;
-    private long cacheItemTTLSecs = DEFAULT_CACHE_ITEM_TTL_SEC; // 1 day
-    private PenguinVersion penguinVersion = PenguinVersion.PENGUIN_4;
+  pubwic s-static cwass buiwdew {
+    pwivate int maxcachesize = defauwt_max_cache_size;
+    pwivate wong cacheitemttwsecs = d-defauwt_cache_item_ttw_sec; // 1 day
+    pwivate penguinvewsion penguinvewsion = p-penguinvewsion.penguin_4;
 
-    public Builder maxCacheSize(int cacheSize) {
-      this.maxCacheSize = cacheSize;
-      return this;
+    p-pubwic buiwdew m-maxcachesize(int cachesize) {
+      t-this.maxcachesize = cachesize;
+      wetuwn this;
     }
 
-    public Builder cacheItemTTL(long cacheItemTTL) {
-      this.cacheItemTTLSecs = cacheItemTTL;
-      return this;
+    p-pubwic buiwdew c-cacheitemttw(wong cacheitemttw) {
+      this.cacheitemttwsecs = cacheitemttw;
+      wetuwn this;
     }
 
-    public Builder penguinVersion(PenguinVersion newPenguinVersion) {
-      this.penguinVersion = Preconditions.checkNotNull(newPenguinVersion);
-      return this;
+    pubwic buiwdew p-penguinvewsion(penguinvewsion nyewpenguinvewsion) {
+      t-this.penguinvewsion = pweconditions.checknotnuww(newpenguinvewsion);
+      w-wetuwn this;
     }
 
-    /** Builds an NGramCache instance. */
-    public NGramCache build() {
-      return new NGramCache(
-          maxCacheSize,
-          Duration.apply(cacheItemTTLSecs, TimeUnit.SECONDS),
-          penguinVersion);
+    /** b-buiwds an nygwamcache instance. (U ᵕ U❁) */
+    pubwic n-nygwamcache buiwd() {
+      w-wetuwn nyew nygwamcache(
+          m-maxcachesize, (U ﹏ U)
+          d-duwation.appwy(cacheitemttwsecs, :3 timeunit.seconds), ( ͡o ω ͡o )
+          penguinvewsion);
     }
   }
 
-  // Should be used only in tests that want to mock out this class.
-  @VisibleForTesting
-  public NGramCache() {
-    this(DEFAULT_MAX_CACHE_SIZE,
-         Duration.apply(DEFAULT_CACHE_ITEM_TTL_SEC, TimeUnit.SECONDS),
-         PenguinVersion.PENGUIN_4);
+  // shouwd be used onwy in tests t-that want to m-mock out this cwass. σωσ
+  @visibwefowtesting
+  p-pubwic nygwamcache() {
+    t-this(defauwt_max_cache_size, >w<
+         d-duwation.appwy(defauwt_cache_item_ttw_sec, 😳😳😳 timeunit.seconds), OwO
+         p-penguinvewsion.penguin_4);
   }
 
-  private NGramCache(int maxCacheSize, Duration cacheItemTTL, PenguinVersion penguinVersion) {
-    // we only have 1 refresher thread that writes to the cache
-    this.trendsCache = CacheBuilder.newBuilder()
-        .concurrencyLevel(1)
-        .expireAfterWrite(cacheItemTTL.inSeconds(), TimeUnit.SECONDS)
-        .maximumSize(maxCacheSize)
-        .<String, String>build()
-        .asMap();
-    this.penguinVersion = penguinVersion;
+  pwivate ngwamcache(int maxcachesize, 😳 duwation cacheitemttw, 😳😳😳 p-penguinvewsion p-penguinvewsion) {
+    // we onwy have 1 wefweshew t-thwead that w-wwites to the cache
+    this.twendscache = cachebuiwdew.newbuiwdew()
+        .concuwwencywevew(1)
+        .expiweaftewwwite(cacheitemttw.inseconds(), (˘ω˘) timeunit.seconds)
+        .maximumsize(maxcachesize)
+        .<stwing, ʘwʘ s-stwing>buiwd()
+        .asmap();
+    this.penguinvewsion = penguinvewsion;
   }
 }

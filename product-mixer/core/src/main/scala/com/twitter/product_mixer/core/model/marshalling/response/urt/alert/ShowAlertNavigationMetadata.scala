@@ -1,3 +1,3 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.alert
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.awewt
 
-case class ShowAlertNavigationMetadata(navigateToEntryId: String)
+case c-cwass showawewtnavigationmetadata(navigatetoentwyid: s-stwing)

@@ -1,8 +1,8 @@
-package com.twitter.visibility.rules.generators
+package com.twittew.visibiwity.wuwes.genewatows
 
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.Rule
+impowt com.twittew.visibiwity.modews.safetywevew
+i-impowt com.twittew.visibiwity.wuwes.wuwe
 
-trait RuleGenerator {
-  def rulesForSurface(safetyLevel: SafetyLevel): Seq[Rule]
+t-twait w-wuwegenewatow {
+  d-def wuwesfowsuwface(safetywevew: s-safetywevew): s-seq[wuwe]
 }

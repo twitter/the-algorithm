@@ -1,35 +1,35 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finagle-internal/mtls/src/main/scala/com/twitter/finagle/mtls/authentication",
-        "merlin/util/src/main/scala",
-        "tweetypie/servo/util/src/main/scala",
-        "tweetypie/servo/util/src/main/scala:exception",
-        "src/scala/com/twitter/ads/internal/pcl/service",
-        "src/thrift/com/twitter/ads/adserver:adserver_rpc-scala",
-        "src/thrift/com/twitter/gizmoduck:thrift-scala",
-        "src/thrift/com/twitter/merlin:thrift-scala",
-        "tweetypie/common/src/thrift/com/twitter/tweetypie:service-scala",
-        "tweetypie/common/src/thrift/com/twitter/tweetypie:tweet_service_graphql-scala",
-        "stitch/stitch-core/src/main/scala/com/twitter/stitch",
-        "strato/src/main/scala/com/twitter/strato/access/filters",
-        "strato/src/main/scala/com/twitter/strato/catalog",
-        "strato/src/main/scala/com/twitter/strato/client",
-        "strato/src/main/scala/com/twitter/strato/config",
-        "strato/src/main/scala/com/twitter/strato/fed",
-        "strato/src/main/scala/com/twitter/strato/server/context",
-        "strato/src/main/scala/com/twitter/strato/thrift",
-        "tweetypie/server/src/main/scala/com/twitter/tweetypie",
-        "tweetypie/server/src/main/scala/com/twitter/tweetypie/backends",
-        "tweetypie/server/src/main/scala/com/twitter/tweetypie/federated/columns",
-        "tweetypie/server/src/main/scala/com/twitter/tweetypie/federated/context",
-        "tweetypie/server/src/main/scala/com/twitter/tweetypie/federated/prefetcheddata",
-        "tweetypie/server/src/main/scala/com/twitter/tweetypie/federated/promotedcontent",
-        "tweetypie/server/src/main/scala/com/twitter/tweetypie/repository",
-        "tweetypie/server/src/main/thrift:compiled-scala",
-        "util/util-slf4j-api/src/main/scala/com/twitter/util/logging",
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    s-stwict_deps = t-twue, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "finagwe-intewnaw/mtws/swc/main/scawa/com/twittew/finagwe/mtws/authentication", (⑅˘꒳˘)
+        "mewwin/utiw/swc/main/scawa", ( ͡o ω ͡o )
+        "tweetypie/sewvo/utiw/swc/main/scawa", UwU
+        "tweetypie/sewvo/utiw/swc/main/scawa:exception", rawr x3
+        "swc/scawa/com/twittew/ads/intewnaw/pcw/sewvice", rawr
+        "swc/thwift/com/twittew/ads/adsewvew:adsewvew_wpc-scawa",
+        "swc/thwift/com/twittew/gizmoduck:thwift-scawa", σωσ
+        "swc/thwift/com/twittew/mewwin:thwift-scawa", σωσ
+        "tweetypie/common/swc/thwift/com/twittew/tweetypie:sewvice-scawa", >_<
+        "tweetypie/common/swc/thwift/com/twittew/tweetypie:tweet_sewvice_gwaphqw-scawa", :3
+        "stitch/stitch-cowe/swc/main/scawa/com/twittew/stitch", (U ﹏ U)
+        "stwato/swc/main/scawa/com/twittew/stwato/access/fiwtews", -.-
+        "stwato/swc/main/scawa/com/twittew/stwato/catawog", (ˆ ﻌ ˆ)♡
+        "stwato/swc/main/scawa/com/twittew/stwato/cwient", (⑅˘꒳˘)
+        "stwato/swc/main/scawa/com/twittew/stwato/config", (U ᵕ U❁)
+        "stwato/swc/main/scawa/com/twittew/stwato/fed",
+        "stwato/swc/main/scawa/com/twittew/stwato/sewvew/context", -.-
+        "stwato/swc/main/scawa/com/twittew/stwato/thwift", ^^;;
+        "tweetypie/sewvew/swc/main/scawa/com/twittew/tweetypie", >_<
+        "tweetypie/sewvew/swc/main/scawa/com/twittew/tweetypie/backends", mya
+        "tweetypie/sewvew/swc/main/scawa/com/twittew/tweetypie/fedewated/cowumns", mya
+        "tweetypie/sewvew/swc/main/scawa/com/twittew/tweetypie/fedewated/context", 😳
+        "tweetypie/sewvew/swc/main/scawa/com/twittew/tweetypie/fedewated/pwefetcheddata", XD
+        "tweetypie/sewvew/swc/main/scawa/com/twittew/tweetypie/fedewated/pwomotedcontent", :3
+        "tweetypie/sewvew/swc/main/scawa/com/twittew/tweetypie/wepositowy",
+        "tweetypie/sewvew/swc/main/thwift:compiwed-scawa", 😳😳😳
+        "utiw/utiw-swf4j-api/swc/main/scawa/com/twittew/utiw/wogging", -.-
     ],
 )

@@ -1,184 +1,184 @@
-package com.twitter.servo.cache
+package com.twittew.sewvo.cache
 
-import com.google.common.primitives.{Ints, Longs}
-import com.twitter.finagle.thrift.Protocols
-import com.twitter.io.Buf
-import com.twitter.scrooge.{ThriftStruct, ThriftStructCodec, ThriftStructSerializer}
-import com.twitter.servo.util.Transformer
-import com.twitter.util.{Time => UtilTime, Try}
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
-import java.nio.ByteBuffer
-import org.apache.thrift.TBase
-import org.apache.thrift.protocol.{TCompactProtocol, TProtocolFactory}
-import org.apache.thrift.transport.TIOStreamTransport
+impowt com.googwe.common.pwimitives.{ints, 🥺 w-wongs}
+i-impowt com.twittew.finagwe.thwift.pwotocows
+i-impowt c-com.twittew.io.buf
+i-impowt com.twittew.scwooge.{thwiftstwuct, XD t-thwiftstwuctcodec, (U ᵕ U❁) t-thwiftstwuctsewiawizew}
+i-impowt com.twittew.sewvo.utiw.twansfowmew
+impowt com.twittew.utiw.{time => utiwtime, :3 twy}
+impowt java.io.{byteawwayinputstweam, ( ͡o ω ͡o ) b-byteawwayoutputstweam}
+impowt java.nio.bytebuffew
+impowt owg.apache.thwift.tbase
+i-impowt owg.apache.thwift.pwotocow.{tcompactpwotocow, òωó t-tpwotocowfactowy}
+impowt owg.apache.thwift.twanspowt.tiostweamtwanspowt
 
-object Serializers { self =>
-  val CompactProtocolFactory = new TCompactProtocol.Factory
-  val EmptyByteArray = Array.empty[Byte]
+object sewiawizews { s-sewf =>
+  vaw compactpwotocowfactowy = nyew tcompactpwotocow.factowy
+  v-vaw emptybyteawway = a-awway.empty[byte]
 
-  val Unit = Transformer[Unit, Array[Byte]](_ => EmptyByteArray, _ => ())
+  vaw unit = twansfowmew[unit, σωσ awway[byte]](_ => emptybyteawway, (U ᵕ U❁) _ => ())
 
-  object Long {
-    val Simple = Transformer[Long, Array[Byte]](Longs.toByteArray, Longs.fromByteArray)
+  object wong {
+    vaw s-simpwe = twansfowmew[wong, (✿oωo) awway[byte]](wongs.tobyteawway, ^^ wongs.fwombyteawway)
   }
 
-  object CachedLong {
-    val Compact: Serializer[Cached[Long]] =
-      new CachedSerializer(self.Long.Simple, CompactProtocolFactory)
+  object cachedwong {
+    v-vaw compact: sewiawizew[cached[wong]] =
+      new cachedsewiawizew(sewf.wong.simpwe, ^•ﻌ•^ c-compactpwotocowfactowy)
   }
 
-  object SeqLong {
-    val Simple: Serializer[Seq[Long]] = new SeqSerializer(self.Long.Simple, 8)
+  o-object seqwong {
+    v-vaw simpwe: s-sewiawizew[seq[wong]] = nyew seqsewiawizew(sewf.wong.simpwe, XD 8)
   }
 
-  object CachedSeqLong {
-    val Compact: Serializer[Cached[Seq[Long]]] =
-      new CachedSerializer(self.SeqLong.Simple, CompactProtocolFactory)
+  object c-cachedseqwong {
+    vaw compact: sewiawizew[cached[seq[wong]]] =
+      n-nyew cachedsewiawizew(sewf.seqwong.simpwe, :3 compactpwotocowfactowy)
   }
 
-  object Int {
-    val Simple = Transformer[Int, Array[Byte]](Ints.toByteArray, Ints.fromByteArray)
+  object int {
+    vaw simpwe = twansfowmew[int, (ꈍᴗꈍ) a-awway[byte]](ints.tobyteawway, :3 ints.fwombyteawway)
   }
 
-  object CachedInt {
-    val Compact: Serializer[Cached[Int]] =
-      new CachedSerializer(self.Int.Simple, CompactProtocolFactory)
+  object c-cachedint {
+    v-vaw compact: s-sewiawizew[cached[int]] =
+      nyew cachedsewiawizew(sewf.int.simpwe, (U ﹏ U) compactpwotocowfactowy)
   }
 
-  object SeqInt {
-    val Simple: Serializer[Seq[Int]] = new SeqSerializer(self.Int.Simple, 4)
+  object s-seqint {
+    vaw s-simpwe: sewiawizew[seq[int]] = nyew seqsewiawizew(sewf.int.simpwe, UwU 4)
   }
 
-  object CachedSeqInt {
-    val Compact: Serializer[Cached[Seq[Int]]] =
-      new CachedSerializer(self.SeqInt.Simple, CompactProtocolFactory)
+  o-object c-cachedseqint {
+    vaw compact: s-sewiawizew[cached[seq[int]]] =
+      nyew cachedsewiawizew(sewf.seqint.simpwe, 😳😳😳 c-compactpwotocowfactowy)
   }
 
-  object String {
-    val Utf8: Serializer[String] = Transformer.Utf8ToBytes
+  object stwing {
+    vaw utf8: s-sewiawizew[stwing] = twansfowmew.utf8tobytes
   }
 
-  object CachedString {
-    val Compact: Serializer[Cached[String]] =
-      new CachedSerializer(self.String.Utf8, CompactProtocolFactory)
+  o-object cachedstwing {
+    vaw compact: sewiawizew[cached[stwing]] =
+      nyew c-cachedsewiawizew(sewf.stwing.utf8, XD c-compactpwotocowfactowy)
   }
 
-  object SeqString {
-    val Utf8: Serializer[Seq[String]] = new SeqSerializer(self.String.Utf8)
+  object seqstwing {
+    vaw utf8: sewiawizew[seq[stwing]] = nyew seqsewiawizew(sewf.stwing.utf8)
   }
 
-  object CachedSeqString {
-    val Compact: Serializer[Cached[Seq[String]]] =
-      new CachedSerializer(self.SeqString.Utf8, CompactProtocolFactory)
-  }
-
-  /**
-   * We take care not to alter the buffer so that this conversion can
-   * safely be used multiple times with the same buffer, and that
-   * other threads cannot view other states of the buffer.
-   */
-  private[this] def byteBufferToArray(b: ByteBuffer): Array[Byte] = {
-    val a = new Array[Byte](b.remaining)
-    b.duplicate.get(a)
-    a
+  object cachedseqstwing {
+    v-vaw compact: s-sewiawizew[cached[seq[stwing]]] =
+      nyew cachedsewiawizew(sewf.seqstwing.utf8, o.O c-compactpwotocowfactowy)
   }
 
   /**
-   * Convert between a ByteBuffer and an Array of bytes. The
-   * conversion to Array[Byte] makes a copy of the data, while the
-   * reverse conversion just wraps the array.
+   * w-we take cawe nyot t-to awtew the buffew so that this convewsion can
+   * safewy b-be used muwtipwe times with the same buffew, (⑅˘꒳˘) and that
+   * othew thweads cannot v-view othew states of the buffew. 😳😳😳
    */
-  val ArrayByteBuffer: Transformer[Array[Byte], ByteBuffer] =
-    Transformer(ByteBuffer.wrap(_: Array[Byte]), byteBufferToArray)
-
-  val ArrayByteBuf: Transformer[Array[Byte], Buf] =
-    Transformer(Buf.ByteArray.Shared.apply, Buf.ByteArray.Shared.extract)
-
-  /**
-   * Isomorphism between Time and Long. The Long represents the number
-   * of nanoseconds since the epoch.
-   */
-  val TimeNanos: Transformer[UtilTime, Long] =
-    Transformer.pure[UtilTime, Long](_.inNanoseconds, UtilTime.fromNanoseconds)
+  p-pwivate[this] d-def bytebuffewtoawway(b: b-bytebuffew): awway[byte] = {
+    vaw a = new awway[byte](b.wemaining)
+    b-b.dupwicate.get(a)
+    a-a
+  }
 
   /**
-   * Transformer from Time to Array[Byte] always succeeds. The inverse
-   * transform throws BufferUnderflowException if the buffer is less
-   * than eight bytes in length. If it is greater than eight bytes,
-   * the later bytes are discarded.
+   * c-convewt between a-a bytebuffew and an awway of bytes. nyaa~~ the
+   * c-convewsion to awway[byte] m-makes a-a copy of the data, rawr w-whiwe the
+   * w-wevewse convewsion just wwaps the awway. -.-
    */
-  // This is lazy because if it is not, it may be initialized before
-  // Long.Simple. In that case, Long.Simple will be null at
-  // initialization time, and will be captured here. Unfortunately,
-  // this is dependent on the order of class initialization, which may
-  // vary between runs of a program.
-  lazy val Time: Serializer[UtilTime] = TimeNanos andThen Long.Simple
+  vaw awwaybytebuffew: t-twansfowmew[awway[byte], (✿oωo) bytebuffew] =
+    twansfowmew(bytebuffew.wwap(_: awway[byte]), /(^•ω•^) bytebuffewtoawway)
+
+  vaw awwaybytebuf: t-twansfowmew[awway[byte], 🥺 buf] =
+    twansfowmew(buf.byteawway.shawed.appwy, ʘwʘ buf.byteawway.shawed.extwact)
+
+  /**
+   * isomowphism between t-time and wong. UwU t-the wong wepwesents t-the nyumbew
+   * of nanoseconds s-since the epoch. XD
+   */
+  vaw t-timenanos: twansfowmew[utiwtime, w-wong] =
+    twansfowmew.puwe[utiwtime, (✿oωo) wong](_.innanoseconds, utiwtime.fwomnanoseconds)
+
+  /**
+   * twansfowmew fwom time to a-awway[byte] awways succeeds. :3 the i-invewse
+   * twansfowm thwows b-buffewundewfwowexception i-if the buffew is wess
+   * than eight bytes i-in wength. (///ˬ///✿) i-if it is gweatew than eight bytes, nyaa~~
+   * t-the watew b-bytes awe discawded. >w<
+   */
+  // this is wazy because if it is nyot, -.- it may be initiawized befowe
+  // w-wong.simpwe. (✿oωo) i-in that case, (˘ω˘) w-wong.simpwe wiww be nyuww at
+  // i-initiawization t-time, rawr and wiww be captuwed hewe. OwO u-unfowtunatewy, ^•ﻌ•^
+  // this is dependent on the owdew of cwass initiawization, UwU w-which may
+  // v-vawy between wuns of a pwogwam. (˘ω˘)
+  wazy vaw time: s-sewiawizew[utiwtime] = t-timenanos andthen wong.simpwe
 }
 
 /**
- * A Serializer for Thrift structs generated by Scrooge.
+ * a sewiawizew fow thwift stwucts g-genewated by scwooge. (///ˬ///✿)
  *
- * @param codec used to encode and decode structs for a given protocol
- * @param protocolFactory defines the serialization protocol to be used
+ * @pawam codec used to encode and decode stwucts fow a given pwotocow
+ * @pawam p-pwotocowfactowy defines the sewiawization p-pwotocow to b-be used
  */
-class ThriftSerializer[T <: ThriftStruct](
-  val codec: ThriftStructCodec[T],
-  val protocolFactory: TProtocolFactory)
-    extends Serializer[T]
-    with ThriftStructSerializer[T] {
-  override def to(obj: T): Try[Array[Byte]] = Try(toBytes(obj))
-  override def from(bytes: Array[Byte]): Try[T] = Try(fromBytes(bytes))
+cwass thwiftsewiawizew[t <: thwiftstwuct](
+  vaw codec: t-thwiftstwuctcodec[t], σωσ
+  v-vaw pwotocowfactowy: tpwotocowfactowy)
+    extends sewiawizew[t]
+    w-with thwiftstwuctsewiawizew[t] {
+  ovewwide def t-to(obj: t): twy[awway[byte]] = twy(tobytes(obj))
+  ovewwide def fwom(bytes: awway[byte]): t-twy[t] = twy(fwombytes(bytes))
 }
 
 /**
- * A Serializer for Thrift structs generated by the Apache code generator.
+ * a-a sewiawizew f-fow thwift stwucts genewated by t-the apache code genewatow. /(^•ω•^)
  *
- * @param tFactory a factory for Thrift-defined objects of type T. Objects
- *        yielded by the factory are read into and returned during
- *        deserialization.
+ * @pawam t-tfactowy a-a factowy fow t-thwift-defined objects of type t. 😳 o-objects
+ *        y-yiewded by the factowy awe wead into and wetuwned d-duwing
+ *        d-desewiawization.
  *
- * @param protocolFactory defines the serialization protocol to be used
+ * @pawam p-pwotocowfactowy defines the sewiawization pwotocow t-to be used
  */
-class TBaseSerializer[T <: TBase[_, _]](tFactory: () => T, protocolFactory: TProtocolFactory)
-    extends Serializer[T] {
-  override def to(obj: T): Try[Array[Byte]] = Try {
-    val baos = new ByteArrayOutputStream
-    obj.write(protocolFactory.getProtocol(new TIOStreamTransport(baos)))
-    baos.toByteArray
+cwass tbasesewiawizew[t <: t-tbase[_, 😳 _]](tfactowy: () => t, p-pwotocowfactowy: tpwotocowfactowy)
+    extends sewiawizew[t] {
+  o-ovewwide def t-to(obj: t): twy[awway[byte]] = twy {
+    v-vaw baos = n-nyew byteawwayoutputstweam
+    obj.wwite(pwotocowfactowy.getpwotocow(new t-tiostweamtwanspowt(baos)))
+    baos.tobyteawway
   }
 
-  override def from(bytes: Array[Byte]): Try[T] = Try {
-    val obj = tFactory()
-    val stream = new ByteArrayInputStream(bytes)
-    obj.read(protocolFactory.getProtocol(new TIOStreamTransport(stream)))
+  ovewwide def fwom(bytes: awway[byte]): twy[t] = twy {
+    vaw o-obj = tfactowy()
+    vaw stweam = n-nyew byteawwayinputstweam(bytes)
+    obj.wead(pwotocowfactowy.getpwotocow(new t-tiostweamtwanspowt(stweam)))
     obj
   }
 }
 
-object CachedSerializer {
-  def binary[T](valueSerializer: Serializer[T]): CachedSerializer[T] =
-    new CachedSerializer(valueSerializer, Protocols.binaryFactory())
+object c-cachedsewiawizew {
+  def binawy[t](vawuesewiawizew: s-sewiawizew[t]): c-cachedsewiawizew[t] =
+    n-nyew cachedsewiawizew(vawuesewiawizew, (⑅˘꒳˘) p-pwotocows.binawyfactowy())
 
-  def compact[T](valueSerializer: Serializer[T]): CachedSerializer[T] =
-    new CachedSerializer(valueSerializer, new TCompactProtocol.Factory)
+  d-def compact[t](vawuesewiawizew: sewiawizew[t]): cachedsewiawizew[t] =
+    nyew cachedsewiawizew(vawuesewiawizew, 😳😳😳 nyew tcompactpwotocow.factowy)
 }
 
 /**
- * A Serializer of Cached object.
+ * a sewiawizew of cached object. 😳
  *
- * @param valueSerializer an underlying serializer of the values to be cached.
- * @param protocolFactory defines the serialization protocol to be used
+ * @pawam v-vawuesewiawizew a-an u-undewwying sewiawizew of the vawues t-to be cached. XD
+ * @pawam pwotocowfactowy defines the sewiawization p-pwotocow t-to be used
  */
-class CachedSerializer[T](valueSerializer: Serializer[T], protocolFactory: TProtocolFactory)
-    extends Serializer[Cached[T]] {
-  private[this] val underlying = new ThriftSerializer(CachedValue, protocolFactory)
+cwass cachedsewiawizew[t](vawuesewiawizew: s-sewiawizew[t], mya pwotocowfactowy: tpwotocowfactowy)
+    e-extends sewiawizew[cached[t]] {
+  p-pwivate[this] vaw undewwying = n-new thwiftsewiawizew(cachedvawue, ^•ﻌ•^ p-pwotocowfactowy)
 
-  override def to(cached: Cached[T]): Try[Array[Byte]] =
-    underlying.to(cached.toCachedValue(valueSerializer))
+  ovewwide def to(cached: cached[t]): twy[awway[byte]] =
+    undewwying.to(cached.tocachedvawue(vawuesewiawizew))
 
-  private[this] val asCached: CachedValue => Cached[T] =
-    t => Cached(t, valueSerializer)
+  p-pwivate[this] v-vaw ascached: c-cachedvawue => c-cached[t] =
+    t-t => cached(t, vawuesewiawizew)
 
-  override def from(bytes: Array[Byte]): Try[Cached[T]] =
-    underlying.from(bytes).map(asCached)
+  o-ovewwide d-def fwom(bytes: awway[byte]): twy[cached[t]] =
+    u-undewwying.fwom(bytes).map(ascached)
 }

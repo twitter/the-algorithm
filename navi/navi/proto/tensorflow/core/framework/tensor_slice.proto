@@ -1,39 +1,39 @@
-// Protocol buffer representing slices of a tensor
+// pwotocow buffew wepwesenting swices o-of a tensow
 
-syntax = "proto3";
+s-syntax = "pwoto3";
 
-package tensorflow;
+p-package tensowfwow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "TensorSliceProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/tensor_slice_go_proto";
+o-option c-cc_enabwe_awenas = t-twue;
+option j-java_outew_cwassname = "tensowswicepwotos";
+option j-java_muwtipwe_fiwes = twue;
+option java_package = "owg.tensowfwow.fwamewowk";
+option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/fwamewowk/tensow_swice_go_pwoto";
 
-// Can only be interpreted if you know the corresponding TensorShape.
-message TensorSliceProto {
-  // Extent of the slice in one dimension.
-  message Extent {
-    // Either both or no attributes must be set.  When no attribute is set
-    // means: All data in that dimension.
+// can onwy be intewpweted i-if you know the cowwesponding tensowshape. 😳😳😳
+m-message tensowswicepwoto {
+  // extent of t-the swice in one dimension. o.O
+  message extent {
+    // eithew both o-ow nyo attwibutes must be set. ( ͡o ω ͡o )  w-when nyo attwibute i-is set
+    // means: aww data in that dimension. (U ﹏ U)
 
-    // Start index of the slice, starting at 0.
-    int64 start = 1;
+    // stawt index of the s-swice, (///ˬ///✿) stawting at 0. >w<
+    int64 stawt = 1;
 
-    // Length of the slice: if the length is missing or -1 we will
-    // interpret this as "everything in this dimension".  We use
-    // "oneof" to preserve information about whether the length is
-    // present without changing the serialization format from the
-    // prior proto2 version of this proto.
-    oneof has_length {
-      int64 length = 2;
+    // wength of the swice: if the w-wength is missing ow -1 we wiww
+    // i-intewpwet t-this as "evewything i-in this dimension". rawr  w-we use
+    // "oneof" to pwesewve infowmation about whethew t-the wength is
+    // pwesent without changing t-the sewiawization fowmat fwom the
+    // pwiow pwoto2 vewsion of this pwoto. mya
+    oneof has_wength {
+      i-int64 wength = 2;
     }
   }
 
-  // Extent of the slice in all tensor dimensions.
+  // e-extent of the swice i-in aww tensow d-dimensions. ^^
   //
-  // Must have one entry for each of the dimension of the tensor that this
-  // slice belongs to.  The order of sizes is the same as the order of
-  // dimensions in the TensorShape.
-  repeated Extent extent = 1;
+  // must have one entwy fow each of the dimension o-of the tensow t-that this
+  // swice bewongs t-to. 😳😳😳  the owdew o-of sizes is the same as the owdew o-of
+  // dimensions in the tensowshape. mya
+  w-wepeated extent extent = 1;
 }

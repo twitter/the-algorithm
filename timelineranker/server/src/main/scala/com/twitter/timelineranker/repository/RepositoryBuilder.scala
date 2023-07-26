@@ -1,17 +1,17 @@
-package com.twitter.timelineranker.repository
+package com.twittew.timewinewankew.wepositowy
 
-import com.twitter.timelines.visibility.model.VisibilityRule
+impowt c-com.twittew.timewines.visibiwity.modew.visibiwitywuwe
 
-object RepositoryBuilder {
-  val VisibilityRules: Set[VisibilityRule.Value] = Set(
-    VisibilityRule.Blocked,
-    VisibilityRule.BlockedBy,
-    VisibilityRule.Muted,
-    VisibilityRule.Protected,
-    VisibilityRule.AccountStatus
+o-object w-wepositowybuiwdew {
+  v-vaw visibiwitywuwes: s-set[visibiwitywuwe.vawue] = s-set(
+    v-visibiwitywuwe.bwocked, σωσ
+    visibiwitywuwe.bwockedby, >_<
+    v-visibiwitywuwe.muted, :3
+    visibiwitywuwe.pwotected, (U ﹏ U)
+    visibiwitywuwe.accountstatus
   )
 }
 
-trait RepositoryBuilder {
-  val VisibilityRules: Set[VisibilityRule.Value] = RepositoryBuilder.VisibilityRules
+twait wepositowybuiwdew {
+  vaw visibiwitywuwes: s-set[visibiwitywuwe.vawue] = wepositowybuiwdew.visibiwitywuwes
 }

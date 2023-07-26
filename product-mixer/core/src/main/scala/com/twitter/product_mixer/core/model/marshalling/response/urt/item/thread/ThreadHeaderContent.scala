@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.thread
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.thwead
 
-sealed trait ThreadHeaderContent
+seawed twait thweadheadewcontent
 
-case class UserThreadHeader(userId: Long) extends ThreadHeaderContent
+c-case cwass usewthweadheadew(usewid: w-wong) extends t-thweadheadewcontent

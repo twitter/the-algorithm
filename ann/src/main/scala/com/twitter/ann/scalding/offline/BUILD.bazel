@@ -1,44 +1,44 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-only",
+scawa_wibwawy(
+    souwces = ["*.scawa"], UwU
+    compiwew_option_sets = ["fataw_wawnings"], rawr x3
+    p-pwatfowm = "java8", rawr
+    t-tags = [
+        "bazew-compatibwe", σωσ
+        "bazew-onwy", σωσ
     ],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/bijection:scrooge",
-        "3rdparty/src/jvm/com/twitter/scalding:args",
-        "3rdparty/src/jvm/com/twitter/scalding:commons",
-        "3rdparty/src/jvm/com/twitter/scalding:core",
-        "ann/src/main/scala/com/twitter/ann/brute_force",
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/scala/com/twitter/ann/hnsw",
-        "ann/src/main/scala/com/twitter/ann/util",
-        "cortex-core/entity-embeddings/src/thrift/com/twitter/entityembeddings/neighbors:embeddings-knn-thrift-scala",
-        "src/scala/com/twitter/cortex/ml/embeddings/common:Helpers-deploy",
-        "src/scala/com/twitter/pluck/source/core_workflows/user_model:condensed_user_state-scala",
-        "src/scala/com/twitter/scalding_internal/dalv2",
-        "src/scala/com/twitter/scalding_internal/job",
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/scalding_internal/parquet_thrift",
-        "usersource/snapshot/src/main/scala/com/twitter/usersource/snapshot/flat:usersource_flat-scala",
-        "usersource/snapshot/src/main/thrift/com/twitter/usersource/snapshot/flat:flat-scala",
+    d-dependencies = [
+        "3wdpawty/jvm/com/twittew/bijection:scwooge", >_<
+        "3wdpawty/swc/jvm/com/twittew/scawding:awgs", :3
+        "3wdpawty/swc/jvm/com/twittew/scawding:commons", (U ﹏ U)
+        "3wdpawty/swc/jvm/com/twittew/scawding:cowe", -.-
+        "ann/swc/main/scawa/com/twittew/ann/bwute_fowce", (ˆ ﻌ ˆ)♡
+        "ann/swc/main/scawa/com/twittew/ann/common", (⑅˘꒳˘)
+        "ann/swc/main/scawa/com/twittew/ann/hnsw", (U ᵕ U❁)
+        "ann/swc/main/scawa/com/twittew/ann/utiw", -.-
+        "cowtex-cowe/entity-embeddings/swc/thwift/com/twittew/entityembeddings/neighbows:embeddings-knn-thwift-scawa", ^^;;
+        "swc/scawa/com/twittew/cowtex/mw/embeddings/common:hewpews-depwoy", >_<
+        "swc/scawa/com/twittew/pwuck/souwce/cowe_wowkfwows/usew_modew:condensed_usew_state-scawa", mya
+        "swc/scawa/com/twittew/scawding_intewnaw/dawv2",
+        "swc/scawa/com/twittew/scawding_intewnaw/job", mya
+        "swc/scawa/com/twittew/scawding_intewnaw/muwtifowmat/fowmat", 😳
+        "swc/scawa/com/twittew/scawding_intewnaw/pawquet_thwift", XD
+        "usewsouwce/snapshot/swc/main/scawa/com/twittew/usewsouwce/snapshot/fwat:usewsouwce_fwat-scawa", :3
+        "usewsouwce/snapshot/swc/main/thwift/com/twittew/usewsouwce/snapshot/fwat:fwat-scawa", 😳😳😳
     ],
 )
 
-hadoop_binary(
-    name = "ann-offline-deploy",
-    main = "com.twitter.scalding.Tool",
-    platform = "java8",
-    runtime_platform = "java8",
+h-hadoop_binawy(
+    n-nyame = "ann-offwine-depwoy", -.-
+    m-main = "com.twittew.scawding.toow",
+    p-pwatfowm = "java8", ( ͡o ω ͡o )
+    w-wuntime_pwatfowm = "java8", rawr x3
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
+        "bazew-compatibwe", nyaa~~
+        "bazew-compatibwe:migwated", /(^•ω•^)
+        "bazew-onwy",
+    ], rawr
     dependencies = [
-        ":offline",
-        "3rdparty/jvm/org/slf4j:slf4j-jdk14",
-    ],
+        ":offwine",
+        "3wdpawty/jvm/owg/swf4j:swf4j-jdk14", OwO
+    ], (U ﹏ U)
 )

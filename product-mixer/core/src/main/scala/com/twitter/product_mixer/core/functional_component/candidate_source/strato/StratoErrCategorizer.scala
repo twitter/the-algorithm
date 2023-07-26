@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source.strato
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.stwato
 
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.Unauthorized
-import com.twitter.stitch.Stitch
-import com.twitter.strato.response.Err
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.unauthowized
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.wesponse.eww
 
 /**
- * Categorize Strato's Err messages to our PipelineFailures.
+ * c-categowize stwato's e-eww messages t-to ouw pipewinefaiwuwes. mya
  *
- * This should be used by all strato-based candidate source, and we can
- * add more cases here as they're useful.
+ * t-this shouwd be u-used by aww stwato-based candidate souwce, 😳 and we can
+ * add mowe cases hewe as t-they'we usefuw. XD
  */
-object StratoErrCategorizer {
-  val CategorizeStratoException: PartialFunction[Throwable, Stitch[Nothing]] = {
-    case err @ Err(Err.Authorization, reason, context) =>
-      Stitch.exception(
-        PipelineFailure(Unauthorized, s"$reason [${context.toString}]", underlying = Some(err))
+object stwatoewwcategowizew {
+  vaw categowizestwatoexception: p-pawtiawfunction[thwowabwe, :3 stitch[nothing]] = {
+    c-case eww @ eww(eww.authowization, 😳😳😳 weason, -.- context) =>
+      s-stitch.exception(
+        pipewinefaiwuwe(unauthowized, ( ͡o ω ͡o ) s-s"$weason [${context.tostwing}]", rawr x3 u-undewwying = some(eww))
       )
   }
 }

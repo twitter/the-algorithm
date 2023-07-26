@@ -1,104 +1,104 @@
-namespace java com.twitter.tsp.thriftjava
-namespace py gen.twitter.tsp
-#@namespace scala com.twitter.tsp.thriftscala
-#@namespace strato com.twitter.tsp.strato
+namespace java com.twittew.tsp.thwiftjava
+nyamespace p-py gen.twittew.tsp
+#@namespace s-scawa com.twittew.tsp.thwiftscawa
+#@namespace s-stwato com.twittew.tsp.stwato
 
-include "com/twitter/contentrecommender/common.thrift"
-include "com/twitter/simclusters_v2/identifier.thrift"
-include "com/twitter/simclusters_v2/online_store.thrift"
-include "topic_listing.thrift"
+i-incwude "com/twittew/contentwecommendew/common.thwift"
+i-incwude "com/twittew/simcwustews_v2/identifiew.thwift"
+i-incwude "com/twittew/simcwustews_v2/onwine_stowe.thwift"
+i-incwude "topic_wisting.thwift"
 
-enum TopicListingSetting {
-  All = 0 // All the existing Semantic Core Entity/Topics. ie., All topics on twitter, and may or may not have been launched yet.
-  Followable = 1 // All the topics which the user is allowed to follow. ie., topics that have shipped, and user may or may not be following it.
-  Following = 2 // Only topics the user is explicitly following
-  ImplicitFollow = 3 // The topics user has not followed but implicitly may follow. ie., Only topics that user has not followed.
-} (hasPersonalData='false')
+e-enum topicwistingsetting {
+  aww = 0 // aww the existing semantic cowe entity/topics. (˘ω˘) ie., a-aww topics on twittew, nyaa~~ and may ow may nyot have b-been waunched yet. UwU
+  fowwowabwe = 1 // a-aww the topics which the usew is awwowed to fowwow. :3 ie., t-topics that have shipped, (⑅˘꒳˘) and u-usew may ow may n-nyot be fowwowing it. (///ˬ///✿)
+  fowwowing = 2 // onwy topics the usew is expwicitwy fowwowing
+  i-impwicitfowwow = 3 // the topics usew has not fowwowed but impwicitwy may f-fowwow. ^^;; ie., onwy topics that u-usew has nyot fowwowed. >_<
+} (haspewsonawdata='fawse')
 
 
-// used to tell Topic Social Proof endpoint which specific filtering can be bypassed
-enum TopicSocialProofFilteringBypassMode {
-  NotInterested = 0
-} (hasPersonalData='false')
+// u-used to t-teww topic sociaw p-pwoof endpoint which specific fiwtewing can be b-bypassed
+enum topicsociawpwooffiwtewingbypassmode {
+  nyotintewested = 0
+} (haspewsonawdata='fawse')
 
-struct TopicSocialProofRequest {
-  1: required i64 userId(personalDataType = "UserId")
-  2: required set<i64> tweetIds(personalDataType = 'TweetId')
-  3: required common.DisplayLocation displayLocation
-  4: required TopicListingSetting topicListingSetting
-  5: required topic_listing.TopicListingViewerContext context
-  6: optional set<TopicSocialProofFilteringBypassMode> bypassModes
-  7: optional map<i64, set<MetricTag>> tags
+s-stwuct topicsociawpwoofwequest {
+  1: wequiwed i64 usewid(pewsonawdatatype = "usewid")
+  2: wequiwed set<i64> tweetids(pewsonawdatatype = 'tweetid')
+  3: wequiwed common.dispwaywocation d-dispwaywocation
+  4: wequiwed t-topicwistingsetting t-topicwistingsetting
+  5: w-wequiwed topic_wisting.topicwistingviewewcontext context
+  6: optionaw s-set<topicsociawpwooffiwtewingbypassmode> b-bypassmodes
+  7: optionaw m-map<i64, rawr x3 s-set<metwictag>> tags
 }
 
-struct TopicSocialProofOptions {
-  1: required i64 userId(personalDataType = "UserId")
-  2: required common.DisplayLocation displayLocation
-  3: required TopicListingSetting topicListingSetting
-  4: required topic_listing.TopicListingViewerContext context
-  5: optional set<TopicSocialProofFilteringBypassMode> bypassModes
-  6: optional map<i64, set<MetricTag>> tags
+stwuct topicsociawpwoofoptions {
+  1: w-wequiwed i64 usewid(pewsonawdatatype = "usewid")
+  2: w-wequiwed common.dispwaywocation dispwaywocation
+  3: wequiwed t-topicwistingsetting topicwistingsetting
+  4: wequiwed t-topic_wisting.topicwistingviewewcontext context
+  5: optionaw s-set<topicsociawpwooffiwtewingbypassmode> bypassmodes
+  6: o-optionaw map<i64, /(^•ω•^) set<metwictag>> tags
 }
 
-struct TopicSocialProofResponse {
-  1: required map<i64, list<TopicWithScore>> socialProofs
-}(hasPersonalData='false')
+stwuct topicsociawpwoofwesponse {
+  1: wequiwed map<i64, :3 wist<topicwithscowe>> sociawpwoofs
+}(haspewsonawdata='fawse')
 
-// Distinguishes between how a topic tweet is generated. Useful for metric tracking and debugging
-enum TopicTweetType {
-  // CrOON candidates
-  UserInterestedIn        = 1
-  Twistly                 = 2
-  // crTopic candidates
-  SkitConsumerEmbeddings  = 100
-  SkitProducerEmbeddings  = 101
-  SkitHighPrecision       = 102
-  SkitInterestBrowser     = 103
-  Certo                   = 104
-}(persisted='true')
+// d-distinguishes b-between how a topic tweet is g-genewated. (ꈍᴗꈍ) usefuw f-fow metwic twacking a-and debugging
+enum topictweettype {
+  // cwoon candidates
+  usewintewestedin        = 1
+  t-twistwy                 = 2
+  // cwtopic candidates
+  skitconsumewembeddings  = 100
+  skitpwoducewembeddings  = 101
+  skithighpwecision       = 102
+  s-skitintewestbwowsew     = 103
+  cewto                   = 104
+}(pewsisted='twue')
 
-struct TopicWithScore {
-  1: required i64 topicId
-  2: required double score // score used to rank topics relative to one another
-  3: optional TopicTweetType algorithmType // how the topic is generated
-  4: optional TopicFollowType topicFollowType // Whether the topic is being explicitly or implicily followed
-}(persisted='true', hasPersonalData='false')
-
-
-struct ScoreKey {
-  1: required identifier.EmbeddingType userEmbeddingType
-  2: required identifier.EmbeddingType topicEmbeddingType
-  3: required online_store.ModelVersion modelVersion
-}(persisted='true', hasPersonalData='false')
-
-struct UserTopicScore {
-  1: required map<ScoreKey, double> scores
-}(persisted='true', hasPersonalData='false')
+s-stwuct t-topicwithscowe {
+  1: w-wequiwed i64 topicid
+  2: w-wequiwed doubwe s-scowe // scowe used t-to wank topics w-wewative to one anothew
+  3: optionaw topictweettype a-awgowithmtype // h-how the t-topic is genewated
+  4: o-optionaw t-topicfowwowtype topicfowwowtype // whethew the topic is being e-expwicitwy ow impwiciwy fowwowed
+}(pewsisted='twue', /(^•ω•^) haspewsonawdata='fawse')
 
 
-enum TopicFollowType {
-  Following = 1
-  ImplicitFollow = 2
-}(persisted='true')
+stwuct scowekey {
+  1: wequiwed identifiew.embeddingtype u-usewembeddingtype
+  2: wequiwed identifiew.embeddingtype topicembeddingtype
+  3: wequiwed o-onwine_stowe.modewvewsion m-modewvewsion
+}(pewsisted='twue', (⑅˘꒳˘) h-haspewsonawdata='fawse')
 
-// Provide the Tags which provides the Recommended Tweets Source Signal and other context.
-// Warning: Please don't use this tag in any ML Features or business logic.
-enum MetricTag {
-  // Source Signal Tags
-  TweetFavorite         = 0
-  Retweet               = 1
-
-  UserFollow            = 101
-  PushOpenOrNtabClick   = 201
-
-  HomeTweetClick        = 301
-  HomeVideoView         = 302
-  HomeSongbirdShowMore  = 303
+stwuct usewtopicscowe {
+  1: w-wequiwed map<scowekey, ( ͡o ω ͡o ) doubwe> s-scowes
+}(pewsisted='twue', òωó haspewsonawdata='fawse')
 
 
-  InterestsRankerRecentSearches = 401  // For Interests Candidate Expansion
+e-enum topicfowwowtype {
+  fowwowing = 1
+  impwicitfowwow = 2
+}(pewsisted='twue')
 
-  UserInterestedIn      = 501
-  MBCG                = 503
-  // Other Metric Tags
-} (persisted='true', hasPersonalData='true')
+// pwovide the tags which pwovides the w-wecommended tweets souwce signaw a-and othew context. (⑅˘꒳˘)
+// wawning: p-pwease don't use t-this tag in any mw featuwes ow business wogic. XD
+e-enum metwictag {
+  // s-souwce signaw tags
+  tweetfavowite         = 0
+  w-wetweet               = 1
+
+  u-usewfowwow            = 101
+  pushopenowntabcwick   = 201
+
+  hometweetcwick        = 301
+  homevideoview         = 302
+  homesongbiwdshowmowe  = 303
+
+
+  intewestswankewwecentseawches = 401  // fow intewests c-candidate expansion
+
+  u-usewintewestedin      = 501
+  m-mbcg                = 503
+  // othew metwic t-tags
+} (pewsisted='twue', -.- h-haspewsonawdata='twue')

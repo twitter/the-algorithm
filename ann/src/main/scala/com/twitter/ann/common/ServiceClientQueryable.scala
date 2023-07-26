@@ -1,64 +1,64 @@
-package com.twitter.ann.common
+package com.twittew.ann.common
 
-import com.twitter.ann.common.EmbeddingType._
-import com.twitter.ann.common.thriftscala.{
-  NearestNeighborQuery,
-  NearestNeighborResult,
-  Distance => ServiceDistance,
-  RuntimeParams => ServiceRuntimeParams
+impowt com.twittew.ann.common.embeddingtype._
+i-impowt c-com.twittew.ann.common.thwiftscawa.{
+  n-nyeawestneighbowquewy, /(^•ω•^)
+  n-nyeawestneighbowwesuwt, ʘwʘ
+  d-distance => s-sewvicedistance, σωσ
+  w-wuntimepawams => s-sewvicewuntimepawams
 }
-import com.twitter.bijection.Injection
-import com.twitter.finagle.Service
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec
-import com.twitter.util.Future
+impowt com.twittew.bijection.injection
+impowt com.twittew.finagwe.sewvice
+impowt com.twittew.mediasewvices.commons.codec.awwaybytebuffewcodec
+i-impowt com.twittew.utiw.futuwe
 
-class ServiceClientQueryable[T, P <: RuntimeParams, D <: Distance[D]](
-  service: Service[NearestNeighborQuery, NearestNeighborResult],
-  runtimeParamInjection: Injection[P, ServiceRuntimeParams],
-  distanceInjection: Injection[D, ServiceDistance],
-  idInjection: Injection[T, Array[Byte]])
-    extends Queryable[T, P, D] {
-  override def query(
-    embedding: EmbeddingVector,
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Future[List[T]] = {
-    service
-      .apply(
-        NearestNeighborQuery(
-          embeddingSerDe.toThrift(embedding),
-          withDistance = false,
-          runtimeParamInjection(runtimeParams),
-          numOfNeighbors
+cwass sewvicecwientquewyabwe[t, OwO p <: wuntimepawams, 😳😳😳 d-d <: distance[d]](
+  sewvice: s-sewvice[neawestneighbowquewy, 😳😳😳 nyeawestneighbowwesuwt], o.O
+  wuntimepawaminjection: injection[p, ( ͡o ω ͡o ) s-sewvicewuntimepawams], (U ﹏ U)
+  distanceinjection: i-injection[d, (///ˬ///✿) s-sewvicedistance], >w<
+  idinjection: injection[t, rawr awway[byte]])
+    extends quewyabwe[t, mya p-p, ^^ d] {
+  ovewwide def quewy(
+    embedding: embeddingvectow, 😳😳😳
+    numofneighbows: int, mya
+    wuntimepawams: p-p
+  ): futuwe[wist[t]] = {
+    s-sewvice
+      .appwy(
+        n-nyeawestneighbowquewy(
+          e-embeddingsewde.tothwift(embedding), 😳
+          w-withdistance = fawse, -.-
+          wuntimepawaminjection(wuntimepawams), 🥺
+          n-nyumofneighbows
         )
       )
-      .map { result =>
-        result.nearestNeighbors.map { nearestNeighbor =>
-          idInjection.invert(ArrayByteBufferCodec.decode(nearestNeighbor.id)).get
-        }.toList
+      .map { wesuwt =>
+        wesuwt.neawestneighbows.map { n-nyeawestneighbow =>
+          idinjection.invewt(awwaybytebuffewcodec.decode(neawestneighbow.id)).get
+        }.towist
       }
   }
 
-  override def queryWithDistance(
-    embedding: EmbeddingVector,
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Future[List[NeighborWithDistance[T, D]]] =
-    service
-      .apply(
-        NearestNeighborQuery(
-          embeddingSerDe.toThrift(embedding),
-          withDistance = true,
-          runtimeParamInjection(runtimeParams),
-          numOfNeighbors
+  ovewwide def quewywithdistance(
+    embedding: embeddingvectow, o.O
+    nyumofneighbows: int, /(^•ω•^)
+    wuntimepawams: p-p
+  ): futuwe[wist[neighbowwithdistance[t, nyaa~~ d]]] =
+    sewvice
+      .appwy(
+        n-nyeawestneighbowquewy(
+          e-embeddingsewde.tothwift(embedding), nyaa~~
+          w-withdistance = twue, :3
+          wuntimepawaminjection(wuntimepawams), 😳😳😳
+          nyumofneighbows
         )
       )
-      .map { result =>
-        result.nearestNeighbors.map { nearestNeighbor =>
-          NeighborWithDistance(
-            idInjection.invert(ArrayByteBufferCodec.decode(nearestNeighbor.id)).get,
-            distanceInjection.invert(nearestNeighbor.distance.get).get
+      .map { w-wesuwt =>
+        w-wesuwt.neawestneighbows.map { nyeawestneighbow =>
+          n-nyeighbowwithdistance(
+            i-idinjection.invewt(awwaybytebuffewcodec.decode(neawestneighbow.id)).get, (˘ω˘)
+            distanceinjection.invewt(neawestneighbow.distance.get).get
           )
-        }.toList
+        }.towist
       }
 }

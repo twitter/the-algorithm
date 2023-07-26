@@ -1,68 +1,68 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.gizmoduck.thriftscala.LookupContext
-import com.twitter.gizmoduck.thriftscala.ModifiedAccount
-import com.twitter.gizmoduck.thriftscala.ModifiedUser
-import com.twitter.tweetypie.backends.Gizmoduck
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.gizmoduck.thwiftscawa.wookupcontext
+i-impowt com.twittew.gizmoduck.thwiftscawa.modifiedaccount
+i-impowt c-com.twittew.gizmoduck.thwiftscawa.modifiedusew
+i-impowt com.twittew.tweetypie.backends.gizmoduck
+i-impowt com.twittew.tweetypie.thwiftscawa._
 
-trait GizmoduckUserGeotagUpdateStore
-    extends TweetStoreBase[GizmoduckUserGeotagUpdateStore]
-    with AsyncInsertTweet.Store
-    with ScrubGeoUpdateUserTimestamp.Store {
-  def wrap(w: TweetStore.Wrap): GizmoduckUserGeotagUpdateStore =
-    new TweetStoreWrapper(w, this)
-      with GizmoduckUserGeotagUpdateStore
-      with AsyncInsertTweet.StoreWrapper
-      with ScrubGeoUpdateUserTimestamp.StoreWrapper
+t-twait gizmoduckusewgeotagupdatestowe
+    extends tweetstowebase[gizmoduckusewgeotagupdatestowe]
+    with asyncinsewttweet.stowe
+    with scwubgeoupdateusewtimestamp.stowe {
+  d-def wwap(w: tweetstowe.wwap): gizmoduckusewgeotagupdatestowe =
+    n-nyew tweetstowewwappew(w, (˘ω˘) this)
+      w-with gizmoduckusewgeotagupdatestowe
+      with asyncinsewttweet.stowewwappew
+      with scwubgeoupdateusewtimestamp.stowewwappew
 }
 
 /**
- * A TweetStore implementation that updates a Gizmoduck user's user_has_geotagged_status flag.
- * If a tweet is geotagged and the user's flag is not set, call out to Gizmoduck to update it.
+ * a tweetstowe impwementation t-that updates a gizmoduck u-usew's usew_has_geotagged_status f-fwag. >_<
+ * if a tweet is geotagged and the usew's fwag is nyot set, -.- caww out t-to gizmoduck to update it. 🥺
  */
-object GizmoduckUserGeotagUpdateStore {
-  val Action: AsyncWriteAction.UserGeotagUpdate.type = AsyncWriteAction.UserGeotagUpdate
+object gizmoduckusewgeotagupdatestowe {
+  vaw action: asyncwwiteaction.usewgeotagupdate.type = a-asyncwwiteaction.usewgeotagupdate
 
-  def apply(
-    modifyAndGet: Gizmoduck.ModifyAndGet,
-    stats: StatsReceiver
-  ): GizmoduckUserGeotagUpdateStore = {
-    // Counts the number of times that the scrubGeo actually cleared the
-    // hasGeotaggedStatuses bit for a user.
-    val clearedCounter = stats.counter("has_geotag_cleared")
+  def appwy(
+    m-modifyandget: g-gizmoduck.modifyandget, (U ﹏ U)
+    s-stats: s-statsweceivew
+  ): gizmoduckusewgeotagupdatestowe = {
+    // counts the nyumbew o-of times that the scwubgeo actuawwy cweawed t-the
+    // hasgeotaggedstatuses bit fow a usew. >w<
+    vaw cweawedcountew = stats.countew("has_geotag_cweawed")
 
-    // Counts the number of times that asyncInsertTweet actually set the
-    // hasGeotaggedStatuses bit for a user.
-    val setCounter = stats.counter("has_geotag_set")
+    // counts the nyumbew of times t-that asyncinsewttweet actuawwy s-set the
+    // h-hasgeotaggedstatuses b-bit fow a usew. mya
+    vaw setcountew = stats.countew("has_geotag_set")
 
-    def setHasGeotaggedStatuses(value: Boolean): FutureEffect[UserId] = {
-      val modifiedAccount = ModifiedAccount(hasGeotaggedStatuses = Some(value))
-      val modifiedUser = ModifiedUser(account = Some(modifiedAccount))
-      FutureEffect(userId => modifyAndGet((LookupContext(), userId, modifiedUser)).unit)
+    def sethasgeotaggedstatuses(vawue: b-boowean): futuweeffect[usewid] = {
+      v-vaw modifiedaccount = modifiedaccount(hasgeotaggedstatuses = s-some(vawue))
+      v-vaw modifiedusew = modifiedusew(account = s-some(modifiedaccount))
+      futuweeffect(usewid => m-modifyandget((wookupcontext(), >w< usewid, modifiedusew)).unit)
     }
 
-    new GizmoduckUserGeotagUpdateStore {
-      override val asyncInsertTweet: FutureEffect[AsyncInsertTweet.Event] =
-        setHasGeotaggedStatuses(true)
-          .contramap[AsyncInsertTweet.Event](_.user.id)
-          .onSuccess(_ => setCounter.incr())
-          .onlyIf { e =>
-            // only with geo info and an account that doesn't yet have geotagged statuses flag set
-            hasGeo(e.tweet) && (e.user.account.exists(!_.hasGeotaggedStatuses))
+    n-nyew gizmoduckusewgeotagupdatestowe {
+      ovewwide v-vaw asyncinsewttweet: futuweeffect[asyncinsewttweet.event] =
+        s-sethasgeotaggedstatuses(twue)
+          .contwamap[asyncinsewttweet.event](_.usew.id)
+          .onsuccess(_ => s-setcountew.incw())
+          .onwyif { e =>
+            // onwy with geo info and an account that doesn't yet have geotagged statuses f-fwag set
+            h-hasgeo(e.tweet) && (e.usew.account.exists(!_.hasgeotaggedstatuses))
           }
 
-      override val retryAsyncInsertTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncInsertTweet.Event]
+      ovewwide v-vaw wetwyasyncinsewttweet: f-futuweeffect[
+        t-tweetstowewetwyevent[asyncinsewttweet.event]
       ] =
-        TweetStore.retry(Action, asyncInsertTweet)
+        tweetstowe.wetwy(action, asyncinsewttweet)
 
-      override val scrubGeoUpdateUserTimestamp: FutureEffect[ScrubGeoUpdateUserTimestamp.Event] =
-        setHasGeotaggedStatuses(false)
-          .contramap[ScrubGeoUpdateUserTimestamp.Event](_.userId)
-          .onlyIf(_.mightHaveGeotaggedStatuses)
-          .onSuccess(_ => clearedCounter.incr())
+      ovewwide v-vaw scwubgeoupdateusewtimestamp: futuweeffect[scwubgeoupdateusewtimestamp.event] =
+        sethasgeotaggedstatuses(fawse)
+          .contwamap[scwubgeoupdateusewtimestamp.event](_.usewid)
+          .onwyif(_.mighthavegeotaggedstatuses)
+          .onsuccess(_ => cweawedcountew.incw())
     }
   }
 }

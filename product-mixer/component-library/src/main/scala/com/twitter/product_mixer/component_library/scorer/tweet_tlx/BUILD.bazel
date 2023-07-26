@@ -1,26 +1,26 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/configapi",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/scorer",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
-        "src/thrift/com/twitter/ml/featurestore/timelines:ml-features-timelines-scala",
-        "src/thrift/com/twitter/timelinescorer:thrift-scala",
-        "src/thrift/com/twitter/timelinescorer/server/internal:thrift-scala",
-        "strato/config/columns/ml/featureStore:featureStore-strato-client",
+scawa_wibwawy(
+    souwces = ["*.scawa"], òωó
+    compiwew_option_sets = ["fataw_wawnings"], o.O
+    s-stwict_deps = t-twue, (U ᵕ U❁)
+    t-tags = ["bazew-compatibwe"], (⑅˘꒳˘)
+    d-dependencies = [
+        "3wdpawty/jvm/javax/inject:javax.inject",
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/configapi", ( ͡o ω ͡o )
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/scowew", UwU
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine", rawr x3
+        "swc/thwift/com/twittew/mw/featuwestowe/timewines:mw-featuwes-timewines-scawa",
+        "swc/thwift/com/twittew/timewinescowew:thwift-scawa", rawr
+        "swc/thwift/com/twittew/timewinescowew/sewvew/intewnaw:thwift-scawa", σωσ
+        "stwato/config/cowumns/mw/featuwestowe:featuwestowe-stwato-cwient", σωσ
     ],
-    exports = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/configapi",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/scorer",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
-        "src/thrift/com/twitter/ml/featurestore/timelines:ml-features-timelines-scala",
-        "src/thrift/com/twitter/timelinescorer:thrift-scala",
-        "src/thrift/com/twitter/timelinescorer/server/internal:thrift-scala",
-        "strato/config/columns/ml/featureStore:featureStore-strato-client",
-    ],
+    e-expowts = [
+        "3wdpawty/jvm/javax/inject:javax.inject", >_<
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/configapi", :3
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/scowew", (U ﹏ U)
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine", -.-
+        "swc/thwift/com/twittew/mw/featuwestowe/timewines:mw-featuwes-timewines-scawa", (ˆ ﻌ ˆ)♡
+        "swc/thwift/com/twittew/timewinescowew:thwift-scawa", (⑅˘꒳˘)
+        "swc/thwift/com/twittew/timewinescowew/sewvew/intewnaw:thwift-scawa", (U ᵕ U❁)
+        "stwato/config/cowumns/mw/featuwestowe:featuwestowe-stwato-cwient", -.-
+    ], ^^;;
 )

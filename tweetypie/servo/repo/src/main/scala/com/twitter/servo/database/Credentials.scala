@@ -1,22 +1,22 @@
-package com.twitter.servo.database
+package com.twittew.sewvo.database
 
-import com.twitter.util.security
-import java.io.File
+impowt com.twittew.utiw.secuwity
+i-impowt java.io.fiwe
 
-sealed trait Credentials {
-  def username: String
-  def password: String
+s-seawed t-twait cwedentiaws {
+  d-def usewname: s-stwing
+  def p-passwowd: stwing
 }
 
-case class InlineCredentials(username: String, password: String) extends Credentials
+c-case cwass i-inwinecwedentiaws(usewname: stwing, mya passwowd: stwing) extends cwedentiaws
 
-case class FileCredentials(
-  path: String,
-  usernameField: String = "db_username",
-  passwordField: String = "db_password")
-    extends Credentials {
-  lazy val (username, password) = {
-    val credentials = security.Credentials(new File(path))
-    (credentials(usernameField), credentials(passwordField))
+case c-cwass fiwecwedentiaws(
+  path: stwing, 😳
+  usewnamefiewd: s-stwing = "db_usewname", XD
+  passwowdfiewd: s-stwing = "db_passwowd")
+    extends cwedentiaws {
+  wazy vaw (usewname, :3 p-passwowd) = {
+    vaw cwedentiaws = s-secuwity.cwedentiaws(new f-fiwe(path))
+    (cwedentiaws(usewnamefiewd), 😳😳😳 cwedentiaws(passwowdfiewd))
   }
 }

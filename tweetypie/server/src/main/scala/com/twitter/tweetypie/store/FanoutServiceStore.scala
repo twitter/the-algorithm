@@ -1,38 +1,38 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.timelineservice.fanout.thriftscala.FanoutService
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.timewinesewvice.fanout.thwiftscawa.fanoutsewvice
+i-impowt com.twittew.tweetypie.thwiftscawa._
 
-trait FanoutServiceStore extends TweetStoreBase[FanoutServiceStore] with AsyncInsertTweet.Store {
-  def wrap(w: TweetStore.Wrap): FanoutServiceStore =
-    new TweetStoreWrapper(w, this) with FanoutServiceStore with AsyncInsertTweet.StoreWrapper
+t-twait f-fanoutsewvicestowe e-extends tweetstowebase[fanoutsewvicestowe] w-with asyncinsewttweet.stowe {
+  d-def wwap(w: tweetstowe.wwap): fanoutsewvicestowe =
+    nyew tweetstowewwappew(w, (✿oωo) this) with fanoutsewvicestowe with asyncinsewttweet.stowewwappew
 }
 
-object FanoutServiceStore {
-  val Action: AsyncWriteAction.FanoutDelivery.type = AsyncWriteAction.FanoutDelivery
+o-object fanoutsewvicestowe {
+  vaw action: asyncwwiteaction.fanoutdewivewy.type = asyncwwiteaction.fanoutdewivewy
 
-  def apply(
-    fanoutClient: FanoutService.MethodPerEndpoint,
-    stats: StatsReceiver
-  ): FanoutServiceStore =
-    new FanoutServiceStore {
-      override val asyncInsertTweet: FutureEffect[AsyncInsertTweet.Event] =
-        FutureEffect[AsyncInsertTweet.Event] { event =>
-          fanoutClient.tweetCreateEvent2(
-            TweetCreateEvent(
-              tweet = event.tweet,
-              user = event.user,
-              sourceTweet = event.sourceTweet,
-              sourceUser = event.sourceUser,
-              additionalContext = event.additionalContext,
-              transientContext = event.transientContext
+  d-def appwy(
+    fanoutcwient: f-fanoutsewvice.methodpewendpoint, (ˆ ﻌ ˆ)♡
+    stats: statsweceivew
+  ): fanoutsewvicestowe =
+    n-nyew fanoutsewvicestowe {
+      o-ovewwide v-vaw asyncinsewttweet: futuweeffect[asyncinsewttweet.event] =
+        futuweeffect[asyncinsewttweet.event] { event =>
+          fanoutcwient.tweetcweateevent2(
+            t-tweetcweateevent(
+              tweet = event.tweet, (˘ω˘)
+              usew = event.usew, (⑅˘꒳˘)
+              souwcetweet = event.souwcetweet, (///ˬ///✿)
+              s-souwceusew = event.souwceusew, 😳😳😳
+              a-additionawcontext = e-event.additionawcontext, 🥺
+              t-twansientcontext = e-event.twansientcontext
             )
           )
         }
 
-      override val retryAsyncInsertTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncInsertTweet.Event]
-      ] = TweetStore.retry(Action, asyncInsertTweet)
+      ovewwide vaw wetwyasyncinsewttweet: futuweeffect[
+        t-tweetstowewetwyevent[asyncinsewttweet.event]
+      ] = tweetstowe.wetwy(action, mya asyncinsewttweet)
     }
 }

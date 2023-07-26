@@ -1,27 +1,27 @@
 """
-Functions to query devices being used by tensorflow
+functions to quewy devices being u-used by tensowfwow
 """
 
-from tensorflow.python.client import device_lib
+f-fwom t-tensowfwow.python.cwient i-impowt d-device_wib
 
 
-def get_device_map():
-  """Returns the map of device name to device type"""
-  local_device_protos = device_lib.list_local_devices()
-  return {x.name: x.device_type for x in local_device_protos}
+def g-get_device_map():
+  """wetuwns t-the map of device n-nyame to device type"""
+  wocaw_device_pwotos = device_wib.wist_wocaw_devices()
+  wetuwn {x.name: x.device_type f-fow x in wocaw_device_pwotos}
 
 
-def get_gpu_list():
-  """Returns the list of GPUs available"""
-  device_map = get_device_map()
-  return [name for name in device_map if device_map[name] == 'GPU']
+def get_gpu_wist():
+  """wetuwns the wist of g-gpus avaiwabwe"""
+  device_map = g-get_device_map()
+  wetuwn [name fow nyame in device_map if device_map[name] == 'gpu']
 
 
-def get_gpu_count():
-  """Returns the count of GPUs available"""
-  return len(get_gpu_list())
+d-def get_gpu_count():
+  """wetuwns the count o-of gpus avaiwabwe"""
+  w-wetuwn wen(get_gpu_wist())
 
 
-def is_gpu_available():
-  """Returns if GPUs are available"""
-  return get_gpu_count() > 0
+def is_gpu_avaiwabwe():
+  """wetuwns if gpus awe avaiwabwe"""
+  w-wetuwn get_gpu_count() > 0

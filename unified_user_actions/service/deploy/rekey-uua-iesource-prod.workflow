@@ -1,66 +1,66 @@
 {
-  "role": "discode",
-  "name": "rekey-uua-iesource-prod",
-  "config-files": [
-    "rekey-uua-iesource.aurora"
-  ],
-  "build": {
-    "play": true,
-    "trigger": {
-      "cron-schedule": "0 17 * * 2"
-    },
+  "wowe": "discode", XD
+  "name": "wekey-uua-iesouwce-pwod", >_<
+  "config-fiwes": [
+    "wekey-uua-iesouwce.auwowa"
+  ], (ꈍᴗꈍ)
+  "buiwd": {
+    "pway": twue, ^•ﻌ•^
+    "twiggew": {
+      "cwon-scheduwe": "0 17 * * 2"
+    }, OwO
     "dependencies": [
       {
-        "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "wowe": "packew", 🥺
+        "name": "packew-cwient-no-pex", òωó
+        "vewsion": "watest"
       }
-    ],
+    ], o.O
     "steps": [
       {
-        "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:rekey-uua-iesource"
-      },
+        "type": "bazew-bundwe", (U ᵕ U❁)
+        "name": "bundwe", (⑅˘꒳˘)
+        "tawget": "unified_usew_actions/sewvice/swc/main/scawa:wekey-uua-iesouwce"
+      }, ( ͡o ω ͡o )
       {
-        "type": "packer",
-        "name": "rekey-uua-iesource",
-        "artifact": "./dist/rekey-uua-iesource.zip"
+        "type": "packew", UwU
+        "name": "wekey-uua-iesouwce", rawr x3
+        "awtifact": "./dist/wekey-uua-iesouwce.zip"
       }
     ]
-  },
-  "targets": [
+  }, rawr
+  "tawgets": [
     {
-      "type": "group",
-      "name": "prod",
-      "targets": [
+      "type": "gwoup", σωσ
+      "name": "pwod", σωσ
+      "tawgets": [
         {
-          "name": "rekey-uua-iesource-prod-atla",
-          "key": "atla/discode/prod/rekey-uua-iesource"
-        },
+          "name": "wekey-uua-iesouwce-pwod-atwa", >_<
+          "key": "atwa/discode/pwod/wekey-uua-iesouwce"
+        }, :3
         {
-          "name": "rekey-uua-iesource-prod-pdxa",
-          "key": "pdxa/discode/prod/rekey-uua-iesource"
+          "name": "wekey-uua-iesouwce-pwod-pdxa", (U ﹏ U)
+          "key": "pdxa/discode/pwod/wekey-uua-iesouwce"
         }
       ]
     }
-  ],
-  "subscriptions": [
+  ], -.-
+  "subscwiptions": [
    {
-     "type": "SLACK",
-     "recipients": [
+     "type": "swack", (ˆ ﻌ ˆ)♡
+     "wecipients": [
        {
-         "to": "discode-oncall"
+         "to": "discode-oncaww"
        }
-     ],
-     "events": ["WORKFLOW_SUCCESS"]
-   },
+     ], (⑅˘꒳˘)
+     "events": ["wowkfwow_success"]
+   }, (U ᵕ U❁)
    {
-     "type": "SLACK",
-     "recipients": [{
-       "to": "discode-oncall"
-     }],
-     "events": ["*FAILED"]
+     "type": "swack", -.-
+     "wecipients": [{
+       "to": "discode-oncaww"
+     }], ^^;;
+     "events": ["*faiwed"]
    }
   ]
 }

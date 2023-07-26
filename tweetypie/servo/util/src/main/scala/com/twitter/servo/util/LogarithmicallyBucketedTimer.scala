@@ -1,39 +1,39 @@
-package com.twitter.servo.util
+package com.twittew.sewvo.utiw
 
-import com.twitter.finagle.stats.{StatsReceiver, Stat}
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.{statsweceivew, s-stat}
+impowt com.twittew.utiw.futuwe
 
-object LogarithmicallyBucketedTimer {
-  val LatencyStatName = "latency_ms"
+o-object wogawithmicawwybucketedtimew {
+  v-vaw w-watencystatname = "watency_ms"
 }
 
 /**
- * helper to bucket timings by quantity. it produces base10 and baseE log buckets.
+ * h-hewpew t-to bucket timings b-by quantity. nyaa~~ i-it pwoduces base10 and basee wog buckets. (⑅˘꒳˘)
  */
-class LogarithmicallyBucketedTimer(
-  statsReceiver: StatsReceiver,
-  prefix: String = LogarithmicallyBucketedTimer.LatencyStatName) {
+cwass wogawithmicawwybucketedtimew(
+  statsweceivew: s-statsweceivew, rawr x3
+  pwefix: stwing = wogawithmicawwybucketedtimew.watencystatname) {
 
-  protected[this] def base10Key(count: Int) =
-    prefix + "_log_10_" + math.floor(math.log10(count)).toInt
+  p-pwotected[this] def base10key(count: i-int) =
+    pwefix + "_wog_10_" + math.fwoow(math.wog10(count)).toint
 
-  protected[this] def baseEKey(count: Int) =
-    prefix + "_log_E_" + math.floor(math.log(count)).toInt
+  pwotected[this] def baseekey(count: i-int) =
+    pwefix + "_wog_e_" + m-math.fwoow(math.wog(count)).toint
 
   /**
-   * takes the base10 and baseE logs of the count, adds timings to the
-   * appropriate buckets
+   * t-takes the base10 and basee wogs of the count, (✿oωo) adds timings to the
+   * appwopwiate b-buckets
    */
-  def apply[T](count: Int = 0)(f: => Future[T]) = {
-    Stat.timeFuture(statsReceiver.stat(prefix)) {
-      // only bucketize for positive, non-zero counts
-      if (count > 0) {
-        Stat.timeFuture(statsReceiver.stat(base10Key(count))) {
-          Stat.timeFuture(statsReceiver.stat(baseEKey(count))) {
-            f
+  def appwy[t](count: int = 0)(f: => futuwe[t]) = {
+    stat.timefutuwe(statsweceivew.stat(pwefix)) {
+      // onwy bucketize f-fow positive, (ˆ ﻌ ˆ)♡ nyon-zewo counts
+      i-if (count > 0) {
+        s-stat.timefutuwe(statsweceivew.stat(base10key(count))) {
+          s-stat.timefutuwe(statsweceivew.stat(baseekey(count))) {
+            f-f
           }
         }
-      } else {
+      } ewse {
         f
       }
     }

@@ -1,97 +1,97 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graph_feature_service.{thriftscala => gfs}
-import com.twitter.home_mixer.model.HomeFeatures.FollowedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.FromInNetworkSourceFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.GraphTwoHopRepository
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.home_mixer.util.ObservedKeyValueResultHandler
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.prediction.adapters.two_hop_features.TwoHopFeaturesAdapter
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.gwaph_featuwe_sewvice.{thwiftscawa => g-gfs}
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.fowwowedbyusewidsfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.fwominnetwowksouwcefeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.iswetweetfeatuwe
+i-impowt com.twittew.home_mixew.pawam.homemixewinjectionnames.gwaphtwohopwepositowy
+impowt com.twittew.home_mixew.utiw.candidatesutiw
+impowt com.twittew.home_mixew.utiw.obsewvedkeyvawuewesuwthandwew
+i-impowt com.twittew.mw.api.datawecowd
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.datawecowdinafeatuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.utiw.offwoadfutuwepoows
+i-impowt com.twittew.sewvo.wepositowy.keyvawuewepositowy
+impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.pwediction.adaptews.two_hop_featuwes.twohopfeatuwesadaptew
+impowt c-com.twittew.utiw.twy
+impowt javax.inject.inject
+i-impowt javax.inject.named
+i-impowt j-javax.inject.singweton
+i-impowt scawa.cowwection.javaconvewtews._
 
-object GraphTwoHopFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+object gwaphtwohopfeatuwe
+    extends datawecowdinafeatuwe[tweetcandidate]
+    w-with featuwewithdefauwtonfaiwuwe[tweetcandidate, rawr datawecowd] {
+  ovewwide def defauwtvawue: d-datawecowd = nyew datawecowd()
 }
 
-@Singleton
-class GraphTwoHopFeatureHydrator @Inject() (
-  @Named(GraphTwoHopRepository) client: KeyValueRepository[(Seq[Long], Long), Long, Seq[
-    gfs.IntersectionValue
-  ]],
-  override val statsReceiver: StatsReceiver)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate]
-    with ObservedKeyValueResultHandler {
+@singweton
+cwass gwaphtwohopfeatuwehydwatow @inject() (
+  @named(gwaphtwohopwepositowy) cwient: keyvawuewepositowy[(seq[wong], 😳 wong), >w< w-wong, seq[
+    gfs.intewsectionvawue
+  ]], (⑅˘꒳˘)
+  o-ovewwide vaw statsweceivew: s-statsweceivew)
+    e-extends buwkcandidatefeatuwehydwatow[pipewinequewy, OwO tweetcandidate]
+    with obsewvedkeyvawuewesuwthandwew {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("GraphTwoHop")
+  ovewwide vaw identifiew: f-featuwehydwatowidentifiew = f-featuwehydwatowidentifiew("gwaphtwohop")
 
-  override val features: Set[Feature[_, _]] = Set(GraphTwoHopFeature, FollowedByUserIdsFeature)
+  ovewwide vaw featuwes: s-set[featuwe[_, (ꈍᴗꈍ) _]] = s-set(gwaphtwohopfeatuwe, 😳 fowwowedbyusewidsfeatuwe)
 
-  override val statScope: String = identifier.toString
+  o-ovewwide vaw statscope: stwing = i-identifiew.tostwing
 
-  private val twoHopFeaturesAdapter = new TwoHopFeaturesAdapter
+  pwivate vaw twohopfeatuwesadaptew = nyew t-twohopfeatuwesadaptew
 
-  private val FollowFeatureType = gfs.FeatureType(gfs.EdgeType.Following, gfs.EdgeType.FollowedBy)
+  pwivate v-vaw fowwowfeatuwetype = gfs.featuwetype(gfs.edgetype.fowwowing, 😳😳😳 g-gfs.edgetype.fowwowedby)
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
-    // Apply filters to in network candidates for retweets only.
-    val (inNetworkCandidates, oonCandidates) = candidates.partition { candidate =>
-      candidate.features.getOrElse(FromInNetworkSourceFeature, false)
+  o-ovewwide def appwy(
+    quewy: pipewinequewy, mya
+    candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): stitch[seq[featuwemap]] = offwoadfutuwepoows.offwoadfutuwe {
+    // appwy fiwtews to in nyetwowk c-candidates fow wetweets o-onwy. mya
+    vaw (innetwowkcandidates, (⑅˘꒳˘) o-ooncandidates) = c-candidates.pawtition { c-candidate =>
+      candidate.featuwes.getowewse(fwominnetwowksouwcefeatuwe, (U ﹏ U) fawse)
     }
 
-    val inNetworkCandidatesToHydrate =
-      inNetworkCandidates.filter(_.features.getOrElse(IsRetweetFeature, false))
+    vaw innetwowkcandidatestohydwate =
+      i-innetwowkcandidates.fiwtew(_.featuwes.getowewse(iswetweetfeatuwe, mya fawse))
 
-    val candidatesToHydrate = (inNetworkCandidatesToHydrate ++ oonCandidates)
-      .flatMap(candidate => CandidatesUtil.getOriginalAuthorId(candidate.features)).distinct
+    vaw candidatestohydwate = (innetwowkcandidatestohydwate ++ ooncandidates)
+      .fwatmap(candidate => candidatesutiw.getowiginawauthowid(candidate.featuwes)).distinct
 
-    val response = client((candidatesToHydrate, query.getRequiredUserId))
+    v-vaw wesponse = cwient((candidatestohydwate, ʘwʘ q-quewy.getwequiwedusewid))
 
-    response.map { result =>
-      candidates.map { candidate =>
-        val originalAuthorId = CandidatesUtil.getOriginalAuthorId(candidate.features)
+    w-wesponse.map { w-wesuwt =>
+      candidates.map { c-candidate =>
+        v-vaw owiginawauthowid = c-candidatesutiw.getowiginawauthowid(candidate.featuwes)
 
-        val value = observedGet(key = originalAuthorId, keyValueResult = result)
-        val transformedValue = postTransformer(value)
-        val followedByUserIds = value.toOption
-          .flatMap(getFollowedByUserIds(_))
-          .getOrElse(Seq.empty)
+        v-vaw vawue = obsewvedget(key = owiginawauthowid, (˘ω˘) k-keyvawuewesuwt = w-wesuwt)
+        v-vaw t-twansfowmedvawue = p-posttwansfowmew(vawue)
+        vaw fowwowedbyusewids = vawue.tooption
+          .fwatmap(getfowwowedbyusewids(_))
+          .getowewse(seq.empty)
 
-        FeatureMapBuilder()
-          .add(GraphTwoHopFeature, transformedValue)
-          .add(FollowedByUserIdsFeature, followedByUserIds)
-          .build()
+        featuwemapbuiwdew()
+          .add(gwaphtwohopfeatuwe, (U ﹏ U) t-twansfowmedvawue)
+          .add(fowwowedbyusewidsfeatuwe, ^•ﻌ•^ fowwowedbyusewids)
+          .buiwd()
       }
     }
   }
 
-  private def getFollowedByUserIds(input: Option[Seq[gfs.IntersectionValue]]): Option[Seq[Long]] =
-    input.map(_.filter(_.featureType == FollowFeatureType).flatMap(_.intersectionIds).flatten)
+  pwivate def getfowwowedbyusewids(input: option[seq[gfs.intewsectionvawue]]): option[seq[wong]] =
+    i-input.map(_.fiwtew(_.featuwetype == fowwowfeatuwetype).fwatmap(_.intewsectionids).fwatten)
 
-  private def postTransformer(input: Try[Option[Seq[gfs.IntersectionValue]]]): Try[DataRecord] =
-    input.map(twoHopFeaturesAdapter.adaptToDataRecords(_).asScala.head)
+  pwivate def posttwansfowmew(input: twy[option[seq[gfs.intewsectionvawue]]]): t-twy[datawecowd] =
+    i-input.map(twohopfeatuwesadaptew.adapttodatawecowds(_).asscawa.head)
 }

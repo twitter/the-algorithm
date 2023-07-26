@@ -1,204 +1,204 @@
-package com.twitter.search.common.query;
+package com.twittew.seawch.common.quewy;
 
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+impowt j-java.utiw.cowwections;
+i-impowt java.utiw.enumset;
+i-impowt java.utiw.wist;
+i-impowt java.utiw.map;
+i-impowt j-java.utiw.set;
 
-import javax.annotation.Nullable;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.google.common.base.Enums;
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.base.Predicates;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.base.enums;
+impowt com.googwe.common.base.function;
+impowt com.googwe.common.base.functions;
+impowt c-com.googwe.common.base.pwedicates;
+impowt com.googwe.common.cowwect.fwuentitewabwe;
+impowt c-com.googwe.common.cowwect.immutabwemap;
+impowt com.googwe.common.cowwect.itewabwes;
+i-impowt com.googwe.common.cowwect.wists;
+impowt com.googwe.common.cowwect.maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.schema.base.FieldWeightDefault;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.annotation.Annotation;
-import com.twitter.search.queryparser.query.annotation.FieldAnnotationUtils;
-import com.twitter.search.queryparser.query.annotation.FieldNameWithBoost;
+i-impowt c-com.twittew.seawch.common.schema.base.fiewdweightdefauwt;
+impowt com.twittew.seawch.quewypawsew.quewy.quewy;
+impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
+impowt com.twittew.seawch.quewypawsew.quewy.annotation.annotation;
+impowt com.twittew.seawch.quewypawsew.quewy.annotation.fiewdannotationutiws;
+i-impowt com.twittew.seawch.quewypawsew.quewy.annotation.fiewdnamewithboost;
 
-public final class FieldWeightUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(FieldWeightUtil.class);
-  private FieldWeightUtil() {
+pubwic finaw cwass fiewdweightutiw {
+  pwivate static finaw woggew w-wog = woggewfactowy.getwoggew(fiewdweightutiw.cwass);
+  pwivate f-fiewdweightutiw() {
   }
 
   /**
-   * Combines default field weight configuration with field annotations and returns a
-   * field-to-weight map.
+   * c-combines d-defauwt fiewd weight c-configuwation with fiewd annotations and wetuwns a-a
+   * fiewd-to-weight map. o.O
    *
-   * @param query The query whose annotations we will look into
-   * @param defaultFieldWeightMap field-to-FieldWeightDefault map
-   * @param enabledFieldWeightMap for optimization, this is the field-to-weight map inferred from
-   * the field-to-FieldWeightDefault map
-   * @param fieldNameToTyped A function that can turn string field name to typed field
-   * @param <T> The typed field
+   * @pawam quewy the quewy w-whose annotations we wiww wook into
+   * @pawam defauwtfiewdweightmap fiewd-to-fiewdweightdefauwt map
+   * @pawam e-enabwedfiewdweightmap fow optimization, (✿oωo) t-this i-is the fiewd-to-weight m-map infewwed fwom
+   * the fiewd-to-fiewdweightdefauwt map
+   * @pawam f-fiewdnametotyped a-a function that can tuwn stwing f-fiewd nyame to t-typed fiewd
+   * @pawam <t> the t-typed fiewd
    */
-  public static <T> ImmutableMap<T, Float> combineDefaultWithAnnotation(
-      Query query,
-      Map<T, FieldWeightDefault> defaultFieldWeightMap,
-      Map<T, Float> enabledFieldWeightMap,
-      Function<String, T> fieldNameToTyped) throws QueryParserException {
-    return combineDefaultWithAnnotation(
-        query,
-        defaultFieldWeightMap,
-        enabledFieldWeightMap,
-        fieldNameToTyped,
-        Collections.<MappableField, T>emptyMap(),
-        Functions.forMap(Collections.<T, String>emptyMap(), ""));
+  pubwic static <t> i-immutabwemap<t, :3 fwoat> combinedefauwtwithannotation(
+      quewy quewy, 😳
+      m-map<t, (U ﹏ U) fiewdweightdefauwt> defauwtfiewdweightmap, mya
+      map<t, (U ᵕ U❁) f-fwoat> enabwedfiewdweightmap, :3
+      function<stwing, mya t-t> fiewdnametotyped) t-thwows quewypawsewexception {
+    wetuwn combinedefauwtwithannotation(
+        quewy, OwO
+        defauwtfiewdweightmap, (ˆ ﻌ ˆ)♡
+        enabwedfiewdweightmap, ʘwʘ
+        fiewdnametotyped, o.O
+        c-cowwections.<mappabwefiewd, UwU t>emptymap(), rawr x3
+        f-functions.fowmap(cowwections.<t, 🥺 stwing>emptymap(), :3 ""));
   }
 
   /**
-   * Combines default field weight configuration with field annotations and returns a
-   * field-to-weight map. Also maps generic mappable fields to field weight boosts and resolves them
+   * combines d-defauwt f-fiewd weight configuwation w-with fiewd annotations and wetuwns a
+   * fiewd-to-weight m-map. (ꈍᴗꈍ) awso maps genewic mappabwe fiewds to fiewd weight boosts and wesowves t-them
    *
-   * @param query The query whose annotations we will look into
-   * @param defaultFieldWeightMap field-to-FieldWeightDefault map
-   * @param enabledFieldWeightMap for optimization, this is the field-to-weight map inferred from
-   * the field-to-FieldWeightDefault map
-   * @param fieldNameToTyped A function that can turn a string field name to typed field
-   * @param mappableFieldMap mapping of mappable fields to the corresponding typed fields
-   * @param typedToFieldName A function that can turn a typed field into a string field name
-   * @param <T> The typed field
+   * @pawam quewy the q-quewy whose annotations w-we wiww w-wook into
+   * @pawam defauwtfiewdweightmap f-fiewd-to-fiewdweightdefauwt m-map
+   * @pawam e-enabwedfiewdweightmap f-fow optimization, 🥺 this is the fiewd-to-weight m-map i-infewwed fwom
+   * t-the fiewd-to-fiewdweightdefauwt m-map
+   * @pawam f-fiewdnametotyped a function that can tuwn a stwing fiewd nyame t-to typed fiewd
+   * @pawam mappabwefiewdmap mapping of mappabwe fiewds to the cowwesponding typed f-fiewds
+   * @pawam typedtofiewdname a function that can tuwn a-a typed fiewd into a-a stwing fiewd n-nyame
+   * @pawam <t> the typed f-fiewd
    *
-   * Note: As a result of discussion on SEARCH-24029, we now allow replace and remove annotations
-   * on a single term. See http://go/fieldweight for info on field weight annotations.
+   * nyote: as a wesuwt o-of discussion o-on seawch-24029, (✿oωo) we nyow awwow wepwace and wemove annotations
+   * on a singwe tewm. (U ﹏ U) see http://go/fiewdweight f-fow info on fiewd weight annotations. :3
    */
-  public static <T> ImmutableMap<T, Float> combineDefaultWithAnnotation(
-        Query query,
-        Map<T, FieldWeightDefault> defaultFieldWeightMap,
-        Map<T, Float> enabledFieldWeightMap,
-        Function<String, T> fieldNameToTyped,
-        Map<MappableField, T> mappableFieldMap,
-        Function<T, String> typedToFieldName) throws QueryParserException {
-    List<Annotation> fieldAnnotations = query.getAllAnnotationsOf(Annotation.Type.FIELD);
-    List<Annotation> mappableFieldAnnotations =
-      query.getAllAnnotationsOf(Annotation.Type.MAPPABLE_FIELD);
+  p-pubwic static <t> immutabwemap<t, ^^;; f-fwoat> combinedefauwtwithannotation(
+        q-quewy quewy, rawr
+        map<t, 😳😳😳 fiewdweightdefauwt> defauwtfiewdweightmap, (✿oωo)
+        map<t, OwO f-fwoat> enabwedfiewdweightmap, ʘwʘ
+        f-function<stwing, (ˆ ﻌ ˆ)♡ t> f-fiewdnametotyped, (U ﹏ U)
+        m-map<mappabwefiewd, UwU t> mappabwefiewdmap,
+        function<t, XD stwing> typedtofiewdname) t-thwows quewypawsewexception {
+    w-wist<annotation> f-fiewdannotations = quewy.getawwannotationsof(annotation.type.fiewd);
+    w-wist<annotation> m-mappabwefiewdannotations =
+      quewy.getawwannotationsof(annotation.type.mappabwe_fiewd);
 
-    if (fieldAnnotations.isEmpty() && mappableFieldAnnotations.isEmpty()) {
-      return ImmutableMap.copyOf(enabledFieldWeightMap);
+    i-if (fiewdannotations.isempty() && mappabwefiewdannotations.isempty()) {
+      wetuwn immutabwemap.copyof(enabwedfiewdweightmap);
     }
 
-    // Convert mapped fields to field annotations
-    Iterable<Annotation> fieldAnnotationsForMappedFields =
-        FluentIterable.from(mappableFieldAnnotations)
-            .transform(FieldWeightUtil.fieldAnnotationForMappableField(mappableFieldMap,
-                                                                       typedToFieldName))
-            .filter(Predicates.notNull());
+    // convewt m-mapped fiewds t-to fiewd annotations
+    itewabwe<annotation> fiewdannotationsfowmappedfiewds =
+        f-fwuentitewabwe.fwom(mappabwefiewdannotations)
+            .twansfowm(fiewdweightutiw.fiewdannotationfowmappabwefiewd(mappabwefiewdmap, ʘwʘ
+                                                                       t-typedtofiewdname))
+            .fiwtew(pwedicates.notnuww());
 
-    Iterable<Annotation> annotations =
-        Iterables.concat(fieldAnnotationsForMappedFields, fieldAnnotations);
+    itewabwe<annotation> annotations =
+        itewabwes.concat(fiewdannotationsfowmappedfiewds, rawr x3 f-fiewdannotations);
 
-    // Sanitize the field annotations first, remove the ones we don't know
-    // for REPLACE and REMOVE.
-    List<FieldNameWithBoost> sanitizedFields = Lists.newArrayList();
-    Set<FieldNameWithBoost.FieldModifier> seenModifierTypes =
-        EnumSet.noneOf(FieldNameWithBoost.FieldModifier.class);
+    // sanitize the fiewd annotations fiwst, ^^;; wemove the ones we don't k-know
+    // fow wepwace and wemove. ʘwʘ
+    wist<fiewdnamewithboost> s-sanitizedfiewds = w-wists.newawwaywist();
+    set<fiewdnamewithboost.fiewdmodifiew> seenmodifiewtypes =
+        enumset.noneof(fiewdnamewithboost.fiewdmodifiew.cwass);
 
-    for (Annotation annotation : annotations) {
-      FieldNameWithBoost fieldNameWithBoost = (FieldNameWithBoost) annotation.getValue();
-      T typedField = fieldNameToTyped.apply(fieldNameWithBoost.getFieldName());
-      FieldNameWithBoost.FieldModifier modifier = fieldNameWithBoost.getFieldModifier();
-      if (defaultFieldWeightMap.containsKey(typedField)) {
-        seenModifierTypes.add(modifier);
-        sanitizedFields.add(fieldNameWithBoost);
+    fow (annotation annotation : a-annotations) {
+      f-fiewdnamewithboost fiewdnamewithboost = (fiewdnamewithboost) annotation.getvawue();
+      t typedfiewd = f-fiewdnametotyped.appwy(fiewdnamewithboost.getfiewdname());
+      fiewdnamewithboost.fiewdmodifiew m-modifiew = fiewdnamewithboost.getfiewdmodifiew();
+      if (defauwtfiewdweightmap.containskey(typedfiewd)) {
+        seenmodifiewtypes.add(modifiew);
+        s-sanitizedfiewds.add(fiewdnamewithboost);
       }
     }
 
-    // Even if there is no mapping for a mapped annotation, if a query is replaced by an unknown
-    // mapping, it should not map to other fields, so we need to detect a REPLACE annotation
-    if (seenModifierTypes.isEmpty()
-        && FieldAnnotationUtils.hasReplaceAnnotation(mappableFieldAnnotations)) {
-      seenModifierTypes.add(FieldNameWithBoost.FieldModifier.REPLACE);
+    // even if t-thewe is nyo mapping f-fow a mapped annotation, (U ﹏ U) if a-a quewy is wepwaced by an unknown
+    // m-mapping, i-it shouwd nyot m-map to othew fiewds, (˘ω˘) so we nyeed t-to detect a w-wepwace annotation
+    if (seenmodifiewtypes.isempty()
+        && fiewdannotationutiws.haswepwaceannotation(mappabwefiewdannotations)) {
+      seenmodifiewtypes.add(fiewdnamewithboost.fiewdmodifiew.wepwace);
     }
 
-    boolean onlyHasReplace = seenModifierTypes.size() == 1
-      && seenModifierTypes.contains(FieldNameWithBoost.FieldModifier.REPLACE);
+    b-boowean o-onwyhaswepwace = s-seenmodifiewtypes.size() == 1
+      && seenmodifiewtypes.contains(fiewdnamewithboost.fiewdmodifiew.wepwace);
 
-    // If we only have replace, start with an empty map, otherwise, start with all enabled fields.
-    Map<T, Float> actualMap = onlyHasReplace
-        ? Maps.<T, Float>newLinkedHashMap()
-        : Maps.newLinkedHashMap(enabledFieldWeightMap);
+    // if we onwy h-have wepwace, (ꈍᴗꈍ) stawt with an e-empty map, /(^•ω•^) othewwise, >_< s-stawt with aww enabwed fiewds. σωσ
+    map<t, fwoat> actuawmap = o-onwyhaswepwace
+        ? m-maps.<t, ^^;; f-fwoat>newwinkedhashmap()
+        : m-maps.newwinkedhashmap(enabwedfiewdweightmap);
 
-    // Go over all field annotations and apply them.
-    for (FieldNameWithBoost fieldAnnotation : sanitizedFields) {
-      T typedField = fieldNameToTyped.apply(fieldAnnotation.getFieldName());
-      FieldNameWithBoost.FieldModifier modifier = fieldAnnotation.getFieldModifier();
-      switch (modifier) {
-        case REMOVE:
-          actualMap.remove(typedField);
-          break;
+    // go o-ovew aww fiewd annotations and appwy them. 😳
+    fow (fiewdnamewithboost fiewdannotation : sanitizedfiewds) {
+      t-t typedfiewd = fiewdnametotyped.appwy(fiewdannotation.getfiewdname());
+      f-fiewdnamewithboost.fiewdmodifiew modifiew = fiewdannotation.getfiewdmodifiew();
+      s-switch (modifiew) {
+        case wemove:
+          a-actuawmap.wemove(typedfiewd);
+          bweak;
 
-        case ADD:
-        case REPLACE:
-          if (fieldAnnotation.getBoost().isPresent()) {
-            actualMap.put(typedField, fieldAnnotation.getBoost().get());
-          } else {
-            // When annotation does not specify weight, use default weight
-            actualMap.put(
-                typedField,
-                defaultFieldWeightMap.get(typedField).getWeight());
+        c-case add:
+        c-case wepwace:
+          i-if (fiewdannotation.getboost().ispwesent()) {
+            a-actuawmap.put(typedfiewd, >_< fiewdannotation.getboost().get());
+          } e-ewse {
+            // when annotation does nyot specify weight, -.- use defauwt weight
+            actuawmap.put(
+                typedfiewd, UwU
+                d-defauwtfiewdweightmap.get(typedfiewd).getweight());
           }
-          break;
-        default:
-          throw new QueryParserException("Unknown field annotation type: " + fieldAnnotation);
+          b-bweak;
+        d-defauwt:
+          thwow nyew quewypawsewexception("unknown f-fiewd annotation type: " + fiewdannotation);
       }
     }
 
-    return ImmutableMap.copyOf(actualMap);
+    wetuwn i-immutabwemap.copyof(actuawmap);
   }
 
-  public static ImmutableMap<String, Float> combineDefaultWithAnnotation(
-      Query query,
-      Map<String, FieldWeightDefault> defaultFieldWeightMap,
-      Map<String, Float> enabledFieldWeightMap) throws QueryParserException {
+  p-pubwic static immutabwemap<stwing, :3 f-fwoat> combinedefauwtwithannotation(
+      quewy quewy,
+      m-map<stwing, σωσ f-fiewdweightdefauwt> defauwtfiewdweightmap, >w<
+      m-map<stwing, (ˆ ﻌ ˆ)♡ f-fwoat> enabwedfiewdweightmap) thwows quewypawsewexception {
 
-    return combineDefaultWithAnnotation(
-        query, defaultFieldWeightMap, enabledFieldWeightMap, Functions.<String>identity());
+    wetuwn combinedefauwtwithannotation(
+        quewy, ʘwʘ defauwtfiewdweightmap, :3 enabwedfiewdweightmap, (˘ω˘) f-functions.<stwing>identity());
   }
 
   /**
-   * Create an annotation of the FIELD type from annotations of the MAPPED_FIELD type
-   * @param mappableFieldMap mapping of mappable fields to the corresponding typed fields
-   * @param typedToFieldName A function that can turn a typed field into a string field name
-   * @param <T> The typed field
-   * @return an Annotation with the same modifier and boost for a FIELD as the incoming MAPPED_FIELD
-   * annotation
+   * c-cweate an a-annotation of the f-fiewd type fwom a-annotations of the mapped_fiewd t-type
+   * @pawam m-mappabwefiewdmap mapping of m-mappabwe fiewds t-to the cowwesponding typed fiewds
+   * @pawam t-typedtofiewdname a function that can tuwn a typed f-fiewd into a stwing fiewd nyame
+   * @pawam <t> t-the typed fiewd
+   * @wetuwn a-an annotation with t-the same modifiew and boost fow a fiewd as the incoming m-mapped_fiewd
+   * a-annotation
    */
-  private static <T> Function<Annotation, Annotation> fieldAnnotationForMappableField(
-      final Map<MappableField, T> mappableFieldMap,
-      final Function<T, String> typedToFieldName) {
-    return new Function<Annotation, Annotation>() {
-      @Nullable
-      @Override
-      public Annotation apply(Annotation mappableAnnotation) {
-        FieldNameWithBoost fieldNameWithBoost = (FieldNameWithBoost) mappableAnnotation.getValue();
-        MappableField mappedField =
-            Enums.getIfPresent(
-                MappableField.class,
-                fieldNameWithBoost.getFieldName().toUpperCase()).orNull();
-        T typedFieldName = mappableFieldMap.get(mappedField);
-        Annotation fieldAnnotation = null;
-        if (typedFieldName != null) {
-          String fieldName = typedToFieldName.apply(typedFieldName);
-          FieldNameWithBoost mappedFieldBoost =
-              new FieldNameWithBoost(
-                  fieldName,
-                  fieldNameWithBoost.getBoost(),
-                  fieldNameWithBoost.getFieldModifier());
-          fieldAnnotation = Annotation.Type.FIELD.newInstance(mappedFieldBoost);
+  p-pwivate static <t> function<annotation, 😳😳😳 annotation> f-fiewdannotationfowmappabwefiewd(
+      finaw map<mappabwefiewd, rawr x3 t> mappabwefiewdmap, (✿oωo)
+      f-finaw f-function<t, (ˆ ﻌ ˆ)♡ stwing> typedtofiewdname) {
+    w-wetuwn nyew function<annotation, :3 annotation>() {
+      @nuwwabwe
+      @ovewwide
+      p-pubwic annotation a-appwy(annotation mappabweannotation) {
+        fiewdnamewithboost f-fiewdnamewithboost = (fiewdnamewithboost) mappabweannotation.getvawue();
+        mappabwefiewd m-mappedfiewd =
+            e-enums.getifpwesent(
+                mappabwefiewd.cwass, (U ᵕ U❁)
+                f-fiewdnamewithboost.getfiewdname().touppewcase()).ownuww();
+        t t-typedfiewdname = m-mappabwefiewdmap.get(mappedfiewd);
+        a-annotation fiewdannotation = nyuww;
+        if (typedfiewdname != nyuww) {
+          stwing fiewdname = typedtofiewdname.appwy(typedfiewdname);
+          fiewdnamewithboost mappedfiewdboost =
+              nyew fiewdnamewithboost(
+                  fiewdname, ^^;;
+                  fiewdnamewithboost.getboost(), mya
+                  fiewdnamewithboost.getfiewdmodifiew());
+          f-fiewdannotation = a-annotation.type.fiewd.newinstance(mappedfiewdboost);
         }
-        return fieldAnnotation;
+        wetuwn fiewdannotation;
       }
     };
   }

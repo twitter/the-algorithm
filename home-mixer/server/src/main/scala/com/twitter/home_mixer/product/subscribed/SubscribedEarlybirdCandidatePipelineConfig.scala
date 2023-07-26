@@ -1,64 +1,64 @@
-package com.twitter.home_mixer.product.subscribed
+package com.twittew.home_mixew.pwoduct.subscwibed
 
-import com.google.inject.Inject
-import com.twitter.home_mixer.functional_component.candidate_source.EarlybirdCandidateSource
-import com.twitter.home_mixer.product.subscribed.model.SubscribedQuery
-import com.twitter.product_mixer.component_library.feature_hydrator.query.social_graph.SGSSubscribedUsersFeature
-import com.twitter.product_mixer.component_library.filter.TweetVisibilityFilter
-import com.twitter.product_mixer.component_library.gate.NonEmptySeqFeatureGate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.search.earlybird.{thriftscala => t}
-import com.twitter.spam.rtf.thriftscala.SafetyLevel.TimelineHomeSubscribed
-import com.twitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
-import com.twitter.tweetypie.thriftscala.TweetVisibilityPolicy
+impowt com.googwe.inject.inject
+i-impowt com.twittew.home_mixew.functionaw_component.candidate_souwce.eawwybiwdcandidatesouwce
+impowt c-com.twittew.home_mixew.pwoduct.subscwibed.modew.subscwibedquewy
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.quewy.sociaw_gwaph.sgssubscwibedusewsfeatuwe
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.fiwtew.tweetvisibiwityfiwtew
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.gate.nonemptyseqfeatuwegate
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.basecandidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinewesuwtstwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig
+impowt com.twittew.seawch.eawwybiwd.{thwiftscawa => t-t}
+impowt com.twittew.spam.wtf.thwiftscawa.safetywevew.timewinehomesubscwibed
+impowt com.twittew.stitch.tweetypie.{tweetypie => t-tweetypiestitchcwient}
+impowt com.twittew.tweetypie.thwiftscawa.tweetvisibiwitypowicy
 
-class SubscribedEarlybirdCandidatePipelineConfig @Inject() (
-  earlybirdCandidateSource: EarlybirdCandidateSource,
-  tweetyPieStitchClient: TweetypieStitchClient,
-  subscribedEarlybirdQueryTransformer: SubscribedEarlybirdQueryTransformer)
-    extends CandidatePipelineConfig[
-      SubscribedQuery,
-      t.EarlybirdRequest,
-      t.ThriftSearchResult,
-      TweetCandidate
+c-cwass subscwibedeawwybiwdcandidatepipewineconfig @inject() (
+  e-eawwybiwdcandidatesouwce: eawwybiwdcandidatesouwce, 😳😳😳
+  tweetypiestitchcwient: tweetypiestitchcwient, o.O
+  subscwibedeawwybiwdquewytwansfowmew: subscwibedeawwybiwdquewytwansfowmew)
+    e-extends candidatepipewineconfig[
+      subscwibedquewy, ( ͡o ω ͡o )
+      t.eawwybiwdwequest, (U ﹏ U)
+      t.thwiftseawchwesuwt, (///ˬ///✿)
+      tweetcandidate
     ] {
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("SubscribedEarlybird")
+  o-ovewwide vaw identifiew: candidatepipewineidentifiew =
+    c-candidatepipewineidentifiew("subscwibedeawwybiwd")
 
-  override val candidateSource: BaseCandidateSource[t.EarlybirdRequest, t.ThriftSearchResult] =
-    earlybirdCandidateSource
+  o-ovewwide vaw c-candidatesouwce: b-basecandidatesouwce[t.eawwybiwdwequest, >w< t.thwiftseawchwesuwt] =
+    eawwybiwdcandidatesouwce
 
-  override val gates: Seq[Gate[SubscribedQuery]] = Seq(
-    NonEmptySeqFeatureGate(SGSSubscribedUsersFeature)
+  o-ovewwide vaw gates: seq[gate[subscwibedquewy]] = seq(
+    nyonemptyseqfeatuwegate(sgssubscwibedusewsfeatuwe)
   )
 
-  override def filters: Seq[Filter[SubscribedQuery, TweetCandidate]] = Seq(
-    new TweetVisibilityFilter(
-      tweetyPieStitchClient,
-      TweetVisibilityPolicy.UserVisible,
-      TimelineHomeSubscribed
+  o-ovewwide def fiwtews: seq[fiwtew[subscwibedquewy, rawr tweetcandidate]] = seq(
+    nyew tweetvisibiwityfiwtew(
+      tweetypiestitchcwient, mya
+      t-tweetvisibiwitypowicy.usewvisibwe, ^^
+      timewinehomesubscwibed
     )
   )
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    SubscribedQuery,
-    t.EarlybirdRequest
-  ] = subscribedEarlybirdQueryTransformer
+  o-ovewwide vaw quewytwansfowmew: candidatepipewinequewytwansfowmew[
+    s-subscwibedquewy, 😳😳😳
+    t-t.eawwybiwdwequest
+  ] = subscwibedeawwybiwdquewytwansfowmew
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[t.ThriftSearchResult]
-  ] = Seq(SubscribedEarlybirdResponseFeatureTransformer)
+  ovewwide vaw featuwesfwomcandidatesouwcetwansfowmews: s-seq[
+    candidatefeatuwetwansfowmew[t.thwiftseawchwesuwt]
+  ] = s-seq(subscwibedeawwybiwdwesponsefeatuwetwansfowmew)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    t.ThriftSearchResult,
-    TweetCandidate
-  ] = { sourceResult => TweetCandidate(id = sourceResult.id) }
+  ovewwide v-vaw wesuwttwansfowmew: c-candidatepipewinewesuwtstwansfowmew[
+    t.thwiftseawchwesuwt, mya
+    t-tweetcandidate
+  ] = { souwcewesuwt => t-tweetcandidate(id = souwcewesuwt.id) }
 }

@@ -1,93 +1,93 @@
-package com.twitter.timelines.prediction.features.two_hop_features
+package com.twittew.timewines.pwediction.featuwes.two_hop_featuwes
 
-import com.twitter.graph_feature_service.thriftscala.EdgeType
-import com.twitter.ml.api.Feature._
-import scala.collection.JavaConverters._
-import TwoHopFeaturesConfig.personalDataTypesMap
+impowt com.twittew.gwaph_featuwe_sewvice.thwiftscawa.edgetype
+i-impowt com.twittew.mw.api.featuwe._
+i-impowt scawa.cowwection.javaconvewtews._
+i-impowt t-twohopfeatuwesconfig.pewsonawdatatypesmap
 
-object TwoHopFeaturesDescriptor {
-  val prefix = "two_hop"
-  val normalizedPostfix = "normalized"
-  val leftNodeDegreePostfix = "left_degree"
-  val rightNodeDegreePostfix = "right_degree"
+o-object twohopfeatuwesdescwiptow {
+  v-vaw pwefix = "two_hop"
+  v-vaw n-nyowmawizedpostfix = "nowmawized"
+  vaw weftnodedegweepostfix = "weft_degwee"
+  vaw wightnodedegweepostfix = "wight_degwee"
 
-  type TwoHopFeatureMap = Map[(EdgeType, EdgeType), Continuous]
-  type TwoHopFeatureNodeDegreeMap = Map[EdgeType, Continuous]
+  type twohopfeatuwemap = map[(edgetype, mya e-edgetype), mya continuous]
+  type twohopfeatuwenodedegweemap = m-map[edgetype, (⑅˘꒳˘) continuous]
 
-  def apply(edgeTypePairs: Seq[(EdgeType, EdgeType)]): TwoHopFeaturesDescriptor = {
-    new TwoHopFeaturesDescriptor(edgeTypePairs)
+  def a-appwy(edgetypepaiws: seq[(edgetype, (U ﹏ U) edgetype)]): twohopfeatuwesdescwiptow = {
+    n-nyew twohopfeatuwesdescwiptow(edgetypepaiws)
   }
 }
 
-class TwoHopFeaturesDescriptor(edgeTypePairs: Seq[(EdgeType, EdgeType)]) {
-  import TwoHopFeaturesDescriptor._
+cwass twohopfeatuwesdescwiptow(edgetypepaiws: s-seq[(edgetype, e-edgetype)]) {
+  impowt twohopfeatuwesdescwiptow._
 
-  def getLeftEdge(edgeTypePair: (EdgeType, EdgeType)): EdgeType = {
-    edgeTypePair._1
+  def getweftedge(edgetypepaiw: (edgetype, edgetype)): edgetype = {
+    e-edgetypepaiw._1
   }
 
-  def getLeftEdgeName(edgeTypePair: (EdgeType, EdgeType)): String = {
-    getLeftEdge(edgeTypePair).originalName.toLowerCase
+  def getweftedgename(edgetypepaiw: (edgetype, mya edgetype)): stwing = {
+    getweftedge(edgetypepaiw).owiginawname.towowewcase
   }
 
-  def getRightEdge(edgeTypePair: (EdgeType, EdgeType)): EdgeType = {
-    edgeTypePair._2
+  d-def getwightedge(edgetypepaiw: (edgetype, ʘwʘ edgetype)): e-edgetype = {
+    e-edgetypepaiw._2
   }
 
-  def getRightEdgeName(edgeTypePair: (EdgeType, EdgeType)): String = {
-    getRightEdge(edgeTypePair).originalName.toLowerCase
+  d-def getwightedgename(edgetypepaiw: (edgetype, (˘ω˘) e-edgetype)): stwing = {
+    getwightedge(edgetypepaiw).owiginawname.towowewcase
   }
 
-  val rawFeaturesMap: TwoHopFeatureMap = edgeTypePairs.map(edgeTypePair => {
-    val leftEdgeType = getLeftEdge(edgeTypePair)
-    val leftEdgeName = getLeftEdgeName(edgeTypePair)
-    val rightEdgeType = getRightEdge(edgeTypePair)
-    val rightEdgeName = getRightEdgeName(edgeTypePair)
-    val personalDataTypes = (
-      personalDataTypesMap.getOrElse(leftEdgeType, Set.empty) ++
-        personalDataTypesMap.getOrElse(rightEdgeType, Set.empty)
-    ).asJava
-    val rawFeature = new Continuous(s"$prefix.$leftEdgeName.$rightEdgeName", personalDataTypes)
-    edgeTypePair -> rawFeature
-  })(collection.breakOut)
+  v-vaw wawfeatuwesmap: twohopfeatuwemap = e-edgetypepaiws.map(edgetypepaiw => {
+    vaw weftedgetype = getweftedge(edgetypepaiw)
+    vaw weftedgename = getweftedgename(edgetypepaiw)
+    vaw wightedgetype = g-getwightedge(edgetypepaiw)
+    vaw wightedgename = g-getwightedgename(edgetypepaiw)
+    v-vaw pewsonawdatatypes = (
+      p-pewsonawdatatypesmap.getowewse(weftedgetype, (U ﹏ U) set.empty) ++
+        pewsonawdatatypesmap.getowewse(wightedgetype, set.empty)
+    ).asjava
+    v-vaw wawfeatuwe = n-nyew continuous(s"$pwefix.$weftedgename.$wightedgename", ^•ﻌ•^ pewsonawdatatypes)
+    e-edgetypepaiw -> w-wawfeatuwe
+  })(cowwection.bweakout)
 
-  val leftNodeDegreeFeaturesMap: TwoHopFeatureNodeDegreeMap = edgeTypePairs.map(edgeTypePair => {
-    val leftEdgeType = getLeftEdge(edgeTypePair)
-    val leftEdgeName = getLeftEdgeName(edgeTypePair)
-    val personalDataTypes = personalDataTypesMap.getOrElse(leftEdgeType, Set.empty).asJava
-    val leftNodeDegreeFeature =
-      new Continuous(s"$prefix.$leftEdgeName.$leftNodeDegreePostfix", personalDataTypes)
-    leftEdgeType -> leftNodeDegreeFeature
-  })(collection.breakOut)
+  vaw weftnodedegweefeatuwesmap: t-twohopfeatuwenodedegweemap = edgetypepaiws.map(edgetypepaiw => {
+    v-vaw weftedgetype = getweftedge(edgetypepaiw)
+    vaw weftedgename = g-getweftedgename(edgetypepaiw)
+    vaw pewsonawdatatypes = p-pewsonawdatatypesmap.getowewse(weftedgetype, (˘ω˘) set.empty).asjava
+    v-vaw weftnodedegweefeatuwe =
+      n-nyew continuous(s"$pwefix.$weftedgename.$weftnodedegweepostfix", :3 pewsonawdatatypes)
+    weftedgetype -> weftnodedegweefeatuwe
+  })(cowwection.bweakout)
 
-  val rightNodeDegreeFeaturesMap: TwoHopFeatureNodeDegreeMap = edgeTypePairs.map(edgeTypePair => {
-    val rightEdgeType = getRightEdge(edgeTypePair)
-    val rightEdgeName = getRightEdgeName(edgeTypePair)
-    val personalDataTypes = personalDataTypesMap.getOrElse(rightEdgeType, Set.empty).asJava
-    val rightNodeDegreeFeature =
-      new Continuous(s"$prefix.$rightEdgeName.$rightNodeDegreePostfix", personalDataTypes)
-    rightEdgeType -> rightNodeDegreeFeature
-  })(collection.breakOut)
+  vaw wightnodedegweefeatuwesmap: twohopfeatuwenodedegweemap = edgetypepaiws.map(edgetypepaiw => {
+    v-vaw wightedgetype = g-getwightedge(edgetypepaiw)
+    vaw wightedgename = getwightedgename(edgetypepaiw)
+    v-vaw pewsonawdatatypes = p-pewsonawdatatypesmap.getowewse(wightedgetype, ^^;; s-set.empty).asjava
+    vaw wightnodedegweefeatuwe =
+      nyew continuous(s"$pwefix.$wightedgename.$wightnodedegweepostfix", 🥺 p-pewsonawdatatypes)
+    wightedgetype -> wightnodedegweefeatuwe
+  })(cowwection.bweakout)
 
-  val normalizedFeaturesMap: TwoHopFeatureMap = edgeTypePairs.map(edgeTypePair => {
-    val leftEdgeType = getLeftEdge(edgeTypePair)
-    val leftEdgeName = getLeftEdgeName(edgeTypePair)
-    val rightEdgeType = getRightEdge(edgeTypePair)
-    val rightEdgeName = getRightEdgeName(edgeTypePair)
-    val personalDataTypes = (
-      personalDataTypesMap.getOrElse(leftEdgeType, Set.empty) ++
-        personalDataTypesMap.getOrElse(rightEdgeType, Set.empty)
-    ).asJava
-    val normalizedFeature =
-      new Continuous(s"$prefix.$leftEdgeName.$rightEdgeName.$normalizedPostfix", personalDataTypes)
-    edgeTypePair -> normalizedFeature
-  })(collection.breakOut)
+  vaw nowmawizedfeatuwesmap: twohopfeatuwemap = e-edgetypepaiws.map(edgetypepaiw => {
+    vaw weftedgetype = g-getweftedge(edgetypepaiw)
+    v-vaw weftedgename = g-getweftedgename(edgetypepaiw)
+    vaw w-wightedgetype = g-getwightedge(edgetypepaiw)
+    vaw w-wightedgename = g-getwightedgename(edgetypepaiw)
+    vaw pewsonawdatatypes = (
+      pewsonawdatatypesmap.getowewse(weftedgetype, (⑅˘꒳˘) s-set.empty) ++
+        p-pewsonawdatatypesmap.getowewse(wightedgetype, nyaa~~ s-set.empty)
+    ).asjava
+    v-vaw nyowmawizedfeatuwe =
+      n-nyew continuous(s"$pwefix.$weftedgename.$wightedgename.$nowmawizedpostfix", :3 pewsonawdatatypes)
+    edgetypepaiw -> nyowmawizedfeatuwe
+  })(cowwection.bweakout)
 
-  private val rawFeaturesSeq: Seq[Continuous] = rawFeaturesMap.values.toSeq
-  private val leftNodeDegreeFeaturesSeq: Seq[Continuous] = leftNodeDegreeFeaturesMap.values.toSeq
-  private val rightNodeDegreeFeaturesSeq: Seq[Continuous] = rightNodeDegreeFeaturesMap.values.toSeq
-  private val normalizedFeaturesSeq: Seq[Continuous] = normalizedFeaturesMap.values.toSeq
+  p-pwivate vaw wawfeatuwesseq: seq[continuous] = wawfeatuwesmap.vawues.toseq
+  pwivate vaw weftnodedegweefeatuwesseq: seq[continuous] = w-weftnodedegweefeatuwesmap.vawues.toseq
+  pwivate vaw wightnodedegweefeatuwesseq: seq[continuous] = wightnodedegweefeatuwesmap.vawues.toseq
+  p-pwivate vaw n-nyowmawizedfeatuwesseq: s-seq[continuous] = nyowmawizedfeatuwesmap.vawues.toseq
 
-  val featuresSeq: Seq[Continuous] =
-    rawFeaturesSeq ++ leftNodeDegreeFeaturesSeq ++ rightNodeDegreeFeaturesSeq ++ normalizedFeaturesSeq
+  v-vaw featuwesseq: seq[continuous] =
+    w-wawfeatuwesseq ++ w-weftnodedegweefeatuwesseq ++ wightnodedegweefeatuwesseq ++ nyowmawizedfeatuwesseq
 }

@@ -1,62 +1,62 @@
-package com.twitter.interaction_graph.scio.agg_flock
+package com.twittew.intewaction_gwaph.scio.agg_fwock
 
-import com.spotify.scio.values.SCollection
-import com.twitter.algebird.Min
-import com.twitter.flockdb.tools.datasets.flock.thriftscala.FlockEdge
-import com.twitter.interaction_graph.scio.common.InteractionGraphRawInput
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import java.time.Instant
-import java.time.temporal.ChronoUnit
-import org.joda.time.Interval
+impowt com.spotify.scio.vawues.scowwection
+i-impowt com.twittew.awgebiwd.min
+i-impowt com.twittew.fwockdb.toows.datasets.fwock.thwiftscawa.fwockedge
+i-impowt com.twittew.intewaction_gwaph.scio.common.intewactiongwaphwawinput
+i-impowt com.twittew.intewaction_gwaph.thwiftscawa.featuwename
+i-impowt j-java.time.instant
+i-impowt java.time.tempowaw.chwonounit
+i-impowt owg.joda.time.intewvaw
 
-object InteractionGraphAggFlockUtil {
+object intewactiongwaphaggfwockutiw {
 
-  def getFlockFeatures(
-    edges: SCollection[FlockEdge],
-    featureName: FeatureName,
-    dateInterval: Interval
-  ): SCollection[InteractionGraphRawInput] = {
+  def getfwockfeatuwes(
+    e-edges: scowwection[fwockedge], 😳
+    featuwename: featuwename, mya
+    d-dateintewvaw: intewvaw
+  ): s-scowwection[intewactiongwaphwawinput] = {
     edges
-      .withName(s"${featureName.toString} - Converting flock edge to interaction graph input")
-      .map { edge =>
-        // NOTE: getUpdatedAt gives time in the seconds resolution
-        // Because we use .extend() when reading the data source, the updatedAt time might be larger than the dateRange.
-        // We need to cap them, otherwise, DateUtil.diffDays gives incorrect results.
-        val start = (edge.updatedAt * 1000L).min(dateInterval.getEnd.toInstant.getMillis)
-        val end = dateInterval.getStart.toInstant.getMillis
-        val age = ChronoUnit.DAYS.between(
-          Instant.ofEpochMilli(start),
-          Instant.ofEpochMilli(end)
+      .withname(s"${featuwename.tostwing} - convewting fwock edge t-to intewaction gwaph input")
+      .map { e-edge =>
+        // n-nyote: getupdatedat gives time in the seconds wesowution
+        // because we use .extend() w-when weading the data souwce, (˘ω˘) the updatedat time might be wawgew than t-the datewange. >_<
+        // we nyeed t-to cap them, -.- o-othewwise, dateutiw.diffdays g-gives i-incowwect wesuwts. 🥺
+        vaw stawt = (edge.updatedat * 1000w).min(dateintewvaw.getend.toinstant.getmiwwis)
+        v-vaw end = dateintewvaw.getstawt.toinstant.getmiwwis
+        vaw age = chwonounit.days.between(
+          i-instant.ofepochmiwwi(stawt), (U ﹏ U)
+          instant.ofepochmiwwi(end)
         ) + 1
-        InteractionGraphRawInput(edge.sourceId, edge.destinationId, featureName, age.toInt, 1.0)
+        intewactiongwaphwawinput(edge.souwceid, >w< edge.destinationid, featuwename, mya age.toint, >w< 1.0)
       }
 
   }
 
-  def getMutualFollowFeature(
-    flockFollowFeature: SCollection[InteractionGraphRawInput]
-  ): SCollection[InteractionGraphRawInput] = {
-    flockFollowFeature
-      .withName("Convert FlockFollows to Mutual Follows")
-      .map { input =>
-        val sourceId = input.src
-        val destId = input.dst
+  d-def getmutuawfowwowfeatuwe(
+    fwockfowwowfeatuwe: s-scowwection[intewactiongwaphwawinput]
+  ): s-scowwection[intewactiongwaphwawinput] = {
+    f-fwockfowwowfeatuwe
+      .withname("convewt fwockfowwows to mutuaw fowwows")
+      .map { i-input =>
+        v-vaw souwceid = input.swc
+        v-vaw destid = i-input.dst
 
-        if (sourceId < destId) {
-          Tuple2(sourceId, destId) -> Tuple2(Set(true), Min(input.age)) // true means follow
-        } else {
-          Tuple2(destId, sourceId) -> Tuple2(Set(false), Min(input.age)) // false means followed_by
+        if (souwceid < d-destid) {
+          tupwe2(souwceid, nyaa~~ d-destid) -> tupwe2(set(twue), (✿oωo) min(input.age)) // t-twue means fowwow
+        } e-ewse {
+          tupwe2(destid, ʘwʘ s-souwceid) -> t-tupwe2(set(fawse), (ˆ ﻌ ˆ)♡ min(input.age)) // fawse means fowwowed_by
         }
       }
-      .sumByKey
-      .flatMap {
-        case ((id1, id2), (followSet, minAge)) if followSet.size == 2 =>
-          val age = minAge.get
-          Seq(
-            InteractionGraphRawInput(id1, id2, FeatureName.NumMutualFollows, age, 1.0),
-            InteractionGraphRawInput(id2, id1, FeatureName.NumMutualFollows, age, 1.0))
-        case _ =>
-          Nil
+      .sumbykey
+      .fwatmap {
+        case ((id1, 😳😳😳 id2), (fowwowset, :3 minage)) if fowwowset.size == 2 =>
+          v-vaw age = m-minage.get
+          seq(
+            i-intewactiongwaphwawinput(id1, OwO i-id2, featuwename.nummutuawfowwows, (U ﹏ U) a-age, >w< 1.0),
+            intewactiongwaphwawinput(id2, (U ﹏ U) id1, featuwename.nummutuawfowwows, 😳 age, 1.0))
+        c-case _ =>
+          nyiw
       }
   }
 

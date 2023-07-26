@@ -1,60 +1,60 @@
-package com.twitter.timelineranker.parameters
+package com.twittew.timewinewankew.pawametews
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.timelineranker.parameters.entity_tweets.EntityTweetsProduction
-import com.twitter.timelineranker.parameters.recap.RecapProduction
-import com.twitter.timelineranker.parameters.recap_author.RecapAuthorProduction
-import com.twitter.timelineranker.parameters.recap_hydration.RecapHydrationProduction
-import com.twitter.timelineranker.parameters.in_network_tweets.InNetworkTweetProduction
-import com.twitter.timelineranker.parameters.revchron.ReverseChronProduction
-import com.twitter.timelineranker.parameters.uteg_liked_by_tweets.UtegLikedByTweetsProduction
-import com.twitter.timelineranker.parameters.monitoring.MonitoringProduction
-import com.twitter.timelines.configapi.CompositeConfig
-import com.twitter.timelines.configapi.Config
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.sewvo.decidew.decidewgatebuiwdew
+i-impowt com.twittew.timewinewankew.pawametews.entity_tweets.entitytweetspwoduction
+i-impowt com.twittew.timewinewankew.pawametews.wecap.wecappwoduction
+i-impowt com.twittew.timewinewankew.pawametews.wecap_authow.wecapauthowpwoduction
+i-impowt com.twittew.timewinewankew.pawametews.wecap_hydwation.wecaphydwationpwoduction
+i-impowt com.twittew.timewinewankew.pawametews.in_netwowk_tweets.innetwowktweetpwoduction
+impowt com.twittew.timewinewankew.pawametews.wevchwon.wevewsechwonpwoduction
+impowt com.twittew.timewinewankew.pawametews.uteg_wiked_by_tweets.utegwikedbytweetspwoduction
+impowt com.twittew.timewinewankew.pawametews.monitowing.monitowingpwoduction
+i-impowt com.twittew.timewines.configapi.compositeconfig
+impowt com.twittew.timewines.configapi.config
 
 /**
- * Builds global composite config containing prioritized "layers" of parameter overrides
- * based on whitelists, experiments, and deciders. Generated config can be used in tests with
- * mocked decider and whitelist.
+ * b-buiwds gwobaw composite c-config containing pwiowitized "wayews" of pawametew ovewwides
+ * b-based on whitewists, 😳😳😳 expewiments, (˘ω˘) a-and decidews. ^^ g-genewated config can be used in tests with
+ * mocked decidew and whitewist. :3
  */
-class ConfigBuilder(deciderGateBuilder: DeciderGateBuilder, statsReceiver: StatsReceiver) {
+c-cwass configbuiwdew(decidewgatebuiwdew: decidewgatebuiwdew, -.- statsweceivew: statsweceivew) {
 
   /**
-   * Production config which includes all configs which contribute to production behavior. At
-   * minimum, it should include all configs containing decider-based param overrides.
+   * pwoduction c-config which incwudes aww configs w-which contwibute t-to pwoduction b-behaviow. 😳 a-at
+   * minimum, mya it shouwd incwude aww configs containing d-decidew-based pawam ovewwides. (˘ω˘)
    *
-   * It is important that the production config include all production param overrides as it is
-   * used to build holdback experiment configs; If the production config doesn't include all param
-   * overrides supporting production behavior then holdback experiment "production" buckets will
-   * not reflect production behavior.
+   * it is impowtant t-that the pwoduction config incwude aww pwoduction pawam ovewwides as it is
+   * used to buiwd h-howdback expewiment configs; if t-the pwoduction c-config doesn't incwude a-aww pawam
+   * ovewwides suppowting pwoduction behaviow then h-howdback expewiment "pwoduction" b-buckets wiww
+   * nyot wefwect p-pwoduction behaviow. >_<
    */
-  val prodConfig: Config = new CompositeConfig(
-    Seq(
-      new RecapProduction(deciderGateBuilder, statsReceiver).config,
-      new InNetworkTweetProduction(deciderGateBuilder).config,
-      new ReverseChronProduction(deciderGateBuilder).config,
-      new EntityTweetsProduction(deciderGateBuilder).config,
-      new RecapAuthorProduction(deciderGateBuilder).config,
-      new RecapHydrationProduction(deciderGateBuilder).config,
-      new UtegLikedByTweetsProduction(deciderGateBuilder).config,
-      MonitoringProduction.config
-    ),
-    "prodConfig"
+  v-vaw pwodconfig: config = nyew compositeconfig(
+    s-seq(
+      nyew wecappwoduction(decidewgatebuiwdew, -.- s-statsweceivew).config, 🥺
+      nyew innetwowktweetpwoduction(decidewgatebuiwdew).config, (U ﹏ U)
+      nyew wevewsechwonpwoduction(decidewgatebuiwdew).config, >w<
+      n-nyew entitytweetspwoduction(decidewgatebuiwdew).config, mya
+      nyew wecapauthowpwoduction(decidewgatebuiwdew).config, >w<
+      n-nyew wecaphydwationpwoduction(decidewgatebuiwdew).config, nyaa~~
+      n-nyew u-utegwikedbytweetspwoduction(decidewgatebuiwdew).config, (✿oωo)
+      monitowingpwoduction.config
+    ), ʘwʘ
+    "pwodconfig"
   )
 
-  val whitelistConfig: Config = new CompositeConfig(
-    Seq(
-      // No whitelists configured at present.
+  vaw whitewistconfig: config = nyew compositeconfig(
+    seq(
+      // nyo whitewists c-configuwed at pwesent. (ˆ ﻌ ˆ)♡
     ),
-    "whitelistConfig"
+    "whitewistconfig"
   )
 
-  val rootConfig: Config = new CompositeConfig(
-    Seq(
-      whitelistConfig,
-      prodConfig
-    ),
-    "rootConfig"
+  v-vaw wootconfig: config = n-nyew compositeconfig(
+    seq(
+      w-whitewistconfig, 😳😳😳
+      p-pwodconfig
+    ), :3
+    "wootconfig"
   )
 }

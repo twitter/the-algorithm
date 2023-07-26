@@ -1,74 +1,74 @@
-package com.twitter.product_mixer.core.feature
+package com.twittew.pwoduct_mixew.cowe.featuwe
 
 /**
- * A [[Feature]] is a single measurable or computable property of an entity.
+ * a [[featuwe]] i-is a singwe m-measuwabwe ow computabwe p-pwopewty o-of an entity. (⑅˘꒳˘)
  *
- * @note If a [[Feature]] is optional then the [[Value]] should be `Option[Value]`
+ * @note i-if a [[featuwe]] i-is o-optionaw then the [[vawue]] s-shouwd be `option[vawue]`
  *
- * @note If a [[Feature]] is populated with a [[com.twitter.product_mixer.core.functional_component.feature_hydrator.FeatureHydrator]]
- *       and the hydration fails, a failure will be stored for the [[Feature]].
- *       If that [[Feature]] is accessed with [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap.get]]
- *       then the stored exception will be thrown, essentially failing-closed.
- *       You can use [[FeatureWithDefaultOnFailure]] or [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap.getOrElse]]
- *       instead to avoid these issues and instead fail-open.
- *       If correctly hydrating a Feature's value is essential to the request being correct,
- *       then you should fail-closed on failure to hydrate it by extending [[Feature]] directly.
+ * @note if a [[featuwe]] is popuwated with a [[com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.featuwehydwatow]]
+ *       a-and the hydwation faiws, (///ˬ///✿) a faiwuwe wiww b-be stowed fow the [[featuwe]]. ^^;;
+ *       if that [[featuwe]] i-is accessed with [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap.get]]
+ *       then the stowed exception w-wiww be thwown, >_< essentiawwy f-faiwing-cwosed. rawr x3
+ *       y-you can use [[featuwewithdefauwtonfaiwuwe]] ow [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap.getowewse]]
+ *       instead to avoid these i-issues and instead faiw-open. /(^•ω•^)
+ *       if cowwectwy hydwating a featuwe's vawue i-is essentiaw to the wequest b-being cowwect, :3
+ *       t-then you s-shouwd faiw-cwosed o-on faiwuwe to hydwate it by extending [[featuwe]] d-diwectwy. (ꈍᴗꈍ)
  *
- *       This does not apply to [[Feature]]s from [[com.twitter.product_mixer.core.functional_component.transformer.FeatureTransformer]]
- *       which throw in the calling Pipeline instead of storing their failures.
+ *       this does nyot appwy t-to [[featuwe]]s fwom [[com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.featuwetwansfowmew]]
+ *       which thwow in the cawwing pipewine instead of stowing theiw f-faiwuwes. /(^•ω•^)
  *
- * @tparam Entity The type of entity that this feature works with. This could be a User, Tweet,
- *                Query, etc.
- * @tparam Value The type of the value of this feature.
+ * @tpawam entity t-the type of entity t-that this f-featuwe wowks with. (⑅˘꒳˘) this couwd be a usew, ( ͡o ω ͡o ) tweet, òωó
+ *                quewy, (⑅˘꒳˘) etc. XD
+ * @tpawam v-vawue t-the type of the vawue of this featuwe. -.-
  */
-trait Feature[-Entity, Value] { self =>
-  override def toString: String = {
-    Feature.getSimpleName(self.getClass)
+t-twait f-featuwe[-entity, :3 vawue] { sewf =>
+  o-ovewwide def tostwing: stwing = {
+    f-featuwe.getsimpwename(sewf.getcwass)
   }
 }
 
 /**
- * With a [[Feature]], if the [[com.twitter.product_mixer.core.functional_component.feature_hydrator.FeatureHydrator]] fails,
- * the failure will be caught by the platform and stored in the [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]].
- * Accessing a failed feature via [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap.get()]]
- * will throw the exception that was caught while attempting to hydrate the feature. If there's a
- * reasonable default for a [[Feature]] to fail-open with, then throwing the exception at read time
- * can be prevented by defining a `defaultValue` via [[FeatureWithDefaultOnFailure]]. When accessing
- * a failed feature via [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap.get()]]
- * for a [[FeatureWithDefaultOnFailure]], the `defaultValue` will be returned.
+ * with a [[featuwe]], nyaa~~ i-if the [[com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.featuwehydwatow]] faiws, 😳
+ * the f-faiwuwe wiww be caught by the pwatfowm a-and stowed i-in the [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap]]. (⑅˘꒳˘)
+ * accessing a faiwed featuwe via [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap.get()]]
+ * wiww thwow the exception that was caught w-whiwe attempting t-to hydwate the featuwe. nyaa~~ if thewe's a-a
+ * weasonabwe d-defauwt fow a-a [[featuwe]] to faiw-open with, OwO then thwowing the exception at w-wead time
+ * can be pwevented by defining a `defauwtvawue` via [[featuwewithdefauwtonfaiwuwe]]. rawr x3 when accessing
+ * a-a faiwed featuwe via [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap.get()]]
+ * f-fow a [[featuwewithdefauwtonfaiwuwe]], t-the `defauwtvawue` w-wiww be wetuwned. XD
  *
  *
- * @note [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap.getOrElse()]] can also be used
- *       to access a failed feature without throwing the exception, by defining the default via the
- *       [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap.getOrElse()]] method call
- *       instead of as part of the feature declaration.
- * @note This does not apply to [[FeatureWithDefaultOnFailure]]s from [[com.twitter.product_mixer.core.functional_component.transformer.FeatureTransformer]]
- *       which throw in the calling Pipeline instead of storing their failures.
+ * @note [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap.getowewse()]] c-can awso b-be used
+ *       t-to access a faiwed f-featuwe without thwowing the exception, σωσ by d-defining the defauwt v-via the
+ *       [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap.getowewse()]] m-method caww
+ *       i-instead o-of as pawt of the featuwe decwawation. (U ᵕ U❁)
+ * @note this does nyot appwy to [[featuwewithdefauwtonfaiwuwe]]s f-fwom [[com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.featuwetwansfowmew]]
+ *       which thwow in the cawwing pipewine instead of stowing theiw faiwuwes. (U ﹏ U)
  *
- * @tparam Entity The type of entity that this feature works with. This could be a User, Tweet,
- *                Query, etc.
- * @tparam Value The type of the value of this feature.
+ * @tpawam entity the type o-of entity that this featuwe wowks with. :3 this couwd be a usew, ( ͡o ω ͡o ) t-tweet,
+ *                q-quewy, σωσ e-etc.
+ * @tpawam vawue the type o-of the vawue of this featuwe. >w<
  */
-trait FeatureWithDefaultOnFailure[Entity, Value] extends Feature[Entity, Value] {
+t-twait featuwewithdefauwtonfaiwuwe[entity, 😳😳😳 v-vawue] extends featuwe[entity, OwO vawue] {
 
-  /** The default value a feature should return should it fail to be hydrated */
-  def defaultValue: Value
+  /** the defauwt vawue a featuwe shouwd wetuwn s-shouwd it faiw to be hydwated */
+  d-def defauwtvawue: vawue
 }
 
-trait ModelFeatureName { self: Feature[_, _] =>
-  def featureName: String
+t-twait modewfeatuwename { s-sewf: featuwe[_, 😳 _] =>
+  def featuwename: s-stwing
 }
 
-object Feature {
+o-object featuwe {
 
   /**
-   * Avoid `malformed class name` exceptions due to the presence of the `$` character
-   * Also strip off trailing $ signs for readability
+   * avoid `mawfowmed cwass n-nyame` exceptions d-due to the pwesence of the `$` chawactew
+   * awso stwip off twaiwing $ signs f-fow weadabiwity
    */
-  def getSimpleName[T](c: Class[T]): String = {
-    c.getName.stripSuffix("$").lastIndexOf("$") match {
-      case -1 => c.getSimpleName.stripSuffix("$")
-      case index => c.getName.substring(index + 1).stripSuffix("$")
+  d-def g-getsimpwename[t](c: cwass[t]): s-stwing = {
+    c.getname.stwipsuffix("$").wastindexof("$") m-match {
+      case -1 => c-c.getsimpwename.stwipsuffix("$")
+      case index => c.getname.substwing(index + 1).stwipsuffix("$")
     }
   }
 }

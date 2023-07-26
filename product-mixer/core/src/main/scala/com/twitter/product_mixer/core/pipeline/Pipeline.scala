@@ -1,46 +1,46 @@
-package com.twitter.product_mixer.core.pipeline
+package com.twittew.pwoduct_mixew.cowe.pipewine
 
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.component
+i-impowt c-com.twittew.stitch.awwow
+i-impowt c-com.twittew.stitch.stitch
 
-/** Base trait for all `pipeline` implementations */
-trait Pipeline[-Query, Result] extends Component {
+/** b-base twait fow a-aww `pipewine` i-impwementations */
+t-twait pipewine[-quewy, -.- wesuwt] extends component {
 
-  /** The [[PipelineConfig]] that was used to create this [[Pipeline]] */
-  private[core] val config: PipelineConfig
+  /** the [[pipewineconfig]] that was used t-to cweate this [[pipewine]] */
+  pwivate[cowe] vaw config: pipewineconfig
 
-  /** Returns the underlying arrow that represents the pipeline. This is a val because we want to ensure
-   * that the arrow is long-lived and consistent, not generated per-request.
+  /** w-wetuwns the undewwying awwow t-that wepwesents the pipewine. 😳 this is a vaw because we want to e-ensuwe
+   * that the awwow is wong-wived a-and consistent, mya n-nyot genewated pew-wequest. (˘ω˘)
    *
-   * Directly using this arrow allows you to combine it with other arrows efficiently.
+   * diwectwy using this awwow awwows you to combine it w-with othew awwows efficientwy. >_<
    */
-  val arrow: Arrow[Query, PipelineResult[Result]]
+  vaw awwow: awwow[quewy, -.- pipewinewesuwt[wesuwt]]
 
-  /** all child [[Component]]s that this [[Pipeline]] contains which will be registered and monitored */
-  val children: Seq[Component]
+  /** a-aww chiwd [[component]]s that this [[pipewine]] c-contains which wiww b-be wegistewed a-and monitowed */
+  v-vaw chiwdwen: seq[component]
 
   /**
-   * A helper for executing a single query.
+   * a h-hewpew fow executing a singwe quewy. 🥺
    *
-   * toResultTry and lowerFromTry has the end result of adapting PipelineResult into either a
-   * successful result or a Stitch exception, which is a common use-case for callers,
-   * particularly in the case of [[com.twitter.product_mixer.core.pipeline.product.ProductPipeline]].
+   * towesuwttwy and wowewfwomtwy h-has the end wesuwt of adapting pipewinewesuwt into eithew a
+   * successfuw wesuwt ow a-a stitch exception, (U ﹏ U) which is a c-common use-case f-fow cawwews,
+   * p-pawticuwawwy in the case of [[com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct.pwoductpipewine]]. >w<
    */
-  def process(query: Query): Stitch[Result] = arrow(query).map(_.toResultTry).lowerFromTry
+  def pwocess(quewy: quewy): s-stitch[wesuwt] = a-awwow(quewy).map(_.towesuwttwy).wowewfwomtwy
 
-  final override def toString = s"Pipeline(identifier=$identifier)"
+  finaw ovewwide d-def tostwing = s-s"pipewine(identifiew=$identifiew)"
 
   /**
-   * [[Pipeline]]s are equal to one another if they were generated from the same [[PipelineConfig]],
-   * we check this by doing a reference checks first then comparing the [[PipelineConfig]] instances.
+   * [[pipewine]]s awe equaw to o-one anothew if they wewe genewated f-fwom the same [[pipewineconfig]], mya
+   * we check this by doing a-a wefewence checks fiwst then c-compawing the [[pipewineconfig]] instances.
    *
-   * We can skip additional checks because the other fields (e.g. [[identifier]] and [[children]])
-   * are derived from the [[PipelineConfig]].
+   * w-we can skip a-additionaw checks because the othew fiewds (e.g. >w< [[identifiew]] and [[chiwdwen]])
+   * awe dewived fwom the [[pipewineconfig]]. nyaa~~
    */
-  final override def equals(obj: Any): Boolean = obj match {
-    case pipeline: Pipeline[_, _] =>
-      pipeline.eq(this) || pipeline.config.eq(config) || pipeline.config == config
-    case _ => false
+  finaw o-ovewwide def equaws(obj: a-any): boowean = obj match {
+    c-case pipewine: p-pipewine[_, (✿oωo) _] =>
+      p-pipewine.eq(this) || pipewine.config.eq(config) || pipewine.config == config
+    c-case _ => fawse
   }
 }

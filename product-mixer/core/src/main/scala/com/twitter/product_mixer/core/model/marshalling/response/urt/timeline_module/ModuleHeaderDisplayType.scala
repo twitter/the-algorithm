@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe
 
-sealed trait ModuleHeaderDisplayType
+seawed twait m-moduweheadewdispwaytype
 
-case object Classic extends ModuleHeaderDisplayType
-case object ContextEmphasis extends ModuleHeaderDisplayType
-case object ClassicNoDivider extends ModuleHeaderDisplayType
+c-case o-object cwassic e-extends moduweheadewdispwaytype
+c-case object contextemphasis e-extends m-moduweheadewdispwaytype
+c-case object cwassicnodividew extends moduweheadewdispwaytype

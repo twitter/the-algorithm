@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.component_library.candidate_source.explore_ranker
+package com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.expwowe_wankew
 
-import com.twitter.explore_ranker.{thriftscala => t}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.expwowe_wankew.{thwiftscawa => t-t}
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt c-com.twittew.stitch.stitch
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class ExploreRankerCandidateSource @Inject() (
-  exploreRankerService: t.ExploreRanker.MethodPerEndpoint)
-    extends CandidateSource[t.ExploreRankerRequest, t.ImmersiveRecsResult] {
+@singweton
+cwass expwowewankewcandidatesouwce @inject() (
+  expwowewankewsewvice: t.expwowewankew.methodpewendpoint)
+    e-extends candidatesouwce[t.expwowewankewwequest, 😳😳😳 t.immewsivewecswesuwt] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("ExploreRanker")
+  ovewwide v-vaw identifiew: candidatesouwceidentifiew = c-candidatesouwceidentifiew("expwowewankew")
 
-  override def apply(
-    request: t.ExploreRankerRequest
-  ): Stitch[Seq[t.ImmersiveRecsResult]] = {
-    Stitch
-      .callFuture(exploreRankerService.getRankedResults(request))
+  ovewwide def appwy(
+    wequest: t.expwowewankewwequest
+  ): s-stitch[seq[t.immewsivewecswesuwt]] = {
+    stitch
+      .cawwfutuwe(expwowewankewsewvice.getwankedwesuwts(wequest))
       .map {
-        case t.ExploreRankerResponse(
-              t.ExploreRankerProductResponse
-                .ImmersiveRecsResponse(t.ImmersiveRecsResponse(immersiveRecsResults))) =>
-          immersiveRecsResults
-        case response =>
-          throw new UnsupportedOperationException(s"Unknown response type: $response")
+        c-case t.expwowewankewwesponse(
+              t-t.expwowewankewpwoductwesponse
+                .immewsivewecswesponse(t.immewsivewecswesponse(immewsivewecswesuwts))) =>
+          immewsivewecswesuwts
+        case wesponse =>
+          thwow nyew unsuppowtedopewationexception(s"unknown w-wesponse type: $wesponse")
       }
   }
 }

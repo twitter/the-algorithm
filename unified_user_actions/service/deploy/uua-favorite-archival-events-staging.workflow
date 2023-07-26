@@ -1,39 +1,39 @@
 {
-  "role": "discode",
-  "name": "uua-favorite-archival-events-staging",
-  "config-files": [
-    "uua-favorite-archival-events.aurora"
-  ],
-  "build": {
-    "play": true,
+  "wowe": "discode", XD
+  "name": "uua-favowite-awchivaw-events-staging", >_<
+  "config-fiwes": [
+    "uua-favowite-awchivaw-events.auwowa"
+  ], (ꈍᴗꈍ)
+  "buiwd": {
+    "pway": twue, ^•ﻌ•^
     "dependencies": [
       {
-        "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "wowe": "packew", OwO
+        "name": "packew-cwient-no-pex", 🥺
+        "vewsion": "watest"
       }
-    ],
+    ], òωó
     "steps": [
       {
-        "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-favorite-archival-events"
-      },
+        "type": "bazew-bundwe", o.O
+        "name": "bundwe", (U ᵕ U❁)
+        "tawget": "unified_usew_actions/sewvice/swc/main/scawa:uua-favowite-awchivaw-events"
+      }, (⑅˘꒳˘)
       {
-        "type": "packer",
-        "name": "uua-favorite-archival-events-staging",
-        "artifact": "./dist/uua-favorite-archival-events.zip"
+        "type": "packew", ( ͡o ω ͡o )
+        "name": "uua-favowite-awchivaw-events-staging", UwU
+        "awtifact": "./dist/uua-favowite-awchivaw-events.zip"
       }
     ]
-  },
-  "targets": [
+  }, rawr x3
+  "tawgets": [
     {
-      "type": "group",
-      "name": "staging",
-      "targets": [
+      "type": "gwoup", rawr
+      "name": "staging", σωσ
+      "tawgets": [
         {
-          "name": "uua-favorite-archival-events-staging-pdxa",
-          "key": "pdxa/discode/staging/uua-favorite-archival-events"
+          "name": "uua-favowite-awchivaw-events-staging-pdxa", σωσ
+          "key": "pdxa/discode/staging/uua-favowite-awchivaw-events"
         }
       ]
     }

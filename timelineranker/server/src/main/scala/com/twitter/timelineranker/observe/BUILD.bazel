@@ -1,15 +1,15 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/thrift/com/twitter/timelineranker/server/model:thrift-scala",
-        "timelineranker/common:model",
-        "timelines:observe",
-        "timelines/src/main/scala/com/twitter/timelines/authorization",
-        "timelines/src/main/scala/com/twitter/timelines/features",
-        "timelines/src/main/scala/com/twitter/timelines/model/types",
-        "util/util-core:util-core-util",
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    s-stwict_deps = t-twue, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "swc/thwift/com/twittew/timewinewankew/sewvew/modew:thwift-scawa", (⑅˘꒳˘)
+        "timewinewankew/common:modew",
+        "timewines:obsewve", ( ͡o ω ͡o )
+        "timewines/swc/main/scawa/com/twittew/timewines/authowization", UwU
+        "timewines/swc/main/scawa/com/twittew/timewines/featuwes", rawr x3
+        "timewines/swc/main/scawa/com/twittew/timewines/modew/types", rawr
+        "utiw/utiw-cowe:utiw-cowe-utiw", σωσ
     ],
 )

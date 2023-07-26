@@ -1,51 +1,51 @@
-package com.twitter.servo.util
+package com.twittew.sewvo.utiw
 
-import com.twitter.finagle.stats.{NullStatsReceiver, StatsReceiver}
-import scala.collection.mutable
+impowt com.twittew.finagwe.stats.{nuwwstatsweceivew, 😳😳😳 s-statsweceivew}
+i-impowt scawa.cowwection.mutabwe
 
 /**
- * Maintains a frequency counted circular buffer of objects.
+ * m-maintains a-a fwequency c-counted ciwcuwaw b-buffew of objects. o.O
  */
-class FrequencyCounter[Q](
-  size: Int,
-  threshold: Int,
-  trigger: Q => Unit,
-  statsReceiver: StatsReceiver = NullStatsReceiver) {
-  require(threshold > 1) // in order to minimize work for the common case
-  private[this] val buffer = new mutable.ArraySeq[Q](size)
-  private[this] var index = 0
-  private[this] val counts = mutable.Map[Q, Int]()
+c-cwass fwequencycountew[q](
+  s-size: int, ( ͡o ω ͡o )
+  thweshowd: int, (U ﹏ U)
+  twiggew: q => unit, (///ˬ///✿)
+  statsweceivew: statsweceivew = n-nyuwwstatsweceivew) {
+  wequiwe(thweshowd > 1) // in owdew t-to minimize wowk fow the common c-case
+  pwivate[this] vaw buffew = nyew mutabwe.awwayseq[q](size)
+  pwivate[this] v-vaw index = 0
+  pwivate[this] v-vaw counts = m-mutabwe.map[q, >w< int]()
 
-  private[this] val keyCountStat = statsReceiver.scope("frequencyCounter").stat("keyCount")
+  pwivate[this] vaw keycountstat = statsweceivew.scope("fwequencycountew").stat("keycount")
 
   /**
-   * Adds a new key to the circular buffer and updates frequency counts.
-   * Runs trigger if this key occurs exactly `threshold` times in the buffer.
-   * Returns true if this key occurs at least `threshold` times in the buffer.
+   * adds a nyew key t-to the ciwcuwaw buffew and updates fwequency counts. rawr
+   * wuns twiggew if this key o-occuws exactwy `thweshowd` times i-in the buffew. mya
+   * w-wetuwns t-twue if this key o-occuws at weast `thweshowd` times in the buffew. ^^
    */
-  def incr(key: Q): Boolean = {
-    // TOOD(aa): maybe write lock-free version
-    val count = synchronized {
-      counts(key) = counts.getOrElse(key, 0) + 1
+  d-def incw(key: q): boowean = {
+    // tood(aa): maybe wwite w-wock-fwee vewsion
+    vaw count = synchwonized {
+      counts(key) = counts.getowewse(key, 😳😳😳 0) + 1
 
-      Option(buffer(index)) foreach { oldKey =>
-        val countVal = counts(oldKey)
-        if (countVal == 1) {
-          counts -= oldKey
-        } else {
-          counts(oldKey) = countVal - 1
+      option(buffew(index)) f-foweach { owdkey =>
+        vaw countvaw = counts(owdkey)
+        i-if (countvaw == 1) {
+          c-counts -= owdkey
+        } e-ewse {
+          counts(owdkey) = countvaw - 1
         }
       }
 
-      buffer(index) = key
-      index = (index + 1) % size
-      counts(key)
+      buffew(index) = k-key
+      i-index = (index + 1) % size
+      c-counts(key)
     }
-    keyCountStat.add(count)
-    if (count == threshold) {
-      trigger(key)
+    k-keycountstat.add(count)
+    if (count == t-thweshowd) {
+      twiggew(key)
     }
-    count >= threshold
+    c-count >= thweshowd
   }
 
 }

@@ -1,80 +1,80 @@
-package com.twitter.simclustersann.controllers
+package com.twittew.simcwustewsann.contwowwews
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finatra.thrift.Controller
-import com.twitter.simclustersann.thriftscala.SimClustersANNService.GetTweetCandidates
-import com.twitter.simclustersann.thriftscala.SimClustersANNService
-import com.twitter.simclustersann.thriftscala.Query
-import com.twitter.simclustersann.thriftscala.SimClustersANNTweetCandidate
-import com.twitter.scrooge.Request
-import com.twitter.scrooge.Response
-import javax.inject.Inject
-import com.twitter.finagle.Service
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.annotations.Flag
-import com.twitter.simclustersann.candidate_source.{
-  SimClustersANNCandidateSource => SANNSimClustersANNCandidateSource
+impowt com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.finatwa.thwift.contwowwew
+i-impowt c-com.twittew.simcwustewsann.thwiftscawa.simcwustewsannsewvice.gettweetcandidates
+i-impowt com.twittew.simcwustewsann.thwiftscawa.simcwustewsannsewvice
+i-impowt com.twittew.simcwustewsann.thwiftscawa.quewy
+i-impowt com.twittew.simcwustewsann.thwiftscawa.simcwustewsanntweetcandidate
+i-impowt com.twittew.scwooge.wequest
+impowt com.twittew.scwooge.wesponse
+impowt javax.inject.inject
+impowt com.twittew.finagwe.sewvice
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.inject.annotations.fwag
+impowt com.twittew.simcwustewsann.candidate_souwce.{
+  s-simcwustewsanncandidatesouwce => sannsimcwustewsanncandidatesouwce
 }
-import com.twitter.simclustersann.common.FlagNames
-import com.twitter.simclustersann.filters.GetTweetCandidatesResponseStatsFilter
-import com.twitter.simclustersann.filters.SimClustersAnnVariantFilter
-import com.twitter.util.Future
-import com.twitter.util.JavaTimer
-import com.twitter.util.Timer
+i-impowt com.twittew.simcwustewsann.common.fwagnames
+impowt com.twittew.simcwustewsann.fiwtews.gettweetcandidateswesponsestatsfiwtew
+impowt com.twittew.simcwustewsann.fiwtews.simcwustewsannvawiantfiwtew
+i-impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.javatimew
+i-impowt com.twittew.utiw.timew
 
-class SimClustersANNController @Inject() (
-  @Flag(FlagNames.ServiceTimeout) serviceTimeout: Int,
-  variantFilter: SimClustersAnnVariantFilter,
-  getTweetCandidatesResponseStatsFilter: GetTweetCandidatesResponseStatsFilter,
-  sannCandidateSource: SANNSimClustersANNCandidateSource,
-  globalStats: StatsReceiver)
-    extends Controller(SimClustersANNService) {
+c-cwass simcwustewsanncontwowwew @inject() (
+  @fwag(fwagnames.sewvicetimeout) sewvicetimeout: int, rawr
+  vawiantfiwtew: simcwustewsannvawiantfiwtew, mya
+  gettweetcandidateswesponsestatsfiwtew: g-gettweetcandidateswesponsestatsfiwtew, ^^
+  sanncandidatesouwce: sannsimcwustewsanncandidatesouwce, 😳😳😳
+  gwobawstats: statsweceivew)
+    e-extends contwowwew(simcwustewsannsewvice) {
 
-  import SimClustersANNController._
+  impowt simcwustewsanncontwowwew._
 
-  private val stats: StatsReceiver = globalStats.scope(this.getClass.getCanonicalName)
-  private val timer: Timer = new JavaTimer(true)
+  p-pwivate vaw s-stats: statsweceivew = g-gwobawstats.scope(this.getcwass.getcanonicawname)
+  p-pwivate vaw timew: timew = nyew javatimew(twue)
 
-  val filteredService: Service[Request[GetTweetCandidates.Args], Response[
-    Seq[SimClustersANNTweetCandidate]
+  v-vaw fiwtewedsewvice: sewvice[wequest[gettweetcandidates.awgs], mya wesponse[
+    seq[simcwustewsanntweetcandidate]
   ]] = {
-    variantFilter
-      .andThen(getTweetCandidatesResponseStatsFilter)
-      .andThen(Service.mk(handler))
+    v-vawiantfiwtew
+      .andthen(gettweetcandidateswesponsestatsfiwtew)
+      .andthen(sewvice.mk(handwew))
   }
 
-  handle(GetTweetCandidates).withService(filteredService)
+  handwe(gettweetcandidates).withsewvice(fiwtewedsewvice)
 
-  private def handler(
-    request: Request[GetTweetCandidates.Args]
-  ): Future[Response[Seq[SimClustersANNTweetCandidate]]] = {
-    val query: Query = request.args.query
-    val simClustersANNCandidateSourceQuery = SANNSimClustersANNCandidateSource.Query(
-      sourceEmbeddingId = query.sourceEmbeddingId,
-      config = query.config
+  pwivate def handwew(
+    wequest: wequest[gettweetcandidates.awgs]
+  ): futuwe[wesponse[seq[simcwustewsanntweetcandidate]]] = {
+    vaw quewy: q-quewy = wequest.awgs.quewy
+    vaw simcwustewsanncandidatesouwcequewy = s-sannsimcwustewsanncandidatesouwce.quewy(
+      s-souwceembeddingid = q-quewy.souwceembeddingid, 😳
+      config = quewy.config
     )
 
-    val result = sannCandidateSource
-      .get(simClustersANNCandidateSourceQuery).map {
-        case Some(tweetCandidatesSeq) =>
-          Response(tweetCandidatesSeq.map { tweetCandidate =>
-            SimClustersANNTweetCandidate(
-              tweetId = tweetCandidate.tweetId,
-              score = tweetCandidate.score
+    vaw wesuwt = sanncandidatesouwce
+      .get(simcwustewsanncandidatesouwcequewy).map {
+        case some(tweetcandidatesseq) =>
+          w-wesponse(tweetcandidatesseq.map { t-tweetcandidate =>
+            simcwustewsanntweetcandidate(
+              t-tweetid = t-tweetcandidate.tweetid, -.-
+              scowe = tweetcandidate.scowe
             )
           })
-        case None =>
-          DefaultResponse
+        c-case nyone =>
+          defauwtwesponse
       }
 
-    result.raiseWithin(serviceTimeout.milliseconds)(timer).rescue {
-      case e: Throwable =>
-        stats.scope("failures").counter(e.getClass.getCanonicalName).incr()
-        Future.value(DefaultResponse)
+    w-wesuwt.waisewithin(sewvicetimeout.miwwiseconds)(timew).wescue {
+      case e: thwowabwe =>
+        stats.scope("faiwuwes").countew(e.getcwass.getcanonicawname).incw()
+        f-futuwe.vawue(defauwtwesponse)
     }
   }
 }
 
-object SimClustersANNController {
-  val DefaultResponse: Response[Seq[SimClustersANNTweetCandidate]] = Response(Seq.empty)
+object simcwustewsanncontwowwew {
+  v-vaw defauwtwesponse: wesponse[seq[simcwustewsanntweetcandidate]] = w-wesponse(seq.empty)
 }

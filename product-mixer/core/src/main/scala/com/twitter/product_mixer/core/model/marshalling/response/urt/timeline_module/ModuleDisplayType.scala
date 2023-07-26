@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe
 
-sealed trait ModuleDisplayType
+seawed twait m-moduwedispwaytype
 
-case object Carousel extends ModuleDisplayType
-case object CompactCarousel extends ModuleDisplayType
-case object ConversationTree extends ModuleDisplayType
-case object GridCarousel extends ModuleDisplayType
-case object Vertical extends ModuleDisplayType
-case object VerticalConversation extends ModuleDisplayType
-case object VerticalGrid extends ModuleDisplayType
-case object VerticalWithContextLine extends ModuleDisplayType
+c-case object c-cawousew extends m-moduwedispwaytype
+c-case object c-compactcawousew e-extends moduwedispwaytype
+c-case object convewsationtwee extends moduwedispwaytype
+case object gwidcawousew e-extends moduwedispwaytype
+case object v-vewticaw extends moduwedispwaytype
+c-case object vewticawconvewsation extends moduwedispwaytype
+case object vewticawgwid e-extends moduwedispwaytype
+c-case object vewticawwithcontextwine e-extends moduwedispwaytype

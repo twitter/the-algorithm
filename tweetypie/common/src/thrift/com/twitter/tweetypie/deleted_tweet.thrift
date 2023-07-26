@@ -1,86 +1,86 @@
-namespace java com.twitter.tweetypie.thriftjava
-#@namespace scala com.twitter.tweetypie.thriftscala
-#@namespace strato com.twitter.tweetypie
-namespace py gen.twitter.tweetypie.deletedtweet
-namespace rb TweetyPie
-namespace go tweetypie
+namespace java com.twittew.tweetypie.thwiftjava
+#@namespace scawa c-com.twittew.tweetypie.thwiftscawa
+#@namespace stwato c-com.twittew.tweetypie
+n-nyamespace p-py gen.twittew.tweetypie.dewetedtweet
+n-nyamespace w-wb tweetypie
+n-nyamespace g-go tweetypie
 
-// Structs used for response from getDeletedTweets
+// stwucts used fow wesponse fwom getdewetedtweets
 
-struct DeletedTweetMediaEntity {
-  1: required i64 id
-  2: required i8 mediaType
-  3: required i16 width
-  4: required i16 height
-} (persisted = 'true')
+stwuct dewetedtweetmediaentity {
+  1: w-wequiwed i64 id
+  2: wequiwed i8 mediatype
+  3: w-wequiwed i16 width
+  4: w-wequiwed i16 height
+} (pewsisted = 'twue')
 
-struct DeletedTweetShare {
-  1: required i64 sourceStatusId
-  2: required i64 sourceUserId
-  3: required i64 parentStatusId
-} (persisted = 'true')
+stwuct dewetedtweetshawe {
+  1: wequiwed i-i64 souwcestatusid
+  2: wequiwed i-i64 souwceusewid
+  3: w-wequiwed i64 pawentstatusid
+} (pewsisted = 'twue')
 
 /**
- * A tweet that has been soft- or hard-deleted.
+ * a tweet that has been soft- ow hawd-deweted.
  *
- * Originally DeletedTweet used the same field ids as tbird.Status.
- * This is no longer the case.
+ * o-owiginawwy dewetedtweet used the same fiewd ids as tbiwd.status. >w<
+ * this i-is nyo wongew the case. (⑅˘꒳˘)
  */
-struct DeletedTweet {
-  // Uses the same field ids as tbird.thrift so we can easily map and add fields later
-  1: required i64 id
+stwuct d-dewetedtweet {
+  // u-uses the s-same fiewd ids a-as tbiwd.thwift so we can easiwy map and add fiewds w-watew
+  1: wequiwed i64 id
 
   /**
-   * User who created the tweet. Only available for soft-deleted tweets.
+   * usew w-who cweated the tweet. OwO onwy avaiwabwe fow soft-deweted tweets. (ꈍᴗꈍ)
    */
-  2: optional i64 userId
+  2: optionaw i64 usewid
 
   /**
-   * Content of the tweet. Only available for soft-deleted tweets.
+   * c-content of the tweet. o-onwy avaiwabwe f-fow soft-deweted t-tweets. 😳
    */
-  3: optional string text
+  3: optionaw stwing text
 
   /**
-   * When the tweet was created. Only available for soft-deleted tweets.
+   * when the tweet w-was cweated. 😳😳😳 o-onwy avaiwabwe fow soft-deweted t-tweets. mya
    */
-  5: optional i64 createdAtSecs
+  5: o-optionaw i64 cweatedatsecs
 
   /**
-   * Retweet information if the deleted tweet was a retweet. Only available
-   * for soft-deleted tweets.
+   * w-wetweet infowmation i-if the deweted tweet was a wetweet. mya onwy avaiwabwe
+   * f-fow soft-deweted tweets. (⑅˘꒳˘)
    */
-  7: optional DeletedTweetShare share
+  7: o-optionaw dewetedtweetshawe s-shawe
 
   /**
-   * Media metadata if the deleted tweet included media. Only available for
-   * soft-deleted tweets.
+   * m-media metadata if the deweted tweet incwuded media. (U ﹏ U) onwy avaiwabwe fow
+   * soft-deweted tweets. mya
    */
-  14: optional list<DeletedTweetMediaEntity> media
+  14: o-optionaw wist<dewetedtweetmediaentity> m-media
 
   /**
-   * The time when this tweet was deleted by a user, in epoch milliseconds, either normally (aka
-   * "softDelete") or via a bouncer flow (aka "bounceDelete").
+   * the time when this t-tweet was deweted b-by a usew, ʘwʘ in e-epoch miwwiseconds, (˘ω˘) eithew nyowmawwy (aka
+   * "softdewete") ow via a bouncew fwow (aka "bouncedewete"). (U ﹏ U)
    *
-   * This data is not available for all deleted tweets.
+   * t-this data is nyot avaiwabwe fow aww deweted tweets. ^•ﻌ•^
    */
-  18: optional i64 deletedAtMsec
+  18: optionaw i64 d-dewetedatmsec
 
   /**
-   * The time when this tweet was permanently deleted, in epoch milliseconds.
+   * the t-time when this tweet w-was pewmanentwy d-deweted, (˘ω˘) in epoch miwwiseconds. :3
    *
-   * This data is not available for all deleted tweets.
+   * this d-data is nyot a-avaiwabwe fow aww d-deweted tweets. ^^;;
    */
-  19: optional i64 hardDeletedAtMsec
+  19: optionaw i-i64 hawddewetedatmsec
 
   /**
-  * The ID of the NoteTweet associated with this Tweet if one exists. This is used by safety tools
-  * to fetch the NoteTweet content when viewing soft deleted Tweets.
+  * the id of the nyotetweet a-associated with t-this tweet if o-one exists. 🥺 this i-is used by safety t-toows
+  * to fetch the nyotetweet content when viewing soft deweted t-tweets. (⑅˘꒳˘)
   */
-  20: optional i64 noteTweetId
+  20: optionaw i64 nyotetweetid
 
   /**
-  * Specifies if the Tweet can be expanded into the NoteTweet, or if they have the same text. Can
-  * be used to distinguish between Longer Tweets and RichText Tweets.
+  * specifies if the tweet can be expanded into the nyotetweet, nyaa~~ o-ow if they have the same text. :3 can
+  * be used to distinguish b-between w-wongew tweets and w-wichtext tweets. ( ͡o ω ͡o )
   */
-  21: optional bool isExpandable
-} (persisted = 'true')
+  21: optionaw boow isexpandabwe
+} (pewsisted = 'twue')

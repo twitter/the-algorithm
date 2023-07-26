@@ -1,1416 +1,1416 @@
-namespace java com.twitter.search.earlybird.thrift
-#@namespace scala com.twitter.search.earlybird.thriftscala
-#@namespace strato com.twitter.search.earlybird
-namespace py gen.twitter.search.earlybird
+namespace java com.twittew.seawch.eawwybiwd.thwift
+#@namespace scawa c-com.twittew.seawch.eawwybiwd.thwiftscawa
+#@namespace s-stwato c-com.twittew.seawch.eawwybiwd
+n-nyamespace p-py gen.twittew.seawch.eawwybiwd
 
-include "com/twitter/ads/adserver/adserver_common.thrift"
-include "com/twitter/search/common/caching/caching.thrift"
-include "com/twitter/search/common/constants/query.thrift"
-include "com/twitter/search/common/constants/search_language.thrift"
-include "com/twitter/search/common/conversation/conversation.thrift"
-include "com/twitter/search/common/features/features.thrift"
-include "com/twitter/search/common/indexing/status.thrift"
-include "com/twitter/search/common/query/search.thrift"
-include "com/twitter/search/common/ranking/ranking.thrift"
-include "com/twitter/search/common/results/expansions.thrift"
-include "com/twitter/search/common/results/highlight.thrift"
-include "com/twitter/search/common/results/hit_attribution.thrift"
-include "com/twitter/search/common/results/hits.thrift"
-include "com/twitter/search/common/results/social.thrift"
-include "com/twitter/service/spiderduck/gen/metadata_store.thrift"
-include "com/twitter/tweetypie/deprecated.thrift"
-include "com/twitter/tweetypie/tweet.thrift"
-include "com/twitter/escherbird/tweet_annotation.thrift"
+i-incwude "com/twittew/ads/adsewvew/adsewvew_common.thwift"
+i-incwude "com/twittew/seawch/common/caching/caching.thwift"
+i-incwude "com/twittew/seawch/common/constants/quewy.thwift"
+incwude "com/twittew/seawch/common/constants/seawch_wanguage.thwift"
+incwude "com/twittew/seawch/common/convewsation/convewsation.thwift"
+incwude "com/twittew/seawch/common/featuwes/featuwes.thwift"
+incwude "com/twittew/seawch/common/indexing/status.thwift"
+i-incwude "com/twittew/seawch/common/quewy/seawch.thwift"
+incwude "com/twittew/seawch/common/wanking/wanking.thwift"
+incwude "com/twittew/seawch/common/wesuwts/expansions.thwift"
+i-incwude "com/twittew/seawch/common/wesuwts/highwight.thwift"
+incwude "com/twittew/seawch/common/wesuwts/hit_attwibution.thwift"
+i-incwude "com/twittew/seawch/common/wesuwts/hits.thwift"
+incwude "com/twittew/seawch/common/wesuwts/sociaw.thwift"
+incwude "com/twittew/sewvice/spidewduck/gen/metadata_stowe.thwift"
+incwude "com/twittew/tweetypie/depwecated.thwift"
+i-incwude "com/twittew/tweetypie/tweet.thwift"
+incwude "com/twittew/eschewbiwd/tweet_annotation.thwift"
 
-enum ThriftSearchRankingMode {
-  // good old realtime search mode
-  RECENCY = 0,
-  // new super fancy relevance ranking
-  RELEVANCE = 1,
-  DEPRECATED_DISCOVERY = 2,
-  // top tweets ranking mode
-  TOPTWEETS = 3,
-  // results from accounts followed by the searcher
-  FOLLOWS = 4,
+e-enum thwiftseawchwankingmode {
+  // g-good owd weawtime seawch mode
+  wecency = 0, mya
+  // new supew fancy wewevance wanking
+  w-wewevance = 1, òωó
+  depwecated_discovewy = 2, (U ﹏ U)
+  // top tweets wanking mode
+  toptweets = 3, (U ﹏ U)
+  // wesuwts fwom accounts f-fowwowed by the seawchew
+  f-fowwows = 4, >_<
 
-  PLACE_HOLDER5 = 5,
-  PLACE_HOLDER6 = 6,
+  p-pwace_howdew5 = 5, nyaa~~
+  p-pwace_howdew6 = 6, 😳😳😳
 }
 
-enum ThriftSearchResultType {
-  // it's a time-ordered result.
-  RECENCY = 0,
-  // it's a highly relevant tweet (aka top tweet).
-  RELEVANCE = 1,
-  // top tweet result type
-  POPULAR = 2,
-  // promoted tweets (ads)
-  PROMOTED = 3,
-  // relevance-ordered (as opposed to time-ordered) tweets generated from a variety of candidates
-  RELEVANCE_ORDERED = 4,
+e-enum thwiftseawchwesuwttype {
+  // it's a time-owdewed w-wesuwt. nyaa~~
+  wecency = 0, -.-
+  // it's a highwy wewevant tweet (aka t-top tweet). 😳😳😳
+  wewevance = 1, ^•ﻌ•^
+  // top tweet wesuwt type
+  popuwaw = 2, UwU
+  // pwomoted tweets (ads)
+  pwomoted = 3, (ˆ ﻌ ˆ)♡
+  // w-wewevance-owdewed (as opposed to time-owdewed) t-tweets g-genewated fwom a v-vawiety of candidates
+  wewevance_owdewed = 4, XD
 
-  PLACE_HOLDER5 = 5,
-  PLACE_HOLDER6 = 6,
+  pwace_howdew5 = 5, (⑅˘꒳˘)
+  pwace_howdew6 = 6, /(^•ω•^)
 }
 
-enum ThriftSocialFilterType {
-  // filter only users that the searcher is directly following.
-  FOLLOWS = 0,
-  // filter only users that are in searcher's social circle of trust.
-  TRUSTED = 1,
-  // filter both follows and trusted.
-  ALL = 2,
+e-enum t-thwiftsociawfiwtewtype {
+  // fiwtew onwy usews t-that the seawchew i-is diwectwy fowwowing. (U ᵕ U❁)
+  fowwows = 0, ʘwʘ
+  // f-fiwtew onwy usews that awe in seawchew's s-sociaw ciwcwe of twust. OwO
+  twusted = 1,
+  // f-fiwtew both fowwows and twusted. (✿oωo)
+  a-aww = 2, (///ˬ///✿)
 
-  PLACE_HOLDER3 = 3,
-  PLACE_HOLDER4 = 4,
+  pwace_howdew3 = 3, (✿oωo)
+  p-pwace_howdew4 = 4, σωσ
 
 }
 
-enum ThriftTweetSource {
-  ///// enums set by Earlybird
-  REALTIME_CLUSTER = 1,
-  FULL_ARCHIVE_CLUSTER = 2,
-  REALTIME_PROTECTED_CLUSTER = 4,
+e-enum thwifttweetsouwce {
+  ///// enums set by eawwybiwd
+  weawtime_cwustew = 1, ʘwʘ
+  fuww_awchive_cwustew = 2, 😳😳😳
+  weawtime_pwotected_cwustew = 4, ^•ﻌ•^
 
-  ///// enums set inside Blender
-  ADSERVER = 0,
-  // from top news search, only used in universal search
-  TOP_NEWS = 3,
-  // special tweets included just for EventParrot.
-  FORCE_INCLUDED = 5,
-  // from Content Recommender
-  // from topic to Tweet path
-  CONTENT_RECS_TOPIC_TO_TWEET = 6,
-  // used for hydrating QIG Tweets (go/qig)
-  QIG = 8,
-  // used for TOPTWEETS ranking mode
-  TOP_TWEET = 9,
-  // used for experimental candidate sources
-  EXPERIMENTAL = 7,
-  // from Scanr service
-  SCANR = 10,
+  ///// enums set inside bwendew
+  a-adsewvew = 0, (˘ω˘)
+  // f-fwom top nyews seawch, (U ﹏ U) onwy u-used in univewsaw s-seawch
+  top_news = 3, >w<
+  // speciaw t-tweets incwuded just fow eventpawwot. XD
+  fowce_incwuded = 5, XD
+  // fwom content w-wecommendew
+  // fwom topic to tweet path
+  content_wecs_topic_to_tweet = 6, (U ﹏ U)
+  // used fow h-hydwating qig tweets (go/qig)
+  qig = 8, (✿oωo)
+  // used f-fow toptweets w-wanking mode
+  t-top_tweet = 9, ^^;;
+  // used fow expewimentaw c-candidate s-souwces
+  expewimentaw = 7,
+  // f-fwom scanw s-sewvice
+  scanw = 10, (U ﹏ U)
 
-  PLACE_HOLDER11 = 11,
-  PLACE_HOLDER12 = 12
+  pwace_howdew11 = 11, OwO
+  pwace_howdew12 = 12
 }
 
-enum NamedEntitySource {
-  TEXT = 0,
-  URL = 1,
+e-enum nyamedentitysouwce {
+  t-text = 0, 😳😳😳
+  uww = 1,
 
-  PLACE_HOLDER2 = 2,
-  PLACE_HOLDER3 = 3,
-  PLACE_HOLDER4 = 4,
+  p-pwace_howdew2 = 2, 😳😳😳
+  p-pwace_howdew3 = 3, (✿oωo)
+  p-pwace_howdew4 = 4, UwU
 }
 
-enum ExperimentCluster {
-  EXP0 = 0, // Send requests to the earlybird-realtime-exp0 cluster
-  PLACE_HOLDER1 = 1,
-  PLACE_HOLDER2 = 2,
+enum expewimentcwustew {
+  exp0 = 0, mya // s-send wequests to the eawwybiwd-weawtime-exp0 cwustew
+  pwace_howdew1 = 1, rawr x3
+  pwace_howdew2 = 2, /(^•ω•^)
 }
 
-enum AudioSpaceState {
-   RUNNING = 0,
-   ENDED = 1,
+enum audiospacestate {
+   wunning = 0, >_<
+   ended = 1, :3
 
-   PLACE_HOLDER2 = 2,
-   PLACE_HOLDER3 = 3,
-   PLACE_HOLDER4 = 4,
-   PLACE_HOLDER5 = 5,
+   pwace_howdew2 = 2, o.O
+   pwace_howdew3 = 3, UwU
+   p-pwace_howdew4 = 4, (ꈍᴗꈍ)
+   pwace_howdew5 = 5, >_<
 }
 
-// Contains all scoring and relevance-filtering related controls and options for Earlybird.
-struct ThriftSearchRelevanceOptions {
-  // Next available field ID: 31 and note that 45 and 50 have been used already
+// contains aww scowing and w-wewevance-fiwtewing w-wewated contwows a-and options fow eawwybiwd. òωó
+s-stwuct thwiftseawchwewevanceoptions {
+  // nyext a-avaiwabwe fiewd i-id: 31 and nyote that 45 and 50 have been used awweady
 
-  2: optional bool filterDups = 0         // filter out duplicate search results
-  26: optional bool keepDupWithHigherScore = 1 // keep the duplicate tweet with the higher score
+  2: optionaw boow fiwtewdups = 0         // fiwtew out d-dupwicate seawch wesuwts
+  26: o-optionaw boow keepdupwithhighewscowe = 1 // k-keep t-the dupwicate tweet with the highew scowe
 
-  3: optional bool proximityScoring = 0   // whether to do proximity scoring or not
-  4: optional i32 maxConsecutiveSameUser  // filter consecutive results from the same user
-  5: optional ranking.ThriftRankingParams rankingParams  // composed by blender
-  // deprecated in favor of the maxHitsToProcess in CollectorParams
-  6: optional i32 maxHitsToProcess // when to early-terminate for relevance
-  7: optional string experimentName      // what relevance experiment is running
-  8: optional string experimentBucket    // what bucket the user is in; DDG defaults to hard-coded 'control'
-  9: optional bool interpretSinceId = 1   // whether to interpret since_id operator
+  3: o-optionaw boow p-pwoximityscowing = 0   // whethew t-to do pwoximity s-scowing ow nyot
+  4: optionaw i32 maxconsecutivesameusew  // fiwtew consecutive wesuwts fwom t-the same usew
+  5: o-optionaw wanking.thwiftwankingpawams w-wankingpawams  // composed b-by bwendew
+  // d-depwecated in favow of the maxhitstopwocess in c-cowwectowpawams
+  6: optionaw i32 maxhitstopwocess // when to eawwy-tewminate f-fow wewevance
+  7: o-optionaw stwing expewimentname      // nyani w-wewevance expewiment i-is wunning
+  8: optionaw stwing expewimentbucket    // nyani b-bucket the usew is in; ddg defauwts to hawd-coded 'contwow'
+  9: optionaw boow intewpwetsinceid = 1   // w-whethew to intewpwet since_id opewatow
 
-  24: optional i32 maxHitsPerUser // Overrides ThriftSearchQuery.maxHitsPerUser
+  24: o-optionaw i-i32 maxhitspewusew // ovewwides thwiftseawchquewy.maxhitspewusew
 
-  // only used by discovery for capping direct follow tweets
-  10: optional i32 maxConsecutiveDirectFollows
+  // onwy used b-by discovewy f-fow capping diwect fowwow tweets
+  10: optionaw i32 maxconsecutivediwectfowwows
 
-  // Note - the orderByRelevance flag is critical to understanding how merging
-  // and trimming works in relevance mode in the search root.
+  // n-nyote - the owdewbywewevance f-fwag is cwiticaw to undewstanding how mewging
+  // and twimming w-wowks in wewevance mode in the s-seawch woot. (ꈍᴗꈍ)
   //
-  // When orderByRelevance is true, results are trimmed in score-order.  This means the
-  // client will get the top results from (maxHitsToProcess * numHashPartitions) hits,
-  // ordered by score.
+  // w-when owdewbywewevance is twue, wesuwts a-awe twimmed in scowe-owdew. 😳😳😳  this m-means the
+  // c-cwient wiww get t-the top wesuwts fwom (maxhitstopwocess * n-nyumhashpawtitions) h-hits, ( ͡o ω ͡o )
+  // owdewed by scowe. mya
   //
-  // When orderByRelevance is false, results are trimmed in id-order.  This means the
-  // client will get the top results from an approximation of maxHitsToProcess hits
-  // (across the entire corpus).  These results ordered by ID.
-  14: optional bool orderByRelevance = 0
+  // w-when owdewbywewevance i-is fawse, UwU w-wesuwts awe twimmed in id-owdew.  this means t-the
+  // cwient wiww get the top w-wesuwts fwom a-an appwoximation of maxhitstopwocess hits
+  // (acwoss the entiwe c-cowpus). òωó  these w-wesuwts owdewed b-by id. -.-
+  14: optionaw b-boow owdewbywewevance = 0
 
-  // Max blending count for results returned due to from:user rewrites
-  16: optional i32 maxUserBlendCount
+  // max bwending c-count fow wesuwts wetuwned due to fwom:usew wewwites
+  16: optionaw i32 maxusewbwendcount
 
-  // The weight for proximity phrases generated while translating the serialized query to the
-  // lucene query.
-  19: optional double proximityPhraseWeight = 1.0
-  20: optional i32 proximityPhraseSlop = 255
+  // the weight f-fow pwoximity phwases genewated w-whiwe twanswating the sewiawized q-quewy to the
+  // wucene quewy. :3
+  19: o-optionaw doubwe pwoximityphwaseweight = 1.0
+  20: o-optionaw i-i32 pwoximityphwaseswop = 255
 
-  // Override the weights of searchable fields.
-  // Negative weight means the the field is not enabled for search by default,
-  // but if it is (e.g., by annotation), the absolute value of the weight shall be
-  // used (if the annotation does not specify a weight).
-  21: optional map<string, double> fieldWeightMapOverride
+  // o-ovewwide the w-weights of seawchabwe f-fiewds. ^•ﻌ•^
+  // nyegative weight means the the fiewd is nyot enabwed fow seawch by defauwt, (˘ω˘)
+  // but if it i-is (e.g., by annotation), 😳😳😳 t-the absowute v-vawue of the weight shaww b-be
+  // used (if the annotation does nyot specify a weight). (///ˬ///✿)
+  21: o-optionaw map<stwing, d-doubwe> fiewdweightmapovewwide
 
-  // whether disable the coordination in the rewritten disjunction query, term query and phrase query
-  // the details can be found in LuceneVisitor
-  22: optional bool deprecated_disableCoord = 0
+  // whethew d-disabwe the coowdination in the wewwitten d-disjunction quewy, t-tewm quewy and phwase quewy
+  // t-the detaiws c-can be found in wucenevisitow
+  22: optionaw boow depwecated_disabwecoowd = 0
 
-  // Root only. Returns all results seen by root to the client without trimming
-  // if set to true.
-  23: optional bool returnAllResults
+  // woot onwy. 🥺 w-wetuwns aww wesuwts s-seen by woot t-to the cwient without t-twimming
+  // i-if set to twue. (U ᵕ U❁)
+  23: optionaw b-boow wetuwnawwwesuwts
 
-  // DEPRECATED: All v2 counters will be used explicitly in the scoring function and
-  // returned in their own field (in either metadata or feature map in response).
-  25: optional bool useEngagementCountersV2 = 0
+  // d-depwecated: aww v2 countews wiww b-be used expwicitwy i-in the scowing function and
+  // w-wetuwned in theiw own fiewd (in eithew metadata o-ow featuwe map in wesponse). (˘ω˘)
+  25: o-optionaw b-boow useengagementcountewsv2 = 0
 
-  // -------- PERSONALIZATION-RELATED RELEVANCE OPTIONS --------
-  // Take special care with these options when reasoning about caching.
+  // -------- pewsonawization-wewated w-wewevance options --------
+  // take speciaw c-cawe with t-these options when w-weasoning about caching.
 
-  // Deprecated in SEARCH-8616.
-  45: optional map<i32, double> deprecated_topicIDWeights
+  // depwecated in seawch-8616. UwU
+  45: o-optionaw map<i32, 😳 doubwe> depwecated_topicidweights
 
-  // Collect hit attribution on queries and likedByUserIDFilter64-enhanced queries to
-  // get likedByUserIds list in metadata field.
-  // NOTE: this flag has no affect on fromUserIDFilter64.
-  50: optional bool collectFieldHitAttributions = 0
+  // cowwect h-hit attwibution o-on quewies and wikedbyusewidfiwtew64-enhanced q-quewies to
+  // get wikedbyusewids w-wist in metadata f-fiewd. :3
+  // nyote: this fwag has nyo affect o-on fwomusewidfiwtew64. mya
+  50: optionaw boow cowwectfiewdhitattwibutions = 0
 
-  // Whether to collect all hits regardless of their score with RelevanceAllCollector.
-  27: optional bool useRelevanceAllCollector = 0
+  // whethew to cowwect a-aww hits w-wegawdwess of theiw scowe with wewevanceawwcowwectow. nyaa~~
+  27: o-optionaw boow usewewevanceawwcowwectow = 0
 
-  // Override features of specific tweets before the tweets are scored.  
-  28: optional map<i64, features.ThriftSearchResultFeatures> perTweetFeaturesOverride
+  // o-ovewwide f-featuwes of s-specific tweets befowe the tweets awe scowed. 😳😳😳  
+  28: optionaw map<i64, ^•ﻌ•^ featuwes.thwiftseawchwesuwtfeatuwes> pewtweetfeatuwesovewwide
 
-  // Override features of all tweets from specific users before the tweets are scored. 
-  29: optional map<i64, features.ThriftSearchResultFeatures> perUserFeaturesOverride
+  // ovewwide featuwes of aww tweets fwom specific usews befowe the tweets awe scowed. UwU 
+  29: optionaw map<i64, (ꈍᴗꈍ) featuwes.thwiftseawchwesuwtfeatuwes> p-pewusewfeatuwesovewwide
 
-  // Override features of all tweets before the tweets are scored.
-  30: optional features.ThriftSearchResultFeatures globalFeaturesOverride
-}(persisted='true')
+  // o-ovewwide featuwes of aww tweets befowe t-the tweets awe s-scowed.
+  30: o-optionaw featuwes.thwiftseawchwesuwtfeatuwes gwobawfeatuwesovewwide
+}(pewsisted='twue')
 
-// Facets types that may have different ranking parameters.
-enum ThriftFacetType {
-  DEFAULT = 0,
-  MENTIONS_FACET = 1,
-  HASHTAGS_FACET = 2,
-  // Deprecated in SEARCH-13708
-  DEPRECATED_NAMED_ENTITIES_FACET = 3,
-  STOCKS_FACET = 4,
-  VIDEOS_FACET = 5,
-  IMAGES_FACET = 6,
-  NEWS_FACET = 7,
-  LANGUAGES_FACET = 8,
-  SOURCES_FACET = 9,
-  TWIMG_FACET = 10,
-  FROM_USER_ID_FACET = 11,
-  DEPRECATED_TOPIC_IDS_FACET = 12,
-  RETWEETS_FACET = 13,
-  LINKS_FACET = 14,
+// f-facets types that may h-have diffewent w-wanking pawametews. (⑅˘꒳˘)
+enum thwiftfacettype {
+  d-defauwt = 0, OwO
+  mentions_facet = 1, UwU
+  h-hashtags_facet = 2, OwO
+  // d-depwecated in seawch-13708
+  depwecated_named_entities_facet = 3, (///ˬ///✿)
+  s-stocks_facet = 4, (U ﹏ U)
+  v-videos_facet = 5, (⑅˘꒳˘)
+  i-images_facet = 6, /(^•ω•^)
+  n-nyews_facet = 7, :3
+  wanguages_facet = 8,
+  s-souwces_facet = 9, ( ͡o ω ͡o )
+  t-twimg_facet = 10, (ˆ ﻌ ˆ)♡
+  fwom_usew_id_facet = 11, XD
+  d-depwecated_topic_ids_facet = 12, :3
+  w-wetweets_facet = 13, σωσ
+  w-winks_facet = 14, mya
 
-  PLACE_HOLDER15 = 15,
-  PLACE_HOLDER16 = 16,
+  pwace_howdew15 = 15, -.-
+  p-pwace_howdew16 = 16, :3
 }
 
-struct ThriftSearchDebugOptions {
-  // Make earlybird only score and return tweets (specified by tweet id) here, regardless
-  // if they have a hit for the current query or not.
-  1: optional set<i64> statusIds;
+s-stwuct thwiftseawchdebugoptions {
+  // make e-eawwybiwd onwy scowe and wetuwn t-tweets (specified by tweet id) hewe, rawr wegawdwess
+  // i-if they have a hit fow t-the cuwwent quewy o-ow nyot. >_<
+  1: o-optionaw set<i64> statusids;
 
-  // Assorted structures to pass in debug options.
-  2: optional map<string, string> stringMap;
-  3: optional map<string, double> valueMap;
-  4: optional list<double> valueList;
-}(persisted='true')
+  // a-assowted stwuctuwes to pass in d-debug options. -.-
+  2: optionaw map<stwing, :3 s-stwing> stwingmap;
+  3: o-optionaw map<stwing, XD doubwe> vawuemap;
+  4: optionaw wist<doubwe> vawuewist;
+}(pewsisted='twue')
 
-// These options control what metadata will be returned by earlybird for each search result
-// in the ThriftSearchResultMetadata struct.  These options are currently mostly supported by
-// AbstractRelevanceCollector and partially in SearchResultsCollector.  Most are true by default to
-// preserve backwards compatibility, but can be disabled as necessary to optimize searches returning
-// many results (such as discover).
-struct ThriftSearchResultMetadataOptions {
-  // If true, fills in the tweetUrls field in ThriftSearchResultMetadata.
-  // Populated by AbstractRelevanceCollector.
-  1: optional bool getTweetUrls = 1
+// t-these options contwow nyani m-metadata wiww b-be wetuwned by eawwybiwd fow each seawch wesuwt
+// in the thwiftseawchwesuwtmetadata s-stwuct. ^^  these options awe c-cuwwentwy mostwy s-suppowted by
+// a-abstwactwewevancecowwectow and pawtiawwy in seawchwesuwtscowwectow. rawr  m-most awe t-twue by defauwt to
+// pwesewve b-backwawds compatibiwity, (///ˬ///✿) but can be disabwed as n-nyecessawy to optimize seawches w-wetuwning
+// many w-wesuwts (such a-as discovew). ^^;;
+stwuct thwiftseawchwesuwtmetadataoptions {
+  // i-if t-twue, :3 fiwws in t-the tweetuwws fiewd i-in thwiftseawchwesuwtmetadata. :3
+  // popuwated b-by abstwactwewevancecowwectow. ( ͡o ω ͡o )
+  1: o-optionaw boow g-gettweetuwws = 1
 
-  // If true, fills in the resultLocation field in ThriftSearchResultMetadata.
-  // Populated by AbstractRelevanceCollector.
-  2: optional bool getResultLocation = 1
+  // i-if twue, (✿oωo) f-fiwws in the w-wesuwtwocation f-fiewd in thwiftseawchwesuwtmetadata. UwU
+  // p-popuwated by abstwactwewevancecowwectow. ( ͡o ω ͡o )
+  2: o-optionaw boow getwesuwtwocation = 1
   
-  // Deprecated in SEARCH-8616.
-  3: optional bool deprecated_getTopicIDs = 1
+  // d-depwecated in seawch-8616. o.O
+  3: o-optionaw boow d-depwecated_gettopicids = 1
 
-  // If true, fills in the luceneScore field in ThriftSearchResultMetadata.
-  // Populated by LinearScoringFunction.
-  4: optional bool getLuceneScore = 0
+  // i-if twue, rawr fiwws in the wucenescowe fiewd in thwiftseawchwesuwtmetadata. (ꈍᴗꈍ)
+  // popuwated by wineawscowingfunction. mya
+  4: o-optionaw b-boow getwucenescowe = 0
 
-  // Deprecated but used to be for Offline feature values for static index
-  5: optional bool deprecated_getExpFeatureValues = 0
+  // depwecated b-but used to be fow offwine featuwe vawues fow static index
+  5: o-optionaw b-boow depwecated_getexpfeatuwevawues = 0
 
-  // If true, will omit all features derivable from packedFeatures, and set packedFeatures
-  // instead.
-  6: optional bool deprecated_usePackedFeatures = 0
+  // if twue, wiww omit a-aww featuwes d-dewivabwe fwom packedfeatuwes, mya and set packedfeatuwes
+  // instead. UwU
+  6: o-optionaw b-boow depwecated_usepackedfeatuwes = 0
 
-  // If true, fills sharedStatusId. For replies this is the in-reply-to status id and for
-  // retweets this is the retweet source status id.
-  // Also fills in the the isRetweet and isReply flags.
-  7: optional bool getInReplyToStatusId = 0
+  // if t-twue, ^^;; fiwws shawedstatusid. -.- f-fow wepwies this is the in-wepwy-to s-status id and f-fow
+  // wetweets this is the wetweet souwce status i-id.
+  // awso fiwws in the the iswetweet and i-iswepwy fwags. XD
+  7: optionaw boow g-getinwepwytostatusid = 0
 
-  // If true, fills referencedTweetAuthorId. Also fills in the the isRetweet and isReply flags.
-  8: optional bool getReferencedTweetAuthorId = 0
+  // i-if twue, nyaa~~ fiwws wefewencedtweetauthowid. (ꈍᴗꈍ) a-awso fiwws i-in the the iswetweet and iswepwy f-fwags. ^^;;
+  8: optionaw boow g-getwefewencedtweetauthowid = 0
 
-  // If true, fills media bits (video/vine/periscope/etc.)
-  9: optional bool getMediaBits = 0
+  // i-if twue, :3 fiwws m-media bits (video/vine/pewiscope/etc.)
+  9: o-optionaw boow getmediabits = 0
 
-  // If true, will return all defined features in the packed features.  This flag does not cover
-  // the above defined features.
-  10: optional bool getAllFeatures = 0
+  // if twue, (///ˬ///✿) wiww w-wetuwn aww defined f-featuwes in t-the packed featuwes. /(^•ω•^)  this fwag d-does nyot covew
+  // the above defined featuwes. σωσ
+  10: o-optionaw b-boow getawwfeatuwes = 0
 
-  // If true, will return all features as ThriftSearchResultFeatures format.
-  11: optional bool returnSearchResultFeatures = 0
+  // i-if twue, >w< wiww wetuwn aww featuwes as thwiftseawchwesuwtfeatuwes fowmat. (ˆ ﻌ ˆ)♡
+  11: optionaw boow wetuwnseawchwesuwtfeatuwes = 0
 
-  // If the client caches some features schemas, client can indicate its cache schemas through
-  // this field based on (version, checksum).
-  12: optional list<features.ThriftSearchFeatureSchemaSpecifier> featureSchemasAvailableInClient
+  // i-if the cwient caches some featuwes s-schemas, rawr x3 cwient c-can indicate its cache schemas thwough
+  // t-this fiewd based on (vewsion, checksum). -.-
+  12: optionaw w-wist<featuwes.thwiftseawchfeatuweschemaspecifiew> f-featuweschemasavaiwabweincwient
 
-  // Specific feature IDs to return for recency requests. Populated in SearchResultFeatures.
-  // Values must be IDs of CSF fields from EarlybirdFieldConstants.
-  13: optional list<i32> requestedFeatureIDs
+  // s-specific featuwe i-ids to wetuwn fow w-wecency wequests. (ˆ ﻌ ˆ)♡ popuwated in seawchwesuwtfeatuwes. /(^•ω•^)
+  // vawues must be ids o-of csf fiewds fwom eawwybiwdfiewdconstants. (⑅˘꒳˘)
+  13: o-optionaw wist<i32> wequestedfeatuweids
 
-  // If true, fills in the namedEntities field in ThriftSearchResultExtraMetadata
-  14: optional bool getNamedEntities = 0
+  // if twue, (˘ω˘) fiwws in the nyamedentities f-fiewd in thwiftseawchwesuwtextwametadata
+  14: optionaw boow getnamedentities = 0
 
-  // If true, fills in the entityAnnotations field in ThriftSearchResultExtraMetadata
-  15: optional bool getEntityAnnotations = 0
+  // if twue, ^•ﻌ•^ fiwws in the e-entityannotations f-fiewd in thwiftseawchwesuwtextwametadata
+  15: optionaw boow g-getentityannotations = 0
 
-  // If true, fills in the fromUserId field in the ThriftSearchResultExtraMetadata
-  16: optional bool getFromUserId = 0
+  // if twue, o.O fiwws in the fwomusewid f-fiewd in the thwiftseawchwesuwtextwametadata
+  16: o-optionaw boow getfwomusewid = 0
 
-  // If true, fills in the spaces field in the ThriftSearchResultExtraMetadata
-  17: optional bool getSpaces = 0
+  // i-if twue, (⑅˘꒳˘) fiwws in the s-spaces fiewd in the thwiftseawchwesuwtextwametadata
+  17: optionaw boow getspaces = 0
 
-  18: optional bool getExclusiveConversationAuthorId = 0
-}(persisted='true')
+  18: o-optionaw boow getexcwusiveconvewsationauthowid = 0
+}(pewsisted='twue')
 
 
-// ThriftSearchQuery describes an earlybird search request, which typically consists
-// of these parts:
-//  - a query to retrieve hits
-//  - relevance options to score hits
-//  - a collector to collect hits and process into search results
-// Note that this struct is used in both ThriftBlenderRequest and EarlybirdRequest.
-// Most fields are not set when this struct is embedded in ThriftBlenderRequest, and
-// are filled in by the blender before sending to earlybird.
-struct ThriftSearchQuery {
-  // Next available field ID: 42
+// thwiftseawchquewy d-descwibes a-an eawwybiwd s-seawch wequest, σωσ which typicawwy consists
+// of t-these pawts:
+//  - a quewy to wetwieve hits
+//  - wewevance options to scowe hits
+//  - a-a cowwectow t-to cowwect h-hits and pwocess i-into seawch wesuwts
+// nyote that this stwuct is u-used in both thwiftbwendewwequest a-and eawwybiwdwequest.
+// most fiewds awe nyot s-set when this stwuct is embedded in thwiftbwendewwequest, >_< a-and
+// awe fiwwed in by the bwendew b-befowe sending to e-eawwybiwd. ʘwʘ
+stwuct thwiftseawchquewy {
+  // n-nyext a-avaiwabwe fiewd i-id: 42
 
-  // -------- SECTION ZERO: THINGS USED ONLY BY THE BLENDER --------
-  // See SEARCHQUAL-2398
-  // These fields are used by the blender and clients of the blender, but not by earlybird.
+  // -------- section zewo: things used o-onwy by the bwendew --------
+  // see seawchquaw-2398
+  // these f-fiewds awe used by the bwendew and cwients of the bwendew, (✿oωo) but n-nyot by eawwybiwd.
 
-  // blender use only
-  // The raw un-parsed user search query.
-  6: optional string rawQuery(personalDataType = 'SearchQuery')
+  // b-bwendew u-use onwy
+  // t-the waw un-pawsed u-usew seawch quewy. o.O
+  6: optionaw s-stwing wawquewy(pewsonawdatatype = 'seawchquewy')
 
-  // blender use only
-  // Language of the rawQuery.
-  18: optional string queryLang(personalDataType = 'InferredLanguage')
+  // bwendew use onwy
+  // w-wanguage of the wawquewy. 😳
+  18: o-optionaw stwing quewywang(pewsonawdatatype = 'infewwedwanguage')
 
-  // blender use only
-  // What page of results to return, indexed from 1.
-  7: optional i32 page = 1
+  // bwendew u-use onwy
+  // n-nyani page of wesuwts to wetuwn, nyaa~~ i-indexed fwom 1. XD
+  7: optionaw i32 p-page = 1
 
-  // blender use only
-  // Number of results to skip (for pagination).  Indexed from 0.
-  2: optional i32 deprecated_resultOffset = 0
+  // b-bwendew use onwy
+  // nyumbew o-of wesuwts to skip (fow p-pagination). ^^;;  indexed fwom 0. /(^•ω•^)
+  2: o-optionaw i32 depwecated_wesuwtoffset = 0
 
 
-  // -------- SECTION ONE: RETRIEVAL OPTIONS --------
-  // These options control the query that will be used to retrieve documents / hits.
+  // -------- section one: wetwievaw options --------
+  // t-these options contwow the quewy t-that wiww be used to wetwieve documents / hits. >_<
 
-  // The parsed query tree, serialized to a string.  Restricts the search results to
-  // tweets matching this query.
-  1: optional string serializedQuery(personalDataType = 'SearchQuery')
+  // t-the pawsed q-quewy twee, (U ﹏ U) sewiawized t-to a stwing. 😳😳😳  westwicts t-the seawch wesuwts t-to
+  // tweets matching this q-quewy.
+  1: optionaw stwing sewiawizedquewy(pewsonawdatatype = 'seawchquewy')
 
-  // Restricts the search results to tweets having this minimum tweep cred, out of 100.
-  5: optional i32 minTweepCredFilter = -1
+  // w-westwicts the seawch wesuwts t-to tweets having t-this minimum tweep cwed, XD out of 100. OwO
+  5: optionaw i32 mintweepcwedfiwtew = -1
 
-  // Restricts the search results to tweets from these users.
-  34: optional list<i64> fromUserIDFilter64(personalDataType = 'PrivateAccountsFollowing, PublicAccountsFollowing')
-  // Restricts the search results to tweets liked by these users.
-  40: optional list<i64> likedByUserIDFilter64(personalDataType = 'PrivateAccountsFollowing, PublicAccountsFollowing')
+  // westwicts t-the seawch wesuwts t-to tweets fwom these usews. (U ᵕ U❁)
+  34: optionaw wist<i64> fwomusewidfiwtew64(pewsonawdatatype = 'pwivateaccountsfowwowing, (⑅˘꒳˘) p-pubwicaccountsfowwowing')
+  // westwicts t-the seawch wesuwts t-to tweets wiked by these usews. UwU
+  40: optionaw wist<i64> wikedbyusewidfiwtew64(pewsonawdatatype = 'pwivateaccountsfowwowing, 😳😳😳 p-pubwicaccountsfowwowing')
 
-  // If searchStatusIds are present, earlybird will ignore the serializedQuery completely
-  // and simply score each of searchStatusIds, also bypassing features like duplicate
-  // filtering and early termination.
-  // IMPORTANT: this means that it is possible to get scores equal to ScoringFunction.SKIP_HIT,
-  // for results skipped by the scoring function.
-  31: optional set<i64> searchStatusIds
+  // if seawchstatusids awe pwesent, mya e-eawwybiwd wiww ignowe the sewiawizedquewy c-compwetewy
+  // a-and simpwy scowe each o-of seawchstatusids, 🥺 a-awso bypassing f-featuwes w-wike dupwicate
+  // f-fiwtewing and e-eawwy tewmination. ^^
+  // impowtant: this means that it is possibwe to get scowes equaw to scowingfunction.skip_hit, -.-
+  // f-fow wesuwts s-skipped by t-the scowing function. ^^
+  31: o-optionaw s-set<i64> seawchstatusids
 
-  35: optional set<i64> deprecated_eventClusterIdsFilter
+  35: o-optionaw set<i64> depwecated_eventcwustewidsfiwtew
 
-  41: optional map<string, list<i64>> namedDisjunctionMap
+  41: optionaw map<stwing, o.O wist<i64>> nyameddisjunctionmap
 
-  // -------- SECTION TWO: HIT COLLECTOR OPTIONS --------
-  // These options control what hits will be collected by the hit collector.
-  // Whether we want to collect and return per-field hit attributions is set in RelevanceOptions.
-  // See SEARCH-2784
-  // Number of results to return (after offset/page correction).
-  // This is ignored when searchStatusIds is set.
-  3: required i32 numResults
+  // -------- s-section two: h-hit cowwectow options --------
+  // these options contwow nani hits wiww be cowwected b-by the hit c-cowwectow. σωσ
+  // w-whethew we want to cowwect and wetuwn pew-fiewd h-hit attwibutions is set in wewevanceoptions. ^•ﻌ•^
+  // see seawch-2784
+  // n-nyumbew o-of wesuwts to wetuwn (aftew offset/page cowwection). 😳
+  // t-this is ignowed when s-seawchstatusids i-is set. nyaa~~
+  3: wequiwed i32 nyumwesuwts
 
-  // Maximum number of hits to process by the collector.
-  // deprecated in favor of the maxHitsToProcess in CollectorParams
-  4: optional i32 maxHitsToProcess = 1000
+  // m-maximum n-nyumbew of hits t-to pwocess by t-the cowwectow. ^•ﻌ•^
+  // d-depwecated i-in favow of the maxhitstopwocess i-in cowwectowpawams
+  4: o-optionaw i32 maxhitstopwocess = 1000
 
-  // Collect hit counts for these time periods (in milliseconds).
-  30: optional list<i64> hitCountBuckets
+  // c-cowwect hit counts fow these time pewiods (in m-miwwiseconds). >_<
+  30: optionaw w-wist<i64> hitcountbuckets
 
-  // If set, earlybird will also return the facet labels of the specified facet fields
-  // in result tweets.
-  33: optional list<string> facetFieldNames
+  // if set, (⑅˘꒳˘) eawwybiwd w-wiww awso wetuwn t-the facet wabews of the specified facet fiewds
+  // i-in wesuwt tweets. ^^
+  33: optionaw wist<stwing> f-facetfiewdnames
 
-  // Options controlling which search result metadata is returned.
-  36: optional ThriftSearchResultMetadataOptions resultMetadataOptions
+  // o-options contwowwing which seawch wesuwt m-metadata is w-wetuwned. :3
+  36: optionaw thwiftseawchwesuwtmetadataoptions w-wesuwtmetadataoptions
 
-  // Collection related Params
-  38: optional search.CollectorParams collectorParams
+  // cowwection wewated pawams
+  38: o-optionaw s-seawch.cowwectowpawams cowwectowpawams
 
-  // Whether to collect conversation IDs
-  39: optional bool collectConversationId = 0
+  // w-whethew t-to cowwect convewsation ids
+  39: optionaw b-boow cowwectconvewsationid = 0
 
-  // -------- SECTION THREE: RELEVANCE OPTIONS --------
-  // These options control relevance scoring and anti-gaming.
+  // -------- s-section t-thwee: wewevance o-options --------
+  // these options contwow wewevance scowing and anti-gaming. 😳
 
-  // Ranking mode (RECENCY means time-ordered ranking with no relevance).
-  8: optional ThriftSearchRankingMode rankingMode = ThriftSearchRankingMode.RECENCY
+  // wanking mode (wecency m-means time-owdewed w-wanking with n-nyo wewevance). (˘ω˘)
+  8: o-optionaw t-thwiftseawchwankingmode w-wankingmode = thwiftseawchwankingmode.wecency
 
-  // Relevance scoring options.
-  9: optional ThriftSearchRelevanceOptions relevanceOptions
+  // w-wewevance s-scowing options. >w<
+  9: optionaw t-thwiftseawchwewevanceoptions w-wewevanceoptions
 
-  // Limits the number of hits that can be contributed by the same user, for anti-gaming.
-  // Set to -1 to disable the anti-gaming filter.  This is ignored when searchStatusIds
-  // is set.
-  11: optional i32 maxHitsPerUser = 3
+  // wimits the nyumbew of hits t-that can be contwibuted by the same usew, 😳 fow a-anti-gaming. ^^;;
+  // set to -1 to d-disabwe the anti-gaming f-fiwtew. rawr x3  this is ignowed w-when seawchstatusids
+  // i-is set. òωó
+  11: o-optionaw i32 maxhitspewusew = 3
 
-  // Disables anti-gaming filter checks for any tweets that exceed this tweepcred.
-  12: optional i32 maxTweepcredForAntiGaming = 65
-
-  // -------- PERSONALIZATION-RELATED RELEVANCE OPTIONS --------
-  // Take special care with these options when reasoning about caching.  All of these
-  // options, if set, will bypass the cache with the exception of uiLang which is the
-  // only form of personalization allowed for caching.
-
-  // User ID of searcher.  This is used for relevance, and will be used for retrieval
-  // by the protected tweets index.  If set, query will not be cached.
-  20: optional i64 searcherId(personalDataType = 'UserId')
-
-  // Bloom filter containing trusted user IDs.  If set, query will not be cached.
-  10: optional binary trustedFilter(personalDataType = 'UserId')
-
-  // Bloom filter containing direct follow user IDs.  If set, query will not be cached.
-  16: optional binary directFollowFilter(personalDataType = 'UserId, PrivateAccountsFollowing, PublicAccountsFollowing')
-
-  // UI language from the searcher's profile settings.
-  14: optional string uiLang(personalDataType = 'GeneralSettings')
-
-  // Confidence of the understandability of different languages for this user.
-  // uiLang field above is treated as a userlang with a confidence of 1.0.
-  28: optional map<search_language.ThriftLanguage, double> userLangs(personalDataTypeKey = 'InferredLanguage')
-
-  // An alternative to fromUserIDFilter64 that relies on the relevance bloom filters
-  // for user filtering.  Not currently used in production.  Only supported for realtime
-  // searches.
-  // If set, earlybird expects both trustedFilter and directFollowFilter to also be set.
-  17: optional ThriftSocialFilterType socialFilterType
-
-  // -------- SECTION FOUR: DEBUG OPTIONS, FORGOTTEN FEATURES --------
-
-  // Earlybird search debug options.
-  19: optional ThriftSearchDebugOptions debugOptions
-
-  // Overrides the query time for debugging.
-  29: optional i64 timestampMsecs = 0
-
-  // Support for this feature has been removed and this field is left for backwards compatibility
-  // (and to detect improper usage by clients when it is set).
-  25: optional list<string> deprecated_iterativeQueries
-
-  // Specifies a lucene query that will only be used if serializedQuery is not set,
-  // for debugging.  Not currently used in production.
-  27: optional string luceneQuery(personalDataType = 'SearchQuery')
-
-  // This field is deprecated and is not used by earlybirds when processing the query.
-  21: optional i32 deprecated_minDocsToProcess = 0
-}(persisted='true', hasPersonalData = 'true')
-
-
-struct ThriftFacetLabel {
-  1: required string fieldName
-  2: required string label
-  // the number of times this facet has shown up in tweets with offensive words.
-  3: optional i32 offensiveCount = 0
-
-  // only filled for TWIMG facets
-  4: optional string nativePhotoUrl
-}(persisted='true')
-
-struct ThriftSearchResultGeoLocation {
-  1: optional double latitude(personalDataType = 'GpsCoordinates')
-  2: optional double longitude(personalDataType = 'GpsCoordinates')
-  3: optional double distanceKm
-}(persisted='true', hasPersonalData = 'true')
-
-// Contains an expanded url and media type from the URL facet fields in earlybird.
-// Note: thrift copied from status.thrift with unused fields renamed.
-struct ThriftSearchResultUrl {
-  // Next available field ID: 6.  Fields 2-4 removed.
-
-  // Note: this is actually the expanded url.  Rename after deprecated fields are removed.
-  1: required string originalUrl
-
-  // Media type of the url.
-  5: optional metadata_store.MediaTypes mediaType
-}(persisted='true')
-
-struct ThriftSearchResultNamedEntity {
-  1: required string canonicalName
-  2: required string entityType
-  3: required NamedEntitySource source
-}(persisted='true')
-
-struct ThriftSearchResultAudioSpace {
-  1: required string id
-  2: required AudioSpaceState state
-}(persisted='true')
-
-// Even more metadata
-struct ThriftSearchResultExtraMetadata {
-  // Next available field ID: 49
-
-  1: optional double userLangScore
-  2: optional bool hasDifferentLang
-  3: optional bool hasEnglishTweetAndDifferentUILang
-  4: optional bool hasEnglishUIAndDifferentTweetLang
-  5: optional i32 quotedCount
-  6: optional double querySpecificScore
-  7: optional bool hasQuote
-  29: optional i64 quotedTweetId
-  30: optional i64 quotedUserId
-  31: optional search_language.ThriftLanguage cardLang
-  8: optional i64 conversationId
-  9: optional bool isSensitiveContent
-  10: optional bool hasMultipleMediaFlag
-  11: optional bool profileIsEggFlag
-  12: optional bool isUserNewFlag
-  26: optional double authorSpecificScore
-  28: optional bool isComposerSourceCamera
-
-  // temporary V2 engagement counters, original ones in ThriftSearchResultMetadata has log()
-  // applied on them and then converted to int in Thrift, which is effectively a premature
-  // discretization. It doesn't affect the scoring inside Earlybird but for scoring and ML training
-  // outside earlybird, they were bad. These newly added ones stores a proper value of these
-  // counts. This also provides an easier transition to v2 counter when Earlybird is eventually
-  // ready to consume them from DL
-  // See SEARCHQUAL-9536, SEARCH-11181
-  18: optional i32 retweetCountV2
-  19: optional i32 favCountV2
-  20: optional i32 replyCountV2
-  // Tweepcred weighted version of various engagement counts
-  22: optional i32 weightedRetweetCount
-  23: optional i32 weightedReplyCount
-  24: optional i32 weightedFavCount
-  25: optional i32 weightedQuoteCount
-
-  // 2 bits - 0, 1, 2, 3+
-  13: optional i32 numMentions
-  14: optional i32 numHashtags
-
-  // 1 byte - 256 possible languages
-  15: optional i32 linkLanguage
-  // 6 bits - 64 possible values
-  16: optional i32 prevUserTweetEngagement
-
-  17: optional features.ThriftSearchResultFeatures features
-
-  // If the ThriftSearchQuery.likedByUserIdFilter64 and ThriftSearchRelevanceOptions.collectFieldHitAttributions 
-  // fields are set, then this field will contain the list of all users in the query that liked this tweet.
-  // Otherwise, this field is not set.
-  27: optional list<i64> likedByUserIds
-
-
-  // Deprecated. See SEARCHQUAL-10321
-  21: optional double dopamineNonPersonalizedScore
-
-  32: optional list<ThriftSearchResultNamedEntity> namedEntities
-  33: optional list<tweet_annotation.TweetEntityAnnotation> entityAnnotations
-
-  // Health model scores from HML
-  34: optional double toxicityScore // (go/toxicity)
-  35: optional double pBlockScore // (go/pblock)
-  36: optional double experimentalHealthModelScore1
-  37: optional double experimentalHealthModelScore2
-  38: optional double experimentalHealthModelScore3
-  39: optional double experimentalHealthModelScore4
-
-  40: optional i64 directedAtUserId
-
-  // Health model scores from HML (cont.)
-  41: optional double pSpammyTweetScore // (go/pspammytweet)
-  42: optional double pReportedTweetScore // (go/preportedtweet)
-  43: optional double spammyTweetContentScore // (go/spammy-tweet-content)
-  // it is populated by looking up user table and it is only available in archive earlybirds response
-  44: optional bool isUserProtected
-  45: optional list<ThriftSearchResultAudioSpace> spaces
-
-  46: optional i64 exclusiveConversationAuthorId
-  47: optional string cardUri
-  48: optional bool fromBlueVerifiedAccount(personalDataType = 'UserVerifiedFlag')
-}(persisted='true')
-
-// Some basic metadata about a search result.  Useful for re-sorting, filtering, etc.
+  // d-disabwes anti-gaming f-fiwtew checks fow any tweets t-that exceed this tweepcwed. ^^;;
+  12: o-optionaw i32 m-maxtweepcwedfowantigaming = 65
+
+  // -------- pewsonawization-wewated w-wewevance options --------
+  // t-take speciaw cawe with these options when w-weasoning about caching.  aww of these
+  // options, :3 if set, (ꈍᴗꈍ) wiww bypass the cache with the exception of uiwang w-which is the
+  // onwy fowm of pewsonawization awwowed fow caching. 😳😳😳
+
+  // usew id of seawchew. :3  this is used fow w-wewevance, ʘwʘ and wiww be used fow wetwievaw
+  // b-by the pwotected tweets index. :3  i-if set, OwO quewy wiww nyot be cached. mya
+  20: optionaw i-i64 seawchewid(pewsonawdatatype = 'usewid')
+
+  // bwoom fiwtew c-containing twusted usew ids. σωσ  i-if set, quewy wiww n-nyot be cached. (⑅˘꒳˘)
+  10: optionaw binawy twustedfiwtew(pewsonawdatatype = 'usewid')
+
+  // b-bwoom fiwtew containing diwect fowwow usew ids. (˘ω˘)  if set, q-quewy wiww nyot be cached. >w<
+  16: o-optionaw binawy diwectfowwowfiwtew(pewsonawdatatype = 'usewid, ( ͡o ω ͡o ) p-pwivateaccountsfowwowing, ^^;; pubwicaccountsfowwowing')
+
+  // u-ui w-wanguage fwom the seawchew's pwofiwe settings. (✿oωo)
+  14: o-optionaw stwing uiwang(pewsonawdatatype = 'genewawsettings')
+
+  // confidence o-of the undewstandabiwity of diffewent wanguages fow this usew. (✿oωo)
+  // uiwang fiewd a-above is tweated a-as a usewwang with a confidence o-of 1.0. (⑅˘꒳˘)
+  28: o-optionaw map<seawch_wanguage.thwiftwanguage, -.- doubwe> usewwangs(pewsonawdatatypekey = 'infewwedwanguage')
+
+  // a-an awtewnative to fwomusewidfiwtew64 that wewies on the wewevance bwoom fiwtews
+  // f-fow usew f-fiwtewing. XD  nyot cuwwentwy used i-in pwoduction. òωó  o-onwy suppowted fow weawtime
+  // s-seawches. :3
+  // if set, (///ˬ///✿) eawwybiwd expects both twustedfiwtew a-and diwectfowwowfiwtew to awso be set.
+  17: o-optionaw t-thwiftsociawfiwtewtype sociawfiwtewtype
+
+  // -------- section f-fouw: debug options, òωó fowgotten featuwes --------
+
+  // eawwybiwd seawch debug options. UwU
+  19: optionaw thwiftseawchdebugoptions debugoptions
+
+  // o-ovewwides the q-quewy time fow debugging. >w<
+  29: o-optionaw i64 timestampmsecs = 0
+
+  // s-suppowt fow this featuwe h-has been wemoved and this fiewd is weft fow backwawds compatibiwity
+  // (and to detect impwopew usage by cwients w-when it is set). ʘwʘ
+  25: optionaw wist<stwing> depwecated_itewativequewies
+
+  // specifies a wucene q-quewy that w-wiww onwy be used i-if sewiawizedquewy is nyot set, /(^•ω•^)
+  // fow debugging. (⑅˘꒳˘)  nyot cuwwentwy u-used in pwoduction.
+  27: o-optionaw stwing w-wucenequewy(pewsonawdatatype = 'seawchquewy')
+
+  // this fiewd is d-depwecated and is nyot used by e-eawwybiwds when pwocessing the q-quewy. (ˆ ﻌ ˆ)♡
+  21: optionaw i32 depwecated_mindocstopwocess = 0
+}(pewsisted='twue', OwO h-haspewsonawdata = 'twue')
+
+
+stwuct thwiftfacetwabew {
+  1: w-wequiwed stwing fiewdname
+  2: w-wequiwed s-stwing wabew
+  // the numbew of t-times this facet h-has shown up in tweets with offensive w-wowds. ^^;;
+  3: optionaw i32 o-offensivecount = 0
+
+  // onwy fiwwed f-fow twimg f-facets
+  4: optionaw stwing nyativephotouww
+}(pewsisted='twue')
+
+stwuct thwiftseawchwesuwtgeowocation {
+  1: o-optionaw doubwe watitude(pewsonawdatatype = 'gpscoowdinates')
+  2: optionaw doubwe wongitude(pewsonawdatatype = 'gpscoowdinates')
+  3: optionaw doubwe distancekm
+}(pewsisted='twue', (///ˬ///✿) haspewsonawdata = 'twue')
+
+// contains an expanded u-uww and media type fwom the uww facet fiewds i-in eawwybiwd. ^•ﻌ•^
+// nyote: thwift c-copied fwom status.thwift with unused fiewds wenamed. rawr
+s-stwuct thwiftseawchwesuwtuww {
+  // nyext avaiwabwe fiewd i-id: 6. ^^;;  fiewds 2-4 wemoved. òωó
+
+  // nyote: this i-is actuawwy the expanded uww.  wename aftew depwecated f-fiewds awe wemoved. σωσ
+  1: wequiwed stwing o-owiginawuww
+
+  // m-media type of the uww. 😳😳😳
+  5: optionaw metadata_stowe.mediatypes m-mediatype
+}(pewsisted='twue')
+
+s-stwuct thwiftseawchwesuwtnamedentity {
+  1: wequiwed s-stwing canonicawname
+  2: wequiwed s-stwing entitytype
+  3: wequiwed nyamedentitysouwce souwce
+}(pewsisted='twue')
+
+s-stwuct thwiftseawchwesuwtaudiospace {
+  1: wequiwed stwing id
+  2: wequiwed audiospacestate s-state
+}(pewsisted='twue')
+
+// even mowe metadata
+stwuct thwiftseawchwesuwtextwametadata {
+  // nyext avaiwabwe f-fiewd id: 49
+
+  1: o-optionaw doubwe u-usewwangscowe
+  2: optionaw boow hasdiffewentwang
+  3: optionaw b-boow hasengwishtweetanddiffewentuiwang
+  4: optionaw boow hasengwishuianddiffewenttweetwang
+  5: o-optionaw i32 quotedcount
+  6: o-optionaw doubwe q-quewyspecificscowe
+  7: optionaw boow hasquote
+  29: optionaw i64 quotedtweetid
+  30: optionaw i-i64 quotedusewid
+  31: o-optionaw seawch_wanguage.thwiftwanguage cawdwang
+  8: o-optionaw i64 convewsationid
+  9: optionaw boow issensitivecontent
+  10: optionaw b-boow hasmuwtipwemediafwag
+  11: o-optionaw boow pwofiweiseggfwag
+  12: o-optionaw boow i-isusewnewfwag
+  26: o-optionaw d-doubwe authowspecificscowe
+  28: optionaw boow iscomposewsouwcecamewa
+
+  // t-tempowawy v-v2 engagement c-countews, (///ˬ///✿) owiginaw o-ones in t-thwiftseawchwesuwtmetadata h-has wog()
+  // appwied o-on them and then c-convewted to i-int in thwift, ^•ﻌ•^ which is effectivewy a pwematuwe
+  // d-discwetization. 😳😳😳 it doesn't affect the scowing i-inside eawwybiwd but fow scowing and mw twaining
+  // o-outside e-eawwybiwd, (U ᵕ U❁) they wewe bad. (U ﹏ U) these nyewwy added ones stowes a pwopew v-vawue of these
+  // c-counts. σωσ this awso pwovides a-an easiew twansition t-to v2 countew when eawwybiwd is eventuawwy
+  // weady to c-consume them fwom d-dw
+  // see seawchquaw-9536, (˘ω˘) seawch-11181
+  18: optionaw i32 wetweetcountv2
+  19: optionaw i32 f-favcountv2
+  20: o-optionaw i32 wepwycountv2
+  // tweepcwed weighted vewsion of vawious e-engagement counts
+  22: optionaw i32 weightedwetweetcount
+  23: optionaw i32 weightedwepwycount
+  24: optionaw i-i32 weightedfavcount
+  25: optionaw i32 weightedquotecount
+
+  // 2 bits - 0, ^^ 1, 2, 3+
+  13: o-optionaw i32 nyummentions
+  14: o-optionaw i32 numhashtags
+
+  // 1 b-byte - 256 possibwe wanguages
+  15: o-optionaw i-i32 winkwanguage
+  // 6 b-bits - 64 p-possibwe vawues
+  16: o-optionaw i32 pwevusewtweetengagement
+
+  17: optionaw featuwes.thwiftseawchwesuwtfeatuwes f-featuwes
+
+  // i-if the thwiftseawchquewy.wikedbyusewidfiwtew64 and t-thwiftseawchwewevanceoptions.cowwectfiewdhitattwibutions 
+  // fiewds awe set, ^^ t-then this fiewd w-wiww contain the w-wist of aww usews in the quewy t-that wiked this t-tweet. (✿oωo)
+  // othewwise, /(^•ω•^) t-this fiewd i-is nyot set. -.-
+  27: o-optionaw wist<i64> wikedbyusewids
+
+
+  // d-depwecated. ʘwʘ see seawchquaw-10321
+  21: o-optionaw d-doubwe dopaminenonpewsonawizedscowe
+
+  32: optionaw wist<thwiftseawchwesuwtnamedentity> nyamedentities
+  33: o-optionaw w-wist<tweet_annotation.tweetentityannotation> entityannotations
+
+  // h-heawth m-modew scowes fwom hmw
+  34: optionaw doubwe toxicityscowe // (go/toxicity)
+  35: o-optionaw doubwe p-pbwockscowe // (go/pbwock)
+  36: o-optionaw doubwe e-expewimentawheawthmodewscowe1
+  37: o-optionaw d-doubwe expewimentawheawthmodewscowe2
+  38: optionaw doubwe expewimentawheawthmodewscowe3
+  39: o-optionaw doubwe expewimentawheawthmodewscowe4
+
+  40: optionaw i64 diwectedatusewid
+
+  // heawth m-modew scowes fwom h-hmw (cont.)
+  41: optionaw doubwe pspammytweetscowe // (go/pspammytweet)
+  42: optionaw doubwe p-pwepowtedtweetscowe // (go/pwepowtedtweet)
+  43: o-optionaw doubwe spammytweetcontentscowe // (go/spammy-tweet-content)
+  // it is p-popuwated by wooking up usew tabwe a-and it is onwy a-avaiwabwe in a-awchive eawwybiwds wesponse
+  44: optionaw boow isusewpwotected
+  45: o-optionaw wist<thwiftseawchwesuwtaudiospace> s-spaces
+
+  46: optionaw i64 excwusiveconvewsationauthowid
+  47: o-optionaw stwing cawduwi
+  48: optionaw boow fwombwuevewifiedaccount(pewsonawdatatype = 'usewvewifiedfwag')
+}(pewsisted='twue')
+
+// s-some basic metadata about a s-seawch wesuwt. XD  usefuw fow we-sowting, (U ᵕ U❁) fiwtewing, /(^•ω•^) e-etc.
 //
-// NOTE: DO NOT ADD NEW FIELD!!
-// Stop adding new fields to this struct, all new fields should go to
-// ThriftSearchResultExtraMetadata (VM-1897), or there will be performance issues in production.
-struct ThriftSearchResultMetadata {
-  // Next available field ID: 86
+// nyote: do nyot add n-nyew fiewd!!
+// stop adding nyew fiewds to this stwuct, XD aww nyew fiewds shouwd go to
+// thwiftseawchwesuwtextwametadata (vm-1897), ^•ﻌ•^ ow thewe wiww b-be pewfowmance i-issues in pwoduction. ( ͡o ω ͡o )
+s-stwuct thwiftseawchwesuwtmetadata {
+  // n-nyext avaiwabwe fiewd id: 86
 
-  // -------- BASIC SCORING METADATA --------
+  // -------- basic s-scowing metadata --------
 
-  // When resultType is RECENCY most scoring metadata will not be available.
-  1: required ThriftSearchResultType resultType
+  // when wesuwttype is wecency most scowing metadata w-wiww nyot be a-avaiwabwe. (U ﹏ U)
+  1: w-wequiwed thwiftseawchwesuwttype w-wesuwttype
 
-  // Relevance score computed for this result.
-  3: optional double score
+  // wewevance scowe computed fow this wesuwt. /(^•ω•^)
+  3: optionaw doubwe s-scowe
 
-  // True if the result was skipped by the scoring function.  Only set when the collect-all
-  // results collector was used - in other cases skipped results are not returned.
-  // The score will be ScoringFunction.SKIP_HIT when skipped is true.
-  43: optional bool skipped
+  // twue i-if the wesuwt was skipped by the scowing function. 🥺  onwy set when t-the cowwect-aww
+  // wesuwts c-cowwectow was used - i-in othew cases s-skipped wesuwts awe not wetuwned. rawr
+  // the scowe wiww be scowingfunction.skip_hit when skipped is twue. :3
+  43: o-optionaw boow skipped
 
-  // optionally a Lucene-style explanation for this result
-  5: optional string explanation
-
-
-  // -------- NETWORK-BASED SCORING METADATA --------
-
-  // Found the tweet in the trusted circle.
-  6: optional bool isTrusted
-
-  // Found the tweet in the direct follows.
-  8: optional bool isFollow
-
-  // True if the fromUserId of this tweet was whitelisted by the dup / antigaming filter.
-  // This typically indicates the result was from a tweet that matched a fromUserId query.
-  9: optional bool dontFilterUser
+  // optionawwy a-a wucene-stywe expwanation fow this wesuwt
+  5: optionaw s-stwing expwanation
 
 
-  // -------- COMMON DOCUMENT METADATA --------
+  // -------- nyetwowk-based s-scowing metadata --------
 
-  // User ID of the author.  When isRetweet is true, this is the user ID of the retweeter
-  // and NOT that of the original tweet.
-  7: optional i64 fromUserId = 0
+  // found the tweet in the twusted c-ciwcwe. σωσ
+  6: o-optionaw boow istwusted
 
-  // When isRetweet (or packed features equivalent) is true, this is the status id of the
-  // original tweet. When isReply and getReplySource are true, this is the status id of the
-  // original tweet. In all other circumstances this is 0.
-  40: optional i64 sharedStatusId = 0
+  // f-found t-the tweet in t-the diwect fowwows. òωó
+  8: optionaw b-boow isfowwow
 
-  // When hasCard (or packed features equivalent) is true, this is one of SearchCardType.
-  49: optional i8 cardType = 0
+  // t-twue if the fwomusewid of t-this tweet was whitewisted by the dup / antigaming f-fiwtew. ^•ﻌ•^
+  // this typicawwy i-indicates the wesuwt w-was fwom a tweet that matched a-a fwomusewid q-quewy. (U ᵕ U❁)
+  9: optionaw boow dontfiwtewusew
 
-  // -------- EXTENDED DOCUMENT METADATA --------
-  // This is additional metadata from facet fields and column stride fields.
-  // Return of these fields is controlled by ThriftSearchResultMetadataOptions to
-  // allow for fine-grained control over when these fields are returned, as an
-  // optimization for searches returning a large quantity of results.
 
-  // Lucene component of the relevance score.  Only returned when
-  // ThriftSearchResultMetadataOptions.getLuceneScore is true.
-  31: optional double luceneScore = 0.0
+  // -------- common document metadata --------
 
-  // Urls found in the tweet.  Only returned when
-  // ThriftSearchResultMetadataOptions.getTweetUrls is true.
-  18: optional list<ThriftSearchResultUrl> tweetUrls
+  // u-usew id of the a-authow. òωó  when iswetweet i-is twue, ^^ t-this is the usew id of the wetweetew
+  // and nyot that of the o-owiginaw tweet. 😳😳😳
+  7: optionaw i64 fwomusewid = 0
 
-  // Deprecated in SEARCH-8616.
-  36: optional list<i32> deprecated_topicIDs
+  // w-when iswetweet (ow packed featuwes equivawent) i-is twue, rawr x3 this is the status id of the
+  // owiginaw tweet. ^^;; w-when iswepwy and getwepwysouwce a-awe twue, :3 this i-is the status id o-of the
+  // owiginaw tweet. (✿oωo) in a-aww othew ciwcumstances t-this is 0. XD
+  40: optionaw i-i64 shawedstatusid = 0
 
-  // Facets available in this tweet, this will only be filled if
-  // ThriftSearchQuery.facetFieldNames is set in the request.
-  22: optional list<ThriftFacetLabel> facetLabels
+  // when h-hascawd (ow p-packed featuwes e-equivawent) is twue, (///ˬ///✿) this is one o-of seawchcawdtype. o.O
+  49: o-optionaw i-i8 cawdtype = 0
 
-  // The location of the result, and the distance to it from the center of the query
-  // location.  Only returned when ThriftSearchResultMetadataOptions.getResultLocation is true.
-  35: optional ThriftSearchResultGeoLocation resultLocation
+  // -------- extended document m-metadata --------
+  // this is additionaw metadata fwom facet fiewds and cowumn stwide fiewds. σωσ
+  // w-wetuwn of t-these fiewds is contwowwed by t-thwiftseawchwesuwtmetadataoptions to
+  // awwow fow fine-gwained c-contwow ovew when t-these fiewds a-awe wetuwned, òωó as a-an
+  // optimization fow seawches w-wetuwning a wawge quantity of wesuwts. (///ˬ///✿)
 
-  // Per field hit attribution.
-  55: optional hit_attribution.FieldHitAttribution fieldHitAttribution
+  // w-wucene component o-of the wewevance scowe. :3  onwy wetuwned when
+  // thwiftseawchwesuwtmetadataoptions.getwucenescowe i-is twue. mya
+  31: optionaw doubwe w-wucenescowe = 0.0
 
-  // whether this has geolocation_type:geotag hit
-  57: optional bool geotagHit = 0
+  // uwws found in the tweet. ^^  o-onwy wetuwned when
+  // thwiftseawchwesuwtmetadataoptions.gettweetuwws i-is twue. (˘ω˘)
+  18: optionaw wist<thwiftseawchwesuwtuww> tweetuwws
 
-  // the user id of the author of the source/referenced tweet (the tweet one replied
-  // to, retweeted and possibly quoted, etc.) (SEARCH-8561)
-  // Only returned when ThriftSearchResultMetadataOptions.getReferencedTweetAuthorId is true.
-  60: optional i64 referencedTweetAuthorId = 0
+  // depwecated i-in seawch-8616. -.-
+  36: optionaw wist<i32> d-depwecated_topicids
 
-  // Whether this tweet has certain types of media.
-  // Only returned when ThriftSearchResultMetadataOptions.getMediaBits is true.
-  // "Native video" is either consumer, pro, vine, or periscope.
-  // "Native image" is an image hosted on pic.twitter.com.
-  62: optional bool hasConsumerVideo
-  63: optional bool hasProVideo
-  64: optional bool hasVine
-  65: optional bool hasPeriscope
-  66: optional bool hasNativeVideo
-  67: optional bool hasNativeImage
+  // facets a-avaiwabwe in t-this tweet, XD this wiww onwy be fiwwed if
+  // thwiftseawchquewy.facetfiewdnames i-is set in the wequest. rawr
+  22: optionaw wist<thwiftfacetwabew> f-facetwabews
 
-  // Packed features for this result. This field is never populated.
-  50: optional status.PackedFeatures deprecated_packedFeatures
+  // the w-wocation of the w-wesuwt, >_< and the distance to it fwom the centew of the quewy
+  // wocation. :3  onwy wetuwned when t-thwiftseawchwesuwtmetadataoptions.getwesuwtwocation is twue. :3
+  35: optionaw thwiftseawchwesuwtgeowocation w-wesuwtwocation
 
-  // The features stored in earlybird
+  // p-pew fiewd hit attwibution. XD
+  55: optionaw hit_attwibution.fiewdhitattwibution fiewdhitattwibution
 
-  // From integer 0 from EarlybirdFeatureConfiguration:
-  16: optional bool isRetweet
-  71: optional bool isSelfTweet
-  10: optional bool isOffensive
-  11: optional bool hasLink
-  12: optional bool hasTrend
-  13: optional bool isReply
-  14: optional bool hasMultipleHashtagsOrTrends
-  23: optional bool fromVerifiedAccount
-  // Static text quality score.  This is actually an int between 0 and 100.
-  30: optional double textScore
-  51: optional search_language.ThriftLanguage language
+  // whethew t-this has geowocation_type:geotag h-hit
+  57: optionaw boow geotaghit = 0
 
-  // From integer 1 from EarlybirdFeatureConfiguration:
-  52: optional bool hasImage
-  53: optional bool hasVideo
-  28: optional bool hasNews
-  48: optional bool hasCard
-  61: optional bool hasVisibleLink
-  // Tweep cred aka user rep.  This is actually an int between 0 and 100.
-  32: optional double userRep
-  24: optional bool isUserSpam
-  25: optional bool isUserNSFW
-  26: optional bool isUserBot
-  54: optional bool isUserAntiSocial
+  // the usew id of the a-authow of the souwce/wefewenced tweet (the tweet o-one wepwied
+  // to, ( ͡o ω ͡o ) wetweeted and possibwy quoted, rawr x3 e-etc.) (seawch-8561)
+  // onwy w-wetuwned when thwiftseawchwesuwtmetadataoptions.getwefewencedtweetauthowid is t-twue. (⑅˘꒳˘)
+  60: optionaw i-i64 wefewencedtweetauthowid = 0
 
-  // From integer 2 from EarlybirdFeatureConfiguration:
+  // whethew t-this tweet has cewtain types o-of media. UwU
+  // o-onwy wetuwned when t-thwiftseawchwesuwtmetadataoptions.getmediabits i-is twue. (˘ω˘)
+  // "native v-video" is eithew consumew, (˘ω˘) p-pwo, rawr vine, ow p-pewiscope. nyaa~~
+  // "native image" is an image hosted o-on pic.twittew.com. 😳😳😳
+  62: optionaw b-boow hasconsumewvideo
+  63: optionaw boow haspwovideo
+  64: optionaw boow hasvine
+  65: optionaw boow haspewiscope
+  66: optionaw boow hasnativevideo
+  67: o-optionaw boow hasnativeimage
 
-  // Retweet, fav, reply, embeds counts, and video view counts are APPROXIMATE ONLY.
-  // Note that retweetCount, favCount and replyCount are not original unnormalized values,
-  // but after a log2() function for historical reason, this loses us some granularity.
-  // For more accurate counts, use {retweet, fav, reply}CountV2 in extraMetadata.
-  2: optional i32 retweetCount
-  33: optional i32 favCount
-  34: optional i32 replyCount
-  58: optional i32 embedsImpressionCount
-  59: optional i32 embedsUrlCount
-  68: optional i32 videoViewCount
+  // p-packed featuwes fow this wesuwt. ^^;; t-this fiewd i-is nyevew popuwated. >w<
+  50: optionaw s-status.packedfeatuwes depwecated_packedfeatuwes
 
-  // Parus score.  This is actually an int between 0 and 100.
-  29: optional double parusScore
+  // t-the featuwes stowed i-in eawwybiwd
 
-  // Extra feature data, all new feature fields you want to return from Earlybird should go into
-  // this one, the outer one is always reaching its limit of the number of fields JVM can
-  // comfortably support!!
-  86: optional ThriftSearchResultExtraMetadata extraMetadata
+  // fwom integew 0 fwom eawwybiwdfeatuweconfiguwation:
+  16: optionaw boow iswetweet
+  71: optionaw boow issewftweet
+  10: o-optionaw boow isoffensive
+  11: optionaw b-boow haswink
+  12: optionaw boow h-hastwend
+  13: optionaw boow iswepwy
+  14: optionaw boow hasmuwtipwehashtagsowtwends
+  23: optionaw boow fwomvewifiedaccount
+  // static text quawity scowe. ʘwʘ  this is actuawwy an int between 0 a-and 100. XD
+  30: o-optionaw doubwe t-textscowe
+  51: optionaw seawch_wanguage.thwiftwanguage w-wanguage
 
-  // Integer 3 is omitted, see expFeatureValues above for more details.
+  // f-fwom integew 1 f-fwom eawwybiwdfeatuweconfiguwation:
+  52: optionaw boow hasimage
+  53: o-optionaw boow hasvideo
+  28: o-optionaw boow hasnews
+  48: o-optionaw b-boow hascawd
+  61: o-optionaw boow h-hasvisibwewink
+  // t-tweep cwed aka usew wep.  t-this is actuawwy a-an int between 0 a-and 100. (ˆ ﻌ ˆ)♡
+  32: o-optionaw doubwe u-usewwep
+  24: o-optionaw boow isusewspam
+  25: optionaw b-boow isusewnsfw
+  26: o-optionaw b-boow isusewbot
+  54: o-optionaw boow isusewantisociaw
 
-  // From integer 4 from EarlybirdFeatureConfiguration:
-  // Signature, for duplicate detection and removal.
-  4: optional i32 signature
+  // fwom integew 2 fwom eawwybiwdfeatuweconfiguwation:
 
-  // -------- THINGS USED ONLY BY THE BLENDER --------
+  // w-wetweet, >_< fav, wepwy, >_< embeds c-counts, ʘwʘ and video view counts awe appwoximate o-onwy. rawr
+  // nyote t-that wetweetcount, nyaa~~ f-favcount and wepwycount a-awe nyot owiginaw u-unnowmawized vawues, >w<
+  // but aftew a wog2() function fow histowicaw weason, (ˆ ﻌ ˆ)♡ this woses us some g-gwanuwawity. :3
+  // fow mowe accuwate counts, OwO use {wetweet, fav, mya w-wepwy}countv2 in e-extwametadata. /(^•ω•^)
+  2: optionaw i32 w-wetweetcount
+  33: o-optionaw i32 f-favcount
+  34: o-optionaw i32 wepwycount
+  58: o-optionaw i32 embedsimpwessioncount
+  59: o-optionaw i-i32 embedsuwwcount
+  68: optionaw i32 videoviewcount
 
-  // Social proof of the tweet, for network discovery.
-  // Do not use these fields outside of network discovery.
-  41: optional list<i64> retweetedUserIDs64
-  42: optional list<i64> replyUserIDs64
+  // p-pawus scowe. nyaa~~  this i-is actuawwy an int between 0 and 100.
+  29: o-optionaw d-doubwe pawusscowe
 
-  // Social connection between the search user and this result.
-  19: optional social.ThriftSocialContext socialContext
+  // extwa f-featuwe data, (˘ω˘) aww nyew featuwe fiewds you want t-to wetuwn fwom e-eawwybiwd shouwd g-go into
+  // this o-one, (ꈍᴗꈍ) the outew one is awways w-weaching its wimit o-of the nyumbew o-of fiewds jvm can
+  // comfowtabwy s-suppowt!!
+  86: optionaw thwiftseawchwesuwtextwametadata extwametadata
 
-  // used by RelevanceTimelineSearchWorkflow, whether a tweet should be highlighted or not
-  46: optional bool highlightResult
+  // integew 3 is omitted, >w< see expfeatuwevawues above fow mowe detaiws. nyaa~~
 
-  // used by RelevanceTimelineSearchWorkflow, the highlight context of the highlighted tweet
-  47: optional highlight.ThriftHighlightContext highlightContext
+  // fwom integew 4 fwom eawwybiwdfeatuweconfiguwation:
+  // s-signatuwe, (✿oωo) fow d-dupwicate detection and wemovaw. (⑅˘꒳˘)
+  4: optionaw i32 signatuwe
 
-  // the penguin version used to tokenize the tweets by the serving earlybird index as defined
-  // in com.twitter.common.text.version.PenguinVersion
-  56: optional i8 penguinVersion
+  // -------- things used onwy b-by the bwendew --------
 
-  69: optional bool isNullcast
+  // s-sociaw pwoof of the tweet, (ˆ ﻌ ˆ)♡ fow nyetwowk discovewy. òωó
+  // d-do nyot use t-these fiewds outside of nyetwowk d-discovewy. -.-
+  41: o-optionaw wist<i64> wetweetedusewids64
+  42: o-optionaw wist<i64> wepwyusewids64
 
-  // This is the normalized ratio(0.00 to 1.00) of nth token(starting before 140) divided by
-  // numTokens and then normalized into 16 positions(4 bits) but on a scale of 0 to 100% as
-  // we unnormalize it for you
-  70: optional double tokenAt140DividedByNumTokensBucket
+  // s-sociaw connection b-between the seawch usew and this wesuwt. 😳😳😳
+  19: optionaw s-sociaw.thwiftsociawcontext s-sociawcontext
 
-}(persisted='true')
+  // u-used by wewevancetimewineseawchwowkfwow, rawr x3 w-whethew a tweet shouwd b-be highwighted o-ow nyot
+  46: optionaw b-boow highwightwesuwt
 
-// Query level result stats.
-// Next id: 20
-struct ThriftSearchResultsRelevanceStats {
-  1: optional i32 numScored = 0
-  // Skipped documents count, they were also scored but their scores got ignored (skipped), note that this is different
-  // from numResultsSkipped in the ThriftSearchResults.
-  2: optional i32 numSkipped = 0
-  3: optional i32 numSkippedForAntiGaming = 0
-  4: optional i32 numSkippedForLowReputation = 0
-  5: optional i32 numSkippedForLowTextScore = 0
-  6: optional i32 numSkippedForSocialFilter = 0
-  7: optional i32 numSkippedForLowFinalScore = 0
-  8: optional i32 oldestScoredTweetAgeInSeconds = 0
+  // u-used by wewevancetimewineseawchwowkfwow, 😳 the highwight context o-of the highwighted t-tweet
+  47: optionaw highwight.thwifthighwightcontext highwightcontext
 
-  // More counters for various features.
-  9:  optional i32 numFromDirectFollows = 0
-  10: optional i32 numFromTrustedCircle = 0
-  11: optional i32 numReplies = 0
-  12: optional i32 numRepliesTrusted = 0
-  13: optional i32 numRepliesOutOfNetwork = 0
-  14: optional i32 numSelfTweets = 0
-  15: optional i32 numWithMedia = 0
-  16: optional i32 numWithNews = 0
-  17: optional i32 numSpamUser = 0
-  18: optional i32 numOffensive = 0
-  19: optional i32 numBot = 0
-}(persisted='true')
+  // the penguin vewsion used to tokenize t-the tweets b-by the sewving eawwybiwd index a-as defined
+  // in com.twittew.common.text.vewsion.penguinvewsion
+  56: optionaw i8 penguinvewsion
 
-// Per result debug info.
-struct ThriftSearchResultDebugInfo {
-  1: optional string hostname
-  2: optional string clusterName
-  3: optional i32 partitionId
-  4: optional string tiername
-}(persisted='true')
+  69: o-optionaw b-boow isnuwwcast
 
-struct ThriftSearchResult {
-  // Next available field ID: 22
+  // t-this is the nyowmawized w-watio(0.00 to 1.00) o-of nyth token(stawting befowe 140) divided b-by
+  // nyumtokens a-and then nyowmawized i-into 16 p-positions(4 bits) b-but on a scawe o-of 0 to 100% as
+  // we unnowmawize it fow you
+  70: optionaw doubwe tokenat140dividedbynumtokensbucket
 
-  // Result status id.
-  1: required i64 id
+}(pewsisted='twue')
 
-  // TweetyPie status of the search result
-  7: optional deprecated.Status tweetypieStatus
-  19: optional tweet.Tweet tweetypieTweet  // v2 struct
+// quewy wevew wesuwt s-stats. 🥺
+// nyext id: 20
+stwuct t-thwiftseawchwesuwtswewevancestats {
+  1: o-optionaw i32 nyumscowed = 0
+  // skipped documents count, (⑅˘꒳˘) t-they wewe a-awso scowed but theiw scowes got i-ignowed (skipped), (✿oωo) nyote that this i-is diffewent
+  // fwom nyumwesuwtsskipped in the thwiftseawchwesuwts. 😳
+  2: optionaw i-i32 nyumskipped = 0
+  3: optionaw i32 nyumskippedfowantigaming = 0
+  4: optionaw i32 numskippedfowwowweputation = 0
+  5: optionaw i32 nyumskippedfowwowtextscowe = 0
+  6: optionaw i32 nyumskippedfowsociawfiwtew = 0
+  7: o-optionaw i32 n-nyumskippedfowwowfinawscowe = 0
+  8: o-optionaw i32 o-owdestscowedtweetageinseconds = 0
 
-  // If the search result is a retweet, this field contains the source TweetyPie status.
-  10: optional deprecated.Status sourceTweetypieStatus
-  20: optional tweet.Tweet sourceTweetypieTweet  // v2 struct
+  // mowe countews fow vawious f-featuwes. mya
+  9:  optionaw i32 n-nyumfwomdiwectfowwows = 0
+  10: optionaw i32 nyumfwomtwustedciwcwe = 0
+  11: optionaw i-i32 nyumwepwies = 0
+  12: o-optionaw i32 nyumwepwiestwusted = 0
+  13: o-optionaw i32 nyumwepwiesoutofnetwowk = 0
+  14: optionaw i-i32 nyumsewftweets = 0
+  15: optionaw i32 nyumwithmedia = 0
+  16: optionaw i32 nyumwithnews = 0
+  17: optionaw i32 nyumspamusew = 0
+  18: optionaw i-i32 nyumoffensive = 0
+  19: o-optionaw i32 nyumbot = 0
+}(pewsisted='twue')
 
-  // If the search result is a quote tweet, this field contains the quoted TweetyPie status.
-  17: optional deprecated.Status quotedTweetypieStatus
-  21: optional tweet.Tweet quotedTweetypieTweet  // v2 struct
+// pew wesuwt debug info. (U ﹏ U)
+stwuct thwiftseawchwesuwtdebuginfo {
+  1: optionaw stwing hostname
+  2: o-optionaw stwing cwustewname
+  3: optionaw i32 p-pawtitionid
+  4: o-optionaw stwing t-tiewname
+}(pewsisted='twue')
 
-  // Additional metadata about a search result.
-  5: optional ThriftSearchResultMetadata metadata
+stwuct t-thwiftseawchwesuwt {
+  // nyext avaiwabwe fiewd id: 22
 
-  // Hit highlights for various parts of this tweet
-  // for tweet text
-  6: optional list<hits.ThriftHits> hitHighlights
-  // for the title and description in the card expando.
-  12: optional list<hits.ThriftHits> cardTitleHitHighlights
-  13: optional list<hits.ThriftHits> cardDescriptionHitHighlights
+  // wesuwt status id. 😳
+  1: wequiwed i64 id
 
-  // Expansion types, if expandResult == False, the expansions set should be ignored.
-  8: optional bool expandResult = 0
-  9: optional set<expansions.ThriftTweetExpansionType> expansions
+  // t-tweetypie status o-of the seawch wesuwt
+  7: o-optionaw d-depwecated.status tweetypiestatus
+  19: o-optionaw tweet.tweet t-tweetypietweet  // v2 stwuct
 
-  // Only set if this is a promoted tweet
-  11: optional adserver_common.AdImpression adImpression
+  // if the seawch wesuwt is a wetweet, 🥺 t-this fiewd c-contains the souwce t-tweetypie s-status. -.-
+  10: optionaw depwecated.status s-souwcetweetypiestatus
+  20: o-optionaw tweet.tweet souwcetweetypietweet  // v2 stwuct
 
-  // where this tweet is from
-  // Since ThriftSearchResult used not only as an Earlybird response, but also an internal
-  // data transfer object of Blender, the value of this field is mutable in Blender, not
-  // necessarily reflecting Earlybird response.
-  14: optional ThriftTweetSource tweetSource
+  // if the seawch w-wesuwt is a quote t-tweet, (ˆ ﻌ ˆ)♡ this fiewd contains the quoted tweetypie status. >_<
+  17: o-optionaw depwecated.status quotedtweetypiestatus
+  21: o-optionaw t-tweet.tweet quotedtweetypietweet  // v-v2 stwuct
 
-  // the features of a tweet used for relevance timeline
-  // this field is populated by blender in RelevanceTimelineSearchWorkflow
-  15: optional features.ThriftTweetFeatures tweetFeatures
+  // additionaw metadata about a seawch wesuwt. rawr
+  5: optionaw thwiftseawchwesuwtmetadata metadata
 
-  // the conversation context of a tweet
-  16: optional conversation.ThriftConversationContext conversationContext
+  // h-hit highwights fow vawious p-pawts of this tweet
+  // fow tweet text
+  6: o-optionaw wist<hits.thwifthits> hithighwights
+  // f-fow the titwe a-and descwiption i-in the cawd expando. rawr x3
+  12: o-optionaw w-wist<hits.thwifthits> cawdtitwehithighwights
+  13: o-optionaw wist<hits.thwifthits> cawddescwiptionhithighwights
 
-  // per-result debugging info that's persisted across merges.
-  18: optional ThriftSearchResultDebugInfo debugInfo
-}(persisted='true')
+  // expansion types, OwO if expandwesuwt == f-fawse, nyaa~~ the expansions set shouwd be i-ignowed. 😳
+  8: o-optionaw boow expandwesuwt = 0
+  9: o-optionaw set<expansions.thwifttweetexpansiontype> expansions
 
-enum ThriftFacetRankingMode {
-  COUNT = 0,
-  FILTER_WITH_TERM_STATISTICS = 1,
+  // onwy set if this is a pwomoted tweet
+  11: o-optionaw adsewvew_common.adimpwession a-adimpwession
+
+  // w-whewe t-this tweet is fwom
+  // since thwiftseawchwesuwt used nyot onwy as an eawwybiwd wesponse, UwU but awso an intewnaw
+  // d-data twansfew object of bwendew, ʘwʘ the vawue o-of this fiewd is m-mutabwe in bwendew, 🥺 n-nyot
+  // nyecessawiwy wefwecting e-eawwybiwd wesponse. 🥺
+  14: optionaw thwifttweetsouwce tweetsouwce
+
+  // the featuwes of a tweet used fow wewevance timewine
+  // this fiewd is popuwated by b-bwendew in wewevancetimewineseawchwowkfwow
+  15: optionaw featuwes.thwifttweetfeatuwes tweetfeatuwes
+
+  // t-the c-convewsation context of a tweet
+  16: o-optionaw c-convewsation.thwiftconvewsationcontext convewsationcontext
+
+  // pew-wesuwt debugging i-info that's p-pewsisted acwoss mewges. òωó
+  18: optionaw thwiftseawchwesuwtdebuginfo d-debuginfo
+}(pewsisted='twue')
+
+e-enum thwiftfacetwankingmode {
+  c-count = 0, 🥺
+  f-fiwtew_with_tewm_statistics = 1, ʘwʘ
 }
 
-struct ThriftFacetFieldRequest {
-  // next available field ID: 4
-  1: required string fieldName
-  2: optional i32 numResults = 5
+stwuct thwiftfacetfiewdwequest {
+  // n-nyext avaiwabwe fiewd id: 4
+  1: wequiwed s-stwing fiewdname
+  2: o-optionaw i32 nyumwesuwts = 5
 
-  // use facetRankingOptions in ThriftFacetRequest instead
-  3: optional ThriftFacetRankingMode rankingMode = ThriftFacetRankingMode.COUNT
-}(persisted='true')
+  // use f-facetwankingoptions i-in thwiftfacetwequest instead
+  3: optionaw thwiftfacetwankingmode wankingmode = t-thwiftfacetwankingmode.count
+}(pewsisted='twue')
 
-struct ThriftFacetRequest {
-  // Next available field ID: 7
-  1: optional list<ThriftFacetFieldRequest> facetFields
-  5: optional ranking.ThriftFacetRankingOptions facetRankingOptions
-  6: optional bool usingQueryCache = 0
-}(persisted='true')
+stwuct t-thwiftfacetwequest {
+  // nyext a-avaiwabwe fiewd id: 7
+  1: optionaw wist<thwiftfacetfiewdwequest> f-facetfiewds
+  5: optionaw wanking.thwiftfacetwankingoptions facetwankingoptions
+  6: optionaw boow usingquewycache = 0
+}(pewsisted='twue')
 
-struct ThriftTermRequest {
-  1: optional string fieldName = "text"
-  2: required string term
-}(persisted='true')
+stwuct t-thwifttewmwequest {
+  1: optionaw stwing fiewdname = "text"
+  2: w-wequiwed s-stwing tewm
+}(pewsisted='twue')
 
-enum ThriftHistogramGranularityType {
-  MINUTES = 0
-  HOURS = 1,
-  DAYS = 2,
-  CUSTOM = 3,
+e-enum thwifthistogwamgwanuwawitytype {
+  minutes = 0
+  houws = 1, XD
+  d-days = 2, OwO
+  c-custom = 3, ʘwʘ
 
-  PLACE_HOLDER4 = 4,
-  PLACE_HOLDER5 = 5,
+  pwace_howdew4 = 4, :3
+  p-pwace_howdew5 = 5, nyaa~~
 }
 
-struct ThriftHistogramSettings {
-  1: required ThriftHistogramGranularityType granularity
-  2: optional i32 numBins = 60
-  3: optional i32 samplingRate = 1
-  4: optional i32 binSizeInSeconds   // the bin size, only used if granularity is set to CUSTOM.
-}(persisted='true')
+s-stwuct thwifthistogwamsettings {
+  1: w-wequiwed thwifthistogwamgwanuwawitytype g-gwanuwawity
+  2: o-optionaw i-i32 nyumbins = 60
+  3: o-optionaw i32 sampwingwate = 1
+  4: optionaw i-i32 binsizeinseconds   // the b-bin size, >w< onwy used if gwanuwawity is set to c-custom. (U ᵕ U❁)
+}(pewsisted='twue')
 
-// next id is 4
-struct ThriftTermStatisticsRequest {
-  1: optional list<ThriftTermRequest> termRequests
-  2: optional ThriftHistogramSettings histogramSettings
-  // If this is set to true, even if there is no termRequests above, so long as the histogramSettings
-  // is set, Earlybird will return a null->ThriftTermResults entry in the termResults map, containing
-  // the global tweet count histogram for current query, which is the number of tweets matching this
-  // query in different minutes/hours/days.
-  3: optional bool includeGlobalCounts = 0
-  // When this is set, the background facets call does another search in order to find the best
-  // representative tweet for a given term request, the representative tweet is stored in the
-  // metadata of the termstats result
-  4: optional bool scoreTweetsForRepresentatives = 0
-}(persisted='true')
+// n-nyext id is 4
+stwuct t-thwifttewmstatisticswequest {
+  1: optionaw w-wist<thwifttewmwequest> t-tewmwequests
+  2: optionaw t-thwifthistogwamsettings h-histogwamsettings
+  // if this is set t-to twue, :3 even if thewe is nyo t-tewmwequests above, (ˆ ﻌ ˆ)♡ s-so wong as the h-histogwamsettings
+  // i-is set, o.O eawwybiwd wiww wetuwn a nyuww->thwifttewmwesuwts entwy in the t-tewmwesuwts map, rawr x3 containing
+  // t-the gwobaw tweet count histogwam f-fow cuwwent quewy, (U ᵕ U❁) w-which is the nyumbew of tweets m-matching this
+  // q-quewy in diffewent minutes/houws/days.
+  3: optionaw boow i-incwudegwobawcounts = 0
+  // w-when this is set, (✿oωo) the backgwound facets caww does anothew seawch in owdew to find the best
+  // wepwesentative tweet fow a given tewm wequest, /(^•ω•^) the wepwesentative t-tweet is stowed i-in the
+  // metadata o-of the tewmstats w-wesuwt
+  4: optionaw boow scowetweetsfowwepwesentatives = 0
+}(pewsisted='twue')
 
-// Next id is 12
-struct ThriftFacetCountMetadata {
-  // this is the id of the first tweet in the index that contained this facet
-  1: optional i64 statusId = -1
+// n-nyext i-id is 12
+stwuct t-thwiftfacetcountmetadata {
+  // t-this is the id of the fiwst tweet in the index that contained this facet
+  1: optionaw i-i64 statusid = -1
 
-  // whether the tweet with the above statusId is NSFW, from an antisocial user,
-  // marked as sensitive content, etc.
-  10: optional bool statusPossiblySensitive
+  // whethew t-the tweet w-with the above s-statusid is nysfw, o.O fwom an antisociaw u-usew, (U ᵕ U❁)
+  // mawked as sensitive content, 🥺 etc. òωó
+  10: optionaw boow statuspossibwysensitive
 
-  // the id of the user who sent the tweet above - only returned if
-  // statusId is returned too
-  // NOTE: for native photos we may not be able to determine the user,
-  // even though the statusId can be returned. This is because the statusId
-  // can be determined from the url, but the user can't and the tweet may
-  // not be in the index anymore. In this case statusId would be set but
-  // twitterUserId would not.
-  2: optional i64 twitterUserId = -1
+  // t-the id of the usew who sent t-the tweet above - o-onwy wetuwned if
+  // statusid is wetuwned too
+  // nyote: fow n-nyative photos we may nyot be a-abwe to detewmine the usew, ʘwʘ
+  // even though the s-statusid can be wetuwned. rawr x3 this is because the statusid
+  // c-can be detewmined fwom t-the uww, >_< but the usew can't a-and the tweet may
+  // n-nyot be in the index anymowe. (˘ω˘) in this case statusid wouwd b-be set but
+  // twittewusewid wouwd nyot. ^•ﻌ•^
+  2: optionaw i64 twittewusewid = -1
 
-  // the language of the tweet above.
-  8: optional search_language.ThriftLanguage statusLanguage
+  // the wanguage of the tweet above. (✿oωo)
+  8: optionaw s-seawch_wanguage.thwiftwanguage s-statuswanguage
 
-  // optionally whitelist the fromUserId from dup/twitterUserId filtering
-  3: optional bool dontFilterUser = 0;
+  // optionawwy w-whitewist the fwomusewid fwom d-dup/twittewusewid f-fiwtewing
+  3: o-optionaw boow dontfiwtewusew = 0;
 
-  // if this facet is a native photo we return for convenience the
-  // twimg url
-  4: optional string nativePhotoUrl
+  // if this f-facet is a native photo we wetuwn fow convenience the
+  // twimg uww
+  4: optionaw s-stwing nyativephotouww
 
-  // optionally returns some debug information about this facet
-  5: optional string explanation
+  // o-optionawwy wetuwns s-some debug i-infowmation about this facet
+  5: o-optionaw stwing expwanation
 
-  // the created_at value for the tweet from statusId - only returned
-  // if statusId is returned too
-  6: optional i64 created_at
+  // t-the cweated_at v-vawue fow the tweet fwom statusid - onwy wetuwned
+  // i-if statusid i-is wetuwned t-too
+  6: optionaw i-i64 cweated_at
 
-  // the maximum tweepcred of the hits that contained this facet
-  7: optional i32 maxTweepCred
+  // t-the maximum tweepcwed of the hits that c-contained this f-facet
+  7: optionaw i-i32 maxtweepcwed
 
-  // Whether this facet result is force inserted, instead of organically returned from search.
-  // This field is only used in Blender to mark the force-inserted facet results
-  // (from recent tweets, etc).
-  11: optional bool forceInserted = 0
-}(persisted='true')
+  // whethew this facet wesuwt is fowce insewted, ( ͡o ω ͡o ) i-instead o-of owganicawwy wetuwned f-fwom seawch. (˘ω˘)
+  // this fiewd i-is onwy used in bwendew to m-mawk the fowce-insewted f-facet wesuwts
+  // (fwom w-wecent tweets, etc). >w<
+  11: optionaw boow fowceinsewted = 0
+}(pewsisted='twue')
 
-struct ThriftTermResults {
-  1: required i32 totalCount
-  2: optional list<i32> histogramBins
-  3: optional ThriftFacetCountMetadata metadata
-}(persisted='true')
+s-stwuct thwifttewmwesuwts {
+  1: wequiwed i32 totawcount
+  2: optionaw w-wist<i32> histogwambins
+  3: optionaw thwiftfacetcountmetadata metadata
+}(pewsisted='twue')
 
-struct ThriftTermStatisticsResults {
-  1: required map<ThriftTermRequest,ThriftTermResults> termResults
-  2: optional ThriftHistogramSettings histogramSettings
-  // If histogramSettings are set, this will have a list of ThriftHistogramSettings.numBins binIds,
-  // that the corresponding histogramBins in ThriftTermResults will have counts for.
-  // The binIds will correspond to the times of the hits matching the driving search query for this
-  // term statistics request.
-  // If there were no hits matching the search query, numBins binIds will be returned, but the
-  // values of the binIds will not meaningfully correspond to anything related to the query, and
-  // should not be used. Such cases can be identified by ThriftSearchResults.numHitsProcessed being
-  // set to 0 in the response, and the response not being early terminated.
-  3: optional list<i32> binIds
-  // If set, this id indicates the id of the minimum (oldest) bin that has been completely searched,
-  // even if the query was early terminated. If not set no bin was searched fully, or no histogram
-  // was requested.
-  // Note that if e.g. a query only matches a bin partially (due to e.g. a since operator) the bin
-  // is still considered fully searched if the query did not early terminate.
-  4: optional i32 minCompleteBinId
-}(persisted='true')
+s-stwuct thwifttewmstatisticswesuwts {
+  1: wequiwed m-map<thwifttewmwequest,thwifttewmwesuwts> tewmwesuwts
+  2: o-optionaw thwifthistogwamsettings h-histogwamsettings
+  // i-if histogwamsettings a-awe set, (⑅˘꒳˘) this wiww have a wist of t-thwifthistogwamsettings.numbins binids, (U ᵕ U❁)
+  // that the cowwesponding histogwambins in thwifttewmwesuwts w-wiww have c-counts fow. OwO
+  // t-the binids wiww c-cowwespond to t-the times of the hits matching the d-dwiving seawch q-quewy fow this
+  // tewm statistics wequest. òωó
+  // if thewe wewe n-nyo hits matching the seawch quewy, ^•ﻌ•^ nyumbins binids w-wiww be wetuwned, 😳😳😳 but the
+  // v-vawues of the binids wiww nyot meaningfuwwy c-cowwespond to anything wewated t-to the quewy, o.O and
+  // shouwd nyot b-be used. :3 such c-cases can be identified b-by thwiftseawchwesuwts.numhitspwocessed being
+  // set to 0 in the wesponse, ^•ﻌ•^ and the wesponse nyot being eawwy tewminated. >w<
+  3: optionaw w-wist<i32> binids
+  // if set, :3 this id indicates t-the id of the minimum (owdest) b-bin that has been c-compwetewy seawched,
+  // even i-if the quewy was e-eawwy tewminated. (✿oωo) if nyot set nyo bin was seawched fuwwy, rawr ow n-nyo histogwam
+  // was wequested.
+  // n-note that if e.g. UwU a quewy onwy matches a b-bin pawtiawwy (due to e.g. (⑅˘꒳˘) a since o-opewatow) the bin
+  // is stiww c-considewed fuwwy s-seawched if the quewy did nyot eawwy tewminate. σωσ
+  4: optionaw i32 mincompwetebinid
+}(pewsisted='twue')
 
-struct ThriftFacetCount {
-  // the text of the facet
-  1: required string facetLabel
+s-stwuct t-thwiftfacetcount {
+  // t-the text of the facet
+  1: wequiwed stwing f-facetwabew
 
-  // deprecated; currently matches weightedCount for backwards-compatibility reasons
-  2: optional i32 facetCount
+  // depwecated; c-cuwwentwy matches weightedcount f-fow backwawds-compatibiwity weasons
+  2: optionaw i32 facetcount
 
-  // the simple count of tweets that contained this facet, without any
-  // weighting applied
-  7: optional i32 simpleCount
+  // t-the simpwe count of tweets t-that contained t-this facet, (///ˬ///✿) without any
+  // weighting appwied
+  7: optionaw i32 simpwecount
 
-  // a weighted version of the count, using signals like tweepcred, parus, etc.
-  8: optional i32 weightedCount
+  // a-a weighted vewsion of the count, (˘ω˘) using signaws w-wike tweepcwed, ^•ﻌ•^ p-pawus, etc. ʘwʘ
+  8: o-optionaw i32 weightedcount
 
-  // the number of times this facet occurred in tweets matching the background query
-  // using the term statistics API - only set if FILTER_WITH_TERM_STATISTICS was used
-  3: optional i32 backgroundCount
+  // t-the nyumbew of times this facet occuwwed i-in tweets matching the backgwound q-quewy
+  // using t-the tewm statistics a-api - onwy set if fiwtew_with_tewm_statistics w-was used
+  3: o-optionaw i32 b-backgwoundcount
 
-  // the relevance score that was computed for this facet if FILTER_WITH_TERM_STATISTICS
-  // was used
-  4: optional double score
+  // t-the wewevance scowe that w-was computed fow this facet if fiwtew_with_tewm_statistics
+  // w-was used
+  4: optionaw d-doubwe scowe
 
-  // a counter for how often this facet was penalized
-  5: optional i32 penaltyCount
+  // a countew fow how often this facet was penawized
+  5: o-optionaw i32 penawtycount
 
-  6: optional ThriftFacetCountMetadata metadata
-}(persisted='true')
+  6: optionaw thwiftfacetcountmetadata metadata
+}(pewsisted='twue')
 
-// List of facet labels and counts for a given facet field, the
-// total count for this field, and a quality score for this field
-struct ThriftFacetFieldResults {
-  1: required list<ThriftFacetCount> topFacets
-  2: required i32 totalCount
-  3: optional double scoreQuality
-  4: optional i32 totalScore
-  5: optional i32 totalPenalty
+// wist of facet w-wabews and counts f-fow a given facet fiewd, 😳 the
+// totaw count fow this fiewd, òωó and a quawity scowe fow this fiewd
+stwuct thwiftfacetfiewdwesuwts {
+  1: w-wequiwed w-wist<thwiftfacetcount> t-topfacets
+  2: w-wequiwed i-i32 totawcount
+  3: o-optionaw doubwe scowequawity
+  4: o-optionaw i32 totawscowe
+  5: o-optionaw i32 totawpenawty
 
-  // The ratio of the tweet language in the tweets with this facet field, a map from the language
-  // name to a number between (0.0, 1.0]. Only languages with ratio higher than 0.1 will be included.
-  6: optional map<search_language.ThriftLanguage, double> languageHistogram
+  // t-the watio of the tweet wanguage i-in the tweets w-with this facet f-fiewd, a map fwom t-the wanguage
+  // n-nyame to a nyumbew between (0.0, ( ͡o ω ͡o ) 1.0]. onwy w-wanguages with watio highew than 0.1 wiww be incwuded. :3
+  6: optionaw m-map<seawch_wanguage.thwiftwanguage, (ˆ ﻌ ˆ)♡ doubwe> wanguagehistogwam
 }
 
-struct ThriftFacetResults {
-  1: required map<string, ThriftFacetFieldResults> facetFields
-  2: optional i32 backgroundNumHits
-  // returns optionally a list of user ids that should not get filtered
-  // out by things like antigaming filters, because these users were explicitly
-  // queried for
-  // Note that ThriftFacetCountMetadata returns already dontFilterUser
-  // for facet requests in which case this list is not needed. However, it
-  // is needed for subsequent term statistics queries, were user id lookups
-  // are performed, but a different background query is used.
-  3: optional set<i64> userIDWhitelist
+s-stwuct thwiftfacetwesuwts {
+  1: w-wequiwed map<stwing, XD thwiftfacetfiewdwesuwts> f-facetfiewds
+  2: optionaw i-i32 backgwoundnumhits
+  // w-wetuwns optionawwy a w-wist of usew ids that shouwd nyot g-get fiwtewed
+  // o-out by things wike antigaming f-fiwtews, :3 because these usews wewe expwicitwy
+  // quewied fow
+  // n-nyote that thwiftfacetcountmetadata w-wetuwns awweady dontfiwtewusew
+  // fow f-facet wequests in which case this w-wist is nyot nyeeded. nyaa~~ howevew, i-it
+  // is nyeeded fow subsequent t-tewm statistics quewies, 😳😳😳 wewe u-usew id wookups
+  // awe pewfowmed, (⑅˘꒳˘) but a diffewent b-backgwound q-quewy is used. ^^
+  3: o-optionaw set<i64> u-usewidwhitewist
 }
 
-struct ThriftSearchResults {
-  // Next available field ID: 23
-  1: required list<ThriftSearchResult> results = []
+s-stwuct t-thwiftseawchwesuwts {
+  // nyext a-avaiwabwe fiewd i-id: 23
+  1: wequiwed w-wist<thwiftseawchwesuwt> wesuwts = []
 
-  // (SEARCH-11950): Now resultOffset is deprecated, so there is no use in numResultsSkipped too.
-  9: optional i32 deprecated_numResultsSkipped
+  // (seawch-11950): n-nyow wesuwtoffset is depwecated, 🥺 so thewe is n-nyo use in nyumwesuwtsskipped t-too. OwO
+  9: optionaw i32 depwecated_numwesuwtsskipped
 
-  // Number of docs that matched the query and were processed.
-  7: optional i32 numHitsProcessed
+  // n-nyumbew o-of docs that matched the quewy and w-wewe pwocessed. ^^
+  7: o-optionaw i-i32 numhitspwocessed
 
-  // Range of status IDs searched, from max ID to min ID (both inclusive).
-  // These may be unset in case that the search query contained ID or time
-  // operators that were completely out of range for the given index.
-  10: optional i64 maxSearchedStatusID
-  11: optional i64 minSearchedStatusID
+  // w-wange of status ids seawched, nyaa~~ fwom max id to min id (both incwusive). ^^
+  // these may be unset in case t-that the seawch quewy contained i-id ow time
+  // opewatows that w-wewe compwetewy out of wange fow t-the given index. (✿oωo)
+  10: o-optionaw i64 maxseawchedstatusid
+  11: o-optionaw i64 minseawchedstatusid
 
-  // Time range that was searched (both inclusive).
-  19: optional i32 maxSearchedTimeSinceEpoch
-  20: optional i32 minSearchedTimeSinceEpoch
+  // t-time wange that was seawched (both incwusive). ^^
+  19: o-optionaw i32 maxseawchedtimesinceepoch
+  20: optionaw i-i32 minseawchedtimesinceepoch
 
-  12: optional ThriftSearchResultsRelevanceStats relevanceStats
+  12: optionaw t-thwiftseawchwesuwtswewevancestats w-wewevancestats
 
-  // Overall quality of this search result set
-  13: optional double score = -1.0
-  18: optional double nsfwRatio = 0.0
+  // o-ovewaww quawity of this seawch w-wesuwt set
+  13: optionaw doubwe scowe = -1.0
+  18: optionaw d-doubwe nysfwwatio = 0.0
 
-  // The count of hit documents in each language.
-  14: optional map<search_language.ThriftLanguage, i32> languageHistogram
+  // the count of hit documents in each wanguage. òωó
+  14: optionaw map<seawch_wanguage.thwiftwanguage, (⑅˘꒳˘) i32> wanguagehistogwam
 
-  // Hit counts per time period:
-  // The key is a time cutoff in milliseconds (e.g. 60000 msecs ago).
-  // The value is the number of hits that are more recent than the cutoff.
-  15: optional map<i64, i32> hitCounts
+  // hit counts pew time p-pewiod:
+  // the k-key is a time cutoff in miwwiseconds (e.g. (U ﹏ U) 60000 m-msecs ago). OwO
+  // t-the vawue is the numbew of hits that awe mowe wecent than the c-cutoff. (///ˬ///✿)
+  15: o-optionaw map<i64, o.O i32> hitcounts
 
-  // the total cost for this query
-  16: optional double queryCost
+  // t-the totaw c-cost fow this q-quewy
+  16: optionaw d-doubwe quewycost
 
-  // Set to non-0 if this query was terminated early (either due to a timeout, or exceeded query cost)
-  // When getting this response from a single earlybird, this will be set to 1, if the query
-  // terminated early.
-  // When getting this response from a search root, this should be set to the number of individual
-  // earlybird requests that were terminated early.
-  17: optional i32 numPartitionsEarlyTerminated
+  // set to nyon-0 if this q-quewy was tewminated eawwy (eithew due to a timeout, (ꈍᴗꈍ) ow exceeded q-quewy cost)
+  // when getting this wesponse fwom a singwe eawwybiwd, this wiww be set to 1, -.- if t-the quewy
+  // tewminated eawwy. òωó
+  // when getting this wesponse f-fwom a seawch w-woot, OwO this shouwd b-be set to the nyumbew of individuaw
+  // eawwybiwd w-wequests that w-wewe tewminated e-eawwy. (U ﹏ U)
+  17: optionaw i32 nyumpawtitionseawwytewminated
 
-  // If ThriftSearchResults returns features in features.ThriftSearchResultFeature format, this
-  // field would define the schema of the features.
-  // If the earlybird schema is already in the client cached schemas indicated in the request, then
-  // searchFeatureSchema would only have (version, checksum) information.
+  // if thwiftseawchwesuwts w-wetuwns featuwes in featuwes.thwiftseawchwesuwtfeatuwe f-fowmat, ^^;; this
+  // fiewd wouwd define the schema of the featuwes. ^^;;
+  // i-if the eawwybiwd schema is a-awweady in the cwient cached schemas i-indicated i-in the wequest, XD then
+  // seawchfeatuweschema w-wouwd onwy have (vewsion, OwO checksum) i-infowmation. (U ﹏ U)
   //
-  // Notice that earlybird root only sends one schema back to the superroot even though earlybird
-  // root might receive multiple version of schemas.
+  // notice that eawwybiwd woot onwy sends one s-schema back to the supewwoot even though eawwybiwd
+  // w-woot might weceive muwtipwe v-vewsion of s-schemas. >w<
   //
-  // Earlybird roots' schema merge/choose logic when returning results to superroot:
-  // . pick the most occurred versioned schema and return the schema to the superroot
-  // . if the superroot already caches the schema, only send the version information back
+  // eawwybiwd woots' s-schema mewge/choose wogic w-when wetuwning wesuwts to supewwoot:
+  // . >w< pick t-the most occuwwed v-vewsioned schema and wetuwn the s-schema to the s-supewwoot
+  // . (ˆ ﻌ ˆ)♡ if the supewwoot a-awweady caches the schema, (ꈍᴗꈍ) onwy send the vewsion infowmation back
   //
-  // Superroots' schema merge/choose logic when returning results to clients:
-  // . pick the schema based on the order of: realtime > protected > archive
-  // . because of the above ordering, it is possible that archive earlybird schema with a new flush
-  //   version (with new bit features) might be lost to older realtime earlybird schema; this is
-  //   considered to to be rare and acceptable because one realtime earlybird deploy would fix it
-  21: optional features.ThriftSearchFeatureSchema featureSchema
+  // supewwoots' schema m-mewge/choose wogic when wetuwning wesuwts to cwients:
+  // . 😳😳😳 pick the schema based o-on the owdew o-of: weawtime > p-pwotected > awchive
+  // . because o-of the above o-owdewing, mya it is possibwe that awchive e-eawwybiwd schema with a nyew f-fwush
+  //   v-vewsion (with nyew bit featuwes) might be wost to owdew weawtime e-eawwybiwd schema; t-this is
+  //   considewed to to be wawe and a-acceptabwe because one weawtime e-eawwybiwd depwoy w-wouwd fix it
+  21: o-optionaw featuwes.thwiftseawchfeatuweschema f-featuweschema
 
-  // How long it took to score the results in earlybird (in nanoseconds). The number of results
-  // that were scored should be set in numHitsProcessed.
-  // Expected to only be set for requests that actually do scoring (i.e. Relevance and TopTweets).
-  22: optional i64 scoringTimeNanos
+  // how wong it t-took to scowe the wesuwts in eawwybiwd (in n-nanoseconds). (˘ω˘) the nyumbew of wesuwts
+  // that wewe scowed s-shouwd be s-set in nyumhitspwocessed. (✿oωo)
+  // expected t-to onwy b-be set fow wequests t-that actuawwy d-do scowing (i.e. (ˆ ﻌ ˆ)♡ w-wewevance and toptweets). (ˆ ﻌ ˆ)♡
+  22: optionaw i64 s-scowingtimenanos
 
-  8: optional i32 deprecated_numDocsProcessed
+  8: optionaw i32 depwecated_numdocspwocessed
 }
 
-// Note: Earlybird no longer respects this field, as it does not contain statuses.
-// Blender should respect it.
-enum EarlybirdReturnStatusType {
-  NO_STATUS = 0
-  // deprecated
-  DEPRECATED_BASIC_STATUS = 1,
-  // deprecated
-  DEPRECATED_SEARCH_STATUS = 2,
-  TWEETYPIE_STATUS = 3,
+// n-nyote: eawwybiwd nyo wongew w-wespects this fiewd, nyaa~~ as it does nyot contain statuses. :3
+// bwendew shouwd wespect i-it. (✿oωo)
+enum eawwybiwdwetuwnstatustype {
+  n-nyo_status = 0
+  // d-depwecated
+  depwecated_basic_status = 1, (✿oωo)
+  // depwecated
+  depwecated_seawch_status = 2, (⑅˘꒳˘)
+  t-tweetypie_status = 3, >_<
 
-  PLACE_HOLDER4 = 4,
-  PLACE_HOLDER5 = 5,
+  p-pwace_howdew4 = 4, >_<
+  p-pwace_howdew5 = 5, ʘwʘ
 }
 
-struct AdjustedRequestParams {
-  // Next available field ID: 4
+s-stwuct adjustedwequestpawams {
+  // nyext avaiwabwe fiewd id: 4
 
-  // Adjusted value for EarlybirdRequest.searchQuery.numResults.
-  1: optional i32 numResults
+  // adjusted vawue fow eawwybiwdwequest.seawchquewy.numwesuwts. (U ﹏ U)
+  1: o-optionaw i32 n-numwesuwts
 
-  // Adjusted value for EarlybirdRequest.searchQuery.maxHitsToProcess and
-  // EarlybirdRequest.searchQuery.relevanceOptions.maxHitsToProcess.
-  2: optional i32 maxHitsToProcess
+  // a-adjusted vawue fow eawwybiwdwequest.seawchquewy.maxhitstopwocess and
+  // eawwybiwdwequest.seawchquewy.wewevanceoptions.maxhitstopwocess. ^^
+  2: o-optionaw i32 maxhitstopwocess
 
-  // Adjusted value for EarlybirdRequest.searchQuery.relevanceOptions.returnAllResults
-  3: optional bool returnAllResults
+  // adjusted vawue fow eawwybiwdwequest.seawchquewy.wewevanceoptions.wetuwnawwwesuwts
+  3: o-optionaw boow wetuwnawwwesuwts
 }
 
-struct EarlybirdRequest {
-  // Next available field ID: 36
+stwuct e-eawwybiwdwequest {
+  // nyext avaiwabwe fiewd id: 36
 
-  // -------- COMMON REQUEST OPTIONS --------
-  // These fields contain options respected by all kinds of earlybird requests.
+  // -------- c-common wequest options --------
+  // these f-fiewds contain options wespected by aww kinds of eawwybiwd w-wequests. >_<
 
-  // Search query containing general earlybird retrieval and hit collection options.
-  // Also contains the options specific to search requests.
-  1: required ThriftSearchQuery searchQuery
+  // seawch quewy containing genewaw e-eawwybiwd wetwievaw and hit cowwection o-options. OwO
+  // a-awso contains the options specific to seawch wequests. 😳
+  1: wequiwed thwiftseawchquewy s-seawchquewy
 
-  // Common RPC information - client hostname and request ID.
-  12: optional string clientHost
-  13: optional string clientRequestID
+  // common wpc infowmation - cwient hostname and wequest id. (U ᵕ U❁)
+  12: optionaw stwing cwienthost
+  13: o-optionaw s-stwing cwientwequestid
 
-  // A string identifying the client that initiated the request.
-  // Ex: macaw-search.prod, webforall.prod, webforall.staging.
-  // The intention is to track the load we get from each client, and eventually enforce
-  // per-client QPS quotas, but this field could also be used to allow access to certain features
-  // only to certain clients, etc.
-  21: optional string clientId
+  // a stwing identifying the cwient t-that initiated the wequest. 😳😳😳
+  // e-ex: macaw-seawch.pwod, w-webfowaww.pwod, -.- w-webfowaww.staging. (U ᵕ U❁)
+  // the intention is to twack the woad we get fwom e-each cwient, -.- a-and eventuawwy enfowce
+  // p-pew-cwient q-qps quotas, (U ﹏ U) but this fiewd couwd awso be used to awwow access t-to cewtain f-featuwes
+  // onwy to cewtain cwients, ^^ etc.
+  21: optionaw stwing cwientid
 
-  // The time (in millis since epoch) when the earlybird client issued this request.
-  // Can be used to estimate request timeout time, capturing in-transit time for the request.
-  23: optional i64 clientRequestTimeMs
+  // the time (in miwwis s-since epoch) when the eawwybiwd cwient issued this wequest. UwU
+  // c-can be used t-to estimate wequest t-timeout time, c-captuwing in-twansit time fow the wequest. o.O
+  23: optionaw i64 cwientwequesttimems
 
-  // Caching parameters used by earlybird roots.
-  24: optional caching.CachingParams cachingParams
+  // caching p-pawametews used by eawwybiwd w-woots. ^^
+  24: optionaw caching.cachingpawams c-cachingpawams
 
-  // Deprecated. See SEARCH-2784
-  // Earlybird requests will be early terminated in a best-effort way to prevent them from
-  // exceeding the given timeout.  If timeout is <= 0 this early termination criteria is
-  // disabled.
-  17: optional i32 timeoutMs = -1
+  // d-depwecated. 🥺 see seawch-2784
+  // eawwybiwd wequests wiww be eawwy tewminated in a-a best-effowt way to pwevent them f-fwom
+  // exceeding t-the given t-timeout. 😳  if timeout i-is <= 0 this eawwy tewmination c-cwitewia is
+  // disabwed. (⑅˘꒳˘)
+  17: optionaw i32 t-timeoutms = -1
 
-  // Deprecated. See SEARCH-2784
-  // Earlybird requests will be early terminated in a best-effort way to prevent them from
-  // exceeding the given query cost.  If maxQueryCost <= 0 this early termination criteria
-  // is disabled.
-  20: optional double maxQueryCost = -1
-
-
-  // -------- REQUEST-TYPE SPECIFIC OPTIONS --------
-  // These fields contain options for one specific kind of request.  If one of these options
-  // is set the request will be considered to be the appropriate type of request.
-
-  // Options for facet counting requests.
-  11: optional ThriftFacetRequest facetRequest
-
-  // Options for term statistics requests.
-  14: optional ThriftTermStatisticsRequest termStatisticsRequest
+  // d-depwecated. >w< s-see seawch-2784
+  // eawwybiwd wequests wiww b-be eawwy tewminated in a best-effowt w-way to pwevent t-them fwom
+  // e-exceeding the g-given quewy cost. >_<  if maxquewycost <= 0 this eawwy tewmination c-cwitewia
+  // is disabwed.
+  20: optionaw doubwe maxquewycost = -1
 
 
-  // -------- DEBUG OPTIONS --------
-  // Used for debugging only.
+  // -------- wequest-type s-specific options --------
+  // t-these fiewds contain options fow one specific kind o-of wequest. rawr x3  i-if one of these o-options
+  // is s-set the wequest wiww be considewed to be the appwopwiate t-type of wequest. >_<
 
-  // Debug mode, 0 for no debug information.
-  15: optional i8 debugMode = 0
+  // options fow facet c-counting wequests. XD
+  11: optionaw t-thwiftfacetwequest f-facetwequest
 
-  // Can be used to pass extra debug arguments to earlybird.
-  34: optional EarlybirdDebugOptions debugOptions
-
-  // Searches a specific segment by time slice id if set and segment id is > 0.
-  22: optional i64 searchSegmentId
-
-  // -------- THINGS USED ONLY BY THE BLENDER --------
-  // These fields are used by the blender and clients of the blender, but not by earlybird.
-
-  // Specifies what kind of status object to return, if any.
-  7: optional EarlybirdReturnStatusType returnStatusType
+  // o-options f-fow tewm statistics w-wequests. mya
+  14: o-optionaw thwifttewmstatisticswequest tewmstatisticswequest
 
 
-  // -------- THINGS USED BY THE ROOTS --------
-  // These fields are not in use by earlybirds themselves, but are in use by earlybird roots
-  // (and their clients).
-  // These fields live here since we currently reuse the same thrift request and response structs
-  // for both earlybirds and earlybird roots, and could potentially be moved out if we were to
-  // introduce separate request / response structs specifically for the roots.
+  // -------- debug options --------
+  // u-used fow debugging o-onwy. (///ˬ///✿)
 
-  // We have a threshold for how many hash partition requests need to succeed at the root level
-  // in order for the earlybird root request to be considered successful.
-  // Each type or earlybird queries (e.g. relevance, or term statistics) has a predefined default
-  // threshold value (e.g. 90% or hash partitions need to succeed for a recency query).
-  // The client can optionally set the threshold value to be something other than the default,
-  // by setting this field to a value in the range of 0 (exclusive) to 1 (inclusive).
-  // If this value is set outside of the (0, 1] range, a CLIENT_ERROR EarlybirdResponseCode will
-  // be returned.
-  25: optional double successfulResponseThreshold
+  // debug mode, OwO 0 fow nyo d-debug infowmation. mya
+  15: o-optionaw i-i8 debugmode = 0
 
-  // Where does the query come from?
-  26: optional query.ThriftQuerySource querySource
+  // c-can be u-used to pass extwa debug awguments to eawwybiwd. OwO
+  34: optionaw eawwybiwddebugoptions debugoptions
 
-  // Whether to get archive results This flag is advisory. A request may still be restricted from
-  // getting reqults from the archive based on the requesting client, query source, requested
-  // time/id range, etc.
-  27: optional bool getOlderResults
+  // s-seawches a-a specific segment by time swice i-id if set and s-segment id is > 0. :3
+  22: optionaw i-i64 seawchsegmentid
 
-  // The list of users followed by the current user.
-  // Used to restrict the values in the fromUserIDFilter64 field when sending a request
-  // to the protectected cluster.
-  28: optional list<i64> followedUserIds
+  // -------- things used onwy by the bwendew --------
+  // t-these fiewds awe used by the b-bwendew and cwients o-of the bwendew, òωó but nyot b-by eawwybiwd. OwO
 
-  // The adjusted parameters for the protected request.
-  29: optional AdjustedRequestParams adjustedProtectedRequestParams
+  // s-specifies nyani k-kind of status o-object to wetuwn, OwO i-if any. (U ᵕ U❁)
+  7: optionaw eawwybiwdwetuwnstatustype w-wetuwnstatustype
 
-  // The adjusted parameters for the full archive request.
-  30: optional AdjustedRequestParams adjustedFullArchiveRequestParams
 
-  // Return only the protected tweets. This flag is used by the SuperRoot to return relevance
-  // results that contain only protected tweets.
-  31: optional bool getProtectedTweetsOnly
+  // -------- t-things used by the woots --------
+  // these f-fiewds awe nyot in use by eawwybiwds themsewves, mya b-but awe in use by eawwybiwd woots
+  // (and theiw cwients).
+  // t-these fiewds w-wive hewe since w-we cuwwentwy weuse t-the same thwift wequest and wesponse stwucts
+  // f-fow both e-eawwybiwds and eawwybiwd woots, UwU and couwd potentiawwy b-be moved out i-if we wewe to
+  // i-intwoduce sepawate wequest / w-wesponse stwucts s-specificawwy fow the woots. /(^•ω•^)
 
-  // Tokenize serialized queries with the appropriate Pengin version(s).
-  // Only has an effect on superroot.
-  32: optional bool retokenizeSerializedQuery
+  // we have a thweshowd fow how many hash pawtition wequests nyeed to succeed a-at the woot wevew
+  // in owdew fow the eawwybiwd woot wequest to be considewed successfuw. UwU
+  // each type ow eawwybiwd q-quewies (e.g. w-wewevance, UwU ow tewm statistics) has a pwedefined defauwt
+  // t-thweshowd vawue (e.g. /(^•ω•^) 90% ow hash pawtitions nyeed to succeed f-fow a wecency quewy). XD
+  // t-the c-cwient can optionawwy set the thweshowd v-vawue to be something othew t-than the defauwt, ^^;;
+  // by setting t-this fiewd t-to a vawue in the w-wange of 0 (excwusive) t-to 1 (incwusive). nyaa~~
+  // if this vawue is s-set outside of t-the (0, mya 1] wange, (✿oωo) a cwient_ewwow eawwybiwdwesponsecode wiww
+  // b-be wetuwned. rawr
+  25: o-optionaw doubwe successfuwwesponsethweshowd
 
-  // Flag to ignore tweets that are very recent and could be incompletely indexed.
-  // If false, will allow queries to see results that may violate implicit streaming
-  // guarantees and will search Tweets that have been partially indexed.
-  // See go/indexing-latency for more details. When enabled, prevents seeing tweets
-  // that are less than 15 seconds old (or a similarly configured threshold).
-  // May be set to false unless explicitly set to true.
-  33: optional bool skipVeryRecentTweets = 1
+  // whewe does the quewy come fwom?
+  26: optionaw q-quewy.thwiftquewysouwce q-quewysouwce
 
-  // Setting an experimental cluster will reroute traffic at the realtime root layer to an experimental
-  // Earlybird cluster. This will have no impact if set on requests to anywhere other than realtime root.
-  35: optional ExperimentCluster experimentClusterToUse
+  // whethew to get awchive w-wesuwts this fwag is advisowy. -.- a-a wequest may stiww be westwicted fwom
+  // getting wequwts f-fwom the awchive based on the wequesting cwient, σωσ q-quewy souwce, mya wequested
+  // time/id wange, ^•ﻌ•^ etc.
+  27: o-optionaw b-boow getowdewwesuwts
 
-  // Caps number of results returned by roots after merging results from different earlybird partitions/clusters. 
-  // If not set, ThriftSearchQuery.numResults or CollectorParams.numResultsToReturn will be used to cap results. 
-  // This parameter will be ignored if ThriftRelevanceOptions.returnAllResults is set to true.
-  36: optional i32 numResultsToReturnAtRoot
+  // the wist of usews fowwowed by the cuwwent usew. nyaa~~
+  // u-used to westwict t-the vawues in t-the fwomusewidfiwtew64 f-fiewd when sending a wequest
+  // to the p-pwotectected cwustew. 🥺
+  28: o-optionaw w-wist<i64> f-fowwowedusewids
+
+  // t-the adjusted pawametews fow the pwotected wequest. (✿oωo)
+  29: optionaw adjustedwequestpawams adjustedpwotectedwequestpawams
+
+  // the adjusted p-pawametews fow the fuww awchive w-wequest. rawr
+  30: o-optionaw adjustedwequestpawams adjustedfuwwawchivewequestpawams
+
+  // w-wetuwn onwy t-the pwotected t-tweets. (ˆ ﻌ ˆ)♡ this fwag is used by the supewwoot to wetuwn wewevance
+  // wesuwts that c-contain onwy pwotected tweets. ^^;;
+  31: optionaw boow g-getpwotectedtweetsonwy
+
+  // t-tokenize sewiawized quewies with t-the appwopwiate pengin vewsion(s). OwO
+  // onwy has an effect on s-supewwoot. mya
+  32: o-optionaw boow wetokenizesewiawizedquewy
+
+  // fwag t-to ignowe tweets that awe vewy wecent and couwd b-be incompwetewy i-indexed. (⑅˘꒳˘)
+  // i-if fawse, (U ﹏ U) wiww awwow quewies to see wesuwts that m-may viowate impwicit s-stweaming
+  // g-guawantees a-and wiww seawch t-tweets that have b-been pawtiawwy indexed. (U ﹏ U)
+  // s-see go/indexing-watency f-fow mowe detaiws. XD when enabwed, OwO p-pwevents seeing tweets
+  // that awe wess t-than 15 seconds o-owd (ow a simiwawwy c-configuwed t-thweshowd). (///ˬ///✿)
+  // m-may be set to f-fawse unwess expwicitwy set to twue. XD
+  33: optionaw b-boow skipvewywecenttweets = 1
+
+  // s-setting a-an expewimentaw c-cwustew wiww wewoute t-twaffic at the weawtime woot w-wayew to an expewimentaw
+  // e-eawwybiwd cwustew. σωσ this wiww have n-nyo impact if set on wequests to anywhewe othew t-than weawtime w-woot. (///ˬ///✿)
+  35: optionaw expewimentcwustew e-expewimentcwustewtouse
+
+  // c-caps nyumbew of wesuwts wetuwned by woots aftew mewging wesuwts fwom diffewent e-eawwybiwd pawtitions/cwustews. 😳 
+  // i-if not set, rawr x3 t-thwiftseawchquewy.numwesuwts ow cowwectowpawams.numwesuwtstowetuwn w-wiww be used to cap wesuwts. 😳 
+  // this pawametew wiww be ignowed if thwiftwewevanceoptions.wetuwnawwwesuwts i-is set to twue. ^^;;
+  36: optionaw i32 nyumwesuwtstowetuwnatwoot
 }
 
-enum EarlybirdResponseCode {
-  SUCCESS = 0,
-  PARTITION_NOT_FOUND = 1,
-  PARTITION_DISABLED = 2,
-  TRANSIENT_ERROR = 3,
-  PERSISTENT_ERROR = 4,
-  CLIENT_ERROR = 5,
-  PARTITION_SKIPPED = 6,
-  // Request was queued up on the server for so long that it timed out, and was not
-  // executed at all.
-  SERVER_TIMEOUT_ERROR = 7,
-  TIER_SKIPPED = 8,
-  // Not enough partitions returned a successful response. The merged response will have partition
-  // counts and early termination info set, but will not have search results.
-  TOO_MANY_PARTITIONS_FAILED_ERROR = 9,
-  // Client went over its quota, and the request was throttled.
-  QUOTA_EXCEEDED_ERROR = 10,
-  // Client's request is blocked based on Search Infra's policy. Search Infra can can block client's
-  // requests based on the query source of the request.
-  REQUEST_BLOCKED_ERROR = 11,
+enum eawwybiwdwesponsecode {
+  success = 0, òωó
+  pawtition_not_found = 1, >w<
+  p-pawtition_disabwed = 2, >w<
+  t-twansient_ewwow = 3, òωó
+  p-pewsistent_ewwow = 4, 😳😳😳
+  cwient_ewwow = 5, ( ͡o ω ͡o )
+  pawtition_skipped = 6, o.O
+  // wequest was queued up on the sewvew fow so wong that it timed o-out, UwU and was nyot
+  // exekawaii~d at aww. rawr
+  s-sewvew_timeout_ewwow = 7, mya
+  tiew_skipped = 8, (✿oωo)
+  // nyot enough pawtitions wetuwned a-a successfuw wesponse. ( ͡o ω ͡o ) the mewged wesponse wiww h-have pawtition
+  // counts and eawwy tewmination info set, nyaa~~ but w-wiww nyot have seawch wesuwts. (///ˬ///✿)
+  too_many_pawtitions_faiwed_ewwow = 9, 😳😳😳
+  // cwient w-went ovew its quota, UwU and the w-wequest was thwottwed. 🥺
+  quota_exceeded_ewwow = 10, (///ˬ///✿)
+  // cwient's wequest is bwocked based on s-seawch infwa's p-powicy. (⑅˘꒳˘) seawch infwa c-can can bwock c-cwient's
+  // w-wequests based on the quewy souwce o-of the wequest. (✿oωo)
+  wequest_bwocked_ewwow = 11, òωó
 
-  CLIENT_CANCEL_ERROR = 12,
+  cwient_cancew_ewwow = 12, ^^
 
-  CLIENT_BLOCKED_BY_TIER_ERROR = 13,
+  cwient_bwocked_by_tiew_ewwow = 13, rawr
 
-  PLACE_HOLDER_2015_09_21 = 14,
+  pwace_howdew_2015_09_21 = 14,
 }
 
-// A recorded request and response.
-struct EarlybirdRequestResponse {
-  // Where did we send this request to.
-  1: optional string sentTo;
-  2: optional EarlybirdRequest request;
-  // This can't be an EarlybirdResponse, because the thrift compiler for Python
-  // doesn't allow cyclic references and we have some Python utilities that will fail.
-  3: optional string response;
+// a wecowded wequest and wesponse. ^^;;
+stwuct eawwybiwdwequestwesponse {
+  // w-whewe did we send this wequest to. (ˆ ﻌ ˆ)♡
+  1: optionaw s-stwing sentto;
+  2: optionaw e-eawwybiwdwequest w-wequest;
+  // this can't be an e-eawwybiwdwesponse, (⑅˘꒳˘) because the t-thwift compiwew f-fow python
+  // d-doesn't awwow cycwic wefewences a-and we have some p-python utiwities t-that wiww faiw. ( ͡o ω ͡o )
+  3: optionaw stwing wesponse;
 }
 
-struct EarlybirdDebugInfo {
-  1: optional string host
-  2: optional string parsedQuery
-  3: optional string luceneQuery
-  // Requests sent to dependent services. For example, superroot sends to realtime root,
-  // archive root, etc.
-  4: optional list<EarlybirdRequestResponse> sentRequests;
-  // segment level debug info (eg. hitsPerSegment, max/minSearchedTime etc.)
-  5: optional list<string> collectorDebugInfo
-  6: optional list<string> termStatisticsDebugInfo
+stwuct eawwybiwddebuginfo {
+  1: optionaw stwing h-host
+  2: o-optionaw stwing pawsedquewy
+  3: o-optionaw stwing w-wucenequewy
+  // wequests sent t-to dependent sewvices. 🥺 f-fow exampwe, s-supewwoot sends to weawtime woot, ^^;;
+  // awchive woot, o.O etc.
+  4: o-optionaw wist<eawwybiwdwequestwesponse> sentwequests;
+  // s-segment wevew debug info (eg. rawr hitspewsegment, (⑅˘꒳˘) max/minseawchedtime e-etc.)
+  5: optionaw wist<stwing> c-cowwectowdebuginfo
+  6: optionaw wist<stwing> tewmstatisticsdebuginfo
 }
 
-struct EarlybirdDebugOptions {
-  1: optional bool includeCollectorDebugInfo
+stwuct eawwybiwddebugoptions {
+  1: optionaw boow incwudecowwectowdebuginfo
 }
 
-struct TierResponse {
-  1: optional EarlybirdResponseCode tierResponseCode
-  2: optional i32 numPartitions
-  3: optional i32 numSuccessfulPartitions
+stwuct t-tiewwesponse {
+  1: optionaw eawwybiwdwesponsecode tiewwesponsecode
+  2: o-optionaw i-i32 nyumpawtitions
+  3: o-optionaw i32 nyumsuccessfuwpawtitions
 }
 
-struct EarlybirdServerStats {
-  // The hostname of the Earlybird that processed this request.
-  1: optional string hostname
+s-stwuct eawwybiwdsewvewstats {
+  // the hostname o-of the eawwybiwd t-that pwocessed t-this wequest. 😳
+  1: o-optionaw stwing h-hostname
 
-  // The partition to which this earlybird belongs.
-  2: optional i32 partition
+  // the pawtition t-to which this e-eawwybiwd bewongs. nyaa~~
+  2: o-optionaw i-i32 pawtition
 
-  // Current Earlybird QPS.
-  // Earlybirds should set this field at the end of a request (not at the start). This would give
-  // roots a more up-to-date view of the load on the earlybirds.
-  3: optional i64 currentQps
+  // cuwwent eawwybiwd qps. ^•ﻌ•^
+  // eawwybiwds shouwd s-set this fiewd a-at the end of a-a wequest (not at the stawt). (⑅˘꒳˘) this w-wouwd give
+  // woots a mowe u-up-to-date view of the woad on the eawwybiwds. σωσ
+  3: optionaw i64 c-cuwwentqps
 
-  // The time the request waited in the queue before Earlybird started processing it.
-  // This does not include the time spent in the finagle queue: it's the time between the moment
-  // earlybird received the request, and the moment it started processing the request.
-  4: optional i64 queueTimeMillis
+  // t-the time the w-wequest waited in t-the queue befowe e-eawwybiwd stawted p-pwocessing i-it. (U ᵕ U❁)
+  // this does nyot incwude t-the time spent in the finagwe queue: it's the time between the moment
+  // e-eawwybiwd w-weceived the wequest, o.O and the moment it stawted p-pwocessing the wequest. >w<
+  4: optionaw i64 queuetimemiwwis
 
-  // The average request time in the queue before Earlybird started processing it.
-  // This does not include the time that requests spent in the finagle queue: it's the average time
-  // between the moment earlybird received its requests, and the moment it started processing them.
-  5: optional i64 averageQueueTimeMillis
+  // the avewage wequest time in t-the queue befowe e-eawwybiwd stawted p-pwocessing it. (///ˬ///✿)
+  // t-this does n-not incwude the time that wequests spent in the f-finagwe queue: i-it's the avewage time
+  // between t-the moment eawwybiwd w-weceived i-its wequests, :3 and the moment it s-stawted pwocessing t-them. ^^;;
+  5: optionaw i64 avewagequeuetimemiwwis
 
-  // Current average per-request latency as perceived by Earlybird.
-  6: optional i64 averageLatencyMicros
+  // cuwwent avewage pew-wequest watency as p-pewceived by eawwybiwd. òωó
+  6: optionaw i64 avewagewatencymicwos
 
-  // The tier to which this earlybird belongs.
-  7: optional string tierName
+  // the tiew to w-which this eawwybiwd b-bewongs.
+  7: optionaw stwing t-tiewname
 }
 
-struct EarlybirdResponse {
-  // Next available field ID: 17
-  1: optional ThriftSearchResults searchResults
-  5: optional ThriftFacetResults facetResults
-  6: optional ThriftTermStatisticsResults termStatisticsResults
-  2: required EarlybirdResponseCode responseCode
-  3: required i64 responseTime
-  7: optional i64 responseTimeMicros
-  // fields below will only be returned if debug > 1 in the request.
-  4: optional string debugString
-  8: optional EarlybirdDebugInfo debugInfo
+stwuct eawwybiwdwesponse {
+  // n-nyext avaiwabwe f-fiewd id: 17
+  1: o-optionaw thwiftseawchwesuwts s-seawchwesuwts
+  5: o-optionaw thwiftfacetwesuwts facetwesuwts
+  6: o-optionaw thwifttewmstatisticswesuwts tewmstatisticswesuwts
+  2: w-wequiwed eawwybiwdwesponsecode w-wesponsecode
+  3: w-wequiwed i64 wesponsetime
+  7: optionaw i64 wesponsetimemicwos
+  // fiewds bewow w-wiww onwy be wetuwned if debug > 1 i-in the wequest. nyaa~~
+  4: optionaw stwing debugstwing
+  8: optionaw eawwybiwddebuginfo debuginfo
 
-  // Only exists for merged earlybird response.
-  10: optional i32 numPartitions
-  11: optional i32 numSuccessfulPartitions
-  // Only exists for merged earlybird response from multiple tiers.
-  13: optional list<TierResponse> perTierResponse
+  // onwy exists fow mewged eawwybiwd wesponse. /(^•ω•^)
+  10: o-optionaw i-i32 nyumpawtitions
+  11: optionaw i32 nyumsuccessfuwpawtitions
+  // o-onwy exists fow mewged eawwybiwd wesponse fwom muwtipwe tiews. 😳
+  13: optionaw w-wist<tiewwesponse> p-pewtiewwesponse
 
-  // Total number of segments that were searched. Partially searched segments are fully counted.
-  // e.g. if we searched 1 segment fully, and early terminated half way through the second
-  // segment, this field should be set to 2.
-  15: optional i32 numSearchedSegments
+  // t-totaw nyumbew of segments t-that wewe s-seawched. òωó pawtiawwy seawched segments awe fuwwy counted. (⑅˘꒳˘)
+  // e.g. i-if we seawched 1 segment fuwwy, ^•ﻌ•^ and eawwy tewminated hawf way t-thwough the second
+  // s-segment, o.O this fiewd shouwd be set to 2.
+  15: optionaw i32 nyumseawchedsegments
 
-  // Whether the request early terminated, if so, the termination reason.
-  12: optional search.EarlyTerminationInfo earlyTerminationInfo
+  // w-whethew the wequest e-eawwy tewminated, σωσ if so, the t-tewmination weason. 😳
+  12: o-optionaw seawch.eawwytewminationinfo eawwytewminationinfo
 
-  // Whether this response is from cache.
-  14: optional bool cacheHit
+  // whethew t-this wesponse is fwom cache. (ˆ ﻌ ˆ)♡
+  14: optionaw boow c-cachehit
 
-  // Stats used by roots to determine if we should go into degraded mode.
-  16: optional EarlybirdServerStats earlybirdServerStats
+  // stats used by w-woots to detewmine i-if we shouwd g-go into degwaded m-mode. (///ˬ///✿)
+  16: optionaw e-eawwybiwdsewvewstats e-eawwybiwdsewvewstats
 }
 
-enum EarlybirdStatusCode {
-  STARTING = 0,
-  CURRENT = 1,
-  STOPPING = 2,
-  UNHEALTHY = 3,
-  BLACKLISTED = 4,
+e-enum eawwybiwdstatuscode {
+  stawting = 0, (///ˬ///✿)
+  cuwwent = 1, >_<
+  s-stopping = 2, XD
+  u-unheawthy = 3, (U ﹏ U)
+  bwackwisted = 4, ( ͡o ω ͡o )
 
-  PLACE_HOLDER5 = 5,
-  PLACE_HOLDER6 = 6,
+  pwace_howdew5 = 5, ^•ﻌ•^
+  p-pwace_howdew6 = 6, 😳
 }
 
-struct EarlybirdStatusResponse {
-  1: required EarlybirdStatusCode code
-  2: required i64 aliveSince
-  3: optional string message
+s-stwuct eawwybiwdstatuswesponse {
+  1: w-wequiwed eawwybiwdstatuscode c-code
+  2: wequiwed i64 awivesince
+  3: o-optionaw s-stwing message
 }
 
-service EarlybirdService {
-  string getName(),
-  EarlybirdStatusResponse getStatus(),
-  EarlybirdResponse search( 1: EarlybirdRequest request )
+sewvice eawwybiwdsewvice {
+  stwing getname(), (ˆ ﻌ ˆ)♡
+  e-eawwybiwdstatuswesponse g-getstatus(), (ˆ ﻌ ˆ)♡
+  eawwybiwdwesponse seawch( 1: e-eawwybiwdwequest wequest )
 }

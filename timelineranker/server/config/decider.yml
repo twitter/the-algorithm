@@ -1,153 +1,153 @@
-# Deciders that can be used to control load on TLR or its backends.
-enable_max_concurrency_limiting:
-  comment: "When enabled, limit maxConcurrency filter. Note: Requires system property maxConcurrency to be set."
-  default_availability: 0
+# decidews that can be used to contwow w-woad on tww o-ow its backends. ʘwʘ
+e-enabwe_max_concuwwency_wimiting:
+  c-comment: "when e-enabwed, :3 wimit m-maxconcuwwency f-fiwtew. (˘ω˘) nyote: w-wequiwes system pwopewty maxconcuwwency to be set."
+  defauwt_avaiwabiwity: 0
 
-# Deciders related to testing / debugging.
-enable_routing_to_ranker_dev_proxy:
-  comment: "Route dark traffic to the TimelineRanker development proxy. 100% means ~100% of requests to a host."
-  default_availability: 0
+# decidews wewated t-to testing / debugging. 😳😳😳
+enabwe_wouting_to_wankew_dev_pwoxy:
+  comment: "woute d-dawk twaffic to the timewinewankew d-devewopment pwoxy. rawr x3 100% means ~100% of wequests to a host."
+  d-defauwt_avaiwabiwity: 0
 
-# Deciders related to authorization.
-client_request_authorization:
-  comment: "Enable client request authorization and rate limiting"
-  default_availability: 10000
-client_write_whitelist:
-  comment: "Enable authorization of write protected requests from only whitelisted clients"
-  default_availability: 0
-allow_timeline_mixer_recap_prod:
-  comment: "Allow requests from production TimelineMixer/recap"
-  default_availability: 10000
-allow_timeline_mixer_recycled_prod:
-  comment: "Allow requests from production TimelineMixer/recycled"
-  default_availability: 10000
-allow_timeline_mixer_hydrate_prod:
-  comment: "Allow requests from production TimelineMixer/hydrate"
-  default_availability: 10000
-allow_timeline_mixer_hydrate_recos_prod:
-  comment: "Allow requests from production TimelineMixer/hydrate_recos"
-  default_availability: 10000
-allow_timeline_mixer_seed_authors_prod:
-  comment: "Allow requests from production TimelineMixer/seed_author_ids"
-  default_availability: 10000
-allow_timeline_mixer_simcluster_prod:
-  comment: "Allow requests from production TimelineMixer/simcluster"
-  default_availability: 10000
-allow_timeline_mixer_entity_tweets_prod:
-  comment: "Allow requests from production TimelineMixer/entity_tweets"
-  default_availability: 10000
-allow_timeline_mixer_list_prod:
-  comment: "Allow requests from production TimelineMixer/list"
-  default_availability: 10000
-allow_timeline_mixer_list_tweet_prod:
-  comment: "Allow requests from production TimelineMixer/list_tweet"
-  default_availability: 10000
-allow_timeline_mixer_uteg_liked_by_tweets_prod:
-  comment: "Allow requests from production TimelineMixer/uteg_liked_by_tweets"
-  default_availability: 10000
-allow_timeline_mixer_community_prod:
-  comment: "Allow requests from production TimelineMixer/community"
-  default_availability: 10000
-allow_timeline_mixer_community_tweet_prod:
-  comment: "Allow requests from production TimelineMixer/community_tweet"
-  default_availability: 10000
-allow_timeline_scorer_recommended_trend_tweet_prod:
-  comment: "Allow requests from production TimelineMixer/recommended_trend_tweet"
-  default_availability: 10000
+# decidews w-wewated to a-authowization. (✿oωo)
+cwient_wequest_authowization:
+  comment: "enabwe cwient wequest authowization and w-wate wimiting"
+  defauwt_avaiwabiwity: 10000
+cwient_wwite_whitewist:
+  comment: "enabwe authowization o-of wwite pwotected wequests f-fwom onwy whitewisted c-cwients"
+  d-defauwt_avaiwabiwity: 0
+a-awwow_timewine_mixew_wecap_pwod:
+  comment: "awwow wequests fwom pwoduction t-timewinemixew/wecap"
+  defauwt_avaiwabiwity: 10000
+awwow_timewine_mixew_wecycwed_pwod:
+  c-comment: "awwow wequests fwom pwoduction timewinemixew/wecycwed"
+  defauwt_avaiwabiwity: 10000
+awwow_timewine_mixew_hydwate_pwod:
+  comment: "awwow w-wequests fwom pwoduction t-timewinemixew/hydwate"
+  d-defauwt_avaiwabiwity: 10000
+a-awwow_timewine_mixew_hydwate_wecos_pwod:
+  comment: "awwow wequests fwom pwoduction timewinemixew/hydwate_wecos"
+  d-defauwt_avaiwabiwity: 10000
+a-awwow_timewine_mixew_seed_authows_pwod:
+  comment: "awwow w-wequests f-fwom pwoduction timewinemixew/seed_authow_ids"
+  d-defauwt_avaiwabiwity: 10000
+awwow_timewine_mixew_simcwustew_pwod:
+  c-comment: "awwow wequests fwom pwoduction t-timewinemixew/simcwustew"
+  defauwt_avaiwabiwity: 10000
+a-awwow_timewine_mixew_entity_tweets_pwod:
+  comment: "awwow w-wequests f-fwom pwoduction timewinemixew/entity_tweets"
+  defauwt_avaiwabiwity: 10000
+awwow_timewine_mixew_wist_pwod:
+  comment: "awwow wequests fwom pwoduction t-timewinemixew/wist"
+  d-defauwt_avaiwabiwity: 10000
+awwow_timewine_mixew_wist_tweet_pwod:
+  c-comment: "awwow w-wequests fwom pwoduction t-timewinemixew/wist_tweet"
+  defauwt_avaiwabiwity: 10000
+awwow_timewine_mixew_uteg_wiked_by_tweets_pwod:
+  comment: "awwow w-wequests fwom pwoduction timewinemixew/uteg_wiked_by_tweets"
+  defauwt_avaiwabiwity: 10000
+awwow_timewine_mixew_community_pwod:
+  comment: "awwow wequests fwom p-pwoduction timewinemixew/community"
+  defauwt_avaiwabiwity: 10000
+a-awwow_timewine_mixew_community_tweet_pwod:
+  c-comment: "awwow w-wequests fwom pwoduction timewinemixew/community_tweet"
+  d-defauwt_avaiwabiwity: 10000
+a-awwow_timewine_scowew_wecommended_twend_tweet_pwod:
+  comment: "awwow wequests f-fwom pwoduction t-timewinemixew/wecommended_twend_tweet"
+  defauwt_avaiwabiwity: 10000
 
-allow_timeline_scorer_rec_topic_tweets_prod:
-  comment: "Allow requests from production TimelineScorer/rec_topic_tweets"
-  default_availability: 10000
-allow_timeline_scorer_popular_topic_tweets_prod:
-  comment: "Allow requests from production TimelineScorer/popular_topic_tweets"
-  default_availability: 10000
+awwow_timewine_scowew_wec_topic_tweets_pwod:
+  c-comment: "awwow w-wequests f-fwom pwoduction t-timewinescowew/wec_topic_tweets"
+  d-defauwt_avaiwabiwity: 10000
+awwow_timewine_scowew_popuwaw_topic_tweets_pwod:
+  comment: "awwow wequests f-fwom pwoduction timewinescowew/popuwaw_topic_tweets"
+  defauwt_avaiwabiwity: 10000
 
-allow_timelinescorer_hydrate_tweet_scoring_prod:
-  comment: "Allow requests from production TimelineScorer/hydrate_tweet_scoring"
-  default_availability: 10000
+awwow_timewinescowew_hydwate_tweet_scowing_pwod:
+  comment: "awwow wequests f-fwom pwoduction timewinescowew/hydwate_tweet_scowing"
+  defauwt_avaiwabiwity: 10000
 
-allow_timeline_mixer_staging:
-  comment: "Allow requests from staging TimelineMixer"
-  default_availability: 10000
-allow_timeline_ranker_warmup:
-  comment: "Allow warmup requests from the TLR cluster"
-  default_availability: 10000
-allow_timeline_ranker_proxy:
-  comment: "Allow warmup requests from the TimelineRanker proxy"
-  default_availability: 10000
-allow_timeline_service_prod:
-  comment: "Allow requests from production TimelineService"
-  default_availability: 10000
-allow_timeline_service_staging:
-  comment: "Allow requests from staging TimelineService"
-  default_availability: 10000
-rate_limit_override_unknown:
-  comment: "Override the rate limit for unknown clients"
-  default_availability: 0
+awwow_timewine_mixew_staging:
+  c-comment: "awwow w-wequests fwom s-staging timewinemixew"
+  defauwt_avaiwabiwity: 10000
+a-awwow_timewine_wankew_wawmup:
+  comment: "awwow w-wawmup w-wequests fwom the tww cwustew"
+  defauwt_avaiwabiwity: 10000
+awwow_timewine_wankew_pwoxy:
+  comment: "awwow wawmup w-wequests fwom the timewinewankew p-pwoxy"
+  defauwt_avaiwabiwity: 10000
+awwow_timewine_sewvice_pwod:
+  c-comment: "awwow w-wequests fwom pwoduction timewinesewvice"
+  d-defauwt_avaiwabiwity: 10000
+a-awwow_timewine_sewvice_staging:
+  comment: "awwow w-wequests fwom s-staging timewinesewvice"
+  defauwt_avaiwabiwity: 10000
+wate_wimit_ovewwide_unknown:
+  comment: "ovewwide the wate w-wimit fow unknown c-cwients"
+  defauwt_avaiwabiwity: 0
 
-# Deciders related to reverse-chron home timeline materialization.
-multiplier_of_materialization_tweets_fetched:
-  comment: "Multiplier applied to the number of tweets fetched from search expressed as percentage. 100 means 100%. It can be used to fetch more than the number tweets requested by a caller (to improve similarity) or to fetch less than requested to reduce load."
-  default_availability: 100
-enable_backfill_filtered_entries:
-  comment: "Controls whether to back-fill timeline entries that get filtered out by TweetsPostFilter during home timeline materialization."
-  default_availability: 0
-tweets_filtering_lossage_threshold:
-  comment: "If back-filling filtered entries is enabled and if percentage of tweets that get filtered out exceeds this value then we will issue a second call to get more tweets. Default value 2000 == 20%"
-  default_availability: 2000
-tweets_filtering_lossage_limit:
-  comment: "We need to ensure that the number of tweets requested by the second call are not unbounded (for example, if everything is filtered out in the first call) therefore we limit the actual filtered out percentage to be no greater than the value below. Default value 6000 == 60%. That is, even if the actual lossage is 90% we will consider it to be only 60% for the purpose of back-filling."
-  default_availability: 6000
-supplement_follows_with_real_graph:
-  comment: "Whether to fetch additional follows from RealGraph for users with more than the max follows fetched from SGS during home timeline materialization."
-  default_availability: 0
+# d-decidews wewated to wevewse-chwon h-home t-timewine matewiawization. (ˆ ﻌ ˆ)♡
+muwtipwiew_of_matewiawization_tweets_fetched:
+  c-comment: "muwtipwiew appwied to the nyumbew of tweets fetched fwom seawch expwessed as p-pewcentage. :3 100 m-means 100%. (U ᵕ U❁) it can be used to fetch mowe than t-the nyumbew tweets w-wequested by a cawwew (to impwove simiwawity) ow to fetch wess t-than wequested to weduce woad."
+  defauwt_avaiwabiwity: 100
+enabwe_backfiww_fiwtewed_entwies:
+  comment: "contwows w-whethew to back-fiww timewine entwies that g-get fiwtewed out b-by tweetspostfiwtew duwing home timewine matewiawization."
+  defauwt_avaiwabiwity: 0
+t-tweets_fiwtewing_wossage_thweshowd:
+  c-comment: "if back-fiwwing fiwtewed entwies is enabwed a-and if pewcentage of tweets that g-get fiwtewed out exceeds this vawue then we wiww issue a second c-caww to get mowe tweets. defauwt v-vawue 2000 == 20%"
+  d-defauwt_avaiwabiwity: 2000
+tweets_fiwtewing_wossage_wimit:
+  c-comment: "we nyeed to ensuwe t-that the nyumbew o-of tweets wequested b-by the second caww awe nyot u-unbounded (fow e-exampwe, if evewything is fiwtewed out in the f-fiwst caww) thewefowe w-we wimit t-the actuaw fiwtewed out pewcentage to be nyo gweatew t-than the vawue bewow. ^^;; defauwt v-vawue 6000 == 60%. mya t-that is, even if the actuaw wossage is 90% we wiww considew i-it to be onwy 60% f-fow the puwpose o-of back-fiwwing."
+  d-defauwt_avaiwabiwity: 6000
+suppwement_fowwows_with_weaw_gwaph:
+  c-comment: "whethew to fetch additionaw fowwows fwom weawgwaph fow usews with mowe than the m-max fowwows fetched fwom sgs d-duwing home timewine matewiawization."
+  d-defauwt_avaiwabiwity: 0
 
-# Deciders related to recap.
-recap_enable_content_features_hydration:
-  comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for recap Tweets. Otherwise those features are not set"
-  default_availability: 10000
-recap_max_count_multiplier:
-  comment: "We multiply maxCount (caller supplied value) by this multiplier and fetch those many candidates from search so that we are left with sufficient number of candidates after hydration and filtering. 100 == 1.0"
-  default_availability: 100
-recap_enable_extra_sorting_in_results:
-  comment: "If TLR will do extra sorting in search results"
-  default_availability: 10000
+# decidews wewated t-to wecap. 😳😳😳
+wecap_enabwe_content_featuwes_hydwation:
+  comment: "if t-twue, OwO semantic c-cowe, rawr penguin, a-and tweetypie b-based expensive f-featuwes wiww be hydwated fow wecap tweets. XD othewwise those featuwes awe nyot set"
+  defauwt_avaiwabiwity: 10000
+wecap_max_count_muwtipwiew:
+  c-comment: "we muwtipwy m-maxcount (cawwew s-suppwied vawue) by this m-muwtipwiew and fetch those many candidates fwom seawch so that w-we awe weft with s-sufficient nyumbew of candidates a-aftew hydwation and fiwtewing. (U ﹏ U) 100 == 1.0"
+  defauwt_avaiwabiwity: 100
+wecap_enabwe_extwa_sowting_in_wesuwts:
+  c-comment: "if tww w-wiww do extwa sowting in seawch w-wesuwts"
+  defauwt_avaiwabiwity: 10000
 
-# Deciders related to recycled tweets.
-recycled_enable_content_features_hydration:
-  comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for recycled Tweets. Otherwise those features are not set"
-  default_availability: 0
-recycled_max_count_multiplier:
-  comment: "We multiply maxCount (caller supplied value) by this multiplier and fetch those many candidates from search so that we are left with sufficient number of candidates after hydration and filtering. 100 == 1.0"
-  default_availability: 100
+# d-decidews wewated to wecycwed tweets. (˘ω˘)
+wecycwed_enabwe_content_featuwes_hydwation:
+  comment: "if twue, UwU s-semantic cowe, >_< p-penguin, σωσ and tweetypie b-based expensive f-featuwes w-wiww be hydwated fow wecycwed t-tweets. 🥺 othewwise t-those featuwes awe nyot set"
+  d-defauwt_avaiwabiwity: 0
+w-wecycwed_max_count_muwtipwiew:
+  comment: "we m-muwtipwy maxcount (cawwew suppwied vawue) b-by this muwtipwiew and fetch those m-many candidates f-fwom seawch so that we awe weft w-with sufficient nyumbew of candidates aftew h-hydwation and fiwtewing. 🥺 100 == 1.0"
+  d-defauwt_avaiwabiwity: 100
 
-# Deciders related to entity tweets.
-entity_tweets_enable_content_features_hydration:
-  comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for entity Tweets. Otherwise those features are not set"
-  default_availability: 10000
+# d-decidews wewated to entity tweets. ʘwʘ
+entity_tweets_enabwe_content_featuwes_hydwation:
+  comment: "if t-twue, :3 semantic cowe, (U ﹏ U) penguin, and tweetypie b-based expensive f-featuwes wiww be hydwated fow e-entity tweets. (U ﹏ U) othewwise those f-featuwes awe nyot s-set"
+  defauwt_avaiwabiwity: 10000
 
-# Deciders related to both recap and recycled tweets
-enable_real_graph_users:
-  comment: "This is used only if user follows >= 1000. If true, expands user seedset with real graph users and recent followed users. Otherwise, user seedset only includes followed users."
-  default_availability: 0
-max_real_graph_and_followed_users:
-  comment: "Maximum number of combined real graph users and recent followed users in the user seedset for recap and recycled tweets if enable_real_graph_users is true and only_real_graph_users is false. This is upper bounded by 2000."
-  default_availability: 1000
+# decidews wewated to both w-wecap and wecycwed tweets
+enabwe_weaw_gwaph_usews:
+  comment: "this i-is used onwy i-if usew fowwows >= 1000. ʘwʘ if twue, e-expands usew seedset with weaw g-gwaph usews and w-wecent fowwowed u-usews. >w< othewwise, rawr x3 usew seedset onwy incwudes fowwowed usews."
+  defauwt_avaiwabiwity: 0
+max_weaw_gwaph_and_fowwowed_usews:
+  comment: "maximum nyumbew of combined weaw gwaph usews and wecent fowwowed usews in the usew seedset fow wecap and w-wecycwed tweets i-if enabwe_weaw_gwaph_usews is twue and onwy_weaw_gwaph_usews i-is fawse. OwO this is u-uppew bounded b-by 2000."
+  defauwt_avaiwabiwity: 1000
 
-# Deciders related to recap author
-recap_author_enable_new_pipeline:
-  comment: "Enable new recap author pipeline"
-  default_availability: 0
-recap_author_enable_content_features_hydration:
-  comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for PYLE Tweets. Otherwise those features are not set"
-  default_availability: 0
+# decidews w-wewated to wecap authow
+wecap_authow_enabwe_new_pipewine:
+  comment: "enabwe n-nyew wecap authow p-pipewine"
+  defauwt_avaiwabiwity: 0
+wecap_authow_enabwe_content_featuwes_hydwation:
+  c-comment: "if twue, ^•ﻌ•^ semantic c-cowe, >_< penguin, OwO a-and tweetypie based expensive featuwes wiww be h-hydwated fow pywe t-tweets. >_< othewwise t-those featuwes a-awe nyot set"
+  d-defauwt_avaiwabiwity: 0
 
-# Deciders related to recap hydration(rectweet+ranked organic).
-recap_hydration_enable_content_features_hydration:
-  comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for rectweet+ranked organic Tweets. Otherwise those features are not set"
-  default_availability: 0
+# d-decidews wewated t-to wecap hydwation(wectweet+wanked o-owganic). (ꈍᴗꈍ)
+wecap_hydwation_enabwe_content_featuwes_hydwation:
+  c-comment: "if twue, >w< semantic cowe, (U ﹏ U) p-penguin, ^^ and t-tweetypie based e-expensive featuwes wiww be hydwated f-fow wectweet+wanked owganic tweets. (U ﹏ U) othewwise t-those featuwes awe nyot set"
+  d-defauwt_avaiwabiwity: 0
 
-# Deciders related to uteg liked by tweets
-uteg_liked_by_tweets_enable_content_features_hydration:
-  comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for rectweet+recycled utegLikedBy Tweets. Otherwise those features are not set"
-  default_availability: 0
+# d-decidews w-wewated to uteg wiked by t-tweets
+uteg_wiked_by_tweets_enabwe_content_featuwes_hydwation:
+  comment: "if twue, :3 s-semantic cowe, (✿oωo) penguin, XD and t-tweetypie based expensive featuwes w-wiww be hydwated fow wectweet+wecycwed utegwikedby tweets. >w< othewwise those featuwes a-awe nyot set"
+  defauwt_avaiwabiwity: 0

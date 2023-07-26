@@ -1,7 +1,7 @@
-package com.twitter.search.ingester.pipeline.util;
+package com.twittew.seawch.ingestew.pipewine.utiw;
 
-public class PipelineStageRuntimeException extends RuntimeException {
-  public PipelineStageRuntimeException(String msg) {
-    super(msg);
+pubwic cwass p-pipewinestagewuntimeexception e-extends w-wuntimeexception {
+  p-pubwic p-pipewinestagewuntimeexception(stwing m-msg) {
+    s-supew(msg);
   }
 }

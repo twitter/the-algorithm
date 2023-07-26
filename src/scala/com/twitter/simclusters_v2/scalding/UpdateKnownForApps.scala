@@ -1,307 +1,307 @@
-package com.twitter.simclusters_v2.scalding
+package com.twittew.simcwustews_v2.scawding
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.pluck.source.cassowary.FollowingsCosineSimilaritiesManhattanSource
-import com.twitter.pluck.source.cassowary.SimsCandidatesSource
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecution
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecutionArgs
-import com.twitter.scalding_internal.job.analytics_batch.BatchDescription
-import com.twitter.scalding_internal.job.analytics_batch.BatchFirstTime
-import com.twitter.scalding_internal.job.analytics_batch.BatchIncrement
-import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledExecutionApp
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.UpdateKnownFor.ClusterScoresForNode
-import com.twitter.simclusters_v2.scalding.UpdateKnownFor.NeighborhoodInformation
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsKnownFor
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import scala.util.Success
+impowt c-com.twittew.daw.cwient.dataset.keyvawdawdataset
+i-impowt com.twittew.hewmit.candidate.thwiftscawa.candidates
+i-impowt c-com.twittew.pwuck.souwce.cassowawy.fowwowingscosinesimiwawitiesmanhattansouwce
+i-impowt com.twittew.pwuck.souwce.cassowawy.simscandidatessouwce
+i-impowt com.twittew.scawding._
+i-impowt com.twittew.scawding_intewnaw.dawv2.daw
+i-impowt com.twittew.scawding_intewnaw.dawv2.dawwwite._
+impowt com.twittew.scawding_intewnaw.job.twittewexecutionapp
+impowt com.twittew.scawding_intewnaw.job.anawytics_batch.anawyticsbatchexecution
+impowt com.twittew.scawding_intewnaw.job.anawytics_batch.anawyticsbatchexecutionawgs
+impowt c-com.twittew.scawding_intewnaw.job.anawytics_batch.batchdescwiption
+impowt com.twittew.scawding_intewnaw.job.anawytics_batch.batchfiwsttime
+impowt c-com.twittew.scawding_intewnaw.job.anawytics_batch.batchincwement
+impowt com.twittew.scawding_intewnaw.job.anawytics_batch.twittewscheduwedexecutionapp
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.simcwustews_v2.common.modewvewsions
+impowt com.twittew.simcwustews_v2.hdfs_souwces._
+i-impowt com.twittew.simcwustews_v2.scawding.updateknownfow.cwustewscowesfownode
+impowt com.twittew.simcwustews_v2.scawding.updateknownfow.neighbowhoodinfowmation
+i-impowt com.twittew.simcwustews_v2.scawding.common.typedwichpipe._
+i-impowt com.twittew.simcwustews_v2.scawding.common.utiw
+impowt com.twittew.simcwustews_v2.thwiftscawa.cwustewsusewisknownfow
+impowt com.twittew.usewsouwce.snapshot.fwat.usewsouwcefwatscawadataset
+impowt s-scawa.utiw.success
 
-object UpdateKnownForApps {
+object updateknownfowapps {
 
   /**
-   * Average edge weight of an input graph
-   * @param graph a TypedPipe with nodeId as key and adjacency list as value. We don't care about
-   *              the keys in this method.
-   * @return avg edge weight wrapped in an option in an execution
+   * avewage edge weight of an input gwaph
+   * @pawam g-gwaph a typedpipe with nyodeid a-as key and adjacency w-wist as vawue. UwU w-we don't cawe a-about
+   *              the keys in this method. o.O
+   * @wetuwn a-avg edge weight wwapped in an option in an execution
    */
-  def getGlobalAvgWeight(graph: TypedPipe[(Long, Map[Long, Float])]): Execution[Option[Double]] = {
-    graph.values
-      .flatMap(_.values)
-      .map { x => (x.toDouble, 1L) }
+  d-def getgwobawavgweight(gwaph: typedpipe[(wong, (ˆ ﻌ ˆ)♡ map[wong, ^^;; fwoat])]): execution[option[doubwe]] = {
+    g-gwaph.vawues
+      .fwatmap(_.vawues)
+      .map { x => (x.todoubwe, ʘwʘ 1w) }
       .sum
-      .toOptionExecution
+      .tooptionexecution
       .map {
-        case Some((sum, cnt)) =>
-          val res = sum / cnt
-          println("globalAvgWeight is " + res)
-          Some(res)
-        case _ =>
-          println("Input graph to globalAvgWeight seems to be empty")
-          None
+        c-case some((sum, σωσ c-cnt)) =>
+          v-vaw wes = sum / cnt
+          pwintwn("gwobawavgweight is " + wes)
+          s-some(wes)
+        c-case _ =>
+          pwintwn("input g-gwaph t-to gwobawavgweight seems to be e-empty")
+          nyone
       }
   }
 
   /**
-   * Average membership score for a particular knownFor assignment
-   * @param knownFor TypedPipe from nodeId to the clusters it's been assigned to along with
-   *                 membership scores. We don't care about the keys in this method.
-   * @return average membership score
+   * a-avewage membewship scowe fow a pawticuwaw knownfow a-assignment
+   * @pawam knownfow t-typedpipe fwom nyodeid to the c-cwustews it's b-been assigned to awong with
+   *                 membewship scowes. ^^;; we don't cawe about the keys in this method. ʘwʘ
+   * @wetuwn avewage membewship s-scowe
    */
-  def getAvgMembershipScore(knownFor: TypedPipe[(Long, Array[(Int, Float)])]): Execution[Double] = {
-    knownFor.values
-      .flatMap(_.map(_._2))
-      .map { x => (x, 1L) }
+  d-def getavgmembewshipscowe(knownfow: typedpipe[(wong, ^^ a-awway[(int, f-fwoat)])]): execution[doubwe] = {
+    k-knownfow.vawues
+      .fwatmap(_.map(_._2))
+      .map { x => (x, nyaa~~ 1w) }
       .sum
-      .map { case (num, den) => num / den.toDouble }
-      .getExecution
-      .onComplete {
-        case Success(x) => println("Avg. membership score is " + x)
-        case _ => println("Failed to calculate avg. membership score")
+      .map { case (num, (///ˬ///✿) den) => nyum / d-den.todoubwe }
+      .getexecution
+      .oncompwete {
+        case success(x) => pwintwn("avg. XD membewship scowe is " + x)
+        c-case _ => pwintwn("faiwed to c-cawcuwate avg. :3 m-membewship scowe")
       }
   }
 
   /**
-   * For each cluster, get two statistics about it: the number of nodes assigned to it, and the
-   * sum of the membership scores
+   * f-fow each cwustew, òωó get t-two statistics a-about it: the nyumbew o-of nyodes a-assigned to it, ^^ and the
+   * sum of the membewship s-scowes
    *
-   * @param knownFor TypedPipe from nodeId to the clusters it's been assigned to along with
-   *                 membership scores.
-   * @return Map giving the NeighborhoodInformation for each cluster. The nodeCount and
-   *         sumOfMembershipWeights fields in NeighborhoodInformation are populated, others are 0.
+   * @pawam k-knownfow t-typedpipe fwom n-nyodeid to the c-cwustews it's been assigned to awong with
+   *                 membewship scowes. ^•ﻌ•^
+   * @wetuwn m-map giving the nyeighbowhoodinfowmation fow each cwustew. σωσ the nyodecount and
+   *         sumofmembewshipweights f-fiewds in nyeighbowhoodinfowmation awe popuwated, (ˆ ﻌ ˆ)♡ othews awe 0. nyaa~~
    */
-  def getClusterStats(
-    knownFor: TypedPipe[(Long, Array[(Int, Float)])]
-  ): Execution[Map[Int, NeighborhoodInformation]] = {
-    knownFor
-      .flatMap {
-        case (_, clusterArray) =>
-          clusterArray.map {
-            case (clusterId, score) =>
-              Map(clusterId -> (1, score))
+  def getcwustewstats(
+    k-knownfow: typedpipe[(wong, ʘwʘ a-awway[(int, f-fwoat)])]
+  ): execution[map[int, ^•ﻌ•^ n-nyeighbowhoodinfowmation]] = {
+    knownfow
+      .fwatmap {
+        case (_, rawr x3 cwustewawway) =>
+          c-cwustewawway.map {
+            c-case (cwustewid, 🥺 scowe) =>
+              map(cwustewid -> (1, scowe))
           }
       }
       .sum
-      .getExecution
+      .getexecution
       .map { map =>
-        map.mapValues {
-          case (count, sum) =>
-            NeighborhoodInformation(count, 0, 0, sum)
+        map.mapvawues {
+          c-case (count, sum) =>
+            n-nyeighbowhoodinfowmation(count, ʘwʘ 0, 0, sum)
         }
       }
   }
 
   /**
-   * Adds self-loops and also potentially raises all edge weights to an exponent
-   * (typically exponent > 1, and has the effect of increasing inequality in edge weights to
-   * "clarify" structure in the graph - currently we just set exponent to 1).
-   * @param symmetrizedSims input symmetrized similarity graph
-   * @param exponentForEdgeWeight exponent to raise all edge weights to.
-   *                              Set to 1.0 to make this a no-op
-   * @param maxWtToSelfLoopWtMultFactor What to multiply the max wt among non-self-loop edges to
-   *                                    derive the weight on the self-loop edge.
-   * @return New graph
+   * a-adds sewf-woops a-and awso potentiawwy waises aww edge weights to a-an exponent
+   * (typicawwy e-exponent > 1, (˘ω˘) and has t-the effect of i-incweasing inequawity in edge weights to
+   * "cwawify" stwuctuwe in the gwaph - c-cuwwentwy we just s-set exponent t-to 1). o.O
+   * @pawam symmetwizedsims i-input symmetwized s-simiwawity gwaph
+   * @pawam e-exponentfowedgeweight exponent to waise aww edge weights to. σωσ
+   *                              set to 1.0 to m-make this a nyo-op
+   * @pawam maxwttosewfwoopwtmuwtfactow n-nyani to muwtipwy the max wt among nyon-sewf-woop e-edges t-to
+   *                                    dewive the weight on the sewf-woop e-edge. (ꈍᴗꈍ)
+   * @wetuwn nyew gwaph
    */
-  def simsGraphForUpdateFromSymmetrizedSims(
-    symmetrizedSims: TypedPipe[(Long, Map[Long, Float])],
-    exponentForEdgeWeight: Float,
-    maxWtToSelfLoopWtMultFactor: Float
-  ): TypedPipe[(Long, Map[Long, Float])] = {
-    val expWeighted = symmetrizedSims.mapValues { y =>
-      y.mapValues { x => math.pow(x, exponentForEdgeWeight).toFloat }
+  def simsgwaphfowupdatefwomsymmetwizedsims(
+    symmetwizedsims: typedpipe[(wong, (ˆ ﻌ ˆ)♡ m-map[wong, o.O fwoat])], :3
+    exponentfowedgeweight: f-fwoat, -.-
+    m-maxwttosewfwoopwtmuwtfactow: fwoat
+  ): typedpipe[(wong, ( ͡o ω ͡o ) map[wong, fwoat])] = {
+    v-vaw expweighted = s-symmetwizedsims.mapvawues { y =>
+      y.mapvawues { x => math.pow(x, /(^•ω•^) exponentfowedgeweight).tofwoat }
     }
 
-    TopUsersSimilarityGraph.addSelfLoop(
-      input = expWeighted,
-      maxToSelfLoopWeight = { x: Float => x * maxWtToSelfLoopWtMultFactor }
+    t-topusewssimiwawitygwaph.addsewfwoop(
+      input = expweighted, (⑅˘꒳˘)
+      m-maxtosewfwoopweight = { x: fwoat => x * maxwttosewfwoopwtmuwtfactow }
     )
   }
 
   /**
-   * Runs the job
-   * @param args args which specify many parameters
-   * @param inputKnownFor
-   * @param inputSimsGraph
-   * @param defaultEmailAddress by default, the email address to send an to email to, which has
-   *                            a bunch of evaluation metrics
-   * @param writeKnownForFunction function that takes a knownFor and writes to some
-   *                              persistent location
-   * @param readKnownForFunction function that reads the knownFor which was written to using the
-   *                             writeKnownForFunction
-   * @param dateRange dateRange, used for reading UserSource
-   * @param uniqueID need for creating stats
-   * @return Execution[Unit] encapsulating the whole job
+   * wuns t-the job
+   * @pawam awgs awgs which s-specify many p-pawametews
+   * @pawam inputknownfow
+   * @pawam i-inputsimsgwaph
+   * @pawam defauwtemaiwaddwess b-by defauwt, òωó the e-emaiw addwess t-to send an to emaiw to, 🥺 which has
+   *                            a-a bunch of evawuation m-metwics
+   * @pawam wwiteknownfowfunction function that t-takes a knownfow a-and wwites to some
+   *                              p-pewsistent wocation
+   * @pawam weadknownfowfunction f-function that weads the k-knownfow which w-was wwitten to using the
+   *                             wwiteknownfowfunction
+   * @pawam datewange d-datewange, (ˆ ﻌ ˆ)♡ u-used fow weading u-usewsouwce
+   * @pawam u-uniqueid nyeed fow cweating s-stats
+   * @wetuwn execution[unit] encapsuwating the whowe job
    */
-  def runUpdateKnownForGeneric(
-    args: Args,
-    inputKnownFor: TypedPipe[(Long, Array[(Int, Float)])],
-    inputSimsGraph: TypedPipe[Candidates],
-    defaultEmailAddress: String,
-    writeKnownForFunction: TypedPipe[(Long, Array[(Int, Float)])] => Execution[Unit],
-    readKnownForFunction: => TypedPipe[(Long, Array[(Int, Float)])],
-    includeEvaluationResultsInEmail: Boolean
+  def wunupdateknownfowgenewic(
+    a-awgs: awgs, -.-
+    inputknownfow: typedpipe[(wong, σωσ a-awway[(int, >_< fwoat)])], :3
+    inputsimsgwaph: t-typedpipe[candidates], OwO
+    defauwtemaiwaddwess: s-stwing, rawr
+    wwiteknownfowfunction: t-typedpipe[(wong, (///ˬ///✿) awway[(int, f-fwoat)])] => e-execution[unit], ^^
+    w-weadknownfowfunction: => t-typedpipe[(wong, XD awway[(int, fwoat)])], UwU
+    incwudeevawuationwesuwtsinemaiw: boowean
   )(
-    implicit dateRange: DateRange,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val minActiveFollowers = args.int("minActiveFollowers", 400)
-    val topK = args.int("topK")
-    val maxSimsNeighborsForUpdate =
-      args.int("maxSimsNeighborsForUpdate", 40)
-    val minNeighborsInCluster = args.int("minNeighborsInCluster", 2)
-    val maxWtToSelfLoopWtMultFactor =
-      args.float("maxWtToSelfLoopWtMultFactor", 2)
-    val exponentForEdgeWeight = args.float("exponentForEdgeWeights", 1.0f)
-    val updateMethod: ClusterScoresForNode => Double = args("updateMethod") match {
-      case "sumScoreIgnoringMembershipScores" => { x: ClusterScoresForNode =>
-        x.sumScoreIgnoringMembershipScores
+    impwicit datewange: datewange, o.O
+    u-uniqueid: u-uniqueid
+  ): execution[unit] = {
+    v-vaw minactivefowwowews = awgs.int("minactivefowwowews", 😳 400)
+    v-vaw topk = awgs.int("topk")
+    vaw maxsimsneighbowsfowupdate =
+      awgs.int("maxsimsneighbowsfowupdate", (˘ω˘) 40)
+    v-vaw m-minneighbowsincwustew = awgs.int("minneighbowsincwustew", 🥺 2)
+    v-vaw maxwttosewfwoopwtmuwtfactow =
+      awgs.fwoat("maxwttosewfwoopwtmuwtfactow", ^^ 2)
+    vaw exponentfowedgeweight = a-awgs.fwoat("exponentfowedgeweights", >w< 1.0f)
+    v-vaw updatemethod: cwustewscowesfownode => doubwe = a-awgs("updatemethod") m-match {
+      case "sumscoweignowingmembewshipscowes" => { x: cwustewscowesfownode =>
+        x.sumscoweignowingmembewshipscowes
       }
-      case "ratioScoreIgnoringMembershipScores" => { x: ClusterScoresForNode =>
-        x.ratioScoreIgnoringMembershipScores
+      case "watioscoweignowingmembewshipscowes" => { x-x: cwustewscowesfownode =>
+        x-x.watioscoweignowingmembewshipscowes
       }
-      case "ratioScoreUsingMembershipScores" => { x: ClusterScoresForNode =>
-        x.ratioScoreUsingMembershipScores
+      c-case "watioscoweusingmembewshipscowes" => { x-x: c-cwustewscowesfownode =>
+        x.watioscoweusingmembewshipscowes
       }
-      case x @ _ =>
-        throw new Exception(s"value for --updateMethod $x is unknown. It must be one of " +
-          s"[sumScoreIgnoringMembershipScores, ratioScoreIgnoringMembershipScores, ratioScoreUsingMembershipScores]")
+      c-case x @ _ =>
+        t-thwow nyew exception(s"vawue f-fow --updatemethod $x i-is unknown. ^^;; it must be o-one of " +
+          s"[sumscoweignowingmembewshipscowes, watioscoweignowingmembewshipscowes, (˘ω˘) w-watioscoweusingmembewshipscowes]")
     }
-    val truePositiveWtFactor = args.float("truePositiveWtFactor", 10)
-    val modelVersion = args("outputModelVersion")
-    val emailAddress =
-      args.optional("emailAddress").getOrElse(defaultEmailAddress)
+    vaw twuepositivewtfactow = a-awgs.fwoat("twuepositivewtfactow", OwO 10)
+    v-vaw modewvewsion = awgs("outputmodewvewsion")
+    v-vaw emaiwaddwess =
+      awgs.optionaw("emaiwaddwess").getowewse(defauwtemaiwaddwess)
 
-    val topUsers = TopUsersSimilarityGraph
-      .topUserIds(
-        DAL
-          .readMostRecentSnapshot(UsersourceFlatScalaDataset, dateRange)
-          .toTypedPipe,
-        minActiveFollowers,
-        topK).count("num_top_users")
+    vaw t-topusews = topusewssimiwawitygwaph
+      .topusewids(
+        d-daw
+          .weadmostwecentsnapshot(usewsouwcefwatscawadataset, (ꈍᴗꈍ) d-datewange)
+          .totypedpipe, òωó
+        minactivefowwowews, ʘwʘ
+        topk).count("num_top_usews")
 
-    TopUsersSimilarityGraph
-      .getSubgraphFromUserGroupedInput(
-        fullGraph = inputSimsGraph,
-        usersToInclude = topUsers,
-        maxNeighborsPerNode = maxSimsNeighborsForUpdate,
-        degreeThresholdForStat = minNeighborsInCluster
+    topusewssimiwawitygwaph
+      .getsubgwaphfwomusewgwoupedinput(
+        f-fuwwgwaph = inputsimsgwaph, ʘwʘ
+        usewstoincwude = topusews, nyaa~~
+        m-maxneighbowspewnode = m-maxsimsneighbowsfowupdate, UwU
+        degweethweshowdfowstat = m-minneighbowsincwustew
       )
-      .forceToDiskExecution
-      .flatMap { symmetrizedSims =>
-        val modifiedSims =
-          UpdateKnownForApps.simsGraphForUpdateFromSymmetrizedSims(
-            symmetrizedSims = symmetrizedSims,
-            exponentForEdgeWeight = exponentForEdgeWeight,
-            maxWtToSelfLoopWtMultFactor = maxWtToSelfLoopWtMultFactor
+      .fowcetodiskexecution
+      .fwatmap { symmetwizedsims =>
+        v-vaw modifiedsims =
+          updateknownfowapps.simsgwaphfowupdatefwomsymmetwizedsims(
+            s-symmetwizedsims = symmetwizedsims, (⑅˘꒳˘)
+            exponentfowedgeweight = e-exponentfowedgeweight, (˘ω˘)
+            maxwttosewfwoopwtmuwtfactow = maxwttosewfwoopwtmuwtfactow
           )
 
-        val previouslyFamousUsersExec = inputKnownFor
-          .leftJoin(topUsers.asKeys)
-          .collect { case (userId, (clusters, None)) => userId }
-          .getSummaryString(
-            "Users previously in known for but not in topUsers anymore",
-            numRecords = 20)
+        vaw p-pweviouswyfamoususewsexec = i-inputknownfow
+          .weftjoin(topusews.askeys)
+          .cowwect { case (usewid, :3 (cwustews, (˘ω˘) nyone)) => u-usewid }
+          .getsummawystwing(
+            "usews pweviouswy in k-known fow but nyot i-in topusews a-anymowe", nyaa~~
+            nyumwecowds = 20)
 
-        val clusterStatsExec = UpdateKnownForApps.getClusterStats(inputKnownFor)
+        vaw cwustewstatsexec = updateknownfowapps.getcwustewstats(inputknownfow)
 
-        val globalAvgWeightExec =
-          UpdateKnownForApps.getGlobalAvgWeight(modifiedSims)
+        vaw gwobawavgweightexec =
+          updateknownfowapps.getgwobawavgweight(modifiedsims)
 
-        val globalAvgMembershipScoreExec = UpdateKnownForApps.getAvgMembershipScore(inputKnownFor)
+        vaw gwobawavgmembewshipscoweexec = updateknownfowapps.getavgmembewshipscowe(inputknownfow)
 
-        Execution.zip(globalAvgWeightExec, clusterStatsExec, globalAvgMembershipScoreExec).flatMap {
-          case (Some(globalAvgWeight), clusterStats, globalAvgMembershipScore) =>
-            println("Size of clusterStats: " + clusterStats.size)
-            println("First few entries from clusterStats: " + clusterStats.take(5))
-            println("globalAvgWeight: " + globalAvgWeight)
-            println("globalAvgMembershipScore: " + globalAvgMembershipScore)
+        execution.zip(gwobawavgweightexec, (U ﹏ U) cwustewstatsexec, nyaa~~ gwobawavgmembewshipscoweexec).fwatmap {
+          case (some(gwobawavgweight), ^^;; cwustewstats, OwO gwobawavgmembewshipscowe) =>
+            p-pwintwn("size o-of cwustewstats: " + cwustewstats.size)
+            pwintwn("fiwst f-few entwies f-fwom cwustewstats: " + c-cwustewstats.take(5))
+            pwintwn("gwobawavgweight: " + g-gwobawavgweight)
+            pwintwn("gwobawavgmembewshipscowe: " + g-gwobawavgmembewshipscowe)
 
-            val knownForWithUnnormalizedScores = UpdateKnownFor
-              .newKnownForScores(
-                inputKnownFor,
-                modifiedSims,
-                globalAvgWeight,
-                clusterStats,
-                globalAvgMembershipScore
+            v-vaw knownfowwithunnowmawizedscowes = updateknownfow
+              .newknownfowscowes(
+                i-inputknownfow, nyaa~~
+                modifiedsims, UwU
+                g-gwobawavgweight, 😳
+                c-cwustewstats, 😳
+                gwobawavgmembewshipscowe
               )
-            val writeNewKnownForExec = writeKnownForFunction(
-              UpdateKnownFor.updateGeneric(
-                modifiedSims,
-                knownForWithUnnormalizedScores,
-                clusterStats,
-                minNeighborsInCluster,
-                globalAvgWeight,
-                globalAvgMembershipScore,
-                truePositiveWtFactor,
-                updateMethod
+            vaw wwitenewknownfowexec = w-wwiteknownfowfunction(
+              u-updateknownfow.updategenewic(
+                m-modifiedsims, (ˆ ﻌ ˆ)♡
+                k-knownfowwithunnowmawizedscowes, (✿oωo)
+                c-cwustewstats, nyaa~~
+                m-minneighbowsincwustew, ^^
+                g-gwobawavgweight, (///ˬ///✿)
+                g-gwobawavgmembewshipscowe, 😳
+                t-twuepositivewtfactow, òωó
+                updatemethod
               )
             )
 
-            writeNewKnownForExec.flatMap { _ =>
-              Util.getCustomCountersString(writeNewKnownForExec).flatMap { customCountersString =>
-                if (includeEvaluationResultsInEmail) {
-                  // It's unfortunate that we're not using the newKnownFor directly, but are instead
-                  // first writing it out and then reading it back in. The reason for doing it in this
-                  // convoluted way is that when we directly use the newKnownFor, the clusterEvaluation
-                  // metrics are being incorrectly computed.
+            w-wwitenewknownfowexec.fwatmap { _ =>
+              u-utiw.getcustomcountewsstwing(wwitenewknownfowexec).fwatmap { c-customcountewsstwing =>
+                if (incwudeevawuationwesuwtsinemaiw) {
+                  // i-it's unfowtunate that we'we nyot using the n-nyewknownfow diwectwy, ^^;; but awe i-instead
+                  // f-fiwst w-wwiting it out and then weading i-it back in. rawr the weason fow doing i-it in this
+                  // convowuted way i-is that when we diwectwy use t-the nyewknownfow, the cwustewevawuation
+                  // metwics awe being incowwectwy computed. (ˆ ﻌ ˆ)♡
 
-                  val newKnownFor = readKnownForFunction
+                  v-vaw nyewknownfow = weadknownfowfunction
 
-                  val newResultsExec =
-                    ClusterEvaluation
-                      .overallEvaluation(symmetrizedSims, newKnownFor, "newKnownForEval")
-                  val oldResultsExec =
-                    ClusterEvaluation
-                      .overallEvaluation(symmetrizedSims, inputKnownFor, "oldKnownForEval")
-                  val minSizeOfBiggerClusterForComparison = 10
-                  val compareExec = CompareClusters.summarize(
-                    CompareClusters.compare(
-                      KnownForSources.transpose(inputKnownFor),
-                      KnownForSources.transpose(newKnownFor),
-                      minSizeOfBiggerCluster = minSizeOfBiggerClusterForComparison
+                  v-vaw nyewwesuwtsexec =
+                    c-cwustewevawuation
+                      .ovewawwevawuation(symmetwizedsims, XD newknownfow, >_< "newknownfowevaw")
+                  vaw owdwesuwtsexec =
+                    cwustewevawuation
+                      .ovewawwevawuation(symmetwizedsims, (˘ω˘) i-inputknownfow, 😳 "owdknownfowevaw")
+                  vaw minsizeofbiggewcwustewfowcompawison = 10
+                  v-vaw compaweexec = c-compawecwustews.summawize(
+                    c-compawecwustews.compawe(
+                      knownfowsouwces.twanspose(inputknownfow), o.O
+                      knownfowsouwces.twanspose(newknownfow), (ꈍᴗꈍ)
+                      m-minsizeofbiggewcwustew = m-minsizeofbiggewcwustewfowcompawison
                     ))
 
-                  Execution
-                    .zip(oldResultsExec, newResultsExec, compareExec, previouslyFamousUsersExec)
+                  execution
+                    .zip(owdwesuwtsexec, rawr x3 n-nyewwesuwtsexec, ^^ compaweexec, OwO pweviouswyfamoususewsexec)
                     .map {
-                      case (oldResults, newResults, compareResults, previouslyFamousUsersString) =>
-                        val emailText = "Evaluation Results for existing knownFor:\n" +
-                          Util.prettyJsonMapper.writeValueAsString(oldResults) +
+                      c-case (owdwesuwts, ^^ nyewwesuwts, :3 c-compawewesuwts, o.O p-pweviouswyfamoususewsstwing) =>
+                        v-vaw emaiwtext = "evawuation w-wesuwts f-fow existing knownfow:\n" +
+                          u-utiw.pwettyjsonmappew.wwitevawueasstwing(owdwesuwts) +
                           "\n\n-------------------\n\n" +
-                          "Evaluation Results for new knownFor:\n" +
-                          Util.prettyJsonMapper.writeValueAsString(newResults) +
+                          "evawuation w-wesuwts fow nyew knownfow:\n" +
+                          u-utiw.pwettyjsonmappew.wwitevawueasstwing(newwesuwts) +
                           "\n\n-------------------\n\n" +
-                          s"Cosine similarity distribution between cluster membership vectors for " +
-                          s"clusters with at least $minSizeOfBiggerClusterForComparison members\n" +
-                          Util.prettyJsonMapper
-                            .writeValueAsString(compareResults) +
+                          s-s"cosine simiwawity d-distwibution b-between cwustew m-membewship vectows f-fow " +
+                          s-s"cwustews w-with at weast $minsizeofbiggewcwustewfowcompawison membews\n" +
+                          u-utiw.pwettyjsonmappew
+                            .wwitevawueasstwing(compawewesuwts) +
                           "\n\n-------------------\n\n" +
-                          "Custom counters:\n" + customCountersString +
+                          "custom countews:\n" + c-customcountewsstwing +
                           "\n\n-------------------\n\n" +
-                          previouslyFamousUsersString
+                          pweviouswyfamoususewsstwing
 
-                        Util
-                          .sendEmail(
-                            emailText,
-                            s"Evaluation results of new knownFor $modelVersion",
-                            emailAddress)
+                        u-utiw
+                          .sendemaiw(
+                            e-emaiwtext, -.-
+                            s-s"evawuation wesuwts of nyew knownfow $modewvewsion",
+                            emaiwaddwess)
                     }
-                } else {
-                  Util
-                    .sendEmail(
-                      customCountersString,
-                      s"Change in cluster assignments for update of knownFor $modelVersion",
-                      emailAddress
+                } e-ewse {
+                  utiw
+                    .sendemaiw(
+                      c-customcountewsstwing,
+                      s-s"change in cwustew assignments fow update of knownfow $modewvewsion", (U ﹏ U)
+                      e-emaiwaddwess
                     )
-                  Execution.unit
+                  e-execution.unit
                 }
 
               }
@@ -311,66 +311,66 @@ object UpdateKnownForApps {
   }
 }
 
-trait UpdateKnownForBatch extends TwitterScheduledExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  implicit val dp = DateParser.default
+twait updateknownfowbatch e-extends t-twittewscheduwedexecutionapp {
+  impwicit vaw tz: java.utiw.timezone = dateops.utc
+  i-impwicit v-vaw dp = datepawsew.defauwt
 
-  def firstTime: String
+  d-def fiwsttime: stwing
 
-  val batchIncrement: Duration = Days(30)
+  v-vaw batchincwement: duwation = days(30)
 
-  def batchDescription: String
+  d-def batchdescwiption: s-stwing
 
-  private lazy val execArgs = AnalyticsBatchExecutionArgs(
-    batchDesc = BatchDescription(batchDescription),
-    firstTime = BatchFirstTime(RichDate(firstTime)),
-    lastTime = None,
-    batchIncrement = BatchIncrement(batchIncrement)
+  pwivate wazy vaw execawgs = a-anawyticsbatchexecutionawgs(
+    batchdesc = batchdescwiption(batchdescwiption), o.O
+    fiwsttime = b-batchfiwsttime(wichdate(fiwsttime)),
+    wasttime = n-nyone, OwO
+    b-batchincwement = batchincwement(batchincwement)
   )
 
-  val emailAddress: String = "no-reply@twitter.com"
+  v-vaw emaiwaddwess: s-stwing = "no-wepwy@twittew.com"
 
-  def inputDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]]
+  def i-inputdawdataset: keyvawdawdataset[keyvaw[wong, ^•ﻌ•^ cwustewsusewisknownfow]]
 
-  def inputModelVersion: String
+  d-def inputmodewvewsion: s-stwing
 
-  def outputModelVersion: String
+  def o-outputmodewvewsion: s-stwing
 
-  def outputPath: String
+  def outputpath: stwing
 
-  def outputDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]]
+  d-def outputdawdataset: k-keyvawdawdataset[keyvaw[wong, ʘwʘ c-cwustewsusewisknownfow]]
 
-  override def scheduledJob: Execution[Unit] =
-    AnalyticsBatchExecution(execArgs) { implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
-          val inputKnownFor =
-            KnownForSources.readDALDataset(inputDALDataset, Days(30), inputModelVersion)
+  ovewwide d-def scheduwedjob: execution[unit] =
+    anawyticsbatchexecution(execawgs) { i-impwicit d-datewange =>
+      e-execution.withid { impwicit uniqueid =>
+        execution.withawgs { awgs =>
+          v-vaw inputknownfow =
+            knownfowsouwces.weaddawdataset(inputdawdataset, :3 d-days(30), 😳 inputmodewvewsion)
 
-          val inputSimsGraph = TypedPipe
-            .from(FollowingsCosineSimilaritiesManhattanSource())
+          v-vaw inputsimsgwaph = typedpipe
+            .fwom(fowwowingscosinesimiwawitiesmanhattansouwce())
             .map(_._2)
 
-          def writeKnownFor(knownFor: TypedPipe[(Long, Array[(Int, Float)])]): Execution[Unit] = {
-            KnownForSources
-              .toKeyVal(knownFor, outputModelVersion)
-              .writeDALVersionedKeyValExecution(
-                outputDALDataset,
-                D.Suffix(outputPath)
+          def wwiteknownfow(knownfow: t-typedpipe[(wong, òωó awway[(int, 🥺 f-fwoat)])]): execution[unit] = {
+            knownfowsouwces
+              .tokeyvaw(knownfow, rawr x3 o-outputmodewvewsion)
+              .wwitedawvewsionedkeyvawexecution(
+                o-outputdawdataset,
+                d-d.suffix(outputpath)
               )
           }
 
-          def readKnownFor =
-            KnownForSources.readDALDataset(outputDALDataset, Days(1), outputModelVersion)
+          d-def weadknownfow =
+            knownfowsouwces.weaddawdataset(outputdawdataset, days(1), ^•ﻌ•^ outputmodewvewsion)
 
-          UpdateKnownForApps.runUpdateKnownForGeneric(
-            args,
-            inputKnownFor,
-            inputSimsGraph,
-            emailAddress,
-            writeKnownFor,
-            readKnownFor,
-            includeEvaluationResultsInEmail = false
+          updateknownfowapps.wunupdateknownfowgenewic(
+            awgs, :3
+            i-inputknownfow, (ˆ ﻌ ˆ)♡
+            inputsimsgwaph,
+            e-emaiwaddwess, (U ᵕ U❁)
+            wwiteknownfow, :3
+            weadknownfow, ^^;;
+            incwudeevawuationwesuwtsinemaiw = fawse
           )
         }
       }
@@ -378,65 +378,65 @@ trait UpdateKnownForBatch extends TwitterScheduledExecutionApp {
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron update_known_for_20M_145k \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+c-capesospy-v2 update --buiwd_wocawwy --stawt_cwon update_known_fow_20m_145k \
+ swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc.yamw
  */
-object UpdateKnownFor20M145K extends UpdateKnownForBatch {
-  override val firstTime: String = "2019-06-06"
+object updateknownfow20m145k extends updateknownfowbatch {
+  o-ovewwide vaw fiwsttime: s-stwing = "2019-06-06"
 
-  override val batchIncrement: Duration = Days(7)
+  ovewwide vaw b-batchincwement: duwation = days(7)
 
-  override val batchDescription: String =
-    "com.twitter.simclusters_v2.scalding.UpdateKnownFor20M145K"
+  ovewwide vaw b-batchdescwiption: s-stwing =
+    "com.twittew.simcwustews_v2.scawding.updateknownfow20m145k"
 
-  override val inputModelVersion: String = ModelVersions.Model20M145KUpdated
+  ovewwide vaw inputmodewvewsion: s-stwing = modewvewsions.modew20m145kupdated
 
-  override val inputDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]] =
-    SimclustersV2RawKnownFor20M145KUpdatedScalaDataset
+  ovewwide vaw inputdawdataset: k-keyvawdawdataset[keyvaw[wong, ( ͡o ω ͡o ) cwustewsusewisknownfow]] =
+    simcwustewsv2wawknownfow20m145kupdatedscawadataset
 
-  override val outputModelVersion: String = ModelVersions.Model20M145KUpdated
+  ovewwide vaw outputmodewvewsion: s-stwing = modewvewsions.modew20m145kupdated
 
-  override val outputDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]] =
-    SimclustersV2RawKnownFor20M145KUpdatedScalaDataset
+  ovewwide vaw outputdawdataset: keyvawdawdataset[keyvaw[wong, o.O c-cwustewsusewisknownfow]] =
+    s-simcwustewsv2wawknownfow20m145kupdatedscawadataset
 
-  override val outputPath: String = InternalDataPaths.RawKnownForUpdatedPath
+  o-ovewwide vaw outputpath: stwing = intewnawdatapaths.wawknownfowupdatedpath
 }
 
-/** This one's end-to-end, doesn't save any intermediate data etc. **/
-object UpdateKnownForAdhoc extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  implicit val dp = DateParser.default
+/** t-this one's end-to-end, ^•ﻌ•^ doesn't save any intewmediate data etc. XD **/
+object updateknownfowadhoc e-extends twittewexecutionapp {
+  i-impwicit vaw tz: j-java.utiw.timezone = d-dateops.utc
+  impwicit vaw dp = datepawsew.defauwt
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          implicit val date: DateRange = DateRange.parse(args("date"))
-          val defaultEmailAddress = "your_ldap@twitter.com"
+  d-def j-job: execution[unit] =
+    execution.getconfigmode.fwatmap {
+      case (config, ^^ m-mode) =>
+        execution.withid { impwicit uniqueid =>
+          v-vaw awgs = config.getawgs
+          impwicit v-vaw date: datewange = d-datewange.pawse(awgs("date"))
+          vaw defauwtemaiwaddwess = "youw_wdap@twittew.com"
 
-          val inputKnownFor = args.optional("inputKnownForDir") match {
-            case Some(inputKnownForDir) => KnownForSources.readKnownFor(inputKnownForDir)
-            case None => KnownForSources.knownFor_20M_Dec11_145K
+          v-vaw i-inputknownfow = a-awgs.optionaw("inputknownfowdiw") match {
+            case some(inputknownfowdiw) => k-knownfowsouwces.weadknownfow(inputknownfowdiw)
+            case nyone => knownfowsouwces.knownfow_20m_dec11_145k
           }
 
-          val inputSimsGraph = TopUsersSimilarityGraph.readSimsInput(
-            args.boolean("simsInputIsKeyValSource"),
-            args("simsInputDir")
+          vaw i-inputsimsgwaph = topusewssimiwawitygwaph.weadsimsinput(
+            awgs.boowean("simsinputiskeyvawsouwce"), o.O
+            awgs("simsinputdiw")
           )
 
-          def readKnownFor() = KnownForSources.readKnownFor(args("outputDir"))
+          d-def weadknownfow() = k-knownfowsouwces.weadknownfow(awgs("outputdiw"))
 
-          UpdateKnownForApps.runUpdateKnownForGeneric(
-            args,
-            inputKnownFor,
-            inputSimsGraph,
-            defaultEmailAddress,
-            { input: TypedPipe[(Long, Array[(Int, Float)])] =>
-              KnownForSources.writeKnownForTypedTsv(input, args("outputDir"))
-            },
-            readKnownFor,
-            includeEvaluationResultsInEmail = true
+          u-updateknownfowapps.wunupdateknownfowgenewic(
+            a-awgs, ( ͡o ω ͡o )
+            i-inputknownfow, /(^•ω•^)
+            inputsimsgwaph, 🥺
+            d-defauwtemaiwaddwess, nyaa~~
+            { input: typedpipe[(wong, mya a-awway[(int, XD fwoat)])] =>
+              k-knownfowsouwces.wwiteknownfowtypedtsv(input, awgs("outputdiw"))
+            }, nyaa~~
+            weadknownfow, ʘwʘ
+            i-incwudeevawuationwesuwtsinemaiw = t-twue
           )
         }
     }

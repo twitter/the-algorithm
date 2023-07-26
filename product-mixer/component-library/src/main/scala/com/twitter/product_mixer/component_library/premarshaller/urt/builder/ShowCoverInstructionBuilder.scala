@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowCoverInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Cover
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.showcovewinstwuction
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case class ShowCoverInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, ShowCoverInstruction] {
-  override def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[ShowCoverInstruction] = {
-    if (includeInstruction(query, entries)) {
-      // Currently only one cover is supported per response
-      entries.collectFirst {
-        case coverEntry: Cover => ShowCoverInstruction(coverEntry)
-      }.toSeq
-    } else {
-      Seq.empty
+c-case cwass showcovewinstwuctionbuiwdew[quewy <: p-pipewinequewy](
+  o-ovewwide vaw i-incwudeinstwuction: incwudeinstwuction[quewy] = awwaysincwude)
+    extends uwtinstwuctionbuiwdew[quewy, XD showcovewinstwuction] {
+  o-ovewwide def buiwd(
+    quewy: quewy, :3
+    entwies: s-seq[timewineentwy]
+  ): seq[showcovewinstwuction] = {
+    i-if (incwudeinstwuction(quewy, 😳😳😳 entwies)) {
+      // cuwwentwy onwy one covew is s-suppowted pew wesponse
+      entwies.cowwectfiwst {
+        c-case c-covewentwy: covew => showcovewinstwuction(covewentwy)
+      }.toseq
+    } ewse {
+      seq.empty
     }
   }
 }

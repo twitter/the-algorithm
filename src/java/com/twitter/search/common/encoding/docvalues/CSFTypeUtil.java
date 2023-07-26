@@ -1,34 +1,34 @@
-package com.twitter.search.common.encoding.docvalues;
+package com.twittew.seawch.common.encoding.docvawues;
 
-public final class CSFTypeUtil {
-  private CSFTypeUtil() {
+pubwic finaw c-cwass csftypeutiw {
+  p-pwivate c-csftypeutiw() {
   }
 
   /**
-   * Convert a long into a byte array, stored into dest.
+   * c-convewt a wong i-into a byte awway, rawr x3 s-stowed into dest. (✿oωo)
    */
-  public static void convertToBytes(byte[] dest, int valueIndex, int value) {
-    int offset = valueIndex * Integer.BYTES;
-    dest[offset] = (byte) (value >>> 24);
-    dest[offset + 1] = (byte) (value >>> 16);
-    dest[offset + 2] = (byte) (value >>> 8);
-    dest[offset + 3] = (byte) value;
+  p-pubwic s-static void convewttobytes(byte[] dest, (ˆ ﻌ ˆ)♡ int vawueindex, (˘ω˘) int vawue) {
+    int o-offset = vawueindex * integew.bytes;
+    dest[offset] = (byte) (vawue >>> 24);
+    d-dest[offset + 1] = (byte) (vawue >>> 16);
+    dest[offset + 2] = (byte) (vawue >>> 8);
+    dest[offset + 3] = (byte) v-vawue;
   }
 
   /**
-   * Convert bytes into a long value. Inverse function of convertToBytes.
+   * convewt bytes into a wong vawue. (⑅˘꒳˘) invewse function o-of convewttobytes. (///ˬ///✿)
    */
-  public static int convertFromBytes(byte[] data, int startOffset, int valueIndex) {
-    // This should rarely happen, eg. when we get a corrupt ThriftIndexingEvent, we insert a new
-    // Document which is blank. Such a document results in a length 0 BytesRef.
-    if (data.length == 0) {
-      return 0;
+  pubwic s-static int convewtfwombytes(byte[] d-data, 😳😳😳 int stawtoffset, 🥺 int vawueindex) {
+    // this shouwd wawewy happen, mya e-eg. 🥺 when we get a cowwupt thwiftindexingevent, >_< we insewt a nyew
+    // document which is bwank. s-such a document wesuwts in a wength 0 b-byteswef. >_<
+    i-if (data.wength == 0) {
+      w-wetuwn 0;
     }
 
-    int offset = startOffset + valueIndex * Integer.BYTES;
-    return ((data[offset] & 0xFF) << 24)
-        | ((data[offset + 1] & 0xFF) << 16)
-        | ((data[offset + 2] & 0xFF) << 8)
-        | (data[offset + 3] & 0xFF);
+    i-int offset = stawtoffset + vawueindex * i-integew.bytes;
+    wetuwn ((data[offset] & 0xff) << 24)
+        | ((data[offset + 1] & 0xff) << 16)
+        | ((data[offset + 2] & 0xff) << 8)
+        | (data[offset + 3] & 0xff);
   }
 }

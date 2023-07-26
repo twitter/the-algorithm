@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.pipeline.state
+package com.twittew.pwoduct_mixew.cowe.pipewine.state
 
-import com.twitter.timelines.configapi.Params
+impowt com.twittew.timewines.configapi.pawams
 
-trait HasParams {
-  def params: Params
+t-twait haspawams {
+  d-def pawams: p-pawams
 }

@@ -1,36 +1,36 @@
-package com.twitter.product_mixer.core.product
+package com.twittew.pwoduct_mixew.cowe.pwoduct
 
-import com.twitter.product_mixer.core.functional_component.configapi.registry.ParamConfig
-import com.twitter.servo.decider.DeciderKeyName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.decider.BooleanDeciderParam
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.configapi.wegistwy.pawamconfig
+i-impowt c-com.twittew.sewvo.decidew.decidewkeyname
+i-impowt c-com.twittew.timewines.configapi.fspawam
+i-impowt com.twittew.timewines.configapi.decidew.booweandecidewpawam
 
-trait ProductParamConfig extends ParamConfig with ProductParamConfigBuilder {
-
-  /**
-   * This enabled decider param can to be used to quickly disable a Product via Decider
-   *
-   * This value must correspond to the deciders configured in the `resources/config/decider.yml` file
-   */
-  val enabledDeciderKey: DeciderKeyName
+t-twait p-pwoductpawamconfig e-extends pawamconfig with pwoductpawamconfigbuiwdew {
 
   /**
-   * This supported client feature switch param can be used with a Feature Switch to control the
-   * rollout of a new Product from dogfood to experiment to production
+   * this enabwed decidew pawam can to be used t-to quickwy disabwe a pwoduct via decidew
    *
-   * FeatureSwitches are configured by defining both a [[com.twitter.timelines.configapi.Param]] in code
-   * and in an associated `.yml` file in the __config repo__.
-   *
-   * The `.yml` file path is determined by the `feature_switches_path` in your aurora file and tge Product name
-   * so the resulting path in the __config repo__ is essentially `s"{feature_switches_path}/{snakeCase(Product.identifier)}"`
+   * t-this vawue must cowwespond to t-the decidews configuwed in the `wesouwces/config/decidew.ymw` fiwe
    */
-  val supportedClientFSName: String
+  vaw enabweddecidewkey: d-decidewkeyname
 
-  object EnabledDeciderParam extends BooleanDeciderParam(enabledDeciderKey)
+  /**
+   * this s-suppowted cwient f-featuwe switch pawam can be used with a featuwe switch to contwow the
+   * wowwout o-of a nyew pwoduct fwom dogfood to expewiment to pwoduction
+   *
+   * featuweswitches a-awe configuwed by defining b-both a [[com.twittew.timewines.configapi.pawam]] i-in code
+   * a-and in an associated `.ymw` f-fiwe in the __config wepo__. ʘwʘ
+   *
+   * the `.ymw` f-fiwe path is detewmined by the `featuwe_switches_path` in youw a-auwowa fiwe and tge pwoduct nyame
+   * so the wesuwting path in the __config wepo__ is essentiawwy `s"{featuwe_switches_path}/{snakecase(pwoduct.identifiew)}"`
+   */
+  v-vaw suppowtedcwientfsname: stwing
 
-  object SupportedClientParam
-      extends FSParam(
-        name = supportedClientFSName,
-        default = false
+  object e-enabweddecidewpawam e-extends b-booweandecidewpawam(enabweddecidewkey)
+
+  object suppowtedcwientpawam
+      extends f-fspawam(
+        n-nyame = suppowtedcwientfsname, /(^•ω•^)
+        defauwt = f-fawse
       )
 }

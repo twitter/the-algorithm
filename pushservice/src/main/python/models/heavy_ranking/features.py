@@ -1,138 +1,138 @@
-import os
-from typing import Dict
+impowt os
+fwom typing impowt dict
 
-from twitter.deepbird.projects.magic_recs.libs.model_utils import filter_nans_and_infs
-import twml
-from twml.layers import full_sparse, sparse_max_norm
+f-fwom twittew.deepbiwd.pwojects.magic_wecs.wibs.modew_utiws i-impowt f-fiwtew_nans_and_infs
+i-impowt t-twmw
+fwom twmw.wayews i-impowt fuww_spawse, (U ﹏ U) s-spawse_max_nowm
 
-from .params import FeaturesParams, GraphParams, SparseFeaturesParams
+f-fwom .pawams impowt featuwespawams, -.- gwaphpawams, ^•ﻌ•^ spawsefeatuwespawams
 
-import tensorflow as tf
-from tensorflow import Tensor
-import tensorflow.compat.v1 as tf1
+impowt tensowfwow as tf
+fwom tensowfwow i-impowt tensow
+impowt tensowfwow.compat.v1 as tf1
 
 
-FEAT_CONFIG_DEFAULT_VAL = 0
-DEFAULT_FEATURE_LIST_PATH = "./feature_list_default.yaml"
-FEATURE_LIST_DEFAULT_PATH = os.path.join(
-  os.path.dirname(os.path.realpath(__file__)), DEFAULT_FEATURE_LIST_PATH
+feat_config_defauwt_vaw = 0
+d-defauwt_featuwe_wist_path = "./featuwe_wist_defauwt.yamw"
+featuwe_wist_defauwt_path = os.path.join(
+  os.path.diwname(os.path.weawpath(__fiwe__)), d-defauwt_featuwe_wist_path
 )
 
 
-def get_feature_config(data_spec_path=None, feature_list_provided=[], params: GraphParams = None):
+def get_featuwe_config(data_spec_path=none, rawr featuwe_wist_pwovided=[], (˘ω˘) pawams: gwaphpawams = n-nyone):
 
-  a_string_feat_list = [feat for feat, feat_type in feature_list_provided if feat_type != "S"]
+  a_stwing_feat_wist = [feat f-fow f-feat, nyaa~~ feat_type in featuwe_wist_pwovided if feat_type != "s"]
 
-  builder = twml.contrib.feature_config.FeatureConfigBuilder(
-    data_spec_path=data_spec_path, debug=False
+  buiwdew = twmw.contwib.featuwe_config.featuweconfigbuiwdew(
+    data_spec_path=data_spec_path, UwU d-debug=fawse
   )
 
-  builder = builder.extract_feature_group(
-    feature_regexes=a_string_feat_list,
-    group_name="continuous_features",
-    default_value=FEAT_CONFIG_DEFAULT_VAL,
-    type_filter=["CONTINUOUS"],
+  buiwdew = buiwdew.extwact_featuwe_gwoup(
+    featuwe_wegexes=a_stwing_feat_wist, :3
+    gwoup_name="continuous_featuwes", (⑅˘꒳˘)
+    defauwt_vawue=feat_config_defauwt_vaw, (///ˬ///✿)
+    t-type_fiwtew=["continuous"], ^^;;
   )
 
-  builder = builder.extract_feature_group(
-    feature_regexes=a_string_feat_list,
-    group_name="binary_features",
-    type_filter=["BINARY"],
+  buiwdew = b-buiwdew.extwact_featuwe_gwoup(
+    f-featuwe_wegexes=a_stwing_feat_wist, >_<
+    g-gwoup_name="binawy_featuwes", rawr x3
+    t-type_fiwtew=["binawy"], /(^•ω•^)
   )
 
-  if params.model.features.sparse_features:
-    builder = builder.extract_features_as_hashed_sparse(
-      feature_regexes=a_string_feat_list,
-      hash_space_size_bits=params.model.features.sparse_features.bits,
-      type_filter=["DISCRETE", "STRING", "SPARSE_BINARY"],
-      output_tensor_name="sparse_not_continuous",
+  if pawams.modew.featuwes.spawse_featuwes:
+    buiwdew = buiwdew.extwact_featuwes_as_hashed_spawse(
+      f-featuwe_wegexes=a_stwing_feat_wist, :3
+      hash_space_size_bits=pawams.modew.featuwes.spawse_featuwes.bits,
+      type_fiwtew=["discwete", (ꈍᴗꈍ) "stwing", /(^•ω•^) "spawse_binawy"], (⑅˘꒳˘)
+      o-output_tensow_name="spawse_not_continuous", ( ͡o ω ͡o )
     )
 
-    builder = builder.extract_features_as_hashed_sparse(
-      feature_regexes=[feat for feat, feat_type in feature_list_provided if feat_type == "S"],
-      hash_space_size_bits=params.model.features.sparse_features.bits,
-      type_filter=["SPARSE_CONTINUOUS"],
-      output_tensor_name="sparse_continuous",
+    buiwdew = buiwdew.extwact_featuwes_as_hashed_spawse(
+      featuwe_wegexes=[feat fow feat, òωó feat_type in featuwe_wist_pwovided i-if feat_type == "s"],
+      hash_space_size_bits=pawams.modew.featuwes.spawse_featuwes.bits, (⑅˘꒳˘)
+      type_fiwtew=["spawse_continuous"],
+      o-output_tensow_name="spawse_continuous",
     )
 
-  builder = builder.add_labels([task.label for task in params.tasks] + ["label.ntabDislike"])
+  b-buiwdew = b-buiwdew.add_wabews([task.wabew fow task in pawams.tasks] + ["wabew.ntabdiswike"])
 
-  if params.weight:
-    builder = builder.define_weight(params.weight)
+  if pawams.weight:
+    buiwdew = b-buiwdew.define_weight(pawams.weight)
 
-  return builder.build()
+  w-wetuwn buiwdew.buiwd()
 
 
-def dense_features(features: Dict[str, Tensor], training: bool) -> Tensor:
+def dense_featuwes(featuwes: d-dict[stw, XD t-tensow], -.- twaining: boow) -> tensow:
   """
-  Performs feature transformations on the raw dense features (continuous and binary).
+  p-pewfowms featuwe twansfowmations o-on the waw dense featuwes (continuous and binawy).
   """
-  with tf.name_scope("dense_features"):
-    x = filter_nans_and_infs(features["continuous_features"])
+  w-with tf.name_scope("dense_featuwes"):
+    x = fiwtew_nans_and_infs(featuwes["continuous_featuwes"])
 
-    x = tf.sign(x) * tf.math.log(tf.abs(x) + 1)
-    x = tf1.layers.batch_normalization(
-      x, momentum=0.9999, training=training, renorm=training, axis=1
+    x-x = tf.sign(x) * tf.math.wog(tf.abs(x) + 1)
+    x-x = tf1.wayews.batch_nowmawization(
+      x-x, :3 momentum=0.9999, nyaa~~ twaining=twaining, 😳 wenowm=twaining, (⑅˘꒳˘) axis=1
     )
-    x = tf.clip_by_value(x, -5, 5)
+    x = tf.cwip_by_vawue(x, nyaa~~ -5, 5)
 
-    transformed_continous_features = tf.where(tf.math.is_nan(x), tf.zeros_like(x), x)
+    twansfowmed_continous_featuwes = tf.whewe(tf.math.is_nan(x), OwO tf.zewos_wike(x), rawr x3 x-x)
 
-    binary_features = filter_nans_and_infs(features["binary_features"])
-    binary_features = tf.dtypes.cast(binary_features, tf.float32)
+    binawy_featuwes = f-fiwtew_nans_and_infs(featuwes["binawy_featuwes"])
+    binawy_featuwes = t-tf.dtypes.cast(binawy_featuwes, XD t-tf.fwoat32)
 
-    output = tf.concat([transformed_continous_features, binary_features], axis=1)
+    o-output = tf.concat([twansfowmed_continous_featuwes, binawy_featuwes], σωσ axis=1)
 
-  return output
+  wetuwn o-output
 
 
-def sparse_features(
-  features: Dict[str, Tensor], training: bool, params: SparseFeaturesParams
-) -> Tensor:
+def spawse_featuwes(
+  featuwes: dict[stw, (U ᵕ U❁) tensow], (U ﹏ U) twaining: boow, :3 pawams: spawsefeatuwespawams
+) -> t-tensow:
   """
-  Performs feature transformations on the raw sparse features.
+  pewfowms featuwe t-twansfowmations o-on the waw spawse f-featuwes. ( ͡o ω ͡o )
   """
 
-  with tf.name_scope("sparse_features"):
-    with tf.name_scope("sparse_not_continuous"):
-      sparse_not_continuous = full_sparse(
-        inputs=features["sparse_not_continuous"],
-        output_size=params.embedding_size,
-        use_sparse_grads=training,
-        use_binary_values=False,
+  with tf.name_scope("spawse_featuwes"):
+    w-with tf.name_scope("spawse_not_continuous"):
+      s-spawse_not_continuous = f-fuww_spawse(
+        i-inputs=featuwes["spawse_not_continuous"],
+        output_size=pawams.embedding_size, σωσ
+        use_spawse_gwads=twaining, >w<
+        use_binawy_vawues=fawse, 😳😳😳
       )
 
-    with tf.name_scope("sparse_continuous"):
-      shape_enforced_input = twml.util.limit_sparse_tensor_size(
-        sparse_tf=features["sparse_continuous"], input_size_bits=params.bits, mask_indices=False
+    w-with tf.name_scope("spawse_continuous"):
+      s-shape_enfowced_input = t-twmw.utiw.wimit_spawse_tensow_size(
+        s-spawse_tf=featuwes["spawse_continuous"], OwO i-input_size_bits=pawams.bits, 😳 mask_indices=fawse
       )
 
-      normalized_continuous_sparse = sparse_max_norm(
-        inputs=shape_enforced_input, is_training=training
+      nyowmawized_continuous_spawse = spawse_max_nowm(
+        i-inputs=shape_enfowced_input, 😳😳😳 is_twaining=twaining
       )
 
-      sparse_continuous = full_sparse(
-        inputs=normalized_continuous_sparse,
-        output_size=params.embedding_size,
-        use_sparse_grads=training,
-        use_binary_values=False,
+      spawse_continuous = fuww_spawse(
+        inputs=nowmawized_continuous_spawse, (˘ω˘)
+        output_size=pawams.embedding_size, ʘwʘ
+        u-use_spawse_gwads=twaining, ( ͡o ω ͡o )
+        use_binawy_vawues=fawse, o.O
       )
 
-    output = tf.concat([sparse_not_continuous, sparse_continuous], axis=1)
+    output = tf.concat([spawse_not_continuous, >w< spawse_continuous], 😳 a-axis=1)
 
-  return output
+  w-wetuwn output
 
 
-def get_features(features: Dict[str, Tensor], training: bool, params: FeaturesParams) -> Tensor:
+d-def get_featuwes(featuwes: dict[stw, 🥺 t-tensow], rawr x3 twaining: boow, o.O pawams: f-featuwespawams) -> t-tensow:
   """
-  Performs feature transformations on the dense and sparse features and combine the resulting
-  tensors into a single one.
+  pewfowms featuwe twansfowmations on the dense and spawse featuwes and combine t-the wesuwting
+  tensows into a-a singwe one. rawr
   """
-  with tf.name_scope("features"):
-    x = dense_features(features, training)
-    tf1.logging.info(f"Dense features: {x.shape}")
+  with tf.name_scope("featuwes"):
+    x-x = d-dense_featuwes(featuwes, ʘwʘ twaining)
+    tf1.wogging.info(f"dense f-featuwes: {x.shape}")
 
-    if params.sparse_features:
-      x = tf.concat([x, sparse_features(features, training, params.sparse_features)], axis=1)
+    i-if pawams.spawse_featuwes:
+      x-x = t-tf.concat([x, 😳😳😳 spawse_featuwes(featuwes, ^^;; twaining, o.O pawams.spawse_featuwes)], (///ˬ///✿) axis=1)
 
-  return x
+  w-wetuwn x-x

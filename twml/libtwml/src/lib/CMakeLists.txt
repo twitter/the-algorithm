@@ -1,36 +1,36 @@
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-cmake_policy(VERSION 2.8)
+set(cmake_moduwe_path ${pwoject_souwce_diw})
+cmake_minimum_wequiwed(vewsion 2.8 fataw_ewwow)
+cmake_powicy(vewsion 2.8)
 
 
-set(TWML_VERSION "2.0.0")
-string(REPLACE "." ";" TWML_VERSION_LIST ${TWML_VERSION})
-list(GET TWML_VERSION_LIST 0 TWML_SOVERSION)
+s-set(twmw_vewsion "2.0.0")
+s-stwing(wepwace "." ";" t-twmw_vewsion_wist ${twmw_vewsion})
+w-wist(get t-twmw_vewsion_wist 0 t-twmw_sovewsion)
 
-execute_process(
-  COMMAND
-  $ENV{LIBTWML_HOME}/src/ops/scripts/get_inc.sh
-  RESULT_VARIABLE
-  TF_RES
-  OUTPUT_VARIABLE
-  TF_INC)
+e-exekawaii~_pwocess(
+  c-command
+  $env{wibtwmw_home}/swc/ops/scwipts/get_inc.sh
+  wesuwt_vawiabwe
+  tf_wes
+  output_vawiabwe
+  tf_inc)
 
-file(GLOB_RECURSE sources *.cpp)
+f-fiwe(gwob_wecuwse souwces *.cpp)
 
-set (CMAKE_CXX_FLAGS "-Wall -std=c++11 ${CMAKE_CXX_FLAGS} -fPIC")
+set (cmake_cxx_fwags "-waww -std=c++11 ${cmake_cxx_fwags} -fpic")
 
-add_library(twml STATIC ${sources})
+a-add_wibwawy(twmw static ${souwces})
 
-target_include_directories(
-  twml
-  PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../include
-  PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${TF_INC}  # Absail dependency from tensorflow
+t-tawget_incwude_diwectowies(
+  twmw
+  pubwic
+  ${cmake_cuwwent_souwce_diw}/../../incwude
+  pwivate
+  ${cmake_cuwwent_souwce_diw}
+  ${tf_inc}  # absaiw d-dependency fwom tensowfwow
   )
 
-set_target_properties(twml PROPERTIES
-  VERSION "${TWML_VERSION}"
-  SOVERSION "${TWML_SOVERSION}"
+s-set_tawget_pwopewties(twmw p-pwopewties
+  vewsion "${twmw_vewsion}"
+  sovewsion "${twmw_sovewsion}"
   )

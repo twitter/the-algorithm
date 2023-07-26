@@ -1,126 +1,126 @@
-package com.twitter.ann.scalding.offline.com.twitter.ann.scalding.benchmark
+package com.twittew.ann.scawding.offwine.com.twittew.ann.scawding.benchmawk
 
 /*
-This job will generate KNN ground truth based user and item embeddings.
+this job wiww genewate k-knn gwound t-twuth based usew a-and item embeddings. mya
  */
 
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.ann.knn.thriftscala.Knn
-import com.twitter.ann.knn.thriftscala.Neighbor
-import com.twitter.ann.scalding.offline.IndexingStrategy
-import com.twitter.ann.scalding.offline.KnnHelper
-import com.twitter.ann.common.Distance
-import com.twitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
-import com.twitter.cortex.ml.embeddings.common.EmbeddingFormatArgsParser
-import com.twitter.cortex.ml.embeddings.common.EntityKind
-import java.util.TimeZone
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.ann.scalding.benchmark.UserItemKnnScalaDataset
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.UserId
+i-impowt c-com.twittew.scawding.typed.typedpipe
+i-impowt com.twittew.scawding._
+i-impowt com.twittew.scawding_intewnaw.dawv2.dawwwite.d
+i-impowt com.twittew.ann.knn.thwiftscawa.knn
+impowt com.twittew.ann.knn.thwiftscawa.neighbow
+impowt com.twittew.ann.scawding.offwine.indexingstwategy
+impowt com.twittew.ann.scawding.offwine.knnhewpew
+i-impowt com.twittew.ann.common.distance
+impowt com.twittew.mw.featuwestowe.wib.embedding.embeddingwithentity
+i-impowt com.twittew.cowtex.mw.embeddings.common.embeddingfowmatawgspawsew
+i-impowt com.twittew.cowtex.mw.embeddings.common.entitykind
+impowt java.utiw.timezone
+impowt com.twittew.scawding_intewnaw.dawv2.dawwwite._
+i-impowt com.twittew.ann.scawding.benchmawk.usewitemknnscawadataset
+impowt com.twittew.scawding_intewnaw.job.twittewexecutionapp
+i-impowt com.twittew.mw.featuwestowe.wib.entityid
+i-impowt com.twittew.mw.featuwestowe.wib.usewid
 
 /**
- * This job will take consumer and item embeddings(either url or tweet) and output Knn entities (user id, (distance, item id)).
+ * this job wiww take consumew and item embeddings(eithew uww o-ow tweet) and output knn entities (usew id, mya (distance, (⑅˘꒳˘) item id)). (U ﹏ U)
  *
- * Example command to run this adhoc job:
+ * exampwe c-command to wun this adhoc job:
  *
- * scalding remote run \
- * --target ann/src/main/scala/com/twitter/ann/scalding/benchmark:benchmark-adhoc \
- * --hadoop-properties "mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce.memory.mb=8192 mapreduce.reduce.java.opts='-Xmx7618M' mapred.task.timeout=0" \
- * --submitter hadoopnest3.smf1.twitter.com \
- * --user cortex-mlx \
- * --submitter-memory 8000.megabyte \
- * --main-class com.twitter.ann.scalding.offline.com.twitter.ann.scalding.benchmark.KnnJob -- \
- * --dalEnvironment Prod \
- * --search_space_entity_type user \
- * --user.feature_store_embedding ConsumerFollowEmbedding300Dataset \
- * --user.feature_store_major_version 1569196895 \
- * --user.date_range 2019-10-23 \
- * --search_space.feature_store_embedding ConsumerFollowEmbedding300Dataset \
- * --search_space.feature_store_major_version 1569196895 \
- * --search_space.date_range 2019-10-23 \
+ * s-scawding wemote w-wun \
+ * --tawget a-ann/swc/main/scawa/com/twittew/ann/scawding/benchmawk:benchmawk-adhoc \
+ * --hadoop-pwopewties "mapweduce.map.memowy.mb=8192 m-mapweduce.map.java.opts='-xmx7618m' mapweduce.weduce.memowy.mb=8192 mapweduce.weduce.java.opts='-xmx7618m' m-mapwed.task.timeout=0" \
+ * --submittew hadoopnest3.smf1.twittew.com \
+ * --usew cowtex-mwx \
+ * --submittew-memowy 8000.megabyte \
+ * --main-cwass c-com.twittew.ann.scawding.offwine.com.twittew.ann.scawding.benchmawk.knnjob -- \
+ * --dawenviwonment pwod \
+ * --seawch_space_entity_type usew \
+ * --usew.featuwe_stowe_embedding consumewfowwowembedding300dataset \
+ * --usew.featuwe_stowe_majow_vewsion 1569196895 \
+ * --usew.date_wange 2019-10-23 \
+ * --seawch_space.featuwe_stowe_embedding consumewfowwowembedding300dataset \
+ * --seawch_space.featuwe_stowe_majow_vewsion 1569196895 \
+ * --seawch_space.date_wange 2019-10-23 \
  * --date 2019-10-25 \
- * --version "consumer_follower_test" \
- * --reducers 10000 \
- * --num_of_random_groups 20 \
- * --num_replicas 1000 \
- * --indexing_strategy.metric InnerProduct \
- * --indexing_strategy.type hnsw \
- * --indexing_strategy.dimension 300 \
- * --indexing_strategy.ef_construction 30 \
- * --indexing_strategy.max_m 10 \
- * --indexing_strategy.ef_query 50 \
- * --search_space_shards 3000 \
- * --query_shards 3000 \
- * --search_space.read_sample_ratio 0.038
+ * --vewsion "consumew_fowwowew_test" \
+ * --weducews 10000 \
+ * --num_of_wandom_gwoups 20 \
+ * --num_wepwicas 1000 \
+ * --indexing_stwategy.metwic innewpwoduct \
+ * --indexing_stwategy.type h-hnsw \
+ * --indexing_stwategy.dimension 300 \
+ * --indexing_stwategy.ef_constwuction 30 \
+ * --indexing_stwategy.max_m 10 \
+ * --indexing_stwategy.ef_quewy 50 \
+ * --seawch_space_shawds 3000 \
+ * --quewy_shawds 3000 \
+ * --seawch_space.wead_sampwe_watio 0.038
  */
-trait KnnJobBase {
-  val seed: Long = 123
+twait knnjobbase {
+  v-vaw seed: wong = 123
 
-  def getKnnDataset[B <: EntityId, D <: Distance[D]](
-    args: Args
+  d-def g-getknndataset[b <: entityid, mya d <: distance[d]](
+    awgs: awgs
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[Knn] = {
+    i-impwicit u-uniqueid: uniqueid
+  ): typedpipe[knn] = {
 
-    val consumerPipe: TypedPipe[EmbeddingWithEntity[UserId]] = EmbeddingFormatArgsParser.User
-      .getEmbeddingFormat(args, "user")
-      .getEmbeddings
+    v-vaw consumewpipe: t-typedpipe[embeddingwithentity[usewid]] = embeddingfowmatawgspawsew.usew
+      .getembeddingfowmat(awgs, ʘwʘ "usew")
+      .getembeddings
 
-    val itemPipe = EntityKind
-      .getEntityKind(args("search_space_entity_type"))
-      .parser
-      .getEmbeddingFormat(args, "search_space")
-      .getEmbeddings
+    v-vaw itempipe = entitykind
+      .getentitykind(awgs("seawch_space_entity_type"))
+      .pawsew
+      .getembeddingfowmat(awgs, (˘ω˘) "seawch_space")
+      .getembeddings
 
-    KnnHelper
-    // Refer to the documentation of findNearestNeighboursWithIndexingStrategy for more
-    // information about how to set these settings.
-      .findNearestNeighboursWithIndexingStrategy[UserId, B, D](
-        queryEmbeddings = consumerPipe,
-        searchSpaceEmbeddings = itemPipe.asInstanceOf[TypedPipe[EmbeddingWithEntity[B]]],
-        numNeighbors = args.int("candidate_per_user", 20),
-        reducersOption = args.optional("reducers").map(_.toInt),
-        numOfSearchGroups = args.int("num_of_random_groups"),
-        numReplicas = args.int("num_replicas"),
-        indexingStrategy = IndexingStrategy.parse(args).asInstanceOf[IndexingStrategy[D]],
-        queryShards = args.optional("query_shards").map(_.toInt),
-        searchSpaceShards = args.optional("search_space_shards").map(_.toInt)
+    k-knnhewpew
+    // wefew to the documentation o-of findneawestneighbouwswithindexingstwategy fow mowe
+    // i-infowmation about how to set these s-settings. (U ﹏ U)
+      .findneawestneighbouwswithindexingstwategy[usewid, ^•ﻌ•^ b-b, (˘ω˘) d](
+        quewyembeddings = consumewpipe, :3
+        seawchspaceembeddings = itempipe.asinstanceof[typedpipe[embeddingwithentity[b]]], ^^;;
+        nyumneighbows = awgs.int("candidate_pew_usew", 🥺 20), (⑅˘꒳˘)
+        w-weducewsoption = a-awgs.optionaw("weducews").map(_.toint), nyaa~~
+        nyumofseawchgwoups = a-awgs.int("num_of_wandom_gwoups"), :3
+        n-nyumwepwicas = a-awgs.int("num_wepwicas"), ( ͡o ω ͡o )
+        indexingstwategy = indexingstwategy.pawse(awgs).asinstanceof[indexingstwategy[d]], mya
+        quewyshawds = awgs.optionaw("quewy_shawds").map(_.toint), (///ˬ///✿)
+        s-seawchspaceshawds = awgs.optionaw("seawch_space_shawds").map(_.toint)
       )
       .map {
-        case (user, items) =>
-          val neighbors = items.map {
-            case (item, distance) =>
-              Neighbor(
-                distance.distance,
-                item.toThrift
+        case (usew, (˘ω˘) items) =>
+          vaw nyeighbows = i-items.map {
+            case (item, ^^;; d-distance) =>
+              n-nyeighbow(
+                distance.distance, (✿oωo)
+                i-item.tothwift
               )
           }
-          Knn(user.toThrift, neighbors)
+          knn(usew.tothwift, (U ﹏ U) n-nyeighbows)
       }
   }
 }
 
-object KnnJob extends TwitterExecutionApp with KnnJobBase {
+o-object knnjob e-extends twittewexecutionapp w-with knnjobbase {
 
-  val KnnPathSuffix: String = "/user/cortex-mlx/qualatative_analysis/knn_ground_truth/"
-  val partitionKey: String = "version"
+  vaw knnpathsuffix: s-stwing = "/usew/cowtex-mwx/quawatative_anawysis/knn_gwound_twuth/"
+  v-vaw pawtitionkey: s-stwing = "vewsion"
 
-  override def job: Execution[Unit] = Execution.withId { implicit uniqueId =>
-    Execution.getArgs.flatMap { args: Args =>
-      implicit val timeZone: TimeZone = TimeZone.getDefault
-      implicit val dateParser: DateParser = DateParser.default
-      implicit val dateRange: DateRange = DateRange.parse(args.list("date"))(timeZone, dateParser)
+  o-ovewwide def j-job: execution[unit] = execution.withid { impwicit uniqueid =>
+    e-execution.getawgs.fwatmap { awgs: awgs =>
+      impwicit vaw timezone: timezone = timezone.getdefauwt
+      impwicit vaw datepawsew: d-datepawsew = datepawsew.defauwt
+      impwicit vaw datewange: d-datewange = d-datewange.pawse(awgs.wist("date"))(timezone, -.- datepawsew)
 
-      getKnnDataset(args).writeDALExecution(
-        UserItemKnnScalaDataset,
-        D.Daily,
-        D.Suffix(KnnPathSuffix),
-        D.Parquet,
-        Set(D.Partition(partitionKey, args("version"), D.PartitionType.String))
+      g-getknndataset(awgs).wwitedawexecution(
+        usewitemknnscawadataset, ^•ﻌ•^
+        d-d.daiwy, rawr
+        d.suffix(knnpathsuffix), (˘ω˘)
+        d-d.pawquet, nyaa~~
+        s-set(d.pawtition(pawtitionkey, UwU awgs("vewsion"), :3 d.pawtitiontype.stwing))
       )
     }
   }

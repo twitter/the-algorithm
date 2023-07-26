@@ -1,244 +1,244 @@
-package com.twitter.simclusters_v2.scalding.inferred_entities
+package com.twittew.simcwustews_v2.scawding.infewwed_entities
 
-import com.twitter.escherbird.metadata.thriftscala.FullMetadata
-import com.twitter.scalding._
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.wtf.entity_real_graph.scalding.common.{DataSources => ERGDataSources}
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+impowt c-com.twittew.eschewbiwd.metadata.thwiftscawa.fuwwmetadata
+i-impowt c-com.twittew.scawding._
+i-impowt c-com.twittew.scawding.typed.typedpipe
+i-impowt com.twittew.scawding_intewnaw.dawv2.dawwwite._
+i-impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.simcwustews_v2.common.cwustewid
+impowt com.twittew.simcwustews_v2.common.modewvewsions
+impowt com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces._
+impowt com.twittew.simcwustews_v2.scawding.common.utiw
+i-impowt com.twittew.simcwustews_v2.thwiftscawa._
+impowt com.twittew.wtf.entity_weaw_gwaph.scawding.common.{datasouwces => ewgdatasouwces}
+impowt c-com.twittew.wtf.scawding.jobs.common.adhocexecutionapp
+impowt com.twittew.wtf.scawding.jobs.common.scheduwedexecutionapp
+impowt java.utiw.timezone
 
 /**
- * Infer Known-For entities based on users' different variations of SimClusters Known-Fors.
- * The basic idea is to look at the Known-For datasets (User, Cluster) and the entity embeddings
- * (Cluster, Entities) to derive the (User, Entities).
+ * i-infew known-fow entities based o-on usews' diffewent v-vawiations of simcwustews known-fows. >_<
+ * the basic idea is to wook at the known-fow d-datasets (usew, -.- cwustew) and the entity embeddings
+ * (cwustew, mya entities) t-to dewive the (usew, >w< entities). (U ﹏ U)
  */
-object InferredSemanticCoreEntitiesFromKnownFor {
+o-object infewwedsemanticcoweentitiesfwomknownfow {
 
   /**
-   * Given a (user, cluster) and (cluster, entity) mappings, generate (user, entity) mappings
+   * g-given a (usew, 😳😳😳 c-cwustew) and (cwustew, e-entity) mappings, o.O genewate (usew, òωó entity) m-mappings
    */
-  def getUserToEntities(
-    userToClusters: TypedPipe[(UserId, Seq[SimClusterWithScore])],
-    clusterToEntities: TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])],
-    inferredFromCluster: Option[SimClustersSource],
-    inferredFromEntity: Option[EntitySource],
-    minEntityScore: Double
-  ): TypedPipe[(UserId, Seq[InferredEntity])] = {
+  def getusewtoentities(
+    usewtocwustews: t-typedpipe[(usewid, 😳😳😳 seq[simcwustewwithscowe])], σωσ
+    cwustewtoentities: typedpipe[(cwustewid, (⑅˘꒳˘) seq[semanticcoweentitywithscowe])], (///ˬ///✿)
+    infewwedfwomcwustew: o-option[simcwustewssouwce], 🥺
+    infewwedfwomentity: o-option[entitysouwce], OwO
+    m-minentityscowe: d-doubwe
+  ): typedpipe[(usewid, >w< seq[infewwedentity])] = {
 
-    val validClusterToEntities = clusterToEntities.flatMap {
-      case (clusterId, entities) =>
-        entities.collect {
-          case entity if entity.score >= minEntityScore =>
-            (clusterId, (entity.entityId, entity.score))
+    vaw vawidcwustewtoentities = c-cwustewtoentities.fwatmap {
+      c-case (cwustewid, 🥺 entities) =>
+        e-entities.cowwect {
+          c-case entity if entity.scowe >= m-minentityscowe =>
+            (cwustewid, nyaa~~ (entity.entityid, ^^ entity.scowe))
         }
     }
 
-    userToClusters
-      .flatMap {
-        case (userId, clusters) =>
-          clusters.map { cluster => (cluster.clusterId, userId) }
+    u-usewtocwustews
+      .fwatmap {
+        case (usewid, >w< cwustews) =>
+          c-cwustews.map { cwustew => (cwustew.cwustewid, OwO u-usewid) }
       }
-      .join(validClusterToEntities)
+      .join(vawidcwustewtoentities)
       .map {
-        case (clusterId, (userId, (entityId, score))) =>
-          ((userId, entityId), score)
+        case (cwustewid, (usewid, XD (entityid, ^^;; s-scowe))) =>
+          ((usewid, 🥺 e-entityid), XD scowe)
       }
-      // If a user is known for the same entity through multiple cluster-entity mappings, sum the scores
-      .sumByKey
+      // if a usew is known fow the same entity thwough muwtipwe cwustew-entity mappings, (U ᵕ U❁) sum the scowes
+      .sumbykey
       .map {
-        case ((userId, entityId), score) =>
-          (userId, Seq(InferredEntity(entityId, score, inferredFromCluster, inferredFromEntity)))
+        c-case ((usewid, :3 e-entityid), scowe) =>
+          (usewid, ( ͡o ω ͡o ) seq(infewwedentity(entityid, òωó s-scowe, σωσ i-infewwedfwomcwustew, (U ᵕ U❁) i-infewwedfwomentity)))
       }
-      .sumByKey
+      .sumbykey
   }
 
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
-  inferred_entities_from_known_for \
-  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+capesospy-v2 update --buiwd_wocawwy --stawt_cwon \
+  infewwed_entities_fwom_known_fow \
+  swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc.yamw
  */
-object InferredKnownForSemanticCoreEntitiesBatchApp extends ScheduledExecutionApp {
+o-object infewwedknownfowsemanticcoweentitiesbatchapp extends scheduwedexecutionapp {
 
-  import InferredSemanticCoreEntitiesFromKnownFor._
+  impowt infewwedsemanticcoweentitiesfwomknownfow._
 
-  override def firstTime: RichDate = RichDate("2023-01-23")
+  ovewwide def fiwsttime: w-wichdate = wichdate("2023-01-23")
 
-  override def batchIncrement: Duration = Days(1)
+  o-ovewwide d-def batchincwement: d-duwation = days(1)
 
-  private val outputPath = InferredEntities.MHRootPath + "/known_for"
+  pwivate v-vaw outputpath = i-infewwedentities.mhwootpath + "/known_fow"
 
-  override def runOnDateRange(
-    args: Args
+  o-ovewwide def w-wunondatewange(
+    awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    impwicit d-datewange: datewange,
+    t-timezone: t-timezone, (✿oωo)
+    u-uniqueid: u-uniqueid
+  ): execution[unit] = {
 
-    val clusterToEntities = EntityEmbeddingsSources
-      .getReverseIndexedSemanticCoreEntityEmbeddingsSource(
-        EmbeddingType.FavBasedSematicCoreEntity,
-        ModelVersions.Model20M145K2020,
-        dateRange.embiggen(Days(7)) // read 7 days before & after to give buffer
+    vaw cwustewtoentities = entityembeddingssouwces
+      .getwevewseindexedsemanticcoweentityembeddingssouwce(
+        embeddingtype.favbasedsematiccoweentity, ^^
+        modewvewsions.modew20m145k2020, ^•ﻌ•^
+        d-datewange.embiggen(days(7)) // wead 7 days befowe & aftew to give buffew
       )
-      .forceToDisk
+      .fowcetodisk
 
-    val userToEntities2020 = getUserToEntities(
-      ProdSources.getUpdatedKnownFor,
-      clusterToEntities,
-      Some(InferredEntities.KnownFor2020),
-      Some(EntitySource.SimClusters20M145K2020EntityEmbeddingsByFavScore),
-      InferredEntities.MinLegibleEntityScore
+    vaw usewtoentities2020 = g-getusewtoentities(
+      pwodsouwces.getupdatedknownfow, XD
+      cwustewtoentities, :3
+      some(infewwedentities.knownfow2020), (ꈍᴗꈍ)
+      some(entitysouwce.simcwustews20m145k2020entityembeddingsbyfavscowe),
+      i-infewwedentities.minwegibweentityscowe
     )
 
-    val userToEntities = InferredEntities.combineResults(userToEntities2020)
+    v-vaw usewtoentities = i-infewwedentities.combinewesuwts(usewtoentities2020)
 
-    userToEntities
-      .map { case (userId, entities) => KeyVal(userId, entities) }
-      .writeDALVersionedKeyValExecution(
-        SimclustersInferredEntitiesFromKnownForScalaDataset,
-        D.Suffix(outputPath)
+    usewtoentities
+      .map { c-case (usewid, :3 entities) => keyvaw(usewid, (U ﹏ U) e-entities) }
+      .wwitedawvewsionedkeyvawexecution(
+        s-simcwustewsinfewwedentitiesfwomknownfowscawadataset, UwU
+        d.suffix(outputpath)
       )
   }
 }
 
 /**
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/inferred_entities:inferred_entities_from_known_for-adhoc && \
- oscar hdfs --user recos-platform --screen --tee your_ldap-logs/ \
-  --bundle inferred_entities_from_known_for-adhoc \
-  --tool com.twitter.simclusters_v2.scalding.inferred_entities.InferredSemanticCoreEntitiesFromKnownForAdhocApp \
-  -- --date 2019-11-02 --email your_ldap@twitter.com
+./bazew bundwe swc/scawa/com/twittew/simcwustews_v2/scawding/infewwed_entities:infewwed_entities_fwom_known_fow-adhoc && \
+ oscaw hdfs --usew wecos-pwatfowm --scween --tee youw_wdap-wogs/ \
+  --bundwe i-infewwed_entities_fwom_known_fow-adhoc \
+  --toow com.twittew.simcwustews_v2.scawding.infewwed_entities.infewwedsemanticcoweentitiesfwomknownfowadhocapp \
+  -- --date 2019-11-02 --emaiw youw_wdap@twittew.com
  */
-object InferredSemanticCoreEntitiesFromKnownForAdhocApp extends AdhocExecutionApp {
+o-object infewwedsemanticcoweentitiesfwomknownfowadhocapp e-extends adhocexecutionapp {
 
-  private def readEntityEmbeddingsFromPath(
-    path: String
-  ): TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])] = {
-    TypedPipe
-      .from(AdhocKeyValSources.clusterToEntitiesSource(path))
+  p-pwivate def weadentityembeddingsfwompath(
+    path: stwing
+  ): t-typedpipe[(cwustewid, 😳😳😳 s-seq[semanticcoweentitywithscowe])] = {
+    typedpipe
+      .fwom(adhockeyvawsouwces.cwustewtoentitiessouwce(path))
       .map {
-        case (embeddingId, embedding) =>
-          embeddingId.internalId match {
-            case InternalId.ClusterId(clusterId) =>
-              val semanticCoreEntities = embedding.embedding.map {
-                case InternalIdWithScore(InternalId.EntityId(entityId), score) =>
-                  SemanticCoreEntityWithScore(entityId, score)
-                case _ =>
-                  throw new IllegalArgumentException(
-                    "The value to the entity embeddings dataset isn't entityId"
+        c-case (embeddingid, XD e-embedding) =>
+          embeddingid.intewnawid match {
+            case intewnawid.cwustewid(cwustewid) =>
+              vaw semanticcoweentities = e-embedding.embedding.map {
+                case i-intewnawidwithscowe(intewnawid.entityid(entityid), o.O s-scowe) =>
+                  semanticcoweentitywithscowe(entityid, (⑅˘꒳˘) s-scowe)
+                c-case _ =>
+                  thwow n-nyew iwwegawawgumentexception(
+                    "the vawue to the entity embeddings dataset isn't entityid"
                   )
               }
-              (clusterId, semanticCoreEntities)
-            case _ =>
-              throw new IllegalArgumentException(
-                "The key to the entity embeddings dataset isn't clusterId"
+              (cwustewid, 😳😳😳 semanticcoweentities)
+            c-case _ =>
+              t-thwow nyew iwwegawawgumentexception(
+                "the key to the entity e-embeddings d-dataset isn't cwustewid"
               )
           }
       }
   }
 
-  override def runOnDateRange(
-    args: Args
+  ovewwide def wunondatewange(
+    awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    import InferredSemanticCoreEntitiesFromKnownFor._
+    i-impwicit datewange: datewange, nyaa~~
+    timezone: timezone, rawr
+    uniqueid: uniqueid
+  ): e-execution[unit] = {
+    impowt infewwedsemanticcoweentitiesfwomknownfow._
 
-    val entityIdToString: TypedPipe[(Long, String)] =
-      ERGDataSources.semanticCoreMetadataSource
-        .collect {
-          case FullMetadata(domainId, entityId, Some(basicMetadata), _, _, _)
-              if domainId == 131L && !basicMetadata.indexableFields.exists(
-                _.tags.exists(_.contains("utt:sensitive_interest"))) =>
-            entityId -> basicMetadata.name
-        }.distinctBy(_._1)
+    vaw entityidtostwing: t-typedpipe[(wong, -.- s-stwing)] =
+      ewgdatasouwces.semanticcowemetadatasouwce
+        .cowwect {
+          case fuwwmetadata(domainid, entityid, (✿oωo) s-some(basicmetadata), /(^•ω•^) _, _, _)
+              i-if domainid == 131w && !basicmetadata.indexabwefiewds.exists(
+                _.tags.exists(_.contains("utt:sensitive_intewest"))) =>
+            entityid -> basicmetadata.name
+        }.distinctby(_._1)
 
-    val clusterToEntitiesUpdated = EntityEmbeddingsSources
-      .getReverseIndexedSemanticCoreEntityEmbeddingsSource(
-        EmbeddingType.FavBasedSematicCoreEntity,
-        ModelVersions.Model20M145KUpdated,
-        dateRange.embiggen(Days(4)) // read 4 days before & after to give buffer
+    vaw c-cwustewtoentitiesupdated = entityembeddingssouwces
+      .getwevewseindexedsemanticcoweentityembeddingssouwce(
+        e-embeddingtype.favbasedsematiccoweentity, 🥺
+        modewvewsions.modew20m145kupdated, ʘwʘ
+        datewange.embiggen(days(4)) // wead 4 days befowe & a-aftew to give buffew
       )
-      .forceToDisk
+      .fowcetodisk
 
-    // Inferred entities based on Updated version's entity embeddings
-    val dec11UserToUpdatedEntities = getUserToEntities(
-      ProdSources.getDec11KnownFor,
-      clusterToEntitiesUpdated,
-      Some(InferredEntities.Dec11KnownFor),
-      Some(EntitySource.SimClusters20M145KUpdatedEntityEmbeddingsByFavScore),
-      InferredEntities.MinLegibleEntityScore
+    // i-infewwed entities b-based on updated vewsion's entity e-embeddings
+    vaw dec11usewtoupdatedentities = g-getusewtoentities(
+      p-pwodsouwces.getdec11knownfow, UwU
+      c-cwustewtoentitiesupdated, XD
+      some(infewwedentities.dec11knownfow), (✿oωo)
+      s-some(entitysouwce.simcwustews20m145kupdatedentityembeddingsbyfavscowe), :3
+      i-infewwedentities.minwegibweentityscowe
     )
 
-    val updatedUserToUpdatedEntities = getUserToEntities(
-      ProdSources.getUpdatedKnownFor,
-      clusterToEntitiesUpdated,
-      Some(InferredEntities.UpdatedKnownFor),
-      Some(EntitySource.SimClusters20M145KUpdatedEntityEmbeddingsByFavScore),
-      InferredEntities.MinLegibleEntityScore
+    vaw updatedusewtoupdatedentities = g-getusewtoentities(
+      p-pwodsouwces.getupdatedknownfow, (///ˬ///✿)
+      cwustewtoentitiesupdated, nyaa~~
+      some(infewwedentities.updatedknownfow), >w<
+      s-some(entitysouwce.simcwustews20m145kupdatedentityembeddingsbyfavscowe), -.-
+      infewwedentities.minwegibweentityscowe
     )
 
-    // Updated entities data
-    val entitiesPipe = (
-      dec11UserToUpdatedEntities ++ updatedUserToUpdatedEntities
-    ).sumByKey
+    // updated entities d-data
+    vaw entitiespipe = (
+      dec11usewtoupdatedentities ++ u-updatedusewtoupdatedentities
+    ).sumbykey
 
-    val userToEntitiesWithString = entitiesPipe
-      .flatMap {
-        case (userId, entities) =>
-          entities.map { entity => (entity.entityId, (userId, entity)) }
+    v-vaw usewtoentitieswithstwing = entitiespipe
+      .fwatmap {
+        case (usewid, (✿oωo) entities) =>
+          e-entities.map { e-entity => (entity.entityid, (˘ω˘) (usewid, rawr e-entity)) }
       }
-      .hashJoin(entityIdToString)
+      .hashjoin(entityidtostwing)
       .map {
-        case (entityId, ((userId, inferredEntity), entityStr)) =>
-          (userId, Seq((entityStr, inferredEntity)))
+        c-case (entityid, OwO ((usewid, infewwedentity), ^•ﻌ•^ e-entitystw)) =>
+          (usewid, UwU seq((entitystw, (˘ω˘) infewwedentity)))
       }
-      .sumByKey
+      .sumbykey
 
-    val outputPath = "/user/recos-platform/adhoc/known_for_inferred_entities_updated"
+    vaw outputpath = "/usew/wecos-pwatfowm/adhoc/known_fow_infewwed_entities_updated"
 
-    val scoreDistribution = Util
-      .printSummaryOfNumericColumn(
-        entitiesPipe.flatMap { case (k, v) => v.map(_.score) },
-        Some("Distributions of scores, Updated version")
-      ).map { results =>
-        Util.sendEmail(
-          results,
-          "Distributions of scores, Updated version",
-          args.getOrElse("email", "")
+    vaw scowedistwibution = utiw
+      .pwintsummawyofnumewiccowumn(
+        e-entitiespipe.fwatmap { case (k, (///ˬ///✿) v) => v.map(_.scowe) }, σωσ
+        s-some("distwibutions of scowes, /(^•ω•^) u-updated vewsion")
+      ).map { wesuwts =>
+        u-utiw.sendemaiw(
+          wesuwts, 😳
+          "distwibutions o-of scowes, 😳 u-updated vewsion", (⑅˘꒳˘)
+          a-awgs.getowewse("emaiw", 😳😳😳 "")
         )
       }
 
-    val coverageDistribution = Util
-      .printSummaryOfNumericColumn(
-        entitiesPipe.map { case (k, v) => v.size },
-        Some("# of knownFor entities per user, Updated version")
-      ).map { results =>
-        Util.sendEmail(
-          results,
-          "# of knownFor entities per user, Updated version",
-          args.getOrElse("email", "")
+    v-vaw covewagedistwibution = u-utiw
+      .pwintsummawyofnumewiccowumn(
+        entitiespipe.map { case (k, 😳 v) => v.size }, XD
+        some("# of knownfow entities pew usew, mya updated vewsion")
+      ).map { wesuwts =>
+        u-utiw.sendemaiw(
+          w-wesuwts, ^•ﻌ•^
+          "# o-of knownfow entities pew u-usew, ʘwʘ updated vewsion", ( ͡o ω ͡o )
+          awgs.getowewse("emaiw", mya "")
         )
       }
 
-    Execution
+    execution
       .zip(
-        userToEntitiesWithString.writeExecution(TypedTsv(outputPath)),
-        scoreDistribution,
-        coverageDistribution
+        u-usewtoentitieswithstwing.wwiteexecution(typedtsv(outputpath)), o.O
+        s-scowedistwibution, (✿oωo)
+        covewagedistwibution
       ).unit
   }
 }

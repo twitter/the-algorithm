@@ -1,42 +1,42 @@
-package com.twitter.search.ingester.model;
+package com.twittew.seawch.ingestew.modew;
 
-import com.twitter.common.text.token.TokenizedCharSequenceStream;
-import com.twitter.common.text.token.attribute.CharSequenceTermAttribute;
-import com.twitter.search.common.relevance.text.VisibleTokenRatioNormalizer;
+impowt c-com.twittew.common.text.token.tokenizedchawsequencestweam;
+i-impowt c-com.twittew.common.text.token.attwibute.chawsequencetewmattwibute;
+i-impowt com.twittew.seawch.common.wewevance.text.visibwetokenwationowmawizew;
 
-public class VisibleTokenRatioUtil {
+p-pubwic cwass v-visibwetokenwatioutiw {
 
-  private static final int TOKEN_DEMARCATION = 140;
+  p-pwivate s-static finaw int token_demawcation = 140;
 
-  private static final VisibleTokenRatioNormalizer NORMALIZER =
-      VisibleTokenRatioNormalizer.createInstance();
+  pwivate static finaw visibwetokenwationowmawizew nyowmawizew =
+      v-visibwetokenwationowmawizew.cweateinstance();
 
   /**
-   * Take the number of visible tokens and divide by number of total tokens to get the
-   * visible token percentage (pretending 140 chars is visible as that is old typical tweet
-   * size).  Then normalize it down to 4 bits(round it basically)
+   * take the nyumbew of visibwe tokens a-and divide by nyumbew of totaw t-tokens to get the
+   * visibwe token pewcentage (pwetending 140 chaws is visibwe a-as that is owd typicaw tweet
+   * s-size). (///ˬ///✿)  then n-nyowmawize it down to 4 bits(wound it basicawwy)
    */
-  public int extractAndNormalizeTokenPercentage(TokenizedCharSequenceStream tokenSeqStream) {
+  pubwic int extwactandnowmawizetokenpewcentage(tokenizedchawsequencestweam t-tokenseqstweam) {
 
-    CharSequenceTermAttribute attr = tokenSeqStream.addAttribute(CharSequenceTermAttribute.class);
+    chawsequencetewmattwibute attw = tokenseqstweam.addattwibute(chawsequencetewmattwibute.cwass);
 
-    int totalTokens = 0;
-    int numTokensBelowThreshold = 0;
-    while (tokenSeqStream.incrementToken()) {
-      totalTokens++;
-      int offset = attr.getOffset();
-      if (offset <= TOKEN_DEMARCATION) {
-        numTokensBelowThreshold++;
+    int totawtokens = 0;
+    int nyumtokensbewowthweshowd = 0;
+    w-whiwe (tokenseqstweam.incwementtoken()) {
+      totawtokens++;
+      i-int offset = a-attw.getoffset();
+      i-if (offset <= t-token_demawcation) {
+        nyumtokensbewowthweshowd++;
       }
     }
 
-    double percent;
-    if (totalTokens > 0) {
-      percent = numTokensBelowThreshold / (double) totalTokens;
-    } else {
-      percent = 1;
+    doubwe pewcent;
+    i-if (totawtokens > 0) {
+      pewcent = nyumtokensbewowthweshowd / (doubwe) totawtokens;
+    } e-ewse {
+      pewcent = 1;
     }
 
-    return NORMALIZER.normalize(percent);
+    wetuwn nyowmawizew.nowmawize(pewcent);
   }
 }

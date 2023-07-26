@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted
 
-case class PrerollMetadata(
-  preroll: Option[Preroll],
-  videoAnalyticsScribePassthrough: Option[String])
+case cwass pwewowwmetadata(
+  p-pwewoww: o-option[pwewoww], 🥺
+  v-videoanawyticsscwibepassthwough: o-option[stwing])

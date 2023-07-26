@@ -1,69 +1,69 @@
-#pragma once
-#ifdef __cplusplus
+#pwagma once
+#ifdef __cpwuspwus
 
-#include <twml/defines.h>
-#include <twml/TensorRecord.h>
+#incwude <twmw/defines.h>
+#incwude <twmw/tensowwecowd.h>
 
-#include <cstdint>
-#include <cmath>
-#include <vector>
+#incwude <cstdint>
+#incwude <cmath>
+#incwude <vectow>
 
-namespace twml {
+nyamespace twmw {
 
-class HashedDataRecordReader;
+c-cwass hasheddatawecowdweadew;
 
-class TWMLAPI HashedDataRecord : public TensorRecord {
- public:
-  typedef HashedDataRecordReader Reader;
+c-cwass twmwapi h-hasheddatawecowd : p-pubwic tensowwecowd {
+ p-pubwic:
+  t-typedef hasheddatawecowdweadew w-weadew;
 
-  HashedDataRecord(int num_labels=0, int num_weights=0):
-      m_keys(),
-      m_transformed_keys(),
-      m_values(),
-      m_codes(),
-      m_types(),
-      m_labels(num_labels, std::nanf("")),
+  hasheddatawecowd(int n-nyum_wabews=0, mya int nyum_weights=0):
+      m_keys(), 😳
+      m_twansfowmed_keys(), -.-
+      m_vawues(), 🥺
+      m-m_codes(), o.O
+      m_types(), /(^•ω•^)
+      m_wabews(num_wabews, nyaa~~ s-std::nanf("")), nyaa~~
       m_weights(num_weights) {}
 
-  void decode(HashedDataRecordReader &reader);
+  v-void decode(hasheddatawecowdweadew &weadew);
 
-  const std::vector<int64_t> &keys() const { return m_keys; }
-  const std::vector<int64_t> &transformed_keys() const { return m_transformed_keys; }
-  const std::vector<double> &values() const { return m_values; }
-  const std::vector<int64_t> &codes() const { return m_codes; }
-  const std::vector<uint8_t> &types() const { return m_types; }
+  const std::vectow<int64_t> &keys() const { wetuwn m_keys; }
+  c-const std::vectow<int64_t> &twansfowmed_keys() const { wetuwn m-m_twansfowmed_keys; }
+  c-const std::vectow<doubwe> &vawues() const { wetuwn m_vawues; }
+  const s-std::vectow<int64_t> &codes() const { wetuwn m_codes; }
+  const std::vectow<uint8_t> &types() const { wetuwn m_types; }
 
-  const std::vector<float> &labels() const { return m_labels; }
-  const std::vector<float> &weights() const { return m_weights; }
+  c-const std::vectow<fwoat> &wabews() const { w-wetuwn m_wabews; }
+  c-const s-std::vectow<fwoat> &weights() c-const { wetuwn m_weights; }
 
-  void clear();
+  void cweaw();
 
-  uint64_t totalSize() const { return m_keys.size(); }
+  uint64_t totawsize() c-const { wetuwn m_keys.size(); }
 
-  void extendSize(int delta_size) {
-    int count = m_keys.size() + delta_size;
-    m_keys.reserve(count);
-    m_transformed_keys.reserve(count);
-    m_values.reserve(count);
-    m_codes.reserve(count);
-    m_types.reserve(count);
+  void extendsize(int d-dewta_size) {
+    int count = m_keys.size() + dewta_size;
+    m_keys.wesewve(count);
+    m_twansfowmed_keys.wesewve(count);
+    m-m_vawues.wesewve(count);
+    m_codes.wesewve(count);
+    m-m_types.wesewve(count);
   }
 
- private:
-  std::vector<int64_t> m_keys;
-  std::vector<int64_t> m_transformed_keys;
-  std::vector<double> m_values;
-  std::vector<int64_t> m_codes;
-  std::vector<uint8_t> m_types;
+ p-pwivate:
+  std::vectow<int64_t> m-m_keys;
+  std::vectow<int64_t> m_twansfowmed_keys;
+  std::vectow<doubwe> m_vawues;
+  s-std::vectow<int64_t> m-m_codes;
+  std::vectow<uint8_t> m-m_types;
 
-  std::vector<float> m_labels;
-  std::vector<float> m_weights;
+  s-std::vectow<fwoat> m_wabews;
+  s-std::vectow<fwoat> m_weights;
 
-  void addKey(int64_t key, int64_t transformed_key, int64_t code, uint8_t type, double value=1);
-  void addLabel(int64_t id, double value = 1);
-  void addWeight(int64_t id, double value);
+  v-void addkey(int64_t key, :3 int64_t twansfowmed_key, 😳😳😳 i-int64_t code, (˘ω˘) uint8_t t-type, ^^ doubwe vawue=1);
+  void addwabew(int64_t i-id, :3 doubwe vawue = 1);
+  v-void addweight(int64_t id, -.- doubwe vawue);
 
-  friend class HashedDataRecordReader;
+  fwiend cwass hasheddatawecowdweadew;
 };
 
 }

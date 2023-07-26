@@ -1,186 +1,186 @@
-package com.twitter.frigate.pushservice.util
+package com.twittew.fwigate.pushsewvice.utiw
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.TimeUtil
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushConstants
-import com.twitter.frigate.pushservice.params.{PushFeatureSwitchParams => FSParams}
-import com.twitter.util.Future
-import com.twitter.util.Time
-import java.util.Calendar
-import java.util.TimeZone
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.utiw.timeutiw
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+i-impowt c-com.twittew.fwigate.pushsewvice.pawams.pushconstants
+i-impowt com.twittew.fwigate.pushsewvice.pawams.{pushfeatuweswitchpawams => fspawams}
+impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.time
+i-impowt java.utiw.cawendaw
+impowt java.utiw.timezone
 
-case class MinDurationModifierCalculator() {
+case c-cwass minduwationmodifiewcawcuwatow() {
 
-  private def mapCountryCodeToTimeZone(
-    countryCode: String,
-    stats: StatsReceiver
-  ): Option[Calendar] = {
-    PushConstants.countryCodeToTimeZoneMap
-      .get(countryCode.toUpperCase).map(timezone =>
-        Calendar.getInstance(TimeZone.getTimeZone(timezone)))
+  pwivate d-def mapcountwycodetotimezone(
+    countwycode: stwing,
+    stats: statsweceivew
+  ): o-option[cawendaw] = {
+    pushconstants.countwycodetotimezonemap
+      .get(countwycode.touppewcase).map(timezone =>
+        c-cawendaw.getinstance(timezone.gettimezone(timezone)))
   }
 
-  private def transformToHour(
-    dayOfHour: Int
-  ): Int = {
-    if (dayOfHour < 0) dayOfHour + 24
-    else dayOfHour
+  p-pwivate def twansfowmtohouw(
+    dayofhouw: int
+  ): int = {
+    if (dayofhouw < 0) dayofhouw + 24
+    e-ewse dayofhouw
   }
 
-  private def getMinDurationByHourOfDay(
-    hourOfDay: Int,
-    startTimeList: Seq[Int],
-    endTimeList: Seq[Int],
-    minDurationTimeModifierConst: Seq[Int],
-    stats: StatsReceiver
-  ): Option[Int] = {
-    val scopedStats = stats.scope("getMinDurationByHourOfDay")
-    scopedStats.counter("request").incr()
-    val durationOpt = (startTimeList, endTimeList, minDurationTimeModifierConst).zipped.toList
-      .filter {
-        case (startTime, endTime, _) =>
-          if (startTime <= endTime) hourOfDay >= startTime && hourOfDay < endTime
-          else (hourOfDay >= startTime) || hourOfDay < endTime
-        case _ => false
+  pwivate def getminduwationbyhouwofday(
+    houwofday: int, -.-
+    stawttimewist: s-seq[int], :3
+    endtimewist: s-seq[int], ʘwʘ
+    m-minduwationtimemodifiewconst: s-seq[int], 🥺
+    s-stats: statsweceivew
+  ): option[int] = {
+    vaw scopedstats = s-stats.scope("getminduwationbyhouwofday")
+    scopedstats.countew("wequest").incw()
+    vaw duwationopt = (stawttimewist, >_< e-endtimewist, ʘwʘ minduwationtimemodifiewconst).zipped.towist
+      .fiwtew {
+        case (stawttime, (˘ω˘) endtime, (✿oωo) _) =>
+          if (stawttime <= endtime) houwofday >= s-stawttime && houwofday < e-endtime
+          e-ewse (houwofday >= s-stawttime) || houwofday < endtime
+        case _ => fawse
       }.map {
-        case (_, _, modifier) => modifier
-      }.headOption
-    durationOpt match {
-      case Some(duration) => scopedStats.counter(s"$duration.minutes").incr()
-      case _ => scopedStats.counter("none").incr()
+        c-case (_, (///ˬ///✿) _, m-modifiew) => modifiew
+      }.headoption
+    d-duwationopt match {
+      c-case some(duwation) => s-scopedstats.countew(s"$duwation.minutes").incw()
+      case _ => s-scopedstats.countew("none").incw()
     }
-    durationOpt
+    duwationopt
   }
 
-  def getMinDurationModifier(
-    target: Target,
-    calendar: Calendar,
-    stats: StatsReceiver
-  ): Option[Int] = {
-    val startTimeList = target.params(FSParams.MinDurationModifierStartHourList)
-    val endTimeList = target.params(FSParams.MinDurationModifierEndHourList)
-    val minDurationTimeModifierConst = target.params(FSParams.MinDurationTimeModifierConst)
-    if (startTimeList.length != endTimeList.length || minDurationTimeModifierConst.length != startTimeList.length) {
-      None
-    } else {
-      val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
-      getMinDurationByHourOfDay(
-        hourOfDay,
-        startTimeList,
-        endTimeList,
-        minDurationTimeModifierConst,
+  def getminduwationmodifiew(
+    t-tawget: tawget, rawr x3
+    cawendaw: c-cawendaw, -.-
+    stats: statsweceivew
+  ): o-option[int] = {
+    vaw s-stawttimewist = tawget.pawams(fspawams.minduwationmodifiewstawthouwwist)
+    vaw endtimewist = tawget.pawams(fspawams.minduwationmodifiewendhouwwist)
+    vaw minduwationtimemodifiewconst = tawget.pawams(fspawams.minduwationtimemodifiewconst)
+    i-if (stawttimewist.wength != e-endtimewist.wength || minduwationtimemodifiewconst.wength != s-stawttimewist.wength) {
+      n-nyone
+    } ewse {
+      v-vaw houwofday = cawendaw.get(cawendaw.houw_of_day)
+      getminduwationbyhouwofday(
+        houwofday, ^^
+        s-stawttimewist, (⑅˘꒳˘)
+        endtimewist,
+        minduwationtimemodifiewconst, nyaa~~
         stats)
     }
   }
 
-  def getMinDurationModifier(
-    target: Target,
-    countryCodeOpt: Option[String],
-    stats: StatsReceiver
-  ): Option[Int] = {
-    val scopedStats = stats
-      .scope("getMinDurationModifier")
-    scopedStats.counter("total_requests").incr()
+  def getminduwationmodifiew(
+    t-tawget: tawget, /(^•ω•^)
+    c-countwycodeopt: o-option[stwing], (U ﹏ U)
+    s-stats: statsweceivew
+  ): option[int] = {
+    v-vaw scopedstats = s-stats
+      .scope("getminduwationmodifiew")
+    s-scopedstats.countew("totaw_wequests").incw()
 
-    countryCodeOpt match {
-      case Some(countryCode) =>
-        scopedStats
-          .counter("country_code_exists").incr()
-        val calendarOpt = mapCountryCodeToTimeZone(countryCode, scopedStats)
-        calendarOpt.flatMap(calendar => getMinDurationModifier(target, calendar, scopedStats))
-      case _ => None
+    c-countwycodeopt match {
+      case some(countwycode) =>
+        s-scopedstats
+          .countew("countwy_code_exists").incw()
+        v-vaw c-cawendawopt = mapcountwycodetotimezone(countwycode, 😳😳😳 s-scopedstats)
+        c-cawendawopt.fwatmap(cawendaw => getminduwationmodifiew(tawget, >w< cawendaw, XD scopedstats))
+      c-case _ => nyone
     }
   }
 
-  def getMinDurationModifier(target: Target, stats: StatsReceiver): Future[Option[Int]] = {
-    val scopedStats = stats
-      .scope("getMinDurationModifier")
-    scopedStats.counter("total_requests").incr()
+  def getminduwationmodifiew(tawget: tawget, o.O stats: statsweceivew): futuwe[option[int]] = {
+    v-vaw scopedstats = stats
+      .scope("getminduwationmodifiew")
+    scopedstats.countew("totaw_wequests").incw()
 
-    val startTimeList = target.params(FSParams.MinDurationModifierStartHourList)
-    val endTimeList = target.params(FSParams.MinDurationModifierEndHourList)
-    val minDurationTimeModifierConst = target.params(FSParams.MinDurationTimeModifierConst)
-    if (startTimeList.length != endTimeList.length || minDurationTimeModifierConst.length != startTimeList.length) {
-      Future.value(None)
-    } else {
-      target.localTimeInHHMM.map {
-        case (hourOfDay, _) =>
-          getMinDurationByHourOfDay(
-            hourOfDay,
-            startTimeList,
-            endTimeList,
-            minDurationTimeModifierConst,
-            scopedStats)
-        case _ => None
+    vaw stawttimewist = t-tawget.pawams(fspawams.minduwationmodifiewstawthouwwist)
+    v-vaw endtimewist = t-tawget.pawams(fspawams.minduwationmodifiewendhouwwist)
+    vaw minduwationtimemodifiewconst = t-tawget.pawams(fspawams.minduwationtimemodifiewconst)
+    if (stawttimewist.wength != e-endtimewist.wength || m-minduwationtimemodifiewconst.wength != stawttimewist.wength) {
+      futuwe.vawue(none)
+    } ewse {
+      tawget.wocawtimeinhhmm.map {
+        case (houwofday, mya _) =>
+          getminduwationbyhouwofday(
+            h-houwofday, 🥺
+            stawttimewist, ^^;;
+            e-endtimewist, :3
+            minduwationtimemodifiewconst, (U ﹏ U)
+            s-scopedstats)
+        c-case _ => nyone
       }
     }
   }
 
-  def getMinDurationModifierByUserOpenedHistory(
-    target: Target,
-    openedPushByHourAggregatedOpt: Option[Map[Int, Int]],
-    stats: StatsReceiver
-  ): Option[Int] = {
-    val scopedStats = stats
-      .scope("getMinDurationModifierByUserOpenedHistory")
-    scopedStats.counter("total_requests").incr()
-    openedPushByHourAggregatedOpt match {
-      case Some(openedPushByHourAggregated) =>
-        if (openedPushByHourAggregated.isEmpty) {
-          scopedStats.counter("openedPushByHourAggregated_empty").incr()
-          None
-        } else {
-          val currentUTCHour = TimeUtil.hourOfDay(Time.now)
-          val utcHourWithMaxOpened = if (target.params(FSParams.EnableRandomHourForQuickSend)) {
-            (target.targetId % 24).toInt
-          } else {
-            openedPushByHourAggregated.maxBy(_._2)._1
+  def getminduwationmodifiewbyusewopenedhistowy(
+    tawget: t-tawget, OwO
+    o-openedpushbyhouwaggwegatedopt: option[map[int, 😳😳😳 i-int]], (ˆ ﻌ ˆ)♡
+    stats: s-statsweceivew
+  ): option[int] = {
+    vaw scopedstats = stats
+      .scope("getminduwationmodifiewbyusewopenedhistowy")
+    scopedstats.countew("totaw_wequests").incw()
+    openedpushbyhouwaggwegatedopt m-match {
+      c-case s-some(openedpushbyhouwaggwegated) =>
+        if (openedpushbyhouwaggwegated.isempty) {
+          s-scopedstats.countew("openedpushbyhouwaggwegated_empty").incw()
+          n-nyone
+        } ewse {
+          v-vaw cuwwentutchouw = timeutiw.houwofday(time.now)
+          vaw utchouwwithmaxopened = if (tawget.pawams(fspawams.enabwewandomhouwfowquicksend)) {
+            (tawget.tawgetid % 24).toint
+          } ewse {
+            o-openedpushbyhouwaggwegated.maxby(_._2)._1
           }
-          val numOfMaxOpened = openedPushByHourAggregated.maxBy(_._2)._2
-          if (numOfMaxOpened >= target.params(FSParams.SendTimeByUserHistoryMaxOpenedThreshold)) {
-            scopedStats.counter("pass_experiment_bucket_threshold").incr()
-            if (numOfMaxOpened >= target
-                .params(FSParams.SendTimeByUserHistoryMaxOpenedThreshold)) { // only update if number of opened pushes meet threshold
-              scopedStats.counter("pass_max_threshold").incr()
-              val quickSendBeforeHours =
-                target.params(FSParams.SendTimeByUserHistoryQuickSendBeforeHours)
-              val quickSendAfterHours =
-                target.params(FSParams.SendTimeByUserHistoryQuickSendAfterHours)
+          v-vaw nyumofmaxopened = openedpushbyhouwaggwegated.maxby(_._2)._2
+          if (numofmaxopened >= t-tawget.pawams(fspawams.sendtimebyusewhistowymaxopenedthweshowd)) {
+            s-scopedstats.countew("pass_expewiment_bucket_thweshowd").incw()
+            if (numofmaxopened >= tawget
+                .pawams(fspawams.sendtimebyusewhistowymaxopenedthweshowd)) { // onwy u-update if nyumbew of opened pushes meet thweshowd
+              scopedstats.countew("pass_max_thweshowd").incw()
+              vaw quicksendbefowehouws =
+                t-tawget.pawams(fspawams.sendtimebyusewhistowyquicksendbefowehouws)
+              vaw quicksendaftewhouws =
+                t-tawget.pawams(fspawams.sendtimebyusewhistowyquicksendaftewhouws)
 
-              val hoursToLessSend = target.params(FSParams.SendTimeByUserHistoryNoSendsHours)
+              v-vaw houwstowesssend = tawget.pawams(fspawams.sendtimebyusewhistowynosendshouws)
 
-              val quickSendTimeMinDurationInMinute =
-                target.params(FSParams.SendTimeByUserHistoryQuickSendMinDurationInMinute)
-              val noSendTimeMinDuration =
-                target.params(FSParams.SendTimeByUserHistoryNoSendMinDuration)
+              vaw quicksendtimeminduwationinminute =
+                tawget.pawams(fspawams.sendtimebyusewhistowyquicksendminduwationinminute)
+              v-vaw nyosendtimeminduwation =
+                t-tawget.pawams(fspawams.sendtimebyusewhistowynosendminduwation)
 
-              val startTimeForNoSend = transformToHour(
-                utcHourWithMaxOpened - quickSendBeforeHours - hoursToLessSend)
-              val startTimeForQuickSend = transformToHour(
-                utcHourWithMaxOpened - quickSendBeforeHours)
-              val endTimeForNoSend =
-                transformToHour(utcHourWithMaxOpened - quickSendBeforeHours)
-              val endTimeForQuickSend =
-                transformToHour(utcHourWithMaxOpened + quickSendAfterHours) + 1
+              vaw stawttimefownosend = twansfowmtohouw(
+                utchouwwithmaxopened - q-quicksendbefowehouws - houwstowesssend)
+              v-vaw stawttimefowquicksend = twansfowmtohouw(
+                utchouwwithmaxopened - quicksendbefowehouws)
+              v-vaw endtimefownosend =
+                t-twansfowmtohouw(utchouwwithmaxopened - q-quicksendbefowehouws)
+              vaw endtimefowquicksend =
+                t-twansfowmtohouw(utchouwwithmaxopened + quicksendaftewhouws) + 1
 
-              val startTimeList = Seq(startTimeForNoSend, startTimeForQuickSend)
-              val endTimeList = Seq(endTimeForNoSend, endTimeForQuickSend)
-              val minDurationTimeModifierConst =
-                Seq(noSendTimeMinDuration, quickSendTimeMinDurationInMinute)
+              v-vaw stawttimewist = s-seq(stawttimefownosend, XD s-stawttimefowquicksend)
+              vaw endtimewist = s-seq(endtimefownosend, (ˆ ﻌ ˆ)♡ e-endtimefowquicksend)
+              vaw minduwationtimemodifiewconst =
+                seq(nosendtimeminduwation, ( ͡o ω ͡o ) q-quicksendtimeminduwationinminute)
 
-              getMinDurationByHourOfDay(
-                currentUTCHour,
-                startTimeList,
-                endTimeList,
-                minDurationTimeModifierConst,
-                scopedStats)
+              g-getminduwationbyhouwofday(
+                cuwwentutchouw, rawr x3
+                stawttimewist, nyaa~~
+                e-endtimewist, >_<
+                minduwationtimemodifiewconst, ^^;;
+                scopedstats)
 
-            } else None
-          } else None
+            } e-ewse nyone
+          } ewse n-nyone
         }
-      case _ =>
-        None
+      c-case _ =>
+        nyone
     }
   }
 

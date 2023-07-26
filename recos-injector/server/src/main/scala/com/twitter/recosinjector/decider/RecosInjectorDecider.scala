@@ -1,33 +1,33 @@
-package com.twitter.recosinjector.decider
+package com.twittew.wecosinjectow.decidew
 
-import com.twitter.decider.{Decider, DeciderFactory, RandomRecipient, Recipient}
+impowt c-com.twittew.decidew.{decidew, OwO decidewfactowy, (U ﹏ U) wandomwecipient, >_< w-wecipient}
 
-case class RecosInjectorDecider(isProd: Boolean, dataCenter: String) {
-  lazy val decider: Decider = DeciderFactory(
-    Some("config/decider.yml"),
-    Some(getOverlayPath(isProd, dataCenter))
+case c-cwass wecosinjectowdecidew(ispwod: b-boowean, rawr x3 datacentew: s-stwing) {
+  w-wazy vaw decidew: d-decidew = d-decidewfactowy(
+    some("config/decidew.ymw"), mya
+    some(getovewwaypath(ispwod, nyaa~~ datacentew))
   )()
 
-  private def getOverlayPath(isProd: Boolean, dataCenter: String): String = {
-    if (isProd) {
-      s"/usr/local/config/overlays/recos-injector/recos-injector/prod/$dataCenter/decider_overlay.yml"
-    } else {
-      s"/usr/local/config/overlays/recos-injector/recos-injector/staging/$dataCenter/decider_overlay.yml"
+  pwivate def g-getovewwaypath(ispwod: boowean, (⑅˘꒳˘) datacentew: stwing): s-stwing = {
+    if (ispwod) {
+      s-s"/usw/wocaw/config/ovewways/wecos-injectow/wecos-injectow/pwod/$datacentew/decidew_ovewway.ymw"
+    } ewse {
+      s"/usw/wocaw/config/ovewways/wecos-injectow/wecos-injectow/staging/$datacentew/decidew_ovewway.ymw"
     }
   }
 
-  def getDecider: Decider = decider
+  def getdecidew: decidew = decidew
 
-  def isAvailable(feature: String, recipient: Option[Recipient]): Boolean = {
-    decider.isAvailable(feature, recipient)
+  d-def isavaiwabwe(featuwe: stwing, rawr x3 w-wecipient: o-option[wecipient]): boowean = {
+    decidew.isavaiwabwe(featuwe, (✿oωo) wecipient)
   }
 
-  def isAvailable(feature: String): Boolean = isAvailable(feature, Some(RandomRecipient))
+  def isavaiwabwe(featuwe: s-stwing): boowean = isavaiwabwe(featuwe, (ˆ ﻌ ˆ)♡ some(wandomwecipient))
 }
 
-object RecosInjectorDeciderConstants {
-  val TweetEventTransformerUserTweetEntityEdgesDecider =
-    "tweet_event_transformer_user_tweet_entity_edges"
-  val EnableEmitTweetEdgeFromReply = "enable_emit_tweet_edge_from_reply"
-  val EnableUnfavoriteEdge = "enable_unfavorite_edge"
+object wecosinjectowdecidewconstants {
+  v-vaw tweeteventtwansfowmewusewtweetentityedgesdecidew =
+    "tweet_event_twansfowmew_usew_tweet_entity_edges"
+  vaw enabweemittweetedgefwomwepwy = "enabwe_emit_tweet_edge_fwom_wepwy"
+  v-vaw enabweunfavowiteedge = "enabwe_unfavowite_edge"
 }

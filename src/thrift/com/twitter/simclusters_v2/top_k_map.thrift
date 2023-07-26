@@ -1,14 +1,14 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.top_k_map
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namespace java com.twittew.simcwustews_v2.thwiftjava
+nyamespace py g-gen.twittew.simcwustews_v2.top_k_map
+#@namespace s-scawa com.twittew.simcwustews_v2.thwiftscawa
+#@namespace s-stwato c-com.twittew.simcwustews_v2
 
-include "com/twitter/algebird_internal/algebird.thrift"
+incwude "com/twittew/awgebiwd_intewnaw/awgebiwd.thwift"
 
-struct TopKClusters {
-	1: required map<i32, algebird.DecayedValue> topK(personalDataTypeKey = 'InferredInterests')
-}(hasPersonalData = 'true')
+s-stwuct topkcwustews {
+	1: w-wequiwed map<i32, a-awgebiwd.decayedvawue> t-topk(pewsonawdatatypekey = 'infewwedintewests')
+}(haspewsonawdata = 'twue')
 
-struct TopKTweets {
-	1: required map<i64, algebird.DecayedValue> topK(personalDataTypeKey='TweetId')
-}(hasPersonalData = 'true') 
+stwuct topktweets {
+	1: wequiwed map<i64, rawr awgebiwd.decayedvawue> topk(pewsonawdatatypekey='tweetid')
+}(haspewsonawdata = 'twue') 

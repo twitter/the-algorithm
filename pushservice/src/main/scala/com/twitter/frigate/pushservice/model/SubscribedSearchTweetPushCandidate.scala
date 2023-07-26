@@ -1,56 +1,56 @@
-package com.twitter.frigate.pushservice.model
+package com.twittew.fwigate.pushsewvice.modew
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.SubscribedSearchTweetCandidate
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.model.ibis.SubscribedSearchTweetIbis2Hydrator
-import com.twitter.frigate.pushservice.model.ntab.SubscribedSearchTweetNtabRequestHydrator
-import com.twitter.frigate.pushservice.take.predicates.BasicTweetPredicatesForRFPH
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.stitch.tweetypie.TweetyPie
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.subscwibedseawchtweetcandidate
+i-impowt com.twittew.fwigate.common.base.tweetauthowdetaiws
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+i-impowt com.twittew.fwigate.pushsewvice.config.config
+impowt com.twittew.fwigate.pushsewvice.mw.pushmwmodewscowew
+impowt com.twittew.fwigate.pushsewvice.modew.candidate.copyids
+impowt com.twittew.fwigate.pushsewvice.modew.ibis.subscwibedseawchtweetibis2hydwatow
+i-impowt com.twittew.fwigate.pushsewvice.modew.ntab.subscwibedseawchtweetntabwequesthydwatow
+impowt com.twittew.fwigate.pushsewvice.take.pwedicates.basictweetpwedicatesfowwfph
+i-impowt com.twittew.gizmoduck.thwiftscawa.usew
+i-impowt com.twittew.stitch.tweetypie.tweetypie
+impowt com.twittew.utiw.futuwe
 
-class SubscribedSearchTweetPushCandidate(
-  candidate: RawCandidate with SubscribedSearchTweetCandidate,
-  author: Option[User],
-  copyIds: CopyIds
+cwass subscwibedseawchtweetpushcandidate(
+  candidate: wawcandidate w-with subscwibedseawchtweetcandidate, mya
+  authow: option[usew], ^^
+  c-copyids: c-copyids
 )(
-  implicit stats: StatsReceiver,
-  pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
-    with SubscribedSearchTweetCandidate
-    with TweetAuthorDetails
-    with SubscribedSearchTweetIbis2Hydrator
-    with SubscribedSearchTweetNtabRequestHydrator {
-  override def tweetAuthor: Future[Option[User]] = Future.value(author)
+  impwicit stats: statsweceivew, 😳😳😳
+  pushmodewscowew: pushmwmodewscowew)
+    extends pushcandidate
+    with subscwibedseawchtweetcandidate
+    w-with tweetauthowdetaiws
+    with subscwibedseawchtweetibis2hydwatow
+    with subscwibedseawchtweetntabwequesthydwatow {
+  ovewwide def tweetauthow: futuwe[option[usew]] = f-futuwe.vawue(authow)
 
-  override def weightedOpenOrNtabClickModelScorer: PushMLModelScorer = pushModelScorer
+  ovewwide d-def weightedopenowntabcwickmodewscowew: p-pushmwmodewscowew = p-pushmodewscowew
 
-  override def tweetId: Long = candidate.tweetId
+  o-ovewwide def tweetid: wong = candidate.tweetid
 
-  override def pushCopyId: Option[Int] = copyIds.pushCopyId
+  o-ovewwide def pushcopyid: option[int] = copyids.pushcopyid
 
-  override def ntabCopyId: Option[Int] = copyIds.ntabCopyId
+  o-ovewwide def nytabcopyid: option[int] = copyids.ntabcopyid
 
-  override def copyAggregationId: Option[String] = copyIds.aggregationId
+  ovewwide def copyaggwegationid: option[stwing] = copyids.aggwegationid
 
-  override def target: PushTypes.Target = candidate.target
+  o-ovewwide def tawget: p-pushtypes.tawget = c-candidate.tawget
 
-  override def searchTerm: String = candidate.searchTerm
+  o-ovewwide def seawchtewm: stwing = candidate.seawchtewm
 
-  override def timeBoundedLandingUrl: Option[String] = None
+  ovewwide def timeboundedwandinguww: o-option[stwing] = n-nyone
 
-  override def statsReceiver: StatsReceiver = stats
+  ovewwide def statsweceivew: s-statsweceivew = s-stats
 
-  override def tweetyPieResult: Option[TweetyPie.TweetyPieResult] = candidate.tweetyPieResult
+  ovewwide def t-tweetypiewesuwt: option[tweetypie.tweetypiewesuwt] = c-candidate.tweetypiewesuwt
 }
 
-case class SubscribedSearchTweetCandidatePredicates(override val config: Config)
-    extends BasicTweetPredicatesForRFPH[SubscribedSearchTweetPushCandidate] {
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+case cwass subscwibedseawchtweetcandidatepwedicates(ovewwide vaw config: config)
+    e-extends basictweetpwedicatesfowwfph[subscwibedseawchtweetpushcandidate] {
+  i-impwicit vaw statsweceivew: s-statsweceivew = c-config.statsweceivew.scope(getcwass.getsimpwename)
 }

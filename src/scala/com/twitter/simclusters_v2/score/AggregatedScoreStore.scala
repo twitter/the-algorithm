@@ -1,24 +1,24 @@
-package com.twitter.simclusters_v2.score
+package com.twittew.simcwustews_v2.scowe
 
-import com.twitter.simclusters_v2.thriftscala.{ScoreId => ThriftScoreId, Score => ThriftScore}
-import com.twitter.storehaus.ReadableStore
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.{scoweid => t-thwiftscoweid, nyaa~~ s-scowe => thwiftscowe}
+i-impowt com.twittew.stowehaus.weadabwestowe
 
 /**
- * A wrapper class, used to aggregate the scores calculated by other score stores. It relies on the
- * results of other ScoreStores registered in the ScoreFacadeStore.
+ * a-a wwappew c-cwass, (⑅˘꒳˘) used t-to aggwegate the s-scowes cawcuwated by othew scowe stowes. rawr x3 it wewies on the
+ * wesuwts of othew s-scowestowes wegistewed in the scowefacadestowe. (✿oωo)
  */
-trait AggregatedScoreStore extends ReadableStore[ThriftScoreId, ThriftScore] {
+twait aggwegatedscowestowe extends w-weadabwestowe[thwiftscoweid, (ˆ ﻌ ˆ)♡ thwiftscowe] {
 
-  // The underlyingScoreStore relies on [[ScoreFacadeStore]] to finish the dependency injection.
-  protected var scoreFacadeStore: ReadableStore[ThriftScoreId, ThriftScore] = ReadableStore.empty
+  // t-the undewwyingscowestowe wewies on [[scowefacadestowe]] to finish the dependency injection. (˘ω˘)
+  p-pwotected vaw scowefacadestowe: w-weadabwestowe[thwiftscoweid, (⑅˘꒳˘) t-thwiftscowe] = weadabwestowe.empty
 
   /**
-   * When registering this store in a ScoreFacadeStore, the facade store calls this function to
-   * provide references to other score stores.
+   * when wegistewing this stowe in a scowefacadestowe, (///ˬ///✿) t-the facade stowe cawws this function to
+   * pwovide wefewences to othew scowe s-stowes. 😳😳😳
    */
-  private[score] def set(facadeStore: ReadableStore[ThriftScoreId, ThriftScore]): Unit = {
-    this.synchronized {
-      scoreFacadeStore = facadeStore
+  pwivate[scowe] d-def set(facadestowe: w-weadabwestowe[thwiftscoweid, 🥺 t-thwiftscowe]): u-unit = {
+    this.synchwonized {
+      scowefacadestowe = facadestowe
     }
   }
 }

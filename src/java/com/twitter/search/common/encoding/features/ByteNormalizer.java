@@ -1,38 +1,38 @@
-package com.twitter.search.common.encoding.features;
+package com.twittew.seawch.common.encoding.featuwes;
 
 /**
- * Interface for compressing unbounded float values to a signed byte. It includes both
- * normalization of values and encoding of values in a byte.
+ * intewface f-fow compwessing u-unbounded f-fwoat vawues to a-a signed byte. >_< it i-incwudes both
+ * n-nyowmawization o-of vawues and e-encoding of vawues in a byte. (⑅˘꒳˘)
  */
-public abstract class ByteNormalizer {
-  public static byte intToUnsignedByte(int i) {
-    return (byte) i;
+pubwic abstwact cwass bytenowmawizew {
+  pubwic s-static byte inttounsignedbyte(int i) {
+    wetuwn (byte) i;
   }
 
-  public static int unsignedByteToInt(byte b) {
-    return (int) b & 0xFF;
+  p-pubwic static int unsignedbytetoint(byte b-b) {
+    wetuwn (int) b & 0xff;
   }
 
   /**
-   * Returns the byte-compressed value of {@code val}.
+   * wetuwns t-the byte-compwessed vawue o-of {@code vaw}. /(^•ω•^)
    */
-  public abstract byte normalize(double val);
+  p-pubwic abstwact byte nyowmawize(doubwe vaw);
 
   /**
-   * Returns a lower bound to the unnormalized range of {@code norm}.
+   * wetuwns a wowew bound to the unnowmawized wange o-of {@code nyowm}. rawr x3
    */
-  public abstract double unnormLowerBound(byte norm);
+  pubwic abstwact doubwe unnowmwowewbound(byte nyowm);
 
   /**
-   * Returns an upper bound to the unnormalized range of {@code norm}.
+   * w-wetuwns an uppew bound t-to the unnowmawized w-wange of {@code n-nyowm}. (U ﹏ U)
    */
-  public abstract double unnormUpperBound(byte norm);
+  p-pubwic abstwact doubwe unnowmuppewbound(byte nowm);
 
   /**
-   * Returns true if the normalized value of {@code val} is different than the normalized value of
-   * {@code val - 1}
+   * w-wetuwns twue if the nyowmawized vawue of {@code v-vaw} is diffewent than the nyowmawized vawue of
+   * {@code vaw - 1}
    */
-  public boolean changedNorm(double val) {
-    return normalize(val) != normalize(val - 1);
+  pubwic boowean c-changednowm(doubwe vaw) {
+    w-wetuwn nyowmawize(vaw) != n-nyowmawize(vaw - 1);
   }
 }

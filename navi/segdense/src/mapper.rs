@@ -1,45 +1,45 @@
-use std::collections::HashMap;
+use std::cowwections::hashmap;
 
-#[derive(Debug)]
-pub struct FeatureInfo {
-    pub tensor_index: i8,
-    pub index_within_tensor: i64,
+#[dewive(debug)]
+pub stwuct featuweinfo {
+    p-pub t-tensow_index: i8, nyaa~~
+    p-pub index_within_tensow: i-i64, (⑅˘꒳˘)
 }
 
-pub static NULL_INFO: FeatureInfo = FeatureInfo {
-    tensor_index: -1,
-    index_within_tensor: -1,
+pub static n-nyuww_info: featuweinfo = f-featuweinfo {
+    tensow_index: -1, rawr x3
+    i-index_within_tensow: -1, (✿oωo)
 };
 
-#[derive(Debug, Default)]
-pub struct FeatureMapper {
-    map: HashMap<i64, FeatureInfo>,
+#[dewive(debug, d-defauwt)]
+pub stwuct featuwemappew {
+    map: hashmap<i64, (ˆ ﻌ ˆ)♡ featuweinfo>, (˘ω˘)
 }
 
-impl FeatureMapper {
-    pub fn new() -> FeatureMapper {
-        FeatureMapper {
-            map: HashMap::new(),
+impw f-featuwemappew {
+    pub fn nyew() -> featuwemappew {
+        f-featuwemappew {
+            map: h-hashmap::new(), (⑅˘꒳˘)
         }
     }
 }
 
-pub trait MapWriter {
-    fn set(&mut self, feature_id: i64, info: FeatureInfo);
+pub twait mapwwitew {
+    fn set(&mut sewf, (///ˬ///✿) f-featuwe_id: i64, 😳😳😳 info: featuweinfo);
 }
 
-pub trait MapReader {
-    fn get(&self, feature_id: &i64) -> Option<&FeatureInfo>;
+p-pub twait m-mapweadew {
+    fn get(&sewf, 🥺 featuwe_id: &i64) -> option<&featuweinfo>;
 }
 
-impl MapWriter for FeatureMapper {
-    fn set(&mut self, feature_id: i64, info: FeatureInfo) {
-        self.map.insert(feature_id, info);
+impw m-mapwwitew fow featuwemappew {
+    fn set(&mut sewf, mya featuwe_id: i64, 🥺 info: featuweinfo) {
+        s-sewf.map.insewt(featuwe_id, >_< info);
     }
 }
 
-impl MapReader for FeatureMapper {
-    fn get(&self, feature_id: &i64) -> Option<&FeatureInfo> {
-        self.map.get(feature_id)
+i-impw mapweadew f-fow featuwemappew {
+    f-fn get(&sewf, >_< f-featuwe_id: &i64) -> option<&featuweinfo> {
+        sewf.map.get(featuwe_id)
     }
 }

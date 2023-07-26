@@ -1,82 +1,82 @@
-// Input used in serving APIs.  Based on the tensorflow.Example family of
-// feature representations.
+// input used in sewving apis. 😳😳😳  based o-on the tensowfwow.exampwe famiwy o-of
+// featuwe w-wepwesentations. (˘ω˘)
 
-syntax = "proto3";
+s-syntax = "pwoto3";
 
-option cc_enable_arenas = true;
+o-option c-cc_enabwe_awenas = t-twue;
 
-import "tensorflow/core/example/example.proto";
+impowt "tensowfwow/cowe/exampwe/exampwe.pwoto";
 
-package tensorflow.serving;
+p-package tensowfwow.sewving;
 
-// Specifies one or more fully independent input Examples.
-// See examples at:
-//     https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/example/example.proto
-message ExampleList {
-  repeated tensorflow.Example examples = 1;
+// specifies one ow mowe fuwwy independent i-input exampwes. ^^
+// see exampwes at:
+//     https://github.com/tensowfwow/tensowfwow/bwob/mastew/tensowfwow/cowe/exampwe/exampwe.pwoto
+m-message exampwewist {
+  w-wepeated tensowfwow.exampwe exampwes = 1;
 }
 
-// Specifies one or more independent input Examples, with a common context
-// Example.
+// specifies one ow mowe independent i-input exampwes, :3 with a common c-context
+// exampwe.
 //
-// The common use case for context is to cleanly and optimally specify some
-// features that are common across multiple examples.
+// t-the common use case fow context is to cweanwy and optimawwy specify s-some
+// featuwes that awe common acwoss muwtipwe exampwes. -.-
 //
-// See example below with a search query as the context and multiple restaurants
-// to perform some inference on.
+// see exampwe bewow w-with a seawch quewy as the context a-and muwtipwe w-westauwants
+// t-to pewfowm some i-infewence on. 😳
 //
 // context: {
-//   features: {
-//     feature: {
-//       key  : "query"
-//       value: {
-//         bytes_list: {
-//           value: [ "pizza" ]
+//   featuwes: {
+//     f-featuwe: {
+//       key  : "quewy"
+//       vawue: {
+//         b-bytes_wist: {
+//           vawue: [ "pizza" ]
 //         }
 //       }
 //     }
 //   }
 // }
-// examples: {
-//   features: {
-//     feature: {
+// exampwes: {
+//   featuwes: {
+//     featuwe: {
 //       key  : "cuisine"
-//       value: {
-//         bytes_list: {
-//           value: [ "Pizzeria" ]
+//       vawue: {
+//         b-bytes_wist: {
+//           vawue: [ "pizzewia" ]
 //         }
 //       }
 //     }
 //   }
 // }
-// examples: {
-//   features: {
-//     feature: {
-//       key  : "cuisine"
-//       value: {
-//         bytes_list: {
-//           value: [ "Taqueria" ]
+// e-exampwes: {
+//   featuwes: {
+//     f-featuwe: {
+//       k-key  : "cuisine"
+//       vawue: {
+//         bytes_wist: {
+//           vawue: [ "taquewia" ]
 //         }
 //       }
 //     }
 //   }
 // }
 //
-// Implementations of ExampleListWithContext merge the context Example into each
-// of the Examples. Note that feature keys must not be duplicated between the
-// Examples and context Example, or the behavior is undefined.
+// impwementations o-of exampwewistwithcontext m-mewge the context exampwe into e-each
+// of the e-exampwes. mya nyote that featuwe keys m-must nyot be dupwicated between t-the
+// exampwes and context exampwe, (˘ω˘) ow the behaviow i-is undefined. >_<
 //
-// See also:
-//     tensorflow/core/example/example.proto
-//     https://developers.google.com/protocol-buffers/docs/proto3#maps
-message ExampleListWithContext {
-  repeated tensorflow.Example examples = 1;
-  tensorflow.Example context = 2;
+// see awso:
+//     t-tensowfwow/cowe/exampwe/exampwe.pwoto
+//     https://devewopews.googwe.com/pwotocow-buffews/docs/pwoto3#maps
+m-message e-exampwewistwithcontext {
+  wepeated tensowfwow.exampwe exampwes = 1;
+  tensowfwow.exampwe context = 2;
 }
 
-message Input {
-  oneof kind {
-    ExampleList example_list = 1 [lazy = true];
-    ExampleListWithContext example_list_with_context = 2 [lazy = true];
+message i-input {
+  oneof k-kind {
+    exampwewist exampwe_wist = 1 [wazy = t-twue];
+    exampwewistwithcontext e-exampwe_wist_with_context = 2 [wazy = t-twue];
   }
 }

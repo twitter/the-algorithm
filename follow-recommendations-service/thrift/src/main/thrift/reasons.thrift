@@ -1,61 +1,61 @@
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+namespace java com.twittew.fowwow_wecommendations.thwiftjava
+#@namespace scawa com.twittew.fowwow_wecommendations.thwiftscawa
+#@namespace s-stwato c-com.twittew.fowwow_wecommendations
 
-// Proof based on Follow relationship
-struct FollowProof {
-  1: required list<i64> userIds(personalDataType='UserId')
-  2: required i32 numIds(personalDataType='CountOfFollowersAndFollowees')
-}(hasPersonalData='true')
+// p-pwoof based o-on fowwow wewationship
+s-stwuct f-fowwowpwoof {
+  1: w-wequiwed wist<i64> u-usewids(pewsonawdatatype='usewid')
+  2: wequiwed i32 nyumids(pewsonawdatatype='countoffowwowewsandfowwowees')
+}(haspewsonawdata='twue')
 
-// Similar to userIds in the context (e.g. profileId)
-struct SimilarToProof {
-  1: required list<i64> userIds(personalDataType='UserId')
-}(hasPersonalData='true')
+// simiwaw to usewids in the context (e.g. ^^ pwofiweid)
+s-stwuct simiwawtopwoof {
+  1: wequiwed wist<i64> usewids(pewsonawdatatype='usewid')
+}(haspewsonawdata='twue')
 
-// Proof based on geo location
-struct PopularInGeoProof {
-  1: required string location(personalDataType='InferredLocation')
-}(hasPersonalData='true')
+// p-pwoof based on geo wocation
+s-stwuct popuwawingeopwoof {
+  1: wequiwed stwing wocation(pewsonawdatatype='infewwedwocation')
+}(haspewsonawdata='twue')
 
-// Proof based on ttt interest
-struct TttInterestProof {
-  1: required i64 interestId(personalDataType='ProvidedInterests')
-  2: required string interestDisplayName(personalDataType='ProvidedInterests')
-}(hasPersonalData='true')
+// pwoof based on ttt i-intewest
+stwuct tttintewestpwoof {
+  1: w-wequiwed i-i64 intewestid(pewsonawdatatype='pwovidedintewests')
+  2: wequiwed stwing intewestdispwayname(pewsonawdatatype='pwovidedintewests')
+}(haspewsonawdata='twue')
 
-// Proof based on topics
-struct TopicProof {
-  1: required i64 topicId(personalDataType='ProvidedInterests')
-}(hasPersonalData='true')
+// pwoof based on topics
+stwuct t-topicpwoof {
+  1: wequiwed i64 topicid(pewsonawdatatype='pwovidedintewests')
+}(haspewsonawdata='twue')
 
-// Proof based on custom interest / search queries
-struct CustomInterestProof {
-  1: required string query(personalDataType='SearchQuery')
-}(hasPersonalData='true')
+// pwoof based on custom i-intewest / seawch quewies
+stwuct c-customintewestpwoof {
+  1: wequiwed s-stwing quewy(pewsonawdatatype='seawchquewy')
+}(haspewsonawdata='twue')
 
-// Proof based on tweet authors
-struct TweetsAuthorProof {
-  1: required list<i64> tweetIds(personalDataType='TweetId')
-}(hasPersonalData='true')
+// p-pwoof based on t-tweet authows
+stwuct tweetsauthowpwoof {
+  1: wequiwed wist<i64> t-tweetids(pewsonawdatatype='tweetid')
+}(haspewsonawdata='twue')
 
-// Proof candidate is of device follow type
-struct DeviceFollowProof {
-  1: required bool isDeviceFollow(personalDataType='OtherDeviceInfo')
-}(hasPersonalData='true')
+// pwoof candidate is of device f-fowwow type
+stwuct devicefowwowpwoof {
+  1: wequiwed boow isdevicefowwow(pewsonawdatatype='othewdeviceinfo')
+}(haspewsonawdata='twue')
 
-// Account level proof that should be attached to each candidate
-struct AccountProof {
-  1: optional FollowProof followProof
-  2: optional SimilarToProof similarToProof
-  3: optional PopularInGeoProof popularInGeoProof
-  4: optional TttInterestProof tttInterestProof
-  5: optional TopicProof topicProof
-  6: optional CustomInterestProof customInterestProof
-  7: optional TweetsAuthorProof tweetsAuthorProof
-  8: optional DeviceFollowProof deviceFollowProof
-}(hasPersonalData='true')
+// account wevew pwoof that shouwd be a-attached to each candidate
+stwuct a-accountpwoof {
+  1: o-optionaw f-fowwowpwoof fowwowpwoof
+  2: optionaw simiwawtopwoof simiwawtopwoof
+  3: o-optionaw p-popuwawingeopwoof popuwawingeopwoof
+  4: o-optionaw t-tttintewestpwoof tttintewestpwoof
+  5: o-optionaw topicpwoof topicpwoof
+  6: optionaw c-customintewestpwoof customintewestpwoof
+  7: optionaw tweetsauthowpwoof t-tweetsauthowpwoof
+  8: optionaw d-devicefowwowpwoof devicefowwowpwoof
+}(haspewsonawdata='twue')
 
-struct Reason {
-  1: optional AccountProof accountProof 
-}(hasPersonalData='true')
+stwuct w-weason {
+  1: o-optionaw accountpwoof accountpwoof 
+}(haspewsonawdata='twue')

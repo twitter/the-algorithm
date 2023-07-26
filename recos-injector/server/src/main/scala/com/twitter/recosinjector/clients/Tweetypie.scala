@@ -1,30 +1,30 @@
-package com.twitter.recosinjector.clients
+package com.twittew.wecosinjectow.cwients
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.tweetypie.TweetyPie.{TweetyPieException, TweetyPieResult}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.stitch.tweetypie.tweetypie.{tweetypieexception, rawr x3 t-tweetypiewesuwt}
+i-impowt c-com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt com.twittew.utiw.futuwe
 
-class Tweetypie(
-  tweetyPieStore: ReadableStore[Long, TweetyPieResult]
+cwass tweetypie(
+  tweetypiestowe: weadabwestowe[wong, nyaa~~ tweetypiewesuwt]
 )(
-  implicit statsReceiver: StatsReceiver) {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val failureStats = stats.scope("getTweetFailure")
+  i-impwicit statsweceivew: statsweceivew) {
+  pwivate vaw stats = s-statsweceivew.scope(this.getcwass.getsimpwename)
+  pwivate vaw f-faiwuwestats = stats.scope("gettweetfaiwuwe")
 
-  def getTweet(tweetId: Long): Future[Option[Tweet]] = {
-    tweetyPieStore
-      .get(tweetId)
+  def gettweet(tweetid: wong): f-futuwe[option[tweet]] = {
+    tweetypiestowe
+      .get(tweetid)
       .map { _.map(_.tweet) }
-      .rescue {
-        case e: TweetyPieException =>
-          // Usually results from trying to query a protected or unsafe tweet
-          failureStats.scope("TweetyPieException").counter(e.result.tweetState.toString).incr()
-          Future.None
+      .wescue {
+        c-case e: tweetypieexception =>
+          // u-usuawwy wesuwts fwom twying to quewy a pwotected ow unsafe tweet
+          faiwuwestats.scope("tweetypieexception").countew(e.wesuwt.tweetstate.tostwing).incw()
+          f-futuwe.none
         case e =>
-          failureStats.counter(e.getClass.getSimpleName).incr()
-          Future.None
+          faiwuwestats.countew(e.getcwass.getsimpwename).incw()
+          futuwe.none
       }
   }
 }

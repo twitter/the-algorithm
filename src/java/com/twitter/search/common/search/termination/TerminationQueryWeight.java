@@ -1,53 +1,53 @@
-package com.twitter.search.common.search.termination;
+package com.twittew.seawch.common.seawch.tewmination;
 
-import java.io.IOException;
-import java.util.Set;
+impowt java.io.ioexception;
+i-impowt java.utiw.set;
 
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.Weight;
+i-impowt owg.apache.wucene.index.weafweadewcontext;
+i-impowt o-owg.apache.wucene.index.tewm;
+i-impowt o-owg.apache.wucene.seawch.expwanation;
+impowt owg.apache.wucene.seawch.scowew;
+impowt owg.apache.wucene.seawch.weight;
 
 /**
- * Weight implementation that adds termination support for an underlying query.
- * Meant to be used in conjunction with {@link TerminationQuery}.
+ * weight impwementation t-that adds tewmination suppowt fow an undewwying q-quewy. /(^•ω•^)
+ * meant to be used i-in conjunction with {@wink tewminationquewy}. ʘwʘ
  */
-public class TerminationQueryWeight extends Weight {
-  private final Weight inner;
-  private final QueryTimeout timeout;
+pubwic cwass tewminationquewyweight e-extends weight {
+  pwivate f-finaw weight i-innew;
+  pwivate finaw quewytimeout timeout;
 
-  TerminationQueryWeight(TerminationQuery query, Weight inner, QueryTimeout timeout) {
-    super(query);
-    this.inner = inner;
-    this.timeout = Preconditions.checkNotNull(timeout);
+  tewminationquewyweight(tewminationquewy quewy, σωσ w-weight innew, OwO quewytimeout timeout) {
+    supew(quewy);
+    this.innew = innew;
+    t-this.timeout = pweconditions.checknotnuww(timeout);
   }
 
-  @Override
-  public Explanation explain(LeafReaderContext context, int doc)
-      throws IOException {
-    return inner.explain(context, doc);
+  @ovewwide
+  p-pubwic e-expwanation expwain(weafweadewcontext c-context, 😳😳😳 i-int doc)
+      thwows ioexception {
+    wetuwn i-innew.expwain(context, 😳😳😳 doc);
   }
 
-  @Override
-  public Scorer scorer(LeafReaderContext context) throws IOException {
-    Scorer innerScorer = inner.scorer(context);
-    if (innerScorer != null) {
-      return new TerminationQueryScorer(this, innerScorer, timeout);
+  @ovewwide
+  pubwic scowew scowew(weafweadewcontext c-context) thwows ioexception {
+    scowew innewscowew = innew.scowew(context);
+    if (innewscowew != nyuww) {
+      w-wetuwn nyew tewminationquewyscowew(this, o.O i-innewscowew, ( ͡o ω ͡o ) t-timeout);
     }
 
-    return null;
+    w-wetuwn nyuww;
   }
 
-  @Override
-  public void extractTerms(Set<Term> terms) {
-    inner.extractTerms(terms);
+  @ovewwide
+  pubwic void extwacttewms(set<tewm> tewms) {
+    i-innew.extwacttewms(tewms);
   }
 
-  @Override
-  public boolean isCacheable(LeafReaderContext ctx) {
-    return inner.isCacheable(ctx);
+  @ovewwide
+  p-pubwic boowean iscacheabwe(weafweadewcontext c-ctx) {
+    wetuwn i-innew.iscacheabwe(ctx);
   }
 }

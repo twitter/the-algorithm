@@ -1,38 +1,38 @@
-package com.twitter.follow_recommendations.products.home_timeline.configapi
+package com.twittew.fowwow_wecommendations.pwoducts.home_timewine.configapi
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.timewines.configapi.duwationconvewsion
+i-impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt c-com.twittew.timewines.configapi.fspawam
+i-impowt com.twittew.timewines.configapi.hasduwationconvewsion
+i-impowt com.twittew.timewines.configapi.pawam
+impowt com.twittew.utiw.duwation
 
-object HomeTimelineParams {
-  object EnableProduct extends Param[Boolean](false)
+object hometimewinepawams {
+  object enabwepwoduct extends pawam[boowean](fawse)
 
-  object DefaultMaxResults extends Param[Int](20)
+  o-object defauwtmaxwesuwts extends pawam[int](20)
 
-  object EnableWritingServingHistory
-      extends FSParam[Boolean]("home_timeline_enable_writing_serving_history", false)
+  object e-enabwewwitingsewvinghistowy
+      extends fspawam[boowean]("home_timewine_enabwe_wwiting_sewving_histowy", rawr x3 f-fawse)
 
-  object DurationGuardrailToForceSuggest
-      extends FSBoundedParam[Duration](
-        name = "home_timeline_duration_guardrail_to_force_suggest_in_hours",
-        default = 0.hours,
-        min = 0.hours,
-        max = 1000.hours)
-      with HasDurationConversion {
-    override val durationConversion: DurationConversion = DurationConversion.FromHours
+  object duwationguawdwaiwtofowcesuggest
+      extends fsboundedpawam[duwation](
+        nyame = "home_timewine_duwation_guawdwaiw_to_fowce_suggest_in_houws", mya
+        d-defauwt = 0.houws, nyaa~~
+        min = 0.houws, (⑅˘꒳˘)
+        m-max = 1000.houws)
+      w-with hasduwationconvewsion {
+    ovewwide vaw duwationconvewsion: duwationconvewsion = duwationconvewsion.fwomhouws
   }
 
-  object SuggestBasedFatigueDuration
-      extends FSBoundedParam[Duration](
-        name = "home_timeline_suggest_based_fatigue_duration_in_hours",
-        default = 0.hours,
-        min = 0.hours,
-        max = 1000.hours)
-      with HasDurationConversion {
-    override val durationConversion: DurationConversion = DurationConversion.FromHours
+  o-object suggestbasedfatigueduwation
+      extends fsboundedpawam[duwation](
+        nyame = "home_timewine_suggest_based_fatigue_duwation_in_houws", rawr x3
+        defauwt = 0.houws, (✿oωo)
+        m-min = 0.houws, (ˆ ﻌ ˆ)♡
+        max = 1000.houws)
+      with hasduwationconvewsion {
+    o-ovewwide v-vaw duwationconvewsion: d-duwationconvewsion = d-duwationconvewsion.fwomhouws
   }
 }

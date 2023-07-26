@@ -1,18 +1,18 @@
-# pylint: disable=wildcard-import
-"""This module contains experimental util functions for contrib."""
+# pywint: disabwe=wiwdcawd-impowt
+"""this moduwe c-contains expewimentaw u-utiw functions f-fow contwib."""
 
-from .math_fns import safe_div, safe_log, cal_ndcg, cal_swapped_ndcg  # noqa: F401
-from .masks import diag_mask, full_mask  # noqa: F401
-from .normalizer import mean_max_normalizaiton, standard_normalizaiton  # noqa: F401
-from .scores import get_pairwise_scores, get_pairwise_label_scores  # noqa: F401
-# pointwise functions
-from .loss_fns import get_pointwise_loss  # noqa: F401
-# ranknet functions
-from .loss_fns import get_pair_loss  # noqa: F401
-# listwise functions
-from .loss_fns import get_attrank_loss, get_listnet_loss, get_listmle_loss  # noqa: F401
-# lambdarank functions
-from .loss_fns import get_lambda_pair_loss  # noqa: F401
-from .device import get_device_map, get_gpu_list, get_gpu_count, is_gpu_available  # noqa: F401
-from .similarities import cosine_similarity  # noqa: F401
-from . import interp # noqa: F401
+f-fwom .math_fns i-impowt safe_div, s-safe_wog, 😳😳😳 c-caw_ndcg, 🥺 caw_swapped_ndcg  # n-nyoqa: f401
+fwom .masks impowt diag_mask, mya fuww_mask  # nyoqa: f401
+f-fwom .nowmawizew impowt mean_max_nowmawizaiton, 🥺 standawd_nowmawizaiton  # n-nyoqa: f401
+fwom .scowes i-impowt get_paiwwise_scowes, >_< get_paiwwise_wabew_scowes  # nyoqa: f401
+# pointwise f-functions
+fwom .woss_fns impowt g-get_pointwise_woss  # n-nyoqa: f401
+# wanknet functions
+fwom .woss_fns impowt get_paiw_woss  # n-nyoqa: f401
+# wistwise functions
+fwom .woss_fns impowt get_attwank_woss, >_< get_wistnet_woss, (⑅˘꒳˘) g-get_wistmwe_woss  # nyoqa: f401
+# wambdawank f-functions
+f-fwom .woss_fns i-impowt get_wambda_paiw_woss  # n-nyoqa: f401
+fwom .device impowt get_device_map, /(^•ω•^) g-get_gpu_wist, rawr x3 get_gpu_count, (U ﹏ U) is_gpu_avaiwabwe  # nyoqa: f401
+fwom .simiwawities i-impowt cosine_simiwawity  # nyoqa: f401
+fwom . (U ﹏ U) impowt intewp # nyoqa: f401

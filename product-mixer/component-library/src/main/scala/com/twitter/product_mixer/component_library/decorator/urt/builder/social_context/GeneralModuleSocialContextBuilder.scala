@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.social_context
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.sociaw_context
 
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseModuleStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseModuleSocialContextBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basemoduwestw
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.sociaw_context.basemoduwesociawcontextbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.genewawcontext
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.genewawcontexttype
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.uww
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * This class works the same as [[GeneralSocialContextBuilder]] but passes a list of candidates
- * into [[BaseModuleStr]] when rendering the string.
+ * this cwass wowks t-the same as [[genewawsociawcontextbuiwdew]] but passes a wist of c-candidates
+ * into [[basemoduwestw]] when wendewing t-the stwing. (⑅˘꒳˘)
  */
-case class GeneralModuleSocialContextBuilder[
-  -Query <: PipelineQuery,
-  -Candidate <: UniversalNoun[Any]
+case cwass genewawmoduwesociawcontextbuiwdew[
+  -quewy <: pipewinequewy, (///ˬ///✿)
+  -candidate <: univewsawnoun[any]
 ](
-  textBuilder: BaseModuleStr[Query, Candidate],
-  contextType: GeneralContextType,
-  url: Option[String] = None,
-  contextImageUrls: Option[List[String]] = None,
-  landingUrl: Option[Url] = None)
-    extends BaseModuleSocialContextBuilder[Query, Candidate] {
+  t-textbuiwdew: basemoduwestw[quewy, c-candidate], 😳😳😳
+  c-contexttype: genewawcontexttype, 🥺
+  uww: option[stwing] = none, mya
+  contextimageuwws: option[wist[stwing]] = n-nyone, 🥺
+  wandinguww: option[uww] = nyone)
+    extends basemoduwesociawcontextbuiwdew[quewy, >_< candidate] {
 
-  def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Option[GeneralContext] =
-    Some(
-      GeneralContext(
-        text = textBuilder(query, candidates),
-        contextType = contextType,
-        url = url,
-        contextImageUrls = contextImageUrls,
-        landingUrl = landingUrl))
+  d-def appwy(
+    quewy: q-quewy, >_<
+    candidates: s-seq[candidatewithfeatuwes[candidate]]
+  ): o-option[genewawcontext] =
+    s-some(
+      genewawcontext(
+        text = textbuiwdew(quewy, (⑅˘꒳˘) candidates), /(^•ω•^)
+        contexttype = c-contexttype, rawr x3
+        uww = uww, (U ﹏ U)
+        contextimageuwws = c-contextimageuwws, (U ﹏ U)
+        wandinguww = wandinguww))
 }

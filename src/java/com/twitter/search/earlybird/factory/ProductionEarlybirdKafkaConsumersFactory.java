@@ -1,41 +1,41 @@
-package com.twitter.search.earlybird.factory;
+package com.twittew.seawch.eawwybiwd.factowy;
 
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+impowt o-owg.apache.kafka.cwients.consumew.kafkaconsumew;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.util.io.kafka.CompactThriftDeserializer;
-import com.twitter.search.common.util.io.kafka.FinagleKafkaClientUtils;
+i-impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
+i-impowt com.twittew.seawch.common.utiw.io.kafka.compactthwiftdesewiawizew;
+i-impowt c-com.twittew.seawch.common.utiw.io.kafka.finagwekafkacwientutiws;
 
 /**
- * Responsible for creating kafka consumers.
+ * w-wesponsibwe f-fow cweating k-kafka consumews. 🥺
  */
-public class ProductionEarlybirdKafkaConsumersFactory implements EarlybirdKafkaConsumersFactory {
-  private final String kafkaPath;
-  private final int defaultMaxPollRecords;
+pubwic cwass pwoductioneawwybiwdkafkaconsumewsfactowy impwements eawwybiwdkafkaconsumewsfactowy {
+  pwivate finaw stwing k-kafkapath;
+  pwivate finaw int defauwtmaxpowwwecowds;
 
-  ProductionEarlybirdKafkaConsumersFactory(String kafkaPath, int defaultMaxPollRecords) {
-    this.kafkaPath = kafkaPath;
-    this.defaultMaxPollRecords = defaultMaxPollRecords;
+  p-pwoductioneawwybiwdkafkaconsumewsfactowy(stwing kafkapath, mya i-int defauwtmaxpowwwecowds) {
+    this.kafkapath = kafkapath;
+    this.defauwtmaxpowwwecowds = d-defauwtmaxpowwwecowds;
   }
 
   /**
-   * Create a kafka consumer with set maximum of records to be polled.
+   * cweate a-a kafka consumew w-with set maximum of wecowds to be powwed. 🥺
    */
-  @Override
-  public KafkaConsumer<Long, ThriftVersionedEvents> createKafkaConsumer(
-      String clientID, int maxPollRecords) {
-    return FinagleKafkaClientUtils.newKafkaConsumerForAssigning(
-        kafkaPath,
-        new CompactThriftDeserializer<>(ThriftVersionedEvents.class),
-        clientID,
-        maxPollRecords);
+  @ovewwide
+  pubwic kafkaconsumew<wong, >_< thwiftvewsionedevents> c-cweatekafkaconsumew(
+      stwing cwientid, >_< int maxpowwwecowds) {
+    wetuwn finagwekafkacwientutiws.newkafkaconsumewfowassigning(
+        k-kafkapath, (⑅˘꒳˘)
+        nyew compactthwiftdesewiawizew<>(thwiftvewsionedevents.cwass), /(^•ω•^)
+        c-cwientid, rawr x3
+        m-maxpowwwecowds);
   }
 
   /**
-   * Create a kafka consumer with default records to be polled.
+   * c-cweate a-a kafka consumew with defauwt wecowds to be p-powwed. (U ﹏ U)
    */
-  @Override
-  public KafkaConsumer<Long, ThriftVersionedEvents> createKafkaConsumer(String clientID) {
-    return createKafkaConsumer(clientID, defaultMaxPollRecords);
+  @ovewwide
+  pubwic kafkaconsumew<wong, (U ﹏ U) t-thwiftvewsionedevents> cweatekafkaconsumew(stwing cwientid) {
+    wetuwn cweatekafkaconsumew(cwientid, (⑅˘꒳˘) defauwtmaxpowwwecowds);
   }
 }

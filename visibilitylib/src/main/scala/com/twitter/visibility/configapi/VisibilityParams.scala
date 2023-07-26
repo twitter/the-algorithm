@@ -1,61 +1,61 @@
-package com.twitter.visibility.configapi
+package com.twittew.visibiwity.configapi
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.decider.Decider
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.timelines.configapi.Params
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.UnitOfDiversion
-import com.twitter.visibility.models.ViewerContext
+impowt c-com.twittew.abdecidew.woggingabdecidew
+i-impowt com.twittew.decidew.decidew
+i-impowt c-com.twittew.featuweswitches.v2.featuweswitches
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.wogging.woggew
+i-impowt com.twittew.sewvo.utiw.memoizingstatsweceivew
+i-impowt com.twittew.timewines.configapi.pawams
+impowt com.twittew.visibiwity.modews.safetywevew
+impowt com.twittew.visibiwity.modews.unitofdivewsion
+impowt com.twittew.visibiwity.modews.viewewcontext
 
-object VisibilityParams {
-  def apply(
-    log: Logger,
-    statsReceiver: StatsReceiver,
-    decider: Decider,
-    abDecider: LoggingABDecider,
-    featureSwitches: FeatureSwitches
-  ): VisibilityParams =
-    new VisibilityParams(log, statsReceiver, decider, abDecider, featureSwitches)
+o-object visibiwitypawams {
+  def appwy(
+    w-wog: woggew, o.O
+    statsweceivew: s-statsweceivew, /(^•ω•^)
+    decidew: decidew, nyaa~~
+    abdecidew: woggingabdecidew, nyaa~~
+    f-featuweswitches: featuweswitches
+  ): v-visibiwitypawams =
+    n-nyew visibiwitypawams(wog, :3 statsweceivew, 😳😳😳 decidew, abdecidew, (˘ω˘) featuweswitches)
 }
 
-class VisibilityParams(
-  log: Logger,
-  statsReceiver: StatsReceiver,
-  decider: Decider,
-  abDecider: LoggingABDecider,
-  featureSwitches: FeatureSwitches) {
+cwass visibiwitypawams(
+  w-wog: woggew, ^^
+  statsweceivew: statsweceivew, :3
+  decidew: decidew, -.-
+  abdecidew: w-woggingabdecidew, 😳
+  featuweswitches: featuweswitches) {
 
-  private[this] val contextFactory = new VisibilityRequestContextFactory(
-    abDecider,
-    featureSwitches
+  p-pwivate[this] v-vaw contextfactowy = n-nyew visibiwitywequestcontextfactowy(
+    a-abdecidew, mya
+    featuweswitches
   )
 
-  private[this] val configBuilder = ConfigBuilder(statsReceiver.scope("config"), decider, log)
+  pwivate[this] v-vaw configbuiwdew = configbuiwdew(statsweceivew.scope("config"), (˘ω˘) decidew, w-wog)
 
-  private[this] val paramStats: MemoizingStatsReceiver = new MemoizingStatsReceiver(
-    statsReceiver.scope("configapi_params"))
+  pwivate[this] vaw pawamstats: memoizingstatsweceivew = nyew memoizingstatsweceivew(
+    statsweceivew.scope("configapi_pawams"))
 
-  def apply(
-    viewerContext: ViewerContext,
-    safetyLevel: SafetyLevel,
-    unitsOfDiversion: Seq[UnitOfDiversion] = Seq.empty
-  ): Params = {
-    val config = configBuilder.build(safetyLevel)
-    val requestContext = contextFactory(viewerContext, safetyLevel, unitsOfDiversion)
-    config.apply(requestContext, paramStats)
+  def a-appwy(
+    viewewcontext: viewewcontext, >_<
+    s-safetywevew: s-safetywevew, -.-
+    u-unitsofdivewsion: seq[unitofdivewsion] = seq.empty
+  ): pawams = {
+    v-vaw config = configbuiwdew.buiwd(safetywevew)
+    v-vaw wequestcontext = contextfactowy(viewewcontext, 🥺 s-safetywevew, (U ﹏ U) u-unitsofdivewsion)
+    config.appwy(wequestcontext, >w< p-pawamstats)
   }
 
   def memoized(
-    viewerContext: ViewerContext,
-    safetyLevel: SafetyLevel,
-    unitsOfDiversion: Seq[UnitOfDiversion] = Seq.empty
-  ): Params = {
-    val config = configBuilder.buildMemoized(safetyLevel)
-    val requestContext = contextFactory(viewerContext, safetyLevel, unitsOfDiversion)
-    config.apply(requestContext, paramStats)
+    v-viewewcontext: viewewcontext, mya
+    safetywevew: s-safetywevew, >w<
+    unitsofdivewsion: s-seq[unitofdivewsion] = seq.empty
+  ): p-pawams = {
+    v-vaw config = configbuiwdew.buiwdmemoized(safetywevew)
+    vaw wequestcontext = contextfactowy(viewewcontext, nyaa~~ safetywevew, (✿oωo) unitsofdivewsion)
+    config.appwy(wequestcontext, ʘwʘ p-pawamstats)
   }
 }

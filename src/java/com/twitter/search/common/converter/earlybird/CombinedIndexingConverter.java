@@ -1,99 +1,99 @@
-package com.twitter.search.common.converter.earlybird;
+package com.twittew.seawch.common.convewtew.eawwybiwd;
 
-import java.io.IOException;
-import java.util.List;
+impowt java.io.ioexception;
+i-impowt java.utiw.wist;
 
-import javax.annotation.concurrent.NotThreadSafe;
+i-impowt j-javax.annotation.concuwwent.notthweadsafe;
 
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdThriftDocumentBuilder;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEventType;
+i-impowt c-com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+i-impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
+impowt com.twittew.seawch.common.wewevance.entities.twittewmessage;
+impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+i-impowt com.twittew.seawch.common.schema.base.schema;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+impowt c-com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdthwiftdocumentbuiwdew;
+impowt c-com.twittew.seawch.common.schema.thwiftjava.thwiftdocument;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingevent;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingeventtype;
 
 /**
- * CombinedIndexingConverter builds objects from TwitterMessage to ThriftVersionedEvent.
+ * c-combinedindexingconvewtew buiwds objects f-fwom twittewmessage t-to thwiftvewsionedevent. ^•ﻌ•^
  *
- * It is used in tests and in offline jobs, so all data is available on the TwitterMessage. This
- * means that we don't need to split up the ThriftVersionedEvents into basic events and update
- * events, like we do in the realtime pipeline using the BasicIndexingConverter and the
- * DelayedIndexingConverter.
+ * it is used in tests and in offwine jobs, (˘ω˘) so aww data is a-avaiwabwe on the twittewmessage. this
+ * means that we don't nyeed to spwit up t-the thwiftvewsionedevents into basic e-events and u-update
+ * events, :3 w-wike we do in t-the weawtime pipewine using the basicindexingconvewtew a-and the
+ * dewayedindexingconvewtew. ^^;;
  */
-@NotThreadSafe
-public class CombinedIndexingConverter {
-  private final EncodedFeatureBuilder featureBuilder;
-  private final Schema schema;
-  private final EarlybirdCluster cluster;
+@notthweadsafe
+pubwic cwass combinedindexingconvewtew {
+  p-pwivate finaw encodedfeatuwebuiwdew featuwebuiwdew;
+  pwivate finaw schema schema;
+  pwivate finaw eawwybiwdcwustew c-cwustew;
 
-  public CombinedIndexingConverter(Schema schema, EarlybirdCluster cluster) {
-    this.featureBuilder = new EncodedFeatureBuilder();
+  pubwic c-combinedindexingconvewtew(schema s-schema, 🥺 eawwybiwdcwustew c-cwustew) {
+    this.featuwebuiwdew = new encodedfeatuwebuiwdew();
     this.schema = schema;
-    this.cluster = cluster;
+    t-this.cwustew = c-cwustew;
   }
 
   /**
-   * Converts a TwitterMessage to a Thrift representation.
+   * convewts a twittewmessage t-to a-a thwift wepwesentation. (⑅˘꒳˘)
    */
-  public ThriftVersionedEvents convertMessageToThrift(
-      TwitterMessage message,
-      boolean strict,
-      List<PenguinVersion> penguinVersions) throws IOException {
-    Preconditions.checkNotNull(message);
-    Preconditions.checkNotNull(penguinVersions);
+  pubwic thwiftvewsionedevents c-convewtmessagetothwift(
+      twittewmessage m-message, nyaa~~
+      boowean stwict, :3
+      w-wist<penguinvewsion> penguinvewsions) t-thwows ioexception {
+    pweconditions.checknotnuww(message);
+    pweconditions.checknotnuww(penguinvewsions);
 
-    ThriftVersionedEvents versionedEvents = new ThriftVersionedEvents()
-        .setId(message.getId());
+    t-thwiftvewsionedevents v-vewsionedevents = nyew thwiftvewsionedevents()
+        .setid(message.getid());
 
-    ImmutableSchemaInterface schemaSnapshot = schema.getSchemaSnapshot();
+    immutabweschemaintewface schemasnapshot = schema.getschemasnapshot();
 
-    for (PenguinVersion penguinVersion : penguinVersions) {
-      ThriftDocument document =
-          buildDocumentForPenguinVersion(schemaSnapshot, message, strict, penguinVersion);
+    fow (penguinvewsion penguinvewsion : penguinvewsions) {
+      t-thwiftdocument d-document =
+          buiwddocumentfowpenguinvewsion(schemasnapshot, ( ͡o ω ͡o ) m-message, mya stwict, p-penguinvewsion);
 
-      ThriftIndexingEvent thriftIndexingEvent = new ThriftIndexingEvent()
-          .setDocument(document)
-          .setEventType(ThriftIndexingEventType.INSERT)
-          .setSortId(message.getId());
-      message.getFromUserTwitterId().map(thriftIndexingEvent::setUid);
-      versionedEvents.putToVersionedEvents(penguinVersion.getByteValue(), thriftIndexingEvent);
+      t-thwiftindexingevent thwiftindexingevent = nyew thwiftindexingevent()
+          .setdocument(document)
+          .seteventtype(thwiftindexingeventtype.insewt)
+          .setsowtid(message.getid());
+      message.getfwomusewtwittewid().map(thwiftindexingevent::setuid);
+      v-vewsionedevents.puttovewsionedevents(penguinvewsion.getbytevawue(), (///ˬ///✿) thwiftindexingevent);
     }
 
-    return versionedEvents;
+    wetuwn vewsionedevents;
   }
 
-  private ThriftDocument buildDocumentForPenguinVersion(
-      ImmutableSchemaInterface schemaSnapshot,
-      TwitterMessage message,
-      boolean strict,
-      PenguinVersion penguinVersion) throws IOException {
-    EncodedFeatureBuilder.TweetFeatureWithEncodeFeatures tweetFeature =
-        featureBuilder.createTweetFeaturesFromTwitterMessage(
-            message, penguinVersion, schemaSnapshot);
+  pwivate thwiftdocument buiwddocumentfowpenguinvewsion(
+      i-immutabweschemaintewface schemasnapshot, (˘ω˘)
+      t-twittewmessage m-message, ^^;;
+      b-boowean stwict, (✿oωo)
+      p-penguinvewsion penguinvewsion) thwows i-ioexception {
+    e-encodedfeatuwebuiwdew.tweetfeatuwewithencodefeatuwes t-tweetfeatuwe =
+        featuwebuiwdew.cweatetweetfeatuwesfwomtwittewmessage(
+            message, (U ﹏ U) penguinvewsion, -.- schemasnapshot);
 
-    EarlybirdThriftDocumentBuilder builder =
-        BasicIndexingConverter.buildBasicFields(message, schemaSnapshot, cluster, tweetFeature);
+    e-eawwybiwdthwiftdocumentbuiwdew b-buiwdew =
+        b-basicindexingconvewtew.buiwdbasicfiewds(message, ^•ﻌ•^ s-schemasnapshot, rawr c-cwustew, tweetfeatuwe);
 
-    BasicIndexingConverter
-        .buildUserFields(builder, message, tweetFeature.versionedFeatures, penguinVersion);
-    BasicIndexingConverter.buildGeoFields(builder, message, tweetFeature.versionedFeatures);
-    DelayedIndexingConverter.buildURLFields(builder, message, tweetFeature.encodedFeatures);
-    BasicIndexingConverter.buildRetweetAndReplyFields(builder, message, strict);
-    BasicIndexingConverter.buildQuotesFields(builder, message);
-    BasicIndexingConverter.buildVersionedFeatureFields(builder, tweetFeature.versionedFeatures);
-    DelayedIndexingConverter.buildCardFields(builder, message, penguinVersion);
-    BasicIndexingConverter.buildAnnotationFields(builder, message);
-    BasicIndexingConverter.buildNormalizedMinEngagementFields(
-        builder, tweetFeature.encodedFeatures, cluster);
-    DelayedIndexingConverter.buildNamedEntityFields(builder, message);
-    BasicIndexingConverter.buildDirectedAtFields(builder, message);
+    basicindexingconvewtew
+        .buiwdusewfiewds(buiwdew, (˘ω˘) message, nyaa~~ t-tweetfeatuwe.vewsionedfeatuwes, UwU penguinvewsion);
+    basicindexingconvewtew.buiwdgeofiewds(buiwdew, :3 message, (⑅˘꒳˘) tweetfeatuwe.vewsionedfeatuwes);
+    dewayedindexingconvewtew.buiwduwwfiewds(buiwdew, (///ˬ///✿) m-message, ^^;; tweetfeatuwe.encodedfeatuwes);
+    basicindexingconvewtew.buiwdwetweetandwepwyfiewds(buiwdew, >_< message, stwict);
+    b-basicindexingconvewtew.buiwdquotesfiewds(buiwdew, rawr x3 m-message);
+    b-basicindexingconvewtew.buiwdvewsionedfeatuwefiewds(buiwdew, /(^•ω•^) tweetfeatuwe.vewsionedfeatuwes);
+    d-dewayedindexingconvewtew.buiwdcawdfiewds(buiwdew, :3 message, p-penguinvewsion);
+    b-basicindexingconvewtew.buiwdannotationfiewds(buiwdew, (ꈍᴗꈍ) message);
+    basicindexingconvewtew.buiwdnowmawizedminengagementfiewds(
+        buiwdew, /(^•ω•^) tweetfeatuwe.encodedfeatuwes, (⑅˘꒳˘) cwustew);
+    d-dewayedindexingconvewtew.buiwdnamedentityfiewds(buiwdew, ( ͡o ω ͡o ) message);
+    b-basicindexingconvewtew.buiwddiwectedatfiewds(buiwdew, òωó message);
 
-    return builder.build();
+    wetuwn b-buiwdew.buiwd();
   }
 }

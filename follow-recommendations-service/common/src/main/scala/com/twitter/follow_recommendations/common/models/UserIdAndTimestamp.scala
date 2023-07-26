@@ -1,3 +1,3 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-case class UserIdWithTimestamp(userId: Long, timeInMs: Long)
+case cwass u-usewidwithtimestamp(usewid: w-wong, OwO timeinms: w-wong)

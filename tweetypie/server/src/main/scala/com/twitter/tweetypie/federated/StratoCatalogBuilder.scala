@@ -1,127 +1,127 @@
-package com.twitter.tweetypie.federated
+package com.twittew.tweetypie.fedewated
 
-import com.twitter.ads.internal.pcl.service.CallbackPromotedContentLogger
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.scrooge.ThriftStructFieldInfo
-import com.twitter.servo.util.Gate
-import com.twitter.strato.catalog.Catalog
-import com.twitter.strato.client.Client
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.tweetypie.ThriftTweetService
-import com.twitter.tweetypie.Tweet
-import com.twitter.tweetypie.backends.Gizmoduck
-import com.twitter.tweetypie.federated.columns._
-import com.twitter.tweetypie.federated.context.GetRequestContext
-import com.twitter.tweetypie.federated.prefetcheddata.PrefetchedDataRepositoryBuilder
-import com.twitter.tweetypie.federated.promotedcontent.TweetPromotedContentLogger
-import com.twitter.tweetypie.repository.UnmentionInfoRepository
-import com.twitter.tweetypie.repository.VibeRepository
-import com.twitter.util.Activity
-import com.twitter.util.logging.Logger
+impowt com.twittew.ads.intewnaw.pcw.sewvice.cawwbackpwomotedcontentwoggew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.scwooge.thwiftstwuctfiewdinfo
+i-impowt com.twittew.sewvo.utiw.gate
+i-impowt com.twittew.stwato.catawog.catawog
+impowt c-com.twittew.stwato.cwient.cwient
+i-impowt com.twittew.stwato.fed.stwatofed
+impowt c-com.twittew.stwato.thwift.scwoogeconv
+i-impowt com.twittew.tweetypie.thwifttweetsewvice
+impowt com.twittew.tweetypie.tweet
+impowt com.twittew.tweetypie.backends.gizmoduck
+impowt c-com.twittew.tweetypie.fedewated.cowumns._
+impowt com.twittew.tweetypie.fedewated.context.getwequestcontext
+impowt com.twittew.tweetypie.fedewated.pwefetcheddata.pwefetcheddatawepositowybuiwdew
+i-impowt com.twittew.tweetypie.fedewated.pwomotedcontent.tweetpwomotedcontentwoggew
+impowt c-com.twittew.tweetypie.wepositowy.unmentioninfowepositowy
+impowt com.twittew.tweetypie.wepositowy.vibewepositowy
+impowt com.twittew.utiw.activity
+i-impowt com.twittew.utiw.wogging.woggew
 
-object StratoCatalogBuilder {
+object s-stwatocatawogbuiwdew {
 
-  def catalog(
-    thriftTweetService: ThriftTweetService,
-    stratoClient: Client,
-    getUserResultsById: Gizmoduck.GetById,
-    callbackPromotedContentLogger: CallbackPromotedContentLogger,
-    statsReceiver: StatsReceiver,
-    enableCommunityTweetCreatesDecider: Gate[Unit],
-  ): Activity[Catalog[StratoFed.Column]] = {
-    val log = Logger(getClass)
+  d-def catawog(
+    thwifttweetsewvice: thwifttweetsewvice, nyaa~~
+    stwatocwient: cwient, :3
+    getusewwesuwtsbyid: g-gizmoduck.getbyid, ( ͡o ω ͡o )
+    cawwbackpwomotedcontentwoggew: cawwbackpwomotedcontentwoggew, mya
+    statsweceivew: statsweceivew, (///ˬ///✿)
+    e-enabwecommunitytweetcweatesdecidew: gate[unit],
+  ): a-activity[catawog[stwatofed.cowumn]] = {
+    v-vaw wog = woggew(getcwass)
 
-    val getRequestContext = new GetRequestContext()
-    val prefetchedDataRepository =
-      PrefetchedDataRepositoryBuilder(getUserResultsById, statsReceiver)
-    val unmentionInfoRepository = UnmentionInfoRepository(stratoClient)
-    val vibeRepository = VibeRepository(stratoClient)
+    v-vaw getwequestcontext = n-nyew getwequestcontext()
+    vaw pwefetcheddatawepositowy =
+      pwefetcheddatawepositowybuiwdew(getusewwesuwtsbyid, (˘ω˘) statsweceivew)
+    v-vaw unmentioninfowepositowy = unmentioninfowepositowy(stwatocwient)
+    vaw vibewepositowy = vibewepositowy(stwatocwient)
 
-    val tweetPromotedContentLogger =
-      TweetPromotedContentLogger(callbackPromotedContentLogger)
+    v-vaw tweetpwomotedcontentwoggew =
+      tweetpwomotedcontentwoggew(cawwbackpwomotedcontentwoggew)
 
-    // A stitch group builder to be used for Federated Field Column requests. The handler must be the same across
-    // all Federated Field Columns to ensure requests are batched across columns for different fields
-    val federatedFieldGroupBuilder: FederatedFieldGroupBuilder.Type = FederatedFieldGroupBuilder(
-      thriftTweetService.getTweetFields)
+    // a stitch gwoup buiwdew to be used fow fedewated fiewd c-cowumn wequests. ^^;; the handwew must b-be the same acwoss
+    // a-aww f-fedewated fiewd cowumns to ensuwe wequests awe batched acwoss cowumns f-fow diffewent f-fiewds
+    vaw fedewatedfiewdgwoupbuiwdew: fedewatedfiewdgwoupbuiwdew.type = f-fedewatedfiewdgwoupbuiwdew(
+      t-thwifttweetsewvice.gettweetfiewds)
 
-    val columns: Seq[StratoFed.Column] = Seq(
-      new UnretweetColumn(
-        thriftTweetService.unretweet,
-        getRequestContext,
+    vaw cowumns: s-seq[stwatofed.cowumn] = seq(
+      nyew u-unwetweetcowumn(
+        thwifttweetsewvice.unwetweet, (✿oωo)
+        getwequestcontext, (U ﹏ U)
       ),
-      new CreateRetweetColumn(
-        thriftTweetService.postRetweet,
-        getRequestContext,
-        prefetchedDataRepository,
-        tweetPromotedContentLogger,
-        statsReceiver
-      ),
-      new CreateTweetColumn(
-        thriftTweetService.postTweet,
-        getRequestContext,
-        prefetchedDataRepository,
-        unmentionInfoRepository,
-        vibeRepository,
-        tweetPromotedContentLogger,
-        statsReceiver,
-        enableCommunityTweetCreatesDecider,
-      ),
-      new DeleteTweetColumn(
-        thriftTweetService.deleteTweets,
-        getRequestContext,
-      ),
-      new GetTweetFieldsColumn(thriftTweetService.getTweetFields, statsReceiver),
-      new GetStoredTweetsColumn(thriftTweetService.getStoredTweets),
-      new GetStoredTweetsByUserColumn(thriftTweetService.getStoredTweetsByUser)
+      new cweatewetweetcowumn(
+        t-thwifttweetsewvice.postwetweet, -.-
+        getwequestcontext, ^•ﻌ•^
+        p-pwefetcheddatawepositowy, rawr
+        tweetpwomotedcontentwoggew, (˘ω˘)
+        s-statsweceivew
+      ), nyaa~~
+      n-nyew cweatetweetcowumn(
+        thwifttweetsewvice.posttweet, UwU
+        getwequestcontext, :3
+        pwefetcheddatawepositowy, (⑅˘꒳˘)
+        unmentioninfowepositowy, (///ˬ///✿)
+        vibewepositowy, ^^;;
+        tweetpwomotedcontentwoggew, >_<
+        s-statsweceivew, rawr x3
+        enabwecommunitytweetcweatesdecidew, /(^•ω•^)
+      ), :3
+      n-new dewetetweetcowumn(
+        thwifttweetsewvice.dewetetweets, (ꈍᴗꈍ)
+        g-getwequestcontext, /(^•ω•^)
+      ), (⑅˘꒳˘)
+      n-nyew g-gettweetfiewdscowumn(thwifttweetsewvice.gettweetfiewds, ( ͡o ω ͡o ) statsweceivew), òωó
+      nyew getstowedtweetscowumn(thwifttweetsewvice.getstowedtweets), (⑅˘꒳˘)
+      nyew getstowedtweetsbyusewcowumn(thwifttweetsewvice.getstowedtweetsbyusew)
     )
 
-    // Gather tweet field ids that are eligible to be federated field columns
-    val federatedFieldInfos =
-      Tweet.fieldInfos
-        .filter((info: ThriftStructFieldInfo) =>
-          FederatedFieldColumn.isFederatedField(info.tfield.id))
+    // g-gathew tweet fiewd ids that awe ewigibwe to be fedewated fiewd cowumns
+    v-vaw fedewatedfiewdinfos =
+      tweet.fiewdinfos
+        .fiwtew((info: t-thwiftstwuctfiewdinfo) =>
+          f-fedewatedfiewdcowumn.isfedewatedfiewd(info.tfiewd.id))
 
-    // Instantiate the federated field columns
-    val federatedFieldColumns: Seq[FederatedFieldColumn] =
-      federatedFieldInfos.map { fieldInfo: ThriftStructFieldInfo =>
-        val path = FederatedFieldColumn.makeColumnPath(fieldInfo.tfield)
-        val stratoType = ScroogeConv.typeOfFieldInfo(fieldInfo)
-        log.info(f"creating federated column: $path")
-        new FederatedFieldColumn(
-          federatedFieldGroupBuilder,
-          thriftTweetService.setAdditionalFields,
-          stratoType,
-          fieldInfo.tfield,
+    // i-instantiate the fedewated fiewd c-cowumns
+    v-vaw fedewatedfiewdcowumns: s-seq[fedewatedfiewdcowumn] =
+      f-fedewatedfiewdinfos.map { fiewdinfo: thwiftstwuctfiewdinfo =>
+        v-vaw path = fedewatedfiewdcowumn.makecowumnpath(fiewdinfo.tfiewd)
+        v-vaw s-stwatotype = scwoogeconv.typeoffiewdinfo(fiewdinfo)
+        w-wog.info(f"cweating f-fedewated cowumn: $path")
+        nyew fedewatedfiewdcowumn(
+          fedewatedfiewdgwoupbuiwdew, XD
+          thwifttweetsewvice.setadditionawfiewds, -.-
+          stwatotype, :3
+          f-fiewdinfo.tfiewd, nyaa~~
         )
       }
 
-    // Instantiate the federated V1 field columns
-    val federatedV1FieldColumns: Seq[FederatedFieldColumn] =
-      federatedFieldInfos
-        .filter(f => FederatedFieldColumn.isMigrationFederatedField(f.tfield))
-        .map { fieldInfo: ThriftStructFieldInfo =>
-          val v1Path = FederatedFieldColumn.makeV1ColumnPath(fieldInfo.tfield)
-          val stratoType = ScroogeConv.typeOfFieldInfo(fieldInfo)
-          log.info(f"creating V1 federated column: $v1Path")
-          new FederatedFieldColumn(
-            federatedFieldGroupBuilder,
-            thriftTweetService.setAdditionalFields,
-            stratoType,
-            fieldInfo.tfield,
-            Some(v1Path)
+    // instantiate the fedewated v1 fiewd cowumns
+    vaw fedewatedv1fiewdcowumns: seq[fedewatedfiewdcowumn] =
+      fedewatedfiewdinfos
+        .fiwtew(f => f-fedewatedfiewdcowumn.ismigwationfedewatedfiewd(f.tfiewd))
+        .map { fiewdinfo: thwiftstwuctfiewdinfo =>
+          vaw v1path = fedewatedfiewdcowumn.makev1cowumnpath(fiewdinfo.tfiewd)
+          vaw s-stwatotype = scwoogeconv.typeoffiewdinfo(fiewdinfo)
+          w-wog.info(f"cweating v-v1 fedewated cowumn: $v1path")
+          n-nyew fedewatedfiewdcowumn(
+            f-fedewatedfiewdgwoupbuiwdew, 😳
+            t-thwifttweetsewvice.setadditionawfiewds, (⑅˘꒳˘)
+            stwatotype, nyaa~~
+            fiewdinfo.tfiewd, OwO
+            some(v1path)
           )
         }
 
-    // Combine the dynamic and hard coded federated columns
-    val allColumns: Seq[StratoFed.Column] =
-      columns ++ federatedFieldColumns ++ federatedV1FieldColumns
+    // combine the dynamic and hawd coded f-fedewated cowumns
+    vaw awwcowumns: s-seq[stwatofed.cowumn] =
+      cowumns ++ f-fedewatedfiewdcowumns ++ f-fedewatedv1fiewdcowumns
 
-    Activity.value(
-      Catalog(
-        allColumns.map { column =>
-          column.path -> column
+    activity.vawue(
+      catawog(
+        awwcowumns.map { c-cowumn =>
+          c-cowumn.path -> cowumn
         }: _*
       ))
   }

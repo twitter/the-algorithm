@@ -1,76 +1,76 @@
-package com.twitter.search.core.earlybird.index.column;
+package com.twittew.seawch.cowe.eawwybiwd.index.cowumn;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.NumericDocValues;
+i-impowt owg.apache.wucene.index.weafweadew;
+i-impowt o-owg.apache.wucene.index.numewicdocvawues;
 
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.utiw.awwdocsitewatow;
 
 /**
- * A NumericDocValues implementation that uses an AllDocsIterator to iterate through all docs, and
- * gets its values from a ColumnStrideFieldIndex instance.
+ * a-a numewicdocvawues i-impwementation that u-uses an awwdocsitewatow to itewate thwough aww docs, >w< and
+ * gets its vawues f-fwom a cowumnstwidefiewdindex instance. rawr
  */
-public class ColumnStrideFieldDocValues extends NumericDocValues {
-  private final ColumnStrideFieldIndex csf;
-  private final AllDocsIterator iterator;
+pubwic c-cwass cowumnstwidefiewddocvawues extends nyumewicdocvawues {
+  p-pwivate finaw cowumnstwidefiewdindex csf;
+  pwivate finaw awwdocsitewatow i-itewatow;
 
-  public ColumnStrideFieldDocValues(ColumnStrideFieldIndex csf, LeafReader reader)
-      throws IOException {
-    this.csf = Preconditions.checkNotNull(csf);
-    this.iterator = new AllDocsIterator(Preconditions.checkNotNull(reader));
+  pubwic c-cowumnstwidefiewddocvawues(cowumnstwidefiewdindex c-csf, 😳 weafweadew weadew)
+      thwows ioexception {
+    this.csf = pweconditions.checknotnuww(csf);
+    t-this.itewatow = nyew awwdocsitewatow(pweconditions.checknotnuww(weadew));
   }
 
-  @Override
-  public long longValue() {
-    return csf.get(docID());
+  @ovewwide
+  pubwic wong wongvawue() {
+    wetuwn csf.get(docid());
   }
 
-  @Override
-  public int docID() {
-    return iterator.docID();
+  @ovewwide
+  p-pubwic int docid() {
+    wetuwn i-itewatow.docid();
   }
 
-  @Override
-  public int nextDoc() throws IOException {
-    return iterator.nextDoc();
+  @ovewwide
+  p-pubwic int n-nyextdoc() thwows i-ioexception {
+    wetuwn itewatow.nextdoc();
   }
 
-  @Override
-  public int advance(int target) throws IOException {
-    return iterator.advance(target);
+  @ovewwide
+  pubwic int advance(int t-tawget) thwows ioexception {
+    wetuwn i-itewatow.advance(tawget);
   }
 
-  @Override
-  public boolean advanceExact(int target) throws IOException {
-    // The javadocs for advance() and advanceExact() are inconsistent. advance() allows the target
-    // to be smaller than the current doc ID, and requires the iterator to advance the current doc
-    // ID past the target, and past the current doc ID. So essentially, advance(target) returns
-    // max(target, currentDocId + 1). At the same time, advanceExact() is undefined if the target is
-    // smaller than the current do ID (or if it's an invalid doc ID), and always returns the target.
-    // So essentially, advanceExact(target) should always set the current doc ID to the given target
-    // and if target == currentDocId, then currentDocId should not be advanced. This is why we have
-    // these extra checks here instead of moving them to advance().
-    Preconditions.checkState(
-        target >= docID(),
-        "ColumnStrideFieldDocValues.advance() for field %s called with target %s, "
-        + "but the current doc ID is %s.",
-        csf.getName(),
-        target,
-        docID());
-    if (target == docID()) {
-      return true;
+  @ovewwide
+  pubwic boowean advanceexact(int tawget) thwows ioexception {
+    // the javadocs fow a-advance() and advanceexact() a-awe inconsistent. >w< a-advance() awwows t-the tawget
+    // to be smowew than the cuwwent doc id, (⑅˘꒳˘) and wequiwes t-the itewatow t-to advance the cuwwent doc
+    // i-id past the t-tawget, OwO and past the cuwwent d-doc id. (ꈍᴗꈍ) so essentiawwy, 😳 advance(tawget) w-wetuwns
+    // max(tawget, 😳😳😳 cuwwentdocid + 1). mya a-at the same time, mya advanceexact() i-is undefined if the tawget i-is
+    // smowew t-than the cuwwent do id (ow if it's an invawid doc id), (⑅˘꒳˘) and awways wetuwns the tawget. (U ﹏ U)
+    // so essentiawwy, mya a-advanceexact(tawget) s-shouwd awways set the cuwwent d-doc id to the g-given tawget
+    // a-and if tawget == cuwwentdocid, ʘwʘ then cuwwentdocid shouwd nyot b-be advanced. (˘ω˘) this is why we have
+    // these extwa checks hewe instead of moving t-them to advance(). (U ﹏ U)
+    pweconditions.checkstate(
+        t-tawget >= d-docid(), ^•ﻌ•^
+        "cowumnstwidefiewddocvawues.advance() f-fow fiewd %s cawwed w-with tawget %s, "
+        + "but t-the cuwwent doc i-id is %s.", (˘ω˘)
+        c-csf.getname(), :3
+        tawget, ^^;;
+        docid());
+    i-if (tawget == d-docid()) {
+      w-wetuwn t-twue;
     }
 
-    // We don't need to check if we have a value for 'target', because a ColumnStrideFieldIndex
-    // instance has a value for every doc ID (though that value might be 0).
-    return advance(target) == target;
+    // w-we don't nyeed to check if we have a vawue fow 'tawget', 🥺 because a-a cowumnstwidefiewdindex
+    // instance has a vawue fow evewy doc id (though that vawue might be 0). (⑅˘꒳˘)
+    w-wetuwn advance(tawget) == tawget;
   }
 
-  @Override
-  public long cost() {
-    return iterator.cost();
+  @ovewwide
+  pubwic wong cost() {
+    wetuwn i-itewatow.cost();
   }
 }

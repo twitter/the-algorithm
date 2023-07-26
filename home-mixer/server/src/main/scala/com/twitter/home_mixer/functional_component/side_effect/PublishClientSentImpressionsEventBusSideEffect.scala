@@ -1,95 +1,95 @@
-package com.twitter.home_mixer.functional_component.side_effect
+package com.twittew.home_mixew.functionaw_component.side_effect
 
-import com.twitter.eventbus.client.EventBusPublisher
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.model.request.SubscribedProduct
-import com.twitter.home_mixer.model.request.HasSeenTweetIds
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.impressionstore.thriftscala.Impression
-import com.twitter.timelines.impressionstore.thriftscala.ImpressionList
-import com.twitter.timelines.impressionstore.thriftscala.PublishedImpressionList
-import com.twitter.timelines.impressionstore.thriftscala.SurfaceArea
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.eventbus.cwient.eventbuspubwishew
+i-impowt com.twittew.home_mixew.modew.wequest.fowwowingpwoduct
+i-impowt com.twittew.home_mixew.modew.wequest.fowyoupwoduct
+i-impowt c-com.twittew.home_mixew.modew.wequest.subscwibedpwoduct
+i-impowt c-com.twittew.home_mixew.modew.wequest.hasseentweetids
+i-impowt com.twittew.home_mixew.sewvice.homemixewawewtconfig
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.side_effect.pipewinewesuwtsideeffect
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.sideeffectidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.hasmawshawwing
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.timewines.impwessionstowe.thwiftscawa.impwession
+i-impowt com.twittew.timewines.impwessionstowe.thwiftscawa.impwessionwist
+impowt com.twittew.timewines.impwessionstowe.thwiftscawa.pubwishedimpwessionwist
+impowt c-com.twittew.timewines.impwessionstowe.thwiftscawa.suwfaceawea
+impowt com.twittew.utiw.time
+i-impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-object PublishClientSentImpressionsEventBusSideEffect {
-  val HomeSurfaceArea: Option[Set[SurfaceArea]] = Some(Set(SurfaceArea.HomeTimeline))
-  val HomeLatestSurfaceArea: Option[Set[SurfaceArea]] = Some(Set(SurfaceArea.HomeLatestTimeline))
-  val HomeSubscribedSurfaceArea: Option[Set[SurfaceArea]] = Some(Set(SurfaceArea.HomeSubscribed))
+object pubwishcwientsentimpwessionseventbussideeffect {
+  vaw homesuwfaceawea: option[set[suwfaceawea]] = s-some(set(suwfaceawea.hometimewine))
+  vaw homewatestsuwfaceawea: option[set[suwfaceawea]] = some(set(suwfaceawea.homewatesttimewine))
+  vaw homesubscwibedsuwfaceawea: o-option[set[suwfaceawea]] = some(set(suwfaceawea.homesubscwibed))
 }
 
 /**
- * Side effect that publishes seen tweet IDs sent from clients. The seen tweet IDs are sent to a
- * heron topology which writes to a memcache dataset.
+ * s-side effect that p-pubwishes seen t-tweet ids sent f-fwom cwients. /(^•ω•^) the seen tweet ids awe sent to a
+ * h-hewon topowogy which wwites to a memcache dataset. 😳😳😳
  */
-@Singleton
-class PublishClientSentImpressionsEventBusSideEffect @Inject() (
-  eventBusPublisher: EventBusPublisher[PublishedImpressionList])
-    extends PipelineResultSideEffect[PipelineQuery with HasSeenTweetIds, HasMarshalling]
-    with PipelineResultSideEffect.Conditionally[
-      PipelineQuery with HasSeenTweetIds,
-      HasMarshalling
+@singweton
+c-cwass pubwishcwientsentimpwessionseventbussideeffect @inject() (
+  eventbuspubwishew: eventbuspubwishew[pubwishedimpwessionwist])
+    extends pipewinewesuwtsideeffect[pipewinequewy with h-hasseentweetids, ( ͡o ω ͡o ) hasmawshawwing]
+    w-with pipewinewesuwtsideeffect.conditionawwy[
+      p-pipewinequewy w-with hasseentweetids,
+      hasmawshawwing
     ] {
-  import PublishClientSentImpressionsEventBusSideEffect._
+  impowt pubwishcwientsentimpwessionseventbussideeffect._
 
-  override val identifier: SideEffectIdentifier =
-    SideEffectIdentifier("PublishClientSentImpressionsEventBus")
+  o-ovewwide vaw i-identifiew: sideeffectidentifiew =
+    sideeffectidentifiew("pubwishcwientsentimpwessionseventbus")
 
-  override def onlyIf(
-    query: PipelineQuery with HasSeenTweetIds,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: HasMarshalling
-  ): Boolean = query.seenTweetIds.exists(_.nonEmpty)
+  o-ovewwide d-def onwyif(
+    quewy: pipewinequewy w-with hasseentweetids, >_<
+    sewectedcandidates: s-seq[candidatewithdetaiws], >w<
+    wemainingcandidates: seq[candidatewithdetaiws], rawr
+    d-dwoppedcandidates: seq[candidatewithdetaiws], 😳
+    w-wesponse: hasmawshawwing
+  ): b-boowean = q-quewy.seentweetids.exists(_.nonempty)
 
-  def buildEvents(
-    query: PipelineQuery with HasSeenTweetIds,
-    currentTime: Long
-  ): Option[Seq[Impression]] = {
-    val surfaceArea = query.product match {
-      case ForYouProduct => HomeSurfaceArea
-      case FollowingProduct => HomeLatestSurfaceArea
-      case SubscribedProduct => HomeSubscribedSurfaceArea
-      case _ => None
+  def buiwdevents(
+    quewy: pipewinequewy with hasseentweetids, >w<
+    cuwwenttime: wong
+  ): option[seq[impwession]] = {
+    v-vaw suwfaceawea = q-quewy.pwoduct match {
+      c-case fowyoupwoduct => h-homesuwfaceawea
+      c-case fowwowingpwoduct => homewatestsuwfaceawea
+      case subscwibedpwoduct => homesubscwibedsuwfaceawea
+      c-case _ => nyone
     }
-    query.seenTweetIds.map { seenTweetIds =>
-      seenTweetIds.map { tweetId =>
-        Impression(
-          tweetId = tweetId,
-          impressionTime = Some(currentTime),
-          surfaceAreas = surfaceArea
+    quewy.seentweetids.map { seentweetids =>
+      seentweetids.map { tweetid =>
+        impwession(
+          t-tweetid = tweetid, (⑅˘꒳˘)
+          impwessiontime = s-some(cuwwenttime), OwO
+          s-suwfaceaweas = suwfaceawea
         )
       }
     }
   }
 
-  final override def apply(
-    inputs: PipelineResultSideEffect.Inputs[PipelineQuery with HasSeenTweetIds, HasMarshalling]
-  ): Stitch[Unit] = {
-    val currentTime = Time.now.inMilliseconds
-    val impressions = buildEvents(inputs.query, currentTime)
+  f-finaw ovewwide def appwy(
+    i-inputs: p-pipewinewesuwtsideeffect.inputs[pipewinequewy w-with h-hasseentweetids, (ꈍᴗꈍ) hasmawshawwing]
+  ): stitch[unit] = {
+    v-vaw c-cuwwenttime = t-time.now.inmiwwiseconds
+    v-vaw i-impwessions = buiwdevents(inputs.quewy, 😳 cuwwenttime)
 
-    Stitch.callFuture(
-      eventBusPublisher.publish(
-        PublishedImpressionList(
-          inputs.query.getRequiredUserId,
-          ImpressionList(impressions),
-          currentTime
+    stitch.cawwfutuwe(
+      eventbuspubwishew.pubwish(
+        p-pubwishedimpwessionwist(
+          inputs.quewy.getwequiwedusewid, 😳😳😳
+          impwessionwist(impwessions),
+          cuwwenttime
         )
       )
     )
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.4)
+  ovewwide vaw awewts = seq(
+    h-homemixewawewtconfig.businesshouws.defauwtsuccesswateawewt(99.4)
   )
 }

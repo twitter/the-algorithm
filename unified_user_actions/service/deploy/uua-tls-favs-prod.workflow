@@ -1,66 +1,66 @@
 {
-  "role": "discode",
-  "name": "uua-tls-favs-prod",
-  "config-files": [
-    "uua-tls-favs.aurora"
-  ],
-  "build": {
-    "play": true,
-    "trigger": {
-      "cron-schedule": "0 17 * * 2"
-    },
+  "wowe": "discode", XD
+  "name": "uua-tws-favs-pwod", >_<
+  "config-fiwes": [
+    "uua-tws-favs.auwowa"
+  ], (ꈍᴗꈍ)
+  "buiwd": {
+    "pway": twue, ^•ﻌ•^
+    "twiggew": {
+      "cwon-scheduwe": "0 17 * * 2"
+    }, OwO
     "dependencies": [
       {
-        "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "wowe": "packew", 🥺
+        "name": "packew-cwient-no-pex", òωó
+        "vewsion": "watest"
       }
-    ],
+    ], o.O
     "steps": [
       {
-        "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-tls-favs"
-      },
+        "type": "bazew-bundwe", (U ᵕ U❁)
+        "name": "bundwe", (⑅˘꒳˘)
+        "tawget": "unified_usew_actions/sewvice/swc/main/scawa:uua-tws-favs"
+      }, ( ͡o ω ͡o )
       {
-        "type": "packer",
-        "name": "uua-tls-favs",
-        "artifact": "./dist/uua-tls-favs.zip"
+        "type": "packew", UwU
+        "name": "uua-tws-favs", rawr x3
+        "awtifact": "./dist/uua-tws-favs.zip"
       }
     ]
-  },
-  "targets": [
+  }, rawr
+  "tawgets": [
     {
-      "type": "group",
-      "name": "prod",
-      "targets": [
+      "type": "gwoup", σωσ
+      "name": "pwod", σωσ
+      "tawgets": [
         {
-          "name": "uua-tls-favs-prod-atla",
-          "key": "atla/discode/prod/uua-tls-favs"
+          "name": "uua-tws-favs-pwod-atwa", >_<
+          "key": "atwa/discode/pwod/uua-tws-favs"
         },
         {
-          "name": "uua-tls-favs-prod-pdxa",
-          "key": "pdxa/discode/prod/uua-tls-favs"
+          "name": "uua-tws-favs-pwod-pdxa", :3
+          "key": "pdxa/discode/pwod/uua-tws-favs"
         }
       ]
     }
-  ],
-  "subscriptions": [
+  ], (U ﹏ U)
+  "subscwiptions": [
     {
-      "type": "SLACK",
-      "recipients": [
+      "type": "swack", -.-
+      "wecipients": [
         {
-          "to": "discode-oncall"
+          "to": "discode-oncaww"
         }
-      ],
-      "events": ["WORKFLOW_SUCCESS"]
-    },
+      ], (ˆ ﻌ ˆ)♡
+      "events": ["wowkfwow_success"]
+    }, (⑅˘꒳˘)
     {
-      "type": "SLACK",
-      "recipients": [{
-        "to": "discode-oncall"
-      }],
-      "events": ["*FAILED"]
+      "type": "swack", (U ᵕ U❁)
+      "wecipients": [{
+        "to": "discode-oncaww"
+      }], -.-
+      "events": ["*faiwed"]
     }
   ]
 }

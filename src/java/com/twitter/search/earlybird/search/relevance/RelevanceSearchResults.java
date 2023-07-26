@@ -1,37 +1,37 @@
-package com.twitter.search.earlybird.search.relevance;
+package com.twittew.seawch.eawwybiwd.seawch.wewevance;
 
-import com.twitter.search.earlybird.search.Hit;
-import com.twitter.search.earlybird.search.SimpleSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
+impowt com.twittew.seawch.eawwybiwd.seawch.hit;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.simpweseawchwesuwts;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtmetadata;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtswewevancestats;
 
-public class RelevanceSearchResults extends SimpleSearchResults {
-  public final ThriftSearchResultMetadata[] resultMetadata;
-  private ThriftSearchResultsRelevanceStats relevanceStats = null;
-  private long scoringTimeNanos = 0;
+p-pubwic c-cwass wewevanceseawchwesuwts e-extends simpweseawchwesuwts {
+  p-pubwic finaw thwiftseawchwesuwtmetadata[] wesuwtmetadata;
+  pwivate thwiftseawchwesuwtswewevancestats wewevancestats = n-nyuww;
+  pwivate wong scowingtimenanos = 0;
 
-  public RelevanceSearchResults(int size) {
-    super(size);
-    this.resultMetadata = new ThriftSearchResultMetadata[size];
+  pubwic wewevanceseawchwesuwts(int s-size) {
+    supew(size);
+    t-this.wesuwtmetadata = nyew thwiftseawchwesuwtmetadata[size];
   }
 
-  public void setHit(Hit hit, int hitIndex) {
-    hits[hitIndex] = hit;
-    resultMetadata[hitIndex] = hit.getMetadata();
+  pubwic v-void sethit(hit hit, (⑅˘꒳˘) int hitindex) {
+    h-hits[hitindex] = h-hit;
+    wesuwtmetadata[hitindex] = hit.getmetadata();
   }
 
-  public void setRelevanceStats(ThriftSearchResultsRelevanceStats relevanceStats) {
-    this.relevanceStats = relevanceStats;
+  pubwic void setwewevancestats(thwiftseawchwesuwtswewevancestats wewevancestats) {
+    this.wewevancestats = w-wewevancestats;
   }
-  public ThriftSearchResultsRelevanceStats getRelevanceStats() {
-    return relevanceStats;
-  }
-
-  public void setScoringTimeNanos(long scoringTimeNanos) {
-    this.scoringTimeNanos = scoringTimeNanos;
+  pubwic thwiftseawchwesuwtswewevancestats getwewevancestats() {
+    wetuwn w-wewevancestats;
   }
 
-  public long getScoringTimeNanos() {
-    return scoringTimeNanos;
+  pubwic v-void setscowingtimenanos(wong s-scowingtimenanos) {
+    t-this.scowingtimenanos = s-scowingtimenanos;
+  }
+
+  pubwic wong getscowingtimenanos() {
+    w-wetuwn scowingtimenanos;
   }
 }

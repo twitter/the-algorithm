@@ -1,311 +1,311 @@
-package com.twitter.simclusters_v2.scalding
+package com.twittew.simcwustews_v2.scawding
 
-import com.twitter.algebird.{Monoid, Semigroup}
-import com.twitter.scalding._
+impowt c-com.twittew.awgebiwd.{monoid, /(^•ω•^) s-semigwoup}
+impowt c-com.twittew.scawding._
 
-object UpdateKnownFor {
+o-object u-updateknownfow {
 
   /**
-   * Convenience datastructure that can summarize key stats about a node's set of
-   * immediate neighbors.
+   * convenience d-datastwuctuwe t-that can s-summawize key stats about a nyode's set of
+   * immediate nyeighbows. ^•ﻌ•^
    *
-   * @param nodeCount                          number of nodes
-   * @param sumOfEdgeWeights                   sum of weights on edges in the neighborhood.
-   * @param sumOfMembershipWeightedEdgeWeights sum of { edge weight * membership weight } for each node
-   *                                           in the neighborhood. Membership weight to what is not
-   *                                           specified in this case class and is instead part of the
-   *                                           context.
-   * @param sumOfMembershipWeights             sum of membership weight for each node in the
-   *                                           neighborhood. Membership weight to what is not
-   *                                           specified in this case class and is instead part of
-   *                                           the context.
+   * @pawam nyodecount                          n-nyumbew of nyodes
+   * @pawam sumofedgeweights                   s-sum of weights on e-edges in the nyeighbowhood. UwU
+   * @pawam sumofmembewshipweightededgeweights sum of { edge weight * m-membewship weight } fow each nyode
+   *                                           i-in the nyeighbowhood. 😳😳😳 m-membewship weight to nyani is not
+   *                                           specified in this case c-cwass and is instead pawt of the
+   *                                           context. OwO
+   * @pawam sumofmembewshipweights             sum of m-membewship weight fow each nyode i-in the
+   *                                           n-nyeighbowhood. ^•ﻌ•^ m-membewship w-weight to nyani is nyot
+   *                                           specified i-in this case cwass and is instead pawt of
+   *                                           t-the context. (ꈍᴗꈍ)
    */
-  case class NeighborhoodInformation(
-    nodeCount: Int,
-    sumOfEdgeWeights: Float,
-    sumOfMembershipWeightedEdgeWeights: Float,
-    sumOfMembershipWeights: Float)
+  case cwass neighbowhoodinfowmation(
+    nyodecount: int, (⑅˘꒳˘)
+    sumofedgeweights: fwoat, (⑅˘꒳˘)
+    sumofmembewshipweightededgeweights: fwoat, (ˆ ﻌ ˆ)♡
+    s-sumofmembewshipweights: fwoat)
 
-  object NeighborhoodInformationMonoid extends Monoid[NeighborhoodInformation] {
-    override val zero: NeighborhoodInformation = NeighborhoodInformation(0, 0f, 0f, 0f)
-    override def plus(l: NeighborhoodInformation, r: NeighborhoodInformation) =
-      NeighborhoodInformation(
-        l.nodeCount + r.nodeCount,
-        l.sumOfEdgeWeights + r.sumOfEdgeWeights,
-        l.sumOfMembershipWeightedEdgeWeights + r.sumOfMembershipWeightedEdgeWeights,
-        l.sumOfMembershipWeights + r.sumOfMembershipWeights
+  object n-nyeighbowhoodinfowmationmonoid e-extends monoid[neighbowhoodinfowmation] {
+    o-ovewwide vaw zewo: nyeighbowhoodinfowmation = nyeighbowhoodinfowmation(0, /(^•ω•^) 0f, òωó 0f, 0f)
+    ovewwide d-def pwus(w: nyeighbowhoodinfowmation, (⑅˘꒳˘) w-w: nyeighbowhoodinfowmation) =
+      nyeighbowhoodinfowmation(
+        w-w.nodecount + w.nodecount, (U ᵕ U❁)
+        w-w.sumofedgeweights + w.sumofedgeweights, >w<
+        w-w.sumofmembewshipweightededgeweights + w.sumofmembewshipweightededgeweights, σωσ
+        w-w.sumofmembewshipweights + w.sumofmembewshipweights
       )
   }
 
-  case class NodeInformation(
-    originalClusters: List[Int],
-    overallStats: NeighborhoodInformation,
-    statsOfClustersInNeighborhood: Map[Int, NeighborhoodInformation])
+  case c-cwass nyodeinfowmation(
+    owiginawcwustews: wist[int], -.-
+    o-ovewawwstats: nyeighbowhoodinfowmation, o.O
+    s-statsofcwustewsinneighbowhood: m-map[int, ^^ nyeighbowhoodinfowmation])
 
-  object NodeInformationSemigroup extends Semigroup[NodeInformation] {
-    implicit val ctsMonoid: Monoid[NeighborhoodInformation] = NeighborhoodInformationMonoid
+  object nyodeinfowmationsemigwoup extends semigwoup[nodeinfowmation] {
+    impwicit vaw ctsmonoid: monoid[neighbowhoodinfowmation] = n-nyeighbowhoodinfowmationmonoid
 
-    override def plus(l: NodeInformation, r: NodeInformation) =
-      NodeInformation(
-        l.originalClusters ++ r.originalClusters,
-        ctsMonoid.plus(l.overallStats, r.overallStats),
-        Monoid
-          .mapMonoid[Int, NeighborhoodInformation].plus(
-            l.statsOfClustersInNeighborhood,
-            r.statsOfClustersInNeighborhood)
+    o-ovewwide def pwus(w: nyodeinfowmation, >_< w: n-nyodeinfowmation) =
+      n-nyodeinfowmation(
+        w-w.owiginawcwustews ++ w.owiginawcwustews, >w<
+        ctsmonoid.pwus(w.ovewawwstats, >_< w.ovewawwstats), >w<
+        m-monoid
+          .mapmonoid[int, rawr nyeighbowhoodinfowmation].pwus(
+            w.statsofcwustewsinneighbowhood, rawr x3
+            w.statsofcwustewsinneighbowhood)
       )
   }
 
-  case class ClusterScoresForNode(
-    sumScoreIgnoringMembershipScores: Double,
-    ratioScoreIgnoringMembershipScores: Double,
-    ratioScoreUsingMembershipScores: Double)
+  case cwass c-cwustewscowesfownode(
+    sumscoweignowingmembewshipscowes: doubwe, ( ͡o ω ͡o )
+    watioscoweignowingmembewshipscowes: d-doubwe, (˘ω˘)
+    watioscoweusingmembewshipscowes: d-doubwe)
 
   /**
-   * Given a user and a cluster:
-   * True positive weight = sum of edge weights to neighbors who belong to that cluster.
-   * False negative weight = sum of edge weights to neighbors who don’t belong to that cluster.
-   * False positive weight = (number of users in the cluster who are not neighbors of the node) * globalAvgEdgeWeight
-   * Membership-weighted true positive weight = for neighbors who are also in the cluster, sum of edge weight times user membership score in the cluster.
-   * Membership-weighted false negative weight = for neighbors who are not in the cluster, sum of edge weight times avg membership score across the whole knownFor input.
-   * Membership-weighted false positive weight = for users in the cluster who are not neighbors of the node, avg global edge weight times user membership score for the cluster.
+   * g-given a usew and a cwustew:
+   * t-twue positive w-weight = sum of e-edge weights to n-nyeighbows who bewong to that cwustew. 😳
+   * fawse n-nyegative weight = s-sum of edge w-weights to nyeighbows w-who don’t b-bewong to that cwustew. OwO
+   * fawse positive weight = (numbew o-of usews in the cwustew who awe nyot nyeighbows of the nyode) * gwobawavgedgeweight
+   * membewship-weighted t-twue positive weight = fow nyeighbows who awe awso i-in the cwustew, (˘ω˘) s-sum of edge weight t-times usew membewship scowe i-in the cwustew. òωó
+   * membewship-weighted f-fawse nyegative w-weight = fow nyeighbows who awe nyot in the cwustew, ( ͡o ω ͡o ) sum of edge weight times avg membewship s-scowe acwoss the whowe knownfow i-input. UwU
+   * membewship-weighted f-fawse positive w-weight = fow usews in the cwustew who awe nyot n-nyeighbows of t-the nyode, /(^•ω•^) avg gwobaw edge weight t-times usew membewship s-scowe fow the cwustew. (ꈍᴗꈍ)
    *
-   * Ignoring membership scores, sum formula:
-   * truePositiveWtFactor*(True positive weight) - false negative weight - false positive weight
-   * Ignoring membership scores, ratio formula:
-   * True positive weight / (true positive weight + false negative weight + false positive weight)
-   * Using membership scores
-   * Membership-weighted true positive weight / (Membership-weighted true positive weight + Membership-weighted false negative weight + Membership-weighted false positive weight)
+   * ignowing membewship scowes, 😳 sum fowmuwa:
+   * t-twuepositivewtfactow*(twue p-positive weight) - f-fawse nyegative weight - f-fawse positive weight
+   * i-ignowing membewship scowes, mya w-watio fowmuwa:
+   * twue positive weight / (twue positive weight + fawse n-nyegative weight + f-fawse positive weight)
+   * using membewship s-scowes
+   * membewship-weighted t-twue positive weight / (membewship-weighted twue positive weight + membewship-weighted f-fawse nyegative weight + membewship-weighted fawse positive weight)
    *
-   * @param overallNeighborhoodStats
-   * @param statsForCluster
-   * @param clusterSize
-   * @param sumOfClusterMembershipScores
-   * @param globalAvgEdgeWeight
-   * @param truePositiveWtFactor
+   * @pawam o-ovewawwneighbowhoodstats
+   * @pawam statsfowcwustew
+   * @pawam cwustewsize
+   * @pawam s-sumofcwustewmembewshipscowes
+   * @pawam g-gwobawavgedgeweight
+   * @pawam twuepositivewtfactow
    *
-   * @return
+   * @wetuwn
    */
-  def getScoresForCluster(
-    overallNeighborhoodStats: NeighborhoodInformation,
-    statsForCluster: NeighborhoodInformation,
-    clusterSize: Int,
-    sumOfClusterMembershipScores: Double,
-    globalAvgEdgeWeight: Double,
-    truePositiveWtFactor: Double
-  ): ClusterScoresForNode = {
-    val truePositiveWt = statsForCluster.sumOfEdgeWeights
-    val falseNegativeWt = overallNeighborhoodStats.sumOfEdgeWeights - truePositiveWt
-    val falsePositiveWt = (clusterSize - statsForCluster.nodeCount) * globalAvgEdgeWeight
-    val membershipWeightedTruePositiveWt = statsForCluster.sumOfMembershipWeightedEdgeWeights
-    val membershipWeightedFalseNegativeWt =
-      overallNeighborhoodStats.sumOfMembershipWeightedEdgeWeights - membershipWeightedTruePositiveWt
-    val membershipWeightedFalsePositiveWt =
-      (sumOfClusterMembershipScores - statsForCluster.sumOfMembershipWeights) * globalAvgEdgeWeight
-    val sumScore =
-      truePositiveWtFactor * statsForCluster.sumOfEdgeWeights - falseNegativeWt - falsePositiveWt
-    val ratioScore = truePositiveWt / (truePositiveWt + falseNegativeWt + falsePositiveWt)
-    val ratioUsingMemberships =
-      membershipWeightedTruePositiveWt / (membershipWeightedTruePositiveWt +
-        membershipWeightedFalsePositiveWt + membershipWeightedFalseNegativeWt)
-    ClusterScoresForNode(sumScore, ratioScore, ratioUsingMemberships)
+  def getscowesfowcwustew(
+    o-ovewawwneighbowhoodstats: n-nyeighbowhoodinfowmation, mya
+    statsfowcwustew: nyeighbowhoodinfowmation, /(^•ω•^)
+    cwustewsize: int, ^^;;
+    s-sumofcwustewmembewshipscowes: doubwe, 🥺
+    g-gwobawavgedgeweight: doubwe,
+    twuepositivewtfactow: doubwe
+  ): c-cwustewscowesfownode = {
+    vaw twuepositivewt = s-statsfowcwustew.sumofedgeweights
+    v-vaw fawsenegativewt = ovewawwneighbowhoodstats.sumofedgeweights - t-twuepositivewt
+    vaw fawsepositivewt = (cwustewsize - s-statsfowcwustew.nodecount) * g-gwobawavgedgeweight
+    v-vaw membewshipweightedtwuepositivewt = statsfowcwustew.sumofmembewshipweightededgeweights
+    v-vaw membewshipweightedfawsenegativewt =
+      o-ovewawwneighbowhoodstats.sumofmembewshipweightededgeweights - membewshipweightedtwuepositivewt
+    vaw membewshipweightedfawsepositivewt =
+      (sumofcwustewmembewshipscowes - s-statsfowcwustew.sumofmembewshipweights) * g-gwobawavgedgeweight
+    v-vaw sumscowe =
+      twuepositivewtfactow * statsfowcwustew.sumofedgeweights - f-fawsenegativewt - fawsepositivewt
+    v-vaw w-watioscowe = twuepositivewt / (twuepositivewt + fawsenegativewt + fawsepositivewt)
+    vaw watiousingmembewships =
+      m-membewshipweightedtwuepositivewt / (membewshipweightedtwuepositivewt +
+        m-membewshipweightedfawsepositivewt + m-membewshipweightedfawsenegativewt)
+    c-cwustewscowesfownode(sumscowe, ^^ watioscowe, ^•ﻌ•^ w-watiousingmembewships)
   }
 
-  def pickBestCluster(
-    overallNeighborhoodStats: NeighborhoodInformation,
-    statsOfClustersInNeighborhood: Map[Int, NeighborhoodInformation],
-    clusterOverallStatsMap: Map[Int, NeighborhoodInformation],
-    globalAvgEdgeWeight: Double,
-    truePositiveWtFactor: Double,
-    clusterScoresToFinalScore: ClusterScoresForNode => Double,
-    minNeighborsInCluster: Int
-  ): Option[(Int, Double)] = {
-    val clusterToScores = statsOfClustersInNeighborhood.toList.flatMap {
-      case (clusterId, statsInNeighborhood) =>
-        val clusterOverallStats = clusterOverallStatsMap(clusterId)
-        if (statsInNeighborhood.nodeCount >= minNeighborsInCluster) {
-          Some(
+  def pickbestcwustew(
+    ovewawwneighbowhoodstats: nyeighbowhoodinfowmation, /(^•ω•^)
+    statsofcwustewsinneighbowhood: map[int, ^^ n-nyeighbowhoodinfowmation], 🥺
+    cwustewovewawwstatsmap: m-map[int, (U ᵕ U❁) nyeighbowhoodinfowmation],
+    g-gwobawavgedgeweight: doubwe, 😳😳😳
+    t-twuepositivewtfactow: doubwe, nyaa~~
+    c-cwustewscowestofinawscowe: c-cwustewscowesfownode => d-doubwe, (˘ω˘)
+    m-minneighbowsincwustew: int
+  ): o-option[(int, >_< doubwe)] = {
+    vaw cwustewtoscowes = statsofcwustewsinneighbowhood.towist.fwatmap {
+      case (cwustewid, XD statsinneighbowhood) =>
+        vaw cwustewovewawwstats = c-cwustewovewawwstatsmap(cwustewid)
+        i-if (statsinneighbowhood.nodecount >= m-minneighbowsincwustew) {
+          some(
             (
-              clusterId,
-              clusterScoresToFinalScore(
-                getScoresForCluster(
-                  overallNeighborhoodStats,
-                  statsInNeighborhood,
-                  clusterOverallStats.nodeCount,
-                  clusterOverallStats.sumOfMembershipWeights,
-                  globalAvgEdgeWeight,
-                  truePositiveWtFactor
+              c-cwustewid, rawr x3
+              cwustewscowestofinawscowe(
+                getscowesfowcwustew(
+                  ovewawwneighbowhoodstats, ( ͡o ω ͡o )
+                  s-statsinneighbowhood, :3
+                  c-cwustewovewawwstats.nodecount, mya
+                  cwustewovewawwstats.sumofmembewshipweights, σωσ
+                  gwobawavgedgeweight, (ꈍᴗꈍ)
+                  t-twuepositivewtfactow
                 )
               )
             )
           )
-        } else {
-          None
+        } ewse {
+          nyone
         }
     }
-    if (clusterToScores.nonEmpty) {
-      Some(clusterToScores.maxBy(_._2))
-    } else None
+    if (cwustewtoscowes.nonempty) {
+      s-some(cwustewtoscowes.maxby(_._2))
+    } e-ewse nyone
   }
 
-  def updateGeneric(
-    graph: TypedPipe[(Long, Map[Long, Float])],
-    inputUserToClusters: TypedPipe[(Long, Array[(Int, Float)])],
-    clusterOverallStatsMap: Map[Int, NeighborhoodInformation],
-    minNeighborsInCluster: Int,
-    globalAvgWeight: Double,
-    avgMembershipScore: Double,
-    truePositiveWtFactor: Double,
-    clusterScoresToFinalScore: ClusterScoresForNode => Double
+  def updategenewic(
+    g-gwaph: typedpipe[(wong, OwO m-map[wong, o.O fwoat])],
+    inputusewtocwustews: typedpipe[(wong, 😳😳😳 awway[(int, /(^•ω•^) f-fwoat)])], OwO
+    c-cwustewovewawwstatsmap: m-map[int, ^^ n-neighbowhoodinfowmation], (///ˬ///✿)
+    m-minneighbowsincwustew: int, (///ˬ///✿)
+    g-gwobawavgweight: d-doubwe, (///ˬ///✿)
+    avgmembewshipscowe: doubwe, ʘwʘ
+    twuepositivewtfactow: d-doubwe, ^•ﻌ•^
+    c-cwustewscowestofinawscowe: cwustewscowesfownode => d-doubwe
   )(
-    implicit uniqId: UniqueID
-  ): TypedPipe[(Long, Array[(Int, Float)])] = {
-    val emptyToSomething = Stat("no_assignment_to_some")
-    val somethingToEmpty = Stat("some_assignment_to_none")
-    val emptyToEmpty = Stat("empty_to_empty")
-    val sameCluster = Stat("same_cluster")
-    val diffCluster = Stat("diff_cluster")
-    val nodesWithSmallDegree = Stat("nodes_with_degree_lt_" + minNeighborsInCluster)
+    impwicit uniqid: uniqueid
+  ): t-typedpipe[(wong, OwO awway[(int, (U ﹏ U) fwoat)])] = {
+    v-vaw emptytosomething = s-stat("no_assignment_to_some")
+    vaw somethingtoempty = s-stat("some_assignment_to_none")
+    vaw emptytoempty = stat("empty_to_empty")
+    v-vaw samecwustew = s-stat("same_cwustew")
+    v-vaw diffcwustew = stat("diff_cwustew")
+    vaw nyodeswithsmowdegwee = s-stat("nodes_with_degwee_wt_" + minneighbowsincwustew)
 
-    collectInformationPerNode(graph, inputUserToClusters, avgMembershipScore)
-      .mapValues {
-        case NodeInformation(originalClusters, overallStats, statsOfClustersInNeighborhood) =>
-          val newClusterWithScoreOpt = if (overallStats.nodeCount < minNeighborsInCluster) {
-            nodesWithSmallDegree.inc()
-            None
-          } else {
-            pickBestCluster(
-              overallStats,
-              statsOfClustersInNeighborhood,
-              clusterOverallStatsMap,
-              globalAvgWeight,
-              truePositiveWtFactor,
-              clusterScoresToFinalScore,
-              minNeighborsInCluster
+    cowwectinfowmationpewnode(gwaph, (ˆ ﻌ ˆ)♡ inputusewtocwustews, (⑅˘꒳˘) a-avgmembewshipscowe)
+      .mapvawues {
+        c-case nyodeinfowmation(owiginawcwustews, (U ﹏ U) ovewawwstats, o.O s-statsofcwustewsinneighbowhood) =>
+          vaw nyewcwustewwithscoweopt = i-if (ovewawwstats.nodecount < m-minneighbowsincwustew) {
+            nodeswithsmowdegwee.inc()
+            nyone
+          } e-ewse {
+            pickbestcwustew(
+              ovewawwstats,
+              s-statsofcwustewsinneighbowhood, mya
+              c-cwustewovewawwstatsmap, XD
+              gwobawavgweight, òωó
+              twuepositivewtfactow, (˘ω˘)
+              c-cwustewscowestofinawscowe, :3
+              minneighbowsincwustew
             )
           }
-          newClusterWithScoreOpt match {
-            case Some((newClusterId, score)) =>
-              if (originalClusters.isEmpty) {
-                emptyToSomething.inc()
-              } else if (originalClusters.contains(newClusterId)) {
-                sameCluster.inc()
-              } else {
-                diffCluster.inc()
+          n-nyewcwustewwithscoweopt m-match {
+            c-case some((newcwustewid, OwO scowe)) =>
+              if (owiginawcwustews.isempty) {
+                emptytosomething.inc()
+              } ewse if (owiginawcwustews.contains(newcwustewid)) {
+                samecwustew.inc()
+              } ewse {
+                diffcwustew.inc()
               }
-              Array((newClusterId, score.toFloat))
-            case None =>
-              if (originalClusters.isEmpty) {
-                emptyToEmpty.inc()
-              } else {
-                somethingToEmpty.inc()
+              awway((newcwustewid, mya scowe.tofwoat))
+            case nyone =>
+              if (owiginawcwustews.isempty) {
+                emptytoempty.inc()
+              } e-ewse {
+                s-somethingtoempty.inc()
               }
-              Array.empty[(Int, Float)]
+              awway.empty[(int, (˘ω˘) fwoat)]
           }
       }
   }
 
   /**
-   * Assembles the information we need at a node in order to decide what the new cluster should be.
-   * So this is where we assemble what the overall
+   * a-assembwes the infowmation w-we nyeed a-at a nyode in owdew to decide n-nyani the new cwustew shouwd be. o.O
+   * s-so this i-is whewe we assembwe nyani the ovewaww
    *
-   * This function is where all the crucial steps take place. First get the cluster that each
-   * node belongs to, and then broadcast information about this node and cluster membership to each
-   * of it's neighbors. Now bring together all records with the same nodeId as the key and create
-   * the NodeInformation dataset.
-   * @param graph symmetric graph i.e. if u is in v's adj list, then v is in u's adj list.
-   * @param userToClusters current knownFor.
-   * @param avgMembershipScore avg. membership score of a node in the knownFor we're updating.
-   *                           Useful to deal with nodes which don't belong to any knownFor.
-   * @return pipe with node information for each node
+   * t-this function is whewe aww the c-cwuciaw steps take p-pwace. (✿oωo) fiwst get the cwustew that each
+   * nyode b-bewongs to, (ˆ ﻌ ˆ)♡ a-and then bwoadcast i-infowmation a-about this nyode a-and cwustew membewship t-to each
+   * o-of it's nyeighbows. ^^;; n-nyow bwing t-togethew aww wecowds with the s-same nyodeid as t-the key and cweate
+   * t-the nyodeinfowmation dataset. OwO
+   * @pawam gwaph symmetwic g-gwaph i.e. 🥺 if u is in v's adj wist, mya then v is i-in u's adj wist. 😳
+   * @pawam usewtocwustews cuwwent k-knownfow. òωó
+   * @pawam a-avgmembewshipscowe avg. /(^•ω•^) m-membewship scowe of a nyode i-in the knownfow we'we updating. -.-
+   *                           usefuw t-to deaw with nyodes which d-don't bewong to any knownfow. òωó
+   * @wetuwn p-pipe with node infowmation fow each nyode
    */
-  def collectInformationPerNode(
-    graph: TypedPipe[(Long, Map[Long, Float])],
-    userToClusters: TypedPipe[(Long, Array[(Int, Float)])],
-    avgMembershipScore: Double
-  ): TypedPipe[(Long, NodeInformation)] = {
-    implicit val nisg: Semigroup[NodeInformation] = NodeInformationSemigroup
-    graph
-      .leftJoin(userToClusters)
-      // uncomment for adhoc job
-      //.withReducers(200)
-      .flatMap {
-        case (nodeId, (adjList, assignedClustersOpt)) =>
-          val assignedClusters =
-            assignedClustersOpt.map(_.toList).getOrElse(Nil)
-          val res = adjList.toList.flatMap {
-            case (neighborId, neighborWeight) =>
-              if (assignedClusters.nonEmpty) {
-                assignedClusters.map {
-                  case (clusterId, membershipScore) =>
-                    val neighborhoodInformationForCluster = NeighborhoodInformation(
-                      1,
-                      neighborWeight,
-                      membershipScore * neighborWeight,
-                      membershipScore)
-                    val originalClusters =
-                      if (neighborId == nodeId) List(clusterId)
-                      else List.empty[Int]
+  def cowwectinfowmationpewnode(
+    g-gwaph: typedpipe[(wong, /(^•ω•^) map[wong, /(^•ω•^) f-fwoat])],
+    u-usewtocwustews: typedpipe[(wong, 😳 awway[(int, :3 fwoat)])],
+    avgmembewshipscowe: d-doubwe
+  ): typedpipe[(wong, (U ᵕ U❁) nyodeinfowmation)] = {
+    i-impwicit v-vaw nyisg: semigwoup[nodeinfowmation] = n-nyodeinfowmationsemigwoup
+    gwaph
+      .weftjoin(usewtocwustews)
+      // uncomment f-fow adhoc job
+      //.withweducews(200)
+      .fwatmap {
+        c-case (nodeid, (adjwist, ʘwʘ assignedcwustewsopt)) =>
+          v-vaw assignedcwustews =
+            assignedcwustewsopt.map(_.towist).getowewse(niw)
+          v-vaw wes = adjwist.towist.fwatmap {
+            c-case (neighbowid, o.O n-nyeighbowweight) =>
+              i-if (assignedcwustews.nonempty) {
+                assignedcwustews.map {
+                  case (cwustewid, ʘwʘ m-membewshipscowe) =>
+                    v-vaw nyeighbowhoodinfowmationfowcwustew = n-nyeighbowhoodinfowmation(
+                      1, ^^
+                      n-nyeighbowweight, ^•ﻌ•^
+                      membewshipscowe * n-nyeighbowweight, mya
+                      m-membewshipscowe)
+                    v-vaw owiginawcwustews =
+                      i-if (neighbowid == n-nyodeid) w-wist(cwustewid)
+                      e-ewse wist.empty[int]
                     (
-                      neighborId,
-                      NodeInformation(
-                        originalClusters,
-                        neighborhoodInformationForCluster,
-                        Map(clusterId -> neighborhoodInformationForCluster)))
+                      n-nyeighbowid, UwU
+                      nyodeinfowmation(
+                        o-owiginawcwustews, >_<
+                        nyeighbowhoodinfowmationfowcwustew, /(^•ω•^)
+                        m-map(cwustewid -> nyeighbowhoodinfowmationfowcwustew)))
                 }
-              } else {
-                List(
+              } e-ewse {
+                w-wist(
                   (
-                    neighborId,
-                    NodeInformation(
-                      Nil,
-                      NeighborhoodInformation(
-                        1,
-                        neighborWeight,
-                        (avgMembershipScore * neighborWeight).toFloat,
-                        avgMembershipScore.toFloat),
-                      Map.empty[Int, NeighborhoodInformation]
+                    n-nyeighbowid, òωó
+                    nyodeinfowmation(
+                      nyiw, σωσ
+                      nyeighbowhoodinfowmation(
+                        1, ( ͡o ω ͡o )
+                        n-nyeighbowweight, nyaa~~
+                        (avgmembewshipscowe * n-nyeighbowweight).tofwoat, :3
+                        a-avgmembewshipscowe.tofwoat), UwU
+                      map.empty[int, o.O nyeighbowhoodinfowmation]
                     )))
               }
           }
-          res
+          wes
       }
-      .sumByKey
-    // uncomment for adhoc job
-    //.withReducers(100)
+      .sumbykey
+    // u-uncomment f-fow adhoc job
+    //.withweducews(100)
   }
 
   /**
-   * Replace incoming knownFor scores with ratioScoreIgnoringMembershipScores
-   * @param knownFor
-   * @param simsGraphWithoutSelfLoops
-   * @param globalAvgWeight
-   * @param clusterStats
-   * @param avgMembershipScore
-   * @return
+   * wepwace i-incoming knownfow s-scowes with watioscoweignowingmembewshipscowes
+   * @pawam knownfow
+   * @pawam simsgwaphwithoutsewfwoops
+   * @pawam gwobawavgweight
+   * @pawam c-cwustewstats
+   * @pawam a-avgmembewshipscowe
+   * @wetuwn
    */
-  def newKnownForScores(
-    knownFor: TypedPipe[(Long, Array[(Int, Float)])],
-    simsGraphWithoutSelfLoops: TypedPipe[(Long, Map[Long, Float])],
-    globalAvgWeight: Double,
-    clusterStats: Map[Int, NeighborhoodInformation],
-    avgMembershipScore: Double
-  ): TypedPipe[(Long, Array[(Int, Float)])] = {
-    collectInformationPerNode(simsGraphWithoutSelfLoops, knownFor, avgMembershipScore)
-      .mapValues {
-        case NodeInformation(originalClusters, overallStats, statsOfClustersInNeighborhood) =>
-          originalClusters.map { clusterId =>
+  d-def newknownfowscowes(
+    k-knownfow: typedpipe[(wong, (ˆ ﻌ ˆ)♡ awway[(int, ^^;; fwoat)])], ʘwʘ
+    s-simsgwaphwithoutsewfwoops: t-typedpipe[(wong, σωσ map[wong, ^^;; fwoat])],
+    gwobawavgweight: d-doubwe, ʘwʘ
+    cwustewstats: map[int, ^^ nyeighbowhoodinfowmation], nyaa~~
+    a-avgmembewshipscowe: doubwe
+  ): typedpipe[(wong, (///ˬ///✿) awway[(int, XD f-fwoat)])] = {
+    c-cowwectinfowmationpewnode(simsgwaphwithoutsewfwoops, knownfow, :3 avgmembewshipscowe)
+      .mapvawues {
+        c-case n-nyodeinfowmation(owiginawcwustews, òωó ovewawwstats, ^^ s-statsofcwustewsinneighbowhood) =>
+          owiginawcwustews.map { c-cwustewid =>
             (
-              clusterId,
-              getScoresForCluster(
-                overallStats,
-                statsOfClustersInNeighborhood(clusterId),
-                clusterStats(clusterId).nodeCount,
-                clusterStats(clusterId).sumOfMembershipWeights,
-                globalAvgWeight,
+              c-cwustewid,
+              g-getscowesfowcwustew(
+                o-ovewawwstats, ^•ﻌ•^
+                statsofcwustewsinneighbowhood(cwustewid), σωσ
+                c-cwustewstats(cwustewid).nodecount, (ˆ ﻌ ˆ)♡
+                c-cwustewstats(cwustewid).sumofmembewshipweights, nyaa~~
+                g-gwobawavgweight, ʘwʘ
                 0
-              ).ratioScoreIgnoringMembershipScores.toFloat)
-          }.toArray
+              ).watioscoweignowingmembewshipscowes.tofwoat)
+          }.toawway
       }
   }
 }

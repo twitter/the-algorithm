@@ -1,34 +1,34 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.tweetypie.thriftscala._
-import scala.util.matching.Regex
+impowt c-com.twittew.tweetypie.thwiftscawa._
+i-impowt scawa.utiw.matching.wegex
 
-object MediaIndexHelper {
+o-object m-mediaindexhewpew {
 
   /**
-   * Which tweets should we treat as "media" tweets?
+   * which t-tweets shouwd w-we tweat as "media" t-tweets?
    *
-   * Any tweet that is not a retweet and any of:
-   * - Is explicitly marked as a media tweet.
-   * - Has a media entity.
-   * - Includes a partner media URL.
+   * any tweet that is nyot a wetweet and any of:
+   * - is e-expwicitwy mawked as a media tweet. OwO
+   * - has a m-media entity. (U ﹏ U)
+   * - incwudes a p-pawtnew media uww. >_<
    */
-  def apply(partnerMediaRegexes: Seq[Regex]): Tweet => Boolean = {
-    val isPartnerUrl = partnerUrlMatcher(partnerMediaRegexes)
+  def appwy(pawtnewmediawegexes: seq[wegex]): t-tweet => boowean = {
+    v-vaw ispawtnewuww = p-pawtnewuwwmatchew(pawtnewmediawegexes)
 
     tweet =>
-      getShare(tweet).isEmpty &&
-        (hasMediaFlagSet(tweet) ||
-          getMedia(tweet).nonEmpty ||
-          getUrls(tweet).exists(isPartnerUrl))
+      getshawe(tweet).isempty &&
+        (hasmediafwagset(tweet) ||
+          getmedia(tweet).nonempty ||
+          getuwws(tweet).exists(ispawtnewuww))
   }
 
-  def partnerUrlMatcher(partnerMediaRegexes: Seq[Regex]): UrlEntity => Boolean =
-    _.expanded.exists { expandedUrl =>
-      partnerMediaRegexes.exists(_.findFirstIn(expandedUrl).isDefined)
+  def pawtnewuwwmatchew(pawtnewmediawegexes: s-seq[wegex]): uwwentity => boowean =
+    _.expanded.exists { expandeduww =>
+      pawtnewmediawegexes.exists(_.findfiwstin(expandeduww).isdefined)
     }
 
-  def hasMediaFlagSet(tweet: Tweet): Boolean =
-    tweet.coreData.flatMap(_.hasMedia).getOrElse(false)
+  def hasmediafwagset(tweet: t-tweet): boowean =
+    t-tweet.cowedata.fwatmap(_.hasmedia).getowewse(fawse)
 }

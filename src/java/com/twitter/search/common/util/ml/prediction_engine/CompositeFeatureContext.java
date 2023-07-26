@@ -1,35 +1,35 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+package com.twittew.seawch.common.utiw.mw.pwediction_engine;
 
-import java.util.function.Supplier;
-import javax.annotation.Nullable;
+impowt j-java.utiw.function.suppwiew;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.twitter.ml.api.FeatureContext;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchema;
+i-impowt com.twittew.mw.api.featuwecontext;
+i-impowt c-com.twittew.seawch.common.featuwes.thwift.thwiftseawchfeatuweschema;
 
 /**
- * An object to store feature context information to build models with.
+ * a-an object to stowe f-featuwe context i-infowmation to buiwd modews with. (ˆ ﻌ ˆ)♡
  */
-public class CompositeFeatureContext {
-  // legacy static feature context
-  private final FeatureContext legacyContext;
-  // a supplier for the context (well the schema itself) of the schema-based features
-  private final Supplier<ThriftSearchFeatureSchema> schemaSupplier;
+pubwic cwass compositefeatuwecontext {
+  // wegacy static f-featuwe context
+  pwivate finaw featuwecontext w-wegacycontext;
+  // a suppwiew f-fow the context (weww the schema itsewf) of the schema-based f-featuwes
+  pwivate finaw suppwiew<thwiftseawchfeatuweschema> s-schemasuppwiew;
 
-  public CompositeFeatureContext(
-      FeatureContext legacyContext,
-      @Nullable Supplier<ThriftSearchFeatureSchema> schemaSupplier) {
-    this.legacyContext = legacyContext;
-    this.schemaSupplier = schemaSupplier;
+  p-pubwic compositefeatuwecontext(
+      featuwecontext wegacycontext,
+      @nuwwabwe suppwiew<thwiftseawchfeatuweschema> schemasuppwiew) {
+    t-this.wegacycontext = wegacycontext;
+    this.schemasuppwiew = schemasuppwiew;
   }
 
-  FeatureContext getLegacyContext() {
-    return legacyContext;
+  featuwecontext g-getwegacycontext() {
+    wetuwn w-wegacycontext;
   }
 
-  ThriftSearchFeatureSchema getFeatureSchema() {
-    if (schemaSupplier == null) {
-      throw new UnsupportedOperationException("Feature schema was not initialized");
+  t-thwiftseawchfeatuweschema g-getfeatuweschema() {
+    i-if (schemasuppwiew == nyuww) {
+      thwow nyew unsuppowtedopewationexception("featuwe s-schema was nyot initiawized");
     }
-    return schemaSupplier.get();
+    wetuwn s-schemasuppwiew.get();
   }
 }

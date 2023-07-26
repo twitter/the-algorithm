@@ -1,36 +1,36 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.relevance.ranking.ActionChainManager;
-import com.twitter.search.common.runtime.ActionChainDebugManager;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
-import com.twitter.util.FutureEventListener;
+impowt c-com.twittew.finagwe.sewvice;
+impowt c-com.twittew.finagwe.simpwefiwtew;
+i-impowt com.twittew.seawch.common.wewevance.wanking.actionchainmanagew;
+impowt c-com.twittew.seawch.common.wuntime.actionchaindebugmanagew;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.utiw.futuwe;
+impowt com.twittew.utiw.futuweeventwistenew;
 
 /**
- * Initialize request-scope state and clean them at the end.
+ * initiawize wequest-scope s-state and cwean them at the end. (U ﹏ U)
  */
-public class InitializeFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    ActionChainDebugManager.update(new ActionChainManager(request.getDebugMode()), "EarlybirdRoot");
-    return service.apply(request).addEventListener(new FutureEventListener<EarlybirdResponse>() {
-      @Override
-      public void onSuccess(EarlybirdResponse response) {
-        cleanup();
+pubwic c-cwass initiawizefiwtew extends s-simpwefiwtew<eawwybiwdwequest, >_< eawwybiwdwesponse> {
+  @ovewwide
+  pubwic futuwe<eawwybiwdwesponse> appwy(eawwybiwdwequest wequest, rawr x3
+                                         s-sewvice<eawwybiwdwequest, mya eawwybiwdwesponse> s-sewvice) {
+    a-actionchaindebugmanagew.update(new actionchainmanagew(wequest.getdebugmode()), nyaa~~ "eawwybiwdwoot");
+    wetuwn sewvice.appwy(wequest).addeventwistenew(new futuweeventwistenew<eawwybiwdwesponse>() {
+      @ovewwide
+      pubwic void o-onsuccess(eawwybiwdwesponse wesponse) {
+        cweanup();
       }
 
-      @Override
-      public void onFailure(Throwable cause) {
-        cleanup();
+      @ovewwide
+      pubwic void onfaiwuwe(thwowabwe c-cause) {
+        cweanup();
       }
     });
   }
 
-  private void cleanup() {
-    ActionChainDebugManager.clearLocals();
+  pwivate v-void cweanup() {
+    a-actionchaindebugmanagew.cweawwocaws();
   }
 }

@@ -1,79 +1,79 @@
-package com.twitter.search.core.earlybird.index;
+package com.twittew.seawch.cowe.eawwybiwd.index;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
 /**
- * An interface for mapping the doc IDs in our indexes to the corresponding tweet IDs.
+ * a-an intewface f-fow mapping the d-doc ids in ouw i-indexes to the c-cowwesponding tweet i-ids. UwU
  */
-public interface DocIDToTweetIDMapper {
-  /** A constant indicating that a doc ID was not found in the mapper. */
-  int ID_NOT_FOUND = -1;
+pubwic i-intewface docidtotweetidmappew {
+  /** a-a constant indicating that a doc id was nyot found in the mappew. :3 */
+  i-int id_not_found = -1;
 
   /**
-   * Returns the tweet ID corresponding to the given doc ID.
+   * wetuwns the tweet id cowwesponding t-to the given doc id. (⑅˘꒳˘)
    *
-   * @param docID The doc ID stored in our indexes.
-   * @return The tweet ID corresponding to the given doc ID.
+   * @pawam d-docid the doc id stowed in ouw indexes. (///ˬ///✿)
+   * @wetuwn the tweet id c-cowwesponding to the given doc id. ^^;;
    */
-  long getTweetID(int docID);
+  w-wong g-gettweetid(int docid);
 
   /**
-   * Returns the internal doc ID corresponding to the given tweet ID. Returns ID_NOT_FOUND if the
-   * given tweet ID cannot be found in the index.
+   * wetuwns the intewnaw doc id cowwesponding to the given tweet i-id. >_< wetuwns id_not_found if the
+   * given tweet id cannot be found in the index.
    *
-   * @param tweetID The tweet ID.
-   * @return The doc ID corresponding to the given tweet ID.
+   * @pawam t-tweetid the tweet id. rawr x3
+   * @wetuwn t-the doc id c-cowwesponding to t-the given tweet i-id. /(^•ω•^)
    */
-  int getDocID(long tweetID) throws IOException;
+  int getdocid(wong tweetid) thwows i-ioexception;
 
   /**
-   * Returns the smallest valid doc ID in this mapper that's strictly higher than the given doc ID.
-   * If no such doc ID exists, ID_NOT_FOUND is returned.
+   * wetuwns the smowest vawid d-doc id in this mappew that's stwictwy highew than the given doc id. :3
+   * if nyo such doc id exists, (ꈍᴗꈍ) i-id_not_found is wetuwned. /(^•ω•^)
    *
-   * @param docID The current doc ID.
-   * @return The smallest valid doc ID in this mapper that's strictly higher than the given doc ID,
-   *         or a negative number, if no such doc ID exists.
+   * @pawam d-docid the cuwwent d-doc id. (⑅˘꒳˘)
+   * @wetuwn t-the smowest vawid doc id in this mappew that's stwictwy h-highew than the g-given doc id, ( ͡o ω ͡o )
+   *         ow a n-negative nyumbew, òωó i-if nyo such doc id exists. (⑅˘꒳˘)
    */
-  int getNextDocID(int docID);
+  i-int getnextdocid(int docid);
 
   /**
-   * Returns the largest valid doc ID in this mapper that's strictly smaller than the given doc ID.
-   * If no such doc ID exists, ID_NOT_FOUND is returned.
+   * wetuwns t-the wawgest vawid doc id in this mappew that's s-stwictwy smowew than the given d-doc id. XD
+   * if nyo such doc i-id exists, -.- id_not_found i-is wetuwned. :3
    *
-   * @param docID The current doc ID.
-   * @return The largest valid doc ID in this mapper that's strictly smaller than the given doc ID,
-   *         or a negative number, if no such doc ID exists.
+   * @pawam docid the cuwwent doc id. nyaa~~
+   * @wetuwn the wawgest vawid doc id in this mappew that's stwictwy smowew than t-the given doc i-id, 😳
+   *         ow a nyegative n-nyumbew, (⑅˘꒳˘) if nyo s-such doc id exists. nyaa~~
    */
-  int getPreviousDocID(int docID);
+  i-int getpweviousdocid(int docid);
 
   /**
-   * Returns the total number of documents stored in this mapper.
+   * wetuwns t-the totaw nyumbew of documents stowed in this mappew. OwO
    *
-   * @return The total number of documents stored in this mapper.
+   * @wetuwn the totaw n-nyumbew of documents stowed i-in this mappew. rawr x3
    */
-  int getNumDocs();
+  i-int getnumdocs();
 
   /**
-   * Adds a mapping for the given tweet ID. Returns the doc ID assigned to this tweet ID.
-   * This method does not check if the tweet ID is already present in the mapper. It always assigns
-   * a new doc ID to the given tweet.
+   * a-adds a mapping fow the given t-tweet id. XD wetuwns t-the doc id a-assigned to this t-tweet id. σωσ
+   * this method does nyot check if the t-tweet id is awweady p-pwesent in t-the mappew. (U ᵕ U❁) it a-awways assigns
+   * a-a nyew doc id to the given tweet. (U ﹏ U)
    *
-   * @param tweetID The tweet ID to be added to the mapper.
-   * @return The doc ID assigned to the given tweet ID, or ID_NOT_FOUND if a doc ID could not be
-   *         assigned to this tweet.
+   * @pawam tweetid t-the tweet id to be added to the mappew. :3
+   * @wetuwn the doc id assigned to the given tweet id, o-ow id_not_found if a doc id couwd nyot be
+   *         assigned t-to this tweet. ( ͡o ω ͡o )
    */
-  int addMapping(long tweetID);
+  i-int addmapping(wong t-tweetid);
 
   /**
-   * Converts the current DocIDToTweetIDMapper to a DocIDToTweetIDMapper instance with the same
-   * tweet IDs. The tweet IDs in the original and optimized instances can be mapped to different
-   * doc IDs. However, we expect doc IDs to be assigned such that tweets created later have smaller
-   * have smaller doc IDs.
+   * convewts the cuwwent d-docidtotweetidmappew to a d-docidtotweetidmappew i-instance with the same
+   * tweet ids. σωσ the tweet ids in the owiginaw and optimized instances c-can be mapped to diffewent
+   * d-doc ids. >w< howevew, 😳😳😳 we expect doc i-ids to be assigned s-such that tweets cweated watew have smowew
+   * h-have smowew d-doc ids. OwO
    *
-   * This method should be called when an earlybird segment is being optimized, right before
-   * flushing it to disk.
+   * this method s-shouwd be cawwed w-when an eawwybiwd segment is being optimized, 😳 wight befowe
+   * fwushing it to d-disk. 😳😳😳
    *
-   * @return An optimized DocIDToTweetIDMapper with the same tweet IDs.
+   * @wetuwn a-an optimized d-docidtotweetidmappew with the s-same tweet ids. (˘ω˘)
    */
-  DocIDToTweetIDMapper optimize() throws IOException;
+  d-docidtotweetidmappew optimize() thwows i-ioexception;
 }

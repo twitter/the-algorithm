@@ -1,54 +1,54 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala.FieldByPath
+impowt c-com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.wepositowy._
+i-impowt c-com.twittew.tweetypie.thwiftscawa.fiewdbypath
 
 /**
- * Hydrates the `conversationMuted` field of Tweet. `conversationMuted`
- * will be true if the conversation that this tweet is part of has been
- * muted by the user. This field is perspectival, so the result of this
- * hydrator should never be cached.
+ * h-hydwates t-the `convewsationmuted` f-fiewd of tweet. :3 `convewsationmuted`
+ * wiww be twue if the convewsation that this tweet i-is pawt of has been
+ * muted by the usew. -.- this f-fiewd is pewspectivaw, 😳 so the w-wesuwt of this
+ * hydwatow shouwd nyevew be cached. mya
  */
-object ConversationMutedHydrator {
-  type Type = ValueHydrator[Option[Boolean], Ctx]
+object convewsationmutedhydwatow {
+  t-type type = vawuehydwatow[option[boowean], c-ctx]
 
-  case class Ctx(conversationId: Option[TweetId], underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy
+  c-case cwass ctx(convewsationid: option[tweetid], (˘ω˘) undewwyingtweetctx: tweetctx)
+      extends tweetctx.pwoxy
 
-  val hydratedField: FieldByPath = fieldByPath(Tweet.ConversationMutedField)
+  vaw h-hydwatedfiewd: fiewdbypath = fiewdbypath(tweet.convewsationmutedfiewd)
 
-  private[this] val partialResult = ValueState.partial(None, hydratedField)
-  private[this] val modifiedTrue = ValueState.modified(Some(true))
-  private[this] val modifiedFalse = ValueState.modified(Some(false))
+  pwivate[this] vaw pawtiawwesuwt = vawuestate.pawtiaw(none, >_< h-hydwatedfiewd)
+  pwivate[this] v-vaw modifiedtwue = v-vawuestate.modified(some(twue))
+  p-pwivate[this] v-vaw modifiedfawse = vawuestate.modified(some(fawse))
 
-  def apply(repo: ConversationMutedRepository.Type): Type = {
+  def appwy(wepo: c-convewsationmutedwepositowy.type): type = {
 
-    ValueHydrator[Option[Boolean], Ctx] { (_, ctx) =>
-      (ctx.opts.forUserId, ctx.conversationId) match {
-        case (Some(userId), Some(convoId)) =>
-          repo(userId, convoId).liftToTry
+    vawuehydwatow[option[boowean], -.- c-ctx] { (_, 🥺 ctx) =>
+      (ctx.opts.fowusewid, (U ﹏ U) ctx.convewsationid) match {
+        case (some(usewid), >w< some(convoid)) =>
+          wepo(usewid, mya convoid).wifttotwy
             .map {
-              case Return(true) => modifiedTrue
-              case Return(false) => modifiedFalse
-              case Throw(_) => partialResult
+              c-case wetuwn(twue) => modifiedtwue
+              c-case wetuwn(fawse) => m-modifiedfawse
+              c-case thwow(_) => pawtiawwesuwt
             }
         case _ =>
-          ValueState.StitchUnmodifiedNone
+          vawuestate.stitchunmodifiednone
       }
-    }.onlyIf { (curr, ctx) =>
-      // It is unlikely that this field will already be set, but if, for
-      // some reason, this hydrator is run on a tweet that already has
-      // this value set, we will skip the work to check again.
-      curr.isEmpty &&
-      // We only hydrate this field if it is explicitly requested. At
-      // the time of this writing, this field is only used for
-      // displaying UI for toggling the muted state of the relevant
-      // conversation.
-      ctx.tweetFieldRequested(Tweet.ConversationMutedField) &&
-      // Retweets are not part of a conversation, so should not be muted.
-      !ctx.isRetweet
+    }.onwyif { (cuww, >w< ctx) =>
+      // i-it i-is unwikewy that this fiewd wiww a-awweady be set, nyaa~~ b-but if, (✿oωo) fow
+      // some weason, t-this hydwatow is wun on a tweet t-that awweady has
+      // this vawue set, ʘwʘ we w-wiww skip the wowk to check again. (ˆ ﻌ ˆ)♡
+      c-cuww.isempty &&
+      // we onwy hydwate t-this fiewd if i-it is expwicitwy wequested. 😳😳😳 at
+      // the time of this wwiting, :3 this fiewd is onwy used fow
+      // dispwaying u-ui fow toggwing t-the muted state of the wewevant
+      // c-convewsation. OwO
+      c-ctx.tweetfiewdwequested(tweet.convewsationmutedfiewd) &&
+      // w-wetweets awe nyot pawt of a convewsation, (U ﹏ U) so shouwd nyot be muted. >w<
+      !ctx.iswetweet
     }
   }
 }

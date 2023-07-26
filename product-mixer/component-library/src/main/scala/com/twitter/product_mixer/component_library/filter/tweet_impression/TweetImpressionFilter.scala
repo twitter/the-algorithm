@@ -1,37 +1,37 @@
-package com.twitter.product_mixer.component_library.filter.tweet_impression
+package com.twittew.pwoduct_mixew.component_wibwawy.fiwtew.tweet_impwession
 
-import com.twitter.product_mixer.component_library.feature_hydrator.query.impressed_tweets.ImpressedTweets
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.quewy.impwessed_tweets.impwessedtweets
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
 
 /**
- * Filters out tweets that the user has seen
+ * f-fiwtews out tweets that the usew has seen
  */
-case class TweetImpressionFilter[Candidate <: BaseTweetCandidate](
-) extends Filter[PipelineQuery, Candidate] {
+c-case cwass tweetimpwessionfiwtew[candidate <: basetweetcandidate](
+) extends fiwtew[pipewinequewy, rawr x3 c-candidate] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("TweetImpression")
+  ovewwide vaw identifiew: fiwtewidentifiew = fiwtewidentifiew("tweetimpwession")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
+  o-ovewwide def appwy(
+    quewy: p-pipewinequewy, (✿oωo)
+    c-candidates: seq[candidatewithfeatuwes[candidate]]
+  ): stitch[fiwtewwesuwt[candidate]] = {
 
-    // Set of Tweets that have impressed the user
-    val impressedTweetsSet: Set[Long] = query.features match {
-      case Some(featureMap) => featureMap.getOrElse(ImpressedTweets, Seq.empty).toSet
-      case None => Set.empty
+    // set of tweets that have i-impwessed the usew
+    vaw impwessedtweetsset: set[wong] = quewy.featuwes match {
+      case s-some(featuwemap) => featuwemap.getowewse(impwessedtweets, (ˆ ﻌ ˆ)♡ s-seq.empty).toset
+      c-case nyone => s-set.empty
     }
 
-    val (keptCandidates, removedCandidates) = candidates.partition { filteredCandidate =>
-      !impressedTweetsSet.contains(filteredCandidate.candidate.id)
+    v-vaw (keptcandidates, (˘ω˘) wemovedcandidates) = candidates.pawtition { fiwtewedcandidate =>
+      !impwessedtweetsset.contains(fiwtewedcandidate.candidate.id)
     }
 
-    Stitch.value(FilterResult(keptCandidates.map(_.candidate), removedCandidates.map(_.candidate)))
+    s-stitch.vawue(fiwtewwesuwt(keptcandidates.map(_.candidate), (⑅˘꒳˘) wemovedcandidates.map(_.candidate)))
   }
 }

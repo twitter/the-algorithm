@@ -1,15 +1,15 @@
-namespace java com.twitter.ann.knn.thriftjava
-#@namespace scala com.twitter.ann.knn.thriftscala
-namespace py gen.twitter.ann.knn
+namespace java com.twittew.ann.knn.thwiftjava
+#@namespace scawa com.twittew.ann.knn.thwiftscawa
+namespace p-py gen.twittew.ann.knn
 
-include "com/twitter/ml/featurestore/entity.thrift"
+i-incwude "com/twittew/mw/featuwestowe/entity.thwift"
 
-struct Neighbor {
-  1: required double distance
-  2: required entity.EntityId id
-} (persisted = "true")
+s-stwuct nyeighbow {
+  1: w-wequiwed d-doubwe distance
+  2: w-wequiwed e-entity.entityid i-id
+} (pewsisted = "twue")
 
-struct Knn {
-  1: required entity.EntityId queryId
-  2: required list<Neighbor> neighbors
-}(persisted='true')
+stwuct knn {
+  1: wequiwed entity.entityid quewyid
+  2: wequiwed w-wist<neighbow> neighbows
+}(pewsisted='twue')

@@ -1,22 +1,22 @@
-package com.twitter.timelineranker.common
+package com.twittew.timewinewankew.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.core.HydratedTweets
-import com.twitter.timelines.visibility.VisibilityEnforcer
-import com.twitter.util.Future
+impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.timewinewankew.cowe.candidateenvewope
+i-impowt c-com.twittew.timewinewankew.cowe.hydwatedtweets
+i-impowt com.twittew.timewines.visibiwity.visibiwityenfowcew
+i-impowt c-com.twittew.utiw.futuwe
 
 /**
- * Transform which uses an instance of a VisiblityEnforcer to filter down HydratedTweets
+ * t-twansfowm which uses an instance of a visibwityenfowcew to fiwtew down hydwatedtweets
  */
-class VisibilityEnforcingTransform(visibilityEnforcer: VisibilityEnforcer)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    visibilityEnforcer.apply(Some(envelope.query.userId), envelope.hydratedTweets.outerTweets).map {
-      visibleTweets =>
-        val innerTweets = envelope.hydratedTweets.innerTweets
-        envelope.copy(
-          hydratedTweets = HydratedTweets(outerTweets = visibleTweets, innerTweets = innerTweets))
+cwass v-visibiwityenfowcingtwansfowm(visibiwityenfowcew: visibiwityenfowcew)
+    extends f-futuweawwow[candidateenvewope, -.- candidateenvewope] {
+  o-ovewwide def appwy(envewope: candidateenvewope): futuwe[candidateenvewope] = {
+    visibiwityenfowcew.appwy(some(envewope.quewy.usewid), ( ͡o ω ͡o ) e-envewope.hydwatedtweets.outewtweets).map {
+      visibwetweets =>
+        vaw i-innewtweets = e-envewope.hydwatedtweets.innewtweets
+        envewope.copy(
+          hydwatedtweets = hydwatedtweets(outewtweets = visibwetweets, rawr x3 i-innewtweets = innewtweets))
     }
   }
 }

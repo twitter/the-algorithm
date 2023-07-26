@@ -1,8 +1,8 @@
-package com.twitter.ann.dataflow.offline
+package com.twittew.ann.datafwow.offwine
 
-import com.twitter.beam.schemas.SchemaFieldName
+impowt c-com.twittew.beam.schemas.schemafiewdname
 
-case class FlatEmbeddingData(
-  @SchemaFieldName("entityId") entityId: Option[Long],
-  @SchemaFieldName("embedding") embedding: Seq[Double])
-    extends BaseEmbeddingData
+c-case cwass f-fwatembeddingdata(
+  @schemafiewdname("entityid") e-entityid: o-option[wong], (⑅˘꒳˘)
+  @schemafiewdname("embedding") embedding: s-seq[doubwe])
+    e-extends b-baseembeddingdata

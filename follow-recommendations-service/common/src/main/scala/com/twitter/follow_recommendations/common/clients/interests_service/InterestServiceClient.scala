@@ -1,115 +1,115 @@
-package com.twitter.follow_recommendations.common.clients.interests_service
+package com.twittew.fowwow_wecommendations.common.cwients.intewests_sewvice
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.InterestedInInterestsFetchKey
-import com.twitter.inject.Logging
-import com.twitter.interests.thriftscala.InterestId
-import com.twitter.interests.thriftscala.InterestRelationship
-import com.twitter.interests.thriftscala.InterestedInInterestModel
-import com.twitter.interests.thriftscala.UserInterest
-import com.twitter.interests.thriftscala.UserInterestData
-import com.twitter.interests.thriftscala.UserInterestsResponse
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Client
-import com.twitter.strato.thrift.ScroogeConvImplicits._
+impowt c-com.googwe.inject.inject
+i-impowt c-com.googwe.inject.singweton
+impowt c-com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.stowe.intewestedinintewestsfetchkey
+i-impowt com.twittew.inject.wogging
+i-impowt com.twittew.intewests.thwiftscawa.intewestid
+impowt com.twittew.intewests.thwiftscawa.intewestwewationship
+impowt c-com.twittew.intewests.thwiftscawa.intewestedinintewestmodew
+impowt com.twittew.intewests.thwiftscawa.usewintewest
+i-impowt com.twittew.intewests.thwiftscawa.usewintewestdata
+impowt c-com.twittew.intewests.thwiftscawa.usewintewestswesponse
+impowt com.twittew.stitch.stitch
+impowt c-com.twittew.stwato.cwient.cwient
+impowt com.twittew.stwato.thwift.scwoogeconvimpwicits._
 
-@Singleton
-class InterestServiceClient @Inject() (
-  stratoClient: Client,
-  statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends Logging {
+@singweton
+c-cwass i-intewestsewvicecwient @inject() (
+  stwatocwient: cwient, 😳
+  statsweceivew: statsweceivew = nyuwwstatsweceivew)
+    e-extends wogging {
 
-  val interestsServiceStratoColumnPath = "interests/interestedInInterests"
-  val stats = statsReceiver.scope("interest_service_client")
-  val errorCounter = stats.counter("error")
+  vaw intewestssewvicestwatocowumnpath = "intewests/intewestedinintewests"
+  vaw stats = statsweceivew.scope("intewest_sewvice_cwient")
+  vaw ewwowcountew = stats.countew("ewwow")
 
-  private val interestsFetcher =
-    stratoClient.fetcher[InterestedInInterestsFetchKey, UserInterestsResponse](
-      interestsServiceStratoColumnPath,
-      checkTypes = true
+  p-pwivate vaw intewestsfetchew =
+    s-stwatocwient.fetchew[intewestedinintewestsfetchkey, σωσ u-usewintewestswesponse](
+      i-intewestssewvicestwatocowumnpath, rawr x3
+      c-checktypes = twue
     )
 
-  def fetchUttInterestIds(
-    userId: Long
-  ): Stitch[Seq[Long]] = {
-    fetchInterestRelationships(userId)
-      .map(_.toSeq.flatten.flatMap(extractUttInterest))
+  def fetchuttintewestids(
+    u-usewid: wong
+  ): stitch[seq[wong]] = {
+    fetchintewestwewationships(usewid)
+      .map(_.toseq.fwatten.fwatmap(extwactuttintewest))
   }
 
-  def extractUttInterest(
-    interestRelationShip: InterestRelationship
-  ): Option[Long] = {
-    interestRelationShip match {
-      case InterestRelationship.V1(relationshipV1) =>
-        relationshipV1.interestId match {
-          case InterestId.SemanticCore(semanticCoreInterest) => Some(semanticCoreInterest.id)
-          case _ => None
+  d-def extwactuttintewest(
+    intewestwewationship: intewestwewationship
+  ): option[wong] = {
+    intewestwewationship match {
+      c-case intewestwewationship.v1(wewationshipv1) =>
+        wewationshipv1.intewestid m-match {
+          c-case intewestid.semanticcowe(semanticcoweintewest) => s-some(semanticcoweintewest.id)
+          case _ => none
         }
-      case _ => None
+      case _ => nyone
     }
   }
 
-  def fetchCustomInterests(
-    userId: Long
-  ): Stitch[Seq[String]] = {
-    fetchInterestRelationships(userId)
-      .map(_.toSeq.flatten.flatMap(extractCustomInterest))
+  d-def fetchcustomintewests(
+    u-usewid: wong
+  ): stitch[seq[stwing]] = {
+    f-fetchintewestwewationships(usewid)
+      .map(_.toseq.fwatten.fwatmap(extwactcustomintewest))
   }
 
-  def extractCustomInterest(
-    interestRelationShip: InterestRelationship
-  ): Option[String] = {
-    interestRelationShip match {
-      case InterestRelationship.V1(relationshipV1) =>
-        relationshipV1.interestId match {
-          case InterestId.FreeForm(freeFormInterest) => Some(freeFormInterest.interest)
-          case _ => None
+  d-def extwactcustomintewest(
+    intewestwewationship: i-intewestwewationship
+  ): option[stwing] = {
+    i-intewestwewationship match {
+      case i-intewestwewationship.v1(wewationshipv1) =>
+        wewationshipv1.intewestid m-match {
+          case intewestid.fweefowm(fweefowmintewest) => s-some(fweefowmintewest.intewest)
+          c-case _ => nyone
         }
-      case _ => None
+      case _ => none
     }
   }
 
-  def fetchInterestRelationships(
-    userId: Long
-  ): Stitch[Option[Seq[InterestRelationship]]] = {
-    interestsFetcher
+  def fetchintewestwewationships(
+    usewid: wong
+  ): stitch[option[seq[intewestwewationship]]] = {
+    i-intewestsfetchew
       .fetch(
-        InterestedInInterestsFetchKey(
-          userId = userId,
-          labels = None,
-          None
+        i-intewestedinintewestsfetchkey(
+          usewid = u-usewid, OwO
+          w-wabews = n-nyone, /(^•ω•^)
+          nyone
         ))
       .map(_.v)
       .map {
-        case Some(response) =>
-          response.interests.interests.map { interests =>
-            interests.collect {
-              case UserInterest(_, Some(interestData)) =>
-                getInterestRelationship(interestData)
-            }.flatten
+        case some(wesponse) =>
+          wesponse.intewests.intewests.map { i-intewests =>
+            intewests.cowwect {
+              case usewintewest(_, 😳😳😳 some(intewestdata)) =>
+                getintewestwewationship(intewestdata)
+            }.fwatten
           }
-        case _ => None
+        c-case _ => nyone
       }
-      .rescue {
-        case e: Throwable => // we are swallowing all errors
-          logger.warn(s"interests could not be retrieved for user $userId due to ${e.getCause}")
-          errorCounter.incr
-          Stitch.None
+      .wescue {
+        case e: thwowabwe => // w-we awe s-swawwowing aww e-ewwows
+          woggew.wawn(s"intewests c-couwd nyot b-be wetwieved f-fow usew $usewid d-due to ${e.getcause}")
+          ewwowcountew.incw
+          stitch.none
       }
   }
 
-  private def getInterestRelationship(
-    interestData: UserInterestData
-  ): Seq[InterestRelationship] = {
-    interestData match {
-      case UserInterestData.InterestedIn(interestModels) =>
-        interestModels.collect {
-          case InterestedInInterestModel.ExplicitModel(model) => model
+  pwivate d-def getintewestwewationship(
+    i-intewestdata: u-usewintewestdata
+  ): s-seq[intewestwewationship] = {
+    i-intewestdata match {
+      case usewintewestdata.intewestedin(intewestmodews) =>
+        intewestmodews.cowwect {
+          c-case intewestedinintewestmodew.expwicitmodew(modew) => modew
         }
-      case _ => Nil
+      case _ => nyiw
     }
   }
 }

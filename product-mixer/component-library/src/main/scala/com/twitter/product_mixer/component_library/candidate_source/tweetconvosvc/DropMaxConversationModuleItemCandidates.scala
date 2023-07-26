@@ -1,55 +1,55 @@
-package com.twitter.product_mixer.component_library.candidate_source.tweetconvosvc
+package com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.tweetconvosvc
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.moduwecandidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Takes a conversation module item and truncates it to be at most the focal tweet, the focal tweet's
- * in reply to tweet and optionally, the root conversation tweet if desired.
- * @param pipelineScope What pipeline scopes to include in this.
- * @param includeRootTweet Whether to include the root tweet at the top of the conversation or not.
- * @tparam Query
+ * t-takes a c-convewsation moduwe item and twuncates it to be at most the focaw tweet, mya the focaw t-tweet's
+ * in wepwy to tweet and optionawwy, >w< t-the woot convewsation tweet if d-desiwed. nyaa~~
+ * @pawam pipewinescope nyani pipewine scopes to incwude i-in this. (✿oωo)
+ * @pawam incwudewoottweet w-whethew to i-incwude the woot tweet at the top of the convewsation ow nyot. ʘwʘ
+ * @tpawam quewy
  */
-case class DropMaxConversationModuleItemCandidates[-Query <: PipelineQuery](
-  override val pipelineScope: CandidateScope,
-  includeRootTweet: Boolean)
-    extends Selector[Query] {
-  override def apply(
-    query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val updatedCandidates = remainingCandidates.collect {
-      case moduleCandidate: ModuleCandidateWithDetails if pipelineScope.contains(moduleCandidate) =>
-        updateConversationModule(moduleCandidate, includeRootTweet)
-      case candidates => candidates
+c-case cwass dwopmaxconvewsationmoduweitemcandidates[-quewy <: pipewinequewy](
+  ovewwide vaw pipewinescope: c-candidatescope,
+  incwudewoottweet: b-boowean)
+    e-extends sewectow[quewy] {
+  o-ovewwide d-def appwy(
+    quewy: quewy, (ˆ ﻌ ˆ)♡
+    wemainingcandidates: s-seq[candidatewithdetaiws], 😳😳😳
+    wesuwt: seq[candidatewithdetaiws]
+  ): s-sewectowwesuwt = {
+    vaw updatedcandidates = wemainingcandidates.cowwect {
+      case moduwecandidate: moduwecandidatewithdetaiws if pipewinescope.contains(moduwecandidate) =>
+        u-updateconvewsationmoduwe(moduwecandidate, :3 incwudewoottweet)
+      c-case c-candidates => c-candidates
     }
-    SelectorResult(remainingCandidates = updatedCandidates, result = result)
+    sewectowwesuwt(wemainingcandidates = updatedcandidates, OwO wesuwt = w-wesuwt)
   }
 
-  private def updateConversationModule(
-    module: ModuleCandidateWithDetails,
-    includeRootTweet: Boolean
-  ): ModuleCandidateWithDetails = {
-    // If the thread is only the root tweet & a focal tweet replying to it, no truncation can be done.
-    if (module.candidates.length <= 2) {
-      module
-    } else {
-      // If a thread is more 3 or more tweets, we optionally keep the root tweet if desired, and take
-      // the focal tweet tweet and its direct ancestor (the one it would have replied to) and return
-      // those.
-      val tweetCandidates = module.candidates
-      val replyAndFocalTweet = tweetCandidates.takeRight(2)
-      val updatedConversation = if (includeRootTweet) {
-        tweetCandidates.headOption ++ replyAndFocalTweet
-      } else {
-        replyAndFocalTweet
+  p-pwivate def updateconvewsationmoduwe(
+    m-moduwe: moduwecandidatewithdetaiws, (U ﹏ U)
+    i-incwudewoottweet: boowean
+  ): m-moduwecandidatewithdetaiws = {
+    // if t-the thwead is onwy the woot tweet & a focaw tweet w-wepwying to it, >w< nyo twuncation c-can be done. (U ﹏ U)
+    if (moduwe.candidates.wength <= 2) {
+      m-moduwe
+    } e-ewse {
+      // if a thwead is mowe 3 ow mowe tweets, 😳 we optionawwy keep the woot tweet if desiwed, (ˆ ﻌ ˆ)♡ and t-take
+      // t-the focaw tweet tweet and its diwect a-ancestow (the o-one it wouwd h-have wepwied to) and wetuwn
+      // those. 😳😳😳
+      vaw tweetcandidates = m-moduwe.candidates
+      vaw wepwyandfocawtweet = tweetcandidates.takewight(2)
+      vaw updatedconvewsation = i-if (incwudewoottweet) {
+        tweetcandidates.headoption ++ w-wepwyandfocawtweet
+      } ewse {
+        w-wepwyandfocawtweet
       }
-      module.copy(candidates = updatedConversation.toSeq)
+      moduwe.copy(candidates = u-updatedconvewsation.toseq)
     }
   }
 }

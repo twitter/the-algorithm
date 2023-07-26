@@ -1,18 +1,18 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "configapi/configapi-core",
-        "configapi/configapi-core/src/main/scala/com/twitter/timelines/configapi",
-        "servo/decider",
-        "timelineranker/common/src/main/scala/com/twitter/timelineranker/model",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/config",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/decider",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/parameters/util",
-        "timelines/src/main/scala/com/twitter/timelines/config",
-        "timelines/src/main/scala/com/twitter/timelines/decider",
-        "timelines/src/main/scala/com/twitter/timelines/util/bounds",
-        "util/util-stats/src/main/scala",
+scawa_wibwawy(
+    souwces = ["*.scawa"], ^•ﻌ•^
+    compiwew_option_sets = ["fataw_wawnings"], OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "configapi/configapi-cowe", òωó
+        "configapi/configapi-cowe/swc/main/scawa/com/twittew/timewines/configapi", o.O
+        "sewvo/decidew", (U ᵕ U❁)
+        "timewinewankew/common/swc/main/scawa/com/twittew/timewinewankew/modew", (⑅˘꒳˘)
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/config", ( ͡o ω ͡o )
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/decidew", UwU
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/pawametews/utiw", rawr x3
+        "timewines/swc/main/scawa/com/twittew/timewines/config", rawr
+        "timewines/swc/main/scawa/com/twittew/timewines/decidew", σωσ
+        "timewines/swc/main/scawa/com/twittew/timewines/utiw/bounds", σωσ
+        "utiw/utiw-stats/swc/main/scawa", >_<
     ],
 )

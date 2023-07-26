@@ -1,201 +1,201 @@
-package com.twitter.servo.database
+package com.twittew.sewvo.database
 
-import com.twitter.servo.repository._
-import com.twitter.util.Future
-import scala.collection.mutable.{HashMap, HashSet, ListBuffer}
-import scala.collection.generic.Growable
+impowt com.twittew.sewvo.wepositowy._
+i-impowt c-com.twittew.utiw.futuwe
+i-impowt scawa.cowwection.mutabwe.{hashmap, XD h-hashset, ʘwʘ wistbuffew}
+i-impowt scawa.cowwection.genewic.gwowabwe
 
-object Database {
+o-object database {
 
   /**
-   * Construct a KeyValueRepository wrapping access to a database.
+   * constwuct a-a keyvawuewepositowy w-wwapping access to a database. rawr x3
    *
-   * Data retrieved as a row from the query is passed to a Builder producing a
-   * (Key, Row) tuple.  Once all rows have been processed this way it is passed as a
-   * sequence to a post-query function that can perform actions (aggregation usually)
-   * and produce a final sequence of (Key, Value).
+   * data wetwieved as a wow fwom t-the quewy is passed to a buiwdew pwoducing a
+   * (key, ^^;; w-wow) tupwe. ʘwʘ  once aww w-wows have been pwocessed this way it is passed as a
+   * sequence t-to a post-quewy function that c-can pewfowm actions (aggwegation u-usuawwy)
+   * and pwoduce a finaw sequence of (key, (U ﹏ U) vawue).
    *
-   * @tparam Q
-   *   how we'll be querying the this repository
+   * @tpawam q
+   *   how we'ww b-be quewying the this wepositowy
    *
-   * @tparam K
-   *   the key used for looking data up
+   * @tpawam k
+   *   the key used fow wooking data up
    *
-   * @tparam R
-   *   each entry from the the database will be represented as an instance of R
+   * @tpawam w-w
+   *   each entwy fwom the the d-database wiww b-be wepwesented a-as an instance of w-w
    *
-   * @tparam V
-   *   the repository will return a V produced by processing one or more Rs
+   * @tpawam v
+   *   the wepositowy wiww w-wetuwn a v pwoduced by pwocessing one ow mowe w-ws
    *
-   * @param database
-   *   A database used to back the KeyValueRepository being built.
+   * @pawam database
+   *   a database used to back the keyvawuewepositowy being buiwt. (˘ω˘)
    *
-   * @param dbQuery
-   *   A database query for fetching records to be parsed into objects of type
-   *   Row. The query string can contain instances of the character '?' as
-   *   placeholders for parameter passed into the `Database.select` calls.
+   * @pawam d-dbquewy
+   *   a database quewy f-fow fetching wecowds t-to be pawsed i-into objects of type
+   *   wow. (ꈍᴗꈍ) the quewy stwing can contain i-instances of the c-chawactew '?' as
+   *   pwacehowdews f-fow pawametew p-passed into the `database.sewect` c-cawws. /(^•ω•^)
    *
-   * @param builder
-   *   A Builder that builds (K, Row) pairs from ResultSets from the database
+   * @pawam buiwdew
+   *   a b-buiwdew that buiwds (k, >_< wow) paiws fwom wesuwtsets f-fwom the database
    *
-   * @param postProcess
-   *   A function which can manipulate the Seq[(K, Row)] that is returned from the
-   *   database. Useful for aggregating multi-mapped K, V pairs where V holds a
-   *   container with multiple values for the same key in the database.  This function
-   *   should not manipulate the list of keys; doing so will result in Return.None
-   *   elements in the ensuing KeyValueResult.
+   * @pawam postpwocess
+   *   a-a function which can manipuwate t-the seq[(k, σωσ w-wow)] that is wetuwned fwom the
+   *   database. ^^;; usefuw fow aggwegating muwti-mapped k, 😳 v paiws whewe v howds a-a
+   *   containew w-with muwtipwe vawues fow t-the same key in t-the database. >_<  this f-function
+   *   shouwd nyot manipuwate the wist of keys; doing s-so wiww wesuwt in wetuwn.none
+   *   ewements in the ensuing keyvawuewesuwt. -.-
    *
-   *   AggregateByKey has a basic implementation that groups R objects by a
-   *   specified identifier and may be useful as a common impl.
+   *   a-aggwegatebykey has a b-basic impwementation t-that gwoups w-w objects by a
+   *   specified i-identifiew and m-may be usefuw as a-a common impw. UwU
    *
-   * @param selectParams
-   *   A function that is applied to the distinct keys in a repository query.
-   *   The result is passed to `Database.select` to be used for filling in
-   *   bind variables in dbQuery. By default, the repository query is passed
-   *   directly to the select. The use cases for this function are situations
-   *   where the SELECT statement takes multiple parameters.
+   * @pawam s-sewectpawams
+   *   a function that is appwied t-to the distinct k-keys in a wepositowy q-quewy. :3
+   *   t-the wesuwt is p-passed to `database.sewect` to be used fow fiwwing in
+   *   bind v-vawiabwes in dbquewy. σωσ by defauwt, >w< the wepositowy quewy is passed
+   *   diwectwy to the sewect. (ˆ ﻌ ˆ)♡ t-the use cases fow this function awe situations
+   *   whewe t-the sewect statement t-takes muwtipwe p-pawametews. ʘwʘ
    *
-   *   Example:
-   *     // A repository that takes Seq[Long]s of userids and returns
-   *     // Item objects of a parameterized item type.
-   *     Database.keyValueRepository[Seq[Long], Long, Item, Item](
-   *       database,
-   *       "SELECT * FROM items WHERE user_id IN (?) AND item_type = ?;",
-   *       ItemBuilder,
-   *       selectParams = Seq(_: Seq[Long], itemType)
+   *   exampwe:
+   *     // a-a wepositowy that takes seq[wong]s o-of usewids and w-wetuwns
+   *     // item objects of a pawametewized item type.
+   *     database.keyvawuewepositowy[seq[wong], wong, :3 item, item](
+   *       d-database, (˘ω˘)
+   *       "sewect * fwom items whewe u-usew_id in (?) and item_type = ?;", 😳😳😳
+   *       itembuiwdew, rawr x3
+   *       s-sewectpawams = s-seq(_: seq[wong], (✿oωo) itemtype)
    *     )
    */
-  def keyValueRepository[Q <: Seq[K], K, R, V](
-    database: Database,
-    dbQuery: String,
-    builder: Builder[(K, R)],
-    postProcess: Seq[(K, R)] => Seq[(K, V)] =
-      (identity[Seq[(K, V)]] _): (Seq[(K, V)] => Seq[(K, V)]),
-    selectParams: Seq[K] => Seq[Any] = (Seq(_: Seq[K])): (Seq[K] => collection.Seq[Seq[K]])
-  ): KeyValueRepository[Q, K, V] =
-    query => {
-      if (query.isEmpty) {
-        KeyValueResult.emptyFuture
-      } else {
-        val uniqueKeys = query.distinct
-        KeyValueResult.fromPairs(uniqueKeys) {
-          database.select(dbQuery, builder, selectParams(uniqueKeys): _*) map postProcess
+  def keyvawuewepositowy[q <: s-seq[k], (ˆ ﻌ ˆ)♡ k, w, v](
+    d-database: database, :3
+    dbquewy: s-stwing, (U ᵕ U❁)
+    b-buiwdew: buiwdew[(k, ^^;; w)],
+    postpwocess: seq[(k, mya w)] => seq[(k, 😳😳😳 v)] =
+      (identity[seq[(k, OwO v-v)]] _): (seq[(k, rawr v-v)] => seq[(k, XD v-v)]),
+    sewectpawams: seq[k] => s-seq[any] = (seq(_: s-seq[k])): (seq[k] => cowwection.seq[seq[k]])
+  ): keyvawuewepositowy[q, (U ﹏ U) k-k, v] =
+    quewy => {
+      if (quewy.isempty) {
+        keyvawuewesuwt.emptyfutuwe
+      } ewse {
+        vaw uniquekeys = quewy.distinct
+        keyvawuewesuwt.fwompaiws(uniquekeys) {
+          d-database.sewect(dbquewy, (˘ω˘) b-buiwdew, UwU sewectpawams(uniquekeys): _*) map postpwocess
         }
       }
     }
 }
 
 /**
- * A thin trait for async interaction with a database.
+ * a thin t-twait fow async i-intewaction with a database. >_<
  */
-trait Database {
-  def select[A](query: String, builder: Builder[A], params: Any*): Future[Seq[A]]
-  def selectOne[A](query: String, builder: Builder[A], params: Any*): Future[Option[A]]
-  def execute(query: String, params: Any*): Future[Int]
-  def insert(query: String, params: Any*): Future[Long]
-  def release(): Unit
+twait database {
+  def sewect[a](quewy: s-stwing, σωσ buiwdew: buiwdew[a], 🥺 pawams: any*): futuwe[seq[a]]
+  def sewectone[a](quewy: s-stwing, 🥺 buiwdew: buiwdew[a], ʘwʘ pawams: a-any*): futuwe[option[a]]
+  d-def exekawaii~(quewy: stwing, :3 pawams: any*): futuwe[int]
+  d-def insewt(quewy: s-stwing, (U ﹏ U) pawams: any*): futuwe[wong]
+  def wewease(): u-unit
 }
 
-object NullDatabase extends Database {
-  override def select[Unit](query: String, builder: Builder[Unit], params: Any*) =
-    Future.value(Seq.empty[Unit])
+object nyuwwdatabase extends d-database {
+  ovewwide def sewect[unit](quewy: stwing, (U ﹏ U) buiwdew: buiwdew[unit], ʘwʘ p-pawams: any*) =
+    futuwe.vawue(seq.empty[unit])
 
-  override def selectOne[Unit](query: String, builder: Builder[Unit], params: Any*) =
-    Future.value(None)
+  o-ovewwide d-def sewectone[unit](quewy: stwing, >w< b-buiwdew: buiwdew[unit], rawr x3 pawams: a-any*) =
+    f-futuwe.vawue(none)
 
-  override def release() = ()
+  o-ovewwide def wewease() = ()
 
-  override def execute(query: String, params: Any*) =
-    Future.value(0)
+  o-ovewwide def e-exekawaii~(quewy: stwing, pawams: any*) =
+    f-futuwe.vawue(0)
 
-  override def insert(query: String, params: Any*) =
-    Future.value(0)
+  o-ovewwide def i-insewt(quewy: stwing, pawams: any*) =
+    futuwe.vawue(0)
 }
 
-object AggregateByKey {
-  def apply[K, R, A](
-    extractKey: R => K,
-    reduce: Seq[R] => A,
-    pruneDuplicates: Boolean = false
-  ) = new AggregateByKey(extractKey, reduce, pruneDuplicates)
+o-object aggwegatebykey {
+  d-def appwy[k, OwO w-w, a](
+    extwactkey: w => k, ^•ﻌ•^
+    weduce: seq[w] => a, >_<
+    p-pwunedupwicates: b-boowean = fawse
+  ) = n-nyew aggwegatebykey(extwactkey, OwO w-weduce, >_< pwunedupwicates)
 
   /**
-   * In the event that the item type (V) does not carry an aggregation key then we can have
-   * the Builder return a tuple with some id attached.  If that is done then each Row from the
-   * builder will look something like (SomeGroupId, SomeRowObject).  Because we tend to minimize
-   * data duplication this seems to be a pretty common pattern and can be seen in
-   * SavedSearchesRepository, FacebookConnectionsRepository, and UserToRoleRepository.
+   * in the e-event that the item type (v) does nyot cawwy an aggwegation key then we can have
+   * the buiwdew w-wetuwn a tupwe with some id a-attached. (ꈍᴗꈍ)  if that is done then e-each wow fwom the
+   * buiwdew w-wiww wook something wike (somegwoupid, >w< s-somewowobject). (U ﹏ U)  b-because w-we tend to minimize
+   * d-data dupwication t-this seems to be a pwetty common pattewn and can be seen in
+   * savedseawcheswepositowy, facebookconnectionswepositowy, ^^ and usewtowowewepositowy. (U ﹏ U)
    *
-   * @tparam K
-   *   The type for the key
-   * @tparam V
-   *   The type of a single element of the list
-   * @tparam A
-   *   The object we'll aggregate list items into
-   * @param reduce
-   *   A function that combines a seq of V into A
-   * @param pruneDuplicates
-   *   If set this ensures that, at most, one instance of any given V will be passed into reduce.
+   * @tpawam k
+   *   t-the type f-fow the key
+   * @tpawam v-v
+   *   the type of a s-singwe ewement of the wist
+   * @tpawam a
+   *   the object we'ww a-aggwegate wist i-items into
+   * @pawam weduce
+   *   a-a function that combines a seq of v into a-a
+   * @pawam pwunedupwicates
+   *   i-if set this ensuwes that, :3 at m-most, (✿oωo) one instance o-of any given v wiww be passed into weduce. XD
    */
-  def withKeyValuePairs[K, V, A](
-    reduce: Seq[V] => A,
-    pruneDuplicates: Boolean
-  ): AggregateByKey[K, (K, V), A] =
-    new AggregateByKey(
-      { case (k, _) => k },
-      values => reduce(values map { case (_, v) => v }),
-      pruneDuplicates
+  def withkeyvawuepaiws[k, >w< v, a](
+    weduce: s-seq[v] => a, òωó
+    p-pwunedupwicates: b-boowean
+  ): a-aggwegatebykey[k, (ꈍᴗꈍ) (k, rawr x3 v-v), a] =
+    nyew aggwegatebykey(
+      { c-case (k, rawr x3 _) => k-k }, σωσ
+      vawues => weduce(vawues m-map { case (_, (ꈍᴗꈍ) v-v) => v }), rawr
+      pwunedupwicates
     )
 }
 
 /**
- * Basic aggregator that extracts keys from a Row, groups into a Seq by those keys, and
- * performs some reduction step to mash those into an aggregated object.  Order is not
- * necessarily kept between the retrieving rows from the database and passing them into
- * reduce.
+ * b-basic aggwegatow that extwacts keys fwom a w-wow, ^^;; gwoups into a seq by those k-keys, rawr x3 and
+ * pewfowms s-some weduction step to mash t-those into an aggwegated object. (ˆ ﻌ ˆ)♡  owdew is nyot
+ * n-nyecessawiwy k-kept between t-the wetwieving wows fwom the database and passing them into
+ * weduce. σωσ
  *
- * @tparam K
- *   the type used by the item on which we aggregate rows
+ * @tpawam k-k
+ *   the type used by the item on which we a-aggwegate wows
  *
- * @tparam R
- *   object that a single row of the query will be represented as
+ * @tpawam w
+ *   o-object that a singwe wow of t-the quewy wiww be wepwesented a-as
  *
- * @tparam A
- *   what we collect groups of R into
+ * @tpawam a-a
+ *   nyani we cowwect gwoups of w into
  *
- * @param extractKey
- *   function to extract a key from a row object
+ * @pawam e-extwactkey
+ *   function to extwact a key f-fwom a wow object
  *
- * @param reduce
- *   function that can take a sequence of rows and combine them into an aggregate
+ * @pawam w-weduce
+ *   function that can take a-a sequence of wows and combine t-them into an aggwegate
  *
- * @param pruneDuplicates
- *   if set this will ensure that at most one copy of each R will be passed into reduce (as
- *   determined by R's equal method) but will pass the input through a set which will
- *   likely lose ordering.
+ * @pawam p-pwunedupwicates
+ *   i-if set this wiww ensuwe that at most one copy of each w wiww be passed into weduce (as
+ *   detewmined by w's equaw method) but wiww pass the input thwough a set which wiww
+ *   wikewy wose owdewing. (U ﹏ U)
  */
-class AggregateByKey[K, R, A](
-  extractKey: R => K,
-  reduce: Seq[R] => A,
-  pruneDuplicates: Boolean = false)
-    extends (Seq[R] => Seq[(K, A)]) {
-  override def apply(input: Seq[R]): Seq[(K, A)] = {
-    val collectionMap = new HashMap[K, Growable[R] with Iterable[R]]
+c-cwass aggwegatebykey[k, >w< w, σωσ a-a](
+  extwactkey: w => k, nyaa~~
+  weduce: seq[w] => a-a, 🥺
+  pwunedupwicates: b-boowean = f-fawse)
+    extends (seq[w] => seq[(k, rawr x3 a-a)]) {
+  ovewwide def appwy(input: s-seq[w]): s-seq[(k, σωσ a)] = {
+    vaw cowwectionmap = n-nyew hashmap[k, (///ˬ///✿) gwowabwe[w] w-with itewabwe[w]]
 
-    def emptyCollection: Growable[R] with Iterable[R] =
-      if (pruneDuplicates) {
-        new HashSet[R]
-      } else {
-        new ListBuffer[R]
+    d-def emptycowwection: gwowabwe[w] with i-itewabwe[w] =
+      i-if (pwunedupwicates) {
+        n-nyew hashset[w]
+      } e-ewse {
+        n-nyew w-wistbuffew[w]
       }
 
-    input foreach { element =>
-      (collectionMap.getOrElseUpdate(extractKey(element), emptyCollection)) += element
+    i-input f-foweach { ewement =>
+      (cowwectionmap.getowewseupdate(extwactkey(ewement), (U ﹏ U) e-emptycowwection)) += ewement
     }
 
-    collectionMap map {
-      case (key, items) =>
-        key -> reduce(items toSeq)
-    } toSeq
+    c-cowwectionmap m-map {
+      c-case (key, ^^;; items) =>
+        key -> weduce(items t-toseq)
+    } toseq
   }
 }

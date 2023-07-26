@@ -1,104 +1,104 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namespace java com.twittew.cw_mixew.thwiftjava
+#@namespace scawa c-com.twittew.cw_mixew.thwiftscawa
+#@namespace s-stwato c-com.twittew.cw_mixew
 
-include "ads.thrift"
-include "candidate_generation_key.thrift"
-include "product.thrift"
-include "product_context.thrift"
-include "validation.thrift"
-include "metric_tags.thrift"
-include "related_tweet.thrift"
-include "uteg.thrift"
-include "frs_based_tweet.thrift"
-include "related_video_tweet.thrift"
-include "topic_tweet.thrift"
+i-incwude "ads.thwift"
+incwude "candidate_genewation_key.thwift"
+i-incwude "pwoduct.thwift"
+i-incwude "pwoduct_context.thwift"
+i-incwude "vawidation.thwift"
+incwude "metwic_tags.thwift"
+i-incwude "wewated_tweet.thwift"
+incwude "uteg.thwift"
+incwude "fws_based_tweet.thwift"
+incwude "wewated_video_tweet.thwift"
+incwude "topic_tweet.thwift"
 
-include "com/twitter/product_mixer/core/client_context.thrift"
-include "com/twitter/timelines/render/response.thrift"
-include "finatra-thrift/finatra_thrift_exceptions.thrift"
-include "com/twitter/strato/graphql/slice.thrift"
+i-incwude "com/twittew/pwoduct_mixew/cowe/cwient_context.thwift"
+incwude "com/twittew/timewines/wendew/wesponse.thwift"
+incwude "finatwa-thwift/finatwa_thwift_exceptions.thwift"
+i-incwude "com/twittew/stwato/gwaphqw/swice.thwift"
 
-struct CrMixerTweetRequest {
-	1: required client_context.ClientContext clientContext
-	2: required product.Product product
-	# Product-specific parameters should be placed in the Product Context
-	3: optional product_context.ProductContext productContext
-	4: optional list<i64> excludedTweetIds (personalDataType = 'TweetId')
-} (persisted='true', hasPersonalData='true')
+stwuct cwmixewtweetwequest {
+	1: w-wequiwed cwient_context.cwientcontext cwientcontext
+	2: wequiwed pwoduct.pwoduct pwoduct
+	# p-pwoduct-specific pawametews s-shouwd be pwaced i-in the pwoduct context
+	3: optionaw pwoduct_context.pwoductcontext pwoductcontext
+	4: optionaw w-wist<i64> excwudedtweetids (pewsonawdatatype = 'tweetid')
+} (pewsisted='twue', 🥺 haspewsonawdata='twue')
 
-struct TweetRecommendation {
-  1: required i64 tweetId (personalDataType = 'TweetId')
-  2: required double score
-  3: optional list<metric_tags.MetricTag> metricTags
-  # 4: the author of the tweet candidate. To be used by Content-Mixer to unblock the Hydra experiment.
-  4: optional i64 authorId (personalDataType = 'UserId')
-  # 5: extra info about candidate generation. To be used by Content-Mixer to unblock the Hydra experiment.
-  5: optional candidate_generation_key.CandidateGenerationKey candidateGenerationKey
-  # 1001: the latest timestamp of fav signals. If null, the candidate is not generated from fav signals
-  1001: optional i64 latestSourceSignalTimestampInMillis(personalDataType = 'PublicTimestamp')
-} (persisted='true', hasPersonalData = 'true')
+stwuct tweetwecommendation {
+  1: wequiwed i-i64 tweetid (pewsonawdatatype = 'tweetid')
+  2: wequiwed doubwe s-scowe
+  3: optionaw w-wist<metwic_tags.metwictag> m-metwictags
+  # 4: t-the authow of the tweet candidate. òωó to be used b-by content-mixew to unbwock the hydwa expewiment.
+  4: o-optionaw i64 authowid (pewsonawdatatype = 'usewid')
+  # 5: extwa info about candidate genewation. (ˆ ﻌ ˆ)♡ to be used by content-mixew t-to unbwock the hydwa expewiment. -.-
+  5: optionaw c-candidate_genewation_key.candidategenewationkey c-candidategenewationkey
+  # 1001: t-the watest timestamp of fav signaws. :3 if nyuww, the candidate i-is nyot genewated f-fwom fav signaws
+  1001: o-optionaw i64 watestsouwcesignawtimestampinmiwwis(pewsonawdatatype = 'pubwictimestamp')
+} (pewsisted='twue', ʘwʘ h-haspewsonawdata = 'twue')
 
-struct CrMixerTweetResponse {
- 1: required list<TweetRecommendation> tweets
-} (persisted='true')
+stwuct cwmixewtweetwesponse {
+ 1: w-wequiwed wist<tweetwecommendation> t-tweets
+} (pewsisted='twue')
 
-service CrMixer {
-  CrMixerTweetResponse getTweetRecommendations(1: CrMixerTweetRequest request) throws (
-    # Validation errors - the details of which will be reported to clients on failure
-    1: validation.ValidationExceptionList validationErrors;
-    # Server errors - the details of which will not be reported to clients
-    2: finatra_thrift_exceptions.ServerError serverError
+sewvice cwmixew {
+  cwmixewtweetwesponse g-gettweetwecommendations(1: cwmixewtweetwequest w-wequest) thwows (
+    # vawidation e-ewwows - the d-detaiws of which wiww be wepowted to cwients on faiwuwe
+    1: vawidation.vawidationexceptionwist vawidationewwows;
+    # sewvew e-ewwows - the d-detaiws of which wiww nyot be wepowted t-to cwients
+    2: f-finatwa_thwift_exceptions.sewvewewwow sewvewewwow
   )
 
-  # getRelatedTweetsForQueryTweet and getRelatedTweetsForQueryAuthor do very similar things
-  # We can merge these two endpoints into one unified endpoint
-  related_tweet.RelatedTweetResponse getRelatedTweetsForQueryTweet(1: related_tweet.RelatedTweetRequest request) throws (
-    # Validation errors - the details of which will be reported to clients on failure
-    1: validation.ValidationExceptionList validationErrors;
-    # Server errors - the details of which will not be reported to clients
-    2: finatra_thrift_exceptions.ServerError serverError
+  # g-getwewatedtweetsfowquewytweet and getwewatedtweetsfowquewyauthow do vewy simiwaw things
+  # w-we can mewge these two endpoints into one unified endpoint
+  wewated_tweet.wewatedtweetwesponse getwewatedtweetsfowquewytweet(1: w-wewated_tweet.wewatedtweetwequest wequest) thwows (
+    # v-vawidation e-ewwows - the d-detaiws of which wiww be wepowted t-to cwients o-on faiwuwe
+    1: v-vawidation.vawidationexceptionwist v-vawidationewwows;
+    # sewvew ewwows - the d-detaiws of which w-wiww nyot be wepowted t-to cwients
+    2: f-finatwa_thwift_exceptions.sewvewewwow s-sewvewewwow
   )
 
-  related_tweet.RelatedTweetResponse getRelatedTweetsForQueryAuthor(1: related_tweet.RelatedTweetRequest request) throws (
-    # Validation errors - the details of which will be reported to clients on failure
-    1: validation.ValidationExceptionList validationErrors;
-    # Server errors - the details of which will not be reported to clients
-    2: finatra_thrift_exceptions.ServerError serverError
+  wewated_tweet.wewatedtweetwesponse getwewatedtweetsfowquewyauthow(1: wewated_tweet.wewatedtweetwequest w-wequest) thwows (
+    # vawidation ewwows - the detaiws of which wiww be wepowted to cwients o-on faiwuwe
+    1: vawidation.vawidationexceptionwist vawidationewwows;
+    # sewvew ewwows - t-the detaiws o-of which wiww nyot b-be wepowted to cwients
+    2: f-finatwa_thwift_exceptions.sewvewewwow sewvewewwow
   )
 
-  uteg.UtegTweetResponse getUtegTweetRecommendations(1: uteg.UtegTweetRequest request) throws (
-    # Validation errors - the details of which will be reported to clients on failure
-    1: validation.ValidationExceptionList validationErrors;
-    # Server errors - the details of which will not be reported to clients
-    2: finatra_thrift_exceptions.ServerError serverError
+  u-uteg.utegtweetwesponse g-getutegtweetwecommendations(1: uteg.utegtweetwequest wequest) thwows (
+    # vawidation ewwows - the detaiws of w-which wiww be wepowted to cwients o-on faiwuwe
+    1: vawidation.vawidationexceptionwist v-vawidationewwows;
+    # s-sewvew ewwows - the detaiws of which wiww nyot be w-wepowted to cwients
+    2: f-finatwa_thwift_exceptions.sewvewewwow sewvewewwow
   )
 
-  frs_based_tweet.FrsTweetResponse getFrsBasedTweetRecommendations(1: frs_based_tweet.FrsTweetRequest request) throws (
-     # Validation errors - the details of which will be reported to clients on failure
-     1: validation.ValidationExceptionList validationErrors;
-     # Server errors - the details of which will not be reported to clients
-     2: finatra_thrift_exceptions.ServerError serverError
+  f-fws_based_tweet.fwstweetwesponse g-getfwsbasedtweetwecommendations(1: fws_based_tweet.fwstweetwequest wequest) thwows (
+     # vawidation ewwows - t-the detaiws o-of which wiww b-be wepowted to cwients on faiwuwe
+     1: v-vawidation.vawidationexceptionwist v-vawidationewwows;
+     # sewvew ewwows - t-the detaiws of which wiww nyot be wepowted to cwients
+     2: finatwa_thwift_exceptions.sewvewewwow s-sewvewewwow
   )
 
-  related_video_tweet.RelatedVideoTweetResponse getRelatedVideoTweetsForQueryTweet(1: related_video_tweet.RelatedVideoTweetRequest request) throws (
-      # Validation errors - the details of which will be reported to clients on failure
-      1: validation.ValidationExceptionList validationErrors;
-      # Server errors - the details of which will not be reported to clients
-      2: finatra_thrift_exceptions.ServerError serverError
+  w-wewated_video_tweet.wewatedvideotweetwesponse getwewatedvideotweetsfowquewytweet(1: wewated_video_tweet.wewatedvideotweetwequest wequest) t-thwows (
+      # v-vawidation ewwows - the detaiws of which wiww be wepowted t-to cwients on faiwuwe
+      1: vawidation.vawidationexceptionwist vawidationewwows;
+      # sewvew ewwows - the d-detaiws of which wiww nyot be wepowted to cwients
+      2: f-finatwa_thwift_exceptions.sewvewewwow s-sewvewewwow
   )
 
-  ads.AdsResponse getAdsRecommendations(1: ads.AdsRequest request) throws (
-    # Validation errors - the details of which will be reported to clients on failure
-    1: validation.ValidationExceptionList validationErrors;
-    # Server errors - the details of which will not be reported to clients
-    2: finatra_thrift_exceptions.ServerError serverError
+  ads.adswesponse getadswecommendations(1: ads.adswequest wequest) t-thwows (
+    # v-vawidation ewwows - the detaiws of which wiww be wepowted t-to cwients on faiwuwe
+    1: vawidation.vawidationexceptionwist v-vawidationewwows;
+    # sewvew ewwows - the detaiws of which wiww n-nyot be wepowted to cwients
+    2: f-finatwa_thwift_exceptions.sewvewewwow s-sewvewewwow
   )
 
-  topic_tweet.TopicTweetResponse getTopicTweetRecommendations(1: topic_tweet.TopicTweetRequest request) throws (
-    # Validation errors - the details of which will be reported to clients on failure
-    1: validation.ValidationExceptionList validationErrors;
-    # Server errors - the details of which will not be reported to clients
-    2: finatra_thrift_exceptions.ServerError serverError
+  topic_tweet.topictweetwesponse gettopictweetwecommendations(1: t-topic_tweet.topictweetwequest wequest) t-thwows (
+    # v-vawidation ewwows - t-the detaiws of which wiww b-be wepowted to c-cwients on faiwuwe
+    1: vawidation.vawidationexceptionwist vawidationewwows;
+    # s-sewvew ewwows - t-the detaiws o-of which wiww nyot be wepowted to cwients
+    2: f-finatwa_thwift_exceptions.sewvewewwow sewvewewwow
   )
 }

@@ -1,7 +1,7 @@
-package com.twitter.ann.hnsw;
+package com.twittew.ann.hnsw;
 
-public class IllegalDuplicateInsertException extends Exception {
-  public IllegalDuplicateInsertException(String message) {
-    super(message);
+pubwic c-cwass iwwegawdupwicateinsewtexception e-extends e-exception {
+  p-pubwic iwwegawdupwicateinsewtexception(stwing message) {
+    s-supew(message);
   }
 }

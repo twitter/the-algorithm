@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.rankers.first_n_ranker
+package com.twittew.fowwow_wecommendations.common.wankews.fiwst_n_wankew
 
-object FirstNRankerFeatureSwitchKeys {
-  val CandidatePoolSize = "first_n_ranker_candidate_pool_size"
-  val ScribeRankingInfo = "first_n_ranker_scribe_ranking_info"
-  val MinNumCandidatesScoredScaleDownFactor =
-    "first_n_ranker_min_scale_down_factor"
+object f-fiwstnwankewfeatuweswitchkeys {
+  v-vaw candidatepoowsize = "fiwst_n_wankew_candidate_poow_size"
+  v-vaw scwibewankinginfo = "fiwst_n_wankew_scwibe_wanking_info"
+  v-vaw minnumcandidatesscowedscawedownfactow =
+    "fiwst_n_wankew_min_scawe_down_factow"
 }

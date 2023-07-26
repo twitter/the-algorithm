@@ -1,93 +1,93 @@
-package com.twitter.tweetypie
-package backends
+package com.twittew.tweetypie
+package b-backends
 
-import com.twitter.finagle.Backoff
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.gizmoduck.thriftscala.CountsUpdateField
-import com.twitter.gizmoduck.thriftscala.LookupContext
-import com.twitter.gizmoduck.thriftscala.ModifiedUser
-import com.twitter.gizmoduck.thriftscala.UserResult
-import com.twitter.gizmoduck.{thriftscala => gd}
-import com.twitter.servo.util.FutureArrow
-import com.twitter.tweetypie.core.OverCapacity
-import com.twitter.tweetypie.util.RetryPolicyBuilder
+impowt c-com.twittew.finagwe.backoff
+i-impowt com.twittew.finagwe.sewvice.wetwypowicy
+i-impowt com.twittew.gizmoduck.thwiftscawa.countsupdatefiewd
+i-impowt c-com.twittew.gizmoduck.thwiftscawa.wookupcontext
+i-impowt com.twittew.gizmoduck.thwiftscawa.modifiedusew
+i-impowt com.twittew.gizmoduck.thwiftscawa.usewwesuwt
+impowt com.twittew.gizmoduck.{thwiftscawa => gd}
+impowt c-com.twittew.sewvo.utiw.futuweawwow
+impowt com.twittew.tweetypie.cowe.ovewcapacity
+impowt com.twittew.tweetypie.utiw.wetwypowicybuiwdew
 
-object Gizmoduck {
-  import Backend._
+o-object gizmoduck {
+  i-impowt backend._
 
-  type GetById = FutureArrow[(gd.LookupContext, Seq[UserId], Set[UserField]), Seq[gd.UserResult]]
-  type GetByScreenName =
-    FutureArrow[(gd.LookupContext, Seq[String], Set[UserField]), Seq[gd.UserResult]]
-  type IncrCount = FutureArrow[(UserId, gd.CountsUpdateField, Int), Unit]
-  type ModifyAndGet = FutureArrow[(gd.LookupContext, UserId, gd.ModifiedUser), gd.User]
+  type getbyid = futuweawwow[(gd.wookupcontext, :3 seq[usewid], ^^;; s-set[usewfiewd]), 🥺 seq[gd.usewwesuwt]]
+  t-type getbyscweenname =
+    f-futuweawwow[(gd.wookupcontext, (⑅˘꒳˘) seq[stwing], nyaa~~ set[usewfiewd]), :3 seq[gd.usewwesuwt]]
+  type incwcount = futuweawwow[(usewid, ( ͡o ω ͡o ) g-gd.countsupdatefiewd, int), mya unit]
+  type modifyandget = futuweawwow[(gd.wookupcontext, (///ˬ///✿) usewid, gd.modifiedusew), (˘ω˘) g-gd.usew]
 
-  def fromClient(client: gd.UserService.MethodPerEndpoint): Gizmoduck =
-    new Gizmoduck {
-      val getById = FutureArrow((client.get _).tupled)
-      val getByScreenName = FutureArrow((client.getByScreenName _).tupled)
-      val incrCount = FutureArrow((client.incrCount _).tupled)
-      val modifyAndGet = FutureArrow((client.modifyAndGet _).tupled)
-      def ping(): Future[Unit] = client.get(gd.LookupContext(), Seq.empty, Set.empty).unit
+  def fwomcwient(cwient: g-gd.usewsewvice.methodpewendpoint): g-gizmoduck =
+    n-nyew gizmoduck {
+      v-vaw getbyid = futuweawwow((cwient.get _).tupwed)
+      vaw getbyscweenname = f-futuweawwow((cwient.getbyscweenname _).tupwed)
+      vaw incwcount = futuweawwow((cwient.incwcount _).tupwed)
+      v-vaw modifyandget = futuweawwow((cwient.modifyandget _).tupwed)
+      def ping(): futuwe[unit] = cwient.get(gd.wookupcontext(), ^^;; seq.empty, (✿oωo) set.empty).unit
     }
 
-  case class Config(
-    readTimeout: Duration,
-    writeTimeout: Duration,
-    modifyAndGetTimeout: Duration,
-    modifyAndGetTimeoutBackoffs: Stream[Duration],
-    defaultTimeoutBackoffs: Stream[Duration],
-    gizmoduckExceptionBackoffs: Stream[Duration]) {
+  c-case cwass config(
+    w-weadtimeout: d-duwation, (U ﹏ U)
+    w-wwitetimeout: duwation, -.-
+    modifyandgettimeout: duwation, ^•ﻌ•^
+    modifyandgettimeoutbackoffs: stweam[duwation], rawr
+    d-defauwttimeoutbackoffs: s-stweam[duwation], (˘ω˘)
+    gizmoduckexceptionbackoffs: s-stweam[duwation]) {
 
-    def apply(svc: Gizmoduck, ctx: Backend.Context): Gizmoduck =
-      new Gizmoduck {
-        val getById: FutureArrow[(LookupContext, Seq[UserId], Set[UserField]), Seq[UserResult]] =
-          policy("getById", readTimeout, ctx)(svc.getById)
-        val getByScreenName: FutureArrow[(LookupContext, Seq[String], Set[UserField]), Seq[
-          UserResult
-        ]] = policy("getByScreenName", readTimeout, ctx)(svc.getByScreenName)
-        val incrCount: FutureArrow[(UserId, CountsUpdateField, Int), Unit] =
-          policy("incrCount", writeTimeout, ctx)(svc.incrCount)
-        val modifyAndGet: FutureArrow[(LookupContext, UserId, ModifiedUser), User] = policy(
-          "modifyAndGet",
-          modifyAndGetTimeout,
-          ctx,
-          timeoutBackoffs = modifyAndGetTimeoutBackoffs
-        )(svc.modifyAndGet)
-        def ping(): Future[Unit] = svc.ping()
+    d-def appwy(svc: gizmoduck, nyaa~~ ctx: b-backend.context): gizmoduck =
+      n-nyew gizmoduck {
+        vaw getbyid: futuweawwow[(wookupcontext, UwU seq[usewid], :3 s-set[usewfiewd]), (⑅˘꒳˘) seq[usewwesuwt]] =
+          p-powicy("getbyid", (///ˬ///✿) weadtimeout, ^^;; c-ctx)(svc.getbyid)
+        v-vaw getbyscweenname: futuweawwow[(wookupcontext, >_< seq[stwing], rawr x3 set[usewfiewd]), /(^•ω•^) seq[
+          usewwesuwt
+        ]] = powicy("getbyscweenname", :3 w-weadtimeout, (ꈍᴗꈍ) c-ctx)(svc.getbyscweenname)
+        vaw i-incwcount: futuweawwow[(usewid, /(^•ω•^) c-countsupdatefiewd, (⑅˘꒳˘) i-int), unit] =
+          powicy("incwcount", ( ͡o ω ͡o ) wwitetimeout, ctx)(svc.incwcount)
+        vaw modifyandget: f-futuweawwow[(wookupcontext, òωó usewid, (⑅˘꒳˘) modifiedusew), XD usew] = powicy(
+          "modifyandget", -.-
+          modifyandgettimeout, :3
+          c-ctx, nyaa~~
+          timeoutbackoffs = m-modifyandgettimeoutbackoffs
+        )(svc.modifyandget)
+        d-def ping(): futuwe[unit] = s-svc.ping()
       }
 
-    private[this] def policy[A, B](
-      name: String,
-      requestTimeout: Duration,
-      ctx: Context,
-      timeoutBackoffs: Stream[Duration] = defaultTimeoutBackoffs
-    ): Builder[A, B] =
-      translateExceptions andThen
-        defaultPolicy(name, requestTimeout, retryPolicy(timeoutBackoffs), ctx)
+    pwivate[this] d-def powicy[a, b-b](
+      nyame: s-stwing, 😳
+      w-wequesttimeout: duwation, (⑅˘꒳˘)
+      ctx: context, nyaa~~
+      t-timeoutbackoffs: s-stweam[duwation] = d-defauwttimeoutbackoffs
+    ): b-buiwdew[a, OwO b-b] =
+      twanswateexceptions andthen
+        defauwtpowicy(name, rawr x3 wequesttimeout, XD w-wetwypowicy(timeoutbackoffs), σωσ ctx)
 
-    private[this] def translateExceptions[A, B]: Builder[A, B] =
-      _.translateExceptions {
-        case gd.OverCapacity(msg) => OverCapacity(s"gizmoduck: $msg")
+    pwivate[this] def twanswateexceptions[a, (U ᵕ U❁) b]: buiwdew[a, (U ﹏ U) b] =
+      _.twanswateexceptions {
+        case gd.ovewcapacity(msg) => o-ovewcapacity(s"gizmoduck: $msg")
       }
 
-    private[this] def retryPolicy[B](timeoutBackoffs: Stream[Duration]): RetryPolicy[Try[B]] =
-      RetryPolicy.combine[Try[B]](
-        RetryPolicyBuilder.timeouts[B](timeoutBackoffs),
-        RetryPolicy.backoff(Backoff.fromStream(gizmoduckExceptionBackoffs)) {
-          case Throw(ex: gd.InternalServerError) => true
+    pwivate[this] def wetwypowicy[b](timeoutbackoffs: stweam[duwation]): w-wetwypowicy[twy[b]] =
+      w-wetwypowicy.combine[twy[b]](
+        w-wetwypowicybuiwdew.timeouts[b](timeoutbackoffs), :3
+        wetwypowicy.backoff(backoff.fwomstweam(gizmoduckexceptionbackoffs)) {
+          c-case thwow(ex: gd.intewnawsewvewewwow) => t-twue
         }
       )
   }
 
-  implicit val warmup: Warmup[Gizmoduck] =
-    Warmup[Gizmoduck]("gizmoduck")(_.ping())
+  i-impwicit vaw wawmup: wawmup[gizmoduck] =
+    wawmup[gizmoduck]("gizmoduck")(_.ping())
 }
 
-trait Gizmoduck {
-  import Gizmoduck._
-  val getById: GetById
-  val getByScreenName: GetByScreenName
-  val incrCount: IncrCount
-  val modifyAndGet: ModifyAndGet
-  def ping(): Future[Unit]
+twait gizmoduck {
+  impowt gizmoduck._
+  vaw getbyid: g-getbyid
+  vaw getbyscweenname: getbyscweenname
+  v-vaw incwcount: incwcount
+  vaw m-modifyandget: modifyandget
+  d-def ping(): futuwe[unit]
 }

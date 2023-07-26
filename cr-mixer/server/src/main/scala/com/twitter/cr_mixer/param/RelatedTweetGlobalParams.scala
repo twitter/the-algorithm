@@ -1,32 +1,32 @@
-package com.twitter.cr_mixer.param
+package com.twittew.cw_mixew.pawam
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.timewines.configapi.baseconfig
+i-impowt com.twittew.timewines.configapi.baseconfigbuiwdew
+i-impowt c-com.twittew.timewines.configapi.fsboundedpawam
+i-impowt com.twittew.timewines.configapi.fsname
+i-impowt com.twittew.timewines.configapi.featuweswitchovewwideutiw
+i-impowt com.twittew.timewines.configapi.pawam
 
-object RelatedTweetGlobalParams {
+o-object wewatedtweetgwobawpawams {
 
-  object MaxCandidatesPerRequestParam
-      extends FSBoundedParam[Int](
-        name = "related_tweet_core_max_candidates_per_request",
-        default = 100,
-        min = 0,
-        max = 500
+  o-object maxcandidatespewwequestpawam
+      extends fsboundedpawam[int](
+        nyame = "wewated_tweet_cowe_max_candidates_pew_wequest", -.-
+        defauwt = 100, ^^;;
+        min = 0, >_<
+        m-max = 500
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(MaxCandidatesPerRequestParam)
+  vaw awwpawams: seq[pawam[_] with f-fsname] = seq(maxcandidatespewwequestpawam)
 
-  lazy val config: BaseConfig = {
+  wazy vaw config: b-baseconfig = {
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      MaxCandidatesPerRequestParam
+    vaw intovewwides = featuweswitchovewwideutiw.getboundedintfsovewwides(
+      maxcandidatespewwequestpawam
     )
 
-    BaseConfigBuilder()
-      .set(intOverrides: _*)
-      .build()
+    b-baseconfigbuiwdew()
+      .set(intovewwides: _*)
+      .buiwd()
   }
 }

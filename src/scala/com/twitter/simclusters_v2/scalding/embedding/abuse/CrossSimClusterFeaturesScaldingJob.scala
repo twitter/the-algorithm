@@ -1,149 +1,149 @@
-package com.twitter.simclusters_v2.scalding.embedding.abuse
+package com.twittew.simcwustews_v2.scawding.embedding.abuse
 
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Execution
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding.Years
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.NumBlocksP95
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.getFlockBlocksSparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.getUserInterestedInTruncatedKMatrix
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.ClusterId
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.UserId
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.AdhocCrossSimClusterInteractionScores
-import com.twitter.simclusters_v2.thriftscala.ClustersScore
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.CassowaryJob
-import com.twitter.simclusters_v2.hdfs_sources.AdhocCrossSimclusterBlockInteractionFeaturesScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.AdhocCrossSimclusterFavInteractionFeaturesScalaDataset
-import java.util.TimeZone
+impowt c-com.twittew.scawding.typed.typedpipe
+i-impowt com.twittew.scawding.awgs
+i-impowt c-com.twittew.scawding.datewange
+impowt c-com.twittew.scawding.execution
+i-impowt com.twittew.scawding.uniqueid
+i-impowt c-com.twittew.scawding.yeaws
+impowt com.twittew.simcwustews_v2.scawding.common.matwix.spawsematwix
+impowt com.twittew.simcwustews_v2.scawding.embedding.abuse.datasouwces.numbwocksp95
+impowt com.twittew.simcwustews_v2.scawding.embedding.abuse.datasouwces.getfwockbwocksspawsematwix
+i-impowt com.twittew.simcwustews_v2.scawding.embedding.abuse.datasouwces.getusewintewestedintwuncatedkmatwix
+impowt com.twittew.scawding_intewnaw.dawv2.dawwwite.d
+impowt c-com.twittew.scawding_intewnaw.dawv2.dawwwite._
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.embeddingutiw.cwustewid
+i-impowt com.twittew.simcwustews_v2.scawding.embedding.common.embeddingutiw.usewid
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.embeddingutiw
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.extewnawdatasouwces
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.adhoccwosssimcwustewintewactionscowes
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.cwustewsscowe
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
+impowt com.twittew.wtf.scawding.jobs.common.adhocexecutionapp
+impowt com.twittew.wtf.scawding.jobs.common.cassowawyjob
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.adhoccwosssimcwustewbwockintewactionfeatuwesscawadataset
+impowt com.twittew.simcwustews_v2.hdfs_souwces.adhoccwosssimcwustewfavintewactionfeatuwesscawadataset
+impowt java.utiw.timezone
 
 /*
-To run:
-scalding remote run \
---user cassowary \
---submitter hadoopnest1.atla.twitter.com \
---target src/scala/com/twitter/simclusters_v2/scalding/embedding/abuse:cross_simcluster-adhoc \
---main-class com.twitter.simclusters_v2.scalding.embedding.abuse.CrossSimClusterFeaturesScaldingJob \
---submitter-memory 128192.megabyte --hadoop-properties "mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce.memory.mb=8192 mapreduce.reduce.java.opts='-Xmx7618M'" \
+to wun:
+s-scawding wemote wun \
+--usew c-cassowawy \
+--submittew h-hadoopnest1.atwa.twittew.com \
+--tawget s-swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/abuse:cwoss_simcwustew-adhoc \
+--main-cwass c-com.twittew.simcwustews_v2.scawding.embedding.abuse.cwosssimcwustewfeatuwesscawdingjob \
+--submittew-memowy 128192.megabyte --hadoop-pwopewties "mapweduce.map.memowy.mb=8192 mapweduce.map.java.opts='-xmx7618m' mapweduce.weduce.memowy.mb=8192 m-mapweduce.weduce.java.opts='-xmx7618m'" \
 -- \
 --date 2021-02-07 \
---dalEnvironment Prod
+--dawenviwonment pwod
  */
 
-object CrossSimClusterFeaturesUtil {
+object cwosssimcwustewfeatuwesutiw {
 
   /**
-   * To generate the interaction score for 2 simclusters c1 and c2 for all cluster combinations (I):
-   * a) Get C - user interestedIn matrix, User * Cluster
-   * b) Get INT - positive or negative interaction matrix, User * User
-   * c) Compute C^T*INT
-   * d) Finally, return C^T*INT*C
+   * t-to genewate the intewaction scowe fow 2 simcwustews c1 and c2 fow aww cwustew combinations (i):
+   * a-a) get c - usew intewestedin m-matwix, u-usew * cwustew
+   * b-b) get int - positive ow nyegative intewaction matwix, ʘwʘ usew * u-usew
+   * c) compute c-c^t*int
+   * d) finawwy, 😳😳😳 w-wetuwn c^t*int*c
    */
-  def getCrossClusterScores(
-    userClusterMatrix: SparseMatrix[UserId, ClusterId, Double],
-    userInteractionMatrix: SparseMatrix[UserId, UserId, Double]
-  ): SparseMatrix[ClusterId, ClusterId, Double] = {
-    // intermediate = C^T*INT
-    val intermediateResult = userClusterMatrix.transpose.multiplySparseMatrix(userInteractionMatrix)
-    // return intermediate*C
-    intermediateResult.multiplySparseMatrix(userClusterMatrix)
+  d-def getcwosscwustewscowes(
+    usewcwustewmatwix: s-spawsematwix[usewid, ^^;; cwustewid, o.O doubwe], (///ˬ///✿)
+    u-usewintewactionmatwix: spawsematwix[usewid, σωσ usewid, doubwe]
+  ): spawsematwix[cwustewid, nyaa~~ c-cwustewid, doubwe] = {
+    // intewmediate = c^t*int
+    v-vaw intewmediatewesuwt = usewcwustewmatwix.twanspose.muwtipwyspawsematwix(usewintewactionmatwix)
+    // w-wetuwn intewmediate*c
+    i-intewmediatewesuwt.muwtipwyspawsematwix(usewcwustewmatwix)
   }
 }
 
-object CrossSimClusterFeaturesScaldingJob extends AdhocExecutionApp with CassowaryJob {
-  override def jobName: String = "AdhocAbuseCrossSimClusterFeaturesScaldingJob"
+object cwosssimcwustewfeatuwesscawdingjob extends adhocexecutionapp with cassowawyjob {
+  ovewwide d-def jobname: stwing = "adhocabusecwosssimcwustewfeatuwesscawdingjob"
 
-  private val outputPathBlocksThrift: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = false,
-    modelVersion = ModelVersion.Model20m145kUpdated,
-    pathSuffix = "abuse_cross_simcluster_block_features"
+  p-pwivate vaw outputpathbwocksthwift: s-stwing = e-embeddingutiw.gethdfspath(
+    i-isadhoc = fawse, ^^;;
+    ismanhattankeyvaw = fawse, ^•ﻌ•^
+    modewvewsion = m-modewvewsion.modew20m145kupdated, σωσ
+    pathsuffix = "abuse_cwoss_simcwustew_bwock_featuwes"
   )
 
-  private val outputPathFavThrift: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = false,
-    modelVersion = ModelVersion.Model20m145kUpdated,
-    pathSuffix = "abuse_cross_simcluster_fav_features"
+  pwivate vaw outputpathfavthwift: stwing = e-embeddingutiw.gethdfspath(
+    isadhoc = fawse, -.-
+    i-ismanhattankeyvaw = f-fawse, ^^;;
+    m-modewvewsion = modewvewsion.modew20m145kupdated, XD
+    p-pathsuffix = "abuse_cwoss_simcwustew_fav_featuwes"
   )
 
-  private val HalfLifeInDaysForFavScore = 100
+  p-pwivate vaw h-hawfwifeindaysfowfavscowe = 100
 
-  // Adhoc jobs which use all user interestedIn simclusters (default=50) was failing
-  // Hence truncating the number of clusters
-  private val MaxNumClustersPerUser = 20
+  // a-adhoc jobs which use aww usew intewestedin s-simcwustews (defauwt=50) w-was f-faiwing
+  // hence t-twuncating the n-nyumbew of cwustews
+  pwivate vaw maxnumcwustewspewusew = 20
 
-  import CrossSimClusterFeaturesUtil._
-  override def runOnDateRange(
-    args: Args
+  impowt cwosssimcwustewfeatuwesutiw._
+  o-ovewwide def wunondatewange(
+    awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    impwicit datewange: datewange, 🥺
+    t-timezone: timezone, òωó
+    uniqueid: uniqueid
+  ): execution[unit] = {
 
-    val normalizedUserInterestedInMatrix: SparseMatrix[UserId, ClusterId, Double] =
-      getUserInterestedInTruncatedKMatrix(MaxNumClustersPerUser).rowL2Normalize
+    v-vaw nyowmawizedusewintewestedinmatwix: s-spawsematwix[usewid, (ˆ ﻌ ˆ)♡ c-cwustewid, -.- doubwe] =
+      g-getusewintewestedintwuncatedkmatwix(maxnumcwustewspewusew).woww2nowmawize
 
-    //the below code is to get cross simcluster features from flockblocks - negative user-user interactions.
-    val flockBlocksMatrix: SparseMatrix[UserId, UserId, Double] =
-      getFlockBlocksSparseMatrix(NumBlocksP95, dateRange.prepend(Years(1)))
+    //the bewow code i-is to get cwoss s-simcwustew featuwes fwom fwockbwocks - nyegative usew-usew intewactions. :3
+    vaw fwockbwocksmatwix: s-spawsematwix[usewid, ʘwʘ usewid, 🥺 d-doubwe] =
+      getfwockbwocksspawsematwix(numbwocksp95, >_< d-datewange.pwepend(yeaws(1)))
 
-    val crossClusterBlockScores: SparseMatrix[ClusterId, ClusterId, Double] =
-      getCrossClusterScores(normalizedUserInterestedInMatrix, flockBlocksMatrix)
+    v-vaw cwosscwustewbwockscowes: spawsematwix[cwustewid, ʘwʘ c-cwustewid, (˘ω˘) doubwe] =
+      g-getcwosscwustewscowes(nowmawizedusewintewestedinmatwix, (✿oωo) fwockbwocksmatwix)
 
-    val blockScores: TypedPipe[AdhocCrossSimClusterInteractionScores] =
-      crossClusterBlockScores.rowAsKeys
-        .mapValues(List(_)).sumByKey.toTypedPipe.map {
-          case (givingClusterId, receivingClustersWithScores) =>
-            AdhocCrossSimClusterInteractionScores(
-              clusterId = givingClusterId,
-              clusterScores = receivingClustersWithScores.map {
-                case (cluster, score) => ClustersScore(cluster, score)
+    v-vaw b-bwockscowes: typedpipe[adhoccwosssimcwustewintewactionscowes] =
+      cwosscwustewbwockscowes.wowaskeys
+        .mapvawues(wist(_)).sumbykey.totypedpipe.map {
+          case (givingcwustewid, (///ˬ///✿) weceivingcwustewswithscowes) =>
+            adhoccwosssimcwustewintewactionscowes(
+              c-cwustewid = givingcwustewid, rawr x3
+              c-cwustewscowes = w-weceivingcwustewswithscowes.map {
+                case (cwustew, -.- scowe) => c-cwustewsscowe(cwustew, ^^ scowe)
               })
         }
 
-    // get cross simcluster features from fav graph - positive user-user interactions
-    val favGraphMatrix: SparseMatrix[UserId, UserId, Double] =
-      SparseMatrix.apply[UserId, UserId, Double](
-        ExternalDataSources.getFavEdges(HalfLifeInDaysForFavScore))
+    // g-get cwoss simcwustew featuwes f-fwom fav gwaph - positive usew-usew intewactions
+    vaw favgwaphmatwix: s-spawsematwix[usewid, (⑅˘꒳˘) u-usewid, doubwe] =
+      spawsematwix.appwy[usewid, nyaa~~ usewid, d-doubwe](
+        e-extewnawdatasouwces.getfavedges(hawfwifeindaysfowfavscowe))
 
-    val crossClusterFavScores: SparseMatrix[ClusterId, ClusterId, Double] =
-      getCrossClusterScores(normalizedUserInterestedInMatrix, favGraphMatrix)
+    vaw cwosscwustewfavscowes: spawsematwix[cwustewid, /(^•ω•^) cwustewid, (U ﹏ U) d-doubwe] =
+      getcwosscwustewscowes(nowmawizedusewintewestedinmatwix, 😳😳😳 favgwaphmatwix)
 
-    val favScores: TypedPipe[AdhocCrossSimClusterInteractionScores] =
-      crossClusterFavScores.rowAsKeys
-        .mapValues(List(_)).sumByKey.toTypedPipe.map {
-          case (givingClusterId, receivingClustersWithScores) =>
-            AdhocCrossSimClusterInteractionScores(
-              clusterId = givingClusterId,
-              clusterScores = receivingClustersWithScores.map {
-                case (cluster, score) => ClustersScore(cluster, score)
+    vaw favscowes: typedpipe[adhoccwosssimcwustewintewactionscowes] =
+      c-cwosscwustewfavscowes.wowaskeys
+        .mapvawues(wist(_)).sumbykey.totypedpipe.map {
+          case (givingcwustewid, >w< weceivingcwustewswithscowes) =>
+            a-adhoccwosssimcwustewintewactionscowes(
+              c-cwustewid = givingcwustewid, XD
+              cwustewscowes = weceivingcwustewswithscowes.map {
+                c-case (cwustew, o.O s-scowe) => cwustewsscowe(cwustew, mya scowe)
               })
         }
-    // write both block and fav interaction matrices to hdfs in thrift format
-    Execution
+    // wwite both bwock a-and fav intewaction matwices t-to hdfs in thwift fowmat
+    execution
       .zip(
-        blockScores.writeDALSnapshotExecution(
-          AdhocCrossSimclusterBlockInteractionFeaturesScalaDataset,
-          D.Daily,
-          D.Suffix(outputPathBlocksThrift),
-          D.Parquet,
-          dateRange.`end`),
-        favScores.writeDALSnapshotExecution(
-          AdhocCrossSimclusterFavInteractionFeaturesScalaDataset,
-          D.Daily,
-          D.Suffix(outputPathFavThrift),
-          D.Parquet,
-          dateRange.`end`)
+        bwockscowes.wwitedawsnapshotexecution(
+          adhoccwosssimcwustewbwockintewactionfeatuwesscawadataset, 🥺
+          d-d.daiwy, ^^;;
+          d.suffix(outputpathbwocksthwift), :3
+          d-d.pawquet, (U ﹏ U)
+          d-datewange.`end`),
+        favscowes.wwitedawsnapshotexecution(
+          adhoccwosssimcwustewfavintewactionfeatuwesscawadataset, OwO
+          d-d.daiwy, 😳😳😳
+          d.suffix(outputpathfavthwift), (ˆ ﻌ ˆ)♡
+          d-d.pawquet, XD
+          d-datewange.`end`)
       ).unit
   }
 }

@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted
 
-sealed trait UrlOverrideType
+seawed twait uwwuvwwidetype
 
-object UnknownUrlOverrideType extends UrlOverrideType
-object DcmUrlOverrideType extends UrlOverrideType
+o-object u-unknownuwwuvwwidetype e-extends u-uwwuvwwidetype
+o-object dcmuwwuvwwidetype e-extends u-uwwuvwwidetype

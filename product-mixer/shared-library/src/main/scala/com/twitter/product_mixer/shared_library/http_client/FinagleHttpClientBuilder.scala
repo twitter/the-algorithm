@@ -1,57 +1,57 @@
-package com.twitter.product_mixer.shared_library.http_client
+package com.twittew.pwoduct_mixew.shawed_wibwawy.http_cwient
 
-import com.twitter.finagle.Http
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Duration
+impowt c-com.twittew.finagwe.http
+i-impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt c-com.twittew.finagwe.mtws.cwient.mtwsstackcwient._
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.utiw.duwation
 
-object FinagleHttpClientBuilder {
-
-  /**
-   * Build a Finagle HTTP client with S2S Auth / Mutual TLS
-   *
-   * @param requestTimeout     HTTP client request timeout
-   * @param connectTimeout     HTTP client transport connect timeout
-   * @param acquisitionTimeout HTTP client session acquisition timeout
-   * @param serviceIdentifier  Service ID used to S2S Auth
-   * @param statsReceiver      Stats
-   *
-   * @return Finagle HTTP Client with S2S Auth / Mutual TLS
-   */
-  def buildFinagleHttpClientMutualTls(
-    requestTimeout: Duration,
-    connectTimeout: Duration,
-    acquisitionTimeout: Duration,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Http.Client =
-    buildFinagleHttpClient(
-      requestTimeout = requestTimeout,
-      connectTimeout = connectTimeout,
-      acquisitionTimeout = acquisitionTimeout,
-      statsReceiver = statsReceiver
-    ).withMutualTls(serviceIdentifier)
+o-object finagwehttpcwientbuiwdew {
 
   /**
-   * Build a Finagle HTTP client
+   * buiwd a finagwe http cwient with s2s auth / mutuaw tws
    *
-   * @param requestTimeout     HTTP client request timeout
-   * @param connectTimeout     HTTP client transport connect timeout
-   * @param acquisitionTimeout HTTP client session acquisition timeout
-   * @param statsReceiver      stats
+   * @pawam w-wequesttimeout     http cwient wequest timeout
+   * @pawam c-connecttimeout     http c-cwient twanspowt connect timeout
+   * @pawam acquisitiontimeout http cwient session a-acquisition timeout
+   * @pawam s-sewviceidentifiew  s-sewvice id used to s2s auth
+   * @pawam statsweceivew      stats
    *
-   * @return Finagle HTTP Client
+   * @wetuwn finagwe h-http cwient with s2s auth / mutuaw tws
    */
-  def buildFinagleHttpClient(
-    requestTimeout: Duration,
-    connectTimeout: Duration,
-    acquisitionTimeout: Duration,
-    statsReceiver: StatsReceiver,
-  ): Http.Client =
-    Http.client
-      .withStatsReceiver(statsReceiver)
-      .withRequestTimeout(requestTimeout)
-      .withTransport.connectTimeout(connectTimeout)
-      .withSession.acquisitionTimeout(acquisitionTimeout)
+  def buiwdfinagwehttpcwientmutuawtws(
+    wequesttimeout: d-duwation, 😳
+    connecttimeout: d-duwation, -.-
+    a-acquisitiontimeout: d-duwation, 🥺
+    s-sewviceidentifiew: sewviceidentifiew, o.O
+    statsweceivew: s-statsweceivew
+  ): http.cwient =
+    buiwdfinagwehttpcwient(
+      w-wequesttimeout = wequesttimeout, /(^•ω•^)
+      connecttimeout = connecttimeout, nyaa~~
+      acquisitiontimeout = acquisitiontimeout, nyaa~~
+      s-statsweceivew = statsweceivew
+    ).withmutuawtws(sewviceidentifiew)
+
+  /**
+   * b-buiwd a finagwe h-http cwient
+   *
+   * @pawam w-wequesttimeout     http cwient wequest timeout
+   * @pawam connecttimeout     h-http c-cwient twanspowt connect timeout
+   * @pawam a-acquisitiontimeout h-http cwient session acquisition t-timeout
+   * @pawam statsweceivew      s-stats
+   *
+   * @wetuwn finagwe http cwient
+   */
+  def b-buiwdfinagwehttpcwient(
+    wequesttimeout: d-duwation, :3
+    connecttimeout: d-duwation, 😳😳😳
+    a-acquisitiontimeout: duwation,
+    statsweceivew: statsweceivew, (˘ω˘)
+  ): http.cwient =
+    http.cwient
+      .withstatsweceivew(statsweceivew)
+      .withwequesttimeout(wequesttimeout)
+      .withtwanspowt.connecttimeout(connecttimeout)
+      .withsession.acquisitiontimeout(acquisitiontimeout)
 }

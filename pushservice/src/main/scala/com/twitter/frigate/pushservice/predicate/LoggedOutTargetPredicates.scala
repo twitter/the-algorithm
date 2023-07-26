@@ -1,52 +1,52 @@
-package com.twitter.frigate.pushservice.predicate
+package com.twittew.fwigate.pushsewvice.pwedicate
 
-import com.twitter.abdecider.GuestRecipient
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.common.predicate.{FatiguePredicate => CommonFatiguePredicate}
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.conversions.DurationOps._
-import com.twitter.frigate.common.util.Experiments.LoggedOutRecsHoldback
-import com.twitter.hermit.predicate.Predicate
+impowt com.twittew.abdecidew.guestwecipient
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+i-impowt c-com.twittew.fwigate.common.pwedicate.{fatiguepwedicate => c-commonfatiguepwedicate}
+i-impowt com.twittew.hewmit.pwedicate.namedpwedicate
+impowt com.twittew.convewsions.duwationops._
+impowt com.twittew.fwigate.common.utiw.expewiments.woggedoutwecshowdback
+impowt com.twittew.hewmit.pwedicate.pwedicate
 
-object LoggedOutTargetPredicates {
+o-object woggedouttawgetpwedicates {
 
-  def targetFatiguePredicate[T <: Target](
+  def tawgetfatiguepwedicate[t <: t-tawget](
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
-    val name = "logged_out_target_min_duration_since_push"
-    CommonFatiguePredicate
-      .magicRecsPushTargetFatiguePredicate(
-        minInterval = 24.hours,
-        maxInInterval = 1
-      ).withStats(statsReceiver.scope(name))
-      .withName(name)
+    impwicit statsweceivew: s-statsweceivew
+  ): namedpwedicate[t] = {
+    vaw nyame = "wogged_out_tawget_min_duwation_since_push"
+    commonfatiguepwedicate
+      .magicwecspushtawgetfatiguepwedicate(
+        minintewvaw = 24.houws, >_<
+        m-maxinintewvaw = 1
+      ).withstats(statsweceivew.scope(name))
+      .withname(name)
   }
 
-  def loggedOutRecsHoldbackPredicate[T <: Target](
+  def w-woggedoutwecshowdbackpwedicate[t <: t-tawget](
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
-    val name = "logged_out_recs_holdback"
-    val guestIdNotFoundCounter = statsReceiver.scope("logged_out").counter("guest_id_not_found")
-    val controlBucketCounter = statsReceiver.scope("logged_out").counter("holdback_control")
-    val allowTrafficCounter = statsReceiver.scope("logged_out").counter("allow_traffic")
-    Predicate.from { target: T =>
-      val guestId = target.targetGuestId match {
-        case Some(guest) => guest
-        case _ =>
-          guestIdNotFoundCounter.incr()
-          throw new IllegalStateException("guest_id_not_found")
+    impwicit statsweceivew: statsweceivew
+  ): nyamedpwedicate[t] = {
+    vaw n-nyame = "wogged_out_wecs_howdback"
+    vaw guestidnotfoundcountew = statsweceivew.scope("wogged_out").countew("guest_id_not_found")
+    vaw contwowbucketcountew = statsweceivew.scope("wogged_out").countew("howdback_contwow")
+    v-vaw awwowtwafficcountew = statsweceivew.scope("wogged_out").countew("awwow_twaffic")
+    pwedicate.fwom { tawget: t-t =>
+      v-vaw guestid = t-tawget.tawgetguestid m-match {
+        case some(guest) => guest
+        c-case _ =>
+          guestidnotfoundcountew.incw()
+          thwow nyew iwwegawstateexception("guest_id_not_found")
       }
-      target.abDecider
-        .bucket(LoggedOutRecsHoldback.exptName, GuestRecipient(guestId)).map(_.name) match {
-        case Some(LoggedOutRecsHoldback.control) =>
-          controlBucketCounter.incr()
-          false
+      t-tawget.abdecidew
+        .bucket(woggedoutwecshowdback.exptname, (⑅˘꒳˘) guestwecipient(guestid)).map(_.name) match {
+        case some(woggedoutwecshowdback.contwow) =>
+          contwowbucketcountew.incw()
+          f-fawse
         case _ =>
-          allowTrafficCounter.incr()
-          true
+          a-awwowtwafficcountew.incw()
+          t-twue
       }
     }
   }

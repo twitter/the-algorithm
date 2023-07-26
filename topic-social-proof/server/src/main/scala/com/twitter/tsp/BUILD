@@ -1,12 +1,12 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], (ꈍᴗꈍ)
     tags = [
-        "bazel-compatible",
+        "bazew-compatibwe", ^•ﻌ•^
     ],
-    dependencies = [
-        "finatra/inject/inject-thrift-client",
-        "strato/src/main/scala/com/twitter/strato/fed",
-        "strato/src/main/scala/com/twitter/strato/fed/server",
-        "topic-social-proof/server/src/main/scala/com/twitter/tsp/columns",
+    d-dependencies = [
+        "finatwa/inject/inject-thwift-cwient", OwO
+        "stwato/swc/main/scawa/com/twittew/stwato/fed", 🥺
+        "stwato/swc/main/scawa/com/twittew/stwato/fed/sewvew", òωó
+        "topic-sociaw-pwoof/sewvew/swc/main/scawa/com/twittew/tsp/cowumns", o.O
     ],
 )

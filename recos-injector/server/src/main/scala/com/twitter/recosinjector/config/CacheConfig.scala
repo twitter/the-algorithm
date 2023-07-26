@@ -1,23 +1,23 @@
-package com.twitter.recosinjector.config
+package com.twittew.wecosinjectow.config
 
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus_internal.memcache.MemcacheStore
-import com.twitter.storehaus_internal.util.{ClientName, ZkEndPoint}
+impowt c-com.twittew.finagwe.memcached.cwient
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.stowehaus_intewnaw.memcache.memcachestowe
+i-impowt com.twittew.stowehaus_intewnaw.utiw.{cwientname, >_< z-zkendpoint}
 
-trait CacheConfig {
-  implicit def statsReceiver: StatsReceiver
+t-twait cacheconfig {
+  i-impwicit def statsweceivew: statsweceivew
 
-  def serviceIdentifier: ServiceIdentifier
+  def sewviceidentifiew: sewviceidentifiew
 
-  def recosInjectorCoreSvcsCacheDest: String
+  d-def wecosinjectowcowesvcscachedest: stwing
 
-  val recosInjectorCoreSvcsCacheClient: Client = MemcacheStore.memcachedClient(
-    name = ClientName("memcache-recos-injector"),
-    dest = ZkEndPoint(recosInjectorCoreSvcsCacheDest),
-    statsReceiver = statsReceiver,
-    serviceIdentifier = serviceIdentifier
+  vaw wecosinjectowcowesvcscachecwient: c-cwient = memcachestowe.memcachedcwient(
+    n-nyame = cwientname("memcache-wecos-injectow"), mya
+    dest = zkendpoint(wecosinjectowcowesvcscachedest), mya
+    statsweceivew = s-statsweceivew, 😳
+    sewviceidentifiew = s-sewviceidentifiew
   )
 
 }

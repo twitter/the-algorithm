@@ -1,633 +1,633 @@
-package com.twitter.visibility.interfaces.conversations
+package com.twittew.visibiwity.intewfaces.convewsations
 
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.spam.rtf.thriftscala.FilteredReason
-import com.twitter.spam.rtf.thriftscala.FilteredReason.UnspecifiedReason
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.spam.rtf.thriftscala.SafetyResult
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.render.thriftscala.RichText
-import com.twitter.timelines.render.thriftscala.TombstoneDisplayType
-import com.twitter.timelines.render.thriftscala.TombstoneInfo
-import com.twitter.tweetypie.thriftscala.GetTweetFieldsResult
-import com.twitter.tweetypie.thriftscala.TweetFieldsResultFailed
-import com.twitter.tweetypie.thriftscala.TweetFieldsResultFiltered
-import com.twitter.tweetypie.thriftscala.TweetFieldsResultFound
-import com.twitter.tweetypie.thriftscala.TweetFieldsResultNotFound
-import com.twitter.tweetypie.thriftscala.TweetFieldsResultState
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.tweets.ModerationFeatures
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.common.actions.InterstitialReason
-import com.twitter.visibility.common.actions.LimitedEngagementReason
-import com.twitter.visibility.common.actions.TombstoneReason
-import com.twitter.visibility.common.actions.converter.scala.InterstitialReasonConverter
-import com.twitter.visibility.common.actions.converter.scala.LocalizedMessageConverter
-import com.twitter.visibility.common.actions.converter.scala.TombstoneReasonConverter
-import com.twitter.visibility.common.filtered_reason.FilteredReasonHelper
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.features.FocalTweetId
-import com.twitter.visibility.features.TweetId
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.models.SafetyLevel.Tombstoning
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.results.richtext.EpitaphToRichText
-import com.twitter.visibility.results.richtext.LocalizedMessageToRichText
-import com.twitter.visibility.results.urt.ReasonToUrtParser
-import com.twitter.visibility.results.urt.SafetyResultToUrtParser
-import com.twitter.visibility.rules._
-import com.twitter.visibility.{thriftscala => t}
+impowt com.twittew.decidew.decidew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.gizmoduck.thwiftscawa.usew
+i-impowt com.twittew.spam.wtf.thwiftscawa.fiwtewedweason
+impowt c-com.twittew.spam.wtf.thwiftscawa.fiwtewedweason.unspecifiedweason
+i-impowt com.twittew.spam.wtf.thwiftscawa.safetywevew
+i-impowt com.twittew.spam.wtf.thwiftscawa.safetywesuwt
+impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.wendew.thwiftscawa.wichtext
+impowt c-com.twittew.timewines.wendew.thwiftscawa.tombstonedispwaytype
+impowt com.twittew.timewines.wendew.thwiftscawa.tombstoneinfo
+impowt c-com.twittew.tweetypie.thwiftscawa.gettweetfiewdswesuwt
+impowt c-com.twittew.tweetypie.thwiftscawa.tweetfiewdswesuwtfaiwed
+impowt com.twittew.tweetypie.thwiftscawa.tweetfiewdswesuwtfiwtewed
+impowt com.twittew.tweetypie.thwiftscawa.tweetfiewdswesuwtfound
+i-impowt com.twittew.tweetypie.thwiftscawa.tweetfiewdswesuwtnotfound
+impowt com.twittew.tweetypie.thwiftscawa.tweetfiewdswesuwtstate
+i-impowt com.twittew.visibiwity.visibiwitywibwawy
+i-impowt com.twittew.visibiwity.buiwdew.tweets.modewationfeatuwes
+impowt com.twittew.visibiwity.buiwdew.usews.authowfeatuwes
+impowt com.twittew.visibiwity.buiwdew.usews.wewationshipfeatuwes
+impowt com.twittew.visibiwity.buiwdew.usews.viewewfeatuwes
+i-impowt com.twittew.visibiwity.common.usewwewationshipsouwce
+impowt com.twittew.visibiwity.common.usewsouwce
+impowt com.twittew.visibiwity.common.actions.intewstitiawweason
+impowt com.twittew.visibiwity.common.actions.wimitedengagementweason
+i-impowt com.twittew.visibiwity.common.actions.tombstoneweason
+i-impowt com.twittew.visibiwity.common.actions.convewtew.scawa.intewstitiawweasonconvewtew
+i-impowt com.twittew.visibiwity.common.actions.convewtew.scawa.wocawizedmessageconvewtew
+i-impowt com.twittew.visibiwity.common.actions.convewtew.scawa.tombstoneweasonconvewtew
+i-impowt com.twittew.visibiwity.common.fiwtewed_weason.fiwtewedweasonhewpew
+impowt com.twittew.visibiwity.configapi.configs.visibiwitydecidewgates
+impowt c-com.twittew.visibiwity.featuwes.focawtweetid
+impowt com.twittew.visibiwity.featuwes.tweetid
+impowt com.twittew.visibiwity.modews.contentid
+i-impowt com.twittew.visibiwity.modews.safetywevew.tombstoning
+impowt com.twittew.visibiwity.modews.viewewcontext
+impowt com.twittew.visibiwity.wesuwts.wichtext.epitaphtowichtext
+impowt com.twittew.visibiwity.wesuwts.wichtext.wocawizedmessagetowichtext
+impowt c-com.twittew.visibiwity.wesuwts.uwt.weasontouwtpawsew
+impowt com.twittew.visibiwity.wesuwts.uwt.safetywesuwttouwtpawsew
+i-impowt c-com.twittew.visibiwity.wuwes._
+i-impowt com.twittew.visibiwity.{thwiftscawa => t}
 
-case class TombstoneVisibilityRequest(
-  conversationId: Long,
-  focalTweetId: Long,
-  tweets: Seq[(GetTweetFieldsResult, Option[SafetyLevel])],
-  authorMap: Map[
-    Long,
-    User
-  ],
-  moderatedTweetIds: Seq[Long],
-  viewerContext: ViewerContext,
-  useRichText: Boolean = true)
+case cwass tombstonevisibiwitywequest(
+  convewsationid: w-wong, ^^;;
+  f-focawtweetid: wong, rawr
+  tweets: s-seq[(gettweetfiewdswesuwt, (ˆ ﻌ ˆ)♡ o-option[safetywevew])], XD
+  authowmap: m-map[
+    wong, >_<
+    usew
+  ], (˘ω˘)
+  modewatedtweetids: s-seq[wong], 😳
+  viewewcontext: viewewcontext, o.O
+  usewichtext: boowean = t-twue)
 
-case class TombstoneVisibilityResponse(tweetVerdicts: Map[Long, VfTombstone])
+case cwass tombstonevisibiwitywesponse(tweetvewdicts: m-map[wong, (ꈍᴗꈍ) vftombstone])
 
-case class TombstoneVisibilityLibrary(
-  visibilityLibrary: VisibilityLibrary,
-  statsReceiver: StatsReceiver,
-  decider: Decider) {
+case c-cwass tombstonevisibiwitywibwawy(
+  v-visibiwitywibwawy: visibiwitywibwawy, rawr x3
+  statsweceivew: statsweceivew, ^^
+  decidew: decidew) {
 
-  private case class TombstoneType(
-    tweetId: Long,
-    tombstoneId: Long,
-    action: Action) {
+  pwivate case c-cwass tombstonetype(
+    t-tweetid: wong, OwO
+    tombstoneid: w-wong, ^^
+    a-action: action) {
 
-    lazy val isInnerTombstone: Boolean = tweetId != tombstoneId
+    w-wazy vaw isinnewtombstone: boowean = tweetid != tombstoneid
 
-    lazy val tombstoneDisplayType: TombstoneDisplayType = action match {
-      case _: InterstitialLimitedEngagements | _: EmergencyDynamicInterstitial =>
-        TombstoneDisplayType.NonCompliant
-      case _ => TombstoneDisplayType.Inline
+    w-wazy vaw tombstonedispwaytype: tombstonedispwaytype = action match {
+      case _: intewstitiawwimitedengagements | _: e-emewgencydynamicintewstitiaw =>
+        tombstonedispwaytype.noncompwiant
+      c-case _ => tombstonedispwaytype.inwine
     }
   }
 
-  val En: String = "en"
-  val View: String = "View"
-  val relationshipFeatures =
-    new RelationshipFeatures(
-      statsReceiver)
-  val visibilityDeciderGates = VisibilityDeciderGates(decider)
+  v-vaw en: stwing = "en"
+  v-vaw view: stwing = "view"
+  v-vaw wewationshipfeatuwes =
+    n-nyew wewationshipfeatuwes(
+      s-statsweceivew)
+  v-vaw visibiwitydecidewgates = visibiwitydecidewgates(decidew)
 
 
-  def toAction(
-    filteredReason: FilteredReason,
-    actionStatsReceiver: StatsReceiver
-  ): Option[Action] = {
+  def t-toaction(
+    fiwtewedweason: f-fiwtewedweason, :3
+    a-actionstatsweceivew: s-statsweceivew
+  ): o-option[action] = {
 
-    val enableLocalizedInterstitials =
-      visibilityDeciderGates.enableConvosLocalizedInterstitial()
-    val enableLegacyInterstitials =
-      visibilityDeciderGates.enableConvosLegacyInterstitial()
+    vaw enabwewocawizedintewstitiaws =
+      visibiwitydecidewgates.enabweconvoswocawizedintewstitiaw()
+    vaw enabwewegacyintewstitiaws =
+      v-visibiwitydecidewgates.enabweconvoswegacyintewstitiaw()
 
-    val tombstoneStatsReceiver = actionStatsReceiver.scope("tombstone")
-    val interstitialLocalStatsReceiver =
-      actionStatsReceiver.scope("interstitial").scope("localized")
-    val interstitialLegacyStatsReceiver =
-      actionStatsReceiver.scope("interstitial").scope("legacy")
+    vaw tombstonestatsweceivew = actionstatsweceivew.scope("tombstone")
+    vaw intewstitiawwocawstatsweceivew =
+      actionstatsweceivew.scope("intewstitiaw").scope("wocawized")
+    v-vaw intewstitiawwegacystatsweceivew =
+      actionstatsweceivew.scope("intewstitiaw").scope("wegacy")
 
-    filteredReason match {
-      case _ if FilteredReasonHelper.isTombstone(filteredReason) =>
-        createLocalizedTombstone(filteredReason, tombstoneStatsReceiver) match {
-          case tombstoneOpt @ Some(LocalizedTombstone(_, _)) => tombstoneOpt
+    fiwtewedweason match {
+      c-case _ i-if fiwtewedweasonhewpew.istombstone(fiwtewedweason) =>
+        cweatewocawizedtombstone(fiwtewedweason, o.O t-tombstonestatsweceivew) match {
+          c-case tombstoneopt @ some(wocawizedtombstone(_, -.- _)) => t-tombstoneopt
           case _ =>
-            createTombstone(Epitaph.Unavailable, tombstoneStatsReceiver, Some("emptyTombstone"))
+            c-cweatetombstone(epitaph.unavaiwabwe, (U ﹏ U) tombstonestatsweceivew, some("emptytombstone"))
         }
 
       case _
-          if enableLocalizedInterstitials &&
-            FilteredReasonHelper.isLocalizedSuppressedReasonInterstitial(filteredReason) =>
-        FilteredReasonHelper.getLocalizedSuppressedReasonInterstitial(filteredReason) match {
-          case Some(t.Interstitial(reasonOpt, Some(message))) =>
-            InterstitialReasonConverter.fromThrift(reasonOpt).map { interstitialReason =>
-              interstitialLocalStatsReceiver.counter("interstitial").incr()
-              Interstitial(
-                Reason.fromInterstitialReason(interstitialReason),
-                Some(LocalizedMessageConverter.fromThrift(message)))
+          if enabwewocawizedintewstitiaws &&
+            fiwtewedweasonhewpew.iswocawizedsuppwessedweasonintewstitiaw(fiwtewedweason) =>
+        f-fiwtewedweasonhewpew.getwocawizedsuppwessedweasonintewstitiaw(fiwtewedweason) match {
+          c-case some(t.intewstitiaw(weasonopt, o.O some(message))) =>
+            i-intewstitiawweasonconvewtew.fwomthwift(weasonopt).map { i-intewstitiawweason =>
+              intewstitiawwocawstatsweceivew.countew("intewstitiaw").incw()
+              intewstitiaw(
+                w-weason.fwomintewstitiawweason(intewstitiawweason), OwO
+                some(wocawizedmessageconvewtew.fwomthwift(message)))
             }
 
-          case _ => None
+          c-case _ => nyone
         }
 
-      case _ if FilteredReasonHelper.containNsfwMedia(filteredReason) =>
-        None
+      c-case _ i-if fiwtewedweasonhewpew.containnsfwmedia(fiwtewedweason) =>
+        nyone
 
-      case _ if FilteredReasonHelper.possiblyUndesirable(filteredReason) =>
-        None
+      case _ if fiwtewedweasonhewpew.possibwyundesiwabwe(fiwtewedweason) =>
+        nyone
 
-      case _ if FilteredReasonHelper.reportedTweet(filteredReason) =>
-        filteredReason match {
-          case FilteredReason.ReportedTweet(true) =>
-            interstitialLegacyStatsReceiver.counter("fr_reported").incr()
-            Some(Interstitial(Reason.ViewerReportedAuthor))
+      c-case _ if fiwtewedweasonhewpew.wepowtedtweet(fiwtewedweason) =>
+        f-fiwtewedweason m-match {
+          case fiwtewedweason.wepowtedtweet(twue) =>
+            i-intewstitiawwegacystatsweceivew.countew("fw_wepowted").incw()
+            s-some(intewstitiaw(weason.viewewwepowtedauthow))
 
-          case FilteredReason.SafetyResult(safetyResult: SafetyResult)
-              if enableLegacyInterstitials =>
-            val safetyResultReported = InterstitialReasonConverter
-              .fromAction(safetyResult.action).collect {
-                case InterstitialReason.ViewerReportedTweet => true
-                case InterstitialReason.ViewerReportedAuthor => true
-              }.getOrElse(false)
+          case fiwtewedweason.safetywesuwt(safetywesuwt: s-safetywesuwt)
+              if enabwewegacyintewstitiaws =>
+            vaw safetywesuwtwepowted = intewstitiawweasonconvewtew
+              .fwomaction(safetywesuwt.action).cowwect {
+                c-case i-intewstitiawweason.viewewwepowtedtweet => twue
+                case intewstitiawweason.viewewwepowtedauthow => t-twue
+              }.getowewse(fawse)
 
-            if (safetyResultReported) {
-              interstitialLegacyStatsReceiver.counter("reported_author").incr()
-              Some(Interstitial(Reason.ViewerReportedAuthor))
-            } else None
+            i-if (safetywesuwtwepowted) {
+              intewstitiawwegacystatsweceivew.countew("wepowted_authow").incw()
+              some(intewstitiaw(weason.viewewwepowtedauthow))
+            } ewse n-nyone
 
-          case _ => None
+          case _ => nyone
         }
 
-      case _ if FilteredReasonHelper.tweetMatchesViewerMutedKeyword(filteredReason) =>
-        filteredReason match {
-          case FilteredReason.TweetMatchesViewerMutedKeyword(_) =>
-            interstitialLegacyStatsReceiver.counter("fr_muted_keyword").incr()
-            Some(Interstitial(Reason.MutedKeyword))
+      case _ if fiwtewedweasonhewpew.tweetmatchesviewewmutedkeywowd(fiwtewedweason) =>
+        fiwtewedweason match {
+          c-case fiwtewedweason.tweetmatchesviewewmutedkeywowd(_) =>
+            intewstitiawwegacystatsweceivew.countew("fw_muted_keywowd").incw()
+            s-some(intewstitiaw(weason.mutedkeywowd))
 
-          case FilteredReason.SafetyResult(safetyResult: SafetyResult)
-              if enableLegacyInterstitials =>
-            val safetyResultMutedKeyword = InterstitialReasonConverter
-              .fromAction(safetyResult.action).collect {
-                case _: InterstitialReason.MatchesMutedKeyword => true
-              }.getOrElse(false)
+          c-case fiwtewedweason.safetywesuwt(safetywesuwt: safetywesuwt)
+              if enabwewegacyintewstitiaws =>
+            vaw safetywesuwtmutedkeywowd = i-intewstitiawweasonconvewtew
+              .fwomaction(safetywesuwt.action).cowwect {
+                case _: i-intewstitiawweason.matchesmutedkeywowd => twue
+              }.getowewse(fawse)
 
-            if (safetyResultMutedKeyword) {
-              interstitialLegacyStatsReceiver.counter("muted_keyword").incr()
-              Some(Interstitial(Reason.MutedKeyword))
-            } else None
+            if (safetywesuwtmutedkeywowd) {
+              intewstitiawwegacystatsweceivew.countew("muted_keywowd").incw()
+              s-some(intewstitiaw(weason.mutedkeywowd))
+            } ewse nyone
 
-          case _ => None
+          c-case _ => none
         }
 
       case _ =>
-        None
+        nyone
     }
   }
 
-  def toAction(
-    tfrs: TweetFieldsResultState,
-    actionStatsReceiver: StatsReceiver
-  ): Option[Action] = {
+  d-def toaction(
+    tfws: tweetfiewdswesuwtstate, ^•ﻌ•^
+    a-actionstatsweceivew: s-statsweceivew
+  ): option[action] = {
 
-    val enableLocalizedInterstitials = visibilityDeciderGates.enableConvosLocalizedInterstitial()
-    val enableLegacyInterstitials = visibilityDeciderGates.enableConvosLegacyInterstitial()
+    v-vaw enabwewocawizedintewstitiaws = visibiwitydecidewgates.enabweconvoswocawizedintewstitiaw()
+    v-vaw enabwewegacyintewstitiaws = v-visibiwitydecidewgates.enabweconvoswegacyintewstitiaw()
 
-    val tombstoneStatsReceiver = actionStatsReceiver.scope("tombstone")
-    val interstitialLocalStatsReceiver =
-      actionStatsReceiver.scope("interstitial").scope("localized")
-    val interstitialLegacyStatsReceiver =
-      actionStatsReceiver.scope("interstitial").scope("legacy")
+    v-vaw tombstonestatsweceivew = actionstatsweceivew.scope("tombstone")
+    v-vaw i-intewstitiawwocawstatsweceivew =
+      actionstatsweceivew.scope("intewstitiaw").scope("wocawized")
+    vaw intewstitiawwegacystatsweceivew =
+      a-actionstatsweceivew.scope("intewstitiaw").scope("wegacy")
 
-    tfrs match {
+    t-tfws match {
 
-      case TweetFieldsResultState.NotFound(TweetFieldsResultNotFound(_, _, Some(filteredReason)))
-          if FilteredReasonHelper.isTombstone(filteredReason) =>
-        createLocalizedTombstone(filteredReason, tombstoneStatsReceiver)
+      c-case tweetfiewdswesuwtstate.notfound(tweetfiewdswesuwtnotfound(_, ʘwʘ _, some(fiwtewedweason)))
+          if f-fiwtewedweasonhewpew.istombstone(fiwtewedweason) =>
+        cweatewocawizedtombstone(fiwtewedweason, :3 t-tombstonestatsweceivew)
 
-      case TweetFieldsResultState.NotFound(tfr: TweetFieldsResultNotFound) if tfr.deleted =>
-        createTombstone(Epitaph.Deleted, tombstoneStatsReceiver)
+      c-case tweetfiewdswesuwtstate.notfound(tfw: tweetfiewdswesuwtnotfound) if tfw.deweted =>
+        cweatetombstone(epitaph.deweted, 😳 t-tombstonestatsweceivew)
 
-      case TweetFieldsResultState.NotFound(_: TweetFieldsResultNotFound) =>
-        createTombstone(Epitaph.NotFound, tombstoneStatsReceiver)
+      c-case tweetfiewdswesuwtstate.notfound(_: t-tweetfiewdswesuwtnotfound) =>
+        c-cweatetombstone(epitaph.notfound, òωó tombstonestatsweceivew)
 
-      case TweetFieldsResultState.Failed(TweetFieldsResultFailed(_, _, _)) =>
-        createTombstone(Epitaph.Unavailable, tombstoneStatsReceiver, Some("failed"))
+      c-case tweetfiewdswesuwtstate.faiwed(tweetfiewdswesuwtfaiwed(_, 🥺 _, _)) =>
+        cweatetombstone(epitaph.unavaiwabwe, rawr x3 tombstonestatsweceivew, ^•ﻌ•^ some("faiwed"))
 
-      case TweetFieldsResultState.Filtered(TweetFieldsResultFiltered(UnspecifiedReason(true))) =>
-        createTombstone(Epitaph.Unavailable, tombstoneStatsReceiver, Some("filtered"))
+      case tweetfiewdswesuwtstate.fiwtewed(tweetfiewdswesuwtfiwtewed(unspecifiedweason(twue))) =>
+        cweatetombstone(epitaph.unavaiwabwe, :3 tombstonestatsweceivew, (ˆ ﻌ ˆ)♡ some("fiwtewed"))
 
-      case TweetFieldsResultState.Filtered(TweetFieldsResultFiltered(filteredReason)) =>
-        toAction(filteredReason, actionStatsReceiver)
+      c-case tweetfiewdswesuwtstate.fiwtewed(tweetfiewdswesuwtfiwtewed(fiwtewedweason)) =>
+        toaction(fiwtewedweason, a-actionstatsweceivew)
 
-      case TweetFieldsResultState.Found(TweetFieldsResultFound(_, _, Some(filteredReason)))
-          if enableLocalizedInterstitials &&
-            FilteredReasonHelper.isSuppressedReasonPublicInterestInterstial(filteredReason) =>
-        interstitialLocalStatsReceiver.counter("ipi").incr()
-        FilteredReasonHelper
-          .getSafetyResult(filteredReason)
-          .flatMap(_.reason)
-          .flatMap(PublicInterest.SafetyResultReasonToReason.get) match {
-          case Some(safetyResultReason) =>
-            FilteredReasonHelper
-              .getSuppressedReasonPublicInterestInterstial(filteredReason)
-              .map(edi => edi.localizedMessage)
-              .map(tlm => LocalizedMessageConverter.fromThrift(tlm))
-              .map(lm =>
-                InterstitialLimitedEngagements(
-                  safetyResultReason,
-                  Some(LimitedEngagementReason.NonCompliant),
-                  lm))
-          case _ => None
+      case tweetfiewdswesuwtstate.found(tweetfiewdswesuwtfound(_, (U ᵕ U❁) _, some(fiwtewedweason)))
+          i-if enabwewocawizedintewstitiaws &&
+            fiwtewedweasonhewpew.issuppwessedweasonpubwicintewestintewstiaw(fiwtewedweason) =>
+        intewstitiawwocawstatsweceivew.countew("ipi").incw()
+        f-fiwtewedweasonhewpew
+          .getsafetywesuwt(fiwtewedweason)
+          .fwatmap(_.weason)
+          .fwatmap(pubwicintewest.safetywesuwtweasontoweason.get) match {
+          c-case some(safetywesuwtweason) =>
+            f-fiwtewedweasonhewpew
+              .getsuppwessedweasonpubwicintewestintewstiaw(fiwtewedweason)
+              .map(edi => edi.wocawizedmessage)
+              .map(twm => wocawizedmessageconvewtew.fwomthwift(twm))
+              .map(wm =>
+                i-intewstitiawwimitedengagements(
+                  s-safetywesuwtweason, :3
+                  s-some(wimitedengagementweason.noncompwiant), ^^;;
+                  wm))
+          case _ => nyone
         }
 
-      case TweetFieldsResultState.Found(TweetFieldsResultFound(_, _, Some(filteredReason)))
-          if enableLegacyInterstitials &&
-            FilteredReasonHelper.isSuppressedReasonPublicInterestInterstial(filteredReason) =>
-        interstitialLegacyStatsReceiver.counter("ipi").incr()
-        FilteredReasonHelper
-          .getSafetyResult(filteredReason)
-          .flatMap(_.reason)
-          .flatMap(PublicInterest.SafetyResultReasonToReason.get)
-          .map(InterstitialLimitedEngagements(_, Some(LimitedEngagementReason.NonCompliant)))
+      case tweetfiewdswesuwtstate.found(tweetfiewdswesuwtfound(_, ( ͡o ω ͡o ) _, some(fiwtewedweason)))
+          if enabwewegacyintewstitiaws &&
+            f-fiwtewedweasonhewpew.issuppwessedweasonpubwicintewestintewstiaw(fiwtewedweason) =>
+        i-intewstitiawwegacystatsweceivew.countew("ipi").incw()
+        f-fiwtewedweasonhewpew
+          .getsafetywesuwt(fiwtewedweason)
+          .fwatmap(_.weason)
+          .fwatmap(pubwicintewest.safetywesuwtweasontoweason.get)
+          .map(intewstitiawwimitedengagements(_, some(wimitedengagementweason.noncompwiant)))
 
-      case TweetFieldsResultState.Found(TweetFieldsResultFound(_, _, Some(filteredReason)))
-          if enableLocalizedInterstitials &&
-            FilteredReasonHelper.isLocalizedSuppressedReasonEmergencyDynamicInterstitial(
-              filteredReason) =>
-        interstitialLocalStatsReceiver.counter("edi").incr()
-        FilteredReasonHelper
-          .getSuppressedReasonEmergencyDynamicInterstitial(filteredReason)
+      c-case tweetfiewdswesuwtstate.found(tweetfiewdswesuwtfound(_, o.O _, some(fiwtewedweason)))
+          if enabwewocawizedintewstitiaws &&
+            fiwtewedweasonhewpew.iswocawizedsuppwessedweasonemewgencydynamicintewstitiaw(
+              f-fiwtewedweason) =>
+        i-intewstitiawwocawstatsweceivew.countew("edi").incw()
+        fiwtewedweasonhewpew
+          .getsuppwessedweasonemewgencydynamicintewstitiaw(fiwtewedweason)
           .map(e =>
-            EmergencyDynamicInterstitial(
-              e.copy,
-              e.link,
-              LocalizedMessageConverter.fromThrift(e.localizedMessage)))
+            e-emewgencydynamicintewstitiaw(
+              e.copy, ^•ﻌ•^
+              e.wink, XD
+              w-wocawizedmessageconvewtew.fwomthwift(e.wocawizedmessage)))
 
-      case TweetFieldsResultState.Found(TweetFieldsResultFound(_, _, Some(filteredReason)))
-          if enableLegacyInterstitials &&
-            FilteredReasonHelper.isSuppressedReasonEmergencyDynamicInterstitial(filteredReason) =>
-        interstitialLegacyStatsReceiver.counter("edi").incr()
-        FilteredReasonHelper
-          .getSuppressedReasonEmergencyDynamicInterstitial(filteredReason)
-          .map(e => EmergencyDynamicInterstitial(e.copy, e.link))
+      case t-tweetfiewdswesuwtstate.found(tweetfiewdswesuwtfound(_, ^^ _, some(fiwtewedweason)))
+          if e-enabwewegacyintewstitiaws &&
+            f-fiwtewedweasonhewpew.issuppwessedweasonemewgencydynamicintewstitiaw(fiwtewedweason) =>
+        intewstitiawwegacystatsweceivew.countew("edi").incw()
+        fiwtewedweasonhewpew
+          .getsuppwessedweasonemewgencydynamicintewstitiaw(fiwtewedweason)
+          .map(e => emewgencydynamicintewstitiaw(e.copy, o.O e.wink))
 
-      case TweetFieldsResultState.Found(TweetFieldsResultFound(tweet, _, _))
-          if tweet.perspective.exists(_.reported) =>
-        interstitialLegacyStatsReceiver.counter("reported").incr()
-        Some(Interstitial(Reason.ViewerReportedAuthor))
+      c-case tweetfiewdswesuwtstate.found(tweetfiewdswesuwtfound(tweet, ( ͡o ω ͡o ) _, _))
+          i-if tweet.pewspective.exists(_.wepowted) =>
+        i-intewstitiawwegacystatsweceivew.countew("wepowted").incw()
+        s-some(intewstitiaw(weason.viewewwepowtedauthow))
 
-      case TweetFieldsResultState.Found(
-            TweetFieldsResultFound(_, _, Some(UnspecifiedReason(true)))) =>
-        None
+      case t-tweetfiewdswesuwtstate.found(
+            tweetfiewdswesuwtfound(_, /(^•ω•^) _, s-some(unspecifiedweason(twue)))) =>
+        n-nyone
 
-      case TweetFieldsResultState.Found(TweetFieldsResultFound(_, _, Some(filteredReason))) =>
-        toAction(filteredReason, actionStatsReceiver)
+      case tweetfiewdswesuwtstate.found(tweetfiewdswesuwtfound(_, 🥺 _, nyaa~~ s-some(fiwtewedweason))) =>
+        t-toaction(fiwtewedweason, mya actionstatsweceivew)
 
-      case _ =>
-        None
+      c-case _ =>
+        nyone
     }
   }
 
-  private[conversations] def shouldTruncateDescendantsWhenFocal(action: Action): Boolean =
-    action match {
-      case _: InterstitialLimitedEngagements | _: EmergencyDynamicInterstitial =>
-        true
-      case Tombstone(Epitaph.Bounced, _) | Tombstone(Epitaph.BounceDeleted, _) =>
-        true
-      case LocalizedTombstone(TombstoneReason.Bounced, _) |
-          LocalizedTombstone(TombstoneReason.BounceDeleted, _) =>
-        true
-      case LimitedEngagements(LimitedEngagementReason.NonCompliant, _) =>
-        true
-      case _ => false
+  pwivate[convewsations] d-def shouwdtwuncatedescendantswhenfocaw(action: action): boowean =
+    a-action m-match {
+      case _: intewstitiawwimitedengagements | _: e-emewgencydynamicintewstitiaw =>
+        twue
+      case tombstone(epitaph.bounced, XD _) | t-tombstone(epitaph.bouncedeweted, nyaa~~ _) =>
+        t-twue
+      case w-wocawizedtombstone(tombstoneweason.bounced, ʘwʘ _) |
+          wocawizedtombstone(tombstoneweason.bouncedeweted, (⑅˘꒳˘) _) =>
+        twue
+      case wimitedengagements(wimitedengagementweason.noncompwiant, :3 _) =>
+        t-twue
+      case _ => fawse
     }
 
-  def apply(request: TombstoneVisibilityRequest): Stitch[TombstoneVisibilityResponse] = {
+  def appwy(wequest: t-tombstonevisibiwitywequest): s-stitch[tombstonevisibiwitywesponse] = {
 
-    val moderationFeatures = new ModerationFeatures(
-      moderationSource = request.moderatedTweetIds.contains,
-      statsReceiver = statsReceiver
+    vaw modewationfeatuwes = nyew m-modewationfeatuwes(
+      modewationsouwce = w-wequest.modewatedtweetids.contains, -.-
+      s-statsweceivew = statsweceivew
     )
 
-    val userSource = UserSource.fromFunction({
-      case (userId, _) =>
-        request.authorMap
-          .get(userId)
-          .map(Stitch.value).getOrElse(Stitch.NotFound)
+    vaw usewsouwce = u-usewsouwce.fwomfunction({
+      case (usewid, 😳😳😳 _) =>
+        wequest.authowmap
+          .get(usewid)
+          .map(stitch.vawue).getowewse(stitch.notfound)
     })
 
-    val authorFeatures = new AuthorFeatures(userSource, statsReceiver)
-    val viewerFeatures = new ViewerFeatures(userSource, statsReceiver)
+    v-vaw a-authowfeatuwes = nyew authowfeatuwes(usewsouwce, (U ﹏ U) s-statsweceivew)
+    vaw viewewfeatuwes = n-nyew v-viewewfeatuwes(usewsouwce, o.O s-statsweceivew)
 
-    val languageTag = request.viewerContext.requestCountryCode.getOrElse(En)
-    val firstRound: Seq[(GetTweetFieldsResult, Option[TombstoneType])] = request.tweets.map {
-      case (gtfr, safetyLevel) =>
-        val actionStats = statsReceiver
+    vaw wanguagetag = wequest.viewewcontext.wequestcountwycode.getowewse(en)
+    vaw fiwstwound: seq[(gettweetfiewdswesuwt, ( ͡o ω ͡o ) option[tombstonetype])] = wequest.tweets.map {
+      case (gtfw, òωó safetywevew) =>
+        vaw actionstats = statsweceivew
           .scope("action")
-          .scope(safetyLevel.map(_.toString().toLowerCase()).getOrElse("unknown_safety_level"))
-        toAction(gtfr.tweetResult, actionStats) match {
-          case Some(action) =>
-            (gtfr, Some(TombstoneType(gtfr.tweetId, gtfr.tweetId, action)))
+          .scope(safetywevew.map(_.tostwing().towowewcase()).getowewse("unknown_safety_wevew"))
+        toaction(gtfw.tweetwesuwt, 🥺 actionstats) m-match {
+          c-case some(action) =>
+            (gtfw, /(^•ω•^) some(tombstonetype(gtfw.tweetid, 😳😳😳 g-gtfw.tweetid, ^•ﻌ•^ a-action)))
 
-          case None =>
-            val quotedTweetId: Option[Long] = gtfr.tweetResult match {
-              case TweetFieldsResultState.Found(TweetFieldsResultFound(tweet, _, _)) =>
-                tweet.quotedTweet.map(_.tweetId)
-              case _ => None
+          c-case nyone =>
+            vaw quotedtweetid: o-option[wong] = gtfw.tweetwesuwt m-match {
+              c-case tweetfiewdswesuwtstate.found(tweetfiewdswesuwtfound(tweet, nyaa~~ _, _)) =>
+                t-tweet.quotedtweet.map(_.tweetid)
+              case _ => nyone
             }
 
-            (quotedTweetId, gtfr.quotedTweetResult) match {
-              case (Some(quotedTweetId), Some(tfrs)) =>
-                val qtActionStats = actionStats.scope("quoted")
-                toAction(tfrs, qtActionStats) match {
-                  case None =>
-                    (gtfr, None)
+            (quotedtweetid, g-gtfw.quotedtweetwesuwt) m-match {
+              case (some(quotedtweetid), OwO some(tfws)) =>
+                v-vaw qtactionstats = a-actionstats.scope("quoted")
+                t-toaction(tfws, ^•ﻌ•^ q-qtactionstats) m-match {
+                  c-case nyone =>
+                    (gtfw, σωσ n-nyone)
 
-                  case Some(action) =>
-                    (gtfr, Some(TombstoneType(gtfr.tweetId, quotedTweetId, action)))
+                  c-case some(action) =>
+                    (gtfw, -.- s-some(tombstonetype(gtfw.tweetid, (˘ω˘) quotedtweetid, rawr x3 a-action)))
                 }
 
-              case _ =>
-                (gtfr, None)
+              c-case _ =>
+                (gtfw, rawr x3 nyone)
             }
         }
     }
 
-    val (firstRoundActions, secondRoundInput) = firstRound.partition {
-      case (_, Some(tombstoneType)) =>
-        !tombstoneType.isInnerTombstone
-      case (_, None) => false
+    v-vaw (fiwstwoundactions, σωσ secondwoundinput) = f-fiwstwound.pawtition {
+      case (_, nyaa~~ some(tombstonetype)) =>
+        !tombstonetype.isinnewtombstone
+      case (_, (ꈍᴗꈍ) nyone) => f-fawse
     }
 
-    def invokeVisibilityLibrary(tweetId: Long, author: User): Stitch[Action] = {
-      visibilityLibrary
-        .runRuleEngine(
-          ContentId.TweetId(tweetId),
-          visibilityLibrary.featureMapBuilder(
-            Seq(
-              viewerFeatures.forViewerContext(request.viewerContext),
-              moderationFeatures.forTweetId(tweetId),
-              authorFeatures.forAuthor(author),
-              relationshipFeatures
-                .forAuthor(author, request.viewerContext.userId),
-              _.withConstantFeature(TweetId, tweetId),
-              _.withConstantFeature(FocalTweetId, request.focalTweetId)
+    def invokevisibiwitywibwawy(tweetid: w-wong, ^•ﻌ•^ a-authow: usew): stitch[action] = {
+      v-visibiwitywibwawy
+        .wunwuweengine(
+          contentid.tweetid(tweetid), >_<
+          v-visibiwitywibwawy.featuwemapbuiwdew(
+            seq(
+              v-viewewfeatuwes.fowviewewcontext(wequest.viewewcontext), ^^;;
+              modewationfeatuwes.fowtweetid(tweetid), ^^;;
+              a-authowfeatuwes.fowauthow(authow),
+              wewationshipfeatuwes
+                .fowauthow(authow, /(^•ω•^) w-wequest.viewewcontext.usewid), nyaa~~
+              _.withconstantfeatuwe(tweetid, (✿oωo) tweetid),
+              _.withconstantfeatuwe(focawtweetid, wequest.focawtweetid)
             )
-          ),
-          request.viewerContext,
-          Tombstoning
-        ).map(_.verdict)
+          ), ( ͡o ω ͡o )
+          wequest.viewewcontext, (U ᵕ U❁)
+          tombstoning
+        ).map(_.vewdict)
     }
 
-    val secondRoundActions: Stitch[Seq[(GetTweetFieldsResult, Option[TombstoneType])]] =
-      Stitch.traverse(secondRoundInput) {
-        case (gtfr: GetTweetFieldsResult, firstRoundTombstone: Option[TombstoneType]) =>
-          val secondRoundTombstone: Stitch[Option[TombstoneType]] = gtfr.tweetResult match {
-            case TweetFieldsResultState.Found(TweetFieldsResultFound(tweet, _, _)) =>
-              val tweetId = tweet.id
+    v-vaw secondwoundactions: s-stitch[seq[(gettweetfiewdswesuwt, òωó o-option[tombstonetype])]] =
+      stitch.twavewse(secondwoundinput) {
+        case (gtfw: gettweetfiewdswesuwt, σωσ f-fiwstwoundtombstone: option[tombstonetype]) =>
+          v-vaw secondwoundtombstone: s-stitch[option[tombstonetype]] = g-gtfw.tweetwesuwt match {
+            case tweetfiewdswesuwtstate.found(tweetfiewdswesuwtfound(tweet, :3 _, _)) =>
+              v-vaw tweetid = t-tweet.id
 
-              tweet.coreData
-                .flatMap { coreData => request.authorMap.get(coreData.userId) } match {
-                case Some(author) =>
-                  invokeVisibilityLibrary(tweetId, author).flatMap {
-                    case Allow =>
-                      val quotedTweetId = tweet.quotedTweet.map(_.tweetId)
-                      val quotedTweetAuthor = tweet.quotedTweet.flatMap { qt =>
-                        request.authorMap.get(qt.userId)
+              tweet.cowedata
+                .fwatmap { c-cowedata => wequest.authowmap.get(cowedata.usewid) } match {
+                c-case some(authow) =>
+                  invokevisibiwitywibwawy(tweetid, a-authow).fwatmap {
+                    c-case awwow =>
+                      v-vaw quotedtweetid = tweet.quotedtweet.map(_.tweetid)
+                      v-vaw quotedtweetauthow = t-tweet.quotedtweet.fwatmap { q-qt =>
+                        w-wequest.authowmap.get(qt.usewid)
                       }
 
-                      (quotedTweetId, quotedTweetAuthor) match {
-                        case (Some(quotedTweetId), Some(quotedTweetAuthor)) =>
-                          invokeVisibilityLibrary(quotedTweetId, quotedTweetAuthor).flatMap {
-                            case Allow =>
-                              Stitch.None
+                      (quotedtweetid, OwO quotedtweetauthow) m-match {
+                        c-case (some(quotedtweetid), ^^ s-some(quotedtweetauthow)) =>
+                          i-invokevisibiwitywibwawy(quotedtweetid, (˘ω˘) q-quotedtweetauthow).fwatmap {
+                            c-case awwow =>
+                              s-stitch.none
 
-                            case reason =>
-                              Stitch.value(Some(TombstoneType(tweetId, quotedTweetId, reason)))
+                            c-case weason =>
+                              s-stitch.vawue(some(tombstonetype(tweetid, OwO quotedtweetid, UwU w-weason)))
                           }
 
                         case _ =>
-                          Stitch.None
+                          s-stitch.none
                       }
 
-                    case reason =>
-                      Stitch.value(Some(TombstoneType(tweetId, tweetId, reason)))
+                    c-case w-weason =>
+                      stitch.vawue(some(tombstonetype(tweetid, ^•ﻌ•^ tweetid, weason)))
                   }
 
-                case None =>
-                  Stitch.None
+                c-case nyone =>
+                  s-stitch.none
               }
 
-            case _ =>
-              Stitch.None
+            c-case _ =>
+              stitch.none
           }
 
-          secondRoundTombstone.map { opt => opt.orElse(firstRoundTombstone) }.map { opt =>
-            (gtfr, opt)
+          secondwoundtombstone.map { opt => opt.owewse(fiwstwoundtombstone) }.map { o-opt =>
+            (gtfw, (ꈍᴗꈍ) o-opt)
           }
       }
 
-    secondRoundActions.map { secondRound =>
-      val tombstones: Seq[(Long, VfTombstone)] = (firstRoundActions ++ secondRound).flatMap {
-        case (gtfr, tombstoneTypeOpt) => {
+    secondwoundactions.map { s-secondwound =>
+      v-vaw tombstones: seq[(wong, /(^•ω•^) vftombstone)] = (fiwstwoundactions ++ secondwound).fwatmap {
+        c-case (gtfw, (U ᵕ U❁) t-tombstonetypeopt) => {
 
-          val nonCompliantLimitedEngagementsOpt = gtfr.tweetResult match {
-            case TweetFieldsResultState.Found(TweetFieldsResultFound(_, _, Some(filteredReason)))
-                if FilteredReasonHelper.isLimitedEngagementsNonCompliant(filteredReason) =>
-              Some(LimitedEngagements(LimitedEngagementReason.NonCompliant))
-            case _ => None
+          v-vaw nyoncompwiantwimitedengagementsopt = g-gtfw.tweetwesuwt match {
+            case tweetfiewdswesuwtstate.found(tweetfiewdswesuwtfound(_, (✿oωo) _, some(fiwtewedweason)))
+                i-if fiwtewedweasonhewpew.iswimitedengagementsnoncompwiant(fiwtewedweason) =>
+              s-some(wimitedengagements(wimitedengagementweason.noncompwiant))
+            case _ => nyone
           }
 
-          (tombstoneTypeOpt, nonCompliantLimitedEngagementsOpt) match {
-            case (Some(tombstoneType), nonCompliantOpt) =>
-              val tombstoneId = tombstoneType.tombstoneId
-              val action = tombstoneType.action
-              val textOpt: Option[RichText] = action match {
+          (tombstonetypeopt, OwO n-nyoncompwiantwimitedengagementsopt) match {
+            case (some(tombstonetype), :3 n-nyoncompwiantopt) =>
+              vaw t-tombstoneid = t-tombstonetype.tombstoneid
+              vaw action = t-tombstonetype.action
+              v-vaw textopt: option[wichtext] = a-action match {
 
-                case InterstitialLimitedEngagements(_, _, Some(localizedMessage), _) =>
-                  Some(LocalizedMessageToRichText(localizedMessage))
-                case ipi: InterstitialLimitedEngagements =>
-                  Some(
-                    SafetyResultToUrtParser.fromSafetyResultToRichText(
-                      SafetyResult(
-                        Some(PublicInterest.ReasonToSafetyResultReason(ipi.reason)),
-                        ipi.toActionThrift()
-                      ),
-                      languageTag
+                case intewstitiawwimitedengagements(_, nyaa~~ _, s-some(wocawizedmessage), _) =>
+                  s-some(wocawizedmessagetowichtext(wocawizedmessage))
+                c-case ipi: intewstitiawwimitedengagements =>
+                  s-some(
+                    safetywesuwttouwtpawsew.fwomsafetywesuwttowichtext(
+                      s-safetywesuwt(
+                        s-some(pubwicintewest.weasontosafetywesuwtweason(ipi.weason)), ^•ﻌ•^
+                        i-ipi.toactionthwift()
+                      ), ( ͡o ω ͡o )
+                      wanguagetag
                     )
                   )
 
-                case EmergencyDynamicInterstitial(_, _, Some(localizedMessage), _) =>
-                  Some(LocalizedMessageToRichText(localizedMessage))
-                case edi: EmergencyDynamicInterstitial =>
-                  Some(
-                    SafetyResultToUrtParser.fromSafetyResultToRichText(
-                      SafetyResult(
-                        None,
-                        edi.toActionThrift()
-                      ),
-                      languageTag
+                c-case emewgencydynamicintewstitiaw(_, ^^;; _, some(wocawizedmessage), mya _) =>
+                  s-some(wocawizedmessagetowichtext(wocawizedmessage))
+                c-case edi: e-emewgencydynamicintewstitiaw =>
+                  some(
+                    safetywesuwttouwtpawsew.fwomsafetywesuwttowichtext(
+                      safetywesuwt(
+                        nyone, (U ᵕ U❁)
+                        e-edi.toactionthwift()
+                      ), ^•ﻌ•^
+                      wanguagetag
                     )
                   )
 
-                case Tombstone(epitaph, _) =>
-                  if (request.useRichText)
-                    Some(EpitaphToRichText(epitaph, languageTag))
-                  else
-                    Some(EpitaphToRichText(Epitaph.UnavailableWithoutLink, languageTag))
+                c-case tombstone(epitaph, (U ﹏ U) _) =>
+                  i-if (wequest.usewichtext)
+                    some(epitaphtowichtext(epitaph, /(^•ω•^) wanguagetag))
+                  e-ewse
+                    some(epitaphtowichtext(epitaph.unavaiwabwewithoutwink, ʘwʘ w-wanguagetag))
 
-                case LocalizedTombstone(_, message) =>
-                  if (request.useRichText)
-                    Some(LocalizedMessageToRichText(LocalizedMessageConverter.toThrift(message)))
-                  else
-                    Some(EpitaphToRichText(Epitaph.UnavailableWithoutLink, languageTag))
+                c-case wocawizedtombstone(_, XD message) =>
+                  i-if (wequest.usewichtext)
+                    s-some(wocawizedmessagetowichtext(wocawizedmessageconvewtew.tothwift(message)))
+                  e-ewse
+                    some(epitaphtowichtext(epitaph.unavaiwabwewithoutwink, (⑅˘꒳˘) wanguagetag))
 
-                case Interstitial(_, Some(localizedMessage), _) =>
-                  Some(LocalizedMessageToRichText.apply(localizedMessage))
+                case intewstitiaw(_, nyaa~~ some(wocawizedmessage), UwU _) =>
+                  s-some(wocawizedmessagetowichtext.appwy(wocawizedmessage))
 
-                case interstitial: Interstitial =>
-                  ReasonToUrtParser.fromReasonToRichText(interstitial.reason, languageTag)
-
-                case _ =>
-                  None
-              }
-
-              val isRoot: Boolean = gtfr.tweetId == request.conversationId
-              val isOuter: Boolean = tombstoneId == request.conversationId
-              val revealTextOpt: Option[RichText] = action match {
-                case _: InterstitialLimitedEngagements | _: EmergencyDynamicInterstitial
-                    if isRoot && isOuter =>
-                  None
-
-                case _: Interstitial | _: InterstitialLimitedEngagements |
-                    _: EmergencyDynamicInterstitial =>
-                  Some(ReasonToUrtParser.getRichRevealText(languageTag))
+                case intewstitiaw: i-intewstitiaw =>
+                  weasontouwtpawsew.fwomweasontowichtext(intewstitiaw.weason, (˘ω˘) wanguagetag)
 
                 case _ =>
-                  None
+                  n-nyone
               }
 
-              val includeTweet = action match {
-                case _: Interstitial | _: InterstitialLimitedEngagements |
-                    _: EmergencyDynamicInterstitial =>
-                  true
-                case _ => false
+              vaw iswoot: boowean = gtfw.tweetid == wequest.convewsationid
+              vaw isoutew: b-boowean = tombstoneid == w-wequest.convewsationid
+              vaw w-weveawtextopt: option[wichtext] = action match {
+                c-case _: intewstitiawwimitedengagements | _: emewgencydynamicintewstitiaw
+                    i-if iswoot && isoutew =>
+                  none
+
+                c-case _: intewstitiaw | _: intewstitiawwimitedengagements |
+                    _: e-emewgencydynamicintewstitiaw =>
+                  some(weasontouwtpawsew.getwichweveawtext(wanguagetag))
+
+                case _ =>
+                  nyone
               }
 
-              val truncateForAction: Boolean =
-                shouldTruncateDescendantsWhenFocal(action)
-              val truncateForNonCompliant: Boolean =
-                nonCompliantOpt
-                  .map(shouldTruncateDescendantsWhenFocal).getOrElse(false)
-              val truncateDescendants: Boolean =
-                truncateForAction || truncateForNonCompliant
+              v-vaw incwudetweet = action match {
+                case _: i-intewstitiaw | _: i-intewstitiawwimitedengagements |
+                    _: e-emewgencydynamicintewstitiaw =>
+                  twue
+                case _ => f-fawse
+              }
 
-              val tombstone = textOpt match {
-                case Some(_) if request.useRichText =>
-                  VfTombstone(
-                    includeTweet = includeTweet,
-                    action = action,
-                    tombstoneInfo = Some(
-                      TombstoneInfo(
-                        cta = None,
-                        revealText = None,
-                        richText = textOpt,
-                        richRevealText = revealTextOpt
+              vaw twuncatefowaction: boowean =
+                shouwdtwuncatedescendantswhenfocaw(action)
+              vaw twuncatefownoncompwiant: b-boowean =
+                n-nyoncompwiantopt
+                  .map(shouwdtwuncatedescendantswhenfocaw).getowewse(fawse)
+              v-vaw twuncatedescendants: b-boowean =
+                twuncatefowaction || twuncatefownoncompwiant
+
+              v-vaw tombstone = t-textopt match {
+                case some(_) if wequest.usewichtext =>
+                  v-vftombstone(
+                    incwudetweet = incwudetweet, rawr x3
+                    a-action = action, (///ˬ///✿)
+                    tombstoneinfo = s-some(
+                      t-tombstoneinfo(
+                        cta = nyone,
+                        w-weveawtext = n-nyone,
+                        w-wichtext = textopt, 😳😳😳
+                        wichweveawtext = w-weveawtextopt
                       )
-                    ),
-                    tombstoneDisplayType = tombstoneType.tombstoneDisplayType,
-                    truncateDescendantsWhenFocal = truncateDescendants
+                    ), (///ˬ///✿)
+                    tombstonedispwaytype = tombstonetype.tombstonedispwaytype, ^^;;
+                    t-twuncatedescendantswhenfocaw = twuncatedescendants
                   )
-                case Some(_) =>
-                  VfTombstone(
-                    includeTweet = includeTweet,
-                    action = action,
-                    tombstoneInfo = Some(
-                      TombstoneInfo(
-                        text = textOpt
-                          .map(richText => richText.text).getOrElse(
+                case some(_) =>
+                  vftombstone(
+                    i-incwudetweet = i-incwudetweet, ^^
+                    a-action = a-action, (///ˬ///✿)
+                    t-tombstoneinfo = some(
+                      tombstoneinfo(
+                        t-text = textopt
+                          .map(wichtext => wichtext.text).getowewse(
                             ""
-                        cta = None,
-                        revealText = revealTextOpt.map(_.text),
-                        richText = None,
-                        richRevealText = None
+                        cta = nyone, -.-
+                        w-weveawtext = weveawtextopt.map(_.text), /(^•ω•^)
+                        w-wichtext = nyone,
+                        wichweveawtext = n-nyone
                       )
                     ),
-                    tombstoneDisplayType = tombstoneType.tombstoneDisplayType,
-                    truncateDescendantsWhenFocal = truncateDescendants
+                    t-tombstonedispwaytype = tombstonetype.tombstonedispwaytype, UwU
+                    t-twuncatedescendantswhenfocaw = twuncatedescendants
                   )
 
-                case None =>
-                  VfTombstone(
-                    includeTweet = false,
-                    action = action,
-                    tombstoneInfo = Some(
-                      TombstoneInfo(
-                        cta = None,
-                        revealText = None,
-                        richText = Some(EpitaphToRichText(Epitaph.Unavailable, languageTag)),
-                        richRevealText = None
+                c-case nyone =>
+                  v-vftombstone(
+                    incwudetweet = f-fawse, (⑅˘꒳˘)
+                    a-action = action, ʘwʘ
+                    t-tombstoneinfo = some(
+                      tombstoneinfo(
+                        cta = nyone, σωσ
+                        w-weveawtext = nyone, ^^
+                        w-wichtext = some(epitaphtowichtext(epitaph.unavaiwabwe, OwO wanguagetag)), (ˆ ﻌ ˆ)♡
+                        w-wichweveawtext = n-none
                       )
-                    ),
-                    tombstoneDisplayType = tombstoneType.tombstoneDisplayType,
-                    truncateDescendantsWhenFocal = truncateDescendants
+                    ), o.O
+                    t-tombstonedispwaytype = tombstonetype.tombstonedispwaytype, (˘ω˘)
+                    t-twuncatedescendantswhenfocaw = t-twuncatedescendants
                   )
               }
 
-              Some((gtfr.tweetId, tombstone))
+              some((gtfw.tweetid, 😳 t-tombstone))
 
-            case (None, Some(limitedEngagements))
-                if shouldTruncateDescendantsWhenFocal(limitedEngagements) =>
-              val tombstone = VfTombstone(
-                tombstoneId = gtfr.tweetId,
-                includeTweet = true,
-                action = limitedEngagements,
-                tombstoneInfo = None,
-                tombstoneDisplayType = TombstoneDisplayType.NonCompliant,
-                truncateDescendantsWhenFocal = true
+            case (none, (U ᵕ U❁) s-some(wimitedengagements))
+                if shouwdtwuncatedescendantswhenfocaw(wimitedengagements) =>
+              vaw t-tombstone = vftombstone(
+                t-tombstoneid = gtfw.tweetid, :3
+                incwudetweet = twue, o.O
+                action = w-wimitedengagements, (///ˬ///✿)
+                t-tombstoneinfo = nyone, OwO
+                tombstonedispwaytype = tombstonedispwaytype.noncompwiant, >w<
+                t-twuncatedescendantswhenfocaw = twue
               )
-              Some((gtfr.tweetId, tombstone))
+              s-some((gtfw.tweetid, ^^ t-tombstone))
 
             case _ =>
-              None
+              nyone
           }
         }
       }
 
-      TombstoneVisibilityResponse(
-        tweetVerdicts = tombstones.toMap
+      tombstonevisibiwitywesponse(
+        tweetvewdicts = t-tombstones.tomap
       )
     }
   }
 
-  private def createLocalizedTombstone(
-    filteredReason: FilteredReason,
-    tombstoneStats: StatsReceiver,
-  ): Option[LocalizedTombstone] = {
+  pwivate def cweatewocawizedtombstone(
+    f-fiwtewedweason: fiwtewedweason, (⑅˘꒳˘)
+    t-tombstonestats: s-statsweceivew, ʘwʘ
+  ): option[wocawizedtombstone] = {
 
-    val tombstoneOpt = FilteredReasonHelper.getTombstone(filteredReason)
-    tombstoneOpt match {
-      case Some(t.Tombstone(reasonOpt, Some(message))) =>
-        TombstoneReasonConverter.fromThrift(reasonOpt).map { localReason =>
-          tombstoneStats
-            .scope("localized").counter(localReason.toString().toLowerCase()).incr()
-          LocalizedTombstone(localReason, LocalizedMessageConverter.fromThrift(message))
+    v-vaw t-tombstoneopt = f-fiwtewedweasonhewpew.gettombstone(fiwtewedweason)
+    t-tombstoneopt m-match {
+      c-case some(t.tombstone(weasonopt, (///ˬ///✿) some(message))) =>
+        tombstoneweasonconvewtew.fwomthwift(weasonopt).map { wocawweason =>
+          tombstonestats
+            .scope("wocawized").countew(wocawweason.tostwing().towowewcase()).incw()
+          wocawizedtombstone(wocawweason, XD w-wocawizedmessageconvewtew.fwomthwift(message))
         }
 
-      case _ => None
+      c-case _ => n-nyone
     }
   }
 
-  private def createTombstone(
-    epitaph: Epitaph,
-    tombstoneStats: StatsReceiver,
-    extraCounterOpt: Option[String] = None
-  ): Option[Action] = {
-    tombstoneStats
-      .scope("legacy")
-      .counter(epitaph.toString().toLowerCase())
-      .incr()
-    extraCounterOpt.map { extraCounter =>
-      tombstoneStats
-        .scope("legacy")
-        .scope(epitaph.toString().toLowerCase())
-        .counter(extraCounter)
-        .incr()
+  p-pwivate def c-cweatetombstone(
+    e-epitaph: epitaph, 😳
+    tombstonestats: statsweceivew, >w<
+    extwacountewopt: option[stwing] = n-nyone
+  ): option[action] = {
+    t-tombstonestats
+      .scope("wegacy")
+      .countew(epitaph.tostwing().towowewcase())
+      .incw()
+    extwacountewopt.map { extwacountew =>
+      tombstonestats
+        .scope("wegacy")
+        .scope(epitaph.tostwing().towowewcase())
+        .countew(extwacountew)
+        .incw()
     }
-    Some(Tombstone(epitaph))
+    s-some(tombstone(epitaph))
   }
 }

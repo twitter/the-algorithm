@@ -1,42 +1,42 @@
-package com.twitter.home_mixer.model.request
+package com.twittew.home_mixew.modew.wequest
 
-import com.twitter.dspbidder.commons.thriftscala.DspClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.ProductContext
+impowt c-com.twittew.dspbiddew.commons.thwiftscawa.dspcwientcontext
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.pwoductcontext
 
-case class FollowingProductContext(
-  deviceContext: Option[DeviceContext],
-  seenTweetIds: Option[Seq[Long]],
-  dspClientContext: Option[DspClientContext])
-    extends ProductContext
+case c-cwass fowwowingpwoductcontext(
+  d-devicecontext: o-option[devicecontext], rawr x3
+  s-seentweetids: o-option[seq[wong]], (U ﹏ U)
+  d-dspcwientcontext: option[dspcwientcontext])
+    extends pwoductcontext
 
-case class ForYouProductContext(
-  deviceContext: Option[DeviceContext],
-  seenTweetIds: Option[Seq[Long]],
-  dspClientContext: Option[DspClientContext],
-  pushToHomeTweetId: Option[Long])
-    extends ProductContext
+case cwass fowyoupwoductcontext(
+  d-devicecontext: option[devicecontext], (U ﹏ U)
+  seentweetids: o-option[seq[wong]], (⑅˘꒳˘)
+  dspcwientcontext: o-option[dspcwientcontext], òωó
+  pushtohometweetid: option[wong])
+    extends p-pwoductcontext
 
-case class ScoredTweetsProductContext(
-  deviceContext: Option[DeviceContext],
-  seenTweetIds: Option[Seq[Long]],
-  servedTweetIds: Option[Seq[Long]],
-  backfillTweetIds: Option[Seq[Long]])
-    extends ProductContext
+case cwass scowedtweetspwoductcontext(
+  d-devicecontext: o-option[devicecontext], ʘwʘ
+  seentweetids: option[seq[wong]], /(^•ω•^)
+  sewvedtweetids: option[seq[wong]], ʘwʘ
+  b-backfiwwtweetids: option[seq[wong]])
+    extends pwoductcontext
 
-case class ListTweetsProductContext(
-  listId: Long,
-  deviceContext: Option[DeviceContext],
-  dspClientContext: Option[DspClientContext])
-    extends ProductContext
+case cwass wisttweetspwoductcontext(
+  w-wistid: wong,
+  devicecontext: o-option[devicecontext], σωσ
+  d-dspcwientcontext: o-option[dspcwientcontext])
+    e-extends pwoductcontext
 
-case class ListRecommendedUsersProductContext(
-  listId: Long,
-  selectedUserIds: Option[Seq[Long]],
-  excludedUserIds: Option[Seq[Long]],
-  listName: Option[String])
-    extends ProductContext
+case cwass wistwecommendedusewspwoductcontext(
+  w-wistid: wong, OwO
+  sewectedusewids: option[seq[wong]], 😳😳😳
+  e-excwudedusewids: option[seq[wong]], 😳😳😳
+  wistname: option[stwing])
+    extends pwoductcontext
 
-case class SubscribedProductContext(
-  deviceContext: Option[DeviceContext],
-  seenTweetIds: Option[Seq[Long]])
-    extends ProductContext
+case cwass s-subscwibedpwoductcontext(
+  devicecontext: o-option[devicecontext], o.O
+  s-seentweetids: o-option[seq[wong]])
+    extends pwoductcontext

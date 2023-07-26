@@ -1,144 +1,144 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.guano.{thriftscala => guano}
-import com.twitter.servo.util.Scribe
-import com.twitter.takedown.util.TakedownReasons
-import com.twitter.tseng.withholding.thriftscala.TakedownReason
-import com.twitter.tweetypie.thriftscala.AuditDeleteTweet
+impowt c-com.twittew.guano.{thwiftscawa => g-guano}
+impowt c-com.twittew.sewvo.utiw.scwibe
+i-impowt com.twittew.takedown.utiw.takedownweasons
+i-impowt com.twittew.tseng.withhowding.thwiftscawa.takedownweason
+i-impowt com.twittew.tweetypie.thwiftscawa.auditdewetetweet
 
-object Guano {
-  case class MalwareAttempt(
-    url: String,
-    userId: UserId,
-    clientAppId: Option[Long],
-    remoteHost: Option[String]) {
-    def toScribeMessage: guano.ScribeMessage =
-      guano.ScribeMessage(
-        `type` = guano.ScribeType.MalwareAttempt,
-        malwareAttempt = Some(
-          guano.MalwareAttempt(
-            timestamp = Time.now.inSeconds,
-            host = remoteHost,
-            userId = userId,
-            url = url,
-            `type` = guano.MalwareAttemptType.Status,
-            clientAppId = clientAppId.map(_.toInt) // yikes!
+o-object guano {
+  case cwass mawwaweattempt(
+    uww: stwing, rawr
+    usewid: u-usewid,
+    cwientappid: option[wong], (˘ω˘)
+    wemotehost: option[stwing]) {
+    d-def toscwibemessage: guano.scwibemessage =
+      g-guano.scwibemessage(
+        `type` = guano.scwibetype.mawwaweattempt, nyaa~~
+        mawwaweattempt = some(
+          g-guano.mawwaweattempt(
+            timestamp = t-time.now.inseconds,
+            h-host = wemotehost, UwU
+            usewid = usewid, :3
+            uww = uww, (⑅˘꒳˘)
+            `type` = guano.mawwaweattempttype.status, (///ˬ///✿)
+            c-cwientappid = cwientappid.map(_.toint) // yikes! ^^;;
           )
         )
       )
   }
 
-  case class DestroyTweet(
-    tweet: Tweet,
-    userId: UserId,
-    byUserId: UserId,
-    passthrough: Option[AuditDeleteTweet]) {
-    def toScribeMessage: guano.ScribeMessage =
-      guano.ScribeMessage(
-        `type` = guano.ScribeType.DestroyStatus,
-        destroyStatus = Some(
-          guano.DestroyStatus(
-            `type` = Some(guano.DestroyStatusType.Status),
-            timestamp = Time.now.inSeconds,
-            userId = userId,
-            byUserId = byUserId,
-            statusId = tweet.id,
-            text = "",
-            reason = passthrough
-              .flatMap(_.reason)
-              .flatMap { r => guano.UserActionReason.valueOf(r.name) }
-              .orElse(Some(guano.UserActionReason.Other)),
-            done = passthrough.flatMap(_.done).orElse(Some(true)),
-            host = passthrough.flatMap(_.host),
-            bulkId = passthrough.flatMap(_.bulkId),
-            note = passthrough.flatMap(_.note),
-            runId = passthrough.flatMap(_.runId),
-            clientApplicationId = passthrough.flatMap(_.clientApplicationId),
-            userAgent = passthrough.flatMap(_.userAgent)
+  case cwass destwoytweet(
+    tweet: t-tweet, >_<
+    usewid: usewid,
+    b-byusewid: usewid, rawr x3
+    p-passthwough: o-option[auditdewetetweet]) {
+    d-def toscwibemessage: guano.scwibemessage =
+      guano.scwibemessage(
+        `type` = g-guano.scwibetype.destwoystatus, /(^•ω•^)
+        destwoystatus = some(
+          g-guano.destwoystatus(
+            `type` = some(guano.destwoystatustype.status), :3
+            timestamp = time.now.inseconds, (ꈍᴗꈍ)
+            usewid = usewid, /(^•ω•^)
+            byusewid = b-byusewid, (⑅˘꒳˘)
+            statusid = t-tweet.id, ( ͡o ω ͡o )
+            t-text = "", òωó
+            w-weason = passthwough
+              .fwatmap(_.weason)
+              .fwatmap { w => guano.usewactionweason.vawueof(w.name) }
+              .owewse(some(guano.usewactionweason.othew)),
+            done = passthwough.fwatmap(_.done).owewse(some(twue)), (⑅˘꒳˘)
+            host = p-passthwough.fwatmap(_.host), XD
+            b-buwkid = passthwough.fwatmap(_.buwkid), -.-
+            note = p-passthwough.fwatmap(_.note), :3
+            wunid = p-passthwough.fwatmap(_.wunid), nyaa~~
+            cwientappwicationid = p-passthwough.fwatmap(_.cwientappwicationid), 😳
+            usewagent = passthwough.fwatmap(_.usewagent)
           )
         )
       )
   }
 
-  case class Takedown(
-    tweetId: TweetId,
-    userId: UserId,
-    reason: TakedownReason,
-    takendown: Boolean,
-    note: Option[String],
-    host: Option[String],
-    byUserId: Option[UserId]) {
-    def toScribeMessage: guano.ScribeMessage =
-      guano.ScribeMessage(
-        `type` = guano.ScribeType.PctdAction,
-        pctdAction = Some(
-          guano.PctdAction(
-            `type` = guano.PctdActionType.Status,
-            timestamp = Time.now.inSeconds,
-            tweetId = Some(tweetId),
-            userId = userId,
-            countryCode =
-              TakedownReasons.reasonToCountryCode.applyOrElse(reason, (_: TakedownReason) => ""),
-            takendown = takendown,
-            note = note,
-            host = host,
-            byUserId = byUserId.getOrElse(-1L),
-            reason = Some(reason)
+  c-case cwass takedown(
+    tweetid: tweetid, (⑅˘꒳˘)
+    u-usewid: usewid, nyaa~~
+    weason: takedownweason, OwO
+    t-takendown: boowean, rawr x3
+    nyote: option[stwing], XD
+    h-host: option[stwing], σωσ
+    b-byusewid: option[usewid]) {
+    def toscwibemessage: guano.scwibemessage =
+      guano.scwibemessage(
+        `type` = guano.scwibetype.pctdaction, (U ᵕ U❁)
+        p-pctdaction = s-some(
+          guano.pctdaction(
+            `type` = g-guano.pctdactiontype.status, (U ﹏ U)
+            t-timestamp = t-time.now.inseconds, :3
+            tweetid = some(tweetid), ( ͡o ω ͡o )
+            usewid = usewid, σωσ
+            c-countwycode =
+              takedownweasons.weasontocountwycode.appwyowewse(weason, >w< (_: takedownweason) => ""), 😳😳😳
+            takendown = takendown, OwO
+            nyote = nyote, 😳
+            h-host = host, 😳😳😳
+            b-byusewid = b-byusewid.getowewse(-1w), (˘ω˘)
+            w-weason = some(weason)
           )
         )
       )
   }
 
-  case class UpdatePossiblySensitiveTweet(
-    tweetId: TweetId,
-    userId: UserId,
-    byUserId: UserId,
-    action: guano.NsfwTweetActionAction,
-    enabled: Boolean,
-    host: Option[String],
-    note: Option[String]) {
-    def toScribeMessage: guano.ScribeMessage =
-      guano.ScribeMessage(
-        `type` = guano.ScribeType.NsfwTweetAction,
-        nsfwTweetAction = Some(
-          guano.NsfwTweetAction(
-            timestamp = Time.now.inSeconds,
-            host = host,
-            userId = userId,
-            byUserId = byUserId,
-            action = action,
-            enabled = enabled,
-            note = note,
-            tweetId = tweetId
+  c-case cwass updatepossibwysensitivetweet(
+    tweetid: t-tweetid, ʘwʘ
+    u-usewid: usewid, ( ͡o ω ͡o )
+    b-byusewid: usewid, o.O
+    action: guano.nsfwtweetactionaction, >w<
+    e-enabwed: b-boowean, 😳
+    host: o-option[stwing], 🥺
+    n-nyote: option[stwing]) {
+    d-def toscwibemessage: guano.scwibemessage =
+      guano.scwibemessage(
+        `type` = guano.scwibetype.nsfwtweetaction, rawr x3
+        n-nysfwtweetaction = some(
+          guano.nsfwtweetaction(
+            timestamp = time.now.inseconds, o.O
+            host = host, rawr
+            u-usewid = usewid, ʘwʘ
+            byusewid = byusewid, 😳😳😳
+            action = action, ^^;;
+            e-enabwed = e-enabwed, o.O
+            n-nyote = nyote, (///ˬ///✿)
+            t-tweetid = tweetid
           )
         )
       )
   }
 
-  def apply(
-    scribe: FutureEffect[guano.ScribeMessage] = Scribe(guano.ScribeMessage,
-      Scribe("trust_eng_audit"))
-  ): Guano = {
-    new Guano {
-      override val scribeMalwareAttempt: FutureEffect[MalwareAttempt] =
-        scribe.contramap[MalwareAttempt](_.toScribeMessage)
+  d-def a-appwy(
+    scwibe: futuweeffect[guano.scwibemessage] = scwibe(guano.scwibemessage, σωσ
+      scwibe("twust_eng_audit"))
+  ): guano = {
+    nyew guano {
+      o-ovewwide vaw scwibemawwaweattempt: f-futuweeffect[mawwaweattempt] =
+        scwibe.contwamap[mawwaweattempt](_.toscwibemessage)
 
-      override val scribeDestroyTweet: FutureEffect[DestroyTweet] =
-        scribe.contramap[DestroyTweet](_.toScribeMessage)
+      o-ovewwide vaw scwibedestwoytweet: f-futuweeffect[destwoytweet] =
+        scwibe.contwamap[destwoytweet](_.toscwibemessage)
 
-      override val scribeTakedown: FutureEffect[Takedown] =
-        scribe.contramap[Takedown](_.toScribeMessage)
+      ovewwide vaw scwibetakedown: f-futuweeffect[takedown] =
+        s-scwibe.contwamap[takedown](_.toscwibemessage)
 
-      override val scribeUpdatePossiblySensitiveTweet: FutureEffect[UpdatePossiblySensitiveTweet] =
-        scribe.contramap[UpdatePossiblySensitiveTweet](_.toScribeMessage)
+      ovewwide vaw scwibeupdatepossibwysensitivetweet: f-futuweeffect[updatepossibwysensitivetweet] =
+        s-scwibe.contwamap[updatepossibwysensitivetweet](_.toscwibemessage)
     }
   }
 }
 
-trait Guano {
-  val scribeMalwareAttempt: FutureEffect[Guano.MalwareAttempt]
-  val scribeDestroyTweet: FutureEffect[Guano.DestroyTweet]
-  val scribeTakedown: FutureEffect[Guano.Takedown]
-  val scribeUpdatePossiblySensitiveTweet: FutureEffect[Guano.UpdatePossiblySensitiveTweet]
+twait guano {
+  vaw scwibemawwaweattempt: futuweeffect[guano.mawwaweattempt]
+  vaw scwibedestwoytweet: f-futuweeffect[guano.destwoytweet]
+  v-vaw scwibetakedown: f-futuweeffect[guano.takedown]
+  vaw scwibeupdatepossibwysensitivetweet: f-futuweeffect[guano.updatepossibwysensitivetweet]
 }

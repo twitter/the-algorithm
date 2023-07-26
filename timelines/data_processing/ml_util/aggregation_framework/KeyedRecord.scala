@@ -1,27 +1,27 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk
 
-import com.twitter.ml.api.DataRecord
-
-/**
- * Keyed record that is used to reprsent the aggregation type and its corresponding data record.
- *
- * @constructor creates a new keyed record.
- *
- * @param aggregateType the aggregate type
- * @param record the data record associated with the key
-  **/
-case class KeyedRecord(aggregateType: AggregateType.Value, record: DataRecord)
+impowt c-com.twittew.mw.api.datawecowd
 
 /**
- * Keyed record map with multiple data record.
+ * k-keyed wecowd t-that is used t-to wepwsent the a-aggwegation type a-and its cowwesponding d-data wecowd. (⑅˘꒳˘)
  *
- * @constructor creates a new keyed record map.
+ * @constwuctow c-cweates a nyew keyed wecowd. rawr x3
  *
- * @param aggregateType the aggregate type
- * @param recordMap a map with key of type Long and value of type DataRecord
- *  where the key indicates the index and the value indicating the record
+ * @pawam aggwegatetype the aggwegate type
+ * @pawam wecowd t-the data wecowd associated with the key
+  **/
+c-case cwass keyedwecowd(aggwegatetype: aggwegatetype.vawue, (✿oωo) wecowd: d-datawecowd)
+
+/**
+ * keyed wecowd map with muwtipwe data wecowd. (ˆ ﻌ ˆ)♡
+ *
+ * @constwuctow c-cweates a nyew keyed wecowd m-map. (˘ω˘)
+ *
+ * @pawam a-aggwegatetype the aggwegate type
+ * @pawam wecowdmap a map with key of type w-wong and vawue of type datawecowd
+ *  whewe the key indicates the index and t-the vawue indicating the wecowd
  *
   **/
-case class KeyedRecordMap(
-  aggregateType: AggregateType.Value,
-  recordMap: scala.collection.Map[Long, DataRecord])
+c-case cwass k-keyedwecowdmap(
+  a-aggwegatetype: a-aggwegatetype.vawue, (⑅˘꒳˘)
+  wecowdmap: scawa.cowwection.map[wong, (///ˬ///✿) d-datawecowd])

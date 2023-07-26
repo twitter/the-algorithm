@@ -1,16 +1,16 @@
-package com.twitter.cr_mixer.module
+package com.twittew.cw_mixew.moduwe
 
-import com.google.inject.Provides
-import com.twitter.timelines.configapi.Config
-import com.twitter.cr_mixer.param.CrMixerParamConfig
-import com.twitter.inject.TwitterModule
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.timewines.configapi.config
+i-impowt com.twittew.cw_mixew.pawam.cwmixewpawamconfig
+i-impowt c-com.twittew.inject.twittewmoduwe
+i-impowt javax.inject.singweton
 
-object CrMixerParamConfigModule extends TwitterModule {
+o-object cwmixewpawamconfigmoduwe e-extends twittewmoduwe {
 
-  @Provides
-  @Singleton
-  def provideConfig(): Config = {
-    CrMixerParamConfig.config
+  @pwovides
+  @singweton
+  d-def pwovideconfig(): config = {
+    cwmixewpawamconfig.config
   }
 }

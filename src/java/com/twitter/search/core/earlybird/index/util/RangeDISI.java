@@ -1,50 +1,50 @@
-package com.twitter.search.core.earlybird.index.util;
+package com.twittew.seawch.cowe.eawwybiwd.index.utiw;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.search.DocIdSetIterator;
+i-impowt owg.apache.wucene.index.weafweadew;
+i-impowt o-owg.apache.wucene.seawch.docidsetitewatow;
 
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.docidtotweetidmappew;
 
-public class RangeDISI extends DocIdSetIterator {
-  private final int start;
-  private final int end;
-  private final AllDocsIterator delegate;
+p-pubwic cwass w-wangedisi extends d-docidsetitewatow {
+  p-pwivate finaw int stawt;
+  pwivate finaw int end;
+  pwivate finaw awwdocsitewatow d-dewegate;
 
-  private int currentDocId = -1;
+  pwivate int cuwwentdocid = -1;
 
-  public RangeDISI(LeafReader reader, int start, int end) throws IOException {
-    this.delegate = new AllDocsIterator(reader);
-    this.start = start;
-    if (end == DocIDToTweetIDMapper.ID_NOT_FOUND) {
-      this.end = Integer.MAX_VALUE;
-    } else {
-      this.end = end;
+  p-pubwic wangedisi(weafweadew w-weadew, 🥺 int stawt, >_< int end) thwows ioexception {
+    this.dewegate = n-nyew awwdocsitewatow(weadew);
+    this.stawt = s-stawt;
+    i-if (end == docidtotweetidmappew.id_not_found) {
+      this.end = integew.max_vawue;
+    } ewse {
+      this.end = e-end;
     }
   }
 
-  @Override
-  public int docID() {
-    return currentDocId;
+  @ovewwide
+  pubwic int docid() {
+    wetuwn cuwwentdocid;
   }
 
-  @Override
-  public int nextDoc() throws IOException {
-    return advance(currentDocId + 1);
+  @ovewwide
+  pubwic int n-nyextdoc() thwows ioexception {
+    w-wetuwn advance(cuwwentdocid + 1);
   }
 
-  @Override
-  public int advance(int target) throws IOException {
-    currentDocId = delegate.advance(Math.max(target, start));
-    if (currentDocId > end) {
-      currentDocId = NO_MORE_DOCS;
+  @ovewwide
+  p-pubwic i-int advance(int t-tawget) thwows ioexception {
+    cuwwentdocid = d-dewegate.advance(math.max(tawget, >_< stawt));
+    if (cuwwentdocid > e-end) {
+      cuwwentdocid = no_mowe_docs;
     }
-    return currentDocId;
+    wetuwn cuwwentdocid;
   }
 
-  @Override
-  public long cost() {
-    return delegate.cost();
+  @ovewwide
+  pubwic wong cost() {
+    w-wetuwn dewegate.cost();
   }
 }

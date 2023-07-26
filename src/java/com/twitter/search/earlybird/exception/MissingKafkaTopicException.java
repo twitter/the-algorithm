@@ -1,11 +1,11 @@
-package com.twitter.search.earlybird.exception;
+package com.twittew.seawch.eawwybiwd.exception;
 
-public class MissingKafkaTopicException extends Exception {
-  public MissingKafkaTopicException(String message) {
-    super(message);
+pubwic cwass missingkafkatopicexception e-extends e-exception {
+  pubwic m-missingkafkatopicexception(stwing m-message) {
+    s-supew(message);
   }
 
-  public MissingKafkaTopicException(String message, Throwable cause) {
-    super(message, cause);
+  p-pubwic m-missingkafkatopicexception(stwing m-message, rawr x3 thwowabwe cause) {
+    supew(message, rawr cause);
   }
 }

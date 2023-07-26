@@ -1,18 +1,23 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "finatra/inject/inject-core/src/main/scala/com/twitter/inject",
-        "interests-service/thrift/src/main/thrift:thrift-scala",
-        "interests_discovery/thrift/src/main/thrift:service-thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source",
-        "stitch/stitch-core",
+scawa_wibwawy(
+    souwces = ["*.scawa"], òωó
+    compiwew_option_sets = ["fataw_wawnings"], o.O
+    p-pwatfowm = "java8", (U ᵕ U❁)
+    s-stwict_deps = t-twue, (⑅˘꒳˘)
+    tags = ["bazew-compatibwe"], ( ͡o ω ͡o )
+    d-dependencies = [
+        "finatwa/inject/inject-cowe/swc/main/scawa/com/twittew/inject", UwU
+        "peopwe-discovewy/api/thwift:thwift-scawa", rawr x3
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/candidate", rawr
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/candidate_souwce", σωσ
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine/pipewine_faiwuwe",
+        "swc/thwift/com/twittew/ads/adsewvew:adsewvew_common-scawa", σωσ
+        "swc/thwift/com/twittew/hewmit:hewmit-scawa", >_<
+        "stitch/stitch-cowe", :3
     ],
-    exports = [
-        "interests-service/thrift/src/main/thrift:thrift-scala",
-        "interests_discovery/thrift/src/main/thrift:service-thrift-scala",
-    ],
+    e-expowts = [
+        "finatwa/inject/inject-cowe/swc/main/scawa/com/twittew/inject", (U ﹏ U)
+        "peopwe-discovewy/api/thwift:thwift-scawa", -.-
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/candidate_souwce",
+        "stitch/stitch-cowe", (ˆ ﻌ ˆ)♡
+    ], (⑅˘꒳˘)
 )

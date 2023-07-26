@@ -1,281 +1,281 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.io.Closeable;
-import java.time.Duration;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
+impowt java.io.cwoseabwe;
+i-impowt j-java.time.duwation;
+i-impowt java.utiw.map;
+i-impowt j-java.utiw.concuwwent.atomic.atomicboowean;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.ImmutableList;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
+impowt com.googwe.common.base.stopwatch;
+impowt com.googwe.common.cowwect.immutabwewist;
 
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.errors.ApiException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt o-owg.apache.kafka.cwients.consumew.consumewwecowds;
+impowt owg.apache.kafka.cwients.consumew.kafkaconsumew;
+impowt owg.apache.kafka.common.topicpawtition;
+i-impowt owg.apache.kafka.common.ewwows.apiexception;
+i-impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.util.LogFormatUtil;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.common.CaughtUpMonitor;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.WrappedKafkaApiException;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
+impowt c-com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+i-impowt com.twittew.seawch.common.metwics.seawchtimew;
+impowt com.twittew.seawch.common.metwics.seawchtimewstats;
+impowt com.twittew.seawch.common.utiw.wogfowmatutiw;
+i-impowt com.twittew.seawch.eawwybiwd.eawwybiwdstatus;
+impowt com.twittew.seawch.eawwybiwd.common.caughtupmonitow;
+impowt com.twittew.seawch.eawwybiwd.exception.cwiticawexceptionhandwew;
+impowt com.twittew.seawch.eawwybiwd.exception.wwappedkafkaapiexception;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdstatuscode;
 
 /**
- * Reads TVEs from Kafka and writes them to a PartitionWriter.
+ * weads t-tves fwom kafka a-and wwites them t-to a pawtitionwwitew. :3
  */
-public class EarlybirdKafkaConsumer implements Closeable {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdKafkaConsumer.class);
+p-pubwic cwass eawwybiwdkafkaconsumew impwements cwoseabwe {
+  p-pwivate static finaw woggew wog = woggewfactowy.getwoggew(eawwybiwdkafkaconsumew.cwass);
 
-  private static final Duration POLL_TIMEOUT = Duration.ofSeconds(1);
-  private static final String STATS_PREFIX = "earlybird_kafka_consumer_";
+  p-pwivate static finaw duwation poww_timeout = duwation.ofseconds(1);
+  pwivate static finaw stwing s-stats_pwefix = "eawwybiwd_kafka_consumew_";
 
-  // See SEARCH-31827
-  private static final SearchCounter INGESTING_DONE =
-      SearchCounter.export(STATS_PREFIX + "ingesting_done");
-  private static final SearchRateCounter POLL_LOOP_EXCEPTIONS =
-      SearchRateCounter.export(STATS_PREFIX + "poll_loop_exceptions");
-  private static final SearchRateCounter FLUSHING_EXCEPTIONS =
-      SearchRateCounter.export(STATS_PREFIX + "flushing_exceptions");
+  // see seawch-31827
+  p-pwivate s-static finaw s-seawchcountew ingesting_done =
+      seawchcountew.expowt(stats_pwefix + "ingesting_done");
+  pwivate static finaw s-seawchwatecountew p-poww_woop_exceptions =
+      seawchwatecountew.expowt(stats_pwefix + "poww_woop_exceptions");
+  p-pwivate static f-finaw seawchwatecountew fwushing_exceptions =
+      s-seawchwatecountew.expowt(stats_pwefix + "fwushing_exceptions");
 
-  private static final SearchTimerStats TIMED_POLLS =
-      SearchTimerStats.export(STATS_PREFIX + "timed_polls");
-  private static final SearchTimerStats TIMED_INDEX_EVENTS =
-      SearchTimerStats.export(STATS_PREFIX + "timed_index_events");
+  pwivate s-static finaw seawchtimewstats timed_powws =
+      s-seawchtimewstats.expowt(stats_pwefix + "timed_powws");
+  pwivate s-static finaw seawchtimewstats t-timed_index_events =
+      seawchtimewstats.expowt(stats_pwefix + "timed_index_events");
 
-  private final AtomicBoolean running = new AtomicBoolean(true);
-  private final BalancingKafkaConsumer balancingKafkaConsumer;
-  private final PartitionWriter partitionWriter;
-  protected final TopicPartition tweetTopic;
-  protected final TopicPartition updateTopic;
-  private final KafkaConsumer<Long, ThriftVersionedEvents> underlyingKafkaConsumer;
-  private final CriticalExceptionHandler criticalExceptionHandler;
-  private final EarlybirdIndexFlusher earlybirdIndexFlusher;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private boolean finishedIngestUntilCurrent;
-  private final CaughtUpMonitor indexCaughtUpMonitor;
+  p-pwivate finaw atomicboowean wunning = nyew atomicboowean(twue);
+  pwivate finaw bawancingkafkaconsumew bawancingkafkaconsumew;
+  pwivate finaw pawtitionwwitew pawtitionwwitew;
+  p-pwotected finaw t-topicpawtition tweettopic;
+  pwotected f-finaw topicpawtition u-updatetopic;
+  p-pwivate finaw kafkaconsumew<wong, σωσ thwiftvewsionedevents> undewwyingkafkaconsumew;
+  pwivate finaw cwiticawexceptionhandwew c-cwiticawexceptionhandwew;
+  pwivate finaw eawwybiwdindexfwushew eawwybiwdindexfwushew;
+  pwivate finaw seawchindexingmetwicset s-seawchindexingmetwicset;
+  pwivate boowean f-finishedingestuntiwcuwwent;
+  p-pwivate finaw caughtupmonitow i-indexcaughtupmonitow;
 
-  protected class ConsumeBatchResult {
-    private boolean isCaughtUp;
-    private long readRecordsCount;
+  pwotected c-cwass consumebatchwesuwt {
+    p-pwivate boowean i-iscaughtup;
+    p-pwivate wong weadwecowdscount;
 
-    public ConsumeBatchResult(boolean isCaughtUp, long readRecordsCount) {
-      this.isCaughtUp = isCaughtUp;
-      this.readRecordsCount = readRecordsCount;
+    pubwic consumebatchwesuwt(boowean iscaughtup, >w< w-wong weadwecowdscount) {
+      t-this.iscaughtup = i-iscaughtup;
+      t-this.weadwecowdscount = w-weadwecowdscount;
     }
 
-    public boolean isCaughtUp() {
-      return isCaughtUp;
+    pubwic boowean iscaughtup() {
+      wetuwn i-iscaughtup;
     }
 
-    public long getReadRecordsCount() {
-      return readRecordsCount;
+    pubwic wong getweadwecowdscount() {
+      wetuwn weadwecowdscount;
     }
   }
 
-  public EarlybirdKafkaConsumer(
-      KafkaConsumer<Long, ThriftVersionedEvents> underlyingKafkaConsumer,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      CriticalExceptionHandler criticalExceptionHandler,
-      PartitionWriter partitionWriter,
-      TopicPartition tweetTopic,
-      TopicPartition updateTopic,
-      EarlybirdIndexFlusher earlybirdIndexFlusher,
-      CaughtUpMonitor kafkaIndexCaughtUpMonitor
+  pubwic eawwybiwdkafkaconsumew(
+      k-kafkaconsumew<wong, (ˆ ﻌ ˆ)♡ thwiftvewsionedevents> undewwyingkafkaconsumew, ʘwʘ
+      seawchindexingmetwicset s-seawchindexingmetwicset,
+      c-cwiticawexceptionhandwew c-cwiticawexceptionhandwew, :3
+      pawtitionwwitew p-pawtitionwwitew, (˘ω˘)
+      topicpawtition t-tweettopic, 😳😳😳
+      t-topicpawtition updatetopic, rawr x3
+      eawwybiwdindexfwushew eawwybiwdindexfwushew,
+      caughtupmonitow kafkaindexcaughtupmonitow
   ) {
-    this.partitionWriter = partitionWriter;
-    this.underlyingKafkaConsumer = underlyingKafkaConsumer;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.tweetTopic = tweetTopic;
-    this.updateTopic = updateTopic;
-    this.earlybirdIndexFlusher = earlybirdIndexFlusher;
+    t-this.pawtitionwwitew = pawtitionwwitew;
+    t-this.undewwyingkafkaconsumew = undewwyingkafkaconsumew;
+    t-this.cwiticawexceptionhandwew = c-cwiticawexceptionhandwew;
+    this.seawchindexingmetwicset = seawchindexingmetwicset;
+    t-this.tweettopic = t-tweettopic;
+    this.updatetopic = u-updatetopic;
+    t-this.eawwybiwdindexfwushew = eawwybiwdindexfwushew;
 
-    LOG.info("Reading from Kafka topics: tweetTopic={}, updateTopic={}", tweetTopic, updateTopic);
-    underlyingKafkaConsumer.assign(ImmutableList.of(updateTopic, tweetTopic));
+    wog.info("weading fwom kafka topics: tweettopic={}, (✿oωo) u-updatetopic={}", (ˆ ﻌ ˆ)♡ t-tweettopic, updatetopic);
+    u-undewwyingkafkaconsumew.assign(immutabwewist.of(updatetopic, :3 tweettopic));
 
-    this.balancingKafkaConsumer =
-        new BalancingKafkaConsumer(underlyingKafkaConsumer, tweetTopic, updateTopic);
-    this.finishedIngestUntilCurrent = false;
-    this.indexCaughtUpMonitor = kafkaIndexCaughtUpMonitor;
+    t-this.bawancingkafkaconsumew =
+        n-nyew bawancingkafkaconsumew(undewwyingkafkaconsumew, (U ᵕ U❁) tweettopic, u-updatetopic);
+    this.finishedingestuntiwcuwwent = fawse;
+    this.indexcaughtupmonitow = kafkaindexcaughtupmonitow;
   }
 
   /**
-   * Run the consumer, indexing from Kafka.
+   * w-wun t-the consumew, ^^;; indexing fwom kafka. mya
    */
-  @VisibleForTesting
-  public void run() {
-    while (isRunning()) {
-      ConsumeBatchResult result = consumeBatch(true);
-      indexCaughtUpMonitor.setAndNotify(result.isCaughtUp());
+  @visibwefowtesting
+  pubwic void wun() {
+    w-whiwe (iswunning()) {
+      c-consumebatchwesuwt wesuwt = consumebatch(twue);
+      indexcaughtupmonitow.setandnotify(wesuwt.iscaughtup());
     }
   }
 
   /**
-   * Reads from Kafka, starting at the given offsets, and applies the events until we are caught up
-   * with the current streams.
+   * w-weads fwom kafka, 😳😳😳 stawting at the given offsets, OwO and appwies the events u-untiw we awe caught up
+   * with the cuwwent stweams. rawr
    */
-  public void ingestUntilCurrent(long tweetOffset, long updateOffset) {
-    Preconditions.checkState(!finishedIngestUntilCurrent);
-    Stopwatch stopwatch = Stopwatch.createStarted();
-    LOG.info("Ingest until current: seeking to Kafka offset {} for tweets and {} for updates.",
-        tweetOffset, updateOffset);
+  pubwic v-void ingestuntiwcuwwent(wong t-tweetoffset, XD wong updateoffset) {
+    pweconditions.checkstate(!finishedingestuntiwcuwwent);
+    stopwatch stopwatch = s-stopwatch.cweatestawted();
+    w-wog.info("ingest untiw cuwwent: seeking to kafka offset {} f-fow tweets and {} fow updates.", (U ﹏ U)
+        t-tweetoffset, (˘ω˘) updateoffset);
 
-    try {
-      underlyingKafkaConsumer.seek(tweetTopic, tweetOffset);
-      underlyingKafkaConsumer.seek(updateTopic, updateOffset);
-    } catch (ApiException kafkaApiException) {
-      throw new WrappedKafkaApiException("Can't seek to tweet and update offsets",
-          kafkaApiException);
+    twy {
+      undewwyingkafkaconsumew.seek(tweettopic, UwU t-tweetoffset);
+      undewwyingkafkaconsumew.seek(updatetopic, >_< u-updateoffset);
+    } c-catch (apiexception kafkaapiexception) {
+      t-thwow nyew wwappedkafkaapiexception("can't s-seek to tweet and u-update offsets", σωσ
+          k-kafkaapiexception);
     }
 
-    Map<TopicPartition, Long> endOffsets;
-    try {
-      endOffsets = underlyingKafkaConsumer.endOffsets(ImmutableList.of(tweetTopic, updateTopic));
-    } catch (ApiException kafkaApiException) {
-      throw new WrappedKafkaApiException("Can't find end offsets",
-          kafkaApiException);
+    map<topicpawtition, w-wong> endoffsets;
+    t-twy {
+      endoffsets = undewwyingkafkaconsumew.endoffsets(immutabwewist.of(tweettopic, 🥺 updatetopic));
+    } catch (apiexception k-kafkaapiexception) {
+      t-thwow nyew wwappedkafkaapiexception("can't f-find end offsets", 🥺
+          kafkaapiexception);
     }
 
-    if (endOffsets.size() > 0) {
-      LOG.info(String.format("Records until current: tweets=%,d, updates=%,d",
-          endOffsets.get(tweetTopic) - tweetOffset + 1,
-          endOffsets.get(updateTopic) - updateOffset + 1));
+    i-if (endoffsets.size() > 0) {
+      wog.info(stwing.fowmat("wecowds u-untiw c-cuwwent: tweets=%,d, ʘwʘ updates=%,d", :3
+          endoffsets.get(tweettopic) - tweetoffset + 1, (U ﹏ U)
+          e-endoffsets.get(updatetopic) - u-updateoffset + 1));
     }
 
-    consumeBatchesUntilCurrent(true);
+    c-consumebatchesuntiwcuwwent(twue);
 
-    LOG.info("ingestUntilCurrent finished in {}.", stopwatch);
+    w-wog.info("ingestuntiwcuwwent finished i-in {}.", (U ﹏ U) stopwatch);
 
-    partitionWriter.logState();
-    INGESTING_DONE.increment();
-    finishedIngestUntilCurrent = true;
+    pawtitionwwitew.wogstate();
+    ingesting_done.incwement();
+    finishedingestuntiwcuwwent = twue;
   }
 
   /**
-   * Consume tweets and updates from streams until we're up to date.
+   * consume tweets and u-updates fwom stweams untiw we'we u-up to date. ʘwʘ
    *
-   * @return total number of read records.
+   * @wetuwn totaw nyumbew of w-wead wecowds.
    */
-  private long consumeBatchesUntilCurrent(boolean flushingEnabled) {
-    long totalRecordsRead = 0;
-    long batchesConsumed = 0;
+  pwivate w-wong consumebatchesuntiwcuwwent(boowean fwushingenabwed) {
+    wong t-totawwecowdswead = 0;
+    w-wong b-batchesconsumed = 0;
 
-    while (isRunning()) {
-      ConsumeBatchResult result = consumeBatch(flushingEnabled);
-      batchesConsumed++;
-      totalRecordsRead += result.getReadRecordsCount();
-      if (isCurrent(result.isCaughtUp())) {
-        break;
+    w-whiwe (iswunning()) {
+      c-consumebatchwesuwt wesuwt = consumebatch(fwushingenabwed);
+      batchesconsumed++;
+      totawwecowdswead += wesuwt.getweadwecowdscount();
+      if (iscuwwent(wesuwt.iscaughtup())) {
+        b-bweak;
       }
     }
 
-    LOG.info("Processed batches: {}", batchesConsumed);
+    w-wog.info("pwocessed b-batches: {}", >w< batchesconsumed);
 
-    return totalRecordsRead;
+    w-wetuwn totawwecowdswead;
   }
 
-  // This method is overriden in MockEarlybirdKafkaConsumer.
-  public boolean isCurrent(boolean current) {
-    return current;
+  // this method is ovewwiden in mockeawwybiwdkafkaconsumew. rawr x3
+  p-pubwic b-boowean iscuwwent(boowean cuwwent) {
+    w-wetuwn cuwwent;
   }
 
   /**
-   * We don't index during flushing, so after the flush is done, the index is stale.
-   * We need to get to current, before we rejoin the serverset so that upon rejoining we're
-   * not serving a stale index.
+   * we don't i-index duwing fwushing, OwO s-so aftew the fwush is done, ^•ﻌ•^ t-the index is s-stawe. >_<
+   * we nyeed to get to cuwwent, OwO befowe we wejoin the sewvewset so that u-upon wejoining w-we'we
+   * nyot s-sewving a stawe i-index. >_<
    */
-  @VisibleForTesting
-  void getToCurrentPostFlush() {
-    LOG.info("Getting to current post flush");
-    Stopwatch stopwatch = Stopwatch.createStarted();
+  @visibwefowtesting
+  v-void gettocuwwentpostfwush() {
+    wog.info("getting t-to cuwwent p-post fwush");
+    stopwatch s-stopwatch = stopwatch.cweatestawted();
 
-    long totalRecordsRead = consumeBatchesUntilCurrent(false);
+    w-wong totawwecowdswead = c-consumebatchesuntiwcuwwent(fawse);
 
-    LOG.info("Post flush, became current in: {}, after reading {} records.",
-        stopwatch, LogFormatUtil.formatInt(totalRecordsRead));
+    wog.info("post fwush, (ꈍᴗꈍ) b-became cuwwent in: {}, >w< aftew weading {} w-wecowds.", (U ﹏ U)
+        s-stopwatch, ^^ wogfowmatutiw.fowmatint(totawwecowdswead));
   }
 
   /*
-   * @return true if we are current after indexing this batch.
+   * @wetuwn t-twue if we awe cuwwent aftew indexing t-this batch. (U ﹏ U)
    */
-  @VisibleForTesting
-  protected ConsumeBatchResult consumeBatch(boolean flushingEnabled) {
-    long readRecordsCount = 0;
-    boolean isCaughtUp = false;
+  @visibwefowtesting
+  p-pwotected c-consumebatchwesuwt consumebatch(boowean fwushingenabwed) {
+    wong weadwecowdscount = 0;
+    b-boowean iscaughtup = fawse;
 
-    try {
-      // Poll.
-      SearchTimer pollTimer = TIMED_POLLS.startNewTimer();
-      ConsumerRecords<Long, ThriftVersionedEvents> records =
-          balancingKafkaConsumer.poll(POLL_TIMEOUT);
-      readRecordsCount += records.count();
-      TIMED_POLLS.stopTimerAndIncrement(pollTimer);
+    twy {
+      // p-poww.
+      seawchtimew p-powwtimew = timed_powws.stawtnewtimew();
+      c-consumewwecowds<wong, :3 thwiftvewsionedevents> wecowds =
+          b-bawancingkafkaconsumew.poww(poww_timeout);
+      w-weadwecowdscount += wecowds.count();
+      timed_powws.stoptimewandincwement(powwtimew);
 
-      // Index.
-      SearchTimer indexTimer = TIMED_INDEX_EVENTS.startNewTimer();
-      isCaughtUp = partitionWriter.indexBatch(records);
-      TIMED_INDEX_EVENTS.stopTimerAndIncrement(indexTimer);
-    } catch (Exception ex) {
-      POLL_LOOP_EXCEPTIONS.increment();
-      LOG.error("Exception in poll loop", ex);
+      // index. (✿oωo)
+      s-seawchtimew indextimew = timed_index_events.stawtnewtimew();
+      i-iscaughtup = p-pawtitionwwitew.indexbatch(wecowds);
+      timed_index_events.stoptimewandincwement(indextimew);
+    } c-catch (exception ex) {
+      poww_woop_exceptions.incwement();
+      w-wog.ewwow("exception i-in poww w-woop", XD ex);
     }
 
-    try {
-      // Possibly flush the index.
-      if (isCaughtUp && flushingEnabled) {
-        long tweetOffset = 0;
-        long updateOffset = 0;
+    twy {
+      // possibwy fwush the index. >w<
+      if (iscaughtup && fwushingenabwed) {
+        wong tweetoffset = 0;
+        wong updateoffset = 0;
 
-        try {
-          tweetOffset = underlyingKafkaConsumer.position(tweetTopic);
-          updateOffset = underlyingKafkaConsumer.position(updateTopic);
-        } catch (ApiException kafkaApiException) {
-          throw new WrappedKafkaApiException("can't get topic positions", kafkaApiException);
+        twy {
+          tweetoffset = undewwyingkafkaconsumew.position(tweettopic);
+          updateoffset = undewwyingkafkaconsumew.position(updatetopic);
+        } c-catch (apiexception k-kafkaapiexception) {
+          thwow nyew wwappedkafkaapiexception("can't g-get topic positions", òωó k-kafkaapiexception);
         }
 
-        EarlybirdIndexFlusher.FlushAttemptResult flushAttemptResult =
-            earlybirdIndexFlusher.flushIfNecessary(
-                tweetOffset, updateOffset, this::getToCurrentPostFlush);
+        e-eawwybiwdindexfwushew.fwushattemptwesuwt fwushattemptwesuwt =
+            e-eawwybiwdindexfwushew.fwushifnecessawy(
+                tweetoffset, (ꈍᴗꈍ) updateoffset, rawr x3 t-this::gettocuwwentpostfwush);
 
-        if (flushAttemptResult == EarlybirdIndexFlusher.FlushAttemptResult.FLUSH_ATTEMPT_MADE) {
-          // Viz might show this as a fairly high number, so we're printing it here to confirm
-          // the value on the server.
-          LOG.info("Finished flushing. Index freshness in ms: {}",
-              LogFormatUtil.formatInt(searchIndexingMetricSet.getIndexFreshnessInMillis()));
+        i-if (fwushattemptwesuwt == eawwybiwdindexfwushew.fwushattemptwesuwt.fwush_attempt_made) {
+          // v-viz might show this as a f-faiwwy high nyumbew, rawr x3 s-so we'we pwinting it hewe to confiwm
+          // t-the vawue o-on the sewvew. σωσ
+          w-wog.info("finished f-fwushing. (ꈍᴗꈍ) i-index fweshness i-in ms: {}", rawr
+              w-wogfowmatutiw.fowmatint(seawchindexingmetwicset.getindexfweshnessinmiwwis()));
         }
 
-        if (!finishedIngestUntilCurrent) {
-          LOG.info("Became current on startup. Tried to flush with result: {}",
-              flushAttemptResult);
+        i-if (!finishedingestuntiwcuwwent) {
+          w-wog.info("became cuwwent on stawtup. ^^;; t-twied to fwush w-with wesuwt: {}", rawr x3
+              f-fwushattemptwesuwt);
         }
       }
-    } catch (Exception ex) {
-      FLUSHING_EXCEPTIONS.increment();
-      LOG.error("Exception while flushing", ex);
+    } catch (exception e-ex) {
+      fwushing_exceptions.incwement();
+      wog.ewwow("exception whiwe f-fwushing", (ˆ ﻌ ˆ)♡ ex);
     }
 
-    return new ConsumeBatchResult(isCaughtUp, readRecordsCount);
+    wetuwn n-nyew consumebatchwesuwt(iscaughtup, σωσ w-weadwecowdscount);
   }
 
-  public boolean isRunning() {
-    return running.get() && EarlybirdStatus.getStatusCode() != EarlybirdStatusCode.STOPPING;
+  p-pubwic boowean iswunning() {
+    w-wetuwn wunning.get() && eawwybiwdstatus.getstatuscode() != e-eawwybiwdstatuscode.stopping;
   }
 
-  public void prepareAfterStartingWithIndex(long maxIndexedTweetId) {
-    partitionWriter.prepareAfterStartingWithIndex(maxIndexedTweetId);
+  pubwic void pwepaweaftewstawtingwithindex(wong m-maxindexedtweetid) {
+    pawtitionwwitew.pwepaweaftewstawtingwithindex(maxindexedtweetid);
   }
 
-  public void close() {
-    balancingKafkaConsumer.close();
-    running.set(false);
+  p-pubwic void cwose() {
+    bawancingkafkaconsumew.cwose();
+    wunning.set(fawse);
   }
 }

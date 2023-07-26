@@ -1,62 +1,62 @@
-package com.twitter.timelineranker.common
+package com.twittew.timewinewankew.common
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.IndividualRequestTimeoutException
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.core.HydratedTweets
-import com.twitter.timelineranker.model.PartiallyHydratedTweet
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.util.Future
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.individuawwequesttimeoutexception
+i-impowt com.twittew.seawch.eawwybiwd.thwiftscawa.thwiftseawchwesuwt
+i-impowt com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.timewinewankew.cowe.candidateenvewope
+i-impowt c-com.twittew.timewinewankew.cowe.hydwatedtweets
+i-impowt com.twittew.timewinewankew.modew.pawtiawwyhydwatedtweet
+impowt com.twittew.timewines.modew.tweet.hydwatedtweet
+impowt com.twittew.utiw.futuwe
 
-object TweetHydrationTransform {
-  val EmptyHydratedTweets: HydratedTweets =
-    HydratedTweets(Seq.empty[HydratedTweet], Seq.empty[HydratedTweet])
-  val EmptyHydratedTweetsFuture: Future[HydratedTweets] = Future.value(EmptyHydratedTweets)
+object tweethydwationtwansfowm {
+  vaw emptyhydwatedtweets: h-hydwatedtweets =
+    hydwatedtweets(seq.empty[hydwatedtweet], -.- seq.empty[hydwatedtweet])
+  v-vaw emptyhydwatedtweetsfutuwe: f-futuwe[hydwatedtweets] = futuwe.vawue(emptyhydwatedtweets)
 }
 
-object CandidateTweetHydrationTransform extends TweetHydrationTransform {
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    hydrate(
-      searchResults = envelope.searchResults,
-      envelope = envelope
-    ).map { tweets => envelope.copy(hydratedTweets = tweets) }
+object candidatetweethydwationtwansfowm e-extends tweethydwationtwansfowm {
+  ovewwide def a-appwy(envewope: c-candidateenvewope): futuwe[candidateenvewope] = {
+    hydwate(
+      seawchwesuwts = envewope.seawchwesuwts, 🥺
+      e-envewope = envewope
+    ).map { tweets => envewope.copy(hydwatedtweets = tweets) }
   }
 }
 
-object SourceTweetHydrationTransform extends TweetHydrationTransform {
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    hydrate(
-      searchResults = envelope.sourceSearchResults,
-      envelope = envelope
-    ).map { tweets => envelope.copy(sourceHydratedTweets = tweets) }
+object souwcetweethydwationtwansfowm e-extends tweethydwationtwansfowm {
+  ovewwide d-def appwy(envewope: c-candidateenvewope): f-futuwe[candidateenvewope] = {
+    h-hydwate(
+      seawchwesuwts = envewope.souwceseawchwesuwts,
+      e-envewope = envewope
+    ).map { tweets => e-envewope.copy(souwcehydwatedtweets = tweets) }
   }
 }
 
-// Static IRTE to indicate timeout in tweet hydrator. Placeholder timeout duration of 0 millis is used
-// since we are only concerned with the source of the exception.
-object TweetHydrationTimeoutException extends IndividualRequestTimeoutException(0.millis) {
-  serviceName = "tweetHydrator"
+// static iwte to indicate timeout in tweet hydwatow. pwacehowdew t-timeout duwation of 0 miwwis is u-used
+// since we a-awe onwy concewned w-with the souwce of the exception. o.O
+object tweethydwationtimeoutexception extends i-individuawwequesttimeoutexception(0.miwwis) {
+  s-sewvicename = "tweethydwatow"
 }
 
 /**
- * Transform which hydrates tweets in the CandidateEnvelope
+ * twansfowm w-which hydwates t-tweets in the candidateenvewope
  **/
-trait TweetHydrationTransform extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+t-twait tweethydwationtwansfowm e-extends futuweawwow[candidateenvewope, /(^•ω•^) candidateenvewope] {
 
-  import TweetHydrationTransform._
+  impowt tweethydwationtwansfowm._
 
-  protected def hydrate(
-    searchResults: Seq[ThriftSearchResult],
-    envelope: CandidateEnvelope
-  ): Future[HydratedTweets] = {
-    if (searchResults.nonEmpty) {
-      Future.value(
-        HydratedTweets(searchResults.map(PartiallyHydratedTweet.fromSearchResult))
+  p-pwotected def hydwate(
+    s-seawchwesuwts: seq[thwiftseawchwesuwt], nyaa~~
+    e-envewope: candidateenvewope
+  ): f-futuwe[hydwatedtweets] = {
+    if (seawchwesuwts.nonempty) {
+      futuwe.vawue(
+        hydwatedtweets(seawchwesuwts.map(pawtiawwyhydwatedtweet.fwomseawchwesuwt))
       )
-    } else {
-      EmptyHydratedTweetsFuture
+    } ewse {
+      emptyhydwatedtweetsfutuwe
     }
   }
 }

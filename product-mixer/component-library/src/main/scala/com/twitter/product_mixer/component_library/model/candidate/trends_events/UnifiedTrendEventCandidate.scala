@@ -1,119 +1,119 @@
-package com.twitter.product_mixer.component_library.model.candidate.trends_events
+package com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twends_events
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.EventSummaryDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.trend.GroupedTrend
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclosureType
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.event.eventsummawydispwaytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.twend.gwoupedtwend
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.imagevawiant
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.uww
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.discwosuwetype
 
 /**
- * An [[UnifiedTrendEventCandidate]] represents a piece of Event or Trend content.
- * The Event and Trend candidate are represented by different types of keys that Event has a Long
- * eventId while Trend has a String trendName.
+ * an [[unifiedtwendeventcandidate]] wepwesents a piece o-of event ow twend content. ^^;;
+ * the event and t-twend candidate awe wepwesented b-by diffewent types of keys that event has a wong
+ * eventid whiwe t-twend has a stwing twendname. >_<
  */
-sealed trait UnifiedTrendEventCandidate[+T] extends UniversalNoun[T]
+s-seawed twait u-unifiedtwendeventcandidate[+t] extends univewsawnoun[t]
 
-final class UnifiedEventCandidate private (
-  override val id: Long)
-    extends UnifiedTrendEventCandidate[Long] {
+finaw cwass unifiedeventcandidate pwivate (
+  o-ovewwide vaw id: wong)
+    extends unifiedtwendeventcandidate[wong] {
 
-  override def canEqual(that: Any): Boolean = this.isInstanceOf[UnifiedEventCandidate]
+  ovewwide def canequaw(that: any): b-boowean = this.isinstanceof[unifiedeventcandidate]
 
-  override def equals(that: Any): Boolean = {
-    that match {
-      case candidate: UnifiedEventCandidate =>
+  ovewwide d-def equaws(that: a-any): boowean = {
+    t-that match {
+      c-case candidate: unifiedeventcandidate =>
         (
           (this eq candidate)
-            || ((hashCode == candidate.hashCode)
+            || ((hashcode == c-candidate.hashcode)
               && (id == candidate.id))
         )
-      case _ => false
+      case _ => f-fawse
     }
   }
 
-  override val hashCode: Int = id.##
+  ovewwide vaw hashcode: int = id.##
 }
 
-object UnifiedEventCandidate {
-  def apply(id: Long): UnifiedEventCandidate = new UnifiedEventCandidate(id)
+object unifiedeventcandidate {
+  def appwy(id: w-wong): unifiedeventcandidate = nyew unifiedeventcandidate(id)
 }
 
 /**
- * Text description of an Event. Usually this is extracted from curated Event metadata
+ * t-text descwiption o-of an event. usuawwy t-this is extwacted fwom cuwated event metadata
  */
-object EventTitleFeature extends Feature[UnifiedEventCandidate, String]
+object eventtitwefeatuwe e-extends featuwe[unifiedeventcandidate, rawr x3 s-stwing]
 
 /**
- * Display type of an Event. This will be used for client to differentiate if this Event will be
- * displayed as a normal cell, a hero, etc.
+ * dispway t-type of an event. /(^•ω•^) t-this wiww be used fow cwient to d-diffewentiate if this event wiww b-be
+ * dispwayed as a nyowmaw ceww, :3 a hewo, etc. (ꈍᴗꈍ)
  */
-object EventDisplayType extends Feature[UnifiedEventCandidate, EventSummaryDisplayType]
+o-object eventdispwaytype extends featuwe[unifiedeventcandidate, /(^•ω•^) e-eventsummawydispwaytype]
 
 /**
- * URL that servces as the landing page of an Event
+ * uww that s-sewvces as the wanding p-page of an event
  */
-object EventUrl extends Feature[UnifiedEventCandidate, Url]
+object eventuww extends featuwe[unifiedeventcandidate, (⑅˘꒳˘) uww]
 
 /**
- * Use to render an Event cell's editorial image
+ * use to wendew an event ceww's editowiaw i-image
  */
-object EventImage extends Feature[UnifiedEventCandidate, Option[ImageVariant]]
+o-object eventimage extends featuwe[unifiedeventcandidate, ( ͡o ω ͡o ) o-option[imagevawiant]]
 
 /**
- * Localized time string like "LIVE" or "Last Night" that is used to render the Event cell
+ * w-wocawized t-time stwing wike "wive" ow "wast nyight" that is used to wendew t-the event ceww
  */
-object EventTimeString extends Feature[UnifiedEventCandidate, Option[String]]
+object eventtimestwing extends featuwe[unifiedeventcandidate, òωó option[stwing]]
 
-final class UnifiedTrendCandidate private (
-  override val id: String)
-    extends UnifiedTrendEventCandidate[String] {
+f-finaw cwass unifiedtwendcandidate p-pwivate (
+  o-ovewwide vaw i-id: stwing)
+    extends unifiedtwendeventcandidate[stwing] {
 
-  override def canEqual(that: Any): Boolean = this.isInstanceOf[UnifiedTrendCandidate]
+  o-ovewwide def canequaw(that: a-any): b-boowean = this.isinstanceof[unifiedtwendcandidate]
 
-  override def equals(that: Any): Boolean = {
-    that match {
-      case candidate: UnifiedTrendCandidate =>
+  o-ovewwide def equaws(that: any): boowean = {
+    t-that match {
+      c-case c-candidate: unifiedtwendcandidate =>
         (
-          (this eq candidate)
-            || ((hashCode == candidate.hashCode)
+          (this e-eq c-candidate)
+            || ((hashcode == candidate.hashcode)
               && (id == candidate.id))
         )
-      case _ => false
+      case _ => fawse
     }
   }
 
-  override val hashCode: Int = id.##
+  o-ovewwide vaw hashcode: int = id.##
 }
 
-object UnifiedTrendCandidate {
-  def apply(id: String): UnifiedTrendCandidate = new UnifiedTrendCandidate(id)
+object unifiedtwendcandidate {
+  def appwy(id: stwing): unifiedtwendcandidate = nyew unifiedtwendcandidate(id)
 }
 
-object TrendNormalizedTrendName extends Feature[UnifiedTrendCandidate, String]
+o-object twendnowmawizedtwendname extends featuwe[unifiedtwendcandidate, (⑅˘꒳˘) s-stwing]
 
-object TrendTrendName extends Feature[UnifiedTrendCandidate, String]
+object t-twendtwendname extends f-featuwe[unifiedtwendcandidate, XD stwing]
 
-object TrendUrl extends Feature[UnifiedTrendCandidate, Url]
+object t-twenduww extends featuwe[unifiedtwendcandidate, u-uww]
 
-object TrendDescription extends Feature[UnifiedTrendCandidate, Option[String]]
+object t-twenddescwiption extends featuwe[unifiedtwendcandidate, -.- option[stwing]]
 
-object TrendTweetCount extends Feature[UnifiedTrendCandidate, Option[Int]]
+object twendtweetcount extends featuwe[unifiedtwendcandidate, :3 o-option[int]]
 
-object TrendDomainContext extends Feature[UnifiedTrendCandidate, Option[String]]
+object twenddomaincontext e-extends featuwe[unifiedtwendcandidate, nyaa~~ option[stwing]]
 
-object TrendGroupedTrends extends Feature[UnifiedTrendCandidate, Option[Seq[GroupedTrend]]]
+o-object t-twendgwoupedtwends extends featuwe[unifiedtwendcandidate, 😳 option[seq[gwoupedtwend]]]
 
-object PromotedTrendNameFeature extends Feature[UnifiedTrendCandidate, Option[String]]
+o-object pwomotedtwendnamefeatuwe e-extends featuwe[unifiedtwendcandidate, (⑅˘꒳˘) option[stwing]]
 
-object PromotedTrendDescriptionFeature extends Feature[UnifiedTrendCandidate, Option[String]]
+object p-pwomotedtwenddescwiptionfeatuwe e-extends featuwe[unifiedtwendcandidate, nyaa~~ option[stwing]]
 
-object PromotedTrendAdvertiserNameFeature extends Feature[UnifiedTrendCandidate, Option[String]]
+object pwomotedtwendadvewtisewnamefeatuwe extends f-featuwe[unifiedtwendcandidate, OwO option[stwing]]
 
-object PromotedTrendIdFeature extends Feature[UnifiedTrendCandidate, Option[Long]]
+o-object pwomotedtwendidfeatuwe e-extends featuwe[unifiedtwendcandidate, rawr x3 o-option[wong]]
 
-object PromotedTrendDisclosureTypeFeature
-    extends Feature[UnifiedTrendCandidate, Option[DisclosureType]]
+o-object pwomotedtwenddiscwosuwetypefeatuwe
+    extends featuwe[unifiedtwendcandidate, XD o-option[discwosuwetype]]
 
-object PromotedTrendImpressionIdFeature extends Feature[UnifiedTrendCandidate, Option[String]]
+object pwomotedtwendimpwessionidfeatuwe extends featuwe[unifiedtwendcandidate, σωσ option[stwing]]

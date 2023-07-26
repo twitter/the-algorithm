@@ -1,18 +1,18 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.tweetypie.thriftscala.TextRange
+impowt c-com.twittew.tweetypie.thwiftscawa.textwange
 
 /**
- * Some tweets with visibleTextRange may have fromIndex > toIndex, in which case set fromIndex
- * to toIndex.
+ * s-some tweets w-with visibwetextwange m-may h-have fwomindex > t-toindex, ^^;; in which c-case set fwomindex
+ * to toindex. >_<
  */
-object NegativeVisibleTextRangeRepairer {
-  private val mutation =
-    Mutation[Option[TextRange]] {
-      case Some(TextRange(from, to)) if from > to => Some(Some(TextRange(to, to)))
-      case _ => None
+object nyegativevisibwetextwangewepaiwew {
+  pwivate vaw m-mutation =
+    mutation[option[textwange]] {
+      case some(textwange(fwom, mya to)) i-if fwom > to => some(some(textwange(to, t-to)))
+      case _ => nyone
     }
 
-  private[tweetypie] val tweetMutation = TweetLenses.visibleTextRange.mutation(mutation)
+  pwivate[tweetypie] v-vaw tweetmutation = tweetwenses.visibwetextwange.mutation(mutation)
 }

@@ -1,50 +1,50 @@
-package com.twitter.follow_recommendations.common.utils
+package com.twittew.fowwow_wecommendations.common.utiws
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.stitch.Stitch
-import com.twitter.util.Duration
-import com.twitter.util.TimeoutException
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.base.statsutiw
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.utiw.duwation
+i-impowt c-com.twittew.utiw.timeoutexception
 
-object RescueWithStatsUtils {
-  def rescueWithStats[T](
-    s: Stitch[Seq[T]],
-    stats: StatsReceiver,
-    source: String
-  ): Stitch[Seq[T]] = {
-    StatsUtil.profileStitchSeqResults(s, stats.scope(source)).rescue {
-      case _: Exception => Stitch.Nil
+o-object wescuewithstatsutiws {
+  d-def wescuewithstats[t](
+    s: s-stitch[seq[t]], (✿oωo)
+    stats: statsweceivew, (ˆ ﻌ ˆ)♡
+    souwce: stwing
+  ): stitch[seq[t]] = {
+    statsutiw.pwofiwestitchseqwesuwts(s, s-stats.scope(souwce)).wescue {
+      case _: exception => stitch.niw
     }
   }
 
-  def rescueOptionalWithStats[T](
-    s: Stitch[Option[T]],
-    stats: StatsReceiver,
-    source: String
-  ): Stitch[Option[T]] = {
-    StatsUtil.profileStitchOptionalResults(s, stats.scope(source)).rescue {
-      case _: Exception => Stitch.None
+  d-def wescueoptionawwithstats[t](
+    s: stitch[option[t]], (˘ω˘)
+    stats: s-statsweceivew, (⑅˘꒳˘)
+    souwce: stwing
+  ): stitch[option[t]] = {
+    statsutiw.pwofiwestitchoptionawwesuwts(s, (///ˬ///✿) s-stats.scope(souwce)).wescue {
+      case _: exception => s-stitch.none
     }
   }
 
-  def rescueWithStatsWithin[T](
-    s: Stitch[Seq[T]],
-    stats: StatsReceiver,
-    source: String,
-    timeout: Duration
-  ): Stitch[Seq[T]] = {
-    val hydratedScopeSource = stats.scope(source)
-    StatsUtil
-      .profileStitchSeqResults(
-        s.within(timeout)(com.twitter.finagle.util.DefaultTimer),
-        hydratedScopeSource)
-      .rescue {
-        case _: TimeoutException =>
-          hydratedScopeSource.counter("timeout").incr()
-          Stitch.Nil
-        case _: Exception =>
-          hydratedScopeSource.counter("exception").incr()
-          Stitch.Nil
+  d-def wescuewithstatswithin[t](
+    s: stitch[seq[t]], 😳😳😳
+    stats: statsweceivew, 🥺
+    souwce: stwing, mya
+    t-timeout: duwation
+  ): stitch[seq[t]] = {
+    vaw hydwatedscopesouwce = stats.scope(souwce)
+    s-statsutiw
+      .pwofiwestitchseqwesuwts(
+        s.within(timeout)(com.twittew.finagwe.utiw.defauwttimew), 🥺
+        h-hydwatedscopesouwce)
+      .wescue {
+        c-case _: t-timeoutexception =>
+          h-hydwatedscopesouwce.countew("timeout").incw()
+          stitch.niw
+        case _: e-exception =>
+          hydwatedscopesouwce.countew("exception").incw()
+          stitch.niw
       }
   }
 }

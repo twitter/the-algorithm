@@ -1,20 +1,20 @@
-package com.twitter.home_mixer.marshaller.timelines
+package com.twittew.home_mixew.mawshawwew.timewines
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.timelines.service.{thriftscala => t}
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.uwtowdewedcuwsow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.bottomcuwsow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.gapcuwsow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.topcuwsow
+i-impowt com.twittew.timewines.sewvice.{thwiftscawa => t-t}
 
-object ChronologicalCursorMarshaller {
+object c-chwonowogicawcuwsowmawshawwew {
 
-  def apply(cursor: UrtOrderedCursor): Option[t.ChronologicalCursor] = {
-    cursor.cursorType match {
-      case Some(TopCursor) => Some(t.ChronologicalCursor(bottom = cursor.id))
-      case Some(BottomCursor) => Some(t.ChronologicalCursor(top = cursor.id))
-      case Some(GapCursor) =>
-        Some(t.ChronologicalCursor(top = cursor.id, bottom = cursor.gapBoundaryId))
-      case _ => None
+  d-def appwy(cuwsow: uwtowdewedcuwsow): option[t.chwonowogicawcuwsow] = {
+    cuwsow.cuwsowtype match {
+      c-case some(topcuwsow) => some(t.chwonowogicawcuwsow(bottom = cuwsow.id))
+      case s-some(bottomcuwsow) => some(t.chwonowogicawcuwsow(top = c-cuwsow.id))
+      case some(gapcuwsow) =>
+        some(t.chwonowogicawcuwsow(top = c-cuwsow.id, mya bottom = c-cuwsow.gapboundawyid))
+      case _ => n-nyone
     }
   }
 }

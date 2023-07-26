@@ -1,53 +1,53 @@
-package com.twitter.simclusters_v2.candidate_source
+package com.twittew.simcwustews_v2.candidate_souwce
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.simclusters_v2.candidate_source.SimClustersANNCandidateSource.LookbackMediaTweetConfig
-import com.twitter.simclusters_v2.candidate_source.SimClustersANNCandidateSource.SimClustersTweetCandidate
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.base.candidatesouwce
+i-impowt c-com.twittew.simcwustews_v2.candidate_souwce.simcwustewsanncandidatesouwce.wookbackmediatweetconfig
+i-impowt com.twittew.simcwustews_v2.candidate_souwce.simcwustewsanncandidatesouwce.simcwustewstweetcandidate
+impowt c-com.twittew.utiw.futuwe
 
 /**
- * An abstraction layer that implements a lambda structure for ANNCandidate source.
- * Allows us to call an online store as well as an offline store from a single query.
+ * a-an abstwaction w-wayew that i-impwements a wambda stwuctuwe fow anncandidate souwce. (⑅˘꒳˘)
+ * awwows us to caww an onwine s-stowe as weww as an offwine stowe fwom a singwe q-quewy. /(^•ω•^)
  */
-case class SimClustersANNWrapperCandidateSource(
-  onlineANNSource: CandidateSource[SimClustersANNCandidateSource.Query, SimClustersTweetCandidate],
-  lookbackANNSource: CandidateSource[
-    SimClustersANNCandidateSource.Query,
-    SimClustersTweetCandidate
-  ],
+case cwass simcwustewsannwwappewcandidatesouwce(
+  o-onwineannsouwce: candidatesouwce[simcwustewsanncandidatesouwce.quewy, simcwustewstweetcandidate], rawr x3
+  wookbackannsouwce: c-candidatesouwce[
+    simcwustewsanncandidatesouwce.quewy, (U ﹏ U)
+    s-simcwustewstweetcandidate
+  ], (U ﹏ U)
 )(
-  statsReceiver: StatsReceiver)
-    extends CandidateSource[SimClustersANNCandidateSource.Query, SimClustersTweetCandidate] {
+  s-statsweceivew: statsweceivew)
+    extends candidatesouwce[simcwustewsanncandidatesouwce.quewy, (⑅˘꒳˘) simcwustewstweetcandidate] {
 
-  override def get(
-    query: SimClustersANNCandidateSource.Query
-  ): Future[Option[Seq[SimClustersTweetCandidate]]] = {
+  ovewwide d-def get(
+    quewy: simcwustewsanncandidatesouwce.quewy
+  ): futuwe[option[seq[simcwustewstweetcandidate]]] = {
 
-    val enableLookbackSource =
-      query.overrideConfig.exists(_.enableLookbackSource.getOrElse(false))
+    vaw enabwewookbacksouwce =
+      quewy.ovewwideconfig.exists(_.enabwewookbacksouwce.getowewse(fawse))
 
-    val embeddingType = query.sourceEmbeddingId.embeddingType
-    val lookbackCandidatesFut =
-      if (enableLookbackSource &&
-        LookbackMediaTweetConfig.contains(embeddingType)) {
-        statsReceiver
-          .counter("lookback_source", embeddingType.toString, "enable").incr()
-        statsReceiver.counter("lookback_source", "enable").incr()
-        lookbackANNSource.get(query)
-      } else {
-        statsReceiver
-          .counter("lookback_source", embeddingType.toString, "disable").incr()
-        Future.None
+    v-vaw embeddingtype = quewy.souwceembeddingid.embeddingtype
+    v-vaw wookbackcandidatesfut =
+      i-if (enabwewookbacksouwce &&
+        w-wookbackmediatweetconfig.contains(embeddingtype)) {
+        s-statsweceivew
+          .countew("wookback_souwce", òωó embeddingtype.tostwing, ʘwʘ "enabwe").incw()
+        statsweceivew.countew("wookback_souwce", /(^•ω•^) "enabwe").incw()
+        w-wookbackannsouwce.get(quewy)
+      } ewse {
+        statsweceivew
+          .countew("wookback_souwce", ʘwʘ e-embeddingtype.tostwing, σωσ "disabwe").incw()
+        futuwe.none
       }
 
-    Future.join(onlineANNSource.get(query), lookbackCandidatesFut).map {
-      case (onlineCandidates, lookbackCandidates) =>
-        Some(
-          onlineCandidates.getOrElse(Nil) ++ lookbackCandidates.getOrElse(Nil)
+    futuwe.join(onwineannsouwce.get(quewy), OwO wookbackcandidatesfut).map {
+      case (onwinecandidates, 😳😳😳 wookbackcandidates) =>
+        some(
+          o-onwinecandidates.getowewse(niw) ++ wookbackcandidates.getowewse(niw)
         )
     }
   }
 
-  override def name: String = this.getClass.getCanonicalName
+  o-ovewwide d-def nyame: s-stwing = this.getcwass.getcanonicawname
 }

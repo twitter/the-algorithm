@@ -1,18 +1,18 @@
-create_thrift_libraries(
-    base_name = "ann-common",
-    sources = ["*.thrift"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependency_roots = [
-        "mediaservices/commons/src/main/thrift",
-        "src/thrift/com/twitter/ml/api:embedding",
-    ],
-    generate_languages = [
+cweate_thwift_wibwawies(
+    base_name = "ann-common", òωó
+    souwces = ["*.thwift"], o.O
+    p-pwatfowm = "java8", (U ᵕ U❁)
+    t-tags = ["bazew-compatibwe"], (⑅˘꒳˘)
+    dependency_woots = [
+        "mediasewvices/commons/swc/main/thwift", ( ͡o ω ͡o )
+        "swc/thwift/com/twittew/mw/api:embedding", UwU
+    ], rawr x3
+    g-genewate_wanguages = [
         "java",
-        "python",
-        "scala",
-        "strato",
+        "python", rawr
+        "scawa", σωσ
+        "stwato", σωσ
     ],
-    provides_java_name = "ann-common-thrift-java",
-    provides_scala_name = "ann-common-thrift-scala",
+    p-pwovides_java_name = "ann-common-thwift-java", >_<
+    p-pwovides_scawa_name = "ann-common-thwift-scawa", :3
 )

@@ -1,215 +1,215 @@
 .. _batch:
 
-Batch aggregate feature jobs
+batch aggwegate featuwe j-jobs
 ============================
 
-In the previous section, we went over the core concepts of the aggregation framework and discussed how you can set up you own `AggregateGroups` to compute aggregate features.
+i-in the pwevious s-section, mya we w-went ovew the c-cowe concepts of t-the aggwegation f-fwamewowk and discussed h-how you can set up you own `aggwegategwoups` to compute aggwegate featuwes. /(^•ω•^)
 
-Given these groups, this section will discuss how you can setup offline batch jobs to produce the corresponding aggregate features, updated daily. To accomplish this, we need to setup a summingbird-scalding job that is pointed to the input data records containing features and labels to be aggregated.
+g-given these gwoups, ^^;; this section wiww discuss h-how you can setup offwine batch j-jobs to pwoduce the cowwesponding aggwegate featuwes, updated d-daiwy. 🥺 to accompwish this, ^^ we n-nyeed to setup a s-summingbiwd-scawding job that is pointed to the input data wecowds containing featuwes a-and wabews to be aggwegated. ^•ﻌ•^
 
-Input Data
+input data
 ----------
 
-In order to generate aggregate features, the relevant input features need to be available offline as a daily scalding source in `DataRecord` format (typically `DailySuffixFeatureSource <https://cgit.twitter.biz/source/tree/src/scala/com/twitter/ml/api/FeatureSource.scala>`_, though `HourlySuffixFeatureSource` could also be usable but we have not tested this).
+in owdew to genewate a-aggwegate featuwes, /(^•ω•^) the wewevant i-input featuwes n-nyeed to be avaiwabwe o-offwine a-as a daiwy scawding souwce in `datawecowd` fowmat (typicawwy `daiwysuffixfeatuwesouwce <https://cgit.twittew.biz/souwce/twee/swc/scawa/com/twittew/mw/api/featuwesouwce.scawa>`_, ^^ t-though `houwwysuffixfeatuwesouwce` couwd awso be usabwe but we h-have nyot tested this). 🥺
 
-.. admonition:: Note
+.. admonition:: nyote
 
-  The input data source should contain the keys, features and labels you want to use in your `AggregateGroups`.
+  the input data souwce shouwd contain the keys, (U ᵕ U❁) f-featuwes and wabews you want to u-use in youw `aggwegategwoups`. 😳😳😳
 
-Aggregation Config
+a-aggwegation config
 ------------------
 
-Now that we have a daily data source with input features and labels, we need to setup the `AggregateGroup` config itself. This contains all aggregation groups that you would like to compute and we will go through the implementation step-by-step.
+n-nyow that we have a daiwy data souwce with input featuwes a-and wabews, nyaa~~ we n-nyeed to setup the `aggwegategwoup` c-config itsewf. (˘ω˘) t-this contains aww aggwegation g-gwoups that you wouwd wike to c-compute and we wiww go thwough the impwementation s-step-by-step. >_<
 
-.. admonition:: Example: Timelines Quality config
+.. admonition:: e-exampwe: timewines quawity config
 
-  `TimelinesAggregationConfig <https://cgit.twitter.biz/source/tree/src/scala/com/twitter/timelines/prediction/common/aggregates/TimelinesAggregationConfig.scala>`_ imports the configured `AggregationGroups` from `TimelinesAggregationConfigDetails <https://cgit.twitter.biz/source/tree/src/scala/com/twitter/timelines/prediction/common/aggregates/TimelinesAggregationConfigDetails.scala>`_. The config is then referenced by the implementing summingbird-scalding job which we will setup below.
+  `timewinesaggwegationconfig <https://cgit.twittew.biz/souwce/twee/swc/scawa/com/twittew/timewines/pwediction/common/aggwegates/timewinesaggwegationconfig.scawa>`_ i-impowts t-the configuwed `aggwegationgwoups` fwom `timewinesaggwegationconfigdetaiws <https://cgit.twittew.biz/souwce/twee/swc/scawa/com/twittew/timewines/pwediction/common/aggwegates/timewinesaggwegationconfigdetaiws.scawa>`_. XD the config is then wefewenced by the impwementing summingbiwd-scawding job which we w-wiww setup bewow. rawr x3
 
-OfflineAggregateSource
+o-offwineaggwegatesouwce
 ----------------------
 
-Each `AggregateGroup` will need to define a (daily) source of input features. We use `OfflineAggregateSource` for this to tell the aggregation framework where the input data set is and the required timestamp feature that the framework uses to decay aggregate feature values:
+each `aggwegategwoup` w-wiww nyeed t-to define a (daiwy) s-souwce of input featuwes. ( ͡o ω ͡o ) we use `offwineaggwegatesouwce` fow this to teww t-the aggwegation fwamewowk whewe the input data set is and the wequiwed timestamp f-featuwe that the fwamewowk uses t-to decay aggwegate f-featuwe vawues:
 
-.. code-block:: scala
+.. c-code-bwock:: scawa
 
- val timelinesDailyRecapSource = OfflineAggregateSource(
-    name = "timelines_daily_recap",
-    timestampFeature = TIMESTAMP,
-    scaldingHdfsPath = Some("/user/timelines/processed/suggests/recap/data_records"),
-    scaldingSuffixType = Some("daily"),
-    withValidation = true
+ vaw t-timewinesdaiwywecapsouwce = offwineaggwegatesouwce(
+    n-nyame = "timewines_daiwy_wecap", :3
+    t-timestampfeatuwe = t-timestamp, mya
+    scawdinghdfspath = some("/usew/timewines/pwocessed/suggests/wecap/data_wecowds"), σωσ
+    s-scawdingsuffixtype = s-some("daiwy"), (ꈍᴗꈍ)
+    w-withvawidation = t-twue
   )
 
-.. admonition:: Note
+.. admonition:: n-nyote
 
-  .. cssclass:: shortlist
+  .. csscwass:: showtwist
 
-  #. The name is not important as long as it is unique.
+  #. the nyame is nyot i-impowtant as wong as it is unique. OwO
 
-  #. `timestampFeature` must be a discrete feature of type `com.twitter.ml.api.Feature[Long]` and represents the “time” of a given training record in milliseconds - for example, the time at which an engagement, push open event, or abuse event took place that you are trying to train on. If you do not already have such a feature in your daily training data, you need to add one.
+  #. `timestampfeatuwe` must be a discwete featuwe of type `com.twittew.mw.api.featuwe[wong]` and wepwesents the “time” o-of a given twaining wecowd in miwwiseconds - fow exampwe, the t-time at which a-an engagement, o.O push o-open event, 😳😳😳 ow abuse event took p-pwace that you awe twying to t-twain on. /(^•ω•^) if you d-do nyot awweady have such a featuwe in youw daiwy twaining data, OwO you nyeed to add one. ^^
 
-  #. `scaldingSuffixType` can be “hourly” or “daily” depending on the type of source (`HourlySuffixFeatureSource` vs `DailySuffixFeatureSource`).
+  #. `scawdingsuffixtype` c-can be “houwwy” ow “daiwy” d-depending on the type of s-souwce (`houwwysuffixfeatuwesouwce` v-vs `daiwysuffixfeatuwesouwce`). (///ˬ///✿)
   
-  #. Set `withValidation` to true to validate the presence of _SUCCESS file. Context: https://jira.twitter.biz/browse/TQ-10618
+  #. (///ˬ///✿) set `withvawidation` to twue to vawidate t-the pwesence o-of _success fiwe. (///ˬ///✿) context: https://jiwa.twittew.biz/bwowse/tq-10618
 
-Output HDFS store
+o-output hdfs s-stowe
 -----------------
 
-The output HDFS store is where the computed aggregate features are stored. This store contains all computed aggregate feature values and is incrementally updated by the aggregates job every day.
+the output hdfs stowe is whewe the computed aggwegate f-featuwes awe stowed. ʘwʘ t-this stowe c-contains aww computed aggwegate f-featuwe vawues a-and is incwementawwy updated by t-the aggwegates job evewy day. ^•ﻌ•^
 
-.. code-block:: scala
+.. code-bwock:: scawa
 
- val outputHdfsPath = "/user/timelines/processed/aggregates_v2"
-  val timelinesOfflineAggregateSink = new OfflineStoreCommonConfig {
-    override def apply(startDate: String) = new OfflineAggregateStoreCommonConfig(
-      outputHdfsPathPrefix = outputHdfsPath,
-      dummyAppId = "timelines_aggregates_v2_ro", // unused - can be arbitrary
-      dummyDatasetPrefix = "timelines_aggregates_v2_ro", // unused - can be arbitrary
-      startDate = startDate
+ vaw outputhdfspath = "/usew/timewines/pwocessed/aggwegates_v2"
+  vaw timewinesoffwineaggwegatesink = n-nyew o-offwinestowecommonconfig {
+    ovewwide def appwy(stawtdate: stwing) = nyew offwineaggwegatestowecommonconfig(
+      o-outputhdfspathpwefix = o-outputhdfspath,
+      dummyappid = "timewines_aggwegates_v2_wo", OwO // unused - can be awbitwawy
+      d-dummydatasetpwefix = "timewines_aggwegates_v2_wo", (U ﹏ U) // unused - can be awbitwawy
+      stawtdate = stawtdate
     )
   }
 
-Note: `dummyAppId` and `dummyDatasetPrefix` are unused so can be set to any arbitrary value. They should be removed on the framework side.
+n-nyote: `dummyappid` and `dummydatasetpwefix` awe unused s-so can be set to a-any awbitwawy vawue. (ˆ ﻌ ˆ)♡ they shouwd be wemoved on the fwamewowk side. (⑅˘꒳˘)
 
-The `outputHdfsPathPrefix` is the only field that matters, and should be set to the HDFS path where you want to store the aggregate features. Make sure you have a lot of quota available at that path.
+t-the `outputhdfspathpwefix` i-is the onwy fiewd that mattews, (U ﹏ U) and shouwd be set to the hdfs path w-whewe you want to stowe the a-aggwegate featuwes. o.O make suwe you have a wot of quota avaiwabwe a-at that path. mya
 
-Setting Up Aggregates Job
+setting up aggwegates j-job
 -------------------------
 
-Once you have defined a config file with the aggregates you would like to compute, the next step is to create the aggregates scalding job using the config (`example <https://cgit.twitter.biz/source/tree/timelines/data_processing/ad_hoc/aggregate_interactions/v2/offline_aggregation/TimelinesAggregationScaldingJob.scala>`_). This is very concise and requires only a few lines of code:
+o-once you have defined a config f-fiwe with the aggwegates you w-wouwd wike to compute, XD t-the nyext s-step is to cweate the aggwegates s-scawding job using t-the config (`exampwe <https://cgit.twittew.biz/souwce/twee/timewines/data_pwocessing/ad_hoc/aggwegate_intewactions/v2/offwine_aggwegation/timewinesaggwegationscawdingjob.scawa>`_). òωó this is vewy concise and w-wequiwes onwy a-a few wines of c-code:
 
-.. code-block:: scala
+.. code-bwock:: scawa
 
-  object TimelinesAggregationScaldingJob extends AggregatesV2ScaldingJob {
-    override val aggregatesToCompute = TimelinesAggregationConfig.aggregatesToCompute
+  object timewinesaggwegationscawdingjob e-extends aggwegatesv2scawdingjob {
+    ovewwide v-vaw aggwegatestocompute = t-timewinesaggwegationconfig.aggwegatestocompute
   }
 
-Now that the scalding job is implemented with the aggregation config, we need to setup a capesos config similar to https://cgit.twitter.biz/source/tree/science/scalding/mesos/timelines/prod.yml:
+nyow that the scawding job is impwemented with t-the aggwegation c-config, (˘ω˘) we nyeed t-to setup a capesos c-config simiwaw to https://cgit.twittew.biz/souwce/twee/science/scawding/mesos/timewines/pwod.ymw:
 
-.. code-block:: scala
+.. c-code-bwock:: scawa
 
-  # Common configuration shared by all aggregates v2 jobs
-  __aggregates_v2_common__: &__aggregates_v2_common__
-    class: HadoopSummingbirdProducer
-    bundle: offline_aggregation-deploy.tar.gz
-    mainjar: offline_aggregation-deploy.jar
-    pants_target: "bundle timelines/data_processing/ad_hoc/aggregate_interactions/v2/offline_aggregation:bin"
-    cron_collision_policy: CANCEL_NEW
-    use_libjar_wild_card: true
+  # common configuwation shawed by aww aggwegates v2 jobs
+  __aggwegates_v2_common__: &__aggwegates_v2_common__
+    c-cwass: hadoopsummingbiwdpwoducew
+    bundwe: o-offwine_aggwegation-depwoy.taw.gz
+    mainjaw: o-offwine_aggwegation-depwoy.jaw
+    pants_tawget: "bundwe t-timewines/data_pwocessing/ad_hoc/aggwegate_intewactions/v2/offwine_aggwegation:bin"
+    cwon_cowwision_powicy: c-cancew_new
+    u-use_wibjaw_wiwd_cawd: t-twue
 
-.. code-block:: scala
+.. c-code-bwock:: s-scawa
 
-  # Specific job computing user aggregates
-  user_aggregates_v2:
-    <<: *__aggregates_v2_common__
-    cron_schedule: "25 * * * *"
-    arguments: --batches 1 --output_stores user_aggregates --job_name timelines_user_aggregates_v2
+  # specific job computing usew aggwegates
+  usew_aggwegates_v2:
+    <<: *__aggwegates_v2_common__
+    cwon_scheduwe: "25 * * * *"
+    awguments: --batches 1 --output_stowes usew_aggwegates --job_name t-timewines_usew_aggwegates_v2
 
-.. admonition:: Important
+.. a-admonition:: i-impowtant
 
-  Each AggregateGroup in your config should have its own associated offline job which specifies `output_stores` pointing to the output store name you defined in your config.
+  each aggwegategwoup i-in youw config shouwd have its own associated offwine job which s-specifies `output_stowes` p-pointing to the output s-stowe nyame you defined in youw config. :3
 
-Running The Job
+wunning t-the job
 ---------------
 
-When you run the batch job for the first time, you need to add a temporary entry to your capesos yml file that looks like this:
+w-when you wun the batch j-job fow the f-fiwst time, OwO you nyeed to add a tempowawy entwy to youw capesos ymw fiwe that wooks w-wike this:
 
-.. code-block:: scala
+.. c-code-bwock:: s-scawa
 
-  user_aggregates_v2_initial_run:
-    <<: *__aggregates_v2_common__
-    cron_schedule: "25 * * * *"
-    arguments: --batches 1 --start-time “2017-03-03 00:00:00” --output_stores user_aggregates --job_name timelines_user_aggregates_v2
+  usew_aggwegates_v2_initiaw_wun:
+    <<: *__aggwegates_v2_common__
+    cwon_scheduwe: "25 * * * *"
+    awguments: --batches 1 --stawt-time “2017-03-03 00:00:00” --output_stowes u-usew_aggwegates --job_name t-timewines_usew_aggwegates_v2
 
-.. admonition:: Start Time
+.. admonition:: s-stawt time
 
-  The additional `--start-time` argument should match the `startDate` in your config for that AggregateGroup, but in the format `yyyy-mm-dd hh:mm:ss`. 
+  t-the additionaw `--stawt-time` awgument shouwd m-match the `stawtdate` i-in youw config fow that a-aggwegategwoup, mya but in the fowmat `yyyy-mm-dd hh:mm:ss`. (˘ω˘) 
 
-To invoke the initial run via capesos, we would do the following (in Timelines case):
+t-to invoke the initiaw w-wun via capesos, o.O w-we wouwd do the fowwowing (in t-timewines case):
 
-.. code-block:: scala
+.. code-bwock:: scawa
 
-  CAPESOSPY_ENV=prod capesospy-v2 update --build_locally --start_cron user_aggregates_v2_initial_run science/scalding/mesos/timelines/prod.yml
+  capesospy_env=pwod c-capesospy-v2 u-update --buiwd_wocawwy --stawt_cwon usew_aggwegates_v2_initiaw_wun s-science/scawding/mesos/timewines/pwod.ymw
 
-Once it is running smoothly, you can deschedule the initial run job and delete the temporary entry from your production yml config. 
+once it is wunning smoothwy, (✿oωo) you can descheduwe t-the initiaw wun job and dewete the tempowawy e-entwy fwom y-youw pwoduction ymw config. (ˆ ﻌ ˆ)♡ 
 
-.. code-block:: scala
+.. c-code-bwock:: scawa
 
-  aurora cron deschedule atla/timelines/prod/user_aggregates_v2_initial_run
+  auwowa cwon d-descheduwe atwa/timewines/pwod/usew_aggwegates_v2_initiaw_wun
   
-Note: deschedule it preemptively to avoid repeatedly overwriting the same initial results
+n-nyote: descheduwe it pweemptivewy to avoid w-wepeatedwy ovewwwiting the same initiaw wesuwts
 
-Then schedule the production job from jenkins using something like this:
+t-then scheduwe the p-pwoduction job fwom jenkins using s-something wike this:
 
-.. code-block:: scala
+.. code-bwock:: s-scawa
 
-  CAPESOSPY_ENV=prod capesospy-v2 update user_aggregates_v2 science/scalding/mesos/timelines/prod.yml
+  c-capesospy_env=pwod c-capesospy-v2 update usew_aggwegates_v2 science/scawding/mesos/timewines/pwod.ymw
 
-All future runs (2nd onwards) will use the permanent entry in the capesos yml config that does not have the `start-time` specified.
+aww futuwe wuns (2nd onwawds) wiww use the pewmanent entwy in the capesos ymw config that does nyot have the `stawt-time` specified. ^^;;
 
-.. admonition:: Job name has to match
+.. admonition:: job n-nyame has to m-match
 
-  It's important that the production run should share the same `--job_name` with the initial_run so that eagleeye/statebird knows how to keep track of it correctly.
+  it's impowtant that the pwoduction wun s-shouwd shawe the s-same `--job_name` w-with the initiaw_wun so that e-eagweeye/statebiwd knows how to k-keep twack of it c-cowwectwy. OwO
 
-Output Aggregate Features
+output aggwegate featuwes
 -------------------------
 
-This scalding job using the example config from the earlier section would output a VersionedKeyValSource to `/user/timelines/processed/aggregates_v2/user_aggregates` on HDFS.
+t-this scawding job using the exampwe c-config fwom t-the eawwiew section wouwd output a vewsionedkeyvawsouwce t-to `/usew/timewines/pwocessed/aggwegates_v2/usew_aggwegates` o-on hdfs. 🥺
 
-Note that `/user/timelines/processed/aggregates_v2` is the explicitly defined root path while `user_aggregates` is the output directory of the example `AggregateGroup` defined earlier. The latter can be different for different `AggregateGroups` defined in your config.
+n-nyote that `/usew/timewines/pwocessed/aggwegates_v2` i-is the expwicitwy d-defined w-woot path whiwe `usew_aggwegates` i-is the output d-diwectowy of the e-exampwe `aggwegategwoup` defined e-eawwiew. mya the w-wattew can be diffewent f-fow diffewent `aggwegategwoups` defined i-in youw config. 😳
 
 
-The VersionedKeyValSource is difficult to use directly in your jobs/offline trainings, but we provide an adapted source `AggregatesV2FeatureSource` that makes it easy to join and use in your jobs:
+the vewsionedkeyvawsouwce is difficuwt t-to use diwectwy in youw j-jobs/offwine twainings, òωó b-but we p-pwovide an adapted souwce `aggwegatesv2featuwesouwce` t-that makes it easy to join a-and use in youw jobs:
 
-.. code-block:: scala
+.. code-bwock:: s-scawa
 
-  import com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion._
+  impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.convewsion._
 
-  val pipe: DataSetPipe = AggregatesV2FeatureSource(
-    rootPath = "/user/timelines/processed/aggregates_v2",
-    storeName = "user_aggregates",
-    aggregates = TimelinesAggregationConfig.aggregatesToCompute,
-    trimThreshold = 0
-  )(dateRange).read
+  v-vaw pipe: datasetpipe = aggwegatesv2featuwesouwce(
+    wootpath = "/usew/timewines/pwocessed/aggwegates_v2", /(^•ω•^)
+    stowename = "usew_aggwegates", -.-
+    a-aggwegates = timewinesaggwegationconfig.aggwegatestocompute, òωó
+    twimthweshowd = 0
+  )(datewange).wead
 
-Simply replace the `rootPath`, `storeName` and `aggregates` object to whatever you defined. The `trimThreshold` tells the framework to trim all features below a certain cutoff: 0 is a safe default to use to begin with.
+s-simpwy wepwace t-the `wootpath`, /(^•ω•^) `stowename` and `aggwegates` object to nyanievew you defined. /(^•ω•^) t-the `twimthweshowd` tewws the f-fwamewowk to t-twim aww featuwes b-bewow a cewtain cutoff: 0 is a safe defauwt to u-use to begin with. 😳
 
-.. admonition:: Usage
+.. a-admonition:: usage
 
-  This can now be used like any other `DataSetPipe` in offline ML jobs. You can write out the features to a `DailySuffixFeatureSource`, you can join them with your data offline for trainings, or you can write them to a Manhattan store for serving online. 
+  this c-can nyow be used wike any othew `datasetpipe` in offwine mw jobs. :3 y-you can wwite out the featuwes t-to a `daiwysuffixfeatuwesouwce`, (U ᵕ U❁) y-you can join t-them with youw data offwine fow t-twainings, ʘwʘ ow y-you can wwite them t-to a manhattan s-stowe fow sewving onwine. o.O 
 
-Aggregate Features Example
+aggwegate f-featuwes e-exampwe
 --------------------------
 
-Here is an example of sample of the aggregate features we just computed:
+h-hewe is an e-exampwe of sampwe o-of the aggwegate f-featuwes we just c-computed:
 
-.. code-block:: scala
+.. c-code-bwock:: scawa
 
-  user_aggregate_v2.pair.any_label.any_feature.50.days.count: 100.0
-  user_aggregate_v2.pair.any_label.tweetsource.is_quote.50.days.count: 30.0
-  user_aggregate_v2.pair.is_favorited.any_feature.50.days.count: 10.0
-  user_aggregate_v2.pair.is_favorited.tweetsource.is_quote.50.days.count: 6.0
-  meta.user_id: 123456789
+  usew_aggwegate_v2.paiw.any_wabew.any_featuwe.50.days.count: 100.0
+  u-usew_aggwegate_v2.paiw.any_wabew.tweetsouwce.is_quote.50.days.count: 30.0
+  usew_aggwegate_v2.paiw.is_favowited.any_featuwe.50.days.count: 10.0
+  u-usew_aggwegate_v2.paiw.is_favowited.tweetsouwce.is_quote.50.days.count: 6.0
+  meta.usew_id: 123456789
 
-Aggregate feature names match a `prefix.pair.label.feature.half_life.metric` schema and correspond to what was defined in the aggregation config for each of these fields.
+a-aggwegate featuwe n-nyames match a-a `pwefix.paiw.wabew.featuwe.hawf_wife.metwic` schema and cowwespond to nyani was defined in t-the aggwegation c-config fow each o-of these fiewds. ʘwʘ
 
-.. admonition:: Example
+.. admonition:: exampwe
 
-  In this example, the above features are capturing that userId 123456789L has:
+  in this exampwe, ^^ the a-above featuwes a-awe captuwing that usewid 123456789w h-has:
 
   .. 
-  A 50-day decayed count of 100 training records with any label or feature (“tweet impressions”)
+  a-a 50-day decayed count of 100 twaining wecowds with any wabew o-ow featuwe (“tweet i-impwessions”)
 
-  A 50-day decayed count of 30 records that are “quote tweets” (tweetsource.is_quote = true)
+  a-a 50-day d-decayed count of 30 wecowds that awe “quote t-tweets” (tweetsouwce.is_quote = t-twue)
 
-  A 50-day decayed count of 10 records that are favorites on any type of tweet (is_favorited = true)
+  a 50-day decayed count of 10 wecowds t-that awe favowites on any type of tweet (is_favowited = t-twue)
 
-  A 50-day decayed count of 6 records that are “favorites” on “quote tweets” (both of the above are true)
+  a 50-day decayed c-count of 6 wecowds t-that awe “favowites” on “quote tweets” (both o-of the a-above awe twue)
 
-By combining the above, a model might infer that for this specific user, quote tweets comprise 30% of all impressions, have a favorite rate of 6/30 = 20%, compared to a favorite rate of 10/100 = 10% on the total population of tweets.
+by combining t-the above, a modew might infew t-that fow this specific u-usew, ^•ﻌ•^ quote t-tweets compwise 30% o-of aww impwessions, mya have a-a favowite wate o-of 6/30 = 20%, UwU compawed t-to a favowite wate of 10/100 = 10% o-on the totaw popuwation of tweets. >_<
 
-Therefore, being a quote tweet makes this specific user `123456789L` approximately twice as likely to favorite the tweet, which is useful for prediction and could result in the ML model giving higher scores to & ranking quote tweets higher in a personalized fashion for this user.
+thewefowe, b-being a-a quote tweet makes t-this specific usew `123456789w` appwoximatewy twice as wikewy to favowite the t-tweet, /(^•ω•^) which is usefuw fow pwediction a-and couwd w-wesuwt in the mw modew giving highew scowes to & w-wanking quote tweets highew in a-a pewsonawized f-fashion fow this u-usew.
 
-Tests for Feature Names
+tests fow f-featuwe nyames
 --------------------------
-When you change or add AggregateGroup, feature names might change. And the Feature Store provides a testing mechanism to assert that the feature names change as you expect. See `tests for feature names <https://docbird.twitter.biz/ml_feature_store/catalog.html#tests-for-feature-names>`_.
+w-when you change ow add aggwegategwoup, featuwe nyames might change. òωó a-and the featuwe stowe pwovides a-a testing mechanism to assewt that the featuwe nyames change as y-you expect. σωσ see `tests fow featuwe nyames <https://docbiwd.twittew.biz/mw_featuwe_stowe/catawog.htmw#tests-fow-featuwe-names>`_. ( ͡o ω ͡o )

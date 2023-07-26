@@ -1,82 +1,82 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow.data.experimental;
+package tensowfwow.data.expewimentaw;
 
-import "tensorflow/core/protobuf/data_service.proto";
+impowt "tensowfwow/cowe/pwotobuf/data_sewvice.pwoto";
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// Configuration for a tf.data service DispatchServer.
-// Next id: 10
-message DispatcherConfig {
-  // The port for the dispatcher to bind to. A value of 0 indicates that the
-  // dispatcher may bind to any available port.
-  int64 port = 1;
-  // The protocol for the dispatcher to use when connecting to workers.
-  string protocol = 2;
-  // A work directory to use for storing dispatcher state, and for recovering
-  // during restarts. The empty string indicates not to use any work directory.
-  string work_dir = 3;
-  // Whether to run in fault tolerant mode, where dispatcher state is saved
-  // across restarts. Requires that `work_dir` is nonempty.
-  bool fault_tolerant_mode = 4;
-  // (Optional.) If the job uses auto-sharding, it needs to specify a fixed list
-  // of worker addresses that will register with the dispatcher. The worker
-  // addresses should be in the format "host" or "host:port", where "port" is an
-  // integer, named port, or %port% to match any port.
-  repeated string worker_addresses = 7;
-  // (Optional.) tf.data service deployment mode. Supported values are "REMOTE",
-  // "COLOCATED", and "HYBRID". If unspecified, it is assumed to be "REMOTE".
-  DeploymentMode deployment_mode = 9;
-  // How often the dispatcher should scan through to delete old and unused
-  // jobs. A value of 0 indicates that the decision should be left up to the
-  // runtime.
-  int64 job_gc_check_interval_ms = 5;
-  // How long a job needs to be unused before it becomes a candidate for garbage
-  // collection. A value of -1 indicates that jobs should never be garbage
-  // collected. A value of 0 indicates that the decision should be left up to
-  // the runtime.
-  int64 job_gc_timeout_ms = 6;
-  // How long to wait before garbage-collecting a client that hasn't
-  // heartbeated to the dispatcher. A value of 0 indicates that the timeout
-  // should be left to the runtime.
-  int64 client_timeout_ms = 8;
+// c-configuwation f-fow a tf.data sewvice d-dispatchsewvew. ^•ﻌ•^
+// n-nyext id: 10
+m-message dispatchewconfig {
+  // t-the powt fow t-the dispatchew to bind to. σωσ a vawue of 0 indicates that the
+  // dispatchew may b-bind to any avaiwabwe powt.
+  int64 powt = 1;
+  // t-the pwotocow fow the dispatchew t-to use when connecting to wowkews. -.-
+  stwing pwotocow = 2;
+  // a-a wowk diwectowy to use fow s-stowing dispatchew s-state, ^^;; and fow wecovewing
+  // duwing westawts. XD the empty stwing indicates nyot t-to use any wowk diwectowy. 🥺
+  stwing wowk_diw = 3;
+  // whethew to wun in fauwt t-towewant mode, òωó whewe dispatchew s-state is saved
+  // a-acwoss westawts. (ˆ ﻌ ˆ)♡ w-wequiwes t-that `wowk_diw` is nyonempty. -.-
+  boow fauwt_towewant_mode = 4;
+  // (optionaw.) if t-the job uses auto-shawding, :3 it nyeeds to specify a-a fixed wist
+  // of wowkew addwesses that wiww wegistew with the dispatchew. ʘwʘ the wowkew
+  // a-addwesses shouwd be in the fowmat "host" o-ow "host:powt", 🥺 w-whewe "powt" i-is an
+  // integew, >_< nyamed powt, ʘwʘ ow %powt% to match any powt. (˘ω˘)
+  w-wepeated s-stwing wowkew_addwesses = 7;
+  // (optionaw.) tf.data s-sewvice depwoyment m-mode. (✿oωo) suppowted vawues a-awe "wemote", (///ˬ///✿)
+  // "cowocated", rawr x3 and "hybwid". -.- if u-unspecified, ^^ it is assumed to be "wemote". (⑅˘꒳˘)
+  depwoymentmode d-depwoyment_mode = 9;
+  // how often t-the dispatchew shouwd scan thwough t-to dewete owd a-and unused
+  // jobs. a vawue of 0 indicates that the decision shouwd be weft up to the
+  // wuntime.
+  int64 j-job_gc_check_intewvaw_ms = 5;
+  // h-how wong a job nyeeds to be unused b-befowe it b-becomes a candidate f-fow gawbage
+  // cowwection. nyaa~~ a vawue of -1 indicates that jobs s-shouwd nyevew be gawbage
+  // cowwected. a vawue of 0 indicates that the decision s-shouwd be weft up to
+  // the w-wuntime. /(^•ω•^)
+  int64 j-job_gc_timeout_ms = 6;
+  // h-how wong to wait befowe gawbage-cowwecting a-a cwient t-that hasn't
+  // h-heawtbeated t-to the dispatchew. (U ﹏ U) a vawue of 0 indicates that t-the timeout
+  // s-shouwd be weft t-to the wuntime. 😳😳😳
+  i-int64 cwient_timeout_ms = 8;
 }
 
-// Configuration for a tf.data service WorkerServer.
-// Next id: 11
-message WorkerConfig {
-  // The port for the worker to bind to. A value of 0 indicates that the
-  // worker may bind to any available port.
-  int64 port = 1;
-  // The protocol for the worker to use when connecting to the dispatcher.
-  string protocol = 2;
-  // The address of the dispatcher to register with.
-  string dispatcher_address = 3;
-  // The address of the worker server. The substring "%port%", if specified,
-  // will be replaced with the worker's bound port. This is useful when the port
-  // is set to `0`.
-  string worker_address = 4;
-  // Tags attached to the worker. This allows reading from selected workers.
-  // For example, by applying a "COLOCATED" tag, tf.data service is able to read
-  // from the local tf.data worker if one exists, then from off-TF-host workers,
-  // to avoid cross-TF-host reads.
-  repeated string worker_tags = 10;
-  // How often the worker should heartbeat to the master. A value of 0 indicates
-  // that the decision should be left up to the runtime.
-  int64 heartbeat_interval_ms = 5;
-  // How long to retry requests to the dispatcher before giving up and reporting
-  // an error. A value of 0 indicates that the decision should be left up to the
-  // runtime.
-  int64 dispatcher_timeout_ms = 6;
-  // The protocol for the worker to use when transferring data to clients.
-  string data_transfer_protocol = 7;
-  // The data transfer address of the worker server. The substring "%port%", if
-  // specified, will be replaced with the worker's bound port. This is useful
-  // when the port is set to `0`.
-  string data_transfer_address = 8;
-  // When shutting down a worker, how long to wait for the gRPC server to
-  // process the final requests. This is used to achieve clean shutdown in unit
-  // tests.
-  int64 shutdown_quiet_period_ms = 9;
+// c-configuwation fow a tf.data sewvice wowkewsewvew. >w<
+// nyext i-id: 11
+message wowkewconfig {
+  // the powt fow the wowkew to bind to. XD a vawue of 0 indicates that the
+  // wowkew m-may bind to any avaiwabwe powt. o.O
+  int64 powt = 1;
+  // the pwotocow f-fow the wowkew t-to use when c-connecting to the dispatchew. mya
+  s-stwing pwotocow = 2;
+  // the a-addwess of the dispatchew t-to wegistew with. 🥺
+  stwing dispatchew_addwess = 3;
+  // the addwess of the wowkew sewvew. ^^;; the substwing "%powt%", :3 i-if specified, (U ﹏ U)
+  // wiww be wepwaced w-with the wowkew's bound powt. this i-is usefuw when t-the powt
+  // is set to `0`. OwO
+  stwing wowkew_addwess = 4;
+  // t-tags attached to t-the wowkew. 😳😳😳 this awwows weading f-fwom sewected w-wowkews. (ˆ ﻌ ˆ)♡
+  // fow exampwe, XD by appwying a "cowocated" tag, (ˆ ﻌ ˆ)♡ tf.data sewvice is abwe t-to wead
+  // fwom t-the wocaw tf.data w-wowkew if one exists, then f-fwom off-tf-host w-wowkews, ( ͡o ω ͡o )
+  // to avoid cwoss-tf-host w-weads. rawr x3
+  wepeated stwing wowkew_tags = 10;
+  // how often the wowkew shouwd h-heawtbeat to t-the mastew. nyaa~~ a vawue of 0 indicates
+  // that the d-decision shouwd b-be weft up to the wuntime. >_<
+  int64 heawtbeat_intewvaw_ms = 5;
+  // how wong to w-wetwy wequests to the dispatchew befowe giving up and wepowting
+  // an ewwow. ^^;; a v-vawue of 0 indicates that the decision shouwd be w-weft up to the
+  // w-wuntime. (ˆ ﻌ ˆ)♡
+  int64 dispatchew_timeout_ms = 6;
+  // the pwotocow fow the wowkew t-to use when twansfewwing d-data to cwients. ^^;;
+  stwing data_twansfew_pwotocow = 7;
+  // the data t-twansfew addwess of the wowkew sewvew. (⑅˘꒳˘) t-the substwing "%powt%", rawr x3 if
+  // specified, (///ˬ///✿) wiww be wepwaced with the wowkew's b-bound powt. 🥺 this is usefuw
+  // w-when the powt i-is set to `0`. >_<
+  stwing data_twansfew_addwess = 8;
+  // w-when shutting down a w-wowkew, UwU how wong t-to wait fow the g-gwpc sewvew to
+  // pwocess the f-finaw wequests. >_< t-this is used to achieve cwean shutdown in unit
+  // t-tests. -.-
+  int64 s-shutdown_quiet_pewiod_ms = 9;
 }

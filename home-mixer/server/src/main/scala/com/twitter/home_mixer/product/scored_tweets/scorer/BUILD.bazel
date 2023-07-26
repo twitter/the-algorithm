@@ -1,20 +1,20 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    dependencies = [
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/functional_component/scorer",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model/request",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/module",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/scored_tweets/model",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/scored_tweets/param",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/util",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature/featuremap/datarecord",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/util",
-        "src/scala/com/twitter/timelines/prediction/features/recap",
-        "timelineservice/common:model",
+scawa_wibwawy(
+    souwces = ["*.scawa"], OwO
+    compiwew_option_sets = ["fataw_wawnings"], 🥺
+    s-stwict_deps = t-twue, òωó
+    d-dependencies = [
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/functionaw_component/scowew", o.O
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/modew", (U ᵕ U❁)
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/modew/wequest", (⑅˘꒳˘)
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/moduwe", ( ͡o ω ͡o )
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pwoduct/scowed_tweets/modew", UwU
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pwoduct/scowed_tweets/pawam", rawr x3
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/utiw", rawr
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/featuwe/featuwemap/datawecowd", σωσ
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine", σωσ
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pwoduct", >_<
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/utiw", :3
+        "swc/scawa/com/twittew/timewines/pwediction/featuwes/wecap", (U ﹏ U)
+        "timewinesewvice/common:modew", -.-
     ],
 )

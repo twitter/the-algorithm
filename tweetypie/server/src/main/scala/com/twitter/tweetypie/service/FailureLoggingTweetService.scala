@@ -1,76 +1,76 @@
-package com.twitter.tweetypie
-package service
+package com.twittew.tweetypie
+package s-sewvice
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.coreservices.failed_task.writer.FailedTaskWriter
-import com.twitter.scrooge.ThriftException
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.scrooge.ThriftStructCodec
-import com.twitter.tweetypie.serverutil.BoringStackTrace
-import com.twitter.tweetypie.thriftscala._
-import scala.util.control.NoStackTrace
+impowt c-com.twittew.bijection.scwooge.binawyscawacodec
+i-impowt com.twittew.cowesewvices.faiwed_task.wwitew.faiwedtaskwwitew
+i-impowt com.twittew.scwooge.thwiftexception
+i-impowt com.twittew.scwooge.thwiftstwuct
+i-impowt c-com.twittew.scwooge.thwiftstwuctcodec
+i-impowt com.twittew.tweetypie.sewvewutiw.bowingstacktwace
+impowt com.twittew.tweetypie.thwiftscawa._
+impowt scawa.utiw.contwow.nostacktwace
 
-object FailureLoggingTweetService {
+object faiwuwewoggingtweetsewvice {
 
   /**
-   * Defines the universe of exception types for which we should scribe
-   * the failure.
+   * d-defines the univewse of exception types fow w-which we shouwd scwibe
+   * the f-faiwuwe. OwO
    */
-  private def shouldWrite(t: Throwable): Boolean =
-    t match {
-      case _: ThriftException => true
-      case _: PostTweetFailure => true
-      case _ => !BoringStackTrace.isBoring(t)
+  pwivate def shouwdwwite(t: thwowabwe): boowean =
+    t-t match {
+      case _: thwiftexception => t-twue
+      case _: p-posttweetfaiwuwe => twue
+      case _ => !bowingstacktwace.isbowing(t)
     }
 
   /**
-   * Holds failure information from a failing PostTweetResult.
+   * howds faiwuwe infowmation f-fwom a faiwing posttweetwesuwt. (U ﹏ U)
    *
-   * FailedTaskWriter logs an exception with the failed request, so we
-   * need to package up any failure that we want to log into an
-   * exception.
+   * faiwedtaskwwitew wogs an exception with the faiwed w-wequest, >w< so we
+   * nyeed to p-package up any f-faiwuwe that we w-want to wog into a-an
+   * exception. (U ﹏ U)
    */
-  private class PostTweetFailure(state: TweetCreateState, reason: Option[String])
-      extends Exception
-      with NoStackTrace {
-    override def toString: String = s"PostTweetFailure($state, $reason)"
+  pwivate cwass posttweetfaiwuwe(state: t-tweetcweatestate, 😳 weason: option[stwing])
+      extends exception
+      w-with nyostacktwace {
+    ovewwide def tostwing: stwing = s"posttweetfaiwuwe($state, (ˆ ﻌ ˆ)♡ $weason)"
   }
 }
 
 /**
- * Wraps a tweet service with scribing of failed requests in order to
- * enable analysis of failures for diagnosing problems.
+ * wwaps a tweet sewvice with s-scwibing of faiwed wequests in o-owdew to
+ * enabwe a-anawysis of faiwuwes f-fow diagnosing pwobwems. 😳😳😳
  */
-class FailureLoggingTweetService(
-  failedTaskWriter: FailedTaskWriter[Array[Byte]],
-  protected val underlying: ThriftTweetService)
-    extends TweetServiceProxy {
-  import FailureLoggingTweetService._
+cwass faiwuwewoggingtweetsewvice(
+  faiwedtaskwwitew: f-faiwedtaskwwitew[awway[byte]],
+  p-pwotected vaw undewwying: t-thwifttweetsewvice)
+    e-extends tweetsewvicepwoxy {
+  i-impowt faiwuwewoggingtweetsewvice._
 
-  private[this] object writers {
-    private[this] def writer[T <: ThriftStruct](
-      name: String,
-      codec: ThriftStructCodec[T]
-    ): (T, Throwable) => Future[Unit] = {
-      val taskWriter = failedTaskWriter(name, BinaryScalaCodec(codec).apply)
+  p-pwivate[this] object wwitews {
+    pwivate[this] d-def wwitew[t <: thwiftstwuct](
+      n-nyame: stwing, (U ﹏ U)
+      codec: t-thwiftstwuctcodec[t]
+    ): (t, (///ˬ///✿) t-thwowabwe) => futuwe[unit] = {
+      vaw taskwwitew = faiwedtaskwwitew(name, 😳 binawyscawacodec(codec).appwy)
 
-      (t, exc) =>
-        Future.when(shouldWrite(exc)) {
-          taskWriter.writeFailure(t, exc)
+      (t, 😳 exc) =>
+        futuwe.when(shouwdwwite(exc)) {
+          t-taskwwitew.wwitefaiwuwe(t, σωσ e-exc)
         }
     }
 
-    val postTweet: (PostTweetRequest, Throwable) => Future[Unit] =
-      writer("post_tweet", PostTweetRequest)
+    vaw posttweet: (posttweetwequest, rawr x3 t-thwowabwe) => f-futuwe[unit] =
+      w-wwitew("post_tweet", OwO posttweetwequest)
   }
 
-  override def postTweet(request: PostTweetRequest): Future[PostTweetResult] =
-    underlying.postTweet(request).respond {
-      // Log requests for states other than OK to enable debugging creation failures
-      case Return(res) if res.state != TweetCreateState.Ok =>
-        writers.postTweet(request, new PostTweetFailure(res.state, res.failureReason))
-      case Throw(exc) =>
-        writers.postTweet(request, exc)
-      case _ =>
+  ovewwide def posttweet(wequest: p-posttweetwequest): futuwe[posttweetwesuwt] =
+    undewwying.posttweet(wequest).wespond {
+      // wog wequests fow states othew than ok to enabwe d-debugging cweation faiwuwes
+      c-case wetuwn(wes) i-if wes.state != t-tweetcweatestate.ok =>
+        wwitews.posttweet(wequest, /(^•ω•^) n-nyew p-posttweetfaiwuwe(wes.state, 😳😳😳 w-wes.faiwuweweason))
+      c-case thwow(exc) =>
+        wwitews.posttweet(wequest, ( ͡o ω ͡o ) exc)
+      c-case _ =>
     }
 }

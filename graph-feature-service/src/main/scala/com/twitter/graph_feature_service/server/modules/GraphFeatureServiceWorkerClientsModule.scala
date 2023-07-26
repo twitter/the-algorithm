@@ -1,51 +1,51 @@
-package com.twitter.graph_feature_service.server.modules
+package com.twittew.gwaph_featuwe_sewvice.sewvew.moduwes
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.service.RetryBudget
-import com.twitter.graph_feature_service.thriftscala
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.util.{Await, Duration}
-import javax.inject.Singleton
+impowt c-com.googwe.inject.pwovides
+i-impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt c-com.twittew.finagwe.mtws.cwient.mtwsstackcwient._
+i-impowt com.twittew.finagwe.thwiftmux
+i-impowt com.twittew.finagwe.sewvice.wetwybudget
+impowt com.twittew.gwaph_featuwe_sewvice.thwiftscawa
+impowt com.twittew.inject.twittewmoduwe
+impowt com.twittew.inject.annotations.fwag
+i-impowt com.twittew.utiw.{await, duwation}
+i-impowt javax.inject.singweton
 
-case class GraphFeatureServiceWorkerClients(
-  workers: Seq[thriftscala.Worker.MethodPerEndpoint])
+case cwass g-gwaphfeatuwesewvicewowkewcwients(
+  wowkews: seq[thwiftscawa.wowkew.methodpewendpoint])
 
-object GraphFeatureServiceWorkerClientsModule extends TwitterModule {
-  private[this] val closeableGracePeriod: Duration = 1.second
-  private[this] val requestTimeout: Duration = 25.millis
+object gwaphfeatuwesewvicewowkewcwientsmoduwe e-extends twittewmoduwe {
+  p-pwivate[this] v-vaw cwoseabwegwacepewiod: duwation = 1.second
+  pwivate[this] vaw wequesttimeout: duwation = 25.miwwis
 
-  @Provides
-  @Singleton
-  def provideGraphFeatureServiceWorkerClient(
-    @Flag(ServerFlagNames.NumWorkers) numWorkers: Int,
-    @Flag(ServerFlagNames.ServiceRole) serviceRole: String,
-    @Flag(ServerFlagNames.ServiceEnv) serviceEnv: String,
-    serviceIdentifier: ServiceIdentifier
-  ): GraphFeatureServiceWorkerClients = {
+  @pwovides
+  @singweton
+  d-def pwovidegwaphfeatuwesewvicewowkewcwient(
+    @fwag(sewvewfwagnames.numwowkews) nyumwowkews: int, mya
+    @fwag(sewvewfwagnames.sewvicewowe) sewvicewowe: stwing, 🥺
+    @fwag(sewvewfwagnames.sewviceenv) sewviceenv: s-stwing, >_<
+    sewviceidentifiew: s-sewviceidentifiew
+  ): g-gwaphfeatuwesewvicewowkewcwients = {
 
-    val workers: Seq[thriftscala.Worker.MethodPerEndpoint] =
-      (0 until numWorkers).map { id =>
-        val dest = s"/srv#/$serviceEnv/local/$serviceRole/graph_feature_service-worker-$id"
+    v-vaw wowkews: s-seq[thwiftscawa.wowkew.methodpewendpoint] =
+      (0 untiw nyumwowkews).map { id =>
+        vaw d-dest = s"/swv#/$sewviceenv/wocaw/$sewvicewowe/gwaph_featuwe_sewvice-wowkew-$id"
 
-        val client = ThriftMux.client
-          .withRequestTimeout(requestTimeout)
-          .withRetryBudget(RetryBudget.Empty)
-          .withMutualTls(serviceIdentifier)
-          .build[thriftscala.Worker.MethodPerEndpoint](dest, s"worker-$id")
+        vaw cwient = thwiftmux.cwient
+          .withwequesttimeout(wequesttimeout)
+          .withwetwybudget(wetwybudget.empty)
+          .withmutuawtws(sewviceidentifiew)
+          .buiwd[thwiftscawa.wowkew.methodpewendpoint](dest, >_< s"wowkew-$id")
 
-        onExit {
-          val closeable = client.asClosable
-          Await.result(closeable.close(closeableGracePeriod), closeableGracePeriod)
+        o-onexit {
+          vaw cwoseabwe = cwient.ascwosabwe
+          await.wesuwt(cwoseabwe.cwose(cwoseabwegwacepewiod), (⑅˘꒳˘) cwoseabwegwacepewiod)
         }
 
-        client
+        cwient
       }
 
-    GraphFeatureServiceWorkerClients(workers)
+    g-gwaphfeatuwesewvicewowkewcwients(wowkews)
   }
 }

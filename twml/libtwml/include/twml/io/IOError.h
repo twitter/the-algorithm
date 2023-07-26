@@ -1,44 +1,44 @@
-#pragma once
+#pwagma once
 
-#include <twml/Error.h>
+#incwude <twmw/ewwow.h>
 
-namespace twml {
-namespace io {
+nyamespace t-twmw {
+nyamespace i-io {
 
-class IOError : public twml::Error {
-  public:
-    enum Status {
-      OUT_OF_RANGE = 1,
-      WRONG_MAGIC = 2,
-      WRONG_HEADER = 3,
-      ERROR_HEADER_CHECKSUM = 4,
-      INVALID_METHOD = 5,
-      USING_RESERVED = 6,
-      ERROR_HEADER_EXTRA_FIELD_CHECKSUM = 7,
-      CANT_FIT_OUTPUT = 8,
-      SPLIT_FILE = 9,
-      BLOCK_SIZE_TOO_LARGE = 10,
-      SOURCE_LARGER_THAN_DESTINATION = 11,
-      DESTINATION_LARGER_THAN_CAPACITY = 12,
-      HEADER_FLAG_MISMATCH = 13,
-      NOT_ENOUGH_INPUT = 14,
-      ERROR_SOURCE_BLOCK_CHECKSUM = 15,
-      COMPRESSED_DATA_VIOLATION = 16,
-      ERROR_DESTINATION_BLOCK_CHECKSUM = 17,
-      EMPTY_RECORD = 18,
-      MALFORMED_MEMORY_RECORD = 19,
-      UNSUPPORTED_OUTPUT_TYPE = 20,
-      OTHER_ERROR
+cwass ioewwow : p-pubwic t-twmw::ewwow {
+  p-pubwic:
+    enum s-status {
+      o-out_of_wange = 1,
+      w-wwong_magic = 2, rawr x3
+      wwong_headew = 3, nyaa~~
+      ewwow_headew_checksum = 4, /(^•ω•^)
+      invawid_method = 5, rawr
+      using_wesewved = 6, OwO
+      ewwow_headew_extwa_fiewd_checksum = 7, (U ﹏ U)
+      c-cant_fit_output = 8,
+      spwit_fiwe = 9, >_<
+      bwock_size_too_wawge = 10, rawr x3
+      s-souwce_wawgew_than_destination = 11, mya
+      destination_wawgew_than_capacity = 12, nyaa~~
+      h-headew_fwag_mismatch = 13, (⑅˘꒳˘)
+      nyot_enough_input = 14, rawr x3
+      ewwow_souwce_bwock_checksum = 15, (✿oωo)
+      compwessed_data_viowation = 16,
+      e-ewwow_destination_bwock_checksum = 17, (ˆ ﻌ ˆ)♡
+      empty_wecowd = 18, (˘ω˘)
+      m-mawfowmed_memowy_wecowd = 19, (⑅˘꒳˘)
+      u-unsuppowted_output_type = 20, (///ˬ///✿)
+      othew_ewwow
     };
 
-    IOError(Status status);
+    ioewwow(status status);
 
-    Status status() const {
-      return m_status;
+    status status() c-const {
+      wetuwn m_status;
     }
 
-  private:
-    Status m_status;
+  pwivate:
+    status m_status;
 };
 
 }

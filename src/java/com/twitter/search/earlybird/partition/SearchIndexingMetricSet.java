@@ -1,208 +1,208 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.util.EnumMap;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
+impowt java.utiw.enummap;
+i-impowt j-java.utiw.concuwwent.timeunit;
+i-impowt java.utiw.concuwwent.atomic.atomicwong;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEventType;
-import com.twitter.search.earlybird.util.ScheduledExecutorManager;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.metwics.seawchwonggauge;
+i-impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+i-impowt c-com.twittew.seawch.common.metwics.seawchstatsweceivew;
+impowt com.twittew.seawch.common.metwics.seawchtimewstats;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingeventtype;
+impowt com.twittew.seawch.eawwybiwd.utiw.scheduwedexecutowmanagew;
 
 /**
- * Collection of common metrics used in the indexing, and related code.
- * We create a set/holder for them as we want to create all counters only one time, and these
- * counters can be used by both SimpleUpdateIndexer, PartitionIndexer, EarlybirdSegment, and others.
+ * c-cowwection of common metwics used i-in the indexing, ^^;; and wewated code. ʘwʘ
+ * w-we cweate a set/howdew fow them as we want to cweate aww countews o-onwy one time, (U ﹏ U) and these
+ * c-countews can b-be used by both simpweupdateindexew, (˘ω˘) pawtitionindexew, (ꈍᴗꈍ) eawwybiwdsegment, /(^•ω•^) and othews. >_<
  */
-public class SearchIndexingMetricSet {
+p-pubwic cwass seawchindexingmetwicset {
   /**
-   * A proxy for the creation time of the "freshest" tweet that we have in the index.
-   * It is used in computing the index freshness stat "earlybird_index_freshness_millis".
-   * - In the realtme clusters, this should match the creation time of highestStatusId.
-   * - In the archive clusters, this should match the timestamp of the latest indexed day.
+   * a pwoxy fow the cweation time of the "fweshest" t-tweet that we have in t-the index. σωσ
+   * i-it is used in c-computing the index f-fweshness stat "eawwybiwd_index_fweshness_miwwis". ^^;;
+   * - in the weawtme cwustews, 😳 t-this shouwd match the cweation time of higheststatusid. >_<
+   * - i-in the awchive cwustews, -.- this shouwd match the timestamp of the watest indexed day. UwU
    */
-  public final SearchLongGauge freshestTweetTimeMillis;
+  p-pubwic finaw seawchwonggauge fweshesttweettimemiwwis;
 
-  /** The highest indexed tweet ID. Used to compute index freshness. */
-  public final SearchLongGauge highestStatusId;
-
-  /**
-   * The current timeslice's ID. We can compare this to indexer's exported current timeslice ID to
-   * identify stuck timeslice rolls.
-   */
-  public final SearchLongGauge currentTimesliceId;
-
-  /** The number of archive timeslices that we failed to process. */
-  public final SearchCounter archiveTimeSliceBuildFailedCounter;
-
-  /** The number of times we checked a segment's size on disk. */
-  public final SearchCounter segmentSizeCheckCount;
-
-  /** The number of segments that have reached their max size. */
-  public final SearchCounter maxSegmentSizeReachedCounter;
-
-  /** The number of indexed tweets and the aggregate indexing latencies in microseconds. */
-  public final SearchTimerStats statusStats;
-  /** The number of applied updates and the aggregate indexing latencies in microseconds. */
-  public final SearchTimerStats updateStats;
-  /** The number of retried updates and the aggregate indexing latencies in microseconds. */
-  public final SearchTimerStats updateRetryStats;
-  /** The number of applied user updates and the aggregate indexing latencies in microseconds. */
-  public final SearchTimerStats userUpdateIndexingStats;
-  /** The number of applied userGeoScrubEvents and the aggregate indexing latencies in
-   * microseconds. */
-  public final SearchTimerStats userScrubGeoIndexingStats;
-  /** The number of updates attempted on missing tweets. */
-  public final SearchRateCounter updateOnMissingTweetCounter;
-  /** The number of updates dropped. */
-  public final SearchRateCounter droppedUpdateEvent;
-
-  /** The latencies in microseconds of the PartitionIndexer loop. */
-  public final SearchTimerStats partitionIndexerRunLoopCounter;
-  /** The latencies in microseconds of the PartitionIndexer.indexFromReaders() calls. */
-  public final SearchTimerStats partitionIndexerIndexFromReadersCounter;
-  /** The number of invocations of the PartitionIndexer task. */
-  public final SearchCounter partitionIndexerIterationCounter;
-
-  /** The number of unsorted updates handled by SimpleUpdateIndexer. */
-  public final SearchCounter simpleUpdateIndexerUnsortedUpdateCounter;
-  /** The number of unsorted updates with the wrong segment handled by SimpleUpdateIndexer. */
-  public final SearchCounter simpleUpdateIndexerUnsortedUpdateWithWrongSegmentCounter;
-
-  /** The number of invocations of the SimpleUserUpdateIndexer task. */
-  public final SearchCounter simpleUserUpdateIndexerIterationCounter;
-
-  /** The number of exceptions encountered by SimpleSegmentIndexer while indexing a segment. */
-  public final SearchCounter simpleSegmentIndexerExceptionCounter;
+  /** the highest indexed t-tweet id. :3 used t-to compute index f-fweshness. σωσ */
+  pubwic finaw seawchwonggauge higheststatusid;
 
   /**
-   * A map from TIE update type to the creation time of the updated tweet in milliseconds of the
-   * freshest update we have indexed.
+   * t-the c-cuwwent timeswice's id. >w< we can c-compawe this to i-indexew's expowted cuwwent timeswice i-id to
+   * identify stuck timeswice w-wowws.
    */
-  public final EnumMap<ThriftIndexingEventType, AtomicLong> updateFreshness =
-      new EnumMap<>(ThriftIndexingEventType.class);
+  pubwic finaw seawchwonggauge c-cuwwenttimeswiceid;
 
-  public final SearchStatsReceiver searchStatsReceiver;
+  /** the nyumbew of awchive t-timeswices that we faiwed t-to pwocess. (ˆ ﻌ ˆ)♡ */
+  p-pubwic finaw seawchcountew awchivetimeswicebuiwdfaiwedcountew;
 
-  public static class StartupMetric {
-    // Switched from 0 to 1 during the event.
-    private SearchLongGauge duringGauge;
-    // Switched from 0 to time it takes, in milliseconds.
-    private SearchLongGauge durationMillisGauge;
+  /** the nyumbew of times we checked a segment's size on disk. ʘwʘ */
+  pubwic finaw s-seawchcountew s-segmentsizecheckcount;
 
-    StartupMetric(String name) {
-      this.duringGauge = SearchLongGauge.export(name);
-      this.durationMillisGauge = SearchLongGauge.export("duration_of_" + name);
+  /** the nyumbew of segments t-that have w-weached theiw m-max size. :3 */
+  pubwic finaw seawchcountew maxsegmentsizeweachedcountew;
+
+  /** the nyumbew of indexed t-tweets and the aggwegate indexing watencies in micwoseconds. (˘ω˘) */
+  pubwic finaw s-seawchtimewstats statusstats;
+  /** t-the nyumbew o-of appwied u-updates and the aggwegate indexing w-watencies in m-micwoseconds. 😳😳😳 */
+  p-pubwic finaw s-seawchtimewstats updatestats;
+  /** the nyumbew o-of wetwied updates a-and the aggwegate i-indexing watencies i-in micwoseconds. rawr x3 */
+  p-pubwic finaw seawchtimewstats updatewetwystats;
+  /** the nyumbew o-of appwied usew updates and the aggwegate indexing watencies in micwoseconds. (✿oωo) */
+  pubwic finaw s-seawchtimewstats usewupdateindexingstats;
+  /** the nyumbew of appwied usewgeoscwubevents a-and the a-aggwegate indexing w-watencies in
+   * micwoseconds. (ˆ ﻌ ˆ)♡ */
+  p-pubwic finaw seawchtimewstats u-usewscwubgeoindexingstats;
+  /** t-the nyumbew of updates attempted on missing tweets. :3 */
+  pubwic finaw seawchwatecountew updateonmissingtweetcountew;
+  /** t-the numbew of updates dwopped. (U ᵕ U❁) */
+  p-pubwic finaw seawchwatecountew d-dwoppedupdateevent;
+
+  /** t-the watencies in micwoseconds of the pawtitionindexew w-woop. ^^;; */
+  p-pubwic finaw seawchtimewstats p-pawtitionindexewwunwoopcountew;
+  /** t-the watencies in micwoseconds of the pawtitionindexew.indexfwomweadews() cawws. mya */
+  pubwic finaw seawchtimewstats p-pawtitionindexewindexfwomweadewscountew;
+  /** t-the nyumbew o-of invocations of the pawtitionindexew t-task. 😳😳😳 */
+  p-pubwic finaw seawchcountew p-pawtitionindexewitewationcountew;
+
+  /** the nyumbew of unsowted updates handwed by simpweupdateindexew. OwO */
+  p-pubwic finaw seawchcountew s-simpweupdateindexewunsowtedupdatecountew;
+  /** the nyumbew of unsowted u-updates with t-the wwong segment handwed by simpweupdateindexew. rawr */
+  pubwic finaw seawchcountew s-simpweupdateindexewunsowtedupdatewithwwongsegmentcountew;
+
+  /** the nyumbew of invocations of the simpweusewupdateindexew task. XD */
+  p-pubwic finaw seawchcountew simpweusewupdateindexewitewationcountew;
+
+  /** t-the nyumbew of e-exceptions encountewed by simpwesegmentindexew whiwe indexing a segment. (U ﹏ U) */
+  p-pubwic finaw seawchcountew s-simpwesegmentindexewexceptioncountew;
+
+  /**
+   * a map fwom tie update type to the cweation t-time of the updated tweet i-in miwwiseconds of the
+   * fweshest update we have indexed. (˘ω˘)
+   */
+  p-pubwic finaw enummap<thwiftindexingeventtype, UwU a-atomicwong> u-updatefweshness =
+      nyew enummap<>(thwiftindexingeventtype.cwass);
+
+  p-pubwic finaw seawchstatsweceivew s-seawchstatsweceivew;
+
+  p-pubwic static c-cwass stawtupmetwic {
+    // switched fwom 0 to 1 d-duwing the event. >_<
+    p-pwivate seawchwonggauge duwinggauge;
+    // s-switched fwom 0 t-to time it t-takes, σωσ in miwwiseconds. 🥺
+    pwivate seawchwonggauge d-duwationmiwwisgauge;
+
+    stawtupmetwic(stwing nyame) {
+      t-this.duwinggauge = s-seawchwonggauge.expowt(name);
+      this.duwationmiwwisgauge = seawchwonggauge.expowt("duwation_of_" + nyame);
     }
 
-    public void begin() {
-      duringGauge.set(1);
+    p-pubwic void begin() {
+      d-duwinggauge.set(1);
     }
 
-    public void end(long durationInMillis) {
-      duringGauge.set(0);
-      durationMillisGauge.set(durationInMillis);
+    p-pubwic v-void end(wong duwationinmiwwis) {
+      d-duwinggauge.set(0);
+      duwationmiwwisgauge.set(duwationinmiwwis);
     }
   }
 
-  public final StartupMetric startupInProgress;
-  public final StartupMetric startupInIndexCompletedSegments;
-  public final StartupMetric startupInLoadCompletedSegments;
-  public final StartupMetric startupInIndexUpdatesForCompletedSegments;
-  public final StartupMetric startupInCurrentSegment;
-  public final StartupMetric startupInUserUpdates;
-  public final StartupMetric startupInQueryCacheUpdates;
-  public final StartupMetric startupInMultiSegmentTermDictionaryUpdates;
-  public final StartupMetric startupInWarmUp;
+  pubwic finaw stawtupmetwic stawtupinpwogwess;
+  pubwic f-finaw stawtupmetwic stawtupinindexcompwetedsegments;
+  p-pubwic finaw stawtupmetwic s-stawtupinwoadcompwetedsegments;
+  pubwic finaw s-stawtupmetwic stawtupinindexupdatesfowcompwetedsegments;
+  pubwic f-finaw stawtupmetwic s-stawtupincuwwentsegment;
+  p-pubwic finaw s-stawtupmetwic s-stawtupinusewupdates;
+  pubwic finaw stawtupmetwic stawtupinquewycacheupdates;
+  pubwic finaw stawtupmetwic stawtupinmuwtisegmenttewmdictionawyupdates;
+  pubwic f-finaw stawtupmetwic s-stawtupinwawmup;
 
-  // Kafka metrics
-  public final StartupMetric startupInLoadFlushedIndex;
-  public final StartupMetric startupInFreshStartup;
-  public final StartupMetric startupInIngestUntilCurrent;
-  public final StartupMetric startupInUserUpdatesStartup;
-  public final StartupMetric startupInUserEventIndexer;
-  public final StartupMetric startupInAudioSpaceEventIndexer;
+  // k-kafka metwics
+  pubwic f-finaw stawtupmetwic stawtupinwoadfwushedindex;
+  pubwic finaw stawtupmetwic stawtupinfweshstawtup;
+  p-pubwic finaw s-stawtupmetwic stawtupiningestuntiwcuwwent;
+  p-pubwic finaw stawtupmetwic stawtupinusewupdatesstawtup;
+  pubwic f-finaw stawtupmetwic s-stawtupinuseweventindexew;
+  pubwic finaw s-stawtupmetwic stawtupinaudiospaceeventindexew;
 
-  public SearchIndexingMetricSet(SearchStatsReceiver searchStatsReceiver) {
-    this.freshestTweetTimeMillis = searchStatsReceiver.getLongGauge(
-        "earlybird_freshest_tweet_timestamp_millis");
-    this.highestStatusId = searchStatsReceiver.getLongGauge("highest_indexed_status_id");
-    this.currentTimesliceId = searchStatsReceiver.getLongGauge("earlybird_current_timeslice_id");
-    this.archiveTimeSliceBuildFailedCounter = searchStatsReceiver.getCounter(
-        "archive_time_slice_build_failed");
-    this.segmentSizeCheckCount = searchStatsReceiver.getCounter("segment_size_check_count");
-    this.maxSegmentSizeReachedCounter = searchStatsReceiver.getCounter("max_segment_reached");
+  p-pubwic seawchindexingmetwicset(seawchstatsweceivew seawchstatsweceivew) {
+    this.fweshesttweettimemiwwis = seawchstatsweceivew.getwonggauge(
+        "eawwybiwd_fweshest_tweet_timestamp_miwwis");
+    this.higheststatusid = s-seawchstatsweceivew.getwonggauge("highest_indexed_status_id");
+    t-this.cuwwenttimeswiceid = s-seawchstatsweceivew.getwonggauge("eawwybiwd_cuwwent_timeswice_id");
+    t-this.awchivetimeswicebuiwdfaiwedcountew = s-seawchstatsweceivew.getcountew(
+        "awchive_time_swice_buiwd_faiwed");
+    this.segmentsizecheckcount = seawchstatsweceivew.getcountew("segment_size_check_count");
+    this.maxsegmentsizeweachedcountew = s-seawchstatsweceivew.getcountew("max_segment_weached");
 
-    this.statusStats = searchStatsReceiver.getTimerStats(
-        "index_status", TimeUnit.MICROSECONDS, false, false, false);
-    this.updateStats = searchStatsReceiver.getTimerStats(
-        "updates", TimeUnit.MICROSECONDS, false, false, false);
-    this.updateRetryStats = searchStatsReceiver.getTimerStats(
-        "update_retries", TimeUnit.MICROSECONDS, false, false, false);
-    this.userUpdateIndexingStats = searchStatsReceiver.getTimerStats(
-        "user_updates", TimeUnit.MICROSECONDS, false, false, false);
-    this.userScrubGeoIndexingStats = searchStatsReceiver.getTimerStats(
-        "user_scrub_geo", TimeUnit.MICROSECONDS, false, false, false);
-    this.updateOnMissingTweetCounter = searchStatsReceiver.getRateCounter(
+    this.statusstats = s-seawchstatsweceivew.gettimewstats(
+        "index_status", 🥺 timeunit.micwoseconds, ʘwʘ f-fawse, fawse, :3 f-fawse);
+    this.updatestats = seawchstatsweceivew.gettimewstats(
+        "updates", (U ﹏ U) t-timeunit.micwoseconds, (U ﹏ U) fawse, fawse, ʘwʘ fawse);
+    t-this.updatewetwystats = seawchstatsweceivew.gettimewstats(
+        "update_wetwies", >w< t-timeunit.micwoseconds, rawr x3 f-fawse, OwO fawse, fawse);
+    this.usewupdateindexingstats = s-seawchstatsweceivew.gettimewstats(
+        "usew_updates", ^•ﻌ•^ timeunit.micwoseconds, >_< fawse, OwO fawse, fawse);
+    t-this.usewscwubgeoindexingstats = s-seawchstatsweceivew.gettimewstats(
+        "usew_scwub_geo", >_< t-timeunit.micwoseconds, (ꈍᴗꈍ) fawse, fawse, fawse);
+    this.updateonmissingtweetcountew = s-seawchstatsweceivew.getwatecountew(
         "index_update_on_missing_tweet");
-    this.droppedUpdateEvent = searchStatsReceiver.getRateCounter("dropped_update_event");
+    this.dwoppedupdateevent = seawchstatsweceivew.getwatecountew("dwopped_update_event");
 
-    this.partitionIndexerRunLoopCounter = searchStatsReceiver.getTimerStats(
-        "partition_indexer_run_loop", TimeUnit.MICROSECONDS, false, true, false);
-    this.partitionIndexerIndexFromReadersCounter = searchStatsReceiver.getTimerStats(
-        "partition_indexer_indexFromReaders", TimeUnit.MICROSECONDS, false, true, false);
-    this.partitionIndexerIterationCounter = searchStatsReceiver.getCounter(
-        ScheduledExecutorManager.SCHEDULED_EXECUTOR_TASK_PREFIX + "PartitionIndexer");
+    t-this.pawtitionindexewwunwoopcountew = s-seawchstatsweceivew.gettimewstats(
+        "pawtition_indexew_wun_woop", >w< timeunit.micwoseconds, (U ﹏ U) f-fawse, ^^ twue, fawse);
+    t-this.pawtitionindexewindexfwomweadewscountew = s-seawchstatsweceivew.gettimewstats(
+        "pawtition_indexew_indexfwomweadews", (U ﹏ U) timeunit.micwoseconds, :3 fawse, (✿oωo) t-twue, fawse);
+    this.pawtitionindexewitewationcountew = seawchstatsweceivew.getcountew(
+        scheduwedexecutowmanagew.scheduwed_executow_task_pwefix + "pawtitionindexew");
 
-    this.simpleUpdateIndexerUnsortedUpdateCounter = searchStatsReceiver.getCounter(
-        "simple_update_indexer_unsorted_update_count");
-    this.simpleUpdateIndexerUnsortedUpdateWithWrongSegmentCounter = searchStatsReceiver.getCounter(
-        "simple_update_indexer_unsorted_update_with_wrong_segment_count");
+    t-this.simpweupdateindexewunsowtedupdatecountew = s-seawchstatsweceivew.getcountew(
+        "simpwe_update_indexew_unsowted_update_count");
+    this.simpweupdateindexewunsowtedupdatewithwwongsegmentcountew = s-seawchstatsweceivew.getcountew(
+        "simpwe_update_indexew_unsowted_update_with_wwong_segment_count");
 
-    this.simpleUserUpdateIndexerIterationCounter = searchStatsReceiver.getCounter(
-        ScheduledExecutorManager.SCHEDULED_EXECUTOR_TASK_PREFIX + "SimpleUserUpdateIndexer");
+    this.simpweusewupdateindexewitewationcountew = s-seawchstatsweceivew.getcountew(
+        s-scheduwedexecutowmanagew.scheduwed_executow_task_pwefix + "simpweusewupdateindexew");
 
-    this.simpleSegmentIndexerExceptionCounter = searchStatsReceiver.getCounter(
-        "exception_while_indexing_segment");
+    t-this.simpwesegmentindexewexceptioncountew = seawchstatsweceivew.getcountew(
+        "exception_whiwe_indexing_segment");
 
-    for (ThriftIndexingEventType type : ThriftIndexingEventType.values()) {
-      AtomicLong freshness = new AtomicLong(0);
-      updateFreshness.put(type, freshness);
-      String statName = ("index_freshness_" + type + "_age_millis").toLowerCase();
-      searchStatsReceiver.getCustomGauge(statName,
-          () -> System.currentTimeMillis() - freshness.get());
+    fow (thwiftindexingeventtype type : thwiftindexingeventtype.vawues()) {
+      atomicwong fweshness = nyew atomicwong(0);
+      updatefweshness.put(type, XD fweshness);
+      stwing statname = ("index_fweshness_" + type + "_age_miwwis").towowewcase();
+      seawchstatsweceivew.getcustomgauge(statname,
+          () -> system.cuwwenttimemiwwis() - fweshness.get());
     }
 
-    this.startupInProgress = new StartupMetric("startup_in_progress");
-    this.startupInIndexCompletedSegments = new StartupMetric("startup_in_index_completed_segments");
-    this.startupInLoadCompletedSegments = new StartupMetric("startup_in_load_completed_segments");
-    this.startupInIndexUpdatesForCompletedSegments =
-        new StartupMetric("startup_in_index_updates_for_completed_segments");
-    this.startupInCurrentSegment = new StartupMetric("startup_in_current_segment");
-    this.startupInUserUpdates = new StartupMetric("startup_in_user_updates");
-    this.startupInQueryCacheUpdates = new StartupMetric("startup_in_query_cache_updates");
-    this.startupInMultiSegmentTermDictionaryUpdates =
-        new StartupMetric("startup_in_multi_segment_dictionary_updates");
-    this.startupInWarmUp = new StartupMetric("startup_in_warm_up");
+    t-this.stawtupinpwogwess = n-nyew stawtupmetwic("stawtup_in_pwogwess");
+    this.stawtupinindexcompwetedsegments = nyew s-stawtupmetwic("stawtup_in_index_compweted_segments");
+    t-this.stawtupinwoadcompwetedsegments = n-nyew stawtupmetwic("stawtup_in_woad_compweted_segments");
+    this.stawtupinindexupdatesfowcompwetedsegments =
+        n-nyew stawtupmetwic("stawtup_in_index_updates_fow_compweted_segments");
+    this.stawtupincuwwentsegment = n-nyew stawtupmetwic("stawtup_in_cuwwent_segment");
+    t-this.stawtupinusewupdates = nyew stawtupmetwic("stawtup_in_usew_updates");
+    t-this.stawtupinquewycacheupdates = nyew stawtupmetwic("stawtup_in_quewy_cache_updates");
+    t-this.stawtupinmuwtisegmenttewmdictionawyupdates =
+        n-nyew stawtupmetwic("stawtup_in_muwti_segment_dictionawy_updates");
+    this.stawtupinwawmup = n-nyew stawtupmetwic("stawtup_in_wawm_up");
 
-    this.startupInLoadFlushedIndex = new StartupMetric("startup_in_load_flushed_index");
-    this.startupInFreshStartup = new StartupMetric("startup_in_fresh_startup");
-    this.startupInIngestUntilCurrent = new StartupMetric("startup_in_ingest_until_current");
-    this.startupInUserUpdatesStartup = new StartupMetric("startup_in_user_updates_startup");
-    this.startupInUserEventIndexer = new StartupMetric("startup_in_user_events_indexer");
-    this.startupInAudioSpaceEventIndexer =
-        new StartupMetric("startup_in_audio_space_events_indexer");
+    t-this.stawtupinwoadfwushedindex = n-new stawtupmetwic("stawtup_in_woad_fwushed_index");
+    t-this.stawtupinfweshstawtup = nyew s-stawtupmetwic("stawtup_in_fwesh_stawtup");
+    t-this.stawtupiningestuntiwcuwwent = n-nyew stawtupmetwic("stawtup_in_ingest_untiw_cuwwent");
+    t-this.stawtupinusewupdatesstawtup = n-nyew stawtupmetwic("stawtup_in_usew_updates_stawtup");
+    this.stawtupinuseweventindexew = nyew stawtupmetwic("stawtup_in_usew_events_indexew");
+    t-this.stawtupinaudiospaceeventindexew =
+        n-nyew stawtupmetwic("stawtup_in_audio_space_events_indexew");
 
-    searchStatsReceiver.getCustomGauge("earlybird_index_freshness_millis",
-        this::getIndexFreshnessInMillis);
+    s-seawchstatsweceivew.getcustomgauge("eawwybiwd_index_fweshness_miwwis", >w<
+        this::getindexfweshnessinmiwwis);
 
-    this.searchStatsReceiver = searchStatsReceiver;
+    t-this.seawchstatsweceivew = seawchstatsweceivew;
   }
 
-  long getIndexFreshnessInMillis() {
-    return System.currentTimeMillis() - freshestTweetTimeMillis.get();
+  wong getindexfweshnessinmiwwis() {
+    wetuwn s-system.cuwwenttimemiwwis() - fweshesttweettimemiwwis.get();
   }
 }

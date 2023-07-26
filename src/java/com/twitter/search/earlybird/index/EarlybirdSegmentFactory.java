@@ -1,58 +1,58 @@
-package com.twitter.search.earlybird.index;
+package com.twittew.seawch.eawwybiwd.index;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import org.apache.lucene.store.Directory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.apache.wucene.stowe.diwectowy;
+i-impowt owg.swf4j.woggew;
+i-impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.partition.SegmentSyncInfo;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
+i-impowt c-com.twittew.common.utiw.cwock;
+impowt com.twittew.seawch.common.pawtitioning.base.segment;
+impowt com.twittew.seawch.eawwybiwd.eawwybiwdindexconfig;
+impowt com.twittew.seawch.eawwybiwd.pawtition.seawchindexingmetwicset;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.segmentsyncinfo;
+impowt com.twittew.seawch.eawwybiwd.stats.eawwybiwdseawchewstats;
 
-public class EarlybirdSegmentFactory {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdSegmentFactory.class);
+pubwic cwass eawwybiwdsegmentfactowy {
+  p-pwivate static finaw w-woggew wog = woggewfactowy.getwoggew(eawwybiwdsegmentfactowy.cwass);
 
-  private final EarlybirdIndexConfig earlybirdIndexConfig;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private final EarlybirdSearcherStats searcherStats;
-  private Clock clock;
+  pwivate finaw eawwybiwdindexconfig eawwybiwdindexconfig;
+  p-pwivate finaw seawchindexingmetwicset s-seawchindexingmetwicset;
+  p-pwivate finaw eawwybiwdseawchewstats seawchewstats;
+  pwivate cwock cwock;
 
-  public EarlybirdSegmentFactory(
-      EarlybirdIndexConfig earlybirdIndexConfig,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      EarlybirdSearcherStats searcherStats,
-      Clock clock) {
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.searcherStats = searcherStats;
-    this.clock = clock;
+  p-pubwic eawwybiwdsegmentfactowy(
+      eawwybiwdindexconfig eawwybiwdindexconfig, o.O
+      seawchindexingmetwicset seawchindexingmetwicset, ( ͡o ω ͡o )
+      e-eawwybiwdseawchewstats seawchewstats, (U ﹏ U)
+      c-cwock c-cwock) {
+    this.eawwybiwdindexconfig = e-eawwybiwdindexconfig;
+    t-this.seawchindexingmetwicset = seawchindexingmetwicset;
+    this.seawchewstats = s-seawchewstats;
+    this.cwock = cwock;
   }
 
-  public EarlybirdIndexConfig getEarlybirdIndexConfig() {
-    return earlybirdIndexConfig;
+  p-pubwic eawwybiwdindexconfig geteawwybiwdindexconfig() {
+    wetuwn eawwybiwdindexconfig;
   }
 
   /**
-   * Creates a new earlybird segment.
+   * cweates a nyew eawwybiwd segment. (///ˬ///✿)
    */
-  public EarlybirdSegment newEarlybirdSegment(Segment segment, SegmentSyncInfo segmentSyncInfo)
-      throws IOException {
-    Directory dir = earlybirdIndexConfig.newLuceneDirectory(segmentSyncInfo);
+  p-pubwic eawwybiwdsegment nyeweawwybiwdsegment(segment segment, >w< s-segmentsyncinfo s-segmentsyncinfo)
+      t-thwows ioexception {
+    diwectowy diw = eawwybiwdindexconfig.newwucenediwectowy(segmentsyncinfo);
 
-    LOG.info("Creating EarlybirdSegment on " + dir.toString());
+    w-wog.info("cweating e-eawwybiwdsegment on " + diw.tostwing());
 
-    return new EarlybirdSegment(
-        segment.getSegmentName(),
-        segment.getTimeSliceID(),
-        segment.getMaxSegmentSize(),
-        dir,
-        earlybirdIndexConfig,
-        searchIndexingMetricSet,
-        searcherStats,
-        clock);
+    w-wetuwn nyew e-eawwybiwdsegment(
+        segment.getsegmentname(), rawr
+        s-segment.gettimeswiceid(), mya
+        segment.getmaxsegmentsize(), ^^
+        diw, 😳😳😳
+        e-eawwybiwdindexconfig, mya
+        seawchindexingmetwicset, 😳
+        seawchewstats, -.-
+        cwock);
   }
 }

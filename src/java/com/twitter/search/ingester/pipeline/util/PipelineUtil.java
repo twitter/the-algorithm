@@ -1,26 +1,26 @@
-package com.twitter.search.ingester.pipeline.util;
+package com.twittew.seawch.ingestew.pipewine.utiw;
 
-import com.google.common.base.Preconditions;
+impowt com.googwe.common.base.pweconditions;
 
-import org.apache.commons.pipeline.Feeder;
-import org.apache.commons.pipeline.stage.InstrumentedBaseStage;
+i-impowt owg.apache.commons.pipewine.feedew;
+i-impowt o-owg.apache.commons.pipewine.stage.instwumentedbasestage;
 
-public final class PipelineUtil {
+p-pubwic f-finaw cwass p-pipewineutiw {
 
   /**
-   * Feed an object to a specified stage.  Used for stages that follow the pattern of
-   * looping indefinitely in the first call to process() and don't care what the object passed
-   * in is, but still needs at least one item fed to the stage to start processing.
+   * f-feed a-an object to a specified stage.  used fow stages that fowwow the pattewn of
+   * w-wooping indefinitewy in the fiwst caww to pwocess() a-and don't cawe nyani the object p-passed
+   * in is, (⑅˘꒳˘) but stiww nyeeds at weast one item fed to t-the stage to stawt pwocessing. rawr x3
    *
-   * Examples of stages like this are: EventBusReaderStage and KafkaBytesReaderStage
+   * e-exampwes o-of stages wike this awe: eventbusweadewstage and kafkabytesweadewstage
    *
-   * @param stage stage to enqueue an arbitrary object to.
+   * @pawam stage stage to enqueue a-an awbitwawy object to. (✿oωo)
    */
-  public static void feedStartObjectToStage(InstrumentedBaseStage stage) {
-    Feeder stageFeeder = stage.getStageContext().getStageFeeder(stage);
-    Preconditions.checkNotNull(stageFeeder);
-    stageFeeder.feed("off to the races");
+  pubwic static void feedstawtobjecttostage(instwumentedbasestage stage) {
+    f-feedew stagefeedew = stage.getstagecontext().getstagefeedew(stage);
+    p-pweconditions.checknotnuww(stagefeedew);
+    s-stagefeedew.feed("off t-to the w-waces");
   }
 
-  private PipelineUtil() { /* prevent instantiation */ }
+  pwivate pipewineutiw() { /* pwevent i-instantiation */ }
 }

@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.quality_factor
+package com.twittew.pwoduct_mixew.cowe.quawity_factow
 
-import com.twitter.util.Duration
-import com.twitter.util.Try
+impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.twy
 
-/** Updates the [[QualityFactor]] */
-trait QualityFactorObserver {
+/** u-updates t-the [[quawityfactow]] */
+t-twait quawityfactowobsewvew {
 
-  /** The [[QualityFactor]] to update when observing */
-  def qualityFactor: QualityFactor[_]
+  /** t-the [[quawityfactow]] t-to update when o-obsewving */
+  d-def quawityfactow: quawityfactow[_]
 
   /**
-   * updates the [[qualityFactor]] given the result [[Try]] and the latency
-   * @note implementations must be sure to correctly ignore
-   *       [[QualityFactor.config]]'s [[QualityFactorConfig.ignorableFailures]]
+   * updates the [[quawityfactow]] given the wesuwt [[twy]] and the w-watency
+   * @note impwementations must be suwe t-to cowwectwy ignowe
+   *       [[quawityfactow.config]]'s [[quawityfactowconfig.ignowabwefaiwuwes]]
    */
-  def apply(result: Try[_], latency: Duration): Unit
+  def a-appwy(wesuwt: twy[_], (⑅˘꒳˘) watency: duwation): unit
 }

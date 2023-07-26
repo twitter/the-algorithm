@@ -1,58 +1,58 @@
-package com.twitter.unified_user_actions.enricher.hydrator
-import com.google.common.util.concurrent.RateLimiter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.unified_user_actions.enricher.FatalException
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentEnvelop
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentKey
-import com.twitter.util.Future
-import com.twitter.util.logging.Logging
+package com.twittew.unified_usew_actions.enwichew.hydwatow
+impowt c-com.googwe.common.utiw.concuwwent.watewimitew
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.unified_usew_actions.enwichew.fatawexception
+i-impowt c-com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentenvewop
+i-impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentinstwuction
+i-impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentkey
+impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.wogging.wogging
 
-abstract class AbstractHydrator(scopedStatsReceiver: StatsReceiver) extends Hydrator with Logging {
+abstwact cwass abstwacthydwatow(scopedstatsweceivew: s-statsweceivew) extends hydwatow with wogging {
 
-  object StatsNames {
-    val Exceptions = "exceptions"
-    val EmptyKeys = "empty_keys"
-    val Hydrations = "hydrations"
+  o-object statsnames {
+    vaw e-exceptions = "exceptions"
+    vaw emptykeys = "empty_keys"
+    vaw hydwations = "hydwations"
   }
 
-  private val exceptionsCounter = scopedStatsReceiver.counter(StatsNames.Exceptions)
-  private val emptyKeysCounter = scopedStatsReceiver.counter(StatsNames.EmptyKeys)
-  private val hydrationsCounter = scopedStatsReceiver.counter(StatsNames.Hydrations)
+  pwivate vaw e-exceptionscountew = scopedstatsweceivew.countew(statsnames.exceptions)
+  p-pwivate v-vaw emptykeyscountew = scopedstatsweceivew.countew(statsnames.emptykeys)
+  pwivate vaw hydwationscountew = scopedstatsweceivew.countew(statsnames.hydwations)
 
-  // at most 1 log message per second
-  private val rateLimiter = RateLimiter.create(1.0)
+  // a-at most 1 wog message pew second
+  pwivate vaw watewimitew = watewimitew.cweate(1.0)
 
-  private def rateLimitedLogError(e: Throwable): Unit =
-    if (rateLimiter.tryAcquire()) {
-      error(e.getMessage, e)
+  p-pwivate def watewimitedwogewwow(e: t-thwowabwe): unit =
+    i-if (watewimitew.twyacquiwe()) {
+      e-ewwow(e.getmessage, ʘwʘ e-e)
     }
 
-  protected def safelyHydrate(
-    instruction: EnrichmentInstruction,
-    keyOpt: EnrichmentKey,
-    envelop: EnrichmentEnvelop
-  ): Future[EnrichmentEnvelop]
+  pwotected def safewyhydwate(
+    instwuction: enwichmentinstwuction, /(^•ω•^)
+    k-keyopt: enwichmentkey, ʘwʘ
+    envewop: enwichmentenvewop
+  ): futuwe[enwichmentenvewop]
 
-  override def hydrate(
-    instruction: EnrichmentInstruction,
-    keyOpt: Option[EnrichmentKey],
-    envelop: EnrichmentEnvelop
-  ): Future[EnrichmentEnvelop] = {
-    keyOpt
+  ovewwide d-def hydwate(
+    instwuction: enwichmentinstwuction, σωσ
+    keyopt: option[enwichmentkey], OwO
+    envewop: enwichmentenvewop
+  ): futuwe[enwichmentenvewop] = {
+    k-keyopt
       .map(key => {
-        safelyHydrate(instruction, key, envelop)
-          .onSuccess(_ => hydrationsCounter.incr())
-          .rescue {
-            case e: FatalException => Future.exception(e)
+        safewyhydwate(instwuction, 😳😳😳 k-key, envewop)
+          .onsuccess(_ => h-hydwationscountew.incw())
+          .wescue {
+            c-case e: fatawexception => futuwe.exception(e)
             case e =>
-              rateLimitedLogError(e)
-              exceptionsCounter.incr()
-              Future.value(envelop)
+              watewimitedwogewwow(e)
+              e-exceptionscountew.incw()
+              f-futuwe.vawue(envewop)
           }
-      }).getOrElse({
-        emptyKeysCounter.incr()
-        Future.value(envelop)
+      }).getowewse({
+        emptykeyscountew.incw()
+        f-futuwe.vawue(envewop)
       })
   }
 }

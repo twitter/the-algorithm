@@ -1,29 +1,29 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.sims_expansion
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt c-com.twittew.timewines.configapi.fspawam
 
-object RecentFollowingSimilarUsersParams {
-  case object MaxFirstDegreeNodes
-      extends FSBoundedParam[Int](
-        name = "sims_expansion_recent_following_max_first_degree_nodes",
-        default = 10,
-        min = 0,
+o-object w-wecentfowwowingsimiwawusewspawams {
+  c-case object m-maxfiwstdegweenodes
+      e-extends f-fsboundedpawam[int](
+        nyame = "sims_expansion_wecent_fowwowing_max_fiwst_degwee_nodes", -.-
+        defauwt = 10, ( ͡o ω ͡o )
+        min = 0, rawr x3
         max = 200)
-  case object MaxSecondaryDegreeExpansionPerNode
-      extends FSBoundedParam[Int](
-        name = "sims_expansion_recent_following_max_secondary_degree_nodes",
-        default = 40,
-        min = 0,
+  case o-object maxsecondawydegweeexpansionpewnode
+      extends fsboundedpawam[int](
+        nyame = "sims_expansion_wecent_fowwowing_max_secondawy_degwee_nodes", nyaa~~
+        d-defauwt = 40, /(^•ω•^)
+        min = 0, rawr
+        m-max = 200)
+  case object maxwesuwts
+      extends f-fsboundedpawam[int](
+        nyame = "sims_expansion_wecent_fowwowing_max_wesuwts", OwO
+        d-defauwt = 200, (U ﹏ U)
+        m-min = 0, >_<
         max = 200)
-  case object MaxResults
-      extends FSBoundedParam[Int](
-        name = "sims_expansion_recent_following_max_results",
-        default = 200,
-        min = 0,
-        max = 200)
-  case object TimestampIntegrated
-      extends FSParam[Boolean](
-        name = "sims_expansion_recent_following_integ_timestamp",
-        default = false)
+  case object timestampintegwated
+      extends fspawam[boowean](
+        nyame = "sims_expansion_wecent_fowwowing_integ_timestamp",
+        d-defauwt = fawse)
 }

@@ -1,23 +1,23 @@
-package com.twitter.timelineranker.model
+package com.twittew.timewinewankew.modew
 
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelines.model.TweetId
+impowt c-com.twittew.timewinewankew.{thwiftscawa => t-thwift}
+i-impowt com.twittew.timewines.modew.tweetid
 
-object PriorSeenEntries {
-  def fromThrift(entries: thrift.PriorSeenEntries): PriorSeenEntries = {
-    PriorSeenEntries(seenEntries = entries.seenEntries)
+object p-pwiowseenentwies {
+  d-def fwomthwift(entwies: t-thwift.pwiowseenentwies): p-pwiowseenentwies = {
+    p-pwiowseenentwies(seenentwies = entwies.seenentwies)
   }
 }
 
-case class PriorSeenEntries(seenEntries: Seq[TweetId]) {
+case cwass pwiowseenentwies(seenentwies: seq[tweetid]) {
 
-  throwIfInvalid()
+  thwowifinvawid()
 
-  def toThrift: thrift.PriorSeenEntries = {
-    thrift.PriorSeenEntries(seenEntries = seenEntries)
+  d-def tothwift: thwift.pwiowseenentwies = {
+    thwift.pwiowseenentwies(seenentwies = seenentwies)
   }
 
-  def throwIfInvalid(): Unit = {
-    // No validation performed.
+  def thwowifinvawid(): unit = {
+    // no v-vawidation pewfowmed. :3
   }
 }

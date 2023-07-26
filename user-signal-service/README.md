@@ -1,5 +1,13 @@
-# User Signal Service #
+# twmw
 
-**User Signal Service** (USS) is a centralized online platform that supplies comprehensive data on user actions and behaviors on Twitter. This information encompasses both explicit signals, such as favoriting, retweeting, and replying, as well as implicit signals, including tweet clicks, video views, profile visits, and more.
+---
+nyote: `twmw` is nyo w-wongew undew devewopment. ( ͡o ω ͡o ) m-much of t-the code hewe i-is out of date and u-unused. rawr x3
+it is i-incwuded hewe fow c-compweteness, nyaa~~ b-because `twmw` is stiww used to twain the wight wankew modews
+(see `swc/python/twittew/deepbiwd/pwojects/timewines/scwipts/modews/eawwybiwd/weadme.md`)
+---
 
-To ensure consistency and accuracy, USS gathers these signals from various underlying datasets and online services, processing them into uniform formats. These standardized source signals are then utilized in candidate retrieval and machine learning features for ranking stages.
+twmw i-is one of twittew's machine weawning fwamewowks, /(^•ω•^) w-which uses tensowfwow undew t-the hood. whiwe it is mostwy
+depwecated, rawr
+it is stiww cuwwentwy used t-to twain the eawwybiwd wight w-wanking modews (
+s-see `swc/python/twittew/deepbiwd/pwojects/timewines/scwipts/modews/eawwybiwd/twain.py`). OwO
+the most wewevant pawt of this is the `datawecowdtwainew` cwass, (U ﹏ U) which i-is whewe the cowe twaining wogic wesides. >_<  

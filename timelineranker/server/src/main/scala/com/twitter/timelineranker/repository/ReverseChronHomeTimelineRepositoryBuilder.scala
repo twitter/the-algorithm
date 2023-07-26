@@ -1,72 +1,72 @@
-package com.twitter.timelineranker.repository
+package com.twittew.timewinewankew.wepositowy
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelineranker.config.RequestScopes
-import com.twitter.timelineranker.config.RuntimeConfiguration
-import com.twitter.timelineranker.parameters.ConfigBuilder
-import com.twitter.timelineranker.parameters.revchron.ReverseChronTimelineQueryContextBuilder
-import com.twitter.timelineranker.parameters.util.RequestContextBuilderImpl
-import com.twitter.timelineranker.source.ReverseChronHomeTimelineSource
-import com.twitter.timelineranker.visibility.RealGraphFollowGraphDataProvider
-import com.twitter.timelineranker.visibility.SgsFollowGraphDataFields
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.timelineranker.decider.DeciderKey
-import com.twitter.timelines.util.stats.RequestScope
-import com.twitter.util.Duration
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.timewinewankew.config.wequestscopes
+i-impowt com.twittew.timewinewankew.config.wuntimeconfiguwation
+i-impowt com.twittew.timewinewankew.pawametews.configbuiwdew
+i-impowt c-com.twittew.timewinewankew.pawametews.wevchwon.wevewsechwontimewinequewycontextbuiwdew
+i-impowt com.twittew.timewinewankew.pawametews.utiw.wequestcontextbuiwdewimpw
+impowt com.twittew.timewinewankew.souwce.wevewsechwonhometimewinesouwce
+impowt com.twittew.timewinewankew.visibiwity.weawgwaphfowwowgwaphdatapwovidew
+i-impowt com.twittew.timewinewankew.visibiwity.sgsfowwowgwaphdatafiewds
+impowt com.twittew.seawch.eawwybiwd.thwiftscawa.eawwybiwdsewvice
+i-impowt com.twittew.timewinewankew.decidew.decidewkey
+impowt com.twittew.timewines.utiw.stats.wequestscope
+i-impowt com.twittew.utiw.duwation
 
-class ReverseChronHomeTimelineRepositoryBuilder(
-  config: RuntimeConfiguration,
-  configBuilder: ConfigBuilder)
-    extends CandidatesRepositoryBuilder(config) {
+cwass wevewsechwonhometimewinewepositowybuiwdew(
+  c-config: wuntimeconfiguwation, (///ˬ///✿)
+  configbuiwdew: c-configbuiwdew)
+    e-extends candidateswepositowybuiwdew(config) {
 
-  override val clientSubId = "home_materialization"
-  override val requestScope: RequestScope = RequestScopes.HomeTimelineMaterialization
-  override val followGraphDataFieldsToFetch: SgsFollowGraphDataFields.ValueSet =
-    SgsFollowGraphDataFields.ValueSet(
-      SgsFollowGraphDataFields.FollowedUserIds,
-      SgsFollowGraphDataFields.MutedUserIds,
-      SgsFollowGraphDataFields.RetweetsMutedUserIds
+  ovewwide vaw cwientsubid = "home_matewiawization"
+  ovewwide vaw wequestscope: w-wequestscope = wequestscopes.hometimewinematewiawization
+  ovewwide vaw fowwowgwaphdatafiewdstofetch: sgsfowwowgwaphdatafiewds.vawueset =
+    s-sgsfowwowgwaphdatafiewds.vawueset(
+      sgsfowwowgwaphdatafiewds.fowwowedusewids, >w<
+      s-sgsfowwowgwaphdatafiewds.mutedusewids, rawr
+      s-sgsfowwowgwaphdatafiewds.wetweetsmutedusewids
     )
-  override val searchProcessingTimeout: Duration = 800.milliseconds // [3]
+  o-ovewwide v-vaw seawchpwocessingtimeout: duwation = 800.miwwiseconds // [3]
 
-  override def earlybirdClient(scope: String): EarlybirdService.MethodPerEndpoint =
-    config.underlyingClients.createEarlybirdClient(
-      scope = scope,
-      requestTimeout = 1.second, // [1]
-      timeout = 1900.milliseconds, // [2]
-      retryPolicy = config.underlyingClients.DefaultRetryPolicy
+  ovewwide d-def eawwybiwdcwient(scope: stwing): eawwybiwdsewvice.methodpewendpoint =
+    config.undewwyingcwients.cweateeawwybiwdcwient(
+      s-scope = scope,
+      wequesttimeout = 1.second, mya // [1]
+      timeout = 1900.miwwiseconds, ^^ // [2]
+      wetwypowicy = config.undewwyingcwients.defauwtwetwypowicy
     )
 
-  val realGraphFollowGraphDataProvider = new RealGraphFollowGraphDataProvider(
-    followGraphDataProvider,
-    config.clientWrapperFactories.realGraphClientFactory
-      .scope(RequestScopes.ReverseChronHomeTimelineSource),
-    config.clientWrapperFactories.socialGraphClientFactory
-      .scope(RequestScopes.ReverseChronHomeTimelineSource),
-    config.deciderGateBuilder.idGate(DeciderKey.SupplementFollowsWithRealGraph),
-    config.statsReceiver.scope(RequestScopes.ReverseChronHomeTimelineSource.scope)
+  vaw weawgwaphfowwowgwaphdatapwovidew = n-nyew weawgwaphfowwowgwaphdatapwovidew(
+    fowwowgwaphdatapwovidew, 😳😳😳
+    c-config.cwientwwappewfactowies.weawgwaphcwientfactowy
+      .scope(wequestscopes.wevewsechwonhometimewinesouwce), mya
+    c-config.cwientwwappewfactowies.sociawgwaphcwientfactowy
+      .scope(wequestscopes.wevewsechwonhometimewinesouwce), 😳
+    c-config.decidewgatebuiwdew.idgate(decidewkey.suppwementfowwowswithweawgwaph), -.-
+    config.statsweceivew.scope(wequestscopes.wevewsechwonhometimewinesouwce.scope)
   )
 
-  def apply(): ReverseChronHomeTimelineRepository = {
-    val reverseChronTimelineSource = new ReverseChronHomeTimelineSource(
-      searchClient,
-      realGraphFollowGraphDataProvider,
-      clientFactories.visibilityEnforcerFactory.apply(
-        VisibilityRules,
-        RequestScopes.ReverseChronHomeTimelineSource
-      ),
-      config.statsReceiver
+  def appwy(): wevewsechwonhometimewinewepositowy = {
+    vaw wevewsechwontimewinesouwce = n-nyew wevewsechwonhometimewinesouwce(
+      s-seawchcwient, 🥺
+      weawgwaphfowwowgwaphdatapwovidew, o.O
+      c-cwientfactowies.visibiwityenfowcewfactowy.appwy(
+        v-visibiwitywuwes, /(^•ω•^)
+        wequestscopes.wevewsechwonhometimewinesouwce
+      ), nyaa~~
+      config.statsweceivew
     )
 
-    val contextBuilder = new ReverseChronTimelineQueryContextBuilder(
-      configBuilder.rootConfig,
+    vaw c-contextbuiwdew = nyew wevewsechwontimewinequewycontextbuiwdew(
+      c-configbuiwdew.wootconfig, nyaa~~
       config,
-      new RequestContextBuilderImpl(config.configApiConfiguration.requestContextFactory)
+      nyew wequestcontextbuiwdewimpw(config.configapiconfiguwation.wequestcontextfactowy)
     )
 
-    new ReverseChronHomeTimelineRepository(
-      reverseChronTimelineSource,
-      contextBuilder
+    n-nyew wevewsechwonhometimewinewepositowy(
+      wevewsechwontimewinesouwce, :3
+      c-contextbuiwdew
     )
   }
 }

@@ -1,15 +1,15 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "dspbidder/thrift/src/main/thrift/com/twitter/dspbidder/commons:thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/request",
-        "timelineservice/common:model",
-    ],
-    exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/request",
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    s-stwict_deps = t-twue, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "dspbiddew/thwift/swc/main/thwift/com/twittew/dspbiddew/commons:thwift-scawa", (⑅˘꒳˘)
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/modew/common", ( ͡o ω ͡o )
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/modew/mawshawwing/wequest", UwU
+        "timewinesewvice/common:modew", rawr x3
+    ], rawr
+    expowts = [
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/modew/mawshawwing/wequest", σωσ
     ],
 )

@@ -1,10 +1,10 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// If included as a payload, this message flags the Status to be a "derived"
-// Status. Used by StatusGroup to ignore certain Statuses when reporting
-// errors to end users.
-message DerivedStatus {}
+// i-if incwuded a-as a paywoad, rawr t-this message f-fwags the status t-to be a "dewived"
+// s-status. σωσ used b-by statusgwoup t-to ignowe cewtain statuses when wepowting
+// ewwows to end usews. σωσ
+message dewivedstatus {}

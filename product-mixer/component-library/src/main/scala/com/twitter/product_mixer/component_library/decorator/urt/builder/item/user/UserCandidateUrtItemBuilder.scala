@@ -1,62 +1,62 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.user
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.usew
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.user.UserCandidateUrtItemBuilder.UserClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.BaseUserCandidate
-import com.twitter.product_mixer.component_library.model.candidate.IsMarkUnreadFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.user.BaseUserReactiveTriggersBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.promoted.BasePromotedMetadataBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.User
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.usew.usewcandidateuwtitembuiwdew.usewcwienteventinfoewement
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.baseusewcandidate
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.ismawkunweadfeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.candidateuwtentwybuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.item.usew.baseusewweactivetwiggewsbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventinfobuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.pwomoted.basepwomotedmetadatabuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.sociaw_context.basesociawcontextbuiwdew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.usew.usew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.usew.usewdispwaytype
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.usew.usewitem
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object UserCandidateUrtItemBuilder {
-  val UserClientEventInfoElement: String = "user"
+o-object usewcandidateuwtitembuiwdew {
+  vaw usewcwienteventinfoewement: stwing = "usew"
 }
 
-case class UserCandidateUrtItemBuilder[Query <: PipelineQuery, UserCandidate <: BaseUserCandidate](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, UserCandidate],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, UserCandidate]
-  ] = None,
-  displayType: UserDisplayType = User,
-  promotedMetadataBuilder: Option[BasePromotedMetadataBuilder[Query, UserCandidate]] = None,
-  socialContextBuilder: Option[BaseSocialContextBuilder[Query, UserCandidate]] = None,
-  reactiveTriggersBuilder: Option[BaseUserReactiveTriggersBuilder[Query, UserCandidate]] = None,
-  enableReactiveBlending: Option[Boolean] = None)
-    extends CandidateUrtEntryBuilder[Query, UserCandidate, UserItem] {
+case cwass usewcandidateuwtitembuiwdew[quewy <: pipewinequewy, mya u-usewcandidate <: baseusewcandidate](
+  c-cwienteventinfobuiwdew: b-basecwienteventinfobuiwdew[quewy, (˘ω˘) usewcandidate], >_<
+  feedbackactioninfobuiwdew: option[
+    basefeedbackactioninfobuiwdew[quewy, -.- usewcandidate]
+  ] = n-nyone, 🥺
+  dispwaytype: usewdispwaytype = usew, (U ﹏ U)
+  pwomotedmetadatabuiwdew: option[basepwomotedmetadatabuiwdew[quewy, >w< u-usewcandidate]] = nyone, mya
+  s-sociawcontextbuiwdew: o-option[basesociawcontextbuiwdew[quewy, >w< u-usewcandidate]] = n-nyone, nyaa~~
+  weactivetwiggewsbuiwdew: option[baseusewweactivetwiggewsbuiwdew[quewy, (✿oωo) usewcandidate]] = n-nyone, ʘwʘ
+  enabweweactivebwending: option[boowean] = nyone)
+    e-extends candidateuwtentwybuiwdew[quewy, (ˆ ﻌ ˆ)♡ usewcandidate, 😳😳😳 usewitem] {
 
-  override def apply(
-    query: Query,
-    userCandidate: UserCandidate,
-    candidateFeatures: FeatureMap
-  ): UserItem = {
-    val isMarkUnread = candidateFeatures.getTry(IsMarkUnreadFeature).toOption
+  ovewwide def appwy(
+    quewy: quewy, :3
+    u-usewcandidate: usewcandidate, OwO
+    c-candidatefeatuwes: f-featuwemap
+  ): u-usewitem = {
+    vaw ismawkunwead = candidatefeatuwes.gettwy(ismawkunweadfeatuwe).tooption
 
-    UserItem(
-      id = userCandidate.id,
-      sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-      clientEventInfo = clientEventInfoBuilder(
-        query,
-        userCandidate,
-        candidateFeatures,
-        Some(UserClientEventInfoElement)),
-      feedbackActionInfo =
-        feedbackActionInfoBuilder.flatMap(_.apply(query, userCandidate, candidateFeatures)),
-      isMarkUnread = isMarkUnread,
-      displayType = displayType,
-      promotedMetadata =
-        promotedMetadataBuilder.flatMap(_.apply(query, userCandidate, candidateFeatures)),
-      socialContext =
-        socialContextBuilder.flatMap(_.apply(query, userCandidate, candidateFeatures)),
-      reactiveTriggers =
-        reactiveTriggersBuilder.flatMap(_.apply(query, userCandidate, candidateFeatures)),
-      enableReactiveBlending = enableReactiveBlending
+    usewitem(
+      i-id = usewcandidate.id, (U ﹏ U)
+      s-sowtindex = nyone, >w< // sowt indexes a-awe automaticawwy s-set in the domain mawshawwew p-phase
+      cwienteventinfo = c-cwienteventinfobuiwdew(
+        quewy, (U ﹏ U)
+        usewcandidate, 😳
+        c-candidatefeatuwes, (ˆ ﻌ ˆ)♡
+        some(usewcwienteventinfoewement)), 😳😳😳
+      f-feedbackactioninfo =
+        feedbackactioninfobuiwdew.fwatmap(_.appwy(quewy, u-usewcandidate, (U ﹏ U) c-candidatefeatuwes)), (///ˬ///✿)
+      ismawkunwead = ismawkunwead, 😳
+      dispwaytype = dispwaytype, 😳
+      pwomotedmetadata =
+        pwomotedmetadatabuiwdew.fwatmap(_.appwy(quewy, σωσ u-usewcandidate, rawr x3 c-candidatefeatuwes)), OwO
+      sociawcontext =
+        s-sociawcontextbuiwdew.fwatmap(_.appwy(quewy, u-usewcandidate, /(^•ω•^) c-candidatefeatuwes)), 😳😳😳
+      weactivetwiggews =
+        weactivetwiggewsbuiwdew.fwatmap(_.appwy(quewy, ( ͡o ω ͡o ) usewcandidate, >_< c-candidatefeatuwes)), >w<
+      enabweweactivebwending = enabweweactivebwending
     )
   }
 }

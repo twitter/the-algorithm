@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.service.quality_factor_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.quawity_factow_executow
 
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
 
-case class QualityFactorExecutorResult(
-  pipelineQualityFactors: Map[ComponentIdentifier, Double])
+c-case cwass q-quawityfactowexecutowwesuwt(
+  p-pipewinequawityfactows: m-map[componentidentifiew, (⑅˘꒳˘) d-doubwe])
 
-object QualityFactorExecutorResult {
-  val empty: QualityFactorExecutorResult = QualityFactorExecutorResult(Map.empty)
+object q-quawityfactowexecutowwesuwt {
+  v-vaw empty: q-quawityfactowexecutowwesuwt = quawityfactowexecutowwesuwt(map.empty)
 }

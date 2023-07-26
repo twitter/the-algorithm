@@ -1,189 +1,189 @@
-package com.twitter.search.common.util.ml.tensorflow_engine;
+package com.twittew.seawch.common.utiw.mw.tensowfwow_engine;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Supplier;
+impowt j-java.io.ioexception;
+i-impowt j-java.utiw.cowwections;
+i-impowt java.utiw.hashmap;
+i-impowt java.utiw.map;
+i-impowt java.utiw.function.suppwiew;
 
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tensorflow.SavedModelBundle;
-import org.tensorflow.Session;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
+impowt owg.tensowfwow.savedmodewbundwe;
+i-impowt owg.tensowfwow.session;
 
-import com.twitter.ml.api.FeatureUtil;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchema;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchemaEntry;
-import com.twitter.search.common.file.AbstractFile;
-import com.twitter.search.common.schema.DynamicSchema;
-import com.twitter.search.common.util.ml.models_manager.BaseModelsManager;
-import com.twitter.tfcompute_java.TFModelRunner;
-import com.twitter.tfcompute_java.TFSessionInit;
-import com.twitter.twml.runtime.lib.TwmlLoader;
-import com.twitter.twml.runtime.models.ModelLocator;
-import com.twitter.twml.runtime.models.ModelLocator$;
-import com.twitter.util.Await;
+impowt c-com.twittew.mw.api.featuweutiw;
+impowt com.twittew.seawch.common.featuwes.thwift.thwiftseawchfeatuweschema;
+i-impowt com.twittew.seawch.common.featuwes.thwift.thwiftseawchfeatuweschemaentwy;
+impowt com.twittew.seawch.common.fiwe.abstwactfiwe;
+impowt com.twittew.seawch.common.schema.dynamicschema;
+i-impowt com.twittew.seawch.common.utiw.mw.modews_managew.basemodewsmanagew;
+i-impowt com.twittew.tfcompute_java.tfmodewwunnew;
+i-impowt com.twittew.tfcompute_java.tfsessioninit;
+impowt com.twittew.twmw.wuntime.wib.twmwwoadew;
+impowt com.twittew.twmw.wuntime.modews.modewwocatow;
+impowt com.twittew.twmw.wuntime.modews.modewwocatow$;
+i-impowt com.twittew.utiw.await;
 
 /**
- * TensorflowModelsManager manages the lifecyle of TF models.
+ * tensowfwowmodewsmanagew manages the wifecywe of tf modews. mya
  */
-public class TensorflowModelsManager extends BaseModelsManager<TFModelRunner>  {
+pubwic cwass t-tensowfwowmodewsmanagew extends b-basemodewsmanagew<tfmodewwunnew>  {
 
-  private static final Logger LOG = LoggerFactory.getLogger(TensorflowModelsManager.class);
+  p-pwivate s-static finaw w-woggew wog = woggewfactowy.getwoggew(tensowfwowmodewsmanagew.cwass);
 
-  private static final String[] TF_TAGS = new String[] {"serve"};
+  pwivate static finaw stwing[] t-tf_tags = nyew stwing[] {"sewve"};
 
-  private volatile Map<Integer, Long> featureSchemaIdToMlApiId = new HashMap<Integer, Long>();
+  pwivate v-vowatiwe map<integew, 🥺 wong> featuweschemaidtomwapiid = nyew hashmap<integew, ^^;; wong>();
 
   static {
-    TwmlLoader.load();
+    t-twmwwoadew.woad();
   }
 
-  public static final TensorflowModelsManager NO_OP_MANAGER =
-    createNoOp("no_op_manager");
+  pubwic static f-finaw tensowfwowmodewsmanagew n-no_op_managew =
+    c-cweatenoop("no_op_managew");
 
-  public TensorflowModelsManager(
-      Supplier<Map<String, AbstractFile>> activeModelsSupplier,
-      boolean shouldUnloadInactiveModels,
-      String statsPrefix
+  pubwic tensowfwowmodewsmanagew(
+      suppwiew<map<stwing, :3 abstwactfiwe>> activemodewssuppwiew, (U ﹏ U)
+      b-boowean s-shouwdunwoadinactivemodews, OwO
+      stwing statspwefix
   ) {
-    this(
-      activeModelsSupplier,
-      shouldUnloadInactiveModels,
-      statsPrefix,
-      () -> true,
-      () -> true,
-      null
+    t-this(
+      activemodewssuppwiew, 😳😳😳
+      s-shouwdunwoadinactivemodews, (ˆ ﻌ ˆ)♡
+      statspwefix, XD
+      () -> t-twue, (ˆ ﻌ ˆ)♡
+      () -> twue, ( ͡o ω ͡o )
+      n-nyuww
     );
   }
 
-  public TensorflowModelsManager(
-      Supplier<Map<String, AbstractFile>> activeModelsSupplier,
-      boolean shouldUnloadInactiveModels,
-      String statsPrefix,
-      Supplier<Boolean> serveModels,
-      Supplier<Boolean> loadModels,
-      DynamicSchema dynamicSchema
+  pubwic tensowfwowmodewsmanagew(
+      suppwiew<map<stwing, rawr x3 a-abstwactfiwe>> activemodewssuppwiew, nyaa~~
+      b-boowean shouwdunwoadinactivemodews, >_<
+      s-stwing statspwefix, ^^;;
+      s-suppwiew<boowean> sewvemodews, (ˆ ﻌ ˆ)♡
+      suppwiew<boowean> woadmodews, ^^;;
+      dynamicschema dynamicschema
   ) {
-    super(
-      activeModelsSupplier,
-      shouldUnloadInactiveModels,
-      statsPrefix,
-      serveModels,
-      loadModels
+    supew(
+      activemodewssuppwiew, (⑅˘꒳˘)
+      s-shouwdunwoadinactivemodews, rawr x3
+      s-statspwefix, (///ˬ///✿)
+      sewvemodews, 🥺
+      w-woadmodews
     );
-    if (dynamicSchema != null) {
-      updateFeatureSchemaIdToMlIdMap(dynamicSchema.getSearchFeatureSchema());
+    i-if (dynamicschema != n-nyuww) {
+      updatefeatuweschemaidtomwidmap(dynamicschema.getseawchfeatuweschema());
     }
   }
 
   /**
-   * The ML API feature ids for tensorflow scoring are hashes of their feature names. This hashing
-   * could be expensive to do for every search request. Instead, allow the map from schema feature
-   * id to ML API id to be updated whenever the schema is reloaded.
+   * the mw api featuwe ids f-fow tensowfwow scowing awe hashes of theiw featuwe names. >_< this hashing
+   * couwd b-be expensive to do fow evewy seawch w-wequest. UwU instead, a-awwow the m-map fwom schema featuwe
+   * id t-to mw api id to b-be updated whenevew t-the schema i-is wewoaded. >_<
    */
-  public void updateFeatureSchemaIdToMlIdMap(ThriftSearchFeatureSchema schema) {
-    HashMap<Integer, Long> newFeatureSchemaIdToMlApiId = new HashMap<Integer, Long>();
-    Map<Integer, ThriftSearchFeatureSchemaEntry> featureEntries = schema.getEntries();
-    for (Map.Entry<Integer, ThriftSearchFeatureSchemaEntry> entry : featureEntries.entrySet()) {
-      long mlApiFeatureId = FeatureUtil.featureIdForName(entry.getValue().getFeatureName());
-      newFeatureSchemaIdToMlApiId.put(entry.getKey(), mlApiFeatureId);
+  pubwic void updatefeatuweschemaidtomwidmap(thwiftseawchfeatuweschema s-schema) {
+    h-hashmap<integew, -.- w-wong> n-nyewfeatuweschemaidtomwapiid = nyew h-hashmap<integew, mya wong>();
+    map<integew, >w< thwiftseawchfeatuweschemaentwy> featuweentwies = schema.getentwies();
+    f-fow (map.entwy<integew, (U ﹏ U) thwiftseawchfeatuweschemaentwy> entwy : featuweentwies.entwyset()) {
+      wong mwapifeatuweid = featuweutiw.featuweidfowname(entwy.getvawue().getfeatuwename());
+      n-nyewfeatuweschemaidtomwapiid.put(entwy.getkey(), 😳😳😳 mwapifeatuweid);
     }
 
-    featureSchemaIdToMlApiId = newFeatureSchemaIdToMlApiId;
+    featuweschemaidtomwapiid = nyewfeatuweschemaidtomwapiid;
   }
 
-  public Map<Integer, Long> getFeatureSchemaIdToMlApiId() {
-    return featureSchemaIdToMlApiId;
-  }
-
-  /**
-   * If the manager is not enabled, it won't fetch TF models.
-   */
-  public boolean isEnabled() {
-    return true;
+  p-pubwic map<integew, o.O w-wong> g-getfeatuweschemaidtomwapiid() {
+    wetuwn featuweschemaidtomwapiid;
   }
 
   /**
-   * Load an individual model and make it available for inference.
+   * i-if the managew is not enabwed, òωó i-it won't fetch t-tf modews. 😳😳😳
    */
-  public TFModelRunner readModelFromDirectory(
-    AbstractFile modelDir) throws IOException {
+  pubwic boowean isenabwed() {
+    wetuwn twue;
+  }
 
-    ModelLocator modelLocator =
-      ModelLocator$.MODULE$.apply(
-        modelDir.toString(),
-        modelDir.toURI()
+  /**
+   * woad an individuaw modew and m-make it avaiwabwe fow infewence. σωσ
+   */
+  p-pubwic tfmodewwunnew weadmodewfwomdiwectowy(
+    a-abstwactfiwe m-modewdiw) thwows ioexception {
+
+    modewwocatow m-modewwocatow =
+      m-modewwocatow$.moduwe$.appwy(
+        modewdiw.tostwing(), (⑅˘꒳˘)
+        m-modewdiw.touwi()
       );
 
-    try {
-      Await.result(modelLocator.ensureLocalPresent(true));
-    } catch (Exception e) {
-      LOG.error("Couldn't find model " + modelDir.toString(), e);
-      throw new IOException("Couldn't find model " + modelDir.toString());
+    twy {
+      a-await.wesuwt(modewwocatow.ensuwewocawpwesent(twue));
+    } catch (exception e) {
+      wog.ewwow("couwdn't find modew " + m-modewdiw.tostwing(), (///ˬ///✿) e-e);
+      t-thwow nyew ioexception("couwdn't find modew " + m-modewdiw.tostwing());
     }
 
-    Session session = SavedModelBundle.load(modelLocator.localPath(), TF_TAGS).session();
+    s-session session = savedmodewbundwe.woad(modewwocatow.wocawpath(), 🥺 t-tf_tags).session();
 
-    return new TFModelRunner(session);
+    wetuwn nyew tfmodewwunnew(session);
   }
 
 
   /**
-   * Initialize Tensorflow intra and inter op thread pools.
-   * See `ConfigProto.[intra|inter]_op_parallelism_threads` documentation for more information:
-   * https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/protobuf/config.proto
-   * Initialization should happen only once.
-   * Default values for Tensorflow are:
-   * intraOpParallelismThreads = 0 which means that TF will pick an appropriate default.
-   * interOpParallelismThreads = 0 which means that TF will pick an appropriate default.
-   * operation_timeout_in_ms = 0 which means that no timeout will be applied.
+   * initiawize tensowfwow intwa and intew op thwead p-poows. OwO
+   * s-see `configpwoto.[intwa|intew]_op_pawawwewism_thweads` documentation fow mowe infowmation:
+   * h-https://github.com/tensowfwow/tensowfwow/bwob/mastew/tensowfwow/cowe/pwotobuf/config.pwoto
+   * i-initiawization shouwd happen onwy once. >w<
+   * defauwt vawues fow t-tensowfwow awe:
+   * intwaoppawawwewismthweads = 0 which means that tf wiww pick an appwopwiate d-defauwt.
+   * intewoppawawwewismthweads = 0 which means that tf w-wiww pick an appwopwiate d-defauwt. 🥺
+   * opewation_timeout_in_ms = 0 which means that nyo timeout w-wiww be appwied. nyaa~~
    */
-  public static void initTensorflowThreadPools(
-    int intraOpParallelismThreads,
-    int interOpParallelismThreads) {
-    new TFSessionInit(intraOpParallelismThreads, interOpParallelismThreads, 0);
+  p-pubwic static void inittensowfwowthweadpoows(
+    int intwaoppawawwewismthweads, ^^
+    int i-intewoppawawwewismthweads) {
+    nyew tfsessioninit(intwaoppawawwewismthweads, >w< i-intewoppawawwewismthweads, OwO 0);
   }
 
   /**
-   * Creates a no-op instance. It can be used for tests or when the models are disabled.
+   * cweates a no-op instance. XD it can be used fow tests o-ow when the modews awe disabwed. ^^;;
    */
-  public static TensorflowModelsManager createNoOp(String statsPrefix) {
-    return new TensorflowModelsManager(Collections::emptyMap, false, statsPrefix) {
-      @Override
-      public void run() { }
+  p-pubwic s-static tensowfwowmodewsmanagew cweatenoop(stwing s-statspwefix) {
+    wetuwn nyew t-tensowfwowmodewsmanagew(cowwections::emptymap, 🥺 f-fawse, XD statspwefix) {
+      @ovewwide
+      pubwic v-void wun() { }
 
-      @Override
-      public boolean isEnabled() {
-        return false;
+      @ovewwide
+      pubwic b-boowean isenabwed() {
+        w-wetuwn fawse;
       }
 
-      @Override
-      public void updateFeatureSchemaIdToMlIdMap(ThriftSearchFeatureSchema schema) { }
+      @ovewwide
+      pubwic void updatefeatuweschemaidtomwidmap(thwiftseawchfeatuweschema s-schema) { }
     };
   }
 
  /**
-   * Creates an instance that loads the models based on a ConfigSupplier.
+   * c-cweates an i-instance that woads the modews based on a configsuppwiew. (U ᵕ U❁)
    */
-  public static TensorflowModelsManager createUsingConfigFile(
-      AbstractFile configFile,
-      boolean shouldUnloadInactiveModels,
-      String statsPrefix,
-      Supplier<Boolean> serveModels,
-      Supplier<Boolean> loadModels,
-      DynamicSchema dynamicSchema) {
-    Preconditions.checkArgument(
-        configFile.canRead(), "Config file is not readable: %s", configFile.getPath());
-    return new TensorflowModelsManager(
-      new ConfigSupplier(configFile),
-      shouldUnloadInactiveModels,
-      statsPrefix,
-      serveModels,
-      loadModels,
-      dynamicSchema
+  p-pubwic static tensowfwowmodewsmanagew c-cweateusingconfigfiwe(
+      a-abstwactfiwe configfiwe, :3
+      boowean shouwdunwoadinactivemodews, ( ͡o ω ͡o )
+      stwing s-statspwefix, òωó
+      s-suppwiew<boowean> s-sewvemodews, σωσ
+      s-suppwiew<boowean> woadmodews, (U ᵕ U❁)
+      dynamicschema dynamicschema) {
+    p-pweconditions.checkawgument(
+        configfiwe.canwead(), (✿oωo) "config fiwe is nyot weadabwe: %s", ^^ configfiwe.getpath());
+    wetuwn n-nyew tensowfwowmodewsmanagew(
+      nyew configsuppwiew(configfiwe), ^•ﻌ•^
+      s-shouwdunwoadinactivemodews, XD
+      statspwefix, :3
+      s-sewvemodews, (ꈍᴗꈍ)
+      woadmodews, :3
+      d-dynamicschema
     );
   }
 }

@@ -1,102 +1,102 @@
-package com.twitter.frigate.pushservice.util
+package com.twittew.fwigate.pushsewvice.utiw
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.common.base.CandidateResult
-import com.twitter.frigate.common.base.Invalid
-import com.twitter.frigate.common.base.OK
-import com.twitter.frigate.common.base.Result
-import com.twitter.frigate.common.base.TweetAuthor
-import com.twitter.frigate.common.base.TweetCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams.ListOfAdhocIdsForStatsTracking
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.candidatedetaiws
+i-impowt com.twittew.fwigate.common.base.candidatewesuwt
+i-impowt c-com.twittew.fwigate.common.base.invawid
+i-impowt c-com.twittew.fwigate.common.base.ok
+impowt com.twittew.fwigate.common.base.wesuwt
+impowt com.twittew.fwigate.common.base.tweetauthow
+impowt com.twittew.fwigate.common.base.tweetcandidate
+impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams.wistofadhocidsfowstatstwacking
 
-class AdhocStatsUtil(stats: StatsReceiver) {
+c-cwass adhocstatsutiw(stats: s-statsweceivew) {
 
-  private def getAdhocIds(candidate: PushCandidate): Set[Long] =
-    candidate.target.params(ListOfAdhocIdsForStatsTracking)
+  pwivate def getadhocids(candidate: pushcandidate): s-set[wong] =
+    candidate.tawget.pawams(wistofadhocidsfowstatstwacking)
 
-  private def isAdhocTweetCandidate(candidate: PushCandidate): Boolean = {
+  p-pwivate d-def isadhoctweetcandidate(candidate: pushcandidate): boowean = {
     candidate match {
-      case tweetCandidate: RawCandidate with TweetCandidate with TweetAuthor =>
-        tweetCandidate.authorId.exists(id => getAdhocIds(candidate).contains(id))
-      case _ => false
+      case t-tweetcandidate: wawcandidate with tweetcandidate with tweetauthow =>
+        tweetcandidate.authowid.exists(id => getadhocids(candidate).contains(id))
+      case _ => f-fawse
     }
   }
 
-  def getCandidateSourceStats(hydratedCandidates: Seq[CandidateDetails[PushCandidate]]): Unit = {
-    hydratedCandidates.foreach { hydratedCandidate =>
-      if (isAdhocTweetCandidate(hydratedCandidate.candidate)) {
-        stats.scope("candidate_source").counter(hydratedCandidate.source).incr()
+  def g-getcandidatesouwcestats(hydwatedcandidates: s-seq[candidatedetaiws[pushcandidate]]): u-unit = {
+    h-hydwatedcandidates.foweach { hydwatedcandidate =>
+      if (isadhoctweetcandidate(hydwatedcandidate.candidate)) {
+        s-stats.scope("candidate_souwce").countew(hydwatedcandidate.souwce).incw()
       }
     }
   }
 
-  def getPreRankingFilterStats(
-    preRankingFilteredCandidates: Seq[CandidateResult[PushCandidate, Result]]
-  ): Unit = {
-    preRankingFilteredCandidates.foreach { filteredCandidate =>
-      if (isAdhocTweetCandidate(filteredCandidate.candidate)) {
-        filteredCandidate.result match {
-          case Invalid(reason) =>
-            stats.scope("preranking_filter").counter(reason.getOrElse("unknown_reason")).incr()
-          case _ =>
+  def getpwewankingfiwtewstats(
+    pwewankingfiwtewedcandidates: s-seq[candidatewesuwt[pushcandidate, (U ﹏ U) wesuwt]]
+  ): unit = {
+    pwewankingfiwtewedcandidates.foweach { fiwtewedcandidate =>
+      if (isadhoctweetcandidate(fiwtewedcandidate.candidate)) {
+        f-fiwtewedcandidate.wesuwt match {
+          c-case invawid(weason) =>
+            s-stats.scope("pwewanking_fiwtew").countew(weason.getowewse("unknown_weason")).incw()
+          c-case _ =>
         }
       }
     }
   }
 
-  def getLightRankingStats(lightRankedCandidates: Seq[CandidateDetails[PushCandidate]]): Unit = {
-    lightRankedCandidates.foreach { lightRankedCandidate =>
-      if (isAdhocTweetCandidate(lightRankedCandidate.candidate)) {
-        stats.scope("light_ranker").counter("passed_light_ranking").incr()
+  def getwightwankingstats(wightwankedcandidates: seq[candidatedetaiws[pushcandidate]]): unit = {
+    w-wightwankedcandidates.foweach { w-wightwankedcandidate =>
+      if (isadhoctweetcandidate(wightwankedcandidate.candidate)) {
+        s-stats.scope("wight_wankew").countew("passed_wight_wanking").incw()
       }
     }
   }
 
-  def getRankingStats(rankedCandidates: Seq[CandidateDetails[PushCandidate]]): Unit = {
-    rankedCandidates.zipWithIndex.foreach {
-      case (rankedCandidate, index) =>
-        val rankerStats = stats.scope("heavy_ranker")
-        if (isAdhocTweetCandidate(rankedCandidate.candidate)) {
-          rankerStats.counter("ranked_candidates").incr()
-          rankerStats.stat("rank").add(index.toFloat)
-          rankedCandidate.candidate.modelScores.map { modelScores =>
-            modelScores.foreach {
-              case (modelName, score) =>
-                // mutiply score by 1000 to not lose precision while converting to Float
-                val precisionScore = (score * 100000).toFloat
-                rankerStats.stat(modelName).add(precisionScore)
+  def g-getwankingstats(wankedcandidates: seq[candidatedetaiws[pushcandidate]]): u-unit = {
+    wankedcandidates.zipwithindex.foweach {
+      c-case (wankedcandidate, 😳 index) =>
+        vaw wankewstats = s-stats.scope("heavy_wankew")
+        if (isadhoctweetcandidate(wankedcandidate.candidate)) {
+          w-wankewstats.countew("wanked_candidates").incw()
+          wankewstats.stat("wank").add(index.tofwoat)
+          w-wankedcandidate.candidate.modewscowes.map { m-modewscowes =>
+            modewscowes.foweach {
+              case (modewname, (ˆ ﻌ ˆ)♡ scowe) =>
+                // mutipwy scowe by 1000 to nyot wose pwecision whiwe convewting to f-fwoat
+                v-vaw pwecisionscowe = (scowe * 100000).tofwoat
+                wankewstats.stat(modewname).add(pwecisionscowe)
             }
           }
         }
     }
   }
-  def getReRankingStats(rankedCandidates: Seq[CandidateDetails[PushCandidate]]): Unit = {
-    rankedCandidates.zipWithIndex.foreach {
-      case (rankedCandidate, index) =>
-        val rankerStats = stats.scope("re_ranking")
-        if (isAdhocTweetCandidate(rankedCandidate.candidate)) {
-          rankerStats.counter("re_ranked_candidates").incr()
-          rankerStats.stat("re_rank").add(index.toFloat)
+  d-def getwewankingstats(wankedcandidates: s-seq[candidatedetaiws[pushcandidate]]): u-unit = {
+    wankedcandidates.zipwithindex.foweach {
+      case (wankedcandidate, 😳😳😳 index) =>
+        v-vaw wankewstats = stats.scope("we_wanking")
+        if (isadhoctweetcandidate(wankedcandidate.candidate)) {
+          wankewstats.countew("we_wanked_candidates").incw()
+          wankewstats.stat("we_wank").add(index.tofwoat)
         }
     }
   }
 
-  def getTakeCandidateResultStats(
-    allTakeCandidateResults: Seq[CandidateResult[PushCandidate, Result]]
-  ): Unit = {
-    val takeStats = stats.scope("take_step")
-    allTakeCandidateResults.foreach { candidateResult =>
-      if (isAdhocTweetCandidate(candidateResult.candidate)) {
-        candidateResult.result match {
-          case OK =>
-            takeStats.counter("sent").incr()
-          case Invalid(reason) =>
-            takeStats.counter(reason.getOrElse("unknown_reason")).incr()
-          case _ =>
-            takeStats.counter("unknown_filter").incr()
+  def gettakecandidatewesuwtstats(
+    a-awwtakecandidatewesuwts: seq[candidatewesuwt[pushcandidate, (U ﹏ U) w-wesuwt]]
+  ): u-unit = {
+    vaw t-takestats = stats.scope("take_step")
+    awwtakecandidatewesuwts.foweach { c-candidatewesuwt =>
+      i-if (isadhoctweetcandidate(candidatewesuwt.candidate)) {
+        c-candidatewesuwt.wesuwt m-match {
+          case ok =>
+            takestats.countew("sent").incw()
+          c-case invawid(weason) =>
+            t-takestats.countew(weason.getowewse("unknown_weason")).incw()
+          c-case _ =>
+            t-takestats.countew("unknown_fiwtew").incw()
         }
       }
     }

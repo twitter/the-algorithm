@@ -1,213 +1,213 @@
-package com.twitter.recosinjector
+package com.twittew.wecosinjectow
 
-import com.twitter.app.Flag
-import com.twitter.finagle.http.HttpMuxer
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.ElfOwlFilter
-import com.twitter.recosinjector.clients.Gizmoduck
-import com.twitter.recosinjector.clients.RecosHoseEntitiesCache
-import com.twitter.recosinjector.clients.SocialGraph
-import com.twitter.recosinjector.clients.Tweetypie
-import com.twitter.recosinjector.clients.UrlResolver
-import com.twitter.recosinjector.config._
-import com.twitter.recosinjector.edges.SocialWriteEventToUserUserGraphBuilder
-import com.twitter.recosinjector.edges.TimelineEventToUserTweetEntityGraphBuilder
-import com.twitter.recosinjector.edges.TweetEventToUserTweetEntityGraphBuilder
-import com.twitter.recosinjector.edges.TweetEventToUserUserGraphBuilder
-import com.twitter.recosinjector.edges.UnifiedUserActionToUserVideoGraphBuilder
-import com.twitter.recosinjector.edges.UnifiedUserActionToUserAdGraphBuilder
-import com.twitter.recosinjector.edges.UnifiedUserActionToUserTweetGraphPlusBuilder
-import com.twitter.recosinjector.edges.UserTweetEntityEdgeBuilder
-import com.twitter.recosinjector.event_processors.SocialWriteEventProcessor
-import com.twitter.recosinjector.event_processors.TimelineEventProcessor
-import com.twitter.recosinjector.event_processors.TweetEventProcessor
-import com.twitter.recosinjector.publishers.KafkaEventPublisher
-import com.twitter.recosinjector.uua_processors.UnifiedUserActionProcessor
-import com.twitter.recosinjector.uua_processors.UnifiedUserActionsConsumer
-import com.twitter.server.logging.{Logging => JDK14Logging}
-import com.twitter.server.Deciderable
-import com.twitter.server.TwitterServer
-import com.twitter.socialgraph.thriftscala.WriteEvent
-import com.twitter.timelineservice.thriftscala.{Event => TimelineEvent}
-import com.twitter.tweetypie.thriftscala.TweetEvent
-import com.twitter.util.Await
-import com.twitter.util.Duration
-import java.util.concurrent.TimeUnit
+impowt com.twittew.app.fwag
+i-impowt c-com.twittew.finagwe.http.httpmuxew
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.utiw.ewfowwfiwtew
+i-impowt c-com.twittew.wecosinjectow.cwients.gizmoduck
+impowt com.twittew.wecosinjectow.cwients.wecoshoseentitiescache
+impowt com.twittew.wecosinjectow.cwients.sociawgwaph
+impowt com.twittew.wecosinjectow.cwients.tweetypie
+impowt com.twittew.wecosinjectow.cwients.uwwwesowvew
+i-impowt com.twittew.wecosinjectow.config._
+impowt com.twittew.wecosinjectow.edges.sociawwwiteeventtousewusewgwaphbuiwdew
+i-impowt com.twittew.wecosinjectow.edges.timewineeventtousewtweetentitygwaphbuiwdew
+impowt com.twittew.wecosinjectow.edges.tweeteventtousewtweetentitygwaphbuiwdew
+i-impowt com.twittew.wecosinjectow.edges.tweeteventtousewusewgwaphbuiwdew
+impowt com.twittew.wecosinjectow.edges.unifiedusewactiontousewvideogwaphbuiwdew
+impowt c-com.twittew.wecosinjectow.edges.unifiedusewactiontousewadgwaphbuiwdew
+impowt c-com.twittew.wecosinjectow.edges.unifiedusewactiontousewtweetgwaphpwusbuiwdew
+i-impowt com.twittew.wecosinjectow.edges.usewtweetentityedgebuiwdew
+impowt com.twittew.wecosinjectow.event_pwocessows.sociawwwiteeventpwocessow
+impowt com.twittew.wecosinjectow.event_pwocessows.timewineeventpwocessow
+i-impowt com.twittew.wecosinjectow.event_pwocessows.tweeteventpwocessow
+impowt com.twittew.wecosinjectow.pubwishews.kafkaeventpubwishew
+impowt com.twittew.wecosinjectow.uua_pwocessows.unifiedusewactionpwocessow
+i-impowt com.twittew.wecosinjectow.uua_pwocessows.unifiedusewactionsconsumew
+impowt com.twittew.sewvew.wogging.{wogging => jdk14wogging}
+i-impowt c-com.twittew.sewvew.decidewabwe
+i-impowt com.twittew.sewvew.twittewsewvew
+i-impowt com.twittew.sociawgwaph.thwiftscawa.wwiteevent
+impowt com.twittew.timewinesewvice.thwiftscawa.{event => t-timewineevent}
+impowt com.twittew.tweetypie.thwiftscawa.tweetevent
+i-impowt com.twittew.utiw.await
+impowt com.twittew.utiw.duwation
+impowt java.utiw.concuwwent.timeunit
 
-object Main extends TwitterServer with JDK14Logging with Deciderable { self =>
+o-object main extends twittewsewvew w-with jdk14wogging w-with decidewabwe { s-sewf =>
 
-  implicit val stats: StatsReceiver = statsReceiver
+  impwicit vaw stats: statsweceivew = statsweceivew
 
-  private val dataCenter: Flag[String] = flag("service.cluster", "atla", "Data Center")
-  private val serviceRole: Flag[String] = flag("service.role", "Service Role")
-  private val serviceEnv: Flag[String] = flag("service.env", "Service Env")
-  private val serviceName: Flag[String] = flag("service.name", "Service Name")
-  private val shardId = flag("shardId", 0, "Shard ID")
-  private val numShards = flag("numShards", 1, "Number of shards for this service")
-  private val truststoreLocation =
-    flag[String]("truststore_location", "", "Truststore file location")
+  p-pwivate v-vaw datacentew: fwag[stwing] = f-fwag("sewvice.cwustew", (U ﹏ U) "atwa", "data c-centew")
+  pwivate vaw sewvicewowe: f-fwag[stwing] = fwag("sewvice.wowe", UwU "sewvice w-wowe")
+  pwivate vaw sewviceenv: fwag[stwing] = f-fwag("sewvice.env", 😳😳😳 "sewvice env")
+  pwivate v-vaw sewvicename: fwag[stwing] = f-fwag("sewvice.name", XD "sewvice n-nyame")
+  pwivate vaw shawdid = fwag("shawdid", o.O 0, "shawd id")
+  pwivate vaw nyumshawds = fwag("numshawds", (⑅˘꒳˘) 1, "numbew of shawds f-fow this sewvice")
+  p-pwivate vaw twuststowewocation =
+    f-fwag[stwing]("twuststowe_wocation", 😳😳😳 "", nyaa~~ "twuststowe f-fiwe wocation")
 
-  def main(): Unit = {
-    val serviceIdentifier = ServiceIdentifier(
-      role = serviceRole(),
-      service = serviceName(),
-      environment = serviceEnv(),
-      zone = dataCenter()
+  d-def main(): unit = {
+    vaw sewviceidentifiew = sewviceidentifiew(
+      w-wowe = sewvicewowe(), rawr
+      sewvice = sewvicename(), -.-
+      enviwonment = s-sewviceenv(), (✿oωo)
+      zone = d-datacentew()
     )
-    println("ServiceIdentifier = " + serviceIdentifier.toString)
-    log.info("ServiceIdentifier = " + serviceIdentifier.toString)
+    p-pwintwn("sewviceidentifiew = " + s-sewviceidentifiew.tostwing)
+    wog.info("sewviceidentifiew = " + s-sewviceidentifiew.tostwing)
 
-    val shard = shardId()
-    val numOfShards = numShards()
-    val environment = serviceEnv()
+    v-vaw s-shawd = shawdid()
+    v-vaw nyumofshawds = nyumshawds()
+    vaw enviwonment = s-sewviceenv()
 
-    implicit val config: DeployConfig = {
-      environment match {
-        case "prod" => ProdConfig(serviceIdentifier)(stats)
-        case "staging" | "devel" => StagingConfig(serviceIdentifier)
-        case env => throw new Exception(s"Unknown environment $env")
+    impwicit v-vaw config: d-depwoyconfig = {
+      e-enviwonment m-match {
+        case "pwod" => pwodconfig(sewviceidentifiew)(stats)
+        case "staging" | "devew" => stagingconfig(sewviceidentifiew)
+        c-case env => thwow nyew exception(s"unknown enviwonment $env")
       }
     }
 
-    // Initialize the config and wait for initialization to finish
-    Await.ready(config.init())
+    // initiawize the config and wait fow initiawization t-to finish
+    await.weady(config.init())
 
-    log.info(
-      "Starting Recos Injector: environment %s, clientId %s",
-      environment,
-      config.recosInjectorThriftClientId
+    wog.info(
+      "stawting wecos injectow: e-enviwonment %s, /(^•ω•^) c-cwientid %s", 🥺
+      e-enviwonment, ʘwʘ
+      config.wecosinjectowthwiftcwientid
     )
-    log.info("Starting shard Id: %d of %d shards...".format(shard, numOfShards))
+    w-wog.info("stawting shawd i-id: %d of %d s-shawds...".fowmat(shawd, UwU nyumofshawds))
 
-    // Client wrappers
-    val cache = new RecosHoseEntitiesCache(config.recosInjectorCoreSvcsCacheClient)
-    val gizmoduck = new Gizmoduck(config.userStore)
-    val socialGraph = new SocialGraph(config.socialGraphIdStore)
-    val tweetypie = new Tweetypie(config.tweetyPieStore)
-    val urlResolver = new UrlResolver(config.urlInfoStore)
+    // cwient wwappews
+    vaw cache = nyew wecoshoseentitiescache(config.wecosinjectowcowesvcscachecwient)
+    vaw gizmoduck = n-nyew gizmoduck(config.usewstowe)
+    vaw s-sociawgwaph = nyew sociawgwaph(config.sociawgwaphidstowe)
+    v-vaw tweetypie = n-nyew tweetypie(config.tweetypiestowe)
+    vaw uwwwesowvew = nyew u-uwwwesowvew(config.uwwinfostowe)
 
-    // Edge builders
-    val userTweetEntityEdgeBuilder = new UserTweetEntityEdgeBuilder(cache, urlResolver)
+    // e-edge buiwdews
+    vaw u-usewtweetentityedgebuiwdew = n-nyew usewtweetentityedgebuiwdew(cache, XD uwwwesowvew)
 
-    // Publishers
-    val kafkaEventPublisher = KafkaEventPublisher(
-      "/s/kafka/recommendations:kafka-tls",
-      config.outputKafkaTopicPrefix,
-      config.recosInjectorThriftClientId,
-      truststoreLocation())
+    // pubwishews
+    vaw kafkaeventpubwishew = k-kafkaeventpubwishew(
+      "/s/kafka/wecommendations:kafka-tws", (✿oωo)
+      c-config.outputkafkatopicpwefix, :3
+      c-config.wecosinjectowthwiftcwientid, (///ˬ///✿)
+      twuststowewocation())
 
-    // Message Builders
-    val socialWriteToUserUserMessageBuilder =
-      new SocialWriteEventToUserUserGraphBuilder()(
-        statsReceiver.scope("SocialWriteEventToUserUserGraphBuilder")
+    // m-message buiwdews
+    v-vaw sociawwwitetousewusewmessagebuiwdew =
+      new sociawwwiteeventtousewusewgwaphbuiwdew()(
+        s-statsweceivew.scope("sociawwwiteeventtousewusewgwaphbuiwdew")
       )
 
-    val timelineToUserTweetEntityMessageBuilder = new TimelineEventToUserTweetEntityGraphBuilder(
-      userTweetEntityEdgeBuilder = userTweetEntityEdgeBuilder
-    )(statsReceiver.scope("TimelineEventToUserTweetEntityGraphBuilder"))
+    vaw timewinetousewtweetentitymessagebuiwdew = nyew timewineeventtousewtweetentitygwaphbuiwdew(
+      usewtweetentityedgebuiwdew = u-usewtweetentityedgebuiwdew
+    )(statsweceivew.scope("timewineeventtousewtweetentitygwaphbuiwdew"))
 
-    val tweetEventToUserTweetEntityGraphBuilder = new TweetEventToUserTweetEntityGraphBuilder(
-      userTweetEntityEdgeBuilder = userTweetEntityEdgeBuilder,
-      tweetCreationStore = config.tweetCreationStore,
-      decider = config.recosInjectorDecider
-    )(statsReceiver.scope("TweetEventToUserTweetEntityGraphBuilder"))
+    v-vaw tweeteventtousewtweetentitygwaphbuiwdew = nyew tweeteventtousewtweetentitygwaphbuiwdew(
+      usewtweetentityedgebuiwdew = u-usewtweetentityedgebuiwdew, nyaa~~
+      t-tweetcweationstowe = config.tweetcweationstowe, >w<
+      decidew = config.wecosinjectowdecidew
+    )(statsweceivew.scope("tweeteventtousewtweetentitygwaphbuiwdew"))
 
-    val socialWriteEventProcessor = new SocialWriteEventProcessor(
-      eventBusStreamName = s"recos_injector_social_write_event_$environment",
-      thriftStruct = WriteEvent,
-      serviceIdentifier = serviceIdentifier,
-      kafkaEventPublisher = kafkaEventPublisher,
-      userUserGraphTopic = KafkaEventPublisher.UserUserTopic,
-      userUserGraphMessageBuilder = socialWriteToUserUserMessageBuilder
-    )(statsReceiver.scope("SocialWriteEventProcessor"))
+    vaw s-sociawwwiteeventpwocessow = nyew sociawwwiteeventpwocessow(
+      eventbusstweamname = s"wecos_injectow_sociaw_wwite_event_$enviwonment", -.-
+      thwiftstwuct = w-wwiteevent, (✿oωo)
+      sewviceidentifiew = sewviceidentifiew, (˘ω˘)
+      k-kafkaeventpubwishew = k-kafkaeventpubwishew, rawr
+      usewusewgwaphtopic = kafkaeventpubwishew.usewusewtopic, OwO
+      usewusewgwaphmessagebuiwdew = s-sociawwwitetousewusewmessagebuiwdew
+    )(statsweceivew.scope("sociawwwiteeventpwocessow"))
 
-    val tweetToUserUserMessageBuilder = new TweetEventToUserUserGraphBuilder()(
-      statsReceiver.scope("TweetEventToUserUserGraphBuilder")
+    vaw t-tweettousewusewmessagebuiwdew = nyew tweeteventtousewusewgwaphbuiwdew()(
+      statsweceivew.scope("tweeteventtousewusewgwaphbuiwdew")
     )
 
-    val unifiedUserActionToUserVideoGraphBuilder = new UnifiedUserActionToUserVideoGraphBuilder(
-      userTweetEntityEdgeBuilder = userTweetEntityEdgeBuilder
-    )(statsReceiver.scope("UnifiedUserActionToUserVideoGraphBuilder"))
+    vaw unifiedusewactiontousewvideogwaphbuiwdew = n-nyew unifiedusewactiontousewvideogwaphbuiwdew(
+      usewtweetentityedgebuiwdew = u-usewtweetentityedgebuiwdew
+    )(statsweceivew.scope("unifiedusewactiontousewvideogwaphbuiwdew"))
 
-    val unifiedUserActionToUserAdGraphBuilder = new UnifiedUserActionToUserAdGraphBuilder(
-      userTweetEntityEdgeBuilder = userTweetEntityEdgeBuilder
-    )(statsReceiver.scope("UnifiedUserActionToUserAdGraphBuilder"))
+    vaw unifiedusewactiontousewadgwaphbuiwdew = nyew unifiedusewactiontousewadgwaphbuiwdew(
+      u-usewtweetentityedgebuiwdew = usewtweetentityedgebuiwdew
+    )(statsweceivew.scope("unifiedusewactiontousewadgwaphbuiwdew"))
 
-    val unifiedUserActionToUserTweetGraphPlusBuilder =
-      new UnifiedUserActionToUserTweetGraphPlusBuilder(
-        userTweetEntityEdgeBuilder = userTweetEntityEdgeBuilder
-      )(statsReceiver.scope("UnifiedUserActionToUserTweetGraphPlusBuilder"))
+    v-vaw u-unifiedusewactiontousewtweetgwaphpwusbuiwdew =
+      nyew unifiedusewactiontousewtweetgwaphpwusbuiwdew(
+        u-usewtweetentityedgebuiwdew = usewtweetentityedgebuiwdew
+      )(statsweceivew.scope("unifiedusewactiontousewtweetgwaphpwusbuiwdew"))
 
-    // Processors
-    val tweetEventProcessor = new TweetEventProcessor(
-      eventBusStreamName = s"recos_injector_tweet_events_$environment",
-      thriftStruct = TweetEvent,
-      serviceIdentifier = serviceIdentifier,
-      userUserGraphMessageBuilder = tweetToUserUserMessageBuilder,
-      userUserGraphTopic = KafkaEventPublisher.UserUserTopic,
-      userTweetEntityGraphMessageBuilder = tweetEventToUserTweetEntityGraphBuilder,
-      userTweetEntityGraphTopic = KafkaEventPublisher.UserTweetEntityTopic,
-      kafkaEventPublisher = kafkaEventPublisher,
-      socialGraph = socialGraph,
-      tweetypie = tweetypie,
-      gizmoduck = gizmoduck
-    )(statsReceiver.scope("TweetEventProcessor"))
+    // p-pwocessows
+    v-vaw t-tweeteventpwocessow = nyew tweeteventpwocessow(
+      e-eventbusstweamname = s-s"wecos_injectow_tweet_events_$enviwonment", ^•ﻌ•^
+      thwiftstwuct = tweetevent, UwU
+      sewviceidentifiew = s-sewviceidentifiew, (˘ω˘)
+      u-usewusewgwaphmessagebuiwdew = t-tweettousewusewmessagebuiwdew, (///ˬ///✿)
+      usewusewgwaphtopic = kafkaeventpubwishew.usewusewtopic, σωσ
+      usewtweetentitygwaphmessagebuiwdew = t-tweeteventtousewtweetentitygwaphbuiwdew, /(^•ω•^)
+      usewtweetentitygwaphtopic = k-kafkaeventpubwishew.usewtweetentitytopic, 😳
+      k-kafkaeventpubwishew = kafkaeventpubwishew, 😳
+      sociawgwaph = sociawgwaph, (⑅˘꒳˘)
+      tweetypie = t-tweetypie, 😳😳😳
+      g-gizmoduck = g-gizmoduck
+    )(statsweceivew.scope("tweeteventpwocessow"))
 
-    val timelineEventProcessor = new TimelineEventProcessor(
-      eventBusStreamName = s"recos_injector_timeline_events_prototype_$environment",
-      thriftStruct = TimelineEvent,
-      serviceIdentifier = serviceIdentifier,
-      kafkaEventPublisher = kafkaEventPublisher,
-      userTweetEntityGraphTopic = KafkaEventPublisher.UserTweetEntityTopic,
-      userTweetEntityGraphMessageBuilder = timelineToUserTweetEntityMessageBuilder,
-      decider = config.recosInjectorDecider,
-      gizmoduck = gizmoduck,
-      tweetypie = tweetypie
-    )(statsReceiver.scope("TimelineEventProcessor"))
+    v-vaw timewineeventpwocessow = nyew timewineeventpwocessow(
+      e-eventbusstweamname = s"wecos_injectow_timewine_events_pwototype_$enviwonment", 😳
+      thwiftstwuct = timewineevent, XD
+      sewviceidentifiew = sewviceidentifiew, mya
+      kafkaeventpubwishew = k-kafkaeventpubwishew, ^•ﻌ•^
+      usewtweetentitygwaphtopic = k-kafkaeventpubwishew.usewtweetentitytopic, ʘwʘ
+      usewtweetentitygwaphmessagebuiwdew = t-timewinetousewtweetentitymessagebuiwdew, ( ͡o ω ͡o )
+      decidew = config.wecosinjectowdecidew, mya
+      g-gizmoduck = gizmoduck, o.O
+      t-tweetypie = t-tweetypie
+    )(statsweceivew.scope("timewineeventpwocessow"))
 
-    val eventBusProcessors = Seq(
-      timelineEventProcessor,
-      socialWriteEventProcessor,
-      tweetEventProcessor
+    v-vaw eventbuspwocessows = s-seq(
+      timewineeventpwocessow,
+      s-sociawwwiteeventpwocessow, (✿oωo)
+      tweeteventpwocessow
     )
 
-    val uuaProcessor = new UnifiedUserActionProcessor(
-      gizmoduck = gizmoduck,
-      tweetypie = tweetypie,
-      kafkaEventPublisher = kafkaEventPublisher,
-      userVideoGraphTopic = KafkaEventPublisher.UserVideoTopic,
-      userVideoGraphBuilder = unifiedUserActionToUserVideoGraphBuilder,
-      userAdGraphTopic = KafkaEventPublisher.UserAdTopic,
-      userAdGraphBuilder = unifiedUserActionToUserAdGraphBuilder,
-      userTweetGraphPlusTopic = KafkaEventPublisher.UserTweetPlusTopic,
-      userTweetGraphPlusBuilder = unifiedUserActionToUserTweetGraphPlusBuilder)(
-      statsReceiver.scope("UnifiedUserActionProcessor"))
+    vaw uuapwocessow = nyew unifiedusewactionpwocessow(
+      gizmoduck = gizmoduck, :3
+      t-tweetypie = tweetypie, 😳
+      k-kafkaeventpubwishew = k-kafkaeventpubwishew, (U ﹏ U)
+      usewvideogwaphtopic = k-kafkaeventpubwishew.usewvideotopic, mya
+      usewvideogwaphbuiwdew = unifiedusewactiontousewvideogwaphbuiwdew, (U ᵕ U❁)
+      usewadgwaphtopic = k-kafkaeventpubwishew.usewadtopic, :3
+      u-usewadgwaphbuiwdew = unifiedusewactiontousewadgwaphbuiwdew, mya
+      u-usewtweetgwaphpwustopic = kafkaeventpubwishew.usewtweetpwustopic, OwO
+      usewtweetgwaphpwusbuiwdew = unifiedusewactiontousewtweetgwaphpwusbuiwdew)(
+      s-statsweceivew.scope("unifiedusewactionpwocessow"))
 
-    val uuaConsumer = new UnifiedUserActionsConsumer(uuaProcessor, truststoreLocation())
+    v-vaw uuaconsumew = nyew unifiedusewactionsconsumew(uuapwocessow, (ˆ ﻌ ˆ)♡ t-twuststowewocation())
 
-    // Start-up init and graceful shutdown setup
+    // s-stawt-up init and gwacefuw shutdown setup
 
-    // wait a bit for services to be ready
-    Thread.sleep(5000L)
+    // wait a bit fow sewvices to b-be weady
+    thwead.sweep(5000w)
 
-    log.info("Starting the event processors")
-    eventBusProcessors.foreach(_.start())
+    w-wog.info("stawting t-the event p-pwocessows")
+    e-eventbuspwocessows.foweach(_.stawt())
 
-    log.info("Starting the uua processors")
-    uuaConsumer.atLeastOnceProcessor.start()
+    wog.info("stawting t-the uua pwocessows")
+    u-uuaconsumew.atweastoncepwocessow.stawt()
 
-    this.addAdminRoute(ElfOwlFilter.getPostbackRoute())
+    this.addadminwoute(ewfowwfiwtew.getpostbackwoute())
 
-    onExit {
-      log.info("Shutting down the event processors")
-      eventBusProcessors.foreach(_.stop())
-      log.info("Shutting down the uua processors")
-      uuaConsumer.atLeastOnceProcessor.close()
-      log.info("done exit")
+    o-onexit {
+      w-wog.info("shutting down the event p-pwocessows")
+      eventbuspwocessows.foweach(_.stop())
+      wog.info("shutting d-down the uua pwocessows")
+      u-uuaconsumew.atweastoncepwocessow.cwose()
+      w-wog.info("done exit")
     }
 
-    // Wait on the thriftServer so that shutdownTimeout is respected.
-    Await.result(adminHttpServer)
+    // w-wait on the thwiftsewvew so that shutdowntimeout i-is wespected. ʘwʘ
+    a-await.wesuwt(adminhttpsewvew)
   }
 }

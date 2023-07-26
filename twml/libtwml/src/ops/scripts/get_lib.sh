@@ -1,2 +1,2 @@
 #!/bin/sh
-PEX_INTERPRETER=1 "$PYTHON_ENV" "$LIBTWML_HOME"/src/ops/scripts/get_lib.py
+pex_intewpwetew=1 "$python_env" "$wibtwmw_home"/swc/ops/scwipts/get_wib.py

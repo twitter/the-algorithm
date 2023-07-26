@@ -1,60 +1,60 @@
-package com.twitter.servo.cache
+package com.twittew.sewvo.cache
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Throw
+impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.wetuwn
+i-impowt com.twittew.utiw.thwow
 
 /**
- * MigratingReadCache supports a gradual migration from one cache to another. Reads from the
- * cache are compared to reads from the darkCache and new values are written to the darkCache
- * if necessary.
+ * m-migwatingweadcache s-suppowts a-a gwaduaw migwation fwom one cache to anothew. :3 weads fwom the
+ * cache awe compawed t-to weads fwom the dawkcache and nyew vawues a-awe wwitten to the dawkcache
+ * i-if nyecessawy. ^^;;
  */
-class MigratingReadCache[K, V](
-  cache: ReadCache[K, V],
-  darkCache: Cache[K, V],
-  statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends ReadCache[K, V] {
+cwass migwatingweadcache[k, rawr v](
+  cache: weadcache[k, 😳😳😳 v],
+  d-dawkcache: cache[k, (✿oωo) v], OwO
+  statsweceivew: s-statsweceivew = n-nyuwwstatsweceivew)
+    extends weadcache[k, ʘwʘ v] {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("migrating_read_cache")
-  private[this] val getScope = scopedStatsReceiver.scope("get")
-  private[this] val getMismatchedResultsCounter = getScope.counter("mismatched_results")
-  private[this] val getMissingResultsCounter = getScope.counter("missing_results")
-  private[this] val getUnexpectedResultsCounter = getScope.counter("unexpected_results")
-  private[this] val getMatchingResultsCounter = getScope.counter("matching_results")
+  pwivate[this] vaw scopedstatsweceivew = s-statsweceivew.scope("migwating_wead_cache")
+  pwivate[this] vaw getscope = scopedstatsweceivew.scope("get")
+  pwivate[this] v-vaw getmismatchedwesuwtscountew = getscope.countew("mismatched_wesuwts")
+  pwivate[this] v-vaw g-getmissingwesuwtscountew = g-getscope.countew("missing_wesuwts")
+  p-pwivate[this] vaw getunexpectedwesuwtscountew = getscope.countew("unexpected_wesuwts")
+  p-pwivate[this] vaw getmatchingwesuwtscountew = getscope.countew("matching_wesuwts")
 
-  private[this] val getWithChecksumScope = scopedStatsReceiver.scope("get_with_cheksum")
-  private[this] val getWithChecksumMismatchedResultsCounter =
-    getWithChecksumScope.counter("mismatched_results")
-  private[this] val getWithChecksumMissingResultsCounter =
-    getWithChecksumScope.counter("missing_results")
-  private[this] val getWithChecksumUnexpectedResultsCounter =
-    getWithChecksumScope.counter("unexpected_results")
-  private[this] val getWithChecksumMatchingResultsCounter =
-    getWithChecksumScope.counter("matching_results")
+  p-pwivate[this] vaw getwithchecksumscope = scopedstatsweceivew.scope("get_with_cheksum")
+  pwivate[this] vaw getwithchecksummismatchedwesuwtscountew =
+    getwithchecksumscope.countew("mismatched_wesuwts")
+  pwivate[this] v-vaw getwithchecksummissingwesuwtscountew =
+    g-getwithchecksumscope.countew("missing_wesuwts")
+  p-pwivate[this] v-vaw getwithchecksumunexpectedwesuwtscountew =
+    getwithchecksumscope.countew("unexpected_wesuwts")
+  pwivate[this] v-vaw getwithchecksummatchingwesuwtscountew =
+    g-getwithchecksumscope.countew("matching_wesuwts")
 
-  override def get(keys: Seq[K]): Future[KeyValueResult[K, V]] = {
-    cache.get(keys) onSuccess { result =>
-      darkCache.get(keys) onSuccess { darkResult =>
-        keys foreach { k =>
-          (result(k), darkResult(k)) match {
-            // compare values, set if they differ
-            case (Return(Some(v)), Return(Some(dv))) if (v != dv) =>
-              getMismatchedResultsCounter.incr()
-              darkCache.set(k, v)
-            // set a value if missing
-            case (Return(Some(v)), Return.None | Throw(_)) =>
-              getMissingResultsCounter.incr()
-              darkCache.set(k, v)
-            // remove if necessary
-            case (Return.None, Return(Some(_)) | Throw(_)) =>
-              getUnexpectedResultsCounter.incr()
-              darkCache.delete(k)
-            // do nothing otherwise
-            case _ =>
-              getMatchingResultsCounter.incr()
+  ovewwide def g-get(keys: seq[k]): f-futuwe[keyvawuewesuwt[k, (ˆ ﻌ ˆ)♡ v]] = {
+    c-cache.get(keys) onsuccess { w-wesuwt =>
+      dawkcache.get(keys) onsuccess { d-dawkwesuwt =>
+        keys f-foweach { k =>
+          (wesuwt(k), (U ﹏ U) dawkwesuwt(k)) m-match {
+            // c-compawe vawues, UwU set if they diffew
+            case (wetuwn(some(v)), XD wetuwn(some(dv))) if (v != dv) =>
+              getmismatchedwesuwtscountew.incw()
+              d-dawkcache.set(k, ʘwʘ v-v)
+            // set a vawue i-if missing
+            c-case (wetuwn(some(v)), w-wetuwn.none | thwow(_)) =>
+              getmissingwesuwtscountew.incw()
+              dawkcache.set(k, rawr x3 v)
+            // w-wemove if nyecessawy
+            case (wetuwn.none, ^^;; wetuwn(some(_)) | thwow(_)) =>
+              g-getunexpectedwesuwtscountew.incw()
+              dawkcache.dewete(k)
+            // do n-nyothing othewwise
+            c-case _ =>
+              g-getmatchingwesuwtscountew.incw()
               ()
           }
         }
@@ -62,27 +62,27 @@ class MigratingReadCache[K, V](
     }
   }
 
-  override def getWithChecksum(keys: Seq[K]): Future[CsKeyValueResult[K, V]] = {
-    cache.getWithChecksum(keys) onSuccess { result =>
-      // no point in the getWithChecksum from the darkCache
-      darkCache.get(keys) onSuccess { darkResult =>
-        keys foreach { k =>
-          (result(k), darkResult(k)) match {
-            // compare values, set if they differ
-            case (Return(Some((Return(v), _))), Return(Some(dv))) if (v != dv) =>
-              getWithChecksumMismatchedResultsCounter.incr()
-              darkCache.set(k, v)
-            // set a value if missing
-            case (Return(Some((Return(v), _))), Return.None | Throw(_)) =>
-              getWithChecksumMissingResultsCounter.incr()
-              darkCache.set(k, v)
-            // remove if necessary
-            case (Return.None, Return(Some(_)) | Throw(_)) =>
-              getWithChecksumUnexpectedResultsCounter.incr()
-              darkCache.delete(k)
-            // do nothing otherwise
-            case _ =>
-              getWithChecksumMatchingResultsCounter.incr()
+  ovewwide def g-getwithchecksum(keys: s-seq[k]): f-futuwe[cskeyvawuewesuwt[k, ʘwʘ v-v]] = {
+    cache.getwithchecksum(keys) onsuccess { w-wesuwt =>
+      // n-no point in t-the getwithchecksum f-fwom the dawkcache
+      d-dawkcache.get(keys) onsuccess { dawkwesuwt =>
+        keys foweach { k =>
+          (wesuwt(k), (U ﹏ U) d-dawkwesuwt(k)) match {
+            // compawe vawues, (˘ω˘) set if they diffew
+            case (wetuwn(some((wetuwn(v), _))), (ꈍᴗꈍ) wetuwn(some(dv))) i-if (v != dv) =>
+              getwithchecksummismatchedwesuwtscountew.incw()
+              dawkcache.set(k, /(^•ω•^) v-v)
+            // s-set a vawue i-if missing
+            case (wetuwn(some((wetuwn(v), >_< _))), σωσ w-wetuwn.none | thwow(_)) =>
+              g-getwithchecksummissingwesuwtscountew.incw()
+              d-dawkcache.set(k, ^^;; v)
+            // wemove if nyecessawy
+            case (wetuwn.none, 😳 wetuwn(some(_)) | thwow(_)) =>
+              g-getwithchecksumunexpectedwesuwtscountew.incw()
+              dawkcache.dewete(k)
+            // d-do nyothing othewwise
+            c-case _ =>
+              g-getwithchecksummatchingwesuwtscountew.incw()
               ()
           }
         }
@@ -90,155 +90,155 @@ class MigratingReadCache[K, V](
     }
   }
 
-  override def release(): Unit = {
-    cache.release()
-    darkCache.release()
+  ovewwide def wewease(): unit = {
+    c-cache.wewease()
+    d-dawkcache.wewease()
   }
 }
 
 /**
- * MigratingCache supports a gradual migration from one cache to another. Writes to the cache
- * are propogated to the darkCache. Reads from the cache are compared to reads from the darkCache
- * and new values are written to the darkCache if necessary.
+ * migwatingcache s-suppowts a gwaduaw m-migwation fwom one cache to anothew. >_< wwites to the cache
+ * awe pwopogated to t-the dawkcache. -.- w-weads fwom the c-cache awe compawed to weads fwom t-the dawkcache
+ * a-and new vawues awe wwitten to t-the dawkcache if nyecessawy. UwU
  *
- * Writes to the darkCache are not locking writes, so there is some risk of inconsistencies from
- * race conditions. However, writes to the darkCache only occur if they succeed in the cache, so
- * if a checkAndSet fails, for example, no write is issued to the darkCache.
+ * wwites to the dawkcache awe nyot wocking wwites, :3 s-so thewe is s-some wisk of inconsistencies fwom
+ * wace conditions. σωσ h-howevew, wwites t-to the dawkcache onwy occuw if they succeed in the cache, >w< s-so
+ * if a checkandset faiws, (ˆ ﻌ ˆ)♡ fow exampwe, nyo wwite is issued to the dawkcache. ʘwʘ
  */
-class MigratingCache[K, V](
-  cache: Cache[K, V],
-  darkCache: Cache[K, V],
-  statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends MigratingReadCache(cache, darkCache, statsReceiver)
-    with Cache[K, V] {
-  override def add(key: K, value: V): Future[Boolean] = {
-    cache.add(key, value) onSuccess { wasAdded =>
-      if (wasAdded) {
-        darkCache.set(key, value)
+c-cwass migwatingcache[k, :3 v](
+  cache: cache[k, (˘ω˘) v-v],
+  dawkcache: c-cache[k, 😳😳😳 v],
+  statsweceivew: statsweceivew = nyuwwstatsweceivew)
+    e-extends m-migwatingweadcache(cache, rawr x3 dawkcache, (✿oωo) statsweceivew)
+    with cache[k, (ˆ ﻌ ˆ)♡ v-v] {
+  ovewwide def add(key: k-k, :3 vawue: v): futuwe[boowean] = {
+    cache.add(key, (U ᵕ U❁) vawue) o-onsuccess { wasadded =>
+      if (wasadded) {
+        dawkcache.set(key, ^^;; v-vawue)
       }
     }
   }
 
-  override def checkAndSet(key: K, value: V, checksum: Checksum): Future[Boolean] = {
-    cache.checkAndSet(key, value, checksum) onSuccess { wasSet =>
-      if (wasSet) {
-        darkCache.set(key, value)
+  o-ovewwide def checkandset(key: k-k, mya vawue: v, checksum: checksum): f-futuwe[boowean] = {
+    c-cache.checkandset(key, 😳😳😳 v-vawue, checksum) onsuccess { w-wasset =>
+      i-if (wasset) {
+        dawkcache.set(key, OwO vawue)
       }
     }
   }
 
-  override def set(key: K, value: V): Future[Unit] = {
-    cache.set(key, value) onSuccess { _ =>
-      darkCache.set(key, value)
+  o-ovewwide d-def set(key: k, rawr v-vawue: v): futuwe[unit] = {
+    cache.set(key, XD vawue) onsuccess { _ =>
+      d-dawkcache.set(key, (U ﹏ U) vawue)
     }
   }
 
-  override def replace(key: K, value: V): Future[Boolean] = {
-    cache.replace(key, value) onSuccess { wasReplaced =>
-      if (wasReplaced) {
-        darkCache.set(key, value)
+  o-ovewwide def w-wepwace(key: k, (˘ω˘) vawue: v): futuwe[boowean] = {
+    cache.wepwace(key, UwU vawue) onsuccess { w-waswepwaced =>
+      if (waswepwaced) {
+        d-dawkcache.set(key, >_< v-vawue)
       }
     }
   }
 
-  override def delete(key: K): Future[Boolean] = {
-    cache.delete(key) onSuccess { wasDeleted =>
-      if (wasDeleted) {
-        darkCache.delete(key)
+  o-ovewwide def dewete(key: k-k): futuwe[boowean] = {
+    cache.dewete(key) onsuccess { wasdeweted =>
+      if (wasdeweted) {
+        dawkcache.dewete(key)
       }
     }
   }
 }
 
 /**
- * Like MigratingCache but for TtlCaches
+ * wike m-migwatingcache but fow ttwcaches
  */
-class MigratingTtlCache[K, V](
-  cache: TtlCache[K, V],
-  darkCache: TtlCache[K, V],
-  ttl: (K, V) => Duration)
-    extends MigratingReadCache(cache, new TtlCacheToCache(darkCache, ttl))
-    with TtlCache[K, V] {
-  override def add(key: K, value: V, ttl: Duration): Future[Boolean] = {
-    cache.add(key, value, ttl) onSuccess { wasAdded =>
-      if (wasAdded) {
-        darkCache.set(key, value, ttl)
+c-cwass migwatingttwcache[k, σωσ v](
+  cache: ttwcache[k, 🥺 v-v],
+  dawkcache: ttwcache[k, 🥺 v-v],
+  ttw: (k, ʘwʘ v) => duwation)
+    e-extends m-migwatingweadcache(cache, :3 n-nyew t-ttwcachetocache(dawkcache, (U ﹏ U) t-ttw))
+    with ttwcache[k, (U ﹏ U) v] {
+  ovewwide def add(key: k, ʘwʘ vawue: v, ttw: duwation): futuwe[boowean] = {
+    c-cache.add(key, >w< v-vawue, ttw) o-onsuccess { wasadded =>
+      i-if (wasadded) {
+        dawkcache.set(key, rawr x3 vawue, ttw)
       }
     }
   }
 
-  override def checkAndSet(key: K, value: V, checksum: Checksum, ttl: Duration): Future[Boolean] = {
-    cache.checkAndSet(key, value, checksum, ttl) onSuccess { wasSet =>
-      if (wasSet) {
-        darkCache.set(key, value, ttl)
+  o-ovewwide d-def checkandset(key: k, OwO vawue: v-v, ^•ﻌ•^ checksum: checksum, >_< ttw: duwation): futuwe[boowean] = {
+    c-cache.checkandset(key, OwO v-vawue, >_< checksum, ttw) o-onsuccess { wasset =>
+      i-if (wasset) {
+        dawkcache.set(key, (ꈍᴗꈍ) vawue, ttw)
       }
     }
   }
 
-  override def set(key: K, value: V, ttl: Duration): Future[Unit] = {
-    cache.set(key, value, ttl) onSuccess { _ =>
-      darkCache.set(key, value, ttl)
+  ovewwide def set(key: k, >w< v-vawue: v, ttw: d-duwation): futuwe[unit] = {
+    c-cache.set(key, (U ﹏ U) vawue, t-ttw) onsuccess { _ =>
+      d-dawkcache.set(key, ^^ vawue, ttw)
     }
   }
 
-  override def replace(key: K, value: V, ttl: Duration): Future[Boolean] = {
-    cache.replace(key, value, ttl) onSuccess { wasReplaced =>
-      if (wasReplaced) {
-        darkCache.set(key, value, ttl)
+  o-ovewwide d-def wepwace(key: k, (U ﹏ U) vawue: v-v, :3 ttw: duwation): f-futuwe[boowean] = {
+    cache.wepwace(key, (✿oωo) v-vawue, ttw) onsuccess { waswepwaced =>
+      if (waswepwaced) {
+        d-dawkcache.set(key, XD vawue, t-ttw)
       }
     }
   }
 
-  override def delete(key: K): Future[Boolean] = {
-    cache.delete(key) onSuccess { wasDeleted =>
-      if (wasDeleted) {
-        darkCache.delete(key)
+  o-ovewwide def dewete(key: k-k): futuwe[boowean] = {
+    cache.dewete(key) onsuccess { wasdeweted =>
+      i-if (wasdeweted) {
+        d-dawkcache.dewete(key)
       }
     }
   }
 
-  override def release(): Unit = {
-    cache.release()
-    darkCache.release()
+  o-ovewwide def wewease(): unit = {
+    cache.wewease()
+    dawkcache.wewease()
   }
 }
 
 /**
- * A MigratingTtlCache for Memcaches, implementing a migrating incr and decr.  Race conditions
- * are possible and may prevent the counts from being perfectly synchronized.
+ * a-a migwatingttwcache fow memcaches, >w< impwementing a-a migwating incw a-and decw. òωó  wace conditions
+ * a-awe possibwe and may pwevent the c-counts fwom being p-pewfectwy synchwonized. (ꈍᴗꈍ)
  */
-class MigratingMemcache(
-  cache: Memcache,
-  darkCache: Memcache,
-  ttl: (String, Array[Byte]) => Duration)
-    extends MigratingTtlCache[String, Array[Byte]](cache, darkCache, ttl)
-    with Memcache {
-  def incr(key: String, delta: Long = 1): Future[Option[Long]] = {
-    cache.incr(key, delta) onSuccess {
-      case None =>
-        darkCache.delete(key)
+cwass migwatingmemcache(
+  cache: m-memcache, rawr x3
+  dawkcache: memcache, rawr x3
+  ttw: (stwing, σωσ a-awway[byte]) => d-duwation)
+    extends migwatingttwcache[stwing, (ꈍᴗꈍ) a-awway[byte]](cache, dawkcache, rawr t-ttw)
+    with m-memcache {
+  def i-incw(key: stwing, ^^;; dewta: wong = 1): futuwe[option[wong]] = {
+    cache.incw(key, rawr x3 dewta) onsuccess {
+      case nyone =>
+        dawkcache.dewete(key)
 
-      case Some(value) =>
-        darkCache.incr(key, delta) onSuccess {
-          case Some(`value`) => // same value!
-          case _ =>
-            val b = value.toString.getBytes
-            darkCache.set(key, b, ttl(key, b))
+      case some(vawue) =>
+        dawkcache.incw(key, (ˆ ﻌ ˆ)♡ dewta) onsuccess {
+          case some(`vawue`) => // s-same vawue! σωσ
+          c-case _ =>
+            vaw b = vawue.tostwing.getbytes
+            dawkcache.set(key, (U ﹏ U) b-b, ttw(key, b))
         }
     }
   }
 
-  def decr(key: String, delta: Long = 1): Future[Option[Long]] = {
-    cache.decr(key, delta) onSuccess {
-      case None =>
-        darkCache.delete(key)
+  d-def decw(key: s-stwing, >w< dewta: wong = 1): futuwe[option[wong]] = {
+    c-cache.decw(key, σωσ dewta) o-onsuccess {
+      c-case nyone =>
+        dawkcache.dewete(key)
 
-      case Some(value) =>
-        darkCache.decr(key, delta) onSuccess {
-          case Some(`value`) => // same value!
-          case _ =>
-            val b = value.toString.getBytes
-            darkCache.set(key, b, ttl(key, b))
+      c-case some(vawue) =>
+        dawkcache.decw(key, nyaa~~ d-dewta) onsuccess {
+          c-case some(`vawue`) => // same vawue! 🥺
+          c-case _ =>
+            v-vaw b = v-vawue.tostwing.getbytes
+            d-dawkcache.set(key, rawr x3 b-b, ttw(key, σωσ b-b))
         }
     }
   }

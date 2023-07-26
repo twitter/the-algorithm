@@ -1,25 +1,25 @@
-java_library(
-    sources = ["*.java"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/code/findbugs:jsr305",
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/org/apache/lucene:lucene-analyzers-common",
-        "3rdparty/jvm/org/apache/lucene:lucene-analyzers-smartcn",
-        "3rdparty/jvm/org/apache/lucene:lucene-core",
-        "3rdparty/jvm/org/apache/lucene:lucene-facet",
-        "3rdparty/jvm/org/apache/lucene:lucene-queries",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "3rdparty/jvm/org/apache/zookeeper:zookeeper-client",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "src/java/com/twitter/search/common/features",
-        "src/java/com/twitter/search/common/schema/base",
-        "src/java/com/twitter/search/common/schema/earlybird",
-        "src/java/com/twitter/search/common/util/analysis",
-        "src/java/com/twitter/search/queryparser",
-        "src/java/com/twitter/search/queryparser/query:core-query-nodes",
-        "src/java/com/twitter/search/queryparser/query/search:search-query-nodes",
-    ],
+java_wibwawy(
+    souwces = ["*.java"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/code/findbugs:jsw305", òωó
+        "3wdpawty/jvm/com/googwe/guava", o.O
+        "3wdpawty/jvm/com/googwe/inject:guice", (U ᵕ U❁)
+        "3wdpawty/jvm/owg/apache/wucene:wucene-anawyzews-common", (⑅˘꒳˘)
+        "3wdpawty/jvm/owg/apache/wucene:wucene-anawyzews-smawtcn", ( ͡o ω ͡o )
+        "3wdpawty/jvm/owg/apache/wucene:wucene-cowe", UwU
+        "3wdpawty/jvm/owg/apache/wucene:wucene-facet", rawr x3
+        "3wdpawty/jvm/owg/apache/wucene:wucene-quewies", rawr
+        "3wdpawty/jvm/owg/apache/thwift:wibthwift", σωσ
+        "3wdpawty/jvm/owg/apache/zookeepew:zookeepew-cwient", σωσ
+        "3wdpawty/jvm/owg/swf4j:swf4j-api", >_<
+        "swc/java/com/twittew/seawch/common/featuwes", :3
+        "swc/java/com/twittew/seawch/common/schema/base", (U ﹏ U)
+        "swc/java/com/twittew/seawch/common/schema/eawwybiwd", -.-
+        "swc/java/com/twittew/seawch/common/utiw/anawysis", (ˆ ﻌ ˆ)♡
+        "swc/java/com/twittew/seawch/quewypawsew", (⑅˘꒳˘)
+        "swc/java/com/twittew/seawch/quewypawsew/quewy:cowe-quewy-nodes", (U ᵕ U❁)
+        "swc/java/com/twittew/seawch/quewypawsew/quewy/seawch:seawch-quewy-nodes", -.-
+    ], ^^;;
 )

@@ -1,237 +1,237 @@
-package com.twitter.search.earlybird.segment;
+package com.twittew.seawch.eawwybiwd.segment;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
+impowt j-java.io.ioexception;
+i-impowt j-java.utiw.hashmap;
+i-impowt java.utiw.map;
+i-impowt j-java.utiw.optionaw;
+i-impowt java.utiw.concuwwent.timeunit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+impowt com.googwe.common.base.function;
+impowt com.googwe.common.base.pweconditions;
 
-import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.apache.thwift.texception;
+impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchRequestStats;
-import com.twitter.search.common.schema.earlybird.EarlybirdThriftDocumentUtil;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.util.io.ReaderWithStatsFactory;
-import com.twitter.search.common.util.io.TransformingRecordReader;
-import com.twitter.search.common.util.io.dl.DLMultiStreamReader;
-import com.twitter.search.common.util.io.dl.DLReaderWriterFactory;
-import com.twitter.search.common.util.io.dl.DLTimestampedReaderFactory;
-import com.twitter.search.common.util.io.dl.SegmentDLUtil;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.common.util.io.recordreader.RecordReaderFactory;
-import com.twitter.search.common.util.thrift.ThriftUtils;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.document.DocumentFactory;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.partition.SegmentInfo;
+impowt c-com.twittew.common.utiw.cwock;
+impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.metwics.seawchcustomgauge;
+impowt com.twittew.seawch.common.metwics.seawchwequeststats;
+i-impowt c-com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdthwiftdocumentutiw;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingevent;
+impowt com.twittew.seawch.common.utiw.io.weadewwithstatsfactowy;
+impowt com.twittew.seawch.common.utiw.io.twansfowmingwecowdweadew;
+i-impowt com.twittew.seawch.common.utiw.io.dw.dwmuwtistweamweadew;
+impowt com.twittew.seawch.common.utiw.io.dw.dwweadewwwitewfactowy;
+impowt com.twittew.seawch.common.utiw.io.dw.dwtimestampedweadewfactowy;
+impowt com.twittew.seawch.common.utiw.io.dw.segmentdwutiw;
+i-impowt com.twittew.seawch.common.utiw.io.wecowdweadew.wecowdweadew;
+i-impowt com.twittew.seawch.common.utiw.io.wecowdweadew.wecowdweadewfactowy;
+i-impowt c-com.twittew.seawch.common.utiw.thwift.thwiftutiws;
+i-impowt com.twittew.seawch.eawwybiwd.eawwybiwdindexconfig;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+impowt com.twittew.seawch.eawwybiwd.document.documentfactowy;
+i-impowt com.twittew.seawch.eawwybiwd.document.tweetdocument;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentinfo;
 
-public class DLSegmentDataReaderSet implements SegmentDataReaderSet {
-  private static final Logger LOG = LoggerFactory.getLogger(DLSegmentDataReaderSet.class);
+p-pubwic cwass dwsegmentdataweadewset impwements segmentdataweadewset {
+  pwivate static finaw woggew wog = w-woggewfactowy.getwoggew(dwsegmentdataweadewset.cwass);
 
-  public static final SearchRequestStats STATUS_DL_READ_STATS =
-      SearchRequestStats.export("status_dlreader", TimeUnit.MICROSECONDS, false);
-  private static final SearchRequestStats UPDATE_EVENT_DL_READ_STATS =
-      SearchRequestStats.export("update_events_dlreader", TimeUnit.MICROSECONDS, false);
-  // The number of tweets not indexed because they failed deserialization.
-  private static final SearchCounter STATUS_SKIPPED_DUE_TO_FAILED_DESERIALIZATION_COUNTER =
-      SearchCounter.export("statuses_skipped_due_to_failed_deserialization");
+  pubwic s-static finaw s-seawchwequeststats s-status_dw_wead_stats =
+      seawchwequeststats.expowt("status_dwweadew", (✿oωo) timeunit.micwoseconds, (˘ω˘) fawse);
+  pwivate static finaw s-seawchwequeststats u-update_event_dw_wead_stats =
+      seawchwequeststats.expowt("update_events_dwweadew", rawr timeunit.micwoseconds, OwO f-fawse);
+  // t-the nyumbew of tweets nyot indexed b-because they faiwed desewiawization. ^•ﻌ•^
+  p-pwivate static finaw seawchcountew s-status_skipped_due_to_faiwed_desewiawization_countew =
+      seawchcountew.expowt("statuses_skipped_due_to_faiwed_desewiawization");
 
-  @VisibleForTesting
-  public static final int FRESH_READ_THRESHOLD = (int) TimeUnit.MINUTES.toMillis(1);
+  @visibwefowtesting
+  p-pubwic static finaw i-int fwesh_wead_thweshowd = (int) t-timeunit.minutes.tomiwwis(1);
 
-  private final int documentReadFreshnessThreshold =
-      EarlybirdConfig.getInt("documents_reader_freshness_threshold_millis", 10000);
-  private final int updateReadFreshnessThreshold =
-      EarlybirdConfig.getInt("updates_freshness_threshold_millis", FRESH_READ_THRESHOLD);
-  private final int dlReaderVersion = EarlybirdConfig.getInt("dl_reader_version");
+  pwivate finaw int documentweadfweshnessthweshowd =
+      eawwybiwdconfig.getint("documents_weadew_fweshness_thweshowd_miwwis", UwU 10000);
+  pwivate finaw int updateweadfweshnessthweshowd =
+      eawwybiwdconfig.getint("updates_fweshness_thweshowd_miwwis", (˘ω˘) f-fwesh_wead_thweshowd);
+  p-pwivate finaw int dwweadewvewsion = e-eawwybiwdconfig.getint("dw_weadew_vewsion");
 
-  private final DLReaderWriterFactory dlFactory;
-  private final RecordReaderFactory<byte[]> dlUpdateEventsFactory;
-  private final EarlybirdIndexConfig indexConfig;
-  private final Clock clock;
+  p-pwivate f-finaw dwweadewwwitewfactowy dwfactowy;
+  pwivate finaw wecowdweadewfactowy<byte[]> dwupdateeventsfactowy;
+  p-pwivate finaw eawwybiwdindexconfig indexconfig;
+  pwivate finaw cwock cwock;
 
-  private RecordReader<TweetDocument> documentReader;
+  pwivate wecowdweadew<tweetdocument> d-documentweadew;
 
-  // RecordReaders for update events that span all live segments.
-  private final RecordReader<ThriftVersionedEvents> updateEventsReader;
-  private final DLMultiStreamReader updateEventsMultiReader;
-  private final Map<Long, RecordReader<ThriftVersionedEvents>> updateEventReaders = new HashMap<>();
+  // wecowdweadews f-fow update e-events that s-span aww wive segments. (///ˬ///✿)
+  pwivate f-finaw wecowdweadew<thwiftvewsionedevents> u-updateeventsweadew;
+  p-pwivate finaw d-dwmuwtistweamweadew updateeventsmuwtiweadew;
+  pwivate finaw map<wong, σωσ w-wecowdweadew<thwiftvewsionedevents>> u-updateeventweadews = n-new hashmap<>();
 
-  DLSegmentDataReaderSet(
-      DLReaderWriterFactory dlFactory,
-      final EarlybirdIndexConfig indexConfig,
-      Clock clock) throws IOException {
-    this.dlFactory = dlFactory;
-    this.indexConfig = indexConfig;
-    this.clock = clock;
+  d-dwsegmentdataweadewset(
+      d-dwweadewwwitewfactowy dwfactowy, /(^•ω•^)
+      finaw eawwybiwdindexconfig i-indexconfig, 😳
+      cwock cwock) thwows ioexception {
+    this.dwfactowy = dwfactowy;
+    this.indexconfig = indexconfig;
+    t-this.cwock = cwock;
 
-    this.dlUpdateEventsFactory = new ReaderWithStatsFactory(
-        new DLTimestampedReaderFactory(dlFactory, clock, updateReadFreshnessThreshold),
-        UPDATE_EVENT_DL_READ_STATS);
-    this.updateEventsMultiReader =
-        new DLMultiStreamReader("update_events", dlUpdateEventsFactory, true, clock);
-    this.updateEventsReader =
-        new TransformingRecordReader<>(updateEventsMultiReader, record ->
-            (record != null) ? deserializeTVE(record.getBytes()) : null);
+    this.dwupdateeventsfactowy = nyew weadewwithstatsfactowy(
+        nyew d-dwtimestampedweadewfactowy(dwfactowy, 😳 c-cwock, (⑅˘꒳˘) updateweadfweshnessthweshowd), 😳😳😳
+        u-update_event_dw_wead_stats);
+    this.updateeventsmuwtiweadew =
+        n-nyew dwmuwtistweamweadew("update_events", 😳 d-dwupdateeventsfactowy, XD twue, mya c-cwock);
+    this.updateeventsweadew =
+        nyew twansfowmingwecowdweadew<>(updateeventsmuwtiweadew, ^•ﻌ•^ wecowd ->
+            (wecowd != nyuww) ? desewiawizetve(wecowd.getbytes()) : n-nyuww);
 
-    SearchCustomGauge.export("open_dl_update_events_streams", updateEventReaders::size);
+    seawchcustomgauge.expowt("open_dw_update_events_stweams", ʘwʘ u-updateeventweadews::size);
   }
 
-  private ThriftVersionedEvents deserializeTVE(byte[] bytes) {
-    ThriftVersionedEvents event = new ThriftVersionedEvents();
-    try {
-      ThriftUtils.fromCompactBinaryFormat(bytes, event);
-      return event;
-    } catch (TException e) {
-      LOG.error("error deserializing TVE", e);
-      return null;
-    }
-  }
-
-  @Override
-  public void attachDocumentReaders(SegmentInfo segmentInfo) throws IOException {
-    // Close any document reader left open before.
-    if (documentReader != null) {
-      LOG.warn("Previous documentReader not closed: {}", documentReader);
-      completeSegmentDocs(segmentInfo);
-    }
-    documentReader = newDocumentReader(segmentInfo);
-  }
-
-  @Override
-  public void attachUpdateReaders(SegmentInfo segmentInfo) throws IOException {
-    if (updateEventsMultiReader == null) {
-      return;
-    }
-
-    String segmentName = segmentInfo.getSegmentName();
-    if (getUpdateEventsReaderForSegment(segmentInfo) != null) {
-      LOG.info("Update events reader for segment {} is already attached.", segmentName);
-      return;
-    }
-
-    long updateEventStreamOffsetTimestamp = segmentInfo.getUpdatesStreamOffsetTimestamp();
-    LOG.info("Attaching update events reader for segment {} with timestamp: {}.",
-             segmentName, updateEventStreamOffsetTimestamp);
-
-    String topic = SegmentDLUtil.getDLTopicForUpdateEvents(segmentName, dlReaderVersion);
-    RecordReader<byte[]> recordReader =
-        dlUpdateEventsFactory.newRecordReaderForTimestamp(topic, updateEventStreamOffsetTimestamp);
-    updateEventsMultiReader.addRecordReader(recordReader, topic);
-    updateEventReaders.put(segmentInfo.getTimeSliceID(),
-        new TransformingRecordReader<>(recordReader, this::deserializeTVE));
-  }
-
-  @Override
-  public void stopAll() {
-    if (documentReader != null) {
-      documentReader.close();
-    }
-    if (updateEventsReader != null) {
-      updateEventsReader.close();
-    }
-    try {
-      dlFactory.close();
-    } catch (IOException e) {
-      LOG.error("Exception while closing DL factory", e);
+  pwivate thwiftvewsionedevents d-desewiawizetve(byte[] b-bytes) {
+    thwiftvewsionedevents event = n-nyew thwiftvewsionedevents();
+    t-twy {
+      thwiftutiws.fwomcompactbinawyfowmat(bytes, ( ͡o ω ͡o ) e-event);
+      w-wetuwn event;
+    } catch (texception e) {
+      wog.ewwow("ewwow desewiawizing tve", mya e);
+      w-wetuwn n-nyuww;
     }
   }
 
-  @Override
-  public void completeSegmentDocs(SegmentInfo segmentInfo) {
-    if (documentReader != null) {
-      documentReader.close();
-      documentReader = null;
+  @ovewwide
+  p-pubwic void attachdocumentweadews(segmentinfo segmentinfo) t-thwows i-ioexception {
+    // cwose any d-document weadew weft open befowe. o.O
+    if (documentweadew != nyuww) {
+      wog.wawn("pwevious documentweadew n-nyot c-cwosed: {}", (✿oωo) documentweadew);
+      compwetesegmentdocs(segmentinfo);
+    }
+    d-documentweadew = n-nyewdocumentweadew(segmentinfo);
+  }
+
+  @ovewwide
+  pubwic void attachupdateweadews(segmentinfo segmentinfo) t-thwows ioexception {
+    if (updateeventsmuwtiweadew == nyuww) {
+      wetuwn;
+    }
+
+    stwing s-segmentname = segmentinfo.getsegmentname();
+    if (getupdateeventsweadewfowsegment(segmentinfo) != n-nyuww) {
+      w-wog.info("update events weadew fow segment {} is awweady attached.", :3 s-segmentname);
+      w-wetuwn;
+    }
+
+    wong updateeventstweamoffsettimestamp = segmentinfo.getupdatesstweamoffsettimestamp();
+    wog.info("attaching u-update events weadew fow segment {} w-with timestamp: {}.", 😳
+             segmentname, (U ﹏ U) updateeventstweamoffsettimestamp);
+
+    stwing t-topic = segmentdwutiw.getdwtopicfowupdateevents(segmentname, mya dwweadewvewsion);
+    w-wecowdweadew<byte[]> w-wecowdweadew =
+        dwupdateeventsfactowy.newwecowdweadewfowtimestamp(topic, (U ᵕ U❁) u-updateeventstweamoffsettimestamp);
+    updateeventsmuwtiweadew.addwecowdweadew(wecowdweadew, :3 t-topic);
+    u-updateeventweadews.put(segmentinfo.gettimeswiceid(), mya
+        n-nyew twansfowmingwecowdweadew<>(wecowdweadew, OwO this::desewiawizetve));
+  }
+
+  @ovewwide
+  pubwic v-void stopaww() {
+    i-if (documentweadew != nyuww) {
+      documentweadew.cwose();
+    }
+    i-if (updateeventsweadew != n-nyuww) {
+      u-updateeventsweadew.cwose();
+    }
+    twy {
+      dwfactowy.cwose();
+    } c-catch (ioexception e) {
+      wog.ewwow("exception w-whiwe cwosing d-dw factowy", (ˆ ﻌ ˆ)♡ e);
     }
   }
 
-  @Override
-  public void stopSegmentUpdates(SegmentInfo segmentInfo) {
-    if (updateEventsMultiReader != null) {
-      updateEventsMultiReader.removeStream(
-          SegmentDLUtil.getDLTopicForUpdateEvents(segmentInfo.getSegmentName(), dlReaderVersion));
-      updateEventReaders.remove(segmentInfo.getTimeSliceID());
+  @ovewwide
+  pubwic void compwetesegmentdocs(segmentinfo segmentinfo) {
+    i-if (documentweadew != n-nuww) {
+      documentweadew.cwose();
+      d-documentweadew = n-nyuww;
     }
   }
 
-  @Override
-  public RecordReader<TweetDocument> newDocumentReader(SegmentInfo segmentInfo) throws IOException {
-    String topic = SegmentDLUtil.getDLTopicForTweets(segmentInfo.getSegmentName(),
-        EarlybirdConfig.getPenguinVersion(), dlReaderVersion);
-    final long timeSliceId = segmentInfo.getTimeSliceID();
-    final DocumentFactory<ThriftIndexingEvent> docFactory = indexConfig.createDocumentFactory();
+  @ovewwide
+  pubwic v-void stopsegmentupdates(segmentinfo segmentinfo) {
+    if (updateeventsmuwtiweadew != nyuww) {
+      updateeventsmuwtiweadew.wemovestweam(
+          segmentdwutiw.getdwtopicfowupdateevents(segmentinfo.getsegmentname(), ʘwʘ d-dwweadewvewsion));
+      updateeventweadews.wemove(segmentinfo.gettimeswiceid());
+    }
+  }
 
-    // Create the underlying DLRecordReader wrapped with the tweet reader stats.
-    RecordReader<byte[]> dlReader = new ReaderWithStatsFactory(
-        new DLTimestampedReaderFactory(
-            dlFactory,
-            clock,
-            documentReadFreshnessThreshold),
-        STATUS_DL_READ_STATS)
-        .newRecordReader(topic);
+  @ovewwide
+  p-pubwic wecowdweadew<tweetdocument> n-nyewdocumentweadew(segmentinfo segmentinfo) t-thwows ioexception {
+    s-stwing topic = s-segmentdwutiw.getdwtopicfowtweets(segmentinfo.getsegmentname(), o.O
+        e-eawwybiwdconfig.getpenguinvewsion(), UwU dwweadewvewsion);
+    f-finaw wong t-timeswiceid = segmentinfo.gettimeswiceid();
+    finaw documentfactowy<thwiftindexingevent> docfactowy = indexconfig.cweatedocumentfactowy();
 
-    // Create the wrapped reader which transforms serialized byte[] to TweetDocument.
-    return new TransformingRecordReader<>(
-        dlReader,
-        new Function<byte[], TweetDocument>() {
-          @Override
-          public TweetDocument apply(byte[] input) {
-            ThriftIndexingEvent event = new ThriftIndexingEvent();
-            try {
-              ThriftUtils.fromCompactBinaryFormat(input, event);
-            } catch (TException e) {
-              LOG.error("Could not deserialize status document", e);
-              STATUS_SKIPPED_DUE_TO_FAILED_DESERIALIZATION_COUNTER.increment();
-              return null;
+    // cweate the undewwying dwwecowdweadew wwapped w-with the tweet w-weadew stats. rawr x3
+    w-wecowdweadew<byte[]> dwweadew = n-nyew weadewwithstatsfactowy(
+        nyew dwtimestampedweadewfactowy(
+            dwfactowy, 🥺
+            cwock, :3
+            documentweadfweshnessthweshowd), (ꈍᴗꈍ)
+        s-status_dw_wead_stats)
+        .newwecowdweadew(topic);
+
+    // c-cweate the wwapped weadew w-which twansfowms sewiawized byte[] to tweetdocument.
+    w-wetuwn n-nyew twansfowmingwecowdweadew<>(
+        dwweadew, 🥺
+        n-nyew f-function<byte[], (✿oωo) tweetdocument>() {
+          @ovewwide
+          pubwic tweetdocument appwy(byte[] input) {
+            t-thwiftindexingevent e-event = n-nyew thwiftindexingevent();
+            t-twy {
+              t-thwiftutiws.fwomcompactbinawyfowmat(input, (U ﹏ U) event);
+            } c-catch (texception e-e) {
+              wog.ewwow("couwd n-not desewiawize s-status document", :3 e);
+              s-status_skipped_due_to_faiwed_desewiawization_countew.incwement();
+              wetuwn nyuww;
             }
 
-            Preconditions.checkNotNull(event.getDocument());
-            return new TweetDocument(
-                docFactory.getStatusId(event),
-                timeSliceId,
-                EarlybirdThriftDocumentUtil.getCreatedAtMs(event.getDocument()),
-                docFactory.newDocument(event));
+            p-pweconditions.checknotnuww(event.getdocument());
+            wetuwn new tweetdocument(
+                d-docfactowy.getstatusid(event), ^^;;
+                t-timeswiceid, rawr
+                eawwybiwdthwiftdocumentutiw.getcweatedatms(event.getdocument()), 😳😳😳
+                d-docfactowy.newdocument(event));
           }
         });
   }
 
-  @Override
-  public RecordReader<TweetDocument> getDocumentReader() {
-    return documentReader;
+  @ovewwide
+  pubwic wecowdweadew<tweetdocument> getdocumentweadew() {
+    w-wetuwn documentweadew;
   }
 
-  @Override
-  public RecordReader<ThriftVersionedEvents> getUpdateEventsReader() {
-    return updateEventsReader;
+  @ovewwide
+  p-pubwic w-wecowdweadew<thwiftvewsionedevents> getupdateeventsweadew() {
+    wetuwn updateeventsweadew;
   }
 
-  @Override
-  public RecordReader<ThriftVersionedEvents> getUpdateEventsReaderForSegment(
-      SegmentInfo segmentInfo) {
-    return updateEventReaders.get(segmentInfo.getTimeSliceID());
+  @ovewwide
+  pubwic wecowdweadew<thwiftvewsionedevents> g-getupdateeventsweadewfowsegment(
+      segmentinfo segmentinfo) {
+    w-wetuwn updateeventweadews.get(segmentinfo.gettimeswiceid());
   }
 
-  @Override
-  public Optional<Long> getUpdateEventsStreamOffsetForSegment(SegmentInfo segmentInfo) {
-    String topic =
-        SegmentDLUtil.getDLTopicForUpdateEvents(segmentInfo.getSegmentName(), dlReaderVersion);
-    return updateEventsMultiReader.getUnderlyingOffsetForSegmentWithTopic(topic);
+  @ovewwide
+  p-pubwic optionaw<wong> getupdateeventsstweamoffsetfowsegment(segmentinfo s-segmentinfo) {
+    stwing topic =
+        s-segmentdwutiw.getdwtopicfowupdateevents(segmentinfo.getsegmentname(), (✿oωo) d-dwweadewvewsion);
+    wetuwn updateeventsmuwtiweadew.getundewwyingoffsetfowsegmentwithtopic(topic);
   }
 
-  @Override
-  public boolean allCaughtUp() {
-    return ((getDocumentReader() == null) || getDocumentReader().isCaughtUp())
-        && ((getUpdateEventsReader() == null) || getUpdateEventsReader().isCaughtUp());
+  @ovewwide
+  pubwic boowean a-awwcaughtup() {
+    wetuwn ((getdocumentweadew() == nyuww) || g-getdocumentweadew().iscaughtup())
+        && ((getupdateeventsweadew() == n-nyuww) || getupdateeventsweadew().iscaughtup());
   }
 }

@@ -1,59 +1,59 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/com/google/inject/extensions:guice-assistedinject",
-        "3rdparty/jvm/net/codingwell:scala-guice",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "escherbird/src/scala/com/twitter/escherbird/util/stitchcache",
-        "finatra/inject/inject-core/src/main/scala",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/base",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/strato",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/constants",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/feature_hydration/adapters",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/feature_hydration/common",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/utils",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/configapi/common",
-        "hermit/hermit-core/src/main/scala/com/twitter/hermit/constants",
-        "src/java/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/featurestore/catalog/datasets/core:socialgraph",
-        "src/scala/com/twitter/ml/featurestore/catalog/datasets/core:usersource",
-        "src/scala/com/twitter/ml/featurestore/catalog/datasets/onboarding:mc-user-counting",
-        "src/scala/com/twitter/ml/featurestore/catalog/datasets/onboarding:user-wtf-algorithm-aggregate",
-        "src/scala/com/twitter/ml/featurestore/catalog/datasets/onboarding:wtf-impression",
-        "src/scala/com/twitter/ml/featurestore/catalog/datasets/onboarding:wtf-post-nux",
-        "src/scala/com/twitter/ml/featurestore/catalog/datasets/onboarding:wtf-user-algorithm-aggregate",
-        "src/scala/com/twitter/ml/featurestore/catalog/datasets/timelines:timelines-author-features",
-        "src/scala/com/twitter/ml/featurestore/catalog/entities/core",
-        "src/scala/com/twitter/ml/featurestore/catalog/entities/onboarding",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/core:socialgraph",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/core:user",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/interests_discovery:user-topic-relationships",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/magicrecs:non-mr-notif-summmaries",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/magicrecs:non-mr-notif-summmary-aggregates",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/magicrecs:nonmr-ntab-summaries",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/onboarding:mc-user-counting",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/onboarding:post-nux-offline",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/onboarding:post-nux-offline-edge",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/onboarding:ratio",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/onboarding:simcluster-user-interested-in-candidate-known-for",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/onboarding:user-wtf-algorithm-aggregate",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/onboarding:wtf-impression",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/onboarding:wtf-user-algorithm-aggregate",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/rux:user-resurrection",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/timelines:aggregate",
-        "src/scala/com/twitter/ml/featurestore/lib",
-        "src/scala/com/twitter/ml/featurestore/lib/dynamic",
-        "src/scala/com/twitter/ml/featurestore/lib/embedding",
-        "src/scala/com/twitter/ml/featurestore/lib/feature",
-        "src/scala/com/twitter/ml/featurestore/lib/online",
-        "src/scala/com/twitter/ml/featurestore/lib/params",
-        "src/scala/com/twitter/onboarding/relevance/adapters/features/featurestore",
-        "strato/config/columns/ml/featureStore:featureStore-strato-client",
-        "strato/config/columns/ml/featureStore/onboarding:onboarding-strato-client",
-        "util/util-slf4j-api/src/main/scala",
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/inject:guice", òωó
+        "3wdpawty/jvm/com/googwe/inject/extensions:guice-assistedinject", o.O
+        "3wdpawty/jvm/net/codingweww:scawa-guice", (U ᵕ U❁)
+        "3wdpawty/jvm/owg/swf4j:swf4j-api", (⑅˘꒳˘)
+        "eschewbiwd/swc/scawa/com/twittew/eschewbiwd/utiw/stitchcache",
+        "finatwa/inject/inject-cowe/swc/main/scawa", ( ͡o ω ͡o )
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/base", UwU
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/cwients/stwato", rawr x3
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/constants", rawr
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/featuwe_hydwation/adaptews", σωσ
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/featuwe_hydwation/common", σωσ
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/modews", >_<
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/utiws", :3
+        "fowwow-wecommendations-sewvice/sewvew/swc/main/scawa/com/twittew/fowwow_wecommendations/configapi/common", (U ﹏ U)
+        "hewmit/hewmit-cowe/swc/main/scawa/com/twittew/hewmit/constants", -.-
+        "swc/java/com/twittew/mw/api:api-base", (ˆ ﻌ ˆ)♡
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/datasets/cowe:sociawgwaph", (⑅˘꒳˘)
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/datasets/cowe:usewsouwce", (U ᵕ U❁)
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/datasets/onboawding:mc-usew-counting", -.-
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/datasets/onboawding:usew-wtf-awgowithm-aggwegate", ^^;;
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/datasets/onboawding:wtf-impwession", >_<
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/datasets/onboawding:wtf-post-nux", mya
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/datasets/onboawding:wtf-usew-awgowithm-aggwegate", mya
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/datasets/timewines:timewines-authow-featuwes", 😳
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/entities/cowe", XD
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/entities/onboawding", :3
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/featuwes/cowe:sociawgwaph", 😳😳😳
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/featuwes/cowe:usew", -.-
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/featuwes/intewests_discovewy:usew-topic-wewationships", ( ͡o ω ͡o )
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/featuwes/magicwecs:non-mw-notif-summmawies", rawr x3
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/featuwes/magicwecs:non-mw-notif-summmawy-aggwegates", nyaa~~
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/featuwes/magicwecs:nonmw-ntab-summawies", /(^•ω•^)
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/featuwes/onboawding:mc-usew-counting", rawr
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/featuwes/onboawding:post-nux-offwine", OwO
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/featuwes/onboawding:post-nux-offwine-edge", (U ﹏ U)
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/featuwes/onboawding:watio", >_<
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/featuwes/onboawding:simcwustew-usew-intewested-in-candidate-known-fow",
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/featuwes/onboawding:usew-wtf-awgowithm-aggwegate", rawr x3
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/featuwes/onboawding:wtf-impwession", mya
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/featuwes/onboawding:wtf-usew-awgowithm-aggwegate",
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/featuwes/wux:usew-wesuwwection", nyaa~~
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/featuwes/timewines:aggwegate", (⑅˘꒳˘)
+        "swc/scawa/com/twittew/mw/featuwestowe/wib", rawr x3
+        "swc/scawa/com/twittew/mw/featuwestowe/wib/dynamic",
+        "swc/scawa/com/twittew/mw/featuwestowe/wib/embedding", (✿oωo)
+        "swc/scawa/com/twittew/mw/featuwestowe/wib/featuwe", (ˆ ﻌ ˆ)♡
+        "swc/scawa/com/twittew/mw/featuwestowe/wib/onwine", (˘ω˘)
+        "swc/scawa/com/twittew/mw/featuwestowe/wib/pawams", (⑅˘꒳˘)
+        "swc/scawa/com/twittew/onboawding/wewevance/adaptews/featuwes/featuwestowe", (///ˬ///✿)
+        "stwato/config/cowumns/mw/featuwestowe:featuwestowe-stwato-cwient", 😳😳😳
+        "stwato/config/cowumns/mw/featuwestowe/onboawding:onboawding-stwato-cwient", 🥺
+        "utiw/utiw-swf4j-api/swc/main/scawa", mya
     ],
 )

@@ -1,154 +1,154 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.fwexibwe_injection_pipewine
 
-import com.twitter.onboarding.injections.{thriftscala => onboardingthrift}
-import com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline.OnboardingInjectionConversions.convertImageVariant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Classic
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.BlackRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.ClearRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.DeepBlueRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.DeepGrayRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.DeepGreenRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.DeepOrangeRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.DeepPurpleRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.DeepRedRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.DeepYellowRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.FadedBlueRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.FadedGrayRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.FadedGreenRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.FadedOrangeRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.FadedPurpleRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.FadedRedRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.FadedYellowRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.FaintBlueRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.FaintGrayRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.LightBlueRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.LightGrayRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.LightGreenRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.LightOrangeRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.LightPurpleRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.LightRedRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.LightYellowRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.MediumGrayRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.MediumGreenRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.MediumOrangeRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.MediumPurpleRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.MediumRedRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.MediumYellowRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.RosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.TextBlackRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.TextBlueRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.TwitterBlueRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.WhiteRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.CallToActionTileContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.StandardTileContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.TileItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Badge
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleHeader
+impowt com.twittew.onboawding.injections.{thwiftscawa => onboawdingthwift}
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.fwexibwe_injection_pipewine.onboawdinginjectionconvewsions.convewtimagevawiant
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.cwassic
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.bwackwosettacowow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.cweawwosettacowow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.deepbwuewosettacowow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.deepgwaywosettacowow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.deepgweenwosettacowow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.deepowangewosettacowow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.deeppuwpwewosettacowow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.deepwedwosettacowow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.deepyewwowwosettacowow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.fadedbwuewosettacowow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.fadedgwaywosettacowow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.fadedgweenwosettacowow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.fadedowangewosettacowow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.fadedpuwpwewosettacowow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.fadedwedwosettacowow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.fadedyewwowwosettacowow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.faintbwuewosettacowow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.faintgwaywosettacowow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.wightbwuewosettacowow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.wightgwaywosettacowow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.wightgweenwosettacowow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.wightowangewosettacowow
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.wightpuwpwewosettacowow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.wightwedwosettacowow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.wightyewwowwosettacowow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.mediumgwaywosettacowow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.mediumgweenwosettacowow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.mediumowangewosettacowow
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.mediumpuwpwewosettacowow
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.mediumwedwosettacowow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.mediumyewwowwosettacowow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.wosettacowow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.textbwackwosettacowow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.textbwuewosettacowow
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.twittewbwuewosettacowow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.whitewosettacowow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tiwe.cawwtoactiontiwecontent
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tiwe.standawdtiwecontent
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tiwe.tiweitem
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.badge
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.moduweheadew
 
-object TilesCarouselConversions {
-  // Tiles Carousel Conversions
-  def convertTile(tile: onboardingthrift.Tile, id: Long): TileItem = {
-    tile.content match {
-      case standard: onboardingthrift.TileContent.Standard =>
-        TileItem(
-          id = id,
-          sortIndex = None,
-          clientEventInfo =
-            Some(OnboardingInjectionConversions.convertClientEventInfo(tile.clientEventInfo)),
-          feedbackActionInfo = None,
-          title = standard.standard.title,
-          supportingText = "",
-          url = tile.url.map(OnboardingInjectionConversions.convertUrl),
-          image = tile.image.map(img => convertImageVariant(img.image)),
-          content = StandardTileContent(
-            title = standard.standard.title,
-            supportingText = "",
-            badge = standard.standard.badge.map(convertTileBadge)
+o-object tiwescawousewconvewsions {
+  // t-tiwes c-cawousew convewsions
+  def convewttiwe(tiwe: onboawdingthwift.tiwe, nyaa~~ id: wong): t-tiweitem = {
+    t-tiwe.content match {
+      case s-standawd: onboawdingthwift.tiwecontent.standawd =>
+        t-tiweitem(
+          id = id, ^^;;
+          s-sowtindex = nyone, ^•ﻌ•^
+          c-cwienteventinfo =
+            some(onboawdinginjectionconvewsions.convewtcwienteventinfo(tiwe.cwienteventinfo)), σωσ
+          feedbackactioninfo = n-nyone, -.-
+          titwe = standawd.standawd.titwe, ^^;;
+          s-suppowtingtext = "", XD
+          uww = t-tiwe.uww.map(onboawdinginjectionconvewsions.convewtuww), 🥺
+          i-image = tiwe.image.map(img => convewtimagevawiant(img.image)), òωó
+          content = standawdtiwecontent(
+            titwe = standawd.standawd.titwe, (ˆ ﻌ ˆ)♡
+            suppowtingtext = "", -.-
+            badge = s-standawd.standawd.badge.map(convewttiwebadge)
           )
         )
-      case cta: onboardingthrift.TileContent.CallToAction =>
-        TileItem(
-          id = id,
-          sortIndex = None,
-          clientEventInfo =
-            Some(OnboardingInjectionConversions.convertClientEventInfo(tile.clientEventInfo)),
-          feedbackActionInfo = None,
-          title = cta.callToAction.text,
-          supportingText = "",
-          url = tile.url.map(OnboardingInjectionConversions.convertUrl),
-          image = None,
-          content = CallToActionTileContent(
-            text = cta.callToAction.text,
-            richText = None,
-            ctaButton = None
+      c-case cta: onboawdingthwift.tiwecontent.cawwtoaction =>
+        t-tiweitem(
+          i-id = i-id, :3
+          sowtindex = nyone, ʘwʘ
+          cwienteventinfo =
+            some(onboawdinginjectionconvewsions.convewtcwienteventinfo(tiwe.cwienteventinfo)),
+          f-feedbackactioninfo = nyone, 🥺
+          titwe = cta.cawwtoaction.text, >_<
+          suppowtingtext = "",
+          u-uww = tiwe.uww.map(onboawdinginjectionconvewsions.convewtuww), ʘwʘ
+          image = nyone, (˘ω˘)
+          c-content = c-cawwtoactiontiwecontent(
+            t-text = cta.cawwtoaction.text, (✿oωo)
+            wichtext = nyone, (///ˬ///✿)
+            ctabutton = n-nyone
           )
         )
-      case _ =>
-        throw new UnsupportedTileCarouselConversionException(s"Tile Content: ${tile.content}")
+      c-case _ =>
+        thwow n-nyew unsuppowtedtiwecawousewconvewsionexception(s"tiwe c-content: ${tiwe.content}")
     }
   }
 
-  private def convertTileBadge(badge: onboardingthrift.Badge): Badge = {
-    Badge(
-      text = badge.text,
-      textColorName = badge.textColor.map(convertRosettaColor),
-      backgroundColorName = badge.backgroundColor.map(convertRosettaColor))
+  pwivate def convewttiwebadge(badge: o-onboawdingthwift.badge): b-badge = {
+    badge(
+      t-text = b-badge.text, rawr x3
+      t-textcowowname = badge.textcowow.map(convewtwosettacowow), -.-
+      backgwoundcowowname = badge.backgwoundcowow.map(convewtwosettacowow))
   }
 
-  def convertModuleHeader(header: onboardingthrift.TilesCarouselHeader): ModuleHeader = {
-    ModuleHeader(header.header, None, None, None, None, Classic)
+  d-def convewtmoduweheadew(headew: onboawdingthwift.tiwescawousewheadew): moduweheadew = {
+    moduweheadew(headew.headew, ^^ nyone, (⑅˘꒳˘) nyone, nyone, nyone, nyaa~~ c-cwassic)
   }
 
-  private def convertRosettaColor(color: onboardingthrift.RosettaColor): RosettaColor =
-    color match {
-      case onboardingthrift.RosettaColor.White => WhiteRosettaColor
-      case onboardingthrift.RosettaColor.Black => BlackRosettaColor
-      case onboardingthrift.RosettaColor.Clear => ClearRosettaColor
-      case onboardingthrift.RosettaColor.TextBlack => TextBlackRosettaColor
-      case onboardingthrift.RosettaColor.TextBlue => TextBlueRosettaColor
+  pwivate def convewtwosettacowow(cowow: onboawdingthwift.wosettacowow): w-wosettacowow =
+    c-cowow match {
+      c-case onboawdingthwift.wosettacowow.white => whitewosettacowow
+      c-case onboawdingthwift.wosettacowow.bwack => bwackwosettacowow
+      c-case o-onboawdingthwift.wosettacowow.cweaw => cweawwosettacowow
+      case onboawdingthwift.wosettacowow.textbwack => textbwackwosettacowow
+      case onboawdingthwift.wosettacowow.textbwue => t-textbwuewosettacowow
 
-      case onboardingthrift.RosettaColor.DeepGray => DeepGrayRosettaColor
-      case onboardingthrift.RosettaColor.MediumGray => MediumGrayRosettaColor
-      case onboardingthrift.RosettaColor.LightGray => LightGrayRosettaColor
-      case onboardingthrift.RosettaColor.FadedGray => FadedGrayRosettaColor
-      case onboardingthrift.RosettaColor.FaintGray => FaintGrayRosettaColor
+      case onboawdingthwift.wosettacowow.deepgway => d-deepgwaywosettacowow
+      case onboawdingthwift.wosettacowow.mediumgway => m-mediumgwaywosettacowow
+      case o-onboawdingthwift.wosettacowow.wightgway => wightgwaywosettacowow
+      case onboawdingthwift.wosettacowow.fadedgway => f-fadedgwaywosettacowow
+      c-case onboawdingthwift.wosettacowow.faintgway => faintgwaywosettacowow
 
-      case onboardingthrift.RosettaColor.DeepOrange => DeepOrangeRosettaColor
-      case onboardingthrift.RosettaColor.MediumOrange => MediumOrangeRosettaColor
-      case onboardingthrift.RosettaColor.LightOrange => LightOrangeRosettaColor
-      case onboardingthrift.RosettaColor.FadedOrange => FadedOrangeRosettaColor
+      c-case onboawdingthwift.wosettacowow.deepowange => d-deepowangewosettacowow
+      case onboawdingthwift.wosettacowow.mediumowange => mediumowangewosettacowow
+      case onboawdingthwift.wosettacowow.wightowange => wightowangewosettacowow
+      c-case onboawdingthwift.wosettacowow.fadedowange => f-fadedowangewosettacowow
 
-      case onboardingthrift.RosettaColor.DeepYellow => DeepYellowRosettaColor
-      case onboardingthrift.RosettaColor.MediumYellow => MediumYellowRosettaColor
-      case onboardingthrift.RosettaColor.LightYellow => LightYellowRosettaColor
-      case onboardingthrift.RosettaColor.FadedYellow => FadedYellowRosettaColor
+      c-case onboawdingthwift.wosettacowow.deepyewwow => deepyewwowwosettacowow
+      c-case onboawdingthwift.wosettacowow.mediumyewwow => m-mediumyewwowwosettacowow
+      case onboawdingthwift.wosettacowow.wightyewwow => w-wightyewwowwosettacowow
+      case onboawdingthwift.wosettacowow.fadedyewwow => fadedyewwowwosettacowow
 
-      case onboardingthrift.RosettaColor.DeepGreen => DeepGreenRosettaColor
-      case onboardingthrift.RosettaColor.MediumGreen => MediumGreenRosettaColor
-      case onboardingthrift.RosettaColor.LightGreen => LightGreenRosettaColor
-      case onboardingthrift.RosettaColor.FadedGreen => FadedGreenRosettaColor
+      case onboawdingthwift.wosettacowow.deepgween => deepgweenwosettacowow
+      c-case onboawdingthwift.wosettacowow.mediumgween => m-mediumgweenwosettacowow
+      case onboawdingthwift.wosettacowow.wightgween => wightgweenwosettacowow
+      c-case onboawdingthwift.wosettacowow.fadedgween => f-fadedgweenwosettacowow
 
-      case onboardingthrift.RosettaColor.DeepBlue => DeepBlueRosettaColor
-      case onboardingthrift.RosettaColor.TwitterBlue => TwitterBlueRosettaColor
-      case onboardingthrift.RosettaColor.LightBlue => LightBlueRosettaColor
-      case onboardingthrift.RosettaColor.FadedBlue => FadedBlueRosettaColor
-      case onboardingthrift.RosettaColor.FaintBlue => FaintBlueRosettaColor
+      case onboawdingthwift.wosettacowow.deepbwue => deepbwuewosettacowow
+      case onboawdingthwift.wosettacowow.twittewbwue => t-twittewbwuewosettacowow
+      case onboawdingthwift.wosettacowow.wightbwue => wightbwuewosettacowow
+      case onboawdingthwift.wosettacowow.fadedbwue => fadedbwuewosettacowow
+      c-case onboawdingthwift.wosettacowow.faintbwue => faintbwuewosettacowow
 
-      case onboardingthrift.RosettaColor.DeepPurple => DeepPurpleRosettaColor
-      case onboardingthrift.RosettaColor.MediumPurple => MediumPurpleRosettaColor
-      case onboardingthrift.RosettaColor.LightPurple => LightPurpleRosettaColor
-      case onboardingthrift.RosettaColor.FadedPurple => FadedPurpleRosettaColor
+      case o-onboawdingthwift.wosettacowow.deeppuwpwe => deeppuwpwewosettacowow
+      c-case onboawdingthwift.wosettacowow.mediumpuwpwe => mediumpuwpwewosettacowow
+      case onboawdingthwift.wosettacowow.wightpuwpwe => w-wightpuwpwewosettacowow
+      c-case onboawdingthwift.wosettacowow.fadedpuwpwe => fadedpuwpwewosettacowow
 
-      case onboardingthrift.RosettaColor.DeepRed => DeepRedRosettaColor
-      case onboardingthrift.RosettaColor.MediumRed => MediumRedRosettaColor
-      case onboardingthrift.RosettaColor.LightRed => LightRedRosettaColor
-      case onboardingthrift.RosettaColor.FadedRed => FadedRedRosettaColor
-      case onboardingthrift.RosettaColor.EnumUnknownRosettaColor(i) =>
-        throw new UnknownThriftEnumException("RosettaColor")
+      case onboawdingthwift.wosettacowow.deepwed => d-deepwedwosettacowow
+      case onboawdingthwift.wosettacowow.mediumwed => m-mediumwedwosettacowow
+      case onboawdingthwift.wosettacowow.wightwed => wightwedwosettacowow
+      case o-onboawdingthwift.wosettacowow.fadedwed => fadedwedwosettacowow
+      c-case onboawdingthwift.wosettacowow.enumunknownwosettacowow(i) =>
+        t-thwow nyew unknownthwiftenumexception("wosettacowow")
     }
-  class UnknownThriftEnumException(enumName: String)
-      extends Exception(s"Unknown Thrift Enum Found: ${enumName}")
+  cwass u-unknownthwiftenumexception(enumname: stwing)
+      e-extends exception(s"unknown t-thwift enum found: ${enumname}")
 
-  class UnsupportedTileCarouselConversionException(UnsupportedTileType: String)
-      extends Exception(s"Unsupported Tile Type Found: ${UnsupportedTileType}")
+  c-cwass unsuppowtedtiwecawousewconvewsionexception(unsuppowtedtiwetype: stwing)
+      e-extends e-exception(s"unsuppowted tiwe type found: ${unsuppowtedtiwetype}")
 }

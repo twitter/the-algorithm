@@ -1,175 +1,175 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.twittew.seawch.eawwybiwd_woot.mewgews;
 
 
-import javax.annotation.Nullable;
+impowt javax.annotation.nuwwabwe;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.collect.Iterables;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+impowt c-com.googwe.common.base.function;
+i-impowt com.googwe.common.base.joinew;
+i-impowt c-com.googwe.common.cowwect.itewabwes;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.logging.DebugMessageBuilder;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
+impowt com.twittew.seawch.common.wogging.debugmessagebuiwdew;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchquewy;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwt;
 
 /**
- * Collects debug messages to attach to EarlybirdResponse
+ * cowwects d-debug messages to attach to eawwybiwdwesponse
  */
-class EarlybirdResponseDebugMessageBuilder {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(EarlybirdResponseDebugMessageBuilder.class);
+cwass eawwybiwdwesponsedebugmessagebuiwdew {
+  p-pwivate static finaw woggew w-wog =
+      woggewfactowy.getwoggew(eawwybiwdwesponsedebugmessagebuiwdew.cwass);
 
-  private static final Logger TOO_MANY_FAILED_PARTITIONS_LOG =
-      LoggerFactory.getLogger(String.format("%s_too_many_failed_partitions",
-                                            EarlybirdResponseDebugMessageBuilder.class.getName()));
+  p-pwivate static finaw woggew too_many_faiwed_pawtitions_wog =
+      woggewfactowy.getwoggew(stwing.fowmat("%s_too_many_faiwed_pawtitions", ^^;;
+                                            eawwybiwdwesponsedebugmessagebuiwdew.cwass.getname()));
 
-  @VisibleForTesting
-  protected final SearchCounter insufficientValidResponseCounter =
-      SearchCounter.export("insufficient_valid_partition_responses_count");
-  @VisibleForTesting
-  protected final SearchCounter validPartitionResponseCounter =
-      SearchCounter.export("valid_partition_response_count");
+  @visibwefowtesting
+  p-pwotected finaw seawchcountew insufficientvawidwesponsecountew =
+      seawchcountew.expowt("insufficient_vawid_pawtition_wesponses_count");
+  @visibwefowtesting
+  pwotected finaw s-seawchcountew vawidpawtitionwesponsecountew =
+      seawchcountew.expowt("vawid_pawtition_wesponse_count");
 
-  // the combined debug string for all earlybird responses
-  private final StringBuilder debugString;
+  // t-the combined debug s-stwing fow a-aww eawwybiwd wesponses
+  p-pwivate finaw stwingbuiwdew debugstwing;
   /**
-   * A message builder backed by the same {@link #debugString} above.
+   * a-a message buiwdew backed by the same {@wink #debugstwing} a-above. o.O
    */
-  private final DebugMessageBuilder debugMessageBuilder;
+  pwivate finaw debugmessagebuiwdew debugmessagebuiwdew;
 
-  private static final Joiner JOINER = Joiner.on(", ");
+  pwivate static finaw joinew joinew = j-joinew.on(", (///ˬ///✿) ");
 
-  EarlybirdResponseDebugMessageBuilder(EarlybirdRequest request) {
-    this(getDebugLevel(request));
+  eawwybiwdwesponsedebugmessagebuiwdew(eawwybiwdwequest w-wequest) {
+    this(getdebugwevew(wequest));
   }
 
-  EarlybirdResponseDebugMessageBuilder(DebugMessageBuilder.Level level) {
-    this.debugString = new StringBuilder();
-    this.debugMessageBuilder = new DebugMessageBuilder(debugString, level);
+  e-eawwybiwdwesponsedebugmessagebuiwdew(debugmessagebuiwdew.wevew w-wevew) {
+    this.debugstwing = nyew stwingbuiwdew();
+    this.debugmessagebuiwdew = n-nyew debugmessagebuiwdew(debugstwing, σωσ w-wevew);
   }
 
-  private static DebugMessageBuilder.Level getDebugLevel(EarlybirdRequest request) {
-    if (request.isSetDebugMode() && request.getDebugMode() > 0) {
-      return DebugMessageBuilder.getDebugLevel(request.getDebugMode());
-    } else if (request.isSetDebugOptions()) {
-      return DebugMessageBuilder.Level.DEBUG_BASIC;
-    } else {
-      return DebugMessageBuilder.Level.DEBUG_NONE;
+  pwivate s-static debugmessagebuiwdew.wevew g-getdebugwevew(eawwybiwdwequest wequest) {
+    i-if (wequest.issetdebugmode() && wequest.getdebugmode() > 0) {
+      w-wetuwn debugmessagebuiwdew.getdebugwevew(wequest.getdebugmode());
+    } ewse if (wequest.issetdebugoptions()) {
+      wetuwn d-debugmessagebuiwdew.wevew.debug_basic;
+    } ewse {
+      wetuwn d-debugmessagebuiwdew.wevew.debug_none;
     }
   }
 
-  protected boolean isDebugMode() {
-    return debugMessageBuilder.getDebugLevel() > 0;
+  pwotected b-boowean isdebugmode() {
+    wetuwn d-debugmessagebuiwdew.getdebugwevew() > 0;
   }
 
-  void append(String msg) {
-    debugString.append(msg);
+  void append(stwing msg) {
+    debugstwing.append(msg);
   }
 
-  void debugAndLogWarning(String msg) {
-    if (isDebugMode()) {
-      debugString.append(msg).append('\n');
+  void debugandwogwawning(stwing msg) {
+    if (isdebugmode()) {
+      debugstwing.append(msg).append('\n');
     }
-    LOG.warn(msg);
+    w-wog.wawn(msg);
   }
 
-  void debugDetailed(String format, Object... args) {
-    debugAtLevel(DebugMessageBuilder.Level.DEBUG_DETAILED, format, args);
+  void d-debugdetaiwed(stwing fowmat, nyaa~~ o-object... awgs) {
+    d-debugatwevew(debugmessagebuiwdew.wevew.debug_detaiwed, ^^;; f-fowmat, ^•ﻌ•^ awgs);
   }
 
-  void debugVerbose(String format, Object... args) {
-    debugAtLevel(DebugMessageBuilder.Level.DEBUG_VERBOSE, format, args);
+  void debugvewbose(stwing fowmat, σωσ o-object... awgs) {
+    debugatwevew(debugmessagebuiwdew.wevew.debug_vewbose, -.- fowmat, awgs);
   }
 
-  void debugVerbose2(String format, Object... args) {
-    debugAtLevel(DebugMessageBuilder.Level.DEBUG_VERBOSE_2, format, args);
+  void debugvewbose2(stwing fowmat, ^^;; object... a-awgs) {
+    debugatwevew(debugmessagebuiwdew.wevew.debug_vewbose_2, XD fowmat, 🥺 awgs);
   }
 
-  void debugAtLevel(DebugMessageBuilder.Level level, String format, Object... args) {
-    boolean levelOK = debugMessageBuilder.isAtLeastLevel(level);
-    if (levelOK || LOG.isDebugEnabled()) {
-      // We check both modes here in order to build the formatted message only once.
-      String message = String.format(format, args);
+  v-void d-debugatwevew(debugmessagebuiwdew.wevew w-wevew, òωó stwing fowmat, (ˆ ﻌ ˆ)♡ object... a-awgs) {
+    b-boowean wevewok = d-debugmessagebuiwdew.isatweastwevew(wevew);
+    i-if (wevewok || wog.isdebugenabwed()) {
+      // we check both m-modes hewe in o-owdew to buiwd t-the fowmatted message o-onwy once. -.-
+      s-stwing message = stwing.fowmat(fowmat, :3 awgs);
 
-      LOG.debug(message);
+      wog.debug(message);
 
-      if (levelOK) {
-        debugString.append(message).append('\n');
+      if (wevewok) {
+        debugstwing.append(message).append('\n');
       }
     }
   }
 
-  String debugString() {
-    return debugString.toString();
+  s-stwing debugstwing() {
+    wetuwn debugstwing.tostwing();
   }
 
-  DebugMessageBuilder getDebugMessageBuilder() {
-    return debugMessageBuilder;
+  debugmessagebuiwdew getdebugmessagebuiwdew() {
+    wetuwn debugmessagebuiwdew;
   }
 
-  void logBelowSuccessThreshold(ThriftSearchQuery searchQuery, int numSuccessResponses,
-                                int numPartitions, double successThreshold) {
-    String rawQuery = (searchQuery != null && searchQuery.isSetRawQuery())
-        ? "[" + searchQuery.getRawQuery() + "]" : "null";
-    String serializedQuery = (searchQuery != null && searchQuery.isSetSerializedQuery())
-        ? "[" + searchQuery.getSerializedQuery() + "]" : "null";
-    // Not enough successful responses from partitions.
-    String errorMessage = String.format(
-        "Only %d valid responses returned out of %d partitions for raw query: %s"
-            + " serialized query: %s. Lower than threshold of %s",
-        numSuccessResponses, numPartitions, rawQuery, serializedQuery, successThreshold);
+  v-void wogbewowsuccessthweshowd(thwiftseawchquewy seawchquewy, ʘwʘ int nyumsuccesswesponses, 🥺
+                                int n-nyumpawtitions, >_< d-doubwe successthweshowd) {
+    stwing w-wawquewy = (seawchquewy != nyuww && seawchquewy.issetwawquewy())
+        ? "[" + s-seawchquewy.getwawquewy() + "]" : "nuww";
+    stwing sewiawizedquewy = (seawchquewy != n-nyuww && s-seawchquewy.issetsewiawizedquewy())
+        ? "[" + seawchquewy.getsewiawizedquewy() + "]" : "nuww";
+    // nyot enough successfuw wesponses fwom pawtitions. ʘwʘ
+    stwing e-ewwowmessage = stwing.fowmat(
+        "onwy %d vawid wesponses wetuwned o-out of %d pawtitions fow w-waw quewy: %s"
+            + " s-sewiawized quewy: %s. (˘ω˘) wowew than thweshowd of %s", (✿oωo)
+        n-nyumsuccesswesponses, (///ˬ///✿) n-nyumpawtitions, rawr x3 wawquewy, -.- sewiawizedquewy, ^^ s-successthweshowd);
 
-    TOO_MANY_FAILED_PARTITIONS_LOG.warn(errorMessage);
+    t-too_many_faiwed_pawtitions_wog.wawn(ewwowmessage);
 
-    insufficientValidResponseCounter.increment();
-    validPartitionResponseCounter.add(numSuccessResponses);
-    debugString.append(errorMessage);
+    insufficientvawidwesponsecountew.incwement();
+    vawidpawtitionwesponsecountew.add(numsuccesswesponses);
+    debugstwing.append(ewwowmessage);
   }
 
 
-  @VisibleForTesting
-  void logResponseDebugInfo(EarlybirdRequest earlybirdRequest,
-                            String partitionTierName,
-                            EarlybirdResponse response) {
-    if (response.isSetDebugString() && !response.getDebugString().isEmpty()) {
-      debugString.append(String.format("Received response from [%s] with debug string [%s]",
-          partitionTierName, response.getDebugString())).append("\n");
+  @visibwefowtesting
+  void wogwesponsedebuginfo(eawwybiwdwequest e-eawwybiwdwequest, (⑅˘꒳˘)
+                            s-stwing pawtitiontiewname, nyaa~~
+                            e-eawwybiwdwesponse wesponse) {
+    i-if (wesponse.issetdebugstwing() && !wesponse.getdebugstwing().isempty()) {
+      d-debugstwing.append(stwing.fowmat("weceived wesponse fwom [%s] w-with debug stwing [%s]", /(^•ω•^)
+          pawtitiontiewname, (U ﹏ U) wesponse.getdebugstwing())).append("\n");
     }
 
-    if (!response.isSetResponseCode()) {
-      debugAndLogWarning(String.format(
-          "Received Earlybird null response code for query [%s] from [%s]",
-          earlybirdRequest, partitionTierName));
-    } else if (response.getResponseCode() != EarlybirdResponseCode.SUCCESS
-        && response.getResponseCode() != EarlybirdResponseCode.PARTITION_SKIPPED
-        && response.getResponseCode() != EarlybirdResponseCode.PARTITION_DISABLED
-        && response.getResponseCode() != EarlybirdResponseCode.TIER_SKIPPED) {
-      debugAndLogWarning(String.format(
-          "Received Earlybird response error [%s] for query [%s] from [%s]",
-          response.getResponseCode(), earlybirdRequest, partitionTierName));
+    if (!wesponse.issetwesponsecode()) {
+      debugandwogwawning(stwing.fowmat(
+          "weceived eawwybiwd nyuww w-wesponse code f-fow quewy [%s] fwom [%s]", 😳😳😳
+          eawwybiwdwequest, >w< p-pawtitiontiewname));
+    } e-ewse if (wesponse.getwesponsecode() != eawwybiwdwesponsecode.success
+        && wesponse.getwesponsecode() != eawwybiwdwesponsecode.pawtition_skipped
+        && w-wesponse.getwesponsecode() != eawwybiwdwesponsecode.pawtition_disabwed
+        && wesponse.getwesponsecode() != eawwybiwdwesponsecode.tiew_skipped) {
+      debugandwogwawning(stwing.fowmat(
+          "weceived e-eawwybiwd wesponse ewwow [%s] fow quewy [%s] f-fwom [%s]", XD
+          w-wesponse.getwesponsecode(), o.O eawwybiwdwequest, mya pawtitiontiewname));
     }
 
-    if (debugMessageBuilder.isVerbose2()) {
-      debugVerbose2("Earlybird [%s] returned response: %s", partitionTierName, response);
-    } else if (debugMessageBuilder.isVerbose()) {
-      if (response.isSetSearchResults() && response.getSearchResults().getResultsSize() > 0) {
-        String ids = JOINER.join(Iterables.transform(
-            response.getSearchResults().getResults(),
-            new Function<ThriftSearchResult, Long>() {
-              @Nullable
-              @Override
-              public Long apply(ThriftSearchResult result) {
-                return result.getId();
+    if (debugmessagebuiwdew.isvewbose2()) {
+      d-debugvewbose2("eawwybiwd [%s] w-wetuwned wesponse: %s", 🥺 pawtitiontiewname, ^^;; wesponse);
+    } ewse if (debugmessagebuiwdew.isvewbose()) {
+      i-if (wesponse.issetseawchwesuwts() && wesponse.getseawchwesuwts().getwesuwtssize() > 0) {
+        s-stwing ids = joinew.join(itewabwes.twansfowm(
+            wesponse.getseawchwesuwts().getwesuwts(), :3
+            nyew function<thwiftseawchwesuwt, (U ﹏ U) w-wong>() {
+              @nuwwabwe
+              @ovewwide
+              pubwic w-wong appwy(thwiftseawchwesuwt w-wesuwt) {
+                wetuwn w-wesuwt.getid();
               }
             }));
-        debugVerbose("Earlybird [%s] returned TweetIDs: %s", partitionTierName, ids);
+        debugvewbose("eawwybiwd [%s] w-wetuwned t-tweetids: %s", p-pawtitiontiewname, OwO ids);
       }
     }
   }

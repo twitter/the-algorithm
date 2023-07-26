@@ -1,65 +1,65 @@
-package com.twitter.ann.featurestore
+package com.twittew.ann.featuwestowe
 
-import com.twitter.ann.common.EmbeddingProducer
-import com.twitter.finagle.stats.{InMemoryStatsReceiver, StatsReceiver}
-import com.twitter.ml.api.embedding.{Embedding, EmbeddingSerDe}
-import com.twitter.ml.api.thriftscala
-import com.twitter.ml.api.thriftscala.{Embedding => TEmbedding}
-import com.twitter.ml.featurestore.lib.dataset.online.VersionedOnlineAccessDataset
-import com.twitter.ml.featurestore.lib.{EntityId, RawFloatTensor}
-import com.twitter.ml.featurestore.lib.dataset.DatasetParams
-import com.twitter.ml.featurestore.lib.entity.EntityWithId
-import com.twitter.ml.featurestore.lib.feature.{BoundFeature, BoundFeatureSet}
-import com.twitter.ml.featurestore.lib.online.{FeatureStoreClient, FeatureStoreRequest}
-import com.twitter.ml.featurestore.lib.params.FeatureStoreParams
-import com.twitter.stitch.Stitch
-import com.twitter.strato.opcontext.Attribution
-import com.twitter.strato.client.Client
+impowt com.twittew.ann.common.embeddingpwoducew
+i-impowt com.twittew.finagwe.stats.{inmemowystatsweceivew, s-statsweceivew}
+i-impowt c-com.twittew.mw.api.embedding.{embedding, -.- e-embeddingsewde}
+i-impowt c-com.twittew.mw.api.thwiftscawa
+i-impowt com.twittew.mw.api.thwiftscawa.{embedding => tembedding}
+impowt com.twittew.mw.featuwestowe.wib.dataset.onwine.vewsionedonwineaccessdataset
+impowt com.twittew.mw.featuwestowe.wib.{entityid, 😳 wawfwoattensow}
+i-impowt com.twittew.mw.featuwestowe.wib.dataset.datasetpawams
+impowt com.twittew.mw.featuwestowe.wib.entity.entitywithid
+impowt com.twittew.mw.featuwestowe.wib.featuwe.{boundfeatuwe, b-boundfeatuweset}
+impowt com.twittew.mw.featuwestowe.wib.onwine.{featuwestowecwient, mya f-featuwestowewequest}
+impowt com.twittew.mw.featuwestowe.wib.pawams.featuwestowepawams
+impowt com.twittew.stitch.stitch
+impowt c-com.twittew.stwato.opcontext.attwibution
+impowt c-com.twittew.stwato.cwient.cwient
 
-object FeatureStoreEmbeddingProducer {
-  def apply[T <: EntityId](
-    dataset: VersionedOnlineAccessDataset[T, TEmbedding],
-    version: Long,
-    boundFeature: BoundFeature[T, RawFloatTensor],
-    client: Client,
-    statsReceiver: StatsReceiver = new InMemoryStatsReceiver,
-    featureStoreAttributions: Seq[Attribution] = Seq.empty
-  ): EmbeddingProducer[EntityWithId[T]] = {
-    val featureStoreParams = FeatureStoreParams(
-      perDataset = Map(
-        dataset.id -> DatasetParams(datasetVersion = Some(version))
-      ),
-      global = DatasetParams(attributions = featureStoreAttributions)
+o-object featuwestoweembeddingpwoducew {
+  def appwy[t <: entityid](
+    dataset: vewsionedonwineaccessdataset[t, (˘ω˘) t-tembedding], >_<
+    vewsion: wong,
+    boundfeatuwe: boundfeatuwe[t, -.- wawfwoattensow], 🥺
+    c-cwient: cwient, (U ﹏ U)
+    statsweceivew: s-statsweceivew = n-nyew i-inmemowystatsweceivew, >w<
+    f-featuwestoweattwibutions: seq[attwibution] = seq.empty
+  ): e-embeddingpwoducew[entitywithid[t]] = {
+    vaw featuwestowepawams = featuwestowepawams(
+      p-pewdataset = map(
+        dataset.id -> datasetpawams(datasetvewsion = some(vewsion))
+      ), mya
+      gwobaw = datasetpawams(attwibutions = f-featuwestoweattwibutions)
     )
-    val featureStoreClient = FeatureStoreClient(
-      BoundFeatureSet(boundFeature),
-      client,
-      statsReceiver,
-      featureStoreParams
+    vaw featuwestowecwient = f-featuwestowecwient(
+      b-boundfeatuweset(boundfeatuwe), >w<
+      c-cwient, nyaa~~
+      statsweceivew, (✿oωo)
+      featuwestowepawams
     )
-    new FeatureStoreEmbeddingProducer(boundFeature, featureStoreClient)
+    nyew f-featuwestoweembeddingpwoducew(boundfeatuwe, ʘwʘ f-featuwestowecwient)
   }
 }
 
-private[featurestore] class FeatureStoreEmbeddingProducer[T <: EntityId](
-  boundFeature: BoundFeature[T, RawFloatTensor],
-  featureStoreClient: FeatureStoreClient)
-    extends EmbeddingProducer[EntityWithId[T]] {
-  // Looks up embedding from online feature store for an entity.
-  override def produceEmbedding(input: EntityWithId[T]): Stitch[Option[Embedding[Float]]] = {
-    val featureStoreRequest = FeatureStoreRequest(
-      entityIds = Seq(input)
+pwivate[featuwestowe] cwass f-featuwestoweembeddingpwoducew[t <: e-entityid](
+  boundfeatuwe: b-boundfeatuwe[t, (ˆ ﻌ ˆ)♡ wawfwoattensow], 😳😳😳
+  f-featuwestowecwient: featuwestowecwient)
+    extends embeddingpwoducew[entitywithid[t]] {
+  // w-wooks up embedding fwom onwine f-featuwe stowe fow an entity. :3
+  o-ovewwide def pwoduceembedding(input: e-entitywithid[t]): stitch[option[embedding[fwoat]]] = {
+    vaw featuwestowewequest = featuwestowewequest(
+      entityids = seq(input)
     )
 
-    Stitch.callFuture(featureStoreClient(featureStoreRequest).map { predictionRecord =>
-      predictionRecord.getFeatureValue(boundFeature) match {
-        case Some(featureValue) => {
-          val embedding = EmbeddingSerDe.floatEmbeddingSerDe.fromThrift(
-            thriftscala.Embedding(Some(featureValue.value))
+    stitch.cawwfutuwe(featuwestowecwient(featuwestowewequest).map { p-pwedictionwecowd =>
+      p-pwedictionwecowd.getfeatuwevawue(boundfeatuwe) match {
+        c-case some(featuwevawue) => {
+          v-vaw embedding = e-embeddingsewde.fwoatembeddingsewde.fwomthwift(
+            thwiftscawa.embedding(some(featuwevawue.vawue))
           )
-          Some(embedding)
+          some(embedding)
         }
-        case _ => None
+        case _ => n-nyone
       }
     })
   }

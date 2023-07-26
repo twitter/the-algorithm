@@ -1,7 +1,7 @@
-package com.twitter.frigate.pushservice.exception
+package com.twittew.fwigate.pushsewvice.exception
 
-import scala.util.control.NoStackTrace
+impowt scawa.utiw.contwow.nostacktwace
 
-class TweetNTabRequestHydratorException(private val message: String)
-    extends Exception(message)
-    with NoStackTrace
+c-cwass t-tweetntabwequesthydwatowexception(pwivate v-vaw message: s-stwing)
+    e-extends exception(message)
+    w-with nyostacktwace

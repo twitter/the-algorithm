@@ -1,4 +1,4 @@
-pub mod prediction_service;
-pub mod data;
-pub mod tensor;
+pub mod pwediction_sewvice;
+pub mod d-data;
+pub mod t-tensow;
 

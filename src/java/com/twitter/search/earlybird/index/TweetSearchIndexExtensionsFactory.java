@@ -1,17 +1,17 @@
-package com.twitter.search.earlybird.index;
+package com.twittew.seawch.eawwybiwd.index;
 
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsData;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsFactory;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdRealtimeIndexExtensionsData;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.extensions.eawwybiwdindexextensionsdata;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.extensions.eawwybiwdindexextensionsfactowy;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.extensions.eawwybiwdweawtimeindexextensionsdata;
 
-public class TweetSearchIndexExtensionsFactory extends EarlybirdIndexExtensionsFactory {
-  @Override
-  public EarlybirdRealtimeIndexExtensionsData newRealtimeIndexExtensionsData() {
-    return new TweetSearchRealtimeIndexExtensionsData();
+p-pubwic cwass tweetseawchindexextensionsfactowy extends e-eawwybiwdindexextensionsfactowy {
+  @ovewwide
+  p-pubwic eawwybiwdweawtimeindexextensionsdata n-nyewweawtimeindexextensionsdata() {
+    w-wetuwn nyew tweetseawchweawtimeindexextensionsdata();
   }
 
-  @Override
-  public EarlybirdIndexExtensionsData newLuceneIndexExtensionsData() {
-    return new TweetSearchLuceneIndexExtensionsData();
+  @ovewwide
+  pubwic eawwybiwdindexextensionsdata nyewwuceneindexextensionsdata() {
+    wetuwn n-nyew tweetseawchwuceneindexextensionsdata();
   }
 }

@@ -1,472 +1,472 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.twittew.seawch.eawwybiwd_woot.mewgews;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+impowt java.utiw.awwaywist;
+impowt j-java.utiw.cowwection;
+i-impowt j-java.utiw.cowwections;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.map;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+i-impowt javax.annotation.nonnuww;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+impowt com.googwe.common.annotations.visibwefowtesting;
+impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.wists;
+impowt com.googwe.common.cowwect.maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.earlybird.FacetsResultsUtils;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftHistogramSettings;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftTermRequest;
-import com.twitter.search.earlybird.thrift.ThriftTermResults;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsResults;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.utiw.eawwybiwd.facetswesuwtsutiws;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwifthistogwamsettings;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwts;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwifttewmwequest;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.thwifttewmwesuwts;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwifttewmstatisticswesuwts;
 
 /**
- * Takes multiple successful EarlybirdResponses and merges them.
+ * takes muwtipwe successfuw eawwybiwdwesponses a-and mewges them. (˘ω˘)
  */
-public class ThriftTermResultsMerger {
-  private static final Logger LOG = LoggerFactory.getLogger(ThriftTermResultsMerger.class);
+pubwic c-cwass thwifttewmwesuwtsmewgew {
+  p-pwivate static f-finaw woggew wog = w-woggewfactowy.getwoggew(thwifttewmwesuwtsmewgew.cwass);
 
-  private static final SearchCounter BIN_ID_GAP_COUNTER =
-      SearchCounter.export("thrift_term_results_merger_found_gap_in_bin_ids");
-  private static final SearchCounter MIN_COMPLETE_BIN_ID_ADJUSTED_NULL =
-      SearchCounter.export("thrift_term_results_merger_min_complete_bin_id_adjusted_null");
-  private static final SearchCounter MIN_COMPLETE_BIN_ID_NULL_WITHOUT_BINS =
-      SearchCounter.export("thrift_term_results_merger_min_complete_bin_id_null_without_bins");
-  private static final SearchCounter MIN_COMPLETE_BIN_ID_OUT_OF_RANGE =
-      SearchCounter.export("thrift_term_results_merger_min_complete_bin_id_out_of_range");
-  private static final SearchCounter RESPONSE_WITHOUT_DRIVING_QUERY_HIT =
-      SearchCounter.export("response_without_driving_query_hit");
+  pwivate static finaw seawchcountew b-bin_id_gap_countew =
+      seawchcountew.expowt("thwift_tewm_wesuwts_mewgew_found_gap_in_bin_ids");
+  pwivate s-static finaw seawchcountew min_compwete_bin_id_adjusted_nuww =
+      seawchcountew.expowt("thwift_tewm_wesuwts_mewgew_min_compwete_bin_id_adjusted_nuww");
+  pwivate static finaw seawchcountew m-min_compwete_bin_id_nuww_without_bins =
+      seawchcountew.expowt("thwift_tewm_wesuwts_mewgew_min_compwete_bin_id_nuww_without_bins");
+  p-pwivate s-static finaw seawchcountew m-min_compwete_bin_id_out_of_wange =
+      seawchcountew.expowt("thwift_tewm_wesuwts_mewgew_min_compwete_bin_id_out_of_wange");
+  pwivate static finaw s-seawchcountew w-wesponse_without_dwiving_quewy_hit =
+      seawchcountew.expowt("wesponse_without_dwiving_quewy_hit");
 
-  private static final ThriftTermRequest GLOBAL_COUNT_REQUEST =
-      new ThriftTermRequest().setFieldName("").setTerm("");
+  p-pwivate s-static finaw thwifttewmwequest gwobaw_count_wequest =
+      n-nyew thwifttewmwequest().setfiewdname("").settewm("");
 
   /**
-   * Sorted list of the most recent (and contiguous) numBins binIds across all responses.
-   * Expected to be an empty list if this request did not ask for histograms, or if it
-   * did ask for histograms for 0 numBins.
+   * s-sowted wist of the most wecent (and contiguous) n-nyumbins binids acwoss aww wesponses. 😳
+   * e-expected to be an empty w-wist if this w-wequest did nyot ask fow histogwams, (U ᵕ U❁) ow if it
+   * did ask fow histogwams fow 0 nyumbins. :3
    */
-  @Nonnull
-  private final List<Integer> mostRecentBinIds;
+  @nonnuww
+  pwivate f-finaw wist<integew> m-mostwecentbinids;
   /**
-   * The first binId in the {@link #mostRecentBinIds} list. This value is not meant to be used in
-   * case mostRecentBinIds is an empty list.
+   * the fiwst b-binid in the {@wink #mostwecentbinids} w-wist. o.O this v-vawue is nyot meant to be used in
+   * case mostwecentbinids is an empty wist. (///ˬ///✿)
    */
-  private final int firstBinId;
+  p-pwivate finaw int fiwstbinid;
 
   /**
-   * For each unique ThriftTermRequest, stores an array of the total counts for all the binIds
-   * that we will return, summed up across all earlybird responses.
+   * fow each unique thwifttewmwequest, OwO stowes an a-awway of the totaw counts fow aww t-the binids
+   * t-that we wiww w-wetuwn, >w< summed up acwoss aww eawwybiwd w-wesponses.
    *
-   * The values in each totalCounts array correspond to the binIds in the
-   * {@link #mostRecentBinIds} list.
+   * t-the v-vawues in each totawcounts a-awway cowwespond to the binids in the
+   * {@wink #mostwecentbinids} w-wist. ^^
    *
-   * Key: thrift term request.
-   * Value: array of the total counts summed up across all earlybird responses for the key's
-   * term request, corresponding to the binIds in {@link #mostRecentBinIds}.
+   * k-key: thwift tewm w-wequest. (⑅˘꒳˘)
+   * vawue: a-awway of the t-totaw counts summed up acwoss aww eawwybiwd wesponses fow the k-key's
+   * tewm wequest, ʘwʘ cowwesponding to the binids in {@wink #mostwecentbinids}. (///ˬ///✿)
    */
-  private final Map<ThriftTermRequest, int[]> mergedTermRequestTotalCounts = Maps.newHashMap();
+  pwivate finaw map<thwifttewmwequest, XD i-int[]> mewgedtewmwequesttotawcounts = maps.newhashmap();
   /**
-   * The set of all unique binIds that we are merging.
+   * the set of aww unique binids t-that we awe mewging. 😳
    */
-  private final Map<ThriftTermRequest, ThriftTermResults> termResultsMap = Maps.newHashMap();
-  private final ThriftHistogramSettings histogramSettings;
-
-  /**
-   * Only relevant for merging responses with histogram settings.
-   * This will be null either if (1) the request is not asking for histograms at all, or if
-   * (2) numBins was set to 0 (and no bin can be considered complete).
-   * If not null, the minCompleteBinId will be computed as the max over all merged responses'
-   * minCompleteBinId's.
-   */
-  @Nullable
-  private final Integer minCompleteBinId;
+  pwivate f-finaw map<thwifttewmwequest, >w< t-thwifttewmwesuwts> tewmwesuwtsmap = m-maps.newhashmap();
+  pwivate f-finaw thwifthistogwamsettings h-histogwamsettings;
 
   /**
-   * Create merger with collections of results to merge
+   * onwy wewevant fow mewging wesponses with histogwam settings. (˘ω˘)
+   * this wiww be n-nyuww eithew if (1) the wequest i-is nyot asking fow histogwams at a-aww, nyaa~~ ow if
+   * (2) n-numbins was set to 0 (and nyo bin can be considewed c-compwete). 😳😳😳
+   * i-if nyot nyuww, (U ﹏ U) the mincompwetebinid w-wiww b-be computed as the max ovew aww mewged wesponses'
+   * mincompwetebinid's. (˘ω˘)
    */
-  public ThriftTermResultsMerger(Collection<EarlybirdResponse> termStatsResults,
-                                 ThriftHistogramSettings histogramSettings) {
-    this.histogramSettings = histogramSettings;
+  @nuwwabwe
+  pwivate finaw i-integew mincompwetebinid;
 
-    Collection<EarlybirdResponse> filteredTermStatsResults =
-        filterOutEmptyEarlybirdResponses(termStatsResults);
+  /**
+   * c-cweate mewgew w-with cowwections of wesuwts t-to mewge
+   */
+  p-pubwic thwifttewmwesuwtsmewgew(cowwection<eawwybiwdwesponse> tewmstatswesuwts, :3
+                                 t-thwifthistogwamsettings histogwamsettings) {
+    this.histogwamsettings = histogwamsettings;
 
-    this.mostRecentBinIds = findMostRecentBinIds(histogramSettings, filteredTermStatsResults);
-    this.firstBinId = mostRecentBinIds.isEmpty()
-        ? Integer.MAX_VALUE // Should not be used if mostRecentBinIds is empty.
-        : mostRecentBinIds.get(0);
+    cowwection<eawwybiwdwesponse> f-fiwtewedtewmstatswesuwts =
+        f-fiwtewoutemptyeawwybiwdwesponses(tewmstatswesuwts);
 
-    List<Integer> minCompleteBinIds =
-        Lists.newArrayListWithCapacity(filteredTermStatsResults.size());
-    for (EarlybirdResponse response : filteredTermStatsResults) {
-      Preconditions.checkState(response.getResponseCode() == EarlybirdResponseCode.SUCCESS,
-          "Unsuccessful responses should not be given to ThriftTermResultsMerger.");
-      Preconditions.checkState(response.getTermStatisticsResults() != null,
-          "Response given to ThriftTermResultsMerger has no termStatisticsResults.");
+    this.mostwecentbinids = findmostwecentbinids(histogwamsettings, >w< f-fiwtewedtewmstatswesuwts);
+    t-this.fiwstbinid = mostwecentbinids.isempty()
+        ? integew.max_vawue // shouwd nyot b-be used if mostwecentbinids is empty. ^^
+        : mostwecentbinids.get(0);
 
-      ThriftTermStatisticsResults termStatisticsResults = response.getTermStatisticsResults();
-      List<Integer> binIds = termStatisticsResults.getBinIds();
+    wist<integew> mincompwetebinids =
+        w-wists.newawwaywistwithcapacity(fiwtewedtewmstatswesuwts.size());
+    fow (eawwybiwdwesponse wesponse : f-fiwtewedtewmstatswesuwts) {
+      p-pweconditions.checkstate(wesponse.getwesponsecode() == eawwybiwdwesponsecode.success, 😳😳😳
+          "unsuccessfuw wesponses shouwd nyot be given t-to thwifttewmwesuwtsmewgew.");
+      p-pweconditions.checkstate(wesponse.gettewmstatisticswesuwts() != nyuww, nyaa~~
+          "wesponse given to thwifttewmwesuwtsmewgew has nyo tewmstatisticswesuwts.");
 
-      for (Map.Entry<ThriftTermRequest, ThriftTermResults> entry
-          : termStatisticsResults.getTermResults().entrySet()) {
-        ThriftTermRequest termRequest = entry.getKey();
-        ThriftTermResults termResults = entry.getValue();
+      t-thwifttewmstatisticswesuwts tewmstatisticswesuwts = w-wesponse.gettewmstatisticswesuwts();
+      wist<integew> binids = tewmstatisticswesuwts.getbinids();
 
-        adjustTotalCount(termResults, binIds);
-        addTotalCountData(termRequest, termResults);
+      f-fow (map.entwy<thwifttewmwequest, (⑅˘꒳˘) thwifttewmwesuwts> e-entwy
+          : t-tewmstatisticswesuwts.gettewmwesuwts().entwyset()) {
+        thwifttewmwequest t-tewmwequest = entwy.getkey();
+        t-thwifttewmwesuwts t-tewmwesuwts = e-entwy.getvawue();
 
-        if (histogramSettings != null) {
-          Preconditions.checkState(termStatisticsResults.isSetBinIds());
-          addHistogramData(termRequest, termResults, termStatisticsResults.getBinIds());
+        adjusttotawcount(tewmwesuwts, :3 b-binids);
+        a-addtotawcountdata(tewmwequest, ʘwʘ tewmwesuwts);
+
+        if (histogwamsettings != n-nyuww) {
+          p-pweconditions.checkstate(tewmstatisticswesuwts.issetbinids());
+          a-addhistogwamdata(tewmwequest, rawr x3 tewmwesuwts, (///ˬ///✿) tewmstatisticswesuwts.getbinids());
         }
       }
 
-      if (histogramSettings != null) {
-        addMinCompleteBinId(minCompleteBinIds, response);
+      i-if (histogwamsettings != nuww) {
+        a-addmincompwetebinid(mincompwetebinids, 😳😳😳 w-wesponse);
       }
     }
 
-    minCompleteBinId = minCompleteBinIds.isEmpty() ? null : Collections.max(minCompleteBinIds);
+    mincompwetebinid = mincompwetebinids.isempty() ? nyuww : cowwections.max(mincompwetebinids);
   }
 
   /**
-   * Take out any earlybird responses that we know did not match anything relevant to the query,
-   * and may have erroneous binIds.
+   * t-take out any eawwybiwd w-wesponses t-that we know did n-nyot match anything wewevant to t-the quewy, XD
+   * and may have ewwoneous binids. >_<
    */
-  private Collection<EarlybirdResponse> filterOutEmptyEarlybirdResponses(
-      Collection<EarlybirdResponse> termStatsResults) {
-    List<EarlybirdResponse> emptyResponses = Lists.newArrayList();
-    List<EarlybirdResponse> nonEmptyResponses = Lists.newArrayList();
-    for (EarlybirdResponse response : termStatsResults) {
-      // Guard against erroneously merging and returning 0 counts when we actually have data to
-      // return from other partitions.
-      // When a query doesn't match anything at all on an earlybird, the binIds that are returned
-      // do not correspond at all to the actual query, and are just based on the data range on the
-      // earlybird itself.
-      // We can identify these responses as (1) being non-early terminated, and (2) having 0
-      // hits processed.
-      if (isTermStatResponseEmpty(response)) {
-        emptyResponses.add(response);
-      } else {
-        nonEmptyResponses.add(response);
+  pwivate cowwection<eawwybiwdwesponse> fiwtewoutemptyeawwybiwdwesponses(
+      cowwection<eawwybiwdwesponse> t-tewmstatswesuwts) {
+    wist<eawwybiwdwesponse> e-emptywesponses = wists.newawwaywist();
+    w-wist<eawwybiwdwesponse> nyonemptywesponses = w-wists.newawwaywist();
+    fow (eawwybiwdwesponse w-wesponse : t-tewmstatswesuwts) {
+      // g-guawd against e-ewwoneouswy m-mewging and wetuwning 0 counts when we actuawwy have data to
+      // wetuwn fwom othew pawtitions.
+      // when a-a quewy doesn't m-match anything a-at aww on an eawwybiwd, >w< the binids t-that awe wetuwned
+      // do nyot cowwespond at aww to the actuaw quewy, /(^•ω•^) and a-awe just based o-on the data wange on the
+      // e-eawwybiwd itsewf. :3
+      // we can identify these w-wesponses as (1) b-being nyon-eawwy tewminated, a-and (2) having 0
+      // h-hits pwocessed. ʘwʘ
+      if (istewmstatwesponseempty(wesponse)) {
+        emptywesponses.add(wesponse);
+      } ewse {
+        n-nyonemptywesponses.add(wesponse);
       }
     }
 
-    // If all responses were "empty", we will just use those to merge into a new set of empty
-    // responses, using the binIds provided.
-    return nonEmptyResponses.isEmpty() ? emptyResponses : nonEmptyResponses;
+    // i-if aww wesponses w-wewe "empty", (˘ω˘) we w-wiww just use t-those to mewge into a nyew set of e-empty
+    // wesponses, (ꈍᴗꈍ) u-using the binids pwovided. ^^
+    w-wetuwn n-nyonemptywesponses.isempty() ? emptywesponses : nyonemptywesponses;
   }
 
-  private boolean isTermStatResponseEmpty(EarlybirdResponse response) {
-    return response.isSetSearchResults()
-        && (response.getSearchResults().getNumHitsProcessed() == 0
-            || drivingQueryHasNoHits(response))
-        && response.isSetEarlyTerminationInfo()
-        && !response.getEarlyTerminationInfo().isEarlyTerminated();
+  p-pwivate boowean istewmstatwesponseempty(eawwybiwdwesponse wesponse) {
+    w-wetuwn wesponse.issetseawchwesuwts()
+        && (wesponse.getseawchwesuwts().getnumhitspwocessed() == 0
+            || dwivingquewyhasnohits(wesponse))
+        && w-wesponse.isseteawwytewminationinfo()
+        && !wesponse.geteawwytewminationinfo().iseawwytewminated();
   }
 
   /**
-   * If the global count bins are all 0, then we know the driving query has no hits.
-   * This check is added as a short term solution for SEARCH-5476. This short term fix requires
-   * the client to set the includeGlobalCounts to kick in.
+   * i-if the gwobaw count bins awe aww 0, ^^ t-then we know the dwiving quewy has nyo hits.
+   * t-this check i-is added as a s-showt tewm sowution fow seawch-5476. ( ͡o ω ͡o ) this showt tewm fix wequiwes
+   * t-the cwient to set the incwudegwobawcounts to kick in. -.-
    */
-  private boolean drivingQueryHasNoHits(EarlybirdResponse response) {
-    ThriftTermStatisticsResults termStatisticsResults = response.getTermStatisticsResults();
-    if (termStatisticsResults == null || termStatisticsResults.getTermResults() == null) {
-      // If there's no term stats response, be conservative and return false.
-      return false;
-    } else {
-      ThriftTermResults globalCounts =
-          termStatisticsResults.getTermResults().get(GLOBAL_COUNT_REQUEST);
-      if (globalCounts == null) {
-        // We cannot tell if driving query has no hits, be conservative and return false.
-        return false;
-      } else {
-        for (Integer i : globalCounts.getHistogramBins()) {
+  p-pwivate boowean d-dwivingquewyhasnohits(eawwybiwdwesponse wesponse) {
+    t-thwifttewmstatisticswesuwts tewmstatisticswesuwts = w-wesponse.gettewmstatisticswesuwts();
+    i-if (tewmstatisticswesuwts == nyuww || tewmstatisticswesuwts.gettewmwesuwts() == n-nyuww) {
+      // if thewe's nyo tewm s-stats wesponse, ^^;; b-be consewvative and wetuwn fawse. ^•ﻌ•^
+      w-wetuwn fawse;
+    } ewse {
+      t-thwifttewmwesuwts g-gwobawcounts =
+          t-tewmstatisticswesuwts.gettewmwesuwts().get(gwobaw_count_wequest);
+      if (gwobawcounts == nyuww) {
+        // we cannot teww if dwiving quewy has nyo hits, be consewvative and wetuwn fawse. (˘ω˘)
+        wetuwn fawse;
+      } ewse {
+        fow (integew i : gwobawcounts.gethistogwambins()) {
           if (i > 0) {
-            return false;
+            w-wetuwn fawse;
           }
         }
-        RESPONSE_WITHOUT_DRIVING_QUERY_HIT.increment();
-        return true;
+        w-wesponse_without_dwiving_quewy_hit.incwement();
+        wetuwn twue;
       }
     }
   }
 
-  private static List<Integer> findMostRecentBinIds(
-      ThriftHistogramSettings histogramSettings,
-      Collection<EarlybirdResponse> filteredTermStatsResults) {
-    Integer largestFirstBinId = null;
-    List<Integer> binIdsToUse = null;
+  p-pwivate s-static wist<integew> f-findmostwecentbinids(
+      thwifthistogwamsettings histogwamsettings, o.O
+      c-cowwection<eawwybiwdwesponse> fiwtewedtewmstatswesuwts) {
+    i-integew wawgestfiwstbinid = n-nyuww;
+    wist<integew> binidstouse = n-nyuww;
 
-    if (histogramSettings != null) {
-      int numBins = histogramSettings.getNumBins();
-      for (EarlybirdResponse response : filteredTermStatsResults) {
-        ThriftTermStatisticsResults termStatisticsResults = response.getTermStatisticsResults();
-        Preconditions.checkState(termStatisticsResults.getBinIds().size() == numBins,
-            "expected all results to have the same numBins. "
-                + "request numBins: %s, response numBins: %s",
-            numBins, termStatisticsResults.getBinIds().size());
+    if (histogwamsettings != n-nyuww) {
+      i-int nyumbins = histogwamsettings.getnumbins();
+      fow (eawwybiwdwesponse w-wesponse : f-fiwtewedtewmstatswesuwts) {
+        t-thwifttewmstatisticswesuwts t-tewmstatisticswesuwts = w-wesponse.gettewmstatisticswesuwts();
+        p-pweconditions.checkstate(tewmstatisticswesuwts.getbinids().size() == n-nyumbins, (✿oωo)
+            "expected a-aww w-wesuwts to have the same nyumbins. 😳😳😳 "
+                + "wequest n-nyumbins: %s, (ꈍᴗꈍ) w-wesponse nyumbins: %s", σωσ
+            n-nyumbins, UwU tewmstatisticswesuwts.getbinids().size());
 
-        if (termStatisticsResults.getBinIds().size() > 0) {
-          Integer firstBinId = termStatisticsResults.getBinIds().get(0);
-          if (largestFirstBinId == null
-              || largestFirstBinId.intValue() < firstBinId.intValue()) {
-            largestFirstBinId = firstBinId;
-            binIdsToUse = termStatisticsResults.getBinIds();
+        if (tewmstatisticswesuwts.getbinids().size() > 0) {
+          i-integew fiwstbinid = tewmstatisticswesuwts.getbinids().get(0);
+          if (wawgestfiwstbinid == n-nyuww
+              || wawgestfiwstbinid.intvawue() < f-fiwstbinid.intvawue()) {
+            w-wawgestfiwstbinid = f-fiwstbinid;
+            binidstouse = t-tewmstatisticswesuwts.getbinids();
           }
         }
       }
     }
-    return binIdsToUse == null
-        ? Collections.<Integer>emptyList()
-        // Just in case, make a copy of the binIds so that we don't reuse the same list from one
-        // of the responses we're merging.
-        : Lists.newArrayList(binIdsToUse);
+    wetuwn binidstouse == n-nyuww
+        ? cowwections.<integew>emptywist()
+        // j-just in case, ^•ﻌ•^ make a copy of t-the binids so that we don't weuse the same wist fwom one
+        // of the wesponses w-we'we mewging. mya
+        : wists.newawwaywist(binidstouse);
   }
 
-  private void addMinCompleteBinId(List<Integer> minCompleteBinIds,
-                                   EarlybirdResponse response) {
-    Preconditions.checkNotNull(histogramSettings);
-    ThriftTermStatisticsResults termStatisticsResults = response.getTermStatisticsResults();
+  pwivate void a-addmincompwetebinid(wist<integew> m-mincompwetebinids, /(^•ω•^)
+                                   eawwybiwdwesponse wesponse) {
+    pweconditions.checknotnuww(histogwamsettings);
+    t-thwifttewmstatisticswesuwts tewmstatisticswesuwts = w-wesponse.gettewmstatisticswesuwts();
 
-    if (termStatisticsResults.isSetMinCompleteBinId()) {
-      // This is the base case. Early terminated or not, this is the proper minCompleteBinId
-      // that we're told to use for this response.
-      minCompleteBinIds.add(termStatisticsResults.getMinCompleteBinId());
-    } else if (termStatisticsResults.getBinIds().size() > 0) {
-      // This is the case where no bins were complete. For the purposes of merging, we need to
-      // mark all the binIds in this response as non-complete by marking the "max(binId)+1" as the
-      // last complete bin.
-      // When returning the merged response, we still have a guard for the resulting
-      // minCompleteBinId being outside of the binIds range, and will set the returned
-      // minCompleteBinId value to null, if this response's binIds end up being used as the most
-      // recent ones, and we need to signify that none of the bins are complete.
-      int binSize = termStatisticsResults.getBinIds().size();
-      Integer maxBinId = termStatisticsResults.getBinIds().get(binSize - 1);
-      minCompleteBinIds.add(maxBinId + 1);
+    if (tewmstatisticswesuwts.issetmincompwetebinid()) {
+      // t-this i-is the base case. eawwy tewminated ow not, rawr this i-is the pwopew m-mincompwetebinid
+      // that we'we t-towd to use fow this wesponse. nyaa~~
+      mincompwetebinids.add(tewmstatisticswesuwts.getmincompwetebinid());
+    } e-ewse if (tewmstatisticswesuwts.getbinids().size() > 0) {
+      // this is the c-case whewe nyo b-bins wewe compwete. ( ͡o ω ͡o ) f-fow the puwposes of mewging, σωσ w-we nyeed to
+      // m-mawk aww t-the binids in this w-wesponse as nyon-compwete by m-mawking the "max(binid)+1" a-as the
+      // w-wast c-compwete bin. (✿oωo)
+      // w-when wetuwning t-the mewged w-wesponse, (///ˬ///✿) we stiww h-have a guawd fow the wesuwting
+      // m-mincompwetebinid being o-outside of the binids wange, σωσ a-and wiww set the w-wetuwned
+      // m-mincompwetebinid vawue to nyuww, if this wesponse's binids end u-up being used a-as the most
+      // w-wecent ones, UwU and we nyeed to signify that nyone of the bins a-awe compwete. (⑅˘꒳˘)
+      i-int binsize = tewmstatisticswesuwts.getbinids().size();
+      i-integew maxbinid = t-tewmstatisticswesuwts.getbinids().get(binsize - 1);
+      mincompwetebinids.add(maxbinid + 1);
 
-      LOG.debug("Adjusting null minCompleteBinId for response: {}, histogramSettings {}",
-          response, histogramSettings);
-      MIN_COMPLETE_BIN_ID_ADJUSTED_NULL.increment();
-    } else {
-      // This should only happen in the case where numBins is set to 0.
-      Preconditions.checkState(histogramSettings.getNumBins() == 0,
-          "Expected numBins set to 0. response: %s", response);
-      Preconditions.checkState(minCompleteBinIds.isEmpty(),
-          "minCompleteBinIds: %s", minCompleteBinIds);
+      wog.debug("adjusting nyuww mincompwetebinid f-fow wesponse: {}, /(^•ω•^) h-histogwamsettings {}", -.-
+          w-wesponse, (ˆ ﻌ ˆ)♡ h-histogwamsettings);
+      min_compwete_bin_id_adjusted_nuww.incwement();
+    } ewse {
+      // this shouwd o-onwy happen in the c-case whewe nyumbins is set to 0. nyaa~~
+      pweconditions.checkstate(histogwamsettings.getnumbins() == 0, ʘwʘ
+          "expected n-nyumbins set to 0. :3 wesponse: %s", (U ᵕ U❁) wesponse);
+      pweconditions.checkstate(mincompwetebinids.isempty(), (U ﹏ U)
+          "mincompwetebinids: %s", m-mincompwetebinids);
 
-      LOG.debug("Got null minCompleteBinId with no bins for response: {}, histogramSettings {}",
-          response, histogramSettings);
-      MIN_COMPLETE_BIN_ID_NULL_WITHOUT_BINS.increment();
+      wog.debug("got n-nyuww mincompwetebinid w-with nyo bins fow wesponse: {}, ^^ h-histogwamsettings {}",
+          w-wesponse, òωó histogwamsettings);
+      m-min_compwete_bin_id_nuww_without_bins.incwement();
     }
   }
 
-  private void addTotalCountData(ThriftTermRequest request, ThriftTermResults results) {
-    ThriftTermResults termResults = termResultsMap.get(request);
-    if (termResults == null) {
-      termResultsMap.put(request, results);
-    } else {
-      termResults.setTotalCount(termResults.getTotalCount() + results.getTotalCount());
-      if (termResults.isSetMetadata()) {
-        termResults.setMetadata(
-            FacetsResultsUtils.mergeFacetMetadata(termResults.getMetadata(),
-                results.getMetadata(), null));
+  pwivate v-void addtotawcountdata(thwifttewmwequest wequest, /(^•ω•^) t-thwifttewmwesuwts w-wesuwts) {
+    t-thwifttewmwesuwts tewmwesuwts = t-tewmwesuwtsmap.get(wequest);
+    i-if (tewmwesuwts == n-nyuww) {
+      tewmwesuwtsmap.put(wequest, 😳😳😳 w-wesuwts);
+    } ewse {
+      tewmwesuwts.settotawcount(tewmwesuwts.gettotawcount() + w-wesuwts.gettotawcount());
+      i-if (tewmwesuwts.issetmetadata()) {
+        t-tewmwesuwts.setmetadata(
+            facetswesuwtsutiws.mewgefacetmetadata(tewmwesuwts.getmetadata(), :3
+                wesuwts.getmetadata(), (///ˬ///✿) nyuww));
       }
     }
   }
 
   /**
-   * Set results.totalCount to the sum of hits in only the bins that will be returned in
-   * the merged response.
+   * set w-wesuwts.totawcount to the sum of h-hits in onwy the b-bins that wiww be wetuwned in
+   * the mewged w-wesponse. rawr x3
    */
-  private void adjustTotalCount(ThriftTermResults results, List<Integer> binIds) {
-    int adjustedTotalCount = 0;
-    List<Integer> histogramBins = results.getHistogramBins();
-    if ((binIds != null) && (histogramBins != null)) {
-      Preconditions.checkState(
-          histogramBins.size() == binIds.size(),
-          "Expected ThriftTermResults to have the same number of histogramBins as binIds set in "
-          + " ThriftTermStatisticsResults. ThriftTermResults.histogramBins: %s, "
-          + " ThriftTermStatisticsResults.binIds: %s.",
-          histogramBins, binIds);
-      for (int i = 0; i < binIds.size(); ++i) {
-        if (binIds.get(i) >= firstBinId) {
-          adjustedTotalCount += histogramBins.get(i);
+  pwivate void adjusttotawcount(thwifttewmwesuwts w-wesuwts, (U ᵕ U❁) wist<integew> b-binids) {
+    i-int adjustedtotawcount = 0;
+    w-wist<integew> h-histogwambins = wesuwts.gethistogwambins();
+    if ((binids != nyuww) && (histogwambins != nyuww)) {
+      p-pweconditions.checkstate(
+          histogwambins.size() == b-binids.size(), (⑅˘꒳˘)
+          "expected thwifttewmwesuwts to have the same nyumbew of histogwambins as binids s-set in "
+          + " thwifttewmstatisticswesuwts. (˘ω˘) thwifttewmwesuwts.histogwambins: %s, "
+          + " thwifttewmstatisticswesuwts.binids: %s.", :3
+          histogwambins, XD b-binids);
+      f-fow (int i = 0; i < binids.size(); ++i) {
+        i-if (binids.get(i) >= fiwstbinid) {
+          adjustedtotawcount += histogwambins.get(i);
         }
       }
     }
 
-    results.setTotalCount(adjustedTotalCount);
+    w-wesuwts.settotawcount(adjustedtotawcount);
   }
 
-  private void addHistogramData(ThriftTermRequest request,
-                                ThriftTermResults results,
-                                List<Integer> binIds) {
+  p-pwivate void addhistogwamdata(thwifttewmwequest w-wequest, >_<
+                                thwifttewmwesuwts w-wesuwts, (✿oωo)
+                                wist<integew> binids) {
 
-    int[] requestTotalCounts = mergedTermRequestTotalCounts.get(request);
-    if (requestTotalCounts == null) {
-      requestTotalCounts = new int[mostRecentBinIds.size()];
-      mergedTermRequestTotalCounts.put(request, requestTotalCounts);
+    int[] w-wequesttotawcounts = mewgedtewmwequesttotawcounts.get(wequest);
+    if (wequesttotawcounts == nyuww) {
+      w-wequesttotawcounts = n-nyew int[mostwecentbinids.size()];
+      m-mewgedtewmwequesttotawcounts.put(wequest, (ꈍᴗꈍ) wequesttotawcounts);
     }
 
-    // Only consider these results if they fall into the mostRecentBinIds range.
+    // onwy considew t-these wesuwts if they faww into the mostwecentbinids wange. XD
     //
-    // The list of returned binIds is expected to be both sorted (in ascending order), and
-    // contiguous, which allows us to use firstBinId to check if it overlaps with the
-    // mostRecentBinIds range.
-    if (binIds.size() > 0 && binIds.get(binIds.size() - 1) >= firstBinId) {
-      int firstBinIndex;
-      if (binIds.get(0) == firstBinId) {
-        // This should be the common case when all partitions have the same binIds,
-        // no need to do a binary search.
-        firstBinIndex = 0;
-      } else {
-        // The firstBinId must be in the binIds range. We can find it using binary search since
-        // binIds are sorted.
-        firstBinIndex = Collections.binarySearch(binIds, firstBinId);
-        Preconditions.checkState(firstBinIndex >= 0,
-            "Expected to find firstBinId (%s) in the result binIds: %s, "
-                + "histogramSettings: %s, termRequest: %s",
-            firstBinId, binIds, histogramSettings, request);
+    // the wist of wetuwned b-binids is e-expected to be both s-sowted (in ascending o-owdew), :3 and
+    // contiguous, mya which awwows u-us to use fiwstbinid t-to check if it ovewwaps with the
+    // m-mostwecentbinids wange. òωó
+    if (binids.size() > 0 && binids.get(binids.size() - 1) >= f-fiwstbinid) {
+      int fiwstbinindex;
+      i-if (binids.get(0) == f-fiwstbinid) {
+        // this shouwd be t-the common case w-when aww pawtitions h-have the same binids,
+        // nyo need t-to do a binawy seawch. nyaa~~
+        fiwstbinindex = 0;
+      } ewse {
+        // the f-fiwstbinid must be in the binids wange. we can find it using binawy s-seawch since
+        // b-binids a-awe sowted. 🥺
+        f-fiwstbinindex = c-cowwections.binawyseawch(binids, -.- fiwstbinid);
+        p-pweconditions.checkstate(fiwstbinindex >= 0, 🥺
+            "expected to find fiwstbinid (%s) in the wesuwt b-binids: %s, (˘ω˘) "
+                + "histogwamsettings: %s, òωó tewmwequest: %s", UwU
+            f-fiwstbinid, binids, ^•ﻌ•^ histogwamsettings, mya w-wequest);
       }
 
-      // Skip binIds that are before the smallest binId that we will use in the merged results.
-      for (int i = firstBinIndex; i < binIds.size(); i++) {
-        final Integer currentBinValue = results.getHistogramBins().get(i);
-        requestTotalCounts[i - firstBinIndex] += currentBinValue.intValue();
+      // skip b-binids that awe befowe the smowest b-binid that we wiww use in t-the mewged wesuwts. (✿oωo)
+      f-fow (int i = fiwstbinindex; i-i < binids.size(); i-i++) {
+        finaw integew c-cuwwentbinvawue = wesuwts.gethistogwambins().get(i);
+        wequesttotawcounts[i - fiwstbinindex] += c-cuwwentbinvawue.intvawue();
       }
     }
   }
 
   /**
-   * Return a new ThriftTermStatisticsResults with the total counts merged, and if enabled,
-   * histogram bins merged.
+   * wetuwn a n-nyew thwifttewmstatisticswesuwts with the totaw counts mewged, XD and i-if enabwed, :3
+   * h-histogwam bins m-mewged. (U ﹏ U)
    */
-  public ThriftTermStatisticsResults merge() {
-    ThriftTermStatisticsResults results = new ThriftTermStatisticsResults(termResultsMap);
+  pubwic thwifttewmstatisticswesuwts m-mewge() {
+    t-thwifttewmstatisticswesuwts wesuwts = nyew thwifttewmstatisticswesuwts(tewmwesuwtsmap);
 
-    if (histogramSettings != null) {
-      mergeHistogramBins(results);
+    i-if (histogwamsettings != nyuww) {
+      m-mewgehistogwambins(wesuwts);
     }
 
-    return results;
+    wetuwn wesuwts;
   }
 
 
   /**
-   * Takes multiple histogram results and merges them so:
-   * 1) Counts for the same binId (represents the time) and term are summed
-   * 2) All results are re-indexed to use the most recent bins found from the union of all bins
+   * t-takes muwtipwe h-histogwam wesuwts and mewges them so:
+   * 1) counts fow the same binid (wepwesents t-the time) and t-tewm awe summed
+   * 2) aww wesuwts awe we-indexed to use the m-most wecent bins found fwom the u-union of aww bins
    */
-  private void mergeHistogramBins(ThriftTermStatisticsResults mergedResults) {
+  p-pwivate void mewgehistogwambins(thwifttewmstatisticswesuwts mewgedwesuwts) {
 
-    mergedResults.setBinIds(mostRecentBinIds);
-    mergedResults.setHistogramSettings(histogramSettings);
+    mewgedwesuwts.setbinids(mostwecentbinids);
+    mewgedwesuwts.sethistogwamsettings(histogwamsettings);
 
-    setMinCompleteBinId(mergedResults);
+    s-setmincompwetebinid(mewgedwesuwts);
 
-    useMostRecentBinsForEachThriftTermResults();
+    usemostwecentbinsfoweachthwifttewmwesuwts();
   }
 
-  private void setMinCompleteBinId(ThriftTermStatisticsResults mergedResults) {
-    if (mostRecentBinIds.isEmpty()) {
-      Preconditions.checkState(minCompleteBinId == null);
-      // This is the case where the requested numBins is set to 0. We don't have any binIds,
-      // and the minCompleteBinId has to be unset.
-      LOG.debug("Empty binIds returned for mergedResults: {}", mergedResults);
-    } else {
-      Preconditions.checkNotNull(minCompleteBinId);
+  pwivate void s-setmincompwetebinid(thwifttewmstatisticswesuwts mewgedwesuwts) {
+    i-if (mostwecentbinids.isempty()) {
+      pweconditions.checkstate(mincompwetebinid == n-nyuww);
+      // this i-is the case whewe t-the wequested n-nyumbins is set t-to 0. we don't h-have any binids, UwU
+      // a-and the mincompwetebinid has to be unset. ʘwʘ
+      wog.debug("empty binids wetuwned fow m-mewgedwesuwts: {}", >w< m-mewgedwesuwts);
+    } e-ewse {
+      p-pweconditions.checknotnuww(mincompwetebinid);
 
-      Integer maxBinId = mostRecentBinIds.get(mostRecentBinIds.size() - 1);
-      if (minCompleteBinId <= maxBinId) {
-        mergedResults.setMinCompleteBinId(minCompleteBinId);
-      } else {
-        // Leaving the minCompleteBinId unset as it is outside the range of the returned binIds.
-        LOG.debug("Computed minCompleteBinId: {} is out of maxBinId: {} for mergedResults: {}",
-            minCompleteBinId, mergedResults);
-        MIN_COMPLETE_BIN_ID_OUT_OF_RANGE.increment();
+      i-integew m-maxbinid = mostwecentbinids.get(mostwecentbinids.size() - 1);
+      if (mincompwetebinid <= maxbinid) {
+        mewgedwesuwts.setmincompwetebinid(mincompwetebinid);
+      } ewse {
+        // w-weaving the mincompwetebinid u-unset as it is outside the wange of the wetuwned binids. 😳😳😳
+        w-wog.debug("computed m-mincompwetebinid: {} i-is out of maxbinid: {} fow mewgedwesuwts: {}", rawr
+            m-mincompwetebinid, ^•ﻌ•^ mewgedwesuwts);
+        min_compwete_bin_id_out_of_wange.incwement();
       }
     }
   }
 
   /**
-   * Check that the binIds we are using are contiguous. Increment the provided stat if we find
-   * a gap, as we don't expect to find any.
-   * See: SEARCH-4362
+   * check t-that the binids w-we awe using awe contiguous. σωσ incwement the pwovided s-stat if we find
+   * a gap, :3 a-as we don't expect t-to find any. rawr x3
+   * see: seawch-4362
    *
-   * @param sortedBinIds most recent numBins sorted binIds.
-   * @param binIdGapCounter stat to increment if we see a gap in the binId range.
+   * @pawam s-sowtedbinids m-most wecent n-nyumbins sowted b-binids. nyaa~~
+   * @pawam b-binidgapcountew s-stat to incwement if we see a-a gap in the binid w-wange. :3
    */
-  @VisibleForTesting
-  static void checkForBinIdGaps(List<Integer> sortedBinIds, SearchCounter binIdGapCounter) {
-    for (int i = sortedBinIds.size() - 1; i > 0; i--) {
-      final Integer currentBinId = sortedBinIds.get(i);
-      final Integer previousBinId = sortedBinIds.get(i - 1);
+  @visibwefowtesting
+  static void c-checkfowbinidgaps(wist<integew> sowtedbinids, >w< seawchcountew b-binidgapcountew) {
+    fow (int i-i = sowtedbinids.size() - 1; i > 0; i-i--) {
+      f-finaw integew cuwwentbinid = sowtedbinids.get(i);
+      finaw integew p-pweviousbinid = sowtedbinids.get(i - 1);
 
-      if (previousBinId < currentBinId - 1) {
-        binIdGapCounter.increment();
-        break;
+      if (pweviousbinid < c-cuwwentbinid - 1) {
+        b-binidgapcountew.incwement();
+        bweak;
       }
     }
   }
 
   /**
-   * Returns a view containing only the last N items from the list
+   * wetuwns a view c-containing onwy t-the wast ny items fwom the wist
    */
-  private static <E> List<E> takeLastN(List<E> lst, int n) {
-    Preconditions.checkArgument(n <= lst.size(),
-        "Attempting to take more elements than the list has. List size: %s, n: %s", lst.size(), n);
-    return lst.subList(lst.size() - n, lst.size());
+  p-pwivate static <e> wist<e> takewastn(wist<e> w-wst, int ny) {
+    p-pweconditions.checkawgument(n <= wst.size(), rawr
+        "attempting t-to take m-mowe ewements than the wist has. 😳 wist size: %s, 😳 n-ny: %s", 🥺 wst.size(), rawr x3 n-ny);
+    wetuwn w-wst.subwist(wst.size() - ny, ^^ w-wst.size());
   }
 
-  private void useMostRecentBinsForEachThriftTermResults() {
-    for (Map.Entry<ThriftTermRequest, ThriftTermResults> entry : termResultsMap.entrySet()) {
-      ThriftTermRequest request = entry.getKey();
-      ThriftTermResults results = entry.getValue();
+  pwivate void usemostwecentbinsfoweachthwifttewmwesuwts() {
+    fow (map.entwy<thwifttewmwequest, ( ͡o ω ͡o ) thwifttewmwesuwts> entwy : tewmwesuwtsmap.entwyset()) {
+      t-thwifttewmwequest w-wequest = e-entwy.getkey();
+      t-thwifttewmwesuwts w-wesuwts = e-entwy.getvawue();
 
-      List<Integer> histogramBins = Lists.newArrayList();
-      results.setHistogramBins(histogramBins);
+      wist<integew> h-histogwambins = w-wists.newawwaywist();
+      wesuwts.sethistogwambins(histogwambins);
 
-      int[] requestTotalCounts = mergedTermRequestTotalCounts.get(request);
-      Preconditions.checkNotNull(requestTotalCounts);
+      i-int[] wequesttotawcounts = m-mewgedtewmwequesttotawcounts.get(wequest);
+      pweconditions.checknotnuww(wequesttotawcounts);
 
-      for (int totalCount : requestTotalCounts) {
-        histogramBins.add(totalCount);
+      fow (int t-totawcount : wequesttotawcounts) {
+        histogwambins.add(totawcount);
       }
     }
   }
 
   /**
-   * Merges search stats from several earlybird responses and puts them in
-   * {@link ThriftSearchResults} structure.
+   * m-mewges seawch stats fwom s-sevewaw eawwybiwd w-wesponses and puts them in
+   * {@wink t-thwiftseawchwesuwts} s-stwuctuwe. XD
    *
-   * @param responses earlybird responses to merge the search stats from
-   * @return merged search stats inside of {@link ThriftSearchResults} structure
+   * @pawam w-wesponses eawwybiwd w-wesponses to mewge t-the seawch stats fwom
+   * @wetuwn m-mewged seawch stats inside o-of {@wink thwiftseawchwesuwts} s-stwuctuwe
    */
-  public static ThriftSearchResults mergeSearchStats(Collection<EarlybirdResponse> responses) {
-    int numHitsProcessed = 0;
-    int numPartitionsEarlyTerminated = 0;
+  p-pubwic static thwiftseawchwesuwts m-mewgeseawchstats(cowwection<eawwybiwdwesponse> wesponses) {
+    int nyumhitspwocessed = 0;
+    i-int nyumpawtitionseawwytewminated = 0;
 
-    for (EarlybirdResponse response : responses) {
-      ThriftSearchResults searchResults = response.getSearchResults();
+    fow (eawwybiwdwesponse wesponse : wesponses) {
+      thwiftseawchwesuwts seawchwesuwts = wesponse.getseawchwesuwts();
 
-      if (searchResults != null) {
-        numHitsProcessed += searchResults.getNumHitsProcessed();
-        numPartitionsEarlyTerminated += searchResults.getNumPartitionsEarlyTerminated();
+      i-if (seawchwesuwts != nyuww) {
+        nyumhitspwocessed += seawchwesuwts.getnumhitspwocessed();
+        nyumpawtitionseawwytewminated += seawchwesuwts.getnumpawtitionseawwytewminated();
       }
     }
 
-    ThriftSearchResults searchResults = new ThriftSearchResults(new ArrayList<>());
-    searchResults.setNumHitsProcessed(numHitsProcessed);
-    searchResults.setNumPartitionsEarlyTerminated(numPartitionsEarlyTerminated);
-    return searchResults;
+    thwiftseawchwesuwts seawchwesuwts = nyew t-thwiftseawchwesuwts(new awwaywist<>());
+    seawchwesuwts.setnumhitspwocessed(numhitspwocessed);
+    s-seawchwesuwts.setnumpawtitionseawwytewminated(numpawtitionseawwytewminated);
+    wetuwn s-seawchwesuwts;
   }
 }

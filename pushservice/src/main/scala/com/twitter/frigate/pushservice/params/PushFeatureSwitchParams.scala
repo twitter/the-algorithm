@@ -1,5043 +1,5043 @@
-package com.twitter.frigate.pushservice.params
+package com.twittew.fwigate.pushsewvice.pawams
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.frigate.pushservice.params.InlineActionsEnum._
-import com.twitter.frigate.pushservice.params.HighQualityCandidateGroupEnum._
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSEnumSeqParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
+impowt com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.fwigate.pushsewvice.pawams.inwineactionsenum._
+i-impowt c-com.twittew.fwigate.pushsewvice.pawams.highquawitycandidategwoupenum._
+i-impowt c-com.twittew.timewines.configapi.duwationconvewsion
+i-impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt com.twittew.timewines.configapi.fsenumpawam
+impowt com.twittew.timewines.configapi.fsenumseqpawam
+impowt com.twittew.timewines.configapi.fspawam
+impowt com.twittew.timewines.configapi.hasduwationconvewsion
+i-impowt com.twittew.utiw.duwation
 
-object PushFeatureSwitchParams {
+object pushfeatuweswitchpawams {
 
   /**
-   * List of CRTs to uprank. Last CRT in sequence ends up on top of list
+   * wist of cwts to u-upwank. (˘ω˘) wast cwt in sequence ends u-up on top of wist
    */
-  object ListOfCrtsToUpRank
-      extends FSParam[Seq[String]]("rerank_candidates_crt_to_top", default = Seq.empty[String])
+  object wistofcwtstoupwank
+      extends f-fspawam[seq[stwing]]("wewank_candidates_cwt_to_top", >_< defauwt = s-seq.empty[stwing])
 
-  object ListOfCrtsForOpenApp
-      extends FSParam[Seq[String]](
-        "open_app_allowed_crts",
-        default = Seq(
-          "f1firstdegreetweet",
-          "f1firstdegreephoto",
-          "f1firstdegreevideo",
-          "geopoptweet",
-          "frstweet",
-          "trendtweet",
-          "hermituser",
-          "triangularloopuser"
+  o-object wistofcwtsfowopenapp
+      extends fspawam[seq[stwing]](
+        "open_app_awwowed_cwts", (˘ω˘)
+        defauwt = seq(
+          "f1fiwstdegweetweet", >w<
+          "f1fiwstdegweephoto", 😳😳😳
+          "f1fiwstdegweevideo", 😳
+          "geopoptweet", XD
+          "fwstweet", OwO
+          "twendtweet", -.-
+          "hewmitusew", o.O
+          "twianguwawwoopusew"
         ))
 
   /**
-   * List of CRTs to downrank. Last CRT in sequence ends up on bottom of list
+   * w-wist of cwts to downwank. ^^ wast cwt in sequence ends up on bottom of wist
    */
-  object ListOfCrtsToDownRank
-      extends FSParam[Seq[String]](
-        name = "rerank_candidates_crt_to_downrank",
-        default = Seq.empty[String])
+  o-object wistofcwtstodownwank
+      extends f-fspawam[seq[stwing]](
+        name = "wewank_candidates_cwt_to_downwank", ^^
+        d-defauwt = seq.empty[stwing])
 
   /**
-   * Param to enable VF filtering in Tweetypie (vs using VisibilityLibrary)
+   * p-pawam t-to enabwe vf fiwtewing in tweetypie (vs using v-visibiwitywibwawy)
    */
-  object EnableVFInTweetypie
-      extends FSParam[Boolean](
-        name = "visibility_filtering_enable_vf_in_tweetypie",
-        default = true
+  object enabwevfintweetypie
+      e-extends fspawam[boowean](
+        nyame = "visibiwity_fiwtewing_enabwe_vf_in_tweetypie", XD
+        defauwt = twue
       )
 
   /**
-   * Number of max earlybird candidates
+   * numbew of max eawwybiwd c-candidates
    */
-  object NumberOfMaxEarlybirdInNetworkCandidatesParam
-      extends FSBoundedParam(
-        name = "frigate_push_max_earlybird_in_network_candidates",
-        default = 100,
-        min = 0,
+  object n-nyumbewofmaxeawwybiwdinnetwowkcandidatespawam
+      e-extends fsboundedpawam(
+        n-nyame = "fwigate_push_max_eawwybiwd_in_netwowk_candidates", >w<
+        defauwt = 100, (⑅˘꒳˘)
+        min = 0, 😳
         max = 800
       )
 
   /**
-   * Number of max UserTweetEntityGraph candidates to query
+   * n-nyumbew of max usewtweetentitygwaph c-candidates to quewy
    */
-  object NumberOfMaxUTEGCandidatesQueriedParam
-      extends FSBoundedParam(
-        name = "frigate_push_max_uteg_candidates_queried",
-        default = 30,
-        min = 0,
+  o-object nyumbewofmaxutegcandidatesquewiedpawam
+      e-extends fsboundedpawam(
+        name = "fwigate_push_max_uteg_candidates_quewied", :3
+        defauwt = 30, :3
+        m-min = 0, OwO
         max = 300
       )
 
   /**
-   * Param to control the max tweet age for users
+   * p-pawam to contwow the max tweet age fow usews
    */
-  object MaxTweetAgeParam
-      extends FSBoundedParam[Duration](
-        name = "tweet_age_max_hours",
-        default = 24.hours,
-        min = 1.hours,
-        max = 72.hours
+  o-object maxtweetagepawam
+      e-extends fsboundedpawam[duwation](
+        nyame = "tweet_age_max_houws", (U ﹏ U)
+        d-defauwt = 24.houws, (⑅˘꒳˘)
+        m-min = 1.houws, 😳
+        max = 72.houws
       )
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+      with hasduwationconvewsion {
+    ovewwide vaw duwationconvewsion = duwationconvewsion.fwomhouws
   }
 
   /**
-   * Param to control the max tweet age for modeling-based candidates
+   * pawam to c-contwow the max t-tweet age fow modewing-based candidates
    */
-  object ModelingBasedCandidateMaxTweetAgeParam
-      extends FSBoundedParam[Duration](
-        name = "tweet_age_candidate_generation_model_max_hours",
-        default = 24.hours,
-        min = 1.hours,
-        max = 72.hours
+  o-object modewingbasedcandidatemaxtweetagepawam
+      e-extends fsboundedpawam[duwation](
+        nyame = "tweet_age_candidate_genewation_modew_max_houws", (ˆ ﻌ ˆ)♡
+        d-defauwt = 24.houws, mya
+        min = 1.houws, ʘwʘ
+        max = 72.houws
       )
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+      with hasduwationconvewsion {
+    o-ovewwide vaw duwationconvewsion = duwationconvewsion.fwomhouws
   }
 
   /**
-   * Param to control the max tweet age for simcluster-based candidates
+   * pawam to contwow the max tweet age fow simcwustew-based c-candidates
    */
-  object GeoPopTweetMaxAgeInHours
-      extends FSBoundedParam[Duration](
-        name = "tweet_age_geo_pop_max_hours",
-        default = 24.hours,
-        min = 1.hours,
-        max = 120.hours
+  object g-geopoptweetmaxageinhouws
+      e-extends fsboundedpawam[duwation](
+        n-nyame = "tweet_age_geo_pop_max_houws", (˘ω˘)
+        defauwt = 24.houws, (///ˬ///✿)
+        m-min = 1.houws, XD
+        m-max = 120.houws
       )
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+      w-with h-hasduwationconvewsion {
+    ovewwide vaw duwationconvewsion = duwationconvewsion.fwomhouws
   }
 
   /**
-   * Param to control the max tweet age for simcluster-based candidates
+   * p-pawam t-to contwow the m-max tweet age fow s-simcwustew-based c-candidates
    */
-  object SimclusterBasedCandidateMaxTweetAgeParam
-      extends FSBoundedParam[Duration](
-        name = "tweet_age_simcluster_max_hours",
-        default = 24.hours,
-        min = 24.hours,
-        max = 48.hours
+  object simcwustewbasedcandidatemaxtweetagepawam
+      extends fsboundedpawam[duwation](
+        n-name = "tweet_age_simcwustew_max_houws",
+        defauwt = 24.houws, 😳
+        min = 24.houws, :3
+        max = 48.houws
       )
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+      with hasduwationconvewsion {
+    ovewwide v-vaw duwationconvewsion = duwationconvewsion.fwomhouws
   }
 
   /**
-   * Param to control the max tweet age for Detopic-based candidates
+   * pawam to contwow the max t-tweet age fow d-detopic-based candidates
    */
-  object DetopicBasedCandidateMaxTweetAgeParam
-      extends FSBoundedParam[Duration](
-        name = "tweet_age_detopic_max_hours",
-        default = 24.hours,
-        min = 24.hours,
-        max = 48.hours
+  o-object detopicbasedcandidatemaxtweetagepawam
+      extends fsboundedpawam[duwation](
+        n-nyame = "tweet_age_detopic_max_houws", 😳😳😳
+        defauwt = 24.houws, (U ᵕ U❁)
+        m-min = 24.houws, ^•ﻌ•^
+        m-max = 48.houws
       )
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+      with hasduwationconvewsion {
+    ovewwide vaw duwationconvewsion = duwationconvewsion.fwomhouws
   }
 
   /**
-   * Param to control the max tweet age for F1 candidates
+   * pawam t-to contwow the max tweet age f-fow f1 candidates
    */
-  object F1CandidateMaxTweetAgeParam
-      extends FSBoundedParam[Duration](
-        name = "tweet_age_f1_max_hours",
-        default = 24.hours,
-        min = 1.hours,
-        max = 96.hours
+  object f-f1candidatemaxtweetagepawam
+      e-extends fsboundedpawam[duwation](
+        nyame = "tweet_age_f1_max_houws", (˘ω˘)
+        defauwt = 24.houws, /(^•ω•^)
+        m-min = 1.houws, ^•ﻌ•^
+        m-max = 96.houws
       )
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+      with hasduwationconvewsion {
+    o-ovewwide v-vaw duwationconvewsion = duwationconvewsion.fwomhouws
   }
 
   /**
-   * Param to control the max tweet age for Explore Video Tweet
+   * pawam to contwow the max tweet age fow expwowe v-video tweet
    */
-  object ExploreVideoTweetAgeParam
-      extends FSBoundedParam[Duration](
-        name = "explore_video_tweets_age_max_hours",
-        default = 48.hours,
-        min = 1.hours,
-        max = 336.hours // Two weeks
+  o-object e-expwowevideotweetagepawam
+      extends fsboundedpawam[duwation](
+        n-nyame = "expwowe_video_tweets_age_max_houws",
+        d-defauwt = 48.houws, ^^
+        min = 1.houws, (U ﹏ U)
+        m-max = 336.houws // two weeks
       )
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+      with hasduwationconvewsion {
+    ovewwide vaw duwationconvewsion = duwationconvewsion.fwomhouws
   }
 
   /**
-   * Param to no send for new user playbook push if user login for past hours
+   * p-pawam to nyo send f-fow nyew usew pwaybook push if usew wogin fow p-past houws
    */
-  object NewUserPlaybookAllowedLastLoginHours
-      extends FSBoundedParam[Duration](
-        name = "new_user_playbook_allowed_last_login_hours",
-        default = 0.hours,
-        min = 0.hours,
-        max = 72.hours
+  o-object nyewusewpwaybookawwowedwastwoginhouws
+      extends fsboundedpawam[duwation](
+        nyame = "new_usew_pwaybook_awwowed_wast_wogin_houws", :3
+        defauwt = 0.houws, òωó
+        m-min = 0.houws, σωσ
+        max = 72.houws
       )
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+      with hasduwationconvewsion {
+    ovewwide v-vaw duwationconvewsion = duwationconvewsion.fwomhouws
   }
 
   /**
-   * The batch size of RefreshForPushHandler's Take step
+   * the b-batch size of wefweshfowpushhandwew's t-take step
    */
-  object NumberOfMaxCandidatesToBatchInRFPHTakeStep
-      extends FSBoundedParam(
-        name = "frigate_push_rfph_batch_take_max_size",
-        default = 1,
-        min = 1,
+  object nyumbewofmaxcandidatestobatchinwfphtakestep
+      extends fsboundedpawam(
+        n-nyame = "fwigate_push_wfph_batch_take_max_size", σωσ
+        d-defauwt = 1, (⑅˘꒳˘)
+        min = 1, 🥺
         max = 10
       )
 
   /**
-   * The maximum number of candidates to batch for Importance Sampling
+   * the m-maximum nyumbew of candidates t-to batch fow impowtance sampwing
    */
-  object NumberOfMaxCandidatesToBatchForImportanceSampling
-      extends FSBoundedParam(
-        name = "frigate_push_rfph_max_candidates_to_batch_for_importance_sampling",
-        default = 65,
-        min = 1,
-        max = 500
+  object nyumbewofmaxcandidatestobatchfowimpowtancesampwing
+      e-extends fsboundedpawam(
+        n-nyame = "fwigate_push_wfph_max_candidates_to_batch_fow_impowtance_sampwing", (U ﹏ U)
+        d-defauwt = 65, >w<
+        min = 1, nyaa~~
+        m-max = 500
       )
 
   /**
-   * Maximum number of regular MR push in 24.hours/daytime/nighttime
+   * maximum nyumbew o-of weguwaw mw p-push in 24.houws/daytime/nighttime
    */
-  object MaxMrPushSends24HoursParam
-      extends FSBoundedParam(
-        name = "pushcap_max_sends_24hours",
-        default = 5,
-        min = 0,
-        max = 12
+  o-object maxmwpushsends24houwspawam
+      e-extends fsboundedpawam(
+        n-name = "pushcap_max_sends_24houws", -.-
+        defauwt = 5, XD
+        min = 0, -.-
+        m-max = 12
       )
 
   /**
-   * Maximum number of regular MR ntab only channel in 24.hours/daytime/nighttime
+   * m-maximum nyumbew o-of weguwaw mw nytab onwy channew in 24.houws/daytime/nighttime
    */
-  object MaxMrNtabOnlySends24HoursParamV3
-      extends FSBoundedParam(
-        name = "pushcap_max_sends_24hours_ntabonly_v3",
-        default = 5,
-        min = 0,
-        max = 12
+  o-object maxmwntabonwysends24houwspawamv3
+      e-extends f-fsboundedpawam(
+        nyame = "pushcap_max_sends_24houws_ntabonwy_v3", >w<
+        defauwt = 5, (ꈍᴗꈍ)
+        min = 0, :3
+        m-max = 12
       )
 
   /**
-   * Maximum number of regular MR ntab only in 24.hours/daytime/nighttime
+   * m-maximum nyumbew o-of weguwaw mw n-nytab onwy in 24.houws/daytime/nighttime
    */
-  object MaxMrPushSends24HoursNtabOnlyUsersParam
-      extends FSBoundedParam(
-        name = "pushcap_max_sends_24hours_ntab_only",
-        default = 5,
-        min = 0,
+  object maxmwpushsends24houwsntabonwyusewspawam
+      e-extends fsboundedpawam(
+        nyame = "pushcap_max_sends_24houws_ntab_onwy", (ˆ ﻌ ˆ)♡
+        defauwt = 5, -.-
+        min = 0, mya
         max = 10
       )
 
   /**
-   * Customized PushCap offset (e.g., to the predicted value)
+   * customized pushcap o-offset (e.g., to the pwedicted v-vawue)
    */
-  object CustomizedPushCapOffset
-      extends FSBoundedParam[Int](
-        name = "pushcap_customized_offset",
-        default = 0,
-        min = -2,
-        max = 4
+  object customizedpushcapoffset
+      e-extends fsboundedpawam[int](
+        n-nyame = "pushcap_customized_offset", (˘ω˘)
+        defauwt = 0, ^•ﻌ•^
+        min = -2, 😳😳😳
+        m-max = 4
       )
 
   /**
-   * Param to enable restricting minimum pushcap assigned with ML models
+   * p-pawam t-to enabwe westwicting m-minimum p-pushcap assigned with mw modews
    * */
-  object EnableRestrictedMinModelPushcap
-      extends FSParam[Boolean](
-        name = "pushcap_restricted_model_min_enable",
-        default = false
+  object enabwewestwictedminmodewpushcap
+      extends fspawam[boowean](
+        nyame = "pushcap_westwicted_modew_min_enabwe", σωσ
+        d-defauwt = fawse
       )
 
   /**
-   * Param to specify the minimum pushcap allowed to be assigned with ML models
+   * p-pawam to specify t-the minimum pushcap awwowed t-to be assigned with mw modews
    * */
-  object RestrictedMinModelPushcap
-      extends FSBoundedParam[Int](
-        name = "pushcap_restricted_model_min_value",
-        default = 1,
-        min = 0,
+  object westwictedminmodewpushcap
+      e-extends fsboundedpawam[int](
+        n-nyame = "pushcap_westwicted_modew_min_vawue", ( ͡o ω ͡o )
+        defauwt = 1, nyaa~~
+        m-min = 0, :3
         max = 9
       )
 
-  object EnablePushcapRefactor
-      extends FSParam[Boolean](
-        name = "pushcap_enable_refactor",
-        default = false
+  object enabwepushcapwefactow
+      e-extends f-fspawam[boowean](
+        nyame = "pushcap_enabwe_wefactow", (✿oωo)
+        d-defauwt = fawse
       )
 
   /**
-   * Enables the restrict step in pushservice for a given user
+   * e-enabwes the westwict step in pushsewvice fow a given usew
    *
-   * Setting this to false may cause a large number of candidates to be passed on to filtering/take
-   * step in RefreshForPushHandler, increasing the service latency significantly
+   * setting t-this to fawse m-may cause a wawge n-nyumbew of c-candidates to be p-passed on to fiwtewing/take
+   * step in wefweshfowpushhandwew, >_< i-incweasing the s-sewvice watency significantwy
    */
-  object EnableRestrictStep extends FSParam[Boolean]("frigate_push_rfph_restrict_step_enable", true)
+  o-object enabwewestwictstep e-extends fspawam[boowean]("fwigate_push_wfph_westwict_step_enabwe", ^^ twue)
 
   /**
-   * The number of candidates that are able to pass through the restrict step.
+   * t-the nyumbew of candidates that awe abwe to p-pass thwough the westwict step. (///ˬ///✿)
    */
-  object RestrictStepSize
-      extends FSBoundedParam(
-        name = "frigate_push_rfph_restrict_step_size",
-        default = 65,
-        min = 65,
+  o-object westwictstepsize
+      e-extends fsboundedpawam(
+        nyame = "fwigate_push_wfph_westwict_step_size", :3
+        d-defauwt = 65, :3
+        min = 65, (ˆ ﻌ ˆ)♡
         max = 200
       )
 
   /**
-   * Number of max crMixer candidates to send.
+   * n-nyumbew of max c-cwmixew candidates t-to send. 🥺
    */
-  object NumberOfMaxCrMixerCandidatesParam
-      extends FSBoundedParam(
-        name = "cr_mixer_migration_max_num_of_candidates_to_return",
-        default = 400,
-        min = 0,
+  object nyumbewofmaxcwmixewcandidatespawam
+      extends fsboundedpawam(
+        nyame = "cw_mixew_migwation_max_num_of_candidates_to_wetuwn", 😳
+        d-defauwt = 400, (ꈍᴗꈍ)
+        min = 0, mya
         max = 2000
       )
 
   /**
-   * Duration between two MR pushes
+   * d-duwation between t-two mw pushes
    */
-  object MinDurationSincePushParam
-      extends FSBoundedParam[Duration](
-        name = "pushcap_min_duration_since_push_hours",
-        default = 4.hours,
-        min = 0.hours,
-        max = 72.hours
+  object m-minduwationsincepushpawam
+      extends fsboundedpawam[duwation](
+        n-nyame = "pushcap_min_duwation_since_push_houws", rawr
+        d-defauwt = 4.houws, ʘwʘ
+        min = 0.houws, -.-
+        max = 72.houws
       )
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+      w-with hasduwationconvewsion {
+    ovewwide vaw duwationconvewsion = d-duwationconvewsion.fwomhouws
   }
 
   /**
-   * Each Phase duration to gradually ramp up MagicRecs for new users
+   * e-each phase duwation to gwaduawwy w-wamp up magicwecs fow nyew u-usews
    */
-  object GraduallyRampUpPhaseDurationDays
-      extends FSBoundedParam[Duration](
-        name = "pushcap_gradually_ramp_up_phase_duration_days",
-        default = 3.days,
-        min = 2.days,
+  object g-gwaduawwywampupphaseduwationdays
+      e-extends fsboundedpawam[duwation](
+        name = "pushcap_gwaduawwy_wamp_up_phase_duwation_days", UwU
+        defauwt = 3.days, :3
+        min = 2.days, 😳
         max = 7.days
       )
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+      with hasduwationconvewsion {
+    ovewwide vaw duwationconvewsion = duwationconvewsion.fwomdays
   }
 
   /**
-   * Param to specify interval for target pushcap fatigue
+   * pawam to specify intewvaw fow tawget pushcap fatigue
    */
-  object TargetPushCapFatigueIntervalHours
-      extends FSBoundedParam[Duration](
-        name = "pushcap_fatigue_interval_hours",
-        default = 24.hours,
-        min = 1.hour,
-        max = 240.hours
+  object t-tawgetpushcapfatigueintewvawhouws
+      e-extends fsboundedpawam[duwation](
+        name = "pushcap_fatigue_intewvaw_houws", (ꈍᴗꈍ)
+        d-defauwt = 24.houws, mya
+        m-min = 1.houw, nyaa~~
+        m-max = 240.houws
       )
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+      with hasduwationconvewsion {
+    o-ovewwide vaw duwationconvewsion = d-duwationconvewsion.fwomhouws
   }
 
   /**
-   * Param to specify interval for target ntabOnly fatigue
+   * p-pawam to specify intewvaw f-fow tawget nytabonwy fatigue
    */
-  object TargetNtabOnlyCapFatigueIntervalHours
-      extends FSBoundedParam[Duration](
-        name = "pushcap_ntabonly_fatigue_interval_hours",
-        default = 24.hours,
-        min = 1.hour,
-        max = 240.hours
+  o-object tawgetntabonwycapfatigueintewvawhouws
+      e-extends fsboundedpawam[duwation](
+        nyame = "pushcap_ntabonwy_fatigue_intewvaw_houws", o.O
+        d-defauwt = 24.houws, òωó
+        m-min = 1.houw,
+        m-max = 240.houws
       )
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+      w-with h-hasduwationconvewsion {
+    ovewwide v-vaw duwationconvewsion = d-duwationconvewsion.fwomhouws
   }
 
   /**
-   * Param to use completely explicit push cap instead of LTV/modeling-based
+   * p-pawam t-to use compwetewy expwicit push c-cap instead o-of wtv/modewing-based
    */
-  object EnableExplicitPushCap
-      extends FSParam[Boolean](
-        name = "pushcap_explicit_enable",
-        default = false
+  o-object enabweexpwicitpushcap
+      e-extends fspawam[boowean](
+        nyame = "pushcap_expwicit_enabwe", ^•ﻌ•^
+        defauwt = f-fawse
       )
 
   /**
-   * Param to control explicit push cap (non-LTV)
+   * pawam to contwow e-expwicit push c-cap (non-wtv)
    */
-  object ExplicitPushCap
-      extends FSBoundedParam[Int](
-        name = "pushcap_explicit_value",
-        default = 1,
-        min = 0,
+  o-object expwicitpushcap
+      extends fsboundedpawam[int](
+        n-name = "pushcap_expwicit_vawue", (˘ω˘)
+        defauwt = 1, òωó
+        m-min = 0, mya
         max = 20
       )
 
   /**
-   * Parameters for percentile thresholds of OpenOrNtabClick model in MR filtering model refreshing DDG
+   * p-pawametews fow pewcentiwe thweshowds o-of openowntabcwick modew in mw fiwtewing modew wefweshing ddg
    */
-  object PercentileThresholdCohort1
-      extends FSBoundedParam[Double](
-        name = "frigate_push_modeling_percentile_threshold_cohort1",
-        default = 0.65,
-        min = 0.0,
+  o-object pewcentiwethweshowdcohowt1
+      extends f-fsboundedpawam[doubwe](
+        n-nyame = "fwigate_push_modewing_pewcentiwe_thweshowd_cohowt1", ^^
+        defauwt = 0.65, rawr
+        min = 0.0, >_<
         max = 1.0
       )
 
-  object PercentileThresholdCohort2
-      extends FSBoundedParam[Double](
-        name = "frigate_push_modeling_percentile_threshold_cohort2",
-        default = 0.03,
-        min = 0.0,
+  o-object pewcentiwethweshowdcohowt2
+      extends f-fsboundedpawam[doubwe](
+        n-nyame = "fwigate_push_modewing_pewcentiwe_thweshowd_cohowt2", (U ᵕ U❁)
+        d-defauwt = 0.03, /(^•ω•^)
+        min = 0.0, mya
         max = 1.0
       )
-  object PercentileThresholdCohort3
-      extends FSBoundedParam[Double](
-        name = "frigate_push_modeling_percentile_threshold_cohort3",
-        default = 0.03,
-        min = 0.0,
+  o-object p-pewcentiwethweshowdcohowt3
+      extends fsboundedpawam[doubwe](
+        n-name = "fwigate_push_modewing_pewcentiwe_thweshowd_cohowt3", OwO
+        defauwt = 0.03, UwU
+        min = 0.0, 🥺
+        m-max = 1.0
+      )
+  object pewcentiwethweshowdcohowt4
+      e-extends fsboundedpawam[doubwe](
+        nyame = "fwigate_push_modewing_pewcentiwe_thweshowd_cohowt4", (✿oωo)
+        d-defauwt = 0.06, rawr
+        m-min = 0.0, rawr
         max = 1.0
       )
-  object PercentileThresholdCohort4
-      extends FSBoundedParam[Double](
-        name = "frigate_push_modeling_percentile_threshold_cohort4",
-        default = 0.06,
-        min = 0.0,
-        max = 1.0
+  o-object pewcentiwethweshowdcohowt5
+      e-extends f-fsboundedpawam[doubwe](
+        n-nyame = "fwigate_push_modewing_pewcentiwe_thweshowd_cohowt5", ( ͡o ω ͡o )
+        defauwt = 0.06, /(^•ω•^)
+        m-min = 0.0, -.-
+        m-max = 1.0
       )
-  object PercentileThresholdCohort5
-      extends FSBoundedParam[Double](
-        name = "frigate_push_modeling_percentile_threshold_cohort5",
-        default = 0.06,
-        min = 0.0,
-        max = 1.0
-      )
-  object PercentileThresholdCohort6
-      extends FSBoundedParam[Double](
-        name = "frigate_push_modeling_percentile_threshold_cohort6",
-        default = 0.8,
-        min = 0.0,
-        max = 1.0
-      )
-
-  /**
-   * Parameters for percentile threshold list of OpenOrNtabCLick model in MR percentile grid search experiments
-   */
-  object MrPercentileGridSearchThresholdsCohort1
-      extends FSParam[Seq[Double]](
-        name = "frigate_push_modeling_percentile_grid_search_thresholds_cohort1",
-        default = Seq(0.8, 0.75, 0.65, 0.55, 0.45, 0.35, 0.25)
-      )
-  object MrPercentileGridSearchThresholdsCohort2
-      extends FSParam[Seq[Double]](
-        name = "frigate_push_modeling_percentile_grid_search_thresholds_cohort2",
-        default = Seq(0.15, 0.12, 0.1, 0.08, 0.06, 0.045, 0.03)
-      )
-  object MrPercentileGridSearchThresholdsCohort3
-      extends FSParam[Seq[Double]](
-        name = "frigate_push_modeling_percentile_grid_search_thresholds_cohort3",
-        default = Seq(0.15, 0.12, 0.1, 0.08, 0.06, 0.045, 0.03)
-      )
-  object MrPercentileGridSearchThresholdsCohort4
-      extends FSParam[Seq[Double]](
-        name = "frigate_push_modeling_percentile_grid_search_thresholds_cohort4",
-        default = Seq(0.15, 0.12, 0.1, 0.08, 0.06, 0.045, 0.03)
-      )
-  object MrPercentileGridSearchThresholdsCohort5
-      extends FSParam[Seq[Double]](
-        name = "frigate_push_modeling_percentile_grid_search_thresholds_cohort5",
-        default = Seq(0.3, 0.2, 0.15, 0.1, 0.08, 0.06, 0.05)
-      )
-  object MrPercentileGridSearchThresholdsCohort6
-      extends FSParam[Seq[Double]](
-        name = "frigate_push_modeling_percentile_grid_search_thresholds_cohort6",
-        default = Seq(0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2)
+  o-object p-pewcentiwethweshowdcohowt6
+      e-extends fsboundedpawam[doubwe](
+        n-nyame = "fwigate_push_modewing_pewcentiwe_thweshowd_cohowt6", >w<
+        defauwt = 0.8, ( ͡o ω ͡o )
+        m-min = 0.0, (˘ω˘)
+        m-max = 1.0
       )
 
   /**
-   * Parameters for threshold list of OpenOrNtabClick model in MF grid search experiments
+   * pawametews f-fow pewcentiwe thweshowd wist o-of openowntabcwick modew in mw pewcentiwe g-gwid seawch e-expewiments
    */
-  object MfGridSearchThresholdsCohort1
-      extends FSParam[Seq[Double]](
-        name = "frigate_push_modeling_mf_grid_search_thresholds_cohort1",
-        default = Seq(0.030, 0.040, 0.050, 0.062, 0.070, 0.080, 0.090) // default: 0.062
+  o-object mwpewcentiwegwidseawchthweshowdscohowt1
+      extends fspawam[seq[doubwe]](
+        nyame = "fwigate_push_modewing_pewcentiwe_gwid_seawch_thweshowds_cohowt1", /(^•ω•^)
+        d-defauwt = s-seq(0.8, (˘ω˘) 0.75, o.O 0.65, 0.55, 0.45, nyaa~~ 0.35, 0.25)
       )
-  object MfGridSearchThresholdsCohort2
-      extends FSParam[Seq[Double]](
-        name = "frigate_push_modeling_mf_grid_search_thresholds_cohort2",
-        default = Seq(0.005, 0.010, 0.015, 0.020, 0.030, 0.040, 0.050) // default: 0.020
+  o-object mwpewcentiwegwidseawchthweshowdscohowt2
+      extends fspawam[seq[doubwe]](
+        n-nyame = "fwigate_push_modewing_pewcentiwe_gwid_seawch_thweshowds_cohowt2", :3
+        d-defauwt = seq(0.15, (///ˬ///✿) 0.12, 0.1, 0.08, (U ﹏ U) 0.06, 0.045, 0.03)
       )
-  object MfGridSearchThresholdsCohort3
-      extends FSParam[Seq[Double]](
-        name = "frigate_push_modeling_mf_grid_search_thresholds_cohort3",
-        default = Seq(0.010, 0.015, 0.020, 0.025, 0.035, 0.045, 0.055) // default: 0.025
+  o-object m-mwpewcentiwegwidseawchthweshowdscohowt3
+      extends fspawam[seq[doubwe]](
+        nyame = "fwigate_push_modewing_pewcentiwe_gwid_seawch_thweshowds_cohowt3", o.O
+        d-defauwt = s-seq(0.15, ^^;; 0.12, 0.1, ʘwʘ 0.08, 0.06, 0.045, (///ˬ///✿) 0.03)
       )
-  object MfGridSearchThresholdsCohort4
-      extends FSParam[Seq[Double]](
-        name = "frigate_push_modeling_mf_grid_search_thresholds_cohort4",
-        default = Seq(0.015, 0.020, 0.025, 0.030, 0.040, 0.050, 0.060) // default: 0.030
+  o-object m-mwpewcentiwegwidseawchthweshowdscohowt4
+      extends fspawam[seq[doubwe]](
+        n-nyame = "fwigate_push_modewing_pewcentiwe_gwid_seawch_thweshowds_cohowt4", σωσ
+        d-defauwt = seq(0.15, ^^;; 0.12, 0.1, 0.08, UwU 0.06, 0.045, 0.03)
       )
-  object MfGridSearchThresholdsCohort5
-      extends FSParam[Seq[Double]](
-        name = "frigate_push_modeling_mf_grid_search_thresholds_cohort5",
-        default = Seq(0.035, 0.040, 0.045, 0.050, 0.060, 0.070, 0.080) // default: 0.050
+  object m-mwpewcentiwegwidseawchthweshowdscohowt5
+      extends fspawam[seq[doubwe]](
+        n-nyame = "fwigate_push_modewing_pewcentiwe_gwid_seawch_thweshowds_cohowt5", mya
+        defauwt = s-seq(0.3, ^•ﻌ•^ 0.2, 0.15, (⑅˘꒳˘) 0.1, 0.08, 0.06, nyaa~~ 0.05)
       )
-  object MfGridSearchThresholdsCohort6
-      extends FSParam[Seq[Double]](
-        name = "frigate_push_modeling_mf_grid_search_thresholds_cohort6",
-        default = Seq(0.040, 0.045, 0.050, 0.055, 0.065, 0.075, 0.085) // default: 0.055
+  o-object mwpewcentiwegwidseawchthweshowdscohowt6
+      extends f-fspawam[seq[doubwe]](
+        n-nyame = "fwigate_push_modewing_pewcentiwe_gwid_seawch_thweshowds_cohowt6", ^^;;
+        defauwt = seq(0.8, 🥺 0.7, 0.6, ^^;; 0.5, 0.4, 0.3, nyaa~~ 0.2)
       )
 
   /**
-   * Param to specify which global optout models to use to first predict the global scores for users
+   * p-pawametews fow thweshowd w-wist of openowntabcwick m-modew i-in mf gwid seawch e-expewiments
    */
-  object GlobalOptoutModelParam
-      extends FSParam[Seq[OptoutModel.ModelNameType]](
-        name = "optout_model_global_model_ids",
-        default = Seq.empty[OptoutModel.ModelNameType]
+  object mfgwidseawchthweshowdscohowt1
+      e-extends fspawam[seq[doubwe]](
+        n-nyame = "fwigate_push_modewing_mf_gwid_seawch_thweshowds_cohowt1", 🥺
+        d-defauwt = seq(0.030, (ˆ ﻌ ˆ)♡ 0.040, 0.050, ( ͡o ω ͡o ) 0.062, 0.070, nyaa~~ 0.080, 0.090) // defauwt: 0.062
+      )
+  o-object mfgwidseawchthweshowdscohowt2
+      extends f-fspawam[seq[doubwe]](
+        n-nyame = "fwigate_push_modewing_mf_gwid_seawch_thweshowds_cohowt2", ( ͡o ω ͡o )
+        d-defauwt = seq(0.005, ^^;; 0.010, 0.015, rawr x3 0.020, 0.030, ^^;; 0.040, 0.050) // defauwt: 0.020
+      )
+  object mfgwidseawchthweshowdscohowt3
+      extends fspawam[seq[doubwe]](
+        n-nyame = "fwigate_push_modewing_mf_gwid_seawch_thweshowds_cohowt3", ^•ﻌ•^
+        defauwt = seq(0.010, 🥺 0.015, 0.020, 0.025, (ꈍᴗꈍ) 0.035, 0.045, ^•ﻌ•^ 0.055) // d-defauwt: 0.025
+      )
+  o-object mfgwidseawchthweshowdscohowt4
+      extends fspawam[seq[doubwe]](
+        n-nyame = "fwigate_push_modewing_mf_gwid_seawch_thweshowds_cohowt4", :3
+        defauwt = s-seq(0.015, 0.020, (˘ω˘) 0.025, 0.030, ^^ 0.040, 0.050, /(^•ω•^) 0.060) // d-defauwt: 0.030
+      )
+  o-object mfgwidseawchthweshowdscohowt5
+      e-extends f-fspawam[seq[doubwe]](
+        nyame = "fwigate_push_modewing_mf_gwid_seawch_thweshowds_cohowt5", σωσ
+        defauwt = seq(0.035, òωó 0.040, >w< 0.045, 0.050, (˘ω˘) 0.060, 0.070, ^•ﻌ•^ 0.080) // defauwt: 0.050
+      )
+  o-object mfgwidseawchthweshowdscohowt6
+      e-extends fspawam[seq[doubwe]](
+        nyame = "fwigate_push_modewing_mf_gwid_seawch_thweshowds_cohowt6", >_<
+        defauwt = seq(0.040, -.- 0.045, òωó 0.050, 0.055, 0.065, ( ͡o ω ͡o ) 0.075, 0.085) // defauwt: 0.055
       )
 
   /**
-   * Param to specify which optout model to use according to the experiment bucket
+   * p-pawam to specify which gwobaw optout modews to use to fiwst pwedict the g-gwobaw scowes f-fow usews
    */
-  object BucketOptoutModelParam
-      extends FSParam[OptoutModel.ModelNameType](
-        name = "optout_model_bucket_model_id",
-        default = OptoutModel.D0_has_realtime_features
+  object gwobawoptoutmodewpawam
+      e-extends fspawam[seq[optoutmodew.modewnametype]](
+        nyame = "optout_modew_gwobaw_modew_ids",
+        defauwt = seq.empty[optoutmodew.modewnametype]
+      )
+
+  /**
+   * pawam to specify w-which optout m-modew to use accowding to the expewiment b-bucket
+   */
+  object b-bucketoptoutmodewpawam
+      extends fspawam[optoutmodew.modewnametype](
+        nyame = "optout_modew_bucket_modew_id", (ˆ ﻌ ˆ)♡
+        d-defauwt = optoutmodew.d0_has_weawtime_featuwes
       )
 
   /*
-   * Param to enable candidate generation model
+   * pawam to enabwe candidate genewation m-modew
    * */
-  object EnableCandidateGenerationModelParam
-      extends FSParam[Boolean](
-        name = "candidate_generation_model_enable",
-        default = false
+  o-object enabwecandidategenewationmodewpawam
+      e-extends fspawam[boowean](
+        nyame = "candidate_genewation_modew_enabwe",
+        d-defauwt = fawse
       )
 
-  object EnableOverrideForSportsCandidates
-      extends FSParam[Boolean](name = "magicfanout_sports_event_enable_override", default = true)
+  object enabweovewwidefowspowtscandidates
+      extends fspawam[boowean](name = "magicfanout_spowts_event_enabwe_ovewwide", d-defauwt = t-twue)
 
-  object EnableEventIdBasedOverrideForSportsCandidates
-      extends FSParam[Boolean](
-        name = "magicfanout_sports_event_enable_event_id_based_override",
-        default = true)
-
-  /**
-   * Param to specify the threshold to determine if a user’s optout score is high enough to enter the experiment.
-   */
-  object GlobalOptoutThresholdParam
-      extends FSParam[Seq[Double]](
-        name = "optout_model_global_thresholds",
-        default = Seq(1.0, 1.0)
-      )
+  object e-enabweeventidbasedovewwidefowspowtscandidates
+      e-extends fspawam[boowean](
+        nyame = "magicfanout_spowts_event_enabwe_event_id_based_ovewwide", :3
+        defauwt = twue)
 
   /**
-   * Param to specify the threshold to determine if a user’s optout score is high enough to be assigned
-   * with a reduced pushcap based on the bucket membership.
+   * p-pawam t-to specify the thweshowd to detewmine if a usew’s o-optout scowe is high enough to entew the e-expewiment. ^•ﻌ•^
    */
-  object BucketOptoutThresholdParam
-      extends FSBoundedParam[Double](
-        name = "optout_model_bucket_threshold",
-        default = 1.0,
-        min = 0.0,
-        max = 1.0
+  object gwobawoptoutthweshowdpawam
+      extends f-fspawam[seq[doubwe]](
+        n-nyame = "optout_modew_gwobaw_thweshowds", ( ͡o ω ͡o )
+        defauwt = seq(1.0, ^•ﻌ•^ 1.0)
       )
 
   /**
-   * Param to specify the reduced pushcap value if the optout probability predicted by the bucket
-   * optout model is higher than the specified bucket optout threshold.
+   * p-pawam to specify t-the thweshowd to d-detewmine if a usew’s optout scowe is high enough t-to be assigned
+   * with a weduced pushcap b-based on the bucket membewship. ʘwʘ
    */
-  object OptoutExptPushCapParam
-      extends FSBoundedParam[Int](
-        name = "optout_model_expt_push_cap",
-        default = 10,
-        min = 0,
-        max = 10
+  object bucketoptoutthweshowdpawam
+      e-extends fsboundedpawam[doubwe](
+        n-nyame = "optout_modew_bucket_thweshowd", :3
+        d-defauwt = 1.0, >_<
+        m-min = 0.0, rawr
+        m-max = 1.0
       )
 
   /**
-   * Param to specify the thresholds to determine which push cap slot the user should be assigned to
-   * according to the optout score. For example,the slot thresholds are [0.1, 0.2, ..., 1.0], the user
-   * is assigned to the second slot if the optout score is in (0.1, 0.2].
+   * pawam to specify t-the weduced pushcap vawue if the optout pwobabiwity p-pwedicted by the bucket
+   * o-optout modew is highew than the specified bucket o-optout thweshowd. 🥺
    */
-  object BucketOptoutSlotThresholdParam
-      extends FSParam[Seq[Double]](
-        name = "optout_model_bucket_slot_thresholds",
-        default = Seq.empty[Double]
+  object o-optoutexptpushcappawam
+      extends fsboundedpawam[int](
+        n-nyame = "optout_modew_expt_push_cap", (✿oωo)
+        defauwt = 10, (U ﹏ U)
+        m-min = 0, rawr x3
+        m-max = 10
       )
 
   /**
-   * Param to specify the adjusted push cap of each slot. For example, if the slot push caps are [1, 2, ..., 10]
-   * and the user is assigned to the 2nd slot according to the optout score, the push cap of the user
-   * will be adjusted to 2.
+   * pawam t-to specify the thweshowds t-to detewmine which push c-cap swot the usew shouwd be assigned to
+   * accowding to the o-optout scowe. (✿oωo) fow exampwe,the swot t-thweshowds awe [0.1, (U ᵕ U❁) 0.2, ..., 1.0], -.- the usew
+   * is assigned t-to the second s-swot if the optout s-scowe is in (0.1, /(^•ω•^) 0.2].
    */
-  object BucketOptoutSlotPushcapParam
-      extends FSParam[Seq[Int]](
-        name = "optout_model_bucket_slot_pushcaps",
-        default = Seq.empty[Int]
+  object bucketoptoutswotthweshowdpawam
+      extends f-fspawam[seq[doubwe]](
+        n-nyame = "optout_modew_bucket_swot_thweshowds", OwO
+        defauwt = s-seq.empty[doubwe]
       )
 
   /**
-   * Param to specify if the optout score based push cap adjustment is enabled
+   * pawam t-to specify the adjusted push cap o-of each swot. rawr x3 f-fow exampwe, σωσ if the swot push caps awe [1, ʘwʘ 2, ..., 10]
+   * and the usew is assigned t-to the 2nd s-swot accowding to the optout scowe, -.- the push cap of the usew
+   * w-wiww be adjusted to 2. 😳
    */
-  object EnableOptoutAdjustedPushcap
-      extends FSParam[Boolean](
-        "optout_model_enable_optout_adjusted_pushcap",
-        false
+  o-object bucketoptoutswotpushcappawam
+      e-extends fspawam[seq[int]](
+        nyame = "optout_modew_bucket_swot_pushcaps", 😳😳😳
+        defauwt = seq.empty[int]
       )
 
   /**
-   * Param to specify which weighted open or ntab click model to use
+   * pawam to specify if the optout s-scowe based push cap adjustment is enabwed
    */
-  object WeightedOpenOrNtabClickRankingModelParam
-      extends FSParam[WeightedOpenOrNtabClickModel.ModelNameType](
-        name = "frigate_push_modeling_oonc_ranking_model_id",
-        default = WeightedOpenOrNtabClickModel.Periodically_Refreshed_Prod_Model
+  o-object enabweoptoutadjustedpushcap
+      extends f-fspawam[boowean](
+        "optout_modew_enabwe_optout_adjusted_pushcap", OwO
+        f-fawse
       )
 
   /**
-   * Param to disable heavy ranker
+   * pawam to specify w-which weighted open o-ow nytab cwick m-modew to use
    */
-  object DisableHeavyRankingModelFSParam
-      extends FSParam[Boolean](
-        name = "frigate_push_modeling_disable_heavy_ranking",
-        default = false
+  o-object weightedopenowntabcwickwankingmodewpawam
+      e-extends f-fspawam[weightedopenowntabcwickmodew.modewnametype](
+        nyame = "fwigate_push_modewing_oonc_wanking_modew_id", ^•ﻌ•^
+        defauwt = weightedopenowntabcwickmodew.pewiodicawwy_wefweshed_pwod_modew
       )
 
   /**
-   * Param to specify which weighted open or ntab click model to use for Android modelling experiment
+   * pawam to disabwe heavy wankew
    */
-  object WeightedOpenOrNtabClickRankingModelForAndroidParam
-      extends FSParam[WeightedOpenOrNtabClickModel.ModelNameType](
-        name = "frigate_push_modeling_oonc_ranking_model_for_android_id",
-        default = WeightedOpenOrNtabClickModel.Periodically_Refreshed_Prod_Model
+  object disabweheavywankingmodewfspawam
+      e-extends fspawam[boowean](
+        n-nyame = "fwigate_push_modewing_disabwe_heavy_wanking", rawr
+        d-defauwt = fawse
       )
 
   /**
-   * Param to specify which weighted open or ntab click model to use for FILTERING
+   * p-pawam to s-specify which weighted o-open ow nytab cwick modew to use fow andwoid modewwing expewiment
    */
-  object WeightedOpenOrNtabClickFilteringModelParam
-      extends FSParam[WeightedOpenOrNtabClickModel.ModelNameType](
-        name = "frigate_push_modeling_oonc_filtering_model_id",
-        default = WeightedOpenOrNtabClickModel.Periodically_Refreshed_Prod_Model
+  object weightedopenowntabcwickwankingmodewfowandwoidpawam
+      e-extends fspawam[weightedopenowntabcwickmodew.modewnametype](
+        n-nyame = "fwigate_push_modewing_oonc_wanking_modew_fow_andwoid_id", (✿oωo)
+        defauwt = weightedopenowntabcwickmodew.pewiodicawwy_wefweshed_pwod_modew
       )
 
   /**
-   * Param to specify which quality predicate to use for ML filtering
+   * pawam to specify which w-weighted open o-ow nytab cwick m-modew to use fow fiwtewing
    */
-  object QualityPredicateIdParam
-      extends FSEnumParam[QualityPredicateEnum.type](
-        name = "frigate_push_modeling_quality_predicate_id",
-        default = QualityPredicateEnum.WeightedOpenOrNtabClick,
-        enum = QualityPredicateEnum
+  object weightedopenowntabcwickfiwtewingmodewpawam
+      e-extends fspawam[weightedopenowntabcwickmodew.modewnametype](
+        nyame = "fwigate_push_modewing_oonc_fiwtewing_modew_id", ^^
+        d-defauwt = weightedopenowntabcwickmodew.pewiodicawwy_wefweshed_pwod_modew
       )
 
   /**
-   * Param to control threshold for any quality predicates using explicit thresholds
+   * p-pawam to specify which quawity pwedicate to use f-fow mw fiwtewing
    */
-  object QualityPredicateExplicitThresholdParam
-      extends FSBoundedParam[Double](
-        name = "frigate_push_modeling_quality_predicate_explicit_threshold",
-        default = 0.1,
-        min = 0,
+  object q-quawitypwedicateidpawam
+      e-extends fsenumpawam[quawitypwedicateenum.type](
+        n-nyame = "fwigate_push_modewing_quawity_pwedicate_id", -.-
+        d-defauwt = quawitypwedicateenum.weightedopenowntabcwick, (✿oωo)
+        e-enum = quawitypwedicateenum
+      )
+
+  /**
+   * p-pawam to contwow t-thweshowd fow a-any quawity pwedicates using e-expwicit thweshowds
+   */
+  o-object quawitypwedicateexpwicitthweshowdpawam
+      e-extends fsboundedpawam[doubwe](
+        nyame = "fwigate_push_modewing_quawity_pwedicate_expwicit_thweshowd", o.O
+        defauwt = 0.1, :3
+        m-min = 0, rawr x3
         max = 1)
 
   /**
-   * MagicFanout relaxed eventID fatigue interval (when we want to enable multiple updates for the same event)
+   * m-magicfanout wewaxed eventid fatigue i-intewvaw (when w-we want to enabwe muwtipwe updates fow the s-same event)
    */
-  object MagicFanoutRelaxedEventIdFatigueIntervalInHours
-      extends FSBoundedParam[Int](
-        name = "frigate_push_magicfanout_relaxed_event_id_fatigue_interval_in_hours",
-        default = 24,
-        min = 0,
+  object magicfanoutwewaxedeventidfatigueintewvawinhouws
+      extends fsboundedpawam[int](
+        n-nyame = "fwigate_push_magicfanout_wewaxed_event_id_fatigue_intewvaw_in_houws", (U ᵕ U❁)
+        d-defauwt = 24, :3
+        min = 0, 🥺
         max = 720
       )
 
   /**
-   * MagicFanout DenyListed Countries
+   * m-magicfanout denywisted c-countwies
    */
-  object MagicFanoutDenyListedCountries
-      extends FSParam[Seq[String]](
-        "frigate_push_magicfanout_denylisted_countries",
-        Seq.empty[String])
+  object m-magicfanoutdenywistedcountwies
+      extends fspawam[seq[stwing]](
+        "fwigate_push_magicfanout_denywisted_countwies", XD
+        s-seq.empty[stwing])
 
-  object MagicFanoutSportsEventDenyListedCountries
-      extends FSParam[Seq[String]](
-        "magicfanout_sports_event_denylisted_countries",
-        Seq.empty[String])
+  o-object magicfanoutspowtseventdenywistedcountwies
+      e-extends fspawam[seq[stwing]](
+        "magicfanout_spowts_event_denywisted_countwies", >_<
+        s-seq.empty[stwing])
 
   /**
-   * MagicFanout maximum erg rank for a given push event for non heavy users
+   * magicfanout maximum ewg wank fow a-a given push e-event fow nyon heavy u-usews
    */
-  object MagicFanoutRankErgThresholdNonHeavy
-      extends FSBoundedParam[Int](
-        name = "frigate_push_magicfanout_erg_rank_threshold_non_heavy",
-        default = 25,
-        min = 1,
+  o-object magicfanoutwankewgthweshowdnonheavy
+      extends fsboundedpawam[int](
+        nyame = "fwigate_push_magicfanout_ewg_wank_thweshowd_non_heavy", (ꈍᴗꈍ)
+        defauwt = 25, ( ͡o ω ͡o )
+        min = 1, (˘ω˘)
         max = 50
       )
 
   /**
-   * MagicFanout maximum erg rank for a given push event for heavy users
+   * magicfanout m-maximum ewg wank f-fow a given push e-event fow heavy u-usews
    */
-  object MagicFanoutRankErgThresholdHeavy
-      extends FSBoundedParam[Int](
-        name = "frigate_push_magicfanout_erg_rank_threshold_heavy",
-        default = 20,
-        min = 1,
+  o-object magicfanoutwankewgthweshowdheavy
+      e-extends fsboundedpawam[int](
+        nyame = "fwigate_push_magicfanout_ewg_wank_thweshowd_heavy", (˘ω˘)
+        d-defauwt = 20, UwU
+        m-min = 1, (ˆ ﻌ ˆ)♡
         max = 50
       )
 
-  object EnablePushMixerReplacingAllSources
-      extends FSParam[Boolean](
-        name = "push_mixer_enable_replacing_all_sources",
-        default = false
+  o-object enabwepushmixewwepwacingawwsouwces
+      e-extends fspawam[boowean](
+        nyame = "push_mixew_enabwe_wepwacing_aww_souwces", (///ˬ///✿)
+        defauwt = fawse
       )
 
-  object EnablePushMixerReplacingAllSourcesWithControl
-      extends FSParam[Boolean](
-        name = "push_mixer_enable_replacing_all_sources_with_control",
-        default = false
+  o-object enabwepushmixewwepwacingawwsouwceswithcontwow
+      extends f-fspawam[boowean](
+        nyame = "push_mixew_enabwe_wepwacing_aww_souwces_with_contwow", (ꈍᴗꈍ)
+        d-defauwt = fawse
       )
 
-  object EnablePushMixerReplacingAllSourcesWithExtra
-      extends FSParam[Boolean](
-        name = "push_mixer_enable_replacing_all_sources_with_extra",
-        default = false
+  o-object enabwepushmixewwepwacingawwsouwceswithextwa
+      e-extends fspawam[boowean](
+        n-nyame = "push_mixew_enabwe_wepwacing_aww_souwces_with_extwa", -.-
+        d-defauwt = fawse
       )
 
-  object EnablePushMixerSource
-      extends FSParam[Boolean](
-        name = "push_mixer_enable_source",
-        default = false
+  o-object e-enabwepushmixewsouwce
+      extends f-fspawam[boowean](
+        nyame = "push_mixew_enabwe_souwce", 😳😳😳
+        d-defauwt = f-fawse
       )
 
-  object PushMixerMaxResults
-      extends FSBoundedParam[Int](
-        name = "push_mixer_max_results",
-        default = 10,
-        min = 1,
-        max = 5000
+  o-object pushmixewmaxwesuwts
+      extends fsboundedpawam[int](
+        n-nyame = "push_mixew_max_wesuwts", (///ˬ///✿)
+        defauwt = 10, UwU
+        min = 1, 😳
+        m-max = 5000
       )
 
   /**
-   * Enable tweets from trends that have been annotated by curators
+   * enabwe tweets fwom twends that have been annotated by cuwatows
    */
-  object EnableCuratedTrendTweets
-      extends FSParam[Boolean](name = "trend_tweet_curated_trends_enable", default = false)
+  object enabwecuwatedtwendtweets
+      e-extends fspawam[boowean](name = "twend_tweet_cuwated_twends_enabwe", /(^•ω•^) defauwt = fawse)
 
   /**
-   * Enable tweets from trends that haven't been annotated by curators
+   * enabwe tweets fwom twends that haven't b-been annotated by cuwatows
    */
-  object EnableNonCuratedTrendTweets
-      extends FSParam[Boolean](name = "trend_tweet_non_curated_trends_enable", default = false)
+  object enabwenoncuwatedtwendtweets
+      e-extends fspawam[boowean](name = "twend_tweet_non_cuwated_twends_enabwe", òωó d-defauwt = fawse)
 
   /**
-   * Maximum trend tweet notifications in fixed duration
+   * maximum twend t-tweet nyotifications in fixed duwation
    */
-  object MaxTrendTweetNotificationsInDuration
-      extends FSBoundedParam[Int](
-        name = "trend_tweet_max_notifications_in_duration",
-        min = 0,
-        default = 0,
+  o-object maxtwendtweetnotificationsinduwation
+      extends fsboundedpawam[int](
+        n-nyame = "twend_tweet_max_notifications_in_duwation",
+        m-min = 0, >w<
+        defauwt = 0, -.-
         max = 20)
 
   /**
-   * Duration in days over which trend tweet notifications fatigue is applied
+   * d-duwation in days ovew which twend tweet nyotifications fatigue is a-appwied
    */
-  object TrendTweetNotificationsFatigueDuration
-      extends FSBoundedParam[Duration](
-        name = "trend_tweet_notifications_fatigue_in_days",
-        default = 1.day,
-        min = Duration.Bottom,
-        max = Duration.Top
+  object twendtweetnotificationsfatigueduwation
+      e-extends fsboundedpawam[duwation](
+        nyame = "twend_tweet_notifications_fatigue_in_days", (⑅˘꒳˘)
+        d-defauwt = 1.day, (˘ω˘)
+        min = duwation.bottom, (U ᵕ U❁)
+        m-max = duwation.top
       )
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+      w-with hasduwationconvewsion {
+    ovewwide vaw duwationconvewsion = d-duwationconvewsion.fwomdays
   }
 
   /**
-   * Maximum number of trends candidates to query from event-recos endpoint
+   * maximum nyumbew of twends candidates t-to quewy fwom event-wecos endpoint
    */
-  object MaxRecommendedTrendsToQuery
-      extends FSBoundedParam[Int](
-        name = "trend_tweet_max_trends_to_query",
-        min = 0,
-        default = 0,
-        max = 100)
+  object maxwecommendedtwendstoquewy
+      extends f-fsboundedpawam[int](
+        n-nyame = "twend_tweet_max_twends_to_quewy", ^^
+        min = 0, ^^
+        d-defauwt = 0,
+        m-max = 100)
 
   /**
-   * Fix missing event-associated interests in MagicFanoutNoOptoutInterestsPredicate
+   * fix missing event-associated i-intewests in magicfanoutnooptoutintewestspwedicate
    */
-  object MagicFanoutFixNoOptoutInterestsBugParam
-      extends FSParam[Boolean]("frigate_push_magicfanout_fix_no_optout_interests", default = true)
+  object magicfanoutfixnooptoutintewestsbugpawam
+      extends fspawam[boowean]("fwigate_push_magicfanout_fix_no_optout_intewests", rawr x3 defauwt = t-twue)
 
-  object EnableSimclusterOfflineAggFeatureForExpt
-      extends FSParam[Boolean]("frigate_enable_simcluster_offline_agg_feature", false)
+  o-object enabwesimcwustewoffwineaggfeatuwefowexpt
+      extends fspawam[boowean]("fwigate_enabwe_simcwustew_offwine_agg_featuwe", >w< f-fawse)
 
   /**
-   * Param to enable removal of UTT domain for
+   * p-pawam to enabwe wemovaw of utt d-domain fow
    */
-  object ApplyMagicFanoutBroadEntityInterestRankThresholdPredicate
-      extends FSParam[Boolean](
-        "frigate_push_magicfanout_broad_entity_interest_rank_threshold_predicate",
-        false
+  object appwymagicfanoutbwoadentityintewestwankthweshowdpwedicate
+      extends f-fspawam[boowean](
+        "fwigate_push_magicfanout_bwoad_entity_intewest_wank_thweshowd_pwedicate", (U ᵕ U❁)
+        fawse
       )
 
-  object HydrateEventReasonsFeatures
-      extends FSParam[Boolean](
-        name = "frigate_push_magicfanout_hydrate_event_reasons_features",
-        false
-      )
-
-  /**
-   * Param to enable online MR history features
-   */
-  object EnableHydratingOnlineMRHistoryFeatures
-      extends FSParam[Boolean](
-        name = "feature_hydration_online_mr_history",
-        default = false
+  object hydwateeventweasonsfeatuwes
+      e-extends f-fspawam[boowean](
+        nyame = "fwigate_push_magicfanout_hydwate_event_weasons_featuwes",
+        fawse
       )
 
   /**
-   * Param to enable bold title on favorite and retweet push copy for Android in DDG 10220
+   * p-pawam to enabwe onwine mw histowy featuwes
    */
-  object MRBoldTitleFavoriteAndRetweetParam
-      extends FSEnumParam[MRBoldTitleFavoriteAndRetweetExperimentEnum.type](
-        name = "frigate_push_bold_title_favorite_and_retweet_id",
-        default = MRBoldTitleFavoriteAndRetweetExperimentEnum.ShortTitle,
-        enum = MRBoldTitleFavoriteAndRetweetExperimentEnum
+  object enabwehydwatingonwinemwhistowyfeatuwes
+      extends fspawam[boowean](
+        nyame = "featuwe_hydwation_onwine_mw_histowy", 🥺
+        defauwt = fawse
       )
 
   /**
-   * Param to enable high priority push
+   * p-pawam to enabwe b-bowd titwe on favowite and w-wetweet push copy f-fow andwoid in ddg 10220
    */
-  object EnableHighPriorityPush
-      extends FSParam[Boolean]("frigate_push_magicfanout_enable_high_priority_push", false)
-
-  /**
-   * Param to redirect sports crt event to a custom url
-   */
-  object EnableSearchURLRedirectForSportsFanout
-      extends FSParam[Boolean]("magicfanout_sports_event_enable_search_url_redirect", false)
-
-  /**
-   * Param to enable score fanout notification for sports
-   */
-  object EnableScoreFanoutNotification
-      extends FSParam[Boolean]("magicfanout_sports_event_enable_score_fanout", false)
-
-  /**
-   * Param to add custom search url for sports crt event
-   */
-  object SearchURLRedirectForSportsFanout
-      extends FSParam[String](
-        name = "magicfanout_sports_event_search_url_redirect",
-        default = "https://twitter.com/explore/tabs/ipl",
+  o-object mwbowdtitwefavowiteandwetweetpawam
+      extends fsenumpawam[mwbowdtitwefavowiteandwetweetexpewimentenum.type](
+        nyame = "fwigate_push_bowd_titwe_favowite_and_wetweet_id", (⑅˘꒳˘)
+        defauwt = mwbowdtitwefavowiteandwetweetexpewimentenum.showttitwe, OwO
+        enum = mwbowdtitwefavowiteandwetweetexpewimentenum
       )
 
   /**
-   * Param to enable high priority sports push
+   * p-pawam to enabwe high pwiowity push
    */
-  object EnableHighPrioritySportsPush
-      extends FSParam[Boolean]("magicfanout_sports_event_enable_high_priority_push", false)
+  object enabwehighpwiowitypush
+      extends fspawam[boowean]("fwigate_push_magicfanout_enabwe_high_pwiowity_push", 😳 f-fawse)
 
   /**
-   * Param to control rank threshold for magicfanout user follow
+   * p-pawam to w-wediwect spowts cwt event to a custom uww
    */
-  object MagicFanoutRealgraphRankThreshold
-      extends FSBoundedParam[Int](
-        name = "magicfanout_realgraph_threshold",
-        default = 500,
-        max = 500,
+  object enabweseawchuwwwediwectfowspowtsfanout
+      e-extends fspawam[boowean]("magicfanout_spowts_event_enabwe_seawch_uww_wediwect", òωó f-fawse)
+
+  /**
+   * p-pawam to enabwe scowe f-fanout nyotification fow spowts
+   */
+  o-object enabwescowefanoutnotification
+      extends fspawam[boowean]("magicfanout_spowts_event_enabwe_scowe_fanout", (ˆ ﻌ ˆ)♡ f-fawse)
+
+  /**
+   * pawam to add custom s-seawch uww fow spowts cwt event
+   */
+  object s-seawchuwwwediwectfowspowtsfanout
+      extends f-fspawam[stwing](
+        n-nyame = "magicfanout_spowts_event_seawch_uww_wediwect", ʘwʘ
+        defauwt = "https://twittew.com/expwowe/tabs/ipw", ^^;;
+      )
+
+  /**
+   * p-pawam to enabwe h-high pwiowity spowts push
+   */
+  o-object enabwehighpwiowityspowtspush
+      extends f-fspawam[boowean]("magicfanout_spowts_event_enabwe_high_pwiowity_push", ʘwʘ fawse)
+
+  /**
+   * p-pawam t-to contwow wank thweshowd fow magicfanout usew f-fowwow
+   */
+  object magicfanoutweawgwaphwankthweshowd
+      extends fsboundedpawam[int](
+        nyame = "magicfanout_weawgwaph_thweshowd", òωó
+        defauwt = 500, ( ͡o ω ͡o )
+        max = 500, ʘwʘ
         min = 100
       )
 
   /**
-   * Topic score threshold for topic proof tweet candidates topic annotations
+   * topic scowe thweshowd f-fow topic pwoof tweet candidates topic annotations
    * */
-  object TopicProofTweetCandidatesTopicScoreThreshold
-      extends FSBoundedParam[Double](
-        name = "topics_as_social_proof_topic_score_threshold",
-        default = 0.0,
-        min = 0.0,
+  o-object topicpwooftweetcandidatestopicscowethweshowd
+      extends f-fsboundedpawam[doubwe](
+        nyame = "topics_as_sociaw_pwoof_topic_scowe_thweshowd", >w<
+        defauwt = 0.0, 😳😳😳
+        m-min = 0.0, σωσ
         max = 100.0
       )
 
   /**
-   * Enable Topic Proof Tweet Recs
+   * enabwe topic pwoof t-tweet wecs
    */
-  object EnableTopicProofTweetRecs
-      extends FSParam[Boolean](name = "topics_as_social_proof_enable", default = true)
+  object enabwetopicpwooftweetwecs
+      extends f-fspawam[boowean](name = "topics_as_sociaw_pwoof_enabwe", defauwt = twue)
 
   /**
-   * Enable health filters for topic tweet notifications
+   * e-enabwe heawth fiwtews fow topic tweet n-nyotifications
    */
-  object EnableHealthFiltersForTopicProofTweet
-      extends FSParam[Boolean](
-        name = "topics_as_social_proof_enable_health_filters",
-        default = false)
+  o-object enabweheawthfiwtewsfowtopicpwooftweet
+      extends fspawam[boowean](
+        n-nyame = "topics_as_sociaw_pwoof_enabwe_heawth_fiwtews", -.-
+        d-defauwt = fawse)
 
   /**
-   * Disable health filters for CrMixer candidates
+   * d-disabwe h-heawth fiwtews fow cwmixew candidates
    */
-  object DisableHealthFiltersForCrMixerCandidates
-      extends FSParam[Boolean](
-        name = "health_and_quality_filter_disable_for_crmixer_candidates",
-        default = false)
+  object disabweheawthfiwtewsfowcwmixewcandidates
+      e-extends fspawam[boowean](
+        nyame = "heawth_and_quawity_fiwtew_disabwe_fow_cwmixew_candidates", 🥺
+        defauwt = fawse)
 
-  object EnableMagicFanoutNewsForYouNtabCopy
-      extends FSParam[Boolean](name = "send_handler_enable_nfy_ntab_copy", default = false)
+  object enabwemagicfanoutnewsfowyountabcopy
+      e-extends fspawam[boowean](name = "send_handwew_enabwe_nfy_ntab_copy", >w< defauwt = fawse)
 
   /**
-   * Param to enable semi-personalized high quality candidates in pushservice
+   * p-pawam t-to enabwe semi-pewsonawized h-high quawity candidates in pushsewvice
    * */
-  object HighQualityCandidatesEnableCandidateSource
-      extends FSParam[Boolean](
-        name = "high_quality_candidates_enable_candidate_source",
-        default = false
+  object h-highquawitycandidatesenabwecandidatesouwce
+      extends fspawam[boowean](
+        n-nyame = "high_quawity_candidates_enabwe_candidate_souwce",
+        defauwt = f-fawse
       )
 
   /**
-   * Param to decide semi-personalized high quality candidates
+   * p-pawam to decide semi-pewsonawized high quawity candidates
    * */
-  object HighQualityCandidatesEnableGroups
-      extends FSEnumSeqParam[HighQualityCandidateGroupEnum.type](
-        name = "high_quality_candidates_enable_groups_ids",
-        default = Seq(AgeBucket, Language),
-        enum = HighQualityCandidateGroupEnum
+  object highquawitycandidatesenabwegwoups
+      extends fsenumseqpawam[highquawitycandidategwoupenum.type](
+        nyame = "high_quawity_candidates_enabwe_gwoups_ids", (///ˬ///✿)
+        d-defauwt = seq(agebucket, UwU w-wanguage), ( ͡o ω ͡o )
+        enum = highquawitycandidategwoupenum
       )
 
   /**
-   * Param to decide semi-personalized high quality candidates
+   * p-pawam to decide semi-pewsonawized high quawity c-candidates
    * */
-  object HighQualityCandidatesNumberOfCandidates
-      extends FSBoundedParam[Int](
-        name = "high_quality_candidates_number_of_candidates",
-        default = 0,
-        min = 0,
-        max = Int.MaxValue
+  o-object h-highquawitycandidatesnumbewofcandidates
+      e-extends fsboundedpawam[int](
+        n-nyame = "high_quawity_candidates_numbew_of_candidates", (ˆ ﻌ ˆ)♡
+        d-defauwt = 0, ^^;;
+        min = 0, (U ᵕ U❁)
+        max = i-int.maxvawue
       )
 
   /**
-   * Param to enable small domain falling back to bigger domains for high quality candidates in pushservice
+   * p-pawam to enabwe s-smow domain fawwing b-back to biggew d-domains fow h-high quawity candidates in pushsewvice
    * */
-  object HighQualityCandidatesEnableFallback
-      extends FSParam[Boolean](
-        name = "high_quality_candidates_enable_fallback",
-        default = false
+  o-object highquawitycandidatesenabwefawwback
+      e-extends fspawam[boowean](
+        n-nyame = "high_quawity_candidates_enabwe_fawwback", XD
+        defauwt = fawse
       )
 
   /**
-   * Param to decide whether to fallback to bigger domain for high quality candidates
+   * pawam to decide w-whethew to fawwback to biggew domain fow high q-quawity candidates
    * */
-  object HighQualityCandidatesMinNumOfCandidatesToFallback
-      extends FSBoundedParam[Int](
-        name = "high_quality_candidates_min_num_of_candidates_to_fallback",
-        default = 50,
-        min = 0,
-        max = Int.MaxValue
+  object highquawitycandidatesminnumofcandidatestofawwback
+      extends f-fsboundedpawam[int](
+        n-nyame = "high_quawity_candidates_min_num_of_candidates_to_fawwback", (ꈍᴗꈍ)
+        defauwt = 50, -.-
+        min = 0, >_<
+        max = int.maxvawue
       )
 
   /**
-   * Param to specific source ids for high quality candidates
+   * p-pawam t-to specific souwce ids fow high q-quawity candidates
    * */
-  object HighQualityCandidatesFallbackSourceIds
-      extends FSParam[Seq[String]](
-        name = "high_quality_candidates_fallback_source_ids",
-        default = Seq("HQ_C_COUNT_PASS_QUALITY_SCORES"))
+  o-object highquawitycandidatesfawwbacksouwceids
+      extends fspawam[seq[stwing]](
+        nyame = "high_quawity_candidates_fawwback_souwce_ids", (ˆ ﻌ ˆ)♡
+        defauwt = s-seq("hq_c_count_pass_quawity_scowes"))
 
   /**
-   * Param to decide groups for semi-personalized high quality candidates
+   * p-pawam to decide gwoups fow semi-pewsonawized h-high quawity c-candidates
    * */
-  object HighQualityCandidatesFallbackEnabledGroups
-      extends FSEnumSeqParam[HighQualityCandidateGroupEnum.type](
-        name = "high_quality_candidates_fallback_enabled_groups_ids",
-        default = Seq(Country),
-        enum = HighQualityCandidateGroupEnum
+  object highquawitycandidatesfawwbackenabwedgwoups
+      extends f-fsenumseqpawam[highquawitycandidategwoupenum.type](
+        nyame = "high_quawity_candidates_fawwback_enabwed_gwoups_ids", ( ͡o ω ͡o )
+        defauwt = seq(countwy), rawr x3
+        enum = highquawitycandidategwoupenum
       )
 
   /**
-   * Param to control what heavy ranker model to use for scribing scores
+   * p-pawam to contwow nyani heavy wankew modew to use f-fow scwibing s-scowes
    */
-  object HighQualityCandidatesHeavyRankingModel
-      extends FSParam[String](
-        name = "high_quality_candidates_heavy_ranking_model",
-        default = "Periodically_Refreshed_Prod_Model_V11"
+  object h-highquawitycandidatesheavywankingmodew
+      extends fspawam[stwing](
+        n-nyame = "high_quawity_candidates_heavy_wanking_modew", òωó
+        d-defauwt = "pewiodicawwy_wefweshed_pwod_modew_v11"
       )
 
   /**
-   * Param to control what non personalized quality "Cnn" model to use for scribing scores
+   * p-pawam to c-contwow nyani n-nyon pewsonawized quawity "cnn" modew to use fow s-scwibing scowes
    */
-  object HighQualityCandidatesNonPersonalizedQualityCnnModel
-      extends FSParam[String](
-        name = "high_quality_candidates_non_personalized_quality_cnn_model",
-        default = "Q1_2023_Mr_Tf_Quality_Model_cnn"
+  o-object h-highquawitycandidatesnonpewsonawizedquawitycnnmodew
+      extends f-fspawam[stwing](
+        n-nyame = "high_quawity_candidates_non_pewsonawized_quawity_cnn_modew", 😳
+        d-defauwt = "q1_2023_mw_tf_quawity_modew_cnn"
       )
 
   /**
-   * Param to control what nsfw health model to use for scribing scores
+   * pawam to c-contwow nyani n-nysfw heawth modew t-to use fow scwibing s-scowes
    */
-  object HighQualityCandidatesBqmlNsfwModel
-      extends FSParam[String](
-        name = "high_quality_candidates_bqml_nsfw_model",
-        default = "Q2_2022_Mr_Bqml_Health_Model_NsfwV0"
+  o-object highquawitycandidatesbqmwnsfwmodew
+      extends fspawam[stwing](
+        n-nyame = "high_quawity_candidates_bqmw_nsfw_modew", (ˆ ﻌ ˆ)♡
+        defauwt = "q2_2022_mw_bqmw_heawth_modew_nsfwv0"
       )
 
   /**
-   * Param to control what reportodel to use for scribing scores
+   * p-pawam to contwow n-nyani wepowtodew to use fow scwibing scowes
    */
-  object HighQualityCandidatesBqmlReportModel
-      extends FSParam[String](
-        name = "high_quality_candidates_bqml_report_model",
-        default = "Q3_2022_15266_Mr_Bqml_Non_Personalized_Report_Model_with_Media_Embeddings"
+  object h-highquawitycandidatesbqmwwepowtmodew
+      e-extends fspawam[stwing](
+        n-nyame = "high_quawity_candidates_bqmw_wepowt_modew", 🥺
+        d-defauwt = "q3_2022_15266_mw_bqmw_non_pewsonawized_wepowt_modew_with_media_embeddings"
       )
 
   /**
-   * Param to specify the threshold to determine if a tweet contains nudity media
+   * pawam to specify the thweshowd t-to detewmine i-if a tweet contains n-nyudity media
    */
-  object TweetMediaSensitiveCategoryThresholdParam
-      extends FSBoundedParam[Double](
-        name = "tweet_media_sensitive_category_threshold",
-        default = 1.0,
-        min = 0.0,
+  o-object t-tweetmediasensitivecategowythweshowdpawam
+      e-extends fsboundedpawam[doubwe](
+        nyame = "tweet_media_sensitive_categowy_thweshowd",
+        defauwt = 1.0, ^^
+        m-min = 0.0, /(^•ω•^)
         max = 1.0
       )
 
   /**
-   * Param to boost candidates from subscription creators
+   * pawam to boost candidates fwom subscwiption c-cweatows
    */
-  object BoostCandidatesFromSubscriptionCreators
-      extends FSParam[Boolean](
-        name = "subscription_enable_boost_candidates_from_active_creators",
-        default = false
+  o-object boostcandidatesfwomsubscwiptioncweatows
+      extends fspawam[boowean](
+        nyame = "subscwiption_enabwe_boost_candidates_fwom_active_cweatows", o.O
+        defauwt = f-fawse
       )
 
   /**
-   * Param to soft rank candidates from subscription creators
+   * p-pawam to soft wank candidates fwom subscwiption c-cweatows
    */
-  object SoftRankCandidatesFromSubscriptionCreators
-      extends FSParam[Boolean](
-        name = "subscription_enable_soft_rank_candidates_from_active_creators",
-        default = false
+  object softwankcandidatesfwomsubscwiptioncweatows
+      e-extends f-fspawam[boowean](
+        n-nyame = "subscwiption_enabwe_soft_wank_candidates_fwom_active_cweatows", òωó
+        defauwt = fawse
       )
 
   /**
-   * Param as factor to control how much we want to boost creator tweets
+   * pawam as factow to contwow how m-much we want to boost cweatow t-tweets
    */
-  object SoftRankFactorForSubscriptionCreators
-      extends FSBoundedParam[Double](
-        name = "subscription_soft_rank_factor_for_boost",
-        default = 1.0,
-        min = 0.0,
-        max = Double.MaxValue
+  object softwankfactowfowsubscwiptioncweatows
+      e-extends fsboundedpawam[doubwe](
+        name = "subscwiption_soft_wank_factow_fow_boost", XD
+        defauwt = 1.0, rawr x3
+        m-min = 0.0, (˘ω˘)
+        max = d-doubwe.maxvawue
       )
 
   /**
-   * Param to enable new OON copy for Push Notifications
+   * pawam to enabwe nyew oon c-copy fow push nyotifications
    */
-  object EnableNewMROONCopyForPush
-      extends FSParam[Boolean](
-        name = "mr_copy_enable_new_mr_oon_copy_push",
-        default = true
+  object enabwenewmwooncopyfowpush
+      e-extends fspawam[boowean](
+        nyame = "mw_copy_enabwe_new_mw_oon_copy_push",
+        defauwt = twue
       )
 
   /**
-   * Param to enable generated inline actions on OON Notifications
+   * pawam to enabwe genewated inwine actions o-on oon nyotifications
    */
-  object EnableOONGeneratedInlineActions
-      extends FSParam[Boolean](
-        name = "mr_inline_enable_oon_generated_actions",
-        default = false
+  o-object enabweoongenewatedinwineactions
+      e-extends f-fspawam[boowean](
+        nyame = "mw_inwine_enabwe_oon_genewated_actions", :3
+        defauwt = fawse
       )
 
   /**
-   * Param to control dynamic inline actions for Out-of-Network copies
+   * p-pawam to contwow dynamic inwine actions fow out-of-netwowk c-copies
    */
-  object OONTweetDynamicInlineActionsList
-      extends FSEnumSeqParam[InlineActionsEnum.type](
-        name = "mr_inline_oon_tweet_dynamic_action_ids",
-        default = Seq(Follow, Retweet, Favorite),
-        enum = InlineActionsEnum
+  o-object oontweetdynamicinwineactionswist
+      e-extends fsenumseqpawam[inwineactionsenum.type](
+        n-nyame = "mw_inwine_oon_tweet_dynamic_action_ids", (U ᵕ U❁)
+        defauwt = seq(fowwow, rawr wetweet, favowite), OwO
+        enum = i-inwineactionsenum
       )
 
-  object HighOONCTweetFormat
-      extends FSEnumParam[IbisTemplateFormatEnum.type](
-        name = "mr_copy_high_oonc_format_id",
-        default = IbisTemplateFormatEnum.template1,
-        enum = IbisTemplateFormatEnum
+  o-object highoonctweetfowmat
+      extends fsenumpawam[ibistempwatefowmatenum.type](
+        n-nyame = "mw_copy_high_oonc_fowmat_id", ʘwʘ
+        defauwt = i-ibistempwatefowmatenum.tempwate1, XD
+        e-enum = i-ibistempwatefowmatenum
       )
 
-  object LowOONCTweetFormat
-      extends FSEnumParam[IbisTemplateFormatEnum.type](
-        name = "mr_copy_low_oonc_format_id",
-        default = IbisTemplateFormatEnum.template1,
-        enum = IbisTemplateFormatEnum
+  object wowoonctweetfowmat
+      extends fsenumpawam[ibistempwatefowmatenum.type](
+        nyame = "mw_copy_wow_oonc_fowmat_id", rawr x3
+        defauwt = ibistempwatefowmatenum.tempwate1, OwO
+        e-enum = ibistempwatefowmatenum
       )
 
   /**
-   * Param to enable dynamic inline actions based on FSParams for Tweet copies (not OON)
+   * pawam to enabwe d-dynamic inwine actions based on fspawams fow tweet copies (not o-oon)
    */
-  object EnableTweetDynamicInlineActions
-      extends FSParam[Boolean](
-        name = "mr_inline_enable_tweet_dynamic_actions",
-        default = false
+  object enabwetweetdynamicinwineactions
+      e-extends fspawam[boowean](
+        nyame = "mw_inwine_enabwe_tweet_dynamic_actions", nyaa~~
+        d-defauwt = f-fawse
       )
 
   /**
-   * Param to control dynamic inline actions for Tweet copies (not OON)
+   * p-pawam t-to contwow dynamic i-inwine actions fow tweet copies (not o-oon)
    */
-  object TweetDynamicInlineActionsList
-      extends FSEnumSeqParam[InlineActionsEnum.type](
-        name = "mr_inline_tweet_dynamic_action_ids",
-        default = Seq(Reply, Retweet, Favorite),
-        enum = InlineActionsEnum
+  o-object tweetdynamicinwineactionswist
+      extends fsenumseqpawam[inwineactionsenum.type](
+        n-nyame = "mw_inwine_tweet_dynamic_action_ids", ʘwʘ
+        defauwt = seq(wepwy, nyaa~~ wetweet, (U ﹏ U) favowite),
+        e-enum = inwineactionsenum
       )
 
-  object UseInlineActionsV1
-      extends FSParam[Boolean](
-        name = "mr_inline_use_inline_action_v1",
-        default = true
+  object useinwineactionsv1
+      e-extends fspawam[boowean](
+        n-nyame = "mw_inwine_use_inwine_action_v1", (///ˬ///✿)
+        defauwt = t-twue
       )
 
-  object UseInlineActionsV2
-      extends FSParam[Boolean](
-        name = "mr_inline_use_inline_action_v2",
-        default = false
+  o-object useinwineactionsv2
+      extends fspawam[boowean](
+        nyame = "mw_inwine_use_inwine_action_v2",
+        defauwt = f-fawse
       )
 
-  object EnableInlineFeedbackOnPush
-      extends FSParam[Boolean](
-        name = "mr_inline_enable_inline_feedback_on_push",
-        default = false
+  o-object enabweinwinefeedbackonpush
+      e-extends f-fspawam[boowean](
+        nyame = "mw_inwine_enabwe_inwine_feedback_on_push", :3
+        defauwt = fawse
       )
 
-  object InlineFeedbackSubstitutePosition
-      extends FSBoundedParam[Int](
-        name = "mr_inline_feedback_substitute_position",
-        min = 0,
-        max = 2,
-        default = 2, // default to substitute or append last inline action
+  o-object inwinefeedbacksubstituteposition
+      extends fsboundedpawam[int](
+        nyame = "mw_inwine_feedback_substitute_position", (˘ω˘)
+        min = 0, 😳
+        m-max = 2, 😳😳😳
+        defauwt = 2, ʘwʘ // defauwt to substitute o-ow append wast inwine action
       )
 
   /**
-   * Param to control dynamic inline actions for web notifications
+   * pawam to contwow dynamic i-inwine actions fow web notifications
    */
-  object EnableDynamicInlineActionsForDesktopWeb
-      extends FSParam[Boolean](
-        name = "mr_inline_enable_dynamic_actions_for_desktop_web",
-        default = false
+  o-object e-enabwedynamicinwineactionsfowdesktopweb
+      e-extends fspawam[boowean](
+        nyame = "mw_inwine_enabwe_dynamic_actions_fow_desktop_web", (⑅˘꒳˘)
+        d-defauwt = f-fawse
       )
 
-  object EnableDynamicInlineActionsForMobileWeb
-      extends FSParam[Boolean](
-        name = "mr_inline_enable_dynamic_actions_for_mobile_web",
-        default = false
-      )
-
-  /**
-   * Param to define dynamic inline action types for web notifications (both desktop web + mobile web)
-   */
-  object TweetDynamicInlineActionsListForWeb
-      extends FSEnumSeqParam[InlineActionsEnum.type](
-        name = "mr_inline_tweet_dynamic_action_for_web_ids",
-        default = Seq(Retweet, Favorite),
-        enum = InlineActionsEnum
+  object enabwedynamicinwineactionsfowmobiweweb
+      e-extends f-fspawam[boowean](
+        n-nyame = "mw_inwine_enabwe_dynamic_actions_fow_mobiwe_web", nyaa~~
+        d-defauwt = fawse
       )
 
   /**
-   * Param to enable MR Override Notifications for Android
+   * p-pawam to define d-dynamic inwine a-action types fow web nyotifications (both d-desktop web + mobiwe web)
    */
-  object EnableOverrideNotificationsForAndroid
-      extends FSParam[Boolean](
-        name = "mr_override_enable_override_notifications_for_android",
-        default = false
+  object tweetdynamicinwineactionswistfowweb
+      extends fsenumseqpawam[inwineactionsenum.type](
+        n-nyame = "mw_inwine_tweet_dynamic_action_fow_web_ids", (U ﹏ U)
+        d-defauwt = seq(wetweet, ʘwʘ favowite), (ꈍᴗꈍ)
+        e-enum = inwineactionsenum
       )
 
   /**
-   * Param to enable MR Override Notifications for iOS
+   * pawam t-to enabwe mw ovewwide n-nyotifications f-fow andwoid
    */
-  object EnableOverrideNotificationsForIos
-      extends FSParam[Boolean](
-        name = "mr_override_enable_override_notifications_for_ios",
-        default = false
+  o-object enabweovewwidenotificationsfowandwoid
+      e-extends fspawam[boowean](
+        nyame = "mw_ovewwide_enabwe_ovewwide_notifications_fow_andwoid", :3
+        d-defauwt = f-fawse
       )
 
   /**
-   * Param to enable gradually ramp up notification
+   * pawam to enabwe mw ovewwide nyotifications f-fow ios
    */
-  object EnableGraduallyRampUpNotification
-      extends FSParam[Boolean](
-        name = "pushcap_gradually_ramp_up_enable",
-        default = false
+  object enabweovewwidenotificationsfowios
+      e-extends fspawam[boowean](
+        nyame = "mw_ovewwide_enabwe_ovewwide_notifications_fow_ios", ( ͡o ω ͡o )
+        defauwt = f-fawse
       )
 
   /**
-   * Param to control the minInrerval for fatigue between consecutive MFNFY pushes
+   * pawam to enabwe g-gwaduawwy wamp up nyotification
    */
-  object MFMinIntervalFatigue
-      extends FSBoundedParam[Duration](
-        name = "frigate_push_magicfanout_fatigue_min_interval_consecutive_pushes_minutes",
-        default = 240.minutes,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromMinutes
+  object enabwegwaduawwywampupnotification
+      e-extends fspawam[boowean](
+        nyame = "pushcap_gwaduawwy_wamp_up_enabwe", rawr x3
+        d-defauwt = fawse
+      )
+
+  /**
+   * p-pawam to contwow t-the mininwewvaw fow fatigue between consecutive m-mfnfy pushes
+   */
+  object mfminintewvawfatigue
+      extends f-fsboundedpawam[duwation](
+        n-nyame = "fwigate_push_magicfanout_fatigue_min_intewvaw_consecutive_pushes_minutes", rawr x3
+        defauwt = 240.minutes, mya
+        m-min = duwation.bottom, nyaa~~
+        max = duwation.top)
+      with hasduwationconvewsion {
+    ovewwide v-vaw duwationconvewsion = duwationconvewsion.fwomminutes
   }
 
   /**
-   * Param to control the interval for MFNFY pushes
+   * pawam to c-contwow the intewvaw f-fow mfnfy pushes
    */
-  object MFPushIntervalInHours
-      extends FSBoundedParam[Duration](
-        name = "frigate_push_magicfanout_fatigue_push_interval_in_hours",
-        default = 24.hours,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+  object mfpushintewvawinhouws
+      e-extends fsboundedpawam[duwation](
+        n-nyame = "fwigate_push_magicfanout_fatigue_push_intewvaw_in_houws", (///ˬ///✿)
+        defauwt = 24.houws, ^^
+        min = duwation.bottom, OwO
+        max = duwation.top)
+      w-with hasduwationconvewsion {
+    o-ovewwide vaw duwationconvewsion = duwationconvewsion.fwomhouws
   }
 
   /**
-   * Param to control the maximum number of Sports MF pushes in a period of time
+   * p-pawam t-to contwow the maximum nyumbew o-of spowts mf pushes i-in a pewiod of time
    */
-  object SportsMaxNumberOfPushesInInterval
-      extends FSBoundedParam[Int](
-        name = "magicfanout_sports_event_fatigue_max_pushes_in_interval",
-        default = 2,
-        min = 0,
+  o-object spowtsmaxnumbewofpushesinintewvaw
+      extends fsboundedpawam[int](
+        n-nyame = "magicfanout_spowts_event_fatigue_max_pushes_in_intewvaw", :3
+        d-defauwt = 2, ^^
+        m-min = 0, (✿oωo)
+        m-max = 6)
+
+  /**
+   * p-pawam to contwow the m-minintewvaw fow f-fatigue between consecutive spowts pushes
+   */
+  o-object spowtsminintewvawfatigue
+      extends f-fsboundedpawam[duwation](
+        nyame = "magicfanout_spowts_event_fatigue_min_intewvaw_consecutive_pushes_minutes", 😳
+        defauwt = 240.minutes, (///ˬ///✿)
+        min = duwation.bottom, (///ˬ///✿)
+        max = duwation.top)
+      with hasduwationconvewsion {
+    o-ovewwide vaw duwationconvewsion = d-duwationconvewsion.fwomminutes
+  }
+
+  /**
+   * pawam to c-contwow the intewvaw f-fow spowts pushes
+   */
+  o-object spowtspushintewvawinhouws
+      extends f-fsboundedpawam[duwation](
+        nyame = "magicfanout_spowts_event_fatigue_push_intewvaw_in_houws", (U ﹏ U)
+        d-defauwt = 24.houws, òωó
+        min = duwation.bottom,
+        max = duwation.top)
+      with hasduwationconvewsion {
+    ovewwide vaw duwationconvewsion = duwationconvewsion.fwomhouws
+  }
+
+  /**
+   * p-pawam to contwow the maximum nyumbew of same event s-spowts mf pushes in a pewiod o-of time
+   */
+  object spowtsmaxnumbewofpushesinintewvawpewevent
+      extends fsboundedpawam[int](
+        nyame = "magicfanout_spowts_event_fatigue_max_pushes_in_pew_event_intewvaw", :3
+        defauwt = 2, (⑅˘꒳˘)
+        min = 0, 😳😳😳
         max = 6)
 
   /**
-   * Param to control the minInterval for fatigue between consecutive sports pushes
+   * pawam t-to contwow the m-minintewvaw fow f-fatigue between consecutive same e-event spowts p-pushes
    */
-  object SportsMinIntervalFatigue
-      extends FSBoundedParam[Duration](
-        name = "magicfanout_sports_event_fatigue_min_interval_consecutive_pushes_minutes",
-        default = 240.minutes,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromMinutes
+  o-object spowtsminintewvawfatiguepewevent
+      extends fsboundedpawam[duwation](
+        n-nyame = "magicfanout_spowts_event_fatigue_min_intewvaw_consecutive_pushes_pew_event_minutes", ʘwʘ
+        d-defauwt = 240.minutes, OwO
+        min = d-duwation.bottom, >_<
+        m-max = d-duwation.top)
+      w-with hasduwationconvewsion {
+    o-ovewwide vaw duwationconvewsion = d-duwationconvewsion.fwomminutes
   }
 
   /**
-   * Param to control the interval for sports pushes
+   * p-pawam to c-contwow the intewvaw f-fow same event s-spowts pushes
    */
-  object SportsPushIntervalInHours
-      extends FSBoundedParam[Duration](
-        name = "magicfanout_sports_event_fatigue_push_interval_in_hours",
-        default = 24.hours,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+  o-object s-spowtspushintewvawinhouwspewevent
+      e-extends f-fsboundedpawam[duwation](
+        n-nyame = "magicfanout_spowts_event_fatigue_push_intewvaw_pew_event_in_houws", /(^•ω•^)
+        defauwt = 24.houws, (˘ω˘)
+        min = duwation.bottom,
+        max = duwation.top)
+      w-with hasduwationconvewsion {
+    ovewwide v-vaw duwationconvewsion = duwationconvewsion.fwomhouws
   }
 
   /**
-   * Param to control the maximum number of same event sports MF pushes in a period of time
+   * pawam t-to contwow the m-maximum nyumbew o-of mf pushes in a pewiod of time
    */
-  object SportsMaxNumberOfPushesInIntervalPerEvent
-      extends FSBoundedParam[Int](
-        name = "magicfanout_sports_event_fatigue_max_pushes_in_per_event_interval",
-        default = 2,
-        min = 0,
+  o-object m-mfmaxnumbewofpushesinintewvaw
+      extends fsboundedpawam[int](
+        nyame = "fwigate_push_magicfanout_fatigue_max_pushes_in_intewvaw", >w<
+        defauwt = 2, ^•ﻌ•^
+        min = 0, ʘwʘ
         max = 6)
 
   /**
-   * Param to control the minInterval for fatigue between consecutive same event sports pushes
+   * p-pawam to enabwe custom duwation fow fatiguing
    */
-  object SportsMinIntervalFatiguePerEvent
-      extends FSBoundedParam[Duration](
-        name = "magicfanout_sports_event_fatigue_min_interval_consecutive_pushes_per_event_minutes",
-        default = 240.minutes,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromMinutes
-  }
-
-  /**
-   * Param to control the interval for same event sports pushes
-   */
-  object SportsPushIntervalInHoursPerEvent
-      extends FSBoundedParam[Duration](
-        name = "magicfanout_sports_event_fatigue_push_interval_per_event_in_hours",
-        default = 24.hours,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
-  }
-
-  /**
-   * Param to control the maximum number of MF pushes in a period of time
-   */
-  object MFMaxNumberOfPushesInInterval
-      extends FSBoundedParam[Int](
-        name = "frigate_push_magicfanout_fatigue_max_pushes_in_interval",
-        default = 2,
-        min = 0,
-        max = 6)
-
-  /**
-   * Param to enable custom duration for fatiguing
-   */
-  object GPEnableCustomMagicFanoutCricketFatigue
-      extends FSParam[Boolean](
-        name = "global_participation_cricket_magicfanout_enable_custom_fatigue",
-        default = false
+  object gpenabwecustommagicfanoutcwicketfatigue
+      e-extends f-fspawam[boowean](
+        nyame = "gwobaw_pawticipation_cwicket_magicfanout_enabwe_custom_fatigue", OwO
+        defauwt = fawse
       )
 
   /**
-   * Param to enable e2e scribing for target filtering step
+   * p-pawam to enabwe e-e2e scwibing f-fow tawget fiwtewing s-step
    */
-  object EnableMrRequestScribingForTargetFiltering
-      extends FSParam[Boolean](
-        name = "mr_request_scribing_enable_for_target_filtering",
-        default = false
+  o-object enabwemwwequestscwibingfowtawgetfiwtewing
+      e-extends f-fspawam[boowean](
+        nyame = "mw_wequest_scwibing_enabwe_fow_tawget_fiwtewing", nyaa~~
+        defauwt = fawse
       )
 
   /**
-   * Param to enable e2e scribing for candidate filtering step
+   * p-pawam to enabwe e2e scwibing f-fow candidate fiwtewing step
    */
-  object EnableMrRequestScribingForCandidateFiltering
-      extends FSParam[Boolean](
-        name = "mr_request_scribing_enable_for_candidate_filtering",
-        default = false
+  o-object enabwemwwequestscwibingfowcandidatefiwtewing
+      e-extends fspawam[boowean](
+        nyame = "mw_wequest_scwibing_enabwe_fow_candidate_fiwtewing", nyaa~~
+        d-defauwt = fawse
       )
 
   /**
-   * Param to enable e2e scribing with feature hydrating
+   * pawam t-to enabwe e2e s-scwibing with featuwe h-hydwating
    */
-  object EnableMrRequestScribingWithFeatureHydrating
-      extends FSParam[Boolean](
-        name = "mr_request_scribing_enable_with_feature_hydrating",
-        default = false
+  o-object enabwemwwequestscwibingwithfeatuwehydwating
+      extends fspawam[boowean](
+        n-nyame = "mw_wequest_scwibing_enabwe_with_featuwe_hydwating", XD
+        d-defauwt = f-fawse
       )
 
   /*
-   * TargetLevel Feature list for Mr request scribing
+   * tawgetwevew f-featuwe wist fow mw wequest scwibing
    */
-  object TargetLevelFeatureListForMrRequestScribing
-      extends FSParam[Seq[String]](
-        name = "mr_request_scribing_target_level_feature_list",
-        default = Seq.empty
+  object tawgetwevewfeatuwewistfowmwwequestscwibing
+      extends fspawam[seq[stwing]](
+        name = "mw_wequest_scwibing_tawget_wevew_featuwe_wist", o.O
+        defauwt = seq.empty
       )
 
   /**
-   * Param to enable \eps-greedy exploration for BigFiltering/LTV-based filtering
+   * pawam t-to enabwe \eps-gweedy e-expwowation fow bigfiwtewing/wtv-based fiwtewing
    */
-  object EnableMrRequestScribingForEpsGreedyExploration
-      extends FSParam[Boolean](
-        name = "mr_request_scribing_eps_greedy_exploration_enable",
-        default = false
+  object enabwemwwequestscwibingfowepsgweedyexpwowation
+      extends f-fspawam[boowean](
+        n-nyame = "mw_wequest_scwibing_eps_gweedy_expwowation_enabwe", òωó
+        defauwt = fawse
       )
 
   /**
-   * Param to control epsilon in \eps-greedy exploration for BigFiltering/LTV-based filtering
+   * pawam to contwow epsiwon in \eps-gweedy e-expwowation f-fow bigfiwtewing/wtv-based fiwtewing
    */
-  object MrRequestScribingEpsGreedyExplorationRatio
-      extends FSBoundedParam[Double](
-        name = "mr_request_scribing_eps_greedy_exploration_ratio",
-        default = 0.0,
-        min = 0.0,
-        max = 1.0
+  o-object mwwequestscwibingepsgweedyexpwowationwatio
+      extends f-fsboundedpawam[doubwe](
+        nyame = "mw_wequest_scwibing_eps_gweedy_expwowation_watio", (⑅˘꒳˘)
+        d-defauwt = 0.0, o.O
+        min = 0.0, (ˆ ﻌ ˆ)♡
+        m-max = 1.0
       )
 
   /**
-   * Param to enable scribing dismiss model score
+   * p-pawam to enabwe scwibing dismiss modew scowe
    */
-  object EnableMrRequestScribingDismissScore
-      extends FSParam[Boolean](
-        name = "mr_request_scribing_dismiss_score_enable",
-        default = false
+  object enabwemwwequestscwibingdismissscowe
+      e-extends f-fspawam[boowean](
+        n-nyame = "mw_wequest_scwibing_dismiss_scowe_enabwe", (⑅˘꒳˘)
+        d-defauwt = fawse
       )
 
   /**
-   * Param to enable scribing BigFiltering supervised model(s) score(s)
+   * p-pawam t-to enabwe scwibing b-bigfiwtewing s-supewvised modew(s) scowe(s)
    */
-  object EnableMrRequestScribingBigFilteringSupervisedScores
-      extends FSParam[Boolean](
-        name = "mr_request_scribing_bigfiltering_supervised_scores_enable",
-        default = false
+  object enabwemwwequestscwibingbigfiwtewingsupewvisedscowes
+      e-extends fspawam[boowean](
+        n-nyame = "mw_wequest_scwibing_bigfiwtewing_supewvised_scowes_enabwe", (U ᵕ U❁)
+        defauwt = fawse
       )
 
   /**
-   * Param to enable scribing BigFiltering RL model(s) score(s)
+   * pawam to enabwe scwibing b-bigfiwtewing w-ww modew(s) scowe(s)
    */
-  object EnableMrRequestScribingBigFilteringRLScores
-      extends FSParam[Boolean](
-        name = "mr_request_scribing_bigfiltering_rl_scores_enable",
-        default = false
+  object e-enabwemwwequestscwibingbigfiwtewingwwscowes
+      extends fspawam[boowean](
+        nyame = "mw_wequest_scwibing_bigfiwtewing_ww_scowes_enabwe", >w<
+        defauwt = f-fawse
       )
 
   /**
-   * Param to flatten mr request scribe
+   * p-pawam to fwatten m-mw wequest scwibe
    */
-  object EnableFlattenMrRequestScribing
-      extends FSParam[Boolean](
-        name = "mr_request_scribing_enable_flatten",
-        default = false
+  object e-enabwefwattenmwwequestscwibing
+      e-extends fspawam[boowean](
+        nyame = "mw_wequest_scwibing_enabwe_fwatten", OwO
+        d-defauwt = fawse
       )
 
   /**
-   * Param to enable NSFW token based filtering
+   * p-pawam to enabwe n-nysfw token b-based fiwtewing
    */
-  object EnableNsfwTokenBasedFiltering
-      extends FSParam[Boolean](
-        name = "health_and_quality_filter_enable_nsfw_token_based_filtering",
-        default = false
+  o-object enabwensfwtokenbasedfiwtewing
+      e-extends fspawam[boowean](
+        nyame = "heawth_and_quawity_fiwtew_enabwe_nsfw_token_based_fiwtewing", >w<
+        defauwt = fawse
       )
 
-  object NsfwTokensParam
-      extends FSParam[Seq[String]](
-        name = "health_and_quality_filter_nsfw_tokens",
-        default = Seq("nsfw", "18+", "\uD83D\uDD1E"))
+  object nysfwtokenspawam
+      extends fspawam[seq[stwing]](
+        n-nyame = "heawth_and_quawity_fiwtew_nsfw_tokens", ^^;;
+        defauwt = s-seq("nsfw", >w< "18+", σωσ "\ud83d\udd1e"))
 
-  object MinimumAllowedAuthorAccountAgeInHours
-      extends FSBoundedParam[Int](
-        name = "health_and_quality_filter_minimum_allowed_author_account_age_in_hours",
-        default = 0,
-        min = 0,
+  o-object minimumawwowedauthowaccountageinhouws
+      extends fsboundedpawam[int](
+        nyame = "heawth_and_quawity_fiwtew_minimum_awwowed_authow_account_age_in_houws", (˘ω˘)
+        d-defauwt = 0, òωó
+        m-min = 0, (ꈍᴗꈍ)
         max = 168
       )
 
   /**
-   * Param to enable the profanity filter
+   * p-pawam to enabwe the pwofanity f-fiwtew
    */
-  object EnableProfanityFilterParam
-      extends FSParam[Boolean](
-        name = "health_and_quality_filter_enable_profanity_filter",
-        default = false
+  object enabwepwofanityfiwtewpawam
+      extends fspawam[boowean](
+        nyame = "heawth_and_quawity_fiwtew_enabwe_pwofanity_fiwtew", (ꈍᴗꈍ)
+        d-defauwt = fawse
       )
 
   /**
-   * Param to enable query the author media representation store
+   * pawam to enabwe quewy the authow media wepwesentation s-stowe
    */
-  object EnableQueryAuthorMediaRepresentationStore
-      extends FSParam[Boolean](
-        name = "health_and_quality_filter_enable_query_author_media_representation_store",
-        default = false
+  o-object enabwequewyauthowmediawepwesentationstowe
+      e-extends f-fspawam[boowean](
+        nyame = "heawth_and_quawity_fiwtew_enabwe_quewy_authow_media_wepwesentation_stowe", òωó
+        defauwt = fawse
       )
 
   /**
-   * Threshold to filter a tweet based on the author sensitive media score
+   * thweshowd t-to fiwtew a tweet based o-on the authow sensitive media scowe
    */
-  object AuthorSensitiveMediaFilteringThreshold
-      extends FSBoundedParam[Double](
-        name = "health_and_quality_filter_author_sensitive_media_filtering_threshold",
-        default = 1.0,
-        min = 0.0,
+  object a-authowsensitivemediafiwtewingthweshowd
+      e-extends fsboundedpawam[doubwe](
+        n-nyame = "heawth_and_quawity_fiwtew_authow_sensitive_media_fiwtewing_thweshowd", (U ᵕ U❁)
+        defauwt = 1.0, /(^•ω•^)
+        min = 0.0, :3
+        m-max = 1.0
+      )
+
+  /**
+   * thweshowd to fiwtew a tweet based on the authow sensitive media scowe
+   */
+  object authowsensitivemediafiwtewingthweshowdfowmwtwistwy
+      e-extends fsboundedpawam[doubwe](
+        nyame = "heawth_and_quawity_fiwtew_authow_sensitive_media_fiwtewing_thweshowd_fow_mwtwistwy", rawr
+        d-defauwt = 1.0, (ˆ ﻌ ˆ)♡
+        min = 0.0, ^^;;
         max = 1.0
       )
 
   /**
-   * Threshold to filter a tweet based on the author sensitive media score
+   * pawam to enabwe fiwtewing the simcwustew tweet if it h-has abusestwike_top2pewcent entitiy
    */
-  object AuthorSensitiveMediaFilteringThresholdForMrTwistly
-      extends FSBoundedParam[Double](
-        name = "health_and_quality_filter_author_sensitive_media_filtering_threshold_for_mrtwistly",
-        default = 1.0,
-        min = 0.0,
+  object e-enabweabusestwiketop2pewcentfiwtewsimcwustew
+      e-extends f-fspawam[boowean](
+        n-nyame = "heawth_signaw_stowe_enabwe_abuse_stwike_top_2_pewcent_fiwtew_sim_cwustew", (⑅˘꒳˘)
+        defauwt = fawse
+      )
+
+  /**
+   * pawam to enabwe fiwtewing the simcwustew t-tweet if it has a-abusestwike_top1pewcent e-entitiy
+   */
+  o-object enabweabusestwiketop1pewcentfiwtewsimcwustew
+      e-extends fspawam[boowean](
+        nyame = "heawth_signaw_stowe_enabwe_abuse_stwike_top_1_pewcent_fiwtew_sim_cwustew", rawr x3
+        d-defauwt = fawse
+      )
+
+  /**
+   * pawam to enabwe fiwtewing the simcwustew t-tweet if it has a-abusestwike_top0.5pewcent e-entitiy
+   */
+  o-object enabweabusestwiketop05pewcentfiwtewsimcwustew
+      e-extends fspawam[boowean](
+        n-nyame = "heawth_signaw_stowe_enabwe_abuse_stwike_top_05_pewcent_fiwtew_sim_cwustew", ʘwʘ
+        defauwt = fawse
+      )
+
+  object enabweagathausewheawthmodewpwedicate
+      extends fspawam[boowean](
+        n-nyame = "heawth_signaw_stowe_enabwe_agatha_usew_heawth_modew_pwedicate", (ꈍᴗꈍ)
+        d-defauwt = fawse
+      )
+
+  /**
+   * thweshowd to fiwtew a tweet based on the a-agatha_cawibwated_nsfw scowe of i-its authow fow m-mwtwistwy
+   */
+  o-object agathacawibwatednsfwthweshowdfowmwtwistwy
+      extends fsboundedpawam[doubwe](
+        nyame = "heawth_signaw_stowe_agatha_cawibwated_nsfw_thweshowd_fow_mwtwistwy", /(^•ω•^)
+        defauwt = 1.0, (✿oωo)
+        min = 0.0, ^^;;
+        m-max = 1.0
+      )
+
+  /**
+   * thweshowd to fiwtew a-a tweet based on the agatha_cawibwated_nsfw scowe of its authow
+   */
+  o-object agathacawibwatednsfwthweshowd
+      e-extends fsboundedpawam[doubwe](
+        n-nyame = "heawth_signaw_stowe_agatha_cawibwated_nsfw_thweshowd", (˘ω˘)
+        d-defauwt = 1.0, 😳😳😳
+        m-min = 0.0, ^^
+        m-max = 1.0
+      )
+
+  /**
+   * thweshowd t-to fiwtew a tweet based on the agatha_nsfw_text_usew scowe of its authow f-fow mwtwistwy
+   */
+  object agathatextnsfwthweshowdfowmwtwistwy
+      extends f-fsboundedpawam[doubwe](
+        n-nyame = "heawth_signaw_stowe_agatha_text_nsfw_thweshowd_fow_mwtwistwy", /(^•ω•^)
+        d-defauwt = 1.0, >_<
+        min = 0.0, (ꈍᴗꈍ)
         max = 1.0
       )
 
   /**
-   * Param to enable filtering the SimCluster tweet if it has AbuseStrike_Top2Percent entitiy
+   * thweshowd to fiwtew a tweet b-based on the a-agatha_nsfw_text_usew s-scowe of i-its authow
    */
-  object EnableAbuseStrikeTop2PercentFilterSimCluster
-      extends FSParam[Boolean](
-        name = "health_signal_store_enable_abuse_strike_top_2_percent_filter_sim_cluster",
-        default = false
-      )
-
-  /**
-   * Param to enable filtering the SimCluster tweet if it has AbuseStrike_Top1Percent entitiy
-   */
-  object EnableAbuseStrikeTop1PercentFilterSimCluster
-      extends FSParam[Boolean](
-        name = "health_signal_store_enable_abuse_strike_top_1_percent_filter_sim_cluster",
-        default = false
-      )
-
-  /**
-   * Param to enable filtering the SimCluster tweet if it has AbuseStrike_Top0.5Percent entitiy
-   */
-  object EnableAbuseStrikeTop05PercentFilterSimCluster
-      extends FSParam[Boolean](
-        name = "health_signal_store_enable_abuse_strike_top_05_percent_filter_sim_cluster",
-        default = false
-      )
-
-  object EnableAgathaUserHealthModelPredicate
-      extends FSParam[Boolean](
-        name = "health_signal_store_enable_agatha_user_health_model_predicate",
-        default = false
-      )
-
-  /**
-   * Threshold to filter a tweet based on the agatha_calibrated_nsfw score of its author for MrTwistly
-   */
-  object AgathaCalibratedNSFWThresholdForMrTwistly
-      extends FSBoundedParam[Double](
-        name = "health_signal_store_agatha_calibrated_nsfw_threshold_for_mrtwistly",
-        default = 1.0,
-        min = 0.0,
+  object agathatextnsfwthweshowd
+      extends fsboundedpawam[doubwe](
+        nyame = "heawth_signaw_stowe_agatha_text_nsfw_thweshowd", (ꈍᴗꈍ)
+        defauwt = 1.0, mya
+        m-min = 0.0, :3
         max = 1.0
       )
 
   /**
-   * Threshold to filter a tweet based on the agatha_calibrated_nsfw score of its author
+   * thweshowd t-to bucket a u-usew based on the a-agatha_cawibwated_nsfw scowe of t-the tweet authow
    */
-  object AgathaCalibratedNSFWThreshold
-      extends FSBoundedParam[Double](
-        name = "health_signal_store_agatha_calibrated_nsfw_threshold",
-        default = 1.0,
-        min = 0.0,
+  object agathacawibwatednsfwbucketthweshowd
+      extends fsboundedpawam[doubwe](
+        nyame = "heawth_signaw_stowe_agatha_cawibwated_nsfw_bucket_thweshowd", 😳😳😳
+        defauwt = 1.0, /(^•ω•^)
+        min = 0.0, -.-
         max = 1.0
       )
 
   /**
-   * Threshold to filter a tweet based on the agatha_nsfw_text_user score of its author for MrTwistly
+   * thweshowd t-to bucket a usew based on the agatha_nsfw_text_usew s-scowe of t-the tweet authow
    */
-  object AgathaTextNSFWThresholdForMrTwistly
-      extends FSBoundedParam[Double](
-        name = "health_signal_store_agatha_text_nsfw_threshold_for_mrtwistly",
-        default = 1.0,
-        min = 0.0,
+  object a-agathatextnsfwbucketthweshowd
+      e-extends fsboundedpawam[doubwe](
+        nyame = "heawth_signaw_stowe_agatha_text_nsfw_bucket_thweshowd", UwU
+        defauwt = 1.0, (U ﹏ U)
+        m-min = 0.0, ^^
+        m-max = 1.0
+      )
+
+  /**
+   * pawam to enabwe fiwtewing using pnsfw_text_tweet m-modew. 😳
+   */
+  object e-enabweheawthsignawstowepnsfwtweettextpwedicate
+      e-extends f-fspawam[boowean](
+        nyame = "heawth_signaw_stowe_enabwe_pnsfw_tweet_text_pwedicate", (˘ω˘)
+        d-defauwt = fawse
+      )
+
+  /**
+   * thweshowd s-scowe fow fiwtewing b-based on pnsfw_text_tweet m-modew. /(^•ω•^)
+   */
+  o-object pnsfwtweettextthweshowd
+      extends fsboundedpawam[doubwe](
+        nyame = "heawth_signaw_stowe_pnsfw_tweet_text_thweshowd",
+        defauwt = 1.0, (˘ω˘)
+        min = 0.0, (✿oωo)
+        m-max = 1.0
+      )
+
+  /**
+   * thweshowd s-scowe fow bucketing based on pnsfw_text_tweet m-modew. (U ﹏ U)
+   */
+  object pnsfwtweettextbucketingthweshowd
+      extends f-fsboundedpawam[doubwe](
+        nyame = "heawth_signaw_stowe_pnsfw_tweet_text_bucketing_thweshowd", (U ﹏ U)
+        defauwt = 1.0,
+        min = 0.0, (ˆ ﻌ ˆ)♡
+        m-max = 1.0
+      )
+
+  /**
+   * enabwe f-fiwtewing tweets w-with media based o-on pnsfw_media_tweet modew fow oon tweets onwy. /(^•ω•^)
+   */
+  o-object p-pnsfwtweetmediafiwtewoononwy
+      e-extends fspawam[boowean](
+        n-nyame = "heawth_signaw_stowe_pnsfw_tweet_media_fiwtew_oon_onwy", XD
+        defauwt = twue
+      )
+
+  /**
+   * t-thweshowd scowe f-fow fiwtewing t-tweets with media b-based on pnsfw_media_tweet m-modew. (ˆ ﻌ ˆ)♡
+   */
+  object pnsfwtweetmediathweshowd
+      e-extends fsboundedpawam[doubwe](
+        n-nyame = "heawth_signaw_stowe_pnsfw_tweet_media_thweshowd", XD
+        defauwt = 1.0, mya
+        min = 0.0, OwO
+        m-max = 1.0
+      )
+
+  /**
+   * t-thweshowd scowe f-fow fiwtewing tweets with images b-based on pnsfw_media_tweet m-modew.
+   */
+  object pnsfwtweetimagethweshowd
+      e-extends fsboundedpawam[doubwe](
+        n-nyame = "heawth_signaw_stowe_pnsfw_tweet_image_thweshowd", XD
+        defauwt = 1.0, ( ͡o ω ͡o )
+        m-min = 0.0, (ꈍᴗꈍ)
         max = 1.0
       )
 
   /**
-   * Threshold to filter a tweet based on the agatha_nsfw_text_user score of its author
+   * t-thweshowd s-scowe fow fiwtewing q-quote/wepwy t-tweets based on souwce tweet's media
    */
-  object AgathaTextNSFWThreshold
-      extends FSBoundedParam[Double](
-        name = "health_signal_store_agatha_text_nsfw_threshold",
-        default = 1.0,
-        min = 0.0,
+  object pnsfwquotetweetthweshowd
+      e-extends fsboundedpawam[doubwe](
+        nyame = "heawth_signaw_stowe_pnsfw_quote_tweet_thweshowd", mya
+        d-defauwt = 1.0, 😳
+        min = 0.0, (ˆ ﻌ ˆ)♡
+        m-max = 1.0
+      )
+
+  /**
+   * t-thweshowd scowe fow bucketing b-based on p-pnsfw_media_tweet modew. ^•ﻌ•^
+   */
+  object pnsfwtweetmediabucketingthweshowd
+      e-extends fsboundedpawam[doubwe](
+        n-nyame = "heawth_signaw_stowe_pnsfw_tweet_media_bucketing_thweshowd", 😳😳😳
+        defauwt = 1.0, (///ˬ///✿)
+        min = 0.0, 🥺
         max = 1.0
       )
 
   /**
-   * Threshold to bucket a user based on the agatha_calibrated_nsfw score of the tweet author
+   * pawam to enabwe fiwtewing using muwtiwinguaw psnfw pwedicate
    */
-  object AgathaCalibratedNSFWBucketThreshold
-      extends FSBoundedParam[Double](
-        name = "health_signal_store_agatha_calibrated_nsfw_bucket_threshold",
-        default = 1.0,
-        min = 0.0,
-        max = 1.0
+  object enabweheawthsignawstowemuwtiwinguawpnsfwtweettextpwedicate
+      extends fspawam[boowean](
+        n-nyame = "heawth_signaw_stowe_enabwe_muwtiwinguaw_pnsfw_tweet_text_pwedicate", ^^
+        d-defauwt = fawse
       )
 
   /**
-   * Threshold to bucket a user based on the agatha_nsfw_text_user score of the tweet author
+   * w-wanguage sequence w-we wiww quewy pnsfw scowes fow
    */
-  object AgathaTextNSFWBucketThreshold
-      extends FSBoundedParam[Double](
-        name = "health_signal_store_agatha_text_nsfw_bucket_threshold",
-        default = 1.0,
-        min = 0.0,
-        max = 1.0
+  object m-muwtiwinguawpnsfwtweettextsuppowtedwanguages
+      e-extends f-fspawam[seq[stwing]](
+        nyame = "heawth_signaw_stowe_muwtiwinguaw_pnsfw_tweet_suppowted_wanguages", (ˆ ﻌ ˆ)♡
+        d-defauwt = seq.empty[stwing], mya
       )
 
   /**
-   * Param to enable filtering using pnsfw_text_tweet model.
+   * thweshowd scowe pew wanguage fow bucketing based on pnsfw scowes. OwO
    */
-  object EnableHealthSignalStorePnsfwTweetTextPredicate
-      extends FSParam[Boolean](
-        name = "health_signal_store_enable_pnsfw_tweet_text_predicate",
-        default = false
+  o-object m-muwtiwinguawpnsfwtweettextbucketingthweshowd
+      e-extends f-fspawam[seq[doubwe]](
+        nyame = "heawth_signaw_stowe_muwtiwinguaw_pnsfw_tweet_text_bucketing_thweshowds", /(^•ω•^)
+        d-defauwt = seq.empty[doubwe], /(^•ω•^)
       )
 
   /**
-   * Threshold score for filtering based on pnsfw_text_tweet Model.
+   * thweshowd scowe pew wanguage fow fiwtewing b-based on pnsfw scowes. rawr
    */
-  object PnsfwTweetTextThreshold
-      extends FSBoundedParam[Double](
-        name = "health_signal_store_pnsfw_tweet_text_threshold",
-        default = 1.0,
-        min = 0.0,
-        max = 1.0
+  o-object muwtiwinguawpnsfwtweettextfiwtewingthweshowd
+      e-extends fspawam[seq[doubwe]](
+        nyame = "heawth_signaw_stowe_muwtiwinguaw_pnsfw_tweet_text_fiwtewing_thweshowds", XD
+        defauwt = s-seq.empty[doubwe], ʘwʘ
       )
 
   /**
-   * Threshold score for bucketing based on pnsfw_text_tweet Model.
+   * wist o-of modews to thweshowd scowes fow bucketing puwposes
    */
-  object PnsfwTweetTextBucketingThreshold
-      extends FSBoundedParam[Double](
-        name = "health_signal_store_pnsfw_tweet_text_bucketing_threshold",
-        default = 1.0,
-        min = 0.0,
-        max = 1.0
+  o-object muwtiwinguawpnsfwtweettextbucketingmodewwist
+      extends fsenumseqpawam[nsfwtextdetectionmodew.type](
+        n-name = "heawth_signaw_stowe_muwtiwinguaw_pnsfw_tweet_text_bucketing_modews_ids", :3
+        defauwt = seq(nsfwtextdetectionmodew.pwodmodew), σωσ
+        e-enum = nysfwtextdetectionmodew
+      )
+
+  o-object muwtiwinguawpnsfwtweettextmodew
+      e-extends fsenumpawam[nsfwtextdetectionmodew.type](
+        nyame = "heawth_signaw_stowe_muwtiwinguaw_pnsfw_tweet_text_modew", /(^•ω•^)
+        defauwt = nysfwtextdetectionmodew.pwodmodew, (ˆ ﻌ ˆ)♡
+        enum = n-nysfwtextdetectionmodew
       )
 
   /**
-   * Enable filtering tweets with media based on pnsfw_media_tweet Model for OON tweets only.
+   * pawam to detewmine media shouwd be enabwed fow andwoid
    */
-  object PnsfwTweetMediaFilterOonOnly
-      extends FSParam[Boolean](
-        name = "health_signal_store_pnsfw_tweet_media_filter_oon_only",
-        default = true
+  object enabweeventsquawemediaandwoid
+      e-extends fspawam[boowean](
+        n-nyame = "mw_enabwe_event_media_squawe_andwoid", (U ﹏ U)
+        defauwt = fawse
       )
 
   /**
-   * Threshold score for filtering tweets with media based on pnsfw_media_tweet Model.
+   * p-pawam to detewmine expanded m-media shouwd be e-enabwed fow andwoid
    */
-  object PnsfwTweetMediaThreshold
-      extends FSBoundedParam[Double](
-        name = "health_signal_store_pnsfw_tweet_media_threshold",
-        default = 1.0,
-        min = 0.0,
-        max = 1.0
+  o-object enabweeventpwimawymediaandwoid
+      extends f-fspawam[boowean](
+        nyame = "mw_enabwe_event_media_pwimawy_andwoid",
+        defauwt = fawse
       )
 
   /**
-   * Threshold score for filtering tweets with images based on pnsfw_media_tweet Model.
+   * pawam to detewmine media s-shouwd be enabwed f-fow ios fow magicfanout
    */
-  object PnsfwTweetImageThreshold
-      extends FSBoundedParam[Double](
-        name = "health_signal_store_pnsfw_tweet_image_threshold",
-        default = 1.0,
-        min = 0.0,
-        max = 1.0
+  o-object enabweeventsquawemediaiosmagicfanoutnewsevent
+      e-extends fspawam[boowean](
+        n-nyame = "mw_enabwe_event_media_squawe_ios_mf", >_<
+        defauwt = f-fawse
       )
 
   /**
-   * Threshold score for filtering quote/reply tweets based on source tweet's media
+   * p-pawam to configuwe htw visit fatigue
    */
-  object PnsfwQuoteTweetThreshold
-      extends FSBoundedParam[Double](
-        name = "health_signal_store_pnsfw_quote_tweet_threshold",
-        default = 1.0,
-        min = 0.0,
-        max = 1.0
-      )
-
-  /**
-   * Threshold score for bucketing based on pnsfw_media_tweet Model.
-   */
-  object PnsfwTweetMediaBucketingThreshold
-      extends FSBoundedParam[Double](
-        name = "health_signal_store_pnsfw_tweet_media_bucketing_threshold",
-        default = 1.0,
-        min = 0.0,
-        max = 1.0
-      )
-
-  /**
-   * Param to enable filtering using multilingual psnfw predicate
-   */
-  object EnableHealthSignalStoreMultilingualPnsfwTweetTextPredicate
-      extends FSParam[Boolean](
-        name = "health_signal_store_enable_multilingual_pnsfw_tweet_text_predicate",
-        default = false
-      )
-
-  /**
-   * Language sequence we will query pnsfw scores for
-   */
-  object MultilingualPnsfwTweetTextSupportedLanguages
-      extends FSParam[Seq[String]](
-        name = "health_signal_store_multilingual_pnsfw_tweet_supported_languages",
-        default = Seq.empty[String],
-      )
-
-  /**
-   * Threshold score per language for bucketing based on pnsfw scores.
-   */
-  object MultilingualPnsfwTweetTextBucketingThreshold
-      extends FSParam[Seq[Double]](
-        name = "health_signal_store_multilingual_pnsfw_tweet_text_bucketing_thresholds",
-        default = Seq.empty[Double],
-      )
-
-  /**
-   * Threshold score per language for filtering based on pnsfw scores.
-   */
-  object MultilingualPnsfwTweetTextFilteringThreshold
-      extends FSParam[Seq[Double]](
-        name = "health_signal_store_multilingual_pnsfw_tweet_text_filtering_thresholds",
-        default = Seq.empty[Double],
-      )
-
-  /**
-   * List of models to threshold scores for bucketing purposes
-   */
-  object MultilingualPnsfwTweetTextBucketingModelList
-      extends FSEnumSeqParam[NsfwTextDetectionModel.type](
-        name = "health_signal_store_multilingual_pnsfw_tweet_text_bucketing_models_ids",
-        default = Seq(NsfwTextDetectionModel.ProdModel),
-        enum = NsfwTextDetectionModel
-      )
-
-  object MultilingualPnsfwTweetTextModel
-      extends FSEnumParam[NsfwTextDetectionModel.type](
-        name = "health_signal_store_multilingual_pnsfw_tweet_text_model",
-        default = NsfwTextDetectionModel.ProdModel,
-        enum = NsfwTextDetectionModel
-      )
-
-  /**
-   * Param to determine media should be enabled for android
-   */
-  object EnableEventSquareMediaAndroid
-      extends FSParam[Boolean](
-        name = "mr_enable_event_media_square_android",
-        default = false
-      )
-
-  /**
-   * Param to determine expanded media should be enabled for android
-   */
-  object EnableEventPrimaryMediaAndroid
-      extends FSParam[Boolean](
-        name = "mr_enable_event_media_primary_android",
-        default = false
-      )
-
-  /**
-   * Param to determine media should be enabled for ios for MagicFanout
-   */
-  object EnableEventSquareMediaIosMagicFanoutNewsEvent
-      extends FSParam[Boolean](
-        name = "mr_enable_event_media_square_ios_mf",
-        default = false
-      )
-
-  /**
-   * Param to configure HTL Visit fatigue
-   */
-  object HTLVisitFatigueTime
-      extends FSBoundedParam[Int](
-        name = "frigate_push_htl_visit_fatigue_time",
-        default = 20,
-        min = 0,
+  o-object htwvisitfatiguetime
+      e-extends f-fsboundedpawam[int](
+        n-name = "fwigate_push_htw_visit_fatigue_time", >_<
+        d-defauwt = 20, o.O
+        min = 0, (ꈍᴗꈍ)
         max = 72) {
 
-    // Fatigue duration for HTL visit
-    final val DefaultHoursToFatigueAfterHtlVisit = 20
-    final val OldHoursToFatigueAfterHtlVisit = 8
+    // fatigue d-duwation f-fow htw visit
+    f-finaw vaw defauwthouwstofatigueaftewhtwvisit = 20
+    finaw vaw owdhouwstofatigueaftewhtwvisit = 8
   }
 
-  object MagicFanoutNewsUserGeneratedEventsEnable
-      extends FSParam[Boolean](
-        name = "magicfanout_news_user_generated_events_enable",
-        default = false)
+  object m-magicfanoutnewsusewgenewatedeventsenabwe
+      e-extends fspawam[boowean](
+        n-nyame = "magicfanout_news_usew_genewated_events_enabwe", /(^•ω•^)
+        defauwt = fawse)
 
-  object MagicFanoutSkipAccountCountryPredicate
-      extends FSParam[Boolean]("magicfanout_news_skip_account_country_predicate", false)
+  o-object magicfanoutskipaccountcountwypwedicate
+      e-extends f-fspawam[boowean]("magicfanout_news_skip_account_countwy_pwedicate", OwO f-fawse)
 
-  object MagicFanoutNewsEnableDescriptionCopy
-      extends FSParam[Boolean](name = "magicfanout_news_enable_description_copy", default = false)
-
-  /**
-   *  Enables Custom Targeting for MagicFnaout News events in Pushservice
-   */
-  object MagicFanoutEnableCustomTargetingNewsEvent
-      extends FSParam[Boolean]("magicfanout_news_event_custom_targeting_enable", false)
+  object magicfanoutnewsenabwedescwiptioncopy
+      extends fspawam[boowean](name = "magicfanout_news_enabwe_descwiption_copy", σωσ d-defauwt = fawse)
 
   /**
-   * Enable Topic Copy in MF
+   *  enabwes custom tawgeting fow magicfnaout n-nyews events in pushsewvice
    */
-  object EnableTopicCopyForMF
-      extends FSParam[Boolean](
-        name = "magicfanout_enable_topic_copy",
-        default = false
-      )
+  object magicfanoutenabwecustomtawgetingnewsevent
+      e-extends fspawam[boowean]("magicfanout_news_event_custom_tawgeting_enabwe", XD fawse)
 
   /**
-   * Enable Topic Copy in MF for implicit topics
+   * e-enabwe topic copy in mf
    */
-  object EnableTopicCopyForImplicitTopics
-      extends FSParam[Boolean](
-        name = "magicfanout_enable_topic_copy_erg_interests",
-        default = false
+  o-object enabwetopiccopyfowmf
+      e-extends fspawam[boowean](
+        n-nyame = "magicfanout_enabwe_topic_copy", rawr x3
+        d-defauwt = fawse
       )
 
   /**
-   * Enable NewCreator push
+   * enabwe t-topic copy in mf fow impwicit topics
    */
-  object EnableNewCreatorPush
-      extends FSParam[Boolean](
-        name = "new_creator_enable_push",
-        default = false
+  object enabwetopiccopyfowimpwicittopics
+      extends f-fspawam[boowean](
+        n-nyame = "magicfanout_enabwe_topic_copy_ewg_intewests", (ˆ ﻌ ˆ)♡
+        d-defauwt = f-fawse
       )
 
   /**
-   * Enable CreatorSubscription push
+   * e-enabwe nyewcweatow push
    */
-  object EnableCreatorSubscriptionPush
-      extends FSParam[Boolean](
-        name = "creator_subscription_enable_push",
-        default = false
+  o-object enabwenewcweatowpush
+      e-extends fspawam[boowean](
+        nyame = "new_cweatow_enabwe_push", XD
+        defauwt = fawse
       )
 
   /**
-   * Featureswitch param to enable/disable push recommendations
+   * enabwe cweatowsubscwiption push
    */
-  object EnablePushRecommendationsParam
-      extends FSParam[Boolean](name = "push_recommendations_enabled", default = false)
-
-  object DisableMlInFilteringFeatureSwitchParam
-      extends FSParam[Boolean](
-        name = "frigate_push_modeling_disable_ml_in_filtering",
-        default = false
+  o-object enabwecweatowsubscwiptionpush
+      extends fspawam[boowean](
+        n-nyame = "cweatow_subscwiption_enabwe_push", (˘ω˘)
+        defauwt = f-fawse
       )
 
-  object EnableMinDurationModifier
-      extends FSParam[Boolean](
-        name = "min_duration_modifier_enable_hour_modifier",
-        default = false
+  /**
+   * featuweswitch pawam to enabwe/disabwe p-push wecommendations
+   */
+  object enabwepushwecommendationspawam
+      e-extends fspawam[boowean](name = "push_wecommendations_enabwed", mya defauwt = fawse)
+
+  o-object disabwemwinfiwtewingfeatuweswitchpawam
+      e-extends f-fspawam[boowean](
+        nyame = "fwigate_push_modewing_disabwe_mw_in_fiwtewing", ^^
+        defauwt = fawse
       )
 
-  object EnableMinDurationModifierV2
-      extends FSParam[Boolean](
-        name = "min_duration_modifier_enable_hour_modifier_v2",
-        default = false
+  object enabweminduwationmodifiew
+      extends fspawam[boowean](
+        nyame = "min_duwation_modifiew_enabwe_houw_modifiew", (U ᵕ U❁)
+        d-defauwt = fawse
       )
 
-  object MinDurationModifierStartHourList
-      extends FSParam[Seq[Int]](
-        name = "min_duration_modifier_start_time_list",
-        default = Seq(),
+  object enabweminduwationmodifiewv2
+      e-extends fspawam[boowean](
+        nyame = "min_duwation_modifiew_enabwe_houw_modifiew_v2",
+        d-defauwt = fawse
       )
 
-  object MinDurationModifierEndHourList
-      extends FSParam[Seq[Int]](
-        name = "min_duration_modifier_start_end_list",
-        default = Seq(),
+  object m-minduwationmodifiewstawthouwwist
+      extends f-fspawam[seq[int]](
+        n-nyame = "min_duwation_modifiew_stawt_time_wist", rawr x3
+        defauwt = seq(), (ˆ ﻌ ˆ)♡
       )
 
-  object MinDurationTimeModifierConst
-      extends FSParam[Seq[Int]](
-        name = "min_duration_modifier_const_list",
-        default = Seq(),
+  object minduwationmodifiewendhouwwist
+      e-extends fspawam[seq[int]](
+        nyame = "min_duwation_modifiew_stawt_end_wist", (U ﹏ U)
+        d-defauwt = seq(), mya
       )
 
-  object EnableQueryUserOpenedHistory
-      extends FSParam[Boolean](
-        name = "min_duration_modifier_enable_query_user_opened_history",
-        default = false
+  object minduwationtimemodifiewconst
+      e-extends fspawam[seq[int]](
+        nyame = "min_duwation_modifiew_const_wist", OwO
+        d-defauwt = seq(), (ꈍᴗꈍ)
       )
 
-  object EnableMinDurationModifierByUserHistory
-      extends FSParam[Boolean](
-        name = "min_duration_modifier_enable_hour_modifier_by_user_history",
-        default = false
+  o-object enabwequewyusewopenedhistowy
+      extends f-fspawam[boowean](
+        nyame = "min_duwation_modifiew_enabwe_quewy_usew_opened_histowy", XD
+        defauwt = fawse
       )
 
-  object EnableRandomHourForQuickSend
-      extends FSParam[Boolean](
-        name = "min_duration_modifier_enable_random_hour_for_quick_send",
-        default = false
+  object enabweminduwationmodifiewbyusewhistowy
+      e-extends f-fspawam[boowean](
+        n-name = "min_duwation_modifiew_enabwe_houw_modifiew_by_usew_histowy", 🥺
+        defauwt = fawse
       )
 
-  object SendTimeByUserHistoryMaxOpenedThreshold
-      extends FSBoundedParam[Int](
-        name = "min_duration_modifier_max_opened_threshold",
-        default = 4,
-        min = 0,
+  o-object enabwewandomhouwfowquicksend
+      extends f-fspawam[boowean](
+        nyame = "min_duwation_modifiew_enabwe_wandom_houw_fow_quick_send", 😳😳😳
+        d-defauwt = fawse
+      )
+
+  object sendtimebyusewhistowymaxopenedthweshowd
+      e-extends fsboundedpawam[int](
+        n-nyame = "min_duwation_modifiew_max_opened_thweshowd", >w<
+        d-defauwt = 4, nyaa~~
+        min = 0, :3
         max = 100)
 
-  object SendTimeByUserHistoryNoSendsHours
-      extends FSBoundedParam[Int](
-        name = "min_duration_modifier_no_sends_hours",
-        default = 1,
+  object sendtimebyusewhistowynosendshouws
+      extends fsboundedpawam[int](
+        n-nyame = "min_duwation_modifiew_no_sends_houws", UwU
+        defauwt = 1, (✿oωo)
+        min = 0, OwO
+        m-max = 24)
+
+  o-object sendtimebyusewhistowyquicksendbefowehouws
+      e-extends fsboundedpawam[int](
+        n-nyame = "min_duwation_modifiew_quick_send_befowe_houws", ʘwʘ
+        defauwt = 0, XD
         min = 0,
+        m-max = 24)
+
+  object sendtimebyusewhistowyquicksendaftewhouws
+      e-extends fsboundedpawam[int](
+        n-nyame = "min_duwation_modifiew_quick_send_aftew_houws", (ˆ ﻌ ˆ)♡
+        d-defauwt = 0, σωσ
+        min = 0, rawr x3
+        m-max = 24)
+
+  object s-sendtimebyusewhistowyquicksendminduwationinminute
+      e-extends f-fsboundedpawam[int](
+        nyame = "min_duwation_modifiew_quick_send_min_duwation",
+        d-defauwt = 0, rawr
+        min = 0, 🥺
+        m-max = 1440)
+
+  o-object sendtimebyusewhistowynosendminduwation
+      extends fsboundedpawam[int](
+        name = "min_duwation_modifiew_no_send_min_duwation", :3
+        defauwt = 24, :3
+        m-min = 0, >w<
         max = 24)
 
-  object SendTimeByUserHistoryQuickSendBeforeHours
-      extends FSBoundedParam[Int](
-        name = "min_duration_modifier_quick_send_before_hours",
-        default = 0,
-        min = 0,
-        max = 24)
-
-  object SendTimeByUserHistoryQuickSendAfterHours
-      extends FSBoundedParam[Int](
-        name = "min_duration_modifier_quick_send_after_hours",
-        default = 0,
-        min = 0,
-        max = 24)
-
-  object SendTimeByUserHistoryQuickSendMinDurationInMinute
-      extends FSBoundedParam[Int](
-        name = "min_duration_modifier_quick_send_min_duration",
-        default = 0,
-        min = 0,
-        max = 1440)
-
-  object SendTimeByUserHistoryNoSendMinDuration
-      extends FSBoundedParam[Int](
-        name = "min_duration_modifier_no_send_min_duration",
-        default = 24,
-        min = 0,
-        max = 24)
-
-  object EnableMfGeoTargeting
-      extends FSParam[Boolean](
-        name = "frigate_push_magicfanout_geo_targeting_enable",
-        default = false)
+  object enabwemfgeotawgeting
+      extends fspawam[boowean](
+        n-nyame = "fwigate_push_magicfanout_geo_tawgeting_enabwe", :3
+        d-defauwt = fawse)
 
   /**
-   * Enable RUX Tweet landing page for push open. When this param is enabled, user will go to RUX
-   * landing page instead of Tweet details page when opening MagicRecs push.
+   * enabwe wux tweet wanding page fow push open. 🥺 when this pawam is enabwed, ^^;; usew w-wiww go to wux
+   * w-wanding page i-instead of tweet d-detaiws page w-when opening magicwecs p-push. rawr
    */
-  object EnableRuxLandingPage
-      extends FSParam[Boolean](name = "frigate_push_enable_rux_landing_page", default = false)
+  object enabwewuxwandingpage
+      e-extends fspawam[boowean](name = "fwigate_push_enabwe_wux_wanding_page", ^^ d-defauwt = fawse)
 
   /**
-   * Enable RUX Tweet landing page for Ntab Click. When this param is enabled, user will go to RUX
-   * landing page instead of Tweet details page when click MagicRecs entry on Ntab.
+   * enabwe w-wux tweet wanding page fow n-nytab cwick. mya when t-this pawam is e-enabwed, mya usew wiww g-go to wux
+   * w-wanding page instead of tweet detaiws page when c-cwick magicwecs entwy on nytab.
    */
-  object EnableNTabRuxLandingPage
-      extends FSParam[Boolean](name = "frigate_push_enable_ntab_rux_landing_page", default = false)
+  object enabwentabwuxwandingpage
+      e-extends fspawam[boowean](name = "fwigate_push_enabwe_ntab_wux_wanding_page", (U ﹏ U) defauwt = fawse)
 
   /**
-   * Param to enable Onboarding Pushes
+   * p-pawam t-to enabwe onboawding pushes
    */
-  object EnableOnboardingPushes
-      extends FSParam[Boolean](
-        name = "onboarding_push_enable",
-        default = false
+  o-object enabweonboawdingpushes
+      extends f-fspawam[boowean](
+        n-nyame = "onboawding_push_enabwe", ( ͡o ω ͡o )
+        defauwt = fawse
       )
 
   /**
-   * Param to enable Address Book Pushes
+   * p-pawam to enabwe addwess b-book pushes
    */
-  object EnableAddressBookPush
-      extends FSParam[Boolean](
-        name = "onboarding_push_enable_address_book_push",
-        default = false
+  o-object enabweaddwessbookpush
+      extends fspawam[boowean](
+        n-nyame = "onboawding_push_enabwe_addwess_book_push", 🥺
+        defauwt = fawse
       )
 
   /**
-   * Param to enable Complete Onboarding Pushes
+   * pawam to enabwe compwete o-onboawding pushes
    */
-  object EnableCompleteOnboardingPush
-      extends FSParam[Boolean](
-        name = "onboarding_push_enable_complete_onboarding_push",
-        default = false
+  object e-enabwecompweteonboawdingpush
+      extends fspawam[boowean](
+        nyame = "onboawding_push_enabwe_compwete_onboawding_push", σωσ
+        d-defauwt = fawse
       )
 
   /**
-   * Param to enable Smart Push Config for MR Override Notifs on Android
+   * pawam t-to enabwe smawt push config f-fow mw ovewwide nyotifs on andwoid
    */
-  object EnableOverrideNotificationsSmartPushConfigForAndroid
-      extends FSParam[Boolean](
-        name = "mr_override_enable_smart_push_config_for_android",
-        default = false)
+  o-object enabweovewwidenotificationssmawtpushconfigfowandwoid
+      e-extends fspawam[boowean](
+        nyame = "mw_ovewwide_enabwe_smawt_push_config_fow_andwoid", (///ˬ///✿)
+        d-defauwt = fawse)
 
   /**
-   * Param to control the min duration since last MR push for Onboarding Pushes
+   * p-pawam to contwow t-the min duwation s-since wast mw p-push fow onboawding p-pushes
    */
-  object MrMinDurationSincePushForOnboardingPushes
-      extends FSBoundedParam[Duration](
-        name = "onboarding_push_min_duration_since_push_days",
-        default = 4.days,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  object mwminduwationsincepushfowonboawdingpushes
+      e-extends f-fsboundedpawam[duwation](
+        n-nyame = "onboawding_push_min_duwation_since_push_days", (⑅˘꒳˘)
+        defauwt = 4.days, OwO
+        min = d-duwation.bottom, ^^
+        max = duwation.top)
+      w-with hasduwationconvewsion {
+    o-ovewwide vaw duwationconvewsion = duwationconvewsion.fwomdays
   }
 
   /**
-   * Param to control the push fatigue for Onboarding Pushes
+   * p-pawam to c-contwow the push fatigue fow onboawding p-pushes
    */
-  object FatigueForOnboardingPushes
-      extends FSBoundedParam[Duration](
-        name = "onboarding_push_fatigue_days",
-        default = 30.days,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  o-object fatiguefowonboawdingpushes
+      extends f-fsboundedpawam[duwation](
+        n-nyame = "onboawding_push_fatigue_days", rawr
+        defauwt = 30.days,
+        min = duwation.bottom, XD
+        max = duwation.top)
+      with hasduwationconvewsion {
+    ovewwide v-vaw duwationconvewsion = duwationconvewsion.fwomdays
   }
 
   /**
-   * Param to specify the maximum number of Onboarding Push Notifs in a specified period of time
+   * p-pawam to specify the m-maximum nyumbew of onboawding push n-nyotifs in a s-specified pewiod of time
    */
-  object MaxOnboardingPushInInterval
-      extends FSBoundedParam[Int](
-        name = "onboarding_push_max_in_interval",
-        default = 1,
-        min = 0,
+  o-object maxonboawdingpushinintewvaw
+      e-extends fsboundedpawam[int](
+        nyame = "onboawding_push_max_in_intewvaw", ( ͡o ω ͡o )
+        d-defauwt = 1, 😳😳😳
+        min = 0, (ˆ ﻌ ˆ)♡
         max = 10
       )
 
   /**
-   * Param to disable the Onboarding Push Notif Fatigue
+   * p-pawam to disabwe the onboawding p-push nyotif f-fatigue
    */
-  object DisableOnboardingPushFatigue
-      extends FSParam[Boolean](
-        name = "onboarding_push_disable_push_fatigue",
-        default = false
+  o-object disabweonboawdingpushfatigue
+      extends f-fspawam[boowean](
+        nyame = "onboawding_push_disabwe_push_fatigue", mya
+        defauwt = fawse
       )
 
   /**
-   * Param to control the inverter for fatigue between consecutive TopTweetsByGeoPush
+   * p-pawam to contwow the invewtew fow fatigue between consecutive toptweetsbygeopush
    */
-  object TopTweetsByGeoPushInterval
-      extends FSBoundedParam[Duration](
-        name = "top_tweets_by_geo_interval_days",
-        default = 0.days,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  object toptweetsbygeopushintewvaw
+      extends fsboundedpawam[duwation](
+        n-nyame = "top_tweets_by_geo_intewvaw_days", ( ͡o ω ͡o )
+        d-defauwt = 0.days, ^^
+        min = duwation.bottom, OwO
+        m-max = duwation.top)
+      w-with hasduwationconvewsion {
+    ovewwide vaw duwationconvewsion = d-duwationconvewsion.fwomdays
   }
 
   /**
-   * Param to control the inverter for fatigue between consecutive TripTweets
+   * p-pawam to contwow the invewtew f-fow fatigue b-between consecutive t-twiptweets
    */
-  object HighQualityTweetsPushInterval
-      extends FSBoundedParam[Duration](
-        name = "high_quality_candidates_push_interval_days",
-        default = 1.days,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  o-object highquawitytweetspushintewvaw
+      extends fsboundedpawam[duwation](
+        n-nyame = "high_quawity_candidates_push_intewvaw_days", 😳
+        defauwt = 1.days, /(^•ω•^)
+        min = duwation.bottom, >w<
+        max = duwation.top)
+      w-with hasduwationconvewsion {
+    ovewwide vaw duwationconvewsion = duwationconvewsion.fwomdays
   }
 
   /**
-   * Expiry TTL duration for Tweet Notification types written to history store
+   * expiwy ttw duwation fow tweet nyotification types w-wwitten to histowy stowe
    */
-  object FrigateHistoryTweetNotificationWriteTtl
-      extends FSBoundedParam[Duration](
-        name = "frigate_notification_history_tweet_write_ttl_days",
-        default = 60.days,
-        min = Duration.Bottom,
-        max = Duration.Top
+  object fwigatehistowytweetnotificationwwitettw
+      extends f-fsboundedpawam[duwation](
+        n-nyame = "fwigate_notification_histowy_tweet_wwite_ttw_days", >w<
+        d-defauwt = 60.days, (✿oωo)
+        min = duwation.bottom, (///ˬ///✿)
+        max = duwation.top
       )
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+      w-with hasduwationconvewsion {
+    o-ovewwide vaw d-duwationconvewsion = duwationconvewsion.fwomdays
   }
 
   /**
-   * Expiry TTL duration for Notification written to history store
+   * expiwy ttw duwation f-fow nyotification wwitten to h-histowy stowe
    */
-  object FrigateHistoryOtherNotificationWriteTtl
-      extends FSBoundedParam[Duration](
-        name = "frigate_notification_history_other_write_ttl_days",
-        default = 90.days,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  object fwigatehistowyothewnotificationwwitettw
+      extends fsboundedpawam[duwation](
+        n-nyame = "fwigate_notification_histowy_othew_wwite_ttw_days",
+        defauwt = 90.days, (ꈍᴗꈍ)
+        m-min = duwation.bottom, /(^•ω•^)
+        max = duwation.top)
+      w-with hasduwationconvewsion {
+    o-ovewwide vaw duwationconvewsion = duwationconvewsion.fwomdays
   }
 
   /**
-   * Param to control maximum number of TopTweetsByGeoPush pushes to receive in an interval
+   * pawam t-to contwow maximum nyumbew of toptweetsbygeopush p-pushes to weceive in an intewvaw
    */
-  object MaxTopTweetsByGeoPushGivenInterval
-      extends FSBoundedParam[Int](
-        name = "top_tweets_by_geo_push_given_interval",
-        default = 1,
-        min = 0,
+  object maxtoptweetsbygeopushgivenintewvaw
+      extends fsboundedpawam[int](
+        n-nyame = "top_tweets_by_geo_push_given_intewvaw", (✿oωo)
+        defauwt = 1, nyaa~~
+        min = 0, (ꈍᴗꈍ)
+        m-max = 10
+      )
+
+  /**
+   * pawam to contwow m-maximum numbew o-of highquawitytweet pushes to weceive i-in an intewvaw
+   */
+  object m-maxhighquawitytweetspushgivenintewvaw
+      extends fsboundedpawam[int](
+        nyame = "high_quawity_candidates_max_push_given_intewvaw", o.O
+        d-defauwt = 3, ^^;;
+        m-min = 0, σωσ
         max = 10
       )
 
   /**
-   * Param to control maximum number of HighQualityTweet pushes to receive in an interval
+   * p-pawam t-to downwank/backfiww top tweets b-by geo candidates
    */
-  object MaxHighQualityTweetsPushGivenInterval
-      extends FSBoundedParam[Int](
-        name = "high_quality_candidates_max_push_given_interval",
-        default = 3,
-        min = 0,
-        max = 10
+  object backfiwwwanktoptweetsbygeocandidates
+      extends fspawam[boowean](
+        nyame = "top_tweets_by_geo_backfiww_wank", òωó
+        defauwt = fawse
       )
 
   /**
-   * Param to downrank/backfill top tweets by geo candidates
+   * d-detewmine whethew to use aggwessive thweshowds fow heawth f-fiwtewing on seawchtweet
    */
-  object BackfillRankTopTweetsByGeoCandidates
-      extends FSParam[Boolean](
-        name = "top_tweets_by_geo_backfill_rank",
-        default = false
+  o-object popgeotweetenabweaggwessivethweshowds
+      e-extends fspawam[boowean](
+        nyame = "top_tweets_by_geo_enabwe_aggwessive_heawth_thweshowds", (ꈍᴗꈍ)
+        defauwt = f-fawse
       )
 
   /**
-   * Determine whether to use aggressive thresholds for Health filtering on SearchTweet
+   * p-pawam to appwy diffewent scowing f-functions to sewect top tweets b-by geo candidates
    */
-  object PopGeoTweetEnableAggressiveThresholds
-      extends FSParam[Boolean](
-        name = "top_tweets_by_geo_enable_aggressive_health_thresholds",
-        default = false
+  o-object scowingfuncfowtoptweetsbygeo
+      extends fspawam[stwing](
+        nyame = "top_tweets_by_geo_scowing_function", ʘwʘ
+        d-defauwt = "pop8h", ^^;;
       )
 
   /**
-   * Param to apply different scoring functions to select top tweets by geo candidates
+   * p-pawam to quewy diffewent stowes in pop geo s-sewvice. mya
    */
-  object ScoringFuncForTopTweetsByGeo
-      extends FSParam[String](
-        name = "top_tweets_by_geo_scoring_function",
-        default = "Pop8H",
+  object toptweetsbygeocombinationpawam
+      e-extends f-fsenumpawam[toptweetsfowgeocombination.type](
+        n-nyame = "top_tweets_by_geo_combination_id", XD
+        defauwt = t-toptweetsfowgeocombination.defauwt, /(^•ω•^)
+        enum = toptweetsfowgeocombination
       )
 
   /**
-   * Param to query different stores in pop geo service.
+   * p-pawam fow popgeo tweet v-vewsion
    */
-  object TopTweetsByGeoCombinationParam
-      extends FSEnumParam[TopTweetsForGeoCombination.type](
-        name = "top_tweets_by_geo_combination_id",
-        default = TopTweetsForGeoCombination.Default,
-        enum = TopTweetsForGeoCombination
+  object popgeotweetvewsionpawam
+      extends fsenumpawam[popgeotweetvewsion.type](
+        nyame = "top_tweets_by_geo_vewsion_id", nyaa~~
+        d-defauwt = p-popgeotweetvewsion.pwod, (U ᵕ U❁)
+        e-enum = popgeotweetvewsion
       )
 
   /**
-   * Param for popgeo tweet version
+   * p-pawam to quewy n-nyani wength o-of hash fow geoh s-stowe
    */
-  object PopGeoTweetVersionParam
-      extends FSEnumParam[PopGeoTweetVersion.type](
-        name = "top_tweets_by_geo_version_id",
-        default = PopGeoTweetVersion.Prod,
-        enum = PopGeoTweetVersion
+  object geohashwengthwist
+      extends fspawam[seq[int]](
+        n-nyame = "top_tweets_by_geo_hash_wength_wist", òωó
+        defauwt = seq(4), σωσ
       )
 
   /**
-   * Param to query what length of hash for geoh store
+   * pawam t-to incwude countwy code wesuwts a-as back off . ^^;;
    */
-  object GeoHashLengthList
-      extends FSParam[Seq[Int]](
-        name = "top_tweets_by_geo_hash_length_list",
-        default = Seq(4),
+  object enabwecountwycodebackofftoptweetsbygeo
+      extends fspawam[boowean](
+        name = "top_tweets_by_geo_enabwe_countwy_code_backoff", (˘ω˘)
+        d-defauwt = fawse, òωó
       )
 
   /**
-   * Param to include country code results as back off .
+   * p-pawam to decide w-wanking function fow fetched top tweets by geo
    */
-  object EnableCountryCodeBackoffTopTweetsByGeo
-      extends FSParam[Boolean](
-        name = "top_tweets_by_geo_enable_country_code_backoff",
-        default = false,
+  object w-wankingfunctionfowtoptweetsbygeo
+      e-extends f-fsenumpawam[toptweetsfowgeowankingfunction.type](
+        n-nyame = "top_tweets_by_geo_wanking_function_id",
+        defauwt = toptweetsfowgeowankingfunction.scowe, UwU
+        enum = toptweetsfowgeowankingfunction
       )
 
   /**
-   * Param to decide ranking function for fetched top tweets by geo
+   * pawam to e-enabwe top tweets b-by geo candidates
    */
-  object RankingFunctionForTopTweetsByGeo
-      extends FSEnumParam[TopTweetsForGeoRankingFunction.type](
-        name = "top_tweets_by_geo_ranking_function_id",
-        default = TopTweetsForGeoRankingFunction.Score,
-        enum = TopTweetsForGeoRankingFunction
+  o-object enabwetoptweetsbygeocandidates
+      extends f-fspawam[boowean](
+        nyame = "top_tweets_by_geo_enabwe_candidate_souwce", 😳😳😳
+        defauwt = fawse
       )
 
   /**
-   * Param to enable top tweets by geo candidates
+   * pawam to e-enabwe top tweets b-by geo candidates f-fow dowmant u-usews
    */
-  object EnableTopTweetsByGeoCandidates
-      extends FSParam[Boolean](
-        name = "top_tweets_by_geo_enable_candidate_source",
-        default = false
+  o-object enabwetoptweetsbygeocandidatesfowdowmantusews
+      e-extends f-fspawam[boowean](
+        n-nyame = "top_tweets_by_geo_enabwe_candidate_souwce_dowmant_usews",
+        defauwt = fawse
       )
 
   /**
-   * Param to enable top tweets by geo candidates for dormant users
+   * pawam to specify the m-maximum nyumbew of top tweets by geo candidates t-to take
    */
-  object EnableTopTweetsByGeoCandidatesForDormantUsers
-      extends FSParam[Boolean](
-        name = "top_tweets_by_geo_enable_candidate_source_dormant_users",
-        default = false
+  object maxtoptweetsbygeocandidatestotake
+      e-extends fsboundedpawam[int](
+        nyame = "top_tweets_by_geo_candidates_to_take", (///ˬ///✿)
+        defauwt = 10, ^^;;
+        min = 0, XD
+        m-max = 100
       )
 
   /**
-   * Param to specify the maximum number of Top Tweets by Geo candidates to take
+   * pawam to min duwation s-since wast m-mw push fow top tweets by geo pushes
    */
-  object MaxTopTweetsByGeoCandidatesToTake
-      extends FSBoundedParam[Int](
-        name = "top_tweets_by_geo_candidates_to_take",
-        default = 10,
-        min = 0,
-        max = 100
-      )
-
-  /**
-   * Param to min duration since last MR push for top tweets by geo pushes
-   */
-  object MrMinDurationSincePushForTopTweetsByGeoPushes
-      extends FSBoundedParam[Duration](
-        name = "top_tweets_by_geo_min_duration_since_last_mr_days",
-        default = 3.days,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  object mwminduwationsincepushfowtoptweetsbygeopushes
+      extends f-fsboundedpawam[duwation](
+        nyame = "top_tweets_by_geo_min_duwation_since_wast_mw_days",
+        defauwt = 3.days, (ˆ ﻌ ˆ)♡
+        min = duwation.bottom, (˘ω˘)
+        max = duwation.top)
+      w-with hasduwationconvewsion {
+    o-ovewwide v-vaw duwationconvewsion = d-duwationconvewsion.fwomdays
   }
 
   /**
-   * Param to enable FRS candidate tweets
+   * p-pawam to enabwe fws candidate tweets
    */
-  object EnableFrsCandidates
-      extends FSParam[Boolean](
-        name = "frs_tweet_candidate_enable_adaptor",
-        default = false
+  o-object enabwefwscandidates
+      extends f-fspawam[boowean](
+        nyame = "fws_tweet_candidate_enabwe_adaptow", σωσ
+        defauwt = fawse
       )
 
   /**
-   * Param to enable FRSTweet candidates for topic setting users
+   * pawam to enabwe fwstweet candidates fow topic s-setting usews
    * */
-  object EnableFrsTweetCandidatesTopicSetting
-      extends FSParam[Boolean](
-        name = "frs_tweet_candidate_enable_adaptor_for_topic_setting",
-        default = false
+  object e-enabwefwstweetcandidatestopicsetting
+      e-extends f-fspawam[boowean](
+        nyame = "fws_tweet_candidate_enabwe_adaptow_fow_topic_setting", 😳😳😳
+        defauwt = fawse
       )
 
   /**
-   * Param to enable topic annotations for FRSTweet candidates tweets
+   * p-pawam t-to enabwe topic annotations fow f-fwstweet candidates t-tweets
    * */
-  object EnableFrsTweetCandidatesTopicAnnotation
-      extends FSParam[Boolean](
-        name = "frs_tweet_candidate_enable_topic_annotation",
-        default = false
+  object enabwefwstweetcandidatestopicannotation
+      e-extends fspawam[boowean](
+        n-nyame = "fws_tweet_candidate_enabwe_topic_annotation", ^•ﻌ•^
+        defauwt = fawse
       )
 
   /**
-   * Param to enable topic copy for FRSTweet candidates tweets
+   * p-pawam to enabwe topic copy fow f-fwstweet candidates tweets
    * */
-  object EnableFrsTweetCandidatesTopicCopy
-      extends FSParam[Boolean](
-        name = "frs_tweet_candidate_enable_topic_copy",
-        default = false
+  o-object enabwefwstweetcandidatestopiccopy
+      e-extends fspawam[boowean](
+        name = "fws_tweet_candidate_enabwe_topic_copy", σωσ
+        defauwt = fawse
       )
 
   /**
-   * Topic score threshold for FRSTweet candidates topic annotations
+   * topic scowe thweshowd fow fwstweet candidates t-topic annotations
    * */
-  object FrsTweetCandidatesTopicScoreThreshold
-      extends FSBoundedParam[Double](
-        name = "frs_tweet_candidate_topic_score_threshold",
-        default = 0.0,
-        min = 0.0,
+  o-object fwstweetcandidatestopicscowethweshowd
+      extends f-fsboundedpawam[doubwe](
+        n-nyame = "fws_tweet_candidate_topic_scowe_thweshowd", (///ˬ///✿)
+        d-defauwt = 0.0, XD
+        min = 0.0, >_<
         max = 100.0
       )
 
   /**
-   * Param to enable mr modeling-based candidates tweets
+   * pawam t-to enabwe mw modewing-based candidates tweets
    * */
-  object EnableMrModelingBasedCandidates
-      extends FSParam[Boolean](
-        name = "candidate_generation_model_enable_adaptor",
-        default = false
+  object enabwemwmodewingbasedcandidates
+      e-extends fspawam[boowean](
+        n-nyame = "candidate_genewation_modew_enabwe_adaptow", òωó
+        d-defauwt = f-fawse
       )
 
   /**
-   Param to enable mr modeling-based candidates tweets for topic setting users
+   pawam t-to enabwe mw modewing-based c-candidates t-tweets fow t-topic setting usews
    * */
-  object EnableMrModelingBasedCandidatesTopicSetting
-      extends FSParam[Boolean](
-        name = "candidate_generation_model_enable_adaptor_for_topic_setting",
-        default = false
+  object enabwemwmodewingbasedcandidatestopicsetting
+      e-extends f-fspawam[boowean](
+        n-nyame = "candidate_genewation_modew_enabwe_adaptow_fow_topic_setting", (U ᵕ U❁)
+        d-defauwt = f-fawse
       )
 
   /**
-   * Param to enable topic annotations for mr modeling-based candidates tweets
+   * pawam to enabwe topic annotations f-fow mw modewing-based candidates tweets
    * */
-  object EnableMrModelingBasedCandidatesTopicAnnotation
-      extends FSParam[Boolean](
-        name = "candidate_generation_model_enable_adaptor_topic_annotation",
-        default = false
+  object enabwemwmodewingbasedcandidatestopicannotation
+      extends fspawam[boowean](
+        n-nyame = "candidate_genewation_modew_enabwe_adaptow_topic_annotation", (˘ω˘)
+        defauwt = fawse
       )
 
   /**
-   * Topic score threshold for mr modeling based candidates topic annotations
+   * topic scowe thweshowd f-fow mw modewing b-based candidates t-topic annotations
    * */
-  object MrModelingBasedCandidatesTopicScoreThreshold
-      extends FSBoundedParam[Double](
-        name = "candidate_generation_model_topic_score_threshold",
-        default = 0.0,
-        min = 0.0,
+  object mwmodewingbasedcandidatestopicscowethweshowd
+      extends f-fsboundedpawam[doubwe](
+        nyame = "candidate_genewation_modew_topic_scowe_thweshowd", 🥺
+        d-defauwt = 0.0, (✿oωo)
+        m-min = 0.0, (˘ω˘)
         max = 100.0
       )
 
   /**
-   * Param to enable topic copy for mr modeling-based candidates tweets
+   * pawam to enabwe topic copy fow mw modewing-based candidates t-tweets
    * */
-  object EnableMrModelingBasedCandidatesTopicCopy
-      extends FSParam[Boolean](
-        name = "candidate_generation_model_enable_topic_copy",
-        default = false
+  object enabwemwmodewingbasedcandidatestopiccopy
+      e-extends fspawam[boowean](
+        n-nyame = "candidate_genewation_modew_enabwe_topic_copy", (ꈍᴗꈍ)
+        d-defauwt = fawse
       )
 
   /**
-   * Number of max mr modeling based candidates
+   * nyumbew o-of max mw m-modewing based candidates
    * */
-  object NumberOfMaxMrModelingBasedCandidates
-      extends FSBoundedParam[Int](
-        name = "candidate_generation_model_max_mr_modeling_based_candidates",
-        default = 200,
-        min = 0,
+  object nyumbewofmaxmwmodewingbasedcandidates
+      e-extends fsboundedpawam[int](
+        n-nyame = "candidate_genewation_modew_max_mw_modewing_based_candidates", ( ͡o ω ͡o )
+        defauwt = 200, (U ᵕ U❁)
+        min = 0, ʘwʘ
         max = 1000
       )
 
   /**
-   * Enable the traffic to use fav threshold
+   * enabwe the twaffic t-to use fav t-thweshowd
    * */
-  object EnableThresholdOfFavMrModelingBasedCandidates
-      extends FSParam[Boolean](
-        name = "candidate_generation_model_enable_fav_threshold",
-        default = false
+  o-object enabwethweshowdoffavmwmodewingbasedcandidates
+      extends fspawam[boowean](
+        n-nyame = "candidate_genewation_modew_enabwe_fav_thweshowd", (ˆ ﻌ ˆ)♡
+        d-defauwt = fawse
       )
 
   /**
-   * Threshold of fav for mr modeling based candidates
+   * thweshowd o-of fav fow mw modewing based candidates
    * */
-  object ThresholdOfFavMrModelingBasedCandidates
-      extends FSBoundedParam[Int](
-        name = "candidate_generation_model_fav_threshold",
-        default = 0,
-        min = 0,
+  object thweshowdoffavmwmodewingbasedcandidates
+      extends fsboundedpawam[int](
+        n-nyame = "candidate_genewation_modew_fav_thweshowd", /(^•ω•^)
+        d-defauwt = 0, (ˆ ﻌ ˆ)♡
+        min = 0, (✿oωo)
         max = 500
       )
 
   /**
-   * Filtered threshold for mr modeling based candidates
+   * fiwtewed t-thweshowd f-fow mw modewing based candidates
    * */
-  object CandidateGenerationModelCosineThreshold
-      extends FSBoundedParam[Double](
-        name = "candidate_generation_model_cosine_threshold",
-        default = 0.9,
-        min = 0.0,
+  object candidategenewationmodewcosinethweshowd
+      e-extends fsboundedpawam[doubwe](
+        nyame = "candidate_genewation_modew_cosine_thweshowd", ^•ﻌ•^
+        defauwt = 0.9, (ˆ ﻌ ˆ)♡
+        min = 0.0, XD
         max = 1.0
       )
 
   /*
-   * ANN hyparameters
+   * ann hypawametews
    * */
-  object ANNEfQuery
-      extends FSBoundedParam[Int](
-        name = "candidate_generation_model_ann_ef_query",
-        default = 300,
-        min = 50,
+  o-object annefquewy
+      extends fsboundedpawam[int](
+        n-nyame = "candidate_genewation_modew_ann_ef_quewy", :3
+        d-defauwt = 300, -.-
+        min = 50, ^^;;
         max = 1500
       )
 
   /**
-   * Param to do real A/B impression for FRS candidates to avoid dilution
+   * pawam t-to do weaw a/b impwession f-fow fws candidates to avoid diwution
    */
-  object EnableResultFromFrsCandidates
-      extends FSParam[Boolean](
-        name = "frs_tweet_candidate_enable_returned_result",
-        default = false
+  object enabwewesuwtfwomfwscandidates
+      e-extends fspawam[boowean](
+        nyame = "fws_tweet_candidate_enabwe_wetuwned_wesuwt", OwO
+        d-defauwt = fawse
       )
 
   /**
-   * Param to enable hashspace candidate tweets
+   * pawam to enabwe hashspace candidate tweets
    */
-  object EnableHashspaceCandidates
-      extends FSParam[Boolean](
-        name = "hashspace_candidate_enable_adaptor",
-        default = false
+  o-object enabwehashspacecandidates
+      e-extends fspawam[boowean](
+        n-nyame = "hashspace_candidate_enabwe_adaptow", ^^;;
+        defauwt = f-fawse
       )
 
   /**
-   * Param to enable hashspace candidates tweets for topic setting users
+   * pawam t-to enabwe hashspace c-candidates t-tweets fow topic setting usews
    * */
-  object EnableHashspaceCandidatesTopicSetting
-      extends FSParam[Boolean](
-        name = "hashspace_candidate_enable_adaptor_for_topic_setting",
-        default = false
+  o-object e-enabwehashspacecandidatestopicsetting
+      extends fspawam[boowean](
+        nyame = "hashspace_candidate_enabwe_adaptow_fow_topic_setting", 🥺
+        d-defauwt = f-fawse
       )
 
   /**
-   * Param to enable topic annotations for hashspace candidates tweets
+   * p-pawam to enabwe topic annotations fow h-hashspace candidates tweets
    * */
-  object EnableHashspaceCandidatesTopicAnnotation
-      extends FSParam[Boolean](
-        name = "hashspace_candidate_enable_topic_annotation",
-        default = false
+  o-object enabwehashspacecandidatestopicannotation
+      e-extends fspawam[boowean](
+        nyame = "hashspace_candidate_enabwe_topic_annotation", ^^
+        defauwt = fawse
       )
 
   /**
-   * Param to enable topic copy for hashspace candidates tweets
+   * p-pawam to enabwe t-topic copy fow h-hashspace candidates t-tweets
    * */
-  object EnableHashspaceCandidatesTopicCopy
-      extends FSParam[Boolean](
-        name = "hashspace_candidate_enable_topic_copy",
-        default = false
+  object enabwehashspacecandidatestopiccopy
+      e-extends fspawam[boowean](
+        nyame = "hashspace_candidate_enabwe_topic_copy", o.O
+        defauwt = fawse
       )
 
   /**
-   * Topic score threshold for hashspace candidates topic annotations
+   * topic scowe thweshowd fow hashspace candidates t-topic annotations
    * */
-  object HashspaceCandidatesTopicScoreThreshold
-      extends FSBoundedParam[Double](
-        name = "hashspace_candidate_topic_score_threshold",
-        default = 0.0,
-        min = 0.0,
-        max = 100.0
+  object hashspacecandidatestopicscowethweshowd
+      e-extends fsboundedpawam[doubwe](
+        nyame = "hashspace_candidate_topic_scowe_thweshowd",
+        d-defauwt = 0.0, ( ͡o ω ͡o )
+        min = 0.0, nyaa~~
+        m-max = 100.0
       )
 
   /**
-   * Param to do real A/B impression for hashspace candidates to avoid dilution
+   * pawam to do w-weaw a/b impwession f-fow hashspace c-candidates to a-avoid diwution
    */
-  object EnableResultFromHashspaceCandidates
-      extends FSParam[Boolean](
-        name = "hashspace_candidate_enable_returned_result",
-        default = false
+  o-object enabwewesuwtfwomhashspacecandidates
+      extends fspawam[boowean](
+        nyame = "hashspace_candidate_enabwe_wetuwned_wesuwt", (///ˬ///✿)
+        defauwt = fawse
       )
 
   /**
-   * Param to enable detopic tweet candidates in adaptor
+   * pawam t-to enabwe detopic t-tweet candidates i-in adaptow
    */
-  object EnableDeTopicTweetCandidates
-      extends FSParam[Boolean](
-        name = "detopic_tweet_candidate_enable_adaptor",
-        default = false
+  object enabwedetopictweetcandidates
+      e-extends fspawam[boowean](
+        nyame = "detopic_tweet_candidate_enabwe_adaptow", (ˆ ﻌ ˆ)♡
+        defauwt = fawse
       )
 
   /**
-   * Param to enable detopic tweet candidates results (to avoid dilution)
+   * p-pawam to enabwe d-detopic tweet candidates wesuwts (to a-avoid diwution)
    */
-  object EnableDeTopicTweetCandidateResults
-      extends FSParam[Boolean](
-        name = "detopic_tweet_candidate_enable_results",
-        default = false
+  object enabwedetopictweetcandidatewesuwts
+      extends fspawam[boowean](
+        n-nyame = "detopic_tweet_candidate_enabwe_wesuwts", XD
+        d-defauwt = fawse
       )
 
   /**
-   * Param to specify whether to provide a custom list of topics in request
+   * pawam t-to specify w-whethew to pwovide a custom wist of topics in wequest
    */
-  object EnableDeTopicTweetCandidatesCustomTopics
-      extends FSParam[Boolean](
-        name = "detopic_tweet_candidate_enable_custom_topics",
-        default = false
+  object enabwedetopictweetcandidatescustomtopics
+      e-extends fspawam[boowean](
+        n-nyame = "detopic_tweet_candidate_enabwe_custom_topics", >_<
+        d-defauwt = f-fawse
       )
 
   /**
-   * Param to specify whether to provide a custom language in request
+   * p-pawam to specify whethew t-to pwovide a c-custom wanguage in wequest
    */
-  object EnableDeTopicTweetCandidatesCustomLanguages
-      extends FSParam[Boolean](
-        name = "detopic_tweet_candidate_enable_custom_languages",
-        default = false
+  o-object enabwedetopictweetcandidatescustomwanguages
+      e-extends fspawam[boowean](
+        n-nyame = "detopic_tweet_candidate_enabwe_custom_wanguages", (U ﹏ U)
+        defauwt = fawse
       )
 
   /**
-   * Number of detopic tweet candidates in the request
+   * nyumbew of d-detopic tweet candidates in the w-wequest
    * */
-  object NumberOfDeTopicTweetCandidates
-      extends FSBoundedParam[Int](
-        name = "detopic_tweet_candidate_num_candidates_in_request",
-        default = 600,
-        min = 0,
+  o-object nyumbewofdetopictweetcandidates
+      extends fsboundedpawam[int](
+        n-nyame = "detopic_tweet_candidate_num_candidates_in_wequest", òωó
+        defauwt = 600, >w<
+        min = 0, ^•ﻌ•^
+        m-max = 3000
+      )
+
+  /**
+   * m-max nyumbew of detopic t-tweet candidates wetuwned in adaptow
+   * */
+  object nyumbewofmaxdetopictweetcandidateswetuwned
+      e-extends fsboundedpawam[int](
+        name = "detopic_tweet_candidate_max_num_candidates_wetuwned", 🥺
+        d-defauwt = 200,
+        m-min = 0, (✿oωo)
         max = 3000
       )
 
   /**
-   * Max Number of detopic tweet candidates returned in adaptor
-   * */
-  object NumberOfMaxDeTopicTweetCandidatesReturned
-      extends FSBoundedParam[Int](
-        name = "detopic_tweet_candidate_max_num_candidates_returned",
-        default = 200,
-        min = 0,
-        max = 3000
+   * p-pawam to enabwe f1 fwom pwotected a-authows
+   */
+  o-object enabwef1fwompwotectedtweetauthows
+      extends fspawam[boowean](
+        "f1_enabwe_pwotected_tweets", UwU
+        fawse
       )
 
   /**
-   * Param to enable F1 from protected Authors
+   * p-pawam to enabwe safe usew tweet tweetypie stowe
    */
-  object EnableF1FromProtectedTweetAuthors
-      extends FSParam[Boolean](
-        "f1_enable_protected_tweets",
-        false
+  o-object e-enabwesafeusewtweettweetypiestowe
+      extends f-fspawam[boowean](
+        "mw_infwa_enabwe_use_safe_usew_tweet_tweetypie", (˘ω˘)
+        fawse
       )
 
   /**
-   * Param to enable safe user tweet tweetypie store
+   * pawam t-to min duwation s-since wast m-mw push fow top tweets by geo pushes
    */
-  object EnableSafeUserTweetTweetypieStore
-      extends FSParam[Boolean](
-        "mr_infra_enable_use_safe_user_tweet_tweetypie",
-        false
+  object enabwemwminduwationsincemwpushfatigue
+      extends fspawam[boowean](
+        nyame = "top_tweets_by_geo_enabwe_min_duwation_since_mw_fatigue", ʘwʘ
+        defauwt = fawse
       )
 
   /**
-   * Param to min duration since last MR push for top tweets by geo pushes
+   * pawam to check time since wast time usew wogged in fow geo top tweets by geo push
    */
-  object EnableMrMinDurationSinceMrPushFatigue
-      extends FSParam[Boolean](
-        name = "top_tweets_by_geo_enable_min_duration_since_mr_fatigue",
-        default = false
-      )
-
-  /**
-   * Param to check time since last time user logged in for geo top tweets by geo push
-   */
-  object TimeSinceLastLoginForGeoPopTweetPush
-      extends FSBoundedParam[Duration](
-        name = "top_tweets_by_geo_time_since_last_login_in_days",
-        default = 14.days,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  o-object t-timesincewastwoginfowgeopoptweetpush
+      extends fsboundedpawam[duwation](
+        n-nyame = "top_tweets_by_geo_time_since_wast_wogin_in_days", (ˆ ﻌ ˆ)♡
+        d-defauwt = 14.days, ( ͡o ω ͡o )
+        m-min = duwation.bottom, :3
+        max = duwation.top)
+      w-with hasduwationconvewsion {
+    o-ovewwide v-vaw duwationconvewsion = duwationconvewsion.fwomdays
   }
 
   /**
-   * Param to check time since last time user logged in for geo top tweets by geo push
+   * p-pawam to check time s-since wast time u-usew wogged in fow geo top tweets by geo push
    */
-  object MinimumTimeSinceLastLoginForGeoPopTweetPush
-      extends FSBoundedParam[Duration](
-        name = "top_tweets_by_geo_minimum_time_since_last_login_in_days",
-        default = 14.days,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  o-object minimumtimesincewastwoginfowgeopoptweetpush
+      extends f-fsboundedpawam[duwation](
+        n-nyame = "top_tweets_by_geo_minimum_time_since_wast_wogin_in_days", 😳
+        d-defauwt = 14.days, (✿oωo)
+        min = d-duwation.bottom, /(^•ω•^)
+        m-max = d-duwation.top)
+      w-with hasduwationconvewsion {
+    o-ovewwide vaw duwationconvewsion = d-duwationconvewsion.fwomdays
   }
 
-  /** How long we wait after a user visited the app before sending them a space fanout rec */
-  object SpaceRecsAppFatigueDuration
-      extends FSBoundedParam[Duration](
-        name = "space_recs_app_fatigue_duration_hours",
-        default = 4.hours,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+  /** h-how wong we wait a-aftew a usew visited the app b-befowe sending them a space fanout wec */
+  object s-spacewecsappfatigueduwation
+      extends fsboundedpawam[duwation](
+        nyame = "space_wecs_app_fatigue_duwation_houws",
+        d-defauwt = 4.houws, :3
+        m-min = duwation.bottom, σωσ
+        m-max = duwation.top)
+      with h-hasduwationconvewsion {
+    ovewwide v-vaw duwationconvewsion = duwationconvewsion.fwomhouws
   }
 
-  /** The fatigue time-window for OON space fanout recs, e.g. 1 push every 3 days */
-  object OONSpaceRecsFatigueDuration
-      extends FSBoundedParam[Duration](
-        name = "space_recs_oon_fatigue_duration_days",
-        default = 1.days,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  /** the fatigue t-time-window fow oon space fanout w-wecs, σωσ e.g. 1 push evewy 3 days */
+  object oonspacewecsfatigueduwation
+      extends fsboundedpawam[duwation](
+        nyame = "space_wecs_oon_fatigue_duwation_days", 🥺
+        d-defauwt = 1.days, rawr
+        min = d-duwation.bottom, o.O
+        m-max = duwation.top)
+      with hasduwationconvewsion {
+    ovewwide v-vaw duwationconvewsion = duwationconvewsion.fwomdays
   }
 
-  /** The global fatigue time-window for space fanout recs, e.g. 1 push every 3 days */
-  object SpaceRecsGlobalFatigueDuration
-      extends FSBoundedParam[Duration](
-        name = "space_recs_global_fatigue_duration_days",
-        default = 1.day,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  /** t-the gwobaw fatigue t-time-window fow s-space fanout wecs, 😳😳😳 e.g. 1 push evewy 3 days */
+  o-object spacewecsgwobawfatigueduwation
+      e-extends fsboundedpawam[duwation](
+        nyame = "space_wecs_gwobaw_fatigue_duwation_days", /(^•ω•^)
+        d-defauwt = 1.day, σωσ
+        min = duwation.bottom, OwO
+        m-max = duwation.top)
+      w-with hasduwationconvewsion {
+    o-ovewwide v-vaw duwationconvewsion = duwationconvewsion.fwomdays
   }
 
-  /** The min-interval between space fanout recs.
-   * After receiving a space fanout rec, they must wait a minimum of this
-   * interval before eligibile for another */
-  object SpaceRecsFatigueMinIntervalDuration
-      extends FSBoundedParam[Duration](
-        name = "space_recs_fatigue_mininterval_duration_minutes",
-        default = 30.minutes,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromMinutes
+  /** t-the min-intewvaw b-between space f-fanout wecs. OwO
+   * a-aftew weceiving a space fanout w-wec, òωó they must w-wait a minimum of t-this
+   * intewvaw b-befowe ewigibiwe f-fow anothew */
+  o-object spacewecsfatigueminintewvawduwation
+      e-extends f-fsboundedpawam[duwation](
+        nyame = "space_wecs_fatigue_minintewvaw_duwation_minutes", :3
+        d-defauwt = 30.minutes, σωσ
+        min = duwation.bottom, σωσ
+        m-max = duwation.top)
+      with h-hasduwationconvewsion {
+    o-ovewwide v-vaw duwationconvewsion = duwationconvewsion.fwomminutes
   }
 
-  /** Space fanout user-follow rank threshold.
-   * Users targeted by a follow that is above this threshold will be filtered */
-  object SpaceRecsRealgraphThreshold
-      extends FSBoundedParam[Int](
-        name = "space_recs_realgraph_threshold",
-        default = 50,
-        max = 500,
+  /** space fanout usew-fowwow wank thweshowd. -.-
+   * u-usews tawgeted b-by a fowwow t-that is above this thweshowd wiww be fiwtewed */
+  object spacewecsweawgwaphthweshowd
+      e-extends f-fsboundedpawam[int](
+        nyame = "space_wecs_weawgwaph_thweshowd", (///ˬ///✿)
+        d-defauwt = 50, rawr x3
+        m-max = 500,
         min = 0
       )
 
-  object EnableHydratingRealGraphTargetUserFeatures
-      extends FSParam[Boolean](
-        name = "frigate_push_modeling_enable_hydrating_real_graph_target_user_feature",
-        default = true
+  object enabwehydwatingweawgwaphtawgetusewfeatuwes
+      extends f-fspawam[boowean](
+        n-name = "fwigate_push_modewing_enabwe_hydwating_weaw_gwaph_tawget_usew_featuwe", (U ﹏ U)
+        d-defauwt = twue
       )
 
-  /** Param to reduce dillution when checking if a space is featured or not */
-  object CheckFeaturedSpaceOON
-      extends FSParam[Boolean](name = "space_recs_check_if_its_featured_space", default = false)
+  /** p-pawam to weduce diwwution when checking if a space i-is featuwed o-ow nyot */
+  object checkfeatuwedspaceoon
+      extends fspawam[boowean](name = "space_wecs_check_if_its_featuwed_space", d-defauwt = fawse)
 
-  /** Enable Featured Spaces Rules for OON spaces */
-  object EnableFeaturedSpacesOON
-      extends FSParam[Boolean](name = "space_recs_enable_featured_spaces_oon", default = false)
+  /** enabwe featuwed s-spaces wuwes fow oon spaces */
+  o-object enabwefeatuwedspacesoon
+      e-extends fspawam[boowean](name = "space_wecs_enabwe_featuwed_spaces_oon", òωó d-defauwt = fawse)
 
-  /** Enable Geo Targeting */
-  object EnableGeoTargetingForSpaces
-      extends FSParam[Boolean](name = "space_recs_enable_geo_targeting", default = false)
+  /** e-enabwe geo tawgeting */
+  o-object enabwegeotawgetingfowspaces
+      extends f-fspawam[boowean](name = "space_wecs_enabwe_geo_tawgeting", OwO defauwt = f-fawse)
 
-  /** Number of max pushes within the fatigue duration for OON Space Recs */
-  object OONSpaceRecsPushLimit
-      extends FSBoundedParam[Int](
-        name = "space_recs_oon_push_limit",
-        default = 1,
-        max = 3,
-        min = 0
+  /** n-nyumbew of m-max pushes within the fatigue d-duwation fow oon s-space wecs */
+  o-object oonspacewecspushwimit
+      extends fsboundedpawam[int](
+        n-nyame = "space_wecs_oon_push_wimit", ^^
+        defauwt = 1, /(^•ω•^)
+        max = 3, >_<
+        m-min = 0
       )
 
-  /** Space fanout recs, number of max pushes within the fatigue duration */
-  object SpaceRecsGlobalPushLimit
-      extends FSBoundedParam[Int](
-        name = "space_recs_global_push_limit",
-        default = 3,
-        max = 50,
+  /** s-space fanout w-wecs, nyumbew of max pushes within the fatigue duwation */
+  object spacewecsgwobawpushwimit
+      e-extends fsboundedpawam[int](
+        nyame = "space_wecs_gwobaw_push_wimit", -.-
+        d-defauwt = 3, (˘ω˘)
+        m-max = 50, >_<
         min = 0
       )
 
   /**
-   * Param to enable score based override.
+   * pawam to enabwe scowe b-based ovewwide. (˘ω˘)
    */
-  object EnableOverrideNotificationsScoreBasedOverride
-      extends FSParam[Boolean](
-        name = "mr_override_enable_score_ranking",
-        default = false
+  object e-enabweovewwidenotificationsscowebasedovewwide
+      e-extends fspawam[boowean](
+        n-nyame = "mw_ovewwide_enabwe_scowe_wanking", >w<
+        d-defauwt = f-fawse
       )
 
   /**
-   * Param to determine the lookback duration when searching for override info.
+   * pawam to detewmine the wookback duwation when seawching f-fow ovewwide info. 😳😳😳
    */
-  object OverrideNotificationsLookbackDurationForOverrideInfo
-      extends FSBoundedParam[Duration](
-        name = "mr_override_lookback_duration_override_info_in_days",
-        default = 30.days,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  o-object ovewwidenotificationswookbackduwationfowovewwideinfo
+      extends fsboundedpawam[duwation](
+        nyame = "mw_ovewwide_wookback_duwation_ovewwide_info_in_days", 😳
+        defauwt = 30.days, XD
+        min = d-duwation.bottom, OwO
+        max = duwation.top)
+      with hasduwationconvewsion {
+    ovewwide v-vaw duwationconvewsion = d-duwationconvewsion.fwomdays
   }
 
   /**
-   * Param to determine the lookback duration when searching for impression ids.
+   * pawam to d-detewmine the wookback duwation when seawching fow i-impwession ids. -.-
    */
-  object OverrideNotificationsLookbackDurationForImpressionId
-      extends FSBoundedParam[Duration](
-        name = "mr_override_lookback_duration_impression_id_in_days",
-        default = 30.days,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  o-object ovewwidenotificationswookbackduwationfowimpwessionid
+      e-extends fsboundedpawam[duwation](
+        n-nyame = "mw_ovewwide_wookback_duwation_impwession_id_in_days", o.O
+        defauwt = 30.days, ^^
+        min = duwation.bottom,
+        max = duwation.top)
+      w-with hasduwationconvewsion {
+    ovewwide vaw duwationconvewsion = d-duwationconvewsion.fwomdays
   }
 
   /**
-   * Param to enable sending multiple target ids in the payload.
+   * p-pawam to enabwe s-sending muwtipwe tawget ids in the paywoad. ^^
    */
-  object EnableOverrideNotificationsMultipleTargetIds
-      extends FSParam[Boolean](
-        name = "mr_override_enable_multiple_target_ids",
-        default = false
+  o-object enabweovewwidenotificationsmuwtipwetawgetids
+      extends fspawam[boowean](
+        nyame = "mw_ovewwide_enabwe_muwtipwe_tawget_ids", XD
+        defauwt = fawse
       )
 
   /**
-   * Param for MR Web Notifications holdback
+   * pawam f-fow mw web n-nyotifications howdback
    */
-  object MRWebHoldbackParam
-      extends FSParam[Boolean](
-        name = "mr_web_notifications_holdback",
-        default = false
+  o-object mwwebhowdbackpawam
+      e-extends fspawam[boowean](
+        nyame = "mw_web_notifications_howdback", >w<
+        defauwt = fawse
       )
 
-  object CommonRecommendationTypeDenyListPushHoldbacks
-      extends FSParam[Seq[String]](
-        name = "crt_to_exclude_from_holdbacks_push_holdbacks",
-        default = Seq.empty[String]
-      )
-
-  /**
-   * Param to enable sending number of slots to maintain in the payload.
-   */
-  object EnableOverrideNotificationsNSlots
-      extends FSParam[Boolean](
-        name = "mr_override_enable_n_slots",
-        default = false
+  o-object c-commonwecommendationtypedenywistpushhowdbacks
+      extends fspawam[seq[stwing]](
+        nyame = "cwt_to_excwude_fwom_howdbacks_push_howdbacks", (⑅˘꒳˘)
+        defauwt = s-seq.empty[stwing]
       )
 
   /**
-   * Enable down ranking of NUPS and pop geo topic follow candidates for new user playbook.
+   * pawam to enabwe sending numbew of s-swots to maintain in the paywoad. 😳
    */
-  object EnableDownRankOfNewUserPlaybookTopicFollowPush
-      extends FSParam[Boolean](
-        name = "topic_follow_new_user_playbook_enable_down_rank",
-        default = false
+  object e-enabweovewwidenotificationsnswots
+      e-extends fspawam[boowean](
+        n-nyame = "mw_ovewwide_enabwe_n_swots", :3
+        d-defauwt = f-fawse
       )
 
   /**
-   * Enable down ranking of NUPS and pop geo topic tweet candidates for new user playbook.
+   * enabwe down wanking o-of nyups and pop geo topic fowwow candidates fow n-nyew usew pwaybook. :3
    */
-  object EnableDownRankOfNewUserPlaybookTopicTweetPush
-      extends FSParam[Boolean](
-        name = "topic_tweet_new_user_playbook_enable_down_rank",
-        default = false
+  object enabwedownwankofnewusewpwaybooktopicfowwowpush
+      extends fspawam[boowean](
+        n-nyame = "topic_fowwow_new_usew_pwaybook_enabwe_down_wank", OwO
+        d-defauwt = fawse
       )
 
   /**
-   * Param to enable/disable employee only spaces for fanout of notifications
+   * e-enabwe down w-wanking of nups a-and pop geo topic tweet candidates f-fow nyew usew pwaybook. (U ﹏ U)
    */
-  object EnableEmployeeOnlySpaceNotifications
-      extends FSParam[Boolean](name = "space_recs_employee_only_enable", default = false)
-
-  /**
-   * NTab spaces ttl experiments
-   */
-  object EnableSpacesTtlForNtab
-      extends FSParam[Boolean](
-        name = "ntab_spaces_ttl_enable",
-        default = false
+  object enabwedownwankofnewusewpwaybooktopictweetpush
+      e-extends fspawam[boowean](
+        n-nyame = "topic_tweet_new_usew_pwaybook_enabwe_down_wank", (⑅˘꒳˘)
+        defauwt = fawse
       )
 
   /**
-   * Param to determine the ttl duration for space notifications on NTab.
+   * pawam to enabwe/disabwe e-empwoyee o-onwy spaces fow fanout of n-nyotifications
    */
-  object SpaceNotificationsTTLDurationForNTab
-      extends FSBoundedParam[Duration](
-        name = "ntab_spaces_ttl_hours",
-        default = 1.hour,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+  object enabweempwoyeeonwyspacenotifications
+      e-extends f-fspawam[boowean](name = "space_wecs_empwoyee_onwy_enabwe", 😳 defauwt = f-fawse)
+
+  /**
+   * n-nytab spaces ttw expewiments
+   */
+  object e-enabwespacesttwfowntab
+      extends fspawam[boowean](
+        nyame = "ntab_spaces_ttw_enabwe", (ˆ ﻌ ˆ)♡
+        defauwt = fawse
+      )
+
+  /**
+   * p-pawam to detewmine the ttw duwation f-fow space nyotifications on nytab. mya
+   */
+  o-object spacenotificationsttwduwationfowntab
+      e-extends fsboundedpawam[duwation](
+        n-nyame = "ntab_spaces_ttw_houws", ʘwʘ
+        defauwt = 1.houw, (˘ω˘)
+        m-min = duwation.bottom, (///ˬ///✿)
+        m-max = duwation.top)
+      with hasduwationconvewsion {
+    o-ovewwide vaw duwationconvewsion = d-duwationconvewsion.fwomhouws
   }
 
   /*
-   * NTab override experiments
-   * see go/ntab-override experiment brief for more details
+   * nytab ovewwide e-expewiments
+   * s-see go/ntab-ovewwide expewiment bwief fow mowe detaiws
    */
 
   /**
-   * Override notifications for Spaces on lockscreen.
+   * ovewwide nyotifications f-fow spaces o-on wockscween. XD
    */
-  object EnableOverrideForSpaces
-      extends FSParam[Boolean](
-        name = "mr_override_spaces",
-        default = false
+  object enabweovewwidefowspaces
+      extends fspawam[boowean](
+        n-nyame = "mw_ovewwide_spaces", 😳
+        defauwt = f-fawse
       )
 
   /**
-   * Param to enable storing the Generic Notification Key.
+   * p-pawam to enabwe stowing the genewic nyotification key. :3
    */
-  object EnableStoringNtabGenericNotifKey
-      extends FSParam[Boolean](
-        name = "ntab_enable_storing_generic_notif_key",
-        default = false
+  object e-enabwestowingntabgenewicnotifkey
+      extends fspawam[boowean](
+        n-nyame = "ntab_enabwe_stowing_genewic_notif_key", 😳😳😳
+        defauwt = fawse
       )
 
   /**
-   * Param to enable deleting the Target's timeline.
+   * p-pawam to e-enabwe deweting the tawget's timewine. (U ᵕ U❁)
    */
-  object EnableDeletingNtabTimeline
-      extends FSParam[Boolean](
-        name = "ntab_enable_delete_timeline",
-        default = false
+  o-object enabwedewetingntabtimewine
+      e-extends f-fspawam[boowean](
+        n-nyame = "ntab_enabwe_dewete_timewine", ^•ﻌ•^
+        d-defauwt = f-fawse
       )
 
   /**
-   * Param to enable sending the overrideId
-   * to NTab which enables override support in NTab-api
+   * pawam to enabwe sending the ovewwideid
+   * to nytab which enabwes o-ovewwide suppowt i-in nytab-api
    */
-  object EnableOverrideIdNTabRequest
-      extends FSParam[Boolean](
-        name = "ntab_enable_override_id_in_request",
-        default = false
+  o-object enabweovewwideidntabwequest
+      e-extends fspawam[boowean](
+        n-nyame = "ntab_enabwe_ovewwide_id_in_wequest", (˘ω˘)
+        d-defauwt = fawse
       )
 
   /**
-   * [Override Workstream] Param to enable NTab override n-slot feature.
+   * [ovewwide wowkstweam] pawam to enabwe nytab ovewwide n-ny-swot featuwe. /(^•ω•^)
    */
-  object EnableNslotsForOverrideOnNtab
-      extends FSParam[Boolean](
-        name = "ntab_enable_override_max_count",
-        default = false
+  o-object enabwenswotsfowovewwideonntab
+      extends fspawam[boowean](
+        nyame = "ntab_enabwe_ovewwide_max_count", ^•ﻌ•^
+        d-defauwt = f-fawse
       )
 
   /**
-   * Param to determine the lookback duration for override candidates on NTab.
+   * p-pawam to detewmine the wookback duwation f-fow ovewwide candidates on nytab. ^^
    */
-  object OverrideNotificationsLookbackDurationForNTab
-      extends FSBoundedParam[Duration](
-        name = "ntab_override_lookback_duration_days",
-        default = 30.days,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  o-object ovewwidenotificationswookbackduwationfowntab
+      e-extends fsboundedpawam[duwation](
+        nyame = "ntab_ovewwide_wookback_duwation_days", (U ﹏ U)
+        d-defauwt = 30.days, :3
+        min = duwation.bottom, òωó
+        m-max = duwation.top)
+      w-with hasduwationconvewsion {
+    ovewwide vaw duwationconvewsion = d-duwationconvewsion.fwomdays
   }
 
   /**
-   * Param to determine the max count for candidates on NTab.
+   * pawam t-to detewmine t-the max count f-fow candidates on n-nytab. σωσ
    */
-  object OverrideNotificationsMaxCountForNTab
-      extends FSBoundedParam[Int](
-        name = "ntab_override_limit",
-        min = 0,
-        max = Int.MaxValue,
-        default = 4)
+  o-object ovewwidenotificationsmaxcountfowntab
+      extends fsboundedpawam[int](
+        n-nyame = "ntab_ovewwide_wimit", σωσ
+        min = 0, (⑅˘꒳˘)
+        m-max = int.maxvawue, 🥺
+        defauwt = 4)
 
-  //// end override experiments ////
+  //// e-end ovewwide expewiments ////
   /**
-   * Param to enable top tweet impressions notification
+   * pawam to enabwe top tweet i-impwessions nyotification
    */
-  object EnableTopTweetImpressionsNotification
-      extends FSParam[Boolean](
-        name = "top_tweet_impressions_notification_enable",
-        default = false
+  o-object enabwetoptweetimpwessionsnotification
+      extends f-fspawam[boowean](
+        n-nyame = "top_tweet_impwessions_notification_enabwe", (U ﹏ U)
+        defauwt = fawse
       )
 
   /**
-   * Param to control the inverter for fatigue between consecutive TweetImpressions
+   * p-pawam to contwow the invewtew fow fatigue b-between consecutive t-tweetimpwessions
    */
-  object TopTweetImpressionsNotificationInterval
-      extends FSBoundedParam[Duration](
-        name = "top_tweet_impressions_notification_interval_days",
-        default = 7.days,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  object toptweetimpwessionsnotificationintewvaw
+      extends f-fsboundedpawam[duwation](
+        n-nyame = "top_tweet_impwessions_notification_intewvaw_days",
+        defauwt = 7.days, >w<
+        m-min = duwation.bottom, nyaa~~
+        max = duwation.top)
+      with hasduwationconvewsion {
+    o-ovewwide v-vaw duwationconvewsion = duwationconvewsion.fwomdays
   }
 
   /**
-   * The min-interval between TweetImpressions notifications.
-   * After receiving a TweetImpressions notif, they must wait a minimum of this
-   * interval before being eligible for another
+   * t-the min-intewvaw b-between tweetimpwessions nyotifications. -.-
+   * a-aftew weceiving a-a tweetimpwessions n-nyotif, XD t-they must wait a minimum of this
+   * intewvaw befowe being ewigibwe fow anothew
    */
-  object TopTweetImpressionsFatigueMinIntervalDuration
-      extends FSBoundedParam[Duration](
-        name = "top_tweet_impressions_fatigue_mininterval_duration_days",
-        default = 1.days,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  object toptweetimpwessionsfatigueminintewvawduwation
+      e-extends fsboundedpawam[duwation](
+        n-nyame = "top_tweet_impwessions_fatigue_minintewvaw_duwation_days", -.-
+        d-defauwt = 1.days, >w<
+        m-min = duwation.bottom, (ꈍᴗꈍ)
+        m-max = duwation.top)
+      w-with hasduwationconvewsion {
+    ovewwide v-vaw duwationconvewsion = d-duwationconvewsion.fwomdays
   }
 
   /**
-   * Maximum number of top tweet impressions notifications to receive in an interval
+   * maximum n-nyumbew of t-top tweet impwessions nyotifications to weceive i-in an intewvaw
    */
-  object MaxTopTweetImpressionsNotifications
-      extends FSBoundedParam(
-        name = "top_tweet_impressions_fatigue_max_in_interval",
-        default = 0,
-        min = 0,
+  object maxtoptweetimpwessionsnotifications
+      extends f-fsboundedpawam(
+        nyame = "top_tweet_impwessions_fatigue_max_in_intewvaw", :3
+        d-defauwt = 0, (ˆ ﻌ ˆ)♡
+        m-min = 0, -.-
         max = 10
       )
 
   /**
-   * Param for min number of impressions counts to be eligible for lonely_birds_tweet_impressions model
+   * pawam f-fow min nyumbew o-of impwessions c-counts to be ewigibwe fow wonewy_biwds_tweet_impwessions m-modew
    */
-  object TopTweetImpressionsMinRequired
-      extends FSBoundedParam[Int](
-        name = "top_tweet_impressions_min_required",
-        default = 25,
-        min = 0,
-        max = Int.MaxValue
+  o-object toptweetimpwessionsminwequiwed
+      extends fsboundedpawam[int](
+        n-nyame = "top_tweet_impwessions_min_wequiwed", mya
+        defauwt = 25, (˘ω˘)
+        min = 0, ^•ﻌ•^
+        m-max = int.maxvawue
       )
 
   /**
-   * Param for threshold of impressions counts to notify for lonely_birds_tweet_impressions model
+   * p-pawam f-fow thweshowd of impwessions c-counts to nyotify fow wonewy_biwds_tweet_impwessions modew
    */
-  object TopTweetImpressionsThreshold
-      extends FSBoundedParam[Int](
-        name = "top_tweet_impressions_threshold",
-        default = 25,
-        min = 0,
-        max = Int.MaxValue
+  o-object toptweetimpwessionsthweshowd
+      extends fsboundedpawam[int](
+        nyame = "top_tweet_impwessions_thweshowd", 😳😳😳
+        defauwt = 25, σωσ
+        min = 0, ( ͡o ω ͡o )
+        max = i-int.maxvawue
       )
 
   /**
-   * Param for the number of days to search up to for a user's original tweets
+   * pawam fow the nyumbew of days to seawch up to fow a usew's owiginaw tweets
    */
-  object TopTweetImpressionsOriginalTweetsNumDaysSearch
-      extends FSBoundedParam[Int](
-        name = "top_tweet_impressions_original_tweets_num_days_search",
-        default = 3,
-        min = 0,
+  object toptweetimpwessionsowiginawtweetsnumdaysseawch
+      e-extends fsboundedpawam[int](
+        nyame = "top_tweet_impwessions_owiginaw_tweets_num_days_seawch", nyaa~~
+        defauwt = 3, :3
+        m-min = 0, (✿oωo)
         max = 21
       )
 
   /**
-   * Param for the minimum number of original tweets a user needs to be considered an original author
+   * p-pawam fow the minimum nyumbew of owiginaw tweets a-a usew nyeeds to be considewed a-an owiginaw authow
    */
-  object TopTweetImpressionsMinNumOriginalTweets
-      extends FSBoundedParam[Int](
-        name = "top_tweet_impressions_num_original_tweets",
-        default = 3,
-        min = 0,
-        max = Int.MaxValue
+  object t-toptweetimpwessionsminnumowiginawtweets
+      e-extends fsboundedpawam[int](
+        nyame = "top_tweet_impwessions_num_owiginaw_tweets", >_<
+        defauwt = 3, ^^
+        m-min = 0, (///ˬ///✿)
+        max = int.maxvawue
       )
 
   /**
-   * Param for the max number of favorites any original Tweet can have
+   * pawam fow the m-max nyumbew of favowites any owiginaw t-tweet can have
    */
-  object TopTweetImpressionsMaxFavoritesPerTweet
-      extends FSBoundedParam[Int](
-        name = "top_tweet_impressions_max_favorites_per_tweet",
-        default = 3,
-        min = 0,
-        max = Int.MaxValue
+  object t-toptweetimpwessionsmaxfavowitespewtweet
+      extends fsboundedpawam[int](
+        n-nyame = "top_tweet_impwessions_max_favowites_pew_tweet",
+        d-defauwt = 3, :3
+        min = 0, :3
+        max = i-int.maxvawue
       )
 
   /**
-   * Param for the max number of total inbound favorites for a user's tweets
+   * pawam fow the max numbew of t-totaw inbound favowites fow a usew's tweets
    */
-  object TopTweetImpressionsTotalInboundFavoritesLimit
-      extends FSBoundedParam[Int](
-        name = "top_tweet_impressions_total_inbound_favorites_limit",
-        default = 60,
-        min = 0,
-        max = Int.MaxValue
+  object toptweetimpwessionstotawinboundfavowiteswimit
+      extends fsboundedpawam[int](
+        n-nyame = "top_tweet_impwessions_totaw_inbound_favowites_wimit", (ˆ ﻌ ˆ)♡
+        d-defauwt = 60, 🥺
+        min = 0, 😳
+        m-max = int.maxvawue
       )
 
   /**
-   * Param for the number of days to search for tweets to count the total inbound favorites
+   * p-pawam fow the numbew of d-days to seawch fow tweets to count the totaw inbound favowites
    */
-  object TopTweetImpressionsTotalFavoritesLimitNumDaysSearch
-      extends FSBoundedParam[Int](
-        name = "top_tweet_impressions_total_favorites_limit_num_days_search",
-        default = 7,
-        min = 0,
+  object t-toptweetimpwessionstotawfavowiteswimitnumdaysseawch
+      e-extends fsboundedpawam[int](
+        nyame = "top_tweet_impwessions_totaw_favowites_wimit_num_days_seawch", (ꈍᴗꈍ)
+        d-defauwt = 7, mya
+        m-min = 0, rawr
         max = 21
       )
 
   /**
-   * Param for the max number of recent tweets Tflock should return
+   * p-pawam fow the max nyumbew of wecent tweets tfwock s-shouwd wetuwn
    */
-  object TopTweetImpressionsRecentTweetsByAuthorStoreMaxResults
-      extends FSBoundedParam[Int](
-        name = "top_tweet_impressions_recent_tweets_by_author_store_max_results",
-        default = 50,
-        min = 0,
+  object toptweetimpwessionswecenttweetsbyauthowstowemaxwesuwts
+      e-extends f-fsboundedpawam[int](
+        nyame = "top_tweet_impwessions_wecent_tweets_by_authow_stowe_max_wesuwts", ʘwʘ
+        defauwt = 50, -.-
+        m-min = 0, UwU
         max = 1000
       )
 
   /*
-   * Param to represent the max number of slots to maintain for Override Notifications
+   * pawam to wepwesent the max nyumbew of swots to maintain fow ovewwide nyotifications
    */
-  object OverrideNotificationsMaxNumOfSlots
-      extends FSBoundedParam[Int](
-        name = "mr_override_max_num_slots",
-        default = 1,
-        max = 10,
+  object ovewwidenotificationsmaxnumofswots
+      e-extends fsboundedpawam[int](
+        n-nyame = "mw_ovewwide_max_num_swots", :3
+        defauwt = 1, 😳
+        m-max = 10, (ꈍᴗꈍ)
         min = 1
       )
 
-  object EnableOverrideMaxSlotFn
-      extends FSParam[Boolean](
-        name = "mr_override_enable_max_num_slots_fn",
-        default = false
+  o-object enabweovewwidemaxswotfn
+      extends fspawam[boowean](
+        n-nyame = "mw_ovewwide_enabwe_max_num_swots_fn", mya
+        defauwt = fawse
       )
 
-  object OverrideMaxSlotFnPushCapKnobs
-      extends FSParam[Seq[Double]]("mr_override_fn_pushcap_knobs", default = Seq.empty[Double])
+  object ovewwidemaxswotfnpushcapknobs
+      extends fspawam[seq[doubwe]]("mw_ovewwide_fn_pushcap_knobs", nyaa~~ defauwt = seq.empty[doubwe])
 
-  object OverrideMaxSlotFnNSlotKnobs
-      extends FSParam[Seq[Double]]("mr_override_fn_nslot_knobs", default = Seq.empty[Double])
+  o-object ovewwidemaxswotfnnswotknobs
+      extends fspawam[seq[doubwe]]("mw_ovewwide_fn_nswot_knobs", o.O defauwt = seq.empty[doubwe])
 
-  object OverrideMaxSlotFnPowerKnobs
-      extends FSParam[Seq[Double]]("mr_override_fn_power_knobs", default = Seq.empty[Double])
+  o-object ovewwidemaxswotfnpowewknobs
+      e-extends fspawam[seq[doubwe]]("mw_ovewwide_fn_powew_knobs", òωó d-defauwt = seq.empty[doubwe])
 
-  object OverrideMaxSlotFnWeight
-      extends FSBoundedParam[Double](
-        "mr_override_fn_weight",
-        default = 1.0,
-        min = 0.0,
-        max = Double.MaxValue)
-
-  /**
-   * Use to enable sending target ids in the Smart Push Payload
-   */
-  object EnableTargetIdsInSmartPushPayload
-      extends FSParam[Boolean](name = "mr_override_enable_target_ids", default = true)
+  object ovewwidemaxswotfnweight
+      e-extends fsboundedpawam[doubwe](
+        "mw_ovewwide_fn_weight", ^•ﻌ•^
+        d-defauwt = 1.0,
+        m-min = 0.0, (˘ω˘)
+        max = doubwe.maxvawue)
 
   /**
-   * Param to enable override by target id for MagicFanoutSportsEvent candidates
+   * u-use to enabwe sending tawget i-ids in the smawt push paywoad
    */
-  object EnableTargetIdInSmartPushPayloadForMagicFanoutSportsEvent
-      extends FSParam[Boolean](
-        name = "mr_override_enable_target_id_for_magic_fanout_sports_event",
-        default = true)
+  o-object enabwetawgetidsinsmawtpushpaywoad
+      e-extends fspawam[boowean](name = "mw_ovewwide_enabwe_tawget_ids", òωó defauwt = t-twue)
 
   /**
-   * Param to enable secondary account predicate on MF NFY
+   * pawam to enabwe o-ovewwide by t-tawget id fow magicfanoutspowtsevent candidates
    */
-  object EnableSecondaryAccountPredicateMF
-      extends FSParam[Boolean](
-        name = "frigate_push_magicfanout_secondary_account_predicate",
-        default = false
+  o-object e-enabwetawgetidinsmawtpushpaywoadfowmagicfanoutspowtsevent
+      extends fspawam[boowean](
+        n-nyame = "mw_ovewwide_enabwe_tawget_id_fow_magic_fanout_spowts_event", mya
+        defauwt = twue)
+
+  /**
+   * p-pawam to enabwe secondawy a-account pwedicate o-on mf nyfy
+   */
+  object enabwesecondawyaccountpwedicatemf
+      e-extends fspawam[boowean](
+        nyame = "fwigate_push_magicfanout_secondawy_account_pwedicate", ^^
+        defauwt = fawse
       )
 
   /**
-   * Enables showing our customers videos on their notifications
+   * enabwes showing ouw customews videos on theiw nyotifications
    */
-  object EnableInlineVideo
-      extends FSParam[Boolean](name = "mr_inline_enable_inline_video", default = false)
+  o-object enabweinwinevideo
+      extends f-fspawam[boowean](name = "mw_inwine_enabwe_inwine_video", rawr defauwt = f-fawse)
 
   /**
-   * Enables autoplay for inline videos
+   * enabwes autopway fow inwine v-videos
    */
-  object EnableAutoplayForInlineVideo
-      extends FSParam[Boolean](name = "mr_inline_enable_autoplay_for_inline_video", default = false)
+  object enabweautopwayfowinwinevideo
+      extends fspawam[boowean](name = "mw_inwine_enabwe_autopway_fow_inwine_video", >_< d-defauwt = fawse)
 
   /**
-   * Enable OON filtering based on MentionFilter.
+   * enabwe o-oon fiwtewing based on mentionfiwtew. (U ᵕ U❁)
    */
-  object EnableOONFilteringBasedOnUserSettings
-      extends FSParam[Boolean](name = "oon_filtering_enable_based_on_user_settings", false)
+  object enabweoonfiwtewingbasedonusewsettings
+      e-extends fspawam[boowean](name = "oon_fiwtewing_enabwe_based_on_usew_settings", /(^•ω•^) fawse)
 
   /**
-   * Enables Custom Thread Ids which is used to ungroup notifications for N-slots on iOS
+   * enabwes custom t-thwead ids which i-is used to ungwoup nyotifications fow ny-swots o-on ios
    */
-  object EnableCustomThreadIdForOverride
-      extends FSParam[Boolean](name = "mr_override_enable_custom_thread_id", default = false)
+  o-object enabwecustomthweadidfowovewwide
+      extends fspawam[boowean](name = "mw_ovewwide_enabwe_custom_thwead_id", mya d-defauwt = f-fawse)
 
   /**
-   * Enables showing verified symbol in the push presentation
+   * enabwes showing vewified symbow i-in the push pwesentation
    */
-  object EnablePushPresentationVerifiedSymbol
-      extends FSParam[Boolean](name = "push_presentation_enable_verified_symbol", default = false)
+  object enabwepushpwesentationvewifiedsymbow
+      extends fspawam[boowean](name = "push_pwesentation_enabwe_vewified_symbow", OwO defauwt = fawse)
 
   /**
-   * Decide subtext in Android push header
+   * decide s-subtext in andwoid push headew
    */
-  object SubtextInAndroidPushHeaderParam
-      extends FSEnumParam[SubtextForAndroidPushHeader.type](
-        name = "push_presentation_subtext_in_android_push_header_id",
-        default = SubtextForAndroidPushHeader.None,
-        enum = SubtextForAndroidPushHeader)
+  object subtextinandwoidpushheadewpawam
+      e-extends f-fsenumpawam[subtextfowandwoidpushheadew.type](
+        n-nyame = "push_pwesentation_subtext_in_andwoid_push_headew_id", UwU
+        defauwt = subtextfowandwoidpushheadew.none, 🥺
+        enum = subtextfowandwoidpushheadew)
 
   /**
-   * Enable SimClusters Targeting For Spaces. If false we just drop all candidates with such targeting reason
+   * enabwe simcwustews t-tawgeting fow spaces. (✿oωo) if f-fawse we just dwop aww candidates w-with such tawgeting w-weason
    */
-  object EnableSimClusterTargetingSpaces
-      extends FSParam[Boolean](name = "space_recs_send_simcluster_recommendations", default = false)
+  object enabwesimcwustewtawgetingspaces
+      extends fspawam[boowean](name = "space_wecs_send_simcwustew_wecommendations", rawr defauwt = fawse)
 
   /**
-   * Param to control threshold for dot product of simcluster based targeting on Spaces
+   * pawam to contwow thweshowd f-fow dot p-pwoduct of simcwustew based tawgeting on spaces
    */
-  object SpacesTargetingSimClusterDotProductThreshold
-      extends FSBoundedParam[Double](
-        "space_recs_simclusters_dot_product_threshold",
-        default = 0.0,
-        min = 0.0,
-        max = 10.0)
+  o-object spacestawgetingsimcwustewdotpwoductthweshowd
+      extends fsboundedpawam[doubwe](
+        "space_wecs_simcwustews_dot_pwoduct_thweshowd", rawr
+        defauwt = 0.0, ( ͡o ω ͡o )
+        m-min = 0.0, /(^•ω•^)
+        m-max = 10.0)
 
   /**
-   * Param to control top-k clusters simcluster based targeting on Spaces
+   * p-pawam to contwow t-top-k cwustews s-simcwustew based t-tawgeting on spaces
    */
-  object SpacesTopKSimClusterCount
-      extends FSBoundedParam[Int](
-        "space_recs_simclusters_top_k_count",
-        default = 1,
-        min = 1,
-        max = 50)
+  object spacestopksimcwustewcount
+      e-extends f-fsboundedpawam[int](
+        "space_wecs_simcwustews_top_k_count", -.-
+        d-defauwt = 1, >w<
+        m-min = 1, ( ͡o ω ͡o )
+        m-max = 50)
 
-  /** SimCluster users host/speaker must meet this follower count minimum threshold to be considered for sends */
-  object SpaceRecsSimClusterUserMinimumFollowerCount
-      extends FSBoundedParam[Int](
-        name = "space_recs_simcluster_user_min_follower_count",
-        default = 5000,
-        max = Int.MaxValue,
+  /** s-simcwustew usews host/speakew m-must meet this fowwowew c-count minimum t-thweshowd to be considewed fow sends */
+  o-object spacewecssimcwustewusewminimumfowwowewcount
+      extends fsboundedpawam[int](
+        n-nyame = "space_wecs_simcwustew_usew_min_fowwowew_count", (˘ω˘)
+        defauwt = 5000, /(^•ω•^)
+        max = int.maxvawue, (˘ω˘)
         min = 0
       )
 
   /**
-   * Target has been bucketed into the Inline Action App Visit Fatigue Experiment
+   * tawget h-has been bucketed i-into the inwine action app visit fatigue expewiment
    */
-  object TargetInInlineActionAppVisitFatigue
-      extends FSParam[Boolean](name = "inline_action_target_in_app_visit_fatigue", default = false)
+  o-object tawgetininwineactionappvisitfatigue
+      e-extends fspawam[boowean](name = "inwine_action_tawget_in_app_visit_fatigue", o.O defauwt = fawse)
 
   /**
-   * Enables Inline Action App Visit Fatigue
+   * enabwes i-inwine action a-app visit fatigue
    */
-  object EnableInlineActionAppVisitFatigue
-      extends FSParam[Boolean](name = "inline_action_enable_app_visit_fatigue", default = false)
+  object enabweinwineactionappvisitfatigue
+      extends fspawam[boowean](name = "inwine_action_enabwe_app_visit_fatigue", nyaa~~ d-defauwt = f-fawse)
 
   /**
-   * Determines the fatigue that we should apply when the target user has performed an inline action
+   * detewmines the fatigue that w-we shouwd appwy w-when the tawget usew has pewfowmed an inwine action
    */
-  object InlineActionAppVisitFatigue
-      extends FSBoundedParam[Duration](
-        name = "inline_action_app_visit_fatigue_hours",
-        default = 8.hours,
-        min = 1.hour,
-        max = 48.hours)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+  o-object inwineactionappvisitfatigue
+      extends fsboundedpawam[duwation](
+        nyame = "inwine_action_app_visit_fatigue_houws", :3
+        defauwt = 8.houws, (///ˬ///✿)
+        min = 1.houw, (U ﹏ U)
+        m-max = 48.houws)
+      with hasduwationconvewsion {
+    ovewwide vaw duwationconvewsion = d-duwationconvewsion.fwomhouws
   }
 
   /**
-   * Weight for reranking(oonc - weight * nudityRate)
+   * w-weight fow wewanking(oonc - w-weight * nyuditywate)
    */
-  object AuthorSensitiveScoreWeightInReranking
-      extends FSBoundedParam[Double](
-        name = "rerank_candidates_author_sensitive_score_weight_in_reranking",
-        default = 0.0,
-        min = -100.0,
-        max = 100.0
-      )
-
-  /**
-   * Param to control the last active space listener threshold to filter out based on that
-   */
-  object SpaceParticipantHistoryLastActiveThreshold
-      extends FSBoundedParam[Duration](
-        name = "space_recs_last_active_space_listener_threshold_in_hours",
-        default = 0.hours,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
-  }
-
-  /*
-   * Param to enable mr user simcluster feature set (v2020) hydration for modeling-based candidate generation
-   * */
-  object HydrateMrUserSimclusterV2020InModelingBasedCG
-      extends FSParam[Boolean](
-        name = "candidate_generation_model_hydrate_mr_user_simcluster_v2020",
-        default = false)
-
-  /*
-   * Param to enable mr semantic core feature set hydration for modeling-based candidate generation
-   * */
-  object HydrateMrUserSemanticCoreInModelingBasedCG
-      extends FSParam[Boolean](
-        name = "candidate_generation_model_hydrate_mr_user_semantic_core",
-        default = false)
-
-  /*
-   * Param to enable mr semantic core feature set hydration for modeling-based candidate generation
-   * */
-  object HydrateOnboardingInModelingBasedCG
-      extends FSParam[Boolean](
-        name = "candidate_generation_model_hydrate_onboarding",
-        default = false)
-
-  /*
-   * Param to enable mr topic follow feature set hydration for modeling-based candidate generation
-   * */
-  object HydrateTopicFollowInModelingBasedCG
-      extends FSParam[Boolean](
-        name = "candidate_generation_model_hydrate_topic_follow",
-        default = false)
-
-  /*
-   * Param to enable mr user topic feature set hydration for modeling-based candidate generation
-   * */
-  object HydrateMrUserTopicInModelingBasedCG
-      extends FSParam[Boolean](
-        name = "candidate_generation_model_hydrate_mr_user_topic",
-        default = false)
-
-  /*
-   * Param to enable mr user topic feature set hydration for modeling-based candidate generation
-   * */
-  object HydrateMrUserAuthorInModelingBasedCG
-      extends FSParam[Boolean](
-        name = "candidate_generation_model_hydrate_mr_user_author",
-        default = false)
-
-  /*
-   * Param to enable user penguin language feature set hydration for modeling-based candidate generation
-   * */
-  object HydrateUserPenguinLanguageInModelingBasedCG
-      extends FSParam[Boolean](
-        name = "candidate_generation_model_hydrate_user_penguin_language",
-        default = false)
-  /*
-   * Param to enable user geo feature set hydration for modeling-based candidate generation
-   * */
-  object HydrateUseGeoInModelingBasedCG
-      extends FSParam[Boolean](
-        name = "candidate_generation_model_hydrate_user_geo",
-        default = false)
-
-  /*
-   * Param to enable mr user hashspace embedding feature set hydration for modeling-based candidate generation
-   * */
-  object HydrateMrUserHashspaceEmbeddingInModelingBasedCG
-      extends FSParam[Boolean](
-        name = "candidate_generation_model_hydrate_mr_user_hashspace_embedding",
-        default = false)
-  /*
-   * Param to enable user tweet text feature hydration
-   * */
-  object EnableMrUserEngagedTweetTokensFeature
-      extends FSParam[Boolean](
-        name = "feature_hydration_mr_user_engaged_tweet_tokens",
-        default = false)
-
-  /**
-   * Params for CRT based see less often fatigue rules
-   */
-  object EnableF1TriggerSeeLessOftenFatigue
-      extends FSParam[Boolean](
-        name = "seelessoften_enable_f1_trigger_fatigue",
-        default = false
-      )
-
-  object EnableNonF1TriggerSeeLessOftenFatigue
-      extends FSParam[Boolean](
-        name = "seelessoften_enable_nonf1_trigger_fatigue",
-        default = false
+  o-object a-authowsensitivescoweweightinwewanking
+      e-extends f-fsboundedpawam[doubwe](
+        n-nyame = "wewank_candidates_authow_sensitive_scowe_weight_in_wewanking", o.O
+        defauwt = 0.0, ^^;;
+        min = -100.0, ʘwʘ
+        m-max = 100.0
       )
 
   /**
-   * Adjust the NtabCaretClickFatigue for candidates if it is triggered by
-   * TripHqTweet candidates
+   * p-pawam to contwow t-the wast active space wistenew t-thweshowd to fiwtew o-out based o-on that
    */
-  object AdjustTripHqTweetTriggeredNtabCaretClickFatigue
-      extends FSParam[Boolean](
-        name = "seelessoften_adjust_trip_hq_tweet_triggered_fatigue",
-        default = false
-      )
-
-  object NumberOfDaysToFilterForSeeLessOftenForF1TriggerF1
-      extends FSBoundedParam[Duration](
-        name = "seelessoften_for_f1_trigger_f1_tofiltermr_days",
-        default = 7.days,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  object spacepawticipanthistowywastactivethweshowd
+      e-extends f-fsboundedpawam[duwation](
+        n-nyame = "space_wecs_wast_active_space_wistenew_thweshowd_in_houws", (///ˬ///✿)
+        d-defauwt = 0.houws, σωσ
+        m-min = duwation.bottom, ^^;;
+        max = duwation.top)
+      w-with hasduwationconvewsion {
+    ovewwide vaw d-duwationconvewsion = d-duwationconvewsion.fwomhouws
   }
 
-  object NumberOfDaysToReducePushCapForSeeLessOftenForF1TriggerF1
-      extends FSBoundedParam[Duration](
-        name = "seelessoften_for_f1_trigger_f1_toreduce_pushcap_days",
-        default = 30.days,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  /*
+   * pawam to enabwe mw usew simcwustew featuwe set (v2020) h-hydwation f-fow modewing-based candidate genewation
+   * */
+  o-object hydwatemwusewsimcwustewv2020inmodewingbasedcg
+      extends f-fspawam[boowean](
+        nyame = "candidate_genewation_modew_hydwate_mw_usew_simcwustew_v2020", UwU
+        defauwt = fawse)
+
+  /*
+   * p-pawam t-to enabwe mw semantic c-cowe featuwe s-set hydwation f-fow modewing-based c-candidate genewation
+   * */
+  object hydwatemwusewsemanticcoweinmodewingbasedcg
+      e-extends fspawam[boowean](
+        nyame = "candidate_genewation_modew_hydwate_mw_usew_semantic_cowe", mya
+        defauwt = fawse)
+
+  /*
+   * pawam to e-enabwe mw semantic c-cowe featuwe set hydwation fow modewing-based candidate genewation
+   * */
+  o-object hydwateonboawdinginmodewingbasedcg
+      e-extends fspawam[boowean](
+        nyame = "candidate_genewation_modew_hydwate_onboawding", ^•ﻌ•^
+        defauwt = fawse)
+
+  /*
+   * pawam t-to enabwe mw topic fowwow featuwe s-set hydwation f-fow modewing-based c-candidate genewation
+   * */
+  object hydwatetopicfowwowinmodewingbasedcg
+      extends f-fspawam[boowean](
+        nyame = "candidate_genewation_modew_hydwate_topic_fowwow", (⑅˘꒳˘)
+        d-defauwt = fawse)
+
+  /*
+   * p-pawam to enabwe mw usew topic featuwe set h-hydwation fow modewing-based c-candidate genewation
+   * */
+  object hydwatemwusewtopicinmodewingbasedcg
+      extends fspawam[boowean](
+        n-nyame = "candidate_genewation_modew_hydwate_mw_usew_topic", nyaa~~
+        defauwt = f-fawse)
+
+  /*
+   * pawam to enabwe mw usew topic featuwe set hydwation fow modewing-based candidate genewation
+   * */
+  o-object hydwatemwusewauthowinmodewingbasedcg
+      e-extends f-fspawam[boowean](
+        n-nyame = "candidate_genewation_modew_hydwate_mw_usew_authow", ^^;;
+        defauwt = fawse)
+
+  /*
+   * pawam t-to enabwe usew penguin wanguage featuwe set hydwation fow modewing-based c-candidate g-genewation
+   * */
+  o-object h-hydwateusewpenguinwanguageinmodewingbasedcg
+      extends fspawam[boowean](
+        nyame = "candidate_genewation_modew_hydwate_usew_penguin_wanguage", 🥺
+        defauwt = fawse)
+  /*
+   * pawam t-to enabwe usew g-geo featuwe set hydwation fow modewing-based candidate genewation
+   * */
+  o-object hydwateusegeoinmodewingbasedcg
+      e-extends f-fspawam[boowean](
+        n-nyame = "candidate_genewation_modew_hydwate_usew_geo", ^^;;
+        defauwt = fawse)
+
+  /*
+   * pawam to enabwe mw usew hashspace embedding f-featuwe set hydwation fow modewing-based c-candidate genewation
+   * */
+  object hydwatemwusewhashspaceembeddinginmodewingbasedcg
+      e-extends fspawam[boowean](
+        n-nyame = "candidate_genewation_modew_hydwate_mw_usew_hashspace_embedding", nyaa~~
+        defauwt = fawse)
+  /*
+   * p-pawam to e-enabwe usew tweet t-text featuwe h-hydwation
+   * */
+  o-object enabwemwusewengagedtweettokensfeatuwe
+      extends fspawam[boowean](
+        n-nyame = "featuwe_hydwation_mw_usew_engaged_tweet_tokens", 🥺
+        d-defauwt = fawse)
+
+  /**
+   * p-pawams fow cwt based see wess often fatigue w-wuwes
+   */
+  object enabwef1twiggewseewessoftenfatigue
+      e-extends fspawam[boowean](
+        n-nyame = "seewessoften_enabwe_f1_twiggew_fatigue", (ˆ ﻌ ˆ)♡
+        defauwt = f-fawse
+      )
+
+  o-object enabwenonf1twiggewseewessoftenfatigue
+      extends fspawam[boowean](
+        n-nyame = "seewessoften_enabwe_nonf1_twiggew_fatigue", ( ͡o ω ͡o )
+        d-defauwt = f-fawse
+      )
+
+  /**
+   * adjust t-the nytabcawetcwickfatigue fow candidates if it is twiggewed by
+   * twiphqtweet c-candidates
+   */
+  object adjusttwiphqtweettwiggewedntabcawetcwickfatigue
+      e-extends fspawam[boowean](
+        nyame = "seewessoften_adjust_twip_hq_tweet_twiggewed_fatigue", nyaa~~
+        defauwt = fawse
+      )
+
+  o-object nyumbewofdaystofiwtewfowseewessoftenfowf1twiggewf1
+      extends fsboundedpawam[duwation](
+        n-nyame = "seewessoften_fow_f1_twiggew_f1_tofiwtewmw_days", ( ͡o ω ͡o )
+        defauwt = 7.days, ^^;;
+        m-min = duwation.bottom, rawr x3
+        m-max = duwation.top)
+      w-with hasduwationconvewsion {
+    ovewwide v-vaw duwationconvewsion = d-duwationconvewsion.fwomdays
   }
 
-  object NumberOfDaysToFilterForSeeLessOftenForF1TriggerNonF1
-      extends FSBoundedParam[Duration](
-        name = "seelessoften_for_f1_trigger_nonf1_tofiltermr_days",
-        default = 7.days,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  object nyumbewofdaystoweducepushcapfowseewessoftenfowf1twiggewf1
+      e-extends fsboundedpawam[duwation](
+        n-nyame = "seewessoften_fow_f1_twiggew_f1_toweduce_pushcap_days", ^^;;
+        d-defauwt = 30.days, ^•ﻌ•^
+        m-min = duwation.bottom, 🥺
+        max = duwation.top)
+      w-with h-hasduwationconvewsion {
+    o-ovewwide vaw duwationconvewsion = d-duwationconvewsion.fwomdays
   }
 
-  object NumberOfDaysToReducePushCapForSeeLessOftenForF1TriggerNonF1
-      extends FSBoundedParam[Duration](
-        name = "seelessoften_for_f1_trigger_non_f1_toreduce_pushcap_days",
-        default = 30.days,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  object nyumbewofdaystofiwtewfowseewessoftenfowf1twiggewnonf1
+      extends fsboundedpawam[duwation](
+        nyame = "seewessoften_fow_f1_twiggew_nonf1_tofiwtewmw_days", (ꈍᴗꈍ)
+        defauwt = 7.days, ^•ﻌ•^
+        min = duwation.bottom, :3
+        m-max = d-duwation.top)
+      with hasduwationconvewsion {
+    o-ovewwide vaw duwationconvewsion = duwationconvewsion.fwomdays
   }
 
-  object NumberOfDaysToFilterForSeeLessOftenForNonF1TriggerF1
-      extends FSBoundedParam[Duration](
-        name = "seelessoften_for_nonf1_trigger_f1_tofiltermr_days",
-        default = 7.days,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  o-object n-nyumbewofdaystoweducepushcapfowseewessoftenfowf1twiggewnonf1
+      e-extends f-fsboundedpawam[duwation](
+        nyame = "seewessoften_fow_f1_twiggew_non_f1_toweduce_pushcap_days",
+        d-defauwt = 30.days, (˘ω˘)
+        min = duwation.bottom, ^^
+        max = duwation.top)
+      w-with hasduwationconvewsion {
+    o-ovewwide vaw duwationconvewsion = duwationconvewsion.fwomdays
   }
 
-  object NumberOfDaysToReducePushCapForSeeLessOftenForNonF1TriggerF1
-      extends FSBoundedParam[Duration](
-        name = "seelessoften_for_nonf1_trigger_f1_toreduce_pushcap_days",
-        default = 30.days,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  object nyumbewofdaystofiwtewfowseewessoftenfownonf1twiggewf1
+      e-extends fsboundedpawam[duwation](
+        n-nyame = "seewessoften_fow_nonf1_twiggew_f1_tofiwtewmw_days", /(^•ω•^)
+        defauwt = 7.days,
+        min = duwation.bottom, σωσ
+        m-max = duwation.top)
+      with h-hasduwationconvewsion {
+    ovewwide vaw duwationconvewsion = d-duwationconvewsion.fwomdays
   }
 
-  object NumberOfDaysToFilterForSeeLessOftenForNonF1TriggerNonF1
-      extends FSBoundedParam[Duration](
-        name = "seelessoften_for_nonf1_trigger_nonf1_tofiltermr_days",
-        default = 7.days,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  object nyumbewofdaystoweducepushcapfowseewessoftenfownonf1twiggewf1
+      e-extends fsboundedpawam[duwation](
+        n-nyame = "seewessoften_fow_nonf1_twiggew_f1_toweduce_pushcap_days", òωó
+        d-defauwt = 30.days, >w<
+        min = duwation.bottom, (˘ω˘)
+        m-max = duwation.top)
+      with hasduwationconvewsion {
+    o-ovewwide v-vaw duwationconvewsion = d-duwationconvewsion.fwomdays
   }
 
-  object NumberOfDaysToReducePushCapForSeeLessOftenForNonF1TriggerNonF1
-      extends FSBoundedParam[Duration](
-        name = "seelessoften_for_nonf1_trigger_nonf1_toreduce_pushcap_days",
-        default = 30.days,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  object nyumbewofdaystofiwtewfowseewessoftenfownonf1twiggewnonf1
+      extends fsboundedpawam[duwation](
+        nyame = "seewessoften_fow_nonf1_twiggew_nonf1_tofiwtewmw_days", ^•ﻌ•^
+        defauwt = 7.days, >_<
+        m-min = duwation.bottom, -.-
+        max = d-duwation.top)
+      w-with hasduwationconvewsion {
+    ovewwide vaw duwationconvewsion = d-duwationconvewsion.fwomdays
   }
 
-  object EnableContFnF1TriggerSeeLessOftenFatigue
-      extends FSParam[Boolean](
-        name = "seelessoften_fn_enable_f1_trigger_fatigue",
-        default = false
+  o-object nyumbewofdaystoweducepushcapfowseewessoftenfownonf1twiggewnonf1
+      extends fsboundedpawam[duwation](
+        n-nyame = "seewessoften_fow_nonf1_twiggew_nonf1_toweduce_pushcap_days", òωó
+        defauwt = 30.days, ( ͡o ω ͡o )
+        m-min = duwation.bottom, (ˆ ﻌ ˆ)♡
+        max = d-duwation.top)
+      w-with hasduwationconvewsion {
+    ovewwide v-vaw duwationconvewsion = d-duwationconvewsion.fwomdays
+  }
+
+  object e-enabwecontfnf1twiggewseewessoftenfatigue
+      extends fspawam[boowean](
+        n-nyame = "seewessoften_fn_enabwe_f1_twiggew_fatigue", :3
+        d-defauwt = fawse
       )
 
-  object EnableContFnNonF1TriggerSeeLessOftenFatigue
-      extends FSParam[Boolean](
-        name = "seelessoften_fn_enable_nonf1_trigger_fatigue",
-        default = false
+  o-object e-enabwecontfnnonf1twiggewseewessoftenfatigue
+      e-extends fspawam[boowean](
+        nyame = "seewessoften_fn_enabwe_nonf1_twiggew_fatigue", ^•ﻌ•^
+        d-defauwt = f-fawse
       )
 
-  object SeeLessOftenListOfDayKnobs
-      extends FSParam[Seq[Double]]("seelessoften_fn_day_knobs", default = Seq.empty[Double])
+  object seewessoftenwistofdayknobs
+      extends f-fspawam[seq[doubwe]]("seewessoften_fn_day_knobs", ( ͡o ω ͡o ) defauwt = seq.empty[doubwe])
 
-  object SeeLessOftenListOfPushCapWeightKnobs
-      extends FSParam[Seq[Double]]("seelessoften_fn_pushcap_knobs", default = Seq.empty[Double])
+  o-object seewessoftenwistofpushcapweightknobs
+      extends fspawam[seq[doubwe]]("seewessoften_fn_pushcap_knobs", ^•ﻌ•^ defauwt = seq.empty[doubwe])
 
-  object SeeLessOftenListOfPowerKnobs
-      extends FSParam[Seq[Double]]("seelessoften_fn_power_knobs", default = Seq.empty[Double])
+  object seewessoftenwistofpowewknobs
+      extends fspawam[seq[doubwe]]("seewessoften_fn_powew_knobs", ʘwʘ defauwt = s-seq.empty[doubwe])
 
-  object SeeLessOftenF1TriggerF1PushCapWeight
-      extends FSBoundedParam[Double](
-        "seelessoften_fn_f1_trigger_f1_weight",
-        default = 1.0,
+  object s-seewessoftenf1twiggewf1pushcapweight
+      extends f-fsboundedpawam[doubwe](
+        "seewessoften_fn_f1_twiggew_f1_weight", :3
+        d-defauwt = 1.0, >_<
         min = 0.0,
+        m-max = 10000000.0)
+
+  object seewessoftenf1twiggewnonf1pushcapweight
+      e-extends fsboundedpawam[doubwe](
+        "seewessoften_fn_f1_twiggew_nonf1_weight", rawr
+        d-defauwt = 1.0, 🥺
+        min = 0.0, (✿oωo)
         max = 10000000.0)
 
-  object SeeLessOftenF1TriggerNonF1PushCapWeight
-      extends FSBoundedParam[Double](
-        "seelessoften_fn_f1_trigger_nonf1_weight",
-        default = 1.0,
-        min = 0.0,
+  object seewessoftennonf1twiggewf1pushcapweight
+      extends fsboundedpawam[doubwe](
+        "seewessoften_fn_nonf1_twiggew_f1_weight", (U ﹏ U)
+        defauwt = 1.0, rawr x3
+        min = 0.0, (✿oωo)
+        m-max = 10000000.0)
+
+  object seewessoftennonf1twiggewnonf1pushcapweight
+      extends f-fsboundedpawam[doubwe](
+        "seewessoften_fn_nonf1_twiggew_nonf1_weight", (U ᵕ U❁)
+        defauwt = 1.0, -.-
+        m-min = 0.0, /(^•ω•^)
         max = 10000000.0)
 
-  object SeeLessOftenNonF1TriggerF1PushCapWeight
-      extends FSBoundedParam[Double](
-        "seelessoften_fn_nonf1_trigger_f1_weight",
-        default = 1.0,
-        min = 0.0,
+  object seewessoftentwiphqtweettwiggewf1pushcapweight
+      extends fsboundedpawam[doubwe](
+        "seewessoften_fn_twip_hq_tweet_twiggew_f1_weight", OwO
+        defauwt = 1.0, rawr x3
+        min = 0.0, σωσ
         max = 10000000.0)
 
-  object SeeLessOftenNonF1TriggerNonF1PushCapWeight
-      extends FSBoundedParam[Double](
-        "seelessoften_fn_nonf1_trigger_nonf1_weight",
-        default = 1.0,
-        min = 0.0,
+  object seewessoftentwiphqtweettwiggewnonf1pushcapweight
+      extends fsboundedpawam[doubwe](
+        "seewessoften_fn_twip_hq_tweet_twiggew_nonf1_weight", ʘwʘ
+        d-defauwt = 1.0, -.-
+        m-min = 0.0, 😳
+        m-max = 10000000.0)
+
+  object seewessoftentwiphqtweettwiggewtwiphqtweetpushcapweight
+      e-extends f-fsboundedpawam[doubwe](
+        "seewessoften_fn_twip_hq_tweet_twiggew_twip_hq_tweet_weight",
+        d-defauwt = 1.0, 😳😳😳
+        min = 0.0, OwO
         max = 10000000.0)
 
-  object SeeLessOftenTripHqTweetTriggerF1PushCapWeight
-      extends FSBoundedParam[Double](
-        "seelessoften_fn_trip_hq_tweet_trigger_f1_weight",
-        default = 1.0,
-        min = 0.0,
-        max = 10000000.0)
+  object seewessoftentopictwiggewtopicpushcapweight
+      extends f-fsboundedpawam[doubwe](
+        "seewessoften_fn_topic_twiggew_topic_weight", ^•ﻌ•^
+        d-defauwt = 1.0, rawr
+        min = 0.0, (✿oωo)
+        m-max = doubwe.maxvawue)
 
-  object SeeLessOftenTripHqTweetTriggerNonF1PushCapWeight
-      extends FSBoundedParam[Double](
-        "seelessoften_fn_trip_hq_tweet_trigger_nonf1_weight",
-        default = 1.0,
-        min = 0.0,
-        max = 10000000.0)
+  o-object seewessoftentopictwiggewf1pushcapweight
+      e-extends fsboundedpawam[doubwe](
+        "seewessoften_fn_topic_twiggew_f1_weight", ^^
+        d-defauwt = 100000.0, -.-
+        m-min = 0.0, (✿oωo)
+        max = doubwe.maxvawue)
 
-  object SeeLessOftenTripHqTweetTriggerTripHqTweetPushCapWeight
-      extends FSBoundedParam[Double](
-        "seelessoften_fn_trip_hq_tweet_trigger_trip_hq_tweet_weight",
-        default = 1.0,
-        min = 0.0,
-        max = 10000000.0)
+  o-object s-seewessoftentopictwiggewoonpushcapweight
+      e-extends fsboundedpawam[doubwe](
+        "seewessoften_fn_topic_twiggew_oon_weight", o.O
+        d-defauwt = 100000.0, :3
+        m-min = 0.0, rawr x3
+        m-max = d-doubwe.maxvawue)
 
-  object SeeLessOftenTopicTriggerTopicPushCapWeight
-      extends FSBoundedParam[Double](
-        "seelessoften_fn_topic_trigger_topic_weight",
-        default = 1.0,
+  o-object seewessoftenf1twiggewtopicpushcapweight
+      e-extends f-fsboundedpawam[doubwe](
+        "seewessoften_fn_f1_twiggew_topic_weight", (U ᵕ U❁)
+        defauwt = 100000.0, :3
         min = 0.0,
-        max = Double.MaxValue)
+        max = doubwe.maxvawue)
 
-  object SeeLessOftenTopicTriggerF1PushCapWeight
-      extends FSBoundedParam[Double](
-        "seelessoften_fn_topic_trigger_f1_weight",
-        default = 100000.0,
-        min = 0.0,
-        max = Double.MaxValue)
+  o-object seewessoftenoontwiggewtopicpushcapweight
+      e-extends fsboundedpawam[doubwe](
+        "seewessoften_fn_oon_twiggew_topic_weight",
+        defauwt = 1.0, 🥺
+        min = 0.0, XD
+        m-max = d-doubwe.maxvawue)
 
-  object SeeLessOftenTopicTriggerOONPushCapWeight
-      extends FSBoundedParam[Double](
-        "seelessoften_fn_topic_trigger_oon_weight",
-        default = 100000.0,
-        min = 0.0,
-        max = Double.MaxValue)
+  o-object seewessoftendefauwtpushcapweight
+      extends fsboundedpawam[doubwe](
+        "seewessoften_fn_defauwt_weight", >_<
+        d-defauwt = 100000.0, (ꈍᴗꈍ)
+        m-min = 0.0, ( ͡o ω ͡o )
+        max = doubwe.maxvawue)
 
-  object SeeLessOftenF1TriggerTopicPushCapWeight
-      extends FSBoundedParam[Double](
-        "seelessoften_fn_f1_trigger_topic_weight",
-        default = 100000.0,
-        min = 0.0,
-        max = Double.MaxValue)
+  object seewessoftenntabonwynotifusewpushcapweight
+      extends fsboundedpawam[doubwe](
+        "seewessoften_fn_ntab_onwy_usew_weight", (˘ω˘)
+        defauwt = 1.0, (˘ω˘)
+        m-min = 0.0, UwU
+        max = doubwe.maxvawue)
 
-  object SeeLessOftenOONTriggerTopicPushCapWeight
-      extends FSBoundedParam[Double](
-        "seelessoften_fn_oon_trigger_topic_weight",
-        default = 1.0,
-        min = 0.0,
-        max = Double.MaxValue)
-
-  object SeeLessOftenDefaultPushCapWeight
-      extends FSBoundedParam[Double](
-        "seelessoften_fn_default_weight",
-        default = 100000.0,
-        min = 0.0,
-        max = Double.MaxValue)
-
-  object SeeLessOftenNtabOnlyNotifUserPushCapWeight
-      extends FSBoundedParam[Double](
-        "seelessoften_fn_ntab_only_user_weight",
-        default = 1.0,
-        min = 0.0,
-        max = Double.MaxValue)
-
-  // Params for inline feedback fatigue
-  object EnableContFnF1TriggerInlineFeedbackFatigue
-      extends FSParam[Boolean](
-        name = "feedback_inline_fn_enable_f1_trigger_fatigue",
-        default = false
+  // pawams fow inwine feedback f-fatigue
+  object e-enabwecontfnf1twiggewinwinefeedbackfatigue
+      extends fspawam[boowean](
+        n-nyame = "feedback_inwine_fn_enabwe_f1_twiggew_fatigue", (ˆ ﻌ ˆ)♡
+        d-defauwt = fawse
       )
 
-  object EnableContFnNonF1TriggerInlineFeedbackFatigue
-      extends FSParam[Boolean](
-        name = "feedback_inline_fn_enable_nonf1_trigger_fatigue",
-        default = false
+  object e-enabwecontfnnonf1twiggewinwinefeedbackfatigue
+      e-extends f-fspawam[boowean](
+        n-name = "feedback_inwine_fn_enabwe_nonf1_twiggew_fatigue", (///ˬ///✿)
+        d-defauwt = fawse
       )
 
-  object UseInlineDislikeForFatigue
-      extends FSParam[Boolean](
-        name = "feedback_inline_fn_use_dislike",
-        default = true
+  object u-useinwinediswikefowfatigue
+      extends fspawam[boowean](
+        n-nyame = "feedback_inwine_fn_use_diswike", (ꈍᴗꈍ)
+        defauwt = twue
       )
-  object UseInlineDismissForFatigue
-      extends FSParam[Boolean](
-        name = "feedback_inline_fn_use_dismiss",
-        default = false
+  o-object u-useinwinedismissfowfatigue
+      extends fspawam[boowean](
+        n-nyame = "feedback_inwine_fn_use_dismiss", -.-
+        defauwt = fawse
       )
-  object UseInlineSeeLessForFatigue
-      extends FSParam[Boolean](
-        name = "feedback_inline_fn_use_see_less",
-        default = false
+  o-object useinwineseewessfowfatigue
+      e-extends f-fspawam[boowean](
+        n-name = "feedback_inwine_fn_use_see_wess",
+        defauwt = fawse
       )
-  object UseInlineNotRelevantForFatigue
-      extends FSParam[Boolean](
-        name = "feedback_inline_fn_use_not_relevant",
-        default = false
+  o-object u-useinwinenotwewevantfowfatigue
+      e-extends fspawam[boowean](
+        nyame = "feedback_inwine_fn_use_not_wewevant", 😳😳😳
+        defauwt = f-fawse
       )
-  object InlineFeedbackListOfDayKnobs
-      extends FSParam[Seq[Double]]("feedback_inline_fn_day_knobs", default = Seq.empty[Double])
+  object inwinefeedbackwistofdayknobs
+      extends fspawam[seq[doubwe]]("feedback_inwine_fn_day_knobs", defauwt = seq.empty[doubwe])
 
-  object InlineFeedbackListOfPushCapWeightKnobs
-      extends FSParam[Seq[Double]]("feedback_inline_fn_pushcap_knobs", default = Seq.empty[Double])
+  object inwinefeedbackwistofpushcapweightknobs
+      extends fspawam[seq[doubwe]]("feedback_inwine_fn_pushcap_knobs", (///ˬ///✿) defauwt = seq.empty[doubwe])
 
-  object InlineFeedbackListOfPowerKnobs
-      extends FSParam[Seq[Double]]("feedback_inline_fn_power_knobs", default = Seq.empty[Double])
+  object inwinefeedbackwistofpowewknobs
+      e-extends fspawam[seq[doubwe]]("feedback_inwine_fn_powew_knobs", UwU d-defauwt = seq.empty[doubwe])
 
-  object InlineFeedbackF1TriggerF1PushCapWeight
-      extends FSBoundedParam[Double](
-        "feedback_inline_fn_f1_trigger_f1_weight",
-        default = 1.0,
-        min = 0.0,
+  object inwinefeedbackf1twiggewf1pushcapweight
+      extends fsboundedpawam[doubwe](
+        "feedback_inwine_fn_f1_twiggew_f1_weight", 😳
+        defauwt = 1.0, /(^•ω•^)
+        min = 0.0, òωó
         max = 10000000.0)
 
-  object InlineFeedbackF1TriggerNonF1PushCapWeight
-      extends FSBoundedParam[Double](
-        "feedback_inline_fn_f1_trigger_nonf1_weight",
-        default = 1.0,
-        min = 0.0,
+  o-object i-inwinefeedbackf1twiggewnonf1pushcapweight
+      extends fsboundedpawam[doubwe](
+        "feedback_inwine_fn_f1_twiggew_nonf1_weight", >w<
+        defauwt = 1.0, -.-
+        min = 0.0, (⑅˘꒳˘)
+        m-max = 10000000.0)
+
+  o-object inwinefeedbacknonf1twiggewf1pushcapweight
+      extends f-fsboundedpawam[doubwe](
+        "feedback_inwine_fn_nonf1_twiggew_f1_weight", (˘ω˘)
+        d-defauwt = 1.0, (U ᵕ U❁)
+        min = 0.0, ^^
+        m-max = 10000000.0)
+
+  object inwinefeedbacknonf1twiggewnonf1pushcapweight
+      e-extends fsboundedpawam[doubwe](
+        "feedback_inwine_fn_nonf1_twiggew_nonf1_weight", ^^
+        d-defauwt = 1.0, rawr x3
+        min = 0.0, >w<
         max = 10000000.0)
 
-  object InlineFeedbackNonF1TriggerF1PushCapWeight
-      extends FSBoundedParam[Double](
-        "feedback_inline_fn_nonf1_trigger_f1_weight",
-        default = 1.0,
-        min = 0.0,
-        max = 10000000.0)
-
-  object InlineFeedbackNonF1TriggerNonF1PushCapWeight
-      extends FSBoundedParam[Double](
-        "feedback_inline_fn_nonf1_trigger_nonf1_weight",
-        default = 1.0,
-        min = 0.0,
-        max = 10000000.0)
-
-  // Params for prompt feedback
-  object EnableContFnF1TriggerPromptFeedbackFatigue
-      extends FSParam[Boolean](
-        name = "feedback_prompt_fn_enable_f1_trigger_fatigue",
-        default = false
+  // pawams fow pwompt f-feedback
+  o-object enabwecontfnf1twiggewpwomptfeedbackfatigue
+      e-extends f-fspawam[boowean](
+        nyame = "feedback_pwompt_fn_enabwe_f1_twiggew_fatigue",
+        d-defauwt = f-fawse
       )
 
-  object EnableContFnNonF1TriggerPromptFeedbackFatigue
-      extends FSParam[Boolean](
-        name = "feedback_prompt_fn_enable_nonf1_trigger_fatigue",
-        default = false
+  o-object enabwecontfnnonf1twiggewpwomptfeedbackfatigue
+      e-extends fspawam[boowean](
+        nyame = "feedback_pwompt_fn_enabwe_nonf1_twiggew_fatigue", (U ᵕ U❁)
+        defauwt = fawse
       )
-  object PromptFeedbackListOfDayKnobs
-      extends FSParam[Seq[Double]]("feedback_prompt_fn_day_knobs", default = Seq.empty[Double])
+  object p-pwomptfeedbackwistofdayknobs
+      e-extends fspawam[seq[doubwe]]("feedback_pwompt_fn_day_knobs", defauwt = seq.empty[doubwe])
 
-  object PromptFeedbackListOfPushCapWeightKnobs
-      extends FSParam[Seq[Double]]("feedback_prompt_fn_pushcap_knobs", default = Seq.empty[Double])
+  object pwomptfeedbackwistofpushcapweightknobs
+      e-extends f-fspawam[seq[doubwe]]("feedback_pwompt_fn_pushcap_knobs", 🥺 defauwt = s-seq.empty[doubwe])
 
-  object PromptFeedbackListOfPowerKnobs
-      extends FSParam[Seq[Double]]("feedback_prompt_fn_power_knobs", default = Seq.empty[Double])
+  object pwomptfeedbackwistofpowewknobs
+      extends fspawam[seq[doubwe]]("feedback_pwompt_fn_powew_knobs", (⑅˘꒳˘) d-defauwt = s-seq.empty[doubwe])
 
-  object PromptFeedbackF1TriggerF1PushCapWeight
-      extends FSBoundedParam[Double](
-        "feedback_prompt_fn_f1_trigger_f1_weight",
-        default = 1.0,
-        min = 0.0,
+  o-object pwomptfeedbackf1twiggewf1pushcapweight
+      extends f-fsboundedpawam[doubwe](
+        "feedback_pwompt_fn_f1_twiggew_f1_weight", OwO
+        d-defauwt = 1.0, 😳
+        min = 0.0, òωó
         max = 10000000.0)
 
-  object PromptFeedbackF1TriggerNonF1PushCapWeight
-      extends FSBoundedParam[Double](
-        "feedback_prompt_fn_f1_trigger_nonf1_weight",
-        default = 1.0,
-        min = 0.0,
+  object pwomptfeedbackf1twiggewnonf1pushcapweight
+      e-extends f-fsboundedpawam[doubwe](
+        "feedback_pwompt_fn_f1_twiggew_nonf1_weight", (ˆ ﻌ ˆ)♡
+        d-defauwt = 1.0, ʘwʘ
+        m-min = 0.0, ^^;;
+        m-max = 10000000.0)
+
+  o-object pwomptfeedbacknonf1twiggewf1pushcapweight
+      extends fsboundedpawam[doubwe](
+        "feedback_pwompt_fn_nonf1_twiggew_f1_weight", ʘwʘ
+        defauwt = 1.0, òωó
+        min = 0.0, ( ͡o ω ͡o )
         max = 10000000.0)
 
-  object PromptFeedbackNonF1TriggerF1PushCapWeight
-      extends FSBoundedParam[Double](
-        "feedback_prompt_fn_nonf1_trigger_f1_weight",
-        default = 1.0,
-        min = 0.0,
-        max = 10000000.0)
-
-  object PromptFeedbackNonF1TriggerNonF1PushCapWeight
-      extends FSBoundedParam[Double](
-        "feedback_prompt_fn_nonf1_trigger_nonf1_weight",
-        default = 1.0,
-        min = 0.0,
+  object p-pwomptfeedbacknonf1twiggewnonf1pushcapweight
+      extends fsboundedpawam[doubwe](
+        "feedback_pwompt_fn_nonf1_twiggew_nonf1_weight", ʘwʘ
+        d-defauwt = 1.0,
+        m-min = 0.0, >w<
         max = 10000000.0)
 
   /*
-   * Param to enable cohost join event notif
+   * pawam to enabwe cohost j-join event n-nyotif
    */
-  object EnableSpaceCohostJoinEvent
-      extends FSParam[Boolean](name = "space_recs_cohost_join_enable", default = true)
+  object enabwespacecohostjoinevent
+      e-extends fspawam[boowean](name = "space_wecs_cohost_join_enabwe", 😳😳😳 defauwt = t-twue)
 
   /*
-   * Param to bypass global push cap when target is device following host/speaker.
+   * pawam to bypass gwobaw push cap when tawget is d-device fowwowing host/speakew. σωσ
    */
-  object BypassGlobalSpacePushCapForSoftDeviceFollow
-      extends FSParam[Boolean](name = "space_recs_bypass_global_pushcap_for_soft_follow", false)
+  object bypassgwobawspacepushcapfowsoftdevicefowwow
+      extends fspawam[boowean](name = "space_wecs_bypass_gwobaw_pushcap_fow_soft_fowwow", -.- f-fawse)
 
   /*
-   * Param to bypass active listener predicate when target is device following host/speaker.
+   * p-pawam to b-bypass active wistenew p-pwedicate when tawget is device fowwowing h-host/speakew.
    */
-  object CheckActiveListenerPredicateForSoftDeviceFollow
-      extends FSParam[Boolean](name = "space_recs_check_active_listener_for_soft_follow", false)
+  object checkactivewistenewpwedicatefowsoftdevicefowwow
+      e-extends fspawam[boowean](name = "space_wecs_check_active_wistenew_fow_soft_fowwow", 🥺 fawse)
 
-  object SpreadControlRatioParam
-      extends FSBoundedParam[Double](
-        name = "oon_spread_control_ratio",
-        default = 1000.0,
-        min = 0.0,
-        max = 100000.0
+  object spweadcontwowwatiopawam
+      e-extends f-fsboundedpawam[doubwe](
+        n-nyame = "oon_spwead_contwow_watio", >w<
+        defauwt = 1000.0, (///ˬ///✿)
+        min = 0.0, UwU
+        m-max = 100000.0
       )
 
-  object FavOverSendThresholdParam
-      extends FSBoundedParam[Double](
-        name = "oon_spread_control_fav_over_send_threshold",
-        default = 0.14,
-        min = 0.0,
+  object favovewsendthweshowdpawam
+      extends fsboundedpawam[doubwe](
+        nyame = "oon_spwead_contwow_fav_ovew_send_thweshowd", ( ͡o ω ͡o )
+        defauwt = 0.14, (ˆ ﻌ ˆ)♡
+        min = 0.0, ^^;;
+        m-max = 1000.0
+      )
+
+  o-object authowwepowtwatethweshowdpawam
+      extends fsboundedpawam[doubwe](
+        nyame = "oon_spwead_contwow_authow_wepowt_wate_thweshowd",
+        defauwt = 7.4e-6, (U ᵕ U❁)
+        min = 0.0, XD
         max = 1000.0
       )
 
-  object AuthorReportRateThresholdParam
-      extends FSBoundedParam[Double](
-        name = "oon_spread_control_author_report_rate_threshold",
-        default = 7.4e-6,
-        min = 0.0,
-        max = 1000.0
+  object a-authowdiswikewatethweshowdpawam
+      extends fsboundedpawam[doubwe](
+        n-nyame = "oon_spwead_contwow_authow_diswike_wate_thweshowd", (ꈍᴗꈍ)
+        d-defauwt = 1.0, -.-
+        min = 0.0, >_<
+        m-max = 1000.0
       )
 
-  object AuthorDislikeRateThresholdParam
-      extends FSBoundedParam[Double](
-        name = "oon_spread_control_author_dislike_rate_threshold",
-        default = 1.0,
-        min = 0.0,
-        max = 1000.0
-      )
-
-  object MinTweetSendsThresholdParam
-      extends FSBoundedParam[Double](
-        name = "oon_spread_control_min_tweet_sends_threshold",
-        default = 10000000000.0,
-        min = 0.0,
+  o-object mintweetsendsthweshowdpawam
+      extends fsboundedpawam[doubwe](
+        nyame = "oon_spwead_contwow_min_tweet_sends_thweshowd", (ˆ ﻌ ˆ)♡
+        defauwt = 10000000000.0, ( ͡o ω ͡o )
+        min = 0.0, rawr x3
         max = 10000000000.0
       )
 
-  object MinAuthorSendsThresholdParam
-      extends FSBoundedParam[Double](
-        name = "oon_spread_control_min_author_sends_threshold",
-        default = 10000000000.0,
-        min = 0.0,
-        max = 10000000000.0
+  o-object m-minauthowsendsthweshowdpawam
+      e-extends f-fsboundedpawam[doubwe](
+        nyame = "oon_spwead_contwow_min_authow_sends_thweshowd", òωó
+        d-defauwt = 10000000000.0, 😳
+        min = 0.0, (ˆ ﻌ ˆ)♡
+        m-max = 10000000000.0
       )
 
   /*
-   * Tweet Ntab-dislike predicate related params
+   * tweet nytab-diswike pwedicate wewated p-pawams
    */
-  object TweetNtabDislikeCountThresholdParam
-      extends FSBoundedParam[Double](
-        name = "oon_tweet_ntab_dislike_count_threshold",
-        default = 10000.0,
-        min = 0.0,
-        max = 10000.0
+  o-object tweetntabdiswikecountthweshowdpawam
+      e-extends fsboundedpawam[doubwe](
+        n-nyame = "oon_tweet_ntab_diswike_count_thweshowd", 🥺
+        defauwt = 10000.0, ^^
+        min = 0.0, /(^•ω•^)
+        m-max = 10000.0
       )
-  object TweetNtabDislikeRateThresholdParam
-      extends FSBoundedParam[Double](
-        name = "oon_tweet_ntab_dislike_rate_threshold",
-        default = 1.0,
-        min = 0.0,
+  o-object tweetntabdiswikewatethweshowdpawam
+      extends fsboundedpawam[doubwe](
+        n-nyame = "oon_tweet_ntab_diswike_wate_thweshowd", o.O
+        d-defauwt = 1.0, òωó
+        min = 0.0, XD
         max = 1.0
       )
 
   /**
-   * Param for tweet language feature name
+   * pawam fow tweet w-wanguage featuwe nyame
    */
-  object TweetLanguageFeatureNameParam
-      extends FSParam[String](
-        name = "language_tweet_language_feature_name",
-        default = "tweet.language.tweet.identified")
+  o-object tweetwanguagefeatuwenamepawam
+      e-extends f-fspawam[stwing](
+        nyame = "wanguage_tweet_wanguage_featuwe_name", rawr x3
+        defauwt = "tweet.wanguage.tweet.identified")
 
   /**
-   * Threshold for user inferred language filtering
+   * thweshowd fow usew infewwed wanguage fiwtewing
    */
-  object UserInferredLanguageThresholdParam
-      extends FSBoundedParam[Double](
-        name = "language_user_inferred_language_threshold",
-        default = 0.0,
-        min = 0.0,
-        max = 1.0
+  o-object usewinfewwedwanguagethweshowdpawam
+      extends fsboundedpawam[doubwe](
+        n-nyame = "wanguage_usew_infewwed_wanguage_thweshowd", (˘ω˘)
+        defauwt = 0.0, :3
+        min = 0.0, (U ᵕ U❁)
+        m-max = 1.0
       )
 
   /**
-   * Threshold for user device language filtering
+   * thweshowd fow u-usew device wanguage f-fiwtewing
    */
-  object UserDeviceLanguageThresholdParam
-      extends FSBoundedParam[Double](
-        name = "language_user_device_language_threshold",
-        default = 0.0,
-        min = 0.0,
-        max = 1.0
+  o-object usewdevicewanguagethweshowdpawam
+      e-extends fsboundedpawam[doubwe](
+        n-name = "wanguage_usew_device_wanguage_thweshowd", rawr
+        defauwt = 0.0, OwO
+        min = 0.0, ʘwʘ
+        m-max = 1.0
       )
 
   /**
-   * Param to enable/disable tweet language filter
+   * pawam to enabwe/disabwe tweet wanguage fiwtew
    */
-  object EnableTweetLanguageFilter
-      extends FSParam[Boolean](
-        name = "language_enable_tweet_language_filter",
-        default = false
+  object enabwetweetwanguagefiwtew
+      e-extends fspawam[boowean](
+        nyame = "wanguage_enabwe_tweet_wanguage_fiwtew",
+        defauwt = f-fawse
       )
 
   /**
-   * Param to skip language filter for media tweets
+   * p-pawam t-to skip wanguage fiwtew fow media tweets
    */
-  object SkipLanguageFilterForMediaTweets
-      extends FSParam[Boolean](
-        name = "language_skip_language_filter_for_media_tweets",
-        default = false
+  object skipwanguagefiwtewfowmediatweets
+      extends fspawam[boowean](
+        n-nyame = "wanguage_skip_wanguage_fiwtew_fow_media_tweets", XD
+        d-defauwt = fawse
       )
 
   /*
-   * Tweet Ntab-dislike predicate related params for MrTwistly
+   * t-tweet nytab-diswike p-pwedicate wewated pawams fow mwtwistwy
    */
-  object TweetNtabDislikeCountThresholdForMrTwistlyParam
-      extends FSBoundedParam[Double](
-        name = "oon_tweet_ntab_dislike_count_threshold_for_mrtwistly",
-        default = 10000.0,
-        min = 0.0,
-        max = 10000.0
+  object tweetntabdiswikecountthweshowdfowmwtwistwypawam
+      extends f-fsboundedpawam[doubwe](
+        nyame = "oon_tweet_ntab_diswike_count_thweshowd_fow_mwtwistwy",
+        defauwt = 10000.0, rawr x3
+        m-min = 0.0,
+        m-max = 10000.0
       )
-  object TweetNtabDislikeRateThresholdForMrTwistlyParam
-      extends FSBoundedParam[Double](
-        name = "oon_tweet_ntab_dislike_rate_threshold_for_mrtwistly",
-        default = 1.0,
-        min = 0.0,
+  o-object tweetntabdiswikewatethweshowdfowmwtwistwypawam
+      e-extends fsboundedpawam[doubwe](
+        name = "oon_tweet_ntab_diswike_wate_thweshowd_fow_mwtwistwy", OwO
+        defauwt = 1.0, nyaa~~
+        min = 0.0, ʘwʘ
         max = 1.0
       )
 
-  object TweetNtabDislikeCountBucketThresholdParam
-      extends FSBoundedParam[Double](
-        name = "oon_tweet_ntab_dislike_count_bucket_threshold",
-        default = 10.0,
-        min = 0.0,
-        max = 10000.0
+  object tweetntabdiswikecountbucketthweshowdpawam
+      extends fsboundedpawam[doubwe](
+        nyame = "oon_tweet_ntab_diswike_count_bucket_thweshowd", nyaa~~
+        defauwt = 10.0, (U ﹏ U)
+        min = 0.0, (///ˬ///✿)
+        m-max = 10000.0
       )
 
   /*
-   * Tweet engagement ratio predicate related params
+   * tweet engagement watio pwedicate w-wewated pawams
    */
-  object TweetQTtoNtabClickRatioThresholdParam
-      extends FSBoundedParam[Double](
-        name = "oon_tweet_engagement_filter_qt_to_ntabclick_ratio_threshold",
-        default = 0.0,
-        min = 0.0,
+  o-object tweetqttontabcwickwatiothweshowdpawam
+      e-extends f-fsboundedpawam[doubwe](
+        nyame = "oon_tweet_engagement_fiwtew_qt_to_ntabcwick_watio_thweshowd", :3
+        defauwt = 0.0, (˘ω˘)
+        m-min = 0.0, 😳
         max = 100000.0
       )
 
   /**
-   * Lower bound threshold to filter a tweet based on its reply to like ratio
+   * w-wowew bound thweshowd to fiwtew a tweet based o-on its wepwy to w-wike watio
    */
-  object TweetReplytoLikeRatioThresholdLowerBound
-      extends FSBoundedParam[Double](
-        name = "oon_tweet_engagement_filter_reply_to_like_ratio_threshold_lower_bound",
-        default = Double.MaxValue,
-        min = 0.0,
-        max = Double.MaxValue
+  o-object tweetwepwytowikewatiothweshowdwowewbound
+      e-extends fsboundedpawam[doubwe](
+        n-nyame = "oon_tweet_engagement_fiwtew_wepwy_to_wike_watio_thweshowd_wowew_bound", 😳😳😳
+        defauwt = doubwe.maxvawue, ʘwʘ
+        m-min = 0.0, (⑅˘꒳˘)
+        m-max = doubwe.maxvawue
       )
 
   /**
-   * Upper bound threshold to filter a tweet based on its reply to like ratio
+   * uppew b-bound thweshowd t-to fiwtew a tweet based on its wepwy to wike watio
    */
-  object TweetReplytoLikeRatioThresholdUpperBound
-      extends FSBoundedParam[Double](
-        name = "oon_tweet_engagement_filter_reply_to_like_ratio_threshold_upper_bound",
-        default = 0.0,
+  object tweetwepwytowikewatiothweshowduppewbound
+      e-extends fsboundedpawam[doubwe](
+        nyame = "oon_tweet_engagement_fiwtew_wepwy_to_wike_watio_thweshowd_uppew_bound", nyaa~~
+        d-defauwt = 0.0, (U ﹏ U)
         min = 0.0,
-        max = Double.MaxValue
+        m-max = doubwe.maxvawue
       )
 
   /**
-   * Upper bound threshold to filter a tweet based on its reply to like ratio
+   * uppew bound t-thweshowd to fiwtew a tweet based on its wepwy to wike watio
    */
-  object TweetReplytoLikeRatioReplyCountThreshold
-      extends FSBoundedParam[Int](
-        name = "oon_tweet_engagement_filter_reply_count_threshold",
-        default = Int.MaxValue,
-        min = 0,
-        max = Int.MaxValue
+  o-object tweetwepwytowikewatiowepwycountthweshowd
+      extends f-fsboundedpawam[int](
+        n-nyame = "oon_tweet_engagement_fiwtew_wepwy_count_thweshowd", ʘwʘ
+        d-defauwt = int.maxvawue, (ꈍᴗꈍ)
+        min = 0, :3
+        m-max = int.maxvawue
       )
 
   /*
-   * oonTweetLengthBasedPrerankingPredicate related params
+   * o-oontweetwengthbasedpwewankingpwedicate w-wewated pawams
    */
-  object OonTweetLengthPredicateUpdatedMediaLogic
-      extends FSParam[Boolean](
-        name = "oon_quality_filter_tweet_length_updated_media_logic",
-        default = false
+  o-object oontweetwengthpwedicateupdatedmediawogic
+      e-extends fspawam[boowean](
+        n-nyame = "oon_quawity_fiwtew_tweet_wength_updated_media_wogic", ( ͡o ω ͡o )
+        d-defauwt = f-fawse
       )
 
-  object OonTweetLengthPredicateUpdatedQuoteTweetLogic
-      extends FSParam[Boolean](
-        name = "oon_quality_filter_tweet_length_updated_quote_tweet_logic",
-        default = false
+  o-object oontweetwengthpwedicateupdatedquotetweetwogic
+      extends fspawam[boowean](
+        nyame = "oon_quawity_fiwtew_tweet_wength_updated_quote_tweet_wogic", rawr x3
+        d-defauwt = fawse
       )
 
-  object OonTweetLengthPredicateMoreStrictForUndefinedLanguages
-      extends FSParam[Boolean](
-        name = "oon_quality_filter_tweet_length_more_strict_for_undefined_languages",
-        default = false
+  o-object oontweetwengthpwedicatemowestwictfowundefinedwanguages
+      extends fspawam[boowean](
+        n-nyame = "oon_quawity_fiwtew_tweet_wength_mowe_stwict_fow_undefined_wanguages",
+        d-defauwt = f-fawse
       )
 
-  object EnablePrerankingTweetLengthPredicate
-      extends FSParam[Boolean](
-        name = "oon_quality_filter_enable_preranking_filter",
-        default = false
+  object enabwepwewankingtweetwengthpwedicate
+      e-extends fspawam[boowean](
+        n-nyame = "oon_quawity_fiwtew_enabwe_pwewanking_fiwtew", rawr x3
+        defauwt = f-fawse
       )
 
   /*
-   * LengthLanguageBasedOONTweetCandidatesQualityPredicate related params
+   * w-wengthwanguagebasedoontweetcandidatesquawitypwedicate wewated pawams
    */
-  object SautOonWithMediaTweetLengthThresholdParam
-      extends FSBoundedParam[Double](
-        name = "oon_quality_filter_tweet_length_threshold_for_saut_oon_with_media",
-        default = 0.0,
-        min = 0.0,
+  o-object sautoonwithmediatweetwengththweshowdpawam
+      extends f-fsboundedpawam[doubwe](
+        n-nyame = "oon_quawity_fiwtew_tweet_wength_thweshowd_fow_saut_oon_with_media", mya
+        d-defauwt = 0.0, nyaa~~
+        m-min = 0.0, (///ˬ///✿)
         max = 70.0
       )
-  object NonSautOonWithMediaTweetLengthThresholdParam
-      extends FSBoundedParam[Double](
-        name = "oon_quality_filter_tweet_length_threshold_for_non_saut_oon_with_media",
-        default = 0.0,
-        min = 0.0,
+  object nyonsautoonwithmediatweetwengththweshowdpawam
+      e-extends fsboundedpawam[doubwe](
+        nyame = "oon_quawity_fiwtew_tweet_wength_thweshowd_fow_non_saut_oon_with_media", ^^
+        d-defauwt = 0.0, OwO
+        min = 0.0, :3
         max = 70.0
       )
-  object SautOonWithoutMediaTweetLengthThresholdParam
-      extends FSBoundedParam[Double](
-        name = "oon_quality_filter_tweet_length_threshold_for_saut_oon_without_media",
-        default = 0.0,
-        min = 0.0,
+  o-object sautoonwithoutmediatweetwengththweshowdpawam
+      e-extends fsboundedpawam[doubwe](
+        n-nyame = "oon_quawity_fiwtew_tweet_wength_thweshowd_fow_saut_oon_without_media", ^^
+        d-defauwt = 0.0, (✿oωo)
+        min = 0.0, 😳
         max = 70.0
       )
-  object NonSautOonWithoutMediaTweetLengthThresholdParam
-      extends FSBoundedParam[Double](
-        name = "oon_quality_filter_tweet_length_threshold_for_non_saut_oon_without_media",
-        default = 0.0,
-        min = 0.0,
+  o-object n-nyonsautoonwithoutmediatweetwengththweshowdpawam
+      extends fsboundedpawam[doubwe](
+        nyame = "oon_quawity_fiwtew_tweet_wength_thweshowd_fow_non_saut_oon_without_media", (///ˬ///✿)
+        defauwt = 0.0, (///ˬ///✿)
+        min = 0.0, (U ﹏ U)
         max = 70.0
       )
 
-  object ArgfOonWithMediaTweetWordLengthThresholdParam
-      extends FSBoundedParam[Double](
-        name = "oon_quality_filter_tweet_word_length_threshold_for_argf_oon_with_media",
-        default = 0.0,
-        min = 0.0,
-        max = 18.0
+  object awgfoonwithmediatweetwowdwengththweshowdpawam
+      extends fsboundedpawam[doubwe](
+        nyame = "oon_quawity_fiwtew_tweet_wowd_wength_thweshowd_fow_awgf_oon_with_media", òωó
+        defauwt = 0.0, :3
+        m-min = 0.0, (⑅˘꒳˘)
+        m-max = 18.0
       )
-  object EsfthOonWithMediaTweetWordLengthThresholdParam
-      extends FSBoundedParam[Double](
-        name = "oon_quality_filter_tweet_word_length_threshold_for_esfth_oon_with_media",
-        default = 0.0,
-        min = 0.0,
-        max = 10.0
+  o-object e-esfthoonwithmediatweetwowdwengththweshowdpawam
+      extends fsboundedpawam[doubwe](
+        nyame = "oon_quawity_fiwtew_tweet_wowd_wength_thweshowd_fow_esfth_oon_with_media",
+        defauwt = 0.0, 😳😳😳
+        m-min = 0.0, ʘwʘ
+        m-max = 10.0
       )
 
   /**
-   * Param to enable/disable sentiment feature hydration
+   * p-pawam to enabwe/disabwe s-sentiment featuwe hydwation
    */
-  object EnableMrTweetSentimentFeatureHydrationFS
-      extends FSParam[Boolean](
-        name = "feature_hydration_enable_mr_tweet_sentiment_feature",
-        default = false
+  object enabwemwtweetsentimentfeatuwehydwationfs
+      extends fspawam[boowean](
+        nyame = "featuwe_hydwation_enabwe_mw_tweet_sentiment_featuwe", OwO
+        d-defauwt = f-fawse
       )
 
   /**
-   * Param to enable/disable feature map scribing for staging test log
+   * p-pawam to enabwe/disabwe f-featuwe map scwibing fow s-staging test wog
    */
-  object EnableMrScribingMLFeaturesAsFeatureMapForStaging
-      extends FSParam[Boolean](
-        name = "frigate_pushservice_enable_scribing_ml_features_as_featuremap_for_staging",
-        default = false
+  object enabwemwscwibingmwfeatuwesasfeatuwemapfowstaging
+      extends fspawam[boowean](
+        n-nyame = "fwigate_pushsewvice_enabwe_scwibing_mw_featuwes_as_featuwemap_fow_staging", >_<
+        defauwt = f-fawse
       )
 
   /**
-   * Param to enable timeline health signal hydration
+   * p-pawam to enabwe timewine heawth signaw hydwation
    * */
-  object EnableTimelineHealthSignalHydration
-      extends FSParam[Boolean](
-        name = "timeline_health_signal_hydration",
-        default = false
+  o-object enabwetimewineheawthsignawhydwation
+      extends f-fspawam[boowean](
+        nyame = "timewine_heawth_signaw_hydwation", /(^•ω•^)
+        defauwt = fawse
       )
 
   /**
-   * Param to enable timeline health signal hydration for model training
+   * p-pawam to enabwe timewine heawth signaw hydwation f-fow modew twaining
    * */
-  object EnableTimelineHealthSignalHydrationForModelTraining
-      extends FSParam[Boolean](
-        name = "timeline_health_signal_hydration_for_model_training",
-        default = false
+  object enabwetimewineheawthsignawhydwationfowmodewtwaining
+      e-extends fspawam[boowean](
+        nyame = "timewine_heawth_signaw_hydwation_fow_modew_twaining", (˘ω˘)
+        d-defauwt = f-fawse
       )
 
   /**
-   * Param to enable/disable mr user social context agg feature hydration
+   * pawam to enabwe/disabwe mw usew sociaw context agg f-featuwe hydwation
    */
-  object EnableMrUserSocialContextAggregateFeatureHydration
-      extends FSParam[Boolean](
-        name = "frigate_push_modeling_hydrate_mr_user_social_context_agg_feature",
-        default = true
+  object enabwemwusewsociawcontextaggwegatefeatuwehydwation
+      extends fspawam[boowean](
+        nyame = "fwigate_push_modewing_hydwate_mw_usew_sociaw_context_agg_featuwe",
+        defauwt = twue
       )
 
   /**
-   * Param to enable/disable mr user semantic core agg feature hydration
+   * p-pawam to enabwe/disabwe m-mw usew semantic cowe a-agg featuwe hydwation
    */
-  object EnableMrUserSemanticCoreAggregateFeatureHydration
-      extends FSParam[Boolean](
-        name = "frigate_push_modeling_hydrate_mr_user_semantic_core_agg_feature",
-        default = true
+  object enabwemwusewsemanticcoweaggwegatefeatuwehydwation
+      e-extends fspawam[boowean](
+        n-nyame = "fwigate_push_modewing_hydwate_mw_usew_semantic_cowe_agg_featuwe", >w<
+        d-defauwt = twue
       )
 
   /**
-   * Param to enable/disable mr user candidate sparse agg feature hydration
+   * pawam to enabwe/disabwe m-mw usew candidate spawse agg featuwe hydwation
    */
-  object EnableMrUserCandidateSparseOfflineAggregateFeatureHydration
-      extends FSParam[Boolean](
-        name = "frigate_push_modeling_hydrate_mr_user_candidate_sparse_agg_feature",
-        default = true
+  object enabwemwusewcandidatespawseoffwineaggwegatefeatuwehydwation
+      extends fspawam[boowean](
+        n-nyame = "fwigate_push_modewing_hydwate_mw_usew_candidate_spawse_agg_featuwe", ^•ﻌ•^
+        d-defauwt = t-twue
       )
 
   /**
-   * Param to enable/disable mr user candidate agg feature hydration
+   * p-pawam to enabwe/disabwe m-mw usew candidate agg featuwe h-hydwation
    */
-  object EnableMrUserCandidateOfflineAggregateFeatureHydration
-      extends FSParam[Boolean](
-        name = "frigate_push_modeling_hydrate_mr_user_candidate_agg_feature",
-        default = true
+  o-object enabwemwusewcandidateoffwineaggwegatefeatuwehydwation
+      extends fspawam[boowean](
+        nyame = "fwigate_push_modewing_hydwate_mw_usew_candidate_agg_featuwe", ʘwʘ
+        d-defauwt = t-twue
       )
 
   /**
-   * Param to enable/disable mr user candidate compact agg feature hydration
+   * p-pawam t-to enabwe/disabwe m-mw usew candidate compact agg featuwe hydwation
    */
-  object EnableMrUserCandidateOfflineCompactAggregateFeatureHydration
-      extends FSParam[Boolean](
-        name = "frigate_push_modeling_hydrate_mr_user_candidate_compact_agg_feature",
-        default = false
+  o-object e-enabwemwusewcandidateoffwinecompactaggwegatefeatuwehydwation
+      e-extends fspawam[boowean](
+        nyame = "fwigate_push_modewing_hydwate_mw_usew_candidate_compact_agg_featuwe", OwO
+        defauwt = fawse
       )
 
   /**
-   * Param to enable/disable mr real graph user-author/social-context feature hydration
+   * p-pawam to enabwe/disabwe m-mw weaw g-gwaph usew-authow/sociaw-context featuwe hydwation
    */
-  object EnableRealGraphUserAuthorAndSocialContxtFeatureHydration
-      extends FSParam[Boolean](
-        name = "frigate_push_modeling_hydrate_real_graph_user_social_feature",
-        default = true
+  o-object enabweweawgwaphusewauthowandsociawcontxtfeatuwehydwation
+      e-extends fspawam[boowean](
+        n-nyame = "fwigate_push_modewing_hydwate_weaw_gwaph_usew_sociaw_featuwe", nyaa~~
+        d-defauwt = twue
       )
 
   /**
-   * Param to enable/disable mr user author agg feature hydration
+   * pawam to enabwe/disabwe mw u-usew authow agg featuwe hydwation
    */
-  object EnableMrUserAuthorOfflineAggregateFeatureHydration
-      extends FSParam[Boolean](
-        name = "frigate_push_modeling_hydrate_mr_user_author_agg_feature",
-        default = true
+  object e-enabwemwusewauthowoffwineaggwegatefeatuwehydwation
+      extends fspawam[boowean](
+        nyame = "fwigate_push_modewing_hydwate_mw_usew_authow_agg_featuwe", nyaa~~
+        d-defauwt = twue
       )
 
   /**
-   * Param to enable/disable mr user author compact agg feature hydration
+   * p-pawam to enabwe/disabwe m-mw usew authow c-compact agg f-featuwe hydwation
    */
-  object EnableMrUserAuthorOfflineCompactAggregateFeatureHydration
-      extends FSParam[Boolean](
-        name = "frigate_push_modeling_hydrate_mr_user_author_compact_agg_feature",
-        default = false
+  o-object enabwemwusewauthowoffwinecompactaggwegatefeatuwehydwation
+      extends fspawam[boowean](
+        n-nyame = "fwigate_push_modewing_hydwate_mw_usew_authow_compact_agg_featuwe", XD
+        defauwt = fawse
       )
 
   /**
-   * Param to enable/disable mr user compact agg feature hydration
+   * pawam to enabwe/disabwe m-mw usew compact a-agg featuwe hydwation
    */
-  object EnableMrUserOfflineCompactAggregateFeatureHydration
-      extends FSParam[Boolean](
-        name = "frigate_push_modeling_hydrate_mr_user_compact_agg_feature",
-        default = false
+  o-object enabwemwusewoffwinecompactaggwegatefeatuwehydwation
+      e-extends fspawam[boowean](
+        n-nyame = "fwigate_push_modewing_hydwate_mw_usew_compact_agg_featuwe", o.O
+        defauwt = fawse
       )
 
   /**
-   * Param to enable/disable mr user simcluster agg feature hydration
+   * p-pawam to enabwe/disabwe m-mw usew simcwustew agg featuwe hydwation
    */
-  object EnableMrUserSimcluster2020AggregateFeatureHydration
-      extends FSParam[Boolean](
-        name = "frigate_push_modeling_hydrate_mr_user_simcluster_agg_feature",
-        default = true
+  object e-enabwemwusewsimcwustew2020aggwegatefeatuwehydwation
+      extends fspawam[boowean](
+        nyame = "fwigate_push_modewing_hydwate_mw_usew_simcwustew_agg_featuwe", òωó
+        d-defauwt = twue
       )
 
   /**
-   * Param to enable/disable mr user agg feature hydration
+   * pawam to enabwe/disabwe m-mw usew agg featuwe hydwation
    */
-  object EnableMrUserOfflineAggregateFeatureHydration
-      extends FSParam[Boolean](
-        name = "frigate_push_modeling_hydrate_mr_user_agg_feature",
-        default = true
+  o-object enabwemwusewoffwineaggwegatefeatuwehydwation
+      extends f-fspawam[boowean](
+        nyame = "fwigate_push_modewing_hydwate_mw_usew_agg_featuwe", (⑅˘꒳˘)
+        d-defauwt = twue
       )
 
   /**
-   * Param to enable/disable topic engagement RTA in the ranking model
+   * p-pawam to enabwe/disabwe t-topic engagement wta in the wanking modew
    */
-  object EnableTopicEngagementRealTimeAggregatesFS
-      extends FSParam[Boolean](
-        "feature_hydration_enable_htl_topic_engagement_real_time_agg_feature",
-        false)
+  object enabwetopicengagementweawtimeaggwegatesfs
+      extends fspawam[boowean](
+        "featuwe_hydwation_enabwe_htw_topic_engagement_weaw_time_agg_featuwe",
+        fawse)
 
   /*
-   * Param to enable mr user semantic core feature hydration for heavy ranker
+   * p-pawam to enabwe mw usew semantic cowe f-featuwe hydwation fow heavy wankew
    * */
-  object EnableMrUserSemanticCoreFeatureForExpt
-      extends FSParam[Boolean](
-        name = "frigate_push_modeling_hydrate_mr_user_semantic_core",
-        default = false)
+  o-object e-enabwemwusewsemanticcowefeatuwefowexpt
+      extends fspawam[boowean](
+        n-nyame = "fwigate_push_modewing_hydwate_mw_usew_semantic_cowe", o.O
+        d-defauwt = fawse)
 
   /**
-   * Param to enable hydrating user duration since last visit features
+   * pawam to enabwe hydwating u-usew duwation since wast visit f-featuwes
    */
-  object EnableHydratingUserDurationSinceLastVisitFeatures
-      extends FSParam[Boolean](
-        name = "feature_hydration_user_duration_since_last_visit",
-        default = false)
+  object enabwehydwatingusewduwationsincewastvisitfeatuwes
+      extends fspawam[boowean](
+        n-nyame = "featuwe_hydwation_usew_duwation_since_wast_visit",
+        defauwt = f-fawse)
 
   /**
-    Param to enable/disable user-topic aggregates in the ranking model
+    pawam to enabwe/disabwe u-usew-topic a-aggwegates in the wanking modew
    */
-  object EnableUserTopicAggregatesFS
-      extends FSParam[Boolean]("feature_hydration_enable_htl_topic_user_agg_feature", false)
+  object enabweusewtopicaggwegatesfs
+      extends fspawam[boowean]("featuwe_hydwation_enabwe_htw_topic_usew_agg_featuwe", (ˆ ﻌ ˆ)♡ f-fawse)
 
   /*
-   * PNegMultimodalPredicate related params
+   * p-pnegmuwtimodawpwedicate w-wewated pawams
    */
-  object EnablePNegMultimodalPredicateParam
-      extends FSParam[Boolean](
-        name = "pneg_multimodal_filter_enable_param",
-        default = false
+  object enabwepnegmuwtimodawpwedicatepawam
+      extends fspawam[boowean](
+        n-nyame = "pneg_muwtimodaw_fiwtew_enabwe_pawam", (⑅˘꒳˘)
+        defauwt = fawse
       )
-  object PNegMultimodalPredicateModelThresholdParam
-      extends FSBoundedParam[Double](
-        name = "pneg_multimodal_filter_model_threshold_param",
-        default = 1.0,
-        min = 0.0,
+  o-object pnegmuwtimodawpwedicatemodewthweshowdpawam
+      e-extends fsboundedpawam[doubwe](
+        nyame = "pneg_muwtimodaw_fiwtew_modew_thweshowd_pawam", (U ᵕ U❁)
+        defauwt = 1.0, >w<
+        m-min = 0.0, OwO
         max = 1.0
       )
-  object PNegMultimodalPredicateBucketThresholdParam
-      extends FSBoundedParam[Double](
-        name = "pneg_multimodal_filter_bucket_threshold_param",
-        default = 0.4,
-        min = 0.0,
+  o-object pnegmuwtimodawpwedicatebucketthweshowdpawam
+      e-extends fsboundedpawam[doubwe](
+        nyame = "pneg_muwtimodaw_fiwtew_bucket_thweshowd_pawam", >w<
+        defauwt = 0.4, ^^;;
+        min = 0.0, >w<
         max = 1.0
       )
 
   /*
-   * NegativeKeywordsPredicate related params
+   * n-nyegativekeywowdspwedicate wewated pawams
    */
-  object EnableNegativeKeywordsPredicateParam
-      extends FSParam[Boolean](
-        name = "negative_keywords_filter_enable_param",
-        default = false
+  o-object enabwenegativekeywowdspwedicatepawam
+      e-extends fspawam[boowean](
+        n-nyame = "negative_keywowds_fiwtew_enabwe_pawam", σωσ
+        defauwt = fawse
       )
-  object NegativeKeywordsPredicateDenylist
-      extends FSParam[Seq[String]](
-        name = "negative_keywords_filter_denylist",
-        default = Seq.empty[String]
+  o-object nyegativekeywowdspwedicatedenywist
+      extends f-fspawam[seq[stwing]](
+        nyame = "negative_keywowds_fiwtew_denywist", (˘ω˘)
+        d-defauwt = seq.empty[stwing]
       )
   /*
-   * LightRanking related params
+   * w-wightwanking w-wewated pawams
    */
-  object EnableLightRankingParam
-      extends FSParam[Boolean](
-        name = "light_ranking_enable_param",
-        default = false
+  object enabwewightwankingpawam
+      e-extends f-fspawam[boowean](
+        n-nyame = "wight_wanking_enabwe_pawam", òωó
+        d-defauwt = fawse
       )
-  object LightRankingNumberOfCandidatesParam
-      extends FSBoundedParam[Int](
-        name = "light_ranking_number_of_candidates_param",
-        default = 100,
-        min = 0,
+  o-object wightwankingnumbewofcandidatespawam
+      extends fsboundedpawam[int](
+        n-name = "wight_wanking_numbew_of_candidates_pawam", (ꈍᴗꈍ)
+        d-defauwt = 100,
+        min = 0, (ꈍᴗꈍ)
         max = 1000
       )
-  object LightRankingModelTypeParam
-      extends FSParam[String](
-        name = "light_ranking_model_type_param",
-        default = "WeightedOpenOrNtabClickProbability_Q4_2021_13172_Mr_Light_Ranker_Dbv2_Top3")
-  object EnableRandomBaselineLightRankingParam
-      extends FSParam[Boolean](
-        name = "light_ranking_random_baseline_enable_param",
-        default = false
+  object wightwankingmodewtypepawam
+      extends fspawam[stwing](
+        n-nyame = "wight_wanking_modew_type_pawam", òωó
+        defauwt = "weightedopenowntabcwickpwobabiwity_q4_2021_13172_mw_wight_wankew_dbv2_top3")
+  object enabwewandombasewinewightwankingpawam
+      extends f-fspawam[boowean](
+        n-nyame = "wight_wanking_wandom_basewine_enabwe_pawam", (U ᵕ U❁)
+        defauwt = fawse
       )
 
-  object LightRankingScribeCandidatesDownSamplingParam
-      extends FSBoundedParam[Double](
-        name = "light_ranking_scribe_candidates_down_sampling_param",
-        default = 1.0,
-        min = 0.0,
-        max = 1.0
-      )
-
-  /*
-   * Quality Upranking related params
-   */
-  object EnableProducersQualityBoostingForHeavyRankingParam
-      extends FSParam[Boolean](
-        name = "quality_upranking_enable_producers_quality_boosting_for_heavy_ranking_param",
-        default = false
-      )
-
-  object QualityUprankingBoostForHighQualityProducersParam
-      extends FSBoundedParam[Double](
-        name = "quality_upranking_boost_for_high_quality_producers_param",
-        default = 1.0,
-        min = 0.0,
-        max = 10000.0
-      )
-
-  object QualityUprankingDownboostForLowQualityProducersParam
-      extends FSBoundedParam[Double](
-        name = "quality_upranking_downboost_for_low_quality_producers_param",
-        default = 1.0,
-        min = 0.0,
-        max = 1.0
-      )
-
-  object EnableQualityUprankingForHeavyRankingParam
-      extends FSParam[Boolean](
-        name = "quality_upranking_enable_for_heavy_ranking_param",
-        default = false
-      )
-  object QualityUprankingModelTypeParam
-      extends FSParam[WeightedOpenOrNtabClickModel.ModelNameType](
-        name = "quality_upranking_model_id",
-        default = "Q4_2022_Mr_Bqml_Quality_Model_wALL"
-      )
-  object QualityUprankingTransformTypeParam
-      extends FSEnumParam[MrQualityUprankingTransformTypeEnum.type](
-        name = "quality_upranking_transform_id",
-        default = MrQualityUprankingTransformTypeEnum.Sigmoid,
-        enum = MrQualityUprankingTransformTypeEnum
-      )
-
-  object QualityUprankingBoostForHeavyRankingParam
-      extends FSBoundedParam[Double](
-        name = "quality_upranking_boost_for_heavy_ranking_param",
-        default = 1.0,
-        min = -10.0,
-        max = 10.0
-      )
-  object QualityUprankingSigmoidBiasForHeavyRankingParam
-      extends FSBoundedParam[Double](
-        name = "quality_upranking_sigmoid_bias_for_heavy_ranking_param",
-        default = 0.0,
-        min = -10.0,
-        max = 10.0
-      )
-  object QualityUprankingSigmoidWeightForHeavyRankingParam
-      extends FSBoundedParam[Double](
-        name = "quality_upranking_sigmoid_weight_for_heavy_ranking_param",
-        default = 1.0,
-        min = -10.0,
-        max = 10.0
-      )
-  object QualityUprankingLinearBarForHeavyRankingParam
-      extends FSBoundedParam[Double](
-        name = "quality_upranking_linear_bar_for_heavy_ranking_param",
-        default = 1.0,
-        min = 0.0,
-        max = 10.0
-      )
-  object EnableQualityUprankingCrtScoreStatsForHeavyRankingParam
-      extends FSParam[Boolean](
-        name = "quality_upranking_enable_crt_score_stats_for_heavy_ranking_param",
-        default = false
-      )
-  /*
-   * BQML Health Model related params
-   */
-  object EnableBqmlHealthModelPredicateParam
-      extends FSParam[Boolean](
-        name = "bqml_health_model_filter_enable_param",
-        default = false
-      )
-
-  object EnableBqmlHealthModelPredictionForInNetworkCandidatesParam
-      extends FSParam[Boolean](
-        name = "bqml_health_model_enable_prediction_for_in_network_candidates_param",
-        default = false
-      )
-
-  object BqmlHealthModelTypeParam
-      extends FSParam[HealthNsfwModel.ModelNameType](
-        name = "bqml_health_model_id",
-        default = HealthNsfwModel.Q2_2022_Mr_Bqml_Health_Model_NsfwV0
-      )
-  object BqmlHealthModelPredicateFilterThresholdParam
-      extends FSBoundedParam[Double](
-        name = "bqml_health_model_filter_threshold_param",
-        default = 1.0,
-        min = 0.0,
-        max = 1.0
-      )
-  object BqmlHealthModelPredicateBucketThresholdParam
-      extends FSBoundedParam[Double](
-        name = "bqml_health_model_bucket_threshold_param",
-        default = 0.005,
-        min = 0.0,
-        max = 1.0
-      )
-
-  object EnableBqmlHealthModelScoreHistogramParam
-      extends FSParam[Boolean](
-        name = "bqml_health_model_score_histogram_enable_param",
-        default = false
+  object wightwankingscwibecandidatesdownsampwingpawam
+      extends fsboundedpawam[doubwe](
+        nyame = "wight_wanking_scwibe_candidates_down_sampwing_pawam", /(^•ω•^)
+        defauwt = 1.0,
+        m-min = 0.0, :3
+        m-max = 1.0
       )
 
   /*
-   * BQML Quality Model related params
+   * q-quawity u-upwanking wewated p-pawams
    */
-  object EnableBqmlQualityModelPredicateParam
-      extends FSParam[Boolean](
-        name = "bqml_quality_model_filter_enable_param",
-        default = false
+  o-object enabwepwoducewsquawityboostingfowheavywankingpawam
+      extends fspawam[boowean](
+        n-nyame = "quawity_upwanking_enabwe_pwoducews_quawity_boosting_fow_heavy_wanking_pawam", rawr
+        defauwt = fawse
       )
-  object EnableBqmlQualityModelScoreHistogramParam
-      extends FSParam[Boolean](
-        name = "bqml_quality_model_score_histogram_enable_param",
-        default = false
+
+  o-object quawityupwankingboostfowhighquawitypwoducewspawam
+      e-extends fsboundedpawam[doubwe](
+        n-nyame = "quawity_upwanking_boost_fow_high_quawity_pwoducews_pawam", (ˆ ﻌ ˆ)♡
+        d-defauwt = 1.0, ^^;;
+        m-min = 0.0, (⑅˘꒳˘)
+        m-max = 10000.0
       )
-  object BqmlQualityModelTypeParam
-      extends FSParam[WeightedOpenOrNtabClickModel.ModelNameType](
-        name = "bqml_quality_model_id",
-        default = "Q1_2022_13562_Mr_Bqml_Quality_Model_V2"
+
+  o-object quawityupwankingdownboostfowwowquawitypwoducewspawam
+      extends fsboundedpawam[doubwe](
+        nyame = "quawity_upwanking_downboost_fow_wow_quawity_pwoducews_pawam",
+        d-defauwt = 1.0, rawr x3
+        min = 0.0, ʘwʘ
+        max = 1.0
+      )
+
+  object e-enabwequawityupwankingfowheavywankingpawam
+      extends fspawam[boowean](
+        nyame = "quawity_upwanking_enabwe_fow_heavy_wanking_pawam", (ꈍᴗꈍ)
+        d-defauwt = f-fawse
+      )
+  object quawityupwankingmodewtypepawam
+      extends f-fspawam[weightedopenowntabcwickmodew.modewnametype](
+        nyame = "quawity_upwanking_modew_id",
+        d-defauwt = "q4_2022_mw_bqmw_quawity_modew_waww"
+      )
+  o-object quawityupwankingtwansfowmtypepawam
+      e-extends fsenumpawam[mwquawityupwankingtwansfowmtypeenum.type](
+        n-nyame = "quawity_upwanking_twansfowm_id", /(^•ω•^)
+        d-defauwt = mwquawityupwankingtwansfowmtypeenum.sigmoid, (✿oωo)
+        enum = mwquawityupwankingtwansfowmtypeenum
+      )
+
+  o-object quawityupwankingboostfowheavywankingpawam
+      extends fsboundedpawam[doubwe](
+        nyame = "quawity_upwanking_boost_fow_heavy_wanking_pawam", ^^;;
+        d-defauwt = 1.0, (˘ω˘)
+        min = -10.0, 😳😳😳
+        m-max = 10.0
+      )
+  object quawityupwankingsigmoidbiasfowheavywankingpawam
+      e-extends fsboundedpawam[doubwe](
+        n-nyame = "quawity_upwanking_sigmoid_bias_fow_heavy_wanking_pawam", ^^
+        defauwt = 0.0, /(^•ω•^)
+        m-min = -10.0, >_<
+        max = 10.0
+      )
+  o-object quawityupwankingsigmoidweightfowheavywankingpawam
+      e-extends fsboundedpawam[doubwe](
+        nyame = "quawity_upwanking_sigmoid_weight_fow_heavy_wanking_pawam", (ꈍᴗꈍ)
+        defauwt = 1.0, (ꈍᴗꈍ)
+        m-min = -10.0, mya
+        m-max = 10.0
+      )
+  o-object quawityupwankingwineawbawfowheavywankingpawam
+      e-extends f-fsboundedpawam[doubwe](
+        n-nyame = "quawity_upwanking_wineaw_baw_fow_heavy_wanking_pawam", :3
+        defauwt = 1.0, 😳😳😳
+        m-min = 0.0, /(^•ω•^)
+        m-max = 10.0
+      )
+  o-object enabwequawityupwankingcwtscowestatsfowheavywankingpawam
+      extends f-fspawam[boowean](
+        nyame = "quawity_upwanking_enabwe_cwt_scowe_stats_fow_heavy_wanking_pawam", -.-
+        defauwt = fawse
+      )
+  /*
+   * b-bqmw heawth m-modew wewated pawams
+   */
+  object enabwebqmwheawthmodewpwedicatepawam
+      e-extends fspawam[boowean](
+        n-nyame = "bqmw_heawth_modew_fiwtew_enabwe_pawam",
+        defauwt = f-fawse
+      )
+
+  o-object enabwebqmwheawthmodewpwedictionfowinnetwowkcandidatespawam
+      extends f-fspawam[boowean](
+        n-nyame = "bqmw_heawth_modew_enabwe_pwediction_fow_in_netwowk_candidates_pawam", UwU
+        defauwt = fawse
+      )
+
+  object bqmwheawthmodewtypepawam
+      extends fspawam[heawthnsfwmodew.modewnametype](
+        nyame = "bqmw_heawth_modew_id", (U ﹏ U)
+        d-defauwt = heawthnsfwmodew.q2_2022_mw_bqmw_heawth_modew_nsfwv0
+      )
+  o-object bqmwheawthmodewpwedicatefiwtewthweshowdpawam
+      extends f-fsboundedpawam[doubwe](
+        nyame = "bqmw_heawth_modew_fiwtew_thweshowd_pawam", ^^
+        defauwt = 1.0, 😳
+        m-min = 0.0, (˘ω˘)
+        m-max = 1.0
+      )
+  object b-bqmwheawthmodewpwedicatebucketthweshowdpawam
+      e-extends fsboundedpawam[doubwe](
+        nyame = "bqmw_heawth_modew_bucket_thweshowd_pawam", /(^•ω•^)
+        defauwt = 0.005, (˘ω˘)
+        min = 0.0, (✿oωo)
+        m-max = 1.0
+      )
+
+  object enabwebqmwheawthmodewscowehistogwampawam
+      e-extends fspawam[boowean](
+        nyame = "bqmw_heawth_modew_scowe_histogwam_enabwe_pawam", (U ﹏ U)
+        d-defauwt = f-fawse
+      )
+
+  /*
+   * b-bqmw quawity modew wewated p-pawams
+   */
+  object enabwebqmwquawitymodewpwedicatepawam
+      extends fspawam[boowean](
+        nyame = "bqmw_quawity_modew_fiwtew_enabwe_pawam", (U ﹏ U)
+        d-defauwt = fawse
+      )
+  object enabwebqmwquawitymodewscowehistogwampawam
+      extends fspawam[boowean](
+        nyame = "bqmw_quawity_modew_scowe_histogwam_enabwe_pawam", (ˆ ﻌ ˆ)♡
+        defauwt = fawse
+      )
+  object bqmwquawitymodewtypepawam
+      e-extends f-fspawam[weightedopenowntabcwickmodew.modewnametype](
+        nyame = "bqmw_quawity_modew_id", /(^•ω•^)
+        d-defauwt = "q1_2022_13562_mw_bqmw_quawity_modew_v2"
       )
 
   /**
-   * Param to specify which quality models to use to get the scores for determining
-   * whether to bucket a user for the DDG
+   * p-pawam to specify which quawity modews to use to get t-the scowes fow d-detewmining
+   * whethew to bucket a-a usew fow the d-ddg
    */
-  object BqmlQualityModelBucketModelIdListParam
-      extends FSParam[Seq[WeightedOpenOrNtabClickModel.ModelNameType]](
-        name = "bqml_quality_model_bucket_model_id_list",
-        default = Seq(
-          "Q1_2022_13562_Mr_Bqml_Quality_Model_V2",
-          "Q2_2022_DDG14146_Mr_Personalised_BQML_Quality_Model",
-          "Q2_2022_DDG14146_Mr_NonPersonalised_BQML_Quality_Model"
+  object b-bqmwquawitymodewbucketmodewidwistpawam
+      e-extends fspawam[seq[weightedopenowntabcwickmodew.modewnametype]](
+        nyame = "bqmw_quawity_modew_bucket_modew_id_wist", XD
+        defauwt = s-seq(
+          "q1_2022_13562_mw_bqmw_quawity_modew_v2",
+          "q2_2022_ddg14146_mw_pewsonawised_bqmw_quawity_modew", (ˆ ﻌ ˆ)♡
+          "q2_2022_ddg14146_mw_nonpewsonawised_bqmw_quawity_modew"
         )
       )
 
-  object BqmlQualityModelPredicateThresholdParam
-      extends FSBoundedParam[Double](
-        name = "bqml_quality_model_filter_threshold_param",
-        default = 1.0,
-        min = 0.0,
+  object bqmwquawitymodewpwedicatethweshowdpawam
+      extends fsboundedpawam[doubwe](
+        n-nyame = "bqmw_quawity_modew_fiwtew_thweshowd_pawam", XD
+        defauwt = 1.0, mya
+        min = 0.0, OwO
         max = 1.0
       )
 
   /**
-   * Param to specify the threshold to determine if a user’s quality score is high enough to enter the experiment.
+   * pawam to specify the thweshowd t-to detewmine if a usew’s quawity scowe is high enough to entew t-the expewiment. XD
    */
-  object BqmlQualityModelBucketThresholdListParam
-      extends FSParam[Seq[Double]](
-        name = "bqml_quality_model_bucket_threshold_list",
-        default = Seq(0.7, 0.7, 0.7)
+  o-object b-bqmwquawitymodewbucketthweshowdwistpawam
+      extends fspawam[seq[doubwe]](
+        nyame = "bqmw_quawity_modew_bucket_thweshowd_wist", ( ͡o ω ͡o )
+        d-defauwt = seq(0.7, (ꈍᴗꈍ) 0.7, 0.7)
       )
 
   /*
-   * TweetAuthorAggregates related params
+   * t-tweetauthowaggwegates w-wewated pawams
    */
-  object EnableTweetAuthorAggregatesFeatureHydrationParam
-      extends FSParam[Boolean](
-        name = "tweet_author_aggregates_feature_hydration_enable_param",
-        default = false
+  object enabwetweetauthowaggwegatesfeatuwehydwationpawam
+      e-extends fspawam[boowean](
+        nyame = "tweet_authow_aggwegates_featuwe_hydwation_enabwe_pawam", mya
+        d-defauwt = fawse
       )
 
   /**
-   * Param to determine if we should include the relevancy score of candidates in the Ibis payload
+   * pawam to detewmine if we shouwd i-incwude the wewevancy scowe of candidates i-in the ibis paywoad
    */
-  object IncludeRelevanceScoreInIbis2Payload
-      extends FSParam[Boolean](
-        name = "relevance_score_include_in_ibis2_payload",
-        default = false
+  o-object incwudewewevancescoweinibis2paywoad
+      e-extends fspawam[boowean](
+        nyame = "wewevance_scowe_incwude_in_ibis2_paywoad", 😳
+        d-defauwt = fawse
       )
 
   /**
-   *  Param to specify supervised model to predict score by sending the notification
+   *  pawam to specify supewvised m-modew to pwedict scowe by sending the nyotification
    */
-  object BigFilteringSupervisedSendingModelParam
-      extends FSParam[BigFilteringSupervisedModel.ModelNameType](
-        name = "ltv_filtering_bigfiltering_supervised_sending_model_param",
-        default = BigFilteringSupervisedModel.V0_0_BigFiltering_Supervised_Sending_Model
+  object bigfiwtewingsupewvisedsendingmodewpawam
+      e-extends fspawam[bigfiwtewingsupewvisedmodew.modewnametype](
+        nyame = "wtv_fiwtewing_bigfiwtewing_supewvised_sending_modew_pawam", (ˆ ﻌ ˆ)♡
+        defauwt = b-bigfiwtewingsupewvisedmodew.v0_0_bigfiwtewing_supewvised_sending_modew
       )
 
   /**
-   *  Param to specify supervised model to predict score by not sending the notification
+   *  pawam t-to specify supewvised m-modew to pwedict scowe b-by nyot sending the nyotification
    */
-  object BigFilteringSupervisedWithoutSendingModelParam
-      extends FSParam[BigFilteringSupervisedModel.ModelNameType](
-        name = "ltv_filtering_bigfiltering_supervised_without_sending_model_param",
-        default = BigFilteringSupervisedModel.V0_0_BigFiltering_Supervised_Without_Sending_Model
+  o-object bigfiwtewingsupewvisedwithoutsendingmodewpawam
+      extends fspawam[bigfiwtewingsupewvisedmodew.modewnametype](
+        n-nyame = "wtv_fiwtewing_bigfiwtewing_supewvised_without_sending_modew_pawam", ^•ﻌ•^
+        d-defauwt = bigfiwtewingsupewvisedmodew.v0_0_bigfiwtewing_supewvised_without_sending_modew
       )
 
   /**
-   *  Param to specify RL model to predict score by sending the notification
+   *  pawam t-to specify ww m-modew to pwedict scowe by sending the nyotification
    */
-  object BigFilteringRLSendingModelParam
-      extends FSParam[BigFilteringSupervisedModel.ModelNameType](
-        name = "ltv_filtering_bigfiltering_rl_sending_model_param",
-        default = BigFilteringRLModel.V0_0_BigFiltering_Rl_Sending_Model
+  o-object bigfiwtewingwwsendingmodewpawam
+      e-extends f-fspawam[bigfiwtewingsupewvisedmodew.modewnametype](
+        n-nyame = "wtv_fiwtewing_bigfiwtewing_ww_sending_modew_pawam", 😳😳😳
+        d-defauwt = b-bigfiwtewingwwmodew.v0_0_bigfiwtewing_ww_sending_modew
       )
 
   /**
-   *  Param to specify RL model to predict score by not sending the notification
+   *  p-pawam t-to specify ww modew to pwedict scowe by nyot sending the nyotification
    */
-  object BigFilteringRLWithoutSendingModelParam
-      extends FSParam[BigFilteringSupervisedModel.ModelNameType](
-        name = "ltv_filtering_bigfiltering_rl_without_sending_model_param",
-        default = BigFilteringRLModel.V0_0_BigFiltering_Rl_Without_Sending_Model
+  object bigfiwtewingwwwithoutsendingmodewpawam
+      e-extends fspawam[bigfiwtewingsupewvisedmodew.modewnametype](
+        nyame = "wtv_fiwtewing_bigfiwtewing_ww_without_sending_modew_pawam",
+        defauwt = b-bigfiwtewingwwmodew.v0_0_bigfiwtewing_ww_without_sending_modew
       )
 
   /**
-   *  Param to specify the threshold (send notification if score >= threshold)
+   *  pawam to specify t-the thweshowd (send nyotification if scowe >= thweshowd)
    */
-  object BigFilteringThresholdParam
-      extends FSBoundedParam[Double](
-        name = "ltv_filtering_bigfiltering_threshold_param",
-        default = 0.0,
-        min = Double.MinValue,
-        max = Double.MaxValue
+  o-object bigfiwtewingthweshowdpawam
+      extends f-fsboundedpawam[doubwe](
+        n-nyame = "wtv_fiwtewing_bigfiwtewing_thweshowd_pawam", rawr
+        defauwt = 0.0, ^•ﻌ•^
+        min = doubwe.minvawue, σωσ
+        max = d-doubwe.maxvawue
       )
 
   /**
-   *  Param to specify normalization used for BigFiltering
+   *  pawam to specify nowmawization used fow bigfiwtewing
    */
-  object BigFilteringNormalizationTypeIdParam
-      extends FSEnumParam[BigFilteringNormalizationEnum.type](
-        name = "ltv_filtering_bigfiltering_normalization_type_id",
-        default = BigFilteringNormalizationEnum.NormalizationDisabled,
-        enum = BigFilteringNormalizationEnum
+  object bigfiwtewingnowmawizationtypeidpawam
+      e-extends fsenumpawam[bigfiwtewingnowmawizationenum.type](
+        nyame = "wtv_fiwtewing_bigfiwtewing_nowmawization_type_id", :3
+        d-defauwt = b-bigfiwtewingnowmawizationenum.nowmawizationdisabwed, rawr x3
+        e-enum = bigfiwtewingnowmawizationenum
       )
 
   /**
-   *  Param to specify histograms of model scores in BigFiltering
+   *  p-pawam to specify histogwams of modew scowes i-in bigfiwtewing
    */
-  object BigFilteringEnableHistogramsParam
-      extends FSParam[Boolean](
-        name = "ltv_filtering_bigfiltering_enable_histograms_param",
-        default = false
+  object bigfiwtewingenabwehistogwamspawam
+      e-extends fspawam[boowean](
+        nyame = "wtv_fiwtewing_bigfiwtewing_enabwe_histogwams_pawam", nyaa~~
+        defauwt = fawse
       )
 
   /*
-   * Param to enable sending requests to Ins Sender
+   * pawam to enabwe sending wequests to ins s-sendew
    */
-  object EnableInsSender extends FSParam[Boolean](name = "ins_enable_dark_traffic", default = false)
+  object enabweinssendew e-extends fspawam[boowean](name = "ins_enabwe_dawk_twaffic", :3 d-defauwt = fawse)
 
   /**
-   * Param to specify the range of relevance scores for MagicFanout types.
+   * p-pawam to specify the wange of wewevance scowes fow m-magicfanout types. >w<
    */
-  object MagicFanoutRelevanceScoreRange
-      extends FSParam[Seq[Double]](
-        name = "relevance_score_mf_range",
-        default = Seq(0.75, 1.0)
+  o-object magicfanoutwewevancescowewange
+      e-extends f-fspawam[seq[doubwe]](
+        nyame = "wewevance_scowe_mf_wange", rawr
+        d-defauwt = seq(0.75, 😳 1.0)
       )
 
   /**
-   * Param to specify the range of relevance scores for MR types.
+   * p-pawam to specify the wange of wewevance scowes f-fow mw types. 😳
    */
-  object MagicRecsRelevanceScoreRange
-      extends FSParam[Seq[Double]](
-        name = "relevance_score_mr_range",
-        default = Seq(0.25, 0.5)
+  object m-magicwecswewevancescowewange
+      extends fspawam[seq[doubwe]](
+        n-nyame = "wewevance_scowe_mw_wange", 🥺
+        d-defauwt = seq(0.25, rawr x3 0.5)
       )
 
   /**
-   * Param to enable backfilling OON candidates if number of F1 candidates is greater than a threshold K.
+   * pawam to enabwe backfiwwing oon candidates if nyumbew of f1 candidates is gweatew t-than a thweshowd k-k. ^^
    */
-  object EnableOONBackfillBasedOnF1Candidates
-      extends FSParam[Boolean](name = "oon_enable_backfill_based_on_f1", default = false)
+  object enabweoonbackfiwwbasedonf1candidates
+      e-extends fspawam[boowean](name = "oon_enabwe_backfiww_based_on_f1", ( ͡o ω ͡o ) d-defauwt = f-fawse)
 
   /**
-   * Threshold for the minimum number of F1 candidates required to enable backfill of OON candidates.
+   * thweshowd fow the minimum nyumbew of f1 candidates w-wequiwed to enabwe backfiww of oon candidates. XD
    */
-  object NumberOfF1CandidatesThresholdForOONBackfill
-      extends FSBoundedParam[Int](
-        name = "oon_enable_backfill_f1_threshold",
-        min = 0,
-        default = 5000,
-        max = 5000)
+  object nyumbewoff1candidatesthweshowdfowoonbackfiww
+      extends f-fsboundedpawam[int](
+        nyame = "oon_enabwe_backfiww_f1_thweshowd",
+        m-min = 0, ^^
+        d-defauwt = 5000, (⑅˘꒳˘)
+        m-max = 5000)
 
   /**
-   * Event ID allowlist to skip account country predicate
+   * event id awwowwist t-to skip account c-countwy pwedicate
    */
-  object MagicFanoutEventAllowlistToSkipAccountCountryPredicate
-      extends FSParam[Seq[Long]](
-        name = "magicfanout_event_allowlist_skip_account_country_predicate",
-        default = Seq.empty[Long]
+  o-object magicfanouteventawwowwisttoskipaccountcountwypwedicate
+      e-extends fspawam[seq[wong]](
+        nyame = "magicfanout_event_awwowwist_skip_account_countwy_pwedicate", (⑅˘꒳˘)
+        defauwt = s-seq.empty[wong]
       )
 
   /**
-   * MagicFanout Event Semantic Core Domain Ids
+   * m-magicfanout e-event semantic cowe d-domain ids
    */
-  object ListOfEventSemanticCoreDomainIds
-      extends FSParam[Seq[Long]](
-        name = "magicfanout_automated_events_semantic_core_domain_ids",
-        default = Seq())
+  o-object wistofeventsemanticcowedomainids
+      extends fspawam[seq[wong]](
+        nyame = "magicfanout_automated_events_semantic_cowe_domain_ids", ^•ﻌ•^
+        defauwt = seq())
 
   /**
-   * Adhoc id for detailed rank flow stats
+   * adhoc i-id fow detaiwed wank fwow stats
    */
-  object ListOfAdhocIdsForStatsTracking
-      extends FSParam[Set[Long]](
-        name = "stats_enable_detailed_stats_tracking_ids",
-        default = Set.empty[Long]
+  object wistofadhocidsfowstatstwacking
+      extends fspawam[set[wong]](
+        n-nyame = "stats_enabwe_detaiwed_stats_twacking_ids", ( ͡o ω ͡o )
+        defauwt = set.empty[wong]
       )
 
-  object EnableGenericCRTBasedFatiguePredicate
-      extends FSParam[Boolean](
-        name = "seelessoften_enable_generic_crt_based_fatigue_predicate",
-        default = false)
+  object e-enabwegenewiccwtbasedfatiguepwedicate
+      e-extends fspawam[boowean](
+        n-nyame = "seewessoften_enabwe_genewic_cwt_based_fatigue_pwedicate", ( ͡o ω ͡o )
+        defauwt = f-fawse)
 
   /**
-   * Param to enable copy features such as Emojis and Target Name
+   * pawam t-to enabwe copy f-featuwes such as emojis and tawget nyame
    */
-  object EnableCopyFeaturesForF1
-      extends FSParam[Boolean](name = "mr_copy_enable_features_f1", default = false)
+  object enabwecopyfeatuwesfowf1
+      extends fspawam[boowean](name = "mw_copy_enabwe_featuwes_f1", (✿oωo) defauwt = fawse)
 
   /**
-   * Param to enable copy features such as Emojis and Target Name
+   * p-pawam to enabwe copy featuwes such a-as emojis and tawget nyame
    */
-  object EnableCopyFeaturesForOon
-      extends FSParam[Boolean](name = "mr_copy_enable_features_oon", default = false)
+  o-object enabwecopyfeatuwesfowoon
+      e-extends fspawam[boowean](name = "mw_copy_enabwe_featuwes_oon", 😳😳😳 defauwt = f-fawse)
 
   /**
-   * Param to enable Emoji in F1 Copy
+   * p-pawam to enabwe emoji in f-f1 copy
    */
-  object EnableEmojiInF1Copy
-      extends FSParam[Boolean](name = "mr_copy_enable_f1_emoji", default = false)
+  o-object enabweemojiinf1copy
+      extends fspawam[boowean](name = "mw_copy_enabwe_f1_emoji", OwO defauwt = fawse)
 
   /**
-   * Param to enable Target in F1 Copy
+   * pawam t-to enabwe tawget i-in f1 copy
    */
-  object EnableTargetInF1Copy
-      extends FSParam[Boolean](name = "mr_copy_enable_f1_target", default = false)
+  o-object enabwetawgetinf1copy
+      extends fspawam[boowean](name = "mw_copy_enabwe_f1_tawget", ^^ d-defauwt = fawse)
 
   /**
-   * Param to enable Emoji in OON Copy
+   * p-pawam to enabwe emoji in oon copy
    */
-  object EnableEmojiInOonCopy
-      extends FSParam[Boolean](name = "mr_copy_enable_oon_emoji", default = false)
+  o-object enabweemojiinooncopy
+      extends fspawam[boowean](name = "mw_copy_enabwe_oon_emoji", rawr x3 defauwt = f-fawse)
 
   /**
-   * Param to enable Target in OON Copy
+   * p-pawam to enabwe tawget in oon copy
    */
-  object EnableTargetInOonCopy
-      extends FSParam[Boolean](name = "mr_copy_enable_oon_target", default = false)
+  o-object enabwetawgetinooncopy
+      e-extends fspawam[boowean](name = "mw_copy_enabwe_oon_tawget", 🥺 defauwt = fawse)
 
   /**
-   * Param to enable split fatigue for Target and Emoji copy for OON and F1
+   * pawam to enabwe spwit f-fatigue fow tawget and emoji copy fow oon and f1
    */
-  object EnableTargetAndEmojiSplitFatigue
-      extends FSParam[Boolean](name = "mr_copy_enable_target_emoji_split_fatigue", default = false)
+  object enabwetawgetandemojispwitfatigue
+      e-extends fspawam[boowean](name = "mw_copy_enabwe_tawget_emoji_spwit_fatigue", (ˆ ﻌ ˆ)♡ defauwt = f-fawse)
 
   /**
-   * Param to enable experimenting string on the body
+   * p-pawam to enabwe expewimenting stwing on the body
    */
-  object EnableF1CopyBody extends FSParam[Boolean](name = "mr_copy_f1_enable_body", default = false)
+  object e-enabwef1copybody e-extends fspawam[boowean](name = "mw_copy_f1_enabwe_body", ( ͡o ω ͡o ) defauwt = fawse)
 
-  object EnableOONCopyBody
-      extends FSParam[Boolean](name = "mr_copy_oon_enable_body", default = false)
+  object enabweooncopybody
+      extends fspawam[boowean](name = "mw_copy_oon_enabwe_body", >w< d-defauwt = fawse)
 
-  object EnableIosCopyBodyTruncate
-      extends FSParam[Boolean](name = "mr_copy_enable_body_truncate", default = false)
+  o-object enabweioscopybodytwuncate
+      extends fspawam[boowean](name = "mw_copy_enabwe_body_twuncate", /(^•ω•^) defauwt = f-fawse)
 
-  object EnableNsfwCopy extends FSParam[Boolean](name = "mr_copy_enable_nsfw", default = false)
+  object enabwensfwcopy e-extends fspawam[boowean](name = "mw_copy_enabwe_nsfw", 😳😳😳 d-defauwt = fawse)
 
   /**
-   * Param to determine F1 candidate nsfw score threshold
+   * p-pawam to detewmine f1 candidate n-nysfw scowe t-thweshowd
    */
-  object NsfwScoreThresholdForF1Copy
-      extends FSBoundedParam[Double](
-        name = "mr_copy_nsfw_threshold_f1",
-        default = 0.3,
-        min = 0.0,
+  o-object nysfwscowethweshowdfowf1copy
+      extends f-fsboundedpawam[doubwe](
+        n-name = "mw_copy_nsfw_thweshowd_f1", (U ᵕ U❁)
+        defauwt = 0.3, (˘ω˘)
+        min = 0.0, 😳
+        m-max = 1.0
+      )
+
+  /**
+   * p-pawam t-to detewmine oon candidate nysfw scowe thweshowd
+   */
+  o-object nysfwscowethweshowdfowooncopy
+      e-extends fsboundedpawam[doubwe](
+        n-nyame = "mw_copy_nsfw_thweshowd_oon", (ꈍᴗꈍ)
+        defauwt = 0.2, :3
+        min = 0.0, /(^•ω•^)
         max = 1.0
       )
 
   /**
-   * Param to determine OON candidate nsfw score threshold
+   * p-pawam to detewmine t-the wookback d-duwation when s-seawching fow pwev copy featuwes. ^^;;
    */
-  object NsfwScoreThresholdForOONCopy
-      extends FSBoundedParam[Double](
-        name = "mr_copy_nsfw_threshold_oon",
-        default = 0.2,
-        min = 0.0,
-        max = 1.0
-      )
-
-  /**
-   * Param to determine the lookback duration when searching for prev copy features.
-   */
-  object CopyFeaturesHistoryLookbackDuration
-      extends FSBoundedParam[Duration](
-        name = "mr_copy_history_lookback_duration_in_days",
-        default = 30.days,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  o-object copyfeatuweshistowywookbackduwation
+      extends fsboundedpawam[duwation](
+        nyame = "mw_copy_histowy_wookback_duwation_in_days", o.O
+        defauwt = 30.days, 😳
+        m-min = duwation.bottom,
+        m-max = duwation.top)
+      w-with hasduwationconvewsion {
+    ovewwide v-vaw duwationconvewsion = duwationconvewsion.fwomdays
   }
 
   /**
-   * Param to determine the F1 emoji copy fatigue in # of hours.
+   * p-pawam to detewmine t-the f1 emoji c-copy fatigue i-in # of houws. UwU
    */
-  object F1EmojiCopyFatigueDuration
-      extends FSBoundedParam[Duration](
-        name = "mr_copy_f1_emoji_copy_fatigue_in_hours",
-        default = 24.hours,
-        min = 0.hours,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+  o-object f1emojicopyfatigueduwation
+      extends fsboundedpawam[duwation](
+        nyame = "mw_copy_f1_emoji_copy_fatigue_in_houws", >w<
+        defauwt = 24.houws, o.O
+        min = 0.houws, (˘ω˘)
+        max = duwation.top)
+      w-with hasduwationconvewsion {
+    o-ovewwide vaw d-duwationconvewsion = duwationconvewsion.fwomhouws
   }
 
   /**
-   * Param to determine the F1 target copy fatigue in # of hours.
+   * p-pawam to detewmine the f1 tawget copy fatigue in # of houws. òωó
    */
-  object F1TargetCopyFatigueDuration
-      extends FSBoundedParam[Duration](
-        name = "mr_copy_f1_target_copy_fatigue_in_hours",
-        default = 24.hours,
-        min = 0.hours,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+  o-object f1tawgetcopyfatigueduwation
+      e-extends fsboundedpawam[duwation](
+        nyame = "mw_copy_f1_tawget_copy_fatigue_in_houws", nyaa~~
+        d-defauwt = 24.houws, ( ͡o ω ͡o )
+        min = 0.houws, 😳😳😳
+        max = duwation.top)
+      w-with hasduwationconvewsion {
+    o-ovewwide vaw duwationconvewsion = d-duwationconvewsion.fwomhouws
   }
 
   /**
-   * Param to determine the OON emoji copy fatigue in # of hours.
+   * p-pawam to detewmine the oon emoji copy fatigue in # of houws. ^•ﻌ•^
    */
-  object OonEmojiCopyFatigueDuration
-      extends FSBoundedParam[Duration](
-        name = "mr_copy_oon_emoji_copy_fatigue_in_hours",
-        default = 24.hours,
-        min = 0.hours,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+  object oonemojicopyfatigueduwation
+      e-extends fsboundedpawam[duwation](
+        n-nyame = "mw_copy_oon_emoji_copy_fatigue_in_houws", (˘ω˘)
+        d-defauwt = 24.houws, (˘ω˘)
+        m-min = 0.houws, -.-
+        m-max = duwation.top)
+      with hasduwationconvewsion {
+    o-ovewwide vaw d-duwationconvewsion = duwationconvewsion.fwomhouws
   }
 
   /**
-   * Param to determine the OON target copy fatigue in # of hours.
+   * p-pawam to detewmine t-the oon tawget copy fatigue i-in # of houws. ^•ﻌ•^
    */
-  object OonTargetCopyFatigueDuration
-      extends FSBoundedParam[Duration](
-        name = "mr_copy_oon_target_copy_fatigue_in_hours",
-        default = 24.hours,
-        min = 0.hours,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+  object oontawgetcopyfatigueduwation
+      extends fsboundedpawam[duwation](
+        n-nyame = "mw_copy_oon_tawget_copy_fatigue_in_houws", /(^•ω•^)
+        defauwt = 24.houws, (///ˬ///✿)
+        m-min = 0.houws, mya
+        m-max = duwation.top)
+      w-with hasduwationconvewsion {
+    ovewwide vaw duwationconvewsion = d-duwationconvewsion.fwomhouws
   }
 
   /**
-   * Param to turn on/off home timeline based fatigue rule, where once last home timeline visit
-   * is larger than the specified will evalute to not fatigue
+   * p-pawam to tuwn o-on/off home timewine based fatigue wuwe, whewe once wast home t-timewine visit
+   * is wawgew than the specified w-wiww evawute to n-nyot fatigue
    */
-  object EnableHTLBasedFatigueBasicRule
-      extends FSParam[Boolean](
-        name = "mr_copy_enable_htl_based_fatigue_basic_rule",
-        default = false)
+  object enabwehtwbasedfatiguebasicwuwe
+      e-extends fspawam[boowean](
+        nyame = "mw_copy_enabwe_htw_based_fatigue_basic_wuwe", o.O
+        d-defauwt = fawse)
 
   /**
-   * Param to determine f1 emoji copy fatigue in # of pushes
+   * p-pawam to detewmine f1 emoji copy fatigue in # of p-pushes
    */
-  object F1EmojiCopyNumOfPushesFatigue
-      extends FSBoundedParam[Int](
-        name = "mr_copy_f1_emoji_copy_number_of_pushes_fatigue",
-        default = 0,
-        min = 0,
+  object f1emojicopynumofpushesfatigue
+      extends f-fsboundedpawam[int](
+        n-nyame = "mw_copy_f1_emoji_copy_numbew_of_pushes_fatigue", ^•ﻌ•^
+        defauwt = 0, (U ᵕ U❁)
+        m-min = 0, :3
         max = 200
       )
 
   /**
-   * Param to determine oon emoji copy fatigue in # of pushes
+   * p-pawam to d-detewmine oon emoji c-copy fatigue in # of pushes
    */
-  object OonEmojiCopyNumOfPushesFatigue
-      extends FSBoundedParam[Int](
-        name = "mr_copy_oon_emoji_copy_number_of_pushes_fatigue",
-        default = 0,
-        min = 0,
+  object oonemojicopynumofpushesfatigue
+      extends fsboundedpawam[int](
+        nyame = "mw_copy_oon_emoji_copy_numbew_of_pushes_fatigue", (///ˬ///✿)
+        defauwt = 0, (///ˬ///✿)
+        min = 0, 🥺
         max = 200
       )
 
   /**
-   * If user haven't visited home timeline for certain duration, we will
-   * exempt user from feature copy fatigue. This param is used to control
-   * how long it is before we enter exemption.
+   * if usew haven't visited home timewine fow cewtain duwation, -.- we wiww
+   * exempt u-usew fwom featuwe c-copy fatigue. nyaa~~ this pawam is used to contwow
+   * h-how wong it is b-befowe we entew e-exemption. (///ˬ///✿)
    */
-  object MinFatigueDurationSinceLastHTLVisit
-      extends FSBoundedParam[Duration](
-        name = "mr_copy_min_duration_since_last_htl_visit_hours",
-        default = Duration.Top,
-        min = 0.hour,
-        max = Duration.Top,
+  object minfatigueduwationsincewasthtwvisit
+      e-extends fsboundedpawam[duwation](
+        nyame = "mw_copy_min_duwation_since_wast_htw_visit_houws", 🥺
+        d-defauwt = duwation.top, >w<
+        m-min = 0.houw, rawr x3
+        max = duwation.top, (⑅˘꒳˘)
       )
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+      w-with hasduwationconvewsion {
+    o-ovewwide v-vaw duwationconvewsion = duwationconvewsion.fwomhouws
   }
 
   /**
-   * If a user haven't visit home timeline very long, the user will return
-   * to fatigue state under the home timeline based fatigue rule. There will
-   * only be a window, where the user is out of fatigue state under the rule.
-   * This param control the length of the non fatigue period.
+   * if a u-usew haven't visit h-home timewine v-vewy wong, σωσ the u-usew wiww wetuwn
+   * t-to fatigue s-state undew the h-home timewine based f-fatigue wuwe. XD t-thewe wiww
+   * onwy be a window, -.- w-whewe the usew i-is out of fatigue s-state undew the wuwe. >_<
+   * t-this pawam contwow the wength of the nyon fatigue p-pewiod. rawr
    */
-  object LastHTLVisitBasedNonFatigueWindow
-      extends FSBoundedParam[Duration](
-        name = "mr_copy_last_htl_visit_based_non_fatigue_window_hours",
-        default = 48.hours,
-        min = 0.hour,
-        max = Duration.Top,
+  object wasthtwvisitbasednonfatiguewindow
+      e-extends fsboundedpawam[duwation](
+        n-nyame = "mw_copy_wast_htw_visit_based_non_fatigue_window_houws", 😳😳😳
+        d-defauwt = 48.houws, UwU
+        min = 0.houw, (U ﹏ U)
+        m-max = duwation.top, (˘ω˘)
       )
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+      with hasduwationconvewsion {
+    o-ovewwide vaw duwationconvewsion = d-duwationconvewsion.fwomhouws
   }
 
-  object EnableOONCBasedCopy
-      extends FSParam[Boolean](
-        name = "mr_copy_enable_oonc_based_copy",
-        default = false
+  object enabweooncbasedcopy
+      e-extends fspawam[boowean](
+        nyame = "mw_copy_enabwe_oonc_based_copy", /(^•ω•^)
+        defauwt = fawse
       )
 
-  object HighOONCThresholdForCopy
-      extends FSBoundedParam[Double](
-        name = "mr_copy_high_oonc_threshold_for_copy",
-        default = 1.0,
-        min = 0.0,
-        max = 1.0
+  object highooncthweshowdfowcopy
+      extends fsboundedpawam[doubwe](
+        n-nyame = "mw_copy_high_oonc_thweshowd_fow_copy", (U ﹏ U)
+        defauwt = 1.0, ^•ﻌ•^
+        m-min = 0.0, >w<
+        m-max = 1.0
       )
 
-  object LowOONCThresholdForCopy
-      extends FSBoundedParam[Double](
-        name = "mr_copy_low_oonc_threshold_for_copy",
-        default = 0.0,
-        min = 0.0,
-        max = 1.0
+  object wowooncthweshowdfowcopy
+      extends fsboundedpawam[doubwe](
+        n-nyame = "mw_copy_wow_oonc_thweshowd_fow_copy", ʘwʘ
+        defauwt = 0.0, òωó
+        m-min = 0.0, o.O
+        m-max = 1.0
       )
 
-  object EnableTweetTranslation
-      extends FSParam[Boolean](name = "tweet_translation_enable", default = false)
+  o-object enabwetweettwanswation
+      extends fspawam[boowean](name = "tweet_twanswation_enabwe", ( ͡o ω ͡o ) d-defauwt = f-fawse)
 
-  object TripTweetCandidateReturnEnable
-      extends FSParam[Boolean](name = "trip_tweet_candidate_enable", default = false)
+  object twiptweetcandidatewetuwnenabwe
+      e-extends fspawam[boowean](name = "twip_tweet_candidate_enabwe", mya defauwt = f-fawse)
 
-  object TripTweetCandidateSourceIds
-      extends FSParam[Seq[String]](
-        name = "trip_tweet_candidate_source_ids",
-        default = Seq("TOP_GEO_V3"))
+  object twiptweetcandidatesouwceids
+      e-extends fspawam[seq[stwing]](
+        n-nyame = "twip_tweet_candidate_souwce_ids", >_<
+        d-defauwt = seq("top_geo_v3"))
 
-  object TripTweetMaxTotalCandidates
-      extends FSBoundedParam[Int](
-        name = "trip_tweet_max_total_candidates",
-        default = 500,
-        min = 10,
-        max = 1000)
+  o-object t-twiptweetmaxtotawcandidates
+      e-extends fsboundedpawam[int](
+        n-nyame = "twip_tweet_max_totaw_candidates", rawr
+        defauwt = 500, >_<
+        m-min = 10, (U ﹏ U)
+        m-max = 1000)
 
-  object EnableEmptyBody
-      extends FSParam[Boolean](name = "push_presentation_enable_empty_body", default = false)
+  o-object enabweemptybody
+      e-extends fspawam[boowean](name = "push_pwesentation_enabwe_empty_body", rawr d-defauwt = f-fawse)
 
-  object EnableSocialContextForRetweet
-      extends FSParam[Boolean](name = "push_presentation_social_context_retweet", default = false)
+  object e-enabwesociawcontextfowwetweet
+      e-extends fspawam[boowean](name = "push_pwesentation_sociaw_context_wetweet", (U ᵕ U❁) d-defauwt = fawse)
 
   /**
-   * Param to enable/disable simcluster feature hydration
+   * pawam to enabwe/disabwe s-simcwustew featuwe hydwation
    */
-  object EnableMrTweetSimClusterFeatureHydrationFS
-      extends FSParam[Boolean](
-        name = "feature_hydration_enable_mr_tweet_simcluster_feature",
-        default = false
+  object e-enabwemwtweetsimcwustewfeatuwehydwationfs
+      e-extends fspawam[boowean](
+        n-nyame = "featuwe_hydwation_enabwe_mw_tweet_simcwustew_featuwe", (ˆ ﻌ ˆ)♡
+        defauwt = fawse
       )
 
   /**
-   * Param to disable OON candidates based on tweetAuthor
+   * pawam to disabwe oon candidates b-based on tweetauthow
    */
-  object DisableOutNetworkTweetCandidatesFS
-      extends FSParam[Boolean](name = "oon_filtering_disable_oon_candidates", default = false)
+  o-object disabweoutnetwowktweetcandidatesfs
+      e-extends fspawam[boowean](name = "oon_fiwtewing_disabwe_oon_candidates", >_< defauwt = fawse)
 
   /**
-   * Param to enable Local Viral Tweets
+   * pawam to enabwe w-wocaw viwaw t-tweets
    */
-  object EnableLocalViralTweets
-      extends FSParam[Boolean](name = "local_viral_tweets_enable", default = true)
+  object enabwewocawviwawtweets
+      e-extends fspawam[boowean](name = "wocaw_viwaw_tweets_enabwe", ^^;; d-defauwt = twue)
 
   /**
-   * Param to enable Explore Video Tweets
+   * pawam to enabwe expwowe video tweets
    */
-  object EnableExploreVideoTweets
-      extends FSParam[Boolean](name = "explore_video_tweets_enable", default = false)
+  o-object e-enabweexpwowevideotweets
+      e-extends fspawam[boowean](name = "expwowe_video_tweets_enabwe", d-defauwt = fawse)
 
   /**
-   * Param to enable List Recommendations
+   * pawam to enabwe wist w-wecommendations
    */
-  object EnableListRecommendations
-      extends FSParam[Boolean](name = "list_recommendations_enable", default = false)
+  o-object enabwewistwecommendations
+      extends fspawam[boowean](name = "wist_wecommendations_enabwe", ʘwʘ d-defauwt = fawse)
 
   /**
-   * Param to enable IDS List Recommendations
+   * pawam to enabwe ids w-wist wecommendations
    */
-  object EnableIDSListRecommendations
-      extends FSParam[Boolean](name = "list_recommendations_ids_enable", default = false)
+  object e-enabweidswistwecommendations
+      e-extends fspawam[boowean](name = "wist_wecommendations_ids_enabwe", 😳😳😳 d-defauwt = f-fawse)
 
   /**
-   * Param to enable PopGeo List Recommendations
+   * pawam to e-enabwe popgeo wist wecommendations
    */
-  object EnablePopGeoListRecommendations
-      extends FSParam[Boolean](name = "list_recommendations_pop_geo_enable", default = false)
+  o-object e-enabwepopgeowistwecommendations
+      e-extends f-fspawam[boowean](name = "wist_wecommendations_pop_geo_enabwe", UwU defauwt = fawse)
 
   /**
-   * Param to control the inverter for fatigue between consecutive ListRecommendations
+   * p-pawam t-to contwow the i-invewtew fow fatigue between consecutive w-wistwecommendations
    */
-  object ListRecommendationsPushInterval
-      extends FSBoundedParam[Duration](
-        name = "list_recommendations_interval_days",
-        default = 24.hours,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromDays
+  object wistwecommendationspushintewvaw
+      extends fsboundedpawam[duwation](
+        n-nyame = "wist_wecommendations_intewvaw_days", OwO
+        d-defauwt = 24.houws,
+        m-min = duwation.bottom, :3
+        max = duwation.top)
+      with hasduwationconvewsion {
+    ovewwide vaw duwationconvewsion = d-duwationconvewsion.fwomdays
   }
 
   /**
-   * Param to control the granularity of GeoHash for ListRecommendations
+   * pawam to c-contwow the gwanuwawity o-of geohash fow wistwecommendations
    */
-  object ListRecommendationsGeoHashLength
-      extends FSBoundedParam[Int](
-        name = "list_recommendations_geo_hash_length",
-        default = 5,
-        min = 3,
-        max = 5)
+  object wistwecommendationsgeohashwength
+      e-extends fsboundedpawam[int](
+        nyame = "wist_wecommendations_geo_hash_wength", -.-
+        defauwt = 5, 🥺
+        m-min = 3, -.-
+        m-max = 5)
 
   /**
-   * Param to control maximum number of ListRecommendation pushes to receive in an interval
+   * p-pawam t-to contwow maximum n-nyumbew of wistwecommendation pushes to weceive in an intewvaw
    */
-  object MaxListRecommendationsPushGivenInterval
-      extends FSBoundedParam[Int](
-        name = "list_recommendations_push_given_interval",
-        default = 1,
-        min = 0,
+  object maxwistwecommendationspushgivenintewvaw
+      extends f-fsboundedpawam[int](
+        nyame = "wist_wecommendations_push_given_intewvaw", -.-
+        d-defauwt = 1, (U ﹏ U)
+        min = 0, rawr
         max = 10
       )
 
   /**
-   * Param to control the subscriber count for list recommendation
+   * pawam to contwow t-the subscwibew count fow wist wecommendation
    */
-  object ListRecommendationsSubscriberCount
-      extends FSBoundedParam[Int](
-        name = "list_recommendations_subscriber_count",
-        default = 0,
-        min = 0,
-        max = Integer.MAX_VALUE)
+  object wistwecommendationssubscwibewcount
+      e-extends f-fsboundedpawam[int](
+        nyame = "wist_wecommendations_subscwibew_count", mya
+        d-defauwt = 0, ( ͡o ω ͡o )
+        min = 0, /(^•ω•^)
+        max = i-integew.max_vawue)
 
   /**
-   * Param to define dynamic inline action types for web notifications (both desktop web + mobile web)
+   * p-pawam to define dynamic inwine a-action types fow web nyotifications (both d-desktop web + mobiwe web)
    */
-  object LocalViralTweetsBucket
-      extends FSParam[String](
-        name = "local_viral_tweets_bucket",
-        default = "high",
+  object wocawviwawtweetsbucket
+      e-extends fspawam[stwing](
+        nyame = "wocaw_viwaw_tweets_bucket", >_<
+        defauwt = "high", (✿oωo)
       )
 
   /**
-   * List of CrTags to disable
+   * wist of cwtags t-to disabwe
    */
-  object OONCandidatesDisabledCrTagParam
-      extends FSParam[Seq[String]](
-        name = "oon_enable_oon_candidates_disabled_crtag",
-        default = Seq.empty[String]
+  o-object ooncandidatesdisabwedcwtagpawam
+      e-extends fspawam[seq[stwing]](
+        nyame = "oon_enabwe_oon_candidates_disabwed_cwtag", 😳😳😳
+        defauwt = s-seq.empty[stwing]
       )
 
   /**
-   * List of Crt groups to disable
+   * wist of cwt gwoups to disabwe
    */
-  object OONCandidatesDisabledCrtGroupParam
-      extends FSEnumSeqParam[CrtGroupEnum.type](
-        name = "oon_enable_oon_candidates_disabled_crt_group_ids",
-        default = Seq.empty[CrtGroupEnum.Value],
-        enum = CrtGroupEnum
+  object ooncandidatesdisabwedcwtgwouppawam
+      e-extends f-fsenumseqpawam[cwtgwoupenum.type](
+        nyame = "oon_enabwe_oon_candidates_disabwed_cwt_gwoup_ids", (ꈍᴗꈍ)
+        d-defauwt = seq.empty[cwtgwoupenum.vawue], 🥺
+        e-enum = cwtgwoupenum
       )
 
   /**
-   * Param to enable launching video tweets in the Immersive Explore timeline
+   * pawam to enabwe waunching v-video tweets i-in the immewsive expwowe timewine
    */
-  object EnableLaunchVideosInImmersiveExplore
-      extends FSParam[Boolean](name = "launch_videos_in_immersive_explore", default = false)
+  object e-enabwewaunchvideosinimmewsiveexpwowe
+      extends fspawam[boowean](name = "waunch_videos_in_immewsive_expwowe", mya defauwt = fawse)
 
   /**
-   * Param to enable Ntab Entries for Sports Event Notifications
+   * p-pawam to enabwe nytab entwies fow spowts event n-nyotifications
    */
-  object EnableNTabEntriesForSportsEventNotifications
-      extends FSParam[Boolean](
-        name = "magicfanout_sports_event_enable_ntab_entries",
-        default = false)
+  o-object enabwentabentwiesfowspowtseventnotifications
+      extends fspawam[boowean](
+        n-nyame = "magicfanout_spowts_event_enabwe_ntab_entwies", (ˆ ﻌ ˆ)♡
+        d-defauwt = fawse)
 
   /**
-   * Param to enable Ntab Facepiles for teams in Sport Notifs
+   * p-pawam to enabwe nytab facepiwes fow teams in spowt n-nyotifs
    */
-  object EnableNTabFacePileForSportsEventNotifications
-      extends FSParam[Boolean](
-        name = "magicfanout_sports_event_enable_ntab_facepiles",
-        default = false)
+  object enabwentabfacepiwefowspowtseventnotifications
+      extends fspawam[boowean](
+        n-nyame = "magicfanout_spowts_event_enabwe_ntab_facepiwes", (⑅˘꒳˘)
+        defauwt = fawse)
 
   /**
-   * Param to enable Ntab Override for Sports Event Notifications
+   * pawam to enabwe nytab ovewwide fow s-spowts event n-nyotifications
    */
-  object EnableNTabOverrideForSportsEventNotifications
-      extends FSParam[Boolean](
-        name = "magicfanout_sports_event_enable_ntab_override",
-        default = false)
+  o-object enabwentabovewwidefowspowtseventnotifications
+      e-extends fspawam[boowean](
+        n-nyame = "magicfanout_spowts_event_enabwe_ntab_ovewwide", òωó
+        defauwt = fawse)
 
   /**
-   * Param to control the interval for MF Product Launch Notifs
+   * p-pawam to contwow the intewvaw fow mf pwoduct waunch n-nyotifs
    */
-  object ProductLaunchPushIntervalInHours
-      extends FSBoundedParam[Duration](
-        name = "product_launch_fatigue_push_interval_in_hours",
-        default = 24.hours,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+  object pwoductwaunchpushintewvawinhouws
+      e-extends fsboundedpawam[duwation](
+        name = "pwoduct_waunch_fatigue_push_intewvaw_in_houws", o.O
+        defauwt = 24.houws, XD
+        m-min = d-duwation.bottom, (˘ω˘)
+        max = duwation.top)
+      w-with hasduwationconvewsion {
+    ovewwide vaw d-duwationconvewsion = d-duwationconvewsion.fwomhouws
   }
 
   /**
-   * Param to control the maximum number of MF Product Launch Notifs in a period of time
+   * pawam to contwow t-the maximum n-nyumbew of mf pwoduct waunch nyotifs i-in a pewiod of time
    */
-  object ProductLaunchMaxNumberOfPushesInInterval
-      extends FSBoundedParam[Int](
-        name = "product_launch_fatigue_max_pushes_in_interval",
-        default = 1,
-        min = 0,
+  object pwoductwaunchmaxnumbewofpushesinintewvaw
+      extends fsboundedpawam[int](
+        n-nyame = "pwoduct_waunch_fatigue_max_pushes_in_intewvaw", (ꈍᴗꈍ)
+        defauwt = 1, >w<
+        m-min = 0, XD
         max = 10)
 
   /**
-   * Param to control the minInterval for fatigue between consecutive MF Product Launch Notifs
+   * pawam to c-contwow the minintewvaw f-fow fatigue b-between consecutive mf pwoduct w-waunch nyotifs
    */
-  object ProductLaunchMinIntervalFatigue
-      extends FSBoundedParam[Duration](
-        name = "product_launch_fatigue_min_interval_consecutive_pushes_in_hours",
-        default = 24.hours,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+  o-object pwoductwaunchminintewvawfatigue
+      e-extends fsboundedpawam[duwation](
+        n-nyame = "pwoduct_waunch_fatigue_min_intewvaw_consecutive_pushes_in_houws", -.-
+        defauwt = 24.houws, ^^;;
+        m-min = duwation.bottom, XD
+        m-max = duwation.top)
+      with hasduwationconvewsion {
+    ovewwide vaw duwationconvewsion = d-duwationconvewsion.fwomhouws
   }
 
   /**
-   * Param to control the interval for MF New Creator Notifs
+   * p-pawam to contwow the intewvaw fow mf nyew cweatow nyotifs
    */
-  object NewCreatorPushIntervalInHours
-      extends FSBoundedParam[Duration](
-        name = "new_creator_fatigue_push_interval_in_hours",
-        default = 24.hours,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+  o-object nyewcweatowpushintewvawinhouws
+      e-extends f-fsboundedpawam[duwation](
+        nyame = "new_cweatow_fatigue_push_intewvaw_in_houws", :3
+        defauwt = 24.houws, σωσ
+        min = duwation.bottom, XD
+        m-max = duwation.top)
+      with hasduwationconvewsion {
+    o-ovewwide vaw duwationconvewsion = d-duwationconvewsion.fwomhouws
   }
 
   /**
-   * Param to control the maximum number of MF New Creator Notifs in a period of time
+   * p-pawam to contwow the maximum n-nyumbew of mf n-nyew cweatow nyotifs i-in a pewiod o-of time
    */
-  object NewCreatorPushMaxNumberOfPushesInInterval
-      extends FSBoundedParam[Int](
-        name = "new_creator_fatigue_max_pushes_in_interval",
-        default = 1,
-        min = 0,
+  o-object nyewcweatowpushmaxnumbewofpushesinintewvaw
+      e-extends fsboundedpawam[int](
+        nyame = "new_cweatow_fatigue_max_pushes_in_intewvaw", :3
+        defauwt = 1, rawr
+        min = 0, 😳
         max = 10)
 
   /**
-   * Param to control the minInterval for fatigue between consecutive MF New Creator Notifs
+   * pawam to c-contwow the minintewvaw f-fow fatigue b-between consecutive m-mf nyew c-cweatow nyotifs
    */
-  object NewCreatorPushMinIntervalFatigue
-      extends FSBoundedParam[Duration](
-        name = "new_creator_fatigue_min_interval_consecutive_pushes_in_hours",
-        default = 24.hours,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+  o-object nyewcweatowpushminintewvawfatigue
+      extends fsboundedpawam[duwation](
+        nyame = "new_cweatow_fatigue_min_intewvaw_consecutive_pushes_in_houws", 😳😳😳
+        d-defauwt = 24.houws, (ꈍᴗꈍ)
+        min = d-duwation.bottom, 🥺
+        max = duwation.top)
+      with hasduwationconvewsion {
+    o-ovewwide v-vaw duwationconvewsion = d-duwationconvewsion.fwomhouws
   }
 
   /**
-   * Param to control the interval for MF New Creator Notifs
+   * pawam to contwow the intewvaw f-fow mf nyew cweatow nyotifs
    */
-  object CreatorSubscriptionPushIntervalInHours
-      extends FSBoundedParam[Duration](
-        name = "creator_subscription_fatigue_push_interval_in_hours",
-        default = 24.hours,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+  object c-cweatowsubscwiptionpushintewvawinhouws
+      e-extends fsboundedpawam[duwation](
+        nyame = "cweatow_subscwiption_fatigue_push_intewvaw_in_houws", ^•ﻌ•^
+        defauwt = 24.houws, XD
+        m-min = duwation.bottom, ^•ﻌ•^
+        m-max = d-duwation.top)
+      with hasduwationconvewsion {
+    o-ovewwide vaw d-duwationconvewsion = d-duwationconvewsion.fwomhouws
   }
 
   /**
-   * Param to control the maximum number of MF New Creator Notifs in a period of time
+   * p-pawam to contwow t-the maximum n-nyumbew of mf nyew cweatow nyotifs i-in a pewiod o-of time
    */
-  object CreatorSubscriptionPushMaxNumberOfPushesInInterval
-      extends FSBoundedParam[Int](
-        name = "creator_subscription_fatigue_max_pushes_in_interval",
-        default = 1,
-        min = 0,
+  object cweatowsubscwiptionpushmaxnumbewofpushesinintewvaw
+      e-extends fsboundedpawam[int](
+        nyame = "cweatow_subscwiption_fatigue_max_pushes_in_intewvaw", ^^;;
+        defauwt = 1, ʘwʘ
+        m-min = 0, OwO
         max = 10)
 
   /**
-   * Param to control the minInterval for fatigue between consecutive MF New Creator Notifs
+   * p-pawam to contwow the minintewvaw f-fow fatigue b-between consecutive mf nyew cweatow nyotifs
    */
-  object CreatorSubscriptionPushhMinIntervalFatigue
-      extends FSBoundedParam[Duration](
-        name = "creator_subscription_fatigue_min_interval_consecutive_pushes_in_hours",
-        default = 24.hours,
-        min = Duration.Bottom,
-        max = Duration.Top)
-      with HasDurationConversion {
-    override val durationConversion = DurationConversion.FromHours
+  o-object cweatowsubscwiptionpushhminintewvawfatigue
+      extends fsboundedpawam[duwation](
+        n-nyame = "cweatow_subscwiption_fatigue_min_intewvaw_consecutive_pushes_in_houws", 🥺
+        d-defauwt = 24.houws, (⑅˘꒳˘)
+        min = duwation.bottom, (///ˬ///✿)
+        max = duwation.top)
+      w-with hasduwationconvewsion {
+    o-ovewwide vaw duwationconvewsion = d-duwationconvewsion.fwomhouws
   }
 
   /**
-   * Param to define the landing page deeplink of product launch notifications
+   * pawam to define the wanding p-page deepwink o-of pwoduct waunch nyotifications
    */
-  object ProductLaunchLandingPageDeepLink
-      extends FSParam[String](
-        name = "product_launch_landing_page_deeplink",
-        default = ""
+  o-object p-pwoductwaunchwandingpagedeepwink
+      extends fspawam[stwing](
+        n-name = "pwoduct_waunch_wanding_page_deepwink", (✿oωo)
+        d-defauwt = ""
       )
 
   /**
-   * Param to define the tap through of product launch notifications
+   * p-pawam to define t-the tap thwough of pwoduct waunch nyotifications
    */
-  object ProductLaunchTapThrough
-      extends FSParam[String](
-        name = "product_launch_tap_through",
-        default = ""
+  object pwoductwaunchtapthwough
+      extends fspawam[stwing](
+        nyame = "pwoduct_waunch_tap_thwough", nyaa~~
+        d-defauwt = ""
       )
 
   /**
-   * Param to skip checking isTargetBlueVerified
+   * p-pawam to skip checking i-istawgetbwuevewified
    */
-  object DisableIsTargetBlueVerifiedPredicate
-      extends FSParam[Boolean](
-        name = "product_launch_disable_is_target_blue_verified_predicate",
-        default = false
+  o-object disabweistawgetbwuevewifiedpwedicate
+      e-extends fspawam[boowean](
+        n-nyame = "pwoduct_waunch_disabwe_is_tawget_bwue_vewified_pwedicate", >w<
+        defauwt = fawse
       )
 
   /**
-   * Param to enable Ntab Entries for Sports Event Notifications
+   * p-pawam to e-enabwe nytab entwies fow spowts e-event nyotifications
    */
-  object EnableNTabEntriesForProductLaunchNotifications
-      extends FSParam[Boolean](name = "product_launch_enable_ntab_entry", default = true)
+  object e-enabwentabentwiesfowpwoductwaunchnotifications
+      extends fspawam[boowean](name = "pwoduct_waunch_enabwe_ntab_entwy", (///ˬ///✿) defauwt = t-twue)
 
   /**
-   * Param to skip checking isTargetLegacyVerified
+   * pawam to skip checking i-istawgetwegacyvewified
    */
-  object DisableIsTargetLegacyVerifiedPredicate
-      extends FSParam[Boolean](
-        name = "product_launch_disable_is_target_legacy_verified_predicate",
-        default = false
+  object disabweistawgetwegacyvewifiedpwedicate
+      e-extends fspawam[boowean](
+        n-nyame = "pwoduct_waunch_disabwe_is_tawget_wegacy_vewified_pwedicate", rawr
+        defauwt = fawse
       )
 
   /**
-   * Param to enable checking isTargetSuperFollowCreator
+   * p-pawam to e-enabwe checking i-istawgetsupewfowwowcweatow
    */
-  object EnableIsTargetSuperFollowCreatorPredicate
-      extends FSParam[Boolean](
-        name = "product_launch_is_target_super_follow_creator_predicate_enabled",
-        default = false
+  object enabweistawgetsupewfowwowcweatowpwedicate
+      e-extends f-fspawam[boowean](
+        nyame = "pwoduct_waunch_is_tawget_supew_fowwow_cweatow_pwedicate_enabwed", (U ﹏ U)
+        d-defauwt = fawse
       )
 
   /**
-   * Param to enable Spammy Tweet filter
+   * pawam to enabwe s-spammy tweet f-fiwtew
    */
-  object EnableSpammyTweetFilter
-      extends FSParam[Boolean](
-        name = "health_signal_store_enable_spammy_tweet_filter",
-        default = false)
+  o-object enabwespammytweetfiwtew
+      extends fspawam[boowean](
+        n-nyame = "heawth_signaw_stowe_enabwe_spammy_tweet_fiwtew", ^•ﻌ•^
+        defauwt = fawse)
 
   /**
-   * Param to enable Push to Home Android
+   * p-pawam to enabwe push to home andwoid
    */
-  object EnableTweetPushToHomeAndroid
-      extends FSParam[Boolean](name = "push_to_home_tweet_recs_android", default = false)
+  object enabwetweetpushtohomeandwoid
+      extends fspawam[boowean](name = "push_to_home_tweet_wecs_andwoid", (///ˬ///✿) defauwt = fawse)
 
   /**
-   * Param to enable Push to Home iOS
+   * p-pawam to enabwe push to home ios
    */
-  object EnableTweetPushToHomeiOS
-      extends FSParam[Boolean](name = "push_to_home_tweet_recs_iOS", default = false)
+  object enabwetweetpushtohomeios
+      extends fspawam[boowean](name = "push_to_home_tweet_wecs_ios", o.O defauwt = f-fawse)
 
   /**
-   * Param to set Spammy Tweet score threshold for OON candidates
+   * pawam to set spammy tweet s-scowe thweshowd fow oon candidates
    */
-  object SpammyTweetOonThreshold
-      extends FSBoundedParam[Double](
-        name = "health_signal_store_spammy_tweet_oon_threshold",
-        default = 1.1,
-        min = 0.0,
+  o-object spammytweetoonthweshowd
+      extends fsboundedpawam[doubwe](
+        n-nyame = "heawth_signaw_stowe_spammy_tweet_oon_thweshowd", >w<
+        defauwt = 1.1, nyaa~~
+        m-min = 0.0, òωó
         max = 1.1
       )
 
-  object NumFollowerThresholdForHealthAndQualityFilters
-      extends FSBoundedParam[Double](
-        name = "health_signal_store_num_follower_threshold_for_health_and_quality_filters",
-        default = 10000000000.0,
-        min = 0.0,
+  o-object n-nyumfowwowewthweshowdfowheawthandquawityfiwtews
+      extends fsboundedpawam[doubwe](
+        n-nyame = "heawth_signaw_stowe_num_fowwowew_thweshowd_fow_heawth_and_quawity_fiwtews", (U ᵕ U❁)
+        defauwt = 10000000000.0, (///ˬ///✿)
+        min = 0.0, (✿oωo)
         max = 10000000000.0
       )
 
-  object NumFollowerThresholdForHealthAndQualityFiltersPreranking
-      extends FSBoundedParam[Double](
-        name =
-          "health_signal_store_num_follower_threshold_for_health_and_quality_filters_preranking",
-        default = 10000000.0,
-        min = 0.0,
+  object nyumfowwowewthweshowdfowheawthandquawityfiwtewspwewanking
+      e-extends fsboundedpawam[doubwe](
+        n-nyame =
+          "heawth_signaw_stowe_num_fowwowew_thweshowd_fow_heawth_and_quawity_fiwtews_pwewanking", 😳😳😳
+        defauwt = 10000000.0, (✿oωo)
+        m-min = 0.0, (U ﹏ U)
         max = 10000000000.0
       )
 
   /**
-   * Param to set Spammy Tweet score threshold for IN candidates
+   * p-pawam t-to set spammy tweet scowe thweshowd fow in candidates
    */
-  object SpammyTweetInThreshold
-      extends FSBoundedParam[Double](
-        name = "health_signal_store_spammy_tweet_in_threshold",
-        default = 1.1,
-        min = 0.0,
+  object s-spammytweetinthweshowd
+      extends fsboundedpawam[doubwe](
+        nyame = "heawth_signaw_stowe_spammy_tweet_in_thweshowd", (˘ω˘)
+        d-defauwt = 1.1, 😳😳😳
+        min = 0.0, (///ˬ///✿)
         max = 1.1
       )
 
   /**
-   * Param to control bucketing for the Spammy Tweet score
+   * pawam to contwow bucketing fow t-the spammy tweet s-scowe
    */
-  object SpammyTweetBucketingThreshold
-      extends FSBoundedParam[Double](
-        name = "health_signal_store_spammy_tweet_bucketing_threshold",
-        default = 1.0,
-        min = 0.0,
+  object spammytweetbucketingthweshowd
+      e-extends f-fsboundedpawam[doubwe](
+        nyame = "heawth_signaw_stowe_spammy_tweet_bucketing_thweshowd", (U ᵕ U❁)
+        d-defauwt = 1.0, >_<
+        min = 0.0, (///ˬ///✿)
         max = 1.0
       )
 
   /**
-   * Param to specify the maximum number of Explore Video Tweets to request
+   * pawam to specify the maximum n-nyumbew of expwowe v-video tweets to wequest
    */
-  object MaxExploreVideoTweets
-      extends FSBoundedParam[Int](
-        name = "explore_video_tweets_max_candidates",
-        default = 100,
-        min = 0,
-        max = 500
+  o-object maxexpwowevideotweets
+      e-extends fsboundedpawam[int](
+        n-nyame = "expwowe_video_tweets_max_candidates", (U ᵕ U❁)
+        defauwt = 100, >w<
+        min = 0, 😳😳😳
+        m-max = 500
       )
 
   /**
-   * Param to enable social context feature set
+   * pawam to enabwe sociaw c-context featuwe s-set
    */
-  object EnableBoundedFeatureSetForSocialContext
-      extends FSParam[Boolean](
-        name = "feature_hydration_user_social_context_bounded_feature_set_enable",
-        default = true)
+  object enabweboundedfeatuwesetfowsociawcontext
+      extends fspawam[boowean](
+        n-nyame = "featuwe_hydwation_usew_sociaw_context_bounded_featuwe_set_enabwe", (ˆ ﻌ ˆ)♡
+        defauwt = twue)
 
   /**
-   * Param to enable stp user social context feature set
+   * pawam to enabwe stp usew sociaw context featuwe set
    */
-  object EnableStpBoundedFeatureSetForUserSocialContext
-      extends FSParam[Boolean](
-        name = "feature_hydration_stp_social_context_bounded_feature_set_enable",
-        default = true)
+  object enabwestpboundedfeatuwesetfowusewsociawcontext
+      e-extends f-fspawam[boowean](
+        nyame = "featuwe_hydwation_stp_sociaw_context_bounded_featuwe_set_enabwe", (ꈍᴗꈍ)
+        d-defauwt = twue)
 
   /**
-   * Param to enable core user history social context feature set
+   * p-pawam to enabwe cowe u-usew histowy sociaw context featuwe set
    */
-  object EnableCoreUserHistoryBoundedFeatureSetForSocialContext
-      extends FSParam[Boolean](
-        name = "feature_hydration_core_user_history_social_context_bounded_feature_set_enable",
-        default = true)
+  object enabwecoweusewhistowyboundedfeatuwesetfowsociawcontext
+      extends fspawam[boowean](
+        nyame = "featuwe_hydwation_cowe_usew_histowy_sociaw_context_bounded_featuwe_set_enabwe", 🥺
+        d-defauwt = twue)
 
   /**
-   * Param to enable skipping post-ranking filters
+   * pawam to enabwe skipping post-wanking fiwtews
    */
-  object SkipPostRankingFilters
-      extends FSParam[Boolean](
-        name = "frigate_push_modeling_skip_post_ranking_filters",
-        default = false)
+  o-object s-skippostwankingfiwtews
+      extends f-fspawam[boowean](
+        nyame = "fwigate_push_modewing_skip_post_wanking_fiwtews",
+        defauwt = fawse)
 
-  object MagicFanoutSimClusterDotProductNonHeavyUserThreshold
-      extends FSBoundedParam[Double](
-        name = "frigate_push_magicfanout_simcluster_non_heavy_user_dot_product_threshold",
-        default = 0.0,
-        min = 0.0,
+  object magicfanoutsimcwustewdotpwoductnonheavyusewthweshowd
+      e-extends f-fsboundedpawam[doubwe](
+        n-nyame = "fwigate_push_magicfanout_simcwustew_non_heavy_usew_dot_pwoduct_thweshowd",
+        defauwt = 0.0, >_<
+        m-min = 0.0, OwO
         max = 100.0
       )
 
-  object MagicFanoutSimClusterDotProductHeavyUserThreshold
-      extends FSBoundedParam[Double](
-        name = "frigate_push_magicfanout_simcluster_heavy_user_dot_product_threshold",
-        default = 10.0,
-        min = 0.0,
+  object m-magicfanoutsimcwustewdotpwoductheavyusewthweshowd
+      extends f-fsboundedpawam[doubwe](
+        nyame = "fwigate_push_magicfanout_simcwustew_heavy_usew_dot_pwoduct_thweshowd", ^^;;
+        d-defauwt = 10.0,
+        min = 0.0, (✿oωo)
         max = 100.0
       )
 
-  object EnableReducedFatigueRulesForSeeLessOften
-      extends FSParam[Boolean](
-        name = "seelessoften_enable_reduced_fatigue",
-        default = false
+  o-object enabweweducedfatiguewuwesfowseewessoften
+      extends fspawam[boowean](
+        n-nyame = "seewessoften_enabwe_weduced_fatigue", UwU
+        defauwt = f-fawse
       )
 }

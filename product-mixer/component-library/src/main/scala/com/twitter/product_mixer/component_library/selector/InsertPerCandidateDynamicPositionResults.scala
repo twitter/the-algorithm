@@ -1,78 +1,78 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.specificpipewine
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.specificpipewines
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object InsertPerCandidateDynamicPositionResults {
-  def apply[Query <: PipelineQuery](
-    candidatePipeline: CandidatePipelineIdentifier,
-    candidatePositionInResults: CandidatePositionInResults[Query]
-  ): InsertPerCandidateDynamicPositionResults[Query] =
-    InsertPerCandidateDynamicPositionResults[Query](
-      SpecificPipeline(candidatePipeline),
-      candidatePositionInResults)
+object insewtpewcandidatedynamicpositionwesuwts {
+  def appwy[quewy <: pipewinequewy](
+    c-candidatepipewine: candidatepipewineidentifiew, (U ﹏ U)
+    candidatepositioninwesuwts: c-candidatepositioninwesuwts[quewy]
+  ): insewtpewcandidatedynamicpositionwesuwts[quewy] =
+    i-insewtpewcandidatedynamicpositionwesuwts[quewy](
+      specificpipewine(candidatepipewine), (///ˬ///✿)
+      candidatepositioninwesuwts)
 
-  def apply[Query <: PipelineQuery](
-    candidatePipelines: Set[CandidatePipelineIdentifier],
-    candidatePositionInResults: CandidatePositionInResults[Query]
-  ): InsertPerCandidateDynamicPositionResults[Query] =
-    InsertPerCandidateDynamicPositionResults[Query](
-      SpecificPipelines(candidatePipelines),
-      candidatePositionInResults)
+  def appwy[quewy <: p-pipewinequewy](
+    candidatepipewines: s-set[candidatepipewineidentifiew], 😳
+    c-candidatepositioninwesuwts: candidatepositioninwesuwts[quewy]
+  ): insewtpewcandidatedynamicpositionwesuwts[quewy] =
+    insewtpewcandidatedynamicpositionwesuwts[quewy](
+      specificpipewines(candidatepipewines), 😳
+      candidatepositioninwesuwts)
 }
 
 /**
- * Insert each candidate in the [[CandidateScope]] at the index relative to the original candidate in the `result`
- * at that index using the provided [[CandidatePositionInResults]] instance. If the current results are shorter
- * length than the computed position, then the candidate will be appended to the results.
+ * insewt e-each candidate in the [[candidatescope]] at the index wewative to the owiginaw candidate in t-the `wesuwt`
+ * at that index u-using the pwovided [[candidatepositioninwesuwts]] i-instance. if the c-cuwwent wesuwts a-awe showtew
+ * wength than the computed position, σωσ t-then the candidate wiww be appended to the w-wesuwts. rawr x3
  *
- * When the [[CandidatePositionInResults]] returns a `None`, that candidate is not
- * added to the result. Negative position values are treated as 0 (front of the results).
+ * when the [[candidatepositioninwesuwts]] wetuwns a `none`, OwO that candidate is nyot
+ * added to the w-wesuwt. /(^•ω•^) nyegative position vawues a-awe tweated as 0 (fwont o-of the w-wesuwts). 😳😳😳
  *
- * @example if [[CandidatePositionInResults]] results in a candidate mapping from index to candidate of
- *          `{0 -> a, 0 -> b, 0 -> c, 1 -> e, 2 -> g, 2 -> h} ` with  original `results` = `[D, F]`,
- *          then the resulting output would look like `[a, b, c, D, e, F, g, h]`
+ * @exampwe if [[candidatepositioninwesuwts]] wesuwts in a candidate m-mapping fwom i-index to candidate of
+ *          `{0 -> a-a, ( ͡o ω ͡o ) 0 -> b-b, 0 -> c, >_< 1 -> e, 2 -> g, >w< 2 -> h-h} ` with  owiginaw `wesuwts` = `[d, rawr f]`,
+ *          t-then the wesuwting output wouwd wook wike `[a, 😳 b-b, c, d, >w< e, f, g, h]`
  */
-case class InsertPerCandidateDynamicPositionResults[-Query <: PipelineQuery](
-  pipelineScope: CandidateScope,
-  candidatePositionInResults: CandidatePositionInResults[Query])
-    extends Selector[Query] {
+c-case cwass insewtpewcandidatedynamicpositionwesuwts[-quewy <: pipewinequewy](
+  p-pipewinescope: candidatescope, (⑅˘꒳˘)
+  c-candidatepositioninwesuwts: candidatepositioninwesuwts[quewy])
+    extends sewectow[quewy] {
 
-  override def apply(
-    query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val (candidatesToInsert, otherRemainingCandidatesTuples) = remainingCandidates
-      .map { candidate: CandidateWithDetails =>
-        val position =
-          if (pipelineScope.contains(candidate))
-            candidatePositionInResults(query, candidate, result)
-          else
-            None
-        (position, candidate)
-      }.partition { case (index, _) => index.isDefined }
+  ovewwide def appwy(
+    quewy: quewy, OwO
+    wemainingcandidates: seq[candidatewithdetaiws], (ꈍᴗꈍ)
+    wesuwt: s-seq[candidatewithdetaiws]
+  ): s-sewectowwesuwt = {
+    vaw (candidatestoinsewt, 😳 o-othewwemainingcandidatestupwes) = w-wemainingcandidates
+      .map { c-candidate: candidatewithdetaiws =>
+        vaw position =
+          if (pipewinescope.contains(candidate))
+            c-candidatepositioninwesuwts(quewy, 😳😳😳 candidate, mya wesuwt)
+          ewse
+            nyone
+        (position, mya candidate)
+      }.pawtition { case (index, (⑅˘꒳˘) _) => i-index.isdefined }
 
-    val otherRemainingCandidates = otherRemainingCandidatesTuples.map {
-      case (_, candidate) => candidate
+    vaw othewwemainingcandidates = o-othewwemainingcandidatestupwes.map {
+      c-case (_, (U ﹏ U) c-candidate) => candidate
     }
 
-    val positionAndCandidateList = candidatesToInsert.collect {
-      case (Some(position), candidate) => (position, candidate)
+    v-vaw positionandcandidatewist = c-candidatestoinsewt.cowwect {
+      c-case (some(position), mya c-candidate) => (position, ʘwʘ candidate)
     }
 
-    val mergedResult = DynamicPositionSelector.mergeByIndexIntoResult(
-      positionAndCandidateList,
-      result,
-      DynamicPositionSelector.RelativeIndices
+    vaw mewgedwesuwt = d-dynamicpositionsewectow.mewgebyindexintowesuwt(
+      p-positionandcandidatewist, (˘ω˘)
+      w-wesuwt, (U ﹏ U)
+      d-dynamicpositionsewectow.wewativeindices
     )
 
-    SelectorResult(remainingCandidates = otherRemainingCandidates, result = mergedResult)
+    s-sewectowwesuwt(wemainingcandidates = othewwemainingcandidates, ^•ﻌ•^ wesuwt = mewgedwesuwt)
   }
 }

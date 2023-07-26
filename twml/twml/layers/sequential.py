@@ -1,160 +1,160 @@
 """
-Implementing Sequential Layer container
+impwementing sequentiaw wayew c-containew
 """
 
 
-from .layer import Layer
+f-fwom .wayew impowt w-wayew
 
-from tensorflow import keras
-from tensorflow.python.layers import base
+fwom t-tensowfwow impowt k-kewas
+fwom tensowfwow.python.wayews i-impowt base
 
 
-class Sequential(Layer):
+c-cwass sequentiaw(wayew):
   """
-  A sequential stack of layers.
+  a-a sequentiaw stack of wayews. ^^;;
 
-  Arguments:
-      layers: list of layers to add to the model.
+  awguments:
+      wayews: wist of wayews to a-add to the modew. o.O
 
-  Output:
-      the output of the sequential layers
+  output:
+      the output of t-the sequentiaw wayews
    """
 
-  def __init__(self, layers=None, **kwargs):
-    self._layers = []  # Stack of layers.
-    self._layer_names = []  # Stack of layers names
-    self._layer_outputs = []
-    # Add to the model any layers passed to the constructor.
-    if layers:
-      for layer in layers:
-        self.add(layer)
-    super(Sequential, self).__init__(**kwargs)
+  d-def __init__(sewf, (///ˬ///✿) wayews=none, σωσ **kwawgs):
+    sewf._wayews = []  # stack of wayews. nyaa~~
+    s-sewf._wayew_names = []  # stack of wayews n-nyames
+    s-sewf._wayew_outputs = []
+    # add to the modew any wayews passed to the constwuctow. ^^;;
+    if wayews:
+      f-fow wayew in wayews:
+        sewf.add(wayew)
+    supew(sequentiaw, ^•ﻌ•^ sewf).__init__(**kwawgs)
 
-  def add(self, layer):
-    """Adds a layer instance on top of the layer stack.
+  d-def add(sewf, σωσ wayew):
+    """adds a-a wayew i-instance on t-top of the wayew s-stack.
 
-    Arguments:
-      layer:
-        layer instance.
+    awguments:
+      wayew:
+        wayew i-instance. -.-
 
-    Raises:
-      TypeError:
-        if the layer argument is not instance of base.Layer
+    waises:
+      typeewwow:
+        i-if the wayew awgument is nyot instance of base.wayew
     """
-    if not isinstance(layer, base.Layer) and not isinstance(layer, keras.layers.Layer):
-      raise TypeError('The added layer must be an instance of class Layer')
+    if nyot isinstance(wayew, ^^;; base.wayew) and nyot i-isinstance(wayew, XD kewas.wayews.wayew):
+      w-waise typeewwow('the a-added wayew m-must be an instance of cwass wayew')
 
-    if layer.name in self._layer_names:
-      raise ValueError('Layer with name %s already exists in sequential layer' % layer.name)
+    if wayew.name in sewf._wayew_names:
+      w-waise vawueewwow('wayew w-with nyame %s awweady e-exists in sequentiaw w-wayew' % wayew.name)
 
-    self._layers.append(layer)
-    self._layer_names.append(layer.name)
+    s-sewf._wayews.append(wayew)
+    sewf._wayew_names.append(wayew.name)
 
-  def pop(self):
-    """Removes the last layer in the model.
+  d-def pop(sewf):
+    """wemoves the wast wayew in the modew. 🥺
 
-    Raises:
-      TypeError:
-        if there are no layers in the model.
+    w-waises:
+      typeewwow:
+        i-if thewe awe nyo wayews i-in the modew. òωó
     """
-    if not self._layers or not self._layer_names:
-      raise TypeError('There are no layers in the model.')
-    self._layers.pop()
-    self._layer_names.pop()
+    i-if nyot sewf._wayews ow nyot sewf._wayew_names:
+      waise typeewwow('thewe awe nyo wayews in the modew.')
+    sewf._wayews.pop()
+    s-sewf._wayew_names.pop()
 
-  def call(self, inputs, **kwargs):  # pylint: disable=unused-argument
-    """The logic of the layer lives here.
+  d-def caww(sewf, (ˆ ﻌ ˆ)♡ inputs, -.- **kwawgs):  # p-pywint: disabwe=unused-awgument
+    """the w-wogic o-of the wayew wives hewe. :3
 
-    Arguments:
+    awguments:
       inputs:
-        input tensor(s).
+        i-input tensow(s). ʘwʘ
 
-    Returns:
-      The output of the sequential layers
+    wetuwns:
+      the output of the sequentiaw wayews
     """
-    self._layer_outputs = []
-    for layer in self._layers:
-      # don't use layer.call because you want to build individual layers
-      inputs = layer(inputs)  # overwrites the current input after it has been processed
-      self._layer_outputs.append(inputs)
-    return inputs
+    s-sewf._wayew_outputs = []
+    fow wayew in s-sewf._wayews:
+      # d-don't use w-wayew.caww because you want to b-buiwd individuaw w-wayews
+      inputs = w-wayew(inputs)  # o-ovewwwites the cuwwent input aftew it has b-been pwocessed
+      s-sewf._wayew_outputs.append(inputs)
+    wetuwn i-inputs
 
-  @property
-  def layers(self):
-    """ Return the layers in the sequential layer """
-    return self._layers
+  @pwopewty
+  d-def w-wayews(sewf):
+    """ wetuwn the wayews in the sequentiaw wayew """
+    w-wetuwn sewf._wayews
 
-  @property
-  def layer_names(self):
-    """ Return the layer names in the sequential layer """
-    return self._layer_names
+  @pwopewty
+  def wayew_names(sewf):
+    """ wetuwn the wayew nyames in the sequentiaw wayew """
+    w-wetuwn sewf._wayew_names
 
-  @property
-  def layer_outputs(self):
-    """ Return the layer outputs in the sequential layer """
-    return self._layer_outputs
+  @pwopewty
+  def wayew_outputs(sewf):
+    """ wetuwn the wayew outputs i-in the sequentiaw w-wayew """
+    w-wetuwn sewf._wayew_outputs
 
-  def get(self, key):
-    """Retrieves the n-th layer.
+  def get(sewf, 🥺 k-key):
+    """wetwieves the ny-th w-wayew. >_<
 
-    Arguments:
-      key:
-        index of the layer
+    awguments:
+      k-key:
+        index of the wayew
 
-    Output:
-      The n-th layer where n is equal to the key.
+    output:
+      the ny-th wayew whewe ny is equaw t-to the key. ʘwʘ
     """
-    return self._layers[key]
+    wetuwn s-sewf._wayews[key]
 
-  def get_output(self, key):
-    """Retrieves the n-th layer output.
+  def get_output(sewf, (˘ω˘) k-key):
+    """wetwieves t-the ny-th wayew output. (✿oωo)
 
-    Arguments:
-      key:
-        index of the layer
+    awguments:
+      k-key:
+        index o-of the wayew
 
-    Output:
-      The intermediary output equivalent to the nth layer, where n is equal to the key.
+    output:
+      t-the intewmediawy o-output equivawent to the nyth wayew, (///ˬ///✿) whewe ny is equaw to the key. rawr x3
     """
-    return self._layer_outputs[key]
+    w-wetuwn sewf._wayew_outputs[key]
 
-  def get_layer_by_name(self, name):
-    """Retrieves the layer corresponding to the name.
+  d-def get_wayew_by_name(sewf, -.- n-nyame):
+    """wetwieves the w-wayew cowwesponding t-to the nyame. ^^
 
-    Arguments:
-      name:
-        name of the layer
+    awguments:
+      n-nyame:
+        nyame of the wayew
 
-    Output:
-      list of layers that have the name desired
+    output:
+      wist of wayews that h-have the nyame d-desiwed
     """
-    return self._layers[self._layer_names.index(name)]
+    wetuwn sewf._wayews[sewf._wayew_names.index(name)]
 
-  def get_layer_output_by_name(self, name):
-    """Retrieves the layer output corresponding to the name.
+  def get_wayew_output_by_name(sewf, (⑅˘꒳˘) n-nyame):
+    """wetwieves t-the wayew output cowwesponding to the nyame. nyaa~~
 
-    Arguments:
-      name:
-        name of the layer
+    awguments:
+      n-nyame:
+        nyame of the wayew
 
-    Output:
-      list of the output of the layers that have the desired name
+    output:
+      wist of the output o-of the wayews that have the desiwed nyame
     """
-    return self._layer_outputs[self._layer_names.index(name)]
+    w-wetuwn sewf._wayew_outputs[sewf._wayew_names.index(name)]
 
-  @property
-  def init(self):
-    """ returns a list of initialization ops (one per layer) """
-    return [layer.init for layer in self._layers]
+  @pwopewty
+  d-def init(sewf):
+    """ wetuwns a wist of initiawization ops (one p-pew wayew) """
+    w-wetuwn [wayew.init fow wayew in sewf._wayews]
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  def compute_output_shape(sewf, /(^•ω•^) i-input_shape):
+    """computes the output shape o-of the wayew given the input shape. (U ﹏ U)
 
-    Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+    awgs:
+      input_shape: a-a (possibwy nyested tupwe o-of) `tensowshape`. 😳😳😳  i-it nyeed nyot
+        be fuwwy d-defined (e.g. >w< the batch size m-may be unknown). XD
 
-    Raise NotImplementedError.
+    w-waise notimpwementedewwow. o.O
 
     """
-    raise NotImplementedError
+    w-waise nyotimpwementedewwow

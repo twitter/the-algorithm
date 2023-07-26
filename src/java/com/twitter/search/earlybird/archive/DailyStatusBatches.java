@@ -1,702 +1,702 @@
-package com.twitter.search.earlybird.archive;
+package com.twittew.seawch.eawwybiwd.awchive;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.NavigableMap;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+impowt j-java.io.fiwe;
+i-impowt java.io.fiwenotfoundexception;
+i-impowt j-java.io.fiwewwitew;
+i-impowt java.io.ioexception;
+i-impowt java.utiw.cawendaw;
+i-impowt j-java.utiw.cowwection;
+impowt java.utiw.date;
+impowt java.utiw.navigabwemap;
+impowt java.utiw.concuwwent.timeunit;
+i-impowt java.utiw.concuwwent.atomic.atomicboowean;
+impowt java.utiw.wegex.matchew;
+impowt java.utiw.wegex.pattewn;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.base.stopwatch;
+impowt com.googwe.common.cowwect.maps;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.time.FastDateFormat;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt o-owg.apache.commons.io.ioutiws;
+impowt owg.apache.commons.wang3.time.fastdatefowmat;
+i-impowt owg.apache.hadoop.fs.fiwestatus;
+i-impowt owg.apache.hadoop.fs.fiwesystem;
+impowt owg.apache.hadoop.fs.path;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.util.date.DateUtil;
-import com.twitter.search.common.util.io.LineRecordFileReader;
-import com.twitter.search.common.util.zktrylock.TryLock;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.partition.HdfsUtil;
-import com.twitter.search.earlybird.partition.StatusBatchFlushVersion;
+i-impowt com.twittew.common.quantity.amount;
+impowt com.twittew.common.quantity.time;
+impowt com.twittew.seawch.common.database.databaseconfig;
+impowt com.twittew.seawch.common.utiw.date.dateutiw;
+impowt com.twittew.seawch.common.utiw.io.winewecowdfiweweadew;
+i-impowt com.twittew.seawch.common.utiw.zktwywock.twywock;
+impowt com.twittew.seawch.common.utiw.zktwywock.zookeepewtwywockfactowy;
+i-impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+i-impowt c-com.twittew.seawch.eawwybiwd.common.config.eawwybiwdpwopewty;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.hdfsutiw;
+impowt com.twittew.seawch.eawwybiwd.pawtition.statusbatchfwushvewsion;
 
 /**
- * Provides access to preprocessed statuses (tweets) to be indexed by archive search earlybirds.
+ * pwovides a-access to pwepwocessed statuses (tweets) to be indexed b-by awchive seawch eawwybiwds. òωó
  *
- * These tweets can be coming from a scrub gen or from the output of the daily jobs.
+ * these tweets can be coming fwom a scwub gen ow fwom the o-output of the daiwy jobs. o.O
  */
-public class DailyStatusBatches {
-  private static final Logger LOG = LoggerFactory.getLogger(DailyStatusBatches.class);
+p-pubwic cwass daiwystatusbatches {
+  p-pwivate static f-finaw woggew wog = woggewfactowy.getwoggew(daiwystatusbatches.cwass);
 
-  // Maximum time to spend on obtaining daily status batches by computing or loading from HDFS
-  private static final Amount<Long, Time> MAX_TIME_ALLOWED_DAILY_STATUS_BATCHES_MINUTES =
-      Amount.of(EarlybirdConfig.getLong("daily_status_batches_max_initial_load_time_minutes"),
-          Time.MINUTES);
-  // Time to wait before trying again when obtaining daily status batches fails
-  private static final Amount<Long, Time> DAILY_STATUS_BATCHES_WAITING_TIME_MINUTES =
-      Amount.of(EarlybirdConfig.getLong("daily_status_batches_waiting_time_minutes"),
-          Time.MINUTES);
-  private static final String DAILY_STATUS_BATCHES_SYNC_PATH =
-      EarlybirdProperty.ZK_APP_ROOT.get() + "/daily_batches_sync";
-  private static final String DAILY_BATCHES_ZK_LOCK = "daily_batches_zk_lock";
-  private static final Amount<Long, Time> DAILY_STATUS_BATCHES_ZK_LOCK_EXPIRATION_MINUTES =
-      Amount.of(EarlybirdConfig.getLong("daily_status_batches_zk_lock_expiration_minutes"),
-          Time.MINUTES);
+  // maximum time to spend on obtaining d-daiwy status b-batches by computing ow woading f-fwom hdfs
+  pwivate s-static finaw amount<wong, ( ͡o ω ͡o ) time> m-max_time_awwowed_daiwy_status_batches_minutes =
+      amount.of(eawwybiwdconfig.getwong("daiwy_status_batches_max_initiaw_woad_time_minutes"), mya
+          t-time.minutes);
+  // time to wait befowe twying again w-when obtaining daiwy status batches f-faiws
+  pwivate static finaw a-amount<wong, >_< t-time> daiwy_status_batches_waiting_time_minutes =
+      amount.of(eawwybiwdconfig.getwong("daiwy_status_batches_waiting_time_minutes"),
+          time.minutes);
+  pwivate static finaw stwing daiwy_status_batches_sync_path =
+      eawwybiwdpwopewty.zk_app_woot.get() + "/daiwy_batches_sync";
+  pwivate static f-finaw stwing d-daiwy_batches_zk_wock = "daiwy_batches_zk_wock";
+  pwivate static f-finaw amount<wong, rawr t-time> daiwy_status_batches_zk_wock_expiwation_minutes =
+      a-amount.of(eawwybiwdconfig.getwong("daiwy_status_batches_zk_wock_expiwation_minutes"), >_<
+          time.minutes);
 
-  static final FastDateFormat DATE_FORMAT = FastDateFormat.getInstance("yyyyMMdd");
+  static finaw fastdatefowmat d-date_fowmat = fastdatefowmat.getinstance("yyyymmdd");
 
-  // before this date, there was no twitter
-  private static final Date FIRST_TWITTER_DAY = DateUtil.toDate(2006, 2, 1);
+  // befowe this date, (U ﹏ U) thewe was nyo twittew
+  p-pwivate static finaw date f-fiwst_twittew_day = d-dateutiw.todate(2006, rawr 2, 1);
 
-  private static final String STATUS_BATCHES_PREFIX = "status_batches";
+  p-pwivate static finaw stwing s-status_batches_pwefix = "status_batches";
 
-  private final String rootDir =
-      EarlybirdConfig.getString("hdfs_offline_segment_sync_dir", "top_archive_statuses");
+  pwivate f-finaw stwing w-wootdiw =
+      e-eawwybiwdconfig.getstwing("hdfs_offwine_segment_sync_diw", (U ᵕ U❁) "top_awchive_statuses");
 
-  private final String buildGen =
-      EarlybirdConfig.getString("offline_segment_build_gen", "bg_1");
+  pwivate finaw stwing b-buiwdgen =
+      e-eawwybiwdconfig.getstwing("offwine_segment_buiwd_gen", "bg_1");
 
-  public static final String STATUS_SUBDIR_NAME = "statuses";
-  public static final String LAYOUT_SUBDIR_NAME = "layouts";
-  public static final String SCRUB_GEN_SUFFIX_PATTERN = "scrubbed/%s";
+  p-pubwic static f-finaw stwing status_subdiw_name = "statuses";
+  p-pubwic static finaw stwing wayout_subdiw_name = "wayouts";
+  pubwic static finaw stwing scwub_gen_suffix_pattewn = "scwubbed/%s";
 
-  private static final String INTERMEDIATE_COUNTS_SUBDIR_NAME = "counts";
-  private static final String SUCCESS_FILE_NAME = "_SUCCESS";
-  private static final Pattern HASH_PARTITION_PATTERN = Pattern.compile("p_(\\d+)_of_(\\d+)");
-  private static final Date FIRST_TWEET_DAY = DateUtil.toDate(2006, 3, 21);
+  p-pwivate static finaw stwing intewmediate_counts_subdiw_name = "counts";
+  pwivate static finaw stwing success_fiwe_name = "_success";
+  pwivate static finaw p-pattewn hash_pawtition_pattewn = pattewn.compiwe("p_(\\d+)_of_(\\d+)");
+  pwivate static finaw d-date fiwst_tweet_day = d-dateutiw.todate(2006, (ˆ ﻌ ˆ)♡ 3, 21);
 
-  private final Path rootPath = new Path(rootDir);
-  private final Path buildGenPath = new Path(rootPath, buildGen);
-  private final Path statusPath = new Path(buildGenPath, STATUS_SUBDIR_NAME);
+  p-pwivate finaw path wootpath = n-nyew path(wootdiw);
+  pwivate finaw path b-buiwdgenpath = n-new path(wootpath, >_< buiwdgen);
+  pwivate finaw path statuspath = new path(buiwdgenpath, ^^;; status_subdiw_name);
 
-  private final NavigableMap<Date, DailyStatusBatch> statusBatches = Maps.newTreeMap();
+  p-pwivate finaw nyavigabwemap<date, ʘwʘ daiwystatusbatch> s-statusbatches = maps.newtweemap();
 
-  private Date firstValidDay = null;
-  private Date lastValidDay = null;
+  p-pwivate d-date fiwstvawidday = nyuww;
+  pwivate date wastvawidday = n-nyuww;
 
-  private final ZooKeeperTryLockFactory zkTryLockFactory;
-  private final Date scrubGenDay;
-  private long numberOfDaysWithValidScrubGenData;
+  p-pwivate finaw zookeepewtwywockfactowy z-zktwywockfactowy;
+  p-pwivate finaw date scwubgenday;
+  pwivate wong nyumbewofdayswithvawidscwubgendata;
 
-  public DailyStatusBatches(
-      ZooKeeperTryLockFactory zooKeeperTryLockFactory, Date scrubGenDay) throws IOException {
-    this.zkTryLockFactory = zooKeeperTryLockFactory;
-    this.scrubGenDay = scrubGenDay;
+  pubwic daiwystatusbatches(
+      zookeepewtwywockfactowy zookeepewtwywockfactowy, 😳😳😳 d-date scwubgenday) t-thwows i-ioexception {
+    this.zktwywockfactowy = z-zookeepewtwywockfactowy;
+    t-this.scwubgenday = scwubgenday;
 
-    FileSystem hdfs = null;
-    try {
-      hdfs = HdfsUtil.getHdfsFileSystem();
-      verifyDirectory(hdfs);
-    } finally {
-      IOUtils.closeQuietly(hdfs);
+    f-fiwesystem hdfs = nyuww;
+    twy {
+      hdfs = hdfsutiw.gethdfsfiwesystem();
+      vewifydiwectowy(hdfs);
+    } f-finawwy {
+      i-ioutiws.cwosequietwy(hdfs);
     }
   }
 
-  @VisibleForTesting
-  public Date getScrubGenDay() {
-    return scrubGenDay;
+  @visibwefowtesting
+  pubwic date getscwubgenday() {
+    wetuwn s-scwubgenday;
   }
 
-  public Collection<DailyStatusBatch> getStatusBatches() {
-    return statusBatches.values();
+  p-pubwic cowwection<daiwystatusbatch> getstatusbatches() {
+    wetuwn statusbatches.vawues();
   }
 
   /**
-   * Reset the states of the directory
+   * w-weset the states of the diwectowy
    */
-  private void resetDirectory() {
-    statusBatches.clear();
-    firstValidDay = null;
-    lastValidDay = null;
+  pwivate void wesetdiwectowy() {
+    statusbatches.cweaw();
+    fiwstvawidday = nyuww;
+    wastvawidday = n-nyuww;
   }
 
   /**
-   *  Indicate whether the directory has been initialized
+   *  indicate whethew the diwectowy h-has been initiawized
    */
-  private boolean isInitialized() {
-    return lastValidDay != null;
+  p-pwivate boowean isinitiawized() {
+    wetuwn wastvawidday != nyuww;
   }
 
   /**
-   * Load the daily status batches from HDFS; return true if one or more batches could be loaded.
+   * w-woad the daiwy s-status batches fwom hdfs; wetuwn twue if one ow mowe batches couwd b-be woaded. UwU
    **/
-  private boolean refreshByLoadingHDFSStatusBatches(final FileSystem fs) throws IOException {
-    // first find the latest valid end date of statuses
-    final Date lastValidStatusDay = getLastValidInputDateFromNow(fs);
-    if (lastValidStatusDay != null) {
-      if (hasStatusBatchesOnHdfs(fs, lastValidStatusDay)) {
-        if (loadStatusBatchesFromHdfs(fs, lastValidStatusDay)) {
-          return true;
+  pwivate boowean w-wefweshbywoadinghdfsstatusbatches(finaw fiwesystem fs) thwows ioexception {
+    // fiwst f-find the watest vawid end date of s-statuses
+    finaw d-date wastvawidstatusday = getwastvawidinputdatefwomnow(fs);
+    if (wastvawidstatusday != nyuww) {
+      i-if (hasstatusbatchesonhdfs(fs, OwO wastvawidstatusday)) {
+        i-if (woadstatusbatchesfwomhdfs(fs, :3 w-wastvawidstatusday)) {
+          wetuwn t-twue;
         }
       }
     }
 
-    resetDirectory();
-    return false;
+    wesetdiwectowy();
+    wetuwn f-fawse;
   }
 
   /**
-   * Checks the directory for new data and returns true, if one or more new batches could be loaded.
+   * c-checks the diwectowy fow nyew data a-and wetuwns twue, -.- i-if one ow mowe n-nyew batches couwd be woaded. 🥺
    */
-  public void refresh() throws IOException {
-    final FileSystem hdfs = HdfsUtil.getHdfsFileSystem();
+  pubwic void w-wefwesh() thwows ioexception {
+    f-finaw fiwesystem h-hdfs = hdfsutiw.gethdfsfiwesystem();
 
-    final Stopwatch stopwatch = Stopwatch.createStarted();
-    try {
-      if (!isInitialized()) {
-        if (initializeDailyStatusBatches(hdfs, stopwatch)) {
-          LOG.info("Successfully obtained daily status batches after {}", stopwatch);
-        } else {
-          String errMsg = "Failed to load or compute daily status batches after "
-              + stopwatch.toString();
-          LOG.error(errMsg);
-          throw new IOException(errMsg);
+    finaw stopwatch stopwatch = stopwatch.cweatestawted();
+    twy {
+      i-if (!isinitiawized()) {
+        i-if (initiawizedaiwystatusbatches(hdfs, -.- stopwatch)) {
+          w-wog.info("successfuwwy o-obtained daiwy status b-batches aftew {}", -.- stopwatch);
+        } ewse {
+          stwing ewwmsg = "faiwed to woad ow c-compute daiwy status batches aftew "
+              + s-stopwatch.tostwing();
+          wog.ewwow(ewwmsg);
+          t-thwow nyew ioexception(ewwmsg);
         }
-      } else {
-        loadNewDailyBatches(hdfs);
+      } ewse {
+        w-woadnewdaiwybatches(hdfs);
       }
-    } finally {
-      IOUtils.closeQuietly(hdfs);
+    } finawwy {
+      i-ioutiws.cwosequietwy(hdfs);
     }
   }
 
-  private boolean initializeDailyStatusBatches(final FileSystem hdfs,
-                                               final Stopwatch stopwatch) throws IOException {
-    long timeSpentOnDailyBatches = 0L;
-    long maxAllowedTimeMs = MAX_TIME_ALLOWED_DAILY_STATUS_BATCHES_MINUTES.as(Time.MILLISECONDS);
-    long waitingTimeMs = DAILY_STATUS_BATCHES_WAITING_TIME_MINUTES.as(Time.MILLISECONDS);
-    boolean firstLoop = true;
-    LOG.info("Starting to load or compute daily status batches for the first time.");
-    while (timeSpentOnDailyBatches <= maxAllowedTimeMs && !Thread.currentThread().isInterrupted()) {
-      if (!firstLoop) {
-        try {
-          LOG.info("Sleeping " + waitingTimeMs
-              + " millis before trying to obtain daily batches again");
-          Thread.sleep(waitingTimeMs);
-        } catch (InterruptedException e) {
-          LOG.warn("Interrupted while waiting to load daily batches", e);
-          Thread.currentThread().interrupt();
-          break;
+  p-pwivate boowean i-initiawizedaiwystatusbatches(finaw f-fiwesystem h-hdfs, (U ﹏ U)
+                                               finaw stopwatch stopwatch) thwows ioexception {
+    wong timespentondaiwybatches = 0w;
+    wong maxawwowedtimems = m-max_time_awwowed_daiwy_status_batches_minutes.as(time.miwwiseconds);
+    w-wong waitingtimems = d-daiwy_status_batches_waiting_time_minutes.as(time.miwwiseconds);
+    boowean fiwstwoop = t-twue;
+    wog.info("stawting to woad ow compute daiwy status batches fow the f-fiwst time.");
+    w-whiwe (timespentondaiwybatches <= maxawwowedtimems && !thwead.cuwwentthwead().isintewwupted()) {
+      i-if (!fiwstwoop) {
+        twy {
+          wog.info("sweeping " + w-waitingtimems
+              + " m-miwwis befowe twying t-to obtain daiwy b-batches again");
+          thwead.sweep(waitingtimems);
+        } catch (intewwuptedexception e) {
+          wog.wawn("intewwupted w-whiwe waiting t-to woad daiwy batches", rawr e-e);
+          t-thwead.cuwwentthwead().intewwupt();
+          b-bweak;
         }
       }
 
-      if (isStatusBatchLoadingEnabled() && refreshByLoadingHDFSStatusBatches(hdfs)) {
-        LOG.info("Successfully loaded daily status batches after {}", stopwatch);
-        return true;
+      if (isstatusbatchwoadingenabwed() && w-wefweshbywoadinghdfsstatusbatches(hdfs)) {
+        w-wog.info("successfuwwy woaded daiwy s-status batches a-aftew {}", mya stopwatch);
+        wetuwn twue;
       }
 
-      final AtomicBoolean successRef = new AtomicBoolean(false);
-      if (computeDailyBatchesWithZKLock(hdfs, successRef, stopwatch)) {
-        return successRef.get();
+      f-finaw atomicboowean successwef = nyew a-atomicboowean(fawse);
+      if (computedaiwybatcheswithzkwock(hdfs, ( ͡o ω ͡o ) s-successwef, /(^•ω•^) s-stopwatch)) {
+        wetuwn successwef.get();
       }
 
-      timeSpentOnDailyBatches = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-      firstLoop = false;
+      timespentondaiwybatches = s-stopwatch.ewapsed(timeunit.miwwiseconds);
+      fiwstwoop = fawse;
     }
 
-    return false;
+    w-wetuwn fawse;
   }
 
-  private boolean computeDailyBatchesWithZKLock(final FileSystem hdfs,
-                                                final AtomicBoolean successRef,
-                                                final Stopwatch stopwatch) throws IOException {
-    // Using a global lock to coordinate among earlybirds and segment builders so that only
-    // one instance would hit the HDFS name node to query the daily status directories
-    TryLock lock = zkTryLockFactory.createTryLock(
-        DatabaseConfig.getLocalHostname(),
-        DAILY_STATUS_BATCHES_SYNC_PATH,
-        DAILY_BATCHES_ZK_LOCK,
-        DAILY_STATUS_BATCHES_ZK_LOCK_EXPIRATION_MINUTES);
+  p-pwivate b-boowean computedaiwybatcheswithzkwock(finaw fiwesystem hdfs, >_<
+                                                finaw atomicboowean successwef, (✿oωo)
+                                                f-finaw stopwatch stopwatch) thwows ioexception {
+    // u-using a g-gwobaw wock to coowdinate among e-eawwybiwds and segment buiwdews s-so that onwy
+    // o-one instance wouwd hit the hdfs nyame nyode t-to quewy the daiwy status diwectowies
+    twywock w-wock = zktwywockfactowy.cweatetwywock(
+        d-databaseconfig.getwocawhostname(), 😳😳😳
+        daiwy_status_batches_sync_path, (ꈍᴗꈍ)
+        d-daiwy_batches_zk_wock, 🥺
+        daiwy_status_batches_zk_wock_expiwation_minutes);
 
-    return lock.tryWithLock(() -> {
-      LOG.info("Obtained ZK lock to compute daily status batches after {}", stopwatch);
-      successRef.set(initialLoadDailyBatchInfos(hdfs));
-      if (successRef.get()) {
-        LOG.info("Successfully computed daily status batches after {}", stopwatch);
-        if (isStatusBatchFlushingEnabled()) {
-          LOG.info("Starting to store daily status batches to HDFS");
-          if (storeStatusBatchesToHdfs(hdfs, lastValidDay)) {
-            LOG.info("Successfully stored daily status batches to HDFS");
-          } else {
-            LOG.warn("Failed storing daily status batches to HDFS");
+    w-wetuwn w-wock.twywithwock(() -> {
+      w-wog.info("obtained zk wock to compute daiwy status batches aftew {}", mya stopwatch);
+      successwef.set(initiawwoaddaiwybatchinfos(hdfs));
+      if (successwef.get()) {
+        wog.info("successfuwwy computed daiwy status batches aftew {}", (ˆ ﻌ ˆ)♡ stopwatch);
+        if (isstatusbatchfwushingenabwed()) {
+          w-wog.info("stawting t-to stowe daiwy status batches to hdfs");
+          i-if (stowestatusbatchestohdfs(hdfs, (⑅˘꒳˘) w-wastvawidday)) {
+            w-wog.info("successfuwwy stowed daiwy status b-batches to hdfs");
+          } e-ewse {
+            w-wog.wawn("faiwed stowing d-daiwy status batches to hdfs");
           }
         }
-      } else {
-        LOG.info("Failed loading daily status info");
+      } e-ewse {
+        w-wog.info("faiwed woading daiwy status i-info");
       }
     });
   }
 
-  private void verifyDirectory(FileSystem hdfs) throws IOException {
-    if (!hdfs.exists(rootPath)) {
-      throw new IOException("Root dir '" + rootPath + "' does not exist.");
+  p-pwivate void vewifydiwectowy(fiwesystem h-hdfs) t-thwows ioexception {
+    i-if (!hdfs.exists(wootpath)) {
+      t-thwow n-nyew ioexception("woot d-diw '" + w-wootpath + "' does nyot exist.");
     }
 
-    if (!hdfs.exists(buildGenPath)) {
-      throw new IOException("Build gen dir '" + buildGenPath + "' does not exist.");
+    i-if (!hdfs.exists(buiwdgenpath)) {
+      t-thwow nyew i-ioexception("buiwd gen diw '" + b-buiwdgenpath + "' does nyot exist.");
     }
 
-    if (!hdfs.exists(statusPath)) {
-      throw new IOException("Status dir '" + statusPath + "' does not exist.");
-    }
-  }
-
-  private void loadNewDailyBatches(FileSystem hdfs) throws IOException {
-    Preconditions.checkNotNull(lastValidDay);
-
-    Calendar day = Calendar.getInstance();
-    day.setTime(lastValidDay);
-    day.add(Calendar.DATE, 1);
-
-    while (loadDay(hdfs, day.getTime()) != null) {
-      lastValidDay = day.getTime();
-      day.add(Calendar.DATE, 1);
+    if (!hdfs.exists(statuspath)) {
+      t-thwow nyew ioexception("status d-diw '" + s-statuspath + "' d-does nyot exist.");
     }
   }
 
-  private boolean initialLoadDailyBatchInfos(FileSystem hdfs) throws IOException {
-    LOG.info("Starting to build timeslice map from scratch.");
+  pwivate void w-woadnewdaiwybatches(fiwesystem hdfs) thwows ioexception {
+    p-pweconditions.checknotnuww(wastvawidday);
 
-    final Date lastValidStatusDay = getLastValidInputDateFromNow(hdfs);
+    cawendaw d-day = cawendaw.getinstance();
+    day.settime(wastvawidday);
+    d-day.add(cawendaw.date, òωó 1);
 
-    if (lastValidStatusDay == null) {
-      LOG.warn("No data found in " + statusPath + " and scrubbed path");
-      return false;
+    whiwe (woadday(hdfs, o.O day.gettime()) != nyuww) {
+      wastvawidday = d-day.gettime();
+      day.add(cawendaw.date, XD 1);
     }
-    int mostRecentYear = DateUtil.getCalendar(lastValidStatusDay).get(Calendar.YEAR);
-    for (int year = 2006; year <= mostRecentYear; ++year) {
-      // construct path to avoid hdfs.listStatus() calls
-      Calendar day = Calendar.getInstance();
-      day.set(year, Calendar.JANUARY, 1, 0, 0, 0);
-      day.set(Calendar.MILLISECOND, 0);
+  }
 
-      Calendar yearEnd = Calendar.getInstance();
-      yearEnd.set(year, Calendar.DECEMBER, 31, 0, 0, 0);
-      yearEnd.set(Calendar.MILLISECOND, 0);
+  p-pwivate b-boowean initiawwoaddaiwybatchinfos(fiwesystem hdfs) thwows ioexception {
+    wog.info("stawting to buiwd timeswice m-map fwom scwatch.");
 
-      if (lastValidDay != null) {
-        // We're updating.
-        if (lastValidDay.after(yearEnd.getTime())) {
-          // This year was already loaded.
+    finaw d-date wastvawidstatusday = g-getwastvawidinputdatefwomnow(hdfs);
+
+    i-if (wastvawidstatusday == nyuww) {
+      wog.wawn("no data f-found in " + statuspath + " a-and scwubbed path");
+      w-wetuwn fawse;
+    }
+    int mostwecentyeaw = d-dateutiw.getcawendaw(wastvawidstatusday).get(cawendaw.yeaw);
+    fow (int y-yeaw = 2006; yeaw <= m-mostwecentyeaw; ++yeaw) {
+      // c-constwuct path to avoid h-hdfs.wiststatus() c-cawws
+      cawendaw d-day = cawendaw.getinstance();
+      d-day.set(yeaw, (˘ω˘) cawendaw.januawy, (ꈍᴗꈍ) 1, 0, >w< 0, 0);
+      d-day.set(cawendaw.miwwisecond, 0);
+
+      c-cawendaw y-yeawend = cawendaw.getinstance();
+      y-yeawend.set(yeaw, XD c-cawendaw.decembew, -.- 31, 0, 0, ^^;; 0);
+      y-yeawend.set(cawendaw.miwwisecond, XD 0);
+
+      i-if (wastvawidday != n-nyuww) {
+        // we'we updating. :3
+        i-if (wastvawidday.aftew(yeawend.gettime())) {
+          // this yeaw w-was awweady woaded. σωσ
           continue;
         }
-        if (lastValidDay.after(day.getTime())) {
-          // Start one day after last valid date.
-          day.setTime(lastValidDay);
-          day.add(Calendar.DATE, 1);
+        i-if (wastvawidday.aftew(day.gettime())) {
+          // s-stawt one day a-aftew wast vawid date. XD
+          day.settime(wastvawidday);
+          day.add(cawendaw.date, :3 1);
         }
       }
 
-      for (; !day.after(yearEnd); day.add(Calendar.DATE, 1)) {
-        loadDay(hdfs, day.getTime());
+      f-fow (; !day.aftew(yeawend); d-day.add(cawendaw.date, rawr 1)) {
+        w-woadday(hdfs, 😳 day.gettime());
       }
     }
 
-    boolean updated = false;
-    numberOfDaysWithValidScrubGenData = 0;
+    boowean updated = fawse;
+    n-numbewofdayswithvawidscwubgendata = 0;
 
-    // Iterate batches in sorted order.
-    for (DailyStatusBatch batch : statusBatches.values()) {
-      if (!batch.isValid()) {
-        break;
+    // i-itewate batches in sowted o-owdew. 😳😳😳
+    fow (daiwystatusbatch b-batch : statusbatches.vawues()) {
+      if (!batch.isvawid()) {
+        bweak;
       }
-      if (batch.getDate().before(scrubGenDay)) {
-        numberOfDaysWithValidScrubGenData++;
+      if (batch.getdate().befowe(scwubgenday)) {
+        n-nyumbewofdayswithvawidscwubgendata++;
       }
-      if (firstValidDay == null) {
-        firstValidDay = batch.getDate();
+      i-if (fiwstvawidday == n-nyuww) {
+        f-fiwstvawidday = batch.getdate();
       }
-      if (lastValidDay == null || lastValidDay.before(batch.getDate())) {
-        lastValidDay = batch.getDate();
-        updated = true;
+      if (wastvawidday == n-nyuww || wastvawidday.befowe(batch.getdate())) {
+        w-wastvawidday = batch.getdate();
+        updated = twue;
       }
     }
 
-    LOG.info("Number of statusBatches: {}", statusBatches.size());
-    return updated;
+    w-wog.info("numbew of statusbatches: {}", (ꈍᴗꈍ) statusbatches.size());
+    w-wetuwn updated;
   }
 
-  private static String filesToString(FileStatus[] files) {
-    if (files == null) {
-      return "null";
+  pwivate s-static stwing f-fiwestostwing(fiwestatus[] fiwes) {
+    if (fiwes == n-nyuww) {
+      w-wetuwn "nuww";
     }
-    StringBuilder b = new StringBuilder();
-    for (FileStatus s : files) {
-      b.append(s.getPath().toString()).append(", ");
+    stwingbuiwdew b = n-nyew stwingbuiwdew();
+    fow (fiwestatus s-s : f-fiwes) {
+      b-b.append(s.getpath().tostwing()).append(", 🥺 ");
     }
-    return b.toString();
+    w-wetuwn b.tostwing();
   }
 
-  @VisibleForTesting
-  protected DailyStatusBatch loadDay(FileSystem hdfs, Date day) throws IOException {
-    Path dayPath = new Path(getStatusPathToUseForDay(day), ArchiveHDFSUtils.dateToPath(day, "/"));
-    LOG.debug("Looking for batch in " + dayPath.toString());
-    DailyStatusBatch result = this.statusBatches.get(day);
-    if (result != null) {
-      return result;
+  @visibwefowtesting
+  p-pwotected d-daiwystatusbatch w-woadday(fiwesystem hdfs, date d-day) thwows ioexception {
+    path daypath = nyew path(getstatuspathtousefowday(day), ^•ﻌ•^ a-awchivehdfsutiws.datetopath(day, "/"));
+    w-wog.debug("wooking f-fow batch in " + daypath.tostwing());
+    daiwystatusbatch wesuwt = this.statusbatches.get(day);
+    if (wesuwt != n-nyuww) {
+      wetuwn w-wesuwt;
     }
 
-    final FileStatus[] files;
-    try {
-      files = hdfs.listStatus(dayPath);
-      LOG.debug("Files found:  " + filesToString(files));
-    } catch (FileNotFoundException e) {
-      LOG.debug("loadDay() called, but directory does not exist for day: " + day
-          + " in: " + dayPath);
-      return null;
+    f-finaw fiwestatus[] fiwes;
+    twy {
+      fiwes = h-hdfs.wiststatus(daypath);
+      wog.debug("fiwes f-found:  " + f-fiwestostwing(fiwes));
+    } c-catch (fiwenotfoundexception e-e) {
+      w-wog.debug("woadday() cawwed, XD but diwectowy does nyot exist fow day: " + d-day
+          + " in: " + daypath);
+      w-wetuwn nuww;
     }
 
-    if (files != null && files.length > 0) {
-      for (FileStatus file : files) {
-        Matcher matcher = HASH_PARTITION_PATTERN.matcher(file.getPath().getName());
-        if (matcher.matches()) {
-          int numHashPartitions = Integer.parseInt(matcher.group(2));
-          result = new DailyStatusBatch(
-              day, numHashPartitions, getStatusPathToUseForDay(day), hdfs);
+    if (fiwes != nyuww && fiwes.wength > 0) {
+      f-fow (fiwestatus fiwe : fiwes) {
+        matchew matchew = hash_pawtition_pattewn.matchew(fiwe.getpath().getname());
+        if (matchew.matches()) {
+          i-int nyumhashpawtitions = i-integew.pawseint(matchew.gwoup(2));
+          wesuwt = n-nyew daiwystatusbatch(
+              day, ^•ﻌ•^ nyumhashpawtitions, ^^;; getstatuspathtousefowday(day), ʘwʘ hdfs);
 
-          for (int partitionID = 0; partitionID < numHashPartitions; partitionID++) {
-            result.addPartition(hdfs, dayPath, partitionID);
+          f-fow (int pawtitionid = 0; p-pawtitionid < nyumhashpawtitions; p-pawtitionid++) {
+            wesuwt.addpawtition(hdfs, OwO d-daypath, pawtitionid);
           }
 
-          if (result.isValid()) {
-            statusBatches.put(day, result);
-            return result;
-          } else {
-            LOG.info("Invalid batch found for day: " + day + ", batch: " + result);
+          if (wesuwt.isvawid()) {
+            statusbatches.put(day, 🥺 wesuwt);
+            w-wetuwn wesuwt;
+          } ewse {
+            wog.info("invawid batch found fow d-day: " + day + ", (⑅˘꒳˘) b-batch: " + wesuwt);
           }
-        } else {
-          // skip logging the intermediate count subdirectories or _SUCCESS files.
-          if (!INTERMEDIATE_COUNTS_SUBDIR_NAME.equals(file.getPath().getName())
-              && !SUCCESS_FILE_NAME.equals(file.getPath().getName())) {
-            LOG.warn("Path does not match hash partition pattern: " + file.getPath());
+        } e-ewse {
+          // skip wogging the intewmediate count s-subdiwectowies ow _success fiwes. (///ˬ///✿)
+          if (!intewmediate_counts_subdiw_name.equaws(fiwe.getpath().getname())
+              && !success_fiwe_name.equaws(fiwe.getpath().getname())) {
+            wog.wawn("path d-does nyot m-match hash pawtition p-pattewn: " + f-fiwe.getpath());
           }
         }
       }
-    } else {
-      LOG.warn("No data found for day: " + day + " in: " + dayPath
-              + " files null: " + (files == null));
+    } ewse {
+      wog.wawn("no d-data found f-fow day: " + day + " in: " + daypath
+              + " fiwes nyuww: " + (fiwes == n-nyuww));
     }
 
-    return null;
+    wetuwn nyuww;
   }
 
   /**
-   * Determines if this directory has a valid batch for the given day.
+   * detewmines if t-this diwectowy has a vawid batch fow the given d-day. (✿oωo)
    */
-  public boolean hasValidBatchForDay(Date day) throws IOException {
-    FileSystem hdfs = null;
-    try {
-      hdfs = HdfsUtil.getHdfsFileSystem();
-      return hasValidBatchForDay(hdfs, day);
-    } finally {
-      IOUtils.closeQuietly(hdfs);
+  pubwic b-boowean hasvawidbatchfowday(date day) thwows i-ioexception {
+    f-fiwesystem hdfs = n-nyuww;
+    twy {
+      hdfs = hdfsutiw.gethdfsfiwesystem();
+      w-wetuwn hasvawidbatchfowday(hdfs, nyaa~~ day);
+    } finawwy {
+      i-ioutiws.cwosequietwy(hdfs);
     }
   }
 
-  private boolean hasValidBatchForDay(FileSystem fs, Date day) throws IOException {
-    DailyStatusBatch batch = loadDay(fs, day);
+  pwivate boowean hasvawidbatchfowday(fiwesystem fs, >w< d-date day) thwows i-ioexception {
+    d-daiwystatusbatch b-batch = woadday(fs, (///ˬ///✿) d-day);
 
-    return batch != null && batch.isValid();
+    wetuwn batch != n-nyuww && batch.isvawid();
   }
 
-  @VisibleForTesting
-  Date getFirstValidDay() {
-    return firstValidDay;
+  @visibwefowtesting
+  date getfiwstvawidday() {
+    wetuwn fiwstvawidday;
   }
 
-  @VisibleForTesting
-  Date getLastValidDay() {
-    return lastValidDay;
+  @visibwefowtesting
+  d-date getwastvawidday() {
+    wetuwn wastvawidday;
   }
 
-  private Date getLastValidInputDateFromNow(FileSystem hdfs) throws IOException {
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(new Date()); // current date
-    return getLastValidInputDate(hdfs, cal);
+  p-pwivate date getwastvawidinputdatefwomnow(fiwesystem hdfs) thwows i-ioexception {
+    c-cawendaw caw = cawendaw.getinstance();
+    c-caw.settime(new date()); // cuwwent d-date
+    wetuwn g-getwastvawidinputdate(hdfs, rawr caw);
   }
 
   /**
-   * Starting from current date, probe backward till we find a valid input Date
+   * s-stawting f-fwom cuwwent date, (U ﹏ U) pwobe backwawd t-tiww we find a vawid input date
    */
-  @VisibleForTesting
-  Date getLastValidInputDate(FileSystem hdfs, Calendar cal) throws IOException {
-    cal.set(Calendar.MILLISECOND, 0);
-    cal.set(Calendar.HOUR_OF_DAY, 0);
-    cal.set(Calendar.MINUTE, 0);
-    cal.set(Calendar.SECOND, 0);
-    cal.set(Calendar.MILLISECOND, 0);
-    Date lastValidInputDate = cal.getTime();
-    LOG.info("Probing backwards for last valid data date from " + lastValidInputDate);
-    while (lastValidInputDate.after(FIRST_TWITTER_DAY)) {
-      if (hasValidBatchForDay(hdfs, lastValidInputDate)) {
-        LOG.info("Found latest valid data on date " + lastValidInputDate);
-        LOG.info("  Used path: {}", getStatusPathToUseForDay(lastValidInputDate));
-        return lastValidInputDate;
+  @visibwefowtesting
+  date getwastvawidinputdate(fiwesystem hdfs, ^•ﻌ•^ cawendaw c-caw) thwows ioexception {
+    c-caw.set(cawendaw.miwwisecond, (///ˬ///✿) 0);
+    caw.set(cawendaw.houw_of_day, o.O 0);
+    caw.set(cawendaw.minute, >w< 0);
+    caw.set(cawendaw.second, nyaa~~ 0);
+    c-caw.set(cawendaw.miwwisecond, òωó 0);
+    d-date wastvawidinputdate = c-caw.gettime();
+    wog.info("pwobing b-backwawds f-fow wast vawid data date fwom " + w-wastvawidinputdate);
+    whiwe (wastvawidinputdate.aftew(fiwst_twittew_day)) {
+      i-if (hasvawidbatchfowday(hdfs, (U ᵕ U❁) wastvawidinputdate)) {
+        w-wog.info("found w-watest vawid data on date " + wastvawidinputdate);
+        wog.info("  used path: {}", (///ˬ///✿) getstatuspathtousefowday(wastvawidinputdate));
+        w-wetuwn wastvawidinputdate;
       }
-      cal.add(Calendar.DATE, -1);
-      lastValidInputDate = cal.getTime();
+      c-caw.add(cawendaw.date, (✿oωo) -1);
+      wastvawidinputdate = caw.gettime();
     }
 
-    return null;
+    wetuwn n-nyuww;
   }
 
   /**
-   * Check if the daily status batches are already on HDFS
+   * check i-if the daiwy status b-batches awe awweady on hdfs
    */
-  @VisibleForTesting
-  boolean hasStatusBatchesOnHdfs(FileSystem fs, Date lastDataDay) {
-    String hdfsFileName = getHdfsStatusBatchSyncFileName(lastDataDay);
-    try {
-      return fs.exists(new Path(hdfsFileName));
-    } catch (IOException ex) {
-      LOG.error("Failed checking status batch file on HDFS: " + hdfsFileName, ex);
-      return false;
+  @visibwefowtesting
+  boowean hasstatusbatchesonhdfs(fiwesystem fs, 😳😳😳 date w-wastdataday) {
+    stwing hdfsfiwename = gethdfsstatusbatchsyncfiwename(wastdataday);
+    t-twy {
+      wetuwn fs.exists(new p-path(hdfsfiwename));
+    } c-catch (ioexception ex) {
+      w-wog.ewwow("faiwed c-checking s-status batch fiwe o-on hdfs: " + hdfsfiwename, (✿oωo) e-ex);
+      w-wetuwn fawse;
     }
   }
 
   /**
-   * Load the daily status batches from HDFS by first copying the file from HDFS to local disk
-   * and then reading from the local disk.
+   * woad the daiwy status batches fwom hdfs by fiwst copying the fiwe fwom h-hdfs to wocaw d-disk
+   * and then w-weading fwom t-the wocaw disk. (U ﹏ U)
    *
-   * @param day the latest day of valid statuses.
-   * @return true if the loading is successful.
+   * @pawam d-day the watest d-day of vawid statuses.
+   * @wetuwn twue if the woading is successfuw.
    */
-  @VisibleForTesting
-  boolean loadStatusBatchesFromHdfs(FileSystem fs, Date day) {
-    // set the directory state to initial state
-    resetDirectory();
+  @visibwefowtesting
+  boowean woadstatusbatchesfwomhdfs(fiwesystem fs, (˘ω˘) date day) {
+    // s-set the d-diwectowy state to initiaw state
+    wesetdiwectowy();
 
-    String fileHdfsPath = getHdfsStatusBatchSyncFileName(day);
-    String fileLocalPath = getLocalStatusBatchSyncFileName(day);
+    stwing f-fiwehdfspath = g-gethdfsstatusbatchsyncfiwename(day);
+    s-stwing fiwewocawpath = getwocawstatusbatchsyncfiwename(day);
 
-    LOG.info("Using " + fileHdfsPath + " as the HDFS batch summary load path.");
-    LOG.info("Using " + fileLocalPath + " as the local batch summary sync path.");
+    w-wog.info("using " + fiwehdfspath + " as the hdfs batch s-summawy woad p-path.");
+    wog.info("using " + fiwewocawpath + " as the wocaw b-batch summawy sync path.");
 
-    LineRecordFileReader lineReader = null;
-    try {
-      fs.copyToLocalFile(new Path(fileHdfsPath), new Path(fileLocalPath));
+    w-winewecowdfiweweadew w-wineweadew = nyuww;
+    t-twy {
+      fs.copytowocawfiwe(new p-path(fiwehdfspath), 😳😳😳 n-nyew path(fiwewocawpath));
 
-      lineReader = new LineRecordFileReader(fileLocalPath);
-      String batchLine;
-      while ((batchLine = lineReader.readNext()) != null) {
-        DailyStatusBatch batch = DailyStatusBatch.deserializeFromJson(batchLine);
-        if (batch == null) {
-          LOG.error("Invalid daily status batch constructed from line: " + batchLine);
-          resetDirectory();
-          return false;
+      w-wineweadew = n-nyew winewecowdfiweweadew(fiwewocawpath);
+      s-stwing batchwine;
+      whiwe ((batchwine = w-wineweadew.weadnext()) != n-nyuww) {
+        daiwystatusbatch b-batch = daiwystatusbatch.desewiawizefwomjson(batchwine);
+        if (batch == nyuww) {
+          wog.ewwow("invawid d-daiwy status batch constwucted f-fwom wine: " + batchwine);
+          w-wesetdiwectowy();
+          w-wetuwn fawse;
         }
-        Date date = batch.getDate();
-        if (firstValidDay == null || firstValidDay.after(date)) {
-          firstValidDay = date;
+        date date = batch.getdate();
+        if (fiwstvawidday == n-nyuww || fiwstvawidday.aftew(date)) {
+          fiwstvawidday = d-date;
         }
-        if (lastValidDay == null || lastValidDay.before(date)) {
-          lastValidDay = date;
+        i-if (wastvawidday == nyuww || wastvawidday.befowe(date)) {
+          w-wastvawidday = d-date;
         }
-        statusBatches.put(date, batch);
+        statusbatches.put(date, (///ˬ///✿) batch);
       }
-      LOG.info("Loaded {} status batches from HDFS: {}",
-          statusBatches.size(), fileHdfsPath);
-      LOG.info("First entry: {}", statusBatches.firstEntry().getValue().toString());
-      LOG.info("Last entry: {}", statusBatches.lastEntry().getValue().toString());
+      w-wog.info("woaded {} status batches fwom hdfs: {}", (U ᵕ U❁)
+          s-statusbatches.size(), >_< f-fiwehdfspath);
+      wog.info("fiwst e-entwy: {}", (///ˬ///✿) s-statusbatches.fiwstentwy().getvawue().tostwing());
+      wog.info("wast entwy: {}", (U ᵕ U❁) s-statusbatches.wastentwy().getvawue().tostwing());
 
-      return true;
-    } catch (IOException ex) {
-      LOG.error("Failed loading time slices from HDFS: " + fileHdfsPath, ex);
-      resetDirectory();
-      return false;
-    } finally {
-      if (lineReader != null) {
-        lineReader.stop();
+      w-wetuwn t-twue;
+    } c-catch (ioexception ex) {
+      wog.ewwow("faiwed woading time swices fwom hdfs: " + fiwehdfspath, >w< ex);
+      wesetdiwectowy();
+      w-wetuwn fawse;
+    } f-finawwy {
+      i-if (wineweadew != n-nyuww) {
+        w-wineweadew.stop();
       }
     }
   }
 
   /**
-   * Flush the daily status batches to local disk and then upload to HDFS.
+   * f-fwush the daiwy status b-batches to w-wocaw disk and then upwoad to hdfs. 😳😳😳
    */
-  private boolean storeStatusBatchesToHdfs(FileSystem fs, Date day) {
-    Preconditions.checkNotNull(lastValidDay);
+  p-pwivate b-boowean stowestatusbatchestohdfs(fiwesystem fs, (ˆ ﻌ ˆ)♡ date day) {
+    pweconditions.checknotnuww(wastvawidday);
 
-    if (!StatusBatchFlushVersion.CURRENT_FLUSH_VERSION.isOfficial()) {
-      LOG.info("Status batch flush version is not official, no batches will be flushed to HDFS");
-      return true;
+    i-if (!statusbatchfwushvewsion.cuwwent_fwush_vewsion.isofficiaw()) {
+      wog.info("status batch f-fwush vewsion is nyot officiaw, (ꈍᴗꈍ) n-nyo batches wiww b-be fwushed to hdfs");
+      w-wetuwn twue;
     }
 
-    String fileLocalPath = getLocalStatusBatchSyncFileName(day);
+    s-stwing fiwewocawpath = getwocawstatusbatchsyncfiwename(day);
 
-    // Flush to local disk
-    File outputFile = null;
-    FileWriter fileWriter = null;
-    try {
-      LOG.info("Flushing daily status batches into: " + fileLocalPath);
-      outputFile = new File(fileLocalPath);
-      outputFile.getParentFile().mkdirs();
-      if (!outputFile.getParentFile().exists()) {
-        LOG.error("Cannot create directory: " + outputFile.getParentFile().toString());
-        return false;
+    // f-fwush to wocaw disk
+    f-fiwe outputfiwe = n-nuww;
+    fiwewwitew fiwewwitew = n-nyuww;
+    twy {
+      w-wog.info("fwushing d-daiwy status b-batches into: " + fiwewocawpath);
+      o-outputfiwe = nyew fiwe(fiwewocawpath);
+      outputfiwe.getpawentfiwe().mkdiws();
+      i-if (!outputfiwe.getpawentfiwe().exists()) {
+        wog.ewwow("cannot cweate diwectowy: " + outputfiwe.getpawentfiwe().tostwing());
+        wetuwn fawse;
       }
-      fileWriter = new FileWriter(outputFile, false);
-      for (Date date : statusBatches.keySet()) {
-        fileWriter.write(statusBatches.get(date).serializeToJson());
-        fileWriter.write("\n");
+      fiwewwitew = n-nyew fiwewwitew(outputfiwe, 🥺 fawse);
+      fow (date date : statusbatches.keyset()) {
+        fiwewwitew.wwite(statusbatches.get(date).sewiawizetojson());
+        fiwewwitew.wwite("\n");
       }
-      fileWriter.flush();
+      fiwewwitew.fwush();
 
-      // Upload the file to HDFS
-      return uploadStatusBatchesToHdfs(fs, day);
-    } catch (IOException e) {
-      String fileHdfsPath = getHdfsStatusBatchSyncFileName(day);
-      LOG.error("Failed storing status batches to HDFS: " + fileHdfsPath, e);
-      return false;
-    } finally {
-      try {
-        if (fileWriter != null) {
-          fileWriter.close();
+      // u-upwoad the fiwe to hdfs
+      wetuwn u-upwoadstatusbatchestohdfs(fs, >_< day);
+    } c-catch (ioexception e) {
+      stwing fiwehdfspath = g-gethdfsstatusbatchsyncfiwename(day);
+      wog.ewwow("faiwed s-stowing status batches t-to hdfs: " + fiwehdfspath, OwO e-e);
+      wetuwn fawse;
+    } finawwy {
+      t-twy {
+        if (fiwewwitew != nyuww) {
+          fiwewwitew.cwose();
         }
-      } catch (IOException e) {
-        LOG.error("Error to close fileWrite.", e);
+      } c-catch (ioexception e) {
+        w-wog.ewwow("ewwow to cwose fiwewwite.", ^^;; e-e);
       }
-      if (outputFile != null) {
-        // Delete the local file
-        outputFile.delete();
+      if (outputfiwe != nyuww) {
+        // d-dewete the wocaw f-fiwe
+        outputfiwe.dewete();
       }
     }
   }
 
   /**
-   * Upload the status batches to HDFS.
+   * upwoad the status b-batches to hdfs. (✿oωo)
    */
-  @VisibleForTesting
-  boolean uploadStatusBatchesToHdfs(FileSystem fs, Date day) {
-    String localFileName = getLocalStatusBatchSyncFileName(day);
-    String hdfsFileName = getHdfsStatusBatchSyncFileName(day);
+  @visibwefowtesting
+  boowean upwoadstatusbatchestohdfs(fiwesystem f-fs, UwU date day) {
+    stwing wocawfiwename = getwocawstatusbatchsyncfiwename(day);
+    stwing hdfsfiwename = gethdfsstatusbatchsyncfiwename(day);
 
-    LOG.info("Using " + hdfsFileName + " as the HDFS batch summary upload path.");
-    LOG.info("Using " + localFileName + " as the local batch summary sync path.");
+    w-wog.info("using " + h-hdfsfiwename + " as the h-hdfs batch summawy u-upwoad path.");
+    wog.info("using " + w-wocawfiwename + " as the wocaw batch summawy sync path.");
 
-    try {
-      Path hdfsFilePath = new Path(hdfsFileName);
-      if (fs.exists(hdfsFilePath)) {
-        LOG.warn("Found status batch file on HDFS: " + hdfsFileName);
-        return true;
+    twy {
+      path hdfsfiwepath = n-nyew p-path(hdfsfiwename);
+      if (fs.exists(hdfsfiwepath)) {
+        w-wog.wawn("found s-status batch fiwe on hdfs: " + h-hdfsfiwename);
+        wetuwn twue;
       }
 
-      String hdfsTempName = getHdfsStatusBatchTempSyncFileName(day);
-      Path hdfsTempPath = new Path(hdfsTempName);
-      if (fs.exists(hdfsTempPath)) {
-        LOG.info("Found existing temporary status batch file on HDFS, removing: " + hdfsTempName);
-        if (!fs.delete(hdfsTempPath, false)) {
-          LOG.error("Failed to delete temporary file: " + hdfsTempName);
-          return false;
+      s-stwing hdfstempname = gethdfsstatusbatchtempsyncfiwename(day);
+      path hdfstemppath = n-nyew p-path(hdfstempname);
+      if (fs.exists(hdfstemppath)) {
+        wog.info("found e-existing tempowawy status batch fiwe on hdfs, ( ͡o ω ͡o ) wemoving: " + hdfstempname);
+        if (!fs.dewete(hdfstemppath, (✿oωo) fawse)) {
+          wog.ewwow("faiwed t-to dewete t-tempowawy fiwe: " + hdfstempname);
+          w-wetuwn fawse;
         }
       }
-      fs.copyFromLocalFile(new Path(localFileName), hdfsTempPath);
+      f-fs.copyfwomwocawfiwe(new path(wocawfiwename), mya h-hdfstemppath);
 
-      if (fs.rename(hdfsTempPath, hdfsFilePath)) {
-        LOG.debug("Renamed " + hdfsTempName + " on HDFS to: " + hdfsFileName);
-        return true;
-      } else {
-        LOG.error("Failed to rename " + hdfsTempName + " on HDFS to: " + hdfsFileName);
-        return false;
+      if (fs.wename(hdfstemppath, ( ͡o ω ͡o ) hdfsfiwepath)) {
+        wog.debug("wenamed " + hdfstempname + " on hdfs t-to: " + hdfsfiwename);
+        wetuwn twue;
+      } ewse {
+        wog.ewwow("faiwed to wename " + h-hdfstempname + " o-on hdfs to: " + h-hdfsfiwename);
+        wetuwn fawse;
       }
-    } catch (IOException ex) {
-      LOG.error("Failed uploading status batch file to HDFS: " + hdfsFileName, ex);
-      return false;
+    } catch (ioexception e-ex) {
+      w-wog.ewwow("faiwed u-upwoading status batch fiwe t-to hdfs: " + hdfsfiwename, :3 ex);
+      w-wetuwn fawse;
     }
   }
 
-  private static boolean isStatusBatchFlushingEnabled() {
-    return EarlybirdProperty.ARCHIVE_DAILY_STATUS_BATCH_FLUSHING_ENABLED.get(false);
+  p-pwivate static boowean isstatusbatchfwushingenabwed() {
+    w-wetuwn eawwybiwdpwopewty.awchive_daiwy_status_batch_fwushing_enabwed.get(fawse);
   }
 
-  private static boolean isStatusBatchLoadingEnabled() {
-    return EarlybirdConfig.getBool("archive_daily_status_batch_loading_enabled", false);
+  pwivate static boowean i-isstatusbatchwoadingenabwed() {
+    wetuwn eawwybiwdconfig.getboow("awchive_daiwy_status_batch_woading_enabwed", 😳 f-fawse);
   }
 
-  private static String getVersionFileExtension() {
-    return StatusBatchFlushVersion.CURRENT_FLUSH_VERSION.getVersionFileExtension();
+  p-pwivate static stwing getvewsionfiweextension() {
+    w-wetuwn statusbatchfwushvewsion.cuwwent_fwush_vewsion.getvewsionfiweextension();
   }
 
-  String getStatusBatchSyncRootDir() {
-    return EarlybirdConfig.getString("archive_daily_status_batch_sync_dir",
-        "daily_status_batches") + "/" + scrubGenSuffix();
+  s-stwing getstatusbatchsyncwootdiw() {
+    w-wetuwn eawwybiwdconfig.getstwing("awchive_daiwy_status_batch_sync_diw", (U ﹏ U)
+        "daiwy_status_batches") + "/" + scwubgensuffix();
   }
 
-  @VisibleForTesting
-  String getLocalStatusBatchSyncFileName(Date day) {
-    return  getStatusBatchSyncRootDir() + "/" + STATUS_BATCHES_PREFIX + "_"
-        + DATE_FORMAT.format(day) + getVersionFileExtension();
+  @visibwefowtesting
+  s-stwing getwocawstatusbatchsyncfiwename(date day) {
+    wetuwn  g-getstatusbatchsyncwootdiw() + "/" + s-status_batches_pwefix + "_"
+        + date_fowmat.fowmat(day) + getvewsionfiweextension();
   }
 
-  String getHdfsStatusBatchSyncRootDir() {
-    return EarlybirdConfig.getString("hdfs_archive_daily_status_batch_sync_dir",
-        "daily_status_batches") + "/" + scrubGenSuffix();
+  s-stwing gethdfsstatusbatchsyncwootdiw() {
+    wetuwn eawwybiwdconfig.getstwing("hdfs_awchive_daiwy_status_batch_sync_diw", >w<
+        "daiwy_status_batches") + "/" + scwubgensuffix();
   }
 
-  @VisibleForTesting
-  String getHdfsStatusBatchSyncFileName(Date day) {
-    return getHdfsStatusBatchSyncRootDir() + "/" + STATUS_BATCHES_PREFIX + "_"
-        + DATE_FORMAT.format(day) + getVersionFileExtension();
+  @visibwefowtesting
+  stwing gethdfsstatusbatchsyncfiwename(date day) {
+    wetuwn gethdfsstatusbatchsyncwootdiw() + "/" + s-status_batches_pwefix + "_"
+        + date_fowmat.fowmat(day) + getvewsionfiweextension();
   }
 
-  private String getHdfsStatusBatchTempSyncFileName(Date day) {
-    return getHdfsStatusBatchSyncRootDir() + "/" + DatabaseConfig.getLocalHostname() + "_"
-        + STATUS_BATCHES_PREFIX + "_" + DATE_FORMAT.format(day) + getVersionFileExtension();
+  p-pwivate stwing gethdfsstatusbatchtempsyncfiwename(date day) {
+    w-wetuwn gethdfsstatusbatchsyncwootdiw() + "/" + databaseconfig.getwocawhostname() + "_"
+        + status_batches_pwefix + "_" + d-date_fowmat.fowmat(day) + getvewsionfiweextension();
   }
 
-  private String scrubGenSuffix() {
-    return String.format(SCRUB_GEN_SUFFIX_PATTERN, DATE_FORMAT.format(scrubGenDay));
+  pwivate s-stwing scwubgensuffix() {
+    wetuwn stwing.fowmat(scwub_gen_suffix_pattewn, UwU date_fowmat.fowmat(scwubgenday));
   }
 
   /**
-   * Returns the path to the directory that stores the statuses for the given day.
+   * w-wetuwns the path to the diwectowy that stowes t-the statuses fow the given day. 😳
    */
-  public Path getStatusPathToUseForDay(Date day) {
-    if (!day.before(scrubGenDay)) {
-      return statusPath;
+  pubwic p-path getstatuspathtousefowday(date d-day) {
+    if (!day.befowe(scwubgenday)) {
+      wetuwn statuspath;
     }
 
-    String suffix = scrubGenSuffix();
-    Preconditions.checkArgument(!suffix.isEmpty());
-    Path scrubPath = new Path(buildGenPath, suffix);
-    return new Path(scrubPath, STATUS_SUBDIR_NAME);
+    stwing suffix = s-scwubgensuffix();
+    p-pweconditions.checkawgument(!suffix.isempty());
+    path s-scwubpath = new p-path(buiwdgenpath, XD suffix);
+    wetuwn nyew path(scwubpath, (✿oωo) s-status_subdiw_name);
   }
 
   /**
-   * Determines if the data for the specified scrub gen was fully built, by checking the number of
-   * days for which data was built against the expected number of days extracted from the specified
-   * scrub gen date.
+   * detewmines if the data fow the specified scwub g-gen was fuwwy buiwt, ^•ﻌ•^ by checking the nyumbew of
+   * days fow w-which data was buiwt a-against the e-expected nyumbew of days extwacted fwom the specified
+   * scwub g-gen date. mya
    */
-  public boolean isScrubGenDataFullyBuilt(FileSystem hdfs) throws IOException {
-    initialLoadDailyBatchInfos(hdfs);
-    if (numberOfDaysWithValidScrubGenData == 0) {
-      LOG.warn("numberOfDaysWithValidScrubGenData is 0");
+  pubwic boowean i-isscwubgendatafuwwybuiwt(fiwesystem hdfs) thwows i-ioexception {
+    i-initiawwoaddaiwybatchinfos(hdfs);
+    if (numbewofdayswithvawidscwubgendata == 0) {
+      wog.wawn("numbewofdayswithvawidscwubgendata is 0");
     }
-    long expectedDays = getDiffBetweenDays(scrubGenDay);
-    return expectedDays == numberOfDaysWithValidScrubGenData;
+    wong expecteddays = g-getdiffbetweendays(scwubgenday);
+    w-wetuwn expecteddays == nyumbewofdayswithvawidscwubgendata;
   }
 
-  @VisibleForTesting
-  long getDiffBetweenDays(Date day) {
-    long diff = day.getTime() - FIRST_TWEET_DAY.getTime();
-    return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+  @visibwefowtesting
+  wong g-getdiffbetweendays(date day) {
+    wong diff = d-day.gettime() - f-fiwst_tweet_day.gettime();
+    w-wetuwn timeunit.days.convewt(diff, (˘ω˘) t-timeunit.miwwiseconds);
   }
 }

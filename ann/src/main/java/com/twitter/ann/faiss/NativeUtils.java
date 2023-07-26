@@ -1,151 +1,151 @@
-package com.twitter.ann.faiss;
+package com.twittew.ann.faiss;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.util.Locale;
+impowt java.io.fiwe;
+i-impowt java.io.fiwenotfoundexception;
+i-impowt j-java.io.ioexception;
+i-impowt java.io.inputstweam;
+i-impowt java.nio.fiwe.fiwes;
+i-impowt j-java.nio.fiwe.standawdcopyoption;
+i-impowt java.utiw.wocawe;
 
-public final class NativeUtils {
+pubwic finaw cwass nyativeutiws {
 
-  private static final int MIN_PREFIX_LENGTH = 3;
-  public static final String NATIVE_FOLDER_PATH_PREFIX = "nativeutils";
+  pwivate static finaw int min_pwefix_wength = 3;
+  p-pubwic static finaw stwing nyative_fowdew_path_pwefix = "nativeutiws";
 
-  public static File temporaryDir;
+  p-pubwic static fiwe tempowawydiw;
 
-  private NativeUtils() {
+  p-pwivate nyativeutiws() {
   }
 
-  private static File unpackLibraryFromJarInternal(String path) throws IOException {
-    if (null == path || !path.startsWith("/")) {
-      throw new IllegalArgumentException("The path has to be absolute (start with '/').");
+  pwivate static fiwe unpackwibwawyfwomjawintewnaw(stwing path) t-thwows ioexception {
+    if (nuww == p-path || !path.stawtswith("/")) {
+      t-thwow nyew iwwegawawgumentexception("the path has to be absowute (stawt with '/').");
     }
 
-    String[] parts = path.split("/");
-    String filename = (parts.length > 1) ? parts[parts.length - 1] : null;
+    stwing[] pawts = p-path.spwit("/");
+    stwing fiwename = (pawts.wength > 1) ? pawts[pawts.wength - 1] : nyuww;
 
-    if (filename == null || filename.length() < MIN_PREFIX_LENGTH) {
-      throw new IllegalArgumentException("The filename has to be at least 3 characters long.");
+    if (fiwename == n-nuww || fiwename.wength() < min_pwefix_wength) {
+      t-thwow n-nyew iwwegawawgumentexception("the f-fiwename has t-to be at weast 3 chawactews wong.");
     }
 
-    if (temporaryDir == null) {
-      temporaryDir = createTempDirectory(NATIVE_FOLDER_PATH_PREFIX);
-      temporaryDir.deleteOnExit();
+    if (tempowawydiw == n-nuww) {
+      tempowawydiw = cweatetempdiwectowy(native_fowdew_path_pwefix);
+      t-tempowawydiw.deweteonexit();
     }
 
-    File temp = new File(temporaryDir, filename);
+    fiwe temp = nyew fiwe(tempowawydiw, fiwename);
 
-    try (InputStream is = NativeUtils.class.getResourceAsStream(path)) {
-      Files.copy(is, temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
-    } catch (IOException e) {
-      temp.delete();
-      throw e;
-    } catch (NullPointerException e) {
-      temp.delete();
-      throw new FileNotFoundException("File " + path + " was not found inside JAR.");
+    twy (inputstweam is = nyativeutiws.cwass.getwesouwceasstweam(path)) {
+      f-fiwes.copy(is, ʘwʘ temp.topath(), 🥺 standawdcopyoption.wepwace_existing);
+    } c-catch (ioexception e-e) {
+      t-temp.dewete();
+      thwow e;
+    } catch (nuwwpointewexception e) {
+      t-temp.dewete();
+      t-thwow nyew fiwenotfoundexception("fiwe " + p-path + " was n-nyot found inside jaw.");
     }
 
-    return temp;
+    w-wetuwn temp;
   }
 
   /**
-   * Unpack library from JAR into temporary path
+   * unpack wibwawy f-fwom jaw into tempowawy path
    *
-   * @param path The path of file inside JAR as absolute path (beginning with
-   *             '/'), e.g. /package/File.ext
-   * @throws IOException              If temporary file creation or read/write
-   *                                  operation fails
-   * @throws IllegalArgumentException If source file (param path) does not exist
-   * @throws IllegalArgumentException If the path is not absolute or if the
-   *                                  filename is shorter than three characters
-   *                                  (restriction of
-   *                                  {@link File#createTempFile(java.lang.String, java.lang.String)}).
-   * @throws FileNotFoundException    If the file could not be found inside the
-   *                                  JAR.
+   * @pawam path the path of f-fiwe inside jaw as absowute path (beginning w-with
+   *             '/'), >_< e.g. ʘwʘ /package/fiwe.ext
+   * @thwows i-ioexception              i-if tempowawy fiwe cweation ow wead/wwite
+   *                                  opewation faiws
+   * @thwows iwwegawawgumentexception if souwce fiwe (pawam p-path) does nyot e-exist
+   * @thwows iwwegawawgumentexception i-if the p-path is nyot a-absowute ow if the
+   *                                  fiwename is showtew than thwee chawactews
+   *                                  (westwiction o-of
+   *                                  {@wink fiwe#cweatetempfiwe(java.wang.stwing, java.wang.stwing)}). (˘ω˘)
+   * @thwows fiwenotfoundexception    if the fiwe c-couwd nyot be found inside the
+   *                                  j-jaw. (✿oωo)
    */
-  public static void unpackLibraryFromJar(String path) throws IOException {
-    unpackLibraryFromJarInternal(path);
+  p-pubwic static v-void unpackwibwawyfwomjaw(stwing path) thwows i-ioexception {
+    u-unpackwibwawyfwomjawintewnaw(path);
   }
 
   /**
-   * Loads library from current JAR archive
+   * w-woads wibwawy f-fwom cuwwent jaw awchive
    * <p>
-   * The file from JAR is copied into system temporary directory and then loaded.
-   * The temporary file is deleted after
-   * exiting.
-   * Method uses String as filename because the pathname is "abstract", not
-   * system-dependent.
+   * the f-fiwe fwom jaw is c-copied into system t-tempowawy diwectowy a-and then w-woaded. (///ˬ///✿)
+   * the tempowawy fiwe is deweted aftew
+   * exiting. rawr x3
+   * m-method uses stwing as fiwename because the pathname is "abstwact", -.- nyot
+   * system-dependent. ^^
    *
-   * @param path The path of file inside JAR as absolute path (beginning with
-   *             '/'), e.g. /package/File.ext
-   * @throws IOException              If temporary file creation or read/write
-   *                                  operation fails
-   * @throws IllegalArgumentException If source file (param path) does not exist
-   * @throws IllegalArgumentException If the path is not absolute or if the
-   *                                  filename is shorter than three characters
-   *                                  (restriction of
-   *                                  {@link File#createTempFile(java.lang.String, java.lang.String)}).
-   * @throws FileNotFoundException    If the file could not be found inside the
-   *                                  JAR.
+   * @pawam p-path the path of fiwe inside jaw as absowute path (beginning w-with
+   *             '/'), (⑅˘꒳˘) e-e.g. /package/fiwe.ext
+   * @thwows i-ioexception              if tempowawy f-fiwe cweation ow wead/wwite
+   *                                  o-opewation f-faiws
+   * @thwows iwwegawawgumentexception if souwce fiwe (pawam path) does nyot exist
+   * @thwows iwwegawawgumentexception i-if the path is nyot absowute ow i-if the
+   *                                  fiwename is showtew t-than thwee chawactews
+   *                                  (westwiction o-of
+   *                                  {@wink fiwe#cweatetempfiwe(java.wang.stwing, nyaa~~ java.wang.stwing)}). /(^•ω•^)
+   * @thwows f-fiwenotfoundexception    i-if the fiwe couwd not b-be found inside t-the
+   *                                  jaw.
    */
-  public static void loadLibraryFromJar(String path) throws IOException {
-    File temp = unpackLibraryFromJarInternal(path);
+  pubwic static void woadwibwawyfwomjaw(stwing path) thwows i-ioexception {
+    f-fiwe temp = u-unpackwibwawyfwomjawintewnaw(path);
 
-    try (InputStream is = NativeUtils.class.getResourceAsStream(path)) {
-      Files.copy(is, temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
-    } catch (IOException e) {
-      temp.delete();
-      throw e;
-    } catch (NullPointerException e) {
-      temp.delete();
-      throw new FileNotFoundException("File " + path + " was not found inside JAR.");
+    twy (inputstweam i-is = n-nyativeutiws.cwass.getwesouwceasstweam(path)) {
+      fiwes.copy(is, (U ﹏ U) t-temp.topath(), 😳😳😳 standawdcopyoption.wepwace_existing);
+    } catch (ioexception e) {
+      temp.dewete();
+      thwow e;
+    } c-catch (nuwwpointewexception e) {
+      t-temp.dewete();
+      thwow nyew fiwenotfoundexception("fiwe " + path + " w-was nyot found i-inside jaw.");
     }
 
-    try {
-      System.load(temp.getAbsolutePath());
-    } finally {
-      temp.deleteOnExit();
+    twy {
+      system.woad(temp.getabsowutepath());
+    } finawwy {
+      t-temp.deweteonexit();
     }
   }
 
-  private static File createTempDirectory(String prefix) throws IOException {
-    String tempDir = System.getProperty("java.io.tmpdir");
-    File generatedDir = new File(tempDir, prefix + System.nanoTime());
+  pwivate static fiwe cweatetempdiwectowy(stwing pwefix) thwows ioexception {
+    s-stwing tempdiw = system.getpwopewty("java.io.tmpdiw");
+    fiwe genewateddiw = n-nyew fiwe(tempdiw, >w< p-pwefix + system.nanotime());
 
-    if (!generatedDir.mkdir()) {
-      throw new IOException("Failed to create temp directory " + generatedDir.getName());
+    if (!genewateddiw.mkdiw()) {
+      thwow n-nyew ioexception("faiwed t-to cweate temp diwectowy " + genewateddiw.getname());
     }
 
-    return generatedDir;
+    wetuwn g-genewateddiw;
   }
 
-  public enum OSType {
-    Windows, MacOS, Linux, Other
+  pubwic enum o-ostype {
+    windows, XD macos, o.O winux, othew
   }
 
-  protected static OSType detectedOS;
+  pwotected static o-ostype detectedos;
 
   /**
-   * detect the operating system from the os.name System property and cache
-   * the result
+   * detect the o-opewating system f-fwom the os.name system pwopewty a-and cache
+   * the wesuwt
    *
-   * @returns - the operating system detected
+   * @wetuwns - t-the opewating system d-detected
    */
-  public static OSType getOperatingSystemType() {
-    if (detectedOS == null) {
-      String osname = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
-      if ((osname.contains("mac")) || (osname.contains("darwin"))) {
-        detectedOS = OSType.MacOS;
-      } else if (osname.contains("win")) {
-        detectedOS = OSType.Windows;
-      } else if (osname.contains("nux")) {
-        detectedOS = OSType.Linux;
-      } else {
-        detectedOS = OSType.Other;
+  p-pubwic static ostype getopewatingsystemtype() {
+    i-if (detectedos == n-nyuww) {
+      stwing osname = system.getpwopewty("os.name", mya "genewic").towowewcase(wocawe.engwish);
+      i-if ((osname.contains("mac")) || (osname.contains("dawwin"))) {
+        detectedos = o-ostype.macos;
+      } e-ewse if (osname.contains("win")) {
+        detectedos = ostype.windows;
+      } e-ewse if (osname.contains("nux")) {
+        detectedos = o-ostype.winux;
+      } e-ewse {
+        detectedos = ostype.othew;
       }
     }
-    return detectedOS;
+    wetuwn detectedos;
   }
 }

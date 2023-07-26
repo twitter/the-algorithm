@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt
 
 /**
- * Indicates that an [[Alert]] can be passed to [[StratoColumnAlert]]. Not all [[Alert]]s can be
- * Strato alerts since our ability to observe from Strato's perspective is limited by the available
- * metrics.
+ * indicates that an [[awewt]] c-can b-be passed to [[stwatocowumnawewt]]. (U ﹏ U) n-nyot aww [[awewt]]s c-can be
+ * s-stwato awewts s-since ouw abiwity t-to obsewve fwom s-stwato's pewspective is wimited by the avaiwabwe
+ * metwics. -.-
  *
- * @note can only be used in conjunction with [[Alert]]
+ * @note can onwy b-be used in conjunction with [[awewt]]
  */
-trait IsObservableFromStrato { _: Alert => }
+twait i-isobsewvabwefwomstwato { _: awewt => }

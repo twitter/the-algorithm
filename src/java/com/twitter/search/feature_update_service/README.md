@@ -1,5 +1,5 @@
-## Feature Update Service
-Feature update service is a service that sends tweet feature updates e.g number of retweets, replies and favorites to Earlybird. Earlybird then indexes and uses these features to rank in-network Home Timeline tweets.
+## featuwe update sewvice
+featuwe u-update sewvice i-is a sewvice that s-sends tweet featuwe u-updates e.g n-nyumbew of wetweets, σωσ w-wepwies and f-favowites to e-eawwybiwd. σωσ eawwybiwd then indexes and uses these featuwes to wank in-netwowk home t-timewine tweets. >_<
 
 
 

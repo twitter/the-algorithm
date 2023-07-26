@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.service.query_feature_hydrator_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.quewy_featuwe_hydwatow_executow
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor.AsyncIndividualFeatureHydratorResult
+impowt com.fastewxmw.jackson.cowe.jsongenewatow
+impowt c-com.fastewxmw.jackson.databind.jsonsewiawizew
+i-impowt com.fastewxmw.jackson.databind.sewiawizewpwovidew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.quewy_featuwe_hydwatow_executow.quewyfeatuwehydwatowexecutow.asyncindividuawfeatuwehydwatowwesuwt
 
-/** A [[JsonSerializer]] that skips the `Stitch` values */
-private[query_feature_hydrator_executor] class AsyncIndividualFeatureHydratorResultSerializer()
-    extends JsonSerializer[AsyncIndividualFeatureHydratorResult] {
+/** a-a [[jsonsewiawizew]] t-that skips t-the `stitch` vawues */
+p-pwivate[quewy_featuwe_hydwatow_executow] cwass asyncindividuawfeatuwehydwatowwesuwtsewiawizew()
+    extends jsonsewiawizew[asyncindividuawfeatuwehydwatowwesuwt] {
 
-  override def serialize(
-    asyncIndividualFeatureHydratorResult: AsyncIndividualFeatureHydratorResult,
-    gen: JsonGenerator,
-    serializers: SerializerProvider
-  ): Unit =
-    serializers.defaultSerializeValue(
-      // implicitly calls `toString` on the identifier because they are keys in the Map
-      Map(
-        asyncIndividualFeatureHydratorResult.hydrateBefore ->
-          asyncIndividualFeatureHydratorResult.features.map(_.toString)),
+  ovewwide def sewiawize(
+    a-asyncindividuawfeatuwehydwatowwesuwt: asyncindividuawfeatuwehydwatowwesuwt, :3
+    gen: j-jsongenewatow, 😳😳😳
+    sewiawizews: s-sewiawizewpwovidew
+  ): unit =
+    sewiawizews.defauwtsewiawizevawue(
+      // impwicitwy cawws `tostwing` o-on the identifiew because t-they awe keys i-in the map
+      map(
+        asyncindividuawfeatuwehydwatowwesuwt.hydwatebefowe ->
+          asyncindividuawfeatuwehydwatowwesuwt.featuwes.map(_.tostwing)), -.-
       gen
     )
 }

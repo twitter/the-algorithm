@@ -1,21 +1,21 @@
-package com.twitter.visibility.interfaces.push_service
+package com.twittew.visibiwity.intewfaces.push_sewvice
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.spam.rtf.thriftscala.SafetyLabelMap
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.visibility.common.stitch.StitchHelpers
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.spam.wtf.thwiftscawa.safetywabewmap
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.stwato.cwient.{cwient => s-stwatocwient}
+i-impowt com.twittew.stwato.thwift.scwoogeconvimpwicits._
+i-impowt com.twittew.visibiwity.common.stitch.stitchhewpews
 
-object PushServiceSafetyLabelMapFetcher {
-  val Column = "frigate/magicrecs/tweetSafetyLabels"
+object pushsewvicesafetywabewmapfetchew {
+  vaw cowumn = "fwigate/magicwecs/tweetsafetywabews"
 
-  def apply(
-    client: StratoClient,
-    statsReceiver: StatsReceiver
-  ): Long => Stitch[Option[SafetyLabelMap]] = {
-    val stats = statsReceiver.scope("strato_tweet_safety_labels")
-    lazy val fetcher = client.fetcher[Long, SafetyLabelMap](Column)
-    tweetId => StitchHelpers.observe(stats)(fetcher.fetch(tweetId).map(_.v))
+  def a-appwy(
+    cwient: stwatocwient, mya
+    statsweceivew: s-statsweceivew
+  ): wong => s-stitch[option[safetywabewmap]] = {
+    vaw stats = statsweceivew.scope("stwato_tweet_safety_wabews")
+    wazy vaw f-fetchew = cwient.fetchew[wong, mya safetywabewmap](cowumn)
+    t-tweetid => s-stitchhewpews.obsewve(stats)(fetchew.fetch(tweetid).map(_.v))
   }
 }

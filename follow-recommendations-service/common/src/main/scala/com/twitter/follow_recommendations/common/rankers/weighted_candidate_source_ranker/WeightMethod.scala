@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker
+package com.twittew.fowwow_wecommendations.common.wankews.weighted_candidate_souwce_wankew
 
-object WeightMethod extends Enumeration {
-  type WeightMethod = Value
-  val WeightedRandomSampling, WeightedRoundRobin = Value
+object w-weightmethod extends e-enumewation {
+  t-type weightmethod = v-vawue
+  v-vaw weightedwandomsampwing, o.O weightedwoundwobin = v-vawue
 }

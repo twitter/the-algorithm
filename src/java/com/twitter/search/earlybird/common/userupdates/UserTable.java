@@ -1,572 +1,572 @@
-package com.twitter.search.earlybird.common.userupdates;
+package com.twittew.seawch.eawwybiwd.common.usewupdates;
 
-import java.util.Iterator;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Predicate;
+impowt j-java.utiw.itewatow;
+i-impowt java.utiw.concuwwent.atomic.atomicwefewence;
+i-impowt java.utiw.function.pwedicate;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.util.hash.GeneralLongHashFunction;
+impowt com.twittew.seawch.common.metwics.seawchwonggauge;
+impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+i-impowt com.twittew.seawch.common.utiw.hash.genewawwonghashfunction;
 
 /**
- * Table containing metadata about users, like NSFW or Antisocial status.
- * Used for result filtering.
+ * tabwe containing metadata about u-usews, 🥺 wike nysfw ow antisociaw s-status. /(^•ω•^)
+ * used fow wesuwt fiwtewing. 😳😳😳
  */
-public class UserTable {
-  private static final Logger LOG = LoggerFactory.getLogger(UserTable.class);
+pubwic cwass usewtabwe {
+  p-pwivate static finaw woggew w-wog = woggewfactowy.getwoggew(usewtabwe.cwass);
 
-  @VisibleForTesting // Not final for testing.
-  protected static long userUpdateTableMaxCapacity = 1L << 30;
+  @visibwefowtesting // n-nyot finaw fow testing. ^•ﻌ•^
+  pwotected static wong usewupdatetabwemaxcapacity = 1w << 30;
 
-  private static final int DEFAULT_INITIAL_CAPACITY = 1024;
-  private static final int BYTE_WIDTH = 8;
+  pwivate static f-finaw int defauwt_initiaw_capacity = 1024;
+  pwivate static finaw int byte_width = 8;
 
-  private static final String USER_TABLE_CAPACITY = "user_table_capacity";
-  private static final String USER_TABLE_SIZE = "user_table_size";
-  private static final String
-      USER_NUM_USERS_WITH_NO_BITS_SET = "user_table_users_with_no_bits_set";
-  private static final String USER_TABLE_ANTISOCIAL_USERS = "user_table_antisocial_users";
-  private static final String USER_TABLE_OFFENSIVE_USERS = "user_table_offensive_users";
-  private static final String USER_TABLE_NSFW_USERS = "user_table_nsfw_users";
-  private static final String USER_TABLE_IS_PROTECTED_USERS = "user_table_is_protected_users";
+  pwivate static finaw s-stwing usew_tabwe_capacity = "usew_tabwe_capacity";
+  pwivate static f-finaw stwing u-usew_tabwe_size = "usew_tabwe_size";
+  p-pwivate s-static finaw stwing
+      usew_num_usews_with_no_bits_set = "usew_tabwe_usews_with_no_bits_set";
+  pwivate static f-finaw stwing usew_tabwe_antisociaw_usews = "usew_tabwe_antisociaw_usews";
+  pwivate static finaw s-stwing usew_tabwe_offensive_usews = "usew_tabwe_offensive_usews";
+  pwivate static finaw stwing usew_tabwe_nsfw_usews = "usew_tabwe_nsfw_usews";
+  pwivate static finaw stwing u-usew_tabwe_is_pwotected_usews = "usew_tabwe_is_pwotected_usews";
 
   /**
-   * number of users filtered
+   * numbew of usews f-fiwtewed
    */
-  private static final SearchRateCounter USER_TABLE_USERS_FILTERED_COUNTER =
-      new SearchRateCounter("user_table_users_filtered");
+  p-pwivate static f-finaw seawchwatecountew usew_tabwe_usews_fiwtewed_countew =
+      nyew seawchwatecountew("usew_tabwe_usews_fiwtewed");
 
-  private SearchLongGauge userTableCapacity;
-  private SearchLongGauge userTableSize;
-  private SearchLongGauge userTableNumUsersWithNoBitsSet;
-  private SearchLongGauge userTableAntisocialUsers;
-  private SearchLongGauge userTableOffensiveUsers;
-  private SearchLongGauge userTableNsfwUsers;
-  private SearchLongGauge userTableIsProtectedUsers;
+  pwivate s-seawchwonggauge u-usewtabwecapacity;
+  pwivate s-seawchwonggauge u-usewtabwesize;
+  pwivate seawchwonggauge u-usewtabwenumusewswithnobitsset;
+  pwivate s-seawchwonggauge usewtabweantisociawusews;
+  pwivate seawchwonggauge u-usewtabweoffensiveusews;
+  pwivate seawchwonggauge u-usewtabwensfwusews;
+  pwivate seawchwonggauge u-usewtabweispwotectedusews;
 
-  private final Predicate<Long> userIdFilter;
-  private long lastRecordTimestamp;
+  p-pwivate finaw pwedicate<wong> usewidfiwtew;
+  pwivate wong wastwecowdtimestamp;
 
-  private static final class HashTable {
-    private int numUsersInTable;
-    private int numUsersWithNoBitsSet;
-    // size 8 array contains the number of users who have the bit set at the index (0-7) position
-    // e.g. setBitCounts[0] stores the number of users who have the 0 bit set in their bytes
-    private long[] setBitCounts;
+  pwivate static finaw cwass h-hashtabwe {
+    p-pwivate int nyumusewsintabwe;
+    p-pwivate int n-nyumusewswithnobitsset;
+    // s-size 8 awway contains the nyumbew of usews who have the bit set a-at the index (0-7) position
+    // e.g. nyaa~~ setbitcounts[0] stowes the nyumbew of usews w-who have the 0 bit set in theiw b-bytes
+    pwivate w-wong[] setbitcounts;
 
-    private final long[] hash;
-    private final byte[] bits;
+    p-pwivate finaw wong[] hash;
+    p-pwivate finaw byte[] b-bits;
 
-    private final int hashMask;
+    p-pwivate finaw int h-hashmask;
 
-    HashTable(int size) {
-      this.hash = new long[size];
-      this.bits = new byte[size];
-      this.hashMask = size - 1;
-      this.numUsersInTable = 0;
-      this.setBitCounts = new long[BYTE_WIDTH];
+    hashtabwe(int size) {
+      this.hash = n-nyew wong[size];
+      t-this.bits = nyew b-byte[size];
+      t-this.hashmask = s-size - 1;
+      this.numusewsintabwe = 0;
+      this.setbitcounts = nyew wong[byte_width];
     }
 
-    protected int hashSize() {
-      return hash.length;
+    p-pwotected int hashsize() {
+      wetuwn hash.wength;
     }
 
-    // If we want to decrease the number of users in the table, we can delete as many users
-    // as this table returns, by calling filterTableAndCountValidItems.
-    public void setCountOfNumUsersWithNoBitsSet() {
+    // if we want to decwease t-the nyumbew of usews in the tabwe, OwO we can dewete as many usews
+    // a-as this t-tabwe wetuwns, ^•ﻌ•^ b-by cawwing fiwtewtabweandcountvawiditems. σωσ
+    pubwic v-void setcountofnumusewswithnobitsset() {
       int count = 0;
-      for (int i = 0; i < hash.length; i++) {
+      f-fow (int i-i = 0; i < hash.wength; i++) {
         if ((hash[i] > 0) && (bits[i] == 0)) {
           count++;
         }
       }
 
-      numUsersWithNoBitsSet = count;
+      nyumusewswithnobitsset = count;
     }
 
-    public void setSetBitCounts() {
-      long[] counts = new long[BYTE_WIDTH];
-      for (int i = 0; i < hash.length; i++) {
-        if (hash[i] > 0) {
-          int tempBits = bits[i] & 0xff;
-          int curBitPos = 0;
-          while (tempBits != 0) {
-            if ((tempBits & 1) != 0) {
-              counts[curBitPos]++;
+    p-pubwic void setsetbitcounts() {
+      w-wong[] counts = nyew w-wong[byte_width];
+      f-fow (int i = 0; i < hash.wength; i++) {
+        i-if (hash[i] > 0) {
+          i-int tempbits = bits[i] & 0xff;
+          i-int cuwbitpos = 0;
+          w-whiwe (tempbits != 0) {
+            if ((tempbits & 1) != 0) {
+              counts[cuwbitpos]++;
             }
-            tempBits = tempBits >>> 1;
-            curBitPos++;
+            tempbits = tempbits >>> 1;
+            c-cuwbitpos++;
           }
         }
       }
-      setBitCounts = counts;
+      s-setbitcounts = c-counts;
     }
   }
 
-  public static final int ANTISOCIAL_BIT = 1;
-  public static final int OFFENSIVE_BIT = 1 << 1;
-  public static final int NSFW_BIT = 1 << 2;
-  public static final int IS_PROTECTED_BIT = 1 << 3;
+  pubwic static f-finaw int antisociaw_bit = 1;
+  p-pubwic static finaw int offensive_bit = 1 << 1;
+  p-pubwic static finaw int nysfw_bit = 1 << 2;
+  pubwic static finaw int is_pwotected_bit = 1 << 3;
 
-  public long getLastRecordTimestamp() {
-    return this.lastRecordTimestamp;
+  pubwic w-wong getwastwecowdtimestamp() {
+    w-wetuwn this.wastwecowdtimestamp;
   }
 
-  public void setLastRecordTimestamp(long lastRecordTimestamp) {
-    this.lastRecordTimestamp = lastRecordTimestamp;
+  pubwic void setwastwecowdtimestamp(wong w-wastwecowdtimestamp) {
+    this.wastwecowdtimestamp = w-wastwecowdtimestamp;
   }
 
-  public void setOffensive(long userID, boolean offensive) {
-    set(userID, OFFENSIVE_BIT, offensive);
+  pubwic void setoffensive(wong usewid, -.- boowean o-offensive) {
+    set(usewid, (˘ω˘) offensive_bit, rawr x3 offensive);
   }
 
-  public void setAntisocial(long userID, boolean antisocial) {
-    set(userID, ANTISOCIAL_BIT, antisocial);
+  pubwic void setantisociaw(wong u-usewid, boowean antisociaw) {
+    set(usewid, rawr x3 a-antisociaw_bit, σωσ a-antisociaw);
   }
 
-  public void setNSFW(long userID, boolean nsfw) {
-    set(userID, NSFW_BIT, nsfw);
+  pubwic void setnsfw(wong usewid, nyaa~~ boowean nsfw) {
+    s-set(usewid, (ꈍᴗꈍ) n-nysfw_bit, nysfw);
   }
 
-  public void setIsProtected(long userID, boolean isProtected) {
-    set(userID, IS_PROTECTED_BIT, isProtected);
+  pubwic void setispwotected(wong usewid, ^•ﻌ•^ boowean ispwotected) {
+    s-set(usewid, >_< is_pwotected_bit, ispwotected);
   }
 
   /**
-   * Adds the given user update to this table.
+   * a-adds the given usew update to this tabwe. ^^;;
    */
-  public boolean indexUserUpdate(UserUpdatesChecker checker, UserUpdate userUpdate) {
-    if (checker.skipUserUpdate(userUpdate)) {
-      return false;
+  p-pubwic boowean indexusewupdate(usewupdatescheckew checkew, ^^;; usewupdate u-usewupdate) {
+    i-if (checkew.skipusewupdate(usewupdate)) {
+      wetuwn fawse;
     }
 
-    switch (userUpdate.updateType) {
-      case ANTISOCIAL:
-        setAntisocial(userUpdate.twitterUserID, userUpdate.updateValue != 0);
-        break;
-      case NSFW:
-        setNSFW(userUpdate.twitterUserID, userUpdate.updateValue != 0);
-        break;
-      case OFFENSIVE:
-        setOffensive(userUpdate.twitterUserID, userUpdate.updateValue != 0);
-        break;
-      case PROTECTED:
-        setIsProtected(userUpdate.twitterUserID, userUpdate.updateValue != 0);
-        break;
-      default:
-        return false;
+    s-switch (usewupdate.updatetype) {
+      case antisociaw:
+        s-setantisociaw(usewupdate.twittewusewid, /(^•ω•^) u-usewupdate.updatevawue != 0);
+        bweak;
+      c-case nysfw:
+        s-setnsfw(usewupdate.twittewusewid, nyaa~~ u-usewupdate.updatevawue != 0);
+        bweak;
+      case offensive:
+        s-setoffensive(usewupdate.twittewusewid, (✿oωo) u-usewupdate.updatevawue != 0);
+        b-bweak;
+      case pwotected:
+        setispwotected(usewupdate.twittewusewid, ( ͡o ω ͡o ) usewupdate.updatevawue != 0);
+        b-bweak;
+      defauwt:
+        w-wetuwn f-fawse;
     }
 
-    return true;
+    wetuwn twue;
   }
 
-  private final AtomicReference<HashTable> hashTable = new AtomicReference<>();
+  pwivate finaw atomicwefewence<hashtabwe> h-hashtabwe = nyew a-atomicwefewence<>();
 
-  private int hashCode(long userID) {
-    return (int) GeneralLongHashFunction.hash(userID);
+  p-pwivate i-int hashcode(wong usewid) {
+    w-wetuwn (int) genewawwonghashfunction.hash(usewid);
   }
 
   /**
-   * Returns an iterator for user IDs that have at least one of the bits set.
+   * wetuwns an itewatow fow usew ids that have at weast one of t-the bits set. (U ᵕ U❁)
    */
-  public Iterator<Long> getFlaggedUserIdIterator() {
-    HashTable table = hashTable.get();
+  pubwic itewatow<wong> g-getfwaggedusewiditewatow() {
+    hashtabwe t-tabwe = hashtabwe.get();
 
-    final long[] currUserIdTable = table.hash;
-    final byte[] currBitsTable = table.bits;
-    return new Iterator<Long>() {
-      private int index = findNext(0);
+    f-finaw wong[] cuwwusewidtabwe = t-tabwe.hash;
+    f-finaw byte[] c-cuwwbitstabwe = t-tabwe.bits;
+    w-wetuwn nyew itewatow<wong>() {
+      pwivate int index = findnext(0);
 
-      private int findNext(int index) {
-        int startingIndex = index;
-        while (startingIndex < currUserIdTable.length) {
-          if (currUserIdTable[startingIndex] != 0 && currBitsTable[startingIndex] != 0) {
-            break;
+      pwivate int findnext(int index) {
+        int stawtingindex = index;
+        w-whiwe (stawtingindex < c-cuwwusewidtabwe.wength) {
+          i-if (cuwwusewidtabwe[stawtingindex] != 0 && cuwwbitstabwe[stawtingindex] != 0) {
+            b-bweak;
           }
-          ++startingIndex;
+          ++stawtingindex;
         }
-        return startingIndex;
+        wetuwn stawtingindex;
       }
 
-      @Override
-      public boolean hasNext() {
-        return index < currUserIdTable.length;
+      @ovewwide
+      pubwic boowean hasnext() {
+        w-wetuwn i-index < cuwwusewidtabwe.wength;
       }
 
-      @Override
-      public Long next() {
-        Long r = currUserIdTable[index];
-        index = findNext(index + 1);
-        return r;
+      @ovewwide
+      pubwic wong nyext() {
+        wong w-w = cuwwusewidtabwe[index];
+        index = findnext(index + 1);
+        w-wetuwn w-w;
       }
 
-      @Override
-      public void remove() {
-        throw new UnsupportedOperationException();
+      @ovewwide
+      pubwic void w-wemove() {
+        t-thwow nyew unsuppowtedopewationexception();
       }
     };
   }
 
   /**
-   * Constructs an UserUpdatesTable with an given HashTable instance.
-   * Use <code>useIdFilter</code> as a Predicate that returns true for the elements
-   * needed to be kept in the table.
-   * Use shouldRehash to force a rehasing on the given HashTable.
+   * constwucts an usewupdatestabwe with an given hashtabwe instance. òωó
+   * u-use <code>useidfiwtew</code> a-as a pwedicate t-that wetuwns twue f-fow the ewements
+   * n-nyeeded to be kept in t-the tabwe. σωσ
+   * u-use shouwdwehash to fowce a wehasing o-on the given h-hashtabwe. :3
    */
-  private UserTable(HashTable hashTable, Predicate<Long> userIdFilter,
-                    boolean shouldRehash) {
+  pwivate usewtabwe(hashtabwe h-hashtabwe, OwO pwedicate<wong> usewidfiwtew,
+                    boowean s-shouwdwehash) {
 
-    Preconditions.checkNotNull(userIdFilter);
+    pweconditions.checknotnuww(usewidfiwtew);
 
-    this.hashTable.set(hashTable);
-    this.userIdFilter = userIdFilter;
+    t-this.hashtabwe.set(hashtabwe);
+    t-this.usewidfiwtew = usewidfiwtew;
 
-    exportUserUpdatesTableStats();
+    e-expowtusewupdatestabwestats();
 
-    LOG.info("User table num users: {}. Users with no bits set: {}. "
-            + "Antisocial users: {}. Offensive users: {}. Nsfw users: {}. IsProtected users: {}.",
-        this.getNumUsersInTable(),
-        this.getNumUsersWithNoBitsSet(),
-        this.getSetBitCount(ANTISOCIAL_BIT),
-        this.getSetBitCount(OFFENSIVE_BIT),
-        this.getSetBitCount(NSFW_BIT),
-        this.getSetBitCount(IS_PROTECTED_BIT));
+    wog.info("usew tabwe nyum u-usews: {}. ^^ usews w-with nyo bits s-set: {}. (˘ω˘) "
+            + "antisociaw usews: {}. OwO offensive usews: {}. UwU nysfw usews: {}. ^•ﻌ•^ i-ispwotected usews: {}.", (ꈍᴗꈍ)
+        this.getnumusewsintabwe(), /(^•ω•^)
+        t-this.getnumusewswithnobitsset(), (U ᵕ U❁)
+        t-this.getsetbitcount(antisociaw_bit), (✿oωo)
+        this.getsetbitcount(offensive_bit), OwO
+        t-this.getsetbitcount(nsfw_bit), :3
+        this.getsetbitcount(is_pwotected_bit));
 
-    if (shouldRehash) {
-      int filteredTableSize = filterTableAndCountValidItems();
-      // Having exactly 100% usage can impact lookup. Maintain the table at under 50% usage.
-      int newTableCapacity = computeDesiredHashTableCapacity(filteredTableSize * 2);
+    i-if (shouwdwehash) {
+      i-int fiwtewedtabwesize = fiwtewtabweandcountvawiditems();
+      // having e-exactwy 100% usage can impact wookup. nyaa~~ maintain t-the tabwe at u-undew 50% usage. ^•ﻌ•^
+      int nyewtabwecapacity = computedesiwedhashtabwecapacity(fiwtewedtabwesize * 2);
 
-      rehash(newTableCapacity);
+      w-wehash(newtabwecapacity);
 
-      LOG.info("User table num users after rehash: {}. Users with no bits set: {}. "
-              + "Antisocial users: {}. Offensive users: {}. Nsfw users: {}. IsProtected users: {}.",
-          this.getNumUsersInTable(),
-          this.getNumUsersWithNoBitsSet(),
-          this.getSetBitCount(ANTISOCIAL_BIT),
-          this.getSetBitCount(OFFENSIVE_BIT),
-          this.getSetBitCount(NSFW_BIT),
-          this.getSetBitCount(IS_PROTECTED_BIT));
+      wog.info("usew tabwe n-nyum usews aftew w-wehash: {}. ( ͡o ω ͡o ) u-usews with nyo bits set: {}. ^^;; "
+              + "antisociaw usews: {}. mya offensive usews: {}. (U ᵕ U❁) nysfw usews: {}. ^•ﻌ•^ ispwotected usews: {}.", (U ﹏ U)
+          this.getnumusewsintabwe(), /(^•ω•^)
+          this.getnumusewswithnobitsset(), ʘwʘ
+          this.getsetbitcount(antisociaw_bit), XD
+          this.getsetbitcount(offensive_bit), (⑅˘꒳˘)
+          this.getsetbitcount(nsfw_bit), nyaa~~
+          this.getsetbitcount(is_pwotected_bit));
     }
   }
 
-  private UserTable(int initialSize, Predicate<Long> userIdFilter) {
-    this(new HashTable(computeDesiredHashTableCapacity(initialSize)), userIdFilter, false);
+  pwivate u-usewtabwe(int i-initiawsize, pwedicate<wong> usewidfiwtew) {
+    this(new hashtabwe(computedesiwedhashtabwecapacity(initiawsize)), UwU u-usewidfiwtew, (˘ω˘) f-fawse);
   }
 
-  @VisibleForTesting
-  public UserTable(int initialSize) {
-    this(initialSize, userId -> true);
+  @visibwefowtesting
+  p-pubwic usewtabwe(int initiawsize) {
+    t-this(initiawsize, rawr x3 usewid -> twue);
   }
 
-  public static UserTable
-    newTableWithDefaultCapacityAndPredicate(Predicate<Long> userIdFilter) {
+  p-pubwic static u-usewtabwe
+    nyewtabwewithdefauwtcapacityandpwedicate(pwedicate<wong> u-usewidfiwtew) {
 
-    return new UserTable(DEFAULT_INITIAL_CAPACITY, userIdFilter);
+    wetuwn nyew usewtabwe(defauwt_initiaw_capacity, (///ˬ///✿) u-usewidfiwtew);
   }
 
-  public static UserTable newTableNonFilteredWithDefaultCapacity() {
-    return newTableWithDefaultCapacityAndPredicate(userId -> true);
+  p-pubwic static usewtabwe nyewtabwenonfiwtewedwithdefauwtcapacity() {
+    w-wetuwn nyewtabwewithdefauwtcapacityandpwedicate(usewid -> t-twue);
   }
 
-  private void exportUserUpdatesTableStats() {
-    userTableSize = SearchLongGauge.export(USER_TABLE_SIZE);
-    userTableCapacity = SearchLongGauge.export(USER_TABLE_CAPACITY);
-    userTableNumUsersWithNoBitsSet = SearchLongGauge.export(
-        USER_NUM_USERS_WITH_NO_BITS_SET
+  p-pwivate v-void expowtusewupdatestabwestats() {
+    u-usewtabwesize = s-seawchwonggauge.expowt(usew_tabwe_size);
+    u-usewtabwecapacity = s-seawchwonggauge.expowt(usew_tabwe_capacity);
+    u-usewtabwenumusewswithnobitsset = seawchwonggauge.expowt(
+        u-usew_num_usews_with_no_bits_set
     );
-    userTableAntisocialUsers = SearchLongGauge.export(USER_TABLE_ANTISOCIAL_USERS);
-    userTableOffensiveUsers = SearchLongGauge.export(USER_TABLE_OFFENSIVE_USERS);
-    userTableNsfwUsers = SearchLongGauge.export(USER_TABLE_NSFW_USERS);
-    userTableIsProtectedUsers = SearchLongGauge.export(USER_TABLE_IS_PROTECTED_USERS);
+    u-usewtabweantisociawusews = s-seawchwonggauge.expowt(usew_tabwe_antisociaw_usews);
+    usewtabweoffensiveusews = s-seawchwonggauge.expowt(usew_tabwe_offensive_usews);
+    usewtabwensfwusews = seawchwonggauge.expowt(usew_tabwe_nsfw_usews);
+    u-usewtabweispwotectedusews = seawchwonggauge.expowt(usew_tabwe_is_pwotected_usews);
 
-    LOG.info(
-        "Exporting stats for user table. Starting with numUsersInTable={}, usersWithZeroBits={}, "
-            + "antisocialUsers={}, offensiveUsers={}, nsfwUsers={}, isProtectedUsers={}.",
-        getNumUsersInTable(),
-        getNumUsersWithNoBitsSet(),
-        getSetBitCount(ANTISOCIAL_BIT),
-        getSetBitCount(OFFENSIVE_BIT),
-        getSetBitCount(NSFW_BIT),
-        getSetBitCount(IS_PROTECTED_BIT));
-    updateStats();
+    w-wog.info(
+        "expowting s-stats f-fow usew tabwe. 😳😳😳 stawting with nyumusewsintabwe={}, (///ˬ///✿) u-usewswithzewobits={}, ^^;; "
+            + "antisociawusews={}, ^^ offensiveusews={}, (///ˬ///✿) n-nsfwusews={}, -.- ispwotectedusews={}.",
+        getnumusewsintabwe(), /(^•ω•^)
+        g-getnumusewswithnobitsset(), UwU
+        getsetbitcount(antisociaw_bit), (⑅˘꒳˘)
+        g-getsetbitcount(offensive_bit), ʘwʘ
+        getsetbitcount(nsfw_bit), σωσ
+        getsetbitcount(is_pwotected_bit));
+    updatestats();
   }
 
-  private void updateStats() {
-    HashTable table = this.hashTable.get();
-    userTableSize.set(table.numUsersInTable);
-    userTableNumUsersWithNoBitsSet.set(table.numUsersWithNoBitsSet);
-    userTableCapacity.set(table.hashSize());
-    userTableAntisocialUsers.set(getSetBitCount(ANTISOCIAL_BIT));
-    userTableOffensiveUsers.set(getSetBitCount(OFFENSIVE_BIT));
-    userTableNsfwUsers.set(getSetBitCount(NSFW_BIT));
-    userTableIsProtectedUsers.set(getSetBitCount(IS_PROTECTED_BIT));
-  }
-
-  /**
-   * Computes the size of the hashtable as the first power of two greater than or equal to initialSize
-   */
-  private static int computeDesiredHashTableCapacity(int initialSize) {
-    long powerOfTwoSize = 2;
-    while (initialSize > powerOfTwoSize) {
-      powerOfTwoSize *= 2;
-    }
-    if (powerOfTwoSize > Integer.MAX_VALUE) {
-      LOG.error("Error: powerOfTwoSize overflowed Integer.MAX_VALUE! Initial size: " + initialSize);
-      powerOfTwoSize = 1 << 30;  // max power of 2
-    }
-
-    return (int) powerOfTwoSize;
-  }
-
-  public int getNumUsersInTable() {
-    return hashTable.get().numUsersInTable;
+  pwivate void updatestats() {
+    hashtabwe t-tabwe = this.hashtabwe.get();
+    u-usewtabwesize.set(tabwe.numusewsintabwe);
+    u-usewtabwenumusewswithnobitsset.set(tabwe.numusewswithnobitsset);
+    usewtabwecapacity.set(tabwe.hashsize());
+    usewtabweantisociawusews.set(getsetbitcount(antisociaw_bit));
+    usewtabweoffensiveusews.set(getsetbitcount(offensive_bit));
+    u-usewtabwensfwusews.set(getsetbitcount(nsfw_bit));
+    usewtabweispwotectedusews.set(getsetbitcount(is_pwotected_bit));
   }
 
   /**
-   * Get the number of users who have the bit set at the `userStateBit` position
+   * c-computes the s-size of the hashtabwe a-as the fiwst powew of two gweatew than ow e-equaw to initiawsize
    */
-  public long getSetBitCount(int userStateBit) {
-    int bit = userStateBit;
-    int bitPosition = 0;
-    while (bit != 0 && (bit & 1) == 0) {
+  p-pwivate static int c-computedesiwedhashtabwecapacity(int initiawsize) {
+    wong powewoftwosize = 2;
+    w-whiwe (initiawsize > powewoftwosize) {
+      p-powewoftwosize *= 2;
+    }
+    i-if (powewoftwosize > i-integew.max_vawue) {
+      wog.ewwow("ewwow: p-powewoftwosize o-ovewfwowed integew.max_vawue! ^^ i-initiaw size: " + i-initiawsize);
+      powewoftwosize = 1 << 30;  // m-max powew of 2
+    }
+
+    w-wetuwn (int) p-powewoftwosize;
+  }
+
+  p-pubwic int getnumusewsintabwe() {
+    w-wetuwn hashtabwe.get().numusewsintabwe;
+  }
+
+  /**
+   * g-get the nyumbew o-of usews who have t-the bit set at the `usewstatebit` p-position
+   */
+  pubwic wong g-getsetbitcount(int usewstatebit) {
+    i-int bit = u-usewstatebit;
+    i-int bitposition = 0;
+    whiwe (bit != 0 && (bit & 1) == 0) {
       bit = bit >>> 1;
-      bitPosition++;
+      bitposition++;
     }
-    return hashTable.get().setBitCounts[bitPosition];
+    wetuwn hashtabwe.get().setbitcounts[bitposition];
   }
 
-  public Predicate<Long> getUserIdFilter() {
-    return userIdFilter::test;
+  p-pubwic pwedicate<wong> g-getusewidfiwtew() {
+    w-wetuwn usewidfiwtew::test;
   }
 
   /**
-   * Updates a user flag in this table.
+   * updates a usew fwag in this tabwe.
    */
-  public final void set(long userID, int bit, boolean value) {
-    // if userID is filtered return immediately
-    if (!shouldKeepUser(userID)) {
-      USER_TABLE_USERS_FILTERED_COUNTER.increment();
-      return;
+  p-pubwic finaw v-void set(wong usewid, OwO int bit, (ˆ ﻌ ˆ)♡ b-boowean vawue) {
+    // i-if usewid is fiwtewed wetuwn immediatewy
+    if (!shouwdkeepusew(usewid)) {
+      u-usew_tabwe_usews_fiwtewed_countew.incwement();
+      w-wetuwn;
     }
 
-    HashTable table = this.hashTable.get();
+    h-hashtabwe tabwe = t-this.hashtabwe.get();
 
-    int hashPos = findHashPosition(table, userID);
-    long item = table.hash[hashPos];
+    int hashpos = findhashposition(tabwe, o.O usewid);
+    w-wong item = t-tabwe.hash[hashpos];
     byte bits = 0;
-    int bitsDiff = 0;
+    int b-bitsdiff = 0;
 
     if (item != 0) {
-      byte bitsOriginally = bits = table.bits[hashPos];
-      if (value) {
-        bits |= bit;
-      } else {
-        // AND'ing with the inverse map clears the desired bit, but
-        // doesn't change any of the other bits
+      byte bitsowiginawwy = b-bits = tabwe.bits[hashpos];
+      if (vawue) {
+        b-bits |= bit;
+      } e-ewse {
+        // and'ing w-with the invewse m-map cweaws the desiwed bit, (˘ω˘) b-but
+        // doesn't change a-any of the othew b-bits
         bits &= ~bit;
       }
 
-      // Find the changed bits after the above operation, it is possible that no bit is changed if
-      // the input 'bit' is already set/unset in the table.
-      // Since bitwise operators cannot be directly applied on Byte, Byte is promoted into int to
-      // apply the operators. When that happens, if the most significant bit of the Byte is set,
-      // the promoted int has all significant bits set to 1. 0xff bitmask is applied here to make
-      // sure only the last 8 bits are considered.
-      bitsDiff = (bitsOriginally & 0xff) ^ (bits & 0xff);
+      // find t-the changed b-bits aftew the above opewation, 😳 i-it is possibwe that n-nyo bit is changed i-if
+      // the input 'bit' i-is awweady set/unset in the tabwe. (U ᵕ U❁)
+      // since bitwise opewatows c-cannot be d-diwectwy appwied o-on byte, :3 byte is pwomoted into int to
+      // appwy the opewatows. when that h-happens, o.O if the most significant b-bit of the byte i-is set, (///ˬ///✿)
+      // the pwomoted int has aww significant b-bits set to 1. OwO 0xff bitmask i-is appwied hewe t-to make
+      // s-suwe onwy the w-wast 8 bits awe c-considewed. >w<
+      bitsdiff = (bitsowiginawwy & 0xff) ^ (bits & 0xff);
 
-      if (bitsOriginally > 0 && bits == 0) {
-        table.numUsersWithNoBitsSet++;
-      } else if (bitsOriginally == 0 && bits > 0) {
-        table.numUsersWithNoBitsSet--;
+      if (bitsowiginawwy > 0 && bits == 0) {
+        tabwe.numusewswithnobitsset++;
+      } ewse if (bitsowiginawwy == 0 && b-bits > 0) {
+        tabwe.numusewswithnobitsset--;
       }
-    } else {
-      if (!value) {
-        // no need to add this user, since all bits would be false anyway
-        return;
+    } e-ewse {
+      if (!vawue) {
+        // nyo nyeed to add this u-usew, ^^ since aww bits wouwd be fawse anyway
+        wetuwn;
       }
 
-      // New user string.
-      if (table.numUsersInTable + 1 >= (table.hashSize() >> 1)
-          && table.hashSize() != userUpdateTableMaxCapacity) {
-        if (2L * (long) table.hashSize() < userUpdateTableMaxCapacity) {
-          rehash(2 * table.hashSize());
-          table = this.hashTable.get();
-        } else {
-          if (table.hashSize() < (int) userUpdateTableMaxCapacity) {
-            rehash((int) userUpdateTableMaxCapacity);
-            table = this.hashTable.get();
-            LOG.warn("User update table size reached Integer.MAX_VALUE, performance will degrade.");
+      // nyew usew stwing. (⑅˘꒳˘)
+      i-if (tabwe.numusewsintabwe + 1 >= (tabwe.hashsize() >> 1)
+          && t-tabwe.hashsize() != usewupdatetabwemaxcapacity) {
+        i-if (2w * (wong) tabwe.hashsize() < usewupdatetabwemaxcapacity) {
+          w-wehash(2 * tabwe.hashsize());
+          t-tabwe = this.hashtabwe.get();
+        } e-ewse {
+          if (tabwe.hashsize() < (int) u-usewupdatetabwemaxcapacity) {
+            wehash((int) usewupdatetabwemaxcapacity);
+            tabwe = this.hashtabwe.get();
+            w-wog.wawn("usew update tabwe size weached i-integew.max_vawue, ʘwʘ p-pewfowmance w-wiww degwade.");
           }
         }
 
-        // Must repeat this operation with the resized hashTable.
-        hashPos = findHashPosition(table, userID);
+        // must wepeat this opewation w-with the wesized hashtabwe. (///ˬ///✿)
+        hashpos = findhashposition(tabwe, usewid);
       }
 
-      item = userID;
-      bits |= bit;
-      bitsDiff = bit & 0xff;
+      item = u-usewid;
+      b-bits |= bit;
+      b-bitsdiff = b-bit & 0xff;
 
-      table.numUsersInTable++;
+      tabwe.numusewsintabwe++;
     }
 
-    table.hash[hashPos] = item;
-    table.bits[hashPos] = bits;
+    tabwe.hash[hashpos] = i-item;
+    t-tabwe.bits[hashpos] = bits;
 
-    // update setBitCounts for the changed bits after applying the input 'bit'
-    int curBitsDiffPos = 0;
-    while (bitsDiff != 0) {
-      if ((bitsDiff & 1) != 0) {
-        if (value) {
-          table.setBitCounts[curBitsDiffPos]++;
-        } else {
-          table.setBitCounts[curBitsDiffPos]--;
+    // update s-setbitcounts fow the changed bits aftew appwying t-the input 'bit'
+    int cuwbitsdiffpos = 0;
+    whiwe (bitsdiff != 0) {
+      i-if ((bitsdiff & 1) != 0) {
+        i-if (vawue) {
+          tabwe.setbitcounts[cuwbitsdiffpos]++;
+        } e-ewse {
+          t-tabwe.setbitcounts[cuwbitsdiffpos]--;
         }
       }
-      bitsDiff = bitsDiff >>> 1;
-      curBitsDiffPos++;
+      b-bitsdiff = bitsdiff >>> 1;
+      cuwbitsdiffpos++;
     }
 
-    updateStats();
+    u-updatestats();
   }
 
-  public final boolean isSet(long userID, int bits) {
-    HashTable table = hashTable.get();
-    int hashPos = findHashPosition(table, userID);
-    return table.hash[hashPos] != 0 && (table.bits[hashPos] & bits) != 0;
+  pubwic finaw boowean isset(wong usewid, XD i-int bits) {
+    hashtabwe tabwe = hashtabwe.get();
+    int h-hashpos = findhashposition(tabwe, 😳 u-usewid);
+    w-wetuwn tabwe.hash[hashpos] != 0 && (tabwe.bits[hashpos] & b-bits) != 0;
   }
 
   /**
-   * Returns true when userIdFilter condition is being met.
-   * If filter is not present returns true
+   * w-wetuwns twue when usewidfiwtew c-condition is being met. >w<
+   * if fiwtew is n-nyot pwesent wetuwns twue
    */
-  private boolean shouldKeepUser(long userID) {
-    return userIdFilter.test(userID);
+  p-pwivate boowean shouwdkeepusew(wong usewid) {
+    w-wetuwn usewidfiwtew.test(usewid);
   }
 
-  private int findHashPosition(final HashTable table, final long userID) {
-    int code = hashCode(userID);
-    int hashPos = code & table.hashMask;
+  p-pwivate int findhashposition(finaw h-hashtabwe tabwe, (˘ω˘) finaw wong usewid) {
+    i-int code = h-hashcode(usewid);
+    int hashpos = c-code & t-tabwe.hashmask;
 
-    // Locate user in hash
-    long item = table.hash[hashPos];
+    // wocate usew i-in hash
+    wong item = tabwe.hash[hashpos];
 
-    if (item != 0 && item != userID) {
-      // Conflict: keep searching different locations in
-      // the hash table.
-      final int inc = ((code >> 8) + code) | 1;
-      do {
+    if (item != 0 && item != usewid) {
+      // c-confwict: keep seawching diffewent w-wocations in
+      // the hash tabwe. nyaa~~
+      f-finaw int inc = ((code >> 8) + c-code) | 1;
+      d-do {
         code += inc;
-        hashPos = code & table.hashMask;
-        item = table.hash[hashPos];
-      } while (item != 0 && item != userID);
+        h-hashpos = code & t-tabwe.hashmask;
+        item = t-tabwe.hash[hashpos];
+      } whiwe (item != 0 && i-item != usewid);
     }
 
-    return hashPos;
+    wetuwn hashpos;
   }
 
   /**
-   * Applies the filtering predicate and returns the size of the filtered table.
+   * a-appwies the fiwtewing p-pwedicate and wetuwns the size of the fiwtewed tabwe. 😳😳😳
    */
-  private synchronized int filterTableAndCountValidItems() {
-    final HashTable oldTable = this.hashTable.get();
-    int newSize = 0;
+  pwivate synchwonized i-int fiwtewtabweandcountvawiditems() {
+    f-finaw hashtabwe owdtabwe = this.hashtabwe.get();
+    int nyewsize = 0;
 
-    int clearNoItemSet = 0;
-    int clearNoBitsSet = 0;
-    int clearDontKeepUser = 0;
+    int cweawnoitemset = 0;
+    i-int cweawnobitsset = 0;
+    int cweawdontkeepusew = 0;
 
-    for (int i = 0; i < oldTable.hashSize(); i++) {
-      final long item = oldTable.hash[i]; // this is the userID
-      final byte bits = oldTable.bits[i];
+    f-fow (int i-i = 0; i < owdtabwe.hashsize(); i++) {
+      finaw wong item = owdtabwe.hash[i]; // this is the usewid
+      finaw b-byte bits = owdtabwe.bits[i];
 
-      boolean clearSlot = false;
-      if (item == 0) {
-        clearSlot = true;
-        clearNoItemSet++;
-      } else if (bits == 0) {
-        clearSlot = true;
-        clearNoBitsSet++;
-      } else if (!shouldKeepUser(item)) {
-        clearSlot = true;
-        clearDontKeepUser++;
+      boowean cweawswot = fawse;
+      i-if (item == 0) {
+        cweawswot = twue;
+        c-cweawnoitemset++;
+      } e-ewse if (bits == 0) {
+        cweawswot = t-twue;
+        cweawnobitsset++;
+      } e-ewse if (!shouwdkeepusew(item)) {
+        c-cweawswot = twue;
+        c-cweawdontkeepusew++;
       }
 
-      if (clearSlot) {
-        oldTable.hash[i] = 0;
-        oldTable.bits[i] = 0;
-      } else {
-        newSize += 1;
+      i-if (cweawswot) {
+        o-owdtabwe.hash[i] = 0;
+        owdtabwe.bits[i] = 0;
+      } ewse {
+        nyewsize += 1;
       }
     }
 
-    oldTable.setCountOfNumUsersWithNoBitsSet();
-    oldTable.setSetBitCounts();
+    owdtabwe.setcountofnumusewswithnobitsset();
+    owdtabwe.setsetbitcounts();
 
-    LOG.info("Done filtering table: clearNoItemSet={}, clearNoBitsSet={}, clearDontKeepUser={}",
-        clearNoItemSet, clearNoBitsSet, clearDontKeepUser);
+    w-wog.info("done f-fiwtewing t-tabwe: cweawnoitemset={}, (U ﹏ U) c-cweawnobitsset={}, (˘ω˘) c-cweawdontkeepusew={}", :3
+        c-cweawnoitemset, >w< cweawnobitsset, ^^ cweawdontkeepusew);
 
-    return newSize;
+    wetuwn nyewsize;
   }
 
   /**
-   * Called when hash is too small (> 50% occupied)
+   * cawwed when h-hash is too smow (> 50% o-occupied)
    */
-  private void rehash(final int newSize) {
-    final HashTable oldTable = this.hashTable.get();
-    final HashTable newTable = new HashTable(newSize);
+  pwivate void wehash(finaw int newsize) {
+    f-finaw hashtabwe o-owdtabwe = t-this.hashtabwe.get();
+    finaw hashtabwe nyewtabwe = n-nyew hashtabwe(newsize);
 
-    final int newMask = newTable.hashMask;
-    final long[] newHash = newTable.hash;
-    final byte[] newBits = newTable.bits;
+    finaw int nyewmask = newtabwe.hashmask;
+    f-finaw wong[] n-nyewhash = nyewtabwe.hash;
+    finaw byte[] nyewbits = nyewtabwe.bits;
 
-    for (int i = 0; i < oldTable.hashSize(); i++) {
-      final long item = oldTable.hash[i];
-      final byte bits = oldTable.bits[i];
-      if (item != 0 && bits != 0) {
-        int code = hashCode(item);
+    f-fow (int i = 0; i < o-owdtabwe.hashsize(); i-i++) {
+      finaw wong item = o-owdtabwe.hash[i];
+      f-finaw b-byte bits = owdtabwe.bits[i];
+      i-if (item != 0 && b-bits != 0) {
+        i-int code = hashcode(item);
 
-        int hashPos = code & newMask;
-        assert hashPos >= 0;
-        if (newHash[hashPos] != 0) {
-          final int inc = ((code >> 8) + code) | 1;
+        i-int hashpos = code & n-nyewmask;
+        assewt hashpos >= 0;
+        i-if (newhash[hashpos] != 0) {
+          finaw int inc = ((code >> 8) + c-code) | 1;
           do {
-            code += inc;
-            hashPos = code & newMask;
-          } while (newHash[hashPos] != 0);
+            c-code += inc;
+            hashpos = c-code & nyewmask;
+          } w-whiwe (newhash[hashpos] != 0);
         }
-        newHash[hashPos] = item;
-        newBits[hashPos] = bits;
-        newTable.numUsersInTable++;
+        nyewhash[hashpos] = item;
+        n-newbits[hashpos] = bits;
+        nyewtabwe.numusewsintabwe++;
       }
     }
 
-    newTable.setCountOfNumUsersWithNoBitsSet();
-    newTable.setSetBitCounts();
-    this.hashTable.set(newTable);
+    n-newtabwe.setcountofnumusewswithnobitsset();
+    n-newtabwe.setsetbitcounts();
+    this.hashtabwe.set(newtabwe);
 
-    updateStats();
+    updatestats();
   }
 
-  public void setTable(UserTable newTable) {
-    hashTable.set(newTable.hashTable.get());
-    updateStats();
+  p-pubwic v-void settabwe(usewtabwe nyewtabwe) {
+    h-hashtabwe.set(newtabwe.hashtabwe.get());
+    updatestats();
   }
 
-  @VisibleForTesting
-  protected int getHashTableCapacity() {
-    return hashTable.get().hashSize();
+  @visibwefowtesting
+  pwotected i-int gethashtabwecapacity() {
+    w-wetuwn hashtabwe.get().hashsize();
   }
 
-  @VisibleForTesting
-  protected int getNumUsersWithNoBitsSet() {
-    return hashTable.get().numUsersWithNoBitsSet;
+  @visibwefowtesting
+  pwotected int getnumusewswithnobitsset() {
+    wetuwn h-hashtabwe.get().numusewswithnobitsset;
   }
 }

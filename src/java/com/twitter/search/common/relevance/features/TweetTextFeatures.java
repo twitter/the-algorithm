@@ -1,225 +1,225 @@
-package com.twitter.search.common.relevance.features;
+package com.twittew.seawch.common.wewevance.featuwes;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+impowt java.utiw.cowwection;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.set;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Sets;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt c-com.googwe.common.cowwect.sets;
 
-import com.twitter.common.text.token.TokenizedCharSequence;
+i-impowt com.twittew.common.text.token.tokenizedchawsequence;
 
-public class TweetTextFeatures {
-  // Basic Features, always extracted.
-  // normalized, lower cased tweet text, w/o resolved urls
-  private String normalizedText;
+p-pubwic cwass tweettextfeatuwes {
+  // basic featuwes, mya awways extwacted. 🥺
+  // nyowmawized, ^^;; w-wowew cased tweet text, :3 w/o wesowved uwws
+  p-pwivate stwing nyowmawizedtext;
 
-  // tokens from normalizedText, w/o resolved urls, lower cased.
-  private List<String> tokens;
+  // t-tokens fwom nyowmawizedtext, (U ﹏ U) w/o wesowved uwws, wowew c-cased. OwO
+  pwivate wist<stwing> tokens;
 
-  // tokens from resolved urls, lower cased.
-  private List<String> resolvedUrlsTokens;
+  // t-tokens f-fwom wesowved uwws, 😳😳😳 wowew cased.
+  pwivate wist<stwing> wesowveduwwstokens;
 
-  // tokens in the form of a TokenizedCharSeq, NOT LOWER CASED
-  private TokenizedCharSequence tokenSequence;
+  // tokens in the f-fowm of a tokenizedchawseq, (ˆ ﻌ ˆ)♡ nyot wowew cased
+  pwivate tokenizedchawsequence tokensequence;
 
-  // strippedTokens above joined with space
-  private String normalizedStrippedText;
+  // stwippedtokens a-above joined with space
+  pwivate s-stwing nyowmawizedstwippedtext;
 
-  // normalized, original case tokens, without @mention, #hashtag or urls.
-  private List<String> strippedTokens;
+  // n-nyowmawized, XD o-owiginaw c-case tokens, (ˆ ﻌ ˆ)♡ without @mention, ( ͡o ω ͡o ) #hashtag ow uwws. rawr x3
+  pwivate wist<stwing> s-stwippedtokens;
 
-  // all hash tags, without "#", lower cased
-  private Set<String> hashtags = Sets.newHashSet();
+  // aww hash tags, nyaa~~ without "#", >_< wowew c-cased
+  pwivate set<stwing> hashtags = sets.newhashset();
 
-  // all mentions, without "@", lower cased
-  private Set<String> mentions = Sets.newHashSet();
+  // aww mentions, ^^;; without "@", (ˆ ﻌ ˆ)♡ wowew cased
+  pwivate s-set<stwing> mentions = sets.newhashset();
 
-  // whether this tweet has a question mark that's not in url.
-  private boolean hasQuestionMark = false;
+  // w-whethew this t-tweet has a question m-mawk that's nyot in uww. ^^;;
+  pwivate boowean hasquestionmawk = f-fawse;
 
-  private boolean hasPositiveSmiley = false;
-  private boolean hasNegativeSmiley = false;
+  pwivate b-boowean haspositivesmiwey = fawse;
+  pwivate b-boowean hasnegativesmiwey = f-fawse;
 
-  // normalized, original case smileys
-  private List<String> smileys;
+  // nyowmawized, (⑅˘꒳˘) o-owiginaw case smiweys
+  pwivate w-wist<stwing> smiweys;
 
-  // lower cased, normalized stock names, without "$"
-  private List<String> stocks;
+  // wowew cased, n-nyowmawized stock nyames, rawr x3 without "$"
+  p-pwivate wist<stwing> stocks;
 
-  // Extra features for text quality evaluation only.
-  private int signature = TweetIntegerShingleSignature.DEFAULT_NO_SIGNATURE;
-  private Set<String> trendingTerms = Sets.newHashSet();
-  private int length;
-  private int caps;
+  // e-extwa f-featuwes fow text quawity evawuation onwy. (///ˬ///✿)
+  pwivate int signatuwe = tweetintegewshingwesignatuwe.defauwt_no_signatuwe;
+  pwivate set<stwing> twendingtewms = sets.newhashset();
+  p-pwivate int w-wength;
+  pwivate int caps;
 
-  public String getNormalizedText() {
-    return normalizedText;
+  pubwic s-stwing getnowmawizedtext() {
+    w-wetuwn nyowmawizedtext;
   }
 
-  public void setNormalizedText(String normalizedText) {
-    this.normalizedText = normalizedText;
+  p-pubwic void setnowmawizedtext(stwing nyowmawizedtext) {
+    this.nowmawizedtext = n-nyowmawizedtext;
   }
 
-  public List<String> getTokens() {
-    return tokens;
+  pubwic wist<stwing> gettokens() {
+    wetuwn tokens;
   }
 
-  public int getTokensSize() {
-    return tokens == null ? 0 : tokens.size();
+  pubwic i-int gettokenssize() {
+    wetuwn t-tokens == nyuww ? 0 : t-tokens.size();
   }
 
-  public void setTokens(List<String> tokens) {
-    this.tokens = tokens;
+  p-pubwic void settokens(wist<stwing> tokens) {
+    t-this.tokens = tokens;
   }
 
-  public List<String> getResolvedUrlTokens() {
-    return resolvedUrlsTokens;
+  p-pubwic w-wist<stwing> g-getwesowveduwwtokens() {
+    wetuwn wesowveduwwstokens;
   }
 
-  public int getResolvedUrlTokensSize() {
-    return resolvedUrlsTokens == null ? 0 : resolvedUrlsTokens.size();
+  pubwic int getwesowveduwwtokenssize() {
+    w-wetuwn w-wesowveduwwstokens == n-nyuww ? 0 : w-wesowveduwwstokens.size();
   }
 
-  public void setResolvedUrlTokens(List<String> tokensResolvedUrls) {
-    this.resolvedUrlsTokens = tokensResolvedUrls;
+  p-pubwic void setwesowveduwwtokens(wist<stwing> tokenswesowveduwws) {
+    this.wesowveduwwstokens = t-tokenswesowveduwws;
   }
 
-  public TokenizedCharSequence getTokenSequence() {
-    return tokenSequence;
+  pubwic tokenizedchawsequence gettokensequence() {
+    wetuwn tokensequence;
   }
 
-  public void setTokenSequence(TokenizedCharSequence tokenSequence) {
-    this.tokenSequence = tokenSequence;
+  pubwic void s-settokensequence(tokenizedchawsequence tokensequence) {
+    this.tokensequence = tokensequence;
   }
 
-  public String getNormalizedStrippedText() {
-    return normalizedStrippedText;
+  p-pubwic s-stwing getnowmawizedstwippedtext() {
+    w-wetuwn nyowmawizedstwippedtext;
   }
 
-  public void setNormalizedStrippedText(String normalizedStrippedText) {
-    this.normalizedStrippedText = normalizedStrippedText;
+  p-pubwic void setnowmawizedstwippedtext(stwing nowmawizedstwippedtext) {
+    this.nowmawizedstwippedtext = n-nyowmawizedstwippedtext;
   }
 
-  public List<String> getStrippedTokens() {
-    return strippedTokens;
+  p-pubwic wist<stwing> getstwippedtokens() {
+    wetuwn stwippedtokens;
   }
 
-  public int getStrippedTokensSize() {
-    return strippedTokens == null ? 0 : strippedTokens.size();
+  pubwic int getstwippedtokenssize() {
+    w-wetuwn stwippedtokens == nyuww ? 0 : s-stwippedtokens.size();
   }
 
-  public void setStrippedTokens(List<String> strippedTokens) {
-    this.strippedTokens = strippedTokens;
+  pubwic void setstwippedtokens(wist<stwing> s-stwippedtokens) {
+    t-this.stwippedtokens = stwippedtokens;
   }
 
-  public Set<String> getHashtags() {
-    return hashtags;
+  pubwic set<stwing> g-gethashtags() {
+    w-wetuwn hashtags;
   }
 
-  public int getHashtagsSize() {
-    return hashtags.size();
+  pubwic int gethashtagssize() {
+    w-wetuwn hashtags.size();
   }
 
-  public void setHashtags(Collection<String> hashtags) {
-    this.hashtags = Sets.newHashSet(hashtags);
+  p-pubwic void sethashtags(cowwection<stwing> hashtags) {
+    this.hashtags = sets.newhashset(hashtags);
   }
 
-  public Set<String> getMentions() {
-    return mentions;
+  pubwic set<stwing> g-getmentions() {
+    w-wetuwn mentions;
   }
 
-  public int getMentionsSize() {
-    return mentions.size();
+  p-pubwic int getmentionssize() {
+    w-wetuwn mentions.size();
   }
 
-  public void setMentions(Collection<String> mentions) {
-    this.mentions = Sets.newHashSet(mentions);
+  p-pubwic void setmentions(cowwection<stwing> mentions) {
+    t-this.mentions = sets.newhashset(mentions);
   }
 
-  public boolean hasQuestionMark() {
-    return hasQuestionMark;
+  pubwic boowean hasquestionmawk() {
+    wetuwn hasquestionmawk;
   }
 
-  public void setHasQuestionMark(boolean hasQuestionMark) {
-    this.hasQuestionMark = hasQuestionMark;
+  p-pubwic void sethasquestionmawk(boowean h-hasquestionmawk) {
+    this.hasquestionmawk = hasquestionmawk;
   }
 
-  public boolean hasPositiveSmiley() {
-    return hasPositiveSmiley;
+  p-pubwic boowean haspositivesmiwey() {
+    w-wetuwn haspositivesmiwey;
   }
 
-  public void setHasPositiveSmiley(boolean hasPositiveSmiley) {
-    this.hasPositiveSmiley = hasPositiveSmiley;
+  pubwic void sethaspositivesmiwey(boowean h-haspositivesmiwey) {
+    this.haspositivesmiwey = haspositivesmiwey;
   }
 
-  public boolean hasNegativeSmiley() {
-    return hasNegativeSmiley;
+  pubwic boowean hasnegativesmiwey() {
+    wetuwn hasnegativesmiwey;
   }
 
-  public void setHasNegativeSmiley(boolean hasNegativeSmiley) {
-    this.hasNegativeSmiley = hasNegativeSmiley;
+  p-pubwic void sethasnegativesmiwey(boowean hasnegativesmiwey) {
+    t-this.hasnegativesmiwey = h-hasnegativesmiwey;
   }
 
-  public List<String> getSmileys() {
-    return smileys;
+  pubwic wist<stwing> getsmiweys() {
+    w-wetuwn smiweys;
   }
 
-  public int getSmileysSize() {
-    return smileys == null ? 0 : smileys.size();
+  p-pubwic int getsmiweyssize() {
+    wetuwn smiweys == n-nyuww ? 0 : smiweys.size();
   }
 
-  public void setSmileys(List<String> smileys) {
-    this.smileys = smileys;
+  pubwic void setsmiweys(wist<stwing> s-smiweys) {
+    this.smiweys = smiweys;
   }
 
-  public List<String> getStocks() {
-    return stocks;
+  pubwic wist<stwing> g-getstocks() {
+    wetuwn s-stocks;
   }
 
-  public int getStocksSize() {
-    return stocks == null ? 0 : stocks.size();
+  p-pubwic int getstockssize() {
+    wetuwn stocks == n-nyuww ? 0 : stocks.size();
   }
 
-  public void setStocks(List<String> stocks) {
-    this.stocks = stocks;
+  pubwic void s-setstocks(wist<stwing> s-stocks) {
+    t-this.stocks = stocks;
   }
 
-  public int getSignature() {
-    return signature;
+  p-pubwic int getsignatuwe() {
+    w-wetuwn signatuwe;
   }
 
-  public void setSignature(int signature) {
-    this.signature = signature;
+  pubwic void setsignatuwe(int s-signatuwe) {
+    t-this.signatuwe = s-signatuwe;
   }
 
-  /** Returns the trending terms. */
-  public Set<String> getTrendingTerms() {
-    return trendingTerms;
+  /** wetuwns the twending tewms. 🥺 */
+  p-pubwic set<stwing> gettwendingtewms() {
+    w-wetuwn t-twendingtewms;
   }
 
-  public int getTrendingTermsSize() {
-    return trendingTerms.size();
+  pubwic int gettwendingtewmssize() {
+    wetuwn twendingtewms.size();
   }
 
-  @VisibleForTesting
-  public void setTrendingTerms(Set<String> trendingTerms) {
-    this.trendingTerms = trendingTerms;
+  @visibwefowtesting
+  p-pubwic v-void settwendingtewms(set<stwing> t-twendingtewms) {
+    t-this.twendingtewms = twendingtewms;
   }
 
-  public int getLength() {
-    return length;
+  pubwic int g-getwength() {
+    wetuwn wength;
   }
 
-  public void setLength(int length) {
-    this.length = length;
+  pubwic void setwength(int wength) {
+    this.wength = wength;
   }
 
-  public int getCaps() {
-    return caps;
+  p-pubwic int getcaps() {
+    w-wetuwn caps;
   }
 
-  public void setCaps(int caps) {
-    this.caps = caps;
+  pubwic v-void setcaps(int caps) {
+    t-this.caps = caps;
   }
 }

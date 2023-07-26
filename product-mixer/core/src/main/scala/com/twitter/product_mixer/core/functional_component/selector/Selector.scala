@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.selector
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-/** Selects some `remainingCandidates` and add them to the `result` */
-trait Selector[-Query <: PipelineQuery] {
+/** s-sewects s-some `wemainingcandidates` a-and add them to t-the `wesuwt` */
+t-twait sewectow[-quewy <: pipewinequewy] {
 
   /**
-   * Specifies which [[com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails.source]]s
-   * this [[Selector]] will apply to.
+   * specifies which [[com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws.souwce]]s
+   * this [[sewectow]] w-wiww appwy to. -.-
    *
-   * @note it is up to each [[Selector]] implementation to correctly handle this behavior
+   * @note it is up to e-each [[sewectow]] impwementation t-to cowwectwy handwe this behaviow
    */
-  def pipelineScope: CandidateScope
+  def pipewinescope: c-candidatescope
 
-  /** Selects some `remainingCandidates` and add them to the `result` */
-  def apply(
-    query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult
+  /** sewects some `wemainingcandidates` a-and add t-them to the `wesuwt` */
+  def appwy(
+    quewy: quewy, ( ͡o ω ͡o )
+    wemainingcandidates: seq[candidatewithdetaiws], rawr x3
+    w-wesuwt: seq[candidatewithdetaiws]
+  ): sewectowwesuwt
 }

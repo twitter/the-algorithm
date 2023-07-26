@@ -1,18 +1,18 @@
-package com.twitter.timelineranker.uteg_liked_by_tweets
+package com.twittew.timewinewankew.uteg_wiked_by_tweets
 
-import com.twitter.timelineranker.model.CandidateTweetsResult
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.util.Future
+impowt com.twittew.timewinewankew.modew.candidatetweetswesuwt
+i-impowt com.twittew.timewinewankew.modew.wecapquewy
+i-impowt c-com.twittew.utiw.futuwe
 
 /**
- * A repository of YML tweets candidiates
+ * a-a wepositowy of y-ymw tweets candidiates
  */
-class UtegLikedByTweetsRepository(source: UtegLikedByTweetsSource) {
-  def get(query: RecapQuery): Future[CandidateTweetsResult] = {
-    source.get(query)
+c-cwass u-utegwikedbytweetswepositowy(souwce: u-utegwikedbytweetssouwce) {
+  def get(quewy: wecapquewy): futuwe[candidatetweetswesuwt] = {
+    souwce.get(quewy)
   }
 
-  def get(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
-    source.get(queries)
+  def g-get(quewies: seq[wecapquewy]): futuwe[seq[candidatetweetswesuwt]] = {
+    souwce.get(quewies)
   }
 }

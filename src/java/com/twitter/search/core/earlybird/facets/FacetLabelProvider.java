@@ -1,204 +1,204 @@
-package com.twitter.search.core.earlybird.facets;
+package com.twittew.seawch.cowe.eawwybiwd.facets;
 
-import org.apache.lucene.util.BytesRef;
+impowt owg.apache.wucene.utiw.byteswef;
 
-import com.twitter.search.common.hashtable.HashTable;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.analysis.IntTermAttributeImpl;
-import com.twitter.search.common.util.analysis.LongTermAttributeImpl;
-import com.twitter.search.common.util.analysis.SortableLongTermAttributeImpl;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
+i-impowt c-com.twittew.seawch.common.hashtabwe.hashtabwe;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt c-com.twittew.seawch.common.utiw.anawysis.inttewmattwibuteimpw;
+i-impowt c-com.twittew.seawch.common.utiw.anawysis.wongtewmattwibuteimpw;
+i-impowt com.twittew.seawch.common.utiw.anawysis.sowtabwewongtewmattwibuteimpw;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.invewtedindex;
 
 /**
- * Given a termID this accessor can be used to retrieve the term bytesref and text
- * that corresponds to the termID.
+ * given a tewmid this accessow can be used to wetwieve t-the tewm byteswef and text
+ * that cowwesponds t-to the tewmid. mya
  */
-public interface FacetLabelProvider {
+pubwic intewface f-facetwabewpwovidew {
   /**
-   * Returns a {@link FacetLabelAccessor} for this provider.
+   * wetuwns a {@wink facetwabewaccessow} fow t-this pwovidew. 🥺
    */
-  FacetLabelAccessor getLabelAccessor();
+  facetwabewaccessow g-getwabewaccessow();
 
-  abstract class FacetLabelAccessor {
-    private int currentTermID = -1;
+  a-abstwact cwass facetwabewaccessow {
+    pwivate int cuwwenttewmid = -1;
 
-    protected final BytesRef termRef = new BytesRef();
-    protected boolean hasTermPayload = false;
-    protected final BytesRef termPayload = new BytesRef();
-    protected int offensiveCount = 0;
+    pwotected finaw b-byteswef tewmwef = nyew byteswef();
+    pwotected boowean hastewmpaywoad = fawse;
+    p-pwotected finaw byteswef tewmpaywoad = n-nyew b-byteswef();
+    p-pwotected int o-offensivecount = 0;
 
-    protected final boolean maybeSeek(long termID) {
-      if (termID == currentTermID) {
-        return true;
+    pwotected finaw boowean m-maybeseek(wong tewmid) {
+      if (tewmid == cuwwenttewmid) {
+        w-wetuwn twue;
       }
 
-      if (seek(termID)) {
-        currentTermID = (int) termID;
-        return true;
-      } else {
-        currentTermID = -1;
-        return false;
+      if (seek(tewmid)) {
+        cuwwenttewmid = (int) tewmid;
+        wetuwn twue;
+      } ewse {
+        cuwwenttewmid = -1;
+        w-wetuwn fawse;
       }
     }
 
-    // Seek to term id provided.  Returns true if term found.  Should update termRef,
-    // hasTermPayload, and termPayload as appropriate.
-    protected abstract boolean seek(long termID);
+    // seek to t-tewm id pwovided. ^^;;  w-wetuwns twue i-if tewm found. :3  shouwd update tewmwef, (U ﹏ U)
+    // hastewmpaywoad, OwO and tewmpaywoad as appwopwiate. 😳😳😳
+    p-pwotected abstwact b-boowean seek(wong tewmid);
 
-    public final BytesRef getTermRef(long termID) {
-      return maybeSeek(termID) ? termRef : null;
+    p-pubwic finaw b-byteswef gettewmwef(wong tewmid) {
+      w-wetuwn maybeseek(tewmid) ? t-tewmwef : nuww;
     }
 
-    public String getTermText(long termID) {
-      return maybeSeek(termID) ? termRef.utf8ToString() : null;
+    pubwic stwing g-gettewmtext(wong tewmid) {
+      w-wetuwn maybeseek(tewmid) ? tewmwef.utf8tostwing() : n-nyuww;
     }
 
-    public final BytesRef getTermPayload(long termID) {
-      return maybeSeek(termID) && hasTermPayload ? termPayload : null;
+    p-pubwic finaw byteswef gettewmpaywoad(wong tewmid) {
+      wetuwn maybeseek(tewmid) && hastewmpaywoad ? tewmpaywoad : nyuww;
     }
 
-    public final int getOffensiveCount(long termID) {
-      return maybeSeek(termID) ? offensiveCount : 0;
+    p-pubwic f-finaw int getoffensivecount(wong tewmid) {
+      w-wetuwn maybeseek(tewmid) ? o-offensivecount : 0;
     }
   }
 
   /**
-   * Assumes the term is stored as an IntTermAttribute, and uses this to convert
-   * the term bytesref to an integer string facet label.
+   * a-assumes the tewm is stowed as an inttewmattwibute, and u-uses this to convewt
+   * the tewm byteswef to an integew stwing facet wabew. (ˆ ﻌ ˆ)♡
    */
-  class IntTermFacetLabelProvider implements FacetLabelProvider {
-      private final InvertedIndex invertedIndex;
+  c-cwass inttewmfacetwabewpwovidew impwements f-facetwabewpwovidew {
+      p-pwivate f-finaw invewtedindex invewtedindex;
 
-    public IntTermFacetLabelProvider(InvertedIndex invertedIndex) {
-      this.invertedIndex = invertedIndex;
+    p-pubwic i-inttewmfacetwabewpwovidew(invewtedindex i-invewtedindex) {
+      t-this.invewtedindex = invewtedindex;
     }
 
-    @Override
-    public FacetLabelAccessor getLabelAccessor() {
-      return new FacetLabelAccessor() {
-        @Override
-        protected boolean seek(long termID) {
-          if (termID != HashTable.EMPTY_SLOT) {
-            invertedIndex.getTerm((int) termID, termRef);
-            return true;
+    @ovewwide
+    pubwic facetwabewaccessow g-getwabewaccessow() {
+      w-wetuwn nyew f-facetwabewaccessow() {
+        @ovewwide
+        p-pwotected boowean s-seek(wong tewmid) {
+          if (tewmid != hashtabwe.empty_swot) {
+            invewtedindex.gettewm((int) t-tewmid, XD tewmwef);
+            wetuwn twue;
           }
-          return false;
+          wetuwn fawse;
         }
 
-        @Override
-        public String getTermText(long termID) {
-          return maybeSeek(termID)
-                 ? Integer.toString(IntTermAttributeImpl.copyBytesRefToInt(termRef))
-                 : null;
+        @ovewwide
+        pubwic stwing gettewmtext(wong tewmid) {
+          w-wetuwn maybeseek(tewmid)
+                 ? integew.tostwing(inttewmattwibuteimpw.copybytesweftoint(tewmwef))
+                 : nyuww;
         }
       };
     }
   }
 
   /**
-   * Assumes the term is stored as an LongTermAttribute, and uses this to convert
-   * the term bytesref to an long string facet label.
+   * assumes t-the tewm is stowed a-as an wongtewmattwibute, (ˆ ﻌ ˆ)♡ a-and uses this to convewt
+   * t-the tewm byteswef to a-an wong stwing facet w-wabew. ( ͡o ω ͡o )
    */
-  class LongTermFacetLabelProvider implements FacetLabelProvider {
-    private final InvertedIndex invertedIndex;
+  cwass wongtewmfacetwabewpwovidew impwements facetwabewpwovidew {
+    pwivate finaw invewtedindex i-invewtedindex;
 
-    public LongTermFacetLabelProvider(InvertedIndex invertedIndex) {
-      this.invertedIndex = invertedIndex;
+    pubwic w-wongtewmfacetwabewpwovidew(invewtedindex invewtedindex) {
+      t-this.invewtedindex = i-invewtedindex;
     }
 
-    @Override
-    public FacetLabelAccessor getLabelAccessor() {
-      return new FacetLabelAccessor() {
-        @Override
-        protected boolean seek(long termID) {
-          if (termID != HashTable.EMPTY_SLOT) {
-            invertedIndex.getTerm((int) termID, termRef);
-            return true;
+    @ovewwide
+    pubwic facetwabewaccessow g-getwabewaccessow() {
+      w-wetuwn nyew facetwabewaccessow() {
+        @ovewwide
+        pwotected boowean s-seek(wong tewmid) {
+          if (tewmid != h-hashtabwe.empty_swot) {
+            invewtedindex.gettewm((int) tewmid, rawr x3 tewmwef);
+            wetuwn t-twue;
           }
-          return false;
+          w-wetuwn f-fawse;
         }
 
-        @Override
-        public String getTermText(long termID) {
-          return maybeSeek(termID)
-                 ? Long.toString(LongTermAttributeImpl.copyBytesRefToLong(termRef))
-                 : null;
+        @ovewwide
+        pubwic stwing gettewmtext(wong t-tewmid) {
+          w-wetuwn maybeseek(tewmid)
+                 ? wong.tostwing(wongtewmattwibuteimpw.copybytesweftowong(tewmwef))
+                 : n-nyuww;
         }
       };
     }
   }
 
-  class SortedLongTermFacetLabelProvider implements FacetLabelProvider {
-    private final InvertedIndex invertedIndex;
+  cwass sowtedwongtewmfacetwabewpwovidew impwements facetwabewpwovidew {
+    pwivate finaw i-invewtedindex i-invewtedindex;
 
-    public SortedLongTermFacetLabelProvider(InvertedIndex invertedIndex) {
-      this.invertedIndex = invertedIndex;
+    pubwic sowtedwongtewmfacetwabewpwovidew(invewtedindex invewtedindex) {
+      t-this.invewtedindex = i-invewtedindex;
     }
 
-    @Override
-    public FacetLabelAccessor getLabelAccessor() {
-      return new FacetLabelAccessor() {
-        @Override
-        protected boolean seek(long termID) {
-          if (termID != HashTable.EMPTY_SLOT) {
-            invertedIndex.getTerm((int) termID, termRef);
-            return true;
+    @ovewwide
+    pubwic facetwabewaccessow getwabewaccessow() {
+      wetuwn nyew f-facetwabewaccessow() {
+        @ovewwide
+        pwotected boowean seek(wong tewmid) {
+          if (tewmid != hashtabwe.empty_swot) {
+            i-invewtedindex.gettewm((int) tewmid, nyaa~~ tewmwef);
+            wetuwn t-twue;
           }
-          return false;
+          w-wetuwn fawse;
         }
 
-        @Override
-        public String getTermText(long termID) {
-          return maybeSeek(termID)
-              ? Long.toString(SortableLongTermAttributeImpl.copyBytesRefToLong(termRef))
-              : null;
+        @ovewwide
+        pubwic stwing gettewmtext(wong tewmid) {
+          w-wetuwn maybeseek(tewmid)
+              ? w-wong.tostwing(sowtabwewongtewmattwibuteimpw.copybytesweftowong(tewmwef))
+              : nyuww;
         }
       };
     }
   }
 
-  class IdentityFacetLabelProvider implements FacetLabelProvider {
-    @Override
-    public FacetLabelAccessor getLabelAccessor() {
-      return new FacetLabelAccessor() {
-        @Override
-        protected boolean seek(long termID) {
-          return true;
+  cwass identityfacetwabewpwovidew impwements facetwabewpwovidew {
+    @ovewwide
+    p-pubwic facetwabewaccessow getwabewaccessow() {
+      w-wetuwn nyew facetwabewaccessow() {
+        @ovewwide
+        pwotected boowean seek(wong t-tewmid) {
+          wetuwn twue;
         }
 
-        @Override
-        public String getTermText(long termID) {
-          return Long.toString(termID);
+        @ovewwide
+        p-pubwic stwing g-gettewmtext(wong tewmid) {
+          w-wetuwn wong.tostwing(tewmid);
         }
       };
     }
   }
 
   /**
-   * The methods on this provider should NOT be called under normal circumstances!
+   * t-the methods on t-this pwovidew shouwd n-nyot be cawwed undew nyowmaw c-ciwcumstances! >_<
    *
-   * When a facet misses inverted index and does not use CSF, this InaccessibleFacetLabelProvider
-   * will be used as a dummy provider. Then, unexptectedFacetLabelAccess counter will be
-   * incremented when this provider is used later.
+   * w-when a facet misses invewted index and d-does nyot use c-csf, ^^;; this inaccessibwefacetwabewpwovidew
+   * w-wiww be used as a dummy pwovidew. (ˆ ﻌ ˆ)♡ t-then, ^^;; unexptectedfacetwabewaccess countew wiww be
+   * i-incwemented w-when this pwovidew is used watew. (⑅˘꒳˘)
    *
-   * Also see:
-   * {@link FacetUtil}
+   * awso see:
+   * {@wink facetutiw}
    */
-  class InaccessibleFacetLabelProvider implements FacetLabelProvider {
-    private final SearchCounter unexptectedFacetLabelAccess;
+  c-cwass inaccessibwefacetwabewpwovidew i-impwements f-facetwabewpwovidew {
+    p-pwivate finaw seawchcountew unexptectedfacetwabewaccess;
 
-    public InaccessibleFacetLabelProvider(String fieldName) {
-      this.unexptectedFacetLabelAccess =
-          SearchCounter.export("unexpected_facet_label_access_for_field_" + fieldName);
+    pubwic i-inaccessibwefacetwabewpwovidew(stwing fiewdname) {
+      this.unexptectedfacetwabewaccess =
+          seawchcountew.expowt("unexpected_facet_wabew_access_fow_fiewd_" + fiewdname);
     }
 
-    @Override
-    public FacetLabelAccessor getLabelAccessor() {
-      return new FacetLabelAccessor() {
-        @Override
-        protected boolean seek(long termID) {
-          unexptectedFacetLabelAccess.increment();
-          return false;
+    @ovewwide
+    pubwic facetwabewaccessow getwabewaccessow() {
+      w-wetuwn nyew facetwabewaccessow() {
+        @ovewwide
+        p-pwotected boowean seek(wong t-tewmid) {
+          unexptectedfacetwabewaccess.incwement();
+          w-wetuwn fawse;
         }
       };
     }

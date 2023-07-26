@@ -1,285 +1,285 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.gizmoduck.thriftscala.LookupContext
-import com.twitter.gizmoduck.thriftscala.UserResponseState
-import com.twitter.gizmoduck.thriftscala.UserResult
-import com.twitter.servo.cache.ScopedCacheKey
-import com.twitter.servo.json.syntax._
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.compat.LegacySeqGroup
-import com.twitter.tweetypie.backends.Gizmoduck
-import com.twitter.tweetypie.core._
-import com.twitter.util.Base64Long.toBase64
-import com.twitter.util.logging.Logger
-import com.twitter.visibility.thriftscala.UserVisibilityResult
-import scala.util.control.NoStackTrace
+i-impowt com.twittew.gizmoduck.thwiftscawa.wookupcontext
+i-impowt com.twittew.gizmoduck.thwiftscawa.usewwesponsestate
+i-impowt com.twittew.gizmoduck.thwiftscawa.usewwesuwt
+i-impowt com.twittew.sewvo.cache.scopedcachekey
+i-impowt com.twittew.sewvo.json.syntax._
+i-impowt c-com.twittew.spam.wtf.thwiftscawa.safetywevew
+impowt com.twittew.stitch.notfound
+impowt com.twittew.stitch.seqgwoup
+impowt com.twittew.stitch.stitch
+impowt com.twittew.stitch.compat.wegacyseqgwoup
+i-impowt com.twittew.tweetypie.backends.gizmoduck
+impowt com.twittew.tweetypie.cowe._
+impowt c-com.twittew.utiw.base64wong.tobase64
+impowt com.twittew.utiw.wogging.woggew
+i-impowt com.twittew.visibiwity.thwiftscawa.usewvisibiwitywesuwt
+impowt scawa.utiw.contwow.nostacktwace
 
-sealed trait UserKey
+s-seawed twait usewkey
 
-object UserKey {
-  def byId(userId: UserId): UserKey = UserIdKey(userId)
-  def byScreenName(screenName: String): UserKey = ScreenNameKey.toLowerCase(screenName)
-  def apply(userId: UserId): UserKey = UserIdKey(userId)
-  def apply(screenName: String): UserKey = ScreenNameKey.toLowerCase(screenName)
+object u-usewkey {
+  def b-byid(usewid: usewid): usewkey = usewidkey(usewid)
+  def byscweenname(scweenname: stwing): usewkey = s-scweennamekey.towowewcase(scweenname)
+  def appwy(usewid: usewid): usewkey = usewidkey(usewid)
+  d-def appwy(scweenname: stwing): u-usewkey = s-scweennamekey.towowewcase(scweenname)
 }
 
-case class UserIdKey(userId: UserId)
-    extends ScopedCacheKey("t", "usr", 1, "id", toBase64(userId))
-    with UserKey
+c-case cwass u-usewidkey(usewid: usewid)
+    extends scopedcachekey("t", mya "usw", 1, "id", 😳😳😳 t-tobase64(usewid))
+    with usewkey
 
-object ScreenNameKey {
-  def toLowerCase(screenName: String): ScreenNameKey = ScreenNameKey(screenName.toLowerCase)
+object scweennamekey {
+  d-def towowewcase(scweenname: stwing): scweennamekey = scweennamekey(scweenname.towowewcase)
 }
 
 /**
- * Use UserKey.apply(String) instead of ScreenNameKey(String) to construct a key,
- * as it will down-case the screen-name to better utilize the user cache.
+ * use usewkey.appwy(stwing) instead o-of scweennamekey(stwing) to constwuct a-a key, OwO
+ * a-as it wiww down-case t-the scween-name to bettew utiwize the usew cache. rawr
  */
-case class ScreenNameKey private (screenName: String)
-    extends ScopedCacheKey("t", "usr", 1, "sn", screenName)
-    with UserKey
+case c-cwass scweennamekey p-pwivate (scweenname: stwing)
+    e-extends scopedcachekey("t", XD "usw", (U ﹏ U) 1, "sn", s-scweenname)
+    with usewkey
 
 /**
- * A set of flags, used in UserQuery, which control whether to include or filter out
- * users in various non-standard states.
+ * a-a set of fwags, (˘ω˘) used in u-usewquewy, UwU which contwow whethew to incwude ow fiwtew o-out
+ * usews in vawious nyon-standawd s-states. >_<
  */
-case class UserVisibility(
-  filterProtected: Boolean,
-  filterSuspended: Boolean,
-  filterDeactivated: Boolean,
-  filterOffboardedAndErased: Boolean,
-  filterNoScreenName: Boolean,
-  filterPeriscope: Boolean,
-  filterSoft: Boolean)
+case cwass u-usewvisibiwity(
+  f-fiwtewpwotected: boowean, σωσ
+  fiwtewsuspended: boowean, 🥺
+  fiwtewdeactivated: boowean, 🥺
+  fiwtewoffboawdedandewased: boowean, ʘwʘ
+  fiwtewnoscweenname: b-boowean, :3
+  f-fiwtewpewiscope: boowean, (U ﹏ U)
+  fiwtewsoft: b-boowean)
 
-object UserVisibility {
+o-object usewvisibiwity {
 
   /**
-   * No filtering, can see every user that gizmoduck can return.
+   * n-nyo fiwtewing, (U ﹏ U) can see evewy usew that gizmoduck can wetuwn. ʘwʘ
    */
-  val All: UserVisibility = UserVisibility(
-    filterProtected = false,
-    filterSuspended = false,
-    filterDeactivated = false,
-    filterOffboardedAndErased = false,
-    filterNoScreenName = false,
-    filterPeriscope = false,
-    filterSoft = false
+  v-vaw aww: usewvisibiwity = usewvisibiwity(
+    fiwtewpwotected = fawse, >w<
+    f-fiwtewsuspended = fawse, rawr x3
+    f-fiwtewdeactivated = f-fawse, OwO
+    f-fiwtewoffboawdedandewased = fawse, ^•ﻌ•^
+    f-fiwtewnoscweenname = f-fawse, >_<
+    f-fiwtewpewiscope = f-fawse, OwO
+    fiwtewsoft = fawse
   )
 
   /**
-   * Only includes users that would be visible to a non-logged in user,
-   * or a logged in user where the following graph is checked for
-   * protected users.
+   * o-onwy incwudes u-usews that w-wouwd be visibwe t-to a nyon-wogged i-in usew, >_<
+   * ow a wogged in usew whewe the fowwowing gwaph i-is checked fow
+   * pwotected usews. (ꈍᴗꈍ)
    *
-   * no-screen-name, soft, and periscope users are visible, but not
-   * mentionable.
+   * nyo-scween-name, soft, >w< and pewiscope usews awe visibwe, (U ﹏ U) but nyot
+   * mentionabwe. ^^
    */
-  val Visible: UserVisibility = UserVisibility(
-    filterProtected = true,
-    filterSuspended = true,
-    filterDeactivated = true,
-    filterOffboardedAndErased = true,
-    filterNoScreenName = false,
-    filterPeriscope = false,
-    filterSoft = false
+  v-vaw visibwe: usewvisibiwity = usewvisibiwity(
+    fiwtewpwotected = t-twue, (U ﹏ U)
+    f-fiwtewsuspended = t-twue, :3
+    fiwtewdeactivated = t-twue, (✿oωo)
+    fiwtewoffboawdedandewased = t-twue,
+    f-fiwtewnoscweenname = fawse, XD
+    fiwtewpewiscope = fawse, >w<
+    fiwtewsoft = fawse
   )
 
-  val MediaTaggable: UserVisibility = UserVisibility(
-    filterProtected = false,
-    filterSuspended = true,
-    filterDeactivated = true,
-    filterOffboardedAndErased = true,
-    filterNoScreenName = true,
-    filterPeriscope = true,
-    filterSoft = true
+  vaw m-mediataggabwe: usewvisibiwity = u-usewvisibiwity(
+    fiwtewpwotected = f-fawse, òωó
+    f-fiwtewsuspended = twue, (ꈍᴗꈍ)
+    fiwtewdeactivated = t-twue, rawr x3
+    fiwtewoffboawdedandewased = t-twue, rawr x3
+    fiwtewnoscweenname = t-twue, σωσ
+    f-fiwtewpewiscope = twue, (ꈍᴗꈍ)
+    fiwtewsoft = twue
   )
 
   /**
-   * Includes all mentionable users (filter deactivated/offboarded/erased/no-screen-name users)
+   * incwudes aww mentionabwe usews (fiwtew d-deactivated/offboawded/ewased/no-scween-name u-usews)
    */
-  val Mentionable: UserVisibility = UserVisibility(
-    filterProtected = false,
-    filterSuspended = false,
-    filterDeactivated = false,
-    filterOffboardedAndErased = true,
-    filterNoScreenName = true,
-    filterPeriscope = true,
-    filterSoft = true
+  v-vaw mentionabwe: usewvisibiwity = u-usewvisibiwity(
+    f-fiwtewpwotected = fawse, rawr
+    f-fiwtewsuspended = fawse, ^^;;
+    fiwtewdeactivated = fawse, rawr x3
+    fiwtewoffboawdedandewased = twue, (ˆ ﻌ ˆ)♡
+    f-fiwtewnoscweenname = t-twue, σωσ
+    fiwtewpewiscope = twue, (U ﹏ U)
+    f-fiwtewsoft = t-twue
   )
 }
 
 /**
- * The `visibility` field includes a set of flags that indicate whether users in
- * various non-standard states should be included in the `found` results, or filtered
- * out.  By default, "filtered out" means to treat them as `notFound`, but if `filteredAsFailure`
- * is true, then the filtered users will be indicated in a [[UserFilteredFailure]] result.
+ * the `visibiwity` fiewd incwudes a set of fwags t-that indicate whethew usews in
+ * vawious nyon-standawd states shouwd be incwuded i-in the `found` wesuwts, >w< ow fiwtewed
+ * out. σωσ  b-by defauwt, nyaa~~ "fiwtewed o-out" means to tweat them as `notfound`, 🥺 but if `fiwtewedasfaiwuwe`
+ * i-is t-twue, rawr x3 then the fiwtewed usews wiww be indicated in a [[usewfiwtewedfaiwuwe]] w-wesuwt. σωσ
  */
-case class UserQueryOptions(
-  queryFields: Set[UserField] = Set.empty,
-  visibility: UserVisibility,
-  forUserId: Option[UserId] = None,
-  filteredAsFailure: Boolean = false,
-  safetyLevel: Option[SafetyLevel] = None) {
-  def toLookupContext: LookupContext =
-    LookupContext(
-      includeFailed = true,
-      forUserId = forUserId,
-      includeProtected = !visibility.filterProtected,
-      includeSuspended = !visibility.filterSuspended,
-      includeDeactivated = !visibility.filterDeactivated,
-      includeErased = !visibility.filterOffboardedAndErased,
-      includeNoScreenNameUsers = !visibility.filterNoScreenName,
-      includePeriscopeUsers = !visibility.filterPeriscope,
-      includeSoftUsers = !visibility.filterSoft,
-      includeOffboarded = !visibility.filterOffboardedAndErased,
-      safetyLevel = safetyLevel
+case cwass u-usewquewyoptions(
+  quewyfiewds: set[usewfiewd] = set.empty, (///ˬ///✿)
+  v-visibiwity: usewvisibiwity, (U ﹏ U)
+  f-fowusewid: option[usewid] = n-nyone, ^^;;
+  fiwtewedasfaiwuwe: b-boowean = fawse, 🥺
+  safetywevew: o-option[safetywevew] = n-nyone) {
+  def towookupcontext: w-wookupcontext =
+    wookupcontext(
+      i-incwudefaiwed = t-twue, òωó
+      fowusewid = fowusewid,
+      i-incwudepwotected = !visibiwity.fiwtewpwotected, XD
+      i-incwudesuspended = !visibiwity.fiwtewsuspended,
+      i-incwudedeactivated = !visibiwity.fiwtewdeactivated, :3
+      incwudeewased = !visibiwity.fiwtewoffboawdedandewased, (U ﹏ U)
+      incwudenoscweennameusews = !visibiwity.fiwtewnoscweenname, >w<
+      i-incwudepewiscopeusews = !visibiwity.fiwtewpewiscope, /(^•ω•^)
+      incwudesoftusews = !visibiwity.fiwtewsoft, (⑅˘꒳˘)
+      i-incwudeoffboawded = !visibiwity.fiwtewoffboawdedandewased, ʘwʘ
+      s-safetywevew = safetywevew
     )
 }
 
-case class UserLookupFailure(message: String, state: UserResponseState) extends RuntimeException {
-  override def getMessage(): String =
-    s"$message: responseState = $state"
+case cwass usewwookupfaiwuwe(message: s-stwing, rawr x3 s-state: usewwesponsestate) e-extends w-wuntimeexception {
+  ovewwide d-def getmessage(): stwing =
+    s"$message: wesponsestate = $state"
 }
 
 /**
- * Indicates a failure due to the user being filtered.
+ * indicates a faiwuwe due to the usew being fiwtewed. (˘ω˘)
  *
- * @see [[GizmoduckUserRepository.FilteredStates]]
+ * @see [[gizmoduckusewwepositowy.fiwtewedstates]]
  */
-case class UserFilteredFailure(state: UserResponseState, reason: Option[UserVisibilityResult])
-    extends Exception
-    with NoStackTrace
+case c-cwass usewfiwtewedfaiwuwe(state: usewwesponsestate, o.O w-weason: option[usewvisibiwitywesuwt])
+    e-extends exception
+    with nyostacktwace
 
-object UserRepository {
-  type Type = (UserKey, UserQueryOptions) => Stitch[User]
-  type Optional = (UserKey, UserQueryOptions) => Stitch[Option[User]]
+o-object usewwepositowy {
+  t-type type = (usewkey, u-usewquewyoptions) => s-stitch[usew]
+  t-type optionaw = (usewkey, 😳 u-usewquewyoptions) => stitch[option[usew]]
 
-  def optional(repo: Type): Optional =
-    (userKey, queryOptions) => repo(userKey, queryOptions).liftNotFoundToOption
+  def optionaw(wepo: type): optionaw =
+    (usewkey, o.O quewyoptions) => wepo(usewkey, ^^;; quewyoptions).wiftnotfoundtooption
 
-  def userGetter(
-    userRepo: UserRepository.Optional,
-    opts: UserQueryOptions
-  ): UserKey => Future[Option[User]] =
-    userKey => Stitch.run(userRepo(userKey, opts))
+  def u-usewgettew(
+    u-usewwepo: usewwepositowy.optionaw, ( ͡o ω ͡o )
+    o-opts: usewquewyoptions
+  ): u-usewkey => futuwe[option[usew]] =
+    usewkey => stitch.wun(usewwepo(usewkey, ^^;; o-opts))
 }
 
-object GizmoduckUserRepository {
-  private[this] val log = Logger(getClass)
+object g-gizmoduckusewwepositowy {
+  pwivate[this] vaw w-wog = woggew(getcwass)
 
-  def apply(
-    getById: Gizmoduck.GetById,
-    getByScreenName: Gizmoduck.GetByScreenName,
-    maxRequestSize: Int = Int.MaxValue
-  ): UserRepository.Type = {
-    case class GetBy[K](
-      opts: UserQueryOptions,
-      get: ((LookupContext, Seq[K], Set[UserField])) => Future[Seq[UserResult]])
-        extends SeqGroup[K, UserResult] {
-      override def run(keys: Seq[K]): Future[Seq[Try[UserResult]]] =
-        LegacySeqGroup.liftToSeqTry(get((opts.toLookupContext, keys, opts.queryFields)))
-      override def maxSize: Int = maxRequestSize
+  def appwy(
+    getbyid: g-gizmoduck.getbyid, ^^;;
+    g-getbyscweenname: gizmoduck.getbyscweenname, XD
+    m-maxwequestsize: i-int = int.maxvawue
+  ): usewwepositowy.type = {
+    case cwass getby[k](
+      opts: u-usewquewyoptions, 🥺
+      g-get: ((wookupcontext, (///ˬ///✿) seq[k], s-set[usewfiewd])) => f-futuwe[seq[usewwesuwt]])
+        e-extends seqgwoup[k, (U ᵕ U❁) u-usewwesuwt] {
+      o-ovewwide def wun(keys: seq[k]): f-futuwe[seq[twy[usewwesuwt]]] =
+        w-wegacyseqgwoup.wifttoseqtwy(get((opts.towookupcontext, ^^;; keys, opts.quewyfiewds)))
+      o-ovewwide def maxsize: int = maxwequestsize
     }
 
-    (key, opts) => {
-      val result =
+    (key, ^^;; opts) => {
+      vaw w-wesuwt =
         key match {
-          case UserIdKey(id) => Stitch.call(id, GetBy(opts, getById))
-          case ScreenNameKey(sn) => Stitch.call(sn, GetBy(opts, getByScreenName))
+          c-case usewidkey(id) => s-stitch.caww(id, rawr getby(opts, (˘ω˘) getbyid))
+          c-case scweennamekey(sn) => stitch.caww(sn, 🥺 getby(opts, nyaa~~ g-getbyscweenname))
         }
 
-      result.flatMap(r => Stitch.const(toTryUser(r, opts.filteredAsFailure)))
+      w-wesuwt.fwatmap(w => s-stitch.const(totwyusew(w, :3 opts.fiwtewedasfaiwuwe)))
     }
   }
 
-  private def toTryUser(
-    userResult: UserResult,
-    filteredAsFailure: Boolean
-  ): Try[User] =
-    userResult.responseState match {
-      case s if s.forall(SuccessStates.contains(_)) =>
-        userResult.user match {
-          case Some(u) =>
-            Return(u)
+  pwivate def totwyusew(
+    u-usewwesuwt: usewwesuwt, /(^•ω•^)
+    fiwtewedasfaiwuwe: b-boowean
+  ): t-twy[usew] =
+    usewwesuwt.wesponsestate m-match {
+      case s-s if s.fowaww(successstates.contains(_)) =>
+        u-usewwesuwt.usew match {
+          case some(u) =>
+            w-wetuwn(u)
 
-          case None =>
-            log.warn(
-              s"User expected to be present, but not found in:\n${userResult.prettyPrint}"
+          case nyone =>
+            wog.wawn(
+              s-s"usew e-expected to be pwesent, ^•ﻌ•^ but nyot f-found in:\n${usewwesuwt.pwettypwint}"
             )
-            // This should never happen, but if it does, treat it as the
-            // user being returned as NotFound.
-            Throw(NotFound)
+            // this shouwd n-nyevew happen, UwU b-but if it does, 😳😳😳 t-tweat it as the
+            // usew being wetuwned as nyotfound. OwO
+            thwow(notfound)
         }
 
-      case Some(s) if NotFoundStates.contains(s) =>
-        Throw(NotFound)
+      case some(s) if nyotfoundstates.contains(s) =>
+        thwow(notfound)
 
-      case Some(s) if FilteredStates.contains(s) =>
-        Throw(if (filteredAsFailure) UserFilteredFailure(s, userResult.unsafeReason) else NotFound)
+      case some(s) if fiwtewedstates.contains(s) =>
+        thwow(if (fiwtewedasfaiwuwe) usewfiwtewedfaiwuwe(s, ^•ﻌ•^ usewwesuwt.unsafeweason) ewse nyotfound)
 
-      case Some(UserResponseState.Failed) =>
-        def lookupFailure(msg: String) =
-          UserLookupFailure(msg, UserResponseState.Failed)
+      case some(usewwesponsestate.faiwed) =>
+        d-def wookupfaiwuwe(msg: s-stwing) =
+          usewwookupfaiwuwe(msg, (ꈍᴗꈍ) usewwesponsestate.faiwed)
 
-        Throw {
-          userResult.failureReason
-            .map { reason =>
-              reason.internalServerError
-                .orElse {
-                  reason.overCapacity.map { e =>
-                    // Convert Gizmoduck OverCapacity to Tweetypie
-                    // OverCapacity exception, explaining that it was
-                    // propagated from Gizmoduck.
-                    OverCapacity(s"gizmoduck over capacity: ${e.message}")
+        t-thwow {
+          u-usewwesuwt.faiwuweweason
+            .map { w-weason =>
+              weason.intewnawsewvewewwow
+                .owewse {
+                  w-weason.ovewcapacity.map { e =>
+                    // c-convewt g-gizmoduck ovewcapacity to tweetypie
+                    // o-ovewcapacity exception, (⑅˘꒳˘) expwaining t-that it was
+                    // p-pwopagated fwom gizmoduck. (⑅˘꒳˘)
+                    ovewcapacity(s"gizmoduck o-ovew c-capacity: ${e.message}")
                   }
                 }
-                .orElse(reason.unexpectedException.map(lookupFailure))
-                .getOrElse(lookupFailure("failureReason empty"))
+                .owewse(weason.unexpectedexception.map(wookupfaiwuwe))
+                .getowewse(wookupfaiwuwe("faiwuweweason e-empty"))
             }
-            .getOrElse(lookupFailure("failureReason missing"))
+            .getowewse(wookupfaiwuwe("faiwuweweason m-missing"))
         }
 
-      case Some(unexpected) =>
-        Throw(UserLookupFailure("Unexpected response state", unexpected))
+      c-case some(unexpected) =>
+        t-thwow(usewwookupfaiwuwe("unexpected w-wesponse s-state", (ˆ ﻌ ˆ)♡ unexpected))
     }
 
   /**
-   * States that we expect to correspond to a user being returned.
+   * s-states that we expect t-to cowwespond t-to a usew being w-wetuwned. /(^•ω•^)
    */
-  val SuccessStates: Set[UserResponseState] =
-    Set[UserResponseState](
-      UserResponseState.Found,
-      UserResponseState.Partial
+  vaw successstates: s-set[usewwesponsestate] =
+    set[usewwesponsestate](
+      usewwesponsestate.found, òωó
+      u-usewwesponsestate.pawtiaw
     )
 
   /**
-   * States that always correspond to a NotFound response.
+   * states t-that awways cowwespond t-to a nyotfound w-wesponse. (⑅˘꒳˘)
    */
-  val NotFoundStates: Set[UserResponseState] =
-    Set[UserResponseState](
-      UserResponseState.NotFound,
-      // These are really filtered out, but we treat them as not found
-      // since we don't have analogous filtering states for tweets.
-      UserResponseState.PeriscopeUser,
-      UserResponseState.SoftUser,
-      UserResponseState.NoScreenNameUser
+  vaw notfoundstates: set[usewwesponsestate] =
+    s-set[usewwesponsestate](
+      usewwesponsestate.notfound, (U ᵕ U❁)
+      // these a-awe weawwy fiwtewed out, >w< but w-we tweat them as nyot found
+      // s-since we don't have anawogous fiwtewing states fow tweets.
+      usewwesponsestate.pewiscopeusew, σωσ
+      usewwesponsestate.softusew, -.-
+      u-usewwesponsestate.noscweennameusew
     )
 
   /**
-   * Response states that correspond to a FilteredState
+   * wesponse states t-that cowwespond t-to a fiwtewedstate
    */
-  val FilteredStates: Set[UserResponseState] =
-    Set(
-      UserResponseState.DeactivatedUser,
-      UserResponseState.OffboardedUser,
-      UserResponseState.ErasedUser,
-      UserResponseState.SuspendedUser,
-      UserResponseState.ProtectedUser,
-      UserResponseState.UnsafeUser
+  vaw fiwtewedstates: set[usewwesponsestate] =
+    set(
+      usewwesponsestate.deactivatedusew, o.O
+      u-usewwesponsestate.offboawdedusew, ^^
+      usewwesponsestate.ewasedusew, >_<
+      u-usewwesponsestate.suspendedusew, >w<
+      u-usewwesponsestate.pwotectedusew, >_<
+      u-usewwesponsestate.unsafeusew
     )
 }

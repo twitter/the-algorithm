@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.pipeline
+package com.twittew.pwoduct_mixew.cowe.pipewine
 
-import com.twitter.product_mixer.core.model.common.identifier.HasComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.hascomponentidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pipewinestepidentifiew
 
-trait PipelineConfig extends HasComponentIdentifier
+t-twait p-pipewineconfig e-extends hascomponentidentifiew
 
-trait PipelineConfigCompanion {
+t-twait pipewineconfigcompanion {
 
-  /** used to generate `AsyncFeaturesFor` [[PipelineStepIdentifier]]s for the internal Async Features Step */
-  private[core] def asyncFeaturesStep(
-    stepToHydrateFor: PipelineStepIdentifier
-  ): PipelineStepIdentifier =
-    PipelineStepIdentifier("AsyncFeaturesFor" + stepToHydrateFor.name)
+  /** u-used to genewate `asyncfeatuwesfow` [[pipewinestepidentifiew]]s f-fow the intewnaw a-async featuwes step */
+  pwivate[cowe] def asyncfeatuwesstep(
+    steptohydwatefow: p-pipewinestepidentifiew
+  ): pipewinestepidentifiew =
+    pipewinestepidentifiew("asyncfeatuwesfow" + s-steptohydwatefow.name)
 
-  /** All the Steps which are executed by a [[Pipeline]] in the order in which they are run */
-  val stepsInOrder: Seq[PipelineStepIdentifier]
+  /** aww the steps which a-awe exekawaii~d by a [[pipewine]] in the owdew in which they a-awe wun */
+  vaw stepsinowdew: seq[pipewinestepidentifiew]
 
-  val stepsAsyncFeatureHydrationCanBeCompletedBy: Set[PipelineStepIdentifier] = Set.empty
+  v-vaw s-stepsasyncfeatuwehydwationcanbecompwetedby: set[pipewinestepidentifiew] = set.empty
 }

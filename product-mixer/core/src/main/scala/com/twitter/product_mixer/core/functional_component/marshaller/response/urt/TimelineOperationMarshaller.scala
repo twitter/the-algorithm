@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.operation.CursorOperationMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineOperation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.twanspowtmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.opewation.cuwsowopewationmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineopewation
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.cuwsowopewation
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => uwt}
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class TimelineOperationMarshaller @Inject() (
-  cursorOperationMarshaller: CursorOperationMarshaller) {
+@singweton
+cwass timewineopewationmawshawwew @inject() (
+  cuwsowopewationmawshawwew: cuwsowopewationmawshawwew) {
 
-  def apply(operation: TimelineOperation): urt.TimelineOperation = operation match {
-    case cursorOperation: CursorOperation => cursorOperationMarshaller(cursorOperation)
+  d-def appwy(opewation: timewineopewation): uwt.timewineopewation = o-opewation match {
+    case c-cuwsowopewation: cuwsowopewation => cuwsowopewationmawshawwew(cuwsowopewation)
     case _ =>
-      throw new UnsupportedTimelineOperationException(operation)
+      t-thwow nyew unsuppowtedtimewineopewationexception(opewation)
   }
 }
 
-class UnsupportedTimelineOperationException(operation: TimelineOperation)
-    extends UnsupportedOperationException(
-      "Unsupported timeline operation " + TransportMarshaller.getSimpleName(operation.getClass))
+cwass unsuppowtedtimewineopewationexception(opewation: t-timewineopewation)
+    e-extends unsuppowtedopewationexception(
+      "unsuppowted timewine opewation " + twanspowtmawshawwew.getsimpwename(opewation.getcwass))

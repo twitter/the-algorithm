@@ -1,35 +1,35 @@
-package com.twitter.home_mixer.product.list_recommended_users.filter
+package com.twittew.home_mixew.pwoduct.wist_wecommended_usews.fiwtew
 
-import com.twitter.home_mixer.product.list_recommended_users.feature_hydrator.RecentListMembersFeature
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersQuery
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.stitch.Stitch
+impowt com.twittew.home_mixew.pwoduct.wist_wecommended_usews.featuwe_hydwatow.wecentwistmembewsfeatuwe
+i-impowt c-com.twittew.home_mixew.pwoduct.wist_wecommended_usews.modew.wistwecommendedusewsquewy
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.usewcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt com.twittew.stitch.stitch
 
-object PreviouslyServedUsersFilter extends Filter[ListRecommendedUsersQuery, UserCandidate] {
+o-object pweviouswysewvedusewsfiwtew extends fiwtew[wistwecommendedusewsquewy, (⑅˘꒳˘) u-usewcandidate] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("PreviouslyServedUsers")
+  ovewwide v-vaw identifiew: fiwtewidentifiew = fiwtewidentifiew("pweviouswysewvedusews")
 
-  override def apply(
-    query: ListRecommendedUsersQuery,
-    candidates: Seq[CandidateWithFeatures[UserCandidate]]
-  ): Stitch[FilterResult[UserCandidate]] = {
+  ovewwide def a-appwy(
+    quewy: wistwecommendedusewsquewy, rawr x3
+    c-candidates: s-seq[candidatewithfeatuwes[usewcandidate]]
+  ): stitch[fiwtewwesuwt[usewcandidate]] = {
 
-    val recentListMembers = query.features.map(_.getOrElse(RecentListMembersFeature, Seq.empty))
+    vaw wecentwistmembews = quewy.featuwes.map(_.getowewse(wecentwistmembewsfeatuwe, (✿oωo) seq.empty))
 
-    val servedUserIds = query.pipelineCursor.map(_.excludedIds)
+    v-vaw sewvedusewids = quewy.pipewinecuwsow.map(_.excwudedids)
 
-    val excludedUserIds = (recentListMembers.getOrElse(Seq.empty) ++
-      query.selectedUserIds.getOrElse(Seq.empty) ++
-      query.excludedUserIds.getOrElse(Seq.empty) ++
-      servedUserIds.getOrElse(Seq.empty)).toSet
+    vaw excwudedusewids = (wecentwistmembews.getowewse(seq.empty) ++
+      quewy.sewectedusewids.getowewse(seq.empty) ++
+      q-quewy.excwudedusewids.getowewse(seq.empty) ++
+      sewvedusewids.getowewse(seq.empty)).toset
 
-    val (removed, kept) =
-      candidates.map(_.candidate).partition(candidate => excludedUserIds.contains(candidate.id))
+    v-vaw (wemoved, (ˆ ﻌ ˆ)♡ k-kept) =
+      c-candidates.map(_.candidate).pawtition(candidate => e-excwudedusewids.contains(candidate.id))
 
-    Stitch.value(FilterResult(kept = kept, removed = removed))
+    stitch.vawue(fiwtewwesuwt(kept = kept, (˘ω˘) w-wemoved = wemoved))
   }
 }

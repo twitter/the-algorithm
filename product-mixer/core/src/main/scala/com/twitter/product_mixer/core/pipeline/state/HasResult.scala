@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.pipeline.state
+package com.twittew.pwoduct_mixew.cowe.pipewine.state
 
 /**
- * Defines how to build a result from a pipeline state. Pipeline States should extend this and
- * implement [[buildResult]] which computes the final result from their current state.
- * @tparam Result Type of result
+ * defines h-how to buiwd a-a wesuwt fwom a-a pipewine state. >_< p-pipewine states s-shouwd extend t-this and
+ * impwement [[buiwdwesuwt]] w-which computes t-the finaw wesuwt fwom theiw cuwwent state.
+ * @tpawam wesuwt type of wesuwt
  */
-trait HasResult[+Result] {
-  def buildResult(): Result
+t-twait haswesuwt[+wesuwt] {
+  def buiwdwesuwt(): wesuwt
 }

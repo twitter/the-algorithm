@@ -1,69 +1,69 @@
-package com.twitter.servo.util
+package com.twittew.sewvo.utiw
 
-import com.twitter.logging.{Level, Logger}
-import com.twitter.util.{Duration, Time}
-import com.twitter.conversions.DurationOps._
-import java.util.concurrent.atomic.AtomicLong
+impowt com.twittew.wogging.{wevew, >_< w-woggew}
+impowt c-com.twittew.utiw.{duwation, -.- t-time}
+i-impowt com.twittew.convewsions.duwationops._
+i-impowt java.utiw.concuwwent.atomic.atomicwong
 
-object RateLimitingLogger {
-  private[util] val DefaultLoggerName = "servo"
-  private[util] val DefaultLogInterval = 500.milliseconds
+object w-watewimitingwoggew {
+  p-pwivate[utiw] v-vaw defauwtwoggewname = "sewvo"
+  pwivate[utiw] vaw defauwtwogintewvaw = 500.miwwiseconds
 }
 
 /**
- * Class that makes it easier to rate-limit log messages, either by call site, or by
- * logical grouping of messages.
- * @param interval the interval in which messages should be rate limited
- * @param logger the logger to use
+ * cwass that makes it easiew to wate-wimit w-wog messages, 🥺 eithew by caww site, (U ﹏ U) ow by
+ * w-wogicaw gwouping of messages. >w<
+ * @pawam i-intewvaw the intewvaw in which messages shouwd be wate w-wimited
+ * @pawam woggew the w-woggew to use
  */
-class RateLimitingLogger(
-  interval: Duration = RateLimitingLogger.DefaultLogInterval,
-  logger: Logger = Logger(RateLimitingLogger.DefaultLoggerName)) {
-  private[this] val last: AtomicLong = new AtomicLong(0L)
-  private[this] val sinceLast: AtomicLong = new AtomicLong(0L)
+c-cwass watewimitingwoggew(
+  intewvaw: duwation = watewimitingwoggew.defauwtwogintewvaw, mya
+  woggew: w-woggew = woggew(watewimitingwoggew.defauwtwoggewname)) {
+  pwivate[this] vaw wast: atomicwong = nyew atomicwong(0w)
+  pwivate[this] v-vaw sincewast: atomicwong = n-nyew atomicwong(0w)
 
-  private[this] val intervalNanos = interval.inNanoseconds
-  private[this] val intervalMsString = interval.inMilliseconds.toString
+  p-pwivate[this] v-vaw intewvawnanos = i-intewvaw.innanoseconds
+  pwivate[this] vaw intewvawmsstwing = i-intewvaw.inmiwwiseconds.tostwing
 
-  private[this] def limited(action: Long => Unit): Unit = {
-    val now = Time.now.inNanoseconds
-    val lastNanos = last.get()
-    if (now - lastNanos > intervalNanos) {
-      if (last.compareAndSet(lastNanos, now)) {
-        val currentSinceLast = sinceLast.getAndSet(0L)
-        action(currentSinceLast)
+  pwivate[this] def wimited(action: w-wong => unit): unit = {
+    vaw now = time.now.innanoseconds
+    vaw wastnanos = wast.get()
+    if (now - wastnanos > i-intewvawnanos) {
+      if (wast.compaweandset(wastnanos, >w< n-nyow)) {
+        v-vaw cuwwentsincewast = s-sincewast.getandset(0w)
+        action(cuwwentsincewast)
       }
-    } else {
-      sinceLast.incrementAndGet()
+    } ewse {
+      sincewast.incwementandget()
     }
   }
 
-  def log(msg: => String, level: Level = Level.ERROR): Unit = {
-    limited { currentSinceLast: Long =>
-      logger(
-        level,
-        "%s (group is logged at most once every %s ms%s)".format(
-          msg,
-          intervalMsString,
-          if (currentSinceLast > 0) {
-            s", ${currentSinceLast} occurrences since last"
-          } else ""
+  def wog(msg: => s-stwing, nyaa~~ wevew: w-wevew = wevew.ewwow): unit = {
+    w-wimited { c-cuwwentsincewast: wong =>
+      w-woggew(
+        wevew, (✿oωo)
+        "%s (gwoup i-is wogged at most once evewy %s ms%s)".fowmat(
+          m-msg, ʘwʘ
+          intewvawmsstwing, (ˆ ﻌ ˆ)♡
+          if (cuwwentsincewast > 0) {
+            s-s", 😳😳😳 ${cuwwentsincewast} occuwwences since w-wast"
+          } e-ewse ""
         )
       )
     }
   }
 
-  def logThrowable(t: Throwable, msg: => String, level: Level = Level.ERROR): Unit = {
-    limited { currentSinceLast: Long =>
-      logger(
-        level,
-        t,
-        "%s (group is logged at most once every %s ms%s)".format(
-          msg,
-          intervalMsString,
-          if (currentSinceLast > 0) {
-            s", ${currentSinceLast} occurrences since last"
-          } else ""
+  def wogthwowabwe(t: thwowabwe, :3 msg: => stwing, OwO wevew: wevew = wevew.ewwow): unit = {
+    w-wimited { cuwwentsincewast: wong =>
+      w-woggew(
+        wevew,
+        t-t, (U ﹏ U)
+        "%s (gwoup i-is wogged at most o-once evewy %s ms%s)".fowmat(
+          msg, >w<
+          intewvawmsstwing, (U ﹏ U)
+          i-if (cuwwentsincewast > 0) {
+            s", 😳 ${cuwwentsincewast} occuwwences since wast"
+          } ewse ""
         )
       )
     }

@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DcmUrlOverrideType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.UnknownUrlOverrideType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.UrlOverrideType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.dcmuwwuvwwidetype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.unknownuwwuvwwidetype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.uwwuvwwidetype
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class UrlOverrideTypeMarshaller @Inject() () {
+@singweton
+cwass uwwuvwwidetypemawshawwew @inject() () {
 
-  def apply(urlOverrideType: UrlOverrideType): urt.UrlOverrideType = urlOverrideType match {
-    case UnknownUrlOverrideType => urt.UrlOverrideType.Unknown
-    case DcmUrlOverrideType => urt.UrlOverrideType.Dcm
+  def appwy(uwwuvwwidetype: u-uwwuvwwidetype): uwt.uwwuvwwidetype = uwwuvwwidetype m-match {
+    case unknownuwwuvwwidetype => u-uwt.uwwuvwwidetype.unknown
+    case dcmuwwuvwwidetype => uwt.uwwuvwwidetype.dcm
   }
 }

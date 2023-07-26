@@ -1,7 +1,7 @@
-package com.twitter.search.ingester.pipeline.util;
+package com.twittew.seawch.ingestew.pipewine.utiw;
 
-public class ResponseNotReturnedException extends Exception {
-  ResponseNotReturnedException(Object request) {
-    super("Response not returned in batch for request: " + request);
+pubwic cwass w-wesponsenotwetuwnedexception e-extends e-exception {
+  w-wesponsenotwetuwnedexception(object w-wequest) {
+    s-supew("wesponse n-nyot wetuwned i-in batch fow wequest: " + wequest);
   }
 }

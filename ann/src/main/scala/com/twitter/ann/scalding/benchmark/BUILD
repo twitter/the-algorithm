@@ -1,56 +1,56 @@
-scala_library(
-    name = "benchmark",
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+scawa_wibwawy(
+    nyame = "benchmawk", mya
+    souwces = ["*.scawa"], mya
+    c-compiwew_option_sets = ["fataw_wawnings"], 😳
+    p-pwatfowm = "java8", XD
+    t-tags = [
+        "bazew-compatibwe", :3
+        "bazew-compatibwe:migwated", 😳😳😳
+        "bazew-onwy", -.-
     ],
-    dependencies = [
-        ":user_item_knn-scala",
-        "3rdparty/src/jvm/com/twitter/scalding:args",
-        "3rdparty/src/jvm/com/twitter/scalding:core",
-        "3rdparty/src/jvm/com/twitter/scalding:date",
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/scala/com/twitter/ann/scalding/offline",
-        "src/scala/com/twitter/scalding_internal/dalv2",
-        "src/scala/com/twitter/scalding_internal/job",
-        "src/scala/com/twitter/scalding_internal/job/analytics_batch",
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-    ],
-)
-
-hadoop_binary(
-    name = "benchmark-adhoc",
-    main = "com.twitter.scalding.Tool",
-    platform = "java8",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [
-        ":benchmark",
-        "3rdparty/jvm/org/slf4j:slf4j-jdk14",
+    d-dependencies = [
+        ":usew_item_knn-scawa", ( ͡o ω ͡o )
+        "3wdpawty/swc/jvm/com/twittew/scawding:awgs", rawr x3
+        "3wdpawty/swc/jvm/com/twittew/scawding:cowe", nyaa~~
+        "3wdpawty/swc/jvm/com/twittew/scawding:date", /(^•ω•^)
+        "ann/swc/main/scawa/com/twittew/ann/common", rawr
+        "ann/swc/main/scawa/com/twittew/ann/scawding/offwine", OwO
+        "swc/scawa/com/twittew/scawding_intewnaw/dawv2",
+        "swc/scawa/com/twittew/scawding_intewnaw/job", (U ﹏ U)
+        "swc/scawa/com/twittew/scawding_intewnaw/job/anawytics_batch", >_<
+        "swc/scawa/com/twittew/scawding_intewnaw/muwtifowmat/fowmat", rawr x3
     ],
 )
 
-create_datasets(
-    base_name = "user_item_knn",
-    description = "List of the top recommendations per search entity (user)",
-    java_schema = "com.twitter.ann.knn.thriftjava.Knn",
-    platform = "java8",
-    role = "cortex-mlx",
-    scala_schema = "com.twitter.ann.knn.thriftscala.Knn",
-    segment_type = "partitioned",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "ann/src/main/thrift/com/twitter/ann/knn:thrift-java",
+h-hadoop_binawy(
+    n-nyame = "benchmawk-adhoc",
+    m-main = "com.twittew.scawding.toow", mya
+    p-pwatfowm = "java8", nyaa~~
+    wuntime_pwatfowm = "java8", (⑅˘꒳˘)
+    tags = [
+        "bazew-compatibwe", rawr x3
+        "bazew-compatibwe:migwated", (✿oωo)
+        "bazew-onwy", (ˆ ﻌ ˆ)♡
     ],
-    scala_dependencies = [
-        "ann/src/main/thrift/com/twitter/ann/knn:thrift-scala",
+    dependencies = [
+        ":benchmawk", (˘ω˘)
+        "3wdpawty/jvm/owg/swf4j:swf4j-jdk14", (⑅˘꒳˘)
     ],
+)
+
+cweate_datasets(
+    b-base_name = "usew_item_knn", (///ˬ///✿)
+    descwiption = "wist of the t-top wecommendations pew seawch e-entity (usew)", 😳😳😳
+    java_schema = "com.twittew.ann.knn.thwiftjava.knn",
+    pwatfowm = "java8", 🥺
+    wowe = "cowtex-mwx", mya
+    scawa_schema = "com.twittew.ann.knn.thwiftscawa.knn", 🥺
+    s-segment_type = "pawtitioned", >_<
+    tags = ["bazew-compatibwe"],
+    j-java_dependencies = [
+        "ann/swc/main/thwift/com/twittew/ann/knn:thwift-java", >_<
+    ], (⑅˘꒳˘)
+    s-scawa_dependencies = [
+        "ann/swc/main/thwift/com/twittew/ann/knn:thwift-scawa", /(^•ω•^)
+    ], rawr x3
 )

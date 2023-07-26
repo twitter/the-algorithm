@@ -1,20 +1,20 @@
-package com.twitter.follow_recommendations.common.clients.common
+package com.twittew.fowwow_wecommendations.common.cwients.common
 
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.thrift.Protocols
-import com.twitter.follow_recommendations.common.constants.ServiceConstants._
-import com.twitter.inject.thrift.modules.ThriftClientModule
-import scala.reflect.ClassTag
+impowt com.twittew.finagwe.thwiftmux
+i-impowt com.twittew.finagwe.thwift.pwotocows
+i-impowt com.twittew.fowwow_wecommendations.common.constants.sewviceconstants._
+i-impowt com.twittew.inject.thwift.moduwes.thwiftcwientmoduwe
+i-impowt s-scawa.wefwect.cwasstag
 
 /**
- * basic client configurations that we apply for all of our clients go in here
+ * b-basic cwient configuwations t-that w-we appwy fow aww of ouw cwients go in hewe
  */
-abstract class BaseClientModule[T: ClassTag] extends ThriftClientModule[T] {
-  def configureThriftMuxClient(client: ThriftMux.Client): ThriftMux.Client = {
-    client
-      .withProtocolFactory(
-        Protocols.binaryFactory(
-          stringLengthLimit = StringLengthLimit,
-          containerLengthLimit = ContainerLengthLimit))
+abstwact cwass basecwientmoduwe[t: c-cwasstag] extends thwiftcwientmoduwe[t] {
+  def configuwethwiftmuxcwient(cwient: t-thwiftmux.cwient): thwiftmux.cwient = {
+    c-cwient
+      .withpwotocowfactowy(
+        pwotocows.binawyfactowy(
+          stwingwengthwimit = stwingwengthwimit, ^^;;
+          c-containewwengthwimit = containewwengthwimit))
   }
 }

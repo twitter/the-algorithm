@@ -1,67 +1,67 @@
-package com.twitter.search.earlybird.search.facets;
+package com.twittew.seawch.eawwybiwd.seawch.facets;
 
-import java.util.Map;
-import java.util.Set;
+impowt java.utiw.map;
+i-impowt j-java.utiw.set;
 
-import com.twitter.search.core.earlybird.facets.FacetIDMap;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.facets.FacetTermCollector;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultExtraMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetidmap;
+i-impowt c-com.twittew.seawch.cowe.eawwybiwd.facets.facetwabewpwovidew;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.facettewmcowwectow;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwt;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtextwametadata;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtmetadata;
 
-public abstract class AbstractFacetTermCollector implements FacetTermCollector {
-  private Map<String, FacetLabelProvider> facetLabelProviders;
-  private FacetIDMap facetIdMap;
+pubwic abstwact cwass a-abstwactfacettewmcowwectow impwements facettewmcowwectow {
+  p-pwivate map<stwing, >_< f-facetwabewpwovidew> facetwabewpwovidews;
+  pwivate facetidmap facetidmap;
 
   /**
-   * Populates the given ThriftSearchResult instance with the results collected by this collector
-   * and clears all collected results in this collector.
+   * p-popuwates the given thwiftseawchwesuwt i-instance w-with the wesuwts cowwected by this cowwectow
+   * and cweaws aww cowwected w-wesuwts in this cowwectow. -.-
    *
-   * @param result The ThriftSearchResult instance to be populated with the results collected in
-   *               this collector.
+   * @pawam wesuwt the thwiftseawchwesuwt instance t-to be popuwated with the wesuwts c-cowwected i-in
+   *               t-this cowwectow. 🥺
    */
-  public abstract void fillResultAndClear(ThriftSearchResult result);
+  p-pubwic abstwact void fiwwwesuwtandcweaw(thwiftseawchwesuwt w-wesuwt);
 
-  public void resetFacetLabelProviders(
-      Map<String, FacetLabelProvider> facetLabelProvidersToReset, FacetIDMap facetIdMapToReset) {
-    this.facetLabelProviders = facetLabelProvidersToReset;
-    this.facetIdMap = facetIdMapToReset;
+  pubwic void wesetfacetwabewpwovidews(
+      m-map<stwing, (U ﹏ U) facetwabewpwovidew> facetwabewpwovidewstoweset, >w< facetidmap facetidmaptoweset) {
+    this.facetwabewpwovidews = facetwabewpwovidewstoweset;
+    t-this.facetidmap = facetidmaptoweset;
   }
 
-  String findFacetName(int fieldId) {
-    return fieldId < 0 ? null : facetIdMap.getFacetFieldByFacetID(fieldId).getFacetName();
+  s-stwing findfacetname(int f-fiewdid) {
+    w-wetuwn fiewdid < 0 ? nyuww : facetidmap.getfacetfiewdbyfacetid(fiewdid).getfacetname();
   }
 
-  protected ThriftSearchResultExtraMetadata getExtraMetadata(ThriftSearchResult result) {
-    ThriftSearchResultMetadata metadata = result.getMetadata();
-    if (!metadata.isSetExtraMetadata()) {
-      metadata.setExtraMetadata(new ThriftSearchResultExtraMetadata());
+  pwotected thwiftseawchwesuwtextwametadata getextwametadata(thwiftseawchwesuwt w-wesuwt) {
+    t-thwiftseawchwesuwtmetadata metadata = w-wesuwt.getmetadata();
+    i-if (!metadata.issetextwametadata()) {
+      metadata.setextwametadata(new t-thwiftseawchwesuwtextwametadata());
     }
-    return metadata.getExtraMetadata();
+    wetuwn metadata.getextwametadata();
   }
 
-  protected String getTermFromProvider(
-      String facetName, long termID, FacetLabelProvider provider) {
-    return provider.getLabelAccessor().getTermText(termID);
+  p-pwotected stwing gettewmfwompwovidew(
+      stwing f-facetname, mya wong tewmid, >w< facetwabewpwovidew p-pwovidew) {
+    wetuwn p-pwovidew.getwabewaccessow().gettewmtext(tewmid);
   }
 
-  protected String getTermFromFacet(long termID, int fieldID, Set<String> facetsToCollectFrom) {
-    if (termID == EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
-      return null;
+  p-pwotected stwing gettewmfwomfacet(wong tewmid, nyaa~~ int fiewdid, set<stwing> facetstocowwectfwom) {
+    if (tewmid == eawwybiwdindexsegmentatomicweadew.tewm_not_found) {
+      w-wetuwn nyuww;
     }
 
-    String facetName = findFacetName(fieldID);
-    if (!facetsToCollectFrom.contains(facetName)) {
-      return null;
+    stwing f-facetname = findfacetname(fiewdid);
+    i-if (!facetstocowwectfwom.contains(facetname)) {
+      w-wetuwn nyuww;
     }
 
-    final FacetLabelProvider provider = facetLabelProviders.get(facetName);
-    if (provider == null) {
-      return null;
+    f-finaw facetwabewpwovidew pwovidew = facetwabewpwovidews.get(facetname);
+    i-if (pwovidew == nyuww) {
+      wetuwn nyuww;
     }
 
-    return getTermFromProvider(facetName, termID, provider);
+    wetuwn gettewmfwompwovidew(facetname, (✿oωo) tewmid, ʘwʘ pwovidew);
   }
 }

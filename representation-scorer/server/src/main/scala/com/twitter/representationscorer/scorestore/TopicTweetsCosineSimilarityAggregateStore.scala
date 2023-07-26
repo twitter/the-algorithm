@@ -1,148 +1,148 @@
-package com.twitter.representationscorer.scorestore
+package com.twittew.wepwesentationscowew.scowestowe
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.representationscorer.scorestore.TopicTweetsCosineSimilarityAggregateStore.ScoreKey
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.score.AggregatedScoreStore
-import com.twitter.simclusters_v2.thriftscala.ScoreInternalId.GenericPairScoreId
-import com.twitter.simclusters_v2.thriftscala.ScoringAlgorithm.CortexTopicTweetLabel
-import com.twitter.simclusters_v2.thriftscala.{
-  EmbeddingType,
-  InternalId,
-  ModelVersion,
-  ScoreInternalId,
-  ScoringAlgorithm,
-  SimClustersEmbeddingId,
-  TopicId,
-  Score => ThriftScore,
-  ScoreId => ThriftScoreId,
-  SimClustersEmbeddingPairScoreId => ThriftSimClustersEmbeddingPairScoreId
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.utiw.statsutiw
+i-impowt com.twittew.wepwesentationscowew.scowestowe.topictweetscosinesimiwawityaggwegatestowe.scowekey
+i-impowt c-com.twittew.simcwustews_v2.common.tweetid
+i-impowt c-com.twittew.simcwustews_v2.scowe.aggwegatedscowestowe
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.scoweintewnawid.genewicpaiwscoweid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.scowingawgowithm.cowtextopictweetwabew
+impowt com.twittew.simcwustews_v2.thwiftscawa.{
+  embeddingtype, ʘwʘ
+  i-intewnawid, 😳😳😳
+  modewvewsion, ^^;;
+  scoweintewnawid, o.O
+  scowingawgowithm, (///ˬ///✿)
+  simcwustewsembeddingid,
+  t-topicid, σωσ
+  scowe => thwiftscowe, nyaa~~
+  s-scoweid => thwiftscoweid, ^^;;
+  simcwustewsembeddingpaiwscoweid => thwiftsimcwustewsembeddingpaiwscoweid
 }
-import com.twitter.storehaus.ReadableStore
-import com.twitter.topic_recos.common.Configs.{DefaultModelVersion, MinCosineSimilarityScore}
-import com.twitter.topic_recos.common._
-import com.twitter.util.Future
+impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.topic_wecos.common.configs.{defauwtmodewvewsion, ^•ﻌ•^ mincosinesimiwawityscowe}
+i-impowt com.twittew.topic_wecos.common._
+i-impowt com.twittew.utiw.futuwe
 
 /**
- * Calculates the cosine similarity scores of arbitrary combinations of TopicEmbeddings and
- * TweetEmbeddings.
- * The class has 2 uses:
- * 1. For internal uses. TSP will call this store to fetch the raw scores for (topic, tweet) with
- * all available embedding types. We calculate all the scores here, so the caller can do filtering
- * & score caching on their side. This will make it possible to DDG different embedding scores.
+ * cawcuwates the cosine simiwawity scowes of awbitwawy c-combinations of topicembeddings and
+ * tweetembeddings. σωσ
+ * the cwass has 2 uses:
+ * 1. -.- fow i-intewnaw uses. ^^;; tsp wiww caww this s-stowe to fetch t-the waw scowes f-fow (topic, XD tweet) w-with
+ * aww avaiwabwe embedding types. 🥺 we cawcuwate a-aww the scowes hewe, òωó so the cawwew can d-do fiwtewing
+ * & scowe caching on theiw side. (ˆ ﻌ ˆ)♡ this wiww make it possibwe to ddg diffewent embedding s-scowes. -.-
  *
- * 2. For external calls from Cortex. We return true (or 1.0) for any given (topic, tweet) if their
- * cosine similarity passes the threshold for any of the embedding types.
- * The expected input type is
- * ScoreId(
- *  PairEmbeddingCosineSimilarity,
- *  GenericPairScoreId(TopicId, TweetId)
+ * 2. :3 fow extewnaw c-cawws fwom cowtex. ʘwʘ w-we wetuwn t-twue (ow 1.0) fow any given (topic, 🥺 tweet) if theiw
+ * cosine simiwawity p-passes t-the thweshowd fow any of the embedding t-types. >_<
+ * t-the expected input type is
+ * scoweid(
+ *  p-paiwembeddingcosinesimiwawity, ʘwʘ
+ *  genewicpaiwscoweid(topicid, (˘ω˘) tweetid)
  * )
  */
-case class TopicTweetsCosineSimilarityAggregateStore(
-  scoreKeys: Seq[ScoreKey],
-  statsReceiver: StatsReceiver)
-    extends AggregatedScoreStore {
+c-case cwass topictweetscosinesimiwawityaggwegatestowe(
+  scowekeys: s-seq[scowekey], (✿oωo)
+  statsweceivew: s-statsweceivew)
+    extends aggwegatedscowestowe {
 
-  def toCortexScore(scoresMap: Map[ScoreKey, Double]): Double = {
-    val passThreshold = scoresMap.exists {
-      case (_, score) => score >= MinCosineSimilarityScore
+  d-def tocowtexscowe(scowesmap: m-map[scowekey, (///ˬ///✿) doubwe]): doubwe = {
+    vaw passthweshowd = scowesmap.exists {
+      case (_, rawr x3 scowe) => scowe >= mincosinesimiwawityscowe
     }
-    if (passThreshold) 1.0 else 0.0
+    i-if (passthweshowd) 1.0 e-ewse 0.0
   }
 
   /**
-   * To be called by Cortex through Unified Score API ONLY. Calculates all possible (topic, tweet),
-   * return 1.0 if any of the embedding scores passes the minimum threshold.
+   * to be cawwed b-by cowtex thwough u-unified scowe a-api onwy. -.- cawcuwates aww possibwe (topic, ^^ tweet), (⑅˘꒳˘)
+   * wetuwn 1.0 i-if any of the embedding scowes passes the minimum thweshowd. nyaa~~
    *
-   * Expect a GenericPairScoreId(PairEmbeddingCosineSimilarity, (TopicId, TweetId)) as input
+   * expect a-a genewicpaiwscoweid(paiwembeddingcosinesimiwawity, /(^•ω•^) (topicid, (U ﹏ U) tweetid)) as input
    */
-  override def get(k: ThriftScoreId): Future[Option[ThriftScore]] = {
-    StatsUtil.trackOptionStats(statsReceiver) {
-      (k.algorithm, k.internalId) match {
-        case (CortexTopicTweetLabel, GenericPairScoreId(genericPairScoreId)) =>
-          (genericPairScoreId.id1, genericPairScoreId.id2) match {
-            case (InternalId.TopicId(topicId), InternalId.TweetId(tweetId)) =>
-              TopicTweetsCosineSimilarityAggregateStore
-                .getRawScoresMap(topicId, tweetId, scoreKeys, scoreFacadeStore)
-                .map { scoresMap => Some(ThriftScore(toCortexScore(scoresMap))) }
-            case (InternalId.TweetId(tweetId), InternalId.TopicId(topicId)) =>
-              TopicTweetsCosineSimilarityAggregateStore
-                .getRawScoresMap(topicId, tweetId, scoreKeys, scoreFacadeStore)
-                .map { scoresMap => Some(ThriftScore(toCortexScore(scoresMap))) }
-            case _ =>
-              Future.None
-            // Do not accept other InternalId combinations
+  o-ovewwide d-def get(k: thwiftscoweid): futuwe[option[thwiftscowe]] = {
+    s-statsutiw.twackoptionstats(statsweceivew) {
+      (k.awgowithm, 😳😳😳 k.intewnawid) m-match {
+        c-case (cowtextopictweetwabew, >w< g-genewicpaiwscoweid(genewicpaiwscoweid)) =>
+          (genewicpaiwscoweid.id1, XD g-genewicpaiwscoweid.id2) match {
+            case (intewnawid.topicid(topicid), o.O i-intewnawid.tweetid(tweetid)) =>
+              t-topictweetscosinesimiwawityaggwegatestowe
+                .getwawscowesmap(topicid, mya t-tweetid, s-scowekeys, 🥺 s-scowefacadestowe)
+                .map { scowesmap => some(thwiftscowe(tocowtexscowe(scowesmap))) }
+            case (intewnawid.tweetid(tweetid), ^^;; i-intewnawid.topicid(topicid)) =>
+              topictweetscosinesimiwawityaggwegatestowe
+                .getwawscowesmap(topicid, :3 tweetid, scowekeys, (U ﹏ U) scowefacadestowe)
+                .map { scowesmap => some(thwiftscowe(tocowtexscowe(scowesmap))) }
+            c-case _ =>
+              futuwe.none
+            // do nyot accept othew i-intewnawid combinations
           }
-        case _ =>
-          // Do not accept other Id types for now
-          Future.None
+        c-case _ =>
+          // d-do nyot accept othew id types f-fow nyow
+          futuwe.none
       }
     }
   }
 }
 
-object TopicTweetsCosineSimilarityAggregateStore {
+o-object topictweetscosinesimiwawityaggwegatestowe {
 
-  val TopicEmbeddingTypes: Seq[EmbeddingType] =
-    Seq(
-      EmbeddingType.FavTfgTopic,
-      EmbeddingType.LogFavBasedKgoApeTopic
+  v-vaw topicembeddingtypes: seq[embeddingtype] =
+    seq(
+      embeddingtype.favtfgtopic, OwO
+      embeddingtype.wogfavbasedkgoapetopic
     )
 
-  // Add the new embedding types if want to test the new Tweet embedding performance.
-  val TweetEmbeddingTypes: Seq[EmbeddingType] = Seq(EmbeddingType.LogFavBasedTweet)
+  // add t-the nyew embedding types if want t-to test the nyew tweet embedding p-pewfowmance. 😳😳😳
+  v-vaw tweetembeddingtypes: seq[embeddingtype] = seq(embeddingtype.wogfavbasedtweet)
 
-  val ModelVersions: Seq[ModelVersion] =
-    Seq(DefaultModelVersion)
+  vaw modewvewsions: s-seq[modewvewsion] =
+    s-seq(defauwtmodewvewsion)
 
-  val DefaultScoreKeys: Seq[ScoreKey] = {
-    for {
-      modelVersion <- ModelVersions
-      topicEmbeddingType <- TopicEmbeddingTypes
-      tweetEmbeddingType <- TweetEmbeddingTypes
-    } yield {
-      ScoreKey(
-        topicEmbeddingType = topicEmbeddingType,
-        tweetEmbeddingType = tweetEmbeddingType,
-        modelVersion = modelVersion
+  vaw d-defauwtscowekeys: s-seq[scowekey] = {
+    fow {
+      modewvewsion <- modewvewsions
+      topicembeddingtype <- topicembeddingtypes
+      t-tweetembeddingtype <- tweetembeddingtypes
+    } y-yiewd {
+      s-scowekey(
+        topicembeddingtype = t-topicembeddingtype, (ˆ ﻌ ˆ)♡
+        t-tweetembeddingtype = tweetembeddingtype, XD
+        modewvewsion = m-modewvewsion
       )
     }
   }
-  case class ScoreKey(
-    topicEmbeddingType: EmbeddingType,
-    tweetEmbeddingType: EmbeddingType,
-    modelVersion: ModelVersion)
+  case cwass scowekey(
+    topicembeddingtype: embeddingtype, (ˆ ﻌ ˆ)♡
+    t-tweetembeddingtype: embeddingtype, ( ͡o ω ͡o )
+    m-modewvewsion: modewvewsion)
 
-  def getRawScoresMap(
-    topicId: TopicId,
-    tweetId: TweetId,
-    scoreKeys: Seq[ScoreKey],
-    uniformScoringStore: ReadableStore[ThriftScoreId, ThriftScore]
-  ): Future[Map[ScoreKey, Double]] = {
-    val scoresMapFut = scoreKeys.map { key =>
-      val scoreInternalId = ScoreInternalId.SimClustersEmbeddingPairScoreId(
-        ThriftSimClustersEmbeddingPairScoreId(
-          buildTopicEmbedding(topicId, key.topicEmbeddingType, key.modelVersion),
-          SimClustersEmbeddingId(
-            key.tweetEmbeddingType,
-            key.modelVersion,
-            InternalId.TweetId(tweetId))
+  def getwawscowesmap(
+    t-topicid: t-topicid, rawr x3
+    tweetid: tweetid, nyaa~~
+    scowekeys: seq[scowekey], >_<
+    u-unifowmscowingstowe: weadabwestowe[thwiftscoweid, ^^;; thwiftscowe]
+  ): futuwe[map[scowekey, (ˆ ﻌ ˆ)♡ doubwe]] = {
+    v-vaw scowesmapfut = scowekeys.map { k-key =>
+      vaw s-scoweintewnawid = scoweintewnawid.simcwustewsembeddingpaiwscoweid(
+        thwiftsimcwustewsembeddingpaiwscoweid(
+          buiwdtopicembedding(topicid, ^^;; k-key.topicembeddingtype, (⑅˘꒳˘) k-key.modewvewsion), rawr x3
+          simcwustewsembeddingid(
+            key.tweetembeddingtype, (///ˬ///✿)
+            key.modewvewsion, 🥺
+            i-intewnawid.tweetid(tweetid))
         ))
-      val scoreFut = uniformScoringStore
+      vaw scowefut = u-unifowmscowingstowe
         .get(
-          ThriftScoreId(
-            algorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity, // Hard code as cosine sim
-            internalId = scoreInternalId
+          thwiftscoweid(
+            awgowithm = scowingawgowithm.paiwembeddingcosinesimiwawity, >_< // hawd code a-as cosine sim
+            intewnawid = s-scoweintewnawid
           ))
-      key -> scoreFut
-    }.toMap
+      k-key -> scowefut
+    }.tomap
 
-    Future
-      .collect(scoresMapFut).map(_.collect {
-        case (key, Some(ThriftScore(score))) =>
-          (key, score)
+    f-futuwe
+      .cowwect(scowesmapfut).map(_.cowwect {
+        case (key, UwU s-some(thwiftscowe(scowe))) =>
+          (key, >_< s-scowe)
       })
   }
 }

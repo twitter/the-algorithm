@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.query.cr_ml_ranker
+package com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.quewy.cw_mw_wankew
 
-import com.twitter.cr_ml_ranker.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.cw_mw_wankew.{thwiftscawa => t-t}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
 /**
- * Builds a query hydrator that hydrates Common Features for the given Query from CR ML Ranker
- * to be later used to call CR ML Ranker for scoring using the desired [[RankingConfigBuilder]]
- * for building the ranking config.
+ * b-buiwds a-a quewy hydwatow t-that hydwates c-common featuwes f-fow the given quewy fwom cw mw wankew
+ * to be watew used to caww cw mw wankew f-fow scowing using the desiwed [[wankingconfigbuiwdew]]
+ * fow buiwding t-the wanking config.
  */
-@Singleton
-class CrMlRankerCommonQueryFeatureHydratorBuilder @Inject() (
-  crMlRanker: t.CrMLRanker.MethodPerEndpoint) {
+@singweton
+c-cwass cwmwwankewcommonquewyfeatuwehydwatowbuiwdew @inject() (
+  cwmwwankew: t.cwmwwankew.methodpewendpoint) {
 
-  def build(rankingConfigSelector: RankingConfigBuilder): CrMlRankerCommonQueryFeatureHydrator =
-    new CrMlRankerCommonQueryFeatureHydrator(crMlRanker, rankingConfigSelector)
+  d-def buiwd(wankingconfigsewectow: w-wankingconfigbuiwdew): c-cwmwwankewcommonquewyfeatuwehydwatow =
+    new cwmwwankewcommonquewyfeatuwehydwatow(cwmwwankew, wankingconfigsewectow)
 }

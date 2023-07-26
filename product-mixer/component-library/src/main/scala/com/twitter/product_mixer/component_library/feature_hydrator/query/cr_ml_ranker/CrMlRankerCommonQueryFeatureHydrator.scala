@@ -1,37 +1,37 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.query.cr_ml_ranker
+package com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.quewy.cw_mw_wankew
 
-import com.twitter.cr_ml_ranker.{thriftscala => t}
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt com.twittew.cw_mw_wankew.{thwiftscawa => t-t}
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
 
-object CrMlRankerCommonFeatures extends Feature[PipelineQuery, t.CommonFeatures]
-object CrMlRankerRankingConfig extends Feature[PipelineQuery, t.RankingConfig]
+object cwmwwankewcommonfeatuwes extends featuwe[pipewinequewy, 😳😳😳 t-t.commonfeatuwes]
+object cwmwwankewwankingconfig e-extends featuwe[pipewinequewy, 🥺 t-t.wankingconfig]
 
-private[cr_ml_ranker] class CrMlRankerCommonQueryFeatureHydrator(
-  crMlRanker: t.CrMLRanker.MethodPerEndpoint,
-  rankingConfigSelector: RankingConfigBuilder)
-    extends QueryFeatureHydrator[PipelineQuery] {
+pwivate[cw_mw_wankew] cwass cwmwwankewcommonquewyfeatuwehydwatow(
+  cwmwwankew: t-t.cwmwwankew.methodpewendpoint, mya
+  wankingconfigsewectow: w-wankingconfigbuiwdew)
+    e-extends quewyfeatuwehydwatow[pipewinequewy] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("CrMlRanker")
+  ovewwide vaw identifiew: featuwehydwatowidentifiew = f-featuwehydwatowidentifiew("cwmwwankew")
 
-  override val features: Set[Feature[_, _]] =
-    Set(CrMlRankerCommonFeatures, CrMlRankerRankingConfig)
+  ovewwide vaw featuwes: set[featuwe[_, 🥺 _]] =
+    set(cwmwwankewcommonfeatuwes, >_< c-cwmwwankewwankingconfig)
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    val rankingConfig = rankingConfigSelector.apply(query)
-    Stitch
-      .callFuture(
-        crMlRanker.getCommonFeatures(
-          t.RankingRequestContext(query.getRequiredUserId, rankingConfig))).map { commonFeatures =>
-        FeatureMapBuilder()
-          .add(CrMlRankerRankingConfig, rankingConfig)
-          .add(CrMlRankerCommonFeatures, commonFeatures)
-          .build()
+  ovewwide d-def hydwate(quewy: p-pipewinequewy): s-stitch[featuwemap] = {
+    v-vaw wankingconfig = wankingconfigsewectow.appwy(quewy)
+    s-stitch
+      .cawwfutuwe(
+        cwmwwankew.getcommonfeatuwes(
+          t.wankingwequestcontext(quewy.getwequiwedusewid, >_< w-wankingconfig))).map { commonfeatuwes =>
+        featuwemapbuiwdew()
+          .add(cwmwwankewwankingconfig, (⑅˘꒳˘) wankingconfig)
+          .add(cwmwwankewcommonfeatuwes, /(^•ω•^) commonfeatuwes)
+          .buiwd()
       }
   }
 }

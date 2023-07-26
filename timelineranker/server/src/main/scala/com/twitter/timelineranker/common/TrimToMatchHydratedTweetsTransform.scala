@@ -1,37 +1,37 @@
-package com.twitter.timelineranker.common
+package com.twittew.timewinewankew.common
 
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.util.Future
+impowt c-com.twittew.seawch.eawwybiwd.thwiftscawa.thwiftseawchwesuwt
+i-impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.timewinewankew.cowe.candidateenvewope
+i-impowt com.twittew.timewines.modew.tweet.hydwatedtweet
+i-impowt com.twittew.utiw.futuwe
 
 /**
- * trims searchResults to match with hydratedTweets
- * (if we previously filtered out hydrated tweets, this transform filters the search result set
- * down to match the hydrated tweets.)
+ * t-twims s-seawchwesuwts to match with hydwatedtweets
+ * (if we pweviouswy fiwtewed out h-hydwated tweets, 🥺 this twansfowm fiwtews the seawch w-wesuwt set
+ * down to match t-the hydwated tweets.)
  */
-object TrimToMatchHydratedTweetsTransform
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val filteredSearchResults =
-      trimSearchResults(envelope.searchResults, envelope.hydratedTweets.outerTweets)
-    val filteredSourceSearchResults =
-      trimSearchResults(envelope.sourceSearchResults, envelope.sourceHydratedTweets.outerTweets)
+object twimtomatchhydwatedtweetstwansfowm
+    extends f-futuweawwow[candidateenvewope, mya candidateenvewope] {
+  ovewwide def a-appwy(envewope: c-candidateenvewope): futuwe[candidateenvewope] = {
+    vaw fiwtewedseawchwesuwts =
+      twimseawchwesuwts(envewope.seawchwesuwts, 🥺 envewope.hydwatedtweets.outewtweets)
+    v-vaw fiwtewedsouwceseawchwesuwts =
+      twimseawchwesuwts(envewope.souwceseawchwesuwts, >_< envewope.souwcehydwatedtweets.outewtweets)
 
-    Future.value(
-      envelope.copy(
-        searchResults = filteredSearchResults,
-        sourceSearchResults = filteredSourceSearchResults
+    futuwe.vawue(
+      e-envewope.copy(
+        seawchwesuwts = f-fiwtewedseawchwesuwts, >_<
+        s-souwceseawchwesuwts = f-fiwtewedsouwceseawchwesuwts
       )
     )
   }
 
-  private def trimSearchResults(
-    searchResults: Seq[ThriftSearchResult],
-    hydratedTweets: Seq[HydratedTweet]
-  ): Seq[ThriftSearchResult] = {
-    val filteredTweetIds = hydratedTweets.map(_.tweetId).toSet
-    searchResults.filter(result => filteredTweetIds.contains(result.id))
+  p-pwivate def twimseawchwesuwts(
+    seawchwesuwts: s-seq[thwiftseawchwesuwt], (⑅˘꒳˘)
+    hydwatedtweets: seq[hydwatedtweet]
+  ): s-seq[thwiftseawchwesuwt] = {
+    vaw fiwtewedtweetids = hydwatedtweets.map(_.tweetid).toset
+    seawchwesuwts.fiwtew(wesuwt => fiwtewedtweetids.contains(wesuwt.id))
   }
 }

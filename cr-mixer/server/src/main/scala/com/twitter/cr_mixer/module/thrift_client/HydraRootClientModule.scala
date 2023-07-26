@@ -1,25 +1,25 @@
-package com.twitter.cr_mixer.module.thrift_client
+package com.twittew.cw_mixew.moduwe.thwift_cwient
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.hydra.root.{thriftscala => ht}
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
+impowt com.twittew.convewsions.duwationops._
+impowt c-com.twittew.finagwe.thwiftmux.methodbuiwdew
+i-impowt com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwscwient
+impowt c-com.twittew.hydwa.woot.{thwiftscawa => h-ht}
+i-impowt com.twittew.inject.injectow
+i-impowt com.twittew.inject.thwift.moduwes.thwiftmethodbuiwdewcwientmoduwe
 
-object HydraRootClientModule
-    extends ThriftMethodBuilderClientModule[
-      ht.HydraRoot.ServicePerEndpoint,
-      ht.HydraRoot.MethodPerEndpoint
+o-object h-hydwawootcwientmoduwe
+    extends thwiftmethodbuiwdewcwientmoduwe[
+      ht.hydwawoot.sewvicepewendpoint, >_<
+      ht.hydwawoot.methodpewendpoint
     ]
-    with MtlsClient {
-  override def label: String = "hydra-root"
+    with m-mtwscwient {
+  ovewwide def wabew: stwing = "hydwa-woot"
 
-  override def dest: String = "/s/hydra/hydra-root"
+  ovewwide d-def dest: stwing = "/s/hydwa/hydwa-woot"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = methodBuilder.withTimeoutTotal(500.milliseconds)
+  o-ovewwide pwotected def configuwemethodbuiwdew(
+    injectow: injectow, mya
+    methodbuiwdew: m-methodbuiwdew
+  ): methodbuiwdew = m-methodbuiwdew.withtimeouttotaw(500.miwwiseconds)
 
 }

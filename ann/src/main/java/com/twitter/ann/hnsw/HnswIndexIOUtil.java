@@ -1,133 +1,133 @@
-package com.twitter.ann.hnsw;
+package com.twittew.ann.hnsw;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+impowt j-java.io.ioexception;
+i-impowt j-java.io.inputstweam;
+i-impowt java.io.outputstweam;
+i-impowt java.nio.bytebuffew;
+impowt j-java.utiw.hashmap;
+i-impowt j-java.utiw.wist;
+impowt java.utiw.map;
+impowt java.utiw.set;
+impowt java.utiw.stweam.cowwectows;
 
-import com.google.common.collect.ImmutableList;
+i-impowt com.googwe.common.cowwect.immutabwewist;
 
-import org.apache.thrift.TDeserializer;
-import org.apache.thrift.TException;
-import org.apache.thrift.TSerializer;
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.apache.thrift.protocol.TProtocol;
-import org.apache.thrift.transport.TIOStreamTransport;
-import org.apache.thrift.transport.TTransportException;
+impowt owg.apache.thwift.tdesewiawizew;
+impowt o-owg.apache.thwift.texception;
+impowt owg.apache.thwift.tsewiawizew;
+i-impowt owg.apache.thwift.pwotocow.tbinawypwotocow;
+impowt owg.apache.thwift.pwotocow.tpwotocow;
+impowt owg.apache.thwift.twanspowt.tiostweamtwanspowt;
+impowt o-owg.apache.thwift.twanspowt.ttwanspowtexception;
 
-import com.twitter.ann.common.thriftjava.HnswGraphEntry;
-import com.twitter.ann.common.thriftjava.HnswInternalIndexMetadata;
-import com.twitter.bijection.Injection;
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec;
-import com.twitter.search.common.file.AbstractFile;
+impowt com.twittew.ann.common.thwiftjava.hnswgwaphentwy;
+i-impowt c-com.twittew.ann.common.thwiftjava.hnswintewnawindexmetadata;
+impowt com.twittew.bijection.injection;
+impowt com.twittew.mediasewvices.commons.codec.awwaybytebuffewcodec;
+impowt com.twittew.seawch.common.fiwe.abstwactfiwe;
 
-public final class HnswIndexIOUtil {
-  private HnswIndexIOUtil() {
+p-pubwic finaw cwass hnswindexioutiw {
+  pwivate hnswindexioutiw() {
   }
 
   /**
-   * Save thrift object in file
+   * save thwift o-object in fiwe
    */
-  public static <T> void saveMetadata(
-      HnswMeta<T> graphMeta,
-      int efConstruction,
-      int maxM,
-      int numElements,
-      Injection<T, byte[]> injection,
-      OutputStream outputStream
-  ) throws IOException, TException {
-    final int maxLevel = graphMeta.getMaxLevel();
-    final HnswInternalIndexMetadata metadata = new HnswInternalIndexMetadata(
-        maxLevel,
-        efConstruction,
-        maxM,
-        numElements
+  pubwic s-static <t> void s-savemetadata(
+      h-hnswmeta<t> g-gwaphmeta, (⑅˘꒳˘)
+      int efconstwuction, ( ͡o ω ͡o )
+      int m-maxm,
+      int nyumewements, òωó
+      injection<t, (⑅˘꒳˘) b-byte[]> injection,
+      outputstweam outputstweam
+  ) thwows ioexception, XD texception {
+    finaw i-int maxwevew = gwaphmeta.getmaxwevew();
+    finaw h-hnswintewnawindexmetadata metadata = n-nyew hnswintewnawindexmetadata(
+        m-maxwevew,
+        efconstwuction, -.-
+        maxm, :3
+        nyumewements
     );
 
-    if (graphMeta.getEntryPoint().isPresent()) {
-      metadata.setEntryPoint(injection.apply(graphMeta.getEntryPoint().get()));
+    i-if (gwaphmeta.getentwypoint().ispwesent()) {
+      m-metadata.setentwypoint(injection.appwy(gwaphmeta.getentwypoint().get()));
     }
-    final TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
-    outputStream.write(serializer.serialize(metadata));
-    outputStream.close();
+    finaw t-tsewiawizew sewiawizew = n-nyew tsewiawizew(new tbinawypwotocow.factowy());
+    o-outputstweam.wwite(sewiawizew.sewiawize(metadata));
+    outputstweam.cwose();
   }
 
   /**
-   * Load Hnsw index metadata
+   * w-woad hnsw index metadata
    */
-  public static HnswInternalIndexMetadata loadMetadata(AbstractFile file)
-      throws IOException, TException {
-    final HnswInternalIndexMetadata obj = new HnswInternalIndexMetadata();
-    final TDeserializer deserializer = new TDeserializer(new TBinaryProtocol.Factory());
-    deserializer.deserialize(obj, file.getByteSource().read());
-    return obj;
+  pubwic s-static hnswintewnawindexmetadata woadmetadata(abstwactfiwe fiwe)
+      t-thwows ioexception, nyaa~~ texception {
+    f-finaw hnswintewnawindexmetadata o-obj = nyew hnswintewnawindexmetadata();
+    finaw tdesewiawizew desewiawizew = nyew tdesewiawizew(new tbinawypwotocow.factowy());
+    desewiawizew.desewiawize(obj, 😳 f-fiwe.getbytesouwce().wead());
+    w-wetuwn obj;
   }
 
   /**
-   * Load Hnsw graph entries from file
+   * woad hnsw gwaph e-entwies fwom fiwe
    */
-  public static <T> Map<HnswNode<T>, ImmutableList<T>> loadHnswGraph(
-      AbstractFile file,
-      Injection<T, byte[]> injection,
-      int numElements
-  ) throws IOException, TException {
-    final InputStream stream = file.getByteSource().openBufferedStream();
-    final TProtocol protocol = new TBinaryProtocol(new TIOStreamTransport(stream));
-    final Map<HnswNode<T>, ImmutableList<T>> graph =
-        new HashMap<>(numElements);
-    while (true) {
-      try {
-        final HnswGraphEntry entry = new HnswGraphEntry();
-        entry.read(protocol);
-        final HnswNode<T> node = HnswNode.from(entry.level,
-            injection.invert(ArrayByteBufferCodec.decode(entry.key)).get());
-        final List<T> list = entry.getNeighbours().stream()
-            .map(bb -> injection.invert(ArrayByteBufferCodec.decode(bb)).get())
-            .collect(Collectors.toList());
-        graph.put(node, ImmutableList.copyOf(list.iterator()));
-      } catch (TException e) {
-        if (e instanceof TTransportException
-            && TTransportException.class.cast(e).getType() == TTransportException.END_OF_FILE) {
-          stream.close();
-          break;
+  p-pubwic s-static <t> map<hnswnode<t>, (⑅˘꒳˘) immutabwewist<t>> woadhnswgwaph(
+      abstwactfiwe fiwe, nyaa~~
+      injection<t, OwO b-byte[]> injection, rawr x3
+      int nyumewements
+  ) thwows ioexception, XD texception {
+    finaw i-inputstweam stweam = fiwe.getbytesouwce().openbuffewedstweam();
+    f-finaw tpwotocow p-pwotocow = n-nyew tbinawypwotocow(new tiostweamtwanspowt(stweam));
+    f-finaw m-map<hnswnode<t>, σωσ i-immutabwewist<t>> g-gwaph =
+        new hashmap<>(numewements);
+    whiwe (twue) {
+      t-twy {
+        f-finaw h-hnswgwaphentwy entwy = n-new hnswgwaphentwy();
+        e-entwy.wead(pwotocow);
+        finaw hnswnode<t> nyode = hnswnode.fwom(entwy.wevew, (U ᵕ U❁)
+            injection.invewt(awwaybytebuffewcodec.decode(entwy.key)).get());
+        f-finaw wist<t> wist = entwy.getneighbouws().stweam()
+            .map(bb -> injection.invewt(awwaybytebuffewcodec.decode(bb)).get())
+            .cowwect(cowwectows.towist());
+        gwaph.put(node, (U ﹏ U) immutabwewist.copyof(wist.itewatow()));
+      } c-catch (texception e) {
+        if (e instanceof ttwanspowtexception
+            && t-ttwanspowtexception.cwass.cast(e).gettype() == t-ttwanspowtexception.end_of_fiwe) {
+          s-stweam.cwose();
+          bweak;
         }
-        stream.close();
-        throw e;
+        s-stweam.cwose();
+        thwow e-e;
       }
     }
 
-    return graph;
+    w-wetuwn gwaph;
   }
 
   /**
-   * Save hnsw graph in file
+   * save hnsw gwaph in fiwe
    *
-   * @return number of keys in the graph
+   * @wetuwn nyumbew of keys in the gwaph
    */
-  public static <T> int saveHnswGraphEntries(
-      Map<HnswNode<T>, ImmutableList<T>> graph,
-      OutputStream outputStream,
-      Injection<T, byte[]> injection
-  ) throws IOException, TException {
-    final TProtocol protocol = new TBinaryProtocol(new TIOStreamTransport(outputStream));
-    final Set<HnswNode<T>> nodes = graph.keySet();
-    for (HnswNode<T> node : nodes) {
-      final HnswGraphEntry entry = new HnswGraphEntry();
-      entry.setLevel(node.level);
-      entry.setKey(injection.apply(node.item));
-      final List<ByteBuffer> nn = graph.getOrDefault(node, ImmutableList.of()).stream()
-          .map(t -> ByteBuffer.wrap(injection.apply(t)))
-          .collect(Collectors.toList());
-      entry.setNeighbours(nn);
-      entry.write(protocol);
+  p-pubwic static <t> int savehnswgwaphentwies(
+      m-map<hnswnode<t>, :3 immutabwewist<t>> g-gwaph, ( ͡o ω ͡o )
+      o-outputstweam outputstweam, σωσ
+      injection<t, >w< b-byte[]> injection
+  ) t-thwows ioexception, 😳😳😳 t-texception {
+    f-finaw tpwotocow pwotocow = nyew tbinawypwotocow(new tiostweamtwanspowt(outputstweam));
+    finaw s-set<hnswnode<t>> n-nyodes = gwaph.keyset();
+    f-fow (hnswnode<t> nyode : nyodes) {
+      f-finaw h-hnswgwaphentwy entwy = nyew hnswgwaphentwy();
+      e-entwy.setwevew(node.wevew);
+      entwy.setkey(injection.appwy(node.item));
+      finaw wist<bytebuffew> nyn = gwaph.getowdefauwt(node, OwO i-immutabwewist.of()).stweam()
+          .map(t -> b-bytebuffew.wwap(injection.appwy(t)))
+          .cowwect(cowwectows.towist());
+      entwy.setneighbouws(nn);
+      entwy.wwite(pwotocow);
     }
 
-    outputStream.close();
-    return nodes.size();
+    o-outputstweam.cwose();
+    w-wetuwn nyodes.size();
   }
 }

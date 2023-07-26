@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.pipeline.product
+package com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct
 
-import com.twitter.timelines.configapi.Params
+impowt com.twittew.timewines.configapi.pawams
 
-case class ProductPipelineRequest[RequestType](request: RequestType, params: Params)
+c-case cwass p-pwoductpipewinewequest[wequesttype](wequest: wequesttype, p-pawams: p-pawams)

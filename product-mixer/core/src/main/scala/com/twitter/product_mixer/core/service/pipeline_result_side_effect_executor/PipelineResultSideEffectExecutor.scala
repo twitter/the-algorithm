@@ -1,91 +1,91 @@
-package com.twitter.product_mixer.core.service.pipeline_result_side_effect_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_wesuwt_side_effect_executow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.side_effect.ExecuteSynchronously
-import com.twitter.product_mixer.core.functional_component.side_effect.FailOpen
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect.Inputs
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.product_mixer.core.service.pipeline_result_side_effect_executor.PipelineResultSideEffectExecutor._
-import com.twitter.stitch.Arrow
-import com.twitter.util.Return
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.side_effect.exekawaii~synchwonouswy
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.side_effect.faiwopen
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.side_effect.pipewinewesuwtsideeffect
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.side_effect.pipewinewesuwtsideeffect.inputs
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.conditionawwy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.sideeffectidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.hasmawshawwing
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.executowwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_wesuwt_side_effect_executow.pipewinewesuwtsideeffectexecutow._
+impowt c-com.twittew.stitch.awwow
+impowt c-com.twittew.utiw.wetuwn
+impowt com.twittew.utiw.twy
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class PipelineResultSideEffectExecutor @Inject() (override val statsReceiver: StatsReceiver)
-    extends Executor {
-  def arrow[Query <: PipelineQuery, MixerDomainResultType <: HasMarshalling](
-    sideEffects: Seq[PipelineResultSideEffect[Query, MixerDomainResultType]],
-    context: Executor.Context
-  ): Arrow[Inputs[Query, MixerDomainResultType], PipelineResultSideEffectExecutor.Result] = {
+@singweton
+cwass p-pipewinewesuwtsideeffectexecutow @inject() (ovewwide v-vaw statsweceivew: statsweceivew)
+    extends executow {
+  def awwow[quewy <: p-pipewinequewy, σωσ mixewdomainwesuwttype <: hasmawshawwing](
+    sideeffects: seq[pipewinewesuwtsideeffect[quewy, mixewdomainwesuwttype]], rawr x3
+    context: e-executow.context
+  ): awwow[inputs[quewy, OwO m-mixewdomainwesuwttype], /(^•ω•^) p-pipewinewesuwtsideeffectexecutow.wesuwt] = {
 
-    val individualArrows: Seq[
-      Arrow[Inputs[Query, MixerDomainResultType], (SideEffectIdentifier, SideEffectResultType)]
-    ] = sideEffects.map {
-      case synchronousSideEffect: ExecuteSynchronously =>
-        val failsRequestIfThrows = {
-          wrapComponentWithExecutorBookkeeping(context, synchronousSideEffect.identifier)(
-            Arrow.flatMap(synchronousSideEffect.apply))
+    v-vaw i-individuawawwows: seq[
+      awwow[inputs[quewy, 😳😳😳 mixewdomainwesuwttype], ( ͡o ω ͡o ) (sideeffectidentifiew, >_< s-sideeffectwesuwttype)]
+    ] = sideeffects.map {
+      case synchwonoussideeffect: exekawaii~synchwonouswy =>
+        v-vaw faiwswequestifthwows = {
+          wwapcomponentwithexecutowbookkeeping(context, >w< synchwonoussideeffect.identifiew)(
+            awwow.fwatmap(synchwonoussideeffect.appwy))
         }
-        synchronousSideEffect match {
-          case failOpen: FailOpen =>
-            // lift the failure
-            failsRequestIfThrows.liftToTry.map(t =>
-              (failOpen.identifier, SynchronousSideEffectResult(t)))
+        synchwonoussideeffect match {
+          c-case faiwopen: faiwopen =>
+            // wift the f-faiwuwe
+            f-faiwswequestifthwows.wifttotwy.map(t =>
+              (faiwopen.identifiew, rawr s-synchwonoussideeffectwesuwt(t)))
           case _ =>
-            // don't encapsulate the failure
-            failsRequestIfThrows.map(_ =>
-              (synchronousSideEffect.identifier, SynchronousSideEffectResult(Return.Unit)))
+            // don't encapsuwate the faiwuwe
+            f-faiwswequestifthwows.map(_ =>
+              (synchwonoussideeffect.identifiew, 😳 s-synchwonoussideeffectwesuwt(wetuwn.unit)))
         }
 
-      case sideEffect =>
-        Arrow
+      case s-sideeffect =>
+        a-awwow
           .async(
-            wrapComponentWithExecutorBookkeeping(context, sideEffect.identifier)(
-              Arrow.flatMap(sideEffect.apply)))
-          .andThen(Arrow.value((sideEffect.identifier, SideEffectResult)))
+            wwapcomponentwithexecutowbookkeeping(context, >w< s-sideeffect.identifiew)(
+              awwow.fwatmap(sideeffect.appwy)))
+          .andthen(awwow.vawue((sideeffect.identifiew, (⑅˘꒳˘) sideeffectwesuwt)))
     }
 
-    val conditionallyRunArrows = sideEffects.zip(individualArrows).map {
+    v-vaw conditionawwywunawwows = sideeffects.zip(individuawawwows).map {
       case (
-            sideEffect: Conditionally[
-              PipelineResultSideEffect.Inputs[Query, MixerDomainResultType] @unchecked
-            ],
-            arrow) =>
-        Arrow.ifelse[
-          Inputs[Query, MixerDomainResultType],
-          (SideEffectIdentifier, SideEffectResultType)](
-          input => sideEffect.onlyIf(input),
-          arrow,
-          Arrow.value((sideEffect.identifier, TurnedOffByConditionally)))
-      case (_, arrow) => arrow
+            s-sideeffect: conditionawwy[
+              p-pipewinewesuwtsideeffect.inputs[quewy, OwO mixewdomainwesuwttype] @unchecked
+            ], (ꈍᴗꈍ)
+            a-awwow) =>
+        a-awwow.ifewse[
+          inputs[quewy, 😳 mixewdomainwesuwttype], 😳😳😳
+          (sideeffectidentifiew, mya sideeffectwesuwttype)](
+          input => sideeffect.onwyif(input),
+          awwow, mya
+          awwow.vawue((sideeffect.identifiew, (⑅˘꒳˘) t-tuwnedoffbyconditionawwy)))
+      c-case (_, (U ﹏ U) awwow) => awwow
     }
 
-    Arrow
-      .collect(conditionallyRunArrows)
-      .map(results => Result(results))
+    a-awwow
+      .cowwect(conditionawwywunawwows)
+      .map(wesuwts => w-wesuwt(wesuwts))
   }
 }
 
-object PipelineResultSideEffectExecutor {
-  case class Result(sideEffects: Seq[(SideEffectIdentifier, SideEffectResultType)])
-      extends ExecutorResult
+o-object pipewinewesuwtsideeffectexecutow {
+  case cwass wesuwt(sideeffects: seq[(sideeffectidentifiew, sideeffectwesuwttype)])
+      e-extends executowwesuwt
 
-  sealed trait SideEffectResultType
+  seawed twait sideeffectwesuwttype
 
-  /** The [[PipelineResultSideEffect]] was executed asynchronously in a fire-and-forget way so no result will be available */
-  case object SideEffectResult extends SideEffectResultType
+  /** the [[pipewinewesuwtsideeffect]] was exekawaii~d a-asynchwonouswy in a fiwe-and-fowget w-way so nyo wesuwt w-wiww be avaiwabwe */
+  c-case object sideeffectwesuwt e-extends s-sideeffectwesuwttype
 
-  /** The result of the [[PipelineResultSideEffect]] that was executed with [[ExecuteSynchronously]] */
-  case class SynchronousSideEffectResult(result: Try[Unit]) extends SideEffectResultType
+  /** t-the w-wesuwt of the [[pipewinewesuwtsideeffect]] that was exekawaii~d w-with [[exekawaii~synchwonouswy]] */
+  c-case cwass s-synchwonoussideeffectwesuwt(wesuwt: t-twy[unit]) e-extends sideeffectwesuwttype
 
-  /** The result for when a [[PipelineResultSideEffect]] is turned off by [[Conditionally]]'s [[Conditionally.onlyIf]] */
-  case object TurnedOffByConditionally extends SideEffectResultType
+  /** the wesuwt fow when a [[pipewinewesuwtsideeffect]] is tuwned o-off by [[conditionawwy]]'s [[conditionawwy.onwyif]] */
+  case object tuwnedoffbyconditionawwy extends sideeffectwesuwttype
 }

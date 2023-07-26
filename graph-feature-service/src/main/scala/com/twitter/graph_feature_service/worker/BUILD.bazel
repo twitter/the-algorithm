@@ -1,30 +1,30 @@
-scala_library(
-    sources = ["**/*.scala"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "3rdparty/jvm/net/codingwell:scala-guice",
-        "discovery-common/src/main/scala/com/twitter/discovery/common/stats",
-        "finatra-internal/decider/src/main/scala",
-        "finatra-internal/gizmoduck/src/main/scala",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "finatra/inject/inject-app/src/main/scala",
-        "finatra/inject/inject-core/src/main/scala",
-        "finatra/inject/inject-server/src/main/scala",
-        "finatra/inject/inject-thrift-client/src/main/scala",
-        "finatra/inject/inject-utils/src/main/scala",
-        "frigate/frigate-common:constdb_util",
-        "graph-feature-service/src/main/resources",
-        "graph-feature-service/src/main/scala/com/twitter/graph_feature_service/common",
-        "graph-feature-service/src/main/scala/com/twitter/graph_feature_service/util",
-        "graph-feature-service/src/main/thrift/com/twitter/graph_feature_service:graph_feature_service_thrift-scala",
-        "hermit/hermit-core/src/main/scala/com/twitter/hermit/store/common",
-        "servo/request/src/main/scala",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/server/src/main/scala",
-        "util/util-app/src/main/scala",
-        "util/util-slf4j-api/src/main/scala",
-    ],
+scawa_wibwawy(
+    souwces = ["**/*.scawa"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/inject:guice", òωó
+        "3wdpawty/jvm/javax/inject:javax.inject",
+        "3wdpawty/jvm/net/codingweww:scawa-guice", o.O
+        "discovewy-common/swc/main/scawa/com/twittew/discovewy/common/stats", (U ᵕ U❁)
+        "finatwa-intewnaw/decidew/swc/main/scawa", (⑅˘꒳˘)
+        "finatwa-intewnaw/gizmoduck/swc/main/scawa", ( ͡o ω ͡o )
+        "finatwa-intewnaw/mtws-thwiftmux/swc/main/scawa", UwU
+        "finatwa/inject/inject-app/swc/main/scawa", rawr x3
+        "finatwa/inject/inject-cowe/swc/main/scawa", rawr
+        "finatwa/inject/inject-sewvew/swc/main/scawa", σωσ
+        "finatwa/inject/inject-thwift-cwient/swc/main/scawa", σωσ
+        "finatwa/inject/inject-utiws/swc/main/scawa", >_<
+        "fwigate/fwigate-common:constdb_utiw", :3
+        "gwaph-featuwe-sewvice/swc/main/wesouwces", (U ﹏ U)
+        "gwaph-featuwe-sewvice/swc/main/scawa/com/twittew/gwaph_featuwe_sewvice/common", -.-
+        "gwaph-featuwe-sewvice/swc/main/scawa/com/twittew/gwaph_featuwe_sewvice/utiw", (ˆ ﻌ ˆ)♡
+        "gwaph-featuwe-sewvice/swc/main/thwift/com/twittew/gwaph_featuwe_sewvice:gwaph_featuwe_sewvice_thwift-scawa",
+        "hewmit/hewmit-cowe/swc/main/scawa/com/twittew/hewmit/stowe/common", (⑅˘꒳˘)
+        "sewvo/wequest/swc/main/scawa", (U ᵕ U❁)
+        "twittew-sewvew-intewnaw/swc/main/scawa", -.-
+        "twittew-sewvew/sewvew/swc/main/scawa", ^^;;
+        "utiw/utiw-app/swc/main/scawa", >_<
+        "utiw/utiw-swf4j-api/swc/main/scawa", mya
+    ], mya
 )

@@ -1,39 +1,39 @@
-import tensorflow.compat.v1 as tf
-from twml.contrib.utils import math_fns
+impowt tensowfwow.compat.v1 as tf
+f-fwom twmw.contwib.utiws i-impowt m-math_fns
 
 
-def mean_max_normalizaiton(dense_tensor):
+def mean_max_nowmawizaiton(dense_tensow):
   """
-  In-batch normalization
-  Args:
-    dense_tensor: A dense `Tensor`.
-  Returns:
-    (dense_tensor - mean) / abs(max value)
-  Note:
-    when dense_tensor is of size [1, ?] it will give 0
-    If this is not what you want handle it outside the function
+  i-in-batch n-nyowmawization
+  a-awgs:
+    d-dense_tensow: a d-dense `tensow`. >_<
+  wetuwns:
+    (dense_tensow - mean) / abs(max vawue)
+  nyote:
+    when dense_tensow i-is of size [1, (⑅˘꒳˘) ?] it wiww give 0
+    if this i-is nyot nyani you want handwe i-it outside the function
   """
-  dense_mean = tf.reduce_mean(dense_tensor, reduction_indices=[0])
-  dense_abs_max = tf.abs(tf.reduce_max(dense_tensor, reduction_indices=[0]))
-  dense_tensor = math_fns.safe_div(dense_tensor - dense_mean, dense_abs_max,
-    'mean_max_normalization_in_batch')
-  return dense_tensor
+  dense_mean = tf.weduce_mean(dense_tensow, /(^•ω•^) weduction_indices=[0])
+  d-dense_abs_max = tf.abs(tf.weduce_max(dense_tensow, rawr x3 w-weduction_indices=[0]))
+  d-dense_tensow = math_fns.safe_div(dense_tensow - dense_mean, (U ﹏ U) dense_abs_max, (U ﹏ U)
+    'mean_max_nowmawization_in_batch')
+  wetuwn dense_tensow
 
 
-def standard_normalizaiton(dense_tensor):
+def standawd_nowmawizaiton(dense_tensow):
   """
-  In-batch normalization
-  z-normalization or standard_normalization in batch
-  Args:
-    dense_tensor: A dense `Tensor`.
-  Returns:
-    (dense_tensor - mean) / variance
-  Note:
-    when dense_tensor is of size [1, ?] it will give 0
-    If this is not what you want handle it outside the function
+  i-in-batch nyowmawization
+  z-nowmawization ow standawd_nowmawization in batch
+  awgs:
+    d-dense_tensow: a dense `tensow`. (⑅˘꒳˘)
+  w-wetuwns:
+    (dense_tensow - m-mean) / vawiance
+  n-nyote:
+    w-when dense_tensow is of size [1, òωó ?] it wiww give 0
+    i-if this is not nyani you want handwe it o-outside the function
   """
-  epsilon = 1E-7
-  dense_mean, dense_variance = tf.nn.moments(dense_tensor, 0)
-  # using epsilon is safer than math_fns.safe_div in here
-  dense_tensor = (dense_tensor - dense_mean) / (dense_variance + epsilon)
-  return dense_tensor
+  epsiwon = 1e-7
+  dense_mean, ʘwʘ dense_vawiance = tf.nn.moments(dense_tensow, /(^•ω•^) 0)
+  # using epsiwon is safew than math_fns.safe_div in h-hewe
+  dense_tensow = (dense_tensow - dense_mean) / (dense_vawiance + e-epsiwon)
+  w-wetuwn dense_tensow

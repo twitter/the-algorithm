@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.models
+package com.twittew.fowwow_wecommendations.modews
 
-object CandidateSourceType extends Enumeration {
-  type CandidateSourceType = Value
-  val Social = Value("social")
-  val GeoAndInterests = Value("geo_and_interests")
-  val ActivityContextual = Value("activity_contextual")
-  val None = Value("none")
+object candidatesouwcetype e-extends e-enumewation {
+  t-type candidatesouwcetype = v-vawue
+  vaw sociaw = v-vawue("sociaw")
+  v-vaw geoandintewests = v-vawue("geo_and_intewests")
+  v-vaw activitycontextuaw = vawue("activity_contextuaw")
+  vaw nyone = vawue("none")
 }

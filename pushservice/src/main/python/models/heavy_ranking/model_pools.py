@@ -1,34 +1,34 @@
 """
-Candidate architectures for each task's.
+candidate awchitectuwes fow each t-task's. (U ﹏ U)
 """
 
-from __future__ import annotations
+f-fwom __futuwe__ i-impowt annotations
 
-from typing import Dict
+f-fwom typing i-impowt dict
 
-from .features import get_features
-from .graph import Graph
-from .lib.model import ClemNet
-from .params import ModelTypeEnum
+fwom .featuwes i-impowt g-get_featuwes
+f-fwom .gwaph impowt gwaph
+fwom .wib.modew impowt cwemnet
+fwom .pawams impowt modewtypeenum
 
-import tensorflow as tf
-
-
-class MagicRecsClemNet(Graph):
-  def get_logits(self, features: Dict[str, tf.Tensor], training: bool) -> tf.Tensor:
-
-    with tf.name_scope("logits"):
-      inputs = get_features(features=features, training=training, params=self.params.model.features)
-
-      with tf.name_scope("OONC_logits"):
-        model = ClemNet(params=self.params.model.architecture)
-        oonc_logit = model(inputs=inputs, training=training)
-
-      with tf.name_scope("EngagementGivenOONC_logits"):
-        model = ClemNet(params=self.params.model.architecture)
-        eng_logits = model(inputs=inputs, training=training)
-
-      return tf.concat([oonc_logit, eng_logits], axis=1)
+i-impowt tensowfwow as tf
 
 
-ALL_MODELS = {ModelTypeEnum.clemnet: MagicRecsClemNet}
+cwass magicwecscwemnet(gwaph):
+  d-def get_wogits(sewf, featuwes: d-dict[stw, >_< tf.tensow], rawr x3 twaining: boow) -> tf.tensow:
+
+    with tf.name_scope("wogits"):
+      i-inputs = get_featuwes(featuwes=featuwes, mya twaining=twaining, nyaa~~ pawams=sewf.pawams.modew.featuwes)
+
+      w-with tf.name_scope("oonc_wogits"):
+        m-modew = cwemnet(pawams=sewf.pawams.modew.awchitectuwe)
+        oonc_wogit = modew(inputs=inputs, (⑅˘꒳˘) twaining=twaining)
+
+      with tf.name_scope("engagementgivenoonc_wogits"):
+        m-modew = cwemnet(pawams=sewf.pawams.modew.awchitectuwe)
+        eng_wogits = modew(inputs=inputs, rawr x3 twaining=twaining)
+
+      w-wetuwn tf.concat([oonc_wogit, (✿oωo) eng_wogits], axis=1)
+
+
+a-aww_modews = {modewtypeenum.cwemnet: m-magicwecscwemnet}

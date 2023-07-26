@@ -1,21 +1,21 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import javax.inject.Inject;
+impowt j-javax.inject.inject;
 
-import com.twitter.search.common.partitioning.base.PartitionMappingManager;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
+i-impowt com.twittew.seawch.common.pawtitioning.base.pawtitionmappingmanagew;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdfeatuweschemamewgew;
 
 /**
- * The EarlybirdServiceScatterGatherSupport implementation used to fan out requests to the earlybird
- * partitions in the realtime cluster.
+ * t-the e-eawwybiwdsewvicescattewgathewsuppowt i-impwementation u-used to fan out wequests to the eawwybiwd
+ * pawtitions in the weawtime cwustew. 😳
  */
-public class EarlybirdRealtimeScatterGatherSupport extends EarlybirdServiceScatterGatherSupport {
-  /** Creates a new EarlybirdRealtimeScatterGatherSupport instance. */
-  @Inject
-  EarlybirdRealtimeScatterGatherSupport(
-      PartitionMappingManager partitionMappingManager,
-      EarlybirdFeatureSchemaMerger featureSchemaMerger) {
-    super(partitionMappingManager, EarlybirdCluster.REALTIME, featureSchemaMerger);
+p-pubwic cwass eawwybiwdweawtimescattewgathewsuppowt extends e-eawwybiwdsewvicescattewgathewsuppowt {
+  /** cweates a nyew e-eawwybiwdweawtimescattewgathewsuppowt instance. XD */
+  @inject
+  eawwybiwdweawtimescattewgathewsuppowt(
+      pawtitionmappingmanagew p-pawtitionmappingmanagew, :3
+      eawwybiwdfeatuweschemamewgew f-featuweschemamewgew) {
+    s-supew(pawtitionmappingmanagew, 😳😳😳 eawwybiwdcwustew.weawtime, -.- featuweschemamewgew);
   }
 }

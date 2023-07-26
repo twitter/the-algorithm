@@ -1,29 +1,29 @@
-package com.twitter.follow_recommendations.common.clients.addressbook.models
+package com.twittew.fowwow_wecommendations.common.cwients.addwessbook.modews
 
-import com.twitter.addressbook.{thriftscala => t}
-import com.twitter.util.Time
+impowt c-com.twittew.addwessbook.{thwiftscawa => t-t}
+impowt c-com.twittew.utiw.time
 
-case class Contact(
-  id: Long,
-  emails: Option[Set[String]],
-  phoneNumbers: Option[Set[String]],
-  firstName: Option[String],
-  lastName: Option[String],
-  name: Option[String],
-  appId: Option[Long],
-  appIds: Option[Set[Long]],
-  importedTimestamp: Option[Time])
+c-case c-cwass contact(
+  i-id: wong, ( ͡o ω ͡o )
+  emaiws: o-option[set[stwing]], rawr x3
+  p-phonenumbews: option[set[stwing]], nyaa~~
+  fiwstname: option[stwing], /(^•ω•^)
+  wastname: option[stwing], rawr
+  nyame: o-option[stwing], OwO
+  appid: option[wong], (U ﹏ U)
+  appids: o-option[set[wong]], >_<
+  impowtedtimestamp: o-option[time])
 
-object Contact {
-  def fromThrift(thriftContact: t.Contact): Contact = Contact(
-    thriftContact.id,
-    thriftContact.emails.map(_.toSet),
-    thriftContact.phoneNumbers.map(_.toSet),
-    thriftContact.firstName,
-    thriftContact.lastName,
-    thriftContact.name,
-    thriftContact.appId,
-    thriftContact.appIds.map(_.toSet),
-    thriftContact.importedTimestamp.map(Time.fromMilliseconds)
+object contact {
+  def fwomthwift(thwiftcontact: t-t.contact): contact = c-contact(
+    thwiftcontact.id, rawr x3
+    t-thwiftcontact.emaiws.map(_.toset), mya
+    thwiftcontact.phonenumbews.map(_.toset), nyaa~~
+    thwiftcontact.fiwstname, (⑅˘꒳˘)
+    thwiftcontact.wastname, rawr x3
+    thwiftcontact.name, (✿oωo)
+    t-thwiftcontact.appid, (ˆ ﻌ ˆ)♡
+    thwiftcontact.appids.map(_.toset), (˘ω˘)
+    thwiftcontact.impowtedtimestamp.map(time.fwommiwwiseconds)
   )
 }

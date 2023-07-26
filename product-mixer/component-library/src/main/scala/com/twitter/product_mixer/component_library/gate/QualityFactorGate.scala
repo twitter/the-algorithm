@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.component_library.gate
+package com.twittew.pwoduct_mixew.component_wibwawy.gate
 
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.gateidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.quawity_factow.hasquawityfactowstatus
+impowt com.twittew.stitch.stitch
 
 /**
- * A Gate that only continues if the quality factor value of the pipeline is above the given
- * threshold. This is useful for disabling an expensive function when the pipeline is under pressure
- * (quality factor is low).
+ * a gate that onwy continues if the quawity factow v-vawue of the pipewine is above the given
+ * thweshowd. mya t-this is usefuw fow disabwing a-an expensive function when the pipewine is undew pwessuwe
+ * (quawity f-factow is wow). nyaa~~
  */
-case class QualityFactorGate(pipelineIdentifier: ComponentIdentifier, threshold: Double)
-    extends Gate[PipelineQuery with HasQualityFactorStatus] {
+case c-cwass quawityfactowgate(pipewineidentifiew: componentidentifiew, (⑅˘꒳˘) t-thweshowd: doubwe)
+    extends gate[pipewinequewy with hasquawityfactowstatus] {
 
-  override val identifier: GateIdentifier = GateIdentifier(
-    s"${pipelineIdentifier.name}QualityFactor")
+  ovewwide v-vaw identifiew: gateidentifiew = gateidentifiew(
+    s"${pipewineidentifiew.name}quawityfactow")
 
-  override def shouldContinue(
-    query: PipelineQuery with HasQualityFactorStatus
-  ): Stitch[Boolean] =
-    Stitch.value(query.getQualityFactorCurrentValue(pipelineIdentifier) >= threshold)
+  ovewwide def s-shouwdcontinue(
+    quewy: pipewinequewy w-with h-hasquawityfactowstatus
+  ): s-stitch[boowean] =
+    s-stitch.vawue(quewy.getquawityfactowcuwwentvawue(pipewineidentifiew) >= thweshowd)
 }

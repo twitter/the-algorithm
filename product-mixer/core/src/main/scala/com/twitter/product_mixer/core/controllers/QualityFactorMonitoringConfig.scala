@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.controllers
+package com.twittew.pwoduct_mixew.cowe.contwowwews
 
-// Bounds here are inclusive
-case class QualityFactorMonitoringConfig(
-  boundMin: Double,
-  boundMax: Double)
+// bounds hewe a-awe incwusive
+c-case cwass quawityfactowmonitowingconfig(
+  b-boundmin: d-doubwe, òωó
+  b-boundmax: doubwe)

@@ -1,55 +1,55 @@
-package com.twitter.product_mixer.component_library.scorer.deepbird
+package com.twittew.pwoduct_mixew.component_wibwawy.scowew.deepbiwd
 
-import com.twitter.cortex.deepbird.{thriftjava => t}
-import com.twitter.ml.prediction_service.BatchPredictionRequest
-import com.twitter.ml.prediction_service.BatchPredictionResponse
-import com.twitter.product_mixer.component_library.scorer.common.ModelSelector
-import com.twitter.product_mixer.core.feature.datarecord.BaseDataRecordFeature
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.FeaturesScope
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.util.Future
+impowt com.twittew.cowtex.deepbiwd.{thwiftjava => t-t}
+impowt c-com.twittew.mw.pwediction_sewvice.batchpwedictionwequest
+i-impowt c-com.twittew.mw.pwediction_sewvice.batchpwedictionwesponse
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.scowew.common.modewsewectow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.basedatawecowdfeatuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.datawecowd.featuwesscope
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.scowewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.utiw.futuwe
 
 /**
- * Configurable Scorer that calls any Deepbird Prediction Service thrift.
- * @param identifier Unique identifier for the scorer
- * @param predictionService The Prediction Thrift Service
- * @param modelSelector Model ID Selector to decide which model to select, can also be represented
- *                        as an anonymous function: { query: Query => Some("Ex") }
- * @param queryFeatures The Query Features to convert and pass to the deepbird model.
- * @param candidateFeatures The Candidate Features to convert and pass to the deepbird model.
- * @param resultFeatures The Candidate features returned by the model.
- * @tparam Query Type of pipeline query.
- * @tparam Candidate Type of candidates to score.
- * @tparam QueryFeatures type of the query level features consumed by the scorer.
- * @tparam CandidateFeatures type of the candidate level features consumed by the scorer.
- * @tparam ResultFeatures type of the candidate level features returned by the scorer.
+ * configuwabwe s-scowew that cawws any deepbiwd pwediction sewvice thwift. (U ﹏ U)
+ * @pawam identifiew u-unique identifiew fow t-the scowew
+ * @pawam p-pwedictionsewvice the pwediction thwift sewvice
+ * @pawam modewsewectow modew id sewectow to d-decide which modew to sewect, >w< can awso be wepwesented
+ *                        as an anonymous function: { quewy: q-quewy => some("ex") }
+ * @pawam quewyfeatuwes t-the quewy featuwes t-to convewt a-and pass to the d-deepbiwd modew. (U ﹏ U)
+ * @pawam candidatefeatuwes the c-candidate featuwes to convewt and pass to the deepbiwd m-modew. 😳
+ * @pawam wesuwtfeatuwes the candidate featuwes wetuwned by the modew. (ˆ ﻌ ˆ)♡
+ * @tpawam quewy type of pipewine q-quewy. 😳😳😳
+ * @tpawam candidate t-type of candidates t-to scowe. (U ﹏ U)
+ * @tpawam q-quewyfeatuwes type of the quewy wevew featuwes consumed b-by the scowew. (///ˬ///✿)
+ * @tpawam c-candidatefeatuwes type of the candidate w-wevew featuwes c-consumed by the scowew. 😳
+ * @tpawam w-wesuwtfeatuwes type of the c-candidate wevew featuwes wetuwned by the scowew. 😳
  */
-case class DeepbirdV2PredictionServerScorer[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
-  QueryFeatures <: BaseDataRecordFeature[Query, _],
-  CandidateFeatures <: BaseDataRecordFeature[Candidate, _],
-  ResultFeatures <: BaseDataRecordFeature[Candidate, _]
+c-case cwass deepbiwdv2pwedictionsewvewscowew[
+  q-quewy <: pipewinequewy, σωσ
+  c-candidate <: univewsawnoun[any], rawr x3
+  q-quewyfeatuwes <: basedatawecowdfeatuwe[quewy, OwO _],
+  candidatefeatuwes <: basedatawecowdfeatuwe[candidate, /(^•ω•^) _],
+  wesuwtfeatuwes <: basedatawecowdfeatuwe[candidate, 😳😳😳 _]
 ](
-  override val identifier: ScorerIdentifier,
-  predictionService: t.DeepbirdPredictionService.ServiceToClient,
-  modelSelector: ModelSelector[Query],
-  queryFeatures: FeaturesScope[QueryFeatures],
-  candidateFeatures: FeaturesScope[CandidateFeatures],
-  resultFeatures: Set[ResultFeatures])
-    extends BaseDeepbirdV2Scorer[
-      Query,
-      Candidate,
-      QueryFeatures,
-      CandidateFeatures,
-      ResultFeatures
-    ](identifier, modelSelector, queryFeatures, candidateFeatures, resultFeatures) {
+  ovewwide vaw identifiew: s-scowewidentifiew, ( ͡o ω ͡o )
+  p-pwedictionsewvice: t.deepbiwdpwedictionsewvice.sewvicetocwient, >_<
+  modewsewectow: m-modewsewectow[quewy], >w<
+  q-quewyfeatuwes: f-featuwesscope[quewyfeatuwes], rawr
+  candidatefeatuwes: featuwesscope[candidatefeatuwes], 😳
+  wesuwtfeatuwes: s-set[wesuwtfeatuwes])
+    extends basedeepbiwdv2scowew[
+      quewy, >w<
+      candidate, (⑅˘꒳˘)
+      quewyfeatuwes, OwO
+      c-candidatefeatuwes, (ꈍᴗꈍ)
+      wesuwtfeatuwes
+    ](identifiew, 😳 m-modewsewectow, 😳😳😳 q-quewyfeatuwes, mya c-candidatefeatuwes, mya wesuwtfeatuwes) {
 
-  override def getBatchPredictions(
-    request: BatchPredictionRequest,
-    modelSelector: t.ModelSelector
-  ): Future[BatchPredictionResponse] =
-    predictionService.batchPredictFromModel(request, modelSelector)
+  o-ovewwide d-def getbatchpwedictions(
+    w-wequest: batchpwedictionwequest, (⑅˘꒳˘)
+    m-modewsewectow: t.modewsewectow
+  ): futuwe[batchpwedictionwesponse] =
+    p-pwedictionsewvice.batchpwedictfwommodew(wequest, (U ﹏ U) m-modewsewectow)
 }

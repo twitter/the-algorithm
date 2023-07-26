@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.article
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.awticwe
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleSeedType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.FollowingListSeed
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.FriendsOfFriendsSeed
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ListIdSeed
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.awticwe.awticweseedtype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.awticwe.fowwowingwistseed
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.awticwe.fwiendsoffwiendsseed
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.awticwe.wistidseed
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => uwt}
+i-impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
-@Singleton
-class ArticleSeedTypeMarshaller @Inject() () {
+@singweton
+cwass awticweseedtypemawshawwew @inject() () {
 
-  def apply(articleSeedType: ArticleSeedType): urt.ArticleSeedType =
-    articleSeedType match {
-      case FollowingListSeed => urt.ArticleSeedType.FollowingList
-      case FriendsOfFriendsSeed => urt.ArticleSeedType.FriendsOfFriends
-      case ListIdSeed => urt.ArticleSeedType.ListId
+  def appwy(awticweseedtype: awticweseedtype): uwt.awticweseedtype =
+    a-awticweseedtype match {
+      case fowwowingwistseed => u-uwt.awticweseedtype.fowwowingwist
+      case fwiendsoffwiendsseed => uwt.awticweseedtype.fwiendsoffwiends
+      c-case wistidseed => uwt.awticweseedtype.wistid
     }
 }

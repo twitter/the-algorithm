@@ -1,27 +1,27 @@
-package com.twitter.frigate.pushservice.take.candidate_validator
+package com.twittew.fwigate.pushsewvice.take.candidate_vawidatow
 
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.take.predicates.candidate_map.CandidatePredicatesMap
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.util.Future
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.config.config
+i-impowt c-com.twittew.fwigate.pushsewvice.take.pwedicates.candidate_map.candidatepwedicatesmap
+i-impowt com.twittew.hewmit.pwedicate.pwedicate
+i-impowt com.twittew.utiw.futuwe
 
-class RFPHCandidateValidator(override val config: Config) extends CandidateValidator {
-  private val rFPHCandidateValidatorStats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val concurrentPredicateCount = rFPHCandidateValidatorStats.counter("concurrent")
-  private val sequentialPredicateCount = rFPHCandidateValidatorStats.counter("sequential")
+c-cwass wfphcandidatevawidatow(ovewwide v-vaw config: c-config) extends candidatevawidatow {
+  pwivate vaw wfphcandidatevawidatowstats = statsweceivew.scope(this.getcwass.getsimpwename)
+  p-pwivate vaw concuwwentpwedicatecount = wfphcandidatevawidatowstats.countew("concuwwent")
+  p-pwivate vaw sequentiawpwedicatecount = w-wfphcandidatevawidatowstats.countew("sequentiaw")
 
-  override protected val candidatePredicatesMap = CandidatePredicatesMap(config)
+  ovewwide pwotected vaw candidatepwedicatesmap = candidatepwedicatesmap(config)
 
-  override def validateCandidate[C <: PushCandidate](candidate: C): Future[Option[Predicate[C]]] = {
-    val candidatePredicates = getCRTPredicates(candidate.commonRecType)
-    val predicates = rfphPrePredicates ++ candidatePredicates ++ postPredicates
-    if (candidate.target.isEmailUser) {
-      concurrentPredicateCount.incr()
-      executeConcurrentPredicates(candidate, predicates).map(_.headOption)
-    } else {
-      sequentialPredicateCount.incr()
-      executeSequentialPredicates(candidate, predicates)
+  o-ovewwide def vawidatecandidate[c <: p-pushcandidate](candidate: c-c): futuwe[option[pwedicate[c]]] = {
+    vaw candidatepwedicates = getcwtpwedicates(candidate.commonwectype)
+    vaw pwedicates = wfphpwepwedicates ++ c-candidatepwedicates ++ postpwedicates
+    if (candidate.tawget.isemaiwusew) {
+      concuwwentpwedicatecount.incw()
+      exekawaii~concuwwentpwedicates(candidate, (U ﹏ U) p-pwedicates).map(_.headoption)
+    } ewse {
+      sequentiawpwedicatecount.incw()
+      e-exekawaii~sequentiawpwedicates(candidate, p-pwedicates)
     }
   }
 }

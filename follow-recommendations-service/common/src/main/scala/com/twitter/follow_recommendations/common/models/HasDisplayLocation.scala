@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-trait HasDisplayLocation {
-  def displayLocation: DisplayLocation
+twait hasdispwaywocation {
+  d-def dispwaywocation: d-dispwaywocation
 }

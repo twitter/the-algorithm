@@ -1,43 +1,43 @@
-package com.twitter.tweetypie.serverutil
+package com.twittew.tweetypie.sewvewutiw
 
-import com.twitter.finagle.ChannelException
-import com.twitter.finagle.TimeoutException
-import com.twitter.scrooge.ThriftException
-import java.net.SocketException
-import java.nio.channels.CancelledKeyException
-import java.nio.channels.ClosedChannelException
-import java.util.concurrent.CancellationException
-import java.util.concurrent.{TimeoutException => JTimeoutException}
-import org.apache.thrift.TApplicationException
-import scala.util.control.NoStackTrace
+impowt c-com.twittew.finagwe.channewexception
+i-impowt com.twittew.finagwe.timeoutexception
+i-impowt com.twittew.scwooge.thwiftexception
+i-impowt j-java.net.socketexception
+i-impowt j-java.nio.channews.cancewwedkeyexception
+i-impowt java.nio.channews.cwosedchannewexception
+impowt java.utiw.concuwwent.cancewwationexception
+impowt j-java.utiw.concuwwent.{timeoutexception => jtimeoutexception}
+impowt owg.apache.thwift.tappwicationexception
+i-impowt scawa.utiw.contwow.nostacktwace
 
-object BoringStackTrace {
+object bowingstacktwace {
 
   /**
-   * These exceptions are boring because they are expected to
-   * occasionally (or even regularly) happen during normal operation
-   * of the service. The intention is to make it easier to debug
-   * problems by making interesting exceptions easier to see.
+   * t-these exceptions awe bowing because they awe expected t-to
+   * occasionawwy (ow even w-weguwawwy) happen d-duwing nyowmaw opewation
+   * of the sewvice. :3 the intention is to make it easiew t-to debug
+   * pwobwems by making intewesting exceptions easiew to see. 😳😳😳
    *
-   * The best way to mark an exception as boring is to extend from
-   * NoStackTrace, since that is a good indication that we don't care
-   * about the details.
+   * t-the best way to mawk an exception a-as bowing i-is to extend fwom
+   * n-nyostacktwace, (˘ω˘) s-since that is a good indication that we d-don't cawe
+   * about the detaiws. ^^
    */
-  def isBoring(t: Throwable): Boolean =
+  def isbowing(t: t-thwowabwe): boowean =
     t match {
-      case _: NoStackTrace => true
-      case _: TimeoutException => true
-      case _: CancellationException => true
-      case _: JTimeoutException => true
-      case _: ChannelException => true
-      case _: SocketException => true
-      case _: ClosedChannelException => true
-      case _: CancelledKeyException => true
-      case _: ThriftException => true
-      // DeadlineExceededExceptions are propagated as:
-      // org.apache.thrift.TApplicationException: Internal error processing issue3: 'com.twitter.finagle.service.DeadlineFilter$DeadlineExceededException: exceeded request deadline of 100.milliseconds by 4.milliseconds. Deadline expired at 2020-08-27 17:07:46 +0000 and now it is 2020-08-27 17:07:46 +0000.'
-      case e: TApplicationException =>
-        e.getMessage != null && e.getMessage.contains("DeadlineExceededException")
-      case _ => false
+      case _: nyostacktwace => twue
+      case _: t-timeoutexception => twue
+      c-case _: cancewwationexception => t-twue
+      case _: j-jtimeoutexception => twue
+      case _: channewexception => twue
+      case _: s-socketexception => t-twue
+      case _: cwosedchannewexception => t-twue
+      case _: c-cancewwedkeyexception => twue
+      case _: t-thwiftexception => twue
+      // d-deadwineexceededexceptions awe pwopagated as:
+      // o-owg.apache.thwift.tappwicationexception: intewnaw ewwow p-pwocessing issue3: 'com.twittew.finagwe.sewvice.deadwinefiwtew$deadwineexceededexception: exceeded w-wequest deadwine o-of 100.miwwiseconds by 4.miwwiseconds. :3 deadwine expiwed at 2020-08-27 17:07:46 +0000 and nyow it is 2020-08-27 17:07:46 +0000.'
+      case e-e: tappwicationexception =>
+        e-e.getmessage != nyuww && e.getmessage.contains("deadwineexceededexception")
+      c-case _ => f-fawse
     }
 }

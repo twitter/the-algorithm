@@ -1,70 +1,70 @@
-package com.twitter.product_mixer.core.model.common.identifier
+package com.twittew.pwoduct_mixew.cowe.modew.common.identifiew
 
 /**
- * Side Effect identifier
+ * side effect i-identifiew
  *
- * @note This class should always remain effectively `final`. If for any reason the `sealed`
- *       modifier is removed, the equals() implementation must be updated in order to handle class
- *       inheritor equality (see note on the equals method below)
+ * @note t-this cwass s-shouwd awways w-wemain effectivewy `finaw`. :3 i-if f-fow any weason t-the `seawed`
+ *       m-modifiew is wemoved, (⑅˘꒳˘) the equaws() impwementation must be updated in owdew t-to handwe cwass
+ *       inhewitow equawity (see n-nyote on the equaws method bewow)
  */
-sealed abstract class SideEffectIdentifier(override val name: String)
-    extends ComponentIdentifier("SideEffect", name) {
+s-seawed abstwact cwass sideeffectidentifiew(ovewwide vaw nyame: stwing)
+    e-extends componentidentifiew("sideeffect", (///ˬ///✿) nyame) {
 
   /**
-   * @inheritdoc
+   * @inhewitdoc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[SideEffectIdentifier]
+  o-ovewwide def c-canequaw(that: any): boowean = that.isinstanceof[sideeffectidentifiew]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * high pewfowmance impwementation o-of equaws method that wevewages:
+   *  - wefewentiaw equawity showt ciwcuit
+   *  - c-cached hashcode equawity s-showt ciwcuit
+   *  - f-fiewd vawues a-awe onwy checked i-if the hashcodes awe equaw to handwe the unwikewy c-case
+   *    of a hashcode cowwision
+   *  - w-wemovaw of check fow `that` being an equaws-compatibwe descendant since this cwass is finaw
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @note `candidate.canequaw(this)` i-is nyot nyecessawy because t-this cwass i-is finaw
+   * @see [[http://www.awtima.com/pins1ed/object-equawity.htmw p-pwogwamming in scawa, ^^;;
+   *      chaptew 28]] fow discussion a-and design. >_<
    */
-  override def equals(that: Any): Boolean =
-    that match {
-      case identifier: SideEffectIdentifier =>
-        // Note identifier.canEqual(this) is not necessary because this class is effectively final
-        ((this eq identifier)
-          || ((hashCode == identifier.hashCode) && ((componentType == identifier.componentType) && (name == identifier.name))))
-      case _ =>
-        false
+  o-ovewwide def equaws(that: a-any): boowean =
+    t-that match {
+      case i-identifiew: sideeffectidentifiew =>
+        // nyote identifiew.canequaw(this) is n-nyot nyecessawy because this cwass is effectivewy f-finaw
+        ((this eq identifiew)
+          || ((hashcode == i-identifiew.hashcode) && ((componenttype == identifiew.componenttype) && (name == i-identifiew.name))))
+      c-case _ =>
+        fawse
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * wevewage domain-specific constwaints (see nyotes bewow) to safewy constwuct a-and cache the
+   * h-hashcode as a vaw, rawr x3 such that i-it is instantiated o-once on object c-constwuction. /(^•ω•^) this pwevents the
+   * nyeed to wecompute the h-hashcode on each hashcode() invocation, :3 which is the behaviow of the
+   * scawa c-compiwew case cwass-genewated h-hashcode() since i-it cannot make a-assumptions wegawding fiewd
+   * o-object mutabiwity a-and hashcode i-impwementations. (ꈍᴗꈍ)
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated identifier
-   *       (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       data structure), assuming stable hashCode implementations for these objects
+   * @note c-caching the hashcode is onwy safe if aww of the f-fiewds used to c-constwuct the hashcode
+   *       a-awe immutabwe. /(^•ω•^) t-this incwudes:
+   *       - i-inabiwity to mutate the object wefewence on fow an e-existing instantiated identifiew
+   *       (i.e. (⑅˘꒳˘) each fiewd is a vaw)
+   *       - inabiwity to mutate the fiewd o-object instance itsewf (i.e. ( ͡o ω ͡o ) each fiewd is an immutabwe
+   *       - i-inabiwity t-to mutate the fiewd o-object instance itsewf (i.e. òωó e-each fiewd is an immutabwe
+   *       d-data stwuctuwe), (⑅˘꒳˘) a-assuming stabwe hashcode impwementations fow these objects
    *
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @note in owdew fow the hashcode to b-be consistent with object equawity, XD `##` m-must be used fow
+   *       b-boxed nyumewic t-types and nyuww. -.- as such, :3 awways pwefew `.##` o-ovew `.hashcode()`. nyaa~~
    */
-  override val hashCode: Int = 31 * componentType.## + name.##
+  ovewwide v-vaw hashcode: int = 31 * c-componenttype.## + n-nyame.##
 }
 
-object SideEffectIdentifier {
-  def apply(name: String)(implicit sourceFile: sourcecode.File): SideEffectIdentifier = {
-    if (ComponentIdentifier.isValidName(name))
-      new SideEffectIdentifier(name) {
-        override val file: sourcecode.File = sourceFile
+object sideeffectidentifiew {
+  def appwy(name: stwing)(impwicit souwcefiwe: souwcecode.fiwe): sideeffectidentifiew = {
+    i-if (componentidentifiew.isvawidname(name))
+      n-nyew s-sideeffectidentifiew(name) {
+        ovewwide v-vaw fiwe: souwcecode.fiwe = s-souwcefiwe
       }
-    else
-      throw new IllegalArgumentException(s"Illegal SideEffectIdentifier: $name")
+    ewse
+      thwow n-nyew iwwegawawgumentexception(s"iwwegaw sideeffectidentifiew: $name")
   }
 }

@@ -1,158 +1,158 @@
-package com.twitter.timelineranker.config
+package com.twittew.timewinewankew.config
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.cortex_tweet_annotate.thriftscala.CortexTweetQueryService
-import com.twitter.finagle.ssl.OpportunisticTls
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.gizmoduck.thriftscala.{UserService => Gizmoduck}
-import com.twitter.manhattan.v1.thriftscala.{ManhattanCoordinator => ManhattanV1}
-import com.twitter.merlin.thriftscala.UserRolesService
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.UserTweetEntityGraph
-import com.twitter.socialgraph.thriftscala.SocialGraphService
-import com.twitter.storehaus.Store
-import com.twitter.strato.client.Strato
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.timelineranker.clients.content_features_cache.ContentFeaturesMemcacheBuilder
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelineranker.thriftscala.TimelineRanker
-import com.twitter.timelines.clients.memcache_common.StorehausMemcacheConfig
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelineservice.thriftscala.TimelineService
-import com.twitter.tweetypie.thriftscala.{TweetService => TweetyPie}
-import com.twitter.util.Timer
-import org.apache.thrift.protocol.TCompactProtocol
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.convewsions.pewcentops._
+i-impowt com.twittew.cowtex_tweet_annotate.thwiftscawa.cowtextweetquewysewvice
+i-impowt com.twittew.finagwe.ssw.oppowtunistictws
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.finagwe.thwift.cwientid
+i-impowt c-com.twittew.finagwe.utiw.defauwttimew
+impowt com.twittew.gizmoduck.thwiftscawa.{usewsewvice => gizmoduck}
+impowt com.twittew.manhattan.v1.thwiftscawa.{manhattancoowdinatow => manhattanv1}
+impowt c-com.twittew.mewwin.thwiftscawa.usewwowessewvice
+impowt com.twittew.wecos.usew_tweet_entity_gwaph.thwiftscawa.usewtweetentitygwaph
+impowt com.twittew.sociawgwaph.thwiftscawa.sociawgwaphsewvice
+i-impowt com.twittew.stowehaus.stowe
+impowt com.twittew.stwato.cwient.stwato
+impowt c-com.twittew.stwato.cwient.{cwient => stwatocwient}
+impowt com.twittew.timewinewankew.cwients.content_featuwes_cache.contentfeatuwesmemcachebuiwdew
+i-impowt com.twittew.timewinewankew.wecap.modew.contentfeatuwes
+i-impowt com.twittew.timewinewankew.thwiftscawa.timewinewankew
+i-impowt com.twittew.timewines.cwients.memcache_common.stowehausmemcacheconfig
+impowt com.twittew.timewines.modew.tweetid
+impowt com.twittew.timewinesewvice.thwiftscawa.timewinesewvice
+impowt c-com.twittew.tweetypie.thwiftscawa.{tweetsewvice => tweetypie}
+impowt com.twittew.utiw.timew
+impowt owg.apache.thwift.pwotocow.tcompactpwotocow
 
-class DefaultUnderlyingClientConfiguration(flags: TimelineRankerFlags, statsReceiver: StatsReceiver)
-    extends UnderlyingClientConfiguration(flags, statsReceiver) { top =>
+c-cwass defauwtundewwyingcwientconfiguwation(fwags: timewinewankewfwags, XD s-statsweceivew: s-statsweceivew)
+    e-extends u-undewwyingcwientconfiguwation(fwags, statsweceivew) { top =>
 
-  val timer: Timer = DefaultTimer
-  val twCachePrefix = "/srv#/prod/local/cache"
+  v-vaw timew: timew = defauwttimew
+  vaw twcachepwefix = "/swv#/pwod/wocaw/cache"
 
-  override val cortexTweetQueryServiceClient: CortexTweetQueryService.MethodPerEndpoint = {
-    methodPerEndpointClient[
-      CortexTweetQueryService.ServicePerEndpoint,
-      CortexTweetQueryService.MethodPerEndpoint](
-      thriftMuxClientBuilder("cortex-tweet-query", requireMutualTls = true)
-        .dest("/s/cortex-tweet-annotate/cortex-tweet-query")
-        .requestTimeout(200.milliseconds)
-        .timeout(500.milliseconds)
+  o-ovewwide vaw cowtextweetquewysewvicecwient: cowtextweetquewysewvice.methodpewendpoint = {
+    methodpewendpointcwient[
+      cowtextweetquewysewvice.sewvicepewendpoint, -.-
+      cowtextweetquewysewvice.methodpewendpoint](
+      t-thwiftmuxcwientbuiwdew("cowtex-tweet-quewy", :3 wequiwemutuawtws = t-twue)
+        .dest("/s/cowtex-tweet-annotate/cowtex-tweet-quewy")
+        .wequesttimeout(200.miwwiseconds)
+        .timeout(500.miwwiseconds)
     )
   }
 
-  override val gizmoduckClient: Gizmoduck.MethodPerEndpoint = {
-    methodPerEndpointClient[Gizmoduck.ServicePerEndpoint, Gizmoduck.MethodPerEndpoint](
-      thriftMuxClientBuilder("gizmoduck", requireMutualTls = true)
+  o-ovewwide vaw g-gizmoduckcwient: gizmoduck.methodpewendpoint = {
+    methodpewendpointcwient[gizmoduck.sewvicepewendpoint, nyaa~~ gizmoduck.methodpewendpoint](
+      thwiftmuxcwientbuiwdew("gizmoduck", 😳 w-wequiwemutuawtws = t-twue)
         .dest("/s/gizmoduck/gizmoduck")
-        .requestTimeout(400.milliseconds)
-        .timeout(900.milliseconds)
+        .wequesttimeout(400.miwwiseconds)
+        .timeout(900.miwwiseconds)
     )
   }
 
-  override lazy val manhattanStarbuckClient: ManhattanV1.MethodPerEndpoint = {
-    methodPerEndpointClient[ManhattanV1.ServicePerEndpoint, ManhattanV1.MethodPerEndpoint](
-      thriftMuxClientBuilder("manhattan.starbuck", requireMutualTls = true)
-        .dest("/s/manhattan/starbuck.native-thrift")
-        .requestTimeout(600.millis)
+  ovewwide w-wazy vaw m-manhattanstawbuckcwient: manhattanv1.methodpewendpoint = {
+    methodpewendpointcwient[manhattanv1.sewvicepewendpoint, (⑅˘꒳˘) m-manhattanv1.methodpewendpoint](
+      thwiftmuxcwientbuiwdew("manhattan.stawbuck", nyaa~~ w-wequiwemutuawtws = twue)
+        .dest("/s/manhattan/stawbuck.native-thwift")
+        .wequesttimeout(600.miwwis)
     )
   }
 
-  override val sgsClient: SocialGraphService.MethodPerEndpoint = {
-    methodPerEndpointClient[
-      SocialGraphService.ServicePerEndpoint,
-      SocialGraphService.MethodPerEndpoint](
-      thriftMuxClientBuilder("socialgraph", requireMutualTls = true)
-        .dest("/s/socialgraph/socialgraph")
-        .requestTimeout(350.milliseconds)
-        .timeout(700.milliseconds)
+  ovewwide v-vaw sgscwient: sociawgwaphsewvice.methodpewendpoint = {
+    m-methodpewendpointcwient[
+      sociawgwaphsewvice.sewvicepewendpoint, OwO
+      s-sociawgwaphsewvice.methodpewendpoint](
+      t-thwiftmuxcwientbuiwdew("sociawgwaph", rawr x3 wequiwemutuawtws = twue)
+        .dest("/s/sociawgwaph/sociawgwaph")
+        .wequesttimeout(350.miwwiseconds)
+        .timeout(700.miwwiseconds)
     )
   }
 
-  override lazy val timelineRankerForwardingClient: TimelineRanker.FinagledClient =
-    new TimelineRanker.FinagledClient(
-      thriftMuxClientBuilder(
-        TimelineRankerConstants.ForwardedClientName,
-        ClientId(TimelineRankerConstants.ForwardedClientName),
-        protocolFactoryOption = Some(new TCompactProtocol.Factory()),
-        requireMutualTls = true
-      ).dest("/s/timelineranker/timelineranker:compactthrift").build(),
-      protocolFactory = new TCompactProtocol.Factory()
+  ovewwide wazy vaw timewinewankewfowwawdingcwient: timewinewankew.finagwedcwient =
+    nyew timewinewankew.finagwedcwient(
+      t-thwiftmuxcwientbuiwdew(
+        t-timewinewankewconstants.fowwawdedcwientname, XD
+        cwientid(timewinewankewconstants.fowwawdedcwientname), σωσ
+        p-pwotocowfactowyoption = s-some(new t-tcompactpwotocow.factowy()),
+        wequiwemutuawtws = twue
+      ).dest("/s/timewinewankew/timewinewankew:compactthwift").buiwd(), (U ᵕ U❁)
+      pwotocowfactowy = n-nyew tcompactpwotocow.factowy()
     )
 
-  override val timelineServiceClient: TimelineService.MethodPerEndpoint = {
-    methodPerEndpointClient[TimelineService.ServicePerEndpoint, TimelineService.MethodPerEndpoint](
-      thriftMuxClientBuilder("timelineservice", requireMutualTls = true)
-        .dest("/s/timelineservice/timelineservice")
-        .requestTimeout(600.milliseconds)
-        .timeout(800.milliseconds)
+  ovewwide vaw timewinesewvicecwient: timewinesewvice.methodpewendpoint = {
+    m-methodpewendpointcwient[timewinesewvice.sewvicepewendpoint, (U ﹏ U) timewinesewvice.methodpewendpoint](
+      t-thwiftmuxcwientbuiwdew("timewinesewvice", :3 w-wequiwemutuawtws = t-twue)
+        .dest("/s/timewinesewvice/timewinesewvice")
+        .wequesttimeout(600.miwwiseconds)
+        .timeout(800.miwwiseconds)
     )
   }
 
-  override val tweetyPieHighQoSClient: TweetyPie.MethodPerEndpoint = {
-    methodPerEndpointClient[TweetyPie.ServicePerEndpoint, TweetyPie.MethodPerEndpoint](
-      thriftMuxClientBuilder("tweetypieHighQoS", requireMutualTls = true)
+  ovewwide v-vaw tweetypiehighqoscwient: t-tweetypie.methodpewendpoint = {
+    m-methodpewendpointcwient[tweetypie.sewvicepewendpoint, ( ͡o ω ͡o ) t-tweetypie.methodpewendpoint](
+      thwiftmuxcwientbuiwdew("tweetypiehighqos", σωσ wequiwemutuawtws = twue)
         .dest("/s/tweetypie/tweetypie")
-        .requestTimeout(450.milliseconds)
-        .timeout(800.milliseconds),
-      maxExtraLoadPercent = Some(1.percent)
+        .wequesttimeout(450.miwwiseconds)
+        .timeout(800.miwwiseconds), >w<
+      maxextwawoadpewcent = s-some(1.pewcent)
     )
   }
 
   /**
-   * Provide less costly TweetPie client with the trade-off of reduced quality. Intended for use cases
-   * which are not essential for successful completion of timeline requests. Currently this client differs
-   * from the highQoS endpoint by having retries count set to 1 instead of 2.
+   * p-pwovide w-wess costwy tweetpie c-cwient with t-the twade-off of weduced quawity. 😳😳😳 intended fow use cases
+   * w-which awe nyot essentiaw fow successfuw compwetion of timewine wequests. OwO cuwwentwy this cwient d-diffews
+   * fwom the highqos endpoint by having wetwies count s-set to 1 instead o-of 2. 😳
    */
-  override val tweetyPieLowQoSClient: TweetyPie.MethodPerEndpoint = {
-    methodPerEndpointClient[TweetyPie.ServicePerEndpoint, TweetyPie.MethodPerEndpoint](
-      thriftMuxClientBuilder("tweetypieLowQoS", requireMutualTls = true)
+  ovewwide v-vaw tweetypiewowqoscwient: tweetypie.methodpewendpoint = {
+    m-methodpewendpointcwient[tweetypie.sewvicepewendpoint, 😳😳😳 tweetypie.methodpewendpoint](
+      t-thwiftmuxcwientbuiwdew("tweetypiewowqos", (˘ω˘) w-wequiwemutuawtws = twue)
         .dest("/s/tweetypie/tweetypie")
-        .retryPolicy(mkRetryPolicy(1)) // override default value
-        .requestTimeout(450.milliseconds)
-        .timeout(800.milliseconds),
-      maxExtraLoadPercent = Some(1.percent)
+        .wetwypowicy(mkwetwypowicy(1)) // ovewwide defauwt vawue
+        .wequesttimeout(450.miwwiseconds)
+        .timeout(800.miwwiseconds), ʘwʘ
+      maxextwawoadpewcent = some(1.pewcent)
     )
   }
 
-  override val userRolesServiceClient: UserRolesService.MethodPerEndpoint = {
-    methodPerEndpointClient[
-      UserRolesService.ServicePerEndpoint,
-      UserRolesService.MethodPerEndpoint](
-      thriftMuxClientBuilder("merlin", requireMutualTls = true)
-        .dest("/s/merlin/merlin")
-        .requestTimeout(1.second)
+  o-ovewwide vaw usewwowessewvicecwient: u-usewwowessewvice.methodpewendpoint = {
+    methodpewendpointcwient[
+      u-usewwowessewvice.sewvicepewendpoint, ( ͡o ω ͡o )
+      u-usewwowessewvice.methodpewendpoint](
+      thwiftmuxcwientbuiwdew("mewwin", wequiwemutuawtws = t-twue)
+        .dest("/s/mewwin/mewwin")
+        .wequesttimeout(1.second)
     )
   }
 
-  lazy val contentFeaturesCache: Store[TweetId, ContentFeatures] =
-    new ContentFeaturesMemcacheBuilder(
-      config = new StorehausMemcacheConfig(
-        destName = s"$twCachePrefix/timelines_content_features:twemcaches",
-        keyPrefix = "",
-        requestTimeout = 50.milliseconds,
-        numTries = 1,
-        globalTimeout = 60.milliseconds,
-        tcpConnectTimeout = 50.milliseconds,
-        connectionAcquisitionTimeout = 25.milliseconds,
-        numPendingRequests = 100,
-        isReadOnly = false,
-        serviceIdentifier = serviceIdentifier
-      ),
-      ttl = 48.hours,
-      statsReceiver
-    ).build
+  w-wazy vaw contentfeatuwescache: stowe[tweetid, o.O c-contentfeatuwes] =
+    n-nyew contentfeatuwesmemcachebuiwdew(
+      config = nyew stowehausmemcacheconfig(
+        destname = s"$twcachepwefix/timewines_content_featuwes:twemcaches", >w<
+        keypwefix = "", 😳
+        wequesttimeout = 50.miwwiseconds, 🥺
+        n-nyumtwies = 1,
+        g-gwobawtimeout = 60.miwwiseconds, rawr x3
+        t-tcpconnecttimeout = 50.miwwiseconds, o.O
+        connectionacquisitiontimeout = 25.miwwiseconds, rawr
+        n-nyumpendingwequests = 100, ʘwʘ
+        i-isweadonwy = fawse, 😳😳😳
+        s-sewviceidentifiew = sewviceidentifiew
+      ), ^^;;
+      ttw = 48.houws, o.O
+      statsweceivew
+    ).buiwd
 
-  override val userTweetEntityGraphClient: UserTweetEntityGraph.FinagledClient =
-    new UserTweetEntityGraph.FinagledClient(
-      thriftMuxClientBuilder("user_tweet_entity_graph", requireMutualTls = true)
-        .dest("/s/cassowary/user_tweet_entity_graph")
-        .retryPolicy(mkRetryPolicy(2))
-        .requestTimeout(300.milliseconds)
-        .build()
+  ovewwide v-vaw usewtweetentitygwaphcwient: u-usewtweetentitygwaph.finagwedcwient =
+    nyew usewtweetentitygwaph.finagwedcwient(
+      thwiftmuxcwientbuiwdew("usew_tweet_entity_gwaph", w-wequiwemutuawtws = t-twue)
+        .dest("/s/cassowawy/usew_tweet_entity_gwaph")
+        .wetwypowicy(mkwetwypowicy(2))
+        .wequesttimeout(300.miwwiseconds)
+        .buiwd()
     )
 
-  override val stratoClient: StratoClient =
-    Strato.client.withMutualTls(serviceIdentifier, OpportunisticTls.Required).build()
+  ovewwide vaw stwatocwient: stwatocwient =
+    s-stwato.cwient.withmutuawtws(sewviceidentifiew, (///ˬ///✿) oppowtunistictws.wequiwed).buiwd()
 }

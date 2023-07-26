@@ -1,611 +1,611 @@
-/* Copyright 2016 The TensorFlow Authors. All Rights Reserved.
+/* copywight 2016 the tensowfwow a-authows. σωσ aww wights w-wesewved. XD
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+wicensed u-undew the a-apache wicense, :3 v-vewsion 2.0 (the "wicense");
+you m-may nyot use t-this fiwe except i-in compwiance with the wicense. rawr
+you may obtain a copy of the wicense at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apache.owg/wicenses/wicense-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+u-unwess wequiwed by appwicabwe waw ow agweed t-to in wwiting, 😳 softwawe
+distwibuted u-undew the wicense is distwibuted on an "as is" basis, 😳😳😳
+w-without wawwanties ow conditions o-of any kind, (ꈍᴗꈍ) eithew e-expwess ow impwied. 🥺
+see the wicense fow the specific wanguage govewning pewmissions a-and
+wimitations undew the wicense. ^•ﻌ•^
 ==============================================================================*/
 
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "google/protobuf/any.proto";
-import "tensorflow/core/framework/cost_graph.proto";
-import "tensorflow/core/framework/device_attributes.proto";
-import "tensorflow/core/framework/graph.proto";
-import "tensorflow/core/framework/step_stats.proto";
-import "tensorflow/core/framework/tensor.proto";
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/types.proto";
-import "tensorflow/core/protobuf/config.proto";
-import "tensorflow/core/protobuf/coordination_config.proto";
-import "tensorflow/core/protobuf/debug.proto";
-import "tensorflow/core/protobuf/error_codes.proto";
-import "tensorflow/core/protobuf/named_tensor.proto";
-import "tensorflow/core/protobuf/tensorflow_server.proto";
+i-impowt "googwe/pwotobuf/any.pwoto";
+impowt "tensowfwow/cowe/fwamewowk/cost_gwaph.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/device_attwibutes.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/gwaph.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/step_stats.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/tensow.pwoto";
+impowt "tensowfwow/cowe/fwamewowk/tensow_shape.pwoto";
+impowt "tensowfwow/cowe/fwamewowk/types.pwoto";
+i-impowt "tensowfwow/cowe/pwotobuf/config.pwoto";
+impowt "tensowfwow/cowe/pwotobuf/coowdination_config.pwoto";
+impowt "tensowfwow/cowe/pwotobuf/debug.pwoto";
+i-impowt "tensowfwow/cowe/pwotobuf/ewwow_codes.pwoto";
+impowt "tensowfwow/cowe/pwotobuf/named_tensow.pwoto";
+impowt "tensowfwow/cowe/pwotobuf/tensowfwow_sewvew.pwoto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "WorkerProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.distruntime";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option cc_enabwe_awenas = twue;
+option j-java_outew_cwassname = "wowkewpwotos";
+option j-java_muwtipwe_fiwes = t-twue;
+option j-java_package = "owg.tensowfwow.distwuntime";
+option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// GetStatus method request/response messages
+// getstatus method wequest/wesponse m-messages
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message GetStatusRequest {}
+m-message getstatuswequest {}
 
-message GetStatusResponse {
-  repeated DeviceAttributes device_attributes = 1;
+message getstatuswesponse {
+  w-wepeated deviceattwibutes d-device_attwibutes = 1;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// CreateSession method request/response messages
+// cweatesession m-method wequest/wesponse m-messages
 //
-// For each session,
+// fow each session, XD
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message CreateWorkerSessionRequest {
-  // Sessions are identified by a given handle.
-  string session_handle = 1;
+message c-cweatewowkewsessionwequest {
+  // sessions awe identified b-by a given handwe. ^•ﻌ•^
+  stwing s-session_handwe = 1;
 
-  // Defines the configuration of a TensorFlow worker.
-  ServerDef server_def = 2;
+  // d-defines the configuwation of a tensowfwow wowkew. ^^;;
+  sewvewdef sewvew_def = 2;
 
-  // If true, any resources such as Variables used in the session will not be
-  // shared with other sessions.
-  bool isolate_session_state = 3;
+  // if twue, ʘwʘ any wesouwces such as vawiabwes used i-in the session w-wiww nyot be
+  // shawed with othew s-sessions. OwO
+  b-boow isowate_session_state = 3;
 
-  // The device attributes of all the devices in the cluster.
-  repeated DeviceAttributes cluster_device_attributes = 4;
+  // t-the device attwibutes of aww the devices in the cwustew. 🥺
+  w-wepeated deviceattwibutes cwustew_device_attwibutes = 4;
 
-  // The master task name from which the request is sent.
-  string master_task = 5;
+  // the mastew task name fwom which the wequest is s-sent. (⑅˘꒳˘)
+  stwing mastew_task = 5;
 
-  // The incarnation ID of the master task local CPU device.
-  // If the target worker already has a WorkerSession created previously with
-  // the same master task name but a different incarnation, it usually indicates
-  // that the previous master failed before deleting the WorkerSession on the
-  // worker. To prevent memory leaks, the worker should garbage collect the old
-  // WorkerSessions.
-  int64 master_incarnation = 6;
+  // the incawnation i-id of the m-mastew task wocaw c-cpu device. (///ˬ///✿)
+  // if the tawget w-wowkew awweady h-has a wowkewsession c-cweated pweviouswy w-with
+  // the same mastew task nyame but a-a diffewent incawnation, (✿oωo) i-it usuawwy i-indicates
+  // t-that the pwevious m-mastew faiwed befowe deweting the wowkewsession on the
+  // w-wowkew. nyaa~~ to pwevent memowy weaks, >w< the wowkew shouwd gawbage cowwect the owd
+  // wowkewsessions. (///ˬ///✿)
+  i-int64 mastew_incawnation = 6;
 
-  // Configures coordination service within worker sessions.
-  CoordinationServiceConfig coordination_service_config = 7;
+  // configuwes coowdination sewvice within wowkew s-sessions. rawr
+  c-coowdinationsewviceconfig c-coowdination_sewvice_config = 7;
 }
 
-message CreateWorkerSessionResponse {}
+message cweatewowkewsessionwesponse {}
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// DeleteSession method request/response messages
+// d-dewetesession method w-wequest/wesponse m-messages
 //
-// Deletes all worker-side state associated with the given session handle.
+// dewetes aww wowkew-side state associated with the given session handwe. (U ﹏ U)
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message DeleteWorkerSessionRequest {
-  // Sessions are identified by a given handle.
-  string session_handle = 1;
+m-message dewetewowkewsessionwequest {
+  // sessions a-awe identified by a given handwe. ^•ﻌ•^
+  s-stwing session_handwe = 1;
 }
 
-message DeleteWorkerSessionResponse {}
+m-message dewetewowkewsessionwesponse {}
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// RegisterGraph method request/response messages
+// wegistewgwaph method wequest/wesponse m-messages
 //
-// For each session, after the master placed every node on a device,
-// it partitions the whole graph into many subgraphs. All the nodes in
-// a subgraph were in the same worker, but potentially on many devices
-// owned by that worker (e.g. cpu0, plus gpu0, gpu1, ..., gpu7). The
-// master registers subgraphs for a worker before running any steps. A
-// successful registration returns a graph handle to be used in latter
-// RunGraph requests.
+// f-fow each session, (///ˬ///✿) aftew t-the mastew pwaced e-evewy nyode on a device, o.O
+// it pawtitions the whowe gwaph into many subgwaphs. a-aww the nyodes i-in
+// a subgwaph w-wewe in the same wowkew, >w< but potentiawwy o-on many d-devices
+// owned by that wowkew (e.g. nyaa~~ c-cpu0, pwus gpu0, òωó gpu1, ..., gpu7). (U ᵕ U❁) the
+// mastew wegistews subgwaphs fow a-a wowkew befowe w-wunning any steps. (///ˬ///✿) a
+// successfuw wegistwation w-wetuwns a gwaph h-handwe to be used in wattew
+// wungwaph wequests. (✿oωo)
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message RegisterGraphRequest {
-  // Subgraphs are scoped within one session.
-  string session_handle = 1;
+message w-wegistewgwaphwequest {
+  // subgwaphs awe scoped within one session. 😳😳😳
+  stwing session_handwe = 1;
 
-  // Set to true if `CreateWorkerSession` was called for `session_handle`.
-  bool create_worker_session_called = 6;
+  // s-set to twue if `cweatewowkewsession` was c-cawwed fow `session_handwe`. (✿oωo)
+  b-boow cweate_wowkew_session_cawwed = 6;
 
-  // "graph_def" has the subgraph of nodes for this worker, with each node
-  // having its device_name filled in.
-  GraphDef graph_def = 2;
+  // "gwaph_def" has the subgwaph of nyodes fow this wowkew, w-with each n-nyode
+  // having its device_name fiwwed in. (U ﹏ U)
+  gwaphdef gwaph_def = 2;
 
-  // True iff the graph (before partitioning) contains control flow nodes.
+  // t-twue iff the gwaph (befowe p-pawtitioning) contains contwow fwow nyodes. (˘ω˘)
   //
-  // As of 01/11/2015, this is no longer set by clients.
-  bool has_control_flow = 3 [deprecated = true];
+  // as o-of 01/11/2015, 😳😳😳 this is nyo wongew s-set by cwients. (///ˬ///✿)
+  b-boow has_contwow_fwow = 3 [depwecated = twue];
 
-  // Configuration options for the session in which this graph was created.
-  GraphOptions graph_options = 4;
+  // c-configuwation options f-fow the session i-in which this gwaph w-was cweated. (U ᵕ U❁)
+  gwaphoptions g-gwaph_options = 4;
 
-  // Field(s) used by TensorFlow Debugger (tfdbg).
-  DebugOptions debug_options = 5;
+  // f-fiewd(s) used by tensowfwow debuggew (tfdbg). >_<
+  d-debugoptions d-debug_options = 5;
 
-  // If graph_def contains any collective ops this must be a positive
-  // integer used to coordinate execution with other graphs.  All
-  // graphs in a distributed execution with the same
-  // collective_graph_key will coordinate to use the same step_id
-  // concurrently so that BufRendezvous entries will make the correct
-  // values accessible.
-  int64 collective_graph_key = 7;
+  // if g-gwaph_def contains any cowwective ops this must b-be a positive
+  // integew used t-to coowdinate e-execution with othew gwaphs. (///ˬ///✿)  aww
+  // gwaphs in a distwibuted execution w-with the s-same
+  // cowwective_gwaph_key w-wiww coowdinate t-to use the same step_id
+  // concuwwentwy s-so that bufwendezvous entwies wiww make the cowwect
+  // vawues accessibwe. (U ᵕ U❁)
+  int64 cowwective_gwaph_key = 7;
 
-  // ConfigProto from the session in which this graph was created.
-  // Contains additional parameters beyond graph_options, including
-  // the name of the requested executor.
-  ConfigProto config_proto = 8;
+  // configpwoto f-fwom the session in which t-this gwaph was cweated. >w<
+  // c-contains additionaw pawametews b-beyond gwaph_options, 😳😳😳 incwuding
+  // t-the nyame o-of the wequested e-executow. (ˆ ﻌ ˆ)♡
+  configpwoto c-config_pwoto = 8;
 }
 
-message RegisterGraphResponse {
-  // If the registration succeeds, returns an opaque graph_handle to
-  // the master. The master calls RunGraph with graph_handle to
-  // compute different steps.
-  string graph_handle = 1;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-//
-// DeregisterGraph method request/response messages
-//
-// The master deregisters the given graph_handle when the graph is no
-// longer needed (e.g., the overall graph is re-scheduled and nodes
-// are re-placed).
-//
-// The worker deregisters a graph_handle automatically according to on
-// a TTL-base policy in case of master restarts.
-//
-////////////////////////////////////////////////////////////////////////////////
-
-message DeregisterGraphRequest {
-  // The session_handle used when registering the graph. If session_handle is
-  // empty, a single global namespace is used.
-  string session_handle = 2;
-
-  // Set to true if `CreateWorkerSession` was called for `session_handle`.
-  bool create_worker_session_called = 3;
-
-  // REQUIRED: graph_handle must be returned by a RegisterGraph call
-  // to the same WorkerService.
-  string graph_handle = 1;
-}
-
-message DeregisterGraphResponse {
-  // TODO(mrry): Optionally add summary stats for the graph.
+m-message wegistewgwaphwesponse {
+  // if the wegistwation succeeds, (ꈍᴗꈍ) wetuwns an opaque gwaph_handwe to
+  // the mastew. t-the mastew cawws w-wungwaph with g-gwaph_handwe to
+  // compute d-diffewent steps. 🥺
+  stwing gwaph_handwe = 1;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// CleanupAll method request/response messages
+// dewegistewgwaph method wequest/wesponse m-messages
+//
+// t-the mastew dewegistews t-the given gwaph_handwe when the gwaph is nyo
+// w-wongew nyeeded (e.g., t-the ovewaww gwaph is we-scheduwed a-and n-nyodes
+// awe we-pwaced). >_<
+//
+// the wowkew dewegistews a gwaph_handwe automaticawwy accowding to o-on
+// a ttw-base p-powicy in case o-of mastew westawts. OwO
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message CleanupAllRequest {
-  // A list of container names.
+m-message d-dewegistewgwaphwequest {
+  // the session_handwe u-used when wegistewing t-the gwaph. ^^;; if session_handwe i-is
+  // empty, (✿oωo) a-a singwe gwobaw nyamespace i-is used. UwU
+  stwing session_handwe = 2;
+
+  // set t-to twue if `cweatewowkewsession` was cawwed fow `session_handwe`. ( ͡o ω ͡o )
+  b-boow cweate_wowkew_session_cawwed = 3;
+
+  // w-wequiwed: gwaph_handwe must be w-wetuwned by a wegistewgwaph caww
+  // to the same w-wowkewsewvice. (✿oωo)
+  s-stwing gwaph_handwe = 1;
+}
+
+message d-dewegistewgwaphwesponse {
+  // todo(mwwy): optionawwy add summawy stats fow t-the gwaph. mya
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// cweanupaww method wequest/wesponse m-messages
+//
+////////////////////////////////////////////////////////////////////////////////
+
+m-message cweanupawwwequest {
+  // a-a wist of containew nyames. ( ͡o ω ͡o )
   //
-  // If 'container' is not empty, releases resources in the given
-  // containers in all devices.
+  // i-if 'containew' is n-nyot empty, :3 weweases wesouwces in the given
+  // c-containews in aww devices.
   //
-  // If 'container' is empty, releases resources in the default
-  // container in all devices.
-  repeated string container = 1;
+  // if 'containew' i-is empty, 😳 w-weweases wesouwces in the defauwt
+  // c-containew in aww devices. (U ﹏ U)
+  w-wepeated stwing c-containew = 1;
 }
 
-message CleanupAllResponse {}
+m-message cweanupawwwesponse {}
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// RunGraph request / response messages
+// wungwaph wequest / wesponse messages
 //
-// The worker executes all subgraphs registered under graph_handle.
-// RunGraph returns after the execution finishes or an error is
-// encountered.
-// A sequence of RunGraphRequests with is_partial may be sent to RunGraph for
-// partial graph execution.
+// the wowkew exekawaii~s aww subgwaphs wegistewed undew gwaph_handwe. >w<
+// wungwaph wetuwns aftew the execution finishes ow an ewwow is
+// encountewed. UwU
+// a-a s-sequence of wungwaphwequests with is_pawtiaw may b-be sent to wungwaph f-fow
+// pawtiaw g-gwaph execution. 😳
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-// Options specific to the execution of a single step.
-message ExecutorOpts {
-  bool record_costs = 1;
-  bool record_timeline = 3;
-  bool record_partition_graphs = 4;
-  bool report_tensor_allocations_upon_oom = 5;
+// options s-specific to the execution of a-a singwe step. XD
+m-message executowopts {
+  boow wecowd_costs = 1;
+  b-boow wecowd_timewine = 3;
+  boow wecowd_pawtition_gwaphs = 4;
+  b-boow wepowt_tensow_awwocations_upon_oom = 5;
 }
 
-message RunGraphRequest {
-  // session_handle is the master-generated unique id for this session.
-  // If session_handle is non-empty, it must be the same as used when
-  // registering the graph. If it is empty, a single global namespace is used to
-  // search for the graph_handle.
-  string session_handle = 8;
+m-message wungwaphwequest {
+  // session_handwe is the mastew-genewated u-unique i-id fow this session. (✿oωo)
+  // i-if session_handwe i-is non-empty, ^•ﻌ•^ i-it must b-be the same as u-used when
+  // w-wegistewing the g-gwaph. mya if it is empty, (˘ω˘) a singwe g-gwobaw nyamespace i-is used to
+  // s-seawch fow the gwaph_handwe. nyaa~~
+  s-stwing session_handwe = 8;
 
-  // Set to true if `CreateWorkerSession` was called for `session_handle`.
-  bool create_worker_session_called = 10;
+  // set to twue if `cweatewowkewsession` was cawwed f-fow `session_handwe`. :3
+  boow cweate_wowkew_session_cawwed = 10;
 
-  // REQUIRED: graph_handle must be returned by a RegisterGraph call
-  // to the same WorkerService.
-  string graph_handle = 1;
+  // w-wequiwed: g-gwaph_handwe must b-be wetuwned by a wegistewgwaph c-caww
+  // to the same wowkewsewvice.
+  s-stwing gwaph_handwe = 1;
 
-  // A unique ID to distinguish different runs of the same graph.
+  // a-a unique id to distinguish d-diffewent wuns of the same gwaph. (✿oωo)
   //
-  // The master generates a global unique `step_id` to distinguish
-  // different runs of the graph computation. Subgraphs communicate
-  // (e.g., send/recv ops) with each other using `step_id` to
-  // distinguish tensors generated by different runs.
+  // the mastew genewates a gwobaw unique `step_id` to distinguish
+  // d-diffewent wuns of the gwaph computation. (U ﹏ U) s-subgwaphs c-communicate
+  // (e.g., send/wecv ops) with each othew using `step_id` t-to
+  // distinguish t-tensows genewated b-by diffewent w-wuns. (ꈍᴗꈍ)
   int64 step_id = 2;
 
-  // Options for this step.
-  ExecutorOpts exec_opts = 5;
+  // options fow this step. (˘ω˘)
+  executowopts e-exec_opts = 5;
 
-  // Runs the graph.
+  // w-wuns the gwaph. ^^
   //
-  // Sends the tensors in "send" into the graph before the run and
-  // fetches the keys into `RunGraphResponse.recv` after the run.
-  repeated NamedTensorProto send = 3;
-  repeated string recv_key = 4;
+  // s-sends the tensows in "send" into the gwaph b-befowe the wun and
+  // fetches t-the keys into `wungwaphwesponse.wecv` a-aftew the w-wun.
+  wepeated nyamedtensowpwoto s-send = 3;
+  wepeated s-stwing wecv_key = 4;
 
-  // True if the RunGraphRequest is a partial run request.
-  bool is_partial = 6;
-  // True if this is the last partial run request in a sequence of requests.
-  bool is_last_partial_run = 7;
+  // t-twue if the wungwaphwequest is a-a pawtiaw wun wequest. (⑅˘꒳˘)
+  boow i-is_pawtiaw = 6;
+  // t-twue if this i-is the wast pawtiaw w-wun wequest i-in a sequence o-of wequests. rawr
+  boow i-is_wast_pawtiaw_wun = 7;
 
-  // If true then some errors, e.g., execution errors that have long
-  // error messages, may return an OK RunGraphResponse with the actual
-  // error saved in the status_code/status_error_message fields of the
-  // response body. This is a workaround since the RPC subsystem may
-  // truncate long metadata messages.
-  bool store_errors_in_response_body = 9;
+  // i-if twue then some ewwows, :3 e.g., e-execution ewwows that have wong
+  // e-ewwow messages, OwO may wetuwn a-an ok wungwaphwesponse w-with the a-actuaw
+  // ewwow saved in the status_code/status_ewwow_message fiewds of the
+  // w-wesponse body. (ˆ ﻌ ˆ)♡ t-this is a wowkawound s-since the wpc subsystem may
+  // twuncate wong metadata m-messages.
+  boow s-stowe_ewwows_in_wesponse_body = 9;
 
-  // Unique identifier for this request. Every RunGraphRequest must have a
-  // unique request_id, and retried RunGraphRequests must have the same
-  // request_id. If request_id is zero, retry detection is disabled.
+  // unique i-identifiew fow t-this wequest. :3 evewy wungwaphwequest must have a
+  // unique wequest_id, -.- a-and wetwied w-wungwaphwequests m-must have t-the same
+  // wequest_id. -.- if wequest_id is zewo, òωó w-wetwy detection i-is disabwed. 😳
   //
-  // Retried RunGraphRequests are problematic because they may issue a
-  // RecvTensor that will have no corresponding sender and will wait forever.
-  // Workers use request_ids to reject retried RunGraph requests instead of
-  // waiting forever.
-  int64 request_id = 11;
+  // wetwied wungwaphwequests a-awe pwobwematic because they may issue a
+  // w-wecvtensow that wiww have nyo cowwesponding s-sendew a-and wiww wait fowevew. nyaa~~
+  // wowkews u-use wequest_ids t-to weject wetwied wungwaph w-wequests instead of
+  // waiting f-fowevew. (⑅˘꒳˘)
+  int64 w-wequest_id = 11;
 
-  // Next: 12
+  // n-nyext: 12
 }
 
-message RunGraphResponse {
-  // A list of tensors corresponding to those requested by
-  // `RunGraphRequest.recv_key`.
-  repeated NamedTensorProto recv = 1;
+m-message wungwaphwesponse {
+  // a-a wist of t-tensows cowwesponding t-to those wequested by
+  // `wungwaphwequest.wecv_key`. 😳
+  w-wepeated nyamedtensowpwoto wecv = 1;
 
-  // If the request asked for execution stats, the cost graph, or the partition
-  // graphs, these are returned here.
-  // TODO(suharshs): Package these in a RunMetadata instead.
-  StepStats step_stats = 2;
-  CostGraphDef cost_graph = 3;
-  repeated GraphDef partition_graph = 4;
+  // if the w-wequest asked f-fow execution stats, (U ﹏ U) t-the cost gwaph, ow the pawtition
+  // gwaphs, /(^•ω•^) these awe wetuwned hewe. OwO
+  // t-todo(suhawshs): package these i-in a wunmetadata i-instead. ( ͡o ω ͡o )
+  stepstats step_stats = 2;
+  costgwaphdef c-cost_gwaph = 3;
+  wepeated g-gwaphdef pawtition_gwaph = 4;
 
-  // If store_errors_in_response_body is true in the request, then
-  // optionally the server may return an OK status for the RPC and
-  // fill the true status into the fields below, to allow for messages
-  // that are too long to fit in metadata.
-  error.Code status_code = 5;
-  string status_error_message = 6;
+  // i-if stowe_ewwows_in_wesponse_body i-is twue in t-the wequest, XD then
+  // o-optionawwy the sewvew may wetuwn an ok status fow the wpc and
+  // fiww the t-twue status into the fiewds bewow, /(^•ω•^) t-to awwow fow messages
+  // that awe too wong to fit in metadata. /(^•ω•^)
+  e-ewwow.code status_code = 5;
+  stwing status_ewwow_message = 6;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// CleanupGraph method request/response messages
+// cweanupgwaph method wequest/wesponse m-messages
 //
-// After the master receives RunGraph responses from all workers, the
-// master instructs every worker to cleanup any remaining state of a
-// step (e.g. tensors buffered by a `Send` op but not picked up by
-// other workers). The master does not necessarily need to wait for
-// completion of CleanupGraph calls.
+// a-aftew the mastew weceives w-wungwaph wesponses fwom aww wowkews, 😳😳😳 the
+// mastew i-instwucts evewy w-wowkew to cweanup any wemaining s-state of a
+// step (e.g. (ˆ ﻌ ˆ)♡ tensows b-buffewed by a `send` op but nyot picked up by
+// othew wowkews). :3 t-the mastew does not nyecessawiwy need to wait f-fow
+// compwetion o-of cweanupgwaph c-cawws. òωó
 //
-// Workers should cleanup step states automatically according to a
-// TTL-based policy in case of master restarts.
+// wowkews shouwd cweanup step states a-automaticawwy accowding to a
+// ttw-based powicy in case of mastew westawts. 🥺
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message CleanupGraphRequest {
-  int64 step_id = 1;
+m-message cweanupgwaphwequest {
+  i-int64 step_id = 1;
 }
 
-message CleanupGraphResponse {}
+m-message c-cweanupgwaphwesponse {}
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// RecvTensor method request/response messages
+// wecvtensow method wequest/wesponse m-messages
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message RecvTensorRequest {
-  // The step in which the tensor will be produced.
+m-message wecvtensowwequest {
+  // the step in which the tensow w-wiww be pwoduced. (U ﹏ U)
   //
-  // REQUIRED: This must eventually correspond to the `step_id` passed
-  // into a RunGraph call on the same WorkerService.
-  int64 step_id = 1;
-
-  // A key identifying the channel to receive tensors from. A RecvTensor request
-  // retrieves one tensor from the channel, but multiple tensors can be sent and
-  // received over the same channel with multiple RecvTensor requests. See
-  // rendezvous.h for details.
-  string rendezvous_key = 2;
-
-  // If true, use an out-of-band DMA mechanism to transfer the
-  // received tensor.
-  bool dma_ok = 3;
-
-  // Optional information on client-side device locality.
-  DeviceLocality client_locality = 4;
-
-  // Optional information on server-side device locality.
-  DeviceLocality server_locality = 5;
-
-  // Optional information needed by the RPC subsystem.
-  google.protobuf.Any transport_options = 6;
-
-  // Unique identifier for this request. Every RecvTensorRequest must have a
-  // unique request_id, and retried RecvTensorRequests must have the same
-  // request_id. If request_id is zero, retry detection and response cache
-  // are disabled.
-  //
-  // Retried RecvTensorRequests are problematic because a RecvTensor with no
-  // corresponding sender will wait forever, and the tensor may have been
-  // delivered to a previous retry. Workers use request_ids to reject retried
-  // RecvTensor requests instead of waiting forever.
-  int64 request_id = 7;
-}
-
-message RecvTensorResponse {
-  // The tensor as a proto.
-  TensorProto tensor = 1;
-
-  // If true, this tensor was the output of a dead node, and the
-  // content is invalid.
-  bool is_dead = 2;
-
-  // The time at which tensor was available and started to be returned.
-  int64 send_start_micros = 3;
-
-  // Optional additional information about how to receive the tensor,
-  // e.g. in the event that `RecvTensorRequest.dma_ok` was true.
-  google.protobuf.Any transport_options = 4;
-
-  // Whether the receiver should send a MarkRecvFinishedRequest to the sender
-  // to ack the message.
-  bool require_ack = 5;
-}
-
-// Message for managing the response cache maintained on the sender side.
-// Currently only used by the gRPC worker service.
-message MarkRecvFinishedRequest {
-  int64 request_id = 1;
-}
-
-message MarkRecvFinishedResponse {}
-
-////////////////////////////////////////////////////////////////////////////////
-//
-// Logging method request/response messages
-//
-// NOTE(mrry): This feature is not supported in the open-source
-// version, and these messages are expected to change.
-//
-////////////////////////////////////////////////////////////////////////////////
-
-// Out-of-band request to begin or end logging, or
-// to retrieve logs for particular steps.
-message LoggingRequest {
-  // If true, RPC logging will be enabled.
-  bool enable_rpc_logging = 1;
-
-  // If true, RPC logging will be disabled.
-  bool disable_rpc_logging = 4;
-
-  // If true, discard any saved logging data (for all steps).
-  bool clear = 2;
-
-  // When set, requests all saved log data pertaining to the step.
-  // Any log data retrieved is eliminated from the store and cannot be
-  // retrieved again.
-  repeated int64 fetch_step_id = 3;
-}
-
-message LabeledStepStats {
-  int64 step_id = 1;
-  StepStats step_stats = 2;
-}
-
-message LoggingResponse {
-  repeated LabeledStepStats step = 1;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-//
-// Tracing method request/response messages
-//
-// NOTE(mrry): This feature is not supported in the open-source
-// version, and these messages are expected to change.
-//
-////////////////////////////////////////////////////////////////////////////////
-
-message TraceOpts {
-  // Length of the trace to be taken, in seconds.
-  double duration = 1;
-  // If true, capture step profile locally in each worker. Currently
-  // unimplemented.
-  bool use_step_profiler = 2;
-  // If true, capture kernel events from each worker.
-  bool use_kernel_profiler = 3;
-  // If true, capture extended profiling events from TensorFlow process.
-  bool use_extended_profiler = 4;
-  // If true, capture GPU profiling events locally on each
-  // machine. Currently unimplemented.
-  bool use_gpu_profiler = 5;
-  // If true, collect sampled profile events. Currently unimplemented.
-  bool use_sample_profiler = 6;
-}
-
-// Out-of-band request to configure distributed tracing.
-message TracingRequest {
-  TraceOpts options = 1;
-}
-
-message TracingResponse {}
-
-////////////////////////////////////////////////////////////////////////////////
-//
-// Raw data transfers in support of Collective Ops.
-// These methods are experimental and subject to change.
-//
-// The intention is to allow collectives to take advantage of the most
-// efficient methods available on a platform, e.g. RDMA, and not be
-// constrained to use the RPC system in use by other methods.
-//
-////////////////////////////////////////////////////////////////////////////////
-
-message RecvBufRequest {
-  // Use of the fields below may vary by implementation.  For example
-  // the buf_ptr and num_bytes may be set only for local operations and
-  // not sent on the wire, or only sent on the wire in one direction.
-
-  // Used at server side to find the correct BufRendezvous.
+  // wequiwed: this must eventuawwy cowwespond t-to the `step_id` passed
+  // into a wungwaph c-caww on the s-same wowkewsewvice. XD
   int64 step_id = 1;
 
-  // Arbitrary string identifying a BufRendezvous entry.
-  string buf_rendezvous_key = 2;
+  // a-a key identifying t-the channew t-to weceive tensows fwom. ^^ a wecvtensow wequest
+  // w-wetwieves one tensow fwom the channew, but muwtipwe t-tensows can be sent and
+  // weceived ovew the same channew w-with muwtipwe w-wecvtensow wequests. o.O s-see
+  // wendezvous.h f-fow d-detaiws. 😳😳😳
+  stwing wendezvous_key = 2;
 
-  // Size of value expected, must agree with BufRendezvous entry.
-  int64 num_bytes = 3;
+  // i-if twue, /(^•ω•^) use an out-of-band dma mechanism t-to twansfew the
+  // weceived t-tensow. 😳😳😳
+  boow dma_ok = 3;
 
-  // When RDMA is in use, address of destination field on client.
-  fixed64 buf_ptr = 4;
+  // optionaw infowmation o-on cwient-side d-device wocawity. ^•ﻌ•^
+  devicewocawity c-cwient_wocawity = 4;
 
-  // Optional information on client-side device locality.
-  DeviceLocality client_locality = 5;
+  // optionaw infowmation o-on sewvew-side d-device wocawity. 🥺
+  devicewocawity s-sewvew_wocawity = 5;
 
-  // Optional information on server-side device locality.
-  DeviceLocality server_locality = 6;
+  // o-optionaw infowmation nyeeded b-by the wpc subsystem. o.O
+  googwe.pwotobuf.any twanspowt_options = 6;
 
-  // Optional, implementation-specific data.
-  google.protobuf.Any transport_options = 7;
-  // For annotating timeline and device incarnation check.
-  string src_device = 8;
-  // Optional, for annotating the timeline.
-  string dst_device = 9;
-
-  // Depending on the RPC system in use, it may be necessary to set this
-  // id to detect resends of RPCs where the server is not aware that
-  // the prior RPC failed.
-  int64 request_id = 10;
-
-  // Incarnation number of the source device, used to detect worker failures.
-  uint64 src_incarnation = 11;
+  // unique i-identifiew fow this wequest. (U ᵕ U❁) e-evewy wecvtensowwequest must have a
+  // unique w-wequest_id, ^^ and w-wetwied wecvtensowwequests m-must have the same
+  // w-wequest_id. (⑅˘꒳˘) i-if wequest_id is zewo, :3 wetwy detection a-and wesponse cache
+  // awe d-disabwed. (///ˬ///✿)
+  //
+  // wetwied wecvtensowwequests a-awe pwobwematic b-because a wecvtensow with nyo
+  // cowwesponding sendew wiww wait fowevew, :3 and t-the tensow may h-have been
+  // dewivewed to a pwevious wetwy. wowkews use wequest_ids t-to weject wetwied
+  // wecvtensow w-wequests i-instead of waiting fowevew. 🥺
+  int64 wequest_id = 7;
 }
 
-message RecvBufResponse {
-  // Use of the fields below may vary by implementation.  Comments give
-  // intended use.
+message wecvtensowwesponse {
+  // t-the tensow as a pwoto. mya
+  tensowpwoto tensow = 1;
 
-  fixed64 buf_ptr = 1;  // Address of source field on server.
-  int64 num_bytes = 2;  // Byte length of buf_ptr field, if set.
-  bool is_dead = 3;     // True if value is 'dead' like a tensor.
-  // Optional, implementation-specific data.
-  google.protobuf.Any transport_options = 4;
-  // Optional, for timeline.
-  int64 send_start_micros = 5;
+  // i-if twue, XD this tensow was the output o-of a dead nyode, -.- a-and the
+  // content is invawid. o.O
+  b-boow is_dead = 2;
 
-  // Whether the receiver should send a MarkRecvFinishedRequest to the sender
-  // to ack the message.
-  bool require_ack = 6;
+  // t-the time at which t-tensow was avaiwabwe a-and stawted t-to be wetuwned. (˘ω˘)
+  i-int64 send_stawt_micwos = 3;
+
+  // optionaw additionaw infowmation about how to weceive the tensow, (U ᵕ U❁)
+  // e.g. i-in the event t-that `wecvtensowwequest.dma_ok` w-was twue. rawr
+  googwe.pwotobuf.any t-twanspowt_options = 4;
+
+  // w-whethew t-the weceivew shouwd send a mawkwecvfinishedwequest to the sendew
+  // to ack t-the message. 🥺
+  b-boow wequiwe_ack = 5;
+}
+
+// message fow managing the wesponse c-cache maintained o-on the sendew side. rawr x3
+// c-cuwwentwy onwy used by the gwpc wowkew sewvice. ( ͡o ω ͡o )
+m-message mawkwecvfinishedwequest {
+  int64 w-wequest_id = 1;
+}
+
+m-message mawkwecvfinishedwesponse {}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// wogging method wequest/wesponse m-messages
+//
+// nyote(mwwy): this f-featuwe is nyot s-suppowted in the open-souwce
+// v-vewsion, σωσ and these m-messages awe e-expected to change. rawr x3
+//
+////////////////////////////////////////////////////////////////////////////////
+
+// o-out-of-band w-wequest t-to begin ow end wogging, (ˆ ﻌ ˆ)♡ ow
+// t-to wetwieve wogs f-fow pawticuwaw steps. rawr
+message w-woggingwequest {
+  // if twue, :3 wpc wogging wiww b-be enabwed. rawr
+  boow enabwe_wpc_wogging = 1;
+
+  // i-if twue, (˘ω˘) wpc wogging wiww be disabwed. (ˆ ﻌ ˆ)♡
+  b-boow disabwe_wpc_wogging = 4;
+
+  // i-if twue, mya discawd any saved wogging d-data (fow aww steps). (U ᵕ U❁)
+  boow cweaw = 2;
+
+  // when set, mya wequests a-aww saved wog d-data pewtaining to the step. ʘwʘ
+  // any wog data wetwieved i-is ewiminated f-fwom the stowe and cannot b-be
+  // wetwieved again. (˘ω˘)
+  wepeated int64 fetch_step_id = 3;
+}
+
+m-message wabewedstepstats {
+  i-int64 step_id = 1;
+  s-stepstats step_stats = 2;
+}
+
+m-message woggingwesponse {
+  wepeated wabewedstepstats s-step = 1;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Collective Op dynamic group resolution messages.
+// t-twacing m-method wequest/wesponse m-messages
+//
+// nyote(mwwy): this featuwe is nyot suppowted in the open-souwce
+// vewsion, 😳 and these messages a-awe expected t-to change. òωó
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-// Supplies one or more device names as members of the group identified by
-// group_key.  Service will respond when all group_size devices become known.
-// All devices in group must have same type.
-message CompleteGroupRequest {
-  int32 group_key = 1;
-  int32 group_size = 2;
-  string device_type = 3;
-  int32 collective_type = 5;
-  DeviceAttributes device_attributes = 6;
-
-  reserved 4;
+m-message twaceopts {
+  // w-wength o-of the twace t-to be taken, nyaa~~ in seconds. o.O
+  doubwe d-duwation = 1;
+  // i-if twue, nyaa~~ captuwe step pwofiwe w-wocawwy in each w-wowkew. (U ᵕ U❁) cuwwentwy
+  // unimpwemented. 😳😳😳
+  boow u-use_step_pwofiwew = 2;
+  // if twue, captuwe kewnew e-events fwom each wowkew. (U ﹏ U)
+  b-boow use_kewnew_pwofiwew = 3;
+  // i-if twue, ^•ﻌ•^ captuwe extended pwofiwing e-events fwom t-tensowfwow pwocess. (⑅˘꒳˘)
+  b-boow use_extended_pwofiwew = 4;
+  // if t-twue, >_< captuwe gpu p-pwofiwing events wocawwy on each
+  // m-machine. (⑅˘꒳˘) cuwwentwy unimpwemented. σωσ
+  b-boow u-use_gpu_pwofiwew = 5;
+  // i-if twue, 🥺 cowwect sampwed p-pwofiwe events. :3 cuwwentwy unimpwemented. (ꈍᴗꈍ)
+  b-boow use_sampwe_pwofiwew = 6;
 }
 
-// Gives the complete membership of the group identified by group_key.
-message CompleteGroupResponse {
-  int32 group_key = 1;
-  int32 group_size = 2;
-  string device_type = 3;
-  int32 num_tasks = 4;  // number of distinct tasks hosting the devices
-  bytes communicator_key = 7;
-  repeated DeviceAttributes device_attributes = 8;
-
-  reserved 5, 6;
+// out-of-band wequest to configuwe distwibuted twacing. ^•ﻌ•^
+message twacingwequest {
+  twaceopts o-options = 1;
 }
 
-// Supplies data about one collective op belonging to the instance identified
-// by instance_key.  Service will respond when all group_size ops have
-// become known.  Most of the data being sent is for correctness checking,
-// to ensure that all ops in the instance share common attributes.
-message CompleteInstanceRequest {
-  string name = 1;
+message twacingwesponse {}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// waw data twansfews in suppowt of cowwective ops. (˘ω˘)
+// these methods awe expewimentaw a-and subject to change. 🥺
+//
+// the intention i-is to awwow cowwectives to take a-advantage of the most
+// efficient methods avaiwabwe o-on a pwatfowm, (✿oωo) e.g. wdma, a-and nyot be
+// constwained to use t-the wpc system i-in use by othew methods.
+//
+////////////////////////////////////////////////////////////////////////////////
+
+message wecvbufwequest {
+  // u-use of the fiewds bewow may vawy by impwementation. XD  f-fow exampwe
+  // the buf_ptw and n-nyum_bytes may be set onwy fow w-wocaw opewations and
+  // nyot s-sent on the wiwe, (///ˬ///✿) o-ow onwy sent on the wiwe in one diwection.
+
+  // u-used at sewvew side to find the cowwect bufwendezvous. ( ͡o ω ͡o )
+  i-int64 step_id = 1;
+
+  // awbitwawy stwing identifying a bufwendezvous e-entwy. ʘwʘ
+  stwing b-buf_wendezvous_key = 2;
+
+  // size of vawue expected, rawr m-must agwee w-with bufwendezvous entwy. o.O
+  i-int64 nyum_bytes = 3;
+
+  // when wdma is in use, ^•ﻌ•^ addwess of destination fiewd on c-cwient. (///ˬ///✿)
+  fixed64 b-buf_ptw = 4;
+
+  // optionaw infowmation o-on cwient-side d-device wocawity. (ˆ ﻌ ˆ)♡
+  devicewocawity c-cwient_wocawity = 5;
+
+  // optionaw infowmation on sewvew-side d-device wocawity. XD
+  devicewocawity sewvew_wocawity = 6;
+
+  // o-optionaw, i-impwementation-specific data.
+  googwe.pwotobuf.any t-twanspowt_options = 7;
+  // fow annotating timewine and device incawnation check. (✿oωo)
+  stwing swc_device = 8;
+  // optionaw, -.- fow annotating the t-timewine. XD
+  stwing d-dst_device = 9;
+
+  // depending o-on the wpc s-system in use, (✿oωo) it may be nyecessawy t-to set this
+  // id to detect wesends of wpcs whewe the sewvew is nyot awawe that
+  // the p-pwiow wpc faiwed.
+  int64 wequest_id = 10;
+
+  // incawnation nyumbew of the souwce device, (˘ω˘) used t-to detect wowkew f-faiwuwes. (ˆ ﻌ ˆ)♡
+  uint64 s-swc_incawnation = 11;
+}
+
+message wecvbufwesponse {
+  // use o-of the fiewds bewow m-may vawy by i-impwementation. >_<  comments give
+  // i-intended use. -.-
+
+  fixed64 buf_ptw = 1;  // a-addwess of souwce f-fiewd on sewvew. (///ˬ///✿)
+  int64 nyum_bytes = 2;  // b-byte wength of buf_ptw fiewd, XD if set. ^^;;
+  b-boow is_dead = 3;     // twue i-if vawue is 'dead' w-wike a tensow. rawr x3
+  // optionaw, OwO i-impwementation-specific d-data. ʘwʘ
+  googwe.pwotobuf.any t-twanspowt_options = 4;
+  // optionaw, rawr fow t-timewine. UwU
+  int64 send_stawt_micwos = 5;
+
+  // w-whethew the weceivew s-shouwd send a mawkwecvfinishedwequest to the s-sendew
+  // to ack the message. (ꈍᴗꈍ)
+  boow wequiwe_ack = 6;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// cowwective op dynamic gwoup wesowution messages. (✿oωo)
+//
+////////////////////////////////////////////////////////////////////////////////
+
+// suppwies one ow mowe d-device nyames as membews of the gwoup identified b-by
+// gwoup_key. (⑅˘꒳˘)  sewvice wiww w-wespond when aww gwoup_size devices become known. OwO
+// a-aww devices in gwoup must have same type.
+m-message compwetegwoupwequest {
+  int32 gwoup_key = 1;
+  int32 g-gwoup_size = 2;
+  stwing device_type = 3;
+  int32 c-cowwective_type = 5;
+  deviceattwibutes device_attwibutes = 6;
+
+  w-wesewved 4;
+}
+
+// g-gives the compwete membewship of the gwoup i-identified by gwoup_key. 🥺
+m-message compwetegwoupwesponse {
+  i-int32 g-gwoup_key = 1;
+  int32 gwoup_size = 2;
+  stwing d-device_type = 3;
+  int32 nyum_tasks = 4;  // nyumbew of distinct tasks hosting t-the devices
+  bytes communicatow_key = 7;
+  wepeated deviceattwibutes d-device_attwibutes = 8;
+
+  w-wesewved 5, >_< 6;
+}
+
+// s-suppwies data about one cowwective op bewonging to the instance i-identified
+// by instance_key. (ꈍᴗꈍ)  s-sewvice wiww wespond when a-aww gwoup_size ops h-have
+// become known. 😳  most of the data being sent is fow cowwectness checking, 🥺
+// to ensuwe t-that aww ops in t-the instance shawe common attwibutes. nyaa~~
+message compweteinstancewequest {
+  s-stwing nyame = 1;
   int32 type = 2;
-  DataType data_type = 3;
-  TensorShapeProto shape = 4;
-  int32 group_key = 5;
-  int32 group_size = 6;
-  int32 instance_key = 7;
-  string device_type = 8;
-  repeated int32 subdiv_offset = 9;
-  string device = 10;
-  bool is_source = 11;
+  d-datatype data_type = 3;
+  t-tensowshapepwoto s-shape = 4;
+  i-int32 gwoup_key = 5;
+  int32 g-gwoup_size = 6;
+  i-int32 instance_key = 7;
+  stwing device_type = 8;
+  wepeated i-int32 subdiv_offset = 9;
+  stwing d-device = 10;
+  b-boow is_souwce = 11;
 }
 
-// Confirms that every op in the instance has consistently declared itself.
-// Also gives the source_rank in case of broadcast.
-message CompleteInstanceResponse {
-  int32 instance_key = 1;
-  int32 source_rank = 2;
-  reserved 3;
+// c-confiwms that evewy o-op in the instance h-has consistentwy decwawed i-itsewf. ^•ﻌ•^
+// awso g-gives the souwce_wank i-in case of bwoadcast. (ˆ ﻌ ˆ)♡
+message compweteinstancewesponse {
+  i-int32 instance_key = 1;
+  int32 souwce_wank = 2;
+  w-wesewved 3;
 }
 
-// Request for next agreed-upon step_id for the specified graph_keys.
-// This is used to enable multiple graphs containing nodes from
-// a common collective instance to coordinate using the same step_ids.
-message GetStepSequenceRequest {
-  repeated int64 graph_key = 1;
+// wequest fow nyext agweed-upon s-step_id fow t-the specified gwaph_keys. (U ᵕ U❁)
+// this is used to enabwe muwtipwe gwaphs c-containing n-nyodes fwom
+// a common cowwective i-instance to coowdinate u-using the same step_ids. mya
+message getstepsequencewequest {
+  wepeated int64 g-gwaph_key = 1;
 }
 
-message StepSequence {
-  int64 graph_key = 1;
-  int64 next_step_id = 2;
+m-message stepsequence {
+  int64 gwaph_key = 1;
+  int64 nyext_step_id = 2;
 }
 
-// Next valid step_ids for one or more graph_keys.
-message GetStepSequenceResponse {
-  repeated StepSequence step_sequence = 1;
+// n-nyext vawid s-step_ids fow one ow mowe gwaph_keys. 😳
+message getstepsequencewesponse {
+  w-wepeated stepsequence step_sequence = 1;
 }

@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.component_library.scorer.tensorbuilder
+package com.twittew.pwoduct_mixew.component_wibwawy.scowew.tensowbuiwdew
 
-import inference.GrpcService.ModelInferRequest.InferInputTensor
+impowt i-infewence.gwpcsewvice.modewinfewwequest.infewinputtensow
 
-case object Float32InferInputTensorBuilder extends InferInputTensorBuilder[AnyVal] {
+c-case object f-fwoat32infewinputtensowbuiwdew e-extends infewinputtensowbuiwdew[anyvaw] {
 
-  private def toFloat(x: AnyVal): Float = {
-    x match {
-      case y: Float => y
-      case y: Int => y.toFloat
-      case y: Long => y.toFloat
-      case y: Double => y.toFloat
-      case y => throw new UnexpectedDataTypeException(y, this)
+  p-pwivate def tofwoat(x: a-anyvaw): f-fwoat = {
+    x-x match {
+      case y: fwoat => y
+      case y: int => y.tofwoat
+      case y: w-wong => y.tofwoat
+      case y: doubwe => y.tofwoat
+      c-case y => thwow nyew unexpecteddatatypeexception(y, :3 t-this)
     }
   }
 
-  def apply(
-    featureName: String,
-    featureValues: Seq[AnyVal]
-  ): Seq[InferInputTensor] = {
-    val tensorShape = Seq(featureValues.size, 1)
-    InferInputTensorBuilder.buildFloat32InferInputTensor(
-      featureName,
-      featureValues.map(toFloat),
-      tensorShape)
+  def appwy(
+    featuwename: stwing, 😳😳😳
+    featuwevawues: s-seq[anyvaw]
+  ): seq[infewinputtensow] = {
+    v-vaw tensowshape = s-seq(featuwevawues.size, -.- 1)
+    infewinputtensowbuiwdew.buiwdfwoat32infewinputtensow(
+      featuwename, ( ͡o ω ͡o )
+      featuwevawues.map(tofwoat), rawr x3
+      tensowshape)
   }
 }

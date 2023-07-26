@@ -1,56 +1,56 @@
-package com.twitter.graph_feature_service.server
+package com.twittew.gwaph_featuwe_sewvice.sewvew
 
-import com.google.inject.Module
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.mtls.thriftmux.Mtls
-import com.twitter.finatra.thrift.ThriftServer
-import com.twitter.finatra.thrift.filters.{
-  AccessLoggingFilter,
-  LoggingMDCFilter,
-  StatsFilter,
-  ThriftMDCFilter,
-  TraceIdMDCFilter
+impowt com.googwe.inject.moduwe
+i-impowt com.twittew.finatwa.decidew.moduwes.decidewmoduwe
+i-impowt c-com.twittew.finatwa.mtws.thwiftmux.mtws
+i-impowt c-com.twittew.finatwa.thwift.thwiftsewvew
+i-impowt com.twittew.finatwa.thwift.fiwtews.{
+  a-accesswoggingfiwtew, (˘ω˘)
+  w-woggingmdcfiwtew, (⑅˘꒳˘)
+  statsfiwtew, (///ˬ///✿)
+  thwiftmdcfiwtew, 😳😳😳
+  twaceidmdcfiwtew
 }
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule
-import com.twitter.finatra.thrift.routing.ThriftRouter
-import com.twitter.graph_feature_service.server.controllers.ServerController
-import com.twitter.graph_feature_service.server.handlers.ServerWarmupHandler
-import com.twitter.graph_feature_service.server.modules.{
-  GetIntersectionStoreModule,
-  GraphFeatureServiceWorkerClientsModule,
-  ServerFlagsModule
+impowt com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwsthwiftwebfowmsmoduwe
+i-impowt com.twittew.finatwa.thwift.wouting.thwiftwoutew
+impowt com.twittew.gwaph_featuwe_sewvice.sewvew.contwowwews.sewvewcontwowwew
+impowt com.twittew.gwaph_featuwe_sewvice.sewvew.handwews.sewvewwawmuphandwew
+i-impowt com.twittew.gwaph_featuwe_sewvice.sewvew.moduwes.{
+  getintewsectionstowemoduwe, 🥺
+  g-gwaphfeatuwesewvicewowkewcwientsmoduwe, mya
+  sewvewfwagsmoduwe
 }
-import com.twitter.graph_feature_service.thriftscala
-import com.twitter.inject.thrift.modules.ThriftClientIdModule
+impowt com.twittew.gwaph_featuwe_sewvice.thwiftscawa
+impowt c-com.twittew.inject.thwift.moduwes.thwiftcwientidmoduwe
 
-object Main extends ServerMain
+object m-main extends s-sewvewmain
 
-class ServerMain extends ThriftServer with Mtls {
+cwass sewvewmain extends thwiftsewvew with mtws {
 
-  override val name = "graph_feature_service-server"
+  ovewwide vaw n-nyame = "gwaph_featuwe_sewvice-sewvew"
 
-  override val modules: Seq[Module] = {
-    Seq(
-      ServerFlagsModule,
-      DeciderModule,
-      ThriftClientIdModule,
-      GraphFeatureServiceWorkerClientsModule,
-      GetIntersectionStoreModule,
-      new MtlsThriftWebFormsModule[thriftscala.Server.MethodPerEndpoint](this)
+  ovewwide vaw moduwes: seq[moduwe] = {
+    seq(
+      sewvewfwagsmoduwe,
+      d-decidewmoduwe, 🥺
+      thwiftcwientidmoduwe, >_<
+      g-gwaphfeatuwesewvicewowkewcwientsmoduwe, >_<
+      g-getintewsectionstowemoduwe, (⑅˘꒳˘)
+      n-nyew mtwsthwiftwebfowmsmoduwe[thwiftscawa.sewvew.methodpewendpoint](this)
     )
   }
 
-  override def configureThrift(router: ThriftRouter): Unit = {
-    router
-      .filter[LoggingMDCFilter]
-      .filter[TraceIdMDCFilter]
-      .filter[ThriftMDCFilter]
-      .filter[AccessLoggingFilter]
-      .filter[StatsFilter]
-      .add[ServerController]
+  o-ovewwide def configuwethwift(woutew: thwiftwoutew): unit = {
+    w-woutew
+      .fiwtew[woggingmdcfiwtew]
+      .fiwtew[twaceidmdcfiwtew]
+      .fiwtew[thwiftmdcfiwtew]
+      .fiwtew[accesswoggingfiwtew]
+      .fiwtew[statsfiwtew]
+      .add[sewvewcontwowwew]
   }
 
-  override protected def warmup(): Unit = {
-    handle[ServerWarmupHandler]()
+  ovewwide pwotected def w-wawmup(): unit = {
+    handwe[sewvewwawmuphandwew]()
   }
 }

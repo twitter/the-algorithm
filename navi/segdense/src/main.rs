@@ -1,22 +1,22 @@
 use std::env;
 use std::fs;
 
-use segdense::error::SegDenseError;
-use segdense::util;
+use segdense::ewwow::segdenseewwow;
+use s-segdense::utiw;
 
-fn main() -> Result<(), SegDenseError> {
-    env_logger::init();
-    let args: Vec<String> = env::args().collect();
+f-fn main() -> w-wesuwt<(), >_< segdenseewwow> {
+    e-env_woggew::init();
+    w-wet awgs: v-vec<stwing> = e-env::awgs().cowwect();
 
-    let schema_file_name: &str = if args.len() == 1 {
+    w-wet schema_fiwe_name: &stw = if awgs.wen() == 1 {
         "json/compact.json"
-    } else {
-        &args[1]
+    } ewse {
+        &awgs[1]
     };
 
-    let json_str = fs::read_to_string(schema_file_name)?;
+    wet json_stw = f-fs::wead_to_stwing(schema_fiwe_name)?;
 
-    util::safe_load_config(&json_str)?;
+    utiw::safe_woad_config(&json_stw)?;
 
-    Ok(())
+    ok(())
 }

@@ -1,22 +1,22 @@
-namespace java com.twitter.recos.recos_injector.thriftjava
-namespace py gen.twitter.recos.recos_injector
-#@namespace scala com.twitter.recos.recos_injector.thriftscala
-namespace rb RecosInjector
+namespace java com.twittew.wecos.wecos_injectow.thwiftjava
+nyamespace p-py gen.twittew.wecos.wecos_injectow
+#@namespace s-scawa com.twittew.wecos.wecos_injectow.thwiftscawa
+n-nyamespace w-wb wecosinjectow
 
-####### FOR RECOS INTERNAL USE ONLY -- please do NOT use this in client code  ########
+####### f-fow w-wecos intewnaw u-use onwy -- pwease d-do nyot use this in cwient code  ########
 
-struct UserTweetAuthorGraphMessage {
-  1: required i64 leftId
-  2: required i64 rightId
-  3: required i8 action
-  4: optional i8 card
-  5: optional i64 authorId
-  6: optional Features features
+stwuct usewtweetauthowgwaphmessage {
+  1: wequiwed i-i64 weftid
+  2: wequiwed i64 wightid
+  3: wequiwed i-i8 action
+  4: optionaw i8 cawd
+  5: o-optionaw i64 authowid
+  6: optionaw featuwes featuwes
 }
 
-struct Features {
-  1: optional bool hasPhoto
-  2: optional bool hasVideo
-  3: optional bool hasUrl
-  4: optional bool hasHashtag
+s-stwuct featuwes {
+  1: optionaw b-boow hasphoto
+  2: o-optionaw boow hasvideo
+  3: optionaw boow hasuww
+  4: optionaw boow hashashtag
 }

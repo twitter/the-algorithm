@@ -1,40 +1,40 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twittew.simcwustews_v2.summingbiwd.common
 
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.util.Duration
-import com.twitter.conversions.DurationOps._
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
+impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
 
-case class ModelVersionProfile(
-  modelVersion: ModelVersion,
-  usingLogFavScore: Boolean,
-  // redundant in the current models because the above parameter does the same currently.
-  coreEmbeddingType: EmbeddingType,
-  favScoreThresholdForUserInterest: Double,
-  // these values are shared between all profiles so lets set up defaults
-  halfLife: Duration = 8.hours,
-  scoreThresholdForEntityTopKClustersCache: Double = 0.2,
-  scoreThresholdForTweetTopKClustersCache: Double = 0.02,
-  scoreThresholdForClusterTopKTweetsCache: Double = 0.001,
-  scoreThresholdForClusterTopKEntitiesCache: Double = 0.001)
+c-case c-cwass modewvewsionpwofiwe(
+  m-modewvewsion: m-modewvewsion, >_<
+  u-usingwogfavscowe: boowean, (⑅˘꒳˘)
+  // wedundant in the cuwwent modews because t-the above pawametew does the same cuwwentwy. /(^•ω•^)
+  c-coweembeddingtype: embeddingtype, rawr x3
+  f-favscowethweshowdfowusewintewest: doubwe, (U ﹏ U)
+  // these vawues awe shawed between a-aww pwofiwes so wets set up d-defauwts
+  hawfwife: d-duwation = 8.houws, (U ﹏ U)
+  scowethweshowdfowentitytopkcwustewscache: doubwe = 0.2, (⑅˘꒳˘)
+  scowethweshowdfowtweettopkcwustewscache: doubwe = 0.02, òωó
+  s-scowethweshowdfowcwustewtopktweetscache: doubwe = 0.001, ʘwʘ
+  scowethweshowdfowcwustewtopkentitiescache: doubwe = 0.001)
 
-object ModelVersionProfiles {
-  final val ModelVersion20M145KUpdated = ModelVersionProfile(
-    ModelVersion.Model20m145kUpdated,
-    usingLogFavScore = true,
-    coreEmbeddingType = EmbeddingType.LogFavBasedTweet,
-    favScoreThresholdForUserInterest = 1.0
+object modewvewsionpwofiwes {
+  f-finaw vaw modewvewsion20m145kupdated = modewvewsionpwofiwe(
+    m-modewvewsion.modew20m145kupdated, /(^•ω•^)
+    u-usingwogfavscowe = t-twue, ʘwʘ
+    coweembeddingtype = embeddingtype.wogfavbasedtweet, σωσ
+    f-favscowethweshowdfowusewintewest = 1.0
   )
 
-  final val ModelVersion20M145K2020 = ModelVersionProfile(
-    ModelVersion.Model20m145k2020,
-    usingLogFavScore = true,
-    coreEmbeddingType = EmbeddingType.LogFavBasedTweet,
-    favScoreThresholdForUserInterest = 0.3
+  finaw vaw modewvewsion20m145k2020 = modewvewsionpwofiwe(
+    m-modewvewsion.modew20m145k2020, OwO
+    usingwogfavscowe = twue, 😳😳😳
+    coweembeddingtype = e-embeddingtype.wogfavbasedtweet, 😳😳😳
+    favscowethweshowdfowusewintewest = 0.3
   )
 
-  final val ModelVersionProfiles: Map[ModelVersion, ModelVersionProfile] = Map(
-    ModelVersion.Model20m145kUpdated -> ModelVersion20M145KUpdated,
-    ModelVersion.Model20m145k2020 -> ModelVersion20M145K2020
+  finaw vaw modewvewsionpwofiwes: map[modewvewsion, o.O modewvewsionpwofiwe] = map(
+    m-modewvewsion.modew20m145kupdated -> modewvewsion20m145kupdated, ( ͡o ω ͡o )
+    m-modewvewsion.modew20m145k2020 -> m-modewvewsion20m145k2020
   )
 }

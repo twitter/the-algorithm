@@ -1,16 +1,16 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.twittew.simcwustews_v2.hdfs_souwces.injections
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaBinaryThrift
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala._
+impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection
+i-impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection.scawabinawythwift
+i-impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection.wong2bigendian
+i-impowt c-com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa._
 
-object ClusteringInjections {
+object cwustewinginjections {
 
-  final val OrderedClustersAndMembersInjection: KeyValInjection[
-    UserId,
-    OrderedClustersAndMembers
+  finaw v-vaw owdewedcwustewsandmembewsinjection: keyvawinjection[
+    usewid, -.-
+    o-owdewedcwustewsandmembews
   ] =
-    KeyValInjection(Long2BigEndian, ScalaBinaryThrift(OrderedClustersAndMembers))
+    keyvawinjection(wong2bigendian, (ˆ ﻌ ˆ)♡ s-scawabinawythwift(owdewedcwustewsandmembews))
 }

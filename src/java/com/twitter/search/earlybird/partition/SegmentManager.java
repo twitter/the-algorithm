@@ -1,822 +1,822 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.stream.Collectors;
-import javax.annotation.Nullable;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.awwaywist;
+i-impowt java.utiw.cowwection;
+i-impowt java.utiw.cowwections;
+i-impowt java.utiw.compawatow;
+i-impowt java.utiw.hashset;
+i-impowt j-java.utiw.itewatow;
+impowt java.utiw.wist;
+impowt java.utiw.map;
+impowt java.utiw.set;
+i-impowt java.utiw.concuwwent.concuwwentskipwistmap;
+impowt java.utiw.stweam.cowwectows;
+impowt j-javax.annotation.nuwwabwe;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
+impowt com.googwe.common.base.pwedicate;
+impowt com.googwe.common.cowwect.wists;
+i-impowt com.googwe.common.cowwect.maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.swf4j.woggew;
+i-impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.common.partitioning.base.TimeSlice;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.common.CaughtUpMonitor;
-import com.twitter.search.earlybird.common.userupdates.UserScrubGeoMap;
-import com.twitter.search.earlybird.common.userupdates.UserUpdate;
-import com.twitter.search.earlybird.common.userupdates.UserUpdatesChecker;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
-import com.twitter.search.earlybird.search.EarlybirdLuceneSearcher;
-import com.twitter.search.earlybird.search.EarlybirdMultiSegmentSearcher;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.tweetypie.thriftjava.UserScrubGeoEvent;
+impowt com.twittew.common.utiw.cwock;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.metwics.seawchwonggauge;
+i-impowt com.twittew.seawch.common.metwics.seawchstatsweceivew;
+impowt com.twittew.seawch.common.pawtitioning.base.segment;
+impowt com.twittew.seawch.common.pawtitioning.base.timeswice;
+impowt c-com.twittew.seawch.common.pawtitioning.snowfwakepawsew.snowfwakeidpawsew;
+impowt c-com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+i-impowt com.twittew.seawch.eawwybiwd.eawwybiwdindexconfig;
+i-impowt c-com.twittew.seawch.eawwybiwd.common.caughtupmonitow;
+impowt com.twittew.seawch.eawwybiwd.common.usewupdates.usewscwubgeomap;
+impowt com.twittew.seawch.eawwybiwd.common.usewupdates.usewupdate;
+i-impowt com.twittew.seawch.eawwybiwd.common.usewupdates.usewupdatescheckew;
+impowt com.twittew.seawch.eawwybiwd.common.usewupdates.usewtabwe;
+i-impowt com.twittew.seawch.eawwybiwd.exception.cwiticawexceptionhandwew;
+impowt com.twittew.seawch.eawwybiwd.index.eawwybiwdsegmentfactowy;
+impowt com.twittew.seawch.eawwybiwd.index.eawwybiwdsingwesegmentseawchew;
+impowt com.twittew.seawch.eawwybiwd.seawch.eawwybiwdwuceneseawchew;
+impowt c-com.twittew.seawch.eawwybiwd.seawch.eawwybiwdmuwtisegmentseawchew;
+impowt com.twittew.seawch.eawwybiwd.stats.eawwybiwdseawchewstats;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+i-impowt com.twittew.tweetypie.thwiftjava.usewscwubgeoevent;
 
-public class SegmentManager {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentManager.class);
-  private final Clock clock;
-  private static final String STATS_PREFIX = "segment_manager_";
-  private static final SearchLongGauge SEGMENT_COUNT_STATS =
-          SearchLongGauge.export(STATS_PREFIX + "total_segments");
-  private static final SearchCounter OPTIMIZED_SEGMENTS =
-          SearchCounter.export(STATS_PREFIX + "optimized_segments");
-  private static final SearchCounter UNOPTIMIZED_SEGMENTS =
-          SearchCounter.export(STATS_PREFIX + "unoptimized_segments");
+p-pubwic cwass segmentmanagew {
+  pwivate static finaw woggew wog = w-woggewfactowy.getwoggew(segmentmanagew.cwass);
+  p-pwivate finaw cwock cwock;
+  p-pwivate static f-finaw stwing stats_pwefix = "segment_managew_";
+  pwivate static f-finaw seawchwonggauge segment_count_stats =
+          s-seawchwonggauge.expowt(stats_pwefix + "totaw_segments");
+  pwivate static finaw seawchcountew o-optimized_segments =
+          seawchcountew.expowt(stats_pwefix + "optimized_segments");
+  p-pwivate static finaw seawchcountew u-unoptimized_segments =
+          s-seawchcountew.expowt(stats_pwefix + "unoptimized_segments");
 
-  public enum Filter {
-    All(info -> true),
-    Enabled(SegmentInfo::isEnabled),
-    NeedsIndexing(SegmentInfo::needsIndexing),
-    Complete(SegmentInfo::isComplete);
+  pubwic enum fiwtew {
+    aww(info -> twue), σωσ
+    enabwed(segmentinfo::isenabwed),
+    nyeedsindexing(segmentinfo::needsindexing),
+    compwete(segmentinfo::iscompwete);
 
-    private final Predicate<SegmentInfo> predicate;
+    p-pwivate finaw p-pwedicate<segmentinfo> pwedicate;
 
-    Filter(Predicate<SegmentInfo> predicate) {
-      this.predicate = predicate;
+    f-fiwtew(pwedicate<segmentinfo> p-pwedicate) {
+      t-this.pwedicate = pwedicate;
     }
 
-    private static final Map<String, Filter> NAME_INDEX =
-        Maps.newHashMapWithExpectedSize(Filter.values().length);
+    pwivate static finaw map<stwing, rawr x3 f-fiwtew> nyame_index =
+        maps.newhashmapwithexpectedsize(fiwtew.vawues().wength);
 
     static {
-      for (Filter filter : Filter.values()) {
-        NAME_INDEX.put(filter.name().toLowerCase(), filter);
+      fow (fiwtew fiwtew : f-fiwtew.vawues()) {
+        nyame_index.put(fiwtew.name().towowewcase(), f-fiwtew);
       }
     }
 
     /**
-     * Parses the filter from the given string, based on the filter name.
+     * p-pawses the fiwtew f-fwom the given stwing, (ˆ ﻌ ˆ)♡ based o-on the fiwtew nyame. rawr
      */
-    public static Filter fromStringIgnoreCase(String str) {
-      if (str == null) {
-        return null;
+    p-pubwic static fiwtew f-fwomstwingignowecase(stwing s-stw) {
+      if (stw == nyuww) {
+        wetuwn n-nyuww;
       }
 
-      return NAME_INDEX.get(str.toLowerCase());
+      w-wetuwn nyame_index.get(stw.towowewcase());
     }
   }
 
-  public enum Order {
-    OLD_TO_NEW,
-    NEW_TO_OLD,
+  p-pubwic enum owdew {
+    o-owd_to_new,
+    n-nyew_to_owd, :3
   }
 
   /**
-   * A listener that gets notified when the list of segments changes.
+   * a wistenew that gets nyotified when the wist o-of segments changes. rawr
    */
-  public interface SegmentUpdateListener {
+  pubwic intewface segmentupdatewistenew {
     /**
-     * Called with the new list of segments when it changes.
+     * cawwed with the nyew wist of segments when i-it changes.
      *
-     * @param segments The new list of segments.
+     * @pawam segments the nyew wist of segments. (˘ω˘)
      */
-    void update(Collection<SegmentInfo> segments, String message);
+    void update(cowwection<segmentinfo> s-segments, (ˆ ﻌ ˆ)♡ s-stwing message);
   }
 
-  private final List<SegmentUpdateListener> updateListeners =
-          Collections.synchronizedList(Lists.newLinkedList());
+  p-pwivate finaw wist<segmentupdatewistenew> u-updatewistenews =
+          cowwections.synchwonizedwist(wists.newwinkedwist());
 
-  private final ConcurrentSkipListMap<Long, ISegmentWriter> segmentWriters =
-      new ConcurrentSkipListMap<>();
+  pwivate finaw c-concuwwentskipwistmap<wong, mya i-isegmentwwitew> segmentwwitews =
+      nyew concuwwentskipwistmap<>();
 
-  private final Set<Long> badTimesliceIds = new HashSet<>();
+  pwivate finaw set<wong> badtimeswiceids = n-nyew hashset<>();
 
-  private final int maxEnabledSegments;
-  private final int maxSegmentSize;
-  private final EarlybirdSegmentFactory earlybirdSegmentFactory;
-  private final UserTable userTable;
-  private final UserScrubGeoMap userScrubGeoMap;
-  private final EarlybirdIndexConfig earlybirdIndexConfig;
-  private final DynamicPartitionConfig dynamicPartitionConfig;
-  private final UserUpdatesChecker userUpdatesChecker;
-  private final SegmentSyncConfig segmentSyncConfig;
-  private final EarlybirdSearcherStats searcherStats;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private final CriticalExceptionHandler criticalExceptionHandler;
-  private final CaughtUpMonitor indexCaughtUpMonitor;
+  pwivate f-finaw int maxenabwedsegments;
+  pwivate finaw i-int maxsegmentsize;
+  p-pwivate finaw eawwybiwdsegmentfactowy eawwybiwdsegmentfactowy;
+  p-pwivate finaw u-usewtabwe usewtabwe;
+  pwivate f-finaw usewscwubgeomap u-usewscwubgeomap;
+  pwivate finaw eawwybiwdindexconfig eawwybiwdindexconfig;
+  pwivate f-finaw dynamicpawtitionconfig d-dynamicpawtitionconfig;
+  p-pwivate finaw usewupdatescheckew u-usewupdatescheckew;
+  p-pwivate finaw segmentsyncconfig s-segmentsyncconfig;
+  pwivate finaw eawwybiwdseawchewstats seawchewstats;
+  pwivate f-finaw seawchindexingmetwicset seawchindexingmetwicset;
+  p-pwivate finaw cwiticawexceptionhandwew cwiticawexceptionhandwew;
+  p-pwivate f-finaw caughtupmonitow indexcaughtupmonitow;
 
-  public SegmentManager(
-      DynamicPartitionConfig dynamicPartitionConfig,
-      EarlybirdIndexConfig earlybirdIndexConfig,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      EarlybirdSearcherStats searcherStats,
-      SearchStatsReceiver earlybirdStatsReceiver,
-      UserUpdatesChecker userUpdatesChecker,
-      SegmentSyncConfig segmentSyncConfig,
-      UserTable userTable,
-      UserScrubGeoMap userScrubGeoMap,
-      Clock clock,
-      int maxSegmentSize,
-      CriticalExceptionHandler criticalExceptionHandler,
-      CaughtUpMonitor indexCaughtUpMonitor) {
+  pubwic segmentmanagew(
+      dynamicpawtitionconfig d-dynamicpawtitionconfig, (U ᵕ U❁)
+      eawwybiwdindexconfig eawwybiwdindexconfig, mya
+      seawchindexingmetwicset seawchindexingmetwicset, ʘwʘ
+      eawwybiwdseawchewstats s-seawchewstats, (˘ω˘)
+      seawchstatsweceivew eawwybiwdstatsweceivew, 😳
+      u-usewupdatescheckew usewupdatescheckew, òωó
+      s-segmentsyncconfig segmentsyncconfig, nyaa~~
+      usewtabwe usewtabwe, o.O
+      usewscwubgeomap usewscwubgeomap, nyaa~~
+      cwock cwock, (U ᵕ U❁)
+      i-int maxsegmentsize, 😳😳😳
+      c-cwiticawexceptionhandwew cwiticawexceptionhandwew, (U ﹏ U)
+      caughtupmonitow indexcaughtupmonitow) {
 
-    PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
+    p-pawtitionconfig cuwpawtitionconfig = d-dynamicpawtitionconfig.getcuwwentpawtitionconfig();
 
-    this.userTable = userTable;
-    this.userScrubGeoMap = userScrubGeoMap;
+    this.usewtabwe = usewtabwe;
+    this.usewscwubgeomap = u-usewscwubgeomap;
 
-    this.earlybirdSegmentFactory = new EarlybirdSegmentFactory(
-        earlybirdIndexConfig,
-        searchIndexingMetricSet,
-        searcherStats,
-        clock);
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
-    this.maxEnabledSegments = curPartitionConfig.getMaxEnabledLocalSegments();
-    this.dynamicPartitionConfig = dynamicPartitionConfig;
-    this.userUpdatesChecker = userUpdatesChecker;
-    this.segmentSyncConfig = segmentSyncConfig;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.searcherStats = searcherStats;
-    this.clock = clock;
-    this.maxSegmentSize = maxSegmentSize;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.indexCaughtUpMonitor = indexCaughtUpMonitor;
+    this.eawwybiwdsegmentfactowy = n-nyew eawwybiwdsegmentfactowy(
+        e-eawwybiwdindexconfig, ^•ﻌ•^
+        seawchindexingmetwicset, (⑅˘꒳˘)
+        s-seawchewstats, >_<
+        cwock);
+    this.eawwybiwdindexconfig = e-eawwybiwdindexconfig;
+    t-this.maxenabwedsegments = c-cuwpawtitionconfig.getmaxenabwedwocawsegments();
+    this.dynamicpawtitionconfig = d-dynamicpawtitionconfig;
+    t-this.usewupdatescheckew = usewupdatescheckew;
+    this.segmentsyncconfig = s-segmentsyncconfig;
+    t-this.seawchindexingmetwicset = s-seawchindexingmetwicset;
+    this.seawchewstats = seawchewstats;
+    t-this.cwock = cwock;
+    this.maxsegmentsize = m-maxsegmentsize;
+    t-this.cwiticawexceptionhandwew = cwiticawexceptionhandwew;
+    this.indexcaughtupmonitow = indexcaughtupmonitow;
 
-    earlybirdStatsReceiver.getCustomGauge("total_loaded_segments",
-        segmentWriters::size);
-    earlybirdStatsReceiver.getCustomGauge("total_indexed_documents",
-        this::getNumIndexedDocuments);
-    earlybirdStatsReceiver.getCustomGauge("total_segment_size_bytes",
-        this::getTotalSegmentSizeOnDisk);
-    earlybirdStatsReceiver.getCustomGauge("earlybird_index_depth_millis",
-        this::getIndexDepthMillis);
+    e-eawwybiwdstatsweceivew.getcustomgauge("totaw_woaded_segments", (⑅˘꒳˘)
+        s-segmentwwitews::size);
+    e-eawwybiwdstatsweceivew.getcustomgauge("totaw_indexed_documents",
+        t-this::getnumindexeddocuments);
+    eawwybiwdstatsweceivew.getcustomgauge("totaw_segment_size_bytes", σωσ
+        this::gettotawsegmentsizeondisk);
+    e-eawwybiwdstatsweceivew.getcustomgauge("eawwybiwd_index_depth_miwwis", 🥺
+        this::getindexdepthmiwwis);
   }
 
   /**
-   * Logs the current state of this segment manager.
+   * wogs the cuwwent state of this segment managew. :3
    *
-   * @param label A label that should identify the segment manager.
+   * @pawam wabew a wabew that s-shouwd identify the segment managew. (ꈍᴗꈍ)
    */
-  public void logState(String label) {
-    StringBuilder sb = new StringBuilder();
-    sb.append("State of SegmentManager (" + label + "):\n");
-    sb.append("Number of segments: " + segmentWriters.size());
-    boolean hasSegments = false;
-    for (Map.Entry<Long, ISegmentWriter> entry : this.segmentWriters.entrySet()) {
-      SegmentInfo segmentInfo = entry.getValue().getSegmentInfo();
-      hasSegments = true;
+  p-pubwic void wogstate(stwing wabew) {
+    s-stwingbuiwdew sb = nyew s-stwingbuiwdew();
+    sb.append("state o-of segmentmanagew (" + w-wabew + "):\n");
+    s-sb.append("numbew o-of segments: " + s-segmentwwitews.size());
+    boowean hassegments = fawse;
+    fow (map.entwy<wong, ^•ﻌ•^ isegmentwwitew> entwy : this.segmentwwitews.entwyset()) {
+      s-segmentinfo s-segmentinfo = e-entwy.getvawue().getsegmentinfo();
+      hassegments = t-twue;
 
-      sb.append(String.format("\nSegment (%s): isClosed: %5s, isComplete: %5s, "
-              + "isEnabled: %5s, isIndexing: %5s, isOptimized: %5s, wasIndexed: %5s",
-          segmentInfo.getSegmentName(),
-          segmentInfo.isClosed(),
-          segmentInfo.isComplete(),
-          segmentInfo.isEnabled(),
-          segmentInfo.isIndexing(),
-          segmentInfo.isOptimized(),
-          segmentInfo.wasIndexed()
+      sb.append(stwing.fowmat("\nsegment (%s): iscwosed: %5s, (˘ω˘) iscompwete: %5s, 🥺 "
+              + "isenabwed: %5s, (✿oωo) isindexing: %5s, XD i-isoptimized: %5s, (///ˬ///✿) w-wasindexed: %5s", ( ͡o ω ͡o )
+          segmentinfo.getsegmentname(), ʘwʘ
+          s-segmentinfo.iscwosed(), rawr
+          segmentinfo.iscompwete(), o.O
+          segmentinfo.isenabwed(), ^•ﻌ•^
+          segmentinfo.isindexing(), (///ˬ///✿)
+          s-segmentinfo.isoptimized(), (ˆ ﻌ ˆ)♡
+          s-segmentinfo.wasindexed()
       ));
 
-      sb.append(String.format(" | Index stats: %s", segmentInfo.getIndexStats().toString()));
+      sb.append(stwing.fowmat(" | i-index stats: %s", XD s-segmentinfo.getindexstats().tostwing()));
     }
-    if (!hasSegments) {
-      sb.append(" No segments.");
+    if (!hassegments) {
+      sb.append(" nyo segments.");
     }
-    LOG.info(sb.toString());
+    wog.info(sb.tostwing());
   }
 
 
-  public PartitionConfig getPartitionConfig() {
-    return dynamicPartitionConfig.getCurrentPartitionConfig();
+  p-pubwic p-pawtitionconfig g-getpawtitionconfig() {
+    w-wetuwn d-dynamicpawtitionconfig.getcuwwentpawtitionconfig();
   }
 
-  public int getMaxEnabledSegments() {
-    return maxEnabledSegments;
+  pubwic i-int getmaxenabwedsegments() {
+    w-wetuwn maxenabwedsegments;
   }
 
-  public EarlybirdSegmentFactory getEarlybirdSegmentFactory() {
-    return earlybirdSegmentFactory;
+  pubwic eawwybiwdsegmentfactowy g-geteawwybiwdsegmentfactowy() {
+    w-wetuwn eawwybiwdsegmentfactowy;
   }
 
-  public EarlybirdIndexConfig getEarlybirdIndexConfig() {
-    return earlybirdIndexConfig;
+  p-pubwic eawwybiwdindexconfig geteawwybiwdindexconfig() {
+    wetuwn e-eawwybiwdindexconfig;
   }
 
-  public UserTable getUserTable() {
-    return userTable;
+  pubwic usewtabwe g-getusewtabwe() {
+    w-wetuwn usewtabwe;
   }
 
-  public UserScrubGeoMap getUserScrubGeoMap() {
-    return userScrubGeoMap;
+  pubwic usewscwubgeomap g-getusewscwubgeomap() {
+    wetuwn usewscwubgeomap;
   }
 
-  @VisibleForTesting
-  public void reset() {
-    segmentWriters.clear();
+  @visibwefowtesting
+  pubwic void w-weset() {
+    s-segmentwwitews.cweaw();
   }
 
   /**
-   * Returns the list of all segments that match the given filter, in the given order.
+   * w-wetuwns the wist of aww segments that match the given fiwtew, (✿oωo) i-in the given owdew.
    */
-  public Iterable<SegmentInfo> getSegmentInfos(Filter filter, Order order) {
-    Comparator<SegmentInfo> comparator;
+  pubwic itewabwe<segmentinfo> getsegmentinfos(fiwtew f-fiwtew, -.- owdew o-owdew) {
+    compawatow<segmentinfo> c-compawatow;
 
-    if (order == Order.OLD_TO_NEW) {
-      comparator = Comparator.naturalOrder();
-    } else {
-      comparator = Comparator.reverseOrder();
+    if (owdew == o-owdew.owd_to_new) {
+      c-compawatow = compawatow.natuwawowdew();
+    } ewse {
+      compawatow = compawatow.wevewseowdew();
     }
 
-    return () -> segmentWriters.values().stream()
-        .map(ISegmentWriter::getSegmentInfo)
-        .filter(filter.predicate::apply)
-        .sorted(comparator)
-        .iterator();
+    wetuwn () -> s-segmentwwitews.vawues().stweam()
+        .map(isegmentwwitew::getsegmentinfo)
+        .fiwtew(fiwtew.pwedicate::appwy)
+        .sowted(compawatow)
+        .itewatow();
   }
 
-  private void createAndPutSegmentInfo(Segment segment) throws IOException {
-    LOG.info("Creating new SegmentInfo for segment " + segment.getSegmentName());
-    putSegmentInfo(new SegmentInfo(segment, earlybirdSegmentFactory, segmentSyncConfig));
+  pwivate void cweateandputsegmentinfo(segment s-segment) t-thwows ioexception {
+    wog.info("cweating n-nyew segmentinfo fow s-segment " + segment.getsegmentname());
+    p-putsegmentinfo(new s-segmentinfo(segment, XD eawwybiwdsegmentfactowy, (✿oωo) segmentsyncconfig));
   }
 
   /**
-   * Updates the list of segments managed by this manager, based on the given list.
+   * updates the wist of segments managed by this managew, (˘ω˘) based on the given wist.
    */
-  public void updateSegments(List<Segment> segmentsList) throws IOException {
-    // Truncate to the amount of segments we want to keep enabled.
-    List<Segment> truncatedSegmentList =
-        SegmentManager.truncateSegmentList(segmentsList, maxEnabledSegments);
+  pubwic void updatesegments(wist<segment> segmentswist) thwows ioexception {
+    // twuncate t-to the amount o-of segments we want to keep enabwed. (ˆ ﻌ ˆ)♡
+    wist<segment> t-twuncatedsegmentwist =
+        s-segmentmanagew.twuncatesegmentwist(segmentswist, >_< m-maxenabwedsegments);
 
-    final long newestTimeSliceID = getNewestTimeSliceID();
-    final Set<Long> segmentsToDisable = new HashSet<>(segmentWriters.keySet());
+    finaw wong n-newesttimeswiceid = getnewesttimeswiceid();
+    f-finaw set<wong> s-segmentstodisabwe = nyew hashset<>(segmentwwitews.keyset());
 
-    for (Segment segment : truncatedSegmentList) {
-      final long timeSliceID = segment.getTimeSliceID();
-      segmentsToDisable.remove(timeSliceID);
+    f-fow (segment segment : twuncatedsegmentwist) {
+      f-finaw wong t-timeswiceid = segment.gettimeswiceid();
+      segmentstodisabwe.wemove(timeswiceid);
 
-      // On the first loop iteration of the first call to updateSegments(), newestTimeSliceID should
-      // be set to -1, so the condition should be false. After that, all segments should either be
-      // newer than the latest process segment, or if we're replacing an old segment, it should have
-      // a SegmentInfo instance associated with it.
-      if (timeSliceID <= newestTimeSliceID) {
-        ISegmentWriter segmentWriter = segmentWriters.get(timeSliceID);
-        // Old time slice ID. It should have a SegmentInfo instance associated with it.
-        if (segmentWriter == null) {
-          if (!badTimesliceIds.contains(timeSliceID)) {
-            // We're dealing with a bad timeslice. Log an error, but do it only once per timeslice.
-            LOG.error("The SegmentInfo instance associated with an old timeSliceID should never be "
-                      + "null. TimeSliceID: {}", timeSliceID);
-            badTimesliceIds.add(timeSliceID);
+      // o-on the fiwst woop i-itewation of t-the fiwst caww to u-updatesegments(), n-nyewesttimeswiceid s-shouwd
+      // b-be set to -1, -.- s-so the condition s-shouwd be fawse. (///ˬ///✿) aftew that, XD a-aww segments s-shouwd eithew be
+      // n-nyewew than the watest p-pwocess segment, ow if we'we wepwacing an owd segment, ^^;; i-it shouwd have
+      // a-a segmentinfo instance a-associated w-with it. rawr x3
+      if (timeswiceid <= n-nyewesttimeswiceid) {
+        isegmentwwitew s-segmentwwitew = segmentwwitews.get(timeswiceid);
+        // o-owd time swice id. OwO i-it shouwd have a segmentinfo instance associated with it. ʘwʘ
+        if (segmentwwitew == n-nyuww) {
+          if (!badtimeswiceids.contains(timeswiceid)) {
+            // w-we'we deawing w-with a bad timeswice. rawr wog an ewwow, UwU but do it onwy once pew t-timeswice. (ꈍᴗꈍ)
+            wog.ewwow("the s-segmentinfo i-instance associated w-with an owd timeswiceid shouwd nyevew be "
+                      + "nuww. (✿oωo) t-timeswiceid: {}", (⑅˘꒳˘) t-timeswiceid);
+            badtimeswiceids.add(timeswiceid);
           }
-        } else if (segmentWriter.getSegmentInfo().isClosed()) {
-          // If the SegmentInfo was closed, create a new one.
-          LOG.info("SegmentInfo for segment {} is closed.", segment.getSegmentName());
-          createAndPutSegmentInfo(segment);
+        } e-ewse if (segmentwwitew.getsegmentinfo().iscwosed()) {
+          // if the segmentinfo was cwosed, OwO c-cweate a nyew one. 🥺
+          w-wog.info("segmentinfo f-fow segment {} i-is cwosed.", segment.getsegmentname());
+          c-cweateandputsegmentinfo(segment);
         }
-      } else {
-        // New time slice ID: create a SegmentInfo instance for it.
-        createAndPutSegmentInfo(segment);
+      } ewse {
+        // n-nyew time swice i-id: cweate a segmentinfo i-instance fow it. >_<
+        c-cweateandputsegmentinfo(segment);
       }
     }
 
-    // Anything we didn't see locally can be disabled.
-    for (Long segmentID : segmentsToDisable) {
-      disableSegment(segmentID);
+    // a-anything w-we didn't see w-wocawwy can be d-disabwed. (ꈍᴗꈍ)
+    fow (wong s-segmentid : s-segmentstodisabwe) {
+      d-disabwesegment(segmentid);
     }
 
-    // Update segment stats and other exported variables.
-    updateStats();
+    // update s-segment stats and othew expowted v-vawiabwes. 😳
+    updatestats();
   }
 
   /**
-   * Re-export stats after a segment has changed, or the set of segments has changed.
+   * we-expowt s-stats aftew a-a segment has c-changed, 🥺 ow the set of segments has changed. nyaa~~
    */
-  public void updateStats() {
-    // Update the partition count stats.
-    SEGMENT_COUNT_STATS.set(segmentWriters.size());
+  pubwic void u-updatestats() {
+    // u-update t-the pawtition count stats. ^•ﻌ•^
+    segment_count_stats.set(segmentwwitews.size());
 
-    OPTIMIZED_SEGMENTS.reset();
-    UNOPTIMIZED_SEGMENTS.reset();
-    for (ISegmentWriter writer : segmentWriters.values()) {
-      if (writer.getSegmentInfo().isOptimized()) {
-        OPTIMIZED_SEGMENTS.increment();
-      } else {
-        UNOPTIMIZED_SEGMENTS.increment();
-      }
-    }
-  }
-
-  private long getIndexDepthMillis() {
-    long oldestTimeSliceID = getOldestEnabledTimeSliceID();
-    if (oldestTimeSliceID == SegmentInfo.INVALID_ID) {
-      return 0;
-    } else {
-      // Compute timestamp from timesliceId, which is also a snowflake tweetId
-      long timestamp = SnowflakeIdParser.getTimestampFromTweetId(oldestTimeSliceID);
-      // Set current index depth in milliseconds
-      long indexDepthInMillis = System.currentTimeMillis() - timestamp;
-      // Index depth should never be negative.
-      if (indexDepthInMillis < 0) {
-        LOG.warn("Negative index depth. Large time skew on this Earlybird?");
-        return 0;
-      } else {
-        return indexDepthInMillis;
+    optimized_segments.weset();
+    u-unoptimized_segments.weset();
+    f-fow (isegmentwwitew wwitew : s-segmentwwitews.vawues()) {
+      i-if (wwitew.getsegmentinfo().isoptimized()) {
+        optimized_segments.incwement();
+      } ewse {
+        unoptimized_segments.incwement();
       }
     }
   }
 
-  private void updateExportedSegmentStats() {
-    int index = 0;
-    for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.NEW_TO_OLD)) {
-      SegmentIndexStatsExporter.export(segmentInfo, index++);
+  p-pwivate w-wong getindexdepthmiwwis() {
+    w-wong owdesttimeswiceid = g-getowdestenabwedtimeswiceid();
+    if (owdesttimeswiceid == segmentinfo.invawid_id) {
+      w-wetuwn 0;
+    } e-ewse {
+      // compute timestamp fwom timeswiceid, (ˆ ﻌ ˆ)♡ w-which is awso a snowfwake tweetid
+      w-wong timestamp = snowfwakeidpawsew.gettimestampfwomtweetid(owdesttimeswiceid);
+      // s-set cuwwent i-index depth in miwwiseconds
+      w-wong indexdepthinmiwwis = s-system.cuwwenttimemiwwis() - timestamp;
+      // i-index depth shouwd nyevew be n-nyegative. (U ᵕ U❁)
+      i-if (indexdepthinmiwwis < 0) {
+        w-wog.wawn("negative i-index depth. mya wawge time s-skew on this e-eawwybiwd?");
+        w-wetuwn 0;
+      } ewse {
+        w-wetuwn indexdepthinmiwwis;
+      }
     }
   }
 
-  // Marks the SegmentInfo object matching this time slice as disabled.
-  private void disableSegment(long timeSliceID) {
-    SegmentInfo info = getSegmentInfo(timeSliceID);
-    if (info == null) {
-      LOG.warn("Tried to disable missing segment " + timeSliceID);
-      return;
+  pwivate void updateexpowtedsegmentstats() {
+    i-int index = 0;
+    f-fow (segmentinfo s-segmentinfo : getsegmentinfos(fiwtew.enabwed, 😳 owdew.new_to_owd)) {
+      segmentindexstatsexpowtew.expowt(segmentinfo, σωσ index++);
     }
-    info.setIsEnabled(false);
-    LOG.info("Disabled segment " + info);
   }
 
-  public long getNewestTimeSliceID() {
-    final Iterator<SegmentInfo> segments = getSegmentInfos(Filter.All, Order.NEW_TO_OLD).iterator();
-    return segments.hasNext() ? segments.next().getTimeSliceID() : SegmentInfo.INVALID_ID;
-  }
-
-  /**
-   * Returns the timeslice ID of the oldest enabled segment.
-   */
-  public long getOldestEnabledTimeSliceID() {
-    if (segmentWriters.size() == 0) {
-      return SegmentInfo.INVALID_ID;
+  // m-mawks the segmentinfo o-object matching t-this time swice as disabwed. ( ͡o ω ͡o )
+  pwivate void disabwesegment(wong t-timeswiceid) {
+    segmentinfo i-info = getsegmentinfo(timeswiceid);
+    i-if (info == n-nyuww) {
+      w-wog.wawn("twied t-to disabwe missing segment " + timeswiceid);
+      wetuwn;
     }
-    ISegmentWriter segmentWriter = segmentWriters.firstEntry().getValue();
-    return segmentWriter.getSegmentInfo().getTimeSliceID();
+    info.setisenabwed(fawse);
+    w-wog.info("disabwed segment " + i-info);
+  }
+
+  pubwic wong getnewesttimeswiceid() {
+    finaw i-itewatow<segmentinfo> segments = getsegmentinfos(fiwtew.aww, XD owdew.new_to_owd).itewatow();
+    wetuwn segments.hasnext() ? s-segments.next().gettimeswiceid() : s-segmentinfo.invawid_id;
   }
 
   /**
-   * Returns the SegmentInfo for the given timeSliceID.
+   * wetuwns t-the timeswice id of the owdest enabwed segment. :3
    */
-  public final SegmentInfo getSegmentInfo(long timeSliceID) {
-    ISegmentWriter segmentWriter = segmentWriters.get(timeSliceID);
-    return segmentWriter == null ? null : segmentWriter.getSegmentInfo();
+  p-pubwic w-wong getowdestenabwedtimeswiceid() {
+    if (segmentwwitews.size() == 0) {
+      w-wetuwn segmentinfo.invawid_id;
+    }
+    isegmentwwitew s-segmentwwitew = segmentwwitews.fiwstentwy().getvawue();
+    wetuwn segmentwwitew.getsegmentinfo().gettimeswiceid();
   }
 
   /**
-   * Returns the segment info for the segment that should contain the given tweet ID.
+   * wetuwns t-the segmentinfo fow the given timeswiceid. :3
    */
-  public final SegmentInfo getSegmentInfoFromStatusID(long tweetID) {
-    for (SegmentInfo segmentInfo : getSegmentInfos(Filter.All, Order.NEW_TO_OLD)) {
-      if (tweetID >= segmentInfo.getTimeSliceID()) {
-        return segmentInfo;
+  p-pubwic finaw s-segmentinfo g-getsegmentinfo(wong timeswiceid) {
+    isegmentwwitew s-segmentwwitew = segmentwwitews.get(timeswiceid);
+    wetuwn segmentwwitew == nyuww ? nuww : s-segmentwwitew.getsegmentinfo();
+  }
+
+  /**
+   * w-wetuwns the segment i-info fow t-the segment that shouwd contain the given tweet i-id. (⑅˘꒳˘)
+   */
+  pubwic f-finaw segmentinfo getsegmentinfofwomstatusid(wong tweetid) {
+    f-fow (segmentinfo segmentinfo : getsegmentinfos(fiwtew.aww, òωó owdew.new_to_owd)) {
+      i-if (tweetid >= segmentinfo.gettimeswiceid()) {
+        wetuwn segmentinfo;
       }
     }
 
-    return null;
+    w-wetuwn nyuww;
   }
 
   /**
-   * Removes the segment associated with the given timeslice ID from the segment manager. This will
-   * also take care of all required clean up related to the segment being removed, such as closing
-   * its writer.
+   * w-wemoves the segment associated w-with the given t-timeswice id f-fwom the segment managew. mya this wiww
+   * awso take c-cawe of aww wequiwed cwean up wewated to the s-segment being wemoved, such as cwosing
+   * its wwitew. 😳😳😳
    */
-  public boolean removeSegmentInfo(long timeSliceID) {
-    if (timeSliceID == getNewestTimeSliceID()) {
-      throw new RuntimeException("Cannot drop segment of current time-slice " + timeSliceID);
+  p-pubwic boowean w-wemovesegmentinfo(wong t-timeswiceid) {
+    i-if (timeswiceid == g-getnewesttimeswiceid()) {
+      thwow n-nyew wuntimeexception("cannot dwop segment of cuwwent time-swice " + t-timeswiceid);
     }
 
-    ISegmentWriter removed = segmentWriters.get(timeSliceID);
-    if (removed == null) {
-      return false;
+    isegmentwwitew w-wemoved = segmentwwitews.get(timeswiceid);
+    if (wemoved == nuww) {
+      wetuwn f-fawse;
     }
 
-    LOG.info("Removing segment {}", removed.getSegmentInfo());
-    Preconditions.checkState(!removed.getSegmentInfo().isEnabled());
-    removed.getSegmentInfo().getIndexSegment().close();
-    segmentWriters.remove(timeSliceID);
+    w-wog.info("wemoving segment {}", :3 w-wemoved.getsegmentinfo());
+    pweconditions.checkstate(!wemoved.getsegmentinfo().isenabwed());
+    w-wemoved.getsegmentinfo().getindexsegment().cwose();
+    s-segmentwwitews.wemove(timeswiceid);
 
-    String segmentName = removed.getSegmentInfo().getSegmentName();
-    updateAllListeners("Removed segment " + segmentName);
-    LOG.info("Removed segment " + segmentName);
-    updateExportedSegmentStats();
-    updateStats();
-    return true;
+    stwing s-segmentname = wemoved.getsegmentinfo().getsegmentname();
+    u-updateawwwistenews("wemoved segment " + s-segmentname);
+    wog.info("wemoved segment " + segmentname);
+    u-updateexpowtedsegmentstats();
+    updatestats();
+    w-wetuwn twue;
   }
 
   /**
-   * Add the given SegmentWriter into the segmentWriters map.
-   * If a segment with the same timesliceID already exists in the map, the old one is replaced
-   * with the new one; this should only happen in the archive.
+   * add the g-given segmentwwitew i-into the segmentwwitews m-map. >_<
+   * if a segment w-with the same t-timeswiceid awweady exists in t-the map, 🥺 the owd one is wepwaced
+   * w-with the nyew one; this shouwd o-onwy happen i-in the awchive.
    *
-   * The replaced segment is destroyed after a delay to allow in-flight requests to finish.
+   * the wepwaced segment is destwoyed aftew a deway to awwow i-in-fwight wequests t-to finish. (ꈍᴗꈍ)
    */
-  public ISegmentWriter putSegmentInfo(SegmentInfo info) {
-    ISegmentWriter usedSegmentWriter;
+  pubwic isegmentwwitew putsegmentinfo(segmentinfo i-info) {
+    isegmentwwitew u-usedsegmentwwitew;
 
-    SegmentWriter segmentWriter
-        = new SegmentWriter(info, searchIndexingMetricSet.updateFreshness);
+    segmentwwitew s-segmentwwitew
+        = nyew segmentwwitew(info, rawr x3 seawchindexingmetwicset.updatefweshness);
 
-    if (!info.isOptimized()) {
-      LOG.info("Inserting an optimizing segment writer for segment: {}",
-          info.getSegmentName());
+    if (!info.isoptimized()) {
+      wog.info("insewting a-an optimizing segment wwitew fow segment: {}", (U ﹏ U)
+          i-info.getsegmentname());
 
-      usedSegmentWriter = new OptimizingSegmentWriter(
-          segmentWriter,
-          criticalExceptionHandler,
-          searchIndexingMetricSet,
-          indexCaughtUpMonitor);
-    } else {
-      usedSegmentWriter = segmentWriter;
+      usedsegmentwwitew = n-nyew o-optimizingsegmentwwitew(
+          segmentwwitew, ( ͡o ω ͡o )
+          cwiticawexceptionhandwew, 😳😳😳
+          s-seawchindexingmetwicset, 🥺
+          i-indexcaughtupmonitow);
+    } e-ewse {
+      u-usedsegmentwwitew = s-segmentwwitew;
     }
 
-    putSegmentWriter(usedSegmentWriter);
-    return usedSegmentWriter;
+    p-putsegmentwwitew(usedsegmentwwitew);
+    wetuwn usedsegmentwwitew;
   }
 
-  private void putSegmentWriter(ISegmentWriter segmentWriter) {
-    SegmentInfo newSegmentInfo = segmentWriter.getSegmentInfo();
-    SegmentInfo oldSegmentInfo = getSegmentInfo(newSegmentInfo.getTimeSliceID());
+  pwivate void putsegmentwwitew(isegmentwwitew segmentwwitew) {
+    segmentinfo n-nyewsegmentinfo = s-segmentwwitew.getsegmentinfo();
+    s-segmentinfo o-owdsegmentinfo = g-getsegmentinfo(newsegmentinfo.gettimeswiceid());
 
-    // Some sanity checks.
-    if (oldSegmentInfo != null) {
-      // This map is thread safe, so this put can be considered atomic.
-      segmentWriters.put(newSegmentInfo.getTimeSliceID(), segmentWriter);
-      LOG.info("Replaced SegmentInfo with a new one in segmentWriters map. "
-          + "Old SegmentInfo: {} New SegmentInfo: {}", oldSegmentInfo, newSegmentInfo);
+    // s-some sanity checks. òωó
+    if (owdsegmentinfo != nyuww) {
+      // this map is thwead safe, XD so this p-put can be considewed a-atomic. XD
+      segmentwwitews.put(newsegmentinfo.gettimeswiceid(), ( ͡o ω ͡o ) segmentwwitew);
+      wog.info("wepwaced s-segmentinfo w-with a nyew one i-in segmentwwitews map. >w< "
+          + "owd segmentinfo: {} n-nyew segmentinfo: {}", mya owdsegmentinfo, (ꈍᴗꈍ) nyewsegmentinfo);
 
-      if (!oldSegmentInfo.isClosed()) {
-        oldSegmentInfo.deleteIndexSegmentDirectoryAfterDelay();
+      i-if (!owdsegmentinfo.iscwosed()) {
+        o-owdsegmentinfo.deweteindexsegmentdiwectowyaftewdeway();
       }
-    } else {
-      long newestTimeSliceID = getNewestTimeSliceID();
-      if (newestTimeSliceID != SegmentInfo.INVALID_ID
-          && newestTimeSliceID > newSegmentInfo.getTimeSliceID()) {
-        LOG.error("Not adding out-of-order segment " + newSegmentInfo);
-        return;
+    } ewse {
+      wong nyewesttimeswiceid = g-getnewesttimeswiceid();
+      if (newesttimeswiceid != segmentinfo.invawid_id
+          && n-nyewesttimeswiceid > n-nyewsegmentinfo.gettimeswiceid()) {
+        wog.ewwow("not a-adding o-out-of-owdew s-segment " + nyewsegmentinfo);
+        w-wetuwn;
       }
 
-      segmentWriters.put(newSegmentInfo.getTimeSliceID(), segmentWriter);
-      LOG.info("Added segment " + newSegmentInfo);
+      s-segmentwwitews.put(newsegmentinfo.gettimeswiceid(), -.- s-segmentwwitew);
+      wog.info("added s-segment " + n-nyewsegmentinfo);
     }
 
-    updateAllListeners("Added segment " + newSegmentInfo.getTimeSliceID());
-    updateExportedSegmentStats();
-    updateStats();
+    updateawwwistenews("added s-segment " + nyewsegmentinfo.gettimeswiceid());
+    updateexpowtedsegmentstats();
+    updatestats();
   }
 
-  private SegmentInfo createSegmentInfo(long timesliceID) throws IOException {
-    PartitionConfig partitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
+  p-pwivate segmentinfo cweatesegmentinfo(wong t-timeswiceid) thwows ioexception {
+    p-pawtitionconfig p-pawtitionconfig = dynamicpawtitionconfig.getcuwwentpawtitionconfig();
 
-    TimeSlice timeSlice = new TimeSlice(
-        timesliceID,
-        maxSegmentSize,
-        partitionConfig.getIndexingHashPartitionID(),
-        partitionConfig.getNumPartitions());
+    timeswice timeswice = n-nyew timeswice(
+        timeswiceid, (⑅˘꒳˘)
+        maxsegmentsize, (U ﹏ U)
+        pawtitionconfig.getindexinghashpawtitionid(), σωσ
+        p-pawtitionconfig.getnumpawtitions());
 
-    SegmentInfo segmentInfo =
-        new SegmentInfo(timeSlice.getSegment(), earlybirdSegmentFactory, segmentSyncConfig);
+    s-segmentinfo segmentinfo =
+        nyew s-segmentinfo(timeswice.getsegment(), :3 e-eawwybiwdsegmentfactowy, /(^•ω•^) segmentsyncconfig);
 
-    return segmentInfo;
-  }
-
-  /**
-   * Create a new optimizing segment writer and add it to the map.
-   */
-  public OptimizingSegmentWriter createAndPutOptimizingSegmentWriter(
-      long timesliceID) throws IOException {
-    SegmentInfo segmentInfo = createSegmentInfo(timesliceID);
-
-    OptimizingSegmentWriter writer = new OptimizingSegmentWriter(
-        new SegmentWriter(segmentInfo, searchIndexingMetricSet.updateFreshness),
-        criticalExceptionHandler,
-        searchIndexingMetricSet,
-        indexCaughtUpMonitor);
-
-    putSegmentWriter(writer);
-    return writer;
+    w-wetuwn segmentinfo;
   }
 
   /**
-   * Create a new segment writer.
+   * cweate a-a nyew optimizing s-segment wwitew and add it t-to the map. σωσ
    */
-  public SegmentWriter createSegmentWriter(long timesliceID) throws IOException {
-    SegmentInfo segmentInfo = createSegmentInfo(timesliceID);
+  p-pubwic optimizingsegmentwwitew cweateandputoptimizingsegmentwwitew(
+      wong t-timeswiceid) t-thwows ioexception {
+    s-segmentinfo s-segmentinfo = cweatesegmentinfo(timeswiceid);
 
-    SegmentWriter writer = new SegmentWriter(
-        segmentInfo, searchIndexingMetricSet.updateFreshness);
+    optimizingsegmentwwitew wwitew = nyew optimizingsegmentwwitew(
+        nyew segmentwwitew(segmentinfo, (U ᵕ U❁) seawchindexingmetwicset.updatefweshness), 😳
+        cwiticawexceptionhandwew, ʘwʘ
+        seawchindexingmetwicset,
+        i-indexcaughtupmonitow);
 
-    return writer;
-  }
-
-  private void updateAllListeners(String message) {
-    List<SegmentInfo> segmentInfos = segmentWriters.values().stream()
-        .map(ISegmentWriter::getSegmentInfo)
-        .collect(Collectors.toList());
-    for (SegmentUpdateListener listener : updateListeners) {
-      try {
-        listener.update(segmentInfos, message);
-      } catch (Exception e) {
-        LOG.warn("SegmentManager: Unable to call update() on listener.", e);
-      }
-    }
-  }
-
-  // Returns true if the map contains a SegmentInfo matching the given time slice.
-  public final boolean hasSegmentInfo(long timeSliceID) {
-    return segmentWriters.containsKey(timeSliceID);
-  }
-
-  public void addUpdateListener(SegmentUpdateListener listener) {
-    updateListeners.add(listener);
+    p-putsegmentwwitew(wwitew);
+    w-wetuwn w-wwitew;
   }
 
   /**
-   * Look up the segment containing the given status id.
-   * If found, its timeslice id is returned.
-   * If none found, -1 is returned.
+   * c-cweate a-a nyew segment wwitew. (⑅˘꒳˘)
    */
-  public long lookupTimeSliceID(long statusID) throws IOException {
-    SegmentInfo segmentInfo = getSegmentInfoForID(statusID);
-    if (segmentInfo == null) {
-      return -1;
-    }
-    if (!segmentInfo.getIndexSegment().hasDocument(statusID)) {
-        return -1;
-    }
+  p-pubwic segmentwwitew c-cweatesegmentwwitew(wong timeswiceid) thwows i-ioexception {
+    s-segmentinfo segmentinfo = cweatesegmentinfo(timeswiceid);
 
-    return segmentInfo.getTimeSliceID();
+    s-segmentwwitew wwitew = nyew segmentwwitew(
+        s-segmentinfo, ^•ﻌ•^ seawchindexingmetwicset.updatefweshness);
+
+    w-wetuwn wwitew;
   }
 
-  /**
-   * Truncates the given segment list to the specified number of segments, by keeping the newest
-   * segments.
-   */
-  @VisibleForTesting
-  public static List<Segment> truncateSegmentList(List<Segment> segmentList, int maxNumSegments) {
-    // Maybe cut-off the beginning of the sorted list of IDs.
-    if (maxNumSegments > 0 && maxNumSegments < segmentList.size()) {
-      return segmentList.subList(segmentList.size() - maxNumSegments, segmentList.size());
-    } else {
-      return segmentList;
-    }
-  }
-
-  @VisibleForTesting
-  public void setOffensive(long userID, boolean offensive) {
-    userTable.setOffensive(userID, offensive);
-  }
-
-  @VisibleForTesting
-  public void setAntisocial(long userID, boolean antisocial) {
-    userTable.setAntisocial(userID, antisocial);
-  }
-
-  /**
-   * Returns a searcher for all segments.
-   */
-  public EarlybirdMultiSegmentSearcher getMultiSearcher(ImmutableSchemaInterface schemaSnapshot)
-      throws IOException {
-    return new EarlybirdMultiSegmentSearcher(
-        schemaSnapshot,
-        getSearchers(schemaSnapshot, Filter.All, Order.NEW_TO_OLD),
-        searcherStats,
-        clock);
-  }
-
-  /**
-   * Returns a new searcher for the given segment.
-   */
-  @Nullable
-  public EarlybirdLuceneSearcher getSearcher(
-      Segment segment,
-      ImmutableSchemaInterface schemaSnapshot) throws IOException {
-    return getSearcher(segment.getTimeSliceID(), schemaSnapshot);
-  }
-
-  /**
-   * Get max tweet id across all enabled segments.
-   * @return max tweet id or -1 if none found
-   */
-  public long getMaxTweetIdFromEnabledSegments() {
-    for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.NEW_TO_OLD)) {
-      long maxTweetId = segmentInfo.getIndexSegment().getMaxTweetId();
-      if (maxTweetId != -1) {
-        return maxTweetId;
+  p-pwivate void updateawwwistenews(stwing m-message) {
+    w-wist<segmentinfo> s-segmentinfos = segmentwwitews.vawues().stweam()
+        .map(isegmentwwitew::getsegmentinfo)
+        .cowwect(cowwectows.towist());
+    f-fow (segmentupdatewistenew w-wistenew : updatewistenews) {
+      t-twy {
+        wistenew.update(segmentinfos, nyaa~~ m-message);
+      } c-catch (exception e-e) {
+        wog.wawn("segmentmanagew: u-unabwe to caww update() on wistenew.", XD e);
       }
     }
+  }
 
-    return -1;
+  // w-wetuwns twue if the map contains a segmentinfo matching the given time swice. /(^•ω•^)
+  pubwic finaw boowean hassegmentinfo(wong t-timeswiceid) {
+    wetuwn segmentwwitews.containskey(timeswiceid);
+  }
+
+  pubwic void addupdatewistenew(segmentupdatewistenew wistenew) {
+    updatewistenews.add(wistenew);
   }
 
   /**
-   * Create a tweet index searcher on the segment represented by the timeslice id.  For production
-   * search session, the schema snapshot should be always passed in to make sure that the schema
-   * usage inside scoring is consistent.
+   * wook up t-the segment containing the given status id. (U ᵕ U❁)
+   * i-if found, mya its timeswice id is w-wetuwned. (ˆ ﻌ ˆ)♡
+   * if nyone found, (✿oωo) -1 is wetuwned. (✿oωo)
+   */
+  p-pubwic wong wookuptimeswiceid(wong s-statusid) thwows ioexception {
+    s-segmentinfo s-segmentinfo = getsegmentinfofowid(statusid);
+    if (segmentinfo == n-nyuww) {
+      wetuwn -1;
+    }
+    if (!segmentinfo.getindexsegment().hasdocument(statusid)) {
+        wetuwn -1;
+    }
+
+    w-wetuwn segmentinfo.gettimeswiceid();
+  }
+
+  /**
+   * t-twuncates the given segment wist t-to the specified nyumbew of segments, òωó b-by keeping t-the newest
+   * segments. (˘ω˘)
+   */
+  @visibwefowtesting
+  pubwic s-static wist<segment> twuncatesegmentwist(wist<segment> segmentwist, (ˆ ﻌ ˆ)♡ i-int maxnumsegments) {
+    // maybe cut-off the beginning of the sowted wist of ids. ( ͡o ω ͡o )
+    if (maxnumsegments > 0 && m-maxnumsegments < s-segmentwist.size()) {
+      wetuwn segmentwist.subwist(segmentwist.size() - m-maxnumsegments, rawr x3 s-segmentwist.size());
+    } ewse {
+      w-wetuwn segmentwist;
+    }
+  }
+
+  @visibwefowtesting
+  pubwic void setoffensive(wong usewid, (˘ω˘) boowean offensive) {
+    usewtabwe.setoffensive(usewid, òωó offensive);
+  }
+
+  @visibwefowtesting
+  p-pubwic void s-setantisociaw(wong usewid, ( ͡o ω ͡o ) boowean a-antisociaw) {
+    u-usewtabwe.setantisociaw(usewid, antisociaw);
+  }
+
+  /**
+   * w-wetuwns a seawchew fow aww segments. σωσ
+   */
+  p-pubwic eawwybiwdmuwtisegmentseawchew getmuwtiseawchew(immutabweschemaintewface schemasnapshot)
+      t-thwows ioexception {
+    w-wetuwn nyew eawwybiwdmuwtisegmentseawchew(
+        schemasnapshot, (U ﹏ U)
+        getseawchews(schemasnapshot, rawr f-fiwtew.aww, -.- owdew.new_to_owd), ( ͡o ω ͡o )
+        seawchewstats,
+        cwock);
+  }
+
+  /**
+   * wetuwns a nyew seawchew fow the given segment. >_<
+   */
+  @nuwwabwe
+  pubwic eawwybiwdwuceneseawchew g-getseawchew(
+      s-segment segment, o.O
+      immutabweschemaintewface s-schemasnapshot) t-thwows ioexception {
+    wetuwn g-getseawchew(segment.gettimeswiceid(), σωσ schemasnapshot);
+  }
+
+  /**
+   * get max tweet id acwoss aww enabwed segments. -.-
+   * @wetuwn max tweet id o-ow -1 if nyone found
+   */
+  pubwic wong getmaxtweetidfwomenabwedsegments() {
+    fow (segmentinfo segmentinfo : g-getsegmentinfos(fiwtew.enabwed, σωσ o-owdew.new_to_owd)) {
+      w-wong maxtweetid = segmentinfo.getindexsegment().getmaxtweetid();
+      if (maxtweetid != -1) {
+        w-wetuwn maxtweetid;
+      }
+    }
+
+    w-wetuwn -1;
+  }
+
+  /**
+   * c-cweate a tweet index seawchew o-on the segment wepwesented by t-the timeswice id. :3  fow pwoduction
+   * s-seawch session, ^^ the schema s-snapshot shouwd be awways passed in to make s-suwe that the schema
+   * usage i-inside scowing is c-consistent. òωó
    *
-   * For non-production usage, like one-off debugging search, you can use the function call without
-   * the schema snapshot.
+   * fow nyon-pwoduction u-usage, (ˆ ﻌ ˆ)♡ w-wike one-off debugging seawch, XD y-you can use the function caww w-without
+   * the schema snapshot. òωó
    *
-   * @param timeSliceID the timeslice id, which represents the index segment
-   * @param schemaSnapshot the schema snapshot
-   * @return the tweet index searcher
+   * @pawam t-timeswiceid the t-timeswice id, (ꈍᴗꈍ) which wepwesents the index segment
+   * @pawam s-schemasnapshot the schema snapshot
+   * @wetuwn the tweet index seawchew
    */
-  @Nullable
-  public EarlybirdSingleSegmentSearcher getSearcher(
-      long timeSliceID,
-      ImmutableSchemaInterface schemaSnapshot) throws IOException {
-    SegmentInfo segmentInfo = getSegmentInfo(timeSliceID);
-    if (segmentInfo == null) {
-      return null;
+  @nuwwabwe
+  pubwic eawwybiwdsingwesegmentseawchew getseawchew(
+      wong timeswiceid, UwU
+      i-immutabweschemaintewface schemasnapshot) thwows ioexception {
+    s-segmentinfo segmentinfo = getsegmentinfo(timeswiceid);
+    i-if (segmentinfo == nyuww) {
+      wetuwn n-nyuww;
     }
-    return segmentInfo.getIndexSegment().getSearcher(userTable, schemaSnapshot);
+    wetuwn segmentinfo.getindexsegment().getseawchew(usewtabwe, >w< schemasnapshot);
   }
 
   /**
-   * Returns a new searcher for the segment with the given timeslice ID. If the given timeslice ID
-   * does not correspond to any active segment, {@code null} is returned.
+   * w-wetuwns a new seawchew fow the segment with the g-given timeswice id. ʘwʘ if the given timeswice id
+   * d-does nyot cowwespond to any active segment, :3 {@code n-nyuww} is w-wetuwned. ^•ﻌ•^
    *
-   * @param timeSliceID The segment's timeslice ID.
-   * @return A new searcher for the segment with the given timeslice ID.
+   * @pawam timeswiceid the segment's t-timeswice i-id. (ˆ ﻌ ˆ)♡
+   * @wetuwn a nyew seawchew f-fow the segment w-with the given timeswice id. 🥺
    */
-  @Nullable
-  public EarlybirdSingleSegmentSearcher getSearcher(long timeSliceID) throws IOException {
-    SegmentInfo segmentInfo = getSegmentInfo(timeSliceID);
-    if (segmentInfo == null) {
-      return null;
+  @nuwwabwe
+  pubwic eawwybiwdsingwesegmentseawchew g-getseawchew(wong timeswiceid) thwows ioexception {
+    segmentinfo segmentinfo = g-getsegmentinfo(timeswiceid);
+    if (segmentinfo == nyuww) {
+      wetuwn n-nyuww;
     }
-    return segmentInfo.getIndexSegment().getSearcher(userTable);
+    w-wetuwn segmentinfo.getindexsegment().getseawchew(usewtabwe);
   }
 
-  @Nullable
-  public EarlybirdResponseCode checkSegment(Segment segment) {
-    return checkSegmentInternal(getSegmentInfo(segment.getTimeSliceID()));
+  @nuwwabwe
+  p-pubwic eawwybiwdwesponsecode checksegment(segment segment) {
+    wetuwn checksegmentintewnaw(getsegmentinfo(segment.gettimeswiceid()));
   }
 
-  private static EarlybirdResponseCode checkSegmentInternal(SegmentInfo info) {
-    if (info == null) {
-      return EarlybirdResponseCode.PARTITION_NOT_FOUND;
-    } else if (info.isEnabled()) {
-      return EarlybirdResponseCode.SUCCESS;
-    } else {
-      return EarlybirdResponseCode.PARTITION_DISABLED;
+  p-pwivate static eawwybiwdwesponsecode c-checksegmentintewnaw(segmentinfo info) {
+    i-if (info == n-nyuww) {
+      wetuwn eawwybiwdwesponsecode.pawtition_not_found;
+    } ewse if (info.isenabwed()) {
+      wetuwn eawwybiwdwesponsecode.success;
+    } ewse {
+      w-wetuwn eawwybiwdwesponsecode.pawtition_disabwed;
     }
   }
 
-  private List<EarlybirdSingleSegmentSearcher> getSearchers(
-      ImmutableSchemaInterface schemaSnapshot,
-      Filter filter,
-      Order order) throws IOException {
-    List<EarlybirdSingleSegmentSearcher> searchers = Lists.newArrayList();
-    for (SegmentInfo segmentInfo : getSegmentInfos(filter, order)) {
-      EarlybirdSingleSegmentSearcher searcher =
-          segmentInfo.getIndexSegment().getSearcher(userTable, schemaSnapshot);
-      if (searcher != null) {
-        searchers.add(searcher);
+  p-pwivate wist<eawwybiwdsingwesegmentseawchew> getseawchews(
+      immutabweschemaintewface s-schemasnapshot, OwO
+      fiwtew fiwtew, 🥺
+      owdew owdew) t-thwows ioexception {
+    w-wist<eawwybiwdsingwesegmentseawchew> s-seawchews = wists.newawwaywist();
+    f-fow (segmentinfo s-segmentinfo : g-getsegmentinfos(fiwtew, OwO owdew)) {
+      eawwybiwdsingwesegmentseawchew seawchew =
+          s-segmentinfo.getindexsegment().getseawchew(usewtabwe, (U ᵕ U❁) s-schemasnapshot);
+      i-if (seawchew != n-nyuww) {
+        s-seawchews.add(seawchew);
       }
     }
-    return searchers;
+    w-wetuwn seawchews;
   }
 
   /**
-   * Gets metadata for segments for debugging purposes.
+   * g-gets m-metadata fow s-segments fow debugging puwposes. ( ͡o ω ͡o )
    */
-  public List<String> getSegmentMetadata() {
-    List<String> segmentMetadata = new ArrayList<>();
-    for (SegmentInfo segment : getSegmentInfos(Filter.All, Order.OLD_TO_NEW)) {
-      segmentMetadata.add(segment.getSegmentMetadata());
+  pubwic w-wist<stwing> getsegmentmetadata() {
+    wist<stwing> segmentmetadata = n-nyew awwaywist<>();
+    fow (segmentinfo segment : getsegmentinfos(fiwtew.aww, owdew.owd_to_new)) {
+      s-segmentmetadata.add(segment.getsegmentmetadata());
     }
-    return segmentMetadata;
+    w-wetuwn segmentmetadata;
   }
 
   /**
-   * Gets info for query caches to be displayed in an admin page.
+   * gets info fow quewy caches t-to be dispwayed i-in an admin page. ^•ﻌ•^
    */
-  public String getQueryCachesData() {
-    StringBuilder output = new StringBuilder();
-    for (SegmentInfo segment : getSegmentInfos(Filter.All, Order.OLD_TO_NEW)) {
-      output.append(segment.getQueryCachesData() + "\n");
+  pubwic s-stwing getquewycachesdata() {
+    s-stwingbuiwdew output = nyew stwingbuiwdew();
+    fow (segmentinfo s-segment : g-getsegmentinfos(fiwtew.aww, o.O owdew.owd_to_new)) {
+      output.append(segment.getquewycachesdata() + "\n");
     }
-    return output.toString();
+    w-wetuwn output.tostwing();
   }
 
   /**
-   * Index the given user update. Returns false if the given update is skipped.
+   * index t-the given usew update. (⑅˘꒳˘) wetuwns fawse if the g-given update is skipped. (ˆ ﻌ ˆ)♡
    */
-  public boolean indexUserUpdate(UserUpdate userUpdate) {
-    return userTable.indexUserUpdate(userUpdatesChecker, userUpdate);
+  pubwic boowean indexusewupdate(usewupdate usewupdate) {
+    wetuwn u-usewtabwe.indexusewupdate(usewupdatescheckew, :3 usewupdate);
   }
 
   /**
-   * Index the given UserScrubGeoEvent.
-   * @param userScrubGeoEvent
+   * index the given u-usewscwubgeoevent. /(^•ω•^)
+   * @pawam usewscwubgeoevent
    */
-  public void indexUserScrubGeoEvent(UserScrubGeoEvent userScrubGeoEvent) {
-    userScrubGeoMap.indexUserScrubGeoEvent(userScrubGeoEvent);
+  p-pubwic v-void indexusewscwubgeoevent(usewscwubgeoevent usewscwubgeoevent) {
+    u-usewscwubgeomap.indexusewscwubgeoevent(usewscwubgeoevent);
   }
 
   /**
-   * Return how many documents this segment manager has indexed in all of its enabled segments.
+   * w-wetuwn how many d-documents this s-segment managew h-has indexed in aww of its enabwed segments. òωó
    */
-  public long getNumIndexedDocuments() {
-    // Order here doesn't matter, we just want all enabled segments, and allocate
-    // as little as needed.
-    long indexedDocs = 0;
-    for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.OLD_TO_NEW)) {
-      indexedDocs += segmentInfo.getIndexSegment().getIndexStats().getStatusCount();
+  p-pubwic wong g-getnumindexeddocuments() {
+    // o-owdew hewe doesn't mattew, :3 we j-just want aww enabwed s-segments, (˘ω˘) a-and awwocate
+    // as wittwe as n-nyeeded. 😳
+    wong i-indexeddocs = 0;
+    f-fow (segmentinfo s-segmentinfo : g-getsegmentinfos(fiwtew.enabwed, owdew.owd_to_new)) {
+      i-indexeddocs += segmentinfo.getindexsegment().getindexstats().getstatuscount();
     }
-    return indexedDocs;
+    w-wetuwn i-indexeddocs;
   }
 
   /**
-   * Return how many partial updates this segment manager has applied
-   * in all of its enabled segments.
+   * wetuwn how many pawtiaw updates this segment managew h-has appwied
+   * i-in aww of its enabwed segments. σωσ
    */
-  public long getNumPartialUpdates() {
-    long partialUpdates = 0;
-    for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.OLD_TO_NEW)) {
-      partialUpdates += segmentInfo.getIndexSegment().getIndexStats().getPartialUpdateCount();
+  p-pubwic w-wong getnumpawtiawupdates() {
+    wong pawtiawupdates = 0;
+    fow (segmentinfo s-segmentinfo : g-getsegmentinfos(fiwtew.enabwed, UwU o-owdew.owd_to_new)) {
+      p-pawtiawupdates += s-segmentinfo.getindexsegment().getindexstats().getpawtiawupdatecount();
     }
-    return partialUpdates;
+    w-wetuwn pawtiawupdates;
   }
 
   /**
-   * Returns the segment info for the segment containing the given tweet ID.
+   * wetuwns the segment info f-fow the segment containing the given tweet id. -.-
    */
-  public SegmentInfo getSegmentInfoForID(long tweetID) {
-    ISegmentWriter segmentWriter = getSegmentWriterForID(tweetID);
-    return segmentWriter == null ? null : segmentWriter.getSegmentInfo();
+  pubwic segmentinfo getsegmentinfofowid(wong t-tweetid) {
+    i-isegmentwwitew segmentwwitew = getsegmentwwitewfowid(tweetid);
+    wetuwn segmentwwitew == n-nyuww ? n-nyuww : segmentwwitew.getsegmentinfo();
   }
 
   /**
-   * Returns the segment writer for the segment containing the given tweet ID.
+   * wetuwns the segment w-wwitew fow the segment containing t-the given tweet i-id. 🥺
    */
-  @Nullable
-  public ISegmentWriter getSegmentWriterForID(long tweetID) {
-    Map.Entry<Long, ISegmentWriter> entry = segmentWriters.floorEntry(tweetID);
-    return entry == null ? null : entry.getValue();
+  @nuwwabwe
+  p-pubwic isegmentwwitew getsegmentwwitewfowid(wong tweetid) {
+    m-map.entwy<wong, 😳😳😳 isegmentwwitew> e-entwy = segmentwwitews.fwoowentwy(tweetid);
+    w-wetuwn entwy == nyuww ? nyuww : entwy.getvawue();
   }
 
   /**
-   * Remove old segments until we have less than or equal to the number of max enabled segments.
+   * w-wemove owd segments u-untiw we have wess than ow equaw to the numbew o-of max enabwed segments. 🥺
    */
-  public void removeExcessSegments() {
-    int removedSegmentCount = 0;
-    while (segmentWriters.size() > getMaxEnabledSegments()) {
-      long timesliceID = getOldestEnabledTimeSliceID();
-      disableSegment(timesliceID);
-      removeSegmentInfo(timesliceID);
-      removedSegmentCount += 1;
+  p-pubwic void wemoveexcesssegments() {
+    int wemovedsegmentcount = 0;
+    whiwe (segmentwwitews.size() > getmaxenabwedsegments()) {
+      wong timeswiceid = getowdestenabwedtimeswiceid();
+      disabwesegment(timeswiceid);
+      w-wemovesegmentinfo(timeswiceid);
+      w-wemovedsegmentcount += 1;
     }
-    LOG.info("Segment manager removed {} excess segments", removedSegmentCount);
+    w-wog.info("segment m-managew wemoved {} excess segments", ^^ wemovedsegmentcount);
   }
 
   /**
-   * Returns total index size on disk across all enabled segments in this segment manager.
+   * w-wetuwns totaw index size on disk acwoss aww enabwed s-segments in this s-segment managew. ^^;;
    */
-  private long getTotalSegmentSizeOnDisk() {
-    long totalIndexSize = 0;
-    for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.OLD_TO_NEW)) {
-      totalIndexSize += segmentInfo.getIndexSegment().getIndexStats().getIndexSizeOnDiskInBytes();
+  p-pwivate w-wong gettotawsegmentsizeondisk() {
+    wong totawindexsize = 0;
+    fow (segmentinfo segmentinfo : g-getsegmentinfos(fiwtew.enabwed, >w< o-owdew.owd_to_new)) {
+      totawindexsize += segmentinfo.getindexsegment().getindexstats().getindexsizeondiskinbytes();
     }
-    return totalIndexSize;
+    wetuwn t-totawindexsize;
   }
 
-  @VisibleForTesting
-  ISegmentWriter getSegmentWriterWithoutCreationForTests(long timesliceID) {
-    return segmentWriters.get(timesliceID);
+  @visibwefowtesting
+  isegmentwwitew g-getsegmentwwitewwithoutcweationfowtests(wong t-timeswiceid) {
+    w-wetuwn segmentwwitews.get(timeswiceid);
   }
 
-  @VisibleForTesting
-  ArrayList<Long> getTimeSliceIdsForTests() {
-    return new ArrayList<Long>(segmentWriters.keySet());
+  @visibwefowtesting
+  awwaywist<wong> gettimeswiceidsfowtests() {
+    wetuwn nyew awwaywist<wong>(segmentwwitews.keyset());
   }
 }

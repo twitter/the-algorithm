@@ -1,24 +1,24 @@
-package com.twitter.search.earlybird_root.caching;
+package com.twittew.seawch.eawwybiwd_woot.caching;
 
-import javax.inject.Inject;
+impowt javax.inject.inject;
 
-import com.twitter.common.base.Supplier;
-import com.twitter.search.common.decider.SearchDecider;
+i-impowt com.twittew.common.base.suppwiew;
+i-impowt c-com.twittew.seawch.common.decidew.seawchdecidew;
 
 /**
- * A cache miss decider backed by a decider key.
+ * a-a cache m-miss decidew backed b-by a decidew k-key. ^^;;
  */
-public class DefaultForcedCacheMissDecider implements Supplier<Boolean> {
-  private static final String DECIDER_KEY = "default_forced_cache_miss_rate";
-  private final SearchDecider decider;
+pubwic c-cwass defauwtfowcedcachemissdecidew impwements suppwiew<boowean> {
+  pwivate static finaw stwing d-decidew_key = "defauwt_fowced_cache_miss_wate";
+  pwivate finaw seawchdecidew d-decidew;
 
-  @Inject
-  public DefaultForcedCacheMissDecider(SearchDecider decider) {
-    this.decider = decider;
+  @inject
+  pubwic defauwtfowcedcachemissdecidew(seawchdecidew d-decidew) {
+    this.decidew = decidew;
   }
 
-  @Override
-  public Boolean get() {
-    return decider.isAvailable(DECIDER_KEY);
+  @ovewwide
+  pubwic boowean g-get() {
+    wetuwn decidew.isavaiwabwe(decidew_key);
   }
 }

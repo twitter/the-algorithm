@@ -1,34 +1,34 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import javax.inject.Inject;
+impowt javax.inject.inject;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+i-impowt com.twittew.common.utiw.cwock;
+i-impowt com.twittew.finagwe.sewvice;
+i-impowt c-com.twittew.finagwe.simpwefiwtew;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.utiw.futuwe;
 
-/** A filter that sets the EarlybirdRequest.clientRequestTimeMs field if it's not already set. */
-public class ClientRequestTimeFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private static final SearchCounter CLIENT_REQUEST_TIME_MS_UNSET_COUNTER =
-      SearchCounter.export("client_request_time_ms_unset");
+/** a fiwtew that sets the eawwybiwdwequest.cwientwequesttimems f-fiewd if it's nyot awweady set. (U ﹏ U) */
+pubwic c-cwass cwientwequesttimefiwtew extends simpwefiwtew<eawwybiwdwequest, >_< e-eawwybiwdwesponse> {
+  pwivate static finaw seawchcountew c-cwient_wequest_time_ms_unset_countew =
+      seawchcountew.expowt("cwient_wequest_time_ms_unset");
 
-  private final Clock clock;
+  p-pwivate finaw c-cwock cwock;
 
-  @Inject
-  public ClientRequestTimeFilter(Clock clock) {
-    this.clock = clock;
+  @inject
+  pubwic cwientwequesttimefiwtew(cwock cwock) {
+    this.cwock = cwock;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    if (!request.isSetClientRequestTimeMs()) {
-      CLIENT_REQUEST_TIME_MS_UNSET_COUNTER.increment();
-      request.setClientRequestTimeMs(clock.nowMillis());
+  @ovewwide
+  p-pubwic futuwe<eawwybiwdwesponse> appwy(eawwybiwdwequest wequest, rawr x3
+                                         sewvice<eawwybiwdwequest, mya eawwybiwdwesponse> sewvice) {
+    i-if (!wequest.issetcwientwequesttimems()) {
+      cwient_wequest_time_ms_unset_countew.incwement();
+      w-wequest.setcwientwequesttimems(cwock.nowmiwwis());
     }
-    return service.apply(request);
+    w-wetuwn sewvice.appwy(wequest);
   }
 }

@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.common.clients.adserver
+package com.twittew.fowwow_wecommendations.common.cwients.adsewvew
 
-import com.twitter.adserver.thriftscala.NewAdServer
-import com.twitter.adserver.{thriftscala => t}
-import com.twitter.stitch.Stitch
-import javax.inject.{Inject, Singleton}
+impowt com.twittew.adsewvew.thwiftscawa.newadsewvew
+i-impowt com.twittew.adsewvew.{thwiftscawa => t-t}
+impowt com.twittew.stitch.stitch
+i-impowt javax.inject.{inject, rawr x3 s-singweton}
 
-@Singleton
-class AdserverClient @Inject() (adserverService: NewAdServer.MethodPerEndpoint) {
-  def getAdImpressions(adRequest: AdRequest): Stitch[Seq[t.AdImpression]] = {
-    Stitch
-      .callFuture(
-        adserverService.makeAdRequest(adRequest.toThrift)
-      ).map(_.impressions)
+@singweton
+c-cwass a-adsewvewcwient @inject() (adsewvewsewvice: n-nyewadsewvew.methodpewendpoint) {
+  d-def getadimpwessions(adwequest: adwequest): stitch[seq[t.adimpwession]] = {
+    stitch
+      .cawwfutuwe(
+        adsewvewsewvice.makeadwequest(adwequest.tothwift)
+      ).map(_.impwessions)
   }
 }

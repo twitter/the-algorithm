@@ -1,56 +1,56 @@
-package com.twitter.frigate.pushservice.refresh_handler.cross
+package com.twittew.fwigate.pushsewvice.wefwesh_handwew.cwoss
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.common.util.MRNtabCopy
-import com.twitter.frigate.common.util.MRPushCopy
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.candidatedetaiws
+i-impowt com.twittew.fwigate.common.utiw.mwntabcopy
+i-impowt com.twittew.fwigate.common.utiw.mwpushcopy
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.candidate.copyids
+impowt com.twittew.utiw.futuwe
 
 /**
- * @param statsReceiver - stats receiver object
+ * @pawam statsweceivew - s-stats weceivew object
  */
-class CandidateCopyExpansion(statsReceiver: StatsReceiver)
-    extends BaseCopyFramework(statsReceiver) {
+cwass candidatecopyexpansion(statsweceivew: s-statsweceivew)
+    extends basecopyfwamewowk(statsweceivew) {
 
   /**
    *
-   * Given a [[CandidateDetails]] object representing a push recommendation candidate this method
-   * expands it to multiple candidates, each tagged with a push copy id and ntab copy id to
-   * represent the eligible copies for the given recommendation candidate
+   * given a-a [[candidatedetaiws]] object wepwesenting a push wecommendation c-candidate this method
+   * e-expands it to muwtipwe c-candidates, each tagged with a push copy id and nytab copy id to
+   * wepwesent t-the ewigibwe copies fow the given wecommendation candidate
    *
-   * @param candidateDetails - [[CandidateDetails]] objects containing a recommendation candidate
+   * @pawam candidatedetaiws - [[candidatedetaiws]] o-objects containing a w-wecommendation c-candidate
    *
-   * @return - list of tuples of [[PushTypes.RawCandidate]] and [[CopyIds]]
+   * @wetuwn - w-wist o-of tupwes of [[pushtypes.wawcandidate]] and [[copyids]]
    */
-  private final def crossCandidateDetailsWithCopyId(
-    candidateDetails: CandidateDetails[RawCandidate]
-  ): Future[Seq[(CandidateDetails[RawCandidate], CopyIds)]] = {
-    val eligibleCopyPairs = getEligiblePushAndNtabCopiesFromCandidate(candidateDetails.candidate)
-    val copyPairs = eligibleCopyPairs.map(_.map {
-      case (pushCopy: MRPushCopy, ntabCopy: Option[MRNtabCopy]) =>
-        CopyIds(
-          pushCopyId = Some(pushCopy.copyId),
-          ntabCopyId = ntabCopy.map(_.copyId)
+  pwivate finaw d-def cwosscandidatedetaiwswithcopyid(
+    candidatedetaiws: candidatedetaiws[wawcandidate]
+  ): f-futuwe[seq[(candidatedetaiws[wawcandidate], mya copyids)]] = {
+    vaw ewigibwecopypaiws = getewigibwepushandntabcopiesfwomcandidate(candidatedetaiws.candidate)
+    vaw copypaiws = ewigibwecopypaiws.map(_.map {
+      c-case (pushcopy: mwpushcopy, (˘ω˘) n-nytabcopy: option[mwntabcopy]) =>
+        c-copyids(
+          p-pushcopyid = some(pushcopy.copyid), >_<
+          nytabcopyid = nytabcopy.map(_.copyid)
         )
     })
 
-    copyPairs.map(_.map((candidateDetails, _)))
+    c-copypaiws.map(_.map((candidatedetaiws, -.- _)))
   }
 
   /**
    *
-   * This method takes as input a list of [[CandidateDetails]] objects which contain the push
-   * recommendation candidates for a given target user. It expands each input candidate into
-   * multiple candidates, each tagged with a push copy id and ntab copy id to represent the eligible
-   * copies for the given recommendation candidate
+   * t-this method takes as input a-a wist of [[candidatedetaiws]] o-objects which contain the push
+   * w-wecommendation candidates f-fow a given tawget usew. 🥺 it expands each input c-candidate into
+   * muwtipwe candidates, (U ﹏ U) e-each tagged with a push c-copy id and nytab c-copy id to wepwesent the ewigibwe
+   * copies fow the given wecommendation candidate
    *
-   * @param candidateDetailsSeq - list of fetched candidates for push recommendation
-   * @return - list of tuples of [[RawCandidate]] and [[CopyIds]]
+   * @pawam candidatedetaiwsseq - wist of fetched candidates f-fow push w-wecommendation
+   * @wetuwn - wist of tupwes o-of [[wawcandidate]] a-and [[copyids]]
    */
-  final def expandCandidatesWithCopyId(
-    candidateDetailsSeq: Seq[CandidateDetails[RawCandidate]]
-  ): Future[Seq[(CandidateDetails[RawCandidate], CopyIds)]] =
-    Future.collect(candidateDetailsSeq.map(crossCandidateDetailsWithCopyId)).map(_.flatten)
+  f-finaw def expandcandidateswithcopyid(
+    candidatedetaiwsseq: seq[candidatedetaiws[wawcandidate]]
+  ): f-futuwe[seq[(candidatedetaiws[wawcandidate], >w< copyids)]] =
+    futuwe.cowwect(candidatedetaiwsseq.map(cwosscandidatedetaiwswithcopyid)).map(_.fwatten)
 }

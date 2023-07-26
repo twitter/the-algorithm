@@ -1,70 +1,70 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.store.ScrubGeo
-import com.twitter.tweetypie.store.ScrubGeoUpdateUserTimestamp
-import com.twitter.tweetypie.thriftscala.DeleteLocationData
-import com.twitter.tweetypie.thriftscala.GeoScrub
+impowt c-com.twittew.stitch.stitch
+impowt c-com.twittew.tweetypie.wepositowy._
+i-impowt c-com.twittew.tweetypie.stowe.scwubgeo
+i-impowt com.twittew.tweetypie.stowe.scwubgeoupdateusewtimestamp
+i-impowt com.twittew.tweetypie.thwiftscawa.dewetewocationdata
+i-impowt com.twittew.tweetypie.thwiftscawa.geoscwub
 
 /**
- * Create the appropriate ScrubGeo.Event for a GeoScrub request.
+ * cweate the appwopwiate scwubgeo.event fow a geoscwub wequest. 😳😳😳
  */
-object ScrubGeoEventBuilder {
-  val userQueryOptions: UserQueryOptions =
-    UserQueryOptions(
-      Set(UserField.Safety, UserField.Roles),
-      UserVisibility.All
+o-object scwubgeoeventbuiwdew {
+  vaw u-usewquewyoptions: usewquewyoptions =
+    u-usewquewyoptions(
+      set(usewfiewd.safety, (˘ω˘) usewfiewd.wowes), ^^
+      usewvisibiwity.aww
     )
 
-  private def userLoader(
-    stats: StatsReceiver,
-    userRepo: UserRepository.Optional
-  ): UserId => Future[Option[User]] = {
-    val userNotFoundCounter = stats.counter("user_not_found")
-    userId =>
-      Stitch.run(
-        userRepo(UserKey(userId), userQueryOptions)
-          .onSuccess(userOpt => if (userOpt.isEmpty) userNotFoundCounter.incr())
+  pwivate d-def usewwoadew(
+    stats: statsweceivew, :3
+    u-usewwepo: usewwepositowy.optionaw
+  ): u-usewid => futuwe[option[usew]] = {
+    vaw usewnotfoundcountew = stats.countew("usew_not_found")
+    usewid =>
+      s-stitch.wun(
+        usewwepo(usewkey(usewid), -.- usewquewyoptions)
+          .onsuccess(usewopt => if (usewopt.isempty) usewnotfoundcountew.incw())
       )
   }
 
-  object UpdateUserTimestamp {
-    type Type = DeleteLocationData => Future[ScrubGeoUpdateUserTimestamp.Event]
+  o-object updateusewtimestamp {
+    t-type t-type = dewetewocationdata => f-futuwe[scwubgeoupdateusewtimestamp.event]
 
-    def apply(
-      stats: StatsReceiver,
-      userRepo: UserRepository.Optional,
-    ): Type = {
-      val timestampDiffStat = stats.stat("now_delta_ms")
-      val loadUser = userLoader(stats, userRepo)
-      request: DeleteLocationData =>
-        loadUser(request.userId).map { userOpt =>
-          // delta between users requesting deletion and the time we publish to TweetEvents
-          timestampDiffStat.add((Time.now.inMillis - request.timestampMs).toFloat)
-          ScrubGeoUpdateUserTimestamp.Event(
-            userId = request.userId,
-            timestamp = Time.fromMilliseconds(request.timestampMs),
-            optUser = userOpt
+    def a-appwy(
+      stats: statsweceivew, 😳
+      usewwepo: u-usewwepositowy.optionaw, mya
+    ): type = {
+      vaw timestampdiffstat = s-stats.stat("now_dewta_ms")
+      vaw woadusew = usewwoadew(stats, (˘ω˘) usewwepo)
+      wequest: dewetewocationdata =>
+        woadusew(wequest.usewid).map { usewopt =>
+          // d-dewta between usews w-wequesting dewetion a-and the time w-we pubwish to tweetevents
+          timestampdiffstat.add((time.now.inmiwwis - wequest.timestampms).tofwoat)
+          s-scwubgeoupdateusewtimestamp.event(
+            u-usewid = wequest.usewid, >_<
+            t-timestamp = t-time.fwommiwwiseconds(wequest.timestampms), -.-
+            optusew = usewopt
           )
         }
     }
   }
 
-  object ScrubTweets {
-    type Type = GeoScrub => Future[ScrubGeo.Event]
+  o-object scwubtweets {
+    type type = geoscwub => f-futuwe[scwubgeo.event]
 
-    def apply(stats: StatsReceiver, userRepo: UserRepository.Optional): Type = {
-      val loadUser = userLoader(stats, userRepo)
-      geoScrub =>
-        loadUser(geoScrub.userId).map { userOpt =>
-          ScrubGeo.Event(
-            tweetIdSet = geoScrub.statusIds.toSet,
-            userId = geoScrub.userId,
-            enqueueMax = geoScrub.hosebirdEnqueue,
-            optUser = userOpt,
-            timestamp = Time.now
+    def appwy(stats: statsweceivew, 🥺 u-usewwepo: usewwepositowy.optionaw): type = {
+      v-vaw woadusew = usewwoadew(stats, (U ﹏ U) u-usewwepo)
+      g-geoscwub =>
+        woadusew(geoscwub.usewid).map { usewopt =>
+          scwubgeo.event(
+            tweetidset = geoscwub.statusids.toset, >w<
+            usewid = geoscwub.usewid, mya
+            e-enqueuemax = g-geoscwub.hosebiwdenqueue, >w<
+            optusew = u-usewopt, nyaa~~
+            t-timestamp = t-time.now
           )
         }
     }

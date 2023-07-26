@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.itemcandidatewithdetaiws
 
 /**
- * [[DropSelector]] detects duplicates by looking for candidates with the same key. A key can be
- * anything but is typically derived from a candidate's id and class. This approach is not always
- * appropriate. For example, two candidate sources might both return different sub-classes of
- * [[com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate]] resulting in
- * them not being treated as duplicates.
+ * [[dwopsewectow]] d-detects dupwicates b-by wooking fow c-candidates with t-the same key. >_< a-a key can be
+ * anything but is typicawwy dewived fwom a candidate's id and cwass. (⑅˘꒳˘) t-this appwoach is nyot awways
+ * appwopwiate. /(^•ω•^) f-fow exampwe, rawr x3 two candidate souwces m-might both wetuwn diffewent sub-cwasses of
+ * [[com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetweetcandidate]] wesuwting in
+ * t-them nyot being tweated as dupwicates. (U ﹏ U)
  */
-trait DeduplicationKey[Key] {
-  def apply(candidate: ItemCandidateWithDetails): Key
+twait d-dedupwicationkey[key] {
+  def a-appwy(candidate: itemcandidatewithdetaiws): key
 }
 
 /**
- * Use candidate id and class to determine duplicates.
+ * use candidate id and cwass to detewmine d-dupwicates. (U ﹏ U)
  */
-object IdAndClassDuplicationKey extends DeduplicationKey[(String, Class[_ <: UniversalNoun[Any]])] {
-  def apply(item: ItemCandidateWithDetails): (String, Class[_ <: UniversalNoun[Any]]) =
-    (item.candidate.id.toString, item.candidate.getClass)
+object idandcwassdupwicationkey extends dedupwicationkey[(stwing, (⑅˘꒳˘) cwass[_ <: univewsawnoun[any]])] {
+  d-def appwy(item: itemcandidatewithdetaiws): (stwing, c-cwass[_ <: univewsawnoun[any]]) =
+    (item.candidate.id.tostwing, òωó i-item.candidate.getcwass)
 }
 
 /**
- * Use candidate id to determine duplicates.
- * This should be used instead of [[IdAndClassDuplicationKey]] in order to deduplicate across
- * different candidate types, such as different implementations of
- * [[com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate]].
+ * u-use candidate i-id to detewmine dupwicates. ʘwʘ
+ * this shouwd be u-used instead of [[idandcwassdupwicationkey]] in owdew to dedupwicate acwoss
+ * d-diffewent candidate types, /(^•ω•^) such as diffewent impwementations of
+ * [[com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetweetcandidate]]. ʘwʘ
  */
-object IdDuplicationKey extends DeduplicationKey[String] {
-  def apply(item: ItemCandidateWithDetails): String = item.candidate.id.toString
+object iddupwicationkey e-extends dedupwicationkey[stwing] {
+  def appwy(item: i-itemcandidatewithdetaiws): s-stwing = item.candidate.id.tostwing
 }

@@ -1,86 +1,86 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+package com.twittew.seawch.common.utiw.mw.pwediction_engine;
 
-import java.util.Map;
+impowt j-java.utiw.map;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
+i-impowt com.googwe.common.cowwect.hashmuwtimap;
+i-impowt com.googwe.common.cowwect.maps;
+i-impowt c-com.googwe.common.cowwect.muwtimap;
 
-import com.twitter.ml.api.Feature;
-import com.twitter.ml.api.FeatureContext;
-import com.twitter.ml.api.FeatureParser;
-import com.twitter.ml.api.transform.DiscretizerTransform;
+i-impowt com.twittew.mw.api.featuwe;
+i-impowt c-com.twittew.mw.api.featuwecontext;
+impowt com.twittew.mw.api.featuwepawsew;
+impowt com.twittew.mw.api.twansfowm.discwetizewtwansfowm;
 
 /**
- * The builder for a model based on the legacy (non-schema-based) features.
- * See also SchemaBasedModelBuilder.
+ * the b-buiwdew fow a modew based on the wegacy (non-schema-based) f-featuwes. 😳
+ * see awso s-schemabasedmodewbuiwdew. 😳
  */
-public final class LegacyModelBuilder extends BaseModelBuilder {
+pubwic finaw cwass wegacymodewbuiwdew extends basemodewbuiwdew {
 
-  private final Map<String, Feature> featuresByName;
-  // for legacy features
-  private final Map<Feature<Boolean>, Double> binaryFeatures;
-  private final Map<Feature<Double>, Double> continuousFeatures;
-  private final Multimap<Feature<Double>, DiscretizedFeatureRange> discretizedFeatureRanges;
+  p-pwivate finaw map<stwing, σωσ featuwe> f-featuwesbyname;
+  // f-fow wegacy featuwes
+  pwivate finaw map<featuwe<boowean>, rawr x3 doubwe> binawyfeatuwes;
+  p-pwivate finaw map<featuwe<doubwe>, OwO doubwe> continuousfeatuwes;
+  pwivate finaw muwtimap<featuwe<doubwe>, /(^•ω•^) discwetizedfeatuwewange> discwetizedfeatuwewanges;
 
-  LegacyModelBuilder(String modelName, FeatureContext context) {
-    super(modelName);
-    featuresByName = getFeaturesByName(context);
-    binaryFeatures = Maps.newHashMap();
-    continuousFeatures = Maps.newHashMap();
-    discretizedFeatureRanges = HashMultimap.create();
+  wegacymodewbuiwdew(stwing m-modewname, 😳😳😳 featuwecontext c-context) {
+    s-supew(modewname);
+    f-featuwesbyname = g-getfeatuwesbyname(context);
+    binawyfeatuwes = maps.newhashmap();
+    c-continuousfeatuwes = maps.newhashmap();
+    discwetizedfeatuwewanges = h-hashmuwtimap.cweate();
   }
 
-  private static Map<String, Feature> getFeaturesByName(FeatureContext featureContext) {
-    Map<String, Feature> featuresByName = Maps.newHashMap();
-    for (Feature<?> feature : featureContext.getAllFeatures()) {
-      featuresByName.put(feature.getFeatureName(), feature);
+  pwivate static map<stwing, ( ͡o ω ͡o ) featuwe> getfeatuwesbyname(featuwecontext featuwecontext) {
+    map<stwing, >_< featuwe> f-featuwesbyname = maps.newhashmap();
+    f-fow (featuwe<?> f-featuwe : f-featuwecontext.getawwfeatuwes()) {
+      featuwesbyname.put(featuwe.getfeatuwename(), >w< featuwe);
     }
-    return featuresByName;
+    wetuwn featuwesbyname;
   }
 
-  @Override
-  protected void addFeature(String baseName, double weight, FeatureParser parser) {
-    Feature feature = featuresByName.get(baseName);
-    if (feature != null) {
-      switch (feature.getFeatureType()) {
-        case BINARY:
-          binaryFeatures.put(feature, weight);
-          break;
-        case CONTINUOUS:
-          continuousFeatures.put(feature, weight);
-          break;
-        default:
-          throw new IllegalArgumentException(
-              String.format("Unsupported feature type: %s", feature));
+  @ovewwide
+  p-pwotected v-void addfeatuwe(stwing basename, rawr d-doubwe weight, f-featuwepawsew pawsew) {
+    f-featuwe featuwe = featuwesbyname.get(basename);
+    i-if (featuwe != nyuww) {
+      switch (featuwe.getfeatuwetype()) {
+        c-case binawy:
+          binawyfeatuwes.put(featuwe, 😳 w-weight);
+          bweak;
+        c-case continuous:
+          c-continuousfeatuwes.put(featuwe, >w< weight);
+          bweak;
+        defauwt:
+          thwow nyew iwwegawawgumentexception(
+              stwing.fowmat("unsuppowted f-featuwe type: %s", f-featuwe));
       }
-    } else if (baseName.endsWith(DISCRETIZER_NAME_SUFFIX)
-        && parser.getExtension().containsKey(DiscretizerTransform.DEFAULT_RANGE_EXT)) {
+    } ewse if (basename.endswith(discwetizew_name_suffix)
+        && p-pawsew.getextension().containskey(discwetizewtwansfowm.defauwt_wange_ext)) {
 
-      String featureName =
-          baseName.substring(0, baseName.length() - DISCRETIZER_NAME_SUFFIX.length());
+      s-stwing featuwename =
+          b-basename.substwing(0, (⑅˘꒳˘) basename.wength() - discwetizew_name_suffix.wength());
 
-      feature = featuresByName.get(featureName);
-      if (feature == null) {
-        return;
+      featuwe = featuwesbyname.get(featuwename);
+      i-if (featuwe == nyuww) {
+        wetuwn;
       }
 
-      String rangeSpec = parser.getExtension().get(DiscretizerTransform.DEFAULT_RANGE_EXT);
-      discretizedFeatureRanges.put(feature, new DiscretizedFeatureRange(weight, rangeSpec));
+      stwing wangespec = p-pawsew.getextension().get(discwetizewtwansfowm.defauwt_wange_ext);
+      discwetizedfeatuwewanges.put(featuwe, OwO nyew d-discwetizedfeatuwewange(weight, (ꈍᴗꈍ) w-wangespec));
     }
   }
 
-  @Override
-  public LightweightLinearModel build() {
-    Map<Feature<Double>, DiscretizedFeature> discretizedFeatures = Maps.newHashMap();
-    for (Feature<Double> feature : discretizedFeatureRanges.keySet()) {
-      DiscretizedFeature discretizedFeature =
-          BaseModelBuilder.buildFeature(discretizedFeatureRanges.get(feature));
-      if (!discretizedFeature.allValuesBelowThreshold(MIN_WEIGHT)) {
-        discretizedFeatures.put(feature, discretizedFeature);
+  @ovewwide
+  p-pubwic wightweightwineawmodew b-buiwd() {
+    m-map<featuwe<doubwe>, 😳 d-discwetizedfeatuwe> discwetizedfeatuwes = m-maps.newhashmap();
+    fow (featuwe<doubwe> featuwe : discwetizedfeatuwewanges.keyset()) {
+      d-discwetizedfeatuwe d-discwetizedfeatuwe =
+          b-basemodewbuiwdew.buiwdfeatuwe(discwetizedfeatuwewanges.get(featuwe));
+      i-if (!discwetizedfeatuwe.awwvawuesbewowthweshowd(min_weight)) {
+        d-discwetizedfeatuwes.put(featuwe, 😳😳😳 discwetizedfeatuwe);
       }
     }
-    return LightweightLinearModel.createForLegacy(
-        modelName, bias, binaryFeatures, continuousFeatures, discretizedFeatures);
+    wetuwn wightweightwineawmodew.cweatefowwegacy(
+        modewname, mya b-bias, binawyfeatuwes, mya continuousfeatuwes, (⑅˘꒳˘) discwetizedfeatuwes);
   }
 }

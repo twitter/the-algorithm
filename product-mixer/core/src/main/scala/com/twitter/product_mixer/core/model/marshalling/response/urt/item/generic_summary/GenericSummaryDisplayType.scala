@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.genewic_summawy
 
-sealed trait GenericSummaryItemDisplayType
+seawed t-twait genewicsummawyitemdispwaytype
 
-case object HeroDisplayType extends GenericSummaryItemDisplayType
+c-case object h-hewodispwaytype e-extends genewicsummawyitemdispwaytype

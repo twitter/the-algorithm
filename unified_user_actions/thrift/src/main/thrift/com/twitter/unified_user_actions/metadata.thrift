@@ -1,177 +1,177 @@
-namespace java com.twitter.unified_user_actions.thriftjava
-#@namespace scala com.twitter.unified_user_actions.thriftscala
-#@namespace strato com.twitter.unified_user_actions
+namespace java com.twittew.unified_usew_actions.thwiftjava
+#@namespace scawa com.twittew.unified_usew_actions.thwiftscawa
+#@namespace s-stwato com.twittew.unified_usew_actions
 
-/* Input source */
-enum SourceLineage {
-  /* Client-side. Also known as legacy client events or LCE. */
-  ClientEvents = 0
-  /* Client-side. Also known as BCE. */
-  BehavioralClientEvents = 1
-  /* Server-side Timelineservice favorites */
-  ServerTlsFavs = 2
-  /* Server-side Tweetypie events */
-  ServerTweetypieEvents = 3
-  /* Server-side SocialGraph events */
-  ServerSocialGraphEvents = 4
-  /* Notification Actions responding to Your Highlights Emails */
-  EmailNotificationEvents = 5
+/* i-input souwce */
+e-enum souwcewineage {
+  /* c-cwient-side. a-awso known a-as wegacy cwient e-events ow wce. (ꈍᴗꈍ) */
+  c-cwientevents = 0
+  /* cwient-side. /(^•ω•^) awso known as bce. >_< */
+  behaviowawcwientevents = 1
+  /* s-sewvew-side timewinesewvice favowites */
+  sewvewtwsfavs = 2
+  /* sewvew-side t-tweetypie events */
+  sewvewtweetypieevents = 3
+  /* s-sewvew-side sociawgwaph events */
+  sewvewsociawgwaphevents = 4
+  /* nyotification a-actions wesponding to youw h-highwights emaiws */
+  e-emaiwnotificationevents = 5
   /**
-  * Gizmoduck's User Modification events https://docbird.twitter.biz/gizmoduck/user_modifications.html
+  * gizmoduck's usew modification events https://docbiwd.twittew.biz/gizmoduck/usew_modifications.htmw
   **/
-  ServerGizmoduckUserModificationEvents = 6
+  sewvewgizmoduckusewmodificationevents = 6
   /**
-  * Server-side Ads callback engagements
+  * s-sewvew-side ads cawwback engagements
   **/
-  ServerAdsCallbackEngagements = 7
+  sewvewadscawwbackengagements = 7
   /**
-  * Server-side favorite archival events
+  * sewvew-side favowite awchivaw e-events
   **/
-  ServerFavoriteArchivalEvents = 8
+  sewvewfavowiteawchivawevents = 8
   /**
-  * Server-side retweet archival events
+  * s-sewvew-side wetweet a-awchivaw events
   **/
-  ServerRetweetArchivalEvents = 9
-}(persisted='true', hasPersonalData='false')
+  s-sewvewwetweetawchivawevents = 9
+}(pewsisted='twue', σωσ h-haspewsonawdata='fawse')
 
 /*
- * Only available in behavioral client events (BCE).
+ * onwy avaiwabwe in behaviowaw cwient e-events (bce). ^^;;
  *
- * A breadcrumb tweet is a tweet that was interacted with prior to the current action.
+ * a bweadcwumb tweet is a t-tweet that was intewacted with pwiow to the cuwwent action. 😳
  */
-struct BreadcrumbTweet {
-  /* Id for the tweet that was interacted with prior to the current action */
-  1: required i64 tweetId(personalDataType = 'TweetId')
+stwuct bweadcwumbtweet {
+  /* id f-fow the tweet that was intewacted w-with pwiow to t-the cuwwent action */
+  1: w-wequiwed i64 tweetid(pewsonawdatatype = 'tweetid')
   /*
-   * The UI component that hosted the tweet and was interacted with preceeding to the current action.
-   * - tweet: represents the parent tweet container that wraps the quoted tweet
-   * - quote_tweet: represents the nested or quoted tweet within the parent container
+   * the ui component that hosted t-the tweet a-and was intewacted with pweceeding t-to the cuwwent a-action. >_<
+   * - tweet: wepwesents t-the pawent tweet containew that w-wwaps the quoted tweet
+   * - quote_tweet: wepwesents t-the nyested ow quoted tweet w-within the pawent containew
    *
-   * See more details
-   * https://docs.google.com/document/d/16CdSRpsmUUd17yoFH9min3nLBqDVawx4DaZoiqSfCHI/edit#heading=h.nb7tnjrhqxpm
+   * s-see mowe d-detaiws
+   * https://docs.googwe.com/document/d/16cdswpsmuud17yofh9min3nwbqdvawx4dazoiqsfchi/edit#heading=h.nb7tnjwhqxpm
    */
-  2: required string sourceComponent(personalDataType = 'WebsitePage')
-}(persisted='true', hasPersonalData='true')
+  2: wequiwed stwing souwcecomponent(pewsonawdatatype = 'websitepage')
+}(pewsisted='twue', -.- haspewsonawdata='twue')
 
 /*
- * ClientEvent's namespaces. See https://docbird.twitter.biz/client_events/client-event-namespaces.html
+ * cwientevent's nyamespaces. s-see https://docbiwd.twittew.biz/cwient_events/cwient-event-namespaces.htmw
  *
- * - For Legacy Client Events (LCE), it excludes the client part of the
- * six part namespace (client:page:section:component:element:action)
- * since this part is better captured by clientAppid and clientVersion.
+ * - f-fow wegacy cwient events (wce), UwU i-it excwudes t-the cwient p-pawt of the
+ * six pawt nyamespace (cwient:page:section:component:ewement:action)
+ * since this pawt is bettew c-captuwed by cwientappid and cwientvewsion.
  *
- * - For Behavioral Client Events (BCE), use clientPlatform to identify the client.
- * Additionally, BCE contains an optional subsection to denote the UI component of
- * the current action. The ClientEventNamespace.component field will be always empty for
- * BCE namespace. There is no straightfoward 1-1 mapping between BCE and LCE namespace.
+ * - fow behaviowaw cwient events (bce), :3 use cwientpwatfowm t-to identify the cwient. σωσ
+ * a-additionawwy, >w< b-bce contains a-an optionaw subsection to denote t-the ui component o-of
+ * the cuwwent a-action. (ˆ ﻌ ˆ)♡ the c-cwienteventnamespace.component fiewd wiww be awways empty fow
+ * b-bce nyamespace. ʘwʘ t-thewe is nyo stwaightfowawd 1-1 m-mapping between b-bce and wce nyamespace. :3
  */
-struct ClientEventNamespace {
-  1: optional string page(personalDataType = 'AppUsage')
-  2: optional string section(personalDataType = 'AppUsage')
-  3: optional string component(personalDataType = 'AppUsage')
-  4: optional string element(personalDataType = 'AppUsage')
-  5: optional string action(personalDataType = 'AppUsage')
-  6: optional string subsection(personalDataType = 'AppUsage')
-}(persisted='true', hasPersonalData='true')
+s-stwuct cwienteventnamespace {
+  1: optionaw stwing page(pewsonawdatatype = 'appusage')
+  2: o-optionaw stwing section(pewsonawdatatype = 'appusage')
+  3: optionaw stwing component(pewsonawdatatype = 'appusage')
+  4: optionaw stwing ewement(pewsonawdatatype = 'appusage')
+  5: o-optionaw stwing action(pewsonawdatatype = 'appusage')
+  6: optionaw stwing subsection(pewsonawdatatype = 'appusage')
+}(pewsisted='twue', (˘ω˘) h-haspewsonawdata='twue')
 
 /*
- * Metadata that is independent of a particular (user, item, action type) tuple
- * and mostly shared across user action events.
+ * m-metadata t-that is independent of a pawticuwaw (usew, 😳😳😳 i-item, action type) tupwe
+ * a-and mostwy s-shawed acwoss usew action events. rawr x3
  */
-struct EventMetadata {
-  /* When the action happened according to whatever source we are reading from */
-  1: required i64 sourceTimestampMs(personalDataType = 'PrivateTimestamp, PublicTimestamp')
-  /* When the action was received for processing internally 
-   *  (compare with sourceTimestampMs for delay)
+stwuct eventmetadata {
+  /* when the action happened accowding t-to nyanievew souwce we awe w-weading fwom */
+  1: wequiwed i-i64 souwcetimestampms(pewsonawdatatype = 'pwivatetimestamp, (✿oωo) p-pubwictimestamp')
+  /* when the action was weceived f-fow pwocessing i-intewnawwy 
+   *  (compawe with s-souwcetimestampms f-fow deway)
    */
-  2: required i64 receivedTimestampMs
-  /* Which source is this event derived, e.g. CE, BCE, TimelineFavs */
-  3: required SourceLineage sourceLineage
-  /* To be deprecated and replaced by requestJoinId
-   * Useful for joining with other datasets
+  2: wequiwed i64 weceivedtimestampms
+  /* which souwce is this e-event dewived, (ˆ ﻌ ˆ)♡ e-e.g. ce, bce, :3 t-timewinefavs */
+  3: wequiwed souwcewineage s-souwcewineage
+  /* to b-be depwecated and wepwaced by w-wequestjoinid
+   * usefuw fow joining with othew datasets
    * */
-  4: optional i64 traceId(personalDataType = 'TfeTransactionId')
+  4: optionaw i-i64 twaceid(pewsonawdatatype = 'tfetwansactionid')
   /*
-   * This is the language inferred from the request of the user action event (typically user's current client language)
-   * NOT the language of any Tweet,
-   * NOT the language that user sets in their profile!!!
+   * t-this is the wanguage infewwed fwom t-the wequest of the u-usew action event (typicawwy usew's cuwwent cwient wanguage)
+   * nyot the wanguage o-of any tweet, (U ᵕ U❁)
+   * nyot the wanguage that usew sets in theiw pwofiwe!!!
    *
-   *  - ClientEvents && BehavioralClientEvents: Client UI language or from Gizmoduck which is what user set in Twitter App.
-   *      Please see more at https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/finatra-internal/international/src/main/scala/com/twitter/finatra/international/LanguageIdentifier.scala
-   *      The format should be ISO 639-1.
-   *  - ServerTlsFavs: Client UI language, see more at http://go/languagepriority. The format should be ISO 639-1.
-   *  - ServerTweetypieEvents: UUA sets this to None since there is no request level language info.
+   *  - c-cwientevents && behaviowawcwientevents: cwient ui wanguage o-ow fwom gizmoduck w-which is nyani usew set in twittew app. ^^;;
+   *      pwease s-see mowe at https://souwcegwaph.twittew.biz/git.twittew.biz/souwce/-/bwob/finatwa-intewnaw/intewnationaw/swc/main/scawa/com/twittew/finatwa/intewnationaw/wanguageidentifiew.scawa
+   *      the f-fowmat shouwd be iso 639-1. mya
+   *  - sewvewtwsfavs: cwient ui w-wanguage, 😳😳😳 see mowe at http://go/wanguagepwiowity. OwO t-the fowmat shouwd be iso 639-1. rawr
+   *  - sewvewtweetypieevents: uua sets this to n-nyone since thewe is nyo wequest w-wevew wanguage i-info.
    */
-  5: optional string language(personalDataType = 'InferredLanguage')
+  5: optionaw stwing w-wanguage(pewsonawdatatype = 'infewwedwanguage')
   /*
-   * This is the country inferred from the request of the user action event (typically user's current country code)
-   * NOT the country of any Tweet (by geo-tagging),
-   * NOT the country set by the user in their profile!!!
+   * this i-is the countwy i-infewwed fwom the w-wequest of the usew action event (typicawwy usew's c-cuwwent countwy c-code)
+   * nyot the countwy of any tweet (by g-geo-tagging), XD
+   * n-nyot the countwy s-set by the usew in theiw pwofiwe!!!
    *
-   *  - ClientEvents && BehavioralClientEvents: Country code could be IP address (geoduck) or
-   *      User registration country (gizmoduck) and the former takes precedence.
-   *      We don’t know exactly which one is applied, unfortunately,
-   *      see https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/finatra-internal/international/src/main/scala/com/twitter/finatra/international/CountryIdentifier.scala
-   *      The format should be ISO_3166-1_alpha-2.
-   *  - ServerTlsFavs: From the request (user’s current location),
-   *      see https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/thrift/com/twitter/context/viewer.thrift?L54
-   *      The format should be ISO_3166-1_alpha-2.
-   *  - ServerTweetypieEvents:
-   *      UUA sets this to be consistent with IESource to meet existing use requirement.
-   *      see https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/thrift/com/twitter/tweetypie/tweet.thrift?L1001.
-   *      The definitions here conflicts with the intention of UUA to log the request country code
-   *      rather than the signup / geo-tagging country.
+   *  - c-cwientevents && behaviowawcwientevents: c-countwy code couwd b-be ip addwess (geoduck) ow
+   *      usew wegistwation countwy (gizmoduck) a-and t-the fowmew takes p-pwecedence. (U ﹏ U)
+   *      w-we don’t know exactwy w-which one is appwied, (˘ω˘) unfowtunatewy,
+   *      see https://souwcegwaph.twittew.biz/git.twittew.biz/souwce/-/bwob/finatwa-intewnaw/intewnationaw/swc/main/scawa/com/twittew/finatwa/intewnationaw/countwyidentifiew.scawa
+   *      the fowmat shouwd be iso_3166-1_awpha-2. UwU
+   *  - sewvewtwsfavs: f-fwom the wequest (usew’s cuwwent wocation), >_<
+   *      s-see https://souwcegwaph.twittew.biz/git.twittew.biz/souwce/-/bwob/swc/thwift/com/twittew/context/viewew.thwift?w54
+   *      t-the fowmat shouwd be iso_3166-1_awpha-2. σωσ
+   *  - s-sewvewtweetypieevents:
+   *      uua sets t-this to be consistent w-with iesouwce t-to meet e-existing use wequiwement. 🥺
+   *      s-see https://souwcegwaph.twittew.biz/git.twittew.biz/souwce/-/bwob/swc/thwift/com/twittew/tweetypie/tweet.thwift?w1001. 🥺
+   *      the definitions hewe confwicts with the intention of uua to wog the wequest countwy code
+   *      w-wathew than t-the signup / g-geo-tagging countwy. ʘwʘ
    */
-  6: optional string countryCode(personalDataType = 'InferredCountry')
-  /* Useful for debugging client application related issues */
-  7: optional i64 clientAppId(personalDataType = 'AppId')
-  /* Useful for debugging client application related issues */
-  8: optional string clientVersion(personalDataType = 'ClientVersion')
-  /* Useful for filtering */
-  9: optional ClientEventNamespace clientEventNamespace
+  6: optionaw stwing c-countwycode(pewsonawdatatype = 'infewwedcountwy')
+  /* usefuw fow debugging cwient appwication w-wewated issues */
+  7: o-optionaw i64 cwientappid(pewsonawdatatype = 'appid')
+  /* u-usefuw fow debugging cwient appwication wewated i-issues */
+  8: o-optionaw stwing cwientvewsion(pewsonawdatatype = 'cwientvewsion')
+  /* u-usefuw fow f-fiwtewing */
+  9: optionaw cwienteventnamespace cwienteventnamespace
   /*
-   * This field is only populated in behavioral client events (BCE).
+   * this fiewd is onwy popuwated in b-behaviowaw cwient e-events (bce). :3
    *
-   * The client platform such as one of ["iPhone", "iPad", "Mac", "Android", "Web"]
-   * There can be multiple clientAppIds for the same platform.
+   * t-the cwient p-pwatfowm such a-as one of ["iphone", (U ﹏ U) "ipad", "mac", (U ﹏ U) "andwoid", "web"]
+   * thewe can be muwtipwe c-cwientappids f-fow the same pwatfowm. ʘwʘ
    */
-  10: optional string clientPlatform(personalDataType = 'ClientType')
+  10: optionaw stwing c-cwientpwatfowm(pewsonawdatatype = 'cwienttype')
   /*
-   * This field is only populated in behavioral client events (BCE).
+   * this f-fiewd is onwy popuwated in behaviowaw c-cwient events (bce). >w<
    *
-   * The current UI hierarchy information with human readable labels.
-   * For example, [home,timeline,tweet] or [tab_bar,home,scrollable_content,tweet]
+   * the cuwwent u-ui hiewawchy infowmation with h-human weadabwe w-wabews. rawr x3
+   * fow exampwe, OwO [home,timewine,tweet] o-ow [tab_baw,home,scwowwabwe_content,tweet]
    *
-   * For more details see https://docs.google.com/document/d/16CdSRpsmUUd17yoFH9min3nLBqDVawx4DaZoiqSfCHI/edit#heading=h.uv3md49i0j4j
+   * fow mowe detaiws see https://docs.googwe.com/document/d/16cdswpsmuud17yofh9min3nwbqdvawx4dazoiqsfchi/edit#heading=h.uv3md49i0j4j
    */
-  11: optional list<string> viewHierarchy(personalDataType = 'WebsitePage')
+  11: o-optionaw wist<stwing> v-viewhiewawchy(pewsonawdatatype = 'websitepage')
   /*
-   * This field is only populated in behavioral client events (BCE).
+   * t-this fiewd is onwy popuwated in behaviowaw cwient events (bce). ^•ﻌ•^
    *
-   * The sequence of views (breadcrumb) that was interacted with that caused the user to navigate to
-   * the current product surface (e.g. profile page) where an action was taken.
+   * t-the sequence of views (bweadcwumb) that was intewacted w-with that caused t-the usew to nyavigate to
+   * t-the cuwwent pwoduct suwface (e.g. >_< p-pwofiwe page) w-whewe an action was taken. OwO
    *
-   * The breadcrumb information may only be present for certain preceding product surfaces (e.g. Home Timeline).
-   * See more details in https://docs.google.com/document/d/16CdSRpsmUUd17yoFH9min3nLBqDVawx4DaZoiqSfCHI/edit#heading=h.nb7tnjrhqxpm
+   * the bweadcwumb i-infowmation may onwy be pwesent fow cewtain p-pweceding pwoduct s-suwfaces (e.g. >_< home timewine). (ꈍᴗꈍ)
+   * s-see mowe detaiws in https://docs.googwe.com/document/d/16cdswpsmuud17yofh9min3nwbqdvawx4dazoiqsfchi/edit#heading=h.nb7tnjwhqxpm
    */
-  12: optional list<string> breadcrumbViews(personalDataType = 'WebsitePage')
+  12: o-optionaw wist<stwing> b-bweadcwumbviews(pewsonawdatatype = 'websitepage')
   /*
-   * This field is only populated in behavioral client events (BCE).
+   * t-this fiewd is onwy popuwated in behaviowaw cwient events (bce). >w<
    *
-   * The sequence of tweets (breadcrumb) that was interacted with that caused the user to navigate to
-   * current product surface (e.g. profile page) where an action was taken.
+   * the sequence of tweets (bweadcwumb) that was intewacted with that caused the usew to nyavigate to
+   * cuwwent pwoduct suwface (e.g. (U ﹏ U) pwofiwe page) w-whewe an action w-was taken. ^^
    *
-   * The breadcrumb information may only be present for certain preceding product surfaces (e.g. Home Timeline).
-   * See more details in https://docs.google.com/document/d/16CdSRpsmUUd17yoFH9min3nLBqDVawx4DaZoiqSfCHI/edit#heading=h.nb7tnjrhqxpm
+   * the bweadcwumb infowmation m-may onwy be p-pwesent fow cewtain p-pweceding pwoduct suwfaces (e.g. (U ﹏ U) h-home timewine).
+   * see mowe d-detaiws in https://docs.googwe.com/document/d/16cdswpsmuud17yofh9min3nwbqdvawx4dazoiqsfchi/edit#heading=h.nb7tnjwhqxpm
    */
-   13: optional list<BreadcrumbTweet> breadcrumbTweets(personalDataType = 'TweetId')
+   13: o-optionaw wist<bweadcwumbtweet> b-bweadcwumbtweets(pewsonawdatatype = 'tweetid')
   /*
-    * A request join id is created by backend services and broadcasted in subsequent calls
-    * to other downstream services as part of the request path. The requestJoinId is logged
-    * in server logs and scribed in client events, enabling joins across client and server
-    * as well as within a given request across backend servers. See go/joinkey-tdd for more
-    * details.
+    * a wequest join i-id is cweated by b-backend sewvices and bwoadcasted in subsequent c-cawws
+    * to othew d-downstweam s-sewvices as pawt o-of the wequest p-path. :3 the wequestjoinid i-is wogged
+    * i-in sewvew w-wogs and scwibed i-in cwient events, (✿oωo) enabwing joins a-acwoss cwient a-and sewvew
+    * a-as weww as within a given wequest a-acwoss backend sewvews. XD see go/joinkey-tdd f-fow mowe
+    * detaiws. >w<
     */
-   14: optional i64 requestJoinId(personalDataType = 'TransactionId')
-   15: optional i64 clientEventTriggeredOn
-}(persisted='true', hasPersonalData='true')
+   14: optionaw i64 w-wequestjoinid(pewsonawdatatype = 'twansactionid')
+   15: o-optionaw i-i64 cwienteventtwiggewedon
+}(pewsisted='twue', òωó haspewsonawdata='twue')

@@ -1,23 +1,23 @@
-package com.twitter.search.earlybird.exception;
+package com.twittew.seawch.eawwybiwd.exception;
 
-import com.twitter.util.AbstractMonitor;
+impowt com.twittew.utiw.abstwactmonitow;
 
-public class UncaughtExceptionHandler extends AbstractMonitor {
-  private final CriticalExceptionHandler criticalExceptionHandler;
+p-pubwic c-cwass uncaughtexceptionhandwew e-extends abstwactmonitow {
+  p-pwivate f-finaw cwiticawexceptionhandwew c-cwiticawexceptionhandwew;
 
-  public UncaughtExceptionHandler() {
-    this.criticalExceptionHandler = new CriticalExceptionHandler();
+  p-pubwic uncaughtexceptionhandwew() {
+    t-this.cwiticawexceptionhandwew = nyew cwiticawexceptionhandwew();
   }
 
-  public void setShutdownHook(Runnable shutdown) {
-    this.criticalExceptionHandler.setShutdownHook(shutdown);
+  pubwic void setshutdownhook(wunnabwe shutdown) {
+    this.cwiticawexceptionhandwew.setshutdownhook(shutdown);
   }
 
-  @Override
-  public boolean handle(Throwable e) {
-    criticalExceptionHandler.handle(this, e);
+  @ovewwide
+  p-pubwic boowean handwe(thwowabwe e) {
+    cwiticawexceptionhandwew.handwe(this, (⑅˘꒳˘) e-e);
 
-    // We return true here because we handle all exceptions.
-    return true;
+    // we wetuwn twue hewe b-because we handwe aww exceptions. (U ᵕ U❁)
+    wetuwn twue;
   }
 }

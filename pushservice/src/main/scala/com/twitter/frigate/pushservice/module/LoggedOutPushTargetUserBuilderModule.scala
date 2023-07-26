@@ -1,27 +1,27 @@
-package com.twitter.frigate.pushservice.module
+package com.twittew.fwigate.pushsewvice.moduwe
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.pushservice.target.LoggedOutPushTargetUserBuilder
-import com.twitter.frigate.pushservice.config.DeployConfig
-import com.twitter.inject.TwitterModule
+impowt com.googwe.inject.pwovides
+i-impowt com.googwe.inject.singweton
+i-impowt com.twittew.decidew.decidew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.pushsewvice.tawget.woggedoutpushtawgetusewbuiwdew
+i-impowt com.twittew.fwigate.pushsewvice.config.depwoyconfig
+i-impowt c-com.twittew.inject.twittewmoduwe
 
-object LoggedOutPushTargetUserBuilderModule extends TwitterModule {
+o-object woggedoutpushtawgetusewbuiwdewmoduwe extends twittewmoduwe {
 
-  @Provides
-  @Singleton
-  def providesLoggedOutPushTargetUserBuilder(
-    decider: Decider,
-    config: DeployConfig,
-    statsReceiver: StatsReceiver
-  ): LoggedOutPushTargetUserBuilder = {
-    LoggedOutPushTargetUserBuilder(
-      historyStore = config.loggedOutHistoryStore,
-      inputDecider = decider,
-      inputAbDecider = config.abDecider,
-      loggedOutPushInfoStore = config.loggedOutPushInfoStore
-    )(statsReceiver)
+  @pwovides
+  @singweton
+  def pwovideswoggedoutpushtawgetusewbuiwdew(
+    decidew: decidew, mya
+    config: d-depwoyconfig, mya
+    statsweceivew: statsweceivew
+  ): w-woggedoutpushtawgetusewbuiwdew = {
+    woggedoutpushtawgetusewbuiwdew(
+      h-histowystowe = config.woggedouthistowystowe, 😳
+      inputdecidew = decidew, XD
+      i-inputabdecidew = config.abdecidew, :3
+      w-woggedoutpushinfostowe = c-config.woggedoutpushinfostowe
+    )(statsweceivew)
   }
 }

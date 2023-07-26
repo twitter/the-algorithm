@@ -1,55 +1,55 @@
-package com.twitter.tsp
+package com.twittew.tsp
 
-import com.google.inject.Module
-import com.twitter.strato.fed._
-import com.twitter.strato.fed.server._
-import com.twitter.strato.warmup.Warmer
-import com.twitter.tsp.columns.TopicSocialProofColumn
-import com.twitter.tsp.columns.TopicSocialProofBatchColumn
-import com.twitter.tsp.handlers.UttChildrenWarmupHandler
-import com.twitter.tsp.modules.RepresentationScorerStoreModule
-import com.twitter.tsp.modules.GizmoduckUserModule
-import com.twitter.tsp.modules.TSPClientIdModule
-import com.twitter.tsp.modules.TopicListingModule
-import com.twitter.tsp.modules.TopicSocialProofStoreModule
-import com.twitter.tsp.modules.TopicTweetCosineSimilarityAggregateStoreModule
-import com.twitter.tsp.modules.TweetInfoStoreModule
-import com.twitter.tsp.modules.TweetyPieClientModule
-import com.twitter.tsp.modules.UttClientModule
-import com.twitter.tsp.modules.UttLocalizationModule
-import com.twitter.util.Future
+impowt com.googwe.inject.moduwe
+i-impowt com.twittew.stwato.fed._
+i-impowt com.twittew.stwato.fed.sewvew._
+impowt c-com.twittew.stwato.wawmup.wawmew
+i-impowt com.twittew.tsp.cowumns.topicsociawpwoofcowumn
+i-impowt c-com.twittew.tsp.cowumns.topicsociawpwoofbatchcowumn
+i-impowt com.twittew.tsp.handwews.uttchiwdwenwawmuphandwew
+i-impowt com.twittew.tsp.moduwes.wepwesentationscowewstowemoduwe
+impowt com.twittew.tsp.moduwes.gizmoduckusewmoduwe
+impowt com.twittew.tsp.moduwes.tspcwientidmoduwe
+impowt com.twittew.tsp.moduwes.topicwistingmoduwe
+impowt com.twittew.tsp.moduwes.topicsociawpwoofstowemoduwe
+i-impowt com.twittew.tsp.moduwes.topictweetcosinesimiwawityaggwegatestowemoduwe
+impowt com.twittew.tsp.moduwes.tweetinfostowemoduwe
+impowt com.twittew.tsp.moduwes.tweetypiecwientmoduwe
+i-impowt com.twittew.tsp.moduwes.uttcwientmoduwe
+impowt com.twittew.tsp.moduwes.uttwocawizationmoduwe
+i-impowt com.twittew.utiw.futuwe
 
-object TopicSocialProofStratoFedServerMain extends TopicSocialProofStratoFedServer
+object topicsociawpwoofstwatofedsewvewmain e-extends topicsociawpwoofstwatofedsewvew
 
-trait TopicSocialProofStratoFedServer extends StratoFedServer {
-  override def dest: String = "/s/topic-social-proof/topic-social-proof"
+twait topicsociawpwoofstwatofedsewvew e-extends stwatofedsewvew {
+  o-ovewwide def dest: stwing = "/s/topic-sociaw-pwoof/topic-sociaw-pwoof"
 
-  override val modules: Seq[Module] =
-    Seq(
-      GizmoduckUserModule,
-      RepresentationScorerStoreModule,
-      TopicSocialProofStoreModule,
-      TopicListingModule,
-      TopicTweetCosineSimilarityAggregateStoreModule,
-      TSPClientIdModule,
-      TweetInfoStoreModule,
-      TweetyPieClientModule,
-      UttClientModule,
-      UttLocalizationModule
+  ovewwide vaw moduwes: seq[moduwe] =
+    s-seq(
+      gizmoduckusewmoduwe, mya
+      wepwesentationscowewstowemoduwe, 🥺
+      topicsociawpwoofstowemoduwe, >_<
+      topicwistingmoduwe, >_<
+      topictweetcosinesimiwawityaggwegatestowemoduwe, (⑅˘꒳˘)
+      t-tspcwientidmoduwe, /(^•ω•^)
+      tweetinfostowemoduwe, rawr x3
+      t-tweetypiecwientmoduwe, (U ﹏ U)
+      u-uttcwientmoduwe, (U ﹏ U)
+      u-uttwocawizationmoduwe
     )
 
-  override def columns: Seq[Class[_ <: StratoFed.Column]] =
-    Seq(
-      classOf[TopicSocialProofColumn],
-      classOf[TopicSocialProofBatchColumn]
+  o-ovewwide def cowumns: seq[cwass[_ <: s-stwatofed.cowumn]] =
+    seq(
+      cwassof[topicsociawpwoofcowumn],
+      c-cwassof[topicsociawpwoofbatchcowumn]
     )
 
-  override def configureWarmer(warmer: Warmer): Unit = {
-    warmer.add(
-      "uttChildrenWarmupHandler",
+  ovewwide def configuwewawmew(wawmew: wawmew): unit = {
+    wawmew.add(
+      "uttchiwdwenwawmuphandwew", (⑅˘꒳˘)
       () => {
-        handle[UttChildrenWarmupHandler]()
-        Future.Unit
+        handwe[uttchiwdwenwawmuphandwew]()
+        f-futuwe.unit
       }
     )
   }

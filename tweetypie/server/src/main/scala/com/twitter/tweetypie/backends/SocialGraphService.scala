@@ -1,52 +1,52 @@
-package com.twitter.tweetypie
-package backends
+package com.twittew.tweetypie
+package b-backends
 
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.servo.util.FutureArrow
-import com.twitter.socialgraph.thriftscala.ExistsRequest
-import com.twitter.socialgraph.thriftscala.ExistsResult
-import com.twitter.socialgraph.thriftscala.RequestContext
-import com.twitter.socialgraph.{thriftscala => sg}
-import com.twitter.tweetypie.util.RetryPolicyBuilder
+impowt c-com.twittew.finagwe.sewvice.wetwypowicy
+i-impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.sociawgwaph.thwiftscawa.existswequest
+i-impowt com.twittew.sociawgwaph.thwiftscawa.existswesuwt
+i-impowt c-com.twittew.sociawgwaph.thwiftscawa.wequestcontext
+impowt com.twittew.sociawgwaph.{thwiftscawa => sg}
+impowt com.twittew.tweetypie.utiw.wetwypowicybuiwdew
 
-object SocialGraphService {
-  import Backend._
+object sociawgwaphsewvice {
+  i-impowt backend._
 
-  type Exists =
-    FutureArrow[(Seq[sg.ExistsRequest], Option[sg.RequestContext]), Seq[sg.ExistsResult]]
+  type exists =
+    f-futuweawwow[(seq[sg.existswequest], o.O option[sg.wequestcontext]), ( ͡o ω ͡o ) s-seq[sg.existswesuwt]]
 
-  def fromClient(client: sg.SocialGraphService.MethodPerEndpoint): SocialGraphService =
-    new SocialGraphService {
-      val exists = FutureArrow((client.exists _).tupled)
-      def ping: Future[Unit] = client.ping().unit
+  def fwomcwient(cwient: sg.sociawgwaphsewvice.methodpewendpoint): sociawgwaphsewvice =
+    n-nyew sociawgwaphsewvice {
+      vaw exists = f-futuweawwow((cwient.exists _).tupwed)
+      d-def ping: futuwe[unit] = cwient.ping().unit
     }
 
-  case class Config(socialGraphTimeout: Duration, timeoutBackoffs: Stream[Duration]) {
+  case cwass config(sociawgwaphtimeout: duwation, (U ﹏ U) t-timeoutbackoffs: stweam[duwation]) {
 
-    def apply(svc: SocialGraphService, ctx: Backend.Context): SocialGraphService =
-      new SocialGraphService {
-        val exists: FutureArrow[(Seq[ExistsRequest], Option[RequestContext]), Seq[ExistsResult]] =
-          policy("exists", socialGraphTimeout, ctx)(svc.exists)
-        def ping(): Future[Unit] = svc.ping()
+    def appwy(svc: sociawgwaphsewvice, (///ˬ///✿) ctx: b-backend.context): sociawgwaphsewvice =
+      n-new sociawgwaphsewvice {
+        v-vaw exists: futuweawwow[(seq[existswequest], >w< o-option[wequestcontext]), rawr s-seq[existswesuwt]] =
+          powicy("exists", mya sociawgwaphtimeout, ^^ c-ctx)(svc.exists)
+        def ping(): futuwe[unit] = svc.ping()
       }
 
-    private[this] def policy[A, B](
-      name: String,
-      requestTimeout: Duration,
-      ctx: Context
-    ): Builder[A, B] =
-      defaultPolicy(name, requestTimeout, retryPolicy, ctx)
+    p-pwivate[this] def powicy[a, 😳😳😳 b](
+      nyame: stwing, mya
+      wequesttimeout: duwation, 😳
+      c-ctx: context
+    ): buiwdew[a, -.- b-b] =
+      defauwtpowicy(name, w-wequesttimeout, 🥺 w-wetwypowicy, o.O ctx)
 
-    private[this] def retryPolicy[B]: RetryPolicy[Try[B]] =
-      RetryPolicyBuilder.timeouts[Any](timeoutBackoffs)
+    pwivate[this] def wetwypowicy[b]: wetwypowicy[twy[b]] =
+      w-wetwypowicybuiwdew.timeouts[any](timeoutbackoffs)
   }
 
-  implicit val warmup: Warmup[SocialGraphService] =
-    Warmup[SocialGraphService]("socialgraphservice")(_.ping)
+  i-impwicit vaw wawmup: w-wawmup[sociawgwaphsewvice] =
+    w-wawmup[sociawgwaphsewvice]("sociawgwaphsewvice")(_.ping)
 }
 
-trait SocialGraphService {
-  import SocialGraphService._
-  val exists: Exists
-  def ping(): Future[Unit]
+twait sociawgwaphsewvice {
+  i-impowt sociawgwaphsewvice._
+  v-vaw exists: exists
+  def ping(): futuwe[unit]
 }

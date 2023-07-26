@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.clients.cache
+package com.twittew.fowwow_wecommendations.common.cwients.cache
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.Memcached
-import com.twitter.finagle.Memcached.Client
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.service.Retries
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.convewsions.duwationops._
+impowt c-com.twittew.finagwe.memcached
+i-impowt com.twittew.finagwe.memcached.cwient
+i-impowt com.twittew.finagwe.mtws.cwient.mtwsstackcwient._
+i-impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt c-com.twittew.finagwe.sewvice.wetwies
+impowt com.twittew.finagwe.sewvice.wetwypowicy
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.inject.twittewmoduwe
+impowt j-javax.inject.singweton
 
-object MemcacheModule extends TwitterModule {
-  @Provides
-  @Singleton
-  def provideMemcacheClient(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver,
-  ): Client = {
-    Memcached.client
-      .withMutualTls(serviceIdentifier)
-      .withStatsReceiver(statsReceiver.scope("twemcache"))
-      .withTransport.connectTimeout(1.seconds)
-      .withRequestTimeout(1.seconds)
-      .withSession.acquisitionTimeout(10.seconds)
-      .configured(Retries.Policy(RetryPolicy.tries(1)))
+object memcachemoduwe e-extends twittewmoduwe {
+  @pwovides
+  @singweton
+  def pwovidememcachecwient(
+    s-sewviceidentifiew: sewviceidentifiew, -.-
+    statsweceivew: statsweceivew,
+  ): cwient = {
+    m-memcached.cwient
+      .withmutuawtws(sewviceidentifiew)
+      .withstatsweceivew(statsweceivew.scope("twemcache"))
+      .withtwanspowt.connecttimeout(1.seconds)
+      .withwequesttimeout(1.seconds)
+      .withsession.acquisitiontimeout(10.seconds)
+      .configuwed(wetwies.powicy(wetwypowicy.twies(1)))
   }
 }

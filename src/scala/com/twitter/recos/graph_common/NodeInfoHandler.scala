@@ -1,59 +1,59 @@
-package com.twitter.recos.graph_common
+package com.twittew.wecos.gwaph_common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.recos_common.thriftscala.{
-  SocialProofType,
-  GetRecentEdgesRequest,
-  GetRecentEdgesResponse,
-  NodeInfo,
-  RecentEdge
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.wecos.wecos_common.thwiftscawa.{
+  s-sociawpwooftype, nyaa~~
+  getwecentedgeswequest, nyaa~~
+  g-getwecentedgeswesponse, :3
+  n-nyodeinfo, 😳😳😳
+  wecentedge
 }
-import com.twitter.recos.util.Stats._
-import com.twitter.servo.request._
-import com.twitter.util.Future
+i-impowt c-com.twittew.wecos.utiw.stats._
+i-impowt com.twittew.sewvo.wequest._
+i-impowt com.twittew.utiw.futuwe
 
 /**
- * Implementation of the Thrift-defined service interface.
+ * impwementation of the thwift-defined sewvice intewface. (˘ω˘)
  */
-class LeftNodeEdgesHandler(graphHelper: BipartiteGraphHelper, statsReceiver: StatsReceiver)
-    extends RequestHandler[GetRecentEdgesRequest, GetRecentEdgesResponse] {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
+c-cwass weftnodeedgeshandwew(gwaphhewpew: bipawtitegwaphhewpew, ^^ statsweceivew: s-statsweceivew)
+    extends w-wequesthandwew[getwecentedgeswequest, :3 getwecentedgeswesponse] {
+  pwivate vaw stats = statsweceivew.scope(this.getcwass.getsimpwename)
 
-  private val CLICK = 0
-  private val FAVORITE = 1
-  private val RETWEET = 2
-  private val REPLY = 3
-  private val TWEET = 4
+  p-pwivate vaw cwick = 0
+  p-pwivate vaw favowite = 1
+  p-pwivate vaw wetweet = 2
+  pwivate vaw wepwy = 3
+  pwivate vaw tweet = 4
 
-  override def apply(request: GetRecentEdgesRequest): Future[GetRecentEdgesResponse] = {
-    trackFutureBlockStats(stats) {
-      val recentEdges = graphHelper.getLeftNodeEdges(request.requestId).flatMap {
-        case (node, engagementType) if engagementType == CLICK =>
-          Some(RecentEdge(node, SocialProofType.Click))
-        case (node, engagementType) if engagementType == FAVORITE =>
-          Some(RecentEdge(node, SocialProofType.Favorite))
-        case (node, engagementType) if engagementType == RETWEET =>
-          Some(RecentEdge(node, SocialProofType.Retweet))
-        case (node, engagementType) if engagementType == REPLY =>
-          Some(RecentEdge(node, SocialProofType.Reply))
-        case (node, engagementType) if engagementType == TWEET =>
-          Some(RecentEdge(node, SocialProofType.Tweet))
-        case _ =>
-          None
+  o-ovewwide def appwy(wequest: getwecentedgeswequest): futuwe[getwecentedgeswesponse] = {
+    twackfutuwebwockstats(stats) {
+      v-vaw wecentedges = gwaphhewpew.getweftnodeedges(wequest.wequestid).fwatmap {
+        c-case (node, -.- e-engagementtype) i-if engagementtype == c-cwick =>
+          some(wecentedge(node, 😳 sociawpwooftype.cwick))
+        c-case (node, mya engagementtype) if engagementtype == f-favowite =>
+          some(wecentedge(node, (˘ω˘) sociawpwooftype.favowite))
+        case (node, >_< engagementtype) if engagementtype == w-wetweet =>
+          some(wecentedge(node, s-sociawpwooftype.wetweet))
+        c-case (node, -.- e-engagementtype) if engagementtype == wepwy =>
+          some(wecentedge(node, 🥺 s-sociawpwooftype.wepwy))
+        c-case (node, (U ﹏ U) engagementtype) i-if engagementtype == tweet =>
+          s-some(wecentedge(node, >w< sociawpwooftype.tweet))
+        c-case _ =>
+          nyone
       }
-      Future.value(GetRecentEdgesResponse(recentEdges))
+      f-futuwe.vawue(getwecentedgeswesponse(wecentedges))
     }
   }
 }
 
-class RightNodeInfoHandler(graphHelper: BipartiteGraphHelper, statsReceiver: StatsReceiver)
-    extends RequestHandler[Long, NodeInfo] {
-  private[this] val stats = statsReceiver.scope(this.getClass.getSimpleName)
+cwass wightnodeinfohandwew(gwaphhewpew: bipawtitegwaphhewpew, mya s-statsweceivew: statsweceivew)
+    extends w-wequesthandwew[wong, nyodeinfo] {
+  p-pwivate[this] v-vaw stats = statsweceivew.scope(this.getcwass.getsimpwename)
 
-  override def apply(rightNode: Long): Future[NodeInfo] = {
-    trackFutureBlockStats(stats) {
-      val edges = graphHelper.getRightNodeEdges(rightNode)
-      Future.value(NodeInfo(edges = edges))
+  ovewwide def appwy(wightnode: wong): futuwe[nodeinfo] = {
+    twackfutuwebwockstats(stats) {
+      vaw e-edges = gwaphhewpew.getwightnodeedges(wightnode)
+      f-futuwe.vawue(nodeinfo(edges = edges))
     }
   }
 }

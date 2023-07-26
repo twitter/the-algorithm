@@ -1,98 +1,98 @@
-namespace java com.twitter.interaction_graph.thriftjava
-#@namespace scala com.twitter.interaction_graph.thriftscala
-#@namespace strato com.twitter.interaction_graph
+namespace java com.twittew.intewaction_gwaph.thwiftjava
+#@namespace scawa com.twittew.intewaction_gwaph.thwiftscawa
+#@namespace stwato c-com.twittew.intewaction_gwaph
 
-// These could be either a Vertex or an edge feature name
-// when you add a new feature, update VertexFeatureCombiner.java and EdgeFeatureCombiner.java.
-enum FeatureName {
-  num_retweets = 1
-  num_favorites = 2
-  num_mentions = 3
-  num_direct_messages = 4
-  num_tweet_clicks = 5
-  num_link_clicks = 6
-  num_profile_views = 7
-  num_follows = 8
-  num_unfollows = 9
-  num_mutual_follows = 10
-  address_book_email = 11
-  address_book_phone = 12
-  address_book_in_both = 13
-  address_book_mutual_edge_email = 14
-  address_book_mutual_edge_phone = 15
-  address_book_mutual_edge_in_both = 16
-  total_dwell_time = 17
-  num_inspected_statuses = 18
-  num_photo_tags = 19
-  num_blocks = 20 
+// t-these couwd b-be eithew a v-vewtex ow an edge f-featuwe nyame
+// w-when you add a-a nyew featuwe, (⑅˘꒳˘) u-update vewtexfeatuwecombinew.java and edgefeatuwecombinew.java.
+enum featuwename {
+  nyum_wetweets = 1
+  nyum_favowites = 2
+  n-nyum_mentions = 3
+  nyum_diwect_messages = 4
+  nyum_tweet_cwicks = 5
+  n-nyum_wink_cwicks = 6
+  nyum_pwofiwe_views = 7
+  n-nyum_fowwows = 8
+  nyum_unfowwows = 9
+  nyum_mutuaw_fowwows = 10
+  addwess_book_emaiw = 11
+  a-addwess_book_phone = 12
+  addwess_book_in_both = 13
+  a-addwess_book_mutuaw_edge_emaiw = 14
+  a-addwess_book_mutuaw_edge_phone = 15
+  addwess_book_mutuaw_edge_in_both = 16
+  totaw_dweww_time = 17
+  nyum_inspected_statuses = 18
+  nyum_photo_tags = 19
+  n-nyum_bwocks = 20 
   num_mutes = 21 
-  num_report_as_abuses = 22
-  num_report_as_spams = 23
-  num_tweet_quotes = 24
-  num_push_opens = 25
-  num_ntab_clicks = 26,
-  num_rt_favories = 27,
-  num_rt_replies = 28,
-  num_rt_tweet_quotes = 29,
-  num_rt_retweets = 30,
-  num_rt_mentions = 31,
-  num_rt_tweet_clicks = 32,
-  num_rt_link_clicks = 33
-  num_shares = 34,
-  num_email_click = 35,
-  num_email_open = 36,
-  num_ntab_dislike_7_days = 37,
-  num_push_dismiss = 38,
-  num_push_report_tweet_click = 39,
-  num_push_report_user_click = 40,
-  num_replies = 41,
-  // vertex features after 128
-  num_create_tweets = 129,
+  nyum_wepowt_as_abuses = 22
+  nyum_wepowt_as_spams = 23
+  nyum_tweet_quotes = 24
+  n-nyum_push_opens = 25
+  nyum_ntab_cwicks = 26,
+  n-nyum_wt_favowies = 27, nyaa~~
+  n-nyum_wt_wepwies = 28, :3
+  n-nyum_wt_tweet_quotes = 29, ( ͡o ω ͡o )
+  n-nyum_wt_wetweets = 30, mya
+  nyum_wt_mentions = 31, (///ˬ///✿)
+  nyum_wt_tweet_cwicks = 32, (˘ω˘)
+  nyum_wt_wink_cwicks = 33
+  n-num_shawes = 34, ^^;;
+  nyum_emaiw_cwick = 35, (✿oωo)
+  nyum_emaiw_open = 36, (U ﹏ U)
+  n-nyum_ntab_diswike_7_days = 37, -.-
+  nyum_push_dismiss = 38, ^•ﻌ•^
+  nyum_push_wepowt_tweet_cwick = 39, rawr
+  nyum_push_wepowt_usew_cwick = 40, (˘ω˘)
+  nyum_wepwies = 41, nyaa~~
+  // vewtex featuwes aftew 128
+  n-nyum_cweate_tweets = 129, UwU
 }
-// do remember to update the tests in InteractionGraphAggregationJobTest when adding new features but not updating agg_all
+// do wemembew t-to update the tests i-in intewactiongwaphaggwegationjobtest w-when adding nyew featuwes but nyot updating agg_aww
 
-struct TimeSeriesStatistics {
-  1: required double mean;
-  // For computing variance online: http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#On-line_algorithm
-  2: required double m2_for_variance;
-  3: required double ewma; // Exponentially weighted moving average: ewma_t = \alpha x_t + (1-\alpha) ewma_{t-1}
-  4: required i32 num_elapsed_days; // Total number of days since we started counting this feature
-  5: required i32 num_non_zero_days; // Number of days when the interaction was non-zero (used to compute mean/variance)
-  6: optional i32 num_days_since_last; // Number of days since the latest interaction happen
-}(persisted="true", hasPersonalData = 'false') 
+s-stwuct timesewiesstatistics {
+  1: w-wequiwed doubwe mean;
+  // fow c-computing vawiance o-onwine: http://en.wikipedia.owg/wiki/awgowithms_fow_cawcuwating_vawiance#on-wine_awgowithm
+  2: wequiwed doubwe m-m2_fow_vawiance;
+  3: wequiwed d-doubwe ewma; // exponentiawwy weighted moving a-avewage: ewma_t = \awpha x_t + (1-\awpha) e-ewma_{t-1}
+  4: wequiwed i-i32 nyum_ewapsed_days; // totaw n-numbew of days since we stawted counting this featuwe
+  5: wequiwed i32 nyum_non_zewo_days; // nyumbew of days when the intewaction w-was nyon-zewo (used t-to compute mean/vawiance)
+  6: o-optionaw i-i32 nyum_days_since_wast; // n-nyumbew of days since the watest intewaction happen
+}(pewsisted="twue", :3 haspewsonawdata = 'fawse') 
 
-struct VertexFeature {
-  1: required FeatureName name;
-  2: required bool outgoing; // direction e.g. true is num_retweets_by_user, and false is num_retweets_for_user
-  3: required TimeSeriesStatistics tss;
-}(persisted="true", hasPersonalData = 'false')
+s-stwuct vewtexfeatuwe {
+  1: wequiwed featuwename nyame;
+  2: wequiwed boow outgoing; // diwection e-e.g. (⑅˘꒳˘) twue is nyum_wetweets_by_usew, (///ˬ///✿) a-and f-fawse is nyum_wetweets_fow_usew
+  3: w-wequiwed timesewiesstatistics tss;
+}(pewsisted="twue", ^^;; h-haspewsonawdata = 'fawse')
 
-struct Vertex {
-  1: required i64 user_id(personalDataType = 'UserId');
-  2: optional double weight;
-  3: list<VertexFeature> features;
-}(persisted="true", hasPersonalData = 'true')
+s-stwuct v-vewtex {
+  1: wequiwed i-i64 usew_id(pewsonawdatatype = 'usewid');
+  2: optionaw doubwe weight;
+  3: w-wist<vewtexfeatuwe> f-featuwes;
+}(pewsisted="twue", >_< h-haspewsonawdata = 'twue')
 
 /*
- * These features are for an edge (a->b). Examples:
- * (i) follow is whether a follows b
- * (ii) num_retweets is number of b's tweets retweet by a
+ * t-these featuwes a-awe fow an edge (a->b). rawr x3 exampwes:
+ * (i) fowwow is whethew a-a fowwows b
+ * (ii) nyum_wetweets is nyumbew of b's tweets wetweet by a
  */
-struct EdgeFeature {
-  1: required FeatureName name;
-  2: required TimeSeriesStatistics tss;
-}(persisted="true", hasPersonalData = 'false')
+stwuct edgefeatuwe {
+  1: w-wequiwed featuwename nyame;
+  2: wequiwed timesewiesstatistics t-tss;
+}(pewsisted="twue", /(^•ω•^) h-haspewsonawdata = 'fawse')
 
-struct Edge {
-  1: required i64 source_id(personalDataType = 'UserId');
-  2: required i64 destination_id(personalDataType = 'UserId');
-  3: optional double weight;
-  4: list<EdgeFeature> features;
-}(persisted="true", hasPersonalData = 'true')
+s-stwuct edge {
+  1: wequiwed i-i64 souwce_id(pewsonawdatatype = 'usewid');
+  2: wequiwed i-i64 destination_id(pewsonawdatatype = 'usewid');
+  3: o-optionaw doubwe weight;
+  4: wist<edgefeatuwe> featuwes;
+}(pewsisted="twue", :3 haspewsonawdata = 'twue')
 
-// these structs below are used by our ml pipeline
-struct EdgeLabel {
-  1: required i64 source_id(personalDataType = 'UserId');
-  2: required i64 destination_id(personalDataType = 'UserId');
-  3: required set<FeatureName> labels(personalDataType = 'AggregateImpressionEngagementData');
-}(persisted="true", hasPersonalData = 'true')
+// these stwucts bewow a-awe used by ouw mw pipewine
+s-stwuct edgewabew {
+  1: wequiwed i-i64 souwce_id(pewsonawdatatype = 'usewid');
+  2: w-wequiwed i64 destination_id(pewsonawdatatype = 'usewid');
+  3: wequiwed set<featuwename> w-wabews(pewsonawdatatype = 'aggwegateimpwessionengagementdata');
+}(pewsisted="twue", (ꈍᴗꈍ) h-haspewsonawdata = 'twue')

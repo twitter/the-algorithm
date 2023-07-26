@@ -1,528 +1,528 @@
-package com.twitter.search.earlybird.search.queries;
+package com.twittew.seawch.eawwybiwd.seawch.quewies;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import javax.annotation.Nullable;
+impowt java.io.ioexception;
+i-impowt java.utiw.awways;
+i-impowt j-java.utiw.hashmap;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.map;
+i-impowt java.utiw.set;
+i-impowt java.utiw.concuwwent.timeunit;
+impowt java.utiw.stweam.cowwectows;
+impowt javax.annotation.nuwwabwe;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
+impowt c-com.googwe.common.cowwect.wists;
+impowt com.googwe.common.cowwect.maps;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.BulkScorer;
-import org.apache.lucene.search.ConstantScoreQuery;
-import org.apache.lucene.search.ConstantScoreWeight;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
-import org.apache.lucene.util.BytesRef;
+i-impowt owg.apache.wucene.index.weafweadewcontext;
+impowt owg.apache.wucene.index.tewm;
+i-impowt owg.apache.wucene.index.tewms;
+impowt owg.apache.wucene.index.tewmsenum;
+i-impowt owg.apache.wucene.seawch.booweancwause;
+impowt o-owg.apache.wucene.seawch.booweanquewy;
+impowt owg.apache.wucene.seawch.buwkscowew;
+impowt owg.apache.wucene.seawch.constantscowequewy;
+i-impowt owg.apache.wucene.seawch.constantscoweweight;
+impowt owg.apache.wucene.seawch.indexseawchew;
+impowt owg.apache.wucene.seawch.quewy;
+impowt owg.apache.wucene.seawch.scowew;
+i-impowt owg.apache.wucene.seawch.scowemode;
+impowt o-owg.apache.wucene.seawch.weight;
+i-impowt owg.apache.wucene.utiw.byteswef;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.query.HitAttributeHelper;
-import com.twitter.search.common.query.IDDisjunctionQuery;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.IndexedNumericFieldSettings;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.search.termination.QueryTimeout;
-import com.twitter.search.common.util.analysis.LongTermAttributeImpl;
-import com.twitter.search.common.util.analysis.SortableLongTermAttributeImpl;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
-import com.twitter.search.core.earlybird.index.inverted.MultiSegmentTermDictionary;
-import com.twitter.search.earlybird.partition.MultiSegmentTermDictionaryManager;
-import com.twitter.search.earlybird.queryparser.EarlybirdQueryHelper;
-import com.twitter.search.queryparser.query.QueryParserException;
+i-impowt c-com.twittew.decidew.decidew;
+impowt com.twittew.seawch.common.decidew.decidewutiw;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.metwics.seawchtimew;
+impowt com.twittew.seawch.common.metwics.seawchtimewstats;
+impowt c-com.twittew.seawch.common.quewy.hitattwibutehewpew;
+impowt com.twittew.seawch.common.quewy.iddisjunctionquewy;
+impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+impowt com.twittew.seawch.common.schema.base.indexednumewicfiewdsettings;
+i-impowt com.twittew.seawch.common.schema.base.schema;
+impowt c-com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+impowt c-com.twittew.seawch.common.seawch.tewmination.quewytimeout;
+i-impowt com.twittew.seawch.common.utiw.anawysis.wongtewmattwibuteimpw;
+impowt com.twittew.seawch.common.utiw.anawysis.sowtabwewongtewmattwibuteimpw;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentdata;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.invewtedindex;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.muwtisegmenttewmdictionawy;
+impowt c-com.twittew.seawch.eawwybiwd.pawtition.muwtisegmenttewmdictionawymanagew;
+i-impowt com.twittew.seawch.eawwybiwd.quewypawsew.eawwybiwdquewyhewpew;
+i-impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
 
 /**
- * A variant of a multi-term ID disjunction query (similar to {@link UserIdMultiSegmentQuery}),
- * that also uses a {@link MultiSegmentTermDictionary} where available, for more efficient
- * term lookups for queries that span multiple segments.
+ * a vawiant o-of a muwti-tewm id disjunction quewy (simiwaw t-to {@wink usewidmuwtisegmentquewy}), 😳
+ * that a-awso uses a {@wink muwtisegmenttewmdictionawy} w-whewe avaiwabwe, >w< f-fow mowe efficient
+ * tewm wookups fow quewies that span muwtipwe segments. (˘ω˘)
  *
- * By default, a IDDisjunctionQuery (or Lucene's MultiTermQuery), does a term dictionary lookup
- * for all of the terms in its disjunction, and it does it once for each segment (or AtomicReader)
- * that the query is searching.
- * This means that when the term dictionary is large, and the term lookups are expensive, and when
- * we are searching multiple segments, the query needs to make num_terms * num_segments expensive
- * term dictionary lookups.
+ * by defauwt, nyaa~~ a iddisjunctionquewy (ow w-wucene's m-muwtitewmquewy), 😳😳😳 does a tewm dictionawy w-wookup
+ * f-fow aww of the t-tewms in its disjunction, (U ﹏ U) and it does it once fow each segment (ow a-atomicweadew)
+ * that the quewy is seawching. (˘ω˘)
+ * this means that when the t-tewm dictionawy is wawge, and the t-tewm wookups awe e-expensive, :3 and w-when
+ * we awe seawching muwtipwe s-segments, >w< the q-quewy nyeeds to m-make nyum_tewms * n-nyum_segments expensive
+ * tewm dictionawy wookups. ^^
  *
- * With the help of a MultiSegmentTermDictionary, this multi-term disjunction query implementation
- * only does one lookup for all of the segments managed by the MultiSegmentTermDictionary.
- * If a segment is not supported by the MultiSegmentTermDictionary (e.g. if it's not optimized yet),
- * a regular lookup in that segment's term dictionary will be performed.
+ * w-with t-the hewp of a m-muwtisegmenttewmdictionawy, 😳😳😳 t-this m-muwti-tewm disjunction quewy impwementation
+ * onwy does one wookup fow aww of t-the segments managed by the muwtisegmenttewmdictionawy. nyaa~~
+ * if a segment is nyot suppowted by the muwtisegmenttewmdictionawy (e.g. (⑅˘꒳˘) i-if it's nyot optimized yet), :3
+ * a weguwaw wookup in that segment's t-tewm dictionawy w-wiww be pewfowmed. ʘwʘ
  *
- * Usually, we will make 'num_terms' lookups in the current, un-optimized segment, and then if
- * more segments need to be searched, we will make another 'num_terms' lookups, once for all of
- * the remaining segments.
+ * usuawwy, rawr x3 w-we wiww make 'num_tewms' w-wookups in the cuwwent, (///ˬ///✿) un-optimized s-segment, 😳😳😳 and t-then if
+ * mowe segments nyeed to be seawched, we wiww make anothew 'num_tewms' wookups, XD once fow aww of
+ * the w-wemaining segments. >_<
  *
- * When performing lookups in the MultiSegmentTermDictionary, for each supported segment, we save
- * a list of termIds from that segment for all the searched terms that appear in that segment.
+ * when p-pewfowming wookups in the muwtisegmenttewmdictionawy, >w< f-fow each s-suppowted segment, /(^•ω•^) we save
+ * a wist of tewmids f-fwom that segment f-fow aww the seawched tewms that a-appeaw in that s-segment. :3
  *
- * For example, when querying for UserIdMultiSegmentQuery with user ids: {1L, 2L, 3L} and
- * segments: {1, 2}, where segment 1 has user ids {1L, 2L} indexed under termIds {100, 200},
- * and segment 2 has user ids {1L, 2L, 3L} indexed under termIds {200, 300, 400}, we will build
- * up the following map once:
- *   segment1 -> [100, 200]
- *   segment2 -> [200, 300, 400]
+ * fow exampwe, ʘwʘ when quewying fow usewidmuwtisegmentquewy with usew i-ids: {1w, (˘ω˘) 2w, 3w} a-and
+ * segments: {1, (ꈍᴗꈍ) 2}, w-whewe segment 1 has u-usew ids {1w, ^^ 2w} i-indexed undew tewmids {100, ^^ 200},
+ * a-and segment 2 has usew ids {1w, ( ͡o ω ͡o ) 2w, 3w} indexed undew tewmids {200, -.- 300, 400}, ^^;; we wiww buiwd
+ * up the fowwowing m-map once:
+ *   s-segment1 -> [100, ^•ﻌ•^ 200]
+ *   segment2 -> [200, (˘ω˘) 300, 400]
  */
-public class UserIdMultiSegmentQuery extends Query {
-  @VisibleForTesting
-  public static final SearchTimerStats TERM_LOOKUP_STATS =
-      SearchTimerStats.export("multi_segment_query_term_lookup", TimeUnit.NANOSECONDS, false);
-  public static final SearchTimerStats QUERY_FROM_PRECOMPUTED =
-      SearchTimerStats.export("multi_segment_query_from_precomputed", TimeUnit.NANOSECONDS, false);
-  public static final SearchTimerStats QUERY_REGULAR =
-      SearchTimerStats.export("multi_segment_query_regular", TimeUnit.NANOSECONDS, false);
+pubwic cwass u-usewidmuwtisegmentquewy e-extends quewy {
+  @visibwefowtesting
+  pubwic static finaw seawchtimewstats t-tewm_wookup_stats =
+      seawchtimewstats.expowt("muwti_segment_quewy_tewm_wookup", o.O timeunit.nanoseconds, (✿oωo) fawse);
+  pubwic static finaw seawchtimewstats quewy_fwom_pwecomputed =
+      seawchtimewstats.expowt("muwti_segment_quewy_fwom_pwecomputed", 😳😳😳 t-timeunit.nanoseconds, (ꈍᴗꈍ) fawse);
+  pubwic static finaw s-seawchtimewstats q-quewy_weguwaw =
+      seawchtimewstats.expowt("muwti_segment_quewy_weguwaw", σωσ timeunit.nanoseconds, fawse);
 
-  @VisibleForTesting
-  public static final SearchCounter USED_MULTI_SEGMENT_TERM_DICTIONARY_COUNT = SearchCounter.export(
-      "user_id_multi_segment_query_used_multi_segment_term_dictionary_count");
-  @VisibleForTesting
-  public static final SearchCounter USED_ORIGINAL_TERM_DICTIONARY_COUNT = SearchCounter.export(
-      "user_id_multi_segment_query_used_original_term_dictionary_count");
+  @visibwefowtesting
+  p-pubwic static f-finaw seawchcountew used_muwti_segment_tewm_dictionawy_count = seawchcountew.expowt(
+      "usew_id_muwti_segment_quewy_used_muwti_segment_tewm_dictionawy_count");
+  @visibwefowtesting
+  pubwic static finaw s-seawchcountew used_owiginaw_tewm_dictionawy_count = s-seawchcountew.expowt(
+      "usew_id_muwti_segment_quewy_used_owiginaw_tewm_dictionawy_count");
 
-  private static final SearchCounter NEW_QUERY_COUNT =
-      SearchCounter.export("user_id_multi_segment_new_query_count");
-  private static final SearchCounter OLD_QUERY_COUNT =
-      SearchCounter.export("user_id_multi_segment_old_query_count");
+  pwivate static finaw seawchcountew nyew_quewy_count =
+      s-seawchcountew.expowt("usew_id_muwti_segment_new_quewy_count");
+  pwivate static f-finaw seawchcountew o-owd_quewy_count =
+      seawchcountew.expowt("usew_id_muwti_segment_owd_quewy_count");
 
-  private static final HashMap<String, SearchCounter> QUERY_COUNT_BY_QUERY_NAME = new HashMap<>();
-  private static final HashMap<String, SearchCounter> QUERY_COUNT_BY_FIELD_NAME = new HashMap<>();
+  p-pwivate static finaw hashmap<stwing, UwU s-seawchcountew> q-quewy_count_by_quewy_name = n-nyew hashmap<>();
+  pwivate s-static finaw hashmap<stwing, ^•ﻌ•^ s-seawchcountew> quewy_count_by_fiewd_name = nyew hashmap<>();
 
-  private static final String DECIDER_KEY_PREFIX = "use_multi_segment_id_disjunction_queries_in_";
+  p-pwivate s-static finaw s-stwing decidew_key_pwefix = "use_muwti_segment_id_disjunction_quewies_in_";
 
   /**
-   * Returns a new user ID disjunction query.
+   * wetuwns a nyew usew id d-disjunction quewy.
    *
-   * @param ids The user IDs.
-   * @param field The field storing the user IDs.
-   * @param schemaSnapshot A snapshot of earlybird's schema.
-   * @param multiSegmentTermDictionaryManager The manager for the term dictionaries that span
-   *                                          multiple segments.
-   * @param decider The decider.
-   * @param earlybirdCluster The earlybird cluster.
-   * @param ranks The hit attribution ranks to be assigned to every user ID.
-   * @param hitAttributeHelper The helper that tracks hit attributions.
-   * @param queryTimeout The timeout to be enforced on this query.
-   * @return A new user ID disjunction query.
+   * @pawam ids the usew i-ids. mya
+   * @pawam f-fiewd the fiewd stowing the usew ids. /(^•ω•^)
+   * @pawam schemasnapshot a-a snapshot of e-eawwybiwd's schema. rawr
+   * @pawam m-muwtisegmenttewmdictionawymanagew t-the managew fow the tewm dictionawies t-that span
+   *                                          muwtipwe segments. nyaa~~
+   * @pawam decidew the decidew.
+   * @pawam eawwybiwdcwustew the eawwybiwd cwustew. ( ͡o ω ͡o )
+   * @pawam w-wanks the hit attwibution w-wanks to be assigned to evewy usew i-id. σωσ
+   * @pawam hitattwibutehewpew t-the hewpew that twacks hit a-attwibutions. (✿oωo)
+   * @pawam q-quewytimeout t-the timeout t-to be enfowced o-on this quewy. (///ˬ///✿)
+   * @wetuwn a nyew usew id disjunction quewy. σωσ
    */
-  public static Query createIdDisjunctionQuery(
-      String queryName,
-      List<Long> ids,
-      String field,
-      ImmutableSchemaInterface schemaSnapshot,
-      MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager,
-      Decider decider,
-      EarlybirdCluster earlybirdCluster,
-      List<Integer> ranks,
-      @Nullable HitAttributeHelper hitAttributeHelper,
-      @Nullable QueryTimeout queryTimeout) throws QueryParserException {
-    QUERY_COUNT_BY_QUERY_NAME.computeIfAbsent(queryName, name ->
-        SearchCounter.export("multi_segment_query_name_" + name)).increment();
-    QUERY_COUNT_BY_FIELD_NAME.computeIfAbsent(field, name ->
-        SearchCounter.export("multi_segment_query_count_for_field_" + name)).increment();
+  pubwic static quewy cweateiddisjunctionquewy(
+      stwing quewyname, UwU
+      w-wist<wong> i-ids, (⑅˘꒳˘)
+      stwing f-fiewd, /(^•ω•^)
+      immutabweschemaintewface schemasnapshot, -.-
+      m-muwtisegmenttewmdictionawymanagew muwtisegmenttewmdictionawymanagew, (ˆ ﻌ ˆ)♡
+      decidew decidew, nyaa~~
+      e-eawwybiwdcwustew e-eawwybiwdcwustew, ʘwʘ
+      wist<integew> w-wanks, :3
+      @nuwwabwe hitattwibutehewpew hitattwibutehewpew, (U ᵕ U❁)
+      @nuwwabwe q-quewytimeout q-quewytimeout) thwows quewypawsewexception {
+    q-quewy_count_by_quewy_name.computeifabsent(quewyname, (U ﹏ U) n-nyame ->
+        seawchcountew.expowt("muwti_segment_quewy_name_" + name)).incwement();
+    quewy_count_by_fiewd_name.computeifabsent(fiewd, ^^ nyame ->
+        s-seawchcountew.expowt("muwti_segment_quewy_count_fow_fiewd_" + n-nyame)).incwement();
 
-    if (DeciderUtil.isAvailableForRandomRecipient(decider, getDeciderName(earlybirdCluster))) {
-      NEW_QUERY_COUNT.increment();
-      MultiSegmentTermDictionary multiSegmentTermDictionary =
-          multiSegmentTermDictionaryManager.getMultiSegmentTermDictionary(field);
-      return new UserIdMultiSegmentQuery(
-          ids,
-          field,
-          schemaSnapshot,
-          multiSegmentTermDictionary,
-          ranks,
-          hitAttributeHelper,
-          queryTimeout);
-    } else {
-      OLD_QUERY_COUNT.increment();
-      return new IDDisjunctionQuery(ids, field, schemaSnapshot);
+    i-if (decidewutiw.isavaiwabwefowwandomwecipient(decidew, òωó g-getdecidewname(eawwybiwdcwustew))) {
+      nyew_quewy_count.incwement();
+      m-muwtisegmenttewmdictionawy muwtisegmenttewmdictionawy =
+          m-muwtisegmenttewmdictionawymanagew.getmuwtisegmenttewmdictionawy(fiewd);
+      w-wetuwn nyew usewidmuwtisegmentquewy(
+          ids, /(^•ω•^)
+          f-fiewd, 😳😳😳
+          s-schemasnapshot, :3
+          muwtisegmenttewmdictionawy, (///ˬ///✿)
+          w-wanks, rawr x3
+          hitattwibutehewpew, (U ᵕ U❁)
+          quewytimeout);
+    } e-ewse {
+      owd_quewy_count.incwement();
+      w-wetuwn nyew i-iddisjunctionquewy(ids, (⑅˘꒳˘) fiewd, s-schemasnapshot);
     }
   }
 
-  @VisibleForTesting
-  public static String getDeciderName(EarlybirdCluster earlybirdCluster) {
-    return DECIDER_KEY_PREFIX + earlybirdCluster.name().toLowerCase();
+  @visibwefowtesting
+  pubwic static stwing getdecidewname(eawwybiwdcwustew e-eawwybiwdcwustew) {
+    w-wetuwn decidew_key_pwefix + e-eawwybiwdcwustew.name().towowewcase();
   }
 
-  private final boolean useOrderPreservingEncoding;
-  private final HitAttributeHelper hitAttributeHelper;
-  private final QueryTimeout queryTimeout;
-  private final MultiSegmentTermDictionary multiSegmentTermDictionary;
-  private final Schema.FieldInfo fieldInfo;
-  private final String field;
-  private final List<Long> ids;
+  pwivate finaw boowean useowdewpwesewvingencoding;
+  pwivate f-finaw hitattwibutehewpew hitattwibutehewpew;
+  pwivate finaw q-quewytimeout q-quewytimeout;
+  pwivate finaw muwtisegmenttewmdictionawy m-muwtisegmenttewmdictionawy;
+  pwivate f-finaw schema.fiewdinfo f-fiewdinfo;
+  pwivate finaw stwing fiewd;
+  p-pwivate finaw wist<wong> ids;
 
-  private final List<Integer> ranks;
-  // For each segment where we have a multi-segment term dictionary, this map will contain the
-  // termIds of all the terms that actually appear in that segment's index.
-  @Nullable
-  private Map<InvertedIndex, List<TermRankPair>> termIdsPerSegment;
+  pwivate finaw w-wist<integew> wanks;
+  // f-fow each segment whewe w-we have a muwti-segment tewm dictionawy, (˘ω˘) t-this m-map wiww contain t-the
+  // tewmids of aww the tewms that actuawwy appeaw in that segment's index. :3
+  @nuwwabwe
+  pwivate map<invewtedindex, XD wist<tewmwankpaiw>> tewmidspewsegment;
 
-  // A wrap class helps to associate termId with corresponding search operator rank if exist
-  private final class TermRankPair {
-    private final int termId;
-    private final int rank;
+  // a wwap cwass hewps to associate tewmid with cowwesponding seawch opewatow w-wank if exist
+  p-pwivate finaw cwass tewmwankpaiw {
+    pwivate f-finaw int tewmid;
+    p-pwivate finaw i-int wank;
 
-    TermRankPair(int termId, int rank) {
-      this.termId = termId;
-      this.rank = rank;
+    tewmwankpaiw(int t-tewmid, >_< int wank) {
+      this.tewmid = t-tewmid;
+      t-this.wank = wank;
     }
 
-    public int getTermId() {
-      return termId;
+    p-pubwic int gettewmid() {
+      w-wetuwn tewmid;
     }
 
-    public int getRank() {
-      return rank;
+    p-pubwic int getwank() {
+      wetuwn wank;
     }
   }
 
-  @VisibleForTesting
-  public UserIdMultiSegmentQuery(
-      List<Long> ids,
-      String field,
-      ImmutableSchemaInterface schemaSnapshot,
-      MultiSegmentTermDictionary termDictionary,
-      List<Integer> ranks,
-      @Nullable HitAttributeHelper hitAttributeHelper,
-      @Nullable QueryTimeout queryTimeout) {
-    this.field = field;
+  @visibwefowtesting
+  p-pubwic u-usewidmuwtisegmentquewy(
+      w-wist<wong> ids, (✿oωo)
+      s-stwing fiewd, (ꈍᴗꈍ)
+      i-immutabweschemaintewface s-schemasnapshot, XD
+      m-muwtisegmenttewmdictionawy t-tewmdictionawy, :3
+      w-wist<integew> wanks, mya
+      @nuwwabwe h-hitattwibutehewpew h-hitattwibutehewpew, òωó
+      @nuwwabwe q-quewytimeout quewytimeout) {
+    t-this.fiewd = fiewd;
     this.ids = ids;
-    this.multiSegmentTermDictionary = termDictionary;
-    this.ranks = ranks;
-    this.hitAttributeHelper = hitAttributeHelper;
-    this.queryTimeout = queryTimeout;
+    t-this.muwtisegmenttewmdictionawy = tewmdictionawy;
+    t-this.wanks = w-wanks;
+    t-this.hitattwibutehewpew = hitattwibutehewpew;
+    t-this.quewytimeout = quewytimeout;
 
-    // check ids and ranks have same size
-    Preconditions.checkArgument(ranks.size() == 0 || ranks.size() == ids.size());
-    // hitAttributeHelper is not null iff ranks is not empty
-    if (ranks.size() > 0) {
-      Preconditions.checkNotNull(hitAttributeHelper);
-    } else {
-      Preconditions.checkArgument(hitAttributeHelper == null);
+    // check i-ids and wanks have same size
+    p-pweconditions.checkawgument(wanks.size() == 0 || wanks.size() == i-ids.size());
+    // hitattwibutehewpew is nyot nyuww iff wanks is nyot empty
+    i-if (wanks.size() > 0) {
+      pweconditions.checknotnuww(hitattwibutehewpew);
+    } e-ewse {
+      p-pweconditions.checkawgument(hitattwibutehewpew == nyuww);
     }
 
-    if (!schemaSnapshot.hasField(field)) {
-      throw new IllegalStateException("Tried to search a field which does not exist in schema");
+    if (!schemasnapshot.hasfiewd(fiewd)) {
+      thwow n-nyew iwwegawstateexception("twied to seawch a fiewd w-which does n-nyot exist in schema");
     }
-    this.fieldInfo = Preconditions.checkNotNull(schemaSnapshot.getFieldInfo(field));
+    t-this.fiewdinfo = pweconditions.checknotnuww(schemasnapshot.getfiewdinfo(fiewd));
 
-    IndexedNumericFieldSettings numericFieldSettings =
-        fieldInfo.getFieldType().getNumericFieldSettings();
-    if (numericFieldSettings == null) {
-      throw new IllegalStateException("Id field is not numerical");
+    indexednumewicfiewdsettings n-nyumewicfiewdsettings =
+        f-fiewdinfo.getfiewdtype().getnumewicfiewdsettings();
+    if (numewicfiewdsettings == n-nyuww) {
+      thwow nyew iwwegawstateexception("id f-fiewd is nyot numewicaw");
     }
 
-    this.useOrderPreservingEncoding = numericFieldSettings.isUseSortableEncoding();
+    t-this.useowdewpwesewvingencoding = n-nyumewicfiewdsettings.isusesowtabweencoding();
   }
 
   /**
-   * If it hasn't been built yet, build up the map containing termIds of all the terms being
-   * searched, for all of the segments that are managed by the multi-segment term dictionary.
+   * i-if it hasn't been buiwt yet, nyaa~~ b-buiwd up the map c-containing tewmids o-of aww the tewms b-being
+   * seawched, 🥺 fow aww o-of the segments t-that awe managed b-by the muwti-segment t-tewm dictionawy. -.-
    *
-   * We only do this once, when we have to search the first segment that's supported by our
-   * multi-segment term dictionary.
+   * w-we onwy do this o-once, 🥺 when we h-have to seawch t-the fiwst segment that's suppowted b-by ouw
+   * muwti-segment tewm d-dictionawy. (˘ω˘)
    *
-   * Flow here is to:
-   * 1. go through all the ids being queried.
-   * 2. for each id, get the termIds for that term in all of the segments in the term dictionary
-   * 3. for all of the segments that have that term, add the termId to that segment's list of
-   * term ids (in the 'termIdsPerSegment' map).
+   * fwow hewe i-is to:
+   * 1. òωó g-go thwough aww t-the ids being quewied. UwU
+   * 2. fow each id, ^•ﻌ•^ get the tewmids fow that tewm in aww o-of the segments i-in the tewm dictionawy
+   * 3. f-fow aww of the segments that have that tewm, mya add the tewmid to that s-segment's wist o-of
+   * tewm ids (in the 'tewmidspewsegment' m-map). (✿oωo)
    */
-  private void createTermIdsPerSegment() {
-    if (termIdsPerSegment != null) {
-      // already created the map
-      return;
+  pwivate v-void cweatetewmidspewsegment() {
+    if (tewmidspewsegment != nyuww) {
+      // awweady cweated t-the map
+      w-wetuwn;
     }
 
-    long start = System.nanoTime();
+    w-wong stawt = s-system.nanotime();
 
-    final BytesRef termRef = useOrderPreservingEncoding
-        ? SortableLongTermAttributeImpl.newBytesRef()
-        : LongTermAttributeImpl.newBytesRef();
+    finaw byteswef tewmwef = u-useowdewpwesewvingencoding
+        ? s-sowtabwewongtewmattwibuteimpw.newbyteswef()
+        : wongtewmattwibuteimpw.newbyteswef();
 
-    termIdsPerSegment = Maps.newHashMap();
-    List<? extends InvertedIndex> segmentIndexes = multiSegmentTermDictionary.getSegmentIndexes();
+    tewmidspewsegment = m-maps.newhashmap();
+    wist<? extends invewtedindex> s-segmentindexes = muwtisegmenttewmdictionawy.getsegmentindexes();
 
-    for (int idx = 0; idx < ids.size(); ++idx) {
-      long longTerm = ids.get(idx);
+    f-fow (int i-idx = 0; idx < ids.size(); ++idx) {
+      w-wong w-wongtewm = ids.get(idx);
 
-      if (useOrderPreservingEncoding) {
-        SortableLongTermAttributeImpl.copyLongToBytesRef(termRef, longTerm);
-      } else {
-        LongTermAttributeImpl.copyLongToBytesRef(termRef, longTerm);
+      if (useowdewpwesewvingencoding) {
+        s-sowtabwewongtewmattwibuteimpw.copywongtobyteswef(tewmwef, XD wongtewm);
+      } e-ewse {
+        w-wongtewmattwibuteimpw.copywongtobyteswef(tewmwef, :3 w-wongtewm);
       }
 
-      int[] termIds = multiSegmentTermDictionary.lookupTermIds(termRef);
-      Preconditions.checkState(segmentIndexes.size() == termIds.length,
-          "SegmentIndexes: %s, field: %s, termIds: %s",
-          segmentIndexes.size(), field, termIds.length);
+      i-int[] tewmids = muwtisegmenttewmdictionawy.wookuptewmids(tewmwef);
+      p-pweconditions.checkstate(segmentindexes.size() == t-tewmids.wength, (U ﹏ U)
+          "segmentindexes: %s, UwU f-fiewd: %s, ʘwʘ tewmids: %s", >w<
+          s-segmentindexes.size(), 😳😳😳 fiewd, rawr tewmids.wength);
 
-      for (int indexId = 0; indexId < termIds.length; indexId++) {
-        int termId = termIds[indexId];
-        if (termId != EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
-          InvertedIndex fieldIndex = segmentIndexes.get(indexId);
+      fow (int indexid = 0; i-indexid < t-tewmids.wength; i-indexid++) {
+        int tewmid = tewmids[indexid];
+        if (tewmid != eawwybiwdindexsegmentatomicweadew.tewm_not_found) {
+          i-invewtedindex fiewdindex = s-segmentindexes.get(indexid);
 
-          List<TermRankPair> termIdsList = termIdsPerSegment.get(fieldIndex);
-          if (termIdsList == null) {
-            termIdsList = Lists.newArrayList();
-            termIdsPerSegment.put(fieldIndex, termIdsList);
+          w-wist<tewmwankpaiw> tewmidswist = tewmidspewsegment.get(fiewdindex);
+          if (tewmidswist == n-nyuww) {
+            tewmidswist = w-wists.newawwaywist();
+            t-tewmidspewsegment.put(fiewdindex, ^•ﻌ•^ t-tewmidswist);
           }
-          termIdsList.add(new TermRankPair(
-              termId, ranks.size() > 0 ? ranks.get(idx) : -1));
+          t-tewmidswist.add(new t-tewmwankpaiw(
+              tewmid, σωσ wanks.size() > 0 ? wanks.get(idx) : -1));
         }
       }
     }
 
-    long elapsed = System.nanoTime() - start;
-    TERM_LOOKUP_STATS.timerIncrement(elapsed);
+    wong e-ewapsed = system.nanotime() - stawt;
+    tewm_wookup_stats.timewincwement(ewapsed);
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    return new UserIdMultiSegmentQueryWeight(searcher, scoreMode, boost);
+  @ovewwide
+  p-pubwic weight cweateweight(indexseawchew seawchew, :3 scowemode scowemode, f-fwoat boost) {
+    wetuwn nyew usewidmuwtisegmentquewyweight(seawchew, rawr x3 scowemode, nyaa~~ boost);
   }
 
-  @Override
-  public int hashCode() {
-    return Arrays.hashCode(
-        new Object[] {useOrderPreservingEncoding, queryTimeout, field, ids, ranks});
+  @ovewwide
+  pubwic i-int hashcode() {
+    w-wetuwn awways.hashcode(
+        n-nyew object[] {useowdewpwesewvingencoding, :3 quewytimeout, >w< fiewd, rawr ids, wanks});
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof UserIdMultiSegmentQuery)) {
-      return false;
+  @ovewwide
+  p-pubwic b-boowean equaws(object obj) {
+    i-if (!(obj instanceof usewidmuwtisegmentquewy)) {
+      w-wetuwn fawse;
     }
 
-    UserIdMultiSegmentQuery query = UserIdMultiSegmentQuery.class.cast(obj);
-    return Arrays.equals(
-        new Object[] {useOrderPreservingEncoding, queryTimeout, field, ids, ranks},
-        new Object[] {query.useOrderPreservingEncoding,
-                      query.queryTimeout,
-                      query.field,
-                      query.ids,
-                      query.ranks});
+    usewidmuwtisegmentquewy quewy = u-usewidmuwtisegmentquewy.cwass.cast(obj);
+    wetuwn awways.equaws(
+        nyew o-object[] {useowdewpwesewvingencoding, 😳 q-quewytimeout, 😳 f-fiewd, 🥺 ids, wanks}, rawr x3
+        nyew object[] {quewy.useowdewpwesewvingencoding, ^^
+                      q-quewy.quewytimeout, ( ͡o ω ͡o )
+                      quewy.fiewd, XD
+                      quewy.ids, ^^
+                      quewy.wanks});
   }
 
-  @Override
-  public String toString(String fieldName) {
-    StringBuilder builder = new StringBuilder();
-    builder.append(getClass().getSimpleName()).append("[").append(fieldName).append(":");
-    for (Long id : this.ids) {
-      builder.append(id);
-      builder.append(",");
+  @ovewwide
+  pubwic s-stwing tostwing(stwing f-fiewdname) {
+    s-stwingbuiwdew b-buiwdew = nyew stwingbuiwdew();
+    buiwdew.append(getcwass().getsimpwename()).append("[").append(fiewdname).append(":");
+    f-fow (wong id : t-this.ids) {
+      buiwdew.append(id);
+      buiwdew.append(",");
     }
-    builder.setLength(builder.length() - 1);
-    builder.append("]");
-    return builder.toString();
+    buiwdew.setwength(buiwdew.wength() - 1);
+    b-buiwdew.append("]");
+    wetuwn buiwdew.tostwing();
   }
 
-  private final class UserIdMultiSegmentQueryWeight extends ConstantScoreWeight {
-    private final IndexSearcher searcher;
-    private final ScoreMode scoreMode;
+  pwivate finaw c-cwass usewidmuwtisegmentquewyweight extends constantscoweweight {
+    p-pwivate f-finaw indexseawchew seawchew;
+    p-pwivate finaw s-scowemode scowemode;
 
-    private UserIdMultiSegmentQueryWeight(
-        IndexSearcher searcher,
-        ScoreMode scoreMode,
-        float boost) {
-      super(UserIdMultiSegmentQuery.this, boost);
-      this.searcher = searcher;
-      this.scoreMode = scoreMode;
+    p-pwivate usewidmuwtisegmentquewyweight(
+        indexseawchew s-seawchew, (⑅˘꒳˘)
+        scowemode scowemode, (⑅˘꒳˘)
+        f-fwoat boost) {
+      supew(usewidmuwtisegmentquewy.this, ^•ﻌ•^ boost);
+      this.seawchew = seawchew;
+      this.scowemode = scowemode;
     }
 
-    @Override
-    public Scorer scorer(LeafReaderContext context) throws IOException {
-      Weight weight = rewrite(context);
-      if (weight != null) {
-        return weight.scorer(context);
-      } else {
-        return null;
+    @ovewwide
+    p-pubwic scowew s-scowew(weafweadewcontext c-context) t-thwows ioexception {
+      weight w-weight = wewwite(context);
+      if (weight != n-nyuww) {
+        wetuwn weight.scowew(context);
+      } ewse {
+        w-wetuwn nuww;
       }
     }
 
-    @Override
-    public BulkScorer bulkScorer(LeafReaderContext context) throws IOException {
-      Weight weight = rewrite(context);
-      if (weight != null) {
-        return weight.bulkScorer(context);
-      } else {
-        return null;
+    @ovewwide
+    p-pubwic buwkscowew buwkscowew(weafweadewcontext context) t-thwows ioexception {
+      w-weight weight = wewwite(context);
+      i-if (weight != nuww) {
+        w-wetuwn weight.buwkscowew(context);
+      } e-ewse {
+        wetuwn n-nyuww;
       }
     }
 
-    @Override
-    public void extractTerms(Set<Term> terms) {
-      terms.addAll(ids
-          .stream()
-          .map(id -> new Term(field, LongTermAttributeImpl.copyIntoNewBytesRef(id)))
-          .collect(Collectors.toSet()));
+    @ovewwide
+    p-pubwic void extwacttewms(set<tewm> tewms) {
+      t-tewms.addaww(ids
+          .stweam()
+          .map(id -> nyew tewm(fiewd, ( ͡o ω ͡o ) wongtewmattwibuteimpw.copyintonewbyteswef(id)))
+          .cowwect(cowwectows.toset()));
     }
 
-    @Override
-    public boolean isCacheable(LeafReaderContext ctx) {
-      return true;
+    @ovewwide
+    pubwic b-boowean iscacheabwe(weafweadewcontext ctx) {
+      w-wetuwn twue;
     }
 
-    private Weight rewrite(LeafReaderContext context) throws IOException {
-      final Terms terms = context.reader().terms(field);
-      if (terms == null) {
-        // field does not exist
-        return null;
+    pwivate weight wewwite(weafweadewcontext c-context) thwows i-ioexception {
+      f-finaw tewms tewms = context.weadew().tewms(fiewd);
+      i-if (tewms == n-nyuww) {
+        // fiewd does nyot e-exist
+        wetuwn nyuww;
       }
-      final TermsEnum termsEnum = terms.iterator();
-      Preconditions.checkNotNull(termsEnum, "No termsEnum for field: %s", field);
+      f-finaw tewmsenum tewmsenum = t-tewms.itewatow();
+      p-pweconditions.checknotnuww(tewmsenum, ( ͡o ω ͡o ) "no tewmsenum fow fiewd: %s", (✿oωo) fiewd);
 
-      BooleanQuery bq;
-      // See if the segment is supported by the multi-segment term dictionary. If so, build up
-      // the query using the termIds from the multi-segment term dictionary.
-      // If not (for the current segment), do the term lookups directly in the queried segment.
-      InvertedIndex fieldIndex = getFieldIndexFromMultiTermDictionary(context);
-      if (fieldIndex != null) {
-        createTermIdsPerSegment();
+      booweanquewy b-bq;
+      // see i-if the segment is suppowted by the muwti-segment tewm dictionawy. 😳😳😳 i-if so, buiwd up
+      // the q-quewy using the t-tewmids fwom the muwti-segment tewm dictionawy. OwO
+      // if nyot (fow the cuwwent s-segment), ^^ do the tewm wookups diwectwy in the q-quewied segment. rawr x3
+      invewtedindex f-fiewdindex = g-getfiewdindexfwommuwtitewmdictionawy(context);
+      if (fiewdindex != n-nyuww) {
+        c-cweatetewmidspewsegment();
 
-        USED_MULTI_SEGMENT_TERM_DICTIONARY_COUNT.increment();
-        SearchTimer timer = QUERY_FROM_PRECOMPUTED.startNewTimer();
-        bq = addPrecomputedTermQueries(fieldIndex, termsEnum);
-        QUERY_FROM_PRECOMPUTED.stopTimerAndIncrement(timer);
-      } else {
-        USED_ORIGINAL_TERM_DICTIONARY_COUNT.increment();
-        // This segment is not supported by the multi-segment term dictionary. Lookup terms
-        // directly.
-        SearchTimer timer = QUERY_REGULAR.startNewTimer();
-        bq = addTermQueries(termsEnum);
-        QUERY_REGULAR.stopTimerAndIncrement(timer);
+        u-used_muwti_segment_tewm_dictionawy_count.incwement();
+        s-seawchtimew t-timew = q-quewy_fwom_pwecomputed.stawtnewtimew();
+        bq = addpwecomputedtewmquewies(fiewdindex, 🥺 tewmsenum);
+        quewy_fwom_pwecomputed.stoptimewandincwement(timew);
+      } ewse {
+        used_owiginaw_tewm_dictionawy_count.incwement();
+        // t-this segment i-is nyot suppowted b-by the muwti-segment t-tewm d-dictionawy. (ˆ ﻌ ˆ)♡ wookup t-tewms
+        // diwectwy. ( ͡o ω ͡o )
+        seawchtimew timew = quewy_weguwaw.stawtnewtimew();
+        bq = addtewmquewies(tewmsenum);
+        q-quewy_weguwaw.stoptimewandincwement(timew);
       }
 
-      return searcher.rewrite(new ConstantScoreQuery(bq)).createWeight(
-          searcher, scoreMode, score());
+      w-wetuwn seawchew.wewwite(new constantscowequewy(bq)).cweateweight(
+          seawchew, >w< scowemode, /(^•ω•^) scowe());
     }
 
     /**
-     * If the multi-segment term dictionary supports this segment/LeafReader, then return the
-     * InvertedIndex representing this segment.
+     * i-if the muwti-segment t-tewm d-dictionawy suppowts this segment/weafweadew, then w-wetuwn the
+     * invewtedindex wepwesenting t-this segment. 😳😳😳
      *
-     * If the segment being queried right now is not in the multi-segment term dictionary (e.g.
-     * if it's not optimized yet), return null.
+     * i-if the segment being quewied wight nyow i-is nyot in the muwti-segment t-tewm dictionawy (e.g. (U ᵕ U❁)
+     * i-if it's nyot optimized y-yet), (˘ω˘) wetuwn n-nyuww. 😳
      */
-    @Nullable
-    private InvertedIndex getFieldIndexFromMultiTermDictionary(LeafReaderContext context)
-        throws IOException {
-      if (multiSegmentTermDictionary == null) {
-        return null;
+    @nuwwabwe
+    p-pwivate invewtedindex g-getfiewdindexfwommuwtitewmdictionawy(weafweadewcontext c-context)
+        t-thwows ioexception {
+      if (muwtisegmenttewmdictionawy == n-nyuww) {
+        wetuwn n-nyuww;
       }
 
-      if (context.reader() instanceof EarlybirdIndexSegmentAtomicReader) {
-        EarlybirdIndexSegmentAtomicReader reader =
-            (EarlybirdIndexSegmentAtomicReader) context.reader();
+      if (context.weadew() i-instanceof eawwybiwdindexsegmentatomicweadew) {
+        eawwybiwdindexsegmentatomicweadew weadew =
+            (eawwybiwdindexsegmentatomicweadew) c-context.weadew();
 
-        EarlybirdIndexSegmentData segmentData = reader.getSegmentData();
-        InvertedIndex fieldIndex = segmentData.getFieldIndex(field);
+        eawwybiwdindexsegmentdata segmentdata = w-weadew.getsegmentdata();
+        invewtedindex f-fiewdindex = s-segmentdata.getfiewdindex(fiewd);
 
-        if (multiSegmentTermDictionary.supportSegmentIndex(fieldIndex)) {
-          return fieldIndex;
+        if (muwtisegmenttewmdictionawy.suppowtsegmentindex(fiewdindex)) {
+          wetuwn f-fiewdindex;
         }
       }
 
-      return null;
+      wetuwn nyuww;
     }
 
-    private BooleanQuery addPrecomputedTermQueries(
-        InvertedIndex fieldIndex,
-        TermsEnum termsEnum) throws IOException {
+    pwivate booweanquewy a-addpwecomputedtewmquewies(
+        i-invewtedindex fiewdindex, (ꈍᴗꈍ)
+        tewmsenum t-tewmsenum) thwows i-ioexception {
 
-      BooleanQuery.Builder bqBuilder = new BooleanQuery.Builder();
-      int numClauses = 0;
+      booweanquewy.buiwdew bqbuiwdew = n-nyew booweanquewy.buiwdew();
+      int n-nyumcwauses = 0;
 
-      List<TermRankPair> termRankPairs = termIdsPerSegment.get(fieldIndex);
-      if (termRankPairs != null) {
-        for (TermRankPair pair : termRankPairs) {
-          int termId = pair.getTermId();
-          if (numClauses >= BooleanQuery.getMaxClauseCount()) {
-            BooleanQuery saved = bqBuilder.build();
-            bqBuilder = new BooleanQuery.Builder();
-            bqBuilder.add(saved, BooleanClause.Occur.SHOULD);
-            numClauses = 1;
+      w-wist<tewmwankpaiw> tewmwankpaiws = t-tewmidspewsegment.get(fiewdindex);
+      i-if (tewmwankpaiws != nyuww) {
+        fow (tewmwankpaiw p-paiw : t-tewmwankpaiws) {
+          i-int tewmid = paiw.gettewmid();
+          i-if (numcwauses >= booweanquewy.getmaxcwausecount()) {
+            booweanquewy saved = bqbuiwdew.buiwd();
+            bqbuiwdew = nyew booweanquewy.buiwdew();
+            b-bqbuiwdew.add(saved, :3 b-booweancwause.occuw.shouwd);
+            n-nyumcwauses = 1;
           }
 
-          Query query;
-          if (pair.getRank() != -1) {
-            query = EarlybirdQueryHelper.maybeWrapWithHitAttributionCollector(
-                new SimpleTermQuery(termsEnum, termId),
-                pair.getRank(),
-                fieldInfo,
-                hitAttributeHelper);
-          } else {
-            query = new SimpleTermQuery(termsEnum, termId);
+          q-quewy q-quewy;
+          i-if (paiw.getwank() != -1) {
+            quewy = e-eawwybiwdquewyhewpew.maybewwapwithhitattwibutioncowwectow(
+                n-nyew simpwetewmquewy(tewmsenum, t-tewmid), /(^•ω•^)
+                p-paiw.getwank(), ^^;;
+                fiewdinfo, o.O
+                hitattwibutehewpew);
+          } e-ewse {
+            quewy = nyew simpwetewmquewy(tewmsenum, 😳 t-tewmid);
           }
-          bqBuilder.add(EarlybirdQueryHelper.maybeWrapWithTimeout(query, queryTimeout),
-                        BooleanClause.Occur.SHOULD);
-          ++numClauses;
+          bqbuiwdew.add(eawwybiwdquewyhewpew.maybewwapwithtimeout(quewy, UwU q-quewytimeout), >w<
+                        b-booweancwause.occuw.shouwd);
+          ++numcwauses;
         }
       }
-      return bqBuilder.build();
+      wetuwn b-bqbuiwdew.buiwd();
     }
 
-    private BooleanQuery addTermQueries(TermsEnum termsEnum) throws IOException {
-      final BytesRef termRef = useOrderPreservingEncoding
-          ? SortableLongTermAttributeImpl.newBytesRef()
-          : LongTermAttributeImpl.newBytesRef();
+    p-pwivate booweanquewy a-addtewmquewies(tewmsenum tewmsenum) thwows i-ioexception {
+      f-finaw byteswef tewmwef = u-useowdewpwesewvingencoding
+          ? sowtabwewongtewmattwibuteimpw.newbyteswef()
+          : wongtewmattwibuteimpw.newbyteswef();
 
-      BooleanQuery.Builder bqBuilder = new BooleanQuery.Builder();
-      int numClauses = 0;
+      b-booweanquewy.buiwdew b-bqbuiwdew = nyew b-booweanquewy.buiwdew();
+      int nyumcwauses = 0;
 
-      for (int idx = 0; idx < ids.size(); ++idx) {
-        long longTerm = ids.get(idx);
-        if (useOrderPreservingEncoding) {
-          SortableLongTermAttributeImpl.copyLongToBytesRef(termRef, longTerm);
-        } else {
-          LongTermAttributeImpl.copyLongToBytesRef(termRef, longTerm);
+      f-fow (int idx = 0; idx < ids.size(); ++idx) {
+        w-wong wongtewm = ids.get(idx);
+        if (useowdewpwesewvingencoding) {
+          sowtabwewongtewmattwibuteimpw.copywongtobyteswef(tewmwef, o.O wongtewm);
+        } ewse {
+          wongtewmattwibuteimpw.copywongtobyteswef(tewmwef, (˘ω˘) w-wongtewm);
         }
 
-        if (termsEnum.seekExact(termRef)) {
-          if (numClauses >= BooleanQuery.getMaxClauseCount()) {
-            BooleanQuery saved = bqBuilder.build();
-            bqBuilder = new BooleanQuery.Builder();
-            bqBuilder.add(saved, BooleanClause.Occur.SHOULD);
-            numClauses = 1;
+        if (tewmsenum.seekexact(tewmwef)) {
+          if (numcwauses >= booweanquewy.getmaxcwausecount()) {
+            booweanquewy saved = bqbuiwdew.buiwd();
+            bqbuiwdew = n-nyew booweanquewy.buiwdew();
+            bqbuiwdew.add(saved, òωó booweancwause.occuw.shouwd);
+            n-nyumcwauses = 1;
           }
 
-          if (ranks.size() > 0) {
-            bqBuilder.add(EarlybirdQueryHelper.maybeWrapWithHitAttributionCollector(
-                              new SimpleTermQuery(termsEnum, termsEnum.ord()),
-                              ranks.get(idx),
-                              fieldInfo,
-                              hitAttributeHelper),
-                          BooleanClause.Occur.SHOULD);
-          } else {
-            bqBuilder.add(new SimpleTermQuery(termsEnum, termsEnum.ord()),
-                          BooleanClause.Occur.SHOULD);
+          if (wanks.size() > 0) {
+            b-bqbuiwdew.add(eawwybiwdquewyhewpew.maybewwapwithhitattwibutioncowwectow(
+                              nyew simpwetewmquewy(tewmsenum, nyaa~~ t-tewmsenum.owd()), ( ͡o ω ͡o )
+                              wanks.get(idx), 😳😳😳
+                              f-fiewdinfo, ^•ﻌ•^
+                              hitattwibutehewpew), (˘ω˘)
+                          b-booweancwause.occuw.shouwd);
+          } e-ewse {
+            bqbuiwdew.add(new simpwetewmquewy(tewmsenum, (˘ω˘) t-tewmsenum.owd()), -.-
+                          booweancwause.occuw.shouwd);
           }
-          ++numClauses;
+          ++numcwauses;
         }
       }
 
-      return bqBuilder.build();
+      wetuwn bqbuiwdew.buiwd();
     }
   }
 }

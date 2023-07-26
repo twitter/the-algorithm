@@ -1,26 +1,26 @@
-package com.twitter.unified_user_actions.adapter.client_event
+package com.twittew.unified_usew_actions.adaptew.cwient_event
 
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.clientapp.thriftscala.{Item => LogEventItem}
+impowt c-com.twittew.cwientapp.thwiftscawa.wogevent
+i-impowt com.twittew.cwientapp.thwiftscawa.{item => w-wogeventitem}
 
-object NotificationClientEventUtils {
+o-object nyotificationcwienteventutiws {
 
-  // Notification id for notification in the Notification Tab
-  def getNotificationIdForNotificationTab(
-    ceItem: LogEventItem
-  ): Option[String] = {
-    for {
-      notificationTabDetails <- ceItem.notificationTabDetails
-      clientEventMetaData <- notificationTabDetails.clientEventMetadata
-      notificationId <- clientEventMetaData.upstreamId
-    } yield {
-      notificationId
+  // n-nyotification i-id fow n-nyotification i-in the nyotification tab
+  def getnotificationidfownotificationtab(
+    ceitem: wogeventitem
+  ): o-option[stwing] = {
+    fow {
+      nyotificationtabdetaiws <- c-ceitem.notificationtabdetaiws
+      cwienteventmetadata <- n-nyotificationtabdetaiws.cwienteventmetadata
+      nyotificationid <- cwienteventmetadata.upstweamid
+    } yiewd {
+      n-nyotificationid
     }
   }
 
-  // Notification id for Push Notification
-  def getNotificationIdForPushNotification(logEvent: LogEvent): Option[String] = for {
-    pushNotificationDetails <- logEvent.notificationDetails
-    notificationId <- pushNotificationDetails.impressionId
-  } yield notificationId
+  // nyotification i-id fow push nyotification
+  d-def getnotificationidfowpushnotification(wogevent: wogevent): option[stwing] = fow {
+    pushnotificationdetaiws <- w-wogevent.notificationdetaiws
+    nyotificationid <- pushnotificationdetaiws.impwessionid
+  } yiewd nyotificationid
 }

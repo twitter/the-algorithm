@@ -1,23 +1,23 @@
-package com.twitter.unified_user_actions.adapter.client_event
+package com.twittew.unified_usew_actions.adaptew.cwient_event
 
-import com.twitter.clientapp.thriftscala.ItemType
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.clientapp.thriftscala.{Item => LogEventItem}
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.Item
-import com.twitter.unified_user_actions.thriftscala.TopicInfo
+impowt c-com.twittew.cwientapp.thwiftscawa.itemtype
+i-impowt com.twittew.cwientapp.thwiftscawa.wogevent
+i-impowt com.twittew.cwientapp.thwiftscawa.{item => w-wogeventitem}
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.actiontype
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.item
+i-impowt c-com.twittew.unified_usew_actions.thwiftscawa.topicinfo
 
-abstract class BaseTopicClientEvent(actionType: ActionType)
-    extends BaseClientEvent(actionType = actionType) {
-  override def isItemTypeValid(itemTypeOpt: Option[ItemType]): Boolean =
-    ItemTypeFilterPredicates.isItemTypeTopic(itemTypeOpt)
+abstwact cwass basetopiccwientevent(actiontype: actiontype)
+    extends b-basecwientevent(actiontype = actiontype) {
+  ovewwide d-def isitemtypevawid(itemtypeopt: option[itemtype]): b-boowean =
+    itemtypefiwtewpwedicates.isitemtypetopic(itemtypeopt)
 
-  override def getUuaItem(
-    ceItem: LogEventItem,
-    logEvent: LogEvent
-  ): Option[Item] =
-    for (actionTopicId <- ClientEventCommonUtils.getTopicId(
-        ceItem = ceItem,
-        ceNamespaceOpt = logEvent.eventNamespace))
-      yield Item.TopicInfo(TopicInfo(actionTopicId = actionTopicId))
+  ovewwide def getuuaitem(
+    ceitem: wogeventitem, 😳😳😳
+    w-wogevent: wogevent
+  ): o-option[item] =
+    f-fow (actiontopicid <- cwienteventcommonutiws.gettopicid(
+        ceitem = ceitem, -.-
+        cenamespaceopt = wogevent.eventnamespace))
+      yiewd item.topicinfo(topicinfo(actiontopicid = a-actiontopicid))
 }

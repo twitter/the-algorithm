@@ -1,155 +1,155 @@
-package com.twitter.representationscorer.twistlyfeatures
+package com.twittew.wepwesentationscowew.twistwyfeatuwes
 
-import com.twitter.decider.SimpleRecipient
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.representationscorer.common._
-import com.twitter.representationscorer.twistlyfeatures.Engagements._
-import com.twitter.simclusters_v2.common.SimClustersEmbeddingId.LongInternalId
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.recommendations.user_signal_service.SignalsClientColumn
-import com.twitter.strato.generated.client.recommendations.user_signal_service.SignalsClientColumn.Value
-import com.twitter.usersignalservice.thriftscala.BatchSignalRequest
-import com.twitter.usersignalservice.thriftscala.SignalRequest
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.util.Time
-import scala.collection.mutable.ArrayBuffer
-import com.twitter.usersignalservice.thriftscala.ClientIdentifier
+impowt c-com.twittew.decidew.simpwewecipient
+i-impowt com.twittew.finagwe.stats.stat
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.wepwesentationscowew.common._
+i-impowt c-com.twittew.wepwesentationscowew.twistwyfeatuwes.engagements._
+impowt com.twittew.simcwustews_v2.common.simcwustewsembeddingid.wongintewnawid
+impowt com.twittew.stitch.stitch
+impowt com.twittew.stwato.genewated.cwient.wecommendations.usew_signaw_sewvice.signawscwientcowumn
+impowt com.twittew.stwato.genewated.cwient.wecommendations.usew_signaw_sewvice.signawscwientcowumn.vawue
+i-impowt com.twittew.usewsignawsewvice.thwiftscawa.batchsignawwequest
+impowt com.twittew.usewsignawsewvice.thwiftscawa.signawwequest
+impowt c-com.twittew.usewsignawsewvice.thwiftscawa.signawtype
+impowt c-com.twittew.utiw.time
+impowt scawa.cowwection.mutabwe.awwaybuffew
+impowt com.twittew.usewsignawsewvice.thwiftscawa.cwientidentifiew
 
-class UserSignalServiceRecentEngagementsClient(
-  stratoClient: SignalsClientColumn,
-  decider: RepresentationScorerDecider,
-  stats: StatsReceiver) {
+cwass usewsignawsewvicewecentengagementscwient(
+  s-stwatocwient: signawscwientcowumn, >_<
+  d-decidew: w-wepwesentationscowewdecidew,
+  stats: statsweceivew) {
 
-  import UserSignalServiceRecentEngagementsClient._
+  impowt usewsignawsewvicewecentengagementscwient._
 
-  private val signalStats = stats.scope("user-signal-service", "signal")
-  private val signalTypeStats: Map[SignalType, Stat] =
-    SignalType.list.map(s => (s, signalStats.scope(s.name).stat("size"))).toMap
+  pwivate vaw signawstats = s-stats.scope("usew-signaw-sewvice", ʘwʘ "signaw")
+  pwivate vaw signawtypestats: map[signawtype, (˘ω˘) stat] =
+    signawtype.wist.map(s => (s, (✿oωo) s-signawstats.scope(s.name).stat("size"))).tomap
 
-  def get(userId: UserId): Stitch[Engagements] = {
-    val request = buildRequest(userId)
-    stratoClient.fetcher.fetch(request).map(_.v).lowerFromOption().map { response =>
-      val now = Time.now
-      val sevenDaysAgo = now - SevenDaysSpan
-      val thirtyDaysAgo = now - ThirtyDaysSpan
+  def get(usewid: u-usewid): s-stitch[engagements] = {
+    v-vaw w-wequest = buiwdwequest(usewid)
+    stwatocwient.fetchew.fetch(wequest).map(_.v).wowewfwomoption().map { wesponse =>
+      v-vaw nyow = time.now
+      vaw sevendaysago = n-nyow - sevendaysspan
+      vaw thiwtydaysago = nyow - thiwtydaysspan
 
-      Engagements(
-        favs7d = getUserSignals(response, SignalType.TweetFavorite, sevenDaysAgo),
-        retweets7d = getUserSignals(response, SignalType.Retweet, sevenDaysAgo),
-        follows30d = getUserSignals(response, SignalType.AccountFollowWithDelay, thirtyDaysAgo),
-        shares7d = getUserSignals(response, SignalType.TweetShareV1, sevenDaysAgo),
-        replies7d = getUserSignals(response, SignalType.Reply, sevenDaysAgo),
-        originalTweets7d = getUserSignals(response, SignalType.OriginalTweet, sevenDaysAgo),
-        videoPlaybacks7d =
-          getUserSignals(response, SignalType.VideoView90dPlayback50V1, sevenDaysAgo),
-        block30d = getUserSignals(response, SignalType.AccountBlock, thirtyDaysAgo),
-        mute30d = getUserSignals(response, SignalType.AccountMute, thirtyDaysAgo),
-        report30d = getUserSignals(response, SignalType.TweetReport, thirtyDaysAgo),
-        dontlike30d = getUserSignals(response, SignalType.TweetDontLike, thirtyDaysAgo),
-        seeFewer30d = getUserSignals(response, SignalType.TweetSeeFewer, thirtyDaysAgo),
+      engagements(
+        favs7d = getusewsignaws(wesponse, (///ˬ///✿) s-signawtype.tweetfavowite, rawr x3 sevendaysago), -.-
+        w-wetweets7d = g-getusewsignaws(wesponse, ^^ s-signawtype.wetweet, (⑅˘꒳˘) sevendaysago), nyaa~~
+        fowwows30d = getusewsignaws(wesponse, /(^•ω•^) s-signawtype.accountfowwowwithdeway, (U ﹏ U) t-thiwtydaysago), 😳😳😳
+        shawes7d = g-getusewsignaws(wesponse, >w< s-signawtype.tweetshawev1, XD sevendaysago), o.O
+        w-wepwies7d = getusewsignaws(wesponse, mya signawtype.wepwy, 🥺 s-sevendaysago), ^^;;
+        owiginawtweets7d = getusewsignaws(wesponse, :3 signawtype.owiginawtweet, (U ﹏ U) s-sevendaysago), OwO
+        videopwaybacks7d =
+          g-getusewsignaws(wesponse, 😳😳😳 signawtype.videoview90dpwayback50v1, (ˆ ﻌ ˆ)♡ s-sevendaysago), XD
+        b-bwock30d = getusewsignaws(wesponse, (ˆ ﻌ ˆ)♡ signawtype.accountbwock, ( ͡o ω ͡o ) thiwtydaysago), rawr x3
+        mute30d = getusewsignaws(wesponse, nyaa~~ signawtype.accountmute, >_< thiwtydaysago), ^^;;
+        w-wepowt30d = g-getusewsignaws(wesponse, (ˆ ﻌ ˆ)♡ signawtype.tweetwepowt, ^^;; t-thiwtydaysago), (⑅˘꒳˘)
+        d-dontwike30d = g-getusewsignaws(wesponse, rawr x3 signawtype.tweetdontwike, (///ˬ///✿) thiwtydaysago), 🥺
+        seefewew30d = g-getusewsignaws(wesponse, >_< signawtype.tweetseefewew, UwU thiwtydaysago), >_<
       )
     }
   }
 
-  private def getUserSignals(
-    response: Value,
-    signalType: SignalType,
-    earliestValidTimestamp: Time
-  ): Seq[UserSignal] = {
-    val signals = response.signalResponse
-      .getOrElse(signalType, Seq.empty)
+  pwivate def getusewsignaws(
+    w-wesponse: vawue, -.-
+    signawtype: s-signawtype, mya
+    e-eawwiestvawidtimestamp: t-time
+  ): seq[usewsignaw] = {
+    vaw signaws = w-wesponse.signawwesponse
+      .getowewse(signawtype, >w< s-seq.empty)
       .view
-      .filter(_.timestamp > earliestValidTimestamp.inMillis)
-      .map(s => s.targetInternalId.collect { case LongInternalId(id) => (id, s.timestamp) })
-      .collect { case Some((id, engagedAt)) => UserSignal(id, engagedAt) }
-      .take(EngagementsToScore)
-      .force
+      .fiwtew(_.timestamp > e-eawwiestvawidtimestamp.inmiwwis)
+      .map(s => s-s.tawgetintewnawid.cowwect { case wongintewnawid(id) => (id, (U ﹏ U) s.timestamp) })
+      .cowwect { c-case some((id, 😳😳😳 e-engagedat)) => u-usewsignaw(id, o.O e-engagedat) }
+      .take(engagementstoscowe)
+      .fowce
 
-    signalTypeStats(signalType).add(signals.size)
-    signals
+    s-signawtypestats(signawtype).add(signaws.size)
+    signaws
   }
 
-  private def buildRequest(userId: Long) = {
-    val recipient = Some(SimpleRecipient(userId))
+  pwivate def buiwdwequest(usewid: w-wong) = {
+    vaw wecipient = some(simpwewecipient(usewid))
 
-    // Signals RSX always fetches
-    val requestSignals = ArrayBuffer(
-      SignalRequestFav,
-      SignalRequestRetweet,
-      SignalRequestFollow
+    // signaws wsx awways fetches
+    vaw wequestsignaws = a-awwaybuffew(
+      signawwequestfav, òωó
+      signawwequestwetweet, 😳😳😳
+      signawwequestfowwow
     )
 
-    // Signals under experimentation. We use individual deciders to disable them if necessary.
-    // If experiments are successful, they will become permanent.
-    if (decider.isAvailable(FetchSignalShareDeciderKey, recipient))
-      requestSignals.append(SignalRequestShare)
+    // s-signaws u-undew expewimentation. σωσ w-we use individuaw decidews t-to disabwe them if nyecessawy. (⑅˘꒳˘)
+    // i-if expewiments a-awe successfuw, (///ˬ///✿) they wiww become pewmanent. 🥺
+    if (decidew.isavaiwabwe(fetchsignawshawedecidewkey, OwO wecipient))
+      wequestsignaws.append(signawwequestshawe)
 
-    if (decider.isAvailable(FetchSignalReplyDeciderKey, recipient))
-      requestSignals.append(SignalRequestReply)
+    i-if (decidew.isavaiwabwe(fetchsignawwepwydecidewkey, >w< wecipient))
+      w-wequestsignaws.append(signawwequestwepwy)
 
-    if (decider.isAvailable(FetchSignalOriginalTweetDeciderKey, recipient))
-      requestSignals.append(SignalRequestOriginalTweet)
+    if (decidew.isavaiwabwe(fetchsignawowiginawtweetdecidewkey, w-wecipient))
+      w-wequestsignaws.append(signawwequestowiginawtweet)
 
-    if (decider.isAvailable(FetchSignalVideoPlaybackDeciderKey, recipient))
-      requestSignals.append(SignalRequestVideoPlayback)
+    if (decidew.isavaiwabwe(fetchsignawvideopwaybackdecidewkey, 🥺 wecipient))
+      w-wequestsignaws.append(signawwequestvideopwayback)
 
-    if (decider.isAvailable(FetchSignalBlockDeciderKey, recipient))
-      requestSignals.append(SignalRequestBlock)
+    i-if (decidew.isavaiwabwe(fetchsignawbwockdecidewkey, nyaa~~ wecipient))
+      w-wequestsignaws.append(signawwequestbwock)
 
-    if (decider.isAvailable(FetchSignalMuteDeciderKey, recipient))
-      requestSignals.append(SignalRequestMute)
+    i-if (decidew.isavaiwabwe(fetchsignawmutedecidewkey, ^^ wecipient))
+      wequestsignaws.append(signawwequestmute)
 
-    if (decider.isAvailable(FetchSignalReportDeciderKey, recipient))
-      requestSignals.append(SignalRequestReport)
+    if (decidew.isavaiwabwe(fetchsignawwepowtdecidewkey, >w< wecipient))
+      w-wequestsignaws.append(signawwequestwepowt)
 
-    if (decider.isAvailable(FetchSignalDontlikeDeciderKey, recipient))
-      requestSignals.append(SignalRequestDontlike)
+    i-if (decidew.isavaiwabwe(fetchsignawdontwikedecidewkey, OwO w-wecipient))
+      wequestsignaws.append(signawwequestdontwike)
 
-    if (decider.isAvailable(FetchSignalSeeFewerDeciderKey, recipient))
-      requestSignals.append(SignalRequestSeeFewer)
+    i-if (decidew.isavaiwabwe(fetchsignawseefewewdecidewkey, XD w-wecipient))
+      wequestsignaws.append(signawwequestseefewew)
 
-    BatchSignalRequest(userId, requestSignals, Some(ClientIdentifier.RepresentationScorerHome))
+    batchsignawwequest(usewid, ^^;; w-wequestsignaws, 🥺 some(cwientidentifiew.wepwesentationscowewhome))
   }
 }
 
-object UserSignalServiceRecentEngagementsClient {
-  val FetchSignalShareDeciderKey = "representation_scorer_fetch_signal_share"
-  val FetchSignalReplyDeciderKey = "representation_scorer_fetch_signal_reply"
-  val FetchSignalOriginalTweetDeciderKey = "representation_scorer_fetch_signal_original_tweet"
-  val FetchSignalVideoPlaybackDeciderKey = "representation_scorer_fetch_signal_video_playback"
-  val FetchSignalBlockDeciderKey = "representation_scorer_fetch_signal_block"
-  val FetchSignalMuteDeciderKey = "representation_scorer_fetch_signal_mute"
-  val FetchSignalReportDeciderKey = "representation_scorer_fetch_signal_report"
-  val FetchSignalDontlikeDeciderKey = "representation_scorer_fetch_signal_dont_like"
-  val FetchSignalSeeFewerDeciderKey = "representation_scorer_fetch_signal_see_fewer"
+object usewsignawsewvicewecentengagementscwient {
+  vaw fetchsignawshawedecidewkey = "wepwesentation_scowew_fetch_signaw_shawe"
+  vaw fetchsignawwepwydecidewkey = "wepwesentation_scowew_fetch_signaw_wepwy"
+  v-vaw fetchsignawowiginawtweetdecidewkey = "wepwesentation_scowew_fetch_signaw_owiginaw_tweet"
+  v-vaw fetchsignawvideopwaybackdecidewkey = "wepwesentation_scowew_fetch_signaw_video_pwayback"
+  vaw fetchsignawbwockdecidewkey = "wepwesentation_scowew_fetch_signaw_bwock"
+  vaw fetchsignawmutedecidewkey = "wepwesentation_scowew_fetch_signaw_mute"
+  v-vaw f-fetchsignawwepowtdecidewkey = "wepwesentation_scowew_fetch_signaw_wepowt"
+  vaw fetchsignawdontwikedecidewkey = "wepwesentation_scowew_fetch_signaw_dont_wike"
+  vaw fetchsignawseefewewdecidewkey = "wepwesentation_scowew_fetch_signaw_see_fewew"
 
-  val EngagementsToScore = 10
-  private val engagementsToScoreOpt: Option[Long] = Some(EngagementsToScore)
+  v-vaw engagementstoscowe = 10
+  pwivate vaw engagementstoscoweopt: option[wong] = some(engagementstoscowe)
 
-  val SignalRequestFav: SignalRequest =
-    SignalRequest(engagementsToScoreOpt, SignalType.TweetFavorite)
-  val SignalRequestRetweet: SignalRequest = SignalRequest(engagementsToScoreOpt, SignalType.Retweet)
-  val SignalRequestFollow: SignalRequest =
-    SignalRequest(engagementsToScoreOpt, SignalType.AccountFollowWithDelay)
-  // New experimental signals
-  val SignalRequestShare: SignalRequest =
-    SignalRequest(engagementsToScoreOpt, SignalType.TweetShareV1)
-  val SignalRequestReply: SignalRequest = SignalRequest(engagementsToScoreOpt, SignalType.Reply)
-  val SignalRequestOriginalTweet: SignalRequest =
-    SignalRequest(engagementsToScoreOpt, SignalType.OriginalTweet)
-  val SignalRequestVideoPlayback: SignalRequest =
-    SignalRequest(engagementsToScoreOpt, SignalType.VideoView90dPlayback50V1)
+  v-vaw signawwequestfav: signawwequest =
+    signawwequest(engagementstoscoweopt, XD s-signawtype.tweetfavowite)
+  v-vaw signawwequestwetweet: signawwequest = signawwequest(engagementstoscoweopt, (U ᵕ U❁) s-signawtype.wetweet)
+  v-vaw signawwequestfowwow: signawwequest =
+    signawwequest(engagementstoscoweopt, :3 signawtype.accountfowwowwithdeway)
+  // n-nyew expewimentaw signaws
+  v-vaw signawwequestshawe: signawwequest =
+    signawwequest(engagementstoscoweopt, ( ͡o ω ͡o ) signawtype.tweetshawev1)
+  v-vaw signawwequestwepwy: signawwequest = s-signawwequest(engagementstoscoweopt, òωó s-signawtype.wepwy)
+  vaw signawwequestowiginawtweet: s-signawwequest =
+    signawwequest(engagementstoscoweopt, σωσ signawtype.owiginawtweet)
+  v-vaw signawwequestvideopwayback: s-signawwequest =
+    signawwequest(engagementstoscoweopt, (U ᵕ U❁) s-signawtype.videoview90dpwayback50v1)
 
-  // Negative signals
-  val SignalRequestBlock: SignalRequest =
-    SignalRequest(engagementsToScoreOpt, SignalType.AccountBlock)
-  val SignalRequestMute: SignalRequest =
-    SignalRequest(engagementsToScoreOpt, SignalType.AccountMute)
-  val SignalRequestReport: SignalRequest =
-    SignalRequest(engagementsToScoreOpt, SignalType.TweetReport)
-  val SignalRequestDontlike: SignalRequest =
-    SignalRequest(engagementsToScoreOpt, SignalType.TweetDontLike)
-  val SignalRequestSeeFewer: SignalRequest =
-    SignalRequest(engagementsToScoreOpt, SignalType.TweetSeeFewer)
+  // nyegative signaws
+  v-vaw signawwequestbwock: s-signawwequest =
+    signawwequest(engagementstoscoweopt, (✿oωo) signawtype.accountbwock)
+  vaw signawwequestmute: s-signawwequest =
+    s-signawwequest(engagementstoscoweopt, ^^ signawtype.accountmute)
+  v-vaw signawwequestwepowt: signawwequest =
+    signawwequest(engagementstoscoweopt, ^•ﻌ•^ s-signawtype.tweetwepowt)
+  vaw signawwequestdontwike: s-signawwequest =
+    s-signawwequest(engagementstoscoweopt, XD signawtype.tweetdontwike)
+  vaw signawwequestseefewew: signawwequest =
+    s-signawwequest(engagementstoscoweopt, :3 s-signawtype.tweetseefewew)
 }

@@ -1,21 +1,21 @@
-package com.twitter.tweetypie.handler
+package com.twittew.tweetypie.handwew
 
-import com.twitter.compliance.userconsent.compliance.birthdate.GlobalBirthdateUtil
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.tweetypie.thriftscala.DeletedTweet
-import org.joda.time.DateTime
+impowt com.twittew.compwiance.usewconsent.compwiance.biwthdate.gwobawbiwthdateutiw
+i-impowt c-com.twittew.gizmoduck.thwiftscawa.usew
+i-impowt com.twittew.tweetypie.thwiftscawa.dewetedtweet
+i-impowt o-owg.joda.time.datetime
 
 /*
- * As part of GDPR U13 work, we want to block tweets created from when a user
- * was < 13 from being restored.
+ * a-as pawt of gdpw u-u13 wowk, XD we want t-to bwock tweets cweated fwom when a usew
+ * was < 13 fwom being westowed. :3
  */
 
-private[handler] object U13ValidationUtil {
-  def wasTweetCreatedBeforeUserTurned13(user: User, deletedTweet: DeletedTweet): Boolean =
-    deletedTweet.createdAtSecs match {
-      case None =>
-        throw NoCreatedAtTimeException
-      case Some(createdAtSecs) =>
-        GlobalBirthdateUtil.isUnderSomeAge(13, new DateTime(createdAtSecs * 1000L), user)
+p-pwivate[handwew] object u13vawidationutiw {
+  def wastweetcweatedbefoweusewtuwned13(usew: u-usew, 😳😳😳 dewetedtweet: d-dewetedtweet): boowean =
+    dewetedtweet.cweatedatsecs match {
+      case nyone =>
+        t-thwow nyocweatedattimeexception
+      c-case some(cweatedatsecs) =>
+        g-gwobawbiwthdateutiw.isundewsomeage(13, -.- nyew datetime(cweatedatsecs * 1000w), usew)
     }
 }

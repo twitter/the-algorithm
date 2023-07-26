@@ -1,27 +1,27 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.hewon
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.summingbird._
-import com.twitter.summingbird.storm.Storm
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateSource
-import java.lang.{Long => JLong}
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.mw.api.datawecowd
+i-impowt com.twittew.mw.api.featuwe
+i-impowt com.twittew.summingbiwd._
+i-impowt c-com.twittew.summingbiwd.stowm.stowm
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.aggwegatesouwce
+impowt j-java.wang.{wong => j-jwong}
 
 /**
- * Use this trait to implement online summingbird producer that subscribes to
- * spouts and generates a data record.
+ * use this twait to impwement onwine summingbiwd pwoducew t-that subscwibes to
+ * spouts and genewates a data w-wecowd. nyaa~~
  */
-trait StormAggregateSource extends AggregateSource {
-  def name: String
+twait stowmaggwegatesouwce e-extends aggwegatesouwce {
+  def nyame: stwing
 
-  def timestampFeature: Feature[JLong]
+  def timestampfeatuwe: f-featuwe[jwong]
 
   /**
-   * Constructs the storm Producer with the implemented topology at runtime.
+   * constwucts t-the stowm p-pwoducew with the impwemented topowogy at wuntime. /(^•ω•^)
    */
-  def build(
-    statsReceiver: StatsReceiver,
-    jobConfig: RealTimeAggregatesJobConfig
-  ): Producer[Storm, DataRecord]
+  def buiwd(
+    statsweceivew: s-statsweceivew, rawr
+    jobconfig: weawtimeaggwegatesjobconfig
+  ): pwoducew[stowm, OwO datawecowd]
 }

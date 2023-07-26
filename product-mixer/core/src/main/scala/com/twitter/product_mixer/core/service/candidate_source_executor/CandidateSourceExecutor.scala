@@ -1,173 +1,173 @@
-package com.twitter.product_mixer.core.service.candidate_source_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.candidate_souwce_executow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.product_mixer.core.functional_component.transformer.BaseCandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.presentation.CandidateSourcePosition
-import com.twitter.product_mixer.core.model.common.presentation.CandidateSources
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ExecutionFailed
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.UnexpectedCandidateResult
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.candidate_feature_transformer_executor.CandidateFeatureTransformerExecutor
-import com.twitter.product_mixer.core.service.transformer_executor.PerCandidateTransformerExecutor
-import com.twitter.product_mixer.core.service.transformer_executor.TransformerExecutor
-import com.twitter.stitch.Arrow
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.immutable.ListSet
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.basecandidatesouwce
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwcewithextwactedfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidateswithsouwcefeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.basecandidatepipewinequewytwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinewesuwtstwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatesouwceposition
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatesouwces
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.executionfaiwed
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.unexpectedcandidatewesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_featuwe_twansfowmew_executow.candidatefeatuwetwansfowmewexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.twansfowmew_executow.pewcandidatetwansfowmewexecutow
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.twansfowmew_executow.twansfowmewexecutow
+impowt com.twittew.stitch.awwow
+impowt com.twittew.utiw.wetuwn
+impowt com.twittew.utiw.thwow
+impowt c-com.twittew.utiw.twy
+impowt c-com.twittew.utiw.wogging.wogging
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
+impowt scawa.cowwection.immutabwe.wistset
 
 /**
- * [[CandidateSourceExecutor]]:
- *   - Executes a [[BaseCandidateSource]], using a [[BaseCandidatePipelineQueryTransformer]] and a [[CandidatePipelineResultsTransformer]]
- *   - in parallel, uses a [[CandidateFeatureTransformer]] to optionally extract [[com.twitter.product_mixer.core.feature.Feature]]s from the result
- *   - Handles [[UnexpectedCandidateResult]] [[PipelineFailure]]s returned from [[CandidatePipelineResultsTransformer]] failures by removing those candidates from the result
+ * [[candidatesouwceexecutow]]:
+ *   - e-exekawaii~s a [[basecandidatesouwce]], ^^;; using a [[basecandidatepipewinequewytwansfowmew]] and a [[candidatepipewinewesuwtstwansfowmew]]
+ *   - in p-pawawwew, ^•ﻌ•^ uses a [[candidatefeatuwetwansfowmew]] to optionawwy extwact [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwe]]s fwom the wesuwt
+ *   - h-handwes [[unexpectedcandidatewesuwt]] [[pipewinefaiwuwe]]s wetuwned fwom [[candidatepipewinewesuwtstwansfowmew]] f-faiwuwes by w-wemoving those c-candidates fwom the wesuwt
  */
-@Singleton
-class CandidateSourceExecutor @Inject() (
-  override val statsReceiver: StatsReceiver,
-  candidateFeatureTransformerExecutor: CandidateFeatureTransformerExecutor,
-  transformerExecutor: TransformerExecutor,
-  perCandidateTransformerExecutor: PerCandidateTransformerExecutor)
-    extends Executor
-    with Logging {
+@singweton
+cwass candidatesouwceexecutow @inject() (
+  o-ovewwide vaw s-statsweceivew: statsweceivew, σωσ
+  c-candidatefeatuwetwansfowmewexecutow: c-candidatefeatuwetwansfowmewexecutow, -.-
+  twansfowmewexecutow: twansfowmewexecutow, ^^;;
+  p-pewcandidatetwansfowmewexecutow: pewcandidatetwansfowmewexecutow)
+    e-extends executow
+    with wogging {
 
-  def arrow[
-    Query <: PipelineQuery,
-    CandidateSourceQuery,
-    CandidateSourceResult,
-    Candidate <: UniversalNoun[Any]
+  def awwow[
+    q-quewy <: pipewinequewy, XD
+    c-candidatesouwcequewy, 🥺
+    candidatesouwcewesuwt, òωó
+    c-candidate <: u-univewsawnoun[any]
   ](
-    candidateSource: BaseCandidateSource[CandidateSourceQuery, CandidateSourceResult],
-    queryTransformer: BaseCandidatePipelineQueryTransformer[
-      Query,
-      CandidateSourceQuery
-    ],
-    resultTransformer: CandidatePipelineResultsTransformer[CandidateSourceResult, Candidate],
-    resultFeaturesTransformers: Seq[CandidateFeatureTransformer[CandidateSourceResult]],
-    context: Executor.Context
-  ): Arrow[Query, CandidateSourceExecutorResult[Candidate]] = {
+    candidatesouwce: basecandidatesouwce[candidatesouwcequewy, (ˆ ﻌ ˆ)♡ candidatesouwcewesuwt], -.-
+    quewytwansfowmew: basecandidatepipewinequewytwansfowmew[
+      quewy, :3
+      c-candidatesouwcequewy
+    ], ʘwʘ
+    w-wesuwttwansfowmew: candidatepipewinewesuwtstwansfowmew[candidatesouwcewesuwt, 🥺 c-candidate], >_<
+    w-wesuwtfeatuwestwansfowmews: s-seq[candidatefeatuwetwansfowmew[candidatesouwcewesuwt]], ʘwʘ
+    context: executow.context
+  ): awwow[quewy, (˘ω˘) c-candidatesouwceexecutowwesuwt[candidate]] = {
 
-    val candidateSourceArrow: Arrow[CandidateSourceQuery, CandidatesWithSourceFeatures[
-      CandidateSourceResult
+    vaw candidatesouwceawwow: awwow[candidatesouwcequewy, (✿oωo) candidateswithsouwcefeatuwes[
+      candidatesouwcewesuwt
     ]] =
-      candidateSource match {
-        case regularCandidateSource: CandidateSource[CandidateSourceQuery, CandidateSourceResult] =>
-          Arrow.flatMap(regularCandidateSource.apply).map { candidates =>
-            CandidatesWithSourceFeatures(candidates, FeatureMap.empty)
+      c-candidatesouwce match {
+        c-case weguwawcandidatesouwce: c-candidatesouwce[candidatesouwcequewy, (///ˬ///✿) c-candidatesouwcewesuwt] =>
+          awwow.fwatmap(weguwawcandidatesouwce.appwy).map { c-candidates =>
+            c-candidateswithsouwcefeatuwes(candidates, rawr x3 f-featuwemap.empty)
           }
-        case candidateSourceWithExtractedFeatures: CandidateSourceWithExtractedFeatures[
-              CandidateSourceQuery,
-              CandidateSourceResult
+        c-case candidatesouwcewithextwactedfeatuwes: candidatesouwcewithextwactedfeatuwes[
+              c-candidatesouwcequewy, -.-
+              c-candidatesouwcewesuwt
             ] =>
-          Arrow.flatMap(candidateSourceWithExtractedFeatures.apply)
+          awwow.fwatmap(candidatesouwcewithextwactedfeatuwes.appwy)
       }
 
-    val resultsTransformerArrow: Arrow[Seq[CandidateSourceResult], Seq[Try[Candidate]]] =
-      perCandidateTransformerExecutor.arrow(resultTransformer, context)
+    v-vaw wesuwtstwansfowmewawwow: a-awwow[seq[candidatesouwcewesuwt], ^^ s-seq[twy[candidate]]] =
+      pewcandidatetwansfowmewexecutow.awwow(wesuwttwansfowmew, (⑅˘꒳˘) context)
 
-    val featureMapTransformersArrow: Arrow[
-      Seq[CandidateSourceResult],
-      Seq[FeatureMap]
+    vaw featuwemaptwansfowmewsawwow: a-awwow[
+      seq[candidatesouwcewesuwt], nyaa~~
+      seq[featuwemap]
     ] =
-      candidateFeatureTransformerExecutor
-        .arrow(resultFeaturesTransformers, context).map(_.featureMaps)
+      candidatefeatuwetwansfowmewexecutow
+        .awwow(wesuwtfeatuwestwansfowmews, /(^•ω•^) context).map(_.featuwemaps)
 
-    val candidatesResultArrow: Arrow[CandidatesWithSourceFeatures[CandidateSourceResult], Seq[
-      (Candidate, FeatureMap)
-    ]] = Arrow
-      .map[CandidatesWithSourceFeatures[CandidateSourceResult], Seq[CandidateSourceResult]](
+    vaw candidateswesuwtawwow: a-awwow[candidateswithsouwcefeatuwes[candidatesouwcewesuwt], (U ﹏ U) seq[
+      (candidate, 😳😳😳 featuwemap)
+    ]] = awwow
+      .map[candidateswithsouwcefeatuwes[candidatesouwcewesuwt], >w< seq[candidatesouwcewesuwt]](
         _.candidates)
-      .andThen(Arrow
-        .joinMap(resultsTransformerArrow, featureMapTransformersArrow) {
-          case (transformed, features) =>
-            if (transformed.length != features.length)
-              throw PipelineFailure(
-                ExecutionFailed,
-                s"Found ${transformed.length} candidates and ${features.length} FeatureMaps, expected their lengths to be equal")
-            transformed.iterator
-              .zip(features.iterator)
-              .collect { case ErrorHandling(result) => result }
-              .toSeq
+      .andthen(awwow
+        .joinmap(wesuwtstwansfowmewawwow, XD f-featuwemaptwansfowmewsawwow) {
+          c-case (twansfowmed, o.O f-featuwes) =>
+            if (twansfowmed.wength != f-featuwes.wength)
+              thwow pipewinefaiwuwe(
+                e-executionfaiwed, mya
+                s-s"found ${twansfowmed.wength} candidates and ${featuwes.wength} featuwemaps, 🥺 expected theiw wengths to be e-equaw")
+            twansfowmed.itewatow
+              .zip(featuwes.itewatow)
+              .cowwect { c-case ewwowhandwing(wesuwt) => wesuwt }
+              .toseq
         })
 
-    // Build the final CandidateSourceExecutorResult
-    val executorResultArrow: Arrow[
-      (FeatureMap, Seq[(Candidate, FeatureMap)]),
-      CandidateSourceExecutorResult[
-        Candidate
+    // b-buiwd the f-finaw candidatesouwceexecutowwesuwt
+    vaw executowwesuwtawwow: awwow[
+      (featuwemap, ^^;; s-seq[(candidate, :3 f-featuwemap)]), (U ﹏ U)
+      candidatesouwceexecutowwesuwt[
+        c-candidate
       ]
-    ] = Arrow.map {
-      case (queryFeatures: FeatureMap, results: Seq[(Candidate, FeatureMap)]) =>
-        val candidatesWithFeatures: Seq[FetchedCandidateWithFeatures[Candidate]] =
-          results.zipWithIndex.map {
-            case ((candidate, featureMap), index) =>
-              FetchedCandidateWithFeatures(
-                candidate,
-                featureMap + (CandidateSourcePosition, index) + (CandidateSources, ListSet(
-                  candidateSource.identifier))
+    ] = a-awwow.map {
+      case (quewyfeatuwes: featuwemap, OwO wesuwts: seq[(candidate, 😳😳😳 featuwemap)]) =>
+        vaw candidateswithfeatuwes: s-seq[fetchedcandidatewithfeatuwes[candidate]] =
+          w-wesuwts.zipwithindex.map {
+            c-case ((candidate, (ˆ ﻌ ˆ)♡ featuwemap), XD i-index) =>
+              f-fetchedcandidatewithfeatuwes(
+                candidate, (ˆ ﻌ ˆ)♡
+                f-featuwemap + (candidatesouwceposition, ( ͡o ω ͡o ) index) + (candidatesouwces, rawr x3 wistset(
+                  candidatesouwce.identifiew))
               )
           }
-        CandidateSourceExecutorResult(
-          candidates = candidatesWithFeatures,
-          candidateSourceFeatureMap = queryFeatures
+        candidatesouwceexecutowwesuwt(
+          c-candidates = c-candidateswithfeatuwes, nyaa~~
+          candidatesouwcefeatuwemap = quewyfeatuwes
         )
     }
 
-    val queryTransformerArrow =
-      transformerExecutor.arrow[Query, CandidateSourceQuery](queryTransformer, context)
+    v-vaw quewytwansfowmewawwow =
+      t-twansfowmewexecutow.awwow[quewy, >_< candidatesouwcequewy](quewytwansfowmew, ^^;; context)
 
-    val combinedArrow =
-      queryTransformerArrow
-        .andThen(candidateSourceArrow)
-        .andThen(
-          Arrow
+    vaw combinedawwow =
+      q-quewytwansfowmewawwow
+        .andthen(candidatesouwceawwow)
+        .andthen(
+          awwow
             .join(
-              Arrow.map[CandidatesWithSourceFeatures[CandidateSourceResult], FeatureMap](
-                _.features),
-              candidatesResultArrow
+              awwow.map[candidateswithsouwcefeatuwes[candidatesouwcewesuwt], featuwemap](
+                _.featuwes), (ˆ ﻌ ˆ)♡
+              candidateswesuwtawwow
             ))
-        .andThen(executorResultArrow)
+        .andthen(executowwesuwtawwow)
 
-    wrapComponentWithExecutorBookkeepingWithSize[Query, CandidateSourceExecutorResult[Candidate]](
-      context,
-      candidateSource.identifier,
-      result => result.candidates.size
-    )(combinedArrow)
+    w-wwapcomponentwithexecutowbookkeepingwithsize[quewy, ^^;; candidatesouwceexecutowwesuwt[candidate]](
+      context, (⑅˘꒳˘)
+      c-candidatesouwce.identifiew, rawr x3
+      w-wesuwt => wesuwt.candidates.size
+    )(combinedawwow)
   }
 
-  object ErrorHandling {
+  object ewwowhandwing {
 
-    /** Silently drop [[UnexpectedCandidateResult]] */
-    def unapply[Candidate](
-      candidateTryAndFeatureMap: (Try[Candidate], FeatureMap)
-    ): Option[(Candidate, FeatureMap)] = {
-      val (candidateTry, featureMap) = candidateTryAndFeatureMap
-      val candidateOpt = candidateTry match {
-        case Throw(PipelineFailure(UnexpectedCandidateResult, _, _, _)) => None
-        case Throw(ex) => throw ex
-        case Return(r) => Some(r)
+    /** siwentwy d-dwop [[unexpectedcandidatewesuwt]] */
+    d-def unappwy[candidate](
+      candidatetwyandfeatuwemap: (twy[candidate], (///ˬ///✿) featuwemap)
+    ): option[(candidate, 🥺 f-featuwemap)] = {
+      vaw (candidatetwy, >_< f-featuwemap) = candidatetwyandfeatuwemap
+      vaw candidateopt = candidatetwy m-match {
+        case thwow(pipewinefaiwuwe(unexpectedcandidatewesuwt, UwU _, _, >_< _)) => n-nyone
+        c-case thwow(ex) => thwow ex
+        c-case wetuwn(w) => some(w)
       }
 
-      candidateOpt.map { candidate => (candidate, featureMap) }
+      candidateopt.map { c-candidate => (candidate, -.- f-featuwemap) }
     }
   }
 }
 
-case class FetchedCandidateWithFeatures[Candidate <: UniversalNoun[Any]](
-  candidate: Candidate,
-  features: FeatureMap)
-    extends CandidateWithFeatures[Candidate]
+c-case cwass fetchedcandidatewithfeatuwes[candidate <: u-univewsawnoun[any]](
+  c-candidate: candidate, mya
+  featuwes: featuwemap)
+    e-extends candidatewithfeatuwes[candidate]

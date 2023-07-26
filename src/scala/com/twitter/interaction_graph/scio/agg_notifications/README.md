@@ -1,34 +1,5 @@
-## InteractionGraphClientEventLogs Dataflow Job
+# wepwesentation scowew #
 
-#### IntelliJ
-```
-fastpass create --name rg_labels --intellij src/scala/com/twitter/interaction_graph/scio/agg_notifications
-```
+**wepwesentation s-scowew** (wsx) s-sewves a-as a centwawized s-scowing system, XD o-offewing simcwustews o-ow othew e-embedding-based s-scowing sowutions as machine weawning featuwes.
 
-#### Compile
-```
-bazel build src/scala/com/twitter/interaction_graph/scio/agg_notifications:interaction_graph_notifications_scio
-```
-
-#### Build Jar
-```
-bazel bundle src/scala/com/twitter/interaction_graph/scio/agg_notifications:interaction_graph_notifications_scio
-```
-
-#### Run Scheduled Job
-```
-export PROJECTID=twttr-recos-ml-prod
-export REGION=us-central1
-export JOB_NAME=interaction-graph-notifications-dataflow
-
-bin/d6w schedule \
-  ${PROJECTID}/${REGION}/${JOB_NAME} \
-  src/scala/com/twitter/interaction_graph/scio/agg_notifications/config.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.project=${PROJECTID} \
-  --bind=profile.region=${REGION} \
-  --bind=profile.job_name=${JOB_NAME} \
-  --bind=profile.environment=prod \
-  --bind=profile.date=2022-05-10 \
-  --bind=profile.output_path=processed/interaction_graph_agg_notifications_dataflow
-```
+the wepwesentation scowew acquiwes u-usew behaviow data fwom the usew signaw sewvice (uss) a-and extwacts embeddings f-fwom the wepwesentation managew (wms). :3 it then cawcuwates both p-paiwwise and wistwise featuwes. 😳😳😳 t-these featuwes a-awe used at vawious stages, -.- incwuding candidate wetwievaw and wanking.

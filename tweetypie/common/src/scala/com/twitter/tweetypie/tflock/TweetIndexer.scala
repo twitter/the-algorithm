@@ -1,30 +1,30 @@
-/** Copyright 2010 Twitter, Inc. */
-package com.twitter.tweetypie
-package tflock
+/** copywight 2010 twittew, (⑅˘꒳˘) inc. */
+p-package com.twittew.tweetypie
+p-package tfwock
 
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.util.Future
+i-impowt com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt com.twittew.utiw.futuwe
 
-trait TweetIndexer {
-
-  /**
-   * Called at tweet-creation time, this method should set up all relevant indices on the tweet.
-   */
-  def createIndex(tweet: Tweet): Future[Unit] = Future.Unit
+t-twait tweetindexew {
 
   /**
-   * Called at tweet-undelete time (which isn't yet handled), this method should
-   * restore all relevant indices on the tweet.
+   * c-cawwed at tweet-cweation t-time, (///ˬ///✿) t-this method shouwd set up aww wewevant indices on the tweet. 😳😳😳
    */
-  def undeleteIndex(tweet: Tweet): Future[Unit] = Future.Unit
+  def cweateindex(tweet: t-tweet): futuwe[unit] = futuwe.unit
 
   /**
-   * Called at tweet-delete time, this method should archive all relevant indices on the tweet.
+   * c-cawwed at tweet-undewete t-time (which isn't yet handwed), 🥺 this method shouwd
+   * westowe a-aww wewevant indices on the t-tweet. mya
    */
-  def deleteIndex(tweet: Tweet, isBounceDelete: Boolean): Future[Unit] = Future.Unit
+  def u-undeweteindex(tweet: tweet): futuwe[unit] = futuwe.unit
 
   /**
-   * This method should archive or unarchive the retweet edge in TFlock RetweetsGraph.
+   * cawwed at tweet-dewete time, t-this method shouwd awchive aww wewevant indices on the tweet.
    */
-  def setRetweetVisibility(retweetId: TweetId, visible: Boolean): Future[Unit] = Future.Unit
+  def deweteindex(tweet: t-tweet, 🥺 isbouncedewete: boowean): f-futuwe[unit] = f-futuwe.unit
+
+  /**
+   * t-this method s-shouwd awchive ow unawchive the wetweet edge i-in tfwock wetweetsgwaph. >_<
+   */
+  def setwetweetvisibiwity(wetweetid: tweetid, >_< v-visibwe: boowean): futuwe[unit] = futuwe.unit
 }

@@ -1,143 +1,143 @@
-package com.twitter.simclusters_v2.scalding.offline_job
+package com.twittew.simcwustews_v2.scawding.offwine_job
 
-import com.twitter.scalding._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import com.twitter.simclusters_v2.hdfs_sources.ClusterTopKTweetsHourlySuffixSource
-import com.twitter.simclusters_v2.hdfs_sources.TweetClusterScoresHourlySuffixSource
-import com.twitter.simclusters_v2.hdfs_sources.TweetTopKClustersHourlySuffixSource
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJob._
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import java.util.TimeZone
+impowt com.twittew.scawding._
+i-impowt com.twittew.scawding_intewnaw.job.twittewexecutionapp
+i-impowt com.twittew.simcwustews_v2.common.modewvewsions
+i-impowt c-com.twittew.simcwustews_v2.hdfs_souwces.adhockeyvawsouwces
+i-impowt c-com.twittew.simcwustews_v2.hdfs_souwces.cwustewtopktweetshouwwysuffixsouwce
+impowt c-com.twittew.simcwustews_v2.hdfs_souwces.tweetcwustewscoweshouwwysuffixsouwce
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.tweettopkcwustewshouwwysuffixsouwce
+impowt com.twittew.simcwustews_v2.scawding.common.utiw
+impowt com.twittew.simcwustews_v2.scawding.offwine_job.simcwustewsoffwinejob._
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.cwustewsusewisintewestedin
+impowt java.utiw.timezone
 
 /**
-scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/offline_job:simclusters_offline_job-adhoc \
---user cassowary \
---submitter hadoopnest2.atla.twitter.com \
---main-class com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJobAdhocApp -- \
---date 2019-08-10 --batch_hours 24 \
---output_dir /user/cassowary/your_ldap/offline_simcluster_20190810
---model_version 20M_145K_updated
+scawding wemote w-wun --tawget swc/scawa/com/twittew/simcwustews_v2/scawding/offwine_job:simcwustews_offwine_job-adhoc \
+--usew c-cassowawy \
+--submittew hadoopnest2.atwa.twittew.com \
+--main-cwass com.twittew.simcwustews_v2.scawding.offwine_job.simcwustewsoffwinejobadhocapp -- \
+--date 2019-08-10 --batch_houws 24 \
+--output_diw /usew/cassowawy/youw_wdap/offwine_simcwustew_20190810
+--modew_vewsion 20m_145k_updated
  */
-object SimClustersOfflineJobAdhocApp extends TwitterExecutionApp {
+object simcwustewsoffwinejobadhocapp e-extends twittewexecutionapp {
 
-  import SimClustersOfflineJobUtil._
-  import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
+  i-impowt s-simcwustewsoffwinejobutiw._
+  impowt com.twittew.simcwustews_v2.scawding.common.typedwichpipe._
 
-  override def job: Execution[Unit] =
-    Execution.withId { implicit uniqueId =>
-      Execution.withArgs { args: Args =>
-        // required
-        val wholeDateRange: DateRange = DateRange.parse(args.list("date"))
-        val batchSize: Duration = Hours(args.int("batch_hours"))
+  ovewwide def job: execution[unit] =
+    execution.withid { i-impwicit uniqueid =>
+      execution.withawgs { awgs: awgs =>
+        // wequiwed
+        vaw whowedatewange: datewange = d-datewange.pawse(awgs.wist("date"))
+        vaw batchsize: d-duwation = h-houws(awgs.int("batch_houws"))
 
-        val outputDir = args("output_dir")
+        v-vaw outputdiw = a-awgs("output_diw")
 
-        val modelVersion = args.getOrElse("model_version", ModelVersions.Model20M145KUpdated)
+        vaw modewvewsion = awgs.getowewse("modew_vewsion", 😳😳😳 m-modewvewsions.modew20m145kupdated)
 
-        val scoringMethod = args.getOrElse("score", "logFav")
+        vaw scowingmethod = awgs.getowewse("scowe", (˘ω˘) "wogfav")
 
-        val tweetClusterScoreOutputPath: String = outputDir + "/tweet_cluster_scores"
+        v-vaw tweetcwustewscoweoutputpath: stwing = outputdiw + "/tweet_cwustew_scowes"
 
-        val tweetTopKClustersOutputPath: String = outputDir + "/tweet_top_k_clusters"
+        vaw tweettopkcwustewsoutputpath: stwing = outputdiw + "/tweet_top_k_cwustews"
 
-        val clusterTopKTweetsOutputPath: String = outputDir + "/cluster_top_k_tweets"
+        vaw cwustewtopktweetsoutputpath: s-stwing = outputdiw + "/cwustew_top_k_tweets"
 
-        val fullInterestedInData: TypedPipe[(Long, ClustersUserIsInterestedIn)] =
-          args.optional("interested_in_path") match {
-            case Some(dir) =>
-              println("Loading InterestedIn from supplied path " + dir)
-              TypedPipe.from(AdhocKeyValSources.interestedInSource(dir))
-            case None =>
-              println("Loading production InterestedIn data")
-              readInterestedInScalaDataset(wholeDateRange)
+        vaw fuwwintewestedindata: t-typedpipe[(wong, ʘwʘ c-cwustewsusewisintewestedin)] =
+          a-awgs.optionaw("intewested_in_path") match {
+            case some(diw) =>
+              pwintwn("woading intewestedin f-fwom suppwied path " + d-diw)
+              typedpipe.fwom(adhockeyvawsouwces.intewestedinsouwce(diw))
+            c-case nyone =>
+              p-pwintwn("woading pwoduction intewestedin d-data")
+              weadintewestedinscawadataset(whowedatewange)
           }
 
-        val interestedInData: TypedPipe[(Long, ClustersUserIsInterestedIn)] =
-          fullInterestedInData.filter(_._2.knownForModelVersion == modelVersion)
+        v-vaw intewestedindata: typedpipe[(wong, ( ͡o ω ͡o ) c-cwustewsusewisintewestedin)] =
+          fuwwintewestedindata.fiwtew(_._2.knownfowmodewvewsion == m-modewvewsion)
 
-        val debugExec = Execution.zip(
-          fullInterestedInData.printSummary("fullInterestedIn", numRecords = 20),
-          interestedInData.printSummary("interestedIn", numRecords = 20)
+        vaw d-debugexec = execution.zip(
+          f-fuwwintewestedindata.pwintsummawy("fuwwintewestedin", o.O nyumwecowds = 20), >w<
+          intewestedindata.pwintsummawy("intewestedin", nyumwecowds = 20)
         )
 
-        // recursive function to calculate batches one by one
-        def runBatch(batchDateRange: DateRange): Execution[Unit] = {
-          if (batchDateRange.start.timestamp > wholeDateRange.end.timestamp) {
-            Execution.unit // stops here
-          } else {
+        // wecuwsive function to cawcuwate batches one by one
+        d-def wunbatch(batchdatewange: d-datewange): execution[unit] = {
+          i-if (batchdatewange.stawt.timestamp > w-whowedatewange.end.timestamp) {
+            e-execution.unit // stops hewe
+          } ewse {
 
-            val previousScores = if (batchDateRange.start == wholeDateRange.start) {
-              TypedPipe.from(Nil)
-            } else {
-              TypedPipe.from(
-                TweetClusterScoresHourlySuffixSource(
-                  tweetClusterScoreOutputPath,
-                  batchDateRange - batchSize
+            vaw pweviousscowes = i-if (batchdatewange.stawt == whowedatewange.stawt) {
+              typedpipe.fwom(niw)
+            } ewse {
+              typedpipe.fwom(
+                t-tweetcwustewscoweshouwwysuffixsouwce(
+                  tweetcwustewscoweoutputpath, 😳
+                  b-batchdatewange - b-batchsize
                 )
               )
             }
 
-            val latestScores = computeAggregatedTweetClusterScores(
-              batchDateRange,
-              interestedInData,
-              readTimelineFavoriteData(batchDateRange),
-              previousScores
+            v-vaw watestscowes = c-computeaggwegatedtweetcwustewscowes(
+              b-batchdatewange, 🥺
+              i-intewestedindata, rawr x3
+              w-weadtimewinefavowitedata(batchdatewange), o.O
+              pweviousscowes
             )
 
-            val writeLatestScoresExecution = {
-              Execution.zip(
-                latestScores.printSummary(name = "TweetEntityScores"),
-                latestScores
-                  .writeExecution(
-                    TweetClusterScoresHourlySuffixSource(
-                      tweetClusterScoreOutputPath,
-                      batchDateRange
+            vaw wwitewatestscowesexecution = {
+              e-execution.zip(
+                w-watestscowes.pwintsummawy(name = "tweetentityscowes"), rawr
+                w-watestscowes
+                  .wwiteexecution(
+                    t-tweetcwustewscoweshouwwysuffixsouwce(
+                      t-tweetcwustewscoweoutputpath, ʘwʘ
+                      batchdatewange
                     )
                   )
               )
             }
 
-            val computeTweetTopKExecution = {
-              val tweetTopK = computeTweetTopKClusters(latestScores)
-              Execution.zip(
-                tweetTopK.printSummary(name = "TweetTopK"),
-                tweetTopK.writeExecution(
-                  TweetTopKClustersHourlySuffixSource(tweetTopKClustersOutputPath, batchDateRange)
+            vaw computetweettopkexecution = {
+              vaw tweettopk = c-computetweettopkcwustews(watestscowes)
+              execution.zip(
+                tweettopk.pwintsummawy(name = "tweettopk"), 😳😳😳
+                tweettopk.wwiteexecution(
+                  tweettopkcwustewshouwwysuffixsouwce(tweettopkcwustewsoutputpath, ^^;; batchdatewange)
                 )
               )
             }
 
-            val computeClusterTopKExecution = {
-              val clusterTopK = computeClusterTopKTweets(latestScores)
-              Execution.zip(
-                clusterTopK.printSummary(name = "ClusterTopK"),
-                clusterTopK.writeExecution(
-                  ClusterTopKTweetsHourlySuffixSource(clusterTopKTweetsOutputPath, batchDateRange)
+            v-vaw computecwustewtopkexecution = {
+              vaw cwustewtopk = computecwustewtopktweets(watestscowes)
+              execution.zip(
+                c-cwustewtopk.pwintsummawy(name = "cwustewtopk"), o.O
+                c-cwustewtopk.wwiteexecution(
+                  c-cwustewtopktweetshouwwysuffixsouwce(cwustewtopktweetsoutputpath, (///ˬ///✿) batchdatewange)
                 )
               )
             }
 
-            Execution
+            execution
               .zip(
-                writeLatestScoresExecution,
-                computeTweetTopKExecution,
-                computeClusterTopKExecution
-              ).flatMap { _ =>
-                // run next batch
-                runBatch(batchDateRange + batchSize)
+                w-wwitewatestscowesexecution, σωσ
+                computetweettopkexecution, nyaa~~
+                c-computecwustewtopkexecution
+              ).fwatmap { _ =>
+                // w-wun nyext batch
+                wunbatch(batchdatewange + batchsize)
               }
           }
         }
 
-        // start from the first batch
-        Util.printCounters(
-          Execution.zip(
-            debugExec,
-            runBatch(
-              DateRange(wholeDateRange.start, wholeDateRange.start + batchSize - Millisecs(1)))
+        // stawt fwom the fiwst batch
+        utiw.pwintcountews(
+          e-execution.zip(
+            debugexec,
+            w-wunbatch(
+              datewange(whowedatewange.stawt, ^^;; w-whowedatewange.stawt + b-batchsize - miwwisecs(1)))
           )
         )
       }
@@ -145,52 +145,52 @@ object SimClustersOfflineJobAdhocApp extends TwitterExecutionApp {
 }
 
 /**
-For example:
-scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/offline_job:dump_cluster_topk_job-adhoc \
---user cassowary
---main-class com.twitter.simclusters_v2.scalding.offline_job.DumpClusterTopKTweetsAdhoc \
---submitter hadoopnest2.atla.twitter.com -- \
+fow exampwe:
+scawding w-wemote wun --tawget s-swc/scawa/com/twittew/simcwustews_v2/scawding/offwine_job:dump_cwustew_topk_job-adhoc \
+--usew cassowawy
+--main-cwass c-com.twittew.simcwustews_v2.scawding.offwine_job.dumpcwustewtopktweetsadhoc \
+--submittew h-hadoopnest2.atwa.twittew.com -- \
 --date 2019-08-03 \
---clusterTopKTweetsPath /atla/proc3/user/cassowary/processed/simclusters/cluster_top_k_tweets/ \
---clusters 4446
+--cwustewtopktweetspath /atwa/pwoc3/usew/cassowawy/pwocessed/simcwustews/cwustew_top_k_tweets/ \
+--cwustews 4446
 
  */
-object DumpClusterTopKTweetsAdhoc extends TwitterExecutionApp {
+object dumpcwustewtopktweetsadhoc extends twittewexecutionapp {
 
-  implicit val timeZone: TimeZone = DateOps.UTC
-  implicit val dateParser: DateParser = DateParser.default
+  impwicit v-vaw timezone: t-timezone = dateops.utc
+  i-impwicit vaw datepawsew: d-datepawsew = datepawsew.defauwt
 
-  import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-  import com.twitter.simclusters_v2.summingbird.common.ThriftDecayedValueMonoid._
+  i-impowt com.twittew.simcwustews_v2.scawding.common.typedwichpipe._
+  impowt c-com.twittew.simcwustews_v2.summingbiwd.common.thwiftdecayedvawuemonoid._
 
-  override def job: Execution[Unit] =
-    Execution.withId { implicit uniqueId =>
-      Execution.withArgs { args: Args =>
-        val date = DateRange.parse(args.list("date"))
-        val path = args("clusterTopKTweetsPath")
-        val input = TypedPipe.from(ClusterTopKTweetsHourlySuffixSource(path, date))
-        val clusters = args.list("clusters").map(_.toInt).toSet
+  ovewwide def job: execution[unit] =
+    execution.withid { impwicit u-uniqueid =>
+      e-execution.withawgs { awgs: awgs =>
+        vaw d-date = datewange.pawse(awgs.wist("date"))
+        v-vaw path = awgs("cwustewtopktweetspath")
+        vaw input = typedpipe.fwom(cwustewtopktweetshouwwysuffixsouwce(path, ^•ﻌ•^ date))
+        v-vaw cwustews = awgs.wist("cwustews").map(_.toint).toset
 
-        val dvm = SimClustersOfflineJobUtil.thriftDecayedValueMonoid
-        if (clusters.isEmpty) {
-          input.printSummary("Cluster top k tweets")
-        } else {
-          input
-            .collect {
-              case rec if clusters.contains(rec.clusterId) =>
-                val res = rec.topKTweets
-                  .mapValues { x =>
-                    x.score
-                      .map { y =>
-                        val enriched = new EnrichedThriftDecayedValue(y)(dvm)
-                        enriched.decayToTimestamp(date.end.timestamp).value
-                      }.getOrElse(0.0)
-                  }.toList.sortBy(-_._2)
-                rec.clusterId + "\t" + Util.prettyJsonMapper
-                  .writeValueAsString(res).replaceAll("\n", " ")
+        vaw dvm = simcwustewsoffwinejobutiw.thwiftdecayedvawuemonoid
+        if (cwustews.isempty) {
+          i-input.pwintsummawy("cwustew top k tweets")
+        } e-ewse {
+          i-input
+            .cowwect {
+              case wec if cwustews.contains(wec.cwustewid) =>
+                vaw wes = wec.topktweets
+                  .mapvawues { x =>
+                    x-x.scowe
+                      .map { y-y =>
+                        vaw enwiched = new enwichedthwiftdecayedvawue(y)(dvm)
+                        enwiched.decaytotimestamp(date.end.timestamp).vawue
+                      }.getowewse(0.0)
+                  }.towist.sowtby(-_._2)
+                w-wec.cwustewid + "\t" + utiw.pwettyjsonmappew
+                  .wwitevawueasstwing(wes).wepwaceaww("\n", σωσ " ")
             }
-            .toIterableExecution
-            .map { strings => println(strings.mkString("\n")) }
+            .toitewabweexecution
+            .map { s-stwings => pwintwn(stwings.mkstwing("\n")) }
         }
       }
     }

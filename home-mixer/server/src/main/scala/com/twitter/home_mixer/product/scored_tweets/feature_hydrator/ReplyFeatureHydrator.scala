@@ -1,242 +1,242 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.model.ContentFeatures
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.content.InReplyToContentFeatureAdapter
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.earlybird.InReplyToEarlybirdAdapter
-import com.twitter.home_mixer.util.ReplyRetweetUtil
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.search.common.features.thriftscala.ThriftTweetFeatures
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.conversation_features.v1.thriftscala.ConversationFeatures
-import com.twitter.timelines.conversation_features.{thriftscala => cf}
-import com.twitter.timelines.prediction.adapters.conversation_features.ConversationFeaturesAdapter
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.home_mixew.modew.contentfeatuwes
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes._
+i-impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.adaptews.content.inwepwytocontentfeatuweadaptew
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.adaptews.eawwybiwd.inwepwytoeawwybiwdadaptew
+i-impowt com.twittew.home_mixew.utiw.wepwywetweetutiw
+i-impowt com.twittew.mw.api.datawecowd
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.datawecowdinafeatuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.utiw.offwoadfutuwepoows
+impowt com.twittew.seawch.common.featuwes.thwiftscawa.thwifttweetfeatuwes
+impowt com.twittew.snowfwake.id.snowfwakeid
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.timewines.convewsation_featuwes.v1.thwiftscawa.convewsationfeatuwes
+impowt com.twittew.timewines.convewsation_featuwes.{thwiftscawa => cf}
+impowt com.twittew.timewines.pwediction.adaptews.convewsation_featuwes.convewsationfeatuwesadaptew
+impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.time
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
+impowt s-scawa.cowwection.javaconvewtews._
 
-object InReplyToTweetHydratedEarlybirdFeature
-    extends Feature[TweetCandidate, Option[ThriftTweetFeatures]]
+o-object inwepwytotweethydwatedeawwybiwdfeatuwe
+    extends f-featuwe[tweetcandidate, σωσ option[thwifttweetfeatuwes]]
 
-object ConversationDataRecordFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+object c-convewsationdatawecowdfeatuwe
+    extends datawecowdinafeatuwe[tweetcandidate]
+    with featuwewithdefauwtonfaiwuwe[tweetcandidate, datawecowd] {
+  ovewwide def defauwtvawue: datawecowd = n-nyew datawecowd()
 }
 
-object InReplyToEarlybirdDataRecordFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+o-object inwepwytoeawwybiwddatawecowdfeatuwe
+    e-extends datawecowdinafeatuwe[tweetcandidate]
+    w-with featuwewithdefauwtonfaiwuwe[tweetcandidate, (U ᵕ U❁) datawecowd] {
+  ovewwide def defauwtvawue: datawecowd = n-nyew datawecowd()
 }
 
-object InReplyToTweetypieContentDataRecordFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+object i-inwepwytotweetypiecontentdatawecowdfeatuwe
+    extends datawecowdinafeatuwe[tweetcandidate]
+    w-with featuwewithdefauwtonfaiwuwe[tweetcandidate, (✿oωo) d-datawecowd] {
+  ovewwide d-def defauwtvawue: datawecowd = nyew d-datawecowd()
 }
 
 /**
- * The purpose of this hydrator is to
- * 1) hydrate simple features into replies and their ancestor tweets
- * 2) keep both the normal replies and ancestor source candidates, but hydrate into the candidates
- * features useful for predicting the quality of the replies and source ancestor tweets.
+ * the puwpose of this hydwatow i-is to
+ * 1) hydwate simpwe f-featuwes into wepwies and theiw a-ancestow tweets
+ * 2) k-keep both the nyowmaw wepwies and ancestow souwce candidates, ^^ but hydwate into the candidates
+ * featuwes u-usefuw fow pwedicting t-the quawity of the wepwies a-and souwce ancestow t-tweets.
  */
-@Singleton
-class ReplyFeatureHydrator @Inject() (statsReceiver: StatsReceiver)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@singweton
+cwass w-wepwyfeatuwehydwatow @inject() (statsweceivew: statsweceivew)
+    extends buwkcandidatefeatuwehydwatow[pipewinequewy, ^•ﻌ•^ tweetcandidate] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("ReplyTweet")
+  o-ovewwide vaw identifiew: featuwehydwatowidentifiew = featuwehydwatowidentifiew("wepwytweet")
 
-  override val features: Set[Feature[_, _]] = Set(
-    ConversationDataRecordFeature,
-    InReplyToTweetHydratedEarlybirdFeature,
-    InReplyToEarlybirdDataRecordFeature,
-    InReplyToTweetypieContentDataRecordFeature
+  ovewwide vaw featuwes: set[featuwe[_, XD _]] = s-set(
+    convewsationdatawecowdfeatuwe, :3
+    i-inwepwytotweethydwatedeawwybiwdfeatuwe, (ꈍᴗꈍ)
+    i-inwepwytoeawwybiwddatawecowdfeatuwe, :3
+    i-inwepwytotweetypiecontentdatawecowdfeatuwe
   )
 
-  private val defaulDataRecord: DataRecord = new DataRecord()
+  pwivate vaw defauwdatawecowd: d-datawecowd = n-nyew datawecowd()
 
-  private val DefaultFeatureMap = FeatureMapBuilder()
-    .add(ConversationDataRecordFeature, defaulDataRecord)
-    .add(InReplyToTweetHydratedEarlybirdFeature, None)
-    .add(InReplyToEarlybirdDataRecordFeature, defaulDataRecord)
-    .add(InReplyToTweetypieContentDataRecordFeature, defaulDataRecord)
-    .build()
+  pwivate v-vaw defauwtfeatuwemap = featuwemapbuiwdew()
+    .add(convewsationdatawecowdfeatuwe, (U ﹏ U) d-defauwdatawecowd)
+    .add(inwepwytotweethydwatedeawwybiwdfeatuwe, UwU nyone)
+    .add(inwepwytoeawwybiwddatawecowdfeatuwe, 😳😳😳 defauwdatawecowd)
+    .add(inwepwytotweetypiecontentdatawecowdfeatuwe, XD d-defauwdatawecowd)
+    .buiwd()
 
-  private val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
-  private val hydratedReplyCounter = scopedStatsReceiver.counter("hydratedReply")
-  private val hydratedAncestorCounter = scopedStatsReceiver.counter("hydratedAncestor")
+  p-pwivate v-vaw scopedstatsweceivew = s-statsweceivew.scope(getcwass.getsimpwename)
+  p-pwivate vaw hydwatedwepwycountew = scopedstatsweceivew.countew("hydwatedwepwy")
+  pwivate vaw hydwatedancestowcountew = s-scopedstatsweceivew.countew("hydwatedancestow")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offload {
-    val replyToInReplyToTweetMap =
-      ReplyRetweetUtil.replyTweetIdToInReplyToTweetMap(candidates)
-    val candidatesWithRepliesHydrated = candidates.map { candidate =>
-      replyToInReplyToTweetMap
-        .get(candidate.candidate.id).map { inReplyToTweet =>
-          hydratedReplyCounter.incr()
-          hydratedReplyCandidate(candidate, inReplyToTweet)
-        }.getOrElse((candidate, None, None))
+  ovewwide def appwy(
+    quewy: pipewinequewy, o.O
+    candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): s-stitch[seq[featuwemap]] = offwoadfutuwepoows.offwoad {
+    vaw wepwytoinwepwytotweetmap =
+      wepwywetweetutiw.wepwytweetidtoinwepwytotweetmap(candidates)
+    vaw candidateswithwepwieshydwated = c-candidates.map { c-candidate =>
+      w-wepwytoinwepwytotweetmap
+        .get(candidate.candidate.id).map { inwepwytotweet =>
+          h-hydwatedwepwycountew.incw()
+          hydwatedwepwycandidate(candidate, i-inwepwytotweet)
+        }.getowewse((candidate, (⑅˘꒳˘) n-nyone, nyone))
     }
 
     /**
-     * Update ancestor tweets with descendant replies and hydrate simple features from one of
-     * the descendants.
+     * update ancestow tweets with descendant wepwies and hydwate simpwe featuwes f-fwom one of
+     * the descendants. 😳😳😳
      */
-    val ancestorTweetToDescendantRepliesMap =
-      ReplyRetweetUtil.ancestorTweetIdToDescendantRepliesMap(candidates)
-    val candidatesWithRepliesAndAncestorTweetsHydrated = candidatesWithRepliesHydrated.map {
+    v-vaw ancestowtweettodescendantwepwiesmap =
+      wepwywetweetutiw.ancestowtweetidtodescendantwepwiesmap(candidates)
+    v-vaw c-candidateswithwepwiesandancestowtweetshydwated = candidateswithwepwieshydwated.map {
       case (
-            maybeAncestorTweetCandidate,
-            updatedReplyConversationFeatures,
-            inReplyToTweetEarlyBirdFeature) =>
-        ancestorTweetToDescendantRepliesMap
-          .get(maybeAncestorTweetCandidate.candidate.id)
-          .map { descendantReplies =>
-            hydratedAncestorCounter.incr()
-            val (ancestorTweetCandidate, updatedConversationFeatures): (
-              CandidateWithFeatures[TweetCandidate],
-              Option[ConversationFeatures]
+            maybeancestowtweetcandidate, nyaa~~
+            u-updatedwepwyconvewsationfeatuwes, rawr
+            i-inwepwytotweeteawwybiwdfeatuwe) =>
+        ancestowtweettodescendantwepwiesmap
+          .get(maybeancestowtweetcandidate.candidate.id)
+          .map { descendantwepwies =>
+            h-hydwatedancestowcountew.incw()
+            v-vaw (ancestowtweetcandidate, -.- updatedconvewsationfeatuwes): (
+              candidatewithfeatuwes[tweetcandidate], (✿oωo)
+              option[convewsationfeatuwes]
             ) =
-              hydrateAncestorTweetCandidate(
-                maybeAncestorTweetCandidate,
-                descendantReplies,
-                updatedReplyConversationFeatures)
-            (ancestorTweetCandidate, inReplyToTweetEarlyBirdFeature, updatedConversationFeatures)
+              hydwateancestowtweetcandidate(
+                m-maybeancestowtweetcandidate, /(^•ω•^)
+                d-descendantwepwies, 🥺
+                u-updatedwepwyconvewsationfeatuwes)
+            (ancestowtweetcandidate, inwepwytotweeteawwybiwdfeatuwe, u-updatedconvewsationfeatuwes)
           }
-          .getOrElse(
+          .getowewse(
             (
-              maybeAncestorTweetCandidate,
-              inReplyToTweetEarlyBirdFeature,
-              updatedReplyConversationFeatures))
+              m-maybeancestowtweetcandidate, ʘwʘ
+              inwepwytotweeteawwybiwdfeatuwe, UwU
+              u-updatedwepwyconvewsationfeatuwes))
     }
 
-    candidatesWithRepliesAndAncestorTweetsHydrated.map {
-      case (candidate, inReplyToTweetEarlyBirdFeature, updatedConversationFeatures) =>
-        val conversationDataRecordFeature = updatedConversationFeatures
-          .map(f => ConversationFeaturesAdapter.adaptToDataRecord(cf.ConversationFeatures.V1(f)))
-          .getOrElse(defaulDataRecord)
+    candidateswithwepwiesandancestowtweetshydwated.map {
+      case (candidate, XD inwepwytotweeteawwybiwdfeatuwe, (✿oωo) updatedconvewsationfeatuwes) =>
+        v-vaw convewsationdatawecowdfeatuwe = u-updatedconvewsationfeatuwes
+          .map(f => convewsationfeatuwesadaptew.adapttodatawecowd(cf.convewsationfeatuwes.v1(f)))
+          .getowewse(defauwdatawecowd)
 
-        val inReplyToEarlybirdDataRecord =
-          InReplyToEarlybirdAdapter
-            .adaptToDataRecords(inReplyToTweetEarlyBirdFeature).asScala.head
-        val inReplyToContentDataRecord = InReplyToContentFeatureAdapter
-          .adaptToDataRecords(
-            inReplyToTweetEarlyBirdFeature.map(ContentFeatures.fromThrift)).asScala.head
+        vaw inwepwytoeawwybiwddatawecowd =
+          i-inwepwytoeawwybiwdadaptew
+            .adapttodatawecowds(inwepwytotweeteawwybiwdfeatuwe).asscawa.head
+        v-vaw inwepwytocontentdatawecowd = inwepwytocontentfeatuweadaptew
+          .adapttodatawecowds(
+            inwepwytotweeteawwybiwdfeatuwe.map(contentfeatuwes.fwomthwift)).asscawa.head
 
-        FeatureMapBuilder()
-          .add(ConversationDataRecordFeature, conversationDataRecordFeature)
-          .add(InReplyToTweetHydratedEarlybirdFeature, inReplyToTweetEarlyBirdFeature)
-          .add(InReplyToEarlybirdDataRecordFeature, inReplyToEarlybirdDataRecord)
-          .add(InReplyToTweetypieContentDataRecordFeature, inReplyToContentDataRecord)
-          .build()
-      case _ => DefaultFeatureMap
+        featuwemapbuiwdew()
+          .add(convewsationdatawecowdfeatuwe, :3 c-convewsationdatawecowdfeatuwe)
+          .add(inwepwytotweethydwatedeawwybiwdfeatuwe, (///ˬ///✿) inwepwytotweeteawwybiwdfeatuwe)
+          .add(inwepwytoeawwybiwddatawecowdfeatuwe, nyaa~~ inwepwytoeawwybiwddatawecowd)
+          .add(inwepwytotweetypiecontentdatawecowdfeatuwe, >w< inwepwytocontentdatawecowd)
+          .buiwd()
+      case _ => d-defauwtfeatuwemap
     }
   }
 
-  private def hydratedReplyCandidate(
-    replyCandidate: CandidateWithFeatures[TweetCandidate],
-    inReplyToTweetCandidate: CandidateWithFeatures[TweetCandidate]
+  pwivate def hydwatedwepwycandidate(
+    w-wepwycandidate: c-candidatewithfeatuwes[tweetcandidate], -.-
+    inwepwytotweetcandidate: candidatewithfeatuwes[tweetcandidate]
   ): (
-    CandidateWithFeatures[TweetCandidate],
-    Option[ConversationFeatures],
-    Option[ThriftTweetFeatures]
+    candidatewithfeatuwes[tweetcandidate], (✿oωo)
+    o-option[convewsationfeatuwes], (˘ω˘)
+    o-option[thwifttweetfeatuwes]
   ) = {
-    val tweetedAfterInReplyToTweetInSecs =
+    vaw tweetedaftewinwepwytotweetinsecs =
       (
-        originalTweetAgeFromSnowflake(inReplyToTweetCandidate),
-        originalTweetAgeFromSnowflake(replyCandidate)) match {
-        case (Some(inReplyToTweetAge), Some(replyTweetAge)) =>
-          Some((inReplyToTweetAge - replyTweetAge).inSeconds.toLong)
-        case _ => None
+        owiginawtweetagefwomsnowfwake(inwepwytotweetcandidate), rawr
+        owiginawtweetagefwomsnowfwake(wepwycandidate)) m-match {
+        case (some(inwepwytotweetage), OwO s-some(wepwytweetage)) =>
+          some((inwepwytotweetage - wepwytweetage).inseconds.towong)
+        case _ => nyone
       }
 
-    val existingConversationFeatures = Some(
-      replyCandidate.features
-        .getOrElse(ConversationFeature, None).getOrElse(ConversationFeatures()))
+    v-vaw existingconvewsationfeatuwes = s-some(
+      wepwycandidate.featuwes
+        .getowewse(convewsationfeatuwe, ^•ﻌ•^ n-nyone).getowewse(convewsationfeatuwes()))
 
-    val updatedConversationFeatures = existingConversationFeatures match {
-      case Some(v1) =>
-        Some(
-          v1.copy(
-            tweetedAfterInReplyToTweetInSecs = tweetedAfterInReplyToTweetInSecs,
-            isSelfReply = Some(
-              replyCandidate.features.getOrElse(
-                AuthorIdFeature,
-                None) == inReplyToTweetCandidate.features.getOrElse(AuthorIdFeature, None))
+    vaw updatedconvewsationfeatuwes = e-existingconvewsationfeatuwes match {
+      c-case some(v1) =>
+        s-some(
+          v-v1.copy(
+            tweetedaftewinwepwytotweetinsecs = t-tweetedaftewinwepwytotweetinsecs, UwU
+            i-issewfwepwy = some(
+              wepwycandidate.featuwes.getowewse(
+                a-authowidfeatuwe, (˘ω˘)
+                n-nyone) == i-inwepwytotweetcandidate.featuwes.getowewse(authowidfeatuwe, (///ˬ///✿) nyone))
           )
         )
-      case _ => None
+      case _ => n-nyone
     }
 
-    // Note: if inReplyToTweet is a retweet, we need to read early bird feature from the merged
-    // early bird feature field from RetweetSourceTweetFeatureHydrator class.
-    // But if inReplyToTweet is a reply, we return its early bird feature directly
-    val inReplyToTweetThriftTweetFeaturesOpt = {
-      if (inReplyToTweetCandidate.features.getOrElse(IsRetweetFeature, false)) {
-        inReplyToTweetCandidate.features.getOrElse(SourceTweetEarlybirdFeature, None)
-      } else {
-        inReplyToTweetCandidate.features.getOrElse(EarlybirdFeature, None)
+    // nyote: if inwepwytotweet i-is a-a wetweet, σωσ we nyeed to wead eawwy biwd featuwe fwom the mewged
+    // e-eawwy biwd f-featuwe fiewd f-fwom wetweetsouwcetweetfeatuwehydwatow c-cwass. /(^•ω•^)
+    // but if inwepwytotweet i-is a wepwy, 😳 we wetuwn its eawwy biwd featuwe diwectwy
+    vaw inwepwytotweetthwifttweetfeatuwesopt = {
+      if (inwepwytotweetcandidate.featuwes.getowewse(iswetweetfeatuwe, 😳 f-fawse)) {
+        inwepwytotweetcandidate.featuwes.getowewse(souwcetweeteawwybiwdfeatuwe, (⑅˘꒳˘) n-nyone)
+      } ewse {
+        i-inwepwytotweetcandidate.featuwes.getowewse(eawwybiwdfeatuwe, 😳😳😳 nyone)
       }
     }
 
-    (replyCandidate, updatedConversationFeatures, inReplyToTweetThriftTweetFeaturesOpt)
+    (wepwycandidate, 😳 u-updatedconvewsationfeatuwes, XD inwepwytotweetthwifttweetfeatuwesopt)
   }
 
-  private def hydrateAncestorTweetCandidate(
-    ancestorTweetCandidate: CandidateWithFeatures[TweetCandidate],
-    descendantReplies: Seq[CandidateWithFeatures[TweetCandidate]],
-    updatedReplyConversationFeatures: Option[ConversationFeatures]
-  ): (CandidateWithFeatures[TweetCandidate], Option[ConversationFeatures]) = {
-    // Ancestor could be a reply. For example, in thread: tweetA -> tweetB -> tweetC,
-    // tweetB is a reply and ancestor at the same time. Hence, tweetB's conversation feature
-    // will be updated by hydratedReplyCandidate and hydrateAncestorTweetCandidate functions.
-    val existingConversationFeatures =
-      if (updatedReplyConversationFeatures.nonEmpty)
-        updatedReplyConversationFeatures
-      else
-        Some(
-          ancestorTweetCandidate.features
-            .getOrElse(ConversationFeature, None).getOrElse(ConversationFeatures()))
+  p-pwivate def hydwateancestowtweetcandidate(
+    a-ancestowtweetcandidate: c-candidatewithfeatuwes[tweetcandidate], mya
+    d-descendantwepwies: s-seq[candidatewithfeatuwes[tweetcandidate]],
+    updatedwepwyconvewsationfeatuwes: option[convewsationfeatuwes]
+  ): (candidatewithfeatuwes[tweetcandidate], option[convewsationfeatuwes]) = {
+    // ancestow couwd be a wepwy. ^•ﻌ•^ fow exampwe, ʘwʘ i-in thwead: t-tweeta -> tweetb -> t-tweetc, ( ͡o ω ͡o )
+    // tweetb is a wepwy a-and ancestow at the same time. mya hence, tweetb's convewsation f-featuwe
+    // w-wiww be updated by hydwatedwepwycandidate a-and hydwateancestowtweetcandidate functions. o.O
+    vaw existingconvewsationfeatuwes =
+      i-if (updatedwepwyconvewsationfeatuwes.nonempty)
+        u-updatedwepwyconvewsationfeatuwes
+      ewse
+        some(
+          ancestowtweetcandidate.featuwes
+            .getowewse(convewsationfeatuwe, (✿oωo) n-nyone).getowewse(convewsationfeatuwes()))
 
-    val updatedConversationFeatures = existingConversationFeatures match {
-      case Some(v1) =>
-        Some(
-          v1.copy(
-            hasDescendantReplyCandidate = Some(true),
-            hasInNetworkDescendantReply =
-              Some(descendantReplies.exists(_.features.getOrElse(InNetworkFeature, false)))
+    v-vaw updatedconvewsationfeatuwes = existingconvewsationfeatuwes match {
+      case some(v1) =>
+        some(
+          v-v1.copy(
+            h-hasdescendantwepwycandidate = s-some(twue), :3
+            h-hasinnetwowkdescendantwepwy =
+              s-some(descendantwepwies.exists(_.featuwes.getowewse(innetwowkfeatuwe, 😳 fawse)))
           ))
-      case _ => None
+      c-case _ => n-nyone
     }
-    (ancestorTweetCandidate, updatedConversationFeatures)
+    (ancestowtweetcandidate, (U ﹏ U) updatedconvewsationfeatuwes)
   }
 
-  private def originalTweetAgeFromSnowflake(
-    candidate: CandidateWithFeatures[TweetCandidate]
-  ): Option[Duration] = {
-    SnowflakeId
-      .timeFromIdOpt(
-        candidate.features
-          .getOrElse(SourceTweetIdFeature, None).getOrElse(candidate.candidate.id))
-      .map(Time.now - _)
+  pwivate d-def owiginawtweetagefwomsnowfwake(
+    c-candidate: candidatewithfeatuwes[tweetcandidate]
+  ): o-option[duwation] = {
+    snowfwakeid
+      .timefwomidopt(
+        candidate.featuwes
+          .getowewse(souwcetweetidfeatuwe, mya n-nyone).getowewse(candidate.candidate.id))
+      .map(time.now - _)
   }
 }

@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.core.functional_component.side_effect
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.side_effect
 
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect.Inputs
-import com.twitter.product_mixer.core.model.common
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.side_effect.pipewinewesuwtsideeffect.inputs
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.hasmawshawwing
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * A side-effect that can be run with a pipeline result before transport marshalling
+ * a-a side-effect t-that can be wun w-with a pipewine wesuwt befowe twanspowt mawshawwing
  *
- * @see SideEffect
+ * @see sideeffect
  *
- * @tparam Query pipeline query
- * @tparam ResultType response after domain marshalling
+ * @tpawam quewy pipewine q-quewy
+ * @tpawam wesuwttype wesponse aftew d-domain mawshawwing
  */
-trait PipelineResultSideEffect[-Query <: PipelineQuery, -ResultType <: HasMarshalling]
-    extends SideEffect[Inputs[Query, ResultType]]
-    with PipelineResultSideEffect.SupportsConditionally[Query, ResultType]
+twait p-pipewinewesuwtsideeffect[-quewy <: pipewinequewy, -.- -wesuwttype <: hasmawshawwing]
+    extends sideeffect[inputs[quewy, 🥺 w-wesuwttype]]
+    with pipewinewesuwtsideeffect.suppowtsconditionawwy[quewy, o.O w-wesuwttype]
 
-object PipelineResultSideEffect {
+object p-pipewinewesuwtsideeffect {
 
   /**
-   * Mixin for when you want to conditionally run a [[PipelineResultSideEffect]]
+   * mixin fow when you want to conditionawwy wun a [[pipewinewesuwtsideeffect]]
    *
-   * This is a thin wrapper around [[common.Conditionally]] exposing a nicer API for the [[PipelineResultSideEffect]] specific use-case.
+   * t-this is a thin wwappew awound [[common.conditionawwy]] exposing a nyicew api fow the [[pipewinewesuwtsideeffect]] s-specific use-case. /(^•ω•^)
    */
-  trait Conditionally[-Query <: PipelineQuery, -ResultType <: HasMarshalling]
-      extends common.Conditionally[Inputs[Query, ResultType]] {
-    _: PipelineResultSideEffect[Query, ResultType] =>
+  twait conditionawwy[-quewy <: p-pipewinequewy, nyaa~~ -wesuwttype <: h-hasmawshawwing]
+      e-extends common.conditionawwy[inputs[quewy, nyaa~~ w-wesuwttype]] {
+    _: pipewinewesuwtsideeffect[quewy, :3 wesuwttype] =>
 
-    /** @see [[common.Conditionally.onlyIf]] */
-    def onlyIf(
-      query: Query,
-      selectedCandidates: Seq[CandidateWithDetails],
-      remainingCandidates: Seq[CandidateWithDetails],
-      droppedCandidates: Seq[CandidateWithDetails],
-      response: ResultType
-    ): Boolean
+    /** @see [[common.conditionawwy.onwyif]] */
+    d-def onwyif(
+      quewy: quewy, 😳😳😳
+      sewectedcandidates: s-seq[candidatewithdetaiws], (˘ω˘)
+      wemainingcandidates: seq[candidatewithdetaiws], ^^
+      dwoppedcandidates: seq[candidatewithdetaiws], :3
+      wesponse: w-wesuwttype
+    ): boowean
 
-    override final def onlyIf(input: Inputs[Query, ResultType]): Boolean =
-      onlyIf(
-        input.query,
-        input.selectedCandidates,
-        input.remainingCandidates,
-        input.droppedCandidates,
-        input.response)
+    o-ovewwide finaw d-def onwyif(input: i-inputs[quewy, -.- wesuwttype]): boowean =
+      onwyif(
+        i-input.quewy, 😳
+        i-input.sewectedcandidates, mya
+        input.wemainingcandidates, (˘ω˘)
+        i-input.dwoppedcandidates, >_<
+        i-input.wesponse)
 
   }
 
-  type SupportsConditionally[-Query <: PipelineQuery, -ResultType <: HasMarshalling] =
-    common.SupportsConditionally[Inputs[Query, ResultType]]
+  type suppowtsconditionawwy[-quewy <: p-pipewinequewy, -.- -wesuwttype <: hasmawshawwing] =
+    c-common.suppowtsconditionawwy[inputs[quewy, 🥺 wesuwttype]]
 
-  case class Inputs[+Query <: PipelineQuery, +ResultType <: HasMarshalling](
-    query: Query,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: ResultType)
+  case cwass i-inputs[+quewy <: pipewinequewy, (U ﹏ U) +wesuwttype <: h-hasmawshawwing](
+    quewy: quewy, >w<
+    s-sewectedcandidates: s-seq[candidatewithdetaiws], mya
+    wemainingcandidates: seq[candidatewithdetaiws], >w<
+    dwoppedcandidates: seq[candidatewithdetaiws], nyaa~~
+    wesponse: wesuwttype)
 }

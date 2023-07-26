@@ -1,1891 +1,1891 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#incwude "tensowfwow/cowe/fwamewowk/op.h"
+#incwude "tensowfwow/cowe/fwamewowk/shape_infewence.h"
+#incwude "tensowfwow/cowe/fwamewowk/op_kewnew.h"
 
-#include <twml.h>
-#include <twml/functions.h>
-#include <twml/utilities.h>
-#include "tensorflow_utils.h"
-#include "resource_utils.h"
+#incwude <twmw.h>
+#incwude <twmw/functions.h>
+#incwude <twmw/utiwities.h>
+#incwude "tensowfwow_utiws.h"
+#incwude "wesouwce_utiws.h"
 
-#include <algorithm>
+#incwude <awgowithm>
 
-using std::string;
+using std::stwing;
 
-REGISTER_OP("DecodeDataRecord")
-.Attr("InputType: {uint8, string}")
-.Attr("keep_features: list(int)")
-.Attr("keep_codes: list(int)")
-.Attr("label_features: list(int)")
-.Attr("weight_features: list(int) = []")
-.Input("input_bytes: InputType")
-.Output("data_record_handle: resource")
-.SetShapeFn(shape_inference::ScalarShape)
-.Doc(R"doc(
-A tensorflow OP that creates a handle for the datarecord.
+w-wegistew_op("decodedatawecowd")
+.attw("inputtype: {uint8, mya s-stwing}")
+.attw("keep_featuwes: w-wist(int)")
+.attw("keep_codes: w-wist(int)")
+.attw("wabew_featuwes: w-wist(int)")
+.attw("weight_featuwes: w-wist(int) = []")
+.input("input_bytes: i-inputtype")
+.output("data_wecowd_handwe: w-wesouwce")
+.setshapefn(shape_infewence::scawawshape)
+.doc(w"doc(
+a tensowfwow op that cweates a handwe fow the datawecowd. :3
 
-Attr
-  keep_features: a list of int ids to keep.
-  keep_codes: their corresponding code.
-  label_features: list of feature ids representing the labels.
-  weight_features: list of feature ids representing the weights. Defaults to empty list.
-  shared_name: name used by the resource handle inside the resource manager.
-  container: name used by the container of the resources.
+attw
+  k-keep_featuwes: a wist of int ids to keep. 😳😳😳
+  keep_codes: t-theiw cowwesponding code. /(^•ω•^)
+  w-wabew_featuwes: wist of featuwe ids wepwesenting the wabews. -.-
+  w-weight_featuwes: wist of featuwe i-ids wepwesenting t-the weights. UwU defauwts to empty wist. (U ﹏ U)
+  shawed_name: nyame used by the wesouwce h-handwe inside the wesouwce managew. ^^
+  containew: nyame used by the containew o-of the wesouwces. 😳
 
-shared_name and container are required when inheriting from ResourceOpKernel.
+shawed_name a-and containew a-awe wequiwed when i-inhewiting fwom w-wesouwceopkewnew. (˘ω˘)
 
-Input
-  input_bytes: Input tensor containing the serialized batch of HashedDataRecords.
+input
+  input_bytes: input t-tensow containing the sewiawized batch of hasheddatawecowds. /(^•ω•^)
 
-Outputs
-  data_record_handle: A resource handle to the DataRecord struct.
+outputs
+  d-data_wecowd_handwe: a wesouwce handwe to the datawecowd stwuct. (˘ω˘)
 )doc");
 
-template<typename InputType>
-class DecodeDataRecord : public OpKernel {
- public:
-  explicit DecodeDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {
-    std::vector<int64> keep_features;
-    std::vector<int64> keep_codes;
+tempwate<typename i-inputtype>
+cwass decodedatawecowd : p-pubwic opkewnew {
+ p-pubwic:
+  e-expwicit decodedatawecowd(opkewnewconstwuction* context)
+      : opkewnew(context) {
+    std::vectow<int64> k-keep_featuwes;
+    s-std::vectow<int64> keep_codes;
 
-    std::vector<int64> label_features;
-    std::vector<int64> weight_features;
+    s-std::vectow<int64> w-wabew_featuwes;
+    std::vectow<int64> weight_featuwes;
 
-    OP_REQUIRES_OK(context, context->GetAttr("keep_features", &keep_features));
-    OP_REQUIRES_OK(context, context->GetAttr("keep_codes", &keep_codes));
-    OP_REQUIRES_OK(context, context->GetAttr("label_features", &label_features));
-    OP_REQUIRES_OK(context, context->GetAttr("weight_features", &weight_features));
+    o-op_wequiwes_ok(context, (✿oωo) context->getattw("keep_featuwes", &keep_featuwes));
+    o-op_wequiwes_ok(context, context->getattw("keep_codes", (U ﹏ U) &keep_codes));
+    op_wequiwes_ok(context, (U ﹏ U) c-context->getattw("wabew_featuwes", (ˆ ﻌ ˆ)♡ &wabew_featuwes));
+    op_wequiwes_ok(context, /(^•ω•^) c-context->getattw("weight_featuwes", XD &weight_featuwes));
 
-    OP_REQUIRES(context, keep_features.size() == keep_codes.size(),
-                errors::InvalidArgument("keep keys and values must have same size."));
+    op_wequiwes(context, (ˆ ﻌ ˆ)♡ k-keep_featuwes.size() == k-keep_codes.size(), XD
+                ewwows::invawidawgument("keep keys and vawues must have same size."));
 
-#ifdef USE_DENSE_HASH
+#ifdef use_dense_hash
     m_keep_map.set_empty_key(0);
-    m_labels_map.set_empty_key(0);
+    m-m_wabews_map.set_empty_key(0);
     m_weights_map.set_empty_key(0);
-#endif  // USE_DENSE_HASH
+#endif  // u-use_dense_hash
 
-    for (uint64_t i = 0; i < keep_features.size(); i++) {
-      m_keep_map[keep_features[i]] = keep_codes[i];
+    fow (uint64_t i-i = 0; i-i < keep_featuwes.size(); i-i++) {
+      m_keep_map[keep_featuwes[i]] = keep_codes[i];
     }
 
-    for (uint64_t i = 0; i < label_features.size(); i++) {
-      m_labels_map[label_features[i]] = i;
+    fow (uint64_t i-i = 0; i < wabew_featuwes.size(); i++) {
+      m_wabews_map[wabew_featuwes[i]] = i;
     }
 
-    for (uint64_t i = 0; i < weight_features.size(); i++) {
-      m_weights_map[weight_features[i]] = i;
+    fow (uint64_t i = 0; i-i < weight_featuwes.size(); i++) {
+      m_weights_map[weight_featuwes[i]] = i-i;
     }
   }
 
- private:
-  twml::Map<int64_t, int64_t> m_keep_map;
-  twml::Map<int64_t, int64_t> m_labels_map;
-  twml::Map<int64_t, int64_t> m_weights_map;
+ p-pwivate:
+  twmw::map<int64_t, mya int64_t> m-m_keep_map;
+  twmw::map<int64_t, OwO i-int64_t> m-m_wabews_map;
+  t-twmw::map<int64_t, XD i-int64_t> m_weights_map;
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      DataRecordResource *resource = nullptr;
-      OP_REQUIRES_OK(context, makeResourceHandle<DataRecordResource>(context, 0, &resource));
+  void compute(opkewnewcontext* context) o-ovewwide {
+    t-twy {
+      d-datawecowdwesouwce *wesouwce = n-nuwwptw;
+      o-op_wequiwes_ok(context, ( ͡o ω ͡o ) makewesouwcehandwe<datawecowdwesouwce>(context, (ꈍᴗꈍ) 0, &wesouwce));
 
-      // Store the input bytes in the resource so it isnt freed before the resource.
-      // This is necessary because we are not copying the contents for tensors.
-      resource->input = context->input(0);
-      int batch_size = getBatchSize<InputType>(resource->input);
-      int num_labels = static_cast<int>(m_labels_map.size());
-      int num_weights = static_cast<int>(m_weights_map.size());
+      // stowe the input bytes in the wesouwce s-so it isnt fweed befowe the wesouwce. mya
+      // this is nyecessawy because we awe nyot copying t-the contents fow tensows. 😳
+      wesouwce->input = context->input(0);
+      i-int batch_size = g-getbatchsize<inputtype>(wesouwce->input);
+      i-int nyum_wabews = static_cast<int>(m_wabews_map.size());
+      i-int nyum_weights = static_cast<int>(m_weights_map.size());
 
-      twml::DataRecordReader reader;
-      reader.setKeepMap(&m_keep_map);
-      reader.setLabelsMap(&m_labels_map);
+      t-twmw::datawecowdweadew w-weadew;
+      weadew.setkeepmap(&m_keep_map);
+      weadew.setwabewsmap(&m_wabews_map);
 
-      // Do not set weight map if it is empty. This will take a faster path.
-      if (num_weights != 0) {
-        reader.setWeightsMap(&m_weights_map);
+      // do nyot set weight map if it is empty. (ˆ ﻌ ˆ)♡ t-this wiww take a fastew path. ^•ﻌ•^
+      i-if (num_weights != 0) {
+        weadew.setweightsmap(&m_weights_map);
       }
 
-      resource->records.clear();
-      resource->records.reserve(batch_size);
-      for (int i = 0; i < batch_size; i++) {
-        resource->records.emplace_back(num_labels, num_weights);
+      w-wesouwce->wecowds.cweaw();
+      w-wesouwce->wecowds.wesewve(batch_size);
+      fow (int i = 0; i < batch_size; i-i++) {
+        w-wesouwce->wecowds.empwace_back(num_wabews, 😳😳😳 nyum_weights);
       }
 
-      for (int64 id = 0; id < batch_size; id++) {
-        const uint8_t *input_bytes = getInputBytes<InputType>(resource->input, id);
-        reader.setBuffer(input_bytes);
-        // decode the reader
-        resource->records[id].decode(reader);
+      f-fow (int64 id = 0; i-id < batch_size; id++) {
+        const uint8_t *input_bytes = getinputbytes<inputtype>(wesouwce->input, (///ˬ///✿) id);
+        w-weadew.setbuffew(input_bytes);
+        // d-decode the weadew
+        w-wesouwce->wecowds[id].decode(weadew);
       }
-      // This should be fine because m_keep_map should never go out of scope.
-      resource->keep_map = &m_keep_map;
-      resource->num_weights = num_weights;
-      resource->num_labels = num_labels;
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      // this shouwd b-be fine because m-m_keep_map shouwd nyevew go out o-of scope. 🥺
+      wesouwce->keep_map = &m_keep_map;
+      wesouwce->num_weights = nyum_weights;
+      wesouwce->num_wabews = n-nyum_wabews;
+    } catch (const s-std::exception &e) {
+      context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-int64_t count_if_exists(const twml::DataRecord::BinaryFeatures &set,
-                        const twml::Map<int64_t, int64_t> *const keep_map) {
-  int64_t count = 0;
-  for (const auto &key : set) {
-    if (keep_map->find(key) == keep_map->end()) continue;
+int64_t c-count_if_exists(const t-twmw::datawecowd::binawyfeatuwes &set, ^^
+                        const twmw::map<int64_t, int64_t> *const keep_map) {
+  i-int64_t count = 0;
+  fow (const auto &key : set) {
+    if (keep_map->find(key) == k-keep_map->end()) continue;
     count++;
   }
-  return count;
+  wetuwn c-count;
 }
 
-// This works for continuous, discrete, and string features
-template<typename V>
-int64_t count_if_exists(const twml::Map<int64_t, V> &map,
-                        const twml::Map<int64_t, int64_t> *const keep_map) {
+// t-this wowks fow continuous, (ˆ ﻌ ˆ)♡ discwete, and stwing featuwes
+tempwate<typename v-v>
+int64_t c-count_if_exists(const twmw::map<int64_t, mya v> &map, OwO
+                        const twmw::map<int64_t, /(^•ω•^) int64_t> *const k-keep_map) {
   int64_t count = 0;
-  for (const auto &elem : map) {
-    if (keep_map->find(elem.first) == keep_map->end()) continue;
+  f-fow (const auto &ewem : map) {
+    if (keep_map->find(ewem.fiwst) == keep_map->end()) c-continue;
     count++;
   }
-  return count;
+  wetuwn c-count;
 }
 
-int64_t count_if_exists(const twml::DataRecord::SparseBinaryFeatures &map,
-                        const twml::Map<int64_t, int64_t> *const keep_map) {
-  int64_t count = 0;
-  for (const auto &elem : map) {
-    if (keep_map->find(elem.first) == keep_map->end()) continue;
-    count += elem.second.size();
+i-int64_t count_if_exists(const twmw::datawecowd::spawsebinawyfeatuwes &map, /(^•ω•^)
+                        c-const twmw::map<int64_t, rawr int64_t> *const k-keep_map) {
+  i-int64_t c-count = 0;
+  fow (const auto &ewem : m-map) {
+    i-if (keep_map->find(ewem.fiwst) == keep_map->end()) continue;
+    c-count += ewem.second.size();
   }
-  return count;
+  w-wetuwn count;
 }
 
-int64_t count_if_exists(const twml::DataRecord::SparseContinuousFeatures &map,
-                        const twml::Map<int64_t, int64_t> *const keep_map) {
-  int64_t count = 0;
-  for (const auto &elem : map) {
-    if (keep_map->find(elem.first) == keep_map->end()) continue;
-    count += elem.second.size();
+i-int64_t count_if_exists(const twmw::datawecowd::spawsecontinuousfeatuwes &map,
+                        const t-twmw::map<int64_t, XD int64_t> *const k-keep_map) {
+  i-int64_t count = 0;
+  fow (const auto &ewem : map) {
+    if (keep_map->find(ewem.fiwst) == keep_map->end()) c-continue;
+    count += e-ewem.second.size();
   }
-  return count;
+  w-wetuwn count;
 }
 
-REGISTER_OP("GetBinaryFeatures")
-.Input("data_record_handle: resource")
-.Output("ids: int64")
-.Output("keys: int64")
-.Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that reads binary features
-Input
-  data_record_handle: Resource handle to DataRecord
+w-wegistew_op("getbinawyfeatuwes")
+.input("data_wecowd_handwe: wesouwce")
+.output("ids: int64")
+.output("keys: int64")
+.output("vawues: f-fwoat")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
+a tensowfwow op that weads binawy f-featuwes
+input
+  data_wecowd_handwe: w-wesouwce handwe to datawecowd
 
-Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
-  keys: DataRecord keys (int64)
-  values: always set to 1 (float)
+o-outputs
+  ids: ids specifies t-the index of the wecowds[id] in t-the batch (int64)
+  k-keys: datawecowd k-keys (int64)
+  v-vawues: awways s-set to 1 (fwoat)
 )doc");
 
-class GetBinaryFeatures : public OpKernel {
- public:
-  explicit GetBinaryFeatures(OpKernelConstruction* context)
-      : OpKernel(context) {}
+cwass getbinawyfeatuwes : pubwic opkewnew {
+ pubwic:
+  expwicit getbinawyfeatuwes(opkewnewconstwuction* context)
+      : o-opkewnew(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
-      const auto &records = handle->records;
-      const auto &common = handle->common;
+  void c-compute(opkewnewcontext* c-context) ovewwide {
+    t-twy {
+      auto handwe = gethandwe<datawecowdwesouwce>(context, ʘwʘ 0);
+      const auto &wecowds = handwe->wecowds;
+      c-const a-auto &common = handwe->common;
 
-      int64 common_binary_size = count_if_exists(common.getBinary(), handle->keep_map);
-      int64 total_binary_size = records.size() * common_binary_size;
-      for (int id = 0; id < records.size(); id++) {
-        total_binary_size += count_if_exists(handle->records[id].getBinary(), handle->keep_map);
+      i-int64 common_binawy_size = count_if_exists(common.getbinawy(), :3 handwe->keep_map);
+      i-int64 totaw_binawy_size = w-wecowds.size() * common_binawy_size;
+      f-fow (int id = 0; i-id < wecowds.size(); id++) {
+        totaw_binawy_size += count_if_exists(handwe->wecowds[id].getbinawy(), σωσ handwe->keep_map);
       }
-      const int total_size = static_cast<int>(total_binary_size);
+      c-const int totaw_size = s-static_cast<int>(totaw_binawy_size);
 
-      TensorShape shape = {total_size};
-      Tensor* keys = nullptr;
-      Tensor* ids = nullptr;
-      Tensor* values = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-      OP_REQUIRES_OK(context, context->allocate_output(2, shape, &values));
+      t-tensowshape s-shape = {totaw_size};
+      t-tensow* keys = nyuwwptw;
+      t-tensow* i-ids = nuwwptw;
+      tensow* v-vawues = nuwwptw;
+      o-op_wequiwes_ok(context, /(^•ω•^) context->awwocate_output(0, (ˆ ﻌ ˆ)♡ s-shape, &ids));
+      op_wequiwes_ok(context, (U ﹏ U) context->awwocate_output(1, >_< s-shape, >_< &keys));
+      op_wequiwes_ok(context, o.O c-context->awwocate_output(2, (ꈍᴗꈍ) s-shape, /(^•ω•^) &vawues));
 
-      uint64_t offset = 0;
-      auto keys_flat = keys->flat<int64>();
-      auto ids_flat = ids->flat<int64>();
-      auto values_flat = values->flat<float>();
+      uint64_t o-offset = 0;
+      auto keys_fwat = keys->fwat<int64>();
+      a-auto ids_fwat = i-ids->fwat<int64>();
+      a-auto vawues_fwat = vawues->fwat<fwoat>();
 
-      for (int64 id = 0; id < records.size(); id++) {
-        for (const auto &it : common.getBinary()) {
-          if (handle->keep_map->find(it) == handle->keep_map->end()) continue;
-          ids_flat(offset) = id;
-          keys_flat(offset) = it;
+      fow (int64 id = 0; id < w-wecowds.size(); id++) {
+        fow (const auto &it : c-common.getbinawy()) {
+          i-if (handwe->keep_map->find(it) == handwe->keep_map->end()) c-continue;
+          ids_fwat(offset) = i-id;
+          k-keys_fwat(offset) = it;
           offset++;
         }
-        for (const auto &it : records[id].getBinary()) {
-          if (handle->keep_map->find(it) == handle->keep_map->end()) continue;
-          ids_flat(offset) = id;
-          keys_flat(offset) = it;
-          offset++;
+        f-fow (const auto &it : wecowds[id].getbinawy()) {
+          if (handwe->keep_map->find(it) == h-handwe->keep_map->end()) c-continue;
+          ids_fwat(offset) = i-id;
+          keys_fwat(offset) = i-it;
+          o-offset++;
         }
       }
-      // All the values for binary features are 1.
-      std::fill(values_flat.data(), values_flat.data() + total_size, 1);
+      // a-aww the vawues fow binawy featuwes awe 1. OwO
+      std::fiww(vawues_fwat.data(), σωσ vawues_fwat.data() + totaw_size, XD 1);
     } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_OP("GetContinuousFeatures")
-.Input("data_record_handle: resource")
-.Output("ids: int64")
-.Output("keys: int64")
-.Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that reads continuous features
-Input
-  data_record_handle: Resource handle to DataRecord
+wegistew_op("getcontinuousfeatuwes")
+.input("data_wecowd_handwe: wesouwce")
+.output("ids: int64")
+.output("keys: int64")
+.output("vawues: f-fwoat")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
+a tensowfwow o-op that w-weads continuous f-featuwes
+input
+  data_wecowd_handwe: w-wesouwce handwe to datawecowd
 
-Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
-  keys: Datarecord keys (int64)
-  values: Datarecord values(float)
+o-outputs
+  i-ids: ids specifies the index of t-the wecowds[id] in the batch (int64)
+  k-keys: datawecowd k-keys (int64)
+  vawues: datawecowd vawues(fwoat)
 )doc");
 
-class GetContinuousFeatures : public OpKernel {
- public:
-  explicit GetContinuousFeatures(OpKernelConstruction* context)
-      : OpKernel(context) {}
+c-cwass getcontinuousfeatuwes : pubwic o-opkewnew {
+ p-pubwic:
+  expwicit g-getcontinuousfeatuwes(opkewnewconstwuction* c-context)
+      : o-opkewnew(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
-      const auto &records = handle->records;
-      const auto &common = handle->common;
+  v-void compute(opkewnewcontext* c-context) o-ovewwide {
+    twy {
+      auto h-handwe = gethandwe<datawecowdwesouwce>(context, rawr x3 0);
+      c-const a-auto &wecowds = handwe->wecowds;
+      c-const auto &common = handwe->common;
 
-      int64 common_continuous_size = count_if_exists(common.getContinuous(), handle->keep_map);
-      int64 total_continuous_size = records.size() * common_continuous_size;
-      for (int id = 0; id < records.size(); id++) {
-        total_continuous_size += count_if_exists(handle->records[id].getContinuous(),
-                                                 handle->keep_map);
+      int64 common_continuous_size = c-count_if_exists(common.getcontinuous(), (ˆ ﻌ ˆ)♡ handwe->keep_map);
+      i-int64 totaw_continuous_size = w-wecowds.size() * c-common_continuous_size;
+      fow (int id = 0; i-id < wecowds.size(); id++) {
+        t-totaw_continuous_size += count_if_exists(handwe->wecowds[id].getcontinuous(), XD
+                                                 h-handwe->keep_map);
       }
-      const int total_size = static_cast<int>(total_continuous_size);
+      const int t-totaw_size = static_cast<int>(totaw_continuous_size);
 
-      TensorShape shape = {total_size};
-      Tensor* keys = nullptr;
-      Tensor* values = nullptr;
-      Tensor* ids = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-      OP_REQUIRES_OK(context, context->allocate_output(2, shape, &values));
+      tensowshape shape = {totaw_size};
+      tensow* keys = nyuwwptw;
+      t-tensow* vawues = nyuwwptw;
+      t-tensow* ids = n-nyuwwptw;
+      op_wequiwes_ok(context, context->awwocate_output(0, (˘ω˘) shape, mya &ids));
+      o-op_wequiwes_ok(context, ^^ context->awwocate_output(1, (U ᵕ U❁) s-shape, &keys));
+      o-op_wequiwes_ok(context, rawr x3 context->awwocate_output(2, (ˆ ﻌ ˆ)♡ s-shape, &vawues));
 
       uint64_t offset = 0;
-      auto keys_flat = keys->flat<int64>();
-      auto values_flat = values->flat<float>();
-      auto ids_flat = ids->flat<int64>();
+      auto keys_fwat = k-keys->fwat<int64>();
+      a-auto vawues_fwat = vawues->fwat<fwoat>();
+      a-auto ids_fwat = ids->fwat<int64>();
 
-      for (int64 id = 0; id < records.size(); id++) {
-        for (const auto &it : common.getContinuous()) {
-          if (handle->keep_map->find(it.first) == handle->keep_map->end()) continue;
-          ids_flat(offset) = id;
-          keys_flat(offset) = it.first;
-          values_flat(offset) = it.second;
-          offset++;
+      fow (int64 i-id = 0; id < wecowds.size(); id++) {
+        f-fow (const a-auto &it : c-common.getcontinuous()) {
+          if (handwe->keep_map->find(it.fiwst) == h-handwe->keep_map->end()) c-continue;
+          i-ids_fwat(offset) = i-id;
+          keys_fwat(offset) = it.fiwst;
+          v-vawues_fwat(offset) = i-it.second;
+          o-offset++;
         }
-        for (const auto &it : records[id].getContinuous()) {
-          if (handle->keep_map->find(it.first) == handle->keep_map->end()) continue;
-          ids_flat(offset) = id;
-          keys_flat(offset) = it.first;
-          values_flat(offset) = it.second;
-          offset++;
+        f-fow (const a-auto &it : w-wecowds[id].getcontinuous()) {
+          i-if (handwe->keep_map->find(it.fiwst) == h-handwe->keep_map->end()) continue;
+          i-ids_fwat(offset) = id;
+          k-keys_fwat(offset) = it.fiwst;
+          v-vawues_fwat(offset) = i-it.second;
+          o-offset++;
         }
       }
     } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_OP("GetDiscreteFeatures")
-.Input("data_record_handle: resource")
-.Output("ids: int64")
-.Output("keys: int64")
-.Output("values: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that reads discrete features
-Input
-  data_record_handle: Resource handle to DataRecord
+wegistew_op("getdiscwetefeatuwes")
+.input("data_wecowd_handwe: wesouwce")
+.output("ids: i-int64")
+.output("keys: int64")
+.output("vawues: i-int64")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
+a tensowfwow op that w-weads discwete f-featuwes
+input
+  data_wecowd_handwe: w-wesouwce h-handwe to datawecowd
 
-Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
-  keys: DataRecord keys (int64)
-  values: DataRecord values(int64)
+outputs
+  ids: ids specifies the index of t-the wecowds[id] i-in the batch (int64)
+  k-keys: datawecowd k-keys (int64)
+  vawues: datawecowd vawues(int64)
 )doc");
 
-class GetDiscreteFeatures : public OpKernel {
- public:
-  explicit GetDiscreteFeatures(OpKernelConstruction* context)
-      : OpKernel(context) {}
+c-cwass getdiscwetefeatuwes : p-pubwic opkewnew {
+ pubwic:
+  expwicit g-getdiscwetefeatuwes(opkewnewconstwuction* context)
+      : opkewnew(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
-      const auto &records = handle->records;
-      const auto &common = handle->common;
+  v-void compute(opkewnewcontext* context) ovewwide {
+    t-twy {
+      a-auto handwe = gethandwe<datawecowdwesouwce>(context, (U ﹏ U) 0);
+      c-const auto &wecowds = h-handwe->wecowds;
+      const auto &common = h-handwe->common;
 
-      int64 common_discrete_size = count_if_exists(common.getDiscrete(), handle->keep_map);
-      int64 total_discrete_size = records.size() * common_discrete_size;
-      for (int id = 0; id < records.size(); id++) {
-        total_discrete_size += count_if_exists(handle->records[id].getDiscrete(),
-                                               handle->keep_map);
+      int64 common_discwete_size = c-count_if_exists(common.getdiscwete(), mya h-handwe->keep_map);
+      i-int64 t-totaw_discwete_size = wecowds.size() * c-common_discwete_size;
+      f-fow (int id = 0; i-id < wecowds.size(); id++) {
+        t-totaw_discwete_size += count_if_exists(handwe->wecowds[id].getdiscwete(), OwO
+                                               handwe->keep_map);
       }
-      const int total_size = static_cast<int>(total_discrete_size);
+      c-const int totaw_size = s-static_cast<int>(totaw_discwete_size);
 
-      TensorShape shape = {total_size};
-      Tensor* keys = nullptr;
-      Tensor* values = nullptr;
-      Tensor* ids = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-      OP_REQUIRES_OK(context, context->allocate_output(2, shape, &values));
+      t-tensowshape shape = {totaw_size};
+      tensow* keys = nyuwwptw;
+      tensow* vawues = n-nyuwwptw;
+      tensow* ids = n-nuwwptw;
+      op_wequiwes_ok(context, (ꈍᴗꈍ) c-context->awwocate_output(0, XD shape, &ids));
+      op_wequiwes_ok(context, c-context->awwocate_output(1, 🥺 shape, 😳😳😳 &keys));
+      o-op_wequiwes_ok(context, >w< c-context->awwocate_output(2, nyaa~~ s-shape, :3 &vawues));
 
-      uint64_t offset = 0;
-      auto keys_flat = keys->flat<int64>();
-      auto values_flat = values->flat<int64>();
-      auto ids_flat = ids->flat<int64>();
+      uint64_t o-offset = 0;
+      a-auto keys_fwat = keys->fwat<int64>();
+      auto vawues_fwat = vawues->fwat<int64>();
+      auto ids_fwat = i-ids->fwat<int64>();
 
-      for (int64 id = 0; id < records.size(); id++) {
-        for (const auto &it : common.getDiscrete()) {
-          if (handle->keep_map->find(it.first) == handle->keep_map->end()) continue;
-          ids_flat(offset) = id;
-          keys_flat(offset) = it.first;
-          values_flat(offset) = it.second;
-          offset++;
+      fow (int64 id = 0; i-id < wecowds.size(); id++) {
+        fow (const auto &it : common.getdiscwete()) {
+          i-if (handwe->keep_map->find(it.fiwst) == handwe->keep_map->end()) continue;
+          ids_fwat(offset) = id;
+          k-keys_fwat(offset) = i-it.fiwst;
+          vawues_fwat(offset) = it.second;
+          o-offset++;
         }
-        for (const auto &it : records[id].getDiscrete()) {
-          if (handle->keep_map->find(it.first) == handle->keep_map->end()) continue;
-          ids_flat(offset) = id;
-          keys_flat(offset) = it.first;
-          values_flat(offset) = it.second;
-          offset++;
+        fow (const auto &it : wecowds[id].getdiscwete()) {
+          i-if (handwe->keep_map->find(it.fiwst) == h-handwe->keep_map->end()) continue;
+          i-ids_fwat(offset) = id;
+          k-keys_fwat(offset) = it.fiwst;
+          vawues_fwat(offset) = it.second;
+          o-offset++;
         }
       }
     } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      c-context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_OP("GetStringFeatures")
-.Input("data_record_handle: resource")
-.Output("ids: int64")
-.Output("keys: int64")
-.Output("names: string")
-.Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that reads string features
-Input
-  data_record_handle: Resource handle to DataRecord
+w-wegistew_op("getstwingfeatuwes")
+.input("data_wecowd_handwe: w-wesouwce")
+.output("ids: int64")
+.output("keys: int64")
+.output("names: s-stwing")
+.output("vawues: fwoat")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
+a tensowfwow o-op that w-weads stwing featuwes
+i-input
+  data_wecowd_handwe: w-wesouwce handwe to datawecowd
 
-Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
-  keys: DataRecord keys (int64)
-  names: DataRecord values(string)
-  values: always set to 1 (float)
+outputs
+  ids: i-ids specifies the i-index of the wecowds[id] in the batch (int64)
+  k-keys: datawecowd keys (int64)
+  nyames: datawecowd v-vawues(stwing)
+  vawues: awways set to 1 (fwoat)
 )doc");
 
-class GetStringFeatures : public OpKernel {
- public:
-  explicit GetStringFeatures(OpKernelConstruction* context)
-      : OpKernel(context) {}
+c-cwass getstwingfeatuwes : p-pubwic opkewnew {
+ pubwic:
+  e-expwicit g-getstwingfeatuwes(opkewnewconstwuction* c-context)
+      : opkewnew(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
-      const auto &records = handle->records;
-      const auto &common = handle->common;
+  void compute(opkewnewcontext* context) o-ovewwide {
+    twy {
+      auto handwe = g-gethandwe<datawecowdwesouwce>(context, 0);
+      const auto &wecowds = handwe->wecowds;
+      const auto &common = h-handwe->common;
 
-      int64 common_string_size = count_if_exists(common.getString(), handle->keep_map);
-      int64 total_string_size = records.size() * common_string_size;
-      for (int id = 0; id < records.size(); id++) {
-        total_string_size += count_if_exists(handle->records[id].getString(),
-                                             handle->keep_map);
+      i-int64 c-common_stwing_size = c-count_if_exists(common.getstwing(), UwU h-handwe->keep_map);
+      int64 totaw_stwing_size = w-wecowds.size() * common_stwing_size;
+      fow (int i-id = 0; id < wecowds.size(); id++) {
+        t-totaw_stwing_size += count_if_exists(handwe->wecowds[id].getstwing(), (✿oωo)
+                                             handwe->keep_map);
       }
-      const int total_size = static_cast<int>(total_string_size);
+      c-const int totaw_size = s-static_cast<int>(totaw_stwing_size);
 
-      TensorShape shape = {total_size};
-      Tensor* keys = nullptr;
-      Tensor* names = nullptr;
-      Tensor* ids = nullptr;
-      Tensor*values = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-      OP_REQUIRES_OK(context, context->allocate_output(2, shape, &names));
-      OP_REQUIRES_OK(context, context->allocate_output(3, shape, &values));
+      tensowshape s-shape = {totaw_size};
+      tensow* k-keys = nyuwwptw;
+      t-tensow* nyames = nyuwwptw;
+      t-tensow* i-ids = nyuwwptw;
+      tensow*vawues = n-nyuwwptw;
+      op_wequiwes_ok(context, OwO context->awwocate_output(0, ʘwʘ shape, &ids));
+      op_wequiwes_ok(context, XD c-context->awwocate_output(1, (ˆ ﻌ ˆ)♡ shape, &keys));
+      o-op_wequiwes_ok(context, σωσ context->awwocate_output(2, rawr x3 shape, rawr &names));
+      o-op_wequiwes_ok(context, 🥺 c-context->awwocate_output(3, :3 s-shape, :3 &vawues));
 
       uint64_t offset = 0;
-      auto keys_flat = keys->flat<int64>();
-      auto names_flat = names->flat<string>();
-      auto ids_flat = ids->flat<int64>();
-      auto values_flat = values->flat<float>();
+      a-auto keys_fwat = k-keys->fwat<int64>();
+      auto n-nyames_fwat = nyames->fwat<stwing>();
+      a-auto ids_fwat = ids->fwat<int64>();
+      a-auto vawues_fwat = v-vawues->fwat<fwoat>();
 
-      std::fill(values_flat.data(), values_flat.data() + total_size, 1);
-      for (int64 id = 0; id < records.size(); id++) {
-        for (const auto &it : common.getString()) {
-          if (handle->keep_map->find(it.first) == handle->keep_map->end()) continue;
-          ids_flat(offset) = id;
-          keys_flat(offset) = it.first;
-          names_flat(offset) = it.second;
+      std::fiww(vawues_fwat.data(), >w< vawues_fwat.data() + totaw_size, :3 1);
+      fow (int64 id = 0; i-id < wecowds.size(); i-id++) {
+        fow (const auto &it : common.getstwing()) {
+          i-if (handwe->keep_map->find(it.fiwst) == handwe->keep_map->end()) c-continue;
+          i-ids_fwat(offset) = id;
+          keys_fwat(offset) = it.fiwst;
+          nyames_fwat(offset) = i-it.second;
           offset++;
         }
-        for (const auto &it : records[id].getString()) {
-          if (handle->keep_map->find(it.first) == handle->keep_map->end()) continue;
-          ids_flat(offset) = id;
-          keys_flat(offset) = it.first;
-          names_flat(offset) = it.second;
-          offset++;
+        fow (const a-auto &it : wecowds[id].getstwing()) {
+          if (handwe->keep_map->find(it.fiwst) == h-handwe->keep_map->end()) c-continue;
+          ids_fwat(offset) = i-id;
+          k-keys_fwat(offset) = i-it.fiwst;
+          n-nyames_fwat(offset) = i-it.second;
+          o-offset++;
         }
       }
     } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_OP("GetSparseBinaryFeatures")
-.Input("data_record_handle: resource")
-.Output("ids: int64")
-.Output("keys: int64")
-.Output("names: string")
-.Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that reads sparse binary features
-Input
-  data_record_handle: Resource handle to DataRecord
+wegistew_op("getspawsebinawyfeatuwes")
+.input("data_wecowd_handwe: wesouwce")
+.output("ids: i-int64")
+.output("keys: i-int64")
+.output("names: stwing")
+.output("vawues: f-fwoat")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    wetuwn s-status::ok();
+  }).doc(w"doc(
+a t-tensowfwow op that weads spawse binawy featuwes
+input
+  data_wecowd_handwe: wesouwce h-handwe to d-datawecowd
 
-Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
-  keys: DataRecord keys (int64)
-  names: DataRecord values(string)
-  values: always set to 1 (float)
+outputs
+  ids: ids specifies the index of the wecowds[id] i-in the batch (int64)
+  k-keys: d-datawecowd keys (int64)
+  nyames: datawecowd v-vawues(stwing)
+  vawues: awways set to 1 (fwoat)
 )doc");
 
-class GetSparseBinaryFeatures : public OpKernel {
- public:
-  explicit GetSparseBinaryFeatures(OpKernelConstruction* context)
-      : OpKernel(context) {}
+c-cwass g-getspawsebinawyfeatuwes : pubwic opkewnew {
+ pubwic:
+  e-expwicit getspawsebinawyfeatuwes(opkewnewconstwuction* c-context)
+      : opkewnew(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
-      const auto &records = handle->records;
-      const auto &common = handle->common;
+  v-void compute(opkewnewcontext* context) ovewwide {
+    t-twy {
+      a-auto handwe = g-gethandwe<datawecowdwesouwce>(context, 🥺 0);
+      c-const auto &wecowds = h-handwe->wecowds;
+      c-const auto &common = handwe->common;
 
-      int64 common_sparse_binary_size = count_if_exists(common.getSparseBinary(), handle->keep_map);
-      int64 total_sparse_binary_size = records.size() * common_sparse_binary_size;
-      for (int id = 0; id < records.size(); id++) {
-        total_sparse_binary_size += count_if_exists(handle->records[id].getSparseBinary(),
-                                                    handle->keep_map);
+      i-int64 common_spawse_binawy_size = c-count_if_exists(common.getspawsebinawy(), ^^;; handwe->keep_map);
+      i-int64 totaw_spawse_binawy_size = wecowds.size() * common_spawse_binawy_size;
+      f-fow (int id = 0; id < wecowds.size(); id++) {
+        totaw_spawse_binawy_size += c-count_if_exists(handwe->wecowds[id].getspawsebinawy(), rawr
+                                                    handwe->keep_map);
       }
-      const int total_size = static_cast<int>(total_sparse_binary_size);
+      c-const int t-totaw_size = static_cast<int>(totaw_spawse_binawy_size);
 
-      TensorShape shape = {total_size};
-      Tensor* keys = nullptr;
-      Tensor* names = nullptr;
-      Tensor* ids = nullptr;
-      Tensor* values = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-      OP_REQUIRES_OK(context, context->allocate_output(2, shape, &names));
-      OP_REQUIRES_OK(context, context->allocate_output(3, shape, &values));
+      tensowshape shape = {totaw_size};
+      tensow* k-keys = nyuwwptw;
+      tensow* nyames = nyuwwptw;
+      t-tensow* i-ids = nyuwwptw;
+      tensow* vawues = nyuwwptw;
+      o-op_wequiwes_ok(context, c-context->awwocate_output(0, ^^ shape, mya &ids));
+      o-op_wequiwes_ok(context, mya context->awwocate_output(1, (U ﹏ U) shape, &keys));
+      o-op_wequiwes_ok(context, ( ͡o ω ͡o ) c-context->awwocate_output(2, 🥺 shape, &names));
+      op_wequiwes_ok(context, σωσ c-context->awwocate_output(3, (///ˬ///✿) s-shape, &vawues));
 
       uint64_t offset = 0;
-      auto keys_flat = keys->flat<int64>();
-      auto names_flat = names->flat<string>();
-      auto ids_flat = ids->flat<int64>();
-      auto values_flat = values->flat<float>();
+      auto k-keys_fwat = keys->fwat<int64>();
+      a-auto nyames_fwat = n-nyames->fwat<stwing>();
+      a-auto ids_fwat = ids->fwat<int64>();
+      auto vawues_fwat = vawues->fwat<fwoat>();
 
-      // All the values for sparse binary features are 1.
-      std::fill(values_flat.data(), values_flat.data() + total_size, 1);
-      for (int64 id = 0; id < records.size(); id++) {
-        for (const auto &it : common.getSparseBinary()) {
-          if (handle->keep_map->find(it.first) == handle->keep_map->end()) continue;
-          for (const auto &it_inner : it.second) {
-            ids_flat(offset) = id;
-            keys_flat(offset) = it.first;
-            names_flat(offset) = it_inner;
+      // aww the vawues fow spawse binawy featuwes a-awe 1.
+      s-std::fiww(vawues_fwat.data(), (⑅˘꒳˘) v-vawues_fwat.data() + t-totaw_size, OwO 1);
+      f-fow (int64 i-id = 0; id < wecowds.size(); i-id++) {
+        f-fow (const auto &it : common.getspawsebinawy()) {
+          i-if (handwe->keep_map->find(it.fiwst) == h-handwe->keep_map->end()) continue;
+          fow (const auto &it_innew : i-it.second) {
+            ids_fwat(offset) = id;
+            k-keys_fwat(offset) = it.fiwst;
+            n-nyames_fwat(offset) = i-it_innew;
             offset++;
           }
         }
-        for (const auto &it : records[id].getSparseBinary()) {
-          if (handle->keep_map->find(it.first) == handle->keep_map->end()) continue;
-          for (const auto &it_inner : it.second) {
-            ids_flat(offset) = id;
-            keys_flat(offset) = it.first;
-            names_flat(offset) = it_inner;
-            offset++;
-          }
-        }
-      }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
-    }
-  }
-};
-
-REGISTER_OP("GetSparseContinuousFeatures")
-.Input("data_record_handle: resource")
-.Output("ids: int64")
-.Output("keys: int64")
-.Output("values: float")
-.Output("names: string")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that reads sparse continuous features
-Input
-  data_record_handle: Resource handle to DataRecord
-
-Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
-  keys: DataRecord keys (int64)
-  values: DataRecord values(float)
-  names: DataRecord values(string)
-)doc");
-
-class GetSparseContinuousFeatures : public OpKernel {
- public:
-  explicit GetSparseContinuousFeatures(OpKernelConstruction* context)
-      : OpKernel(context) {}
-
-  void Compute(OpKernelContext* context) override {
-    try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
-      const auto &records = handle->records;
-      const auto &common = handle->common;
-
-      int64 common_sparse_continuous_size = count_if_exists(common.getSparseContinuous(),
-                                                            handle->keep_map);
-      int64 total_sparse_continuous_size = records.size() * common_sparse_continuous_size;
-      for (int id = 0; id < records.size(); id++) {
-        total_sparse_continuous_size += count_if_exists(handle->records[id].getSparseContinuous(),
-                                                        handle->keep_map);
-      }
-      const int total_size = static_cast<int>(total_sparse_continuous_size);
-
-      TensorShape shape = {total_size};
-      Tensor* keys = nullptr;
-      Tensor* values = nullptr;
-      Tensor* names = nullptr;
-      Tensor* ids = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-      OP_REQUIRES_OK(context, context->allocate_output(2, shape, &values));
-      OP_REQUIRES_OK(context, context->allocate_output(3, shape, &names));
-
-      uint64_t offset = 0;
-      auto keys_flat = keys->flat<int64>();
-      auto values_flat = values->flat<float>();
-      auto names_flat = names->flat<string>();
-      auto ids_flat = ids->flat<int64>();
-
-      for (int64 id = 0; id < records.size(); id++) {
-        // copying the contents of the maps of maps
-        for (const auto &it : common.getSparseContinuous()) {
-          if (handle->keep_map->find(it.first) == handle->keep_map->end()) continue;
-          // for each id; iterate through the number of maps corresponding to that id
-          for (const auto &it_inner : it.second) {
-            ids_flat(offset) = id;
-            keys_flat(offset) = it.first;
-            names_flat(offset) = it_inner.first;
-            values_flat(offset) = it_inner.second;
-            offset++;
-          }
-        }
-        // copying the contents of the maps of maps
-        for (const auto &it : records[id].getSparseContinuous()) {
-          if (handle->keep_map->find(it.first) == handle->keep_map->end()) continue;
-          // for each id; iterate through the number of maps corresponding to that id
-          for (const auto &it_inner : it.second) {
-            ids_flat(offset) = id;
-            keys_flat(offset) = it.first;
-            names_flat(offset) = it_inner.first;
-            values_flat(offset) = it_inner.second;
+        f-fow (const a-auto &it : wecowds[id].getspawsebinawy()) {
+          i-if (handwe->keep_map->find(it.fiwst) == handwe->keep_map->end()) c-continue;
+          f-fow (const auto &it_innew : i-it.second) {
+            ids_fwat(offset) = i-id;
+            k-keys_fwat(offset) = i-it.fiwst;
+            nyames_fwat(offset) = i-it_innew;
             offset++;
           }
         }
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const s-std::exception &e) {
+      context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_OP("GetBatchSizeFromDataRecord")
-.Input("data_record_handle: resource")
-.Output("batch_size: int64")
-.SetShapeFn(shape_inference::ScalarShape)
-.Doc(R"doc(
-A tensorflow OP that returns batch size from the data record.
-Input
-  data_record_handle: Resource handle to DataRecord
+wegistew_op("getspawsecontinuousfeatuwes")
+.input("data_wecowd_handwe: wesouwce")
+.output("ids: int64")
+.output("keys: int64")
+.output("vawues: fwoat")
+.output("names: s-stwing")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
+a tensowfwow op that weads spawse continuous featuwes
+input
+  d-data_wecowd_handwe: wesouwce handwe to datawecowd
 
-Outputs
-  batch_size: Number of records held in the handle.
+o-outputs
+  ids: ids specifies t-the index of the wecowds[id] in the batch (int64)
+  k-keys: datawecowd keys (int64)
+  v-vawues: datawecowd vawues(fwoat)
+  n-nyames: datawecowd v-vawues(stwing)
 )doc");
 
-class GetBatchSizeFromDataRecord : public OpKernel {
- public:
-  explicit GetBatchSizeFromDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {}
+cwass getspawsecontinuousfeatuwes : pubwic opkewnew {
+ p-pubwic:
+  expwicit getspawsecontinuousfeatuwes(opkewnewconstwuction* context)
+      : opkewnew(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
-      Tensor *output;
-      OP_REQUIRES_OK(context, context->allocate_output(0, TensorShape({}), &output));
-      output->scalar<int64>()() = handle->records.size();
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+  void compute(opkewnewcontext* c-context) ovewwide {
+    twy {
+      a-auto handwe = gethandwe<datawecowdwesouwce>(context, ^^ 0);
+      c-const auto &wecowds = handwe->wecowds;
+      c-const auto &common = h-handwe->common;
+
+      int64 common_spawse_continuous_size = count_if_exists(common.getspawsecontinuous(), rawr
+                                                            h-handwe->keep_map);
+      int64 totaw_spawse_continuous_size = wecowds.size() * c-common_spawse_continuous_size;
+      fow (int id = 0; id < wecowds.size(); id++) {
+        totaw_spawse_continuous_size += c-count_if_exists(handwe->wecowds[id].getspawsecontinuous(), XD
+                                                        h-handwe->keep_map);
+      }
+      const int totaw_size = s-static_cast<int>(totaw_spawse_continuous_size);
+
+      t-tensowshape shape = {totaw_size};
+      t-tensow* keys = nyuwwptw;
+      tensow* vawues = nyuwwptw;
+      tensow* nyames = n-nyuwwptw;
+      t-tensow* ids = nyuwwptw;
+      o-op_wequiwes_ok(context, ( ͡o ω ͡o ) c-context->awwocate_output(0, shape, 😳😳😳 &ids));
+      o-op_wequiwes_ok(context, (ˆ ﻌ ˆ)♡ context->awwocate_output(1, mya shape, ( ͡o ω ͡o ) &keys));
+      o-op_wequiwes_ok(context, ^^ context->awwocate_output(2, OwO shape, &vawues));
+      op_wequiwes_ok(context, 😳 c-context->awwocate_output(3, /(^•ω•^) s-shape, &names));
+
+      uint64_t offset = 0;
+      auto keys_fwat = k-keys->fwat<int64>();
+      auto vawues_fwat = vawues->fwat<fwoat>();
+      auto nyames_fwat = nyames->fwat<stwing>();
+      auto ids_fwat = ids->fwat<int64>();
+
+      fow (int64 id = 0; i-id < wecowds.size(); i-id++) {
+        // copying t-the contents o-of the maps of maps
+        fow (const a-auto &it : common.getspawsecontinuous()) {
+          if (handwe->keep_map->find(it.fiwst) == handwe->keep_map->end()) continue;
+          // fow each id; itewate thwough t-the nyumbew of maps cowwesponding to that id
+          fow (const auto &it_innew : i-it.second) {
+            ids_fwat(offset) = i-id;
+            k-keys_fwat(offset) = it.fiwst;
+            nyames_fwat(offset) = it_innew.fiwst;
+            v-vawues_fwat(offset) = i-it_innew.second;
+            o-offset++;
+          }
+        }
+        // copying t-the contents of the maps of m-maps
+        fow (const auto &it : w-wecowds[id].getspawsecontinuous()) {
+          if (handwe->keep_map->find(it.fiwst) == h-handwe->keep_map->end()) continue;
+          // fow each i-id; itewate thwough the nyumbew o-of maps cowwesponding t-to that id
+          fow (const a-auto &it_innew : i-it.second) {
+            ids_fwat(offset) = i-id;
+            keys_fwat(offset) = i-it.fiwst;
+            nyames_fwat(offset) = i-it_innew.fiwst;
+            v-vawues_fwat(offset) = it_innew.second;
+            offset++;
+          }
+        }
+      }
+    } c-catch (const std::exception &e) {
+      context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_OP("GetLabelsFromDataRecord")
-.Input("data_record_handle: resource")
-.Output("labels: float")
-.Attr("default_label: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that returns labels from the data record.
+wegistew_op("getbatchsizefwomdatawecowd")
+.input("data_wecowd_handwe: wesouwce")
+.output("batch_size: int64")
+.setshapefn(shape_infewence::scawawshape)
+.doc(w"doc(
+a tensowfwow op that wetuwns batch s-size fwom the data wecowd. >w<
+input
+  data_wecowd_handwe: w-wesouwce handwe to datawecowd
 
-Attr
-  default_label: The value used when a label is absent in a data record.
-
-Input
-  data_record_handle: Resource handle to DataRecord
-
-Outputs
-  labels: A 2D tensor of size [batch_size, num_labels] containing the label values.
+o-outputs
+  batch_size: nyumbew of wecowds h-hewd in the handwe. >w<
 )doc");
 
-class GetLabelsFromDataRecord : public OpKernel {
- private:
-  float default_label;
+cwass getbatchsizefwomdatawecowd : pubwic opkewnew {
+ p-pubwic:
+  expwicit getbatchsizefwomdatawecowd(opkewnewconstwuction* context)
+      : o-opkewnew(context) {}
 
- public:
-  explicit GetLabelsFromDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("default_label", &default_label));
+  void compute(opkewnewcontext* context) ovewwide {
+    t-twy {
+      auto handwe = gethandwe<datawecowdwesouwce>(context, (✿oωo) 0);
+      t-tensow *output;
+      o-op_wequiwes_ok(context, (///ˬ///✿) context->awwocate_output(0, (ꈍᴗꈍ) tensowshape({}), /(^•ω•^) &output));
+      output->scawaw<int64>()() = h-handwe->wecowds.size();
+    } c-catch (const std::exception &e) {
+      c-context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
+    }
+  }
+};
+
+w-wegistew_op("getwabewsfwomdatawecowd")
+.input("data_wecowd_handwe: wesouwce")
+.output("wabews: fwoat")
+.attw("defauwt_wabew: fwoat")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
+a tensowfwow op that wetuwns w-wabews fwom the data wecowd. (✿oωo)
+
+attw
+  defauwt_wabew: the vawue u-used when a wabew i-is absent in a d-data wecowd. nyaa~~
+
+input
+  data_wecowd_handwe: wesouwce handwe to datawecowd
+
+o-outputs
+  wabews: a 2d t-tensow of size [batch_size, (ꈍᴗꈍ) nyum_wabews] c-containing t-the wabew vawues. o.O
+)doc");
+
+cwass getwabewsfwomdatawecowd : pubwic opkewnew {
+ pwivate:
+  fwoat defauwt_wabew;
+
+ pubwic:
+  expwicit g-getwabewsfwomdatawecowd(opkewnewconstwuction* c-context)
+      : opkewnew(context) {
+    op_wequiwes_ok(context, ^^;; context->getattw("defauwt_wabew", σωσ &defauwt_wabew));
   }
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
-      const auto &records = handle->records;
-      const int num_labels = static_cast<int>(handle->num_labels);
-      TensorShape shape = {static_cast<int64>(handle->records.size()), num_labels};
+  v-void compute(opkewnewcontext* context) ovewwide {
+    twy {
+      a-auto handwe = g-gethandwe<datawecowdwesouwce>(context, òωó 0);
+      c-const auto &wecowds = h-handwe->wecowds;
+      c-const int nyum_wabews = s-static_cast<int>(handwe->num_wabews);
+      tensowshape shape = {static_cast<int64>(handwe->wecowds.size()), (ꈍᴗꈍ) n-nyum_wabews};
 
-      Tensor *labels;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &labels));
+      t-tensow *wabews;
+      o-op_wequiwes_ok(context, ʘwʘ c-context->awwocate_output(0, s-shape, ^^;; &wabews));
 
-      // The default value of label is not present in data record is std::nanf
-      // For continuous labels, change that to a default_label or label.
-      auto func = [this](float label) -> float {
-        return std::isnan(label) ? default_label : label;
+      // t-the defauwt vawue of wabew is nyot p-pwesent in data w-wecowd is std::nanf
+      // f-fow continuous wabews, mya change that to a defauwt_wabew o-ow wabew. XD
+      auto func = [this](fwoat wabew) -> fwoat {
+        w-wetuwn std::isnan(wabew) ? defauwt_wabew : w-wabew;
       };
 
-      auto labels_data = labels->flat<float>().data();
-      for (const auto &record : records) {
-        const auto& rec_labels = record.labels();
-        labels_data = std::transform(rec_labels.begin(), rec_labels.end(), labels_data, func);
+      a-auto wabews_data = wabews->fwat<fwoat>().data();
+      fow (const auto &wecowd : wecowds) {
+        const a-auto& wec_wabews = w-wecowd.wabews();
+        wabews_data = std::twansfowm(wec_wabews.begin(), /(^•ω•^) w-wec_wabews.end(), nyaa~~ w-wabews_data, (U ᵕ U❁) func);
       }
     } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      c-context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_OP("GetWeightsFromDataRecord")
-.Input("data_record_handle: resource")
-.Output("weights: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that returns weights from the data record.
-Input
-  data_record_handle: Resource handle to DataRecord
+wegistew_op("getweightsfwomdatawecowd")
+.input("data_wecowd_handwe: w-wesouwce")
+.output("weights: fwoat")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+    w-wetuwn status::ok();
+  }).doc(w"doc(
+a-a tensowfwow op that wetuwns weights fwom t-the data wecowd. òωó
+input
+  data_wecowd_handwe: wesouwce handwe to datawecowd
 
-Outputs
-  weights: A 2D tensor of size [batch_size, num_weights] containing the weight values.
+outputs
+  weights: a 2d t-tensow of size [batch_size, σωσ nyum_weights] containing the weight v-vawues.
 )doc");
 
-class GetWeightsFromDataRecord : public OpKernel {
- public:
-  explicit GetWeightsFromDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {}
+c-cwass getweightsfwomdatawecowd : p-pubwic opkewnew {
+ pubwic:
+  e-expwicit getweightsfwomdatawecowd(opkewnewconstwuction* c-context)
+      : o-opkewnew(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
-      const auto &records = handle->records;
-      const int num_weights = static_cast<int>(handle->num_weights);
-      TensorShape shape = {static_cast<int64>(handle->records.size()), num_weights};
+  v-void compute(opkewnewcontext* c-context) ovewwide {
+    twy {
+      auto handwe = g-gethandwe<datawecowdwesouwce>(context, ^^;; 0);
+      c-const auto &wecowds = h-handwe->wecowds;
+      const int nyum_weights = s-static_cast<int>(handwe->num_weights);
+      t-tensowshape s-shape = {static_cast<int64>(handwe->wecowds.size()), (˘ω˘) nyum_weights};
 
-      Tensor *weights;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &weights));
+      tensow *weights;
+      o-op_wequiwes_ok(context, òωó c-context->awwocate_output(0, UwU s-shape, 😳😳😳 &weights));
 
-      auto weights_data = weights->flat<float>().data();
-      for (const auto &record : records) {
-        const auto& rec_weights = record.weights();
-        weights_data = std::copy(rec_weights.begin(), rec_weights.end(), weights_data);
+      a-auto weights_data = w-weights->fwat<fwoat>().data();
+      fow (const a-auto &wecowd : wecowds) {
+        c-const a-auto& wec_weights = wecowd.weights();
+        weights_data = std::copy(wec_weights.begin(), (⑅˘꒳˘) w-wec_weights.end(), nyaa~~ weights_data);
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } c-catch (const std::exception &e) {
+      c-context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-template<typename ValueType, typename FeatureType, typename TensorType>
-void SetValueGroup(
-const FeatureType& type,
-const int64& feature_id,
-const int64& id,
-const ValueType& default_value,
-TensorType values_flat) {
-  auto it = type.find(feature_id);
-  values_flat(id) = (it == type.end()) ? default_value : it->second;
+t-tempwate<typename vawuetype, :3 typename featuwetype, nyaa~~ t-typename t-tensowtype>
+void s-setvawuegwoup(
+c-const featuwetype& t-type, :3
+const i-int64& featuwe_id, :3
+const int64& id, ^•ﻌ•^
+const vawuetype& d-defauwt_vawue, o.O
+tensowtype vawues_fwat) {
+  auto it = type.find(featuwe_id);
+  vawues_fwat(id) = (it == type.end()) ? d-defauwt_vawue : i-it->second;
 }
 
-template<typename ValueType, typename TensorType>
-// overloading for BinaryFeatures; as it needs to set a value of 1
-void SetValueGroup(
-const twml::DataRecord::BinaryFeatures& type,
-const int64& feature_id,
-const int64& id,
-const ValueType& default_value,
-TensorType values_flat) {
-  auto it = type.find(feature_id);
-  values_flat(id) = (it == type.end()) ? default_value : 1;
+tempwate<typename vawuetype, -.- typename tensowtype>
+// o-ovewwoading f-fow binawyfeatuwes; as it nyeeds to set a-a vawue of 1
+void setvawuegwoup(
+c-const twmw::datawecowd::binawyfeatuwes& t-type, 🥺
+c-const int64& featuwe_id, :3
+const int64& id, /(^•ω•^)
+const vawuetype& defauwt_vawue, 😳😳😳
+t-tensowtype vawues_fwat) {
+  a-auto it = type.find(featuwe_id);
+  v-vawues_fwat(id) = (it == type.end()) ? defauwt_vawue : 1;
 }
 
-// Helper for Group Extraction of Dense Features
-template<typename ValueType, typename FeatureType>
-void ComputeHelperGroupFeaturesAsTensors(
-OpKernelContext* context,
-const std::vector<int64>& feature_ids,
-ValueType& default_value,
-std::function<const FeatureType&(const twml::DataRecord&)> f) {
-  auto handle = getHandle<DataRecordResource>(context, 0);
-  const auto &records = handle->records;
-  // Output shape is 2D; where the first dimension corresponds to the batch_size
-  // and the second corresponds to the number of features passed to the TF Op.
-  const int batch_size = static_cast<int64>(handle->records.size());
-  const int num_feature_ids = static_cast<int>(feature_ids.size());
-  TensorShape shape = {batch_size, num_feature_ids};
+// h-hewpew fow gwoup extwaction o-of dense featuwes
+tempwate<typename vawuetype, (✿oωo) t-typename featuwetype>
+void c-computehewpewgwoupfeatuwesastensows(
+opkewnewcontext* context, nyaa~~
+const std::vectow<int64>& featuwe_ids, (˘ω˘)
+vawuetype& defauwt_vawue, rawr x3
+s-std::function<const f-featuwetype&(const t-twmw::datawecowd&)> f-f) {
+  auto handwe = gethandwe<datawecowdwesouwce>(context, 🥺 0);
+  c-const auto &wecowds = handwe->wecowds;
+  // output s-shape is 2d; whewe t-the fiwst dimension c-cowwesponds t-to the batch_size
+  // and the second cowwesponds to the nyumbew of featuwes p-passed to the tf o-op. (ˆ ﻌ ˆ)♡
+  const int batch_size = static_cast<int64>(handwe->wecowds.size());
+  const int nyum_featuwe_ids = s-static_cast<int>(featuwe_ids.size());
+  tensowshape shape = {batch_size, XD n-nyum_featuwe_ids};
 
-  // Define the output
-  Tensor* values = nullptr;
-  OP_REQUIRES_OK(context, context->allocate_output(0, shape, &values));
-  auto values_flat = values->flat<ValueType>();
+  // d-define t-the output
+  tensow* vawues = nyuwwptw;
+  op_wequiwes_ok(context, (˘ω˘) context->awwocate_output(0, shape, UwU &vawues));
+  auto vawues_fwat = v-vawues->fwat<vawuetype>();
 
-  for (int64 id = 0; id < records.size(); id++) {
-    const auto &type = f(records[id]);
-    const auto id_offset = id * feature_ids.size();
-    for (int64 fid = 0; fid < feature_ids.size(); fid++) {
-      auto feature_id = feature_ids[fid];
-      // The value is set to default if it does not exist in the current DataRecord
-      SetValueGroup(type, feature_id, id_offset + fid, default_value, values_flat);
+  fow (int64 i-id = 0; id < wecowds.size(); id++) {
+    const auto &type = f(wecowds[id]);
+    c-const auto id_offset = id * featuwe_ids.size();
+    f-fow (int64 fid = 0; fid < featuwe_ids.size(); fid++) {
+      a-auto featuwe_id = f-featuwe_ids[fid];
+      // t-the v-vawue is set to d-defauwt if it does nyot exist i-in the cuwwent datawecowd
+      s-setvawuegwoup(type, (U ᵕ U❁) featuwe_id, :3 i-id_offset + fid, :3 defauwt_vawue, ^•ﻌ•^ vawues_fwat);
     }
-  }
-}
-
-// Helper for Single Extraction of Dense Features
-template<typename ValueType, typename FeatureType>
-void ComputeHelperFeaturesAsTensors(
-OpKernelContext* context,
-ValueType& default_value,
-int64 feature_id,
-std::function<const FeatureType&(const twml::DataRecord&)> f) {
-  auto handle = getHandle<DataRecordResource>(context, 0);
-  const auto &records = handle->records;
-  // Output shape is 2D; where the first dimension corresponds to the batch_size
-  // and the second corresponds to the number of features passed to the TF Op.
-  const int total_size = static_cast<int64>(handle->records.size());
-  TensorShape shape = {total_size};
-
-  // Define the output
-  Tensor* values = nullptr;
-  OP_REQUIRES_OK(context, context->allocate_output(0, shape, &values));
-  auto values_flat = values->flat<ValueType>();
-  for (int64 id = 0; id < records.size(); id++) {
-    const auto &type = f(records[id]);
-    SetValueGroup(type, feature_id, id, default_value, values_flat);
   }
 }
 
-REGISTER_OP("GetBinaryAsTensor")
-.Input("data_record_handle: resource")
-.Attr("feature_id: int")
-.Attr("default_value: float")
-.Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that returns a Dense Tensor with the values of a particular feature_id.
-Input
-  data_record_handle: Resource handle to DataRecord
-Attr
-  feature_id: Id representing the feature whose values will be extracted.
-  default_value: default_value to be inputted if the values are missing from the current DataRecord.
-Outputs
-  values: A Tensor corresponding to the value of the feature_id across multiple DataRecords
+// h-hewpew fow singwe e-extwaction of dense f-featuwes
+tempwate<typename vawuetype, 🥺 typename f-featuwetype>
+v-void computehewpewfeatuwesastensows(
+opkewnewcontext* context, /(^•ω•^)
+vawuetype& defauwt_vawue, σωσ
+i-int64 featuwe_id, >_<
+s-std::function<const featuwetype&(const t-twmw::datawecowd&)> f-f) {
+  auto handwe = gethandwe<datawecowdwesouwce>(context, (ꈍᴗꈍ) 0);
+  const auto &wecowds = handwe->wecowds;
+  // o-output shape is 2d; whewe the fiwst dimension c-cowwesponds to the batch_size
+  // and the second c-cowwesponds to the nyumbew of featuwes passed to the tf op.
+  c-const int totaw_size = static_cast<int64>(handwe->wecowds.size());
+  t-tensowshape s-shape = {totaw_size};
+
+  // define t-the output
+  tensow* vawues = n-nyuwwptw;
+  o-op_wequiwes_ok(context, (⑅˘꒳˘) context->awwocate_output(0, s-shape, >_< &vawues));
+  a-auto vawues_fwat = v-vawues->fwat<vawuetype>();
+  f-fow (int64 id = 0; id < w-wecowds.size(); i-id++) {
+    const a-auto &type = f(wecowds[id]);
+    setvawuegwoup(type, (U ﹏ U) f-featuwe_id, id, ʘwʘ defauwt_vawue, rawr x3 vawues_fwat);
+  }
+}
+
+wegistew_op("getbinawyastensow")
+.input("data_wecowd_handwe: wesouwce")
+.attw("featuwe_id: int")
+.attw("defauwt_vawue: f-fwoat")
+.output("vawues: f-fwoat")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+    wetuwn s-status::ok();
+  }).doc(w"doc(
+a tensowfwow op that wetuwns a d-dense tensow with t-the vawues of a-a pawticuwaw featuwe_id. ^•ﻌ•^
+i-input
+  data_wecowd_handwe: w-wesouwce handwe to datawecowd
+attw
+  featuwe_id: i-id wepwesenting t-the featuwe whose vawues wiww be extwacted. (✿oωo)
+  defauwt_vawue: d-defauwt_vawue to be inputted i-if the vawues awe missing fwom the cuwwent datawecowd. (///ˬ///✿)
+o-outputs
+  vawues: a tensow c-cowwesponding to the vawue of the featuwe_id acwoss m-muwtipwe datawecowds
 )doc");
 
-class GetBinaryAsTensor : public OpKernel {
- private:
-  int64 feature_id;
-  float default_value;
+cwass getbinawyastensow : p-pubwic opkewnew {
+ p-pwivate:
+  int64 f-featuwe_id;
+  fwoat defauwt_vawue;
 
- public:
-  explicit GetBinaryAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
-    OP_REQUIRES_OK(context, context->GetAttr("default_value", &default_value));
+ pubwic:
+  e-expwicit getbinawyastensow(opkewnewconstwuction* context) : opkewnew(context) {
+    op_wequiwes_ok(context, (⑅˘꒳˘) c-context->getattw("featuwe_id", &featuwe_id));
+    op_wequiwes_ok(context, ( ͡o ω ͡o ) c-context->getattw("defauwt_vawue", XD &defauwt_vawue));
   }
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      std::function<const twml::DataRecord::BinaryFeatures &(const twml::DataRecord &)> f =
-       [](const twml::DataRecord& record) ->const twml::DataRecord::BinaryFeatures& { return record.getBinary(); };
-      ComputeHelperFeaturesAsTensors(context, default_value, feature_id, f);
+  v-void compute(opkewnewcontext* context) ovewwide {
+    twy {
+      std::function<const twmw::datawecowd::binawyfeatuwes &(const twmw::datawecowd &)> f-f =
+       [](const twmw::datawecowd& wecowd) ->const t-twmw::datawecowd::binawyfeatuwes& { w-wetuwn wecowd.getbinawy(); };
+      computehewpewfeatuwesastensows(context, :3 defauwt_vawue, (⑅˘꒳˘) f-featuwe_id, 😳 f-f);
     } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_OP("GetContinuousAsTensor")
-.Input("data_record_handle: resource")
-.Attr("feature_id: int")
-.Attr("default_value: float")
-.Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that returns a Dense Tensor with the values of a particular feature_id.
-Input
-  data_record_handle: Resource handle to DataRecord
-Attr
-  feature_id: Id representing the feature whose values will be extracted.
-  default_value: default_value to be inputted if the values are missing from the current DataRecord.
-Outputs
-  values: A Tensor corresponding to the value of the feature_id across multiple DataRecords
+wegistew_op("getcontinuousastensow")
+.input("data_wecowd_handwe: w-wesouwce")
+.attw("featuwe_id: int")
+.attw("defauwt_vawue: f-fwoat")
+.output("vawues: fwoat")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+    wetuwn s-status::ok();
+  }).doc(w"doc(
+a-a tensowfwow op that wetuwns a-a dense tensow w-with the vawues of a pawticuwaw f-featuwe_id. -.-
+input
+  data_wecowd_handwe: w-wesouwce h-handwe to datawecowd
+a-attw
+  featuwe_id: i-id wepwesenting t-the featuwe whose vawues w-wiww be extwacted. (U ﹏ U)
+  d-defauwt_vawue: defauwt_vawue to be inputted i-if the vawues awe missing fwom t-the cuwwent datawecowd. (U ﹏ U)
+outputs
+  vawues: a tensow cowwesponding to the vawue of the featuwe_id acwoss muwtipwe d-datawecowds
 )doc");
 
-class GetContinuousAsTensor : public OpKernel {
- private:
-  int64 feature_id;
-  float default_value;
+cwass getcontinuousastensow : p-pubwic opkewnew {
+ pwivate:
+  i-int64 featuwe_id;
+  f-fwoat defauwt_vawue;
 
- public:
-  explicit GetContinuousAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
-    OP_REQUIRES_OK(context, context->GetAttr("default_value", &default_value));
+ pubwic:
+  e-expwicit getcontinuousastensow(opkewnewconstwuction* c-context) : opkewnew(context) {
+    o-op_wequiwes_ok(context, /(^•ω•^) context->getattw("featuwe_id", >_< &featuwe_id));
+    op_wequiwes_ok(context, (˘ω˘) context->getattw("defauwt_vawue", (U ᵕ U❁) &defauwt_vawue));
   }
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      std::function<const twml::DataRecord::ContinuousFeatures &(const twml::DataRecord &)> f =
-       [](const twml::DataRecord& record) ->const twml::DataRecord::ContinuousFeatures& { return record.getContinuous(); };
-      ComputeHelperFeaturesAsTensors(context, default_value, feature_id, f);
+  void compute(opkewnewcontext* context) o-ovewwide {
+    twy {
+      std::function<const twmw::datawecowd::continuousfeatuwes &(const t-twmw::datawecowd &)> f =
+       [](const t-twmw::datawecowd& wecowd) ->const twmw::datawecowd::continuousfeatuwes& { wetuwn wecowd.getcontinuous(); };
+      computehewpewfeatuwesastensows(context, rawr defauwt_vawue, (U ﹏ U) featuwe_id, ʘwʘ f);
     } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      c-context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_OP("GetDiscreteAsTensor")
-.Input("data_record_handle: resource")
-.Attr("feature_id: int")
-.Attr("default_value: int")
-.Output("values: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that returns a Dense Tensor with the values of a particular feature_id.
-Input
-  data_record_handle: Resource handle to DataRecord
-Attr
-  feature_id: Id representing the feature whose values will be extracted.
-  default_value: default_value to be inputted if the values are missing from the current DataRecord.
-Outputs
-  values: A Tensor corresponding to the value of the feature_id across multiple DataRecords
+w-wegistew_op("getdiscweteastensow")
+.input("data_wecowd_handwe: w-wesouwce")
+.attw("featuwe_id: int")
+.attw("defauwt_vawue: i-int")
+.output("vawues: i-int64")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
+a tensowfwow o-op that wetuwns a-a dense tensow with the vawues o-of a pawticuwaw f-featuwe_id. (ꈍᴗꈍ)
+input
+  d-data_wecowd_handwe: w-wesouwce h-handwe to datawecowd
+attw
+  f-featuwe_id: id wepwesenting t-the f-featuwe whose vawues w-wiww be extwacted.
+  d-defauwt_vawue: d-defauwt_vawue t-to be inputted i-if the vawues a-awe missing f-fwom the cuwwent datawecowd. (U ᵕ U❁)
+outputs
+  vawues: a tensow cowwesponding t-to the vawue of the featuwe_id a-acwoss muwtipwe datawecowds
 )doc");
 
-class GetDiscreteAsTensor : public OpKernel {
- private:
-  int64 feature_id;
-  int64 default_value;
+cwass g-getdiscweteastensow : p-pubwic opkewnew {
+ p-pwivate:
+  int64 featuwe_id;
+  i-int64 defauwt_vawue;
 
- public:
-  explicit GetDiscreteAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
-    OP_REQUIRES_OK(context, context->GetAttr("default_value", &default_value));
+ pubwic:
+  e-expwicit getdiscweteastensow(opkewnewconstwuction* context) : opkewnew(context) {
+    op_wequiwes_ok(context, :3 context->getattw("featuwe_id", (ꈍᴗꈍ) &featuwe_id));
+    op_wequiwes_ok(context, nyaa~~ c-context->getattw("defauwt_vawue", ^•ﻌ•^ &defauwt_vawue));
   }
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      std::function<const twml::DataRecord::DiscreteFeatures &(const twml::DataRecord &)> f =
-       [](const twml::DataRecord& record) ->const twml::DataRecord::DiscreteFeatures& { return record.getDiscrete(); };
-      ComputeHelperFeaturesAsTensors(context, default_value, feature_id, f);
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+  void compute(opkewnewcontext* context) o-ovewwide {
+    t-twy {
+      std::function<const twmw::datawecowd::discwetefeatuwes &(const t-twmw::datawecowd &)> f-f =
+       [](const t-twmw::datawecowd& w-wecowd) ->const t-twmw::datawecowd::discwetefeatuwes& { w-wetuwn w-wecowd.getdiscwete(); };
+      computehewpewfeatuwesastensows(context, σωσ defauwt_vawue, (˘ω˘) f-featuwe_id, f);
+    } c-catch (const std::exception &e) {
+      context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_OP("GetStringAsTensor")
-.Input("data_record_handle: resource")
-.Attr("feature_id: int")
-.Attr("default_value: string")
-.Output("names: string")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that returns a Dense Tensor with the values of a particular feature_id.
-Input
-  data_record_handle: Resource handle to DataRecord
-Attr
-  feature_id: Id representing the feature whose values will be extracted.
-  default_value: default_value to be inputted if the values are missing from the current DataRecord.
-Outputs
-  names: A Tensor corresponding to the value of the feature_id across multiple DataRecords
+w-wegistew_op("getstwingastensow")
+.input("data_wecowd_handwe: w-wesouwce")
+.attw("featuwe_id: int")
+.attw("defauwt_vawue: s-stwing")
+.output("names: stwing")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+    wetuwn s-status::ok();
+  }).doc(w"doc(
+a-a tensowfwow op t-that wetuwns a d-dense tensow with the vawues of a-a pawticuwaw featuwe_id. ^•ﻌ•^
+i-input
+  d-data_wecowd_handwe: wesouwce handwe t-to datawecowd
+attw
+  featuwe_id: id wepwesenting the featuwe whose vawues wiww be extwacted. σωσ
+  defauwt_vawue: defauwt_vawue to be inputted i-if the vawues awe m-missing fwom the cuwwent datawecowd. ^^;;
+outputs
+  nyames: a tensow cowwesponding t-to the vawue of t-the featuwe_id acwoss muwtipwe datawecowds
 )doc");
 
-class GetStringAsTensor : public OpKernel {
- private:
-  int64 feature_id;
-  string default_value;
+cwass getstwingastensow : pubwic o-opkewnew {
+ p-pwivate:
+  int64 featuwe_id;
+  s-stwing defauwt_vawue;
 
- public:
-  explicit GetStringAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
-    OP_REQUIRES_OK(context, context->GetAttr("default_value", &default_value));
+ p-pubwic:
+  expwicit getstwingastensow(opkewnewconstwuction* c-context) : opkewnew(context) {
+    op_wequiwes_ok(context, c-context->getattw("featuwe_id", 😳 &featuwe_id));
+    o-op_wequiwes_ok(context, /(^•ω•^) context->getattw("defauwt_vawue", &defauwt_vawue));
   }
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      std::function<const twml::DataRecord::StringFeatures &(const twml::DataRecord &)> f =
-       [](const twml::DataRecord& record) ->const twml::DataRecord::StringFeatures& { return record.getString(); };
-      ComputeHelperFeaturesAsTensors(context, default_value, feature_id, f);
+  void compute(opkewnewcontext* context) ovewwide {
+    t-twy {
+      s-std::function<const t-twmw::datawecowd::stwingfeatuwes &(const t-twmw::datawecowd &)> f =
+       [](const t-twmw::datawecowd& w-wecowd) ->const t-twmw::datawecowd::stwingfeatuwes& { w-wetuwn wecowd.getstwing(); };
+      computehewpewfeatuwesastensows(context, ( ͡o ω ͡o ) defauwt_vawue, ^^ f-featuwe_id, f-f);
     } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
-    }
-  }
-};
-
-
-REGISTER_OP("GetBinaryGroupAsTensor")
-.Input("data_record_handle: resource")
-.Attr("feature_ids: list(int)")
-.Attr("default_value: float")
-.Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that returns a Dense Tensor with the values of a particular feature_id.
-Input
-  data_record_handle: Resource handle to DataRecord
-Attr
-  feature_ids: List of ids representing the features whose values will be extracted.
-  default_value: default_value to be inputted if the values are missing from the current DataRecord.
-Outputs
-  values: A Tensor corresponding to the values of the feature_ids across multiple DataRecords
-)doc");
-
-
-class GetBinaryGroupAsTensor : public OpKernel {
- private:
-  float default_value;
-  std::vector<int64> feature_ids;
-
- public:
-  explicit GetBinaryGroupAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_ids", &feature_ids));
-    OP_REQUIRES_OK(context, context->GetAttr("default_value", &default_value));
-  }
-
-  void Compute(OpKernelContext* context) override {
-    try {
-       std::function<const twml::DataRecord::BinaryFeatures &(const twml::DataRecord &)> f =
-        [](const twml::DataRecord& record) ->const twml::DataRecord::BinaryFeatures& { return record.getBinary(); };
-       ComputeHelperGroupFeaturesAsTensors(context, feature_ids, default_value, f);
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
 
-REGISTER_OP("GetContinuousGroupAsTensor")
-.Input("data_record_handle: resource")
-.Attr("feature_ids: list(int)")
-.Attr("default_value: float")
-.Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that returns a Dense Tensor with the values of a particular feature_id.
-Input
-  data_record_handle: Resource handle to DataRecord
-Attr
-  feature_ids: List of ids representing the features whose values will be extracted.
-  default_value: default_value to be inputted if the values are missing from the current DataRecord.
-Outputs
-  values: A Tensor corresponding to the values of the feature_ids across multiple DataRecords
+wegistew_op("getbinawygwoupastensow")
+.input("data_wecowd_handwe: wesouwce")
+.attw("featuwe_ids: w-wist(int)")
+.attw("defauwt_vawue: fwoat")
+.output("vawues: f-fwoat")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+    wetuwn s-status::ok();
+  }).doc(w"doc(
+a tensowfwow op that wetuwns a dense t-tensow with the v-vawues of a pawticuwaw f-featuwe_id. /(^•ω•^)
+input
+  data_wecowd_handwe: w-wesouwce handwe t-to datawecowd
+attw
+  featuwe_ids: wist of ids w-wepwesenting the f-featuwes whose v-vawues wiww be extwacted. ^^
+  d-defauwt_vawue: d-defauwt_vawue t-to be inputted if the vawues awe missing fwom the cuwwent datawecowd. 😳
+outputs
+  vawues: a-a tensow cowwesponding to the vawues o-of the featuwe_ids a-acwoss muwtipwe datawecowds
 )doc");
 
-class GetContinuousGroupAsTensor : public OpKernel {
- private:
-  float default_value;
-  std::vector<int64> feature_ids;
 
- public:
-  explicit GetContinuousGroupAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_ids", &feature_ids));
-    OP_REQUIRES_OK(context, context->GetAttr("default_value", &default_value));
+cwass getbinawygwoupastensow : pubwic o-opkewnew {
+ p-pwivate:
+  fwoat defauwt_vawue;
+  s-std::vectow<int64> featuwe_ids;
+
+ p-pubwic:
+  expwicit getbinawygwoupastensow(opkewnewconstwuction* context) : opkewnew(context) {
+    o-op_wequiwes_ok(context, 😳 context->getattw("featuwe_ids", òωó &featuwe_ids));
+    op_wequiwes_ok(context, nyaa~~ context->getattw("defauwt_vawue", (///ˬ///✿) &defauwt_vawue));
   }
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      std::function<const twml::DataRecord::ContinuousFeatures &(const twml::DataRecord &)> f =
-       [](const twml::DataRecord& record) ->const twml::DataRecord::ContinuousFeatures& { return record.getContinuous(); };
-      ComputeHelperGroupFeaturesAsTensors(context, feature_ids, default_value, f);
+  void compute(opkewnewcontext* c-context) ovewwide {
+    t-twy {
+       s-std::function<const t-twmw::datawecowd::binawyfeatuwes &(const twmw::datawecowd &)> f =
+        [](const t-twmw::datawecowd& wecowd) ->const t-twmw::datawecowd::binawyfeatuwes& { wetuwn wecowd.getbinawy(); };
+       computehewpewgwoupfeatuwesastensows(context, mya f-featuwe_ids, ^•ﻌ•^ d-defauwt_vawue, XD f-f);
     } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_OP("GetDiscreteGroupAsTensor")
-.Input("data_record_handle: resource")
-.Attr("feature_ids: list(int)")
-.Attr("default_value: int")
-.Output("values: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that returns a Dense Tensor with the values of a particular feature_id.
-Input
-  data_record_handle: Resource handle to DataRecord
-Attr
-  feature_ids: List of ids representing the features whose values will be extracted.
-  default_value: default_value to be inputted if the values are missing from the current DataRecord.
-Outputs
-  values: A Tensor corresponding to the values of the feature_ids across multiple DataRecords
+
+w-wegistew_op("getcontinuousgwoupastensow")
+.input("data_wecowd_handwe: wesouwce")
+.attw("featuwe_ids: wist(int)")
+.attw("defauwt_vawue: fwoat")
+.output("vawues: fwoat")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
+a tensowfwow op that w-wetuwns a dense t-tensow with the vawues of a pawticuwaw featuwe_id. (⑅˘꒳˘)
+input
+  data_wecowd_handwe: wesouwce handwe to datawecowd
+a-attw
+  featuwe_ids: wist of ids wepwesenting the f-featuwes whose v-vawues wiww be e-extwacted. -.-
+  defauwt_vawue: d-defauwt_vawue to be inputted if the vawues awe missing fwom the cuwwent datawecowd. ^^
+o-outputs
+  vawues: a-a tensow cowwesponding t-to the v-vawues of the featuwe_ids acwoss m-muwtipwe datawecowds
 )doc");
 
-class GetDiscreteGroupAsTensor : public OpKernel {
- private:
-  std::vector<int64> feature_ids;
-  int64 default_value;
+cwass getcontinuousgwoupastensow : p-pubwic opkewnew {
+ pwivate:
+  fwoat defauwt_vawue;
+  std::vectow<int64> f-featuwe_ids;
 
- public:
-  explicit GetDiscreteGroupAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_ids", &feature_ids));
-    OP_REQUIRES_OK(context, context->GetAttr("default_value", &default_value));
+ p-pubwic:
+  e-expwicit getcontinuousgwoupastensow(opkewnewconstwuction* c-context) : opkewnew(context) {
+    o-op_wequiwes_ok(context, rawr c-context->getattw("featuwe_ids", o.O &featuwe_ids));
+    op_wequiwes_ok(context, >w< context->getattw("defauwt_vawue", σωσ &defauwt_vawue));
   }
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      std::function<const twml::DataRecord::DiscreteFeatures &(const twml::DataRecord &)> f =
-       [](const twml::DataRecord& record) ->const twml::DataRecord::DiscreteFeatures& { return record.getDiscrete(); };
-      ComputeHelperGroupFeaturesAsTensors(context, feature_ids, default_value, f);
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+  void compute(opkewnewcontext* c-context) o-ovewwide {
+    twy {
+      std::function<const twmw::datawecowd::continuousfeatuwes &(const t-twmw::datawecowd &)> f =
+       [](const t-twmw::datawecowd& w-wecowd) ->const t-twmw::datawecowd::continuousfeatuwes& { wetuwn wecowd.getcontinuous(); };
+      computehewpewgwoupfeatuwesastensows(context, rawr featuwe_ids, (U ﹏ U) defauwt_vawue, (˘ω˘) f);
+    } c-catch (const std::exception &e) {
+      context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_OP("GetStringGroupAsTensor")
-.Input("data_record_handle: resource")
-.Attr("feature_ids: list(int)")
-.Attr("default_value: string")
-.Output("names: string")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that returns a Dense Tensor with the values of a particular feature_id.
-Input
-  data_record_handle: Resource handle to DataRecord
-Attr
-  feature_ids: List of ids representing the features whose values will be extracted.
-  default_value: default_value to be inputted if the values are missing from the current DataRecord.
-Outputs
-  names: A Tensor corresponding to the values of the feature_ids across multiple DataRecords
+w-wegistew_op("getdiscwetegwoupastensow")
+.input("data_wecowd_handwe: wesouwce")
+.attw("featuwe_ids: wist(int)")
+.attw("defauwt_vawue: i-int")
+.output("vawues: int64")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    w-wetuwn status::ok();
+  }).doc(w"doc(
+a-a tensowfwow o-op that w-wetuwns a dense tensow with the v-vawues of a pawticuwaw featuwe_id. 😳
+input
+  data_wecowd_handwe: wesouwce handwe to datawecowd
+attw
+  f-featuwe_ids: wist of ids wepwesenting the featuwes w-whose vawues w-wiww be extwacted. XD
+  d-defauwt_vawue: defauwt_vawue to be inputted if the vawues awe missing fwom t-the cuwwent d-datawecowd. ʘwʘ
+outputs
+  v-vawues: a t-tensow cowwesponding to the vawues of the featuwe_ids acwoss muwtipwe datawecowds
 )doc");
 
-class GetStringGroupAsTensor : public OpKernel {
- private:
-  std::vector<int64> feature_ids;
-  string default_value;
+cwass g-getdiscwetegwoupastensow : pubwic opkewnew {
+ pwivate:
+  s-std::vectow<int64> f-featuwe_ids;
+  i-int64 defauwt_vawue;
 
- public:
-  explicit GetStringGroupAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_ids", &feature_ids));
-    OP_REQUIRES_OK(context, context->GetAttr("default_value", &default_value));
+ p-pubwic:
+  expwicit getdiscwetegwoupastensow(opkewnewconstwuction* context) : opkewnew(context) {
+    op_wequiwes_ok(context, /(^•ω•^) context->getattw("featuwe_ids", UwU &featuwe_ids));
+    op_wequiwes_ok(context, UwU context->getattw("defauwt_vawue", ^•ﻌ•^ &defauwt_vawue));
   }
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      std::function<const twml::DataRecord::StringFeatures &(const twml::DataRecord &)> f =
-       [](const twml::DataRecord& record) ->const twml::DataRecord::StringFeatures& { return record.getString(); };
-    ComputeHelperGroupFeaturesAsTensors(context, feature_ids, default_value, f);
+  void compute(opkewnewcontext* context) ovewwide {
+    t-twy {
+      std::function<const twmw::datawecowd::discwetefeatuwes &(const t-twmw::datawecowd &)> f-f =
+       [](const twmw::datawecowd& w-wecowd) ->const t-twmw::datawecowd::discwetefeatuwes& { wetuwn wecowd.getdiscwete(); };
+      computehewpewgwoupfeatuwesastensows(context, (ꈍᴗꈍ) f-featuwe_ids, ^^ d-defauwt_vawue, XD f);
     } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      c-context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_OP("GetSparseBinaryAsTensor")
-.Input("data_record_handle: resource")
-.Attr("feature_id: int")
-.Output("ids: int64")
-.Output("keys: int64")
-.Output("names: string")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that returns tensors corresponding to the ids, keys and names of a particular
-feature_id.
-Input
-  data_record_handle: Resource handle to DataRecord
-Attr
-  feature_id: Id representing the feature whose values will be extracted.
-Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
-  keys: DataRecord keys (int64)
-  names: DataRecord values(string)
+w-wegistew_op("getstwinggwoupastensow")
+.input("data_wecowd_handwe: w-wesouwce")
+.attw("featuwe_ids: w-wist(int)")
+.attw("defauwt_vawue: stwing")
+.output("names: s-stwing")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
+a-a t-tensowfwow op that wetuwns a dense t-tensow with the v-vawues of a pawticuwaw featuwe_id. UwU
+input
+  data_wecowd_handwe: wesouwce handwe to datawecowd
+a-attw
+  featuwe_ids: wist of ids w-wepwesenting the featuwes whose v-vawues wiww be extwacted. ^^
+  defauwt_vawue: defauwt_vawue t-to be inputted if the vawues awe missing fwom the cuwwent d-datawecowd. :3
+outputs
+  nyames: a-a tensow cowwesponding t-to the vawues o-of the featuwe_ids acwoss muwtipwe datawecowds
 )doc");
-class GetSparseBinaryAsTensor : public OpKernel {
- private:
-  int64 feature_id;
 
- public:
-  explicit GetSparseBinaryAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
+c-cwass g-getstwinggwoupastensow : p-pubwic o-opkewnew {
+ pwivate:
+  std::vectow<int64> f-featuwe_ids;
+  s-stwing d-defauwt_vawue;
+
+ p-pubwic:
+  expwicit g-getstwinggwoupastensow(opkewnewconstwuction* context) : opkewnew(context) {
+    o-op_wequiwes_ok(context, (U ﹏ U) c-context->getattw("featuwe_ids", UwU &featuwe_ids));
+    op_wequiwes_ok(context, 🥺 context->getattw("defauwt_vawue", (✿oωo) &defauwt_vawue));
   }
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      // We need two passes to the data:
-      // 1 to compute the output size of the tensor
-      // 2 to copy the values to the tensor
-      auto handle = getHandle<DataRecordResource>(context, 0);
-      const auto &records = handle->records;
+  v-void compute(opkewnewcontext* c-context) ovewwide {
+    t-twy {
+      std::function<const t-twmw::datawecowd::stwingfeatuwes &(const t-twmw::datawecowd &)> f =
+       [](const twmw::datawecowd& w-wecowd) ->const t-twmw::datawecowd::stwingfeatuwes& { wetuwn wecowd.getstwing(); };
+    c-computehewpewgwoupfeatuwesastensows(context, 😳😳😳 featuwe_ids, d-defauwt_vawue, f-f);
+    } catch (const s-std::exception &e) {
+      c-context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
+    }
+  }
+};
 
-      // Creating a vector we increment every time a key is found
-      std::vector<std::string> temp_names;
-      std::vector<int64> temp_ids;
+wegistew_op("getspawsebinawyastensow")
+.input("data_wecowd_handwe: wesouwce")
+.attw("featuwe_id: int")
+.output("ids: i-int64")
+.output("keys: int64")
+.output("names: stwing")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
+a-a t-tensowfwow op that wetuwns tensows c-cowwesponding t-to the ids, (⑅˘꒳˘) keys and nyames of a pawticuwaw
+featuwe_id. mya
+i-input
+  d-data_wecowd_handwe: wesouwce handwe to datawecowd
+attw
+  featuwe_id: id wepwesenting the featuwe whose vawues wiww be extwacted. OwO
+outputs
+  ids: ids specifies the index of the w-wecowds[id] in the b-batch (int64)
+  k-keys: datawecowd k-keys (int64)
+  names: datawecowd vawues(stwing)
+)doc");
+c-cwass g-getspawsebinawyastensow : p-pubwic o-opkewnew {
+ pwivate:
+  int64 featuwe_id;
 
-      for (int64 id = 0; id < records.size(); id++) {
-        const auto &sparse_binary = records[id].getSparseBinary();
-        auto it = sparse_binary.find(feature_id);
-        // Find all instances of key in DataRecord
-        if (it != sparse_binary.end()) {
-          // insert to temp_names all the values in the dictionary value
-          temp_names.insert(temp_names.end(), it->second.begin(), it->second.end());
-          temp_ids.insert(temp_ids.end(), it->second.size(), id);
+ pubwic:
+  expwicit getspawsebinawyastensow(opkewnewconstwuction* context) : o-opkewnew(context) {
+    o-op_wequiwes_ok(context, /(^•ω•^) c-context->getattw("featuwe_id", 😳😳😳 &featuwe_id));
+  }
+
+  void c-compute(opkewnewcontext* context) o-ovewwide {
+    twy {
+      // we nyeed two passes to the data:
+      // 1 to compute the output s-size of the tensow
+      // 2 t-to copy the v-vawues to the tensow
+      auto handwe = gethandwe<datawecowdwesouwce>(context, ^^;; 0);
+      const a-auto &wecowds = handwe->wecowds;
+
+      // c-cweating a vectow we incwement evewy t-time a key is found
+      std::vectow<std::stwing> temp_names;
+      s-std::vectow<int64> temp_ids;
+
+      f-fow (int64 id = 0; id < w-wecowds.size(); i-id++) {
+        const auto &spawse_binawy = wecowds[id].getspawsebinawy();
+        auto it = spawse_binawy.find(featuwe_id);
+        // f-find aww instances of key in datawecowd
+        if (it != spawse_binawy.end()) {
+          // insewt to temp_names aww t-the vawues in the d-dictionawy vawue
+          temp_names.insewt(temp_names.end(), ( ͡o ω ͡o ) i-it->second.begin(), ^•ﻌ•^ it->second.end());
+          t-temp_ids.insewt(temp_ids.end(), i-it->second.size(), OwO i-id);
         }
       }
 
-      // The total_size will be the that of the saved vector
-      const int total_size = static_cast<int64>(temp_names.size());
-      TensorShape shape = {total_size};
-      Tensor* ids = nullptr;
-      Tensor* keys = nullptr;
-      Tensor* names = nullptr;
+      // the totaw_size wiww be the t-that of the saved vectow
+      const int totaw_size = static_cast<int64>(temp_names.size());
+      tensowshape s-shape = {totaw_size};
+      t-tensow* i-ids = nyuwwptw;
+      t-tensow* keys = nyuwwptw;
+      t-tensow* nyames = nyuwwptw;
 
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-      OP_REQUIRES_OK(context, context->allocate_output(2, shape, &names));
+      o-op_wequiwes_ok(context, rawr c-context->awwocate_output(0, nyaa~~ shape, &ids));
+      op_wequiwes_ok(context, 🥺 context->awwocate_output(1, OwO s-shape, ^•ﻌ•^ &keys));
+      o-op_wequiwes_ok(context, (ˆ ﻌ ˆ)♡ c-context->awwocate_output(2, /(^•ω•^) s-shape, ʘwʘ &names));
 
-      auto keys_flat = keys->flat<int64>();
-      auto names_flat = names->flat<string>();
-      auto ids_flat = ids->flat<int64>();
+      a-auto keys_fwat = keys->fwat<int64>();
+      auto nyames_fwat = n-names->fwat<stwing>();
+      a-auto ids_fwat = i-ids->fwat<int64>();
 
-      // The feature id value will always be the same
-      std::fill(keys_flat.data(), keys_flat.data() + total_size, feature_id);
-      std::copy(temp_names.begin(), temp_names.end(), names_flat.data());
-      std::copy(temp_ids.begin(), temp_ids.end(), ids_flat.data());
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      // the featuwe id vawue wiww awways be the same
+      s-std::fiww(keys_fwat.data(), ʘwʘ k-keys_fwat.data() + t-totaw_size, :3 featuwe_id);
+      s-std::copy(temp_names.begin(), ^^ temp_names.end(), :3 n-nyames_fwat.data());
+      s-std::copy(temp_ids.begin(), 🥺 t-temp_ids.end(), :3 ids_fwat.data());
+    } catch (const s-std::exception &e) {
+      context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_OP("GetSparseContinuousAsTensor")
-.Input("data_record_handle: resource")
-.Attr("feature_id: int")
-.Output("ids: int64")
-.Output("keys: int64")
-.Output("names: string")
-.Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that returns tensors corresponding to the ids, keys, names and values of a particular
-feature_id.
-Input
-  data_record_handle: Resource handle to DataRecord
-Attr
-  feature_id: Id representing the feature whose values will be extracted.
-Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
-  keys: DataRecord keys (int64)
-  names: DataRecord values(string)
-  values: DataRecord values(float)
+wegistew_op("getspawsecontinuousastensow")
+.input("data_wecowd_handwe: w-wesouwce")
+.attw("featuwe_id: int")
+.output("ids: int64")
+.output("keys: int64")
+.output("names: s-stwing")
+.output("vawues: fwoat")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+    w-wetuwn status::ok();
+  }).doc(w"doc(
+a tensowfwow o-op that wetuwns t-tensows cowwesponding t-to the ids, rawr k-keys, names and vawues of a pawticuwaw
+featuwe_id. UwU
+i-input
+  data_wecowd_handwe: wesouwce handwe to datawecowd
+attw
+  featuwe_id: id wepwesenting t-the featuwe w-whose vawues wiww b-be extwacted. ^•ﻌ•^
+o-outputs
+  ids: ids s-specifies the index of the wecowds[id] i-in the b-batch (int64)
+  keys: datawecowd keys (int64)
+  nyames: datawecowd v-vawues(stwing)
+  vawues: datawecowd vawues(fwoat)
 )doc");
-class GetSparseContinuousAsTensor : public OpKernel {
- private:
-  int64 feature_id;
+c-cwass getspawsecontinuousastensow : p-pubwic opkewnew {
+ pwivate:
+  int64 featuwe_id;
 
- public:
-  explicit GetSparseContinuousAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
+ p-pubwic:
+  expwicit getspawsecontinuousastensow(opkewnewconstwuction* c-context) : opkewnew(context) {
+    o-op_wequiwes_ok(context, c-context->getattw("featuwe_id", (U ﹏ U) &featuwe_id));
   }
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      // We need two passes to the data:
-      // 1 to compute the output size of the tensor
-      // 2 to copy the values to the tensor
-      auto handle = getHandle<DataRecordResource>(context, 0);
-      const auto &records = handle->records;
+  v-void compute(opkewnewcontext* context) ovewwide {
+    twy {
+      // we nyeed two passes to the data:
+      // 1 to compute t-the output size of the tensow
+      // 2 to c-copy the vawues to the tensow
+      a-auto handwe = g-gethandwe<datawecowdwesouwce>(context, (ˆ ﻌ ˆ)♡ 0);
+      const auto &wecowds = h-handwe->wecowds;
 
-      // Creating a vector we increment every time a key is found
-      std::vector<std::string> temp_names;
-      std::vector<float> temp_values;
-      std::vector<int64> temp_ids;
+      // c-cweating a vectow we incwement evewy time a key is found
+      s-std::vectow<std::stwing> temp_names;
+      std::vectow<fwoat> t-temp_vawues;
+      std::vectow<int64> temp_ids;
 
-      for (int64 id = 0; id < records.size(); id++) {
-        const auto &sparse_continuous = records[id].getSparseContinuous();
-        auto it = sparse_continuous.find(feature_id);
-        // Find all instances of key in DataRecord
-        if (it != sparse_continuous.end()) {
-          // insert to temp_names all the values in the dictionary value
-          auto value_map = it->second;
-          for (auto& elem : value_map) {
-             temp_names.push_back(elem.first);
-             temp_values.push_back(elem.second);
+      f-fow (int64 id = 0; id < w-wecowds.size(); id++) {
+        c-const auto &spawse_continuous = w-wecowds[id].getspawsecontinuous();
+        auto it = spawse_continuous.find(featuwe_id);
+        // find aww instances of key in d-datawecowd
+        i-if (it != spawse_continuous.end()) {
+          // i-insewt to temp_names aww the vawues in the d-dictionawy vawue
+          auto v-vawue_map = it->second;
+          fow (auto& ewem : v-vawue_map) {
+             temp_names.push_back(ewem.fiwst);
+             temp_vawues.push_back(ewem.second);
              temp_ids.push_back(id);
           }
         }
       }
 
-      // The total_size will be the that of the saved vector
-      const int total_size = static_cast<int64>(temp_names.size());
-      TensorShape shape = {total_size};
-      Tensor* ids = nullptr;
-      Tensor* keys = nullptr;
-      Tensor* names = nullptr;
-      Tensor* values = nullptr;
+      // t-the totaw_size wiww be the that o-of the saved vectow
+      c-const int totaw_size = static_cast<int64>(temp_names.size());
+      tensowshape shape = {totaw_size};
+      t-tensow* ids = nyuwwptw;
+      tensow* keys = n-nyuwwptw;
+      t-tensow* nyames = n-nyuwwptw;
+      tensow* vawues = n-nyuwwptw;
 
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-      OP_REQUIRES_OK(context, context->allocate_output(2, shape, &names));
-      OP_REQUIRES_OK(context, context->allocate_output(3, shape, &values));
+      op_wequiwes_ok(context, 😳 context->awwocate_output(0, >w< s-shape, 🥺 &ids));
+      op_wequiwes_ok(context, 😳 context->awwocate_output(1, nyaa~~ s-shape, (˘ω˘) &keys));
+      o-op_wequiwes_ok(context, mya c-context->awwocate_output(2, òωó shape, &names));
+      o-op_wequiwes_ok(context, (U ﹏ U) c-context->awwocate_output(3, (U ﹏ U) s-shape, >_< &vawues));
 
-      auto keys_flat = keys->flat<int64>();
-      auto names_flat = names->flat<string>();
-      auto ids_flat = ids->flat<int64>();
-      auto values_flat = values->flat<float>();
+      a-auto keys_fwat = keys->fwat<int64>();
+      a-auto nyames_fwat = n-nyames->fwat<stwing>();
+      a-auto ids_fwat = ids->fwat<int64>();
+      auto vawues_fwat = vawues->fwat<fwoat>();
 
-      // The feature id value will always be the same
-      std::fill(keys_flat.data(), keys_flat.data() + total_size, feature_id);
-      std::copy(temp_names.begin(), temp_names.end(), names_flat.data());
-      std::copy(temp_ids.begin(), temp_ids.end(), ids_flat.data());
-      std::copy(temp_values.begin(), temp_values.end(), values_flat.data());
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      // the f-featuwe id vawue wiww awways be the same
+      std::fiww(keys_fwat.data(), nyaa~~ keys_fwat.data() + t-totaw_size, 😳😳😳 f-featuwe_id);
+      std::copy(temp_names.begin(), nyaa~~ temp_names.end(), -.- nyames_fwat.data());
+      std::copy(temp_ids.begin(), 😳😳😳 temp_ids.end(), ^•ﻌ•^ ids_fwat.data());
+      s-std::copy(temp_vawues.begin(), UwU t-temp_vawues.end(), (ˆ ﻌ ˆ)♡ v-vawues_fwat.data());
+    } c-catch (const s-std::exception &e) {
+      c-context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-// Helper function to add ids, keys and values to common vector
-inline void addIdsKeysValuesToVectors(
-  const int64 id,
-  const int64 key,
-  const double value,
-  std::vector<int64>& ids,
-  std::vector<int64>& keys,
-  std::vector<float>& values) {
+// hewpew function t-to add ids, XD keys and vawues t-to common vectow
+inwine void addidskeysvawuestovectows(
+  c-const int64 id, (⑅˘꒳˘)
+  const i-int64 key, /(^•ω•^)
+  c-const doubwe vawue, (U ᵕ U❁)
+  s-std::vectow<int64>& i-ids, ʘwʘ
+  s-std::vectow<int64>& keys, OwO
+  std::vectow<fwoat>& vawues) {
   ids.push_back(id);
-  keys.push_back(key);
-  values.push_back(value);
+  k-keys.push_back(key);
+  vawues.push_back(vawue);
 }
 
-struct KeepFeatures {
-  KeepFeatures() : vec(), set() {}
-  template<typename ContainerType>
-  KeepFeatures(const std::vector<int64> &keep_features,
-               const ContainerType *const container) {
-    vec.reserve(keep_features.size());
-#ifdef USE_DENSE_HASH
-    set.resize(keep_features.size());
-    set.set_empty_key(0);
-#else
-    set.reserve(keep_features.size());
-#endif  // USE_DENSE_HASH
-    set.max_load_factor(0.5);
-    for (const auto &elem : keep_features) {
-      if (container->find(elem) == container->end()) continue;
-      vec.push_back(elem);
-      set.insert(elem);
+stwuct keepfeatuwes {
+  keepfeatuwes() : v-vec(), (✿oωo) set() {}
+  tempwate<typename c-containewtype>
+  k-keepfeatuwes(const std::vectow<int64> &keep_featuwes, (///ˬ///✿)
+               c-const containewtype *const containew) {
+    v-vec.wesewve(keep_featuwes.size());
+#ifdef u-use_dense_hash
+    set.wesize(keep_featuwes.size());
+    s-set.set_empty_key(0);
+#ewse
+    set.wesewve(keep_featuwes.size());
+#endif  // u-use_dense_hash
+    s-set.max_woad_factow(0.5);
+    fow (const a-auto &ewem : keep_featuwes) {
+      if (containew->find(ewem) == containew->end()) continue;
+      v-vec.push_back(ewem);
+      set.insewt(ewem);
     }
   }
-  size_t size() const {
-    return vec.size();
+  size_t s-size() const {
+    wetuwn vec.size();
   }
-  std::vector<int64> vec;
-  twml::Set<int64> set;
+  std::vectow<int64> v-vec;
+  twmw::set<int64> set;
 };
 
-// Helper Function to Filter and Hash Feature for Binary Features
-void filterAndHashFeature(
-  const twml::DataRecord::BinaryFeatures& features,
-  const int64 current_id,
-  const KeepFeatures &keep_features,
-  std::vector<int64>& ids,
-  std::vector<int64>& keys,
-  std::vector<float>& values) {
-  if (keep_features.size() < 2 * features.size()) {
-    for (const auto &f : keep_features.vec) {
-      const auto &iter = features.find(f);
-      if (iter == features.end()) continue;
-      addIdsKeysValuesToVectors(current_id, *iter, 1, ids, keys, values);
+// h-hewpew function to fiwtew a-and hash featuwe fow binawy featuwes
+v-void fiwtewandhashfeatuwe(
+  const twmw::datawecowd::binawyfeatuwes& f-featuwes, (✿oωo)
+  const int64 cuwwent_id, σωσ
+  c-const keepfeatuwes &keep_featuwes, ʘwʘ
+  s-std::vectow<int64>& i-ids, 😳😳😳
+  s-std::vectow<int64>& k-keys, ^•ﻌ•^
+  std::vectow<fwoat>& v-vawues) {
+  if (keep_featuwes.size() < 2 * featuwes.size()) {
+    f-fow (const auto &f : k-keep_featuwes.vec) {
+      c-const auto &itew = featuwes.find(f);
+      i-if (itew == featuwes.end()) continue;
+      a-addidskeysvawuestovectows(cuwwent_id, (˘ω˘) *itew, 1, i-ids, (U ﹏ U) keys, vawues);
     }
-  } else {
-    for (const auto &elem : features) {
-      if (keep_features.set.find(elem) == keep_features.set.end()) continue;
-      addIdsKeysValuesToVectors(current_id, elem, 1, ids, keys, values);
-    }
-  }
-}
-
-// Helper Function to Filter and Hash Feature for Continuous Features
-void filterAndHashFeature(
-  const twml::DataRecord::ContinuousFeatures& features,
-  const int64 current_id,
-  const KeepFeatures &keep_features,
-  std::vector<int64>& ids,
-  std::vector<int64>& keys,
-  std::vector<float>& values) {
-  if (keep_features.size() < 2 * features.size()) {
-    for (const auto &f : keep_features.vec) {
-      const auto &iter = features.find(f);
-      if (iter == features.end()) continue;
-      addIdsKeysValuesToVectors(current_id, iter->first, iter->second, ids, keys, values);
-    }
-  } else {
-    for (const auto &elem : features) {
-      if (keep_features.set.find(elem.first) == keep_features.set.end()) continue;
-      addIdsKeysValuesToVectors(current_id, elem.first, elem.second, ids, keys, values);
+  } ewse {
+    f-fow (const auto &ewem : f-featuwes) {
+      if (keep_featuwes.set.find(ewem) == k-keep_featuwes.set.end()) c-continue;
+      a-addidskeysvawuestovectows(cuwwent_id, >w< e-ewem, 1, ids, XD keys, vawues);
     }
   }
 }
 
-// Helper Function to Filter and Hash Feature for Discrete Features
-void filterAndHashFeature(
-  const twml::DataRecord::DiscreteFeatures& features,
-  const int64 current_id,
-  const KeepFeatures &keep_features,
-  std::vector<int64>& ids,
-  std::vector<int64>& keys,
-  std::vector<float>& values) {
-  if (keep_features.size() < 2 * features.size()) {
-    for (const auto &f : keep_features.vec) {
-      const auto &iter = features.find(f);
-      if (iter == features.end()) continue;
-      int64_t key = twml::mixDiscreteIdAndValue(iter->first, iter->second);
-      addIdsKeysValuesToVectors(current_id, key, 1, ids, keys, values);
+// hewpew function to fiwtew and hash featuwe fow continuous featuwes
+v-void fiwtewandhashfeatuwe(
+  const t-twmw::datawecowd::continuousfeatuwes& featuwes, XD
+  c-const int64 cuwwent_id, (U ﹏ U)
+  const k-keepfeatuwes &keep_featuwes, (✿oωo)
+  s-std::vectow<int64>& ids, ^^;;
+  std::vectow<int64>& k-keys, (U ﹏ U)
+  std::vectow<fwoat>& vawues) {
+  i-if (keep_featuwes.size() < 2 * featuwes.size()) {
+    fow (const auto &f : k-keep_featuwes.vec) {
+      const auto &itew = featuwes.find(f);
+      i-if (itew == featuwes.end()) c-continue;
+      a-addidskeysvawuestovectows(cuwwent_id, OwO i-itew->fiwst, 😳😳😳 itew->second, 😳😳😳 i-ids, keys, (✿oωo) vawues);
     }
-  } else {
-    for (const auto &elem : features) {
-      if (keep_features.set.find(elem.first) == keep_features.set.end()) continue;
-      int64_t key = twml::mixDiscreteIdAndValue(elem.first, elem.second);
-      addIdsKeysValuesToVectors(current_id, key, 1, ids, keys, values);
+  } ewse {
+    fow (const auto &ewem : f-featuwes) {
+      if (keep_featuwes.set.find(ewem.fiwst) == keep_featuwes.set.end()) continue;
+      addidskeysvawuestovectows(cuwwent_id, UwU ewem.fiwst, mya ewem.second, ids, rawr x3 keys, vawues);
     }
   }
 }
 
-// Helper Function to Filter and Hash Feature for String Features
-void filterAndHashFeature(
-  const twml::DataRecord::StringFeatures& features,
-  const int64 current_id,
-  const KeepFeatures &keep_features,
-  std::vector<int64>& ids,
-  std::vector<int64>& keys,
-  std::vector<float>& values) {
-  if (keep_features.size() < 2 * features.size()) {
-    for (const auto &f : keep_features.vec) {
-      const auto &iter = features.find(f);
-      if (iter == features.end()) continue;
-      int64_t key = twml::mixStringIdAndValue(
-        iter->first,
-        iter->second.size(),
-        reinterpret_cast<const uint8_t*>(iter->second.c_str()));
-      addIdsKeysValuesToVectors(current_id, key, 1, ids, keys, values);
+// hewpew function to fiwtew and h-hash featuwe fow d-discwete featuwes
+void fiwtewandhashfeatuwe(
+  c-const twmw::datawecowd::discwetefeatuwes& f-featuwes, /(^•ω•^)
+  const int64 cuwwent_id, >_<
+  const keepfeatuwes &keep_featuwes, :3
+  s-std::vectow<int64>& i-ids, o.O
+  std::vectow<int64>& k-keys, UwU
+  std::vectow<fwoat>& v-vawues) {
+  if (keep_featuwes.size() < 2 * f-featuwes.size()) {
+    f-fow (const auto &f : keep_featuwes.vec) {
+      const auto &itew = f-featuwes.find(f);
+      if (itew == featuwes.end()) continue;
+      i-int64_t key = twmw::mixdiscweteidandvawue(itew->fiwst, (ꈍᴗꈍ) itew->second);
+      addidskeysvawuestovectows(cuwwent_id, >_< key, 1, ids, keys, òωó vawues);
     }
-  } else {
-    for (const auto &elem : features) {
-      if (keep_features.set.find(elem.first) == keep_features.set.end()) continue;
-      int64_t key = twml::mixStringIdAndValue(
-        elem.first,
-        elem.second.size(),
-        reinterpret_cast<const uint8_t*>(elem.second.c_str()));
-      addIdsKeysValuesToVectors(current_id, key, 1, ids, keys, values);
+  } e-ewse {
+    fow (const auto &ewem : featuwes) {
+      if (keep_featuwes.set.find(ewem.fiwst) == k-keep_featuwes.set.end()) c-continue;
+      i-int64_t key = twmw::mixdiscweteidandvawue(ewem.fiwst, (ꈍᴗꈍ) ewem.second);
+      addidskeysvawuestovectows(cuwwent_id, 😳😳😳 k-key, 1, ( ͡o ω ͡o ) i-ids, keys, vawues);
     }
   }
 }
 
-// Helper Function to Filter and Hash Feature for Sparse Binary Features
-void filterAndHashFeature(
-  const twml::DataRecord::SparseBinaryFeatures& features,
-  const int64 current_id,
-  const KeepFeatures &keep_features,
-  std::vector<int64>& ids,
-  std::vector<int64>& keys,
-  std::vector<float>& values) {
-  if (keep_features.size() < 2 * features.size()) {
-    for (const auto &f : keep_features.vec) {
-      const auto &iter = features.find(f);
-      if (iter == features.end()) continue;
-      for (const auto &name : iter->second) {
-        int64_t key = twml::mixStringIdAndValue(iter->first, name.size(),
-                                                reinterpret_cast<const uint8_t*>(name.c_str()));
-        addIdsKeysValuesToVectors(current_id, key, 1, ids, keys, values);
+// h-hewpew function to fiwtew and hash featuwe f-fow stwing featuwes
+void fiwtewandhashfeatuwe(
+  c-const twmw::datawecowd::stwingfeatuwes& featuwes, mya
+  const int64 cuwwent_id, UwU
+  const k-keepfeatuwes &keep_featuwes, òωó
+  std::vectow<int64>& i-ids, -.-
+  std::vectow<int64>& keys, :3
+  std::vectow<fwoat>& vawues) {
+  i-if (keep_featuwes.size() < 2 * f-featuwes.size()) {
+    fow (const auto &f : k-keep_featuwes.vec) {
+      const auto &itew = featuwes.find(f);
+      i-if (itew == featuwes.end()) continue;
+      int64_t k-key = twmw::mixstwingidandvawue(
+        itew->fiwst, ^•ﻌ•^
+        itew->second.size(), (˘ω˘)
+        w-weintewpwet_cast<const uint8_t*>(itew->second.c_stw()));
+      a-addidskeysvawuestovectows(cuwwent_id, 😳😳😳 k-key, (///ˬ///✿) 1, ids, keys, 🥺 vawues);
+    }
+  } e-ewse {
+    fow (const auto &ewem : f-featuwes) {
+      if (keep_featuwes.set.find(ewem.fiwst) == keep_featuwes.set.end()) c-continue;
+      i-int64_t key = twmw::mixstwingidandvawue(
+        ewem.fiwst, (U ᵕ U❁)
+        e-ewem.second.size(), (˘ω˘)
+        weintewpwet_cast<const u-uint8_t*>(ewem.second.c_stw()));
+      addidskeysvawuestovectows(cuwwent_id, UwU k-key, 😳 1, ids, keys, :3 vawues);
+    }
+  }
+}
+
+// hewpew function to fiwtew and hash featuwe fow spawse binawy featuwes
+v-void fiwtewandhashfeatuwe(
+  const twmw::datawecowd::spawsebinawyfeatuwes& featuwes, mya
+  const int64 cuwwent_id, nyaa~~
+  c-const keepfeatuwes &keep_featuwes, 😳😳😳
+  s-std::vectow<int64>& ids, ^•ﻌ•^
+  s-std::vectow<int64>& keys, UwU
+  s-std::vectow<fwoat>& v-vawues) {
+  if (keep_featuwes.size() < 2 * f-featuwes.size()) {
+    fow (const a-auto &f : keep_featuwes.vec) {
+      c-const auto &itew = featuwes.find(f);
+      if (itew == featuwes.end()) continue;
+      fow (const auto &name : i-itew->second) {
+        int64_t k-key = twmw::mixstwingidandvawue(itew->fiwst, (ꈍᴗꈍ) name.size(), (⑅˘꒳˘)
+                                                weintewpwet_cast<const u-uint8_t*>(name.c_stw()));
+        addidskeysvawuestovectows(cuwwent_id, OwO k-key, 1, ids, UwU keys, v-vawues);
       }
     }
-  } else {
-    for (const auto &elem : features) {
-      if (keep_features.set.find(elem.first) == keep_features.set.end()) continue;
-      for (const auto &name : elem.second) {
-        int64_t key = twml::mixStringIdAndValue(elem.first, name.size(),
-                                                reinterpret_cast<const uint8_t*>(name.c_str()));
-        addIdsKeysValuesToVectors(current_id, key, 1, ids, keys, values);
-      }
-    }
-  }
-}
-
-// Helper Function to Filter and Hash Feature for Sparse Continuous Features
-void filterAndHashFeature(
-  const twml::DataRecord::SparseContinuousFeatures& features,
-  const int64 current_id,
-  const KeepFeatures &keep_features,
-  std::vector<int64>& ids,
-  std::vector<int64>& keys,
-  std::vector<float>& values) {
-  if (keep_features.size() < 2 * features.size()) {
-    for (const auto &f : keep_features.vec) {
-      const auto &iter = features.find(f);
-      if (iter == features.end()) continue;
-      for (const auto &map : iter->second) {
-        int64_t key = twml::mixStringIdAndValue(
-          iter->first,
-          map.first.size(),
-          reinterpret_cast<const uint8_t*>(map.first.c_str()));
-        addIdsKeysValuesToVectors(current_id, key, map.second, ids, keys, values);
-      }
-    }
-  } else {
-    for (const auto &elem : features) {
-      if (keep_features.set.find(elem.first) == keep_features.set.end()) continue;
-      for (const auto &map : elem.second) {
-        int64_t key = twml::mixStringIdAndValue(
-          elem.first,
-          map.first.size(),
-          reinterpret_cast<const uint8_t*>(map.first.c_str()));
-        addIdsKeysValuesToVectors(current_id, key, map.second, ids, keys, values);
+  } e-ewse {
+    f-fow (const auto &ewem : f-featuwes) {
+      if (keep_featuwes.set.find(ewem.fiwst) == k-keep_featuwes.set.end()) continue;
+      fow (const auto &name : ewem.second) {
+        i-int64_t key = t-twmw::mixstwingidandvawue(ewem.fiwst, OwO n-nyame.size(), (///ˬ///✿)
+                                                w-weintewpwet_cast<const u-uint8_t*>(name.c_stw()));
+        a-addidskeysvawuestovectows(cuwwent_id, (U ﹏ U) k-key, 1, ids, (⑅˘꒳˘) keys, vawues);
       }
     }
   }
 }
 
-// Helper Function to Filter and Hash Feature for Sparse Continuous Features
-void filterAndHashFeatureCompat(
-  const twml::DataRecord::SparseContinuousFeatures& features,
-  const int64 current_id,
-  const KeepFeatures &keep_features,
-  std::vector<int64>& ids,
-  std::vector<int64>& keys,
-  std::vector<float>& values) {
-  if (keep_features.size() < 2 * features.size()) {
-    for (const auto &f : keep_features.vec) {
-      const auto &iter = features.find(f);
-      if (iter == features.end()) continue;
-      for (const auto &map : iter->second) {
-        int64_t key = twml::featureId(map.first);
-        addIdsKeysValuesToVectors(current_id, key, map.second, ids, keys, values);
+// hewpew f-function to fiwtew and hash featuwe fow spawse c-continuous featuwes
+void fiwtewandhashfeatuwe(
+  c-const twmw::datawecowd::spawsecontinuousfeatuwes& featuwes, /(^•ω•^)
+  const int64 cuwwent_id, :3
+  const keepfeatuwes &keep_featuwes,
+  std::vectow<int64>& i-ids, ( ͡o ω ͡o )
+  std::vectow<int64>& k-keys, (ˆ ﻌ ˆ)♡
+  s-std::vectow<fwoat>& vawues) {
+  if (keep_featuwes.size() < 2 * featuwes.size()) {
+    f-fow (const a-auto &f : k-keep_featuwes.vec) {
+      c-const auto &itew = featuwes.find(f);
+      if (itew == featuwes.end()) continue;
+      fow (const auto &map : i-itew->second) {
+        i-int64_t key = twmw::mixstwingidandvawue(
+          i-itew->fiwst, XD
+          map.fiwst.size(), :3
+          weintewpwet_cast<const u-uint8_t*>(map.fiwst.c_stw()));
+        addidskeysvawuestovectows(cuwwent_id, σωσ key, m-map.second, mya ids, keys, -.- vawues);
       }
     }
-  } else {
-    for (const auto &elem : features) {
-      if (keep_features.set.find(elem.first) == keep_features.set.end()) continue;
-      for (const auto &map : elem.second) {
-        int64_t key = twml::featureId(map.first);
-        addIdsKeysValuesToVectors(current_id, key, map.second, ids, keys, values);
+  } e-ewse {
+    fow (const auto &ewem : featuwes) {
+      if (keep_featuwes.set.find(ewem.fiwst) == k-keep_featuwes.set.end()) continue;
+      f-fow (const auto &map : ewem.second) {
+        int64_t k-key = twmw::mixstwingidandvawue(
+          ewem.fiwst, :3
+          map.fiwst.size(), rawr
+          w-weintewpwet_cast<const uint8_t*>(map.fiwst.c_stw()));
+        a-addidskeysvawuestovectows(cuwwent_id, >_< k-key, map.second, -.- ids, :3 keys, vawues);
       }
     }
   }
 }
 
-void copy_if_exists(std::vector<int64>& out,
-                    const std::vector<int64>& in,
-                    const twml::Map<int64_t, int64_t> *const map) {
-  out.reserve(in.size());
-  for (const auto &elem : in) {
-    if (map->find(elem) == map->end()) continue;
-    out.push_back(elem);
+// hewpew function to fiwtew and hash f-featuwe fow spawse continuous featuwes
+void fiwtewandhashfeatuwecompat(
+  const twmw::datawecowd::spawsecontinuousfeatuwes& featuwes, XD
+  const int64 c-cuwwent_id, ^^
+  c-const keepfeatuwes &keep_featuwes, rawr
+  std::vectow<int64>& ids, (///ˬ///✿)
+  s-std::vectow<int64>& keys, ^^;;
+  std::vectow<fwoat>& v-vawues) {
+  if (keep_featuwes.size() < 2 * f-featuwes.size()) {
+    f-fow (const auto &f : keep_featuwes.vec) {
+      const auto &itew = featuwes.find(f);
+      i-if (itew == featuwes.end()) c-continue;
+      f-fow (const a-auto &map : itew->second) {
+        int64_t key = twmw::featuweid(map.fiwst);
+        a-addidskeysvawuestovectows(cuwwent_id, :3 k-key, map.second, :3 ids, keys, ( ͡o ω ͡o ) vawues);
+      }
+    }
+  } ewse {
+    fow (const auto &ewem : featuwes) {
+      if (keep_featuwes.set.find(ewem.fiwst) == keep_featuwes.set.end()) c-continue;
+      fow (const auto &map : ewem.second) {
+        int64_t key = twmw::featuweid(map.fiwst);
+        a-addidskeysvawuestovectows(cuwwent_id, k-key, (✿oωo) map.second, UwU i-ids, keys, v-vawues);
+      }
+    }
   }
 }
 
-void ComputeHashedFeaturesAsTensor(OpKernelContext* context,
-                                   const DataRecordResource *const handle,
-                                   const KeepFeatures &binary_keep_features,
-                                   const KeepFeatures &continuous_keep_features,
-                                   const KeepFeatures &discrete_keep_features,
-                                   const KeepFeatures &string_keep_features,
-                                   const KeepFeatures &sparse_binary_keep_features,
-                                   const KeepFeatures &sparse_continuous_keep_features,
-                                   bool sparse_continuous_compatibility) {
-
-  const auto &records = handle->records;
-  uint64_t estimated_size = (binary_keep_features.size() + continuous_keep_features.size() +
-                             discrete_keep_features.size() + string_keep_features.size() +
-                             sparse_binary_keep_features.size() +
-                             sparse_continuous_keep_features.size());
-  // Construct temporary vectors for common features
-  std::vector<int64> common_ids, common_keys, temp_ids, temp_keys;
-  std::vector<float> common_values, temp_values;
-  common_ids.reserve(estimated_size);
-  common_keys.reserve(estimated_size);
-  common_values.reserve(estimated_size);
-
-  const auto &common_binary = handle->common.getBinary();
-  const auto &common_continuous = handle->common.getContinuous();
-  const auto &common_discrete = handle->common.getDiscrete();
-  const auto &common_string = handle->common.getString();
-  const auto &common_sparse_binary = handle->common.getSparseBinary();
-  const auto &common_sparse_continuous = handle->common.getSparseContinuous();
-
-  filterAndHashFeature(common_binary, 0, binary_keep_features,
-                       common_ids, common_keys, common_values);
-  filterAndHashFeature(common_continuous, 0, continuous_keep_features,
-                       common_ids, common_keys, common_values);
-  filterAndHashFeature(common_discrete, 0, discrete_keep_features,
-                       common_ids, common_keys, common_values);
-  filterAndHashFeature(common_string, 0, string_keep_features,
-                       common_ids, common_keys, common_values);
-  filterAndHashFeature(common_sparse_binary, 0, sparse_binary_keep_features,
-                       common_ids, common_keys, common_values);
-  if (sparse_continuous_compatibility) {
-    filterAndHashFeatureCompat(common_sparse_continuous, 0, sparse_continuous_keep_features,
-                               common_ids, common_keys, common_values);
-  } else {
-    filterAndHashFeature(common_sparse_continuous, 0, sparse_continuous_keep_features,
-                         common_ids, common_keys, common_values);
+void copy_if_exists(std::vectow<int64>& out, ( ͡o ω ͡o )
+                    const std::vectow<int64>& in, o.O
+                    const twmw::map<int64_t, rawr i-int64_t> *const map) {
+  o-out.wesewve(in.size());
+  fow (const auto &ewem : i-in) {
+    i-if (map->find(ewem) == map->end()) continue;
+    out.push_back(ewem);
   }
-  common_ids.clear();
-  // Construct temporary vectors for all features
-  estimated_size = (estimated_size + common_keys.size()) * records.size();
-  temp_ids.reserve(estimated_size);
-  temp_keys.reserve(estimated_size);
-  temp_values.reserve(estimated_size);
+}
 
-  for (int64 id = 0; id < records.size(); id++) {
-    temp_ids.insert(temp_ids.end(), common_keys.size(), id);
-    temp_keys.insert(temp_keys.end(), common_keys.begin(), common_keys.end());
-    temp_values.insert(temp_values.end(), common_values.begin(), common_values.end());
-    const auto &binary = records[id].getBinary();
-    const auto &continuous = records[id].getContinuous();
-    const auto &discrete = records[id].getDiscrete();
-    const auto &str = records[id].getString();
-    const auto &sparse_binary = records[id].getSparseBinary();
-    const auto &sparse_continuous = records[id].getSparseContinuous();
+void computehashedfeatuwesastensow(opkewnewcontext* c-context, (ꈍᴗꈍ)
+                                   const datawecowdwesouwce *const h-handwe, mya
+                                   c-const k-keepfeatuwes &binawy_keep_featuwes, mya
+                                   c-const keepfeatuwes &continuous_keep_featuwes, UwU
+                                   const keepfeatuwes &discwete_keep_featuwes, ^^;;
+                                   c-const keepfeatuwes &stwing_keep_featuwes, -.-
+                                   const keepfeatuwes &spawse_binawy_keep_featuwes, XD
+                                   const keepfeatuwes &spawse_continuous_keep_featuwes,
+                                   b-boow spawse_continuous_compatibiwity) {
 
-    filterAndHashFeature(binary, id, binary_keep_features,
-                         temp_ids, temp_keys, temp_values);
-    filterAndHashFeature(continuous, id, continuous_keep_features,
-                         temp_ids, temp_keys, temp_values);
-    filterAndHashFeature(discrete, id, discrete_keep_features,
-                         temp_ids, temp_keys, temp_values);
-    filterAndHashFeature(str, id, string_keep_features,
-                         temp_ids, temp_keys, temp_values);
-    filterAndHashFeature(sparse_binary, id, sparse_binary_keep_features,
-                         temp_ids, temp_keys, temp_values);
-    if (sparse_continuous_compatibility) {
-      filterAndHashFeatureCompat(sparse_continuous, id, sparse_continuous_keep_features,
-                                 temp_ids, temp_keys, temp_values);
-    } else {
-      filterAndHashFeature(sparse_continuous, id, sparse_continuous_keep_features,
-                           temp_ids, temp_keys, temp_values);
+  c-const a-auto &wecowds = handwe->wecowds;
+  uint64_t estimated_size = (binawy_keep_featuwes.size() + c-continuous_keep_featuwes.size() +
+                             discwete_keep_featuwes.size() + s-stwing_keep_featuwes.size() +
+                             s-spawse_binawy_keep_featuwes.size() +
+                             s-spawse_continuous_keep_featuwes.size());
+  // c-constwuct tempowawy vectows fow common featuwes
+  std::vectow<int64> c-common_ids, nyaa~~ common_keys, (ꈍᴗꈍ) temp_ids, ^^;; temp_keys;
+  std::vectow<fwoat> common_vawues, :3 temp_vawues;
+  c-common_ids.wesewve(estimated_size);
+  c-common_keys.wesewve(estimated_size);
+  common_vawues.wesewve(estimated_size);
+
+  const auto &common_binawy = h-handwe->common.getbinawy();
+  const a-auto &common_continuous = handwe->common.getcontinuous();
+  c-const auto &common_discwete = handwe->common.getdiscwete();
+  const a-auto &common_stwing = handwe->common.getstwing();
+  const auto &common_spawse_binawy = h-handwe->common.getspawsebinawy();
+  const auto &common_spawse_continuous = handwe->common.getspawsecontinuous();
+
+  f-fiwtewandhashfeatuwe(common_binawy, (///ˬ///✿) 0, binawy_keep_featuwes, /(^•ω•^)
+                       c-common_ids, σωσ c-common_keys, >w< common_vawues);
+  fiwtewandhashfeatuwe(common_continuous, (ˆ ﻌ ˆ)♡ 0, rawr x3 c-continuous_keep_featuwes, -.-
+                       c-common_ids, (ˆ ﻌ ˆ)♡ c-common_keys, /(^•ω•^) c-common_vawues);
+  fiwtewandhashfeatuwe(common_discwete, (⑅˘꒳˘) 0, discwete_keep_featuwes, (˘ω˘)
+                       common_ids, ^•ﻌ•^ c-common_keys, o.O common_vawues);
+  f-fiwtewandhashfeatuwe(common_stwing, (⑅˘꒳˘) 0, stwing_keep_featuwes, σωσ
+                       c-common_ids, >_< c-common_keys, ʘwʘ c-common_vawues);
+  f-fiwtewandhashfeatuwe(common_spawse_binawy, (✿oωo) 0, o.O s-spawse_binawy_keep_featuwes, 😳
+                       common_ids, nyaa~~ common_keys, XD common_vawues);
+  if (spawse_continuous_compatibiwity) {
+    fiwtewandhashfeatuwecompat(common_spawse_continuous, ^^;; 0, s-spawse_continuous_keep_featuwes, /(^•ω•^)
+                               c-common_ids, >_< common_keys, (U ﹏ U) c-common_vawues);
+  } e-ewse {
+    fiwtewandhashfeatuwe(common_spawse_continuous, 😳😳😳 0, s-spawse_continuous_keep_featuwes, XD
+                         common_ids, common_keys, OwO common_vawues);
+  }
+  c-common_ids.cweaw();
+  // constwuct tempowawy v-vectows f-fow aww featuwes
+  estimated_size = (estimated_size + c-common_keys.size()) * w-wecowds.size();
+  t-temp_ids.wesewve(estimated_size);
+  t-temp_keys.wesewve(estimated_size);
+  t-temp_vawues.wesewve(estimated_size);
+
+  fow (int64 id = 0; i-id < wecowds.size(); i-id++) {
+    temp_ids.insewt(temp_ids.end(), (U ᵕ U❁) common_keys.size(), (⑅˘꒳˘) i-id);
+    temp_keys.insewt(temp_keys.end(), common_keys.begin(), UwU c-common_keys.end());
+    temp_vawues.insewt(temp_vawues.end(), 😳😳😳 common_vawues.begin(), mya common_vawues.end());
+    const auto &binawy = w-wecowds[id].getbinawy();
+    c-const auto &continuous = w-wecowds[id].getcontinuous();
+    c-const auto &discwete = wecowds[id].getdiscwete();
+    const auto &stw = w-wecowds[id].getstwing();
+    c-const auto &spawse_binawy = wecowds[id].getspawsebinawy();
+    const auto &spawse_continuous = w-wecowds[id].getspawsecontinuous();
+
+    f-fiwtewandhashfeatuwe(binawy, 🥺 i-id, ^^ binawy_keep_featuwes, -.-
+                         temp_ids, ^^ t-temp_keys, o.O t-temp_vawues);
+    fiwtewandhashfeatuwe(continuous, σωσ id, continuous_keep_featuwes, ^•ﻌ•^
+                         temp_ids, 😳 temp_keys, nyaa~~ temp_vawues);
+    fiwtewandhashfeatuwe(discwete, ^•ﻌ•^ i-id, discwete_keep_featuwes, >_<
+                         temp_ids, (⑅˘꒳˘) temp_keys, ^^ temp_vawues);
+    fiwtewandhashfeatuwe(stw, :3 id, stwing_keep_featuwes, 😳
+                         temp_ids, (˘ω˘) temp_keys, >w< temp_vawues);
+    f-fiwtewandhashfeatuwe(spawse_binawy, 😳 i-id, spawse_binawy_keep_featuwes, ^^;;
+                         temp_ids, rawr x3 temp_keys, òωó temp_vawues);
+    if (spawse_continuous_compatibiwity) {
+      f-fiwtewandhashfeatuwecompat(spawse_continuous, ^^;; id, spawse_continuous_keep_featuwes, :3
+                                 temp_ids, (ꈍᴗꈍ) temp_keys, temp_vawues);
+    } e-ewse {
+      fiwtewandhashfeatuwe(spawse_continuous, 😳😳😳 i-id, spawse_continuous_keep_featuwes, :3
+                           t-temp_ids, ʘwʘ temp_keys, temp_vawues);
     }
   }
 
-  // Copy the temporary vectors into the output Tensors
-  TensorShape shape = {static_cast<int64>(temp_ids.size())};
-  Tensor* ids = nullptr;
-  Tensor* keys = nullptr;
-  Tensor* values = nullptr;
-  OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-  OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-  OP_REQUIRES_OK(context, context->allocate_output(2, shape, &values));
-  auto ids_flat = ids->flat<int64>();
-  auto keys_flat = keys->flat<int64>();
-  auto values_flat = values->flat<float>();
-  std::copy(temp_ids.begin(), temp_ids.end(), ids_flat.data());
-  std::copy(temp_keys.begin(), temp_keys.end(), keys_flat.data());
-  std::copy(temp_values.begin(), temp_values.end(), values_flat.data());
+  // c-copy the tempowawy vectows i-into the output tensows
+  tensowshape s-shape = {static_cast<int64>(temp_ids.size())};
+  t-tensow* i-ids = nyuwwptw;
+  t-tensow* keys = nyuwwptw;
+  t-tensow* vawues = n-nyuwwptw;
+  op_wequiwes_ok(context, :3 context->awwocate_output(0, OwO shape, &ids));
+  op_wequiwes_ok(context, mya c-context->awwocate_output(1, σωσ s-shape, (⑅˘꒳˘) &keys));
+  op_wequiwes_ok(context, (˘ω˘) context->awwocate_output(2, >w< shape, &vawues));
+  auto ids_fwat = i-ids->fwat<int64>();
+  a-auto keys_fwat = keys->fwat<int64>();
+  auto v-vawues_fwat = vawues->fwat<fwoat>();
+  s-std::copy(temp_ids.begin(), ( ͡o ω ͡o ) temp_ids.end(), ^^;; ids_fwat.data());
+  std::copy(temp_keys.begin(), (✿oωo) t-temp_keys.end(), (✿oωo) keys_fwat.data());
+  std::copy(temp_vawues.begin(), (⑅˘꒳˘) t-temp_vawues.end(), -.- vawues_fwat.data());
 }
 
-REGISTER_OP("GetHashedFeaturesAsSparseTensor")
-.Input("data_record_handle: resource")
-.Attr("binary_keep_features: list(int)")
-.Attr("continuous_keep_features: list(int)")
-.Attr("discrete_keep_features: list(int)")
-.Attr("string_keep_features: list(int)")
-.Attr("sparse_binary_keep_features: list(int)")
-.Attr("sparse_continuous_keep_features: list(int)")
-.Output("ids: int64")
-.Output("keys: int64")
-.Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-  return Status::OK();
-}).Doc(R"doc(
-A tensorflow OP for returning required features of different type as
-a single sparse tensor. Hashing trick is applied.
+wegistew_op("gethashedfeatuwesasspawsetensow")
+.input("data_wecowd_handwe: w-wesouwce")
+.attw("binawy_keep_featuwes: w-wist(int)")
+.attw("continuous_keep_featuwes: wist(int)")
+.attw("discwete_keep_featuwes: wist(int)")
+.attw("stwing_keep_featuwes: wist(int)")
+.attw("spawse_binawy_keep_featuwes: wist(int)")
+.attw("spawse_continuous_keep_featuwes: w-wist(int)")
+.output("ids: i-int64")
+.output("keys: i-int64")
+.output("vawues: f-fwoat")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+  wetuwn status::ok();
+}).doc(w"doc(
+a-a tensowfwow o-op fow w-wetuwning wequiwed f-featuwes of diffewent t-type as
+a singwe spawse tensow. XD hashing twick is appwied. òωó
 
-Input
-  data_record_handle: Resource handle to DataRecord
+input
+  data_wecowd_handwe: wesouwce handwe t-to datawecowd
 
-Outputs
-  ids: ids specifies the index of the records in the batch (int64)
-  keys: DataRecord keys (int64)
-  values: DataRecord values (float)
+outputs
+  ids: ids s-specifies the i-index of the wecowds i-in the batch (int64)
+  k-keys: d-datawecowd keys (int64)
+  vawues: datawecowd vawues (fwoat)
 )doc");
 
-class GetHashedFeaturesAsSparseTensor: public OpKernel {
- public:
-  explicit GetHashedFeaturesAsSparseTensor(OpKernelConstruction* context): OpKernel(context) {
-    // Get the list of features to keep for each feature type
-    OP_REQUIRES_OK(context, context->GetAttr("binary_keep_features", &binary_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("continuous_keep_features", &continuous_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("discrete_keep_features", &discrete_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("string_keep_features", &string_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("sparse_binary_keep_features", &sparse_binary_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("sparse_continuous_keep_features", &sparse_continuous_keep_features_));
+cwass gethashedfeatuwesasspawsetensow: pubwic o-opkewnew {
+ pubwic:
+  expwicit gethashedfeatuwesasspawsetensow(opkewnewconstwuction* c-context): o-opkewnew(context) {
+    // get the wist of featuwes t-to keep fow each featuwe type
+    op_wequiwes_ok(context, context->getattw("binawy_keep_featuwes", :3 &binawy_keep_featuwes_));
+    o-op_wequiwes_ok(context, (///ˬ///✿) c-context->getattw("continuous_keep_featuwes", &continuous_keep_featuwes_));
+    o-op_wequiwes_ok(context, òωó context->getattw("discwete_keep_featuwes", UwU &discwete_keep_featuwes_));
+    op_wequiwes_ok(context, >w< c-context->getattw("stwing_keep_featuwes", ʘwʘ &stwing_keep_featuwes_));
+    o-op_wequiwes_ok(context, /(^•ω•^) c-context->getattw("spawse_binawy_keep_featuwes", (⑅˘꒳˘) &spawse_binawy_keep_featuwes_));
+    op_wequiwes_ok(context, (ˆ ﻌ ˆ)♡ context->getattw("spawse_continuous_keep_featuwes", OwO &spawse_continuous_keep_featuwes_));
   }
 
- private:
-  std::vector<int64> binary_keep_features_, continuous_keep_features_, discrete_keep_features_;
-  std::vector<int64> string_keep_features_, sparse_binary_keep_features_, sparse_continuous_keep_features_;
+ pwivate:
+  s-std::vectow<int64> b-binawy_keep_featuwes_, ^^;; c-continuous_keep_featuwes_, (///ˬ///✿) d-discwete_keep_featuwes_;
+  s-std::vectow<int64> s-stwing_keep_featuwes_, ^•ﻌ•^ spawse_binawy_keep_featuwes_, rawr s-spawse_continuous_keep_featuwes_;
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
-      // Create a new list of keep features based on the original keep_set.
-      // This is to ensure compatibility with existing behavior such as:
-      //  - Ensure no new features are decoded in this op.
-      //  - Ensure labels or weights dont get included here.
-      // TODO: Should we return features requested by user here even if they are labels / weights?
-      KeepFeatures binary_keep_features(binary_keep_features_, handle->keep_map);
-      KeepFeatures continuous_keep_features(continuous_keep_features_, handle->keep_map);
-      KeepFeatures discrete_keep_features(discrete_keep_features_, handle->keep_map);
-      KeepFeatures string_keep_features(string_keep_features_, handle->keep_map);
-      KeepFeatures sparse_binary_keep_features(sparse_binary_keep_features_, handle->keep_map);
-      KeepFeatures sparse_continuous_keep_features(sparse_continuous_keep_features_, handle->keep_map);
-      ComputeHashedFeaturesAsTensor(context, handle.get(),
-                                    binary_keep_features,
-                                    continuous_keep_features,
-                                    discrete_keep_features,
-                                    string_keep_features,
-                                    sparse_binary_keep_features,
-                                    sparse_continuous_keep_features,
-                                    false);
+  v-void compute(opkewnewcontext* c-context) ovewwide {
+    twy {
+      a-auto handwe = gethandwe<datawecowdwesouwce>(context, ^^;; 0);
+      // c-cweate a nyew w-wist of keep featuwes b-based on the o-owiginaw keep_set. òωó
+      // this i-is to ensuwe compatibiwity with existing behaviow s-such as:
+      //  - e-ensuwe n-nyo nyew featuwes a-awe decoded i-in this op. σωσ
+      //  - ensuwe wabews o-ow weights d-dont get incwuded hewe. 😳😳😳
+      // t-todo: shouwd we wetuwn featuwes wequested by usew h-hewe even if t-they awe wabews / weights?
+      k-keepfeatuwes binawy_keep_featuwes(binawy_keep_featuwes_, (///ˬ///✿) h-handwe->keep_map);
+      keepfeatuwes continuous_keep_featuwes(continuous_keep_featuwes_, ^•ﻌ•^ handwe->keep_map);
+      keepfeatuwes d-discwete_keep_featuwes(discwete_keep_featuwes_, 😳😳😳 h-handwe->keep_map);
+      k-keepfeatuwes stwing_keep_featuwes(stwing_keep_featuwes_, 😳 handwe->keep_map);
+      k-keepfeatuwes s-spawse_binawy_keep_featuwes(spawse_binawy_keep_featuwes_, 🥺 h-handwe->keep_map);
+      k-keepfeatuwes s-spawse_continuous_keep_featuwes(spawse_continuous_keep_featuwes_, rawr x3 h-handwe->keep_map);
+      c-computehashedfeatuwesastensow(context, o.O h-handwe.get(), rawr
+                                    binawy_keep_featuwes, ʘwʘ
+                                    continuous_keep_featuwes, 😳😳😳
+                                    discwete_keep_featuwes, ^^;;
+                                    stwing_keep_featuwes, o.O
+                                    spawse_binawy_keep_featuwes, (///ˬ///✿)
+                                    s-spawse_continuous_keep_featuwes, σωσ
+                                    fawse);
     } catch(const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      c-context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_OP("GetHashedFeaturesAsSparseTensorV2")
-.Input("data_record_handle: resource")
-.Attr("binary_keep_features: list(int)")
-.Attr("continuous_keep_features: list(int)")
-.Attr("discrete_keep_features: list(int)")
-.Attr("string_keep_features: list(int)")
-.Attr("sparse_binary_keep_features: list(int)")
-.Attr("sparse_continuous_keep_features: list(int)")
-.Attr("keep_features: list(int)")
-.Attr("keep_codes: list(int)")
-.Attr("decode_mode: int = 0")
-.Output("ids: int64")
-.Output("keys: int64")
-.Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-  return Status::OK();
-}).Doc(R"doc(
-A tensorflow OP for returning required features of different type as
-a single sparse tensor. Hashing trick is applied.
+wegistew_op("gethashedfeatuwesasspawsetensowv2")
+.input("data_wecowd_handwe: w-wesouwce")
+.attw("binawy_keep_featuwes: wist(int)")
+.attw("continuous_keep_featuwes: wist(int)")
+.attw("discwete_keep_featuwes: wist(int)")
+.attw("stwing_keep_featuwes: w-wist(int)")
+.attw("spawse_binawy_keep_featuwes: wist(int)")
+.attw("spawse_continuous_keep_featuwes: wist(int)")
+.attw("keep_featuwes: w-wist(int)")
+.attw("keep_codes: w-wist(int)")
+.attw("decode_mode: int = 0")
+.output("ids: int64")
+.output("keys: int64")
+.output("vawues: fwoat")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+  wetuwn status::ok();
+}).doc(w"doc(
+a-a tensowfwow op fow wetuwning wequiwed featuwes of diffewent type as
+a s-singwe spawse tensow. nyaa~~ hashing twick i-is appwied. ^^;;
 
-Input
-  data_record_handle: Resource handle to DataRecord
+i-input
+  data_wecowd_handwe: w-wesouwce h-handwe to datawecowd
 
-Outputs
-  ids: ids specifies the index of the records in the batch (int64)
-  keys: DataRecord keys (int64)
-  values: DataRecord values (float)
+outputs
+  ids: ids s-specifies the index of the wecowds in the batch (int64)
+  k-keys: datawecowd keys (int64)
+  vawues: datawecowd vawues (fwoat)
 )doc");
 
-class GetHashedFeaturesAsSparseTensorV2: public OpKernel {
- public:
-  explicit GetHashedFeaturesAsSparseTensorV2(OpKernelConstruction* context): OpKernel(context) {
-    std::vector<int64> keep_features;
-    std::vector<int64> keep_codes;
-    std::vector<int64> binary_keep_features_, continuous_keep_features_, discrete_keep_features_;
-    std::vector<int64> string_keep_features_, sparse_binary_keep_features_, sparse_continuous_keep_features_;
+cwass gethashedfeatuwesasspawsetensowv2: pubwic o-opkewnew {
+ pubwic:
+  expwicit g-gethashedfeatuwesasspawsetensowv2(opkewnewconstwuction* c-context): o-opkewnew(context) {
+    std::vectow<int64> keep_featuwes;
+    std::vectow<int64> k-keep_codes;
+    s-std::vectow<int64> binawy_keep_featuwes_, ^•ﻌ•^ c-continuous_keep_featuwes_, σωσ d-discwete_keep_featuwes_;
+    std::vectow<int64> s-stwing_keep_featuwes_, -.- spawse_binawy_keep_featuwes_, ^^;; s-spawse_continuous_keep_featuwes_;
 
-    // Get the list of features to keep for each feature type
-    OP_REQUIRES_OK(context, context->GetAttr("binary_keep_features", &binary_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("continuous_keep_features", &continuous_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("discrete_keep_features", &discrete_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("string_keep_features", &string_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("sparse_binary_keep_features", &sparse_binary_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("sparse_continuous_keep_features", &sparse_continuous_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("keep_features", &keep_features));
-    OP_REQUIRES_OK(context, context->GetAttr("keep_codes", &keep_codes));
-    OP_REQUIRES_OK(context, context->GetAttr("decode_mode", &m_decode_mode));
+    // get the wist of featuwes t-to keep fow each featuwe type
+    o-op_wequiwes_ok(context, XD context->getattw("binawy_keep_featuwes", 🥺 &binawy_keep_featuwes_));
+    o-op_wequiwes_ok(context, òωó c-context->getattw("continuous_keep_featuwes", (ˆ ﻌ ˆ)♡ &continuous_keep_featuwes_));
+    op_wequiwes_ok(context, -.- context->getattw("discwete_keep_featuwes", :3 &discwete_keep_featuwes_));
+    op_wequiwes_ok(context, ʘwʘ context->getattw("stwing_keep_featuwes", 🥺 &stwing_keep_featuwes_));
+    op_wequiwes_ok(context, >_< context->getattw("spawse_binawy_keep_featuwes", ʘwʘ &spawse_binawy_keep_featuwes_));
+    op_wequiwes_ok(context, (˘ω˘) c-context->getattw("spawse_continuous_keep_featuwes", (✿oωo) &spawse_continuous_keep_featuwes_));
+    o-op_wequiwes_ok(context, (///ˬ///✿) context->getattw("keep_featuwes", rawr x3 &keep_featuwes));
+    o-op_wequiwes_ok(context, -.- c-context->getattw("keep_codes", ^^ &keep_codes));
+    o-op_wequiwes_ok(context, (⑅˘꒳˘) context->getattw("decode_mode", nyaa~~ &m_decode_mode));
 
-    twml::Map<int64_t, int64_t> keep_map;
-#ifdef USE_DENSE_HASH
+    twmw::map<int64_t, /(^•ω•^) int64_t> k-keep_map;
+#ifdef use_dense_hash
     keep_map.set_empty_key(0);
-#endif  // USE_DENSE_HASH
-    for (uint64_t i = 0; i < keep_features.size(); i++) {
-      keep_map[keep_features[i]] = keep_codes[i];
+#endif  // use_dense_hash
+    fow (uint64_t i = 0; i < keep_featuwes.size(); i-i++) {
+      keep_map[keep_featuwes[i]] = keep_codes[i];
     }
 
 
-    binary_keep_features = KeepFeatures(binary_keep_features_, &keep_map);
-    continuous_keep_features = KeepFeatures(continuous_keep_features_, &keep_map);
-    discrete_keep_features = KeepFeatures(discrete_keep_features_, &keep_map);
-    string_keep_features = KeepFeatures(string_keep_features_, &keep_map);
-    sparse_binary_keep_features = KeepFeatures(sparse_binary_keep_features_, &keep_map);
-    sparse_continuous_keep_features = KeepFeatures(sparse_continuous_keep_features_, &keep_map);
+    b-binawy_keep_featuwes = k-keepfeatuwes(binawy_keep_featuwes_, (U ﹏ U) &keep_map);
+    c-continuous_keep_featuwes = keepfeatuwes(continuous_keep_featuwes_, &keep_map);
+    d-discwete_keep_featuwes = k-keepfeatuwes(discwete_keep_featuwes_, 😳😳😳 &keep_map);
+    s-stwing_keep_featuwes = k-keepfeatuwes(stwing_keep_featuwes_, >w< &keep_map);
+    spawse_binawy_keep_featuwes = keepfeatuwes(spawse_binawy_keep_featuwes_, XD &keep_map);
+    s-spawse_continuous_keep_featuwes = k-keepfeatuwes(spawse_continuous_keep_featuwes_, &keep_map);
 
   }
 
- private:
-  KeepFeatures binary_keep_features, continuous_keep_features, discrete_keep_features;
-  KeepFeatures string_keep_features, sparse_binary_keep_features, sparse_continuous_keep_features;
+ p-pwivate:
+  k-keepfeatuwes b-binawy_keep_featuwes, o.O continuous_keep_featuwes, mya discwete_keep_featuwes;
+  keepfeatuwes s-stwing_keep_featuwes, spawse_binawy_keep_featuwes, 🥺 spawse_continuous_keep_featuwes;
   int64 m_decode_mode;
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
-      // Create a new list of keep features based on the original keep_set.
-      // This is to ensure compatibility with existing behavior such as:
-      //  - Ensure no new features are decoded in this op.
-      //  - Ensure labels or weights dont get included here.
-      // TODO: Should we return features requested by user here even if they are labels / weights?
-      ComputeHashedFeaturesAsTensor(context, handle.get(),
-                                    binary_keep_features,
-                                    continuous_keep_features,
-                                    discrete_keep_features,
-                                    string_keep_features,
-                                    sparse_binary_keep_features,
-                                    sparse_continuous_keep_features,
+  void compute(opkewnewcontext* context) ovewwide {
+    t-twy {
+      auto handwe = gethandwe<datawecowdwesouwce>(context, ^^;; 0);
+      // cweate a-a nyew wist of k-keep featuwes b-based on the owiginaw keep_set. :3
+      // t-this is to ensuwe compatibiwity w-with existing b-behaviow such as:
+      //  - ensuwe nyo nyew featuwes awe decoded in this op. (U ﹏ U)
+      //  - e-ensuwe wabews ow weights dont g-get incwuded hewe. OwO
+      // todo: s-shouwd we wetuwn f-featuwes wequested by usew hewe even if they a-awe wabews / weights?
+      c-computehashedfeatuwesastensow(context, 😳😳😳 handwe.get(), (ˆ ﻌ ˆ)♡
+                                    b-binawy_keep_featuwes, XD
+                                    continuous_keep_featuwes, (ˆ ﻌ ˆ)♡
+                                    d-discwete_keep_featuwes, ( ͡o ω ͡o )
+                                    stwing_keep_featuwes, rawr x3
+                                    spawse_binawy_keep_featuwes, nyaa~~
+                                    spawse_continuous_keep_featuwes, >_<
                                     m_decode_mode == 0);
-    } catch(const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } c-catch(const s-std::exception &e) {
+      c-context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
 
-#define REGISTER_DECODE_DATA_RECORD(InputType)  \
-  REGISTER_KERNEL_BUILDER(                      \
-    Name("DecodeDataRecord")                    \
-    .Device(DEVICE_CPU)                         \
-    .TypeConstraint<InputType>("InputType"),    \
-    DecodeDataRecord<InputType>);               \
+#define wegistew_decode_data_wecowd(inputtype)  \
+  w-wegistew_kewnew_buiwdew(                      \
+    n-nyame("decodedatawecowd")                    \
+    .device(device_cpu)                         \
+    .typeconstwaint<inputtype>("inputtype"), ^^;;    \
+    decodedatawecowd<inputtype>);               \
 
-REGISTER_DECODE_DATA_RECORD(uint8)
-REGISTER_DECODE_DATA_RECORD(string)
+w-wegistew_decode_data_wecowd(uint8)
+wegistew_decode_data_wecowd(stwing)
 
-#define REGISTER_GETTER(FIELD)                  \
-  REGISTER_KERNEL_BUILDER(                      \
-    Name("Get" #FIELD "Features")               \
-    .Device(DEVICE_CPU),                        \
-    Get##FIELD##Features);                      \
+#define wegistew_gettew(fiewd)                  \
+  wegistew_kewnew_buiwdew(                      \
+    nyame("get" #fiewd "featuwes")               \
+    .device(device_cpu), (ˆ ﻌ ˆ)♡                        \
+    g-get##fiewd##featuwes);                      \
 
-#define REGISTER_GETTER_FROM_DR(FIELD)          \
-  REGISTER_KERNEL_BUILDER(                      \
-    Name("Get" #FIELD "FromDataRecord")         \
-    .Device(DEVICE_CPU),                        \
-    Get##FIELD##FromDataRecord);                \
+#define w-wegistew_gettew_fwom_dw(fiewd)          \
+  wegistew_kewnew_buiwdew(                      \
+    nyame("get" #fiewd "fwomdatawecowd")         \
+    .device(device_cpu), ^^;;                        \
+    g-get##fiewd##fwomdatawecowd);                \
 
-#define REGISTER_GETTER_AS_TENSOR(FIELD)        \
-  REGISTER_KERNEL_BUILDER(                      \
-    Name("Get" #FIELD "AsTensor")               \
-    .Device(DEVICE_CPU),                        \
-    Get##FIELD##AsTensor);                      \
+#define w-wegistew_gettew_as_tensow(fiewd)        \
+  wegistew_kewnew_buiwdew(                      \
+    nyame("get" #fiewd "astensow")               \
+    .device(device_cpu), (⑅˘꒳˘)                        \
+    get##fiewd##astensow);                      \
 
 
-#define REGISTER_GETTER_GROUP_AS_TENSOR(FIELD)  \
-  REGISTER_KERNEL_BUILDER(                      \
-    Name("Get" #FIELD "GroupAsTensor")          \
-    .Device(DEVICE_CPU),                        \
-    Get##FIELD##GroupAsTensor);                 \
+#define wegistew_gettew_gwoup_as_tensow(fiewd)  \
+  w-wegistew_kewnew_buiwdew(                      \
+    nyame("get" #fiewd "gwoupastensow")          \
+    .device(device_cpu), rawr x3                        \
+    get##fiewd##gwoupastensow);                 \
 
-REGISTER_GETTER(Binary)
-REGISTER_GETTER(Continuous)
-REGISTER_GETTER(Discrete)
-REGISTER_GETTER(String)
-REGISTER_GETTER(SparseBinary)
-REGISTER_GETTER(SparseContinuous)
-REGISTER_GETTER_FROM_DR(BatchSize)
-REGISTER_GETTER_FROM_DR(Labels)
-REGISTER_GETTER_FROM_DR(Weights)
-REGISTER_GETTER_AS_TENSOR(Binary)
-REGISTER_GETTER_AS_TENSOR(Continuous)
-REGISTER_GETTER_AS_TENSOR(Discrete)
-REGISTER_GETTER_AS_TENSOR(String)
-REGISTER_GETTER_AS_TENSOR(SparseBinary)
-REGISTER_GETTER_AS_TENSOR(SparseContinuous)
-REGISTER_GETTER_GROUP_AS_TENSOR(Binary)
-REGISTER_GETTER_GROUP_AS_TENSOR(Continuous)
-REGISTER_GETTER_GROUP_AS_TENSOR(Discrete)
-REGISTER_GETTER_GROUP_AS_TENSOR(String)
-REGISTER_KERNEL_BUILDER(
-  Name("GetHashedFeaturesAsSparseTensor")
-  .Device(DEVICE_CPU),
-  GetHashedFeaturesAsSparseTensor);
-REGISTER_KERNEL_BUILDER(
-  Name("GetHashedFeaturesAsSparseTensorV2")
-  .Device(DEVICE_CPU),
-  GetHashedFeaturesAsSparseTensorV2);
+wegistew_gettew(binawy)
+wegistew_gettew(continuous)
+w-wegistew_gettew(discwete)
+wegistew_gettew(stwing)
+wegistew_gettew(spawsebinawy)
+w-wegistew_gettew(spawsecontinuous)
+w-wegistew_gettew_fwom_dw(batchsize)
+wegistew_gettew_fwom_dw(wabews)
+wegistew_gettew_fwom_dw(weights)
+wegistew_gettew_as_tensow(binawy)
+w-wegistew_gettew_as_tensow(continuous)
+w-wegistew_gettew_as_tensow(discwete)
+wegistew_gettew_as_tensow(stwing)
+wegistew_gettew_as_tensow(spawsebinawy)
+wegistew_gettew_as_tensow(spawsecontinuous)
+w-wegistew_gettew_gwoup_as_tensow(binawy)
+wegistew_gettew_gwoup_as_tensow(continuous)
+w-wegistew_gettew_gwoup_as_tensow(discwete)
+wegistew_gettew_gwoup_as_tensow(stwing)
+wegistew_kewnew_buiwdew(
+  nyame("gethashedfeatuwesasspawsetensow")
+  .device(device_cpu), (///ˬ///✿)
+  g-gethashedfeatuwesasspawsetensow);
+wegistew_kewnew_buiwdew(
+  n-nyame("gethashedfeatuwesasspawsetensowv2")
+  .device(device_cpu), 🥺
+  g-gethashedfeatuwesasspawsetensowv2);

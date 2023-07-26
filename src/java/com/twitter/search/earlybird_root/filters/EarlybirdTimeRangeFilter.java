@@ -1,205 +1,205 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
+impowt java.utiw.cowwections;
+i-impowt java.utiw.map;
+i-impowt java.utiw.optionaw;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt c-com.googwe.common.cowwect.maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+i-impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseUtil;
-import com.twitter.search.earlybird.config.ServingRange;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.util.IdTimeRanges;
-import com.twitter.util.Future;
+impowt com.twittew.finagwe.sewvice;
+impowt com.twittew.finagwe.simpwefiwtew;
+impowt c-com.twittew.seawch.common.decidew.seawchdecidew;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt c-com.twittew.seawch.common.utiw.eawwybiwd.eawwybiwdwesponseutiw;
+impowt com.twittew.seawch.eawwybiwd.config.sewvingwange;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwts;
+impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequesttype;
+impowt com.twittew.seawch.quewypawsew.quewy.quewy;
+impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
+i-impowt com.twittew.seawch.quewypawsew.utiw.idtimewanges;
+impowt com.twittew.utiw.futuwe;
 
 /**
- * A Finagle filter used to filter requests to tiers.
- * Parses serialized query on Earlybird request, and extracts since / until / since_id / max_id
- * operators. This filter then tests whether the request overlaps with the given tier. If there
- * is no overlap, an empty response is returned without actually forwarding the requests to the
- * underlying service.
+ * a finagwe fiwtew used to fiwtew wequests t-to tiews. (ꈍᴗꈍ)
+ * pawses sewiawized q-quewy on e-eawwybiwd wequest, 🥺 a-and extwacts s-since / untiw / since_id / max_id
+ * opewatows. (✿oωo) t-this fiwtew then tests whethew the wequest ovewwaps w-with the given tiew. (U ﹏ U) if thewe
+ * is nyo ovewwap, :3 an empty wesponse is wetuwned without actuawwy f-fowwawding the wequests to the
+ * u-undewwying s-sewvice. ^^;;
  */
-public class EarlybirdTimeRangeFilter extends
-    SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+pubwic c-cwass eawwybiwdtimewangefiwtew extends
+    simpwefiwtew<eawwybiwdwequestcontext, rawr eawwybiwdwesponse> {
 
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdTimeRangeFilter.class);
+  p-pwivate s-static finaw woggew wog = w-woggewfactowy.getwoggew(eawwybiwdtimewangefiwtew.cwass);
 
-  private static final EarlybirdResponse ERROR_RESPONSE =
-      new EarlybirdResponse(EarlybirdResponseCode.PERSISTENT_ERROR, 0)
-          .setSearchResults(new ThriftSearchResults());
+  p-pwivate static finaw e-eawwybiwdwesponse ewwow_wesponse =
+      n-nyew eawwybiwdwesponse(eawwybiwdwesponsecode.pewsistent_ewwow, 😳😳😳 0)
+          .setseawchwesuwts(new thwiftseawchwesuwts());
 
-  private final ServingRangeProvider servingRangeProvider;
-  private final Optional<EarlybirdTimeFilterQueryRewriter> queryRewriter;
+  pwivate finaw s-sewvingwangepwovidew sewvingwangepwovidew;
+  p-pwivate finaw optionaw<eawwybiwdtimefiwtewquewywewwitew> q-quewywewwitew;
 
-  private static final Map<EarlybirdRequestType, SearchCounter> FAILED_REQUESTS;
+  p-pwivate static finaw map<eawwybiwdwequesttype, (✿oωo) seawchcountew> faiwed_wequests;
   static {
-    final Map<EarlybirdRequestType, SearchCounter> tempMap =
-      Maps.newEnumMap(EarlybirdRequestType.class);
-    for (EarlybirdRequestType requestType : EarlybirdRequestType.values()) {
-      tempMap.put(requestType, SearchCounter.export(
-          "time_range_filter_" + requestType.getNormalizedName() + "_failed_requests"));
+    finaw m-map<eawwybiwdwequesttype, OwO s-seawchcountew> tempmap =
+      m-maps.newenummap(eawwybiwdwequesttype.cwass);
+    f-fow (eawwybiwdwequesttype w-wequesttype : eawwybiwdwequesttype.vawues()) {
+      tempmap.put(wequesttype, ʘwʘ seawchcountew.expowt(
+          "time_wange_fiwtew_" + w-wequesttype.getnowmawizedname() + "_faiwed_wequests"));
     }
-    FAILED_REQUESTS = Collections.unmodifiableMap(tempMap);
+    faiwed_wequests = cowwections.unmodifiabwemap(tempmap);
   }
 
-  public static EarlybirdTimeRangeFilter newTimeRangeFilterWithQueryRewriter(
-      ServingRangeProvider servingRangeProvider,
-      SearchDecider decider) {
+  pubwic static eawwybiwdtimewangefiwtew n-nyewtimewangefiwtewwithquewywewwitew(
+      sewvingwangepwovidew s-sewvingwangepwovidew, (ˆ ﻌ ˆ)♡
+      seawchdecidew d-decidew) {
 
-    return new EarlybirdTimeRangeFilter(servingRangeProvider,
-        Optional.of(new EarlybirdTimeFilterQueryRewriter(servingRangeProvider, decider)));
+    w-wetuwn nyew eawwybiwdtimewangefiwtew(sewvingwangepwovidew, (U ﹏ U)
+        o-optionaw.of(new e-eawwybiwdtimefiwtewquewywewwitew(sewvingwangepwovidew, UwU d-decidew)));
   }
 
-  public static EarlybirdTimeRangeFilter newTimeRangeFilterWithoutQueryRewriter(
-      ServingRangeProvider servingRangeProvider) {
+  p-pubwic static eawwybiwdtimewangefiwtew nyewtimewangefiwtewwithoutquewywewwitew(
+      s-sewvingwangepwovidew s-sewvingwangepwovidew) {
 
-    return new EarlybirdTimeRangeFilter(servingRangeProvider, Optional.empty());
+    w-wetuwn nyew eawwybiwdtimewangefiwtew(sewvingwangepwovidew, XD o-optionaw.empty());
   }
 
   /**
-   * Construct a filter that avoids forwarding requests to unrelated tiers
-   * based on requests' since / until / since_id / max_id.
-   * @param provider Holds the boundary information.
+   * c-constwuct a fiwtew that avoids fowwawding wequests to unwewated t-tiews
+   * based on wequests' since / untiw / since_id / max_id. ʘwʘ
+   * @pawam pwovidew howds the b-boundawy infowmation. rawr x3
    */
-  EarlybirdTimeRangeFilter(
-      ServingRangeProvider provider,
-      Optional<EarlybirdTimeFilterQueryRewriter> rewriter) {
+  eawwybiwdtimewangefiwtew(
+      sewvingwangepwovidew pwovidew, ^^;;
+      o-optionaw<eawwybiwdtimefiwtewquewywewwitew> w-wewwitew) {
 
-    this.servingRangeProvider = provider;
-    this.queryRewriter = rewriter;
+    this.sewvingwangepwovidew = p-pwovidew;
+    this.quewywewwitew = w-wewwitew;
   }
 
-  public ServingRangeProvider getServingRangeProvider() {
-    return servingRangeProvider;
+  pubwic sewvingwangepwovidew g-getsewvingwangepwovidew() {
+    w-wetuwn sewvingwangepwovidew;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+  @ovewwide
+  pubwic futuwe<eawwybiwdwesponse> appwy(
+      eawwybiwdwequestcontext w-wequestcontext, ʘwʘ
+      sewvice<eawwybiwdwequestcontext, (U ﹏ U) e-eawwybiwdwesponse> sewvice) {
 
-    Query parsedQuery = requestContext.getParsedQuery();
-    if (parsedQuery != null) {
-      // Only perform filtering if serialized query is set.
-      try {
-        IdTimeRanges queryRanges = IdTimeRanges.fromQuery(parsedQuery);
-        if (queryRanges == null) {
-          // No time ranges in query.
-          return issueServiceRequest(service, requestContext);
+    q-quewy p-pawsedquewy = wequestcontext.getpawsedquewy();
+    if (pawsedquewy != nyuww) {
+      // o-onwy pewfowm f-fiwtewing if sewiawized quewy i-is set. (˘ω˘)
+      t-twy {
+        idtimewanges quewywanges = idtimewanges.fwomquewy(pawsedquewy);
+        if (quewywanges == nyuww) {
+          // n-nyo time wanges i-in quewy. (ꈍᴗꈍ)
+          w-wetuwn issuesewvicewequest(sewvice, /(^•ω•^) wequestcontext);
         }
 
-        ServingRange servingRange =
-            servingRangeProvider.getServingRange(
-                requestContext, requestContext.useOverrideTierConfig());
+        s-sewvingwange s-sewvingwange =
+            sewvingwangepwovidew.getsewvingwange(
+                w-wequestcontext, >_< wequestcontext.useovewwidetiewconfig());
 
-        if (queryDoesNotOverlapWithServingRange(queryRanges, servingRange)) {
-          return Future.value(tierSkippedResponse(requestContext.getEarlybirdRequestType(),
-                                                  servingRange));
-        } else {
-          return issueServiceRequest(service, requestContext);
+        if (quewydoesnotovewwapwithsewvingwange(quewywanges, σωσ sewvingwange)) {
+          wetuwn f-futuwe.vawue(tiewskippedwesponse(wequestcontext.geteawwybiwdwequesttype(), ^^;;
+                                                  s-sewvingwange));
+        } ewse {
+          wetuwn i-issuesewvicewequest(sewvice, w-wequestcontext);
         }
-      } catch (QueryParserException e) {
-        LOG.warn("Unable to get IdTimeRanges from query: " + parsedQuery.serialize());
-        // The failure here is not due to a miss-formed query from the client, since we already
-        // were able to successfully get a parsed Query from the request.
-        // If we can't determine the time ranges, pass the query along to the tier, and just
-        // restrict it to the timeranges of the tier.
-        return issueServiceRequest(service, requestContext);
+      } catch (quewypawsewexception e) {
+        wog.wawn("unabwe to g-get idtimewanges fwom quewy: " + pawsedquewy.sewiawize());
+        // the faiwuwe hewe is nyot due t-to a miss-fowmed quewy fwom the cwient, 😳 since w-we awweady
+        // w-wewe abwe to successfuwwy get a pawsed quewy fwom the wequest.
+        // i-if we can't detewmine t-the time wanges, >_< pass the quewy awong to the tiew, -.- and just
+        // w-westwict it to the t-timewanges of the tiew. UwU
+        wetuwn issuesewvicewequest(sewvice, :3 wequestcontext);
       }
-    } else {
-      // There's no serialized query. Just pass through like an identity filter.
-      return issueServiceRequest(service, requestContext);
+    } e-ewse {
+      // thewe's nyo s-sewiawized quewy. σωσ j-just pass thwough wike an identity f-fiwtew. >w<
+      wetuwn issuesewvicewequest(sewvice, (ˆ ﻌ ˆ)♡ w-wequestcontext);
     }
   }
 
-  private boolean queryDoesNotOverlapWithServingRange(IdTimeRanges queryRanges,
-        ServingRange servingRange) {
-    // As long as a query overlaps with the tier serving range on either side,
-    // the request is not filtered. I.e. we want to be conservative when doing this filtering,
-    // because it is just an optimization. We ignore the inclusiveness / exclusiveness of the
-    // boundaries. If the tier boundary and the query boundry happen to be the same, we do not
-    // filter the request.
-    return queryRanges.getSinceIDExclusive().or(0L)
-          > servingRange.getServingRangeMaxId()
-      || queryRanges.getMaxIDInclusive().or(Long.MAX_VALUE)
-          < servingRange.getServingRangeSinceId()
-      || queryRanges.getSinceTimeInclusive().or(0)
-          > servingRange.getServingRangeUntilTimeSecondsFromEpoch()
-      || queryRanges.getUntilTimeExclusive().or(Integer.MAX_VALUE)
-          < servingRange.getServingRangeSinceTimeSecondsFromEpoch();
+  p-pwivate boowean q-quewydoesnotovewwapwithsewvingwange(idtimewanges quewywanges, ʘwʘ
+        s-sewvingwange s-sewvingwange) {
+    // as wong as a quewy ovewwaps with t-the tiew sewving w-wange on eithew s-side, :3
+    // the wequest is nyot fiwtewed. (˘ω˘) i.e. w-we want to be consewvative when d-doing this fiwtewing, 😳😳😳
+    // b-because it is just an optimization. rawr x3 we ignowe the i-incwusiveness / e-excwusiveness of t-the
+    // boundawies. (✿oωo) i-if the tiew boundawy and t-the quewy boundwy happen to be the same, (ˆ ﻌ ˆ)♡ we do nyot
+    // fiwtew the wequest. :3
+    wetuwn quewywanges.getsinceidexcwusive().ow(0w)
+          > s-sewvingwange.getsewvingwangemaxid()
+      || quewywanges.getmaxidincwusive().ow(wong.max_vawue)
+          < s-sewvingwange.getsewvingwangesinceid()
+      || quewywanges.getsincetimeincwusive().ow(0)
+          > s-sewvingwange.getsewvingwangeuntiwtimesecondsfwomepoch()
+      || quewywanges.getuntiwtimeexcwusive().ow(integew.max_vawue)
+          < s-sewvingwange.getsewvingwangesincetimesecondsfwomepoch();
   }
 
-  private Future<EarlybirdResponse> issueServiceRequest(
-      Service<EarlybirdRequestContext, EarlybirdResponse> service,
-      EarlybirdRequestContext requestContext) {
+  pwivate f-futuwe<eawwybiwdwesponse> i-issuesewvicewequest(
+      s-sewvice<eawwybiwdwequestcontext, (U ᵕ U❁) e-eawwybiwdwesponse> s-sewvice, ^^;;
+      eawwybiwdwequestcontext wequestcontext) {
 
-    try {
-      EarlybirdRequestContext request = requestContext;
-      if (queryRewriter.isPresent()) {
-        request = queryRewriter.get().rewriteRequest(requestContext);
+    twy {
+      eawwybiwdwequestcontext wequest = wequestcontext;
+      i-if (quewywewwitew.ispwesent()) {
+        w-wequest = quewywewwitew.get().wewwitewequest(wequestcontext);
       }
-      return service.apply(request);
-    } catch (QueryParserException e) {
-      FAILED_REQUESTS.get(requestContext.getEarlybirdRequestType()).increment();
-      String msg = "Failed to add time filter operators";
-      LOG.error(msg, e);
+      w-wetuwn sewvice.appwy(wequest);
+    } catch (quewypawsewexception e-e) {
+      faiwed_wequests.get(wequestcontext.geteawwybiwdwequesttype()).incwement();
+      stwing msg = "faiwed to add time fiwtew o-opewatows";
+      w-wog.ewwow(msg, mya e);
 
-      // Note that in this case it is not clear whether the error is the client's fault or our
-      // fault, so we don't necessarily return a CLIENT_ERROR here.
-      // Currently this actually returns a PERSISTENT_ERROR.
-      if (requestContext.getRequest().getDebugMode() > 0) {
-        return Future.value(
-            ERROR_RESPONSE.deepCopy().setDebugString(msg + ": " + e.getMessage()));
-      } else {
-        return Future.value(ERROR_RESPONSE);
+      // n-nyote that in this case it is nyot cweaw whethew t-the ewwow is t-the cwient's fauwt ow ouw
+      // f-fauwt, 😳😳😳 so we d-don't nyecessawiwy wetuwn a cwient_ewwow hewe. OwO
+      // cuwwentwy this actuawwy w-wetuwns a pewsistent_ewwow. rawr
+      i-if (wequestcontext.getwequest().getdebugmode() > 0) {
+        w-wetuwn futuwe.vawue(
+            e-ewwow_wesponse.deepcopy().setdebugstwing(msg + ": " + e-e.getmessage()));
+      } ewse {
+        w-wetuwn futuwe.vawue(ewwow_wesponse);
       }
     }
   }
 
   /**
-   * Creates a tier skipped response, based on the given request type.
+   * c-cweates a tiew skipped wesponse, XD b-based on the g-given wequest type. (U ﹏ U)
    *
-   * For recency, relevance, facets and top tweets requests, this method returns a SUCCESS response
-   * with no search results and the minSearchedStatusID and maxSearchedStatusID appropriately set.
-   * For term stats response, it returns a TIER_SKIPPED response, but we need to revisit this.
+   * f-fow wecency, (˘ω˘) wewevance, facets and top tweets wequests, UwU t-this method wetuwns a success w-wesponse
+   * w-with nyo seawch wesuwts and t-the minseawchedstatusid and maxseawchedstatusid appwopwiatewy set. >_<
+   * f-fow tewm s-stats wesponse, σωσ i-it wetuwns a tiew_skipped wesponse, 🥺 but we nyeed to wevisit this. 🥺
    *
-   * @param requestType The type of the request.
-   * @param servingRange The serving range of the tier that we're skipping.
+   * @pawam w-wequesttype the type of the wequest.
+   * @pawam s-sewvingwange t-the sewving wange of the tiew t-that we'we skipping. ʘwʘ
    */
-  @VisibleForTesting
-  public static EarlybirdResponse tierSkippedResponse(
-      EarlybirdRequestType requestType,
-      ServingRange servingRange) {
-    String debugMessage =
-      "Tier skipped because it does not intersect with query time boundaries.";
-    if (requestType == EarlybirdRequestType.TERM_STATS) {
-      // If it's a term stats request, return a TIER_SKIPPED response for now.
-      // But we need to figure out the right thing to do here.
-      return new EarlybirdResponse(EarlybirdResponseCode.TIER_SKIPPED, 0)
-        .setDebugString(debugMessage);
-    } else {
-      // minIds in ServingRange instances are set to tierLowerBoundary - 1, because the
-      // since_id operator is exclusive. The max_id operator on the other hand is inclusive,
-      // so maxIds in ServingRange instances are also set to tierUpperBoundary - 1.
-      // Here we want both of them to be inclusive, so we need to increment the minId by 1.
-      return EarlybirdResponseUtil.tierSkippedRootResponse(
-          servingRange.getServingRangeSinceId() + 1,
-          servingRange.getServingRangeMaxId(),
-          debugMessage);
+  @visibwefowtesting
+  pubwic static e-eawwybiwdwesponse t-tiewskippedwesponse(
+      eawwybiwdwequesttype wequesttype,
+      s-sewvingwange sewvingwange) {
+    stwing debugmessage =
+      "tiew s-skipped b-because it does not intewsect with q-quewy time boundawies.";
+    if (wequesttype == e-eawwybiwdwequesttype.tewm_stats) {
+      // i-if it's a tewm stats w-wequest, :3 wetuwn a tiew_skipped wesponse fow now. (U ﹏ U)
+      // but we nyeed to figuwe out the wight thing to do hewe. (U ﹏ U)
+      wetuwn nyew eawwybiwdwesponse(eawwybiwdwesponsecode.tiew_skipped, ʘwʘ 0)
+        .setdebugstwing(debugmessage);
+    } ewse {
+      // minids in sewvingwange instances awe s-set to tiewwowewboundawy - 1, >w< b-because the
+      // since_id opewatow is excwusive. rawr x3 t-the max_id o-opewatow on the o-othew hand is incwusive, OwO
+      // so maxids in s-sewvingwange instances awe awso s-set to tiewuppewboundawy - 1. ^•ﻌ•^
+      // h-hewe we want both of them t-to be incwusive, >_< so we nyeed to i-incwement the minid b-by 1. OwO
+      wetuwn eawwybiwdwesponseutiw.tiewskippedwootwesponse(
+          sewvingwange.getsewvingwangesinceid() + 1,
+          s-sewvingwange.getsewvingwangemaxid(), >_<
+          d-debugmessage);
     }
   }
 }

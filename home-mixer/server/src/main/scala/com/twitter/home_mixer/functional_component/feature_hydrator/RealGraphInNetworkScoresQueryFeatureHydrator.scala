@@ -1,46 +1,46 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.twittew.home_mixew.functionaw_component.featuwe_hydwatow
 
-import com.twitter.home_mixer.model.HomeFeatures.RealGraphInNetworkScoresFeature
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealGraphInNetworkScores
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.storehaus.ReadableStore
-import com.twitter.wtf.candidate.{thriftscala => wtf}
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.modew.homefeatuwes.weawgwaphinnetwowkscowesfeatuwe
+i-impowt com.twittew.home_mixew.pawam.homemixewinjectionnames.weawgwaphinnetwowkscowes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.wtf.candidate.{thwiftscawa => w-wtf}
+impowt javax.inject.inject
+impowt javax.inject.named
+impowt j-javax.inject.singweton
 
-@Singleton
-case class RealGraphInNetworkScoresQueryFeatureHydrator @Inject() (
-  @Named(RealGraphInNetworkScores) store: ReadableStore[Long, Seq[wtf.Candidate]])
-    extends QueryFeatureHydrator[PipelineQuery] {
+@singweton
+case cwass w-weawgwaphinnetwowkscowesquewyfeatuwehydwatow @inject() (
+  @named(weawgwaphinnetwowkscowes) stowe: weadabwestowe[wong, 🥺 seq[wtf.candidate]])
+    e-extends quewyfeatuwehydwatow[pipewinequewy] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("RealGraphInNetworkScores")
+  ovewwide vaw i-identifiew: featuwehydwatowidentifiew =
+    f-featuwehydwatowidentifiew("weawgwaphinnetwowkscowes")
 
-  override val features: Set[Feature[_, _]] = Set(RealGraphInNetworkScoresFeature)
+  ovewwide vaw featuwes: set[featuwe[_, >_< _]] = set(weawgwaphinnetwowkscowesfeatuwe)
 
-  private val RealGraphCandidateCount = 1000
+  pwivate v-vaw weawgwaphcandidatecount = 1000
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    Stitch.callFuture(store.get(query.getRequiredUserId)).map { realGraphFollowedUsers =>
-      val realGraphScoresFeatures = realGraphFollowedUsers
-        .getOrElse(Seq.empty)
-        .sortBy(-_.score)
-        .map(candidate => candidate.userId -> scaleScore(candidate.score))
-        .take(RealGraphCandidateCount)
-        .toMap
+  ovewwide def hydwate(quewy: pipewinequewy): stitch[featuwemap] = {
+    s-stitch.cawwfutuwe(stowe.get(quewy.getwequiwedusewid)).map { weawgwaphfowwowedusews =>
+      v-vaw weawgwaphscowesfeatuwes = w-weawgwaphfowwowedusews
+        .getowewse(seq.empty)
+        .sowtby(-_.scowe)
+        .map(candidate => c-candidate.usewid -> s-scawescowe(candidate.scowe))
+        .take(weawgwaphcandidatecount)
+        .tomap
 
-      FeatureMapBuilder().add(RealGraphInNetworkScoresFeature, realGraphScoresFeatures).build()
+      featuwemapbuiwdew().add(weawgwaphinnetwowkscowesfeatuwe, weawgwaphscowesfeatuwes).buiwd()
     }
   }
 
-  // Rescale Real Graph v2 scores from [0,1] to the v1 scores distribution [1,2.97]
-  private def scaleScore(score: Double): Double =
-    if (score >= 0.0 && score <= 1.0) score * 1.97 + 1.0 else score
+  // wescawe w-weaw gwaph v2 scowes fwom [0,1] to the v1 scowes d-distwibution [1,2.97]
+  pwivate def scawescowe(scowe: doubwe): doubwe =
+    if (scowe >= 0.0 && scowe <= 1.0) s-scowe * 1.97 + 1.0 ewse scowe
 }

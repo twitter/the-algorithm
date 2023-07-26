@@ -1,48 +1,48 @@
-package com.twitter.representationscorer.columns
+package com.twittew.wepwesentationscowew.cowumns
 
-import com.twitter.contentrecommender.thriftscala.ScoringResponse
-import com.twitter.representationscorer.scorestore.ScoreStore
-import com.twitter.simclusters_v2.thriftscala.ScoreId
-import com.twitter.stitch
-import com.twitter.stitch.Stitch
-import com.twitter.strato.config.ContactInfo
-import com.twitter.strato.config.Policy
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Lifecycle
-import com.twitter.strato.data.Description.PlainText
-import com.twitter.strato.fed._
-import com.twitter.strato.thrift.ScroogeConv
-import javax.inject.Inject
+impowt com.twittew.contentwecommendew.thwiftscawa.scowingwesponse
+i-impowt com.twittew.wepwesentationscowew.scowestowe.scowestowe
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.scoweid
+i-impowt com.twittew.stitch
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.config.contactinfo
+impowt c-com.twittew.stwato.config.powicy
+i-impowt com.twittew.stwato.catawog.opmetadata
+i-impowt com.twittew.stwato.data.conv
+impowt com.twittew.stwato.data.wifecycwe
+impowt com.twittew.stwato.data.descwiption.pwaintext
+impowt com.twittew.stwato.fed._
+impowt com.twittew.stwato.thwift.scwoogeconv
+i-impowt javax.inject.inject
 
-class ScoreColumn @Inject() (scoreStore: ScoreStore)
-    extends StratoFed.Column("recommendations/representation_scorer/score")
-    with StratoFed.Fetch.Stitch {
+cwass scowecowumn @inject() (scowestowe: scowestowe)
+    e-extends stwatofed.cowumn("wecommendations/wepwesentation_scowew/scowe")
+    w-with stwatofed.fetch.stitch {
 
-  override val policy: Policy = Common.rsxReadPolicy
+  ovewwide vaw powicy: powicy = common.wsxweadpowicy
 
-  override type Key = ScoreId
-  override type View = Unit
-  override type Value = ScoringResponse
+  o-ovewwide type key = scoweid
+  o-ovewwide t-type view = unit
+  ovewwide type vawue = scowingwesponse
 
-  override val keyConv: Conv[Key] = ScroogeConv.fromStruct[ScoreId]
-  override val viewConv: Conv[View] = Conv.ofType
-  override val valueConv: Conv[Value] = ScroogeConv.fromStruct[ScoringResponse]
+  ovewwide vaw keyconv: c-conv[key] = scwoogeconv.fwomstwuct[scoweid]
+  ovewwide vaw viewconv: conv[view] = conv.oftype
+  o-ovewwide vaw vawueconv: conv[vawue] = s-scwoogeconv.fwomstwuct[scowingwesponse]
 
-  override val contactInfo: ContactInfo = Info.contactInfo
+  o-ovewwide vaw c-contactinfo: contactinfo = i-info.contactinfo
 
-  override val metadata: OpMetadata = OpMetadata(
-    lifecycle = Some(Lifecycle.Production),
-    description = Some(PlainText(
-      "The Uniform Scoring Endpoint in Representation Scorer for the Content-Recommender." +
-        " TDD: http://go/representation-scorer-tdd Guideline: http://go/uniform-scoring-guideline"))
+  ovewwide vaw metadata: opmetadata = o-opmetadata(
+    wifecycwe = some(wifecycwe.pwoduction), (⑅˘꒳˘)
+    d-descwiption = some(pwaintext(
+      "the unifowm scowing endpoint in wepwesentation scowew fow the content-wecommendew." +
+        " t-tdd: http://go/wepwesentation-scowew-tdd guidewine: http://go/unifowm-scowing-guidewine"))
   )
 
-  override def fetch(key: Key, view: View): Stitch[Result[Value]] =
-    scoreStore
-      .uniformScoringStoreStitch(key)
-      .map(score => found(ScoringResponse(Some(score))))
-      .handle {
-        case stitch.NotFound => missing
+  o-ovewwide d-def fetch(key: k-key, òωó view: view): stitch[wesuwt[vawue]] =
+    scowestowe
+      .unifowmscowingstowestitch(key)
+      .map(scowe => found(scowingwesponse(some(scowe))))
+      .handwe {
+        c-case stitch.notfound => m-missing
       }
 }

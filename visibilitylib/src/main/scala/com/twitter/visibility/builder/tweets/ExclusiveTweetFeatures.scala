@@ -1,65 +1,65 @@
-package com.twitter.visibility.builder.tweets
+package com.twittew.visibiwity.buiwdew.tweets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.builder.users.ViewerVerbsAuthor
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.features.TweetIsExclusiveTweet
-import com.twitter.visibility.features.ViewerIsExclusiveTweetRootAuthor
-import com.twitter.visibility.features.ViewerSuperFollowsExclusiveTweetRootAuthor
-import com.twitter.visibility.models.ViewerContext
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt c-com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+i-impowt com.twittew.visibiwity.buiwdew.usews.viewewvewbsauthow
+impowt com.twittew.visibiwity.common.usewwewationshipsouwce
+impowt com.twittew.visibiwity.featuwes.tweetisexcwusivetweet
+impowt com.twittew.visibiwity.featuwes.viewewisexcwusivetweetwootauthow
+i-impowt com.twittew.visibiwity.featuwes.viewewsupewfowwowsexcwusivetweetwootauthow
+impowt com.twittew.visibiwity.modews.viewewcontext
 
-class ExclusiveTweetFeatures(
-  userRelationshipSource: UserRelationshipSource,
-  statsReceiver: StatsReceiver) {
+cwass e-excwusivetweetfeatuwes(
+  usewwewationshipsouwce: u-usewwewationshipsouwce,
+  statsweceivew: statsweceivew) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("exclusive_tweet_features")
-  private[this] val viewerSuperFollowsAuthor =
-    scopedStatsReceiver.scope(ViewerSuperFollowsExclusiveTweetRootAuthor.name).counter("requests")
+  pwivate[this] vaw s-scopedstatsweceivew = statsweceivew.scope("excwusive_tweet_featuwes")
+  p-pwivate[this] v-vaw viewewsupewfowwowsauthow =
+    scopedstatsweceivew.scope(viewewsupewfowwowsexcwusivetweetwootauthow.name).countew("wequests")
 
-  def rootAuthorId(tweet: Tweet): Option[Long] =
-    tweet.exclusiveTweetControl.map(_.conversationAuthorId)
+  def wootauthowid(tweet: tweet): option[wong] =
+    tweet.excwusivetweetcontwow.map(_.convewsationauthowid)
 
-  def viewerIsRootAuthor(
-    tweet: Tweet,
-    viewerIdOpt: Option[Long]
-  ): Boolean =
-    (rootAuthorId(tweet), viewerIdOpt) match {
-      case (Some(rootAuthorId), Some(viewerId)) if rootAuthorId == viewerId => true
-      case _ => false
+  d-def viewewiswootauthow(
+    tweet: tweet, rawr
+    viewewidopt: option[wong]
+  ): boowean =
+    (wootauthowid(tweet), mya v-viewewidopt) match {
+      c-case (some(wootauthowid), ^^ s-some(viewewid)) i-if wootauthowid == v-viewewid => twue
+      case _ => fawse
     }
 
-  def viewerSuperFollowsRootAuthor(
-    tweet: Tweet,
-    viewerId: Option[Long]
-  ): Stitch[Boolean] =
-    rootAuthorId(tweet) match {
-      case Some(authorId) =>
-        ViewerVerbsAuthor(
-          authorId,
-          viewerId,
-          userRelationshipSource.superFollows,
-          viewerSuperFollowsAuthor)
-      case None =>
-        Stitch.False
+  d-def viewewsupewfowwowswootauthow(
+    tweet: tweet, 😳😳😳
+    viewewid: o-option[wong]
+  ): stitch[boowean] =
+    wootauthowid(tweet) match {
+      case some(authowid) =>
+        viewewvewbsauthow(
+          a-authowid, mya
+          viewewid, 😳
+          usewwewationshipsouwce.supewfowwows, -.-
+          v-viewewsupewfowwowsauthow)
+      c-case nyone =>
+        s-stitch.fawse
     }
 
-  def forTweet(
-    tweet: Tweet,
-    viewerContext: ViewerContext
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    val viewerId = viewerContext.userId
+  def fowtweet(
+    tweet: tweet, 🥺
+    v-viewewcontext: v-viewewcontext
+  ): featuwemapbuiwdew => f-featuwemapbuiwdew = {
+    v-vaw viewewid = viewewcontext.usewid
 
-    _.withConstantFeature(TweetIsExclusiveTweet, tweet.exclusiveTweetControl.isDefined)
-      .withConstantFeature(ViewerIsExclusiveTweetRootAuthor, viewerIsRootAuthor(tweet, viewerId))
-      .withFeature(
-        ViewerSuperFollowsExclusiveTweetRootAuthor,
-        viewerSuperFollowsRootAuthor(tweet, viewerId))
+    _.withconstantfeatuwe(tweetisexcwusivetweet, o.O t-tweet.excwusivetweetcontwow.isdefined)
+      .withconstantfeatuwe(viewewisexcwusivetweetwootauthow, /(^•ω•^) viewewiswootauthow(tweet, nyaa~~ v-viewewid))
+      .withfeatuwe(
+        viewewsupewfowwowsexcwusivetweetwootauthow, nyaa~~
+        viewewsupewfowwowswootauthow(tweet, :3 v-viewewid))
   }
 
-  def forTweetOnly(tweet: Tweet): FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(TweetIsExclusiveTweet, tweet.exclusiveTweetControl.isDefined)
+  def fowtweetonwy(tweet: t-tweet): featuwemapbuiwdew => featuwemapbuiwdew = {
+    _.withconstantfeatuwe(tweetisexcwusivetweet, 😳😳😳 t-tweet.excwusivetweetcontwow.isdefined)
   }
 }

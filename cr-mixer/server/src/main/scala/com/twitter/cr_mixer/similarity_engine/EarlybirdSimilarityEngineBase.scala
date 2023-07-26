@@ -1,56 +1,56 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.twittew.cw_mixew.simiwawity_engine
 
-import com.twitter.cr_mixer.model.TweetWithAuthor
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.search.earlybird.thriftscala.EarlybirdRequest
-import com.twitter.search.earlybird.thriftscala.EarlybirdResponseCode
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt com.twittew.cw_mixew.modew.tweetwithauthow
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.seawch.eawwybiwd.thwiftscawa.eawwybiwdwequest
+i-impowt com.twittew.seawch.eawwybiwd.thwiftscawa.eawwybiwdwesponsecode
+i-impowt com.twittew.seawch.eawwybiwd.thwiftscawa.eawwybiwdsewvice
+i-impowt com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.utiw.futuwe
 
 /**
- * This trait is a base trait for Earlybird similarity engines. All Earlybird similarity
- * engines extend from it and override the construction method for EarlybirdRequest
+ * t-this twait is a base twait fow eawwybiwd simiwawity engines. (⑅˘꒳˘) aww eawwybiwd s-simiwawity
+ * engines extend fwom it and ovewwide t-the constwuction method fow e-eawwybiwdwequest
  */
-trait EarlybirdSimilarityEngineBase[EarlybirdSearchQuery]
-    extends ReadableStore[EarlybirdSearchQuery, Seq[TweetWithAuthor]] {
-  def earlybirdSearchClient: EarlybirdService.MethodPerEndpoint
+twait eawwybiwdsimiwawityenginebase[eawwybiwdseawchquewy]
+    extends weadabwestowe[eawwybiwdseawchquewy, òωó seq[tweetwithauthow]] {
+  d-def eawwybiwdseawchcwient: e-eawwybiwdsewvice.methodpewendpoint
 
-  def statsReceiver: StatsReceiver
+  d-def statsweceivew: statsweceivew
 
-  def getEarlybirdRequest(query: EarlybirdSearchQuery): Option[EarlybirdRequest]
+  def geteawwybiwdwequest(quewy: eawwybiwdseawchquewy): o-option[eawwybiwdwequest]
 
-  override def get(query: EarlybirdSearchQuery): Future[Option[Seq[TweetWithAuthor]]] = {
-    getEarlybirdRequest(query)
-      .map { earlybirdRequest =>
-        earlybirdSearchClient
-          .search(earlybirdRequest).map { response =>
-            response.responseCode match {
-              case EarlybirdResponseCode.Success =>
-                val earlybirdSearchResult =
-                  response.searchResults
+  ovewwide def get(quewy: eawwybiwdseawchquewy): futuwe[option[seq[tweetwithauthow]]] = {
+    geteawwybiwdwequest(quewy)
+      .map { eawwybiwdwequest =>
+        e-eawwybiwdseawchcwient
+          .seawch(eawwybiwdwequest).map { wesponse =>
+            w-wesponse.wesponsecode m-match {
+              c-case eawwybiwdwesponsecode.success =>
+                v-vaw eawwybiwdseawchwesuwt =
+                  wesponse.seawchwesuwts
                     .map(
-                      _.results
-                        .map(searchResult =>
-                          TweetWithAuthor(
-                            searchResult.id,
-                            // fromUserId should be there since MetadataOptions.getFromUserId = true
-                            searchResult.metadata.map(_.fromUserId).getOrElse(0))).toSeq)
-                statsReceiver.scope("result").stat("size").add(earlybirdSearchResult.size)
-                earlybirdSearchResult
-              case e =>
-                statsReceiver.scope("failures").counter(e.getClass.getSimpleName).incr()
-                Some(Seq.empty)
+                      _.wesuwts
+                        .map(seawchwesuwt =>
+                          t-tweetwithauthow(
+                            seawchwesuwt.id, ʘwʘ
+                            // fwomusewid shouwd b-be thewe since metadataoptions.getfwomusewid = twue
+                            seawchwesuwt.metadata.map(_.fwomusewid).getowewse(0))).toseq)
+                statsweceivew.scope("wesuwt").stat("size").add(eawwybiwdseawchwesuwt.size)
+                eawwybiwdseawchwesuwt
+              case e-e =>
+                statsweceivew.scope("faiwuwes").countew(e.getcwass.getsimpwename).incw()
+                s-some(seq.empty)
             }
           }
-      }.getOrElse(Future.None)
+      }.getowewse(futuwe.none)
   }
 }
 
-object EarlybirdSimilarityEngineBase {
-  trait EarlybirdSearchQuery {
-    def seedUserIds: Seq[UserId]
-    def maxNumTweets: Int
+o-object eawwybiwdsimiwawityenginebase {
+  t-twait eawwybiwdseawchquewy {
+    def seedusewids: seq[usewid]
+    d-def m-maxnumtweets: int
   }
 }

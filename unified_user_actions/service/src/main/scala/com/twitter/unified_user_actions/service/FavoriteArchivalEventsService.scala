@@ -1,26 +1,26 @@
-package com.twitter.unified_user_actions.service
+package com.twittew.unified_usew_actions.sewvice
 
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.inject.server.TwitterServer
-import com.twitter.kafka.client.processor.AtLeastOnceProcessor
-import com.twitter.timelineservice.fanout.thriftscala.FavoriteArchivalEvent
-import com.twitter.unified_user_actions.service.module.KafkaProcessorFavoriteArchivalEventsModule
+impowt com.twittew.finatwa.decidew.moduwes.decidewmoduwe
+i-impowt c-com.twittew.finatwa.kafka.sewde.unkeyed
+i-impowt c-com.twittew.inject.sewvew.twittewsewvew
+i-impowt com.twittew.kafka.cwient.pwocessow.atweastoncepwocessow
+i-impowt com.twittew.timewinesewvice.fanout.thwiftscawa.favowiteawchivawevent
+i-impowt com.twittew.unified_usew_actions.sewvice.moduwe.kafkapwocessowfavowiteawchivaweventsmoduwe
 
-object FavoriteArchivalEventsServiceMain extends FavoriteArchivalEventsService
+o-object favowiteawchivaweventssewvicemain extends favowiteawchivaweventssewvice
 
-class FavoriteArchivalEventsService extends TwitterServer {
+cwass favowiteawchivaweventssewvice extends twittewsewvew {
 
-  override val modules = Seq(
-    KafkaProcessorFavoriteArchivalEventsModule,
-    DeciderModule
+  o-ovewwide vaw moduwes = seq(
+    kafkapwocessowfavowiteawchivaweventsmoduwe, 😳
+    d-decidewmoduwe
   )
 
-  override protected def setup(): Unit = {}
+  ovewwide p-pwotected def setup(): unit = {}
 
-  override protected def start(): Unit = {
-    val processor = injector.instance[AtLeastOnceProcessor[UnKeyed, FavoriteArchivalEvent]]
-    closeOnExit(processor)
-    processor.start()
+  ovewwide pwotected def stawt(): u-unit = {
+    vaw pwocessow = i-injectow.instance[atweastoncepwocessow[unkeyed, XD f-favowiteawchivawevent]]
+    cwoseonexit(pwocessow)
+    pwocessow.stawt()
   }
 }

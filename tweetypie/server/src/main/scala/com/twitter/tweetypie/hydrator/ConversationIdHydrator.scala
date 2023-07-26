@@ -1,33 +1,33 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.wepositowy._
+i-impowt c-com.twittew.tweetypie.thwiftscawa._
 
 /**
- * Hydrates the conversationId field for any tweet that is a reply to another tweet.
- * It uses that other tweet's conversationId.
+ * h-hydwates the convewsationid f-fiewd fow any tweet that is a wepwy to anothew tweet. (˘ω˘)
+ * it uses that o-othew tweet's convewsationid. (⑅˘꒳˘)
  */
-object ConversationIdHydrator {
-  type Type = ValueHydrator[Option[ConversationId], TweetCtx]
+object convewsationidhydwatow {
+  t-type type = vawuehydwatow[option[convewsationid], (///ˬ///✿) t-tweetctx]
 
-  val hydratedField: FieldByPath =
-    fieldByPath(Tweet.CoreDataField, TweetCoreData.ConversationIdField)
+  vaw hydwatedfiewd: fiewdbypath =
+    fiewdbypath(tweet.cowedatafiewd, 😳😳😳 t-tweetcowedata.convewsationidfiewd)
 
-  def apply(repo: ConversationIdRepository.Type): Type =
-    ValueHydrator[Option[ConversationId], TweetCtx] { (_, ctx) =>
-      ctx.inReplyToTweetId match {
-        case None =>
-          // Not a reply to another tweet, use tweet id as conversation root
-          Stitch.value(ValueState.modified(Some(ctx.tweetId)))
-        case Some(parentId) =>
-          // Lookup conversation id from in-reply-to tweet
-          repo(ConversationIdKey(ctx.tweetId, parentId)).liftToTry.map {
-            case Return(rootId) => ValueState.modified(Some(rootId))
-            case Throw(_) => ValueState.partial(None, hydratedField)
+  def appwy(wepo: c-convewsationidwepositowy.type): t-type =
+    vawuehydwatow[option[convewsationid], 🥺 tweetctx] { (_, mya ctx) =>
+      ctx.inwepwytotweetid match {
+        c-case nyone =>
+          // nyot a wepwy to anothew tweet, 🥺 use tweet id as convewsation woot
+          s-stitch.vawue(vawuestate.modified(some(ctx.tweetid)))
+        case some(pawentid) =>
+          // w-wookup c-convewsation i-id fwom in-wepwy-to t-tweet
+          wepo(convewsationidkey(ctx.tweetid, >_< pawentid)).wifttotwy.map {
+            c-case wetuwn(wootid) => vawuestate.modified(some(wootid))
+            case thwow(_) => v-vawuestate.pawtiaw(none, >_< hydwatedfiewd)
           }
       }
-    }.onlyIf((curr, _) => curr.isEmpty)
+    }.onwyif((cuww, (⑅˘꒳˘) _) => cuww.isempty)
 }

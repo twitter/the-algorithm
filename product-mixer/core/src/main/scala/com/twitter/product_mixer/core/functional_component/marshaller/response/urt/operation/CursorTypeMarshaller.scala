@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.operation
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.opewation
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation._
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation._
+impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class CursorTypeMarshaller @Inject() () {
+@singweton
+c-cwass c-cuwsowtypemawshawwew @inject() () {
 
-  def apply(cursorType: CursorType): urt.CursorType = cursorType match {
-    case TopCursor => urt.CursorType.Top
-    case BottomCursor => urt.CursorType.Bottom
-    case GapCursor => urt.CursorType.Gap
-    case PivotCursor => urt.CursorType.Pivot
-    case SubBranchCursor => urt.CursorType.Subbranch
-    case ShowMoreCursor => urt.CursorType.ShowMore
-    case ShowMoreThreadsCursor => urt.CursorType.ShowMoreThreads
-    case ShowMoreThreadsPromptCursor => urt.CursorType.ShowMoreThreadsPrompt
-    case SecondRepliesSectionCursor => urt.CursorType.SecondRepliesSection
-    case ThirdRepliesSectionCursor => urt.CursorType.ThirdRepliesSection
+  d-def appwy(cuwsowtype: c-cuwsowtype): uwt.cuwsowtype = cuwsowtype match {
+    case topcuwsow => uwt.cuwsowtype.top
+    c-case bottomcuwsow => uwt.cuwsowtype.bottom
+    c-case gapcuwsow => uwt.cuwsowtype.gap
+    c-case pivotcuwsow => uwt.cuwsowtype.pivot
+    case subbwanchcuwsow => uwt.cuwsowtype.subbwanch
+    c-case showmowecuwsow => uwt.cuwsowtype.showmowe
+    case s-showmowethweadscuwsow => u-uwt.cuwsowtype.showmowethweads
+    case showmowethweadspwomptcuwsow => uwt.cuwsowtype.showmowethweadspwompt
+    case secondwepwiessectioncuwsow => u-uwt.cuwsowtype.secondwepwiessection
+    case thiwdwepwiessectioncuwsow => uwt.cuwsowtype.thiwdwepwiessection
   }
 
-  def unmarshall(cursorType: urt.CursorType): CursorType = cursorType match {
-    case urt.CursorType.Top => TopCursor
-    case urt.CursorType.Bottom => BottomCursor
-    case urt.CursorType.Gap => GapCursor
-    case urt.CursorType.Pivot => PivotCursor
-    case urt.CursorType.Subbranch => SubBranchCursor
-    case urt.CursorType.ShowMore => ShowMoreCursor
-    case urt.CursorType.ShowMoreThreads => ShowMoreThreadsCursor
-    case urt.CursorType.ShowMoreThreadsPrompt => ShowMoreThreadsPromptCursor
-    case urt.CursorType.SecondRepliesSection => SecondRepliesSectionCursor
-    case urt.CursorType.ThirdRepliesSection => ThirdRepliesSectionCursor
-    case urt.CursorType.EnumUnknownCursorType(id) =>
-      throw new UnsupportedOperationException(s"Unexpected cursor enum field: $id")
+  def unmawshaww(cuwsowtype: uwt.cuwsowtype): c-cuwsowtype = cuwsowtype m-match {
+    c-case uwt.cuwsowtype.top => t-topcuwsow
+    c-case uwt.cuwsowtype.bottom => bottomcuwsow
+    case uwt.cuwsowtype.gap => g-gapcuwsow
+    case uwt.cuwsowtype.pivot => pivotcuwsow
+    c-case uwt.cuwsowtype.subbwanch => subbwanchcuwsow
+    case uwt.cuwsowtype.showmowe => showmowecuwsow
+    case uwt.cuwsowtype.showmowethweads => showmowethweadscuwsow
+    c-case uwt.cuwsowtype.showmowethweadspwompt => showmowethweadspwomptcuwsow
+    c-case uwt.cuwsowtype.secondwepwiessection => s-secondwepwiessectioncuwsow
+    case u-uwt.cuwsowtype.thiwdwepwiessection => thiwdwepwiessectioncuwsow
+    case uwt.cuwsowtype.enumunknowncuwsowtype(id) =>
+      thwow nyew unsuppowtedopewationexception(s"unexpected c-cuwsow enum f-fiewd: $id")
   }
 }

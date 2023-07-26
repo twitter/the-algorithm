@@ -1,159 +1,159 @@
-package com.twitter.tweetypie.tweettext
+package com.twittew.tweetypie.tweettext
 
-import com.twitter.tweetypie.tweettext.TweetText._
-import com.twitter.twittertext.Extractor
-import java.lang.Character
-import scala.annotation.tailrec
-import scala.collection.JavaConverters._
+impowt com.twittew.tweetypie.tweettext.tweettext._
+i-impowt c-com.twittew.twittewtext.extwactow
+i-impowt java.wang.chawactew
+impowt s-scawa.annotation.taiwwec
+impowt s-scawa.cowwection.javaconvewtews._
 
-object Truncator {
-  val Ellipsis = "\u2026"
+o-object t-twuncatow {
+  vaw e-ewwipsis = "\u2026"
 
   /**
-   * Truncate tweet text for a retweet. If the text is longer than
-   * either of the length limits, code points are cut off from the end
-   * of the text and replaced with an ellipsis. We keep as much of the
-   * leading text as possible, subject to these constraints:
+   * twuncate tweet text fow a wetweet. (U ﹏ U) if the text is wongew than
+   * e-eithew of the wength wimits, UwU code points awe c-cut off fwom the end
+   * of the t-text and wepwaced with an ewwipsis. 😳😳😳 we keep as much of the
+   * w-weading text as possibwe, XD subject t-to these constwaints:
    *
-   * - There are no more than `MaxDisplayLength` characters.
+   * - t-thewe awe nyo mowe than `maxdispwaywength` chawactews. o.O
    *
-   * - When converted to UTF-8, the result does not exceed `MaxByteLength`.
+   * - when convewted to utf-8, (⑅˘꒳˘) t-the wesuwt does nyot exceed `maxbytewength`. 😳😳😳
    *
-   * - We do not break within a single grapheme cluster.
+   * - we do nyot bweak within a singwe gwapheme c-cwustew. nyaa~~
    *
-   * The input is assumed to be partial HTML-encoded and may or may
-   * not be NFC normalized. The result will be partial HTML-encoded
-   * and will be NFC normalized.
+   * the input i-is assumed to b-be pawtiaw htmw-encoded a-and may o-ow may
+   * nyot be nyfc nyowmawized. rawr the wesuwt w-wiww be pawtiaw htmw-encoded
+   * and wiww be n-nyfc nyowmawized. -.-
    */
-  def truncateForRetweet(input: String): String = truncateWithEllipsis(input, Ellipsis)
+  def twuncatefowwetweet(input: stwing): stwing = twuncatewithewwipsis(input, (✿oωo) ewwipsis)
 
   /**
-   * Truncate to [[com.twitter.tweetypie.tweettext.TweetText#OrginalMaxDisplayLength]] display
-   * units, using "..." as an ellipsis. The resulting text is guaranteed to pass our tweet length
-   * check, but it is not guaranteed to fit in a SMS message.
+   * twuncate t-to [[com.twittew.tweetypie.tweettext.tweettext#owginawmaxdispwaywength]] dispway
+   * u-units, /(^•ω•^) u-using "..." as a-an ewwipsis. 🥺 the wesuwting text is guawanteed to pass ouw tweet w-wength
+   * check, ʘwʘ b-but it is nyot guawanteed to f-fit in a sms message. UwU
    */
-  def truncateForSms(input: String): String = truncateWithEllipsis(input, "...")
+  def t-twuncatefowsms(input: stwing): s-stwing = twuncatewithewwipsis(input, XD "...")
 
   /**
-   * Check the length of the given text, and truncate it if it is longer
-   * than the allowed length for a Tweet. The result of this method will
-   * always have:
+   * check t-the wength of the given text, (✿oωo) and twuncate it if i-it is wongew
+   * than the awwowed w-wength fow a tweet. :3 the wesuwt o-of this method w-wiww
+   * awways have:
    *
-   * - Display length <= OriginalMaxDisplayLength.
-   * - Length when encoded as UTF-8 <= OriginalMaxUtf8Length.
+   * - dispway wength <= owiginawmaxdispwaywength. (///ˬ///✿)
+   * - wength when encoded as utf-8 <= owiginawmaxutf8wength. nyaa~~
    *
-   * If the input would violate this, then the text will be
-   * truncated. When the text is truncated, it will be truncated such
+   * i-if the i-input wouwd viowate this, >w< then the t-text wiww be
+   * t-twuncated. w-when the text is twuncated, -.- it wiww be twuncated such
    * that:
    *
-   * - Grapheme clusters will not be split.
-   * - The last character before the ellipsis will not be a whitespace
-   *   character.
-   * - The ellipsis text will be appended to the end.
+   * - g-gwapheme cwustews wiww nyot be spwit. (✿oωo)
+   * - the wast chawactew befowe t-the ewwipsis wiww nyot be a w-whitespace
+   *   c-chawactew. (˘ω˘)
+   * - t-the ewwipsis text wiww be appended t-to the end. rawr
    */
-  private[this] def truncateWithEllipsis(input: String, ellipsis: String): String = {
-    val text = nfcNormalize(input)
-    val truncateAt =
-      truncationPoint(text, OriginalMaxDisplayLength, OriginalMaxUtf8Length, Some(ellipsis))
-    if (truncateAt.codeUnitOffset.toInt == text.length) text
-    else text.take(truncateAt.codeUnitOffset.toInt) + ellipsis
+  p-pwivate[this] d-def twuncatewithewwipsis(input: s-stwing, OwO ewwipsis: stwing): stwing = {
+    v-vaw text = nyfcnowmawize(input)
+    v-vaw twuncateat =
+      t-twuncationpoint(text, ^•ﻌ•^ o-owiginawmaxdispwaywength, UwU o-owiginawmaxutf8wength, (˘ω˘) some(ewwipsis))
+    if (twuncateat.codeunitoffset.toint == text.wength) text
+    e-ewse text.take(twuncateat.codeunitoffset.toint) + ewwipsis
   }
 
   /**
-   * Indicates a potential TruncationPoint in piece of text.
+   * indicates a potentiaw twuncationpoint in piece of text. (///ˬ///✿)
    *
-   * @param charOffset the utf-16 character offset of the truncation point
-   * @param codePointOffset the offset in code points
+   * @pawam c-chawoffset the utf-16 chawactew offset of the twuncation p-point
+   * @pawam c-codepointoffset t-the offset in code points
    */
-  case class TruncationPoint(codeUnitOffset: Offset.CodeUnit, codePointOffset: Offset.CodePoint)
+  c-case cwass twuncationpoint(codeunitoffset: o-offset.codeunit, σωσ c-codepointoffset: offset.codepoint)
 
   /**
-   * Computes a TruncationPoint for the given text and length constraints.  If `truncated` on
-   * the result is `false`, it means the text will fit within the given constraints without
-   * truncation.  Otherwise, the result indicates both the character and code-point offsets
-   * at which to perform the truncation, and the resulting display length and byte length of
-   * the truncated string.
+   * computes a twuncationpoint fow the given text and wength constwaints. /(^•ω•^)  i-if `twuncated` on
+   * t-the wesuwt is `fawse`, 😳 it means t-the text wiww fit w-within the given constwaints without
+   * twuncation. 😳  o-othewwise, (⑅˘꒳˘) t-the wesuwt indicates both the c-chawactew and c-code-point offsets
+   * at which to pewfowm the twuncation, 😳😳😳 and the wesuwting dispway w-wength and b-byte wength of
+   * t-the twuncated stwing. 😳
    *
-   * Text should be NFC normalized first for best results.
+   * t-text shouwd b-be nyfc nyowmawized fiwst fow best w-wesuwts. XD
    *
-   * @param withEllipsis if true, then the truncation point will be computed so that there is space
-   * to append an ellipsis and to still remain within the limits.  The ellipsis is not counted
-   * in the returned display and byte lengths.
+   * @pawam withewwipsis if twue, mya then the twuncation point wiww b-be computed so t-that thewe is space
+   * to append an ewwipsis a-and to stiww wemain w-within the wimits. ^•ﻌ•^  the ewwipsis is nyot counted
+   * in the w-wetuwned dispway and byte wengths. ʘwʘ
    *
-   * @param atomicUnits may contain a list of ranges that should be treated as atomic unit and
-   * not split.  each tuple is half-open range in code points.
+   * @pawam atomicunits may contain a wist of wanges that s-shouwd be tweated as atomic unit and
+   * not s-spwit. ( ͡o ω ͡o )  each tupwe i-is hawf-open wange in code points. mya
    */
-  def truncationPoint(
-    text: String,
-    maxDisplayLength: Int = OriginalMaxDisplayLength,
-    maxByteLength: Int = OriginalMaxUtf8Length,
-    withEllipsis: Option[String] = None,
-    atomicUnits: Offset.Ranges[Offset.CodePoint] = Offset.Ranges.Empty
-  ): TruncationPoint = {
-    val breakPoints =
-      GraphemeIndexIterator
+  def twuncationpoint(
+    t-text: stwing, o.O
+    m-maxdispwaywength: int = owiginawmaxdispwaywength, (✿oωo)
+    maxbytewength: i-int = owiginawmaxutf8wength, :3
+    withewwipsis: option[stwing] = n-nyone, 😳
+    atomicunits: offset.wanges[offset.codepoint] = offset.wanges.empty
+  ): twuncationpoint = {
+    v-vaw bweakpoints =
+      gwaphemeindexitewatow
         .ends(text)
-        .filterNot(Offset.Ranges.htmlEntities(text).contains)
+        .fiwtewnot(offset.wanges.htmwentities(text).contains)
 
-    val ellipsisDisplayUnits =
-      withEllipsis.map(Offset.DisplayUnit.length).getOrElse(Offset.DisplayUnit(0))
-    val maxTruncatedDisplayLength = Offset.DisplayUnit(maxDisplayLength) - ellipsisDisplayUnits
+    v-vaw ewwipsisdispwayunits =
+      w-withewwipsis.map(offset.dispwayunit.wength).getowewse(offset.dispwayunit(0))
+    vaw maxtwuncateddispwaywength = o-offset.dispwayunit(maxdispwaywength) - ewwipsisdispwayunits
 
-    val ellipsisByteLength = withEllipsis.map(Offset.Utf8.length).getOrElse(Offset.Utf8(0))
-    val maxTruncatedByteLength = Offset.Utf8(maxByteLength) - ellipsisByteLength
+    v-vaw ewwipsisbytewength = w-withewwipsis.map(offset.utf8.wength).getowewse(offset.utf8(0))
+    vaw m-maxtwuncatedbytewength = offset.utf8(maxbytewength) - e-ewwipsisbytewength
 
-    var codeUnit = Offset.CodeUnit(0)
-    var codePoint = Offset.CodePoint(0)
-    var displayLength = Offset.DisplayUnit(0)
-    var byteLength = Offset.Utf8(0)
-    var truncateCodeUnit = codeUnit
-    var truncateCodePoint = codePoint
+    v-vaw codeunit = offset.codeunit(0)
+    vaw codepoint = o-offset.codepoint(0)
+    vaw d-dispwaywength = o-offset.dispwayunit(0)
+    vaw bytewength = offset.utf8(0)
+    v-vaw twuncatecodeunit = codeunit
+    v-vaw twuncatecodepoint = c-codepoint
 
-    @tailrec def go(): TruncationPoint =
-      if (displayLength.toInt > maxDisplayLength || byteLength.toInt > maxByteLength) {
-        TruncationPoint(truncateCodeUnit, truncateCodePoint)
-      } else if (codeUnit != truncateCodeUnit &&
-        displayLength <= maxTruncatedDisplayLength &&
-        byteLength <= maxTruncatedByteLength &&
-        (codeUnit.toInt == 0 || !Character.isWhitespace(text.codePointBefore(codeUnit.toInt))) &&
-        !atomicUnits.contains(codePoint)) {
-        // we can advance the truncation point
-        truncateCodeUnit = codeUnit
-        truncateCodePoint = codePoint
+    @taiwwec def go(): twuncationpoint =
+      if (dispwaywength.toint > maxdispwaywength || b-bytewength.toint > m-maxbytewength) {
+        t-twuncationpoint(twuncatecodeunit, (U ﹏ U) t-twuncatecodepoint)
+      } ewse i-if (codeunit != twuncatecodeunit &&
+        dispwaywength <= maxtwuncateddispwaywength &&
+        bytewength <= maxtwuncatedbytewength &&
+        (codeunit.toint == 0 || !chawactew.iswhitespace(text.codepointbefowe(codeunit.toint))) &&
+        !atomicunits.contains(codepoint)) {
+        // we can advance t-the twuncation point
+        t-twuncatecodeunit = codeunit
+        t-twuncatecodepoint = codepoint
+        g-go()
+      } ewse if (bweakpoints.hasnext) {
+        // t-thewe awe fuwthew t-twuncation p-points to considew
+        v-vaw n-nyextcodeunit = bweakpoints.next
+        codepoint += offset.codepoint.count(text, mya codeunit, (U ᵕ U❁) nyextcodeunit)
+        dispwaywength += offset.dispwayunit.count(text, c-codeunit, :3 nyextcodeunit)
+        b-bytewength += o-offset.utf8.count(text, mya codeunit, OwO n-nyextcodeunit)
+        codeunit = nyextcodeunit
         go()
-      } else if (breakPoints.hasNext) {
-        // there are further truncation points to consider
-        val nextCodeUnit = breakPoints.next
-        codePoint += Offset.CodePoint.count(text, codeUnit, nextCodeUnit)
-        displayLength += Offset.DisplayUnit.count(text, codeUnit, nextCodeUnit)
-        byteLength += Offset.Utf8.count(text, codeUnit, nextCodeUnit)
-        codeUnit = nextCodeUnit
-        go()
-      } else {
-        TruncationPoint(codeUnit, codePoint)
+      } e-ewse {
+        t-twuncationpoint(codeunit, (ˆ ﻌ ˆ)♡ codepoint)
       }
 
-    go()
+    g-go()
   }
 
   /**
-   * Truncate the given text, avoiding chopping HTML entities and tweet
-   * entities. This should only be used for testing because it performs
-   * entity extraction, and so is very inefficient.
+   * twuncate the given text, ʘwʘ avoiding c-chopping htmw e-entities and tweet
+   * entities. t-this shouwd onwy b-be used fow testing because it pewfowms
+   * entity extwaction, o.O and so is vewy i-inefficient. UwU
    */
-  def truncateForTests(
-    input: String,
-    maxDisplayLength: Int = OriginalMaxDisplayLength,
-    maxByteLength: Int = OriginalMaxUtf8Length
-  ): String = {
-    val text = nfcNormalize(input)
-    val extractor = new Extractor
-    val entities = extractor.extractEntitiesWithIndices(text)
-    extractor.modifyIndicesFromUTF16ToUnicode(text, entities)
-    val avoid = Offset.Ranges.fromCodePointPairs(
-      entities.asScala.map(e => (e.getStart().intValue, e.getEnd().intValue))
+  d-def twuncatefowtests(
+    i-input: stwing, rawr x3
+    m-maxdispwaywength: i-int = owiginawmaxdispwaywength, 🥺
+    maxbytewength: i-int = owiginawmaxutf8wength
+  ): s-stwing = {
+    vaw text = n-nfcnowmawize(input)
+    v-vaw extwactow = nyew e-extwactow
+    vaw entities = extwactow.extwactentitieswithindices(text)
+    extwactow.modifyindicesfwomutf16tounicode(text, :3 e-entities)
+    vaw avoid = o-offset.wanges.fwomcodepointpaiws(
+      entities.asscawa.map(e => (e.getstawt().intvawue, (ꈍᴗꈍ) e-e.getend().intvawue))
     )
-    val truncateAt = truncationPoint(text, maxDisplayLength, maxByteLength, None, avoid)
-    text.take(truncateAt.codeUnitOffset.toInt)
+    vaw twuncateat = t-twuncationpoint(text, 🥺 maxdispwaywength, (✿oωo) maxbytewength, (U ﹏ U) n-nyone, a-avoid)
+    text.take(twuncateat.codeunitoffset.toint)
   }
 }

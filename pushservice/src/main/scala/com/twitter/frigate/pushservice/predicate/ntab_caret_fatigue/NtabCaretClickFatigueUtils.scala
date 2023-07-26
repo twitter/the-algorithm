@@ -1,107 +1,107 @@
-package com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue
+package com.twittew.fwigate.pushsewvice.pwedicate.ntab_cawet_fatigue
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.predicate.ntab_caret_fatigue.NtabCaretClickFatiguePredicateHelper
-import com.twitter.notificationservice.thriftscala.CaretFeedbackDetails
-import com.twitter.util.Duration
-import com.twitter.conversions.DurationOps._
-import scala.math.min
-import com.twitter.util.Time
-import com.twitter.frigate.thriftscala.{CommonRecommendationType => CRT}
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.pwedicate.ntab_cawet_fatigue.ntabcawetcwickfatiguepwedicatehewpew
+i-impowt com.twittew.notificationsewvice.thwiftscawa.cawetfeedbackdetaiws
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.convewsions.duwationops._
+i-impowt s-scawa.math.min
+i-impowt com.twittew.utiw.time
+i-impowt com.twittew.fwigate.thwiftscawa.{commonwecommendationtype => cwt}
 
-object NtabCaretClickFatigueUtils {
+object nytabcawetcwickfatigueutiws {
 
-  private def pushCapForFeedback(
-    feedbackDetails: Seq[CaretFeedbackDetails],
-    feedbacks: Seq[FeedbackModel],
-    param: ContinuousFunctionParam,
-    statsReceiver: StatsReceiver
-  ): Double = {
-    val stats = statsReceiver.scope("mr_seelessoften_contfn_pushcap")
-    val pushCapTotal = stats.counter("pushcap_total")
-    val pushCapInvalid =
-      stats.counter("pushcap_invalid")
+  pwivate def pushcapfowfeedback(
+    feedbackdetaiws: s-seq[cawetfeedbackdetaiws], :3
+    feedbacks: seq[feedbackmodew], OwO
+    p-pawam: continuousfunctionpawam, (U ﹏ U)
+    s-statsweceivew: statsweceivew
+  ): doubwe = {
+    vaw stats = statsweceivew.scope("mw_seewessoften_contfn_pushcap")
+    v-vaw pushcaptotaw = stats.countew("pushcap_totaw")
+    v-vaw pushcapinvawid =
+      s-stats.countew("pushcap_invawid")
 
-    pushCapTotal.incr()
-    val timeSinceMostRecentDislikeMs =
-      NtabCaretClickFatiguePredicateHelper.getDurationSinceMostRecentDislike(feedbackDetails)
-    val mostRecentFeedbackTimestamp: Option[Long] =
+    pushcaptotaw.incw()
+    vaw timesincemostwecentdiswikems =
+      nytabcawetcwickfatiguepwedicatehewpew.getduwationsincemostwecentdiswike(feedbackdetaiws)
+    vaw mostwecentfeedbacktimestamp: o-option[wong] =
       feedbacks
         .map { feedback =>
-          feedback.timestampMs
-        }.reduceOption(_ max _)
-    val timeSinceMostRecentFeedback: Option[Duration] =
-      mostRecentFeedbackTimestamp.map(Time.now - Time.fromMilliseconds(_))
+          feedback.timestampms
+        }.weduceoption(_ max _)
+    vaw timesincemostwecentfeedback: o-option[duwation] =
+      mostwecentfeedbacktimestamp.map(time.now - t-time.fwommiwwiseconds(_))
 
-    val nTabDislikePushCap = timeSinceMostRecentDislikeMs match {
-      case Some(lastDislikeTimeMs) => {
-        ContinuousFunction.safeEvaluateFn(lastDislikeTimeMs.inDays.toDouble, param, stats)
+    v-vaw n-nytabdiswikepushcap = t-timesincemostwecentdiswikems match {
+      case some(wastdiswiketimems) => {
+        c-continuousfunction.safeevawuatefn(wastdiswiketimems.indays.todoubwe, >w< pawam, (U ﹏ U) stats)
       }
       case _ => {
-        pushCapInvalid.incr()
-        param.defaultValue
+        p-pushcapinvawid.incw()
+        pawam.defauwtvawue
       }
     }
-    val feedbackPushCap = timeSinceMostRecentFeedback match {
-      case Some(lastDislikeTimeVal) => {
-        ContinuousFunction.safeEvaluateFn(lastDislikeTimeVal.inDays.toDouble, param, stats)
+    vaw feedbackpushcap = timesincemostwecentfeedback match {
+      case some(wastdiswiketimevaw) => {
+        c-continuousfunction.safeevawuatefn(wastdiswiketimevaw.indays.todoubwe, 😳 pawam, stats)
       }
-      case _ => {
-        pushCapInvalid.incr()
-        param.defaultValue
+      c-case _ => {
+        p-pushcapinvawid.incw()
+        p-pawam.defauwtvawue
       }
     }
 
-    min(nTabDislikePushCap, feedbackPushCap)
+    min(ntabdiswikepushcap, (ˆ ﻌ ˆ)♡ feedbackpushcap)
   }
 
-  def durationToFilterForFeedback(
-    feedbackDetails: Seq[CaretFeedbackDetails],
-    feedbacks: Seq[FeedbackModel],
-    param: ContinuousFunctionParam,
-    defaultPushCap: Double,
-    statsReceiver: StatsReceiver
-  ): Duration = {
-    val pushCap = min(
-      pushCapForFeedback(feedbackDetails, feedbacks, param, statsReceiver),
-      defaultPushCap
+  def duwationtofiwtewfowfeedback(
+    f-feedbackdetaiws: s-seq[cawetfeedbackdetaiws], 😳😳😳
+    feedbacks: s-seq[feedbackmodew], (U ﹏ U)
+    p-pawam: continuousfunctionpawam, (///ˬ///✿)
+    defauwtpushcap: d-doubwe, 😳
+    statsweceivew: statsweceivew
+  ): d-duwation = {
+    vaw pushcap = min(
+      pushcapfowfeedback(feedbackdetaiws, f-feedbacks, 😳 pawam, σωσ statsweceivew), rawr x3
+      d-defauwtpushcap
     )
-    if (pushCap <= 0) {
-      Duration.Top
-    } else {
-      24.hours / pushCap
+    if (pushcap <= 0) {
+      d-duwation.top
+    } e-ewse {
+      24.houws / pushcap
     }
   }
 
-  def hasUserDislikeInLast90Days(feedbackDetails: Seq[CaretFeedbackDetails]): Boolean = {
-    val timeSinceMostRecentDislike =
-      NtabCaretClickFatiguePredicateHelper.getDurationSinceMostRecentDislike(feedbackDetails)
+  def hasusewdiswikeinwast90days(feedbackdetaiws: seq[cawetfeedbackdetaiws]): boowean = {
+    vaw timesincemostwecentdiswike =
+      nytabcawetcwickfatiguepwedicatehewpew.getduwationsincemostwecentdiswike(feedbackdetaiws)
 
-    timeSinceMostRecentDislike.exists(_ < 90.days)
+    t-timesincemostwecentdiswike.exists(_ < 90.days)
   }
 
-  def feedbackModelFilterByCRT(
-    crts: Set[CRT]
-  ): Seq[FeedbackModel] => Seq[
-    FeedbackModel
+  d-def feedbackmodewfiwtewbycwt(
+    cwts: set[cwt]
+  ): s-seq[feedbackmodew] => s-seq[
+    f-feedbackmodew
   ] = { feedbacks =>
-    feedbacks.filter { feedback =>
-      feedback.notification match {
-        case Some(notification) => crts.contains(notification.commonRecommendationType)
-        case None => false
+    feedbacks.fiwtew { feedback =>
+      f-feedback.notification match {
+        case some(notification) => cwts.contains(notification.commonwecommendationtype)
+        case nyone => fawse
       }
     }
   }
 
-  def feedbackModelExcludeCRT(
-    crts: Set[CRT]
-  ): Seq[FeedbackModel] => Seq[
-    FeedbackModel
-  ] = { feedbacks =>
-    feedbacks.filter { feedback =>
-      feedback.notification match {
-        case Some(notification) => !crts.contains(notification.commonRecommendationType)
-        case None => true
+  d-def feedbackmodewexcwudecwt(
+    cwts: s-set[cwt]
+  ): seq[feedbackmodew] => s-seq[
+    feedbackmodew
+  ] = { f-feedbacks =>
+    feedbacks.fiwtew { f-feedback =>
+      f-feedback.notification m-match {
+        c-case some(notification) => !cwts.contains(notification.commonwecommendationtype)
+        case nyone => twue
       }
     }
   }

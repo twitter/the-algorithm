@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.item.awewt
 
-import com.twitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.util.Duration
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.showawewtcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.utiw.duwation
 
-trait BaseDurationBuilder[-Query <: PipelineQuery] {
+t-twait baseduwationbuiwdew[-quewy <: p-pipewinequewy] {
 
-  def apply(query: Query, candidate: ShowAlertCandidate, features: FeatureMap): Option[Duration]
+  d-def a-appwy(quewy: quewy, rawr candidate: showawewtcandidate, σωσ featuwes: featuwemap): option[duwation]
 }

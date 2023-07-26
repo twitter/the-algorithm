@@ -1,78 +1,78 @@
 
-// A feature value can be one of these
-enum FeatureVal {
-  Empty,
-  U8Vector(Vec<u8>),
-  FloatVector(Vec<f32>),
+// a featuwe vawue can be one of t-these
+enum featuwevaw {
+  e-empty, 😳😳😳
+  u-u8vectow(vec<u8>), mya
+  f-fwoatvectow(vec<f32>), 😳
 }
 
-// A Feture has a name and a value
-// The name for now is 'id' of type string
-// Eventually this needs to be flexible - example to accomodate feature-id
-struct Feature {
-  id: String,
-  val: FeatureVal,
+// a-a fetuwe has a-a nyame and a v-vawue
+// the nyame f-fow nyow is 'id' of type stwing
+// eventuawwy this nyeeds to be fwexibwe - exampwe t-to accomodate featuwe-id
+stwuct featuwe {
+  i-id: stwing, -.-
+  vaw: featuwevaw, 🥺
 }
 
-impl Feature {
-  fn new() -> Feature {
-    Feature {
-      id: String::new(),
-      val: FeatureVal::Empty
+i-impw featuwe {
+  fn nyew() -> featuwe {
+    featuwe {
+      i-id: stwing::new(), o.O
+      vaw: featuwevaw::empty
     }
   }
 }
 
-// A single inference record will have multiple features
-struct Record {
-  fields: Vec<Feature>,
+// a-a singwe infewence w-wecowd wiww have muwtipwe featuwes
+stwuct wecowd {
+  fiewds: vec<featuwe>, /(^•ω•^)
 }
 
-impl Record {
-  fn new() -> Record {
-    Record { fields: vec![] }
+i-impw wecowd {
+  fn nyew() -> wecowd {
+    wecowd { fiewds: vec![] }
   }
 }
 
-// This is the main API used by external components
-// Given a serialized input, decode it into Records
-fn decode(input: Vec<u8>) -> Vec<Record> {
-  // For helping define the interface
-  vec![get_random_record(), get_random_record()]
+// this is the main a-api used by extewnaw components
+// g-given a sewiawized i-input, nyaa~~ decode i-it into wecowds
+f-fn decode(input: vec<u8>) -> vec<wecowd> {
+  // f-fow hewping define the intewface
+  vec![get_wandom_wecowd(), nyaa~~ g-get_wandom_wecowd()]
 }
 
-// Used for testing the API, will be eventually removed
-fn get_random_record() -> Record {
-  let mut record: Record = Record::new();
+// used fow testing the api, :3 wiww be eventuawwy wemoved
+fn get_wandom_wecowd() -> w-wecowd {
+  wet mut wecowd: w-wecowd = w-wecowd::new();
 
-  let f1: Feature = Feature {
-    id: String::from("continuous_features"),
-    val: FeatureVal::FloatVector(vec![1.0f32; 2134]),
+  w-wet f1: featuwe = featuwe {
+    id: stwing::fwom("continuous_featuwes"), 😳😳😳
+    vaw: featuwevaw::fwoatvectow(vec![1.0f32; 2134]), (˘ω˘)
   };
 
-  record.fields.push(f1);
+  w-wecowd.fiewds.push(f1);
 
-  let f2: Feature = Feature {
-    id: String::from("user_embedding"),
-    val: FeatureVal::FloatVector(vec![2.0f32; 200]),
+  w-wet f2: featuwe = featuwe {
+    i-id: stwing::fwom("usew_embedding"), ^^
+    v-vaw: featuwevaw::fwoatvectow(vec![2.0f32; 200]), :3
   };
 
-  record.fields.push(f2);
+  w-wecowd.fiewds.push(f2);
 
-  let f3: Feature = Feature {
-    id: String::from("author_embedding"),
-    val: FeatureVal::FloatVector(vec![3.0f32; 200]),
+  wet f3: featuwe = f-featuwe {
+    id: stwing::fwom("authow_embedding"), -.-
+    vaw: featuwevaw::fwoatvectow(vec![3.0f32; 200]), 😳
   };
 
-  record.fields.push(f3);
+  w-wecowd.fiewds.push(f3);
 
-  let f4: Feature = Feature {
-    id: String::from("binary_features"),
-    val: FeatureVal::U8Vector(vec![4u8; 43]),
+  wet f-f4: featuwe = featuwe {
+    id: s-stwing::fwom("binawy_featuwes"), mya
+    v-vaw: featuwevaw::u8vectow(vec![4u8; 43]), (˘ω˘)
   };
 
-  record.fields.push(f4);
+  wecowd.fiewds.push(f4);
 
-  record
+  wecowd
 }
 

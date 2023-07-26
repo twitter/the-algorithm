@@ -1,35 +1,35 @@
-package com.twitter.home_mixer.module
+package com.twittew.home_mixew.moduwe
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.peoplediscovery.api.thriftscala.ThriftPeopleDiscoveryService
-import com.twitter.util.Duration
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.thwiftmux.methodbuiwdew
+i-impowt com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwscwient
+i-impowt com.twittew.inject.injectow
+i-impowt com.twittew.inject.thwift.moduwes.thwiftmethodbuiwdewcwientmoduwe
+impowt c-com.twittew.peopwediscovewy.api.thwiftscawa.thwiftpeopwediscovewysewvice
+impowt c-com.twittew.utiw.duwation
 
 /**
- * Copy of com.twitter.product_mixer.component_library.module.PeopleDiscoveryServiceModule
+ * c-copy of c-com.twittew.pwoduct_mixew.component_wibwawy.moduwe.peopwediscovewysewvicemoduwe
  */
-object PeopleDiscoveryServiceModule
-    extends ThriftMethodBuilderClientModule[
-      ThriftPeopleDiscoveryService.ServicePerEndpoint,
-      ThriftPeopleDiscoveryService.MethodPerEndpoint
+object peopwediscovewysewvicemoduwe
+    extends thwiftmethodbuiwdewcwientmoduwe[
+      thwiftpeopwediscovewysewvice.sewvicepewendpoint, :3
+      t-thwiftpeopwediscovewysewvice.methodpewendpoint
     ]
-    with MtlsClient {
+    with mtwscwient {
 
-  override val label: String = "people-discovery-api"
+  o-ovewwide vaw wabew: stwing = "peopwe-discovewy-api"
 
-  override val dest: String = "/s/people-discovery-api/people-discovery-api:thrift"
+  o-ovewwide vaw dest: stwing = "/s/peopwe-discovewy-api/peopwe-discovewy-api:thwift"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    methodBuilder
-      .withTimeoutPerRequest(350.millis)
-      .withTimeoutTotal(350.millis)
+  ovewwide pwotected def c-configuwemethodbuiwdew(
+    injectow: injectow, 😳😳😳
+    m-methodbuiwdew: m-methodbuiwdew
+  ): methodbuiwdew = {
+    methodbuiwdew
+      .withtimeoutpewwequest(350.miwwis)
+      .withtimeouttotaw(350.miwwis)
   }
 
-  override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+  ovewwide pwotected def sessionacquisitiontimeout: duwation = 500.miwwiseconds
 }

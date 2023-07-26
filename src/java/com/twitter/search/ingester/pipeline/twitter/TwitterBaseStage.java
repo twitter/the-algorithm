@@ -1,360 +1,360 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
+impowt java.utiw.awways;
+impowt j-java.utiw.cowwection;
+i-impowt j-java.utiw.cowwections;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.optionaw;
+i-impowt j-java.utiw.concuwwent.concuwwentmap;
+impowt java.utiw.concuwwent.timeunit;
 
-import javax.naming.NamingException;
+impowt javax.naming.namingexception;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.maps;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.stage.InstrumentedBaseStage;
+impowt owg.apache.commons.wang.stwingutiws;
+i-impowt owg.apache.commons.pipewine.stageexception;
+impowt owg.apache.commons.pipewine.stage.instwumentedbasestage;
 
-import com.twitter.common.metrics.Metrics;
-import com.twitter.common.util.Clock;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.debug.DebugEventAccumulator;
-import com.twitter.search.common.debug.DebugEventUtil;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.Percentile;
-import com.twitter.search.common.metrics.PercentileUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
-import com.twitter.search.ingester.pipeline.wire.WireModule;
+i-impowt com.twittew.common.metwics.metwics;
+impowt com.twittew.common.utiw.cwock;
+impowt c-com.twittew.decidew.decidew;
+impowt c-com.twittew.seawch.common.debug.debugeventaccumuwatow;
+i-impowt com.twittew.seawch.common.debug.debugeventutiw;
+impowt com.twittew.seawch.common.decidew.decidewutiw;
+impowt com.twittew.seawch.common.metwics.pewcentiwe;
+i-impowt com.twittew.seawch.common.metwics.pewcentiweutiw;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.metwics.seawchcustomgauge;
+impowt c-com.twittew.seawch.common.metwics.seawchwonggauge;
+impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+i-impowt com.twittew.seawch.common.metwics.seawchtimewstats;
+i-impowt c-com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+i-impowt com.twittew.seawch.ingestew.pipewine.utiw.pipewinestageexception;
+impowt com.twittew.seawch.ingestew.pipewine.utiw.pipewinestagewuntimeexception;
+i-impowt com.twittew.seawch.ingestew.pipewine.wiwe.wiwemoduwe;
 
 /**
- * Common functionality for all stages.
+ * common f-functionawity fow aww stages. rawr x3
  */
-public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
-  // Currently, all stages run in separate threads, so we could use simple maps here.
-  // However, it seems safer to use concurrent maps, in case we ever change our stage set up.
-  // The performance impact should be negligible.
-  private final ConcurrentMap<Optional<String>, SearchRateCounter> branchEmitObjectsRateCounters =
-      Maps.newConcurrentMap();
-  private final ConcurrentMap<Optional<String>, SearchRateCounter>
-    branchEmitBatchObjectsRateCounters = Maps.newConcurrentMap();
+pubwic cwass twittewbasestage<t, ( ͡o ω ͡o ) w> extends instwumentedbasestage {
+  // c-cuwwentwy, (˘ω˘) aww stages wun in sepawate t-thweads, 😳 so w-we couwd use simpwe m-maps hewe. OwO
+  // howevew, (˘ω˘) it seems safew to use concuwwent m-maps, òωó in case we e-evew change ouw stage set up. ( ͡o ω ͡o )
+  // t-the pewfowmance i-impact shouwd be nyegwigibwe. UwU
+  p-pwivate finaw concuwwentmap<optionaw<stwing>, s-seawchwatecountew> bwanchemitobjectswatecountews =
+      maps.newconcuwwentmap();
+  p-pwivate finaw concuwwentmap<optionaw<stwing>, /(^•ω•^) s-seawchwatecountew>
+    bwanchemitbatchobjectswatecountews = m-maps.newconcuwwentmap();
 
-  private String stageNamePrefix = null;
+  p-pwivate stwing stagenamepwefix = nyuww;
 
-  protected WireModule wireModule;
-  protected Decider decider;
-  protected Clock clock;
-  protected EarlybirdCluster earlybirdCluster;
+  pwotected wiwemoduwe wiwemoduwe;
+  pwotected decidew decidew;
+  p-pwotected c-cwock cwock;
+  pwotected eawwybiwdcwustew e-eawwybiwdcwustew;
 
-  private String fullStageName = null;
-  private Percentile<Long> processPercentile = null;
-  private SearchTimerStats processTimerStats = null;
-  private SearchRateCounter droppedItems = null;
-  private SearchLongGauge stageExceptions = null;
+  p-pwivate stwing fuwwstagename = nyuww;
+  p-pwivate pewcentiwe<wong> pwocesspewcentiwe = nyuww;
+  pwivate s-seawchtimewstats pwocesstimewstats = nyuww;
+  pwivate seawchwatecountew dwoppeditems = n-nyuww;
+  pwivate seawchwonggauge s-stageexceptions = n-nyuww;
 
-  private SearchRateCounter incomingBatchesRateCounter;
-  private SearchRateCounter incomingBatchObjectsRateCounter;
+  pwivate s-seawchwatecountew incomingbatcheswatecountew;
+  p-pwivate seawchwatecountew i-incomingbatchobjectswatecountew;
 
-  private List<String> passThroughToBranches = Collections.emptyList();
-  private List<String> additionalEmitToBranches = Collections.emptyList();
+  p-pwivate wist<stwing> p-passthwoughtobwanches = cowwections.emptywist();
+  pwivate w-wist<stwing> additionawemittobwanches = c-cowwections.emptywist();
 
-  private boolean passThroughDownstream = false;
-  private boolean emitDownstream = true;
+  p-pwivate boowean p-passthwoughdownstweam = f-fawse;
+  pwivate boowean emitdownstweam = twue;
 
-  private String dropItemsDeciderKey;
+  pwivate s-stwing dwopitemsdecidewkey;
 
-  // From XML config.
-  public void setPassThroughToBranches(String passThroughToBranchesString) {
-    // This is a comma-delimited string which is a list of branches to which we just
-    // pass through the incoming object without any processing/filtering.
-    this.passThroughToBranches = Arrays.asList(passThroughToBranchesString.split(","));
+  // fwom xmw config. (ꈍᴗꈍ)
+  pubwic void setpassthwoughtobwanches(stwing passthwoughtobwanchesstwing) {
+    // this i-is a comma-dewimited stwing which is a wist of bwanches to which w-we just
+    // p-pass thwough t-the incoming object without any p-pwocessing/fiwtewing.
+    this.passthwoughtobwanches = a-awways.aswist(passthwoughtobwanchesstwing.spwit(","));
   }
 
-  // From XML config.
-  public void setAdditionalEmitToBranches(String emitToBranchesString) {
-    // This is a comma-delimited string which is a list of branches to which we
-    // will emit when we call actuallyEmitAndCount(obj).
-    this.additionalEmitToBranches = Arrays.asList(emitToBranchesString.split(","));
+  // f-fwom xmw config. 😳
+  pubwic void setadditionawemittobwanches(stwing emittobwanchesstwing) {
+    // this is a comma-dewimited s-stwing which is a wist of bwanches t-to which we
+    // wiww emit w-when we caww a-actuawwyemitandcount(obj). mya
+    this.additionawemittobwanches = awways.aswist(emittobwanchesstwing.spwit(","));
   }
 
-  // From XML config.
-  public void setPassThroughDownstream(boolean passThroughDownstream) {
-    // If true, we emit the raw object downstream
-    this.passThroughDownstream = passThroughDownstream;
+  // fwom xmw config.
+  pubwic v-void setpassthwoughdownstweam(boowean p-passthwoughdownstweam) {
+    // if twue, mya w-we emit the waw o-object downstweam
+    this.passthwoughdownstweam = passthwoughdownstweam;
   }
 
-  // From XML config.
-  public void setEmitDownstream(boolean emitDownstream) {
-    // If true, we emit the processed object downstream.
-    this.emitDownstream = emitDownstream;
+  // fwom xmw config. /(^•ω•^)
+  pubwic v-void setemitdownstweam(boowean emitdownstweam) {
+    // i-if twue, ^^;; w-we emit the pwocessed object downstweam. 🥺
+    t-this.emitdownstweam = e-emitdownstweam;
   }
 
-  @Override
-  public final void innerPreprocess() throws StageException {
-    try {
-      setupEssentialObjects();
-      doInnerPreprocess();
-    } catch (NamingException e) {
-      throw new StageException(this, "Failed to initialize stage.", e);
+  @ovewwide
+  pubwic finaw v-void innewpwepwocess() thwows stageexception {
+    twy {
+      setupessentiawobjects();
+      d-doinnewpwepwocess();
+    } c-catch (namingexception e) {
+      thwow nyew stageexception(this, ^^ "faiwed t-to initiawize s-stage.", e);
     }
   }
 
   /***
-   * Sets up all necessary objects for this stage of the Pipeline. Previously, this task was done
-   * by the preprocess() method provided by the ACP library.
-   * @throws PipelineStageException
+   * sets up aww nyecessawy objects fow this s-stage of the pipewine. ^•ﻌ•^ pweviouswy, /(^•ω•^) this task was done
+   * by the pwepwocess() m-method pwovided by the acp wibwawy. ^^
+   * @thwows pipewinestageexception
    */
-  public void setupStageV2() throws PipelineStageException {
-    try {
-      setupCommonStats();
-      innerSetupStats();
-      setupEssentialObjects();
-      innerSetup();
-    } catch (NamingException e) {
-      throw new PipelineStageException(this, "Failed to initialize stage", e);
+  p-pubwic void setupstagev2() t-thwows pipewinestageexception {
+    twy {
+      setupcommonstats();
+      innewsetupstats();
+      s-setupessentiawobjects();
+      i-innewsetup();
+    } catch (namingexception e) {
+      thwow nyew pipewinestageexception(this, 🥺 "faiwed t-to initiawize stage", (U ᵕ U❁) e);
     }
   }
 
-  protected void innerSetup() throws PipelineStageException, NamingException { }
+  p-pwotected void innewsetup() thwows pipewinestageexception, 😳😳😳 nyamingexception { }
 
   /***
-   * Takes in an argument of type T, processes it and returns an argument of Type R. This is the
-   * main method of a pipeline stage.
+   * t-takes in an awgument of type t-t, nyaa~~ pwocesses i-it and wetuwns an awgument of type w-w. (˘ω˘) this is the
+   * main method o-of a pipewine s-stage. >_<
    */
-  public R runStageV2(T arg) {
-    long startingTime = startProcessing();
-    R processed = innerRunStageV2(arg);
-    endProcessing(startingTime);
-    return processed;
+  p-pubwic w wunstagev2(t awg) {
+    w-wong stawtingtime = s-stawtpwocessing();
+    w pwocessed = innewwunstagev2(awg);
+    e-endpwocessing(stawtingtime);
+    w-wetuwn pwocessed;
   }
 
   /***
-   * Takes in an argument of type T, processes it and pushes the processed element to some place.
-   * This method does not return anything as any time this method is called on a stage, it means
-   * there is no stage after this one. An example stage is any KafkaProducerStage.
+   * t-takes in an awgument of type t, XD pwocesses i-it and pushes the pwocessed ewement t-to some pwace. rawr x3
+   * t-this method does nyot wetuwn anything as any time this m-method is cawwed o-on a stage, ( ͡o ω ͡o ) it m-means
+   * thewe i-is nyo stage aftew this one. :3 a-an exampwe stage is any kafkapwoducewstage. mya
    */
-  public void runFinalStageOfBranchV2(T arg) {
-    long startingTime = startProcessing();
-    innerRunFinalStageOfBranchV2(arg);
-    endProcessing(startingTime);
+  pubwic void wunfinawstageofbwanchv2(t awg) {
+    wong stawtingtime = s-stawtpwocessing();
+    innewwunfinawstageofbwanchv2(awg);
+    e-endpwocessing(stawtingtime);
   }
 
-  protected R innerRunStageV2(T arg) {
-    return null;
+  pwotected w-w innewwunstagev2(t awg) {
+    w-wetuwn nyuww;
   }
 
-  protected void innerRunFinalStageOfBranchV2(T arg) { }
+  pwotected v-void innewwunfinawstageofbwanchv2(t a-awg) { }
 
   /***
-   * called at the end of a pipeline. Cleans up all resources of the stage.
+   * c-cawwed a-at the end of a-a pipewine. σωσ cweans up aww wesouwces of the stage.
    */
-  public void cleanupStageV2() { }
+  pubwic void cweanupstagev2() { }
 
-  private void setupEssentialObjects() throws NamingException {
-    wireModule = WireModule.getWireModule();
-    decider = wireModule.getDecider();
-    clock = wireModule.getClock();
-    earlybirdCluster = wireModule.getEarlybirdCluster();
-    dropItemsDeciderKey =
-          "drop_items_" + earlybirdCluster.getNameForStats() + "_" + fullStageName;
+  pwivate void setupessentiawobjects() thwows nyamingexception {
+    w-wiwemoduwe = w-wiwemoduwe.getwiwemoduwe();
+    d-decidew = wiwemoduwe.getdecidew();
+    cwock = wiwemoduwe.getcwock();
+    e-eawwybiwdcwustew = wiwemoduwe.geteawwybiwdcwustew();
+    dwopitemsdecidewkey =
+          "dwop_items_" + eawwybiwdcwustew.getnamefowstats() + "_" + f-fuwwstagename;
   }
 
-  protected void doInnerPreprocess() throws StageException, NamingException { }
+  p-pwotected void doinnewpwepwocess() t-thwows stageexception, (ꈍᴗꈍ) namingexception { }
 
-  @Override
-  protected void initStats() {
-    super.initStats();
-    setupCommonStats();
-    // Export stage timers
-    SearchCustomGauge.export(stageNamePrefix + "_queue_size",
-        () -> Optional.ofNullable(getQueueSizeAverage()).orElse(0.0));
-    SearchCustomGauge.export(stageNamePrefix + "_queue_percentage_full",
-        () -> Optional.ofNullable(getQueuePercentFull()).orElse(0.0));
+  @ovewwide
+  pwotected void i-initstats() {
+    s-supew.initstats();
+    setupcommonstats();
+    // e-expowt stage t-timews
+    seawchcustomgauge.expowt(stagenamepwefix + "_queue_size", OwO
+        () -> optionaw.ofnuwwabwe(getqueuesizeavewage()).owewse(0.0));
+    seawchcustomgauge.expowt(stagenamepwefix + "_queue_pewcentage_fuww", o.O
+        () -> optionaw.ofnuwwabwe(getqueuepewcentfuww()).owewse(0.0));
 
-    // This only called once on startup
-    // In some unit tests, getQueueCapacity can return null. Hence this guard is added.
-    // getQueueCapacity() does not return null here in prod.
-    SearchLongGauge.export(stageNamePrefix + "_queue_capacity")
-        .set(getQueueCapacity() == null ? 0 : getQueueCapacity());
+    // this onwy cawwed o-once on stawtup
+    // i-in s-some unit tests, 😳😳😳 g-getqueuecapacity c-can wetuwn nyuww. hence this guawd i-is added. /(^•ω•^)
+    // g-getqueuecapacity() does nyot w-wetuwn nyuww h-hewe in pwod. OwO
+    seawchwonggauge.expowt(stagenamepwefix + "_queue_capacity")
+        .set(getqueuecapacity() == n-nuww ? 0 : getqueuecapacity());
   }
 
-  private void setupCommonStats() {
-    // If the stage is instantiated only once, the class name is used for stats export
-    // If the stage is instantiated multiple times, the "stageName" specified in the
-    // pipeline definition xml file is also included.
-    if (StringUtils.isBlank(this.getStageName())) {
-      fullStageName = this.getClass().getSimpleName();
-    } else {
-      fullStageName = String.format(
-          "%s_%s",
-          this.getClass().getSimpleName(),
-          this.getStageName());
+  pwivate void setupcommonstats() {
+    // i-if the stage is instantiated onwy o-once, ^^ the cwass n-nyame is used fow stats expowt
+    // i-if the stage is instantiated muwtipwe times, (///ˬ///✿) t-the "stagename" s-specified i-in the
+    // pipewine definition xmw fiwe is awso incwuded. (///ˬ///✿)
+    i-if (stwingutiws.isbwank(this.getstagename())) {
+      fuwwstagename = this.getcwass().getsimpwename();
+    } e-ewse {
+      f-fuwwstagename = stwing.fowmat(
+          "%s_%s", (///ˬ///✿)
+          t-this.getcwass().getsimpwename(), ʘwʘ
+          this.getstagename());
     }
 
-    stageNamePrefix = Metrics.normalizeName(fullStageName).toLowerCase();
+    s-stagenamepwefix = m-metwics.nowmawizename(fuwwstagename).towowewcase();
 
-    droppedItems = SearchRateCounter.export(stageNamePrefix + "_dropped_messages");
-    stageExceptions = SearchLongGauge.export(stageNamePrefix + "_stage_exceptions");
+    dwoppeditems = seawchwatecountew.expowt(stagenamepwefix + "_dwopped_messages");
+    s-stageexceptions = seawchwonggauge.expowt(stagenamepwefix + "_stage_exceptions");
 
-    processTimerStats = SearchTimerStats.export(stageNamePrefix, TimeUnit.NANOSECONDS,
-        true);
-    processPercentile = PercentileUtil.createPercentile(stageNamePrefix);
+    pwocesstimewstats = s-seawchtimewstats.expowt(stagenamepwefix, ^•ﻌ•^ t-timeunit.nanoseconds, OwO
+        twue);
+    pwocesspewcentiwe = p-pewcentiweutiw.cweatepewcentiwe(stagenamepwefix);
 
-    incomingBatchesRateCounter = SearchRateCounter.export(stageNamePrefix + "_incoming_batches");
-    incomingBatchObjectsRateCounter =
-        SearchRateCounter.export(stageNamePrefix + "_incoming_batch_objects");
+    incomingbatcheswatecountew = s-seawchwatecountew.expowt(stagenamepwefix + "_incoming_batches");
+    i-incomingbatchobjectswatecountew =
+        s-seawchwatecountew.expowt(stagenamepwefix + "_incoming_batch_objects");
   }
 
-  protected void innerSetupStats() {
+  pwotected void innewsetupstats() {
 
   }
 
-  protected SearchCounter makeStageCounter(String counterName) {
-    return SearchCounter.export(getStageNamePrefix() + "_" + counterName);
+  pwotected seawchcountew makestagecountew(stwing countewname) {
+    wetuwn seawchcountew.expowt(getstagenamepwefix() + "_" + countewname);
   }
 
-  private SearchRateCounter getEmitObjectsRateCounterFor(Optional<String> maybeBranch) {
-    return getRateCounterFor(maybeBranch, "emit_objects", branchEmitObjectsRateCounters);
+  pwivate seawchwatecountew getemitobjectswatecountewfow(optionaw<stwing> maybebwanch) {
+    wetuwn g-getwatecountewfow(maybebwanch, "emit_objects", b-bwanchemitobjectswatecountews);
   }
 
-  private SearchRateCounter getEmitBatchObjectsRateCounterFor(Optional<String> maybeBranch) {
-    return getRateCounterFor(maybeBranch, "emit_batch_objects", branchEmitBatchObjectsRateCounters);
+  pwivate seawchwatecountew getemitbatchobjectswatecountewfow(optionaw<stwing> m-maybebwanch) {
+    w-wetuwn getwatecountewfow(maybebwanch, (U ﹏ U) "emit_batch_objects", (ˆ ﻌ ˆ)♡ b-bwanchemitbatchobjectswatecountews);
   }
 
-  private SearchRateCounter getRateCounterFor(
-      Optional<String> maybeBranch,
-      String statSuffix,
-      ConcurrentMap<Optional<String>, SearchRateCounter> rateCountersMap) {
-    SearchRateCounter rateCounter = rateCountersMap.get(maybeBranch);
-    if (rateCounter == null) {
-      String branchSuffix = maybeBranch.map(b -> "_" + b.toLowerCase()).orElse("");
-      rateCounter = SearchRateCounter.export(stageNamePrefix + branchSuffix + "_" + statSuffix);
-      SearchRateCounter existingRateCounter = rateCountersMap.putIfAbsent(maybeBranch, rateCounter);
-      if (existingRateCounter != null) {
-        Preconditions.checkState(
-            existingRateCounter == rateCounter,
-            "SearchRateCounter.export() should always return the same stat instance.");
+  pwivate seawchwatecountew g-getwatecountewfow(
+      optionaw<stwing> m-maybebwanch, (⑅˘꒳˘)
+      s-stwing statsuffix, (U ﹏ U)
+      concuwwentmap<optionaw<stwing>, o.O seawchwatecountew> watecountewsmap) {
+    s-seawchwatecountew watecountew = w-watecountewsmap.get(maybebwanch);
+    if (watecountew == n-nuww) {
+      stwing bwanchsuffix = maybebwanch.map(b -> "_" + b-b.towowewcase()).owewse("");
+      w-watecountew = s-seawchwatecountew.expowt(stagenamepwefix + b-bwanchsuffix + "_" + s-statsuffix);
+      s-seawchwatecountew e-existingwatecountew = w-watecountewsmap.putifabsent(maybebwanch, mya w-watecountew);
+      if (existingwatecountew != n-nyuww) {
+        p-pweconditions.checkstate(
+            e-existingwatecountew == watecountew, XD
+            "seawchwatecountew.expowt() s-shouwd awways wetuwn the same stat instance.");
       }
     }
-    return rateCounter;
+    w-wetuwn watecountew;
   }
 
-  public String getStageNamePrefix() {
-    return stageNamePrefix;
+  p-pubwic stwing g-getstagenamepwefix() {
+    w-wetuwn stagenamepwefix;
   }
 
-  public String getFullStageName() {
-    return fullStageName;
+  p-pubwic stwing getfuwwstagename() {
+    w-wetuwn fuwwstagename;
   }
 
-  @Override
-  public void process(Object obj) throws StageException {
-    long startTime = System.nanoTime();
-    try {
-      // this needs to be updated before calling super.process() so that innerProcess can actually
-      // use the updated incoming rates
-      updateIncomingBatchStats(obj);
-      // Track timing events for when tweets enter each stage.
-      captureStageDebugEvents(obj);
+  @ovewwide
+  pubwic v-void pwocess(object obj) thwows s-stageexception {
+    wong stawttime = system.nanotime();
+    twy {
+      // this nyeeds to be u-updated befowe cawwing supew.pwocess() s-so that i-innewpwocess can actuawwy
+      // use the updated incoming wates
+      u-updateincomingbatchstats(obj);
+      // twack timing events f-fow when tweets e-entew each s-stage. òωó
+      captuwestagedebugevents(obj);
 
-      if (DeciderUtil.isAvailableForRandomRecipient(decider, dropItemsDeciderKey)) {
-        droppedItems.increment();
-        return;
+      if (decidewutiw.isavaiwabwefowwandomwecipient(decidew, (˘ω˘) dwopitemsdecidewkey)) {
+        d-dwoppeditems.incwement();
+        w-wetuwn;
       }
 
-      super.process(obj);
+      supew.pwocess(obj);
 
-      // Now emit the object raw to wherever we need to
-      emitToPassThroughBranches(obj);
-    } finally {
-      long processTime = System.nanoTime() - startTime;
-      processTimerStats.timerIncrement(processTime);
-      processPercentile.record(processTime);
-      stageExceptions.set(stats.getExceptionCount());
+      // n-nyow emit the object waw to whewevew we nyeed to
+      e-emittopassthwoughbwanches(obj);
+    } finawwy {
+      w-wong p-pwocesstime = s-system.nanotime() - stawttime;
+      p-pwocesstimewstats.timewincwement(pwocesstime);
+      p-pwocesspewcentiwe.wecowd(pwocesstime);
+      s-stageexceptions.set(stats.getexceptioncount());
     }
   }
 
-  protected long startProcessing() {
-    long startingTime = System.nanoTime();
-    checkIfObjectShouldBeEmittedOrThrowRuntimeException();
-    return startingTime;
+  p-pwotected wong stawtpwocessing() {
+    w-wong s-stawtingtime = system.nanotime();
+    c-checkifobjectshouwdbeemittedowthwowwuntimeexception();
+    w-wetuwn stawtingtime;
   }
 
-  protected void endProcessing(long startingTime) {
-    long processTime = System.nanoTime() - startingTime;
-    processTimerStats.timerIncrement(processTime);
-    processPercentile.record(processTime);
+  p-pwotected v-void endpwocessing(wong stawtingtime) {
+    w-wong pwocesstime = s-system.nanotime() - stawtingtime;
+    p-pwocesstimewstats.timewincwement(pwocesstime);
+    pwocesspewcentiwe.wecowd(pwocesstime);
   }
 
-  private void checkIfObjectShouldBeEmittedOrThrowRuntimeException() {
-    if (DeciderUtil.isAvailableForRandomRecipient(decider, dropItemsDeciderKey)) {
-      droppedItems.increment();
-      throw new PipelineStageRuntimeException("Object does not have to be processed and passed"
-          + " to the next stage");
+  pwivate v-void checkifobjectshouwdbeemittedowthwowwuntimeexception() {
+    if (decidewutiw.isavaiwabwefowwandomwecipient(decidew, :3 d-dwopitemsdecidewkey)) {
+      d-dwoppeditems.incwement();
+      t-thwow nyew pipewinestagewuntimeexception("object does nyot have to be p-pwocessed and passed"
+          + " t-to the nyext s-stage");
     }
   }
 
-  private void emitToPassThroughBranches(Object obj) {
-    for (String branch : passThroughToBranches) {
-      actuallyEmitAndCount(Optional.of(branch), obj);
+  pwivate void emittopassthwoughbwanches(object obj) {
+    f-fow (stwing bwanch : p-passthwoughtobwanches) {
+      actuawwyemitandcount(optionaw.of(bwanch), OwO obj);
     }
-    if (passThroughDownstream) {
-      actuallyEmitAndCount(Optional.empty(), obj);
-    }
-  }
-
-  private void updateIncomingBatchStats(Object obj) {
-    incomingBatchesRateCounter.increment();
-    incomingBatchObjectsRateCounter.increment(getBatchSizeForStats(obj));
-  }
-
-  protected void captureStageDebugEvents(Object obj) {
-    if (obj instanceof DebugEventAccumulator) {
-      DebugEventUtil.addDebugEvent(
-          (DebugEventAccumulator) obj, getFullStageName(), clock.nowMillis());
-    } else if (obj instanceof Collection) {
-      DebugEventUtil.addDebugEventToCollection(
-          (Collection<?>) obj, getFullStageName(), clock.nowMillis());
-    } else {
-      SearchCounter debugEventsNotSupportedCounter = SearchCounter.export(
-          stageNamePrefix + "_debug_events_not_supported_for_" + obj.getClass());
-      debugEventsNotSupportedCounter.increment();
+    if (passthwoughdownstweam) {
+      a-actuawwyemitandcount(optionaw.empty(), mya o-obj);
     }
   }
 
-  protected int getBatchSizeForStats(Object obj) {
-    return (obj instanceof Collection) ? ((Collection<?>) obj).size() : 1;
+  pwivate void updateincomingbatchstats(object obj) {
+    i-incomingbatcheswatecountew.incwement();
+    i-incomingbatchobjectswatecountew.incwement(getbatchsizefowstats(obj));
   }
 
-  protected void emitAndCount(Object obj) {
-    for (String branch : additionalEmitToBranches) {
-      actuallyEmitAndCount(Optional.of(branch), obj);
-    }
-    if (emitDownstream) {
-      actuallyEmitAndCount(Optional.empty(), obj);
+  p-pwotected v-void captuwestagedebugevents(object obj) {
+    if (obj instanceof d-debugeventaccumuwatow) {
+      d-debugeventutiw.adddebugevent(
+          (debugeventaccumuwatow) obj, (˘ω˘) getfuwwstagename(), o.O cwock.nowmiwwis());
+    } e-ewse if (obj instanceof cowwection) {
+      d-debugeventutiw.adddebugeventtocowwection(
+          (cowwection<?>) obj, (✿oωo) g-getfuwwstagename(), c-cwock.nowmiwwis());
+    } ewse {
+      s-seawchcountew d-debugeventsnotsuppowtedcountew = seawchcountew.expowt(
+          s-stagenamepwefix + "_debug_events_not_suppowted_fow_" + obj.getcwass());
+      d-debugeventsnotsuppowtedcountew.incwement();
     }
   }
 
-  protected void emitToBranchAndCount(String branch, Object obj) {
-    actuallyEmitAndCount(Optional.of(branch), obj);
+  p-pwotected int getbatchsizefowstats(object o-obj) {
+    w-wetuwn (obj instanceof cowwection) ? ((cowwection<?>) o-obj).size() : 1;
   }
 
-  // If the branch is none, emit downstream
-  private void actuallyEmitAndCount(Optional<String> maybeBranch, Object obj) {
-    if (maybeBranch.isPresent()) {
-      emit(maybeBranch.get(), obj);
-    } else {
-      emit(obj);
+  p-pwotected void e-emitandcount(object obj) {
+    f-fow (stwing bwanch : additionawemittobwanches) {
+      actuawwyemitandcount(optionaw.of(bwanch), (ˆ ﻌ ˆ)♡ o-obj);
     }
-    getEmitObjectsRateCounterFor(maybeBranch).increment();
-    getEmitBatchObjectsRateCounterFor(maybeBranch).increment(getBatchSizeForStats(obj));
+    i-if (emitdownstweam) {
+      actuawwyemitandcount(optionaw.empty(), ^^;; o-obj);
+    }
+  }
+
+  pwotected void emittobwanchandcount(stwing bwanch, OwO object obj) {
+    actuawwyemitandcount(optionaw.of(bwanch), 🥺 o-obj);
+  }
+
+  // if the bwanch i-is none, mya emit d-downstweam
+  pwivate void actuawwyemitandcount(optionaw<stwing> maybebwanch, 😳 o-object obj) {
+    if (maybebwanch.ispwesent()) {
+      e-emit(maybebwanch.get(), òωó o-obj);
+    } ewse {
+      e-emit(obj);
+    }
+    g-getemitobjectswatecountewfow(maybebwanch).incwement();
+    g-getemitbatchobjectswatecountewfow(maybebwanch).incwement(getbatchsizefowstats(obj));
   }
 }

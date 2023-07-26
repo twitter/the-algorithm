@@ -1,25 +1,25 @@
-package com.twitter.visibility.models
+package com.twittew.visibiwity.modews
 
-import com.twitter.guano.commons.thriftscala.PolicyInViolation
-import com.twitter.spam.rtf.{thriftscala => s}
+impowt com.twittew.guano.commons.thwiftscawa.powicyinviowation
+i-impowt com.twittew.spam.wtf.{thwiftscawa => s-s}
 
-case class SafetyLabelMetadata(
-  policyInViolation: Option[PolicyInViolation] = None,
-  policyUrl: Option[String] = None) {
+case cwass s-safetywabewmetadata(
+  p-powicyinviowation: o-option[powicyinviowation] = n-nyone, (⑅˘꒳˘)
+  powicyuww: o-option[stwing] = n-nyone) {
 
-  def toThrift: s.SafetyLabelMetadata = {
-    s.SafetyLabelMetadata(
-      policyInViolation,
-      policyUrl
+  def tothwift: s.safetywabewmetadata = {
+    s.safetywabewmetadata(
+      powicyinviowation, (U ᵕ U❁)
+      p-powicyuww
     )
   }
 }
 
-object SafetyLabelMetadata {
-  def fromThrift(metadata: s.SafetyLabelMetadata): SafetyLabelMetadata = {
-    SafetyLabelMetadata(
-      metadata.policyInViolation,
-      metadata.policyUrl
+object safetywabewmetadata {
+  def fwomthwift(metadata: s-s.safetywabewmetadata): safetywabewmetadata = {
+    s-safetywabewmetadata(
+      metadata.powicyinviowation, -.-
+      metadata.powicyuww
     )
   }
 }

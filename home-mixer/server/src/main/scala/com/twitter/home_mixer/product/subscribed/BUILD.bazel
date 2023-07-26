@@ -1,82 +1,84 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "ads-injection/lib/src/main/scala/com/twitter/goldfinch/api",
-        "finagle/finagle-memcached/src/main/scala",
-        "finatra/inject/inject-core/src/main/scala",
-        "finatra/inject/inject-core/src/main/scala/com/twitter/inject",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/candidate_pipeline",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/functional_component/candidate_source",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/functional_component/decorator",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/functional_component/decorator/builder",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/functional_component/decorator/urt/builder",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/functional_component/feature_hydrator",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/functional_component/filter",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/functional_component/gate",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/functional_component/selector",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/functional_component/side_effect",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/marshaller/timelines",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model/request",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/param",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/following/model",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/subscribed/model",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/subscribed/param",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/service",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/util",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/candidate_source/tweetconvosvc",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/decorator/urt",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/feature_hydrator/candidate/param_gated",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/feature_hydrator/query/async",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/feature_hydrator/query/impressed_tweets",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/feature_hydrator/query/param_gated",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/feature_hydrator/query/social_graph",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/filter",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/gate",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/presentation/urt",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/premarshaller/urt",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/selector",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/side_effect",
-        "product-mixer/core/src/main/java/com/twitter/product_mixer/core/product/guice/scope",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/configapi",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/decorator",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/decorator/urt/builder",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/marshaller/response/urt",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common/presentation",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/request",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/urt",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/urt/item",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/mixer",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/product",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product/guice",
-        "src/java/com/twitter/search/common/schema/base",
-        "src/java/com/twitter/search/common/schema/earlybird",
-        "src/java/com/twitter/search/common/util/lang",
-        "src/java/com/twitter/search/queryparser/query:core-query-nodes",
-        "src/java/com/twitter/search/queryparser/query/search:search-query-nodes",
-        "src/thrift/com/twitter/search:earlybird-scala",
-        "src/thrift/com/twitter/search/common:constants-java",
-        "src/thrift/com/twitter/tweetypie:service-scala",
-        "stitch/stitch-gizmoduck",
-        "stitch/stitch-tweetypie",
-        "stringcenter/client",
-        "stringcenter/client/src/main/java",
-        "timelinemixer/common/src/main/scala/com/twitter/timelinemixer/clients/manhattan",
-        "timelinemixer/server/src/main/scala/com/twitter/timelinemixer/injection/model/candidate",
-        "timelinemixer/server/src/main/scala/com/twitter/timelinemixer/injection/store/persistence",
-        "timelines/src/main/scala/com/twitter/timelines/clients/relevance_search",
-        "timelines/src/main/scala/com/twitter/timelines/injection/scribe",
+scawa_wibwawy(
+    souwces = ["*.scawa"], OwO
+    compiwew_option_sets = ["fataw_wawnings"], 🥺
+    s-stwict_deps = t-twue, òωó
+    d-dependencies = [
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/modew", o.O
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/utiw", (U ᵕ U❁)
+        "timewinesewvice/common:modew", (⑅˘꒳˘)
     ],
-    exports = [
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/subscribed/param",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/decorator/urt",
-        "src/thrift/com/twitter/timelines/render:thrift-scala",
+)
+d/swc/main/scawa", UwU
+        "finatwa/inject/inject-cowe/swc/main/scawa", rawr x3
+        "finatwa/inject/inject-cowe/swc/main/scawa/com/twittew/inject", rawr
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/candidate_pipewine", σωσ
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/functionaw_component/candidate_souwce", σωσ
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/functionaw_component/decowatow", >_<
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/functionaw_component/decowatow/buiwdew", :3
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/functionaw_component/decowatow/uwt/buiwdew",
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/functionaw_component/featuwe_hydwatow", (U ﹏ U)
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/functionaw_component/fiwtew", -.-
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/functionaw_component/gate", (ˆ ﻌ ˆ)♡
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/functionaw_component/sewectow", (⑅˘꒳˘)
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/functionaw_component/side_effect", (U ᵕ U❁)
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/mawshawwew/timewines", -.-
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/modew", ^^;;
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/modew/wequest", >_<
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pawam", mya
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pwoduct/fowwowing/modew",
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pwoduct/subscwibed/modew", mya
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pwoduct/subscwibed/pawam", 😳
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/sewvice", XD
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/utiw", :3
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/candidate_souwce/tweetconvosvc",
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/decowatow/uwt", 😳😳😳
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/featuwe_hydwatow/candidate/pawam_gated", -.-
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/featuwe_hydwatow/quewy/async", ( ͡o ω ͡o )
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/featuwe_hydwatow/quewy/impwessed_tweets", rawr x3
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/featuwe_hydwatow/quewy/pawam_gated", nyaa~~
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/featuwe_hydwatow/quewy/sociaw_gwaph", /(^•ω•^)
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/fiwtew", rawr
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/gate", OwO
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/candidate", (U ﹏ U)
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/pwesentation/uwt",
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/pwemawshawwew/uwt", >_<
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/sewectow", rawr x3
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/side_effect", mya
+        "pwoduct-mixew/cowe/swc/main/java/com/twittew/pwoduct_mixew/cowe/pwoduct/guice/scope", nyaa~~
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/configapi", (⑅˘꒳˘)
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/decowatow", rawr x3
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/decowatow/uwt/buiwdew", (✿oωo)
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/mawshawwew/wesponse/uwt", (ˆ ﻌ ˆ)♡
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/modew/common/pwesentation", (˘ω˘)
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/modew/mawshawwing/wequest", (⑅˘꒳˘)
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/modew/mawshawwing/wesponse/uwt", (///ˬ///✿)
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/modew/mawshawwing/wesponse/uwt/item", 😳😳😳
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine/candidate", 🥺
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine/mixew", mya
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine/pwoduct", 🥺
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pwoduct",
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pwoduct/guice", >_<
+        "swc/java/com/twittew/seawch/common/schema/base", >_<
+        "swc/java/com/twittew/seawch/common/schema/eawwybiwd", (⑅˘꒳˘)
+        "swc/java/com/twittew/seawch/common/utiw/wang", /(^•ω•^)
+        "swc/java/com/twittew/seawch/quewypawsew/quewy:cowe-quewy-nodes", rawr x3
+        "swc/java/com/twittew/seawch/quewypawsew/quewy/seawch:seawch-quewy-nodes", (U ﹏ U)
+        "swc/thwift/com/twittew/seawch:eawwybiwd-scawa", (U ﹏ U)
+        "swc/thwift/com/twittew/seawch/common:constants-java",
+        "swc/thwift/com/twittew/tweetypie:sewvice-scawa", (⑅˘꒳˘)
+        "stitch/stitch-gizmoduck", òωó
+        "stitch/stitch-tweetypie",
+        "stwingcentew/cwient", ʘwʘ
+        "stwingcentew/cwient/swc/main/java", /(^•ω•^)
+        "timewinemixew/common/swc/main/scawa/com/twittew/timewinemixew/cwients/manhattan", ʘwʘ
+        "timewinemixew/sewvew/swc/main/scawa/com/twittew/timewinemixew/injection/modew/candidate", σωσ
+        "timewinemixew/sewvew/swc/main/scawa/com/twittew/timewinemixew/injection/stowe/pewsistence", OwO
+        "timewines/swc/main/scawa/com/twittew/timewines/cwients/wewevance_seawch", 😳😳😳
+        "timewines/swc/main/scawa/com/twittew/timewines/injection/scwibe", 😳😳😳
+    ], o.O
+    e-expowts = [
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pwoduct/subscwibed/pawam", ( ͡o ω ͡o )
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/decowatow/uwt", (U ﹏ U)
+        "swc/thwift/com/twittew/timewines/wendew:thwift-scawa", (///ˬ///✿)
     ],
 )

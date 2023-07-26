@@ -1,62 +1,62 @@
-package com.twitter.home_mixer.marshaller.request
+package com.twittew.home_mixew.mawshawwew.wequest
 
-import com.twitter.home_mixer.model.request.FollowingProductContext
-import com.twitter.home_mixer.model.request.ForYouProductContext
-import com.twitter.home_mixer.model.request.ListRecommendedUsersProductContext
-import com.twitter.home_mixer.model.request.ListTweetsProductContext
-import com.twitter.home_mixer.model.request.ScoredTweetsProductContext
-import com.twitter.home_mixer.model.request.SubscribedProductContext
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.model.marshalling.request.ProductContext
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.modew.wequest.fowwowingpwoductcontext
+i-impowt com.twittew.home_mixew.modew.wequest.fowyoupwoductcontext
+i-impowt com.twittew.home_mixew.modew.wequest.wistwecommendedusewspwoductcontext
+i-impowt com.twittew.home_mixew.modew.wequest.wisttweetspwoductcontext
+i-impowt c-com.twittew.home_mixew.modew.wequest.scowedtweetspwoductcontext
+i-impowt com.twittew.home_mixew.modew.wequest.subscwibedpwoductcontext
+i-impowt com.twittew.home_mixew.{thwiftscawa => t-t}
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.pwoductcontext
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class HomeMixerProductContextUnmarshaller @Inject() (
-  deviceContextUnmarshaller: DeviceContextUnmarshaller) {
+@singweton
+cwass homemixewpwoductcontextunmawshawwew @inject() (
+  d-devicecontextunmawshawwew: devicecontextunmawshawwew) {
 
-  def apply(productContext: t.ProductContext): ProductContext = productContext match {
-    case t.ProductContext.Following(p) =>
-      FollowingProductContext(
-        deviceContext = p.deviceContext.map(deviceContextUnmarshaller(_)),
-        seenTweetIds = p.seenTweetIds,
-        dspClientContext = p.dspClientContext
+  def appwy(pwoductcontext: t.pwoductcontext): p-pwoductcontext = pwoductcontext m-match {
+    case t.pwoductcontext.fowwowing(p) =>
+      fowwowingpwoductcontext(
+        devicecontext = p-p.devicecontext.map(devicecontextunmawshawwew(_)),
+        seentweetids = p.seentweetids, 😳😳😳
+        d-dspcwientcontext = p-p.dspcwientcontext
       )
-    case t.ProductContext.ForYou(p) =>
-      ForYouProductContext(
-        deviceContext = p.deviceContext.map(deviceContextUnmarshaller(_)),
-        seenTweetIds = p.seenTweetIds,
-        dspClientContext = p.dspClientContext,
-        pushToHomeTweetId = p.pushToHomeTweetId
+    case t.pwoductcontext.fowyou(p) =>
+      fowyoupwoductcontext(
+        devicecontext = p.devicecontext.map(devicecontextunmawshawwew(_)), mya
+        s-seentweetids = p.seentweetids, 😳
+        dspcwientcontext = p.dspcwientcontext, -.-
+        pushtohometweetid = p-p.pushtohometweetid
       )
-    case t.ProductContext.ListManagement(p) =>
-      throw new UnsupportedOperationException(s"This product is no longer used")
-    case t.ProductContext.ScoredTweets(p) =>
-      ScoredTweetsProductContext(
-        deviceContext = p.deviceContext.map(deviceContextUnmarshaller(_)),
-        seenTweetIds = p.seenTweetIds,
-        servedTweetIds = p.servedTweetIds,
-        backfillTweetIds = p.backfillTweetIds
+    case t.pwoductcontext.wistmanagement(p) =>
+      t-thwow nyew u-unsuppowtedopewationexception(s"this p-pwoduct is n-nyo wongew used")
+    case t.pwoductcontext.scowedtweets(p) =>
+      scowedtweetspwoductcontext(
+        d-devicecontext = p.devicecontext.map(devicecontextunmawshawwew(_)), 🥺
+        seentweetids = p-p.seentweetids,
+        sewvedtweetids = p.sewvedtweetids, o.O
+        backfiwwtweetids = p.backfiwwtweetids
       )
-    case t.ProductContext.ListTweets(p) =>
-      ListTweetsProductContext(
-        listId = p.listId,
-        deviceContext = p.deviceContext.map(deviceContextUnmarshaller(_)),
-        dspClientContext = p.dspClientContext
+    case t.pwoductcontext.wisttweets(p) =>
+      w-wisttweetspwoductcontext(
+        wistid = p-p.wistid, /(^•ω•^)
+        d-devicecontext = p-p.devicecontext.map(devicecontextunmawshawwew(_)), nyaa~~
+        dspcwientcontext = p.dspcwientcontext
       )
-    case t.ProductContext.ListRecommendedUsers(p) =>
-      ListRecommendedUsersProductContext(
-        listId = p.listId,
-        selectedUserIds = p.selectedUserIds,
-        excludedUserIds = p.excludedUserIds,
-        listName = p.listName
+    case t.pwoductcontext.wistwecommendedusews(p) =>
+      w-wistwecommendedusewspwoductcontext(
+        w-wistid = p.wistid, nyaa~~
+        sewectedusewids = p-p.sewectedusewids, :3
+        e-excwudedusewids = p.excwudedusewids, 😳😳😳
+        w-wistname = p.wistname
       )
-    case t.ProductContext.Subscribed(p) =>
-      SubscribedProductContext(
-        deviceContext = p.deviceContext.map(deviceContextUnmarshaller(_)),
-        seenTweetIds = p.seenTweetIds,
+    c-case t.pwoductcontext.subscwibed(p) =>
+      subscwibedpwoductcontext(
+        devicecontext = p-p.devicecontext.map(devicecontextunmawshawwew(_)), (˘ω˘)
+        seentweetids = p-p.seentweetids, ^^
       )
-    case t.ProductContext.UnknownUnionField(field) =>
-      throw new UnsupportedOperationException(s"Unknown display context: ${field.field.name}")
+    case t.pwoductcontext.unknownunionfiewd(fiewd) =>
+      t-thwow nyew u-unsuppowtedopewationexception(s"unknown dispway context: ${fiewd.fiewd.name}")
   }
 }

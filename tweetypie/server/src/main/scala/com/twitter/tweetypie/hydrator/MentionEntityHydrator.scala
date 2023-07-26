@@ -1,47 +1,47 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.stitch.NotFound
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.stitch.notfound
+i-impowt com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.wepositowy._
+i-impowt com.twittew.tweetypie.thwiftscawa._
 
-object MentionEntitiesHydrator {
-  type Type = ValueHydrator[Seq[MentionEntity], TweetCtx]
+o-object m-mentionentitieshydwatow {
+  type t-type = vawuehydwatow[seq[mentionentity], òωó tweetctx]
 
-  def once(h: MentionEntityHydrator.Type): Type =
-    TweetHydration.completeOnlyOnce(
-      queryFilter = queryFilter,
-      hydrationType = HydrationType.Mentions,
-      hydrator = h.liftSeq
+  def once(h: mentionentityhydwatow.type): type =
+    tweethydwation.compweteonwyonce(
+      q-quewyfiwtew = quewyfiwtew, ʘwʘ
+      hydwationtype = h-hydwationtype.mentions, /(^•ω•^)
+      hydwatow = h.wiftseq
     )
 
-  def queryFilter(opts: TweetQuery.Options): Boolean =
-    opts.include.tweetFields.contains(Tweet.MentionsField.id)
+  d-def quewyfiwtew(opts: tweetquewy.options): boowean =
+    opts.incwude.tweetfiewds.contains(tweet.mentionsfiewd.id)
 }
 
-object MentionEntityHydrator {
-  type Type = ValueHydrator[MentionEntity, TweetCtx]
+o-object mentionentityhydwatow {
+  type type = v-vawuehydwatow[mentionentity, ʘwʘ t-tweetctx]
 
-  val hydratedField: FieldByPath = fieldByPath(Tweet.MentionsField)
+  vaw hydwatedfiewd: fiewdbypath = fiewdbypath(tweet.mentionsfiewd)
 
-  def apply(repo: UserIdentityRepository.Type): Type =
-    ValueHydrator[MentionEntity, TweetCtx] { (entity, _) =>
-      repo(UserKey(entity.screenName)).liftToTry.map {
-        case Return(user) => ValueState.delta(entity, update(entity, user))
-        case Throw(NotFound) => ValueState.unmodified(entity)
-        case Throw(_) => ValueState.partial(entity, hydratedField)
+  def appwy(wepo: u-usewidentitywepositowy.type): type =
+    vawuehydwatow[mentionentity, σωσ tweetctx] { (entity, OwO _) =>
+      wepo(usewkey(entity.scweenname)).wifttotwy.map {
+        case wetuwn(usew) => v-vawuestate.dewta(entity, 😳😳😳 update(entity, 😳😳😳 u-usew))
+        c-case thwow(notfound) => v-vawuestate.unmodified(entity)
+        c-case thwow(_) => vawuestate.pawtiaw(entity, o.O hydwatedfiewd)
       }
-    // only hydrate mention if userId or name is empty
-    }.onlyIf((entity, _) => entity.userId.isEmpty || entity.name.isEmpty)
+    // o-onwy hydwate mention if usewid ow nyame i-is empty
+    }.onwyif((entity, ( ͡o ω ͡o ) _) => entity.usewid.isempty || entity.name.isempty)
 
   /**
-   * Updates a MentionEntity using the given user data.
+   * updates a mentionentity using the given usew data. (U ﹏ U)
    */
-  def update(entity: MentionEntity, userIdent: UserIdentity): MentionEntity =
+  d-def update(entity: mentionentity, (///ˬ///✿) u-usewident: u-usewidentity): m-mentionentity =
     entity.copy(
-      screenName = userIdent.screenName,
-      userId = Some(userIdent.id),
-      name = Some(userIdent.realName)
+      scweenname = usewident.scweenname, >w<
+      u-usewid = some(usewident.id), rawr
+      n-nyame = some(usewident.weawname)
     )
 }

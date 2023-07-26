@@ -1,255 +1,255 @@
-package com.twitter.simclusters_v2.scio
-package bq_generation.common
+package com.twittew.simcwustews_v2.scio
+package bq_genewation.common
 
-import com.twitter.wtf.beam.bq_embedding_export.BQQueryUtils
-import org.joda.time.DateTime
+i-impowt com.twittew.wtf.beam.bq_embedding_expowt.bqquewyutiws
+i-impowt owg.joda.time.datetime
 
-object BQGenerationUtil {
-  // Consumer Embeddings BQ table details
-  val interestedInEmbeddings20M145K2020Table = BQTableDetails(
-    "twttr-bq-cassowary-prod",
-    "user",
-    "simclusters_v2_user_to_interested_in_20M_145K_2020",
+o-object bqgenewationutiw {
+  // c-consumew embeddings b-bq tabwe detaiws
+  v-vaw intewestedinembeddings20m145k2020tabwe = b-bqtabwedetaiws(
+    "twttw-bq-cassowawy-pwod", 😳
+    "usew",
+    "simcwustews_v2_usew_to_intewested_in_20m_145k_2020", (⑅˘꒳˘)
   )
-  val mtsConsumerEmbeddingsFav90P20MTable = BQTableDetails(
-    "twttr-bq-cassowary-prod",
-    "user",
-    "mts_consumer_embeddings_fav90p_20m",
+  vaw m-mtsconsumewembeddingsfav90p20mtabwe = bqtabwedetaiws(
+    "twttw-bq-cassowawy-pwod", 😳😳😳
+    "usew", 😳
+    "mts_consumew_embeddings_fav90p_20m", XD
   )
 
-  // Common SQL path
-  val TweetFavCountSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/tweet_fav_count.sql"
+  // common sqw path
+  vaw tweetfavcountsqwpath =
+    s"/com/twittew/simcwustews_v2/scio/bq_genewation/sqw/tweet_fav_count.sqw"
 
-  val NSFWTweetIdDenylistSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/nsfw_tweet_denylist.sql"
+  v-vaw nysfwtweetiddenywistsqwpath =
+    s"/com/twittew/simcwustews_v2/scio/bq_genewation/sqw/nsfw_tweet_denywist.sqw"
 
-  val ClusterTopTweetsIntersectionWithFavBasedIndexSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/cluster_top_tweets_intersection_with_fav_based_index.sql"
+  vaw c-cwustewtoptweetsintewsectionwithfavbasedindexsqwpath =
+    s"/com/twittew/simcwustews_v2/scio/bq_genewation/sqw/cwustew_top_tweets_intewsection_with_fav_based_index.sqw"
 
-  // Read InterestedIn 2020
-  def getInterestedIn2020SQL(
-    queryDate: DateTime,
-    lookBackDays: Int
-  ): String = {
-    s"""
-       |SELECT userId, 
-       |        clusterIdToScores.key AS clusterId,
-       |        clusterIdToScores.value.logFavScore AS userScore,
-       |        clusterIdToScores.value.logFavScoreClusterNormalizedOnly AS clusterNormalizedLogFavScore,
-       |FROM `$interestedInEmbeddings20M145K2020Table`, UNNEST(clusterIdToScores) AS clusterIdToScores
-       |WHERE DATE(_PARTITIONTIME) = 
-       |  (  -- Get latest partition time
-       |  SELECT MAX(DATE(_PARTITIONTIME)) latest_partition
-       |  FROM `$interestedInEmbeddings20M145K2020Table`
-       |  WHERE Date(_PARTITIONTIME) BETWEEN 
-       |      DATE_SUB(Date("${queryDate}"), 
-       |      INTERVAL $lookBackDays DAY) AND DATE("$queryDate")
+  // w-wead intewestedin 2020
+  def getintewestedin2020sqw(
+    quewydate: datetime, mya
+    w-wookbackdays: int
+  ): stwing = {
+    s-s"""
+       |sewect u-usewid, ^•ﻌ•^ 
+       |        cwustewidtoscowes.key as cwustewid, ʘwʘ
+       |        cwustewidtoscowes.vawue.wogfavscowe as u-usewscowe, ( ͡o ω ͡o )
+       |        cwustewidtoscowes.vawue.wogfavscowecwustewnowmawizedonwy as cwustewnowmawizedwogfavscowe, mya
+       |fwom `$intewestedinembeddings20m145k2020tabwe`, o.O unnest(cwustewidtoscowes) as cwustewidtoscowes
+       |whewe d-date(_pawtitiontime) = 
+       |  (  -- get watest pawtition t-time
+       |  s-sewect max(date(_pawtitiontime)) w-watest_pawtition
+       |  f-fwom `$intewestedinembeddings20m145k2020tabwe`
+       |  whewe date(_pawtitiontime) b-between 
+       |      date_sub(date("${quewydate}"), (✿oωo) 
+       |      intewvaw $wookbackdays d-day) and date("$quewydate")
        |  )
-       |   AND clusterIdToScores.value.logFavScore > 0.0 # min score threshold for user embedding values
-       |""".stripMargin
+       |   and cwustewidtoscowes.vawue.wogfavscowe > 0.0 # min scowe thweshowd fow usew embedding vawues
+       |""".stwipmawgin
   }
 
-  // Read MTS Consumer Embeddings - Fav90P20M config
-  def getMTSConsumerEmbeddingsFav90P20MSQL(
-    queryDate: DateTime,
-    lookBackDays: Int
-  ): String = {
-    // We read the most recent snapshot of MTS Consumer Embeddings Fav90P20M
-    s"""
-       |SELECT userId,             
-       |    clusterIdToScores.key AS clusterId,
-       |    clusterIdToScores.value.logFavUserScore AS userScore,
-       |    clusterIdToScores.value.logFavUserScoreClusterNormalized AS clusterNormalizedLogFavScore
-       |    FROM `$mtsConsumerEmbeddingsFav90P20MTable`, UNNEST(embedding.clusterIdToScores) AS clusterIdToScores
-       |WHERE DATE(ingestionTime) = (  
-       |    -- Get latest partition time
-       |    SELECT MAX(DATE(ingestionTime)) latest_partition
-       |    FROM `$mtsConsumerEmbeddingsFav90P20MTable`
-       |    WHERE Date(ingestionTime) BETWEEN 
-       |        DATE_SUB(Date("${queryDate}"), 
-       |        INTERVAL  $lookBackDays DAY) AND DATE("${queryDate}")
-       |) AND clusterIdToScores.value.logFavUserScore > 0.0
-       |""".stripMargin
-  }
-
-  /*
-   * For a specific tweet engagement, retrieve the user id, tweet id, and timestamp
-   *
-   * Return:
-   *  String - UserId, TweetId and Timestamp table SQL string format
-   *           Table Schema
-   *              - userId: Long
-   *              - tweetId: Long
-   *              - tsMillis: Long
-   */
-  def getUserTweetEngagementEventPairSQL(
-    startTime: DateTime,
-    endTime: DateTime,
-    userTweetEngagementEventPairSqlPath: String,
-    userTweetEngagementEventPairTemplateVariable: Map[String, String]
-  ): String = {
-    val templateVariables = Map(
-      "START_TIME" -> startTime.toString(),
-      "END_TIME" -> endTime.toString(),
-      "NO_OLDER_TWEETS_THAN_DATE" -> startTime.toString()
-    ) ++ userTweetEngagementEventPairTemplateVariable
-    BQQueryUtils.getBQQueryFromSqlFile(userTweetEngagementEventPairSqlPath, templateVariables)
+  // wead mts consumew e-embeddings - fav90p20m config
+  d-def getmtsconsumewembeddingsfav90p20msqw(
+    q-quewydate: d-datetime, :3
+    wookbackdays: int
+  ): stwing = {
+    // we wead t-the most wecent s-snapshot of mts consumew embeddings f-fav90p20m
+    s-s"""
+       |sewect usewid, 😳             
+       |    c-cwustewidtoscowes.key as c-cwustewid, (U ﹏ U)
+       |    cwustewidtoscowes.vawue.wogfavusewscowe as usewscowe, mya
+       |    c-cwustewidtoscowes.vawue.wogfavusewscowecwustewnowmawized as cwustewnowmawizedwogfavscowe
+       |    f-fwom `$mtsconsumewembeddingsfav90p20mtabwe`, (U ᵕ U❁) unnest(embedding.cwustewidtoscowes) as c-cwustewidtoscowes
+       |whewe d-date(ingestiontime) = (  
+       |    -- get watest pawtition time
+       |    sewect max(date(ingestiontime)) watest_pawtition
+       |    fwom `$mtsconsumewembeddingsfav90p20mtabwe`
+       |    w-whewe date(ingestiontime) b-between 
+       |        date_sub(date("${quewydate}"), :3 
+       |        i-intewvaw  $wookbackdays d-day) and date("${quewydate}")
+       |) a-and cwustewidtoscowes.vawue.wogfavusewscowe > 0.0
+       |""".stwipmawgin
   }
 
   /*
-   * Retrieve tweets and the # of favs it got from a given time window
+   * fow a specific tweet engagement, mya wetwieve the u-usew id, OwO tweet id, (ˆ ﻌ ˆ)♡ and timestamp
    *
-   * Return:
-   *  String - TweetId  and fav count table SQL string format
-   *           Table Schema
-   *              - tweetId: Long
-   *              - favCount: Long
+   * wetuwn:
+   *  stwing - usewid, ʘwʘ tweetid a-and timestamp tabwe sqw stwing f-fowmat
+   *           t-tabwe schema
+   *              - u-usewid: wong
+   *              - t-tweetid: w-wong
+   *              - t-tsmiwwis: w-wong
    */
-  def getTweetIdWithFavCountSQL(
-    startTime: DateTime,
-    endTime: DateTime,
-  ): String = {
-    val templateVariables =
-      Map(
-        "START_TIME" -> startTime.toString(),
-        "END_TIME" -> endTime.toString(),
+  def getusewtweetengagementeventpaiwsqw(
+    stawttime: d-datetime, o.O
+    e-endtime: d-datetime, UwU
+    usewtweetengagementeventpaiwsqwpath: s-stwing, rawr x3
+    usewtweetengagementeventpaiwtempwatevawiabwe: m-map[stwing, 🥺 stwing]
+  ): stwing = {
+    vaw tempwatevawiabwes = m-map(
+      "stawt_time" -> stawttime.tostwing(), :3
+      "end_time" -> endtime.tostwing(), (ꈍᴗꈍ)
+      "no_owdew_tweets_than_date" -> stawttime.tostwing()
+    ) ++ usewtweetengagementeventpaiwtempwatevawiabwe
+    bqquewyutiws.getbqquewyfwomsqwfiwe(usewtweetengagementeventpaiwsqwpath, 🥺 t-tempwatevawiabwes)
+  }
+
+  /*
+   * wetwieve tweets and the # of favs it got fwom a-a given time window
+   *
+   * w-wetuwn:
+   *  stwing - t-tweetid  and fav count tabwe s-sqw stwing fowmat
+   *           tabwe schema
+   *              - t-tweetid: wong
+   *              - f-favcount: wong
+   */
+  def gettweetidwithfavcountsqw(
+    stawttime: datetime, (✿oωo)
+    endtime: datetime, (U ﹏ U)
+  ): s-stwing = {
+    vaw tempwatevawiabwes =
+      m-map(
+        "stawt_time" -> stawttime.tostwing(), :3
+        "end_time" -> e-endtime.tostwing(), ^^;;
       )
-    BQQueryUtils.getBQQueryFromSqlFile(TweetFavCountSQLPath, templateVariables)
+    b-bqquewyutiws.getbqquewyfwomsqwfiwe(tweetfavcountsqwpath, rawr tempwatevawiabwes)
   }
 
   /*
-   * From a given time window, retrieve tweetIds that were created by specific author or media type
+   * fwom a given t-time window, 😳😳😳 wetwieve t-tweetids that wewe cweated b-by specific authow o-ow media type
    *
-   * Input:
-   *  - startTime: DateTime
-   *  - endTime: DateTime
-   *  - filterMediaType: Option[Int]
-   *      MediaType
-   *        1: Image
-   *        2: GIF
-   *        3: Video
-   * - filterNSFWAuthor: Boolean
-   *      Whether we want to filter out NSFW tweet authors
+   * input:
+   *  - stawttime: datetime
+   *  - endtime: d-datetime
+   *  - f-fiwtewmediatype: o-option[int]
+   *      mediatype
+   *        1: i-image
+   *        2: g-gif
+   *        3: video
+   * - f-fiwtewnsfwauthow: boowean
+   *      whethew we want to fiwtew out nysfw tweet a-authows
    *
-   * Return:
-   *  String - TweetId table SQL string format
-   *           Table Schema
-   *              - tweetId: Long
+   * w-wetuwn:
+   *  stwing - tweetid tabwe sqw s-stwing fowmat
+   *           t-tabwe schema
+   *              - tweetid: wong
    */
-  def getTweetIdWithMediaAndNSFWAuthorFilterSQL(
-    startTime: DateTime,
-    endTime: DateTime,
-    filterMediaType: Option[Int],
-    filterNSFWAuthor: Boolean
-  ): String = {
-    val sql = s"""
-                 |SELECT DISTINCT tweetId
-                 |FROM `twttr-bq-tweetsource-prod.user.unhydrated_flat` tweetsource, UNNEST(media) AS media 
-                 |WHERE (DATE(_PARTITIONTIME) >= DATE("${startTime}") AND DATE(_PARTITIONTIME) <= DATE("${endTime}")) AND
-                 |         timestamp_millis((1288834974657 + 
-                 |          ((tweetId  & 9223372036850581504) >> 22))) >= TIMESTAMP("${startTime}")
-                 |          AND timestamp_millis((1288834974657 + 
-                 |        ((tweetId  & 9223372036850581504) >> 22))) <= TIMESTAMP("${endTime}")
-                 |""".stripMargin
+  d-def gettweetidwithmediaandnsfwauthowfiwtewsqw(
+    stawttime: datetime,
+    endtime: datetime, (✿oωo)
+    fiwtewmediatype: o-option[int], OwO
+    fiwtewnsfwauthow: boowean
+  ): s-stwing = {
+    v-vaw sqw = s"""
+                 |sewect distinct tweetid
+                 |fwom `twttw-bq-tweetsouwce-pwod.usew.unhydwated_fwat` tweetsouwce, ʘwʘ u-unnest(media) a-as media 
+                 |whewe (date(_pawtitiontime) >= date("${stawttime}") and date(_pawtitiontime) <= date("${endtime}")) and
+                 |         t-timestamp_miwwis((1288834974657 + 
+                 |          ((tweetid  & 9223372036850581504) >> 22))) >= timestamp("${stawttime}")
+                 |          and timestamp_miwwis((1288834974657 + 
+                 |        ((tweetid  & 9223372036850581504) >> 22))) <= t-timestamp("${endtime}")
+                 |""".stwipmawgin
 
-    val filterMediaStr = filterMediaType match {
-      case Some(mediaType) => s" AND media.media_type =${mediaType}"
-      case _ => ""
+    vaw fiwtewmediastw = fiwtewmediatype match {
+      c-case some(mediatype) => s" a-and media.media_type =${mediatype}"
+      c-case _ => ""
     }
-    val filterNSFWAuthorStr = if (filterNSFWAuthor) " AND nsfwUser = false" else ""
-    sql + filterMediaStr + filterNSFWAuthorStr
+    vaw fiwtewnsfwauthowstw = i-if (fiwtewnsfwauthow) " and nysfwusew = f-fawse" ewse ""
+    s-sqw + fiwtewmediastw + f-fiwtewnsfwauthowstw
   }
 
   /*
-   * From a given time window, retrieve tweetIds that fall into the NSFW deny list
+   * fwom a given time w-window, (ˆ ﻌ ˆ)♡ wetwieve t-tweetids that faww into the nysfw deny wist
    *
-   * Input:
-   *  - startTime: DateTime
-   *  - endTime: DateTime
+   * i-input:
+   *  - s-stawttime: d-datetime
+   *  - endtime: datetime
    *
-  * Return:
-   *  String - TweetId table SQL string format
-   *           Table Schema
-   *              - tweetId: Long
+  * wetuwn:
+   *  stwing - t-tweetid tabwe sqw stwing f-fowmat
+   *           t-tabwe schema
+   *              - tweetid: wong
    */
-  def getNSFWTweetIdDenylistSQL(
-    startTime: DateTime,
-    endTime: DateTime,
-  ): String = {
-    val templateVariables =
-      Map(
-        "START_TIME" -> startTime.toString(),
-        "END_TIME" -> endTime.toString(),
+  def getnsfwtweetiddenywistsqw(
+    s-stawttime: datetime, (U ﹏ U)
+    e-endtime: d-datetime, UwU
+  ): s-stwing = {
+    vaw tempwatevawiabwes =
+      m-map(
+        "stawt_time" -> stawttime.tostwing(), XD
+        "end_time" -> endtime.tostwing(), ʘwʘ
       )
-    BQQueryUtils.getBQQueryFromSqlFile(NSFWTweetIdDenylistSQLPath, templateVariables)
+    bqquewyutiws.getbqquewyfwomsqwfiwe(nsfwtweetiddenywistsqwpath, tempwatevawiabwes)
   }
 
   /*
-   * From a given cluster id to top k tweets table and a time window,
-   * (1) Retrieve the latest fav-based top tweets per cluster table within the time window
-   * (2) Inner join with the given table using cluster id and tweet id
-   * (3) Create the top k tweets per cluster table for the intersection
+   * fwom a given c-cwustew id to top k tweets t-tabwe and a time window, rawr x3
+   * (1) w-wetwieve the watest fav-based t-top tweets pew cwustew tabwe within t-the time window
+   * (2) i-innew j-join with the g-given tabwe using c-cwustew id and tweet id
+   * (3) cweate the top k tweets pew cwustew tabwe fow the intewsection
    *
-   * Input:
-   *  - startTime: DateTime
-   *  - endTime: DateTime
-   *  - topKTweetsForClusterKeySQL: String, a SQL query
+   * input:
+   *  - s-stawttime: d-datetime
+   *  - e-endtime: datetime
+   *  - t-topktweetsfowcwustewkeysqw: stwing, ^^;; a sqw quewy
    *
-   * Return:
-   *  String - TopKTweetsForClusterKey table SQL string format
-   *           Table Schema
-   *              - clusterId: Long
-   *              - topKTweetsForClusterKey: (Long, Long)
-   *                  - tweetId: Long
-   *                  - tweetScore: Long
+   * wetuwn:
+   *  s-stwing - t-topktweetsfowcwustewkey tabwe s-sqw stwing fowmat
+   *           tabwe schema
+   *              - cwustewid: wong
+   *              - t-topktweetsfowcwustewkey: (wong, ʘwʘ w-wong)
+   *                  - tweetid: wong
+   *                  - t-tweetscowe: w-wong
    */
-  def generateClusterTopTweetIntersectionWithFavBasedIndexSQL(
-    startTime: DateTime,
-    endTime: DateTime,
-    clusterTopKTweets: Int,
-    topKTweetsForClusterKeySQL: String
-  ): String = {
-    val templateVariables =
-      Map(
-        "START_TIME" -> startTime.toString(),
-        "END_TIME" -> endTime.toString(),
-        "CLUSTER_TOP_K_TWEETS" -> clusterTopKTweets.toString,
-        "CLUSTER_TOP_TWEETS_SQL" -> topKTweetsForClusterKeySQL
+  def genewatecwustewtoptweetintewsectionwithfavbasedindexsqw(
+    stawttime: datetime, (U ﹏ U)
+    endtime: datetime, (˘ω˘)
+    c-cwustewtopktweets: i-int, (ꈍᴗꈍ)
+    t-topktweetsfowcwustewkeysqw: s-stwing
+  ): s-stwing = {
+    vaw tempwatevawiabwes =
+      m-map(
+        "stawt_time" -> s-stawttime.tostwing(), /(^•ω•^)
+        "end_time" -> endtime.tostwing(), >_<
+        "cwustew_top_k_tweets" -> cwustewtopktweets.tostwing, σωσ
+        "cwustew_top_tweets_sqw" -> t-topktweetsfowcwustewkeysqw
       )
-    BQQueryUtils.getBQQueryFromSqlFile(
-      ClusterTopTweetsIntersectionWithFavBasedIndexSQLPath,
-      templateVariables)
+    b-bqquewyutiws.getbqquewyfwomsqwfiwe(
+      cwustewtoptweetsintewsectionwithfavbasedindexsqwpath,
+      t-tempwatevawiabwes)
   }
 
   /*
-   * Given a list of action types, build a string that indicates the user
-   * engaged with the tweet
+   * given a wist of action types, ^^;; b-buiwd a stwing that indicates t-the usew
+   * engaged w-with the tweet
    *
-   * Example use case: We want to build a SQL query that specifies this user engaged
-   *  with tweet with either fav or retweet actions.
+   * exampwe use case: w-we want to buiwd a sqw quewy that specifies this u-usew engaged
+   *  w-with tweet w-with eithew fav ow wetweet actions. 😳
    *
-   * Input:
-   *  - actionTypes: Seq("ServerTweetFav", "ServerTweetRetweet")
-   *  - booleanOperator: "OR"
-   * Output: "ServerTweetFav.engaged = 1 OR ServerTweetRetweet.engaged = 1"
+   * input:
+   *  - actiontypes: s-seq("sewvewtweetfav", >_< "sewvewtweetwetweet")
+   *  - booweanopewatow: "ow"
+   * output: "sewvewtweetfav.engaged = 1 o-ow s-sewvewtweetwetweet.engaged = 1"
    *
-   * Example SQL:
-   *  SELECT ServerTweetFav, ServerTweetRetweet
-   *  FROM table
-   *  WHERE ServerTweetFav.engaged = 1 OR ServerTweetRetweet.engaged = 1
+   * exampwe s-sqw:
+   *  sewect sewvewtweetfav, s-sewvewtweetwetweet
+   *  f-fwom tabwe
+   *  whewe sewvewtweetfav.engaged = 1 ow s-sewvewtweetwetweet.engaged = 1
    */
-  def buildActionTypesEngagementIndicatorString(
-    actionTypes: Seq[String],
-    booleanOperator: String = "OR"
-  ): String = {
-    actionTypes.map(action => f"""${action}.engaged = 1""").mkString(f""" ${booleanOperator} """)
+  def buiwdactiontypesengagementindicatowstwing(
+    actiontypes: s-seq[stwing], -.-
+    b-booweanopewatow: stwing = "ow"
+  ): s-stwing = {
+    actiontypes.map(action => f-f"""${action}.engaged = 1""").mkstwing(f""" ${booweanopewatow} """)
   }
 }
 
-case class BQTableDetails(
-  projectName: String,
-  tableName: String,
-  datasetName: String) {
-  override def toString: String = s"${projectName}.${tableName}.${datasetName}"
+c-case cwass bqtabwedetaiws(
+  pwojectname: s-stwing, UwU
+  tabwename: stwing, :3
+  datasetname: stwing) {
+  ovewwide def tostwing: stwing = s"${pwojectname}.${tabwename}.${datasetname}"
 }

@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.color
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow
 
-case class ColorPalette(
-  rgb: Color,
-  percentage: Double)
+case c-cwass cowowpawette(
+  w-wgb: cowow, 🥺
+  p-pewcentage: d-doubwe)

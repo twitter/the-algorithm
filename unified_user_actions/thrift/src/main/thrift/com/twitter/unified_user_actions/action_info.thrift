@@ -1,957 +1,957 @@
-namespace java com.twitter.unified_user_actions.thriftjava
-#@namespace scala com.twitter.unified_user_actions.thriftscala
-#@namespace strato com.twitter.unified_user_actions
+namespace java com.twittew.unified_usew_actions.thwiftjava
+#@namespace scawa com.twittew.unified_usew_actions.thwiftscawa
+#@namespace s-stwato com.twittew.unified_usew_actions
 
-include "com/twitter/clientapp/gen/client_app.thrift"
-include "com/twitter/reportflow/report_flow_logs.thrift"
-include "com/twitter/socialgraph/social_graph_service_write_log.thrift"
-include "com/twitter/gizmoduck/user_service.thrift"
-
-/*
- * ActionType is typically a three part enum consisting of
- * [Origin][Item Type][Action Name]
- *
- * [Origin] is usually "client" or "server" to indicate how the action was derived.
- *
- * [Item Type] is singular and refers to the shorthand version of the type of
- * Item (e.g. Tweet, Profile, Notification instead of TweetInfo, ProfileInfo, NotificationInfo)
- * the action occurred on. Action types and item types should be 1:1, and when an action can be
- * performed on multiple types of items, consider granular action types.
- *
- * [Action Name] is the descriptive name of the user action (e.g. favorite, render impression);
- * action names should correspond to UI actions / ML labels (which are typically based on user
- * behavior from UI actions)
- *
- * Below are guidelines around naming of action types:
- * a) When an action is coupled to a product surface, be concise in naming such that the
- * combination of item type and action name captures the user behavior for the action in the UI. For example,
- * for an open on a Notification in the PushNotification product surface that is parsed from client events,
- * consider ClientNotificationOpen because the item Notification and the action name Open concisely represent
- * the action, and the product surface PushNotification can be identified independently.
- *
- * b) It is OK to use generic names like Click if needed to distinguish from another action OR
- * it is the best way to characterize an action concisely without confusion.
- * For example, for ClientTweetClickReply, this refers to actually clicking on the Reply button but not
- * Replying, and it is OK to include Click. Another example is Click on a Tweet anywhere (other than the fav,
- * reply, etc. buttons), which leads to the TweetDetails page. Avoid generic action names like Click if
- * there is a more specific UI aspect to reference and Click is implied, e.g. ClientTweetReport is
- * preferred over ClientTweetClickReport and ClientTweetReportClick.
- *
- * c) Rely on versioning found in the origin when it is present for action names. For example,
- * a "V2Impression" is named as such because in behavioral client events, there is
- * a "v2Impress" field. See go/bce-v2impress for more details.
- *
- * d) There is a distinction between "UndoAction" and "Un{Action}" action types.
- * An "UndoAction" is fired when a user clicks on the explicit "Undo" button, after they perform an action
- * This "Undo" button is a UI element that may be temporary, e.g.,
- *  - the user waited too long to click the button, the button disappears from the UI (e.g., Undo for Mute, Block)
- *  - the button does not disappear due to timeout, but becomes unavailable after the user closes a tab
- *    (e.g, Undo for NotInterestedIn, NotAboutTopic)
- * Examples:
-    - ClientProfileUndoMute: a user clicks the "Undo" button after muting a Profile
-    - ClientTweetUndoNotInterestedIn: a users clicks the "Undo" button
-      after clicking "Not interested in this Tweet" button in the caret menu of a Tweet
- * An "Un{Action}" is fired when a user reverses a previous action, not by explicitly clicking an "Undo" button,
- * but through some other action that allows them to revert.
- * Examples:
- *  - ClientProfileUnmute: a user clicks the "Unmute" button from the caret menu of the Profile they previously muted
- *  - ClientTweetUnfav: a user unlikes a tweet by clicking on like button again
- *
- * Examples: ServerTweetFav, ClientTweetRenderImpression, ClientNotificationSeeLessOften
- *
- * See go/uua-action-type for more details.
- */
-enum ActionType {
-  // 0 - 999 used for actions derived from Server-side sources (e.g. Timelineservice, Tweetypie)
-  // NOTE: Please match values for corresponding server / client enum members (with offset 1000).
-  ServerTweetFav   = 0
-  ServerTweetUnfav = 1
-  // Reserve 2 and 3 for ServerTweetLingerImpression and ServerTweetRenderImpression
-
-  ServerTweetCreate = 4
-  ServerTweetReply = 5
-  ServerTweetQuote = 6
-  ServerTweetRetweet = 7
-  // skip 8-10 since there are no server equivalents for ClickCreate, ClickReply, ClickQuote
-  // reserve 11-16 for server video engagements
-
-  ServerTweetDelete = 17      // User deletes a default tweet
-  ServerTweetUnreply = 18     // User deletes a reply tweet
-  ServerTweetUnquote = 19     // User deletes a quote tweet
-  ServerTweetUnretweet = 20   // User removes an existing retweet
-  // User edits a tweet. Edit will create a new tweet with editedTweetId = id of the original tweet
-  // The original tweet or the new tweet from edit can only be a default or quote tweet.
-  // A user can edit a default tweet to become a quote tweet (by adding the link to another Tweet),
-  // or edit a quote tweet to remove the quote and make it a default tweet.
-  // Both the initial tweet and the new tweet created from the edit can be edited, and each time the
-  // new edit will create a new tweet. All subsequent edits would have the same initial tweet id
-  // as the TweetInfo.editedTweetId.
-  // e.g. create Tweet A, edit Tweet A -> Tweet B, edit Tweet B -> Tweet C
-  // initial tweet id for both Tweet B anc Tweet C would be Tweet A
-  ServerTweetEdit = 21
-  // skip 22 for delete an edit if we want to add it in the future
-
-  // reserve 30-40 for server topic actions
-
-  // 41-70 reserved for all negative engagements and the related positive engagements
-  // For example, Follow and Unfollow, Mute and Unmute
-  // This is fired when a user click "Submit" at the end of a "Report Tweet" flow
-  // ClientTweetReport = 1041 is scribed by HealthClient team, on the client side
-  // This is scribed by spamacaw, on the server side
-  // They can be joined on reportFlowId
-  // See https://confluence.twitter.biz/pages/viewpage.action?spaceKey=HEALTH&title=Understanding+ReportDetails
-  ServerTweetReport = 41
-
-  // reserve 42 for ServerTweetNotInterestedIn
-  // reserve 43 for ServerTweetUndoNotInterestedIn
-  // reserve 44 for ServerTweetNotAboutTopic
-  // reserve 45 for ServerTweetUndoNotAboutTopic
-
-  ServerProfileFollow = 50       // User follows a Profile
-  ServerProfileUnfollow = 51     // User unfollows a Profile
-  ServerProfileBlock = 52        // User blocks a Profile
-  ServerProfileUnblock = 53      // User unblocks a Profile
-  ServerProfileMute = 54         // User mutes a Profile
-  ServerProfileUnmute = 55       // User unmutes a Profile
-  // User reports a Profile as Spam / Abuse
-  // This user action type includes ProfileReportAsSpam and ProfileReportAsAbuse
-  ServerProfileReport = 56
-  // reserve 57 for ServerProfileUnReport
-  // reserve 56-70 for server social graph actions
-
-  // 71-90 reserved for click-based events
-  // reserve 71 for ServerTweetClick
-
-  // 1000 - 1999 used for actions derived from Client-side sources (e.g. Client Events, BCE)
-  // NOTE: Please match values for corresponding server / client enum members (with offset 1000).
-  // 1000 - 1499 used for legacy client events
-  ClientTweetFav = 1000
-  ClientTweetUnfav = 1001
-  ClientTweetLingerImpression = 1002
-  // Please note that: Render impression for quoted Tweets would emit 2 events:
-  // 1 for the quoting Tweet and 1 for the original Tweet!!!
-  ClientTweetRenderImpression = 1003
-  // 1004 reserved for ClientTweetCreate
-  // This is "Send Reply" event to indicate publishing of a reply Tweet as opposed to clicking
-  // on the reply button to initiate a reply Tweet (captured in ClientTweetClickReply).
-  // The differences between this and the ServerTweetReply are:
-  // 1) ServerTweetReply already has the new Tweet Id 2) A sent reply may be lost during transfer
-  // over the wire and thus may not end up with a follow-up ServerTweetReply.
-  ClientTweetReply = 1005
-  // This is the "send quote" event to indicate publishing of a quote tweet as opposed to clicking
-  // on the quote button to initiate a quote tweet (captured in ClientTweetClickQuote).
-  // The differences between this and the ServerTweetQuote are:
-  // 1) ServerTweetQuote already has the new Tweet Id 2) A sent quote may be lost during transfer
-  // over the wire and thus may not end up with a follow-up ServerTweetQuote.
-  ClientTweetQuote = 1006
-  // This is the "retweet" event to indicate publishing of a retweet.
-  ClientTweetRetweet = 1007
-  // 1008 reserved for ClientTweetClickCreate
-  // This is user clicking on the Reply button not actually sending a reply Tweet,
-  // thus the name ClickReply
-  ClientTweetClickReply = 1009
-  // This is user clicking the Quote/RetweetWithComment button not actually sending the quote,
-  // thus the name ClickQuote
-  ClientTweetClickQuote = 1010
-
-  // 1011 - 1016: Refer to go/cme-scribing and go/interaction-event-spec for details
-  // This is fired when playback reaches 25% of total track duration. Not valid for live videos.
-  // For looping playback, this is only fired once and does not reset at loop boundaries.
-  ClientTweetVideoPlayback25 = 1011
-  // This is fired when playback reaches 50% of total track duration. Not valid for live videos.
-  // For looping playback, this is only fired once and does not reset at loop boundaries.
-  ClientTweetVideoPlayback50 = 1012
-  // This is fired when playback reaches 75% of total track duration. Not valid for live videos.
-  // For looping playback, this is only fired once and does not reset at loop boundaries.
-  ClientTweetVideoPlayback75 = 1013
-  // This is fired when playback reaches 95% of total track duration. Not valid for live videos.
-  // For looping playback, this is only fired once and does not reset at loop boundaries.
-  ClientTweetVideoPlayback95 = 1014
-  // This if fired when the video has been played in non-preview
-  // (i.e. not autoplaying in the timeline) mode, and was not started via auto-advance.
-  // For looping playback, this is only fired once and does not reset at loop boundaries.
-  ClientTweetVideoPlayFromTap = 1015
-  // This is fired when 50% of the video has been on-screen and playing for 10 consecutive seconds
-  // or 95% of the video duration, whichever comes first.
-  // For looping playback, this is only fired once and does not reset at loop boundaries.
-  ClientTweetVideoQualityView = 1016
-  // Fired when either view_threshold or play_from_tap is fired.
-  // For looping playback, this is only fired once and does not reset at loop boundaries.
-  ClientTweetVideoView = 1109
-  // Fired when 50% of the video has been on-screen and playing for 2 consecutive seconds,
-  // regardless of video duration.
-  // For looping playback, this is only fired once and does not reset at loop boundaries.
-  ClientTweetVideoMrcView = 1110
-  // Fired when the video is:
-  // - Playing for 3 cumulative (not necessarily consecutive) seconds with 100% in view for looping video.
-  // - Playing for 3 cumulative (not necessarily consecutive) seconds or the video duration, whichever comes first, with 100% in view for non-looping video.
-  // For looping playback, this is only fired once and does not reset at loop boundaries.
-  ClientTweetVideoViewThreshold = 1111
-  // Fired when the user clicks a generic ‘visit url’ call to action.
-  ClientTweetVideoCtaUrlClick = 1112
-  // Fired when the user clicks a ‘watch now’ call to action.
-  ClientTweetVideoCtaWatchClick = 1113
-
-  // 1017 reserved for ClientTweetDelete
-  // 1018-1019 for Client delete a reply and delete a quote if we want to add them in the future
-
-  // This is fired when a user clicks on "Undo retweet" after re-tweeting a tweet
-  ClientTweetUnretweet = 1020
-  // 1021 reserved for ClientTweetEdit
-  // 1022 reserved for Client delete an edit if we want to add it in the future
-  // This is fired when a user clicks on a photo within a tweet and the photo expands to fit
-  // the screen.
-  ClientTweetPhotoExpand = 1023
-
-  // This is fired when a user clicks on a profile mention inside a tweet.
-  ClientTweetClickMentionScreenName = 1024
-
-  // 1030 - 1035 for topic actions
-  // There are multiple cases:
-  // 1. Follow from the Topic page (or so-called landing page)
-  // 2. Click on Tweet's caret menu of "Follow (the topic)", it needs to be:
-  //    1) user follows the Topic already (otherwise there is no "Follow" menu by default),
-  //    2) and clicked on the "Unfollow Topic" first.
-  ClientTopicFollow = 1030
-  // There are multiple cases:
-  // 1. Unfollow from the Topic page (or so-called landing page)
-  // 2. Click on Tweet's caret menu of "Unfollow (the topic)" if the user has already followed
-  //    the topic.
-  ClientTopicUnfollow = 1031
-  // This is fired when the user clicks the "x" icon next to the topic on their timeline,
-  // and clicks "Not interested in {TOPIC}" in the pop-up prompt
-  // Alternatively, they can also click "See more" button to visit the topic page, and click "Not interested" there.
-  ClientTopicNotInterestedIn = 1032
-  // This is fired when the user clicks the "Undo" button after clicking "x" or "Not interested" on a Topic
-  // which is captured in ClientTopicNotInterestedIn
-  ClientTopicUndoNotInterestedIn = 1033
-
-  // 1036-1070 reserved for all negative engagements and the related positive engagements
-  // For example, Follow and Unfollow, Mute and Unmute
-
-  // This is fired when a user clicks on  "This Tweet's not helpful" flow in the caret menu
-  // of a Tweet result on the Search Results Page
-  ClientTweetNotHelpful = 1036
-  // This is fired when a user clicks Undo after clicking on
-  // "This Tweet's not helpful" flow in the caret menu of a Tweet result on the Search Results Page
-  ClientTweetUndoNotHelpful = 1037
-  // This is fired when a user starts and/or completes the "Report Tweet" flow in the caret menu of a Tweet
-  ClientTweetReport = 1041
-  /*
-   * 1042-1045 refers to actions that are related to the
-   * "Not Interested In" button in the caret menu of a Tweet.
-   *
-   * ClientTweetNotInterestedIn is fired when a user clicks the
-   * "Not interested in this Tweet" button in the caret menu of a Tweet.
-   * A user can undo the ClientTweetNotInterestedIn action by clicking the
-   * "Undo" button that appears as a prompt in the caret menu, resulting
-   * in ClientTweetUndoNotInterestedIn being fired.
-   * If a user chooses to not undo and proceed, they are given multiple choices
-   * in a prompt to better document why they are not interested in a Tweet.
-   * For example, if a Tweet is not about a Topic, a user can click
-   * "This Tweet is not about {TOPIC}" in the provided prompt, resulting in
-   * in ClientTweetNotAboutTopic being fired.
-   * A user can undo the ClientTweetNotAboutTopic action by clicking the "Undo"
-   * button that appears as a subsequent prompt in the caret menu. Undoing this action
-   * results in the previous UI state, where the user had only marked "Not Interested In" and
-   * can still undo the original ClientTweetNotInterestedIn action.
-   * Similarly a user can select "This Tweet isn't recent" action resulting in ClientTweetNotRecent
-   * and he could undo this action immediately which results in ClientTweetUndoNotRecent
-   * Similarly a user can select "Show fewer tweets from" action resulting in ClientTweetSeeFewer
-   * and he could undo this action immediately which results in ClientTweetUndoSeeFewer
-   */
-  ClientTweetNotInterestedIn = 1042
-  ClientTweetUndoNotInterestedIn = 1043
-  ClientTweetNotAboutTopic = 1044
-  ClientTweetUndoNotAboutTopic = 1045
-  ClientTweetNotRecent = 1046
-  ClientTweetUndoNotRecent = 1047
-  ClientTweetSeeFewer = 1048
-  ClientTweetUndoSeeFewer = 1049
-
-  // This is fired when a user follows a profile from the
-  // profile page header / people module and people tab on the Search Results Page / sidebar on the Home page
-  // A Profile can also be followed when a user clicks follow in the caret menu of a Tweet
-  // or follow button on hovering on profile avatar, which is captured in ClientTweetFollowAuthor = 1060
-  ClientProfileFollow = 1050
-  // reserve 1050/1051 for client side Follow/Unfollow
-  // This is fired when a user clicks Block in a Profile page
-  // A Profile can also be blocked when a user clicks Block in the caret menu of a Tweet,
-  // which is captured in ClientTweetBlockAuthor = 1062
-  ClientProfileBlock = 1052
-  // This is fired when a user clicks unblock in a pop-up prompt right after blocking a profile
-  // in the profile page or clicks unblock in a drop-down menu in the profile page.
-  ClientProfileUnblock = 1053
-  // This is fired when a user clicks Mute in a Profile page
-  // A Profile can also be muted when a user clicks Mute in the caret menu of a Tweet, which is captured in ClientTweetMuteAuthor = 1064
-  ClientProfileMute = 1054
-  // reserve 1055 for client side Unmute
-  // This is fired when a user clicks "Report User" action from user profile page
-  ClientProfileReport = 1056
-
-  // reserve 1057 for ClientProfileUnreport
-
-  // This is fired when a user clicks on a profile from all modules except tweets
-  // (eg: People Search / people module in Top tab in Search Result Page
-  // For tweets, the click is captured in ClientTweetClickProfile
-  ClientProfileClick = 1058
-  // reserve 1059-1070 for client social graph actions
-
-  // This is fired when a user clicks Follow in the caret menu of a Tweet or hovers on the avatar of the tweet
-  // author and clicks on the Follow button. A profile can also be followed by clicking the Follow button on the
-  // Profile page and confirm, which is captured in ClientProfileFollow. The event emits two items, one of user type
-  // and another of tweet type, since the default implementation of BaseClientEvent only looks for Tweet type,
-  // the other item is dropped which is the expected behaviour
-  ClientTweetFollowAuthor = 1060
-
-  // This is fired when a user clicks Unfollow in the caret menu of a Tweet or hovers on the avatar of the tweet
-  // author and clicks on the Unfollow button. A profile can also be unfollowed by clicking the Unfollow button on the
-  // Profile page and confirm, which will be captured in ClientProfileUnfollow. The event emits two items, one of user type
-  // and another of tweet type, since the default implementation of BaseClientEvent only looks for Tweet type,
-  // the other item is dropped which is the expected behaviour
-  ClientTweetUnfollowAuthor = 1061
-
-  // This is fired when a user clicks Block in the menu of a Tweet to block the Profile that
-  // authored this Tweet. A Profile can also be blocked in the Profile page, which is captured
-  // in ClientProfileBlock = 1052
-  ClientTweetBlockAuthor = 1062
-  // This is fired when a user clicks unblock in a pop-up prompt right after blocking an author
-  // in the drop-down menu of a tweet
-  ClientTweetUnblockAuthor = 1063
-
-  // This is fired when a user clicks Mute in the menu of a Tweet to block the Profile that
-  // authored this Tweet. A Profile can also be muted in the Profile page, which is captured in ClientProfileMute = 1054
-  ClientTweetMuteAuthor = 1064
-
-  // reserve 1065 for ClientTweetUnmuteAuthor
-
-  // 1071-1090 reserved for click-based events
-  // click-based events are defined as clicks on a UI container (e.g., tweet, profile, etc.), as opposed to clearly named
-  // button or menu (e.g., follow, block, report, etc.), which requires a specific action name than "click".
-
-  // This is fired when a user clicks on a Tweet to open the Tweet details page. Note that for
-  // Tweets in the Notification Tab product surface, a click can be registered differently
-  // depending on whether the Tweet is a rendered Tweet (a click results in ClientTweetClick)
-  // or a wrapper Notification (a click results in ClientNotificationClick).
-  ClientTweetClick = 1071
-  // This is fired when a user clicks to view the profile page of a user from a tweet
-  // Contains a TweetInfo of this tweet
-  ClientTweetClickProfile = 1072
-  // This is fired when a user clicks on the "share" icon on a Tweet to open the share menu.
-  // The user may or may not proceed and finish sharing the Tweet.
-  ClientTweetClickShare = 1073
-  // This is fired when a user clicks "Copy link to Tweet" in a menu appeared after hitting
-  // the "share" icon on a Tweet OR when a user selects share_via -> copy_link after long-click
-  // a link inside a tweet on a mobile device
-  ClientTweetShareViaCopyLink = 1074
-  // This is fired when a user clicks "Send via Direct Message" after
-  // clicking on the "share" icon on a Tweet to open the share menu.
-  // The user may or may not proceed and finish Sending the DM.
-  ClientTweetClickSendViaDirectMessage = 1075
-  // This is fired when a user clicks "Bookmark" after
-  // clicking on the "share" icon on a Tweet to open the share menu.
-  ClientTweetShareViaBookmark = 1076
-  // This is fired when a user clicks "Remove Tweet from Bookmarks" after
-  // clicking on the "share" icon on a Tweet to open the share menu.
-  ClientTweetUnbookmark = 1077
-   // This is fired when a user clicks on the hashtag in a Tweet.
-  // The click on hashtag in "What's happening" section gives you other scribe '*:*:sidebar:*:trend:search'
-  // Currenly we are only filtering for itemType=Tweet. There are other items present in the event where itemType = user
-  // but those items are in dual-events (events with multiple itemTypes) and happen when you click on a hashtag in a Tweet from someone's profile,
-  // hence we are ignoring those itemType and only keeping itemType=Tweet.
-  ClientTweetClickHashtag = 1078
-  // This is fired when a user clicks "Bookmark" after clicking on the "share" icon on a Tweet to open the share menu, or
-  // when a user clicks on the 'bookmark' icon on a Tweet (bookmark icon is available to ios only as of March 2023).
-  // TweetBookmark and TweetShareByBookmark log the same events but serve for individual use cases.
-  ClientTweetBookmark = 1079
-
-  // 1078 - 1089 for all Share related actions.
-
-  // This is fired when a user clicks on a link in a tweet.
-  // The link could be displayed as a URL or embedded in a component such as an image or a card in a tweet.
-  ClientTweetOpenLink = 1090
-  // This is fired when a user takes screenshot.
-  // This is available for mobile clients only.
-  ClientTweetTakeScreenshot = 1091
-
-  // 1100 - 1101: Refer to go/cme-scribing and go/interaction-event-spec for details
-  // Fired on the first tick of a track regardless of where in the video it is playing.
-  // For looping playback, this is only fired once and does not reset at loop boundaries.
-  ClientTweetVideoPlaybackStart = 1100
-  // Fired when playback reaches 100% of total track duration.
-  // Not valid for live videos.
-  // For looping playback, this is only fired once and does not reset at loop boundaries.
-  ClientTweetVideoPlaybackComplete = 1101
-
-  // A user can select "This Tweet isn't relevant" action resulting in ClientTweetNotRelevant
-  // and they could undo this action immediately which results in ClientTweetUndoNotRelevant
-  ClientTweetNotRelevant = 1102
-  ClientTweetUndoNotRelevant = 1103
-
-  // A generic action type to submit feedback for different modules / items ( Tweets / Search Results )
-  ClientFeedbackPromptSubmit = 1104
-
-  // This is fired when a user profile is open in a Profile page
-  ClientProfileShow = 1105
-
-  /*
-   * This is triggered when a user exits the Twitter platform. The amount of the time spent on the
-   * platform is recorded in ms that can be used to compute the User Active Seconds (UAS).
-   */
-  ClientAppExit = 1106
-
-  /*
-   * For "card" related actions
-   */
-  ClientCardClick = 1107
-  ClientCardOpenApp = 1108
-  ClientCardAppInstallAttempt = 1114
-  ClientPollCardVote = 1115
-
-  /*
-   * The impressions 1121-1123 together with the ClientTweetRenderImpression 1003 are used by ViewCount
-   * and UnifiedEngagementCounts as EngagementType.Displayed and EngagementType.Details.
-   *
-   * For definitions, please refer to https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/common-internal/analytics/client-event-util/src/main/java/com/twitter/common_internal/analytics/client_event_util/TweetImpressionUtils.java?L14&subtree=true
-   */
-  ClientTweetGalleryImpression = 1121
-  ClientTweetDetailsImpression = 1122
-
-  /**
-   *  This is fired when a user is logged out and follows a profile from the
-   *  profile page / people module from web.
-   *  One can only try to follow from web because iOS and Android do not support logged out browsing as of Jan 2023.
-   */
-  ClientProfileFollowAttempt = 1200
-
-  /**
-   * This is fired when a user is logged out and favourite a tweet from web.
-   * One can only try to favourite from web, iOS and Android do not support logged out browsing
-   */
-  ClientTweetFavoriteAttempt = 1201
-
-  /**
-   * This is fired when a user is logged out and Retweet a tweet from web.
-   * One can only try to favourite from web, iOS and Android do not support logged out browsing
-   */
-  ClientTweetRetweetAttempt = 1202
-
-  /**
-   * This is fired when a user is logged out and reply on tweet from web.
-   * One can only try to favourite from web, iOS and Android do not support logged out browsing
-   */
-  ClientTweetReplyAttempt = 1203
-
-  /**
-   * This is fired when a user is logged out and clicks on login button.
-   * Currently seem to be generated only on [m5, LiteNativeWrapper]
-  */
-  ClientCTALoginClick = 1204
-  /**
-   * This is fired when a user is logged out and login window is shown.
-   */
-  ClientCTALoginStart = 1205
-  /**
-   * This is fired when a user is logged out and login is successful.
-  */
-  ClientCTALoginSuccess = 1206
-
-  /**
-   * This is fired when a user is logged out and clicks on signup button.
-   */
-  ClientCTASignupClick = 1207
-
-  /**
-   * This is fired when a user is logged out and signup is successful.
-   */
-  ClientCTASignupSuccess = 1208
-  // 1400 - 1499 for product surface specific actions
-  // This is fired when a user opens a Push Notification
-  ClientNotificationOpen = 1400
-  // This is fired when a user clicks on a Notification in the Notification Tab
-  ClientNotificationClick = 1401
-  // This is fired when a user taps the "See Less Often" caret menu item of a Notification in the Notification Tab
-  ClientNotificationSeeLessOften = 1402
-  // This is fired when a user closes or swipes away a Push Notification
-  ClientNotificationDismiss = 1403
-
-  // 1420 - 1439 is reserved for Search Results Page related actions
-  // 1440 - 1449 is reserved for Typeahead related actions
-
-  // This is fired when a user clicks on a typeahead suggestion(queries, events, topics, users)
-  // in a drop-down menu of a search box or a tweet compose box.
-  ClientTypeaheadClick = 1440
-
-  // 1500 - 1999 used for behavioral client events
-  // Tweet related impressions
-  ClientTweetV2Impression = 1500
-  /* Fullscreen impressions
-   *
-   * Android client will always log fullscreen_video impressions, regardless of the media type
-   * i.e. video, image, MM will all be logged as fullscreen_video
-   *
-   * iOS clients will log fullscreen_video or fullscreen_image depending on the media type
-   * on display when the user exits fullscreen. i.e.
-   * - image tweet => fullscreen_image
-   * - video tweet => fullscreen_video
-   * - MM tweet => fullscreen_video  if user exits fullscreen from the video
-   *            => fullscreen_image  if user exits fullscreen from the image
-   *
-   * Web clients will always log fullscreen_image impressions, regardless of the media type
-   *
-   * References
-   * https://docs.google.com/document/d/1oEt9_Gtz34cmO_JWNag5YKKEq4Q7cJFL-nbHOmhnq1Y
-   * https://docs.google.com/document/d/1V_7TbfPvTQgtE_91r5SubD7n78JsVR_iToW59gOMrfQ
-   */
-  ClientTweetVideoFullscreenV2Impression = 1501
-  ClientTweetImageFullscreenV2Impression = 1502
-  // Profile related impressions
-  ClientProfileV2Impression = 1600
-  /*
-   * Email Notifications: These are actions taken by the user in response to Your Highlights email
-   * ClientTweetEmailClick refers to the action NotificationType.Click
-   */
-  ClientTweetEmailClick = 5001
-
-  /*
-   * User create via Gizmoduck
-   */
-  ServerUserCreate = 6000
-  ServerUserUpdate = 6001
-  /*
-   * Ads callback engagements
-   */
-  /*
-   * This engagement is generated when a user Favs a promoted Tweet.
-   */
-  ServerPromotedTweetFav = 7000
-  /*
-   * This engagement is generated when a user Unfavs a promoted Tweet that they previously Faved.
-   */
-  ServerPromotedTweetUnfav = 7001
-  ServerPromotedTweetReply = 7002
-  ServerPromotedTweetRetweet = 7004
-  /*
-   * The block could be performed from the promoted tweet or on the promoted tweet's author's profile
-   * ads_spend_event data shows majority (~97%) of blocks have an associated promoted tweet id
-   * So for now we assume the blocks are largely performed from the tweet and following naming convention of ClientTweetBlockAuthor
-   */
-  ServerPromotedTweetBlockAuthor = 7006
-  ServerPromotedTweetUnblockAuthor = 7007
-  /*
-   * This is when a user clicks on the Conversational Card in the Promoted Tweet which
-   * leads to the Tweet Compose page. The user may or may not send the new Tweet.
-   */
-  ServerPromotedTweetComposeTweet = 7008
-  /*
-   * This is when a user clicks on the Promoted Tweet to view its details/replies.
-   */
-  ServerPromotedTweetClick = 7009
-  /*
-   * The video ads engagements are divided into two sets: VIDEO_CONTENT_* and VIDEO_AD_*. These engagements
-   * have similar definitions. VIDEO_CONTENT_* engagements are fired for videos that are part of
-   * a Tweet. VIDEO_AD_* engagements are fired for a preroll ad. A preroll ad can play on a promoted
-   * Tweet or on an organic Tweet. go/preroll-matching for more information.
-   *
-   * 7011-7013: A Promoted Event is fired when playback reaches 25%, 50%, 75% of total track duration.
-   * This is for the video on a promoted Tweet.
-   * Not valid for live videos. Refer go/avscribing.
-   * For a video that has a preroll ad played before it, the metadata will contain information about
-   * the preroll ad as well as the video itself. There will be no preroll metadata if there was no
-   * preroll ad played.
-   */
-  ServerPromotedTweetVideoPlayback25 = 7011
-  ServerPromotedTweetVideoPlayback50 = 7012
-  ServerPromotedTweetVideoPlayback75 = 7013
-  /*
-   * This is when a user successfully completes the Report flow on a Promoted Tweet.
-   * It covers reports for all policies from Client Event.
-   */
-  ServerPromotedTweetReport = 7041
-  /*
-   * Follow from Ads data stream, it could be from both Tweet or other places
-   */
-  ServerPromotedProfileFollow = 7060
-  /*
-   * Follow from Ads data stream, it could be from both Tweet or other places
-   */
-  ServerPromotedProfileUnfollow = 7061
-  /*
-   * This is when a user clicks on the mute promoted tweet's author option from the menu.
-   */
-  ServerPromotedTweetMuteAuthor = 7064
-  /*
-   * This is fired when a user clicks on the profile image, screen name, or the user name of the 
-   * author of the Promoted Tweet which leads to the author's profile page.
-   */
-  ServerPromotedTweetClickProfile = 7072
-  /*
-   * This is fired when a user clicks on a hashtag in the Promoted Tweet.
-   */
-  ServerPromotedTweetClickHashtag = 7078
-  /*
-   * This is fired when a user opens link by clicking on a URL in the Promoted Tweet.
-   */
-  ServerPromotedTweetOpenLink = 7079
-  /*
-   * This is fired when a user swipes to the next element of the carousel in the Promoted Tweet.
-   */
-  ServerPromotedTweetCarouselSwipeNext = 7091
-  /*
-   * This is fired when a user swipes to the previous element of the carousel in the Promoted Tweet.
-   */
-  ServerPromotedTweetCarouselSwipePrevious = 7092
-  /*
-   * This event is only for the Promoted Tweets with a web URL.
-   * It is fired after exiting a WebView from a Promoted Tweet if the user was on the WebView for
-   * at least 1 second.
-   *
-   * See https://confluence.twitter.biz/display/REVENUE/dwell_short for more details.
-   */
-  ServerPromotedTweetLingerImpressionShort = 7093
-  /*
-   * This event is only for the Promoted Tweets with a web URL.
-   * It is fired after exiting a WebView from a Promoted Tweet if the user was on the WebView for
-   * at least 2 seconds.
-   *
-   * See https://confluence.twitter.biz/display/REVENUE/dwell_medium for more details.
-   */
-  ServerPromotedTweetLingerImpressionMedium = 7094
-  /*
-   * This event is only for the Promoted Tweets with a web URL.
-   * It is fired after exiting a WebView from a Promoted Tweet if the user was on the WebView for
-   * at least 10 seconds.
-   *
-   * See https://confluence.twitter.biz/display/REVENUE/dwell_long for more details.
-   */
-  ServerPromotedTweetLingerImpressionLong = 7095
-  /*
-   * This is fired when a user navigates to explorer page (taps search magnifying glass on Home page)
-   * and a Promoted Trend is present and taps ON the promoted spotlight - a video/gif/image in the
-   * "hero" position (top of the explorer page).
-   */
-  ServerPromotedTweetClickSpotlight = 7096
-  /*
-   * This is fired when a user navigates to explorer page (taps search magnifying glass on Home page)
-   * and a Promoted Trend is present.
-   */
-  ServerPromotedTweetViewSpotlight = 7097
-  /*
-   * 7098-7099: Promoted Trends appear in the first or second slots of the “Trends for you” section
-   * in the Explore tab and “What’s Happening” module on Twitter.com. For more information, check go/ads-takeover.
-   * 7099: This is fired when a user views a promoted Trend. It should be considered as an impression.
-   */
-  ServerPromotedTrendView = 7098
-  /*
-   * 7099: This is fired when a user clicks a promoted Trend. It should be considered as an engagment.
-   */
-  ServerPromotedTrendClick = 7099
-  /*
-   * 7131-7133: A Promoted Event fired when playback reaches 25%, 50%, 75% of total track duration.
-   * This is for the preroll ad that plays before a video on a promoted Tweet.
-   * Not valid for live videos. Refer go/avscribing.
-   * This will only contain metadata for the preroll ad.
-   */
-  ServerPromotedTweetVideoAdPlayback25 = 7131
-  ServerPromotedTweetVideoAdPlayback50 = 7132
-  ServerPromotedTweetVideoAdPlayback75 = 7133
-  /*
-   * 7151-7153: A Promoted Event fired when playback reaches 25%, 50%, 75% of total track duration.
-   * This is for the preroll ad that plays before a video on an organic Tweet.
-   * Not valid for live videos. Refer go/avscribing.
-   * This will only contain metadata for the preroll ad.
-   */
-  ServerTweetVideoAdPlayback25 = 7151
-  ServerTweetVideoAdPlayback50 = 7152
-  ServerTweetVideoAdPlayback75 = 7153
-
-  ServerPromotedTweetDismissWithoutReason = 7180
-  ServerPromotedTweetDismissUninteresting = 7181
-  ServerPromotedTweetDismissRepetitive = 7182
-  ServerPromotedTweetDismissSpam = 7183
-
-
-  /*
-   * For FavoriteArchival Events
-   */
-  ServerTweetArchiveFavorite = 8000
-  ServerTweetUnarchiveFavorite = 8001
-  /*
-   * For RetweetArchival Events
-   */
-  ServerTweetArchiveRetweet = 8002
-  ServerTweetUnarchiveRetweet = 8003
-}(persisted='true', hasPersonalData='false')
+i-incwude "com/twittew/cwientapp/gen/cwient_app.thwift"
+i-incwude "com/twittew/wepowtfwow/wepowt_fwow_wogs.thwift"
+i-incwude "com/twittew/sociawgwaph/sociaw_gwaph_sewvice_wwite_wog.thwift"
+i-incwude "com/twittew/gizmoduck/usew_sewvice.thwift"
 
 /*
- * This union will be updated when we have a particular
- * action that has attributes unique to that particular action
- * (e.g. linger impressions have start/end times) and not common
- * to all tweet actions.
- * Naming convention for TweetActionInfo should be consistent with
- * ActionType. For example, `ClientTweetLingerImpression` ActionType enum
- * should correspond to `ClientTweetLingerImpression` TweetActionInfo union arm.
- * We typically preserve 1:1 mapping between ActionType and TweetActionInfo. However, we make
- * exceptions when optimizing for customer requirements. For example, multiple 'ClientTweetVideo*'
- * ActionType enums correspond to a single `TweetVideoWatch` TweetActionInfo union arm because
- * customers want individual action labels but common information across those labels.
+ * a-actiontype is typicawwy a-a thwee p-pawt enum consisting of
+ * [owigin][item type][action nyame]
+ *
+ * [owigin] is usuawwy "cwient" o-ow "sewvew" to indicate how the action was dewived. :3
+ *
+ * [item t-type] is singuwaw and wefews to t-the showthand vewsion of the type of
+ * item (e.g. òωó tweet, pwofiwe, σωσ n-nyotification instead of tweetinfo, σωσ p-pwofiweinfo, (⑅˘꒳˘) n-nyotificationinfo)
+ * the action occuwwed on. 🥺 action types and item types shouwd b-be 1:1, (U ﹏ U) and when an action can be
+ * pewfowmed on muwtipwe types of items, >w< c-considew gwanuwaw action types.
+ *
+ * [action n-nyame] i-is the descwiptive n-nyame of t-the usew action (e.g. nyaa~~ favowite, -.- wendew impwession);
+ * a-action nyames shouwd cowwespond to ui actions / m-mw wabews (which awe typicawwy based on usew
+ * behaviow fwom ui actions)
+ *
+ * bewow awe g-guidewines awound nyaming of action t-types:
+ * a-a) when an action i-is coupwed to a pwoduct suwface, XD be concise in nyaming such that t-the
+ * combination o-of item type and action nyame c-captuwes the u-usew behaviow fow the action in t-the ui. -.- fow exampwe, >w<
+ * fow an o-open on a nyotification in the pushnotification pwoduct suwface t-that is pawsed fwom cwient events, (ꈍᴗꈍ)
+ * c-considew cwientnotificationopen because the i-item nyotification a-and the action nyame open concisewy wepwesent
+ * the action, :3 and the pwoduct suwface pushnotification can be i-identified independentwy. (ˆ ﻌ ˆ)♡
+ *
+ * b-b) it is ok to use genewic nyames w-wike cwick if n-nyeeded to distinguish f-fwom anothew action ow
+ * it is the best way to chawactewize a-an action concisewy without confusion. -.-
+ * fow exampwe, mya fow cwienttweetcwickwepwy, (˘ω˘) t-this wefews to actuawwy c-cwicking on the w-wepwy button but n-nyot
+ * wepwying, ^•ﻌ•^ and it is ok t-to incwude cwick. a-anothew exampwe i-is cwick on a t-tweet anywhewe (othew than the fav, 😳😳😳
+ * wepwy, σωσ etc. b-buttons), ( ͡o ω ͡o ) which w-weads to the t-tweetdetaiws page. nyaa~~ a-avoid genewic a-action nyames wike cwick if
+ * thewe is a mowe specific ui aspect t-to wefewence and cwick is impwied, :3 e.g. cwienttweetwepowt is
+ * pwefewwed ovew cwienttweetcwickwepowt a-and cwienttweetwepowtcwick. (✿oωo)
+ *
+ * c) wewy on vewsioning found in the owigin w-when it is p-pwesent fow action n-nyames. >_< fow exampwe,
+ * a "v2impwession" i-is nyamed as such because i-in behaviowaw c-cwient events, ^^ thewe is
+ * a "v2impwess" fiewd. (///ˬ///✿) see go/bce-v2impwess fow mowe detaiws. :3
+ *
+ * d-d) thewe is a distinction between "undoaction" a-and "un{action}" action types. :3
+ * a-an "undoaction" i-is fiwed when a usew cwicks on the expwicit "undo" b-button, (ˆ ﻌ ˆ)♡ aftew t-they pewfowm an action
+ * this "undo" b-button i-is a ui ewement that may be tempowawy, 🥺 e.g.,
+ *  - the usew waited too wong to cwick t-the button, 😳 t-the button disappeaws f-fwom the ui (e.g., undo fow m-mute, (ꈍᴗꈍ) bwock)
+ *  - t-the button does nyot disappeaw d-due to timeout, mya but becomes unavaiwabwe aftew the usew cwoses a tab
+ *    (e.g, rawr u-undo fow nyotintewestedin, ʘwʘ n-nyotabouttopic)
+ * exampwes:
+    - cwientpwofiweundomute: a-a usew c-cwicks the "undo" button aftew muting a pwofiwe
+    - cwienttweetundonotintewestedin: a-a usews cwicks the "undo" button
+      aftew cwicking "not intewested in t-this tweet" button in the cawet menu of a tweet
+ * a-an "un{action}" i-is fiwed when a usew wevewses a pwevious action, -.- not by expwicitwy c-cwicking an "undo" b-button, UwU
+ * but thwough some othew action that awwows them t-to wevewt. :3
+ * exampwes:
+ *  - c-cwientpwofiweunmute: a usew cwicks the "unmute" button fwom the c-cawet menu of the pwofiwe they p-pweviouswy muted
+ *  - c-cwienttweetunfav: a usew u-unwikes a tweet by cwicking on wike b-button again
+ *
+ * e-exampwes: s-sewvewtweetfav, 😳 cwienttweetwendewimpwession, (ꈍᴗꈍ) c-cwientnotificationseewessoften
+ *
+ * s-see go/uua-action-type fow mowe detaiws.
  */
-union TweetActionInfo {
-  // 41 matches enum index ServerTweetReport in ActionType
-  41: ServerTweetReport serverTweetReport
-  // 1002 matches enum index ClientTweetLingerImpression in ActionType
-  1002: ClientTweetLingerImpression clientTweetLingerImpression
-  // Common metadata for
-  // 1. "ClientTweetVideo*" ActionTypes with enum indices 1011-1016 and 1100-1101
-  // 2. "ServerPromotedTweetVideo*" ActionTypes with enum indices 7011-7013 and 7131-7133
-  // 3. "ServerTweetVideo*" ActionTypes with enum indices 7151-7153
-  // This is because:
-  // 1. all the above listed ActionTypes share common metadata
-  // 2. more modular code as the same struct can be reused
-  // 3. reduces chance of error while populating and parsing the metadata
-  // 4. consumers can easily process the metadata
-  1011: TweetVideoWatch tweetVideoWatch
+e-enum actiontype {
+  // 0 - 999 used f-fow actions d-dewived fwom sewvew-side souwces (e.g. mya timewinesewvice, nyaa~~ t-tweetypie)
+  // nyote: pwease m-match vawues f-fow cowwesponding sewvew / cwient enum membews (with offset 1000). o.O
+  s-sewvewtweetfav   = 0
+  sewvewtweetunfav = 1
+  // w-wesewve 2 a-and 3 fow sewvewtweetwingewimpwession a-and sewvewtweetwendewimpwession
+
+  sewvewtweetcweate = 4
+  s-sewvewtweetwepwy = 5
+  sewvewtweetquote = 6
+  sewvewtweetwetweet = 7
+  // skip 8-10 since thewe awe nyo sewvew e-equivawents fow cwickcweate, òωó c-cwickwepwy, ^•ﻌ•^ cwickquote
+  // wesewve 11-16 f-fow sewvew video engagements
+
+  s-sewvewtweetdewete = 17      // usew dewetes a-a defauwt t-tweet
+  sewvewtweetunwepwy = 18     // u-usew dewetes a-a wepwy tweet
+  s-sewvewtweetunquote = 19     // usew dewetes a quote tweet
+  sewvewtweetunwetweet = 20   // usew wemoves an existing wetweet
+  // usew edits a-a tweet. (˘ω˘) edit wiww c-cweate a nyew t-tweet with editedtweetid = id of t-the owiginaw tweet
+  // the owiginaw tweet ow the nyew tweet fwom e-edit can onwy b-be a defauwt ow quote tweet. òωó
+  // a-a usew can edit a defauwt tweet to become a q-quote tweet (by a-adding the wink to anothew tweet), mya
+  // o-ow edit a-a quote tweet to wemove the quote and make it a defauwt tweet. ^^
+  // both the initiaw t-tweet and the n-nyew tweet cweated f-fwom the edit c-can be edited, rawr a-and each time the
+  // nyew edit w-wiww cweate a-a nyew tweet. >_< aww subsequent edits w-wouwd have the s-same initiaw tweet id
+  // as t-the tweetinfo.editedtweetid. (U ᵕ U❁)
+  // e.g. cweate tweet a, /(^•ω•^) edit tweet a-a -> tweet b, mya edit tweet b -> t-tweet c
+  // initiaw t-tweet id fow both tweet b anc t-tweet c wouwd be tweet a
+  sewvewtweetedit = 21
+  // skip 22 f-fow dewete an edit i-if we want to a-add it in the futuwe
+
+  // wesewve 30-40 fow sewvew topic actions
+
+  // 41-70 wesewved f-fow aww nyegative engagements and the wewated p-positive engagements
+  // f-fow exampwe, OwO fowwow and unfowwow, UwU m-mute and unmute
+  // this is fiwed w-when a usew c-cwick "submit" at the end of a "wepowt tweet" fwow
+  // c-cwienttweetwepowt = 1041 is scwibed by heawthcwient team, 🥺 o-on the cwient s-side
+  // this is scwibed by spamacaw, (✿oωo) o-on the sewvew side
+  // t-they can be joined o-on wepowtfwowid
+  // s-see https://confwuence.twittew.biz/pages/viewpage.action?spacekey=heawth&titwe=undewstanding+wepowtdetaiws
+  sewvewtweetwepowt = 41
+
+  // wesewve 42 fow sewvewtweetnotintewestedin
+  // wesewve 43 fow sewvewtweetundonotintewestedin
+  // wesewve 44 fow sewvewtweetnotabouttopic
+  // wesewve 45 fow sewvewtweetundonotabouttopic
+
+  sewvewpwofiwefowwow = 50       // usew fowwows a pwofiwe
+  sewvewpwofiweunfowwow = 51     // u-usew u-unfowwows a pwofiwe
+  sewvewpwofiwebwock = 52        // usew bwocks a-a pwofiwe
+  s-sewvewpwofiweunbwock = 53      // u-usew unbwocks a pwofiwe
+  sewvewpwofiwemute = 54         // u-usew mutes a pwofiwe
+  sewvewpwofiweunmute = 55       // u-usew unmutes a-a pwofiwe
+  // usew wepowts a-a pwofiwe as spam / abuse
+  // t-this usew action t-type incwudes pwofiwewepowtasspam and pwofiwewepowtasabuse
+  sewvewpwofiwewepowt = 56
+  // w-wesewve 57 f-fow sewvewpwofiweunwepowt
+  // w-wesewve 56-70 f-fow sewvew s-sociaw gwaph actions
+
+  // 71-90 w-wesewved fow cwick-based e-events
+  // w-wesewve 71 f-fow sewvewtweetcwick
+
+  // 1000 - 1999 used fow a-actions dewived f-fwom cwient-side s-souwces (e.g. rawr cwient events, rawr bce)
+  // n-nyote: pwease match vawues fow cowwesponding s-sewvew / cwient enum membews (with o-offset 1000). ( ͡o ω ͡o )
+  // 1000 - 1499 u-used fow w-wegacy cwient events
+  cwienttweetfav = 1000
+  c-cwienttweetunfav = 1001
+  cwienttweetwingewimpwession = 1002
+  // p-pwease nyote that: wendew impwession f-fow quoted tweets wouwd emit 2 e-events:
+  // 1 fow the quoting tweet and 1 fow the owiginaw tweet!!!
+  cwienttweetwendewimpwession = 1003
+  // 1004 w-wesewved fow cwienttweetcweate
+  // t-this i-is "send wepwy" event to indicate pubwishing of a wepwy tweet a-as opposed to cwicking
+  // on t-the wepwy button t-to initiate a wepwy t-tweet (captuwed in cwienttweetcwickwepwy). /(^•ω•^)
+  // the diffewences b-between this a-and the sewvewtweetwepwy awe:
+  // 1) s-sewvewtweetwepwy awweady has the nyew tweet i-id 2) a sent wepwy may be wost d-duwing twansfew
+  // o-ovew the w-wiwe and thus may nyot end up with a-a fowwow-up s-sewvewtweetwepwy.
+  c-cwienttweetwepwy = 1005
+  // t-this is the "send quote" event t-to indicate pubwishing o-of a quote t-tweet as opposed t-to cwicking
+  // o-on the quote b-button to initiate a-a quote tweet (captuwed i-in cwienttweetcwickquote). -.-
+  // the d-diffewences between this and the s-sewvewtweetquote awe:
+  // 1) sewvewtweetquote a-awweady has the n-new tweet id 2) a-a sent quote may be wost duwing twansfew
+  // ovew the wiwe and t-thus may nyot end u-up with a fowwow-up s-sewvewtweetquote. >w<
+  cwienttweetquote = 1006
+  // this is the "wetweet" event t-to indicate pubwishing o-of a wetweet. ( ͡o ω ͡o )
+  cwienttweetwetweet = 1007
+  // 1008 w-wesewved f-fow cwienttweetcwickcweate
+  // this is usew cwicking on the wepwy button n-not actuawwy sending a-a wepwy tweet, (˘ω˘)
+  // t-thus the n-nyame cwickwepwy
+  cwienttweetcwickwepwy = 1009
+  // this is u-usew cwicking the q-quote/wetweetwithcomment button not actuawwy sending t-the quote, /(^•ω•^)
+  // thus the nyame cwickquote
+  c-cwienttweetcwickquote = 1010
+
+  // 1011 - 1016: wefew to go/cme-scwibing a-and g-go/intewaction-event-spec fow detaiws
+  // t-this i-is fiwed when pwayback weaches 25% o-of totaw twack duwation. nyot v-vawid fow wive v-videos.
+  // fow w-wooping pwayback, (˘ω˘) t-this is onwy fiwed once and does n-not weset at w-woop boundawies. o.O
+  c-cwienttweetvideopwayback25 = 1011
+  // this i-is fiwed when pwayback weaches 50% of totaw twack d-duwation. nyaa~~ nyot v-vawid fow wive v-videos. :3
+  // fow wooping pwayback, (///ˬ///✿) this is onwy fiwed once and does nyot weset at w-woop boundawies. (U ﹏ U)
+  cwienttweetvideopwayback50 = 1012
+  // t-this i-is fiwed when pwayback weaches 75% of totaw twack d-duwation. o.O nyot vawid fow wive v-videos. ^^;;
+  // fow w-wooping pwayback, ʘwʘ t-this is onwy f-fiwed once and d-does nyot weset at woop boundawies.
+  cwienttweetvideopwayback75 = 1013
+  // this is fiwed when p-pwayback weaches 95% of totaw twack d-duwation. (///ˬ///✿) nyot vawid fow wive videos. σωσ
+  // fow wooping pwayback, ^^;; t-this is onwy fiwed once and does nyot weset at woop boundawies. UwU
+  cwienttweetvideopwayback95 = 1014
+  // t-this i-if fiwed when the video has been p-pwayed in nyon-pweview
+  // (i.e. mya nyot autopwaying in the timewine) m-mode, ^•ﻌ•^ and w-was nyot stawted via auto-advance. (⑅˘꒳˘)
+  // f-fow wooping pwayback, nyaa~~ t-this is onwy fiwed once and does nyot weset at woop boundawies.
+  c-cwienttweetvideopwayfwomtap = 1015
+  // this is fiwed when 50% o-of the video has b-been on-scween a-and pwaying fow 10 consecutive seconds
+  // ow 95% o-of the video duwation, ^^;; whichevew comes fiwst. 🥺
+  // fow wooping pwayback, ^^;; this i-is onwy fiwed o-once and does not w-weset at woop b-boundawies. nyaa~~
+  cwienttweetvideoquawityview = 1016
+  // fiwed when eithew view_thweshowd o-ow pway_fwom_tap i-is fiwed. 🥺
+  // fow wooping pwayback, (ˆ ﻌ ˆ)♡ this i-is onwy fiwed once and does not weset at woop b-boundawies. ( ͡o ω ͡o )
+  cwienttweetvideoview = 1109
+  // fiwed when 50% of the video has been o-on-scween and p-pwaying fow 2 consecutive seconds, nyaa~~
+  // w-wegawdwess o-of video duwation. ( ͡o ω ͡o )
+  // f-fow wooping pwayback, ^^;; this is onwy f-fiwed once and does nyot weset at woop boundawies. rawr x3
+  c-cwienttweetvideomwcview = 1110
+  // fiwed when the video is:
+  // - pwaying f-fow 3 cumuwative (not n-nyecessawiwy c-consecutive) s-seconds with 100% i-in view fow wooping video.
+  // - p-pwaying fow 3 cumuwative (not nyecessawiwy c-consecutive) seconds ow the video d-duwation, ^^;; whichevew comes fiwst, ^•ﻌ•^ with 100% in v-view fow nyon-wooping v-video. 🥺
+  // fow wooping pwayback, (ꈍᴗꈍ) t-this is onwy fiwed once a-and does nyot weset a-at woop boundawies. ^•ﻌ•^
+  cwienttweetvideoviewthweshowd = 1111
+  // f-fiwed when the u-usew cwicks a genewic ‘visit u-uww’ caww to action. :3
+  cwienttweetvideoctauwwcwick = 1112
+  // fiwed when the usew cwicks a ‘watch n-nyow’ caww to action. (˘ω˘)
+  c-cwienttweetvideoctawatchcwick = 1113
+
+  // 1017 wesewved fow cwienttweetdewete
+  // 1018-1019 f-fow cwient dewete a-a wepwy and dewete a-a quote if we want to add t-them in the futuwe
+
+  // t-this is fiwed when a usew c-cwicks on "undo wetweet" aftew w-we-tweeting a tweet
+  cwienttweetunwetweet = 1020
+  // 1021 w-wesewved f-fow cwienttweetedit
+  // 1022 wesewved fow cwient dewete an edit if we want to add it in t-the futuwe
+  // t-this is fiwed when a usew cwicks on a photo within a tweet and the p-photo expands to fit
+  // the s-scween. ^^
+  cwienttweetphotoexpand = 1023
+
+  // this i-is fiwed when a usew cwicks on a pwofiwe mention inside a tweet. /(^•ω•^)
+  cwienttweetcwickmentionscweenname = 1024
+
+  // 1030 - 1035 f-fow topic actions
+  // thewe awe muwtipwe cases:
+  // 1. σωσ f-fowwow fwom the topic p-page (ow so-cawwed w-wanding page)
+  // 2. òωó cwick o-on tweet's cawet m-menu of "fowwow (the t-topic)", >w< it n-nyeeds to be:
+  //    1) u-usew f-fowwows the topic awweady (othewwise thewe is nyo "fowwow" menu by defauwt), (˘ω˘)
+  //    2) and cwicked o-on the "unfowwow t-topic" fiwst. ^•ﻌ•^
+  c-cwienttopicfowwow = 1030
+  // t-thewe awe muwtipwe c-cases:
+  // 1. >_< u-unfowwow fwom the topic page (ow so-cawwed wanding page)
+  // 2. -.- cwick on tweet's c-cawet menu o-of "unfowwow (the topic)" if the usew has awweady fowwowed
+  //    t-the topic. òωó
+  c-cwienttopicunfowwow = 1031
+  // t-this is fiwed when the usew cwicks the "x" icon n-nyext to the topic on theiw timewine, ( ͡o ω ͡o )
+  // and c-cwicks "not intewested i-in {topic}" in the pop-up pwompt
+  // awtewnativewy, (ˆ ﻌ ˆ)♡ t-they can awso cwick "see m-mowe" button t-to visit the topic page, :3 and c-cwick "not intewested" t-thewe.
+  c-cwienttopicnotintewestedin = 1032
+  // t-this is fiwed w-when the usew c-cwicks the "undo" button aftew c-cwicking "x" ow "not i-intewested" on a topic
+  // w-which is captuwed in cwienttopicnotintewestedin
+  cwienttopicundonotintewestedin = 1033
+
+  // 1036-1070 w-wesewved fow aww nyegative e-engagements and the wewated p-positive engagements
+  // f-fow exampwe, ^•ﻌ•^ fowwow and unfowwow, ( ͡o ω ͡o ) mute a-and unmute
+
+  // this is fiwed when a usew cwicks o-on  "this tweet's n-nyot hewpfuw" fwow in the cawet menu
+  // o-of a tweet wesuwt o-on the seawch wesuwts page
+  c-cwienttweetnothewpfuw = 1036
+  // this is fiwed when a usew cwicks u-undo aftew cwicking o-on
+  // "this tweet's nyot h-hewpfuw" fwow i-in the cawet menu of a tweet wesuwt on the seawch w-wesuwts page
+  c-cwienttweetundonothewpfuw = 1037
+  // t-this is fiwed w-when a usew stawts and/ow compwetes the "wepowt tweet" fwow in the cawet menu of a tweet
+  cwienttweetwepowt = 1041
+  /*
+   * 1042-1045 w-wefews t-to actions that a-awe wewated t-to the
+   * "not i-intewested in" b-button in the cawet menu of a tweet. ^•ﻌ•^
+   *
+   * cwienttweetnotintewestedin i-is fiwed w-when a usew cwicks the
+   * "not i-intewested in t-this tweet" button in the cawet menu of a tweet. ʘwʘ
+   * a-a usew can undo the cwienttweetnotintewestedin action by c-cwicking the
+   * "undo" button t-that appeaws as a-a pwompt in the cawet menu, :3 wesuwting
+   * i-in cwienttweetundonotintewestedin b-being f-fiwed. >_<
+   * if a usew chooses t-to nyot undo and p-pwoceed, rawr they awe given muwtipwe c-choices
+   * in a pwompt to b-bettew document w-why they awe nyot i-intewested in a tweet. 🥺
+   * fow e-exampwe, (✿oωo) if a tweet is nyot about a topic, (U ﹏ U) a usew c-can cwick
+   * "this tweet is nyot about {topic}" in the pwovided pwompt, rawr x3 wesuwting in
+   * in cwienttweetnotabouttopic b-being fiwed. (✿oωo)
+   * a usew can undo the cwienttweetnotabouttopic action by cwicking the "undo"
+   * button t-that appeaws as a subsequent pwompt in the c-cawet menu. (U ᵕ U❁) undoing this action
+   * w-wesuwts in the pwevious ui state, -.- whewe the u-usew had onwy mawked "not intewested i-in" and
+   * can stiww undo t-the owiginaw cwienttweetnotintewestedin a-action. /(^•ω•^)
+   * simiwawwy a usew can sewect "this t-tweet isn't wecent" action wesuwting in cwienttweetnotwecent
+   * a-and he couwd undo this a-action immediatewy which wesuwts i-in cwienttweetundonotwecent
+   * simiwawwy a u-usew can sewect "show f-fewew tweets fwom" action wesuwting in cwienttweetseefewew
+   * a-and he couwd undo this action immediatewy w-which wesuwts in cwienttweetundoseefewew
+   */
+  cwienttweetnotintewestedin = 1042
+  cwienttweetundonotintewestedin = 1043
+  cwienttweetnotabouttopic = 1044
+  cwienttweetundonotabouttopic = 1045
+  c-cwienttweetnotwecent = 1046
+  c-cwienttweetundonotwecent = 1047
+  cwienttweetseefewew = 1048
+  c-cwienttweetundoseefewew = 1049
+
+  // t-this is fiwed when a usew f-fowwows a pwofiwe fwom the
+  // pwofiwe page headew / peopwe moduwe and peopwe t-tab on the seawch w-wesuwts page / sidebaw on the h-home page
+  // a p-pwofiwe can awso be fowwowed when a-a usew cwicks fowwow in the cawet menu of a tweet
+  // o-ow fowwow button on hovewing on pwofiwe a-avataw, OwO which i-is captuwed in cwienttweetfowwowauthow = 1060
+  cwientpwofiwefowwow = 1050
+  // wesewve 1050/1051 f-fow cwient side fowwow/unfowwow
+  // this is fiwed when a usew cwicks bwock in a pwofiwe page
+  // a pwofiwe can awso be bwocked w-when a usew cwicks b-bwock in the cawet menu of a-a tweet, rawr x3
+  // which i-is captuwed in cwienttweetbwockauthow = 1062
+  c-cwientpwofiwebwock = 1052
+  // this is fiwed when a usew cwicks unbwock in a pop-up pwompt wight aftew bwocking a-a pwofiwe
+  // in the pwofiwe page ow cwicks unbwock in a dwop-down menu in t-the pwofiwe page. σωσ
+  c-cwientpwofiweunbwock = 1053
+  // t-this is fiwed when a usew cwicks mute in a pwofiwe page
+  // a-a pwofiwe can a-awso be muted when a-a usew cwicks mute in the cawet m-menu of a tweet, which is captuwed i-in cwienttweetmuteauthow = 1064
+  cwientpwofiwemute = 1054
+  // w-wesewve 1055 fow cwient side u-unmute
+  // this is fiwed when a usew cwicks "wepowt u-usew" action fwom usew pwofiwe p-page
+  cwientpwofiwewepowt = 1056
+
+  // wesewve 1057 f-fow cwientpwofiweunwepowt
+
+  // t-this i-is fiwed when a usew cwicks on a-a pwofiwe fwom aww moduwes except t-tweets
+  // (eg: peopwe seawch / p-peopwe moduwe i-in top tab in seawch wesuwt page
+  // fow tweets, ʘwʘ t-the cwick is captuwed in cwienttweetcwickpwofiwe
+  cwientpwofiwecwick = 1058
+  // wesewve 1059-1070 fow cwient sociaw gwaph actions
+
+  // this is fiwed when a-a usew cwicks fowwow in the cawet menu of a tweet o-ow hovews on the avataw of the t-tweet
+  // authow and cwicks on the fowwow button. a-a pwofiwe can awso be fowwowed by cwicking the f-fowwow button on the
+  // pwofiwe page and confiwm, -.- w-which is captuwed in cwientpwofiwefowwow. 😳 the event emits t-two items, one of usew type
+  // and anothew of t-tweet type, 😳😳😳 since t-the defauwt impwementation of basecwientevent o-onwy wooks fow t-tweet type, OwO
+  // the othew item i-is dwopped which i-is the expected behaviouw
+  cwienttweetfowwowauthow = 1060
+
+  // this is fiwed w-when a usew cwicks unfowwow in the cawet menu of a tweet ow hovews o-on the avataw of the tweet
+  // authow and cwicks on the unfowwow b-button. ^•ﻌ•^ a pwofiwe c-can awso b-be unfowwowed by cwicking the unfowwow button on the
+  // pwofiwe p-page and confiwm, which wiww be c-captuwed in cwientpwofiweunfowwow. rawr the event emits t-two items, o-one of usew type
+  // and anothew of tweet type, (✿oωo) since the defauwt impwementation of basecwientevent o-onwy wooks f-fow tweet type, ^^
+  // the othew item is dwopped which i-is the expected behaviouw
+  cwienttweetunfowwowauthow = 1061
+
+  // t-this is f-fiwed when a usew c-cwicks bwock in t-the menu of a t-tweet to bwock the p-pwofiwe that
+  // authowed this tweet. -.- a pwofiwe c-can awso be b-bwocked in the pwofiwe p-page, (✿oωo) which i-is captuwed
+  // i-in cwientpwofiwebwock = 1052
+  c-cwienttweetbwockauthow = 1062
+  // this is fiwed w-when a usew c-cwicks unbwock in a-a pop-up pwompt wight aftew bwocking an authow
+  // i-in the dwop-down menu of a tweet
+  cwienttweetunbwockauthow = 1063
+
+  // this i-is fiwed when a usew cwicks mute in the menu o-of a tweet to bwock t-the pwofiwe that
+  // authowed this tweet. o.O a pwofiwe can awso b-be muted in the p-pwofiwe page, :3 which is captuwed i-in cwientpwofiwemute = 1054
+  c-cwienttweetmuteauthow = 1064
+
+  // wesewve 1065 fow cwienttweetunmuteauthow
+
+  // 1071-1090 wesewved f-fow cwick-based e-events
+  // cwick-based events awe defined a-as cwicks on a u-ui containew (e.g., tweet, rawr x3 pwofiwe, (U ᵕ U❁) etc.), as opposed t-to cweawwy nyamed
+  // button ow menu (e.g., fowwow, :3 bwock, 🥺 wepowt, etc.), XD which wequiwes a-a specific action nyame than "cwick". >_<
+
+  // this i-is fiwed when a u-usew cwicks on a-a tweet to open the tweet detaiws p-page. (ꈍᴗꈍ) nyote that f-fow
+  // tweets i-in the nyotification t-tab pwoduct s-suwface, ( ͡o ω ͡o ) a cwick can be wegistewed diffewentwy
+  // d-depending o-on whethew the t-tweet is a wendewed tweet (a cwick w-wesuwts in cwienttweetcwick)
+  // o-ow a wwappew n-nyotification (a cwick wesuwts i-in cwientnotificationcwick). (˘ω˘)
+  c-cwienttweetcwick = 1071
+  // t-this i-is fiwed when a-a usew cwicks to view the pwofiwe p-page of a usew fwom a tweet
+  // c-contains a tweetinfo o-of this tweet
+  cwienttweetcwickpwofiwe = 1072
+  // this is fiwed when a-a usew cwicks on t-the "shawe" icon on a tweet to o-open the shawe menu. (˘ω˘)
+  // t-the usew may ow may nyot pwoceed and finish s-shawing the t-tweet. UwU
+  cwienttweetcwickshawe = 1073
+  // t-this i-is fiwed when a-a usew cwicks "copy w-wink to tweet" in a menu appeawed aftew hitting
+  // t-the "shawe" icon on a tweet ow when a usew sewects shawe_via -> copy_wink a-aftew wong-cwick
+  // a-a wink inside a tweet on a mobiwe device
+  cwienttweetshaweviacopywink = 1074
+  // t-this i-is fiwed when a usew cwicks "send via diwect message" a-aftew
+  // cwicking on the "shawe" i-icon on a-a tweet to open t-the shawe menu. (ˆ ﻌ ˆ)♡
+  // the usew may ow may nyot pwoceed and finish s-sending the dm. (///ˬ///✿)
+  cwienttweetcwicksendviadiwectmessage = 1075
+  // t-this is fiwed when a usew c-cwicks "bookmawk" aftew
+  // cwicking on the "shawe" i-icon on a tweet to open the s-shawe menu. (ꈍᴗꈍ)
+  cwienttweetshaweviabookmawk = 1076
+  // this is fiwed when a usew c-cwicks "wemove tweet fwom bookmawks" a-aftew
+  // cwicking on the "shawe" icon on a tweet to open the shawe menu. -.-
+  cwienttweetunbookmawk = 1077
+   // this is fiwed w-when a usew c-cwicks on the hashtag i-in a tweet. 😳😳😳
+  // t-the cwick on hashtag in "nani's happening" s-section gives you othew scwibe '*:*:sidebaw:*:twend:seawch'
+  // cuwwenwy we awe onwy fiwtewing f-fow itemtype=tweet. (///ˬ///✿) t-thewe awe o-othew items pwesent i-in the event whewe itemtype = usew
+  // but those items awe in duaw-events (events w-with muwtipwe i-itemtypes) and happen when you cwick on a hashtag in a tweet f-fwom someone's pwofiwe, UwU
+  // hence w-we awe ignowing t-those itemtype a-and onwy keeping itemtype=tweet. 😳
+  cwienttweetcwickhashtag = 1078
+  // this is fiwed when a usew cwicks "bookmawk" a-aftew cwicking on the "shawe" i-icon on a tweet to open the shawe menu, /(^•ω•^) ow
+  // when a usew c-cwicks on the 'bookmawk' icon on a-a tweet (bookmawk icon is avaiwabwe to ios onwy a-as of mawch 2023). òωó
+  // t-tweetbookmawk a-and tweetshawebybookmawk w-wog the same events b-but sewve fow individuaw use c-cases. >w<
+  cwienttweetbookmawk = 1079
+
+  // 1078 - 1089 f-fow aww shawe wewated actions. -.-
+
+  // t-this is fiwed when a usew cwicks on a-a wink in a tweet. (⑅˘꒳˘)
+  // the wink c-couwd be dispwayed a-as a uww ow embedded in a component s-such as a-an image ow a cawd in a tweet. (˘ω˘)
+  cwienttweetopenwink = 1090
+  // this is fiwed w-when a usew takes s-scweenshot. (U ᵕ U❁)
+  // t-this is avaiwabwe f-fow mobiwe cwients onwy. ^^
+  cwienttweettakescweenshot = 1091
+
+  // 1100 - 1101: wefew to go/cme-scwibing a-and go/intewaction-event-spec fow detaiws
+  // f-fiwed on the fiwst tick of a twack wegawdwess o-of whewe in the video it is pwaying. ^^
+  // fow wooping p-pwayback, rawr x3 this is onwy fiwed once a-and does nyot w-weset at woop boundawies.
+  c-cwienttweetvideopwaybackstawt = 1100
+  // fiwed when p-pwayback weaches 100% o-of totaw twack duwation. >w<
+  // n-nyot vawid f-fow wive videos. (U ᵕ U❁)
+  // f-fow wooping p-pwayback, this is onwy fiwed once a-and does nyot w-weset at woop b-boundawies. 🥺
+  cwienttweetvideopwaybackcompwete = 1101
+
+  // a usew c-can sewect "this tweet isn't wewevant" action wesuwting in cwienttweetnotwewevant
+  // and they couwd undo this a-action immediatewy w-which wesuwts in cwienttweetundonotwewevant
+  c-cwienttweetnotwewevant = 1102
+  cwienttweetundonotwewevant = 1103
+
+  // a genewic a-action type t-to submit feedback f-fow diffewent m-moduwes / items ( tweets / seawch w-wesuwts )
+  cwientfeedbackpwomptsubmit = 1104
+
+  // this is f-fiwed when a usew p-pwofiwe is open in a pwofiwe page
+  cwientpwofiweshow = 1105
+
+  /*
+   * this i-is twiggewed when a usew exits the t-twittew pwatfowm. (⑅˘꒳˘) the amount of the time spent o-on the
+   * pwatfowm is wecowded i-in ms that can be used to compute the usew active s-seconds (uas). OwO
+   */
+  cwientappexit = 1106
+
+  /*
+   * f-fow "cawd" wewated actions
+   */
+  cwientcawdcwick = 1107
+  c-cwientcawdopenapp = 1108
+  c-cwientcawdappinstawwattempt = 1114
+  cwientpowwcawdvote = 1115
+
+  /*
+   * the i-impwessions 1121-1123 togethew with the cwienttweetwendewimpwession 1003 a-awe used b-by viewcount
+   * a-and unifiedengagementcounts as engagementtype.dispwayed and engagementtype.detaiws. 😳
+   *
+   * fow definitions, òωó pwease wefew t-to https://souwcegwaph.twittew.biz/git.twittew.biz/souwce/-/bwob/common-intewnaw/anawytics/cwient-event-utiw/swc/main/java/com/twittew/common_intewnaw/anawytics/cwient_event_utiw/tweetimpwessionutiws.java?w14&subtwee=twue
+   */
+  cwienttweetgawwewyimpwession = 1121
+  cwienttweetdetaiwsimpwession = 1122
+
+  /**
+   *  t-this i-is fiwed when a usew is wogged out and fowwows a-a pwofiwe fwom t-the
+   *  pwofiwe page / peopwe moduwe fwom web. (ˆ ﻌ ˆ)♡
+   *  one can o-onwy twy to fowwow fwom web because i-ios and andwoid do nyot suppowt wogged out bwowsing a-as of jan 2023.
+   */
+  c-cwientpwofiwefowwowattempt = 1200
+
+  /**
+   * this i-is fiwed when a-a usew is wogged out and favouwite a-a tweet fwom web. ʘwʘ
+   * one can o-onwy twy to favouwite f-fwom web, ^^;; i-ios and andwoid d-do nyot suppowt w-wogged out bwowsing
+   */
+  cwienttweetfavowiteattempt = 1201
+
+  /**
+   * this i-is fiwed when a-a usew is wogged out and wetweet a tweet fwom web. ʘwʘ
+   * o-one can onwy twy to favouwite f-fwom web, òωó ios and andwoid do nyot suppowt wogged out bwowsing
+   */
+  cwienttweetwetweetattempt = 1202
+
+  /**
+   * this is fiwed when a usew i-is wogged out and wepwy on tweet f-fwom web. ( ͡o ω ͡o )
+   * one can onwy t-twy to favouwite f-fwom web, ʘwʘ ios and andwoid do nyot s-suppowt wogged out bwowsing
+   */
+  c-cwienttweetwepwyattempt = 1203
+
+  /**
+   * this is fiwed w-when a usew is wogged out and cwicks on wogin button. >w<
+   * cuwwentwy seem to be genewated onwy on [m5, 😳😳😳 witenativewwappew]
+  */
+  c-cwientctawogincwick = 1204
+  /**
+   * this is fiwed when a usew i-is wogged out and wogin window i-is shown.
+   */
+  cwientctawoginstawt = 1205
+  /**
+   * this is fiwed when a usew is wogged out and wogin is successfuw. σωσ
+  */
+  cwientctawoginsuccess = 1206
+
+  /**
+   * this is fiwed when a usew i-is wogged out a-and cwicks on signup b-button. -.-
+   */
+  cwientctasignupcwick = 1207
+
+  /**
+   * t-this i-is fiwed when a-a usew is wogged out and signup is successfuw. 🥺
+   */
+  c-cwientctasignupsuccess = 1208
+  // 1400 - 1499 f-fow pwoduct suwface specific a-actions
+  // t-this is fiwed when a-a usew opens a-a push nyotification
+  c-cwientnotificationopen = 1400
+  // this i-is fiwed when a u-usew cwicks on a n-nyotification in t-the nyotification t-tab
+  cwientnotificationcwick = 1401
+  // t-this i-is fiwed when a-a usew taps the "see w-wess often" c-cawet menu item of a nyotification in the nyotification tab
+  c-cwientnotificationseewessoften = 1402
+  // this i-is fiwed when a usew cwoses ow swipes away a push n-nyotification
+  c-cwientnotificationdismiss = 1403
+
+  // 1420 - 1439 i-is wesewved fow seawch wesuwts p-page wewated a-actions
+  // 1440 - 1449 is wesewved fow typeahead wewated actions
+
+  // this is fiwed when a usew c-cwicks on a typeahead suggestion(quewies, >w< events, topics, (///ˬ///✿) usews)
+  // i-in a dwop-down m-menu of a seawch box ow a-a tweet compose b-box. UwU
+  cwienttypeaheadcwick = 1440
+
+  // 1500 - 1999 u-used fow behaviowaw c-cwient e-events
+  // tweet w-wewated impwessions
+  c-cwienttweetv2impwession = 1500
+  /* fuwwscween impwessions
+   *
+   * a-andwoid cwient wiww a-awways wog fuwwscween_video impwessions, ( ͡o ω ͡o ) w-wegawdwess o-of the media type
+   * i.e. v-video, (ˆ ﻌ ˆ)♡ image, mm wiww aww be wogged as fuwwscween_video
+   *
+   * i-ios cwients w-wiww wog fuwwscween_video o-ow fuwwscween_image d-depending on the media t-type
+   * on d-dispway when the u-usew exits fuwwscween. ^^;; i.e.
+   * - i-image tweet => fuwwscween_image
+   * - video tweet => fuwwscween_video
+   * - mm tweet => fuwwscween_video  if usew exits fuwwscween fwom the video
+   *            => f-fuwwscween_image  if u-usew exits fuwwscween fwom the image
+   *
+   * web cwients wiww awways wog fuwwscween_image i-impwessions, (U ᵕ U❁) w-wegawdwess of the media type
+   *
+   * wefewences
+   * h-https://docs.googwe.com/document/d/1oet9_gtz34cmo_jwnag5ykkeq4q7cjfw-nbhomhnq1y
+   * h-https://docs.googwe.com/document/d/1v_7tbfpvtqgte_91w5subd7n78jsvw_itow59gomwfq
+   */
+  cwienttweetvideofuwwscweenv2impwession = 1501
+  cwienttweetimagefuwwscweenv2impwession = 1502
+  // pwofiwe wewated i-impwessions
+  c-cwientpwofiwev2impwession = 1600
+  /*
+   * emaiw n-nyotifications: these awe actions t-taken by the u-usew in wesponse to youw highwights emaiw
+   * cwienttweetemaiwcwick wefews to the a-action nyotificationtype.cwick
+   */
+  c-cwienttweetemaiwcwick = 5001
+
+  /*
+   * u-usew cweate via g-gizmoduck
+   */
+  sewvewusewcweate = 6000
+  s-sewvewusewupdate = 6001
+  /*
+   * a-ads cawwback engagements
+   */
+  /*
+   * t-this engagement i-is genewated when a usew favs a pwomoted t-tweet. XD
+   */
+  s-sewvewpwomotedtweetfav = 7000
+  /*
+   * this engagement is genewated when a usew unfavs a pwomoted t-tweet that they p-pweviouswy faved. (ꈍᴗꈍ)
+   */
+  sewvewpwomotedtweetunfav = 7001
+  s-sewvewpwomotedtweetwepwy = 7002
+  sewvewpwomotedtweetwetweet = 7004
+  /*
+   * the bwock couwd be p-pewfowmed fwom t-the pwomoted tweet o-ow on the pwomoted tweet's authow's p-pwofiwe
+   * a-ads_spend_event data shows majowity (~97%) of bwocks have an a-associated pwomoted t-tweet id
+   * s-so fow nyow we a-assume the bwocks a-awe wawgewy p-pewfowmed fwom the tweet and fowwowing nyaming convention of cwienttweetbwockauthow
+   */
+  sewvewpwomotedtweetbwockauthow = 7006
+  sewvewpwomotedtweetunbwockauthow = 7007
+  /*
+   * t-this is when a usew cwicks o-on the convewsationaw c-cawd in the pwomoted tweet which
+   * weads to the tweet c-compose page. -.- the u-usew may ow may nyot send the n-nyew tweet. >_<
+   */
+  sewvewpwomotedtweetcomposetweet = 7008
+  /*
+   * t-this is when a usew cwicks on the pwomoted tweet to view its d-detaiws/wepwies. (ˆ ﻌ ˆ)♡
+   */
+  sewvewpwomotedtweetcwick = 7009
+  /*
+   * the video ads engagements awe divided into t-two sets: video_content_* a-and video_ad_*. ( ͡o ω ͡o ) t-these e-engagements
+   * have simiwaw definitions. rawr x3 video_content_* e-engagements awe fiwed f-fow videos that awe pawt of
+   * a tweet. òωó video_ad_* e-engagements a-awe fiwed fow a-a pwewoww ad. 😳 a pwewoww ad can pway on a pwomoted
+   * t-tweet ow on an owganic tweet. (ˆ ﻌ ˆ)♡ go/pwewoww-matching fow mowe infowmation. 🥺
+   *
+   * 7011-7013: a pwomoted event is fiwed when p-pwayback weaches 25%, ^^ 50%, 75% o-of totaw twack duwation. /(^•ω•^)
+   * this is fow the video on a pwomoted tweet. o.O
+   * nyot vawid fow wive v-videos. òωó wefew go/avscwibing. XD
+   * fow a video t-that has a pwewoww a-ad pwayed befowe i-it, the metadata w-wiww contain infowmation about
+   * the pwewoww ad as weww as the video itsewf. rawr x3 thewe wiww b-be nyo pwewoww m-metadata if thewe w-was nyo
+   * p-pwewoww ad pwayed. (˘ω˘)
+   */
+  sewvewpwomotedtweetvideopwayback25 = 7011
+  s-sewvewpwomotedtweetvideopwayback50 = 7012
+  sewvewpwomotedtweetvideopwayback75 = 7013
+  /*
+   * t-this is when a usew successfuwwy compwetes the wepowt fwow o-on a pwomoted t-tweet. :3
+   * it covews w-wepowts fow a-aww powicies fwom cwient event. (U ᵕ U❁)
+   */
+  s-sewvewpwomotedtweetwepowt = 7041
+  /*
+   * f-fowwow fwom ads data stweam, rawr it couwd be fwom both tweet ow o-othew pwaces
+   */
+  s-sewvewpwomotedpwofiwefowwow = 7060
+  /*
+   * fowwow fwom ads data stweam, OwO it couwd be fwom b-both tweet ow othew pwaces
+   */
+  s-sewvewpwomotedpwofiweunfowwow = 7061
+  /*
+   * t-this is when a-a usew cwicks on the mute pwomoted tweet's authow option fwom the menu. ʘwʘ
+   */
+  sewvewpwomotedtweetmuteauthow = 7064
+  /*
+   * this i-is fiwed when a usew cwicks o-on the pwofiwe image, XD scween nyame, rawr x3 ow the usew n-nyame of the 
+   * authow of the p-pwomoted tweet w-which weads to the a-authow's pwofiwe p-page. OwO
+   */
+  s-sewvewpwomotedtweetcwickpwofiwe = 7072
+  /*
+   * this is fiwed w-when a usew cwicks on a hashtag in the pwomoted tweet. nyaa~~
+   */
+  sewvewpwomotedtweetcwickhashtag = 7078
+  /*
+   * t-this is fiwed when a usew opens wink by cwicking o-on a uww in the p-pwomoted tweet. ʘwʘ
+   */
+  s-sewvewpwomotedtweetopenwink = 7079
+  /*
+   * this is fiwed when a usew swipes to the nyext ewement of t-the cawousew in t-the pwomoted tweet. nyaa~~
+   */
+  s-sewvewpwomotedtweetcawousewswipenext = 7091
+  /*
+   * t-this is fiwed when a usew swipes to the pwevious ewement of the cawousew in the pwomoted tweet.
+   */
+  s-sewvewpwomotedtweetcawousewswipepwevious = 7092
+  /*
+   * this event is onwy fow the pwomoted t-tweets with a-a web uww. (U ﹏ U)
+   * i-it is fiwed aftew exiting a w-webview fwom a pwomoted tweet if the usew was on the webview fow
+   * at weast 1 second. (///ˬ///✿)
+   *
+   * see https://confwuence.twittew.biz/dispway/wevenue/dweww_showt fow mowe detaiws. :3
+   */
+  sewvewpwomotedtweetwingewimpwessionshowt = 7093
+  /*
+   * this event i-is onwy fow the pwomoted tweets with a web uww. (˘ω˘)
+   * i-it is fiwed a-aftew exiting a webview fwom a p-pwomoted tweet i-if the usew was on the webview fow
+   * at weast 2 s-seconds.
+   *
+   * s-see https://confwuence.twittew.biz/dispway/wevenue/dweww_medium fow mowe detaiws. 😳
+   */
+  sewvewpwomotedtweetwingewimpwessionmedium = 7094
+  /*
+   * t-this e-event is onwy fow t-the pwomoted tweets w-with a web uww. 😳😳😳
+   * it is f-fiwed aftew exiting a webview fwom a pwomoted tweet i-if the usew w-was on the webview fow
+   * at w-weast 10 seconds. ʘwʘ
+   *
+   * s-see https://confwuence.twittew.biz/dispway/wevenue/dweww_wong fow mowe detaiws. (⑅˘꒳˘)
+   */
+  sewvewpwomotedtweetwingewimpwessionwong = 7095
+  /*
+   * t-this is fiwed when a-a usew nyavigates to expwowew page (taps s-seawch magnifying gwass on home page)
+   * a-and a pwomoted twend is pwesent and taps on the pwomoted spotwight - a-a video/gif/image in the
+   * "hewo" p-position (top o-of the e-expwowew page). nyaa~~
+   */
+  sewvewpwomotedtweetcwickspotwight = 7096
+  /*
+   * this i-is fiwed when a-a usew nyavigates t-to expwowew page (taps s-seawch magnifying gwass o-on home page)
+   * a-and a pwomoted t-twend is pwesent. (U ﹏ U)
+   */
+  s-sewvewpwomotedtweetviewspotwight = 7097
+  /*
+   * 7098-7099: p-pwomoted twends appeaw in the fiwst ow s-second swots of t-the “twends fow you” section
+   * in the expwowe t-tab and “nani’s h-happening” m-moduwe on twittew.com. ʘwʘ fow m-mowe infowmation, (ꈍᴗꈍ) c-check go/ads-takeovew. :3
+   * 7099: this is fiwed w-when a usew v-views a pwomoted twend. ( ͡o ω ͡o ) it shouwd b-be considewed as an impwession. rawr x3
+   */
+  s-sewvewpwomotedtwendview = 7098
+  /*
+   * 7099: t-this is f-fiwed when a usew c-cwicks a pwomoted twend. rawr x3 it shouwd be considewed as an engagment. mya
+   */
+  s-sewvewpwomotedtwendcwick = 7099
+  /*
+   * 7131-7133: a pwomoted event f-fiwed when pwayback weaches 25%, nyaa~~ 50%, (///ˬ///✿) 75% o-of t-totaw twack duwation. ^^
+   * this i-is fow the pwewoww a-ad that pways befowe a video on a pwomoted tweet. OwO
+   * n-nyot v-vawid fow wive videos. :3 wefew go/avscwibing. ^^
+   * this wiww onwy contain metadata fow the pwewoww ad. (✿oωo)
+   */
+  sewvewpwomotedtweetvideoadpwayback25 = 7131
+  sewvewpwomotedtweetvideoadpwayback50 = 7132
+  sewvewpwomotedtweetvideoadpwayback75 = 7133
+  /*
+   * 7151-7153: a pwomoted event fiwed when pwayback weaches 25%, 😳 50%, 75% o-of totaw twack d-duwation. (///ˬ///✿)
+   * t-this is fow the p-pwewoww ad that pways befowe a video on an owganic t-tweet. (///ˬ///✿)
+   * n-nyot vawid fow w-wive videos. (U ﹏ U) wefew g-go/avscwibing. òωó
+   * this wiww onwy contain metadata fow the pwewoww ad. :3
+   */
+  s-sewvewtweetvideoadpwayback25 = 7151
+  s-sewvewtweetvideoadpwayback50 = 7152
+  s-sewvewtweetvideoadpwayback75 = 7153
+
+  s-sewvewpwomotedtweetdismisswithoutweason = 7180
+  sewvewpwomotedtweetdismissunintewesting = 7181
+  s-sewvewpwomotedtweetdismisswepetitive = 7182
+  sewvewpwomotedtweetdismissspam = 7183
+
+
+  /*
+   * fow favowiteawchivaw events
+   */
+  sewvewtweetawchivefavowite = 8000
+  s-sewvewtweetunawchivefavowite = 8001
+  /*
+   * fow wetweetawchivaw e-events
+   */
+  s-sewvewtweetawchivewetweet = 8002
+  sewvewtweetunawchivewetweet = 8003
+}(pewsisted='twue', (⑅˘꒳˘) haspewsonawdata='fawse')
+
+/*
+ * this u-union wiww be updated when we have a-a pawticuwaw
+ * action that has attwibutes unique t-to that pawticuwaw action
+ * (e.g. 😳😳😳 wingew i-impwessions have stawt/end times) a-and nyot common
+ * to aww tweet a-actions. ʘwʘ
+ * nyaming c-convention fow tweetactioninfo shouwd be consistent with
+ * a-actiontype. OwO fow exampwe, >_< `cwienttweetwingewimpwession` actiontype enum
+ * shouwd cowwespond to `cwienttweetwingewimpwession` tweetactioninfo union awm.
+ * we typicawwy pwesewve 1:1 m-mapping between a-actiontype and tweetactioninfo. /(^•ω•^) h-howevew, we make
+ * exceptions w-when optimizing f-fow customew w-wequiwements. (˘ω˘) fow exampwe, muwtipwe 'cwienttweetvideo*'
+ * actiontype e-enums cowwespond to a singwe `tweetvideowatch` tweetactioninfo union awm because
+ * customews w-want individuaw a-action wabews b-but common i-infowmation acwoss those wabews. >w<
+ */
+u-union tweetactioninfo {
+  // 41 matches enum i-index sewvewtweetwepowt i-in actiontype
+  41: sewvewtweetwepowt sewvewtweetwepowt
+  // 1002 m-matches e-enum index cwienttweetwingewimpwession i-in actiontype
+  1002: c-cwienttweetwingewimpwession c-cwienttweetwingewimpwession
+  // common metadata fow
+  // 1. ^•ﻌ•^ "cwienttweetvideo*" a-actiontypes w-with enum i-indices 1011-1016 and 1100-1101
+  // 2. ʘwʘ "sewvewpwomotedtweetvideo*" actiontypes with enum indices 7011-7013 a-and 7131-7133
+  // 3. OwO "sewvewtweetvideo*" a-actiontypes w-with enum indices 7151-7153
+  // t-this is because:
+  // 1. nyaa~~ aww the above wisted a-actiontypes s-shawe common metadata
+  // 2. nyaa~~ mowe m-moduwaw code as the same stwuct can be weused
+  // 3. XD w-weduces chance of ewwow whiwe popuwating a-and pawsing the metadata
+  // 4. o.O consumews can easiwy pwocess t-the metadata
+  1011: tweetvideowatch t-tweetvideowatch
   // 1012: skip
-  // 1013: skip
-  // 1014: skip
-  // 1015: skip
-  // 1016: skip
-  // 1024 matches enum index ClientTweetClickMentionScreenName in ActionType
-  1024: ClientTweetClickMentionScreenName clientTweetClickMentionScreenName
-  // 1041 matches enum index ClientTweetReport in ActionType
-  1041: ClientTweetReport clientTweetReport
-  // 1060 matches enum index ClientTweetFollowAuthor in ActionType
-  1060: ClientTweetFollowAuthor clientTweetFollowAuthor
-  // 1061 matches enum index ClientTweetUnfollowAuthor in ActionType
-  1061: ClientTweetUnfollowAuthor clientTweetUnfollowAuthor
-  // 1078 matches enum index ClientTweetClickHashtag in ActionType
-  1078: ClientTweetClickHashtag clientTweetClickHashtag
-  // 1090 matches enum index ClientTweetOpenLink in ActionType
-  1090: ClientTweetOpenLink clientTweetOpenLink
-  // 1091 matches enum index ClientTweetTakeScreenshot in ActionType
-  1091: ClientTweetTakeScreenshot clientTweetTakeScreenshot
-  // 1500 matches enum index ClientTweetV2Impression in ActionType
-  1500: ClientTweetV2Impression clientTweetV2Impression
-  // 7079 matches enum index ServerPromotedTweetOpenLink in ActionType
-  7079: ServerPromotedTweetOpenLink serverPromotedTweetOpenLink
-}(persisted='true', hasPersonalData='true')
+  // 1013: s-skip
+  // 1014: s-skip
+  // 1015: s-skip
+  // 1016: s-skip
+  // 1024 matches enum index cwienttweetcwickmentionscweenname i-in actiontype
+  1024: cwienttweetcwickmentionscweenname cwienttweetcwickmentionscweenname
+  // 1041 matches enum index cwienttweetwepowt i-in a-actiontype
+  1041: c-cwienttweetwepowt c-cwienttweetwepowt
+  // 1060 m-matches enum index cwienttweetfowwowauthow i-in a-actiontype
+  1060: cwienttweetfowwowauthow cwienttweetfowwowauthow
+  // 1061 matches e-enum index cwienttweetunfowwowauthow in actiontype
+  1061: c-cwienttweetunfowwowauthow cwienttweetunfowwowauthow
+  // 1078 m-matches enum index cwienttweetcwickhashtag i-in actiontype
+  1078: cwienttweetcwickhashtag cwienttweetcwickhashtag
+  // 1090 m-matches enum index cwienttweetopenwink i-in actiontype
+  1090: c-cwienttweetopenwink c-cwienttweetopenwink
+  // 1091 matches enum index cwienttweettakescweenshot in actiontype
+  1091: cwienttweettakescweenshot cwienttweettakescweenshot
+  // 1500 matches e-enum index cwienttweetv2impwession in actiontype
+  1500: cwienttweetv2impwession c-cwienttweetv2impwession
+  // 7079 matches enum i-index sewvewpwomotedtweetopenwink i-in actiontype
+  7079: sewvewpwomotedtweetopenwink s-sewvewpwomotedtweetopenwink
+}(pewsisted='twue', òωó h-haspewsonawdata='twue')
 
 
-struct ClientTweetOpenLink {
-  //Url which was clicked.
-  1: optional string url(personalDataType = 'RawUrlPath')
-}(persisted='true', hasPersonalData='true')
+stwuct cwienttweetopenwink {
+  //uww which was cwicked. (⑅˘꒳˘)
+  1: optionaw s-stwing uww(pewsonawdatatype = 'wawuwwpath')
+}(pewsisted='twue', o.O haspewsonawdata='twue')
 
-struct ServerPromotedTweetOpenLink {
-  //Url which was clicked.
-  1: optional string url(personalDataType = 'RawUrlPath')
-}(persisted='true', hasPersonalData='true')
+s-stwuct sewvewpwomotedtweetopenwink {
+  //uww which w-was cwicked.
+  1: optionaw stwing u-uww(pewsonawdatatype = 'wawuwwpath')
+}(pewsisted='twue', haspewsonawdata='twue')
 
-struct ClientTweetClickHashtag {
-  /* Hashtag string which was clicked. The PDP annotation is SearchQuery,
-   * because clicking on the hashtag triggers a search with the hashtag
+s-stwuct cwienttweetcwickhashtag {
+  /* h-hashtag stwing which was cwicked. (ˆ ﻌ ˆ)♡ the pdp annotation is seawchquewy, (⑅˘꒳˘)
+   * b-because cwicking o-on the hashtag t-twiggews a seawch with the hashtag
    */
-  1: optional string hashtag(personalDataType = 'SearchQuery')
-}(persisted='true', hasPersonalData='true')
+  1: o-optionaw stwing hashtag(pewsonawdatatype = 'seawchquewy')
+}(pewsisted='twue', (U ᵕ U❁) h-haspewsonawdata='twue')
 
-struct ClientTweetTakeScreenshot {
-  //percentage visible height.
-  1: optional i32 percentVisibleHeight100k
-}(persisted='true', hasPersonalData='false')
+stwuct c-cwienttweettakescweenshot {
+  //pewcentage visibwe height.
+  1: o-optionaw i32 pewcentvisibweheight100k
+}(pewsisted='twue', >w< haspewsonawdata='fawse')
 
 /*
- * See go/ioslingerimpressionbehaviors and go/lingerandroidfaq
- * for ios and android client definitions of a linger respectively.
+ * s-see go/ioswingewimpwessionbehaviows and g-go/wingewandwoidfaq
+ * fow ios and andwoid cwient definitions of a wingew wespectivewy. OwO
  */
-struct ClientTweetLingerImpression {
-  /* Milliseconds since epoch when the tweet became more than 50% visible. */
-  1: required i64 lingerStartTimestampMs(personalDataType = 'ImpressionMetadata')
-  /* Milliseconds since epoch when the tweet became less than 50% visible. */
-  2: required i64 lingerEndTimestampMs(personalDataType = 'ImpressionMetadata')
-}(persisted='true', hasPersonalData='true')
+stwuct c-cwienttweetwingewimpwession {
+  /* miwwiseconds since epoch w-when the tweet b-became mowe than 50% v-visibwe. >w< */
+  1: wequiwed i-i64 wingewstawttimestampms(pewsonawdatatype = 'impwessionmetadata')
+  /* miwwiseconds since epoch w-when the tweet became wess than 50% v-visibwe. ^^;; */
+  2: w-wequiwed i-i64 wingewendtimestampms(pewsonawdatatype = 'impwessionmetadata')
+}(pewsisted='twue', >w< haspewsonawdata='twue')
 
 /*
- * See go/behavioral-client-events for general behavioral client event (BCE) information
- * and go/bce-v2impress for detailed information about BCE impression events.
+ * s-see go/behaviowaw-cwient-events f-fow genewaw b-behaviowaw cwient e-event (bce) infowmation
+ * and g-go/bce-v2impwess fow detaiwed i-infowmation about b-bce impwession events. σωσ
  *
- * Unlike ClientTweetLingerImpression, there is no lower bound on the amount of time
- * necessary for the impress event to occur. There is also no visibility requirement for a impress
- * event to occur.
+ * unwike cwienttweetwingewimpwession, (˘ω˘) thewe is nyo wowew bound on the a-amount of time
+ * necessawy fow the impwess event to occuw. òωó thewe i-is awso nyo v-visibiwity wequiwement fow a impwess
+ * event to occuw. (ꈍᴗꈍ)
  */
-struct ClientTweetV2Impression {
-  /* Milliseconds since epoch when the tweet became visible. */
-  1: required i64 impressStartTimestampMs(personalDataType = 'ImpressionMetadata')
-  /* Milliseconds since epoch when the tweet became visible. */
-  2: required i64 impressEndTimestampMs(personalDataType = 'ImpressionMetadata')
+stwuct cwienttweetv2impwession {
+  /* miwwiseconds since epoch when t-the tweet became v-visibwe. (ꈍᴗꈍ) */
+  1: w-wequiwed i64 i-impwessstawttimestampms(pewsonawdatatype = 'impwessionmetadata')
+  /* m-miwwiseconds s-since epoch when the tweet became v-visibwe. òωó */
+  2: wequiwed i64 i-impwessendtimestampms(pewsonawdatatype = 'impwessionmetadata')
   /*
-   * The UI component that hosted this tweet where the impress event happened.
+   * the u-ui component that hosted this tweet w-whewe the impwess e-event happened. (U ᵕ U❁)
    *
-   * For example, sourceComponent = "tweet" if the impress event happened on a tweet displayed amongst
-   * a collection of tweets, or sourceComponent = "tweet_details" if the impress event happened on
-   * a tweet detail UI component.
+   * f-fow exampwe, /(^•ω•^) souwcecomponent = "tweet" i-if the impwess e-event happened on a tweet dispwayed amongst
+   * a-a cowwection of tweets, :3 ow souwcecomponent = "tweet_detaiws" if the impwess e-event happened on
+   * a tweet detaiw ui component. rawr
    */
-  3: required string sourceComponent(personalDataType = 'WebsitePage')
-}(persisted='true', hasPersonalData='true')
+  3: w-wequiwed stwing s-souwcecomponent(pewsonawdatatype = 'websitepage')
+}(pewsisted='twue', (ˆ ﻌ ˆ)♡ haspewsonawdata='twue')
 
  /*
- * Refer to go/cme-scribing and go/interaction-event-spec for details
+ * w-wefew to go/cme-scwibing a-and go/intewaction-event-spec fow d-detaiws
  */
-struct TweetVideoWatch {
+stwuct tweetvideowatch {
    /*
-   * Type of video included in the Tweet
+   * t-type of video incwuded in the t-tweet
    */
-  1: optional client_app.MediaType mediaType(personalDataType = 'MediaFile')
+  1: o-optionaw cwient_app.mediatype mediatype(pewsonawdatatype = 'mediafiwe')
   /*
-   * Whether the video content is "monetizable", i.e.,
-   * if a preroll ad may be served dynamically when the video plays
+   * w-whethew the video content is "monetizabwe", ^^;; i.e.,
+   * if a pwewoww ad may be s-sewved dynamicawwy when the video p-pways
    */
-  2: optional bool isMonetizable(personalDataType = 'MediaFile')
+  2: optionaw boow ismonetizabwe(pewsonawdatatype = 'mediafiwe')
 
   /*
-   * The owner of the video, provided by playlist.
+   * t-the ownew of the video, (⑅˘꒳˘) p-pwovided by pwaywist. rawr x3
    *
-   * For ad engagements related to a preroll ad (VIDEO_AD_*),
-   * this will be the owner of the preroll ad and same as the prerollOwnerId.
+   * f-fow ad engagements wewated to a-a pwewoww ad (video_ad_*), ʘwʘ
+   * this wiww be the o-ownew of the pwewoww ad and same as the pwewowwownewid. (ꈍᴗꈍ)
    *
-   * For ad engagements related to a regular video (VIDEO_CONTENT_*), this will be the owner of the
-   * video and not the preroll ad.
+   * f-fow ad engagements w-wewated t-to a weguwaw video (video_content_*), /(^•ω•^) t-this wiww b-be the ownew of t-the
+   * video and nyot the pwewoww a-ad. (✿oωo)
    */
-  3: optional i64 videoOwnerId(personalDataType = 'UserId')
+  3: o-optionaw i64 v-videoownewid(pewsonawdatatype = 'usewid')
 
   /*
-   * Identifies the video associated with a card.
+   * identifies t-the video associated with a cawd. ^^;;
    *
-   * For ad Engagements, in the case of engagements related to a preroll ad (VIDEO_AD_*),
-   * this will be the id of the preroll ad and same as the prerollUuid.
+   * fow a-ad engagements, (˘ω˘) i-in the case of engagements wewated to a pwewoww a-ad (video_ad_*), 😳😳😳
+   * t-this wiww be the id of the p-pwewoww ad and s-same as the pwewowwuuid. ^^
    *
-   * For ad engagements related to a regular video (VIDEO_CONTENT_*), this will be id of the video
-   * and not the preroll ad.
+   * f-fow ad engagements w-wewated to a weguwaw video (video_content_*), /(^•ω•^) this wiww be id of the video
+   * and nyot the pwewoww ad. >_<
    */
-  4: optional string videoUuid(personalDataType = 'MediaId')
+  4: optionaw s-stwing videouuid(pewsonawdatatype = 'mediaid')
 
   /*
-   * Id of the preroll ad shown before the video
+   * id o-of the pwewoww ad shown befowe the v-video
    */
-  5: optional string prerollUuid(personalDataType = 'MediaId')
+  5: optionaw stwing p-pwewowwuuid(pewsonawdatatype = 'mediaid')
 
   /*
-   * Advertiser id of the preroll ad
+   * a-advewtisew id of the pwewoww a-ad
    */
-  6: optional i64 prerollOwnerId(personalDataType = 'UserId')
+  6: o-optionaw i64 pwewowwownewid(pewsonawdatatype = 'usewid')
   /*
-   * for amplify_flayer events, indicates whether preroll or the main video is being played
+   * fow ampwify_fwayew e-events, (ꈍᴗꈍ) indicates whethew pwewoww ow the m-main video is being pwayed
    */
-  7: optional string videoType(personalDataType = 'MediaFile')
-}(persisted='true', hasPersonalData='true')
+  7: o-optionaw s-stwing videotype(pewsonawdatatype = 'mediafiwe')
+}(pewsisted='twue', (ꈍᴗꈍ) h-haspewsonawdata='twue')
 
-struct ClientTweetClickMentionScreenName {
-  /* Id for the profile (user_id) that was actioned on */
-  1: required i64 actionProfileId(personalDataType = 'UserId')
-  /* The handle/screenName of the user. This can't be changed. */
-  2: required string handle(personalDataType = 'UserName')
-}(persisted='true', hasPersonalData='true')
+stwuct cwienttweetcwickmentionscweenname {
+  /* i-id fow the pwofiwe (usew_id) that was actioned on */
+  1: wequiwed i-i64 actionpwofiweid(pewsonawdatatype = 'usewid')
+  /* the handwe/scweenname of the usew. mya this can't be changed. :3 */
+  2: wequiwed stwing handwe(pewsonawdatatype = 'usewname')
+}(pewsisted='twue', 😳😳😳 haspewsonawdata='twue')
 
-struct ClientTweetReport {
+stwuct c-cwienttweetwepowt {
   /*
-   * Whether the "Report Tweet" flow was successfully completed.
-   * `true` if the flow was completed successfully, `false` otherwise.
+   * w-whethew the "wepowt tweet" fwow w-was successfuwwy c-compweted. /(^•ω•^)
+   * `twue` if the fwow was compweted successfuwwy, -.- `fawse` o-othewwise.
    */
-  1: required bool isReportTweetDone
+  1: w-wequiwed boow iswepowttweetdone
   /*
-   * report-flow-id is included in Client Event when the "Report Tweet" flow was initiated
-   * See go/report-flow-ids and
-   * https://confluence.twitter.biz/pages/viewpage.action?spaceKey=HEALTH&title=Understanding+ReportDetails
+   * wepowt-fwow-id i-is incwuded i-in cwient e-event when the "wepowt t-tweet" fwow was initiated
+   * see go/wepowt-fwow-ids a-and
+   * https://confwuence.twittew.biz/pages/viewpage.action?spacekey=heawth&titwe=undewstanding+wepowtdetaiws
    */
-  2: optional string reportFlowId
-}(persisted='true', hasPersonalData='true')
+  2: optionaw stwing wepowtfwowid
+}(pewsisted='twue', UwU h-haspewsonawdata='twue')
 
-enum TweetAuthorFollowClickSource {
-  UNKNOWN = 1
-  CARET_MENU = 2
-  PROFILE_IMAGE = 3
+enum tweetauthowfowwowcwicksouwce {
+  unknown = 1
+  cawet_menu = 2
+  pwofiwe_image = 3
 }
 
-struct ClientTweetFollowAuthor {
+stwuct c-cwienttweetfowwowauthow {
   /*
-   * Where did the user click the Follow button on the tweet - from the caret menu("CARET_MENU")
-   * or via hovering over the profile and clicking on Follow ("PROFILE_IMAGE") - only applicable for web clients
-   * "UNKNOWN" if the scribe do not match the expected namespace for the above
+   * whewe did the usew cwick the fowwow button o-on the tweet - f-fwom the cawet m-menu("cawet_menu")
+   * ow via hovewing ovew the p-pwofiwe and cwicking o-on fowwow ("pwofiwe_image") - o-onwy appwicabwe fow web cwients
+   * "unknown" if the scwibe d-do nyot match the expected nyamespace f-fow the above
    */
-  1: required TweetAuthorFollowClickSource followClickSource
-}(persisted='true', hasPersonalData='false')
+  1: wequiwed tweetauthowfowwowcwicksouwce fowwowcwicksouwce
+}(pewsisted='twue', (U ﹏ U) haspewsonawdata='fawse')
 
-enum TweetAuthorUnfollowClickSource {
-  UNKNOWN = 1
-  CARET_MENU = 2
-  PROFILE_IMAGE = 3
+e-enum tweetauthowunfowwowcwicksouwce {
+  unknown = 1
+  c-cawet_menu = 2
+  pwofiwe_image = 3
 }
 
-struct ClientTweetUnfollowAuthor {
+s-stwuct cwienttweetunfowwowauthow {
   /*
-   * Where did the user click the Unfollow button on the tweet - from the caret menu("CARET_MENU")
-   * or via hovering over the profile and clicking on Unfollow ("PROFILE_IMAGE") - only applicable for web clients
-   * "UNKNOWN" if the scribe do not match the expected namespace for the above
+   * whewe d-did the usew cwick the unfowwow b-button on the tweet - fwom the cawet menu("cawet_menu")
+   * o-ow via hovewing ovew the pwofiwe and cwicking on unfowwow ("pwofiwe_image") - o-onwy appwicabwe fow web cwients
+   * "unknown" if the scwibe do n-nyot match the expected nyamespace f-fow the above
    */
-  1: required TweetAuthorUnfollowClickSource unfollowClickSource
-}(persisted='true', hasPersonalData='false')
+  1: w-wequiwed tweetauthowunfowwowcwicksouwce u-unfowwowcwicksouwce
+}(pewsisted='twue', ^^ haspewsonawdata='fawse')
 
-struct ServerTweetReport {
+s-stwuct sewvewtweetwepowt {
   /*
-   * ReportDetails will be populated when the tweet report was scribed by spamacaw (server side)
-   * Only for the action submit, all the fields under ReportDetails will be available.
-   * This is because only after successful submission, we will know the report_type and report_flow_name.
-   * Reference: https://confluence.twitter.biz/pages/viewpage.action?spaceKey=HEALTH&title=Understanding+ReportDetails
+   * wepowtdetaiws wiww be p-popuwated when t-the tweet wepowt was scwibed by s-spamacaw (sewvew s-side)
+   * onwy fow the action s-submit, 😳 aww the fiewds undew wepowtdetaiws wiww be avaiwabwe. (˘ω˘)
+   * this is because onwy aftew successfuw s-submission, /(^•ω•^) we wiww know the wepowt_type and wepowt_fwow_name. (˘ω˘)
+   * w-wefewence: h-https://confwuence.twittew.biz/pages/viewpage.action?spacekey=heawth&titwe=undewstanding+wepowtdetaiws
    */
-  1: optional string reportFlowId
-  2: optional report_flow_logs.ReportType reportType
-}(persisted='true', hasPersonalData='false')
+  1: o-optionaw stwing wepowtfwowid
+  2: o-optionaw w-wepowt_fwow_wogs.wepowttype wepowttype
+}(pewsisted='twue', (✿oωo) h-haspewsonawdata='fawse')
 
 /*
- * This union will be updated when we have a particular
- * action that has attributes unique to that particular action
- * (e.g. linger impressions have start/end times) and not common
- * to other profile actions.
+ * this union wiww b-be updated when w-we have a pawticuwaw
+ * action that has attwibutes unique to that p-pawticuwaw action
+ * (e.g. (U ﹏ U) w-wingew impwessions have stawt/end times) a-and nyot common
+ * to othew p-pwofiwe actions. (U ﹏ U)
  *
- * Naming convention for ProfileActionInfo should be consistent with
- * ActionType. For example, `ClientProfileV2Impression` ActionType enum
- * should correspond to `ClientProfileV2Impression` ProfileActionInfo union arm.
+ * n-nyaming c-convention fow p-pwofiweactioninfo shouwd be consistent w-with
+ * actiontype. (ˆ ﻌ ˆ)♡ fow exampwe, /(^•ω•^) `cwientpwofiwev2impwession` a-actiontype enum
+ * shouwd cowwespond to `cwientpwofiwev2impwession` pwofiweactioninfo u-union a-awm. XD
  */
-union ProfileActionInfo {
-  // 56 matches enum index ServerProfileReport in ActionType
-  56: ServerProfileReport serverProfileReport
-  // 1600 matches enum index ClientProfileV2Impression in ActionType
-  1600: ClientProfileV2Impression clientProfileV2Impression
-  // 6001 matches enum index ServerUserUpdate in ActionType
-  6001: ServerUserUpdate serverUserUpdate
-}(persisted='true', hasPersonalData='true')
+union pwofiweactioninfo {
+  // 56 m-matches e-enum index sewvewpwofiwewepowt i-in actiontype
+  56: s-sewvewpwofiwewepowt s-sewvewpwofiwewepowt
+  // 1600 matches enum index cwientpwofiwev2impwession i-in actiontype
+  1600: cwientpwofiwev2impwession cwientpwofiwev2impwession
+  // 6001 m-matches enum index sewvewusewupdate i-in actiontype
+  6001: sewvewusewupdate sewvewusewupdate
+}(pewsisted='twue', (ˆ ﻌ ˆ)♡ haspewsonawdata='twue')
 
 /*
- * See go/behavioral-client-events for general behavioral client event (BCE) information
- * and https://docs.google.com/document/d/16CdSRpsmUUd17yoFH9min3nLBqDVawx4DaZoiqSfCHI/edit#heading=h.3tu05p92xgxc
- * for detailed information about BCE impression event.
+ * s-see go/behaviowaw-cwient-events f-fow genewaw b-behaviowaw cwient event (bce) infowmation
+ * and https://docs.googwe.com/document/d/16cdswpsmuud17yofh9min3nwbqdvawx4dazoiqsfchi/edit#heading=h.3tu05p92xgxc
+ * f-fow detaiwed i-infowmation about b-bce impwession e-event. XD
  *
- * Unlike ClientTweetLingerImpression, there is no lower bound on the amount of time
- * necessary for the impress event to occur. There is also no visibility requirement for a impress
- * event to occur.
+ * unwike cwienttweetwingewimpwession, mya thewe is nyo wowew bound on the amount of time
+ * nyecessawy f-fow the impwess e-event to occuw. OwO t-thewe is awso nyo visibiwity wequiwement fow a impwess
+ * e-event to occuw. XD
  */
-struct ClientProfileV2Impression {
-  /* Milliseconds since epoch when the profile page became visible. */
-  1: required i64 impressStartTimestampMs(personalDataType = 'ImpressionMetadata')
-  /* Milliseconds since epoch when the profile page became visible. */
-  2: required i64 impressEndTimestampMs(personalDataType = 'ImpressionMetadata')
+stwuct cwientpwofiwev2impwession {
+  /* m-miwwiseconds since epoch when t-the pwofiwe page became visibwe. ( ͡o ω ͡o ) */
+  1: wequiwed i64 impwessstawttimestampms(pewsonawdatatype = 'impwessionmetadata')
+  /* m-miwwiseconds since epoch when the p-pwofiwe page became visibwe. (ꈍᴗꈍ) */
+  2: wequiwed i64 impwessendtimestampms(pewsonawdatatype = 'impwessionmetadata')
   /*
-   * The UI component that hosted this profile where the impress event happened.
+   * t-the ui component that hosted this pwofiwe w-whewe the impwess event happened. mya
    *
-   * For example, sourceComponent = "profile" if the impress event happened on a profile page
+   * f-fow exampwe, 😳 s-souwcecomponent = "pwofiwe" if the impwess event happened on a pwofiwe page
    */
-  3: required string sourceComponent(personalDataType = 'WebsitePage')
-}(persisted='true', hasPersonalData='true')
+  3: w-wequiwed stwing souwcecomponent(pewsonawdatatype = 'websitepage')
+}(pewsisted='twue', (ˆ ﻌ ˆ)♡ haspewsonawdata='twue')
 
-struct ServerProfileReport {
-  1: required social_graph_service_write_log.Action reportType(personalDataType = 'ReportType')
-}(persisted='true', hasPersonalData='true')
+stwuct sewvewpwofiwewepowt {
+  1: wequiwed sociaw_gwaph_sewvice_wwite_wog.action wepowttype(pewsonawdatatype = 'wepowttype')
+}(pewsisted='twue', ^•ﻌ•^ h-haspewsonawdata='twue')
 
-struct ServerUserUpdate {
-  1: required list<user_service.UpdateDiffItem> updates
-  2: optional bool success (personalDataType = 'AuditMessage')
-}(persisted='true', hasPersonalData='true')
+s-stwuct sewvewusewupdate {
+  1: wequiwed wist<usew_sewvice.updatediffitem> updates
+  2: o-optionaw boow success (pewsonawdatatype = 'auditmessage')
+}(pewsisted='twue', 😳😳😳 h-haspewsonawdata='twue')

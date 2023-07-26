@@ -1,61 +1,61 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.repository.TweetRepository
-import com.twitter.tweetypie.repository.UserKey
-import com.twitter.tweetypie.repository.UserQueryOptions
-import com.twitter.tweetypie.repository.UserRepository
-import com.twitter.tweetypie.repository.UserVisibility
-import com.twitter.tweetypie.store.AsyncSetAdditionalFields
-import com.twitter.tweetypie.store.SetAdditionalFields
-import com.twitter.tweetypie.store.TweetStoreEventOrRetry
-import com.twitter.tweetypie.thriftscala.AsyncSetAdditionalFieldsRequest
-import com.twitter.tweetypie.thriftscala.SetAdditionalFieldsRequest
+impowt c-com.twittew.stitch.notfound
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.wepositowy.tweetquewy
+i-impowt com.twittew.tweetypie.wepositowy.tweetwepositowy
+i-impowt c-com.twittew.tweetypie.wepositowy.usewkey
+i-impowt com.twittew.tweetypie.wepositowy.usewquewyoptions
+impowt com.twittew.tweetypie.wepositowy.usewwepositowy
+impowt com.twittew.tweetypie.wepositowy.usewvisibiwity
+i-impowt com.twittew.tweetypie.stowe.asyncsetadditionawfiewds
+impowt com.twittew.tweetypie.stowe.setadditionawfiewds
+impowt com.twittew.tweetypie.stowe.tweetstoweeventowwetwy
+i-impowt com.twittew.tweetypie.thwiftscawa.asyncsetadditionawfiewdswequest
+impowt c-com.twittew.tweetypie.thwiftscawa.setadditionawfiewdswequest
 
-object SetAdditionalFieldsBuilder {
-  type Type = SetAdditionalFieldsRequest => Future[SetAdditionalFields.Event]
+object setadditionawfiewdsbuiwdew {
+  type type = setadditionawfiewdswequest => futuwe[setadditionawfiewds.event]
 
-  val tweetOptions: TweetQuery.Options = TweetQuery.Options(include = GetTweetsHandler.BaseInclude)
+  v-vaw tweetoptions: tweetquewy.options = t-tweetquewy.options(incwude = g-gettweetshandwew.baseincwude)
 
-  def apply(tweetRepo: TweetRepository.Type): Type = {
-    def getTweet(tweetId: TweetId) =
-      Stitch.run(
-        tweetRepo(tweetId, tweetOptions)
-          .rescue(HandlerError.translateNotFoundToClientError(tweetId))
+  def appwy(tweetwepo: tweetwepositowy.type): type = {
+    def gettweet(tweetid: t-tweetid) =
+      stitch.wun(
+        tweetwepo(tweetid, ʘwʘ tweetoptions)
+          .wescue(handwewewwow.twanswatenotfoundtocwientewwow(tweetid))
       )
 
-    request => {
-      getTweet(request.additionalFields.id).map { tweet =>
-        SetAdditionalFields.Event(
-          additionalFields = request.additionalFields,
-          userId = getUserId(tweet),
-          timestamp = Time.now
+    wequest => {
+      g-gettweet(wequest.additionawfiewds.id).map { tweet =>
+        s-setadditionawfiewds.event(
+          a-additionawfiewds = w-wequest.additionawfiewds, σωσ
+          usewid = g-getusewid(tweet), OwO
+          timestamp = time.now
         )
       }
     }
   }
 }
 
-object AsyncSetAdditionalFieldsBuilder {
-  type Type = AsyncSetAdditionalFieldsRequest => Future[
-    TweetStoreEventOrRetry[AsyncSetAdditionalFields.Event]
+o-object asyncsetadditionawfiewdsbuiwdew {
+  type type = asyncsetadditionawfiewdswequest => futuwe[
+    tweetstoweeventowwetwy[asyncsetadditionawfiewds.event]
   ]
 
-  val userQueryOpts: UserQueryOptions = UserQueryOptions(Set(UserField.Safety), UserVisibility.All)
+  v-vaw usewquewyopts: usewquewyoptions = usewquewyoptions(set(usewfiewd.safety), 😳😳😳 usewvisibiwity.aww)
 
-  def apply(userRepo: UserRepository.Type): Type = {
-    def getUser(userId: UserId): Future[User] =
-      Stitch.run(
-        userRepo(UserKey.byId(userId), userQueryOpts)
-          .rescue { case NotFound => Stitch.exception(HandlerError.userNotFound(userId)) }
+  def appwy(usewwepo: usewwepositowy.type): t-type = {
+    def getusew(usewid: u-usewid): f-futuwe[usew] =
+      s-stitch.wun(
+        usewwepo(usewkey.byid(usewid), 😳😳😳 usewquewyopts)
+          .wescue { case nyotfound => s-stitch.exception(handwewewwow.usewnotfound(usewid)) }
       )
 
-    request =>
-      getUser(request.userId).map { user =>
-        AsyncSetAdditionalFields.Event.fromAsyncRequest(request, user)
+    w-wequest =>
+      getusew(wequest.usewid).map { u-usew =>
+        a-asyncsetadditionawfiewds.event.fwomasyncwequest(wequest, o.O usew)
       }
   }
 }

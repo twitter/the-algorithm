@@ -1,49 +1,49 @@
-# Pre-requisites
+# pwe-wequisites
 
-## Tutorial
-Follow the tutorial Batch Job on Dataflow Quickstart on how to run a simple batch job on Dataflow.
+## tutowiaw
+fowwow t-the tutowiaw b-batch job on datafwow q-quickstawt o-on how to wun a-a simpwe batch job o-on datafwow. (⑅˘꒳˘)
 
-## GCP setup
+## g-gcp setup
 
-Ensure `gcloud` CLI is installed and `application_default_credentials.json` has been generated.
+ensuwe `gcwoud` cwi i-is instawwed and `appwication_defauwt_cwedentiaws.json` has been genewated. rawr x3
 
-## Data access
+## data access
 
-If you want to run an adhoc job with your ldap, you will need access to multiple LDAP groups to read the datasets.
+i-if you want to wun an adhoc job with youw wdap, (✿oωo) y-you wiww nyeed access to muwtipwe w-wdap gwoups to wead the datasets. (ˆ ﻌ ˆ)♡
 
-# Running the job
+# wunning the job
 
-### Running an adhoc job
+### wunning a-an adhoc job
 
 ```bash
-export GCP_PROJECT_NAME='twttr-recos-ml-prod'
+expowt g-gcp_pwoject_name='twttw-wecos-mw-pwod'
 
-./bazel bundle src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/assemble_multi_type_graph:assemble-multi-type-graph-scio-adhoc-app
+./bazew b-bundwe swc/scawa/com/twittew/simcwustews_v2/scio/muwti_type_gwaph/assembwe_muwti_type_gwaph:assembwe-muwti-type-gwaph-scio-adhoc-app
 
-bin/d6w create \
-  ${GCP_PROJECT_NAME}/us-central1/assemble-multi-type-graph-scio-adhoc-app \
-  src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/assemble_multi_type_graph/assemble-multi-type-graph-scio-adhoc.d6w \
-  --jar dist/assemble-multi-type-graph-scio-adho-app.jar \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=${USER} \
-  --bind=profile.date="2021-11-04" \
-  --bind=profile.machine="n2-highmem-16"
+bin/d6w cweate \
+  ${gcp_pwoject_name}/us-centwaw1/assembwe-muwti-type-gwaph-scio-adhoc-app \
+  swc/scawa/com/twittew/simcwustews_v2/scio/muwti_type_gwaph/assembwe_muwti_type_gwaph/assembwe-muwti-type-gwaph-scio-adhoc.d6w \
+  --jaw dist/assembwe-muwti-type-gwaph-scio-adho-app.jaw \
+  --bind=pwofiwe.pwoject=${gcp_pwoject_name} \
+  --bind=pwofiwe.usew_name=${usew} \
+  --bind=pwofiwe.date="2021-11-04" \
+  --bind=pwofiwe.machine="n2-highmem-16"
 ```
 
-### Scheduling the job on Workflow
+### scheduwing the job o-on wowkfwow
 
-Scheduling a job will require a service account as `recos-platform`. 
-Remember this account will need permissions to read all the required dataset. 
+scheduwing a job wiww wequiwe a sewvice account as `wecos-pwatfowm`. 
+wemembew this a-account wiww nyeed pewmissions t-to wead aww the w-wequiwed dataset. (˘ω˘) 
 
 ```bash
-export SERVICE_ACCOUNT='recos-platform'
-export GCP_PROJECT_NAME='twttr-recos-ml-prod'
+e-expowt s-sewvice_account='wecos-pwatfowm'
+expowt gcp_pwoject_name='twttw-wecos-mw-pwod'
 
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/assemble-multi-type-graph-scio-batch-app \
-  src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/assemble_multi_type_graph/assemble-multi-type-graph-scio-batch.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name="recos-platform" \
-  --bind=profile.date="2021-11-04" \
-  --bind=profile.machine="n2-highmem-16"
+bin/d6w scheduwe \
+  ${gcp_pwoject_name}/us-centwaw1/assembwe-muwti-type-gwaph-scio-batch-app \
+  s-swc/scawa/com/twittew/simcwustews_v2/scio/muwti_type_gwaph/assembwe_muwti_type_gwaph/assembwe-muwti-type-gwaph-scio-batch.d6w \
+  --bind=pwofiwe.pwoject=${gcp_pwoject_name} \
+  --bind=pwofiwe.usew_name="wecos-pwatfowm" \
+  --bind=pwofiwe.date="2021-11-04" \
+  --bind=pwofiwe.machine="n2-highmem-16"
 ```

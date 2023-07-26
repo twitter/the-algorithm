@@ -1,18 +1,18 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow.serving;
-option cc_enable_arenas = true;
+package tensowfwow.sewving;
+option cc_enabwe_awenas = t-twue;
 
-import "tensorflow_serving/config/log_collector_config.proto";
+i-impowt "tensowfwow_sewving/config/wog_cowwectow_config.pwoto";
 
-message SamplingConfig {
-  // Requests will be logged uniformly at random with this probability. Valid
-  // range: [0, 1.0].
-  double sampling_rate = 1;
+m-message sampwingconfig {
+  // w-wequests w-wiww be wogged u-unifowmwy a-at wandom with this p-pwobabiwity. -.- vawid
+  // wange: [0, (ˆ ﻌ ˆ)♡ 1.0].
+  doubwe sampwing_wate = 1;
 }
 
-// Configuration for logging query/responses.
-message LoggingConfig {
-  LogCollectorConfig log_collector_config = 1;
-  SamplingConfig sampling_config = 2;
+// configuwation fow wogging quewy/wesponses. (⑅˘꒳˘)
+m-message woggingconfig {
+  wogcowwectowconfig w-wog_cowwectow_config = 1;
+  sampwingconfig s-sampwing_config = 2;
 }

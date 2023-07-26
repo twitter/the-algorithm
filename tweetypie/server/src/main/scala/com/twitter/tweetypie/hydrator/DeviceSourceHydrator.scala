@@ -1,33 +1,33 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.stitch.NotFound
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.serverutil.DeviceSourceParser
-import com.twitter.tweetypie.thriftscala.DeviceSource
-import com.twitter.tweetypie.thriftscala.FieldByPath
+impowt c-com.twittew.stitch.notfound
+i-impowt com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.wepositowy._
+i-impowt com.twittew.tweetypie.sewvewutiw.devicesouwcepawsew
+i-impowt c-com.twittew.tweetypie.thwiftscawa.devicesouwce
+i-impowt com.twittew.tweetypie.thwiftscawa.fiewdbypath
 
-object DeviceSourceHydrator {
-  type Type = ValueHydrator[Option[DeviceSource], TweetCtx]
+object devicesouwcehydwatow {
+  type type = vawuehydwatow[option[devicesouwce], >_< tweetctx]
 
-  // WebOauthId is the created_via value for Macaw-Swift through Woodstar.
-  // We need to special-case it to return the same device_source as "web",
-  // since we can't map multiple created_via strings to one device_source.
-  val WebOauthId: String = s"oauth:${DeviceSourceParser.Web}"
+  // w-weboauthid is the cweated_via vawue fow macaw-swift t-thwough woodstaw. (⑅˘꒳˘)
+  // w-we nyeed to speciaw-case it to wetuwn the same device_souwce as "web", /(^•ω•^)
+  // s-since we can't map m-muwtipwe cweated_via s-stwings to one device_souwce.
+  vaw weboauthid: stwing = s"oauth:${devicesouwcepawsew.web}"
 
-  val hydratedField: FieldByPath = fieldByPath(Tweet.DeviceSourceField)
+  vaw hydwatedfiewd: f-fiewdbypath = fiewdbypath(tweet.devicesouwcefiewd)
 
-  private def convertForWeb(createdVia: String) =
-    if (createdVia == DeviceSourceHydrator.WebOauthId) "web" else createdVia
+  pwivate def convewtfowweb(cweatedvia: stwing) =
+    i-if (cweatedvia == devicesouwcehydwatow.weboauthid) "web" e-ewse c-cweatedvia
 
-  def apply(repo: DeviceSourceRepository.Type): Type =
-    ValueHydrator[Option[DeviceSource], TweetCtx] { (_, ctx) =>
-      val req = convertForWeb(ctx.createdVia)
-      repo(req).liftToTry.map {
-        case Return(deviceSource) => ValueState.modified(Some(deviceSource))
-        case Throw(NotFound) => ValueState.UnmodifiedNone
-        case Throw(_) => ValueState.partial(None, hydratedField)
+  def a-appwy(wepo: devicesouwcewepositowy.type): t-type =
+    vawuehydwatow[option[devicesouwce], rawr x3 tweetctx] { (_, (U ﹏ U) c-ctx) =>
+      vaw weq = convewtfowweb(ctx.cweatedvia)
+      w-wepo(weq).wifttotwy.map {
+        case wetuwn(devicesouwce) => vawuestate.modified(some(devicesouwce))
+        case thwow(notfound) => vawuestate.unmodifiednone
+        case thwow(_) => v-vawuestate.pawtiaw(none, (U ﹏ U) hydwatedfiewd)
       }
-    }.onlyIf((curr, ctx) => curr.isEmpty && ctx.tweetFieldRequested(Tweet.DeviceSourceField))
+    }.onwyif((cuww, (⑅˘꒳˘) c-ctx) => cuww.isempty && c-ctx.tweetfiewdwequested(tweet.devicesouwcefiewd))
 }

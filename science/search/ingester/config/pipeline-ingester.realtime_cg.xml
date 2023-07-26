@@ -1,199 +1,199 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xmw vewsion="1.0" encoding="utf-8"?>
 
-<!-- Ingesters process tweet create events from TweetyPie and write them to a queue for Earlybird
-to index. -->
-<pipeline>
-  <property
-      propName="validator"
-      className="org.apache.commons.pipeline.validation.SimplePipelineValidator"/>
-  <listener
-      className="org.apache.commons.pipeline.listener.ObjectProcessedEventCounter"/>
-  <driverFactory
-      className="org.apache.commons.pipeline.driver.DedicatedThreadStageDriverFactory"
+<!-- i-ingestews p-pwocess tweet c-cweate events f-fwom tweetypie a-and wwite them t-to a queue fow eawwybiwd
+t-to index. rawr x3 -->
+<pipewine>
+  <pwopewty
+      p-pwopname="vawidatow"
+      cwassname="owg.apache.commons.pipewine.vawidation.simpwepipewinevawidatow"/>
+  <wistenew
+      cwassname="owg.apache.commons.pipewine.wistenew.objectpwocessedeventcountew"/>
+  <dwivewfactowy
+      cwassname="owg.apache.commons.pipewine.dwivew.dedicatedthweadstagedwivewfactowy"
       id="kafka">
 
-    <property
-        propName="queueFactory"
-        className="org.apache.commons.pipeline.util.BlockingQueueFactory$ArrayBlockingQueueFactory"
+    <pwopewty
+        pwopname="queuefactowy"
+        c-cwassname="owg.apache.commons.pipewine.utiw.bwockingqueuefactowy$awwaybwockingqueuefactowy"
         capacity="1000"
-        fair="false"/>
-  </driverFactory>
+        faiw="fawse"/>
+  </dwivewfactowy>
 
-  <!-- Read tweets from the thrift kafka queue. The reader loops forever. -->
+  <!-- w-wead tweets fwom the thwift k-kafka queue. /(^•ω•^) the weadew woops fowevew. :3 -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.kafka.KafkaRawRecordConsumerStage"
-      kafkaClusterPath=""
-      kafkaClientId=""
-      kafkaTopicName=""
-      kafkaConsumerGroupId=""
-      maxPollRecords="1"
-      pollTimeoutMs="1000"
-      partitioned="false"
-      deciderKey=""
-      driverFactoryId="kafka"/>
+      cwassname="com.twittew.seawch.ingestew.pipewine.twittew.kafka.kafkawawwecowdconsumewstage"
+      kafkacwustewpath=""
+      k-kafkacwientid=""
+      kafkatopicname=""
+      k-kafkaconsumewgwoupid=""
+      m-maxpowwwecowds="1"
+      powwtimeoutms="1000"
+      pawtitioned="fawse"
+      decidewkey=""
+      dwivewfactowyid="kafka"/>
 
-  <!-- Deserialize the bytes into TweetData -->
+  <!-- d-desewiawize the bytes into tweetdata -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.TweetEventDeserializerStage"
-      driverFactoryId="kafka"/>
+      cwassname="com.twittew.seawch.ingestew.pipewine.twittew.tweeteventdesewiawizewstage"
+      dwivewfactowyid="kafka"/>
 
-  <!-- Filter to only have the safetytype = PUBLIC or PROTECTED -->
+  <!-- f-fiwtew to onwy have the s-safetytype = p-pubwic ow pwotected -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.FilterEventsBySafetyTypeStage"
-      tweetCreateLatencyLogThresholdMillis="5000"
-      safetyType="PUBLIC_OR_PROTECTED"
-      driverFactoryId="kafka"/>
+      c-cwassname="com.twittew.seawch.ingestew.pipewine.twittew.fiwteweventsbysafetytypestage"
+      t-tweetcweatewatencywogthweshowdmiwwis="5000"
+      safetytype="pubwic_ow_pwotected"
+      dwivewfactowyid="kafka"/>
 
-  <!-- Parse to TwitterMessage -->
+  <!-- pawse t-to twittewmessage -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.ThriftTweetParserStage"
-      tweetDeleteEventBranchNames="kafka_update_events_delete"
-      driverFactoryId="kafka"/>
+      cwassname="com.twittew.seawch.ingestew.pipewine.twittew.thwifttweetpawsewstage"
+      tweetdeweteeventbwanchnames="kafka_update_events_dewete"
+      dwivewfactowyid="kafka"/>
 
-  <branch>
-    <pipeline key="kafka_update_events_delete">
-      <property
-          propName="validator"
-          className="org.apache.commons.pipeline.validation.SimplePipelineValidator"/>
-      <listener
-          className="org.apache.commons.pipeline.listener.ObjectProcessedEventCounter"/>
-      <driverFactory
-          className="org.apache.commons.pipeline.driver.DedicatedThreadStageDriverFactory"
-          id="kafka_update_events_delete">
+  <bwanch>
+    <pipewine k-key="kafka_update_events_dewete">
+      <pwopewty
+          pwopname="vawidatow"
+          cwassname="owg.apache.commons.pipewine.vawidation.simpwepipewinevawidatow"/>
+      <wistenew
+          cwassname="owg.apache.commons.pipewine.wistenew.objectpwocessedeventcountew"/>
+      <dwivewfactowy
+          cwassname="owg.apache.commons.pipewine.dwivew.dedicatedthweadstagedwivewfactowy"
+          id="kafka_update_events_dewete">
 
-        <!-- we are willing to queue more deletes than other stages,
-             to make sure we don't slow down the incoming tweets -->
-        <property
-            propName="queueFactory"
-            className="org.apache.commons.pipeline.util.BlockingQueueFactory$ArrayBlockingQueueFactory"
-            capacity="1000"
-            fair="false"/>
-      </driverFactory>
+        <!-- we a-awe wiwwing to queue mowe dewetes t-than othew stages, (ꈍᴗꈍ)
+             t-to make suwe we d-don't swow down the incoming tweets -->
+        <pwopewty
+            pwopname="queuefactowy"
+            cwassname="owg.apache.commons.pipewine.utiw.bwockingqueuefactowy$awwaybwockingqueuefactowy"
+            c-capacity="1000"
+            f-faiw="fawse"/>
+      </dwivewfactowy>
 
       <stage
-          className="com.twitter.search.ingester.pipeline.twitter.kafka.DeleteUpdateEventsKafkaProducerStage"
-          kafkaClusterPath=""
-          kafkaClientId=""
-          kafkaTopicName=""
-          driverFactoryId="kafka_update_events_delete"/>
-    </pipeline>
-  </branch>
+          cwassname="com.twittew.seawch.ingestew.pipewine.twittew.kafka.deweteupdateeventskafkapwoducewstage"
+          k-kafkacwustewpath=""
+          k-kafkacwientid=""
+          kafkatopicname=""
+          d-dwivewfactowyid="kafka_update_events_dewete"/>
+    </pipewine>
+  </bwanch>
 
-  <!-- filters out messages that are not formatted correctly -->
+  <!-- fiwtews out m-messages that awe nyot fowmatted cowwectwy -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.FilterTwitterMessageStage"
-      driverFactoryId="kafka"/>
+      c-cwassname="com.twittew.seawch.ingestew.pipewine.twittew.fiwtewtwittewmessagestage"
+      dwivewfactowyid="kafka"/>
 
-  <!-- retrieves space ids from space urls if the tweet has space urls -->
+  <!-- w-wetwieves space ids fwom s-space uwws if t-the tweet has space uwws -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.RetrieveSpaceIdsStage"
-      driverFactoryId="kafka"/>
+      cwassname="com.twittew.seawch.ingestew.pipewine.twittew.wetwievespaceidsstage"
+      dwivewfactowyid="kafka"/>
 
 
-  <!-- looks up user reputation scores for each message -->
+  <!-- wooks up usew weputation scowes fow each message -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.LookupUserPropertiesBatchedStage"
-      driverFactoryId="kafka"/>
+      c-cwassname="com.twittew.seawch.ingestew.pipewine.twittew.wookupusewpwopewtiesbatchedstage"
+      d-dwivewfactowyid="kafka"/>
 
-  <!-- extract text features of the message -->
+  <!-- extwact t-text featuwes o-of the message -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.TextFeatureExtractionWorkersStage"
-      driverFactoryId="kafka"/>
+      c-cwassname="com.twittew.seawch.ingestew.pipewine.twittew.textfeatuweextwactionwowkewsstage"
+      dwivewfactowyid="kafka"/>
 
-  <!-- compute text quality score of the message -->
+  <!-- compute text quawity scowe o-of the message -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.TextQualityEvaluationWorkerStage"
-      driverFactoryId="kafka"/>
+      cwassname="com.twittew.seawch.ingestew.pipewine.twittew.textquawityevawuationwowkewstage"
+      dwivewfactowyid="kafka"/>
 
-  <!-- Extract lat/lon pairs from the text, and geocode them -->
+  <!-- extwact wat/won paiws fwom the t-text, /(^•ω•^) and geocode them -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.SingleTweetExtractAndGeocodeLatLonStage"
-      driverFactoryId="kafka"/>
+      c-cwassname="com.twittew.seawch.ingestew.pipewine.twittew.singwetweetextwactandgeocodewatwonstage"
+      d-dwivewfactowyid="kafka"/>
 
-  <!-- adds coded locations -->
+  <!-- a-adds coded wocations -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.PopulateCodedLocationsBatchedStage"
-      driverFactoryId="kafka"/>
+      c-cwassname="com.twittew.seawch.ingestew.pipewine.twittew.popuwatecodedwocationsbatchedstage"
+      d-dwivewfactowyid="kafka"/>
 
-  <!-- Parse the TwitterMessages into ThriftStatuses -->
+  <!-- p-pawse the twittewmessages i-into thwiftstatuses -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.ConvertMessageToThriftStage"
-      thriftVersionedEventsBranchName="kafka_base_tweets"
-      driverFactoryId="kafka"/>
+      cwassname="com.twittew.seawch.ingestew.pipewine.twittew.convewtmessagetothwiftstage"
+      t-thwiftvewsionedeventsbwanchname="kafka_base_tweets"
+      d-dwivewfactowyid="kafka"/>
 
-  <!-- Branch for tweets -->
-  <branch>
-    <pipeline key="kafka_base_tweets">
-      <property
-          propName="validator"
-          className="org.apache.commons.pipeline.validation.SimplePipelineValidator"/>
-      <listener
-          className="org.apache.commons.pipeline.listener.ObjectProcessedEventCounter"/>
-      <driverFactory
-          className="org.apache.commons.pipeline.driver.DedicatedThreadStageDriverFactory"
+  <!-- b-bwanch f-fow tweets -->
+  <bwanch>
+    <pipewine k-key="kafka_base_tweets">
+      <pwopewty
+          pwopname="vawidatow"
+          cwassname="owg.apache.commons.pipewine.vawidation.simpwepipewinevawidatow"/>
+      <wistenew
+          cwassname="owg.apache.commons.pipewine.wistenew.objectpwocessedeventcountew"/>
+      <dwivewfactowy
+          c-cwassname="owg.apache.commons.pipewine.dwivew.dedicatedthweadstagedwivewfactowy"
           id="kafka_base_tweets">
 
-        <property
-            propName="queueFactory"
-            className="org.apache.commons.pipeline.util.BlockingQueueFactory$ArrayBlockingQueueFactory"
+        <pwopewty
+            pwopname="queuefactowy"
+            cwassname="owg.apache.commons.pipewine.utiw.bwockingqueuefactowy$awwaybwockingqueuefactowy"
             capacity="1000"
-            fair="false"/>
-      </driverFactory>
+            faiw="fawse"/>
+      </dwivewfactowy>
 
       <stage
-          className="com.twitter.search.ingester.pipeline.twitter.kafka.TweetThriftVersionedEventsKafkaProducerStage"
-          kafkaClusterPath=""
-          kafkaClientId=""
-          kafkaTopicName=""
-          driverFactoryId="kafka_base_tweets"/>
-    </pipeline>
-  </branch>
+          c-cwassname="com.twittew.seawch.ingestew.pipewine.twittew.kafka.tweetthwiftvewsionedeventskafkapwoducewstage"
+          kafkacwustewpath=""
+          kafkacwientid=""
+          kafkatopicname=""
+          d-dwivewfactowyid="kafka_base_tweets"/>
+    </pipewine>
+  </bwanch>
 
-  <!-- Resolve compressed URL via Pink -->
+  <!-- w-wesowve c-compwessed uww via pink -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.ResolveCompressedUrlsBatchedStage"
-      pinkClientId="INGESTER"
-      batchedStageBatchSize="10"
-      tweetMaxAgeToResolve="10000"
-      driverFactoryId="kafka"/>
+      c-cwassname="com.twittew.seawch.ingestew.pipewine.twittew.wesowvecompwesseduwwsbatchedstage"
+      pinkcwientid="ingestew"
+      batchedstagebatchsize="10"
+      t-tweetmaxagetowesowve="10000"
+      d-dwivewfactowyid="kafka"/>
 
-  <!-- Retrieve card information -->
+  <!-- wetwieve cawd infowmation -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.RetrieveCardBatchedStage"
-      tweetypieClientId=""
-      internalBatchSize="50"
-      driverFactoryId="kafka"/>
+      cwassname="com.twittew.seawch.ingestew.pipewine.twittew.wetwievecawdbatchedstage"
+      tweetypiecwientid=""
+      intewnawbatchsize="50"
+      d-dwivewfactowyid="kafka"/>
 
-  <!-- Retrieve named entities -->
+  <!-- wetwieve nyamed e-entities -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.RetrieveNamedEntitiesSingleTweetStage"
-      driverFactoryId="kafka"/>
+      cwassname="com.twittew.seawch.ingestew.pipewine.twittew.wetwievenamedentitiessingwetweetstage"
+      d-dwivewfactowyid="kafka"/>
 
-  <!-- retrieves space admins and title for a tweet if the tweet has space urls -->
+  <!-- w-wetwieves space admins and titwe fow a tweet i-if the tweet h-has space uwws -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.RetrieveSpaceAdminsAndTitleStage"
-      driverFactoryId="kafka"/>
+      cwassname="com.twittew.seawch.ingestew.pipewine.twittew.wetwievespaceadminsandtitwestage"
+      d-dwivewfactowyid="kafka"/>
 
-  <!-- extract text features of the message -->
+  <!-- e-extwact text featuwes of the message -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.TextUrlsFeatureExtractionStage"
-      driverFactoryId="kafka"/>
+      cwassname="com.twittew.seawch.ingestew.pipewine.twittew.textuwwsfeatuweextwactionstage"
+      dwivewfactowyid="kafka"/>
 
-  <!-- Compute the tweet signature -->
+  <!-- c-compute t-the tweet signatuwe -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.ComputeTweetSignatureStage"
-      driverFactoryId="kafka"/>
+      c-cwassname="com.twittew.seawch.ingestew.pipewine.twittew.computetweetsignatuwestage"
+      dwivewfactowyid="kafka"/>
 
-  <!-- Parse the TwitterMessages into ThriftStatuses -->
+  <!-- p-pawse the t-twittewmessages into thwiftstatuses -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.ConvertDelayedMessageToThriftStage"
-      driverFactoryId="kafka"/>
+      c-cwassname="com.twittew.seawch.ingestew.pipewine.twittew.convewtdewayedmessagetothwiftstage"
+      dwivewfactowyid="kafka"/>
 
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.kafka.TweetThriftVersionedEventsKafkaProducerStage"
-      kafkaClusterPath=""
-      stageName="UpdateEvents"
-      kafkaClientId=""
-      kafkaTopicName=""
-      driverFactoryId="kafka"/>
-</pipeline>
+      cwassname="com.twittew.seawch.ingestew.pipewine.twittew.kafka.tweetthwiftvewsionedeventskafkapwoducewstage"
+      kafkacwustewpath=""
+      stagename="updateevents"
+      k-kafkacwientid=""
+      k-kafkatopicname=""
+      dwivewfactowyid="kafka"/>
+</pipewine>

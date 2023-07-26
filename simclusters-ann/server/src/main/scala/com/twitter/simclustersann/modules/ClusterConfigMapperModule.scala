@@ -1,15 +1,15 @@
-package com.twitter.simclustersann.modules
+package com.twittew.simcwustewsann.moduwes
 
-import com.google.inject.Provides
-import com.twitter.inject.TwitterModule
-import com.twitter.relevance_platform.simclustersann.multicluster.ClusterConfigMapper
-import javax.inject.Singleton
+impowt c-com.googwe.inject.pwovides
+i-impowt c-com.twittew.inject.twittewmoduwe
+i-impowt com.twittew.wewevance_pwatfowm.simcwustewsann.muwticwustew.cwustewconfigmappew
+i-impowt j-javax.inject.singweton
 
-object ClusterConfigMapperModule extends TwitterModule {
-  @Singleton
-  @Provides
-  def providesClusterConfigMapper(
-  ): ClusterConfigMapper = {
-    ClusterConfigMapper
+o-object c-cwustewconfigmappewmoduwe extends twittewmoduwe {
+  @singweton
+  @pwovides
+  def pwovidescwustewconfigmappew(
+  ): c-cwustewconfigmappew = {
+    cwustewconfigmappew
   }
 }

@@ -1,81 +1,81 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twittew.simcwustews_v2.summingbiwd.common
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.storehaus_internal.memcache.ConnectionConfig
-import com.twitter.storehaus_internal.memcache.MemcacheConfig
-import com.twitter.storehaus_internal.util.KeyPrefix
-import com.twitter.storehaus_internal.util.TTL
-import com.twitter.strato.client.Strato
-import com.twitter.strato.client.{Client => StratoClient}
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.thwift.cwientid
+impowt c-com.twittew.stowehaus_intewnaw.memcache.connectionconfig
+impowt c-com.twittew.stowehaus_intewnaw.memcache.memcacheconfig
+i-impowt c-com.twittew.stowehaus_intewnaw.utiw.keypwefix
+i-impowt com.twittew.stowehaus_intewnaw.utiw.ttw
+i-impowt com.twittew.stwato.cwient.stwato
+impowt com.twittew.stwato.cwient.{cwient => stwatocwient}
 
-object ClientConfigs {
+object cwientconfigs {
 
-  com.twitter.server.Init() // necessary in order to use WilyNS path
+  c-com.twittew.sewvew.init() // nyecessawy in owdew to u-use wiwyns path
 
-  final lazy val simClustersCoreAltCachePath =
-    "/srv#/prod/local/cache/simclusters_core_alt"
+  finaw wazy v-vaw simcwustewscoweawtcachepath =
+    "/swv#/pwod/wocaw/cache/simcwustews_cowe_awt"
 
-  final lazy val simClustersCoreAltLightCachePath =
-    "/srv#/prod/local/cache/simclusters_core_alt_light"
+  finaw wazy vaw simcwustewscoweawtwightcachepath =
+    "/swv#/pwod/wocaw/cache/simcwustews_cowe_awt_wight"
 
-  final lazy val develSimClustersCoreCachePath =
-    "/srv#/test/local/cache/twemcache_simclusters_core"
+  finaw wazy vaw d-devewsimcwustewscowecachepath =
+    "/swv#/test/wocaw/cache/twemcache_simcwustews_cowe"
 
-  final lazy val develSimClustersCoreLightCachePath =
-    "/srv#/test/local/cache/twemcache_simclusters_core_light"
+  finaw w-wazy vaw devewsimcwustewscowewightcachepath =
+    "/swv#/test/wocaw/cache/twemcache_simcwustews_cowe_wight"
 
-  final lazy val logFavBasedTweet20M145K2020StratoPath =
-    "recommendations/simclusters_v2/embeddings/logFavBasedTweet20M145K2020Persistent"
+  f-finaw wazy vaw wogfavbasedtweet20m145k2020stwatopath =
+    "wecommendations/simcwustews_v2/embeddings/wogfavbasedtweet20m145k2020pewsistent"
 
-  final lazy val logFavBasedTweet20M145K2020UncachedStratoPath =
-    "recommendations/simclusters_v2/embeddings/logFavBasedTweet20M145K2020-UNCACHED"
+  finaw wazy vaw wogfavbasedtweet20m145k2020uncachedstwatopath =
+    "wecommendations/simcwustews_v2/embeddings/wogfavbasedtweet20m145k2020-uncached"
 
-  final lazy val develLogFavBasedTweet20M145K2020StratoPath =
-    "recommendations/simclusters_v2/embeddings/logFavBasedTweet20M145K2020Devel"
+  finaw w-wazy vaw devewwogfavbasedtweet20m145k2020stwatopath =
+    "wecommendations/simcwustews_v2/embeddings/wogfavbasedtweet20m145k2020devew"
 
-  final lazy val entityClusterScoreMemcacheConfig: (String, ServiceIdentifier) => MemcacheConfig = {
-    (path: String, serviceIdentifier: ServiceIdentifier) =>
-      new MemcacheConfig {
-        val connectionConfig: ConnectionConfig = ConnectionConfig(path, serviceIdentifier = serviceIdentifier)
-        override val keyPrefix: KeyPrefix = KeyPrefix(s"ecs_")
-        override val ttl: TTL = TTL(8.hours)
+  finaw wazy vaw entitycwustewscowememcacheconfig: (stwing, ʘwʘ sewviceidentifiew) => memcacheconfig = {
+    (path: s-stwing, sewviceidentifiew: s-sewviceidentifiew) =>
+      nyew m-memcacheconfig {
+        v-vaw c-connectionconfig: connectionconfig = connectionconfig(path, (ˆ ﻌ ˆ)♡ s-sewviceidentifiew = sewviceidentifiew)
+        ovewwide v-vaw keypwefix: keypwefix = keypwefix(s"ecs_")
+        ovewwide vaw ttw: ttw = ttw(8.houws)
       }
   }
 
-  // note: this should in dedicated cache for tweet
-  final lazy val tweetTopKClustersMemcacheConfig: (String, ServiceIdentifier) => MemcacheConfig = {
-    (path: String, serviceIdentifier: ServiceIdentifier) =>
-      new MemcacheConfig {
-        val connectionConfig: ConnectionConfig =
-          ConnectionConfig(path, serviceIdentifier = serviceIdentifier)
-        override val keyPrefix: KeyPrefix = KeyPrefix(s"etk_")
-        override val ttl: TTL = TTL(2.days)
+  // n-nyote: this shouwd in dedicated c-cache fow tweet
+  f-finaw wazy vaw t-tweettopkcwustewsmemcacheconfig: (stwing, 😳😳😳 sewviceidentifiew) => memcacheconfig = {
+    (path: stwing, :3 sewviceidentifiew: s-sewviceidentifiew) =>
+      n-nyew memcacheconfig {
+        vaw connectionconfig: c-connectionconfig =
+          c-connectionconfig(path, OwO sewviceidentifiew = s-sewviceidentifiew)
+        ovewwide vaw keypwefix: k-keypwefix = keypwefix(s"etk_")
+        ovewwide v-vaw ttw: ttw = ttw(2.days)
       }
   }
 
-  // note: this should in dedicated cache for tweet
-  final lazy val clusterTopTweetsMemcacheConfig: (String, ServiceIdentifier) => MemcacheConfig = {
-    (path: String, serviceIdentifier: ServiceIdentifier) =>
-      new MemcacheConfig {
-        val connectionConfig: ConnectionConfig =
-          ConnectionConfig(path, serviceIdentifier = serviceIdentifier)
-        override val keyPrefix: KeyPrefix = KeyPrefix(s"ctkt_")
-        override val ttl: TTL = TTL(8.hours)
+  // n-nyote: this shouwd in dedicated c-cache fow tweet
+  f-finaw wazy vaw cwustewtoptweetsmemcacheconfig: (stwing, (U ﹏ U) sewviceidentifiew) => memcacheconfig = {
+    (path: stwing, >w< sewviceidentifiew: sewviceidentifiew) =>
+      nyew memcacheconfig {
+        v-vaw connectionconfig: c-connectionconfig =
+          connectionconfig(path, (U ﹏ U) s-sewviceidentifiew = s-sewviceidentifiew)
+        o-ovewwide vaw keypwefix: keypwefix = keypwefix(s"ctkt_")
+        ovewwide vaw ttw: t-ttw = ttw(8.houws)
       }
   }
 
-  final lazy val stratoClient: ServiceIdentifier => StratoClient = { serviceIdentifier =>
-    Strato.client
-      .withRequestTimeout(2.seconds)
-      .withMutualTls(serviceIdentifier)
-      .build()
+  finaw wazy vaw stwatocwient: sewviceidentifiew => stwatocwient = { s-sewviceidentifiew =>
+    stwato.cwient
+      .withwequesttimeout(2.seconds)
+      .withmutuawtws(sewviceidentifiew)
+      .buiwd()
   }
 
-  // thrift client id
-  private final lazy val thriftClientId: String => ClientId = { env: String =>
-    ClientId(s"simclusters_v2_summingbird.$env")
+  // t-thwift cwient i-id
+  pwivate finaw w-wazy vaw thwiftcwientid: stwing => c-cwientid = { e-env: stwing =>
+    c-cwientid(s"simcwustews_v2_summingbiwd.$env")
   }
 
 }

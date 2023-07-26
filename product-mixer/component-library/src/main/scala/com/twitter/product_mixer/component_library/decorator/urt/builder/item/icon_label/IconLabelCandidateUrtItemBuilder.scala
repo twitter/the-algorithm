@@ -1,42 +1,42 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.icon_label
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.icon_wabew
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.icon_label.IconLabelCandidateUrtItemBuilder.IconLabelClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.LabelCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.HorizonIcon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.icon_label.IconLabelItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextEntity
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.icon_wabew.iconwabewcandidateuwtitembuiwdew.iconwabewcwienteventinfoewement
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.wabewcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.candidateuwtentwybuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventinfobuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.wichtext.basewichtextbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.icon.howizonicon
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.icon_wabew.iconwabewitem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtextentity
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object IconLabelCandidateUrtItemBuilder {
-  val IconLabelClientEventInfoElement: String = "iconlabel"
+object iconwabewcandidateuwtitembuiwdew {
+  vaw iconwabewcwienteventinfoewement: s-stwing = "iconwabew"
 }
 
-case class IconLabelCandidateUrtItemBuilder[-Query <: PipelineQuery, Candidate <: LabelCandidate](
-  richTextBuilder: BaseRichTextBuilder[Query, Candidate],
-  icon: Option[HorizonIcon] = None,
-  entities: Option[List[RichTextEntity]] = None,
-  clientEventInfoBuilder: Option[BaseClientEventInfoBuilder[Query, Candidate]] = None,
-  feedbackActionInfoBuilder: Option[BaseFeedbackActionInfoBuilder[Query, Candidate]] = None)
-    extends CandidateUrtEntryBuilder[Query, Candidate, IconLabelItem] {
+case c-cwass iconwabewcandidateuwtitembuiwdew[-quewy <: pipewinequewy, σωσ candidate <: wabewcandidate](
+  wichtextbuiwdew: b-basewichtextbuiwdew[quewy, OwO candidate], 😳😳😳
+  i-icon: o-option[howizonicon] = nyone, 😳😳😳
+  entities: option[wist[wichtextentity]] = nyone, o.O
+  cwienteventinfobuiwdew: o-option[basecwienteventinfobuiwdew[quewy, ( ͡o ω ͡o ) candidate]] = none, (U ﹏ U)
+  feedbackactioninfobuiwdew: option[basefeedbackactioninfobuiwdew[quewy, (///ˬ///✿) candidate]] = nyone)
+    e-extends candidateuwtentwybuiwdew[quewy, >w< c-candidate, iconwabewitem] {
 
-  override def apply(
-    query: Query,
-    labelCandidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): IconLabelItem =
-    IconLabelItem(
-      id = labelCandidate.id.toString,
-      sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-      clientEventInfo = clientEventInfoBuilder.flatMap(
-        _.apply(query, labelCandidate, candidateFeatures, Some(IconLabelClientEventInfoElement))),
-      feedbackActionInfo =
-        feedbackActionInfoBuilder.flatMap(_.apply(query, labelCandidate, candidateFeatures)),
-      text = richTextBuilder(query, labelCandidate, candidateFeatures),
-      icon = icon,
+  o-ovewwide def appwy(
+    q-quewy: quewy, rawr
+    w-wabewcandidate: candidate, mya
+    candidatefeatuwes: f-featuwemap
+  ): iconwabewitem =
+    iconwabewitem(
+      i-id = wabewcandidate.id.tostwing, ^^
+      sowtindex = nyone, 😳😳😳 // sowt indexes awe automaticawwy set in the domain m-mawshawwew phase
+      cwienteventinfo = c-cwienteventinfobuiwdew.fwatmap(
+        _.appwy(quewy, mya w-wabewcandidate, 😳 c-candidatefeatuwes, -.- some(iconwabewcwienteventinfoewement))), 🥺
+      feedbackactioninfo =
+        feedbackactioninfobuiwdew.fwatmap(_.appwy(quewy, o.O w-wabewcandidate, /(^•ω•^) c-candidatefeatuwes)),
+      text = w-wichtextbuiwdew(quewy, nyaa~~ w-wabewcandidate, nyaa~~ candidatefeatuwes), :3
+      i-icon = icon, 😳😳😳
     )
 }

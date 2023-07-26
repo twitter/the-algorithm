@@ -1,42 +1,42 @@
-package com.twitter.product_mixer.core.functional_component.marshaller
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew
 
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.TransportMarshallerIdentifier
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.component
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twanspowtmawshawwewidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.hasmawshawwing
 
-object TransportMarshaller {
+o-object twanspowtmawshawwew {
 
-  /** Avoid `malformed class name` exceptions due to the presence of the `$` character */
-  def getSimpleName[T](c: Class[T]): String = {
-    c.getName.lastIndexOf("$") match {
-      case -1 => c.getSimpleName
-      case index => c.getName.substring(index + 1)
+  /** a-avoid `mawfowmed c-cwass n-nyame` exceptions d-due to the p-pwesence of the `$` chawactew */
+  def getsimpwename[t](c: cwass[t]): stwing = {
+    c-c.getname.wastindexof("$") match {
+      case -1 => c.getsimpwename
+      case i-index => c.getname.substwing(index + 1)
     }
   }
 }
 
 /**
- * Marshals a [[MarshallerInput]] into a type that can be sent over the wire
+ * mawshaws a [[mawshawwewinput]] into a-a type that can be sent ovew the wiwe
  *
- * This transformation should be mechanical and not contain business logic
+ * this twansfowmation s-shouwd be mechanicaw and nyot c-contain business w-wogic
  *
- * @note this is different from `com.twitter.product_mixer.core.functional_component.premarshaller`
- *       which can contain business logic.
+ * @note this is diffewent fwom `com.twittew.pwoduct_mixew.cowe.functionaw_component.pwemawshawwew`
+ *       which can contain business w-wogic. (U ﹏ U)
  */
-trait TransportMarshaller[-MarshallerInput <: HasMarshalling, +MarshallerOutput] extends Component {
+twait twanspowtmawshawwew[-mawshawwewinput <: hasmawshawwing, (⑅˘꒳˘) +mawshawwewoutput] extends component {
 
-  override val identifier: TransportMarshallerIdentifier
+  ovewwide v-vaw identifiew: twanspowtmawshawwewidentifiew
 
-  def apply(input: MarshallerInput): MarshallerOutput
+  d-def appwy(input: m-mawshawwewinput): m-mawshawwewoutput
 }
 
 /**
- * No op marshalling that passes through a [[HasMarshalling]] into any type. This is useful if
- * the response does not need to be sent over the wire, such as with a
- * [[com.twitter.product_mixer.core.functional_component.candidate_source.product_pipeline.ProductPipelineCandidateSource]]
+ * nyo o-op mawshawwing that passes thwough a [[hasmawshawwing]] i-into any type. òωó this is usefuw if
+ * the w-wesponse does nyot nyeed to be sent ovew the wiwe, ʘwʘ such as with a
+ * [[com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.pwoduct_pipewine.pwoductpipewinecandidatesouwce]]
  */
-object NoOpTransportMarshaller extends TransportMarshaller[HasMarshalling, Any] {
-  override val identifier: TransportMarshallerIdentifier = TransportMarshallerIdentifier("NoOp")
+object nyooptwanspowtmawshawwew e-extends twanspowtmawshawwew[hasmawshawwing, /(^•ω•^) any] {
+  ovewwide v-vaw identifiew: t-twanspowtmawshawwewidentifiew = t-twanspowtmawshawwewidentifiew("noop")
 
-  override def apply(input: HasMarshalling): Any = input
+  ovewwide def appwy(input: hasmawshawwing): a-any = input
 }

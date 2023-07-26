@@ -1,24 +1,24 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.twittew.fwigate.pushsewvice.modew.ibis
 
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.ibis2.lib.util.JsonMarshal
-import com.twitter.util.Future
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.ibis2.wib.utiw.jsonmawshaw
+i-impowt com.twittew.utiw.futuwe
 
-trait CustomConfigurationMapForIbis {
-  self: PushCandidate =>
+t-twait customconfiguwationmapfowibis {
+  s-sewf: p-pushcandidate =>
 
-  lazy val customConfigMapsJsonFut: Future[String] = {
-    customFieldsMapFut.map { customFields =>
-      JsonMarshal.toJson(customFields)
+  w-wazy vaw c-customconfigmapsjsonfut: f-futuwe[stwing] = {
+    customfiewdsmapfut.map { customfiewds =>
+      jsonmawshaw.tojson(customfiewds)
     }
   }
 
-  lazy val customConfigMapsFut: Future[Map[String, String]] = {
-    if (self.target.isLoggedOutUser) {
-      Future.value(Map.empty[String, String])
-    } else {
-      customConfigMapsJsonFut.map { customConfigMapsJson =>
-        Map("custom_config" -> customConfigMapsJson)
+  wazy v-vaw customconfigmapsfut: futuwe[map[stwing, -.- stwing]] = {
+    if (sewf.tawget.iswoggedoutusew) {
+      f-futuwe.vawue(map.empty[stwing, ^^;; stwing])
+    } e-ewse {
+      customconfigmapsjsonfut.map { customconfigmapsjson =>
+        map("custom_config" -> c-customconfigmapsjson)
       }
     }
   }

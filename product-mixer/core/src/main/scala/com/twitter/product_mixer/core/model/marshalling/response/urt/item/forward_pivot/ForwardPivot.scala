@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.fowwawd_pivot
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.RosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Badge
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.wosettacowow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.badge
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.imagevawiant
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.uww
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtext
 
-case class ForwardPivot(
-  text: RichText,
-  landingUrl: Url,
-  displayType: ForwardPivotDisplayType,
-  iconImageVariant: Option[ImageVariant],
-  stateBadge: Option[Badge],
-  subtext: Option[RichText],
-  backgroundColorName: Option[RosettaColor],
-  engagementNudge: Option[Boolean],
-  softInterventionDisplayType: Option[SoftInterventionDisplayType])
+c-case cwass f-fowwawdpivot(
+  t-text: wichtext, ^^;;
+  wandinguww: uww, >_<
+  dispwaytype: fowwawdpivotdispwaytype,
+  iconimagevawiant: o-option[imagevawiant], mya
+  statebadge: option[badge], mya
+  s-subtext: option[wichtext], 😳
+  b-backgwoundcowowname: option[wosettacowow], XD
+  engagementnudge: option[boowean], :3
+  s-softintewventiondispwaytype: option[softintewventiondispwaytype])

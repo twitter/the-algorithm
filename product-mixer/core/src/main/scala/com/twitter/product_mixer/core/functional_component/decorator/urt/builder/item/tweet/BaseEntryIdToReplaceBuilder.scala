@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.tweet
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.item.tweet
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-trait BaseEntryIdToReplaceBuilder[-Query <: PipelineQuery, -Candidate <: BaseTweetCandidate] {
+t-twait baseentwyidtowepwacebuiwdew[-quewy <: p-pipewinequewy, σωσ -candidate <: b-basetweetcandidate] {
 
-  def apply(
-    query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): Option[String]
+  d-def appwy(
+    q-quewy: quewy, σωσ
+    candidate: candidate, >_<
+    candidatefeatuwes: featuwemap
+  ): o-option[stwing]
 }

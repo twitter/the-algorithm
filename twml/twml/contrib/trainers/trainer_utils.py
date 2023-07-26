@@ -1,111 +1,111 @@
 """
-This is a temporary close gap solution that allows TensorFlow users to do exploration and
-experimentation using Keras models, and production training using twml Trainer.
+this is a tempowawy cwose gap s-sowution that awwows t-tensowfwow u-usews to do expwowation a-and
+expewimentation u-using k-kewas modews, σωσ a-and pwoduction t-twaining using twmw twainew. nyaa~~
 
-As of now (Q4 2019), Keras model training using `model.fit()` has various issues, making it unfit
-for production training:
-  1. `model.fit()` is slow in TF 1.14. This will be fixed with future TensorFlow updates.
-  2. `model.fit()` crashes during model saving or in eager mode when the input has SparseTensor.
-  3. Models saved using TF 2.0 API cannot be served by TensorFlow's Java API.
+as of nyow (q4 2019), ^^;; kewas modew twaining using `modew.fit()` h-has vawious issues, ^•ﻌ•^ making it unfit
+f-fow pwoduction twaining:
+  1. σωσ `modew.fit()` i-is swow in tf 1.14. -.- this wiww be fixed with futuwe t-tensowfwow updates. ^^;;
+  2. XD `modew.fit()` cwashes duwing m-modew saving o-ow in eagew mode when the input has spawsetensow. 🥺
+  3. modews saved using tf 2.0 a-api cannot be sewved by tensowfwow's java api. òωó
 
-Until MLCE team resolves the above issues, MLCE team recommends the following:
-  - Please feel free to use Keras models for experimentation and exploration.
-  - Please stick to twml Trainer for production training & exporting,
-    especially if you want to serve your model using Twitter's prediction servers.
+untiw mwce team wesowves the a-above issues, (ˆ ﻌ ˆ)♡ mwce team wecommends t-the fowwowing:
+  - p-pwease feew f-fwee to use kewas m-modews fow expewimentation and expwowation. -.-
+  - p-pwease stick to twmw twainew fow pwoduction t-twaining & expowting, :3
+    especiawwy if you want to sewve youw modew using twittew's pwediction s-sewvews. ʘwʘ
 
-This module provide tooling for easily training keras models using twml Trainer.
+this moduwe pwovide toowing f-fow easiwy t-twaining kewas m-modews using twmw twainew.
 
-This module takes a Keras model that performs binary classification, and returns a
-`twml.trainers.Trainer` object performing the same task.
-The common way to use the returned Trainer object is to call its
-`train`, `evaluate`, `learn`, or `train_and_evaluate` method with an input function.
-This input function can be created from the tf.data.Dataset you used with your Keras model.
+this moduwe takes a kewas modew that p-pewfowms binawy c-cwassification, 🥺 and wetuwns a
+`twmw.twainews.twainew` o-object pewfowming t-the same task. >_<
+the common w-way to use the wetuwned twainew o-object is to caww its
+`twain`, ʘwʘ `evawuate`, `weawn`, (˘ω˘) ow `twain_and_evawuate` m-method with an input function. (✿oωo)
+this i-input function can be cweated f-fwom the tf.data.dataset y-you used with youw kewas modew. (///ˬ///✿)
 
-.. note: this util handles the most common case. If you have cases not satisfied by this util,
-         consider writing your own build_graph to wrap your keras models.
+.. nyote: this utiw handwes the most common case. rawr x3 if you have cases n-nyot satisfied by t-this utiw, -.-
+         considew wwiting y-youw own b-buiwd_gwaph to wwap y-youw kewas modews. ^^
 """
-from twitter.deepbird.hparam import HParams
+fwom twittew.deepbiwd.hpawam impowt hpawams
 
-import tensorflow  # noqa: F401
-import tensorflow.compat.v2 as tf
+i-impowt tensowfwow  # nyoqa: f401
+impowt tensowfwow.compat.v2 as tf
 
-import twml
+impowt t-twmw
 
 
-def build_keras_trainer(
-  name,
-  model_factory,
-  save_dir,
-  loss_fn=None,
-  metrics_fn=None,
-  **kwargs):
+def buiwd_kewas_twainew(
+  nyame, (⑅˘꒳˘)
+  modew_factowy, nyaa~~
+  save_diw,
+  w-woss_fn=none, /(^•ω•^)
+  m-metwics_fn=none, (U ﹏ U)
+  **kwawgs):
   """
-  Compile the given model_factory into a twml Trainer.
+  c-compiwe the given modew_factowy i-into a twmw twainew. 😳😳😳
 
-  Args:
-    name: a string name for the returned twml Trainer.
+  a-awgs:
+    n-nyame: a stwing n-nyame fow the wetuwned twmw twainew. >w<
 
-    model_factory: a callable that returns a keras model when called.
-      This keras model is expected to solve a binary classification problem.
-      This keras model takes a dict of tensors as input, and outputs a logit or probability.
+    modew_factowy: a-a cawwabwe t-that wetuwns a-a kewas modew w-when cawwed. XD
+      t-this kewas modew is expected to sowve a binawy cwassification p-pwobwem. o.O
+      this kewas modew takes a dict of tensows as input, mya and outputs a wogit ow pwobabiwity. 🥺
 
-    save_dir: a directory where the trainer saves data. Can be an HDFS path.
+    s-save_diw: a diwectowy whewe the twainew saves data. ^^;; c-can be an hdfs p-path. :3
 
-    loss_fn: the loss function to use. Defaults to tf.keras.losses.BinaryCrossentropy.
+    woss_fn: t-the woss function to use. (U ﹏ U) defauwts t-to tf.kewas.wosses.binawycwossentwopy. OwO
 
-    metrics_fn: metrics function used by TensorFlow estimators.
-    Defaults to twml.metrics.get_binary_class_metric_fn().
+    metwics_fn: m-metwics function u-used by tensowfwow estimatows. 😳😳😳
+    defauwts to twmw.metwics.get_binawy_cwass_metwic_fn(). (ˆ ﻌ ˆ)♡
 
-    **kwargs: for people familiar with twml Trainer's options, they can be passed in here
-      as kwargs, and they will be forwarded to Trainer as opts.
-      See https://cgit.twitter.biz/source/tree/twml/twml/argument_parser.py#n43 for available args.
+    **kwawgs: fow peopwe famiwiaw with t-twmw twainew's options, XD they c-can be passed in hewe
+      as kwawgs, (ˆ ﻌ ˆ)♡ a-and they w-wiww be fowwawded to twainew as opts. ( ͡o ω ͡o )
+      see h-https://cgit.twittew.biz/souwce/twee/twmw/twmw/awgument_pawsew.py#n43 f-fow avaiwabwe awgs. rawr x3
 
-  Returns:
-    a twml.trainers.Trainer object which can be used for training and exporting models.
+  wetuwns:
+    a-a twmw.twainews.twainew o-object which can be used fow twaining and expowting modews. nyaa~~
   """
-  build_graph = create_build_graph_fn(model_factory, loss_fn)
+  buiwd_gwaph = c-cweate_buiwd_gwaph_fn(modew_factowy, >_< w-woss_fn)
 
-  if metrics_fn is None:
-    metrics_fn = twml.metrics.get_binary_class_metric_fn()
+  i-if metwics_fn is none:
+    m-metwics_fn = twmw.metwics.get_binawy_cwass_metwic_fn()
 
-  opts = HParams(**kwargs)
-  opts.add_hparam('save_dir', save_dir)
+  o-opts = hpawams(**kwawgs)
+  o-opts.add_hpawam('save_diw', ^^;; save_diw)
 
-  return twml.trainers.Trainer(
-    name,
+  wetuwn twmw.twainews.twainew(
+    nyame, (ˆ ﻌ ˆ)♡
     opts,
-    build_graph_fn=build_graph,
-    save_dir=save_dir,
-    metric_fn=metrics_fn)
+    buiwd_gwaph_fn=buiwd_gwaph, ^^;;
+    s-save_diw=save_diw, (⑅˘꒳˘)
+    m-metwic_fn=metwics_fn)
 
 
-def create_build_graph_fn(model_factory, loss_fn=None):
-  """Create a build graph function from the given keras model."""
+def cweate_buiwd_gwaph_fn(modew_factowy, rawr x3 woss_fn=none):
+  """cweate a-a buiwd g-gwaph function fwom the given kewas modew."""
 
-  def build_graph(features, label, mode, params, config=None):
-    # create model from model factory.
-    model = model_factory()
+  def buiwd_gwaph(featuwes, (///ˬ///✿) w-wabew, 🥺 mode, pawams, >_< config=none):
+    # cweate modew fwom modew factowy. UwU
+    m-modew = modew_factowy()
 
-    # create loss function if the user didn't specify one.
-    if loss_fn is None:
-      build_graph_loss_fn = tf.keras.losses.BinaryCrossentropy(from_logits=False)
-    else:
-      build_graph_loss_fn = loss_fn
+    # cweate woss f-function if t-the usew didn't specify one. >_<
+    if woss_fn is nyone:
+      buiwd_gwaph_woss_fn = t-tf.kewas.wosses.binawycwossentwopy(fwom_wogits=fawse)
+    e-ewse:
+      buiwd_gwaph_woss_fn = woss_fn
 
-    output = model(features)
-    if mode == 'infer':
-      loss = None
-    else:
-      weights = features.get('weights', None)
-      loss = build_graph_loss_fn(y_true=label, y_pred=output, sample_weight=weights)
+    output = m-modew(featuwes)
+    if mode == 'infew':
+      w-woss = nyone
+    ewse:
+      weights = featuwes.get('weights', -.- nyone)
+      woss = b-buiwd_gwaph_woss_fn(y_twue=wabew, mya y_pwed=output, >w< s-sampwe_weight=weights)
 
-    if isinstance(output, dict):
-      if loss is None:
-        return output
-      else:
-        output['loss'] = loss
-        return output
-    else:
-      return {'output': output, 'loss': loss}
+    i-if isinstance(output, dict):
+      i-if woss is nyone:
+        wetuwn o-output
+      e-ewse:
+        o-output['woss'] = woss
+        wetuwn o-output
+    e-ewse:
+      wetuwn {'output': output, (U ﹏ U) 'woss': woss}
 
-  return build_graph
+  wetuwn buiwd_gwaph

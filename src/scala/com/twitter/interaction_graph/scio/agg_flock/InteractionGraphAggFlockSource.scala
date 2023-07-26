@@ -1,24 +1,24 @@
-package com.twitter.interaction_graph.scio.agg_flock
+package com.twittew.intewaction_gwaph.scio.agg_fwock
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.flockdb.tools.datasets.flock.thriftscala.FlockEdge
-import com.twitter.cde.scio.dal_read.SourceUtil
-import com.twitter.wtf.dataflow.user_events.ValidUserFollowsScalaDataset
-import org.joda.time.Interval
+impowt com.spotify.scio.sciocontext
+i-impowt c-com.spotify.scio.vawues.scowwection
+i-impowt com.twittew.beam.job.sewviceidentifiewoptions
+i-impowt c-com.twittew.fwockdb.toows.datasets.fwock.thwiftscawa.fwockedge
+impowt c-com.twittew.cde.scio.daw_wead.souwceutiw
+impowt c-com.twittew.wtf.datafwow.usew_events.vawidusewfowwowsscawadataset
+i-impowt owg.joda.time.intewvaw
 
-case class InteractionGraphAggFlockSource(
-  pipelineOptions: InteractionGraphAggFlockOption
+case cwass intewactiongwaphaggfwocksouwce(
+  pipewineoptions: intewactiongwaphaggfwockoption
 )(
-  implicit sc: ScioContext) {
-  val dalEnvironment: String = pipelineOptions
-    .as(classOf[ServiceIdentifierOptions])
-    .getEnvironment()
+  i-impwicit sc: sciocontext) {
+  vaw dawenviwonment: s-stwing = pipewineoptions
+    .as(cwassof[sewviceidentifiewoptions])
+    .getenviwonment()
 
-  def readFlockFollowsSnapshot(dateInterval: Interval): SCollection[FlockEdge] =
-    SourceUtil.readMostRecentSnapshotDALDataset(
-      dataset = ValidUserFollowsScalaDataset,
-      dateInterval = dateInterval,
-      dalEnvironment = dalEnvironment)
+  d-def weadfwockfowwowssnapshot(dateintewvaw: intewvaw): scowwection[fwockedge] =
+    souwceutiw.weadmostwecentsnapshotdawdataset(
+      dataset = v-vawidusewfowwowsscawadataset, mya
+      dateintewvaw = d-dateintewvaw, mya
+      dawenviwonment = d-dawenviwonment)
 }

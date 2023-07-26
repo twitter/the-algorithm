@@ -1,69 +1,69 @@
-WITH
-  vars AS (
-    SELECT
-      TIMESTAMP("{START_TIME}") AS start_date,
-      TIMESTAMP("{END_TIME}") AS end_date,
-  ),
+with
+  vaws as (
+    sewect
+      t-timestamp("{stawt_time}") a-as stawt_date, OwO
+      t-timestamp("{end_time}") a-as end_date, (U ﹏ U)
+  ), >w<
 
-  -- Get raw user-tweet interaction events from UUA (We will use fav engagements here)
-  raw_engagements AS (
-    SELECT
-      userIdentifier.userId AS userId,
-      eventMetadata.sourceTimestampMs AS tsMillis,
-      CASE
-          WHEN actionType IN ({CONTRIBUTING_ACTION_TYPES_STR}) THEN {CONTRIBUTING_ACTION_TWEET_ID_COLUMN}
-          WHEN actionType IN ({UNDO_ACTION_TYPES_STR}) THEN {UNDO_ACTION_TWEET_ID_COLUMN}
-      END AS tweetId,
-      CASE
-        WHEN actionType IN ({CONTRIBUTING_ACTION_TYPES_STR}) THEN 1
-        WHEN actionType IN ({UNDO_ACTION_TYPES_STR}) THEN -1
-      END AS doOrUndo
-    FROM `twttr-bql-unified-prod.unified_user_actions_engagements.streaming_unified_user_actions_engagements`, vars
-    WHERE (DATE(dateHour) >= DATE(vars.start_date) AND DATE(dateHour) <= DATE(vars.end_date))
-      AND eventMetadata.sourceTimestampMs >= UNIX_MILLIS(vars.start_date)
-      AND eventMetadata.sourceTimestampMs <= UNIX_MILLIS(vars.end_date)
-      AND (actionType IN ({CONTRIBUTING_ACTION_TYPES_STR})
-            OR actionType IN ({UNDO_ACTION_TYPES_STR}))
-  ),
+  -- g-get waw usew-tweet i-intewaction events f-fwom uua (we w-wiww use fav engagements hewe)
+  waw_engagements as (
+    sewect
+      usewidentifiew.usewid a-as usewid, (U ﹏ U)
+      eventmetadata.souwcetimestampms as tsmiwwis,
+      c-case
+          when actiontype i-in ({contwibuting_action_types_stw}) then {contwibuting_action_tweet_id_cowumn}
+          when actiontype in ({undo_action_types_stw}) t-then {undo_action_tweet_id_cowumn}
+      end as tweetid, 😳
+      c-case
+        w-when actiontype in ({contwibuting_action_types_stw}) then 1
+        when actiontype in ({undo_action_types_stw}) t-then -1
+      end as doowundo
+    fwom `twttw-bqw-unified-pwod.unified_usew_actions_engagements.stweaming_unified_usew_actions_engagements`, (ˆ ﻌ ˆ)♡ vaws
+    whewe (date(datehouw) >= date(vaws.stawt_date) a-and date(datehouw) <= d-date(vaws.end_date))
+      a-and e-eventmetadata.souwcetimestampms >= u-unix_miwwis(vaws.stawt_date)
+      and eventmetadata.souwcetimestampms <= unix_miwwis(vaws.end_date)
+      and (actiontype in ({contwibuting_action_types_stw})
+            o-ow actiontype in ({undo_action_types_stw}))
+  ), 😳😳😳
 
-  -- Get video tweet ids
-  video_tweet_ids AS (
-      WITH vars AS (
-        SELECT
-          TIMESTAMP("{START_TIME}") AS start_date,
-          TIMESTAMP("{END_TIME}") AS end_date
-      ),
+  -- get video tweet ids
+  video_tweet_ids a-as (
+      with vaws as (
+        sewect
+          timestamp("{stawt_time}") as stawt_date, (U ﹏ U)
+          timestamp("{end_time}") a-as end_date
+      ), (///ˬ///✿)
 
-      -- Get raw user-tweet interaction events from UUA
-      video_view_engagements AS (
-        SELECT item.tweetInfo.actionTweetId AS tweetId
-        FROM `twttr-bql-unified-prod.unified_user_actions_engagements.streaming_unified_user_actions_engagements`, vars
-        WHERE (DATE(dateHour) >= DATE(vars.start_date) AND DATE(dateHour) <= DATE(vars.end_date))
-          AND eventMetadata.sourceTimestampMs >= UNIX_MILLIS(start_date)
-          AND eventMetadata.sourceTimestampMs <= UNIX_MILLIS(end_date)
-          AND (actionType IN ("ClientTweetVideoPlayback50")
-                OR actionType IN ("ClientTweetVideoPlayback95"))
+      -- get waw u-usew-tweet intewaction e-events f-fwom uua
+      video_view_engagements as (
+        sewect item.tweetinfo.actiontweetid as tweetid
+        f-fwom `twttw-bqw-unified-pwod.unified_usew_actions_engagements.stweaming_unified_usew_actions_engagements`, 😳 v-vaws
+        whewe (date(datehouw) >= d-date(vaws.stawt_date) a-and date(datehouw) <= date(vaws.end_date))
+          a-and eventmetadata.souwcetimestampms >= unix_miwwis(stawt_date)
+          and e-eventmetadata.souwcetimestampms <= unix_miwwis(end_date)
+          and (actiontype i-in ("cwienttweetvideopwayback50")
+                ow actiontype i-in ("cwienttweetvideopwayback95"))
       )
 
-      SELECT DISTINCT(tweetId)
-      FROM video_view_engagements
-  ),
+      sewect distinct(tweetid)
+      f-fwom video_view_engagements
+  ), 😳
 
-  -- Join video tweet ids
-  video_tweets_engagements AS (
-      SELECT raw_engagements.*
-      FROM raw_engagements JOIN video_tweet_ids USING(tweetId)
-  ),
+  -- j-join video tweet ids
+  video_tweets_engagements as (
+      sewect waw_engagements.*
+      fwom waw_engagements j-join v-video_tweet_ids using(tweetid)
+  ), σωσ
 
-  -- Group by userId and tweetId
-  user_tweet_engagement_pairs AS (
-    SELECT userId, tweetId, ARRAY_AGG(STRUCT(doOrUndo, tsMillis) ORDER BY tsMillis DESC LIMIT 1) AS details, COUNT(*) AS cnt
-    FROM video_tweets_engagements
-    GROUP BY userId, tweetId
+  -- g-gwoup b-by usewid and t-tweetid
+  usew_tweet_engagement_paiws as (
+    sewect usewid, tweetid, rawr x3 awway_agg(stwuct(doowundo, OwO t-tsmiwwis) owdew by tsmiwwis desc wimit 1) as detaiws, /(^•ω•^) count(*) as cnt
+    fwom v-video_tweets_engagements
+    gwoup b-by usewid, 😳😳😳 tweetid
   )
 
--- Remove undo events
-SELECT userId, tweetId, CAST(dt.tsMillis  AS FLOAT64) AS tsMillis
-FROM user_tweet_engagement_pairs, vars
-CROSS JOIN UNNEST(details) AS dt
-WHERE dt.doOrUndo = 1
+-- wemove u-undo events
+s-sewect usewid, ( ͡o ω ͡o ) tweetid, >_< cast(dt.tsmiwwis  a-as fwoat64) a-as tsmiwwis
+f-fwom usew_tweet_engagement_paiws, >w< v-vaws
+cwoss join unnest(detaiws) as dt
+whewe d-dt.doowundo = 1

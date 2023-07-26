@@ -1,37 +1,37 @@
-package com.twitter.frigate.pushservice.predicate
+package com.twittew.fwigate.pushsewvice.pwedicate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.common.base.TweetCandidate
-import com.twitter.frigate.common.base.TweetDetails
-import com.twitter.frigate.common.predicate.tweet._
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.hermit.predicate.NamedPredicate
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.base.tweetauthowdetaiws
+i-impowt c-com.twittew.fwigate.common.base.tweetcandidate
+i-impowt com.twittew.fwigate.common.base.tweetdetaiws
+i-impowt com.twittew.fwigate.common.pwedicate.tweet._
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.hewmit.pwedicate.namedpwedicate
 
-class LoggedOutPreRankingPredicatesBuilder(implicit statsReceiver: StatsReceiver) {
+cwass woggedoutpwewankingpwedicatesbuiwdew(impwicit statsweceivew: statsweceivew) {
 
-  private val TweetPredicates = List[NamedPredicate[PushCandidate]](
-    TweetObjectExistsPredicate[
-      TweetCandidate with TweetDetails
-    ].applyOnlyToTweetCandidatesWithTweetDetails
-      .withName("tweet_object_exists"),
-    PredicatesForCandidate.oldTweetRecsPredicate.applyOnlyToTweetCandidateWithTargetAndABDeciderAndMaxTweetAge
-      .withName("old_tweet"),
-    PredicatesForCandidate.tweetIsNotAreply.applyOnlyToTweetCandidateWithoutSocialContextWithTweetDetails
-      .withName("tweet_candidate_not_a_reply"),
-    TweetAuthorPredicates
-      .recTweetAuthorUnsuitable[TweetCandidate with TweetAuthorDetails]
-      .applyOnlyToTweetCandidateWithTweetAuthorDetails
-      .withName("tweet_author_unsuitable")
+  p-pwivate vaw tweetpwedicates = wist[namedpwedicate[pushcandidate]](
+    t-tweetobjectexistspwedicate[
+      tweetcandidate w-with tweetdetaiws
+    ].appwyonwytotweetcandidateswithtweetdetaiws
+      .withname("tweet_object_exists"), rawr x3
+    pwedicatesfowcandidate.owdtweetwecspwedicate.appwyonwytotweetcandidatewithtawgetandabdecidewandmaxtweetage
+      .withname("owd_tweet"), nyaa~~
+    pwedicatesfowcandidate.tweetisnotawepwy.appwyonwytotweetcandidatewithoutsociawcontextwithtweetdetaiws
+      .withname("tweet_candidate_not_a_wepwy"), /(^•ω•^)
+    tweetauthowpwedicates
+      .wectweetauthowunsuitabwe[tweetcandidate w-with tweetauthowdetaiws]
+      .appwyonwytotweetcandidatewithtweetauthowdetaiws
+      .withname("tweet_authow_unsuitabwe")
   )
 
-  final def build(): List[NamedPredicate[PushCandidate]] = {
-    TweetPredicates
+  f-finaw d-def buiwd(): wist[namedpwedicate[pushcandidate]] = {
+    tweetpwedicates
   }
 
 }
 
-object LoggedOutPreRankingPredicates {
-  def apply(statsReceiver: StatsReceiver): List[NamedPredicate[PushCandidate]] =
-    new LoggedOutPreRankingPredicatesBuilder()(statsReceiver).build()
+object woggedoutpwewankingpwedicates {
+  def a-appwy(statsweceivew: statsweceivew): wist[namedpwedicate[pushcandidate]] =
+    nyew woggedoutpwewankingpwedicatesbuiwdew()(statsweceivew).buiwd()
 }

@@ -1,376 +1,376 @@
-package com.twitter.search.common.query;
+package com.twittew.seawch.common.quewy;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
+impowt j-java.io.ioexception;
+i-impowt java.utiw.awwaywist;
+i-impowt java.utiw.itewatow;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.objects;
+i-impowt j-java.utiw.set;
+impowt java.utiw.stweam.cowwectows;
 
-import org.apache.lucene.index.FilteredTermsEnum;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.index.TermState;
-import org.apache.lucene.index.TermStates;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.BooleanClause.Occur;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.BulkScorer;
-import org.apache.lucene.search.ConstantScoreQuery;
-import org.apache.lucene.search.ConstantScoreScorer;
-import org.apache.lucene.search.ConstantScoreWeight;
-import org.apache.lucene.search.DocIdSet;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.MultiTermQuery;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.Weight;
-import org.apache.lucene.util.AttributeSource;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.DocIdSetBuilder;
+impowt owg.apache.wucene.index.fiwtewedtewmsenum;
+impowt owg.apache.wucene.index.indexweadew;
+i-impowt owg.apache.wucene.index.weafweadewcontext;
+impowt owg.apache.wucene.index.postingsenum;
+impowt owg.apache.wucene.index.tewm;
+i-impowt owg.apache.wucene.index.tewmstate;
+i-impowt owg.apache.wucene.index.tewmstates;
+impowt owg.apache.wucene.index.tewms;
+impowt owg.apache.wucene.index.tewmsenum;
+impowt owg.apache.wucene.seawch.booweancwause.occuw;
+i-impowt owg.apache.wucene.seawch.booweanquewy;
+impowt owg.apache.wucene.seawch.buwkscowew;
+i-impowt o-owg.apache.wucene.seawch.constantscowequewy;
+impowt owg.apache.wucene.seawch.constantscowescowew;
+impowt owg.apache.wucene.seawch.constantscoweweight;
+impowt owg.apache.wucene.seawch.docidset;
+i-impowt owg.apache.wucene.seawch.docidsetitewatow;
+impowt owg.apache.wucene.seawch.indexseawchew;
+impowt owg.apache.wucene.seawch.muwtitewmquewy;
+impowt owg.apache.wucene.seawch.quewy;
+impowt o-owg.apache.wucene.seawch.scowew;
+impowt owg.apache.wucene.seawch.scowemode;
+i-impowt owg.apache.wucene.seawch.tewmquewy;
+i-impowt o-owg.apache.wucene.seawch.weight;
+i-impowt owg.apache.wucene.utiw.attwibutesouwce;
+impowt owg.apache.wucene.utiw.byteswef;
+impowt o-owg.apache.wucene.utiw.docidsetbuiwdew;
 
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.IndexedNumericFieldSettings;
-import com.twitter.search.common.util.analysis.LongTermAttributeImpl;
-import com.twitter.search.common.util.analysis.SortableLongTermAttributeImpl;
-import com.twitter.search.queryparser.query.QueryParserException;
+impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+i-impowt com.twittew.seawch.common.schema.base.indexednumewicfiewdsettings;
+impowt com.twittew.seawch.common.utiw.anawysis.wongtewmattwibuteimpw;
+impowt com.twittew.seawch.common.utiw.anawysis.sowtabwewongtewmattwibuteimpw;
+impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
 
 /**
- * An extension of Lucene's MultiTermQuery which creates a disjunction of
- * long ID terms. Lucene tries to rewrite the Query depending on the number
- * of clauses to perform as efficiently as possible.
+ * an extension o-of wucene's muwtitewmquewy w-which cweates a-a disjunction of
+ * w-wong id tewms. 😳😳😳 wucene twies to wewwite the quewy depending on t-the nyumbew
+ * o-of cwauses to pewfowm as efficientwy a-as possibwe. nyaa~~
  */
-public class IDDisjunctionQuery extends MultiTermQuery {
-  private final List<Long> ids;
-  private final boolean useOrderPreservingEncoding;
+p-pubwic cwass iddisjunctionquewy e-extends muwtitewmquewy {
+  pwivate finaw w-wist<wong> ids;
+  pwivate finaw boowean useowdewpwesewvingencoding;
 
-  /** Creates a new IDDisjunctionQuery instance. */
-  public IDDisjunctionQuery(List<Long> ids, String field, ImmutableSchemaInterface schemaSnapshot)
-      throws QueryParserException {
-    super(field);
+  /** c-cweates a nyew iddisjunctionquewy i-instance. (˘ω˘) */
+  pubwic i-iddisjunctionquewy(wist<wong> i-ids, >_< stwing fiewd, XD immutabweschemaintewface schemasnapshot)
+      thwows quewypawsewexception {
+    supew(fiewd);
     this.ids = ids;
 
-    setRewriteMethod(new Rewrite());
+    setwewwitemethod(new w-wewwite());
 
-    if (!schemaSnapshot.hasField(field)) {
-      throw new QueryParserException(
-          "Tried to search a field which does not exist in schema: " + field);
+    i-if (!schemasnapshot.hasfiewd(fiewd)) {
+      thwow nyew quewypawsewexception(
+          "twied t-to seawch a fiewd w-which does nyot e-exist in schema: " + fiewd);
     }
 
-    IndexedNumericFieldSettings numericFieldSettings =
-        schemaSnapshot.getFieldInfo(field).getFieldType().getNumericFieldSettings();
+    indexednumewicfiewdsettings nyumewicfiewdsettings =
+        s-schemasnapshot.getfiewdinfo(fiewd).getfiewdtype().getnumewicfiewdsettings();
 
-    if (numericFieldSettings == null) {
-      throw new QueryParserException("Requested id field is not numerical: " + field);
+    if (numewicfiewdsettings == nyuww) {
+      thwow nyew quewypawsewexception("wequested id fiewd is nyot n-nyumewicaw: " + fiewd);
     }
 
-    this.useOrderPreservingEncoding = numericFieldSettings.isUseSortableEncoding();
+    t-this.useowdewpwesewvingencoding = n-nyumewicfiewdsettings.isusesowtabweencoding();
   }
 
   /**
-   * Work around for an issue where LongTerms are not valid utf8, so calling
-   * toString on any TermQuery containing a LongTerm may cause exceptions.
+   * w-wowk awound fow an issue whewe w-wongtewms awe n-nyot vawid utf8, rawr x3 s-so cawwing
+   * t-tostwing on any tewmquewy containing a wongtewm m-may cause exceptions. ( ͡o ω ͡o )
    */
-  private class Rewrite extends RewriteMethod {
-    @Override
-    public Query rewrite(IndexReader reader, MultiTermQuery query) throws IOException {
-      Query result = new MultiTermQueryConstantScoreWrapper(
-          (IDDisjunctionQuery) query, useOrderPreservingEncoding);
-      return result;
+  p-pwivate cwass wewwite e-extends wewwitemethod {
+    @ovewwide
+    p-pubwic quewy wewwite(indexweadew w-weadew, :3 muwtitewmquewy quewy) thwows ioexception {
+      quewy w-wesuwt = nyew muwtitewmquewyconstantscowewwappew(
+          (iddisjunctionquewy) quewy, mya useowdewpwesewvingencoding);
+      wetuwn wesuwt;
     }
   }
 
-  @Override
-  protected TermsEnum getTermsEnum(final Terms terms, AttributeSource atts) throws IOException {
-    final Iterator<Long> it = this.ids.iterator();
-    final TermsEnum termsEnum = terms.iterator();
+  @ovewwide
+  pwotected tewmsenum gettewmsenum(finaw t-tewms tewms, σωσ attwibutesouwce atts) thwows ioexception {
+    f-finaw itewatow<wong> i-it = t-this.ids.itewatow();
+    finaw tewmsenum t-tewmsenum = tewms.itewatow();
 
-    return new FilteredTermsEnum(termsEnum) {
-      private final BytesRef term = useOrderPreservingEncoding
-          ? SortableLongTermAttributeImpl.newBytesRef()
-          : LongTermAttributeImpl.newBytesRef();
+    w-wetuwn n-nyew fiwtewedtewmsenum(tewmsenum) {
+      pwivate finaw byteswef tewm = useowdewpwesewvingencoding
+          ? sowtabwewongtewmattwibuteimpw.newbyteswef()
+          : wongtewmattwibuteimpw.newbyteswef();
 
-      @Override protected AcceptStatus accept(BytesRef term) throws IOException {
-        return AcceptStatus.YES;
+      @ovewwide p-pwotected acceptstatus accept(byteswef t-tewm) thwows ioexception {
+        w-wetuwn a-acceptstatus.yes;
       }
 
-      @Override public BytesRef next() throws IOException {
-        while (it.hasNext()) {
-          Long longTerm = it.next();
-          if (useOrderPreservingEncoding) {
-            SortableLongTermAttributeImpl.copyLongToBytesRef(term, longTerm);
-          } else {
-            LongTermAttributeImpl.copyLongToBytesRef(term, longTerm);
+      @ovewwide pubwic byteswef next() t-thwows ioexception {
+        w-whiwe (it.hasnext()) {
+          wong wongtewm = i-it.next();
+          i-if (useowdewpwesewvingencoding) {
+            sowtabwewongtewmattwibuteimpw.copywongtobyteswef(tewm, (ꈍᴗꈍ) wongtewm);
+          } ewse {
+            wongtewmattwibuteimpw.copywongtobyteswef(tewm, OwO w-wongtewm);
           }
-          if (termsEnum.seekExact(term)) {
-            return term;
+          i-if (tewmsenum.seekexact(tewm)) {
+            w-wetuwn tewm;
           }
         }
 
-        return null;
+        wetuwn n-nyuww;
       }
     };
   }
 
-  @Override
-  public String toString(String field) {
-    StringBuilder builder = new StringBuilder();
-    builder.append("IDDisjunction[").append(this.field).append(":");
-    for (Long id : this.ids) {
-      builder.append(id);
-      builder.append(",");
+  @ovewwide
+  p-pubwic stwing tostwing(stwing f-fiewd) {
+    stwingbuiwdew buiwdew = nyew stwingbuiwdew();
+    buiwdew.append("iddisjunction[").append(this.fiewd).append(":");
+    f-fow (wong id : this.ids) {
+      b-buiwdew.append(id);
+      buiwdew.append(",");
     }
-    builder.setLength(builder.length() - 1);
-    builder.append("]");
-    return builder.toString();
+    buiwdew.setwength(buiwdew.wength() - 1);
+    b-buiwdew.append("]");
+    w-wetuwn buiwdew.tostwing();
   }
 
-  private static class TermQueryWithToString extends TermQuery {
-    private final boolean useOrderPreservingEncoding;
+  pwivate static cwass tewmquewywithtostwing extends t-tewmquewy {
+    pwivate finaw boowean useowdewpwesewvingencoding;
 
-    public TermQueryWithToString(Term t, TermStates states, boolean useOrderPreservingEncoding) {
-      super(t, states);
-      this.useOrderPreservingEncoding = useOrderPreservingEncoding;
+    pubwic tewmquewywithtostwing(tewm t-t, o.O tewmstates states, 😳😳😳 boowean useowdewpwesewvingencoding) {
+      s-supew(t, /(^•ω•^) states);
+      t-this.useowdewpwesewvingencoding = useowdewpwesewvingencoding;
     }
 
-    @Override
-    public String toString(String field) {
-      StringBuilder buffer = new StringBuilder();
-      if (!getTerm().field().equals(field)) {
-        buffer.append(getTerm().field());
-        buffer.append(":");
+    @ovewwide
+    pubwic stwing tostwing(stwing fiewd) {
+      s-stwingbuiwdew b-buffew = nyew stwingbuiwdew();
+      if (!gettewm().fiewd().equaws(fiewd)) {
+        buffew.append(gettewm().fiewd());
+        buffew.append(":");
       }
-      long longTerm;
-      BytesRef termBytes = getTerm().bytes();
-      if (useOrderPreservingEncoding) {
-        longTerm = SortableLongTermAttributeImpl.copyBytesRefToLong(termBytes);
-      } else {
-        longTerm = LongTermAttributeImpl.copyBytesRefToLong(termBytes);
+      wong w-wongtewm;
+      byteswef tewmbytes = g-gettewm().bytes();
+      if (useowdewpwesewvingencoding) {
+        wongtewm = sowtabwewongtewmattwibuteimpw.copybytesweftowong(tewmbytes);
+      } e-ewse {
+        wongtewm = w-wongtewmattwibuteimpw.copybytesweftowong(tewmbytes);
       }
-      buffer.append(longTerm);
-      return buffer.toString();
+      b-buffew.append(wongtewm);
+      wetuwn buffew.tostwing();
     }
   }
 
   /**
-   * This class provides the functionality behind {@link MultiTermQuery#CONSTANT_SCORE_REWRITE}.
-   * It tries to rewrite per-segment as a boolean query that returns a constant score and otherwise
-   * fills a DocIdSet with matches and builds a Scorer on top of this DocIdSet.
+   * t-this cwass pwovides the functionawity b-behind {@wink m-muwtitewmquewy#constant_scowe_wewwite}. OwO
+   * i-it twies to wewwite pew-segment a-as a boowean q-quewy that wetuwns a constant scowe and othewwise
+   * f-fiwws a d-docidset with matches a-and buiwds a scowew on top of this docidset. ^^
    */
-  static final class MultiTermQueryConstantScoreWrapper extends Query {
-    // disable the rewrite option which will scan all posting lists sequentially and perform
-    // the intersection using a temporary DocIdSet. In earlybird this mode is slower than a "normal"
-    // disjunctive BooleanQuery, due to early termination and the fact that everything is in memory.
-    private static final int BOOLEAN_REWRITE_TERM_COUNT_THRESHOLD = 3000;
+  s-static finaw cwass muwtitewmquewyconstantscowewwappew e-extends quewy {
+    // d-disabwe the wewwite option which wiww scan aww posting w-wists sequentiawwy a-and pewfowm
+    // t-the intewsection u-using a tempowawy docidset. (///ˬ///✿) i-in eawwybiwd this mode is swowew than a "nowmaw"
+    // disjunctive booweanquewy, (///ˬ///✿) due to eawwy t-tewmination and the fact that e-evewything is in memowy. (///ˬ///✿)
+    pwivate s-static finaw int boowean_wewwite_tewm_count_thweshowd = 3000;
 
-    private static class TermAndState {
-      private final BytesRef term;
-      private final TermState state;
-      private final int docFreq;
-      private final long totalTermFreq;
+    p-pwivate static cwass tewmandstate {
+      p-pwivate finaw b-byteswef tewm;
+      p-pwivate finaw t-tewmstate state;
+      p-pwivate finaw int docfweq;
+      pwivate finaw wong totawtewmfweq;
 
-      TermAndState(BytesRef term, TermState state, int docFreq, long totalTermFreq) {
-        this.term = term;
-        this.state = state;
-        this.docFreq = docFreq;
-        this.totalTermFreq = totalTermFreq;
+      tewmandstate(byteswef tewm, ʘwʘ tewmstate state, ^•ﻌ•^ i-int docfweq, OwO wong t-totawtewmfweq) {
+        t-this.tewm = tewm;
+        t-this.state = state;
+        this.docfweq = docfweq;
+        t-this.totawtewmfweq = t-totawtewmfweq;
       }
     }
 
-    private static class WeightOrDocIdSet {
-      private final Weight weight;
-      private final DocIdSet docIdSet;
+    pwivate s-static cwass weightowdocidset {
+      pwivate finaw weight weight;
+      p-pwivate f-finaw docidset docidset;
 
-      WeightOrDocIdSet(Weight weight) {
-        this.weight = Objects.requireNonNull(weight);
-        this.docIdSet = null;
+      w-weightowdocidset(weight w-weight) {
+        this.weight = objects.wequiwenonnuww(weight);
+        this.docidset = nyuww;
       }
 
-      WeightOrDocIdSet(DocIdSet docIdSet) {
-        this.docIdSet = docIdSet;
-        this.weight = null;
+      w-weightowdocidset(docidset d-docidset) {
+        t-this.docidset = d-docidset;
+        t-this.weight = nyuww;
       }
     }
 
-    protected final IDDisjunctionQuery query;
-    private final boolean useOrderPreservingEncoding;
+    p-pwotected finaw i-iddisjunctionquewy quewy;
+    pwivate f-finaw boowean u-useowdewpwesewvingencoding;
 
     /**
-     * Wrap a {@link MultiTermQuery} as a Filter.
+     * wwap a {@wink muwtitewmquewy} a-as a fiwtew. (U ﹏ U)
      */
-    protected MultiTermQueryConstantScoreWrapper(
-        IDDisjunctionQuery query,
-        boolean useOrderPreservingEncoding) {
-      this.query = query;
-      this.useOrderPreservingEncoding = useOrderPreservingEncoding;
+    pwotected m-muwtitewmquewyconstantscowewwappew(
+        iddisjunctionquewy q-quewy, (ˆ ﻌ ˆ)♡
+        boowean u-useowdewpwesewvingencoding) {
+      this.quewy = q-quewy;
+      this.useowdewpwesewvingencoding = useowdewpwesewvingencoding;
     }
 
-    @Override
-    public String toString(String field) {
-      // query.toString should be ok for the filter, too, if the query boost is 1.0f
-      return query.toString(field);
+    @ovewwide
+    p-pubwic s-stwing tostwing(stwing f-fiewd) {
+      // quewy.tostwing shouwd be ok fow the f-fiwtew, (⑅˘꒳˘) too, (U ﹏ U) if the quewy boost is 1.0f
+      wetuwn q-quewy.tostwing(fiewd);
     }
 
-    @Override
-    public boolean equals(Object obj) {
-      if (!(obj instanceof MultiTermQueryConstantScoreWrapper)) {
-        return false;
+    @ovewwide
+    p-pubwic boowean equaws(object o-obj) {
+      if (!(obj instanceof m-muwtitewmquewyconstantscowewwappew)) {
+        w-wetuwn fawse;
       }
 
-      return query.equals(MultiTermQueryConstantScoreWrapper.class.cast(obj).query);
+      wetuwn quewy.equaws(muwtitewmquewyconstantscowewwappew.cwass.cast(obj).quewy);
     }
 
-    @Override
-    public int hashCode() {
-      return query == null ? 0 : query.hashCode();
+    @ovewwide
+    pubwic int h-hashcode() {
+      wetuwn quewy == nyuww ? 0 : q-quewy.hashcode();
     }
 
-    /** Returns the field name for this query */
-    public String getField() {
-      return query.getField();
+    /** w-wetuwns the fiewd nyame fow this q-quewy */
+    pubwic stwing getfiewd() {
+      w-wetuwn quewy.getfiewd();
     }
 
-    private List<Long> getIDs() {
-      return query.ids;
+    p-pwivate wist<wong> g-getids() {
+      wetuwn quewy.ids;
     }
 
-    @Override
-    public Weight createWeight(
-        final IndexSearcher searcher,
-        final ScoreMode scoreMode,
-        final float boost) throws IOException {
-      return new ConstantScoreWeight(this, boost) {
-        /** Try to collect terms from the given terms enum and return true iff all
-         *  terms could be collected. If {@code false} is returned, the enum is
-         *  left positioned on the next term. */
-        private boolean collectTerms(LeafReaderContext context,
-                                     TermsEnum termsEnum,
-                                     List<TermAndState> terms) throws IOException {
-          final int threshold = Math.min(BOOLEAN_REWRITE_TERM_COUNT_THRESHOLD,
-                                         BooleanQuery.getMaxClauseCount());
-          for (int i = 0; i < threshold; ++i) {
-            final BytesRef term = termsEnum.next();
-            if (term == null) {
-              return true;
+    @ovewwide
+    pubwic weight cweateweight(
+        finaw indexseawchew seawchew, o.O
+        finaw scowemode scowemode, mya
+        finaw fwoat boost) thwows ioexception {
+      wetuwn nyew constantscoweweight(this, XD boost) {
+        /** twy to c-cowwect tewms f-fwom the given tewms enum and wetuwn twue iff aww
+         *  t-tewms c-couwd be cowwected. òωó i-if {@code fawse} is wetuwned, (˘ω˘) t-the enum is
+         *  weft p-positioned on t-the nyext tewm. :3 */
+        pwivate b-boowean cowwecttewms(weafweadewcontext context, OwO
+                                     t-tewmsenum t-tewmsenum, mya
+                                     wist<tewmandstate> tewms) thwows i-ioexception {
+          f-finaw i-int thweshowd = m-math.min(boowean_wewwite_tewm_count_thweshowd, (˘ω˘)
+                                         b-booweanquewy.getmaxcwausecount());
+          f-fow (int i-i = 0; i < thweshowd; ++i) {
+            f-finaw byteswef t-tewm = tewmsenum.next();
+            if (tewm == n-nyuww) {
+              w-wetuwn twue;
             }
-            TermState state = termsEnum.termState();
-            terms.add(new TermAndState(BytesRef.deepCopyOf(term),
-                                       state,
-                                       termsEnum.docFreq(),
-                                       termsEnum.totalTermFreq()));
+            t-tewmstate state = tewmsenum.tewmstate();
+            t-tewms.add(new tewmandstate(byteswef.deepcopyof(tewm),
+                                       state, o.O
+                                       t-tewmsenum.docfweq(), (✿oωo)
+                                       tewmsenum.totawtewmfweq()));
           }
-          return termsEnum.next() == null;
+          w-wetuwn tewmsenum.next() == n-nyuww;
         }
 
         /**
-         * On the given leaf context, try to either rewrite to a disjunction if
-         * there are few terms, or build a DocIdSet containing matching docs.
+         * o-on the given weaf context, (ˆ ﻌ ˆ)♡ t-twy to eithew wewwite to a d-disjunction if
+         * thewe a-awe few tewms, ^^;; ow buiwd a docidset c-containing matching docs. OwO
          */
-        private WeightOrDocIdSet rewrite(LeafReaderContext context)
-            throws IOException {
-          final Terms terms = context.reader().terms(query.getField());
-          if (terms == null) {
-            // field does not exist
-            return new WeightOrDocIdSet((DocIdSet) null);
+        pwivate weightowdocidset wewwite(weafweadewcontext context)
+            t-thwows ioexception {
+          f-finaw tewms t-tewms = context.weadew().tewms(quewy.getfiewd());
+          if (tewms == nyuww) {
+            // fiewd does nyot exist
+            w-wetuwn nyew weightowdocidset((docidset) nyuww);
           }
 
-          final TermsEnum termsEnum = query.getTermsEnum(terms);
-          assert termsEnum != null;
+          f-finaw t-tewmsenum tewmsenum = q-quewy.gettewmsenum(tewms);
+          assewt tewmsenum != nyuww;
 
-          PostingsEnum docs = null;
+          p-postingsenum d-docs = nyuww;
 
-          final List<TermAndState> collectedTerms = new ArrayList<>();
-          if (collectTerms(context, termsEnum, collectedTerms)) {
-            // build a boolean query
-            BooleanQuery.Builder bqBuilder = new BooleanQuery.Builder();
-            for (TermAndState t : collectedTerms) {
-              final TermStates termStates = new TermStates(searcher.getTopReaderContext());
-              termStates.register(t.state, context.ord, t.docFreq, t.totalTermFreq);
-              final Term term = new Term(query.getField(), t.term);
-              bqBuilder.add(
-                  new TermQueryWithToString(term, termStates, useOrderPreservingEncoding),
-                  Occur.SHOULD);
+          finaw w-wist<tewmandstate> cowwectedtewms = nyew awwaywist<>();
+          i-if (cowwecttewms(context, 🥺 tewmsenum, c-cowwectedtewms)) {
+            // b-buiwd a-a boowean quewy
+            booweanquewy.buiwdew b-bqbuiwdew = nyew b-booweanquewy.buiwdew();
+            f-fow (tewmandstate t-t : cowwectedtewms) {
+              finaw t-tewmstates tewmstates = n-nyew tewmstates(seawchew.gettopweadewcontext());
+              t-tewmstates.wegistew(t.state, mya c-context.owd, 😳 t-t.docfweq, òωó t.totawtewmfweq);
+              f-finaw t-tewm tewm = n-new tewm(quewy.getfiewd(), /(^•ω•^) t.tewm);
+              b-bqbuiwdew.add(
+                  nyew tewmquewywithtostwing(tewm, -.- t-tewmstates, òωó useowdewpwesewvingencoding), /(^•ω•^)
+                  occuw.shouwd);
             }
-            Query q = BoostUtils.maybeWrapInBoostQuery(
-                new ConstantScoreQuery(bqBuilder.build()), score());
-            return new WeightOrDocIdSet(
-                searcher.rewrite(q).createWeight(searcher, scoreMode, boost));
+            q-quewy q = b-boostutiws.maybewwapinboostquewy(
+                n-nyew constantscowequewy(bqbuiwdew.buiwd()), /(^•ω•^) scowe());
+            wetuwn nyew weightowdocidset(
+                s-seawchew.wewwite(q).cweateweight(seawchew, 😳 scowemode, :3 b-boost));
           }
 
-          // Too many terms: go back to the terms we already collected and start building
-          // the DocIdSet
-          DocIdSetBuilder builder = new DocIdSetBuilder(context.reader().maxDoc());
-          if (!collectedTerms.isEmpty()) {
-            TermsEnum termsEnum2 = terms.iterator();
-            for (TermAndState t : collectedTerms) {
-              termsEnum2.seekExact(t.term, t.state);
-              docs = termsEnum2.postings(docs, PostingsEnum.NONE);
-              builder.add(docs);
+          // t-too many tewms: go back to the tewms we awweady cowwected a-and stawt b-buiwding
+          // the docidset
+          d-docidsetbuiwdew b-buiwdew = nyew docidsetbuiwdew(context.weadew().maxdoc());
+          if (!cowwectedtewms.isempty()) {
+            tewmsenum tewmsenum2 = t-tewms.itewatow();
+            f-fow (tewmandstate t-t : cowwectedtewms) {
+              t-tewmsenum2.seekexact(t.tewm, (U ᵕ U❁) t.state);
+              docs = tewmsenum2.postings(docs, ʘwʘ p-postingsenum.none);
+              b-buiwdew.add(docs);
             }
           }
 
-          // Then keep filling the DocIdSet with remaining terms
+          // then keep fiwwing t-the docidset with wemaining tewms
           do {
-            docs = termsEnum.postings(docs, PostingsEnum.NONE);
-            builder.add(docs);
-          } while (termsEnum.next() != null);
+            d-docs = tewmsenum.postings(docs, o.O p-postingsenum.none);
+            b-buiwdew.add(docs);
+          } whiwe (tewmsenum.next() != n-nyuww);
 
-          return new WeightOrDocIdSet(builder.build());
+          w-wetuwn nyew weightowdocidset(buiwdew.buiwd());
         }
 
-        private Scorer scorer(DocIdSet set) throws IOException {
-          if (set == null) {
-            return null;
+        p-pwivate scowew scowew(docidset s-set) t-thwows ioexception {
+          if (set == n-nyuww) {
+            wetuwn n-nyuww;
           }
-          final DocIdSetIterator disi = set.iterator();
-          if (disi == null) {
-            return null;
+          finaw docidsetitewatow d-disi = s-set.itewatow();
+          i-if (disi == nyuww) {
+            w-wetuwn nyuww;
           }
-          return new ConstantScoreScorer(this, score(), ScoreMode.COMPLETE_NO_SCORES, disi);
+          wetuwn nyew constantscowescowew(this, ʘwʘ s-scowe(), ^^ scowemode.compwete_no_scowes, ^•ﻌ•^ d-disi);
         }
 
-        @Override
-        public BulkScorer bulkScorer(LeafReaderContext context) throws IOException {
-          final WeightOrDocIdSet weightOrDocIdSet = rewrite(context);
-          if (weightOrDocIdSet.weight != null) {
-            return weightOrDocIdSet.weight.bulkScorer(context);
-          } else {
-            final Scorer scorer = scorer(weightOrDocIdSet.docIdSet);
-            if (scorer == null) {
-              return null;
+        @ovewwide
+        p-pubwic buwkscowew buwkscowew(weafweadewcontext context) thwows ioexception {
+          finaw weightowdocidset w-weightowdocidset = wewwite(context);
+          i-if (weightowdocidset.weight != n-nyuww) {
+            wetuwn weightowdocidset.weight.buwkscowew(context);
+          } e-ewse {
+            finaw s-scowew scowew = s-scowew(weightowdocidset.docidset);
+            i-if (scowew == n-nyuww) {
+              w-wetuwn nyuww;
             }
-            return new DefaultBulkScorer(scorer);
+            wetuwn nyew defauwtbuwkscowew(scowew);
           }
         }
 
-        @Override
-        public Scorer scorer(LeafReaderContext context) throws IOException {
-          final WeightOrDocIdSet weightOrDocIdSet = rewrite(context);
-          if (weightOrDocIdSet.weight != null) {
-            return weightOrDocIdSet.weight.scorer(context);
-          } else {
-            return scorer(weightOrDocIdSet.docIdSet);
+        @ovewwide
+        pubwic scowew scowew(weafweadewcontext context) t-thwows ioexception {
+          finaw weightowdocidset w-weightowdocidset = wewwite(context);
+          if (weightowdocidset.weight != nyuww) {
+            w-wetuwn weightowdocidset.weight.scowew(context);
+          } ewse {
+            wetuwn scowew(weightowdocidset.docidset);
           }
         }
 
-        @Override
-        public void extractTerms(Set<Term> terms) {
-          terms.addAll(getIDs()
-              .stream()
-              .map(id -> new Term(getField(), LongTermAttributeImpl.copyIntoNewBytesRef(id)))
-              .collect(Collectors.toSet()));
+        @ovewwide
+        pubwic void extwacttewms(set<tewm> t-tewms) {
+          t-tewms.addaww(getids()
+              .stweam()
+              .map(id -> nyew tewm(getfiewd(), mya w-wongtewmattwibuteimpw.copyintonewbyteswef(id)))
+              .cowwect(cowwectows.toset()));
         }
 
-        @Override
-        public boolean isCacheable(LeafReaderContext ctx) {
-          return false;
+        @ovewwide
+        pubwic boowean iscacheabwe(weafweadewcontext ctx) {
+          w-wetuwn f-fawse;
         }
       };
     }

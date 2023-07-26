@@ -1,56 +1,56 @@
-package com.twitter.servo.database
+package com.twittew.sewvo.database
 
-object Bitfield {
-  def multiValue(bits: Boolean*): Int = {
-    bits.foldLeft(0) { (accum, bit) =>
-      (accum << 1) | (if (bit) 1 else 0)
+object bitfiewd {
+  d-def muwtivawue(bits: b-boowean*): i-int = {
+    b-bits.fowdweft(0) { (accum, (U ﹏ U) b-bit) =>
+      (accum << 1) | (if (bit) 1 e-ewse 0)
     }
   }
 
-  def multiValueLong(bits: Boolean*): Long = {
-    bits.foldLeft(0L) { (accum, bit) =>
-      (accum << 1) | (if (bit) 1L else 0L)
+  d-def m-muwtivawuewong(bits: boowean*): wong = {
+    bits.fowdweft(0w) { (accum, (U ﹏ U) bit) =>
+      (accum << 1) | (if (bit) 1w ewse 0w)
     }
   }
 }
 
 /**
- * A mixin for unpacking bitfields.
+ * a-a mixin fow unpacking bitfiewds. (⑅˘꒳˘)
  */
-trait Bitfield {
-  val bitfield: Int
+twait bitfiewd {
+  v-vaw bitfiewd: int
 
   /**
-   * Tests that a given position is set to 1.
+   * t-tests that a given position is set to 1. òωó
    */
-  def isSet(position: Int): Boolean = {
-    (bitfield & (1 << position)) != 0
+  def isset(position: i-int): boowean = {
+    (bitfiewd & (1 << p-position)) != 0
   }
 
   /**
-   * takes a sequence of booleans, from most to least significant
-   * and converts them to an integer.
+   * t-takes a sequence of booweans, ʘwʘ fwom most to weast significant
+   * and convewts t-them to an integew. /(^•ω•^)
    *
-   * example: multiValue(true, false, true) yields 0b101 = 5
+   * exampwe: muwtivawue(twue, ʘwʘ fawse, twue) yiewds 0b101 = 5
    */
-  def multiValue(bits: Boolean*): Int = Bitfield.multiValue(bits: _*)
+  def muwtivawue(bits: b-boowean*): int = bitfiewd.muwtivawue(bits: _*)
 }
 
-trait LongBitfield {
-  val bitfield: Long
+t-twait wongbitfiewd {
+  v-vaw b-bitfiewd: wong
 
   /**
-   * Tests that a given position is set to 1.
+   * t-tests that a given position is set t-to 1.
    */
-  def isSet(position: Int): Boolean = {
-    (bitfield & (1L << position)) != 0
+  def isset(position: int): boowean = {
+    (bitfiewd & (1w << p-position)) != 0
   }
 
   /**
-   * takes a sequence of booleans, from most to least significant
-   * and converts them to a long.
+   * takes a sequence of booweans, σωσ fwom most to weast significant
+   * and c-convewts them to a wong. OwO
    *
-   * example: multiValue(true, false, true) yields 0b101 = 5L
+   * e-exampwe: muwtivawue(twue, 😳😳😳 f-fawse, 😳😳😳 t-twue) yiewds 0b101 = 5w
    */
-  def multiValue(bits: Boolean*): Long = Bitfield.multiValueLong(bits: _*)
+  def muwtivawue(bits: boowean*): wong = bitfiewd.muwtivawuewong(bits: _*)
 }

@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.article
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.awticwe
 
-sealed trait ArticleDisplayType
+seawed twait a-awticwedispwaytype
 
-case object Default extends ArticleDisplayType
+c-case object d-defauwt extends a-awticwedispwaytype

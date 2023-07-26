@@ -1,23 +1,23 @@
-package com.twitter.cr_mixer.ranker
+package com.twittew.cw_mixew.wankew
 
-import com.twitter.cr_mixer.model.BlendedCandidate
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.util.Future
-import javax.inject.Singleton
+impowt com.twittew.cw_mixew.modew.bwendedcandidate
+i-impowt com.twittew.cw_mixew.modew.wankedcandidate
+i-impowt c-com.twittew.utiw.futuwe
+i-impowt javax.inject.singweton
 
 /**
- * Keep the same order as the input.
+ * k-keep t-the same owdew a-as the input. (U ᵕ U❁)
  */
-@Singleton
-class DefaultRanker() {
-  def rank(
-    candidates: Seq[BlendedCandidate],
-  ): Future[Seq[RankedCandidate]] = {
-    val candidateSize = candidates.size
-    val rankedCandidates = candidates.zipWithIndex.map {
-      case (candidate, index) =>
-        candidate.toRankedCandidate((candidateSize - index).toDouble)
+@singweton
+cwass d-defauwtwankew() {
+  def wank(
+    candidates: seq[bwendedcandidate], -.-
+  ): futuwe[seq[wankedcandidate]] = {
+    vaw candidatesize = c-candidates.size
+    vaw wankedcandidates = c-candidates.zipwithindex.map {
+      case (candidate, ^^;; i-index) =>
+        candidate.towankedcandidate((candidatesize - index).todoubwe)
     }
-    Future.value(rankedCandidates)
+    futuwe.vawue(wankedcandidates)
   }
 }

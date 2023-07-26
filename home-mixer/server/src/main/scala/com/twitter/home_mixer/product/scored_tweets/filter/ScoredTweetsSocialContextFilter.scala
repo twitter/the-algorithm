@@ -1,61 +1,61 @@
-package com.twitter.home_mixer.product.scored_tweets.filter
+package com.twittew.home_mixew.pwoduct.scowed_tweets.fiwtew
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelineservice.suggests.{thriftscala => st}
+impowt c-com.twittew.home_mixew.modew.homefeatuwes._
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
+impowt com.twittew.timewinesewvice.suggests.{thwiftscawa => st}
 
-object ScoredTweetsSocialContextFilter extends Filter[PipelineQuery, TweetCandidate] {
+o-object scowedtweetssociawcontextfiwtew extends fiwtew[pipewinequewy, o.O t-tweetcandidate] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("ScoredTweetsSocialContext")
+  ovewwide v-vaw identifiew: fiwtewidentifiew = fiwtewidentifiew("scowedtweetssociawcontext")
 
-  // Tweets from candidate sources which don't need generic like/follow/topic proof
-  private val AllowedSources: Set[st.SuggestType] = Set(
-    st.SuggestType.RankedListTweet,
-    st.SuggestType.RecommendedTrendTweet,
-    st.SuggestType.MediaTweet
+  // tweets f-fwom candidate souwces which d-don't nyeed genewic w-wike/fowwow/topic pwoof
+  pwivate vaw awwowedsouwces: set[st.suggesttype] = set(
+    st.suggesttype.wankedwisttweet, ( ͡o ω ͡o )
+    st.suggesttype.wecommendedtwendtweet, (U ﹏ U)
+    s-st.suggesttype.mediatweet
   )
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
-    val validTweetIds = candidates
-      .filter { candidate =>
-        candidate.features.getOrElse(InNetworkFeature, true) ||
-        candidate.features.getOrElse(SuggestTypeFeature, None).exists(AllowedSources.contains) ||
-        candidate.features.getOrElse(InReplyToTweetIdFeature, None).isDefined ||
-        hasLikedBySocialContext(candidate.features) ||
-        hasFollowedBySocialContext(candidate.features) ||
-        hasTopicSocialContext(candidate.features)
-      }.map(_.candidate.id).toSet
+  ovewwide def appwy(
+    quewy: pipewinequewy, (///ˬ///✿)
+    candidates: s-seq[candidatewithfeatuwes[tweetcandidate]]
+  ): stitch[fiwtewwesuwt[tweetcandidate]] = {
+    v-vaw vawidtweetids = c-candidates
+      .fiwtew { c-candidate =>
+        c-candidate.featuwes.getowewse(innetwowkfeatuwe, twue) ||
+        candidate.featuwes.getowewse(suggesttypefeatuwe, >w< n-nyone).exists(awwowedsouwces.contains) ||
+        candidate.featuwes.getowewse(inwepwytotweetidfeatuwe, rawr nyone).isdefined ||
+        h-haswikedbysociawcontext(candidate.featuwes) ||
+        hasfowwowedbysociawcontext(candidate.featuwes) ||
+        hastopicsociawcontext(candidate.featuwes)
+      }.map(_.candidate.id).toset
 
-    val (kept, removed) =
-      candidates.map(_.candidate).partition(candidate => validTweetIds.contains(candidate.id))
+    vaw (kept, mya wemoved) =
+      candidates.map(_.candidate).pawtition(candidate => vawidtweetids.contains(candidate.id))
 
-    Stitch.value(FilterResult(kept = kept, removed = removed))
+    stitch.vawue(fiwtewwesuwt(kept = kept, ^^ w-wemoved = wemoved))
   }
 
-  private def hasLikedBySocialContext(candidateFeatures: FeatureMap): Boolean =
-    candidateFeatures
-      .getOrElse(SGSValidLikedByUserIdsFeature, Seq.empty)
+  pwivate d-def haswikedbysociawcontext(candidatefeatuwes: f-featuwemap): b-boowean =
+    candidatefeatuwes
+      .getowewse(sgsvawidwikedbyusewidsfeatuwe, 😳😳😳 seq.empty)
       .exists(
-        candidateFeatures
-          .getOrElse(PerspectiveFilteredLikedByUserIdsFeature, Seq.empty)
-          .toSet.contains
+        candidatefeatuwes
+          .getowewse(pewspectivefiwtewedwikedbyusewidsfeatuwe, mya seq.empty)
+          .toset.contains
       )
 
-  private def hasFollowedBySocialContext(candidateFeatures: FeatureMap): Boolean =
-    candidateFeatures.getOrElse(SGSValidFollowedByUserIdsFeature, Seq.empty).nonEmpty
+  p-pwivate def hasfowwowedbysociawcontext(candidatefeatuwes: f-featuwemap): boowean =
+    c-candidatefeatuwes.getowewse(sgsvawidfowwowedbyusewidsfeatuwe, s-seq.empty).nonempty
 
-  private def hasTopicSocialContext(candidateFeatures: FeatureMap): Boolean = {
-    candidateFeatures.getOrElse(TopicIdSocialContextFeature, None).isDefined &&
-    candidateFeatures.getOrElse(TopicContextFunctionalityTypeFeature, None).isDefined
+  pwivate d-def hastopicsociawcontext(candidatefeatuwes: featuwemap): boowean = {
+    candidatefeatuwes.getowewse(topicidsociawcontextfeatuwe, 😳 n-nyone).isdefined &&
+    candidatefeatuwes.getowewse(topiccontextfunctionawitytypefeatuwe, -.- nyone).isdefined
   }
 }

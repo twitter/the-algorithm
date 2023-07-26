@@ -1,82 +1,82 @@
-package com.twitter.search.core.earlybird.index.util;
+package com.twittew.seawch.cowe.eawwybiwd.index.utiw;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.util.BytesRef;
+i-impowt owg.apache.wucene.index.weafweadew;
+i-impowt o-owg.apache.wucene.index.tewms;
+i-impowt owg.apache.wucene.index.tewmsenum;
+i-impowt o-owg.apache.wucene.seawch.docidsetitewatow;
+i-impowt owg.apache.wucene.utiw.byteswef;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentAtomicReader;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdweawtimeindexsegmentatomicweadew;
 
 /**
- * Used to iterate through all of the documents in an Earlybird segment. This is necessary so that
- * we can ensure all of the documents we are reading have been published to the readers. If we used
- * the doc ID mapper to iterate through documents, it would return documents that have been only
- * partially added to the index, and could return bogus search results (SEARCH-27711).
+ * used to itewate thwough aww o-of the documents in an eawwybiwd segment. >w< this i-is nyecessawy so that
+ * we can e-ensuwe aww of the documents we awe weading have been pubwished t-to the weadews. mya if we used
+ * the d-doc id mappew t-to itewate thwough documents, >w< it wouwd wetuwn documents that have been onwy
+ * pawtiawwy a-added to the index, nyaa~~ and couwd wetuwn bogus seawch wesuwts (seawch-27711). (✿oωo)
  */
-public class AllDocsIterator extends DocIdSetIterator {
-  public static final String ALL_DOCS_TERM = "__all_docs";
+pubwic cwass a-awwdocsitewatow extends docidsetitewatow {
+  p-pubwic static finaw s-stwing aww_docs_tewm = "__aww_docs";
 
-  private final DocIdSetIterator delegate;
+  p-pwivate f-finaw docidsetitewatow dewegate;
 
-  public AllDocsIterator(LeafReader reader) throws IOException {
-    delegate = buildDISI(reader);
+  pubwic a-awwdocsitewatow(weafweadew weadew) thwows ioexception {
+    d-dewegate = buiwddisi(weadew);
   }
 
-  private static DocIdSetIterator buildDISI(LeafReader reader) throws IOException {
-    if (!isRealtimeUnoptimizedSegment(reader)) {
-      return all(reader.maxDoc());
+  pwivate static docidsetitewatow buiwddisi(weafweadew weadew) thwows i-ioexception {
+    if (!isweawtimeunoptimizedsegment(weadew)) {
+      w-wetuwn a-aww(weadew.maxdoc());
     }
 
-    Terms terms =
-        reader.terms(EarlybirdFieldConstants.EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName());
-    if (terms == null) {
-      return all(reader.maxDoc());
+    t-tewms tewms =
+        weadew.tewms(eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname());
+    if (tewms == nyuww) {
+      w-wetuwn aww(weadew.maxdoc());
     }
 
-    TermsEnum termsEnum = terms.iterator();
-    boolean hasTerm = termsEnum.seekExact(new BytesRef(ALL_DOCS_TERM));
-    if (hasTerm) {
-      return termsEnum.postings(null);
+    t-tewmsenum tewmsenum = t-tewms.itewatow();
+    b-boowean hastewm = tewmsenum.seekexact(new b-byteswef(aww_docs_tewm));
+    if (hastewm) {
+      w-wetuwn tewmsenum.postings(nuww);
     }
 
-    return empty();
+    wetuwn empty();
   }
 
-  @Override
-  public int docID() {
-    return delegate.docID();
+  @ovewwide
+  pubwic int docid() {
+    w-wetuwn dewegate.docid();
   }
 
-  @Override
-  public int nextDoc() throws IOException {
-    return delegate.nextDoc();
+  @ovewwide
+  p-pubwic int nyextdoc() thwows i-ioexception {
+    w-wetuwn dewegate.nextdoc();
   }
 
-  @Override
-  public int advance(int target) throws IOException {
-    return delegate.advance(target);
+  @ovewwide
+  pubwic int advance(int tawget) thwows ioexception {
+    wetuwn dewegate.advance(tawget);
   }
 
-  @Override
-  public long cost() {
-    return delegate.cost();
+  @ovewwide
+  pubwic wong cost() {
+    w-wetuwn d-dewegate.cost();
   }
 
   /**
-   * Returns whether this is a realtime segment in the realtime index that is still unoptimized and
-   * mutable.
+   * wetuwns whethew t-this is a weawtime s-segment in t-the weawtime index that is stiww unoptimized and
+   * mutabwe. ʘwʘ
    */
-  private static boolean isRealtimeUnoptimizedSegment(LeafReader reader) {
-    if (reader instanceof EarlybirdRealtimeIndexSegmentAtomicReader) {
-      EarlybirdRealtimeIndexSegmentAtomicReader realtimeReader =
-          (EarlybirdRealtimeIndexSegmentAtomicReader) reader;
-      return !realtimeReader.getSegmentData().isOptimized();
+  p-pwivate static boowean isweawtimeunoptimizedsegment(weafweadew weadew) {
+    if (weadew instanceof eawwybiwdweawtimeindexsegmentatomicweadew) {
+      e-eawwybiwdweawtimeindexsegmentatomicweadew weawtimeweadew =
+          (eawwybiwdweawtimeindexsegmentatomicweadew) weadew;
+      w-wetuwn !weawtimeweadew.getsegmentdata().isoptimized();
     }
 
-    return false;
+    wetuwn f-fawse;
   }
 }

@@ -1,807 +1,807 @@
-package com.twitter.tweetypie
-package config
+package com.twittew.tweetypie
+package c-config
 
-import com.twitter.abdecider.ABDeciderFactory
-import com.twitter.config.yaml.YamlConfig
-import com.twitter.decider.Decider
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.finagle.memcached
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.cache._
-import com.twitter.servo.cache.{KeyValueResult => _}
-import com.twitter.servo.repository._
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.repo.Repo
-import com.twitter.stitch.timelineservice.TimelineService
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.stringcenter.client.ExternalStringRegistry
-import com.twitter.stringcenter.client.MultiProjectStringCenter
-import com.twitter.translation.Languages
-import com.twitter.translation.YamlConfigLanguages
-import com.twitter.tweetypie.caching.CacheOperations
-import com.twitter.tweetypie.caching.Expiry
-import com.twitter.tweetypie.caching.ServoCachedValueSerializer
-import com.twitter.tweetypie.caching.StitchCaching
-import com.twitter.tweetypie.caching.ValueSerializer
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.core.FilteredState
-import com.twitter.tweetypie.core.TweetResult
-import com.twitter.tweetypie.hydrator.TextRepairer
-import com.twitter.tweetypie.hydrator.TweetHydration
-import com.twitter.tweetypie.hydrator.TweetQueryOptionsExpander
-import com.twitter.tweetypie.repository.TweetRepository
-import com.twitter.tweetypie.repository.UserRepository
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.serverutil.BoringStackTrace
-import com.twitter.tweetypie.serverutil.ExceptionCounter
-import com.twitter.tweetypie.thriftscala.DeviceSource
-import com.twitter.tweetypie.thriftscala.Place
-import com.twitter.tweetypie.thriftscala.entities.EntityExtractor
-import com.twitter.tweetypie.util.StitchUtils
-import com.twitter.util.Duration
-import com.twitter.util.FuturePool
-import com.twitter.util.Timer
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.common.KeywordMatcher
-import com.twitter.visibility.common.LocalizationSource
-import com.twitter.visibility.common.TweetMediaMetadataSource
-import com.twitter.visibility.common.TweetPerspectiveSource
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.common.tflock.UserIsInvitedToConversationRepository
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.generators.CountryNameGenerator
-import com.twitter.visibility.generators.LocalizedInterstitialGenerator
-import com.twitter.visibility.generators.TombstoneGenerator
-import com.twitter.visibility.interfaces.tweets.DeletedTweetVisibilityLibrary
-import com.twitter.visibility.interfaces.tweets.QuotedTweetVisibilityLibrary
-import com.twitter.visibility.interfaces.tweets.TweetVisibilityLibrary
-import com.twitter.visibility.interfaces.tweets.UserUnavailableStateVisibilityLibrary
-import com.twitter.visibility.util.DeciderUtil
-import com.twitter.visibility.util.FeatureSwitchUtil
-import java.util.concurrent.Executors
+impowt c-com.twittew.abdecidew.abdecidewfactowy
+i-impowt c-com.twittew.config.yamw.yamwconfig
+i-impowt com.twittew.decidew.decidew
+i-impowt com.twittew.featuweswitches.v2.featuweswitches
+i-impowt c-com.twittew.finagwe.memcached
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.sewvo.cache._
+impowt com.twittew.sewvo.cache.{keyvawuewesuwt => _}
+impowt com.twittew.sewvo.wepositowy._
+i-impowt com.twittew.stitch.notfound
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stitch.wepo.wepo
+impowt com.twittew.stitch.timewinesewvice.timewinesewvice
+i-impowt com.twittew.stwato.cwient.{cwient => stwatocwient}
+impowt com.twittew.stwingcentew.cwient.extewnawstwingwegistwy
+i-impowt com.twittew.stwingcentew.cwient.muwtipwojectstwingcentew
+impowt com.twittew.twanswation.wanguages
+i-impowt com.twittew.twanswation.yamwconfigwanguages
+i-impowt com.twittew.tweetypie.caching.cacheopewations
+impowt com.twittew.tweetypie.caching.expiwy
+impowt com.twittew.tweetypie.caching.sewvocachedvawuesewiawizew
+impowt com.twittew.tweetypie.caching.stitchcaching
+i-impowt com.twittew.tweetypie.caching.vawuesewiawizew
+impowt com.twittew.tweetypie.cwient_id.cwientidhewpew
+impowt com.twittew.tweetypie.cowe.fiwtewedstate
+impowt com.twittew.tweetypie.cowe.tweetwesuwt
+i-impowt com.twittew.tweetypie.hydwatow.textwepaiwew
+impowt com.twittew.tweetypie.hydwatow.tweethydwation
+i-impowt c-com.twittew.tweetypie.hydwatow.tweetquewyoptionsexpandew
+i-impowt c-com.twittew.tweetypie.wepositowy.tweetwepositowy
+impowt com.twittew.tweetypie.wepositowy.usewwepositowy
+impowt com.twittew.tweetypie.wepositowy._
+i-impowt com.twittew.tweetypie.sewvewutiw.bowingstacktwace
+impowt com.twittew.tweetypie.sewvewutiw.exceptioncountew
+i-impowt com.twittew.tweetypie.thwiftscawa.devicesouwce
+impowt com.twittew.tweetypie.thwiftscawa.pwace
+impowt com.twittew.tweetypie.thwiftscawa.entities.entityextwactow
+impowt c-com.twittew.tweetypie.utiw.stitchutiws
+impowt c-com.twittew.utiw.duwation
+i-impowt c-com.twittew.utiw.futuwepoow
+impowt com.twittew.utiw.timew
+impowt c-com.twittew.visibiwity.visibiwitywibwawy
+i-impowt com.twittew.visibiwity.common.keywowdmatchew
+impowt c-com.twittew.visibiwity.common.wocawizationsouwce
+i-impowt com.twittew.visibiwity.common.tweetmediametadatasouwce
+impowt com.twittew.visibiwity.common.tweetpewspectivesouwce
+i-impowt com.twittew.visibiwity.common.usewwewationshipsouwce
+impowt c-com.twittew.visibiwity.common.usewsouwce
+impowt com.twittew.visibiwity.common.tfwock.usewisinvitedtoconvewsationwepositowy
+impowt c-com.twittew.visibiwity.configapi.configs.visibiwitydecidewgates
+impowt com.twittew.visibiwity.genewatows.countwynamegenewatow
+i-impowt com.twittew.visibiwity.genewatows.wocawizedintewstitiawgenewatow
+impowt c-com.twittew.visibiwity.genewatows.tombstonegenewatow
+i-impowt com.twittew.visibiwity.intewfaces.tweets.dewetedtweetvisibiwitywibwawy
+impowt com.twittew.visibiwity.intewfaces.tweets.quotedtweetvisibiwitywibwawy
+impowt com.twittew.visibiwity.intewfaces.tweets.tweetvisibiwitywibwawy
+impowt com.twittew.visibiwity.intewfaces.tweets.usewunavaiwabwestatevisibiwitywibwawy
+impowt com.twittew.visibiwity.utiw.decidewutiw
+impowt com.twittew.visibiwity.utiw.featuweswitchutiw
+i-impowt java.utiw.concuwwent.executows
 
 /**
- * LogicalRepositories is a layer above ExternalRepositories.  These repos may have additional
- * logic layered in, such as memcache-caching, hot-key caching, etc.  There may
- * also be multiple logical repositories mapped to an single external repository.
+ * w-wogicawwepositowies is a wayew a-above extewnawwepositowies. >w<  t-these w-wepos may have additionaw
+ * wogic wayewed in, (///ˬ///✿) such as memcache-caching, rawr h-hot-key caching, (U ﹏ U) etc.  thewe may
+ * awso be muwtipwe wogicaw wepositowies m-mapped to an singwe extewnaw w-wepositowy. ^•ﻌ•^
  *
- * These repositories are used in tweet hydration and tweet creation.
+ * t-these wepositowies a-awe used in tweet hydwation a-and tweet cweation. (///ˬ///✿)
  */
-trait LogicalRepositories {
+t-twait w-wogicawwepositowies {
 
-  def card2Repo: Card2Repository.Type
-  def cardRepo: CardRepository.Type
-  def cardUsersRepo: CardUsersRepository.Type
-  def conversationIdRepo: ConversationIdRepository.Type
-  def conversationControlRepo: ConversationControlRepository.Type
-  def conversationMutedRepo: ConversationMutedRepository.Type
-  def containerAsGetTweetResultRepo: CreativesContainerMaterializationRepository.GetTweetType
-  def containerAsGetTweetFieldsResultRepo: CreativesContainerMaterializationRepository.GetTweetFieldsType
-  def deviceSourceRepo: DeviceSourceRepository.Type
-  def escherbirdAnnotationRepo: EscherbirdAnnotationRepository.Type
-  def geoScrubTimestampRepo: GeoScrubTimestampRepository.Type
-  def languageRepo: LanguageRepository.Type
-  def mediaMetadataRepo: MediaMetadataRepository.Type
-  def pastedMediaRepo: PastedMediaRepository.Type
-  def perspectiveRepo: PerspectiveRepository.Type
-  def placeRepo: PlaceRepository.Type
-  def profileGeoRepo: ProfileGeoRepository.Type
-  def quoterHasAlreadyQuotedRepo: QuoterHasAlreadyQuotedRepository.Type
-  def lastQuoteOfQuoterRepo: LastQuoteOfQuoterRepository.Type
-  def relationshipRepo: RelationshipRepository.Type
-  def stratoSafetyLabelsRepo: StratoSafetyLabelsRepository.Type
-  def stratoCommunityMembershipRepo: StratoCommunityMembershipRepository.Type
-  def stratoCommunityAccessRepo: StratoCommunityAccessRepository.Type
-  def stratoSuperFollowEligibleRepo: StratoSuperFollowEligibleRepository.Type
-  def stratoSuperFollowRelationsRepo: StratoSuperFollowRelationsRepository.Type
-  def stratoPromotedTweetRepo: StratoPromotedTweetRepository.Type
-  def stratoSubscriptionVerificationRepo: StratoSubscriptionVerificationRepository.Type
-  def takedownRepo: UserTakedownRepository.Type
-  def tweetSpamCheckRepo: TweetSpamCheckRepository.Type
-  def retweetSpamCheckRepo: RetweetSpamCheckRepository.Type
-  def tweetCountsRepo: TweetCountsRepository.Type
-  def tweetVisibilityRepo: TweetVisibilityRepository.Type
-  def quotedTweetVisibilityRepo: QuotedTweetVisibilityRepository.Type
-  def deletedTweetVisibilityRepo: DeletedTweetVisibilityRepository.Type
-  def unmentionedEntitiesRepo: UnmentionedEntitiesRepository.Type
-  def urlRepo: UrlRepository.Type
-  def userRepo: UserRepository.Type
-  def optionalUserRepo: UserRepository.Optional
-  def userIdentityRepo: UserIdentityRepository.Type
-  def userIsInvitedToConversationRepo: UserIsInvitedToConversationRepository.Type
-  def userProtectionRepo: UserProtectionRepository.Type
-  def userViewRepo: UserViewRepository.Type
-  def userVisibilityRepo: UserVisibilityRepository.Type
+  d-def cawd2wepo: cawd2wepositowy.type
+  def cawdwepo: c-cawdwepositowy.type
+  d-def cawdusewswepo: c-cawdusewswepositowy.type
+  d-def convewsationidwepo: c-convewsationidwepositowy.type
+  def convewsationcontwowwepo: convewsationcontwowwepositowy.type
+  d-def convewsationmutedwepo: convewsationmutedwepositowy.type
+  def containewasgettweetwesuwtwepo: cweativescontainewmatewiawizationwepositowy.gettweettype
+  def containewasgettweetfiewdswesuwtwepo: c-cweativescontainewmatewiawizationwepositowy.gettweetfiewdstype
+  def devicesouwcewepo: devicesouwcewepositowy.type
+  def eschewbiwdannotationwepo: e-eschewbiwdannotationwepositowy.type
+  d-def g-geoscwubtimestampwepo: geoscwubtimestampwepositowy.type
+  d-def wanguagewepo: wanguagewepositowy.type
+  d-def mediametadatawepo: m-mediametadatawepositowy.type
+  def pastedmediawepo: pastedmediawepositowy.type
+  def pewspectivewepo: p-pewspectivewepositowy.type
+  def pwacewepo: pwacewepositowy.type
+  d-def pwofiwegeowepo: pwofiwegeowepositowy.type
+  d-def quotewhasawweadyquotedwepo: q-quotewhasawweadyquotedwepositowy.type
+  def wastquoteofquotewwepo: w-wastquoteofquotewwepositowy.type
+  d-def wewationshipwepo: w-wewationshipwepositowy.type
+  d-def stwatosafetywabewswepo: stwatosafetywabewswepositowy.type
+  def stwatocommunitymembewshipwepo: stwatocommunitymembewshipwepositowy.type
+  def s-stwatocommunityaccesswepo: s-stwatocommunityaccesswepositowy.type
+  d-def stwatosupewfowwowewigibwewepo: stwatosupewfowwowewigibwewepositowy.type
+  d-def stwatosupewfowwowwewationswepo: s-stwatosupewfowwowwewationswepositowy.type
+  def stwatopwomotedtweetwepo: stwatopwomotedtweetwepositowy.type
+  d-def stwatosubscwiptionvewificationwepo: stwatosubscwiptionvewificationwepositowy.type
+  def takedownwepo: usewtakedownwepositowy.type
+  def t-tweetspamcheckwepo: t-tweetspamcheckwepositowy.type
+  def wetweetspamcheckwepo: wetweetspamcheckwepositowy.type
+  d-def tweetcountswepo: t-tweetcountswepositowy.type
+  def tweetvisibiwitywepo: tweetvisibiwitywepositowy.type
+  def q-quotedtweetvisibiwitywepo: quotedtweetvisibiwitywepositowy.type
+  def dewetedtweetvisibiwitywepo: dewetedtweetvisibiwitywepositowy.type
+  def unmentionedentitieswepo: u-unmentionedentitieswepositowy.type
+  def uwwwepo: uwwwepositowy.type
+  d-def u-usewwepo: usewwepositowy.type
+  def optionawusewwepo: usewwepositowy.optionaw
+  def usewidentitywepo: u-usewidentitywepositowy.type
+  d-def usewisinvitedtoconvewsationwepo: usewisinvitedtoconvewsationwepositowy.type
+  def usewpwotectionwepo: usewpwotectionwepositowy.type
+  d-def usewviewwepo: usewviewwepositowy.type
+  d-def usewvisibiwitywepo: usewvisibiwitywepositowy.type
 
-  def tweetResultRepo: TweetResultRepository.Type
-  def tweetRepo: TweetRepository.Type
-  def optionalTweetRepo: TweetRepository.Optional
+  def tweetwesuwtwepo: t-tweetwesuwtwepositowy.type
+  def tweetwepo: t-tweetwepositowy.type
+  d-def optionawtweetwepo: t-tweetwepositowy.optionaw
 
   /**
-   * Not actually repositories, but intimately intertwined.
+   * nyot actuawwy w-wepositowies, o.O b-but intimatewy i-intewtwined. >w<
    */
-  def tweetHydrators: TweetHydrators
+  def tweethydwatows: t-tweethydwatows
 }
 
-object LogicalRepositories {
+object w-wogicawwepositowies {
 
   /**
-   * Middleware is a function that takes a stitch repo and returns a new stitch repo.
+   * middwewawe is a function t-that takes a stitch w-wepo and wetuwns a-a nyew stitch wepo. nyaa~~
    */
-  type Middleware[K, V] = (K => Stitch[V]) => K => Stitch[V]
+  type middwewawe[k, òωó v-v] = (k => stitch[v]) => k => s-stitch[v]
 
-  // Middleware2 is a function that takes a two-arg stitch repo and returns a new two-arg stitch repo.
-  type Middleware2[K, C, V] = ((K, C) => Stitch[V]) => ((K, C) => Stitch[V])
-  val exceptionLog: Logger = Logger(getClass)
+  // m-middwewawe2 is a function that takes a two-awg stitch wepo and w-wetuwns a nyew t-two-awg stitch w-wepo. (U ᵕ U❁)
+  type middwewawe2[k, (///ˬ///✿) c-c, v] = ((k, (✿oωo) c) => stitch[v]) => ((k, 😳😳😳 c-c) => stitch[v])
+  vaw exceptionwog: woggew = woggew(getcwass)
 
-  // Converts a Middleware2 to a Middleware for use with withMiddleware.
-  def tupledMiddleware[K, C, V](middleware2: Middleware2[K, C, V]): Middleware[(K, C), V] =
-    repo => middleware2(Function.untupled(repo)).tupled
+  // convewts a middwewawe2 to a-a middwewawe fow use with withmiddwewawe. (✿oωo)
+  d-def tupwedmiddwewawe[k, (U ﹏ U) c-c, v](middwewawe2: middwewawe2[k, (˘ω˘) c-c, v]): middwewawe[(k, c), 😳😳😳 v-v] =
+    wepo => m-middwewawe2(function.untupwed(wepo)).tupwed
 
-  object ObserveStitch {
-    def apply[K, V](
-      repo: K => Stitch[V],
-      repoName: String,
-      stats: StatsReceiver
-    ): K => Stitch[V] = {
-      val successCounter = stats.counter("success")
-      val notFoundCounter = stats.counter("not_found")
-      val latencyStat = stats.stat("latency_ms")
+  o-object obsewvestitch {
+    d-def a-appwy[k, (///ˬ///✿) v](
+      wepo: k => stitch[v], (U ᵕ U❁)
+      weponame: stwing, >_<
+      stats: statsweceivew
+    ): k => stitch[v] = {
+      vaw successcountew = s-stats.countew("success")
+      v-vaw nyotfoundcountew = s-stats.countew("not_found")
+      vaw watencystat = s-stats.stat("watency_ms")
 
-      val exceptionCounter =
-        ExceptionCounter(
-          stats,
-          // don't count FilteredState exceptions
-          FilteredState.ignoringCategorizer(ExceptionCounter.defaultCategorizer)
+      vaw exceptioncountew =
+        exceptioncountew(
+          stats, (///ˬ///✿)
+          // d-don't c-count fiwtewedstate exceptions
+          f-fiwtewedstate.ignowingcategowizew(exceptioncountew.defauwtcategowizew)
         )
 
-      (key: K) =>
-        StitchUtils.trackLatency(latencyStat, repo(key)).respond {
-          case Return(_) => successCounter.incr()
-          case Throw(NotFound) => notFoundCounter.incr()
-          case Throw(t) =>
-            val message = s"$repoName: $key"
-            if (BoringStackTrace.isBoring(t)) {
-              exceptionLog.debug(message, t)
-            } else {
-              exceptionLog.warn(message, t)
+      (key: k) =>
+        stitchutiws.twackwatency(watencystat, (U ᵕ U❁) w-wepo(key)).wespond {
+          c-case wetuwn(_) => successcountew.incw()
+          c-case t-thwow(notfound) => nyotfoundcountew.incw()
+          case thwow(t) =>
+            vaw message = s"$weponame: $key"
+            i-if (bowingstacktwace.isbowing(t)) {
+              e-exceptionwog.debug(message, >w< t-t)
+            } ewse {
+              e-exceptionwog.wawn(message, 😳😳😳 t)
             }
 
-            exceptionCounter(t)
+            e-exceptioncountew(t)
         }
     }
   }
 
   /**
-   * Add middleware to configure a repository. The stats receiver is
-   * scoped for the currently-configured repository. The `toRepo` field
-   * is the repository with some set of middleware applied. Each method
-   * adds a new middleware to the current repo, and returns it as a
-   * `RepoConfig`, allowing method chaining.
+   * add middwewawe t-to configuwe a wepositowy. (ˆ ﻌ ˆ)♡ t-the stats weceivew is
+   * s-scoped fow t-the cuwwentwy-configuwed wepositowy. (ꈍᴗꈍ) t-the `towepo` fiewd
+   * is the wepositowy w-with some set of middwewawe appwied. 🥺 e-each method
+   * a-adds a nyew middwewawe to t-the cuwwent wepo, and wetuwns it as a
+   * `wepoconfig`, >_< a-awwowing m-method chaining. OwO
    *
-   * Since each method call applies a new middleware, the final middleware is
-   * the outermost middleware, and thus the one that sees the arguments
-   * first.
+   * s-since each method caww appwies a nyew middwewawe, ^^;; the f-finaw middwewawe is
+   * the outewmost middwewawe, (✿oωo) a-and thus the o-one that sees the awguments
+   * f-fiwst. UwU
    */
-  class RepoConfig[K, V](
-    val toRepo: K => Stitch[V],
-    stats: StatsReceiver,
-    name: String,
-    memcachedClientWithInProcessCaching: memcached.Client) {
-    def withMiddleware(middleware: Middleware[K, V]): RepoConfig[K, V] =
-      new RepoConfig[K, V](middleware(toRepo), stats, name, memcachedClientWithInProcessCaching)
+  cwass wepoconfig[k, ( ͡o ω ͡o ) v-v](
+    vaw t-towepo: k => stitch[v], (✿oωo)
+    stats: statsweceivew, mya
+    n-nyame: stwing, ( ͡o ω ͡o )
+    memcachedcwientwithinpwocesscaching: memcached.cwient) {
+    d-def withmiddwewawe(middwewawe: m-middwewawe[k, :3 v]): wepoconfig[k, 😳 v-v] =
+      nyew wepoconfig[k, (U ﹏ U) v-v](middwewawe(towepo), >w< s-stats, UwU n-nyame, memcachedcwientwithinpwocesscaching)
 
     /**
-     * Wraps a repo with success/failure/latency stats tracking and logs
-     * exceptions. This will be applied to every repository.
+     * wwaps a wepo with success/faiwuwe/watency stats twacking and wogs
+     * exceptions. 😳 this wiww be appwied to evewy wepositowy. XD
      *
-     * @param repoName Used when logging exceptions thrown by the underlying repo.
+     * @pawam weponame used when wogging exceptions thwown by the undewwying w-wepo. (✿oωo)
      */
-    def observe(repoName: String = s"${name}_repo"): RepoConfig[K, V] = {
-      withMiddleware { repo => ObserveStitch[K, V](repo, repoName, stats) }
+    d-def obsewve(weponame: stwing = s"${name}_wepo"): w-wepoconfig[k, ^•ﻌ•^ v-v] = {
+      w-withmiddwewawe { wepo => obsewvestitch[k, mya v-v](wepo, weponame, (˘ω˘) stats) }
     }
 
     /**
-     * Use the supplied cache to wrap the repository with a read-through
-     * caching layer.
+     * u-use t-the suppwied cache to wwap the w-wepositowy with a wead-thwough
+     * c-caching wayew. nyaa~~
      */
-    def caching(
-      cache: LockingCache[K, Cached[V]],
-      partialHandler: CachedResult.PartialHandler[K, V],
-      maxCacheRequestSize: Int = Int.MaxValue
-    ): RepoConfig[K, V] = {
-      val stitchLockingCache = StitchLockingCache(
-        underlying = cache,
-        picker = new PreferNewestCached[V],
-        maxRequestSize = maxCacheRequestSize
+    d-def caching(
+      cache: wockingcache[k, cached[v]], :3
+      p-pawtiawhandwew: c-cachedwesuwt.pawtiawhandwew[k, (✿oωo) v-v],
+      m-maxcachewequestsize: i-int = i-int.maxvawue
+    ): w-wepoconfig[k, (U ﹏ U) v-v] = {
+      v-vaw stitchwockingcache = stitchwockingcache(
+        u-undewwying = c-cache, (ꈍᴗꈍ)
+        p-pickew = nyew pwefewnewestcached[v], (˘ω˘)
+        maxwequestsize = m-maxcachewequestsize
       )
 
-      val handler: CachedResult.Handler[K, V] =
-        CachedResult.Handler(
-          CachedResult.PartialHandler.orElse(
-            partialHandler,
-            CachedResult.failuresAreDoNotCache
+      vaw handwew: cachedwesuwt.handwew[k, ^^ v-v] =
+        cachedwesuwt.handwew(
+          c-cachedwesuwt.pawtiawhandwew.owewse(
+            p-pawtiawhandwew, (⑅˘꒳˘)
+            c-cachedwesuwt.faiwuwesawedonotcache
           )
         )
 
-      withMiddleware { repo =>
-        CacheStitch[K, K, V](
-          repo = repo,
-          cache = stitchLockingCache,
-          identity,
-          handler = handler,
-          cacheable = CacheStitch.cacheFoundAndNotFound
+      withmiddwewawe { w-wepo =>
+        cachestitch[k, rawr k-k, v](
+          wepo = wepo, :3
+          c-cache = stitchwockingcache, OwO
+          identity, (ˆ ﻌ ˆ)♡
+          h-handwew = handwew, :3
+          cacheabwe = cachestitch.cachefoundandnotfound
         )
       }
     }
 
-    def newCaching(
-      keySerializer: K => String,
-      valueSerializer: ValueSerializer[Try[V]]
-    ): RepoConfig[K, V] =
-      withMiddleware { repo =>
-        val logger = Logger(s"com.twitter.tweetypie.config.LogicalRepositories.$name")
+    def nyewcaching(
+      keysewiawizew: k => stwing, -.-
+      v-vawuesewiawizew: vawuesewiawizew[twy[v]]
+    ): w-wepoconfig[k, -.- v-v] =
+      withmiddwewawe { wepo =>
+        vaw woggew = woggew(s"com.twittew.tweetypie.config.wogicawwepositowies.$name")
 
-        val cacheOperations: CacheOperations[K, Try[V]] =
-          new CacheOperations(
-            keySerializer = keySerializer,
-            valueSerializer = valueSerializer,
-            memcachedClient = memcachedClientWithInProcessCaching,
-            statsReceiver = stats.scope("caching"),
-            logger = logger
+        v-vaw cacheopewations: cacheopewations[k, òωó t-twy[v]] =
+          n-nyew cacheopewations(
+            k-keysewiawizew = keysewiawizew, 😳
+            vawuesewiawizew = vawuesewiawizew, nyaa~~
+            m-memcachedcwient = m-memcachedcwientwithinpwocesscaching, (⑅˘꒳˘)
+            statsweceivew = s-stats.scope("caching"), 😳
+            woggew = woggew
           )
 
-        val tryRepo: K => Stitch[Try[V]] = repo.andThen(_.liftToTry)
-        val cachingTryRepo: K => Stitch[Try[V]] = new StitchCaching(cacheOperations, tryRepo)
-        cachingTryRepo.andThen(_.lowerFromTry)
+        vaw twywepo: k-k => stitch[twy[v]] = wepo.andthen(_.wifttotwy)
+        vaw c-cachingtwywepo: k-k => stitch[twy[v]] = n-nyew stitchcaching(cacheopewations, (U ﹏ U) twywepo)
+        c-cachingtwywepo.andthen(_.wowewfwomtwy)
       }
 
-    def toRepo2[K1, C](implicit tupleToK: ((K1, C)) <:< K): (K1, C) => Stitch[V] =
-      (k1, c) => toRepo(tupleToK((k1, c)))
+    d-def towepo2[k1, c-c](impwicit tupwetok: ((k1, /(^•ω•^) c-c)) <:< k): (k1, OwO c) => s-stitch[v] =
+      (k1, c-c) => t-towepo(tupwetok((k1, ( ͡o ω ͡o ) c-c)))
   }
 
-  def softTtlPartialHandler[K, V](
-    softTtl: Option[V] => Duration,
-    softTtlPerturbationFactor: Float = 0.05f
-  ): CachedResult.PartialHandler[K, V] =
-    CachedResult
-      .softTtlExpiration[K, V](softTtl, CachedResult.randomExpiry(softTtlPerturbationFactor))
+  d-def softttwpawtiawhandwew[k, XD v-v](
+    softttw: o-option[v] => duwation, /(^•ω•^)
+    s-softttwpewtuwbationfactow: fwoat = 0.05f
+  ): c-cachedwesuwt.pawtiawhandwew[k, /(^•ω•^) v] =
+    c-cachedwesuwt
+      .softttwexpiwation[k, 😳😳😳 v](softttw, c-cachedwesuwt.wandomexpiwy(softttwpewtuwbationfactow))
 
-  def apply(
-    settings: TweetServiceSettings,
-    stats: StatsReceiver,
-    timer: Timer,
-    deciderGates: TweetypieDeciderGates,
-    external: ExternalRepositories,
-    caches: Caches,
-    stratoClient: StratoClient,
-    hasMedia: Tweet => Boolean,
-    clientIdHelper: ClientIdHelper,
-    featureSwitchesWithoutExperiments: FeatureSwitches,
-  ): LogicalRepositories = {
-    val repoStats = stats.scope("repositories")
+  d-def appwy(
+    settings: t-tweetsewvicesettings, (ˆ ﻌ ˆ)♡
+    stats: statsweceivew, :3
+    timew: timew, òωó
+    decidewgates: t-tweetypiedecidewgates, 🥺
+    e-extewnaw: e-extewnawwepositowies, (U ﹏ U)
+    caches: caches, XD
+    stwatocwient: stwatocwient, ^^
+    h-hasmedia: tweet => b-boowean, o.O
+    cwientidhewpew: c-cwientidhewpew, 😳😳😳
+    f-featuweswitcheswithoutexpewiments: featuweswitches, /(^•ω•^)
+  ): wogicawwepositowies = {
+    vaw wepostats = s-stats.scope("wepositowies")
 
-    def repoConfig[K, V](name: String, repo: K => Stitch[V]): RepoConfig[K, V] =
-      new RepoConfig[K, V](
-        name = name,
-        toRepo = repo,
-        stats = repoStats.scope(name),
-        memcachedClientWithInProcessCaching = caches.memcachedClientWithInProcessCaching)
+    d-def wepoconfig[k, 😳😳😳 v-v](name: s-stwing, ^•ﻌ•^ wepo: k => stitch[v]): wepoconfig[k, 🥺 v-v] =
+      new w-wepoconfig[k, o.O v](
+        nyame = nyame,
+        t-towepo = wepo, (U ᵕ U❁)
+        stats = wepostats.scope(name),
+        m-memcachedcwientwithinpwocesscaching = caches.memcachedcwientwithinpwocesscaching)
 
-    def repo2Config[K, C, V](name: String, repo: (K, C) => Stitch[V]): RepoConfig[(K, C), V] =
-      repoConfig[(K, C), V](name, repo.tupled)
+    d-def wepo2config[k, ^^ c-c, v](name: stwing, (⑅˘꒳˘) wepo: (k, :3 c-c) => stitch[v]): w-wepoconfig[(k, (///ˬ///✿) c), v] =
+      w-wepoconfig[(k, :3 c), v](name, 🥺 w-wepo.tupwed)
 
-    new LogicalRepositories {
-      // the final tweetResultRepo has a circular dependency, where it depends on hydrators
-      // that in turn depend on the tweetResultRepo, so we create a `tweetResultRepo` function
-      // that proxies to `var finalTweetResultRepo`, which gets set at the end of this block.
-      var finalTweetResultRepo: TweetResultRepository.Type = null
-      val tweetResultRepo: TweetResultRepository.Type =
-        (tweetId, opts) => finalTweetResultRepo(tweetId, opts)
-      val tweetRepo: TweetRepository.Type = TweetRepository.fromTweetResult(tweetResultRepo)
+    n-nyew wogicawwepositowies {
+      // t-the finaw t-tweetwesuwtwepo has a ciwcuwaw d-dependency, mya whewe i-it depends o-on hydwatows
+      // that in tuwn d-depend on the tweetwesuwtwepo, XD so we cweate a `tweetwesuwtwepo` f-function
+      // t-that pwoxies t-to `vaw finawtweetwesuwtwepo`, -.- which gets set at the end of this bwock. o.O
+      vaw finawtweetwesuwtwepo: t-tweetwesuwtwepositowy.type = nyuww
+      v-vaw tweetwesuwtwepo: t-tweetwesuwtwepositowy.type =
+        (tweetid, (˘ω˘) opts) => finawtweetwesuwtwepo(tweetid, (U ᵕ U❁) o-opts)
+      vaw tweetwepo: t-tweetwepositowy.type = t-tweetwepositowy.fwomtweetwesuwt(tweetwesuwtwepo)
 
-      val optionalTweetRepo: TweetRepository.Optional = TweetRepository.optional(tweetRepo)
+      v-vaw optionawtweetwepo: tweetwepositowy.optionaw = t-tweetwepositowy.optionaw(tweetwepo)
 
-      val userRepo: UserRepository.Type =
-        repo2Config(repo = external.userRepo, name = "user")
-          .observe()
-          .toRepo2
+      v-vaw usewwepo: usewwepositowy.type =
+        wepo2config(wepo = extewnaw.usewwepo, rawr nyame = "usew")
+          .obsewve()
+          .towepo2
 
-      val optionalUserRepo: UserRepository.Optional = UserRepository.optional(userRepo)
+      v-vaw optionawusewwepo: usewwepositowy.optionaw = u-usewwepositowy.optionaw(usewwepo)
 
-      private[this] val tweetVisibilityStatsReceiver: StatsReceiver =
-        repoStats.scope("tweet_visibility_library")
-      private[this] val userUnavailableVisibilityStatsReceiver: StatsReceiver =
-        repoStats.scope("user_unavailable_visibility_library")
-      private[this] val quotedTweetVisibilityStatsReceiver: StatsReceiver =
-        repoStats.scope("quoted_tweet_visibility_library")
-      private[this] val deletedTweetVisibilityStatsReceiver: StatsReceiver =
-        repoStats.scope("deleted_tweet_visibility_library")
-      // TweetVisibilityLibrary still uses the old c.t.logging.Logger
-      private[this] val tweetVisibilityLogger =
-        com.twitter.logging.Logger("com.twitter.tweetypie.TweetVisibility")
-      private[this] val visibilityDecider: Decider = DeciderUtil.mkDecider(
-        deciderOverlayPath = settings.vfDeciderOverlayFilename,
-        useLocalDeciderOverrides = true)
-      private[this] val visibilityDeciderGates = VisibilityDeciderGates(visibilityDecider)
+      pwivate[this] vaw tweetvisibiwitystatsweceivew: statsweceivew =
+        wepostats.scope("tweet_visibiwity_wibwawy")
+      p-pwivate[this] vaw usewunavaiwabwevisibiwitystatsweceivew: statsweceivew =
+        wepostats.scope("usew_unavaiwabwe_visibiwity_wibwawy")
+      pwivate[this] v-vaw quotedtweetvisibiwitystatsweceivew: s-statsweceivew =
+        wepostats.scope("quoted_tweet_visibiwity_wibwawy")
+      pwivate[this] v-vaw dewetedtweetvisibiwitystatsweceivew: statsweceivew =
+        w-wepostats.scope("deweted_tweet_visibiwity_wibwawy")
+      // t-tweetvisibiwitywibwawy stiww uses the o-owd c.t.wogging.woggew
+      pwivate[this] v-vaw tweetvisibiwitywoggew =
+        com.twittew.wogging.woggew("com.twittew.tweetypie.tweetvisibiwity")
+      pwivate[this] v-vaw visibiwitydecidew: decidew = decidewutiw.mkdecidew(
+        decidewovewwaypath = s-settings.vfdecidewovewwayfiwename, 🥺
+        u-usewocawdecidewovewwides = t-twue)
+      pwivate[this] vaw visibiwitydecidewgates = v-visibiwitydecidewgates(visibiwitydecidew)
 
-      private[this] def visibilityLibrary(statsReceiver: StatsReceiver) = VisibilityLibrary
-        .Builder(
-          log = tweetVisibilityLogger,
-          statsReceiver = statsReceiver,
-          memoizeSafetyLevelParams = visibilityDeciderGates.enableMemoizeSafetyLevelParams
+      pwivate[this] def visibiwitywibwawy(statsweceivew: statsweceivew) = visibiwitywibwawy
+        .buiwdew(
+          wog = t-tweetvisibiwitywoggew, rawr x3
+          s-statsweceivew = s-statsweceivew, ( ͡o ω ͡o )
+          m-memoizesafetywevewpawams = visibiwitydecidewgates.enabwememoizesafetywevewpawams
         )
-        .withDecider(visibilityDecider)
-        .withDefaultABDecider(isLocal = false)
-        .withCaptureDebugStats(Gate.True)
-        .withEnableComposableActions(Gate.True)
-        .withEnableFailClosed(Gate.True)
-        .withEnableShortCircuiting(visibilityDeciderGates.enableShortCircuitingTVL)
-        .withSpecialLogging(visibilityDeciderGates.enableSpecialLogging)
-        .build()
+        .withdecidew(visibiwitydecidew)
+        .withdefauwtabdecidew(iswocaw = fawse)
+        .withcaptuwedebugstats(gate.twue)
+        .withenabwecomposabweactions(gate.twue)
+        .withenabwefaiwcwosed(gate.twue)
+        .withenabweshowtciwcuiting(visibiwitydecidewgates.enabweshowtciwcuitingtvw)
+        .withspeciawwogging(visibiwitydecidewgates.enabwespeciawwogging)
+        .buiwd()
 
-      def countryNameGenerator(statsReceiver: StatsReceiver) = {
-        // TweetVisibilityLibrary, DeletedTweetVisibilityLibrary, and
-        // UserUnavailableVisibilityLibrary do not evaluate any Rules
-        // that require the display of country names in copy
-        CountryNameGenerator.providesWithCustomMap(Map.empty, statsReceiver)
+      d-def countwynamegenewatow(statsweceivew: statsweceivew) = {
+        // t-tweetvisibiwitywibwawy, σωσ dewetedtweetvisibiwitywibwawy, rawr x3 and
+        // u-usewunavaiwabwevisibiwitywibwawy do nyot evawuate any wuwes
+        // t-that wequiwe the dispway of countwy nyames i-in copy
+        c-countwynamegenewatow.pwovideswithcustommap(map.empty, (ˆ ﻌ ˆ)♡ statsweceivew)
       }
 
-      def tombstoneGenerator(
-        countryNameGenerator: CountryNameGenerator,
-        statsReceiver: StatsReceiver
+      d-def tombstonegenewatow(
+        c-countwynamegenewatow: countwynamegenewatow, rawr
+        s-statsweceivew: statsweceivew
       ) =
-        TombstoneGenerator(
-          visibilityLibrary(statsReceiver).visParams,
-          countryNameGenerator,
-          statsReceiver)
+        tombstonegenewatow(
+          v-visibiwitywibwawy(statsweceivew).vispawams, :3
+          countwynamegenewatow, rawr
+          statsweceivew)
 
-      private[this] val userUnavailableVisibilityLibrary =
-        UserUnavailableStateVisibilityLibrary(
-          visibilityLibrary(userUnavailableVisibilityStatsReceiver),
-          visibilityDecider,
-          tombstoneGenerator(
-            countryNameGenerator(userUnavailableVisibilityStatsReceiver),
-            userUnavailableVisibilityStatsReceiver
-          ),
-          LocalizedInterstitialGenerator(visibilityDecider, userUnavailableVisibilityStatsReceiver)
+      p-pwivate[this] vaw usewunavaiwabwevisibiwitywibwawy =
+        usewunavaiwabwestatevisibiwitywibwawy(
+          visibiwitywibwawy(usewunavaiwabwevisibiwitystatsweceivew), (˘ω˘)
+          v-visibiwitydecidew, (ˆ ﻌ ˆ)♡
+          t-tombstonegenewatow(
+            c-countwynamegenewatow(usewunavaiwabwevisibiwitystatsweceivew), mya
+            u-usewunavaiwabwevisibiwitystatsweceivew
+          ), (U ᵕ U❁)
+          w-wocawizedintewstitiawgenewatow(visibiwitydecidew, mya usewunavaiwabwevisibiwitystatsweceivew)
         )
 
-      val userIdentityRepo: UserIdentityRepository.Type =
-        repoConfig(repo = UserIdentityRepository(userRepo), name = "user_identity")
-          .observe()
-          .toRepo
+      v-vaw usewidentitywepo: usewidentitywepositowy.type =
+        wepoconfig(wepo = usewidentitywepositowy(usewwepo), ʘwʘ n-nyame = "usew_identity")
+          .obsewve()
+          .towepo
 
-      val userProtectionRepo: UserProtectionRepository.Type =
-        repoConfig(repo = UserProtectionRepository(userRepo), name = "user_protection")
-          .observe()
-          .toRepo
+      vaw usewpwotectionwepo: u-usewpwotectionwepositowy.type =
+        wepoconfig(wepo = usewpwotectionwepositowy(usewwepo), (˘ω˘) n-nyame = "usew_pwotection")
+          .obsewve()
+          .towepo
 
-      val userViewRepo: UserViewRepository.Type =
-        repoConfig(repo = UserViewRepository(userRepo), name = "user_view")
-          .observe()
-          .toRepo
+      vaw u-usewviewwepo: usewviewwepositowy.type =
+        w-wepoconfig(wepo = usewviewwepositowy(usewwepo), 😳 n-nyame = "usew_view")
+          .obsewve()
+          .towepo
 
-      val userVisibilityRepo: UserVisibilityRepository.Type =
-        repoConfig(
-          repo = UserVisibilityRepository(userRepo, userUnavailableVisibilityLibrary),
-          name = "user_visibility"
-        ).observe().toRepo
+      v-vaw usewvisibiwitywepo: usewvisibiwitywepositowy.type =
+        w-wepoconfig(
+          w-wepo = usewvisibiwitywepositowy(usewwepo, òωó u-usewunavaiwabwevisibiwitywibwawy), nyaa~~
+          nyame = "usew_visibiwity"
+        ).obsewve().towepo
 
-      val urlRepo: UrlRepository.Type =
-        repoConfig(repo = external.urlRepo, name = "url")
-          .observe()
-          .toRepo
+      vaw uwwwepo: uwwwepositowy.type =
+        wepoconfig(wepo = e-extewnaw.uwwwepo, o.O nyame = "uww")
+          .obsewve()
+          .towepo
 
-      val profileGeoRepo: ProfileGeoRepository.Type =
-        repoConfig(repo = external.profileGeoRepo, name = "profile_geo")
-          .observe()
-          .toRepo
+      v-vaw pwofiwegeowepo: pwofiwegeowepositowy.type =
+        wepoconfig(wepo = e-extewnaw.pwofiwegeowepo, nyaa~~ n-nyame = "pwofiwe_geo")
+          .obsewve()
+          .towepo
 
-      val quoterHasAlreadyQuotedRepo: QuoterHasAlreadyQuotedRepository.Type =
-        repo2Config(repo = external.quoterHasAlreadyQuotedRepo, name = "quoter_has_already_quoted")
-          .observe()
-          .toRepo2
+      v-vaw quotewhasawweadyquotedwepo: quotewhasawweadyquotedwepositowy.type =
+        w-wepo2config(wepo = e-extewnaw.quotewhasawweadyquotedwepo, name = "quotew_has_awweady_quoted")
+          .obsewve()
+          .towepo2
 
-      val lastQuoteOfQuoterRepo: LastQuoteOfQuoterRepository.Type =
-        repo2Config(repo = external.lastQuoteOfQuoterRepo, name = "last_quote_of_quoter")
-          .observe()
-          .toRepo2
+      v-vaw wastquoteofquotewwepo: w-wastquoteofquotewwepositowy.type =
+        wepo2config(wepo = e-extewnaw.wastquoteofquotewwepo, (U ᵕ U❁) n-nyame = "wast_quote_of_quotew")
+          .obsewve()
+          .towepo2
 
-      val mediaMetadataRepo: MediaMetadataRepository.Type =
-        repoConfig(repo = external.mediaMetadataRepo, name = "media_metadata")
-          .observe()
-          .toRepo
+      vaw mediametadatawepo: mediametadatawepositowy.type =
+        wepoconfig(wepo = extewnaw.mediametadatawepo, 😳😳😳 n-nyame = "media_metadata")
+          .obsewve()
+          .towepo
 
-      val perspectiveRepo: PerspectiveRepository.Type =
-        repoConfig(repo = external.perspectiveRepo, name = "perspective")
-          .observe()
-          .toRepo
+      v-vaw pewspectivewepo: pewspectivewepositowy.type =
+        wepoconfig(wepo = extewnaw.pewspectivewepo, (U ﹏ U) nyame = "pewspective")
+          .obsewve()
+          .towepo
 
-      val conversationMutedRepo: ConversationMutedRepository.Type =
-        TimelineService.GetPerspectives.getConversationMuted(perspectiveRepo)
+      v-vaw convewsationmutedwepo: convewsationmutedwepositowy.type =
+        timewinesewvice.getpewspectives.getconvewsationmuted(pewspectivewepo)
 
-      // Because observe is applied before caching, only cache misses
-      // (i.e. calls to the underlying repo) are observed.
-      // Note that `newCaching` has stats around cache hit/miss but `caching` does not.
-      val deviceSourceRepo: DeviceSourceRepository.Type =
-        repoConfig(repo = external.deviceSourceRepo, name = "device_source")
-          .observe()
-          .newCaching(
-            keySerializer = appIdStr => DeviceSourceKey(appIdStr).toString,
-            valueSerializer = ServoCachedValueSerializer(
-              codec = DeviceSource,
-              expiry = Expiry.byAge(settings.deviceSourceMemcacheTtl),
-              softTtl = settings.deviceSourceMemcacheSoftTtl
+      // b-because o-obsewve is appwied befowe caching, ^•ﻌ•^ onwy cache misses
+      // (i.e. (⑅˘꒳˘) cawws to the u-undewwying wepo) awe obsewved. >_<
+      // nyote t-that `newcaching` has stats awound c-cache hit/miss b-but `caching` does nyot. (⑅˘꒳˘)
+      v-vaw devicesouwcewepo: d-devicesouwcewepositowy.type =
+        w-wepoconfig(wepo = e-extewnaw.devicesouwcewepo, σωσ n-nyame = "device_souwce")
+          .obsewve()
+          .newcaching(
+            k-keysewiawizew = appidstw => devicesouwcekey(appidstw).tostwing, 🥺
+            vawuesewiawizew = sewvocachedvawuesewiawizew(
+              codec = devicesouwce, :3
+              e-expiwy = e-expiwy.byage(settings.devicesouwcememcachettw), (ꈍᴗꈍ)
+              softttw = s-settings.devicesouwcememcachesoftttw
             )
           )
           .caching(
-            cache = caches.deviceSourceInProcessCache,
-            partialHandler = softTtlPartialHandler(_ => settings.deviceSourceInProcessSoftTtl)
+            c-cache = c-caches.devicesouwceinpwocesscache, ^•ﻌ•^
+            pawtiawhandwew = s-softttwpawtiawhandwew(_ => settings.devicesouwceinpwocesssoftttw)
           )
-          .toRepo
+          .towepo
 
-      // Because observe is applied before caching, only cache misses
-      // (i.e. calls to the underlying repo) are observed
-      // Note that `newCaching` has stats around cache hit/miss but `caching` does not.
-      val placeRepo: PlaceRepository.Type =
-        repoConfig(repo = external.placeRepo, name = "place")
-          .observe()
-          .newCaching(
-            keySerializer = placeKey => placeKey.toString,
-            valueSerializer = ServoCachedValueSerializer(
-              codec = Place,
-              expiry = Expiry.byAge(settings.placeMemcacheTtl),
-              softTtl = settings.placeMemcacheSoftTtl
+      // because obsewve is appwied befowe caching, (˘ω˘) o-onwy cache m-misses
+      // (i.e. 🥺 cawws to the undewwying wepo) awe obsewved
+      // n-nyote t-that `newcaching` h-has stats awound cache hit/miss but `caching` d-does nyot. (✿oωo)
+      vaw pwacewepo: pwacewepositowy.type =
+        wepoconfig(wepo = e-extewnaw.pwacewepo, XD n-nyame = "pwace")
+          .obsewve()
+          .newcaching(
+            keysewiawizew = pwacekey => p-pwacekey.tostwing, (///ˬ///✿)
+            vawuesewiawizew = s-sewvocachedvawuesewiawizew(
+              c-codec = pwace, ( ͡o ω ͡o )
+              expiwy = expiwy.byage(settings.pwacememcachettw), ʘwʘ
+              s-softttw = settings.pwacememcachesoftttw
             )
           )
-          .toRepo
+          .towepo
 
-      val cardRepo: CardRepository.Type =
-        repoConfig(repo = external.cardRepo, name = "cards")
-          .observe()
-          .toRepo
+      v-vaw c-cawdwepo: cawdwepositowy.type =
+        w-wepoconfig(wepo = e-extewnaw.cawdwepo, rawr n-nyame = "cawds")
+          .obsewve()
+          .towepo
 
-      val card2Repo: Card2Repository.Type =
-        repo2Config(repo = external.card2Repo, name = "card2")
-          .observe()
-          .toRepo2
+      vaw c-cawd2wepo: cawd2wepositowy.type =
+        w-wepo2config(wepo = extewnaw.cawd2wepo, n-nyame = "cawd2")
+          .obsewve()
+          .towepo2
 
-      val cardUsersRepo: CardUsersRepository.Type =
-        repo2Config(repo = external.cardUsersRepo, name = "card_users")
-          .observe()
-          .toRepo2
+      vaw cawdusewswepo: cawdusewswepositowy.type =
+        w-wepo2config(wepo = extewnaw.cawdusewswepo, o.O n-nyame = "cawd_usews")
+          .obsewve()
+          .towepo2
 
-      val relationshipRepo: RelationshipRepository.Type =
-        repoConfig(repo = external.relationshipRepo, name = "relationship")
-          .observe()
-          .toRepo
+      vaw wewationshipwepo: w-wewationshipwepositowy.type =
+        w-wepoconfig(wepo = extewnaw.wewationshipwepo, ^•ﻌ•^ nyame = "wewationship")
+          .obsewve()
+          .towepo
 
-      val conversationIdRepo: ConversationIdRepository.Type =
-        repoConfig(repo = external.conversationIdRepo, name = "conversation_id")
-          .observe()
-          .toRepo
+      v-vaw convewsationidwepo: convewsationidwepositowy.type =
+        wepoconfig(wepo = extewnaw.convewsationidwepo, n-nyame = "convewsation_id")
+          .obsewve()
+          .towepo
 
-      val conversationControlRepo: ConversationControlRepository.Type =
-        repo2Config(
-          repo = ConversationControlRepository(tweetRepo, stats.scope("conversation_control")),
-          name = "conversation_control"
-        ).observe().toRepo2
+      vaw c-convewsationcontwowwepo: convewsationcontwowwepositowy.type =
+        wepo2config(
+          w-wepo = convewsationcontwowwepositowy(tweetwepo, s-stats.scope("convewsation_contwow")), (///ˬ///✿)
+          nyame = "convewsation_contwow"
+        ).obsewve().towepo2
 
-      val containerAsGetTweetResultRepo: CreativesContainerMaterializationRepository.GetTweetType =
-        repo2Config(
-          repo = external.containerAsTweetRepo,
-          name = "container_as_tweet"
-        ).observe().toRepo2
+      v-vaw containewasgettweetwesuwtwepo: cweativescontainewmatewiawizationwepositowy.gettweettype =
+        wepo2config(
+          wepo = e-extewnaw.containewastweetwepo, (ˆ ﻌ ˆ)♡
+          nyame = "containew_as_tweet"
+        ).obsewve().towepo2
 
-      val containerAsGetTweetFieldsResultRepo: CreativesContainerMaterializationRepository.GetTweetFieldsType =
-        repo2Config(
-          repo = external.containerAsTweetFieldsRepo,
-          name = "container_as_tweet_fields"
-        ).observe().toRepo2
+      vaw c-containewasgettweetfiewdswesuwtwepo: cweativescontainewmatewiawizationwepositowy.gettweetfiewdstype =
+        w-wepo2config(
+          w-wepo = extewnaw.containewastweetfiewdswepo,
+          nyame = "containew_as_tweet_fiewds"
+        ).obsewve().towepo2
 
-      val languageRepo: LanguageRepository.Type = {
-        val pool = FuturePool(Executors.newFixedThreadPool(settings.numPenguinThreads))
-        repoConfig(repo = PenguinLanguageRepository(pool), name = "language")
-          .observe()
-          .toRepo
+      vaw wanguagewepo: w-wanguagewepositowy.type = {
+        v-vaw poow = f-futuwepoow(executows.newfixedthweadpoow(settings.numpenguinthweads))
+        w-wepoconfig(wepo = penguinwanguagewepositowy(poow), XD nyame = "wanguage")
+          .obsewve()
+          .towepo
       }
 
-      // Because observe is applied before caching, only cache misses
-      // (i.e. calls to the underlying repo) are observed
-      // Note that `newCaching` has stats around cache hit/miss but `caching` does not.
-      val tweetCountsRepo: TweetCountsRepository.Type =
-        repoConfig(repo = external.tweetCountsRepo, name = "counts")
-          .observe()
+      // because obsewve is appwied befowe caching, (✿oωo) onwy cache misses
+      // (i.e. -.- cawws t-to the undewwying w-wepo) awe o-obsewved
+      // n-nyote that `newcaching` h-has stats a-awound cache hit/miss but `caching` d-does nyot. XD
+      v-vaw tweetcountswepo: tweetcountswepositowy.type =
+        wepoconfig(wepo = e-extewnaw.tweetcountswepo, (✿oωo) n-nyame = "counts")
+          .obsewve()
           .caching(
-            cache = caches.tweetCountsCache,
-            partialHandler = softTtlPartialHandler {
-              case Some(0) => settings.tweetCountsMemcacheZeroSoftTtl
-              case _ => settings.tweetCountsMemcacheNonZeroSoftTtl
-            },
-            maxCacheRequestSize = settings.tweetCountsCacheChunkSize
+            cache = caches.tweetcountscache,
+            pawtiawhandwew = s-softttwpawtiawhandwew {
+              case some(0) => settings.tweetcountsmemcachezewosoftttw
+              c-case _ => settings.tweetcountsmemcachenonzewosoftttw
+            }, (˘ω˘)
+            maxcachewequestsize = s-settings.tweetcountscachechunksize
           )
-          .toRepo
+          .towepo
 
-      val pastedMediaRepo: PastedMediaRepository.Type =
-        repo2Config(repo = PastedMediaRepository(tweetRepo), name = "pasted_media")
-          .observe()
-          .toRepo2
+      vaw p-pastedmediawepo: pastedmediawepositowy.type =
+        w-wepo2config(wepo = p-pastedmediawepositowy(tweetwepo), (ˆ ﻌ ˆ)♡ n-nyame = "pasted_media")
+          .obsewve()
+          .towepo2
 
-      val escherbirdAnnotationRepo: EscherbirdAnnotationRepository.Type =
-        repoConfig(repo = external.escherbirdAnnotationRepo, name = "escherbird_annotations")
-          .observe()
-          .toRepo
+      vaw eschewbiwdannotationwepo: e-eschewbiwdannotationwepositowy.type =
+        w-wepoconfig(wepo = extewnaw.eschewbiwdannotationwepo, n-nyame = "eschewbiwd_annotations")
+          .obsewve()
+          .towepo
 
-      val stratoSafetyLabelsRepo: StratoSafetyLabelsRepository.Type =
-        repo2Config(repo = external.stratoSafetyLabelsRepo, name = "strato_safety_labels")
-          .observe()
-          .toRepo2
+      vaw stwatosafetywabewswepo: s-stwatosafetywabewswepositowy.type =
+        w-wepo2config(wepo = e-extewnaw.stwatosafetywabewswepo, >_< nyame = "stwato_safety_wabews")
+          .obsewve()
+          .towepo2
 
-      val stratoCommunityMembershipRepo: StratoCommunityMembershipRepository.Type =
-        repoConfig(
-          repo = external.stratoCommunityMembershipRepo,
-          name = "strato_community_memberships")
-          .observe()
-          .toRepo
+      v-vaw stwatocommunitymembewshipwepo: stwatocommunitymembewshipwepositowy.type =
+        wepoconfig(
+          w-wepo = extewnaw.stwatocommunitymembewshipwepo, -.-
+          nyame = "stwato_community_membewships")
+          .obsewve()
+          .towepo
 
-      val stratoCommunityAccessRepo: StratoCommunityAccessRepository.Type =
-        repoConfig(repo = external.stratoCommunityAccessRepo, name = "strato_community_access")
-          .observe()
-          .toRepo
+      vaw stwatocommunityaccesswepo: stwatocommunityaccesswepositowy.type =
+        wepoconfig(wepo = e-extewnaw.stwatocommunityaccesswepo, (///ˬ///✿) nyame = "stwato_community_access")
+          .obsewve()
+          .towepo
 
-      val stratoSuperFollowEligibleRepo: StratoSuperFollowEligibleRepository.Type =
-        repoConfig(
-          repo = external.stratoSuperFollowEligibleRepo,
-          name = "strato_super_follow_eligible")
-          .observe()
-          .toRepo
+      vaw stwatosupewfowwowewigibwewepo: stwatosupewfowwowewigibwewepositowy.type =
+        wepoconfig(
+          wepo = extewnaw.stwatosupewfowwowewigibwewepo, XD
+          n-nyame = "stwato_supew_fowwow_ewigibwe")
+          .obsewve()
+          .towepo
 
-      val stratoSuperFollowRelationsRepo: StratoSuperFollowRelationsRepository.Type =
-        repo2Config(
-          repo = external.stratoSuperFollowRelationsRepo,
-          name = "strato_super_follow_relations")
-          .observe()
-          .toRepo2
+      vaw stwatosupewfowwowwewationswepo: s-stwatosupewfowwowwewationswepositowy.type =
+        wepo2config(
+          w-wepo = extewnaw.stwatosupewfowwowwewationswepo, ^^;;
+          name = "stwato_supew_fowwow_wewations")
+          .obsewve()
+          .towepo2
 
-      val stratoPromotedTweetRepo: StratoPromotedTweetRepository.Type =
-        repoConfig(repo = external.stratoPromotedTweetRepo, name = "strato_promoted_tweet")
-          .observe()
-          .toRepo
+      v-vaw stwatopwomotedtweetwepo: s-stwatopwomotedtweetwepositowy.type =
+        wepoconfig(wepo = e-extewnaw.stwatopwomotedtweetwepo, rawr x3 n-nyame = "stwato_pwomoted_tweet")
+          .obsewve()
+          .towepo
 
-      val stratoSubscriptionVerificationRepo: StratoSubscriptionVerificationRepository.Type =
-        repo2Config(
-          repo = external.stratoSubscriptionVerificationRepo,
-          name = "strato_subscription_verification")
-          .observe()
-          .toRepo2
+      vaw stwatosubscwiptionvewificationwepo: stwatosubscwiptionvewificationwepositowy.type =
+        w-wepo2config(
+          wepo = extewnaw.stwatosubscwiptionvewificationwepo, OwO
+          nyame = "stwato_subscwiption_vewification")
+          .obsewve()
+          .towepo2
 
-      val unmentionedEntitiesRepo: UnmentionedEntitiesRepository.Type =
-        repo2Config(repo = external.unmentionedEntitiesRepo, name = "unmentioned_entities")
-          .observe()
-          .toRepo2
+      vaw unmentionedentitieswepo: u-unmentionedentitieswepositowy.type =
+        wepo2config(wepo = e-extewnaw.unmentionedentitieswepo, ʘwʘ nyame = "unmentioned_entities")
+          .obsewve()
+          .towepo2
 
-      private[this] val userSource =
-        UserSource.fromRepo(
-          Repo { (k, _) =>
-            val opts = UserQueryOptions(k.fields, UserVisibility.All)
-            userRepo(UserKey(k.id), opts)
+      p-pwivate[this] vaw usewsouwce =
+        u-usewsouwce.fwomwepo(
+          w-wepo { (k, rawr _) =>
+            vaw opts = usewquewyoptions(k.fiewds, UwU u-usewvisibiwity.aww)
+            usewwepo(usewkey(k.id), (ꈍᴗꈍ) opts)
           }
         )
 
-      private[this] val userRelationshipSource =
-        UserRelationshipSource.fromRepo(
-          Repo[UserRelationshipSource.Key, Unit, Boolean] { (key, _) =>
-            relationshipRepo(
-              RelationshipKey(key.subjectId, key.objectId, key.relationship)
+      p-pwivate[this] vaw usewwewationshipsouwce =
+        usewwewationshipsouwce.fwomwepo(
+          wepo[usewwewationshipsouwce.key, unit, (✿oωo) b-boowean] { (key, (⑅˘꒳˘) _) =>
+            w-wewationshipwepo(
+              wewationshipkey(key.subjectid, OwO k-key.objectid, 🥺 k-key.wewationship)
             )
           }
         )
 
-      private[this] val tweetPerspectiveSource =
-        TweetPerspectiveSource.fromGetPerspectives(perspectiveRepo)
-      private[this] val tweetMediaMetadataSource =
-        TweetMediaMetadataSource.fromFunction(mediaMetadataRepo)
+      pwivate[this] v-vaw tweetpewspectivesouwce =
+        tweetpewspectivesouwce.fwomgetpewspectives(pewspectivewepo)
+      pwivate[this] vaw tweetmediametadatasouwce =
+        tweetmediametadatasouwce.fwomfunction(mediametadatawepo)
 
-      val userIsInvitedToConversationRepo: UserIsInvitedToConversationRepository.Type =
-        repo2Config(
-          repo = external.userIsInvitedToConversationRepo,
-          name = "user_is_invited_to_conversation")
-          .observe()
-          .toRepo2
+      v-vaw usewisinvitedtoconvewsationwepo: u-usewisinvitedtoconvewsationwepositowy.type =
+        wepo2config(
+          w-wepo = extewnaw.usewisinvitedtoconvewsationwepo, >_<
+          n-nyame = "usew_is_invited_to_convewsation")
+          .obsewve()
+          .towepo2
 
-      private[this] val stringCenterClient: MultiProjectStringCenter = {
-        val stringCenterProjects = settings.flags.stringCenterProjects().toList
+      pwivate[this] v-vaw stwingcentewcwient: muwtipwojectstwingcentew = {
+        vaw stwingcentewpwojects = s-settings.fwags.stwingcentewpwojects().towist
 
-        val languages: Languages = new YamlConfigLanguages(
-          new YamlConfig(settings.flags.languagesConfig()))
+        vaw wanguages: wanguages = n-nyew yamwconfigwanguages(
+          n-nyew yamwconfig(settings.fwags.wanguagesconfig()))
 
-        val loggingAbDecider = ABDeciderFactory("/usr/local/config/abdecider/abdecider.yml")
-          .withEnvironment("production")
-          .buildWithLogging()
+        vaw woggingabdecidew = abdecidewfactowy("/usw/wocaw/config/abdecidew/abdecidew.ymw")
+          .withenviwonment("pwoduction")
+          .buiwdwithwogging()
 
-        MultiProjectStringCenter(
-          projects = stringCenterProjects,
-          defaultBundlePath = MultiProjectStringCenter.StandardDefaultBundlePath,
-          refreshingBundlePath = MultiProjectStringCenter.StandardRefreshingBundlePath,
-          refreshingInterval = MultiProjectStringCenter.StandardRefreshingInterval,
-          requireDefaultBundleExists = true,
-          languages = languages,
-          statsReceiver = tweetVisibilityStatsReceiver,
-          loggingABDecider = loggingAbDecider
+        m-muwtipwojectstwingcentew(
+          pwojects = stwingcentewpwojects,
+          defauwtbundwepath = muwtipwojectstwingcentew.standawddefauwtbundwepath, (ꈍᴗꈍ)
+          wefweshingbundwepath = muwtipwojectstwingcentew.standawdwefweshingbundwepath, 😳
+          wefweshingintewvaw = m-muwtipwojectstwingcentew.standawdwefweshingintewvaw,
+          w-wequiwedefauwtbundweexists = twue, 🥺
+          w-wanguages = wanguages, nyaa~~
+          s-statsweceivew = tweetvisibiwitystatsweceivew, ^•ﻌ•^
+          w-woggingabdecidew = woggingabdecidew
         )
       }
-      private[this] val stringRegistry: ExternalStringRegistry = new ExternalStringRegistry()
-      private[this] val localizationSource: LocalizationSource =
-        LocalizationSource.fromMultiProjectStringCenterClient(stringCenterClient, stringRegistry)
+      pwivate[this] vaw stwingwegistwy: extewnawstwingwegistwy = nyew extewnawstwingwegistwy()
+      pwivate[this] v-vaw wocawizationsouwce: wocawizationsouwce =
+        wocawizationsouwce.fwommuwtipwojectstwingcentewcwient(stwingcentewcwient, (ˆ ﻌ ˆ)♡ stwingwegistwy)
 
-      val tweetVisibilityRepo: TweetVisibilityRepository.Type = {
-        val tweetVisibilityLibrary: TweetVisibilityLibrary.Type =
-          TweetVisibilityLibrary(
-            visibilityLibrary(tweetVisibilityStatsReceiver),
-            userSource = userSource,
-            userRelationshipSource = userRelationshipSource,
-            keywordMatcher = KeywordMatcher.defaultMatcher(stats),
-            stratoClient = stratoClient,
-            localizationSource = localizationSource,
-            decider = visibilityDecider,
-            invitedToConversationRepo = userIsInvitedToConversationRepo,
-            tweetPerspectiveSource = tweetPerspectiveSource,
-            tweetMediaMetadataSource = tweetMediaMetadataSource,
-            tombstoneGenerator = tombstoneGenerator(
-              countryNameGenerator(tweetVisibilityStatsReceiver),
-              tweetVisibilityStatsReceiver
-            ),
-            interstitialGenerator =
-              LocalizedInterstitialGenerator(visibilityDecider, tweetVisibilityStatsReceiver),
-            limitedActionsFeatureSwitches =
-              FeatureSwitchUtil.mkLimitedActionsFeatureSwitches(tweetVisibilityStatsReceiver),
-            enableParityTest = deciderGates.tweetVisibilityLibraryEnableParityTest
+      vaw tweetvisibiwitywepo: t-tweetvisibiwitywepositowy.type = {
+        vaw t-tweetvisibiwitywibwawy: t-tweetvisibiwitywibwawy.type =
+          tweetvisibiwitywibwawy(
+            visibiwitywibwawy(tweetvisibiwitystatsweceivew), (U ᵕ U❁)
+            usewsouwce = u-usewsouwce, mya
+            u-usewwewationshipsouwce = u-usewwewationshipsouwce, 😳
+            keywowdmatchew = k-keywowdmatchew.defauwtmatchew(stats), σωσ
+            stwatocwient = s-stwatocwient, ( ͡o ω ͡o )
+            wocawizationsouwce = w-wocawizationsouwce, XD
+            decidew = v-visibiwitydecidew, :3
+            invitedtoconvewsationwepo = usewisinvitedtoconvewsationwepo, :3
+            t-tweetpewspectivesouwce = tweetpewspectivesouwce, (⑅˘꒳˘)
+            t-tweetmediametadatasouwce = t-tweetmediametadatasouwce, òωó
+            tombstonegenewatow = t-tombstonegenewatow(
+              c-countwynamegenewatow(tweetvisibiwitystatsweceivew), mya
+              tweetvisibiwitystatsweceivew
+            ), 😳😳😳
+            i-intewstitiawgenewatow =
+              wocawizedintewstitiawgenewatow(visibiwitydecidew, :3 t-tweetvisibiwitystatsweceivew), >_<
+            wimitedactionsfeatuweswitches =
+              f-featuweswitchutiw.mkwimitedactionsfeatuweswitches(tweetvisibiwitystatsweceivew), 🥺
+            e-enabwepawitytest = decidewgates.tweetvisibiwitywibwawyenabwepawitytest
           )
 
-        val underlying =
-          TweetVisibilityRepository(
-            tweetVisibilityLibrary,
-            visibilityDeciderGates,
-            tweetVisibilityLogger,
-            repoStats.scope("tweet_visibility_repo")
+        vaw undewwying =
+          t-tweetvisibiwitywepositowy(
+            tweetvisibiwitywibwawy, (ꈍᴗꈍ)
+            visibiwitydecidewgates, rawr x3
+            tweetvisibiwitywoggew, (U ﹏ U)
+            wepostats.scope("tweet_visibiwity_wepo")
           )
 
-        repoConfig(repo = underlying, name = "tweet_visibility")
-          .observe()
-          .toRepo
+        wepoconfig(wepo = undewwying, ( ͡o ω ͡o ) nyame = "tweet_visibiwity")
+          .obsewve()
+          .towepo
       }
 
-      val quotedTweetVisibilityRepo: QuotedTweetVisibilityRepository.Type = {
-        val quotedTweetVisibilityLibrary: QuotedTweetVisibilityLibrary.Type =
-          QuotedTweetVisibilityLibrary(
-            visibilityLibrary(quotedTweetVisibilityStatsReceiver),
-            userSource = userSource,
-            userRelationshipSource = userRelationshipSource,
-            visibilityDecider,
-            userStateVisibilityLibrary = userUnavailableVisibilityLibrary,
-            enableVfFeatureHydration = deciderGates.enableVfFeatureHydrationInQuotedTweetVLShim
+      vaw quotedtweetvisibiwitywepo: q-quotedtweetvisibiwitywepositowy.type = {
+        vaw quotedtweetvisibiwitywibwawy: quotedtweetvisibiwitywibwawy.type =
+          q-quotedtweetvisibiwitywibwawy(
+            visibiwitywibwawy(quotedtweetvisibiwitystatsweceivew), 😳😳😳
+            u-usewsouwce = usewsouwce, 🥺
+            usewwewationshipsouwce = usewwewationshipsouwce, òωó
+            v-visibiwitydecidew, XD
+            usewstatevisibiwitywibwawy = usewunavaiwabwevisibiwitywibwawy, XD
+            e-enabwevffeatuwehydwation = decidewgates.enabwevffeatuwehydwationinquotedtweetvwshim
           )
 
-        val underlying =
-          QuotedTweetVisibilityRepository(quotedTweetVisibilityLibrary, visibilityDeciderGates)
+        vaw undewwying =
+          q-quotedtweetvisibiwitywepositowy(quotedtweetvisibiwitywibwawy, ( ͡o ω ͡o ) visibiwitydecidewgates)
 
-        repoConfig(repo = underlying, name = "quoted_tweet_visibility")
-          .observe()
-          .toRepo
+        wepoconfig(wepo = u-undewwying, >w< nyame = "quoted_tweet_visibiwity")
+          .obsewve()
+          .towepo
       }
 
-      val deletedTweetVisibilityRepo: DeletedTweetVisibilityRepository.Type = {
-        val deletedTweetVisibilityLibrary: DeletedTweetVisibilityLibrary.Type =
-          DeletedTweetVisibilityLibrary(
-            visibilityLibrary(deletedTweetVisibilityStatsReceiver),
-            visibilityDecider,
-            tombstoneGenerator(
-              countryNameGenerator(deletedTweetVisibilityStatsReceiver),
-              deletedTweetVisibilityStatsReceiver
+      vaw dewetedtweetvisibiwitywepo: d-dewetedtweetvisibiwitywepositowy.type = {
+        v-vaw dewetedtweetvisibiwitywibwawy: dewetedtweetvisibiwitywibwawy.type =
+          dewetedtweetvisibiwitywibwawy(
+            visibiwitywibwawy(dewetedtweetvisibiwitystatsweceivew), mya
+            v-visibiwitydecidew,
+            t-tombstonegenewatow(
+              countwynamegenewatow(dewetedtweetvisibiwitystatsweceivew), (ꈍᴗꈍ)
+              d-dewetedtweetvisibiwitystatsweceivew
             )
           )
 
-        val underlying = DeletedTweetVisibilityRepository.apply(
-          deletedTweetVisibilityLibrary
+        v-vaw undewwying = dewetedtweetvisibiwitywepositowy.appwy(
+          dewetedtweetvisibiwitywibwawy
         )
 
-        repoConfig(repo = underlying, name = "deleted_tweet_visibility")
-          .observe()
-          .toRepo
+        w-wepoconfig(wepo = undewwying, -.- nyame = "deweted_tweet_visibiwity")
+          .obsewve()
+          .towepo
       }
 
-      val takedownRepo: UserTakedownRepository.Type =
-        repoConfig(repo = UserTakedownRepository(userRepo), name = "takedowns")
-          .observe()
-          .toRepo
+      vaw takedownwepo: u-usewtakedownwepositowy.type =
+        wepoconfig(wepo = usewtakedownwepositowy(usewwepo), nyame = "takedowns")
+          .obsewve()
+          .towepo
 
-      val tweetSpamCheckRepo: TweetSpamCheckRepository.Type =
-        repo2Config(repo = external.tweetSpamCheckRepo, name = "tweet_spam_check")
-          .observe()
-          .toRepo2
+      vaw t-tweetspamcheckwepo: t-tweetspamcheckwepositowy.type =
+        wepo2config(wepo = e-extewnaw.tweetspamcheckwepo, (⑅˘꒳˘) nyame = "tweet_spam_check")
+          .obsewve()
+          .towepo2
 
-      val retweetSpamCheckRepo: RetweetSpamCheckRepository.Type =
-        repoConfig(repo = external.retweetSpamCheckRepo, name = "retweet_spam_check")
-          .observe()
-          .toRepo
+      vaw wetweetspamcheckwepo: wetweetspamcheckwepositowy.type =
+        wepoconfig(wepo = e-extewnaw.wetweetspamcheckwepo, (U ﹏ U) nyame = "wetweet_spam_check")
+          .obsewve()
+          .towepo
 
-      // Because observe is applied before caching, only cache misses
-      // (i.e. calls to the underlying repo) are observed
-      // Note that `newCaching` has stats around cache hit/miss but `caching` does not.
-      val geoScrubTimestampRepo: GeoScrubTimestampRepository.Type =
-        repoConfig(repo = external.geoScrubTimestampRepo, name = "geo_scrub")
-          .observe()
+      // because o-obsewve is appwied befowe c-caching, σωσ onwy cache m-misses
+      // (i.e. :3 cawws to the undewwying wepo) awe obsewved
+      // nyote that `newcaching` h-has stats a-awound cache hit/miss but `caching` does nyot. /(^•ω•^)
+      v-vaw geoscwubtimestampwepo: geoscwubtimestampwepositowy.type =
+        wepoconfig(wepo = e-extewnaw.geoscwubtimestampwepo, σωσ n-nyame = "geo_scwub")
+          .obsewve()
           .caching(
-            cache = caches.geoScrubCache,
-            partialHandler = (_ => None)
+            c-cache = caches.geoscwubcache, (U ᵕ U❁)
+            p-pawtiawhandwew = (_ => n-nyone)
           )
-          .toRepo
+          .towepo
 
-      val tweetHydrators: TweetHydrators =
-        TweetHydrators(
-          stats = stats,
-          deciderGates = deciderGates,
-          repos = this,
-          tweetDataCache = caches.tweetDataCache,
-          hasMedia = hasMedia,
-          featureSwitchesWithoutExperiments = featureSwitchesWithoutExperiments,
-          clientIdHelper = clientIdHelper,
+      v-vaw tweethydwatows: tweethydwatows =
+        tweethydwatows(
+          s-stats = s-stats, 😳
+          d-decidewgates = d-decidewgates, ʘwʘ
+          w-wepos = t-this, (⑅˘꒳˘)
+          tweetdatacache = c-caches.tweetdatacache, ^•ﻌ•^
+          h-hasmedia = h-hasmedia,
+          featuweswitcheswithoutexpewiments = featuweswitcheswithoutexpewiments, nyaa~~
+          c-cwientidhewpew = cwientidhewpew, XD
         )
 
-      val queryOptionsExpander: TweetQueryOptionsExpander.Type =
-        TweetQueryOptionsExpander.threadLocalMemoize(
-          TweetQueryOptionsExpander.expandDependencies
+      vaw quewyoptionsexpandew: t-tweetquewyoptionsexpandew.type =
+        tweetquewyoptionsexpandew.thweadwocawmemoize(
+          tweetquewyoptionsexpandew.expanddependencies
         )
 
-      // mutations to tweets that we only need to apply when reading from the external
-      // repository, and not when reading from cache
-      val tweetMutation: Mutation[Tweet] =
-        Mutation
-          .all(
-            Seq(
-              EntityExtractor.mutationAll,
-              TextRepairer.BlankLineCollapser,
-              TextRepairer.CoreTextBugPatcher
+      // m-mutations to t-tweets that we onwy nyeed to appwy when weading fwom the extewnaw
+      // w-wepositowy, /(^•ω•^) a-and nyot when weading fwom c-cache
+      vaw t-tweetmutation: mutation[tweet] =
+        mutation
+          .aww(
+            seq(
+              e-entityextwactow.mutationaww, (U ᵕ U❁)
+              t-textwepaiwew.bwankwinecowwapsew, mya
+              textwepaiwew.cowetextbugpatchew
             )
-          ).onlyIf(_.coreData.isDefined)
+          ).onwyif(_.cowedata.isdefined)
 
-      val cachingTweetRepo: TweetResultRepository.Type =
-        repo2Config(repo = external.tweetResultRepo, name = "saved_tweet")
-          .observe()
-          .withMiddleware { repo =>
-            // applies tweetMutation to the results of TweetResultRepository
-            val mutateResult = TweetResult.mutate(tweetMutation)
-            repo.andThen(stitchResult => stitchResult.map(mutateResult))
+      vaw cachingtweetwepo: t-tweetwesuwtwepositowy.type =
+        w-wepo2config(wepo = extewnaw.tweetwesuwtwepo, (ˆ ﻌ ˆ)♡ nyame = "saved_tweet")
+          .obsewve()
+          .withmiddwewawe { w-wepo =>
+            // appwies tweetmutation to the wesuwts of tweetwesuwtwepositowy
+            vaw mutatewesuwt = tweetwesuwt.mutate(tweetmutation)
+            w-wepo.andthen(stitchwesuwt => stitchwesuwt.map(mutatewesuwt))
           }
-          .withMiddleware(
-            tupledMiddleware(
-              CachingTweetRepository(
-                caches.tweetResultCache,
-                settings.tweetTombstoneTtl,
-                stats.scope("saved_tweet", "cache"),
-                clientIdHelper,
-                deciderGates.logCacheExceptions,
+          .withmiddwewawe(
+            tupwedmiddwewawe(
+              c-cachingtweetwepositowy(
+                c-caches.tweetwesuwtcache, (✿oωo)
+                s-settings.tweettombstonettw, (✿oωo)
+                stats.scope("saved_tweet", òωó "cache"), (˘ω˘)
+                cwientidhewpew, (ˆ ﻌ ˆ)♡
+                decidewgates.wogcacheexceptions, ( ͡o ω ͡o )
               )
             )
           )
-          .toRepo2
+          .towepo2
 
-      finalTweetResultRepo = repo2Config(repo = cachingTweetRepo, name = "tweet")
-        .withMiddleware(
-          tupledMiddleware(
-            TweetHydration.hydrateRepo(
-              tweetHydrators.hydrator,
-              tweetHydrators.cacheChangesEffect,
-              queryOptionsExpander
+      f-finawtweetwesuwtwepo = w-wepo2config(wepo = c-cachingtweetwepo, rawr x3 n-nyame = "tweet")
+        .withmiddwewawe(
+          t-tupwedmiddwewawe(
+            tweethydwation.hydwatewepo(
+              tweethydwatows.hydwatow, (˘ω˘)
+              t-tweethydwatows.cachechangeseffect, òωó
+              q-quewyoptionsexpandew
             )
           )
         )
-        .observe()
-        .withMiddleware(tupledMiddleware(TweetResultRepository.shortCircuitInvalidIds))
-        .toRepo2
+        .obsewve()
+        .withmiddwewawe(tupwedmiddwewawe(tweetwesuwtwepositowy.showtciwcuitinvawidids))
+        .towepo2
     }
   }
 }

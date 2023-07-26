@@ -1,11 +1,11 @@
-package com.twitter.visibility.interfaces
+package com.twittew.visibiwity.intewfaces
 
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.spam.rtf.thriftscala.SafetyLabel
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType
-import scala.collection.Map
+impowt c-com.twittew.sewvo.wepositowy.keyvawuewepositowy
+i-impowt com.twittew.spam.wtf.thwiftscawa.safetywabew
+i-impowt com.twittew.spam.wtf.thwiftscawa.safetywabewtype
+i-impowt s-scawa.cowwection.map
 
-package object conversations {
-  type BatchSafetyLabelRepository =
-    KeyValueRepository[(Long, Seq[Long]), Long, Map[SafetyLabelType, SafetyLabel]]
+p-package o-object convewsations {
+  t-type batchsafetywabewwepositowy =
+    keyvawuewepositowy[(wong, σωσ seq[wong]), σωσ wong, map[safetywabewtype, >_< s-safetywabew]]
 }

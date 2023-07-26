@@ -1,17 +1,17 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/net/codingwell:scala-guice",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/cache",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/strato",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/configapi/deciders",
-        "stitch/stitch-core",
-        "strato/src/main/scala/com/twitter/strato/client",
-        "user-signal-service/thrift/src/main/thrift:thrift-scala",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], OwO
+    compiwew_option_sets = ["fataw_wawnings"], 🥺
+    p-pwatfowm = "java8", òωó
+    t-tags = ["bazew-compatibwe"], o.O
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/inject:guice", (U ᵕ U❁)
+        "3wdpawty/jvm/net/codingweww:scawa-guice", (⑅˘꒳˘)
+        "3wdpawty/jvm/owg/swf4j:swf4j-api", ( ͡o ω ͡o )
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/cwients/cache", UwU
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/cwients/stwato", rawr x3
+        "fowwow-wecommendations-sewvice/sewvew/swc/main/scawa/com/twittew/fowwow_wecommendations/configapi/decidews", rawr
+        "stitch/stitch-cowe",
+        "stwato/swc/main/scawa/com/twittew/stwato/cwient", σωσ
+        "usew-signaw-sewvice/thwift/swc/main/thwift:thwift-scawa", σωσ
+    ], >_<
 )

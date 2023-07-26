@@ -1,29 +1,29 @@
-package com.twitter.timelineranker.uteg_liked_by_tweets
+package com.twittew.timewinewankew.uteg_wiked_by_tweets
 
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelines.model.UserId
-import com.twitter.util.Future
+impowt com.twittew.seawch.eawwybiwd.thwiftscawa.thwiftseawchwesuwt
+i-impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.timewinewankew.cowe.candidateenvewope
+i-impowt c-com.twittew.timewines.modew.usewid
+i-impowt com.twittew.utiw.futuwe
 
-object RemoveCandidatesAuthoredByWeightedFollowingsTransform
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val filteredSearchResults = envelope.query.utegLikedByTweetsOptions match {
-      case Some(opts) =>
-        envelope.searchResults.filterNot(isAuthorInWeightedFollowings(_, opts.weightedFollowings))
-      case None => envelope.searchResults
+o-object wemovecandidatesauthowedbyweightedfowwowingstwansfowm
+    e-extends futuweawwow[candidateenvewope, candidateenvewope] {
+  ovewwide def appwy(envewope: c-candidateenvewope): futuwe[candidateenvewope] = {
+    vaw fiwtewedseawchwesuwts = e-envewope.quewy.utegwikedbytweetsoptions match {
+      c-case some(opts) =>
+        envewope.seawchwesuwts.fiwtewnot(isauthowinweightedfowwowings(_, OwO opts.weightedfowwowings))
+      c-case nyone => envewope.seawchwesuwts
     }
-    Future.value(envelope.copy(searchResults = filteredSearchResults))
+    f-futuwe.vawue(envewope.copy(seawchwesuwts = f-fiwtewedseawchwesuwts))
   }
 
-  private def isAuthorInWeightedFollowings(
-    searchResult: ThriftSearchResult,
-    weightedFollowings: Map[UserId, Double]
-  ): Boolean = {
-    searchResult.metadata match {
-      case Some(metadata) => weightedFollowings.contains(metadata.fromUserId)
-      case None => false
+  pwivate def isauthowinweightedfowwowings(
+    seawchwesuwt: thwiftseawchwesuwt, (U ﹏ U)
+    weightedfowwowings: map[usewid, >_< d-doubwe]
+  ): boowean = {
+    seawchwesuwt.metadata match {
+      case some(metadata) => w-weightedfowwowings.contains(metadata.fwomusewid)
+      case nyone => f-fawse
     }
   }
 }

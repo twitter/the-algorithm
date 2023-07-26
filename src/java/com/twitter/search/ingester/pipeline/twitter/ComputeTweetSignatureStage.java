@@ -1,38 +1,38 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+impowt owg.apache.commons.pipewine.stageexception;
+i-impowt o-owg.apache.commons.pipewine.vawidation.consumedtypes;
+i-impowt owg.apache.commons.pipewine.vawidation.pwoducesconsumed;
 
-import com.twitter.search.common.relevance.classifiers.TweetQualityFeatureExtractor;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
+i-impowt com.twittew.seawch.common.wewevance.cwassifiews.tweetquawityfeatuweextwactow;
+i-impowt c-com.twittew.seawch.ingestew.modew.ingestewtwittewmessage;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public class ComputeTweetSignatureStage extends TwitterBaseStage
-    <IngesterTwitterMessage, IngesterTwitterMessage> {
-  private final TweetQualityFeatureExtractor tweetSignatureExtractor =
-      new TweetQualityFeatureExtractor();
+@consumedtypes(ingestewtwittewmessage.cwass)
+@pwoducesconsumed
+p-pubwic c-cwass computetweetsignatuwestage extends twittewbasestage
+    <ingestewtwittewmessage, (U ﹏ U) ingestewtwittewmessage> {
+  pwivate finaw tweetquawityfeatuweextwactow t-tweetsignatuweextwactow =
+      nyew tweetquawityfeatuweextwactow();
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not a TwitterMessage instance: " + obj);
+  @ovewwide
+  pubwic void i-innewpwocess(object obj) thwows s-stageexception {
+    if (!(obj instanceof ingestewtwittewmessage)) {
+      thwow n-nyew stageexception(this, >_< "object is nyot a twittewmessage i-instance: " + o-obj);
     }
 
-    IngesterTwitterMessage message = IngesterTwitterMessage.class.cast(obj);
-    extract(message);
-    emitAndCount(message);
+    ingestewtwittewmessage message = ingestewtwittewmessage.cwass.cast(obj);
+    extwact(message);
+    emitandcount(message);
   }
 
-  private void extract(IngesterTwitterMessage message) {
-    tweetSignatureExtractor.extractTweetTextFeatures(message);
+  p-pwivate void extwact(ingestewtwittewmessage message) {
+    tweetsignatuweextwactow.extwacttweettextfeatuwes(message);
   }
 
-  @Override
-  protected IngesterTwitterMessage innerRunStageV2(IngesterTwitterMessage message) {
-    extract(message);
-    return message;
+  @ovewwide
+  pwotected i-ingestewtwittewmessage innewwunstagev2(ingestewtwittewmessage message) {
+    e-extwact(message);
+    w-wetuwn message;
   }
 }
 

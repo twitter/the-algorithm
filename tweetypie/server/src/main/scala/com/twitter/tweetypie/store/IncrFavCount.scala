@@ -1,89 +1,89 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.tweetypie.store.TweetStoreEvent.NoRetry
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.tweetypie.stowe.tweetstoweevent.nowetwy
+i-impowt com.twittew.tweetypie.thwiftscawa._
 
-object IncrFavCount extends TweetStore.SyncModule {
+o-object incwfavcount e-extends tweetstowe.syncmoduwe {
 
-  case class Event(tweetId: TweetId, delta: Int, timestamp: Time)
-      extends SyncTweetStoreEvent("incr_fav_count") {
-    val toAsyncRequest: AsyncIncrFavCountRequest = AsyncIncrFavCountRequest(tweetId, delta)
+  c-case cwass e-event(tweetid: t-tweetid, (U ﹏ U) dewta: int, 😳 timestamp: time)
+      extends synctweetstoweevent("incw_fav_count") {
+    vaw toasyncwequest: a-asyncincwfavcountwequest = asyncincwfavcountwequest(tweetid, (ˆ ﻌ ˆ)♡ dewta)
   }
 
-  trait Store {
-    val incrFavCount: FutureEffect[Event]
+  t-twait stowe {
+    vaw incwfavcount: f-futuweeffect[event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val incrFavCount: FutureEffect[Event] = wrap(underlying.incrFavCount)
+  twait stowewwappew extends stowe { sewf: tweetstowewwappew[stowe] =>
+    o-ovewwide vaw incwfavcount: f-futuweeffect[event] = w-wwap(undewwying.incwfavcount)
   }
 
-  object Store {
-    def apply(
-      asyncEnqueueStore: AsyncEnqueueStore,
-      replicatingStore: ReplicatingTweetStore
-    ): Store =
-      new Store {
-        override val incrFavCount: FutureEffect[Event] =
-          FutureEffect.inParallel(
-            asyncEnqueueStore.incrFavCount,
-            replicatingStore.incrFavCount
+  object stowe {
+    def appwy(
+      asyncenqueuestowe: asyncenqueuestowe, 😳😳😳
+      w-wepwicatingstowe: wepwicatingtweetstowe
+    ): stowe =
+      nyew stowe {
+        ovewwide vaw i-incwfavcount: futuweeffect[event] =
+          futuweeffect.inpawawwew(
+            a-asyncenqueuestowe.incwfavcount, (U ﹏ U)
+            wepwicatingstowe.incwfavcount
           )
       }
   }
 }
 
-object AsyncIncrFavCount extends TweetStore.AsyncModule {
+o-object asyncincwfavcount e-extends tweetstowe.asyncmoduwe {
 
-  case class Event(tweetId: TweetId, delta: Int, timestamp: Time)
-      extends AsyncTweetStoreEvent("async_incr_fav_count") {
+  c-case cwass event(tweetid: tweetid, dewta: int, (///ˬ///✿) t-timestamp: time)
+      extends asynctweetstoweevent("async_incw_fav_count") {
 
-    override def enqueueRetry(service: ThriftTweetService, action: AsyncWriteAction): Future[Unit] =
-      Future.Unit // We need to define this method for TweetStoreEvent.Async but we don't use it
+    o-ovewwide def enqueuewetwy(sewvice: thwifttweetsewvice, 😳 action: asyncwwiteaction): futuwe[unit] =
+      f-futuwe.unit // we n-need to define this m-method fow tweetstoweevent.async b-but we don't use it
 
-    override def retryStrategy: TweetStoreEvent.RetryStrategy = NoRetry
+    ovewwide def wetwystwategy: tweetstoweevent.wetwystwategy = n-nyowetwy
   }
 
-  trait Store {
-    val asyncIncrFavCount: FutureEffect[Event]
+  t-twait stowe {
+    vaw a-asyncincwfavcount: f-futuweeffect[event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val asyncIncrFavCount: FutureEffect[Event] = wrap(underlying.asyncIncrFavCount)
+  twait s-stowewwappew extends stowe { s-sewf: tweetstowewwappew[stowe] =>
+    ovewwide vaw asyncincwfavcount: f-futuweeffect[event] = wwap(undewwying.asyncincwfavcount)
   }
 
-  object Store {
-    def apply(tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore): Store = {
-      new Store {
-        override val asyncIncrFavCount: FutureEffect[Event] =
-          tweetCountsUpdatingStore.asyncIncrFavCount
+  o-object stowe {
+    def appwy(tweetcountsupdatingstowe: t-tweetcountscacheupdatingstowe): s-stowe = {
+      nyew stowe {
+        ovewwide vaw asyncincwfavcount: futuweeffect[event] =
+          tweetcountsupdatingstowe.asyncincwfavcount
       }
     }
   }
 }
 
-object ReplicatedIncrFavCount extends TweetStore.ReplicatedModule {
+o-object wepwicatedincwfavcount e-extends tweetstowe.wepwicatedmoduwe {
 
-  case class Event(tweetId: TweetId, delta: Int)
-      extends ReplicatedTweetStoreEvent("replicated_incr_fav_count") {
-    override def retryStrategy: TweetStoreEvent.NoRetry.type = NoRetry
+  case cwass e-event(tweetid: t-tweetid, 😳 dewta: i-int)
+      extends wepwicatedtweetstoweevent("wepwicated_incw_fav_count") {
+    ovewwide def wetwystwategy: t-tweetstoweevent.nowetwy.type = nyowetwy
   }
 
-  trait Store {
-    val replicatedIncrFavCount: FutureEffect[Event]
+  twait stowe {
+    vaw wepwicatedincwfavcount: futuweeffect[event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val replicatedIncrFavCount: FutureEffect[Event] = wrap(
-      underlying.replicatedIncrFavCount)
+  twait stowewwappew e-extends stowe { sewf: t-tweetstowewwappew[stowe] =>
+    o-ovewwide vaw wepwicatedincwfavcount: f-futuweeffect[event] = wwap(
+      u-undewwying.wepwicatedincwfavcount)
   }
 
-  object Store {
-    def apply(tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore): Store = {
-      new Store {
-        override val replicatedIncrFavCount: FutureEffect[Event] =
-          tweetCountsUpdatingStore.replicatedIncrFavCount.ignoreFailures
+  o-object stowe {
+    d-def appwy(tweetcountsupdatingstowe: t-tweetcountscacheupdatingstowe): stowe = {
+      nyew stowe {
+        o-ovewwide v-vaw wepwicatedincwfavcount: f-futuweeffect[event] =
+          t-tweetcountsupdatingstowe.wepwicatedincwfavcount.ignowefaiwuwes
       }
     }
   }

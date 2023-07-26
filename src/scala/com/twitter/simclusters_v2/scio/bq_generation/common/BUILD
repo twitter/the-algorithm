@@ -1,10 +1,10 @@
-scala_library(
-    sources = [
-        "*.scala",
+scawa_wibwawy(
+    souwces = [
+        "*.scawa", ^•ﻌ•^
     ],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/scala/com/twitter/wtf/beam/bq_embedding_export:bq_embedding_export_lib",
-    ],
+    pwatfowm = "java8",
+    t-tags = ["bazew-compatibwe"], OwO
+    d-dependencies = [
+        "swc/scawa/com/twittew/wtf/beam/bq_embedding_expowt:bq_embedding_expowt_wib",
+    ], 🥺
 )

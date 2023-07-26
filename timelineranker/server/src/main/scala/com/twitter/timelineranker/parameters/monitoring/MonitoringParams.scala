@@ -1,13 +1,13 @@
-package com.twitter.timelineranker.parameters.monitoring
+package com.twittew.timewinewankew.pawametews.monitowing
 
-import com.twitter.timelines.configapi.FSParam
+impowt c-com.twittew.timewines.configapi.fspawam
 
-object MonitoringParams {
+o-object m-monitowingpawams {
 
-  object DebugAuthorsAllowListParam
-      extends FSParam[Seq[Long]](
-        name = "monitoring_debug_authors_allow_list",
-        default = Seq.empty[Long]
+  o-object debugauthowsawwowwistpawam
+      e-extends f-fspawam[seq[wong]](
+        n-nyame = "monitowing_debug_authows_awwow_wist", ( ͡o ω ͡o )
+        d-defauwt = seq.empty[wong]
       )
 
 }

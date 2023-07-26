@@ -1,33 +1,33 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "VersionsProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/versions_go_proto";
+option cc_enabwe_awenas = t-twue;
+option java_outew_cwassname = "vewsionspwotos";
+o-option java_muwtipwe_fiwes = t-twue;
+option j-java_package = "owg.tensowfwow.fwamewowk";
+o-option g-go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/fwamewowk/vewsions_go_pwoto";
 
-// Version information for a piece of serialized data
+// v-vewsion i-infowmation fow a piece of sewiawized data
 //
-// There are different types of versions for each type of data
-// (GraphDef, etc.), but they all have the same common shape
-// described here.
+// thewe awe diffewent types of vewsions f-fow each type of data
+// (gwaphdef, 🥺 etc.), mya b-but they aww have the same common s-shape
+// descwibed hewe. 🥺
 //
-// Each consumer has "consumer" and "min_producer" versions (specified
-// elsewhere).  A consumer is allowed to consume this data if
+// each consumew has "consumew" a-and "min_pwoducew" vewsions (specified
+// e-ewsewhewe).  a-a consumew is awwowed to consume this data if
 //
-//   producer >= min_producer
-//   consumer >= min_consumer
-//   consumer not in bad_consumers
+//   pwoducew >= min_pwoducew
+//   c-consumew >= min_consumew
+//   consumew nyot in bad_consumews
 //
-message VersionDef {
-  // The version of the code that produced this data.
-  int32 producer = 1;
+message v-vewsiondef {
+  // the vewsion o-of the code that p-pwoduced this d-data. >_<
+  int32 pwoducew = 1;
 
-  // Any consumer below this version is not allowed to consume this data.
-  int32 min_consumer = 2;
+  // a-any consumew bewow this vewsion is nyot awwowed t-to consume this data. >_<
+  int32 min_consumew = 2;
 
-  // Specific consumer versions which are disallowed (e.g. due to bugs).
-  repeated int32 bad_consumers = 3;
+  // s-specific consumew vewsions which awe disawwowed (e.g. (⑅˘꒳˘) due to bugs). /(^•ω•^)
+  wepeated int32 bad_consumews = 3;
 }

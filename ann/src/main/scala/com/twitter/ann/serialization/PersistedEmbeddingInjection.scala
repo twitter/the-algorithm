@@ -1,28 +1,28 @@
-package com.twitter.ann.serialization
+package com.twittew.ann.sewiawization
 
-import com.twitter.ann.common.EntityEmbedding
-import com.twitter.ann.common.EmbeddingType._
-import com.twitter.ann.serialization.thriftscala.PersistedEmbedding
-import com.twitter.bijection.Injection
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec
-import java.nio.ByteBuffer
-import scala.util.Try
+impowt com.twittew.ann.common.entityembedding
+i-impowt com.twittew.ann.common.embeddingtype._
+i-impowt com.twittew.ann.sewiawization.thwiftscawa.pewsistedembedding
+i-impowt com.twittew.bijection.injection
+i-impowt c-com.twittew.mediasewvices.commons.codec.awwaybytebuffewcodec
+i-impowt java.nio.bytebuffew
+i-impowt s-scawa.utiw.twy
 
 /**
- * Injection that converts from the ann.common.Embedding to the thrift PersistedEmbedding.
+ * injection that convewts fwom the ann.common.embedding to the thwift pewsistedembedding. /(^•ω•^)
  */
-class PersistedEmbeddingInjection[T](
-  idByteInjection: Injection[T, Array[Byte]])
-    extends Injection[EntityEmbedding[T], PersistedEmbedding] {
-  override def apply(entity: EntityEmbedding[T]): PersistedEmbedding = {
-    val byteBuffer = ByteBuffer.wrap(idByteInjection(entity.id))
-    PersistedEmbedding(byteBuffer, embeddingSerDe.toThrift(entity.embedding))
+c-cwass pewsistedembeddinginjection[t](
+  idbyteinjection: injection[t, rawr awway[byte]])
+    e-extends injection[entityembedding[t], OwO p-pewsistedembedding] {
+  ovewwide def appwy(entity: entityembedding[t]): p-pewsistedembedding = {
+    vaw bytebuffew = b-bytebuffew.wwap(idbyteinjection(entity.id))
+    p-pewsistedembedding(bytebuffew, (U ﹏ U) embeddingsewde.tothwift(entity.embedding))
   }
 
-  override def invert(persistedEmbedding: PersistedEmbedding): Try[EntityEmbedding[T]] = {
-    val idTry = idByteInjection.invert(ArrayByteBufferCodec.decode(persistedEmbedding.id))
-    idTry.map { id =>
-      EntityEmbedding(id, embeddingSerDe.fromThrift(persistedEmbedding.embedding))
+  ovewwide def invewt(pewsistedembedding: pewsistedembedding): t-twy[entityembedding[t]] = {
+    vaw idtwy = idbyteinjection.invewt(awwaybytebuffewcodec.decode(pewsistedembedding.id))
+    idtwy.map { id =>
+      entityembedding(id, >_< e-embeddingsewde.fwomthwift(pewsistedembedding.embedding))
     }
   }
 }

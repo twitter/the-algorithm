@@ -1,291 +1,291 @@
-package com.twitter.search.common.relevance.features;
+package com.twittew.seawch.common.wewevance.featuwes;
 
-import java.util.Map;
-import java.util.Set;
-import javax.annotation.Nullable;
+impowt java.utiw.map;
+i-impowt j-java.utiw.set;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
+i-impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.immutabwemap;
+i-impowt com.googwe.common.cowwect.immutabweset;
 
-import com.twitter.search.common.encoding.features.IntNormalizer;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
+i-impowt com.twittew.seawch.common.encoding.featuwes.intnowmawizew;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants;
 
-import static com.twitter.search.common.relevance.features.IntNormalizers.BOOLEAN_NORMALIZER;
-import static com.twitter.search.common.relevance.features.IntNormalizers.LEGACY_NORMALIZER;
-import static com.twitter.search.common.relevance.features.IntNormalizers.PARUS_SCORE_NORMALIZER;
-import static com.twitter.search.common.relevance.features.IntNormalizers.SMART_INTEGER_NORMALIZER;
-import static com.twitter.search.common.relevance.features.IntNormalizers.TIMESTAMP_SEC_TO_HR_NORMALIZER;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
+impowt static com.twittew.seawch.common.wewevance.featuwes.intnowmawizews.boowean_nowmawizew;
+impowt static com.twittew.seawch.common.wewevance.featuwes.intnowmawizews.wegacy_nowmawizew;
+impowt s-static com.twittew.seawch.common.wewevance.featuwes.intnowmawizews.pawus_scowe_nowmawizew;
+impowt static com.twittew.seawch.common.wewevance.featuwes.intnowmawizews.smawt_integew_nowmawizew;
+i-impowt static com.twittew.seawch.common.wewevance.featuwes.intnowmawizews.timestamp_sec_to_hw_nowmawizew;
+impowt s-static com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
 
 /**
- * An enum to represent all dynamic/realtime feature types we can update in the Signal Ingester.
- * It provides information for their normalization and their corresponding earlybird feature fields
- * and provides utils both producer (Signal Ingester) and consumer (Earlybird) side.
+ * an enum to wepwesent aww dynamic/weawtime f-featuwe types we can update i-in the signaw ingestew. XD
+ * i-it pwovides infowmation fow theiw nyowmawization and theiw cowwesponding e-eawwybiwd featuwe fiewds
+ * and pwovides utiws both pwoducew (signaw ingestew) a-and consumew (eawwybiwd) side. ʘwʘ
  *
  */
-public enum TweetFeatureType {
-  RETWEET                         (true,  0,  LEGACY_NORMALIZER,
-      EarlybirdFieldConstant.RETWEET_COUNT),
-  REPLY                           (true,  1,  LEGACY_NORMALIZER,
-      EarlybirdFieldConstant.REPLY_COUNT),
-  FAVORITE                        (true,  4,  LEGACY_NORMALIZER,
-      EarlybirdFieldConstant.FAVORITE_COUNT),
-  PARUS_SCORE                     (false, 3,  PARUS_SCORE_NORMALIZER,
-      EarlybirdFieldConstant.PARUS_SCORE),
-  EMBEDS_IMP_COUNT                (true,  10, LEGACY_NORMALIZER,
-      EarlybirdFieldConstant.EMBEDS_IMPRESSION_COUNT),
-  EMBEDS_URL_COUNT                (true,  11, LEGACY_NORMALIZER,
-      EarlybirdFieldConstant.EMBEDS_URL_COUNT),
-  VIDEO_VIEW                      (false, 12, LEGACY_NORMALIZER,
-      EarlybirdFieldConstant.VIDEO_VIEW_COUNT),
-  // v2 engagement counters, they will eventually replace v1 counters above
-  RETWEET_V2                      (true,  13, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.RETWEET_COUNT_V2),
-  REPLY_V2                        (true,  14, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.REPLY_COUNT_V2),
-  FAVORITE_V2                     (true,  15, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.FAVORITE_COUNT_V2),
-  EMBEDS_IMP_COUNT_V2             (true,  16, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.EMBEDS_IMPRESSION_COUNT_V2),
-  EMBEDS_URL_COUNT_V2             (true,  17, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.EMBEDS_URL_COUNT_V2),
-  VIDEO_VIEW_V2                   (false, 18, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.VIDEO_VIEW_COUNT_V2),
-  // other new items
-  QUOTE                           (true,  19, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.QUOTE_COUNT),
-  // weighted engagement counters
-  WEIGHTED_RETWEET                (true,  20, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.WEIGHTED_RETWEET_COUNT),
-  WEIGHTED_REPLY                  (true,  21, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.WEIGHTED_REPLY_COUNT),
-  WEIGHTED_FAVORITE               (true,  22, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.WEIGHTED_FAVORITE_COUNT),
-  WEIGHTED_QUOTE                  (true,  23, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.WEIGHTED_QUOTE_COUNT),
+p-pubwic e-enum tweetfeatuwetype {
+  w-wetweet                         (twue, rawr x3  0,  w-wegacy_nowmawizew, ^^;;
+      eawwybiwdfiewdconstant.wetweet_count), ʘwʘ
+  wepwy                           (twue, (U ﹏ U)  1,  w-wegacy_nowmawizew, (˘ω˘)
+      eawwybiwdfiewdconstant.wepwy_count), (ꈍᴗꈍ)
+  favowite                        (twue, /(^•ω•^)  4,  w-wegacy_nowmawizew,
+      eawwybiwdfiewdconstant.favowite_count), >_<
+  pawus_scowe                     (fawse, σωσ 3,  pawus_scowe_nowmawizew, ^^;;
+      eawwybiwdfiewdconstant.pawus_scowe), 😳
+  embeds_imp_count                (twue, >_<  10, w-wegacy_nowmawizew, -.-
+      eawwybiwdfiewdconstant.embeds_impwession_count), UwU
+  e-embeds_uww_count                (twue, :3  11, w-wegacy_nowmawizew, σωσ
+      e-eawwybiwdfiewdconstant.embeds_uww_count),
+  video_view                      (fawse, >w< 12, wegacy_nowmawizew, (ˆ ﻌ ˆ)♡
+      eawwybiwdfiewdconstant.video_view_count), ʘwʘ
+  // v-v2 engagement c-countews, :3 they wiww eventuawwy wepwace v-v1 countews a-above
+  wetweet_v2                      (twue, (˘ω˘)  13, 😳😳😳 smawt_integew_nowmawizew, rawr x3
+      e-eawwybiwdfiewdconstant.wetweet_count_v2), (✿oωo)
+  wepwy_v2                        (twue, (ˆ ﻌ ˆ)♡  14, smawt_integew_nowmawizew, :3
+      eawwybiwdfiewdconstant.wepwy_count_v2), (U ᵕ U❁)
+  f-favowite_v2                     (twue,  15, ^^;; smawt_integew_nowmawizew, mya
+      eawwybiwdfiewdconstant.favowite_count_v2),
+  e-embeds_imp_count_v2             (twue, 😳😳😳  16, smawt_integew_nowmawizew, OwO
+      e-eawwybiwdfiewdconstant.embeds_impwession_count_v2), rawr
+  embeds_uww_count_v2             (twue, XD  17, (U ﹏ U) s-smawt_integew_nowmawizew,
+      e-eawwybiwdfiewdconstant.embeds_uww_count_v2), (˘ω˘)
+  video_view_v2                   (fawse, UwU 18, >_< smawt_integew_nowmawizew, σωσ
+      eawwybiwdfiewdconstant.video_view_count_v2),
+  // othew nyew items
+  quote                           (twue, 🥺  19, 🥺 smawt_integew_nowmawizew, ʘwʘ
+      e-eawwybiwdfiewdconstant.quote_count), :3
+  // w-weighted engagement countews
+  w-weighted_wetweet                (twue, (U ﹏ U)  20, s-smawt_integew_nowmawizew, (U ﹏ U)
+      e-eawwybiwdfiewdconstant.weighted_wetweet_count), ʘwʘ
+  weighted_wepwy                  (twue, >w<  21, rawr x3 smawt_integew_nowmawizew, OwO
+      eawwybiwdfiewdconstant.weighted_wepwy_count), ^•ﻌ•^
+  weighted_favowite               (twue, >_<  22, smawt_integew_nowmawizew, OwO
+      eawwybiwdfiewdconstant.weighted_favowite_count), >_<
+  w-weighted_quote                  (twue, (ꈍᴗꈍ)  23, smawt_integew_nowmawizew, >w<
+      eawwybiwdfiewdconstant.weighted_quote_count), (U ﹏ U)
 
-  // tweet-level safety labels
-  LABEL_ABUSIVE                   (false, 24, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.LABEL_ABUSIVE_FLAG),
-  LABEL_ABUSIVE_HI_RCL            (false, 25, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.LABEL_ABUSIVE_HI_RCL_FLAG),
-  LABEL_DUP_CONTENT               (false, 26, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.LABEL_DUP_CONTENT_FLAG),
-  LABEL_NSFW_HI_PRC               (false, 27, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.LABEL_NSFW_HI_PRC_FLAG),
-  LABEL_NSFW_HI_RCL               (false, 28, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.LABEL_NSFW_HI_RCL_FLAG),
-  LABEL_SPAM                      (false, 29, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.LABEL_SPAM_FLAG),
-  LABEL_SPAM_HI_RCL               (false, 30, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.LABEL_SPAM_HI_RCL_FLAG),
+  // tweet-wevew safety w-wabews
+  wabew_abusive                   (fawse, ^^ 24, boowean_nowmawizew,
+      e-eawwybiwdfiewdconstant.wabew_abusive_fwag), (U ﹏ U)
+  w-wabew_abusive_hi_wcw            (fawse, 25, :3 b-boowean_nowmawizew, (✿oωo)
+      eawwybiwdfiewdconstant.wabew_abusive_hi_wcw_fwag), XD
+  w-wabew_dup_content               (fawse, >w< 26, òωó b-boowean_nowmawizew, (ꈍᴗꈍ)
+      eawwybiwdfiewdconstant.wabew_dup_content_fwag), rawr x3
+  w-wabew_nsfw_hi_pwc               (fawse, rawr x3 27, b-boowean_nowmawizew, σωσ
+      eawwybiwdfiewdconstant.wabew_nsfw_hi_pwc_fwag), (ꈍᴗꈍ)
+  wabew_nsfw_hi_wcw               (fawse, rawr 28, b-boowean_nowmawizew, ^^;;
+      eawwybiwdfiewdconstant.wabew_nsfw_hi_wcw_fwag), rawr x3
+  w-wabew_spam                      (fawse, (ˆ ﻌ ˆ)♡ 29, b-boowean_nowmawizew, σωσ
+      e-eawwybiwdfiewdconstant.wabew_spam_fwag), (U ﹏ U)
+  w-wabew_spam_hi_wcw               (fawse, >w< 30, boowean_nowmawizew,
+      eawwybiwdfiewdconstant.wabew_spam_hi_wcw_fwag), σωσ
 
-  PERISCOPE_EXISTS                (false, 32, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.PERISCOPE_EXISTS),
-  PERISCOPE_HAS_BEEN_FEATURED     (false, 33, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.PERISCOPE_HAS_BEEN_FEATURED),
-  PERISCOPE_IS_CURRENTLY_FEATURED (false, 34, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.PERISCOPE_IS_CURRENTLY_FEATURED),
-  PERISCOPE_IS_FROM_QUALITY_SOURCE(false, 35, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.PERISCOPE_IS_FROM_QUALITY_SOURCE),
-  PERISCOPE_IS_LIVE               (false, 36, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.PERISCOPE_IS_LIVE),
+  pewiscope_exists                (fawse, nyaa~~ 32, b-boowean_nowmawizew, 🥺
+      eawwybiwdfiewdconstant.pewiscope_exists), rawr x3
+  pewiscope_has_been_featuwed     (fawse, σωσ 33, boowean_nowmawizew, (///ˬ///✿)
+      eawwybiwdfiewdconstant.pewiscope_has_been_featuwed), (U ﹏ U)
+  pewiscope_is_cuwwentwy_featuwed (fawse, ^^;; 34, b-boowean_nowmawizew, 🥺
+      eawwybiwdfiewdconstant.pewiscope_is_cuwwentwy_featuwed), òωó
+  pewiscope_is_fwom_quawity_souwce(fawse, XD 35, boowean_nowmawizew, :3
+      e-eawwybiwdfiewdconstant.pewiscope_is_fwom_quawity_souwce), (U ﹏ U)
+  p-pewiscope_is_wive               (fawse, >w< 36, b-boowean_nowmawizew, /(^•ω•^)
+      eawwybiwdfiewdconstant.pewiscope_is_wive), (⑅˘꒳˘)
 
-  // decayed engagement counters
-  DECAYED_RETWEET                 (true,  37, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.DECAYED_RETWEET_COUNT),
-  DECAYED_REPLY                   (true,  38, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.DECAYED_REPLY_COUNT),
-  DECAYED_FAVORITE                (true,  39, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.DECAYED_FAVORITE_COUNT),
-  DECAYED_QUOTE                   (true,  40, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.DECAYED_QUOTE_COUNT),
+  // d-decayed engagement countews
+  d-decayed_wetweet                 (twue, ʘwʘ  37, s-smawt_integew_nowmawizew, rawr x3
+      eawwybiwdfiewdconstant.decayed_wetweet_count), (˘ω˘)
+  decayed_wepwy                   (twue, o.O  38, smawt_integew_nowmawizew, 😳
+      eawwybiwdfiewdconstant.decayed_wepwy_count), o.O
+  decayed_favowite                (twue, ^^;;  39, ( ͡o ω ͡o ) smawt_integew_nowmawizew, ^^;;
+      e-eawwybiwdfiewdconstant.decayed_favowite_count), ^^;;
+  decayed_quote                   (twue, XD  40, 🥺 s-smawt_integew_nowmawizew,
+      eawwybiwdfiewdconstant.decayed_quote_count), (///ˬ///✿)
 
-  // timestamp of last engagement types
-  LAST_RETWEET_SINCE_CREATION_HR  (false, 41, TIMESTAMP_SEC_TO_HR_NORMALIZER,
-      EarlybirdFieldConstant.LAST_RETWEET_SINCE_CREATION_HRS),
-  LAST_REPLY_SINCE_CREATION_HR    (false, 42, TIMESTAMP_SEC_TO_HR_NORMALIZER,
-      EarlybirdFieldConstant.LAST_REPLY_SINCE_CREATION_HRS),
-  LAST_FAVORITE_SINCE_CREATION_HR (false, 43, TIMESTAMP_SEC_TO_HR_NORMALIZER,
-      EarlybirdFieldConstant.LAST_FAVORITE_SINCE_CREATION_HRS),
-  LAST_QUOTE_SINCE_CREATION_HR    (false, 44, TIMESTAMP_SEC_TO_HR_NORMALIZER,
-      EarlybirdFieldConstant.LAST_QUOTE_SINCE_CREATION_HRS),
+  // t-timestamp o-of wast engagement types
+  wast_wetweet_since_cweation_hw  (fawse, (U ᵕ U❁) 41, timestamp_sec_to_hw_nowmawizew, ^^;;
+      e-eawwybiwdfiewdconstant.wast_wetweet_since_cweation_hws), ^^;;
+  w-wast_wepwy_since_cweation_hw    (fawse, rawr 42, timestamp_sec_to_hw_nowmawizew, (˘ω˘)
+      e-eawwybiwdfiewdconstant.wast_wepwy_since_cweation_hws), 🥺
+  w-wast_favowite_since_cweation_hw (fawse, nyaa~~ 43, timestamp_sec_to_hw_nowmawizew, :3
+      eawwybiwdfiewdconstant.wast_favowite_since_cweation_hws), /(^•ω•^)
+  wast_quote_since_cweation_hw    (fawse, ^•ﻌ•^ 44, timestamp_sec_to_hw_nowmawizew, UwU
+      e-eawwybiwdfiewdconstant.wast_quote_since_cweation_hws), 😳😳😳
 
-  // fake engagement counters
-  FAKE_RETWEET                    (true,  45, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.FAKE_RETWEET_COUNT),
-  FAKE_REPLY                      (true,  46, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.FAKE_REPLY_COUNT),
-  FAKE_FAVORITE                   (true,  47, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.FAKE_FAVORITE_COUNT),
-  FAKE_QUOTE                      (true,  48, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.FAKE_QUOTE_COUNT),
+  // f-fake engagement c-countews
+  fake_wetweet                    (twue, OwO  45, smawt_integew_nowmawizew, ^•ﻌ•^
+      e-eawwybiwdfiewdconstant.fake_wetweet_count), (ꈍᴗꈍ)
+  f-fake_wepwy                      (twue, (⑅˘꒳˘)  46, smawt_integew_nowmawizew, (⑅˘꒳˘)
+      e-eawwybiwdfiewdconstant.fake_wepwy_count), (ˆ ﻌ ˆ)♡
+  fake_favowite                   (twue, /(^•ω•^)  47, òωó smawt_integew_nowmawizew, (⑅˘꒳˘)
+      eawwybiwdfiewdconstant.fake_favowite_count), (U ᵕ U❁)
+  fake_quote                      (twue, >w<  48, s-smawt_integew_nowmawizew, σωσ
+      e-eawwybiwdfiewdconstant.fake_quote_count), -.-
 
-  // blink engagement counters
-  BLINK_RETWEET                   (true,  49, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.BLINK_RETWEET_COUNT),
-  BLINK_REPLY                     (true,  50, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.BLINK_REPLY_COUNT),
-  BLINK_FAVORITE                  (true,  51, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.BLINK_FAVORITE_COUNT),
-  BLINK_QUOTE                     (true,  52, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.BLINK_QUOTE_COUNT),
+  // bwink engagement countews
+  b-bwink_wetweet                   (twue, o.O  49, s-smawt_integew_nowmawizew, ^^
+      eawwybiwdfiewdconstant.bwink_wetweet_count), >_<
+  bwink_wepwy                     (twue, >w<  50, smawt_integew_nowmawizew, >_<
+      e-eawwybiwdfiewdconstant.bwink_wepwy_count), >w<
+  bwink_favowite                  (twue,  51, rawr smawt_integew_nowmawizew, rawr x3
+      eawwybiwdfiewdconstant.bwink_favowite_count), ( ͡o ω ͡o )
+  bwink_quote                     (twue, (˘ω˘)  52, 😳 s-smawt_integew_nowmawizew, OwO
+      eawwybiwdfiewdconstant.bwink_quote_count), (˘ω˘)
 
-  /* semicolon in a single line to avoid polluting git blame */;
+  /* semicowon i-in a singwe w-wine to avoid powwuting git bwame */;
 
-  private static final Map<TweetFeatureType, TweetFeatureType> V2_COUNTER_MAP =
-      ImmutableMap.<TweetFeatureType, TweetFeatureType>builder()
-          .put(RETWEET,          RETWEET_V2)
-          .put(REPLY,            REPLY_V2)
-          .put(FAVORITE,         FAVORITE_V2)
-          .put(EMBEDS_IMP_COUNT, EMBEDS_IMP_COUNT_V2)
-          .put(EMBEDS_URL_COUNT, EMBEDS_URL_COUNT_V2)
-          .put(VIDEO_VIEW,       VIDEO_VIEW_V2)
-      .build();
+  pwivate static finaw m-map<tweetfeatuwetype, òωó t-tweetfeatuwetype> v2_countew_map =
+      immutabwemap.<tweetfeatuwetype, ( ͡o ω ͡o ) tweetfeatuwetype>buiwdew()
+          .put(wetweet, UwU          w-wetweet_v2)
+          .put(wepwy, /(^•ω•^)            wepwy_v2)
+          .put(favowite, (ꈍᴗꈍ)         f-favowite_v2)
+          .put(embeds_imp_count, 😳 embeds_imp_count_v2)
+          .put(embeds_uww_count, mya embeds_uww_count_v2)
+          .put(video_view, mya       video_view_v2)
+      .buiwd();
 
-  private static final Map<TweetFeatureType, TweetFeatureType> WEIGHTED_COUNTER_MAP =
-      ImmutableMap.<TweetFeatureType, TweetFeatureType>builder()
-          .put(RETWEET,          WEIGHTED_RETWEET)
-          .put(REPLY,            WEIGHTED_REPLY)
-          .put(FAVORITE,         WEIGHTED_FAVORITE)
-          .put(QUOTE,            WEIGHTED_QUOTE)
-          .build();
+  pwivate static f-finaw map<tweetfeatuwetype, tweetfeatuwetype> w-weighted_countew_map =
+      i-immutabwemap.<tweetfeatuwetype, /(^•ω•^) tweetfeatuwetype>buiwdew()
+          .put(wetweet, ^^;;          w-weighted_wetweet)
+          .put(wepwy, 🥺            weighted_wepwy)
+          .put(favowite, ^^         w-weighted_favowite)
+          .put(quote,            weighted_quote)
+          .buiwd();
 
-  private static final Map<TweetFeatureType, TweetFeatureType> DECAYED_COUNTER_MAP =
-      ImmutableMap.<TweetFeatureType, TweetFeatureType>builder()
-          .put(RETWEET,          DECAYED_RETWEET)
-          .put(REPLY,            DECAYED_REPLY)
-          .put(FAVORITE,         DECAYED_FAVORITE)
-          .put(QUOTE,            DECAYED_QUOTE)
-          .build();
+  p-pwivate static f-finaw map<tweetfeatuwetype, ^•ﻌ•^ tweetfeatuwetype> d-decayed_countew_map =
+      immutabwemap.<tweetfeatuwetype, /(^•ω•^) tweetfeatuwetype>buiwdew()
+          .put(wetweet, ^^          d-decayed_wetweet)
+          .put(wepwy, 🥺            decayed_wepwy)
+          .put(favowite, (U ᵕ U❁)         decayed_favowite)
+          .put(quote, 😳😳😳            d-decayed_quote)
+          .buiwd();
 
-  private static final Map<TweetFeatureType, TweetFeatureType> DECAYED_COUNTER_TO_ELAPSED_TIME =
-      ImmutableMap.<TweetFeatureType, TweetFeatureType>builder()
-          .put(DECAYED_RETWEET,  LAST_RETWEET_SINCE_CREATION_HR)
-          .put(DECAYED_REPLY,    LAST_REPLY_SINCE_CREATION_HR)
-          .put(DECAYED_FAVORITE, LAST_FAVORITE_SINCE_CREATION_HR)
-          .put(DECAYED_QUOTE,    LAST_QUOTE_SINCE_CREATION_HR)
-          .build();
+  p-pwivate static f-finaw map<tweetfeatuwetype, nyaa~~ tweetfeatuwetype> decayed_countew_to_ewapsed_time =
+      i-immutabwemap.<tweetfeatuwetype, (˘ω˘) tweetfeatuwetype>buiwdew()
+          .put(decayed_wetweet, >_<  w-wast_wetweet_since_cweation_hw)
+          .put(decayed_wepwy, XD    w-wast_wepwy_since_cweation_hw)
+          .put(decayed_favowite, rawr x3 wast_favowite_since_cweation_hw)
+          .put(decayed_quote, ( ͡o ω ͡o )    wast_quote_since_cweation_hw)
+          .buiwd();
 
-  private static final Set<TweetFeatureType> DECAYED_FEATURES =
-      ImmutableSet.of(DECAYED_RETWEET, DECAYED_REPLY, DECAYED_FAVORITE, DECAYED_QUOTE);
+  pwivate s-static finaw s-set<tweetfeatuwetype> d-decayed_featuwes =
+      i-immutabweset.of(decayed_wetweet, :3 decayed_wepwy, mya d-decayed_favowite, σωσ decayed_quote);
 
-  private static final Set<TweetFeatureType> FAKE_ENGAGEMENT_FEATURES =
-      ImmutableSet.of(FAKE_RETWEET, FAKE_REPLY, FAKE_FAVORITE, FAKE_QUOTE);
+  pwivate static finaw set<tweetfeatuwetype> fake_engagement_featuwes =
+      immutabweset.of(fake_wetweet, (ꈍᴗꈍ) f-fake_wepwy, OwO fake_favowite, o.O fake_quote);
 
-  private static final Set<TweetFeatureType> BLINK_ENGAGEMENT_FEATURES =
-      ImmutableSet.of(BLINK_RETWEET, BLINK_REPLY, BLINK_FAVORITE, BLINK_QUOTE);
+  p-pwivate static finaw s-set<tweetfeatuwetype> bwink_engagement_featuwes =
+      i-immutabweset.of(bwink_wetweet, 😳😳😳 bwink_wepwy, /(^•ω•^) b-bwink_favowite, OwO b-bwink_quote);
 
-  @Nullable
-  public TweetFeatureType getV2Type() {
-    return V2_COUNTER_MAP.get(this);
+  @nuwwabwe
+  p-pubwic tweetfeatuwetype g-getv2type() {
+    w-wetuwn v2_countew_map.get(this);
   }
 
-  @Nullable
-  public static TweetFeatureType getWeightedType(TweetFeatureType type) {
-    return WEIGHTED_COUNTER_MAP.get(type);
+  @nuwwabwe
+  pubwic static tweetfeatuwetype getweightedtype(tweetfeatuwetype type) {
+    wetuwn weighted_countew_map.get(type);
   }
 
-  @Nullable
-  public static TweetFeatureType getDecayedType(TweetFeatureType type) {
-    return DECAYED_COUNTER_MAP.get(type);
+  @nuwwabwe
+  pubwic static tweetfeatuwetype g-getdecayedtype(tweetfeatuwetype t-type) {
+    w-wetuwn decayed_countew_map.get(type);
   }
 
-  // Whether this feature is incremental or direct value.
-  private final boolean incremental;
+  // whethew this featuwe i-is incwementaw ow diwect vawue. ^^
+  pwivate finaw boowean incwementaw;
 
-  // This normalizer is used to (1) normalize the output value in DLIndexEventOutputBolt,
-  // (2) check value change.
-  private final IntNormalizer normalizer;
+  // t-this nyowmawizew i-is used to (1) nyowmawize the o-output vawue in dwindexeventoutputbowt, (///ˬ///✿)
+  // (2) check vawue change. (///ˬ///✿)
+  p-pwivate finaw i-intnowmawizew nowmawizew;
 
-  // value for composing cache key. It has to be unique and in increasing order.
-  private final int typeInt;
+  // v-vawue fow composing c-cache key. (///ˬ///✿) it has to be unique and in incweasing owdew. ʘwʘ
+  pwivate finaw i-int typeint;
 
-  private final EarlybirdFieldConstants.EarlybirdFieldConstant earlybirdField;
+  p-pwivate finaw eawwybiwdfiewdconstants.eawwybiwdfiewdconstant e-eawwybiwdfiewd;
 
-  private final IncrementChecker incrementChecker;
+  p-pwivate finaw incwementcheckew i-incwementcheckew;
 
   /**
-   * Constructing an enum for a type. The earlybirdField can be null if it's not prepared, they
-   * can be here as placeholders but they can't be outputted.
-   * The normalizer is null for the timestamp features that do not require normalization
+   * constwucting a-an enum f-fow a type. ^•ﻌ•^ the eawwybiwdfiewd c-can be nyuww if i-it's nyot pwepawed, OwO they
+   * c-can be hewe as pwacehowdews but they can't be outputted. (U ﹏ U)
+   * t-the nyowmawizew is n-nyuww fow the timestamp f-featuwes that do nyot wequiwe n-nyowmawization
    */
-  TweetFeatureType(boolean incremental,
-                   int typeInt,
-                   IntNormalizer normalizer,
-                   @Nullable EarlybirdFieldConstant earlybirdField) {
-    this.incremental = incremental;
-    this.typeInt = typeInt;
-    this.normalizer = normalizer;
-    this.earlybirdField = earlybirdField;
-    this.incrementChecker = new IncrementChecker(this);
+  tweetfeatuwetype(boowean incwementaw, (ˆ ﻌ ˆ)♡
+                   i-int typeint, (⑅˘꒳˘)
+                   i-intnowmawizew n-nyowmawizew, (U ﹏ U)
+                   @nuwwabwe eawwybiwdfiewdconstant eawwybiwdfiewd) {
+    this.incwementaw = incwementaw;
+    this.typeint = typeint;
+    t-this.nowmawizew = nyowmawizew;
+    this.eawwybiwdfiewd = eawwybiwdfiewd;
+    t-this.incwementcheckew = n-nyew incwementcheckew(this);
   }
 
-  public boolean isIncremental() {
-    return incremental;
+  pubwic boowean i-isincwementaw() {
+    wetuwn i-incwementaw;
   }
 
-  public IntNormalizer getNormalizer() {
-    return normalizer;
+  p-pubwic intnowmawizew getnowmawizew() {
+    wetuwn nyowmawizew;
   }
 
-  public int getTypeInt() {
-    return typeInt;
+  p-pubwic int gettypeint() {
+    wetuwn t-typeint;
   }
 
-  public int normalize(double value) {
-    return normalizer.normalize(value);
+  p-pubwic int nyowmawize(doubwe vawue) {
+    w-wetuwn nyowmawizew.nowmawize(vawue);
   }
 
-  public IncrementChecker getIncrementChecker() {
-    return incrementChecker;
+  p-pubwic incwementcheckew g-getincwementcheckew() {
+    w-wetuwn incwementcheckew;
   }
 
-  public EarlybirdFieldConstant getEarlybirdField() {
-    return Preconditions.checkNotNull(earlybirdField);
+  pubwic eawwybiwdfiewdconstant geteawwybiwdfiewd() {
+    wetuwn pweconditions.checknotnuww(eawwybiwdfiewd);
   }
 
-  public boolean hasEarlybirdField() {
-    return earlybirdField != null;
+  pubwic boowean haseawwybiwdfiewd() {
+    wetuwn eawwybiwdfiewd != nyuww;
   }
 
-  public boolean isDecayed() {
-    return DECAYED_FEATURES.contains(this);
+  pubwic boowean isdecayed() {
+    wetuwn d-decayed_featuwes.contains(this);
   }
 
-  @Nullable
-  public TweetFeatureType getElapsedTimeFeatureType() {
-    return DECAYED_COUNTER_TO_ELAPSED_TIME.get(this);
+  @nuwwabwe
+  p-pubwic tweetfeatuwetype getewapsedtimefeatuwetype() {
+    wetuwn decayed_countew_to_ewapsed_time.get(this);
   }
 
-  public boolean isFakeEngagement() {
-    return FAKE_ENGAGEMENT_FEATURES.contains(this);
+  p-pubwic b-boowean isfakeengagement() {
+    w-wetuwn fake_engagement_featuwes.contains(this);
   }
 
-  public boolean isBlinkEngagement() {
-    return BLINK_ENGAGEMENT_FEATURES.contains(this);
+  pubwic b-boowean isbwinkengagement() {
+    wetuwn bwink_engagement_featuwes.contains(this);
   }
 
   /**
-   * Check if an increment is eligible for emitting
+   * c-check if an i-incwement is ewigibwe fow emitting
    */
-  public static class IncrementChecker {
-    private final IntNormalizer normalizer;
+  p-pubwic static cwass incwementcheckew {
+    p-pwivate finaw i-intnowmawizew nyowmawizew;
 
-    public IncrementChecker(IntNormalizer normalizer) {
-      this.normalizer = normalizer;
+    pubwic incwementcheckew(intnowmawizew n-nyowmawizew) {
+      this.nowmawizew = n-nyowmawizew;
     }
 
-    IncrementChecker(TweetFeatureType type) {
-      this(type.getNormalizer());
+    i-incwementcheckew(tweetfeatuwetype t-type) {
+      t-this(type.getnowmawizew());
     }
 
     /**
-     * Check if a value change is eligible for output
+     * c-check i-if a vawue change i-is ewigibwe fow o-output
      */
-    public boolean eligibleForEmit(int oldValue, int newValue) {
-      return normalizer.normalize(oldValue) != normalizer.normalize(newValue);
+    pubwic boowean e-ewigibwefowemit(int o-owdvawue, o.O i-int nyewvawue) {
+      wetuwn n-nyowmawizew.nowmawize(owdvawue) != nyowmawizew.nowmawize(newvawue);
     }
   }
 }

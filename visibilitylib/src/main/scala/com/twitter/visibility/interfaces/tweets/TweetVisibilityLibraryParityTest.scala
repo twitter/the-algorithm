@@ -1,108 +1,108 @@
-package com.twitter.visibility.interfaces.tweets
+package com.twittew.visibiwity.intewfaces.tweets
 
-import com.twitter.spam.rtf.{thriftscala => t}
-import com.twitter.context.TwitterContext
-import com.twitter.context.thriftscala.Viewer
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.Fetch
-import com.twitter.strato.client.Client
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.common.tweets.TweetVisibilityResultMapper
-import com.twitter.visibility.models.SafetyLevel.toThrift
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.thriftscala.TweetVisibilityResult
+impowt com.twittew.spam.wtf.{thwiftscawa => t-t}
+i-impowt com.twittew.context.twittewcontext
+i-impowt c-com.twittew.context.thwiftscawa.viewew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.catawog.fetch
+i-impowt com.twittew.stwato.cwient.cwient
+impowt com.twittew.stwato.cwient.fetchew
+impowt com.twittew.stwato.thwift.scwoogeconvimpwicits._
+impowt com.twittew.visibiwity.buiwdew.visibiwitywesuwt
+i-impowt com.twittew.visibiwity.common.tweets.tweetvisibiwitywesuwtmappew
+impowt com.twittew.visibiwity.modews.safetywevew.tothwift
+impowt com.twittew.visibiwity.modews.viewewcontext
+i-impowt com.twittew.visibiwity.thwiftscawa.tweetvisibiwitywesuwt
 
-class TweetVisibilityLibraryParityTest(statsReceiver: StatsReceiver, stratoClient: Client) {
+cwass tweetvisibiwitywibwawypawitytest(statsweceivew: s-statsweceivew, OwO stwatocwient: cwient) {
 
-  private val parityTestScope = statsReceiver.scope("tweet_visibility_library_parity")
-  private val requests = parityTestScope.counter("requests")
-  private val equal = parityTestScope.counter("equal")
-  private val incorrect = parityTestScope.counter("incorrect")
-  private val empty = parityTestScope.counter("empty")
-  private val failures = parityTestScope.counter("failures")
+  pwivate vaw p-pawitytestscope = statsweceivew.scope("tweet_visibiwity_wibwawy_pawity")
+  p-pwivate v-vaw wequests = pawitytestscope.countew("wequests")
+  pwivate vaw equaw = pawitytestscope.countew("equaw")
+  pwivate vaw incowwect = p-pawitytestscope.countew("incowwect")
+  pwivate vaw empty = pawitytestscope.countew("empty")
+  pwivate vaw faiwuwes = pawitytestscope.countew("faiwuwes")
 
-  private val fetcher: Fetcher[Long, t.SafetyLevel, TweetVisibilityResult] =
-    stratoClient.fetcher[Long, t.SafetyLevel, TweetVisibilityResult](
-      "visibility/service/TweetVisibilityResult.Tweet"
+  p-pwivate vaw fetchew: fetchew[wong, (U ﹏ U) t-t.safetywevew, >w< t-tweetvisibiwitywesuwt] =
+    s-stwatocwient.fetchew[wong, (U ﹏ U) t.safetywevew, 😳 t-tweetvisibiwitywesuwt](
+      "visibiwity/sewvice/tweetvisibiwitywesuwt.tweet"
     )
 
-  def runParityTest(
-    req: TweetVisibilityRequest,
-    resp: VisibilityResult
-  ): Stitch[Unit] = {
-    requests.incr()
+  def wunpawitytest(
+    weq: t-tweetvisibiwitywequest, (ˆ ﻌ ˆ)♡
+    wesp: visibiwitywesuwt
+  ): s-stitch[unit] = {
+    wequests.incw()
 
-    val twitterContext = TwitterContext(TwitterContextPermit)
+    vaw twittewcontext = twittewcontext(twittewcontextpewmit)
 
-    val viewer: Option[Viewer] = {
+    vaw viewew: option[viewew] = {
 
-      val remoteViewerContext = ViewerContext.fromContext
+      vaw wemoteviewewcontext = viewewcontext.fwomcontext
 
-      if (remoteViewerContext != req.viewerContext) {
-        val updatedRemoteViewerContext = remoteViewerContext.copy(
-          userId = req.viewerContext.userId
+      i-if (wemoteviewewcontext != weq.viewewcontext) {
+        vaw u-updatedwemoteviewewcontext = w-wemoteviewewcontext.copy(
+          u-usewid = weq.viewewcontext.usewid
         )
 
-        if (updatedRemoteViewerContext == req.viewerContext) {
-          twitterContext() match {
-            case None =>
-              Some(Viewer(userId = req.viewerContext.userId))
-            case Some(v) =>
-              Some(v.copy(userId = req.viewerContext.userId))
+        if (updatedwemoteviewewcontext == weq.viewewcontext) {
+          twittewcontext() m-match {
+            c-case nyone =>
+              s-some(viewew(usewid = w-weq.viewewcontext.usewid))
+            case some(v) =>
+              s-some(v.copy(usewid = weq.viewewcontext.usewid))
           }
-        } else {
-          None
+        } e-ewse {
+          nyone
         }
-      } else {
-        None
+      } ewse {
+        n-nyone
       }
     }
 
-    val tweetypieContext = TweetypieContext(
-      isQuotedTweet = req.isInnerQuotedTweet,
-      isRetweet = req.isRetweet,
-      hydrateConversationControl = req.hydrateConversationControl
+    vaw tweetypiecontext = t-tweetypiecontext(
+      isquotedtweet = w-weq.isinnewquotedtweet, 😳😳😳
+      i-iswetweet = weq.iswetweet, (U ﹏ U)
+      hydwateconvewsationcontwow = weq.hydwateconvewsationcontwow
     )
 
-    val parityCheck: Stitch[Fetch.Result[TweetVisibilityResult]] = {
-      Stitch.callFuture {
-        TweetypieContext.let(tweetypieContext) {
-          viewer match {
-            case Some(viewer) =>
-              twitterContext.let(viewer) {
-                Stitch.run(fetcher.fetch(req.tweet.id, toThrift(req.safetyLevel)))
+    vaw pawitycheck: stitch[fetch.wesuwt[tweetvisibiwitywesuwt]] = {
+      stitch.cawwfutuwe {
+        t-tweetypiecontext.wet(tweetypiecontext) {
+          v-viewew match {
+            case some(viewew) =>
+              t-twittewcontext.wet(viewew) {
+                stitch.wun(fetchew.fetch(weq.tweet.id, (///ˬ///✿) t-tothwift(weq.safetywevew)))
               }
-            case None =>
-              Stitch.run(fetcher.fetch(req.tweet.id, toThrift(req.safetyLevel)))
+            c-case nyone =>
+              stitch.wun(fetchew.fetch(weq.tweet.id, 😳 tothwift(weq.safetywevew)))
           }
         }
       }
     }
 
-    parityCheck
-      .flatMap { parityResponse =>
-        val tvr = TweetVisibilityResultMapper.fromAction(resp.verdict.toActionThrift())
+    p-pawitycheck
+      .fwatmap { pawitywesponse =>
+        vaw tvw = tweetvisibiwitywesuwtmappew.fwomaction(wesp.vewdict.toactionthwift())
 
-        parityResponse.v match {
-          case Some(ptvr) =>
-            if (tvr == ptvr) {
-              equal.incr()
-            } else {
-              incorrect.incr()
+        pawitywesponse.v m-match {
+          case some(ptvw) =>
+            i-if (tvw == p-ptvw) {
+              e-equaw.incw()
+            } ewse {
+              i-incowwect.incw()
             }
 
-          case None =>
-            empty.incr()
+          c-case nyone =>
+            e-empty.incw()
         }
 
-        Stitch.Done
-      }.rescue {
-        case t: Throwable =>
-          failures.incr()
-          Stitch.Done
+        s-stitch.done
+      }.wescue {
+        case t: thwowabwe =>
+          faiwuwes.incw()
+          s-stitch.done
 
       }.unit
   }

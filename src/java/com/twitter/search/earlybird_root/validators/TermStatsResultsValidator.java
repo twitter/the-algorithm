@@ -1,23 +1,23 @@
-package com.twitter.search.earlybird_root.validators;
+package com.twittew.seawch.eawwybiwd_woot.vawidatows;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.utiw.futuwe;
 
-public class TermStatsResultsValidator implements ServiceResponseValidator<EarlybirdResponse> {
-  private final EarlybirdCluster cluster;
+p-pubwic c-cwass tewmstatswesuwtsvawidatow i-impwements sewvicewesponsevawidatow<eawwybiwdwesponse> {
+  p-pwivate f-finaw eawwybiwdcwustew cwustew;
 
-  public TermStatsResultsValidator(EarlybirdCluster cluster) {
-    this.cluster = cluster;
+  pubwic tewmstatswesuwtsvawidatow(eawwybiwdcwustew cwustew) {
+    this.cwustew = c-cwustew;
   }
 
-  @Override
-  public Future<EarlybirdResponse> validate(EarlybirdResponse response) {
-    if (!response.isSetTermStatisticsResults()
-        || !response.getTermStatisticsResults().isSetTermResults()) {
-      return Future.exception(
-          new IllegalStateException(cluster + " returned null term statistics results."));
+  @ovewwide
+  pubwic futuwe<eawwybiwdwesponse> vawidate(eawwybiwdwesponse w-wesponse) {
+    if (!wesponse.issettewmstatisticswesuwts()
+        || !wesponse.gettewmstatisticswesuwts().issettewmwesuwts()) {
+      w-wetuwn futuwe.exception(
+          nyew iwwegawstateexception(cwustew + " wetuwned nyuww tewm statistics wesuwts."));
     }
-    return Future.value(response);
+    w-wetuwn futuwe.vawue(wesponse);
   }
 }

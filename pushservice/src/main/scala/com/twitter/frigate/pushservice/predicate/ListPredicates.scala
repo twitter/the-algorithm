@@ -1,110 +1,110 @@
-package com.twitter.frigate.pushservice.predicate
+package com.twittew.fwigate.pushsewvice.pwedicate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.pushservice.model.ListRecommendationPushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.hermit.predicate.socialgraph.Edge
-import com.twitter.hermit.predicate.socialgraph.RelationEdge
-import com.twitter.hermit.predicate.socialgraph.SocialGraphPredicate
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.pushsewvice.modew.wistwecommendationpushcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.hewmit.pwedicate.sociawgwaph.edge
+i-impowt c-com.twittew.hewmit.pwedicate.sociawgwaph.wewationedge
+i-impowt com.twittew.hewmit.pwedicate.sociawgwaph.sociawgwaphpwedicate
+i-impowt com.twittew.hewmit.pwedicate.namedpwedicate
+impowt com.twittew.hewmit.pwedicate.pwedicate
+impowt c-com.twittew.sociawgwaph.thwiftscawa.wewationshiptype
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.utiw.futuwe
 
-object ListPredicates {
+o-object wistpwedicates {
 
-  def listNameExistsPredicate(
+  def w-wistnameexistspwedicate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[ListRecommendationPushCandidate] = {
-    Predicate
-      .fromAsync { candidate: ListRecommendationPushCandidate =>
-        candidate.listName.map(_.isDefined)
+    impwicit stats: statsweceivew
+  ): nyamedpwedicate[wistwecommendationpushcandidate] = {
+    p-pwedicate
+      .fwomasync { candidate: w-wistwecommendationpushcandidate =>
+        c-candidate.wistname.map(_.isdefined)
       }
-      .withStats(stats)
-      .withName("list_name_exists")
+      .withstats(stats)
+      .withname("wist_name_exists")
   }
 
-  def listAuthorExistsPredicate(
+  def wistauthowexistspwedicate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[ListRecommendationPushCandidate] = {
-    Predicate
-      .fromAsync { candidate: ListRecommendationPushCandidate =>
-        candidate.listOwnerId.map(_.isDefined)
+    impwicit stats: statsweceivew
+  ): nyamedpwedicate[wistwecommendationpushcandidate] = {
+    p-pwedicate
+      .fwomasync { candidate: wistwecommendationpushcandidate =>
+        candidate.wistownewid.map(_.isdefined)
       }
-      .withStats(stats)
-      .withName("list_owner_exists")
+      .withstats(stats)
+      .withname("wist_ownew_exists")
   }
 
-  def listAuthorAcceptableToTargetUser(
-    edgeStore: ReadableStore[RelationEdge, Boolean]
+  def wistauthowacceptabwetotawgetusew(
+    e-edgestowe: weadabwestowe[wewationedge, :3 b-boowean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[ListRecommendationPushCandidate] = {
-    val name = "list_author_acceptable_to_target_user"
-    val sgsPredicate = SocialGraphPredicate
-      .anyRelationExists(
-        edgeStore,
-        Set(
-          RelationshipType.Blocking,
-          RelationshipType.BlockedBy,
-          RelationshipType.Muting
+    impwicit s-statsweceivew: s-statsweceivew
+  ): n-nyamedpwedicate[wistwecommendationpushcandidate] = {
+    vaw nyame = "wist_authow_acceptabwe_to_tawget_usew"
+    vaw sgspwedicate = s-sociawgwaphpwedicate
+      .anywewationexists(
+        edgestowe, -.-
+        set(
+          w-wewationshiptype.bwocking, 😳
+          wewationshiptype.bwockedby, mya
+          wewationshiptype.muting
         )
       )
-      .withStats(statsReceiver.scope("list_sgs_any_relation_exists"))
-      .withName("list_sgs_any_relation_exists")
+      .withstats(statsweceivew.scope("wist_sgs_any_wewation_exists"))
+      .withname("wist_sgs_any_wewation_exists")
 
-    Predicate
-      .fromAsync { candidate: ListRecommendationPushCandidate =>
-        candidate.listOwnerId.flatMap {
-          case Some(ownerId) =>
-            sgsPredicate.apply(Seq(Edge(candidate.target.targetId, ownerId))).map(_.head)
-          case _ => Future.True
+    pwedicate
+      .fwomasync { candidate: wistwecommendationpushcandidate =>
+        candidate.wistownewid.fwatmap {
+          c-case some(ownewid) =>
+            sgspwedicate.appwy(seq(edge(candidate.tawget.tawgetid, (˘ω˘) o-ownewid))).map(_.head)
+          c-case _ => f-futuwe.twue
         }
       }
-      .withStats(statsReceiver.scope(s"predicate_$name"))
-      .withName(name)
+      .withstats(statsweceivew.scope(s"pwedicate_$name"))
+      .withname(name)
   }
 
   /**
-   * Checks if the list is acceptable to Target user =>
-   *    - Is Target not following the list
-   *    - Is Target not muted the list
+   * checks if the wist is acceptabwe to tawget u-usew =>
+   *    - i-is tawget nyot fowwowing the w-wist
+   *    - is t-tawget nyot muted the wist
    */
-  def listAcceptablePredicate(
+  d-def wistacceptabwepwedicate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[ListRecommendationPushCandidate] = {
-    val name = "list_acceptable_to_target_user"
-    Predicate
-      .fromAsync { candidate: ListRecommendationPushCandidate =>
-        candidate.apiList.map {
-          case Some(apiList) =>
-            !(apiList.following.contains(true) || apiList.muting.contains(true))
-          case _ => false
+    impwicit s-stats: statsweceivew
+  ): nyamedpwedicate[wistwecommendationpushcandidate] = {
+    vaw nyame = "wist_acceptabwe_to_tawget_usew"
+    p-pwedicate
+      .fwomasync { candidate: w-wistwecommendationpushcandidate =>
+        candidate.apiwist.map {
+          c-case s-some(apiwist) =>
+            !(apiwist.fowwowing.contains(twue) || apiwist.muting.contains(twue))
+          case _ => fawse
         }
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .withstats(stats.scope(name))
+      .withname(name)
   }
 
-  def listSubscriberCountPredicate(
+  def wistsubscwibewcountpwedicate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[ListRecommendationPushCandidate] = {
-    val name = "list_subscribe_count"
-    Predicate
-      .fromAsync { candidate: ListRecommendationPushCandidate =>
-        candidate.apiList.map { apiListOpt =>
-          apiListOpt.exists { apiList =>
-            apiList.subscriberCount >= candidate.target.params(
-              PushFeatureSwitchParams.ListRecommendationsSubscriberCount)
+    impwicit stats: statsweceivew
+  ): nyamedpwedicate[wistwecommendationpushcandidate] = {
+    v-vaw nyame = "wist_subscwibe_count"
+    pwedicate
+      .fwomasync { c-candidate: wistwecommendationpushcandidate =>
+        c-candidate.apiwist.map { a-apiwistopt =>
+          a-apiwistopt.exists { apiwist =>
+            apiwist.subscwibewcount >= candidate.tawget.pawams(
+              pushfeatuweswitchpawams.wistwecommendationssubscwibewcount)
           }
         }
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .withstats(stats.scope(name))
+      .withname(name)
   }
 }

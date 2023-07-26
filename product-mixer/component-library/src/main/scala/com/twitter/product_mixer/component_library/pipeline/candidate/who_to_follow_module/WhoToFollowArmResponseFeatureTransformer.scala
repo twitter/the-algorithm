@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+package com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.who_to_fowwow_moduwe
 
-import com.twitter.hermit.{thriftscala => h}
-import com.twitter.account_recommendations_mixer.{thriftscala => t}
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+impowt c-com.twittew.hewmit.{thwiftscawa => h-h}
+impowt c-com.twittew.account_wecommendations_mixew.{thwiftscawa => t-t}
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.usewcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twansfowmewidentifiew
 
-object ContextTypeFeature extends Feature[UserCandidate, Option[t.ContextType]]
+object c-contexttypefeatuwe extends featuwe[usewcandidate, nyaa~~ option[t.contexttype]]
 
-object WhoToFollowArmResponseFeatureTransformer
-    extends CandidateFeatureTransformer[t.RecommendedUser] {
+o-object whotofowwowawmwesponsefeatuwetwansfowmew
+    e-extends candidatefeatuwetwansfowmew[t.wecommendedusew] {
 
-  override val identifier: TransformerIdentifier = TransformerIdentifier("WhoToFollowArmResponse")
+  ovewwide vaw identifiew: twansfowmewidentifiew = t-twansfowmewidentifiew("whotofowwowawmwesponse")
 
-  override val features: Set[Feature[_, _]] =
-    Set(
-      AdImpressionFeature,
-      ContextTypeFeature,
-      HermitContextTypeFeature,
-      SocialTextFeature,
-      TrackingTokenFeature,
-      ScoreFeature)
+  ovewwide vaw featuwes: s-set[featuwe[_, _]] =
+    s-set(
+      adimpwessionfeatuwe, (⑅˘꒳˘)
+      contexttypefeatuwe, rawr x3
+      hewmitcontexttypefeatuwe, (✿oωo)
+      sociawtextfeatuwe, (ˆ ﻌ ˆ)♡
+      twackingtokenfeatuwe, (˘ω˘)
+      s-scowefeatuwe)
 
-  override def transform(input: t.RecommendedUser): FeatureMap = FeatureMapBuilder()
-    .add(AdImpressionFeature, input.adImpression)
-    .add(ContextTypeFeature, input.contextType)
+  ovewwide def twansfowm(input: t.wecommendedusew): featuwemap = f-featuwemapbuiwdew()
+    .add(adimpwessionfeatuwe, (⑅˘꒳˘) input.adimpwession)
+    .add(contexttypefeatuwe, (///ˬ///✿) i-input.contexttype)
     .add(
-      HermitContextTypeFeature,
-      input.contextType.map(contextType => h.ContextType(contextType.value)))
-    .add(SocialTextFeature, input.socialText)
-    .add(TrackingTokenFeature, input.trackingToken)
-    .add(ScoreFeature, input.mlPredictionScore)
-    .build()
+      h-hewmitcontexttypefeatuwe, 😳😳😳
+      i-input.contexttype.map(contexttype => h-h.contexttype(contexttype.vawue)))
+    .add(sociawtextfeatuwe, 🥺 input.sociawtext)
+    .add(twackingtokenfeatuwe, mya input.twackingtoken)
+    .add(scowefeatuwe, 🥺 input.mwpwedictionscowe)
+    .buiwd()
 }

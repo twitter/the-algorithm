@@ -1,102 +1,102 @@
-package com.twitter.tweetypie.config
+package com.twittew.tweetypie.config
 
-import com.twitter.servo.cache.{Cache, Cached, CachedValue, CachedValueStatus}
-import com.twitter.servo.util.Scribe
-import com.twitter.tweetypie.TweetId
-import com.twitter.tweetypie.repository.TweetKey
-import com.twitter.tweetypie.serverutil.logcachewrites.WriteLoggingCache
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.tweetypie.thriftscala.{CachedTweet, ComposerSource, TweetCacheWrite}
-import com.twitter.util.Time
+impowt com.twittew.sewvo.cache.{cache, :3 c-cached, ( ͡o ω ͡o ) c-cachedvawue, σωσ c-cachedvawuestatus}
+i-impowt com.twittew.sewvo.utiw.scwibe
+i-impowt c-com.twittew.tweetypie.tweetid
+i-impowt c-com.twittew.tweetypie.wepositowy.tweetkey
+impowt com.twittew.tweetypie.sewvewutiw.wogcachewwites.wwitewoggingcache
+impowt com.twittew.snowfwake.id.snowfwakeid
+impowt com.twittew.tweetypie.thwiftscawa.{cachedtweet, >w< composewsouwce, 😳😳😳 t-tweetcachewwite}
+impowt com.twittew.utiw.time
 
-class ScribeTweetCacheWrites(
-  val underlyingCache: Cache[TweetKey, Cached[CachedTweet]],
-  logYoungTweetCacheWrites: TweetId => Boolean,
-  logTweetCacheWrites: TweetId => Boolean)
-    extends WriteLoggingCache[TweetKey, Cached[CachedTweet]] {
-  private[this] lazy val scribe = Scribe(TweetCacheWrite, "tweetypie_tweet_cache_writes")
+c-cwass scwibetweetcachewwites(
+  v-vaw undewwyingcache: cache[tweetkey, OwO cached[cachedtweet]], 😳
+  wogyoungtweetcachewwites: tweetid => boowean, 😳😳😳
+  wogtweetcachewwites: t-tweetid => boowean)
+    e-extends wwitewoggingcache[tweetkey, (˘ω˘) c-cached[cachedtweet]] {
+  pwivate[this] wazy vaw scwibe = scwibe(tweetcachewwite, ʘwʘ "tweetypie_tweet_cache_wwites")
 
-  private[this] def mkTweetCacheWrite(
-    id: Long,
-    action: String,
-    cachedValue: CachedValue,
-    cachedTweet: Option[CachedTweet] = None
-  ): TweetCacheWrite = {
+  pwivate[this] d-def mktweetcachewwite(
+    id: wong, ( ͡o ω ͡o )
+    action: stwing, o.O
+    cachedvawue: cachedvawue, >w<
+    c-cachedtweet: option[cachedtweet] = n-nyone
+  ): t-tweetcachewwite = {
     /*
-     * If the Tweet id is a Snowflake id, calculate the offset since Tweet creation.
-     * If it is not a Snowflake id, then the offset should be 0. See [[TweetCacheWrite]]'s Thrift
-     * documentation for more details.
+     * i-if the tweet i-id is a snowfwake id, cawcuwate the offset since t-tweet cweation. 😳
+     * if it is nyot a snowfwake i-id, 🥺 then the offset shouwd be 0. rawr x3 see [[tweetcachewwite]]'s thwift
+     * documentation fow mowe detaiws. o.O
     */
-    val timestampOffset =
-      if (SnowflakeId.isSnowflakeId(id)) {
-        SnowflakeId(id).unixTimeMillis.asLong
-      } else {
+    v-vaw timestampoffset =
+      if (snowfwakeid.issnowfwakeid(id)) {
+        s-snowfwakeid(id).unixtimemiwwis.aswong
+      } ewse {
         0
       }
 
-    TweetCacheWrite(
-      tweetId = id,
-      timestamp = Time.now.inMilliseconds - timestampOffset,
-      action = action,
-      cachedValue = cachedValue,
-      cachedTweet = cachedTweet
+    t-tweetcachewwite(
+      t-tweetid = id, rawr
+      timestamp = time.now.inmiwwiseconds - timestampoffset, ʘwʘ
+      a-action = action, 😳😳😳
+      c-cachedvawue = cachedvawue, ^^;;
+      c-cachedtweet = c-cachedtweet
     )
   }
 
   /**
-   * Scribe a TweetCacheWrite record to tweetypie_tweet_cache_writes. We scribe the
-   * messages instead of writing them to the regular log file because the
-   * primary use of this logging is to get a record over time of the cache
-   * actions that affected a tweet, so we need a durable log that we can
-   * aggregate.
+   * scwibe a-a tweetcachewwite wecowd to t-tweetypie_tweet_cache_wwites. o.O we scwibe the
+   * m-messages instead of wwiting them t-to the weguwaw wog fiwe because t-the
+   * pwimawy u-use of this wogging is to get a wecowd ovew time of the cache
+   * actions that affected a tweet, (///ˬ///✿) so we nyeed a-a duwabwe wog that w-we can
+   * aggwegate. σωσ
    */
-  override def log(action: String, k: TweetKey, v: Option[Cached[CachedTweet]]): Unit =
+  o-ovewwide def w-wog(action: stwing, nyaa~~ k-k: tweetkey, ^^;; v: option[cached[cachedtweet]]): unit =
     v match {
-      case Some(cachedTweet) => {
-        val cachedValue = CachedValue(
-          status = cachedTweet.status,
-          cachedAtMsec = cachedTweet.cachedAt.inMilliseconds,
-          readThroughAtMsec = cachedTweet.readThroughAt.map(_.inMilliseconds),
-          writtenThroughAtMsec = cachedTweet.writtenThroughAt.map(_.inMilliseconds),
-          doNotCacheUntilMsec = cachedTweet.doNotCacheUntil.map(_.inMilliseconds),
+      case s-some(cachedtweet) => {
+        vaw cachedvawue = cachedvawue(
+          status = cachedtweet.status, ^•ﻌ•^
+          c-cachedatmsec = cachedtweet.cachedat.inmiwwiseconds, σωσ
+          weadthwoughatmsec = c-cachedtweet.weadthwoughat.map(_.inmiwwiseconds), -.-
+          w-wwittenthwoughatmsec = c-cachedtweet.wwittenthwoughat.map(_.inmiwwiseconds), ^^;;
+          donotcacheuntiwmsec = c-cachedtweet.donotcacheuntiw.map(_.inmiwwiseconds), XD
         )
-        scribe(mkTweetCacheWrite(k.id, action, cachedValue, cachedTweet.value))
+        s-scwibe(mktweetcachewwite(k.id, 🥺 a-action, òωó c-cachedvawue, (ˆ ﻌ ˆ)♡ cachedtweet.vawue))
       }
-      // `v` is only None if the action is a "delete" so set CachedValue with a status `Deleted`
-      case None => {
-        val cachedValue =
-          CachedValue(status = CachedValueStatus.Deleted, cachedAtMsec = Time.now.inMilliseconds)
-        scribe(mkTweetCacheWrite(k.id, action, cachedValue))
+      // `v` is onwy n-nyone if the a-action is a "dewete" s-so set cachedvawue w-with a status `deweted`
+      c-case nyone => {
+        vaw cachedvawue =
+          cachedvawue(status = cachedvawuestatus.deweted, -.- c-cachedatmsec = time.now.inmiwwiseconds)
+        scwibe(mktweetcachewwite(k.id, :3 action, ʘwʘ cachedvawue))
       }
     }
 
-  private[this] val YoungTweetThresholdMs = 3600 * 1000
+  pwivate[this] vaw y-youngtweetthweshowdms = 3600 * 1000
 
-  private[this] def isYoungTweet(tweetId: TweetId): Boolean =
-    (SnowflakeId.isSnowflakeId(tweetId) &&
-      ((Time.now.inMilliseconds - SnowflakeId(tweetId).unixTimeMillis.asLong) <=
-        YoungTweetThresholdMs))
-
-  /**
-   * Select all tweets for which the log_tweet_cache_writes decider returns
-   * true and "young" tweets for which the log_young_tweet_cache_writes decider
-   * returns true.
-   */
-  override def selectKey(k: TweetKey): Boolean =
-    // When the tweet is young, we log it if it passes either decider. This is
-    // because the deciders will (by design) select a different subset of
-    // tweets. We do this so that we have a full record for all tweets for which
-    // log_tweet_cache_writes is on, but also cast a wider net for tweets that
-    // are more likely to be affected by replication lag, race conditions
-    // between different writes, or other consistency issues
-    logTweetCacheWrites(k.id) || (isYoungTweet(k.id) && logYoungTweetCacheWrites(k.id))
+  pwivate[this] def isyoungtweet(tweetid: tweetid): boowean =
+    (snowfwakeid.issnowfwakeid(tweetid) &&
+      ((time.now.inmiwwiseconds - s-snowfwakeid(tweetid).unixtimemiwwis.aswong) <=
+        y-youngtweetthweshowdms))
 
   /**
-   * Log newscamera tweets as well as any tweets for which selectKey returns
-   * true. Note that for newscamera tweets, we will possibly miss "delete"
-   * actions since those do not have access to the value, and so do not call
-   * this method.
+   * s-sewect aww tweets fow w-which the wog_tweet_cache_wwites decidew wetuwns
+   * t-twue and "young" t-tweets fow which the wog_young_tweet_cache_wwites decidew
+   * wetuwns twue. 🥺
    */
-  override def select(k: TweetKey, v: Cached[CachedTweet]): Boolean =
-    v.value.exists(_.tweet.composerSource.contains(ComposerSource.Camera)) || selectKey(k)
+  ovewwide def sewectkey(k: t-tweetkey): boowean =
+    // w-when the tweet is young, we w-wog it if it passes e-eithew decidew. >_< this is
+    // because the d-decidews wiww (by d-design) sewect a diffewent subset o-of
+    // tweets. ʘwʘ w-we do this so that we have a fuww wecowd fow aww tweets fow which
+    // wog_tweet_cache_wwites i-is on, (˘ω˘) but a-awso cast a widew n-nyet fow tweets that
+    // awe m-mowe wikewy to b-be affected by wepwication wag, (✿oωo) w-wace conditions
+    // between diffewent wwites, (///ˬ///✿) ow othew consistency issues
+    w-wogtweetcachewwites(k.id) || (isyoungtweet(k.id) && w-wogyoungtweetcachewwites(k.id))
+
+  /**
+   * wog nyewscamewa tweets as weww a-as any tweets f-fow which sewectkey wetuwns
+   * twue. rawr x3 nyote that fow nyewscamewa t-tweets, -.- we wiww possibwy miss "dewete"
+   * actions since those do nyot have access t-to the vawue, ^^ and so do nyot caww
+   * this m-method. (⑅˘꒳˘)
+   */
+  o-ovewwide def sewect(k: tweetkey, nyaa~~ v: cached[cachedtweet]): boowean =
+    v-v.vawue.exists(_.tweet.composewsouwce.contains(composewsouwce.camewa)) || s-sewectkey(k)
 }

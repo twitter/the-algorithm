@@ -1,65 +1,65 @@
-package com.twitter.home_mixer.product.list_recommended_users.feature_hydrator
+package com.twittew.home_mixew.pwoduct.wist_wecommended_usews.featuwe_hydwatow
 
-import com.twitter.gizmoduck.{thriftscala => gt}
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersFeatures.IsGizmoduckValidUserFeature
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.spam.rtf.{thriftscala => rtf}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.gizmoduck.Gizmoduck
-import com.twitter.util.Return
+impowt com.twittew.gizmoduck.{thwiftscawa => g-gt}
+i-impowt com.twittew.home_mixew.pwoduct.wist_wecommended_usews.modew.wistwecommendedusewsfeatuwes.isgizmoduckvawidusewfeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.usewcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.spam.wtf.{thwiftscawa => wtf}
+impowt c-com.twittew.stitch.stitch
+impowt com.twittew.stitch.gizmoduck.gizmoduck
+impowt c-com.twittew.utiw.wetuwn
 
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class IsGizmoduckValidUserFeatureHydrator @Inject() (gizmoduck: Gizmoduck)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, UserCandidate] {
+@singweton
+cwass isgizmoduckvawidusewfeatuwehydwatow @inject() (gizmoduck: gizmoduck)
+    extends b-buwkcandidatefeatuwehydwatow[pipewinequewy, (U ﹏ U) usewcandidate] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("IsGizmoduckValidUser")
+  ovewwide vaw identifiew: featuwehydwatowidentifiew =
+    featuwehydwatowidentifiew("isgizmoduckvawidusew")
 
-  override val features: Set[Feature[_, _]] = Set(IsGizmoduckValidUserFeature)
+  o-ovewwide vaw featuwes: set[featuwe[_, (///ˬ///✿) _]] = set(isgizmoduckvawidusewfeatuwe)
 
-  private val queryFields: Set[gt.QueryFields] = Set(gt.QueryFields.Safety)
+  p-pwivate vaw quewyfiewds: s-set[gt.quewyfiewds] = s-set(gt.quewyfiewds.safety)
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[UserCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val context = gt.LookupContext(
-      forUserId = query.getOptionalUserId,
-      includeProtected = true,
-      safetyLevel = Some(rtf.SafetyLevel.Recommendations)
+  o-ovewwide def appwy(
+    quewy: pipewinequewy, >w<
+    candidates: seq[candidatewithfeatuwes[usewcandidate]]
+  ): s-stitch[seq[featuwemap]] = {
+    vaw context = gt.wookupcontext(
+      f-fowusewid = quewy.getoptionawusewid, rawr
+      incwudepwotected = twue, mya
+      safetywevew = some(wtf.safetywevew.wecommendations)
     )
-    val userIds = candidates.map(_.candidate.id)
+    vaw usewids = candidates.map(_.candidate.id)
 
-    Stitch
-      .collectToTry(
-        userIds.map(userId => gizmoduck.getUserById(userId, queryFields, context))).map {
-        userResults =>
-          val idToUserSafetyMap = userResults
-            .collect {
-              case Return(user) => user
-            }.map(user => user.id -> user.safety).toMap
+    s-stitch
+      .cowwecttotwy(
+        usewids.map(usewid => g-gizmoduck.getusewbyid(usewid, ^^ q-quewyfiewds, 😳😳😳 c-context))).map {
+        usewwesuwts =>
+          vaw idtousewsafetymap = usewwesuwts
+            .cowwect {
+              c-case w-wetuwn(usew) => usew
+            }.map(usew => u-usew.id -> usew.safety).tomap
 
-          candidates.map { candidate =>
-            val safety = idToUserSafetyMap.getOrElse(candidate.candidate.id, None)
-            val isValidUser = safety.isDefined &&
+          c-candidates.map { candidate =>
+            v-vaw safety = idtousewsafetymap.getowewse(candidate.candidate.id, mya n-nyone)
+            vaw isvawidusew = safety.isdefined &&
               !safety.exists(_.deactivated) &&
               !safety.exists(_.suspended) &&
-              !safety.exists(_.isProtected) &&
-              !safety.flatMap(_.offboarded).getOrElse(false)
+              !safety.exists(_.ispwotected) &&
+              !safety.fwatmap(_.offboawded).getowewse(fawse)
 
-            FeatureMapBuilder()
-              .add(IsGizmoduckValidUserFeature, isValidUser)
-              .build()
+            f-featuwemapbuiwdew()
+              .add(isgizmoduckvawidusewfeatuwe, 😳 isvawidusew)
+              .buiwd()
           }
       }
   }

@@ -1,9 +1,9 @@
-package com.twitter.visibility.interfaces.notifications
+package com.twittew.visibiwity.intewfaces.notifications
 
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.models.SafetyLevel
+impowt com.twittew.visibiwity.modews.contentid
+i-impowt com.twittew.visibiwity.modews.safetywevew
 
-case class NotificationVFRequest(
-  recipientId: Long,
-  subject: ContentId.UserId,
-  safetyLevel: SafetyLevel)
+c-case cwass n-nyotificationvfwequest(
+  w-wecipientid: w-wong, (U ᵕ U❁)
+  s-subject: contentid.usewid, (⑅˘꒳˘)
+  s-safetywevew: safetywevew)

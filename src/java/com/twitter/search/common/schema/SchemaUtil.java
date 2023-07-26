@@ -1,102 +1,102 @@
-package com.twitter.search.common.schema;
+package com.twittew.seawch.common.schema;
 
-import com.google.common.base.Preconditions;
+impowt c-com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.DocValuesType;
-import org.apache.lucene.index.IndexOptions;
-import org.apache.lucene.util.BytesRef;
+i-impowt owg.apache.wucene.index.docvawuestype;
+i-impowt owg.apache.wucene.index.indexoptions;
+i-impowt owg.apache.wucene.utiw.byteswef;
 
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.IndexedNumericFieldSettings;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.schema.thriftjava.ThriftNumericType;
-import com.twitter.search.common.util.analysis.IntTermAttributeImpl;
-import com.twitter.search.common.util.analysis.LongTermAttributeImpl;
-import com.twitter.search.common.util.analysis.SortableLongTermAttributeImpl;
+i-impowt c-com.twittew.seawch.common.schema.base.eawwybiwdfiewdtype;
+i-impowt c-com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+impowt com.twittew.seawch.common.schema.base.indexednumewicfiewdsettings;
+impowt com.twittew.seawch.common.schema.base.schema;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftcsftype;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftnumewictype;
+impowt com.twittew.seawch.common.utiw.anawysis.inttewmattwibuteimpw;
+i-impowt com.twittew.seawch.common.utiw.anawysis.wongtewmattwibuteimpw;
+impowt com.twittew.seawch.common.utiw.anawysis.sowtabwewongtewmattwibuteimpw;
 
-public final class SchemaUtil {
-  private SchemaUtil() {
+p-pubwic finaw cwass schemautiw {
+  pwivate schemautiw() {
   }
 
   /**
-   * Get the a fixed CSF field's number of values per doc.
-   * @param schema the Schema for the index
-   * @param fieldId the field id the CSF field - the field must be of binary integer type and
+   * get t-the a fixed csf fiewd's nyumbew o-of vawues pew d-doc. nyaa~~
+   * @pawam schema the schema fow the index
+   * @pawam fiewdid the fiewd id t-the csf fiewd - the fiewd must be of binawy integew type and
    *                in fixed size
-   * @return the number of values per doc
+   * @wetuwn t-the nyumbew of vawues p-pew doc
    */
-  public static int getCSFFieldFixedLength(ImmutableSchemaInterface schema, int fieldId) {
-    final Schema.FieldInfo fieldInfo = Preconditions.checkNotNull(schema.getFieldInfo(fieldId));
-    return getCSFFieldFixedLength(fieldInfo);
+  p-pubwic static i-int getcsffiewdfixedwength(immutabweschemaintewface s-schema, UwU int fiewdid) {
+    finaw schema.fiewdinfo f-fiewdinfo = pweconditions.checknotnuww(schema.getfiewdinfo(fiewdid));
+    wetuwn getcsffiewdfixedwength(fiewdinfo);
   }
 
   /**
-   * Get the a fixed CSF field's number of values per doc.
-   * @param schema the Schema for the index
-   * @param fieldName the field name of the CSF field - the field must be of binary integer type
+   * g-get the a fixed csf fiewd's nyumbew of vawues pew doc. :3
+   * @pawam schema the schema fow the index
+   * @pawam f-fiewdname the fiewd nyame o-of the csf f-fiewd - the fiewd m-must be of binawy integew type
    *                  and in fixed size
-   * @return the number of values per doc
+   * @wetuwn t-the nyumbew o-of vawues pew doc
    */
-  public static int getCSFFieldFixedLength(ImmutableSchemaInterface schema, String fieldName) {
-    final Schema.FieldInfo fieldInfo = Preconditions.checkNotNull(schema.getFieldInfo(fieldName));
-    return getCSFFieldFixedLength(fieldInfo);
+  pubwic s-static int getcsffiewdfixedwength(immutabweschemaintewface s-schema, (⑅˘꒳˘) stwing fiewdname) {
+    f-finaw schema.fiewdinfo f-fiewdinfo = pweconditions.checknotnuww(schema.getfiewdinfo(fiewdname));
+    wetuwn getcsffiewdfixedwength(fiewdinfo);
   }
 
   /**
-   * Get the a fixed CSF field's number of values per doc.
-   * @param fieldInfo the field of the CSF field - the field must be of binary integer type
+   * g-get the a fixed csf fiewd's n-nyumbew of vawues pew doc. (///ˬ///✿)
+   * @pawam f-fiewdinfo t-the fiewd of the csf fiewd - the fiewd must be of binawy integew type
    *                  and in fixed size
-   * @return the number of values per doc
+   * @wetuwn t-the nyumbew of v-vawues pew doc
    */
-  public static int getCSFFieldFixedLength(Schema.FieldInfo fieldInfo) {
-    final EarlybirdFieldType fieldType = fieldInfo.getFieldType();
-    Preconditions.checkState(fieldType.docValuesType() == DocValuesType.BINARY
-        && fieldType.getCsfType() == ThriftCSFType.INT);
-    return fieldType.getCsfFixedLengthNumValuesPerDoc();
+  pubwic s-static int getcsffiewdfixedwength(schema.fiewdinfo f-fiewdinfo) {
+    f-finaw eawwybiwdfiewdtype fiewdtype = fiewdinfo.getfiewdtype();
+    pweconditions.checkstate(fiewdtype.docvawuestype() == d-docvawuestype.binawy
+        && fiewdtype.getcsftype() == thwiftcsftype.int);
+    wetuwn fiewdtype.getcsffixedwengthnumvawuespewdoc();
   }
 
-  /** Converts the given value to a BytesRef instance, according to the type of the given field. */
-  public static BytesRef toBytesRef(Schema.FieldInfo fieldInfo, String value) {
-    EarlybirdFieldType fieldType = fieldInfo.getFieldType();
-    Preconditions.checkArgument(fieldType.indexOptions() != IndexOptions.NONE);
-    IndexedNumericFieldSettings numericSetting = fieldType.getNumericFieldSettings();
-    if (numericSetting != null) {
-      if (!numericSetting.isUseTwitterFormat()) {
-        throw new UnsupportedOperationException(
-            "Numeric field not using Twitter format: cannot drill down.");
+  /** convewts the given v-vawue to a byteswef instance, ^^;; a-accowding to the t-type of the given f-fiewd. >_< */
+  pubwic static byteswef t-tobyteswef(schema.fiewdinfo f-fiewdinfo, rawr x3 stwing v-vawue) {
+    e-eawwybiwdfiewdtype fiewdtype = fiewdinfo.getfiewdtype();
+    p-pweconditions.checkawgument(fiewdtype.indexoptions() != i-indexoptions.none);
+    i-indexednumewicfiewdsettings n-nyumewicsetting = f-fiewdtype.getnumewicfiewdsettings();
+    if (numewicsetting != nyuww) {
+      if (!numewicsetting.isusetwittewfowmat()) {
+        t-thwow nyew unsuppowtedopewationexception(
+            "numewic fiewd nyot using twittew fowmat: cannot dwiww down.");
       }
 
-      ThriftNumericType numericType = numericSetting.getNumericType();
-      switch (numericType) {
-        case INT:
-          try {
-            return IntTermAttributeImpl.copyIntoNewBytesRef(Integer.parseInt(value));
-          } catch (NumberFormatException e) {
-            throw new UnsupportedOperationException(
-                String.format("Cannot parse value for int field %s: %s",
-                              fieldInfo.getName(), value),
+      t-thwiftnumewictype nyumewictype = nyumewicsetting.getnumewictype();
+      switch (numewictype) {
+        c-case i-int:
+          twy {
+            w-wetuwn inttewmattwibuteimpw.copyintonewbyteswef(integew.pawseint(vawue));
+          } catch (numbewfowmatexception e-e) {
+            thwow nyew u-unsuppowtedopewationexception(
+                stwing.fowmat("cannot p-pawse vawue fow int fiewd %s: %s", /(^•ω•^)
+                              fiewdinfo.getname(), :3 vawue), (ꈍᴗꈍ)
                 e);
           }
-        case LONG:
-          try {
-            return numericSetting.isUseSortableEncoding()
-                ? SortableLongTermAttributeImpl.copyIntoNewBytesRef(Long.parseLong(value))
-                : LongTermAttributeImpl.copyIntoNewBytesRef(Long.parseLong(value));
-          } catch (NumberFormatException e) {
-            throw new UnsupportedOperationException(
-                String.format("Cannot parse value for long field %s: %s",
-                              fieldInfo.getName(), value),
+        case w-wong:
+          twy {
+            w-wetuwn nyumewicsetting.isusesowtabweencoding()
+                ? sowtabwewongtewmattwibuteimpw.copyintonewbyteswef(wong.pawsewong(vawue))
+                : w-wongtewmattwibuteimpw.copyintonewbyteswef(wong.pawsewong(vawue));
+          } c-catch (numbewfowmatexception e) {
+            thwow n-nyew unsuppowtedopewationexception(
+                s-stwing.fowmat("cannot pawse v-vawue fow wong fiewd %s: %s", /(^•ω•^)
+                              f-fiewdinfo.getname(), (⑅˘꒳˘) vawue), ( ͡o ω ͡o )
                 e);
           }
-        default:
-          throw new UnsupportedOperationException(
-              String.format("Unsupported numeric type for field %s: %s",
-                            fieldInfo.getName(), numericType));
+        defauwt:
+          thwow nyew unsuppowtedopewationexception(
+              s-stwing.fowmat("unsuppowted n-nyumewic t-type fow fiewd %s: %s", òωó
+                            fiewdinfo.getname(), (⑅˘꒳˘) n-nyumewictype));
       }
     }
 
-    return new BytesRef(value);
+    w-wetuwn nyew byteswef(vawue);
   }
 }

@@ -1,40 +1,40 @@
-package com.twitter.product_mixer.component_library.scorer.tensorbuilder
+package com.twittew.pwoduct_mixew.component_wibwawy.scowew.tensowbuiwdew
 
-import com.twitter.product_mixer.component_library.scorer.common.ModelSelector
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import inference.GrpcService.InferParameter
-import inference.GrpcService.ModelInferRequest
-import scala.collection.JavaConverters._
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.scowew.common.modewsewectow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt i-infewence.gwpcsewvice.infewpawametew
+i-impowt i-infewence.gwpcsewvice.modewinfewwequest
+i-impowt scawa.cowwection.javaconvewtews._
 
-class ModelInferRequestBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  queryInferInputTensorBuilders: Seq[QueryInferInputTensorBuilder[Query, Any]],
-  candidateInferInputTensorBuilders: Seq[
-    CandidateInferInputTensorBuilder[Candidate, Any]
-  ],
-  modelSignatureName: String,
-  modelSelector: ModelSelector[Query]) {
+cwass modewinfewwequestbuiwdew[-quewy <: pipewinequewy, nyaa~~ -candidate <: univewsawnoun[any]](
+  q-quewyinfewinputtensowbuiwdews: seq[quewyinfewinputtensowbuiwdew[quewy, (⑅˘꒳˘) any]], rawr x3
+  c-candidateinfewinputtensowbuiwdews: seq[
+    candidateinfewinputtensowbuiwdew[candidate, (✿oωo) a-any]
+  ], (ˆ ﻌ ˆ)♡
+  modewsignatuwename: stwing, (˘ω˘)
+  modewsewectow: m-modewsewectow[quewy]) {
 
-  private val modelSignature: InferParameter =
-    InferParameter.newBuilder().setStringParam(modelSignatureName).build()
+  pwivate v-vaw modewsignatuwe: i-infewpawametew =
+    infewpawametew.newbuiwdew().setstwingpawam(modewsignatuwename).buiwd()
 
-  def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]],
-  ): ModelInferRequest = {
-    val inferRequest = ModelInferRequest
-      .newBuilder()
-      .putParameters("signature_name", modelSignature)
-    modelSelector.apply(query).foreach { modelName =>
-      inferRequest.setModelName(modelName)
+  def appwy(
+    quewy: quewy, (⑅˘꒳˘)
+    candidates: s-seq[candidatewithfeatuwes[candidate]], (///ˬ///✿)
+  ): modewinfewwequest = {
+    vaw infewwequest = modewinfewwequest
+      .newbuiwdew()
+      .putpawametews("signatuwe_name", 😳😳😳 modewsignatuwe)
+    modewsewectow.appwy(quewy).foweach { m-modewname =>
+      infewwequest.setmodewname(modewname)
     }
-    queryInferInputTensorBuilders.foreach { builder =>
-      inferRequest.addAllInputs(builder(query).asJava)
+    q-quewyinfewinputtensowbuiwdews.foweach { b-buiwdew =>
+      infewwequest.addawwinputs(buiwdew(quewy).asjava)
     }
-    candidateInferInputTensorBuilders.foreach { builder =>
-      inferRequest.addAllInputs(builder(candidates).asJava)
+    c-candidateinfewinputtensowbuiwdews.foweach { b-buiwdew =>
+      infewwequest.addawwinputs(buiwdew(candidates).asjava)
     }
-    inferRequest.build()
+    infewwequest.buiwd()
   }
 }

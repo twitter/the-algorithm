@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+package com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.ads
 
-import com.twitter.adserver.{thriftscala => ads}
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.component_library.pipeline.candidate.ads.AdsCandidatePipelineQueryTransformer.buildAdRequestParams
-import com.twitter.product_mixer.core.functional_component.transformer.DependentCandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.adsewvew.{thwiftscawa => a-ads}
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.quewy.ads.adsquewy
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.ads.adscandidatepipewinequewytwansfowmew.buiwdadwequestpawams
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.dependentcandidatepipewinequewytwansfowmew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Transform a PipelineQuery with AdsQuery into an AdsRequestParams
+ * twansfowm a pipewinequewy with adsquewy i-into an adswequestpawams
  *
- * @param adsDisplayLocationBuilder Builder that determines the display location for the ads
- * @param countNumOrganicItems      Count organic items from the response 
+ * @pawam adsdispwaywocationbuiwdew buiwdew that detewmines t-the dispway wocation fow t-the ads
+ * @pawam countnumowganicitems      count owganic items f-fwom the wesponse 
  */
-case class AdsDependentCandidatePipelineQueryTransformer[Query <: PipelineQuery with AdsQuery](
-  adsDisplayLocationBuilder: AdsDisplayLocationBuilder[Query],
-  getOrganicItemIds: GetOrganicItemIds,
-  countNumOrganicItems: CountNumOrganicItems[Query],
-  urtRequest: Option[Boolean],
-) extends DependentCandidatePipelineQueryTransformer[Query, ads.AdRequestParams] {
+case cwass a-adsdependentcandidatepipewinequewytwansfowmew[quewy <: p-pipewinequewy with adsquewy](
+  adsdispwaywocationbuiwdew: adsdispwaywocationbuiwdew[quewy], mya
+  getowganicitemids: g-getowganicitemids, 🥺
+  countnumowganicitems: countnumowganicitems[quewy], >_<
+  uwtwequest: option[boowean], >_<
+) e-extends dependentcandidatepipewinequewytwansfowmew[quewy, (⑅˘꒳˘) ads.adwequestpawams] {
 
-  override def transform(
-    query: Query,
-    previousCandidates: Seq[CandidateWithDetails]
-  ): ads.AdRequestParams = buildAdRequestParams(
-    query = query,
-    adsDisplayLocation = adsDisplayLocationBuilder(query),
-    organicItemIds = getOrganicItemIds.apply(previousCandidates),
-    numOrganicItems = Some(countNumOrganicItems.apply(query, previousCandidates)),
-    urtRequest = urtRequest
+  ovewwide d-def twansfowm(
+    q-quewy: quewy, /(^•ω•^)
+    p-pweviouscandidates: s-seq[candidatewithdetaiws]
+  ): ads.adwequestpawams = buiwdadwequestpawams(
+    q-quewy = quewy, rawr x3
+    adsdispwaywocation = adsdispwaywocationbuiwdew(quewy), (U ﹏ U)
+    o-owganicitemids = getowganicitemids.appwy(pweviouscandidates), (U ﹏ U)
+    nyumowganicitems = some(countnumowganicitems.appwy(quewy, pweviouscandidates)), (⑅˘꒳˘)
+    uwtwequest = u-uwtwequest
   )
 }

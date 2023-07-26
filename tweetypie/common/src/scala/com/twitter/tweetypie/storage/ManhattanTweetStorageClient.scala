@@ -1,451 +1,451 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.EmptyServiceIdentifier
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.ssl.OpportunisticTls
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.BareFormatter
-import com.twitter.logging.Level
-import com.twitter.logging.ScribeHandler
-import com.twitter.logging._
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.bijections.Bijections._
-import com.twitter.storage.client.manhattan.kv._
-import com.twitter.storage.client.manhattan.kv.impl.ValueDescriptor
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.storage.Scribe.ScribeHandlerFactory
-import com.twitter.tweetypie.storage.TweetStorageClient.BounceDelete
-import com.twitter.tweetypie.storage.TweetStorageClient.GetTweet
-import com.twitter.tweetypie.storage.TweetStorageClient.HardDeleteTweet
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.tweetypie.util.StitchUtils
-import com.twitter.util.Duration
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import scala.util.Random
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.mtws.authentication.emptysewviceidentifiew
+i-impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt c-com.twittew.finagwe.ssw.oppowtunistictws
+i-impowt c-com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.wogging.bawefowmattew
+impowt com.twittew.wogging.wevew
+i-impowt com.twittew.wogging.scwibehandwew
+impowt com.twittew.wogging._
+impowt c-com.twittew.stitch.stitch
+impowt c-com.twittew.stowage.cwient.manhattan.bijections.bijections._
+impowt com.twittew.stowage.cwient.manhattan.kv._
+impowt com.twittew.stowage.cwient.manhattan.kv.impw.vawuedescwiptow
+impowt com.twittew.tweetypie.cwient_id.cwientidhewpew
+i-impowt com.twittew.tweetypie.stowage.scwibe.scwibehandwewfactowy
+i-impowt c-com.twittew.tweetypie.stowage.tweetstowagecwient.bouncedewete
+impowt com.twittew.tweetypie.stowage.tweetstowagecwient.gettweet
+impowt com.twittew.tweetypie.stowage.tweetstowagecwient.hawddewetetweet
+impowt com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt com.twittew.tweetypie.utiw.stitchutiws
+impowt com.twittew.utiw.duwation
+impowt com.twittew.utiw.wetuwn
+i-impowt com.twittew.utiw.thwow
+impowt scawa.utiw.wandom
 
-object ManhattanTweetStorageClient {
-  object Config {
+o-object manhattantweetstowagecwient {
+  o-object config {
 
     /**
-     * The Manhattan dataset where tweets are stored is not externally
-     * configurable because writing tweets to a non-production dataset
-     * requires great care. Staging instances using a different dataset will
-     * write tweets to a non-production store, but will publish events, log to
-     * HDFS, and cache data referencing tweets in that store which are not
-     * accessible by the rest of the production cluster.
+     * t-the manhattan d-dataset whewe tweets awe stowed is nyot extewnawwy
+     * configuwabwe b-because wwiting tweets to a nyon-pwoduction d-dataset
+     * wequiwes gweat cawe. ^^ staging instances using a diffewent dataset wiww
+     * w-wwite tweets to a nyon-pwoduction s-stowe, ^•ﻌ•^ but w-wiww pubwish events, mya w-wog to
+     * hdfs, UwU and cache data wefewencing tweets in that s-stowe which a-awe nyot
+     * accessibwe by the w-west of the pwoduction c-cwustew. >_<
      *
-     * In a completely isolated environment it should be safe to write to
-     * other datasets for testing purposes.
+     * in a compwetewy i-isowated enviwonment it shouwd be s-safe to wwite to
+     * othew datasets fow testing p-puwposes. /(^•ω•^)
      */
-    val Dataset = "tbird_mh"
+    vaw dataset = "tbiwd_mh"
 
     /**
-     * Once a tweet has been deleted it can only be undeleted within this time
-     * window, after which [[UndeleteHandler]] will return an error on
-     * undelete attempts.
+     * o-once a tweet has been deweted i-it can onwy be u-undeweted within this time
+     * window, òωó aftew which [[undewetehandwew]] wiww wetuwn an ewwow on
+     * undewete a-attempts. σωσ
      */
-    val UndeleteWindowHours = 240
+    v-vaw undewetewindowhouws = 240
 
     /**
-     * Default label used for underlying Manhattan Thrift client metrics
+     * defauwt wabew u-used fow undewwying m-manhattan t-thwift cwient metwics
      *
-     * The finagle client metrics will be exported at clnt/:label.
+     * the finagwe cwient metwics w-wiww be expowted at cwnt/:wabew. ( ͡o ω ͡o )
      */
-    val ThriftClientLabel = "mh_cylon"
+    vaw thwiftcwientwabew = "mh_cywon"
 
     /**
-     * Return the corresponding Wily path for the Cylon cluster in the "other" DC
+     * wetuwn the cowwesponding wiwy p-path fow the cywon cwustew in the "othew" d-dc
      */
-    def remoteDestination(zone: String): String =
-      s"/srv#/prod/${remoteZone(zone)}/manhattan/cylon.native-thrift"
+    d-def wemotedestination(zone: s-stwing): stwing =
+      s"/swv#/pwod/${wemotezone(zone)}/manhattan/cywon.native-thwift"
 
-    private def remoteZone(zone: String) = zone match {
-      case "pdxa" => "atla"
-      case "atla" | "localhost" => "pdxa"
+    p-pwivate def wemotezone(zone: stwing) = z-zone match {
+      c-case "pdxa" => "atwa"
+      c-case "atwa" | "wocawhost" => "pdxa"
       case _ =>
-        throw new IllegalArgumentException(s"Cannot configure remote DC for unknown zone '$zone'")
+        thwow nyew iwwegawawgumentexception(s"cannot c-configuwe wemote d-dc fow unknown z-zone '$zone'")
     }
   }
 
   /**
-   * @param applicationId Manhattan application id used for quota accounting
-   * @param localDestination Wily path to local Manhattan cluster
-   * @param localTimeout Overall timeout (including retries) for all reads/writes to local cluster
-   * @param remoteDestination Wily path to remote Manhattan cluster, used for undelete and force add
-   * @param remoteTimeout Overall timeout (including retries) for all reads/writes to remote cluster
-   * @param undeleteWindowHours Amount of time during which a deleted tweet can be undeleted
-   * @param thriftClientLabel Label used to scope stats for Manhattan Thrift client
-   * @param maxRequestsPerBatch Configure the Stitch RequestGroup.Generator batch size
-   * @param serviceIdentifier The ServiceIdentifier to use when making connections to a Manhattan cluster
-   * @param opportunisticTlsLevel The level to use for opportunistic TLS for connections to the Manhattan cluster
+   * @pawam a-appwicationid m-manhattan appwication id used fow quota accounting
+   * @pawam w-wocawdestination wiwy path to wocaw manhattan cwustew
+   * @pawam wocawtimeout ovewaww t-timeout (incwuding wetwies) fow aww weads/wwites to wocaw cwustew
+   * @pawam wemotedestination w-wiwy path to wemote m-manhattan cwustew, nyaa~~ u-used fow undewete and fowce a-add
+   * @pawam wemotetimeout o-ovewaww timeout (incwuding w-wetwies) fow aww weads/wwites to wemote cwustew
+   * @pawam undewetewindowhouws amount o-of time duwing which a deweted t-tweet can be undeweted
+   * @pawam t-thwiftcwientwabew w-wabew used to scope stats fow manhattan t-thwift cwient
+   * @pawam m-maxwequestspewbatch configuwe t-the stitch w-wequestgwoup.genewatow batch size
+   * @pawam sewviceidentifiew the sewviceidentifiew t-to use w-when making connections t-to a manhattan cwustew
+   * @pawam o-oppowtunistictwswevew t-the wevew to use fow oppowtunistic t-tws fow connections to the manhattan cwustew
    */
-  case class Config(
-    applicationId: String,
-    localDestination: String,
-    localTimeout: Duration,
-    remoteDestination: String,
-    remoteTimeout: Duration,
-    undeleteWindowHours: Int = Config.UndeleteWindowHours,
-    thriftClientLabel: String = Config.ThriftClientLabel,
-    maxRequestsPerBatch: Int = Int.MaxValue,
-    serviceIdentifier: ServiceIdentifier,
-    opportunisticTlsLevel: OpportunisticTls.Level)
+  case cwass config(
+    a-appwicationid: stwing, :3
+    w-wocawdestination: stwing, UwU
+    wocawtimeout: d-duwation, o.O
+    w-wemotedestination: stwing, (ˆ ﻌ ˆ)♡
+    wemotetimeout: duwation, ^^;;
+    u-undewetewindowhouws: int = config.undewetewindowhouws, ʘwʘ
+    thwiftcwientwabew: stwing = config.thwiftcwientwabew, σωσ
+    maxwequestspewbatch: i-int = int.maxvawue, ^^;;
+    sewviceidentifiew: s-sewviceidentifiew, ʘwʘ
+    o-oppowtunistictwswevew: oppowtunistictws.wevew)
 
   /**
-   * Sanitizes the input for APIs which take in a (Tweet, Seq[Field]) as input.
+   * sanitizes the input fow a-apis which take i-in a (tweet, ^^ seq[fiewd]) as input. nyaa~~
    *
-   * NOTE: This function only applies sanity checks which are common to
-   * all APIs which take in a (Tweet, Seq[Field]) as input. API specific
-   * checks are not covered here.
+   * nyote: this function o-onwy appwies sanity checks which a-awe common to
+   * aww apis which take in a (tweet, (///ˬ///✿) seq[fiewd]) a-as input. XD api specific
+   * checks a-awe nyot covewed h-hewe. :3
    *
-   * @param apiStitch the backing API call
-   * @tparam T the output type of the backing API call
-   * @return a stitch function which does some basic input sanity checking
+   * @pawam apistitch t-the backing api caww
+   * @tpawam t-t the o-output type of the b-backing api caww
+   * @wetuwn a stitch function w-which does some b-basic input sanity checking
    */
-  private[storage] def sanitizeTweetFields[T](
-    apiStitch: (Tweet, Seq[Field]) => Stitch[T]
-  ): (Tweet, Seq[Field]) => Stitch[T] =
-    (tweet, fields) => {
-      require(fields.forall(_.id > 0), s"Field ids ${fields} are not positive numbers")
-      apiStitch(tweet, fields)
+  pwivate[stowage] d-def sanitizetweetfiewds[t](
+    a-apistitch: (tweet, òωó s-seq[fiewd]) => stitch[t]
+  ): (tweet, ^^ seq[fiewd]) => s-stitch[t] =
+    (tweet, ^•ﻌ•^ fiewds) => {
+      w-wequiwe(fiewds.fowaww(_.id > 0), σωσ s-s"fiewd ids ${fiewds} awe not positive nyumbews")
+      a-apistitch(tweet, (ˆ ﻌ ˆ)♡ f-fiewds)
     }
 
-  // Returns a handler that asynchronously logs messages to Scribe using the BareFormatter which
-  // logs just the message without any additional metadata
-  def scribeHandler(categoryName: String): HandlerFactory =
-    ScribeHandler(
-      formatter = BareFormatter,
-      maxMessagesPerTransaction = 100,
-      category = categoryName,
-      level = Some(Level.TRACE)
+  // w-wetuwns a-a handwew that asynchwonouswy wogs m-messages to scwibe using the bawefowmattew which
+  // wogs just the message without any additionaw m-metadata
+  def scwibehandwew(categowyname: s-stwing): handwewfactowy =
+    scwibehandwew(
+      f-fowmattew = bawefowmattew,
+      m-maxmessagespewtwansaction = 100, nyaa~~
+      categowy = c-categowyname, ʘwʘ
+      w-wevew = s-some(wevew.twace)
     )
 
   /**
-   * A Config appropriate for interactive sessions and scripts.
+   * a-a config a-appwopwiate fow intewactive sessions and scwipts. ^•ﻌ•^
    */
-  def develConfig(): Config =
-    Config(
-      applicationId = Option(System.getenv("USER")).getOrElse("<unknown>") + ".devel",
-      localDestination = "/s/manhattan/cylon.native-thrift",
-      localTimeout = 10.seconds,
-      remoteDestination = "/s/manhattan/cylon.native-thrift",
-      remoteTimeout = 10.seconds,
-      undeleteWindowHours = Config.UndeleteWindowHours,
-      thriftClientLabel = Config.ThriftClientLabel,
-      maxRequestsPerBatch = Int.MaxValue,
-      serviceIdentifier = ServiceIdentifier(System.getenv("USER"), "tweetypie", "devel", "local"),
-      opportunisticTlsLevel = OpportunisticTls.Required
+  def devewconfig(): config =
+    config(
+      appwicationid = o-option(system.getenv("usew")).getowewse("<unknown>") + ".devew", rawr x3
+      w-wocawdestination = "/s/manhattan/cywon.native-thwift", 🥺
+      w-wocawtimeout = 10.seconds, ʘwʘ
+      wemotedestination = "/s/manhattan/cywon.native-thwift", (˘ω˘)
+      w-wemotetimeout = 10.seconds, o.O
+      undewetewindowhouws = config.undewetewindowhouws, σωσ
+      thwiftcwientwabew = c-config.thwiftcwientwabew, (ꈍᴗꈍ)
+      m-maxwequestspewbatch = int.maxvawue, (ˆ ﻌ ˆ)♡
+      s-sewviceidentifiew = sewviceidentifiew(system.getenv("usew"), o.O "tweetypie", :3 "devew", -.- "wocaw"),
+      oppowtunistictwswevew = oppowtunistictws.wequiwed
     )
 
   /**
-   * Build a Manhattan tweet storage client for use in interactive
-   * sessions and scripts.
+   * b-buiwd a-a manhattan tweet stowage cwient f-fow use in intewactive
+   * s-sessions and scwipts. ( ͡o ω ͡o )
    */
-  def devel(): TweetStorageClient =
-    new ManhattanTweetStorageClient(
-      develConfig(),
-      NullStatsReceiver,
-      ClientIdHelper.default,
+  def devew(): tweetstowagecwient =
+    nyew manhattantweetstowagecwient(
+      d-devewconfig(), /(^•ω•^)
+      nyuwwstatsweceivew, (⑅˘꒳˘)
+      c-cwientidhewpew.defauwt, òωó
     )
 }
 
-class ManhattanTweetStorageClient(
-  config: ManhattanTweetStorageClient.Config,
-  statsReceiver: StatsReceiver,
-  private val clientIdHelper: ClientIdHelper)
-    extends TweetStorageClient {
-  import ManhattanTweetStorageClient._
+c-cwass m-manhattantweetstowagecwient(
+  config: m-manhattantweetstowagecwient.config, 🥺
+  statsweceivew: s-statsweceivew, (ˆ ﻌ ˆ)♡
+  p-pwivate vaw cwientidhewpew: c-cwientidhewpew)
+    e-extends tweetstowagecwient {
+  i-impowt manhattantweetstowagecwient._
 
-  lazy val scribeHandlerFactory: ScribeHandlerFactory = scribeHandler _
-  val scribe: Scribe = new Scribe(scribeHandlerFactory, statsReceiver)
+  wazy vaw scwibehandwewfactowy: s-scwibehandwewfactowy = scwibehandwew _
+  v-vaw s-scwibe: scwibe = nyew scwibe(scwibehandwewfactowy, -.- s-statsweceivew)
 
-  def mkClient(
-    dest: String,
-    label: String
-  ): ManhattanKVClient = {
-    val mhMtlsParams =
-      if (config.serviceIdentifier == EmptyServiceIdentifier) NoMtlsParams
-      else
-        ManhattanKVClientMtlsParams(
-          serviceIdentifier = config.serviceIdentifier,
-          opportunisticTls = config.opportunisticTlsLevel
+  def mkcwient(
+    dest: stwing, σωσ
+    w-wabew: s-stwing
+  ): manhattankvcwient = {
+    v-vaw mhmtwspawams =
+      if (config.sewviceidentifiew == emptysewviceidentifiew) nyomtwspawams
+      ewse
+        manhattankvcwientmtwspawams(
+          sewviceidentifiew = c-config.sewviceidentifiew, >_<
+          oppowtunistictws = config.oppowtunistictwswevew
         )
 
-    new ManhattanKVClient(
-      config.applicationId,
+    n-nyew manhattankvcwient(
+      c-config.appwicationid, :3
       dest,
-      mhMtlsParams,
-      label,
-      Seq(Experiments.ApertureLoadBalancer))
+      mhmtwspawams, OwO
+      w-wabew, rawr
+      seq(expewiments.apewtuwewoadbawancew))
   }
 
-  val localClient: ManhattanKVClient = mkClient(config.localDestination, config.thriftClientLabel)
+  vaw wocawcwient: m-manhattankvcwient = m-mkcwient(config.wocawdestination, (///ˬ///✿) config.thwiftcwientwabew)
 
-  val localMhEndpoint: ManhattanKVEndpoint = ManhattanKVEndpointBuilder(localClient)
-    .defaultGuarantee(Guarantee.SoftDcReadMyWrites)
-    .defaultMaxTimeout(config.localTimeout)
-    .maxRequestsPerBatch(config.maxRequestsPerBatch)
-    .build()
+  vaw wocawmhendpoint: m-manhattankvendpoint = manhattankvendpointbuiwdew(wocawcwient)
+    .defauwtguawantee(guawantee.softdcweadmywwites)
+    .defauwtmaxtimeout(config.wocawtimeout)
+    .maxwequestspewbatch(config.maxwequestspewbatch)
+    .buiwd()
 
-  val localManhattanOperations = new ManhattanOperations(Config.Dataset, localMhEndpoint)
+  vaw wocawmanhattanopewations = n-nyew manhattanopewations(config.dataset, ^^ wocawmhendpoint)
 
-  val remoteClient: ManhattanKVClient =
-    mkClient(config.remoteDestination, s"${config.thriftClientLabel}_remote")
+  v-vaw wemotecwient: manhattankvcwient =
+    m-mkcwient(config.wemotedestination, XD s"${config.thwiftcwientwabew}_wemote")
 
-  val remoteMhEndpoint: ManhattanKVEndpoint = ManhattanKVEndpointBuilder(remoteClient)
-    .defaultGuarantee(Guarantee.SoftDcReadMyWrites)
-    .defaultMaxTimeout(config.remoteTimeout)
-    .build()
+  v-vaw wemotemhendpoint: m-manhattankvendpoint = m-manhattankvendpointbuiwdew(wemotecwient)
+    .defauwtguawantee(guawantee.softdcweadmywwites)
+    .defauwtmaxtimeout(config.wemotetimeout)
+    .buiwd()
 
-  val remoteManhattanOperations = new ManhattanOperations(Config.Dataset, remoteMhEndpoint)
+  vaw wemotemanhattanopewations = nyew manhattanopewations(config.dataset, UwU wemotemhendpoint)
 
   /**
-   * Note: This translation is only useful for non-batch endpoints. Batch endpoints currently
-   * represent failure without propagating an exception
-   * (e.g. [[com.twitter.tweetypie.storage.Response.TweetResponseCode.Failure]]).
+   * nyote: this twanswation is onwy usefuw fow nyon-batch endpoints. o.O batch endpoints cuwwentwy
+   * wepwesent faiwuwe without pwopagating an e-exception
+   * (e.g. 😳 [[com.twittew.tweetypie.stowage.wesponse.tweetwesponsecode.faiwuwe]]). (˘ω˘)
    */
-  private[this] def translateExceptions(
-    apiName: String,
-    statsReceiver: StatsReceiver
-  ): PartialFunction[Throwable, Throwable] = {
-    case e: IllegalArgumentException => ClientError(e.getMessage, e)
-    case e: DeniedManhattanException => RateLimited(e.getMessage, e)
-    case e: VersionMismatchError =>
-      statsReceiver.scope(apiName).counter("mh_version_mismatches").incr()
+  p-pwivate[this] def twanswateexceptions(
+    apiname: stwing, 🥺
+    s-statsweceivew: s-statsweceivew
+  ): p-pawtiawfunction[thwowabwe, ^^ thwowabwe] = {
+    c-case e: iwwegawawgumentexception => cwientewwow(e.getmessage, >w< e-e)
+    case e: d-deniedmanhattanexception => watewimited(e.getmessage, ^^;; e-e)
+    case e: vewsionmismatchewwow =>
+      s-statsweceivew.scope(apiname).countew("mh_vewsion_mismatches").incw()
       e
-    case e: InternalError =>
-      TweetUtils.log.error(e, s"Error processing $apiName request: ${e.getMessage}")
-      e
+    c-case e: intewnawewwow =>
+      tweetutiws.wog.ewwow(e, s"ewwow p-pwocessing $apiname w-wequest: ${e.getmessage}")
+      e-e
   }
 
   /**
-   * Count requests per client id producing metrics of the form
-   * .../clients/:root_client_id/requests
+   * c-count w-wequests pew cwient i-id pwoducing m-metwics of the f-fowm
+   * .../cwients/:woot_cwient_id/wequests
    */
-  def observeClientId[A, B](
-    apiStitch: A => Stitch[B],
-    statsReceiver: StatsReceiver,
-    clientIdHelper: ClientIdHelper,
-  ): A => Stitch[B] = {
-    val clients = statsReceiver.scope("clients")
+  d-def obsewvecwientid[a, (˘ω˘) b](
+    apistitch: a-a => stitch[b], OwO
+    s-statsweceivew: s-statsweceivew,
+    cwientidhewpew: c-cwientidhewpew, (ꈍᴗꈍ)
+  ): a => stitch[b] = {
+    v-vaw cwients = statsweceivew.scope("cwients")
 
-    val incrementClientRequests = { args: A =>
-      val clientId = clientIdHelper.effectiveClientIdRoot.getOrElse(ClientIdHelper.UnknownClientId)
-      clients.counter(clientId, "requests").incr
+    v-vaw incwementcwientwequests = { a-awgs: a =>
+      v-vaw cwientid = cwientidhewpew.effectivecwientidwoot.getowewse(cwientidhewpew.unknowncwientid)
+      c-cwients.countew(cwientid, òωó "wequests").incw
     }
 
     a => {
-      incrementClientRequests(a)
-      apiStitch(a)
+      incwementcwientwequests(a)
+      apistitch(a)
     }
   }
 
   /**
-   * Increment counters based on the overall response status of the returned [[GetTweet.Response]].
+   * i-incwement countews based on the o-ovewaww wesponse status of the w-wetuwned [[gettweet.wesponse]]. ʘwʘ
    */
-  def observeGetTweetResponseCode[A](
-    apiStitch: A => Stitch[GetTweet.Response],
-    statsReceiver: StatsReceiver
-  ): A => Stitch[GetTweet.Response] = {
-    val scope = statsReceiver.scope("response_code")
+  def obsewvegettweetwesponsecode[a](
+    apistitch: a => stitch[gettweet.wesponse], ʘwʘ
+    statsweceivew: statsweceivew
+  ): a-a => stitch[gettweet.wesponse] = {
+    vaw scope = s-statsweceivew.scope("wesponse_code")
 
-    val success = scope.counter("success")
-    val notFound = scope.counter("not_found")
-    val failure = scope.counter("failure")
-    val overCapacity = scope.counter("over_capacity")
-    val deleted = scope.counter("deleted")
-    val bounceDeleted = scope.counter("bounce_deleted")
+    vaw s-success = scope.countew("success")
+    vaw nyotfound = scope.countew("not_found")
+    vaw faiwuwe = s-scope.countew("faiwuwe")
+    vaw ovewcapacity = s-scope.countew("ovew_capacity")
+    v-vaw deweted = s-scope.countew("deweted")
+    vaw bouncedeweted = scope.countew("bounce_deweted")
 
-    a =>
-      apiStitch(a).respond {
-        case Return(_: GetTweet.Response.Found) => success.incr()
-        case Return(GetTweet.Response.NotFound) => notFound.incr()
-        case Return(_: GetTweet.Response.BounceDeleted) => bounceDeleted.incr()
-        case Return(GetTweet.Response.Deleted) => deleted.incr()
-        case Throw(_: RateLimited) => overCapacity.incr()
-        case Throw(_) => failure.incr()
+    a-a =>
+      a-apistitch(a).wespond {
+        case wetuwn(_: g-gettweet.wesponse.found) => success.incw()
+        case wetuwn(gettweet.wesponse.notfound) => n-nyotfound.incw()
+        case w-wetuwn(_: gettweet.wesponse.bouncedeweted) => b-bouncedeweted.incw()
+        c-case wetuwn(gettweet.wesponse.deweted) => d-deweted.incw()
+        case t-thwow(_: watewimited) => o-ovewcapacity.incw()
+        c-case thwow(_) => faiwuwe.incw()
       }
   }
 
   /**
-   * We do 3 things here:
+   * w-we do 3 things h-hewe:
    *
-   * - Bookkeeping for overall requests
-   * - Bookkeeping for per api requests
-   * - Translate exceptions
+   * - b-bookkeeping fow o-ovewaww wequests
+   * - b-bookkeeping f-fow pew api w-wequests
+   * - t-twanswate exceptions
    *
-   * @param apiName the API being called
-   * @param apiStitch the implementation of the API
-   * @tparam A template for input type of API
-   * @tparam B template for output type of API
-   * @return Function which executes the given API call
+   * @pawam apiname t-the api being cawwed
+   * @pawam apistitch the impwementation o-of the api
+   * @tpawam a-a tempwate f-fow input type o-of api
+   * @tpawam b tempwate fow output type of api
+   * @wetuwn f-function which e-exekawaii~s the g-given api caww
    */
-  private[storage] def endpoint[A, B](
-    apiName: String,
-    apiStitch: A => Stitch[B]
-  ): A => Stitch[B] = {
-    val translateException = translateExceptions(apiName, statsReceiver)
-    val observe = StitchUtils.observe[B](statsReceiver, apiName)
+  pwivate[stowage] def endpoint[a, nyaa~~ b](
+    a-apiname: stwing, UwU
+    a-apistitch: a => stitch[b]
+  ): a-a => stitch[b] = {
+    v-vaw twanswateexception = twanswateexceptions(apiname, (⑅˘꒳˘) statsweceivew)
+    v-vaw obsewve = s-stitchutiws.obsewve[b](statsweceivew, (˘ω˘) a-apiname)
 
-    a =>
-      StitchUtils.translateExceptions(
-        observe(apiStitch(a)),
-        translateException
+    a-a =>
+      stitchutiws.twanswateexceptions(
+        obsewve(apistitch(a)), :3
+        t-twanswateexception
       )
   }
 
-  private[storage] def endpoint2[A, B, C](
-    apiName: String,
-    apiStitch: (A, B) => Stitch[C],
-    clientIdHelper: ClientIdHelper,
-  ): (A, B) => Stitch[C] =
-    Function.untupled(endpoint(apiName, apiStitch.tupled))
+  p-pwivate[stowage] def endpoint2[a, (˘ω˘) b, c-c](
+    apiname: stwing, nyaa~~
+    apistitch: (a, (U ﹏ U) b) => s-stitch[c], nyaa~~
+    cwientidhewpew: c-cwientidhewpew, ^^;;
+  ): (a, OwO b-b) => stitch[c] =
+    f-function.untupwed(endpoint(apiname, nyaa~~ a-apistitch.tupwed))
 
-  val getTweet: TweetStorageClient.GetTweet = {
-    val stats = statsReceiver.scope("getTweet")
+  vaw g-gettweet: tweetstowagecwient.gettweet = {
+    vaw s-stats = statsweceivew.scope("gettweet")
 
-    observeClientId(
-      observeGetTweetResponseCode(
-        endpoint(
-          "getTweet",
-          GetTweetHandler(
-            read = localManhattanOperations.read,
-            statsReceiver = stats,
+    obsewvecwientid(
+      o-obsewvegettweetwesponsecode(
+        e-endpoint(
+          "gettweet", UwU
+          g-gettweethandwew(
+            wead = wocawmanhattanopewations.wead, 😳
+            s-statsweceivew = s-stats, 😳
           )
-        ),
-        stats,
+        ), (ˆ ﻌ ˆ)♡
+        s-stats, (✿oωo)
       ),
-      stats,
-      clientIdHelper,
+      stats, nyaa~~
+      cwientidhewpew, ^^
     )
   }
 
-  val getStoredTweet: TweetStorageClient.GetStoredTweet = {
-    val stats = statsReceiver.scope("getStoredTweet")
+  v-vaw getstowedtweet: tweetstowagecwient.getstowedtweet = {
+    vaw stats = s-statsweceivew.scope("getstowedtweet")
 
-    observeClientId(
-      endpoint(
-        "getStoredTweet",
-        GetStoredTweetHandler(
-          read = localManhattanOperations.read,
-          statsReceiver = stats,
+    obsewvecwientid(
+      e-endpoint(
+        "getstowedtweet", (///ˬ///✿)
+        g-getstowedtweethandwew(
+          wead = wocawmanhattanopewations.wead, 😳
+          statsweceivew = stats, òωó
         )
-      ),
-      stats,
-      clientIdHelper,
+      ), ^^;;
+      stats, rawr
+      c-cwientidhewpew, (ˆ ﻌ ˆ)♡
     )
   }
 
-  val addTweet: TweetStorageClient.AddTweet =
-    endpoint(
-      "addTweet",
-      AddTweetHandler(
-        insert = localManhattanOperations.insert,
-        scribe = scribe,
-        stats = statsReceiver
+  vaw a-addtweet: tweetstowagecwient.addtweet =
+    e-endpoint(
+      "addtweet", XD
+      addtweethandwew(
+        insewt = wocawmanhattanopewations.insewt, >_<
+        s-scwibe = scwibe, (˘ω˘)
+        s-stats = statsweceivew
       )
     )
 
-  val updateTweet: TweetStorageClient.UpdateTweet =
-    endpoint2(
-      "updateTweet",
-      ManhattanTweetStorageClient.sanitizeTweetFields(
-        UpdateTweetHandler(
-          insert = localManhattanOperations.insert,
-          stats = statsReceiver,
+  v-vaw updatetweet: t-tweetstowagecwient.updatetweet =
+    e-endpoint2(
+      "updatetweet", 😳
+      m-manhattantweetstowagecwient.sanitizetweetfiewds(
+        updatetweethandwew(
+          insewt = wocawmanhattanopewations.insewt, o.O
+          stats = statsweceivew, (ꈍᴗꈍ)
         )
-      ),
-      clientIdHelper,
+      ), rawr x3
+      cwientidhewpew, ^^
     )
 
-  val softDelete: TweetStorageClient.SoftDelete =
-    endpoint(
-      "softDelete",
-      SoftDeleteHandler(
-        insert = localManhattanOperations.insert,
-        scribe = scribe
+  v-vaw softdewete: tweetstowagecwient.softdewete =
+    e-endpoint(
+      "softdewete", OwO
+      softdewetehandwew(
+        insewt = wocawmanhattanopewations.insewt, ^^
+        scwibe = s-scwibe
       )
     )
 
-  val bounceDelete: BounceDelete =
+  vaw bouncedewete: bouncedewete =
     endpoint(
-      "bounceDelete",
-      BounceDeleteHandler(
-        insert = localManhattanOperations.insert,
-        scribe = scribe
+      "bouncedewete", :3
+      bouncedewetehandwew(
+        i-insewt = w-wocawmanhattanopewations.insewt, o.O
+        scwibe = s-scwibe
       )
     )
 
-  val undelete: TweetStorageClient.Undelete =
-    endpoint(
-      "undelete",
-      UndeleteHandler(
-        read = localManhattanOperations.read,
-        localInsert = localManhattanOperations.insert,
-        remoteInsert = remoteManhattanOperations.insert,
-        delete = localManhattanOperations.delete,
-        undeleteWindowHours = config.undeleteWindowHours,
-        stats = statsReceiver
+  vaw undewete: tweetstowagecwient.undewete =
+    e-endpoint(
+      "undewete", -.-
+      u-undewetehandwew(
+        wead = wocawmanhattanopewations.wead, (U ﹏ U)
+        w-wocawinsewt = wocawmanhattanopewations.insewt, o.O
+        w-wemoteinsewt = wemotemanhattanopewations.insewt, OwO
+        dewete = wocawmanhattanopewations.dewete, ^•ﻌ•^
+        undewetewindowhouws = c-config.undewetewindowhouws, ʘwʘ
+        stats = statsweceivew
       )
     )
 
-  val getDeletedTweets: TweetStorageClient.GetDeletedTweets =
-    endpoint(
-      "getDeletedTweets",
-      GetDeletedTweetsHandler(
-        read = localManhattanOperations.read,
-        stats = statsReceiver
+  vaw getdewetedtweets: t-tweetstowagecwient.getdewetedtweets =
+    e-endpoint(
+      "getdewetedtweets", :3
+      g-getdewetedtweetshandwew(
+        wead = wocawmanhattanopewations.wead,
+        stats = statsweceivew
       )
     )
 
-  val deleteAdditionalFields: TweetStorageClient.DeleteAdditionalFields =
+  v-vaw deweteadditionawfiewds: tweetstowagecwient.deweteadditionawfiewds =
     endpoint2(
-      "deleteAdditionalFields",
-      DeleteAdditionalFieldsHandler(
-        delete = localManhattanOperations.delete,
-        stats = statsReceiver,
+      "deweteadditionawfiewds", 😳
+      deweteadditionawfiewdshandwew(
+        dewete = w-wocawmanhattanopewations.dewete, òωó
+        s-stats = s-statsweceivew, 🥺
       ),
-      clientIdHelper,
+      c-cwientidhewpew, rawr x3
     )
 
-  val scrub: TweetStorageClient.Scrub =
-    endpoint2(
-      "scrub",
-      ScrubHandler(
-        insert = localManhattanOperations.insert,
-        delete = localManhattanOperations.delete,
-        scribe = scribe,
-        stats = statsReceiver,
-      ),
-      clientIdHelper,
+  vaw scwub: tweetstowagecwient.scwub =
+    e-endpoint2(
+      "scwub", ^•ﻌ•^
+      s-scwubhandwew(
+        insewt = wocawmanhattanopewations.insewt, :3
+        d-dewete = wocawmanhattanopewations.dewete,
+        scwibe = scwibe, (ˆ ﻌ ˆ)♡
+        s-stats = statsweceivew, (U ᵕ U❁)
+      ), :3
+      cwientidhewpew, ^^;;
     )
 
-  val hardDeleteTweet: HardDeleteTweet =
-    endpoint(
-      "hardDeleteTweet",
-      HardDeleteTweetHandler(
-        read = localManhattanOperations.read,
-        insert = localManhattanOperations.insert,
-        delete = localManhattanOperations.delete,
-        scribe = scribe,
-        stats = statsReceiver
+  vaw hawddewetetweet: h-hawddewetetweet =
+    e-endpoint(
+      "hawddewetetweet", ( ͡o ω ͡o )
+      hawddewetetweethandwew(
+        w-wead = w-wocawmanhattanopewations.wead, o.O
+        i-insewt = wocawmanhattanopewations.insewt, ^•ﻌ•^
+        dewete = w-wocawmanhattanopewations.dewete, XD
+        scwibe = scwibe, ^^
+        s-stats = statsweceivew
       )
     )
 
-  val ping: TweetStorageClient.Ping =
+  vaw ping: tweetstowagecwient.ping =
     () =>
-      Stitch
-        .run(
-          localMhEndpoint
+      stitch
+        .wun(
+          w-wocawmhendpoint
             .get(
-              ManhattanOperations.KeyDescriptor
-                .withDataset(Config.Dataset)
-                .withPkey(Random.nextLong().abs)
-                .withLkey(TweetKey.LKey.CoreFieldsKey), // could be any lkey
-              ValueDescriptor(BufInjection)
+              m-manhattanopewations.keydescwiptow
+                .withdataset(config.dataset)
+                .withpkey(wandom.nextwong().abs)
+                .withwkey(tweetkey.wkey.cowefiewdskey), o.O // c-couwd b-be any wkey
+              v-vawuedescwiptow(bufinjection)
             ).unit
         )
 }

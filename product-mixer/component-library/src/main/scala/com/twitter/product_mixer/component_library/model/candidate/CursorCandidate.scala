@@ -1,87 +1,87 @@
-package com.twitter.product_mixer.component_library.model.candidate
+package com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
 
-sealed trait CursorType
-case object PreviousCursor extends CursorType
-case object NextCursor extends CursorType
+s-seawed twait c-cuwsowtype
+case o-object pweviouscuwsow e-extends c-cuwsowtype
+case o-object nyextcuwsow e-extends cuwsowtype
 
 /**
- * Canonical CursorCandidate model. Always prefer this version over all other variants.
+ * canonicaw c-cuwsowcandidate modew. awways pwefew this vewsion ovew aww othew vawiants. nyaa~~
  *
- * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]
- *       on the candidate's [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
- *       features come from the candidate source itself (as opposed to hydrated via a
- *       [[com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator]]),
- *       then [[com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
- *       can be used to extract features from the candidate source response.
+ * @note a-any additionaw fiewds shouwd be added as a [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwe]]
+ *       o-on the candidate's [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap]]. if the
+ *       f-featuwes come fwom the candidate souwce itsewf (as opposed t-to hydwated via a
+ *       [[com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.candidatefeatuwehydwatow]]), OwO
+ *       then [[com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig.featuwesfwomcandidatesouwcetwansfowmews]]
+ *       c-can be used to e-extwact featuwes fwom the candidate souwce wesponse. rawr x3
  *
- * @note This class should always remain `final`. If for any reason the `final` modifier is removed,
- *       the equals() implementation must be updated in order to handle class inheritor equality
- *       (see note on the equals method below)
+ * @note this cwass shouwd awways wemain `finaw`. XD i-if fow any weason the `finaw` modifiew is wemoved, σωσ
+ *       the equaws() i-impwementation must be updated i-in owdew to h-handwe cwass inhewitow e-equawity
+ *       (see n-nyote on the equaws method bewow)
  */
-final class CursorCandidate private (
-  override val id: Long,
-  val value: String,
-  val cursorType: CursorType)
-    extends UniversalNoun[Long] {
+f-finaw cwass cuwsowcandidate pwivate (
+  ovewwide v-vaw id: wong, (U ᵕ U❁)
+  vaw vawue: stwing, (U ﹏ U)
+  vaw cuwsowtype: cuwsowtype)
+    extends univewsawnoun[wong] {
 
   /**
-   * @inheritdoc
+   * @inhewitdoc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[CursorCandidate]
+  o-ovewwide def canequaw(that: a-any): boowean = t-that.isinstanceof[cuwsowcandidate]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * h-high pewfowmance impwementation of equaws method that wevewages:
+   *  - w-wefewentiaw e-equawity showt ciwcuit
+   *  - c-cached hashcode e-equawity showt ciwcuit
+   *  - f-fiewd vawues awe onwy checked i-if the hashcodes awe equaw to handwe the unwikewy c-case
+   *    of a hashcode c-cowwision
+   *  - wemovaw of check f-fow `that` being a-an equaws-compatibwe descendant since this cwass is finaw
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @note `candidate.canequaw(this)` is nyot necessawy because this cwass is f-finaw
+   * @see [[http://www.awtima.com/pins1ed/object-equawity.htmw p-pwogwamming in scawa, :3
+   *      c-chaptew 28]] f-fow discussion a-and design. ( ͡o ω ͡o )
    */
-  override def equals(that: Any): Boolean =
-    that match {
-      case candidate: CursorCandidate =>
+  ovewwide def equaws(that: any): boowean =
+    t-that match {
+      case candidate: cuwsowcandidate =>
         (
           (this eq candidate)
-            || ((hashCode == candidate.hashCode)
-              && (id == candidate.id && value == candidate.value && cursorType == candidate.cursorType))
+            || ((hashcode == candidate.hashcode)
+              && (id == c-candidate.id && vawue == c-candidate.vawue && c-cuwsowtype == c-candidate.cuwsowtype))
         )
       case _ =>
-        false
+        fawse
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * w-wevewage d-domain-specific c-constwaints (see n-nyotes bewow) to safewy constwuct and cache the
+   * h-hashcode as a-a vaw, σωσ such that i-it is instantiated o-once on object c-constwuction. >w< this pwevents the
+   * nyeed to wecompute the h-hashcode on each hashcode() invocation, 😳😳😳 which is the behaviow of the
+   * scawa compiwew case cwass-genewated hashcode() s-since it cannot make assumptions wegawding fiewd
+   * o-object mutabiwity a-and hashcode impwementations. OwO
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated candidate
-   *       (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       data structure), assuming stable hashCode implementations for these objects
+   * @note c-caching the hashcode is onwy safe i-if aww of the fiewds used to constwuct t-the hashcode
+   *       a-awe immutabwe. 😳 this incwudes:
+   *       - inabiwity to mutate the object wefewence on fow an existing i-instantiated candidate
+   *       (i.e. e-each fiewd is a vaw)
+   *       - i-inabiwity to mutate t-the fiewd object instance itsewf (i.e. 😳😳😳 each f-fiewd is an immutabwe
+   *       - i-inabiwity to mutate the fiewd o-object instance i-itsewf (i.e. (˘ω˘) each fiewd is an immutabwe
+   *       data stwuctuwe), ʘwʘ assuming s-stabwe hashcode i-impwementations f-fow these objects
    *
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @note in owdew fow the h-hashcode to be c-consistent with object equawity, ( ͡o ω ͡o ) `##` m-must be used fow
+   *       boxed nyumewic types and nyuww. o.O as such, >w< awways p-pwefew `.##` o-ovew `.hashcode()`. 😳
    */
-  override val hashCode: Int =
+  ovewwide vaw hashcode: i-int =
     31 * (
       31 * (
-        id.##
-      ) + value.##
-    ) + cursorType.##
+        i-id.##
+      ) + vawue.##
+    ) + cuwsowtype.##
 }
 
-object CursorCandidate {
-  def apply(id: Long, value: String, cursorType: CursorType): CursorCandidate =
-    new CursorCandidate(id, value, cursorType)
+object c-cuwsowcandidate {
+  def appwy(id: wong, 🥺 vawue: stwing, rawr x3 cuwsowtype: cuwsowtype): c-cuwsowcandidate =
+    nyew cuwsowcandidate(id, o.O vawue, cuwsowtype)
 }

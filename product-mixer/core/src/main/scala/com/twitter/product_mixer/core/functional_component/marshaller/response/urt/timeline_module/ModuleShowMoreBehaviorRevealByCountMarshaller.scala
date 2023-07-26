@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.timewine_moduwe
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleShowMoreBehaviorRevealByCount
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.moduweshowmowebehaviowweveawbycount
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class ModuleShowMoreBehaviorRevealByCountMarshaller @Inject() () {
+@singweton
+c-cwass m-moduweshowmowebehaviowweveawbycountmawshawwew @inject() () {
 
-  def apply(
-    moduleShowMoreBehaviorRevealByCount: ModuleShowMoreBehaviorRevealByCount
-  ): urt.ModuleShowMoreBehavior =
-    urt.ModuleShowMoreBehavior.RevealByCount(
-      urt.ModuleShowMoreBehaviorRevealByCount(
-        initialItemsCount = moduleShowMoreBehaviorRevealByCount.initialItemsCount,
-        showMoreItemsCount = moduleShowMoreBehaviorRevealByCount.showMoreItemsCount
+  d-def appwy(
+    m-moduweshowmowebehaviowweveawbycount: moduweshowmowebehaviowweveawbycount
+  ): uwt.moduweshowmowebehaviow =
+    uwt.moduweshowmowebehaviow.weveawbycount(
+      uwt.moduweshowmowebehaviowweveawbycount(
+        initiawitemscount = moduweshowmowebehaviowweveawbycount.initiawitemscount, σωσ
+        s-showmoweitemscount = moduweshowmowebehaviowweveawbycount.showmoweitemscount
       )
     )
 }

@@ -1,7 +1,7 @@
-package com.twitter.search.ingester.pipeline.twitter.thriftparse;
+package com.twittew.seawch.ingestew.pipewine.twittew.thwiftpawse;
 
-public final class ThriftTweetParsingException extends Exception {
-  public ThriftTweetParsingException(String message) {
-    super(message);
+pubwic finaw cwass t-thwifttweetpawsingexception e-extends exception {
+  p-pubwic thwifttweetpawsingexception(stwing m-message) {
+    s-supew(message);
   }
 }

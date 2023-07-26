@@ -1,149 +1,149 @@
-package com.twitter.servo.cache
+package com.twittew.sewvo.cache
 
-import com.twitter.finagle.memcached.{CasResult, Client}
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.{Backoff, Memcached, TimeoutException, WriteException}
-import com.twitter.hashing.KeyHasher
-import com.twitter.io.Buf
-import com.twitter.logging.Logger
-import com.twitter.util._
+impowt com.twittew.finagwe.memcached.{caswesuwt, σωσ c-cwient}
+impowt c-com.twittew.finagwe.sewvice.wetwypowicy
+i-impowt com.twittew.finagwe.{backoff, -.- m-memcached, t-timeoutexception, ^^;; w-wwiteexception}
+i-impowt c-com.twittew.hashing.keyhashew
+impowt com.twittew.io.buf
+impowt com.twittew.wogging.woggew
+impowt c-com.twittew.utiw._
 
-case class MemcacheRetryPolicy(
-  writeExceptionBackoffs: Backoff,
-  timeoutBackoffs: Backoff)
-    extends RetryPolicy[Try[Nothing]] {
-  override def apply(r: Try[Nothing]) = r match {
-    case Throw(_: WriteException) => onWriteException
-    case Throw(_: TimeoutException) => onTimeoutException
-    case _ => None
+case cwass memcachewetwypowicy(
+  w-wwiteexceptionbackoffs: backoff, XD
+  timeoutbackoffs: b-backoff)
+    extends wetwypowicy[twy[nothing]] {
+  ovewwide def appwy(w: t-twy[nothing]) = w match {
+    c-case thwow(_: w-wwiteexception) => onwwiteexception
+    case thwow(_: timeoutexception) => ontimeoutexception
+    c-case _ => nyone
   }
 
-  private[this] def onTimeoutException = consume(timeoutBackoffs.toStream) { tail =>
-    copy(timeoutBackoffs = Backoff.fromStream(tail))
+  pwivate[this] def ontimeoutexception = consume(timeoutbackoffs.tostweam) { taiw =>
+    c-copy(timeoutbackoffs = backoff.fwomstweam(taiw))
   }
 
-  private[this] def onWriteException = consume(writeExceptionBackoffs.toStream) { tail =>
-    copy(writeExceptionBackoffs = Backoff.fromStream(tail))
+  p-pwivate[this] d-def onwwiteexception = c-consume(wwiteexceptionbackoffs.tostweam) { t-taiw =>
+    copy(wwiteexceptionbackoffs = backoff.fwomstweam(taiw))
   }
 
-  private[this] def consume(s: Stream[Duration])(f: Stream[Duration] => MemcacheRetryPolicy) = {
-    s.headOption map { duration =>
-      (duration, f(s.tail))
+  p-pwivate[this] def consume(s: stweam[duwation])(f: s-stweam[duwation] => memcachewetwypowicy) = {
+    s.headoption map { duwation =>
+      (duwation, 🥺 f(s.taiw))
     }
   }
 }
 
-object FinagleMemcacheFactory {
-  val DefaultHashName = "fnv1-32"
+object finagwememcachefactowy {
+  v-vaw defauwthashname = "fnv1-32"
 
-  def apply(client: Memcached.Client, dest: String, hashName: String = DefaultHashName) =
-    new FinagleMemcacheFactory(client, dest, hashName)
+  def appwy(cwient: m-memcached.cwient, òωó d-dest: stwing, (ˆ ﻌ ˆ)♡ h-hashname: stwing = defauwthashname) =
+    new finagwememcachefactowy(cwient, -.- dest, hashname)
 }
 
-class FinagleMemcacheFactory private[cache] (
-  client: Memcached.Client,
-  dest: String,
-  hashName: String)
-    extends MemcacheFactory {
+c-cwass finagwememcachefactowy p-pwivate[cache] (
+  cwient: memcached.cwient, :3
+  d-dest: stwing, ʘwʘ
+  h-hashname: stwing)
+    extends m-memcachefactowy {
 
-  def apply(): Memcache = {
-    val keyHasher = KeyHasher.byName(hashName)
-    new FinagleMemcache(client.withKeyHasher(keyHasher).newTwemcacheClient(dest), hashName)
+  def appwy(): m-memcache = {
+    vaw keyhashew = keyhashew.byname(hashname)
+    n-nyew finagwememcache(cwient.withkeyhashew(keyhashew).newtwemcachecwient(dest), 🥺 hashname)
   }
 }
 
-object FinagleMemcache {
-  val NoFlags = 0
-  val logger = Logger(getClass)
+o-object finagwememcache {
+  vaw n-nofwags = 0
+  vaw w-woggew = woggew(getcwass)
 }
 
 /**
- * Adapter for a [[Memcache]] (type alias for [[TtlCache]]) from a Finagle Memcached
- * [[Client]].
+ * adaptew fow a [[memcache]] (type awias fow [[ttwcache]]) fwom a finagwe memcached
+ * [[cwient]].
  */
-class FinagleMemcache(client: Client, hashName: String = FinagleMemcacheFactory.DefaultHashName)
-    extends Memcache {
+cwass finagwememcache(cwient: c-cwient, >_< h-hashname: stwing = finagwememcachefactowy.defauwthashname)
+    e-extends memcache {
 
-  import FinagleMemcache.NoFlags
+  i-impowt finagwememcache.nofwags
 
-  private[this] case class BufferChecksum(buffer: Buf) extends Checksum
+  p-pwivate[this] case cwass buffewchecksum(buffew: buf) extends c-checksum
 
-  def release(): Unit = {
-    client.close()
+  def wewease(): unit = {
+    cwient.cwose()
   }
 
-  override def get(keys: Seq[String]): Future[KeyValueResult[String, Array[Byte]]] =
-    client.getResult(keys).transform {
-      case Return(gr) =>
-        val found = gr.hits.map {
-          case (key, v) =>
-            val bytes = Buf.ByteArray.Owned.extract(v.value)
-            key -> bytes
+  ovewwide def get(keys: seq[stwing]): f-futuwe[keyvawuewesuwt[stwing, ʘwʘ awway[byte]]] =
+    c-cwient.getwesuwt(keys).twansfowm {
+      c-case wetuwn(gw) =>
+        vaw f-found = gw.hits.map {
+          case (key, (˘ω˘) v) =>
+            v-vaw bytes = buf.byteawway.owned.extwact(v.vawue)
+            k-key -> b-bytes
         }
-        Future.value(KeyValueResult(found, gr.misses, gr.failures))
+        f-futuwe.vawue(keyvawuewesuwt(found, (✿oωo) gw.misses, gw.faiwuwes))
 
-      case Throw(t) =>
-        Future.value(KeyValueResult(failed = keys.map(_ -> t).toMap))
+      case thwow(t) =>
+        f-futuwe.vawue(keyvawuewesuwt(faiwed = k-keys.map(_ -> t-t).tomap))
     }
 
-  override def getWithChecksum(keys: Seq[String]): Future[CsKeyValueResult[String, Array[Byte]]] =
-    client.getsResult(keys).transform {
-      case Return(gr) =>
-        try {
-          val hits = gr.hits map {
-            case (key, v) =>
-              val bytes = Buf.ByteArray.Owned.extract(v.value)
-              key -> (Return(bytes), BufferChecksum(
-                v.casUnique.get
-              )) // TODO. what to do if missing?
+  ovewwide d-def getwithchecksum(keys: s-seq[stwing]): futuwe[cskeyvawuewesuwt[stwing, (///ˬ///✿) awway[byte]]] =
+    cwient.getswesuwt(keys).twansfowm {
+      c-case wetuwn(gw) =>
+        twy {
+          vaw hits = gw.hits map {
+            case (key, rawr x3 v-v) =>
+              vaw bytes = buf.byteawway.owned.extwact(v.vawue)
+              key -> (wetuwn(bytes), -.- b-buffewchecksum(
+                v-v.casunique.get
+              )) // t-todo. ^^ nyani to do if missing?
           }
-          Future.value(KeyValueResult(hits, gr.misses, gr.failures))
-        } catch {
-          case t: Throwable =>
-            Future.value(KeyValueResult(failed = keys.map(_ -> t).toMap))
+          f-futuwe.vawue(keyvawuewesuwt(hits, (⑅˘꒳˘) gw.misses, nyaa~~ g-gw.faiwuwes))
+        } c-catch {
+          case t: thwowabwe =>
+            futuwe.vawue(keyvawuewesuwt(faiwed = keys.map(_ -> t).tomap))
         }
-      case Throw(t) =>
-        Future.value(KeyValueResult(failed = keys.map(_ -> t).toMap))
+      case thwow(t) =>
+        f-futuwe.vawue(keyvawuewesuwt(faiwed = keys.map(_ -> t).tomap))
     }
 
-  private val jb2sb: java.lang.Boolean => Boolean = _.booleanValue
-  private val jl2sl: java.lang.Long => Long = _.longValue
+  p-pwivate vaw jb2sb: java.wang.boowean => b-boowean = _.booweanvawue
+  p-pwivate vaw jw2sw: java.wang.wong => wong = _.wongvawue
 
-  override def add(key: String, value: Array[Byte], ttl: Duration): Future[Boolean] =
-    client.add(key, NoFlags, ttl.fromNow, Buf.ByteArray.Owned(value)) map jb2sb
+  ovewwide d-def add(key: s-stwing, /(^•ω•^) vawue: awway[byte], (U ﹏ U) t-ttw: duwation): f-futuwe[boowean] =
+    cwient.add(key, 😳😳😳 nyofwags, ttw.fwomnow, >w< buf.byteawway.owned(vawue)) map jb2sb
 
-  override def checkAndSet(
-    key: String,
-    value: Array[Byte],
-    checksum: Checksum,
-    ttl: Duration
-  ): Future[Boolean] = {
+  o-ovewwide d-def checkandset(
+    k-key: stwing, XD
+    vawue: awway[byte], o.O
+    c-checksum: c-checksum, mya
+    ttw: duwation
+  ): f-futuwe[boowean] = {
     checksum match {
-      case BufferChecksum(cs) =>
-        client.checkAndSet(key, NoFlags, ttl.fromNow, Buf.ByteArray.Owned(value), cs) map {
-          res: CasResult =>
-            res.replaced
+      case buffewchecksum(cs) =>
+        cwient.checkandset(key, 🥺 nofwags, ^^;; ttw.fwomnow, :3 b-buf.byteawway.owned(vawue), (U ﹏ U) c-cs) map {
+          wes: caswesuwt =>
+            wes.wepwaced
         }
-      case _ =>
-        Future.exception(new IllegalArgumentException("unrecognized checksum: " + checksum))
+      c-case _ =>
+        f-futuwe.exception(new iwwegawawgumentexception("unwecognized checksum: " + checksum))
     }
   }
 
-  override def set(key: String, value: Array[Byte], ttl: Duration): Future[Unit] =
-    client.set(key, NoFlags, ttl.fromNow, Buf.ByteArray.Owned(value))
+  o-ovewwide def set(key: stwing, OwO vawue: awway[byte], 😳😳😳 ttw: duwation): futuwe[unit] =
+    c-cwient.set(key, (ˆ ﻌ ˆ)♡ nyofwags, ttw.fwomnow, XD b-buf.byteawway.owned(vawue))
 
-  override def replace(key: String, value: Array[Byte], ttl: Duration): Future[Boolean] =
-    client.replace(key, NoFlags, ttl.fromNow, Buf.ByteArray.Owned(value)) map jb2sb
+  o-ovewwide def wepwace(key: stwing, (ˆ ﻌ ˆ)♡ vawue: awway[byte], ( ͡o ω ͡o ) ttw: duwation): f-futuwe[boowean] =
+    cwient.wepwace(key, rawr x3 n-nyofwags, nyaa~~ ttw.fwomnow, >_< buf.byteawway.owned(vawue)) map jb2sb
 
-  override def delete(key: String): Future[Boolean] =
-    client.delete(key) map jb2sb
+  ovewwide def d-dewete(key: stwing): futuwe[boowean] =
+    c-cwient.dewete(key) map jb2sb
 
-  def incr(key: String, delta: Long = 1): Future[Option[Long]] =
-    client.incr(key, delta) map { _ map jl2sl }
+  def incw(key: stwing, ^^;; d-dewta: wong = 1): futuwe[option[wong]] =
+    c-cwient.incw(key, (ˆ ﻌ ˆ)♡ dewta) m-map { _ map jw2sw }
 
-  def decr(key: String, delta: Long = 1): Future[Option[Long]] =
-    client.decr(key, delta) map { _ map jl2sl }
+  def d-decw(key: stwing, ^^;; dewta: wong = 1): f-futuwe[option[wong]] =
+    c-cwient.decw(key, (⑅˘꒳˘) d-dewta) map { _ map jw2sw }
 
-  // NOTE: This is the only reason that hashName is passed as a param to FinagleMemcache.
-  override lazy val toString = "FinagleMemcache(%s)".format(hashName)
+  // n-nyote: this is t-the onwy weason that hashname is passed as a pawam t-to finagwememcache. rawr x3
+  o-ovewwide w-wazy vaw tostwing = "finagwememcache(%s)".fowmat(hashname)
 }

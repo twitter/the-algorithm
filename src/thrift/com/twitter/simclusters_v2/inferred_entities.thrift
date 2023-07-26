@@ -1,38 +1,38 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.inferred_entities
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namespace java com.twittew.simcwustews_v2.thwiftjava
+nyamespace py g-gen.twittew.simcwustews_v2.infewwed_entities
+#@namespace s-scawa c-com.twittew.simcwustews_v2.thwiftscawa
+#@namespace s-stwato com.twittew.simcwustews_v2
 
-// The SimClusters type we use to infer entity interests about a user
-// Currently used for SimClusters Compliance to store a user's inferred interests
+// t-the simcwustews t-type we u-use to infew entity i-intewests about a usew
+// cuwwentwy used fow simcwustews compwiance to stowe a-a usew's infewwed intewests
 
-include "online_store.thrift"
+incwude "onwine_stowe.thwift"
 
-enum ClusterType {
-  KnownFor        = 1,
-  InterestedIn    = 2
-}(persisted = 'true', hasPersonalData = 'false')
+enum c-cwustewtype {
+  knownfow        = 1, /(^•ω•^)
+  i-intewestedin    = 2
+}(pewsisted = 'twue', rawr x3 haspewsonawdata = 'fawse')
 
-struct SimClustersSource {
-  1: required ClusterType clusterType
-  2: required online_store.ModelVersion modelVersion
-}(persisted = 'true', hasPersonalData = 'false')
+stwuct simcwustewssouwce {
+  1: wequiwed cwustewtype c-cwustewtype
+  2: wequiwed o-onwine_stowe.modewvewsion m-modewvewsion
+}(pewsisted = 'twue', (U ﹏ U) haspewsonawdata = 'fawse')
 
-// The source of entities we use to infer entity interests about a user
-enum EntitySource {
-  SimClusters20M145KDec11EntityEmbeddingsByFavScore = 1, // deprecated
-  SimClusters20M145KUpdatedEntityEmbeddingsByFavScore = 2, // deprecated
-  UTTAccountRecommendations = 3 # dataset built by Onboarding team
-  SimClusters20M145K2020EntityEmbeddingsByFavScore = 4
-}(persisted = 'true', hasPersonalData = 'false')
+// the souwce of entities we use to infew e-entity intewests about a usew
+enum entitysouwce {
+  simcwustews20m145kdec11entityembeddingsbyfavscowe = 1, (U ﹏ U) // depwecated
+  simcwustews20m145kupdatedentityembeddingsbyfavscowe = 2, (⑅˘꒳˘) // d-depwecated
+  uttaccountwecommendations = 3 # d-dataset buiwt b-by onboawding t-team
+  simcwustews20m145k2020entityembeddingsbyfavscowe = 4
+}(pewsisted = 'twue', òωó h-haspewsonawdata = 'fawse')
 
-struct InferredEntity {
-  1: required i64 entityId(personalDataType = 'SemanticcoreClassification')
-  2: required double score(personalDataType = 'EngagementScore')
-  3: optional SimClustersSource simclusterSource
-  4: optional EntitySource entitySource
-}(persisted = 'true', hasPersonalData = 'true')
+stwuct infewwedentity {
+  1: wequiwed i-i64 entityid(pewsonawdatatype = 'semanticcowecwassification')
+  2: wequiwed doubwe scowe(pewsonawdatatype = 'engagementscowe')
+  3: o-optionaw simcwustewssouwce simcwustewsouwce
+  4: optionaw entitysouwce entitysouwce
+}(pewsisted = 'twue', ʘwʘ h-haspewsonawdata = 'twue')
 
-struct SimClustersInferredEntities {
-  1: required list<InferredEntity> entities
-}(persisted = 'true', hasPersonalData = 'true')
+stwuct simcwustewsinfewwedentities {
+  1: w-wequiwed w-wist<infewwedentity> e-entities
+}(pewsisted = 'twue', /(^•ω•^) haspewsonawdata = 'twue')

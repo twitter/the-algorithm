@@ -1,16 +1,16 @@
-package com.twitter.visibility.configapi.params
+package com.twittew.visibiwity.configapi.pawams
 
-private[visibility] object VisibilityExperiments {
+pwivate[visibiwity] o-object visibiwityexpewiments {
 
-  case object TestExperiment extends VisibilityExperiment("vf_test_ddg_7727")
+  c-case object t-testexpewiment e-extends visibiwityexpewiment("vf_test_ddg_7727")
 
-  object CommonBucketId extends Enumeration {
-    type CommonBucketId = Value
-    val Control = Value("control")
-    val Treatment = Value("treatment")
-    val None = Value("none")
+  o-object commonbucketid e-extends e-enumewation {
+    t-type commonbucketid = vawue
+    vaw contwow = vawue("contwow")
+    vaw tweatment = v-vawue("tweatment")
+    vaw nyone = vawue("none")
   }
 
-  case object NotGraduatedUserLabelRuleExperiment
-      extends VisibilityExperiment("not_graduated_user_holdback_16332")
+  case object nyotgwaduatedusewwabewwuweexpewiment
+      e-extends visibiwityexpewiment("not_gwaduated_usew_howdback_16332")
 }

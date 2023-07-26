@@ -1,99 +1,99 @@
-package com.twitter.frigate.pushservice.predicate
+package com.twittew.fwigate.pushsewvice.pwedicate
 
-import com.twitter.frigate.common.base.TargetUser
-import com.twitter.frigate.common.candidate.CaretFeedbackHistory
-import com.twitter.frigate.common.candidate.TargetABDecider
-import com.twitter.frigate.common.util.MrNtabCopyObjects
-import com.twitter.notificationservice.thriftscala.CaretFeedbackDetails
-import com.twitter.notificationservice.thriftscala.GenericNotificationMetadata
-import com.twitter.notificationservice.thriftscala.GenericType
+impowt com.twittew.fwigate.common.base.tawgetusew
+i-impowt com.twittew.fwigate.common.candidate.cawetfeedbackhistowy
+i-impowt com.twittew.fwigate.common.candidate.tawgetabdecidew
+i-impowt com.twittew.fwigate.common.utiw.mwntabcopyobjects
+i-impowt c-com.twittew.notificationsewvice.thwiftscawa.cawetfeedbackdetaiws
+i-impowt com.twittew.notificationsewvice.thwiftscawa.genewicnotificationmetadata
+i-impowt com.twittew.notificationsewvice.thwiftscawa.genewictype
 
-object CaretFeedbackHistoryFilter {
+o-object cawetfeedbackhistowyfiwtew {
 
-  def caretFeedbackHistoryFilter(
-    categories: Seq[String]
-  ): TargetUser with TargetABDecider with CaretFeedbackHistory => Seq[CaretFeedbackDetails] => Seq[
-    CaretFeedbackDetails
-  ] = { target => caretFeedbackDetailsSeq =>
-    caretFeedbackDetailsSeq.filter { caretFeedbackDetails =>
-      caretFeedbackDetails.genericNotificationMetadata match {
-        case Some(genericNotificationMetadata) =>
-          isFeedbackSupportedGenericType(genericNotificationMetadata)
-        case None => false
+  def cawetfeedbackhistowyfiwtew(
+    categowies: seq[stwing]
+  ): tawgetusew w-with tawgetabdecidew with cawetfeedbackhistowy => seq[cawetfeedbackdetaiws] => s-seq[
+    cawetfeedbackdetaiws
+  ] = { tawget => c-cawetfeedbackdetaiwsseq =>
+    cawetfeedbackdetaiwsseq.fiwtew { cawetfeedbackdetaiws =>
+      cawetfeedbackdetaiws.genewicnotificationmetadata m-match {
+        case some(genewicnotificationmetadata) =>
+          i-isfeedbacksuppowtedgenewictype(genewicnotificationmetadata)
+        c-case none => fawse
       }
     }
   }
 
-  private def filterCriteria(
-    caretFeedbackDetails: CaretFeedbackDetails,
-    genericTypes: Seq[GenericType]
-  ): Boolean = {
-    caretFeedbackDetails.genericNotificationMetadata match {
-      case Some(genericNotificationMetadata) =>
-        genericTypes.contains(genericNotificationMetadata.genericType)
-      case None => false
+  pwivate def fiwtewcwitewia(
+    cawetfeedbackdetaiws: cawetfeedbackdetaiws, >w<
+    g-genewictypes: seq[genewictype]
+  ): boowean = {
+    cawetfeedbackdetaiws.genewicnotificationmetadata match {
+      c-case some(genewicnotificationmetadata) =>
+        genewictypes.contains(genewicnotificationmetadata.genewictype)
+      c-case n-nyone => fawse
     }
   }
 
-  def caretFeedbackHistoryFilterByGenericType(
-    genericTypes: Seq[GenericType]
-  ): TargetUser with TargetABDecider with CaretFeedbackHistory => Seq[CaretFeedbackDetails] => Seq[
-    CaretFeedbackDetails
-  ] = { target => caretFeedbackDetailsSeq =>
-    caretFeedbackDetailsSeq.filter { caretFeedbackDetails =>
-      filterCriteria(caretFeedbackDetails, genericTypes)
+  d-def c-cawetfeedbackhistowyfiwtewbygenewictype(
+    genewictypes: seq[genewictype]
+  ): t-tawgetusew with tawgetabdecidew with cawetfeedbackhistowy => seq[cawetfeedbackdetaiws] => s-seq[
+    cawetfeedbackdetaiws
+  ] = { tawget => cawetfeedbackdetaiwsseq =>
+    cawetfeedbackdetaiwsseq.fiwtew { cawetfeedbackdetaiws =>
+      fiwtewcwitewia(cawetfeedbackdetaiws, (U ﹏ U) genewictypes)
     }
   }
 
-  def caretFeedbackHistoryFilterByGenericTypeDenyList(
-    genericTypes: Seq[GenericType]
-  ): TargetUser with TargetABDecider with CaretFeedbackHistory => Seq[CaretFeedbackDetails] => Seq[
-    CaretFeedbackDetails
-  ] = { target => caretFeedbackDetailsSeq =>
-    caretFeedbackDetailsSeq.filterNot { caretFeedbackDetails =>
-      filterCriteria(caretFeedbackDetails, genericTypes)
+  d-def cawetfeedbackhistowyfiwtewbygenewictypedenywist(
+    genewictypes: s-seq[genewictype]
+  ): t-tawgetusew w-with tawgetabdecidew with cawetfeedbackhistowy => seq[cawetfeedbackdetaiws] => seq[
+    cawetfeedbackdetaiws
+  ] = { t-tawget => c-cawetfeedbackdetaiwsseq =>
+    cawetfeedbackdetaiwsseq.fiwtewnot { c-cawetfeedbackdetaiws =>
+      f-fiwtewcwitewia(cawetfeedbackdetaiws, 😳 genewictypes)
     }
   }
 
-  def caretFeedbackHistoryFilterByRefreshableType(
-    refreshableTypes: Set[Option[String]]
-  ): TargetUser with TargetABDecider with CaretFeedbackHistory => Seq[CaretFeedbackDetails] => Seq[
-    CaretFeedbackDetails
-  ] = { target => caretFeedbackDetailsSeq =>
-    caretFeedbackDetailsSeq.filter { caretFeedbackDetails =>
-      caretFeedbackDetails.genericNotificationMetadata match {
-        case Some(genericNotificationMetadata) =>
-          refreshableTypes.contains(genericNotificationMetadata.refreshableType)
-        case None => false
+  d-def cawetfeedbackhistowyfiwtewbywefweshabwetype(
+    wefweshabwetypes: s-set[option[stwing]]
+  ): tawgetusew with tawgetabdecidew w-with cawetfeedbackhistowy => seq[cawetfeedbackdetaiws] => seq[
+    c-cawetfeedbackdetaiws
+  ] = { tawget => cawetfeedbackdetaiwsseq =>
+    c-cawetfeedbackdetaiwsseq.fiwtew { c-cawetfeedbackdetaiws =>
+      cawetfeedbackdetaiws.genewicnotificationmetadata match {
+        case some(genewicnotificationmetadata) =>
+          wefweshabwetypes.contains(genewicnotificationmetadata.wefweshabwetype)
+        case nyone => fawse
       }
     }
   }
 
-  def caretFeedbackHistoryFilterByRefreshableTypeDenyList(
-    refreshableTypes: Set[Option[String]]
-  ): TargetUser with TargetABDecider with CaretFeedbackHistory => Seq[CaretFeedbackDetails] => Seq[
-    CaretFeedbackDetails
-  ] = { target => caretFeedbackDetailsSeq =>
-    caretFeedbackDetailsSeq.filter { caretFeedbackDetails =>
-      caretFeedbackDetails.genericNotificationMetadata match {
-        case Some(genericNotificationMetadata) =>
-          !refreshableTypes.contains(genericNotificationMetadata.refreshableType)
-        case None => true
+  d-def cawetfeedbackhistowyfiwtewbywefweshabwetypedenywist(
+    w-wefweshabwetypes: set[option[stwing]]
+  ): tawgetusew w-with tawgetabdecidew with c-cawetfeedbackhistowy => s-seq[cawetfeedbackdetaiws] => seq[
+    cawetfeedbackdetaiws
+  ] = { tawget => cawetfeedbackdetaiwsseq =>
+    c-cawetfeedbackdetaiwsseq.fiwtew { cawetfeedbackdetaiws =>
+      cawetfeedbackdetaiws.genewicnotificationmetadata match {
+        case some(genewicnotificationmetadata) =>
+          !wefweshabwetypes.contains(genewicnotificationmetadata.wefweshabwetype)
+        c-case none => twue
       }
     }
   }
 
-  private def isFeedbackSupportedGenericType(
-    notificationMetadata: GenericNotificationMetadata
-  ): Boolean = {
-    val genericNotificationTypeName =
-      (notificationMetadata.genericType, notificationMetadata.refreshableType) match {
-        case (GenericType.RefreshableNotification, Some(refreshableType)) => refreshableType
-        case _ => notificationMetadata.genericType.name
+  p-pwivate def isfeedbacksuppowtedgenewictype(
+    n-nyotificationmetadata: g-genewicnotificationmetadata
+  ): boowean = {
+    v-vaw genewicnotificationtypename =
+      (notificationmetadata.genewictype, (ˆ ﻌ ˆ)♡ n-nyotificationmetadata.wefweshabwetype) m-match {
+        c-case (genewictype.wefweshabwenotification, 😳😳😳 some(wefweshabwetype)) => wefweshabwetype
+        c-case _ => n-nyotificationmetadata.genewictype.name
       }
 
-    MrNtabCopyObjects.AllNtabCopyTypes
-      .flatMap(_.refreshableType)
-      .contains(genericNotificationTypeName)
+    m-mwntabcopyobjects.awwntabcopytypes
+      .fwatmap(_.wefweshabwetype)
+      .contains(genewicnotificationtypename)
   }
 }

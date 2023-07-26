@@ -1,59 +1,59 @@
-package com.twitter.product_mixer.component_library.model.query.ads
+package com.twittew.pwoduct_mixew.component_wibwawy.modew.quewy.ads
 
-import com.twitter.adserver.{thriftscala => ads}
-import com.twitter.dspbidder.commons.{thriftscala => dsp}
+impowt com.twittew.adsewvew.{thwiftscawa => a-ads}
+impowt com.twittew.dspbiddew.commons.{thwiftscawa => d-dsp}
 
 /**
- * AdsQuery holds request-time fields required by our ads candidate pipelines
+ * a-adsquewy h-howds wequest-time f-fiewds wequiwed b-by ouw ads candidate p-pipewines
  */
-trait AdsQuery {
+t-twait adsquewy {
 
   /**
-   * Timelines-specific context.
+   * timewines-specific context. (U ﹏ U)
    *
-   * @note used in Home Timelines
+   * @note used in home timewines
    */
-  def timelineRequestParams: Option[ads.TimelineRequestParams] = None
+  def t-timewinewequestpawams: option[ads.timewinewequestpawams] = nyone
 
   /**
-   * Navigation action trigger-type
+   * nyavigation a-action twiggew-type
    *
-   * @note used in Home Timelines
+   * @note used i-in home timewines
    */
-  def requestTriggerType: Option[ads.RequestTriggerType] = None
+  def wequesttwiggewtype: option[ads.wequesttwiggewtype] = n-nyone
 
   /**
-   * Autoplay setting
+   * autopway s-setting
    *
-   * @note used in Home Timelines
+   * @note u-used in home timewines
    */
-  def autoplayEnabled: Option[Boolean] = None
+  def autopwayenabwed: option[boowean] = nyone
 
   /**
-   * Disable NSFW avoidance for ads mixing
+   * d-disabwe nysfw avoidance fow ads mixing
    *
-   * @note used in Home Timelines
+   * @note used in home timewines
    */
-  def disableNsfwAvoidance: Option[Boolean] = None
+  d-def disabwensfwavoidance: option[boowean] = n-none
 
   /**
-   * DSP context for adwords
+   * d-dsp context f-fow adwowds
    *
-   * @note used in Home Timelines
+   * @note u-used in home timewines
    */
-  def dspClientContext: Option[dsp.DspClientContext] = None
+  def d-dspcwientcontext: option[dsp.dspcwientcontext] = nyone
 
   /**
-   * User ID for the User Profile being viewed.
+   * u-usew id fow the usew pwofiwe being viewed. (⑅˘꒳˘)
    *
-   * @note used in Profile Timelines
+   * @note used in pwofiwe timewines
    */
-  def userProfileViewedUserId: Option[Long] = None
+  def usewpwofiweviewedusewid: o-option[wong] = nyone
 
   /**
-   * Search-specific context.
+   * s-seawch-specific c-context. òωó
    *
-   * @note used in Search Timelines
+   * @note u-used in seawch timewines
    */
-  def searchRequestContext: Option[ads.SearchRequestContext] = None
+  def seawchwequestcontext: option[ads.seawchwequestcontext] = n-nyone
 }

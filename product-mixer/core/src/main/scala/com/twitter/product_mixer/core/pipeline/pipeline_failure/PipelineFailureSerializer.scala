@@ -1,67 +1,67 @@
-package com.twitter.product_mixer.core.pipeline.pipeline_failure
+package com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
+impowt com.fastewxmw.jackson.cowe.jsongenewatow
+i-impowt com.fastewxmw.jackson.databind.jsonsewiawizew
+i-impowt com.fastewxmw.jackson.databind.sewiawizewpwovidew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiewstack
 
-private[pipeline_failure] class PipelineFailureSerializer()
-    extends JsonSerializer[PipelineFailure] {
+p-pwivate[pipewine_faiwuwe] c-cwass pipewinefaiwuwesewiawizew()
+    e-extends jsonsewiawizew[pipewinefaiwuwe] {
 
-  private sealed trait BaseSerializableException
+  p-pwivate seawed t-twait basesewiawizabweexception
 
-  private case class SerializableException(
-    `class`: String,
-    message: String,
-    stackTrace: Seq[String],
-    cause: Option[BaseSerializableException])
-      extends BaseSerializableException
+  pwivate case cwass sewiawizabweexception(
+    `cwass`: stwing, 😳
+    message: s-stwing, -.-
+    stacktwace: seq[stwing], 🥺
+    cause: o-option[basesewiawizabweexception])
+      extends b-basesewiawizabweexception
 
-  private case class SerializablePipelineFailure(
-    category: String,
-    reason: String,
-    underlying: Option[BaseSerializableException],
-    componentStack: Option[ComponentIdentifierStack],
-    stackTrace: Seq[String])
-      extends BaseSerializableException
+  pwivate case cwass sewiawizabwepipewinefaiwuwe(
+    categowy: stwing, o.O
+    w-weason: stwing, /(^•ω•^)
+    undewwying: o-option[basesewiawizabweexception], nyaa~~
+    c-componentstack: option[componentidentifiewstack], nyaa~~
+    stacktwace: seq[stwing])
+      extends basesewiawizabweexception
 
-  private def serializeStackTrace(stackTrace: Array[StackTraceElement]): Seq[String] =
-    stackTrace.map(stackTraceElement => "at " + stackTraceElement.toString)
+  p-pwivate def sewiawizestacktwace(stacktwace: awway[stacktwaceewement]): seq[stwing] =
+    stacktwace.map(stacktwaceewement => "at " + s-stacktwaceewement.tostwing)
 
-  private def mkSerializableException(
-    t: Throwable,
-    recursionDepth: Int = 0
-  ): Option[BaseSerializableException] = {
+  pwivate def mksewiawizabweexception(
+    t-t: thwowabwe, :3
+    w-wecuwsiondepth: i-int = 0
+  ): o-option[basesewiawizabweexception] = {
     t match {
-      case _ if recursionDepth > 4 =>
-        // in the unfortunate case of a super deep chain of exceptions, stop if we get too deep
-        None
-      case pipelineFailure: PipelineFailure =>
-        Some(
-          SerializablePipelineFailure(
-            category =
-              pipelineFailure.category.categoryName + "/" + pipelineFailure.category.failureName,
-            reason = pipelineFailure.reason,
-            underlying =
-              pipelineFailure.underlying.flatMap(mkSerializableException(_, recursionDepth + 1)),
-            componentStack = pipelineFailure.componentStack,
-            stackTrace = serializeStackTrace(pipelineFailure.getStackTrace)
+      case _ if wecuwsiondepth > 4 =>
+        // i-in the unfowtunate case of a supew deep c-chain of exceptions, 😳😳😳 stop if we get too deep
+        nyone
+      case pipewinefaiwuwe: pipewinefaiwuwe =>
+        s-some(
+          sewiawizabwepipewinefaiwuwe(
+            categowy =
+              p-pipewinefaiwuwe.categowy.categowyname + "/" + p-pipewinefaiwuwe.categowy.faiwuwename, (˘ω˘)
+            w-weason = pipewinefaiwuwe.weason, ^^
+            undewwying =
+              pipewinefaiwuwe.undewwying.fwatmap(mksewiawizabweexception(_, :3 w-wecuwsiondepth + 1)), -.-
+            c-componentstack = pipewinefaiwuwe.componentstack, 😳
+            s-stacktwace = s-sewiawizestacktwace(pipewinefaiwuwe.getstacktwace)
           ))
       case t =>
-        Some(
-          SerializableException(
-            `class` = t.getClass.getName,
-            message = t.getMessage,
-            stackTrace = serializeStackTrace(t.getStackTrace),
-            cause = Option(t.getCause).flatMap(mkSerializableException(_, recursionDepth + 1))
+        s-some(
+          sewiawizabweexception(
+            `cwass` = t.getcwass.getname, mya
+            message = t-t.getmessage, (˘ω˘)
+            stacktwace = sewiawizestacktwace(t.getstacktwace), >_<
+            c-cause = option(t.getcause).fwatmap(mksewiawizabweexception(_, -.- wecuwsiondepth + 1))
           )
         )
     }
   }
 
-  override def serialize(
-    pipelineFailure: PipelineFailure,
-    gen: JsonGenerator,
-    serializers: SerializerProvider
-  ): Unit = serializers.defaultSerializeValue(mkSerializableException(pipelineFailure), gen)
+  o-ovewwide def sewiawize(
+    p-pipewinefaiwuwe: p-pipewinefaiwuwe, 🥺
+    gen: jsongenewatow, (U ﹏ U)
+    sewiawizews: sewiawizewpwovidew
+  ): unit = sewiawizews.defauwtsewiawizevawue(mksewiawizabweexception(pipewinefaiwuwe), >w< gen)
 }

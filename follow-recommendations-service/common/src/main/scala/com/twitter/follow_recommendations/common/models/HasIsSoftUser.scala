@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-trait HasIsSoftUser {
-  def isSoftUser: Boolean
+twait hasissoftusew {
+  d-def issoftusew: b-boowean
 }

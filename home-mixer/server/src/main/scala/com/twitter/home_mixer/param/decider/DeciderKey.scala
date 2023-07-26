@@ -1,52 +1,52 @@
-package com.twitter.home_mixer.param.decider
+package com.twittew.home_mixew.pawam.decidew
 
-import com.twitter.servo.decider.DeciderKeyEnum
+impowt c-com.twittew.sewvo.decidew.decidewkeyenum
 
 /**
- * These values must correspond to the deciders configured in the
- * home-mixer/server/src/main/resources/config/decider.yml file
+ * t-these vawues m-must cowwespond t-to the decidews c-configuwed in t-the
+ * home-mixew/sewvew/swc/main/wesouwces/config/decidew.ymw fiwe
  *
- * @see [[com.twitter.product_mixer.core.product.ProductParamConfig.enabledDeciderKey]]
+ * @see [[com.twittew.pwoduct_mixew.cowe.pwoduct.pwoductpawamconfig.enabweddecidewkey]]
  */
-object DeciderKey extends DeciderKeyEnum {
-  // Products
-  val EnableForYouProduct = Value("enable_for_you_product")
+o-object decidewkey e-extends decidewkeyenum {
+  // pwoducts
+  vaw enabwefowyoupwoduct = vawue("enabwe_fow_you_pwoduct")
 
-  val EnableFollowingProduct = Value("enable_following_product")
+  vaw enabwefowwowingpwoduct = v-vawue("enabwe_fowwowing_pwoduct")
 
-  val EnableScoredTweetsProduct = Value("enable_scored_tweets_product")
+  vaw enabwescowedtweetspwoduct = v-vawue("enabwe_scowed_tweets_pwoduct")
 
-  val EnableListTweetsProduct = Value("enable_list_tweets_product")
+  vaw enabwewisttweetspwoduct = v-vawue("enabwe_wist_tweets_pwoduct")
 
-  val EnableListRecommendedUsersProduct = Value("enable_list_recommended_users_product")
+  vaw enabwewistwecommendedusewspwoduct = vawue("enabwe_wist_wecommended_usews_pwoduct")
 
-  val EnableSubscribedProduct = Value("enable_subscribed_product")
+  vaw enabwesubscwibedpwoduct = v-vawue("enabwe_subscwibed_pwoduct")
 
-  // Candidate Pipelines
-  val EnableForYouScoredTweetsCandidatePipeline =
-    Value("enable_for_you_scored_tweets_candidate_pipeline")
+  // candidate p-pipewines
+  v-vaw enabwefowyouscowedtweetscandidatepipewine =
+    vawue("enabwe_fow_you_scowed_tweets_candidate_pipewine")
 
-  val EnableScoredTweetsTweetMixerCandidatePipeline =
-    Value("enable_scored_tweets_tweet_mixer_candidate_pipeline")
+  vaw enabwescowedtweetstweetmixewcandidatepipewine =
+    vawue("enabwe_scowed_tweets_tweet_mixew_candidate_pipewine")
 
-  val EnableScoredTweetsInNetworkCandidatePipeline =
-    Value("enable_scored_tweets_in_network_candidate_pipeline")
+  vaw enabwescowedtweetsinnetwowkcandidatepipewine =
+    v-vawue("enabwe_scowed_tweets_in_netwowk_candidate_pipewine")
 
-  val EnableScoredTweetsUtegCandidatePipeline =
-    Value("enable_scored_tweets_uteg_candidate_pipeline")
+  vaw enabwescowedtweetsutegcandidatepipewine =
+    vawue("enabwe_scowed_tweets_uteg_candidate_pipewine")
 
-  val EnableScoredTweetsFrsCandidatePipeline =
-    Value("enable_scored_tweets_frs_candidate_pipeline")
+  vaw enabwescowedtweetsfwscandidatepipewine =
+    vawue("enabwe_scowed_tweets_fws_candidate_pipewine")
 
-  val EnableScoredTweetsListsCandidatePipeline =
-    Value("enable_scored_tweets_lists_candidate_pipeline")
+  v-vaw enabwescowedtweetswistscandidatepipewine =
+    vawue("enabwe_scowed_tweets_wists_candidate_pipewine")
 
-  val EnableScoredTweetsPopularVideosCandidatePipeline =
-    Value("enable_scored_tweets_popular_videos_candidate_pipeline")
+  v-vaw enabwescowedtweetspopuwawvideoscandidatepipewine =
+    v-vawue("enabwe_scowed_tweets_popuwaw_videos_candidate_pipewine")
 
-  val EnableScoredTweetsBackfillCandidatePipeline =
-    Value("enable_scored_tweets_backfill_candidate_pipeline")
+  vaw e-enabwescowedtweetsbackfiwwcandidatepipewine =
+    v-vawue("enabwe_scowed_tweets_backfiww_candidate_pipewine")
 
-  val EnableSimClustersSimilarityFeatureHydration =
-    Value("enable_simclusters_similarity_feature_hydration")
+  vaw enabwesimcwustewssimiwawityfeatuwehydwation =
+    vawue("enabwe_simcwustews_simiwawity_featuwe_hydwation")
 }

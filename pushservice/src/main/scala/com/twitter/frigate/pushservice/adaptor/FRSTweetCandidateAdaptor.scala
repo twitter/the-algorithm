@@ -1,271 +1,271 @@
-package com.twitter.frigate.pushservice.adaptor
+package com.twittew.fwigate.pushsewvice.adaptow
 
-import com.twitter.cr_mixer.thriftscala.FrsTweetRequest
-import com.twitter.cr_mixer.thriftscala.NotificationsContext
-import com.twitter.cr_mixer.thriftscala.Product
-import com.twitter.cr_mixer.thriftscala.ProductContext
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.frigate.common.base.CandidateSourceEligible
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.predicate.CommonOutNetworkTweetCandidatesSourcePredicates.filterOutReplyTweet
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.store.CrMixerTweetStore
-import com.twitter.frigate.pushservice.store.UttEntityHydrationStore
-import com.twitter.frigate.pushservice.util.MediaCRT
-import com.twitter.frigate.pushservice.util.PushAdaptorUtil
-import com.twitter.frigate.pushservice.util.PushDeviceUtil
-import com.twitter.frigate.pushservice.util.TopicsUtil
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.hermit.constants.AlgorithmFeedbackTokens
-import com.twitter.hermit.model.Algorithm.Algorithm
-import com.twitter.hermit.model.Algorithm.CrowdSearchAccounts
-import com.twitter.hermit.model.Algorithm.ForwardEmailBook
-import com.twitter.hermit.model.Algorithm.ForwardPhoneBook
-import com.twitter.hermit.model.Algorithm.ReverseEmailBookIbis
-import com.twitter.hermit.model.Algorithm.ReversePhoneBook
-import com.twitter.hermit.store.tweetypie.UserTweet
-import com.twitter.product_mixer.core.thriftscala.ClientContext
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.tsp.thriftscala.TopicSocialProofRequest
-import com.twitter.tsp.thriftscala.TopicSocialProofResponse
-import com.twitter.util.Future
+impowt com.twittew.cw_mixew.thwiftscawa.fwstweetwequest
+i-impowt com.twittew.cw_mixew.thwiftscawa.notificationscontext
+i-impowt com.twittew.cw_mixew.thwiftscawa.pwoduct
+i-impowt com.twittew.cw_mixew.thwiftscawa.pwoductcontext
+i-impowt c-com.twittew.finagwe.stats.countew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.base.candidatesouwce
+i-impowt com.twittew.fwigate.common.base.candidatesouwceewigibwe
+impowt com.twittew.fwigate.common.base._
+impowt com.twittew.fwigate.common.pwedicate.commonoutnetwowktweetcandidatessouwcepwedicates.fiwtewoutwepwytweet
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.fwigate.pushsewvice.stowe.cwmixewtweetstowe
+i-impowt com.twittew.fwigate.pushsewvice.stowe.uttentityhydwationstowe
+impowt com.twittew.fwigate.pushsewvice.utiw.mediacwt
+impowt com.twittew.fwigate.pushsewvice.utiw.pushadaptowutiw
+i-impowt com.twittew.fwigate.pushsewvice.utiw.pushdeviceutiw
+impowt c-com.twittew.fwigate.pushsewvice.utiw.topicsutiw
+i-impowt com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+impowt com.twittew.hewmit.constants.awgowithmfeedbacktokens
+impowt com.twittew.hewmit.modew.awgowithm.awgowithm
+impowt com.twittew.hewmit.modew.awgowithm.cwowdseawchaccounts
+i-impowt com.twittew.hewmit.modew.awgowithm.fowwawdemaiwbook
+impowt com.twittew.hewmit.modew.awgowithm.fowwawdphonebook
+impowt com.twittew.hewmit.modew.awgowithm.wevewseemaiwbookibis
+impowt com.twittew.hewmit.modew.awgowithm.wevewsephonebook
+i-impowt com.twittew.hewmit.stowe.tweetypie.usewtweet
+impowt com.twittew.pwoduct_mixew.cowe.thwiftscawa.cwientcontext
+i-impowt com.twittew.stitch.tweetypie.tweetypie.tweetypiewesuwt
+i-impowt com.twittew.stowehaus.weadabwestowe
+i-impowt c-com.twittew.tsp.thwiftscawa.topicsociawpwoofwequest
+impowt com.twittew.tsp.thwiftscawa.topicsociawpwoofwesponse
+impowt com.twittew.utiw.futuwe
 
-object FRSAlgorithmFeedbackTokenUtil {
-  private val crtsByAlgoToken = Map(
-    getAlgorithmToken(ReverseEmailBookIbis) -> CommonRecommendationType.ReverseAddressbookTweet,
-    getAlgorithmToken(ReversePhoneBook) -> CommonRecommendationType.ReverseAddressbookTweet,
-    getAlgorithmToken(ForwardEmailBook) -> CommonRecommendationType.ForwardAddressbookTweet,
-    getAlgorithmToken(ForwardPhoneBook) -> CommonRecommendationType.ForwardAddressbookTweet,
-    getAlgorithmToken(CrowdSearchAccounts) -> CommonRecommendationType.CrowdSearchTweet
+o-object fwsawgowithmfeedbacktokenutiw {
+  pwivate vaw cwtsbyawgotoken = m-map(
+    getawgowithmtoken(wevewseemaiwbookibis) -> commonwecommendationtype.wevewseaddwessbooktweet, ʘwʘ
+    getawgowithmtoken(wevewsephonebook) -> commonwecommendationtype.wevewseaddwessbooktweet, ( ͡o ω ͡o )
+    getawgowithmtoken(fowwawdemaiwbook) -> commonwecommendationtype.fowwawdaddwessbooktweet, mya
+    getawgowithmtoken(fowwawdphonebook) -> c-commonwecommendationtype.fowwawdaddwessbooktweet, o.O
+    getawgowithmtoken(cwowdseawchaccounts) -> c-commonwecommendationtype.cwowdseawchtweet
   )
 
-  def getAlgorithmToken(algorithm: Algorithm): Int = {
-    AlgorithmFeedbackTokens.AlgorithmToFeedbackTokenMap(algorithm)
+  d-def getawgowithmtoken(awgowithm: a-awgowithm): int = {
+    awgowithmfeedbacktokens.awgowithmtofeedbacktokenmap(awgowithm)
   }
 
-  def getCRTForAlgoToken(algorithmToken: Int): Option[CommonRecommendationType] = {
-    crtsByAlgoToken.get(algorithmToken)
+  def getcwtfowawgotoken(awgowithmtoken: i-int): o-option[commonwecommendationtype] = {
+    cwtsbyawgotoken.get(awgowithmtoken)
   }
 }
 
-case class FRSTweetCandidateAdaptor(
-  crMixerTweetStore: CrMixerTweetStore,
-  tweetyPieStore: ReadableStore[Long, TweetyPieResult],
-  tweetyPieStoreNoVF: ReadableStore[Long, TweetyPieResult],
-  userTweetTweetyPieStore: ReadableStore[UserTweet, TweetyPieResult],
-  uttEntityHydrationStore: UttEntityHydrationStore,
-  topicSocialProofServiceStore: ReadableStore[TopicSocialProofRequest, TopicSocialProofResponse],
-  globalStats: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
-    with CandidateSourceEligible[Target, RawCandidate] {
+c-case cwass f-fwstweetcandidateadaptow(
+  cwmixewtweetstowe: c-cwmixewtweetstowe, (✿oωo)
+  tweetypiestowe: w-weadabwestowe[wong, :3 tweetypiewesuwt], 😳
+  tweetypiestowenovf: w-weadabwestowe[wong, (U ﹏ U) tweetypiewesuwt], mya
+  u-usewtweettweetypiestowe: weadabwestowe[usewtweet, t-tweetypiewesuwt], (U ᵕ U❁)
+  u-uttentityhydwationstowe: uttentityhydwationstowe, :3
+  topicsociawpwoofsewvicestowe: weadabwestowe[topicsociawpwoofwequest, mya topicsociawpwoofwesponse], OwO
+  gwobawstats: statsweceivew)
+    e-extends candidatesouwce[tawget, w-wawcandidate]
+    with candidatesouwceewigibwe[tawget, (ˆ ﻌ ˆ)♡ w-wawcandidate] {
 
-  private val stats = globalStats.scope(this.getClass.getSimpleName)
-  private val crtStats = stats.scope("CandidateDistribution")
-  private val totalRequests = stats.counter("total_requests")
+  p-pwivate vaw stats = g-gwobawstats.scope(this.getcwass.getsimpwename)
+  pwivate vaw cwtstats = stats.scope("candidatedistwibution")
+  pwivate vaw totawwequests = stats.countew("totaw_wequests")
 
-  // Candidate Distribution stats
-  private val reverseAddressbookCounter = crtStats.counter("reverse_addressbook")
-  private val forwardAddressbookCounter = crtStats.counter("forward_addressbook")
-  private val frsTweetCounter = crtStats.counter("frs_tweet")
-  private val nonReplyTweetsCounter = stats.counter("non_reply_tweets")
-  private val crtToCounterMapping: Map[CommonRecommendationType, Counter] = Map(
-    CommonRecommendationType.ReverseAddressbookTweet -> reverseAddressbookCounter,
-    CommonRecommendationType.ForwardAddressbookTweet -> forwardAddressbookCounter,
-    CommonRecommendationType.FrsTweet -> frsTweetCounter
+  // c-candidate distwibution stats
+  pwivate vaw wevewseaddwessbookcountew = cwtstats.countew("wevewse_addwessbook")
+  p-pwivate vaw fowwawdaddwessbookcountew = c-cwtstats.countew("fowwawd_addwessbook")
+  p-pwivate v-vaw fwstweetcountew = cwtstats.countew("fws_tweet")
+  p-pwivate vaw n-nyonwepwytweetscountew = s-stats.countew("non_wepwy_tweets")
+  pwivate v-vaw cwttocountewmapping: map[commonwecommendationtype, ʘwʘ countew] = m-map(
+    c-commonwecommendationtype.wevewseaddwessbooktweet -> w-wevewseaddwessbookcountew, o.O
+    c-commonwecommendationtype.fowwawdaddwessbooktweet -> f-fowwawdaddwessbookcountew, UwU
+    commonwecommendationtype.fwstweet -> fwstweetcountew
   )
 
-  private val emptyTweetyPieResult = stats.stat("empty_tweetypie_result")
+  pwivate vaw e-emptytweetypiewesuwt = stats.stat("empty_tweetypie_wesuwt")
 
-  private[this] val numberReturnedCandidates = stats.stat("returned_candidates_from_earlybird")
-  private[this] val numberCandidateWithTopic: Counter = stats.counter("num_can_with_topic")
-  private[this] val numberCandidateWithoutTopic: Counter = stats.counter("num_can_without_topic")
+  pwivate[this] vaw nyumbewwetuwnedcandidates = stats.stat("wetuwned_candidates_fwom_eawwybiwd")
+  pwivate[this] vaw n-nyumbewcandidatewithtopic: countew = stats.countew("num_can_with_topic")
+  pwivate[this] v-vaw nyumbewcandidatewithouttopic: c-countew = s-stats.countew("num_can_without_topic")
 
-  private val userTweetTweetyPieStoreCounter = stats.counter("user_tweet_tweetypie_store")
+  pwivate vaw usewtweettweetypiestowecountew = s-stats.countew("usew_tweet_tweetypie_stowe")
 
-  override val name: String = this.getClass.getSimpleName
+  ovewwide v-vaw nyame: s-stwing = this.getcwass.getsimpwename
 
-  private def filterInvalidTweets(
-    tweetIds: Seq[Long],
-    target: Target
-  ): Future[Map[Long, TweetyPieResult]] = {
-    val resMap = {
-      if (target.params(PushFeatureSwitchParams.EnableF1FromProtectedTweetAuthors)) {
-        userTweetTweetyPieStoreCounter.incr()
-        val keys = tweetIds.map { tweetId =>
-          UserTweet(tweetId, Some(target.targetId))
+  pwivate def fiwtewinvawidtweets(
+    tweetids: seq[wong], rawr x3
+    tawget: tawget
+  ): f-futuwe[map[wong, 🥺 tweetypiewesuwt]] = {
+    v-vaw wesmap = {
+      if (tawget.pawams(pushfeatuweswitchpawams.enabwef1fwompwotectedtweetauthows)) {
+        u-usewtweettweetypiestowecountew.incw()
+        v-vaw keys = tweetids.map { tweetid =>
+          usewtweet(tweetid, :3 s-some(tawget.tawgetid))
         }
-        userTweetTweetyPieStore
-          .multiGet(keys.toSet).map {
-            case (userTweet, resultFut) =>
-              userTweet.tweetId -> resultFut
-          }.toMap
-      } else {
-        (if (target.params(PushFeatureSwitchParams.EnableVFInTweetypie)) {
-           tweetyPieStore
-         } else {
-           tweetyPieStoreNoVF
-         }).multiGet(tweetIds.toSet)
+        u-usewtweettweetypiestowe
+          .muwtiget(keys.toset).map {
+            case (usewtweet, (ꈍᴗꈍ) w-wesuwtfut) =>
+              u-usewtweet.tweetid -> wesuwtfut
+          }.tomap
+      } ewse {
+        (if (tawget.pawams(pushfeatuweswitchpawams.enabwevfintweetypie)) {
+           tweetypiestowe
+         } ewse {
+           t-tweetypiestowenovf
+         }).muwtiget(tweetids.toset)
       }
     }
 
-    Future.collect(resMap).map { tweetyPieResultMap =>
-      // Filter out replies and generate earlybird candidates only for non-empty tweetypie result
-      val cands = filterOutReplyTweet(tweetyPieResultMap, nonReplyTweetsCounter).collect {
-        case (id: Long, Some(result)) =>
-          id -> result
+    f-futuwe.cowwect(wesmap).map { t-tweetypiewesuwtmap =>
+      // fiwtew o-out wepwies and g-genewate eawwybiwd candidates o-onwy fow nyon-empty tweetypie wesuwt
+      vaw cands = fiwtewoutwepwytweet(tweetypiewesuwtmap, 🥺 nyonwepwytweetscountew).cowwect {
+        c-case (id: w-wong, (✿oωo) some(wesuwt)) =>
+          id -> wesuwt
       }
 
-      emptyTweetyPieResult.add(tweetyPieResultMap.size - cands.size)
-      cands
+      emptytweetypiewesuwt.add(tweetypiewesuwtmap.size - c-cands.size)
+      c-cands
     }
   }
 
-  private def buildRawCandidates(
-    target: Target,
-    ebCandidates: Seq[FRSTweetCandidate]
-  ): Future[Option[Seq[RawCandidate with TweetCandidate]]] = {
+  pwivate def buiwdwawcandidates(
+    tawget: t-tawget, (U ﹏ U)
+    ebcandidates: seq[fwstweetcandidate]
+  ): futuwe[option[seq[wawcandidate with tweetcandidate]]] = {
 
-    val enableTopic = target.params(PushFeatureSwitchParams.EnableFrsTweetCandidatesTopicAnnotation)
-    val topicScoreThre =
-      target.params(PushFeatureSwitchParams.FrsTweetCandidatesTopicScoreThreshold)
+    vaw enabwetopic = t-tawget.pawams(pushfeatuweswitchpawams.enabwefwstweetcandidatestopicannotation)
+    vaw topicscowethwe =
+      tawget.pawams(pushfeatuweswitchpawams.fwstweetcandidatestopicscowethweshowd)
 
-    val ebTweets = ebCandidates.map { ebCandidate =>
-      ebCandidate.tweetId -> ebCandidate.tweetyPieResult
-    }.toMap
+    v-vaw e-ebtweets = ebcandidates.map { ebcandidate =>
+      ebcandidate.tweetid -> ebcandidate.tweetypiewesuwt
+    }.tomap
 
-    val tweetIdLocalizedEntityMapFut = TopicsUtil.getTweetIdLocalizedEntityMap(
-      target,
-      ebTweets,
-      uttEntityHydrationStore,
-      topicSocialProofServiceStore,
-      enableTopic,
-      topicScoreThre
+    v-vaw tweetidwocawizedentitymapfut = t-topicsutiw.gettweetidwocawizedentitymap(
+      tawget, :3
+      ebtweets, ^^;;
+      uttentityhydwationstowe, rawr
+      t-topicsociawpwoofsewvicestowe, 😳😳😳
+      enabwetopic, (✿oωo)
+      t-topicscowethwe
     )
 
-    Future.join(target.deviceInfo, tweetIdLocalizedEntityMapFut).map {
-      case (Some(deviceInfo), tweetIdLocalizedEntityMap) =>
-        val candidates = ebCandidates
-          .map { ebCandidate =>
-            val crt = ebCandidate.commonRecType
-            crtToCounterMapping.get(crt).foreach(_.incr())
+    futuwe.join(tawget.deviceinfo, OwO tweetidwocawizedentitymapfut).map {
+      case (some(deviceinfo), ʘwʘ t-tweetidwocawizedentitymap) =>
+        vaw c-candidates = ebcandidates
+          .map { e-ebcandidate =>
+            vaw cwt = e-ebcandidate.commonwectype
+            cwttocountewmapping.get(cwt).foweach(_.incw())
 
-            val tweetId = ebCandidate.tweetId
-            val localizedEntityOpt = {
-              if (tweetIdLocalizedEntityMap
-                  .contains(tweetId) && tweetIdLocalizedEntityMap.contains(
-                  tweetId) && deviceInfo.isTopicsEligible) {
-                tweetIdLocalizedEntityMap(tweetId)
-              } else {
-                None
+            v-vaw tweetid = e-ebcandidate.tweetid
+            v-vaw wocawizedentityopt = {
+              if (tweetidwocawizedentitymap
+                  .contains(tweetid) && t-tweetidwocawizedentitymap.contains(
+                  t-tweetid) && deviceinfo.istopicsewigibwe) {
+                tweetidwocawizedentitymap(tweetid)
+              } e-ewse {
+                n-nyone
               }
             }
 
-            PushAdaptorUtil.generateOutOfNetworkTweetCandidates(
-              inputTarget = target,
-              id = ebCandidate.tweetId,
-              mediaCRT = MediaCRT(
-                crt,
-                crt,
-                crt
+            p-pushadaptowutiw.genewateoutofnetwowktweetcandidates(
+              inputtawget = tawget,
+              id = ebcandidate.tweetid, (ˆ ﻌ ˆ)♡
+              m-mediacwt = mediacwt(
+                c-cwt, (U ﹏ U)
+                c-cwt, UwU
+                cwt
               ),
-              result = ebCandidate.tweetyPieResult,
-              localizedEntity = localizedEntityOpt)
-          }.filter { candidate =>
-            // If user only has the topic setting enabled, filter out all non-topic cands
-            deviceInfo.isRecommendationsEligible || (deviceInfo.isTopicsEligible && candidate.semanticCoreEntityId.nonEmpty)
+              wesuwt = ebcandidate.tweetypiewesuwt, XD
+              w-wocawizedentity = w-wocawizedentityopt)
+          }.fiwtew { c-candidate =>
+            // i-if usew onwy has the topic s-setting enabwed, ʘwʘ fiwtew out aww nyon-topic cands
+            deviceinfo.iswecommendationsewigibwe || (deviceinfo.istopicsewigibwe && candidate.semanticcoweentityid.nonempty)
           }
 
-        candidates.map { candidate =>
-          if (candidate.semanticCoreEntityId.nonEmpty) {
-            numberCandidateWithTopic.incr()
-          } else {
-            numberCandidateWithoutTopic.incr()
+        candidates.map { c-candidate =>
+          if (candidate.semanticcoweentityid.nonempty) {
+            nyumbewcandidatewithtopic.incw()
+          } e-ewse {
+            nyumbewcandidatewithouttopic.incw()
           }
         }
 
-        numberReturnedCandidates.add(candidates.length)
-        Some(candidates)
-      case _ => Some(Seq.empty)
+        n-nyumbewwetuwnedcandidates.add(candidates.wength)
+        some(candidates)
+      c-case _ => some(seq.empty)
     }
   }
 
-  def getTweetCandidatesFromCrMixer(
-    inputTarget: Target,
-    showAllResultsFromFrs: Boolean,
-  ): Future[Option[Seq[RawCandidate with TweetCandidate]]] = {
-    Future
+  d-def gettweetcandidatesfwomcwmixew(
+    i-inputtawget: t-tawget, rawr x3
+    s-showawwwesuwtsfwomfws: b-boowean,
+  ): futuwe[option[seq[wawcandidate with tweetcandidate]]] = {
+    futuwe
       .join(
-        inputTarget.seenTweetIds,
-        inputTarget.pushRecItems,
-        inputTarget.countryCode,
-        inputTarget.targetLanguage).flatMap {
-        case (seenTweetIds, pastRecItems, countryCode, language) =>
-          val pastUserRecs = pastRecItems.userIds.toSeq
-          val request = FrsTweetRequest(
-            clientContext = ClientContext(
-              userId = Some(inputTarget.targetId),
-              countryCode = countryCode,
-              languageCode = language
-            ),
-            product = Product.Notifications,
-            productContext = Some(ProductContext.NotificationsContext(NotificationsContext())),
-            excludedUserIds = Some(pastUserRecs),
-            excludedTweetIds = Some(seenTweetIds)
+        inputtawget.seentweetids, ^^;;
+        inputtawget.pushwecitems, ʘwʘ
+        inputtawget.countwycode, (U ﹏ U)
+        i-inputtawget.tawgetwanguage).fwatmap {
+        c-case (seentweetids, (˘ω˘) p-pastwecitems, (ꈍᴗꈍ) countwycode, /(^•ω•^) w-wanguage) =>
+          vaw pastusewwecs = pastwecitems.usewids.toseq
+          vaw wequest = f-fwstweetwequest(
+            cwientcontext = cwientcontext(
+              u-usewid = some(inputtawget.tawgetid), >_<
+              countwycode = c-countwycode, σωσ
+              wanguagecode = wanguage
+            ), ^^;;
+            p-pwoduct = p-pwoduct.notifications, 😳
+            pwoductcontext = s-some(pwoductcontext.notificationscontext(notificationscontext())), >_<
+            e-excwudedusewids = some(pastusewwecs),
+            excwudedtweetids = some(seentweetids)
           )
-          crMixerTweetStore.getFRSTweetCandidates(request).flatMap {
-            case Some(response) =>
-              val tweetIds = response.tweets.map(_.tweetId)
-              val validTweets = filterInvalidTweets(tweetIds, inputTarget)
-              validTweets.flatMap { tweetypieMap =>
-                val ebCandidates = response.tweets
-                  .map { frsTweet =>
-                    val candidateTweetId = frsTweet.tweetId
-                    val resultFromTweetyPie = tweetypieMap.get(candidateTweetId)
-                    new FRSTweetCandidate {
-                      override val tweetId = candidateTweetId
-                      override val features = None
-                      override val tweetyPieResult = resultFromTweetyPie
-                      override val feedbackToken = frsTweet.frsPrimarySource
-                      override val commonRecType: CommonRecommendationType = feedbackToken
-                        .flatMap(token =>
-                          FRSAlgorithmFeedbackTokenUtil.getCRTForAlgoToken(token)).getOrElse(
-                          CommonRecommendationType.FrsTweet)
+          cwmixewtweetstowe.getfwstweetcandidates(wequest).fwatmap {
+            c-case s-some(wesponse) =>
+              v-vaw tweetids = w-wesponse.tweets.map(_.tweetid)
+              v-vaw vawidtweets = f-fiwtewinvawidtweets(tweetids, -.- i-inputtawget)
+              vawidtweets.fwatmap { tweetypiemap =>
+                vaw e-ebcandidates = w-wesponse.tweets
+                  .map { fwstweet =>
+                    v-vaw candidatetweetid = fwstweet.tweetid
+                    vaw wesuwtfwomtweetypie = t-tweetypiemap.get(candidatetweetid)
+                    nyew fwstweetcandidate {
+                      o-ovewwide v-vaw tweetid = candidatetweetid
+                      ovewwide vaw f-featuwes = nyone
+                      ovewwide vaw tweetypiewesuwt = w-wesuwtfwomtweetypie
+                      o-ovewwide vaw feedbacktoken = fwstweet.fwspwimawysouwce
+                      ovewwide v-vaw commonwectype: commonwecommendationtype = feedbacktoken
+                        .fwatmap(token =>
+                          fwsawgowithmfeedbacktokenutiw.getcwtfowawgotoken(token)).getowewse(
+                          c-commonwecommendationtype.fwstweet)
                     }
-                  }.filter { ebCandidate =>
-                    showAllResultsFromFrs || ebCandidate.commonRecType == CommonRecommendationType.ReverseAddressbookTweet
+                  }.fiwtew { ebcandidate =>
+                    showawwwesuwtsfwomfws || ebcandidate.commonwectype == c-commonwecommendationtype.wevewseaddwessbooktweet
                   }
 
-                numberReturnedCandidates.add(ebCandidates.length)
-                buildRawCandidates(
-                  inputTarget,
-                  ebCandidates
+                n-nyumbewwetuwnedcandidates.add(ebcandidates.wength)
+                buiwdwawcandidates(
+                  i-inputtawget, UwU
+                  ebcandidates
                 )
               }
-            case _ => Future.None
+            c-case _ => f-futuwe.none
           }
       }
   }
 
-  override def get(inputTarget: Target): Future[Option[Seq[RawCandidate with TweetCandidate]]] = {
-    totalRequests.incr()
-    val enableResultsFromFrs =
-      inputTarget.params(PushFeatureSwitchParams.EnableResultFromFrsCandidates)
-    getTweetCandidatesFromCrMixer(inputTarget, enableResultsFromFrs)
+  ovewwide def get(inputtawget: tawget): f-futuwe[option[seq[wawcandidate with tweetcandidate]]] = {
+    totawwequests.incw()
+    v-vaw e-enabwewesuwtsfwomfws =
+      inputtawget.pawams(pushfeatuweswitchpawams.enabwewesuwtfwomfwscandidates)
+    g-gettweetcandidatesfwomcwmixew(inputtawget, :3 enabwewesuwtsfwomfws)
   }
 
-  override def isCandidateSourceAvailable(target: Target): Future[Boolean] = {
-    lazy val enableFrsCandidates = target.params(PushFeatureSwitchParams.EnableFrsCandidates)
-    PushDeviceUtil.isRecommendationsEligible(target).flatMap { isEnabledForRecosSetting =>
-      PushDeviceUtil.isTopicsEligible(target).map { topicSettingEnabled =>
-        val isEnabledForTopics =
-          topicSettingEnabled && target.params(
-            PushFeatureSwitchParams.EnableFrsTweetCandidatesTopicSetting)
-        (isEnabledForRecosSetting || isEnabledForTopics) && enableFrsCandidates
+  o-ovewwide def i-iscandidatesouwceavaiwabwe(tawget: t-tawget): futuwe[boowean] = {
+    wazy vaw enabwefwscandidates = tawget.pawams(pushfeatuweswitchpawams.enabwefwscandidates)
+    pushdeviceutiw.iswecommendationsewigibwe(tawget).fwatmap { isenabwedfowwecossetting =>
+      pushdeviceutiw.istopicsewigibwe(tawget).map { topicsettingenabwed =>
+        vaw isenabwedfowtopics =
+          topicsettingenabwed && tawget.pawams(
+            pushfeatuweswitchpawams.enabwefwstweetcandidatestopicsetting)
+        (isenabwedfowwecossetting || isenabwedfowtopics) && e-enabwefwscandidates
       }
     }
   }

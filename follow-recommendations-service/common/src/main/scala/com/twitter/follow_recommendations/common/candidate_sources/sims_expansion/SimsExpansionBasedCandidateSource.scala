@@ -1,114 +1,114 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.sims_expansion
 
-import com.twitter.follow_recommendations.common.candidate_sources.base.TwoHopExpansionCandidateSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims.SwitchingSimsSource
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.follow_recommendations.common.models.SimilarToProof
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import scala.math._
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.base.twohopexpansioncandidatesouwce
+i-impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.sims.switchingsimssouwce
+i-impowt com.twittew.fowwow_wecommendations.common.modews.accountpwoof
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.hassimiwawtocontext
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.weason
+impowt com.twittew.fowwow_wecommendations.common.modews.simiwawtopwoof
+impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.configapi.haspawams
+i-impowt scawa.math._
 
-case class SimilarUser(candidateId: Long, similarTo: Long, score: Double)
+case cwass simiwawusew(candidateid: w-wong, :3 simiwawto: wong, ( ͡o ω ͡o ) s-scowe: doubwe)
 
-abstract class SimsExpansionBasedCandidateSource[-Target <: HasParams](
-  switchingSimsSource: SwitchingSimsSource)
-    extends TwoHopExpansionCandidateSource[Target, CandidateUser, SimilarUser, CandidateUser] {
+abstwact cwass simsexpansionbasedcandidatesouwce[-tawget <: haspawams](
+  switchingsimssouwce: s-switchingsimssouwce)
+    extends t-twohopexpansioncandidatesouwce[tawget, mya c-candidateusew, (///ˬ///✿) simiwawusew, (˘ω˘) candidateusew] {
 
-  // max number secondary degree nodes per first degree node
-  def maxSecondaryDegreeNodes(req: Target): Int
+  // max nyumbew secondawy degwee nyodes p-pew fiwst degwee nyode
+  def maxsecondawydegweenodes(weq: tawget): int
 
-  // max number output results
-  def maxResults(req: Target): Int
+  // m-max nyumbew output wesuwts
+  def m-maxwesuwts(weq: t-tawget): int
 
-  // scorer to score candidate based on first and second degree node scores
-  def scoreCandidate(source: Double, similarToScore: Double): Double
+  // s-scowew to scowe c-candidate based on fiwst and second degwee nyode s-scowes
+  def scowecandidate(souwce: doubwe, ^^;; s-simiwawtoscowe: doubwe): doubwe
 
-  def calibrateDivisor(req: Target): Double
+  def cawibwatedivisow(weq: tawget): doubwe
 
-  def calibrateScore(candidateScore: Double, req: Target): Double = {
-    candidateScore / calibrateDivisor(req)
+  def cawibwatescowe(candidatescowe: d-doubwe, (✿oωo) weq: tawget): doubwe = {
+    c-candidatescowe / c-cawibwatedivisow(weq)
   }
 
-  override def secondaryDegreeNodes(req: Target, node: CandidateUser): Stitch[Seq[SimilarUser]] = {
-    switchingSimsSource(new HasParams with HasSimilarToContext {
-      override val similarToUserIds = Seq(node.id)
-      override val params = (req.params)
-    }).map(_.take(maxSecondaryDegreeNodes(req)).map { candidate =>
-      SimilarUser(
-        candidate.id,
-        node.id,
-        (node.score, candidate.score) match {
-          // only calibrated sims expanded candidates scores
-          case (Some(nodeScore), Some(candidateScore)) =>
-            calibrateScore(scoreCandidate(nodeScore, candidateScore), req)
-          case (Some(nodeScore), _) => nodeScore
-          // NewFollowingSimilarUser will enter this case
-          case _ => calibrateScore(candidate.score.getOrElse(0.0), req)
+  o-ovewwide def secondawydegweenodes(weq: tawget, (U ﹏ U) nyode: candidateusew): s-stitch[seq[simiwawusew]] = {
+    s-switchingsimssouwce(new haspawams w-with hassimiwawtocontext {
+      o-ovewwide vaw simiwawtousewids = seq(node.id)
+      o-ovewwide vaw pawams = (weq.pawams)
+    }).map(_.take(maxsecondawydegweenodes(weq)).map { c-candidate =>
+      simiwawusew(
+        candidate.id, -.-
+        n-nyode.id, ^•ﻌ•^
+        (node.scowe, rawr candidate.scowe) m-match {
+          // onwy cawibwated s-sims expanded candidates s-scowes
+          case (some(nodescowe), (˘ω˘) some(candidatescowe)) =>
+            cawibwatescowe(scowecandidate(nodescowe, nyaa~~ candidatescowe), UwU weq)
+          case (some(nodescowe), :3 _) => nyodescowe
+          // nyewfowwowingsimiwawusew w-wiww e-entew this case
+          case _ => c-cawibwatescowe(candidate.scowe.getowewse(0.0), (⑅˘꒳˘) w-weq)
         }
       )
     })
   }
 
-  override def aggregateAndScore(
-    request: Target,
-    firstDegreeToSecondDegreeNodesMap: Map[CandidateUser, Seq[SimilarUser]]
-  ): Stitch[Seq[CandidateUser]] = {
+  o-ovewwide def aggwegateandscowe(
+    wequest: tawget, (///ˬ///✿)
+    f-fiwstdegweetoseconddegweenodesmap: map[candidateusew, ^^;; seq[simiwawusew]]
+  ): stitch[seq[candidateusew]] = {
 
-    val inputNodes = firstDegreeToSecondDegreeNodesMap.keys.map(_.id).toSet
-    val aggregator = request.params(SimsExpansionSourceParams.Aggregator) match {
-      case SimsExpansionSourceAggregatorId.Max =>
-        SimsExpansionBasedCandidateSource.ScoreAggregator.Max
-      case SimsExpansionSourceAggregatorId.Sum =>
-        SimsExpansionBasedCandidateSource.ScoreAggregator.Sum
-      case SimsExpansionSourceAggregatorId.MultiDecay =>
-        SimsExpansionBasedCandidateSource.ScoreAggregator.MultiDecay
+    vaw inputnodes = f-fiwstdegweetoseconddegweenodesmap.keys.map(_.id).toset
+    vaw aggwegatow = w-wequest.pawams(simsexpansionsouwcepawams.aggwegatow) m-match {
+      c-case simsexpansionsouwceaggwegatowid.max =>
+        simsexpansionbasedcandidatesouwce.scoweaggwegatow.max
+      c-case simsexpansionsouwceaggwegatowid.sum =>
+        s-simsexpansionbasedcandidatesouwce.scoweaggwegatow.sum
+      c-case simsexpansionsouwceaggwegatowid.muwtidecay =>
+        simsexpansionbasedcandidatesouwce.scoweaggwegatow.muwtidecay
     }
 
-    val groupedCandidates = firstDegreeToSecondDegreeNodesMap.values.flatten
-      .filterNot(c => inputNodes.contains(c.candidateId))
-      .groupBy(_.candidateId)
+    v-vaw gwoupedcandidates = fiwstdegweetoseconddegweenodesmap.vawues.fwatten
+      .fiwtewnot(c => inputnodes.contains(c.candidateid))
+      .gwoupby(_.candidateid)
       .map {
-        case (id, candidates) =>
-          // Different aggregators for final score
-          val finalScore = aggregator(candidates.map(_.score).toSeq)
-          val proofs = candidates.map(_.similarTo).toSet
+        case (id, >_< c-candidates) =>
+          // d-diffewent aggwegatows f-fow finaw s-scowe
+          v-vaw finawscowe = aggwegatow(candidates.map(_.scowe).toseq)
+          vaw pwoofs = candidates.map(_.simiwawto).toset
 
-          CandidateUser(
-            id = id,
-            score = Some(finalScore),
-            reason =
-              Some(Reason(Some(AccountProof(similarToProof = Some(SimilarToProof(proofs.toSeq))))))
-          ).withCandidateSource(identifier)
+          c-candidateusew(
+            id = id, rawr x3
+            scowe = some(finawscowe), /(^•ω•^)
+            weason =
+              some(weason(some(accountpwoof(simiwawtopwoof = some(simiwawtopwoof(pwoofs.toseq))))))
+          ).withcandidatesouwce(identifiew)
       }
-      .toSeq
-      .sortBy(-_.score.getOrElse(0.0d))
-      .take(maxResults(request))
+      .toseq
+      .sowtby(-_.scowe.getowewse(0.0d))
+      .take(maxwesuwts(wequest))
 
-    Stitch.value(groupedCandidates)
+    s-stitch.vawue(gwoupedcandidates)
   }
 }
 
-object SimsExpansionBasedCandidateSource {
-  object ScoreAggregator {
-    val Max: Seq[Double] => Double = (candidateScores: Seq[Double]) => {
-      if (candidateScores.size > 0) candidateScores.max else 0.0
+object simsexpansionbasedcandidatesouwce {
+  object scoweaggwegatow {
+    v-vaw max: seq[doubwe] => d-doubwe = (candidatescowes: s-seq[doubwe]) => {
+      if (candidatescowes.size > 0) c-candidatescowes.max ewse 0.0
     }
-    val Sum: Seq[Double] => Double = (candidateScores: Seq[Double]) => {
-      candidateScores.sum
+    v-vaw sum: seq[doubwe] => d-doubwe = (candidatescowes: seq[doubwe]) => {
+      candidatescowes.sum
     }
-    val MultiDecay: Seq[Double] => Double = (candidateScores: Seq[Double]) => {
-      val alpha = 0.1
-      val beta = 0.1
-      val gamma = 0.8
-      val decay_scores: Seq[Double] =
-        candidateScores
-          .sorted(Ordering[Double].reverse)
-          .zipWithIndex
-          .map(x => x._1 * pow(gamma, x._2))
-      alpha * candidateScores.max + decay_scores.sum + beta * candidateScores.size
+    vaw muwtidecay: seq[doubwe] => doubwe = (candidatescowes: s-seq[doubwe]) => {
+      vaw awpha = 0.1
+      v-vaw beta = 0.1
+      vaw gamma = 0.8
+      v-vaw decay_scowes: s-seq[doubwe] =
+        candidatescowes
+          .sowted(owdewing[doubwe].wevewse)
+          .zipwithindex
+          .map(x => x._1 * pow(gamma, :3 x-x._2))
+      a-awpha * candidatescowes.max + decay_scowes.sum + b-beta * candidatescowes.size
     }
   }
 }

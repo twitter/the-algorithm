@@ -1,36 +1,36 @@
-scala_library(
-    name = "model_evaluation",
-    sources = ["*.scala"],
-    platform = "java8",
-    strict_deps = False,
+scawa_wibwawy(
+    nyame = "modew_evawuation", rawr x3
+    souwces = ["*.scawa"], rawr
+    p-pwatfowm = "java8", σωσ
+    s-stwict_deps = f-fawse,
     dependencies = [
-        "3rdparty/src/jvm/com/twitter/scalding:json",
-        "src/scala/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/api/prediction_engine",
-        "src/scala/com/twitter/ml/api/util",
-        "src/scala/com/twitter/scalding_internal/job",
-        "src/scala/com/twitter/timelines/prediction/adapters/recap",
-        "src/scala/com/twitter/timelines/prediction/features/recap",
-        "timelines/data_processing/ad_hoc/earlybird_ranking/common",
-        "timelines/data_processing/util:rich-request",
-        "timelines/data_processing/util/example",
-        "timelines/data_processing/util/execution",
-        "twadoop_config/configuration/log_categories/group/timelines:timelineservice_injection_request_log-scala",
+        "3wdpawty/swc/jvm/com/twittew/scawding:json", σωσ
+        "swc/scawa/com/twittew/mw/api:api-base", >_<
+        "swc/scawa/com/twittew/mw/api/pwediction_engine", :3
+        "swc/scawa/com/twittew/mw/api/utiw", (U ﹏ U)
+        "swc/scawa/com/twittew/scawding_intewnaw/job", -.-
+        "swc/scawa/com/twittew/timewines/pwediction/adaptews/wecap", (ˆ ﻌ ˆ)♡
+        "swc/scawa/com/twittew/timewines/pwediction/featuwes/wecap", (⑅˘꒳˘)
+        "timewines/data_pwocessing/ad_hoc/eawwybiwd_wanking/common", (U ᵕ U❁)
+        "timewines/data_pwocessing/utiw:wich-wequest",
+        "timewines/data_pwocessing/utiw/exampwe", -.-
+        "timewines/data_pwocessing/utiw/execution", ^^;;
+        "twadoop_config/configuwation/wog_categowies/gwoup/timewines:timewinesewvice_injection_wequest_wog-scawa", >_<
     ],
 )
 
-hadoop_binary(
-    name = "bin",
-    basename = "earlybird_model_evaluation-deploy",
-    main = "com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.model_evaluation.EarlybirdModelEvaluationJob",
-    platform = "java8",
-    runtime_platform = "java8",
+h-hadoop_binawy(
+    n-name = "bin", mya
+    b-basename = "eawwybiwd_modew_evawuation-depwoy", mya
+    m-main = "com.twittew.timewines.data_pwocessing.ad_hoc.eawwybiwd_wanking.modew_evawuation.eawwybiwdmodewevawuationjob", 😳
+    p-pwatfowm = "java8", XD
+    wuntime_pwatfowm = "java8", :3
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe", 😳😳😳
+        "bazew-compatibwe:migwated", -.-
+        "bazew-onwy", ( ͡o ω ͡o )
     ],
     dependencies = [
-        ":model_evaluation",
+        ":modew_evawuation", rawr x3
     ],
 )

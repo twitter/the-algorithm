@@ -1,90 +1,90 @@
-package com.twitter.product_mixer.core.model.common.identifier
+package com.twittew.pwoduct_mixew.cowe.modew.common.identifiew
 
 /**
- * Pipeline Step identifier
+ * pipewine step i-identifiew
  *
- * @note This class should always remain effectively `final`. If for any reason the `sealed`
- *       modifier is removed, the equals() implementation must be updated in order to handle class
- *       inheritor equality (see note on the equals method below)
+ * @note t-this c-cwass shouwd awways w-wemain effectivewy `finaw`. 😳😳😳 i-if fow any weason t-the `seawed`
+ *       m-modifiew i-is wemoved, (˘ω˘) the equaws() impwementation must be updated in owdew to handwe cwass
+ *       i-inhewitow equawity (see nyote on the e-equaws method bewow)
  */
-sealed abstract class PipelineStepIdentifier(
-  override val name: String)
-    extends ComponentIdentifier("Step", name) {
+seawed a-abstwact cwass pipewinestepidentifiew(
+  ovewwide vaw nyame: stwing)
+    extends c-componentidentifiew("step", ʘwʘ nyame) {
 
   /**
-   * @inheritdoc
+   * @inhewitdoc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[PipelineStepIdentifier]
+  o-ovewwide def c-canequaw(that: any): boowean = that.isinstanceof[pipewinestepidentifiew]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * high pewfowmance impwementation o-of equaws method that wevewages:
+   *  - wefewentiaw equawity showt ciwcuit
+   *  - cached h-hashcode equawity showt ciwcuit
+   *  - f-fiewd v-vawues awe onwy c-checked if the h-hashcodes awe equaw to handwe the unwikewy case
+   *    o-of a hashcode cowwision
+   *  - wemovaw o-of check fow `that` being an equaws-compatibwe descendant since this cwass is finaw
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @note `candidate.canequaw(this)` is not nyecessawy because this cwass i-is finaw
+   * @see [[http://www.awtima.com/pins1ed/object-equawity.htmw pwogwamming i-in scawa, ( ͡o ω ͡o )
+   *      c-chaptew 28]] f-fow discussion and design. o.O
    */
-  override def equals(that: Any): Boolean =
-    that match {
-      case identifier: PipelineStepIdentifier =>
-        // Note identifier.canEqual(this) is not necessary because this class is effectively final
-        ((this eq identifier)
-          || ((hashCode == identifier.hashCode) && ((componentType == identifier.componentType) && (name == identifier.name))))
-      case _ =>
-        false
+  ovewwide def equaws(that: a-any): boowean =
+    t-that match {
+      case i-identifiew: pipewinestepidentifiew =>
+        // n-note identifiew.canequaw(this) is nyot nyecessawy b-because this cwass is effectivewy f-finaw
+        ((this eq identifiew)
+          || ((hashcode == identifiew.hashcode) && ((componenttype == i-identifiew.componenttype) && (name == identifiew.name))))
+      c-case _ =>
+        fawse
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * w-wevewage d-domain-specific constwaints (see notes bewow) to safewy constwuct and cache the
+   * hashcode as a vaw, >w< such t-that it is instantiated o-once on object constwuction. 😳 t-this pwevents t-the
+   * nyeed t-to wecompute the hashcode on each hashcode() invocation, 🥺 which i-is the behaviow of the
+   * scawa compiwew case cwass-genewated hashcode() since i-it cannot make assumptions wegawding f-fiewd
+   * o-object mutabiwity a-and hashcode impwementations. rawr x3
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated identifier
-   *       (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       data structure), assuming stable hashCode implementations for these objects
+   * @note c-caching the hashcode i-is onwy s-safe if aww of the f-fiewds used to constwuct the hashcode
+   *       a-awe immutabwe. o.O t-this incwudes:
+   *       - inabiwity t-to mutate t-the object wefewence o-on fow an existing instantiated identifiew
+   *       (i.e. rawr each fiewd is a-a vaw)
+   *       - inabiwity to mutate the fiewd object instance itsewf (i.e. ʘwʘ each fiewd is an i-immutabwe
+   *       - inabiwity to mutate the fiewd object instance i-itsewf (i.e. 😳😳😳 e-each fiewd is a-an immutabwe
+   *       data stwuctuwe), ^^;; a-assuming stabwe hashcode i-impwementations f-fow these objects
    *
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @note in owdew fow the hashcode to be consistent with object equawity, o.O `##` must b-be used fow
+   *       boxed nyumewic t-types and nyuww. (///ˬ///✿) as such, σωσ a-awways pwefew `.##` o-ovew `.hashcode()`. nyaa~~
    */
-  override val hashCode: Int = 31 * componentType.## + name.##
+  ovewwide vaw hashcode: int = 31 * c-componenttype.## + n-nyame.##
 }
 
-class Person(val name: String, val age: Int) extends Equals {
-  override def canEqual(that: Any): Boolean =
-    that.isInstanceOf[Person]
+cwass pewson(vaw n-nyame: stwing, ^^;; v-vaw age: int) extends equaws {
+  ovewwide def canequaw(that: any): boowean =
+    t-that.isinstanceof[pewson]
 
-  //Intentionally avoiding the call to super.equals because no ancestor has overridden equals (see note 7 below)
-  override def equals(that: Any): Boolean =
+  //intentionawwy a-avoiding the caww t-to supew.equaws because no ancestow h-has ovewwidden e-equaws (see nyote 7 bewow)
+  o-ovewwide def equaws(that: any): boowean =
     that match {
-      case person: Person =>
-        (this eq person) || (hashCode == person.hashCode) && ((name == person.name) && (age == person.age))
+      case pewson: p-pewson =>
+        (this e-eq pewson) || (hashcode == pewson.hashcode) && ((name == pewson.name) && (age == p-pewson.age))
 
-      case _ =>
-        false
+      c-case _ =>
+        fawse
     }
 
-  //Intentionally avoiding the call to super.hashCode because no ancestor has overridden hashCode (see note 7 below)
-  override def hashCode(): Int =
+  //intentionawwy avoiding the caww to supew.hashcode b-because nyo ancestow has ovewwidden hashcode (see nyote 7 bewow)
+  ovewwide def h-hashcode(): int =
     31 * (
-      name.##
+      nyame.##
     ) + age.##
 }
 
-object PipelineStepIdentifier {
-  def apply(name: String)(implicit sourceFile: sourcecode.File): PipelineStepIdentifier = {
-    if (ComponentIdentifier.isValidName(name))
-      new PipelineStepIdentifier(name) { override val file: sourcecode.File = sourceFile }
-    else
-      throw new IllegalArgumentException(s"Illegal StepIdentifier: $name")
+o-object pipewinestepidentifiew {
+  d-def appwy(name: stwing)(impwicit souwcefiwe: souwcecode.fiwe): pipewinestepidentifiew = {
+    i-if (componentidentifiew.isvawidname(name))
+      n-nyew pipewinestepidentifiew(name) { ovewwide vaw fiwe: souwcecode.fiwe = souwcefiwe }
+    e-ewse
+      thwow nyew i-iwwegawawgumentexception(s"iwwegaw stepidentifiew: $name")
   }
 }

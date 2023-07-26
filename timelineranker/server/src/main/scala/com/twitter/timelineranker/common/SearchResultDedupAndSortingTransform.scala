@@ -1,23 +1,23 @@
-package com.twitter.timelineranker.common
+package com.twittew.timewinewankew.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelines.model.TweetId
-import com.twitter.util.Future
-import scala.collection.mutable
+impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.timewinewankew.cowe.candidateenvewope
+i-impowt c-com.twittew.timewines.modew.tweetid
+i-impowt com.twittew.utiw.futuwe
+i-impowt scawa.cowwection.mutabwe
 
 /**
- * Remove duplicate search results and order them reverse-chron.
+ * wemove d-dupwicate s-seawch wesuwts and owdew them wevewse-chwon. ^^;;
  */
-object SearchResultDedupAndSortingTransform
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val seenTweetIds = mutable.Set.empty[TweetId]
-    val dedupedResults = envelope.searchResults
-      .filter(result => seenTweetIds.add(result.id))
-      .sortBy(_.id)(Ordering[TweetId].reverse)
+object seawchwesuwtdedupandsowtingtwansfowm
+    extends futuweawwow[candidateenvewope, >_< candidateenvewope] {
+  def a-appwy(envewope: candidateenvewope): futuwe[candidateenvewope] = {
+    v-vaw seentweetids = mutabwe.set.empty[tweetid]
+    v-vaw dedupedwesuwts = envewope.seawchwesuwts
+      .fiwtew(wesuwt => seentweetids.add(wesuwt.id))
+      .sowtby(_.id)(owdewing[tweetid].wevewse)
 
-    val transformedEnvelope = envelope.copy(searchResults = dedupedResults)
-    Future.value(transformedEnvelope)
+    vaw twansfowmedenvewope = envewope.copy(seawchwesuwts = d-dedupedwesuwts)
+    futuwe.vawue(twansfowmedenvewope)
   }
 }

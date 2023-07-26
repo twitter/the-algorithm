@@ -1,89 +1,89 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/types.proto";
+impowt "tensowfwow/cowe/fwamewowk/tensow_shape.pwoto";
+impowt "tensowfwow/cowe/fwamewowk/types.pwoto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "CostGraphProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/cost_graph_go_proto";
+o-option cc_enabwe_awenas = t-twue;
+o-option java_outew_cwassname = "costgwaphpwotos";
+o-option java_muwtipwe_fiwes = t-twue;
+o-option java_package = "owg.tensowfwow.fwamewowk";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/fwamewowk/cost_gwaph_go_pwoto";
 
-message CostGraphDef {
-  message Node {
-    // The name of the node. Names are globally unique.
-    string name = 1;
+m-message costgwaphdef {
+  message nyode {
+    // the nyame of the node. mya nyames awe g-gwobawwy unique. mya
+    stwing nyame = 1;
 
-    // The device of the node. Can be empty if the node is mapped to the
-    // default partition or partitioning hasn't been run yet.
-    string device = 2;
+    // the device of the n-node. (⑅˘꒳˘) can be empty if the nyode i-is mapped to the
+    // defauwt pawtition ow pawtitioning hasn't b-been wun yet. (U ﹏ U)
+    stwing device = 2;
 
-    // The id of the node. Node ids are only unique inside a partition.
+    // t-the id of the nyode. n-nyode ids awe onwy unique inside a pawtition.
     int32 id = 3;
 
-    // Inputs of this node. They must be executed before this node can be
-    // executed. An input is a particular output of another node, specified
-    // by the node id and the output index.
-    message InputInfo {
-      int32 preceding_node = 1;
-      int32 preceding_port = 2;
+    // inputs o-of this nyode. mya they must be exekawaii~d befowe this nyode can be
+    // exekawaii~d. ʘwʘ a-an input is a pawticuwaw o-output of anothew n-nyode, specified
+    // b-by t-the nyode id and the output index. (˘ω˘)
+    message inputinfo {
+      i-int32 pweceding_node = 1;
+      int32 pweceding_powt = 2;
     }
-    repeated InputInfo input_info = 4;
+    wepeated inputinfo i-input_info = 4;
 
-    // Outputs of this node.
-    message OutputInfo {
+    // outputs of this nyode. (U ﹏ U)
+    message outputinfo {
       int64 size = 1;
-      // If >= 0, the output is an alias of an input. Note that an alias input
-      // may itself be an alias. The algorithm will therefore need to follow
-      // those pointers.
-      int64 alias_input_port = 2;
-      TensorShapeProto shape = 3;
-      DataType dtype = 4;
+      // if >= 0, ^•ﻌ•^ the output i-is an awias of an input. (˘ω˘) nyote t-that an awias i-input
+      // may i-itsewf be an awias. :3 the awgowithm wiww thewefowe nyeed to fowwow
+      // t-those p-pointews. ^^;;
+      int64 awias_input_powt = 2;
+      t-tensowshapepwoto s-shape = 3;
+      datatype d-dtype = 4;
     }
-    repeated OutputInfo output_info = 5;
+    wepeated outputinfo o-output_info = 5;
 
-    // Temporary memory used by this node.
-    int64 temporary_memory_size = 6;
+    // tempowawy memowy used by this n-nyode. 🥺
+    int64 tempowawy_memowy_size = 6;
 
-    // Persistent memory used by this node.
-    int64 persistent_memory_size = 12;
+    // p-pewsistent memowy used by this n-nyode.
+    int64 p-pewsistent_memowy_size = 12;
 
-    int64 host_temp_memory_size = 10 [deprecated = true];
-    int64 device_temp_memory_size = 11 [deprecated = true];
-    int64 device_persistent_memory_size = 16 [deprecated = true];
+    int64 host_temp_memowy_size = 10 [depwecated = twue];
+    int64 device_temp_memowy_size = 11 [depwecated = twue];
+    int64 device_pewsistent_memowy_size = 16 [depwecated = twue];
 
-    // Estimate of the computational cost of this node, in microseconds.
-    int64 compute_cost = 9;
+    // e-estimate of the c-computationaw cost of this nyode, i-in micwoseconds. (⑅˘꒳˘)
+    i-int64 compute_cost = 9;
 
-    // Analytical estimate of the computational cost of this node, in
-    // microseconds.
+    // a-anawyticaw estimate of the computationaw cost of this nyode, nyaa~~ i-in
+    // micwoseconds. :3
     int64 compute_time = 14;
 
-    // Analytical estimate of the memory access cost of this node, in
-    // microseconds.
-    int64 memory_time = 15;
+    // anawyticaw estimate of the memowy a-access cost of this nyode, ( ͡o ω ͡o ) i-in
+    // micwoseconds.
+    i-int64 m-memowy_time = 15;
 
-    // If true, the output is permanent: it can't be discarded, because this
-    // node is part of the "final output". Nodes may depend on final nodes.
-    bool is_final = 7;
+    // if twue, mya t-the output i-is pewmanent: it c-can't be discawded, (///ˬ///✿) b-because this
+    // nyode is pawt of the "finaw o-output". (˘ω˘) nyodes m-may depend o-on finaw nyodes. ^^;;
+    b-boow is_finaw = 7;
 
-    // Ids of the control inputs for this node.
-    repeated int32 control_input = 8;
+    // i-ids of the contwow inputs fow this nyode. (✿oωo)
+    wepeated int32 contwow_input = 8;
 
-    // Are the costs inaccurate?
-    bool inaccurate = 17;
+    // a-awe the costs inaccuwate?
+    boow inaccuwate = 17;
   }
-  repeated Node node = 1;
+  wepeated nyode nyode = 1;
 
-  // Total cost of this graph, typically used for balancing decisions.
-  message AggregatedCost {
-    // Aggregated cost value.
-    float cost = 1;
+  // totaw cost of t-this gwaph, (U ﹏ U) typicawwy used fow bawancing decisions. -.-
+  message aggwegatedcost {
+    // a-aggwegated c-cost vawue. ^•ﻌ•^
+    f-fwoat cost = 1;
 
-    // Aggregated cost dimension (e.g. 'memory', 'compute', 'network').
-    string dimension = 2;
+    // aggwegated c-cost dimension (e.g. rawr 'memowy', 'compute', (˘ω˘) 'netwowk'). nyaa~~
+    stwing d-dimension = 2;
   }
-  repeated AggregatedCost cost = 2;
+  w-wepeated aggwegatedcost cost = 2;
 }

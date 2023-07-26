@@ -1,66 +1,66 @@
-package com.twitter.home_mixer.service
+package com.twittew.home_mixew.sewvice
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.product_mixer.core.functional_component.common.alert.Destination
-import com.twitter.product_mixer.core.functional_component.common.alert.EmptyResponseRateAlert
-import com.twitter.product_mixer.core.functional_component.common.alert.LatencyAlert
-import com.twitter.product_mixer.core.functional_component.common.alert.NotificationGroup
-import com.twitter.product_mixer.core.functional_component.common.alert.P99
-import com.twitter.product_mixer.core.functional_component.common.alert.Percentile
-import com.twitter.product_mixer.core.functional_component.common.alert.SuccessRateAlert
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfAbove
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfBelow
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfLatencyAbove
-import com.twitter.util.Duration
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.destination
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.emptywesponsewateawewt
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.watencyawewt
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.notificationgwoup
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.p99
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.pewcentiwe
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.successwateawewt
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.pwedicate.twiggewifabove
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.pwedicate.twiggewifbewow
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.pwedicate.twiggewifwatencyabove
+i-impowt com.twittew.utiw.duwation
 
 /**
- * Notifications (email, pagerduty, etc) can be specific per-alert but it is common for multiple
- * products to share notification configuration.
+ * nyotifications (emaiw, 😳 pagewduty, mya e-etc) can be specific pew-awewt b-but it is common fow muwtipwe
+ * pwoducts to shawe nyotification c-configuwation. (˘ω˘)
  */
-object HomeMixerAlertConfig {
-  val DefaultNotificationGroup: NotificationGroup = NotificationGroup(
-    warn = Destination(emails = Seq("")),
-    critical = Destination(emails = Seq(""))
+object homemixewawewtconfig {
+  v-vaw defauwtnotificationgwoup: n-nyotificationgwoup = nyotificationgwoup(
+    wawn = destination(emaiws = seq("")), >_<
+    cwiticaw = d-destination(emaiws = seq(""))
   )
 
-  object BusinessHours {
-    val DefaultNotificationGroup: NotificationGroup = NotificationGroup(
-      warn = Destination(emails = Seq("")),
-      critical = Destination(emails =
-        Seq(""))
+  object businesshouws {
+    vaw defauwtnotificationgwoup: n-nyotificationgwoup = nyotificationgwoup(
+      w-wawn = destination(emaiws = seq("")), -.-
+      cwiticaw = d-destination(emaiws =
+        s-seq(""))
     )
 
-    def defaultEmptyResponseRateAlert(warnThreshold: Double = 50, criticalThreshold: Double = 80) =
-      EmptyResponseRateAlert(
-        notificationGroup = DefaultNotificationGroup,
-        warnPredicate = TriggerIfAbove(warnThreshold),
-        criticalPredicate = TriggerIfAbove(criticalThreshold)
+    d-def defauwtemptywesponsewateawewt(wawnthweshowd: doubwe = 50, 🥺 cwiticawthweshowd: d-doubwe = 80) =
+      emptywesponsewateawewt(
+        nyotificationgwoup = d-defauwtnotificationgwoup, (U ﹏ U)
+        wawnpwedicate = twiggewifabove(wawnthweshowd), >w<
+        cwiticawpwedicate = twiggewifabove(cwiticawthweshowd)
       )
 
-    def defaultSuccessRateAlert(
-      threshold: Double = 99.5,
-      warnDatapointsPastThreshold: Int = 20,
-      criticalDatapointsPastThreshold: Int = 30,
-      duration: Int = 30
-    ) = SuccessRateAlert(
-      notificationGroup = DefaultNotificationGroup,
-      warnPredicate = TriggerIfBelow(threshold, warnDatapointsPastThreshold, duration),
-      criticalPredicate = TriggerIfBelow(threshold, criticalDatapointsPastThreshold, duration),
+    def defauwtsuccesswateawewt(
+      thweshowd: d-doubwe = 99.5, mya
+      wawndatapointspastthweshowd: i-int = 20, >w<
+      c-cwiticawdatapointspastthweshowd: i-int = 30, nyaa~~
+      duwation: int = 30
+    ) = successwateawewt(
+      notificationgwoup = d-defauwtnotificationgwoup, (✿oωo)
+      w-wawnpwedicate = twiggewifbewow(thweshowd, ʘwʘ w-wawndatapointspastthweshowd, (ˆ ﻌ ˆ)♡ d-duwation), 😳😳😳
+      cwiticawpwedicate = t-twiggewifbewow(thweshowd, :3 cwiticawdatapointspastthweshowd, OwO d-duwation), (U ﹏ U)
     )
 
-    def defaultLatencyAlert(
-      latencyThreshold: Duration = 200.millis,
-      warningDatapointsPastThreshold: Int = 15,
-      criticalDatapointsPastThreshold: Int = 30,
-      duration: Int = 30,
-      percentile: Percentile = P99
-    ): LatencyAlert = LatencyAlert(
-      notificationGroup = DefaultNotificationGroup,
-      percentile = percentile,
-      warnPredicate =
-        TriggerIfLatencyAbove(latencyThreshold, warningDatapointsPastThreshold, duration),
-      criticalPredicate =
-        TriggerIfLatencyAbove(latencyThreshold, criticalDatapointsPastThreshold, duration)
+    def defauwtwatencyawewt(
+      watencythweshowd: d-duwation = 200.miwwis, >w<
+      wawningdatapointspastthweshowd: i-int = 15, (U ﹏ U)
+      cwiticawdatapointspastthweshowd: i-int = 30, 😳
+      d-duwation: int = 30, (ˆ ﻌ ˆ)♡
+      pewcentiwe: pewcentiwe = p99
+    ): watencyawewt = watencyawewt(
+      nyotificationgwoup = d-defauwtnotificationgwoup,
+      p-pewcentiwe = pewcentiwe, 😳😳😳
+      w-wawnpwedicate =
+        t-twiggewifwatencyabove(watencythweshowd, (U ﹏ U) w-wawningdatapointspastthweshowd, (///ˬ///✿) duwation), 😳
+      cwiticawpwedicate =
+        twiggewifwatencyabove(watencythweshowd, 😳 c-cwiticawdatapointspastthweshowd, σωσ duwation)
     )
   }
 }

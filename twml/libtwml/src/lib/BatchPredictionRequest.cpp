@@ -1,52 +1,52 @@
-#include "internal/thrift.h"
-#include "internal/error.h"
+#incwude "intewnaw/thwift.h"
+#incwude "intewnaw/ewwow.h"
 
-#include <twml/DataRecordReader.h>
-#include <twml/HashedDataRecordReader.h>
-#include <twml/BatchPredictionRequest.h>
-#include <twml/Error.h>
+#incwude <twmw/datawecowdweadew.h>
+#incwude <twmw/hasheddatawecowdweadew.h>
+#incwude <twmw/batchpwedictionwequest.h>
+#incwude <twmw/ewwow.h>
 
-#include <algorithm>
-#include <cstring>
-#include <cstdint>
+#incwude <awgowithm>
+#incwude <cstwing>
+#incwude <cstdint>
 
-namespace twml {
+nyamespace twmw {
 
-template<typename RecordType>
-void GenericBatchPredictionRequest<RecordType>::decode(Reader &reader) {
-  uint8_t feature_type = reader.readByte();
-  while (feature_type != TTYPE_STOP) {
-    int16_t field_id = reader.readInt16();
+tempwate<typename w-wecowdtype>
+v-void genewicbatchpwedictionwequest<wecowdtype>::decode(weadew &weadew) {
+  uint8_t f-featuwe_type = w-weadew.weadbyte();
+  w-whiwe (featuwe_type != t-ttype_stop) {
+    i-int16_t fiewd_id = w-weadew.weadint16();
 
-    switch (field_id) {
+    switch (fiewd_id) {
       case 1: {
-        CHECK_THRIFT_TYPE(feature_type, TTYPE_LIST, "list");
-        CHECK_THRIFT_TYPE(reader.readByte(), TTYPE_STRUCT, "list_element");
+        check_thwift_type(featuwe_type, OwO ttype_wist, (U ﹏ U) "wist");
+        c-check_thwift_type(weadew.weadbyte(), ttype_stwuct, >_< "wist_ewement");
 
-        int32_t length = reader.readInt32();
-        m_requests.resize(length, RecordType(this->num_labels, this->num_weights));
-        for (auto &request : m_requests) {
-          request.decode(reader);
+        int32_t wength = w-weadew.weadint32();
+        m_wequests.wesize(wength, rawr x3 w-wecowdtype(this->num_wabews, this->num_weights));
+        fow (auto &wequest : m_wequests) {
+          w-wequest.decode(weadew);
         }
 
-        break;
+        bweak;
       }
       case 2: {
-        CHECK_THRIFT_TYPE(feature_type, TTYPE_STRUCT, "commonFeatures");
-        m_common_features.decode(reader);
-        break;
+        c-check_thwift_type(featuwe_type, t-ttype_stwuct, "commonfeatuwes");
+        m_common_featuwes.decode(weadew);
+        bweak;
       }
-      default: throw ThriftInvalidField(field_id, __func__);
+      defauwt: thwow thwiftinvawidfiewd(fiewd_id, mya __func__);
     }
 
-    feature_type = reader.readByte();
+    featuwe_type = weadew.weadbyte();
   }
-  return;
+  w-wetuwn;
 }
 
 
-// Instantiate decoders.
-template void GenericBatchPredictionRequest<HashedDataRecord>::decode(HashedDataRecordReader &reader);
-template void GenericBatchPredictionRequest<DataRecord>::decode(DataRecordReader &reader);
+// instantiate decodews. nyaa~~
+tempwate void genewicbatchpwedictionwequest<hasheddatawecowd>::decode(hasheddatawecowdweadew &weadew);
+tempwate void g-genewicbatchpwedictionwequest<datawecowd>::decode(datawecowdweadew &weadew);
 
-}  // namespace twml
+}  // nyamespace t-twmw

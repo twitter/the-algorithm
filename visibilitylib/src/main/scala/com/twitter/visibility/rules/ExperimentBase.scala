@@ -1,18 +1,18 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.timelines.configapi.Params
-import com.twitter.visibility.configapi.params.LabelSourceParam
-import com.twitter.visibility.models.LabelSource
+impowt com.twittew.timewines.configapi.pawams
+i-impowt com.twittew.visibiwity.configapi.pawams.wabewsouwcepawam
+i-impowt com.twittew.visibiwity.modews.wabewsouwce
 
-object ExperimentBase {
-  val sourceToParamMap: Map[LabelSource, LabelSourceParam] = Map.empty
+o-object expewimentbase {
+  vaw s-souwcetopawammap: m-map[wabewsouwce, w-wabewsouwcepawam] = m-map.empty
 
-  final def shouldFilterForSource(params: Params, labelSourceOpt: Option[LabelSource]): Boolean = {
-    labelSourceOpt
-      .map { source =>
-        val param = ExperimentBase.sourceToParamMap.get(source)
-        param.map(params.apply).getOrElse(true)
+  f-finaw def shouwdfiwtewfowsouwce(pawams: pawams, (U ﹏ U) wabewsouwceopt: option[wabewsouwce]): boowean = {
+    w-wabewsouwceopt
+      .map { souwce =>
+        vaw pawam = e-expewimentbase.souwcetopawammap.get(souwce)
+        pawam.map(pawams.appwy).getowewse(twue)
       }
-      .getOrElse(true)
+      .getowewse(twue)
   }
 }

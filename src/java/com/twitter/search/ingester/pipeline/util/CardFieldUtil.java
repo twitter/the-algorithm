@@ -1,48 +1,48 @@
-package com.twitter.search.ingester.pipeline.util;
+package com.twittew.seawch.ingestew.pipewine.utiw;
 
-import com.google.common.base.Strings;
+impowt com.googwe.common.base.stwings;
 
-import com.twitter.expandodo.thriftjava.BindingValue;
-import com.twitter.expandodo.thriftjava.BindingValueType;
-import com.twitter.expandodo.thriftjava.Card2;
-import com.twitter.search.common.util.text.LanguageIdentifierHelper;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
+i-impowt c-com.twittew.expandodo.thwiftjava.bindingvawue;
+i-impowt com.twittew.expandodo.thwiftjava.bindingvawuetype;
+i-impowt c-com.twittew.expandodo.thwiftjava.cawd2;
+i-impowt c-com.twittew.seawch.common.utiw.text.wanguageidentifiewhewpew;
+impowt c-com.twittew.seawch.ingestew.modew.ingestewtwittewmessage;
 
-public final class CardFieldUtil {
+pubwic finaw cwass cawdfiewdutiw {
 
-  private CardFieldUtil() {
-    /* prevent instantiation */
+  pwivate cawdfiewdutiw() {
+    /* pwevent i-instantiation */
   }
 
   /**
-   * Binding Keys for card fields
+   * binding keys fow cawd fiewds
    */
-  public static final String TITLE_BINDING_KEY = "title";
-  public static final String DESCRIPTION_BINDING_KEY = "description";
+  p-pubwic static finaw stwing t-titwe_binding_key = "titwe";
+  pubwic static finaw stwing descwiption_binding_key = "descwiption";
 
   /**
-   * given a bindingKey and card, will return the bindingValue of the given bindingKey
-   * if present in card.getBinding_values(). If no match is found return null.
+   * given a bindingkey a-and cawd, >_< wiww wetuwn the bindingvawue o-of the g-given bindingkey
+   * if pwesent in cawd.getbinding_vawues(). (⑅˘꒳˘) if nyo match is found wetuwn nyuww. /(^•ω•^)
    */
-  public static String extractBindingValue(String bindingKey, Card2 card) {
-    for (BindingValue bindingValue : card.getBinding_values()) {
-      if ((bindingValue != null)
-          && bindingValue.isSetType()
-          && (bindingValue.getType() == BindingValueType.STRING)
-          && bindingKey.equals(bindingValue.getKey())) {
-        return bindingValue.getString_value();
+  p-pubwic static stwing extwactbindingvawue(stwing bindingkey, rawr x3 cawd2 cawd) {
+    f-fow (bindingvawue bindingvawue : c-cawd.getbinding_vawues()) {
+      i-if ((bindingvawue != n-nuww)
+          && b-bindingvawue.issettype()
+          && (bindingvawue.gettype() == bindingvawuetype.stwing)
+          && bindingkey.equaws(bindingvawue.getkey())) {
+        wetuwn b-bindingvawue.getstwing_vawue();
       }
     }
-    return null;
+    wetuwn nyuww;
   }
 
   /**
-   * derives card lang from title + description and sets it in TwitterMessage.
+   * dewives cawd w-wang fwom titwe + descwiption and sets it in twittewmessage. (U ﹏ U)
    */
-  public static void deriveCardLang(IngesterTwitterMessage message) {
-    message.setCardLang(LanguageIdentifierHelper.identifyLanguage(String.format("%s %s",
-        Strings.nullToEmpty(message.getCardTitle()),
-        Strings.nullToEmpty(message.getCardDescription()))).getLanguage());
+  pubwic static void dewivecawdwang(ingestewtwittewmessage m-message) {
+    message.setcawdwang(wanguageidentifiewhewpew.identifywanguage(stwing.fowmat("%s %s", (U ﹏ U)
+        s-stwings.nuwwtoempty(message.getcawdtitwe()), (⑅˘꒳˘)
+        s-stwings.nuwwtoempty(message.getcawddescwiption()))).getwanguage());
   }
 }
 

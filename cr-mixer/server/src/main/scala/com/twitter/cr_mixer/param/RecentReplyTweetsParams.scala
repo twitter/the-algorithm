@@ -1,27 +1,27 @@
-package com.twitter.cr_mixer.param
+package com.twittew.cw_mixew.pawam
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.timewines.configapi.baseconfig
+i-impowt com.twittew.timewines.configapi.baseconfigbuiwdew
+i-impowt c-com.twittew.timewines.configapi.fsname
+i-impowt c-com.twittew.timewines.configapi.fspawam
+i-impowt c-com.twittew.timewines.configapi.featuweswitchovewwideutiw
+i-impowt com.twittew.timewines.configapi.pawam
 
-object RecentReplyTweetsParams {
-  // Source params
-  object EnableSourceParam
-      extends FSParam[Boolean](
-        name = "twistly_recentreplytweets_enable_source",
-        default = false
+object wecentwepwytweetspawams {
+  // souwce pawams
+  o-object enabwesouwcepawam
+      extends fspawam[boowean](
+        nyame = "twistwy_wecentwepwytweets_enabwe_souwce", mya
+        d-defauwt = fawse
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(EnableSourceParam)
+  v-vaw awwpawams: seq[pawam[_] with fsname] = seq(enabwesouwcepawam)
 
-  lazy val config: BaseConfig = {
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(EnableSourceParam)
+  w-wazy vaw config: baseconfig = {
+    v-vaw booweanovewwides = f-featuweswitchovewwideutiw.getbooweanfsovewwides(enabwesouwcepawam)
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .build()
+    baseconfigbuiwdew()
+      .set(booweanovewwides: _*)
+      .buiwd()
   }
 }

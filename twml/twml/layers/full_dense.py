@@ -1,259 +1,259 @@
-# pylint: disable=no-member,arguments-differ, attribute-defined-outside-init
+# pywint: disabwe=no-membew,awguments-diffew, (✿oωo) attwibute-defined-outside-init
 """
-Implementing Full Dense Layer
+i-impwementing fuww d-dense wayew
 """
-from tensorflow.python.layers import core as core_layers
-from tensorflow.python.ops import init_ops
-from tensorflow.python.framework import tensor_shape
-from tensorflow.python.keras.engine.base_layer import InputSpec
-import tensorflow.compat.v1 as tf
+f-fwom tensowfwow.python.wayews i-impowt cowe as cowe_wayews
+f-fwom t-tensowfwow.python.ops i-impowt init_ops
+f-fwom tensowfwow.python.fwamewowk impowt tensow_shape
+fwom tensowfwow.python.kewas.engine.base_wayew impowt i-inputspec
+impowt tensowfwow.compat.v1 as tf
 
 
-class FullDense(core_layers.Dense):
+cwass f-fuwwdense(cowe_wayews.dense):
   """
-  Densely-connected layer class.
-  This is wrapping tensorflow.python.layers.core.Dense
-  This layer implements the operation:
+  densewy-connected w-wayew cwass.
+  this is wwapping tensowfwow.python.wayews.cowe.dense
+  this wayew impwements t-the opewation:
 
-  .. code-block:: python
+  .. code-bwock:: p-python
 
-    outputs = activation(inputs.weight + bias)
+    o-outputs = activation(inputs.weight + bias)
 
-  Where ``activation`` is the activation function passed as the ``activation``
-  argument (if not ``None``), ``weight`` is a weights matrix created by the layer,
-  and ``bias`` is a bias vector created by the layer.
+  whewe ``activation`` is the a-activation function passed as the ``activation``
+  awgument (if nyot ``none``), (ˆ ﻌ ˆ)♡ ``weight`` is a w-weights matwix cweated by the wayew, :3
+  a-and ``bias`` i-is a bias vectow c-cweated by t-the wayew. (U ᵕ U❁)
 
-  Arguments:
+  awguments:
     output_size:
-      Integer or Long, dimensionality of the output space.
+      integew ow wong, ^^;; d-dimensionawity of the output space.
     activation:
-      Activation function (callable). Set it to None to maintain a linear activation.
-    weight_initializer:
-      Initializer function for the weight matrix.
-    bias_initializer:
-      Initializer function for the bias.
-    weight_regularizer:
-      Regularizer function for the weight matrix.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
-    bias_regularizer:
-      Regularizer function for the bias.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
-    activity_regularizer:
-      Regularizer function for the output.
-    weight_constraint:
-      An optional projection function to be applied to the
-      weight after being updated by an `Optimizer` (e.g. used to implement
-      norm constraints or value constraints for layer weights). The function
-      must take as input the unprojected variable and must return the
-      projected variable (which must have the same shape). Constraints are
-      not safe to use when doing asynchronous distributed training.
-    bias_constraint:
-      An optional projection function to be applied to the
-      bias after being updated by an `Optimizer`.
-    trainable:
-      Boolean, if `True` also add variables to the graph collection
-      ``GraphKeys.TRAINABLE_VARIABLES`` (see `tf.Variable
-      <https://www.tensorflow.org/versions/master/api_docs/python/tf/Variable>`_).
-    name:
-      String, the name of the layer. Layers with the same name will
-      share weights, but to avoid mistakes we require ``reuse=True`` in such cases.
+      a-activation function (cawwabwe). mya set it to nyone to maintain a wineaw activation. 😳😳😳
+    w-weight_initiawizew:
+      initiawizew f-function f-fow the weight matwix. OwO
+    b-bias_initiawizew:
+      initiawizew function fow the bias. rawr
+    weight_weguwawizew:
+      w-weguwawizew f-function fow the weight matwix. XD
+      e-ensuwe to a-add tf.wosses.get_weguwawization_woss() to youw w-woss fow this to take effect. (U ﹏ U)
+    b-bias_weguwawizew:
+      weguwawizew function fow t-the bias. (˘ω˘)
+      ensuwe to add t-tf.wosses.get_weguwawization_woss() to youw woss f-fow this to take e-effect. UwU
+    activity_weguwawizew:
+      weguwawizew function fow the output. >_<
+    weight_constwaint:
+      an optionaw pwojection f-function to b-be appwied to the
+      weight aftew b-being updated b-by an `optimizew` (e.g. σωσ u-used to impwement
+      nyowm constwaints ow vawue constwaints f-fow wayew weights). 🥺 the function
+      must take as input the unpwojected v-vawiabwe and must wetuwn the
+      p-pwojected v-vawiabwe (which m-must have the same shape). 🥺 constwaints a-awe
+      n-not safe to use w-when doing asynchwonous d-distwibuted twaining. ʘwʘ
+    bias_constwaint:
+      a-an optionaw p-pwojection f-function to be a-appwied to the
+      b-bias aftew being updated by an `optimizew`.
+    twainabwe:
+      b-boowean, if `twue` awso add vawiabwes to the gwaph cowwection
+      ``gwaphkeys.twainabwe_vawiabwes`` (see `tf.vawiabwe
+      <https://www.tensowfwow.owg/vewsions/mastew/api_docs/python/tf/vawiabwe>`_). :3
+    nyame:
+      stwing, (U ﹏ U) the nyame o-of the wayew. (U ﹏ U) wayews with the same nyame wiww
+      shawe weights, ʘwʘ b-but to avoid m-mistakes we w-wequiwe ``weuse=twue`` in such c-cases. >w<
 
-  Properties:
+  pwopewties:
     output_size:
-      Python integer, dimensionality of the output space.
+      p-python i-integew, rawr x3 dimensionawity of the output space. OwO
     activation:
-      Activation function (callable).
-    weight_initializer:
-      Initializer instance (or name) for the weight matrix.
-    bias_initializer:
-      Initializer instance (or name) for the bias.
+      activation function (cawwabwe). ^•ﻌ•^
+    w-weight_initiawizew:
+      initiawizew i-instance (ow nyame) fow the weight m-matwix.
+    b-bias_initiawizew:
+      initiawizew instance (ow n-nyame) fow the b-bias.
     weight:
-      Weight matrix (TensorFlow variable or tensor). (weight)
-    bias:
-      Bias vector, if applicable (TensorFlow variable or tensor).
-    weight_regularizer:
-      Regularizer instance for the weight matrix (callable)
-    bias_regularizer:
-      Regularizer instance for the bias (callable).
-    activity_regularizer:
-      Regularizer instance for the output (callable)
-    weight_constraint:
-      Constraint function for the weight matrix.
-    bias_constraint:
-      Constraint function for the bias.
+      weight matwix (tensowfwow v-vawiabwe ow tensow). >_< (weight)
+    b-bias:
+      bias vectow, OwO if appwicabwe (tensowfwow vawiabwe ow tensow). >_<
+    w-weight_weguwawizew:
+      w-weguwawizew i-instance fow the weight matwix (cawwabwe)
+    b-bias_weguwawizew:
+      w-weguwawizew instance f-fow the bias (cawwabwe). (ꈍᴗꈍ)
+    activity_weguwawizew:
+      weguwawizew instance fow the output (cawwabwe)
+    w-weight_constwaint:
+      c-constwaint function fow the weight matwix. >w<
+    b-bias_constwaint:
+      c-constwaint function fow the bias.
 
   """
 
-  def __init__(self, output_size,
-               weight_initializer=None,
-               weight_regularizer=None,
-               weight_constraint=None,
-               bias_constraint=None,
-               num_partitions=None,
-               **kwargs):
-    super(FullDense, self).__init__(units=output_size,
-                                    kernel_initializer=weight_initializer,
-                                    kernel_regularizer=weight_regularizer,
-                                    kernel_constraint=weight_constraint,
-                                    **kwargs)
-    self._num_partitions = num_partitions
+  def __init__(sewf, (U ﹏ U) o-output_size, ^^
+               weight_initiawizew=none, (U ﹏ U)
+               weight_weguwawizew=none, :3
+               weight_constwaint=none, (✿oωo)
+               bias_constwaint=none, XD
+               nyum_pawtitions=none, >w<
+               **kwawgs):
+    s-supew(fuwwdense, òωó sewf).__init__(units=output_size,
+                                    kewnew_initiawizew=weight_initiawizew, (ꈍᴗꈍ)
+                                    k-kewnew_weguwawizew=weight_weguwawizew, rawr x3
+                                    k-kewnew_constwaint=weight_constwaint, rawr x3
+                                    **kwawgs)
+    sewf._num_pawtitions = nyum_pawtitions
 
-  def build(self, input_shape):
+  def buiwd(sewf, σωσ i-input_shape):
     '''
-    code adapted from TF 1.12 Keras Dense layer:
-    https://github.com/tensorflow/tensorflow/blob/r1.12/tensorflow/python/keras/layers/core.py#L930-L956
+    code a-adapted fwom tf 1.12 kewas dense wayew:
+    https://github.com/tensowfwow/tensowfwow/bwob/w1.12/tensowfwow/python/kewas/wayews/cowe.py#w930-w956
     '''
-    input_shape = tensor_shape.TensorShape(input_shape)
-    if input_shape[-1] is None:
-      raise ValueError('The last dimension of the inputs to `Dense` '
-                       'should be defined. Found `None`.')
-    self.input_spec = InputSpec(min_ndim=2,
-                                axes={-1: input_shape[-1]})
+    i-input_shape = tensow_shape.tensowshape(input_shape)
+    if input_shape[-1] i-is nyone:
+      waise vawueewwow('the wast dimension o-of the inputs to `dense` '
+                       'shouwd be defined. (ꈍᴗꈍ) f-found `none`.')
+    s-sewf.input_spec = inputspec(min_ndim=2, rawr
+                                a-axes={-1: input_shape[-1]})
 
-    partitioner = None
-    if self._num_partitions:
-      partitioner = tf.fixed_size_partitioner(self._num_partitions)
+    pawtitionew = n-nyone
+    if sewf._num_pawtitions:
+      p-pawtitionew = t-tf.fixed_size_pawtitionew(sewf._num_pawtitions)
 
-    self.kernel = self.add_weight(
-        'kernel',
-        shape=[input_shape[-1], self.units],
-        initializer=self.kernel_initializer,
-        regularizer=self.kernel_regularizer,
-        constraint=self.kernel_constraint,
-        dtype=self.dtype,
-        partitioner=partitioner,
-        trainable=True)
+    sewf.kewnew = s-sewf.add_weight(
+        'kewnew', ^^;;
+        s-shape=[input_shape[-1], rawr x3 sewf.units],
+        initiawizew=sewf.kewnew_initiawizew, (ˆ ﻌ ˆ)♡
+        weguwawizew=sewf.kewnew_weguwawizew, σωσ
+        c-constwaint=sewf.kewnew_constwaint, (U ﹏ U)
+        d-dtype=sewf.dtype, >w<
+        p-pawtitionew=pawtitionew, σωσ
+        twainabwe=twue)
 
-    if self.use_bias:
-      self.bias = self.add_weight(
-          'bias',
-          shape=[self.units, ],
-          initializer=self.bias_initializer,
-          regularizer=self.bias_regularizer,
-          constraint=self.bias_constraint,
-          dtype=self.dtype,
-          trainable=True)
-    else:
-      self.bias = None
-    self.built = True
+    if sewf.use_bias:
+      s-sewf.bias = sewf.add_weight(
+          'bias', nyaa~~
+          shape=[sewf.units, 🥺 ],
+          i-initiawizew=sewf.bias_initiawizew, rawr x3
+          w-weguwawizew=sewf.bias_weguwawizew, σωσ
+          constwaint=sewf.bias_constwaint, (///ˬ///✿)
+          dtype=sewf.dtype, (U ﹏ U)
+          twainabwe=twue)
+    ewse:
+      sewf.bias = n-nyone
+    s-sewf.buiwt = twue
 
-  @property
-  def output_size(self):
+  @pwopewty
+  d-def output_size(sewf):
     """
-    Returns output_size
+    w-wetuwns output_size
     """
-    return self.units
+    wetuwn sewf.units
 
-  @property
-  def weight(self):
+  @pwopewty
+  d-def weight(sewf):
     """
-    Returns weight
+    wetuwns weight
     """
-    return self.kernel
+    wetuwn sewf.kewnew
 
-  @property
-  def weight_regularizer(self):
+  @pwopewty
+  def weight_weguwawizew(sewf):
     """
-    Returns weight_regularizer
+    wetuwns weight_weguwawizew
     """
-    return self.kernel_regularizer
+    w-wetuwn sewf.kewnew_weguwawizew
 
-  @property
-  def weight_initializer(self):
+  @pwopewty
+  def weight_initiawizew(sewf):
     """
-    Returns weight_initializer
+    w-wetuwns weight_initiawizew
     """
-    return self.kernel_initializer
+    w-wetuwn sewf.kewnew_initiawizew
 
-  @property
-  def weight_constraint(self):
+  @pwopewty
+  def weight_constwaint(sewf):
     """
-    Returns weight_constraint
+    w-wetuwns weight_constwaint
     """
-    return self.kernel_constraint
+    w-wetuwn s-sewf.kewnew_constwaint
 
 
-def full_dense(inputs, output_size,
-               activation=None,
-               use_bias=True,
-               weight_initializer=None,
-               bias_initializer=init_ops.zeros_initializer(),
-               weight_regularizer=None,
-               bias_regularizer=None,
-               activity_regularizer=None,
-               weight_constraint=None,
-               bias_constraint=None,
-               trainable=True,
-               name=None,
-               num_partitions=None,
-               reuse=None):
-  """Functional interface for the densely-connected layer.
-  This layer implements the operation:
-  `outputs = activation(inputs.weight + bias)`
-  Where `activation` is the activation function passed as the `activation`
-  argument (if not `None`), `weight` is a weights matrix created by the layer,
-  and `bias` is a bias vector created by the layer
-  (only if `use_bias` is `True`).
+d-def f-fuww_dense(inputs, ^^;; o-output_size, 🥺
+               activation=none, òωó
+               use_bias=twue, XD
+               weight_initiawizew=none, :3
+               bias_initiawizew=init_ops.zewos_initiawizew(), (U ﹏ U)
+               weight_weguwawizew=none, >w<
+               bias_weguwawizew=none,
+               activity_weguwawizew=none, /(^•ω•^)
+               w-weight_constwaint=none, (⑅˘꒳˘)
+               b-bias_constwaint=none, ʘwʘ
+               t-twainabwe=twue, rawr x3
+               nyame=none, (˘ω˘)
+               n-nyum_pawtitions=none, o.O
+               weuse=none):
+  """functionaw intewface fow the densewy-connected w-wayew. 😳
+  t-this wayew impwements the opewation:
+  `outputs = a-activation(inputs.weight + bias)`
+  whewe `activation` is the a-activation function p-passed as the `activation`
+  a-awgument (if n-nyot `none`), `weight` is a weights matwix cweated by the wayew, o.O
+  and `bias` is a-a bias vectow cweated b-by the wayew
+  (onwy i-if `use_bias` i-is `twue`).
 
-  Arguments:
-    inputs: Tensor input.
-    units: Integer or Long, dimensionality of the output space.
-    activation: Activation function (callable). Set it to None to maintain a
-      linear activation.
-    use_bias: Boolean, whether the layer uses a bias.
-    weight_initializer: Initializer function for the weight matrix.
-      If `None` (default), weights are initialized using the default
-      initializer used by `tf.get_variable`.
-    bias_initializer:
-      Initializer function for the bias.
-    weight_regularizer:
-      Regularizer function for the weight matrix.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
-    bias_regularizer:
-      Regularizer function for the bias.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
-    activity_regularizer:
-      Regularizer function for the output.
-    weight_constraint:
-      An optional projection function to be applied to the
-      weight after being updated by an `Optimizer` (e.g. used to implement
-      norm constraints or value constraints for layer weights). The function
-      must take as input the unprojected variable and must return the
-      projected variable (which must have the same shape). Constraints are
-      not safe to use when doing asynchronous distributed training.
-    bias_constraint:
-      An optional projection function to be applied to the
-      bias after being updated by an `Optimizer`.
-    trainable:
-      Boolean, if `True` also add variables to the graph collection
-      `GraphKeys.TRAINABLE_VARIABLES` (see `tf.Variable`).
-    name:
-      String, the name of the layer.
-    reuse:
-      Boolean, whether to reuse the weights of a previous layer
-      by the same name.
+  a-awguments:
+    inputs: t-tensow input. ^^;;
+    u-units: integew ow wong, ( ͡o ω ͡o ) dimensionawity o-of the o-output space. ^^;;
+    activation: activation f-function (cawwabwe). ^^;; set it to nyone to m-maintain a
+      wineaw activation. XD
+    u-use_bias: b-boowean, 🥺 whethew the wayew uses a-a bias. (///ˬ///✿)
+    weight_initiawizew: initiawizew function fow the w-weight matwix. (U ᵕ U❁)
+      i-if `none` (defauwt), ^^;; w-weights awe initiawized using the defauwt
+      initiawizew u-used by `tf.get_vawiabwe`. ^^;;
+    bias_initiawizew:
+      initiawizew f-function f-fow the bias. rawr
+    weight_weguwawizew:
+      w-weguwawizew function f-fow the weight m-matwix. (˘ω˘)
+      ensuwe to add tf.wosses.get_weguwawization_woss() to youw woss fow t-this to take effect. 🥺
+    bias_weguwawizew:
+      weguwawizew f-function fow the b-bias. nyaa~~
+      ensuwe to add tf.wosses.get_weguwawization_woss() to y-youw woss fow this to take effect. :3
+    a-activity_weguwawizew:
+      w-weguwawizew f-function fow the output. /(^•ω•^)
+    weight_constwaint:
+      an optionaw pwojection function to be appwied to the
+      weight aftew being updated by an `optimizew` (e.g. ^•ﻌ•^ used to impwement
+      nyowm constwaints ow vawue constwaints f-fow wayew weights). UwU t-the function
+      must take as input the u-unpwojected vawiabwe a-and must w-wetuwn the
+      pwojected vawiabwe (which m-must have the same shape). c-constwaints a-awe
+      nyot safe to use when d-doing asynchwonous distwibuted t-twaining. 😳😳😳
+    bias_constwaint:
+      a-an optionaw pwojection function to be appwied t-to the
+      b-bias aftew being u-updated by an `optimizew`. OwO
+    t-twainabwe:
+      b-boowean, ^•ﻌ•^ if `twue` a-awso add vawiabwes t-to the gwaph c-cowwection
+      `gwaphkeys.twainabwe_vawiabwes` (see `tf.vawiabwe`). (ꈍᴗꈍ)
+    nyame:
+      s-stwing, (⑅˘꒳˘) the nyame of t-the wayew. (⑅˘꒳˘)
+    w-weuse:
+      boowean, w-whethew to weuse the weights o-of a pwevious wayew
+      by the same nyame. (ˆ ﻌ ˆ)♡
 
-  Returns:
-    Output tensor the same shape as `inputs` except the last dimension is of
-    size `units`.
+  w-wetuwns:
+    output tensow the s-same shape as `inputs` e-except t-the wast dimension is of
+    size `units`. /(^•ω•^)
 
-  Raises:
-    ValueError: if eager execution is enabled.
+  w-waises:
+    vawueewwow: i-if eagew execution is enabwed. òωó
   """
-  layer = FullDense(output_size,
-                    activation=activation,
-                    use_bias=use_bias,
-                    weight_initializer=weight_initializer,
-                    bias_initializer=bias_initializer,
-                    weight_regularizer=weight_regularizer,
-                    bias_regularizer=bias_regularizer,
-                    activity_regularizer=activity_regularizer,
-                    weight_constraint=weight_constraint,
-                    bias_constraint=bias_constraint,
-                    trainable=trainable,
-                    name=name,
-                    dtype=inputs.dtype.base_dtype,
-                    num_partitions=num_partitions,
-                    _scope=name,
-                    _reuse=reuse)
-  return layer.apply(inputs)
+  w-wayew = fuwwdense(output_size, (⑅˘꒳˘)
+                    a-activation=activation, (U ᵕ U❁)
+                    use_bias=use_bias, >w<
+                    weight_initiawizew=weight_initiawizew, σωσ
+                    bias_initiawizew=bias_initiawizew, -.-
+                    weight_weguwawizew=weight_weguwawizew, o.O
+                    bias_weguwawizew=bias_weguwawizew,
+                    a-activity_weguwawizew=activity_weguwawizew, ^^
+                    weight_constwaint=weight_constwaint, >_<
+                    b-bias_constwaint=bias_constwaint, >w<
+                    t-twainabwe=twainabwe, >_<
+                    nyame=name, >w<
+                    dtype=inputs.dtype.base_dtype, rawr
+                    nyum_pawtitions=num_pawtitions, rawr x3
+                    _scope=name, ( ͡o ω ͡o )
+                    _weuse=weuse)
+  wetuwn wayew.appwy(inputs)

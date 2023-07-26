@@ -1,12 +1,12 @@
-package com.twitter.frigate.pushservice.exception
+package com.twittew.fwigate.pushsewvice.exception
 
-import scala.util.control.NoStackTrace
+impowt scawa.utiw.contwow.nostacktwace
 
 /**
- * Throw exception if DisplayLocation is not supported
+ * t-thwow exception i-if dispwaywocation i-is nyot suppowted
  *
- * @param message Exception message
+ * @pawam m-message exception m-message
  */
-class DisplayLocationNotSupportedException(private val message: String)
-    extends Exception(message)
-    with NoStackTrace
+c-cwass dispwaywocationnotsuppowtedexception(pwivate v-vaw message: s-stwing)
+    extends exception(message)
+    with nyostacktwace

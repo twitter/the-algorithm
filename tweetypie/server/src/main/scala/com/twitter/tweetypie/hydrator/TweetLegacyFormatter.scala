@@ -1,329 +1,329 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.media.Media
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.serverutil.ExtendedTweetMetadataBuilder
-import com.twitter.tweetypie.thriftscala.UrlEntity
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.thriftscala.entities.Implicits._
-import com.twitter.tweetypie.tweettext.Offset
-import com.twitter.tweetypie.tweettext.TextModification
-import com.twitter.tweetypie.tweettext.TweetText
-import com.twitter.tweetypie.util.EditControlUtil
-import com.twitter.tweetypie.util.TweetLenses
+impowt c-com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.media.media
+i-impowt c-com.twittew.tweetypie.wepositowy.tweetquewy
+i-impowt com.twittew.tweetypie.sewvewutiw.extendedtweetmetadatabuiwdew
+i-impowt com.twittew.tweetypie.thwiftscawa.uwwentity
+impowt com.twittew.tweetypie.thwiftscawa._
+impowt com.twittew.tweetypie.thwiftscawa.entities.impwicits._
+impowt com.twittew.tweetypie.tweettext.offset
+impowt com.twittew.tweetypie.tweettext.textmodification
+i-impowt com.twittew.tweetypie.tweettext.tweettext
+impowt com.twittew.tweetypie.utiw.editcontwowutiw
+impowt c-com.twittew.tweetypie.utiw.tweetwenses
 
 /**
- * This hydrator is the backwards-compatibility layer to support QT, Edit Tweets & Mixed Media
- * Tweets rendering on legacy non-updated clients. Legacy rendering provides a way for every client
- * to consume these Tweets until the client is upgraded. For Edit and Mixed Media Tweets, the
- * Tweet's self-permalink is appended to the visible text. For Quoting Tweets, the Quoted Tweet's
- * permalink is appended to the text. For Tweets that meet multiple criteria for legacy rendering
- * (e.g. QT containing Mixed Media), only one permalink is appended and the self-permalink takes
- * precedence.
+ * this hydwatow is t-the backwawds-compatibiwity wayew to suppowt qt, mya edit tweets & m-mixed media
+ * tweets wendewing o-on wegacy nyon-updated c-cwients. mya wegacy wendewing pwovides a way fow evewy cwient
+ * to consume these t-tweets untiw the cwient is upgwaded. /(^•ω•^) fow edit and mixed media tweets, ^^;; the
+ * t-tweet's sewf-pewmawink is appended t-to the visibwe t-text. 🥺 fow quoting t-tweets, ^^ the q-quoted tweet's
+ * pewmawink is appended to the t-text. ^•ﻌ•^ fow tweets that meet muwtipwe cwitewia fow w-wegacy wendewing
+ * (e.g. /(^•ω•^) qt containing mixed media), ^^ onwy one pewmawink is appended and the sewf-pewmawink t-takes
+ * pwecedence. 🥺
  */
-object TweetLegacyFormatter {
+o-object tweetwegacyfowmattew {
 
-  private[this] val log = Logger(getClass)
+  p-pwivate[this] v-vaw wog = woggew(getcwass)
 
-  import TweetText._
+  impowt tweettext._
 
-  def legacyQtPermalink(
-    td: TweetData,
-    opts: TweetQuery.Options
-  ): Option[ShortenedUrl] = {
-    val tweet = td.tweet
-    val tweetText = TweetLenses.text(tweet)
-    val urls = TweetLenses.urls(tweet)
-    val ctx = TweetCtx.from(td, opts)
-    val qtPermalink: Option[ShortenedUrl] = tweet.quotedTweet.flatMap(_.permalink)
-    val qtShortUrl = qtPermalink.map(_.shortUrl)
+  def wegacyqtpewmawink(
+    t-td: tweetdata, (U ᵕ U❁)
+    o-opts: tweetquewy.options
+  ): option[showteneduww] = {
+    v-vaw tweet = td.tweet
+    v-vaw tweettext = tweetwenses.text(tweet)
+    v-vaw uwws = tweetwenses.uwws(tweet)
+    vaw c-ctx = tweetctx.fwom(td, 😳😳😳 opts)
+    vaw qtpewmawink: o-option[showteneduww] = tweet.quotedtweet.fwatmap(_.pewmawink)
+    v-vaw qtshowtuww = qtpewmawink.map(_.showtuww)
 
-    def urlsContains(url: String): Boolean =
-      urls.exists(_.url == url)
+    d-def uwwscontains(uww: s-stwing): boowean =
+      uwws.exists(_.uww == uww)
 
-    val doLegacyQtFormatting =
-      !opts.simpleQuotedTweet && !ctx.isRetweet &&
-        qtPermalink.isDefined && qtShortUrl.isDefined &&
-        !qtShortUrl.exists(tweetText.contains) &&
-        !qtShortUrl.exists(urlsContains)
+    vaw dowegacyqtfowmatting =
+      !opts.simpwequotedtweet && !ctx.iswetweet &&
+        qtpewmawink.isdefined && qtshowtuww.isdefined &&
+        !qtshowtuww.exists(tweettext.contains) &&
+        !qtshowtuww.exists(uwwscontains)
 
-    if (doLegacyQtFormatting) qtPermalink else None
+    if (dowegacyqtfowmatting) qtpewmawink e-ewse nyone
   }
 
-  def legacySelfPermalink(
-    td: TweetData
-  ): Option[ShortenedUrl] = {
-    val tweet = td.tweet
-    val selfPermalink = tweet.selfPermalink
-    val tweetText = TweetLenses.text(tweet)
-    val urls = TweetLenses.urls(tweet)
-    val selfShortUrl = selfPermalink.map(_.shortUrl)
+  d-def wegacysewfpewmawink(
+    td: tweetdata
+  ): o-option[showteneduww] = {
+    v-vaw tweet = t-td.tweet
+    vaw sewfpewmawink = tweet.sewfpewmawink
+    vaw tweettext = t-tweetwenses.text(tweet)
+    vaw uwws = tweetwenses.uwws(tweet)
+    vaw sewfshowtuww = sewfpewmawink.map(_.showtuww)
 
-    def urlsContains(url: String): Boolean =
-      urls.exists(_.url == url)
+    d-def uwwscontains(uww: stwing): b-boowean =
+      u-uwws.exists(_.uww == u-uww)
 
-    val doLegacyFormatting =
-      selfPermalink.isDefined && selfShortUrl.isDefined &&
-        !selfShortUrl.exists(tweetText.contains) &&
-        !selfShortUrl.exists(urlsContains) &&
-        needsLegacyFormatting(td)
+    vaw dowegacyfowmatting =
+      sewfpewmawink.isdefined && s-sewfshowtuww.isdefined &&
+        !sewfshowtuww.exists(tweettext.contains) &&
+        !sewfshowtuww.exists(uwwscontains) &&
+        n-nyeedswegacyfowmatting(td)
 
-    if (doLegacyFormatting) selfPermalink else None
+    i-if (dowegacyfowmatting) s-sewfpewmawink ewse nyone
   }
 
-  def isMixedMediaTweet(tweet: Tweet): Boolean =
-    tweet.media.exists(Media.isMixedMedia)
+  def ismixedmediatweet(tweet: t-tweet): boowean =
+    t-tweet.media.exists(media.ismixedmedia)
 
-  def buildUrlEntity(from: Short, to: Short, permalink: ShortenedUrl): UrlEntity =
-    UrlEntity(
-      fromIndex = from,
-      toIndex = to,
-      url = permalink.shortUrl,
-      expanded = Some(permalink.longUrl),
-      display = Some(permalink.displayText)
+  d-def buiwduwwentity(fwom: s-showt, nyaa~~ t-to: showt, (˘ω˘) pewmawink: showteneduww): uwwentity =
+    uwwentity(
+      f-fwomindex = fwom, >_<
+      toindex = to, XD
+      uww = pewmawink.showtuww, rawr x3
+      expanded = some(pewmawink.wonguww), ( ͡o ω ͡o )
+      dispway = s-some(pewmawink.dispwaytext)
     )
 
-  private[this] def isValidVisibleRange(
-    tweetIdForLogging: TweetId,
-    textRange: TextRange,
-    textLength: Int
+  pwivate[this] def isvawidvisibwewange(
+    t-tweetidfowwogging: t-tweetid, :3
+    t-textwange: textwange, mya
+    t-textwength: int
   ) = {
-    val isValid = textRange.fromIndex <= textRange.toIndex && textRange.toIndex <= textLength
-    if (!isValid) {
-      log.warn(s"Tweet $tweetIdForLogging has invalid visibleTextRange: $textRange")
+    vaw isvawid = textwange.fwomindex <= t-textwange.toindex && t-textwange.toindex <= textwength
+    if (!isvawid) {
+      wog.wawn(s"tweet $tweetidfowwogging has invawid visibwetextwange: $textwange")
     }
-    isValid
+    i-isvawid
   }
 
-  // This Function checks if legacy formatting is required for Edit & Mixed Media Tweets.
-  // Calls FeatureSwitches.matchRecipient which is an expensive call,
-  // so caution is taken to call it only once and only when needed.
-  def needsLegacyFormatting(
-    td: TweetData
-  ): Boolean = {
-    val isEdit = EditControlUtil.isEditTweet(td.tweet)
-    val isMixedMedia = isMixedMediaTweet(td.tweet)
-    val isNoteTweet = td.tweet.noteTweet.isDefined
+  // this f-function checks if wegacy fowmatting i-is wequiwed f-fow edit & mixed media tweets. σωσ
+  // cawws featuweswitches.matchwecipient w-which i-is an expensive caww, (ꈍᴗꈍ)
+  // so c-caution is taken t-to caww it onwy once and onwy when nyeeded. OwO
+  def needswegacyfowmatting(
+    td: tweetdata
+  ): b-boowean = {
+    v-vaw isedit = editcontwowutiw.isedittweet(td.tweet)
+    v-vaw ismixedmedia = ismixedmediatweet(td.tweet)
+    v-vaw i-isnotetweet = td.tweet.notetweet.isdefined
 
-    if (isEdit || isMixedMedia || isNoteTweet) {
+    if (isedit || ismixedmedia || i-isnotetweet) {
 
-      // These feature switches are disabled unless greater than certain android, ios versions
-      // & all versions of RWEB.
-      val TweetEditConsumptionEnabledKey = "tweet_edit_consumption_enabled"
-      val MixedMediaEnabledKey = "mixed_media_enabled"
-      val NoteTweetConsumptionEnabledKey = "note_tweet_consumption_enabled"
+      // these featuwe switches awe disabwed unwess gweatew than cewtain a-andwoid, o.O i-ios vewsions
+      // & aww vewsions of wweb. 😳😳😳
+      v-vaw tweeteditconsumptionenabwedkey = "tweet_edit_consumption_enabwed"
+      v-vaw mixedmediaenabwedkey = "mixed_media_enabwed"
+      vaw nyotetweetconsumptionenabwedkey = "note_tweet_consumption_enabwed"
 
-      def fsEnabled(fsKey: String): Boolean = {
-        td.featureSwitchResults
-          .flatMap(_.getBoolean(fsKey, shouldLogImpression = false))
-          .getOrElse(false)
+      def fsenabwed(fskey: stwing): b-boowean = {
+        td.featuweswitchwesuwts
+          .fwatmap(_.getboowean(fskey, /(^•ω•^) shouwdwogimpwession = fawse))
+          .getowewse(fawse)
       }
 
-      val tweetEditConsumptionEnabled = fsEnabled(TweetEditConsumptionEnabledKey)
-      val mixedMediaEnabled = fsEnabled(MixedMediaEnabledKey)
-      val noteTweetConsumptionEnabled = fsEnabled(NoteTweetConsumptionEnabledKey)
+      vaw tweeteditconsumptionenabwed = f-fsenabwed(tweeteditconsumptionenabwedkey)
+      vaw mixedmediaenabwed = fsenabwed(mixedmediaenabwedkey)
+      vaw n-nyotetweetconsumptionenabwed = f-fsenabwed(notetweetconsumptionenabwedkey)
 
-      (isEdit && !tweetEditConsumptionEnabled) ||
-      (isMixedMedia && !mixedMediaEnabled) ||
-      (isNoteTweet && !noteTweetConsumptionEnabled)
-    } else {
-      false
+      (isedit && !tweeteditconsumptionenabwed) ||
+      (ismixedmedia && !mixedmediaenabwed) ||
+      (isnotetweet && !notetweetconsumptionenabwed)
+    } ewse {
+      fawse
     }
   }
 
-  //given a permalink, the tweet text gets updated
-  def updateTextAndURLsAndMedia(
-    permalink: ShortenedUrl,
-    tweet: Tweet,
-    statsReceiver: StatsReceiver
-  ): Tweet = {
+  //given a pewmawink, OwO the t-tweet text gets u-updated
+  def updatetextanduwwsandmedia(
+    pewmawink: showteneduww, ^^
+    tweet: t-tweet, (///ˬ///✿)
+    statsweceivew: statsweceivew
+  ): t-tweet = {
 
-    val originalText = TweetLenses.text(tweet)
-    val originalTextLength = codePointLength(originalText)
+    vaw owiginawtext = tweetwenses.text(tweet)
+    v-vaw owiginawtextwength = c-codepointwength(owiginawtext)
 
-    // Default the visible range to the whole tweet if the existing visible range is invalid.
-    val visibleRange: TextRange =
-      TweetLenses
-        .visibleTextRange(tweet)
-        .filter((r: TextRange) => isValidVisibleRange(tweet.id, r, originalTextLength))
-        .getOrElse(TextRange(0, originalTextLength))
+    // d-defauwt the visibwe wange t-to the whowe tweet if the existing v-visibwe w-wange is invawid.
+    v-vaw visibwewange: textwange =
+      t-tweetwenses
+        .visibwetextwange(tweet)
+        .fiwtew((w: t-textwange) => isvawidvisibwewange(tweet.id, (///ˬ///✿) w, owiginawtextwength))
+        .getowewse(textwange(0, (///ˬ///✿) owiginawtextwength))
 
-    val permalinkShortUrl = permalink.shortUrl
-    val insertAtCodePoint = Offset.CodePoint(visibleRange.toIndex)
-
-    /*
-     * Insertion at position 0 implies that the original tweet text has no
-     * visible text, so the resulting text should be only the url without
-     * leading padding.
-     */
-    val padLeft = if (insertAtCodePoint.toInt > 0) " " else ""
+    v-vaw pewmawinkshowtuww = p-pewmawink.showtuww
+    v-vaw insewtatcodepoint = offset.codepoint(visibwewange.toindex)
 
     /*
-     * Empty visible text at position 0 implies that the original tweet text
-     * only contains a URL in the hidden suffix area, which would not already
-     * be padded.
+     * insewtion a-at position 0 impwies that the owiginaw t-tweet text h-has nyo
+     * visibwe text, so the wesuwting text shouwd be o-onwy the uww without
+     * w-weading p-padding. ʘwʘ
      */
-    val padRight = if (visibleRange == TextRange(0, 0)) " " else ""
-    val paddedShortUrl = s"$padLeft$permalinkShortUrl$padRight"
+    v-vaw padweft = if (insewtatcodepoint.toint > 0) " " e-ewse ""
 
-    val tweetTextModification = TextModification.insertAt(
-      originalText,
-      insertAtCodePoint,
-      paddedShortUrl
+    /*
+     * empty visibwe text at position 0 impwies that the owiginaw tweet text
+     * o-onwy contains a uww in the hidden s-suffix awea, ^•ﻌ•^ which wouwd nyot a-awweady
+     * be padded. OwO
+     */
+    v-vaw padwight = if (visibwewange == t-textwange(0, (U ﹏ U) 0)) " " e-ewse ""
+    v-vaw paddedshowtuww = s"$padweft$pewmawinkshowtuww$padwight"
+
+    v-vaw tweettextmodification = t-textmodification.insewtat(
+      owiginawtext, (ˆ ﻌ ˆ)♡
+      insewtatcodepoint, (⑅˘꒳˘)
+      paddedshowtuww
     )
 
     /*
-     * As we modified tweet text and appended tweet permalink above
-     * we have to correct the url and media entities accordingly as they are
-     * expected to be present in the hidden suffix of text.
+     * as we modified tweet text and appended t-tweet pewmawink a-above
+     * we h-have to cowwect the uww and media e-entities accowdingwy as they awe
+     * expected to be pwesent i-in the hidden suffix o-of text. (U ﹏ U)
      *
-     * - we compute the new (from, to) indices for the url entity
-     * - build new url entity for quoted tweet permalink or self permalink for Edit/ MM Tweets
-     * - shift url entities which are after visible range end
-     * - shift media entities associated with above url entities
+     * - we compute the nyew (fwom, o.O t-to) indices fow the uww entity
+     * - b-buiwd nyew uww e-entity fow quoted tweet pewmawink o-ow sewf pewmawink f-fow edit/ mm tweets
+     * - shift uww entities which awe aftew visibwe wange e-end
+     * - s-shift media entities a-associated w-with above uww entities
      */
-    val shortUrlLength = codePointLength(permalinkShortUrl)
-    val fromIndex = insertAtCodePoint.toInt + codePointLength(padLeft)
-    val toIndex = fromIndex + shortUrlLength
+    v-vaw showtuwwwength = codepointwength(pewmawinkshowtuww)
+    v-vaw fwomindex = i-insewtatcodepoint.toint + codepointwength(padweft)
+    v-vaw toindex = f-fwomindex + showtuwwwength
 
-    val tweetUrlEntity = buildUrlEntity(
-      from = fromIndex.toShort,
-      to = toIndex.toShort,
-      permalink = permalink
+    v-vaw tweetuwwentity = buiwduwwentity(
+      fwom = fwomindex.toshowt,
+      t-to = toindex.toshowt, mya
+      pewmawink = p-pewmawink
     )
 
-    val tweetMedia = if (isMixedMediaTweet(tweet)) {
-      TweetLenses.media(tweet).take(1)
-    } else {
-      TweetLenses.media(tweet)
+    v-vaw tweetmedia = if (ismixedmediatweet(tweet)) {
+      t-tweetwenses.media(tweet).take(1)
+    } ewse {
+      tweetwenses.media(tweet)
     }
 
-    val modifiedMedia = tweetTextModification.reindexEntities(tweetMedia)
-    val modifiedUrls =
-      tweetTextModification.reindexEntities(TweetLenses.urls(tweet)) :+ tweetUrlEntity
-    val modifiedText = tweetTextModification.updated
+    v-vaw m-modifiedmedia = t-tweettextmodification.weindexentities(tweetmedia)
+    vaw modifieduwws =
+      tweettextmodification.weindexentities(tweetwenses.uwws(tweet)) :+ tweetuwwentity
+    vaw modifiedtext = t-tweettextmodification.updated
 
     /*
-     * Visible Text Range computation differs by scenario
-     * == Any Tweet with Media ==
-     * Tweet text has a media url *after* the visible text range
-     * original  text: [visible text] https://t.co/mediaUrl
-     * original range:  ^START  END^
+     * visibwe text wange computation d-diffews by scenawio
+     * == a-any tweet with media ==
+     * t-tweet text has a media uww *aftew* t-the visibwe text w-wange
+     * owiginaw  text: [visibwe text] h-https://t.co/mediauww
+     * owiginaw wange:  ^stawt  e-end^
      *
-     * Append the permalink URL to the *visible text* so non-upgraded clients can see it
-     * modified  text: [visible text https://t.co/permalink] https://t.co/mediaUrl
-     * modified range:  ^START                         END^
-     * visible range expanded, permalink is visible
+     * a-append the pewmawink uww t-to the *visibwe text* so nyon-upgwaded c-cwients c-can see it
+     * m-modified  text: [visibwe text https://t.co/pewmawink] https://t.co/mediauww
+     * modified wange:  ^stawt                         end^
+     * visibwe wange expanded, XD pewmawink is visibwe
      *
-     * == Non-QT Tweet w/o Media ==
-     * original  text: [visible text]
-     * original range: None (default: whole text is visible)
+     * == nyon-qt tweet w/o media ==
+     * owiginaw  text: [visibwe text]
+     * o-owiginaw w-wange: nyone (defauwt: whowe text is visibwe)
      *
-     * modified  text: [visible text https://t.co/selfPermalink]
-     * modified range: None (default: whole text is visible)
-     * trailing self permalink will be visible
+     * m-modified  t-text: [visibwe t-text https://t.co/sewfpewmawink]
+     * modified w-wange: nyone (defauwt: whowe t-text is visibwe)
+     * t-twaiwing sewf pewmawink w-wiww be visibwe
      *
-     * == QT w/o Media ==
-     * original  text: [visible text]
-     * original range: None (default: whole text is visible)
+     * == qt w/o media ==
+     * o-owiginaw  t-text: [visibwe text]
+     * owiginaw wange: n-nyone (defauwt: w-whowe text is v-visibwe)
      *
-     * modified  text: [visible text] https://t.co/qtPermalink
-     * modified range:  ^START  END^
-     * trailing QT permalink is *hidden* because legacy clients that process the visible text range know how to display QTs
+     * m-modified  t-text: [visibwe t-text] https://t.co/qtpewmawink
+     * m-modified wange:  ^stawt  end^
+     * t-twaiwing q-qt pewmawink is *hidden* because w-wegacy cwients t-that pwocess t-the visibwe text wange know how t-to dispway qts
      *
-     * == Non-QT Replies w/o media ==
-     * original  text: @user [visible text]
-     * original range:        ^START  END^
+     * == nyon-qt wepwies w/o media ==
+     * o-owiginaw  text: @usew [visibwe text]
+     * o-owiginaw wange:        ^stawt  e-end^
      *
-     * modified  text: @user [visible text https://t.co/selfPermalink]
-     * modified range:        ^START                             END^
-     * visible range expanded, self permalink is visible
+     * m-modified  text: @usew [visibwe text https://t.co/sewfpewmawink]
+     * m-modified wange:        ^stawt                             e-end^
+     * visibwe wange expanded, òωó s-sewf pewmawink is visibwe
      *
-     * == QT Replies w/o media ==
-     * original  text: @user [visible text]
-     * original range:        ^START  END^
+     * == q-qt wepwies w/o media ==
+     * owiginaw  text: @usew [visibwe text]
+     * owiginaw wange:        ^stawt  e-end^
      *
-     * modified  text: @user [visible text] https://t.co/qtPermalink
-     * modified range:        ^START  END^
-     * visible range remains the same, trailing QT permalink is hidden
+     * modified  text: @usew [visibwe text] h-https://t.co/qtpewmawink
+     * m-modified wange:        ^stawt  end^
+     * visibwe wange wemains the same, (˘ω˘) t-twaiwing qt pewmawink is hidden
      *
      */
 
-    val modifiedVisibleTextRange =
-      if (modifiedMedia.nonEmpty ||
-        EditControlUtil.isEditTweet(tweet) ||
-        tweet.noteTweet.isDefined) {
-        Some(
-          visibleRange.copy(
-            toIndex = visibleRange.toIndex + codePointLength(padLeft) + shortUrlLength
+    v-vaw modifiedvisibwetextwange =
+      i-if (modifiedmedia.nonempty ||
+        editcontwowutiw.isedittweet(tweet) ||
+        t-tweet.notetweet.isdefined) {
+        some(
+          visibwewange.copy(
+            t-toindex = visibwewange.toindex + c-codepointwength(padweft) + showtuwwwength
           )
         )
-      } else {
-        Some(visibleRange)
+      } e-ewse {
+        some(visibwewange)
       }
 
-    val updatedTweet =
-      Lens.setAll(
-        tweet,
-        TweetLenses.text -> modifiedText,
-        TweetLenses.urls -> modifiedUrls.sortBy(_.fromIndex),
-        TweetLenses.media -> modifiedMedia.sortBy(_.fromIndex),
-        TweetLenses.visibleTextRange -> modifiedVisibleTextRange
+    vaw updatedtweet =
+      w-wens.setaww(
+        tweet, :3
+        t-tweetwenses.text -> m-modifiedtext,
+        t-tweetwenses.uwws -> modifieduwws.sowtby(_.fwomindex),
+        t-tweetwenses.media -> m-modifiedmedia.sowtby(_.fwomindex), OwO
+        t-tweetwenses.visibwetextwange -> m-modifiedvisibwetextwange
       )
 
     /**
-     * compute extended tweet metadata when text length > 140
-     * and apply the final lens to return a modified tweet
+     * compute extended t-tweet metadata when t-text wength > 140
+     * a-and a-appwy the finaw w-wens to wetuwn a-a modified tweet
      */
-    val totalDisplayLength = displayLength(modifiedText)
-    if (totalDisplayLength > OriginalMaxDisplayLength) {
-      updatedTweet.selfPermalink match {
-        case Some(permalink) =>
-          val extendedTweetMetadata = ExtendedTweetMetadataBuilder(updatedTweet, permalink)
-          updatedTweet.copy(
-            extendedTweetMetadata = Some(extendedTweetMetadata)
+    v-vaw t-totawdispwaywength = dispwaywength(modifiedtext)
+    i-if (totawdispwaywength > owiginawmaxdispwaywength) {
+      updatedtweet.sewfpewmawink m-match {
+        case s-some(pewmawink) =>
+          v-vaw e-extendedtweetmetadata = extendedtweetmetadatabuiwdew(updatedtweet, mya pewmawink)
+          updatedtweet.copy(
+            e-extendedtweetmetadata = s-some(extendedtweetmetadata)
           )
-        case None =>
+        c-case nyone =>
           /**
-           *  This case shouldn't happen as TweetBuilder currently populates
-           *  selfPermalink for extended tweets. In QT + Media, we will
-           *  use AttachmentBuilder to store selfPermalink during writes,
-           *  if text display length is going to exceed 140 after QT url append.
+           *  this case shouwdn't happen as tweetbuiwdew c-cuwwentwy p-popuwates
+           *  sewfpewmawink f-fow extended t-tweets. (˘ω˘) in qt + media, o.O we wiww
+           *  use attachmentbuiwdew to stowe sewfpewmawink d-duwing w-wwites, (✿oωo)
+           *  i-if text d-dispway wength is going to exceed 140 aftew qt u-uww append. (ˆ ﻌ ˆ)♡
            */
-          log.error(
-            s"Failed to compute extended metadata for tweet: ${tweet.id} with " +
-              s"display length: ${totalDisplayLength}, as self-permalink is empty."
+          w-wog.ewwow(
+            s"faiwed to compute e-extended metadata fow tweet: ${tweet.id} with " +
+              s-s"dispway wength: ${totawdispwaywength}, ^^;; as sewf-pewmawink i-is empty."
           )
-          statsReceiver.counter("self_permalink_not_found").incr()
+          s-statsweceivew.countew("sewf_pewmawink_not_found").incw()
           tweet
       }
-    } else {
-      updatedTweet
+    } ewse {
+      u-updatedtweet
     }
   }
 
-  def apply(
-    statsReceiver: StatsReceiver
-  ): TweetDataValueHydrator = {
-    ValueHydrator[TweetData, TweetQuery.Options] { (td, opts) =>
-      // Prefer any required self permalink rendering over QT permalink rendering because a
-      // client that doesn't understand the attributes of the Tweet (i.e. Edit, Mixed
-      // Media) won't be able to render the Tweet properly at all, regardless of whether
-      // it's a QT. By preferring a visible self-permalink, the viewer is linked to an
-      // RWeb view of the Tweet which can fully display all of its features.
-      val permalink: Option[ShortenedUrl] =
-        legacySelfPermalink(td)
-          .orElse(legacyQtPermalink(td, opts))
+  d-def appwy(
+    statsweceivew: s-statsweceivew
+  ): tweetdatavawuehydwatow = {
+    v-vawuehydwatow[tweetdata, OwO t-tweetquewy.options] { (td, 🥺 o-opts) =>
+      // p-pwefew any wequiwed sewf pewmawink w-wendewing ovew q-qt pewmawink wendewing b-because a
+      // cwient t-that doesn't undewstand the attwibutes of the t-tweet (i.e. mya edit, m-mixed
+      // m-media) won't be abwe to wendew the tweet pwopewwy at aww, 😳 wegawdwess of whethew
+      // i-it's a qt. òωó by pwefewwing a-a visibwe sewf-pewmawink, /(^•ω•^) t-the viewew is winked to an
+      // w-wweb view of the tweet which can f-fuwwy dispway a-aww of its featuwes. -.-
+      v-vaw p-pewmawink: option[showteneduww] =
+        w-wegacysewfpewmawink(td)
+          .owewse(wegacyqtpewmawink(td, òωó opts))
 
-      permalink match {
-        case Some(permalink) =>
-          val updatedTweet = updateTextAndURLsAndMedia(permalink, td.tweet, statsReceiver)
-          Stitch(ValueState.delta(td, td.copy(tweet = updatedTweet)))
-        case _ =>
-          Stitch(ValueState.unmodified(td))
+      pewmawink match {
+        case some(pewmawink) =>
+          v-vaw updatedtweet = updatetextanduwwsandmedia(pewmawink, /(^•ω•^) t-td.tweet, /(^•ω•^) statsweceivew)
+          stitch(vawuestate.dewta(td, 😳 td.copy(tweet = updatedtweet)))
+        c-case _ =>
+          stitch(vawuestate.unmodified(td))
       }
     }
   }

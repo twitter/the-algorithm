@@ -1,63 +1,63 @@
-package com.twitter.servo.cache
+package com.twittew.sewvo.cache
 
-import com.google.common.cache.{CacheBuilder, RemovalListener}
-import com.twitter.util.Duration
-import java.util.concurrent.TimeUnit
+impowt com.googwe.common.cache.{cachebuiwdew, ^^ w-wemovawwistenew}
+impowt c-com.twittew.utiw.duwation
+i-impowt java.utiw.concuwwent.timeunit
 
-object InProcessCache {
+o-object inpwocesscache {
 
   /**
-   * Apply a read filter to exclude items in an InProcessCache
+   * a-appwy a-a wead fiwtew to e-excwude items in a-an inpwocesscache
    */
-  def withFilter[K, V](
-    underlying: InProcessCache[K, V]
+  def withfiwtew[k, 😳😳😳 v](
+    undewwying: inpwocesscache[k, mya v-v]
   )(
-    shouldFilter: (K, V) => Boolean
-  ): InProcessCache[K, V] =
-    new InProcessCache[K, V] {
-      def get(key: K): Option[V] = underlying.get(key) filterNot { shouldFilter(key, _) }
-      def set(key: K, value: V) = underlying.set(key, value)
+    shouwdfiwtew: (k, 😳 v) => boowean
+  ): i-inpwocesscache[k, -.- v] =
+    n-nyew inpwocesscache[k, 🥺 v] {
+      def get(key: k): option[v] = undewwying.get(key) f-fiwtewnot { shouwdfiwtew(key, o.O _) }
+      def s-set(key: k, /(^•ω•^) vawue: v-v) = undewwying.set(key, nyaa~~ vawue)
     }
 }
 
 /**
- * An in-process cache interface. It is distinct from a map in that:
- * 1) All methods must be threadsafe
- * 2) A value set in cache is not guaranteed to remain in the cache.
+ * an in-pwocess cache intewface. nyaa~~ it is distinct f-fwom a map in that:
+ * 1) aww methods must be thweadsafe
+ * 2) a vawue set in cache is nyot guawanteed t-to wemain in the cache.
  */
-trait InProcessCache[K, V] {
-  def get(key: K): Option[V]
-  def set(key: K, value: V): Unit
+t-twait inpwocesscache[k, :3 v-v] {
+  d-def get(key: k-k): option[v]
+  def set(key: k, 😳😳😳 vawue: v): unit
 }
 
 /**
- * In-process implementation of a cache with LRU semantics and a TTL.
+ * i-in-pwocess impwementation of a cache with w-wwu semantics and a ttw. (˘ω˘)
  */
-class ExpiringLruInProcessCache[K, V](
-  ttl: Duration,
-  maximumSize: Int,
-  removalListener: Option[RemovalListener[K, V]] = None: None.type)
-    extends InProcessCache[K, V] {
+cwass expiwingwwuinpwocesscache[k, v](
+  ttw: duwation, ^^
+  maximumsize: int, :3
+  wemovawwistenew: o-option[wemovawwistenew[k, -.- v]] = n-nyone: nyone.type)
+    e-extends inpwocesscache[k, 😳 v-v] {
 
-  private[this] val cacheBuilder =
-    CacheBuilder.newBuilder
-      .asInstanceOf[CacheBuilder[K, V]]
-      .expireAfterWrite(ttl.inMilliseconds, TimeUnit.MILLISECONDS)
-      .initialCapacity(maximumSize)
-      .maximumSize(maximumSize)
+  pwivate[this] vaw cachebuiwdew =
+    cachebuiwdew.newbuiwdew
+      .asinstanceof[cachebuiwdew[k, mya v]]
+      .expiweaftewwwite(ttw.inmiwwiseconds, (˘ω˘) t-timeunit.miwwiseconds)
+      .initiawcapacity(maximumsize)
+      .maximumsize(maximumsize)
 
-  private[this] val cache =
-    removalListener match {
-      case Some(listener) =>
-        cacheBuilder
-          .removalListener(listener)
-          .build[K, V]()
-      case None =>
-        cacheBuilder
-          .build[K, V]()
+  p-pwivate[this] vaw cache =
+    w-wemovawwistenew m-match {
+      case some(wistenew) =>
+        c-cachebuiwdew
+          .wemovawwistenew(wistenew)
+          .buiwd[k, >_< v]()
+      c-case nyone =>
+        cachebuiwdew
+          .buiwd[k, -.- v]()
     }
 
-  def get(key: K): Option[V] = Option(cache.getIfPresent(key))
+  d-def get(key: k): option[v] = o-option(cache.getifpwesent(key))
 
-  def set(key: K, value: V): Unit = cache.put(key, value)
+  def set(key: k-k, 🥺 vawue: v-v): unit = cache.put(key, (U ﹏ U) vawue)
 }

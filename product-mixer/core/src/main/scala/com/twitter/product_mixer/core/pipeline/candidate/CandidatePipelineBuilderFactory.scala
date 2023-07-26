@@ -1,56 +1,56 @@
-package com.twitter.product_mixer.core.pipeline.candidate
+package com.twittew.pwoduct_mixew.cowe.pipewine.candidate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutor
-import com.twitter.product_mixer.core.service.candidate_decorator_executor.CandidateDecoratorExecutor
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.candidate_source_executor.CandidateSourceExecutor
-import com.twitter.product_mixer.core.service.filter_executor.FilterExecutor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutor
-import com.twitter.product_mixer.core.service.group_results_executor.GroupResultsExecutor
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.async_featuwe_map_executow.asyncfeatuwemapexecutow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_decowatow_executow.candidatedecowatowexecutow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_featuwe_hydwatow_executow.candidatefeatuwehydwatowexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_souwce_executow.candidatesouwceexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.fiwtew_executow.fiwtewexecutow
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow.gateexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.gwoup_wesuwts_executow.gwoupwesuwtsexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.quewy_featuwe_hydwatow_executow.quewyfeatuwehydwatowexecutow
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class CandidatePipelineBuilderFactory @Inject() (
-  queryFeatureHydratorExecutor: QueryFeatureHydratorExecutor,
-  asyncFeatureMapExecutor: AsyncFeatureMapExecutor,
-  candidateDecoratorExecutor: CandidateDecoratorExecutor,
-  candidateFeatureHydratorExecutor: CandidateFeatureHydratorExecutor,
-  candidateSourceExecutor: CandidateSourceExecutor,
-  groupResultsExecutor: GroupResultsExecutor,
-  filterExecutor: FilterExecutor,
-  gateExecutor: GateExecutor,
-  statsReceiver: StatsReceiver) {
-  def get[
-    Query <: PipelineQuery,
-    CandidateSourceQuery,
-    CandidateSourceResult,
-    Result <: UniversalNoun[Any]
-  ]: CandidatePipelineBuilder[
-    Query,
-    CandidateSourceQuery,
-    CandidateSourceResult,
-    Result
+@singweton
+cwass candidatepipewinebuiwdewfactowy @inject() (
+  quewyfeatuwehydwatowexecutow: quewyfeatuwehydwatowexecutow, òωó
+  a-asyncfeatuwemapexecutow: asyncfeatuwemapexecutow, ʘwʘ
+  c-candidatedecowatowexecutow: c-candidatedecowatowexecutow, /(^•ω•^)
+  candidatefeatuwehydwatowexecutow: candidatefeatuwehydwatowexecutow, ʘwʘ
+  candidatesouwceexecutow: candidatesouwceexecutow, σωσ
+  g-gwoupwesuwtsexecutow: gwoupwesuwtsexecutow, OwO
+  fiwtewexecutow: fiwtewexecutow, 😳😳😳
+  gateexecutow: g-gateexecutow, 😳😳😳
+  statsweceivew: s-statsweceivew) {
+  d-def get[
+    q-quewy <: p-pipewinequewy, o.O
+    candidatesouwcequewy, ( ͡o ω ͡o )
+    candidatesouwcewesuwt, (U ﹏ U)
+    w-wesuwt <: univewsawnoun[any]
+  ]: candidatepipewinebuiwdew[
+    q-quewy, (///ˬ///✿)
+    candidatesouwcequewy, >w<
+    candidatesouwcewesuwt, rawr
+    wesuwt
   ] = {
-    new CandidatePipelineBuilder[
-      Query,
-      CandidateSourceQuery,
-      CandidateSourceResult,
-      Result
+    nyew candidatepipewinebuiwdew[
+      q-quewy, mya
+      candidatesouwcequewy, ^^
+      candidatesouwcewesuwt, 😳😳😳
+      w-wesuwt
     ](
-      queryFeatureHydratorExecutor,
-      asyncFeatureMapExecutor,
-      candidateDecoratorExecutor,
-      candidateFeatureHydratorExecutor,
-      candidateSourceExecutor,
-      groupResultsExecutor,
-      filterExecutor,
-      gateExecutor,
-      statsReceiver
+      q-quewyfeatuwehydwatowexecutow, mya
+      asyncfeatuwemapexecutow, 😳
+      c-candidatedecowatowexecutow, -.-
+      candidatefeatuwehydwatowexecutow, 🥺
+      candidatesouwceexecutow, o.O
+      gwoupwesuwtsexecutow, /(^•ω•^)
+      f-fiwtewexecutow, nyaa~~
+      g-gateexecutow, nyaa~~
+      statsweceivew
     )
   }
 }

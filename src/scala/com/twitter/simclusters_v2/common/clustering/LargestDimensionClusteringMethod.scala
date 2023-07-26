@@ -1,33 +1,33 @@
-package com.twitter.simclusters_v2.common.clustering
+package com.twittew.simcwustews_v2.common.cwustewing
 
 /**
- * Groups entities by a single embedding dimension with the largest score.
+ * gwoups e-entities by a s-singwe embedding d-dimension with t-the wawgest scowe. rawr x3
  */
-class LargestDimensionClusteringMethod extends ClusteringMethod {
+c-cwass wawgestdimensioncwustewingmethod extends c-cwustewingmethod {
 
   /**
-   * @param embeddings   map of entity IDs and corresponding embeddings
-   * @param similarityFn function that outputs discrete value (0.0 or 1.0).
-   *                     1.0 if the dimensions of the highest score (weight) from two given embeddings match.
-   *                     0.0 otherwise.
-   *                     e.g.
-   *                        case 1: E1=[0.0, 0.1, 0.6, 0.2], E2=[0.1, 0.3, 0.8, 0.0]. similarityFn(E1, E2)=1.0
-   *                        case 2: E1=[0.0, 0.1, 0.6, 0.2], E2=[0.1, 0.4, 0.2, 0.0]. similarityFn(E1, E2)=0.0
-   * @tparam T embedding type. e.g. SimClustersEmbedding
+   * @pawam e-embeddings   m-map of entity ids and cowwesponding embeddings
+   * @pawam simiwawityfn function that o-outputs discwete vawue (0.0 ow 1.0). (U ﹏ U)
+   *                     1.0 if the dimensions o-of the highest scowe (weight) f-fwom two given embeddings match. (U ﹏ U)
+   *                     0.0 othewwise. (⑅˘꒳˘)
+   *                     e.g. òωó
+   *                        c-case 1: e1=[0.0, ʘwʘ 0.1, /(^•ω•^) 0.6, 0.2], e2=[0.1, ʘwʘ 0.3, 0.8, σωσ 0.0]. simiwawityfn(e1, OwO e-e2)=1.0
+   *                        c-case 2: e1=[0.0, 😳😳😳 0.1, 0.6, 0.2], 😳😳😳 e2=[0.1, 0.4, 0.2, o.O 0.0]. simiwawityfn(e1, ( ͡o ω ͡o ) e2)=0.0
+   * @tpawam t embedding type. (U ﹏ U) e.g. simcwustewsembedding
    *
-   * @return A set of sets of entity IDs, each set representing a distinct cluster.
+   * @wetuwn a-a set of sets of entity ids, (///ˬ///✿) each set wepwesenting a distinct cwustew. >w<
    */
-  override def cluster[T](
-    embeddings: Map[Long, T],
-    similarityFn: (T, T) => Double,
-    recordStatCallback: (String, Long) => Unit
-  ): Set[Set[Long]] = {
+  o-ovewwide def cwustew[t](
+    embeddings: m-map[wong, rawr t-t],
+    simiwawityfn: (t, mya t-t) => d-doubwe, ^^
+    wecowdstatcawwback: (stwing, 😳😳😳 wong) => u-unit
+  ): set[set[wong]] = {
 
-    // rely on clustering by connected component.
-    // similarityThreshold=0.1 because it's larger than 0.0 (similarityFn returns 0.0 if two embeddings
-    // don't share the largest dimension.
-    new ConnectedComponentsClusteringMethod(similarityThreshold = 0.1)
-      .cluster(embeddings, similarityFn, recordStatCallback)
+    // wewy o-on cwustewing by connected component. mya
+    // simiwawitythweshowd=0.1 because it's wawgew than 0.0 (simiwawityfn wetuwns 0.0 if two e-embeddings
+    // don't shawe t-the wawgest dimension. 😳
+    n-nyew c-connectedcomponentscwustewingmethod(simiwawitythweshowd = 0.1)
+      .cwustew(embeddings, -.- simiwawityfn, 🥺 wecowdstatcawwback)
   }
 
 }

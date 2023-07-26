@@ -1,25 +1,14 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finagle-internal/mtls/src/main/scala/com/twitter/finagle/mtls/authentication",
-        "finagle-internal/mtls/src/main/scala/com/twitter/finagle/mtls/client",
-        "finagle/finagle-core/src/main",
-        "finagle/finagle-stats",
-        "finagle/finagle-thrift/src/main/scala",
-        "hermit/hermit-core/src/main/scala/com/twitter/hermit/predicate/socialgraph",
-        "relevance-platform/src/main/scala/com/twitter/relevance_platform/common/injection",
-        "servo/service/src/main/scala",
-        "src/scala/com/twitter/storehaus_internal/manhattan2",
-        "src/scala/com/twitter/storehaus_internal/memcache",
-        "src/scala/com/twitter/storehaus_internal/util",
-        "src/scala/com/twitter/twistly/common",
-        "src/scala/com/twitter/twistly/store",
-        "src/thrift/com/twitter/socialgraph:thrift-scala",
-        "stitch/stitch-storehaus",
-        "strato/src/main/scala/com/twitter/strato/fed",
-        "strato/src/main/scala/com/twitter/strato/fed/server",
-        "util/util-core:scala",
-        "util/util-stats/src/main/scala",
+scawa_wibwawy(
+    souwces = [
+        "*.scawa", ^•ﻌ•^
+    ],
+    compiwew_option_sets = ["fataw_wawnings"], OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "iesouwce/thwift/swc/main/thwift:thwift-scawa", òωó
+        "kafka/finagwe-kafka/finatwa-kafka/swc/main/scawa", o.O
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew:base", (U ᵕ U❁)
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/common", (⑅˘꒳˘)
+        "unified_usew_actions/thwift/swc/main/thwift/com/twittew/unified_usew_actions:unified_usew_actions-scawa", ( ͡o ω ͡o )
     ],
 )

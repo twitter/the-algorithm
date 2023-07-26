@@ -1,70 +1,70 @@
-package com.twitter.timelineranker.entity_tweets
+package com.twittew.timewinewankew.entity_tweets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.TweetIdRange
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.clients.relevance_search.SearchClient.TweetTypes
-import com.twitter.timelines.model.TweetId
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.sewvo.utiw.futuweawwow
+i-impowt c-com.twittew.timewinewankew.cowe.candidateenvewope
+i-impowt com.twittew.timewinewankew.modew.tweetidwange
+i-impowt com.twittew.timewines.cwients.wewevance_seawch.seawchcwient
+i-impowt c-com.twittew.timewines.cwients.wewevance_seawch.seawchcwient.tweettypes
+i-impowt com.twittew.timewines.modew.tweetid
+impowt com.twittew.utiw.futuwe
 
-object EntityTweetsSearchResultsTransform {
-  // If EntityTweetsQuery.maxCount is not specified, the following count is used.
-  val DefaultEntityTweetsMaxTweetCount = 200
+object entitytweetsseawchwesuwtstwansfowm {
+  // if entitytweetsquewy.maxcount i-is nyot specified, ^^ the fowwowing count is used. :3
+  v-vaw defauwtentitytweetsmaxtweetcount = 200
 }
 
 /**
- * Fetch entity tweets search results using the search client
- * and populate them into the CandidateEnvelope
+ * fetch e-entity tweets seawch wesuwts using the seawch cwient
+ * and popuwate t-them into the candidateenvewope
  */
-class EntityTweetsSearchResultsTransform(
-  searchClient: SearchClient,
-  statsReceiver: StatsReceiver,
-  logSearchDebugInfo: Boolean = false)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  import EntityTweetsSearchResultsTransform._
+c-cwass entitytweetsseawchwesuwtstwansfowm(
+  s-seawchcwient: seawchcwient, -.-
+  statsweceivew: statsweceivew, 😳
+  wogseawchdebuginfo: b-boowean = fawse)
+    extends futuweawwow[candidateenvewope, mya candidateenvewope] {
+  impowt e-entitytweetsseawchwesuwtstwansfowm._
 
-  private[this] val maxCountStat = statsReceiver.stat("maxCount")
-  private[this] val numResultsFromSearchStat = statsReceiver.stat("numResultsFromSearch")
+  pwivate[this] v-vaw maxcountstat = s-statsweceivew.stat("maxcount")
+  p-pwivate[this] v-vaw nyumwesuwtsfwomseawchstat = statsweceivew.stat("numwesuwtsfwomseawch")
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val maxCount = envelope.query.maxCount.getOrElse(DefaultEntityTweetsMaxTweetCount)
-    maxCountStat.add(maxCount)
+  ovewwide d-def appwy(envewope: candidateenvewope): futuwe[candidateenvewope] = {
+    v-vaw maxcount = envewope.quewy.maxcount.getowewse(defauwtentitytweetsmaxtweetcount)
+    maxcountstat.add(maxcount)
 
-    val tweetIdRange = envelope.query.range
-      .map(TweetIdRange.fromTimelineRange)
-      .getOrElse(TweetIdRange.default)
+    vaw tweetidwange = envewope.quewy.wange
+      .map(tweetidwange.fwomtimewinewange)
+      .getowewse(tweetidwange.defauwt)
 
-    val beforeTweetIdExclusive = tweetIdRange.toId
-    val afterTweetIdExclusive = tweetIdRange.fromId
+    vaw befowetweetidexcwusive = t-tweetidwange.toid
+    vaw aftewtweetidexcwusive = tweetidwange.fwomid
 
-    val excludedTweetIds = envelope.query.excludedTweetIds.getOrElse(Seq.empty[TweetId]).toSet
-    val languages = envelope.query.languages.map(_.map(_.language))
+    v-vaw excwudedtweetids = envewope.quewy.excwudedtweetids.getowewse(seq.empty[tweetid]).toset
+    v-vaw wanguages = e-envewope.quewy.wanguages.map(_.map(_.wanguage))
 
-    envelope.followGraphData.inNetworkUserIdsFuture.flatMap { inNetworkUserIds =>
-      searchClient
-        .getEntityTweets(
-          userId = Some(envelope.query.userId),
-          followedUserIds = inNetworkUserIds.toSet,
-          maxCount = maxCount,
-          beforeTweetIdExclusive = beforeTweetIdExclusive,
-          afterTweetIdExclusive = afterTweetIdExclusive,
-          earlybirdOptions = envelope.query.earlybirdOptions,
-          semanticCoreIds = envelope.query.semanticCoreIds,
-          hashtags = envelope.query.hashtags,
-          languages = languages,
-          tweetTypes = TweetTypes.fromTweetKindOption(envelope.query.options),
-          searchOperator = envelope.query.searchOperator,
-          excludedTweetIds = excludedTweetIds,
-          logSearchDebugInfo = logSearchDebugInfo,
-          includeNullcastTweets = envelope.query.includeNullcastTweets.getOrElse(false),
-          includeTweetsFromArchiveIndex =
-            envelope.query.includeTweetsFromArchiveIndex.getOrElse(false),
-          authorIds = envelope.query.authorIds.map(_.toSet)
-        ).map { results =>
-          numResultsFromSearchStat.add(results.size)
-          envelope.copy(searchResults = results)
+    envewope.fowwowgwaphdata.innetwowkusewidsfutuwe.fwatmap { innetwowkusewids =>
+      seawchcwient
+        .getentitytweets(
+          u-usewid = some(envewope.quewy.usewid), (˘ω˘)
+          f-fowwowedusewids = innetwowkusewids.toset, >_<
+          m-maxcount = m-maxcount, -.-
+          befowetweetidexcwusive = b-befowetweetidexcwusive, 🥺
+          aftewtweetidexcwusive = aftewtweetidexcwusive, (U ﹏ U)
+          e-eawwybiwdoptions = envewope.quewy.eawwybiwdoptions, >w<
+          semanticcoweids = e-envewope.quewy.semanticcoweids, mya
+          hashtags = envewope.quewy.hashtags, >w<
+          w-wanguages = wanguages, nyaa~~
+          tweettypes = tweettypes.fwomtweetkindoption(envewope.quewy.options), (✿oωo)
+          s-seawchopewatow = e-envewope.quewy.seawchopewatow, ʘwʘ
+          excwudedtweetids = excwudedtweetids, (ˆ ﻌ ˆ)♡
+          wogseawchdebuginfo = wogseawchdebuginfo, 😳😳😳
+          incwudenuwwcasttweets = envewope.quewy.incwudenuwwcasttweets.getowewse(fawse), :3
+          i-incwudetweetsfwomawchiveindex =
+            e-envewope.quewy.incwudetweetsfwomawchiveindex.getowewse(fawse), OwO
+          authowids = e-envewope.quewy.authowids.map(_.toset)
+        ).map { w-wesuwts =>
+          n-numwesuwtsfwomseawchstat.add(wesuwts.size)
+          envewope.copy(seawchwesuwts = wesuwts)
         }
     }
   }

@@ -1,39 +1,39 @@
-package com.twitter.follow_recommendations.common.stores
+package com.twittew.fowwow_wecommendations.common.stowes
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.TweepCredOnUserClientColumn
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+impowt c-com.twittew.fowwow_wecommendations.common.modews.haswecentfowwowedusewids
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.genewated.cwient.onboawding.usewwecs.tweepcwedonusewcwientcowumn
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-// Not a candidate source since it's a intermediary.
-@Singleton
-class LowTweepCredFollowStore @Inject() (tweepCredOnUserClientColumn: TweepCredOnUserClientColumn) {
+// n-nyot a candidate souwce since it's a intewmediawy. rawr
+@singweton
+cwass wowtweepcwedfowwowstowe @inject() (tweepcwedonusewcwientcowumn: tweepcwedonusewcwientcowumn) {
 
-  def getLowTweepCredUsers(target: HasRecentFollowedUserIds): Stitch[Seq[CandidateUser]] = {
-    val newFollowings =
-      target.recentFollowedUserIds.getOrElse(Nil).take(LowTweepCredFollowStore.NumFlockToRetrieve)
+  def g-getwowtweepcwedusews(tawget: haswecentfowwowedusewids): stitch[seq[candidateusew]] = {
+    v-vaw nyewfowwowings =
+      t-tawget.wecentfowwowedusewids.getowewse(niw).take(wowtweepcwedfowwowstowe.numfwocktowetwieve)
 
-    val validTweepScoreUserIdsStitch: Stitch[Seq[Long]] = Stitch
-      .traverse(newFollowings) { newFollowingUserId =>
-        val tweepCredScoreOptStitch = tweepCredOnUserClientColumn.fetcher
-          .fetch(newFollowingUserId)
+    vaw vawidtweepscoweusewidsstitch: stitch[seq[wong]] = stitch
+      .twavewse(newfowwowings) { n-nyewfowwowingusewid =>
+        vaw tweepcwedscoweoptstitch = t-tweepcwedonusewcwientcowumn.fetchew
+          .fetch(newfowwowingusewid)
           .map(_.v)
-        tweepCredScoreOptStitch.map(_.flatMap(tweepCred =>
-          if (tweepCred < LowTweepCredFollowStore.TweepCredThreshold) {
-            Some(newFollowingUserId)
-          } else {
-            None
+        t-tweepcwedscoweoptstitch.map(_.fwatmap(tweepcwed =>
+          if (tweepcwed < wowtweepcwedfowwowstowe.tweepcwedthweshowd) {
+            some(newfowwowingusewid)
+          } ewse {
+            n-nyone
           }))
-      }.map(_.flatten)
+      }.map(_.fwatten)
 
-    validTweepScoreUserIdsStitch
-      .map(_.map(CandidateUser(_, Some(CandidateUser.DefaultCandidateScore))))
+    vawidtweepscoweusewidsstitch
+      .map(_.map(candidateusew(_, OwO some(candidateusew.defauwtcandidatescowe))))
   }
 }
 
-object LowTweepCredFollowStore {
-  val NumFlockToRetrieve = 500
-  val TweepCredThreshold = 40
+object wowtweepcwedfowwowstowe {
+  v-vaw nyumfwocktowetwieve = 500
+  vaw tweepcwedthweshowd = 40
 }

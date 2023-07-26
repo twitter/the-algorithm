@@ -1,50 +1,50 @@
-package com.twitter.frigate.pushservice.model
+package com.twittew.fwigate.pushsewvice.modew
 
-import com.twitter.events.recos.thriftscala.TrendsContext
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.TrendTweetCandidate
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.model.ibis.TrendTweetIbis2Hydrator
-import com.twitter.frigate.pushservice.model.ntab.TrendTweetNtabHydrator
-import com.twitter.frigate.pushservice.take.predicates.BasicTweetPredicatesForRFPH
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.stitch.tweetypie.TweetyPie
-import com.twitter.util.Future
+impowt c-com.twittew.events.wecos.thwiftscawa.twendscontext
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.base.twendtweetcandidate
+i-impowt com.twittew.fwigate.common.base.tweetauthowdetaiws
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+i-impowt com.twittew.fwigate.pushsewvice.config.config
+impowt com.twittew.fwigate.pushsewvice.mw.pushmwmodewscowew
+impowt com.twittew.fwigate.pushsewvice.modew.candidate.copyids
+impowt com.twittew.fwigate.pushsewvice.modew.ibis.twendtweetibis2hydwatow
+impowt c-com.twittew.fwigate.pushsewvice.modew.ntab.twendtweetntabhydwatow
+impowt com.twittew.fwigate.pushsewvice.take.pwedicates.basictweetpwedicatesfowwfph
+impowt c-com.twittew.gizmoduck.thwiftscawa.usew
+impowt c-com.twittew.stitch.tweetypie.tweetypie
+impowt com.twittew.utiw.futuwe
 
-class TrendTweetPushCandidate(
-  candidate: RawCandidate with TrendTweetCandidate,
-  author: Option[User],
-  copyIds: CopyIds
+cwass twendtweetpushcandidate(
+  candidate: w-wawcandidate with twendtweetcandidate, mya
+  a-authow: o-option[usew], (˘ω˘)
+  copyids: copyids
 )(
-  implicit stats: StatsReceiver,
-  pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
-    with TrendTweetCandidate
-    with TweetAuthorDetails
-    with TrendTweetIbis2Hydrator
-    with TrendTweetNtabHydrator {
-  override val statsReceiver: StatsReceiver = stats
-  override val weightedOpenOrNtabClickModelScorer: PushMLModelScorer = pushModelScorer
-  override val tweetId: Long = candidate.tweetId
-  override lazy val tweetyPieResult: Option[TweetyPie.TweetyPieResult] = candidate.tweetyPieResult
-  override lazy val tweetAuthor: Future[Option[User]] = Future.value(author)
-  override val target: PushTypes.Target = candidate.target
-  override val landingUrl: String = candidate.landingUrl
-  override val timeBoundedLandingUrl: Option[String] = candidate.timeBoundedLandingUrl
-  override val pushCopyId: Option[Int] = copyIds.pushCopyId
-  override val ntabCopyId: Option[Int] = copyIds.ntabCopyId
-  override val trendId: String = candidate.trendId
-  override val trendName: String = candidate.trendName
-  override val copyAggregationId: Option[String] = copyIds.aggregationId
-  override val context: TrendsContext = candidate.context
+  impwicit stats: statsweceivew, >_<
+  pushmodewscowew: p-pushmwmodewscowew)
+    extends pushcandidate
+    with twendtweetcandidate
+    with tweetauthowdetaiws
+    w-with twendtweetibis2hydwatow
+    with twendtweetntabhydwatow {
+  o-ovewwide v-vaw statsweceivew: s-statsweceivew = s-stats
+  ovewwide vaw weightedopenowntabcwickmodewscowew: pushmwmodewscowew = p-pushmodewscowew
+  ovewwide vaw tweetid: wong = candidate.tweetid
+  o-ovewwide wazy vaw tweetypiewesuwt: option[tweetypie.tweetypiewesuwt] = candidate.tweetypiewesuwt
+  ovewwide wazy vaw tweetauthow: f-futuwe[option[usew]] = futuwe.vawue(authow)
+  o-ovewwide vaw t-tawget: pushtypes.tawget = c-candidate.tawget
+  ovewwide vaw wandinguww: stwing = c-candidate.wandinguww
+  o-ovewwide vaw timeboundedwandinguww: o-option[stwing] = c-candidate.timeboundedwandinguww
+  ovewwide v-vaw pushcopyid: option[int] = c-copyids.pushcopyid
+  ovewwide vaw nytabcopyid: o-option[int] = copyids.ntabcopyid
+  o-ovewwide vaw twendid: stwing = c-candidate.twendid
+  o-ovewwide vaw twendname: stwing = candidate.twendname
+  ovewwide vaw copyaggwegationid: option[stwing] = copyids.aggwegationid
+  ovewwide v-vaw context: t-twendscontext = candidate.context
 }
 
-case class TrendTweetPredicates(override val config: Config)
-    extends BasicTweetPredicatesForRFPH[TrendTweetPushCandidate] {
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+c-case cwass t-twendtweetpwedicates(ovewwide v-vaw config: config)
+    extends basictweetpwedicatesfowwfph[twendtweetpushcandidate] {
+  impwicit v-vaw statsweceivew: statsweceivew = config.statsweceivew.scope(getcwass.getsimpwename)
 }

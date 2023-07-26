@@ -1,409 +1,409 @@
-package com.twitter.search.earlybird.util;
+package com.twittew.seawch.eawwybiwd.utiw;
 
-import java.util.Optional;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicBoolean;
-import javax.annotation.Nullable;
+impowt j-java.utiw.optionaw;
+i-impowt java.utiw.wandom;
+impowt j-java.utiw.concuwwent.atomic.atomicboowean;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt c-com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.base.stopwatch;
 
-import org.apache.zookeeper.KeeperException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.zookeepew.keepewexception;
+impowt owg.swf4j.woggew;
+impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.common.base.ExceptionalFunction;
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.common.zookeeper.ServerSet;
-import com.twitter.common.zookeeper.ZooKeeperClient;
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.util.zktrylock.TryLock;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.ServerSetMember;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.exception.AlreadyInServerSetUpdateException;
-import com.twitter.search.earlybird.exception.EarlybirdException;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.NotInServerSetUpdateException;
-import com.twitter.search.earlybird.partition.DynamicPartitionConfig;
-import com.twitter.search.earlybird.partition.PartitionConfig;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
+impowt com.twittew.common.base.exceptionawfunction;
+i-impowt com.twittew.common.quantity.amount;
+i-impowt com.twittew.common.quantity.time;
+impowt com.twittew.common.zookeepew.sewvewset;
+impowt com.twittew.common.zookeepew.zookeepewcwient;
+i-impowt com.twittew.seawch.common.config.config;
+impowt com.twittew.seawch.common.database.databaseconfig;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.metwics.seawchcustomgauge;
+impowt com.twittew.seawch.common.utiw.zktwywock.twywock;
+impowt com.twittew.seawch.common.utiw.zktwywock.zookeepewtwywockfactowy;
+impowt com.twittew.seawch.eawwybiwd.sewvewsetmembew;
+i-impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdpwopewty;
+impowt com.twittew.seawch.eawwybiwd.exception.awweadyinsewvewsetupdateexception;
+i-impowt com.twittew.seawch.eawwybiwd.exception.eawwybiwdexception;
+impowt com.twittew.seawch.eawwybiwd.exception.cwiticawexceptionhandwew;
+i-impowt c-com.twittew.seawch.eawwybiwd.exception.notinsewvewsetupdateexception;
+i-impowt c-com.twittew.seawch.eawwybiwd.pawtition.dynamicpawtitionconfig;
+impowt com.twittew.seawch.eawwybiwd.pawtition.pawtitionconfig;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentsyncconfig;
 
 /**
- * Utility class for executing tasks on Earlybirds that need to be coordinated across replicas
- * on the same hash partition.
- * Can be used for things like coordinating optimization on the same timeslice.
- * When enabled, a try-lock will be taken out in zookeeper while the task is performed.
- * The action will attempt to leave the partition's server set. If the attempt fails, the action
- * is aborted.
+ * u-utiwity cwass fow executing tasks on eawwybiwds t-that nyeed to be coowdinated acwoss wepwicas
+ * on the same hash pawtition. (˘ω˘)
+ * can be used f-fow things wike coowdinating o-optimization on t-the same timeswice. OwO
+ * w-when enabwed, (ꈍᴗꈍ) a twy-wock wiww be taken out in zookeepew w-whiwe the task is p-pewfowmed. òωó
+ * the action wiww a-attempt to weave t-the pawtition's sewvew set. ʘwʘ if t-the attempt faiws, ʘwʘ the action
+ * i-is abowted. nyaa~~
  */
-public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInterface {
-  private static final Logger LOG = LoggerFactory.getLogger(CoordinatedEarlybirdAction.class);
+pubwic cwass coowdinatedeawwybiwdaction impwements c-coowdinatedeawwybiwdactionintewface {
+  pwivate s-static finaw woggew wog = woggewfactowy.getwoggew(coowdinatedeawwybiwdaction.cwass);
 
-  private static final Boolean COORDINATED_ACTION_FLAG = Boolean.TRUE;
-  private static final Boolean NOT_COORDINATED_ACTION_FLAG = Boolean.FALSE;
+  p-pwivate s-static finaw boowean coowdinated_action_fwag = boowean.twue;
+  pwivate static finaw boowean not_coowdinated_action_fwag = boowean.fawse;
 
-  private final String actionName;
-  private final DynamicPartitionConfig dynamicPartitionConfig;
-  @Nullable private final ServerSetMember serverSetMember;
-  private final ZooKeeperTryLockFactory zooKeeperTryLockFactory;
+  p-pwivate finaw stwing a-actionname;
+  pwivate finaw d-dynamicpawtitionconfig d-dynamicpawtitionconfig;
+  @nuwwabwe p-pwivate finaw sewvewsetmembew sewvewsetmembew;
+  pwivate f-finaw zookeepewtwywockfactowy zookeepewtwywockfactowy;
 
-  // Whether this action should be coordinated through zookeeper in the first place (could be
-  // config'ed off).
-  // If the action is coordinated, this earlybird will leave its server set when performing the
-  // coordinated action.
-  private final AtomicBoolean shouldSynchronize;
-  // Whether this action should ensure that there are enough replicas in the serverset (defined by
-  // maxAllowedReplicasNotInServerSet) before leaving the serverset.
-  private final boolean checkNumReplicasInServerSet;
-  // If this many (or more) servers have left the partition, we cannot perform a coordinated action
-  private final int maxAllowedReplicasNotInServerSet;
-  // How long to lock out all other replicas in this hash partition for.
-  // Should be some small multiple of how long the action is expected to take, to allow for longer
-  // running cases.
-  private final long zkLockExpirationTimeMinutes;
-  // Prefix for the zookeeper lock used when coordinating daily updates.
-  // Full name should include the hash partition number.
-  private final String zkLockNamePrefix;
-  // If we're unable to re-join this earlybird's server set during coordinated updates,
-  // how many times to retry.
-  private final int joinServerSetRetries;
-  // How long to sleep between retries if unable to job back into server set.
-  private final int joinServerSetRetrySleepMillis;
-  // How long to sleep between leaving the serverset and executing the action
-  private final int sleepAfterLeaveServerSetMillis;
+  // whethew this action shouwd be coowdinated thwough z-zookeepew in the fiwst pwace (couwd b-be
+  // c-config'ed off). UwU
+  // i-if the action is coowdinated, (⑅˘꒳˘) t-this eawwybiwd w-wiww weave its s-sewvew set when p-pewfowming the
+  // coowdinated action. (˘ω˘)
+  pwivate f-finaw atomicboowean s-shouwdsynchwonize;
+  // whethew t-this action s-shouwd ensuwe t-that thewe awe enough wepwicas in the sewvewset (defined by
+  // m-maxawwowedwepwicasnotinsewvewset) befowe weaving the sewvewset. :3
+  pwivate finaw boowean checknumwepwicasinsewvewset;
+  // if this m-many (ow mowe) sewvews have weft the pawtition, (˘ω˘) we cannot pewfowm a-a coowdinated a-action
+  pwivate f-finaw int maxawwowedwepwicasnotinsewvewset;
+  // how wong to w-wock out aww othew wepwicas in t-this hash pawtition f-fow. nyaa~~
+  // shouwd be some smow muwtipwe of how wong the action is expected to take, (U ﹏ U) to awwow f-fow wongew
+  // wunning cases.
+  p-pwivate finaw wong zkwockexpiwationtimeminutes;
+  // p-pwefix fow t-the zookeepew wock used when coowdinating daiwy u-updates. nyaa~~
+  // f-fuww nyame shouwd incwude the hash p-pawtition nyumbew. ^^;;
+  p-pwivate finaw stwing zkwocknamepwefix;
+  // if we'we unabwe to we-join this eawwybiwd's s-sewvew set duwing c-coowdinated updates, OwO
+  // h-how many times to wetwy. nyaa~~
+  p-pwivate finaw i-int joinsewvewsetwetwies;
+  // how wong to s-sweep between wetwies if unabwe to job back into sewvew set. UwU
+  pwivate finaw int j-joinsewvewsetwetwysweepmiwwis;
+  // h-how wong to sweep between weaving the sewvewset a-and executing t-the action
+  pwivate finaw int sweepaftewweavesewvewsetmiwwis;
 
-  // How many times a this action was called within a lock block.
-  private final SearchCounter numCoordinatedFunctionCalls;
-  private final SearchCounter numCoordinatedLeaveServersetCalls;
+  // how many t-times a this action was cawwed within a wock bwock. 😳
+  pwivate finaw seawchcountew n-nyumcoowdinatedfunctioncawws;
+  pwivate finaw seawchcountew nyumcoowdinatedweavesewvewsetcawws;
 
-  private final CriticalExceptionHandler criticalExceptionHandler;
-  private final SegmentSyncConfig segmentSyncConfig;
+  p-pwivate finaw c-cwiticawexceptionhandwew cwiticawexceptionhandwew;
+  pwivate finaw segmentsyncconfig s-segmentsyncconfig;
 
   /**
-   * Create a CoordinatedEarlybirdAction.
+   * c-cweate a coowdinatedeawwybiwdaction. 😳
    *
-   * @param actionName the name to be used for logging and the prefix for config options.
-   * @param dynamicPartitionConfig maintains the current partitioning configuration for this
-   * earlybird. Used mainly to determine the hash partition of this earlybird.
-   * @param serverSetMember the server that this action is running on. To be used to leaving and
-   * rejoining the server's server set.
+   * @pawam actionname the nyame t-to be used fow wogging and the p-pwefix fow config options. (ˆ ﻌ ˆ)♡
+   * @pawam dynamicpawtitionconfig maintains the cuwwent p-pawtitioning configuwation f-fow this
+   * eawwybiwd. u-used mainwy to detewmine t-the hash pawtition of this eawwybiwd. (✿oωo)
+   * @pawam s-sewvewsetmembew t-the sewvew t-that this action is wunning on. t-to be used to weaving a-and
+   * wejoining the sewvew's sewvew set. nyaa~~
    */
-  public CoordinatedEarlybirdAction(
-      ZooKeeperTryLockFactory zooKeeperTryLockFactory,
-      String actionName,
-      DynamicPartitionConfig dynamicPartitionConfig,
-      @Nullable ServerSetMember serverSetMember,
-      CriticalExceptionHandler criticalExceptionHandler,
-      SegmentSyncConfig segmentSyncConfig) {
-    this.actionName = actionName;
-    this.dynamicPartitionConfig = dynamicPartitionConfig;
-    this.serverSetMember = serverSetMember;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.segmentSyncConfig = segmentSyncConfig;
-    this.zooKeeperTryLockFactory = zooKeeperTryLockFactory;
-    if (serverSetMember == null) {
-      Preconditions.checkState(Config.environmentIsTest(),
-          "Should only have a null server in tests");
+  p-pubwic c-coowdinatedeawwybiwdaction(
+      z-zookeepewtwywockfactowy zookeepewtwywockfactowy, ^^
+      stwing a-actionname, (///ˬ///✿)
+      dynamicpawtitionconfig d-dynamicpawtitionconfig,
+      @nuwwabwe s-sewvewsetmembew sewvewsetmembew, 😳
+      cwiticawexceptionhandwew cwiticawexceptionhandwew, òωó
+      s-segmentsyncconfig s-segmentsyncconfig) {
+    t-this.actionname = actionname;
+    this.dynamicpawtitionconfig = d-dynamicpawtitionconfig;
+    this.sewvewsetmembew = s-sewvewsetmembew;
+    this.cwiticawexceptionhandwew = cwiticawexceptionhandwew;
+    this.segmentsyncconfig = segmentsyncconfig;
+    this.zookeepewtwywockfactowy = z-zookeepewtwywockfactowy;
+    if (sewvewsetmembew == nyuww) {
+      p-pweconditions.checkstate(config.enviwonmentistest(), ^^;;
+          "shouwd onwy h-have a nyuww sewvew in tests");
     }
 
-    this.shouldSynchronize = new AtomicBoolean(
-            EarlybirdConfig.getBool(actionName + "_should_synchronize", false));
+    t-this.shouwdsynchwonize = nyew atomicboowean(
+            e-eawwybiwdconfig.getboow(actionname + "_shouwd_synchwonize", rawr f-fawse));
 
-    // Export whether or not synchronization is enabled as a stat
-    SearchCustomGauge.export(
-        actionName + "_should_synchronize", () -> shouldSynchronize.get() ? 1 : 0);
+    // e-expowt whethew o-ow nyot synchwonization i-is enabwed as a stat
+    seawchcustomgauge.expowt(
+        actionname + "_shouwd_synchwonize", (ˆ ﻌ ˆ)♡ () -> shouwdsynchwonize.get() ? 1 : 0);
 
-    this.checkNumReplicasInServerSet = EarlybirdProperty.CHECK_NUM_REPLICAS_IN_SERVER_SET.get();
+    this.checknumwepwicasinsewvewset = eawwybiwdpwopewty.check_num_wepwicas_in_sewvew_set.get();
 
-    int numReplicas =
-        dynamicPartitionConfig.getCurrentPartitionConfig().getNumReplicasInHashPartition();
-    this.maxAllowedReplicasNotInServerSet =
-        EarlybirdProperty.MAX_ALLOWED_REPLICAS_NOT_IN_SERVER_SET.get(numReplicas);
+    i-int nyumwepwicas =
+        d-dynamicpawtitionconfig.getcuwwentpawtitionconfig().getnumwepwicasinhashpawtition();
+    t-this.maxawwowedwepwicasnotinsewvewset =
+        eawwybiwdpwopewty.max_awwowed_wepwicas_not_in_sewvew_set.get(numwepwicas);
 
-    this.zkLockExpirationTimeMinutes =
-        EarlybirdConfig.getLong(actionName + "_lock_expiration_time_minutes", 60L);
-    this.zkLockNamePrefix = actionName + "_for_hash_partition_";
-    this.joinServerSetRetries =
-        EarlybirdConfig.getInt(actionName + "_join_server_set_retries", 20);
-    this.joinServerSetRetrySleepMillis =
-        EarlybirdConfig.getInt(actionName + "_join_server_retry_sleep_millis", 2000);
-    this.sleepAfterLeaveServerSetMillis =
-        EarlybirdConfig.getInt("coordinated_action_sleep_after_leave_server_set_millis", 30000);
+    t-this.zkwockexpiwationtimeminutes =
+        eawwybiwdconfig.getwong(actionname + "_wock_expiwation_time_minutes", XD 60w);
+    this.zkwocknamepwefix = actionname + "_fow_hash_pawtition_";
+    t-this.joinsewvewsetwetwies =
+        e-eawwybiwdconfig.getint(actionname + "_join_sewvew_set_wetwies", >_< 20);
+    this.joinsewvewsetwetwysweepmiwwis =
+        e-eawwybiwdconfig.getint(actionname + "_join_sewvew_wetwy_sweep_miwwis", (˘ω˘) 2000);
+    this.sweepaftewweavesewvewsetmiwwis =
+        eawwybiwdconfig.getint("coowdinated_action_sweep_aftew_weave_sewvew_set_miwwis", 😳 30000);
 
-    this.numCoordinatedFunctionCalls = SearchCounter.export(actionName + "_num_coordinated_calls");
-    this.numCoordinatedLeaveServersetCalls =
-        SearchCounter.export(actionName + "_num_coordinated_leave_serverset_calls");
+    t-this.numcoowdinatedfunctioncawws = s-seawchcountew.expowt(actionname + "_num_coowdinated_cawws");
+    this.numcoowdinatedweavesewvewsetcawws =
+        s-seawchcountew.expowt(actionname + "_num_coowdinated_weave_sewvewset_cawws");
 
-    if (this.checkNumReplicasInServerSet) {
-      LOG.info(
-          "Coordinate action config ({}): allowedNotIn: {}, current number of replicas: {}, "
-              + "synchronization enabled: {}, checkNumReplicasInServerSet enabled: {}",
-          actionName,
-          maxAllowedReplicasNotInServerSet,
-          dynamicPartitionConfig.getCurrentPartitionConfig().getNumReplicasInHashPartition(),
-          shouldSynchronize,
-          this.checkNumReplicasInServerSet);
-    } else {
-      LOG.info(
-          "Coordinate action config ({}): synchronization enabled: {}, "
-              + "checkNumReplicasInServerSet enabled: {}",
-          actionName,
-          shouldSynchronize,
-          this.checkNumReplicasInServerSet);
-    }
-  }
-
-
-  @Override
-  public <E extends Exception> boolean execute(
-      String description,
-      ExceptionalFunction<Boolean, Boolean, E> function)
-          throws E, CoordinatedEarlybirdActionLockFailed {
-    if (this.shouldSynchronize.get()) {
-      return executeWithCoordination(description, function);
-    } else {
-      return function.apply(NOT_COORDINATED_ACTION_FLAG);
+    i-if (this.checknumwepwicasinsewvewset) {
+      wog.info(
+          "coowdinate action config ({}): awwowednotin: {}, o.O cuwwent n-nyumbew of wepwicas: {}, (ꈍᴗꈍ) "
+              + "synchwonization e-enabwed: {}, c-checknumwepwicasinsewvewset e-enabwed: {}", rawr x3
+          a-actionname, ^^
+          maxawwowedwepwicasnotinsewvewset, OwO
+          d-dynamicpawtitionconfig.getcuwwentpawtitionconfig().getnumwepwicasinhashpawtition(), ^^
+          s-shouwdsynchwonize, :3
+          this.checknumwepwicasinsewvewset);
+    } e-ewse {
+      w-wog.info(
+          "coowdinate action config ({}): s-synchwonization enabwed: {}, o.O "
+              + "checknumwepwicasinsewvewset enabwed: {}", -.-
+          a-actionname, (U ﹏ U)
+          shouwdsynchwonize, o.O
+          this.checknumwepwicasinsewvewset);
     }
   }
 
-  enum LeaveServerSetResult {
-    SUCCESS,
-    FAILURE,
-    NOT_IN_SERVER_SET,
-    NO_SERVER_SET_MEMBER
+
+  @ovewwide
+  p-pubwic <e e-extends exception> boowean exekawaii~(
+      s-stwing descwiption, OwO
+      exceptionawfunction<boowean, ^•ﻌ•^ boowean, e-e> function)
+          t-thwows e, ʘwʘ c-coowdinatedeawwybiwdactionwockfaiwed {
+    if (this.shouwdsynchwonize.get()) {
+      wetuwn exekawaii~withcoowdination(descwiption, :3 function);
+    } e-ewse {
+      wetuwn function.appwy(not_coowdinated_action_fwag);
+    }
   }
 
-  private LeaveServerSetResult leaveServerSet() {
-    LOG.info("Leaving serving server set for " + actionName);
-    try {
-      serverSetMember.leaveServerSet("CoordinatedAction: " + actionName);
-      return LeaveServerSetResult.SUCCESS;
-    } catch (ServerSet.UpdateException ex) {
-      if (ex instanceof NotInServerSetUpdateException) {
-        LOG.info("No need to leave; already out of server set during: "
-            + actionName, ex);
-        return LeaveServerSetResult.NOT_IN_SERVER_SET;
-      } else {
-        LOG.warn("Unable to leave server set during: " + actionName, ex);
-        return LeaveServerSetResult.FAILURE;
+  enum weavesewvewsetwesuwt {
+    s-success, 😳
+    f-faiwuwe, òωó
+    nyot_in_sewvew_set, 🥺
+    nyo_sewvew_set_membew
+  }
+
+  p-pwivate weavesewvewsetwesuwt weavesewvewset() {
+    w-wog.info("weaving s-sewving sewvew set fow " + actionname);
+    t-twy {
+      sewvewsetmembew.weavesewvewset("coowdinatedaction: " + actionname);
+      w-wetuwn w-weavesewvewsetwesuwt.success;
+    } catch (sewvewset.updateexception e-ex) {
+      if (ex instanceof n-nyotinsewvewsetupdateexception) {
+        wog.info("no n-nyeed t-to weave; awweady out of sewvew set duwing: "
+            + actionname, rawr x3 ex);
+        wetuwn weavesewvewsetwesuwt.not_in_sewvew_set;
+      } ewse {
+        wog.wawn("unabwe to weave sewvew set duwing: " + actionname, ^•ﻌ•^ ex);
+        wetuwn weavesewvewsetwesuwt.faiwuwe;
       }
     }
   }
 
-  private LeaveServerSetResult maybeLeaveServerSet() {
-    if (serverSetMember != null) {
-      if (serverSetMember.isInServerSet()) {
+  p-pwivate weavesewvewsetwesuwt m-maybeweavesewvewset() {
+    if (sewvewsetmembew != nyuww) {
+      i-if (sewvewsetmembew.isinsewvewset()) {
 
-        if (!checkNumReplicasInServerSet) {
-          return leaveServerSet();
-        } else {
-          PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
-          final int minNumServers =
-              curPartitionConfig.getNumReplicasInHashPartition() - maxAllowedReplicasNotInServerSet;
-          Optional<Integer> numServerSetMembers = getNumberOfServerSetMembers();
-          LOG.info("Checking number of replicas before leaving server set for " + actionName
-              + ". Number of members is: " + numServerSetMembers + " minMembers: " + minNumServers);
-          if (numServerSetMembers.isPresent() && numServerSetMembers.get() > minNumServers) {
-            return leaveServerSet();
-          } else {
-            LOG.warn("Not leaving server set during: " + actionName);
-            return LeaveServerSetResult.FAILURE;
+        i-if (!checknumwepwicasinsewvewset) {
+          w-wetuwn weavesewvewset();
+        } e-ewse {
+          pawtitionconfig c-cuwpawtitionconfig = d-dynamicpawtitionconfig.getcuwwentpawtitionconfig();
+          finaw int minnumsewvews =
+              c-cuwpawtitionconfig.getnumwepwicasinhashpawtition() - maxawwowedwepwicasnotinsewvewset;
+          o-optionaw<integew> n-numsewvewsetmembews = getnumbewofsewvewsetmembews();
+          wog.info("checking nyumbew of wepwicas b-befowe weaving s-sewvew set f-fow " + actionname
+              + ". n-nyumbew of m-membews is: " + n-nyumsewvewsetmembews + " m-minmembews: " + m-minnumsewvews);
+          i-if (numsewvewsetmembews.ispwesent() && nyumsewvewsetmembews.get() > m-minnumsewvews) {
+            w-wetuwn weavesewvewset();
+          } e-ewse {
+            wog.wawn("not w-weaving sewvew set duwing: " + actionname);
+            w-wetuwn weavesewvewsetwesuwt.faiwuwe;
           }
         }
-      } else {
-        LOG.info("Not in server set, no need to leave it.");
-        return LeaveServerSetResult.NOT_IN_SERVER_SET;
+      } ewse {
+        w-wog.info("not i-in sewvew set, :3 n-nyo nyeed to weave it.");
+        w-wetuwn weavesewvewsetwesuwt.not_in_sewvew_set;
       }
     }
 
-    return LeaveServerSetResult.NO_SERVER_SET_MEMBER;
+    wetuwn weavesewvewsetwesuwt.no_sewvew_set_membew;
   }
 
-  private <E extends Exception> boolean executeWithCoordination(
-      final String description,
-      final ExceptionalFunction<Boolean, Boolean, E> function)
-      throws E, CoordinatedEarlybirdActionLockFailed {
-    PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
-    TryLock lock = zooKeeperTryLockFactory.createTryLock(
-        DatabaseConfig.getLocalHostname(),
-        segmentSyncConfig.getZooKeeperSyncFullPath(),
-        zkLockNamePrefix
-        + curPartitionConfig.getIndexingHashPartitionID(),
-        Amount.of(zkLockExpirationTimeMinutes, Time.MINUTES)
+  pwivate <e e-extends exception> boowean e-exekawaii~withcoowdination(
+      finaw stwing d-descwiption, (ˆ ﻌ ˆ)♡
+      finaw exceptionawfunction<boowean, (U ᵕ U❁) boowean, :3 e> function)
+      thwows e, ^^;; c-coowdinatedeawwybiwdactionwockfaiwed {
+    pawtitionconfig c-cuwpawtitionconfig = d-dynamicpawtitionconfig.getcuwwentpawtitionconfig();
+    twywock wock = zookeepewtwywockfactowy.cweatetwywock(
+        databaseconfig.getwocawhostname(), ( ͡o ω ͡o )
+        s-segmentsyncconfig.getzookeepewsyncfuwwpath(), o.O
+        zkwocknamepwefix
+        + c-cuwpawtitionconfig.getindexinghashpawtitionid(), ^•ﻌ•^
+        a-amount.of(zkwockexpiwationtimeminutes, XD t-time.minutes)
     );
 
-    final AtomicBoolean success = new AtomicBoolean(false);
+    finaw atomicboowean s-success = nyew atomicboowean(fawse);
 
-    boolean gotLock = lock.tryWithLock(() -> {
-      Stopwatch actionTiming = Stopwatch.createStarted();
+    b-boowean gotwock = wock.twywithwock(() -> {
+      s-stopwatch actiontiming = stopwatch.cweatestawted();
 
-      LeaveServerSetResult leftServerSet = maybeLeaveServerSet();
-      if (leftServerSet == LeaveServerSetResult.FAILURE) {
-        LOG.info("Failed to leave the server set, will not execute action.");
-        return;
+      w-weavesewvewsetwesuwt weftsewvewset = m-maybeweavesewvewset();
+      i-if (weftsewvewset == w-weavesewvewsetwesuwt.faiwuwe) {
+        wog.info("faiwed t-to weave the s-sewvew set, ^^ wiww n-nyot exekawaii~ a-action.");
+        wetuwn;
       }
 
-      LOG.info("maybeLeaveServerSet returned: {}", leftServerSet);
+      w-wog.info("maybeweavesewvewset w-wetuwned: {}", o.O w-weftsewvewset);
 
-      // Sleep for a short time to give the server some time to finish requests that it is currently
-      // executing and allow roots some time to register that this host has left the server set.
-      // If we didn't do this and the coordinated action included a full GC, then latency and error
-      // rate at the root layer would spike higher at the time of the GC. SEARCH-35456
-      try {
-        Thread.sleep(sleepAfterLeaveServerSetMillis);
-      } catch (InterruptedException ex) {
-        Thread.currentThread().interrupt();
+      // s-sweep fow a s-showt time to give t-the sewvew some t-time to finish w-wequests that it is cuwwentwy
+      // e-executing and awwow woots s-some time to wegistew that this h-host has weft t-the sewvew set. ( ͡o ω ͡o )
+      // i-if we didn't do this and the coowdinated action incwuded a-a fuww gc, /(^•ω•^) then w-watency and e-ewwow
+      // wate at the woot wayew wouwd spike highew at the t-time of the gc. 🥺 s-seawch-35456
+      twy {
+        t-thwead.sweep(sweepaftewweavesewvewsetmiwwis);
+      } c-catch (intewwuptedexception ex) {
+        thwead.cuwwentthwead().intewwupt();
       }
 
-      LOG.info(actionName + " synchronization action for " + description);
+      wog.info(actionname + " s-synchwonization a-action f-fow " + descwiption);
 
-      try {
-        numCoordinatedFunctionCalls.increment();
-        numCoordinatedLeaveServersetCalls.increment();
+      t-twy {
+        nyumcoowdinatedfunctioncawws.incwement();
+        nyumcoowdinatedweavesewvewsetcawws.incwement();
 
-        Boolean successValue = function.apply(COORDINATED_ACTION_FLAG);
-        success.set(successValue);
-      } finally {
-        if (leftServerSet == LeaveServerSetResult.SUCCESS) {
-          joinServerSet();
+        boowean s-successvawue = f-function.appwy(coowdinated_action_fwag);
+        success.set(successvawue);
+      } finawwy {
+        i-if (weftsewvewset == weavesewvewsetwesuwt.success) {
+          joinsewvewset();
         }
-        LOG.info("{} synchronization action for {} completed after {}, success: {}",
-            actionName,
-            description,
-            actionTiming,
-            success.get());
+        w-wog.info("{} synchwonization a-action fow {} c-compweted aftew {}, nyaa~~ success: {}", mya
+            a-actionname, XD
+            d-descwiption, nyaa~~
+            actiontiming, ʘwʘ
+            s-success.get());
       }
     });
 
-    if (!gotLock) {
-      String errorMsg = actionName + ": Failed to get zk indexing lock for " + description;
-      LOG.info(errorMsg);
-      throw new CoordinatedEarlybirdActionLockFailed(errorMsg);
+    if (!gotwock) {
+      s-stwing ewwowmsg = a-actionname + ": f-faiwed t-to get zk indexing wock fow " + d-descwiption;
+      w-wog.info(ewwowmsg);
+      t-thwow nyew coowdinatedeawwybiwdactionwockfaiwed(ewwowmsg);
     }
-    return success.get();
+    w-wetuwn success.get();
   }
 
-  @Override
-  public void retryActionUntilRan(String description, Runnable action) {
-    Random random = new Random(System.currentTimeMillis());
+  @ovewwide
+  pubwic void wetwyactionuntiwwan(stwing d-descwiption, (⑅˘꒳˘) wunnabwe a-action) {
+    w-wandom wandom = nyew wandom(system.cuwwenttimemiwwis());
 
-    boolean actionExecuted = false;
+    boowean actionexekawaii~d = fawse;
     int attempts = 0;
-    while (!actionExecuted) {
-      try {
+    whiwe (!actionexekawaii~d) {
+      t-twy {
         attempts++;
-        actionExecuted = this.execute(description, isCoordinated -> {
-          action.run();
-          return true;
+        a-actionexekawaii~d = t-this.exekawaii~(descwiption, :3 iscoowdinated -> {
+          action.wun();
+          w-wetuwn twue;
         });
-      } catch (CoordinatedEarlybirdActionLockFailed ex) {
+      } c-catch (coowdinatedeawwybiwdactionwockfaiwed e-ex) {
       }
 
-      if (!actionExecuted) {
-        // Variable sleep amount. The reason for the random sleeps
-        // is so that across multiple earlybirds this doesn't get
-        // executed in some sequence that depends on something else
-        // like maybe deploy times. It might be easier to catch possible
-        // problems if implicit orderings like this are not introduced.
-        long msToSleep = (10 + random.nextInt(5)) * 1000L;
-        try {
-          Thread.sleep(msToSleep);
-        } catch (InterruptedException ex) {
-          LOG.info("Interrupted while trying to execute");
-          Thread.currentThread().interrupt();
+      i-if (!actionexekawaii~d) {
+        // v-vawiabwe sweep a-amount. -.- the weason fow the wandom sweeps
+        // is so that acwoss muwtipwe e-eawwybiwds this doesn't get
+        // e-exekawaii~d in some sequence that depends on something ewse
+        // wike m-maybe depwoy times. 😳😳😳 it might be easiew to catch possibwe
+        // pwobwems i-if impwicit owdewings w-wike this awe nyot intwoduced. (U ﹏ U)
+        w-wong mstosweep = (10 + wandom.nextint(5)) * 1000w;
+        t-twy {
+          t-thwead.sweep(mstosweep);
+        } catch (intewwuptedexception e-ex) {
+          wog.info("intewwupted w-whiwe twying to exekawaii~");
+          thwead.cuwwentthwead().intewwupt();
         }
-      } else {
-        LOG.info("Executed {} after {} attempts", actionName, attempts);
+      } ewse {
+        w-wog.info("exekawaii~d {} aftew {} attempts", o.O actionname, ( ͡o ω ͡o ) a-attempts);
       }
     }
   }
 
   /**
-   * Gets the current number of servers in this server's server set.
-   * @return absent Optional if we encountered an exception getting the number of hosts.
+   * g-gets t-the cuwwent nyumbew of sewvews in this sewvew's s-sewvew set. òωó
+   * @wetuwn absent optionaw if we encountewed an exception getting t-the nyumbew of h-hosts. 🥺
    */
-  private Optional<Integer> getNumberOfServerSetMembers() {
-    try {
-      return serverSetMember != null ? Optional.of(serverSetMember.getNumberOfServerSetMembers())
-          : Optional.empty();
-    } catch (InterruptedException ex) {
-      LOG.warn("Action " + actionName + " was interrupted.", ex);
-      Thread.currentThread().interrupt();
-      return Optional.empty();
-    } catch (ZooKeeperClient.ZooKeeperConnectionException | KeeperException ex) {
-      LOG.warn("Exception during " + actionName, ex);
-      return Optional.empty();
+  p-pwivate optionaw<integew> g-getnumbewofsewvewsetmembews() {
+    twy {
+      wetuwn s-sewvewsetmembew != n-nyuww ? optionaw.of(sewvewsetmembew.getnumbewofsewvewsetmembews())
+          : optionaw.empty();
+    } catch (intewwuptedexception e-ex) {
+      wog.wawn("action " + actionname + " w-was intewwupted.", /(^•ω•^) ex);
+      thwead.cuwwentthwead().intewwupt();
+      wetuwn o-optionaw.empty();
+    } c-catch (zookeepewcwient.zookeepewconnectionexception | keepewexception e-ex) {
+      w-wog.wawn("exception d-duwing " + actionname, 😳😳😳 ex);
+      wetuwn optionaw.empty();
     }
   }
 
   /**
-   * After a coordinated action, join back this earlybird's server set with retries
-   * and sleeps in between.
+   * a-aftew a coowdinated action, ^•ﻌ•^ join back this e-eawwybiwd's sewvew set with wetwies
+   * and sweeps in between. nyaa~~
    */
-  private void joinServerSet() {
-    Preconditions.checkNotNull(serverSetMember);
+  p-pwivate v-void joinsewvewset() {
+    p-pweconditions.checknotnuww(sewvewsetmembew);
 
-    boolean joined = false;
-    for (int i = 0; i < joinServerSetRetries; i++) {
-      try {
-        serverSetMember.joinServerSet("CoordinatedAction: " + actionName);
-        joined = true;
-        break;
-      } catch (AlreadyInServerSetUpdateException ex) {
-        // Most likely leaving the server set failed
-        joined = true;
-        break;
-      } catch (ServerSet.UpdateException ex) {
-        LOG.warn("Unable to join server set after " + actionName + " on attempt "
-                + i, ex);
-        if (i < (joinServerSetRetries - 1)) {
-          try {
-            Thread.sleep(joinServerSetRetrySleepMillis);
-          } catch (InterruptedException e) {
-            LOG.warn("Interrupted while waiting to join back server set for: " + actionName);
-            // Preserve interrupt status.
-            Thread.currentThread().interrupt();
-            break;
+    b-boowean j-joined = fawse;
+    fow (int i-i = 0; i < joinsewvewsetwetwies; i++) {
+      twy {
+        sewvewsetmembew.joinsewvewset("coowdinatedaction: " + a-actionname);
+        joined = t-twue;
+        bweak;
+      } catch (awweadyinsewvewsetupdateexception ex) {
+        // m-most wikewy w-weaving the sewvew set faiwed
+        j-joined = twue;
+        b-bweak;
+      } c-catch (sewvewset.updateexception ex) {
+        w-wog.wawn("unabwe t-to join sewvew set aftew " + actionname + " o-on attempt "
+                + i, OwO ex);
+        if (i < (joinsewvewsetwetwies - 1)) {
+          t-twy {
+            thwead.sweep(joinsewvewsetwetwysweepmiwwis);
+          } c-catch (intewwuptedexception e) {
+            wog.wawn("intewwupted w-whiwe w-waiting to join b-back sewvew set fow: " + actionname);
+            // p-pwesewve intewwupt s-status. ^•ﻌ•^
+            thwead.cuwwentthwead().intewwupt();
+            b-bweak;
           }
         }
       }
     }
     if (!joined) {
-      String message = String.format(
-          "Unable to join server set after %s, setting fatal flag.",
-          actionName);
-      EarlybirdException exception = new EarlybirdException(message);
+      s-stwing message = stwing.fowmat(
+          "unabwe t-to join sewvew s-set aftew %s, σωσ setting fataw fwag.", -.-
+          actionname);
+      eawwybiwdexception exception = nyew eawwybiwdexception(message);
 
-      LOG.error(message, exception);
-      criticalExceptionHandler.handle(this, exception);
+      w-wog.ewwow(message, (˘ω˘) e-exception);
+      cwiticawexceptionhandwew.handwe(this, rawr x3 exception);
     }
   }
 
 
-  @Override
-  public boolean setShouldSynchronize(boolean shouldSynchronizeParam) {
-    boolean oldValue = this.shouldSynchronize.getAndSet(shouldSynchronizeParam);
-    LOG.info("Updated shouldSynchronize for: " + actionName + " from " + oldValue
-            + " to " + shouldSynchronizeParam);
-    return oldValue;
+  @ovewwide
+  pubwic boowean setshouwdsynchwonize(boowean s-shouwdsynchwonizepawam) {
+    boowean owdvawue = t-this.shouwdsynchwonize.getandset(shouwdsynchwonizepawam);
+    w-wog.info("updated shouwdsynchwonize fow: " + actionname + " fwom " + owdvawue
+            + " t-to " + shouwdsynchwonizepawam);
+    wetuwn owdvawue;
   }
 
-  @Override
-  @VisibleForTesting
-  public long getNumCoordinatedFunctionCalls() {
-    return this.numCoordinatedFunctionCalls.get();
+  @ovewwide
+  @visibwefowtesting
+  pubwic wong getnumcoowdinatedfunctioncawws() {
+    w-wetuwn this.numcoowdinatedfunctioncawws.get();
   }
 
-  @Override
-  @VisibleForTesting
-  public long getNumCoordinatedLeaveServersetCalls() {
-    return this.numCoordinatedLeaveServersetCalls.get();
+  @ovewwide
+  @visibwefowtesting
+  pubwic w-wong getnumcoowdinatedweavesewvewsetcawws() {
+    w-wetuwn this.numcoowdinatedweavesewvewsetcawws.get();
   }
 }

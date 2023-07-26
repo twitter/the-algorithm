@@ -1,8 +1,8 @@
-package com.twitter.tweetypie
+package com.twittew.tweetypie
 
-import com.twitter.context.TwitterContext
-package object repository {
-  // Bring Tweetypie permitted TwitterContext into scope
-  val TwitterContext: TwitterContext =
-    com.twitter.context.TwitterContext(com.twitter.tweetypie.TwitterContextPermit)
+impowt c-com.twittew.context.twittewcontext
+p-package o-object wepositowy {
+  // b-bwing tweetypie p-pewmitted t-twittewcontext i-into scope
+  vaw t-twittewcontext: twittewcontext =
+    com.twittew.context.twittewcontext(com.twittew.tweetypie.twittewcontextpewmit)
 }

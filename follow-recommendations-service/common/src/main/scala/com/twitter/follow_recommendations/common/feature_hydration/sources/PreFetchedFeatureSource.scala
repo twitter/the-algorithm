@@ -1,36 +1,36 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+package com.twittew.fowwow_wecommendations.common.featuwe_hydwation.souwces
 
-import com.google.inject.Inject
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.feature_hydration.adapters.PreFetchedFeatureAdapter
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSource
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSourceId
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+impowt c-com.googwe.inject.inject
+i-impowt c-com.googwe.inject.pwovides
+i-impowt c-com.googwe.inject.singweton
+i-impowt com.twittew.fowwow_wecommendations.common.featuwe_hydwation.adaptews.pwefetchedfeatuweadaptew
+i-impowt com.twittew.fowwow_wecommendations.common.featuwe_hydwation.common.featuwesouwce
+i-impowt com.twittew.fowwow_wecommendations.common.featuwe_hydwation.common.featuwesouwceid
+impowt com.twittew.fowwow_wecommendations.common.featuwe_hydwation.common.haspwefetchedfeatuwe
+impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+impowt c-com.twittew.fowwow_wecommendations.common.modews.hasdispwaywocation
+impowt com.twittew.fowwow_wecommendations.common.modews.hassimiwawtocontext
+impowt com.twittew.mw.api.datawecowd
+i-impowt com.twittew.mw.api.featuwecontext
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.configapi.haspawams
 
-@Provides
-@Singleton
-class PreFetchedFeatureSource @Inject() () extends FeatureSource {
-  override def id: FeatureSourceId = FeatureSourceId.PreFetchedFeatureSourceId
-  override def featureContext: FeatureContext = PreFetchedFeatureAdapter.getFeatureContext
-  override def hydrateFeatures(
-    target: HasClientContext
-      with HasPreFetchedFeature
-      with HasParams
-      with HasSimilarToContext
-      with HasDisplayLocation,
-    candidates: Seq[CandidateUser]
-  ): Stitch[Map[CandidateUser, DataRecord]] = {
-    Stitch.value(candidates.map { candidate =>
-      candidate -> PreFetchedFeatureAdapter.adaptToDataRecord((target, candidate))
-    }.toMap)
+@pwovides
+@singweton
+cwass p-pwefetchedfeatuwesouwce @inject() () extends featuwesouwce {
+  o-ovewwide def id: f-featuwesouwceid = featuwesouwceid.pwefetchedfeatuwesouwceid
+  ovewwide def featuwecontext: featuwecontext = pwefetchedfeatuweadaptew.getfeatuwecontext
+  o-ovewwide def hydwatefeatuwes(
+    tawget: hascwientcontext
+      with h-haspwefetchedfeatuwe
+      with h-haspawams
+      w-with hassimiwawtocontext
+      with h-hasdispwaywocation, (ˆ ﻌ ˆ)♡
+    c-candidates: seq[candidateusew]
+  ): stitch[map[candidateusew, (˘ω˘) d-datawecowd]] = {
+    stitch.vawue(candidates.map { candidate =>
+      candidate -> pwefetchedfeatuweadaptew.adapttodatawecowd((tawget, (⑅˘꒳˘) c-candidate))
+    }.tomap)
   }
 }

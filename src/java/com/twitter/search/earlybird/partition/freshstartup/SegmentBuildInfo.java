@@ -1,92 +1,92 @@
-package com.twitter.search.earlybird.partition.freshstartup;
+package com.twittew.seawch.eawwybiwd.pawtition.fweshstawtup;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.earlybird.partition.SegmentWriter;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.segmentwwitew;
 
-// Data collected and produced while building a segment.
-class SegmentBuildInfo {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentBuildInfo.class);
+// d-data cowwected a-and pwoduced w-whiwe buiwding a-a segment. >w<
+cwass s-segmentbuiwdinfo {
+  pwivate static finaw woggew wog = woggewfactowy.getwoggew(segmentbuiwdinfo.cwass);
 
-  // Inclusive boundaries. [start, end].
-  private final long tweetStartOffset;
-  private final long tweetEndOffset;
-  private final int index;
-  private final boolean lastSegment;
+  // incwusive boundawies. nyaa~~ [stawt, e-end]. (✿oωo)
+  pwivate finaw wong tweetstawtoffset;
+  pwivate finaw wong t-tweetendoffset;
+  pwivate finaw i-int index;
+  pwivate finaw boowean wastsegment;
 
-  private long startTweetId;
-  private long maxIndexedTweetId;
-  private KafkaOffsetPair updateKafkaOffsetPair;
-  private SegmentWriter segmentWriter;
+  pwivate wong s-stawttweetid;
+  pwivate wong maxindexedtweetid;
+  p-pwivate kafkaoffsetpaiw u-updatekafkaoffsetpaiw;
+  pwivate segmentwwitew segmentwwitew;
 
-  public SegmentBuildInfo(long tweetStartOffset,
-                          long tweetEndOffset,
-                          int index,
-                          boolean lastSegment) {
-    this.tweetStartOffset = tweetStartOffset;
-    this.tweetEndOffset = tweetEndOffset;
-    this.index = index;
-    this.lastSegment = lastSegment;
+  pubwic segmentbuiwdinfo(wong t-tweetstawtoffset, ʘwʘ
+                          wong tweetendoffset, (ˆ ﻌ ˆ)♡
+                          int index, 😳😳😳
+                          boowean wastsegment) {
+    t-this.tweetstawtoffset = tweetstawtoffset;
+    t-this.tweetendoffset = t-tweetendoffset;
+    t-this.index = i-index;
+    this.wastsegment = wastsegment;
 
-    this.startTweetId = -1;
-    this.updateKafkaOffsetPair = null;
-    this.maxIndexedTweetId = -1;
-    this.segmentWriter = null;
+    t-this.stawttweetid = -1;
+    this.updatekafkaoffsetpaiw = nyuww;
+    this.maxindexedtweetid = -1;
+    this.segmentwwitew = n-nyuww;
   }
 
-  public void setUpdateKafkaOffsetPair(KafkaOffsetPair updateKafkaOffsetPair) {
-    this.updateKafkaOffsetPair = updateKafkaOffsetPair;
+  pubwic void setupdatekafkaoffsetpaiw(kafkaoffsetpaiw updatekafkaoffsetpaiw) {
+    this.updatekafkaoffsetpaiw = updatekafkaoffsetpaiw;
   }
 
-  public KafkaOffsetPair getUpdateKafkaOffsetPair() {
-    return updateKafkaOffsetPair;
+  pubwic kafkaoffsetpaiw g-getupdatekafkaoffsetpaiw() {
+    wetuwn updatekafkaoffsetpaiw;
   }
 
-  public boolean isLastSegment() {
-    return lastSegment;
+  p-pubwic b-boowean iswastsegment() {
+    w-wetuwn wastsegment;
   }
 
-  public void setStartTweetId(long startTweetId) {
-    this.startTweetId = startTweetId;
+  pubwic void setstawttweetid(wong stawttweetid) {
+    t-this.stawttweetid = s-stawttweetid;
   }
 
-  public long getTweetStartOffset() {
-    return tweetStartOffset;
+  pubwic w-wong gettweetstawtoffset() {
+    w-wetuwn tweetstawtoffset;
   }
 
-  public long getTweetEndOffset() {
-    return tweetEndOffset;
+  pubwic wong gettweetendoffset() {
+    w-wetuwn tweetendoffset;
   }
 
-  public long getStartTweetId() {
-    return startTweetId;
+  pubwic wong g-getstawttweetid() {
+    wetuwn stawttweetid;
   }
 
-  public int getIndex() {
-    return index;
+  p-pubwic int getindex() {
+    w-wetuwn index;
   }
 
-  public void setMaxIndexedTweetId(long maxIndexedTweetId) {
-    this.maxIndexedTweetId = maxIndexedTweetId;
+  pubwic void s-setmaxindexedtweetid(wong m-maxindexedtweetid) {
+    this.maxindexedtweetid = maxindexedtweetid;
   }
 
-  public long getMaxIndexedTweetId() {
-    return maxIndexedTweetId;
+  pubwic wong getmaxindexedtweetid() {
+    wetuwn maxindexedtweetid;
   }
 
-  public SegmentWriter getSegmentWriter() {
-    return segmentWriter;
+  pubwic segmentwwitew getsegmentwwitew() {
+    w-wetuwn segmentwwitew;
   }
 
-  public void setSegmentWriter(SegmentWriter segmentWriter) {
-    this.segmentWriter = segmentWriter;
+  p-pubwic void setsegmentwwitew(segmentwwitew s-segmentwwitew) {
+    t-this.segmentwwitew = s-segmentwwitew;
   }
 
-  public void logState() {
-    LOG.info("SegmentBuildInfo (index:{})", index);
-    LOG.info(String.format("  Start offset: %,d", tweetStartOffset));
-    LOG.info(String.format("  End offset: %,d", tweetEndOffset));
-    LOG.info(String.format("  Start tweet id: %d", startTweetId));
+  pubwic void wogstate() {
+    wog.info("segmentbuiwdinfo (index:{})", i-index);
+    wog.info(stwing.fowmat("  stawt offset: %,d", :3 tweetstawtoffset));
+    wog.info(stwing.fowmat("  e-end offset: %,d", OwO tweetendoffset));
+    w-wog.info(stwing.fowmat("  s-stawt t-tweet id: %d", (U ﹏ U) stawttweetid));
   }
 }

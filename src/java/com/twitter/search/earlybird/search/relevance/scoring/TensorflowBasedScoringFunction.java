@@ -1,338 +1,338 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+package com.twittew.seawch.eawwybiwd.seawch.wewevance.scowing;
 
-import java.io.IOException;
-import java.nio.FloatBuffer;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+impowt java.io.ioexception;
+i-impowt j-java.nio.fwoatbuffew;
+i-impowt java.utiw.hashmap;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.map;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
+impowt com.googwe.common.cowwect.immutabwewist;
+impowt com.googwe.common.cowwect.immutabwemap;
 
-import org.apache.lucene.search.Explanation;
-import org.tensorflow.Tensor;
+impowt owg.apache.wucene.seawch.expwanation;
+impowt owg.tensowfwow.tensow;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.search.common.constants.thriftjava.ThriftQuerySource;
-import com.twitter.search.common.features.EarlybirdRankingDerivedFeature;
-import com.twitter.search.common.features.FeatureHandler;
-import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.util.ml.tensorflow_engine.TensorflowModelsManager;
-import com.twitter.search.earlybird.EarlybirdSearcher;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.ClientException;
-import com.twitter.search.earlybird.search.AntiGamingFilter;
-import com.twitter.search.earlybird.search.relevance.LinearScoringData;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRelevanceOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
-import com.twitter.search.modeling.common.TweetFeaturesUtils;
-import com.twitter.tfcompute_java.TFModelRunner;
+i-impowt com.twittew.common.cowwections.paiw;
+impowt com.twittew.seawch.common.constants.thwiftjava.thwiftquewysouwce;
+i-impowt com.twittew.seawch.common.featuwes.eawwybiwdwankingdewivedfeatuwe;
+impowt com.twittew.seawch.common.featuwes.featuwehandwew;
+i-impowt com.twittew.seawch.common.featuwes.thwift.thwiftseawchwesuwtfeatuwes;
+impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+impowt c-com.twittew.seawch.common.utiw.mw.tensowfwow_engine.tensowfwowmodewsmanagew;
+impowt com.twittew.seawch.eawwybiwd.eawwybiwdseawchew;
+i-impowt c-com.twittew.seawch.eawwybiwd.common.usewupdates.usewtabwe;
+impowt com.twittew.seawch.eawwybiwd.exception.cwientexception;
+impowt com.twittew.seawch.eawwybiwd.seawch.antigamingfiwtew;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.wewevance.wineawscowingdata;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchquewy;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwewevanceoptions;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwttype;
+i-impowt com.twittew.seawch.modewing.common.tweetfeatuwesutiws;
+i-impowt com.twittew.tfcompute_java.tfmodewwunnew;
 
 /**
- * TensorflowBasedScoringFunction relies on a TF model for scoring tweets
- * Only the `batchScore` part is implemented
+ * t-tensowfwowbasedscowingfunction w-wewies on a tf modew fow scowing tweets
+ * o-onwy the `batchscowe` pawt is impwemented
  */
-public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction {
-  private final TFModelRunner tfModelRunner;
+p-pubwic cwass tensowfwowbasedscowingfunction extends featuwebasedscowingfunction {
+  pwivate finaw tfmodewwunnew tfmodewwunnew;
 
-  // https://stackoverflow.com/questions/37849322/how-to-understand-the-term-tensor-in-tensorflow
-  // for more information on this notation - in short, a TF graph is made
-  // of TF operations and doesn't have a first order notion of tensors
-  // The notation <operation>:<index> will maps to the <index> output of the
-  // <operation> contained in the TF graph.
-  private static final String INPUT_VALUES = "input_sparse_tensor_values:0";
-  private static final String INPUT_INDICES = "input_sparse_tensor_indices:0";
-  private static final String INPUT_SHAPE = "input_sparse_tensor_shape:0";
-  private static final String OUTPUT_NODE = "output_scores:0";
+  // h-https://stackovewfwow.com/questions/37849322/how-to-undewstand-the-tewm-tensow-in-tensowfwow
+  // fow m-mowe infowmation o-on this nyotation - i-in showt, (///ˬ///✿) a tf gwaph is made
+  // of tf opewations and doesn't h-have a fiwst o-owdew nyotion of tensows
+  // the n-nyotation <opewation>:<index> w-wiww maps to the <index> output o-of the
+  // <opewation> contained i-in the tf gwaph. (U ﹏ U)
+  pwivate static finaw stwing i-input_vawues = "input_spawse_tensow_vawues:0";
+  pwivate static f-finaw stwing input_indices = "input_spawse_tensow_indices:0";
+  pwivate static f-finaw stwing input_shape = "input_spawse_tensow_shape:0";
+  p-pwivate static finaw stwing output_node = "output_scowes:0";
 
-  private final Map<Integer, Long> featureSchemaIdToMlApiId;
-  private final Map<Long, Float> tweetIdToScoreMap = new HashMap<>();
-  private final EarlybirdRequest request;
+  pwivate finaw map<integew, wong> featuweschemaidtomwapiid;
+  pwivate f-finaw map<wong, ^^;; f-fwoat> tweetidtoscowemap = nyew h-hashmap<>();
+  p-pwivate finaw eawwybiwdwequest w-wequest;
 
-  public TensorflowBasedScoringFunction(
-      EarlybirdRequest request,
-      ImmutableSchemaInterface schema,
-      ThriftSearchQuery searchQuery,
-      AntiGamingFilter antiGamingFilter,
-      ThriftSearchResultType searchResultType,
-      UserTable userTable,
-      TensorflowModelsManager tensorflowModelsManager
-      ) throws IOException, ClientException {
-    super(
-      "TensorflowBasedScoringFunction",
-      schema,
-      searchQuery,
-      antiGamingFilter,
-      searchResultType,
-        userTable
+  pubwic tensowfwowbasedscowingfunction(
+      eawwybiwdwequest wequest, 🥺
+      i-immutabweschemaintewface schema, òωó
+      thwiftseawchquewy seawchquewy, XD
+      antigamingfiwtew a-antigamingfiwtew, :3
+      thwiftseawchwesuwttype s-seawchwesuwttype, (U ﹏ U)
+      u-usewtabwe u-usewtabwe, >w<
+      tensowfwowmodewsmanagew t-tensowfwowmodewsmanagew
+      ) t-thwows ioexception, /(^•ω•^) c-cwientexception {
+    s-supew(
+      "tensowfwowbasedscowingfunction", (⑅˘꒳˘)
+      schema, ʘwʘ
+      seawchquewy, rawr x3
+      antigamingfiwtew, (˘ω˘)
+      s-seawchwesuwttype,
+        u-usewtabwe
     );
-    this.request = request;
-    String modelName = searchQuery.getRelevanceOptions().getRankingParams().selectedTensorflowModel;
-    this.featureSchemaIdToMlApiId = tensorflowModelsManager.getFeatureSchemaIdToMlApiId();
+    t-this.wequest = w-wequest;
+    s-stwing modewname = seawchquewy.getwewevanceoptions().getwankingpawams().sewectedtensowfwowmodew;
+    this.featuweschemaidtomwapiid = tensowfwowmodewsmanagew.getfeatuweschemaidtomwapiid();
 
-    if (modelName == null) {
-      throw new ClientException("Scoring type is TENSORFLOW_BASED but no model was selected");
-    } else if (!tensorflowModelsManager.getModel(modelName).isPresent()) {
-      throw new ClientException(
-        "Scoring type is TENSORFLOW_BASED. Model "
-        + modelName
-        + " is not present."
+    i-if (modewname == nyuww) {
+      thwow nyew cwientexception("scowing type is tensowfwow_based but no modew was s-sewected");
+    } ewse if (!tensowfwowmodewsmanagew.getmodew(modewname).ispwesent()) {
+      thwow new cwientexception(
+        "scowing type i-is tensowfwow_based. o.O m-modew "
+        + m-modewname
+        + " is n-nyot pwesent."
       );
     }
 
-    if (searchQuery.getRelevanceOptions().getRankingParams().isEnableHitDemotion()) {
-      throw new ClientException(
-          "Hit attribute demotion is not supported with TENSORFLOW_BASED scoring type");
+    if (seawchquewy.getwewevanceoptions().getwankingpawams().isenabwehitdemotion()) {
+      t-thwow n-nyew cwientexception(
+          "hit attwibute demotion is nyot suppowted with tensowfwow_based scowing type");
     }
 
-    tfModelRunner = tensorflowModelsManager.getModel(modelName).get();
+    t-tfmodewwunnew = tensowfwowmodewsmanagew.getmodew(modewname).get();
   }
 
   /**
-   * Single item scoring just returns the lucene score to be used during the batching phase.
+   * singwe i-item scowing just wetuwns t-the wucene scowe t-to be used duwing the batching phase. 😳
    */
-  @Override
-  protected float score(float luceneQueryScore) {
-    return luceneQueryScore;
+  @ovewwide
+  p-pwotected f-fwoat scowe(fwoat wucenequewyscowe) {
+    wetuwn w-wucenequewyscowe;
   }
 
-  @Override
-  public Pair<LinearScoringData, ThriftSearchResultFeatures> collectFeatures(
-      float luceneQueryScore) throws IOException {
-    LinearScoringData linearScoringData = updateLinearScoringData(luceneQueryScore);
-    ThriftSearchResultFeatures features =
-        createFeaturesForDocument(linearScoringData, true).getFeatures();
+  @ovewwide
+  p-pubwic paiw<wineawscowingdata, o.O thwiftseawchwesuwtfeatuwes> cowwectfeatuwes(
+      fwoat w-wucenequewyscowe) t-thwows ioexception {
+    w-wineawscowingdata wineawscowingdata = u-updatewineawscowingdata(wucenequewyscowe);
+    t-thwiftseawchwesuwtfeatuwes featuwes =
+        c-cweatefeatuwesfowdocument(wineawscowingdata, ^^;; twue).getfeatuwes();
 
-    return new Pair<>(linearScoringData, features);
+    wetuwn nyew paiw<>(wineawscowingdata, ( ͡o ω ͡o ) featuwes);
   }
 
-  @Override
-  protected FeatureHandler createFeaturesForDocument(
-      LinearScoringData linearScoringData,
-      boolean ignoreDefaultValues) throws IOException {
-    return super.createFeaturesForDocument(linearScoringData,
-            ignoreDefaultValues)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_TREND_CLICK,
-            request.querySource == ThriftQuerySource.TREND_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_TYPED_QUERY,
-            request.querySource == ThriftQuerySource.TYPED_QUERY)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_TYPEAHEAD_CLICK,
-            request.querySource == ThriftQuerySource.TYPEAHEAD_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_HASHTAG_CLICK,
-            request.querySource == ThriftQuerySource.RECENT_SEARCH_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_RECENT_SEARCH_CLICK,
-            request.querySource == ThriftQuerySource.RECENT_SEARCH_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_PROFILE_CLICK,
-            request.querySource == ThriftQuerySource.PROFILE_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_API_CALL,
-            request.querySource == ThriftQuerySource.API_CALL)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_PROMOTED_TREND_CLICK,
-            request.querySource == ThriftQuerySource.PROMOTED_TREND_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_SAVED_SEARCH_CLICK,
-            request.querySource == ThriftQuerySource.SAVED_SEARCH_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_CASHTAG_CLICK,
-            request.querySource == ThriftQuerySource.CASHTAG_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_SPELLING_EXPANSION_REVERT_CLICK,
-            request.querySource == ThriftQuerySource.SPELLING_EXPANSION_REVERT_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_SPELLING_SUGGESTION_CLICK,
-            request.querySource == ThriftQuerySource.SPELLING_SUGGESTION_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_LOGGED_OUT_HOME_TREND_CLICK,
-            request.querySource == ThriftQuerySource.LOGGED_OUT_HOME_TREND_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_RELATED_QUERY_CLICK,
-            request.querySource == ThriftQuerySource.RELATED_QUERY_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_AUTO_SPELL_CORRECT_REVERT_CLICK,
-            request.querySource == ThriftQuerySource.AUTO_SPELL_CORRECT_REVERT_CLICK);
+  @ovewwide
+  p-pwotected f-featuwehandwew cweatefeatuwesfowdocument(
+      wineawscowingdata w-wineawscowingdata, ^^;;
+      b-boowean ignowedefauwtvawues) thwows ioexception {
+    wetuwn supew.cweatefeatuwesfowdocument(wineawscowingdata, ^^;;
+            i-ignowedefauwtvawues)
+        .addboowean(eawwybiwdwankingdewivedfeatuwe.quewy_souwce_twend_cwick, XD
+            wequest.quewysouwce == thwiftquewysouwce.twend_cwick)
+        .addboowean(eawwybiwdwankingdewivedfeatuwe.quewy_souwce_typed_quewy, 🥺
+            wequest.quewysouwce == thwiftquewysouwce.typed_quewy)
+        .addboowean(eawwybiwdwankingdewivedfeatuwe.quewy_souwce_typeahead_cwick, (///ˬ///✿)
+            w-wequest.quewysouwce == thwiftquewysouwce.typeahead_cwick)
+        .addboowean(eawwybiwdwankingdewivedfeatuwe.quewy_souwce_hashtag_cwick, (U ᵕ U❁)
+            wequest.quewysouwce == t-thwiftquewysouwce.wecent_seawch_cwick)
+        .addboowean(eawwybiwdwankingdewivedfeatuwe.quewy_souwce_wecent_seawch_cwick, ^^;;
+            w-wequest.quewysouwce == thwiftquewysouwce.wecent_seawch_cwick)
+        .addboowean(eawwybiwdwankingdewivedfeatuwe.quewy_souwce_pwofiwe_cwick, ^^;;
+            wequest.quewysouwce == thwiftquewysouwce.pwofiwe_cwick)
+        .addboowean(eawwybiwdwankingdewivedfeatuwe.quewy_souwce_api_caww, rawr
+            w-wequest.quewysouwce == thwiftquewysouwce.api_caww)
+        .addboowean(eawwybiwdwankingdewivedfeatuwe.quewy_souwce_pwomoted_twend_cwick, (˘ω˘)
+            w-wequest.quewysouwce == thwiftquewysouwce.pwomoted_twend_cwick)
+        .addboowean(eawwybiwdwankingdewivedfeatuwe.quewy_souwce_saved_seawch_cwick, 🥺
+            wequest.quewysouwce == thwiftquewysouwce.saved_seawch_cwick)
+        .addboowean(eawwybiwdwankingdewivedfeatuwe.quewy_souwce_cashtag_cwick, nyaa~~
+            w-wequest.quewysouwce == thwiftquewysouwce.cashtag_cwick)
+        .addboowean(eawwybiwdwankingdewivedfeatuwe.quewy_souwce_spewwing_expansion_wevewt_cwick, :3
+            w-wequest.quewysouwce == thwiftquewysouwce.spewwing_expansion_wevewt_cwick)
+        .addboowean(eawwybiwdwankingdewivedfeatuwe.quewy_souwce_spewwing_suggestion_cwick,
+            wequest.quewysouwce == thwiftquewysouwce.spewwing_suggestion_cwick)
+        .addboowean(eawwybiwdwankingdewivedfeatuwe.quewy_souwce_wogged_out_home_twend_cwick, /(^•ω•^)
+            w-wequest.quewysouwce == thwiftquewysouwce.wogged_out_home_twend_cwick)
+        .addboowean(eawwybiwdwankingdewivedfeatuwe.quewy_souwce_wewated_quewy_cwick, ^•ﻌ•^
+            w-wequest.quewysouwce == t-thwiftquewysouwce.wewated_quewy_cwick)
+        .addboowean(eawwybiwdwankingdewivedfeatuwe.quewy_souwce_auto_speww_cowwect_wevewt_cwick, UwU
+            wequest.quewysouwce == t-thwiftquewysouwce.auto_speww_cowwect_wevewt_cwick);
   }
 
   /**
-   * Return scores computed in batchScore() if forExplanation is true.
+   * wetuwn scowes c-computed in batchscowe() i-if fowexpwanation i-is twue. 😳😳😳
    */
-  @Override
-  protected double computeScore(LinearScoringData data, boolean forExplanation) {
-    Preconditions.checkState(forExplanation,
-        "forExplanation is false. computeScore() should only be used for explanation creation");
-    return tweetIdToScoreMap.get(tweetIDMapper.getTweetID(getCurrentDocID()));
+  @ovewwide
+  p-pwotected d-doubwe computescowe(wineawscowingdata data, OwO boowean fowexpwanation) {
+    p-pweconditions.checkstate(fowexpwanation, ^•ﻌ•^
+        "fowexpwanation is f-fawse. (ꈍᴗꈍ) computescowe() s-shouwd onwy be used fow expwanation cweation");
+    w-wetuwn tweetidtoscowemap.get(tweetidmappew.gettweetid(getcuwwentdocid()));
   }
 
-  @Override
-  protected void generateExplanationForScoring(
-      LinearScoringData scoringData, boolean isHit, List<Explanation> details) {
+  @ovewwide
+  p-pwotected v-void genewateexpwanationfowscowing(
+      wineawscowingdata scowingdata, (⑅˘꒳˘) boowean ishit, (⑅˘꒳˘) wist<expwanation> d-detaiws) {
   }
 
-  @VisibleForTesting
-  SparseTensor createInputTensor(ThriftSearchResultFeatures[] featuresForDocs) {
-    // Moving this across outside of the request path
-    // would reduce the allocation cost and make the `ByteBuffer`s
-    // long lived - would need one per thread.
-    SparseTensor sparseTensor =
-        new SparseTensor(featuresForDocs.length, featureSchemaIdToMlApiId.size());
-    for (ThriftSearchResultFeatures features : featuresForDocs) {
-      updateSparseTensor(sparseTensor, features);
+  @visibwefowtesting
+  s-spawsetensow c-cweateinputtensow(thwiftseawchwesuwtfeatuwes[] f-featuwesfowdocs) {
+    // moving t-this acwoss outside of the wequest path
+    // wouwd weduce the awwocation cost and make the `bytebuffew`s
+    // w-wong wived - wouwd nyeed one p-pew thwead. (ˆ ﻌ ˆ)♡
+    spawsetensow spawsetensow =
+        n-nyew spawsetensow(featuwesfowdocs.wength, /(^•ω•^) featuweschemaidtomwapiid.size());
+    fow (thwiftseawchwesuwtfeatuwes f-featuwes : featuwesfowdocs) {
+      u-updatespawsetensow(spawsetensow, òωó f-featuwes);
     }
-    return sparseTensor;
+    wetuwn s-spawsetensow;
   }
 
-  private void addSchemaBooleanFeatures(SparseTensor sparseTensor,
-                                        Map<Integer, Boolean> booleanMap) {
-    if (booleanMap == null || booleanMap.isEmpty()) {
-      return;
+  p-pwivate v-void addschemabooweanfeatuwes(spawsetensow spawsetensow, (⑅˘꒳˘)
+                                        map<integew, (U ᵕ U❁) boowean> booweanmap) {
+    if (booweanmap == nyuww || booweanmap.isempty()) {
+      w-wetuwn;
     }
-    for (Map.Entry<Integer, Boolean> entry : booleanMap.entrySet()) {
-      Preconditions.checkState(featureSchemaIdToMlApiId.containsKey(entry.getKey()));
-      sparseTensor.addValue(
-          featureSchemaIdToMlApiId.get(entry.getKey()), entry.getValue() ? 1f : 0f);
+    f-fow (map.entwy<integew, >w< boowean> e-entwy : booweanmap.entwyset()) {
+      pweconditions.checkstate(featuweschemaidtomwapiid.containskey(entwy.getkey()));
+      s-spawsetensow.addvawue(
+          featuweschemaidtomwapiid.get(entwy.getkey()), σωσ entwy.getvawue() ? 1f : 0f);
     }
   }
 
-  private void addSchemaContinuousFeatures(SparseTensor sparseTensor,
-                                           Map<Integer, ? extends Number> valueMap) {
-    if (valueMap == null || valueMap.isEmpty()) {
-      return;
+  pwivate v-void addschemacontinuousfeatuwes(spawsetensow s-spawsetensow, -.-
+                                           map<integew, o.O ? e-extends nyumbew> vawuemap) {
+    if (vawuemap == n-nuww || v-vawuemap.isempty()) {
+      wetuwn;
     }
-    for (Map.Entry<Integer, ? extends Number> entry : valueMap.entrySet()) {
-      Integer id = entry.getKey();
-      // SEARCH-26795
-      if (!TweetFeaturesUtils.isFeatureDiscrete(id)) {
-        Preconditions.checkState(featureSchemaIdToMlApiId.containsKey(id));
-        sparseTensor.addValue(
-            featureSchemaIdToMlApiId.get(id), entry.getValue().floatValue());
+    f-fow (map.entwy<integew, ^^ ? e-extends nyumbew> entwy : vawuemap.entwyset()) {
+      integew id = entwy.getkey();
+      // s-seawch-26795
+      i-if (!tweetfeatuwesutiws.isfeatuwediscwete(id)) {
+        p-pweconditions.checkstate(featuweschemaidtomwapiid.containskey(id));
+        s-spawsetensow.addvawue(
+            f-featuweschemaidtomwapiid.get(id), >_< entwy.getvawue().fwoatvawue());
       }
     }
   }
 
-  private void updateSparseTensor(SparseTensor sparseTensor, ThriftSearchResultFeatures features) {
-    addSchemaBooleanFeatures(sparseTensor, features.getBoolValues());
-    addSchemaContinuousFeatures(sparseTensor, features.getIntValues());
-    addSchemaContinuousFeatures(sparseTensor, features.getLongValues());
-    addSchemaContinuousFeatures(sparseTensor, features.getDoubleValues());
+  p-pwivate v-void updatespawsetensow(spawsetensow spawsetensow, >w< t-thwiftseawchwesuwtfeatuwes f-featuwes) {
+    addschemabooweanfeatuwes(spawsetensow, >_< f-featuwes.getboowvawues());
+    addschemacontinuousfeatuwes(spawsetensow, >w< featuwes.getintvawues());
+    addschemacontinuousfeatuwes(spawsetensow, rawr f-featuwes.getwongvawues());
+    addschemacontinuousfeatuwes(spawsetensow, rawr x3 f-featuwes.getdoubwevawues());
 
-    sparseTensor.incNumRecordsSeen();
+    s-spawsetensow.incnumwecowdsseen();
   }
 
-  private float[] batchScoreInternal(ThriftSearchResultFeatures[] featuresForDocs) {
-    int nbDocs = featuresForDocs.length;
-    float[] backingArrayResults = new float[nbDocs];
-    SparseTensor sparseTensor = createInputTensor(featuresForDocs);
-    Tensor<?> sparseValues =
-      Tensor.create(
-        Float.class,
-        sparseTensor.getSparseValuesShape(),
-        sparseTensor.getSparseValues());
-    Tensor<?> sparseIndices =
-      Tensor.create(
-        Long.class,
-        sparseTensor.getSparseIndicesShape(),
-        sparseTensor.getSparseIndices());
-    Tensor<?> sparseShape =
-      Tensor.create(
-        Long.class,
-        sparseTensor.getSparseShapeShape(),
-        sparseTensor.getSparseShape());
-    Map<String, Tensor<?>> inputMap = ImmutableMap.of(
-      INPUT_VALUES, sparseValues,
-      INPUT_INDICES, sparseIndices,
-      INPUT_SHAPE, sparseShape
+  pwivate f-fwoat[] batchscoweintewnaw(thwiftseawchwesuwtfeatuwes[] featuwesfowdocs) {
+    int nybdocs = f-featuwesfowdocs.wength;
+    f-fwoat[] b-backingawwaywesuwts = nyew fwoat[nbdocs];
+    spawsetensow s-spawsetensow = cweateinputtensow(featuwesfowdocs);
+    tensow<?> s-spawsevawues =
+      t-tensow.cweate(
+        fwoat.cwass, ( ͡o ω ͡o )
+        s-spawsetensow.getspawsevawuesshape(), (˘ω˘)
+        spawsetensow.getspawsevawues());
+    t-tensow<?> spawseindices =
+      t-tensow.cweate(
+        wong.cwass, 😳
+        spawsetensow.getspawseindicesshape(), OwO
+        s-spawsetensow.getspawseindices());
+    tensow<?> spawseshape =
+      tensow.cweate(
+        w-wong.cwass, (˘ω˘)
+        s-spawsetensow.getspawseshapeshape(), òωó
+        spawsetensow.getspawseshape());
+    m-map<stwing, ( ͡o ω ͡o ) tensow<?>> i-inputmap = immutabwemap.of(
+      i-input_vawues, s-spawsevawues,
+      input_indices, UwU spawseindices, /(^•ω•^)
+      input_shape, (ꈍᴗꈍ) spawseshape
       );
-    List<String> output = ImmutableList.of(OUTPUT_NODE);
+    wist<stwing> output = immutabwewist.of(output_node);
 
-    Map<String, Tensor<?>> outputs = tfModelRunner.run(
-      inputMap,
-      output,
-      ImmutableList.of()
+    map<stwing, 😳 tensow<?>> outputs = tfmodewwunnew.wun(
+      inputmap, mya
+      output, mya
+      immutabwewist.of()
     );
-    Tensor<?> outputTensor = outputs.get(OUTPUT_NODE);
-    try {
-      FloatBuffer finalResultBuffer =
-        FloatBuffer.wrap(backingArrayResults, 0, nbDocs);
+    t-tensow<?> outputtensow = o-outputs.get(output_node);
+    twy {
+      fwoatbuffew f-finawwesuwtbuffew =
+        f-fwoatbuffew.wwap(backingawwaywesuwts, /(^•ω•^) 0, n-nybdocs);
 
-      outputTensor.writeTo(finalResultBuffer);
-    } finally {
-      // Close tensors to avoid memory leaks
-      sparseValues.close();
-      sparseIndices.close();
-      sparseShape.close();
-      if (outputTensor != null) {
-        outputTensor.close();
+      outputtensow.wwiteto(finawwesuwtbuffew);
+    } f-finawwy {
+      // cwose tensows t-to avoid m-memowy weaks
+      spawsevawues.cwose();
+      spawseindices.cwose();
+      s-spawseshape.cwose();
+      if (outputtensow != n-nyuww) {
+        o-outputtensow.cwose();
       }
     }
-    return backingArrayResults;
+    wetuwn backingawwaywesuwts;
   }
 
   /**
-   * Compute the score for a list of hits. Not thread safe.
-   * @return Array of scores
+   * compute the scowe f-fow a wist of h-hits. ^^;; nyot thwead s-safe. 🥺
+   * @wetuwn a-awway of scowes
    */
-  @Override
-  public float[] batchScore(List<BatchHit> hits) throws IOException {
-    ThriftSearchResultFeatures[] featuresForDocs = new ThriftSearchResultFeatures[hits.size()];
+  @ovewwide
+  p-pubwic f-fwoat[] batchscowe(wist<batchhit> h-hits) thwows ioexception {
+    t-thwiftseawchwesuwtfeatuwes[] f-featuwesfowdocs = nyew thwiftseawchwesuwtfeatuwes[hits.size()];
 
-    for (int i = 0; i < hits.size(); i++) {
-      // This is a gigantic allocation, but the models are trained to depend on unset values having
-      // a default.
-      BatchHit hit = hits.get(i);
-      ThriftSearchResultFeatures features = hit.getFeatures().deepCopy();
+    f-fow (int i = 0; i-i < hits.size(); i-i++) {
+      // this is a gigantic a-awwocation, ^^ but the modews awe twained to d-depend on unset vawues having
+      // a-a defauwt. ^•ﻌ•^
+      b-batchhit h-hit = hits.get(i);
+      thwiftseawchwesuwtfeatuwes f-featuwes = hit.getfeatuwes().deepcopy();
 
-      // Adjust features of a hit based on overrides provided by relevance options. Should mostly
-      // be used for debugging purposes.
-      adjustHitScoringFeatures(hit, features);
+      // a-adjust featuwes of a hit b-based on ovewwides pwovided by w-wewevance options. /(^•ω•^) shouwd mostwy
+      // be used fow debugging puwposes. ^^
+      a-adjusthitscowingfeatuwes(hit, 🥺 featuwes);
 
-      setDefaultFeatureValues(features);
-      featuresForDocs[i] = features;
+      setdefauwtfeatuwevawues(featuwes);
+      f-featuwesfowdocs[i] = featuwes;
     }
 
-    float[] scores = batchScoreInternal(featuresForDocs);
-    float[] finalScores = new float[hits.size()];
+    f-fwoat[] scowes = batchscoweintewnaw(featuwesfowdocs);
+    fwoat[] finawscowes = n-new fwoat[hits.size()];
 
-    for (int i = 0; i < hits.size(); i++) {
-      LinearScoringData data = hits.get(i).getScoringData();
-      if (data.skipReason != null && data.skipReason != LinearScoringData.SkipReason.NOT_SKIPPED) {
-        // If the hit should be skipped, overwrite the score with SKIP_HIT
-        scores[i] = SKIP_HIT;
+    fow (int i = 0; i-i < hits.size(); i-i++) {
+      wineawscowingdata d-data = hits.get(i).getscowingdata();
+      if (data.skipweason != nyuww && data.skipweason != wineawscowingdata.skipweason.not_skipped) {
+        // i-if the hit s-shouwd be skipped, (U ᵕ U❁) ovewwwite the s-scowe with skip_hit
+        scowes[i] = skip_hit;
       }
 
-      // If explanations enabled, Add scores to map. Will be used in computeScore()
-      if (EarlybirdSearcher.explanationsEnabled(debugMode)) {
-        tweetIdToScoreMap.put(hits.get(i).getTweetID(), scores[i]);
+      // i-if expwanations enabwed, 😳😳😳 add s-scowes to map. nyaa~~ w-wiww be used in c-computescowe()
+      if (eawwybiwdseawchew.expwanationsenabwed(debugmode)) {
+        t-tweetidtoscowemap.put(hits.get(i).gettweetid(), (˘ω˘) s-scowes[i]);
       }
 
-      finalScores[i] = postScoreComputation(
-          data,
-          scores[i],
-          false,  // cannot get the hit attribution info for this hit at this point in time
-          null);
+      f-finawscowes[i] = p-postscowecomputation(
+          data, >_<
+          s-scowes[i], XD
+          f-fawse, rawr x3  // c-cannot get the h-hit attwibution i-info fow this h-hit at this point i-in time
+          n-nyuww);
     }
-    return finalScores;
+    wetuwn finawscowes;
   }
 
-  private void adjustHitScoringFeatures(BatchHit hit, ThriftSearchResultFeatures features) {
+  p-pwivate void adjusthitscowingfeatuwes(batchhit hit, ( ͡o ω ͡o ) thwiftseawchwesuwtfeatuwes f-featuwes) {
 
-    if (request.isSetSearchQuery() && request.getSearchQuery().isSetRelevanceOptions()) {
-      ThriftSearchRelevanceOptions relevanceOptions =
-          request.getSearchQuery().getRelevanceOptions();
+    if (wequest.issetseawchquewy() && w-wequest.getseawchquewy().issetwewevanceoptions()) {
+      t-thwiftseawchwewevanceoptions w-wewevanceoptions =
+          wequest.getseawchquewy().getwewevanceoptions();
 
-      if (relevanceOptions.isSetPerTweetFeaturesOverride()
-          && relevanceOptions.getPerTweetFeaturesOverride().containsKey(hit.getTweetID())) {
-        overrideFeatureValues(
-            features,
-            relevanceOptions.getPerTweetFeaturesOverride().get(hit.getTweetID()));
+      if (wewevanceoptions.issetpewtweetfeatuwesovewwide()
+          && wewevanceoptions.getpewtweetfeatuwesovewwide().containskey(hit.gettweetid())) {
+        o-ovewwidefeatuwevawues(
+            f-featuwes, :3
+            w-wewevanceoptions.getpewtweetfeatuwesovewwide().get(hit.gettweetid()));
       }
 
-      if (relevanceOptions.isSetPerUserFeaturesOverride()
-          && relevanceOptions.getPerUserFeaturesOverride().containsKey(
-              hit.getScoringData().fromUserId)) {
-        overrideFeatureValues(
-            features,
-            relevanceOptions.getPerUserFeaturesOverride().get(hit.getScoringData().fromUserId));
+      if (wewevanceoptions.issetpewusewfeatuwesovewwide()
+          && wewevanceoptions.getpewusewfeatuwesovewwide().containskey(
+              hit.getscowingdata().fwomusewid)) {
+        o-ovewwidefeatuwevawues(
+            f-featuwes,
+            wewevanceoptions.getpewusewfeatuwesovewwide().get(hit.getscowingdata().fwomusewid));
       }
 
-      if (relevanceOptions.isSetGlobalFeaturesOverride()) {
-        overrideFeatureValues(
-            features, relevanceOptions.getGlobalFeaturesOverride());
+      i-if (wewevanceoptions.issetgwobawfeatuwesovewwide()) {
+        o-ovewwidefeatuwevawues(
+            featuwes, mya wewevanceoptions.getgwobawfeatuwesovewwide());
       }
     }
   }

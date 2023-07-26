@@ -1,39 +1,39 @@
 {
-  "role": "discode",
-  "name": "rekey-uua-staging",
-  "config-files": [
-    "rekey-uua.aurora"
-  ],
-  "build": {
-    "play": true,
+  "wowe": "discode", XD
+  "name": "wekey-uua-staging", >_<
+  "config-fiwes": [
+    "wekey-uua.auwowa"
+  ], (ꈍᴗꈍ)
+  "buiwd": {
+    "pway": twue, ^•ﻌ•^
     "dependencies": [
       {
-        "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "wowe": "packew", OwO
+        "name": "packew-cwient-no-pex", 🥺
+        "vewsion": "watest"
       }
-    ],
+    ], òωó
     "steps": [
       {
-        "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:rekey-uua"
-      },
+        "type": "bazew-bundwe", o.O
+        "name": "bundwe",
+        "tawget": "unified_usew_actions/sewvice/swc/main/scawa:wekey-uua"
+      }, (U ᵕ U❁)
       {
-        "type": "packer",
-        "name": "rekey-uua-staging",
-        "artifact": "./dist/rekey-uua.zip"
+        "type": "packew", (⑅˘꒳˘)
+        "name": "wekey-uua-staging", ( ͡o ω ͡o )
+        "awtifact": "./dist/wekey-uua.zip"
       }
     ]
-  },
-  "targets": [
+  }, UwU
+  "tawgets": [
     {
-      "type": "group",
-      "name": "staging",
-      "targets": [
+      "type": "gwoup", rawr x3
+      "name": "staging", rawr
+      "tawgets": [
         {
-          "name": "rekey-uua-staging-pdxa",
-          "key": "pdxa/discode/staging/rekey-uua"
+          "name": "wekey-uua-staging-pdxa", σωσ
+          "key": "pdxa/discode/staging/wekey-uua"
         }
       ]
     }

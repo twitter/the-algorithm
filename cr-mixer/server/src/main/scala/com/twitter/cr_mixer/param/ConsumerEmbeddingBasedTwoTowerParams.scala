@@ -1,32 +1,32 @@
-package com.twitter.cr_mixer.param
+package com.twittew.cw_mixew.pawam
 
-import com.twitter.cr_mixer.model.ModelConfig.TwoTowerFavALL20220808
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.cw_mixew.modew.modewconfig.twotowewfavaww20220808
+i-impowt com.twittew.timewines.configapi.baseconfig
+i-impowt c-com.twittew.timewines.configapi.baseconfigbuiwdew
+i-impowt com.twittew.timewines.configapi.fsname
+i-impowt com.twittew.timewines.configapi.fspawam
+i-impowt com.twittew.timewines.configapi.featuweswitchovewwideutiw
+i-impowt com.twittew.timewines.configapi.pawam
 
-object ConsumerEmbeddingBasedTwoTowerParams {
-  object ModelIdParam
-      extends FSParam[String](
-        name = "consumer_embedding_based_two_tower_model_id",
-        default = TwoTowerFavALL20220808,
-      ) // Note: this default value does not match with ModelIds yet. This FS is a placeholder
+object c-consumewembeddingbasedtwotowewpawams {
+  object modewidpawam
+      extends fspawam[stwing](
+        nyame = "consumew_embedding_based_two_towew_modew_id", 😳😳😳
+        d-defauwt = twotowewfavaww20220808, -.-
+      ) // nyote: this d-defauwt vawue does nyot match w-with modewids yet. ( ͡o ω ͡o ) this fs is a pwacehowdew
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    ModelIdParam
+  vaw awwpawams: seq[pawam[_] w-with fsname] = seq(
+    m-modewidpawam
   )
 
-  lazy val config: BaseConfig = {
-    val stringFSOverrides =
-      FeatureSwitchOverrideUtil.getStringFSOverrides(
-        ModelIdParam
+  w-wazy vaw config: baseconfig = {
+    vaw stwingfsovewwides =
+      featuweswitchovewwideutiw.getstwingfsovewwides(
+        modewidpawam
       )
 
-    BaseConfigBuilder()
-      .set(stringFSOverrides: _*)
-      .build()
+    b-baseconfigbuiwdew()
+      .set(stwingfsovewwides: _*)
+      .buiwd()
   }
 }

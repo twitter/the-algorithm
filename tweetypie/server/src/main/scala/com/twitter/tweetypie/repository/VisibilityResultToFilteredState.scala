@@ -1,209 +1,209 @@
-package com.twitter.tweetypie.repository
+package com.twittew.tweetypie.wepositowy
 
-import com.twitter.spam.rtf.thriftscala.FilteredReason
-import com.twitter.spam.rtf.thriftscala.KeywordMatch
-import com.twitter.spam.rtf.thriftscala.SafetyResult
-import com.twitter.tweetypie.core.FilteredState
-import com.twitter.tweetypie.core.FilteredState.Suppress
-import com.twitter.tweetypie.core.FilteredState.Unavailable
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.common.user_result.UserVisibilityResultHelper
-import com.twitter.visibility.rules.Reason._
-import com.twitter.visibility.rules._
-import com.twitter.visibility.{thriftscala => vfthrift}
+impowt c-com.twittew.spam.wtf.thwiftscawa.fiwtewedweason
+i-impowt com.twittew.spam.wtf.thwiftscawa.keywowdmatch
+i-impowt com.twittew.spam.wtf.thwiftscawa.safetywesuwt
+i-impowt c-com.twittew.tweetypie.cowe.fiwtewedstate
+i-impowt c-com.twittew.tweetypie.cowe.fiwtewedstate.suppwess
+i-impowt com.twittew.tweetypie.cowe.fiwtewedstate.unavaiwabwe
+impowt com.twittew.visibiwity.buiwdew.visibiwitywesuwt
+impowt com.twittew.visibiwity.common.usew_wesuwt.usewvisibiwitywesuwthewpew
+impowt com.twittew.visibiwity.wuwes.weason._
+impowt com.twittew.visibiwity.wuwes._
+i-impowt com.twittew.visibiwity.{thwiftscawa => vfthwift}
 
-object VisibilityResultToFilteredState {
-  def toFilteredStateUnavailable(
-    visibilityResult: VisibilityResult
-  ): Option[FilteredState.Unavailable] = {
-    val dropSafetyResult = Some(
-      Unavailable.Drop(FilteredReason.SafetyResult(visibilityResult.getSafetyResult))
+object visibiwitywesuwttofiwtewedstate {
+  d-def tofiwtewedstateunavaiwabwe(
+    visibiwitywesuwt: visibiwitywesuwt
+  ): o-option[fiwtewedstate.unavaiwabwe] = {
+    vaw dwopsafetywesuwt = some(
+      unavaiwabwe.dwop(fiwtewedweason.safetywesuwt(visibiwitywesuwt.getsafetywesuwt))
     )
 
-    visibilityResult.verdict match {
-      case Drop(ExclusiveTweet, _) =>
-        dropSafetyResult
+    v-visibiwitywesuwt.vewdict match {
+      c-case dwop(excwusivetweet, XD _) =>
+        d-dwopsafetywesuwt
 
-      case Drop(NsfwViewerIsUnderage | NsfwViewerHasNoStatedAge | NsfwLoggedOut, _) =>
-        dropSafetyResult
+      case dwop(nsfwviewewisundewage | nysfwviewewhasnostatedage | nysfwwoggedout, o.O _) =>
+        dwopsafetywesuwt
 
-      case Drop(TrustedFriendsTweet, _) =>
-        dropSafetyResult
+      case dwop(twustedfwiendstweet, mya _) =>
+        d-dwopsafetywesuwt
 
-      case _: LocalizedTombstone => dropSafetyResult
+      case _: wocawizedtombstone => dwopsafetywesuwt
 
-      case Drop(StaleTweet, _) => dropSafetyResult
+      case dwop(stawetweet, 🥺 _) => d-dwopsafetywesuwt
 
-      // legacy drop actions
-      case dropAction: Drop => unavailableFromDropAction(dropAction)
+      // wegacy d-dwop actions
+      c-case dwopaction: d-dwop => unavaiwabwefwomdwopaction(dwopaction)
 
-      // not an unavailable state that can be mapped
-      case _ => None
+      // n-nyot an unavaiwabwe state that can be m-mapped
+      case _ => nyone
     }
   }
 
-  def toFilteredState(
-    visibilityResult: VisibilityResult,
-    disableLegacyInterstitialFilteredReason: Boolean
-  ): Option[FilteredState] = {
-    val suppressSafetyResult = Some(
-      Suppress(FilteredReason.SafetyResult(visibilityResult.getSafetyResult))
+  def t-tofiwtewedstate(
+    visibiwitywesuwt: visibiwitywesuwt, ^^;;
+    disabwewegacyintewstitiawfiwtewedweason: boowean
+  ): option[fiwtewedstate] = {
+    v-vaw suppwesssafetywesuwt = some(
+      s-suppwess(fiwtewedweason.safetywesuwt(visibiwitywesuwt.getsafetywesuwt))
     )
-    val dropSafetyResult = Some(
-      Unavailable.Drop(FilteredReason.SafetyResult(visibilityResult.getSafetyResult))
+    v-vaw dwopsafetywesuwt = s-some(
+      unavaiwabwe.dwop(fiwtewedweason.safetywesuwt(visibiwitywesuwt.getsafetywesuwt))
     )
 
-    visibilityResult.verdict match {
-      case _: Appealable => suppressSafetyResult
+    visibiwitywesuwt.vewdict match {
+      case _: appeawabwe => s-suppwesssafetywesuwt
 
-      case _: Preview => suppressSafetyResult
+      c-case _: pweview => suppwesssafetywesuwt
 
-      case _: InterstitialLimitedEngagements => suppressSafetyResult
+      c-case _: intewstitiawwimitedengagements => s-suppwesssafetywesuwt
 
-      case _: EmergencyDynamicInterstitial => suppressSafetyResult
+      case _: emewgencydynamicintewstitiaw => s-suppwesssafetywesuwt
 
-      case _: SoftIntervention => suppressSafetyResult
+      case _: s-softintewvention => suppwesssafetywesuwt
 
-      case _: LimitedEngagements => suppressSafetyResult
+      case _: wimitedengagements => s-suppwesssafetywesuwt
 
-      case _: TweetInterstitial => suppressSafetyResult
+      case _: t-tweetintewstitiaw => suppwesssafetywesuwt
 
-      case _: TweetVisibilityNudge => suppressSafetyResult
+      c-case _: tweetvisibiwitynudge => s-suppwesssafetywesuwt
 
-      case Interstitial(
-            ViewerBlocksAuthor | ViewerReportedAuthor | ViewerReportedTweet | ViewerMutesAuthor |
-            ViewerHardMutedAuthor | MutedKeyword | InterstitialDevelopmentOnly | HatefulConduct |
-            AbusiveBehavior,
-            _,
-            _) if disableLegacyInterstitialFilteredReason =>
-        suppressSafetyResult
+      case intewstitiaw(
+            viewewbwocksauthow | viewewwepowtedauthow | viewewwepowtedtweet | viewewmutesauthow |
+            viewewhawdmutedauthow | m-mutedkeywowd | i-intewstitiawdevewopmentonwy | hatefuwconduct |
+            a-abusivebehaviow, :3
+            _, (U ﹏ U)
+            _) i-if disabwewegacyintewstitiawfiwtewedweason =>
+        s-suppwesssafetywesuwt
 
-      case Interstitial(
-            ViewerBlocksAuthor | ViewerReportedAuthor | ViewerReportedTweet |
-            InterstitialDevelopmentOnly,
-            _,
+      case intewstitiaw(
+            viewewbwocksauthow | viewewwepowtedauthow | v-viewewwepowtedtweet |
+            intewstitiawdevewopmentonwy, OwO
+            _, 😳😳😳
             _) =>
-        suppressSafetyResult
+        suppwesssafetywesuwt
 
-      case _: ComplianceTweetNotice => suppressSafetyResult
+      case _: compwiancetweetnotice => suppwesssafetywesuwt
 
-      case Drop(ExclusiveTweet, _) =>
-        dropSafetyResult
+      c-case dwop(excwusivetweet, (ˆ ﻌ ˆ)♡ _) =>
+        dwopsafetywesuwt
 
-      case Drop(NsfwViewerIsUnderage | NsfwViewerHasNoStatedAge | NsfwLoggedOut, _) =>
-        dropSafetyResult
+      c-case dwop(nsfwviewewisundewage | n-nysfwviewewhasnostatedage | n-nysfwwoggedout, XD _) =>
+        dwopsafetywesuwt
 
-      case Drop(TrustedFriendsTweet, _) =>
-        dropSafetyResult
+      c-case dwop(twustedfwiendstweet, (ˆ ﻌ ˆ)♡ _) =>
+        d-dwopsafetywesuwt
 
-      case Drop(StaleTweet, _) => dropSafetyResult
+      c-case dwop(stawetweet, ( ͡o ω ͡o ) _) => d-dwopsafetywesuwt
 
-      case _: LocalizedTombstone => dropSafetyResult
+      case _: wocawizedtombstone => d-dwopsafetywesuwt
 
-      case _: Avoid => suppressSafetyResult
+      c-case _: avoid => s-suppwesssafetywesuwt
 
-      // legacy drop actions
-      case dropAction: Drop => unavailableFromDropAction(dropAction)
+      // w-wegacy dwop actions
+      c-case dwopaction: dwop => unavaiwabwefwomdwopaction(dwopaction)
 
-      // legacy suppress actions
-      case action => suppressFromVisibilityAction(action, !disableLegacyInterstitialFilteredReason)
+      // wegacy suppwess a-actions
+      case action => suppwessfwomvisibiwityaction(action, rawr x3 !disabwewegacyintewstitiawfiwtewedweason)
     }
   }
 
-  def toFilteredState(
-    userVisibilityResult: Option[vfthrift.UserVisibilityResult]
-  ): FilteredState.Unavailable =
-    userVisibilityResult
-      .collect {
-        case blockedUser if UserVisibilityResultHelper.isDropAuthorBlocksViewer(blockedUser) =>
-          Unavailable.Drop(FilteredReason.AuthorBlockViewer(true))
+  def tofiwtewedstate(
+    usewvisibiwitywesuwt: option[vfthwift.usewvisibiwitywesuwt]
+  ): f-fiwtewedstate.unavaiwabwe =
+    usewvisibiwitywesuwt
+      .cowwect {
+        case bwockedusew if usewvisibiwitywesuwthewpew.isdwopauthowbwocksviewew(bwockedusew) =>
+          u-unavaiwabwe.dwop(fiwtewedweason.authowbwockviewew(twue))
 
         /**
-         * Reuse states for author visibility issues from the [[UserRepository]] for consistency with
-         * other logic for handling the same types of author visibility filtering.
+         * w-weuse s-states fow authow visibiwity issues f-fwom the [[usewwepositowy]] fow consistency w-with
+         * o-othew wogic fow handwing the same types of authow visibiwity fiwtewing. nyaa~~
          */
-        case protectedUser if UserVisibilityResultHelper.isDropProtectedAuthor(protectedUser) =>
-          Unavailable.Author.Protected
-        case suspendedUser if UserVisibilityResultHelper.isDropSuspendedAuthor(suspendedUser) =>
-          Unavailable.Author.Suspended
-        case nsfwUser if UserVisibilityResultHelper.isDropNsfwAuthor(nsfwUser) =>
-          Unavailable.Drop(FilteredReason.ContainNsfwMedia(true))
-        case mutedByViewer if UserVisibilityResultHelper.isDropViewerMutesAuthor(mutedByViewer) =>
-          Unavailable.Drop(FilteredReason.ViewerMutesAuthor(true))
-        case blockedByViewer
-            if UserVisibilityResultHelper.isDropViewerBlocksAuthor(blockedByViewer) =>
-          Unavailable.Drop(
-            FilteredReason.SafetyResult(
-              SafetyResult(
-                None,
-                vfthrift.Action.Drop(
-                  vfthrift.Drop(Some(vfthrift.DropReason.ViewerBlocksAuthor(true)))
+        case pwotectedusew if u-usewvisibiwitywesuwthewpew.isdwoppwotectedauthow(pwotectedusew) =>
+          unavaiwabwe.authow.pwotected
+        case suspendedusew i-if usewvisibiwitywesuwthewpew.isdwopsuspendedauthow(suspendedusew) =>
+          unavaiwabwe.authow.suspended
+        c-case n-nysfwusew if usewvisibiwitywesuwthewpew.isdwopnsfwauthow(nsfwusew) =>
+          unavaiwabwe.dwop(fiwtewedweason.containnsfwmedia(twue))
+        case mutedbyviewew i-if usewvisibiwitywesuwthewpew.isdwopviewewmutesauthow(mutedbyviewew) =>
+          u-unavaiwabwe.dwop(fiwtewedweason.viewewmutesauthow(twue))
+        case bwockedbyviewew
+            i-if usewvisibiwitywesuwthewpew.isdwopviewewbwocksauthow(bwockedbyviewew) =>
+          u-unavaiwabwe.dwop(
+            fiwtewedweason.safetywesuwt(
+              safetywesuwt(
+                nyone, >_<
+                vfthwift.action.dwop(
+                  v-vfthwift.dwop(some(vfthwift.dwopweason.viewewbwocksauthow(twue)))
                 ))))
       }
-      .getOrElse(FilteredState.Unavailable.Drop(FilteredReason.UnspecifiedReason(true)))
+      .getowewse(fiwtewedstate.unavaiwabwe.dwop(fiwtewedweason.unspecifiedweason(twue)))
 
-  private def unavailableFromDropAction(dropAction: Drop): Option[FilteredState.Unavailable] =
-    dropAction match {
-      case Drop(AuthorBlocksViewer, _) =>
-        Some(Unavailable.Drop(FilteredReason.AuthorBlockViewer(true)))
-      case Drop(Unspecified, _) =>
-        Some(Unavailable.Drop(FilteredReason.UnspecifiedReason(true)))
-      case Drop(MutedKeyword, _) =>
-        Some(Unavailable.Drop(FilteredReason.TweetMatchesViewerMutedKeyword(KeywordMatch(""))))
-      case Drop(ViewerMutesAuthor, _) =>
-        Some(Unavailable.Drop(FilteredReason.ViewerMutesAuthor(true)))
-      case Drop(Nsfw, _) =>
-        Some(Unavailable.Drop(FilteredReason.ContainNsfwMedia(true)))
-      case Drop(NsfwMedia, _) =>
-        Some(Unavailable.Drop(FilteredReason.ContainNsfwMedia(true)))
-      case Drop(PossiblyUndesirable, _) =>
-        Some(Unavailable.Drop(FilteredReason.PossiblyUndesirable(true)))
-      case Drop(Bounce, _) =>
-        Some(Unavailable.Drop(FilteredReason.TweetIsBounced(true)))
+  p-pwivate d-def unavaiwabwefwomdwopaction(dwopaction: dwop): option[fiwtewedstate.unavaiwabwe] =
+    dwopaction m-match {
+      c-case dwop(authowbwocksviewew, ^^;; _) =>
+        some(unavaiwabwe.dwop(fiwtewedweason.authowbwockviewew(twue)))
+      c-case dwop(unspecified, (ˆ ﻌ ˆ)♡ _) =>
+        some(unavaiwabwe.dwop(fiwtewedweason.unspecifiedweason(twue)))
+      case dwop(mutedkeywowd, ^^;; _) =>
+        some(unavaiwabwe.dwop(fiwtewedweason.tweetmatchesviewewmutedkeywowd(keywowdmatch(""))))
+      case dwop(viewewmutesauthow, (⑅˘꒳˘) _) =>
+        s-some(unavaiwabwe.dwop(fiwtewedweason.viewewmutesauthow(twue)))
+      c-case dwop(nsfw, rawr x3 _) =>
+        some(unavaiwabwe.dwop(fiwtewedweason.containnsfwmedia(twue)))
+      case dwop(nsfwmedia, (///ˬ///✿) _) =>
+        s-some(unavaiwabwe.dwop(fiwtewedweason.containnsfwmedia(twue)))
+      c-case dwop(possibwyundesiwabwe, 🥺 _) =>
+        some(unavaiwabwe.dwop(fiwtewedweason.possibwyundesiwabwe(twue)))
+      case dwop(bounce, >_< _) =>
+        some(unavaiwabwe.dwop(fiwtewedweason.tweetisbounced(twue)))
 
       /**
-       * Reuse states for author visibility issues from the [[UserRepository]] for consistency with
-       * other logic for handling the same types of author visibility filtering.
+       * w-weuse states fow authow visibiwity issues fwom the [[usewwepositowy]] fow consistency w-with
+       * othew wogic fow handwing t-the same types o-of authow visibiwity fiwtewing. UwU
        */
-      case Drop(ProtectedAuthor, _) =>
-        Some(Unavailable.Author.Protected)
-      case Drop(SuspendedAuthor, _) =>
-        Some(Unavailable.Author.Suspended)
-      case Drop(OffboardedAuthor, _) =>
-        Some(Unavailable.Author.Offboarded)
-      case Drop(DeactivatedAuthor, _) =>
-        Some(Unavailable.Author.Deactivated)
-      case Drop(ErasedAuthor, _) =>
-        Some(Unavailable.Author.Deactivated)
-      case _: Drop =>
-        Some(Unavailable.Drop(FilteredReason.UnspecifiedReason(true)))
+      case dwop(pwotectedauthow, >_< _) =>
+        some(unavaiwabwe.authow.pwotected)
+      c-case dwop(suspendedauthow, -.- _) =>
+        s-some(unavaiwabwe.authow.suspended)
+      case dwop(offboawdedauthow, mya _) =>
+        some(unavaiwabwe.authow.offboawded)
+      case dwop(deactivatedauthow, >w< _) =>
+        s-some(unavaiwabwe.authow.deactivated)
+      case d-dwop(ewasedauthow, (U ﹏ U) _) =>
+        some(unavaiwabwe.authow.deactivated)
+      case _: dwop =>
+        some(unavaiwabwe.dwop(fiwtewedweason.unspecifiedweason(twue)))
     }
 
-  private def suppressFromVisibilityAction(
-    action: Action,
-    enableLegacyFilteredReason: Boolean
-  ): Option[FilteredState.Suppress] =
+  pwivate d-def suppwessfwomvisibiwityaction(
+    action: a-action, 😳😳😳
+    e-enabwewegacyfiwtewedweason: boowean
+  ): o-option[fiwtewedstate.suppwess] =
     action match {
-      case interstitial: Interstitial =>
-        interstitial.reason match {
-          case MutedKeyword if enableLegacyFilteredReason =>
-            Some(Suppress(FilteredReason.TweetMatchesViewerMutedKeyword(KeywordMatch(""))))
-          case ViewerMutesAuthor if enableLegacyFilteredReason =>
-            Some(Suppress(FilteredReason.ViewerMutesAuthor(true)))
-          case ViewerHardMutedAuthor if enableLegacyFilteredReason =>
-            Some(Suppress(FilteredReason.ViewerMutesAuthor(true)))
-          // Interstitial tweets are considered suppressed by Tweetypie. For
-          // legacy behavior reasons, these tweets should be dropped when
-          // appearing as a quoted tweet via a call to getTweets.
-          case Nsfw =>
-            Some(Suppress(FilteredReason.ContainNsfwMedia(true)))
-          case NsfwMedia =>
-            Some(Suppress(FilteredReason.ContainNsfwMedia(true)))
-          case PossiblyUndesirable =>
-            Some(Suppress(FilteredReason.PossiblyUndesirable(true)))
-          case _ =>
-            Some(Suppress(FilteredReason.PossiblyUndesirable(true)))
+      c-case intewstitiaw: i-intewstitiaw =>
+        intewstitiaw.weason m-match {
+          case mutedkeywowd i-if enabwewegacyfiwtewedweason =>
+            s-some(suppwess(fiwtewedweason.tweetmatchesviewewmutedkeywowd(keywowdmatch(""))))
+          case viewewmutesauthow i-if enabwewegacyfiwtewedweason =>
+            s-some(suppwess(fiwtewedweason.viewewmutesauthow(twue)))
+          c-case viewewhawdmutedauthow if enabwewegacyfiwtewedweason =>
+            s-some(suppwess(fiwtewedweason.viewewmutesauthow(twue)))
+          // intewstitiaw tweets a-awe considewed s-suppwessed by tweetypie. o.O fow
+          // wegacy behaviow weasons, òωó t-these tweets s-shouwd be dwopped w-when
+          // a-appeawing as a quoted tweet v-via a caww to gettweets. 😳😳😳
+          case nysfw =>
+            some(suppwess(fiwtewedweason.containnsfwmedia(twue)))
+          case nysfwmedia =>
+            some(suppwess(fiwtewedweason.containnsfwmedia(twue)))
+          case p-possibwyundesiwabwe =>
+            some(suppwess(fiwtewedweason.possibwyundesiwabwe(twue)))
+          c-case _ =>
+            some(suppwess(fiwtewedweason.possibwyundesiwabwe(twue)))
         }
-      case _ => None
+      case _ => n-nyone
     }
 }

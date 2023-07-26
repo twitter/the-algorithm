@@ -1,120 +1,120 @@
-package com.twitter.follow_recommendations.flows.content_recommender_flow
+package com.twittew.fowwow_wecommendations.fwows.content_wecommendew_fwow
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.clients.geoduck.UserLocationFetcher
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
-import com.twitter.follow_recommendations.common.clients.user_state.UserStateClient
-import com.twitter.follow_recommendations.common.utils.RescueWithStatsUtils.rescueOptionalWithStats
-import com.twitter.follow_recommendations.common.utils.RescueWithStatsUtils.rescueWithStats
-import com.twitter.follow_recommendations.common.utils.RescueWithStatsUtils.rescueWithStatsWithin
-import com.twitter.follow_recommendations.products.common.ProductRequest
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.cwients.geoduck.usewwocationfetchew
+i-impowt c-com.twittew.fowwow_wecommendations.common.cwients.sociawgwaph.sociawgwaphcwient
+i-impowt com.twittew.fowwow_wecommendations.common.cwients.usew_state.usewstatecwient
+i-impowt com.twittew.fowwow_wecommendations.common.utiws.wescuewithstatsutiws.wescueoptionawwithstats
+i-impowt com.twittew.fowwow_wecommendations.common.utiws.wescuewithstatsutiws.wescuewithstats
+impowt com.twittew.fowwow_wecommendations.common.utiws.wescuewithstatsutiws.wescuewithstatswithin
+impowt com.twittew.fowwow_wecommendations.pwoducts.common.pwoductwequest
+impowt com.twittew.stitch.stitch
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class ContentRecommenderRequestBuilder @Inject() (
-  socialGraph: SocialGraphClient,
-  userLocationFetcher: UserLocationFetcher,
-  userStateClient: UserStateClient,
-  statsReceiver: StatsReceiver) {
+@singweton
+c-cwass contentwecommendewwequestbuiwdew @inject() (
+  sociawgwaph: s-sociawgwaphcwient, nyaa~~
+  usewwocationfetchew: usewwocationfetchew, (✿oωo)
+  usewstatecwient: usewstatecwient, ʘwʘ
+  statsweceivew: s-statsweceivew) {
 
-  val stats: StatsReceiver = statsReceiver.scope("content_recommender_request_builder")
-  val invalidRelationshipUsersStats: StatsReceiver = stats.scope("invalidRelationshipUserIds")
-  private val invalidRelationshipUsersMaxSizeCounter =
-    invalidRelationshipUsersStats.counter("maxSize")
-  private val invalidRelationshipUsersNotMaxSizeCounter =
-    invalidRelationshipUsersStats.counter("notMaxSize")
+  vaw stats: statsweceivew = s-statsweceivew.scope("content_wecommendew_wequest_buiwdew")
+  v-vaw invawidwewationshipusewsstats: statsweceivew = stats.scope("invawidwewationshipusewids")
+  pwivate vaw invawidwewationshipusewsmaxsizecountew =
+    i-invawidwewationshipusewsstats.countew("maxsize")
+  pwivate vaw invawidwewationshipusewsnotmaxsizecountew =
+    invawidwewationshipusewsstats.countew("notmaxsize")
 
-  def build(req: ProductRequest): Stitch[ContentRecommenderRequest] = {
-    val userStateStitch = Stitch
-      .collect(req.recommendationRequest.clientContext.userId.map(userId =>
-        userStateClient.getUserState(userId))).map(_.flatten)
-    val recentFollowedUserIdsStitch =
-      Stitch
-        .collect(req.recommendationRequest.clientContext.userId.map { userId =>
-          rescueWithStatsWithin(
-            socialGraph.getRecentFollowedUserIds(userId),
-            stats,
-            "recentFollowedUserIds",
-            req
-              .params(
-                ContentRecommenderParams.RecentFollowingPredicateBudgetInMillisecond).millisecond
+  def buiwd(weq: p-pwoductwequest): stitch[contentwecommendewwequest] = {
+    v-vaw usewstatestitch = s-stitch
+      .cowwect(weq.wecommendationwequest.cwientcontext.usewid.map(usewid =>
+        u-usewstatecwient.getusewstate(usewid))).map(_.fwatten)
+    v-vaw wecentfowwowedusewidsstitch =
+      stitch
+        .cowwect(weq.wecommendationwequest.cwientcontext.usewid.map { u-usewid =>
+          wescuewithstatswithin(
+            sociawgwaph.getwecentfowwowedusewids(usewid), (ˆ ﻌ ˆ)♡
+            s-stats, 😳😳😳
+            "wecentfowwowedusewids", :3
+            weq
+              .pawams(
+                contentwecommendewpawams.wecentfowwowingpwedicatebudgetinmiwwisecond).miwwisecond
           )
         })
-    val recentFollowedByUserIdsStitch =
-      if (req.params(ContentRecommenderParams.GetFollowersFromSgs)) {
-        Stitch
-          .collect(
-            req.recommendationRequest.clientContext.userId.map(userId =>
-              rescueWithStatsWithin(
-                socialGraph.getRecentFollowedByUserIdsFromCachedColumn(userId),
-                stats,
-                "recentFollowedByUserIds",
-                req
-                  .params(ContentRecommenderParams.RecentFollowingPredicateBudgetInMillisecond)
-                  .millisecond
+    vaw wecentfowwowedbyusewidsstitch =
+      if (weq.pawams(contentwecommendewpawams.getfowwowewsfwomsgs)) {
+        stitch
+          .cowwect(
+            w-weq.wecommendationwequest.cwientcontext.usewid.map(usewid =>
+              wescuewithstatswithin(
+                s-sociawgwaph.getwecentfowwowedbyusewidsfwomcachedcowumn(usewid), OwO
+                s-stats, (U ﹏ U)
+                "wecentfowwowedbyusewids", >w<
+                w-weq
+                  .pawams(contentwecommendewpawams.wecentfowwowingpwedicatebudgetinmiwwisecond)
+                  .miwwisecond
               )))
-      } else Stitch.None
-    val invalidRelationshipUserIdsStitch: Stitch[Option[Seq[Long]]] =
-      if (req.params(ContentRecommenderParams.EnableInvalidRelationshipPredicate)) {
-        Stitch
-          .collect(
-            req.recommendationRequest.clientContext.userId.map { userId =>
-              rescueWithStats(
-                socialGraph
-                  .getInvalidRelationshipUserIdsFromCachedColumn(userId)
-                  .onSuccess(ids =>
-                    if (ids.size >= SocialGraphClient.MaxNumInvalidRelationship) {
-                      invalidRelationshipUsersMaxSizeCounter.incr()
-                    } else {
-                      invalidRelationshipUsersNotMaxSizeCounter.incr()
-                    }),
-                stats,
-                "invalidRelationshipUserIds"
+      } ewse stitch.none
+    vaw invawidwewationshipusewidsstitch: s-stitch[option[seq[wong]]] =
+      i-if (weq.pawams(contentwecommendewpawams.enabweinvawidwewationshippwedicate)) {
+        stitch
+          .cowwect(
+            w-weq.wecommendationwequest.cwientcontext.usewid.map { u-usewid =>
+              wescuewithstats(
+                s-sociawgwaph
+                  .getinvawidwewationshipusewidsfwomcachedcowumn(usewid)
+                  .onsuccess(ids =>
+                    if (ids.size >= s-sociawgwaphcwient.maxnuminvawidwewationship) {
+                      invawidwewationshipusewsmaxsizecountew.incw()
+                    } ewse {
+                      i-invawidwewationshipusewsnotmaxsizecountew.incw()
+                    }), (U ﹏ U)
+                stats, 😳
+                "invawidwewationshipusewids"
               )
             }
           )
-      } else {
-        Stitch.None
+      } e-ewse {
+        stitch.none
       }
-    val locationStitch =
-      rescueOptionalWithStats(
-        userLocationFetcher.getGeohashAndCountryCode(
-          req.recommendationRequest.clientContext.userId,
-          req.recommendationRequest.clientContext.ipAddress
-        ),
-        stats,
-        "userLocation"
+    vaw w-wocationstitch =
+      w-wescueoptionawwithstats(
+        usewwocationfetchew.getgeohashandcountwycode(
+          weq.wecommendationwequest.cwientcontext.usewid, (ˆ ﻌ ˆ)♡
+          weq.wecommendationwequest.cwientcontext.ipaddwess
+        ), 😳😳😳
+        stats, (U ﹏ U)
+        "usewwocation"
       )
-    Stitch
+    stitch
       .join(
-        recentFollowedUserIdsStitch,
-        recentFollowedByUserIdsStitch,
-        invalidRelationshipUserIdsStitch,
-        locationStitch,
-        userStateStitch)
+        wecentfowwowedusewidsstitch, (///ˬ///✿)
+        w-wecentfowwowedbyusewidsstitch, 😳
+        i-invawidwewationshipusewidsstitch, 😳
+        wocationstitch, σωσ
+        u-usewstatestitch)
       .map {
-        case (
-              recentFollowedUserIds,
-              recentFollowedByUserIds,
-              invalidRelationshipUserIds,
-              location,
-              userState) =>
-          ContentRecommenderRequest(
-            req.params,
-            req.recommendationRequest.clientContext,
-            req.recommendationRequest.excludedIds.getOrElse(Nil),
-            recentFollowedUserIds,
-            recentFollowedByUserIds,
-            invalidRelationshipUserIds.map(_.toSet),
-            req.recommendationRequest.displayLocation,
-            req.recommendationRequest.maxResults,
-            req.recommendationRequest.debugParams.flatMap(_.debugOptions),
-            location,
-            userState
+        c-case (
+              w-wecentfowwowedusewids, rawr x3
+              wecentfowwowedbyusewids, OwO
+              invawidwewationshipusewids, /(^•ω•^)
+              wocation, 😳😳😳
+              usewstate) =>
+          c-contentwecommendewwequest(
+            weq.pawams, ( ͡o ω ͡o )
+            weq.wecommendationwequest.cwientcontext, >_<
+            weq.wecommendationwequest.excwudedids.getowewse(niw), >w<
+            wecentfowwowedusewids, rawr
+            w-wecentfowwowedbyusewids, 😳
+            invawidwewationshipusewids.map(_.toset), >w<
+            w-weq.wecommendationwequest.dispwaywocation, (⑅˘꒳˘)
+            w-weq.wecommendationwequest.maxwesuwts, OwO
+            w-weq.wecommendationwequest.debugpawams.fwatmap(_.debugoptions), (ꈍᴗꈍ)
+            wocation, 😳
+            u-usewstate
           )
       }
   }

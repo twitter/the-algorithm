@@ -1,72 +1,72 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.MetricCenterUserCountingFeatureRepository
-import com.twitter.home_mixer.util.ObservedKeyValueResultHandler
-import com.twitter.onboarding.relevance.features.{thriftjava => rf}
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.servo.keyvalue.KeyValueResult
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.stitch.Stitch
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt com.twittew.home_mixew.pawam.homemixewinjectionnames.metwiccentewusewcountingfeatuwewepositowy
+i-impowt c-com.twittew.home_mixew.utiw.obsewvedkeyvawuewesuwthandwew
+i-impowt c-com.twittew.onboawding.wewevance.featuwes.{thwiftjava => w-wf}
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.utiw.offwoadfutuwepoows
+impowt com.twittew.sewvo.keyvawue.keyvawuewesuwt
+i-impowt com.twittew.sewvo.wepositowy.keyvawuewepositowy
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.utiw.futuwe
+impowt javax.inject.inject
+impowt javax.inject.named
+impowt javax.inject.singweton
 
-object MetricCenterUserCountingFeature
-    extends Feature[TweetCandidate, Option[rf.MCUserCountingFeatures]]
+o-object metwiccentewusewcountingfeatuwe
+    extends featuwe[tweetcandidate, 😳 option[wf.mcusewcountingfeatuwes]]
 
-@Singleton
-class MetricCenterUserCountingFeatureHydrator @Inject() (
-  @Named(MetricCenterUserCountingFeatureRepository) client: KeyValueRepository[Seq[
-    Long
-  ], Long, rf.MCUserCountingFeatures],
-  override val statsReceiver: StatsReceiver)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate]
-    with ObservedKeyValueResultHandler {
+@singweton
+cwass metwiccentewusewcountingfeatuwehydwatow @inject() (
+  @named(metwiccentewusewcountingfeatuwewepositowy) c-cwient: keyvawuewepositowy[seq[
+    wong
+  ], -.- wong, 🥺 w-wf.mcusewcountingfeatuwes], o.O
+  o-ovewwide vaw s-statsweceivew: statsweceivew)
+    e-extends buwkcandidatefeatuwehydwatow[pipewinequewy, /(^•ω•^) tweetcandidate]
+    with obsewvedkeyvawuewesuwthandwew {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("MetricCenterUserCounting")
+  o-ovewwide vaw identifiew: featuwehydwatowidentifiew =
+    featuwehydwatowidentifiew("metwiccentewusewcounting")
 
-  override val features: Set[Feature[_, _]] = Set(MetricCenterUserCountingFeature)
+  o-ovewwide vaw featuwes: set[featuwe[_, nyaa~~ _]] = set(metwiccentewusewcountingfeatuwe)
 
-  override val statScope: String = identifier.toString
+  ovewwide vaw statscope: stwing = identifiew.tostwing
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
-    val possiblyAuthorIds = extractKeys(candidates)
-    val userIds = possiblyAuthorIds.flatten
+  o-ovewwide def appwy(
+    quewy: pipewinequewy, nyaa~~
+    c-candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): s-stitch[seq[featuwemap]] = o-offwoadfutuwepoows.offwoadfutuwe {
+    vaw possibwyauthowids = extwactkeys(candidates)
+    vaw usewids = p-possibwyauthowids.fwatten
 
-    val response: Future[KeyValueResult[Long, rf.MCUserCountingFeatures]] =
-      if (userIds.isEmpty) Future.value(KeyValueResult.empty) else client(userIds)
+    v-vaw wesponse: futuwe[keyvawuewesuwt[wong, :3 wf.mcusewcountingfeatuwes]] =
+      i-if (usewids.isempty) f-futuwe.vawue(keyvawuewesuwt.empty) ewse cwient(usewids)
 
-    response.map { result =>
-      possiblyAuthorIds.map { possiblyAuthorId =>
-        val value = observedGet(key = possiblyAuthorId, keyValueResult = result)
-        FeatureMapBuilder().add(MetricCenterUserCountingFeature, value).build()
+    w-wesponse.map { wesuwt =>
+      possibwyauthowids.map { possibwyauthowid =>
+        v-vaw vawue = obsewvedget(key = possibwyauthowid, 😳😳😳 keyvawuewesuwt = w-wesuwt)
+        featuwemapbuiwdew().add(metwiccentewusewcountingfeatuwe, (˘ω˘) v-vawue).buiwd()
       }
     }
   }
 
-  private def extractKeys(
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Seq[Option[Long]] = {
+  pwivate def extwactkeys(
+    c-candidates: s-seq[candidatewithfeatuwes[tweetcandidate]]
+  ): seq[option[wong]] = {
     candidates.map { candidate =>
-      candidate.features
-        .getTry(AuthorIdFeature)
-        .toOption
-        .flatten
+      candidate.featuwes
+        .gettwy(authowidfeatuwe)
+        .tooption
+        .fwatten
     }
   }
 }

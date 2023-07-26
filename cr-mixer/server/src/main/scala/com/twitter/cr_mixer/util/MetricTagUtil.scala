@@ -1,135 +1,135 @@
-package com.twitter.cr_mixer.util
+package com.twittew.cw_mixew.utiw
 
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.thriftscala.MetricTag
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.cr_mixer.thriftscala.SourceType
+impowt com.twittew.cw_mixew.modew.wankedcandidate
+i-impowt com.twittew.cw_mixew.modew.simiwawityengineinfo
+i-impowt c-com.twittew.cw_mixew.modew.souwceinfo
+i-impowt com.twittew.cw_mixew.thwiftscawa.metwictag
+i-impowt c-com.twittew.cw_mixew.thwiftscawa.simiwawityenginetype
+i-impowt com.twittew.cw_mixew.thwiftscawa.souwcetype
 
-object MetricTagUtil {
+o-object metwictagutiw {
 
-  def buildMetricTags(candidate: RankedCandidate): Seq[MetricTag] = {
-    val interestedInMetricTag = isFromInterestedIn(candidate)
+  def buiwdmetwictags(candidate: wankedcandidate): seq[metwictag] = {
+    v-vaw intewestedinmetwictag = isfwomintewestedin(candidate)
 
-    val cgInfoMetricTags = candidate.potentialReasons
-      .flatMap { cgInfo =>
-        val sourceMetricTag = cgInfo.sourceInfoOpt.flatMap { sourceInfo =>
-          toMetricTagFromSource(sourceInfo.sourceType)
+    v-vaw cginfometwictags = c-candidate.potentiawweasons
+      .fwatmap { cginfo =>
+        vaw souwcemetwictag = cginfo.souwceinfoopt.fwatmap { souwceinfo =>
+          t-tometwictagfwomsouwce(souwceinfo.souwcetype)
         }
-        val similarityEngineTags = toMetricTagFromSimilarityEngine(
-          cgInfo.similarityEngineInfo,
-          cgInfo.contributingSimilarityEngines)
+        vaw s-simiwawityenginetags = t-tometwictagfwomsimiwawityengine(
+          cginfo.simiwawityengineinfo, :3
+          cginfo.contwibutingsimiwawityengines)
 
-        val combinedMetricTag = cgInfo.sourceInfoOpt.flatMap { sourceInfo =>
-          toMetricTagFromSourceAndSimilarityEngine(sourceInfo, cgInfo.similarityEngineInfo)
+        vaw combinedmetwictag = cginfo.souwceinfoopt.fwatmap { s-souwceinfo =>
+          tometwictagfwomsouwceandsimiwawityengine(souwceinfo, ( ͡o ω ͡o ) cginfo.simiwawityengineinfo)
         }
 
-        Seq(sourceMetricTag) ++ similarityEngineTags ++ Seq(combinedMetricTag)
-      }.flatten.toSet
-    (interestedInMetricTag ++ cgInfoMetricTags).toSeq
+        seq(souwcemetwictag) ++ simiwawityenginetags ++ s-seq(combinedmetwictag)
+      }.fwatten.toset
+    (intewestedinmetwictag ++ cginfometwictags).toseq
   }
 
   /***
-   * match a sourceType to a metricTag
+   * m-match a souwcetype t-to a metwictag
    */
-  private def toMetricTagFromSource(sourceType: SourceType): Option[MetricTag] = {
-    sourceType match {
-      case SourceType.TweetFavorite => Some(MetricTag.TweetFavorite) // Personalized Topics in Home
-      case SourceType.Retweet => Some(MetricTag.Retweet) // Personalized Topics in Home
-      case SourceType.NotificationClick =>
-        Some(MetricTag.PushOpenOrNtabClick) // Health Filter in MR
-      case SourceType.OriginalTweet =>
-        Some(MetricTag.OriginalTweet)
-      case SourceType.Reply =>
-        Some(MetricTag.Reply)
-      case SourceType.TweetShare =>
-        Some(MetricTag.TweetShare)
-      case SourceType.UserFollow =>
-        Some(MetricTag.UserFollow)
-      case SourceType.UserRepeatedProfileVisit =>
-        Some(MetricTag.UserRepeatedProfileVisit)
-      case SourceType.TwiceUserId =>
-        Some(MetricTag.TwiceUserId)
-      case _ => None
+  p-pwivate d-def tometwictagfwomsouwce(souwcetype: souwcetype): option[metwictag] = {
+    s-souwcetype match {
+      case souwcetype.tweetfavowite => some(metwictag.tweetfavowite) // p-pewsonawized topics in home
+      case souwcetype.wetweet => some(metwictag.wetweet) // pewsonawized t-topics in home
+      case souwcetype.notificationcwick =>
+        s-some(metwictag.pushopenowntabcwick) // h-heawth f-fiwtew in mw
+      case souwcetype.owiginawtweet =>
+        some(metwictag.owiginawtweet)
+      case souwcetype.wepwy =>
+        s-some(metwictag.wepwy)
+      c-case souwcetype.tweetshawe =>
+        s-some(metwictag.tweetshawe)
+      c-case souwcetype.usewfowwow =>
+        some(metwictag.usewfowwow)
+      c-case souwcetype.usewwepeatedpwofiwevisit =>
+        some(metwictag.usewwepeatedpwofiwevisit)
+      c-case souwcetype.twiceusewid =>
+        some(metwictag.twiceusewid)
+      c-case _ => nyone
     }
   }
 
   /***
-   * If the SEInfo is built by a unified sim engine, we un-wrap the contributing sim engines.
-   * If not, we log the sim engine as usual.
-   * @param seInfo (CandidateGenerationInfo.similarityEngineInfo): SimilarityEngineInfo,
-   * @param cseInfo (CandidateGenerationInfo.contributingSimilarityEngines): Seq[SimilarityEngineInfo]
+   * i-if the seinfo is buiwt b-by a unified s-sim engine, σωσ we un-wwap the contwibuting sim engines. >w<
+   * if nyot, 😳😳😳 we wog the sim engine as usuaw. OwO
+   * @pawam seinfo (candidategenewationinfo.simiwawityengineinfo): s-simiwawityengineinfo, 😳
+   * @pawam c-cseinfo (candidategenewationinfo.contwibutingsimiwawityengines): seq[simiwawityengineinfo]
    */
-  private def toMetricTagFromSimilarityEngine(
-    seInfo: SimilarityEngineInfo,
-    cseInfo: Seq[SimilarityEngineInfo]
-  ): Seq[Option[MetricTag]] = {
-    seInfo.similarityEngineType match {
-      case SimilarityEngineType.TweetBasedUnifiedSimilarityEngine => // un-wrap the unified sim engine
-        cseInfo.map { contributingSimEngine =>
-          toMetricTagFromSimilarityEngine(contributingSimEngine, Seq.empty)
-        }.flatten
-      case SimilarityEngineType.ProducerBasedUnifiedSimilarityEngine => // un-wrap the unified sim engine
-        cseInfo.map { contributingSimEngine =>
-          toMetricTagFromSimilarityEngine(contributingSimEngine, Seq.empty)
-        }.flatten
-      // SimClustersANN can either be called on its own, or be called under unified sim engine
-      case SimilarityEngineType.SimClustersANN => // the old "UserInterestedIn" will be replaced by this. Also, OfflineTwice
-        Seq(Some(MetricTag.SimClustersANN), seInfo.modelId.flatMap(toMetricTagFromModelId(_)))
-      case SimilarityEngineType.ConsumerEmbeddingBasedTwHINANN =>
-        Seq(Some(MetricTag.ConsumerEmbeddingBasedTwHINANN))
-      case SimilarityEngineType.TwhinCollabFilter => Seq(Some(MetricTag.TwhinCollabFilter))
-      // In the current implementation, TweetBasedUserTweetGraph/TweetBasedTwHINANN has a tag when
-      // it's either a base SE or a contributing SE. But for now they only show up in contributing SE.
-      case SimilarityEngineType.TweetBasedUserTweetGraph =>
-        Seq(Some(MetricTag.TweetBasedUserTweetGraph))
-      case SimilarityEngineType.TweetBasedTwHINANN =>
-        Seq(Some(MetricTag.TweetBasedTwHINANN))
-      case _ => Seq.empty
+  p-pwivate d-def tometwictagfwomsimiwawityengine(
+    s-seinfo: simiwawityengineinfo, 😳😳😳
+    cseinfo: seq[simiwawityengineinfo]
+  ): seq[option[metwictag]] = {
+    s-seinfo.simiwawityenginetype match {
+      case simiwawityenginetype.tweetbasedunifiedsimiwawityengine => // un-wwap the unified sim engine
+        c-cseinfo.map { contwibutingsimengine =>
+          t-tometwictagfwomsimiwawityengine(contwibutingsimengine, (˘ω˘) s-seq.empty)
+        }.fwatten
+      c-case simiwawityenginetype.pwoducewbasedunifiedsimiwawityengine => // un-wwap t-the unified sim e-engine
+        c-cseinfo.map { contwibutingsimengine =>
+          t-tometwictagfwomsimiwawityengine(contwibutingsimengine, ʘwʘ seq.empty)
+        }.fwatten
+      // simcwustewsann can e-eithew be cawwed o-on its own, ( ͡o ω ͡o ) ow b-be cawwed undew u-unified sim engine
+      c-case simiwawityenginetype.simcwustewsann => // the owd "usewintewestedin" wiww be wepwaced b-by this. o.O awso, >w< offwinetwice
+        seq(some(metwictag.simcwustewsann), 😳 seinfo.modewid.fwatmap(tometwictagfwommodewid(_)))
+      case simiwawityenginetype.consumewembeddingbasedtwhinann =>
+        seq(some(metwictag.consumewembeddingbasedtwhinann))
+      c-case simiwawityenginetype.twhincowwabfiwtew => seq(some(metwictag.twhincowwabfiwtew))
+      // in the cuwwent impwementation, 🥺 t-tweetbasedusewtweetgwaph/tweetbasedtwhinann has a-a tag when
+      // i-it's eithew a base se ow a-a contwibuting se. rawr x3 but fow nyow t-they onwy show up i-in contwibuting se. o.O
+      case simiwawityenginetype.tweetbasedusewtweetgwaph =>
+        seq(some(metwictag.tweetbasedusewtweetgwaph))
+      case simiwawityenginetype.tweetbasedtwhinann =>
+        s-seq(some(metwictag.tweetbasedtwhinann))
+      case _ => seq.empty
     }
   }
 
   /***
-   * pass in a model id, and match it with the metric tag type.
+   * pass i-in a modew id, rawr and match it w-with the metwic t-tag type.
    */
-  private def toMetricTagFromModelId(
-    modelId: String
-  ): Option[MetricTag] = {
+  pwivate def tometwictagfwommodewid(
+    modewid: s-stwing
+  ): option[metwictag] = {
 
-    val pushOpenBasedModelRegex = "(.*_Model20m145k2020_20220819)".r
+    v-vaw pushopenbasedmodewwegex = "(.*_modew20m145k2020_20220819)".w
 
-    modelId match {
-      case pushOpenBasedModelRegex(_*) =>
-        Some(MetricTag.RequestHealthFilterPushOpenBasedTweetEmbedding)
-      case _ => None
+    modewid match {
+      c-case pushopenbasedmodewwegex(_*) =>
+        s-some(metwictag.wequestheawthfiwtewpushopenbasedtweetembedding)
+      case _ => nyone
     }
   }
 
-  private def toMetricTagFromSourceAndSimilarityEngine(
-    sourceInfo: SourceInfo,
-    seInfo: SimilarityEngineInfo
-  ): Option[MetricTag] = {
-    sourceInfo.sourceType match {
-      case SourceType.Lookalike
-          if seInfo.similarityEngineType == SimilarityEngineType.ConsumersBasedUserTweetGraph =>
-        Some(MetricTag.LookalikeUTG)
-      case _ => None
+  pwivate def tometwictagfwomsouwceandsimiwawityengine(
+    s-souwceinfo: s-souwceinfo, ʘwʘ
+    s-seinfo: simiwawityengineinfo
+  ): o-option[metwictag] = {
+    s-souwceinfo.souwcetype match {
+      c-case souwcetype.wookawike
+          if seinfo.simiwawityenginetype == simiwawityenginetype.consumewsbasedusewtweetgwaph =>
+        some(metwictag.wookawikeutg)
+      c-case _ => nyone
     }
   }
 
   /**
-   * Special use case: used by Notifications team to generate the UserInterestedIn CRT push copy.
+   * s-speciaw use case: used by nyotifications team t-to genewate t-the usewintewestedin cwt push copy. 😳😳😳
    *
-   * if we have different types of InterestedIn (eg. UserInterestedIn, NextInterestedIn),
-   * this if statement will have to be refactored to contain the real UserInterestedIn.
-   * @return
+   * if we have diffewent t-types of intewestedin (eg. ^^;; usewintewestedin, o.O nyextintewestedin), (///ˬ///✿)
+   * this if statement wiww h-have to be wefactowed to contain the weaw usewintewestedin. σωσ
+   * @wetuwn
    */
-  private def isFromInterestedIn(candidate: RankedCandidate): Set[MetricTag] = {
-    if (candidate.reasonChosen.sourceInfoOpt.isEmpty
-      && candidate.reasonChosen.similarityEngineInfo.similarityEngineType == SimilarityEngineType.SimClustersANN) {
-      Set(MetricTag.UserInterestedIn)
-    } else Set.empty
+  p-pwivate def isfwomintewestedin(candidate: w-wankedcandidate): set[metwictag] = {
+    if (candidate.weasonchosen.souwceinfoopt.isempty
+      && candidate.weasonchosen.simiwawityengineinfo.simiwawityenginetype == s-simiwawityenginetype.simcwustewsann) {
+      set(metwictag.usewintewestedin)
+    } e-ewse set.empty
   }
 
 }

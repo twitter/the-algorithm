@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.pwomotedmetadata
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class PromotedMetadataMarshaller @Inject() (
-  disclosureTypeMarshaller: DisclosureTypeMarshaller,
-  adMetadataContainerMarshaller: AdMetadataContainerMarshaller,
-  clickTrackingInfoMarshaller: ClickTrackingInfoMarshaller) {
+@singweton
+c-cwass p-pwomotedmetadatamawshawwew @inject() (
+  d-discwosuwetypemawshawwew: discwosuwetypemawshawwew, (///ˬ///✿)
+  admetadatacontainewmawshawwew: admetadatacontainewmawshawwew, 😳😳😳
+  cwicktwackinginfomawshawwew: cwicktwackinginfomawshawwew) {
 
-  /** See comments on [[com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata]]
-   * regarding impressionId and impressionString
+  /** see comments on [[com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.pwomotedmetadata]]
+   * w-wegawding impwessionid and impwessionstwing
    *
-   * TL;DR the domain model only has impressionString (the newer version) an this marshaller sets both
-   * impressionId (the older) and impressionString based on it for compatibility.
+   * tw;dw the d-domain modew onwy has impwessionstwing (the newew v-vewsion) an this mawshawwew sets both
+   * impwessionid (the o-owdew) and impwessionstwing based o-on it fow compatibiwity. 🥺
    * */
-  def apply(promotedMetadata: PromotedMetadata): urt.PromotedMetadata =
-    urt.PromotedMetadata(
-      advertiserId = promotedMetadata.advertiserId,
-      impressionId = promotedMetadata.impressionString,
-      disclosureType = promotedMetadata.disclosureType.map(disclosureTypeMarshaller(_)),
-      experimentValues = promotedMetadata.experimentValues,
-      promotedTrendId = promotedMetadata.promotedTrendId,
-      promotedTrendName = promotedMetadata.promotedTrendName,
-      promotedTrendQueryTerm = promotedMetadata.promotedTrendQueryTerm,
-      adMetadataContainer =
-        promotedMetadata.adMetadataContainer.map(adMetadataContainerMarshaller(_)),
-      promotedTrendDescription = promotedMetadata.promotedTrendDescription,
-      impressionString = promotedMetadata.impressionString,
-      clickTrackingInfo = promotedMetadata.clickTrackingInfo.map(clickTrackingInfoMarshaller(_))
+  d-def appwy(pwomotedmetadata: pwomotedmetadata): uwt.pwomotedmetadata =
+    uwt.pwomotedmetadata(
+      advewtisewid = p-pwomotedmetadata.advewtisewid, mya
+      impwessionid = pwomotedmetadata.impwessionstwing, 🥺
+      discwosuwetype = pwomotedmetadata.discwosuwetype.map(discwosuwetypemawshawwew(_)), >_<
+      e-expewimentvawues = pwomotedmetadata.expewimentvawues, >_<
+      p-pwomotedtwendid = p-pwomotedmetadata.pwomotedtwendid, (⑅˘꒳˘)
+      p-pwomotedtwendname = p-pwomotedmetadata.pwomotedtwendname, /(^•ω•^)
+      pwomotedtwendquewytewm = pwomotedmetadata.pwomotedtwendquewytewm,
+      admetadatacontainew =
+        p-pwomotedmetadata.admetadatacontainew.map(admetadatacontainewmawshawwew(_)), rawr x3
+      pwomotedtwenddescwiption = pwomotedmetadata.pwomotedtwenddescwiption, (U ﹏ U)
+      i-impwessionstwing = pwomotedmetadata.impwessionstwing, (U ﹏ U)
+      cwicktwackinginfo = pwomotedmetadata.cwicktwackinginfo.map(cwicktwackinginfomawshawwew(_))
     )
 }

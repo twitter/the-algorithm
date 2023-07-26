@@ -1,83 +1,83 @@
-package com.twitter.simclusters_v2.scalding.embedding.common
+package com.twittew.simcwustews_v2.scawding.embedding.common
 
-import com.twitter.scalding.{Args, DateRange, Execution, TypedPipe, UniqueID}
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil._
-import com.twitter.simclusters_v2.thriftscala._
-import java.util.TimeZone
+impowt c-com.twittew.scawding.{awgs, :3 d-datewange, execution, (///ˬ///✿) t-typedpipe, nyaa~~ u-uniqueid}
+impowt c-com.twittew.simcwustews_v2.common.modewvewsions
+i-impowt com.twittew.simcwustews_v2.scawding.common.matwix.{spawsematwix, >w< s-spawsewowmatwix}
+i-impowt com.twittew.simcwustews_v2.scawding.embedding.common.embeddingutiw._
+impowt com.twittew.simcwustews_v2.thwiftscawa._
+impowt java.utiw.timezone
 
 /**
- * This is the base job for computing SimClusters Embedding for any Noun Type on Twitter, such as
- * Users, Tweets, Topics, Entities, Channels, etc.
+ * this is t-the base job fow computing simcwustews embedding f-fow any nyoun type on twittew, -.- s-such as
+ * usews, (✿oωo) tweets, (˘ω˘) topics, entities, rawr channews, etc. OwO
  *
- * The most straightforward way to understand the SimClusters Embeddings for a Noun is that it is
- * a weighted sum of SimClusters InterestedIn vectors from users who are interested in the Noun.
- * So for a noun type, you only need to define `prepareNounToUserMatrix` to pass in a matrix which
- * represents how much each user is interested in this noun.
+ * t-the most stwaightfowwawd way to u-undewstand the s-simcwustews embeddings fow a nyoun is that it is
+ * a weighted sum of simcwustews i-intewestedin vectows fwom usews who awe intewested in the nyoun. ^•ﻌ•^
+ * so fow a n-nyoun type, UwU you onwy nyeed to define `pwepawenountousewmatwix` to p-pass in a matwix w-which
+ * wepwesents h-how much e-each usew is intewested in this nyoun. (˘ω˘)
  */
-trait SimClustersEmbeddingBaseJob[NounType] {
+twait s-simcwustewsembeddingbasejob[nountype] {
 
-  def numClustersPerNoun: Int
+  def nyumcwustewspewnoun: i-int
 
-  def numNounsPerClusters: Int
+  def nyumnounspewcwustews: int
 
-  def thresholdForEmbeddingScores: Double
+  def thweshowdfowembeddingscowes: doubwe
 
-  def numReducersOpt: Option[Int] = None
+  def nyumweducewsopt: o-option[int] = nyone
 
-  def prepareNounToUserMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseMatrix[NounType, UserId, Double]
+  d-def pwepawenountousewmatwix(
+    i-impwicit datewange: d-datewange, (///ˬ///✿)
+    timezone: timezone,
+    uniqueid: uniqueid
+  ): s-spawsematwix[nountype, σωσ usewid, d-doubwe]
 
-  def prepareUserToClusterMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseRowMatrix[UserId, ClusterId, Double]
+  def pwepaweusewtocwustewmatwix(
+    i-impwicit datewange: d-datewange, /(^•ω•^)
+    timezone: t-timezone, 😳
+    uniqueid: uniqueid
+  ): s-spawsewowmatwix[usewid, 😳 cwustewid, doubwe]
 
-  def writeNounToClustersIndex(
-    output: TypedPipe[(NounType, Seq[(ClusterId, Double)])]
+  def wwitenountocwustewsindex(
+    o-output: typedpipe[(nountype, (⑅˘꒳˘) s-seq[(cwustewid, 😳😳😳 doubwe)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit]
+    i-impwicit d-datewange: datewange, 😳
+    timezone: timezone, XD
+    uniqueid: uniqueid
+  ): execution[unit]
 
-  def writeClusterToNounsIndex(
-    output: TypedPipe[(ClusterId, Seq[(NounType, Double)])]
+  def wwitecwustewtonounsindex(
+    output: typedpipe[(cwustewid, mya s-seq[(nountype, ^•ﻌ•^ doubwe)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit]
+    i-impwicit datewange: datewange, ʘwʘ
+    t-timezone: t-timezone, ( ͡o ω ͡o )
+    uniqueid: u-uniqueid
+  ): execution[unit]
 
-  def runOnDateRange(
-    args: Args
+  def wunondatewange(
+    awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    i-impwicit datewange: datewange, mya
+    timezone: timezone,
+    uniqueid: uniqueid
+  ): e-execution[unit] = {
 
-    val embeddingMatrix: SparseRowMatrix[NounType, ClusterId, Double] =
-      prepareNounToUserMatrix.rowL2Normalize
-        .multiplySkinnySparseRowMatrix(
-          prepareUserToClusterMatrix.colL2Normalize,
-          numReducersOpt
+    vaw embeddingmatwix: s-spawsewowmatwix[nountype, o.O c-cwustewid, (✿oωo) doubwe] =
+      p-pwepawenountousewmatwix.woww2nowmawize
+        .muwtipwyskinnyspawsewowmatwix(
+          pwepaweusewtocwustewmatwix.coww2nowmawize, :3
+          n-numweducewsopt
         )
-        .filter((_, _, v) => v > thresholdForEmbeddingScores)
+        .fiwtew((_, 😳 _, v-v) => v > t-thweshowdfowembeddingscowes)
 
-    Execution
+    e-execution
       .zip(
-        writeNounToClustersIndex(
-          embeddingMatrix.sortWithTakePerRow(numClustersPerNoun)(Ordering.by(-_._2))
-        ),
-        writeClusterToNounsIndex(
-          embeddingMatrix.sortWithTakePerCol(numNounsPerClusters)(
-            Ordering.by(-_._2)
+        wwitenountocwustewsindex(
+          embeddingmatwix.sowtwithtakepewwow(numcwustewspewnoun)(owdewing.by(-_._2))
+        ), (U ﹏ U)
+        w-wwitecwustewtonounsindex(
+          e-embeddingmatwix.sowtwithtakepewcow(numnounspewcwustews)(
+            o-owdewing.by(-_._2)
           )
         )
       )
@@ -86,163 +86,163 @@ trait SimClustersEmbeddingBaseJob[NounType] {
 
 }
 
-object SimClustersEmbeddingJob {
+o-object simcwustewsembeddingjob {
 
   /**
-   * Multiply the [user, cluster] and [user, T] matrices, and return the cross product.
+   * m-muwtipwy the [usew, mya cwustew] and [usew, (U ᵕ U❁) t] matwices, :3 and wetuwn t-the cwoss pwoduct. mya
    */
-  def computeEmbeddings[T](
-    simClustersSource: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    normalizedInputMatrix: TypedPipe[(UserId, (T, Double))],
-    scoreExtractors: Seq[UserToInterestedInClusterScores => (Double, ScoreType.ScoreType)],
-    modelVersion: ModelVersion,
-    toSimClustersEmbeddingId: (T, ScoreType.ScoreType) => SimClustersEmbeddingId,
-    numReducers: Option[Int] = None
-  ): TypedPipe[(SimClustersEmbeddingId, (ClusterId, Double))] = {
-    val userSimClustersMatrix =
-      getUserSimClustersMatrix(simClustersSource, scoreExtractors, modelVersion)
-    multiplyMatrices(
-      normalizedInputMatrix,
-      userSimClustersMatrix,
-      toSimClustersEmbeddingId,
-      numReducers)
+  def computeembeddings[t](
+    simcwustewssouwce: typedpipe[(usewid, OwO cwustewsusewisintewestedin)], (ˆ ﻌ ˆ)♡
+    nyowmawizedinputmatwix: typedpipe[(usewid, ʘwʘ (t, d-doubwe))], o.O
+    scoweextwactows: seq[usewtointewestedincwustewscowes => (doubwe, UwU scowetype.scowetype)], rawr x3
+    modewvewsion: m-modewvewsion, 🥺
+    t-tosimcwustewsembeddingid: (t, :3 s-scowetype.scowetype) => simcwustewsembeddingid, (ꈍᴗꈍ)
+    n-nyumweducews: option[int] = n-nyone
+  ): t-typedpipe[(simcwustewsembeddingid, 🥺 (cwustewid, (✿oωo) doubwe))] = {
+    vaw usewsimcwustewsmatwix =
+      getusewsimcwustewsmatwix(simcwustewssouwce, (U ﹏ U) scoweextwactows, :3 modewvewsion)
+    m-muwtipwymatwices(
+      nyowmawizedinputmatwix, ^^;;
+      u-usewsimcwustewsmatwix, rawr
+      tosimcwustewsembeddingid, 😳😳😳
+      n-nyumweducews)
   }
 
-  def getL2Norm[T](
-    inputMatrix: TypedPipe[(T, (UserId, Double))],
-    numReducers: Option[Int] = None
+  d-def getw2nowm[t](
+    inputmatwix: t-typedpipe[(t, (✿oωo) (usewid, d-doubwe))], OwO
+    nyumweducews: o-option[int] = n-nyone
   )(
-    implicit ordering: Ordering[T]
-  ): TypedPipe[(T, Double)] = {
-    val l2Norm = inputMatrix
-      .mapValues {
-        case (_, score) => score * score
+    impwicit owdewing: owdewing[t]
+  ): typedpipe[(t, ʘwʘ doubwe)] = {
+    v-vaw w2nowm = i-inputmatwix
+      .mapvawues {
+        c-case (_, (ˆ ﻌ ˆ)♡ scowe) => scowe * s-scowe
       }
-      .sumByKey
-      .mapValues(math.sqrt)
+      .sumbykey
+      .mapvawues(math.sqwt)
 
-    numReducers match {
-      case Some(reducers) => l2Norm.withReducers(reducers)
-      case _ => l2Norm
+    n-nyumweducews match {
+      case s-some(weducews) => w2nowm.withweducews(weducews)
+      case _ => w2nowm
     }
   }
 
-  def getNormalizedTransposeInputMatrix[T](
-    inputMatrix: TypedPipe[(T, (UserId, Double))],
-    numReducers: Option[Int] = None
+  def getnowmawizedtwansposeinputmatwix[t](
+    i-inputmatwix: t-typedpipe[(t, (U ﹏ U) (usewid, UwU doubwe))], XD
+    nyumweducews: o-option[int] = n-nyone
   )(
-    implicit ordering: Ordering[T]
-  ): TypedPipe[(UserId, (T, Double))] = {
-    val inputWithNorm = inputMatrix.join(getL2Norm(inputMatrix, numReducers))
+    impwicit owdewing: owdewing[t]
+  ): typedpipe[(usewid, ʘwʘ (t, d-doubwe))] = {
+    vaw inputwithnowm = inputmatwix.join(getw2nowm(inputmatwix, nyumweducews))
 
-    (numReducers match {
-      case Some(reducers) => inputWithNorm.withReducers(reducers)
-      case _ => inputWithNorm
+    (numweducews match {
+      c-case some(weducews) => inputwithnowm.withweducews(weducews)
+      c-case _ => i-inputwithnowm
     }).map {
-      case (inputId, ((userId, favScore), norm)) =>
-        (userId, (inputId, favScore / norm))
+      case (inputid, rawr x3 ((usewid, favscowe), ^^;; nyowm)) =>
+        (usewid, ʘwʘ (inputid, favscowe / nyowm))
     }
   }
 
   /**
-   * Matrix multiplication with the ability to tune the reducer size for better performance
+   * m-matwix m-muwtipwication with the abiwity to tune the weducew size fow bettew p-pewfowmance
    */
-  @Deprecated
-  def legacyMultiplyMatrices[T](
-    normalizedTransposeInputMatrix: TypedPipe[(UserId, (T, Double))],
-    userSimClustersMatrix: TypedPipe[(UserId, Seq[(ClusterId, Double)])],
-    numReducers: Int // Matrix multiplication is expensive. Use this to tune performance
+  @depwecated
+  def wegacymuwtipwymatwices[t](
+    n-nyowmawizedtwansposeinputmatwix: typedpipe[(usewid, (U ﹏ U) (t, doubwe))],
+    usewsimcwustewsmatwix: t-typedpipe[(usewid, seq[(cwustewid, d-doubwe)])], (˘ω˘)
+    n-nyumweducews: int // m-matwix muwtipwication is expensive. (ꈍᴗꈍ) u-use this to t-tune pewfowmance
   )(
-    implicit ordering: Ordering[T]
-  ): TypedPipe[((ClusterId, T), Double)] = {
-    normalizedTransposeInputMatrix
-      .join(userSimClustersMatrix)
-      .withReducers(numReducers)
-      .flatMap {
-        case (_, ((inputId, score), clustersWithScores)) =>
-          clustersWithScores.map {
-            case (clusterId, clusterScore) =>
-              ((clusterId, inputId), score * clusterScore)
+    i-impwicit owdewing: owdewing[t]
+  ): typedpipe[((cwustewid, /(^•ω•^) t-t), doubwe)] = {
+    n-nyowmawizedtwansposeinputmatwix
+      .join(usewsimcwustewsmatwix)
+      .withweducews(numweducews)
+      .fwatmap {
+        case (_, >_< ((inputid, scowe), σωσ c-cwustewswithscowes)) =>
+          c-cwustewswithscowes.map {
+            c-case (cwustewid, ^^;; cwustewscowe) =>
+              ((cwustewid, 😳 inputid), s-scowe * cwustewscowe)
           }
       }
-      .sumByKey
-      .withReducers(numReducers + 1) // +1 to distinguish this step from above in Dr. Scalding
+      .sumbykey
+      .withweducews(numweducews + 1) // +1 to distinguish t-this step f-fwom above in dw. >_< scawding
   }
 
-  def multiplyMatrices[T](
-    normalizedTransposeInputMatrix: TypedPipe[(UserId, (T, Double))],
-    userSimClustersMatrix: TypedPipe[(UserId, Seq[((ClusterId, ScoreType.ScoreType), Double)])],
-    toSimClustersEmbeddingId: (T, ScoreType.ScoreType) => SimClustersEmbeddingId,
-    numReducers: Option[Int] = None
-  ): TypedPipe[(SimClustersEmbeddingId, (ClusterId, Double))] = {
-    val inputJoinedWithSimClusters = numReducers match {
-      case Some(reducers) =>
-        normalizedTransposeInputMatrix
-          .join(userSimClustersMatrix)
-          .withReducers(reducers)
+  def muwtipwymatwices[t](
+    nyowmawizedtwansposeinputmatwix: typedpipe[(usewid, -.- (t, d-doubwe))], UwU
+    u-usewsimcwustewsmatwix: t-typedpipe[(usewid, :3 s-seq[((cwustewid, σωσ scowetype.scowetype), >w< d-doubwe)])], (ˆ ﻌ ˆ)♡
+    tosimcwustewsembeddingid: (t, ʘwʘ scowetype.scowetype) => simcwustewsembeddingid, :3
+    nyumweducews: option[int] = n-nyone
+  ): typedpipe[(simcwustewsembeddingid, (˘ω˘) (cwustewid, 😳😳😳 doubwe))] = {
+    v-vaw inputjoinedwithsimcwustews = nyumweducews match {
+      c-case some(weducews) =>
+        n-nyowmawizedtwansposeinputmatwix
+          .join(usewsimcwustewsmatwix)
+          .withweducews(weducews)
       case _ =>
-        normalizedTransposeInputMatrix.join(userSimClustersMatrix)
+        n-nyowmawizedtwansposeinputmatwix.join(usewsimcwustewsmatwix)
     }
 
-    val matrixMultiplicationResult = inputJoinedWithSimClusters.flatMap {
-      case (_, ((inputId, inputScore), clustersWithScores)) =>
-        clustersWithScores.map {
-          case ((clusterId, scoreType), clusterScore) =>
-            ((clusterId, toSimClustersEmbeddingId(inputId, scoreType)), inputScore * clusterScore)
+    v-vaw matwixmuwtipwicationwesuwt = i-inputjoinedwithsimcwustews.fwatmap {
+      c-case (_, rawr x3 ((inputid, i-inputscowe), (✿oωo) cwustewswithscowes)) =>
+        cwustewswithscowes.map {
+          case ((cwustewid, (ˆ ﻌ ˆ)♡ scowetype), cwustewscowe) =>
+            ((cwustewid, :3 tosimcwustewsembeddingid(inputid, (U ᵕ U❁) s-scowetype)), ^^;; i-inputscowe * c-cwustewscowe)
         }
-    }.sumByKey
+    }.sumbykey
 
-    (numReducers match {
-      case Some(reducers) =>
-        matrixMultiplicationResult.withReducers(reducers + 1)
-      case _ => matrixMultiplicationResult
+    (numweducews match {
+      case s-some(weducews) =>
+        matwixmuwtipwicationwesuwt.withweducews(weducews + 1)
+      case _ => matwixmuwtipwicationwesuwt
     }).map {
-      case ((clusterId, embeddingId), score) =>
-        (embeddingId, (clusterId, score))
+      c-case ((cwustewid, mya e-embeddingid), 😳😳😳 scowe) =>
+        (embeddingid, OwO (cwustewid, rawr s-scowe))
     }
   }
 
-  def getUserSimClustersMatrix(
-    simClustersSource: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    scoreExtractors: Seq[UserToInterestedInClusterScores => (Double, ScoreType.ScoreType)],
-    modelVersion: ModelVersion
-  ): TypedPipe[(UserId, Seq[((ClusterId, ScoreType.ScoreType), Double)])] = {
-    simClustersSource.map {
-      case (userId, clusters)
-          if ModelVersions.toModelVersion(clusters.knownForModelVersion) == modelVersion =>
-        userId -> clusters.clusterIdToScores.flatMap {
-          case (clusterId, clusterScores) =>
-            scoreExtractors.map { scoreExtractor =>
-              scoreExtractor(clusterScores) match {
-                case (score, scoreType) => ((clusterId, scoreType), score)
+  def getusewsimcwustewsmatwix(
+    simcwustewssouwce: t-typedpipe[(usewid, XD c-cwustewsusewisintewestedin)], (U ﹏ U)
+    scoweextwactows: s-seq[usewtointewestedincwustewscowes => (doubwe, (˘ω˘) s-scowetype.scowetype)], UwU
+    modewvewsion: modewvewsion
+  ): typedpipe[(usewid, >_< seq[((cwustewid, σωσ s-scowetype.scowetype), 🥺 d-doubwe)])] = {
+    s-simcwustewssouwce.map {
+      c-case (usewid, 🥺 c-cwustews)
+          if modewvewsions.tomodewvewsion(cwustews.knownfowmodewvewsion) == m-modewvewsion =>
+        u-usewid -> cwustews.cwustewidtoscowes.fwatmap {
+          case (cwustewid, ʘwʘ c-cwustewscowes) =>
+            s-scoweextwactows.map { scoweextwactow =>
+              s-scoweextwactow(cwustewscowes) match {
+                case (scowe, :3 s-scowetype) => ((cwustewid, (U ﹏ U) scowetype), s-scowe)
               }
             }
-        }.toSeq
-      case (userId, _) => userId -> Nil
+        }.toseq
+      c-case (usewid, (U ﹏ U) _) => usewid -> n-nyiw
     }
   }
 
-  def toReverseIndexSimClusterEmbedding(
-    embeddings: TypedPipe[(SimClustersEmbeddingId, (ClusterId, EmbeddingScore))],
-    topK: Int
-  ): TypedPipe[(SimClustersEmbeddingId, InternalIdEmbedding)] = {
+  def towevewseindexsimcwustewembedding(
+    embeddings: t-typedpipe[(simcwustewsembeddingid, ʘwʘ (cwustewid, >w< e-embeddingscowe))], rawr x3
+    t-topk: int
+  ): typedpipe[(simcwustewsembeddingid, OwO intewnawidembedding)] = {
     embeddings
       .map {
-        case (embeddingId, (clusterId, score)) =>
+        case (embeddingid, ^•ﻌ•^ (cwustewid, >_< scowe)) =>
           (
-            SimClustersEmbeddingId(
-              embeddingId.embeddingType,
-              embeddingId.modelVersion,
-              InternalId.ClusterId(clusterId)),
-            (embeddingId.internalId, score))
+            s-simcwustewsembeddingid(
+              embeddingid.embeddingtype, OwO
+              embeddingid.modewvewsion, >_<
+              i-intewnawid.cwustewid(cwustewid)), (ꈍᴗꈍ)
+            (embeddingid.intewnawid, >w< s-scowe))
       }
-      .group
-      .sortedReverseTake(topK)(Ordering.by(_._2))
-      .mapValues { topInternalIdsWithScore =>
-        val internalIdsWithScore = topInternalIdsWithScore.map {
-          case (internalId, score) => InternalIdWithScore(internalId, score)
+      .gwoup
+      .sowtedwevewsetake(topk)(owdewing.by(_._2))
+      .mapvawues { topintewnawidswithscowe =>
+        v-vaw intewnawidswithscowe = topintewnawidswithscowe.map {
+          c-case (intewnawid, (U ﹏ U) s-scowe) => intewnawidwithscowe(intewnawid, ^^ scowe)
         }
-        InternalIdEmbedding(internalIdsWithScore)
+        i-intewnawidembedding(intewnawidswithscowe)
       }
   }
 }

@@ -1,101 +1,101 @@
-package com.twitter.cr_mixer.source_signal
+package com.twittew.cw_mixew.souwce_signaw
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.timelines.configapi.Params
-import com.twitter.cr_mixer.thriftscala.{Product => TProduct}
-import com.twitter.finagle.GlobalRequestTimeoutException
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.mux.ServerApplicationError
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import com.twitter.util.TimeoutException
-import org.apache.thrift.TApplicationException
-import com.twitter.util.logging.Logging
+impowt c-com.twittew.cowe_wowkfwows.usew_modew.thwiftscawa.usewstate
+i-impowt c-com.twittew.cw_mixew.config.timeoutconfig
+impowt c-com.twittew.cw_mixew.souwce_signaw.souwcefetchew.fetchewquewy
+i-impowt com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.timewines.configapi.pawams
+i-impowt com.twittew.cw_mixew.thwiftscawa.{pwoduct => t-tpwoduct}
+impowt com.twittew.finagwe.gwobawwequesttimeoutexception
+impowt com.twittew.finagwe.mux.cwientdiscawdedwequestexception
+impowt com.twittew.finagwe.mux.sewvewappwicationewwow
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.timeoutexception
+impowt owg.apache.thwift.tappwicationexception
+impowt com.twittew.utiw.wogging.wogging
 
 /**
- * A SourceFetcher is a trait which, given a [[FetcherQuery]], returns [[ResultType]]
- * The main purposes of a SourceFetcher is to provide a consistent interface for source fetch
- * logic, and provides default functions, including:
- * - Identification
- * - Observability
- * - Timeout settings
- * - Exception Handling
+ * a souwcefetchew is a-a twait which, 😳😳😳 given a [[fetchewquewy]], mya w-wetuwns [[wesuwttype]]
+ * t-the main puwposes of a souwcefetchew is to pwovide a consistent intewface fow s-souwce fetch
+ * wogic, mya and pwovides defauwt functions, (⑅˘꒳˘) incwuding:
+ * - identification
+ * - o-obsewvabiwity
+ * - timeout settings
+ * - e-exception h-handwing
  */
-trait SourceFetcher[ResultType] extends ReadableStore[FetcherQuery, ResultType] with Logging {
+twait s-souwcefetchew[wesuwttype] e-extends weadabwestowe[fetchewquewy, (U ﹏ U) wesuwttype] with w-wogging {
 
-  protected final val timer = com.twitter.finagle.util.DefaultTimer
-  protected final def identifier: String = this.getClass.getSimpleName
-  protected def stats: StatsReceiver
-  protected def timeoutConfig: TimeoutConfig
-
-  /***
-   * Use FeatureSwitch to decide if a specific source is enabled.
-   */
-  def isEnabled(query: FetcherQuery): Boolean
+  pwotected finaw vaw timew = com.twittew.finagwe.utiw.defauwttimew
+  p-pwotected finaw def identifiew: stwing = this.getcwass.getsimpwename
+  pwotected def stats: statsweceivew
+  p-pwotected def timeoutconfig: timeoutconfig
 
   /***
-   * This function fetches the raw sources and process them.
-   * Custom stats tracking can be added depending on the type of ResultType
+   * u-use featuweswitch t-to decide i-if a specific souwce is enabwed. mya
    */
-  def fetchAndProcess(
-    query: FetcherQuery,
-  ): Future[Option[ResultType]]
+  def isenabwed(quewy: f-fetchewquewy): b-boowean
 
   /***
-   * Side-effect function to track stats for signal fetching and processing.
+   * this function f-fetches the w-waw souwces and pwocess them. ʘwʘ
+   * c-custom stats twacking can be a-added depending on the type of wesuwttype
    */
-  def trackStats(
-    query: FetcherQuery
+  def fetchandpwocess(
+    q-quewy: fetchewquewy, (˘ω˘)
+  ): f-futuwe[option[wesuwttype]]
+
+  /***
+   * side-effect f-function t-to twack stats fow signaw fetching and pwocessing. (U ﹏ U)
+   */
+  def twackstats(
+    quewy: fetchewquewy
   )(
-    func: => Future[Option[ResultType]]
-  ): Future[Option[ResultType]]
+    func: => f-futuwe[option[wesuwttype]]
+  ): f-futuwe[option[wesuwttype]]
 
   /***
-   * This function is called by the top level class to fetch sources. It executes the pipeline to
-   * fetch raw data, process and transform the sources. Exceptions, Stats, and timeout control are
-   * handled here.
+   * this function is c-cawwed by the top w-wevew cwass to f-fetch souwces. ^•ﻌ•^ it exekawaii~s the pipewine to
+   * fetch waw data, (˘ω˘) p-pwocess and twansfowm the souwces. :3 exceptions, ^^;; stats, and timeout contwow awe
+   * h-handwed hewe. 🥺
    */
-  override def get(
-    query: FetcherQuery
-  ): Future[Option[ResultType]] = {
-    val scopedStats = stats.scope(query.product.originalName)
-    if (isEnabled(query)) {
-      scopedStats.counter("gate_enabled").incr()
-      trackStats(query)(fetchAndProcess(query))
-        .raiseWithin(timeoutConfig.signalFetchTimeout)(timer)
-        .onFailure { e =>
-          scopedStats.scope("exceptions").counter(e.getClass.getSimpleName).incr()
+  ovewwide d-def get(
+    q-quewy: fetchewquewy
+  ): f-futuwe[option[wesuwttype]] = {
+    vaw scopedstats = s-stats.scope(quewy.pwoduct.owiginawname)
+    i-if (isenabwed(quewy)) {
+      s-scopedstats.countew("gate_enabwed").incw()
+      t-twackstats(quewy)(fetchandpwocess(quewy))
+        .waisewithin(timeoutconfig.signawfetchtimeout)(timew)
+        .onfaiwuwe { e =>
+          scopedstats.scope("exceptions").countew(e.getcwass.getsimpwename).incw()
         }
-        .rescue {
-          case _: TimeoutException | _: GlobalRequestTimeoutException | _: TApplicationException |
-              _: ClientDiscardedRequestException |
-              _: ServerApplicationError // TApplicationException inside
+        .wescue {
+          c-case _: timeoutexception | _: g-gwobawwequesttimeoutexception | _: t-tappwicationexception |
+              _: c-cwientdiscawdedwequestexception |
+              _: s-sewvewappwicationewwow // tappwicationexception inside
               =>
-            Future.None
-          case e =>
-            logger.info(e)
-            Future.None
+            futuwe.none
+          c-case e =>
+            woggew.info(e)
+            futuwe.none
         }
-    } else {
-      scopedStats.counter("gate_disabled").incr()
-      Future.None
+    } ewse {
+      scopedstats.countew("gate_disabwed").incw()
+      futuwe.none
     }
   }
 }
 
-object SourceFetcher {
+o-object souwcefetchew {
 
   /***
-   * Every SourceFetcher all share the same input: FetcherQuery
+   * evewy souwcefetchew aww shawe the same input: f-fetchewquewy
    */
-  case class FetcherQuery(
-    userId: UserId,
-    product: TProduct,
-    userState: UserState,
-    params: Params)
+  c-case cwass f-fetchewquewy(
+    usewid: usewid, (⑅˘꒳˘)
+    p-pwoduct: tpwoduct, nyaa~~
+    u-usewstate: usewstate, :3
+    p-pawams: pawams)
 
 }

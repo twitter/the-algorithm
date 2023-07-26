@@ -1,12 +1,12 @@
-package com.twitter.search.common.query;
+package com.twittew.seawch.common.quewy;
 
-import java.util.List;
-import java.util.Map;
+impowt j-java.utiw.wist;
+i-impowt java.utiw.map;
 
 /**
- * The interface for objects that can provide hit attributes for a document.
+ * t-the i-intewface fow o-objects that can p-pwovide hit attwibutes f-fow a document. :3
  */
-public interface HitAttributeProvider {
-  /** Returns the hit attributes for the given document. */
-  Map<Integer, List<String>> getHitAttribution(int docId);
+p-pubwic intewface hitattwibutepwovidew {
+  /** wetuwns the hit attwibutes fow the given d-document. (U ﹏ U) */
+  map<integew, -.- wist<stwing>> gethitattwibution(int d-docid);
 }

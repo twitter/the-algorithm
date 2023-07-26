@@ -1,423 +1,423 @@
-package com.twitter.search.earlybird.index;
+package com.twittew.seawch.eawwybiwd.index;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
+impowt j-java.io.ioexception;
+i-impowt java.utiw.wist;
+impowt j-java.utiw.wocawe;
+i-impowt java.utiw.map;
+i-impowt j-java.utiw.map.entwy;
 
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.CollectionStatistics;
-import org.apache.lucene.search.Collector;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.LeafCollector;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.TermStatistics;
-import org.apache.lucene.search.Weight;
-import org.apache.lucene.util.BytesRef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.wucene.index.weafweadewcontext;
+impowt owg.apache.wucene.index.tewm;
+i-impowt owg.apache.wucene.seawch.cowwectionstatistics;
+impowt owg.apache.wucene.seawch.cowwectow;
+impowt owg.apache.wucene.seawch.docidsetitewatow;
+i-impowt owg.apache.wucene.seawch.expwanation;
+impowt owg.apache.wucene.seawch.weafcowwectow;
+impowt o-owg.apache.wucene.seawch.scowew;
+impowt owg.apache.wucene.seawch.scowemode;
+impowt owg.apache.wucene.seawch.tewmstatistics;
+impowt owg.apache.wucene.seawch.weight;
+i-impowt owg.apache.wucene.utiw.byteswef;
+i-impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.relevance.features.EarlybirdDocumentFeatures;
-import com.twitter.search.common.results.thriftjava.FieldHitAttribution;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.search.TwitterCollector;
-import com.twitter.search.common.search.TwitterIndexSearcher;
-import com.twitter.search.common.util.analysis.LongTermAttributeImpl;
-import com.twitter.search.common.util.lang.ThriftLanguageUtil;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
-import com.twitter.search.earlybird.EarlybirdSearcher;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.search.EarlybirdLuceneSearcher;
-import com.twitter.search.earlybird.search.Hit;
-import com.twitter.search.earlybird.search.SearchRequestInfo;
-import com.twitter.search.earlybird.search.SimpleSearchResults;
-import com.twitter.search.earlybird.search.facets.AbstractFacetTermCollector;
-import com.twitter.search.earlybird.search.facets.TermStatisticsCollector;
-import com.twitter.search.earlybird.search.facets.TermStatisticsRequestInfo;
-import com.twitter.search.earlybird.search.relevance.scoring.RelevanceQuery;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftFacetCount;
-import com.twitter.search.earlybird.thrift.ThriftFacetCountMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftTermRequest;
-import com.twitter.search.earlybird.thrift.ThriftTermResults;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsResults;
+impowt com.twittew.common.utiw.cwock;
+impowt com.twittew.seawch.common.constants.thwiftjava.thwiftwanguage;
+i-impowt com.twittew.seawch.common.wewevance.featuwes.eawwybiwddocumentfeatuwes;
+impowt com.twittew.seawch.common.wesuwts.thwiftjava.fiewdhitattwibution;
+impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+impowt com.twittew.seawch.common.schema.base.schema;
+impowt c-com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt c-com.twittew.seawch.common.seawch.twittewcowwectow;
+i-impowt com.twittew.seawch.common.seawch.twittewindexseawchew;
+i-impowt com.twittew.seawch.common.utiw.anawysis.wongtewmattwibuteimpw;
+i-impowt com.twittew.seawch.common.utiw.wang.thwiftwanguageutiw;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.facets.facetwabewpwovidew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.docidtotweetidmappew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentdata;
+impowt com.twittew.seawch.eawwybiwd.eawwybiwdseawchew;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+impowt com.twittew.seawch.eawwybiwd.common.usewupdates.usewtabwe;
+impowt c-com.twittew.seawch.eawwybiwd.seawch.eawwybiwdwuceneseawchew;
+impowt com.twittew.seawch.eawwybiwd.seawch.hit;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.seawchwequestinfo;
+i-impowt c-com.twittew.seawch.eawwybiwd.seawch.simpweseawchwesuwts;
+impowt com.twittew.seawch.eawwybiwd.seawch.facets.abstwactfacettewmcowwectow;
+impowt c-com.twittew.seawch.eawwybiwd.seawch.facets.tewmstatisticscowwectow;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.facets.tewmstatisticswequestinfo;
+impowt com.twittew.seawch.eawwybiwd.seawch.wewevance.scowing.wewevancequewy;
+i-impowt com.twittew.seawch.eawwybiwd.stats.eawwybiwdseawchewstats;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetcount;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetcountmetadata;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwt;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtmetadata;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwts;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.thwifttewmwequest;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.thwifttewmwesuwts;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwifttewmstatisticswesuwts;
 
-public class EarlybirdSingleSegmentSearcher extends EarlybirdLuceneSearcher {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdSingleSegmentSearcher.class);
+p-pubwic cwass eawwybiwdsingwesegmentseawchew e-extends eawwybiwdwuceneseawchew {
+  pwivate static finaw woggew wog = woggewfactowy.getwoggew(eawwybiwdsingwesegmentseawchew.cwass);
 
-  private final EarlybirdIndexSegmentAtomicReader twitterReader;
-  private final ImmutableSchemaInterface schema;
-  private final UserTable userTable;
-  private final long timeSliceID;
+  pwivate finaw eawwybiwdindexsegmentatomicweadew t-twittewweadew;
+  p-pwivate finaw immutabweschemaintewface s-schema;
+  p-pwivate finaw u-usewtabwe usewtabwe;
+  pwivate finaw wong timeswiceid;
 
-  private final EarlybirdSearcherStats searcherStats;
-  private Clock clock;
+  pwivate f-finaw eawwybiwdseawchewstats seawchewstats;
+  pwivate cwock cwock;
 
-  public EarlybirdSingleSegmentSearcher(
-      ImmutableSchemaInterface schema,
-      EarlybirdIndexSegmentAtomicReader reader,
-      UserTable userTable,
-      EarlybirdSearcherStats searcherStats,
-      Clock clock) {
-    super(reader);
-    this.schema = schema;
-    this.twitterReader = reader;
-    this.userTable = userTable;
-    this.timeSliceID = reader.getSegmentData().getTimeSliceID();
-    this.searcherStats = searcherStats;
-    this.clock = clock;
+  pubwic eawwybiwdsingwesegmentseawchew(
+      i-immutabweschemaintewface schema,
+      e-eawwybiwdindexsegmentatomicweadew w-weadew, ^^;;
+      u-usewtabwe usewtabwe, ʘwʘ
+      eawwybiwdseawchewstats s-seawchewstats, ^^
+      c-cwock cwock) {
+    s-supew(weadew);
+    t-this.schema = schema;
+    this.twittewweadew = w-weadew;
+    t-this.usewtabwe = u-usewtabwe;
+    t-this.timeswiceid = w-weadew.getsegmentdata().gettimeswiceid();
+    this.seawchewstats = seawchewstats;
+    this.cwock = cwock;
   }
 
-  public final long getTimeSliceID() {
-    return timeSliceID;
+  p-pubwic finaw wong gettimeswiceid() {
+    wetuwn timeswiceid;
   }
 
-  public EarlybirdIndexSegmentAtomicReader getTwitterIndexReader() {
-    return twitterReader;
+  pubwic eawwybiwdindexsegmentatomicweadew gettwittewindexweadew() {
+    wetuwn twittewweadew;
   }
 
   /**
-   * search() main loop.
-   * This behaves exactly like IndexSearcher.search() if a stock Lucene collector passed in.
-   * However, if a TwitterCollector is passed in, this class performs Twitter style early
-   * termination without relying on
-   * {@link org.apache.lucene.search.CollectionTerminatedException}.
-   * This method is nearly identical to TwitterIndexSearcher.search() with two differences:
-   *  1) advances to smallest docID before searching.  Important to skip incomplete docs in
-   *     realtime segments.
-   *  2) skips deletes using twitterReader
+   * s-seawch() main woop. nyaa~~
+   * this behaves exactwy wike i-indexseawchew.seawch() i-if a stock w-wucene cowwectow passed in. (///ˬ///✿)
+   * h-howevew, XD if a twittewcowwectow i-is passed in, :3 t-this cwass pewfowms twittew stywe eawwy
+   * tewmination without wewying on
+   * {@wink owg.apache.wucene.seawch.cowwectiontewminatedexception}. òωó
+   * t-this method is nyeawwy identicaw t-to twittewindexseawchew.seawch() with two d-diffewences:
+   *  1) a-advances to smowest docid befowe seawching. ^^  i-impowtant to s-skip incompwete docs in
+   *     w-weawtime segments. ^•ﻌ•^
+   *  2) s-skips dewetes using twittewweadew
    */
-  @Override
-  protected void search(List<LeafReaderContext> leaves, Weight weight, Collector coll)
-      throws IOException {
-    // If an TwitterCollector is passed in, we can do a few extra things in here, such
-    // as early termination.  Otherwise we can just fall back to IndexSearcher.search().
-    if (!(coll instanceof TwitterCollector)) {
-      super.search(leaves, weight, coll);
-      return;
+  @ovewwide
+  pwotected void seawch(wist<weafweadewcontext> w-weaves, σωσ weight w-weight, (ˆ ﻌ ˆ)♡ cowwectow c-coww)
+      thwows ioexception {
+    // i-if an t-twittewcowwectow is passed in, nyaa~~ w-we can do a few extwa things in hewe, such
+    // as eawwy tewmination. ʘwʘ  othewwise w-we can just faww b-back to indexseawchew.seawch(). ^•ﻌ•^
+    if (!(coww instanceof twittewcowwectow)) {
+      s-supew.seawch(weaves, rawr x3 w-weight, 🥺 coww);
+      wetuwn;
     }
 
-    TwitterCollector collector = (TwitterCollector) coll;
-    if (collector.isTerminated()) {
-      return;
+    twittewcowwectow c-cowwectow = (twittewcowwectow) coww;
+    if (cowwectow.istewminated()) {
+      wetuwn;
     }
 
-    LOG.debug("Starting segment {}", timeSliceID);
+    wog.debug("stawting s-segment {}", timeswiceid);
 
-    // Notify the collector that we're starting this segment, and check for early
-    // termination criteria again.  setNextReader() performs 'expensive' early
-    // termination checks in some implementations such as TwitterEarlyTerminationCollector.
-    LeafCollector leafCollector = collector.getLeafCollector(twitterReader.getContext());
-    if (collector.isTerminated()) {
-      return;
+    // notify the cowwectow t-that we'we s-stawting this segment, ʘwʘ and check fow eawwy
+    // tewmination cwitewia a-again. (˘ω˘)  setnextweadew() pewfowms 'expensive' e-eawwy
+    // tewmination checks in some impwementations such a-as twitteweawwytewminationcowwectow. o.O
+    weafcowwectow w-weafcowwectow = cowwectow.getweafcowwectow(twittewweadew.getcontext());
+    if (cowwectow.istewminated()) {
+      wetuwn;
     }
 
-    // Initialize the scorer:
-    // Note that constructing the scorer may actually do real work, such as advancing to the
-    // first hit.
-    // The scorer may be null if we can tell right away that the query has no hits: e.g. if the
-    // first hit does not actually exist.
-    Scorer scorer = weight.scorer(twitterReader.getContext());
-    if (scorer == null) {
-      LOG.debug("Scorer was null, not searching segment {}", timeSliceID);
-      collector.finishSegment(DocIdSetIterator.NO_MORE_DOCS);
-      return;
+    // i-initiawize the scowew:
+    // nyote t-that constwucting t-the scowew may actuawwy do w-weaw wowk, σωσ such as advancing to t-the
+    // fiwst h-hit. (ꈍᴗꈍ)
+    // the s-scowew may be nyuww if we can t-teww wight away t-that the quewy has nyo hits: e.g. (ˆ ﻌ ˆ)♡ if the
+    // f-fiwst hit does nyot a-actuawwy exist. o.O
+    s-scowew scowew = weight.scowew(twittewweadew.getcontext());
+    if (scowew == n-nyuww) {
+      wog.debug("scowew w-was nyuww, :3 n-nyot seawching segment {}", -.- timeswiceid);
+      cowwectow.finishsegment(docidsetitewatow.no_mowe_docs);
+      wetuwn;
     }
-    leafCollector.setScorer(scorer);
+    weafcowwectow.setscowew(scowew);
 
-    // Make sure to start searching at the smallest docID.
-    DocIdSetIterator docIdSetIterator = scorer.iterator();
-    int smallestDocId = twitterReader.getSmallestDocID();
-    int docID = docIdSetIterator.advance(smallestDocId);
+    // m-make suwe t-to stawt seawching a-at the smowest d-docid. ( ͡o ω ͡o )
+    docidsetitewatow d-docidsetitewatow = scowew.itewatow();
+    int smowestdocid = twittewweadew.getsmowestdocid();
+    int docid = docidsetitewatow.advance(smowestdocid);
 
-    // Collect results.
-    while (docID != DocIdSetIterator.NO_MORE_DOCS) {
-      // Exclude deleted docs.
-      if (!twitterReader.getDeletesView().isDeleted(docID)) {
-        leafCollector.collect(docID);
+    // c-cowwect wesuwts. /(^•ω•^)
+    whiwe (docid != d-docidsetitewatow.no_mowe_docs) {
+      // excwude deweted docs. (⑅˘꒳˘)
+      i-if (!twittewweadew.getdewetesview().isdeweted(docid)) {
+        weafcowwectow.cowwect(docid);
       }
 
-      // Check if we're done after we consumed the document.
-      if (collector.isTerminated()) {
-        break;
+      // c-check if we'we done aftew w-we consumed t-the document. òωó
+      i-if (cowwectow.istewminated()) {
+        b-bweak;
       }
 
-      docID = docIdSetIterator.nextDoc();
+      d-docid = docidsetitewatow.nextdoc();
     }
 
-    // Always finish the segment, providing the last docID advanced to.
-    collector.finishSegment(docID);
+    // awways finish the segment, 🥺 pwoviding the wast docid advanced to. (ˆ ﻌ ˆ)♡
+    cowwectow.finishsegment(docid);
   }
 
-  @Override
-  public void fillFacetResults(
-      AbstractFacetTermCollector collector, ThriftSearchResults searchResults)
-      throws IOException {
-    if (searchResults == null || searchResults.getResultsSize() == 0) {
-      return;
+  @ovewwide
+  pubwic v-void fiwwfacetwesuwts(
+      a-abstwactfacettewmcowwectow c-cowwectow, -.- thwiftseawchwesuwts s-seawchwesuwts)
+      thwows ioexception {
+    if (seawchwesuwts == nyuww || s-seawchwesuwts.getwesuwtssize() == 0) {
+      w-wetuwn;
     }
 
-    EarlybirdIndexSegmentData segmentData = twitterReader.getSegmentData();
-    collector.resetFacetLabelProviders(
-        segmentData.getFacetLabelProviders(), segmentData.getFacetIDMap());
-    DocIDToTweetIDMapper docIdMapper = segmentData.getDocIDToTweetIDMapper();
-    for (ThriftSearchResult result : searchResults.getResults()) {
-      int docId = docIdMapper.getDocID(result.getId());
-      if (docId < 0) {
-        continue;
+    eawwybiwdindexsegmentdata s-segmentdata = twittewweadew.getsegmentdata();
+    cowwectow.wesetfacetwabewpwovidews(
+        segmentdata.getfacetwabewpwovidews(), σωσ segmentdata.getfacetidmap());
+    d-docidtotweetidmappew d-docidmappew = segmentdata.getdocidtotweetidmappew();
+    f-fow (thwiftseawchwesuwt w-wesuwt : seawchwesuwts.getwesuwts()) {
+      int docid = docidmappew.getdocid(wesuwt.getid());
+      if (docid < 0) {
+        c-continue;
       }
 
-      segmentData.getFacetCountingArray().collectForDocId(docId, collector);
-      collector.fillResultAndClear(result);
+      s-segmentdata.getfacetcountingawway().cowwectfowdocid(docid, >_< cowwectow);
+      c-cowwectow.fiwwwesuwtandcweaw(wesuwt);
     }
   }
 
-  @Override
-  public TermStatisticsCollector.TermStatisticsSearchResults collectTermStatistics(
-      TermStatisticsRequestInfo searchRequestInfo,
-      EarlybirdSearcher searcher, int requestDebugMode) throws IOException {
-    TermStatisticsCollector collector = new TermStatisticsCollector(
-        schema, searchRequestInfo, searcherStats, clock, requestDebugMode);
+  @ovewwide
+  p-pubwic tewmstatisticscowwectow.tewmstatisticsseawchwesuwts c-cowwecttewmstatistics(
+      tewmstatisticswequestinfo s-seawchwequestinfo, :3
+      e-eawwybiwdseawchew seawchew, OwO i-int wequestdebugmode) t-thwows ioexception {
+    t-tewmstatisticscowwectow cowwectow = nyew tewmstatisticscowwectow(
+        s-schema, seawchwequestinfo, rawr seawchewstats, (///ˬ///✿) c-cwock, w-wequestdebugmode);
 
-    search(searchRequestInfo.getLuceneQuery(), collector);
-    searcher.maybeSetCollectorDebugInfo(collector);
-    return collector.getResults();
+    seawch(seawchwequestinfo.getwucenequewy(), c-cowwectow);
+    seawchew.maybesetcowwectowdebuginfo(cowwectow);
+    wetuwn cowwectow.getwesuwts();
   }
 
-  /** This method is only used for debugging, so it's not optimized for speed */
-  @Override
-  public void explainSearchResults(SearchRequestInfo searchRequestInfo,
-                                   SimpleSearchResults hits,
-                                   ThriftSearchResults searchResults) throws IOException {
-    Weight weight =
-        createWeight(rewrite(searchRequestInfo.getLuceneQuery()), ScoreMode.COMPLETE, 1.0f);
+  /** t-this method is o-onwy used fow debugging, ^^ s-so it's nyot optimized fow speed */
+  @ovewwide
+  pubwic v-void expwainseawchwesuwts(seawchwequestinfo seawchwequestinfo, XD
+                                   simpweseawchwesuwts hits, UwU
+                                   t-thwiftseawchwesuwts s-seawchwesuwts) thwows ioexception {
+    w-weight weight =
+        c-cweateweight(wewwite(seawchwequestinfo.getwucenequewy()), o.O s-scowemode.compwete, 😳 1.0f);
 
-    DocIDToTweetIDMapper docIdMapper = twitterReader.getSegmentData().getDocIDToTweetIDMapper();
-    for (int i = 0; i < hits.numHits(); i++) {
-      final Hit hit = hits.getHit(i);
-      Preconditions.checkState(hit.getTimeSliceID() == timeSliceID,
-          "hit: " + hit.toString() + " is not in timeslice: " + timeSliceID);
-      final ThriftSearchResult result = searchResults.getResults().get(i);
-      if (!result.isSetMetadata()) {
-        result.setMetadata(new ThriftSearchResultMetadata()
-            .setPenguinVersion(EarlybirdConfig.getPenguinVersionByte()));
+    docidtotweetidmappew docidmappew = t-twittewweadew.getsegmentdata().getdocidtotweetidmappew();
+    fow (int i = 0; i < hits.numhits(); i-i++) {
+      f-finaw hit hit = hits.gethit(i);
+      p-pweconditions.checkstate(hit.gettimeswiceid() == timeswiceid, (˘ω˘)
+          "hit: " + h-hit.tostwing() + " i-is n-nyot in timeswice: " + timeswiceid);
+      finaw thwiftseawchwesuwt wesuwt = seawchwesuwts.getwesuwts().get(i);
+      if (!wesuwt.issetmetadata()) {
+        wesuwt.setmetadata(new thwiftseawchwesuwtmetadata()
+            .setpenguinvewsion(eawwybiwdconfig.getpenguinvewsionbyte()));
       }
 
-      final int docIdToExplain = docIdMapper.getDocID(hit.getStatusID());
-      if (docIdToExplain == DocIDToTweetIDMapper.ID_NOT_FOUND) {
-        result.getMetadata().setExplanation(
-            "ERROR: Could not find doc ID to explain for " + hit.toString());
-      } else {
-        Explanation explanation;
-        FieldHitAttribution fieldHitAttribution = result.getMetadata().getFieldHitAttribution();
-        if (weight instanceof RelevanceQuery.RelevanceWeight && fieldHitAttribution != null) {
-          RelevanceQuery.RelevanceWeight relevanceWeight =
-              (RelevanceQuery.RelevanceWeight) weight;
+      finaw int docidtoexpwain = docidmappew.getdocid(hit.getstatusid());
+      if (docidtoexpwain == docidtotweetidmappew.id_not_found) {
+        w-wesuwt.getmetadata().setexpwanation(
+            "ewwow: c-couwd nyot find doc id to expwain fow " + hit.tostwing());
+      } e-ewse {
+        e-expwanation expwanation;
+        f-fiewdhitattwibution fiewdhitattwibution = w-wesuwt.getmetadata().getfiewdhitattwibution();
+        if (weight instanceof w-wewevancequewy.wewevanceweight && f-fiewdhitattwibution != nyuww) {
+          w-wewevancequewy.wewevanceweight wewevanceweight =
+              (wewevancequewy.wewevanceweight) w-weight;
 
-          explanation = relevanceWeight.explain(
-              twitterReader.getContext(), docIdToExplain, fieldHitAttribution);
-        } else {
-          explanation = weight.explain(twitterReader.getContext(), docIdToExplain);
+          e-expwanation = wewevanceweight.expwain(
+              twittewweadew.getcontext(), 🥺 d-docidtoexpwain, f-fiewdhitattwibution);
+        } e-ewse {
+          e-expwanation = w-weight.expwain(twittewweadew.getcontext(), ^^ d-docidtoexpwain);
         }
-        hit.setHasExplanation(true);
-        result.getMetadata().setExplanation(explanation.toString());
+        h-hit.sethasexpwanation(twue);
+        w-wesuwt.getmetadata().setexpwanation(expwanation.tostwing());
       }
     }
   }
 
-  @Override
-  public void fillFacetResultMetadata(Map<Term, ThriftFacetCount> facetResults,
-                                      ImmutableSchemaInterface documentSchema,
-                                      byte debugMode) throws IOException {
-    FacetLabelProvider provider = twitterReader.getFacetLabelProviders(
-            documentSchema.getFacetFieldByFacetName(EarlybirdFieldConstant.TWIMG_FACET));
+  @ovewwide
+  p-pubwic void fiwwfacetwesuwtmetadata(map<tewm, >w< t-thwiftfacetcount> f-facetwesuwts, ^^;;
+                                      i-immutabweschemaintewface documentschema, (˘ω˘)
+                                      b-byte debugmode) thwows ioexception {
+    f-facetwabewpwovidew pwovidew = t-twittewweadew.getfacetwabewpwovidews(
+            d-documentschema.getfacetfiewdbyfacetname(eawwybiwdfiewdconstant.twimg_facet));
 
-    FacetLabelProvider.FacetLabelAccessor photoAccessor = null;
+    f-facetwabewpwovidew.facetwabewaccessow photoaccessow = nyuww;
 
-    if (provider != null) {
-      photoAccessor = provider.getLabelAccessor();
+    if (pwovidew != n-nyuww) {
+      photoaccessow = p-pwovidew.getwabewaccessow();
     }
 
-    for (Entry<Term, ThriftFacetCount> facetResult : facetResults.entrySet()) {
-      Term term = facetResult.getKey();
-      ThriftFacetCount facetCount = facetResult.getValue();
+    fow (entwy<tewm, OwO t-thwiftfacetcount> facetwesuwt : f-facetwesuwts.entwyset()) {
+      tewm tewm = facetwesuwt.getkey();
+      thwiftfacetcount facetcount = f-facetwesuwt.getvawue();
 
-      ThriftFacetCountMetadata metadata = facetCount.getMetadata();
-      if (metadata == null) {
-        metadata = new ThriftFacetCountMetadata();
-        facetCount.setMetadata(metadata);
+      thwiftfacetcountmetadata m-metadata = facetcount.getmetadata();
+      i-if (metadata == nyuww) {
+        metadata = nyew thwiftfacetcountmetadata();
+        f-facetcount.setmetadata(metadata);
       }
 
-      fillTermMetadata(term, metadata, photoAccessor, debugMode);
+      fiwwtewmmetadata(tewm, m-metadata, (ꈍᴗꈍ) p-photoaccessow, òωó d-debugmode);
     }
   }
 
-  @Override
-  public void fillTermStatsMetadata(ThriftTermStatisticsResults termStatsResults,
-                                    ImmutableSchemaInterface documentSchema,
-                                    byte debugMode) throws IOException {
+  @ovewwide
+  pubwic void fiwwtewmstatsmetadata(thwifttewmstatisticswesuwts t-tewmstatswesuwts, ʘwʘ
+                                    i-immutabweschemaintewface documentschema, ʘwʘ
+                                    b-byte debugmode) thwows ioexception {
 
-    FacetLabelProvider provider = twitterReader.getFacetLabelProviders(
-        documentSchema.getFacetFieldByFacetName(EarlybirdFieldConstant.TWIMG_FACET));
+    f-facetwabewpwovidew pwovidew = t-twittewweadew.getfacetwabewpwovidews(
+        documentschema.getfacetfiewdbyfacetname(eawwybiwdfiewdconstant.twimg_facet));
 
-    FacetLabelProvider.FacetLabelAccessor photoAccessor = null;
+    f-facetwabewpwovidew.facetwabewaccessow p-photoaccessow = nyuww;
 
-    if (provider != null) {
-      photoAccessor = provider.getLabelAccessor();
+    i-if (pwovidew != n-nyuww) {
+      p-photoaccessow = p-pwovidew.getwabewaccessow();
     }
 
-    for (Map.Entry<ThriftTermRequest, ThriftTermResults> entry
-         : termStatsResults.termResults.entrySet()) {
+    fow (map.entwy<thwifttewmwequest, nyaa~~ t-thwifttewmwesuwts> e-entwy
+         : t-tewmstatswesuwts.tewmwesuwts.entwyset()) {
 
-      ThriftTermRequest termRequest = entry.getKey();
-      if (termRequest.getFieldName().isEmpty()) {
+      t-thwifttewmwequest t-tewmwequest = e-entwy.getkey();
+      i-if (tewmwequest.getfiewdname().isempty()) {
+        c-continue;
+      }
+      schema.fiewdinfo f-facetfiewd = schema.getfacetfiewdbyfacetname(tewmwequest.getfiewdname());
+      t-tewm tewm = nyuww;
+      if (facetfiewd != n-nyuww) {
+        t-tewm = nyew tewm(facetfiewd.getname(), UwU t-tewmwequest.gettewm());
+      }
+      if (tewm == nyuww) {
         continue;
       }
-      Schema.FieldInfo facetField = schema.getFacetFieldByFacetName(termRequest.getFieldName());
-      Term term = null;
-      if (facetField != null) {
-        term = new Term(facetField.getName(), termRequest.getTerm());
-      }
-      if (term == null) {
-        continue;
+
+      thwiftfacetcountmetadata m-metadata = e-entwy.getvawue().getmetadata();
+      if (metadata == nyuww) {
+        m-metadata = nyew thwiftfacetcountmetadata();
+        entwy.getvawue().setmetadata(metadata);
       }
 
-      ThriftFacetCountMetadata metadata = entry.getValue().getMetadata();
-      if (metadata == null) {
-        metadata = new ThriftFacetCountMetadata();
-        entry.getValue().setMetadata(metadata);
-      }
-
-      fillTermMetadata(term, metadata, photoAccessor, debugMode);
+      fiwwtewmmetadata(tewm, (⑅˘꒳˘) m-metadata, photoaccessow, (˘ω˘) d-debugmode);
     }
   }
 
-  private void fillTermMetadata(Term term, ThriftFacetCountMetadata metadata,
-                                FacetLabelProvider.FacetLabelAccessor photoAccessor,
-                                byte debugMode) throws IOException {
-    boolean isTwimg = term.field().equals(EarlybirdFieldConstant.TWIMG_LINKS_FIELD.getFieldName());
-    int internalDocID = DocIDToTweetIDMapper.ID_NOT_FOUND;
-    long statusID = -1;
-    long userID = -1;
-    Term facetTerm = term;
+  pwivate void f-fiwwtewmmetadata(tewm t-tewm, :3 thwiftfacetcountmetadata metadata, (˘ω˘)
+                                facetwabewpwovidew.facetwabewaccessow photoaccessow, nyaa~~
+                                b-byte debugmode) t-thwows ioexception {
+    b-boowean i-istwimg = tewm.fiewd().equaws(eawwybiwdfiewdconstant.twimg_winks_fiewd.getfiewdname());
+    int intewnawdocid = d-docidtotweetidmappew.id_not_found;
+    w-wong statusid = -1;
+    wong usewid = -1;
+    t-tewm facettewm = tewm;
 
-    // Deal with the from_user_id facet.
-    if (term.field().equals(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName())) {
-      userID = Long.parseLong(term.text());
-      facetTerm = new Term(EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName(),
-          LongTermAttributeImpl.copyIntoNewBytesRef(userID));
-    } else if (isTwimg) {
-      statusID = Long.parseLong(term.text());
-      internalDocID = twitterReader.getSegmentData().getDocIDToTweetIDMapper().getDocID(statusID);
+    // deaw with t-the fwom_usew_id facet. (U ﹏ U)
+    i-if (tewm.fiewd().equaws(eawwybiwdfiewdconstant.fwom_usew_id_csf.getfiewdname())) {
+      u-usewid = wong.pawsewong(tewm.text());
+      f-facettewm = n-nyew tewm(eawwybiwdfiewdconstant.fwom_usew_id_fiewd.getfiewdname(), nyaa~~
+          wongtewmattwibuteimpw.copyintonewbyteswef(usewid));
+    } ewse if (istwimg) {
+      s-statusid = wong.pawsewong(tewm.text());
+      intewnawdocid = t-twittewweadew.getsegmentdata().getdocidtotweetidmappew().getdocid(statusid);
     }
 
-    if (internalDocID == DocIDToTweetIDMapper.ID_NOT_FOUND) {
-      // If this is not a twimg, this is how statusID should be looked up
+    i-if (intewnawdocid == d-docidtotweetidmappew.id_not_found) {
+      // i-if this is nyot a twimg, ^^;; t-this is how s-statusid shouwd b-be wooked up
       //
-      // If this is a twimg but we couldn't find the internalDocID, that means this segment,
-      // or maybe even this earlybird, does not contain the original tweet. Then we treat this as
-      // a normal facet for now
-      internalDocID = twitterReader.getOldestDocID(facetTerm);
-      if (internalDocID >= 0) {
-        statusID =
-            twitterReader.getSegmentData().getDocIDToTweetIDMapper().getTweetID(internalDocID);
-      } else {
-        statusID = -1;
+      // if this is a twimg b-but we couwdn't find the intewnawdocid, OwO that m-means this segment, nyaa~~
+      // o-ow m-maybe even this eawwybiwd, UwU does nyot contain the owiginaw tweet. 😳 then we tweat this a-as
+      // a nyowmaw facet f-fow nyow
+      intewnawdocid = twittewweadew.getowdestdocid(facettewm);
+      i-if (intewnawdocid >= 0) {
+        statusid =
+            twittewweadew.getsegmentdata().getdocidtotweetidmappew().gettweetid(intewnawdocid);
+      } e-ewse {
+        statusid = -1;
       }
     }
 
-    // make sure tweet is not deleted
-    if (internalDocID < 0 || twitterReader.getDeletesView().isDeleted(internalDocID)) {
-      return;
+    // m-make suwe t-tweet is nyot deweted
+    i-if (intewnawdocid < 0 || t-twittewweadew.getdewetesview().isdeweted(intewnawdocid)) {
+      w-wetuwn;
     }
 
-    if (metadata.isSetStatusId()
-        && metadata.getStatusId() > 0
-        && metadata.getStatusId() <= statusID) {
-      // we already have the metadata for this facet from an earlier tweet
-      return;
+    if (metadata.issetstatusid()
+        && metadata.getstatusid() > 0
+        && metadata.getstatusid() <= statusid) {
+      // w-we awweady have the metadata f-fow this facet fwom an eawwiew tweet
+      wetuwn;
     }
 
-    // now check if this tweet is offensive, e.g. antisocial, nsfw, sensitive
-    EarlybirdDocumentFeatures documentFeatures = new EarlybirdDocumentFeatures(twitterReader);
-    documentFeatures.advance(internalDocID);
-    boolean isOffensiveFlagSet =
-        documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_OFFENSIVE_FLAG);
-    boolean isSensitiveFlagSet =
-        documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_SENSITIVE_CONTENT);
-    boolean offensive = isOffensiveFlagSet || isSensitiveFlagSet;
+    // nyow check if t-this tweet is offensive, 😳 e.g. (ˆ ﻌ ˆ)♡ antisociaw, nysfw, (✿oωo) sensitive
+    eawwybiwddocumentfeatuwes d-documentfeatuwes = n-nyew eawwybiwddocumentfeatuwes(twittewweadew);
+    d-documentfeatuwes.advance(intewnawdocid);
+    boowean isoffensivefwagset =
+        d-documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.is_offensive_fwag);
+    b-boowean issensitivefwagset =
+        d-documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.is_sensitive_content);
+    boowean o-offensive = isoffensivefwagset || issensitivefwagset;
 
-    // also, user should not be marked as antisocial, nsfw or offensive
-    if (userID < 0) {
-      userID = documentFeatures.getFeatureValue(EarlybirdFieldConstant.FROM_USER_ID_CSF);
+    // awso, nyaa~~ usew shouwd n-nyot be mawked as antisociaw, ^^ nysfw ow offensive
+    i-if (usewid < 0) {
+      u-usewid = documentfeatuwes.getfeatuwevawue(eawwybiwdfiewdconstant.fwom_usew_id_csf);
     }
-    offensive |= userTable.isSet(userID,
-        UserTable.ANTISOCIAL_BIT
-        | UserTable.OFFENSIVE_BIT
-        | UserTable.NSFW_BIT);
+    o-offensive |= usewtabwe.isset(usewid, (///ˬ///✿)
+        usewtabwe.antisociaw_bit
+        | usewtabwe.offensive_bit
+        | u-usewtabwe.nsfw_bit);
 
-    metadata.setStatusId(statusID);
-    metadata.setTwitterUserId(userID);
-    metadata.setCreated_at(twitterReader.getSegmentData().getTimeMapper().getTime(internalDocID));
-    int langId = (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.LANGUAGE);
-    Locale lang = ThriftLanguageUtil.getLocaleOf(ThriftLanguage.findByValue(langId));
-    metadata.setStatusLanguage(ThriftLanguageUtil.getThriftLanguageOf(lang));
-    metadata.setStatusPossiblySensitive(offensive);
-    if (isTwimg && photoAccessor != null && !metadata.isSetNativePhotoUrl()) {
-      int termID = twitterReader.getTermID(term);
-      if (termID != EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
-        BytesRef termPayload = photoAccessor.getTermPayload(termID);
-        if (termPayload != null) {
-          metadata.setNativePhotoUrl(termPayload.utf8ToString());
+    metadata.setstatusid(statusid);
+    metadata.settwittewusewid(usewid);
+    metadata.setcweated_at(twittewweadew.getsegmentdata().gettimemappew().gettime(intewnawdocid));
+    int wangid = (int) d-documentfeatuwes.getfeatuwevawue(eawwybiwdfiewdconstant.wanguage);
+    w-wocawe wang = t-thwiftwanguageutiw.getwocaweof(thwiftwanguage.findbyvawue(wangid));
+    m-metadata.setstatuswanguage(thwiftwanguageutiw.getthwiftwanguageof(wang));
+    metadata.setstatuspossibwysensitive(offensive);
+    if (istwimg && p-photoaccessow != n-nyuww && !metadata.issetnativephotouww()) {
+      int tewmid = twittewweadew.gettewmid(tewm);
+      if (tewmid != eawwybiwdindexsegmentatomicweadew.tewm_not_found) {
+        b-byteswef tewmpaywoad = photoaccessow.gettewmpaywoad(tewmid);
+        i-if (tewmpaywoad != nyuww) {
+          metadata.setnativephotouww(tewmpaywoad.utf8tostwing());
         }
       }
     }
 
-    if (debugMode > 3) {
-      StringBuilder sb = new StringBuilder(256);
-      if (metadata.isSetExplanation()) {
-        sb.append(metadata.getExplanation());
+    i-if (debugmode > 3) {
+      s-stwingbuiwdew sb = nyew stwingbuiwdew(256);
+      i-if (metadata.issetexpwanation()) {
+        s-sb.append(metadata.getexpwanation());
       }
-      sb.append(String.format("TweetId=%d (%s %s), UserId=%d (%s %s), Term=%s\n",
-          statusID,
-          isOffensiveFlagSet ? "OFFENSIVE" : "",
-          isSensitiveFlagSet ? "SENSITIVE" : "",
-          userID,
-          userTable.isSet(userID, UserTable.ANTISOCIAL_BIT) ? "ANTISOCIAL" : "",
-          userTable.isSet(userID, UserTable.NSFW_BIT) ? "NSFW" : "",
-          term.toString()));
-      metadata.setExplanation(sb.toString());
+      s-sb.append(stwing.fowmat("tweetid=%d (%s %s), 😳 usewid=%d (%s %s), òωó tewm=%s\n", ^^;;
+          s-statusid, rawr
+          isoffensivefwagset ? "offensive" : "", (ˆ ﻌ ˆ)♡
+          issensitivefwagset ? "sensitive" : "", XD
+          u-usewid, >_<
+          usewtabwe.isset(usewid, (˘ω˘) usewtabwe.antisociaw_bit) ? "antisociaw" : "", 😳
+          usewtabwe.isset(usewid, o.O u-usewtabwe.nsfw_bit) ? "nsfw" : "", (ꈍᴗꈍ)
+          t-tewm.tostwing()));
+      m-metadata.setexpwanation(sb.tostwing());
     }
   }
 
-  public ImmutableSchemaInterface getSchemaSnapshot() {
-    return schema;
+  p-pubwic i-immutabweschemaintewface getschemasnapshot() {
+    w-wetuwn schema;
   }
 
-  @Override
-  public CollectionStatistics collectionStatistics(String field) throws IOException {
-    return TwitterIndexSearcher.collectionStatistics(field, getIndexReader());
+  @ovewwide
+  pubwic cowwectionstatistics cowwectionstatistics(stwing f-fiewd) thwows ioexception {
+    w-wetuwn twittewindexseawchew.cowwectionstatistics(fiewd, rawr x3 getindexweadew());
   }
 
-  @Override
-  public TermStatistics termStatistics(Term term, int docFreq, long totalTermFreq) {
-    return TwitterIndexSearcher.termStats(term, docFreq, totalTermFreq);
+  @ovewwide
+  p-pubwic t-tewmstatistics tewmstatistics(tewm t-tewm, ^^ int docfweq, OwO wong totawtewmfweq) {
+    w-wetuwn twittewindexseawchew.tewmstats(tewm, ^^ d-docfweq, :3 totawtewmfweq);
   }
 }

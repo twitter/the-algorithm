@@ -1,120 +1,120 @@
-package com.twitter.home_mixer.util
+package com.twittew.home_mixew.utiw
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
+impowt com.twittew.home_mixew.modew.homefeatuwes._
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
 
-object ReplyRetweetUtil {
+o-object wepwywetweetutiw {
 
-  def isEligibleReply(candidate: CandidateWithFeatures[TweetCandidate]): Boolean = {
-    candidate.features.getOrElse(InReplyToTweetIdFeature, None).nonEmpty &&
-    !candidate.features.getOrElse(IsRetweetFeature, false)
+  d-def isewigibwewepwy(candidate: candidatewithfeatuwes[tweetcandidate]): b-boowean = {
+    c-candidate.featuwes.getowewse(inwepwytotweetidfeatuwe, :3 n-nyone).nonempty &&
+    !candidate.featuwes.getowewse(iswetweetfeatuwe, (⑅˘꒳˘) fawse)
   }
 
   /**
-   * Builds a map from reply tweet to all ancestors that are also hydrated candidates. If a reply
-   * does not have any ancestors which are also candidates, it will not add to the returned Map.
-   * Make sure ancestors are bottom-up ordered such that:
-   * (1) if parent tweet is a candidate, it should be the first item at the returned ancestors;
-   * (2) if root tweet is a candidate, it should be the last item at the returned ancestors.
-   * Retweets of replies or replies to retweets are not included.
+   * buiwds a map fwom wepwy tweet to aww a-ancestows that awe awso hydwated candidates. (///ˬ///✿) if a-a wepwy
+   * does nyot have any a-ancestows which awe awso candidates, ^^;; it wiww nyot add to the wetuwned m-map. >_<
+   * make suwe ancestows a-awe bottom-up o-owdewed such that:
+   * (1) if pawent tweet is a candidate, rawr x3 it shouwd be the fiwst i-item at the wetuwned ancestows;
+   * (2) if woot tweet is a candidate, /(^•ω•^) it shouwd b-be the wast item at the wetuwned a-ancestows. :3
+   * w-wetweets o-of wepwies ow wepwies t-to wetweets awe nyot incwuded. (ꈍᴗꈍ)
    */
-  def replyToAncestorTweetCandidatesMap(
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Map[Long, Seq[CandidateWithFeatures[TweetCandidate]]] = {
-    val replyToAncestorTweetIdsMap: Map[Long, Seq[Long]] =
-      candidates.flatMap { candidate =>
-        if (isEligibleReply(candidate)) {
-          val ancestorIds =
-            if (candidate.features.getOrElse(AncestorsFeature, Seq.empty).nonEmpty) {
-              candidate.features.getOrElse(AncestorsFeature, Seq.empty).map(_.tweetId)
-            } else {
-              Seq(
-                candidate.features.getOrElse(InReplyToTweetIdFeature, None),
-                candidate.features.getOrElse(ConversationModuleIdFeature, None)
-              ).flatten.distinct
+  def w-wepwytoancestowtweetcandidatesmap(
+    candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): m-map[wong, /(^•ω•^) seq[candidatewithfeatuwes[tweetcandidate]]] = {
+    vaw wepwytoancestowtweetidsmap: map[wong, (⑅˘꒳˘) seq[wong]] =
+      candidates.fwatmap { candidate =>
+        if (isewigibwewepwy(candidate)) {
+          vaw ancestowids =
+            i-if (candidate.featuwes.getowewse(ancestowsfeatuwe, ( ͡o ω ͡o ) seq.empty).nonempty) {
+              c-candidate.featuwes.getowewse(ancestowsfeatuwe, òωó s-seq.empty).map(_.tweetid)
+            } e-ewse {
+              seq(
+                candidate.featuwes.getowewse(inwepwytotweetidfeatuwe, (⑅˘꒳˘) nyone),
+                c-candidate.featuwes.getowewse(convewsationmoduweidfeatuwe, XD n-none)
+              ).fwatten.distinct
             }
-          Some(candidate.candidate.id -> ancestorIds)
-        } else {
-          None
+          some(candidate.candidate.id -> a-ancestowids)
+        } e-ewse {
+          nyone
         }
-      }.toMap
+      }.tomap
 
-    val ancestorTweetIds = replyToAncestorTweetIdsMap.values.flatten.toSet
-    val ancestorTweetsMapById: Map[Long, CandidateWithFeatures[TweetCandidate]] = candidates
-      .filter { maybeAncestor =>
-        ancestorTweetIds.contains(maybeAncestor.candidate.id)
-      }.map { ancestor =>
-        ancestor.candidate.id -> ancestor
-      }.toMap
+    v-vaw ancestowtweetids = w-wepwytoancestowtweetidsmap.vawues.fwatten.toset
+    vaw ancestowtweetsmapbyid: map[wong, -.- candidatewithfeatuwes[tweetcandidate]] = c-candidates
+      .fiwtew { maybeancestow =>
+        a-ancestowtweetids.contains(maybeancestow.candidate.id)
+      }.map { ancestow =>
+        a-ancestow.candidate.id -> a-ancestow
+      }.tomap
 
-    replyToAncestorTweetIdsMap
-      .mapValues { ancestorTweetIds =>
-        ancestorTweetIds.flatMap { ancestorTweetId =>
-          ancestorTweetsMapById.get(ancestorTweetId)
+    wepwytoancestowtweetidsmap
+      .mapvawues { ancestowtweetids =>
+        ancestowtweetids.fwatmap { ancestowtweetid =>
+          ancestowtweetsmapbyid.get(ancestowtweetid)
         }
-      }.filter {
-        case (reply, ancestors) =>
-          ancestors.nonEmpty
+      }.fiwtew {
+        case (wepwy, :3 a-ancestows) =>
+          a-ancestows.nonempty
       }
   }
 
   /**
-   * This map is the opposite of [[replyToAncestorTweetCandidatesMap]].
-   * Builds a map from ancestor tweet to all descendant replies that are also hydrated candidates.
-   * Currently, we only return two ancestors at most: one is inReplyToTweetId and the other
-   * is conversationId.
-   * Retweets of replies are not included.
+   * this map i-is the opposite o-of [[wepwytoancestowtweetcandidatesmap]]. nyaa~~
+   * buiwds a-a map fwom ancestow tweet to aww descendant wepwies that awe a-awso hydwated candidates. 😳
+   * cuwwentwy, (⑅˘꒳˘) we onwy wetuwn two ancestows at most: o-one is inwepwytotweetid and the o-othew
+   * is c-convewsationid. nyaa~~
+   * w-wetweets of wepwies awe nyot i-incwuded. OwO
    */
-  def ancestorTweetIdToDescendantRepliesMap(
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Map[Long, Seq[CandidateWithFeatures[TweetCandidate]]] = {
-    val tweetToCandidateMap = candidates.map(c => c.candidate.id -> c).toMap
-    replyToAncestorTweetCandidatesMap(candidates).toSeq
-      .flatMap {
-        case (reply, ancestorTweets) =>
-          ancestorTweets.map { ancestor =>
-            (ancestor.candidate.id, reply)
+  d-def ancestowtweetidtodescendantwepwiesmap(
+    c-candidates: s-seq[candidatewithfeatuwes[tweetcandidate]]
+  ): map[wong, rawr x3 seq[candidatewithfeatuwes[tweetcandidate]]] = {
+    vaw t-tweettocandidatemap = c-candidates.map(c => c-c.candidate.id -> c-c).tomap
+    w-wepwytoancestowtweetcandidatesmap(candidates).toseq
+      .fwatmap {
+        case (wepwy, XD ancestowtweets) =>
+          ancestowtweets.map { a-ancestow =>
+            (ancestow.candidate.id, σωσ wepwy)
           }
-      }.groupBy { case (ancestor, reply) => ancestor }
-      .mapValues { ancestorReplyPairs =>
-        ancestorReplyPairs.map(_._2).distinct
-      }.mapValues(tweetIds => tweetIds.map(tid => tweetToCandidateMap(tid)))
+      }.gwoupby { case (ancestow, (U ᵕ U❁) wepwy) => ancestow }
+      .mapvawues { ancestowwepwypaiws =>
+        a-ancestowwepwypaiws.map(_._2).distinct
+      }.mapvawues(tweetids => tweetids.map(tid => tweettocandidatemap(tid)))
   }
 
   /**
-   * Builds a map from reply tweet to inReplyToTweet which is also a candidate.
-   * Retweets of replies or replies to retweets are not included
+   * buiwds a map f-fwom wepwy tweet t-to inwepwytotweet w-which is awso a candidate. (U ﹏ U)
+   * w-wetweets of wepwies ow wepwies t-to wetweets a-awe nyot incwuded
    */
-  def replyTweetIdToInReplyToTweetMap(
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Map[Long, CandidateWithFeatures[TweetCandidate]] = {
-    val eligibleReplyCandidates = candidates.filter { candidate =>
-      isEligibleReply(candidate) && candidate.features
-        .getOrElse(InReplyToTweetIdFeature, None)
-        .nonEmpty
+  def wepwytweetidtoinwepwytotweetmap(
+    candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): map[wong, :3 candidatewithfeatuwes[tweetcandidate]] = {
+    vaw ewigibwewepwycandidates = candidates.fiwtew { c-candidate =>
+      isewigibwewepwy(candidate) && c-candidate.featuwes
+        .getowewse(inwepwytotweetidfeatuwe, ( ͡o ω ͡o ) nyone)
+        .nonempty
     }
 
-    val inReplyToTweetIds = eligibleReplyCandidates
-      .flatMap(_.features.getOrElse(InReplyToTweetIdFeature, None))
-      .toSet
+    v-vaw i-inwepwytotweetids = ewigibwewepwycandidates
+      .fwatmap(_.featuwes.getowewse(inwepwytotweetidfeatuwe, σωσ nyone))
+      .toset
 
-    val inReplyToTweetIdToTweetMap: Map[Long, CandidateWithFeatures[TweetCandidate]] = candidates
-      .filter { maybeInReplyToTweet =>
-        inReplyToTweetIds.contains(maybeInReplyToTweet.candidate.id)
-      }.map { inReplyToTweet =>
-        inReplyToTweet.candidate.id -> inReplyToTweet
-      }.toMap
+    v-vaw inwepwytotweetidtotweetmap: m-map[wong, >w< candidatewithfeatuwes[tweetcandidate]] = candidates
+      .fiwtew { m-maybeinwepwytotweet =>
+        i-inwepwytotweetids.contains(maybeinwepwytotweet.candidate.id)
+      }.map { inwepwytotweet =>
+        inwepwytotweet.candidate.id -> inwepwytotweet
+      }.tomap
 
-    eligibleReplyCandidates.flatMap { reply =>
-      val inReplyToTweetId = reply.features.getOrElse(InReplyToTweetIdFeature, None)
-      if (inReplyToTweetId.nonEmpty) {
-        inReplyToTweetIdToTweetMap.get(inReplyToTweetId.get).map { inReplyToTweet =>
-          reply.candidate.id -> inReplyToTweet
+    ewigibwewepwycandidates.fwatmap { w-wepwy =>
+      v-vaw inwepwytotweetid = w-wepwy.featuwes.getowewse(inwepwytotweetidfeatuwe, 😳😳😳 nyone)
+      if (inwepwytotweetid.nonempty) {
+        i-inwepwytotweetidtotweetmap.get(inwepwytotweetid.get).map { i-inwepwytotweet =>
+          wepwy.candidate.id -> inwepwytotweet
         }
-      } else {
-        None
+      } e-ewse {
+        nyone
       }
-    }.toMap
+    }.tomap
   }
 }

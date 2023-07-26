@@ -1,25 +1,25 @@
-package com.twitter.tweetypie.media
+package com.twittew.tweetypie.media
 
-import com.twitter.mediaservices.commons.thriftscala.MediaKey
-import com.twitter.mediaservices.commons.thriftscala.MediaCategory
+impowt com.twittew.mediasewvices.commons.thwiftscawa.mediakey
+i-impowt com.twittew.mediasewvices.commons.thwiftscawa.mediacategowy
 
-object MediaKeyClassifier {
+o-object mediakeycwassifiew {
 
-  class Classifier(categories: Set[MediaCategory]) {
+  c-cwass cwassifiew(categowies: s-set[mediacategowy]) {
 
-    def apply(mediaKey: MediaKey): Boolean =
-      categories.contains(mediaKey.mediaCategory)
+    d-def a-appwy(mediakey: m-mediakey): boowean =
+      c-categowies.contains(mediakey.mediacategowy)
 
-    def unapply(mediaKey: MediaKey): Option[MediaKey] =
-      apply(mediaKey) match {
-        case false => None
-        case true => Some(mediaKey)
+    def unappwy(mediakey: mediakey): option[mediakey] =
+      appwy(mediakey) m-match {
+        case fawse => nyone
+        c-case twue => some(mediakey)
       }
   }
 
-  val isImage: Classifier = new Classifier(Set(MediaCategory.TweetImage))
-  val isGif: Classifier = new Classifier(Set(MediaCategory.TweetGif))
-  val isVideo: Classifier = new Classifier(
-    Set(MediaCategory.TweetVideo, MediaCategory.AmplifyVideo)
+  v-vaw isimage: cwassifiew = nyew cwassifiew(set(mediacategowy.tweetimage))
+  vaw isgif: c-cwassifiew = new cwassifiew(set(mediacategowy.tweetgif))
+  vaw i-isvideo: cwassifiew = n-nyew cwassifiew(
+    set(mediacategowy.tweetvideo, 😳 mediacategowy.ampwifyvideo)
   )
 }

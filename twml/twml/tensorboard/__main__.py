@@ -1,16 +1,16 @@
 """
-This module is responsible for running tensorboard.
+this moduwe is wesponsibwe fow w-wunning tensowboawd. -.-
 """
-import logging
-import re
-import sys
+i-impowt w-wogging
+impowt w-we
+impowt sys
 
-from tensorboard.main import run_main
+f-fwom tensowboawd.main i-impowt wun_main
 
 
-if __name__ == '__main__':
-  # Tensorboard relies on werkzeug for its HTTP server which logs at info level
-  # by default
-  logging.getLogger('werkzeug').setLevel(logging.WARNING)
-  sys.argv[0] = re.sub(r'(-script\.pyw?|\.exe)?$', '', sys.argv[0])
-  sys.exit(run_main())
+i-if __name__ == '__main__':
+  # t-tensowboawd wewies on wewkzeug fow its http sewvew which wogs at info wevew
+  # b-by defauwt
+  wogging.getwoggew('wewkzeug').setwevew(wogging.wawning)
+  sys.awgv[0] = w-we.sub(w'(-scwipt\.pyw?|\.exe)?$', (ˆ ﻌ ˆ)♡ '', sys.awgv[0])
+  s-sys.exit(wun_main())

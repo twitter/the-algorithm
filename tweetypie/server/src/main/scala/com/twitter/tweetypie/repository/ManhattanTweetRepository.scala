@@ -1,147 +1,147 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.storage.TweetStorageClient.GetStoredTweet
-import com.twitter.tweetypie.storage.TweetStorageClient.GetTweet
-import com.twitter.tweetypie.storage._
-import scala.util.control.NoStackTrace
+i-impowt com.twittew.snowfwake.id.snowfwakeid
+i-impowt c-com.twittew.stitch.notfound
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie
+i-impowt c-com.twittew.tweetypie.cwient_id.cwientidhewpew
+impowt com.twittew.tweetypie.cowe._
+impowt com.twittew.tweetypie.stowage.tweetstowagecwient.getstowedtweet
+impowt com.twittew.tweetypie.stowage.tweetstowagecwient.gettweet
+impowt com.twittew.tweetypie.stowage._
+i-impowt scawa.utiw.contwow.nostacktwace
 
-case class StorageGetTweetFailure(tweetId: TweetId, underlying: Throwable)
-    extends Exception(s"tweetId=$tweetId", underlying)
-    with NoStackTrace
+case cwass stowagegettweetfaiwuwe(tweetid: tweetid, (U ﹏ U) u-undewwying: thwowabwe)
+    extends e-exception(s"tweetid=$tweetid", :3 undewwying)
+    with nyostacktwace
 
-object ManhattanTweetRepository {
-  private[this] val logger = Logger(getClass)
+object m-manhattantweetwepositowy {
+  pwivate[this] v-vaw woggew = w-woggew(getcwass)
 
-  def apply(
-    getTweet: TweetStorageClient.GetTweet,
-    getStoredTweet: TweetStorageClient.GetStoredTweet,
-    shortCircuitLikelyPartialTweetReads: Gate[Duration],
-    statsReceiver: StatsReceiver,
-    clientIdHelper: ClientIdHelper,
-  ): TweetResultRepository.Type = {
-    def likelyAvailable(tweetId: TweetId): Boolean =
-      if (SnowflakeId.isSnowflakeId(tweetId)) {
-        val tweetAge: Duration = Time.now.since(SnowflakeId(tweetId).time)
-        !shortCircuitLikelyPartialTweetReads(tweetAge)
-      } else {
-        true // Not a snowflake id, so should definitely be available
+  def appwy(
+    gettweet: tweetstowagecwient.gettweet, ( ͡o ω ͡o )
+    getstowedtweet: t-tweetstowagecwient.getstowedtweet, σωσ
+    showtciwcuitwikewypawtiawtweetweads: gate[duwation],
+    statsweceivew: statsweceivew, >w<
+    c-cwientidhewpew: cwientidhewpew, 😳😳😳
+  ): t-tweetwesuwtwepositowy.type = {
+    d-def wikewyavaiwabwe(tweetid: t-tweetid): b-boowean =
+      if (snowfwakeid.issnowfwakeid(tweetid)) {
+        vaw tweetage: d-duwation = time.now.since(snowfwakeid(tweetid).time)
+        !showtciwcuitwikewypawtiawtweetweads(tweetage)
+      } ewse {
+        t-twue // nyot a snowfwake id, OwO so shouwd definitewy be avaiwabwe
       }
 
-    val likelyPartialTweetReadsCounter = statsReceiver.counter("likely_partial_tweet_reads")
+    vaw wikewypawtiawtweetweadscountew = statsweceivew.countew("wikewy_pawtiaw_tweet_weads")
 
-    (tweetId, options) =>
-      if (!likelyAvailable(tweetId)) {
-        likelyPartialTweetReadsCounter.incr()
-        val currentClient =
-          clientIdHelper.effectiveClientId.getOrElse(ClientIdHelper.UnknownClientId)
-        logger.debug(s"likely_partial_tweet_read $tweetId $currentClient")
-        Stitch.exception(NotFound)
-      } else if (options.fetchStoredTweets) {
-        getStoredTweet(tweetId).liftToTry.flatMap(handleGetStoredTweetResponse(tweetId, _))
-      } else {
-        getTweet(tweetId).liftToTry.flatMap(handleGetTweetResponse(tweetId, _))
+    (tweetid, 😳 o-options) =>
+      if (!wikewyavaiwabwe(tweetid)) {
+        w-wikewypawtiawtweetweadscountew.incw()
+        v-vaw cuwwentcwient =
+          c-cwientidhewpew.effectivecwientid.getowewse(cwientidhewpew.unknowncwientid)
+        woggew.debug(s"wikewy_pawtiaw_tweet_wead $tweetid $cuwwentcwient")
+        stitch.exception(notfound)
+      } ewse if (options.fetchstowedtweets) {
+        g-getstowedtweet(tweetid).wifttotwy.fwatmap(handwegetstowedtweetwesponse(tweetid, 😳😳😳 _))
+      } e-ewse {
+        gettweet(tweetid).wifttotwy.fwatmap(handwegettweetwesponse(tweetid, (˘ω˘) _))
       }
   }
 
-  private def handleGetTweetResponse(
-    tweetId: tweetypie.TweetId,
-    response: Try[GetTweet.Response]
-  ): Stitch[TweetResult] = {
-    response match {
-      case Return(GetTweet.Response.Found(tweet)) =>
-        Stitch.value(TweetResult(TweetData(tweet = tweet), HydrationState.modified))
-      case Return(GetTweet.Response.NotFound) =>
-        Stitch.exception(NotFound)
-      case Return(GetTweet.Response.Deleted) =>
-        Stitch.exception(FilteredState.Unavailable.TweetDeleted)
-      case Return(_: GetTweet.Response.BounceDeleted) =>
-        Stitch.exception(FilteredState.Unavailable.BounceDeleted)
-      case Throw(_: storage.RateLimited) =>
-        Stitch.exception(OverCapacity(s"Storage overcapacity, tweetId=$tweetId"))
-      case Throw(e) =>
-        Stitch.exception(StorageGetTweetFailure(tweetId, e))
+  pwivate def h-handwegettweetwesponse(
+    t-tweetid: tweetypie.tweetid, ʘwʘ
+    w-wesponse: twy[gettweet.wesponse]
+  ): s-stitch[tweetwesuwt] = {
+    wesponse match {
+      case wetuwn(gettweet.wesponse.found(tweet)) =>
+        s-stitch.vawue(tweetwesuwt(tweetdata(tweet = tweet), ( ͡o ω ͡o ) h-hydwationstate.modified))
+      case wetuwn(gettweet.wesponse.notfound) =>
+        s-stitch.exception(notfound)
+      c-case wetuwn(gettweet.wesponse.deweted) =>
+        stitch.exception(fiwtewedstate.unavaiwabwe.tweetdeweted)
+      case wetuwn(_: gettweet.wesponse.bouncedeweted) =>
+        stitch.exception(fiwtewedstate.unavaiwabwe.bouncedeweted)
+      case thwow(_: stowage.watewimited) =>
+        stitch.exception(ovewcapacity(s"stowage ovewcapacity, o.O t-tweetid=$tweetid"))
+      case t-thwow(e) =>
+        stitch.exception(stowagegettweetfaiwuwe(tweetid, >w< e-e))
     }
   }
 
-  private def handleGetStoredTweetResponse(
-    tweetId: tweetypie.TweetId,
-    response: Try[GetStoredTweet.Response]
-  ): Stitch[TweetResult] = {
-    def translateErrors(
-      getStoredTweetErrs: Seq[GetStoredTweet.Error]
-    ): Seq[StoredTweetResult.Error] = {
-      getStoredTweetErrs.map {
-        case GetStoredTweet.Error.TweetIsCorrupt => StoredTweetResult.Error.Corrupt
-        case GetStoredTweet.Error.ScrubbedFieldsPresent =>
-          StoredTweetResult.Error.ScrubbedFieldsPresent
-        case GetStoredTweet.Error.TweetFieldsMissingOrInvalid =>
-          StoredTweetResult.Error.FieldsMissingOrInvalid
-        case GetStoredTweet.Error.TweetShouldBeHardDeleted =>
-          StoredTweetResult.Error.ShouldBeHardDeleted
+  p-pwivate d-def handwegetstowedtweetwesponse(
+    tweetid: tweetypie.tweetid, 😳
+    wesponse: t-twy[getstowedtweet.wesponse]
+  ): stitch[tweetwesuwt] = {
+    def twanswateewwows(
+      getstowedtweetewws: seq[getstowedtweet.ewwow]
+    ): seq[stowedtweetwesuwt.ewwow] = {
+      g-getstowedtweetewws.map {
+        case getstowedtweet.ewwow.tweetiscowwupt => s-stowedtweetwesuwt.ewwow.cowwupt
+        c-case g-getstowedtweet.ewwow.scwubbedfiewdspwesent =>
+          stowedtweetwesuwt.ewwow.scwubbedfiewdspwesent
+        case g-getstowedtweet.ewwow.tweetfiewdsmissingowinvawid =>
+          s-stowedtweetwesuwt.ewwow.fiewdsmissingowinvawid
+        c-case getstowedtweet.ewwow.tweetshouwdbehawddeweted =>
+          s-stowedtweetwesuwt.ewwow.shouwdbehawddeweted
       }
     }
 
-    def toTweetResult(
-      tweet: Tweet,
-      state: Option[TweetStateRecord],
-      errors: Seq[GetStoredTweet.Error]
-    ): TweetResult = {
-      val translatedErrors = translateErrors(errors)
-      val canHydrate: Boolean =
-        !translatedErrors.contains(StoredTweetResult.Error.Corrupt) &&
-          !translatedErrors.contains(StoredTweetResult.Error.FieldsMissingOrInvalid)
+    def totweetwesuwt(
+      tweet: tweet, 🥺
+      s-state: option[tweetstatewecowd], rawr x3
+      e-ewwows: s-seq[getstowedtweet.ewwow]
+    ): t-tweetwesuwt = {
+      v-vaw twanswatedewwows = twanswateewwows(ewwows)
+      vaw canhydwate: boowean =
+        !twanswatedewwows.contains(stowedtweetwesuwt.ewwow.cowwupt) &&
+          !twanswatedewwows.contains(stowedtweetwesuwt.ewwow.fiewdsmissingowinvawid)
 
-      val storedTweetResult = state match {
-        case None => StoredTweetResult.Present(translatedErrors, canHydrate)
-        case Some(TweetStateRecord.HardDeleted(_, softDeletedAtMsec, hardDeletedAtMsec)) =>
-          StoredTweetResult.HardDeleted(softDeletedAtMsec, hardDeletedAtMsec)
-        case Some(TweetStateRecord.SoftDeleted(_, softDeletedAtMsec)) =>
-          StoredTweetResult.SoftDeleted(softDeletedAtMsec, translatedErrors, canHydrate)
-        case Some(TweetStateRecord.BounceDeleted(_, deletedAtMsec)) =>
-          StoredTweetResult.BounceDeleted(deletedAtMsec, translatedErrors, canHydrate)
-        case Some(TweetStateRecord.Undeleted(_, undeletedAtMsec)) =>
-          StoredTweetResult.Undeleted(undeletedAtMsec, translatedErrors, canHydrate)
-        case Some(TweetStateRecord.ForceAdded(_, addedAtMsec)) =>
-          StoredTweetResult.ForceAdded(addedAtMsec, translatedErrors, canHydrate)
+      v-vaw stowedtweetwesuwt = state match {
+        case nyone => stowedtweetwesuwt.pwesent(twanswatedewwows, o.O canhydwate)
+        c-case some(tweetstatewecowd.hawddeweted(_, rawr softdewetedatmsec, ʘwʘ hawddewetedatmsec)) =>
+          stowedtweetwesuwt.hawddeweted(softdewetedatmsec, 😳😳😳 h-hawddewetedatmsec)
+        c-case some(tweetstatewecowd.softdeweted(_, ^^;; s-softdewetedatmsec)) =>
+          stowedtweetwesuwt.softdeweted(softdewetedatmsec, o.O twanswatedewwows, (///ˬ///✿) c-canhydwate)
+        case some(tweetstatewecowd.bouncedeweted(_, σωσ d-dewetedatmsec)) =>
+          s-stowedtweetwesuwt.bouncedeweted(dewetedatmsec, nyaa~~ twanswatedewwows, ^^;; canhydwate)
+        case some(tweetstatewecowd.undeweted(_, ^•ﻌ•^ undewetedatmsec)) =>
+          stowedtweetwesuwt.undeweted(undewetedatmsec, σωσ twanswatedewwows, -.- c-canhydwate)
+        case s-some(tweetstatewecowd.fowceadded(_, ^^;; addedatmsec)) =>
+          s-stowedtweetwesuwt.fowceadded(addedatmsec, XD t-twanswatedewwows, 🥺 canhydwate)
       }
 
-      TweetResult(
-        TweetData(tweet = tweet, storedTweetResult = Some(storedTweetResult)),
-        HydrationState.modified)
+      tweetwesuwt(
+        t-tweetdata(tweet = tweet, òωó s-stowedtweetwesuwt = some(stowedtweetwesuwt)), (ˆ ﻌ ˆ)♡
+        h-hydwationstate.modified)
     }
 
-    val tweetResult = response match {
-      case Return(GetStoredTweet.Response.FoundAny(tweet, state, _, _, errors)) =>
-        toTweetResult(tweet, state, errors)
-      case Return(GetStoredTweet.Response.Failed(tweetId, _, _, _, errors)) =>
-        val tweetData = TweetData(
-          tweet = Tweet(tweetId),
-          storedTweetResult = Some(StoredTweetResult.Failed(translateErrors(errors))))
-        TweetResult(tweetData, HydrationState.modified)
-      case Return(GetStoredTweet.Response.HardDeleted(tweetId, state, _, _)) =>
-        toTweetResult(Tweet(tweetId), state, Seq())
-      case Return(GetStoredTweet.Response.NotFound(tweetId)) => {
-        val tweetData = TweetData(
-          tweet = Tweet(tweetId),
-          storedTweetResult = Some(StoredTweetResult.NotFound)
+    v-vaw tweetwesuwt = wesponse match {
+      case wetuwn(getstowedtweet.wesponse.foundany(tweet, -.- state, :3 _, _, ewwows)) =>
+        t-totweetwesuwt(tweet, ʘwʘ s-state, ewwows)
+      c-case wetuwn(getstowedtweet.wesponse.faiwed(tweetid, _, 🥺 _, _, ewwows)) =>
+        v-vaw tweetdata = t-tweetdata(
+          tweet = t-tweet(tweetid),
+          stowedtweetwesuwt = some(stowedtweetwesuwt.faiwed(twanswateewwows(ewwows))))
+        tweetwesuwt(tweetdata, >_< hydwationstate.modified)
+      c-case w-wetuwn(getstowedtweet.wesponse.hawddeweted(tweetid, ʘwʘ state, _, _)) =>
+        totweetwesuwt(tweet(tweetid), (˘ω˘) s-state, (✿oωo) s-seq())
+      case wetuwn(getstowedtweet.wesponse.notfound(tweetid)) => {
+        vaw tweetdata = tweetdata(
+          t-tweet = tweet(tweetid), (///ˬ///✿)
+          stowedtweetwesuwt = some(stowedtweetwesuwt.notfound)
         )
-        TweetResult(tweetData, HydrationState.modified)
+        tweetwesuwt(tweetdata, rawr x3 h-hydwationstate.modified)
       }
       case _ => {
-        val tweetData = TweetData(
-          tweet = Tweet(tweetId),
-          storedTweetResult = Some(StoredTweetResult.Failed(Seq(StoredTweetResult.Error.Corrupt))))
-        TweetResult(tweetData, HydrationState.modified)
+        vaw tweetdata = tweetdata(
+          t-tweet = t-tweet(tweetid), -.-
+          stowedtweetwesuwt = some(stowedtweetwesuwt.faiwed(seq(stowedtweetwesuwt.ewwow.cowwupt))))
+        tweetwesuwt(tweetdata, ^^ h-hydwationstate.modified)
       }
     }
 
-    Stitch.value(tweetResult)
+    stitch.vawue(tweetwesuwt)
   }
 }

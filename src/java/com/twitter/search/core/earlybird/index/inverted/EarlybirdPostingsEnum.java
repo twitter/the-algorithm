@@ -1,26 +1,26 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import org.apache.lucene.index.PostingsEnum;
+i-impowt owg.apache.wucene.index.postingsenum;
 
 /**
- * Extension of Lucene's PostingsEnum interface that adds additional funcionality.
+ * e-extension o-of wucene's p-postingsenum intewface t-that adds a-additionaw funcionawity. rawr x3
  */
-public abstract class EarlybirdPostingsEnum extends PostingsEnum {
-  @Override
-  public final int nextDoc() throws IOException {
-    // SEARCH-7008
-    return nextDocNoDel();
+p-pubwic abstwact cwass eawwybiwdpostingsenum extends postingsenum {
+  @ovewwide
+  pubwic finaw int n-nyextdoc() thwows ioexception {
+    // seawch-7008
+    w-wetuwn nextdocnodew();
   }
 
   /**
-   * Advances to the next doc without paying attention to liveDocs.
+   * a-advances to the next doc without paying attention to wivedocs. nyaa~~
    */
-  protected abstract int nextDocNoDel() throws IOException;
+  p-pwotected abstwact int nyextdocnodew() t-thwows i-ioexception;
 
   /**
-   * Returns the largest docID contained in this posting list.
+   * wetuwns the wawgest docid contained in this posting w-wist. /(^•ω•^)
    */
-  public abstract int getLargestDocID() throws IOException;
+  pubwic abstwact int getwawgestdocid() thwows ioexception;
 }

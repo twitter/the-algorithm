@@ -1,28 +1,28 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.client.{Client => StratoClient}
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.cwient.fetchew
+i-impowt c-com.twittew.stwato.cwient.{cwient => s-stwatocwient}
 
 /**
- * Repository for fetching UserIds that have unmentioned themselves from a conversation.
+ * w-wepositowy f-fow fetching usewids that have unmentioned themsewves fwom a convewsation. rawr x3
  */
-object UnmentionedEntitiesRepository {
-  type Type = (ConversationId, Seq[UserId]) => Stitch[Option[Seq[UserId]]]
+o-object unmentionedentitieswepositowy {
+  type type = (convewsationid, nyaa~~ seq[usewid]) => s-stitch[option[seq[usewid]]]
 
-  val column = "consumer-privacy/mentions-management/getUnmentionedUsersFromConversation"
-  case class GetUnmentionView(userIds: Option[Seq[Long]])
+  vaw c-cowumn = "consumew-pwivacy/mentions-management/getunmentionedusewsfwomconvewsation"
+  case cwass getunmentionview(usewids: option[seq[wong]])
 
-  def apply(client: StratoClient): Type = {
-    val fetcher: Fetcher[Long, GetUnmentionView, Seq[Long]] =
-      client.fetcher[Long, GetUnmentionView, Seq[Long]](column)
+  d-def appwy(cwient: stwatocwient): t-type = {
+    vaw f-fetchew: fetchew[wong, /(^•ω•^) getunmentionview, rawr seq[wong]] =
+      cwient.fetchew[wong, getunmentionview, OwO seq[wong]](cowumn)
 
-    (conversationId, userIds) =>
-      if (userIds.nonEmpty) {
-        fetcher.fetch(conversationId, GetUnmentionView(Some(userIds))).map(_.v)
-      } else {
-        Stitch.None
+    (convewsationid, (U ﹏ U) usewids) =>
+      i-if (usewids.nonempty) {
+        fetchew.fetch(convewsationid, >_< getunmentionview(some(usewids))).map(_.v)
+      } ewse {
+        stitch.none
       }
   }
 }

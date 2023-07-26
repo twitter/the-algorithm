@@ -1,72 +1,72 @@
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+namespace java com.twittew.fowwow_wecommendations.wogging.thwiftjava
+#@namespace scawa com.twittew.fowwow_wecommendations.wogging.thwiftscawa
+#@namespace s-stwato c-com.twittew.fowwow_wecommendations.wogging
 
-include "client_context.thrift"
-include "debug.thrift"
-include "display_context.thrift"
-include "display_location.thrift"
-include "recommendations.thrift"
+i-incwude "cwient_context.thwift"
+i-incwude "debug.thwift"
+i-incwude "dispway_context.thwift"
+i-incwude "dispway_wocation.thwift"
+i-incwude "wecommendations.thwift"
 
-struct OfflineRecommendationRequest {
-    1: required client_context.OfflineClientContext clientContext
-    2: required display_location.OfflineDisplayLocation displayLocation
-    3: optional display_context.OfflineDisplayContext displayContext
-    4: optional i32 maxResults
-    5: optional string cursor
-    6: optional list<i64> excludedIds(personalDataType='UserId')
-    7: optional bool fetchPromotedContent
-    8: optional debug.OfflineDebugParams debugParams
-}(persisted='true', hasPersonalData='true')
+s-stwuct offwinewecommendationwequest {
+    1: wequiwed cwient_context.offwinecwientcontext cwientcontext
+    2: wequiwed dispway_wocation.offwinedispwaywocation d-dispwaywocation
+    3: optionaw dispway_context.offwinedispwaycontext dispwaycontext
+    4: o-optionaw i32 maxwesuwts
+    5: o-optionaw stwing cuwsow
+    6: optionaw wist<i64> excwudedids(pewsonawdatatype='usewid')
+    7: o-optionaw boow fetchpwomotedcontent
+    8: o-optionaw d-debug.offwinedebugpawams debugpawams
+}(pewsisted='twue', (✿oωo) haspewsonawdata='twue')
 
-struct OfflineRecommendationResponse {
-    1: required list<recommendations.OfflineRecommendation> recommendations
-}(persisted='true', hasPersonalData='true')
+stwuct offwinewecommendationwesponse {
+    1: wequiwed wist<wecommendations.offwinewecommendation> w-wecommendations
+}(pewsisted='twue', ʘwʘ haspewsonawdata='twue')
 
-struct RecommendationLog {
-    1: required OfflineRecommendationRequest request
-    2: required OfflineRecommendationResponse response
-    3: required i64 timestampMs
-}(persisted='true', hasPersonalData='true')
+stwuct wecommendationwog {
+    1: wequiwed offwinewecommendationwequest wequest
+    2: w-wequiwed offwinewecommendationwesponse w-wesponse
+    3: w-wequiwed i64 t-timestampms
+}(pewsisted='twue', (ˆ ﻌ ˆ)♡ h-haspewsonawdata='twue')
 
-struct OfflineScoringUserRequest {
-  1: required client_context.OfflineClientContext clientContext
-  2: required display_location.OfflineDisplayLocation displayLocation
-  3: required list<recommendations.OfflineUserRecommendation> candidates
-}(persisted='true', hasPersonalData='true')
+stwuct offwinescowingusewwequest {
+  1: w-wequiwed cwient_context.offwinecwientcontext cwientcontext
+  2: wequiwed dispway_wocation.offwinedispwaywocation d-dispwaywocation
+  3: wequiwed wist<wecommendations.offwineusewwecommendation> candidates
+}(pewsisted='twue', 😳😳😳 haspewsonawdata='twue')
 
-struct OfflineScoringUserResponse {
-  1: required list<recommendations.OfflineUserRecommendation> candidates
-}(persisted='true', hasPersonalData='true')
+stwuct o-offwinescowingusewwesponse {
+  1: wequiwed wist<wecommendations.offwineusewwecommendation> c-candidates
+}(pewsisted='twue', :3 h-haspewsonawdata='twue')
 
-struct ScoredUsersLog {
-  1: required OfflineScoringUserRequest request
-  2: required OfflineScoringUserResponse response
-    3: required i64 timestampMs
-}(persisted='true', hasPersonalData='true')
+s-stwuct scowedusewswog {
+  1: wequiwed offwinescowingusewwequest wequest
+  2: wequiwed offwinescowingusewwesponse w-wesponse
+    3: w-wequiwed i64 timestampms
+}(pewsisted='twue', OwO h-haspewsonawdata='twue')
 
-struct OfflineRecommendationFlowUserMetadata {
-  1: optional i32 userSignupAge(personalDataType = 'AgeOfAccount')
-  2: optional string userState(personalDataType = 'UserState')
-}(persisted='true', hasPersonalData='true')
+s-stwuct offwinewecommendationfwowusewmetadata {
+  1: optionaw i-i32 usewsignupage(pewsonawdatatype = 'ageofaccount')
+  2: optionaw stwing u-usewstate(pewsonawdatatype = 'usewstate')
+}(pewsisted='twue', haspewsonawdata='twue')
 
-struct OfflineRecommendationFlowSignals {
-  1: optional string countryCode(personalDataType='InferredCountry')
-}(persisted='true', hasPersonalData='true')
+stwuct o-offwinewecommendationfwowsignaws {
+  1: optionaw s-stwing countwycode(pewsonawdatatype='infewwedcountwy')
+}(pewsisted='twue', haspewsonawdata='twue')
 
-struct OfflineRecommendationFlowCandidateSourceCandidates {
-  1: required string candidateSourceName
-  2: required list<i64> candidateUserIds(personalDataType='UserId')
-  3: optional list<double> candidateUserScores
-}(persisted='true', hasPersonalData='true')
+s-stwuct offwinewecommendationfwowcandidatesouwcecandidates {
+  1: w-wequiwed stwing candidatesouwcename
+  2: wequiwed wist<i64> candidateusewids(pewsonawdatatype='usewid')
+  3: optionaw wist<doubwe> candidateusewscowes
+}(pewsisted='twue', (U ﹏ U) haspewsonawdata='twue')
 
-struct RecommendationFlowLog {
-  1: required client_context.OfflineClientContext clientContext
-  2: optional OfflineRecommendationFlowUserMetadata userMetadata
-  3: optional OfflineRecommendationFlowSignals signals
-  4: required i64 timestampMs
-  5: required string recommendationFlowIdentifier
-  6: optional list<OfflineRecommendationFlowCandidateSourceCandidates> filteredCandidates
-  7: optional list<OfflineRecommendationFlowCandidateSourceCandidates> rankedCandidates
-  8: optional list<OfflineRecommendationFlowCandidateSourceCandidates> truncatedCandidates
-}(persisted='true', hasPersonalData='true')
+s-stwuct w-wecommendationfwowwog {
+  1: wequiwed c-cwient_context.offwinecwientcontext c-cwientcontext
+  2: o-optionaw offwinewecommendationfwowusewmetadata usewmetadata
+  3: optionaw offwinewecommendationfwowsignaws s-signaws
+  4: wequiwed i64 timestampms
+  5: wequiwed stwing wecommendationfwowidentifiew
+  6: o-optionaw wist<offwinewecommendationfwowcandidatesouwcecandidates> fiwtewedcandidates
+  7: o-optionaw wist<offwinewecommendationfwowcandidatesouwcecandidates> w-wankedcandidates
+  8: o-optionaw wist<offwinewecommendationfwowcandidatesouwcecandidates> t-twuncatedcandidates
+}(pewsisted='twue', h-haspewsonawdata='twue')

@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.component_library.filter
+package com.twittew.pwoduct_mixew.component_wibwawy.fiwtew
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedExcludeIdsCursor
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.uwtunowdewedexcwudeidscuwsow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.haspipewinecuwsow
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.stitch
 
-case class UrtUnorderedExcludeIdsCursorFilter[
-  Candidate <: UniversalNoun[Long],
-  Query <: PipelineQuery with HasPipelineCursor[UrtUnorderedExcludeIdsCursor]
-]() extends Filter[Query, Candidate] {
+case cwass uwtunowdewedexcwudeidscuwsowfiwtew[
+  c-candidate <: univewsawnoun[wong],
+  q-quewy <: pipewinequewy with haspipewinecuwsow[uwtunowdewedexcwudeidscuwsow]
+]() extends f-fiwtew[quewy, (U ﹏ U) candidate] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("UnorderedExcludeIdsCursor")
+  o-ovewwide vaw i-identifiew: fiwtewidentifiew = fiwtewidentifiew("unowdewedexcwudeidscuwsow")
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
+  ovewwide def appwy(
+    quewy: quewy, >_<
+    candidates: s-seq[candidatewithfeatuwes[candidate]]
+  ): stitch[fiwtewwesuwt[candidate]] = {
 
-    val excludeIds = query.pipelineCursor.map(_.excludedIds.toSet).getOrElse(Set.empty)
-    val (kept, removed) =
-      candidates.map(_.candidate).partition(candidate => !excludeIds.contains(candidate.id))
+    vaw excwudeids = quewy.pipewinecuwsow.map(_.excwudedids.toset).getowewse(set.empty)
+    vaw (kept, rawr x3 wemoved) =
+      candidates.map(_.candidate).pawtition(candidate => !excwudeids.contains(candidate.id))
 
-    val filterResult = FilterResult(kept = kept, removed = removed)
-    Stitch.value(filterResult)
+    v-vaw fiwtewwesuwt = fiwtewwesuwt(kept = k-kept, mya wemoved = w-wemoved)
+    stitch.vawue(fiwtewwesuwt)
   }
 }

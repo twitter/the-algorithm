@@ -1,14 +1,14 @@
-package com.twitter.graph_feature_service.worker.util
+package com.twittew.gwaph_featuwe_sewvice.wowkew.utiw
 
-import com.twitter.graph_feature_service.thriftscala.EdgeType
+impowt com.twittew.gwaph_featuwe_sewvice.thwiftscawa.edgetype
 
-sealed trait GfsQuery {
-  def edgeType: EdgeType
-  def userId: Long
+s-seawed twait g-gfsquewy {
+  def e-edgetype: edgetype
+  d-def usewid: w-wong
 }
 
 /**
- * Search for edges for any users to users in local partition.
+ * s-seawch fow edges f-fow any usews t-to usews in wocaw pawtition. σωσ
  */
-case class ToPartialQuery(edgeType: EdgeType, userId: Long) extends GfsQuery
+case cwass topawtiawquewy(edgetype: edgetype, σωσ usewid: wong) extends g-gfsquewy
 

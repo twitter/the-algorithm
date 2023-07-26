@@ -1,63 +1,63 @@
-scala_library(
-    name = "common",
-    sources = [
-        "BaseQueryIndexServer.scala",
-        "Exceptions.scala",
-        "QueryIndexThriftController.scala",
-        "QueryableProvider.scala",
-        "RefreshableQueryable.scala",
-        "UnsafeQueryIndexServer.scala",
+scawa_wibwawy(
+    nyame = "common", >_<
+    souwces = [
+        "basequewyindexsewvew.scawa", :3
+        "exceptions.scawa", (U ﹏ U)
+        "quewyindexthwiftcontwowwew.scawa", -.-
+        "quewyabwepwovidew.scawa", (ˆ ﻌ ˆ)♡
+        "wefweshabwequewyabwe.scawa", (⑅˘꒳˘)
+        "unsafequewyindexsewvew.scawa", (U ᵕ U❁)
     ],
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":index_path_provider",
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/com/google/inject/extensions:guice-assistedinject",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "3rdparty/jvm/net/codingwell:scala-guice",
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/thrift/com/twitter/ann/common:ann-common-scala",
-        "finagle/finagle-core/src/main",
-        "finagle/finagle-zipkin-scribe",
-        "finatra-internal/decider",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "finatra/inject/inject-core/src/main/scala",
-        "mediaservices/commons",
-        "scrooge/scrooge-core/src/main/scala",
-        "src/scala/com/twitter/cortex/ml/embeddings/common:Helpers",
-        "util/util-app/src/main/scala",
-        "util/util-logging/src/main/scala",
-    ],
-)
-
-scala_library(
-    name = "index_path_provider",
-    sources = [
-        "IndexPathProvider.scala",
-        "QueryServerUtil.scala",
-    ],
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "ann/src/main/scala/com/twitter/ann/hnsw",
-        "src/java/com/twitter/search/common/file",
-        "util/util-logging/src/main/scala",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
+    c-compiwew_option_sets = ["fataw_wawnings"], -.-
+    t-tags = ["bazew-compatibwe"], ^^;;
+    d-dependencies = [
+        ":index_path_pwovidew", >_<
+        "3wdpawty/jvm/com/googwe/guava", mya
+        "3wdpawty/jvm/com/googwe/inject:guice", mya
+        "3wdpawty/jvm/com/googwe/inject/extensions:guice-assistedinject", 😳
+        "3wdpawty/jvm/javax/inject:javax.inject", XD
+        "3wdpawty/jvm/net/codingweww:scawa-guice", :3
+        "ann/swc/main/scawa/com/twittew/ann/common", 😳😳😳
+        "ann/swc/main/thwift/com/twittew/ann/common:ann-common-scawa", -.-
+        "finagwe/finagwe-cowe/swc/main", ( ͡o ω ͡o )
+        "finagwe/finagwe-zipkin-scwibe", rawr x3
+        "finatwa-intewnaw/decidew", nyaa~~
+        "finatwa-intewnaw/mtws-thwiftmux/swc/main/scawa", /(^•ω•^)
+        "finatwa/inject/inject-cowe/swc/main/scawa", rawr
+        "mediasewvices/commons", OwO
+        "scwooge/scwooge-cowe/swc/main/scawa", (U ﹏ U)
+        "swc/scawa/com/twittew/cowtex/mw/embeddings/common:hewpews", >_<
+        "utiw/utiw-app/swc/main/scawa", rawr x3
+        "utiw/utiw-wogging/swc/main/scawa", mya
     ],
 )
 
-scala_library(
-    name = "faiss_index_path_provider",
-    sources = ["FaissIndexPathProvider.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
+s-scawa_wibwawy(
+    n-nyame = "index_path_pwovidew", nyaa~~
+    s-souwces = [
+        "indexpathpwovidew.scawa", (⑅˘꒳˘)
+        "quewysewvewutiw.scawa", rawr x3
+    ], (✿oωo)
+    c-compiwew_option_sets = ["fataw_wawnings"], (ˆ ﻌ ˆ)♡
+    t-tags = ["bazew-compatibwe"], (˘ω˘)
     dependencies = [
-        ":index_path_provider",
-        "ann/src/main/scala/com/twitter/ann/faiss",
-        "src/java/com/twitter/search/common/file",
-        "util/util-logging/src/main/scala",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
+        "ann/swc/main/scawa/com/twittew/ann/hnsw",
+        "swc/java/com/twittew/seawch/common/fiwe", (⑅˘꒳˘)
+        "utiw/utiw-wogging/swc/main/scawa", (///ˬ///✿)
+        "utiw/utiw-stats/swc/main/scawa/com/twittew/finagwe/stats", 😳😳😳
+    ],
+)
+
+scawa_wibwawy(
+    nyame = "faiss_index_path_pwovidew", 🥺
+    souwces = ["faissindexpathpwovidew.scawa"], mya
+    c-compiwew_option_sets = ["fataw_wawnings"], 🥺
+    tags = ["bazew-compatibwe"], >_<
+    dependencies = [
+        ":index_path_pwovidew", >_<
+        "ann/swc/main/scawa/com/twittew/ann/faiss",
+        "swc/java/com/twittew/seawch/common/fiwe", (⑅˘꒳˘)
+        "utiw/utiw-wogging/swc/main/scawa", /(^•ω•^)
+        "utiw/utiw-stats/swc/main/scawa/com/twittew/finagwe/stats", rawr x3
     ],
 )

@@ -1,54 +1,54 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.specificpipewines
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Limit candidates to the first candidate source in the provided orthogonalCandidatePipelines
- * seq that has candidates in the candidate pool. For the subsequent candidate sources in the seq,
- * remove their candidates from the candidate pool.
+ * wimit candidates to the fiwst candidate souwce i-in the pwovided owthogonawcandidatepipewines
+ * seq that has c-candidates in the candidate poow. nyaa~~ f-fow the subsequent candidate souwces in the seq, nyaa~~
+ * wemove theiw c-candidates fwom the candidate p-poow. :3
  *
- * @example if [[orthogonalCandidatePipelines]] is `Seq(D, A, C)`, and the remaining candidates
- * component identifiers are `Seq(A, A, A, B, B, C, C, D, D, D)`, then `Seq(B, B, D, D, D)` will remain
- * in the candidate pool.
+ * @exampwe i-if [[owthogonawcandidatepipewines]] is `seq(d, 😳😳😳 a, c)`, and the wemaining candidates
+ * component i-identifiews awe `seq(a, (˘ω˘) a, ^^ a, b, b, c, c, :3 d, d, d)`, then `seq(b, -.- b, d, d-d, 😳 d)` wiww wemain
+ * in the candidate p-poow.
  *
- * @example if [[orthogonalCandidatePipelines]] is `Seq(D, A, C)`, and the remaining candidates
- * component identifiers are `Seq(A, A, A, B, B, C, C)`, then `Seq(A, A, A, B, B)` will remain
- * in the candidate pool.
+ * @exampwe i-if [[owthogonawcandidatepipewines]] i-is `seq(d, mya a, c)`, a-and the wemaining candidates
+ * component identifiews a-awe `seq(a, a, (˘ω˘) a, b, b, c, c)`, >_< then `seq(a, -.- a-a, a, b, b)` wiww wemain
+ * in the candidate poow. 🥺
  */
-case class DropOrthogonalCandidates(
-  orthogonalCandidatePipelines: Seq[CandidatePipelineIdentifier])
-    extends Selector[PipelineQuery] {
+case cwass dwopowthogonawcandidates(
+  owthogonawcandidatepipewines: s-seq[candidatepipewineidentifiew])
+    extends s-sewectow[pipewinequewy] {
 
-  override val pipelineScope: CandidateScope =
-    SpecificPipelines(orthogonalCandidatePipelines.toSet)
+  o-ovewwide v-vaw pipewinescope: candidatescope =
+    specificpipewines(owthogonawcandidatepipewines.toset)
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val firstMatchingOrthogonalSourceOpt = orthogonalCandidatePipelines
-      .find { orthogonalCandidatePipeline =>
-        remainingCandidates.exists(_.source == orthogonalCandidatePipeline)
+  ovewwide def appwy(
+    q-quewy: pipewinequewy, (U ﹏ U)
+    w-wemainingcandidates: seq[candidatewithdetaiws], >w<
+    wesuwt: s-seq[candidatewithdetaiws]
+  ): s-sewectowwesuwt = {
+    vaw f-fiwstmatchingowthogonawsouwceopt = owthogonawcandidatepipewines
+      .find { o-owthogonawcandidatepipewine =>
+        wemainingcandidates.exists(_.souwce == owthogonawcandidatepipewine)
       }
 
-    val remainingCandidatesLimited = firstMatchingOrthogonalSourceOpt match {
-      case Some(firstMatchingOrthogonalSource) =>
-        val subsequentOrthogonalSources =
-          orthogonalCandidatePipelines.toSet - firstMatchingOrthogonalSource
+    v-vaw wemainingcandidateswimited = fiwstmatchingowthogonawsouwceopt m-match {
+      case some(fiwstmatchingowthogonawsouwce) =>
+        v-vaw subsequentowthogonawsouwces =
+          o-owthogonawcandidatepipewines.toset - fiwstmatchingowthogonawsouwce
 
-        remainingCandidates.filterNot { candidate =>
-          subsequentOrthogonalSources.contains(candidate.source)
+        wemainingcandidates.fiwtewnot { candidate =>
+          subsequentowthogonawsouwces.contains(candidate.souwce)
         }
-      case None => remainingCandidates
+      case nyone => wemainingcandidates
     }
 
-    SelectorResult(remainingCandidates = remainingCandidatesLimited, result = result)
+    sewectowwesuwt(wemainingcandidates = w-wemainingcandidateswimited, mya w-wesuwt = wesuwt)
   }
 }

@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageAnimationType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Bounce
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.imageanimationtype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.bounce
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class ImageAnimationTypeMarshaller @Inject() () {
+@singweton
+c-cwass imageanimationtypemawshawwew @inject() () {
 
-  def apply(imageAnimationType: ImageAnimationType): urt.ImageAnimationType =
-    imageAnimationType match {
-      case Bounce => urt.ImageAnimationType.Bounce
+  def appwy(imageanimationtype: imageanimationtype): uwt.imageanimationtype =
+    imageanimationtype m-match {
+      case bounce => uwt.imageanimationtype.bounce
     }
 }

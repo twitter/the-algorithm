@@ -1,29 +1,29 @@
-package com.twitter.recos.user_video_graph.util
+package com.twittew.wecos.usew_video_gwaph.utiw
 
-import com.twitter.graphjet.bipartite.MultiSegmentIterator
-import com.twitter.graphjet.bipartite.api.BipartiteGraph
-import com.twitter.graphjet.bipartite.segment.BipartiteGraphSegment
-import scala.collection.mutable.ListBuffer
+impowt com.twittew.gwaphjet.bipawtite.muwtisegmentitewatow
+i-impowt c-com.twittew.gwaphjet.bipawtite.api.bipawtitegwaph
+i-impowt com.twittew.gwaphjet.bipawtite.segment.bipawtitegwaphsegment
+i-impowt scawa.cowwection.mutabwe.wistbuffew
 
-object FetchRHSTweetsUtil {
-  // get RHS tweets given LHS users
-  def fetchRHSTweets(
-    userIds: Seq[Long],
-    bipartiteGraph: BipartiteGraph
-  ): Seq[Long] = {
-    userIds.distinct
-      .flatMap { userId =>
-        val tweetIdsIterator = bipartiteGraph
-          .getLeftNodeEdges(userId).asInstanceOf[MultiSegmentIterator[BipartiteGraphSegment]]
+o-object fetchwhstweetsutiw {
+  // g-get whs tweets g-given whs usews
+  d-def fetchwhstweets(
+    usewids: seq[wong], XD
+    bipawtitegwaph: bipawtitegwaph
+  ): s-seq[wong] = {
+    usewids.distinct
+      .fwatmap { usewid =>
+        v-vaw tweetidsitewatow = bipawtitegwaph
+          .getweftnodeedges(usewid).asinstanceof[muwtisegmentitewatow[bipawtitegwaphsegment]]
 
-        val tweetIds = new ListBuffer[Long]()
-        if (tweetIdsIterator != null) {
-          while (tweetIdsIterator.hasNext) {
-            val rightNode = tweetIdsIterator.nextLong()
-            tweetIds += rightNode
+        v-vaw tweetids = nyew wistbuffew[wong]()
+        if (tweetidsitewatow != n-nyuww) {
+          whiwe (tweetidsitewatow.hasnext) {
+            v-vaw wightnode = t-tweetidsitewatow.nextwong()
+            tweetids += wightnode
           }
         }
-        tweetIds.distinct
+        tweetids.distinct
       }
   }
 }

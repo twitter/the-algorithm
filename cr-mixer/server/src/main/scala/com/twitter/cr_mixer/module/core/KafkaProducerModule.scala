@@ -1,70 +1,70 @@
-package com.twitter.cr_mixer.module.core
+package com.twittew.cw_mixew.moduwe.cowe
 
-import com.google.inject.Provides
-import com.twitter.cr_mixer.thriftscala.GetTweetsRecommendationsScribe
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finatra.kafka.producers.FinagleKafkaProducerBuilder
-import com.twitter.finatra.kafka.producers.KafkaProducerBase
-import com.twitter.finatra.kafka.producers.NullKafkaProducer
-import com.twitter.finatra.kafka.serde.ScalaSerdes
-import com.twitter.inject.TwitterModule
-import javax.inject.Singleton
-import org.apache.kafka.clients.CommonClientConfigs
-import org.apache.kafka.common.config.SaslConfigs
-import org.apache.kafka.common.config.SslConfigs
-import org.apache.kafka.common.record.CompressionType
-import org.apache.kafka.common.security.auth.SecurityProtocol
-import org.apache.kafka.common.serialization.Serdes
+impowt c-com.googwe.inject.pwovides
+i-impowt c-com.twittew.cw_mixew.thwiftscawa.gettweetswecommendationsscwibe
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finatwa.kafka.pwoducews.finagwekafkapwoducewbuiwdew
+i-impowt c-com.twittew.finatwa.kafka.pwoducews.kafkapwoducewbase
+i-impowt com.twittew.finatwa.kafka.pwoducews.nuwwkafkapwoducew
+impowt com.twittew.finatwa.kafka.sewde.scawasewdes
+impowt com.twittew.inject.twittewmoduwe
+impowt javax.inject.singweton
+impowt o-owg.apache.kafka.cwients.commoncwientconfigs
+impowt owg.apache.kafka.common.config.saswconfigs
+impowt owg.apache.kafka.common.config.sswconfigs
+i-impowt owg.apache.kafka.common.wecowd.compwessiontype
+impowt o-owg.apache.kafka.common.secuwity.auth.secuwitypwotocow
+impowt owg.apache.kafka.common.sewiawization.sewdes
 
-object KafkaProducerModule extends TwitterModule {
+object kafkapwoducewmoduwe e-extends twittewmoduwe {
 
-  @Provides
-  @Singleton
-  def provideTweetRecsLoggerFactory(
-    serviceIdentifier: ServiceIdentifier,
-  ): KafkaProducerBase[String, GetTweetsRecommendationsScribe] = {
-    KafkaProducerFactory.getKafkaProducer(serviceIdentifier.environment)
+  @pwovides
+  @singweton
+  d-def p-pwovidetweetwecswoggewfactowy(
+    sewviceidentifiew: sewviceidentifiew, mya
+  ): kafkapwoducewbase[stwing, 🥺 gettweetswecommendationsscwibe] = {
+    k-kafkapwoducewfactowy.getkafkapwoducew(sewviceidentifiew.enviwonment)
   }
 }
 
-object KafkaProducerFactory {
-  private val jaasConfig =
-    """com.sun.security.auth.module.Krb5LoginModule
-      |required 
-      |principal="cr-mixer@TWITTER.BIZ" 
-      |debug=true 
-      |useKeyTab=true 
-      |storeKey=true 
-      |keyTab="/var/lib/tss/keys/fluffy/keytabs/client/cr-mixer.keytab" 
-      |doNotPrompt=true;
-    """.stripMargin.replaceAll("\n", " ")
+object kafkapwoducewfactowy {
+  pwivate vaw jaasconfig =
+    """com.sun.secuwity.auth.moduwe.kwb5woginmoduwe
+      |wequiwed 
+      |pwincipaw="cw-mixew@twittew.biz" 
+      |debug=twue 
+      |usekeytab=twue 
+      |stowekey=twue 
+      |keytab="/vaw/wib/tss/keys/fwoofy/keytabs/cwient/cw-mixew.keytab" 
+      |donotpwompt=twue;
+    """.stwipmawgin.wepwaceaww("\n", >_< " ")
 
-  private val trustStoreLocation = "/etc/tw_truststore/messaging/kafka/client.truststore.jks"
+  p-pwivate vaw twuststowewocation = "/etc/tw_twuststowe/messaging/kafka/cwient.twuststowe.jks"
 
-  def getKafkaProducer(
-    environment: String
-  ): KafkaProducerBase[String, GetTweetsRecommendationsScribe] = {
-    if (environment == "prod") {
-      FinagleKafkaProducerBuilder()
-        .dest("/s/kafka/recommendations:kafka-tls")
-        // kerberos params
-        .withConfig(SaslConfigs.SASL_JAAS_CONFIG, jaasConfig)
-        .withConfig(
-          CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,
-          SecurityProtocol.SASL_SSL.toString)
-        .withConfig(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, trustStoreLocation)
-        .withConfig(SaslConfigs.SASL_MECHANISM, SaslConfigs.GSSAPI_MECHANISM)
-        .withConfig(SaslConfigs.SASL_KERBEROS_SERVICE_NAME, "kafka")
-        .withConfig(SaslConfigs.SASL_KERBEROS_SERVER_NAME, "kafka")
-        // Kafka params
-        .keySerializer(Serdes.String.serializer)
-        .valueSerializer(ScalaSerdes.CompactThrift[GetTweetsRecommendationsScribe].serializer())
-        .clientId("cr-mixer")
-        .enableIdempotence(true)
-        .compressionType(CompressionType.LZ4)
-        .build()
-    } else {
-      new NullKafkaProducer[String, GetTweetsRecommendationsScribe]
+  def getkafkapwoducew(
+    e-enviwonment: s-stwing
+  ): k-kafkapwoducewbase[stwing, >_< g-gettweetswecommendationsscwibe] = {
+    if (enviwonment == "pwod") {
+      finagwekafkapwoducewbuiwdew()
+        .dest("/s/kafka/wecommendations:kafka-tws")
+        // k-kewbewos pawams
+        .withconfig(saswconfigs.sasw_jaas_config, (⑅˘꒳˘) jaasconfig)
+        .withconfig(
+          commoncwientconfigs.secuwity_pwotocow_config, /(^•ω•^)
+          s-secuwitypwotocow.sasw_ssw.tostwing)
+        .withconfig(sswconfigs.ssw_twuststowe_wocation_config, rawr x3 twuststowewocation)
+        .withconfig(saswconfigs.sasw_mechanism, (U ﹏ U) saswconfigs.gssapi_mechanism)
+        .withconfig(saswconfigs.sasw_kewbewos_sewvice_name, (U ﹏ U) "kafka")
+        .withconfig(saswconfigs.sasw_kewbewos_sewvew_name, (⑅˘꒳˘) "kafka")
+        // kafka pawams
+        .keysewiawizew(sewdes.stwing.sewiawizew)
+        .vawuesewiawizew(scawasewdes.compactthwift[gettweetswecommendationsscwibe].sewiawizew())
+        .cwientid("cw-mixew")
+        .enabweidempotence(twue)
+        .compwessiontype(compwessiontype.wz4)
+        .buiwd()
+    } ewse {
+      nyew nyuwwkafkapwoducew[stwing, g-gettweetswecommendationsscwibe]
     }
   }
 }

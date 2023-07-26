@@ -1,110 +1,110 @@
-package com.twitter.search.earlybird.document;
+package com.twittew.seawch.eawwybiwd.document;
 
-import java.io.IOException;
-import javax.annotation.Nullable;
+impowt java.io.ioexception;
+i-impowt j-javax.annotation.nuwwabwe;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.FieldType;
-import org.apache.lucene.index.IndexableField;
-import org.apache.thrift.TBase;
-import org.apache.thrift.TException;
-import org.apache.thrift.TSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.apache.commons.codec.binawy.base64;
+i-impowt o-owg.apache.wucene.document.document;
+i-impowt o-owg.apache.wucene.document.fiewd;
+impowt owg.apache.wucene.document.fiewdtype;
+impowt owg.apache.wucene.index.indexabwefiewd;
+impowt owg.apache.thwift.tbase;
+i-impowt owg.apache.thwift.texception;
+impowt owg.apache.thwift.tsewiawizew;
+i-impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.text.OmitNormTextField;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.utiw.text.omitnowmtextfiewd;
+i-impowt com.twittew.seawch.eawwybiwd.exception.cwiticawexceptionhandwew;
 
 /**
- * Factory that constructs a Lucene document from a thrift object stored in T format.
+ * f-factowy t-that constwucts a wucene document fwom a thwift object stowed in t fowmat. (ꈍᴗꈍ)
  *
- * @param <T> ThriftStatus or ThriftIndexingEvent, to be converted to a Lucene Document.
+ * @pawam <t> t-thwiftstatus ow thwiftindexingevent, to be convewted to a wucene document. /(^•ω•^)
  */
-public abstract class DocumentFactory<T extends TBase<T, ?>> {
-  private static final Logger LOG = LoggerFactory.getLogger(DocumentFactory.class);
-  private static final int MAX_ALLOWED_INVALID_DOCUMENTS = 100;
+pubwic a-abstwact cwass documentfactowy<t e-extends tbase<t, (⑅˘꒳˘) ?>> {
+  p-pwivate s-static finaw w-woggew wog = woggewfactowy.getwoggew(documentfactowy.cwass);
+  pwivate static finaw int max_awwowed_invawid_documents = 100;
 
-  private static final SearchCounter INVALID_DOCUMENTS_COUNTER =
-      SearchCounter.export("invalid_documents");
+  p-pwivate static finaw seawchcountew invawid_documents_countew =
+      s-seawchcountew.expowt("invawid_documents");
 
-  private final CriticalExceptionHandler criticalExceptionHandler;
+  pwivate finaw cwiticawexceptionhandwew cwiticawexceptionhandwew;
 
-  public DocumentFactory(CriticalExceptionHandler criticalExceptionHandler) {
-    this.criticalExceptionHandler = criticalExceptionHandler;
+  pubwic documentfactowy(cwiticawexceptionhandwew c-cwiticawexceptionhandwew) {
+    this.cwiticawexceptionhandwew = c-cwiticawexceptionhandwew;
   }
 
   /**
-   * Given the thrift representation of a tweet, returns the associated tweetId.
+   * g-given the thwift w-wepwesentation of a tweet, ( ͡o ω ͡o ) wetuwns the associated tweetid. òωó
    */
-  public abstract long getStatusId(T thriftObject);
+  p-pubwic abstwact w-wong getstatusid(t thwiftobject);
 
   /**
-   * Given the thrift representation of a tweet, returns a Lucene Document with all the fields
-   * that need to be indexed.
+   * g-given the thwift w-wepwesentation of a tweet, (⑅˘꒳˘) w-wetuwns a wucene document with a-aww the fiewds
+   * that nyeed to be indexed. XD
    */
-  @Nullable
-  public final Document newDocument(T thriftObject) {
-    try {
-      return innerNewDocument(thriftObject);
-    } catch (Exception e) {
-      String statusId = "Not available";
-      if (thriftObject != null) {
-        try {
-          statusId = Long.toString(getStatusId(thriftObject));
-        } catch (Exception ex) {
-          LOG.error("Unable to get tweet id for document", ex);
-          statusId = "Not parsable";
+  @nuwwabwe
+  p-pubwic finaw document nyewdocument(t t-thwiftobject) {
+    twy {
+      w-wetuwn innewnewdocument(thwiftobject);
+    } c-catch (exception e) {
+      stwing statusid = "not avaiwabwe";
+      if (thwiftobject != nyuww) {
+        twy {
+          s-statusid = w-wong.tostwing(getstatusid(thwiftobject));
+        } catch (exception e-ex) {
+          w-wog.ewwow("unabwe t-to get tweet id fow document", -.- ex);
+          statusid = "not pawsabwe";
         }
       }
-      LOG.error("Unexpected exception while indexing. Status id: " + statusId, e);
+      w-wog.ewwow("unexpected exception whiwe indexing. :3 status id: " + statusid, nyaa~~ e);
 
-      if (thriftObject != null) {
-        // Log the status in base64 for debugging
-        try {
-          LOG.warn("Bad ThriftStatus. Id: " + statusId + " base 64: "
-              + Base64.encodeBase64String(new TSerializer().serialize(thriftObject)));
-        } catch (TException e1) {
-          // Ignored since this is logging for debugging.
+      i-if (thwiftobject != nyuww) {
+        // w-wog t-the status in base64 f-fow debugging
+        twy {
+          w-wog.wawn("bad t-thwiftstatus. 😳 i-id: " + s-statusid + " base 64: "
+              + base64.encodebase64stwing(new tsewiawizew().sewiawize(thwiftobject)));
+        } c-catch (texception e-e1) {
+          // i-ignowed s-since this i-is wogging fow debugging. (⑅˘꒳˘)
         }
       }
-      INVALID_DOCUMENTS_COUNTER.increment();
-      if (INVALID_DOCUMENTS_COUNTER.get() > MAX_ALLOWED_INVALID_DOCUMENTS) {
-        criticalExceptionHandler.handle(this, e);
+      invawid_documents_countew.incwement();
+      if (invawid_documents_countew.get() > m-max_awwowed_invawid_documents) {
+        cwiticawexceptionhandwew.handwe(this, nyaa~~ e);
       }
-      return new Document();
+      wetuwn nyew document();
     }
   }
 
   /**
-   * Given the thrift representation of a tweet, returns a Lucene Document with all the fields
-   * that need to be indexed.
+   * given the thwift wepwesentation o-of a tweet, OwO wetuwns a wucene document with aww the fiewds
+   * t-that nyeed to b-be indexed. rawr x3
    *
-   * Return null if the given thrift object is invalid.
+   * w-wetuwn nyuww if the given t-thwift object is invawid. XD
    *
-   * @throws IOException if there are problems reading the input of producing the output. Exception
-   *         is handled in {@link #newDocument(TBase)}.
+   * @thwows i-ioexception i-if thewe awe pwobwems weading the input of pwoducing the output. σωσ exception
+   *         is handwed in {@wink #newdocument(tbase)}. (U ᵕ U❁)
    */
-  @Nullable
-  protected abstract Document innerNewDocument(T thriftObject) throws IOException;
+  @nuwwabwe
+  p-pwotected abstwact document innewnewdocument(t t-thwiftobject) thwows ioexception;
 
-  // Helper methods that prevent us from adding null fields to the lucene index
-  protected void addField(Document document, IndexableField field) {
-    if (field != null) {
-      document.add(field);
+  // h-hewpew methods t-that pwevent us fwom adding nyuww fiewds t-to the wucene index
+  p-pwotected void addfiewd(document d-document, (U ﹏ U) i-indexabwefiewd fiewd) {
+    if (fiewd != nyuww) {
+      document.add(fiewd);
     }
   }
 
-  protected Field newField(String data, String fieldName) {
-    return newField(data, fieldName, OmitNormTextField.TYPE_NOT_STORED);
+  pwotected f-fiewd nyewfiewd(stwing d-data, :3 s-stwing fiewdname) {
+    wetuwn n-nyewfiewd(data, ( ͡o ω ͡o ) f-fiewdname, σωσ omitnowmtextfiewd.type_not_stowed);
   }
 
-  protected Field newField(String data, String fieldName, FieldType fieldType) {
-    if (data != null) {
-      return new Field(fieldName, data, fieldType);
+  pwotected f-fiewd nyewfiewd(stwing data, >w< stwing fiewdname, 😳😳😳 fiewdtype fiewdtype) {
+    if (data != n-nyuww) {
+      w-wetuwn nyew fiewd(fiewdname, OwO data, fiewdtype);
     }
-    return null;
+    wetuwn n-nyuww;
   }
 }

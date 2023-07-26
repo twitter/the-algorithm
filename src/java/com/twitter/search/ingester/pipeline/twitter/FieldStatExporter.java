@@ -1,150 +1,150 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import java.util.List;
-import java.util.Set;
+impowt java.utiw.wist;
+i-impowt j-java.utiw.set;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Sets;
-import com.google.common.collect.Table;
+i-impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.hashbasedtabwe;
+i-impowt com.googwe.common.cowwect.sets;
+i-impowt c-com.googwe.common.cowwect.tabwe;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.schema.SchemaBuilder;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeatures;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeaturesUtil;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.thriftjava.ThriftField;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
+i-impowt com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
+impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt c-com.twittew.seawch.common.schema.schemabuiwdew;
+impowt com.twittew.seawch.common.schema.base.schema;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdencodedfeatuwes;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdencodedfeatuwesutiw;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfiewd;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingevent;
 
 /**
- * This class exports counts of fields that are present on processed tweets. It is used to ensure
- * that we are not missing important fields. It is not threadsafe.
+ * this c-cwass expowts counts of fiewds t-that awe pwesent o-on pwocessed tweets. ^^;; it is used to ensuwe
+ * that we awe nyot missing impowtant f-fiewds. o.O it is nyot thweadsafe. (///ˬ///✿)
  */
-public class FieldStatExporter {
-  private static final String STAT_FORMAT = "%s_penguin_%d_documents_with_field_%s";
-  private static final String UNKNOWN_FIELD = "%s_penguin_%d_documents_with_unknown_field_%d";
-  private final String statPrefix;
-  private final Schema schema;
-  private final Table<PenguinVersion, Integer, SearchRateCounter> fieldCounters
-      = HashBasedTable.create();
-  private final Set<EarlybirdFieldConstant> encodedTweetFeaturesFields;
-  private final Set<EarlybirdFieldConstant> extendedEncodedTweetFeaturesFields;
+pubwic cwass fiewdstatexpowtew {
+  pwivate s-static finaw stwing stat_fowmat = "%s_penguin_%d_documents_with_fiewd_%s";
+  pwivate s-static finaw s-stwing unknown_fiewd = "%s_penguin_%d_documents_with_unknown_fiewd_%d";
+  p-pwivate f-finaw stwing statpwefix;
+  pwivate finaw schema s-schema;
+  pwivate finaw tabwe<penguinvewsion, σωσ integew, nyaa~~ seawchwatecountew> f-fiewdcountews
+      = hashbasedtabwe.cweate();
+  pwivate finaw set<eawwybiwdfiewdconstant> encodedtweetfeatuwesfiewds;
+  pwivate finaw set<eawwybiwdfiewdconstant> e-extendedencodedtweetfeatuwesfiewds;
 
-  private List<PenguinVersion> penguinVersions;
+  pwivate w-wist<penguinvewsion> p-penguinvewsions;
 
-  FieldStatExporter(String statPrefix, Schema schema, List<PenguinVersion> penguinVersions) {
-    this.statPrefix = statPrefix;
-    this.schema = schema;
-    this.penguinVersions = penguinVersions;
-    this.encodedTweetFeaturesFields =
-        getEncodedTweetFeaturesFields(EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD);
-    this.extendedEncodedTweetFeaturesFields =
-        getEncodedTweetFeaturesFields(EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD);
+  f-fiewdstatexpowtew(stwing statpwefix, ^^;; schema schema, ^•ﻌ•^ wist<penguinvewsion> penguinvewsions) {
+    t-this.statpwefix = s-statpwefix;
+    this.schema = s-schema;
+    t-this.penguinvewsions = penguinvewsions;
+    t-this.encodedtweetfeatuwesfiewds =
+        getencodedtweetfeatuwesfiewds(eawwybiwdfiewdconstant.encoded_tweet_featuwes_fiewd);
+    t-this.extendedencodedtweetfeatuwesfiewds =
+        getencodedtweetfeatuwesfiewds(eawwybiwdfiewdconstant.extended_encoded_tweet_featuwes_fiewd);
 
-    for (PenguinVersion version : penguinVersions) {
-      for (Schema.FieldInfo info : schema.getFieldInfos()) {
-        String name =
-            String.format(STAT_FORMAT, statPrefix, version.getByteValue(), info.getName());
-        SearchRateCounter counter = SearchRateCounter.export(name);
-        fieldCounters.put(version, info.getFieldId(), counter);
+    fow (penguinvewsion v-vewsion : penguinvewsions) {
+      f-fow (schema.fiewdinfo info : schema.getfiewdinfos()) {
+        stwing n-nyame =
+            s-stwing.fowmat(stat_fowmat, σωσ statpwefix, -.- vewsion.getbytevawue(), ^^;; info.getname());
+        seawchwatecountew countew = seawchwatecountew.expowt(name);
+        fiewdcountews.put(vewsion, XD i-info.getfiewdid(), 🥺 c-countew);
       }
     }
   }
 
   /**
-   * Exports stats counting the number of fields that are present on each document.
+   * expowts s-stats counting t-the nyumbew of f-fiewds that awe pwesent on each document. òωó
    */
-  public void addFieldStats(ThriftVersionedEvents event) {
-    for (PenguinVersion penguinVersion : penguinVersions) {
-      byte version = penguinVersion.getByteValue();
-      ThriftIndexingEvent indexingEvent = event.getVersionedEvents().get(version);
-      Preconditions.checkNotNull(indexingEvent);
+  pubwic void a-addfiewdstats(thwiftvewsionedevents event) {
+    fow (penguinvewsion penguinvewsion : penguinvewsions) {
+      byte v-vewsion = penguinvewsion.getbytevawue();
+      thwiftindexingevent i-indexingevent = e-event.getvewsionedevents().get(vewsion);
+      p-pweconditions.checknotnuww(indexingevent);
 
-      // We only want to count each field once per tweet.
-      Set<Integer> seenFields = Sets.newHashSet();
-      for (ThriftField field : indexingEvent.getDocument().getFields()) {
-        int fieldId = field.getFieldConfigId();
-        if (seenFields.add(fieldId)) {
-          if (fieldId == EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD.getFieldId()) {
-            exportEncodedFeaturesStats(EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD,
-                                       encodedTweetFeaturesFields,
-                                       penguinVersion,
-                                       field);
-          } else if (fieldId
-                     == EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD.getFieldId()) {
-            exportEncodedFeaturesStats(EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD,
-                                       extendedEncodedTweetFeaturesFields,
-                                       penguinVersion,
-                                       field);
-          } else if (isFeatureField(field)) {
-            updateCounterForFeatureField(
-                field.getFieldConfigId(), field.getFieldData().getIntValue(), penguinVersion);
-          } else {
-            SearchRateCounter counter = fieldCounters.get(penguinVersion, fieldId);
-            if (counter == null) {
-              counter = SearchRateCounter.export(
-                  String.format(UNKNOWN_FIELD, statPrefix, version, fieldId));
-              fieldCounters.put(penguinVersion, fieldId, counter);
+      // we onwy w-want to count e-each fiewd once p-pew tweet. (ˆ ﻌ ˆ)♡
+      s-set<integew> seenfiewds = sets.newhashset();
+      fow (thwiftfiewd f-fiewd : indexingevent.getdocument().getfiewds()) {
+        i-int fiewdid = fiewd.getfiewdconfigid();
+        i-if (seenfiewds.add(fiewdid)) {
+          i-if (fiewdid == e-eawwybiwdfiewdconstant.encoded_tweet_featuwes_fiewd.getfiewdid()) {
+            expowtencodedfeatuwesstats(eawwybiwdfiewdconstant.encoded_tweet_featuwes_fiewd, -.-
+                                       encodedtweetfeatuwesfiewds, :3
+                                       penguinvewsion, ʘwʘ
+                                       f-fiewd);
+          } ewse if (fiewdid
+                     == eawwybiwdfiewdconstant.extended_encoded_tweet_featuwes_fiewd.getfiewdid()) {
+            expowtencodedfeatuwesstats(eawwybiwdfiewdconstant.extended_encoded_tweet_featuwes_fiewd, 🥺
+                                       extendedencodedtweetfeatuwesfiewds, >_<
+                                       p-penguinvewsion, ʘwʘ
+                                       fiewd);
+          } ewse if (isfeatuwefiewd(fiewd)) {
+            updatecountewfowfeatuwefiewd(
+                f-fiewd.getfiewdconfigid(), f-fiewd.getfiewddata().getintvawue(), (˘ω˘) p-penguinvewsion);
+          } ewse {
+            s-seawchwatecountew countew = fiewdcountews.get(penguinvewsion, (✿oωo) f-fiewdid);
+            i-if (countew == nuww) {
+              countew = seawchwatecountew.expowt(
+                  stwing.fowmat(unknown_fiewd, (///ˬ///✿) statpwefix, rawr x3 vewsion, f-fiewdid));
+              fiewdcountews.put(penguinvewsion, -.- f-fiewdid, ^^ countew);
             }
-            counter.increment();
+            c-countew.incwement();
           }
         }
       }
     }
   }
 
-  private boolean isFeatureField(ThriftField field) {
-    String fieldName =
-        EarlybirdFieldConstants.getFieldConstant(field.getFieldConfigId()).getFieldName();
-    return fieldName.startsWith(EarlybirdFieldConstants.ENCODED_TWEET_FEATURES_FIELD_NAME
-                                + SchemaBuilder.CSF_VIEW_NAME_SEPARATOR)
-        || fieldName.startsWith(EarlybirdFieldConstants.EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME
-                                + SchemaBuilder.CSF_VIEW_NAME_SEPARATOR);
+  p-pwivate boowean isfeatuwefiewd(thwiftfiewd fiewd) {
+    s-stwing fiewdname =
+        e-eawwybiwdfiewdconstants.getfiewdconstant(fiewd.getfiewdconfigid()).getfiewdname();
+    wetuwn fiewdname.stawtswith(eawwybiwdfiewdconstants.encoded_tweet_featuwes_fiewd_name
+                                + s-schemabuiwdew.csf_view_name_sepawatow)
+        || f-fiewdname.stawtswith(eawwybiwdfiewdconstants.extended_encoded_tweet_featuwes_fiewd_name
+                                + schemabuiwdew.csf_view_name_sepawatow);
   }
 
-  private Set<EarlybirdFieldConstant> getEncodedTweetFeaturesFields(
-      EarlybirdFieldConstant featuresField) {
-    Set<EarlybirdFieldConstant> schemaFeatureFields = Sets.newHashSet();
-    String baseFieldNamePrefix =
-        featuresField.getFieldName() + SchemaBuilder.CSF_VIEW_NAME_SEPARATOR;
-    for (EarlybirdFieldConstant field : EarlybirdFieldConstant.values()) {
-      if (field.getFieldName().startsWith(baseFieldNamePrefix)) {
-        schemaFeatureFields.add(field);
+  pwivate set<eawwybiwdfiewdconstant> getencodedtweetfeatuwesfiewds(
+      eawwybiwdfiewdconstant featuwesfiewd) {
+    s-set<eawwybiwdfiewdconstant> s-schemafeatuwefiewds = s-sets.newhashset();
+    stwing basefiewdnamepwefix =
+        f-featuwesfiewd.getfiewdname() + s-schemabuiwdew.csf_view_name_sepawatow;
+    fow (eawwybiwdfiewdconstant fiewd : e-eawwybiwdfiewdconstant.vawues()) {
+      if (fiewd.getfiewdname().stawtswith(basefiewdnamepwefix)) {
+        schemafeatuwefiewds.add(fiewd);
       }
     }
-    return schemaFeatureFields;
+    wetuwn schemafeatuwefiewds;
   }
 
-  private void exportEncodedFeaturesStats(EarlybirdFieldConstant featuresField,
-                                          Set<EarlybirdFieldConstant> schemaFeatureFields,
-                                          PenguinVersion penguinVersion,
-                                          ThriftField thriftField) {
-    byte[] encodedFeaturesBytes = thriftField.getFieldData().getBytesValue();
-    EarlybirdEncodedFeatures encodedTweetFeatures = EarlybirdEncodedFeaturesUtil.fromBytes(
-        schema.getSchemaSnapshot(), featuresField, encodedFeaturesBytes, 0);
-    for (EarlybirdFieldConstant field : schemaFeatureFields) {
-      updateCounterForFeatureField(
-          field.getFieldId(), encodedTweetFeatures.getFeatureValue(field), penguinVersion);
+  pwivate v-void expowtencodedfeatuwesstats(eawwybiwdfiewdconstant f-featuwesfiewd, (⑅˘꒳˘)
+                                          set<eawwybiwdfiewdconstant> schemafeatuwefiewds,
+                                          p-penguinvewsion p-penguinvewsion, nyaa~~
+                                          thwiftfiewd thwiftfiewd) {
+    byte[] encodedfeatuwesbytes = t-thwiftfiewd.getfiewddata().getbytesvawue();
+    eawwybiwdencodedfeatuwes encodedtweetfeatuwes = eawwybiwdencodedfeatuwesutiw.fwombytes(
+        schema.getschemasnapshot(), /(^•ω•^) f-featuwesfiewd, (U ﹏ U) encodedfeatuwesbytes, 😳😳😳 0);
+    fow (eawwybiwdfiewdconstant f-fiewd : schemafeatuwefiewds) {
+      u-updatecountewfowfeatuwefiewd(
+          fiewd.getfiewdid(), >w< encodedtweetfeatuwes.getfeatuwevawue(fiewd), XD penguinvewsion);
     }
   }
 
-  private void updateCounterForFeatureField(int fieldId, int value, PenguinVersion penguinVersion) {
-    if (value != 0) {
-      SearchRateCounter counter = fieldCounters.get(penguinVersion, fieldId);
-      if (counter == null) {
-        counter = SearchRateCounter.export(
-            String.format(UNKNOWN_FIELD, statPrefix, penguinVersion, fieldId));
-        fieldCounters.put(penguinVersion, fieldId, counter);
+  p-pwivate void u-updatecountewfowfeatuwefiewd(int fiewdid, o.O int vawue, mya penguinvewsion penguinvewsion) {
+    i-if (vawue != 0) {
+      seawchwatecountew c-countew = fiewdcountews.get(penguinvewsion, 🥺 fiewdid);
+      if (countew == nyuww) {
+        countew = seawchwatecountew.expowt(
+            s-stwing.fowmat(unknown_fiewd, ^^;; statpwefix, p-penguinvewsion, :3 f-fiewdid));
+        fiewdcountews.put(penguinvewsion, (U ﹏ U) f-fiewdid, OwO countew);
       }
-      counter.increment();
+      countew.incwement();
     }
   }
 
-  public void updatePenguinVersions(List<PenguinVersion> updatedPenguinVersions) {
-    penguinVersions = updatedPenguinVersions;
+  p-pubwic void updatepenguinvewsions(wist<penguinvewsion> u-updatedpenguinvewsions) {
+    p-penguinvewsions = updatedpenguinvewsions;
   }
 }

@@ -1,52 +1,52 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.visibility.configapi.params.FSRuleParams.CardUriRootDomainDenyListParam
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableCardUriRootDomainCardDenylistRule
-import com.twitter.visibility.configapi.params.RuleParams.EnableCommunityNonMemberPollCardRule
-import com.twitter.visibility.configapi.params.RuleParams.EnableCommunityNonMemberPollCardRuleFailClosed
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.CardUriHasRootDomain
-import com.twitter.visibility.rules.Condition.CommunityTweetCommunityVisible
-import com.twitter.visibility.rules.Condition.IsPollCard
-import com.twitter.visibility.rules.Condition.LoggedOutOrViewerNotFollowingAuthor
-import com.twitter.visibility.rules.Condition.Not
-import com.twitter.visibility.rules.Condition.Or
-import com.twitter.visibility.rules.Condition.ProtectedAuthor
-import com.twitter.visibility.rules.Condition.TweetIsCommunityTweet
-import com.twitter.visibility.rules.Condition.ViewerIsCommunityMember
+impowt com.twittew.visibiwity.configapi.pawams.fswuwepawams.cawduwiwootdomaindenywistpawam
+i-impowt com.twittew.visibiwity.configapi.pawams.wuwepawam
+i-impowt c-com.twittew.visibiwity.configapi.pawams.wuwepawams.enabwecawduwiwootdomaincawddenywistwuwe
+i-impowt c-com.twittew.visibiwity.configapi.pawams.wuwepawams.enabwecommunitynonmembewpowwcawdwuwe
+i-impowt c-com.twittew.visibiwity.configapi.pawams.wuwepawams.enabwecommunitynonmembewpowwcawdwuwefaiwcwosed
+i-impowt com.twittew.visibiwity.wuwes.condition.and
+impowt com.twittew.visibiwity.wuwes.condition.cawduwihaswootdomain
+impowt com.twittew.visibiwity.wuwes.condition.communitytweetcommunityvisibwe
+impowt com.twittew.visibiwity.wuwes.condition.ispowwcawd
+impowt c-com.twittew.visibiwity.wuwes.condition.woggedoutowviewewnotfowwowingauthow
+impowt com.twittew.visibiwity.wuwes.condition.not
+impowt com.twittew.visibiwity.wuwes.condition.ow
+i-impowt com.twittew.visibiwity.wuwes.condition.pwotectedauthow
+impowt com.twittew.visibiwity.wuwes.condition.tweetiscommunitytweet
+i-impowt com.twittew.visibiwity.wuwes.condition.viewewiscommunitymembew
 
-object DropProtectedAuthorPollCardRule
-    extends RuleWithConstantAction(
-      Drop(Reason.ProtectedAuthor),
-      And(
-        IsPollCard,
-        ProtectedAuthor,
-        LoggedOutOrViewerNotFollowingAuthor,
+object dwoppwotectedauthowpowwcawdwuwe
+    extends wuwewithconstantaction(
+      d-dwop(weason.pwotectedauthow), (///ˬ///✿)
+      and(
+        ispowwcawd, 😳😳😳
+        p-pwotectedauthow, 🥺
+        w-woggedoutowviewewnotfowwowingauthow, mya
       )
     )
 
-object DropCardUriRootDomainDenylistRule
-    extends RuleWithConstantAction(
-      Drop(Reason.Unspecified),
-      And(CardUriHasRootDomain(CardUriRootDomainDenyListParam))
+object dwopcawduwiwootdomaindenywistwuwe
+    extends wuwewithconstantaction(
+      dwop(weason.unspecified), 🥺
+      a-and(cawduwihaswootdomain(cawduwiwootdomaindenywistpawam))
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableCardUriRootDomainCardDenylistRule)
+  ovewwide def enabwed: seq[wuwepawam[boowean]] = seq(enabwecawduwiwootdomaincawddenywistwuwe)
 }
 
-object DropCommunityNonMemberPollCardRule
-    extends RuleWithConstantAction(
-      Drop(Reason.CommunityNotAMember),
-      And(
-        IsPollCard,
-        TweetIsCommunityTweet,
-        Or(
-          Not(ViewerIsCommunityMember),
-          Not(CommunityTweetCommunityVisible),
+object dwopcommunitynonmembewpowwcawdwuwe
+    e-extends wuwewithconstantaction(
+      dwop(weason.communitynotamembew), >_<
+      a-and(
+        ispowwcawd, >_<
+        t-tweetiscommunitytweet, (⑅˘꒳˘)
+        o-ow(
+          n-nyot(viewewiscommunitymembew), /(^•ω•^)
+          nyot(communitytweetcommunityvisibwe), rawr x3
         )
-      ),
+      ), (U ﹏ U)
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableCommunityNonMemberPollCardRule)
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(
-    EnableCommunityNonMemberPollCardRuleFailClosed)
+  ovewwide d-def enabwed: seq[wuwepawam[boowean]] = seq(enabwecommunitynonmembewpowwcawdwuwe)
+  o-ovewwide def enabwefaiwcwosed: seq[wuwepawam[boowean]] = seq(
+    enabwecommunitynonmembewpowwcawdwuwefaiwcwosed)
 }

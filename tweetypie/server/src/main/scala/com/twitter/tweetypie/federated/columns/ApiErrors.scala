@@ -1,110 +1,110 @@
-package com.twitter.tweetypie.federated
-package columns
+package com.twittew.tweetypie.fedewated
+package cowumns
 
-import com.twitter.bouncer.thriftscala.Bounce
-import com.twitter.finagle.http.Status
-import com.twitter.finatra.api11
-import com.twitter.finatra.api11.ApiError
-import com.twitter.strato.response.Err
+i-impowt com.twittew.bouncew.thwiftscawa.bounce
+i-impowt com.twittew.finagwe.http.status
+i-impowt c-com.twittew.finatwa.api11
+i-impowt c-com.twittew.finatwa.api11.apiewwow
+i-impowt com.twittew.stwato.wesponse.eww
 
-object ApiErrors {
-  // Errs ported from StatusesRetweetController
-  val GenericAccessDeniedErr = toErr(ApiError.GenericAccessDenied)
-  val AlreadyRetweetedErr = toErr(ApiError.AlreadyRetweeted)
-  val DuplicateStatusErr = toErr(ApiError.DuplicateStatusError)
-  val InvalidRetweetForStatusErr = toErr(ApiError.InvalidRetweetForStatus)
-  val StatusNotFoundErr = toErr(ApiError.StatusNotFound)
-  val BlockedUserErr =
-    toErr(ApiError.BlockedUserError, "retweeting this user's tweets at their request")
-  val ClientNotPrivilegedErr = toErr(ApiError.ClientNotPrivileged)
-  val UserDeniedRetweetErr = toErr(ApiError.CurrentUserSuspended)
+o-object apiewwows {
+  // ewws powted fwom statuseswetweetcontwowwew
+  vaw genewicaccessdeniedeww = toeww(apiewwow.genewicaccessdenied)
+  v-vaw awweadywetweetedeww = toeww(apiewwow.awweadywetweeted)
+  vaw dupwicatestatuseww = t-toeww(apiewwow.dupwicatestatusewwow)
+  vaw invawidwetweetfowstatuseww = t-toeww(apiewwow.invawidwetweetfowstatus)
+  vaw statusnotfoundeww = toeww(apiewwow.statusnotfound)
+  vaw bwockeduseweww =
+    t-toeww(apiewwow.bwockedusewewwow, (ꈍᴗꈍ) "wetweeting this usew's tweets a-at theiw wequest")
+  v-vaw cwientnotpwiviwegedeww = toeww(apiewwow.cwientnotpwiviweged)
+  vaw usewdeniedwetweeteww = toeww(apiewwow.cuwwentusewsuspended)
 
-  // Errs ported from StatusesUpdateController
-  val RateLimitExceededErr = toErr(ApiError.OverStatusUpdateLimit, "User")
-  val TweetUrlSpamErr = toErr(ApiError.TieredActionTweetUrlSpam)
-  val TweetSpammerErr = toErr(ApiError.TieredActionTweetSpammer)
-  val CaptchaChallengeErr = toErr(ApiError.TieredActionChallengeCaptcha)
-  val SafetyRateLimitExceededErr = toErr(ApiError.UserActionRateLimitExceeded, "User")
-  val TweetCannotBeBlankErr = // was MissingRequiredParameterException
-    toErr(ApiError.ForbiddenMissingParameter, "tweet_text or media")
-  val TweetTextTooLongErr = toErr(ApiError.StatusTooLongError)
-  val MalwareTweetErr = toErr(ApiError.StatusMalwareError)
-  val DuplicateTweetErr = toErr(ApiError.DuplicateStatusError)
-  val CurrentUserSuspendedErr = toErr(ApiError.CurrentUserSuspended)
-  val MentionLimitExceededErr = toErr(ApiError.MentionLimitInTweetExceeded)
-  val UrlLimitExceededErr = toErr(ApiError.UrlLimitInTweetExceeded)
-  val HashtagLimitExceededErr = toErr(ApiError.HashtagLimitInTweetExceeded)
-  val CashtagLimitExceededErr = toErr(ApiError.CashtagLimitInTweetExceeded)
-  val HashtagLengthLimitExceededErr = toErr(ApiError.HashtagLengthLimitInTweetExceeded)
-  val TooManyAttachmentTypesErr = toErr(ApiError.AttachmentTypesLimitInTweetExceeded)
-  val InvalidAttachmentUrlErr = toErr(ApiError.InvalidParameter("attachment_url"))
-  val InReplyToTweetNotFoundErr = toErr(ApiError.InReplyToTweetNotFound)
-  val InvalidAdditionalFieldErr = toErr(ApiError.GenericBadRequest)
-  def invalidAdditionalFieldWithReasonErr(failureReason: String) =
-    toErr(ApiError.GenericBadRequest.copy(message = failureReason))
-  val InvalidUrlErr = toErr(ApiError.InvalidUrl)
-  val InvalidCoordinatesErr = toErr(ApiError.InvalidCoordinates)
-  val InvalidGeoSearchRequestIdErr =
-    toErr(ApiError.InvalidParameter("geo_search_request_id"))
-  val ConversationControlNotAuthorizedErr = toErr(ApiError.ConversationControlNotAuthorized)
-  val ConversationControlInvalidErr = toErr(ApiError.ConversationControlInvalid)
-  val ConversationControlReplyRestricted = toErr(ApiError.ConversationControlReplyRestricted)
+  // ewws powted fwom s-statusesupdatecontwowwew
+  vaw watewimitexceededeww = toeww(apiewwow.ovewstatusupdatewimit, /(^•ω•^) "usew")
+  vaw tweetuwwspameww = t-toeww(apiewwow.tiewedactiontweetuwwspam)
+  vaw tweetspammeweww = t-toeww(apiewwow.tiewedactiontweetspammew)
+  v-vaw captchachawwengeeww = t-toeww(apiewwow.tiewedactionchawwengecaptcha)
+  v-vaw safetywatewimitexceededeww = toeww(apiewwow.usewactionwatewimitexceeded, (⑅˘꒳˘) "usew")
+  vaw tweetcannotbebwankeww = // w-was missingwequiwedpawametewexception
+    toeww(apiewwow.fowbiddenmissingpawametew, ( ͡o ω ͡o ) "tweet_text ow media")
+  v-vaw tweettexttoowongeww = toeww(apiewwow.statustoowongewwow)
+  vaw mawwawetweeteww = toeww(apiewwow.statusmawwaweewwow)
+  vaw dupwicatetweeteww = toeww(apiewwow.dupwicatestatusewwow)
+  vaw c-cuwwentusewsuspendedeww = toeww(apiewwow.cuwwentusewsuspended)
+  v-vaw mentionwimitexceededeww = t-toeww(apiewwow.mentionwimitintweetexceeded)
+  vaw u-uwwwimitexceededeww = toeww(apiewwow.uwwwimitintweetexceeded)
+  vaw hashtagwimitexceededeww = toeww(apiewwow.hashtagwimitintweetexceeded)
+  vaw c-cashtagwimitexceededeww = t-toeww(apiewwow.cashtagwimitintweetexceeded)
+  vaw hashtagwengthwimitexceededeww = toeww(apiewwow.hashtagwengthwimitintweetexceeded)
+  v-vaw toomanyattachmenttypeseww = t-toeww(apiewwow.attachmenttypeswimitintweetexceeded)
+  vaw invawidattachmentuwweww = t-toeww(apiewwow.invawidpawametew("attachment_uww"))
+  vaw i-inwepwytotweetnotfoundeww = toeww(apiewwow.inwepwytotweetnotfound)
+  vaw invawidadditionawfiewdeww = t-toeww(apiewwow.genewicbadwequest)
+  def invawidadditionawfiewdwithweasoneww(faiwuweweason: s-stwing) =
+    toeww(apiewwow.genewicbadwequest.copy(message = faiwuweweason))
+  v-vaw invawiduwweww = t-toeww(apiewwow.invawiduww)
+  vaw invawidcoowdinateseww = toeww(apiewwow.invawidcoowdinates)
+  vaw invawidgeoseawchwequestideww =
+    toeww(apiewwow.invawidpawametew("geo_seawch_wequest_id"))
+  vaw convewsationcontwownotauthowizedeww = toeww(apiewwow.convewsationcontwownotauthowized)
+  vaw convewsationcontwowinvawideww = t-toeww(apiewwow.convewsationcontwowinvawid)
+  v-vaw convewsationcontwowwepwywestwicted = toeww(apiewwow.convewsationcontwowwepwywestwicted)
 
-  // Errors ported from StatusesDestroyController
-  val DeletePermissionErr = toErr(ApiError.StatusActionPermissionError("delete"))
+  // e-ewwows powted f-fwom statusesdestwoycontwowwew
+  v-vaw dewetepewmissioneww = toeww(apiewwow.statusactionpewmissionewwow("dewete"))
 
-  // See StatusesUpdateController#GenericErrorException
-  val GenericTweetCreateErr = toErr(ApiError.UnknownInterpreterError, "Tweet creation failed")
-  val InvalidBatchModeParameterErr = toErr(ApiError.InvalidParameter("batch_mode"))
-  val CannotConvoControlAndCommunitiesErr =
-    toErr(ApiError.CommunityInvalidParams, "conversation_control")
-  val TooManyCommunitiesErr = toErr(ApiError.CommunityInvalidParams, "communities")
-  val CommunityReplyTweetNotAllowedErr = toErr(ApiError.CommunityReplyTweetNotAllowed)
-  val ConversationControlNotSupportedErr = toErr(ApiError.ConversationControlNotSupported)
-  val CommunityUserNotAuthorizedErr = toErr(ApiError.CommunityUserNotAuthorized)
-  val CommunityNotFoundErr = toErr(ApiError.CommunityNotFound)
-  val CommunityProtectedUserCannotTweetErr = toErr(ApiError.CommunityProtectedUserCannotTweet)
+  // see statusesupdatecontwowwew#genewicewwowexception
+  vaw genewictweetcweateeww = t-toeww(apiewwow.unknownintewpwetewewwow, òωó "tweet cweation faiwed")
+  vaw invawidbatchmodepawameteweww = toeww(apiewwow.invawidpawametew("batch_mode"))
+  v-vaw cannotconvocontwowandcommunitieseww =
+    toeww(apiewwow.communityinvawidpawams, (⑅˘꒳˘) "convewsation_contwow")
+  v-vaw toomanycommunitieseww = t-toeww(apiewwow.communityinvawidpawams, XD "communities")
+  v-vaw communitywepwytweetnotawwowedeww = toeww(apiewwow.communitywepwytweetnotawwowed)
+  v-vaw c-convewsationcontwownotsuppowtedeww = t-toeww(apiewwow.convewsationcontwownotsuppowted)
+  v-vaw communityusewnotauthowizedeww = toeww(apiewwow.communityusewnotauthowized)
+  vaw communitynotfoundeww = t-toeww(apiewwow.communitynotfound)
+  v-vaw communitypwotectedusewcannottweeteww = t-toeww(apiewwow.communitypwotectedusewcannottweet)
 
-  val SuperFollowCreateNotAuthorizedErr = toErr(ApiError.SuperFollowsCreateNotAuthorized)
-  val SuperFollowInvalidParamsErr = toErr(ApiError.SuperFollowsInvalidParams)
-  val ExclusiveTweetEngagementNotAllowedErr = toErr(ApiError.ExclusiveTweetEngagementNotAllowed)
+  v-vaw supewfowwowcweatenotauthowizedeww = toeww(apiewwow.supewfowwowscweatenotauthowized)
+  v-vaw supewfowwowinvawidpawamseww = toeww(apiewwow.supewfowwowsinvawidpawams)
+  vaw excwusivetweetengagementnotawwowedeww = toeww(apiewwow.excwusivetweetengagementnotawwowed)
 
-  val SafetyLevelMissingErr = toErr(ApiError.MissingParameter("safety_level"))
+  v-vaw safetywevewmissingeww = toeww(apiewwow.missingpawametew("safety_wevew"))
 
-  def accessDeniedByBouncerErr(bounce: Bounce) =
-    toErr(ApiError.AccessDeniedByBouncer, bounce.errorMessage.getOrElse(Seq.empty))
+  def accessdeniedbybounceweww(bounce: bounce) =
+    toeww(apiewwow.accessdeniedbybouncew, -.- bounce.ewwowmessage.getowewse(seq.empty))
 
-  def tweetEngagementLimitedErr(failureReason: String) =
-    toErr(ApiError.TweetEngagementsLimited(failureReason))
+  d-def tweetengagementwimitedeww(faiwuweweason: stwing) =
+    toeww(apiewwow.tweetengagementswimited(faiwuweweason))
 
-  def invalidMediaErr(failureReason: Option[String]) =
-    toErr(ApiError.invalidMediaId(failureReason))
+  def i-invawidmediaeww(faiwuweweason: option[stwing]) =
+    t-toeww(apiewwow.invawidmediaid(faiwuweweason))
 
-  val TrustedFriendsInvalidParamsErr = toErr(ApiError.TrustedFriendsInvalidParams)
-  val TrustedFriendsRetweetNotAllowedErr = toErr(ApiError.TrustedFriendsRetweetNotAllowed)
-  val TrustedFriendsEngagementNotAllowedErr = toErr(ApiError.TrustedFriendsEngagementNotAllowed)
-  val TrustedFriendsCreateNotAllowedErr = toErr(ApiError.TrustedFriendsCreateNotAllowed)
-  val TrustedFriendsQuoteTweetNotAllowedErr = toErr(ApiError.TrustedFriendsQuoteTweetNotAllowed)
+  v-vaw twustedfwiendsinvawidpawamseww = toeww(apiewwow.twustedfwiendsinvawidpawams)
+  v-vaw twustedfwiendswetweetnotawwowedeww = toeww(apiewwow.twustedfwiendswetweetnotawwowed)
+  v-vaw twustedfwiendsengagementnotawwowedeww = t-toeww(apiewwow.twustedfwiendsengagementnotawwowed)
+  vaw twustedfwiendscweatenotawwowedeww = toeww(apiewwow.twustedfwiendscweatenotawwowed)
+  vaw twustedfwiendsquotetweetnotawwowedeww = toeww(apiewwow.twustedfwiendsquotetweetnotawwowed)
 
-  val StaleTweetEngagementNotAllowedErr = toErr(ApiError.StaleTweetEngagementNotAllowed)
-  val StaleTweetQuoteTweetNotAllowedErr = toErr(ApiError.StaleTweetQuoteTweetNotAllowed)
-  val StaleTweetRetweetNotAllowedErr = toErr(ApiError.StaleTweetRetweetNotAllowed)
+  v-vaw stawetweetengagementnotawwowedeww = toeww(apiewwow.stawetweetengagementnotawwowed)
+  v-vaw stawetweetquotetweetnotawwowedeww = toeww(apiewwow.stawetweetquotetweetnotawwowed)
+  v-vaw stawetweetwetweetnotawwowedeww = t-toeww(apiewwow.stawetweetwetweetnotawwowed)
 
-  val CollabTweetInvalidParamsErr = toErr(ApiError.CollabTweetInvalidParams)
+  vaw cowwabtweetinvawidpawamseww = toeww(apiewwow.cowwabtweetinvawidpawams)
 
-  val FieldEditNotAllowedErr = toErr(ApiError.FieldEditNotAllowed)
-  val NotEligibleForEditErr = toErr(ApiError.NotEligibleForEdit)
+  v-vaw fiewdeditnotawwowedeww = t-toeww(apiewwow.fiewdeditnotawwowed)
+  vaw nyotewigibwefowediteww = t-toeww(apiewwow.notewigibwefowedit)
 
-  def toErr(apiError: api11.ApiError, args: Any*): Err = {
-    val errCode = apiError.status match {
-      case Status.Forbidden => Err.Authorization
-      case Status.Unauthorized => Err.Authentication
-      case Status.NotFound => Err.BadRequest
-      case Status.BadRequest => Err.BadRequest
-      case _ => Err.BadRequest
+  d-def toeww(apiewwow: api11.apiewwow, :3 awgs: any*): eww = {
+    vaw ewwcode = a-apiewwow.status m-match {
+      c-case status.fowbidden => eww.authowization
+      c-case status.unauthowized => e-eww.authentication
+      case status.notfound => e-eww.badwequest
+      case status.badwequest => eww.badwequest
+      case _ => eww.badwequest
     }
-    val errMessage = s"${apiError.message.format(args.mkString(","))} (${apiError.code})"
-    val errContext = Some(Err.Context.Api11Error(apiError.code))
-    Err(errCode, errMessage, errContext)
+    vaw ewwmessage = s-s"${apiewwow.message.fowmat(awgs.mkstwing(","))} (${apiewwow.code})"
+    v-vaw ewwcontext = some(eww.context.api11ewwow(apiewwow.code))
+    eww(ewwcode, nyaa~~ e-ewwmessage, 😳 ewwcontext)
   }
 }

@@ -1,69 +1,69 @@
-# Twitter's Recommendation Algorithm
+# twittew's wecommendation awgowithm
 
-Twitter's Recommendation Algorithm is a set of services and jobs that are responsible for serving feeds of Tweets and other content across all Twitter product surfaces (e.g. For You Timeline, Search, Explore, Notifications). For an introduction to how the algorithm works, please refer to our [engineering blog](https://blog.twitter.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm).
+t-twittew's wecommendation a-awgowithm i-is a set o-of sewvices and j-jobs that awe wesponsibwe f-fow sewving f-feeds of t-tweets and othew content acwoss aww twittew pwoduct suwfaces (e.g. ^^ fow you timewine, ^•ﻌ•^ s-seawch, expwowe, XD nyotifications). :3 fow an intwoduction t-to how the awgowithm w-wowks, (ꈍᴗꈍ) pwease wefew to ouw [engineewing bwog](https://bwog.twittew.com/engineewing/en_us/topics/open-souwce/2023/twittew-wecommendation-awgowithm). :3
 
-## Architecture
+## awchitectuwe
 
-Product surfaces at Twitter are built on a shared set of data, models, and software frameworks. The shared components included in this repository are listed below:
+p-pwoduct suwfaces at twittew a-awe buiwt on a s-shawed set of data, (U ﹏ U) modews, and softwawe fwamewowks. UwU the shawed components incwuded i-in this wepositowy awe wisted bewow:
 
-| Type | Component | Description |
+| type | component | descwiption |
 |------------|------------|------------|
-| Data | [tweetypie](tweetypie/server/README.md) | Core Tweet service that handles the reading and writing of Tweet data. |
-|      | [unified-user-actions](unified_user_actions/README.md) | Real-time stream of user actions on Twitter. |
-|      | [user-signal-service](user-signal-service/README.md) | Centralized platform to retrieve explicit (e.g. likes, replies) and implicit (e.g. profile visits, tweet clicks) user signals. |
-| Model | [SimClusters](src/scala/com/twitter/simclusters_v2/README.md) | Community detection and sparse embeddings into those communities. |
-|       | [TwHIN](https://github.com/twitter/the-algorithm-ml/blob/main/projects/twhin/README.md) | Dense knowledge graph embeddings for Users and Tweets. |
-|       | [trust-and-safety-models](trust_and_safety_models/README.md) | Models for detecting NSFW or abusive content. |
-|       | [real-graph](src/scala/com/twitter/interaction_graph/README.md) | Model to predict the likelihood of a Twitter User interacting with another User. |
-|       | [tweepcred](src/scala/com/twitter/graph/batch/job/tweepcred/README) | Page-Rank algorithm for calculating Twitter User reputation. |
-|       | [recos-injector](recos-injector/README.md) | Streaming event processor for building input streams for [GraphJet](https://github.com/twitter/GraphJet) based services. |
-|       | [graph-feature-service](graph-feature-service/README.md) | Serves graph features for a directed pair of Users (e.g. how many of User A's following liked Tweets from User B). |
-|       | [topic-social-proof](topic-social-proof/README.md) | Identifies topics related to individual Tweets. |
-|       | [representation-scorer](representation-scorer/README.md) | Compute scores between pairs of entities (Users, Tweets, etc.) using embedding similarity. |
-| Software framework | [navi](navi/README.md) | High performance, machine learning model serving written in Rust. |
-|                    | [product-mixer](product-mixer/README.md) | Software framework for building feeds of content. |
-|                    | [timelines-aggregation-framework](timelines/data_processing/ml_util/aggregation_framework/README.md) | Framework for generating aggregate features in batch or real time. |
-|                    | [representation-manager](representation-manager/README.md) | Service to retrieve embeddings (i.e. SimClusers and TwHIN). |
-|                    | [twml](twml/README.md) | Legacy machine learning framework built on TensorFlow v1. |
+| d-data | [tweetypie](tweetypie/sewvew/weadme.md) | cowe tweet s-sewvice that h-handwes the weading a-and wwiting o-of tweet data. 😳😳😳 |
+|      | [unified-usew-actions](unified_usew_actions/weadme.md) | weaw-time stweam of usew actions o-on twittew. XD |
+|      | [usew-signaw-sewvice](usew-signaw-sewvice/weadme.md) | centwawized pwatfowm to wetwieve e-expwicit (e.g. wikes, o.O wepwies) and impwicit (e.g. (⑅˘꒳˘) pwofiwe visits, 😳😳😳 tweet cwicks) usew signaws. nyaa~~ |
+| m-modew | [simcwustews](swc/scawa/com/twittew/simcwustews_v2/weadme.md) | community detection a-and spawse embeddings i-into those c-communities. rawr |
+|       | [twhin](https://github.com/twittew/the-awgowithm-mw/bwob/main/pwojects/twhin/weadme.md) | dense knowwedge gwaph embeddings fow usews a-and tweets. -.- |
+|       | [twust-and-safety-modews](twust_and_safety_modews/weadme.md) | m-modews fow detecting nysfw o-ow abusive content. (✿oωo) |
+|       | [weaw-gwaph](swc/scawa/com/twittew/intewaction_gwaph/weadme.md) | m-modew to pwedict the wikewihood o-of a twittew usew intewacting w-with anothew usew. /(^•ω•^) |
+|       | [tweepcwed](swc/scawa/com/twittew/gwaph/batch/job/tweepcwed/weadme) | page-wank a-awgowithm fow cawcuwating twittew u-usew weputation. 🥺 |
+|       | [wecos-injectow](wecos-injectow/weadme.md) | stweaming event pwocessow f-fow buiwding i-input stweams fow [gwaphjet](https://github.com/twittew/gwaphjet) based sewvices. |
+|       | [gwaph-featuwe-sewvice](gwaph-featuwe-sewvice/weadme.md) | sewves gwaph featuwes fow a diwected paiw of usews (e.g. how many o-of usew a's fowwowing w-wiked tweets fwom usew b). ʘwʘ |
+|       | [topic-sociaw-pwoof](topic-sociaw-pwoof/weadme.md) | i-identifies topics w-wewated to i-individuaw tweets. UwU |
+|       | [wepwesentation-scowew](wepwesentation-scowew/weadme.md) | compute scowes between paiws of entities (usews, XD t-tweets, (✿oωo) etc.) using embedding simiwawity. :3 |
+| softwawe fwamewowk | [navi](navi/weadme.md) | h-high pewfowmance, (///ˬ///✿) machine w-weawning modew s-sewving wwitten i-in wust. nyaa~~ |
+|                    | [pwoduct-mixew](pwoduct-mixew/weadme.md) | softwawe f-fwamewowk f-fow buiwding feeds o-of content. >w< |
+|                    | [timewines-aggwegation-fwamewowk](timewines/data_pwocessing/mw_utiw/aggwegation_fwamewowk/weadme.md) | fwamewowk f-fow genewating aggwegate featuwes in batch o-ow weaw time. -.- |
+|                    | [wepwesentation-managew](wepwesentation-managew/weadme.md) | s-sewvice t-to wetwieve embeddings (i.e. (✿oωo) s-simcwusews a-and twhin). (˘ω˘) |
+|                    | [twmw](twmw/weadme.md) | wegacy machine weawning fwamewowk buiwt on t-tensowfwow v1. |
 
-The product surfaces currently included in this repository are the For You Timeline and Recommended Notifications.
+the pwoduct suwfaces cuwwentwy incwuded in this wepositowy awe the fow you timewine a-and wecommended nyotifications. rawr
 
-### For You Timeline
+### fow you timewine
 
-The diagram below illustrates how major services and jobs interconnect to construct a For You Timeline.
+the d-diagwam bewow i-iwwustwates how m-majow sewvices and jobs intewconnect t-to constwuct a fow you timewine.
 
-![](docs/system-diagram.png)
+![](docs/system-diagwam.png)
 
-The core components of the For You Timeline included in this repository are listed below:
+t-the cowe components o-of the fow you timewine incwuded in this wepositowy awe wisted bewow:
 
-| Type | Component | Description |
+| type | component | d-descwiption |
 |------------|------------|------------|
-| Candidate Source | [search-index](src/java/com/twitter/search/README.md) | Find and rank In-Network Tweets. ~50% of Tweets come from this candidate source. |
-|                  | [cr-mixer](cr-mixer/README.md) | Coordination layer for fetching Out-of-Network tweet candidates from underlying compute services. |
-|                  | [user-tweet-entity-graph](src/scala/com/twitter/recos/user_tweet_entity_graph/README.md) (UTEG)| Maintains an in memory User to Tweet interaction graph, and finds candidates based on traversals of this graph. This is built on the [GraphJet](https://github.com/twitter/GraphJet) framework. Several other GraphJet based features and candidate sources are located [here](src/scala/com/twitter/recos). |
-|                  | [follow-recommendation-service](follow-recommendations-service/README.md) (FRS)| Provides Users with recommendations for accounts to follow, and Tweets from those accounts. |
-| Ranking | [light-ranker](src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird/README.md) | Light Ranker model used by search index (Earlybird) to rank Tweets. |
-|         | [heavy-ranker](https://github.com/twitter/the-algorithm-ml/blob/main/projects/home/recap/README.md) | Neural network for ranking candidate tweets. One of the main signals used to select timeline Tweets post candidate sourcing. |
-| Tweet mixing & filtering | [home-mixer](home-mixer/README.md) | Main service used to construct and serve the Home Timeline. Built on [product-mixer](product-mixer/README.md). |
-|                          | [visibility-filters](visibilitylib/README.md) | Responsible for filtering Twitter content to support legal compliance, improve product quality, increase user trust, protect revenue through the use of hard-filtering, visible product treatments, and coarse-grained downranking. |
-|                          | [timelineranker](timelineranker/README.md) | Legacy service which provides relevance-scored tweets from the Earlybird Search Index and UTEG service. |
+| candidate s-souwce | [seawch-index](swc/java/com/twittew/seawch/weadme.md) | find and w-wank in-netwowk t-tweets. ~50% of tweets come fwom this candidate s-souwce. OwO |
+|                  | [cw-mixew](cw-mixew/weadme.md) | c-coowdination wayew fow fetching o-out-of-netwowk t-tweet candidates fwom undewwying compute sewvices. ^•ﻌ•^ |
+|                  | [usew-tweet-entity-gwaph](swc/scawa/com/twittew/wecos/usew_tweet_entity_gwaph/weadme.md) (uteg)| maintains an in memowy u-usew to tweet i-intewaction gwaph, UwU a-and finds candidates based on t-twavewsaws of t-this gwaph. (˘ω˘) this is buiwt on the [gwaphjet](https://github.com/twittew/gwaphjet) f-fwamewowk. (///ˬ///✿) sevewaw othew gwaphjet based featuwes and candidate souwces awe wocated [hewe](swc/scawa/com/twittew/wecos). σωσ |
+|                  | [fowwow-wecommendation-sewvice](fowwow-wecommendations-sewvice/weadme.md) (fws)| p-pwovides usews w-with wecommendations fow accounts to fowwow, /(^•ω•^) and t-tweets fwom those a-accounts. 😳 |
+| wanking | [wight-wankew](swc/python/twittew/deepbiwd/pwojects/timewines/scwipts/modews/eawwybiwd/weadme.md) | wight wankew modew used by seawch i-index (eawwybiwd) to wank tweets. 😳 |
+|         | [heavy-wankew](https://github.com/twittew/the-awgowithm-mw/bwob/main/pwojects/home/wecap/weadme.md) | nyeuwaw nyetwowk fow wanking candidate tweets. (⑅˘꒳˘) o-one of the main signaws used to sewect timewine t-tweets post c-candidate souwcing. |
+| tweet mixing & fiwtewing | [home-mixew](home-mixew/weadme.md) | main sewvice u-used to constwuct a-and sewve the home timewine. 😳😳😳 buiwt on [pwoduct-mixew](pwoduct-mixew/weadme.md). 😳 |
+|                          | [visibiwity-fiwtews](visibiwitywib/weadme.md) | wesponsibwe f-fow fiwtewing twittew content t-to suppowt wegaw compwiance, XD impwove pwoduct quawity, mya incwease u-usew twust, ^•ﻌ•^ pwotect wevenue thwough t-the use of h-hawd-fiwtewing, ʘwʘ visibwe pwoduct t-tweatments, ( ͡o ω ͡o ) and coawse-gwained downwanking. mya |
+|                          | [timewinewankew](timewinewankew/weadme.md) | w-wegacy sewvice w-which pwovides w-wewevance-scowed tweets fwom t-the eawwybiwd s-seawch index and uteg sewvice. o.O |
 
-### Recommended Notifications
+### wecommended n-nyotifications
 
-The core components of Recommended Notifications included in this repository are listed below:
+t-the cowe components o-of wecommended nyotifications incwuded in t-this wepositowy awe wisted bewow:
 
-| Type | Component | Description |
+| t-type | component | d-descwiption |
 |------------|------------|------------|
-| Service | [pushservice](pushservice/README.md) | Main recommendation service at Twitter used to surface recommendations to our users via notifications.
-| Ranking | [pushservice-light-ranker](pushservice/src/main/python/models/light_ranking/README.md) | Light Ranker model used by pushservice to rank Tweets. Bridges candidate generation and heavy ranking by pre-selecting highly-relevant candidates from the initial huge candidate pool. |
-|         | [pushservice-heavy-ranker](pushservice/src/main/python/models/heavy_ranking/README.md) | Multi-task learning model to predict the probabilities that the target users will open and engage with the sent notifications. |
+| sewvice | [pushsewvice](pushsewvice/weadme.md) | main wecommendation sewvice at t-twittew used to s-suwface wecommendations t-to ouw u-usews via nyotifications. (✿oωo)
+| wanking | [pushsewvice-wight-wankew](pushsewvice/swc/main/python/modews/wight_wanking/weadme.md) | w-wight wankew modew used by pushsewvice to wank tweets. :3 bwidges candidate genewation and heavy wanking b-by pwe-sewecting highwy-wewevant c-candidates fwom the initiaw h-huge candidate poow. 😳 |
+|         | [pushsewvice-heavy-wankew](pushsewvice/swc/main/python/modews/heavy_wanking/weadme.md) | muwti-task w-weawning modew to pwedict t-the pwobabiwities t-that the tawget u-usews wiww o-open and engage w-with the sent nyotifications. (U ﹏ U) |
 
-## Build and test code
+## buiwd and test code
 
-We include Bazel BUILD files for most components, but not a top-level BUILD or WORKSPACE file. We plan to add a more complete build and test system in the future.
+we incwude bazew buiwd fiwes fow most components, mya but nyot a top-wevew b-buiwd ow wowkspace f-fiwe. (U ᵕ U❁) we pwan t-to add a mowe compwete buiwd and t-test system in the futuwe. :3
 
-## Contributing
+## contwibuting
 
-We invite the community to submit GitHub issues and pull requests for suggestions on improving the recommendation algorithm. We are working on tools to manage these suggestions and sync changes to our internal repository. Any security concerns or issues should be routed to our official [bug bounty program](https://hackerone.com/twitter) through HackerOne. We hope to benefit from the collective intelligence and expertise of the global community in helping us identify issues and suggest improvements, ultimately leading to a better Twitter.
+we invite the community t-to submit g-github issues and puww wequests f-fow suggestions on impwoving the wecommendation a-awgowithm. mya we a-awe wowking on toows to manage these s-suggestions a-and sync changes to ouw intewnaw wepositowy. any secuwity concewns ow issues shouwd b-be wouted to o-ouw officiaw [bug b-bounty pwogwam](https://hackewone.com/twittew) t-thwough hackewone. w-we hope to benefit fwom the c-cowwective intewwigence a-and expewtise of the gwobaw c-community i-in hewping us identify issues and s-suggest impwovements, OwO uwtimatewy weading to a b-bettew twittew. (ˆ ﻌ ˆ)♡
 
-Read our blog on the open source initiative [here](https://blog.twitter.com/en_us/topics/company/2023/a-new-era-of-transparency-for-twitter).
+wead ouw bwog on t-the open souwce i-initiative [hewe](https://bwog.twittew.com/en_us/topics/company/2023/a-new-ewa-of-twanspawency-fow-twittew). ʘwʘ

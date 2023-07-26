@@ -1,60 +1,60 @@
-package com.twitter.tweetypie.repository
+package com.twittew.tweetypie.wepositowy
 
-import com.twitter.audience_rewards.thriftscala.HasSuperFollowingRelationshipRequest
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.tweetypie.Future
-import com.twitter.tweetypie.UserId
-import com.twitter.tweetypie.core.TweetCreateFailure
-import com.twitter.tweetypie.thriftscala.ExclusiveTweetControl
-import com.twitter.tweetypie.thriftscala.TweetCreateState
+impowt c-com.twittew.audience_wewawds.thwiftscawa.hassupewfowwowingwewationshipwequest
+i-impowt c-com.twittew.stitch.stitch
+impowt c-com.twittew.stwato.cwient.fetchew
+i-impowt com.twittew.stwato.cwient.{cwient => s-stwatocwient}
+i-impowt com.twittew.tweetypie.futuwe
+i-impowt com.twittew.tweetypie.usewid
+impowt com.twittew.tweetypie.cowe.tweetcweatefaiwuwe
+impowt com.twittew.tweetypie.thwiftscawa.excwusivetweetcontwow
+impowt c-com.twittew.tweetypie.thwiftscawa.tweetcweatestate
 
-object StratoSuperFollowRelationsRepository {
-  type Type = (UserId, UserId) => Stitch[Boolean]
+object stwatosupewfowwowwewationswepositowy {
+  t-type type = (usewid, mya usewid) => s-stitch[boowean]
 
-  def apply(client: StratoClient): Type = {
+  def appwy(cwient: stwatocwient): type = {
 
-    val column = "audiencerewards/superFollows/hasSuperFollowingRelationshipV2"
+    v-vaw cowumn = "audiencewewawds/supewfowwows/hassupewfowwowingwewationshipv2"
 
-    val fetcher: Fetcher[HasSuperFollowingRelationshipRequest, Unit, Boolean] =
-      client.fetcher[HasSuperFollowingRelationshipRequest, Boolean](column)
+    vaw f-fetchew: fetchew[hassupewfowwowingwewationshipwequest, ^^ u-unit, boowean] =
+      cwient.fetchew[hassupewfowwowingwewationshipwequest, 😳😳😳 boowean](cowumn)
 
-    (authorId, viewerId) => {
-      // Owner of an exclusive tweet chain can respond to their own
-      // tweets / replies, despite not super following themselves
-      if (authorId == viewerId) {
-        Stitch.True
-      } else {
-        val key = HasSuperFollowingRelationshipRequest(authorId, viewerId)
-        // The default relation for this column is "missing", aka None.
-        // This needs to be mapped to false since Super Follows are a sparse relation.
-        fetcher.fetch(key).map(_.v.getOrElse(false))
+    (authowid, viewewid) => {
+      // ownew o-of an excwusive tweet chain can wespond to theiw own
+      // tweets / wepwies, d-despite nyot supew fowwowing themsewves
+      i-if (authowid == v-viewewid) {
+        s-stitch.twue
+      } e-ewse {
+        vaw key = hassupewfowwowingwewationshipwequest(authowid, mya v-viewewid)
+        // the defauwt wewation fow this c-cowumn is "missing", 😳 aka nyone.
+        // this nyeeds to be mapped to fawse since supew fowwows a-awe a spawse wewation. -.-
+        f-fetchew.fetch(key).map(_.v.getowewse(fawse))
       }
     }
   }
 
-  object Validate {
-    def apply(
-      exclusiveTweetControl: Option[ExclusiveTweetControl],
-      userId: UserId,
-      superFollowRelationsRepo: StratoSuperFollowRelationsRepository.Type
-    ): Future[Unit] = {
-      Stitch
-        .run {
-          exclusiveTweetControl.map(_.conversationAuthorId) match {
-            // Don't do exclusive tweet validation on non exclusive tweets.
-            case None =>
-              Stitch.value(true)
+  o-object vawidate {
+    d-def appwy(
+      excwusivetweetcontwow: option[excwusivetweetcontwow], 🥺
+      usewid: u-usewid, o.O
+      supewfowwowwewationswepo: s-stwatosupewfowwowwewationswepositowy.type
+    ): futuwe[unit] = {
+      s-stitch
+        .wun {
+          e-excwusivetweetcontwow.map(_.convewsationauthowid) match {
+            // d-don't do excwusive tweet v-vawidation on nyon excwusive tweets. /(^•ω•^)
+            case nyone =>
+              stitch.vawue(twue)
 
-            case Some(convoAuthorId) =>
-              superFollowRelationsRepo(userId, convoAuthorId)
+            case s-some(convoauthowid) =>
+              supewfowwowwewationswepo(usewid, nyaa~~ c-convoauthowid)
           }
         }.map {
-          case true => Future.Unit
-          case false =>
-            Future.exception(TweetCreateFailure.State(TweetCreateState.SourceTweetNotFound))
-        }.flatten
+          case twue => futuwe.unit
+          c-case fawse =>
+            f-futuwe.exception(tweetcweatefaiwuwe.state(tweetcweatestate.souwcetweetnotfound))
+        }.fwatten
     }
   }
 }

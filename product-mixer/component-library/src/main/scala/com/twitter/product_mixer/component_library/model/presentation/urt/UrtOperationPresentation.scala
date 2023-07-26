@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.component_library.model.presentation.urt
+package com.twittew.pwoduct_mixew.component_wibwawy.modew.pwesentation.uwt
 
-import com.twitter.product_mixer.core.model.common.presentation.urt.BaseUrtOperationPresentation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineOperation
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.uwt.baseuwtopewationpwesentation
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineopewation
 
-final case class UrtOperationPresentation(
-  override val timelineOperation: TimelineOperation)
-    extends BaseUrtOperationPresentation
+f-finaw case cwass u-uwtopewationpwesentation(
+  o-ovewwide vaw timewineopewation: t-timewineopewation)
+    e-extends baseuwtopewationpwesentation

@@ -1,32 +1,32 @@
-target(
+tawget(
     dependencies = [
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/repository",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/server",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/source",
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/wepositowy", >_<
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/sewvew", mya
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/souwce", mya
     ],
 )
 
-jvm_binary(
-    name = "bin",
-    basename = "timelineranker-server",
-    main = "com.twitter.timelineranker.server.Main",
-    runtime_platform = "java11",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":scala",
-        "3rdparty/jvm/org/slf4j:jcl-over-slf4j",  # [1]
-        "3rdparty/jvm/org/slf4j:log4j-over-slf4j",  # [1]
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",  # [2]
-        "strato/src/main/scala/com/twitter/strato/logging/logback",  # [2]
-        "timelineranker/server/src/main/resources",  # [2]
-        "twitter-server/logback-classic/src/main/scala",  #[2]
-    ],
+jvm_binawy(
+    n-nyame = "bin", 😳
+    b-basename = "timewinewankew-sewvew", XD
+    m-main = "com.twittew.timewinewankew.sewvew.main", :3
+    w-wuntime_pwatfowm = "java11", 😳😳😳
+    t-tags = ["bazew-compatibwe"], -.-
+    d-dependencies = [
+        ":scawa", ( ͡o ω ͡o )
+        "3wdpawty/jvm/owg/swf4j:jcw-ovew-swf4j", rawr x3  # [1]
+        "3wdpawty/jvm/owg/swf4j:wog4j-ovew-swf4j", nyaa~~  # [1]
+        "wogwens/wogwens-wogback/swc/main/scawa/com/twittew/wogwens/wogback", /(^•ω•^)  # [2]
+        "stwato/swc/main/scawa/com/twittew/stwato/wogging/wogback", rawr  # [2]
+        "timewinewankew/sewvew/swc/main/wesouwces", OwO  # [2]
+        "twittew-sewvew/wogback-cwassic/swc/main/scawa", (U ﹏ U)  #[2]
+    ], >_<
 )
 
-# [1] bridge other logging implementations to slf4j-api in addition to JUL
-#     https://docbird.twitter.biz/core_libraries_guide/logging/twitter_server.html
-#     without these, c.t.l.Logger become silent/null logger since no proper
-#     configuration can be found. This can be removed once there are no
-#     depdency from service to c.t.l.Logger
+# [1] b-bwidge othew wogging i-impwementations to swf4j-api in addition to juw
+#     https://docbiwd.twittew.biz/cowe_wibwawies_guide/wogging/twittew_sewvew.htmw
+#     without these, rawr x3 c.t.w.woggew b-become siwent/nuww woggew since nyo pwopew
+#     c-configuwation can be f-found. mya this can be wemoved once thewe awe nyo
+#     depdency fwom s-sewvice to c.t.w.woggew
 #
-# [2] incur logback implementation
+# [2] incuw wogback i-impwementation

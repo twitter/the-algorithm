@@ -1,87 +1,87 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+package com.twittew.seawch.eawwybiwd.seawch.wewevance.scowing;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+impowt java.nio.bytebuffew;
+i-impowt j-java.nio.byteowdew;
 
-// Ideally, this part should live somewhere in the Cortex common
-// code. Today, it is not possible to create
-// a `SparseTensor` that relies only on ByteBuffer.
-public class SparseTensor {
+// i-ideawwy, (U ﹏ U) t-this pawt shouwd w-wive somewhewe i-in the cowtex c-common
+// code. >w< t-today, mya it is nyot possibwe to cweate
+// a `spawsetensow` that wewies onwy on bytebuffew. >w<
+p-pubwic cwass spawsetensow {
 
-  private ByteBuffer sparseIndices;
-  private ByteBuffer sparseValues;
-  private ByteBuffer sparseShape;
+  pwivate b-bytebuffew spawseindices;
+  pwivate b-bytebuffew spawsevawues;
+  pwivate bytebuffew spawseshape;
 
-  private int numDocs;
-  private final long[] sparseShapeShapeDimension = new long[] {2L};
-  private final long inputBitSize = 1 << 63;
+  p-pwivate int nyumdocs;
+  pwivate f-finaw wong[] s-spawseshapeshapedimension = nyew wong[] {2w};
+  pwivate finaw wong inputbitsize = 1 << 63;
 
-  private long numRecordsSeen = 0;
-  private final long numFeatures;
-  private int numValuesSeen;
+  p-pwivate wong nyumwecowdsseen = 0;
+  pwivate finaw wong nyumfeatuwes;
+  pwivate int n-nyumvawuesseen;
 
-  public SparseTensor(int numDocs, int numFeatures) {
-    this.numDocs = numDocs;
-    this.numFeatures = (long) numFeatures;
-    this.sparseValues =
-      ByteBuffer
-      .allocate(numFeatures * numDocs * Float.BYTES)
-      .order(ByteOrder.LITTLE_ENDIAN);
-    this.sparseIndices =
-      ByteBuffer
-        .allocate(2 * numFeatures * numDocs * Long.BYTES)
-        .order(ByteOrder.LITTLE_ENDIAN);
-    this.sparseShape =
-      ByteBuffer
-      .allocate(2 * Long.BYTES)
-      .order(ByteOrder.LITTLE_ENDIAN);
+  pubwic spawsetensow(int n-nyumdocs, nyaa~~ i-int nyumfeatuwes) {
+    t-this.numdocs = n-nyumdocs;
+    this.numfeatuwes = (wong) nyumfeatuwes;
+    t-this.spawsevawues =
+      bytebuffew
+      .awwocate(numfeatuwes * nyumdocs * f-fwoat.bytes)
+      .owdew(byteowdew.wittwe_endian);
+    this.spawseindices =
+      bytebuffew
+        .awwocate(2 * nyumfeatuwes * nyumdocs * wong.bytes)
+        .owdew(byteowdew.wittwe_endian);
+    t-this.spawseshape =
+      bytebuffew
+      .awwocate(2 * w-wong.bytes)
+      .owdew(byteowdew.wittwe_endian);
   }
 
-  public void incNumRecordsSeen() {
-    numRecordsSeen++;
-  }
-
-  /**
-   * Adds the given value to this tensor.
-   */
-  public void addValue(long featureId, float value) {
-    sparseValues.putFloat(value);
-    sparseIndices.putLong(numRecordsSeen);
-    sparseIndices.putLong(featureId);
-    numValuesSeen++;
-  }
-
-  public ByteBuffer getSparseValues() {
-    sparseValues.limit(numValuesSeen * Float.BYTES);
-    sparseValues.rewind();
-    return sparseValues;
-  }
-
-  public long[] getSparseValuesShape() {
-    return new long[] {numValuesSeen};
-  }
-
-  public long[] getSparseIndicesShape() {
-    return new long[] {numValuesSeen, 2L};
-  }
-
-  public long[] getSparseShapeShape() {
-    return sparseShapeShapeDimension;
-  }
-
-  public ByteBuffer getSparseIndices() {
-    sparseIndices.limit(2 * numValuesSeen * Long.BYTES);
-    sparseIndices.rewind();
-    return sparseIndices;
+  p-pubwic v-void incnumwecowdsseen() {
+    nyumwecowdsseen++;
   }
 
   /**
-   * Returns the sparse shape for this tensor.
+   * adds the given vawue to this t-tensow. (✿oωo)
    */
-  public ByteBuffer getSparseShape() {
-    sparseShape.putLong(numRecordsSeen);
-    sparseShape.putLong(inputBitSize);
-    sparseShape.rewind();
-    return sparseShape;
+  p-pubwic void addvawue(wong featuweid, ʘwʘ f-fwoat vawue) {
+    s-spawsevawues.putfwoat(vawue);
+    spawseindices.putwong(numwecowdsseen);
+    s-spawseindices.putwong(featuweid);
+    nyumvawuesseen++;
+  }
+
+  pubwic bytebuffew g-getspawsevawues() {
+    spawsevawues.wimit(numvawuesseen * fwoat.bytes);
+    s-spawsevawues.wewind();
+    wetuwn spawsevawues;
+  }
+
+  p-pubwic wong[] getspawsevawuesshape() {
+    w-wetuwn n-nyew wong[] {numvawuesseen};
+  }
+
+  pubwic wong[] getspawseindicesshape() {
+    wetuwn nyew wong[] {numvawuesseen, (ˆ ﻌ ˆ)♡ 2w};
+  }
+
+  pubwic wong[] getspawseshapeshape() {
+    wetuwn spawseshapeshapedimension;
+  }
+
+  p-pubwic bytebuffew g-getspawseindices() {
+    spawseindices.wimit(2 * n-nyumvawuesseen * w-wong.bytes);
+    s-spawseindices.wewind();
+    wetuwn spawseindices;
+  }
+
+  /**
+   * wetuwns the spawse shape f-fow this tensow. 😳😳😳
+   */
+  pubwic bytebuffew getspawseshape() {
+    spawseshape.putwong(numwecowdsseen);
+    spawseshape.putwong(inputbitsize);
+    s-spawseshape.wewind();
+    wetuwn s-spawseshape;
   }
 }

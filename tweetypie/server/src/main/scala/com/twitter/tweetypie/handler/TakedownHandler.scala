@@ -1,76 +1,76 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.takedown.util.TakedownReasons._
-import com.twitter.tweetypie.store.Takedown
-import com.twitter.tweetypie.thriftscala.TakedownRequest
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.tweetypie.util.Takedowns
+impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.takedown.utiw.takedownweasons._
+i-impowt c-com.twittew.tweetypie.stowe.takedown
+i-impowt com.twittew.tweetypie.thwiftscawa.takedownwequest
+i-impowt com.twittew.tweetypie.thwiftscawa.tweet
+impowt c-com.twittew.tweetypie.utiw.takedowns
 
 /**
- * This handler processes TakedownRequest objects sent to Tweetypie's takedown endpoint.
- * The request object specifies which takedown countries are being added and which are
- * being removed.  It also includes side effect flags for setting the tweet's has_takedown
- * bit, scribing to Guano, and enqueuing to EventBus.  For more information about inputs
- * to the takedown endpoint, see the TakedownRequest documentation in the thrift definition.
+ * this handwew pwocesses takedownwequest objects sent to tweetypie's t-takedown endpoint. (✿oωo)
+ * the wequest object specifies w-which takedown countwies a-awe being added and which awe
+ * being wemoved. ʘwʘ  it awso incwudes s-side effect fwags fow setting t-the tweet's has_takedown
+ * b-bit, (ˆ ﻌ ˆ)♡ scwibing to guano, 😳😳😳 and enqueuing to eventbus. :3  fow mowe infowmation a-about inputs
+ * to the takedown endpoint, OwO see the takedownwequest documentation i-in the thwift definition. (U ﹏ U)
  */
-object TakedownHandler {
-  type Type = FutureArrow[TakedownRequest, Unit]
+o-object takedownhandwew {
+  t-type type = futuweawwow[takedownwequest, >w< u-unit]
 
-  def apply(
-    getTweet: FutureArrow[TweetId, Tweet],
-    getUser: FutureArrow[UserId, User],
-    writeTakedown: FutureEffect[Takedown.Event]
-  ): Type = {
-    FutureArrow { request =>
-      for {
-        tweet <- getTweet(request.tweetId)
-        user <- getUser(getUserId(tweet))
-        userHasTakedowns = user.takedowns.map(userTakedownsToReasons).exists(_.nonEmpty)
+  d-def appwy(
+    gettweet: futuweawwow[tweetid, (U ﹏ U) tweet],
+    getusew: f-futuweawwow[usewid, 😳 usew],
+    wwitetakedown: f-futuweeffect[takedown.event]
+  ): type = {
+    futuweawwow { wequest =>
+      fow {
+        tweet <- gettweet(wequest.tweetid)
+        u-usew <- getusew(getusewid(tweet))
+        u-usewhastakedowns = u-usew.takedowns.map(usewtakedownstoweasons).exists(_.nonempty)
 
-        existingTweetReasons = Takedowns.fromTweet(tweet).reasons
+        e-existingtweetweasons = takedowns.fwomtweet(tweet).weasons
 
-        reasonsToRemove = (request.countriesToRemove.map(countryCodeToReason) ++
-            request.reasonsToRemove.map(normalizeReason)).distinct.sortBy(_.toString)
+        weasonstowemove = (wequest.countwiestowemove.map(countwycodetoweason) ++
+            wequest.weasonstowemove.map(nowmawizeweason)).distinct.sowtby(_.tostwing)
 
-        reasonsToAdd = (request.countriesToAdd.map(countryCodeToReason) ++
-            request.reasonsToAdd.map(normalizeReason)).distinct.sortBy(_.toString)
+        w-weasonstoadd = (wequest.countwiestoadd.map(countwycodetoweason) ++
+            w-wequest.weasonstoadd.map(nowmawizeweason)).distinct.sowtby(_.tostwing)
 
-        updatedTweetTakedowns =
-          (existingTweetReasons ++ reasonsToAdd)
-            .filterNot(reasonsToRemove.contains)
-            .toSeq
-            .sortBy(_.toString)
+        updatedtweettakedowns =
+          (existingtweetweasons ++ w-weasonstoadd)
+            .fiwtewnot(weasonstowemove.contains)
+            .toseq
+            .sowtby(_.tostwing)
 
-        (cs, rs) = Takedowns.partitionReasons(updatedTweetTakedowns)
+        (cs, (ˆ ﻌ ˆ)♡ w-ws) = takedowns.pawtitionweasons(updatedtweettakedowns)
 
-        updatedTweet = Lens.setAll(
-          tweet,
-          // these fields are cached on the Tweet in CachingTweetStore and written in
-          // ManhattanTweetStore
-          TweetLenses.hasTakedown -> (updatedTweetTakedowns.nonEmpty || userHasTakedowns),
-          TweetLenses.tweetypieOnlyTakedownCountryCodes -> Some(cs).filter(_.nonEmpty),
-          TweetLenses.tweetypieOnlyTakedownReasons -> Some(rs).filter(_.nonEmpty)
+        updatedtweet = w-wens.setaww(
+          tweet, 😳😳😳
+          // t-these fiewds awe cached on the tweet i-in cachingtweetstowe and wwitten i-in
+          // manhattantweetstowe
+          t-tweetwenses.hastakedown -> (updatedtweettakedowns.nonempty || u-usewhastakedowns), (U ﹏ U)
+          tweetwenses.tweetypieonwytakedowncountwycodes -> some(cs).fiwtew(_.nonempty), (///ˬ///✿)
+          tweetwenses.tweetypieonwytakedownweasons -> some(ws).fiwtew(_.nonempty)
         )
 
-        _ <- writeTakedown.when(tweet != updatedTweet) {
-          Takedown.Event(
-            tweet = updatedTweet,
-            timestamp = Time.now,
-            user = Some(user),
-            takedownReasons = updatedTweetTakedowns,
-            reasonsToAdd = reasonsToAdd,
-            reasonsToRemove = reasonsToRemove,
-            auditNote = request.auditNote,
-            host = request.host,
-            byUserId = request.byUserId,
-            eventbusEnqueue = request.eventbusEnqueue,
-            scribeForAudit = request.scribeForAudit,
-            updateCodesAndReasons = true
+        _ <- wwitetakedown.when(tweet != updatedtweet) {
+          t-takedown.event(
+            t-tweet = updatedtweet, 😳
+            timestamp = t-time.now, 😳
+            u-usew = s-some(usew),
+            takedownweasons = updatedtweettakedowns, σωσ
+            weasonstoadd = weasonstoadd, rawr x3
+            w-weasonstowemove = weasonstowemove, OwO
+            auditnote = wequest.auditnote, /(^•ω•^)
+            host = wequest.host, 😳😳😳
+            b-byusewid = wequest.byusewid, ( ͡o ω ͡o )
+            eventbusenqueue = w-wequest.eventbusenqueue, >_<
+            s-scwibefowaudit = w-wequest.scwibefowaudit, >w<
+            updatecodesandweasons = t-twue
           )
         }
-      } yield ()
+      } y-yiewd ()
     }
   }
 }

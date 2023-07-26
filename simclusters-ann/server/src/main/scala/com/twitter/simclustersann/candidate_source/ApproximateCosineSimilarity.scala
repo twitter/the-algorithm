@@ -1,129 +1,129 @@
-package com.twitter.simclustersann.candidate_source
+package com.twittew.simcwustewsann.candidate_souwce
 
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclustersann.thriftscala.ScoringAlgorithm
-import com.twitter.simclustersann.thriftscala.SimClustersANNConfig
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import scala.collection.mutable
+impowt com.twittew.simcwustews_v2.common.cwustewid
+i-impowt com.twittew.simcwustews_v2.common.simcwustewsembedding
+i-impowt com.twittew.simcwustews_v2.common.tweetid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembeddingid
+i-impowt com.twittew.simcwustewsann.thwiftscawa.scowingawgowithm
+i-impowt com.twittew.simcwustewsann.thwiftscawa.simcwustewsannconfig
+i-impowt com.twittew.snowfwake.id.snowfwakeid
+i-impowt com.twittew.utiw.duwation
+impowt com.twittew.utiw.time
+impowt scawa.cowwection.mutabwe
 
 /**
- * This store looks for tweets whose similarity is close to a Source SimClustersEmbeddingId.
+ * this stowe wooks fow tweets w-whose simiwawity is cwose to a souwce simcwustewsembeddingid. ( ͡o ω ͡o )
  *
- * Approximate cosine similarity is the core algorithm to drive this store.
+ * a-appwoximate cosine simiwawity i-is the cowe awgowithm to dwive this stowe. o.O
  *
- * Step 1 - 4 are in "fetchCandidates" method.
- * 1. Retrieve the SimClusters Embedding by the SimClustersEmbeddingId
- * 2. Fetch top N clusters' top tweets from the clusterTweetCandidatesStore (TopTweetsPerCluster index).
- * 3. Calculate all the tweet candidates' dot-product or approximate cosine similarity to source tweets.
- * 4. Take top M tweet candidates by the step 3's score
+ * step 1 - 4 a-awe in "fetchcandidates" method. >w<
+ * 1. 😳 w-wetwieve t-the simcwustews embedding by the simcwustewsembeddingid
+ * 2. 🥺 fetch top ny cwustews' top tweets f-fwom the cwustewtweetcandidatesstowe (toptweetspewcwustew index). rawr x3
+ * 3. cawcuwate aww the tweet candidates' dot-pwoduct o-ow appwoximate cosine s-simiwawity to souwce t-tweets. o.O
+ * 4. t-take top m tweet c-candidates by the step 3's scowe
  */
-trait ApproximateCosineSimilarity {
-  type ScoredTweet = (Long, Double)
-  def apply(
-    sourceEmbedding: SimClustersEmbedding,
-    sourceEmbeddingId: SimClustersEmbeddingId,
-    config: SimClustersANNConfig,
-    candidateScoresStat: Int => Unit,
-    clusterTweetsMap: Map[ClusterId, Option[Seq[(TweetId, Double)]]],
-    clusterTweetsMapArray: Map[ClusterId, Option[Array[(TweetId, Double)]]] = Map.empty
-  ): Seq[ScoredTweet]
+twait appwoximatecosinesimiwawity {
+  type s-scowedtweet = (wong, rawr doubwe)
+  def appwy(
+    s-souwceembedding: simcwustewsembedding, ʘwʘ
+    souwceembeddingid: simcwustewsembeddingid, 😳😳😳
+    config: simcwustewsannconfig, ^^;;
+    c-candidatescowesstat: int => unit, o.O
+    c-cwustewtweetsmap: m-map[cwustewid, (///ˬ///✿) o-option[seq[(tweetid, σωσ doubwe)]]], nyaa~~
+    cwustewtweetsmapawway: map[cwustewid, ^^;; o-option[awway[(tweetid, ^•ﻌ•^ d-doubwe)]]] = map.empty
+  ): s-seq[scowedtweet]
 }
 
-object ApproximateCosineSimilarity extends ApproximateCosineSimilarity {
+o-object appwoximatecosinesimiwawity extends a-appwoximatecosinesimiwawity {
 
-  final val InitialCandidateMapSize = 16384
-  val MaxNumResultsUpperBound = 1000
-  final val MaxTweetCandidateAgeUpperBound = 175200
+  finaw vaw initiawcandidatemapsize = 16384
+  vaw m-maxnumwesuwtsuppewbound = 1000
+  finaw vaw maxtweetcandidateageuppewbound = 175200
 
-  private class HashMap[A, B](initSize: Int) extends mutable.HashMap[A, B] {
-    override def initialSize: Int = initSize // 16 - by default
+  pwivate c-cwass hashmap[a, σωσ b](initsize: int) e-extends mutabwe.hashmap[a, -.- b] {
+    ovewwide d-def initiawsize: i-int = initsize // 16 - by defauwt
   }
 
-  private def parseTweetId(embeddingId: SimClustersEmbeddingId): Option[TweetId] = {
-    embeddingId.internalId match {
-      case InternalId.TweetId(tweetId) =>
-        Some(tweetId)
-      case _ =>
-        None
+  pwivate def pawsetweetid(embeddingid: simcwustewsembeddingid): option[tweetid] = {
+    embeddingid.intewnawid m-match {
+      c-case intewnawid.tweetid(tweetid) =>
+        some(tweetid)
+      c-case _ =>
+        n-nyone
     }
   }
 
-  override def apply(
-    sourceEmbedding: SimClustersEmbedding,
-    sourceEmbeddingId: SimClustersEmbeddingId,
-    config: SimClustersANNConfig,
-    candidateScoresStat: Int => Unit,
-    clusterTweetsMap: Map[ClusterId, Option[Seq[(TweetId, Double)]]] = Map.empty,
-    clusterTweetsMapArray: Map[ClusterId, Option[Array[(TweetId, Double)]]] = Map.empty
-  ): Seq[ScoredTweet] = {
-    val now = Time.now
-    val earliestTweetId =
-      if (config.maxTweetCandidateAgeHours >= MaxTweetCandidateAgeUpperBound)
-        0L // Disable max tweet age filter
-      else
-        SnowflakeId.firstIdFor(now - Duration.fromHours(config.maxTweetCandidateAgeHours))
-    val latestTweetId =
-      SnowflakeId.firstIdFor(now - Duration.fromHours(config.minTweetCandidateAgeHours))
+  o-ovewwide def appwy(
+    souwceembedding: simcwustewsembedding, ^^;;
+    souwceembeddingid: s-simcwustewsembeddingid, XD
+    config: simcwustewsannconfig,
+    candidatescowesstat: int => unit, 🥺
+    c-cwustewtweetsmap: map[cwustewid, òωó o-option[seq[(tweetid, (ˆ ﻌ ˆ)♡ d-doubwe)]]] = m-map.empty,
+    cwustewtweetsmapawway: map[cwustewid, -.- o-option[awway[(tweetid, :3 d-doubwe)]]] = m-map.empty
+  ): s-seq[scowedtweet] = {
+    vaw nyow = time.now
+    v-vaw eawwiesttweetid =
+      i-if (config.maxtweetcandidateagehouws >= m-maxtweetcandidateageuppewbound)
+        0w // d-disabwe max t-tweet age fiwtew
+      ewse
+        snowfwakeid.fiwstidfow(now - duwation.fwomhouws(config.maxtweetcandidateagehouws))
+    v-vaw watesttweetid =
+      snowfwakeid.fiwstidfow(now - duwation.fwomhouws(config.mintweetcandidateagehouws))
 
-    // Use Mutable map to optimize performance. The method is thread-safe.
+    // use mutabwe map to optimize pewfowmance. ʘwʘ the method i-is thwead-safe. 🥺
 
-    // Set initial map size to around p75 of map size distribution to avoid too many copying
-    // from extending the size of the mutable hashmap
-    val candidateScoresMap =
-      new HashMap[TweetId, Double](InitialCandidateMapSize)
-    val candidateNormalizationMap =
-      new HashMap[TweetId, Double](InitialCandidateMapSize)
+    // set initiaw map size to awound p75 of m-map size distwibution t-to avoid t-too many copying
+    // fwom extending t-the size of the mutabwe h-hashmap
+    vaw c-candidatescowesmap =
+      nyew hashmap[tweetid, >_< doubwe](initiawcandidatemapsize)
+    vaw candidatenowmawizationmap =
+      nyew h-hashmap[tweetid, ʘwʘ doubwe](initiawcandidatemapsize)
 
-    clusterTweetsMap.foreach {
-      case (clusterId, Some(tweetScores)) if sourceEmbedding.contains(clusterId) =>
-        val sourceClusterScore = sourceEmbedding.getOrElse(clusterId)
+    c-cwustewtweetsmap.foweach {
+      case (cwustewid, (˘ω˘) s-some(tweetscowes)) i-if souwceembedding.contains(cwustewid) =>
+        vaw souwcecwustewscowe = s-souwceembedding.getowewse(cwustewid)
 
-        for (i <- 0 until Math.min(tweetScores.size, config.maxTopTweetsPerCluster)) {
-          val (tweetId, score) = tweetScores(i)
+        f-fow (i <- 0 untiw math.min(tweetscowes.size, (✿oωo) c-config.maxtoptweetspewcwustew)) {
+          vaw (tweetid, (///ˬ///✿) s-scowe) = tweetscowes(i)
 
-          if (!parseTweetId(sourceEmbeddingId).contains(tweetId) &&
-            tweetId >= earliestTweetId && tweetId <= latestTweetId) {
-            candidateScoresMap.put(
-              tweetId,
-              candidateScoresMap.getOrElse(tweetId, 0.0) + score * sourceClusterScore)
-            candidateNormalizationMap
-              .put(tweetId, candidateNormalizationMap.getOrElse(tweetId, 0.0) + score * score)
+          if (!pawsetweetid(souwceembeddingid).contains(tweetid) &&
+            tweetid >= eawwiesttweetid && t-tweetid <= watesttweetid) {
+            c-candidatescowesmap.put(
+              t-tweetid, rawr x3
+              candidatescowesmap.getowewse(tweetid, -.- 0.0) + s-scowe * souwcecwustewscowe)
+            c-candidatenowmawizationmap
+              .put(tweetid, ^^ candidatenowmawizationmap.getowewse(tweetid, (⑅˘꒳˘) 0.0) + s-scowe * scowe)
           }
         }
       case _ => ()
     }
 
-    candidateScoresStat(candidateScoresMap.size)
+    candidatescowesstat(candidatescowesmap.size)
 
-    // Re-Rank the candidate by configuration
-    val processedCandidateScores: Seq[(TweetId, Double)] = candidateScoresMap.map {
-      case (candidateId, score) =>
-        // Enable Partial Normalization
-        val processedScore = {
-          // We applied the "log" version of partial normalization when we rank candidates
-          // by log cosine similarity
-          config.annAlgorithm match {
-            case ScoringAlgorithm.LogCosineSimilarity =>
-              score / sourceEmbedding.logNorm / math.log(1 + candidateNormalizationMap(candidateId))
-            case ScoringAlgorithm.CosineSimilarity =>
-              score / sourceEmbedding.l2norm / math.sqrt(candidateNormalizationMap(candidateId))
-            case ScoringAlgorithm.CosineSimilarityNoSourceEmbeddingNormalization =>
-              score / math.sqrt(candidateNormalizationMap(candidateId))
-            case ScoringAlgorithm.DotProduct => score
+    // we-wank the candidate b-by configuwation
+    v-vaw pwocessedcandidatescowes: seq[(tweetid, nyaa~~ doubwe)] = c-candidatescowesmap.map {
+      c-case (candidateid, /(^•ω•^) scowe) =>
+        // enabwe pawtiaw nyowmawization
+        vaw p-pwocessedscowe = {
+          // we appwied the "wog" vewsion of pawtiaw nyowmawization when we w-wank candidates
+          // by wog cosine simiwawity
+          config.annawgowithm m-match {
+            c-case scowingawgowithm.wogcosinesimiwawity =>
+              scowe / souwceembedding.wognowm / math.wog(1 + candidatenowmawizationmap(candidateid))
+            c-case scowingawgowithm.cosinesimiwawity =>
+              s-scowe / souwceembedding.w2nowm / math.sqwt(candidatenowmawizationmap(candidateid))
+            case scowingawgowithm.cosinesimiwawitynosouwceembeddingnowmawization =>
+              scowe / math.sqwt(candidatenowmawizationmap(candidateid))
+            c-case scowingawgowithm.dotpwoduct => scowe
           }
         }
-        candidateId -> processedScore
-    }.toSeq
+        c-candidateid -> pwocessedscowe
+    }.toseq
 
-    processedCandidateScores
-      .filter(_._2 >= config.minScore)
-      .sortBy(-_._2)
-      .take(Math.min(config.maxNumResults, MaxNumResultsUpperBound))
+    pwocessedcandidatescowes
+      .fiwtew(_._2 >= config.minscowe)
+      .sowtby(-_._2)
+      .take(math.min(config.maxnumwesuwts, (U ﹏ U) m-maxnumwesuwtsuppewbound))
   }
 }

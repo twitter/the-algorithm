@@ -1,200 +1,200 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import org.apache.lucene.search.DocIdSetIterator;
+impowt o-owg.apache.wucene.seawch.docidsetitewatow;
 
 /**
- * A skip list reader of a single term used {@link HighDFPackedIntsDocsEnum}.
- * @see HighDFPackedIntsPostingLists
+ * a-a skip wist w-weadew of a singwe t-tewm used {@wink h-highdfpackedintsdocsenum}. nyaa~~
+ * @see h-highdfpackedintspostingwists
  */
-class HighDFPackedIntsSkipListReader {
-  /** Skip lists int pool. */
-  private final IntBlockPool skipLists;
+c-cwass highdfpackedintsskipwistweadew {
+  /** s-skip wists int poow. ^^ */
+  pwivate finaw intbwockpoow skipwists;
 
-  /** Whether positions are omitted in the posting list having the read skip list. */
-  private final boolean omitPositions;
+  /** whethew p-positions awe omitted in the posting wist having t-the wead skip wist. >w< */
+  pwivate f-finaw boowean omitpositions;
 
   /**
-   * Last doc in the previous slice relative to the current delta-freq slice. This value is 0 if
-   * the current slice is the first delta-freq slice.
+   * wast doc in the pwevious swice wewative t-to the cuwwent dewta-fweq s-swice. OwO this vawue i-is 0 if
+   * the cuwwent swice is the fiwst dewta-fweq swice. XD
    */
-  private int previousDocIDCurrentSlice;
+  pwivate i-int pweviousdocidcuwwentswice;
 
-  /** Encoded metadata of the current delta-freq slice.*/
-  private int encodedMetadataCurrentSlice;
+  /** encoded metadata of the cuwwent dewta-fweq swice.*/
+  pwivate i-int encodedmetadatacuwwentswice;
 
   /**
-   * Pointer to the first int (contains the position slice header) of the position slice that has
-   * the first position of the first doc in the current delta-freq slice.
+   * pointew to the f-fiwst int (contains t-the position s-swice headew) o-of the position swice that has
+   * the fiwst position o-of the fiwst doc in the cuwwent dewta-fweq s-swice. ^^;;
    */
-  private int positionCurrentSliceIndex;
+  pwivate int positioncuwwentswiceindex;
 
-  /** Pointer to the first int in the current delta-freq slice. */
-  private int deltaFreqCurrentSlicePointer;
+  /** pointew to the fiwst int in the cuwwent dewta-fweq swice. 🥺 */
+  pwivate i-int dewtafweqcuwwentswicepointew;
 
-  /** Data of next slice. */
-  private int previousDocIDNextSlice;
-  private int encodedMetadataNextSlice;
-  private int positionNextSliceIndex;
-  private int deltaFreqNextSlicePointer;
+  /** data of nyext swice. XD */
+  p-pwivate i-int pweviousdocidnextswice;
+  pwivate i-int encodedmetadatanextswice;
+  pwivate int positionnextswiceindex;
+  pwivate i-int dewtafweqnextswicepointew;
 
-  /** Used to load blocks and read ints from skip lists int pool. */
-  private int[] currentSkipListBlock;
-  private int skipListBlockStart;
-  private int skipListBlockIndex;
+  /** u-used to woad bwocks and w-wead ints fwom s-skip wists int poow. (U ᵕ U❁) */
+  pwivate i-int[] cuwwentskipwistbwock;
+  pwivate int skipwistbwockstawt;
+  p-pwivate int skipwistbwockindex;
 
-  /** Number of remaining skip entries for the read skip list. */
-  private int numSkipListEntriesRemaining;
+  /** nyumbew o-of wemaining skip entwies fow t-the wead skip wist. :3 */
+  pwivate i-int nyumskipwistentwieswemaining;
 
-  /** Largest doc ID in the posting list having the read skip list. */
-  private final int largestDocID;
+  /** w-wawgest doc id in the posting wist having the wead skip wist. ( ͡o ω ͡o ) */
+  pwivate finaw int wawgestdocid;
 
-  /** Pointer to the first int in the first slice that stores positions for this term. */
-  private final int positionListPointer;
+  /** p-pointew to t-the fiwst int in the fiwst swice t-that stowes positions f-fow this t-tewm. òωó */
+  pwivate finaw int positionwistpointew;
 
-  /** Total number of docs in the posting list having the read skip list. */
-  private final int numDocsTotal;
+  /** totaw nyumbew of docs in t-the posting wist having the wead skip wist. σωσ */
+  pwivate finaw int nyumdocstotaw;
 
   /**
-   * Create a skip list reader specified by the given skip list pointer in the given skip lists int
-   * pool.
+   * c-cweate a skip wist weadew specified b-by the given s-skip wist pointew i-in the given skip wists int
+   * p-poow. (U ᵕ U❁)
    *
-   * @param skipLists int pool where the read skip list exists
-   * @param skipListPointer pointer to the read skip list
-   * @param omitPositions whether positions are omitted in the positing list to which the read skip
-   *                      list belongs
+   * @pawam s-skipwists i-int poow whewe t-the wead skip wist exists
+   * @pawam skipwistpointew p-pointew t-to the wead skip w-wist
+   * @pawam o-omitpositions w-whethew positions awe omitted in the positing wist to which the w-wead skip
+   *                      wist bewongs
    */
-  public HighDFPackedIntsSkipListReader(
-      final IntBlockPool skipLists,
-      final int skipListPointer,
-      final boolean omitPositions) {
-    this.skipLists = skipLists;
-    this.omitPositions = omitPositions;
+  pubwic highdfpackedintsskipwistweadew(
+      finaw intbwockpoow skipwists, (✿oωo)
+      f-finaw int skipwistpointew, ^^
+      finaw boowean omitpositions) {
+    t-this.skipwists = s-skipwists;
+    t-this.omitpositions = omitpositions;
 
-    this.skipListBlockStart = IntBlockPool.getBlockStart(skipListPointer);
-    this.skipListBlockIndex = IntBlockPool.getOffsetInBlock(skipListPointer);
-    this.currentSkipListBlock = skipLists.getBlock(skipListBlockStart);
+    t-this.skipwistbwockstawt = intbwockpoow.getbwockstawt(skipwistpointew);
+    t-this.skipwistbwockindex = i-intbwockpoow.getoffsetinbwock(skipwistpointew);
+    this.cuwwentskipwistbwock = skipwists.getbwock(skipwistbwockstawt);
 
-    // Read skip list header.
-    this.numSkipListEntriesRemaining = readNextValueFromSkipListBlock();
-    this.largestDocID = readNextValueFromSkipListBlock();
-    this.numDocsTotal = readNextValueFromSkipListBlock();
-    int deltaFreqListPointer = readNextValueFromSkipListBlock();
-    this.positionListPointer = omitPositions ? -1 : readNextValueFromSkipListBlock();
+    // wead skip wist headew. ^•ﻌ•^
+    this.numskipwistentwieswemaining = w-weadnextvawuefwomskipwistbwock();
+    this.wawgestdocid = w-weadnextvawuefwomskipwistbwock();
+    this.numdocstotaw = w-weadnextvawuefwomskipwistbwock();
+    i-int dewtafweqwistpointew = weadnextvawuefwomskipwistbwock();
+    this.positionwistpointew = o-omitpositions ? -1 : w-weadnextvawuefwomskipwistbwock();
 
-    // Set it back by one slice for fetchNextSkipEntry() to advance correctly.
-    this.deltaFreqNextSlicePointer = deltaFreqListPointer - HighDFPackedIntsPostingLists.SLICE_SIZE;
-    fetchNextSkipEntry();
+    // set it back by o-one swice fow fetchnextskipentwy() t-to advance cowwectwy. XD
+    this.dewtafweqnextswicepointew = dewtafweqwistpointew - highdfpackedintspostingwists.swice_size;
+    fetchnextskipentwy();
   }
 
   /**
-   * Load already fetched data in next skip entry into current data variables, and pre-fetch again.
+   * w-woad awweady f-fetched data i-in nyext skip entwy into cuwwent d-data vawiabwes, :3 a-and pwe-fetch again.
    */
-  public void getNextSkipEntry() {
-    previousDocIDCurrentSlice = previousDocIDNextSlice;
-    encodedMetadataCurrentSlice = encodedMetadataNextSlice;
-    positionCurrentSliceIndex = positionNextSliceIndex;
-    deltaFreqCurrentSlicePointer = deltaFreqNextSlicePointer;
-    fetchNextSkipEntry();
+  p-pubwic void getnextskipentwy() {
+    pweviousdocidcuwwentswice = pweviousdocidnextswice;
+    encodedmetadatacuwwentswice = encodedmetadatanextswice;
+    p-positioncuwwentswiceindex = p-positionnextswiceindex;
+    dewtafweqcuwwentswicepointew = dewtafweqnextswicepointew;
+    fetchnextskipentwy();
   }
 
   /**
-   * Fetch data for next skip entry if skip list is not exhausted; otherwise, set docIDNextSlice
-   * to NO_MORE_DOCS.
+   * f-fetch data f-fow nyext skip entwy if skip wist is nyot exhausted; othewwise, (ꈍᴗꈍ) s-set docidnextswice
+   * to nyo_mowe_docs. :3
    */
-  private void fetchNextSkipEntry() {
-    if (numSkipListEntriesRemaining == 0) {
-      previousDocIDNextSlice = DocIdSetIterator.NO_MORE_DOCS;
-      return;
+  pwivate void fetchnextskipentwy() {
+    if (numskipwistentwieswemaining == 0) {
+      pweviousdocidnextswice = d-docidsetitewatow.no_mowe_docs;
+      wetuwn;
     }
 
-    previousDocIDNextSlice = readNextValueFromSkipListBlock();
-    encodedMetadataNextSlice = readNextValueFromSkipListBlock();
-    if (!omitPositions) {
-      positionNextSliceIndex = readNextValueFromSkipListBlock();
+    pweviousdocidnextswice = w-weadnextvawuefwomskipwistbwock();
+    e-encodedmetadatanextswice = weadnextvawuefwomskipwistbwock();
+    if (!omitpositions) {
+      positionnextswiceindex = w-weadnextvawuefwomskipwistbwock();
     }
-    deltaFreqNextSlicePointer += HighDFPackedIntsPostingLists.SLICE_SIZE;
-    numSkipListEntriesRemaining--;
+    d-dewtafweqnextswicepointew += highdfpackedintspostingwists.swice_size;
+    nyumskipwistentwieswemaining--;
   }
 
   /**************************************
-   * Getters of data in skip list entry *
+   * gettews o-of data in skip wist entwy *
    **************************************/
 
   /**
-   * In the context of a current slice, this is the docID of the last document in the previous
-   * slice (or 0 if the current slice is the first slice).
+   * i-in the context of a cuwwent swice, (U ﹏ U) this is the docid of the w-wast document in the pwevious
+   * s-swice (ow 0 if t-the cuwwent swice is the fiwst s-swice). UwU
    *
-   * @see HighDFPackedIntsPostingLists#SKIPLIST_ENTRY_SIZE
+   * @see highdfpackedintspostingwists#skipwist_entwy_size
    */
-  public int getPreviousDocIDCurrentSlice() {
-    return previousDocIDCurrentSlice;
+  p-pubwic int getpweviousdocidcuwwentswice() {
+    w-wetuwn pweviousdocidcuwwentswice;
   }
 
   /**
-   * Get the encoded metadata of the current delta-freq slice.
+   * g-get the encoded metadata of the c-cuwwent dewta-fweq s-swice. 😳😳😳
    *
-   * @see HighDFPackedIntsPostingLists#SKIPLIST_ENTRY_SIZE
+   * @see highdfpackedintspostingwists#skipwist_entwy_size
    */
-  public int getEncodedMetadataCurrentSlice() {
-    return encodedMetadataCurrentSlice;
+  pubwic int g-getencodedmetadatacuwwentswice() {
+    w-wetuwn encodedmetadatacuwwentswice;
   }
 
   /**
-   * Get the pointer to the first int, WHICH CONTAINS THE POSITION SLICE HEADER, of the position
-   * slice that contains the first position of the first doc in the delta-freq slice that
-   * is corresponding to the current skip list entry.
+   * g-get the pointew to the fiwst int, XD which c-contains the position swice headew, o.O o-of the position
+   * s-swice that contains the fiwst position of the fiwst d-doc in the dewta-fweq s-swice that
+   * i-is cowwesponding t-to the cuwwent skip wist e-entwy. (⑅˘꒳˘)
    *
-   * @see HighDFPackedIntsPostingLists#SKIPLIST_ENTRY_SIZE
+   * @see highdfpackedintspostingwists#skipwist_entwy_size
    */
-  public int getPositionCurrentSlicePointer() {
-    assert !omitPositions;
-    return positionListPointer
-        + positionCurrentSliceIndex * HighDFPackedIntsPostingLists.SLICE_SIZE;
+  pubwic int getpositioncuwwentswicepointew() {
+    assewt !omitpositions;
+    wetuwn positionwistpointew
+        + p-positioncuwwentswiceindex * highdfpackedintspostingwists.swice_size;
   }
 
   /**
-   * Get the pointer to the first int in the current delta-freq slice.
+   * g-get the pointew to the fiwst i-int in the cuwwent dewta-fweq s-swice. 😳😳😳
    */
-  public int getDeltaFreqCurrentSlicePointer() {
-    return deltaFreqCurrentSlicePointer;
+  pubwic int getdewtafweqcuwwentswicepointew() {
+    w-wetuwn dewtafweqcuwwentswicepointew;
   }
 
   /**
-   * In the context of next slice, get the last doc ID in the previous slice. This is used to skip
-   * over slices.
+   * i-in the context o-of nyext s-swice, nyaa~~ get the wast d-doc id in the pwevious swice. rawr this is used to skip
+   * ovew swices. -.-
    *
-   * @see HighDFPackedIntsDocsEnum#skipTo(int)
+   * @see highdfpackedintsdocsenum#skipto(int)
    */
-  public int peekPreviousDocIDNextSlice() {
-    return previousDocIDNextSlice;
+  pubwic int p-peekpweviousdocidnextswice() {
+    w-wetuwn pweviousdocidnextswice;
   }
 
   /***************************************
-   * Getters of data in skip list header *
+   * g-gettews of data in skip wist h-headew *
    ***************************************/
 
-  public int getLargestDocID() {
-    return largestDocID;
+  pubwic int getwawgestdocid() {
+    wetuwn wawgestdocid;
   }
 
-  public int getNumDocsTotal() {
-    return numDocsTotal;
+  p-pubwic i-int getnumdocstotaw() {
+    wetuwn n-nyumdocstotaw;
   }
 
   /***************************************************
-   * Methods helping loading int block and read ints *
+   * methods hewping woading int b-bwock and wead i-ints *
    ***************************************************/
 
-  private int readNextValueFromSkipListBlock() {
-    if (skipListBlockIndex == IntBlockPool.BLOCK_SIZE) {
-      loadSkipListBlock();
+  pwivate int weadnextvawuefwomskipwistbwock() {
+    i-if (skipwistbwockindex == intbwockpoow.bwock_size) {
+      w-woadskipwistbwock();
     }
-    return currentSkipListBlock[skipListBlockIndex++];
+    wetuwn cuwwentskipwistbwock[skipwistbwockindex++];
   }
 
-  private void loadSkipListBlock() {
-    skipListBlockStart += IntBlockPool.BLOCK_SIZE;
-    currentSkipListBlock = skipLists.getBlock(skipListBlockStart);
-    skipListBlockIndex = 0;
+  pwivate void woadskipwistbwock() {
+    skipwistbwockstawt += i-intbwockpoow.bwock_size;
+    c-cuwwentskipwistbwock = s-skipwists.getbwock(skipwistbwockstawt);
+    s-skipwistbwockindex = 0;
   }
 }

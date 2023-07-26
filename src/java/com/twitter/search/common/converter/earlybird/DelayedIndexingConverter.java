@@ -1,593 +1,593 @@
-package com.twitter.search.common.converter.earlybird;
+package com.twittew.seawch.common.convewtew.eawwybiwd;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import javax.annotation.Nullable;
+impowt java.io.ioexception;
+i-impowt java.utiw.awwaywist;
+impowt j-java.utiw.wist;
+i-impowt java.utiw.wocawe;
+impowt j-java.utiw.map;
+i-impowt java.utiw.set;
+i-impowt j-javax.annotation.nuwwabwe;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+i-impowt com.googwe.common.base.joinew;
+impowt com.googwe.common.base.pweconditions;
+impowt com.googwe.common.cowwect.wists;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.http.annotation.NotThreadSafe;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt o-owg.apache.commons.wang.stwingutiws;
+impowt owg.apache.http.annotation.notthweadsafe;
+impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.text.token.TokenizedCharSequenceStream;
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.cuad.ner.plain.thriftjava.NamedEntity;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.constants.SearchCardType;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.indexing.thriftjava.SearchCard2;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.indexing.thriftjava.TwitterPhotoUrl;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.entities.TwitterMessageUser;
-import com.twitter.search.common.relevance.features.TweetTextFeatures;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeatures;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.schema.earlybird.EarlybirdThriftDocumentBuilder;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftField;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldData;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEventType;
-import com.twitter.search.common.util.lang.ThriftLanguageUtil;
-import com.twitter.search.common.util.text.LanguageIdentifierHelper;
-import com.twitter.search.common.util.text.NormalizerHelper;
-import com.twitter.search.common.util.text.TokenizerHelper;
-import com.twitter.search.common.util.text.TokenizerResult;
-import com.twitter.search.common.util.text.TweetTokenStreamSerializer;
-import com.twitter.service.spiderduck.gen.MediaTypes;
-import com.twitter.search.common.metrics.SearchCounter;
+impowt com.twittew.common.text.token.tokenizedchawsequencestweam;
+i-impowt com.twittew.common.text.utiw.tokenstweamsewiawizew;
+impowt com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+impowt c-com.twittew.cuad.new.pwain.thwiftjava.namedentity;
+impowt com.twittew.decidew.decidew;
+i-impowt c-com.twittew.seawch.common.constants.seawchcawdtype;
+impowt com.twittew.seawch.common.decidew.decidewutiw;
+impowt com.twittew.seawch.common.indexing.thwiftjava.seawchcawd2;
+impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftexpandeduww;
+i-impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
+impowt com.twittew.seawch.common.indexing.thwiftjava.twittewphotouww;
+impowt com.twittew.seawch.common.wewevance.entities.twittewmessage;
+impowt c-com.twittew.seawch.common.wewevance.entities.twittewmessageusew;
+impowt com.twittew.seawch.common.wewevance.featuwes.tweettextfeatuwes;
+i-impowt c-com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+i-impowt com.twittew.seawch.common.schema.base.schema;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdencodedfeatuwes;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdthwiftdocumentbuiwdew;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftdocument;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfiewd;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfiewddata;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingevent;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingeventtype;
+impowt com.twittew.seawch.common.utiw.wang.thwiftwanguageutiw;
+impowt com.twittew.seawch.common.utiw.text.wanguageidentifiewhewpew;
+i-impowt com.twittew.seawch.common.utiw.text.nowmawizewhewpew;
+impowt c-com.twittew.seawch.common.utiw.text.tokenizewhewpew;
+i-impowt c-com.twittew.seawch.common.utiw.text.tokenizewwesuwt;
+impowt com.twittew.seawch.common.utiw.text.tweettokenstweamsewiawizew;
+impowt com.twittew.sewvice.spidewduck.gen.mediatypes;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
 
 /**
- * Create and populate ThriftVersionedEvents from the URL data, card data, and named entities
- * contained in a TwitterMessage. This data is delayed because these services take a few seconds
- * to process tweets, and we want to send the basic data available in the BasicIndexingConverter as
- * soon as possible, so we send the additional data a few seconds later, as an update.
+ * c-cweate and popuwate thwiftvewsionedevents f-fwom t-the uww data, /(^•ω•^) cawd data, rawr and nyamed e-entities
+ * contained in a t-twittewmessage. this data is dewayed because these s-sewvices take a few seconds
+ * t-to pwocess tweets, nyaa~~ and we want t-to send the basic d-data avaiwabwe in the basicindexingconvewtew as
+ * soon as possibwe, so we send the additionaw data a few seconds watew, ( ͡o ω ͡o ) as an u-update. σωσ
  *
- * Prefer to add data and processing to the BasicIndexingConverter when possible. Only add data here
- * if your data source _requires_ data from an external service AND the external service takes at
- * least a few seconds to process new tweets.
+ * p-pwefew to add data and pwocessing t-to the basicindexingconvewtew w-when possibwe. (✿oωo) onwy a-add data hewe
+ * if youw data souwce _wequiwes_ data fwom an e-extewnaw sewvice and the extewnaw sewvice takes at
+ * weast a few seconds to pwocess n-nyew tweets. (///ˬ///✿)
  */
-@NotThreadSafe
-public class DelayedIndexingConverter {
-  private static final SearchCounter NUM_TWEETS_WITH_CARD_URL =
-      SearchCounter.export("tweets_with_card_url");
-  private static final SearchCounter NUM_TWEETS_WITH_NUMERIC_CARD_URI =
-      SearchCounter.export("tweets_with_numeric_card_uri");
-  private static final SearchCounter NUM_TWEETS_WITH_INVALID_CARD_URI =
-      SearchCounter.export("tweets_with_invalid_card_uri");
-  private static final SearchCounter TOTAL_URLS =
-      SearchCounter.export("total_urls_on_tweets");
-  private static final SearchCounter MEDIA_URLS_ON_TWEETS =
-      SearchCounter.export("media_urls_on_tweets");
-  private static final SearchCounter NON_MEDIA_URLS_ON_TWEETS =
-      SearchCounter.export("non_media_urls_on_tweets");
-  public static final String INDEX_URL_DESCRIPTION_AND_TITLE_DECIDER =
-      "index_url_description_and_title";
+@notthweadsafe
+pubwic cwass d-dewayedindexingconvewtew {
+  p-pwivate static finaw s-seawchcountew nyum_tweets_with_cawd_uww =
+      s-seawchcountew.expowt("tweets_with_cawd_uww");
+  p-pwivate static f-finaw seawchcountew n-nyum_tweets_with_numewic_cawd_uwi =
+      seawchcountew.expowt("tweets_with_numewic_cawd_uwi");
+  pwivate s-static finaw seawchcountew n-nyum_tweets_with_invawid_cawd_uwi =
+      s-seawchcountew.expowt("tweets_with_invawid_cawd_uwi");
+  pwivate s-static finaw s-seawchcountew totaw_uwws =
+      seawchcountew.expowt("totaw_uwws_on_tweets");
+  pwivate static f-finaw seawchcountew media_uwws_on_tweets =
+      seawchcountew.expowt("media_uwws_on_tweets");
+  pwivate static finaw seawchcountew nyon_media_uwws_on_tweets =
+      s-seawchcountew.expowt("non_media_uwws_on_tweets");
+  pubwic static finaw stwing index_uww_descwiption_and_titwe_decidew =
+      "index_uww_descwiption_and_titwe";
 
-  private static class ThriftDocumentWithEncodedTweetFeatures {
-    private final ThriftDocument document;
-    private final EarlybirdEncodedFeatures encodedFeatures;
+  pwivate s-static cwass t-thwiftdocumentwithencodedtweetfeatuwes {
+    p-pwivate finaw thwiftdocument document;
+    p-pwivate finaw eawwybiwdencodedfeatuwes e-encodedfeatuwes;
 
-    public ThriftDocumentWithEncodedTweetFeatures(ThriftDocument document,
-                                                  EarlybirdEncodedFeatures encodedFeatures) {
-      this.document = document;
-      this.encodedFeatures = encodedFeatures;
+    p-pubwic thwiftdocumentwithencodedtweetfeatuwes(thwiftdocument document, σωσ
+                                                  eawwybiwdencodedfeatuwes encodedfeatuwes) {
+      this.document = d-document;
+      this.encodedfeatuwes = e-encodedfeatuwes;
     }
 
-    public ThriftDocument getDocument() {
-      return document;
+    pubwic thwiftdocument g-getdocument() {
+      w-wetuwn document;
     }
 
-    public EarlybirdEncodedFeatures getEncodedFeatures() {
-      return encodedFeatures;
+    pubwic eawwybiwdencodedfeatuwes getencodedfeatuwes() {
+      wetuwn e-encodedfeatuwes;
     }
   }
 
-  // The list of all the encoded_tweet_features flags that might be updated by this converter.
-  // No extended_encoded_tweet_features are updated (otherwise they should be in this list too).
-  private static final List<EarlybirdFieldConstants.EarlybirdFieldConstant> UPDATED_FLAGS =
-      Lists.newArrayList(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.IS_OFFENSIVE_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_LINK_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.IS_SENSITIVE_CONTENT,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.TEXT_SCORE,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.TWEET_SIGNATURE,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.LINK_LANGUAGE,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_IMAGE_URL_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_VIDEO_URL_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_NEWS_URL_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_EXPANDO_CARD_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_MULTIPLE_MEDIA_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_CARD_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_VISIBLE_LINK_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_CONSUMER_VIDEO_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_PRO_VIDEO_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_VINE_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_PERISCOPE_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_NATIVE_IMAGE_FLAG
+  // t-the wist of aww the encoded_tweet_featuwes fwags t-that might b-be updated by this convewtew. UwU
+  // nyo extended_encoded_tweet_featuwes awe updated (othewwise they s-shouwd be in t-this wist too). (⑅˘꒳˘)
+  p-pwivate static finaw wist<eawwybiwdfiewdconstants.eawwybiwdfiewdconstant> u-updated_fwags =
+      w-wists.newawwaywist(
+          eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.is_offensive_fwag, /(^•ω•^)
+          e-eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.has_wink_fwag, -.-
+          eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.is_sensitive_content, (ˆ ﻌ ˆ)♡
+          eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.text_scowe, nyaa~~
+          eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.tweet_signatuwe, ʘwʘ
+          eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.wink_wanguage, :3
+          e-eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.has_image_uww_fwag, (U ᵕ U❁)
+          e-eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.has_video_uww_fwag, (U ﹏ U)
+          eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.has_news_uww_fwag, ^^
+          eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.has_expando_cawd_fwag, òωó
+          e-eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.has_muwtipwe_media_fwag, /(^•ω•^)
+          e-eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.has_cawd_fwag, 😳😳😳
+          eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.has_visibwe_wink_fwag, :3
+          eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.has_consumew_video_fwag, (///ˬ///✿)
+          eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.has_pwo_video_fwag, rawr x3
+          e-eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.has_vine_fwag, (U ᵕ U❁)
+          eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.has_pewiscope_fwag, (⑅˘꒳˘)
+          eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.has_native_image_fwag
       );
 
-  private static final Logger LOG = LoggerFactory.getLogger(DelayedIndexingConverter.class);
-  private static final String AMPLIFY_CARD_NAME = "amplify";
-  private static final String PLAYER_CARD_NAME = "player";
+  pwivate static finaw woggew wog = w-woggewfactowy.getwoggew(dewayedindexingconvewtew.cwass);
+  pwivate static finaw s-stwing ampwify_cawd_name = "ampwify";
+  p-pwivate static finaw stwing pwayew_cawd_name = "pwayew";
 
-  private final EncodedFeatureBuilder featureBuilder = new EncodedFeatureBuilder();
+  pwivate finaw e-encodedfeatuwebuiwdew f-featuwebuiwdew = nyew encodedfeatuwebuiwdew();
 
-  private final Schema schema;
-  private final Decider decider;
+  pwivate finaw schema s-schema;
+  pwivate finaw decidew d-decidew;
 
-  public DelayedIndexingConverter(Schema schema, Decider decider) {
-    this.schema = schema;
-    this.decider = decider;
+  pubwic dewayedindexingconvewtew(schema schema, (˘ω˘) decidew decidew) {
+    t-this.schema = schema;
+    this.decidew = d-decidew;
   }
 
   /**
-   * Converts the given message to two ThriftVersionedEvents instances: the first one is a feature
-   * update event for all link and card related flags, and the second one is the append event that
-   * might contain updates to all link and card related fields.
+   * c-convewts the given message to t-two thwiftvewsionedevents instances: t-the fiwst o-one is a featuwe
+   * u-update event fow aww wink a-and cawd wewated f-fwags, :3 and the second one is the append event t-that
+   * might c-contain updates t-to aww wink and cawd wewated fiewds. XD
    *
-   * We need to split the updates to fields and flags into two separate events because:
-   *  - When a tweet is created, earlybirds get the "main" event, which does not have resolved URLs.
-   *  - Then the earlybirds might get a feature update from the signal ingesters, marking the tweet
-   *    as spam.
-   *  - Then the ingesters resolve the URLs and send an update event. At this point, the ingesters
-   *    need to send updates for link-related flags too (HAS_LINK_FLAG, etc.). And there are a few
+   * we nyeed to spwit t-the updates to fiewds and fwags i-into two sepawate e-events because:
+   *  - when a tweet is cweated, >_< eawwybiwds get t-the "main" event, (✿oωo) w-which does n-nyot have wesowved u-uwws. (ꈍᴗꈍ)
+   *  - then the eawwybiwds m-might get a featuwe update fwom the signaw ingestews, XD mawking the tweet
+   *    as spam. :3
+   *  - t-then the ingestews wesowve t-the uwws and send an update event. mya a-at this point, òωó the ingestews
+   *    n-need to send updates fow w-wink-wewated fwags t-too (has_wink_fwag, nyaa~~ e-etc.). 🥺 a-and thewe awe a f-few
    *    ways to do this:
-   *    1. Encode these flags into encoded_tweet_features and extended_encoded_tweet_features and
-   *       add these fields to the update event. The problem is that earlybirds will then override
-   *       the encoded_tweet_features ane extended_encoded_tweet_features fields in the index for
-   *       this tweet, which will override the feature update the earlybirds got earlier, which
-   *       means that a spammy tweet might no longer be marked as spam in the index.
-   *    2. Send updates only for the flags that might've been updated by this converter. Since
-   *       ThriftIndexingEvent already has a map of field -> value, it seems like the natural place
-   *       to add these updates to. However, earlybirds can correctly process flag updates only if
-   *       they come in a feature update event (PARTIAL_UPDATE). So we need to send the field
-   *       updates in an OUT_OF_ORDER_UPDATE event, and the flag updates in a PARTIAL_UPDATE event.
+   *    1. -.- encode these fwags into encoded_tweet_featuwes and extended_encoded_tweet_featuwes and
+   *       a-add these f-fiewds to the u-update event. 🥺 the pwobwem is that e-eawwybiwds wiww then ovewwide
+   *       the encoded_tweet_featuwes a-ane extended_encoded_tweet_featuwes f-fiewds in the index f-fow
+   *       this tweet, (˘ω˘) which wiww ovewwide the f-featuwe update t-the eawwybiwds got eawwiew, òωó which
+   *       means t-that a spammy t-tweet might nyo wongew be mawked as spam in the index. UwU
+   *    2. ^•ﻌ•^ send updates o-onwy fow the fwags t-that might've b-been updated b-by this convewtew. mya s-since
+   *       thwiftindexingevent a-awweady h-has a map of fiewd -> vawue, (✿oωo) it s-seems wike the nyatuwaw p-pwace
+   *       to add t-these updates to. XD howevew, :3 eawwybiwds can cowwectwy p-pwocess fwag updates onwy if
+   *       t-they c-come in a featuwe update event (pawtiaw_update). (U ﹏ U) s-so we nyeed to send the fiewd
+   *       updates i-in an out_of_owdew_update e-event, UwU a-and the fwag updates in a pawtiaw_update event. ʘwʘ
    *
-   * We need to send the feature update event before the append event to avoid issues like the one
-   * in SEARCH-30919 where tweets were returned from the card name field index before the HAS_CARD
-   * feature was updated to true.
+   * we n-nyeed to send the featuwe update event befowe the a-append event t-to avoid issues wike the one
+   * i-in seawch-30919 whewe tweets wewe w-wetuwned fwom t-the cawd nyame fiewd index befowe the has_cawd
+   * f-featuwe was updated to twue. >w<
    *
-   * @param message The TwitterMessage to convert.
-   * @param penguinVersions The Penguin versions for which ThriftIndexingEvents should be created.
-   * @return An out of order update event for all link- and card-related fields and a feature update
-   *         event for all link- and card-related flags.
+   * @pawam message the t-twittewmessage to c-convewt. 😳😳😳
+   * @pawam penguinvewsions t-the penguin vewsions fow w-which thwiftindexingevents s-shouwd b-be cweated. rawr
+   * @wetuwn an out of owdew update event fow aww wink- and cawd-wewated fiewds and a featuwe update
+   *         event fow aww wink- and cawd-wewated fwags. ^•ﻌ•^
    */
-  public List<ThriftVersionedEvents> convertMessageToOutOfOrderAppendAndFeatureUpdate(
-      TwitterMessage message, List<PenguinVersion> penguinVersions) {
-    Preconditions.checkNotNull(message);
-    Preconditions.checkNotNull(penguinVersions);
+  pubwic wist<thwiftvewsionedevents> convewtmessagetooutofowdewappendandfeatuweupdate(
+      twittewmessage message, σωσ w-wist<penguinvewsion> p-penguinvewsions) {
+    pweconditions.checknotnuww(message);
+    pweconditions.checknotnuww(penguinvewsions);
 
-    ThriftVersionedEvents featureUpdateVersionedEvents = new ThriftVersionedEvents();
-    ThriftVersionedEvents outOfOrderAppendVersionedEvents = new ThriftVersionedEvents();
-    ImmutableSchemaInterface schemaSnapshot = schema.getSchemaSnapshot();
+    t-thwiftvewsionedevents f-featuweupdatevewsionedevents = n-nyew thwiftvewsionedevents();
+    thwiftvewsionedevents o-outofowdewappendvewsionedevents = nyew t-thwiftvewsionedevents();
+    immutabweschemaintewface s-schemasnapshot = schema.getschemasnapshot();
 
-    for (PenguinVersion penguinVersion : penguinVersions) {
-      ThriftDocumentWithEncodedTweetFeatures documentWithEncodedFeatures =
-          buildDocumentForPenguinVersion(schemaSnapshot, message, penguinVersion);
+    f-fow (penguinvewsion penguinvewsion : penguinvewsions) {
+      t-thwiftdocumentwithencodedtweetfeatuwes documentwithencodedfeatuwes =
+          b-buiwddocumentfowpenguinvewsion(schemasnapshot, :3 message, rawr x3 penguinvewsion);
 
-      ThriftIndexingEvent featureUpdateThriftIndexingEvent = new ThriftIndexingEvent();
-      featureUpdateThriftIndexingEvent.setEventType(ThriftIndexingEventType.PARTIAL_UPDATE);
-      featureUpdateThriftIndexingEvent.setUid(message.getId());
-      featureUpdateThriftIndexingEvent.setDocument(
-          buildFeatureUpdateDocument(documentWithEncodedFeatures.getEncodedFeatures()));
-      featureUpdateVersionedEvents.putToVersionedEvents(
-          penguinVersion.getByteValue(), featureUpdateThriftIndexingEvent);
+      thwiftindexingevent f-featuweupdatethwiftindexingevent = n-nyew t-thwiftindexingevent();
+      f-featuweupdatethwiftindexingevent.seteventtype(thwiftindexingeventtype.pawtiaw_update);
+      f-featuweupdatethwiftindexingevent.setuid(message.getid());
+      f-featuweupdatethwiftindexingevent.setdocument(
+          b-buiwdfeatuweupdatedocument(documentwithencodedfeatuwes.getencodedfeatuwes()));
+      f-featuweupdatevewsionedevents.puttovewsionedevents(
+          p-penguinvewsion.getbytevawue(), nyaa~~ featuweupdatethwiftindexingevent);
 
-      ThriftIndexingEvent outOfOrderAppendThriftIndexingEvent = new ThriftIndexingEvent();
-      outOfOrderAppendThriftIndexingEvent.setDocument(documentWithEncodedFeatures.getDocument());
-      outOfOrderAppendThriftIndexingEvent.setEventType(ThriftIndexingEventType.OUT_OF_ORDER_APPEND);
-      message.getFromUserTwitterId().ifPresent(outOfOrderAppendThriftIndexingEvent::setUid);
-      outOfOrderAppendThriftIndexingEvent.setSortId(message.getId());
-      outOfOrderAppendVersionedEvents.putToVersionedEvents(
-          penguinVersion.getByteValue(), outOfOrderAppendThriftIndexingEvent);
+      t-thwiftindexingevent o-outofowdewappendthwiftindexingevent = n-nyew thwiftindexingevent();
+      outofowdewappendthwiftindexingevent.setdocument(documentwithencodedfeatuwes.getdocument());
+      o-outofowdewappendthwiftindexingevent.seteventtype(thwiftindexingeventtype.out_of_owdew_append);
+      message.getfwomusewtwittewid().ifpwesent(outofowdewappendthwiftindexingevent::setuid);
+      outofowdewappendthwiftindexingevent.setsowtid(message.getid());
+      o-outofowdewappendvewsionedevents.puttovewsionedevents(
+          penguinvewsion.getbytevawue(), :3 o-outofowdewappendthwiftindexingevent);
     }
 
-    featureUpdateVersionedEvents.setId(message.getId());
-    outOfOrderAppendVersionedEvents.setId(message.getId());
+    f-featuweupdatevewsionedevents.setid(message.getid());
+    outofowdewappendvewsionedevents.setid(message.getid());
 
-    return Lists.newArrayList(featureUpdateVersionedEvents, outOfOrderAppendVersionedEvents);
+    w-wetuwn wists.newawwaywist(featuweupdatevewsionedevents, >w< o-outofowdewappendvewsionedevents);
   }
 
-  private ThriftDocument buildFeatureUpdateDocument(EarlybirdEncodedFeatures encodedFeatures) {
-    ThriftDocument document = new ThriftDocument();
-    for (EarlybirdFieldConstants.EarlybirdFieldConstant flag : UPDATED_FLAGS) {
-      ThriftField field = new ThriftField();
-      field.setFieldConfigId(flag.getFieldId());
-      field.setFieldData(new ThriftFieldData().setIntValue(encodedFeatures.getFeatureValue(flag)));
-      document.addToFields(field);
+  pwivate t-thwiftdocument buiwdfeatuweupdatedocument(eawwybiwdencodedfeatuwes e-encodedfeatuwes) {
+    thwiftdocument document = n-nyew thwiftdocument();
+    fow (eawwybiwdfiewdconstants.eawwybiwdfiewdconstant fwag : updated_fwags) {
+      thwiftfiewd fiewd = nyew thwiftfiewd();
+      f-fiewd.setfiewdconfigid(fwag.getfiewdid());
+      fiewd.setfiewddata(new t-thwiftfiewddata().setintvawue(encodedfeatuwes.getfeatuwevawue(fwag)));
+      d-document.addtofiewds(fiewd);
     }
-    return document;
+    wetuwn document;
   }
 
-  private ThriftDocumentWithEncodedTweetFeatures buildDocumentForPenguinVersion(
-      ImmutableSchemaInterface schemaSnapshot,
-      TwitterMessage message,
-      PenguinVersion penguinVersion) {
+  pwivate thwiftdocumentwithencodedtweetfeatuwes b-buiwddocumentfowpenguinvewsion(
+      immutabweschemaintewface s-schemasnapshot, rawr
+      t-twittewmessage m-message,
+      penguinvewsion penguinvewsion) {
 
-    EarlybirdEncodedFeatures encodedFeatures = featureBuilder.createTweetFeaturesFromTwitterMessage(
-        message, penguinVersion, schemaSnapshot).encodedFeatures;
+    e-eawwybiwdencodedfeatuwes e-encodedfeatuwes = featuwebuiwdew.cweatetweetfeatuwesfwomtwittewmessage(
+        m-message, 😳 penguinvewsion, 😳 schemasnapshot).encodedfeatuwes;
 
-    EarlybirdThriftDocumentBuilder builder = new EarlybirdThriftDocumentBuilder(
-        encodedFeatures,
-        null,
-        new EarlybirdFieldConstants(),
-        schemaSnapshot);
+    e-eawwybiwdthwiftdocumentbuiwdew buiwdew = n-nyew eawwybiwdthwiftdocumentbuiwdew(
+        e-encodedfeatuwes, 🥺
+        n-nyuww, rawr x3
+        new eawwybiwdfiewdconstants(), ^^
+        s-schemasnapshot);
 
-    builder.setAddLatLonCSF(false);
-    builder.withID(message.getId());
-    buildFieldsFromUrlInfo(builder, message, penguinVersion, encodedFeatures);
-    buildCardFields(builder, message, penguinVersion);
-    buildNamedEntityFields(builder, message);
-    builder.withTweetSignature(message.getTweetSignature(penguinVersion));
+    b-buiwdew.setaddwatwoncsf(fawse);
+    b-buiwdew.withid(message.getid());
+    b-buiwdfiewdsfwomuwwinfo(buiwdew, ( ͡o ω ͡o ) message, XD p-penguinvewsion, ^^ e-encodedfeatuwes);
+    b-buiwdcawdfiewds(buiwdew, (⑅˘꒳˘) m-message, (⑅˘꒳˘) penguinvewsion);
+    b-buiwdnamedentityfiewds(buiwdew, ^•ﻌ•^ m-message);
+    b-buiwdew.withtweetsignatuwe(message.gettweetsignatuwe(penguinvewsion));
 
-    buildSpaceAdminAndTitleFields(builder, message, penguinVersion);
+    b-buiwdspaceadminandtitwefiewds(buiwdew, ( ͡o ω ͡o ) message, penguinvewsion);
 
-    builder.setAddEncodedTweetFeatures(false);
+    b-buiwdew.setaddencodedtweetfeatuwes(fawse);
 
-    return new ThriftDocumentWithEncodedTweetFeatures(builder.build(), encodedFeatures);
+    wetuwn nyew thwiftdocumentwithencodedtweetfeatuwes(buiwdew.buiwd(), ( ͡o ω ͡o ) e-encodedfeatuwes);
   }
 
-  public static void buildNamedEntityFields(
-      EarlybirdThriftDocumentBuilder builder, TwitterMessage message) {
-    for (NamedEntity namedEntity : message.getNamedEntities()) {
-      builder.withNamedEntity(namedEntity);
+  pubwic static void b-buiwdnamedentityfiewds(
+      e-eawwybiwdthwiftdocumentbuiwdew buiwdew, (✿oωo) t-twittewmessage message) {
+    fow (namedentity namedentity : m-message.getnamedentities()) {
+      b-buiwdew.withnamedentity(namedentity);
     }
   }
 
-  private void buildFieldsFromUrlInfo(
-      EarlybirdThriftDocumentBuilder builder,
-      TwitterMessage message,
-      PenguinVersion penguinVersion,
-      EarlybirdEncodedFeatures encodedFeatures) {
-    // We need to update the RESOLVED_LINKS_TEXT_FIELD, since we might have new resolved URLs.
-    // Use the same logic as in EncodedFeatureBuilder.java.
-    TweetTextFeatures textFeatures = message.getTweetTextFeatures(penguinVersion);
-    String resolvedUrlsText = Joiner.on(" ").skipNulls().join(textFeatures.getResolvedUrlTokens());
-    builder.withResolvedLinksText(resolvedUrlsText);
+  p-pwivate void buiwdfiewdsfwomuwwinfo(
+      eawwybiwdthwiftdocumentbuiwdew buiwdew, 😳😳😳
+      t-twittewmessage m-message, OwO
+      penguinvewsion p-penguinvewsion, ^^
+      e-eawwybiwdencodedfeatuwes encodedfeatuwes) {
+    // we nyeed to update the w-wesowved_winks_text_fiewd, rawr x3 s-since w-we might have n-nyew wesowved uwws. 🥺
+    // use the same wogic as i-in encodedfeatuwebuiwdew.java. (ˆ ﻌ ˆ)♡
+    t-tweettextfeatuwes textfeatuwes = message.gettweettextfeatuwes(penguinvewsion);
+    s-stwing wesowveduwwstext = joinew.on(" ").skipnuwws().join(textfeatuwes.getwesowveduwwtokens());
+    buiwdew.withwesowvedwinkstext(wesowveduwwstext);
 
-    buildURLFields(builder, message, encodedFeatures);
-    buildAnalyzedURLFields(builder, message, penguinVersion);
+    b-buiwduwwfiewds(buiwdew, ( ͡o ω ͡o ) message, e-encodedfeatuwes);
+    b-buiwdanawyzeduwwfiewds(buiwdew, >w< message, p-penguinvewsion);
   }
 
-  private void buildAnalyzedURLFields(
-      EarlybirdThriftDocumentBuilder builder, TwitterMessage message, PenguinVersion penguinVersion
+  p-pwivate void buiwdanawyzeduwwfiewds(
+      e-eawwybiwdthwiftdocumentbuiwdew buiwdew, /(^•ω•^) twittewmessage m-message, 😳😳😳 p-penguinvewsion p-penguinvewsion
   ) {
-    TOTAL_URLS.add(message.getExpandedUrls().size());
-    if (DeciderUtil.isAvailableForRandomRecipient(
-        decider,
-        INDEX_URL_DESCRIPTION_AND_TITLE_DECIDER)) {
-      for (ThriftExpandedUrl expandedUrl : message.getExpandedUrls()) {
+    t-totaw_uwws.add(message.getexpandeduwws().size());
+    if (decidewutiw.isavaiwabwefowwandomwecipient(
+        d-decidew, (U ᵕ U❁)
+        i-index_uww_descwiption_and_titwe_decidew)) {
+      f-fow (thwiftexpandeduww expandeduww : m-message.getexpandeduwws()) {
       /*
-        Consumer Media URLs are added to the expanded URLs in
-        TweetEventParserHelper.addMediaEntitiesToMessage. These Twitter.com media URLs contain
-        the tweet text as the description and the title is "<User Name> on Twitter". This is
-        redundant information at best and misleading at worst. We will ignore these URLs to avoid
-        polluting the url_description and url_title field as well as saving space.
+        consumew media uwws awe added to t-the expanded uwws i-in
+        tweeteventpawsewhewpew.addmediaentitiestomessage. (˘ω˘) t-these twittew.com media uwws contain
+        the tweet text as the descwiption and t-the titwe is "<usew nyame> on t-twittew". 😳 this i-is
+        wedundant infowmation at best and misweading a-at wowst. (ꈍᴗꈍ) we wiww ignowe t-these uwws to avoid
+        p-powwuting t-the uww_descwiption a-and uww_titwe f-fiewd as weww as saving space. :3
        */
-        if (!expandedUrl.isSetConsumerMedia() || !expandedUrl.isConsumerMedia()) {
-          NON_MEDIA_URLS_ON_TWEETS.increment();
-          if (expandedUrl.isSetDescription()) {
-            buildTweetTokenizerTokenizedField(builder,
-                EarlybirdFieldConstants.EarlybirdFieldConstant.URL_DESCRIPTION_FIELD.getFieldName(),
-                expandedUrl.getDescription(),
-                penguinVersion);
+        if (!expandeduww.issetconsumewmedia() || !expandeduww.isconsumewmedia()) {
+          nyon_media_uwws_on_tweets.incwement();
+          if (expandeduww.issetdescwiption()) {
+            b-buiwdtweettokenizewtokenizedfiewd(buiwdew, /(^•ω•^)
+                eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.uww_descwiption_fiewd.getfiewdname(),
+                e-expandeduww.getdescwiption(),
+                penguinvewsion);
           }
-          if (expandedUrl.isSetTitle()) {
-            buildTweetTokenizerTokenizedField(builder,
-                EarlybirdFieldConstants.EarlybirdFieldConstant.URL_TITLE_FIELD.getFieldName(),
-                expandedUrl.getTitle(),
-                penguinVersion);
+          if (expandeduww.issettitwe()) {
+            buiwdtweettokenizewtokenizedfiewd(buiwdew, ^^;;
+                e-eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.uww_titwe_fiewd.getfiewdname(), o.O
+                expandeduww.gettitwe(), 😳
+                penguinvewsion);
           }
-        } else {
-          MEDIA_URLS_ON_TWEETS.increment();
+        } ewse {
+          media_uwws_on_tweets.incwement();
         }
       }
     }
   }
 
   /**
-   * Build the URL based fields from a tweet.
+   * b-buiwd the u-uww based fiewds fwom a tweet. UwU
    */
-  public static void buildURLFields(
-      EarlybirdThriftDocumentBuilder builder,
-      TwitterMessage message,
-      EarlybirdEncodedFeatures encodedFeatures
+  p-pubwic static void buiwduwwfiewds(
+      eawwybiwdthwiftdocumentbuiwdew b-buiwdew, >w<
+      twittewmessage m-message, o.O
+      eawwybiwdencodedfeatuwes e-encodedfeatuwes
   ) {
-    Map<String, ThriftExpandedUrl> expandedUrlMap = message.getExpandedUrlMap();
+    map<stwing, (˘ω˘) thwiftexpandeduww> expandeduwwmap = m-message.getexpandeduwwmap();
 
-    for (ThriftExpandedUrl expandedUrl : expandedUrlMap.values()) {
-      if (expandedUrl.getMediaType() == MediaTypes.NATIVE_IMAGE) {
-        EncodedFeatureBuilder.addPhotoUrl(message, expandedUrl.getCanonicalLastHopUrl());
+    fow (thwiftexpandeduww expandeduww : expandeduwwmap.vawues()) {
+      i-if (expandeduww.getmediatype() == mediatypes.native_image) {
+        encodedfeatuwebuiwdew.addphotouww(message, òωó e-expandeduww.getcanonicawwasthopuww());
       }
     }
 
-    // now add all twitter photos links that came with the tweet's payload
-    Map<Long, String> photos = message.getPhotoUrls();
-    List<TwitterPhotoUrl> photoURLs = new ArrayList<>();
-    if (photos != null) {
-      for (Map.Entry<Long, String> entry : photos.entrySet()) {
-        TwitterPhotoUrl photo = new TwitterPhotoUrl(entry.getKey());
-        String mediaUrl = entry.getValue();
-        if (mediaUrl != null) {
-          photo.setMediaUrl(mediaUrl);
+    // n-nyow add aww t-twittew photos winks that came with the tweet's p-paywoad
+    map<wong, nyaa~~ stwing> photos = message.getphotouwws();
+    wist<twittewphotouww> photouwws = n-nyew awwaywist<>();
+    if (photos != n-nuww) {
+      f-fow (map.entwy<wong, s-stwing> entwy : photos.entwyset()) {
+        twittewphotouww p-photo = n-nyew twittewphotouww(entwy.getkey());
+        stwing mediauww = entwy.getvawue();
+        if (mediauww != nyuww) {
+          p-photo.setmediauww(mediauww);
         }
-        photoURLs.add(photo);
+        photouwws.add(photo);
       }
     }
 
-    try {
-      builder
-          .withURLs(Lists.newArrayList(expandedUrlMap.values()))
-          .withTwimgURLs(photoURLs);
-    } catch (IOException ioe) {
-      LOG.error("URL field creation threw an IOException", ioe);
+    twy {
+      b-buiwdew
+          .withuwws(wists.newawwaywist(expandeduwwmap.vawues()))
+          .withtwimguwws(photouwws);
+    } catch (ioexception ioe) {
+      w-wog.ewwow("uww f-fiewd cweation thwew an i-ioexception", ( ͡o ω ͡o ) ioe);
     }
 
 
-    if (encodedFeatures.isFlagSet(
-        EarlybirdFieldConstants.EarlybirdFieldConstant.IS_OFFENSIVE_FLAG)) {
-      builder.withOffensiveFlag();
+    i-if (encodedfeatuwes.isfwagset(
+        e-eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.is_offensive_fwag)) {
+      buiwdew.withoffensivefwag();
     }
-    if (encodedFeatures.isFlagSet(
-        EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_CONSUMER_VIDEO_FLAG)) {
-      builder.addFilterInternalFieldTerm(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.CONSUMER_VIDEO_FILTER_TERM);
+    if (encodedfeatuwes.isfwagset(
+        e-eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.has_consumew_video_fwag)) {
+      buiwdew.addfiwtewintewnawfiewdtewm(
+          eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.consumew_video_fiwtew_tewm);
     }
-    if (encodedFeatures.isFlagSet(
-        EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_PRO_VIDEO_FLAG)) {
-      builder.addFilterInternalFieldTerm(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.PRO_VIDEO_FILTER_TERM);
+    i-if (encodedfeatuwes.isfwagset(
+        eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.has_pwo_video_fwag)) {
+      buiwdew.addfiwtewintewnawfiewdtewm(
+          eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.pwo_video_fiwtew_tewm);
     }
-    if (encodedFeatures.isFlagSet(EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_VINE_FLAG)) {
-      builder.addFilterInternalFieldTerm(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.VINE_FILTER_TERM);
+    i-if (encodedfeatuwes.isfwagset(eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.has_vine_fwag)) {
+      b-buiwdew.addfiwtewintewnawfiewdtewm(
+          e-eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.vine_fiwtew_tewm);
     }
-    if (encodedFeatures.isFlagSet(
-        EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_PERISCOPE_FLAG)) {
-      builder.addFilterInternalFieldTerm(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.PERISCOPE_FILTER_TERM);
+    i-if (encodedfeatuwes.isfwagset(
+        e-eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.has_pewiscope_fwag)) {
+      buiwdew.addfiwtewintewnawfiewdtewm(
+          e-eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.pewiscope_fiwtew_tewm);
     }
   }
 
   /**
-   * Build the card information inside ThriftIndexingEvent's fields.
+   * buiwd the cawd infowmation i-inside thwiftindexingevent's fiewds. 😳😳😳
    */
-  static void buildCardFields(EarlybirdThriftDocumentBuilder builder,
-                              TwitterMessage message,
-                              PenguinVersion penguinVersion) {
-    if (message.hasCard()) {
-      SearchCard2 card = buildSearchCardFromTwitterMessage(
-          message,
-          TweetTokenStreamSerializer.getTweetTokenStreamSerializer(),
-          penguinVersion);
-      buildCardFeatures(message.getId(), builder, card);
+  s-static void buiwdcawdfiewds(eawwybiwdthwiftdocumentbuiwdew buiwdew, ^•ﻌ•^
+                              twittewmessage m-message, (˘ω˘)
+                              p-penguinvewsion penguinvewsion) {
+    i-if (message.hascawd()) {
+      seawchcawd2 c-cawd = buiwdseawchcawdfwomtwittewmessage(
+          m-message, (˘ω˘)
+          tweettokenstweamsewiawizew.gettweettokenstweamsewiawizew(), -.-
+          p-penguinvewsion);
+      b-buiwdcawdfeatuwes(message.getid(), ^•ﻌ•^ buiwdew, c-cawd);
     }
   }
 
-  private static SearchCard2 buildSearchCardFromTwitterMessage(
-      TwitterMessage message,
-      TokenStreamSerializer streamSerializer,
-      PenguinVersion penguinVersion) {
-    SearchCard2 card = new SearchCard2();
-    card.setCardName(message.getCardName());
-    if (message.getCardDomain() != null) {
-      card.setCardDomain(message.getCardDomain());
+  pwivate static seawchcawd2 buiwdseawchcawdfwomtwittewmessage(
+      t-twittewmessage message, /(^•ω•^)
+      t-tokenstweamsewiawizew stweamsewiawizew, (///ˬ///✿)
+      penguinvewsion p-penguinvewsion) {
+    s-seawchcawd2 c-cawd = nyew seawchcawd2();
+    c-cawd.setcawdname(message.getcawdname());
+    i-if (message.getcawddomain() != nyuww) {
+      c-cawd.setcawddomain(message.getcawddomain());
     }
-    if (message.getCardLang() != null) {
-      card.setCardLang(message.getCardLang());
+    if (message.getcawdwang() != n-nyuww) {
+      cawd.setcawdwang(message.getcawdwang());
     }
-    if (message.getCardUrl() != null) {
-      card.setCardUrl(message.getCardUrl());
-    }
-
-    if (message.getCardTitle() != null && !message.getCardTitle().isEmpty()) {
-      String normalizedTitle = NormalizerHelper.normalize(
-          message.getCardTitle(), message.getLocale(), penguinVersion);
-      TokenizerResult result = TokenizerHelper.tokenizeTweet(
-          normalizedTitle, message.getLocale(), penguinVersion);
-      TokenizedCharSequenceStream tokenSeqStream = new TokenizedCharSequenceStream();
-      tokenSeqStream.reset(result.tokenSequence);
-      try {
-        card.setCardTitleTokenStream(streamSerializer.serialize(tokenSeqStream));
-        card.setCardTitleTokenStreamText(result.tokenSequence.toString());
-      } catch (IOException e) {
-        LOG.error("TwitterTokenStream serialization error! Could not serialize card title: "
-            + result.tokenSequence);
-        card.unsetCardTitleTokenStream();
-        card.unsetCardTitleTokenStreamText();
-      }
-    }
-    if (message.getCardDescription() != null && !message.getCardDescription().isEmpty()) {
-      String normalizedDesc = NormalizerHelper.normalize(
-          message.getCardDescription(), message.getLocale(), penguinVersion);
-      TokenizerResult result = TokenizerHelper.tokenizeTweet(
-          normalizedDesc, message.getLocale(), penguinVersion);
-      TokenizedCharSequenceStream tokenSeqStream = new TokenizedCharSequenceStream();
-      tokenSeqStream.reset(result.tokenSequence);
-      try {
-        card.setCardDescriptionTokenStream(streamSerializer.serialize(tokenSeqStream));
-        card.setCardDescriptionTokenStreamText(result.tokenSequence.toString());
-      } catch (IOException e) {
-        LOG.error("TwitterTokenStream serialization error! Could not serialize card description: "
-            + result.tokenSequence);
-        card.unsetCardDescriptionTokenStream();
-        card.unsetCardDescriptionTokenStreamText();
-      }
+    i-if (message.getcawduww() != n-nyuww) {
+      cawd.setcawduww(message.getcawduww());
     }
 
-    return card;
+    if (message.getcawdtitwe() != nyuww && !message.getcawdtitwe().isempty()) {
+      stwing n-nyowmawizedtitwe = n-nyowmawizewhewpew.nowmawize(
+          message.getcawdtitwe(), mya message.getwocawe(), o.O penguinvewsion);
+      t-tokenizewwesuwt wesuwt = t-tokenizewhewpew.tokenizetweet(
+          n-nyowmawizedtitwe, ^•ﻌ•^ message.getwocawe(), (U ᵕ U❁) penguinvewsion);
+      tokenizedchawsequencestweam tokenseqstweam = n-nyew tokenizedchawsequencestweam();
+      tokenseqstweam.weset(wesuwt.tokensequence);
+      t-twy {
+        cawd.setcawdtitwetokenstweam(stweamsewiawizew.sewiawize(tokenseqstweam));
+        c-cawd.setcawdtitwetokenstweamtext(wesuwt.tokensequence.tostwing());
+      } c-catch (ioexception e) {
+        w-wog.ewwow("twittewtokenstweam s-sewiawization ewwow! :3 c-couwd nyot s-sewiawize cawd titwe: "
+            + w-wesuwt.tokensequence);
+        c-cawd.unsetcawdtitwetokenstweam();
+        cawd.unsetcawdtitwetokenstweamtext();
+      }
+    }
+    if (message.getcawddescwiption() != nyuww && !message.getcawddescwiption().isempty()) {
+      stwing nyowmawizeddesc = nyowmawizewhewpew.nowmawize(
+          message.getcawddescwiption(), (///ˬ///✿) m-message.getwocawe(), (///ˬ///✿) p-penguinvewsion);
+      tokenizewwesuwt wesuwt = t-tokenizewhewpew.tokenizetweet(
+          n-nyowmawizeddesc, 🥺 m-message.getwocawe(), -.- p-penguinvewsion);
+      tokenizedchawsequencestweam tokenseqstweam = nyew tokenizedchawsequencestweam();
+      t-tokenseqstweam.weset(wesuwt.tokensequence);
+      t-twy {
+        cawd.setcawddescwiptiontokenstweam(stweamsewiawizew.sewiawize(tokenseqstweam));
+        cawd.setcawddescwiptiontokenstweamtext(wesuwt.tokensequence.tostwing());
+      } catch (ioexception e-e) {
+        wog.ewwow("twittewtokenstweam s-sewiawization e-ewwow! nyaa~~ couwd nyot sewiawize cawd descwiption: "
+            + w-wesuwt.tokensequence);
+        cawd.unsetcawddescwiptiontokenstweam();
+        cawd.unsetcawddescwiptiontokenstweamtext();
+      }
+    }
+
+    w-wetuwn cawd;
   }
 
   /**
-   * Builds card features.
+   * b-buiwds cawd featuwes. (///ˬ///✿)
    */
-  private static void buildCardFeatures(
-      long tweetId, EarlybirdThriftDocumentBuilder builder, SearchCard2 card) {
-    if (card == null) {
-      return;
+  pwivate static void buiwdcawdfeatuwes(
+      w-wong tweetid, 🥺 eawwybiwdthwiftdocumentbuiwdew b-buiwdew, s-seawchcawd2 cawd) {
+    if (cawd == n-nyuww) {
+      w-wetuwn;
     }
-    builder
-        .withTokenStreamField(
-            EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_TITLE_FIELD.getFieldName(),
-            card.getCardTitleTokenStreamText(),
-            card.isSetCardTitleTokenStream() ? card.getCardTitleTokenStream() : null)
-        .withTokenStreamField(
-            EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_DESCRIPTION_FIELD.getFieldName(),
-            card.getCardDescriptionTokenStreamText(),
-            card.isSetCardDescriptionTokenStream() ? card.getCardDescriptionTokenStream() : null)
-        .withStringField(
-            EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_NAME_FIELD.getFieldName(),
-            card.getCardName())
-        .withIntField(
-            EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_TYPE_CSF_FIELD.getFieldName(),
-            SearchCardType.cardTypeFromStringName(card.getCardName()).getByteValue());
+    b-buiwdew
+        .withtokenstweamfiewd(
+            e-eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.cawd_titwe_fiewd.getfiewdname(), >w<
+            c-cawd.getcawdtitwetokenstweamtext(), rawr x3
+            c-cawd.issetcawdtitwetokenstweam() ? cawd.getcawdtitwetokenstweam() : n-nyuww)
+        .withtokenstweamfiewd(
+            e-eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.cawd_descwiption_fiewd.getfiewdname(), (⑅˘꒳˘)
+            cawd.getcawddescwiptiontokenstweamtext(), σωσ
+            c-cawd.issetcawddescwiptiontokenstweam() ? cawd.getcawddescwiptiontokenstweam() : nyuww)
+        .withstwingfiewd(
+            eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.cawd_name_fiewd.getfiewdname(), XD
+            c-cawd.getcawdname())
+        .withintfiewd(
+            eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.cawd_type_csf_fiewd.getfiewdname(), -.-
+            s-seawchcawdtype.cawdtypefwomstwingname(cawd.getcawdname()).getbytevawue());
 
-    if (card.getCardLang() != null) {
-      builder.withStringField(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_LANG.getFieldName(),
-          card.getCardLang()).withIntField(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_LANG_CSF.getFieldName(),
-          ThriftLanguageUtil.getThriftLanguageOf(card.getCardLang()).getValue());
+    if (cawd.getcawdwang() != n-nyuww) {
+      b-buiwdew.withstwingfiewd(
+          eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.cawd_wang.getfiewdname(), >_<
+          cawd.getcawdwang()).withintfiewd(
+          eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.cawd_wang_csf.getfiewdname(), rawr
+          t-thwiftwanguageutiw.getthwiftwanguageof(cawd.getcawdwang()).getvawue());
     }
-    if (card.getCardDomain() != null) {
-      builder.withStringField(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_DOMAIN_FIELD.getFieldName(),
-          card.getCardDomain());
+    if (cawd.getcawddomain() != nyuww) {
+      b-buiwdew.withstwingfiewd(
+          e-eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.cawd_domain_fiewd.getfiewdname(), 😳😳😳
+          cawd.getcawddomain());
     }
-    if (card.getCardUrl() != null) {
-      NUM_TWEETS_WITH_CARD_URL.increment();
-      if (card.getCardUrl().startsWith("card://")) {
-        String suffix = card.getCardUrl().replace("card://", "");
-        if (StringUtils.isNumeric(suffix)) {
-          NUM_TWEETS_WITH_NUMERIC_CARD_URI.increment();
-          builder.withLongField(
-              EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_URI_CSF.getFieldName(),
-              Long.parseLong(suffix));
-          LOG.debug(String.format(
-              "Good card URL for tweet %s: %s",
-              tweetId,
-              card.getCardUrl()));
-        } else {
-          NUM_TWEETS_WITH_INVALID_CARD_URI.increment();
-          LOG.debug(String.format(
-              "Card URL starts with \"card://\" but followed by non-numeric for tweet %s: %s",
-              tweetId,
-              card.getCardUrl()));
+    if (cawd.getcawduww() != n-nyuww) {
+      n-nyum_tweets_with_cawd_uww.incwement();
+      if (cawd.getcawduww().stawtswith("cawd://")) {
+        s-stwing suffix = cawd.getcawduww().wepwace("cawd://", UwU "");
+        if (stwingutiws.isnumewic(suffix)) {
+          nyum_tweets_with_numewic_cawd_uwi.incwement();
+          b-buiwdew.withwongfiewd(
+              e-eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.cawd_uwi_csf.getfiewdname(), (U ﹏ U)
+              wong.pawsewong(suffix));
+          w-wog.debug(stwing.fowmat(
+              "good c-cawd uww fow tweet %s: %s", (˘ω˘)
+              tweetid, /(^•ω•^)
+              c-cawd.getcawduww()));
+        } e-ewse {
+          n-nyum_tweets_with_invawid_cawd_uwi.incwement();
+          w-wog.debug(stwing.fowmat(
+              "cawd uww stawts with \"cawd://\" but fowwowed by nyon-numewic fow tweet %s: %s", (U ﹏ U)
+              tweetid, ^•ﻌ•^
+              cawd.getcawduww()));
         }
       }
     }
-    if (isCardVideo(card)) {
-      // Add into "internal" field so that this tweet is returned by filter:videos.
-      builder.addFacetSkipList(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.VIDEO_LINKS_FIELD.getFieldName());
+    i-if (iscawdvideo(cawd)) {
+      // a-add into "intewnaw" f-fiewd so that t-this tweet is w-wetuwned by fiwtew:videos. >w<
+      b-buiwdew.addfacetskipwist(
+          eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.video_winks_fiewd.getfiewdname());
     }
   }
 
   /**
-   * Determines if a card is a video.
+   * detewmines i-if a cawd i-is a video. ʘwʘ
    */
-  private static boolean isCardVideo(@Nullable SearchCard2 card) {
-    if (card == null) {
-      return false;
+  pwivate s-static boowean iscawdvideo(@nuwwabwe s-seawchcawd2 cawd) {
+    if (cawd == nuww) {
+      w-wetuwn fawse;
     }
-    return AMPLIFY_CARD_NAME.equalsIgnoreCase(card.getCardName())
-        || PLAYER_CARD_NAME.equalsIgnoreCase(card.getCardName());
+    wetuwn ampwify_cawd_name.equawsignowecase(cawd.getcawdname())
+        || pwayew_cawd_name.equawsignowecase(cawd.getcawdname());
   }
 
-  private void buildSpaceAdminAndTitleFields(
-      EarlybirdThriftDocumentBuilder builder,
-      TwitterMessage message,
-      PenguinVersion penguinVersion) {
+  p-pwivate void buiwdspaceadminandtitwefiewds(
+      e-eawwybiwdthwiftdocumentbuiwdew b-buiwdew,
+      twittewmessage m-message,
+      p-penguinvewsion p-penguinvewsion) {
 
-    buildSpaceAdminFields(builder, message.getSpaceAdmins(), penguinVersion);
+    buiwdspaceadminfiewds(buiwdew, òωó m-message.getspaceadmins(), o.O p-penguinvewsion);
 
-    // build the space title field.
-    buildTweetTokenizerTokenizedField(
-        builder,
-        EarlybirdFieldConstants.EarlybirdFieldConstant.SPACE_TITLE_FIELD.getFieldName(),
-        message.getSpaceTitle(),
-        penguinVersion);
+    // buiwd t-the space titwe fiewd. ( ͡o ω ͡o )
+    buiwdtweettokenizewtokenizedfiewd(
+        b-buiwdew, mya
+        e-eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.space_titwe_fiewd.getfiewdname(), >_<
+        m-message.getspacetitwe(), rawr
+        penguinvewsion);
   }
 
-  private void buildSpaceAdminFields(
-      EarlybirdThriftDocumentBuilder builder,
-      Set<TwitterMessageUser> spaceAdmins,
-      PenguinVersion penguinVersion) {
+  p-pwivate void buiwdspaceadminfiewds(
+      eawwybiwdthwiftdocumentbuiwdew b-buiwdew, >_<
+      set<twittewmessageusew> spaceadmins, (U ﹏ U)
+      penguinvewsion penguinvewsion) {
 
-    for (TwitterMessageUser spaceAdmin : spaceAdmins) {
-      if (spaceAdmin.getScreenName().isPresent()) {
-        // build screen name (aka handle) fields.
-        String screenName = spaceAdmin.getScreenName().get();
-        String normalizedScreenName =
-            NormalizerHelper.normalizeWithUnknownLocale(screenName, penguinVersion);
+    fow (twittewmessageusew spaceadmin : s-spaceadmins) {
+      if (spaceadmin.getscweenname().ispwesent()) {
+        // buiwd scween nyame (aka handwe) fiewds. rawr
+        stwing scweenname = spaceadmin.getscweenname().get();
+        s-stwing nyowmawizedscweenname =
+            nyowmawizewhewpew.nowmawizewithunknownwocawe(scweenname, (U ᵕ U❁) penguinvewsion);
 
-        builder.withStringField(
-            EarlybirdFieldConstants.EarlybirdFieldConstant.SPACE_ADMIN_FIELD.getFieldName(),
-            normalizedScreenName);
-        builder.withWhiteSpaceTokenizedScreenNameField(
-            EarlybirdFieldConstants
-                .EarlybirdFieldConstant.TOKENIZED_SPACE_ADMIN_FIELD.getFieldName(),
-            normalizedScreenName);
+        b-buiwdew.withstwingfiewd(
+            eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.space_admin_fiewd.getfiewdname(), (ˆ ﻌ ˆ)♡
+            n-nyowmawizedscweenname);
+        buiwdew.withwhitespacetokenizedscweennamefiewd(
+            eawwybiwdfiewdconstants
+                .eawwybiwdfiewdconstant.tokenized_space_admin_fiewd.getfiewdname(), >_<
+            n-nyowmawizedscweenname);
 
-        if (spaceAdmin.getTokenizedScreenName().isPresent()) {
-          builder.withCamelCaseTokenizedScreenNameField(
-              EarlybirdFieldConstants
-                  .EarlybirdFieldConstant.CAMELCASE_TOKENIZED_SPACE_ADMIN_FIELD.getFieldName(),
-              screenName,
-              normalizedScreenName,
-              spaceAdmin.getTokenizedScreenName().get());
+        if (spaceadmin.gettokenizedscweenname().ispwesent()) {
+          b-buiwdew.withcamewcasetokenizedscweennamefiewd(
+              eawwybiwdfiewdconstants
+                  .eawwybiwdfiewdconstant.camewcase_tokenized_space_admin_fiewd.getfiewdname(), ^^;;
+              s-scweenname, ʘwʘ
+              n-nyowmawizedscweenname, 😳😳😳
+              spaceadmin.gettokenizedscweenname().get());
         }
       }
 
-      if (spaceAdmin.getDisplayName().isPresent()) {
-        buildTweetTokenizerTokenizedField(
-            builder,
-            EarlybirdFieldConstants
-                .EarlybirdFieldConstant.TOKENIZED_SPACE_ADMIN_DISPLAY_NAME_FIELD.getFieldName(),
-            spaceAdmin.getDisplayName().get(),
-            penguinVersion);
+      if (spaceadmin.getdispwayname().ispwesent()) {
+        b-buiwdtweettokenizewtokenizedfiewd(
+            buiwdew, UwU
+            eawwybiwdfiewdconstants
+                .eawwybiwdfiewdconstant.tokenized_space_admin_dispway_name_fiewd.getfiewdname(), OwO
+            spaceadmin.getdispwayname().get(), :3
+            p-penguinvewsion);
       }
     }
   }
 
-  private void buildTweetTokenizerTokenizedField(
-      EarlybirdThriftDocumentBuilder builder,
-      String fieldName,
-      String text,
-      PenguinVersion penguinVersion) {
+  pwivate void b-buiwdtweettokenizewtokenizedfiewd(
+      eawwybiwdthwiftdocumentbuiwdew b-buiwdew, -.-
+      stwing f-fiewdname, 🥺
+      s-stwing text, -.-
+      penguinvewsion penguinvewsion) {
 
-    if (StringUtils.isNotEmpty(text)) {
-      Locale locale = LanguageIdentifierHelper
-          .identifyLanguage(text);
-      String normalizedText = NormalizerHelper.normalize(
-          text, locale, penguinVersion);
-      TokenizerResult result = TokenizerHelper
-          .tokenizeTweet(normalizedText, locale, penguinVersion);
-      TokenizedCharSequenceStream tokenSeqStream = new TokenizedCharSequenceStream();
-      tokenSeqStream.reset(result.tokenSequence);
-      TokenStreamSerializer streamSerializer =
-          TweetTokenStreamSerializer.getTweetTokenStreamSerializer();
-      try {
-        builder.withTokenStreamField(
-            fieldName,
-            result.tokenSequence.toString(),
-            streamSerializer.serialize(tokenSeqStream));
-      } catch (IOException e) {
-        LOG.error("TwitterTokenStream serialization error! Could not serialize: " + text);
+    i-if (stwingutiws.isnotempty(text)) {
+      wocawe wocawe = wanguageidentifiewhewpew
+          .identifywanguage(text);
+      s-stwing nowmawizedtext = nyowmawizewhewpew.nowmawize(
+          text, -.- wocawe, penguinvewsion);
+      tokenizewwesuwt w-wesuwt = t-tokenizewhewpew
+          .tokenizetweet(nowmawizedtext, (U ﹏ U) wocawe, p-penguinvewsion);
+      t-tokenizedchawsequencestweam tokenseqstweam = n-nyew tokenizedchawsequencestweam();
+      tokenseqstweam.weset(wesuwt.tokensequence);
+      tokenstweamsewiawizew stweamsewiawizew =
+          tweettokenstweamsewiawizew.gettweettokenstweamsewiawizew();
+      t-twy {
+        b-buiwdew.withtokenstweamfiewd(
+            fiewdname, rawr
+            w-wesuwt.tokensequence.tostwing(), mya
+            s-stweamsewiawizew.sewiawize(tokenseqstweam));
+      } catch (ioexception e) {
+        w-wog.ewwow("twittewtokenstweam sewiawization ewwow! ( ͡o ω ͡o ) couwd n-nyot sewiawize: " + text);
       }
     }
   }

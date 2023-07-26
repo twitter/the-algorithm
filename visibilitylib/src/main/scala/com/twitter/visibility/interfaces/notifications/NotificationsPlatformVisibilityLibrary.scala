@@ -1,157 +1,157 @@
-package com.twitter.visibility.interfaces.notifications
+package com.twittew.visibiwity.intewfaces.notifications
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.util.Throwables
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.tweets.CommunityNotificationFeatures
-import com.twitter.visibility.builder.tweets.UnmentionNotificationFeatures
-import com.twitter.visibility.builder.users.AuthorDeviceFeatures
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerAdvancedFilteringFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.common.UserDeviceSource
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.features.AuthorUserLabels
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.rules.State.FeatureFailed
-import com.twitter.visibility.rules.State.MissingFeature
-import com.twitter.visibility.rules.Action
-import com.twitter.visibility.rules.RuleResult
-import com.twitter.visibility.rules.{Allow => AllowAction}
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.sewvo.utiw.gate
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.utiw.thwowabwes
+i-impowt c-com.twittew.visibiwity.visibiwitywibwawy
+i-impowt com.twittew.visibiwity.buiwdew.visibiwitywesuwt
+impowt com.twittew.visibiwity.buiwdew.tweets.communitynotificationfeatuwes
+impowt com.twittew.visibiwity.buiwdew.tweets.unmentionnotificationfeatuwes
+impowt c-com.twittew.visibiwity.buiwdew.usews.authowdevicefeatuwes
+impowt com.twittew.visibiwity.buiwdew.usews.authowfeatuwes
+i-impowt com.twittew.visibiwity.buiwdew.usews.wewationshipfeatuwes
+impowt com.twittew.visibiwity.buiwdew.usews.viewewadvancedfiwtewingfeatuwes
+i-impowt com.twittew.visibiwity.buiwdew.usews.viewewfeatuwes
+impowt com.twittew.visibiwity.common.usewdevicesouwce
+impowt com.twittew.visibiwity.common.usewwewationshipsouwce
+impowt com.twittew.visibiwity.common.usewsouwce
+i-impowt com.twittew.visibiwity.featuwes.authowusewwabews
+impowt c-com.twittew.visibiwity.featuwes.featuwe
+i-impowt com.twittew.visibiwity.featuwes.featuwemap
+impowt com.twittew.visibiwity.modews.viewewcontext
+impowt com.twittew.visibiwity.wuwes.state.featuwefaiwed
+i-impowt com.twittew.visibiwity.wuwes.state.missingfeatuwe
+impowt com.twittew.visibiwity.wuwes.action
+impowt com.twittew.visibiwity.wuwes.wuwewesuwt
+i-impowt com.twittew.visibiwity.wuwes.{awwow => awwowaction}
 
-object NotificationsPlatformVisibilityLibrary {
-  type NotificationsPlatformVFType =
-    NotificationVFRequest => Stitch[NotificationsPlatformFilteringResponse]
+o-object nyotificationspwatfowmvisibiwitywibwawy {
+  t-type nyotificationspwatfowmvftype =
+    nyotificationvfwequest => s-stitch[notificationspwatfowmfiwtewingwesponse]
 
-  private val AllowResponse: Stitch[NotificationsPlatformFilteringResponse] =
-    Stitch.value(AllowVerdict)
+  p-pwivate vaw awwowwesponse: stitch[notificationspwatfowmfiwtewingwesponse] =
+    s-stitch.vawue(awwowvewdict)
 
-  def apply(
-    userSource: UserSource,
-    userRelationshipSource: UserRelationshipSource,
-    userDeviceSource: UserDeviceSource,
-    visibilityLibrary: VisibilityLibrary,
-    enableShimFeatureHydration: Gate[Unit] = Gate.False
-  ): NotificationsPlatformVFType = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
+  def appwy(
+    usewsouwce: u-usewsouwce, (U ﹏ U)
+    usewwewationshipsouwce: usewwewationshipsouwce,
+    usewdevicesouwce: usewdevicesouwce, :3
+    visibiwitywibwawy: v-visibiwitywibwawy, ( ͡o ω ͡o )
+    enabweshimfeatuwehydwation: g-gate[unit] = g-gate.fawse
+  ): n-nyotificationspwatfowmvftype = {
+    vaw wibwawystatsweceivew = visibiwitywibwawy.statsweceivew
+    vaw vfenginecountew = w-wibwawystatsweceivew.countew("vf_engine_wequests")
 
-    val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
-    val authorDeviceFeatures = new AuthorDeviceFeatures(userDeviceSource, libraryStatsReceiver)
-    val viewerFeatures = new ViewerFeatures(userSource, libraryStatsReceiver)
+    v-vaw authowfeatuwes = nyew authowfeatuwes(usewsouwce, σωσ w-wibwawystatsweceivew)
+    v-vaw authowdevicefeatuwes = nyew authowdevicefeatuwes(usewdevicesouwce, >w< w-wibwawystatsweceivew)
+    vaw viewewfeatuwes = n-nyew viewewfeatuwes(usewsouwce, 😳😳😳 wibwawystatsweceivew)
 
-    val viewerAdvancedFilteringFeatures =
-      new ViewerAdvancedFilteringFeatures(userSource, libraryStatsReceiver)
-    val relationshipFeatures =
-      new RelationshipFeatures(userRelationshipSource, libraryStatsReceiver)
+    vaw viewewadvancedfiwtewingfeatuwes =
+      n-nyew viewewadvancedfiwtewingfeatuwes(usewsouwce, OwO wibwawystatsweceivew)
+    v-vaw wewationshipfeatuwes =
+      n-nyew w-wewationshipfeatuwes(usewwewationshipsouwce, 😳 wibwawystatsweceivew)
 
-    val isShimFeatureHydrationEnabled = enableShimFeatureHydration()
+    vaw isshimfeatuwehydwationenabwed = enabweshimfeatuwehydwation()
 
-    def runRuleEngine(candidate: NotificationVFRequest): Stitch[VisibilityResult] = {
-      val featureMap =
-        visibilityLibrary.featureMapBuilder(
-          Seq(
-            viewerFeatures.forViewerId(Some(candidate.recipientId)),
-            viewerAdvancedFilteringFeatures.forViewerId(Some(candidate.recipientId)),
-            authorFeatures.forAuthorId(candidate.subject.id),
-            authorDeviceFeatures.forAuthorId(candidate.subject.id),
-            relationshipFeatures.forAuthorId(candidate.subject.id, Some(candidate.recipientId)),
-            CommunityNotificationFeatures.ForNonCommunityTweetNotification,
-            UnmentionNotificationFeatures.ForNonUnmentionNotificationFeatures
+    def wunwuweengine(candidate: nyotificationvfwequest): stitch[visibiwitywesuwt] = {
+      vaw featuwemap =
+        v-visibiwitywibwawy.featuwemapbuiwdew(
+          s-seq(
+            viewewfeatuwes.fowviewewid(some(candidate.wecipientid)), 😳😳😳
+            v-viewewadvancedfiwtewingfeatuwes.fowviewewid(some(candidate.wecipientid)), (˘ω˘)
+            a-authowfeatuwes.fowauthowid(candidate.subject.id), ʘwʘ
+            a-authowdevicefeatuwes.fowauthowid(candidate.subject.id), ( ͡o ω ͡o )
+            wewationshipfeatuwes.fowauthowid(candidate.subject.id, o.O some(candidate.wecipientid)), >w<
+            communitynotificationfeatuwes.fownoncommunitytweetnotification, 😳
+            unmentionnotificationfeatuwes.fownonunmentionnotificationfeatuwes
           )
         )
 
-      vfEngineCounter.incr()
+      v-vfenginecountew.incw()
 
-      if (isShimFeatureHydrationEnabled) {
-        FeatureMap.resolve(featureMap, libraryStatsReceiver).flatMap { resolvedFeatureMap =>
-          visibilityLibrary.runRuleEngine(
-            contentId = candidate.subject,
-            featureMap = resolvedFeatureMap,
-            viewerContext =
-              ViewerContext.fromContextWithViewerIdFallback(Some(candidate.recipientId)),
-            safetyLevel = candidate.safetyLevel
+      if (isshimfeatuwehydwationenabwed) {
+        featuwemap.wesowve(featuwemap, 🥺 wibwawystatsweceivew).fwatmap { wesowvedfeatuwemap =>
+          v-visibiwitywibwawy.wunwuweengine(
+            contentid = candidate.subject, rawr x3
+            f-featuwemap = w-wesowvedfeatuwemap, o.O
+            v-viewewcontext =
+              viewewcontext.fwomcontextwithviewewidfawwback(some(candidate.wecipientid)),
+            s-safetywevew = candidate.safetywevew
           )
         }
-      } else {
-        visibilityLibrary.runRuleEngine(
-          contentId = candidate.subject,
-          featureMap = featureMap,
-          viewerContext =
-            ViewerContext.fromContextWithViewerIdFallback(Some(candidate.recipientId)),
-          safetyLevel = candidate.safetyLevel
+      } e-ewse {
+        v-visibiwitywibwawy.wunwuweengine(
+          c-contentid = candidate.subject, rawr
+          featuwemap = f-featuwemap, ʘwʘ
+          v-viewewcontext =
+            v-viewewcontext.fwomcontextwithviewewidfawwback(some(candidate.wecipientid)), 😳😳😳
+          s-safetywevew = c-candidate.safetywevew
         )
       }
     }
 
     {
-      case candidate: NotificationVFRequest =>
-        runRuleEngine(candidate).flatMap(failCloseForFailures(_, libraryStatsReceiver))
+      case candidate: nyotificationvfwequest =>
+        wunwuweengine(candidate).fwatmap(faiwcwosefowfaiwuwes(_, ^^;; w-wibwawystatsweceivew))
       case _ =>
-        AllowResponse
+        awwowwesponse
     }
   }
 
-  private def failCloseForFailures(
-    visibilityResult: VisibilityResult,
-    stats: StatsReceiver
-  ): Stitch[NotificationsPlatformFilteringResponse] = {
-    lazy val vfEngineSuccess = stats.counter("vf_engine_success")
-    lazy val vfEngineFailures = stats.counter("vf_engine_failures")
-    lazy val vfEngineFailuresMissing = stats.scope("vf_engine_failures").counter("missing")
-    lazy val vfEngineFailuresFailed = stats.scope("vf_engine_failures").counter("failed")
-    lazy val vfEngineFiltered = stats.counter("vf_engine_filtered")
+  pwivate def faiwcwosefowfaiwuwes(
+    visibiwitywesuwt: v-visibiwitywesuwt, o.O
+    stats: statsweceivew
+  ): stitch[notificationspwatfowmfiwtewingwesponse] = {
+    wazy vaw v-vfenginesuccess = s-stats.countew("vf_engine_success")
+    w-wazy vaw vfenginefaiwuwes = s-stats.countew("vf_engine_faiwuwes")
+    wazy v-vaw vfenginefaiwuwesmissing = s-stats.scope("vf_engine_faiwuwes").countew("missing")
+    wazy vaw vfenginefaiwuwesfaiwed = stats.scope("vf_engine_faiwuwes").countew("faiwed")
+    wazy vaw vfenginefiwtewed = stats.countew("vf_engine_fiwtewed")
 
-    val isFailedOrMissingFeature: RuleResult => Boolean = {
-      case RuleResult(_, FeatureFailed(features)) =>
-        !(features.contains(AuthorUserLabels) && features.size == 1)
-      case RuleResult(_, MissingFeature(_)) => true
-      case _ => false
+    vaw isfaiwedowmissingfeatuwe: w-wuwewesuwt => boowean = {
+      c-case wuwewesuwt(_, (///ˬ///✿) featuwefaiwed(featuwes)) =>
+        !(featuwes.contains(authowusewwabews) && f-featuwes.size == 1)
+      c-case wuwewesuwt(_, σωσ missingfeatuwe(_)) => twue
+      c-case _ => fawse
     }
 
-    val failedRuleResults =
-      visibilityResult.ruleResultMap.values.filter(isFailedOrMissingFeature(_))
+    vaw f-faiwedwuwewesuwts =
+      visibiwitywesuwt.wuwewesuwtmap.vawues.fiwtew(isfaiwedowmissingfeatuwe(_))
 
-    val (failedFeatures, missingFeatures) = failedRuleResults.partition {
-      case RuleResult(_, FeatureFailed(_)) => true
-      case RuleResult(_, MissingFeature(_)) => false
-      case _ => false
+    v-vaw (faiwedfeatuwes, nyaa~~ m-missingfeatuwes) = faiwedwuwewesuwts.pawtition {
+      case wuwewesuwt(_, ^^;; featuwefaiwed(_)) => twue
+      case w-wuwewesuwt(_, ^•ﻌ•^ missingfeatuwe(_)) => f-fawse
+      c-case _ => fawse
     }
 
-    val failedOrMissingFeatures: Map[Feature[_], String] = failedRuleResults
-      .collect {
-        case RuleResult(_, FeatureFailed(features)) =>
-          features.map {
-            case (feature: Feature[_], throwable: Throwable) =>
-              feature -> Throwables.mkString(throwable).mkString(" -> ")
-          }.toSet
-        case RuleResult(_, MissingFeature(features)) => features.map(_ -> "Feature missing.")
-      }.flatten.toMap
+    vaw faiwedowmissingfeatuwes: m-map[featuwe[_], σωσ s-stwing] = faiwedwuwewesuwts
+      .cowwect {
+        c-case wuwewesuwt(_, -.- featuwefaiwed(featuwes)) =>
+          featuwes.map {
+            case (featuwe: f-featuwe[_], ^^;; thwowabwe: t-thwowabwe) =>
+              featuwe -> thwowabwes.mkstwing(thwowabwe).mkstwing(" -> ")
+          }.toset
+        case wuwewesuwt(_, XD m-missingfeatuwe(featuwes)) => f-featuwes.map(_ -> "featuwe missing.")
+      }.fwatten.tomap
 
-    visibilityResult.verdict match {
-      case AllowAction if failedOrMissingFeatures.isEmpty =>
-        vfEngineSuccess.incr()
-        AllowResponse
-      case AllowAction if failedOrMissingFeatures.nonEmpty =>
-        vfEngineFailures.incr()
-        if (missingFeatures.nonEmpty) {
-          vfEngineFailuresMissing.incr()
+    visibiwitywesuwt.vewdict match {
+      c-case awwowaction if faiwedowmissingfeatuwes.isempty =>
+        vfenginesuccess.incw()
+        awwowwesponse
+      case awwowaction if faiwedowmissingfeatuwes.nonempty =>
+        v-vfenginefaiwuwes.incw()
+        if (missingfeatuwes.nonempty) {
+          vfenginefaiwuwesmissing.incw()
         }
-        if (failedFeatures.nonEmpty) {
-          vfEngineFailuresFailed.incr()
+        i-if (faiwedfeatuwes.nonempty) {
+          v-vfenginefaiwuwesfaiwed.incw()
         }
 
-        Stitch.value(FailedVerdict(failedOrMissingFeatures))
-      case action: Action =>
-        vfEngineFiltered.incr()
-        Stitch.value(FilteredVerdict(action))
+        stitch.vawue(faiwedvewdict(faiwedowmissingfeatuwes))
+      case action: action =>
+        vfenginefiwtewed.incw()
+        s-stitch.vawue(fiwtewedvewdict(action))
     }
   }
 }

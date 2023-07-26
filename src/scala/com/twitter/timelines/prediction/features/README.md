@@ -1,6 +1,6 @@
-## Prediction Features
+## pwediction featuwes
 
-This directory contains a collection of `Features` (`com.twitter.ml.api.Feature`) which are definitions of feature names and datatypes which allow the features to be efficiently processed and passed to the different ranking models. 
-By predefining the features with their names and datatypes, when features are being generated, scribed or used to score they can be identified with only a hash of their name. 
+this diwectowy c-contains a c-cowwection of `featuwes` (`com.twittew.mw.api.featuwe`) w-which awe d-definitions of f-featuwe nyames a-and datatypes which a-awwow the featuwes t-to be efficientwy pwocessed and passed to the diffewent wanking modews. 
+b-by pwedefining the featuwes with theiw nyames and d-datatypes, XD when featuwes awe b-being genewated, :3 scwibed ow used to scowe they can be identified w-with onwy a hash of theiw nyame. 😳😳😳 
 
-Not all of these features are used in the model, many are experimental or deprecated. 
+n-nyot aww of t-these featuwes awe used in the modew, -.- many awe expewimentaw ow depwecated. ( ͡o ω ͡o ) 

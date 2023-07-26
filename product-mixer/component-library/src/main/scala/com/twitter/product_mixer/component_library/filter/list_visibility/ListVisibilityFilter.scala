@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.component_library.filter.list_visibility
+package com.twittew.pwoduct_mixew.component_wibwawy.fiwtew.wist_visibiwity
 
-import com.twitter.product_mixer.component_library.model.candidate.TwitterListCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.socialgraph.thriftscala.SocialgraphList
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.Fetch
-import com.twitter.strato.generated.client.lists.reads.CoreOnListClientColumn
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twittewwistcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.sociawgwaph.thwiftscawa.sociawgwaphwist
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.catawog.fetch
+impowt com.twittew.stwato.genewated.cwient.wists.weads.coweonwistcwientcowumn
 
-/* This Filter queries the core.List.strato column
- * on Strato, and filters out any lists that are not
- * returned. core.List.strato performs an authorization
- * check, and does not return lists the viewer is not authorized
- * to have access to. */
-class ListVisibilityFilter[Candidate <: UniversalNoun[Long]](
-  listsColumn: CoreOnListClientColumn)
-    extends Filter[PipelineQuery, Candidate] {
+/* t-this fiwtew quewies the cowe.wist.stwato c-cowumn
+ * on stwato, OwO and fiwtews out any wists that awe nyot
+ * w-wetuwned. 😳😳😳 cowe.wist.stwato pewfowms a-an authowization
+ * c-check, 😳😳😳 and does nyot wetuwn wists the viewew is nyot authowized
+ * to have a-access to. o.O */
+cwass wistvisibiwityfiwtew[candidate <: univewsawnoun[wong]](
+  wistscowumn: coweonwistcwientcowumn)
+    extends f-fiwtew[pipewinequewy, ( ͡o ω ͡o ) candidate] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("ListVisibility")
+  o-ovewwide v-vaw identifiew: f-fiwtewidentifiew = f-fiwtewidentifiew("wistvisibiwity")
 
-  def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
+  def appwy(
+    quewy: p-pipewinequewy, (U ﹏ U)
+    candidates: seq[candidatewithfeatuwes[candidate]]
+  ): stitch[fiwtewwesuwt[candidate]] = {
 
-    val listCandidates = candidates.collect {
-      case CandidateWithFeatures(candidate: TwitterListCandidate, _) => candidate
+    v-vaw wistcandidates = candidates.cowwect {
+      case candidatewithfeatuwes(candidate: twittewwistcandidate, (///ˬ///✿) _) => candidate
     }
 
-    Stitch
-      .traverse(
-        listCandidates.map(_.id)
-      ) { listId =>
-        listsColumn.fetcher.fetch(listId)
-      }.map { fetchResults =>
-        fetchResults.collect {
-          case Fetch.Result(Some(list: SocialgraphList), _) => list.id
+    stitch
+      .twavewse(
+        w-wistcandidates.map(_.id)
+      ) { wistid =>
+        wistscowumn.fetchew.fetch(wistid)
+      }.map { fetchwesuwts =>
+        f-fetchwesuwts.cowwect {
+          c-case fetch.wesuwt(some(wist: s-sociawgwaphwist), >w< _) => wist.id
         }
-      }.map { allowedListIds =>
-        val (kept, excluded) = candidates.map(_.candidate).partition {
-          case candidate: TwitterListCandidate => allowedListIds.contains(candidate.id)
-          case _ => true
+      }.map { awwowedwistids =>
+        vaw (kept, rawr e-excwuded) = candidates.map(_.candidate).pawtition {
+          c-case candidate: twittewwistcandidate => a-awwowedwistids.contains(candidate.id)
+          c-case _ => twue
         }
-        FilterResult(kept, excluded)
+        f-fiwtewwesuwt(kept, mya excwuded)
       }
   }
 }

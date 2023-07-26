@@ -1,45 +1,45 @@
-package com.twitter.home_mixer.product.list_recommended_users.candidate_source
+package com.twittew.home_mixew.pwoduct.wist_wecommended_usews.candidate_souwce
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.search.adaptive.adaptive_results.thriftscala.AdaptiveSearchResultData
-import com.twitter.search.adaptive.adaptive_results.thriftscala.Result
-import com.twitter.search.adaptive.adaptive_results.thriftscala.ResultData
-import com.twitter.search.blender.adaptive_search.thriftscala.AdaptiveSearchResponse
-import com.twitter.search.blender.adaptive_search.thriftscala.Container
-import com.twitter.search.blender.thriftscala.BlenderService
-import com.twitter.search.blender.thriftscala.ThriftBlenderRequest
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.seawch.adaptive.adaptive_wesuwts.thwiftscawa.adaptiveseawchwesuwtdata
+i-impowt c-com.twittew.seawch.adaptive.adaptive_wesuwts.thwiftscawa.wesuwt
+i-impowt com.twittew.seawch.adaptive.adaptive_wesuwts.thwiftscawa.wesuwtdata
+i-impowt c-com.twittew.seawch.bwendew.adaptive_seawch.thwiftscawa.adaptiveseawchwesponse
+impowt com.twittew.seawch.bwendew.adaptive_seawch.thwiftscawa.containew
+impowt com.twittew.seawch.bwendew.thwiftscawa.bwendewsewvice
+impowt com.twittew.seawch.bwendew.thwiftscawa.thwiftbwendewwequest
+i-impowt com.twittew.stitch.stitch
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class BlenderUsersCandidateSource @Inject() (
-  blenderClient: BlenderService.MethodPerEndpoint)
-    extends CandidateSource[ThriftBlenderRequest, Long] {
+@singweton
+c-cwass bwendewusewscandidatesouwce @inject() (
+  bwendewcwient: bwendewsewvice.methodpewendpoint)
+    extends candidatesouwce[thwiftbwendewwequest, (˘ω˘) w-wong] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("BlenderUsers")
+  ovewwide vaw identifiew: c-candidatesouwceidentifiew = c-candidatesouwceidentifiew("bwendewusews")
 
-  override def apply(request: ThriftBlenderRequest): Stitch[Seq[Long]] = {
-    Stitch.callFuture(
-      blenderClient.serveV2(request).map { response =>
-        val userIdsOpt =
-          response.adaptiveSearchResponse.map(extractUserIdsFromAdaptiveSearchResponse)
-        userIdsOpt.getOrElse(Seq.empty)
+  ovewwide def appwy(wequest: thwiftbwendewwequest): stitch[seq[wong]] = {
+    stitch.cawwfutuwe(
+      b-bwendewcwient.sewvev2(wequest).map { wesponse =>
+        vaw usewidsopt =
+          wesponse.adaptiveseawchwesponse.map(extwactusewidsfwomadaptiveseawchwesponse)
+        usewidsopt.getowewse(seq.empty)
       }
     )
   }
 
-  private def extractUserIdsFromAdaptiveSearchResponse(
-    response: AdaptiveSearchResponse
-  ): Seq[Long] = {
-    response match {
-      case AdaptiveSearchResponse(Some(Seq(Container(Some(results), _))), _, _) =>
-        results.map(_.data).collect {
-          case AdaptiveSearchResultData.Result(Result(ResultData.User(user), _)) =>
-            user.id
+  p-pwivate def extwactusewidsfwomadaptiveseawchwesponse(
+    w-wesponse: adaptiveseawchwesponse
+  ): s-seq[wong] = {
+    w-wesponse m-match {
+      case adaptiveseawchwesponse(some(seq(containew(some(wesuwts), (⑅˘꒳˘) _))), _, _) =>
+        wesuwts.map(_.data).cowwect {
+          c-case adaptiveseawchwesuwtdata.wesuwt(wesuwt(wesuwtdata.usew(usew), (///ˬ///✿) _)) =>
+            usew.id
         }
-      case _ => Seq.empty
+      c-case _ => seq.empty
     }
   }
 }

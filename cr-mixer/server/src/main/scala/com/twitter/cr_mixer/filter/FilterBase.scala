@@ -1,22 +1,22 @@
-package com.twitter.cr_mixer.filter
+package com.twittew.cw_mixew.fiwtew
 
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.util.Future
+impowt com.twittew.cw_mixew.modew.candidategenewatowquewy
+i-impowt c-com.twittew.cw_mixew.modew.initiawcandidate
+i-impowt com.twittew.utiw.futuwe
 
-trait FilterBase {
-  def name: String
+t-twait fiwtewbase {
+  d-def nyame: s-stwing
 
-  type ConfigType
+  type c-configtype
 
-  def filter(
-    candidates: Seq[Seq[InitialCandidate]],
-    config: ConfigType
-  ): Future[Seq[Seq[InitialCandidate]]]
+  def f-fiwtew(
+    candidates: seq[seq[initiawcandidate]], ^^;;
+    config: configtype
+  ): futuwe[seq[seq[initiawcandidate]]]
 
   /**
-   * Build the config params here. passing in param() into the filter is strongly discouraged
-   * because param() can be slow when called many times
+   * b-buiwd the config pawams hewe. >_< passing in pawam() i-into the fiwtew is stwongwy discouwaged
+   * because p-pawam() can be swow when cawwed many times
    */
-  def requestToConfig[CGQueryType <: CandidateGeneratorQuery](request: CGQueryType): ConfigType
+  def wequesttoconfig[cgquewytype <: c-candidategenewatowquewy](wequest: cgquewytype): configtype
 }

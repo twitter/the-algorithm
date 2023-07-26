@@ -1,75 +1,75 @@
-java_library(
-    name = "earlybird_root-lib",
-    sources = ["*.java"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/commons-lang",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "decider/src/main/scala",
-        "finagle-internal/mtls/src/main/scala/com/twitter/finagle/mtls/authentication",
-        "finagle-internal/mtls/src/main/scala/com/twitter/finagle/mtls/authorization/server",
-        "finagle/finagle-memcached/src/main/java",
-        "finagle/finagle-mux/src/main/scala",
-        "finagle/finagle-thrift/src/main/java",
-        "finagle/finagle-thrift/src/main/scala",
-        "finatra/inject/inject-core/src/main/scala",
-        "finatra/inject/inject-server/src/main/scala/com/twitter/inject/server",
-        "src/java/com/google/common/util/concurrent",
-        "src/java/com/twitter/common/collections",
-        "src/java/com/twitter/common_internal/text/version",
-        "src/java/com/twitter/search/common/caching",
-        "src/java/com/twitter/search/common/clientstats",
-        "src/java/com/twitter/search/common/config",
-        "src/java/com/twitter/search/common/dark",
-        "src/java/com/twitter/search/common/decider",
-        "src/java/com/twitter/search/common/metrics",
-        "src/java/com/twitter/search/common/partitioning/base",
-        "src/java/com/twitter/search/common/partitioning/zookeeper",
-        "src/java/com/twitter/search/common/relevance:ranking",
-        "src/java/com/twitter/search/common/root",
-        "src/java/com/twitter/search/common/runtime",
-        "src/java/com/twitter/search/common/schema/earlybird",
-        "src/java/com/twitter/search/common/search",
-        "src/java/com/twitter/search/common/util/earlybird",
-        "src/java/com/twitter/search/common/util/io/periodic",
-        "src/java/com/twitter/search/common/util/zookeeper",
-        "src/java/com/twitter/search/earlybird/common",
-        "src/java/com/twitter/search/earlybird/config",
-        "src/java/com/twitter/search/earlybird_root/caching",
-        "src/java/com/twitter/search/earlybird_root/common",
-        "src/java/com/twitter/search/earlybird_root/filters",
-        "src/java/com/twitter/search/earlybird_root/mergers",
-        "src/java/com/twitter/search/earlybird_root/quota",
-        "src/java/com/twitter/search/earlybird_root/routers",
-        "src/java/com/twitter/search/earlybird_root/visitors",
-        "src/java/com/twitter/search/queryparser",
-        "src/java/com/twitter/search/queryparser/query:core-query-nodes",
-        "src/java/com/twitter/search/queryparser/query/search:search-query-nodes",
-        "src/thrift/com/twitter/search:benchmark_query-java",
-        "src/thrift/com/twitter/search:earlybird-java",
-        "stitch/stitch-core",
-        "strato/src/main/scala/com/twitter/strato/catalog",
-        "strato/src/main/scala/com/twitter/strato/client",
-        "thrift-web-forms",
-        "thrift-web-forms/src/main/scala/com/twitter/thriftwebforms/model",
+java_wibwawy(
+    nyame = "eawwybiwd_woot-wib", -.-
+    souwces = ["*.java"], (ˆ ﻌ ˆ)♡
+    p-pwatfowm = "java8", (⑅˘꒳˘)
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/inject:guice", -.-
+        "3wdpawty/jvm/commons-wang", ^^;;
+        "3wdpawty/jvm/owg/swf4j:swf4j-api", >_<
+        "decidew/swc/main/scawa",
+        "finagwe-intewnaw/mtws/swc/main/scawa/com/twittew/finagwe/mtws/authentication", mya
+        "finagwe-intewnaw/mtws/swc/main/scawa/com/twittew/finagwe/mtws/authowization/sewvew", mya
+        "finagwe/finagwe-memcached/swc/main/java", 😳
+        "finagwe/finagwe-mux/swc/main/scawa", XD
+        "finagwe/finagwe-thwift/swc/main/java", :3
+        "finagwe/finagwe-thwift/swc/main/scawa", 😳😳😳
+        "finatwa/inject/inject-cowe/swc/main/scawa", -.-
+        "finatwa/inject/inject-sewvew/swc/main/scawa/com/twittew/inject/sewvew", ( ͡o ω ͡o )
+        "swc/java/com/googwe/common/utiw/concuwwent", rawr x3
+        "swc/java/com/twittew/common/cowwections", nyaa~~
+        "swc/java/com/twittew/common_intewnaw/text/vewsion", /(^•ω•^)
+        "swc/java/com/twittew/seawch/common/caching", rawr
+        "swc/java/com/twittew/seawch/common/cwientstats", OwO
+        "swc/java/com/twittew/seawch/common/config", (U ﹏ U)
+        "swc/java/com/twittew/seawch/common/dawk", >_<
+        "swc/java/com/twittew/seawch/common/decidew", rawr x3
+        "swc/java/com/twittew/seawch/common/metwics", mya
+        "swc/java/com/twittew/seawch/common/pawtitioning/base", nyaa~~
+        "swc/java/com/twittew/seawch/common/pawtitioning/zookeepew", (⑅˘꒳˘)
+        "swc/java/com/twittew/seawch/common/wewevance:wanking", rawr x3
+        "swc/java/com/twittew/seawch/common/woot",
+        "swc/java/com/twittew/seawch/common/wuntime", (✿oωo)
+        "swc/java/com/twittew/seawch/common/schema/eawwybiwd", (ˆ ﻌ ˆ)♡
+        "swc/java/com/twittew/seawch/common/seawch", (˘ω˘)
+        "swc/java/com/twittew/seawch/common/utiw/eawwybiwd", (⑅˘꒳˘)
+        "swc/java/com/twittew/seawch/common/utiw/io/pewiodic", (///ˬ///✿)
+        "swc/java/com/twittew/seawch/common/utiw/zookeepew", 😳😳😳
+        "swc/java/com/twittew/seawch/eawwybiwd/common", 🥺
+        "swc/java/com/twittew/seawch/eawwybiwd/config", mya
+        "swc/java/com/twittew/seawch/eawwybiwd_woot/caching", 🥺
+        "swc/java/com/twittew/seawch/eawwybiwd_woot/common", >_<
+        "swc/java/com/twittew/seawch/eawwybiwd_woot/fiwtews", >_<
+        "swc/java/com/twittew/seawch/eawwybiwd_woot/mewgews", (⑅˘꒳˘)
+        "swc/java/com/twittew/seawch/eawwybiwd_woot/quota", /(^•ω•^)
+        "swc/java/com/twittew/seawch/eawwybiwd_woot/woutews", rawr x3
+        "swc/java/com/twittew/seawch/eawwybiwd_woot/visitows", (U ﹏ U)
+        "swc/java/com/twittew/seawch/quewypawsew", (U ﹏ U)
+        "swc/java/com/twittew/seawch/quewypawsew/quewy:cowe-quewy-nodes",
+        "swc/java/com/twittew/seawch/quewypawsew/quewy/seawch:seawch-quewy-nodes", (⑅˘꒳˘)
+        "swc/thwift/com/twittew/seawch:benchmawk_quewy-java", òωó
+        "swc/thwift/com/twittew/seawch:eawwybiwd-java", ʘwʘ
+        "stitch/stitch-cowe", /(^•ω•^)
+        "stwato/swc/main/scawa/com/twittew/stwato/catawog", ʘwʘ
+        "stwato/swc/main/scawa/com/twittew/stwato/cwient", σωσ
+        "thwift-web-fowms", OwO
+        "thwift-web-fowms/swc/main/scawa/com/twittew/thwiftwebfowms/modew", 😳😳😳
     ],
 )
 
-jvm_binary(
-    name = "earlybird_root-binary",
-    basename = "earlybird_root",
-    # The main class is reset in the aurora files (it's a required param).
-    # We need to set it to something here, because hadoop_binary requires it.
-    main = "com.twitter.search.earlybird_root.RealtimeRootAppMain",
-    runtime_platform = "java11",
-    tags = ["bazel-compatible"],
+j-jvm_binawy(
+    n-nyame = "eawwybiwd_woot-binawy", 😳😳😳
+    basename = "eawwybiwd_woot", o.O
+    # t-the main cwass i-is weset in the a-auwowa fiwes (it's a wequiwed pawam). ( ͡o ω ͡o )
+    # we nyeed to set it to something hewe, (U ﹏ U) b-because hadoop_binawy wequiwes it. (///ˬ///✿)
+    main = "com.twittew.seawch.eawwybiwd_woot.weawtimewootappmain", >w<
+    w-wuntime_pwatfowm = "java11", rawr
+    tags = ["bazew-compatibwe"],
     dependencies = [
-        "3rdparty/jvm/org/slf4j:slf4j-log4j12",
-        ":earlybird_root-lib",
-        "src/java/com/twitter/search/common/logging:search-log4j",
-        # For /admin/logging.
-        "twitter-server/slf4j-log4j12/src/main/scala",
-    ],
+        "3wdpawty/jvm/owg/swf4j:swf4j-wog4j12", mya
+        ":eawwybiwd_woot-wib", ^^
+        "swc/java/com/twittew/seawch/common/wogging:seawch-wog4j", 😳😳😳
+        # f-fow /admin/wogging. mya
+        "twittew-sewvew/swf4j-wog4j12/swc/main/scawa", 😳
+    ], -.-
 )

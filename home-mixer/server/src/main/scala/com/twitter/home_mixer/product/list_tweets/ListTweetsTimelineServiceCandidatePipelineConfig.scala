@@ -1,59 +1,59 @@
-package com.twitter.home_mixer.product.list_tweets
+package com.twittew.home_mixew.pwoduct.wist_tweets
 
-import com.twitter.home_mixer.candidate_pipeline.TimelineServiceResponseFeatureTransformer
-import com.twitter.home_mixer.marshaller.timelines.TimelineServiceCursorMarshaller
-import com.twitter.home_mixer.product.list_tweets.model.ListTweetsQuery
-import com.twitter.home_mixer.product.list_tweets.param.ListTweetsParam.ServerMaxResultsParam
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.candidate_source.timeline_service.TimelineServiceTweetCandidateSource
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.timelineservice.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.candidate_pipewine.timewinesewvicewesponsefeatuwetwansfowmew
+i-impowt c-com.twittew.home_mixew.mawshawwew.timewines.timewinesewvicecuwsowmawshawwew
+i-impowt com.twittew.home_mixew.pwoduct.wist_tweets.modew.wisttweetsquewy
+i-impowt c-com.twittew.home_mixew.pwoduct.wist_tweets.pawam.wisttweetspawam.sewvewmaxwesuwtspawam
+i-impowt com.twittew.home_mixew.sewvice.homemixewawewtconfig
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.timewine_sewvice.timewinesewvicetweetcandidatesouwce
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.basecandidatesouwce
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinewesuwtstwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig
+impowt com.twittew.timewinesewvice.{thwiftscawa => t}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class ListTweetsTimelineServiceCandidatePipelineConfig @Inject() (
-  timelineServiceTweetCandidateSource: TimelineServiceTweetCandidateSource)
-    extends CandidatePipelineConfig[ListTweetsQuery, t.TimelineQuery, t.Tweet, TweetCandidate] {
+@singweton
+cwass w-wisttweetstimewinesewvicecandidatepipewineconfig @inject() (
+  timewinesewvicetweetcandidatesouwce: t-timewinesewvicetweetcandidatesouwce)
+    extends candidatepipewineconfig[wisttweetsquewy, ( ͡o ω ͡o ) t.timewinequewy, (U ﹏ U) t.tweet, (///ˬ///✿) tweetcandidate] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("ListTweetsTimelineServiceTweets")
+  o-ovewwide vaw identifiew: candidatepipewineidentifiew =
+    candidatepipewineidentifiew("wisttweetstimewinesewvicetweets")
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    ListTweetsQuery,
-    t.TimelineQuery
-  ] = { query =>
-    val timelineQueryOptions = t.TimelineQueryOptions(
-      contextualUserId = query.clientContext.userId,
+  ovewwide v-vaw quewytwansfowmew: candidatepipewinequewytwansfowmew[
+    w-wisttweetsquewy, >w<
+    t-t.timewinequewy
+  ] = { q-quewy =>
+    v-vaw timewinequewyoptions = t.timewinequewyoptions(
+      contextuawusewid = q-quewy.cwientcontext.usewid, rawr
     )
 
-    t.TimelineQuery(
-      timelineType = t.TimelineType.List,
-      timelineId = query.listId,
-      maxCount = query.maxResults(ServerMaxResultsParam).toShort,
-      cursor2 = query.pipelineCursor.flatMap(TimelineServiceCursorMarshaller(_)),
-      options = Some(timelineQueryOptions),
-      timelineId2 = Some(t.TimelineId(t.TimelineType.List, query.listId, None))
+    t.timewinequewy(
+      timewinetype = t-t.timewinetype.wist, mya
+      timewineid = quewy.wistid, ^^
+      maxcount = quewy.maxwesuwts(sewvewmaxwesuwtspawam).toshowt, 😳😳😳
+      cuwsow2 = quewy.pipewinecuwsow.fwatmap(timewinesewvicecuwsowmawshawwew(_)), mya
+      options = some(timewinequewyoptions), 😳
+      timewineid2 = s-some(t.timewineid(t.timewinetype.wist, -.- quewy.wistid, n-nyone))
     )
   }
 
-  override def candidateSource: BaseCandidateSource[t.TimelineQuery, t.Tweet] =
-    timelineServiceTweetCandidateSource
+  o-ovewwide d-def candidatesouwce: basecandidatesouwce[t.timewinequewy, 🥺 t.tweet] =
+    timewinesewvicetweetcandidatesouwce
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[t.Tweet, TweetCandidate] = {
-    sourceResult => TweetCandidate(id = sourceResult.statusId)
+  o-ovewwide vaw wesuwttwansfowmew: c-candidatepipewinewesuwtstwansfowmew[t.tweet, o.O tweetcandidate] = {
+    s-souwcewesuwt => t-tweetcandidate(id = souwcewesuwt.statusid)
   }
 
-  override val featuresFromCandidateSourceTransformers: Seq[CandidateFeatureTransformer[t.Tweet]] =
-    Seq(TimelineServiceResponseFeatureTransformer)
+  o-ovewwide vaw featuwesfwomcandidatesouwcetwansfowmews: s-seq[candidatefeatuwetwansfowmew[t.tweet]] =
+    seq(timewinesewvicewesponsefeatuwetwansfowmew)
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.7)
+  ovewwide vaw awewts = s-seq(
+    homemixewawewtconfig.businesshouws.defauwtsuccesswateawewt(99.7)
   )
 }

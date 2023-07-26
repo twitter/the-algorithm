@@ -1,44 +1,44 @@
-package com.twitter.follow_recommendations.products
+package com.twittew.fowwow_wecommendations.pwoducts
 
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.products.common.ProductRegistry
-import com.twitter.follow_recommendations.products.explore_tab.ExploreTabProduct
-import com.twitter.follow_recommendations.products.home_timeline.HomeTimelineProduct
-import com.twitter.follow_recommendations.products.home_timeline_tweet_recs.HomeTimelineTweetRecsProduct
-import com.twitter.follow_recommendations.products.sidebar.SidebarProduct
+impowt com.twittew.fowwow_wecommendations.common.modews.dispwaywocation
+i-impowt c-com.twittew.fowwow_wecommendations.pwoducts.common.pwoductwegistwy
+i-impowt com.twittew.fowwow_wecommendations.pwoducts.expwowe_tab.expwowetabpwoduct
+i-impowt com.twittew.fowwow_wecommendations.pwoducts.home_timewine.hometimewinepwoduct
+i-impowt c-com.twittew.fowwow_wecommendations.pwoducts.home_timewine_tweet_wecs.hometimewinetweetwecspwoduct
+i-impowt com.twittew.fowwow_wecommendations.pwoducts.sidebaw.sidebawpwoduct
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class ProdProductRegistry @Inject() (
-  exploreTabProduct: ExploreTabProduct,
-  homeTimelineProduct: HomeTimelineProduct,
-  homeTimelineTweetRecsProduct: HomeTimelineTweetRecsProduct,
-  sidebarProduct: SidebarProduct,
-) extends ProductRegistry {
+@singweton
+cwass pwodpwoductwegistwy @inject() (
+  expwowetabpwoduct: e-expwowetabpwoduct, (///ˬ///✿)
+  hometimewinepwoduct: hometimewinepwoduct, 😳😳😳
+  h-hometimewinetweetwecspwoduct: hometimewinetweetwecspwoduct, 🥺
+  sidebawpwoduct: sidebawpwoduct, mya
+) extends pwoductwegistwy {
 
-  override val products: Seq[common.Product] =
-    Seq(
-      exploreTabProduct,
-      homeTimelineProduct,
-      homeTimelineTweetRecsProduct,
-      sidebarProduct
+  o-ovewwide vaw pwoducts: seq[common.pwoduct] =
+    seq(
+      expwowetabpwoduct, 🥺
+      h-hometimewinepwoduct,
+      hometimewinetweetwecspwoduct, >_<
+      s-sidebawpwoduct
     )
 
-  override val displayLocationProductMap: Map[DisplayLocation, common.Product] =
-    products.groupBy(_.displayLocation).flatMap {
-      case (loc, products) =>
-        assert(products.size == 1, s"Found more than 1 Product for ${loc}")
-        products.headOption.map { product => loc -> product }
+  o-ovewwide vaw dispwaywocationpwoductmap: map[dispwaywocation, >_< common.pwoduct] =
+    pwoducts.gwoupby(_.dispwaywocation).fwatmap {
+      c-case (woc, (⑅˘꒳˘) pwoducts) =>
+        assewt(pwoducts.size == 1, /(^•ω•^) s"found mowe than 1 pwoduct fow ${woc}")
+        p-pwoducts.headoption.map { pwoduct => w-woc -> pwoduct }
     }
 
-  override def getProductByDisplayLocation(displayLocation: DisplayLocation): common.Product = {
-    displayLocationProductMap.getOrElse(
-      displayLocation,
-      throw new MissingProductException(displayLocation))
+  o-ovewwide d-def getpwoductbydispwaywocation(dispwaywocation: d-dispwaywocation): common.pwoduct = {
+    dispwaywocationpwoductmap.getowewse(
+      dispwaywocation, rawr x3
+      t-thwow nyew missingpwoductexception(dispwaywocation))
   }
 }
 
-class MissingProductException(displayLocation: DisplayLocation)
-    extends Exception(s"No Product found for ${displayLocation}")
+cwass missingpwoductexception(dispwaywocation: d-dispwaywocation)
+    extends exception(s"no pwoduct found fow ${dispwaywocation}")

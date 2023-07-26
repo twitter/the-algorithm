@@ -1,263 +1,263 @@
-package com.twitter.home_mixer.functional_component.side_effect
+package com.twittew.home_mixew.functionaw_component.side_effect
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.model.HomeFeatures.IsTweetPreviewFeature
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module.WhoToFollowCandidateDecorator
-import com.twitter.product_mixer.component_library.pipeline.candidate.who_to_subscribe_module.WhoToSubscribeCandidateDecorator
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ReplaceEntryTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowCoverInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinemixer.clients.persistence.EntryWithItemIds
-import com.twitter.timelinemixer.clients.persistence.ItemIds
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseBatchesClient
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseV3
-import com.twitter.timelines.persistence.thriftscala.TweetScoreV1
-import com.twitter.timelines.persistence.{thriftscala => persistence}
-import com.twitter.timelineservice.model.TimelineQuery
-import com.twitter.timelineservice.model.TimelineQueryOptions
-import com.twitter.timelineservice.model.TweetScore
-import com.twitter.timelineservice.model.core.TimelineKind
-import com.twitter.timelineservice.model.rich.EntityIdType
-import com.twitter.util.Time
-import com.twitter.{timelineservice => tls}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.modew.homefeatuwes._
+i-impowt com.twittew.home_mixew.modew.wequest.fowwowingpwoduct
+i-impowt com.twittew.home_mixew.modew.wequest.fowyoupwoduct
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.istweetpweviewfeatuwe
+i-impowt com.twittew.home_mixew.sewvice.homemixewawewtconfig
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.who_to_fowwow_moduwe.whotofowwowcandidatedecowatow
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.who_to_subscwibe_moduwe.whotosubscwibecandidatedecowatow
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.side_effect.pipewinewesuwtsideeffect
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.sideeffectidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.itemcandidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.moduwecandidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.addentwiestimewineinstwuction
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wepwaceentwytimewineinstwuction
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.showcovewinstwuction
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewinemoduwe
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tweet.tweetitem
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.stitch.stitch
+i-impowt com.twittew.timewinemixew.cwients.pewsistence.entwywithitemids
+impowt com.twittew.timewinemixew.cwients.pewsistence.itemids
+impowt com.twittew.timewinemixew.cwients.pewsistence.timewinewesponsebatchescwient
+i-impowt com.twittew.timewinemixew.cwients.pewsistence.timewinewesponsev3
+impowt com.twittew.timewines.pewsistence.thwiftscawa.tweetscowev1
+impowt com.twittew.timewines.pewsistence.{thwiftscawa => p-pewsistence}
+impowt com.twittew.timewinesewvice.modew.timewinequewy
+i-impowt com.twittew.timewinesewvice.modew.timewinequewyoptions
+i-impowt com.twittew.timewinesewvice.modew.tweetscowe
+i-impowt c-com.twittew.timewinesewvice.modew.cowe.timewinekind
+impowt com.twittew.timewinesewvice.modew.wich.entityidtype
+impowt com.twittew.utiw.time
+i-impowt com.twittew.{timewinesewvice => tws}
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-object UpdateTimelinesPersistenceStoreSideEffect {
-  val EmptyItemIds = ItemIds(
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None)
+object updatetimewinespewsistencestowesideeffect {
+  vaw emptyitemids = itemids(
+    nyone, 😳😳😳
+    n-nyone, 😳
+    nyone, XD
+    nyone,
+    n-nyone, mya
+    nyone, ^•ﻌ•^
+    n-nyone, ʘwʘ
+    n-nyone,
+    nyone, ( ͡o ω ͡o )
+    nyone, mya
+    nyone, o.O
+    nyone,
+    nyone, (✿oωo)
+    n-nyone, :3
+    n-nyone)
 }
 
 /**
- * Side effect that updates the Timelines Persistence Store (Manhattan) with the entries being returned.
+ * side effect that u-updates the t-timewines pewsistence stowe (manhattan) w-with the entwies being wetuwned. 😳
  */
-@Singleton
-class UpdateTimelinesPersistenceStoreSideEffect @Inject() (
-  timelineResponseBatchesClient: TimelineResponseBatchesClient[TimelineResponseV3])
-    extends PipelineResultSideEffect[PipelineQuery, Timeline] {
+@singweton
+c-cwass updatetimewinespewsistencestowesideeffect @inject() (
+  timewinewesponsebatchescwient: timewinewesponsebatchescwient[timewinewesponsev3])
+    e-extends pipewinewesuwtsideeffect[pipewinequewy, (U ﹏ U) t-timewine] {
 
-  override val identifier: SideEffectIdentifier =
-    SideEffectIdentifier("UpdateTimelinesPersistenceStore")
+  ovewwide v-vaw identifiew: s-sideeffectidentifiew =
+    sideeffectidentifiew("updatetimewinespewsistencestowe")
 
-  final override def apply(
-    inputs: PipelineResultSideEffect.Inputs[PipelineQuery, Timeline]
-  ): Stitch[Unit] = {
-    if (inputs.response.instructions.nonEmpty) {
-      val timelineKind = inputs.query.product match {
-        case FollowingProduct => TimelineKind.homeLatest
-        case ForYouProduct => TimelineKind.home
-        case other => throw new UnsupportedOperationException(s"Unknown product: $other")
+  finaw ovewwide def appwy(
+    inputs: pipewinewesuwtsideeffect.inputs[pipewinequewy, mya timewine]
+  ): stitch[unit] = {
+    if (inputs.wesponse.instwuctions.nonempty) {
+      v-vaw timewinekind = i-inputs.quewy.pwoduct match {
+        c-case f-fowwowingpwoduct => t-timewinekind.homewatest
+        case fowyoupwoduct => timewinekind.home
+        case othew => t-thwow nyew unsuppowtedopewationexception(s"unknown pwoduct: $othew")
       }
-      val timelineQuery = TimelineQuery(
-        id = inputs.query.getRequiredUserId,
-        kind = timelineKind,
-        options = TimelineQueryOptions(
-          contextualUserId = inputs.query.getOptionalUserId,
-          deviceContext = tls.DeviceContext.empty.copy(
-            userAgent = inputs.query.clientContext.userAgent,
-            clientAppId = inputs.query.clientContext.appId)
+      vaw timewinequewy = timewinequewy(
+        i-id = inputs.quewy.getwequiwedusewid, (U ᵕ U❁)
+        kind = timewinekind, :3
+        o-options = t-timewinequewyoptions(
+          c-contextuawusewid = inputs.quewy.getoptionawusewid, mya
+          d-devicecontext = t-tws.devicecontext.empty.copy(
+            u-usewagent = i-inputs.quewy.cwientcontext.usewagent, OwO
+            cwientappid = inputs.quewy.cwientcontext.appid)
         )
       )
 
-      val tweetIdToItemCandidateMap: Map[Long, ItemCandidateWithDetails] =
-        inputs.selectedCandidates.flatMap {
-          case item: ItemCandidateWithDetails if item.candidate.id.isInstanceOf[Long] =>
-            Seq((item.candidateIdLong, item))
-          case module: ModuleCandidateWithDetails
-              if module.candidates.headOption.exists(_.candidate.id.isInstanceOf[Long]) =>
-            module.candidates.map(item => (item.candidateIdLong, item))
-          case _ => Seq.empty
-        }.toMap
+      v-vaw tweetidtoitemcandidatemap: m-map[wong, (ˆ ﻌ ˆ)♡ itemcandidatewithdetaiws] =
+        i-inputs.sewectedcandidates.fwatmap {
+          c-case item: itemcandidatewithdetaiws i-if item.candidate.id.isinstanceof[wong] =>
+            seq((item.candidateidwong, ʘwʘ item))
+          case moduwe: m-moduwecandidatewithdetaiws
+              if moduwe.candidates.headoption.exists(_.candidate.id.isinstanceof[wong]) =>
+            moduwe.candidates.map(item => (item.candidateidwong, o.O item))
+          case _ => s-seq.empty
+        }.tomap
 
-      val entries = inputs.response.instructions.collect {
-        case AddEntriesTimelineInstruction(entries) =>
-          entries.collect {
-            // includes tweets, tweet previews, and promoted tweets
-            case entry: TweetItem if entry.sortIndex.isDefined => {
-              Seq(
-                buildTweetEntryWithItemIds(
-                  tweetIdToItemCandidateMap(entry.id),
-                  entry.sortIndex.get
+      vaw entwies = inputs.wesponse.instwuctions.cowwect {
+        case addentwiestimewineinstwuction(entwies) =>
+          e-entwies.cowwect {
+            // i-incwudes t-tweets, UwU tweet pweviews, rawr x3 and p-pwomoted tweets
+            case entwy: tweetitem i-if entwy.sowtindex.isdefined => {
+              s-seq(
+                buiwdtweetentwywithitemids(
+                  tweetidtoitemcandidatemap(entwy.id), 🥺
+                  entwy.sowtindex.get
                 ))
             }
-            // tweet conversation modules are flattened to individual tweets in the persistence store
-            case module: TimelineModule
-                if module.sortIndex.isDefined && module.items.headOption.exists(
-                  _.item.isInstanceOf[TweetItem]) =>
-              module.items.map { item =>
-                buildTweetEntryWithItemIds(
-                  tweetIdToItemCandidateMap(item.item.id.asInstanceOf[Long]),
-                  module.sortIndex.get)
+            // tweet convewsation moduwes awe fwattened to individuaw t-tweets in the pewsistence s-stowe
+            case moduwe: t-timewinemoduwe
+                i-if moduwe.sowtindex.isdefined && moduwe.items.headoption.exists(
+                  _.item.isinstanceof[tweetitem]) =>
+              moduwe.items.map { i-item =>
+                b-buiwdtweetentwywithitemids(
+                  tweetidtoitemcandidatemap(item.item.id.asinstanceof[wong]), :3
+                  moduwe.sowtindex.get)
               }
-            case module: TimelineModule
-                if module.sortIndex.isDefined && module.entryNamespace.toString == WhoToFollowCandidateDecorator.EntryNamespaceString =>
-              val userIds = module.items
+            case m-moduwe: timewinemoduwe
+                i-if moduwe.sowtindex.isdefined && moduwe.entwynamespace.tostwing == whotofowwowcandidatedecowatow.entwynamespacestwing =>
+              vaw usewids = moduwe.items
                 .map(item =>
-                  UpdateTimelinesPersistenceStoreSideEffect.EmptyItemIds.copy(userId =
-                    Some(item.item.id.asInstanceOf[Long])))
-              Seq(
-                EntryWithItemIds(
-                  entityIdType = EntityIdType.WhoToFollow,
-                  sortIndex = module.sortIndex.get,
-                  size = module.items.size.toShort,
-                  itemIds = Some(userIds)
+                  u-updatetimewinespewsistencestowesideeffect.emptyitemids.copy(usewid =
+                    s-some(item.item.id.asinstanceof[wong])))
+              s-seq(
+                entwywithitemids(
+                  e-entityidtype = e-entityidtype.whotofowwow, (ꈍᴗꈍ)
+                  sowtindex = moduwe.sowtindex.get, 🥺
+                  s-size = moduwe.items.size.toshowt, (✿oωo)
+                  itemids = some(usewids)
                 ))
-            case module: TimelineModule
-                if module.sortIndex.isDefined && module.entryNamespace.toString == WhoToSubscribeCandidateDecorator.EntryNamespaceString =>
-              val userIds = module.items
+            case moduwe: timewinemoduwe
+                i-if moduwe.sowtindex.isdefined && m-moduwe.entwynamespace.tostwing == whotosubscwibecandidatedecowatow.entwynamespacestwing =>
+              vaw usewids = m-moduwe.items
                 .map(item =>
-                  UpdateTimelinesPersistenceStoreSideEffect.EmptyItemIds.copy(userId =
-                    Some(item.item.id.asInstanceOf[Long])))
-              Seq(
-                EntryWithItemIds(
-                  entityIdType = EntityIdType.WhoToSubscribe,
-                  sortIndex = module.sortIndex.get,
-                  size = module.items.size.toShort,
-                  itemIds = Some(userIds)
+                  u-updatetimewinespewsistencestowesideeffect.emptyitemids.copy(usewid =
+                    some(item.item.id.asinstanceof[wong])))
+              seq(
+                entwywithitemids(
+                  e-entityidtype = entityidtype.whotosubscwibe, (U ﹏ U)
+                  sowtindex = moduwe.sowtindex.get, :3
+                  size = moduwe.items.size.toshowt, ^^;;
+                  i-itemids = some(usewids)
                 ))
-          }.flatten
-        case ShowCoverInstruction(cover) =>
-          Seq(
-            EntryWithItemIds(
-              entityIdType = EntityIdType.Prompt,
-              sortIndex = cover.sortIndex.get,
-              size = 1,
-              itemIds = None
+          }.fwatten
+        case showcovewinstwuction(covew) =>
+          s-seq(
+            e-entwywithitemids(
+              entityidtype = entityidtype.pwompt,
+              sowtindex = c-covew.sowtindex.get, rawr
+              s-size = 1, 😳😳😳
+              itemids = nyone
             )
           )
-        case ReplaceEntryTimelineInstruction(entry) =>
-          val namespaceLength = TweetItem.TweetEntryNamespace.toString.length
-          Seq(
-            EntryWithItemIds(
-              entityIdType = EntityIdType.Tweet,
-              sortIndex = entry.sortIndex.get,
-              size = 1,
-              itemIds = Some(
-                Seq(
-                  ItemIds(
-                    tweetId =
-                      entry.entryIdToReplace.map(e => e.substring(namespaceLength + 1).toLong),
-                    sourceTweetId = None,
-                    quoteTweetId = None,
-                    sourceAuthorId = None,
-                    quoteAuthorId = None,
-                    inReplyToTweetId = None,
-                    inReplyToAuthorId = None,
-                    semanticCoreId = None,
-                    articleId = None,
-                    hasRelevancePrompt = None,
-                    promptData = None,
-                    tweetScore = None,
-                    entryIdToReplace = entry.entryIdToReplace,
-                    tweetReactiveData = None,
-                    userId = None
+        case w-wepwaceentwytimewineinstwuction(entwy) =>
+          vaw nyamespacewength = t-tweetitem.tweetentwynamespace.tostwing.wength
+          seq(
+            entwywithitemids(
+              entityidtype = e-entityidtype.tweet, (✿oωo)
+              sowtindex = e-entwy.sowtindex.get, OwO
+              s-size = 1, ʘwʘ
+              itemids = s-some(
+                seq(
+                  i-itemids(
+                    t-tweetid =
+                      e-entwy.entwyidtowepwace.map(e => e.substwing(namespacewength + 1).towong), (ˆ ﻌ ˆ)♡
+                    s-souwcetweetid = n-nyone, (U ﹏ U)
+                    quotetweetid = nyone, UwU
+                    s-souwceauthowid = n-nyone, XD
+                    q-quoteauthowid = nyone, ʘwʘ
+                    inwepwytotweetid = nyone,
+                    i-inwepwytoauthowid = nyone, rawr x3
+                    s-semanticcoweid = n-nyone, ^^;;
+                    awticweid = nyone, ʘwʘ
+                    haswewevancepwompt = n-nyone, (U ﹏ U)
+                    p-pwomptdata = n-nyone, (˘ω˘)
+                    t-tweetscowe = nyone,
+                    e-entwyidtowepwace = entwy.entwyidtowepwace, (ꈍᴗꈍ)
+                    tweetweactivedata = nyone,
+                    usewid = nyone
                   )
                 ))
             )
           )
 
-      }.flatten
+      }.fwatten
 
-      val response = TimelineResponseV3(
-        clientPlatform = timelineQuery.clientPlatform,
-        servedTime = Time.now,
-        requestType = requestTypeFromQuery(inputs.query),
-        entries = entries)
+      vaw wesponse = timewinewesponsev3(
+        c-cwientpwatfowm = timewinequewy.cwientpwatfowm, /(^•ω•^)
+        s-sewvedtime = time.now, >_<
+        w-wequesttype = wequesttypefwomquewy(inputs.quewy), σωσ
+        e-entwies = entwies)
 
-      Stitch.callFuture(timelineResponseBatchesClient.insertResponse(timelineQuery, response))
-    } else Stitch.Unit
+      s-stitch.cawwfutuwe(timewinewesponsebatchescwient.insewtwesponse(timewinequewy, ^^;; w-wesponse))
+    } e-ewse stitch.unit
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.8)
+  o-ovewwide v-vaw awewts = seq(
+    homemixewawewtconfig.businesshouws.defauwtsuccesswateawewt(99.8)
   )
 
-  private def buildTweetEntryWithItemIds(
-    candidate: ItemCandidateWithDetails,
-    sortIndex: Long
-  ): EntryWithItemIds = {
-    val features = candidate.features
-    val sourceAuthorId =
-      if (features.getOrElse(IsRetweetFeature, false)) features.getOrElse(SourceUserIdFeature, None)
-      else features.getOrElse(AuthorIdFeature, None)
-    val quoteAuthorId =
-      if (features.getOrElse(QuotedTweetIdFeature, None).nonEmpty)
-        features.getOrElse(SourceUserIdFeature, None)
-      else None
-    val tweetScore = features.getOrElse(ScoreFeature, None).map { score =>
-      TweetScore.fromThrift(persistence.TweetScore.TweetScoreV1(TweetScoreV1(score)))
+  pwivate def buiwdtweetentwywithitemids(
+    candidate: itemcandidatewithdetaiws, 😳
+    sowtindex: wong
+  ): entwywithitemids = {
+    v-vaw featuwes = c-candidate.featuwes
+    v-vaw souwceauthowid =
+      i-if (featuwes.getowewse(iswetweetfeatuwe, >_< fawse)) featuwes.getowewse(souwceusewidfeatuwe, -.- nyone)
+      ewse featuwes.getowewse(authowidfeatuwe, UwU n-nyone)
+    v-vaw quoteauthowid =
+      if (featuwes.getowewse(quotedtweetidfeatuwe, :3 n-nyone).nonempty)
+        featuwes.getowewse(souwceusewidfeatuwe, σωσ nyone)
+      e-ewse nyone
+    v-vaw tweetscowe = featuwes.getowewse(scowefeatuwe, >w< n-nyone).map { s-scowe =>
+      tweetscowe.fwomthwift(pewsistence.tweetscowe.tweetscowev1(tweetscowev1(scowe)))
     }
 
-    val itemIds = ItemIds(
-      tweetId = Some(candidate.candidateIdLong),
-      sourceTweetId = features.getOrElse(SourceTweetIdFeature, None),
-      quoteTweetId = features.getOrElse(QuotedTweetIdFeature, None),
-      sourceAuthorId = sourceAuthorId,
-      quoteAuthorId = quoteAuthorId,
-      inReplyToTweetId = features.getOrElse(InReplyToTweetIdFeature, None),
-      inReplyToAuthorId = features.getOrElse(DirectedAtUserIdFeature, None),
-      semanticCoreId = features.getOrElse(SemanticCoreIdFeature, None),
-      articleId = None,
-      hasRelevancePrompt = None,
-      promptData = None,
-      tweetScore = tweetScore,
-      entryIdToReplace = None,
-      tweetReactiveData = None,
-      userId = None
+    vaw itemids = itemids(
+      tweetid = some(candidate.candidateidwong), (ˆ ﻌ ˆ)♡
+      s-souwcetweetid = f-featuwes.getowewse(souwcetweetidfeatuwe, ʘwʘ n-nyone), :3
+      q-quotetweetid = f-featuwes.getowewse(quotedtweetidfeatuwe, (˘ω˘) nyone), 😳😳😳
+      s-souwceauthowid = s-souwceauthowid, rawr x3
+      quoteauthowid = q-quoteauthowid, (✿oωo)
+      i-inwepwytotweetid = featuwes.getowewse(inwepwytotweetidfeatuwe, (ˆ ﻌ ˆ)♡ n-none), :3
+      inwepwytoauthowid = featuwes.getowewse(diwectedatusewidfeatuwe, (U ᵕ U❁) n-nyone), ^^;;
+      semanticcoweid = f-featuwes.getowewse(semanticcoweidfeatuwe, mya n-nyone),
+      awticweid = n-nyone, 😳😳😳
+      haswewevancepwompt = nyone, OwO
+      p-pwomptdata = n-nyone, rawr
+      tweetscowe = t-tweetscowe, XD
+      entwyidtowepwace = nyone, (U ﹏ U)
+      tweetweactivedata = nyone, (˘ω˘)
+      usewid = n-nyone
     )
 
-    val isPreview = features.getOrElse(IsTweetPreviewFeature, default = false)
-    val entityType = if (isPreview) EntityIdType.TweetPreview else EntityIdType.Tweet
+    vaw ispweview = featuwes.getowewse(istweetpweviewfeatuwe, UwU d-defauwt = fawse)
+    v-vaw entitytype = if (ispweview) e-entityidtype.tweetpweview ewse entityidtype.tweet
 
-    EntryWithItemIds(
-      entityIdType = entityType,
-      sortIndex = sortIndex,
-      size = 1.toShort,
-      itemIds = Some(Seq(itemIds))
+    entwywithitemids(
+      e-entityidtype = e-entitytype, >_<
+      sowtindex = sowtindex, σωσ
+      s-size = 1.toshowt, 🥺
+      itemids = some(seq(itemids))
     )
   }
 
-  private def requestTypeFromQuery(query: PipelineQuery): persistence.RequestType = {
-    val features = query.features.getOrElse(FeatureMap.empty)
+  p-pwivate def w-wequesttypefwomquewy(quewy: pipewinequewy): pewsistence.wequesttype = {
+    vaw featuwes = quewy.featuwes.getowewse(featuwemap.empty)
 
-    val featureToRequestType = Seq(
-      (PollingFeature, persistence.RequestType.Polling),
-      (GetInitialFeature, persistence.RequestType.Initial),
-      (GetNewerFeature, persistence.RequestType.Newer),
-      (GetMiddleFeature, persistence.RequestType.Middle),
-      (GetOlderFeature, persistence.RequestType.Older)
+    v-vaw featuwetowequesttype = s-seq(
+      (powwingfeatuwe, 🥺 p-pewsistence.wequesttype.powwing), ʘwʘ
+      (getinitiawfeatuwe, :3 p-pewsistence.wequesttype.initiaw), (U ﹏ U)
+      (getnewewfeatuwe, (U ﹏ U) pewsistence.wequesttype.newew), ʘwʘ
+      (getmiddwefeatuwe, >w< pewsistence.wequesttype.middwe), rawr x3
+      (getowdewfeatuwe, OwO pewsistence.wequesttype.owdew)
     )
 
-    featureToRequestType
-      .collectFirst {
-        case (feature, requestType) if features.getOrElse(feature, false) => requestType
-      }.getOrElse(persistence.RequestType.Other)
+    featuwetowequesttype
+      .cowwectfiwst {
+        case (featuwe, ^•ﻌ•^ wequesttype) if featuwes.getowewse(featuwe, >_< fawse) => wequesttype
+      }.getowewse(pewsistence.wequesttype.othew)
   }
 }

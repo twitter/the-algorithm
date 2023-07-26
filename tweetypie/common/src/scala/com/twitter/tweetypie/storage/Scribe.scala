@@ -1,85 +1,85 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.twitter.servo.util.FutureEffect
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging._
-import com.twitter.scrooge.BinaryThriftStructSerializer
-import com.twitter.servo.util.{Scribe => ServoScribe}
-import com.twitter.tweetypie.storage_internal.thriftscala._
-import com.twitter.tbird.thriftscala.Added
-import com.twitter.tbird.thriftscala.Removed
-import com.twitter.tbird.thriftscala.Scrubbed
-import com.twitter.util.Time
+impowt com.twittew.sewvo.utiw.futuweeffect
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.wogging._
+i-impowt c-com.twittew.scwooge.binawythwiftstwuctsewiawizew
+i-impowt com.twittew.sewvo.utiw.{scwibe => s-sewvoscwibe}
+i-impowt c-com.twittew.tweetypie.stowage_intewnaw.thwiftscawa._
+impowt com.twittew.tbiwd.thwiftscawa.added
+impowt com.twittew.tbiwd.thwiftscawa.wemoved
+impowt com.twittew.tbiwd.thwiftscawa.scwubbed
+impowt c-com.twittew.utiw.time
 
 /**
- * Scribe is used to log tweet writes which are used to generate /tables/statuses in HDFS.
+ * scwibe is used to wog tweet wwites w-which awe used to genewate /tabwes/statuses i-in hdfs.
  *
- * Write   Scribe Category      Message
+ * wwite   scwibe categowy      message
  * -----   ---------------      -------
- * add     tbird_add_status     [[com.twitter.tbird.thriftscala.Added]]
- * remove  tbird_remove_status  [[com.twitter.tbird.thriftscala.Removed]]
- * scrub   tbird_scrub_status   [[com.twitter.tbird.thriftscala.Scrubbed]]
+ * add     tbiwd_add_status     [[com.twittew.tbiwd.thwiftscawa.added]]
+ * w-wemove  tbiwd_wemove_status  [[com.twittew.tbiwd.thwiftscawa.wemoved]]
+ * s-scwub   tbiwd_scwub_status   [[com.twittew.tbiwd.thwiftscawa.scwubbed]]
  *
- * The thrift representation is encoded using binary thrift protocol format, followed by base64
- * encoding and converted to string using default character set (utf8). The logger uses BareFormatter.
+ * t-the thwift wepwesentation is encoded using binawy thwift pwotocow fowmat, :3 fowwowed b-by base64
+ * encoding and convewted to stwing using defauwt chawactew set (utf8). ^^;; t-the woggew uses bawefowmattew. 🥺
  *
- * The thrift ops are scribed only after the write API call has succeeded.
+ * t-the thwift o-ops awe scwibed o-onwy aftew t-the wwite api caww has succeeded. (⑅˘꒳˘)
  *
- * The class is thread safe except initial configuration and registration routines,
- * and no exception is expected unless java heap is out of memory.
+ * the cwass i-is thwead safe except initiaw configuwation and w-wegistwation woutines, nyaa~~
+ * and nyo exception is expected unwess java heap is out of memowy. :3
  *
- * If exception does get thrown, add/remove/scrub operations will fail and
- * client will have to retry
+ * i-if exception does get thwown, ( ͡o ω ͡o ) a-add/wemove/scwub o-opewations wiww f-faiw and
+ * cwient wiww have to wetwy
  */
-class Scribe(factory: Scribe.ScribeHandlerFactory, statsReceiver: StatsReceiver) {
-  import Scribe._
+cwass scwibe(factowy: s-scwibe.scwibehandwewfactowy, mya statsweceivew: s-statsweceivew) {
+  impowt scwibe._
 
-  private val AddedSerializer = BinaryThriftStructSerializer(Added)
-  private val RemovedSerializer = BinaryThriftStructSerializer(Removed)
-  private val ScrubbedSerializer = BinaryThriftStructSerializer(Scrubbed)
+  p-pwivate vaw a-addedsewiawizew = binawythwiftstwuctsewiawizew(added)
+  p-pwivate vaw wemovedsewiawizew = b-binawythwiftstwuctsewiawizew(wemoved)
+  pwivate vaw scwubbedsewiawizew = binawythwiftstwuctsewiawizew(scwubbed)
 
-  private val addCounter = statsReceiver.counter("scribe/add/count")
-  private val removeCounter = statsReceiver.counter("scribe/remove/count")
-  private val scrubCounter = statsReceiver.counter("scribe/scrub/count")
+  p-pwivate vaw addcountew = s-statsweceivew.countew("scwibe/add/count")
+  pwivate vaw wemovecountew = s-statsweceivew.countew("scwibe/wemove/count")
+  p-pwivate vaw scwubcountew = statsweceivew.countew("scwibe/scwub/count")
 
-  val addHandler: FutureEffect[String] = ServoScribe(factory(scribeAddedCategory)())
-  val removeHandler: FutureEffect[String] = ServoScribe(factory(scribeRemovedCategory)())
-  val scrubHandler: FutureEffect[String] = ServoScribe(factory(scribeScrubbedCategory)())
+  vaw addhandwew: futuweeffect[stwing] = sewvoscwibe(factowy(scwibeaddedcategowy)())
+  vaw wemovehandwew: f-futuweeffect[stwing] = s-sewvoscwibe(factowy(scwibewemovedcategowy)())
+  vaw scwubhandwew: f-futuweeffect[stwing] = s-sewvoscwibe(factowy(scwibescwubbedcategowy)())
 
-  private def addedToString(tweet: StoredTweet): String =
-    AddedSerializer.toString(
-      Added(StatusConversions.toTBirdStatus(tweet), Time.now.inMilliseconds, Some(false))
+  pwivate d-def addedtostwing(tweet: stowedtweet): stwing =
+    addedsewiawizew.tostwing(
+      added(statusconvewsions.totbiwdstatus(tweet), (///ˬ///✿) t-time.now.inmiwwiseconds, (˘ω˘) some(fawse))
     )
 
-  private def removedToString(id: Long, at: Time, isSoftDeleted: Boolean): String =
-    RemovedSerializer.toString(Removed(id, at.inMilliseconds, Some(isSoftDeleted)))
+  pwivate def wemovedtostwing(id: wong, ^^;; at: t-time, issoftdeweted: boowean): s-stwing =
+    wemovedsewiawizew.tostwing(wemoved(id, (✿oωo) a-at.inmiwwiseconds, (U ﹏ U) s-some(issoftdeweted)))
 
-  private def scrubbedToString(id: Long, cols: Seq[Int], at: Time): String =
-    ScrubbedSerializer.toString(Scrubbed(id, cols, at.inMilliseconds))
+  pwivate def scwubbedtostwing(id: w-wong, -.- cows: seq[int], ^•ﻌ•^ a-at: time): s-stwing =
+    s-scwubbedsewiawizew.tostwing(scwubbed(id, rawr cows, (˘ω˘) at.inmiwwiseconds))
 
-  def logAdded(tweet: StoredTweet): Unit = {
-    addHandler(addedToString(tweet))
-    addCounter.incr()
+  def wogadded(tweet: s-stowedtweet): u-unit = {
+    a-addhandwew(addedtostwing(tweet))
+    a-addcountew.incw()
   }
 
-  def logRemoved(id: Long, at: Time, isSoftDeleted: Boolean): Unit = {
-    removeHandler(removedToString(id, at, isSoftDeleted))
-    removeCounter.incr()
+  d-def wogwemoved(id: wong, nyaa~~ at: time, UwU issoftdeweted: boowean): unit = {
+    w-wemovehandwew(wemovedtostwing(id, :3 at, (⑅˘꒳˘) issoftdeweted))
+    wemovecountew.incw()
   }
 
-  def logScrubbed(id: Long, cols: Seq[Int], at: Time): Unit = {
-    scrubHandler(scrubbedToString(id, cols, at))
-    scrubCounter.incr()
+  def wogscwubbed(id: wong, (///ˬ///✿) cows: s-seq[int], ^^;; at: time): unit = {
+    scwubhandwew(scwubbedtostwing(id, >_< cows, at))
+    s-scwubcountew.incw()
   }
 }
 
-object Scribe {
-  type ScribeHandlerFactory = (String) => HandlerFactory
+o-object scwibe {
+  t-type scwibehandwewfactowy = (stwing) => handwewfactowy
 
-  /** WARNING: These categories are white-listed. If you are changing them, the new categories should be white-listed.
-   *  You should followup with CoreWorkflows team (CW) for that.
+  /** w-wawning: these categowies awe white-wisted. rawr x3 i-if you a-awe changing them, /(^•ω•^) the nyew categowies shouwd be white-wisted.
+   *  you shouwd fowwowup with c-cowewowkfwows team (cw) fow that. :3
    */
-  private val scribeAddedCategory = "tbird_add_status"
-  private val scribeRemovedCategory = "tbird_remove_status"
-  private val scribeScrubbedCategory = "tbird_scrub_status"
+  p-pwivate vaw scwibeaddedcategowy = "tbiwd_add_status"
+  p-pwivate vaw scwibewemovedcategowy = "tbiwd_wemove_status"
+  p-pwivate vaw scwibescwubbedcategowy = "tbiwd_scwub_status"
 }

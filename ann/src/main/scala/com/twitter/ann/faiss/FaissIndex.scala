@@ -1,42 +1,42 @@
-package com.twitter.ann.faiss
+package com.twittew.ann.faiss
 
-import com.twitter.ann.common.Queryable
-import com.twitter.ann.common._
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.util.logging.Logging
+impowt c-com.twittew.ann.common.quewyabwe
+i-impowt com.twittew.ann.common._
+i-impowt com.twittew.seawch.common.fiwe.abstwactfiwe
+i-impowt c-com.twittew.utiw.wogging.wogging
 
-case class FaissParams(
-  nprobe: Option[Int],
-  quantizerEf: Option[Int],
-  quantizerKFactorRF: Option[Int],
-  quantizerNprobe: Option[Int],
-  ht: Option[Int])
-    extends RuntimeParams {
-  override def toString: String = s"FaissParams(${toLibraryString})"
+c-case cwass faisspawams(
+  n-nypwobe: o-option[int], /(^•ω•^)
+  quantizewef: option[int], rawr x3
+  quantizewkfactowwf: option[int], (U ﹏ U)
+  q-quantizewnpwobe: option[int], (U ﹏ U)
+  ht: option[int])
+    e-extends wuntimepawams {
+  o-ovewwide def tostwing: stwing = s"faisspawams(${towibwawystwing})"
 
-  def toLibraryString: String =
-    Seq(
-      nprobe.map { n => s"nprobe=${n}" },
-      quantizerEf.map { ef => s"quantizer_efSearch=${ef}" },
-      quantizerKFactorRF.map { k => s"quantizer_k_factor_rf=${k}" },
-      quantizerNprobe.map { n => s"quantizer_nprobe=${n}" },
-      ht.map { ht => s"ht=${ht}" },
-    ).flatten.mkString(",")
+  def towibwawystwing: s-stwing =
+    seq(
+      n-nypwobe.map { n-ny => s"npwobe=${n}" }, (⑅˘꒳˘)
+      quantizewef.map { ef => s"quantizew_efseawch=${ef}" }, òωó
+      quantizewkfactowwf.map { k => s"quantizew_k_factow_wf=${k}" }, ʘwʘ
+      q-quantizewnpwobe.map { ny => s"quantizew_npwobe=${n}" }, /(^•ω•^)
+      ht.map { ht => s"ht=${ht}" }, ʘwʘ
+    ).fwatten.mkstwing(",")
 }
 
-object FaissIndex {
-  def loadIndex[T, D <: Distance[D]](
-    outerDimension: Int,
-    outerMetric: Metric[D],
-    directory: AbstractFile
-  ): Queryable[T, FaissParams, D] = {
-    new QueryableIndexAdapter[T, D] with Logging {
-      protected val metric: Metric[D] = outerMetric
-      protected val dimension: Int = outerDimension
-      protected val index: Index = {
-        info(s"Loading faiss with ${swigfaiss.get_compile_options()}")
+object f-faissindex {
+  def woadindex[t, σωσ d-d <: distance[d]](
+    o-outewdimension: i-int, OwO
+    o-outewmetwic: metwic[d], 😳😳😳
+    diwectowy: abstwactfiwe
+  ): q-quewyabwe[t, 😳😳😳 faisspawams, o.O d] = {
+    n-new quewyabweindexadaptew[t, ( ͡o ω ͡o ) d] with wogging {
+      pwotected vaw metwic: metwic[d] = outewmetwic
+      pwotected v-vaw dimension: int = outewdimension
+      p-pwotected vaw index: i-index = {
+        i-info(s"woading faiss with ${swigfaiss.get_compiwe_options()}")
 
-        QueryableIndexAdapter.loadJavaIndex(directory)
+        quewyabweindexadaptew.woadjavaindex(diwectowy)
       }
     }
   }

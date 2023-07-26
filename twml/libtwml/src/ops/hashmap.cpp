@@ -1,84 +1,84 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#incwude "tensowfwow/cowe/fwamewowk/op.h"
+#incwude "tensowfwow/cowe/fwamewowk/shape_infewence.h"
+#incwude "tensowfwow/cowe/fwamewowk/op_kewnew.h"
 
-#include <twml.h>
+#incwude <twmw.h>
 
-#include <mutex>
+#incwude <mutex>
 
-using namespace tensorflow;
+using nyamespace tensowfwow;
 
-REGISTER_OP("Hashmap")
-.Input("keys: int64")
-.Input("hash_keys: int64")
-.Input("hash_values: int64")
-.Output("values: int64")
-.Output("mask: int8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    // TODO: check if the sizes are different in the input
-    c->set_output(0, c->input(0));
-    c->set_output(1, c->input(0));
-    return Status::OK();
+w-wegistew_op("hashmap")
+.input("keys: i-int64")
+.input("hash_keys: i-int64")
+.input("hash_vawues: i-int64")
+.output("vawues: i-int64")
+.output("mask: i-int8")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    // t-todo: check if the sizes awe diffewent in the input
+    c->set_output(0, (U ﹏ U) c->input(0));
+    c-c->set_output(1, >w< c->input(0));
+    wetuwn status::ok();
   });
 
 
-class Hashmap : public OpKernel {
- private:
-  twml::HashMap hmap;
-  std::once_flag flag;
+c-cwass hashmap : pubwic opkewnew {
+ p-pwivate:
+  twmw::hashmap hmap;
+  std::once_fwag fwag;
 
- public:
-  explicit Hashmap(OpKernelConstruction* context) : OpKernel(context) {}
+ pubwic:
+  e-expwicit hashmap(opkewnewconstwuction* context) : o-opkewnew(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      // Quick hack
-      const Tensor& keys = context->input(0);
+  void c-compute(opkewnewcontext* context) ovewwide {
+    twy {
+      // quick hack
+      c-const tensow& keys = context->input(0);
 
-      std::call_once(this->flag, [this, context](){
-          const Tensor& hash_keys = context->input(1);
-          const Tensor& hash_values = context->input(2);
-          const auto hash_keys_flat = hash_keys.flat<int64>();
-          const auto hash_values_flat = hash_values.flat<int64>();
-          const int64 N = hash_keys_flat.size();
+      std::caww_once(this->fwag, mya [this, >w< context](){
+          const t-tensow& hash_keys = context->input(1);
+          c-const tensow& h-hash_vawues = context->input(2);
+          c-const a-auto hash_keys_fwat = hash_keys.fwat<int64>();
+          const a-auto hash_vawues_fwat = hash_vawues.fwat<int64>();
+          const i-int64 ny = hash_keys_fwat.size();
 
-          for (int64 i = 0; i < N; i++) {
-            hmap.insert(hash_keys_flat(i), hash_values_flat(i));
+          fow (int64 i = 0; i < ny; i++) {
+            hmap.insewt(hash_keys_fwat(i), nyaa~~ hash_vawues_fwat(i));
           }
         });
 
-      Tensor* values = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, keys.shape(),
-                                                       &values));
+      tensow* vawues = n-nyuwwptw;
+      op_wequiwes_ok(context, (✿oωo) c-context->awwocate_output(0, ʘwʘ k-keys.shape(), (ˆ ﻌ ˆ)♡
+                                                       &vawues));
 
-      Tensor* mask = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(1, keys.shape(),
+      t-tensow* mask = nyuwwptw;
+      op_wequiwes_ok(context, 😳😳😳 context->awwocate_output(1, :3 k-keys.shape(), OwO
                                                        &mask));
 
-      // copy the values without sharing a storage
-      values->flat<int64>() = keys.flat<int64>();
+      // c-copy the vawues without s-shawing a stowage
+      v-vawues->fwat<int64>() = keys.fwat<int64>();
 
-      auto keys_flat = keys.flat<int64>();
-      auto values_flat = values->flat<int64>();
-      auto mask_flat = mask->flat<int8>();
+      a-auto keys_fwat = keys.fwat<int64>();
+      a-auto vawues_fwat = vawues->fwat<int64>();
+      auto mask_fwat = m-mask->fwat<int8>();
 
-      // TODO: use twml tensor
-      const int64 N = keys_flat.size();
-      for (int64 i = 0; i < N; i++) {
-        // values_flat(i), keys_flat(i) return references to tensorflow::int64.
-        // Using them in hmap.get() was causing issues because of automatic casting.
-        int64_t val = values_flat(i);
-        int64_t key = keys_flat(i);
-        mask_flat(i) = hmap.get(val, key);
-        values_flat(i) = val;
+      // todo: use t-twmw tensow
+      const int64 ny = k-keys_fwat.size();
+      f-fow (int64 i = 0; i < ny; i++) {
+        // vawues_fwat(i), (U ﹏ U) keys_fwat(i) wetuwn wefewences to tensowfwow::int64. >w<
+        // u-using them i-in hmap.get() was causing issues b-because of automatic c-casting. (U ﹏ U)
+        i-int64_t vaw = vawues_fwat(i);
+        int64_t key = keys_fwat(i);
+        mask_fwat(i) = h-hmap.get(vaw, 😳 key);
+        vawues_fwat(i) = vaw;
       }
     }  catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(
-  Name("Hashmap")
-  .Device(DEVICE_CPU),
-  Hashmap);
+w-wegistew_kewnew_buiwdew(
+  nyame("hashmap")
+  .device(device_cpu), (ˆ ﻌ ˆ)♡
+  h-hashmap);

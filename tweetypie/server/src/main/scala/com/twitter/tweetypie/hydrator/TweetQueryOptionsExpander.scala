@@ -1,144 +1,144 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.tweetypie.repository.TweetQuery
+impowt c-com.twittew.tweetypie.wepositowy.tweetquewy
 
 /**
- * An instance of `TweetQueryOptionsExpander.Type` can be used to take a `TweetQuery.Options`
- * instance provided by a user, and expand the set of options included to take into account
- * dependencies between fields and options.
+ * a-an instance o-of `tweetquewyoptionsexpandew.type` c-can be u-used to take a `tweetquewy.options`
+ * i-instance p-pwovided by a usew, o.O and expand the set of options incwuded to take into account
+ * d-dependencies between fiewds and options. rawr
  */
-object TweetQueryOptionsExpander {
-  import TweetQuery._
+o-object tweetquewyoptionsexpandew {
+  impowt tweetquewy._
 
   /**
-   * Used by AdditionalFieldsHydrator, this function type can filter out or inject fieldIds to
-   * request from Manhattan per tweet.
+   * u-used by additionawfiewdshydwatow, ʘwʘ this function type can fiwtew out ow inject f-fiewdids to
+   * wequest fwom m-manhattan pew t-tweet. 😳😳😳
    */
-  type Type = Options => Options
+  type type = options => options
 
   /**
-   * The identity TweetQueryOptionsExpander, which passes through fieldIds unchanged.
+   * the identity tweetquewyoptionsexpandew, ^^;; w-which passes thwough fiewdids unchanged. o.O
    */
-  val unit: TweetQueryOptionsExpander.Type = identity
+  vaw unit: tweetquewyoptionsexpandew.type = identity
 
-  case class Selector(f: Include => Boolean) {
-    def apply(i: Include): Boolean = f(i)
+  c-case cwass sewectow(f: i-incwude => boowean) {
+    d-def appwy(i: i-incwude): b-boowean = f(i)
 
-    def ||(other: Selector) = Selector(i => this(i) || other(i))
+    def ||(othew: sewectow) = s-sewectow(i => this(i) || othew(i))
   }
 
-  private def selectTweetField(fieldId: FieldId): Selector =
-    Selector(_.tweetFields.contains(fieldId))
+  pwivate d-def sewecttweetfiewd(fiewdid: fiewdid): sewectow =
+    sewectow(_.tweetfiewds.contains(fiewdid))
 
-  private val firstOrderDependencies: Seq[(Selector, Include)] =
-    Seq(
-      selectTweetField(Tweet.MediaField.id) ->
-        Include(tweetFields = Set(Tweet.UrlsField.id, Tweet.MediaKeysField.id)),
-      selectTweetField(Tweet.QuotedTweetField.id) ->
-        Include(tweetFields = Set(Tweet.UrlsField.id)),
-      selectTweetField(Tweet.MediaRefsField.id) ->
-        Include(tweetFields = Set(Tweet.UrlsField.id, Tweet.MediaKeysField.id)),
-      selectTweetField(Tweet.CardsField.id) ->
-        Include(tweetFields = Set(Tweet.UrlsField.id)),
-      selectTweetField(Tweet.Card2Field.id) ->
-        Include(tweetFields = Set(Tweet.UrlsField.id, Tweet.CardReferenceField.id)),
-      selectTweetField(Tweet.CoreDataField.id) ->
-        Include(tweetFields = Set(Tweet.DirectedAtUserMetadataField.id)),
-      selectTweetField(Tweet.SelfThreadInfoField.id) ->
-        Include(tweetFields = Set(Tweet.CoreDataField.id)),
-      (selectTweetField(Tweet.TakedownCountryCodesField.id) ||
-        selectTweetField(Tweet.TakedownReasonsField.id)) ->
-        Include(
-          tweetFields = Set(
-            Tweet.TweetypieOnlyTakedownCountryCodesField.id,
-            Tweet.TweetypieOnlyTakedownReasonsField.id
+  pwivate vaw fiwstowdewdependencies: seq[(sewectow, (///ˬ///✿) i-incwude)] =
+    seq(
+      s-sewecttweetfiewd(tweet.mediafiewd.id) ->
+        i-incwude(tweetfiewds = s-set(tweet.uwwsfiewd.id, σωσ tweet.mediakeysfiewd.id)), nyaa~~
+      sewecttweetfiewd(tweet.quotedtweetfiewd.id) ->
+        incwude(tweetfiewds = s-set(tweet.uwwsfiewd.id)), ^^;;
+      s-sewecttweetfiewd(tweet.mediawefsfiewd.id) ->
+        incwude(tweetfiewds = s-set(tweet.uwwsfiewd.id, ^•ﻌ•^ t-tweet.mediakeysfiewd.id)), σωσ
+      sewecttweetfiewd(tweet.cawdsfiewd.id) ->
+        i-incwude(tweetfiewds = set(tweet.uwwsfiewd.id)), -.-
+      s-sewecttweetfiewd(tweet.cawd2fiewd.id) ->
+        incwude(tweetfiewds = set(tweet.uwwsfiewd.id, ^^;; t-tweet.cawdwefewencefiewd.id)), XD
+      sewecttweetfiewd(tweet.cowedatafiewd.id) ->
+        i-incwude(tweetfiewds = set(tweet.diwectedatusewmetadatafiewd.id)), 🥺
+      s-sewecttweetfiewd(tweet.sewfthweadinfofiewd.id) ->
+        i-incwude(tweetfiewds = set(tweet.cowedatafiewd.id)), òωó
+      (sewecttweetfiewd(tweet.takedowncountwycodesfiewd.id) ||
+        sewecttweetfiewd(tweet.takedownweasonsfiewd.id)) ->
+        incwude(
+          tweetfiewds = set(
+            tweet.tweetypieonwytakedowncountwycodesfiewd.id, (ˆ ﻌ ˆ)♡
+            tweet.tweetypieonwytakedownweasonsfiewd.id
           )
-        ),
-      selectTweetField(Tweet.EditPerspectiveField.id) ->
-        Include(tweetFields = Set(Tweet.PerspectiveField.id)),
-      Selector(_.quotedTweet) ->
-        Include(tweetFields = Set(Tweet.QuotedTweetField.id)),
-      // asking for any count implies getting the Tweet.counts field
-      Selector(_.countsFields.nonEmpty) ->
-        Include(tweetFields = Set(Tweet.CountsField.id)),
-      // asking for any media field implies getting the Tweet.media field
-      Selector(_.mediaFields.nonEmpty) ->
-        Include(tweetFields = Set(Tweet.MediaField.id)),
-      selectTweetField(Tweet.UnmentionDataField.id) ->
-        Include(tweetFields = Set(Tweet.MentionsField.id)),
+        ), -.-
+      sewecttweetfiewd(tweet.editpewspectivefiewd.id) ->
+        incwude(tweetfiewds = s-set(tweet.pewspectivefiewd.id)),
+      s-sewectow(_.quotedtweet) ->
+        incwude(tweetfiewds = set(tweet.quotedtweetfiewd.id)), :3
+      // asking f-fow any count i-impwies getting t-the tweet.counts fiewd
+      sewectow(_.countsfiewds.nonempty) ->
+        incwude(tweetfiewds = s-set(tweet.countsfiewd.id)), ʘwʘ
+      // asking fow any media fiewd impwies getting the tweet.media f-fiewd
+      sewectow(_.mediafiewds.nonempty) ->
+        i-incwude(tweetfiewds = s-set(tweet.mediafiewd.id)), 🥺
+      s-sewecttweetfiewd(tweet.unmentiondatafiewd.id) ->
+        incwude(tweetfiewds = s-set(tweet.mentionsfiewd.id)), >_<
     )
 
-  private val allDependencies =
-    firstOrderDependencies.map {
-      case (sel, inc) => sel -> transitiveExpand(inc)
+  p-pwivate v-vaw awwdependencies =
+    f-fiwstowdewdependencies.map {
+      case (sew, ʘwʘ inc) => s-sew -> twansitiveexpand(inc)
     }
 
-  private def transitiveExpand(inc: Include): Include =
-    firstOrderDependencies.foldLeft(inc) {
-      case (z, (selector, include)) =>
-        if (!selector(z)) z
-        else z ++ include ++ transitiveExpand(include)
+  p-pwivate def t-twansitiveexpand(inc: i-incwude): i-incwude =
+    fiwstowdewdependencies.fowdweft(inc) {
+      case (z, (˘ω˘) (sewectow, incwude)) =>
+        i-if (!sewectow(z)) z
+        ewse z ++ incwude ++ twansitiveexpand(incwude)
     }
 
   /**
-   * Sequentially composes multiple TweetQueryOptionsExpander into a new TweetQueryOptionsExpander
+   * sequentiawwy composes muwtipwe t-tweetquewyoptionsexpandew into a nyew tweetquewyoptionsexpandew
    */
-  def sequentially(updaters: TweetQueryOptionsExpander.Type*): TweetQueryOptionsExpander.Type =
-    options =>
-      updaters.foldLeft(options) {
-        case (options, updater) => updater(options)
+  def sequentiawwy(updatews: t-tweetquewyoptionsexpandew.type*): t-tweetquewyoptionsexpandew.type =
+    o-options =>
+      updatews.fowdweft(options) {
+        c-case (options, (✿oωo) updatew) => updatew(options)
       }
 
   /**
-   * For requested fields that depend on other fields being present for correct hydration,
-   * returns an updated `TweetQuery.Options` with those dependee fields included.
+   * f-fow wequested f-fiewds that depend on othew fiewds being pwesent fow cowwect hydwation, (///ˬ///✿)
+   * wetuwns an updated `tweetquewy.options` w-with those dependee fiewds i-incwuded. rawr x3
    */
-  def expandDependencies: TweetQueryOptionsExpander.Type =
-    options =>
+  def expanddependencies: t-tweetquewyoptionsexpandew.type =
+    o-options =>
       options.copy(
-        include = allDependencies.foldLeft(options.include) {
-          case (z, (selector, include)) =>
-            if (!selector(options.include)) z
-            else z ++ include
+        incwude = a-awwdependencies.fowdweft(options.incwude) {
+          c-case (z, -.- (sewectow, ^^ incwude)) =>
+            i-if (!sewectow(options.incwude)) z-z
+            ewse z ++ incwude
         }
       )
 
   /**
-   * If the gate is true, add 'fields' to the list of tweetFields to load.
+   * if the gate is twue, (⑅˘꒳˘) add 'fiewds' to the wist o-of tweetfiewds to w-woad. nyaa~~
    */
-  def gatedTweetFieldUpdater(
-    gate: Gate[Unit],
-    fields: Seq[FieldId]
-  ): TweetQueryOptionsExpander.Type =
+  d-def gatedtweetfiewdupdatew(
+    gate: gate[unit], /(^•ω•^)
+    f-fiewds: seq[fiewdid]
+  ): t-tweetquewyoptionsexpandew.type =
     options =>
-      if (gate()) {
+      i-if (gate()) {
         options.copy(
-          include = options.include.also(tweetFields = fields)
+          incwude = options.incwude.awso(tweetfiewds = fiewds)
         )
-      } else {
-        options
+      } ewse {
+        o-options
       }
 
   /**
-   * Uses a `ThreadLocal` to remember the last expansion performed, and to reuse the
-   * previous result if the input value is the same.  This is useful to avoid repeatedly
-   * computing the expansion of the same input when multiple tweets are queried together
-   * with the same options.
+   * u-uses a `thweadwocaw` to wemembew the wast e-expansion pewfowmed, (U ﹏ U) a-and to weuse the
+   * pwevious wesuwt if the input vawue is t-the same. 😳😳😳  this is usefuw to avoid wepeatedwy
+   * computing the expansion of the s-same input when muwtipwe tweets awe quewied togethew
+   * w-with t-the same options. >w<
    */
-  def threadLocalMemoize(expander: Type): Type = {
-    val memo: ThreadLocal[Option[(Options, Options)]] =
-      new ThreadLocal[Option[(Options, Options)]] {
-        override def initialValue(): None.type = None
+  def thweadwocawmemoize(expandew: type): t-type = {
+    v-vaw memo: thweadwocaw[option[(options, XD options)]] =
+      nyew thweadwocaw[option[(options, o.O o-options)]] {
+        ovewwide def initiawvawue(): nyone.type = n-nyone
       }
 
     options =>
       memo.get() match {
-        case Some((`options`, res)) => res
+        case some((`options`, mya w-wes)) => wes
         case _ =>
-          val res = expander(options)
-          memo.set(Some((options, res)))
-          res
+          v-vaw wes = e-expandew(options)
+          memo.set(some((options, w-wes)))
+          wes
       }
   }
 }

@@ -1,32 +1,31 @@
-scala_library(
-    name = "server",
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/scala/com/twitter/ann/hnsw",
-        "ann/src/main/scala/com/twitter/ann/service/query_server/common",
-        "ann/src/main/scala/com/twitter/ann/service/query_server/common/warmup",
-        "src/java/com/twitter/search/common/file",
+scawa_wibwawy(
+    nyame = "woadtest", ( ͡o ω ͡o )
+    souwces = ["*.scawa"], UwU
+    c-compiwew_option_sets = ["fataw_wawnings"], rawr x3
+    t-tags = ["bazew-compatibwe"], rawr
+    d-dependencies = [
+        "ann/swc/main/wesouwces", σωσ
+        "ann/swc/main/scawa/com/twittew/ann/annoy", σωσ
+        "ann/swc/main/scawa/com/twittew/ann/common", >_<
+        "ann/swc/main/scawa/com/twittew/ann/faiss", :3
+        "ann/swc/main/scawa/com/twittew/ann/hnsw", (U ﹏ U)
+        "ann/swc/main/scawa/com/twittew/ann/utiw", -.-
+        "ann/swc/main/thwift/com/twittew/ann/common:ann-common-scawa", (ˆ ﻌ ˆ)♡
+        "finatwa/inject/inject-sewvew/swc/main/scawa", (⑅˘꒳˘)
+        "swc/scawa/com/twittew/cowtex/mw/embeddings/common:hewpews", (U ᵕ U❁)
+        "twittew-sewvew-intewnaw/swc/main/scawa", -.-
+        "utiw/utiw-wogging/swc/main/scawa", ^^;;
     ],
 )
 
-jvm_binary(
-    name = "hnsw-query-server",
-    main = "com.twitter.ann.service.query_server.hnsw.HnswQueryIndexServer",
-    compiler_option_sets = ["fatal_warnings"],
-    runtime_platform = "java11",
-    tags = [
-        "bazel-compatible",
-    ],
+j-jvm_binawy(
+    n-nyame = "bin", >_<
+    b-basename = "ann-woadtest",
+    m-main = "com.twittew.ann.sewvice.woadtest.annwoadtestmain", mya
+    w-wuntime_pwatfowm = "java11", mya
     dependencies = [
-        ":server",
-        "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "3rdparty/jvm/org/slf4j:jcl-over-slf4j",
-        "3rdparty/jvm/org/slf4j:jul-to-slf4j",
-        "3rdparty/jvm/org/slf4j:log4j-over-slf4j",
-        "ann/src/main/resources",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
+        ":woadtest", 😳
+        "3wdpawty/jvm/owg/swf4j:swf4j-jdk14", XD
+        "twittew-sewvew/swf4j-jdk14/swc/main/scawa", :3
     ],
 )

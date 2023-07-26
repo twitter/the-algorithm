@@ -1,34 +1,34 @@
-package com.twitter.frigate.pushservice.refresh_handler
+package com.twittew.fwigate.pushsewvice.wefwesh_handwew
 
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.common.base.TargetUser
-import com.twitter.frigate.common.candidate.TargetABDecider
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.target.TargetScoringDetails
+impowt com.twittew.finagwe.stats.stat
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.candidatedetaiws
+i-impowt com.twittew.fwigate.common.base.tawgetusew
+i-impowt com.twittew.fwigate.common.candidate.tawgetabdecidew
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+impowt com.twittew.fwigate.pushsewvice.tawget.tawgetscowingdetaiws
 
-class RFPHRestrictStep()(implicit stats: StatsReceiver) {
+cwass wfphwestwictstep()(impwicit stats: statsweceivew) {
 
-  private val statsReceiver: StatsReceiver = stats.scope("RefreshForPushHandler")
-  private val restrictStepStats: StatsReceiver = statsReceiver.scope("restrict")
-  private val restrictStepNumCandidatesDroppedStat: Stat =
-    restrictStepStats.stat("candidates_dropped")
+  pwivate v-vaw statsweceivew: statsweceivew = stats.scope("wefweshfowpushhandwew")
+  p-pwivate vaw westwictstepstats: statsweceivew = s-statsweceivew.scope("westwict")
+  pwivate vaw westwictstepnumcandidatesdwoppedstat: stat =
+    westwictstepstats.stat("candidates_dwopped")
 
   /**
-   * Limit the number of candidates that enter the Take step
+   * wimit the n-nyumbew of candidates that entew t-the take step
    */
-  def restrict(
-    target: TargetUser with TargetABDecider with TargetScoringDetails,
-    candidates: Seq[CandidateDetails[PushCandidate]]
-  ): (Seq[CandidateDetails[PushCandidate]], Seq[CandidateDetails[PushCandidate]]) = {
-    if (target.params(PushFeatureSwitchParams.EnableRestrictStep)) {
-      val restrictSizeParam = PushFeatureSwitchParams.RestrictStepSize
-      val (newCandidates, filteredCandidates) = candidates.splitAt(target.params(restrictSizeParam))
-      val numDropped = candidates.length - newCandidates.length
-      restrictStepNumCandidatesDroppedStat.add(numDropped)
-      (newCandidates, filteredCandidates)
-    } else (candidates, Seq.empty)
+  d-def westwict(
+    tawget: tawgetusew with tawgetabdecidew with tawgetscowingdetaiws, nyaa~~
+    c-candidates: seq[candidatedetaiws[pushcandidate]]
+  ): (seq[candidatedetaiws[pushcandidate]], (⑅˘꒳˘) seq[candidatedetaiws[pushcandidate]]) = {
+    if (tawget.pawams(pushfeatuweswitchpawams.enabwewestwictstep)) {
+      vaw westwictsizepawam = pushfeatuweswitchpawams.westwictstepsize
+      vaw (newcandidates, rawr x3 fiwtewedcandidates) = c-candidates.spwitat(tawget.pawams(westwictsizepawam))
+      vaw nyumdwopped = c-candidates.wength - n-nyewcandidates.wength
+      w-westwictstepnumcandidatesdwoppedstat.add(numdwopped)
+      (newcandidates, (✿oωo) f-fiwtewedcandidates)
+    } ewse (candidates, (ˆ ﻌ ˆ)♡ seq.empty)
   }
 }

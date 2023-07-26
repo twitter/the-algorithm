@@ -1,284 +1,284 @@
-from importlib import import_module
-import os
+fwom impowtwib impowt impowt_moduwe
+i-impowt os
 
-from toxicity_ml_pipeline.settings.default_settings_tox import (
-  INNER_CV,
-  LOCAL_DIR,
-  MAX_SEQ_LENGTH,
-  NUM_PREFETCH,
-  NUM_WORKERS,
-  OUTER_CV,
-  TARGET_POS_PER_EPOCH,
+fwom t-toxicity_mw_pipewine.settings.defauwt_settings_tox i-impowt (
+  i-innew_cv, -.-
+  wocaw_diw,
+  m-max_seq_wength, UwU
+  n-nyum_pwefetch, :3
+  n-nyum_wowkews, σωσ
+  o-outew_cv, >w<
+  tawget_pos_pew_epoch, (ˆ ﻌ ˆ)♡
 )
-from toxicity_ml_pipeline.utils.helpers import execute_command
+fwom toxicity_mw_pipewine.utiws.hewpews impowt exekawaii~_command
 
-import numpy as np
-import pandas
-from sklearn.model_selection import StratifiedKFold
-import tensorflow as tf
-
-
-try:
-  from transformers import AutoTokenizer, DataCollatorWithPadding
-except ModuleNotFoundError:
-  print("...")
-else:
-  from datasets import Dataset
+i-impowt nyumpy as nyp
+impowt pandas
+fwom skweawn.modew_sewection i-impowt stwatifiedkfowd
+impowt t-tensowfwow as tf
 
 
-class BalancedMiniBatchLoader(object):
-  def __init__(
-    self,
-    fold,
-    mb_size,
+twy:
+  fwom twansfowmews impowt autotokenizew, ʘwʘ d-datacowwatowwithpadding
+except m-moduwenotfoundewwow:
+  p-pwint("...")
+ewse:
+  fwom datasets impowt dataset
+
+
+cwass bawancedminibatchwoadew(object):
+  d-def __init__(
+    sewf, :3
+    fowd, (˘ω˘)
+    mb_size, 😳😳😳
     seed,
-    perc_training_tox,
-    scope="TOX",
-    project=...,
-    dual_head=None,
-    n_outer_splits=None,
-    n_inner_splits=None,
-    sample_weights=None,
-    huggingface=False,
+    pewc_twaining_tox, rawr x3
+    s-scope="tox", (✿oωo)
+    pwoject=...,
+    d-duaw_head=none, (ˆ ﻌ ˆ)♡
+    n-ny_outew_spwits=none, :3
+    n-ny_innew_spwits=none, (U ᵕ U❁)
+    s-sampwe_weights=none, ^^;;
+    huggingface=fawse, mya
   ):
-    if 0 >= perc_training_tox or perc_training_tox > 0.5:
-      raise ValueError("Perc_training_tox should be in ]0; 0.5]")
+    if 0 >= p-pewc_twaining_tox ow pewc_twaining_tox > 0.5:
+      waise vawueewwow("pewc_twaining_tox s-shouwd be in ]0; 0.5]")
 
-    self.perc_training_tox = perc_training_tox
-    if not n_outer_splits:
-      n_outer_splits = OUTER_CV
-    if isinstance(n_outer_splits, int):
-      self.n_outer_splits = n_outer_splits
-      self.get_outer_fold = self._get_outer_cv_fold
-      if fold < 0 or fold >= self.n_outer_splits or int(fold) != fold:
-        raise ValueError(f"Number of fold should be an integer in [0 ; {self.n_outer_splits} [.")
+    sewf.pewc_twaining_tox = pewc_twaining_tox
+    if nyot ny_outew_spwits:
+      ny_outew_spwits = o-outew_cv
+    if isinstance(n_outew_spwits, i-int):
+      sewf.n_outew_spwits = n-ny_outew_spwits
+      s-sewf.get_outew_fowd = sewf._get_outew_cv_fowd
+      if fowd < 0 ow fowd >= s-sewf.n_outew_spwits o-ow int(fowd) != fowd:
+        w-waise vawueewwow(f"numbew o-of fowd shouwd be an integew in [0 ; {sewf.n_outew_spwits} [.")
 
-    elif n_outer_splits == "time":
-      self.get_outer_fold = self._get_time_fold
-      if fold != "time":
-        raise ValueError(
-          "To avoid repeating the same run many times, the external fold"
-          "should be time when test data is split according to dates."
+    e-ewif ny_outew_spwits == "time":
+      sewf.get_outew_fowd = s-sewf._get_time_fowd
+      if fowd != "time":
+        waise vawueewwow(
+          "to a-avoid wepeating the same w-wun many times, 😳😳😳 the extewnaw fowd"
+          "shouwd b-be time when t-test data is spwit accowding to dates."
         )
-      try:
-        setting_file = import_module(f"toxicity_ml_pipeline.settings.{scope.lower()}{project}_settings")
-      except ModuleNotFoundError:
-        raise ValueError(f"You need to define a setting file for your project {project}.")
-      self.test_begin_date = setting_file.TEST_BEGIN_DATE
-      self.test_end_date = setting_file.TEST_END_DATE
+      twy:
+        setting_fiwe = impowt_moduwe(f"toxicity_mw_pipewine.settings.{scope.wowew()}{pwoject}_settings")
+      except m-moduwenotfoundewwow:
+        w-waise vawueewwow(f"you nyeed to d-define a setting f-fiwe fow youw p-pwoject {pwoject}.")
+      sewf.test_begin_date = setting_fiwe.test_begin_date
+      sewf.test_end_date = s-setting_fiwe.test_end_date
 
-    else:
-      raise ValueError(
-        f"Argument n_outer_splits should either an integer or 'time'. Provided: {n_outer_splits}"
+    ewse:
+      waise vawueewwow(
+        f"awgument ny_outew_spwits shouwd e-eithew an integew ow 'time'. OwO p-pwovided: {n_outew_spwits}"
       )
 
-    self.n_inner_splits = n_inner_splits if n_inner_splits is not None else INNER_CV
+    s-sewf.n_innew_spwits = ny_innew_spwits if n-ny_innew_spwits is nyot nyone e-ewse innew_cv
 
-    self.seed = seed
-    self.mb_size = mb_size
-    self.fold = fold
+    s-sewf.seed = seed
+    s-sewf.mb_size = m-mb_size
+    sewf.fowd = fowd
 
-    self.sample_weights = sample_weights
-    self.dual_head = dual_head
-    self.huggingface = huggingface
-    if self.huggingface:
-      self._load_tokenizer()
+    sewf.sampwe_weights = sampwe_weights
+    s-sewf.duaw_head = d-duaw_head
+    s-sewf.huggingface = h-huggingface
+    i-if sewf.huggingface:
+      sewf._woad_tokenizew()
 
-  def _load_tokenizer(self):
-    print("Making a local copy of Bertweet-base model")
-    local_model_dir = os.path.join(LOCAL_DIR, "models")
-    cmd = f"mkdir {local_model_dir} ; gsutil -m cp -r gs://... {local_model_dir}"
-    execute_command(cmd)
+  def _woad_tokenizew(sewf):
+    pwint("making a wocaw copy o-of bewtweet-base modew")
+    wocaw_modew_diw = os.path.join(wocaw_diw, rawr "modews")
+    cmd = f"mkdiw {wocaw_modew_diw} ; gsutiw -m c-cp -w gs://... {wocaw_modew_diw}"
+    exekawaii~_command(cmd)
 
-    self.tokenizer = AutoTokenizer.from_pretrained(
-      os.path.join(local_model_dir, "bertweet-base"), normalization=True
+    sewf.tokenizew = autotokenizew.fwom_pwetwained(
+      o-os.path.join(wocaw_modew_diw, XD "bewtweet-base"), (U ﹏ U) n-nyowmawization=twue
     )
 
-  def tokenize_function(self, el):
-    return self.tokenizer(
-      el["text"],
-      max_length=MAX_SEQ_LENGTH,
-      padding="max_length",
-      truncation=True,
-      add_special_tokens=True,
-      return_token_type_ids=False,
-      return_attention_mask=False,
+  d-def tokenize_function(sewf, (˘ω˘) ew):
+    wetuwn s-sewf.tokenizew(
+      ew["text"], UwU
+      m-max_wength=max_seq_wength, >_<
+      padding="max_wength", σωσ
+      t-twuncation=twue, 🥺
+      add_speciaw_tokens=twue, 🥺
+      wetuwn_token_type_ids=fawse, ʘwʘ
+      wetuwn_attention_mask=fawse, :3
     )
 
-  def _get_stratified_kfold(self, n_splits):
-    return StratifiedKFold(shuffle=True, n_splits=n_splits, random_state=self.seed)
+  def _get_stwatified_kfowd(sewf, (U ﹏ U) ny_spwits):
+    w-wetuwn stwatifiedkfowd(shuffwe=twue, (U ﹏ U) ny_spwits=n_spwits, ʘwʘ w-wandom_state=sewf.seed)
 
-  def _get_time_fold(self, df):
-    test_begin_date = pandas.to_datetime(self.test_begin_date).date()
-    test_end_date = pandas.to_datetime(self.test_end_date).date()
-    print(f"Test is going from {test_begin_date} to {test_end_date}.")
-    test_data = df.query("@test_begin_date <= date <= @test_end_date")
+  def _get_time_fowd(sewf, >w< d-df):
+    t-test_begin_date = pandas.to_datetime(sewf.test_begin_date).date()
+    test_end_date = p-pandas.to_datetime(sewf.test_end_date).date()
+    p-pwint(f"test is going fwom {test_begin_date} t-to {test_end_date}.")
+    test_data = d-df.quewy("@test_begin_date <= date <= @test_end_date")
 
-    query = "date < @test_begin_date"
-    other_set = df.query(query)
-    return other_set, test_data
+    quewy = "date < @test_begin_date"
+    othew_set = df.quewy(quewy)
+    w-wetuwn o-othew_set, rawr x3 test_data
 
-  def _get_outer_cv_fold(self, df):
-    labels = df.int_label
-    stratifier = self._get_stratified_kfold(n_splits=self.n_outer_splits)
+  d-def _get_outew_cv_fowd(sewf, OwO df):
+    w-wabews = df.int_wabew
+    s-stwatifiew = sewf._get_stwatified_kfowd(n_spwits=sewf.n_outew_spwits)
 
-    k = 0
-    for train_index, test_index in stratifier.split(np.zeros(len(labels)), labels):
-      if k == self.fold:
-        break
+    k-k = 0
+    fow twain_index, ^•ﻌ•^ test_index in stwatifiew.spwit(np.zewos(wen(wabews)), >_< wabews):
+      i-if k == sewf.fowd:
+        b-bweak
       k += 1
 
-    train_data = df.iloc[train_index].copy()
-    test_data = df.iloc[test_index].copy()
+    twain_data = df.iwoc[twain_index].copy()
+    t-test_data = d-df.iwoc[test_index].copy()
 
-    return train_data, test_data
+    wetuwn twain_data, OwO test_data
 
-  def get_steps_per_epoch(self, nb_pos_examples):
-    return int(max(TARGET_POS_PER_EPOCH, nb_pos_examples) / self.mb_size / self.perc_training_tox)
+  def get_steps_pew_epoch(sewf, >_< n-nyb_pos_exampwes):
+    wetuwn int(max(tawget_pos_pew_epoch, (ꈍᴗꈍ) nyb_pos_exampwes) / sewf.mb_size / sewf.pewc_twaining_tox)
 
-  def make_huggingface_tensorflow_ds(self, group, mb_size=None, shuffle=True):
-    huggingface_ds = Dataset.from_pandas(group).map(self.tokenize_function, batched=True)
-    data_collator = DataCollatorWithPadding(tokenizer=self.tokenizer, return_tensors="tf")
-    tensorflow_ds = huggingface_ds.to_tf_dataset(
-      columns=["input_ids"],
-      label_cols=["labels"],
-      shuffle=shuffle,
-      batch_size=self.mb_size if mb_size is None else mb_size,
-      collate_fn=data_collator,
+  d-def make_huggingface_tensowfwow_ds(sewf, >w< gwoup, (U ﹏ U) mb_size=none, shuffwe=twue):
+    h-huggingface_ds = d-dataset.fwom_pandas(gwoup).map(sewf.tokenize_function, ^^ batched=twue)
+    data_cowwatow = datacowwatowwithpadding(tokenizew=sewf.tokenizew, (U ﹏ U) w-wetuwn_tensows="tf")
+    t-tensowfwow_ds = huggingface_ds.to_tf_dataset(
+      cowumns=["input_ids"], :3
+      wabew_cows=["wabews"], (✿oωo)
+      shuffwe=shuffwe, XD
+      b-batch_size=sewf.mb_size if m-mb_size is nyone ewse mb_size, >w<
+      cowwate_fn=data_cowwatow, òωó
     )
 
-    if shuffle:
-      return tensorflow_ds.repeat()
-    return tensorflow_ds
+    if shuffwe:
+      w-wetuwn tensowfwow_ds.wepeat()
+    wetuwn t-tensowfwow_ds
 
-  def make_pure_tensorflow_ds(self, df, nb_samples):
-    buffer_size = nb_samples * 2
+  d-def make_puwe_tensowfwow_ds(sewf, (ꈍᴗꈍ) df, nyb_sampwes):
+    buffew_size = n-nyb_sampwes * 2
 
-    if self.sample_weights is not None:
-      if self.sample_weights not in df.columns:
-        raise ValueError
-      ds = tf.data.Dataset.from_tensor_slices(
-        (df.text.values, df.label.values, df[self.sample_weights].values)
+    if sewf.sampwe_weights i-is nyot n-nyone:
+      if s-sewf.sampwe_weights nyot in df.cowumns:
+        w-waise vawueewwow
+      d-ds = tf.data.dataset.fwom_tensow_swices(
+        (df.text.vawues, rawr x3 df.wabew.vawues, rawr x3 df[sewf.sampwe_weights].vawues)
       )
-    elif self.dual_head:
-      label_d = {f'{e}_output': df[f'{e}_label'].values for e in self.dual_head}
-      label_d['content_output'] = tf.keras.utils.to_categorical(label_d['content_output'], num_classes=3)
-      ds = tf.data.Dataset.from_tensor_slices((df.text.values, label_d))
+    e-ewif sewf.duaw_head:
+      w-wabew_d = {f'{e}_output': d-df[f'{e}_wabew'].vawues fow e in sewf.duaw_head}
+      wabew_d['content_output'] = tf.kewas.utiws.to_categowicaw(wabew_d['content_output'], σωσ n-nyum_cwasses=3)
+      ds = t-tf.data.dataset.fwom_tensow_swices((df.text.vawues, (ꈍᴗꈍ) w-wabew_d))
 
-    else:
-      ds = tf.data.Dataset.from_tensor_slices((df.text.values, df.label.values))
-    ds = ds.shuffle(buffer_size, seed=self.seed, reshuffle_each_iteration=True).repeat()
-    return ds
+    ewse:
+      ds = tf.data.dataset.fwom_tensow_swices((df.text.vawues, rawr df.wabew.vawues))
+    d-ds = ds.shuffwe(buffew_size, s-seed=sewf.seed, ^^;; w-weshuffwe_each_itewation=twue).wepeat()
+    w-wetuwn ds
 
-  def get_balanced_dataset(self, training_data, size_limit=None, return_as_batch=True):
-    training_data = training_data.sample(frac=1, random_state=self.seed)
-    nb_samples = training_data.shape[0] if not size_limit else size_limit
+  def get_bawanced_dataset(sewf, rawr x3 t-twaining_data, (ˆ ﻌ ˆ)♡ size_wimit=none, wetuwn_as_batch=twue):
+    twaining_data = twaining_data.sampwe(fwac=1, σωσ wandom_state=sewf.seed)
+    n-nyb_sampwes = twaining_data.shape[0] if n-nyot size_wimit ewse size_wimit
 
-    num_classes = training_data.int_label.nunique()
-    toxic_class = training_data.int_label.max()
-    if size_limit:
-      training_data = training_data[: size_limit * num_classes]
+    n-nyum_cwasses = twaining_data.int_wabew.nunique()
+    t-toxic_cwass = twaining_data.int_wabew.max()
+    i-if size_wimit:
+      t-twaining_data = t-twaining_data[: s-size_wimit * nyum_cwasses]
 
-    print(
-      ".... {} examples, incl. {:.2f}% tox in train, {} classes".format(
-        nb_samples,
-        100 * training_data[training_data.int_label == toxic_class].shape[0] / nb_samples,
-        num_classes,
+    p-pwint(
+      ".... {} exampwes, (U ﹏ U) incw. >w< {:.2f}% tox in twain, σωσ {} cwasses".fowmat(
+        nyb_sampwes, nyaa~~
+        100 * twaining_data[twaining_data.int_wabew == t-toxic_cwass].shape[0] / n-nyb_sampwes, 🥺
+        n-nyum_cwasses, rawr x3
       )
     )
-    label_groups = training_data.groupby("int_label")
-    if self.huggingface:
-      label_datasets = {
-        label: self.make_huggingface_tensorflow_ds(group) for label, group in label_groups
+    wabew_gwoups = t-twaining_data.gwoupby("int_wabew")
+    if sewf.huggingface:
+      wabew_datasets = {
+        wabew: sewf.make_huggingface_tensowfwow_ds(gwoup) f-fow wabew, σωσ g-gwoup in wabew_gwoups
       }
 
-    else:
-      label_datasets = {
-        label: self.make_pure_tensorflow_ds(group, nb_samples=nb_samples * 2)
-        for label, group in label_groups
+    ewse:
+      w-wabew_datasets = {
+        wabew: sewf.make_puwe_tensowfwow_ds(gwoup, (///ˬ///✿) n-nyb_sampwes=nb_sampwes * 2)
+        f-fow wabew, (U ﹏ U) gwoup in w-wabew_gwoups
       }
 
-    datasets = [label_datasets[0], label_datasets[1]]
-    weights = [1 - self.perc_training_tox, self.perc_training_tox]
-    if num_classes == 3:
-      datasets.append(label_datasets[2])
-      weights = [1 - self.perc_training_tox, self.perc_training_tox / 2, self.perc_training_tox / 2]
-    elif num_classes != 2:
-      raise ValueError("Currently it should not be possible to get other than 2 or 3 classes")
-    resampled_ds = tf.data.experimental.sample_from_datasets(datasets, weights, seed=self.seed)
+    d-datasets = [wabew_datasets[0], ^^;; wabew_datasets[1]]
+    weights = [1 - sewf.pewc_twaining_tox, 🥺 sewf.pewc_twaining_tox]
+    if nyum_cwasses == 3:
+      datasets.append(wabew_datasets[2])
+      w-weights = [1 - s-sewf.pewc_twaining_tox, òωó sewf.pewc_twaining_tox / 2, XD s-sewf.pewc_twaining_tox / 2]
+    e-ewif n-nyum_cwasses != 2:
+      waise vawueewwow("cuwwentwy i-it shouwd nyot b-be possibwe to get othew than 2 o-ow 3 cwasses")
+    w-wesampwed_ds = tf.data.expewimentaw.sampwe_fwom_datasets(datasets, :3 w-weights, (U ﹏ U) seed=sewf.seed)
 
-    if return_as_batch and not self.huggingface:
-      return resampled_ds.batch(
-        self.mb_size, drop_remainder=True, num_parallel_calls=NUM_WORKERS, deterministic=True
-      ).prefetch(NUM_PREFETCH)
+    if wetuwn_as_batch a-and nyot sewf.huggingface:
+      w-wetuwn w-wesampwed_ds.batch(
+        sewf.mb_size, >w< dwop_wemaindew=twue, /(^•ω•^) n-nyum_pawawwew_cawws=num_wowkews, (⑅˘꒳˘) detewministic=twue
+      ).pwefetch(num_pwefetch)
 
-    return resampled_ds
+    wetuwn w-wesampwed_ds
 
   @staticmethod
-  def _compute_int_labels(full_df):
-    if full_df.label.dtype == int:
-      full_df["int_label"] = full_df.label
+  d-def _compute_int_wabews(fuww_df):
+    i-if fuww_df.wabew.dtype == int:
+      fuww_df["int_wabew"] = fuww_df.wabew
 
-    elif "int_label" not in full_df.columns:
-      if full_df.label.max() > 1:
-        raise ValueError("Binarizing labels that should not be.")
-      full_df["int_label"] = np.where(full_df.label >= 0.5, 1, 0)
+    ewif "int_wabew" n-nyot in fuww_df.cowumns:
+      if fuww_df.wabew.max() > 1:
+        waise v-vawueewwow("binawizing w-wabews that shouwd not be.")
+      f-fuww_df["int_wabew"] = nyp.whewe(fuww_df.wabew >= 0.5, ʘwʘ 1, 0)
 
-    return full_df
+    w-wetuwn f-fuww_df
 
-  def __call__(self, full_df, *args, **kwargs):
-    full_df = self._compute_int_labels(full_df)
+  def __caww__(sewf, rawr x3 fuww_df, *awgs, (˘ω˘) **kwawgs):
+    fuww_df = sewf._compute_int_wabews(fuww_df)
 
-    train_data, test_data = self.get_outer_fold(df=full_df)
+    t-twain_data, o.O test_data = sewf.get_outew_fowd(df=fuww_df)
 
-    stratifier = self._get_stratified_kfold(n_splits=self.n_inner_splits)
-    for train_index, val_index in stratifier.split(
-      np.zeros(train_data.shape[0]), train_data.int_label
+    stwatifiew = s-sewf._get_stwatified_kfowd(n_spwits=sewf.n_innew_spwits)
+    f-fow twain_index, 😳 vaw_index i-in stwatifiew.spwit(
+      nyp.zewos(twain_data.shape[0]), o.O t-twain_data.int_wabew
     ):
-      curr_train_data = train_data.iloc[train_index]
+      c-cuww_twain_data = t-twain_data.iwoc[twain_index]
 
-      mini_batches = self.get_balanced_dataset(curr_train_data)
+      mini_batches = sewf.get_bawanced_dataset(cuww_twain_data)
 
-      steps_per_epoch = self.get_steps_per_epoch(
-        nb_pos_examples=curr_train_data[curr_train_data.int_label != 0].shape[0]
+      steps_pew_epoch = sewf.get_steps_pew_epoch(
+        nyb_pos_exampwes=cuww_twain_data[cuww_twain_data.int_wabew != 0].shape[0]
       )
 
-      val_data = train_data.iloc[val_index].copy()
+      vaw_data = twain_data.iwoc[vaw_index].copy()
 
-      yield mini_batches, steps_per_epoch, val_data, test_data
+      yiewd mini_batches, ^^;; steps_pew_epoch, ( ͡o ω ͡o ) vaw_data, ^^;; test_data
 
-  def simple_cv_load(self, full_df):
-    full_df = self._compute_int_labels(full_df)
+  def simpwe_cv_woad(sewf, ^^;; fuww_df):
+    f-fuww_df = s-sewf._compute_int_wabews(fuww_df)
 
-    train_data, test_data = self.get_outer_fold(df=full_df)
-    if test_data.shape[0] == 0:
-      test_data = train_data.iloc[:500]
+    twain_data, XD test_data = s-sewf.get_outew_fowd(df=fuww_df)
+    i-if test_data.shape[0] == 0:
+      t-test_data = twain_data.iwoc[:500]
 
-    mini_batches = self.get_balanced_dataset(train_data)
-    steps_per_epoch = self.get_steps_per_epoch(
-      nb_pos_examples=train_data[train_data.int_label != 0].shape[0]
+    m-mini_batches = sewf.get_bawanced_dataset(twain_data)
+    s-steps_pew_epoch = s-sewf.get_steps_pew_epoch(
+      nyb_pos_exampwes=twain_data[twain_data.int_wabew != 0].shape[0]
     )
 
-    return mini_batches, test_data, steps_per_epoch
+    w-wetuwn mini_batches, 🥺 test_data, (///ˬ///✿) s-steps_pew_epoch
 
-  def no_cv_load(self, full_df):
-    full_df = self._compute_int_labels(full_df)
+  d-def no_cv_woad(sewf, (U ᵕ U❁) fuww_df):
+    fuww_df = sewf._compute_int_wabews(fuww_df)
 
-    val_test = full_df[full_df.origin == "precision"].copy(deep=True)
-    val_data, test_data = self.get_outer_fold(df=val_test)
+    v-vaw_test = f-fuww_df[fuww_df.owigin == "pwecision"].copy(deep=twue)
+    v-vaw_data, ^^;; test_data = s-sewf.get_outew_fowd(df=vaw_test)
 
-    train_data = full_df.drop(full_df[full_df.origin == "precision"].index, axis=0)
-    if test_data.shape[0] == 0:
-      test_data = train_data.iloc[:500]
+    t-twain_data = fuww_df.dwop(fuww_df[fuww_df.owigin == "pwecision"].index, ^^;; a-axis=0)
+    i-if test_data.shape[0] == 0:
+      t-test_data = t-twain_data.iwoc[:500]
 
-    mini_batches = self.get_balanced_dataset(train_data)
-    if train_data.int_label.nunique() == 1:
-      raise ValueError('Should be at least two labels')
+    mini_batches = s-sewf.get_bawanced_dataset(twain_data)
+    i-if twain_data.int_wabew.nunique() == 1:
+      w-waise vawueewwow('shouwd be a-at weast two wabews')
 
-    num_examples = train_data[train_data.int_label == 1].shape[0]
-    if train_data.int_label.nunique() > 2:
-      second_most_frequent_label = train_data.loc[train_data.int_label != 0, 'int_label'].mode().values[0]
-      num_examples = train_data[train_data.int_label == second_most_frequent_label].shape[0] * 2
-    steps_per_epoch = self.get_steps_per_epoch(nb_pos_examples=num_examples)
+    nyum_exampwes = twain_data[twain_data.int_wabew == 1].shape[0]
+    i-if twain_data.int_wabew.nunique() > 2:
+      s-second_most_fwequent_wabew = t-twain_data.woc[twain_data.int_wabew != 0, rawr 'int_wabew'].mode().vawues[0]
+      n-nyum_exampwes = twain_data[twain_data.int_wabew == s-second_most_fwequent_wabew].shape[0] * 2
+    steps_pew_epoch = s-sewf.get_steps_pew_epoch(nb_pos_exampwes=num_exampwes)
 
-    return mini_batches, steps_per_epoch, val_data, test_data
+    wetuwn mini_batches, (˘ω˘) s-steps_pew_epoch, 🥺 vaw_data, t-test_data

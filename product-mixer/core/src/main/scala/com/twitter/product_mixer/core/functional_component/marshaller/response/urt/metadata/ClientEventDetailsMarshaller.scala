@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventdetaiws
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class ClientEventDetailsMarshaller @Inject() (
-  conversationDetailsMarshaller: ConversationDetailsMarshaller,
-  timelinesDetailsMarshaller: TimelinesDetailsMarshaller,
-  articleDetailsMarshaller: ArticleDetailsMarshaller,
-  liveEventDetailsMarshaller: LiveEventDetailsMarshaller,
-  commerceDetailsMarshaller: CommerceDetailsMarshaller) {
+@singweton
+c-cwass c-cwienteventdetaiwsmawshawwew @inject() (
+  c-convewsationdetaiwsmawshawwew: convewsationdetaiwsmawshawwew, -.-
+  timewinesdetaiwsmawshawwew: timewinesdetaiwsmawshawwew, ( ͡o ω ͡o )
+  awticwedetaiwsmawshawwew: a-awticwedetaiwsmawshawwew, rawr x3
+  wiveeventdetaiwsmawshawwew: wiveeventdetaiwsmawshawwew, nyaa~~
+  c-commewcedetaiwsmawshawwew: commewcedetaiwsmawshawwew) {
 
-  def apply(clientEventDetails: ClientEventDetails): urt.ClientEventDetails = {
-    urt.ClientEventDetails(
-      conversationDetails =
-        clientEventDetails.conversationDetails.map(conversationDetailsMarshaller(_)),
-      timelinesDetails = clientEventDetails.timelinesDetails.map(timelinesDetailsMarshaller(_)),
-      articleDetails = clientEventDetails.articleDetails.map(articleDetailsMarshaller(_)),
-      liveEventDetails = clientEventDetails.liveEventDetails.map(liveEventDetailsMarshaller(_)),
-      commerceDetails = clientEventDetails.commerceDetails.map(commerceDetailsMarshaller(_))
+  d-def appwy(cwienteventdetaiws: cwienteventdetaiws): uwt.cwienteventdetaiws = {
+    uwt.cwienteventdetaiws(
+      c-convewsationdetaiws =
+        cwienteventdetaiws.convewsationdetaiws.map(convewsationdetaiwsmawshawwew(_)), /(^•ω•^)
+      t-timewinesdetaiws = c-cwienteventdetaiws.timewinesdetaiws.map(timewinesdetaiwsmawshawwew(_)), rawr
+      awticwedetaiws = cwienteventdetaiws.awticwedetaiws.map(awticwedetaiwsmawshawwew(_)), OwO
+      wiveeventdetaiws = cwienteventdetaiws.wiveeventdetaiws.map(wiveeventdetaiwsmawshawwew(_)), (U ﹏ U)
+      c-commewcedetaiws = cwienteventdetaiws.commewcedetaiws.map(commewcedetaiwsmawshawwew(_))
     )
   }
 }

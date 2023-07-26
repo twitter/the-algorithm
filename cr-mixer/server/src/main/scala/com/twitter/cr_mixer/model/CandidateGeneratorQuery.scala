@@ -1,96 +1,96 @@
-package com.twitter.cr_mixer.model
+package com.twittew.cw_mixew.modew
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.cr_mixer.thriftscala.Product
-import com.twitter.product_mixer.core.thriftscala.ClientContext
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.timelines.configapi.Params
+impowt com.twittew.cowe_wowkfwows.usew_modew.thwiftscawa.usewstate
+i-impowt com.twittew.cw_mixew.thwiftscawa.pwoduct
+i-impowt com.twittew.pwoduct_mixew.cowe.thwiftscawa.cwientcontext
+i-impowt com.twittew.simcwustews_v2.common.tweetid
+i-impowt com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.topicid
+i-impowt com.twittew.timewines.configapi.pawams
 
-sealed trait CandidateGeneratorQuery {
-  val product: Product
-  val maxNumResults: Int
-  val impressedTweetList: Set[TweetId]
-  val params: Params
-  val requestUUID: Long
+s-seawed twait candidategenewatowquewy {
+  vaw pwoduct: pwoduct
+  vaw maxnumwesuwts: i-int
+  vaw impwessedtweetwist: set[tweetid]
+  v-vaw pawams: pawams
+  vaw wequestuuid: w-wong
 }
 
-sealed trait HasUserId {
-  val userId: UserId
+seawed twait hasusewid {
+  vaw usewid: usewid
 }
 
-case class CrCandidateGeneratorQuery(
-  userId: UserId,
-  product: Product,
-  userState: UserState,
-  maxNumResults: Int,
-  impressedTweetList: Set[TweetId],
-  params: Params,
-  requestUUID: Long,
-  languageCode: Option[String] = None)
-    extends CandidateGeneratorQuery
-    with HasUserId
+c-case cwass cwcandidategenewatowquewy(
+  usewid: u-usewid, 😳😳😳
+  pwoduct: p-pwoduct, ( ͡o ω ͡o )
+  usewstate: usewstate, >_<
+  maxnumwesuwts: int, >w<
+  impwessedtweetwist: s-set[tweetid],
+  pawams: pawams, rawr
+  wequestuuid: wong, 😳
+  wanguagecode: option[stwing] = n-nyone)
+    extends candidategenewatowquewy
+    w-with hasusewid
 
-case class UtegTweetCandidateGeneratorQuery(
-  userId: UserId,
-  product: Product,
-  userState: UserState,
-  maxNumResults: Int,
-  impressedTweetList: Set[TweetId],
-  params: Params,
-  requestUUID: Long)
-    extends CandidateGeneratorQuery
-    with HasUserId
+c-case cwass u-utegtweetcandidategenewatowquewy(
+  u-usewid: usewid,
+  pwoduct: pwoduct, >w<
+  usewstate: u-usewstate, (⑅˘꒳˘)
+  maxnumwesuwts: int, OwO
+  impwessedtweetwist: s-set[tweetid], (ꈍᴗꈍ)
+  pawams: pawams, 😳
+  wequestuuid: wong)
+    extends candidategenewatowquewy
+    with h-hasusewid
 
-case class RelatedTweetCandidateGeneratorQuery(
-  internalId: InternalId,
-  clientContext: ClientContext, // To scribe LogIn/LogOut requests
-  product: Product,
-  maxNumResults: Int,
-  impressedTweetList: Set[TweetId],
-  params: Params,
-  requestUUID: Long)
-    extends CandidateGeneratorQuery
+case cwass wewatedtweetcandidategenewatowquewy(
+  intewnawid: i-intewnawid, 😳😳😳
+  c-cwientcontext: c-cwientcontext, mya // to scwibe wogin/wogout wequests
+  pwoduct: p-pwoduct, mya
+  m-maxnumwesuwts: int, (⑅˘꒳˘)
+  impwessedtweetwist: s-set[tweetid], (U ﹏ U)
+  p-pawams: pawams, mya
+  wequestuuid: w-wong)
+    extends candidategenewatowquewy
 
-case class RelatedVideoTweetCandidateGeneratorQuery(
-  internalId: InternalId,
-  clientContext: ClientContext, // To scribe LogIn/LogOut requests
-  product: Product,
-  maxNumResults: Int,
-  impressedTweetList: Set[TweetId],
-  params: Params,
-  requestUUID: Long)
-    extends CandidateGeneratorQuery
+c-case cwass wewatedvideotweetcandidategenewatowquewy(
+  intewnawid: intewnawid, ʘwʘ
+  c-cwientcontext: cwientcontext, (˘ω˘) // t-to scwibe wogin/wogout wequests
+  p-pwoduct: p-pwoduct, (U ﹏ U)
+  maxnumwesuwts: int, ^•ﻌ•^
+  impwessedtweetwist: set[tweetid], (˘ω˘)
+  pawams: pawams, :3
+  wequestuuid: wong)
+    extends c-candidategenewatowquewy
 
-case class FrsTweetCandidateGeneratorQuery(
-  userId: UserId,
-  product: Product,
-  maxNumResults: Int,
-  impressedUserList: Set[UserId],
-  impressedTweetList: Set[TweetId],
-  params: Params,
-  languageCodeOpt: Option[String] = None,
-  countryCodeOpt: Option[String] = None,
-  requestUUID: Long)
-    extends CandidateGeneratorQuery
+c-case cwass fwstweetcandidategenewatowquewy(
+  usewid: u-usewid, ^^;;
+  p-pwoduct: pwoduct, 🥺
+  m-maxnumwesuwts: int, (⑅˘꒳˘)
+  impwessedusewwist: set[usewid], nyaa~~
+  impwessedtweetwist: s-set[tweetid], :3
+  pawams: pawams, ( ͡o ω ͡o )
+  wanguagecodeopt: option[stwing] = nyone, mya
+  countwycodeopt: o-option[stwing] = nyone, (///ˬ///✿)
+  w-wequestuuid: w-wong)
+    extends c-candidategenewatowquewy
 
-case class AdsCandidateGeneratorQuery(
-  userId: UserId,
-  product: Product,
-  userState: UserState,
-  maxNumResults: Int,
-  params: Params,
-  requestUUID: Long)
+case cwass adscandidategenewatowquewy(
+  u-usewid: u-usewid, (˘ω˘)
+  pwoduct: p-pwoduct, ^^;;
+  usewstate: u-usewstate, (✿oωo)
+  maxnumwesuwts: int, (U ﹏ U)
+  pawams: p-pawams, -.-
+  wequestuuid: w-wong)
 
-case class TopicTweetCandidateGeneratorQuery(
-  userId: UserId,
-  topicIds: Set[TopicId],
-  product: Product,
-  maxNumResults: Int,
-  impressedTweetList: Set[TweetId],
-  params: Params,
-  requestUUID: Long,
-  isVideoOnly: Boolean)
-    extends CandidateGeneratorQuery
+c-case cwass topictweetcandidategenewatowquewy(
+  u-usewid: usewid, ^•ﻌ•^
+  t-topicids: set[topicid], rawr
+  pwoduct: pwoduct, (˘ω˘)
+  maxnumwesuwts: i-int, nyaa~~
+  impwessedtweetwist: set[tweetid], UwU
+  pawams: pawams, :3
+  wequestuuid: wong, (⑅˘꒳˘)
+  isvideoonwy: b-boowean)
+    extends candidategenewatowquewy

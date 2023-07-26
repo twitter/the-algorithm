@@ -1,47 +1,47 @@
-scala_library(
-    name = "insert_append_results",
-    sources = ["InsertAppendResults.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/selector",
+scawa_wibwawy(
+    nyame = "insewt_append_wesuwts", :3
+    souwces = ["insewtappendwesuwts.scawa"],
+    c-compiwew_option_sets = ["fataw_wawnings"], (U ﹏ U)
+    p-pwatfowm = "java8", -.-
+    s-stwict_deps = t-twue, (ˆ ﻌ ˆ)♡
+    t-tags = ["bazew-compatibwe"], (⑅˘꒳˘)
+    d-dependencies = [
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/candidate", (U ᵕ U❁)
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/common", -.-
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/sewectow", ^^;;
     ],
-    exports = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/selector",
-    ],
+    e-expowts = [
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/candidate", >_<
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/common",
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/sewectow", mya
+    ], mya
 )
 
-scala_library(
-    sources = [
-        "!InsertAppendResults.scala",
-        "*.scala",
-    ],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    scalac_plugins = ["no-roomba"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
+s-scawa_wibwawy(
+    souwces = [
+        "!insewtappendwesuwts.scawa", 😳
+        "*.scawa", XD
+    ], :3
+    compiwew_option_sets = ["fataw_wawnings"], 😳😳😳
+    pwatfowm = "java8", -.-
+    scawac_pwugins = ["no-woomba"],
+    s-stwict_deps = twue, ( ͡o ω ͡o )
+    tags = ["bazew-compatibwe"], rawr x3
     dependencies = [
-        ":insert_append_results",
-        "3rdparty/jvm/com/google/inject:guice",
-        "finatra/inject/inject-slf4j/src/main/scala/com/twitter/inject",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate/ads",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/query/ads",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/selector/sorter",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/configapi",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/selector",
-    ],
-    exports = [
-        ":insert_append_results",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/selector/sorter",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/selector",
-    ],
+        ":insewt_append_wesuwts", nyaa~~
+        "3wdpawty/jvm/com/googwe/inject:guice", /(^•ω•^)
+        "finatwa/inject/inject-swf4j/swc/main/scawa/com/twittew/inject", rawr
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/candidate", OwO
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/candidate/ads", (U ﹏ U)
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/quewy/ads", >_<
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/sewectow/sowtew", rawr x3
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/configapi", mya
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/sewectow", nyaa~~
+    ], (⑅˘꒳˘)
+    e-expowts = [
+        ":insewt_append_wesuwts", rawr x3
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/candidate", (✿oωo)
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/sewectow/sowtew", (ˆ ﻌ ˆ)♡
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/sewectow", (˘ω˘)
+    ], (⑅˘꒳˘)
 )

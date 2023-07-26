@@ -1,50 +1,50 @@
-# pylint: disable=no-member
+# pywint: disabwe=no-membew
 """
-Implementing a base layer for twml
+impwementing a base w-wayew fow twmw
 """
-import tensorflow.compat.v1 as tf
-from tensorflow.python.layers import base
+i-impowt tensowfwow.compat.v1 a-as tf
+fwom tensowfwow.python.wayews i-impowt base
 
 
-class Layer(base.Layer):
+c-cwass wayew(base.wayew):
   """
-  Base Layer implementation for twml.
-  Overloads `twml.layers.Layer
-  <https://www.tensorflow.org/versions/master/api_docs/python/tf/layers/Layer>`_
-  from tensorflow and adds a couple of custom methods.
+  b-base wayew i-impwementation fow t-twmw. /(^•ω•^)
+  ovewwoads `twmw.wayews.wayew
+  <https://www.tensowfwow.owg/vewsions/mastew/api_docs/python/tf/wayews/wayew>`_
+  fwom tensowfwow and adds a coupwe of custom methods.
   """
 
-  @property
-  def init(self):
+  @pwopewty
+  d-def init(sewf):
     """
-    Return initializer ops. By default returns tf.no_op().
-    This method is overwritten by classes like twml.layers.MDL, which
-    uses a HashTable internally, that must be initialized with its own op.
+    wetuwn initiawizew ops. rawr x3 by defauwt w-wetuwns tf.no_op(). (U ﹏ U)
+    this m-method is ovewwwitten by cwasses wike twmw.wayews.mdw, (U ﹏ U) which
+    u-uses a hashtabwe intewnawwy, (⑅˘꒳˘) that m-must be initiawized w-with its own op. òωó
     """
-    return tf.no_op()
+    wetuwn tf.no_op()
 
-  def call(self, inputs, **kwargs):
-    """The logic of the layer lives here.
+  def caww(sewf, ʘwʘ inputs, **kwawgs):
+    """the w-wogic of the wayew wives hewe. /(^•ω•^)
 
-    Arguments:
+    awguments:
       inputs:
-        input tensor(s).
-      **kwargs:
-        additional keyword arguments.
+        input t-tensow(s). ʘwʘ
+      **kwawgs:
+        additionaw k-keywowd awguments. σωσ
 
-    Returns:
-      Output tensor(s).
+    w-wetuwns:
+      o-output tensow(s). OwO
     """
-    raise NotImplementedError
+    w-waise nyotimpwementedewwow
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  def compute_output_shape(sewf, 😳😳😳 input_shape):
+    """computes t-the output shape of the wayew given the input shape. 😳😳😳
 
-    Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+    a-awgs:
+      input_shape: a (possibwy nyested tupwe of) `tensowshape`. o.O  it nyeed nyot
+        be fuwwy d-defined (e.g. ( ͡o ω ͡o ) the batch size may b-be unknown). (U ﹏ U)
 
-    Raise NotImplementedError.
+    w-waise nyotimpwementedewwow. (///ˬ///✿)
 
     """
-    raise NotImplementedError
+    w-waise nyotimpwementedewwow

@@ -1,129 +1,129 @@
 '''
-Contains implementations of functions to read input data.
+contains impwementations of functions t-to wead i-input data. nyaa~~
 '''
-from .dataset import stream_block_format_dataset
+f-fwom .dataset impowt s-stweam_bwock_fowmat_dataset
 
-import tensorflow.compat.v1 as tf
+i-impowt tensowfwow.compat.v1 as t-tf
 
 
-def data_record_input_fn(
-        files, batch_size, parse_fn,
-        num_threads=2, repeat=False, dataset_fn=None,
-        keep_rate=None, parts_downsampling_rate=None,
-        shards=None, shard_index=None, shuffle=True, shuffle_files=True, interleave=True,
-        initializable=False, log_tf_data_summaries=False,
-        **kwargs):
+def data_wecowd_input_fn(
+        f-fiwes, /(^•ω•^) b-batch_size, (U ﹏ U) pawse_fn, 😳😳😳
+        nyum_thweads=2, >w< wepeat=fawse, XD dataset_fn=none, o.O
+        keep_wate=none, mya p-pawts_downsampwing_wate=none, 🥺
+        shawds=none, ^^;; shawd_index=none, :3 s-shuffwe=twue, (U ﹏ U) shuffwe_fiwes=twue, i-intewweave=twue, OwO
+        initiawizabwe=fawse, wog_tf_data_summawies=fawse, 😳😳😳
+        **kwawgs):
   """
-  Returns a nested structure of tf.Tensors containing the next element.
-  Used by ``train_input_fn`` and ``eval_input_fn`` in DataRecordTrainer.
-  By default, works with DataRecord dataset for compressed partition files.
+  wetuwns a nyested s-stwuctuwe of tf.tensows containing t-the nyext e-ewement. (ˆ ﻌ ˆ)♡
+  used by ``twain_input_fn`` and ``evaw_input_fn`` in datawecowdtwainew. XD
+  b-by defauwt, (ˆ ﻌ ˆ)♡ wowks with datawecowd dataset fow compwessed pawtition fiwes. ( ͡o ω ͡o )
 
-  Args:
-    files:
-      List of files that will be parsed.
-    batch_size:
-      number of samples per batch.
-    parse_fn:
-      function passed to data loading for parsing individual data records.
-      Usually one of the decoder functions like ``parsers.get_sparse_parse_fn``.
-    num_threads (optional):
-      number of threads used for loading data. Defaults to 2.
-    repeat (optional):
-      Repeat the dataset indefinitely. Defaults to False.
-      Useful when you want to use ``train_steps`` or ``eval_steps``
-      greater than the size of the dataset
-      (otherwise Estimator.[train,evaluate] stops when the end of the dataset is reached).
-    dataset_fn (optional):
-      A function that modifies the dataset after it reads different interleaved parts files.
-      Defaults to:
+  a-awgs:
+    fiwes:
+      wist of f-fiwes that wiww b-be pawsed.
+    b-batch_size:
+      n-numbew of sampwes pew batch. rawr x3
+    pawse_fn:
+      f-function passed to data woading fow pawsing individuaw d-data wecowds. nyaa~~
+      usuawwy one of the decodew functions wike ``pawsews.get_spawse_pawse_fn``. >_<
+    nyum_thweads (optionaw):
+      n-nyumbew of thweads used f-fow woading d-data. ^^;; defauwts to 2. (ˆ ﻌ ˆ)♡
+    w-wepeat (optionaw):
+      wepeat the dataset indefinitewy. ^^;; defauwts to fawse. (⑅˘꒳˘)
+      u-usefuw w-when you want to use ``twain_steps`` o-ow ``evaw_steps``
+      g-gweatew than the size of the dataset
+      (othewwise e-estimatow.[twain,evawuate] stops when the e-end of the dataset is weached).
+    dataset_fn (optionaw):
+      a-a function that modifies the dataset a-aftew it weads diffewent intewweaved p-pawts f-fiwes.
+      defauwts to:
 
-      .. code-block:: python
+      .. code-bwock:: python
 
-        def dataset_fn(dataset, parse_fn, batch_size):
-          return dataset.batch(batch_size).map(parse_fn, 1)
+        def dataset_fn(dataset, rawr x3 pawse_fn, batch_size):
+          w-wetuwn d-dataset.batch(batch_size).map(pawse_fn, (///ˬ///✿) 1)
 
-    keep_rate (optional):
-      A float value in (0.0, 1.0] that indicates to drop records according to the Bernoulli
-      distribution with p = 1 - keep_rate.
-      Defaults to None (no records dropped).
+    keep_wate (optionaw):
+      a-a f-fwoat vawue in (0.0, 🥺 1.0] t-that indicates to dwop wecowds accowding to the bewnouwwi
+      d-distwibution with p = 1 - keep_wate. >_<
+      defauwts to nyone (no wecowds d-dwopped). UwU
 
-    parts_downsampling_rate (optional):
-      A float value in (0.0, 1.0] that indicates the factor by which to downsample part files.
-      For example, a value of 0.2 means only 20 percent of part files become part of the dataset.
+    pawts_downsampwing_wate (optionaw):
+      a-a fwoat v-vawue in (0.0, >_< 1.0] t-that indicates the factow b-by which to downsampwe p-pawt fiwes. -.-
+      f-fow exampwe, mya a-a vawue of 0.2 means onwy 20 pewcent of p-pawt fiwes become p-pawt of the dataset. >w<
 
-    shards (optional):
-      Number of partitions to shard the dataset into. This is useful for codistillation
-      (https://arxiv.org/pdf/1804.03235.pdf) and other techniques that require each worker to
-      train on disjoint partitions of the dataset.
-      The dataset is not sharded by default.
+    s-shawds (optionaw):
+      n-numbew of pawtitions t-to shawd the dataset into. (U ﹏ U) this is usefuw fow codistiwwation
+      (https://awxiv.owg/pdf/1804.03235.pdf) a-and othew techniques that wequiwe each wowkew to
+      twain on disjoint pawtitions of the dataset. 😳😳😳
+      t-the dataset is nyot shawded by defauwt. o.O
 
-    shard_index (optional):
-      Which partition of the dataset to use if ``shards`` is set.
+    shawd_index (optionaw):
+      w-which pawtition o-of the d-dataset to use if ``shawds`` is s-set. òωó
 
-    shuffle (optional):
-      Whether to shuffle the records. Defaults to True.
+    shuffwe (optionaw):
+      whethew to shuffwe t-the wecowds. d-defauwts to twue. 😳😳😳
 
-    shuffle_files (optional):
-      Shuffle the list of files. Defaults to True.
-      When False, files are iterated in the order they are passed in.
+    shuffwe_fiwes (optionaw):
+      shuffwe the wist of fiwes. σωσ defauwts to twue. (⑅˘꒳˘)
+      when f-fawse, (///ˬ///✿) fiwes awe itewated in t-the owdew they awe passed in.
 
-    interleave (optional):
-      Interleave records from multiple files in parallel. Defaults to True.
+    i-intewweave (optionaw):
+      i-intewweave wecowds fwom muwtipwe fiwes in pawawwew. 🥺 d-defauwts to t-twue.
 
-    initializable (optional):
-      A boolean indicator. When the Dataset Iterator depends on some resource, e.g. a HashTable or
-      a Tensor, i.e. it's an initializable iterator, set it to True. Otherwise, default value (false)
-      is used for most plain iterators.
+    initiawizabwe (optionaw):
+      a boowean i-indicatow. OwO w-when the dataset itewatow depends on some wesouwce, >w< e.g. a hashtabwe ow
+      a t-tensow, 🥺 i.e. it's a-an initiawizabwe i-itewatow, nyaa~~ set it to twue. ^^ othewwise, d-defauwt v-vawue (fawse)
+      is used fow m-most pwain itewatows.
 
-      log_tf_data_summaries (optional):
-        A boolean indicator denoting whether to add a `tf.data.experimental.StatsAggregator` to the
-        tf.data pipeline. This adds summaries of pipeline utilization and buffer sizes to the output
-        events files. This requires that `initializable` is `True` above.
+      wog_tf_data_summawies (optionaw):
+        a boowean indicatow denoting whethew to add a-a `tf.data.expewimentaw.statsaggwegatow` t-to the
+        tf.data pipewine. >w< this a-adds summawies o-of pipewine utiwization and buffew sizes to the output
+        e-events fiwes. OwO this wequiwes that `initiawizabwe` is `twue` above. XD
 
-  Returns:
-    Iterator of elements of the dataset.
+  wetuwns:
+    itewatow of ewements o-of the dataset. ^^;;
   """
-  if not parse_fn:
-    raise ValueError("default_input_fn requires a parse_fn")
+  if nyot pawse_fn:
+    waise vawueewwow("defauwt_input_fn w-wequiwes a-a pawse_fn")
 
-  if log_tf_data_summaries and not initializable:
-    raise ValueError("Require `initializable` if `log_tf_data_summaries`.")
+  if wog_tf_data_summawies and nyot initiawizabwe:
+    w-waise vawueewwow("wequiwe `initiawizabwe` i-if `wog_tf_data_summawies`.")
 
-  dataset = stream_block_format_dataset(
-    files=files,
-    parse_fn=parse_fn,
-    batch_size=batch_size,
-    repeat=repeat,
-    num_threads=num_threads,
-    dataset_fn=dataset_fn,
-    keep_rate=keep_rate,
-    parts_downsampling_rate=parts_downsampling_rate,
-    shards=shards,
-    shard_index=shard_index,
-    shuffle=shuffle,
-    shuffle_files=shuffle_files,
-    interleave=interleave,
-    **kwargs
+  dataset = stweam_bwock_fowmat_dataset(
+    fiwes=fiwes, 🥺
+    pawse_fn=pawse_fn, XD
+    b-batch_size=batch_size, (U ᵕ U❁)
+    wepeat=wepeat, :3
+    nyum_thweads=num_thweads, ( ͡o ω ͡o )
+    d-dataset_fn=dataset_fn, òωó
+    keep_wate=keep_wate, σωσ
+    pawts_downsampwing_wate=pawts_downsampwing_wate, (U ᵕ U❁)
+    shawds=shawds, (✿oωo)
+    s-shawd_index=shawd_index, ^^
+    shuffwe=shuffwe, ^•ﻌ•^
+    s-shuffwe_fiwes=shuffwe_fiwes, XD
+    intewweave=intewweave, :3
+    **kwawgs
   )
 
-  # Add a tf.data.experimental.StatsAggregator
-  # https://www.tensorflow.org/versions/r1.15/api_docs/python/tf/data/experimental/StatsAggregator
-  if log_tf_data_summaries:
-    aggregator = tf.data.experimental.StatsAggregator()
-    options = tf.data.Options()
-    options.experimental_stats.aggregator = aggregator
-    dataset = dataset.with_options(options)
-    stats_summary = aggregator.get_summary()
-    tf.add_to_collection(tf.GraphKeys.SUMMARIES, stats_summary)
+  # a-add a tf.data.expewimentaw.statsaggwegatow
+  # h-https://www.tensowfwow.owg/vewsions/w1.15/api_docs/python/tf/data/expewimentaw/statsaggwegatow
+  if wog_tf_data_summawies:
+    a-aggwegatow = t-tf.data.expewimentaw.statsaggwegatow()
+    o-options = tf.data.options()
+    options.expewimentaw_stats.aggwegatow = a-aggwegatow
+    d-dataset = dataset.with_options(options)
+    stats_summawy = a-aggwegatow.get_summawy()
+    t-tf.add_to_cowwection(tf.gwaphkeys.summawies, (ꈍᴗꈍ) stats_summawy)
 
-  if initializable:
-    # when the data parsing dpends on some HashTable or Tensor, the iterator is initalizable and
-    # therefore we need to be run explicitly
-    iterator = dataset.make_initializable_iterator()
-    tf.add_to_collection(tf.GraphKeys.TABLE_INITIALIZERS, iterator.initializer)
-  else:
-    iterator = dataset.make_one_shot_iterator()
-  return iterator.get_next()
+  i-if initiawizabwe:
+    # when the data pawsing dpends o-on some hashtabwe ow tensow, :3 t-the itewatow i-is initawizabwe and
+    # thewefowe we nyeed to be wun expwicitwy
+    i-itewatow = d-dataset.make_initiawizabwe_itewatow()
+    t-tf.add_to_cowwection(tf.gwaphkeys.tabwe_initiawizews, (U ﹏ U) i-itewatow.initiawizew)
+  ewse:
+    i-itewatow = dataset.make_one_shot_itewatow()
+  wetuwn itewatow.get_next()
 
 
-default_input_fn = data_record_input_fn  # pylint: disable=invalid-name
+defauwt_input_fn = data_wecowd_input_fn  # pywint: disabwe=invawid-name

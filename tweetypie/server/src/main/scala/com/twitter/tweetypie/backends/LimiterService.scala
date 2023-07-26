@@ -1,193 +1,193 @@
-package com.twitter.tweetypie
-package backends
+package com.twittew.tweetypie
+package b-backends
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.limiter.thriftscala.FeatureRequest
-import com.twitter.tweetypie.backends.LimiterBackend.GetFeatureUsage
-import com.twitter.tweetypie.backends.LimiterBackend.IncrementFeature
-import com.twitter.tweetypie.backends.LimiterService.Feature
+impowt c-com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.wimitew.thwiftscawa.featuwewequest
+i-impowt com.twittew.tweetypie.backends.wimitewbackend.getfeatuweusage
+i-impowt c-com.twittew.tweetypie.backends.wimitewbackend.incwementfeatuwe
+i-impowt com.twittew.tweetypie.backends.wimitewsewvice.featuwe
 
 /**
- * Why does LimiterService exist?
+ * w-why does wimitewsewvice exist?
  *
- * The underlying Limiter thrift service doesn't support batching. This trait and implementation
- * basically exist to allow a batch like interface to the Limiter. This keeps us from having to
- * spread batching throughout our code base.
+ * the undewwying wimitew thwift sewvice d-doesn't suppowt batching. 😳 this twait and impwementation
+ * b-basicawwy exist to a-awwow a batch wike intewface to the wimitew. (U ﹏ U) this keeps us fwom h-having to
+ * spwead batching thwoughout o-ouw code b-base. mya
  *
- * Why is LimiterService in the backends package?
+ * why is wimitewsewvice in the backends package?
  *
- * In some ways it is like a backend if the backend supports batching. There is a modest amount of
- * business logic LimiterService, but that logic exists here to allow easier consumption throughout
- * the tweetypie code base. We did look at moving LimiterService to another package, but all likely
- * candidates (service, serverutil) caused circular dependencies.
+ * in some ways i-it is wike a backend if the backend suppowts batching. (U ᵕ U❁) thewe is a modest amount o-of
+ * business wogic wimitewsewvice, :3 b-but that wogic e-exists hewe t-to awwow easiew c-consumption thwoughout
+ * the tweetypie code base. mya w-we did wook at moving wimitewsewvice to anothew p-package, OwO but aww wikewy
+ * candidates (sewvice, (ˆ ﻌ ˆ)♡ sewvewutiw) caused ciwcuwaw dependencies. ʘwʘ
  *
- * When I need to add functionality, should I add it to LimiterBackend or LimiterService?
+ * when i nyeed to add functionawity, o.O s-shouwd i add it to wimitewbackend o-ow wimitewsewvice?
  *
- * LimiterBackend is used as a simple wrapper around the Limiter thrift client. The LimiterBackend
- * should be kept as dumb as possible. You will most likely want to add the functionality in
- * LimiterService.
+ * w-wimitewbackend i-is used as a simpwe wwappew awound the wimitew thwift cwient. UwU the w-wimitewbackend
+ * s-shouwd be kept as dumb as possibwe. y-you wiww m-most wikewy want to add the functionawity i-in
+ * wimitewsewvice. rawr x3
  */
-object LimiterService {
-  type MinRemaining = (UserId, Option[UserId]) => Future[Int]
-  type HasRemaining = (UserId, Option[UserId]) => Future[Boolean]
-  type Increment = (UserId, Option[UserId], Int) => Future[Unit]
-  type IncrementByOne = (UserId, Option[UserId]) => Future[Unit]
+o-object wimitewsewvice {
+  type minwemaining = (usewid, 🥺 option[usewid]) => futuwe[int]
+  t-type haswemaining = (usewid, :3 o-option[usewid]) => futuwe[boowean]
+  type i-incwement = (usewid, (ꈍᴗꈍ) o-option[usewid], 🥺 int) => futuwe[unit]
+  type incwementbyone = (usewid, (✿oωo) option[usewid]) => futuwe[unit]
 
-  sealed abstract class Feature(val name: String, val hasPerApp: Boolean = false) {
-    def forUser(userId: UserId): FeatureRequest = FeatureRequest(name, userId = Some(userId))
-    def forApp(appId: AppId): Option[FeatureRequest] =
-      if (hasPerApp) {
-        Some(
-          FeatureRequest(
-            s"${name}_per_app",
-            applicationId = Some(appId),
-            identifier = Some(appId.toString)
+  seawed abstwact cwass featuwe(vaw n-nyame: stwing, (U ﹏ U) v-vaw haspewapp: boowean = fawse) {
+    d-def fowusew(usewid: u-usewid): f-featuwewequest = featuwewequest(name, :3 usewid = some(usewid))
+    d-def fowapp(appid: appid): option[featuwewequest] =
+      if (haspewapp) {
+        some(
+          f-featuwewequest(
+            s"${name}_pew_app", ^^;;
+            a-appwicationid = s-some(appid), rawr
+            i-identifiew = some(appid.tostwing)
           )
         )
-      } else {
-        None
+      } e-ewse {
+        n-nyone
       }
   }
-  object Feature {
-    case object Updates extends Feature("updates", hasPerApp = true)
-    case object MediaTagCreate extends Feature("media_tag_create")
-    case object TweetCreateFailure extends Feature("tweet_creation_failure")
+  o-object featuwe {
+    c-case object updates extends featuwe("updates", 😳😳😳 h-haspewapp = t-twue)
+    case o-object mediatagcweate e-extends featuwe("media_tag_cweate")
+    c-case object tweetcweatefaiwuwe extends featuwe("tweet_cweation_faiwuwe")
   }
 
-  def fromBackend(
-    incrementFeature: IncrementFeature,
-    getFeatureUsage: GetFeatureUsage,
-    getAppId: => Option[
-      AppId
-    ], // the call-by-name here to invoke per request to get the current request's app id
-    stats: StatsReceiver = NullStatsReceiver
-  ): LimiterService =
-    new LimiterService {
-      def increment(
-        feature: Feature
+  d-def fwombackend(
+    incwementfeatuwe: incwementfeatuwe, (✿oωo)
+    getfeatuweusage: getfeatuweusage, OwO
+    g-getappid: => option[
+      appid
+    ], ʘwʘ // the caww-by-name hewe t-to invoke pew w-wequest to get the c-cuwwent wequest's app id
+    s-stats: statsweceivew = nyuwwstatsweceivew
+  ): wimitewsewvice =
+    n-nyew wimitewsewvice {
+      d-def incwement(
+        featuwe: featuwe
       )(
-        userId: UserId,
-        contributorUserId: Option[UserId],
-        amount: Int
-      ): Future[Unit] = {
-        Future.when(amount > 0) {
-          def increment(req: FeatureRequest): Future[Unit] = incrementFeature((req, amount))
+        usewid: usewid, (ˆ ﻌ ˆ)♡
+        contwibutowusewid: o-option[usewid], (U ﹏ U)
+        amount: i-int
+      ): futuwe[unit] = {
+        f-futuwe.when(amount > 0) {
+          d-def incwement(weq: featuwewequest): f-futuwe[unit] = i-incwementfeatuwe((weq, UwU amount))
 
-          val incrementUser: Option[Future[Unit]] =
-            Some(increment(feature.forUser(userId)))
+          v-vaw i-incwementusew: option[futuwe[unit]] =
+            some(incwement(featuwe.fowusew(usewid)))
 
-          val incrementContributor: Option[Future[Unit]] =
-            for {
-              id <- contributorUserId
-              if id != userId
-            } yield increment(feature.forUser(id))
+          vaw incwementcontwibutow: option[futuwe[unit]] =
+            fow {
+              i-id <- contwibutowusewid
+              i-if i-id != usewid
+            } yiewd i-incwement(featuwe.fowusew(id))
 
-          val incrementPerApp: Option[Future[Unit]] =
-            for {
-              appId <- getAppId
-              req <- feature.forApp(appId)
-            } yield increment(req)
+          v-vaw incwementpewapp: option[futuwe[unit]] =
+            f-fow {
+              appid <- getappid
+              weq <- featuwe.fowapp(appid)
+            } yiewd incwement(weq)
 
-          Future.collect(Seq(incrementUser, incrementContributor, incrementPerApp).flatten)
+          f-futuwe.cowwect(seq(incwementusew, i-incwementcontwibutow, XD incwementpewapp).fwatten)
         }
       }
 
-      def minRemaining(
-        feature: Feature
+      def m-minwemaining(
+        f-featuwe: featuwe
       )(
-        userId: UserId,
-        contributorUserId: Option[UserId]
-      ): Future[Int] = {
-        def getRemaining(req: FeatureRequest): Future[Int] = getFeatureUsage(req).map(_.remaining)
+        usewid: usewid, ʘwʘ
+        c-contwibutowusewid: option[usewid]
+      ): futuwe[int] = {
+        def getwemaining(weq: featuwewequest): f-futuwe[int] = getfeatuweusage(weq).map(_.wemaining)
 
-        val getUserRemaining: Option[Future[Int]] =
-          Some(getRemaining(feature.forUser(userId)))
+        vaw getusewwemaining: o-option[futuwe[int]] =
+          s-some(getwemaining(featuwe.fowusew(usewid)))
 
-        val getContributorRemaining: Option[Future[Int]] =
-          contributorUserId.map(id => getRemaining(feature.forUser(id)))
+        vaw getcontwibutowwemaining: option[futuwe[int]] =
+          contwibutowusewid.map(id => g-getwemaining(featuwe.fowusew(id)))
 
-        val getPerAppRemaining: Option[Future[Int]] =
-          for {
-            appId <- getAppId
-            req <- feature.forApp(appId)
-          } yield getRemaining(req)
+        v-vaw getpewappwemaining: option[futuwe[int]] =
+          fow {
+            appid <- getappid
+            w-weq <- featuwe.fowapp(appid)
+          } yiewd getwemaining(weq)
 
-        Future
-          .collect(Seq(getUserRemaining, getContributorRemaining, getPerAppRemaining).flatten)
+        f-futuwe
+          .cowwect(seq(getusewwemaining, rawr x3 getcontwibutowwemaining, ^^;; getpewappwemaining).fwatten)
           .map(_.min)
       }
     }
 }
 
-trait LimiterService {
+twait wimitewsewvice {
 
   /**
-   * Increment the feature count for both the user and the contributor. If either increment fails,
-   * the resulting future will be the first exception encountered.
+   * i-incwement the featuwe c-count fow both the u-usew and the contwibutow. ʘwʘ if e-eithew incwement faiws, (U ﹏ U)
+   * the w-wesuwting futuwe w-wiww be the fiwst e-exception encountewed. (˘ω˘)
    *
-   * @param feature The feature that is incremented
-   * @param userId The current user tied to the current request
-   * @param contributorUserId The contributor, if one exists, tied to the current request
-   * @param amount The amount that each feature should be incremented.
+   * @pawam featuwe t-the featuwe t-that is incwemented
+   * @pawam usewid the cuwwent usew tied to t-the cuwwent wequest
+   * @pawam c-contwibutowusewid t-the contwibutow, (ꈍᴗꈍ) if one exists, /(^•ω•^) tied to the cuwwent w-wequest
+   * @pawam amount t-the amount that e-each featuwe shouwd be incwemented. >_<
    */
-  def increment(
-    feature: Feature
+  def incwement(
+    f-featuwe: featuwe
   )(
-    userId: UserId,
-    contributorUserId: Option[UserId],
-    amount: Int
-  ): Future[Unit]
+    u-usewid: u-usewid,
+    contwibutowusewid: o-option[usewid], σωσ
+    amount: int
+  ): f-futuwe[unit]
 
   /**
-   * Increment the feature count, by one, for both the user and the contributor. If either
-   * increment fails, the resulting future will be the first exception encountered.
+   * incwement the featuwe count, ^^;; by one, fow both the usew and the contwibutow. 😳 if eithew
+   * i-incwement faiws, >_< the wesuwting f-futuwe wiww be the fiwst e-exception encountewed. -.-
    *
-   * @param feature The feature that is incremented
-   * @param userId The current user tied to the current request
-   * @param contributorUserId The contributor, if one exists, tied to the current request
+   * @pawam featuwe t-the featuwe that is incwemented
+   * @pawam u-usewid t-the cuwwent u-usew tied to the c-cuwwent wequest
+   * @pawam c-contwibutowusewid the contwibutow, UwU if one exists, :3 tied to the cuwwent wequest
    *
-   * @see [[increment]] if you want to increment a feature by a specified amount
+   * @see [[incwement]] if you want to incwement a-a featuwe by a s-specified amount
    */
-  def incrementByOne(
-    feature: Feature
+  d-def incwementbyone(
+    featuwe: featuwe
   )(
-    userId: UserId,
-    contributorUserId: Option[UserId]
-  ): Future[Unit] =
-    increment(feature)(userId, contributorUserId, 1)
+    u-usewid: usewid,
+    contwibutowusewid: option[usewid]
+  ): f-futuwe[unit] =
+    i-incwement(featuwe)(usewid, σωσ contwibutowusewid, 1)
 
   /**
-   * The minimum remaining limit between the user and contributor. If an exception occurs, then the
-   * resulting Future will be the first exception encountered.
+   * t-the minimum wemaining wimit between the usew a-and contwibutow. >w< i-if an exception occuws, (ˆ ﻌ ˆ)♡ then t-the
+   * wesuwting f-futuwe wiww be the fiwst exception encountewed. ʘwʘ
    *
-   * @param feature The feature that is queried
-   * @param userId The current user tied to the current request
-   * @param contributorUserId The contributor, if one exists, tied to the current request
+   * @pawam featuwe the featuwe that is q-quewied
+   * @pawam u-usewid the c-cuwwent usew tied t-to the cuwwent w-wequest
+   * @pawam contwibutowusewid t-the contwibutow, :3 i-if one exists, (˘ω˘) tied to t-the cuwwent wequest
    *
-   * @return a `Future[Int]` with the minimum limit left between the user and contributor
+   * @wetuwn a-a `futuwe[int]` with the minimum w-wimit weft between the usew and contwibutow
    */
-  def minRemaining(feature: Feature)(userId: UserId, contributorUserId: Option[UserId]): Future[Int]
+  d-def minwemaining(featuwe: featuwe)(usewid: u-usewid, 😳😳😳 contwibutowusewid: o-option[usewid]): futuwe[int]
 
   /**
-   * Can the user and contributor increment the given feature. If the result cannot be determined
-   * because of an exception, then we assume they can increment. This will allow us to continue
-   * servicing requests even if the limiter service isn't responding.
+   * c-can the usew and contwibutow incwement t-the given featuwe. rawr x3 i-if the wesuwt c-cannot be detewmined
+   * because of an exception, (✿oωo) then we assume t-they can incwement. (ˆ ﻌ ˆ)♡ this wiww awwow us to continue
+   * s-sewvicing w-wequests even if the wimitew s-sewvice isn't wesponding. :3
    *
-   * @param feature The feature that is queried
-   * @param userId The current user tied to the current request
-   * @param contributorUserId The contributor, if one exists, tied to the current request
-   * @return a `Future[Boolean]` with true if both the user and contributor have remaining limit
-   * cap.
+   * @pawam f-featuwe t-the featuwe that is quewied
+   * @pawam usewid t-the cuwwent usew tied to the cuwwent wequest
+   * @pawam c-contwibutowusewid t-the contwibutow, (U ᵕ U❁) if one exists, ^^;; t-tied to the cuwwent wequest
+   * @wetuwn a-a `futuwe[boowean]` w-with t-twue if both the usew and contwibutow have wemaining wimit
+   * cap. mya
    *
-   * @see [[minRemaining]] if you would like to handle any exceptions that occur on your own
+   * @see [[minwemaining]] if you wouwd wike to handwe any exceptions that occuw on youw own
    */
-  def hasRemaining(
-    feature: Feature
+  def haswemaining(
+    featuwe: featuwe
   )(
-    userId: UserId,
-    contributorUserId: Option[UserId]
-  ): Future[Boolean] =
-    minRemaining(feature)(userId, contributorUserId)
+    u-usewid: usewid, 😳😳😳
+    c-contwibutowusewid: option[usewid]
+  ): futuwe[boowean] =
+    m-minwemaining(featuwe)(usewid, OwO c-contwibutowusewid)
       .map(_ > 0)
-      .handle { case _ => true }
+      .handwe { c-case _ => twue }
 }

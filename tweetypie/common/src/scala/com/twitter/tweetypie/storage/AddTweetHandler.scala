@@ -1,80 +1,80 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.kv.ManhattanValue
-import com.twitter.tweetypie.storage.TweetUtils.collectWithRateLimitCheck
-import com.twitter.tweetypie.storage_internal.thriftscala.StoredTweet
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.util.Time
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stowage.cwient.manhattan.kv.manhattanvawue
+i-impowt com.twittew.tweetypie.stowage.tweetutiws.cowwectwithwatewimitcheck
+i-impowt c-com.twittew.tweetypie.stowage_intewnaw.thwiftscawa.stowedtweet
+i-impowt com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt com.twittew.utiw.time
 
-object AddTweetHandler {
-  private[storage] type InternalAddTweet = (
-    Tweet,
-    ManhattanOperations.Insert,
-    Scribe,
-    StatsReceiver,
-    Time
-  ) => Stitch[Unit]
+o-object addtweethandwew {
+  pwivate[stowage] type intewnawaddtweet = (
+    tweet, -.-
+    m-manhattanopewations.insewt, 🥺
+    scwibe,
+    statsweceivew, o.O
+    t-time
+  ) => stitch[unit]
 
-  def apply(
-    insert: ManhattanOperations.Insert,
-    scribe: Scribe,
-    stats: StatsReceiver
-  ): TweetStorageClient.AddTweet =
-    tweet => doAddTweet(tweet, insert, scribe, stats, Time.now)
+  d-def appwy(
+    insewt: manhattanopewations.insewt, /(^•ω•^)
+    scwibe: scwibe, nyaa~~
+    stats: s-statsweceivew
+  ): tweetstowagecwient.addtweet =
+    t-tweet => d-doaddtweet(tweet, nyaa~~ insewt, :3 scwibe, stats, 😳😳😳 time.now)
 
-  def makeRecords(
-    storedTweet: StoredTweet,
-    timestamp: Time
-  ): Seq[TweetManhattanRecord] = {
-    val core = CoreFieldsCodec.fromTweet(storedTweet)
-    val packedCoreFieldsBlob = CoreFieldsCodec.toTFieldBlob(core)
-    val coreRecord =
-      TweetManhattanRecord(
-        TweetKey.coreFieldsKey(storedTweet.id),
-        ManhattanValue(TFieldBlobCodec.toByteBuffer(packedCoreFieldsBlob), Some(timestamp))
+  def makewecowds(
+    stowedtweet: s-stowedtweet, (˘ω˘)
+    timestamp: time
+  ): seq[tweetmanhattanwecowd] = {
+    vaw cowe = cowefiewdscodec.fwomtweet(stowedtweet)
+    vaw packedcowefiewdsbwob = c-cowefiewdscodec.totfiewdbwob(cowe)
+    vaw cowewecowd =
+      t-tweetmanhattanwecowd(
+        t-tweetkey.cowefiewdskey(stowedtweet.id), ^^
+        m-manhattanvawue(tfiewdbwobcodec.tobytebuffew(packedcowefiewdsbwob), :3 s-some(timestamp))
       )
 
-    val otherFieldIds =
-      TweetFields.nonCoreInternalFields ++ TweetFields.getAdditionalFieldIds(storedTweet)
+    vaw othewfiewdids =
+      tweetfiewds.noncoweintewnawfiewds ++ t-tweetfiewds.getadditionawfiewdids(stowedtweet)
 
-    val otherFields =
-      storedTweet
-        .getFieldBlobs(otherFieldIds)
+    vaw othewfiewds =
+      stowedtweet
+        .getfiewdbwobs(othewfiewdids)
         .map {
-          case (fieldId, tFieldBlob) =>
-            TweetManhattanRecord(
-              TweetKey.fieldKey(storedTweet.id, fieldId),
-              ManhattanValue(TFieldBlobCodec.toByteBuffer(tFieldBlob), Some(timestamp))
+          c-case (fiewdid, tfiewdbwob) =>
+            tweetmanhattanwecowd(
+              tweetkey.fiewdkey(stowedtweet.id, -.- fiewdid),
+              manhattanvawue(tfiewdbwobcodec.tobytebuffew(tfiewdbwob), 😳 some(timestamp))
             )
         }
-        .toSeq
-    otherFields :+ coreRecord
+        .toseq
+    o-othewfiewds :+ cowewecowd
   }
 
-  private[storage] val doAddTweet: InternalAddTweet = (
-    tweet: Tweet,
-    insert: ManhattanOperations.Insert,
-    scribe: Scribe,
-    stats: StatsReceiver,
-    timestamp: Time
+  p-pwivate[stowage] v-vaw doaddtweet: i-intewnawaddtweet = (
+    tweet: tweet, mya
+    insewt: manhattanopewations.insewt, (˘ω˘)
+    s-scwibe: scwibe, >_<
+    s-stats: statsweceivew, -.-
+    t-timestamp: t-time
   ) => {
-    assert(tweet.coreData.isDefined, s"Tweet ${tweet.id} is missing coreData: $tweet")
+    assewt(tweet.cowedata.isdefined, 🥺 s-s"tweet ${tweet.id} is missing c-cowedata: $tweet")
 
-    val storedTweet = StorageConversions.toStoredTweet(tweet)
-    val records = makeRecords(storedTweet, timestamp)
-    val inserts = records.map(insert)
-    val insertsWithRateLimitCheck =
-      Stitch.collect(inserts.map(_.liftToTry)).map(collectWithRateLimitCheck).lowerFromTry
+    vaw stowedtweet = stowageconvewsions.tostowedtweet(tweet)
+    v-vaw wecowds = makewecowds(stowedtweet, (U ﹏ U) timestamp)
+    v-vaw insewts = wecowds.map(insewt)
+    v-vaw insewtswithwatewimitcheck =
+      s-stitch.cowwect(insewts.map(_.wifttotwy)).map(cowwectwithwatewimitcheck).wowewfwomtwy
 
-    Stats.updatePerFieldQpsCounters(
-      "addTweet",
-      TweetFields.getAdditionalFieldIds(storedTweet),
+    stats.updatepewfiewdqpscountews(
+      "addtweet", >w<
+      tweetfiewds.getadditionawfiewdids(stowedtweet), mya
       1,
       stats
     )
 
-    insertsWithRateLimitCheck.unit.onSuccess { _ => scribe.logAdded(storedTweet) }
+    insewtswithwatewimitcheck.unit.onsuccess { _ => scwibe.wogadded(stowedtweet) }
   }
 }

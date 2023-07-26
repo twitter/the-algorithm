@@ -1,9 +1,9 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "ann/src/main/scala/com/twitter/ann/common",
-        "util/util-logging",
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "ann/swc/main/scawa/com/twittew/ann/common", òωó
+        "utiw/utiw-wogging", o.O
     ],
 )

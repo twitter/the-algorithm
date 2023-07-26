@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.common.presentation.urt
+package com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.uwt
 
-import com.twitter.product_mixer.core.model.common.presentation.ModulePresentation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.moduwepwesentation
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewinemoduwe
 
-trait BaseUrtModulePresentation extends ModulePresentation {
-  def timelineModule: TimelineModule
+t-twait b-baseuwtmoduwepwesentation e-extends m-moduwepwesentation {
+  d-def t-timewinemoduwe: t-timewinemoduwe
 }

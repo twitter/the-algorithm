@@ -1,5 +1,5 @@
-(SELECT * FROM ML.FEATURE_IMPORTANCE(MODEL `twttr-recos-ml-prod.realgraph.prod`)
-ORDER BY importance_gain DESC)
-UNION ALL
-(SELECT * FROM ML.FEATURE_IMPORTANCE(MODEL `twttr-recos-ml-prod.realgraph.prod_explicit`)
-ORDER BY importance_gain DESC)
+(sewect * fwom mw.featuwe_impowtance(modew `twttw-wecos-mw-pwod.weawgwaph.pwod`)
+owdew by impowtance_gain d-desc)
+union a-aww
+(sewect * f-fwom mw.featuwe_impowtance(modew `twttw-wecos-mw-pwod.weawgwaph.pwod_expwicit`)
+o-owdew by impowtance_gain d-desc)

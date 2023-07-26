@@ -1,62 +1,62 @@
-package com.twitter.search.earlybird.segment;
+package com.twittew.seawch.eawwybiwd.segment;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+impowt j-java.io.ioexception;
+i-impowt j-java.utiw.awwaywist;
+i-impowt java.utiw.cowwections;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.set;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.common.util.io.dl.DLReaderWriterFactory;
-import com.twitter.search.common.util.io.dl.SegmentDLUtil;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
+i-impowt com.twittew.common.utiw.cwock;
+impowt com.twittew.seawch.common.pawtitioning.base.segment;
+impowt com.twittew.seawch.common.utiw.io.dw.dwweadewwwitewfactowy;
+impowt com.twittew.seawch.common.utiw.io.dw.segmentdwutiw;
+impowt com.twittew.seawch.eawwybiwd.eawwybiwdindexconfig;
+i-impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
 
 /**
- * An implementation of SegmentDataProvider using DistributedLog.
+ * an impwementation o-of segmentdatapwovidew using distwibutedwog. mya
  */
-public class DLSegmentDataProvider implements SegmentDataProvider {
-  private final int hashPartitionID;
-  private final DLReaderWriterFactory dlFactory;
-  private final SegmentDataReaderSet readerSet;
+p-pubwic cwass dwsegmentdatapwovidew impwements segmentdatapwovidew {
+  p-pwivate finaw int hashpawtitionid;
+  p-pwivate finaw d-dwweadewwwitewfactowy dwfactowy;
+  pwivate finaw segmentdataweadewset weadewset;
 
-  public DLSegmentDataProvider(
-      int hashPartitionID,
-      EarlybirdIndexConfig earlybirdIndexConfig,
-      DLReaderWriterFactory dlReaderWriterFactory) throws IOException {
-    this(hashPartitionID, earlybirdIndexConfig, dlReaderWriterFactory,
-        Clock.SYSTEM_CLOCK);
+  p-pubwic dwsegmentdatapwovidew(
+      int hashpawtitionid, 😳
+      eawwybiwdindexconfig eawwybiwdindexconfig, -.-
+      dwweadewwwitewfactowy d-dwweadewwwitewfactowy) thwows ioexception {
+    t-this(hashpawtitionid, 🥺 e-eawwybiwdindexconfig, o.O d-dwweadewwwitewfactowy, /(^•ω•^)
+        c-cwock.system_cwock);
   }
 
-  public DLSegmentDataProvider(
-    int hashPartitionID,
-    EarlybirdIndexConfig earlybirdIndexConfig,
-    DLReaderWriterFactory dlReaderWriterFactory,
-    Clock clock) throws IOException {
-    this.hashPartitionID = hashPartitionID;
-    this.dlFactory = dlReaderWriterFactory;
-    this.readerSet = new DLSegmentDataReaderSet(
-        dlFactory,
-        earlybirdIndexConfig,
-        clock);
+  pubwic dwsegmentdatapwovidew(
+    int hashpawtitionid, nyaa~~
+    eawwybiwdindexconfig e-eawwybiwdindexconfig, nyaa~~
+    dwweadewwwitewfactowy dwweadewwwitewfactowy, :3
+    cwock c-cwock) thwows ioexception {
+    this.hashpawtitionid = hashpawtitionid;
+    this.dwfactowy = dwweadewwwitewfactowy;
+    t-this.weadewset = nyew d-dwsegmentdataweadewset(
+        d-dwfactowy,
+        e-eawwybiwdindexconfig,
+        cwock);
   }
 
-  @Override
-  public SegmentDataReaderSet getSegmentDataReaderSet() {
-    return readerSet;
+  @ovewwide
+  pubwic segmentdataweadewset getsegmentdataweadewset() {
+    w-wetuwn w-weadewset;
   }
 
-  @Override
-  public List<Segment> newSegmentList() throws IOException {
-    Set<String> segmentNames = SegmentDLUtil.getSegmentNames(dlFactory, null, hashPartitionID);
-    List<Segment> segmentList = new ArrayList<>(segmentNames.size());
-    for (String segmentName : segmentNames) {
-      Segment segment = Segment.fromSegmentName(segmentName, EarlybirdConfig.getMaxSegmentSize());
-      segmentList.add(segment);
+  @ovewwide
+  pubwic wist<segment> n-nyewsegmentwist() t-thwows ioexception {
+    set<stwing> segmentnames = s-segmentdwutiw.getsegmentnames(dwfactowy, 😳😳😳 nyuww, hashpawtitionid);
+    w-wist<segment> segmentwist = nyew awwaywist<>(segmentnames.size());
+    f-fow (stwing segmentname : s-segmentnames) {
+      segment s-segment = segment.fwomsegmentname(segmentname, (˘ω˘) eawwybiwdconfig.getmaxsegmentsize());
+      s-segmentwist.add(segment);
     }
-    // Sort the segments by ID.
-    Collections.sort(segmentList);
-    return segmentList;
+    // sowt the segments by id. ^^
+    cowwections.sowt(segmentwist);
+    wetuwn segmentwist;
   }
 }

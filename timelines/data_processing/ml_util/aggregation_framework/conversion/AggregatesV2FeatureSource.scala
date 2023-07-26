@@ -1,171 +1,171 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.convewsion
 
-import com.twitter.bijection.Injection
-import com.twitter.bijection.thrift.CompactThriftCodec
-import com.twitter.ml.api.AdaptedFeatureSource
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.IRecordOneToManyAdapter
-import com.twitter.ml.api.TypedFeatureSource
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.RichDate
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding.commons.tap.VersionedTap.TapMode
-import com.twitter.summingbird.batch.BatchID
-import com.twitter.summingbird_internal.bijection.BatchPairImplicits
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKey
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKeyInjection
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
-import org.apache.hadoop.mapred.JobConf
-import scala.collection.JavaConverters._
-import AggregatesV2Adapter._
+impowt com.twittew.bijection.injection
+i-impowt c-com.twittew.bijection.thwift.compactthwiftcodec
+i-impowt com.twittew.mw.api.adaptedfeatuwesouwce
+i-impowt com.twittew.mw.api.datawecowd
+i-impowt c-com.twittew.mw.api.iwecowdonetomanyadaptew
+i-impowt c-com.twittew.mw.api.typedfeatuwesouwce
+impowt com.twittew.scawding.datewange
+impowt com.twittew.scawding.wichdate
+impowt com.twittew.scawding.typedpipe
+i-impowt com.twittew.scawding.commons.souwce.vewsionedkeyvawsouwce
+impowt c-com.twittew.scawding.commons.tap.vewsionedtap.tapmode
+impowt com.twittew.summingbiwd.batch.batchid
+i-impowt com.twittew.summingbiwd_intewnaw.bijection.batchpaiwimpwicits
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.aggwegationkey
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.aggwegationkeyinjection
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.typedaggwegategwoup
+impowt owg.apache.hadoop.mapwed.jobconf
+i-impowt s-scawa.cowwection.javaconvewtews._
+impowt aggwegatesv2adaptew._
 
-object AggregatesV2AdaptedSource {
-  val DefaultTrimThreshold = 0
+object aggwegatesv2adaptedsouwce {
+  vaw defauwttwimthweshowd = 0
 }
 
-trait AggregatesV2AdaptedSource extends AggregatesV2AdaptedSourceBase[DataRecord] {
-  override def storageFormatCodec: Injection[DataRecord, Array[Byte]] =
-    CompactThriftCodec[DataRecord]
-  override def toDataRecord(v: DataRecord): DataRecord = v
+twait aggwegatesv2adaptedsouwce e-extends aggwegatesv2adaptedsouwcebase[datawecowd] {
+  ovewwide def stowagefowmatcodec: injection[datawecowd, ^^ awway[byte]] =
+    c-compactthwiftcodec[datawecowd]
+  ovewwide d-def todatawecowd(v: d-datawecowd): d-datawecowd = v-v
 }
 
-trait AggregatesV2AdaptedSourceBase[StorageFormat]
-    extends TypedFeatureSource[AggregatesV2Tuple]
-    with AdaptedFeatureSource[AggregatesV2Tuple]
-    with BatchPairImplicits {
+twait aggwegatesv2adaptedsouwcebase[stowagefowmat]
+    extends typedfeatuwesouwce[aggwegatesv2tupwe]
+    with a-adaptedfeatuwesouwce[aggwegatesv2tupwe]
+    with batchpaiwimpwicits {
 
-  /* Output root path of aggregates v2 job, excluding store name and version */
-  def rootPath: String
+  /* output woot path o-of aggwegates v2 job, (⑅˘꒳˘) excwuding stowe nyame and vewsion */
+  def wootpath: stwing
 
-  /* Name of store under root path to read */
-  def storeName: String
+  /* nyame of s-stowe undew woot path to wead */
+  d-def stowename: s-stwing
 
-  // max bijection failures
-  def maxFailures: Int = 0
+  // m-max bijection faiwuwes
+  def maxfaiwuwes: int = 0
 
-  /* Aggregate config used to generate above output */
-  def aggregates: Set[TypedAggregateGroup[_]]
+  /* aggwegate c-config used to g-genewate above output */
+  def a-aggwegates: set[typedaggwegategwoup[_]]
 
-  /* trimThreshold Trim all aggregates below a certain threshold to save memory */
-  def trimThreshold: Double
+  /* twimthweshowd t-twim aww aggwegates b-bewow a cewtain thweshowd to save m-memowy */
+  def twimthweshowd: doubwe
 
-  def toDataRecord(v: StorageFormat): DataRecord
+  def t-todatawecowd(v: stowagefowmat): d-datawecowd
 
-  def sourceVersionOpt: Option[Long]
+  def souwcevewsionopt: o-option[wong]
 
-  def enableMostRecentBeforeSourceVersion: Boolean = false
+  d-def enabwemostwecentbefowesouwcevewsion: boowean = fawse
 
-  implicit private val aggregationKeyInjection: Injection[AggregationKey, Array[Byte]] =
-    AggregationKeyInjection
-  implicit def storageFormatCodec: Injection[StorageFormat, Array[Byte]]
+  impwicit pwivate vaw aggwegationkeyinjection: injection[aggwegationkey, awway[byte]] =
+    a-aggwegationkeyinjection
+  i-impwicit def stowagefowmatcodec: i-injection[stowagefowmat, nyaa~~ awway[byte]]
 
-  private def filteredAggregates = aggregates.filter(_.outputStore.name == storeName)
-  def storePath: String = List(rootPath, storeName).mkString("/")
+  pwivate d-def fiwtewedaggwegates = a-aggwegates.fiwtew(_.outputstowe.name == stowename)
+  def stowepath: stwing = wist(wootpath, /(^•ω•^) s-stowename).mkstwing("/")
 
-  def mostRecentVkvs: VersionedKeyValSource[_, _] = {
-    VersionedKeyValSource[AggregationKey, (BatchID, StorageFormat)](
-      path = storePath,
-      sourceVersion = None,
-      maxFailures = maxFailures
+  def mostwecentvkvs: vewsionedkeyvawsouwce[_, (U ﹏ U) _] = {
+    vewsionedkeyvawsouwce[aggwegationkey, 😳😳😳 (batchid, >w< stowagefowmat)](
+      p-path = stowepath, XD
+      souwcevewsion = nyone, o.O
+      maxfaiwuwes = m-maxfaiwuwes
     )
   }
 
-  private def availableVersions: Seq[Long] =
-    mostRecentVkvs
-      .getTap(TapMode.SOURCE)
-      .getStore(new JobConf(true))
-      .getAllVersions()
-      .asScala
-      .map(_.toLong)
+  p-pwivate def avaiwabwevewsions: s-seq[wong] =
+    mostwecentvkvs
+      .gettap(tapmode.souwce)
+      .getstowe(new j-jobconf(twue))
+      .getawwvewsions()
+      .asscawa
+      .map(_.towong)
 
-  private def mostRecentVersion: Long = {
-    require(!availableVersions.isEmpty, s"$storeName has no available versions")
-    availableVersions.max
+  p-pwivate def mostwecentvewsion: w-wong = {
+    wequiwe(!avaiwabwevewsions.isempty, mya s-s"$stowename has no avaiwabwe vewsions")
+    avaiwabwevewsions.max
   }
 
-  def versionToUse: Long =
-    if (enableMostRecentBeforeSourceVersion) {
-      sourceVersionOpt
-        .map(sourceVersion =>
-          availableVersions.filter(_ <= sourceVersion) match {
-            case Seq() =>
-              throw new IllegalArgumentException(
-                "No version older than version: %s, available versions: %s"
-                  .format(sourceVersion, availableVersions)
+  d-def vewsiontouse: w-wong =
+    i-if (enabwemostwecentbefowesouwcevewsion) {
+      s-souwcevewsionopt
+        .map(souwcevewsion =>
+          a-avaiwabwevewsions.fiwtew(_ <= souwcevewsion) match {
+            case seq() =>
+              thwow nyew iwwegawawgumentexception(
+                "no v-vewsion owdew than vewsion: %s, 🥺 avaiwabwe vewsions: %s"
+                  .fowmat(souwcevewsion, ^^;; avaiwabwevewsions)
               )
-            case versionList => versionList.max
+            case vewsionwist => v-vewsionwist.max
           })
-        .getOrElse(mostRecentVersion)
-    } else {
-      sourceVersionOpt.getOrElse(mostRecentVersion)
+        .getowewse(mostwecentvewsion)
+    } ewse {
+      souwcevewsionopt.getowewse(mostwecentvewsion)
     }
 
-  override lazy val adapter: IRecordOneToManyAdapter[AggregatesV2Tuple] =
-    new AggregatesV2Adapter(filteredAggregates, versionToUse, trimThreshold)
+  ovewwide w-wazy vaw adaptew: i-iwecowdonetomanyadaptew[aggwegatesv2tupwe] =
+    n-nyew aggwegatesv2adaptew(fiwtewedaggwegates, :3 vewsiontouse, (U ﹏ U) t-twimthweshowd)
 
-  override def getData: TypedPipe[AggregatesV2Tuple] = {
-    val vkvsToUse: VersionedKeyValSource[AggregationKey, (BatchID, StorageFormat)] = {
-      VersionedKeyValSource[AggregationKey, (BatchID, StorageFormat)](
-        path = storePath,
-        sourceVersion = Some(versionToUse),
-        maxFailures = maxFailures
+  ovewwide def getdata: t-typedpipe[aggwegatesv2tupwe] = {
+    v-vaw vkvstouse: vewsionedkeyvawsouwce[aggwegationkey, (batchid, OwO stowagefowmat)] = {
+      vewsionedkeyvawsouwce[aggwegationkey, 😳😳😳 (batchid, (ˆ ﻌ ˆ)♡ stowagefowmat)](
+        path = stowepath, XD
+        s-souwcevewsion = some(vewsiontouse), (ˆ ﻌ ˆ)♡
+        m-maxfaiwuwes = maxfaiwuwes
       )
     }
-    TypedPipe.from(vkvsToUse).map {
-      case (key, (batch, value)) => (key, (batch, toDataRecord(value)))
+    t-typedpipe.fwom(vkvstouse).map {
+      c-case (key, ( ͡o ω ͡o ) (batch, vawue)) => (key, rawr x3 (batch, todatawecowd(vawue)))
     }
   }
 }
 
 /*
- * Adapted data record feature source from aggregates v2 manhattan output
- * Params documented in parent trait.
+ * a-adapted d-data wecowd featuwe souwce fwom a-aggwegates v2 m-manhattan output
+ * pawams documented in pawent twait. nyaa~~
  */
-case class AggregatesV2FeatureSource(
-  override val rootPath: String,
-  override val storeName: String,
-  override val aggregates: Set[TypedAggregateGroup[_]],
-  override val trimThreshold: Double = 0,
-  override val maxFailures: Int = 0,
+case cwass aggwegatesv2featuwesouwce(
+  o-ovewwide vaw w-wootpath: stwing, >_<
+  o-ovewwide vaw stowename: stwing, ^^;;
+  o-ovewwide v-vaw aggwegates: set[typedaggwegategwoup[_]], (ˆ ﻌ ˆ)♡
+  o-ovewwide vaw twimthweshowd: doubwe = 0, ^^;;
+  ovewwide vaw maxfaiwuwes: int = 0, (⑅˘꒳˘)
 )(
-  implicit val dateRange: DateRange)
-    extends AggregatesV2AdaptedSource {
+  i-impwicit vaw datewange: d-datewange)
+    extends aggwegatesv2adaptedsouwce {
 
-  // Increment end date by 1 millisec since summingbird output for date D is stored at (D+1)T00
-  override val sourceVersionOpt: Some[Long] = Some(dateRange.end.timestamp + 1)
+  // i-incwement end d-date by 1 miwwisec since summingbiwd output fow date d is stowed a-at (d+1)t00
+  ovewwide vaw souwcevewsionopt: some[wong] = some(datewange.end.timestamp + 1)
 }
 
 /*
- * Reads most recent available AggregatesV2FeatureSource.
- * There is no constraint on recency.
- * Params documented in parent trait.
+ * weads most wecent avaiwabwe a-aggwegatesv2featuwesouwce. rawr x3
+ * thewe is nyo constwaint on wecency. (///ˬ///✿)
+ * p-pawams documented i-in pawent twait. 🥺
  */
-case class AggregatesV2MostRecentFeatureSource(
-  override val rootPath: String,
-  override val storeName: String,
-  override val aggregates: Set[TypedAggregateGroup[_]],
-  override val trimThreshold: Double = AggregatesV2AdaptedSource.DefaultTrimThreshold,
-  override val maxFailures: Int = 0)
-    extends AggregatesV2AdaptedSource {
+case cwass aggwegatesv2mostwecentfeatuwesouwce(
+  ovewwide vaw wootpath: s-stwing, >_<
+  o-ovewwide vaw stowename: stwing,
+  ovewwide vaw aggwegates: set[typedaggwegategwoup[_]], UwU
+  o-ovewwide vaw twimthweshowd: d-doubwe = aggwegatesv2adaptedsouwce.defauwttwimthweshowd, >_<
+  ovewwide vaw maxfaiwuwes: int = 0)
+    e-extends aggwegatesv2adaptedsouwce {
 
-  override val sourceVersionOpt: None.type = None
+  o-ovewwide vaw souwcevewsionopt: n-nyone.type = nyone
 }
 
 /*
- * Reads most recent available AggregatesV2FeatureSource
- * on or before the specified beforeDate.
- * Params documented in parent trait.
+ * weads m-most wecent avaiwabwe aggwegatesv2featuwesouwce
+ * o-on ow befowe t-the specified b-befowedate. -.-
+ * pawams documented i-in pawent twait. mya
  */
-case class AggregatesV2MostRecentFeatureSourceBeforeDate(
-  override val rootPath: String,
-  override val storeName: String,
-  override val aggregates: Set[TypedAggregateGroup[_]],
-  override val trimThreshold: Double = AggregatesV2AdaptedSource.DefaultTrimThreshold,
-  beforeDate: RichDate,
-  override val maxFailures: Int = 0)
-    extends AggregatesV2AdaptedSource {
+c-case cwass aggwegatesv2mostwecentfeatuwesouwcebefowedate(
+  ovewwide vaw wootpath: s-stwing, >w<
+  o-ovewwide vaw s-stowename: stwing, (U ﹏ U)
+  ovewwide vaw aggwegates: set[typedaggwegategwoup[_]], 😳😳😳
+  o-ovewwide vaw twimthweshowd: d-doubwe = a-aggwegatesv2adaptedsouwce.defauwttwimthweshowd, o.O
+  befowedate: wichdate, òωó
+  ovewwide vaw maxfaiwuwes: i-int = 0)
+    e-extends aggwegatesv2adaptedsouwce {
 
-  override val enableMostRecentBeforeSourceVersion = true
-  override val sourceVersionOpt: Some[Long] = Some(beforeDate.timestamp + 1)
+  o-ovewwide v-vaw enabwemostwecentbefowesouwcevewsion = twue
+  o-ovewwide vaw souwcevewsionopt: some[wong] = some(befowedate.timestamp + 1)
 }

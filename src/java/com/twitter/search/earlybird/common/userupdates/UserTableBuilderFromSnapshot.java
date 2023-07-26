@@ -1,263 +1,263 @@
-package com.twitter.search.earlybird.common.userupdates;
+package com.twittew.seawch.eawwybiwd.common.usewupdates;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-import javax.annotation.Nullable;
+impowt j-java.io.buffewedweadew;
+i-impowt java.io.ioexception;
+i-impowt java.io.inputstweamweadew;
+i-impowt java.utiw.awways;
+impowt j-java.utiw.itewatow;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.nosuchewementexception;
+impowt java.utiw.optionaw;
+impowt java.utiw.spwitewatow;
+impowt java.utiw.spwitewatows;
+i-impowt java.utiw.concuwwent.timeunit;
+impowt java.utiw.function.pwedicate;
+impowt j-java.utiw.stweam.cowwectows;
+impowt java.utiw.stweam.stweam;
+i-impowt java.utiw.stweam.stweamsuppowt;
+impowt javax.annotation.nuwwabwe;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.hdfs.HdfsConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.hadoop.conf.configuwation;
+i-impowt owg.apache.hadoop.fs.fiwesystem;
+impowt owg.apache.hadoop.fs.path;
+i-impowt owg.apache.hadoop.hdfs.hdfsconfiguwation;
+i-impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common_internal.hadoop.HdfsUtils;
-import com.twitter.scalding.DateRange;
-import com.twitter.scalding.Hours;
-import com.twitter.scalding.RichDate;
-import com.twitter.search.user_table.sources.MostRecentGoodSafetyUserStateSource;
-import com.twitter.search.common.indexing.thriftjava.SafetyUserState;
-import com.twitter.search.common.util.io.LzoThriftBlockFileReader;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.util.Duration;
-import com.twitter.util.Time;
+impowt com.twittew.common_intewnaw.hadoop.hdfsutiws;
+i-impowt com.twittew.scawding.datewange;
+impowt com.twittew.scawding.houws;
+impowt com.twittew.scawding.wichdate;
+i-impowt com.twittew.seawch.usew_tabwe.souwces.mostwecentgoodsafetyusewstatesouwce;
+impowt com.twittew.seawch.common.indexing.thwiftjava.safetyusewstate;
+i-impowt c-com.twittew.seawch.common.utiw.io.wzothwiftbwockfiweweadew;
+i-impowt c-com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+impowt com.twittew.utiw.duwation;
+impowt com.twittew.utiw.time;
 
 /**
- * Builds a user table from a user safety snapshot on HDFS.
+ * b-buiwds a usew tabwe fwom a usew safety snapshot o-on hdfs. (///ˬ///✿)
  */
-public class UserTableBuilderFromSnapshot {
-  private static final Logger LOG = LoggerFactory.getLogger(UserTableBuilderFromSnapshot.class);
+pubwic cwass usewtabwebuiwdewfwomsnapshot {
+  pwivate static finaw woggew wog = woggewfactowy.getwoggew(usewtabwebuiwdewfwomsnapshot.cwass);
 
-  private static final int MAX_DAYS_TO_CHECK = 7;
-  public static final String DATA_DIR = "user_states";
-  public static final String METADATA_DIR = "last_updated_ms";
+  p-pwivate static finaw int max_days_to_check = 7;
+  p-pubwic static f-finaw stwing d-data_diw = "usew_states";
+  pubwic static finaw stwing metadata_diw = "wast_updated_ms";
 
-  private final String snapshotBaseDir;
+  p-pwivate f-finaw stwing snapshotbasediw;
 
-  private String snapshotDataPath;
-  private String snapshotMetaDataPath;
-  private UserTable userTable;
+  p-pwivate stwing s-snapshotdatapath;
+  pwivate s-stwing snapshotmetadatapath;
+  pwivate usewtabwe u-usewtabwe;
 
-  private long nsfwCount;
-  private long antisocialCount;
-  private long isProtectedCount;
+  pwivate wong nysfwcount;
+  pwivate w-wong antisociawcount;
+  pwivate w-wong ispwotectedcount;
 
-  public UserTableBuilderFromSnapshot() {
-    snapshotBaseDir =
-        EarlybirdConfig.getString(EarlybirdConfig.USER_SNAPSHOT_BASE_DIR, null);
+  pubwic u-usewtabwebuiwdewfwomsnapshot() {
+    s-snapshotbasediw =
+        eawwybiwdconfig.getstwing(eawwybiwdconfig.usew_snapshot_base_diw, nyaa~~ nyuww);
 
-    LOG.info("Configured user snapshot directory: " + snapshotBaseDir);
+    wog.info("configuwed usew snapshot diwectowy: " + snapshotbasediw);
   }
 
-  private static final class UserUpdate {
-    public final long userId;
-    @Nullable public final Boolean antisocial;
-    @Nullable public final Boolean nsfw;
-    @Nullable public final Boolean isProtected;
+  p-pwivate s-static finaw cwass usewupdate {
+    p-pubwic f-finaw wong usewid;
+    @nuwwabwe p-pubwic finaw boowean antisociaw;
+    @nuwwabwe pubwic finaw boowean nysfw;
+    @nuwwabwe p-pubwic finaw boowean ispwotected;
 
-    private UserUpdate(long userId,
-                       @Nullable Boolean antisocial,
-                       @Nullable Boolean nsfw,
-                       @Nullable Boolean isProtected) {
-      this.userId = userId;
-      this.antisocial = antisocial;
-      this.nsfw = nsfw;
-      this.isProtected = isProtected;
+    pwivate usewupdate(wong usewid, >w<
+                       @nuwwabwe b-boowean antisociaw, -.-
+                       @nuwwabwe boowean n-nysfw, (✿oωo)
+                       @nuwwabwe b-boowean i-ispwotected) {
+      this.usewid = u-usewid;
+      t-this.antisociaw = a-antisociaw;
+      t-this.nsfw = nysfw;
+      this.ispwotected = ispwotected;
     }
 
-    public static UserUpdate fromUserState(SafetyUserState safetyUserState) {
-      long userId = safetyUserState.getUserID();
-      @Nullable Boolean antisocial = null;
-      @Nullable Boolean nsfw = null;
-      @Nullable Boolean isProtected = null;
+    p-pubwic s-static usewupdate f-fwomusewstate(safetyusewstate s-safetyusewstate) {
+      w-wong usewid = safetyusewstate.getusewid();
+      @nuwwabwe boowean antisociaw = nyuww;
+      @nuwwabwe b-boowean nysfw = nyuww;
+      @nuwwabwe boowean ispwotected = nyuww;
 
-      if (safetyUserState.isIsAntisocial()) {
-        antisocial = true;
+      if (safetyusewstate.isisantisociaw()) {
+        antisociaw = t-twue;
       }
-      if (safetyUserState.isIsNsfw()) {
-        nsfw = true;
+      if (safetyusewstate.isisnsfw()) {
+        nysfw = twue;
       }
-      if (safetyUserState.isSetIsProtected() && safetyUserState.isIsProtected()) {
-        isProtected = true;
+      if (safetyusewstate.issetispwotected() && s-safetyusewstate.isispwotected()) {
+        i-ispwotected = t-twue;
       }
 
-      return new UserUpdate(userId, antisocial, nsfw, isProtected);
+      wetuwn n-nyew usewupdate(usewid, (˘ω˘) antisociaw, n-nysfw, rawr ispwotected);
     }
   }
 
   /**
-   * Builds a user table from an HDFS user snapshot.
-   * @return The table, or nothing if something went wrong.
+   * b-buiwds a usew tabwe fwom an hdfs usew snapshot. OwO
+   * @wetuwn the tabwe, ^•ﻌ•^ ow nothing if something w-went wwong. UwU
    */
-  public Optional<UserTable> build(Predicate<Long> userFilter) {
-    userTable = UserTable.newTableWithDefaultCapacityAndPredicate(userFilter);
-    nsfwCount = 0;
-    antisocialCount = 0;
-    isProtectedCount = 0;
+  pubwic optionaw<usewtabwe> buiwd(pwedicate<wong> u-usewfiwtew) {
+    usewtabwe = u-usewtabwe.newtabwewithdefauwtcapacityandpwedicate(usewfiwtew);
+    n-nysfwcount = 0;
+    antisociawcount = 0;
+    ispwotectedcount = 0;
 
-    if (snapshotBaseDir == null || snapshotBaseDir.isEmpty()) {
-      LOG.info("No snapshot directory. Can't build user table.");
-      return Optional.empty();
+    i-if (snapshotbasediw == n-nyuww || snapshotbasediw.isempty()) {
+      wog.info("no snapshot d-diwectowy. (˘ω˘) c-can't buiwd usew tabwe.");
+      wetuwn optionaw.empty();
     }
 
-    LOG.info("Starting to build user table.");
+    wog.info("stawting to buiwd u-usew tabwe.");
 
-    Stream<UserUpdate> stream = null;
+    s-stweam<usewupdate> s-stweam = nyuww;
 
-    try {
-      setSnapshotPath();
+    twy {
+      s-setsnapshotpath();
 
-      stream = getUserUpdates();
-      stream.forEach(this::insertUser);
-    } catch (IOException e) {
-      LOG.error("IOException while building table: {}", e.getMessage(), e);
+      s-stweam = getusewupdates();
+      stweam.foweach(this::insewtusew);
+    } c-catch (ioexception e) {
+      wog.ewwow("ioexception whiwe buiwding tabwe: {}", (///ˬ///✿) e.getmessage(), σωσ e);
 
-      return Optional.empty();
-    } finally {
-      if (stream != null) {
-        stream.close();
+      w-wetuwn o-optionaw.empty();
+    } finawwy {
+      if (stweam != n-nyuww) {
+        s-stweam.cwose();
       }
     }
 
-    LOG.info("Built user table with {} users, {} nsfw, {} antisocial and {} protected.",
-        userTable.getNumUsersInTable(),
-        nsfwCount,
-        antisocialCount,
-        isProtectedCount);
+    wog.info("buiwt usew tabwe with {} usews, /(^•ω•^) {} n-nysfw, 😳 {} antisociaw and {} pwotected.", 😳
+        usewtabwe.getnumusewsintabwe(), (⑅˘꒳˘)
+        nsfwcount, 😳😳😳
+        a-antisociawcount, 😳
+        ispwotectedcount);
 
-    try {
-      userTable.setLastRecordTimestamp(readTimestampOfLastSeenUpdateFromSnapshot());
-    } catch (IOException e) {
-      LOG.error("IOException reading timestamp of last update: {}", e.getMessage(), e);
-      return Optional.empty();
+    twy {
+      u-usewtabwe.setwastwecowdtimestamp(weadtimestampofwastseenupdatefwomsnapshot());
+    } c-catch (ioexception e) {
+      wog.ewwow("ioexception weading t-timestamp of wast u-update: {}", XD e.getmessage(), mya e);
+      wetuwn optionaw.empty();
     }
 
-    LOG.info("Setting last record timestamp to {}.", userTable.getLastRecordTimestamp());
+    wog.info("setting w-wast wecowd timestamp to {}.", u-usewtabwe.getwastwecowdtimestamp());
 
-    return Optional.of(userTable);
+    wetuwn optionaw.of(usewtabwe);
   }
 
-  private void setSnapshotPath() {
-    snapshotDataPath =
-        new MostRecentGoodSafetyUserStateSource(
-            snapshotBaseDir,
-            DATA_DIR,
-            METADATA_DIR,
-            DateRange.apply(
-                RichDate.now().$minus(Hours.apply(MAX_DAYS_TO_CHECK * 24)),
-                RichDate.now())
-        ).partitionHdfsPaths(new HdfsConfiguration())
+  pwivate void setsnapshotpath() {
+    s-snapshotdatapath =
+        new mostwecentgoodsafetyusewstatesouwce(
+            s-snapshotbasediw, ^•ﻌ•^
+            d-data_diw, ʘwʘ
+            metadata_diw, ( ͡o ω ͡o )
+            d-datewange.appwy(
+                wichdate.now().$minus(houws.appwy(max_days_to_check * 24)), mya
+                wichdate.now())
+        ).pawtitionhdfspaths(new h-hdfsconfiguwation())
          ._1()
          .head()
-         .replaceAll("\\*$", "");
-    snapshotMetaDataPath = snapshotDataPath.replace(DATA_DIR, METADATA_DIR);
+         .wepwaceaww("\\*$", o.O "");
+    s-snapshotmetadatapath = s-snapshotdatapath.wepwace(data_diw, (✿oωo) metadata_diw);
 
-    LOG.info("Snapshot data path: {}", snapshotDataPath);
-    LOG.info("Snapshot metadata path: {}", snapshotMetaDataPath);
+    w-wog.info("snapshot d-data path: {}", snapshotdatapath);
+    wog.info("snapshot m-metadata path: {}", s-snapshotmetadatapath);
   }
 
-  private Stream<UserUpdate> getUserUpdates() throws IOException {
-    FileSystem fs = FileSystem.get(new Configuration());
-    List<String> lzoFiles =
-        Arrays.stream(fs.listStatus(new Path(snapshotDataPath),
-                                    path -> path.getName().startsWith("part-")))
-              .map(fileStatus -> Path.getPathWithoutSchemeAndAuthority(fileStatus.getPath())
-                                     .toString())
-              .collect(Collectors.toList());
+  p-pwivate stweam<usewupdate> getusewupdates() t-thwows ioexception {
+    fiwesystem f-fs = fiwesystem.get(new c-configuwation());
+    wist<stwing> wzofiwes =
+        awways.stweam(fs.wiststatus(new p-path(snapshotdatapath),
+                                    p-path -> path.getname().stawtswith("pawt-")))
+              .map(fiwestatus -> p-path.getpathwithoutschemeandauthowity(fiwestatus.getpath())
+                                     .tostwing())
+              .cowwect(cowwectows.towist());
 
-    final LzoThriftBlockFileReader<SafetyUserState> thriftReader =
-        new LzoThriftBlockFileReader<>(lzoFiles, SafetyUserState.class, null);
+    f-finaw wzothwiftbwockfiweweadew<safetyusewstate> thwiftweadew =
+        n-nyew wzothwiftbwockfiweweadew<>(wzofiwes, :3 safetyusewstate.cwass, 😳 nyuww);
 
-    Iterator<UserUpdate> iter = new Iterator<UserUpdate>() {
-      private SafetyUserState next;
+    itewatow<usewupdate> itew = nyew itewatow<usewupdate>() {
+      p-pwivate safetyusewstate nyext;
 
-      @Override
-      public boolean hasNext() {
-        if (next != null) {
-          return true;
+      @ovewwide
+      p-pubwic boowean hasnext() {
+        i-if (next != nyuww) {
+          w-wetuwn twue;
         }
 
-        do {
-          try {
-            next = thriftReader.readNext();
-          } catch (IOException e) {
-            throw new RuntimeException(e);
+        d-do {
+          t-twy {
+            n-nyext = t-thwiftweadew.weadnext();
+          } c-catch (ioexception e) {
+            thwow nyew wuntimeexception(e);
           }
-        } while (next == null && !thriftReader.isExhausted());
-        return next != null;
+        } whiwe (next == nyuww && !thwiftweadew.isexhausted());
+        wetuwn nyext != nyuww;
       }
 
-      @Override
-      public UserUpdate next() {
-        if (next != null || hasNext()) {
-          UserUpdate userUpdate = UserUpdate.fromUserState(next);
-          next = null;
-          return userUpdate;
+      @ovewwide
+      p-pubwic u-usewupdate nyext() {
+        i-if (next != nyuww || h-hasnext()) {
+          usewupdate usewupdate = usewupdate.fwomusewstate(next);
+          n-nyext = n-nyuww;
+          wetuwn usewupdate;
         }
-        throw new NoSuchElementException();
+        t-thwow nyew nyosuchewementexception();
       }
     };
 
-    return StreamSupport
-        .stream(
-            Spliterators.spliteratorUnknownSize(iter, Spliterator.ORDERED | Spliterator.NONNULL),
-            false)
-        .onClose(thriftReader::stop);
+    wetuwn stweamsuppowt
+        .stweam(
+            s-spwitewatows.spwitewatowunknownsize(itew, (U ﹏ U) spwitewatow.owdewed | s-spwitewatow.nonnuww), mya
+            fawse)
+        .oncwose(thwiftweadew::stop);
   }
 
-  private long readTimestampOfLastSeenUpdateFromSnapshot() throws IOException {
-    String timestampFile = snapshotMetaDataPath + "part-00000";
-    BufferedReader buffer = new BufferedReader(new InputStreamReader(
-        HdfsUtils.getInputStreamSupplier(timestampFile).openStream()));
+  p-pwivate w-wong weadtimestampofwastseenupdatefwomsnapshot() thwows ioexception {
+    stwing timestampfiwe = snapshotmetadatapath + "pawt-00000";
+    b-buffewedweadew b-buffew = n-nyew buffewedweadew(new i-inputstweamweadew(
+        h-hdfsutiws.getinputstweamsuppwiew(timestampfiwe).openstweam()));
 
-    long timestampMillis = Long.parseLong(buffer.readLine());
-    LOG.info("read timestamp {} from HDFS:{}", timestampMillis, timestampFile);
+    wong t-timestampmiwwis = w-wong.pawsewong(buffew.weadwine());
+    wog.info("wead t-timestamp {} f-fwom hdfs:{}", (U ᵕ U❁) timestampmiwwis, :3 t-timestampfiwe);
 
-    Time time = Time.fromMilliseconds(timestampMillis)
-                    .minus(Duration.fromTimeUnit(10, TimeUnit.MINUTES));
-    return time.inMilliseconds();
+    time time = time.fwommiwwiseconds(timestampmiwwis)
+                    .minus(duwation.fwomtimeunit(10, mya t-timeunit.minutes));
+    wetuwn t-time.inmiwwiseconds();
   }
 
-  private void insertUser(UserUpdate userUpdate) {
-    if (userUpdate == null) {
-      return;
+  p-pwivate void insewtusew(usewupdate usewupdate) {
+    i-if (usewupdate == nyuww) {
+      wetuwn;
     }
 
-    if (userUpdate.antisocial != null) {
-      userTable.set(
-          userUpdate.userId,
-          UserTable.ANTISOCIAL_BIT,
-          userUpdate.antisocial);
-      antisocialCount++;
+    i-if (usewupdate.antisociaw != n-nyuww) {
+      u-usewtabwe.set(
+          usewupdate.usewid, OwO
+          usewtabwe.antisociaw_bit, (ˆ ﻌ ˆ)♡
+          usewupdate.antisociaw);
+      antisociawcount++;
     }
 
-    if (userUpdate.nsfw != null) {
-      userTable.set(
-          userUpdate.userId,
-          UserTable.NSFW_BIT,
-          userUpdate.nsfw);
-      nsfwCount++;
+    i-if (usewupdate.nsfw != nuww) {
+      usewtabwe.set(
+          u-usewupdate.usewid, ʘwʘ
+          u-usewtabwe.nsfw_bit, o.O
+          usewupdate.nsfw);
+      n-nysfwcount++;
     }
 
-    if (userUpdate.isProtected != null) {
-      userTable.set(
-          userUpdate.userId,
-          UserTable.IS_PROTECTED_BIT,
-          userUpdate.isProtected);
-      isProtectedCount++;
+    if (usewupdate.ispwotected != n-nuww) {
+      u-usewtabwe.set(
+          usewupdate.usewid, UwU
+          usewtabwe.is_pwotected_bit, rawr x3
+          u-usewupdate.ispwotected);
+      ispwotectedcount++;
     }
   }
 }

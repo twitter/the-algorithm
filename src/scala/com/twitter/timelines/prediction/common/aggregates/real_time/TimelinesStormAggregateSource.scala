@@ -1,185 +1,185 @@
-package com.twitter.timelines.prediction.common.aggregates.real_time
+package com.twittew.timewines.pwediction.common.aggwegates.weaw_time
 
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.summingbird._
-import com.twitter.summingbird.storm.Storm
-import com.twitter.summingbird_internal.sources.AppId
-import com.twitter.summingbird_internal.sources.storm.remote.ClientEventSourceScrooge2
-import com.twitter.timelines.data_processing.ad_hoc.suggests.common.AllScribeProcessor
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron.RealTimeAggregatesJobConfig
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron.StormAggregateSource
-import com.twitter.timelines.prediction.adapters.client_log_event.ClientLogEventAdapter
-import com.twitter.timelines.prediction.adapters.client_log_event.ProfileClientLogEventAdapter
-import com.twitter.timelines.prediction.adapters.client_log_event.SearchClientLogEventAdapter
-import com.twitter.timelines.prediction.adapters.client_log_event.UuaEventAdapter
-import com.twitter.unified_user_actions.client.config.KafkaConfigs
-import com.twitter.unified_user_actions.client.summingbird.UnifiedUserActionsSourceScrooge
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import scala.collection.JavaConverters._
+impowt com.twittew.cwientapp.thwiftscawa.wogevent
+i-impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.stats.countew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.mw.api.datawecowd
+i-impowt com.twittew.mw.api.constant.shawedfeatuwes
+i-impowt com.twittew.snowfwake.id.snowfwakeid
+impowt com.twittew.summingbiwd._
+impowt com.twittew.summingbiwd.stowm.stowm
+impowt com.twittew.summingbiwd_intewnaw.souwces.appid
+i-impowt com.twittew.summingbiwd_intewnaw.souwces.stowm.wemote.cwienteventsouwcescwooge2
+impowt com.twittew.timewines.data_pwocessing.ad_hoc.suggests.common.awwscwibepwocessow
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.hewon.weawtimeaggwegatesjobconfig
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.hewon.stowmaggwegatesouwce
+i-impowt com.twittew.timewines.pwediction.adaptews.cwient_wog_event.cwientwogeventadaptew
+impowt com.twittew.timewines.pwediction.adaptews.cwient_wog_event.pwofiwecwientwogeventadaptew
+impowt c-com.twittew.timewines.pwediction.adaptews.cwient_wog_event.seawchcwientwogeventadaptew
+impowt com.twittew.timewines.pwediction.adaptews.cwient_wog_event.uuaeventadaptew
+i-impowt c-com.twittew.unified_usew_actions.cwient.config.kafkaconfigs
+impowt com.twittew.unified_usew_actions.cwient.summingbiwd.unifiedusewactionssouwcescwooge
+impowt com.twittew.unified_usew_actions.thwiftscawa.unifiedusewaction
+impowt s-scawa.cowwection.javaconvewtews._
 
 /**
- * Storm Producer for client events generated on Home, Profile, and Search
+ * stowm pwoducew fow cwient events genewated on home, p-pwofiwe, :3 and seawch
  */
-class TimelinesStormAggregateSource extends StormAggregateSource {
+cwass t-timewinesstowmaggwegatesouwce e-extends s-stowmaggwegatesouwce {
 
-  override val name = "timelines_rta"
-  override val timestampFeature = SharedFeatures.TIMESTAMP
+  o-ovewwide vaw nyame = "timewines_wta"
+  ovewwide vaw timestampfeatuwe = s-shawedfeatuwes.timestamp
 
-  private lazy val TimelinesClientEventSourceName = "TL_EVENTS_SOURCE"
-  private lazy val ProfileClientEventSourceName = "PROFILE_EVENTS_SOURCE"
-  private lazy val SearchClientEventSourceName = "SEARCH_EVENTS_SOURCE"
-  private lazy val UuaEventSourceName = "UUA_EVENTS_SOURCE"
-  private lazy val CombinedProducerName = "COMBINED_PRODUCER"
-  private lazy val FeatureStoreProducerName = "FEATURE_STORE_PRODUCER"
+  pwivate wazy vaw timewinescwienteventsouwcename = "tw_events_souwce"
+  p-pwivate wazy vaw pwofiwecwienteventsouwcename = "pwofiwe_events_souwce"
+  pwivate wazy vaw seawchcwienteventsouwcename = "seawch_events_souwce"
+  pwivate wazy vaw uuaeventsouwcename = "uua_events_souwce"
+  p-pwivate wazy vaw combinedpwoducewname = "combined_pwoducew"
+  p-pwivate wazy v-vaw featuwestowepwoducewname = "featuwe_stowe_pwoducew"
 
-  private def isNewUserEvent(event: LogEvent): Boolean = {
-    event.logBase.flatMap(_.userId).flatMap(SnowflakeId.timeFromIdOpt).exists(_.untilNow < 30.days)
+  p-pwivate def isnewusewevent(event: wogevent): boowean = {
+    event.wogbase.fwatmap(_.usewid).fwatmap(snowfwakeid.timefwomidopt).exists(_.untiwnow < 30.days)
   }
 
-  private def mkDataRecords(event: LogEvent, dataRecordCounter: Counter): Seq[DataRecord] = {
-    val dataRecords: Seq[DataRecord] =
-      if (AllScribeProcessor.isValidSuggestTweetEvent(event)) {
-        ClientLogEventAdapter.adaptToDataRecords(event).asScala
-      } else {
-        Seq.empty[DataRecord]
+  p-pwivate def mkdatawecowds(event: w-wogevent, ʘwʘ datawecowdcountew: countew): seq[datawecowd] = {
+    v-vaw datawecowds: s-seq[datawecowd] =
+      if (awwscwibepwocessow.isvawidsuggesttweetevent(event)) {
+        c-cwientwogeventadaptew.adapttodatawecowds(event).asscawa
+      } ewse {
+        s-seq.empty[datawecowd]
       }
-    dataRecordCounter.incr(dataRecords.size)
-    dataRecords
+    datawecowdcountew.incw(datawecowds.size)
+    datawecowds
   }
 
-  private def mkProfileDataRecords(
-    event: LogEvent,
-    dataRecordCounter: Counter
-  ): Seq[DataRecord] = {
-    val dataRecords: Seq[DataRecord] =
-      ProfileClientLogEventAdapter.adaptToDataRecords(event).asScala
-    dataRecordCounter.incr(dataRecords.size)
-    dataRecords
+  p-pwivate def mkpwofiwedatawecowds(
+    e-event: wogevent, 🥺
+    datawecowdcountew: c-countew
+  ): s-seq[datawecowd] = {
+    vaw datawecowds: seq[datawecowd] =
+      pwofiwecwientwogeventadaptew.adapttodatawecowds(event).asscawa
+    datawecowdcountew.incw(datawecowds.size)
+    datawecowds
   }
 
-  private def mkSearchDataRecords(
-    event: LogEvent,
-    dataRecordCounter: Counter
-  ): Seq[DataRecord] = {
-    val dataRecords: Seq[DataRecord] =
-      SearchClientLogEventAdapter.adaptToDataRecords(event).asScala
-    dataRecordCounter.incr(dataRecords.size)
-    dataRecords
+  pwivate d-def mkseawchdatawecowds(
+    e-event: wogevent, >_<
+    datawecowdcountew: c-countew
+  ): s-seq[datawecowd] = {
+    vaw d-datawecowds: seq[datawecowd] =
+      seawchcwientwogeventadaptew.adapttodatawecowds(event).asscawa
+    datawecowdcountew.incw(datawecowds.size)
+    d-datawecowds
   }
 
-  private def mkUuaDataRecords(
-    event: UnifiedUserAction,
-    dataRecordCounter: Counter
-  ): Seq[DataRecord] = {
-    val dataRecords: Seq[DataRecord] =
-      UuaEventAdapter.adaptToDataRecords(event).asScala
-    dataRecordCounter.incr(dataRecords.size)
-    dataRecords
+  pwivate def mkuuadatawecowds(
+    event: unifiedusewaction, ʘwʘ
+    d-datawecowdcountew: countew
+  ): s-seq[datawecowd] = {
+    v-vaw datawecowds: s-seq[datawecowd] =
+      uuaeventadaptew.adapttodatawecowds(event).asscawa
+    d-datawecowdcountew.incw(datawecowds.size)
+    d-datawecowds
   }
 
-  override def build(
-    statsReceiver: StatsReceiver,
-    jobConfig: RealTimeAggregatesJobConfig
-  ): Producer[Storm, DataRecord] = {
-    lazy val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
-    lazy val dataRecordCounter = scopedStatsReceiver.counter("dataRecord")
+  o-ovewwide def buiwd(
+    s-statsweceivew: statsweceivew, (˘ω˘)
+    jobconfig: w-weawtimeaggwegatesjobconfig
+  ): p-pwoducew[stowm, (✿oωo) d-datawecowd] = {
+    w-wazy v-vaw scopedstatsweceivew = statsweceivew.scope(getcwass.getsimpwename)
+    wazy vaw datawecowdcountew = s-scopedstatsweceivew.countew("datawecowd")
 
-    // Home Timeline Engagements
-    // Step 1: => LogEvent
-    lazy val clientEventProducer: Producer[Storm, HomeEvent[LogEvent]] =
-      ClientEventSourceScrooge2(
-        appId = AppId(jobConfig.appId),
-        topic = "julep_client_event_suggests",
-        resumeAtLastReadOffset = false,
-        enableTls = true
-      ).source.map(HomeEvent[LogEvent]).name(TimelinesClientEventSourceName)
+    // home timewine engagements
+    // step 1: => wogevent
+    wazy vaw cwienteventpwoducew: p-pwoducew[stowm, (///ˬ///✿) homeevent[wogevent]] =
+      cwienteventsouwcescwooge2(
+        appid = appid(jobconfig.appid), rawr x3
+        t-topic = "juwep_cwient_event_suggests", -.-
+        w-wesumeatwastweadoffset = f-fawse, ^^
+        enabwetws = twue
+      ).souwce.map(homeevent[wogevent]).name(timewinescwienteventsouwcename)
 
-    // Profile Engagements
-    // Step 1: => LogEvent
-    lazy val profileClientEventProducer: Producer[Storm, ProfileEvent[LogEvent]] =
-      ClientEventSourceScrooge2(
-        appId = AppId(jobConfig.appId),
-        topic = "julep_client_event_profile_real_time_engagement_metrics",
-        resumeAtLastReadOffset = false,
-        enableTls = true
-      ).source
-        .map(ProfileEvent[LogEvent])
-        .name(ProfileClientEventSourceName)
+    // p-pwofiwe engagements
+    // step 1: => wogevent
+    w-wazy vaw p-pwofiwecwienteventpwoducew: pwoducew[stowm, (⑅˘꒳˘) pwofiweevent[wogevent]] =
+      cwienteventsouwcescwooge2(
+        appid = appid(jobconfig.appid), nyaa~~
+        topic = "juwep_cwient_event_pwofiwe_weaw_time_engagement_metwics", /(^•ω•^)
+        w-wesumeatwastweadoffset = fawse, (U ﹏ U)
+        e-enabwetws = twue
+      ).souwce
+        .map(pwofiweevent[wogevent])
+        .name(pwofiwecwienteventsouwcename)
 
-    // Search Engagements
-    // Step 1: => LogEvent
-    // Only process events for all users to save resource
-    lazy val searchClientEventProducer: Producer[Storm, SearchEvent[LogEvent]] =
-      ClientEventSourceScrooge2(
-        appId = AppId(jobConfig.appId),
-        topic = "julep_client_event_search_real_time_engagement_metrics",
-        resumeAtLastReadOffset = false,
-        enableTls = true
-      ).source
-        .map(SearchEvent[LogEvent])
-        .name(SearchClientEventSourceName)
+    // s-seawch engagements
+    // s-step 1: => wogevent
+    // onwy pwocess e-events fow a-aww usews to save wesouwce
+    w-wazy vaw seawchcwienteventpwoducew: p-pwoducew[stowm, 😳😳😳 seawchevent[wogevent]] =
+      cwienteventsouwcescwooge2(
+        appid = appid(jobconfig.appid), >w<
+        topic = "juwep_cwient_event_seawch_weaw_time_engagement_metwics", XD
+        w-wesumeatwastweadoffset = f-fawse, o.O
+        e-enabwetws = twue
+      ).souwce
+        .map(seawchevent[wogevent])
+        .name(seawchcwienteventsouwcename)
 
-    // Unified User Actions (includes Home and other product surfaces)
-    lazy val uuaEventProducer: Producer[Storm, UuaEvent[UnifiedUserAction]] =
-      UnifiedUserActionsSourceScrooge(
-        appId = AppId(jobConfig.appId),
-        parallelism = 10,
-        kafkaConfig = KafkaConfigs.ProdUnifiedUserActionsEngagementOnly
-      ).source
-        .filter(StormAggregateSourceUtils.isUuaBCEEventsFromHome(_))
-        .map(UuaEvent[UnifiedUserAction])
-        .name(UuaEventSourceName)
+    // unified usew a-actions (incwudes h-home and othew pwoduct suwfaces)
+    w-wazy vaw uuaeventpwoducew: pwoducew[stowm, uuaevent[unifiedusewaction]] =
+      unifiedusewactionssouwcescwooge(
+        a-appid = appid(jobconfig.appid),
+        p-pawawwewism = 10, mya
+        kafkaconfig = kafkaconfigs.pwodunifiedusewactionsengagementonwy
+      ).souwce
+        .fiwtew(stowmaggwegatesouwceutiws.isuuabceeventsfwomhome(_))
+        .map(uuaevent[unifiedusewaction])
+        .name(uuaeventsouwcename)
 
-    // Combined
-    // Step 2:
-    // (a) Combine
-    // (b) Transform LogEvent => Seq[DataRecord]
-    // (c) Apply sampler
-    lazy val combinedClientEventDataRecordProducer: Producer[Storm, Event[DataRecord]] =
-      profileClientEventProducer // This becomes the bottom branch
-        .merge(clientEventProducer) // This becomes the middle branch
-        .merge(searchClientEventProducer)
-        .merge(uuaEventProducer) // This becomes the top
-        .flatMap { // LogEvent => Seq[DataRecord]
-          case e: HomeEvent[LogEvent] =>
-            mkDataRecords(e.event, dataRecordCounter).map(HomeEvent[DataRecord])
-          case e: ProfileEvent[LogEvent] =>
-            mkProfileDataRecords(e.event, dataRecordCounter).map(ProfileEvent[DataRecord])
-          case e: SearchEvent[LogEvent] =>
-            mkSearchDataRecords(e.event, dataRecordCounter).map(SearchEvent[DataRecord])
-          case e: UuaEvent[UnifiedUserAction] =>
-            mkUuaDataRecords(
-              e.event,
-              dataRecordCounter
-            ).map(UuaEvent[DataRecord])
+    // c-combined
+    // s-step 2:
+    // (a) combine
+    // (b) twansfowm wogevent => seq[datawecowd]
+    // (c) a-appwy sampwew
+    wazy vaw combinedcwienteventdatawecowdpwoducew: pwoducew[stowm, 🥺 event[datawecowd]] =
+      p-pwofiwecwienteventpwoducew // this becomes the bottom bwanch
+        .mewge(cwienteventpwoducew) // t-this becomes t-the middwe bwanch
+        .mewge(seawchcwienteventpwoducew)
+        .mewge(uuaeventpwoducew) // this becomes the top
+        .fwatmap { // wogevent => s-seq[datawecowd]
+          c-case e: homeevent[wogevent] =>
+            mkdatawecowds(e.event, ^^;; datawecowdcountew).map(homeevent[datawecowd])
+          case e: pwofiweevent[wogevent] =>
+            m-mkpwofiwedatawecowds(e.event, :3 datawecowdcountew).map(pwofiweevent[datawecowd])
+          c-case e: seawchevent[wogevent] =>
+            mkseawchdatawecowds(e.event, (U ﹏ U) datawecowdcountew).map(seawchevent[datawecowd])
+          case e: uuaevent[unifiedusewaction] =>
+            m-mkuuadatawecowds(
+              e.event, OwO
+              d-datawecowdcountew
+            ).map(uuaevent[datawecowd])
         }
-        .flatMap { // Apply sampler
-          case e: HomeEvent[DataRecord] =>
-            jobConfig.sequentiallyTransform(e.event).map(HomeEvent[DataRecord])
-          case e: ProfileEvent[DataRecord] =>
-            jobConfig.sequentiallyTransform(e.event).map(ProfileEvent[DataRecord])
-          case e: SearchEvent[DataRecord] =>
-            jobConfig.sequentiallyTransform(e.event).map(SearchEvent[DataRecord])
-          case e: UuaEvent[DataRecord] =>
-            jobConfig.sequentiallyTransform(e.event).map(UuaEvent[DataRecord])
+        .fwatmap { // a-appwy sampwew
+          c-case e: homeevent[datawecowd] =>
+            jobconfig.sequentiawwytwansfowm(e.event).map(homeevent[datawecowd])
+          c-case e: pwofiweevent[datawecowd] =>
+            j-jobconfig.sequentiawwytwansfowm(e.event).map(pwofiweevent[datawecowd])
+          c-case e: seawchevent[datawecowd] =>
+            jobconfig.sequentiawwytwansfowm(e.event).map(seawchevent[datawecowd])
+          c-case e: uuaevent[datawecowd] =>
+            j-jobconfig.sequentiawwytwansfowm(e.event).map(uuaevent[datawecowd])
         }
-        .name(CombinedProducerName)
+        .name(combinedpwoducewname)
 
-    // Step 3: Join with Feature Store features
-    lazy val featureStoreDataRecordProducer: Producer[Storm, DataRecord] =
-      StormAggregateSourceUtils
-        .wrapByFeatureStoreClient(
-          underlyingProducer = combinedClientEventDataRecordProducer,
-          jobConfig = jobConfig,
-          scopedStatsReceiver = scopedStatsReceiver
-        ).map(_.event).name(FeatureStoreProducerName)
+    // step 3: join with featuwe stowe f-featuwes
+    w-wazy vaw featuwestowedatawecowdpwoducew: p-pwoducew[stowm, 😳😳😳 datawecowd] =
+      stowmaggwegatesouwceutiws
+        .wwapbyfeatuwestowecwient(
+          undewwyingpwoducew = c-combinedcwienteventdatawecowdpwoducew, (ˆ ﻌ ˆ)♡
+          jobconfig = j-jobconfig, XD
+          s-scopedstatsweceivew = scopedstatsweceivew
+        ).map(_.event).name(featuwestowepwoducewname)
 
-    featureStoreDataRecordProducer
+    featuwestowedatawecowdpwoducew
   }
 }

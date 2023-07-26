@@ -1,144 +1,144 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.offwine_aggwegates
 
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TimelineAggregateMetadataRepository
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TimelineAggregatePartBRepository
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataRecordMerger
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.repository.Repository
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.data_processing.jobs.timeline_ranking_user_features.TimelinesPartBStoreRegister
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateType
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.StoreConfig
-import com.twitter.timelines.prediction.adapters.request_context.RequestContextAdapter
-import com.twitter.timelines.prediction.common.aggregates.TimelinesAggregationConfig
-import com.twitter.timelines.suggests.common.dense_data_record.thriftscala.DenseFeatureMetadata
-import com.twitter.user_session_store.thriftjava.UserSession
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+impowt c-com.twittew.home_mixew.pawam.homemixewinjectionnames.timewineaggwegatemetadatawepositowy
+i-impowt c-com.twittew.home_mixew.pawam.homemixewinjectionnames.timewineaggwegatepawtbwepositowy
+i-impowt com.twittew.mw.api.datawecowd
+i-impowt c-com.twittew.mw.api.datawecowdmewgew
+i-impowt com.twittew.mw.api.featuwecontext
+impowt c-com.twittew.mw.api.wichdatawecowd
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.datawecowdinafeatuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.sewvo.wepositowy.wepositowy
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.data_pwocessing.jobs.timewine_wanking_usew_featuwes.timewinespawtbstowewegistew
+impowt c-com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.aggwegatetype
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.stoweconfig
+i-impowt c-com.twittew.timewines.pwediction.adaptews.wequest_context.wequestcontextadaptew
+impowt com.twittew.timewines.pwediction.common.aggwegates.timewinesaggwegationconfig
+impowt com.twittew.timewines.suggests.common.dense_data_wecowd.thwiftscawa.densefeatuwemetadata
+impowt com.twittew.usew_session_stowe.thwiftjava.usewsession
+impowt com.twittew.utiw.time
+i-impowt javax.inject.inject
+impowt javax.inject.named
+impowt javax.inject.singweton
 
-object PartBAggregateRootFeature extends BaseAggregateRootFeature {
-  override val aggregateStores: Set[StoreConfig[_]] = TimelinesPartBStoreRegister.allStores
+object pawtbaggwegatewootfeatuwe e-extends baseaggwegatewootfeatuwe {
+  ovewwide v-vaw aggwegatestowes: s-set[stoweconfig[_]] = t-timewinespawtbstowewegistew.awwstowes
 }
 
-object UserAggregateFeature
-    extends DataRecordInAFeature[PipelineQuery]
-    with FeatureWithDefaultOnFailure[PipelineQuery, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+o-object usewaggwegatefeatuwe
+    extends d-datawecowdinafeatuwe[pipewinequewy]
+    with featuwewithdefauwtonfaiwuwe[pipewinequewy, /(^•ω•^) datawecowd] {
+  o-ovewwide def defauwtvawue: datawecowd = nyew datawecowd()
 }
 
-@Singleton
-class PartBAggregateQueryFeatureHydrator @Inject() (
-  @Named(TimelineAggregatePartBRepository)
-  repository: Repository[Long, Option[UserSession]],
-  @Named(TimelineAggregateMetadataRepository)
-  metadataRepository: Repository[Int, Option[DenseFeatureMetadata]])
-    extends BaseAggregateQueryFeatureHydrator(
-      repository,
-      metadataRepository,
-      PartBAggregateRootFeature
+@singweton
+cwass pawtbaggwegatequewyfeatuwehydwatow @inject() (
+  @named(timewineaggwegatepawtbwepositowy)
+  wepositowy: wepositowy[wong, :3 o-option[usewsession]], (ꈍᴗꈍ)
+  @named(timewineaggwegatemetadatawepositowy)
+  metadatawepositowy: w-wepositowy[int, /(^•ω•^) o-option[densefeatuwemetadata]])
+    e-extends baseaggwegatequewyfeatuwehydwatow(
+      wepositowy, (⑅˘꒳˘)
+      metadatawepositowy, ( ͡o ω ͡o )
+      p-pawtbaggwegatewootfeatuwe
     ) {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("PartBAggregateQuery")
+  ovewwide v-vaw identifiew: featuwehydwatowidentifiew =
+    f-featuwehydwatowidentifiew("pawtbaggwegatequewy")
 
-  override val features: Set[Feature[_, _]] =
-    Set(PartBAggregateRootFeature, UserAggregateFeature)
+  o-ovewwide vaw featuwes: s-set[featuwe[_, _]] =
+    set(pawtbaggwegatewootfeatuwe, òωó u-usewaggwegatefeatuwe)
 
-  private val userAggregateFeatureInfo = new AggregateFeatureInfo(
-    aggregateGroups = Set(
-      TimelinesAggregationConfig.userAggregatesV2,
-      TimelinesAggregationConfig.userAggregatesV5Continuous,
-      TimelinesAggregationConfig.userAggregatesV6,
-      TimelinesAggregationConfig.twitterWideUserAggregates,
+  pwivate vaw usewaggwegatefeatuweinfo = n-nyew aggwegatefeatuweinfo(
+    a-aggwegategwoups = set(
+      t-timewinesaggwegationconfig.usewaggwegatesv2, (⑅˘꒳˘)
+      t-timewinesaggwegationconfig.usewaggwegatesv5continuous, XD
+      timewinesaggwegationconfig.usewaggwegatesv6, -.-
+      timewinesaggwegationconfig.twittewwideusewaggwegates, :3
     ),
-    aggregateType = AggregateType.User
+    aggwegatetype = aggwegatetype.usew
   )
 
-  private val userHourAggregateFeatureInfo = new AggregateFeatureInfo(
-    aggregateGroups = Set(
-      TimelinesAggregationConfig.userRequestHourAggregates,
-    ),
-    aggregateType = AggregateType.UserRequestHour
+  pwivate vaw usewhouwaggwegatefeatuweinfo = n-nyew aggwegatefeatuweinfo(
+    aggwegategwoups = s-set(
+      timewinesaggwegationconfig.usewwequesthouwaggwegates, nyaa~~
+    ), 😳
+    aggwegatetype = a-aggwegatetype.usewwequesthouw
   )
 
-  private val userDowAggregateFeatureInfo = new AggregateFeatureInfo(
-    aggregateGroups = Set(
-      TimelinesAggregationConfig.userRequestDowAggregates
-    ),
-    aggregateType = AggregateType.UserRequestDow
+  p-pwivate vaw usewdowaggwegatefeatuweinfo = n-nyew aggwegatefeatuweinfo(
+    aggwegategwoups = set(
+      t-timewinesaggwegationconfig.usewwequestdowaggwegates
+    ), (⑅˘꒳˘)
+    aggwegatetype = aggwegatetype.usewwequestdow
   )
 
-  require(
-    userAggregateFeatureInfo.feature == PartBAggregateRootFeature,
-    "UserAggregates feature must be provided by the PartB data source.")
-  require(
-    userHourAggregateFeatureInfo.feature == PartBAggregateRootFeature,
-    "UserRequstHourAggregates feature must be provided by the PartB data source.")
-  require(
-    userDowAggregateFeatureInfo.feature == PartBAggregateRootFeature,
-    "UserRequestDowAggregates feature must be provided by the PartB data source.")
+  wequiwe(
+    usewaggwegatefeatuweinfo.featuwe == p-pawtbaggwegatewootfeatuwe, nyaa~~
+    "usewaggwegates featuwe m-must be pwovided b-by the pawtb d-data souwce.")
+  wequiwe(
+    usewhouwaggwegatefeatuweinfo.featuwe == p-pawtbaggwegatewootfeatuwe,
+    "usewwequsthouwaggwegates f-featuwe must be p-pwovided by the p-pawtb data souwce.")
+  wequiwe(
+    usewdowaggwegatefeatuweinfo.featuwe == p-pawtbaggwegatewootfeatuwe, OwO
+    "usewwequestdowaggwegates f-featuwe must b-be pwovided by t-the pawtb data souwce.")
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    // Hydrate TimelineAggregatePartBFeature and UserAggregateFeature sequentially.
-    super.hydrate(query).map { featureMap =>
-      val time: Time = Time.now
-      val hourOfDay = RequestContextAdapter.hourFromTimestamp(time.inMilliseconds)
-      val dayOfWeek = RequestContextAdapter.dowFromTimestamp(time.inMilliseconds)
+  o-ovewwide def hydwate(quewy: pipewinequewy): stitch[featuwemap] = {
+    // h-hydwate timewineaggwegatepawtbfeatuwe and usewaggwegatefeatuwe sequentiawwy. rawr x3
+    supew.hydwate(quewy).map { featuwemap =>
+      v-vaw time: time = time.now
+      vaw houwofday = wequestcontextadaptew.houwfwomtimestamp(time.inmiwwiseconds)
+      v-vaw dayofweek = w-wequestcontextadaptew.dowfwomtimestamp(time.inmiwwiseconds)
 
-      val dr = featureMap
-        .get(PartBAggregateRootFeature).map { featuresWithMetadata =>
-          val userAggregatesDr =
-            featuresWithMetadata.userAggregatesOpt
-              .map(featuresWithMetadata.toDataRecord)
-          val userRequestHourAggregatesDr =
-            Option(featuresWithMetadata.userRequestHourAggregates.get(hourOfDay))
-              .map(featuresWithMetadata.toDataRecord)
-          val userRequestDowAggregatesDr =
-            Option(featuresWithMetadata.userRequestDowAggregates.get(dayOfWeek))
-              .map(featuresWithMetadata.toDataRecord)
+      v-vaw dw = featuwemap
+        .get(pawtbaggwegatewootfeatuwe).map { f-featuweswithmetadata =>
+          vaw usewaggwegatesdw =
+            f-featuweswithmetadata.usewaggwegatesopt
+              .map(featuweswithmetadata.todatawecowd)
+          v-vaw usewwequesthouwaggwegatesdw =
+            option(featuweswithmetadata.usewwequesthouwaggwegates.get(houwofday))
+              .map(featuweswithmetadata.todatawecowd)
+          vaw usewwequestdowaggwegatesdw =
+            option(featuweswithmetadata.usewwequestdowaggwegates.get(dayofweek))
+              .map(featuweswithmetadata.todatawecowd)
 
-          dropUnknownFeatures(userAggregatesDr, userAggregateFeatureInfo.featureContext)
+          dwopunknownfeatuwes(usewaggwegatesdw, XD u-usewaggwegatefeatuweinfo.featuwecontext)
 
-          dropUnknownFeatures(
-            userRequestHourAggregatesDr,
-            userHourAggregateFeatureInfo.featureContext)
+          dwopunknownfeatuwes(
+            u-usewwequesthouwaggwegatesdw, σωσ
+            usewhouwaggwegatefeatuweinfo.featuwecontext)
 
-          dropUnknownFeatures(
-            userRequestDowAggregatesDr,
-            userDowAggregateFeatureInfo.featureContext)
+          d-dwopunknownfeatuwes(
+            u-usewwequestdowaggwegatesdw,
+            usewdowaggwegatefeatuweinfo.featuwecontext)
 
-          mergeDataRecordOpts(
-            userAggregatesDr,
-            userRequestHourAggregatesDr,
-            userRequestDowAggregatesDr)
+          mewgedatawecowdopts(
+            u-usewaggwegatesdw, (U ᵕ U❁)
+            u-usewwequesthouwaggwegatesdw, (U ﹏ U)
+            usewwequestdowaggwegatesdw)
 
-        }.getOrElse(new DataRecord())
+        }.getowewse(new d-datawecowd())
 
-      featureMap + (UserAggregateFeature, dr)
+      featuwemap + (usewaggwegatefeatuwe, :3 d-dw)
     }
   }
 
-  private val drMerger = new DataRecordMerger
-  private def mergeDataRecordOpts(dataRecordOpts: Option[DataRecord]*): DataRecord =
-    dataRecordOpts.flatten.foldLeft(new DataRecord) { (l, r) =>
-      drMerger.merge(l, r)
-      l
+  pwivate vaw dwmewgew = nyew datawecowdmewgew
+  pwivate def mewgedatawecowdopts(datawecowdopts: o-option[datawecowd]*): d-datawecowd =
+    d-datawecowdopts.fwatten.fowdweft(new datawecowd) { (w, ( ͡o ω ͡o ) w-w) =>
+      dwmewgew.mewge(w, σωσ w-w)
+      w
     }
 
-  private def dropUnknownFeatures(
-    dataRecordOpt: Option[DataRecord],
-    featureContext: FeatureContext
-  ): Unit =
-    dataRecordOpt.foreach(new RichDataRecord(_, featureContext).dropUnknownFeatures())
+  p-pwivate def dwopunknownfeatuwes(
+    datawecowdopt: option[datawecowd], >w<
+    featuwecontext: featuwecontext
+  ): u-unit =
+    datawecowdopt.foweach(new w-wichdatawecowd(_, 😳😳😳 featuwecontext).dwopunknownfeatuwes())
 
 }

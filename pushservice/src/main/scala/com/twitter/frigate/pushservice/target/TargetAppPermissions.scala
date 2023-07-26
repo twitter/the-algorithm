@@ -1,10 +1,10 @@
-package com.twitter.frigate.pushservice.target
+package com.twittew.fwigate.pushsewvice.tawget
 
-import com.twitter.permissions_storage.thriftscala.AppPermission
-import com.twitter.util.Future
+impowt com.twittew.pewmissions_stowage.thwiftscawa.apppewmission
+i-impowt com.twittew.utiw.futuwe
 
-trait TargetAppPermissions {
+t-twait tawgetapppewmissions {
 
-  def appPermissions: Future[Option[AppPermission]]
+  d-def apppewmissions: f-futuwe[option[apppewmission]]
 
 }

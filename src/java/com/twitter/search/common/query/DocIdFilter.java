@@ -1,74 +1,74 @@
-package com.twitter.search.common.query;
+package com.twittew.seawch.common.quewy;
 
-import java.io.IOException;
-import java.util.Set;
+impowt j-java.io.ioexception;
+i-impowt java.utiw.set;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.ConstantScoreScorer;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+i-impowt o-owg.apache.wucene.index.weafweadewcontext;
+i-impowt o-owg.apache.wucene.index.tewm;
+i-impowt owg.apache.wucene.seawch.constantscowescowew;
+i-impowt owg.apache.wucene.seawch.expwanation;
+impowt owg.apache.wucene.seawch.indexseawchew;
+impowt owg.apache.wucene.seawch.quewy;
+impowt owg.apache.wucene.seawch.scowew;
+i-impowt owg.apache.wucene.seawch.scowemode;
+impowt owg.apache.wucene.seawch.weight;
 
 /**
- * Lucene filter on top of a known docid
+ * w-wucene fiwtew on top o-of a known docid
  *
  */
-public class DocIdFilter extends Query {
-  private final int docid;
+pubwic cwass docidfiwtew extends quewy {
+  p-pwivate finaw int docid;
 
-  public DocIdFilter(int docid) {
+  p-pubwic docidfiwtew(int d-docid) {
     this.docid = docid;
   }
 
-  @Override
-  public Weight createWeight(
-      IndexSearcher searcher, ScoreMode scoreMode, float boost) throws IOException {
-    return new Weight(this) {
-      @Override
-      public void extractTerms(Set<Term> terms) {
+  @ovewwide
+  pubwic weight cweateweight(
+      indexseawchew s-seawchew, ^^ scowemode scowemode, 😳😳😳 fwoat boost) thwows ioexception {
+    w-wetuwn nyew weight(this) {
+      @ovewwide
+      pubwic void extwacttewms(set<tewm> t-tewms) {
       }
 
-      @Override
-      public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-        Scorer scorer = scorer(context);
-        if ((scorer != null) && (scorer.iterator().advance(doc) == doc)) {
-          return Explanation.match(0f, "Match on id " + doc);
+      @ovewwide
+      p-pubwic e-expwanation e-expwain(weafweadewcontext context, mya int doc) thwows i-ioexception {
+        scowew scowew = scowew(context);
+        i-if ((scowew != nyuww) && (scowew.itewatow().advance(doc) == doc)) {
+          wetuwn expwanation.match(0f, 😳 "match on id " + doc);
         }
-        return Explanation.match(0f, "No match on id " + doc);
+        wetuwn expwanation.match(0f, "no match on i-id " + doc);
       }
 
-      @Override
-      public Scorer scorer(LeafReaderContext context) throws IOException {
-        return new ConstantScoreScorer(this, 0.0f, scoreMode, new SingleDocDocIdSetIterator(docid));
+      @ovewwide
+      pubwic s-scowew scowew(weafweadewcontext c-context) thwows i-ioexception {
+        wetuwn new constantscowescowew(this, -.- 0.0f, scowemode, 🥺 n-nyew singwedocdocidsetitewatow(docid));
       }
 
-      @Override
-      public boolean isCacheable(LeafReaderContext ctx) {
-        return true;
+      @ovewwide
+      p-pubwic boowean iscacheabwe(weafweadewcontext c-ctx) {
+        w-wetuwn twue;
       }
     };
   }
 
-  @Override
-  public int hashCode() {
-    return docid;
+  @ovewwide
+  pubwic int hashcode() {
+    w-wetuwn docid;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof DocIdFilter)) {
-      return false;
+  @ovewwide
+  pubwic b-boowean equaws(object obj) {
+    if (!(obj i-instanceof docidfiwtew)) {
+      wetuwn fawse;
     }
 
-    return docid == DocIdFilter.class.cast(obj).docid;
+    w-wetuwn docid == docidfiwtew.cwass.cast(obj).docid;
   }
 
-  @Override
-  public String toString(String field) {
-    return "DOC_ID_FILTER[docId=" + docid + " + ]";
+  @ovewwide
+  p-pubwic stwing tostwing(stwing fiewd) {
+    w-wetuwn "doc_id_fiwtew[docid=" + docid + " + ]";
   }
 }

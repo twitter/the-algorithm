@@ -1,79 +1,79 @@
-package com.twitter.search.common.relevance.features;
+package com.twittew.seawch.common.wewevance.featuwes;
 
-import java.util.Map;
+impowt java.utiw.map;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+i-impowt c-com.googwe.common.cowwect.immutabwemap;
+i-impowt c-com.googwe.common.cowwect.maps;
 
-import com.twitter.common.base.Function;
+i-impowt com.twittew.common.base.function;
 
 /**
- * Class to keep String-Double of term vectors
- * It can calculate magnitude, dot product, and cosine similarity
+ * c-cwass to keep s-stwing-doubwe o-of tewm vectows
+ * it can cawcuwate magnitude, dot pwoduct, (U ﹏ U) and cosine simiwawity
  */
-public class TermVector {
-  private static final double MIN_MAGNITUDE = 0.00001;
-  private final double magnitude;
-  private final ImmutableMap<String, Double> termWeights;
+p-pubwic cwass tewmvectow {
+  pwivate static f-finaw doubwe min_magnitude = 0.00001;
+  pwivate f-finaw doubwe magnitude;
+  pwivate finaw immutabwemap<stwing, 😳 doubwe> tewmweights;
 
-  /** Creates a new TermVector instance. */
-  public TermVector(Map<String, Double> termWeights) {
-    this.termWeights = ImmutableMap.copyOf(termWeights);
-    double sum = 0.0;
-    for (Map.Entry<String, Double> entry : termWeights.entrySet()) {
-      double value = entry.getValue();
-      sum += value * value;
+  /** c-cweates a nyew tewmvectow i-instance. (ˆ ﻌ ˆ)♡ */
+  p-pubwic tewmvectow(map<stwing, 😳😳😳 doubwe> tewmweights) {
+    this.tewmweights = immutabwemap.copyof(tewmweights);
+    doubwe sum = 0.0;
+    f-fow (map.entwy<stwing, (U ﹏ U) doubwe> entwy : tewmweights.entwyset()) {
+      doubwe vawue = entwy.getvawue();
+      s-sum += vawue * vawue;
     }
-    magnitude = Math.sqrt(sum);
+    m-magnitude = m-math.sqwt(sum);
   }
 
-  public ImmutableMap<String, Double> getTermWeights() {
-    return termWeights;
+  p-pubwic i-immutabwemap<stwing, (///ˬ///✿) doubwe> gettewmweights() {
+    w-wetuwn tewmweights;
   }
 
-  public double getMagnitude() {
-    return magnitude;
+  pubwic doubwe getmagnitude() {
+    w-wetuwn magnitude;
   }
 
   /**
-   * Normalize term vector into unit magnitude
-   * @return           the unit normalized TermVector with magnitude equals 1
-   *                   return null if magnitude is very low
+   * nyowmawize tewm vectow into unit magnitude
+   * @wetuwn           the unit nyowmawized tewmvectow w-with magnitude equaws 1
+   *                   w-wetuwn n-nyuww if magnitude i-is vewy wow
    */
-  public TermVector getUnitNormalized() {
-    if (magnitude < MIN_MAGNITUDE) {
-      return null;
+  pubwic tewmvectow getunitnowmawized() {
+    if (magnitude < m-min_magnitude) {
+      w-wetuwn nyuww;
     }
-    return new TermVector(
-        Maps.transformValues(termWeights, (Function<Double, Double>) weight -> weight / magnitude));
+    w-wetuwn nyew tewmvectow(
+        m-maps.twansfowmvawues(tewmweights, (function<doubwe, 😳 doubwe>) weight -> w-weight / magnitude));
   }
 
   /**
-   * Calculate the dot product with another term vector
-   * @param other      the other term vector
-   * @return           the dot product of the two vectors
+   * cawcuwate t-the dot pwoduct with anothew tewm vectow
+   * @pawam o-othew      the othew t-tewm vectow
+   * @wetuwn           the dot pwoduct o-of the two v-vectows
    */
-  public double getDotProduct(TermVector other) {
-    double sum = 0.0;
-    for (Map.Entry<String, Double> entry : termWeights.entrySet()) {
-      Double value2 = other.termWeights.get(entry.getKey());
-      if (value2 != null) {
-        sum += entry.getValue() * value2;
+  pubwic doubwe getdotpwoduct(tewmvectow othew) {
+    doubwe sum = 0.0;
+    fow (map.entwy<stwing, 😳 doubwe> entwy : tewmweights.entwyset()) {
+      d-doubwe vawue2 = o-othew.tewmweights.get(entwy.getkey());
+      if (vawue2 != nyuww) {
+        s-sum += e-entwy.getvawue() * v-vawue2;
       }
     }
-    return sum;
+    wetuwn sum;
   }
 
   /**
-   * Calculate the cosine similarity of with another term vector
-   * @param other     the other term vector
-   * @return          the cosine similarity.
-   *                  if either has very small magnitude, it returns 0 (dotProduct close to 0)
+   * cawcuwate the cosine s-simiwawity of with anothew tewm vectow
+   * @pawam othew     the othew tewm vectow
+   * @wetuwn          t-the cosine simiwawity. σωσ
+   *                  i-if eithew h-has vewy smow m-magnitude, rawr x3 it wetuwns 0 (dotpwoduct cwose to 0)
    */
-  public double getCosineSimilarity(TermVector other) {
-    if (magnitude < MIN_MAGNITUDE || other.magnitude < MIN_MAGNITUDE) {
-      return 0;
+  p-pubwic d-doubwe getcosinesimiwawity(tewmvectow o-othew) {
+    i-if (magnitude < min_magnitude || othew.magnitude < m-min_magnitude) {
+      w-wetuwn 0;
     }
-    return getDotProduct(other) / (magnitude * other.magnitude);
+    w-wetuwn getdotpwoduct(othew) / (magnitude * o-othew.magnitude);
   }
 }

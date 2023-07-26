@@ -1,16 +1,16 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import javax.inject.Inject;
+impowt j-javax.inject.inject;
 
-import com.twitter.finagle.Service;
-import com.twitter.search.common.root.SearchRootServer;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
+i-impowt com.twittew.finagwe.sewvice;
+i-impowt c-com.twittew.seawch.common.woot.seawchwootsewvew;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdsewvice;
 
-public class FullArchiveRootServer extends SearchRootServer<EarlybirdService.ServiceIface> {
+p-pubwic cwass fuwwawchivewootsewvew e-extends seawchwootsewvew<eawwybiwdsewvice.sewviceiface> {
 
-  @Inject
-  public FullArchiveRootServer(FullArchiveRootService svc, Service<byte[], byte[]> byteSvc) {
-    super(svc, byteSvc);
+  @inject
+  p-pubwic fuwwawchivewootsewvew(fuwwawchivewootsewvice svc, σωσ sewvice<byte[], σωσ byte[]> bytesvc) {
+    supew(svc, >_< b-bytesvc);
   }
 
 }

@@ -1,96 +1,96 @@
-package com.twitter.simclusters_v2.scalding.offline_job
+package com.twittew.simcwustews_v2.scawding.offwine_job
 
-import com.twitter.algebird.{DecayedValueMonoid, Monoid, OptionMonoid}
-import com.twitter.algebird_internal.thriftscala.{DecayedValue => ThriftDecayedValue}
-import com.twitter.scalding.{TypedPipe, _}
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{Timestamp, TweetId, UserId}
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.summingbird.common.{Configs, ThriftDecayedValueMonoid}
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.timelineservice.thriftscala.{ContextualizedFavoriteEvent, FavoriteEventUnion}
-import java.util.TimeZone
-import twadoop_config.configuration.log_categories.group.timeline.TimelineServiceFavoritesScalaDataset
+impowt com.twittew.awgebiwd.{decayedvawuemonoid, >w< m-monoid, (U ﹏ U) o-optionmonoid}
+impowt c-com.twittew.awgebiwd_intewnaw.thwiftscawa.{decayedvawue => t-thwiftdecayedvawue}
+i-impowt com.twittew.scawding.{typedpipe, 😳 _}
+i-impowt com.twittew.scawding_intewnaw.dawv2.daw
+impowt c-com.twittew.scawding_intewnaw.dawv2.wemote_access.{expwicitwocation, (ˆ ﻌ ˆ)♡ p-pwocatwa}
+impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.simcwustews_v2.common.{timestamp, tweetid, 😳😳😳 usewid}
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces._
+impowt com.twittew.simcwustews_v2.summingbiwd.common.{configs, (U ﹏ U) thwiftdecayedvawuemonoid}
+i-impowt com.twittew.simcwustews_v2.thwiftscawa._
+i-impowt com.twittew.timewinesewvice.thwiftscawa.{contextuawizedfavowiteevent, (///ˬ///✿) favowiteeventunion}
+impowt j-java.utiw.timezone
+impowt twadoop_config.configuwation.wog_categowies.gwoup.timewine.timewinesewvicefavowitesscawadataset
 
-object SimClustersOfflineJobUtil {
+o-object s-simcwustewsoffwinejobutiw {
 
-  implicit val timeZone: TimeZone = DateOps.UTC
-  implicit val dateParser: DateParser = DateParser.default
+  impwicit vaw timezone: timezone = dateops.utc
+  impwicit vaw d-datepawsew: datepawsew = datepawsew.defauwt
 
-  implicit val modelVersionOrdering: Ordering[PersistedModelVersion] =
-    Ordering.by(_.value)
+  impwicit vaw modewvewsionowdewing: owdewing[pewsistedmodewvewsion] =
+    owdewing.by(_.vawue)
 
-  implicit val scoreTypeOrdering: Ordering[PersistedScoreType] =
-    Ordering.by(_.value)
+  i-impwicit vaw scowetypeowdewing: owdewing[pewsistedscowetype] =
+    o-owdewing.by(_.vawue)
 
-  implicit val persistedScoresOrdering: Ordering[PersistedScores] = Ordering.by(
-    _.score.map(_.value).getOrElse(0.0)
+  i-impwicit v-vaw pewsistedscowesowdewing: o-owdewing[pewsistedscowes] = owdewing.by(
+    _.scowe.map(_.vawue).getowewse(0.0)
   )
 
-  implicit val decayedValueMonoid: DecayedValueMonoid = DecayedValueMonoid(0.0)
+  impwicit v-vaw decayedvawuemonoid: decayedvawuemonoid = decayedvawuemonoid(0.0)
 
-  implicit val thriftDecayedValueMonoid: ThriftDecayedValueMonoid =
-    new ThriftDecayedValueMonoid(Configs.HalfLifeInMs)(decayedValueMonoid)
+  i-impwicit vaw thwiftdecayedvawuemonoid: thwiftdecayedvawuemonoid =
+    nyew thwiftdecayedvawuemonoid(configs.hawfwifeinms)(decayedvawuemonoid)
 
-  implicit val persistedScoresMonoid: PersistedScoresMonoid =
-    new PersistedScoresMonoid()(thriftDecayedValueMonoid)
+  impwicit vaw pewsistedscowesmonoid: p-pewsistedscowesmonoid =
+    nyew p-pewsistedscowesmonoid()(thwiftdecayedvawuemonoid)
 
-  def readInterestedInScalaDataset(
-    implicit dateRange: DateRange
-  ): TypedPipe[(Long, ClustersUserIsInterestedIn)] = {
-    //read SimClusters InterestedIn datasets
-    DAL
-      .readMostRecentSnapshot(
-        SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
-        dateRange.embiggen(Days(30))
+  d-def weadintewestedinscawadataset(
+    i-impwicit datewange: datewange
+  ): typedpipe[(wong, 😳 cwustewsusewisintewestedin)] = {
+    //wead s-simcwustews i-intewestedin datasets
+    d-daw
+      .weadmostwecentsnapshot(
+        s-simcwustewsv2intewestedin20m145kupdatedscawadataset, 😳
+        datewange.embiggen(days(30))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe
       .map {
-        case KeyVal(key, value) => (key, value)
+        case k-keyvaw(key, σωσ vawue) => (key, rawr x3 v-vawue)
       }
   }
 
-  def readTimelineFavoriteData(
-    implicit dateRange: DateRange
-  ): TypedPipe[(UserId, TweetId, Timestamp)] = {
-    DAL
-      .read(TimelineServiceFavoritesScalaDataset, dateRange) // Note: this is a hourly source
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
-      .flatMap { cfe: ContextualizedFavoriteEvent =>
+  def weadtimewinefavowitedata(
+    impwicit d-datewange: datewange
+  ): typedpipe[(usewid, t-tweetid, OwO timestamp)] = {
+    d-daw
+      .wead(timewinesewvicefavowitesscawadataset, /(^•ω•^) d-datewange) // nyote: this is a houwwy souwce
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe
+      .fwatmap { cfe: contextuawizedfavowiteevent =>
         cfe.event match {
-          case FavoriteEventUnion.Favorite(fav) =>
-            Some((fav.userId, fav.tweetId, fav.eventTimeMs))
-          case _ =>
-            None
+          case favowiteeventunion.favowite(fav) =>
+            s-some((fav.usewid, 😳😳😳 f-fav.tweetid, ( ͡o ω ͡o ) fav.eventtimems))
+          c-case _ =>
+            n-nyone
         }
 
       }
   }
 
-  class PersistedScoresMonoid(
-    implicit thriftDecayedValueMonoid: ThriftDecayedValueMonoid)
-      extends Monoid[PersistedScores] {
+  c-cwass pewsistedscowesmonoid(
+    impwicit thwiftdecayedvawuemonoid: thwiftdecayedvawuemonoid)
+      e-extends monoid[pewsistedscowes] {
 
-    private val optionalThriftDecayedValueMonoid =
-      new OptionMonoid[ThriftDecayedValue]()
+    pwivate vaw optionawthwiftdecayedvawuemonoid =
+      nyew optionmonoid[thwiftdecayedvawue]()
 
-    override val zero: PersistedScores = PersistedScores()
+    ovewwide vaw z-zewo: pewsistedscowes = pewsistedscowes()
 
-    override def plus(x: PersistedScores, y: PersistedScores): PersistedScores = {
-      PersistedScores(
-        optionalThriftDecayedValueMonoid.plus(
-          x.score,
-          y.score
+    o-ovewwide def pwus(x: p-pewsistedscowes, >_< y-y: pewsistedscowes): pewsistedscowes = {
+      p-pewsistedscowes(
+        optionawthwiftdecayedvawuemonoid.pwus(
+          x-x.scowe, >w<
+          y-y.scowe
         )
       )
     }
 
-    def build(value: Double, timeInMs: Double): PersistedScores = {
-      PersistedScores(Some(thriftDecayedValueMonoid.build(value, timeInMs)))
+    d-def buiwd(vawue: doubwe, rawr timeinms: doubwe): p-pewsistedscowes = {
+      p-pewsistedscowes(some(thwiftdecayedvawuemonoid.buiwd(vawue, 😳 t-timeinms)))
     }
   }
 

@@ -1,182 +1,182 @@
-package com.twitter.timelines.prediction.common.aggregates.real_time
+package com.twittew.timewines.pwediction.common.aggwegates.weaw_time
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.DefaultStatsReceiver
-import com.twitter.summingbird.Options
-import com.twitter.summingbird.online.option.FlatMapParallelism
-import com.twitter.summingbird.online.option.SourceParallelism
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron._
-import com.twitter.timelines.data_processing.ml_util.transforms.DownsampleTransform
-import com.twitter.timelines.data_processing.ml_util.transforms.RichITransform
-import com.twitter.timelines.data_processing.ml_util.transforms.UserDownsampleTransform
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.stats.defauwtstatsweceivew
+i-impowt com.twittew.summingbiwd.options
+impowt c-com.twittew.summingbiwd.onwine.option.fwatmappawawwewism
+impowt c-com.twittew.summingbiwd.onwine.option.souwcepawawwewism
+i-impowt c-com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.hewon._
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.twansfowms.downsampwetwansfowm
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.twansfowms.wichitwansfowm
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.twansfowms.usewdownsampwetwansfowm
 
-import com.twitter.timelines.prediction.common.aggregates.BCELabelTransformFromUUADataRecord
+impowt com.twittew.timewines.pwediction.common.aggwegates.bcewabewtwansfowmfwomuuadatawecowd
 
 /**
- * Sets up relevant topology parameters. Our primary goal is to handle the
- * LogEvent stream and aggregate (sum) on the parsed DataRecords without falling
- * behind. Our constraint is the resulting write (and read) QPS to the backing
- * memcache store.
+ * sets up wewevant t-topowogy pawametews. 😳 ouw pwimawy goaw is to handwe t-the
+ * wogevent stweam and a-aggwegate (sum) on the pawsed datawecowds without fawwing
+ * behind. (⑅˘꒳˘) o-ouw constwaint is the wesuwting w-wwite (and w-wead) qps to the backing
+ * memcache stowe. 😳😳😳
  *
- * If the job is falling behind, add more flatMappers and/or Summers after
- * inspecting the viz panels for the respective job (go/heron-ui). An increase in
- * Summers (and/or aggregation keys and features in the config) results in an
- * increase in memcache QPS (go/cb and search for our cache). Adjust with CacheSize
- * settings until QPS is well-controlled.
+ * if the job is fawwing behind, 😳 a-add mowe fwatmappews and/ow summews aftew
+ * inspecting the viz panews fow the w-wespective job (go/hewon-ui). XD an i-incwease in
+ * s-summews (and/ow a-aggwegation keys a-and featuwes in the config) wesuwts in an
+ * incwease i-in memcache qps (go/cb and seawch fow ouw c-cache). mya adjust with cachesize
+ * settings untiw qps is weww-contwowwed. ^•ﻌ•^
  *
  */
-object TimelinesRealTimeAggregatesJobConfigs extends RealTimeAggregatesJobConfigs {
-  import TimelinesOnlineAggregationUtils._
+object timewinesweawtimeaggwegatesjobconfigs extends w-weawtimeaggwegatesjobconfigs {
+  impowt timewinesonwineaggwegationutiws._
 
   /**
-   * We remove input records that do not contain a label/engagement as defined in AllTweetLabels, which includes
-   * explicit user engagements including public, private and impression events. By avoiding ingesting records without
-   * engagemnts, we guarantee that no distribution shifts occur in computed aggregate features when we add a new spout
-   * to input aggregate sources. Counterfactual signal is still available since we aggregate on explicit dwell
-   * engagements.
+   * w-we wemove i-input wecowds t-that do nyot contain a wabew/engagement as defined in awwtweetwabews, ʘwʘ w-which incwudes
+   * e-expwicit usew engagements i-incwuding p-pubwic, ( ͡o ω ͡o ) pwivate and impwession e-events. mya by avoiding ingesting wecowds w-without
+   * engagemnts, o.O we guawantee that n-nyo distwibution shifts occuw in c-computed aggwegate featuwes when w-we add a nyew s-spout
+   * to input aggwegate souwces. countewfactuaw signaw is stiww avaiwabwe since we aggwegate on expwicit d-dweww
+   * engagements. (✿oωo)
    */
-  val NegativeDownsampleTransform =
-    DownsampleTransform(
-      negativeSamplingRate = 0.0,
-      keepLabels = AllTweetLabels,
-      positiveSamplingRate = 1.0)
+  v-vaw nyegativedownsampwetwansfowm =
+    downsampwetwansfowm(
+      n-nyegativesampwingwate = 0.0, :3
+      k-keepwabews = a-awwtweetwabews, 😳
+      positivesampwingwate = 1.0)
 
   /**
-   * We downsample positive engagements for devel topology to reduce traffic, aiming for equivalent of 10% of prod traffic.
-   * First apply consistent downsampling to 10% of users, and then apply downsampling to remove records without
-   * explicit labels. We apply user-consistent sampling to more closely approximate prod query patterns.
+   * we downsampwe positive engagements f-fow devew topowogy to weduce twaffic, (U ﹏ U) aiming fow equivawent of 10% of pwod twaffic. mya
+   * f-fiwst appwy consistent d-downsampwing t-to 10% of usews, (U ᵕ U❁) a-and then appwy downsampwing to w-wemove wecowds without
+   * e-expwicit w-wabews. :3 we a-appwy usew-consistent sampwing to mowe cwosewy appwoximate p-pwod q-quewy pattewns. mya
    */
-  val StagingUserBasedDownsampleTransform =
-    UserDownsampleTransform(
-      availability = 1000,
-      featureName = "rta_devel"
+  v-vaw stagingusewbaseddownsampwetwansfowm =
+    u-usewdownsampwetwansfowm(
+      a-avaiwabiwity = 1000, OwO
+      featuwename = "wta_devew"
     )
 
-  override val Prod = RealTimeAggregatesJobConfig(
-    appId = "summingbird_timelines_rta",
-    topologyWorkers = 1450,
-    sourceCount = 120,
-    flatMapCount = 1800,
-    summerCount = 3850,
-    cacheSize = 200,
-    containerRamGigaBytes = 54,
-    name = "timelines_real_time_aggregates",
-    teamName = "timelines",
-    teamEmail = "",
-    // If one component is hitting GC limit at prod, tune componentToMetaSpaceSizeMap.
-    // Except for Source bolts. Tune componentToRamGigaBytesMap for Source bolts instead.
-    componentToMetaSpaceSizeMap = Map(
-      "Tail-FlatMap" -> "-XX:MaxMetaspaceSize=1024M -XX:MetaspaceSize=1024M",
-      "Tail" -> "-XX:MaxMetaspaceSize=2560M -XX:MetaspaceSize=2560M"
+  ovewwide vaw pwod = weawtimeaggwegatesjobconfig(
+    a-appid = "summingbiwd_timewines_wta", (ˆ ﻌ ˆ)♡
+    topowogywowkews = 1450, ʘwʘ
+    souwcecount = 120,
+    fwatmapcount = 1800, o.O
+    summewcount = 3850, UwU
+    cachesize = 200, rawr x3
+    c-containewwamgigabytes = 54, 🥺
+    nyame = "timewines_weaw_time_aggwegates", :3
+    teamname = "timewines", (ꈍᴗꈍ)
+    teamemaiw = "", 🥺
+    // i-if one c-component is hitting g-gc wimit at pwod, (✿oωo) tune componenttometaspacesizemap. (U ﹏ U)
+    // e-except fow souwce bowts. :3 tune c-componenttowamgigabytesmap f-fow souwce bowts instead. ^^;;
+    componenttometaspacesizemap = map(
+      "taiw-fwatmap" -> "-xx:maxmetaspacesize=1024m -xx:metaspacesize=1024m", rawr
+      "taiw" -> "-xx:maxmetaspacesize=2560m -xx:metaspacesize=2560m"
+    ), 😳😳😳
+    // if eithew component i-is hitting memowy wimit at pwod
+    // i-its memowy nyeed to incwease: e-eithew incwease t-totaw memowy of containew (containewwamgigabytes), (✿oωo)
+    // ow awwocate mowe m-memowy fow one c-component whiwe keeping totaw memowy u-unchanged. OwO
+    c-componenttowamgigabytesmap = map(
+      "taiw-fwatmap-souwce" -> 3, ʘwʘ // home souwce
+      "taiw-fwatmap-souwce.2" -> 3, (ˆ ﻌ ˆ)♡ // pwofiwe s-souwce
+      "taiw-fwatmap-souwce.3" -> 3, (U ﹏ U) // s-seawch souwce
+      "taiw-fwatmap-souwce.4" -> 3, UwU // u-uua souwce
+      "taiw-fwatmap" -> 8
+      // taiw wiww u-use the weftovew m-memowy in the containew. XD
+      // m-make suwe to tune topowogywowkews and containewwamgigabytes such that this is gweatew than 10 g-gb. ʘwʘ
     ),
-    // If either component is hitting memory limit at prod
-    // its memory need to increase: either increase total memory of container (containerRamGigaBytes),
-    // or allocate more memory for one component while keeping total memory unchanged.
-    componentToRamGigaBytesMap = Map(
-      "Tail-FlatMap-Source" -> 3, // Home source
-      "Tail-FlatMap-Source.2" -> 3, // Profile source
-      "Tail-FlatMap-Source.3" -> 3, // Search source
-      "Tail-FlatMap-Source.4" -> 3, // UUA source
-      "Tail-FlatMap" -> 8
-      // Tail will use the leftover memory in the container.
-      // Make sure to tune topologyWorkers and containerRamGigaBytes such that this is greater than 10 GB.
-    ),
-    topologyNamedOptions = Map(
-      "TL_EVENTS_SOURCE" -> Options()
-        .set(SourceParallelism(120)),
-      "PROFILE_EVENTS_SOURCE" -> Options()
-        .set(SourceParallelism(30)),
-      "SEARCH_EVENTS_SOURCE" -> Options()
-        .set(SourceParallelism(10)),
-      "UUA_EVENTS_SOURCE" -> Options()
-        .set(SourceParallelism(10)),
-      "COMBINED_PRODUCER" -> Options()
-        .set(FlatMapParallelism(1800))
-    ),
-    // The UUA datarecord for BCE events inputted will not have binary labels populated.
-    // BCELabelTransform will set the datarecord with binary BCE dwell labels features based on the corresponding dwell_time_ms.
-    // It's important to have the BCELabelTransformFromUUADataRecord before ProdNegativeDownsampleTransform
-    // because ProdNegativeDownsampleTransform will remove datarecord that contains no features from AllTweetLabels.
-    onlinePreTransforms =
-      Seq(RichITransform(BCELabelTransformFromUUADataRecord), NegativeDownsampleTransform)
+    t-topowogynamedoptions = map(
+      "tw_events_souwce" -> options()
+        .set(souwcepawawwewism(120)), rawr x3
+      "pwofiwe_events_souwce" -> o-options()
+        .set(souwcepawawwewism(30)), ^^;;
+      "seawch_events_souwce" -> o-options()
+        .set(souwcepawawwewism(10)), ʘwʘ
+      "uua_events_souwce" -> options()
+        .set(souwcepawawwewism(10)), (U ﹏ U)
+      "combined_pwoducew" -> options()
+        .set(fwatmappawawwewism(1800))
+    ), (˘ω˘)
+    // the uua datawecowd f-fow bce events inputted wiww nyot have binawy wabews popuwated. (ꈍᴗꈍ)
+    // bcewabewtwansfowm w-wiww set the datawecowd with binawy b-bce dweww wabews f-featuwes based on the cowwesponding dweww_time_ms. /(^•ω•^)
+    // it's i-impowtant to have t-the bcewabewtwansfowmfwomuuadatawecowd befowe pwodnegativedownsampwetwansfowm
+    // because pwodnegativedownsampwetwansfowm wiww w-wemove datawecowd that contains n-nyo featuwes fwom awwtweetwabews. >_<
+    onwinepwetwansfowms =
+      seq(wichitwansfowm(bcewabewtwansfowmfwomuuadatawecowd), n-nyegativedownsampwetwansfowm)
   )
 
   /**
-   * we downsample 10% computation of devel RTA based on [[StagingNegativeDownsampleTransform]].
-   * To better test scalability of topology, we reduce computing resource of components "Tail-FlatMap"
-   * and "Tail" to be 10% of prod but keep computing resource of component "Tail-FlatMap-Source" unchanged.
-   * hence flatMapCount=110, summerCount=105 and sourceCount=100. Hence topologyWorkers =(110+105+100)/5 = 63.
+   * we downsampwe 10% c-computation o-of devew wta based on [[stagingnegativedownsampwetwansfowm]].
+   * t-to bettew test scawabiwity o-of topowogy, σωσ w-we weduce computing w-wesouwce of components "taiw-fwatmap"
+   * a-and "taiw" to b-be 10% of pwod but keep computing wesouwce of c-component "taiw-fwatmap-souwce" u-unchanged. ^^;;
+   * h-hence fwatmapcount=110, 😳 summewcount=105 and souwcecount=100. >_< h-hence topowogywowkews =(110+105+100)/5 = 63. -.-
    */
-  override val Devel = RealTimeAggregatesJobConfig(
-    appId = "summingbird_timelines_rta_devel",
-    topologyWorkers = 120,
-    sourceCount = 120,
-    flatMapCount = 150,
-    summerCount = 300,
-    cacheSize = 200,
-    containerRamGigaBytes = 54,
-    name = "timelines_real_time_aggregates_devel",
-    teamName = "timelines",
-    teamEmail = "",
-    // If one component is hitting GC limit at prod, tune componentToMetaSpaceSizeMap
-    // Except for Source bolts. Tune componentToRamGigaBytesMap for Source bolts instead.
-    componentToMetaSpaceSizeMap = Map(
-      "Tail-FlatMap" -> "-XX:MaxMetaspaceSize=1024M -XX:MetaspaceSize=1024M",
-      "Tail" -> "-XX:MaxMetaspaceSize=2560M -XX:MetaspaceSize=2560M"
-    ),
-    // If either component is hitting memory limit at prod
-    // its memory need to increase: either increase total memory of container (containerRamGigaBytes),
-    // or allocate more memory for one component while keeping total memory unchanged.
-    componentToRamGigaBytesMap = Map(
-      "Tail-FlatMap-Source" -> 3, // Home source
-      "Tail-FlatMap-Source.2" -> 3, // Profile source
-      "Tail-FlatMap-Source.3" -> 3, // Search source
-      "Tail-FlatMap-Source.4" -> 3, // UUA source
-      "Tail-FlatMap" -> 8
-      // Tail will use the leftover memory in the container.
-      // Make sure to tune topologyWorkers and containerRamGigaBytes such that this is greater than 10 GB.
-    ),
-    topologyNamedOptions = Map(
-      "TL_EVENTS_SOURCE" -> Options()
-        .set(SourceParallelism(120)),
-      "PROFILE_EVENTS_SOURCE" -> Options()
-        .set(SourceParallelism(30)),
-      "SEARCH_EVENTS_SOURCE" -> Options()
-        .set(SourceParallelism(10)),
-      "UUA_EVENTS_SOURCE" -> Options()
-        .set(SourceParallelism(10)),
-      "COMBINED_PRODUCER" -> Options()
-        .set(FlatMapParallelism(150))
-    ),
-    // It's important to have the BCELabelTransformFromUUADataRecord before ProdNegativeDownsampleTransform
-    onlinePreTransforms = Seq(
-      StagingUserBasedDownsampleTransform,
-      RichITransform(BCELabelTransformFromUUADataRecord),
-      NegativeDownsampleTransform),
-    enableUserReindexingNighthawkBtreeStore = true,
-    enableUserReindexingNighthawkHashStore = true,
-    userReindexingNighthawkBtreeStoreConfig = NighthawkUnderlyingStoreConfig(
-      serversetPath =
-        "/twitter/service/cache-user/test/nighthawk_timelines_real_time_aggregates_btree_test_api",
-      // NOTE: table names are prefixed to every pkey so keep it short
-      tableName = "u_r_v1", // (u)ser_(r)eindexing_v1
-      // keep ttl <= 1 day because it's keyed on user, and we will have limited hit rates beyond 1 day
-      cacheTTL = 1.day
-    ),
-    userReindexingNighthawkHashStoreConfig = NighthawkUnderlyingStoreConfig(
-      // For prod: "/s/cache-user/nighthawk_timelines_real_time_aggregates_hash_api",
-      serversetPath =
-        "/twitter/service/cache-user/test/nighthawk_timelines_real_time_aggregates_hash_test_api",
-      // NOTE: table names are prefixed to every pkey so keep it short
-      tableName = "u_r_v1", // (u)ser_(r)eindexing_v1
-      // keep ttl <= 1 day because it's keyed on user, and we will have limited hit rates beyond 1 day
-      cacheTTL = 1.day
+  o-ovewwide vaw devew = w-weawtimeaggwegatesjobconfig(
+    appid = "summingbiwd_timewines_wta_devew", UwU
+    topowogywowkews = 120, :3
+    souwcecount = 120, σωσ
+    f-fwatmapcount = 150, >w<
+    s-summewcount = 300, (ˆ ﻌ ˆ)♡
+    c-cachesize = 200, ʘwʘ
+    c-containewwamgigabytes = 54, :3
+    nyame = "timewines_weaw_time_aggwegates_devew", (˘ω˘)
+    t-teamname = "timewines", 😳😳😳
+    teamemaiw = "", rawr x3
+    // if one component is hitting gc wimit at pwod, (✿oωo) tune componenttometaspacesizemap
+    // e-except fow souwce bowts. (ˆ ﻌ ˆ)♡ t-tune componenttowamgigabytesmap fow souwce bowts i-instead. :3
+    componenttometaspacesizemap = map(
+      "taiw-fwatmap" -> "-xx:maxmetaspacesize=1024m -xx:metaspacesize=1024m", (U ᵕ U❁)
+      "taiw" -> "-xx:maxmetaspacesize=2560m -xx:metaspacesize=2560m"
+    ), ^^;;
+    // i-if eithew component is hitting m-memowy wimit a-at pwod
+    // i-its memowy nyeed t-to incwease: eithew i-incwease totaw memowy of containew (containewwamgigabytes), mya
+    // ow awwocate mowe memowy fow one component whiwe keeping totaw memowy unchanged. 😳😳😳
+    c-componenttowamgigabytesmap = m-map(
+      "taiw-fwatmap-souwce" -> 3, // h-home souwce
+      "taiw-fwatmap-souwce.2" -> 3, OwO // pwofiwe souwce
+      "taiw-fwatmap-souwce.3" -> 3, rawr // s-seawch souwce
+      "taiw-fwatmap-souwce.4" -> 3, XD // uua souwce
+      "taiw-fwatmap" -> 8
+      // taiw wiww use the w-weftovew memowy i-in the containew. (U ﹏ U)
+      // make s-suwe to tune topowogywowkews and containewwamgigabytes s-such that t-this is gweatew than 10 gb. (˘ω˘)
+    ), UwU
+    t-topowogynamedoptions = m-map(
+      "tw_events_souwce" -> options()
+        .set(souwcepawawwewism(120)), >_<
+      "pwofiwe_events_souwce" -> options()
+        .set(souwcepawawwewism(30)), σωσ
+      "seawch_events_souwce" -> options()
+        .set(souwcepawawwewism(10)), 🥺
+      "uua_events_souwce" -> options()
+        .set(souwcepawawwewism(10)), 🥺
+      "combined_pwoducew" -> o-options()
+        .set(fwatmappawawwewism(150))
+    ), ʘwʘ
+    // i-it's impowtant t-to have the b-bcewabewtwansfowmfwomuuadatawecowd b-befowe pwodnegativedownsampwetwansfowm
+    onwinepwetwansfowms = s-seq(
+      s-stagingusewbaseddownsampwetwansfowm, :3
+      wichitwansfowm(bcewabewtwansfowmfwomuuadatawecowd),
+      n-nyegativedownsampwetwansfowm), (U ﹏ U)
+    e-enabweusewweindexingnighthawkbtweestowe = twue, (U ﹏ U)
+    enabweusewweindexingnighthawkhashstowe = t-twue, ʘwʘ
+    usewweindexingnighthawkbtweestoweconfig = nyighthawkundewwyingstoweconfig(
+      s-sewvewsetpath =
+        "/twittew/sewvice/cache-usew/test/nighthawk_timewines_weaw_time_aggwegates_btwee_test_api", >w<
+      // nyote: t-tabwe nyames a-awe pwefixed to evewy pkey so k-keep it showt
+      tabwename = "u_w_v1", rawr x3 // (u)sew_(w)eindexing_v1
+      // keep t-ttw <= 1 day because i-it's keyed o-on usew, OwO and we wiww have wimited hit wates beyond 1 day
+      c-cachettw = 1.day
+    ), ^•ﻌ•^
+    usewweindexingnighthawkhashstoweconfig = nyighthawkundewwyingstoweconfig(
+      // f-fow pwod: "/s/cache-usew/nighthawk_timewines_weaw_time_aggwegates_hash_api", >_<
+      s-sewvewsetpath =
+        "/twittew/sewvice/cache-usew/test/nighthawk_timewines_weaw_time_aggwegates_hash_test_api",
+      // nyote: tabwe nyames a-awe pwefixed to evewy pkey so k-keep it showt
+      t-tabwename = "u_w_v1", OwO // (u)sew_(w)eindexing_v1
+      // keep ttw <= 1 day b-because it's keyed on usew, >_< and we wiww have wimited h-hit wates beyond 1 d-day
+      cachettw = 1.day
     )
   )
 }
 
-object TimelinesRealTimeAggregatesJob extends RealTimeAggregatesJobBase {
-  override lazy val statsReceiver = DefaultStatsReceiver.scope("timelines_real_time_aggregates")
-  override lazy val jobConfigs = TimelinesRealTimeAggregatesJobConfigs
-  override lazy val aggregatesToCompute = TimelinesOnlineAggregationConfig.AggregatesToCompute
+o-object timewinesweawtimeaggwegatesjob extends weawtimeaggwegatesjobbase {
+  o-ovewwide w-wazy vaw statsweceivew = d-defauwtstatsweceivew.scope("timewines_weaw_time_aggwegates")
+  ovewwide wazy vaw jobconfigs = timewinesweawtimeaggwegatesjobconfigs
+  ovewwide wazy vaw aggwegatestocompute = timewinesonwineaggwegationconfig.aggwegatestocompute
 }

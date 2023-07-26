@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.candidate_sources.socialgraph
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.sociawgwaph
 
-import com.twitter.timelines.configapi.FSParam
+impowt com.twittew.timewines.configapi.fspawam
 
-object RecentFollowingRecentFollowingExpansionSourceParams {
-  object CallSgsCachedColumn
-      extends FSParam[Boolean](
-        "recent_following_recent_following_source_call_sgs_cached_column",
-        true)
+o-object wecentfowwowingwecentfowwowingexpansionsouwcepawams {
+  object c-cawwsgscachedcowumn
+      e-extends fspawam[boowean](
+        "wecent_fowwowing_wecent_fowwowing_souwce_caww_sgs_cached_cowumn", 🥺
+        t-twue)
 }

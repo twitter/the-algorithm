@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.clients.geoduck
+package com.twittew.fowwow_wecommendations.common.cwients.geoduck
 
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.common.clients.common.BaseClientModule
-import com.twitter.geoduck.thriftscala.LocationService
+impowt com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwscwient
+impowt c-com.twittew.fowwow_wecommendations.common.cwients.common.basecwientmoduwe
+i-impowt com.twittew.geoduck.thwiftscawa.wocationsewvice
 
-object LocationServiceModule
-    extends BaseClientModule[LocationService.MethodPerEndpoint]
-    with MtlsClient {
-  override val label = "geoduck_locationservice"
-  override val dest = "/s/geo/geoduck_locationservice"
+o-object wocationsewvicemoduwe
+    e-extends b-basecwientmoduwe[wocationsewvice.methodpewendpoint]
+    w-with mtwscwient {
+  o-ovewwide v-vaw wabew = "geoduck_wocationsewvice"
+  ovewwide vaw dest = "/s/geo/geoduck_wocationsewvice"
 }

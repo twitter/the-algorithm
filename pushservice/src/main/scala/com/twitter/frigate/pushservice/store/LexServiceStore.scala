@@ -1,25 +1,25 @@
-package com.twitter.frigate.pushservice.store
+package com.twittew.fwigate.pushsewvice.stowe
 
-import com.twitter.livevideo.common.ids.EventId
-import com.twitter.livevideo.timeline.client.v2.LiveVideoTimelineClient
-import com.twitter.livevideo.timeline.domain.v2.Event
-import com.twitter.livevideo.timeline.domain.v2.LookupContext
-import com.twitter.stitch.storehaus.ReadableStoreOfStitch
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.storehaus.ReadableStore
+impowt c-com.twittew.wivevideo.common.ids.eventid
+i-impowt c-com.twittew.wivevideo.timewine.cwient.v2.wivevideotimewinecwient
+i-impowt com.twittew.wivevideo.timewine.domain.v2.event
+i-impowt c-com.twittew.wivevideo.timewine.domain.v2.wookupcontext
+i-impowt c-com.twittew.stitch.stowehaus.weadabwestoweofstitch
+impowt com.twittew.stitch.notfound
+impowt com.twittew.stitch.stitch
+impowt com.twittew.stowehaus.weadabwestowe
 
-case class EventRequest(eventId: Long, lookupContext: LookupContext = LookupContext.default)
+case cwass eventwequest(eventid: w-wong, :3 wookupcontext: wookupcontext = wookupcontext.defauwt)
 
-object LexServiceStore {
-  def apply(
-    liveVideoTimelineClient: LiveVideoTimelineClient
-  ): ReadableStore[EventRequest, Event] = {
-    ReadableStoreOfStitch { eventRequest =>
-      liveVideoTimelineClient.getEvent(
-        EventId(eventRequest.eventId),
-        eventRequest.lookupContext) rescue {
-        case NotFound => Stitch.NotFound
+o-object wexsewvicestowe {
+  def a-appwy(
+    wivevideotimewinecwient: wivevideotimewinecwient
+  ): weadabwestowe[eventwequest, 😳😳😳 event] = {
+    w-weadabwestoweofstitch { eventwequest =>
+      w-wivevideotimewinecwient.getevent(
+        e-eventid(eventwequest.eventid),
+        eventwequest.wookupcontext) wescue {
+        case nyotfound => stitch.notfound
       }
     }
   }

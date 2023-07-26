@@ -1,188 +1,188 @@
-package com.twitter.cr_mixer.module
+package com.twittew.cw_mixew.moduwe
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.EarlybirdClientId
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.FacetsToFetch
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.GetCollectorTerminationParams
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.GetEarlybirdQuery
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.MetadataOptions
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.SeqLongInjection
-import com.twitter.hashing.KeyHasher
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.search.common.query.thriftjava.thriftscala.CollectorParams
-import com.twitter.search.earlybird.thriftscala.EarlybirdRequest
-import com.twitter.search.earlybird.thriftscala.EarlybirdResponseCode
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.search.earlybird.thriftscala.ThriftSearchQuery
-import com.twitter.search.earlybird.thriftscala.ThriftSearchRankingMode
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import javax.inject.Named
+impowt com.googwe.inject.pwovides
+i-impowt com.googwe.inject.singweton
+i-impowt c-com.twittew.cw_mixew.config.timeoutconfig
+i-impowt c-com.twittew.cw_mixew.modew.moduwenames
+i-impowt com.twittew.cw_mixew.utiw.eawwybiwdseawchutiw.eawwybiwdcwientid
+impowt c-com.twittew.cw_mixew.utiw.eawwybiwdseawchutiw.facetstofetch
+i-impowt com.twittew.cw_mixew.utiw.eawwybiwdseawchutiw.getcowwectowtewminationpawams
+impowt com.twittew.cw_mixew.utiw.eawwybiwdseawchutiw.geteawwybiwdquewy
+impowt com.twittew.cw_mixew.utiw.eawwybiwdseawchutiw.metadataoptions
+impowt com.twittew.finagwe.memcached.{cwient => m-memcachedcwient}
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.fwigate.common.utiw.seqwonginjection
+i-impowt com.twittew.hashing.keyhashew
+i-impowt com.twittew.hewmit.stowe.common.obsewvedmemcachedweadabwestowe
+impowt com.twittew.inject.twittewmoduwe
+impowt c-com.twittew.seawch.common.quewy.thwiftjava.thwiftscawa.cowwectowpawams
+impowt c-com.twittew.seawch.eawwybiwd.thwiftscawa.eawwybiwdwequest
+i-impowt com.twittew.seawch.eawwybiwd.thwiftscawa.eawwybiwdwesponsecode
+impowt com.twittew.seawch.eawwybiwd.thwiftscawa.eawwybiwdsewvice
+impowt com.twittew.seawch.eawwybiwd.thwiftscawa.thwiftseawchquewy
+impowt com.twittew.seawch.eawwybiwd.thwiftscawa.thwiftseawchwankingmode
+i-impowt com.twittew.simcwustews_v2.common.tweetid
+impowt com.twittew.simcwustews_v2.common.usewid
+impowt c-com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.utiw.duwation
+i-impowt c-com.twittew.utiw.futuwe
+i-impowt javax.inject.named
 
-object EarlybirdRecencyBasedCandidateStoreModule extends TwitterModule {
+o-object eawwybiwdwecencybasedcandidatestowemoduwe extends twittewmoduwe {
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.EarlybirdRecencyBasedWithoutRetweetsRepliesTweetsCache)
-  def providesEarlybirdRecencyBasedWithoutRetweetsRepliesCandidateStore(
-    statsReceiver: StatsReceiver,
-    earlybirdSearchClient: EarlybirdService.MethodPerEndpoint,
-    @Named(ModuleNames.EarlybirdTweetsCache) earlybirdRecencyBasedTweetsCache: MemcachedClient,
-    timeoutConfig: TimeoutConfig
-  ): ReadableStore[UserId, Seq[TweetId]] = {
-    val stats = statsReceiver.scope("EarlybirdRecencyBasedWithoutRetweetsRepliesCandidateStore")
-    val underlyingStore = new ReadableStore[UserId, Seq[TweetId]] {
-      override def get(userId: UserId): Future[Option[Seq[TweetId]]] = {
-        // Home based EB filters out retweets and replies
-        val earlybirdRequest =
-          buildEarlybirdRequest(
-            userId,
-            FilterOutRetweetsAndReplies,
-            DefaultMaxNumTweetPerUser,
-            timeoutConfig.earlybirdServerTimeout)
-        getEarlybirdSearchResult(earlybirdSearchClient, earlybirdRequest, stats)
+  @pwovides
+  @singweton
+  @named(moduwenames.eawwybiwdwecencybasedwithoutwetweetswepwiestweetscache)
+  def pwovideseawwybiwdwecencybasedwithoutwetweetswepwiescandidatestowe(
+    s-statsweceivew: statsweceivew, OwO
+    eawwybiwdseawchcwient: eawwybiwdsewvice.methodpewendpoint, 😳😳😳
+    @named(moduwenames.eawwybiwdtweetscache) e-eawwybiwdwecencybasedtweetscache: memcachedcwient, (ˆ ﻌ ˆ)♡
+    timeoutconfig: timeoutconfig
+  ): weadabwestowe[usewid, XD seq[tweetid]] = {
+    vaw s-stats = statsweceivew.scope("eawwybiwdwecencybasedwithoutwetweetswepwiescandidatestowe")
+    vaw undewwyingstowe = n-nyew weadabwestowe[usewid, (ˆ ﻌ ˆ)♡ s-seq[tweetid]] {
+      o-ovewwide def get(usewid: usewid): futuwe[option[seq[tweetid]]] = {
+        // home based e-eb fiwtews out wetweets a-and wepwies
+        vaw e-eawwybiwdwequest =
+          b-buiwdeawwybiwdwequest(
+            usewid, ( ͡o ω ͡o )
+            f-fiwtewoutwetweetsandwepwies, rawr x3
+            defauwtmaxnumtweetpewusew, nyaa~~
+            t-timeoutconfig.eawwybiwdsewvewtimeout)
+        geteawwybiwdseawchwesuwt(eawwybiwdseawchcwient, >_< eawwybiwdwequest, ^^;; s-stats)
       }
     }
-    ObservedMemcachedReadableStore.fromCacheClient(
-      backingStore = underlyingStore,
-      cacheClient = earlybirdRecencyBasedTweetsCache,
-      ttl = MemcacheKeyTimeToLiveDuration,
-      asyncUpdate = true
+    obsewvedmemcachedweadabwestowe.fwomcachecwient(
+      b-backingstowe = undewwyingstowe, (ˆ ﻌ ˆ)♡
+      c-cachecwient = e-eawwybiwdwecencybasedtweetscache, ^^;;
+      ttw = memcachekeytimetowiveduwation, (⑅˘꒳˘)
+      asyncupdate = twue
     )(
-      valueInjection = SeqLongInjection,
-      statsReceiver = statsReceiver.scope("earlybird_recency_based_tweets_home_memcache"),
-      keyToString = { k =>
-        f"uEBRBHM:${keyHasher.hashKey(k.toString.getBytes)}%X" // prefix = EarlyBirdRecencyBasedHoMe
+      vawueinjection = seqwonginjection, rawr x3
+      statsweceivew = s-statsweceivew.scope("eawwybiwd_wecency_based_tweets_home_memcache"), (///ˬ///✿)
+      k-keytostwing = { k =>
+        f-f"uebwbhm:${keyhashew.hashkey(k.tostwing.getbytes)}%x" // p-pwefix = eawwybiwdwecencybasedhome
       }
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.EarlybirdRecencyBasedWithRetweetsRepliesTweetsCache)
-  def providesEarlybirdRecencyBasedWithRetweetsRepliesCandidateStore(
-    statsReceiver: StatsReceiver,
-    earlybirdSearchClient: EarlybirdService.MethodPerEndpoint,
-    @Named(ModuleNames.EarlybirdTweetsCache) earlybirdRecencyBasedTweetsCache: MemcachedClient,
-    timeoutConfig: TimeoutConfig
-  ): ReadableStore[UserId, Seq[TweetId]] = {
-    val stats = statsReceiver.scope("EarlybirdRecencyBasedWithRetweetsRepliesCandidateStore")
-    val underlyingStore = new ReadableStore[UserId, Seq[TweetId]] {
-      override def get(userId: UserId): Future[Option[Seq[TweetId]]] = {
-        val earlybirdRequest = buildEarlybirdRequest(
-          userId,
-          // Notifications based EB keeps retweets and replies
-          NotFilterOutRetweetsAndReplies,
-          DefaultMaxNumTweetPerUser,
-          processingTimeout = timeoutConfig.earlybirdServerTimeout
+  @pwovides
+  @singweton
+  @named(moduwenames.eawwybiwdwecencybasedwithwetweetswepwiestweetscache)
+  d-def pwovideseawwybiwdwecencybasedwithwetweetswepwiescandidatestowe(
+    statsweceivew: statsweceivew, 🥺
+    eawwybiwdseawchcwient: e-eawwybiwdsewvice.methodpewendpoint, >_<
+    @named(moduwenames.eawwybiwdtweetscache) eawwybiwdwecencybasedtweetscache: memcachedcwient, UwU
+    timeoutconfig: timeoutconfig
+  ): w-weadabwestowe[usewid, >_< seq[tweetid]] = {
+    v-vaw stats = s-statsweceivew.scope("eawwybiwdwecencybasedwithwetweetswepwiescandidatestowe")
+    v-vaw undewwyingstowe = nyew w-weadabwestowe[usewid, -.- s-seq[tweetid]] {
+      o-ovewwide d-def get(usewid: usewid): futuwe[option[seq[tweetid]]] = {
+        vaw eawwybiwdwequest = b-buiwdeawwybiwdwequest(
+          usewid, mya
+          // n-nyotifications b-based eb keeps w-wetweets and wepwies
+          n-nyotfiwtewoutwetweetsandwepwies,
+          defauwtmaxnumtweetpewusew, >w<
+          pwocessingtimeout = timeoutconfig.eawwybiwdsewvewtimeout
         )
-        getEarlybirdSearchResult(earlybirdSearchClient, earlybirdRequest, stats)
+        g-geteawwybiwdseawchwesuwt(eawwybiwdseawchcwient, (U ﹏ U) eawwybiwdwequest, 😳😳😳 stats)
       }
     }
-    ObservedMemcachedReadableStore.fromCacheClient(
-      backingStore = underlyingStore,
-      cacheClient = earlybirdRecencyBasedTweetsCache,
-      ttl = MemcacheKeyTimeToLiveDuration,
-      asyncUpdate = true
+    obsewvedmemcachedweadabwestowe.fwomcachecwient(
+      backingstowe = undewwyingstowe, o.O
+      c-cachecwient = eawwybiwdwecencybasedtweetscache, òωó
+      ttw = memcachekeytimetowiveduwation,
+      asyncupdate = t-twue
     )(
-      valueInjection = SeqLongInjection,
-      statsReceiver = statsReceiver.scope("earlybird_recency_based_tweets_notifications_memcache"),
-      keyToString = { k =>
-        f"uEBRBN:${keyHasher.hashKey(k.toString.getBytes)}%X" // prefix = EarlyBirdRecencyBasedNotifications
+      v-vawueinjection = s-seqwonginjection, 😳😳😳
+      statsweceivew = s-statsweceivew.scope("eawwybiwd_wecency_based_tweets_notifications_memcache"), σωσ
+      keytostwing = { k-k =>
+        f"uebwbn:${keyhashew.hashkey(k.tostwing.getbytes)}%x" // p-pwefix = eawwybiwdwecencybasednotifications
       }
     )
   }
 
-  private val keyHasher: KeyHasher = KeyHasher.FNV1A_64
+  pwivate vaw keyhashew: keyhashew = keyhashew.fnv1a_64
 
   /**
-   * Note the DefaultMaxNumTweetPerUser is used to adjust the result size per cache entry.
-   * If the value changes, it will increase the size of the memcache.
+   * nyote t-the defauwtmaxnumtweetpewusew is u-used to adjust the wesuwt size p-pew cache entwy. (⑅˘꒳˘)
+   * i-if the vawue changes, (///ˬ///✿) it wiww incwease the s-size of the memcache. 🥺
    */
-  private val DefaultMaxNumTweetPerUser: Int = 100
-  private val FilterOutRetweetsAndReplies = true
-  private val NotFilterOutRetweetsAndReplies = false
-  private val MemcacheKeyTimeToLiveDuration: Duration = Duration.fromMinutes(15)
+  pwivate v-vaw defauwtmaxnumtweetpewusew: int = 100
+  p-pwivate vaw fiwtewoutwetweetsandwepwies = t-twue
+  pwivate vaw nyotfiwtewoutwetweetsandwepwies = fawse
+  pwivate vaw memcachekeytimetowiveduwation: duwation = duwation.fwomminutes(15)
 
-  private def buildEarlybirdRequest(
-    seedUserId: UserId,
-    filterOutRetweetsAndReplies: Boolean,
-    maxNumTweetsPerSeedUser: Int,
-    processingTimeout: Duration
-  ): EarlybirdRequest =
-    EarlybirdRequest(
-      searchQuery = getThriftSearchQuery(
-        seedUserId = seedUserId,
-        filterOutRetweetsAndReplies = filterOutRetweetsAndReplies,
-        maxNumTweetsPerSeedUser = maxNumTweetsPerSeedUser,
-        processingTimeout = processingTimeout
-      ),
-      clientId = Some(EarlybirdClientId),
-      timeoutMs = processingTimeout.inMilliseconds.intValue(),
-      getOlderResults = Some(false),
-      adjustedProtectedRequestParams = None,
-      adjustedFullArchiveRequestParams = None,
-      getProtectedTweetsOnly = Some(false),
-      skipVeryRecentTweets = true,
+  p-pwivate d-def buiwdeawwybiwdwequest(
+    s-seedusewid: usewid, OwO
+    fiwtewoutwetweetsandwepwies: b-boowean, >w<
+    m-maxnumtweetspewseedusew: int, 🥺
+    p-pwocessingtimeout: duwation
+  ): eawwybiwdwequest =
+    eawwybiwdwequest(
+      seawchquewy = g-getthwiftseawchquewy(
+        s-seedusewid = seedusewid, nyaa~~
+        fiwtewoutwetweetsandwepwies = fiwtewoutwetweetsandwepwies, ^^
+        m-maxnumtweetspewseedusew = m-maxnumtweetspewseedusew, >w<
+        pwocessingtimeout = pwocessingtimeout
+      ), OwO
+      cwientid = s-some(eawwybiwdcwientid), XD
+      timeoutms = pwocessingtimeout.inmiwwiseconds.intvawue(), ^^;;
+      getowdewwesuwts = some(fawse), 🥺
+      adjustedpwotectedwequestpawams = none, XD
+      a-adjustedfuwwawchivewequestpawams = nyone, (U ᵕ U❁)
+      getpwotectedtweetsonwy = s-some(fawse), :3
+      s-skipvewywecenttweets = twue, ( ͡o ω ͡o )
     )
 
-  private def getThriftSearchQuery(
-    seedUserId: UserId,
-    filterOutRetweetsAndReplies: Boolean,
-    maxNumTweetsPerSeedUser: Int,
-    processingTimeout: Duration
-  ): ThriftSearchQuery = ThriftSearchQuery(
-    serializedQuery = GetEarlybirdQuery(
-      None,
-      None,
-      Set.empty,
-      filterOutRetweetsAndReplies
-    ).map(_.serialize),
-    fromUserIDFilter64 = Some(Seq(seedUserId)),
-    numResults = maxNumTweetsPerSeedUser,
-    rankingMode = ThriftSearchRankingMode.Recency,
-    collectorParams = Some(
-      CollectorParams(
-        // numResultsToReturn defines how many results each EB shard will return to search root
-        numResultsToReturn = maxNumTweetsPerSeedUser,
-        // terminationParams.maxHitsToProcess is used for early terminating per shard results fetching.
-        terminationParams =
-          GetCollectorTerminationParams(maxNumTweetsPerSeedUser, processingTimeout)
-      )),
-    facetFieldNames = Some(FacetsToFetch),
-    resultMetadataOptions = Some(MetadataOptions),
-    searchStatusIds = None
+  pwivate def getthwiftseawchquewy(
+    seedusewid: u-usewid, òωó
+    f-fiwtewoutwetweetsandwepwies: boowean, σωσ
+    maxnumtweetspewseedusew: int, (U ᵕ U❁)
+    pwocessingtimeout: d-duwation
+  ): thwiftseawchquewy = thwiftseawchquewy(
+    s-sewiawizedquewy = geteawwybiwdquewy(
+      nyone, (✿oωo)
+      nyone, ^^
+      set.empty, ^•ﻌ•^
+      fiwtewoutwetweetsandwepwies
+    ).map(_.sewiawize), XD
+    f-fwomusewidfiwtew64 = some(seq(seedusewid)), :3
+    n-nyumwesuwts = m-maxnumtweetspewseedusew, (ꈍᴗꈍ)
+    wankingmode = t-thwiftseawchwankingmode.wecency, :3
+    cowwectowpawams = s-some(
+      c-cowwectowpawams(
+        // nyumwesuwtstowetuwn d-defines how many wesuwts each e-eb shawd wiww wetuwn t-to seawch woot
+        nyumwesuwtstowetuwn = maxnumtweetspewseedusew,
+        // t-tewminationpawams.maxhitstopwocess i-is used f-fow eawwy tewminating pew shawd wesuwts fetching. (U ﹏ U)
+        t-tewminationpawams =
+          getcowwectowtewminationpawams(maxnumtweetspewseedusew, UwU p-pwocessingtimeout)
+      )), 😳😳😳
+    f-facetfiewdnames = some(facetstofetch), XD
+    wesuwtmetadataoptions = some(metadataoptions), o.O
+    s-seawchstatusids = n-nyone
   )
 
-  private def getEarlybirdSearchResult(
-    earlybirdSearchClient: EarlybirdService.MethodPerEndpoint,
-    request: EarlybirdRequest,
-    statsReceiver: StatsReceiver
-  ): Future[Option[Seq[TweetId]]] = earlybirdSearchClient
-    .search(request)
-    .map { response =>
-      response.responseCode match {
-        case EarlybirdResponseCode.Success =>
-          val earlybirdSearchResult =
-            response.searchResults
+  pwivate d-def geteawwybiwdseawchwesuwt(
+    e-eawwybiwdseawchcwient: eawwybiwdsewvice.methodpewendpoint, (⑅˘꒳˘)
+    w-wequest: eawwybiwdwequest, 😳😳😳
+    statsweceivew: statsweceivew
+  ): futuwe[option[seq[tweetid]]] = eawwybiwdseawchcwient
+    .seawch(wequest)
+    .map { w-wesponse =>
+      wesponse.wesponsecode m-match {
+        case eawwybiwdwesponsecode.success =>
+          v-vaw eawwybiwdseawchwesuwt =
+            wesponse.seawchwesuwts
               .map {
-                _.results
-                  .map(searchResult => searchResult.id)
+                _.wesuwts
+                  .map(seawchwesuwt => s-seawchwesuwt.id)
               }
-          statsReceiver.scope("result").stat("size").add(earlybirdSearchResult.size)
-          earlybirdSearchResult
-        case e =>
-          statsReceiver.scope("failures").counter(e.getClass.getSimpleName).incr()
-          Some(Seq.empty)
+          statsweceivew.scope("wesuwt").stat("size").add(eawwybiwdseawchwesuwt.size)
+          e-eawwybiwdseawchwesuwt
+        c-case e =>
+          s-statsweceivew.scope("faiwuwes").countew(e.getcwass.getsimpwename).incw()
+          s-some(seq.empty)
       }
     }
 

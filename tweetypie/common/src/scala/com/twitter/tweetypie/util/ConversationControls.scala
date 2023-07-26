@@ -1,112 +1,112 @@
-package com.twitter.tweetypie
-package util
+package com.twittew.tweetypie
+package u-utiw
 
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.tweetypie.thwiftscawa._
 
-object ConversationControls {
-  object Create {
-    def byInvitation(
-      inviteViaMention: Option[Boolean] = None
-    ): TweetCreateConversationControl.ByInvitation = TweetCreateConversationControl.ByInvitation(
-      TweetCreateConversationControlByInvitation(inviteViaMention = inviteViaMention)
+o-object convewsationcontwows {
+  o-object cweate {
+    d-def byinvitation(
+      i-inviteviamention: o-option[boowean] = n-nyone
+    ): tweetcweateconvewsationcontwow.byinvitation = tweetcweateconvewsationcontwow.byinvitation(
+      tweetcweateconvewsationcontwowbyinvitation(inviteviamention = inviteviamention)
     )
 
-    def community(
-      inviteViaMention: Option[Boolean] = None
-    ): TweetCreateConversationControl.Community = TweetCreateConversationControl.Community(
-      TweetCreateConversationControlCommunity(inviteViaMention = inviteViaMention)
+    d-def community(
+      inviteviamention: option[boowean] = n-nyone
+    ): tweetcweateconvewsationcontwow.community = t-tweetcweateconvewsationcontwow.community(
+      tweetcweateconvewsationcontwowcommunity(inviteviamention = inviteviamention)
     )
 
-    def followers(
-      inviteViaMention: Option[Boolean] = None
-    ): TweetCreateConversationControl.Followers = TweetCreateConversationControl.Followers(
-      TweetCreateConversationControlFollowers(inviteViaMention = inviteViaMention)
+    def fowwowews(
+      i-inviteviamention: option[boowean] = n-nyone
+    ): tweetcweateconvewsationcontwow.fowwowews = t-tweetcweateconvewsationcontwow.fowwowews(
+      tweetcweateconvewsationcontwowfowwowews(inviteviamention = inviteviamention)
     )
   }
 
-  object Scenario {
-    case class CommonScenario(
-      createConversationControl: TweetCreateConversationControl,
-      descriptionSuffix: String,
-      expectedConversationControl: (UserId, Seq[UserId]) => ConversationControl,
-      inviteViaMention: Option[Boolean])
+  object scenawio {
+    case cwass c-commonscenawio(
+      cweateconvewsationcontwow: tweetcweateconvewsationcontwow, (ꈍᴗꈍ)
+      descwiptionsuffix: stwing, 😳
+      expectedconvewsationcontwow: (usewid, 😳😳😳 s-seq[usewid]) => convewsationcontwow, mya
+      i-inviteviamention: o-option[boowean])
 
-    def mkCommunityScenario(inviteViaMention: Option[Boolean]): CommonScenario =
-      CommonScenario(
-        Create.community(inviteViaMention = inviteViaMention),
-        "community",
-        expectedConversationControl = (authorId, userIds) => {
-          community(userIds, authorId, inviteViaMention)
-        },
-        inviteViaMention
+    d-def mkcommunityscenawio(inviteviamention: o-option[boowean]): commonscenawio =
+      commonscenawio(
+        c-cweate.community(inviteviamention = inviteviamention), mya
+        "community", (⑅˘꒳˘)
+        expectedconvewsationcontwow = (authowid, (U ﹏ U) u-usewids) => {
+          community(usewids, mya authowid, inviteviamention)
+        }, ʘwʘ
+        inviteviamention
       )
 
-    def mkByInvitationScenario(inviteViaMention: Option[Boolean]): CommonScenario =
-      CommonScenario(
-        Create.byInvitation(inviteViaMention = inviteViaMention),
-        "invited users",
-        expectedConversationControl = (authorId, userIds) => {
-          byInvitation(userIds, authorId, inviteViaMention)
-        },
-        inviteViaMention
+    def mkbyinvitationscenawio(inviteviamention: o-option[boowean]): commonscenawio =
+      c-commonscenawio(
+        c-cweate.byinvitation(inviteviamention = i-inviteviamention), (˘ω˘)
+        "invited usews", (U ﹏ U)
+        expectedconvewsationcontwow = (authowid, ^•ﻌ•^ usewids) => {
+          byinvitation(usewids, (˘ω˘) authowid, :3 i-inviteviamention)
+        }, ^^;;
+        i-inviteviamention
       )
 
-    def mkFollowersScenario(inviteViaMention: Option[Boolean]): CommonScenario =
-      CommonScenario(
-        Create.followers(inviteViaMention = inviteViaMention),
-        "followers",
-        expectedConversationControl = (authorId, userIds) => {
-          followers(userIds, authorId, inviteViaMention)
-        },
-        inviteViaMention
+    def mkfowwowewsscenawio(inviteviamention: o-option[boowean]): commonscenawio =
+      c-commonscenawio(
+        cweate.fowwowews(inviteviamention = i-inviteviamention), 🥺
+        "fowwowews", (⑅˘꒳˘)
+        expectedconvewsationcontwow = (authowid, nyaa~~ u-usewids) => {
+          fowwowews(usewids, :3 authowid, i-inviteviamention)
+        }, ( ͡o ω ͡o )
+        inviteviamention
       )
 
-    val communityScenario = mkCommunityScenario(None)
-    val communityInviteViaMentionScenario = mkCommunityScenario(Some(true))
+    v-vaw communityscenawio = mkcommunityscenawio(none)
+    v-vaw communityinviteviamentionscenawio = m-mkcommunityscenawio(some(twue))
 
-    val byInvitationScenario = mkByInvitationScenario(None)
-    val byInvitationInviteViaMentionScenario = mkByInvitationScenario(Some(true))
+    vaw byinvitationscenawio = mkbyinvitationscenawio(none)
+    vaw byinvitationinviteviamentionscenawio = mkbyinvitationscenawio(some(twue))
 
-    val followersScenario = mkFollowersScenario(None)
-    val followersInviteViaMentionScenario = mkFollowersScenario(Some(true))
+    vaw fowwowewsscenawio = mkfowwowewsscenawio(none)
+    v-vaw fowwowewsinviteviamentionscenawio = m-mkfowwowewsscenawio(some(twue))
   }
 
-  def byInvitation(
-    invitedUserIds: Seq[UserId],
-    conversationTweetAuthorId: UserId,
-    inviteViaMention: Option[Boolean] = None
-  ): ConversationControl =
-    ConversationControl.ByInvitation(
-      ConversationControlByInvitation(
-        conversationTweetAuthorId = conversationTweetAuthorId,
-        invitedUserIds = invitedUserIds,
-        inviteViaMention = inviteViaMention
+  def byinvitation(
+    i-invitedusewids: s-seq[usewid], mya
+    c-convewsationtweetauthowid: usewid, (///ˬ///✿)
+    inviteviamention: option[boowean] = n-nyone
+  ): convewsationcontwow =
+    convewsationcontwow.byinvitation(
+      convewsationcontwowbyinvitation(
+        convewsationtweetauthowid = c-convewsationtweetauthowid, (˘ω˘)
+        invitedusewids = i-invitedusewids, ^^;;
+        i-inviteviamention = i-inviteviamention
       )
     )
 
   def community(
-    invitedUserIds: Seq[UserId],
-    conversationTweetAuthorId: UserId,
-    inviteViaMention: Option[Boolean] = None
-  ): ConversationControl =
-    ConversationControl.Community(
-      ConversationControlCommunity(
-        conversationTweetAuthorId = conversationTweetAuthorId,
-        invitedUserIds = invitedUserIds,
-        inviteViaMention = inviteViaMention
+    i-invitedusewids: s-seq[usewid], (✿oωo)
+    c-convewsationtweetauthowid: u-usewid, (U ﹏ U)
+    inviteviamention: option[boowean] = n-nyone
+  ): c-convewsationcontwow =
+    c-convewsationcontwow.community(
+      c-convewsationcontwowcommunity(
+        c-convewsationtweetauthowid = convewsationtweetauthowid, -.-
+        invitedusewids = invitedusewids, ^•ﻌ•^
+        i-inviteviamention = inviteviamention
       )
     )
 
-  def followers(
-    invitedUserIds: Seq[UserId],
-    conversationTweetAuthorId: UserId,
-    inviteViaMention: Option[Boolean] = None
-  ): ConversationControl =
-    ConversationControl.Followers(
-      ConversationControlFollowers(
-        conversationTweetAuthorId = conversationTweetAuthorId,
-        invitedUserIds = invitedUserIds,
-        inviteViaMention = inviteViaMention
+  def fowwowews(
+    invitedusewids: seq[usewid], rawr
+    convewsationtweetauthowid: usewid, (˘ω˘)
+    i-inviteviamention: option[boowean] = nyone
+  ): convewsationcontwow =
+    convewsationcontwow.fowwowews(
+      c-convewsationcontwowfowwowews(
+        c-convewsationtweetauthowid = c-convewsationtweetauthowid, nyaa~~
+        invitedusewids = i-invitedusewids, UwU
+        inviteviamention = i-inviteviamention
       )
     )
 }

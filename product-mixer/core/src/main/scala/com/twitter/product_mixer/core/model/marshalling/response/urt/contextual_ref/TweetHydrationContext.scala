@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.contextuaw_wef
 
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.SafetyLevel
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.wtf.safety_wevew.safetywevew
 
-case class TweetHydrationContext(
-  safetyLevelOverride: Option[SafetyLevel],
-  outerTweetContext: Option[OuterTweetContext])
+c-case cwass tweethydwationcontext(
+  s-safetywevewuvwwide: o-option[safetywevew], òωó
+  o-outewtweetcontext: o-option[outewtweetcontext])

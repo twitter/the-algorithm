@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source.strato
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.stwato
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.cwient.fetchew
 
 /**
- * A [[CandidateSource]] for getting Candidates from Strato where the
- * Strato column's View is [[StratoView]] and the Value is a Seq of [[StratoResult]]
+ * a-a [[candidatesouwce]] f-fow getting c-candidates fwom s-stwato whewe t-the
+ * stwato cowumn's v-view is [[stwatoview]] and the vawue is a seq of [[stwatowesuwt]]
  *
- * @tparam StratoKey the column's Key type
- * @tparam StratoView the column's View type
- * @tparam StratoResult the column's Value's Seq type
+ * @tpawam stwatokey the cowumn's key t-type
+ * @tpawam stwatoview the cowumn's view t-type
+ * @tpawam stwatowesuwt the c-cowumn's vawue's seq type
  */
-trait StratoKeyViewFetcherSeqSource[StratoKey, StratoView, StratoResult]
-    extends CandidateSource[StratoKeyView[StratoKey, StratoView], StratoResult] {
+twait stwatokeyviewfetchewseqsouwce[stwatokey, >_< stwatoview, s-stwatowesuwt]
+    extends c-candidatesouwce[stwatokeyview[stwatokey, rawr x3 s-stwatoview], mya stwatowesuwt] {
 
-  val fetcher: Fetcher[StratoKey, StratoView, Seq[StratoResult]]
+  vaw fetchew: fetchew[stwatokey, nyaa~~ stwatoview, (⑅˘꒳˘) s-seq[stwatowesuwt]]
 
-  override def apply(
-    request: StratoKeyView[StratoKey, StratoView]
-  ): Stitch[Seq[StratoResult]] = {
-    fetcher
-      .fetch(request.key, request.view)
-      .map { result =>
-        result.v
-          .getOrElse(Seq.empty)
-      }.rescue(StratoErrCategorizer.CategorizeStratoException)
+  ovewwide def appwy(
+    wequest: stwatokeyview[stwatokey, rawr x3 stwatoview]
+  ): s-stitch[seq[stwatowesuwt]] = {
+    fetchew
+      .fetch(wequest.key, (✿oωo) w-wequest.view)
+      .map { w-wesuwt =>
+        w-wesuwt.v
+          .getowewse(seq.empty)
+      }.wescue(stwatoewwcategowizew.categowizestwatoexception)
   }
 }

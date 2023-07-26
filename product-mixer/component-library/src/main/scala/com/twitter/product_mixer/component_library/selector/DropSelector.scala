@@ -1,111 +1,111 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.component_library.model.candidate.CursorCandidate
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import scala.collection.mutable
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.cuwsowcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awwpipewines
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.itemcandidatewithdetaiws
+i-impowt s-scawa.cowwection.mutabwe
 
-private[selector] object DropSelector {
+pwivate[sewectow] o-object dwopsewectow {
 
   /**
-   * Identify and merge duplicates using the supplied key extraction and merger functions. By default
-   * this will keep only the first instance of a candidate in the `candidate` as determined by comparing
-   * the contained candidate ID and class type. Subsequent matching instances will be dropped. For
-   * more details, see DropSelector#dropDuplicates.
+   * identify and mewge dupwicates using the suppwied key extwaction a-and mewgew functions. >w< by defauwt
+   * this wiww k-keep onwy the fiwst instance o-of a candidate in the `candidate` as detewmined by compawing
+   * t-the contained candidate id and c-cwass type. 😳😳😳 subsequent m-matching instances wiww be dwopped. OwO fow
+   * mowe detaiws, 😳 see dwopsewectow#dwopdupwicates.
    *
-   * @note [[com.twitter.product_mixer.component_library.model.candidate.CursorCandidate]] are ignored.
-   * @note [[com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails]] are ignored.
+   * @note [[com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.cuwsowcandidate]] a-awe ignowed. 😳😳😳
+   * @note [[com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.moduwecandidatewithdetaiws]] awe ignowed. (˘ω˘)
    *
-   * @param candidates which may have elements to drop
-   * @param duplicationKey how to generate a key for a candidate for identifying duplicates
-   * @param mergeStrategy how to merge two candidates with the same key (by default pick the first one)
+   * @pawam candidates which may have ewements to dwop
+   * @pawam d-dupwicationkey how to genewate a-a key fow a-a candidate fow i-identifying dupwicates
+   * @pawam m-mewgestwategy how to mewge two candidates with t-the same key (by defauwt pick the fiwst one)
    */
-  def dropDuplicates[Candidate <: CandidateWithDetails, Key](
-    pipelineScope: CandidateScope,
-    candidates: Seq[Candidate],
-    duplicationKey: DeduplicationKey[Key],
-    mergeStrategy: CandidateMergeStrategy
-  ): Seq[Candidate] = {
-    val seenCandidatePositions = mutable.HashMap[Key, Int]()
-    // We assume that, most of the time, most candidates aren't duplicates so the result Seq will be
-    // approximately the size of the candidates Seq.
-    val deduplicatedCandidates = new mutable.ArrayBuffer[Candidate](candidates.length)
+  d-def dwopdupwicates[candidate <: candidatewithdetaiws, ʘwʘ key](
+    pipewinescope: candidatescope, ( ͡o ω ͡o )
+    candidates: seq[candidate], o.O
+    d-dupwicationkey: dedupwicationkey[key], >w<
+    m-mewgestwategy: c-candidatemewgestwategy
+  ): s-seq[candidate] = {
+    vaw seencandidatepositions = mutabwe.hashmap[key, 😳 int]()
+    // w-we assume t-that, 🥺 most of the time, rawr x3 most c-candidates awen't d-dupwicates so the wesuwt seq wiww b-be
+    // appwoximatewy the s-size of the candidates seq. o.O
+    vaw dedupwicatedcandidates = n-nyew mutabwe.awwaybuffew[candidate](candidates.wength)
 
-    for (candidate <- candidates) {
-      candidate match {
+    f-fow (candidate <- candidates) {
+      candidate m-match {
 
-        // candidate is from one of the Pipelines the selector applies to and is not a CursorCandidate
-        case item: ItemCandidateWithDetails
-            if pipelineScope.contains(item) &&
-              !item.candidate.isInstanceOf[CursorCandidate] =>
-          val key = duplicationKey(item)
+        // c-candidate is fwom one of the pipewines the sewectow appwies to and is nyot a cuwsowcandidate
+        case item: itemcandidatewithdetaiws
+            i-if pipewinescope.contains(item) &&
+              !item.candidate.isinstanceof[cuwsowcandidate] =>
+          v-vaw key = dupwicationkey(item)
 
-          // Perform a merge if the candidate has been seen already
-          if (seenCandidatePositions.contains(key)) {
-            val candidateIndex = seenCandidatePositions(key)
+          // p-pewfowm a-a mewge if the c-candidate has been seen awweady
+          if (seencandidatepositions.contains(key)) {
+            vaw candidateindex = s-seencandidatepositions(key)
 
-            // Safe because only ItemCandidateWithDetails are added to seenCandidatePositions so
-            // seenCandidatePositions(key) *must* point to an ItemCandidateWithDetails
-            val originalCandidate =
-              deduplicatedCandidates(candidateIndex).asInstanceOf[ItemCandidateWithDetails]
+            // safe because onwy itemcandidatewithdetaiws awe added to seencandidatepositions so
+            // s-seencandidatepositions(key) *must* point to a-an itemcandidatewithdetaiws
+            v-vaw owiginawcandidate =
+              d-dedupwicatedcandidates(candidateindex).asinstanceof[itemcandidatewithdetaiws]
 
-            deduplicatedCandidates.update(
-              candidateIndex,
-              mergeStrategy(originalCandidate, item).asInstanceOf[Candidate])
-          } else {
-            // Otherwise add a new entry to the list of kept candidates and update our map to track
-            // the new index
-            deduplicatedCandidates.append(item.asInstanceOf[Candidate])
-            seenCandidatePositions.update(key, deduplicatedCandidates.length - 1)
+            dedupwicatedcandidates.update(
+              c-candidateindex, rawr
+              m-mewgestwategy(owiginawcandidate, ʘwʘ i-item).asinstanceof[candidate])
+          } e-ewse {
+            // othewwise add a nyew entwy t-to the wist of k-kept candidates a-and update ouw m-map to twack
+            // t-the nyew index
+            dedupwicatedcandidates.append(item.asinstanceof[candidate])
+            seencandidatepositions.update(key, 😳😳😳 d-dedupwicatedcandidates.wength - 1)
           }
-        case item => deduplicatedCandidates.append(item)
+        case item => dedupwicatedcandidates.append(item)
       }
     }
 
-    deduplicatedCandidates
+    dedupwicatedcandidates
   }
 
   /**
-   * Takes `candidates` from all [[CandidateWithDetails.source]]s but only `candidates` in the provided
-   * `pipelineScope` are counted towards the `max` non-cursor candidates are included.
+   * takes `candidates` fwom aww [[candidatewithdetaiws.souwce]]s b-but onwy `candidates` in the pwovided
+   * `pipewinescope` awe counted towawds t-the `max` nyon-cuwsow c-candidates a-awe incwuded. ^^;;
    *
-   * @param max the maximum number of non-cursor candidates from the provided `pipelineScope` to return
-   * @param candidates a sequence of candidates which may have elements dropped
-   * @param pipelineScope the scope of which `candidates` should count towards the `max`
+   * @pawam max the maximum n-nyumbew of nyon-cuwsow candidates f-fwom the pwovided `pipewinescope` t-to wetuwn
+   * @pawam candidates a sequence of candidates which may have ewements dwopped
+   * @pawam p-pipewinescope the scope o-of which `candidates` shouwd c-count towawds the `max`
    */
-  def takeUntil[Candidate <: CandidateWithDetails](
-    max: Int,
-    candidates: Seq[Candidate],
-    pipelineScope: CandidateScope = AllPipelines
-  ): Seq[Candidate] = {
-    val resultsBuilder = Seq.newBuilder[Candidate]
-    resultsBuilder.sizeHint(candidates)
+  d-def takeuntiw[candidate <: candidatewithdetaiws](
+    max: int, o.O
+    c-candidates: s-seq[candidate], (///ˬ///✿)
+    pipewinescope: c-candidatescope = a-awwpipewines
+  ): seq[candidate] = {
+    vaw wesuwtsbuiwdew = seq.newbuiwdew[candidate]
+    w-wesuwtsbuiwdew.sizehint(candidates)
 
-    candidates.foldLeft(0) {
-      case (
-            count,
-            candidate @ ItemCandidateWithDetails(_: CursorCandidate, _, _)
+    c-candidates.fowdweft(0) {
+      c-case (
+            count, σωσ
+            c-candidate @ i-itemcandidatewithdetaiws(_: cuwsowcandidate, nyaa~~ _, ^^;; _)
           ) =>
-        // keep cursors, not included in the `count`
-        resultsBuilder += candidate.asInstanceOf[Candidate]
+        // k-keep cuwsows, ^•ﻌ•^ nyot incwuded in the `count`
+        wesuwtsbuiwdew += candidate.asinstanceof[candidate]
+        c-count
+
+      c-case (count, σωσ candidate) if !pipewinescope.contains(candidate) =>
+        // keep candidates that d-don't match t-the pwovided `pipewinescope`, nyot incwuded in the `count`
+        wesuwtsbuiwdew += c-candidate
         count
 
-      case (count, candidate) if !pipelineScope.contains(candidate) =>
-        // keep candidates that don't match the provided `pipelineScope`, not included in the `count`
-        resultsBuilder += candidate
-        count
-
-      case (count, candidate) if count < max =>
-        // keep candidates if theres space and increment the `count`
-        resultsBuilder += candidate
+      case (count, -.- candidate) if count < max =>
+        // k-keep candidates if thewes space and incwement t-the `count`
+        w-wesuwtsbuiwdew += candidate
         count + 1
 
-      case (dropCurrentCandidate, _) =>
-        // drop non-cursor candidate because theres no space left
-        dropCurrentCandidate
+      case (dwopcuwwentcandidate, ^^;; _) =>
+        // dwop n-nyon-cuwsow candidate b-because thewes nyo space weft
+        dwopcuwwentcandidate
     }
-    resultsBuilder.result()
+    wesuwtsbuiwdew.wesuwt()
   }
 }

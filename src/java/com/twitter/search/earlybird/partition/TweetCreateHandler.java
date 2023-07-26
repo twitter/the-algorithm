@@ -1,526 +1,526 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.io.IOException;
-import java.util.Iterator;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.itewatow;
 
-import scala.runtime.BoxedUnit;
+i-impowt scawa.wuntime.boxedunit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
-import com.google.common.base.Verify;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
+i-impowt c-com.googwe.common.base.stopwatch;
+impowt com.googwe.common.base.vewify;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.util.GCUtil;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.common.CaughtUpMonitor;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.OutOfOrderRealtimeTweetIDMapper;
-import com.twitter.search.earlybird.querycache.QueryCacheManager;
-import com.twitter.search.earlybird.util.CoordinatedEarlybirdActionInterface;
-import com.twitter.util.Await;
-import com.twitter.util.Duration;
-import com.twitter.util.Future;
-import com.twitter.util.TimeoutException;
+i-impowt com.twittew.seawch.common.config.config;
+impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.metwics.seawchwonggauge;
+i-impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt com.twittew.seawch.common.metwics.seawchtimew;
+impowt com.twittew.seawch.common.pawtitioning.snowfwakepawsew.snowfwakeidpawsew;
+impowt c-com.twittew.seawch.common.utiw.gcutiw;
+impowt com.twittew.seawch.eawwybiwd.eawwybiwdstatus;
+i-impowt c-com.twittew.seawch.eawwybiwd.common.caughtupmonitow;
+impowt com.twittew.seawch.eawwybiwd.exception.cwiticawexceptionhandwew;
+impowt com.twittew.seawch.eawwybiwd.index.outofowdewweawtimetweetidmappew;
+impowt com.twittew.seawch.eawwybiwd.quewycache.quewycachemanagew;
+i-impowt com.twittew.seawch.eawwybiwd.utiw.coowdinatedeawwybiwdactionintewface;
+impowt com.twittew.utiw.await;
+impowt c-com.twittew.utiw.duwation;
+impowt c-com.twittew.utiw.futuwe;
+i-impowt c-com.twittew.utiw.timeoutexception;
 
 /**
- * This class handles incoming new Tweets. It is responsible for creating segments for the incoming
- * Tweets when necessary, triggering optimization on those segments, and writing Tweets to the
- * correct segment.
+ * t-this cwass handwes incoming nyew tweets. (˘ω˘) i-it is wesponsibwe fow cweating segments fow t-the incoming
+ * tweets when nyecessawy, (˘ω˘) twiggewing optimization on those segments, -.- and wwiting t-tweets to the
+ * cowwect segment. ^•ﻌ•^
  */
-public class TweetCreateHandler {
-  private static final Logger LOG = LoggerFactory.getLogger(TweetCreateHandler.class);
+p-pubwic cwass t-tweetcweatehandwew {
+  p-pwivate static finaw woggew wog = woggewfactowy.getwoggew(tweetcweatehandwew.cwass);
 
-  public static final long LATE_TWEET_TIME_BUFFER_MS = Duration.fromMinutes(1).inMilliseconds();
+  pubwic static f-finaw wong wate_tweet_time_buffew_ms = d-duwation.fwomminutes(1).inmiwwiseconds();
 
-  private static final String STATS_PREFIX = "tweet_create_handler_";
+  pwivate static f-finaw stwing s-stats_pwefix = "tweet_cweate_handwew_";
 
-  // To get a better idea of which of these succeeded and so on, see stats in SegmentManager.
-  private IndexingResultCounts indexingResultCounts;
-  private static final SearchRateCounter TWEETS_IN_WRONG_SEGMENT =
-      SearchRateCounter.export(STATS_PREFIX + "tweets_in_wrong_segment");
-  private static final SearchRateCounter SEGMENTS_CLOSED_EARLY =
-      SearchRateCounter.export(STATS_PREFIX + "segments_closed_early");
-  private static final SearchRateCounter INSERTED_IN_CURRENT_SEGMENT =
-      SearchRateCounter.export(STATS_PREFIX + "inserted_in_current_segment");
-  private static final SearchRateCounter INSERTED_IN_PREVIOUS_SEGMENT =
-      SearchRateCounter.export(STATS_PREFIX + "inserted_in_previous_segment");
-  private static final NewSegmentStats NEW_SEGMENT_STATS = new NewSegmentStats();
-  private static final SearchCounter CREATED_SEGMENTS =
-      SearchCounter.export(STATS_PREFIX + "created_segments");
-  private static final SearchRateCounter INCOMING_TWEETS =
-          SearchRateCounter.export(STATS_PREFIX + "incoming_tweets");
-  private static final SearchRateCounter INDEXING_SUCCESS =
-          SearchRateCounter.export(STATS_PREFIX + "indexing_success");
-  private static final SearchRateCounter INDEXING_FAILURE =
-          SearchRateCounter.export(STATS_PREFIX + "indexing_failure");
+  // to get a bettew i-idea of which of these succeeded a-and so on, /(^•ω•^) see stats in segmentmanagew. (///ˬ///✿)
+  pwivate i-indexingwesuwtcounts indexingwesuwtcounts;
+  p-pwivate static finaw seawchwatecountew t-tweets_in_wwong_segment =
+      s-seawchwatecountew.expowt(stats_pwefix + "tweets_in_wwong_segment");
+  pwivate static finaw seawchwatecountew segments_cwosed_eawwy =
+      seawchwatecountew.expowt(stats_pwefix + "segments_cwosed_eawwy");
+  pwivate static f-finaw seawchwatecountew i-insewted_in_cuwwent_segment =
+      seawchwatecountew.expowt(stats_pwefix + "insewted_in_cuwwent_segment");
+  p-pwivate s-static finaw s-seawchwatecountew insewted_in_pwevious_segment =
+      seawchwatecountew.expowt(stats_pwefix + "insewted_in_pwevious_segment");
+  pwivate static f-finaw nyewsegmentstats nyew_segment_stats = nyew nyewsegmentstats();
+  pwivate s-static finaw seawchcountew cweated_segments =
+      s-seawchcountew.expowt(stats_pwefix + "cweated_segments");
+  pwivate s-static finaw s-seawchwatecountew incoming_tweets =
+          s-seawchwatecountew.expowt(stats_pwefix + "incoming_tweets");
+  p-pwivate static finaw s-seawchwatecountew i-indexing_success =
+          seawchwatecountew.expowt(stats_pwefix + "indexing_success");
+  pwivate static f-finaw seawchwatecountew i-indexing_faiwuwe =
+          s-seawchwatecountew.expowt(stats_pwefix + "indexing_faiwuwe");
 
-  // Various stats and logging around creation of new segments, put in this
-  // class so that the code is not watered down too much by this.
-  private static class NewSegmentStats {
-    private static final String NEW_SEGMENT_STATS_PREFIX =
-      STATS_PREFIX + "new_segment_";
+  // v-vawious s-stats and wogging awound cweation of nyew segments, mya put in this
+  // c-cwass so that the code is nyot watewed down too much by this. o.O
+  pwivate static cwass nyewsegmentstats {
+    p-pwivate static finaw stwing nyew_segment_stats_pwefix =
+      stats_pwefix + "new_segment_";
 
-    private static final SearchCounter START_NEW_AFTER_REACHING_LIMIT =
-        SearchCounter.export(NEW_SEGMENT_STATS_PREFIX + "start_after_reaching_limit");
-    private static final SearchCounter START_NEW_AFTER_EXCEEDING_MAX_ID =
-        SearchCounter.export(NEW_SEGMENT_STATS_PREFIX + "start_after_exceeding_max_id");
-    private static final SearchCounter TIMESLICE_SET_TO_CURRENT_ID =
-        SearchCounter.export(NEW_SEGMENT_STATS_PREFIX + "timeslice_set_to_current_id");
-    private static final SearchCounter TIMESLICE_SET_TO_MAX_ID =
-        SearchCounter.export(NEW_SEGMENT_STATS_PREFIX + "timeslice_set_to_max_id");
-    private static final SearchLongGauge TIMESPAN_BETWEEN_MAX_AND_CURRENT =
-        SearchLongGauge.export(NEW_SEGMENT_STATS_PREFIX + "timespan_between_id_and_max");
+    pwivate static f-finaw seawchcountew s-stawt_new_aftew_weaching_wimit =
+        s-seawchcountew.expowt(new_segment_stats_pwefix + "stawt_aftew_weaching_wimit");
+    pwivate static f-finaw seawchcountew stawt_new_aftew_exceeding_max_id =
+        s-seawchcountew.expowt(new_segment_stats_pwefix + "stawt_aftew_exceeding_max_id");
+    p-pwivate static finaw seawchcountew timeswice_set_to_cuwwent_id =
+        seawchcountew.expowt(new_segment_stats_pwefix + "timeswice_set_to_cuwwent_id");
+    pwivate static finaw seawchcountew t-timeswice_set_to_max_id =
+        seawchcountew.expowt(new_segment_stats_pwefix + "timeswice_set_to_max_id");
+    p-pwivate static finaw seawchwonggauge t-timespan_between_max_and_cuwwent =
+        s-seawchwonggauge.expowt(new_segment_stats_pwefix + "timespan_between_id_and_max");
 
-    void recordCreateNewSegment() {
-      CREATED_SEGMENTS.increment();
+    void wecowdcweatenewsegment() {
+      cweated_segments.incwement();
     }
 
-    void recordStartAfterReachingTweetsLimit(int numDocs, int numDocsCutoff,
-                                             int maxSegmentSize, int lateTweetBuffer) {
-      START_NEW_AFTER_REACHING_LIMIT.increment();
-      LOG.info(String.format(
-          "Will create new segment: numDocs=%,d, numDocsCutoff=%,d"
-              + " | maxSegmentSize=%,d, lateTweetBuffer=%,d",
-          numDocs, numDocsCutoff, maxSegmentSize, lateTweetBuffer));
+    void w-wecowdstawtaftewweachingtweetswimit(int n-nyumdocs, int numdocscutoff, ^•ﻌ•^
+                                             i-int maxsegmentsize, (U ᵕ U❁) i-int watetweetbuffew) {
+      stawt_new_aftew_weaching_wimit.incwement();
+      wog.info(stwing.fowmat(
+          "wiww cweate nyew segment: nyumdocs=%,d, :3 n-nyumdocscutoff=%,d"
+              + " | m-maxsegmentsize=%,d, (///ˬ///✿) w-watetweetbuffew=%,d", (///ˬ///✿)
+          nyumdocs, 🥺 nyumdocscutoff, -.- m-maxsegmentsize, w-watetweetbuffew));
     }
 
-    void recordStartAfterExceedingLargestValidTweetId(long tweetId, long largestValidTweetId) {
-      START_NEW_AFTER_EXCEEDING_MAX_ID.increment();
-      LOG.info(String.format(
-          "Will create new segment: tweetDd=%,d, largestValidTweetID for segment=%,d",
-          tweetId, largestValidTweetId));
+    void wecowdstawtaftewexceedingwawgestvawidtweetid(wong tweetid, w-wong wawgestvawidtweetid) {
+      stawt_new_aftew_exceeding_max_id.incwement();
+      wog.info(stwing.fowmat(
+          "wiww cweate nyew segment: tweetdd=%,d, nyaa~~ w-wawgestvawidtweetid f-fow segment=%,d", (///ˬ///✿)
+          tweetid, 🥺 w-wawgestvawidtweetid));
     }
 
-    void recordSettingTimesliceToCurrentTweet(long tweetID) {
-      TIMESLICE_SET_TO_CURRENT_ID.increment();
-      LOG.info("Creating new segment: tweet that triggered it has the largest id we've seen. "
-          + " id={}", tweetID);
+    v-void wecowdsettingtimeswicetocuwwenttweet(wong tweetid) {
+      timeswice_set_to_cuwwent_id.incwement();
+      wog.info("cweating n-nyew segment: tweet that twiggewed it has the wawgest id we've seen. >w< "
+          + " i-id={}", rawr x3 tweetid);
     }
 
-    void recordSettingTimesliceToMaxTweetId(long tweetID, long maxTweetID) {
-      TIMESLICE_SET_TO_MAX_ID.increment();
-      LOG.info("Creating new segment: tweet that triggered it doesn't have the largest id"
-          + " we've seen. tweetId={}, maxTweetId={}",
-          tweetID, maxTweetID);
-      long timeDifference =
-          SnowflakeIdParser.getTimeDifferenceBetweenTweetIDs(maxTweetID, tweetID);
-      LOG.info("Time difference between max seen and last seen: {} ms", timeDifference);
-      TIMESPAN_BETWEEN_MAX_AND_CURRENT.set(timeDifference);
+    void wecowdsettingtimeswicetomaxtweetid(wong t-tweetid, (⑅˘꒳˘) wong m-maxtweetid) {
+      timeswice_set_to_max_id.incwement();
+      wog.info("cweating nyew segment: t-tweet that twiggewed i-it doesn't have the wawgest id"
+          + " we've seen. σωσ t-tweetid={}, XD maxtweetid={}", -.-
+          tweetid, m-maxtweetid);
+      wong timediffewence =
+          snowfwakeidpawsew.gettimediffewencebetweentweetids(maxtweetid, >_< tweetid);
+      w-wog.info("time diffewence between m-max seen and w-wast seen: {} ms", rawr timediffewence);
+      t-timespan_between_max_and_cuwwent.set(timediffewence);
     }
 
-    void wrapNewSegmentCreation(long tweetID, long maxTweetID,
-                                long currentSegmentTimesliceBoundary,
-                                long largestValidTweetIDForCurrentSegment) {
-      long timeDifferenceStartToMax = SnowflakeIdParser.getTimeDifferenceBetweenTweetIDs(
-          largestValidTweetIDForCurrentSegment,
-          currentSegmentTimesliceBoundary);
-      LOG.info("Time between timeslice boundary and largest valid tweet id: {} ms",
-          timeDifferenceStartToMax);
+    void w-wwapnewsegmentcweation(wong t-tweetid, 😳😳😳 w-wong maxtweetid, UwU
+                                wong cuwwentsegmenttimeswiceboundawy, (U ﹏ U)
+                                w-wong w-wawgestvawidtweetidfowcuwwentsegment) {
+      wong timediffewencestawttomax = snowfwakeidpawsew.gettimediffewencebetweentweetids(
+          w-wawgestvawidtweetidfowcuwwentsegment, (˘ω˘)
+          c-cuwwentsegmenttimeswiceboundawy);
+      w-wog.info("time between timeswice boundawy a-and wawgest vawid tweet id: {} ms",
+          t-timediffewencestawttomax);
 
-      LOG.info("Created new segment: (tweetId={}, maxTweetId={}, maxTweetId-tweetId={} "
-              + " | currentSegmentTimesliceBoundary={}, largestValidTweetIDForSegment={})",
-          tweetID, maxTweetID, maxTweetID - tweetID, currentSegmentTimesliceBoundary,
-          largestValidTweetIDForCurrentSegment);
+      w-wog.info("cweated new segment: (tweetid={}, /(^•ω•^) maxtweetid={}, (U ﹏ U) maxtweetid-tweetid={} "
+              + " | c-cuwwentsegmenttimeswiceboundawy={}, ^•ﻌ•^ w-wawgestvawidtweetidfowsegment={})", >w<
+          t-tweetid, ʘwʘ m-maxtweetid, òωó maxtweetid - tweetid, o.O c-cuwwentsegmenttimeswiceboundawy, ( ͡o ω ͡o )
+          wawgestvawidtweetidfowcuwwentsegment);
     }
   }
 
 
-  private final SegmentManager segmentManager;
-  private final MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager;
-  private final int maxSegmentSize;
-  private final int lateTweetBuffer;
+  pwivate finaw segmentmanagew segmentmanagew;
+  pwivate finaw muwtisegmenttewmdictionawymanagew m-muwtisegmenttewmdictionawymanagew;
+  pwivate f-finaw int maxsegmentsize;
+  pwivate f-finaw int watetweetbuffew;
 
-  private long maxTweetID = Long.MIN_VALUE;
+  pwivate wong maxtweetid = w-wong.min_vawue;
 
-  private long largestValidTweetIDForCurrentSegment;
-  private long currentSegmentTimesliceBoundary;
-  private OptimizingSegmentWriter currentSegment;
-  private OptimizingSegmentWriter previousSegment;
-  private final QueryCacheManager queryCacheManager;
-  private final CriticalExceptionHandler criticalExceptionHandler;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private final CoordinatedEarlybirdActionInterface postOptimizationRebuildsAction;
-  private final CoordinatedEarlybirdActionInterface gcAction;
-  private final CaughtUpMonitor indexCaughtUpMonitor;
-  private final OptimizationAndFlushingCoordinationLock optimizationAndFlushingCoordinationLock;
+  pwivate wong wawgestvawidtweetidfowcuwwentsegment;
+  p-pwivate wong c-cuwwentsegmenttimeswiceboundawy;
+  p-pwivate optimizingsegmentwwitew c-cuwwentsegment;
+  p-pwivate optimizingsegmentwwitew pwevioussegment;
+  pwivate finaw quewycachemanagew quewycachemanagew;
+  pwivate finaw cwiticawexceptionhandwew c-cwiticawexceptionhandwew;
+  p-pwivate finaw seawchindexingmetwicset s-seawchindexingmetwicset;
+  pwivate finaw c-coowdinatedeawwybiwdactionintewface postoptimizationwebuiwdsaction;
+  pwivate finaw coowdinatedeawwybiwdactionintewface g-gcaction;
+  p-pwivate finaw caughtupmonitow i-indexcaughtupmonitow;
+  pwivate finaw optimizationandfwushingcoowdinationwock o-optimizationandfwushingcoowdinationwock;
 
-  public TweetCreateHandler(
-      SegmentManager segmentManager,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      CriticalExceptionHandler criticalExceptionHandler,
-      MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager,
-      QueryCacheManager queryCacheManager,
-      CoordinatedEarlybirdActionInterface postOptimizationRebuildsAction,
-      CoordinatedEarlybirdActionInterface gcAction,
-      int lateTweetBuffer,
-      int maxSegmentSize,
-      CaughtUpMonitor indexCaughtUpMonitor,
-      OptimizationAndFlushingCoordinationLock optimizationAndFlushingCoordinationLock
+  p-pubwic tweetcweatehandwew(
+      s-segmentmanagew s-segmentmanagew, mya
+      seawchindexingmetwicset seawchindexingmetwicset, >_<
+      cwiticawexceptionhandwew cwiticawexceptionhandwew, rawr
+      m-muwtisegmenttewmdictionawymanagew m-muwtisegmenttewmdictionawymanagew, >_<
+      q-quewycachemanagew quewycachemanagew, (U ﹏ U)
+      c-coowdinatedeawwybiwdactionintewface p-postoptimizationwebuiwdsaction, rawr
+      coowdinatedeawwybiwdactionintewface g-gcaction, (U ᵕ U❁)
+      i-int watetweetbuffew, (ˆ ﻌ ˆ)♡
+      int maxsegmentsize, >_<
+      c-caughtupmonitow i-indexcaughtupmonitow, ^^;;
+      optimizationandfwushingcoowdinationwock optimizationandfwushingcoowdinationwock
   ) {
-    this.segmentManager = segmentManager;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.multiSegmentTermDictionaryManager = multiSegmentTermDictionaryManager;
-    this.queryCacheManager = queryCacheManager;
-    this.indexingResultCounts = new IndexingResultCounts();
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.postOptimizationRebuildsAction = postOptimizationRebuildsAction;
-    this.gcAction = gcAction;
-    this.indexCaughtUpMonitor = indexCaughtUpMonitor;
+    t-this.segmentmanagew = segmentmanagew;
+    this.cwiticawexceptionhandwew = c-cwiticawexceptionhandwew;
+    this.muwtisegmenttewmdictionawymanagew = m-muwtisegmenttewmdictionawymanagew;
+    t-this.quewycachemanagew = quewycachemanagew;
+    t-this.indexingwesuwtcounts = nyew indexingwesuwtcounts();
+    this.seawchindexingmetwicset = s-seawchindexingmetwicset;
+    t-this.postoptimizationwebuiwdsaction = p-postoptimizationwebuiwdsaction;
+    this.gcaction = gcaction;
+    this.indexcaughtupmonitow = i-indexcaughtupmonitow;
 
-    Preconditions.checkState(lateTweetBuffer < maxSegmentSize);
-    this.lateTweetBuffer = lateTweetBuffer;
-    this.maxSegmentSize = maxSegmentSize;
-    this.optimizationAndFlushingCoordinationLock = optimizationAndFlushingCoordinationLock;
+    pweconditions.checkstate(watetweetbuffew < maxsegmentsize);
+    t-this.watetweetbuffew = w-watetweetbuffew;
+    this.maxsegmentsize = m-maxsegmentsize;
+    this.optimizationandfwushingcoowdinationwock = o-optimizationandfwushingcoowdinationwock;
   }
 
-  void prepareAfterStartingWithIndex(long maxIndexedTweetId) {
-    LOG.info("Preparing after starting with an index.");
+  v-void pwepaweaftewstawtingwithindex(wong maxindexedtweetid) {
+    wog.info("pwepawing a-aftew stawting with an index.");
 
-    Iterator<SegmentInfo> segmentInfosIterator =
-        segmentManager
-            .getSegmentInfos(SegmentManager.Filter.All, SegmentManager.Order.NEW_TO_OLD)
-            .iterator();
+    i-itewatow<segmentinfo> s-segmentinfositewatow =
+        segmentmanagew
+            .getsegmentinfos(segmentmanagew.fiwtew.aww, ʘwʘ s-segmentmanagew.owdew.new_to_owd)
+            .itewatow();
 
-    // Setup the last segment.
-    Verify.verify(segmentInfosIterator.hasNext(), "at least one segment expected");
-    ISegmentWriter lastWriter = segmentManager.getSegmentWriterForID(
-        segmentInfosIterator.next().getTimeSliceID());
-    Verify.verify(lastWriter != null);
+    // setup the wast segment. 😳😳😳
+    v-vewify.vewify(segmentinfositewatow.hasnext(), UwU "at w-weast o-one segment expected");
+    isegmentwwitew wastwwitew = segmentmanagew.getsegmentwwitewfowid(
+        segmentinfositewatow.next().gettimeswiceid());
+    vewify.vewify(wastwwitew != nyuww);
 
-    LOG.info("TweetCreateHandler found last writer: {}", lastWriter.getSegmentInfo().toString());
-    this.currentSegmentTimesliceBoundary = lastWriter.getSegmentInfo().getTimeSliceID();
-    this.largestValidTweetIDForCurrentSegment =
-        OutOfOrderRealtimeTweetIDMapper.calculateMaxTweetID(currentSegmentTimesliceBoundary);
-    this.currentSegment = (OptimizingSegmentWriter) lastWriter;
+    wog.info("tweetcweatehandwew found wast wwitew: {}", OwO wastwwitew.getsegmentinfo().tostwing());
+    this.cuwwentsegmenttimeswiceboundawy = wastwwitew.getsegmentinfo().gettimeswiceid();
+    this.wawgestvawidtweetidfowcuwwentsegment =
+        outofowdewweawtimetweetidmappew.cawcuwatemaxtweetid(cuwwentsegmenttimeswiceboundawy);
+    t-this.cuwwentsegment = (optimizingsegmentwwitew) w-wastwwitew;
 
-    if (maxIndexedTweetId == -1) {
-      maxTweetID = lastWriter.getSegmentInfo().getIndexSegment().getMaxTweetId();
-      LOG.info("Max tweet id = {}", maxTweetID);
-    } else {
-      // See SEARCH-31032
-      maxTweetID = maxIndexedTweetId;
+    if (maxindexedtweetid == -1) {
+      maxtweetid = wastwwitew.getsegmentinfo().getindexsegment().getmaxtweetid();
+      w-wog.info("max t-tweet id = {}", :3 m-maxtweetid);
+    } ewse {
+      // s-see seawch-31032
+      maxtweetid = m-maxindexedtweetid;
     }
 
-    // If we have a previous segment that's not optimized, set it up too, we still need to pick
-    // it up for optimization and we might still be able to add tweets to it.
-    if (segmentInfosIterator.hasNext()) {
-      SegmentInfo previousSegmentInfo = segmentInfosIterator.next();
-      if (!previousSegmentInfo.isOptimized()) {
-        ISegmentWriter previousSegmentWriter = segmentManager.getSegmentWriterForID(
-            previousSegmentInfo.getTimeSliceID());
+    // i-if we have a pwevious s-segment that's nyot optimized, -.- s-set it up too, 🥺 w-we stiww nyeed to pick
+    // it up fow optimization a-and we might s-stiww be abwe t-to add tweets to i-it. -.-
+    if (segmentinfositewatow.hasnext()) {
+      s-segmentinfo p-pwevioussegmentinfo = s-segmentinfositewatow.next();
+      i-if (!pwevioussegmentinfo.isoptimized()) {
+        i-isegmentwwitew pwevioussegmentwwitew = s-segmentmanagew.getsegmentwwitewfowid(
+            p-pwevioussegmentinfo.gettimeswiceid());
 
-        if (previousSegmentWriter != null) {
-          LOG.info("Picked previous segment");
-          this.previousSegment = (OptimizingSegmentWriter) previousSegmentWriter;
-        } else {
-          // Should not happen.
-          LOG.error("Not found previous segment writer");
+        i-if (pwevioussegmentwwitew != nyuww) {
+          w-wog.info("picked pwevious segment");
+          this.pwevioussegment = (optimizingsegmentwwitew) p-pwevioussegmentwwitew;
+        } ewse {
+          // s-shouwd n-nyot happen. -.-
+          w-wog.ewwow("not found pwevious s-segment wwitew");
         }
-      } else {
-        LOG.info("Previous segment info is optimized");
+      } ewse {
+        w-wog.info("pwevious segment i-info is optimized");
       }
-    } else {
-      LOG.info("Previous segment info not found, we only have one segment");
+    } ewse {
+      w-wog.info("pwevious segment info nyot found, (U ﹏ U) we onwy have one segment");
     }
   }
 
-  private void updateIndexFreshness() {
-    searchIndexingMetricSet.highestStatusId.set(maxTweetID);
+  p-pwivate void updateindexfweshness() {
+    s-seawchindexingmetwicset.higheststatusid.set(maxtweetid);
 
-    long tweetTimestamp = SnowflakeIdParser.getTimestampFromTweetId(
-        searchIndexingMetricSet.highestStatusId.get());
-    searchIndexingMetricSet.freshestTweetTimeMillis.set(tweetTimestamp);
-  }
-
-  /**
-   * Index a new TVE representing a Tweet create event.
-   */
-  public void handleTweetCreate(ThriftVersionedEvents tve) throws IOException {
-    INCOMING_TWEETS.increment();
-    long id = tve.getId();
-    maxTweetID = Math.max(id, maxTweetID);
-
-    updateIndexFreshness();
-
-    boolean shouldCreateNewSegment = false;
-
-    if (currentSegment == null) {
-      shouldCreateNewSegment = true;
-      LOG.info("Will create new segment: current segment is null");
-    } else {
-      int numDocs = currentSegment.getSegmentInfo().getIndexSegment().getNumDocs();
-      int numDocsCutoff = maxSegmentSize - lateTweetBuffer;
-      if (numDocs >= numDocsCutoff) {
-        NEW_SEGMENT_STATS.recordStartAfterReachingTweetsLimit(numDocs, numDocsCutoff,
-            maxSegmentSize, lateTweetBuffer);
-        shouldCreateNewSegment = true;
-      } else if (id > largestValidTweetIDForCurrentSegment) {
-        NEW_SEGMENT_STATS.recordStartAfterExceedingLargestValidTweetId(id,
-            largestValidTweetIDForCurrentSegment);
-        shouldCreateNewSegment = true;
-      }
-    }
-
-    if (shouldCreateNewSegment) {
-      createNewSegment(id);
-    }
-
-    if (previousSegment != null) {
-      // Inserts and some updates can't be applied to an optimized segment, so we want to wait at
-      // least LATE_TWEET_TIME_BUFFER between when we created the new segment and when we optimize
-      // the previous segment, in case there are late tweets.
-      // We leave a large (150k, typically) buffer in the segment so that we don't have to close
-      // the previousSegment before LATE_TWEET_TIME_BUFFER has passed, but if we index
-      // lateTweetBuffer Tweets before optimizing, then we must optimize,
-      // so that we don't insert more than max segment size tweets into the previous segment.
-      long relativeTweetAgeMs =
-          SnowflakeIdParser.getTimeDifferenceBetweenTweetIDs(id, currentSegmentTimesliceBoundary);
-
-      boolean needToOptimize = false;
-      int numDocs = previousSegment.getSegmentInfo().getIndexSegment().getNumDocs();
-      String previousSegmentName = previousSegment.getSegmentInfo().getSegmentName();
-      if (numDocs >= maxSegmentSize) {
-        LOG.info(String.format("Previous segment (%s) reached maxSegmentSize, need to optimize it."
-            + " numDocs=%,d, maxSegmentSize=%,d", previousSegmentName, numDocs, maxSegmentSize));
-        needToOptimize = true;
-      } else if (relativeTweetAgeMs > LATE_TWEET_TIME_BUFFER_MS) {
-        LOG.info(String.format("Previous segment (%s) is old enough, we can optimize it."
-            + " Got tweet past time buffer of %,d ms by: %,d ms", previousSegmentName,
-            LATE_TWEET_TIME_BUFFER_MS, relativeTweetAgeMs - LATE_TWEET_TIME_BUFFER_MS));
-        needToOptimize = true;
-      }
-
-      if (needToOptimize) {
-        optimizePreviousSegment();
-      }
-    }
-
-    ISegmentWriter segmentWriter;
-    if (id >= currentSegmentTimesliceBoundary) {
-      INSERTED_IN_CURRENT_SEGMENT.increment();
-      segmentWriter = currentSegment;
-    } else if (previousSegment != null) {
-      INSERTED_IN_PREVIOUS_SEGMENT.increment();
-      segmentWriter = previousSegment;
-    } else {
-      TWEETS_IN_WRONG_SEGMENT.increment();
-      LOG.info("Inserting TVE ({}) into the current segment ({}) even though it should have gone "
-          + "in a previous segment.", id, currentSegmentTimesliceBoundary);
-      segmentWriter = currentSegment;
-    }
-
-    SearchTimer timer = searchIndexingMetricSet.statusStats.startNewTimer();
-    ISegmentWriter.Result result = segmentWriter.indexThriftVersionedEvents(tve);
-    searchIndexingMetricSet.statusStats.stopTimerAndIncrement(timer);
-
-    if (result == ISegmentWriter.Result.SUCCESS) {
-      INDEXING_SUCCESS.increment();
-    } else {
-      INDEXING_FAILURE.increment();
-    }
-
-    indexingResultCounts.countResult(result);
+    w-wong tweettimestamp = snowfwakeidpawsew.gettimestampfwomtweetid(
+        seawchindexingmetwicset.higheststatusid.get());
+    seawchindexingmetwicset.fweshesttweettimemiwwis.set(tweettimestamp);
   }
 
   /**
-   * Many tests need to verify behavior with segments optimized & unoptimized, so we need to expose
-   * this.
+   * i-index a nyew tve wepwesenting a-a tweet cweate e-event. rawr
    */
-  @VisibleForTesting
-  public Future<SegmentInfo> optimizePreviousSegment() {
-    String segmentName = previousSegment.getSegmentInfo().getSegmentName();
-    previousSegment.getSegmentInfo().setIndexing(false);
-    LOG.info("Optimizing previous segment: {}", segmentName);
-    segmentManager.logState("Starting optimization for segment: " + segmentName);
+  pubwic v-void handwetweetcweate(thwiftvewsionedevents tve) thwows ioexception {
+    incoming_tweets.incwement();
+    w-wong id = tve.getid();
+    m-maxtweetid = math.max(id, mya m-maxtweetid);
 
-    Future<SegmentInfo> future = previousSegment
-        .startOptimization(gcAction, optimizationAndFlushingCoordinationLock)
-        .map(this::postOptimizationSteps)
-        .onFailure(t -> {
-          criticalExceptionHandler.handle(this, t);
-          return BoxedUnit.UNIT;
+    updateindexfweshness();
+
+    boowean shouwdcweatenewsegment = f-fawse;
+
+    if (cuwwentsegment == n-nyuww) {
+      s-shouwdcweatenewsegment = t-twue;
+      wog.info("wiww cweate n-nyew segment: c-cuwwent segment i-is nyuww");
+    } e-ewse {
+      int nyumdocs = cuwwentsegment.getsegmentinfo().getindexsegment().getnumdocs();
+      i-int nyumdocscutoff = m-maxsegmentsize - w-watetweetbuffew;
+      i-if (numdocs >= n-nyumdocscutoff) {
+        n-nyew_segment_stats.wecowdstawtaftewweachingtweetswimit(numdocs, ( ͡o ω ͡o ) n-nyumdocscutoff, /(^•ω•^)
+            m-maxsegmentsize, >_< watetweetbuffew);
+        s-shouwdcweatenewsegment = twue;
+      } e-ewse if (id > wawgestvawidtweetidfowcuwwentsegment) {
+        n-nyew_segment_stats.wecowdstawtaftewexceedingwawgestvawidtweetid(id, (✿oωo)
+            w-wawgestvawidtweetidfowcuwwentsegment);
+        s-shouwdcweatenewsegment = twue;
+      }
+    }
+
+    if (shouwdcweatenewsegment) {
+      cweatenewsegment(id);
+    }
+
+    i-if (pwevioussegment != n-nuww) {
+      // i-insewts and some updates can't be appwied to an optimized segment, 😳😳😳 s-so we want t-to wait at
+      // weast wate_tweet_time_buffew b-between when w-we cweated the nyew segment and when we optimize
+      // the pwevious s-segment, (ꈍᴗꈍ) i-in case thewe awe w-wate tweets. 🥺
+      // w-we weave a wawge (150k, mya typicawwy) buffew i-in the segment s-so that we don't have to cwose
+      // the pwevioussegment b-befowe wate_tweet_time_buffew has passed, (ˆ ﻌ ˆ)♡ b-but if we index
+      // w-watetweetbuffew t-tweets befowe optimizing, (⑅˘꒳˘) then we m-must optimize, òωó
+      // s-so that we don't insewt m-mowe than max segment size tweets i-into the pwevious s-segment. o.O
+      w-wong wewativetweetagems =
+          s-snowfwakeidpawsew.gettimediffewencebetweentweetids(id, XD cuwwentsegmenttimeswiceboundawy);
+
+      b-boowean n-nyeedtooptimize = f-fawse;
+      int nyumdocs = pwevioussegment.getsegmentinfo().getindexsegment().getnumdocs();
+      s-stwing pwevioussegmentname = pwevioussegment.getsegmentinfo().getsegmentname();
+      if (numdocs >= m-maxsegmentsize) {
+        w-wog.info(stwing.fowmat("pwevious s-segment (%s) weached maxsegmentsize, (˘ω˘) nyeed to optimize it."
+            + " nyumdocs=%,d, (ꈍᴗꈍ) m-maxsegmentsize=%,d", >w< pwevioussegmentname, XD n-nyumdocs, -.- m-maxsegmentsize));
+        nyeedtooptimize = twue;
+      } ewse i-if (wewativetweetagems > wate_tweet_time_buffew_ms) {
+        w-wog.info(stwing.fowmat("pwevious s-segment (%s) is o-owd enough, ^^;; we c-can optimize it."
+            + " g-got tweet past time buffew of %,d ms by: %,d ms", XD pwevioussegmentname, :3
+            wate_tweet_time_buffew_ms, σωσ w-wewativetweetagems - wate_tweet_time_buffew_ms));
+        n-nyeedtooptimize = twue;
+      }
+
+      if (needtooptimize) {
+        optimizepwevioussegment();
+      }
+    }
+
+    i-isegmentwwitew segmentwwitew;
+    if (id >= cuwwentsegmenttimeswiceboundawy) {
+      insewted_in_cuwwent_segment.incwement();
+      segmentwwitew = c-cuwwentsegment;
+    } e-ewse if (pwevioussegment != nyuww) {
+      i-insewted_in_pwevious_segment.incwement();
+      segmentwwitew = pwevioussegment;
+    } e-ewse {
+      t-tweets_in_wwong_segment.incwement();
+      wog.info("insewting t-tve ({}) into the cuwwent s-segment ({}) even though it shouwd have gone "
+          + "in a pwevious segment.", XD i-id, cuwwentsegmenttimeswiceboundawy);
+      segmentwwitew = cuwwentsegment;
+    }
+
+    s-seawchtimew t-timew = s-seawchindexingmetwicset.statusstats.stawtnewtimew();
+    isegmentwwitew.wesuwt wesuwt = segmentwwitew.indexthwiftvewsionedevents(tve);
+    s-seawchindexingmetwicset.statusstats.stoptimewandincwement(timew);
+
+    if (wesuwt == isegmentwwitew.wesuwt.success) {
+      indexing_success.incwement();
+    } ewse {
+      i-indexing_faiwuwe.incwement();
+    }
+
+    i-indexingwesuwtcounts.countwesuwt(wesuwt);
+  }
+
+  /**
+   * m-many t-tests nyeed to vewify behaviow with segments optimized & u-unoptimized, :3 s-so we nyeed to expose
+   * this. rawr
+   */
+  @visibwefowtesting
+  p-pubwic futuwe<segmentinfo> optimizepwevioussegment() {
+    stwing segmentname = pwevioussegment.getsegmentinfo().getsegmentname();
+    p-pwevioussegment.getsegmentinfo().setindexing(fawse);
+    wog.info("optimizing pwevious s-segment: {}", 😳 s-segmentname);
+    segmentmanagew.wogstate("stawting o-optimization f-fow segment: " + s-segmentname);
+
+    futuwe<segmentinfo> futuwe = p-pwevioussegment
+        .stawtoptimization(gcaction, 😳😳😳 optimizationandfwushingcoowdinationwock)
+        .map(this::postoptimizationsteps)
+        .onfaiwuwe(t -> {
+          cwiticawexceptionhandwew.handwe(this, (ꈍᴗꈍ) t-t);
+          wetuwn boxedunit.unit;
         });
 
-    waitForOptimizationIfInTest(future);
+    waitfowoptimizationifintest(futuwe);
 
-    previousSegment = null;
-    return future;
+    pwevioussegment = n-nyuww;
+    w-wetuwn futuwe;
   }
 
   /**
-   * In tests, it's easier if when a segment starts optimizing, we know that it will finish
-   * optimizing. This way we have no race condition where we're surprised that something that
-   * started optimizing is not ready.
+   * i-in tests, 🥺 it's easiew i-if when a s-segment stawts optimizing, ^•ﻌ•^ we know t-that it wiww finish
+   * optimizing. XD this way w-we have nyo wace condition whewe w-we'we suwpwised that something that
+   * stawted o-optimizing is n-nyot weady. ^•ﻌ•^
    *
-   * In prod we don't have this problem. Segments run for 10 hours and optimization is 20 minutes
-   * so there's no need for extra synchronization.
+   * in pwod we d-don't have this pwobwem. ^^;; segments w-wun fow 10 houws a-and optimization is 20 minutes
+   * s-so thewe's n-nyo nyeed fow extwa synchwonization. ʘwʘ
    */
-  private void waitForOptimizationIfInTest(Future<SegmentInfo> future) {
-    if (Config.environmentIsTest()) {
-      try {
-        Await.ready(future);
-        LOG.info("Optimizing is done");
-      } catch (InterruptedException | TimeoutException ex) {
-        LOG.info("Exception while optimizing", ex);
+  p-pwivate void waitfowoptimizationifintest(futuwe<segmentinfo> futuwe) {
+    if (config.enviwonmentistest()) {
+      twy {
+        a-await.weady(futuwe);
+        wog.info("optimizing is done");
+      } c-catch (intewwuptedexception | timeoutexception ex) {
+        w-wog.info("exception w-whiwe optimizing", OwO e-ex);
       }
     }
   }
 
-  private SegmentInfo postOptimizationSteps(SegmentInfo optimizedSegmentInfo) {
-    segmentManager.updateStats();
-    // See SEARCH-32175
-    optimizedSegmentInfo.setComplete(true);
+  pwivate segmentinfo p-postoptimizationsteps(segmentinfo o-optimizedsegmentinfo) {
+    segmentmanagew.updatestats();
+    // s-see seawch-32175
+    o-optimizedsegmentinfo.setcompwete(twue);
 
-    String segmentName = optimizedSegmentInfo.getSegmentName();
-    LOG.info("Finished optimization for segment: " + segmentName);
-    segmentManager.logState(
-            "Finished optimization for segment: " + segmentName);
+    stwing s-segmentname = o-optimizedsegmentinfo.getsegmentname();
+    wog.info("finished optimization fow segment: " + segmentname);
+    segmentmanagew.wogstate(
+            "finished o-optimization fow s-segment: " + segmentname);
 
     /*
-     * Building the multi segment term dictionary causes GC pauses. The reason for this is because
-     * it's pretty big (possible ~15GB). When it's allocated, we have to copy a lot of data from
-     * survivor space to old gen. That causes several GC pauses. See SEARCH-33544
+     * buiwding the muwti segment tewm dictionawy c-causes gc pauses. 🥺 the weason f-fow this is because
+     * i-it's pwetty big (possibwe ~15gb). (⑅˘꒳˘) when it's awwocated, (///ˬ///✿) we have to copy a wot of data f-fwom
+     * suwvivow space to owd gen. (✿oωo) that causes s-sevewaw gc pauses. nyaa~~ see seawch-33544
      *
-     * GC pauses are in general not fatal, but since all instances finish a segment at roughly the
-     * same time, they might happen at the same time and then it's a problem.
+     * g-gc pauses a-awe in genewaw nyot fataw, >w< but s-since aww instances f-finish a segment a-at woughwy t-the
+     * same t-time, (///ˬ///✿) they might h-happen at the same time and then it's a pwobwem. rawr
      *
-     * Some possible solutions to this problem would be to build this dictionary in some data
-     * structures that are pre-allocated or to build only the part for the last segment, as
-     * everything else doesn't change. These solutions are a bit difficult to implement and this
-     * here is an easy workaround.
+     * some possibwe sowutions to this pwobwem wouwd be t-to buiwd this d-dictionawy in some d-data
+     * stwuctuwes t-that awe p-pwe-awwocated o-ow to buiwd onwy the pawt fow the wast segment, (U ﹏ U) as
+     * evewything ewse doesn't c-change. ^•ﻌ•^ these s-sowutions awe a bit difficuwt to impwement and this
+     * hewe i-is an easy wowkawound. (///ˬ///✿)
      *
-     * Note that we might finish optimizing a segment and then it might take ~60+ minutes until it's
-     * a particular Earlybird's turn to run this code. The effect of this is going to be that we
-     * are not going to use the multi segment dictionary for the last two segments, one of which is
-     * still pretty small. That's not terrible, since right before optimization we're not using
-     * the dictionary for the last segment anyways, since it's still not optimized.
+     * n-nyote that w-we might finish optimizing a segment and then it m-might take ~60+ minutes untiw it's
+     * a pawticuwaw e-eawwybiwd's t-tuwn to wun this code. o.O the effect of this is g-going to be that we
+     * awe n-nyot going to use t-the muwti segment dictionawy f-fow the wast two s-segments, >w< one of w-which is
+     * s-stiww pwetty smow. nyaa~~ t-that's nyot t-tewwibwe, òωó since wight befowe optimization w-we'we n-nyot using
+     * the dictionawy f-fow the wast segment anyways, since it's stiww n-nyot optimized. (U ᵕ U❁)
      */
-    try {
-      LOG.info("Acquire coordination lock before beginning post_optimization_rebuilds action.");
-      optimizationAndFlushingCoordinationLock.lock();
-      LOG.info("Successfully acquired coordination lock for post_optimization_rebuilds action.");
-      postOptimizationRebuildsAction.retryActionUntilRan(
-          "post optimization rebuilds", () -> {
-            Stopwatch stopwatch = Stopwatch.createStarted();
-            LOG.info("Starting to build multi term dictionary for {}", segmentName);
-            boolean result = multiSegmentTermDictionaryManager.buildDictionary();
-            LOG.info("Done building multi term dictionary for {} in {}, result: {}",
-                segmentName, stopwatch, result);
-            queryCacheManager.rebuildQueryCachesAfterSegmentOptimization(
-                optimizedSegmentInfo);
+    twy {
+      w-wog.info("acquiwe coowdination w-wock befowe b-beginning post_optimization_webuiwds action.");
+      optimizationandfwushingcoowdinationwock.wock();
+      w-wog.info("successfuwwy acquiwed coowdination wock f-fow post_optimization_webuiwds a-action.");
+      postoptimizationwebuiwdsaction.wetwyactionuntiwwan(
+          "post optimization w-webuiwds", (///ˬ///✿) () -> {
+            s-stopwatch stopwatch = stopwatch.cweatestawted();
+            wog.info("stawting t-to buiwd muwti tewm dictionawy fow {}", (✿oωo) segmentname);
+            b-boowean wesuwt = m-muwtisegmenttewmdictionawymanagew.buiwddictionawy();
+            wog.info("done b-buiwding muwti t-tewm dictionawy fow {} in {}, 😳😳😳 wesuwt: {}", (✿oωo)
+                segmentname, (U ﹏ U) s-stopwatch, (˘ω˘) w-wesuwt);
+            q-quewycachemanagew.webuiwdquewycachesaftewsegmentoptimization(
+                o-optimizedsegmentinfo);
 
-            // This is a serial full GC and it defragments the memory so things can run smoothly
-            // until the next segment rolls. What we have observed is that if we don't do that
-            // later on some earlybirds can have promotion failures on an old gen that hasn't
-            // reached the initiating occupancy limit and these promotions failures can trigger a
-            // long (1.5 min) full GC. That usually happens because of fragmentation issues.
-            GCUtil.runGC();
-            // Wait for indexing to catch up before rejoining the serverset. We only need to do
-            // this if the host has already finished startup.
-            if (EarlybirdStatus.hasStarted()) {
-              indexCaughtUpMonitor.resetAndWaitUntilCaughtUp();
+            // this is a sewiaw fuww gc and it defwagments the memowy so things can wun smoothwy
+            // untiw the nyext s-segment wowws. 😳😳😳 n-nyani we have obsewved i-is that i-if we don't do that
+            // w-watew on some e-eawwybiwds can have pwomotion faiwuwes o-on an owd g-gen that hasn't
+            // weached the initiating o-occupancy w-wimit and these pwomotions faiwuwes can twiggew a-a
+            // wong (1.5 min) fuww gc. (///ˬ///✿) that u-usuawwy happens because of fwagmentation i-issues. (U ᵕ U❁)
+            g-gcutiw.wungc();
+            // wait f-fow indexing to c-catch up befowe w-wejoining the sewvewset. we onwy n-nyeed to do
+            // t-this if the host has a-awweady finished stawtup. >_<
+            i-if (eawwybiwdstatus.hasstawted()) {
+              i-indexcaughtupmonitow.wesetandwaituntiwcaughtup();
             }
           });
-    } finally {
-      LOG.info("Finished post_optimization_rebuilds action. Releasing coordination lock.");
-      optimizationAndFlushingCoordinationLock.unlock();
+    } f-finawwy {
+      wog.info("finished p-post_optimization_webuiwds action. (///ˬ///✿) weweasing coowdination w-wock.");
+      optimizationandfwushingcoowdinationwock.unwock();
     }
 
-    return optimizedSegmentInfo;
+    wetuwn optimizedsegmentinfo;
   }
 
   /**
-   * Many tests rely on precise segment boundaries, so we expose this to allow them to create a
-   * particular segment.
+   * many tests wewy on pwecise segment boundawies, (U ᵕ U❁) so we expose t-this to awwow them to cweate a
+   * pawticuwaw segment.
    */
-  @VisibleForTesting
-  public void createNewSegment(long tweetID) throws IOException {
-    NEW_SEGMENT_STATS.recordCreateNewSegment();
+  @visibwefowtesting
+  pubwic void cweatenewsegment(wong tweetid) thwows ioexception {
+    n-nyew_segment_stats.wecowdcweatenewsegment();
 
-    if (previousSegment != null) {
-      // We shouldn't have more than one unoptimized segment, so if we get to this point and the
-      // previousSegment has not been optimized and set to null, start optimizing it before
-      // creating the next one. Note that this is a weird case and would only happen if we get
-      // Tweets with drastically different IDs than we expect, or there is a large amount of time
-      // where no Tweets are created in this partition.
-      LOG.error("Creating new segment for Tweet {} when the previous segment {} was not sealed. "
-          + "Current segment: {}. Documents: {}. largestValidTweetIDForSegment: {}.",
-          tweetID,
-          previousSegment.getSegmentInfo().getTimeSliceID(),
-          currentSegment.getSegmentInfo().getTimeSliceID(),
-          currentSegment.getSegmentInfo().getIndexSegment().getNumDocs(),
-          largestValidTweetIDForCurrentSegment);
-      optimizePreviousSegment();
-      SEGMENTS_CLOSED_EARLY.increment();
+    if (pwevioussegment != nyuww) {
+      // w-we shouwdn't have mowe than o-one unoptimized segment, >w< so if we get to this point a-and the
+      // pwevioussegment h-has nyot been optimized and s-set to nyuww, 😳😳😳 stawt o-optimizing it befowe
+      // cweating the n-next one. (ˆ ﻌ ˆ)♡ nyote that this is a weiwd case and wouwd onwy happen i-if we get
+      // tweets with dwasticawwy d-diffewent ids than we e-expect, (ꈍᴗꈍ) ow thewe is a wawge amount o-of time
+      // w-whewe nyo tweets awe cweated in this pawtition. 🥺
+      w-wog.ewwow("cweating nyew segment fow tweet {} when the p-pwevious segment {} was nyot seawed. >_< "
+          + "cuwwent segment: {}. OwO documents: {}. wawgestvawidtweetidfowsegment: {}.", ^^;;
+          t-tweetid, (✿oωo)
+          p-pwevioussegment.getsegmentinfo().gettimeswiceid(), UwU
+          cuwwentsegment.getsegmentinfo().gettimeswiceid(), ( ͡o ω ͡o )
+          c-cuwwentsegment.getsegmentinfo().getindexsegment().getnumdocs(), (✿oωo)
+          wawgestvawidtweetidfowcuwwentsegment);
+      o-optimizepwevioussegment();
+      segments_cwosed_eawwy.incwement();
     }
 
-    previousSegment = currentSegment;
+    p-pwevioussegment = cuwwentsegment;
 
-    // We have two cases:
+    // we have two cases:
     //
-    // Case 1:
-    // If the greatest Tweet ID we have seen is tweetID, then when we want to create a new segment
-    // with that ID, so the Tweet being processed goes into the new segment.
+    // case 1:
+    // i-if the gweatest t-tweet id we have seen is tweetid, mya t-then when w-we want to cweate a nyew segment
+    // w-with that id, ( ͡o ω ͡o ) so the tweet being pwocessed g-goes into the nyew segment. :3
     //
-    // Case 2:
-    // If the tweetID is bigger than the max tweetID, then this method is being called directly from
-    // tests, so we didn't update the maxTweetID, so we can create a new segment with the new
-    // Tweet ID.
+    // case 2:
+    // i-if t-the tweetid is biggew than the max tweetid, 😳 then t-this method is being cawwed diwectwy fwom
+    // tests, (U ﹏ U) so we didn't update the maxtweetid, >w< so we can cweate a nyew segment with t-the nyew
+    // t-tweet id. UwU
     //
-    // Case 3:
-    // If it's not the greatest Tweet ID we have seen, then we don't want to create a
-    // segment boundary that is lower than any Tweet IDs in the current segment, because then
-    // some tweets from the previous segment would be in the wrong segment, so create a segment
-    // that has a greater ID than any Tweets that we have seen.
+    // case 3:
+    // i-if it's n-nyot the gweatest tweet id we have s-seen, 😳 then we don't want to cweate a
+    // segment boundawy that is wowew than any tweet ids i-in the cuwwent segment, XD because then
+    // some tweets fwom the pwevious segment w-wouwd be in t-the wwong segment, (✿oωo) s-so cweate a segment
+    // that has a gweatew id than any tweets t-that we have s-seen. ^•ﻌ•^
     //
-    //   Example:
-    //     - We have seen tweets 3, 10, 5, 6.
-    //     - We now see tweet 7 and we decide it's time to create a new segment.
-    //     - The new segment will start at tweet 11. It can't start at tweet 7, because
-    //       tweet 10 will be in the wrong segment.
-    //     - Tweet 7 that we just saw will end up in the previous segment.
-    if (maxTweetID <= tweetID) {
-      currentSegmentTimesliceBoundary = tweetID;
-      NEW_SEGMENT_STATS.recordSettingTimesliceToCurrentTweet(tweetID);
-    } else {
-      currentSegmentTimesliceBoundary = maxTweetID + 1;
-      NEW_SEGMENT_STATS.recordSettingTimesliceToMaxTweetId(tweetID, maxTweetID);
+    //   e-exampwe:
+    //     - we h-have seen tweets 3, 10, mya 5, 6.
+    //     - we nyow s-see tweet 7 and we decide it's t-time to cweate a nyew segment. (˘ω˘)
+    //     - t-the nyew segment wiww stawt at tweet 11. nyaa~~ i-it can't stawt at tweet 7, :3 b-because
+    //       t-tweet 10 wiww be in the wwong s-segment. (✿oωo)
+    //     - t-tweet 7 that we just s-saw wiww end up in the pwevious s-segment. (U ﹏ U)
+    if (maxtweetid <= tweetid) {
+      cuwwentsegmenttimeswiceboundawy = t-tweetid;
+      n-nyew_segment_stats.wecowdsettingtimeswicetocuwwenttweet(tweetid);
+    } ewse {
+      cuwwentsegmenttimeswiceboundawy = m-maxtweetid + 1;
+      nyew_segment_stats.wecowdsettingtimeswicetomaxtweetid(tweetid, (ꈍᴗꈍ) maxtweetid);
     }
-    currentSegment = segmentManager.createAndPutOptimizingSegmentWriter(
-        currentSegmentTimesliceBoundary);
+    cuwwentsegment = segmentmanagew.cweateandputoptimizingsegmentwwitew(
+        cuwwentsegmenttimeswiceboundawy);
 
-    currentSegment.getSegmentInfo().setIndexing(true);
+    cuwwentsegment.getsegmentinfo().setindexing(twue);
 
-    largestValidTweetIDForCurrentSegment =
-        OutOfOrderRealtimeTweetIDMapper.calculateMaxTweetID(currentSegmentTimesliceBoundary);
+    wawgestvawidtweetidfowcuwwentsegment =
+        outofowdewweawtimetweetidmappew.cawcuwatemaxtweetid(cuwwentsegmenttimeswiceboundawy);
 
-    NEW_SEGMENT_STATS.wrapNewSegmentCreation(tweetID, maxTweetID,
-        currentSegmentTimesliceBoundary, largestValidTweetIDForCurrentSegment);
+    n-nyew_segment_stats.wwapnewsegmentcweation(tweetid, (˘ω˘) maxtweetid, ^^
+        cuwwentsegmenttimeswiceboundawy, (⑅˘꒳˘) w-wawgestvawidtweetidfowcuwwentsegment);
 
-    segmentManager.removeExcessSegments();
+    segmentmanagew.wemoveexcesssegments();
   }
 
-  void logState() {
-    LOG.info("TweetCreateHandler:");
-    LOG.info(String.format("  tweets sent for indexing: %,d",
-        indexingResultCounts.getIndexingCalls()));
-    LOG.info(String.format("  non-retriable failure: %,d",
-        indexingResultCounts.getFailureNotRetriable()));
-    LOG.info(String.format("  retriable failure: %,d",
-        indexingResultCounts.getFailureRetriable()));
-    LOG.info(String.format("  successfully indexed: %,d",
-        indexingResultCounts.getIndexingSuccess()));
-    LOG.info(String.format("  tweets in wrong segment: %,d", TWEETS_IN_WRONG_SEGMENT.getCount()));
-    LOG.info(String.format("  segments closed early: %,d", SEGMENTS_CLOSED_EARLY.getCount()));
+  v-void wogstate() {
+    wog.info("tweetcweatehandwew:");
+    w-wog.info(stwing.fowmat("  tweets sent fow indexing: %,d", rawr
+        i-indexingwesuwtcounts.getindexingcawws()));
+    wog.info(stwing.fowmat("  nyon-wetwiabwe f-faiwuwe: %,d", :3
+        indexingwesuwtcounts.getfaiwuwenotwetwiabwe()));
+    wog.info(stwing.fowmat("  w-wetwiabwe faiwuwe: %,d", OwO
+        indexingwesuwtcounts.getfaiwuwewetwiabwe()));
+    w-wog.info(stwing.fowmat("  s-successfuwwy indexed: %,d", (ˆ ﻌ ˆ)♡
+        indexingwesuwtcounts.getindexingsuccess()));
+    w-wog.info(stwing.fowmat("  t-tweets in wwong segment: %,d", :3 t-tweets_in_wwong_segment.getcount()));
+    w-wog.info(stwing.fowmat("  segments cwosed eawwy: %,d", -.- s-segments_cwosed_eawwy.getcount()));
   }
 }

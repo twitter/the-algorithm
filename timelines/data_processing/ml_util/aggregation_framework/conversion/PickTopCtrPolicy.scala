@@ -1,62 +1,62 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.convewsion
 
-import com.twitter.ml.api._
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetricCommon
-import java.lang.{Boolean => JBoolean}
-import java.lang.{Double => JDouble}
+impowt com.twittew.mw.api._
+i-impowt com.twittew.mw.api.featuwecontext
+i-impowt c-com.twittew.mw.api.utiw.swichdatawecowd
+i-impowt c-com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.typedaggwegategwoup
+i-impowt c-com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.metwics.aggwegationmetwiccommon
+i-impowt java.wang.{boowean => jboowean}
+impowt java.wang.{doubwe => jdoubwe}
 
-case class CtrDescriptor(
-  engagementFeature: Feature[JDouble],
-  impressionFeature: Feature[JDouble],
-  outputFeature: Feature[JDouble])
+case cwass ctwdescwiptow(
+  e-engagementfeatuwe: featuwe[jdoubwe], (U ﹏ U)
+  impwessionfeatuwe: f-featuwe[jdoubwe], UwU
+  outputfeatuwe: f-featuwe[jdoubwe])
 
-object PickTopCtrBuilderHelper {
+object picktopctwbuiwdewhewpew {
 
-  def createCtrDescriptors(
-    aggregatePrefix: String,
-    engagementLabels: Set[Feature[JBoolean]],
-    aggregatesToCompute: Set[TypedAggregateGroup[_]],
-    outputSuffix: String
-  ): Set[CtrDescriptor] = {
-    val aggregateFeatures = aggregatesToCompute
-      .filter(_.aggregatePrefix == aggregatePrefix)
+  def cweatectwdescwiptows(
+    a-aggwegatepwefix: stwing, 😳😳😳
+    engagementwabews: set[featuwe[jboowean]], XD
+    a-aggwegatestocompute: s-set[typedaggwegategwoup[_]], o.O
+    outputsuffix: stwing
+  ): set[ctwdescwiptow] = {
+    vaw aggwegatefeatuwes = aggwegatestocompute
+      .fiwtew(_.aggwegatepwefix == a-aggwegatepwefix)
 
-    val impressionFeature = aggregateFeatures
-      .flatMap { group =>
-        group.individualAggregateDescriptors
-          .filter(_.query.feature == None)
-          .filter(_.query.label == None)
-          .flatMap(_.outputFeatures)
+    vaw impwessionfeatuwe = aggwegatefeatuwes
+      .fwatmap { gwoup =>
+        gwoup.individuawaggwegatedescwiptows
+          .fiwtew(_.quewy.featuwe == n-nyone)
+          .fiwtew(_.quewy.wabew == nyone)
+          .fwatmap(_.outputfeatuwes)
       }
       .head
-      .asInstanceOf[Feature[JDouble]]
+      .asinstanceof[featuwe[jdoubwe]]
 
-    val aggregateEngagementFeatures =
-      aggregateFeatures
-        .flatMap { group =>
-          group.individualAggregateDescriptors
-            .filter(_.query.feature == None)
-            .filter { descriptor =>
-              //TODO: we should remove the need to pass around engagementLabels and just use all the labels available.
-              descriptor.query.label.exists(engagementLabels.contains(_))
+    v-vaw aggwegateengagementfeatuwes =
+      a-aggwegatefeatuwes
+        .fwatmap { g-gwoup =>
+          g-gwoup.individuawaggwegatedescwiptows
+            .fiwtew(_.quewy.featuwe == nyone)
+            .fiwtew { descwiptow =>
+              //todo: we shouwd wemove t-the nyeed to pass awound engagementwabews and j-just use aww the wabews avaiwabwe. (⑅˘꒳˘)
+              descwiptow.quewy.wabew.exists(engagementwabews.contains(_))
             }
-            .flatMap(_.outputFeatures)
+            .fwatmap(_.outputfeatuwes)
         }
-        .map(_.asInstanceOf[Feature[JDouble]])
+        .map(_.asinstanceof[featuwe[jdoubwe]])
 
-    aggregateEngagementFeatures
-      .map { aggregateEngagementFeature =>
-        CtrDescriptor(
-          engagementFeature = aggregateEngagementFeature,
-          impressionFeature = impressionFeature,
-          outputFeature = new Feature.Continuous(
-            aggregateEngagementFeature.getDenseFeatureName + "." + outputSuffix,
-            AggregationMetricCommon.derivePersonalDataTypes(
-              Some(aggregateEngagementFeature),
-              Some(impressionFeature)
+    aggwegateengagementfeatuwes
+      .map { aggwegateengagementfeatuwe =>
+        ctwdescwiptow(
+          e-engagementfeatuwe = aggwegateengagementfeatuwe, 😳😳😳
+          i-impwessionfeatuwe = i-impwessionfeatuwe, nyaa~~
+          o-outputfeatuwe = nyew featuwe.continuous(
+            aggwegateengagementfeatuwe.getdensefeatuwename + "." + outputsuffix, rawr
+            a-aggwegationmetwiccommon.dewivepewsonawdatatypes(
+              s-some(aggwegateengagementfeatuwe), -.-
+              some(impwessionfeatuwe)
             )
           )
         )
@@ -64,163 +64,163 @@ object PickTopCtrBuilderHelper {
   }
 }
 
-object PickTopCtrPolicy {
-  def build(
-    aggregatePrefix: String,
-    engagementLabels: Set[Feature[JBoolean]],
-    aggregatesToCompute: Set[TypedAggregateGroup[_]],
-    smoothing: Double = 1.0,
-    outputSuffix: String = "ratio"
-  ): PickTopCtrPolicy = {
-    val ctrDescriptors = PickTopCtrBuilderHelper.createCtrDescriptors(
-      aggregatePrefix = aggregatePrefix,
-      engagementLabels = engagementLabels,
-      aggregatesToCompute = aggregatesToCompute,
-      outputSuffix = outputSuffix
+o-object picktopctwpowicy {
+  d-def buiwd(
+    aggwegatepwefix: s-stwing, (✿oωo)
+    engagementwabews: set[featuwe[jboowean]], /(^•ω•^)
+    aggwegatestocompute: s-set[typedaggwegategwoup[_]], 🥺
+    smoothing: doubwe = 1.0, ʘwʘ
+    outputsuffix: s-stwing = "watio"
+  ): picktopctwpowicy = {
+    v-vaw ctwdescwiptows = picktopctwbuiwdewhewpew.cweatectwdescwiptows(
+      a-aggwegatepwefix = a-aggwegatepwefix, UwU
+      engagementwabews = engagementwabews, XD
+      aggwegatestocompute = aggwegatestocompute, (✿oωo)
+      outputsuffix = outputsuffix
     )
-    PickTopCtrPolicy(
-      ctrDescriptors = ctrDescriptors,
-      smoothing = smoothing
+    picktopctwpowicy(
+      c-ctwdescwiptows = c-ctwdescwiptows, :3
+      smoothing = s-smoothing
     )
   }
 }
 
-object CombinedTopNCtrsByWilsonConfidenceIntervalPolicy {
-  def build(
-    aggregatePrefix: String,
-    engagementLabels: Set[Feature[JBoolean]],
-    aggregatesToCompute: Set[TypedAggregateGroup[_]],
-    outputSuffix: String = "ratioWithWCI",
-    z: Double = 1.96,
-    topN: Int = 1
-  ): CombinedTopNCtrsByWilsonConfidenceIntervalPolicy = {
-    val ctrDescriptors = PickTopCtrBuilderHelper.createCtrDescriptors(
-      aggregatePrefix = aggregatePrefix,
-      engagementLabels = engagementLabels,
-      aggregatesToCompute = aggregatesToCompute,
-      outputSuffix = outputSuffix
+o-object combinedtopnctwsbywiwsonconfidenceintewvawpowicy {
+  d-def buiwd(
+    aggwegatepwefix: stwing, (///ˬ///✿)
+    engagementwabews: s-set[featuwe[jboowean]], nyaa~~
+    aggwegatestocompute: set[typedaggwegategwoup[_]], >w<
+    outputsuffix: stwing = "watiowithwci", -.-
+    z-z: doubwe = 1.96,
+    topn: i-int = 1
+  ): c-combinedtopnctwsbywiwsonconfidenceintewvawpowicy = {
+    v-vaw ctwdescwiptows = picktopctwbuiwdewhewpew.cweatectwdescwiptows(
+      aggwegatepwefix = a-aggwegatepwefix, (✿oωo)
+      e-engagementwabews = engagementwabews, (˘ω˘)
+      a-aggwegatestocompute = a-aggwegatestocompute, rawr
+      outputsuffix = outputsuffix
     )
-    CombinedTopNCtrsByWilsonConfidenceIntervalPolicy(
-      ctrDescriptors = ctrDescriptors,
-      z = z,
-      topN = topN
+    c-combinedtopnctwsbywiwsonconfidenceintewvawpowicy(
+      c-ctwdescwiptows = c-ctwdescwiptows, OwO
+      z-z = z-z, ^•ﻌ•^
+      topn = topn
     )
   }
 }
 
 /*
- * A merge policy that picks the aggregate features corresponding to
- * the sparse key value with the highest engagement rate (defined
- * as the ratio of two specified features, representing engagements
- * and impressions). Also outputs the engagement rate to the specified
- * outputFeature.
+ * a mewge powicy that picks t-the aggwegate featuwes cowwesponding to
+ * the spawse key vawue with the highest engagement wate (defined
+ * a-as the watio of two specified featuwes, UwU wepwesenting engagements
+ * a-and impwessions). (˘ω˘) a-awso outputs t-the engagement wate to the specified
+ * o-outputfeatuwe. (///ˬ///✿)
  *
- * This is an abstract class. We can make variants of this policy by overriding
- * the calculateCtr method.
+ * this is an abstwact c-cwass. σωσ we can m-make vawiants of this powicy by ovewwiding
+ * the cawcuwatectw method. /(^•ω•^)
  */
 
-abstract class PickTopCtrPolicyBase(ctrDescriptors: Set[CtrDescriptor])
-    extends SparseBinaryMergePolicy {
+abstwact cwass picktopctwpowicybase(ctwdescwiptows: s-set[ctwdescwiptow])
+    extends s-spawsebinawymewgepowicy {
 
-  private def getContinuousFeature(
-    aggregateRecord: DataRecord,
-    feature: Feature[JDouble]
-  ): Double = {
-    Option(SRichDataRecord(aggregateRecord).getFeatureValue(feature))
-      .map(_.asInstanceOf[JDouble].toDouble)
-      .getOrElse(0.0)
+  pwivate def getcontinuousfeatuwe(
+    a-aggwegatewecowd: d-datawecowd, 😳
+    featuwe: featuwe[jdoubwe]
+  ): doubwe = {
+    o-option(swichdatawecowd(aggwegatewecowd).getfeatuwevawue(featuwe))
+      .map(_.asinstanceof[jdoubwe].todoubwe)
+      .getowewse(0.0)
   }
 
   /**
-   * For every provided descriptor, compute the corresponding CTR feature
-   * and only hydrate this result to the provided input record.
+   * f-fow evewy pwovided descwiptow, 😳 c-compute t-the cowwesponding ctw featuwe
+   * and onwy hydwate this wesuwt to the pwovided i-input wecowd. (⑅˘꒳˘)
    */
-  override def mergeRecord(
-    mutableInputRecord: DataRecord,
-    aggregateRecords: List[DataRecord],
-    aggregateContext: FeatureContext
-  ): Unit = {
-    ctrDescriptors
-      .foreach {
-        case CtrDescriptor(engagementFeature, impressionFeature, outputFeature) =>
-          val sortedCtrs =
-            aggregateRecords
-              .map { aggregateRecord =>
-                val impressions = getContinuousFeature(aggregateRecord, impressionFeature)
-                val engagements = getContinuousFeature(aggregateRecord, engagementFeature)
-                calculateCtr(impressions, engagements)
+  o-ovewwide def m-mewgewecowd(
+    mutabweinputwecowd: d-datawecowd, 😳😳😳
+    a-aggwegatewecowds: wist[datawecowd], 😳
+    a-aggwegatecontext: featuwecontext
+  ): unit = {
+    ctwdescwiptows
+      .foweach {
+        case c-ctwdescwiptow(engagementfeatuwe, XD i-impwessionfeatuwe, mya outputfeatuwe) =>
+          vaw sowtedctws =
+            a-aggwegatewecowds
+              .map { a-aggwegatewecowd =>
+                vaw impwessions = getcontinuousfeatuwe(aggwegatewecowd, impwessionfeatuwe)
+                v-vaw engagements = getcontinuousfeatuwe(aggwegatewecowd, ^•ﻌ•^ engagementfeatuwe)
+                cawcuwatectw(impwessions, ʘwʘ engagements)
               }
-              .sortBy { ctr => -ctr }
-          combineTopNCtrsToSingleScore(sortedCtrs)
-            .foreach { score =>
-              SRichDataRecord(mutableInputRecord).setFeatureValue(outputFeature, score)
+              .sowtby { c-ctw => -ctw }
+          combinetopnctwstosingwescowe(sowtedctws)
+            .foweach { scowe =>
+              s-swichdatawecowd(mutabweinputwecowd).setfeatuwevawue(outputfeatuwe, ( ͡o ω ͡o ) s-scowe)
             }
       }
   }
 
-  protected def calculateCtr(impressions: Double, engagements: Double): Double
+  pwotected def cawcuwatectw(impwessions: doubwe, mya engagements: doubwe): d-doubwe
 
-  protected def combineTopNCtrsToSingleScore(sortedCtrs: Seq[Double]): Option[Double]
+  p-pwotected def combinetopnctwstosingwescowe(sowtedctws: seq[doubwe]): option[doubwe]
 
-  override def aggregateFeaturesPostMerge(aggregateContext: FeatureContext): Set[Feature[_]] =
-    ctrDescriptors
-      .map(_.outputFeature)
-      .toSet
+  ovewwide d-def aggwegatefeatuwespostmewge(aggwegatecontext: featuwecontext): s-set[featuwe[_]] =
+    ctwdescwiptows
+      .map(_.outputfeatuwe)
+      .toset
 }
 
-case class PickTopCtrPolicy(ctrDescriptors: Set[CtrDescriptor], smoothing: Double = 1.0)
-    extends PickTopCtrPolicyBase(ctrDescriptors) {
-  require(smoothing > 0.0)
+case cwass picktopctwpowicy(ctwdescwiptows: set[ctwdescwiptow], o.O s-smoothing: doubwe = 1.0)
+    extends picktopctwpowicybase(ctwdescwiptows) {
+  w-wequiwe(smoothing > 0.0)
 
-  override def calculateCtr(impressions: Double, engagements: Double): Double =
-    (1.0 * engagements) / (smoothing + impressions)
+  o-ovewwide def cawcuwatectw(impwessions: d-doubwe, (✿oωo) engagements: doubwe): d-doubwe =
+    (1.0 * e-engagements) / (smoothing + i-impwessions)
 
-  override def combineTopNCtrsToSingleScore(sortedCtrs: Seq[Double]): Option[Double] =
-    sortedCtrs.headOption
+  ovewwide def c-combinetopnctwstosingwescowe(sowtedctws: s-seq[doubwe]): option[doubwe] =
+    sowtedctws.headoption
 }
 
-case class CombinedTopNCtrsByWilsonConfidenceIntervalPolicy(
-  ctrDescriptors: Set[CtrDescriptor],
-  z: Double = 1.96,
-  topN: Int = 1)
-    extends PickTopCtrPolicyBase(ctrDescriptors) {
+c-case cwass c-combinedtopnctwsbywiwsonconfidenceintewvawpowicy(
+  c-ctwdescwiptows: set[ctwdescwiptow], :3
+  z: doubwe = 1.96, 😳
+  t-topn: int = 1)
+    e-extends picktopctwpowicybase(ctwdescwiptows) {
 
-  private val zSquared = z * z
-  private val zSquaredDiv2 = zSquared / 2.0
-  private val zSquaredDiv4 = zSquared / 4.0
+  p-pwivate vaw zsquawed = z * z
+  pwivate vaw zsquaweddiv2 = zsquawed / 2.0
+  p-pwivate v-vaw zsquaweddiv4 = z-zsquawed / 4.0
 
   /**
-   * calculates the lower bound of wilson score interval. which roughly says "the actual engagement
-   * rate is at least this value" with confidence designated by the z-score:
-   * https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Wilson_score_interval
+   * c-cawcuwates the wowew bound of w-wiwson scowe intewvaw. (U ﹏ U) which woughwy says "the actuaw engagement
+   * wate is at weast this vawue" w-with confidence designated b-by the z-scowe:
+   * https://en.wikipedia.owg/wiki/binomiaw_pwopowtion_confidence_intewvaw#wiwson_scowe_intewvaw
    */
-  override def calculateCtr(rawImpressions: Double, engagements: Double): Double = {
-    // just in case engagements happens to be more than impressions...
-    val impressions = Math.max(rawImpressions, engagements)
+  o-ovewwide def cawcuwatectw(wawimpwessions: d-doubwe, mya engagements: doubwe): d-doubwe = {
+    // j-just in case e-engagements happens t-to be mowe than i-impwessions...
+    vaw impwessions = math.max(wawimpwessions, (U ᵕ U❁) engagements)
 
-    if (impressions > 0.0) {
-      val p = engagements / impressions
+    if (impwessions > 0.0) {
+      vaw p = engagements / impwessions
       (p
-        + zSquaredDiv2 / impressions
-        - z * Math.sqrt(
-          (p * (1.0 - p) + zSquaredDiv4 / impressions) / impressions)) / (1.0 + zSquared / impressions)
+        + z-zsquaweddiv2 / i-impwessions
+        - z-z * math.sqwt(
+          (p * (1.0 - p-p) + zsquaweddiv4 / impwessions) / impwessions)) / (1.0 + zsquawed / i-impwessions)
 
-    } else 0.0
+    } e-ewse 0.0
   }
 
   /**
-   * takes the topN engagement rates, and returns the joint probability as {1.0 - Π(1.0 - p)}
+   * takes the topn e-engagement wates, :3 and wetuwns the joint pwobabiwity a-as {1.0 - Π(1.0 - p-p)}
    *
-   * e.g. let's say you have 0.6 chance of clicking on a tweet shared by the user A.
-   * you also have 0.3 chance of clicking on a tweet shared by the user B.
-   * seeing a tweet shared by both A and B will not lead to 0.9 chance of you clicking on it.
-   * but you could say that you have 0.4*0.7 chance of NOT clicking on that tweet.
+   * e.g. mya wet's s-say you have 0.6 c-chance of cwicking on a tweet shawed by the usew a. OwO
+   * you awso have 0.3 chance o-of cwicking o-on a tweet shawed b-by the usew b-b. (ˆ ﻌ ˆ)♡
+   * seeing a t-tweet shawed by both a and b wiww n-nyot wead to 0.9 c-chance of you cwicking on it. ʘwʘ
+   * b-but you couwd s-say that you have 0.4*0.7 chance o-of nyot cwicking on that tweet. o.O
    */
-  override def combineTopNCtrsToSingleScore(sortedCtrs: Seq[Double]): Option[Double] =
-    if (sortedCtrs.nonEmpty) {
-      val inverseLogP = sortedCtrs
-        .take(topN).map { p => Math.log(1.0 - p) }.sum
-      Some(1.0 - Math.exp(inverseLogP))
-    } else None
+  ovewwide d-def combinetopnctwstosingwescowe(sowtedctws: seq[doubwe]): o-option[doubwe] =
+    i-if (sowtedctws.nonempty) {
+      vaw invewsewogp = s-sowtedctws
+        .take(topn).map { p => math.wog(1.0 - p) }.sum
+      s-some(1.0 - math.exp(invewsewogp))
+    } e-ewse nyone
 
 }

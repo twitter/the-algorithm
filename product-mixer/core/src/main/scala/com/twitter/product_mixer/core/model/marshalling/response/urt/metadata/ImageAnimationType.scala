@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata
 
-sealed trait ImageAnimationType
+seawed twait imageanimationtype
 
-case object Bounce extends ImageAnimationType
+c-case object bounce e-extends imageanimationtype

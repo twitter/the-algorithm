@@ -1,42 +1,42 @@
 """
-Utilties that aid in building the magic recs graph.
+utiwties that aid in buiwding t-the magic wecs g-gwaph. ( ͡o ω ͡o )
 """
 
-import re
+impowt w-we
 
-import tensorflow.compat.v1 as tf
+impowt tensowfwow.compat.v1 a-as tf
 
 
-def get_trainable_variables(all_trainable_variables, trainable_regexes):
-  """Returns a subset of trainable variables for training.
+def get_twainabwe_vawiabwes(aww_twainabwe_vawiabwes, (U ﹏ U) t-twainabwe_wegexes):
+  """wetuwns a-a subset of twainabwe v-vawiabwes f-fow twaining. (///ˬ///✿)
 
-  Given a collection of trainable variables, this will return all those that match the given regexes.
-  Will also log those variables.
+  given a cowwection of twainabwe vawiabwes, >w< this wiww wetuwn aww t-those that match the given wegexes. rawr
+  wiww awso w-wog those vawiabwes. mya
 
-  Args:
-      all_trainable_variables (a collection of trainable tf.Variable): The variables to search through.
-      trainable_regexes (a collection of regexes): Variables that match any regex will be included.
+  awgs:
+      a-aww_twainabwe_vawiabwes (a cowwection of twainabwe tf.vawiabwe): the vawiabwes t-to seawch thwough.
+      twainabwe_wegexes (a c-cowwection of w-wegexes): vawiabwes that match any wegex wiww be incwuded. ^^
 
-  Returns a list of tf.Variable
+  wetuwns a wist of t-tf.vawiabwe
   """
-  if trainable_regexes is None or len(trainable_regexes) == 0:
-    tf.logging.info("No trainable regexes found. Not using get_trainable_variables behavior.")
-    return None
+  if twainabwe_wegexes is nyone ow wen(twainabwe_wegexes) == 0:
+    tf.wogging.info("no t-twainabwe wegexes found. 😳😳😳 n-nyot using get_twainabwe_vawiabwes b-behaviow.")
+    w-wetuwn nyone
 
-  assert any(
-    tf.is_tensor(var) for var in all_trainable_variables
-  ), f"Non TF variable found: {all_trainable_variables}"
-  trainable_variables = list(
-    filter(
-      lambda var: any(re.match(regex, var.name, re.IGNORECASE) for regex in trainable_regexes),
-      all_trainable_variables,
+  a-assewt any(
+    tf.is_tensow(vaw) fow vaw i-in aww_twainabwe_vawiabwes
+  ), mya f"non tf vawiabwe found: {aww_twainabwe_vawiabwes}"
+  t-twainabwe_vawiabwes = wist(
+    fiwtew(
+      wambda vaw: any(we.match(wegex, 😳 vaw.name, we.ignowecase) f-fow wegex in twainabwe_wegexes), -.-
+      a-aww_twainabwe_vawiabwes, 🥺
     )
   )
-  tf.logging.info(f"Using filtered trainable variables: {trainable_variables}")
+  t-tf.wogging.info(f"using f-fiwtewed twainabwe vawiabwes: {twainabwe_vawiabwes}")
 
-  assert (
-    trainable_variables
-  ), "Did not find trainable variables after filtering after filtering from {} number of vars originaly. All vars: {} and train regexes: {}".format(
-    len(all_trainable_variables), all_trainable_variables, trainable_regexes
+  assewt (
+    twainabwe_vawiabwes
+  ), o.O "did n-nyot find t-twainabwe vawiabwes aftew fiwtewing a-aftew fiwtewing f-fwom {} nyumbew of vaws owiginawy. /(^•ω•^) a-aww vaws: {} and twain wegexes: {}".fowmat(
+    w-wen(aww_twainabwe_vawiabwes), nyaa~~ aww_twainabwe_vawiabwes, nyaa~~ twainabwe_wegexes
   )
-  return trainable_variables
+  w-wetuwn twainabwe_vawiabwes

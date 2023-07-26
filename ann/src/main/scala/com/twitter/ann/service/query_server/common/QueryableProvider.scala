@@ -1,8 +1,8 @@
-package com.twitter.ann.service.query_server.common
+package com.twittew.ann.sewvice.quewy_sewvew.common
 
-import com.twitter.ann.common.{Distance, Queryable, RuntimeParams}
-import com.twitter.search.common.file.AbstractFile
+impowt com.twittew.ann.common.{distance, UwU q-quewyabwe, rawr x3 w-wuntimepawams}
+i-impowt com.twittew.seawch.common.fiwe.abstwactfiwe
 
-trait QueryableProvider[T, P <: RuntimeParams, D <: Distance[D]] {
-  def provideQueryable(indexDir: AbstractFile): Queryable[T, P, D]
+t-twait q-quewyabwepwovidew[t, p-p <: wuntimepawams, rawr d-d <: distance[d]] {
+  d-def pwovidequewyabwe(indexdiw: abstwactfiwe): quewyabwe[t, σωσ p, d]
 }

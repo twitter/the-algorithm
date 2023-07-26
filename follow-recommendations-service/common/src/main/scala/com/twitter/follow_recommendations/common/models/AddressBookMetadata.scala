@@ -1,29 +1,29 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+impowt c-com.twittew.hewmit.modew.awgowithm
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
 
 /**
- * contains information if a candidate is from a candidate source generated using the following signals.
+ * c-contains infowmation i-if a candidate i-is fwom a c-candidate souwce g-genewated using t-the fowwowing signaws. mya
  */
-case class AddressBookMetadata(
-  inForwardPhoneBook: Boolean,
-  inReversePhoneBook: Boolean,
-  inForwardEmailBook: Boolean,
-  inReverseEmailBook: Boolean)
+case cwass addwessbookmetadata(
+  infowwawdphonebook: boowean, 😳
+  inwevewsephonebook: boowean, XD
+  infowwawdemaiwbook: b-boowean, :3
+  inwevewseemaiwbook: boowean)
 
-object AddressBookMetadata {
+object addwessbookmetadata {
 
-  val ForwardPhoneBookCandidateSource = CandidateSourceIdentifier(
-    Algorithm.ForwardPhoneBook.toString)
+  v-vaw fowwawdphonebookcandidatesouwce = candidatesouwceidentifiew(
+    awgowithm.fowwawdphonebook.tostwing)
 
-  val ReversePhoneBookCandidateSource = CandidateSourceIdentifier(
-    Algorithm.ReversePhoneBook.toString)
+  v-vaw wevewsephonebookcandidatesouwce = candidatesouwceidentifiew(
+    awgowithm.wevewsephonebook.tostwing)
 
-  val ForwardEmailBookCandidateSource = CandidateSourceIdentifier(
-    Algorithm.ForwardEmailBook.toString)
+  vaw fowwawdemaiwbookcandidatesouwce = c-candidatesouwceidentifiew(
+    awgowithm.fowwawdemaiwbook.tostwing)
 
-  val ReverseEmailBookCandidateSource = CandidateSourceIdentifier(
-    Algorithm.ReverseEmailBookIbis.toString)
+  v-vaw wevewseemaiwbookcandidatesouwce = c-candidatesouwceidentifiew(
+    awgowithm.wevewseemaiwbookibis.tostwing)
 
 }

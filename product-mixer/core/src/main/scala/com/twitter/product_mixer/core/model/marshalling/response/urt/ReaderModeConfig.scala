@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt
 
-import metadata.Url
+impowt metadata.uww
 
-case class ReaderModeConfig(isReaderModeAvailable: Boolean, landingUrl: Url)
+c-case c-cwass weadewmodeconfig(isweadewmodeavaiwabwe: b-boowean, òωó w-wandinguww: u-uww)

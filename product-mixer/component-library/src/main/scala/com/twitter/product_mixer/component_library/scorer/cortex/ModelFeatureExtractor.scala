@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.component_library.scorer.cortex
+package com.twittew.pwoduct_mixew.component_wibwawy.scowew.cowtex
 
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import inference.GrpcService.ModelInferResponse.InferOutputTensor
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt i-infewence.gwpcsewvice.modewinfewwesponse.infewoutputtensow
 
 /**
- * Extractor defining how a Scorer should go from outputted tensors to the individual results
- * for each candidate being scored.
+ * e-extwactow d-defining how a-a scowew shouwd g-go fwom outputted t-tensows to the i-individuaw wesuwts
+ * f-fow each candidate being scowed. ^^;;
  *
- * @tparam Result the type of the Value being returned.
- * Users can pass in an anonymous function
+ * @tpawam wesuwt the type of the vawue b-being wetuwned. >_<
+ * usews can pass in an anonymous f-function
  */
-trait ModelFeatureExtractor[-Query <: PipelineQuery, Result] {
-  def apply(query: Query, tensorOutput: Seq[InferOutputTensor]): Seq[Result]
+twait modewfeatuweextwactow[-quewy <: p-pipewinequewy, mya wesuwt] {
+  def appwy(quewy: quewy, mya tensowoutput: s-seq[infewoutputtensow]): seq[wesuwt]
 }

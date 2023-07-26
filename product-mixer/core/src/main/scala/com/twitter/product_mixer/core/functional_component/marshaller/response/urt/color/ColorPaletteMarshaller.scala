@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.cowow
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.ColorPalette
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.cowowpawette
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class ColorPaletteMarshaller @Inject() (
-  colorMarshaller: ColorMarshaller) {
+@singweton
+c-cwass cowowpawettemawshawwew @inject() (
+  c-cowowmawshawwew: c-cowowmawshawwew) {
 
-  def apply(colorPalette: ColorPalette): urt.ColorPaletteItem = urt.ColorPaletteItem(
-    rgb = colorMarshaller(colorPalette.rgb),
-    percentage = colorPalette.percentage
+  def appwy(cowowpawette: cowowpawette): uwt.cowowpawetteitem = uwt.cowowpawetteitem(
+    w-wgb = cowowmawshawwew(cowowpawette.wgb), :3
+    pewcentage = c-cowowpawette.pewcentage
   )
 }

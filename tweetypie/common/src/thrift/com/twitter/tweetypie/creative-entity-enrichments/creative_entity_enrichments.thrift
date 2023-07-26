@@ -1,21 +1,21 @@
-namespace java com.twitter.tweetypie.creative_entity_enrichments.thriftjava
-#@ namespace scala com.twitter.tweetypie.creative_entity_enrichments.thriftscala
-#@ namespace strato com.twitter.tweetypie.creative_entity_enrichments
-namespace py gen.twitter.tweetypie.creative_entity_enrichments
+namespace java com.twittew.tweetypie.cweative_entity_enwichments.thwiftjava
+#@ nyamespace s-scawa com.twittew.tweetypie.cweative_entity_enwichments.thwiftscawa
+#@ n-namespace stwato c-com.twittew.tweetypie.cweative_entity_enwichments
+n-nyamespace py g-gen.twittew.tweetypie.cweative_entity_enwichments
 
-include "com/twitter/strato/columns/creative_entity_enrichments/enrichments.thrift"
+i-incwude "com/twittew/stwato/cowumns/cweative_entity_enwichments/enwichments.thwift"
 
-struct CreativeEntityEnrichmentRef {
-  1: required i64 enrichmentId
-}(persisted='true', hasPersonalData='false')
+s-stwuct c-cweativeentityenwichmentwef {
+  1: wequiwed i64 enwichmentid
+}(pewsisted='twue', /(^•ω•^) haspewsonawdata='fawse')
 
 /**
- * This struct represents a collection of enrichments applied to a tweet.
- * The enrichment for a tweet is just a metadata attached to a tweet
- * Each enrichment has a unique id (EnrichmentId) to uniquely identify an enrichment.
+ * this stwuct wepwesents a-a cowwection of enwichments appwied to a-a tweet. rawr
+ * the enwichment fow a t-tweet is just a metadata attached to a tweet
+ * each enwichment h-has a unique id (enwichmentid) to uniquewy identify a-an enwichment. OwO
  *
- * enrichment_type signifies the type of an enrichment (eg: Interactive Text).
+ * e-enwichment_type signifies the type of an enwichment (eg: intewactive text). (U ﹏ U)
  */
-struct CreativeEntityEnrichments {
-  1: required map<enrichments.EnrichmentType, CreativeEntityEnrichmentRef> enrichment_type_to_ref
-}(persisted='true', hasPersonalData='false')
+s-stwuct cweativeentityenwichments {
+  1: wequiwed map<enwichments.enwichmenttype, >_< cweativeentityenwichmentwef> enwichment_type_to_wef
+}(pewsisted='twue', rawr x3 h-haspewsonawdata='fawse')

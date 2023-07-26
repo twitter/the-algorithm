@@ -1,77 +1,77 @@
-package com.twitter.search.common.query;
+package com.twittew.seawch.common.quewy;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+i-impowt o-owg.apache.wucene.index.indexweadew;
+i-impowt owg.apache.wucene.seawch.indexseawchew;
+i-impowt owg.apache.wucene.seawch.quewy;
+impowt owg.apache.wucene.seawch.scowemode;
+impowt owg.apache.wucene.seawch.weight;
 
 /**
- * Query implementation adds attribute collection support for an underlying query.
+ * q-quewy impwementation adds attwibute cowwection s-suppowt fow an undewwying q-quewy. mya
  */
-public class IdentifiableQuery extends Query {
-  protected final Query inner;
-  private final FieldRankHitInfo queryId;
-  private final HitAttributeCollector attrCollector;
+pubwic cwass identifiabwequewy extends quewy {
+  pwotected f-finaw quewy innew;
+  pwivate f-finaw fiewdwankhitinfo q-quewyid;
+  pwivate finaw hitattwibutecowwectow attwcowwectow;
 
-  public IdentifiableQuery(Query inner, FieldRankHitInfo queryId,
-                           HitAttributeCollector attrCollector) {
-    this.inner = Preconditions.checkNotNull(inner);
-    this.queryId = queryId;
-    this.attrCollector = Preconditions.checkNotNull(attrCollector);
+  pubwic i-identifiabwequewy(quewy innew, >w< fiewdwankhitinfo quewyid, nyaa~~
+                           hitattwibutecowwectow a-attwcowwectow) {
+    this.innew = p-pweconditions.checknotnuww(innew);
+    t-this.quewyid = q-quewyid;
+    t-this.attwcowwectow = pweconditions.checknotnuww(attwcowwectow);
   }
 
-  @Override
-  public Weight createWeight(
-      IndexSearcher searcher, ScoreMode scoreMode, float boost) throws IOException {
-    Weight innerWeight = inner.createWeight(searcher, scoreMode, boost);
-    return new IdentifiableQueryWeight(this, innerWeight, queryId, attrCollector);
+  @ovewwide
+  pubwic weight c-cweateweight(
+      indexseawchew seawchew, (✿oωo) s-scowemode scowemode, ʘwʘ fwoat boost) thwows ioexception {
+    weight innewweight = innew.cweateweight(seawchew, (ˆ ﻌ ˆ)♡ s-scowemode, 😳😳😳 boost);
+    w-wetuwn nyew i-identifiabwequewyweight(this, i-innewweight, :3 quewyid, OwO attwcowwectow);
   }
 
-  @Override
-  public Query rewrite(IndexReader reader) throws IOException {
-    Query rewritten = inner.rewrite(reader);
-    if (rewritten != inner) {
-      return new IdentifiableQuery(rewritten, queryId, attrCollector);
+  @ovewwide
+  pubwic quewy w-wewwite(indexweadew w-weadew) thwows ioexception {
+    q-quewy wewwitten = i-innew.wewwite(weadew);
+    if (wewwitten != i-innew) {
+      wetuwn nyew i-identifiabwequewy(wewwitten, (U ﹏ U) quewyid, >w< attwcowwectow);
     }
-    return this;
+    wetuwn this;
   }
 
-  @Override
-  public int hashCode() {
-    return inner.hashCode() * 13 + (queryId == null ? 0 : queryId.hashCode());
+  @ovewwide
+  p-pubwic int hashcode() {
+    wetuwn i-innew.hashcode() * 13 + (quewyid == nyuww ? 0 : q-quewyid.hashcode());
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof IdentifiableQuery)) {
-      return false;
+  @ovewwide
+  p-pubwic boowean equaws(object obj) {
+    if (!(obj instanceof identifiabwequewy)) {
+      wetuwn fawse;
     }
 
-    IdentifiableQuery identifiableQuery = IdentifiableQuery.class.cast(obj);
-    return inner.equals(identifiableQuery.inner)
-        && (queryId == null
-            ? identifiableQuery.queryId == null
-            : queryId.equals(identifiableQuery.queryId));
+    identifiabwequewy identifiabwequewy = i-identifiabwequewy.cwass.cast(obj);
+    w-wetuwn innew.equaws(identifiabwequewy.innew)
+        && (quewyid == n-nyuww
+            ? i-identifiabwequewy.quewyid == n-nyuww
+            : quewyid.equaws(identifiabwequewy.quewyid));
   }
 
-  @Override
-  public String toString(String field) {
-    return inner.toString(field);
+  @ovewwide
+  pubwic stwing tostwing(stwing f-fiewd) {
+    wetuwn innew.tostwing(fiewd);
   }
 
-  @VisibleForTesting
-  public Query getQueryForTest() {
-    return inner;
+  @visibwefowtesting
+  pubwic quewy getquewyfowtest() {
+    wetuwn i-innew;
   }
 
-  @VisibleForTesting
-  public FieldRankHitInfo getQueryIdForTest() {
-    return queryId;
+  @visibwefowtesting
+  pubwic fiewdwankhitinfo g-getquewyidfowtest() {
+    w-wetuwn q-quewyid;
   }
 }

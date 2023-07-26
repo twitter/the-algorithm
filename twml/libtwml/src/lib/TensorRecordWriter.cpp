@@ -1,162 +1,162 @@
-#include "internal/error.h"
-#include "internal/thrift.h"
+#incwude "intewnaw/ewwow.h"
+#incwude "intewnaw/thwift.h"
 
-#include <map>
-#include <twml/ThriftWriter.h>
-#include <twml/TensorRecordWriter.h>
-#include <twml/io/IOError.h>
+#incwude <map>
+#incwude <twmw/thwiftwwitew.h>
+#incwude <twmw/tensowwecowdwwitew.h>
+#incwude <twmw/io/ioewwow.h>
 
-using namespace twml::io;
+using nyamespace twmw::io;
 
-namespace twml {
+n-nyamespace t-twmw {
 
-static int32_t getRawThriftType(twml_type dtype) {
-  // convert twml enum to tensor.thrift enum
+static i-int32_t getwawthwifttype(twmw_type d-dtype) {
+  // c-convewt twmw enum t-to tensow.thwift e-enum
   switch (dtype) {
-    case TWML_TYPE_FLOAT:
-      return DATA_TYPE_FLOAT;
-    case TWML_TYPE_DOUBLE:
-      return DATA_TYPE_DOUBLE;
-    case TWML_TYPE_INT64:
-      return DATA_TYPE_INT64;
-    case TWML_TYPE_INT32:
-      return DATA_TYPE_INT32;
-    case TWML_TYPE_UINT8:
-      return DATA_TYPE_UINT8;
-    case TWML_TYPE_STRING:
-      return DATA_TYPE_STRING;
-    case TWML_TYPE_BOOL:
-      return DATA_TYPE_BOOL;
-    default:
-      throw IOError(IOError::UNSUPPORTED_OUTPUT_TYPE);
+    c-case twmw_type_fwoat:
+      wetuwn data_type_fwoat;
+    case twmw_type_doubwe:
+      wetuwn data_type_doubwe;
+    c-case twmw_type_int64:
+      wetuwn data_type_int64;
+    c-case twmw_type_int32:
+      wetuwn data_type_int32;
+    c-case twmw_type_uint8:
+      wetuwn data_type_uint8;
+    case twmw_type_stwing:
+      w-wetuwn data_type_stwing;
+    case twmw_type_boow:
+      wetuwn d-data_type_boow;
+    d-defauwt:
+      thwow ioewwow(ioewwow::unsuppowted_output_type);
   }
 }
 
-void TensorRecordWriter::writeTensor(const RawTensor &tensor) {
-  if (tensor.getType() == TWML_TYPE_INT32) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_STRUCT, GT_INT32);
-    m_thrift_writer.writeStructFieldHeader(TTYPE_LIST, 1);
-    m_thrift_writer.writeListHeader(TTYPE_I32, tensor.getNumElements());
+void tensowwecowdwwitew::wwitetensow(const wawtensow &tensow) {
+  if (tensow.gettype() == t-twmw_type_int32) {
+    m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_stwuct, nyaa~~ gt_int32);
+    m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_wist, OwO 1);
+    m_thwift_wwitew.wwitewistheadew(ttype_i32, rawr x3 t-tensow.getnumewements());
 
-    const int32_t *data = tensor.getData<int32_t>();
+    const i-int32_t *data = t-tensow.getdata<int32_t>();
 
-    for (uint64_t i = 0; i < tensor.getNumElements(); i++)
-      m_thrift_writer.writeInt32(data[i]);
+    f-fow (uint64_t i = 0; i-i < tensow.getnumewements(); i++)
+      m_thwift_wwitew.wwiteint32(data[i]);
 
-  } else if (tensor.getType() == TWML_TYPE_INT64) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_STRUCT, GT_INT64);
-    m_thrift_writer.writeStructFieldHeader(TTYPE_LIST, 1);
-    m_thrift_writer.writeListHeader(TTYPE_I64, tensor.getNumElements());
+  } ewse if (tensow.gettype() == t-twmw_type_int64) {
+    m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_stwuct, XD gt_int64);
+    m-m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_wist, σωσ 1);
+    m_thwift_wwitew.wwitewistheadew(ttype_i64, (U ᵕ U❁) tensow.getnumewements());
 
-    const int64_t *data = tensor.getData<int64_t>();
+    const int64_t *data = tensow.getdata<int64_t>();
 
-    for (uint64_t i = 0; i < tensor.getNumElements(); i++)
-      m_thrift_writer.writeInt64(data[i]);
+    fow (uint64_t i-i = 0; i < tensow.getnumewements(); i-i++)
+      m-m_thwift_wwitew.wwiteint64(data[i]);
 
-  } else if (tensor.getType() == TWML_TYPE_FLOAT) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_STRUCT, GT_FLOAT);
-    m_thrift_writer.writeStructFieldHeader(TTYPE_LIST, 1);
-    m_thrift_writer.writeListHeader(TTYPE_DOUBLE, tensor.getNumElements());
+  } e-ewse if (tensow.gettype() == twmw_type_fwoat) {
+    m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_stwuct, (U ﹏ U) gt_fwoat);
+    m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_wist, :3 1);
+    m-m_thwift_wwitew.wwitewistheadew(ttype_doubwe, ( ͡o ω ͡o ) t-tensow.getnumewements());
 
-    const float *data = tensor.getData<float>();
+    const fwoat *data = t-tensow.getdata<fwoat>();
 
-    for (uint64_t i = 0; i < tensor.getNumElements(); i++)
-      m_thrift_writer.writeDouble(static_cast<double>(data[i]));
+    f-fow (uint64_t i = 0; i < tensow.getnumewements(); i-i++)
+      m_thwift_wwitew.wwitedoubwe(static_cast<doubwe>(data[i]));
 
-  } else if (tensor.getType() == TWML_TYPE_DOUBLE) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_STRUCT, GT_DOUBLE);
-    m_thrift_writer.writeStructFieldHeader(TTYPE_LIST, 1);
-    m_thrift_writer.writeListHeader(TTYPE_DOUBLE, tensor.getNumElements());
+  } e-ewse if (tensow.gettype() == twmw_type_doubwe) {
+    m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_stwuct, σωσ g-gt_doubwe);
+    m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_wist, 1);
+    m-m_thwift_wwitew.wwitewistheadew(ttype_doubwe, >w< tensow.getnumewements());
 
-    const double *data = tensor.getData<double>();
+    c-const doubwe *data = t-tensow.getdata<doubwe>();
 
-    for (uint64_t i = 0; i < tensor.getNumElements(); i++)
-      m_thrift_writer.writeDouble(data[i]);
+    fow (uint64_t i = 0; i < tensow.getnumewements(); i++)
+      m_thwift_wwitew.wwitedoubwe(data[i]);
 
-  } else if (tensor.getType() == TWML_TYPE_STRING) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_STRUCT, GT_STRING);
-    m_thrift_writer.writeStructFieldHeader(TTYPE_LIST, 1);
-    m_thrift_writer.writeListHeader(TTYPE_STRING, tensor.getNumElements());
+  } ewse if (tensow.gettype() == t-twmw_type_stwing) {
+    m-m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_stwuct, 😳😳😳 gt_stwing);
+    m-m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_wist, OwO 1);
+    m-m_thwift_wwitew.wwitewistheadew(ttype_stwing, 😳 t-tensow.getnumewements());
 
-    const std::string *data = tensor.getData<std::string>();
+    const std::stwing *data = tensow.getdata<std::stwing>();
 
-    for (uint64_t i = 0; i < tensor.getNumElements(); i++)
-      m_thrift_writer.writeString(data[i]);
+    fow (uint64_t i = 0; i-i < tensow.getnumewements(); i++)
+      m_thwift_wwitew.wwitestwing(data[i]);
 
-  } else if (tensor.getType() == TWML_TYPE_BOOL) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_STRUCT, GT_BOOL);
-    m_thrift_writer.writeStructFieldHeader(TTYPE_LIST, 1);
-    m_thrift_writer.writeListHeader(TTYPE_BOOL, tensor.getNumElements());
+  } ewse if (tensow.gettype() == twmw_type_boow) {
+    m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_stwuct, 😳😳😳 gt_boow);
+    m-m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_wist, (˘ω˘) 1);
+    m_thwift_wwitew.wwitewistheadew(ttype_boow, ʘwʘ t-tensow.getnumewements());
 
-    const bool *data = tensor.getData<bool>();
+    c-const boow *data = t-tensow.getdata<boow>();
 
-    for (uint64_t i = 0; i < tensor.getNumElements(); i++)
-      m_thrift_writer.writeBool(data[i]);
+    fow (uint64_t i-i = 0; i < tensow.getnumewements(); i-i++)
+      m-m_thwift_wwitew.wwiteboow(data[i]);
 
-  } else {
-    throw IOError(IOError::UNSUPPORTED_OUTPUT_TYPE);
+  } e-ewse {
+    thwow ioewwow(ioewwow::unsuppowted_output_type);
   }
 
-  // write tensor shape field
-  m_thrift_writer.writeStructFieldHeader(TTYPE_LIST, 2);
-  m_thrift_writer.writeListHeader(TTYPE_I64, tensor.getNumDims());
+  // wwite tensow shape f-fiewd
+  m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_wist, ( ͡o ω ͡o ) 2);
+  m-m_thwift_wwitew.wwitewistheadew(ttype_i64, o.O t-tensow.getnumdims());
 
-  for (uint64_t i = 0; i < tensor.getNumDims(); i++)
-    m_thrift_writer.writeInt64(tensor.getDim(i));
+  f-fow (uint64_t i-i = 0; i < tensow.getnumdims(); i++)
+    m_thwift_wwitew.wwiteint64(tensow.getdim(i));
 
-  m_thrift_writer.writeStructStop();
-  m_thrift_writer.writeStructStop();
+  m_thwift_wwitew.wwitestwuctstop();
+  m_thwift_wwitew.wwitestwuctstop();
 }
 
-void TensorRecordWriter::writeRawTensor(const RawTensor &tensor) {
-  m_thrift_writer.writeStructFieldHeader(TTYPE_STRUCT, GT_RAW);
+v-void tensowwecowdwwitew::wwitewawtensow(const wawtensow &tensow) {
+  m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_stwuct, >w< gt_waw);
 
-  // dataType field
-  m_thrift_writer.writeStructFieldHeader(TTYPE_I32, 1);
-  m_thrift_writer.writeInt32(getRawThriftType(tensor.getType()));
+  // datatype fiewd
+  m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_i32, 😳 1);
+  m_thwift_wwitew.wwiteint32(getwawthwifttype(tensow.gettype()));
 
-  // content field
-  uint64_t type_size = getSizeOf(tensor.getType());
-  m_thrift_writer.writeStructFieldHeader(TTYPE_STRING, 2);
-  const uint8_t *data = reinterpret_cast<const uint8_t *>(tensor.getData<void>());
-  m_thrift_writer.writeBinary(data, tensor.getNumElements() * type_size);
+  // c-content fiewd
+  uint64_t type_size = getsizeof(tensow.gettype());
+  m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_stwing, 🥺 2);
+  c-const uint8_t *data = w-weintewpwet_cast<const u-uint8_t *>(tensow.getdata<void>());
+  m_thwift_wwitew.wwitebinawy(data, rawr x3 t-tensow.getnumewements() * type_size);
 
-  // shape field
-  m_thrift_writer.writeStructFieldHeader(TTYPE_LIST, 3);
-  m_thrift_writer.writeListHeader(TTYPE_I64, tensor.getNumDims());
+  // s-shape fiewd
+  m-m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_wist, o.O 3);
+  m_thwift_wwitew.wwitewistheadew(ttype_i64, rawr tensow.getnumdims());
 
-  for (uint64_t i = 0; i < tensor.getNumDims(); i++)
-    m_thrift_writer.writeInt64(tensor.getDim(i));
+  fow (uint64_t i = 0; i < tensow.getnumdims(); i-i++)
+    m_thwift_wwitew.wwiteint64(tensow.getdim(i));
 
-  m_thrift_writer.writeStructStop();
-  m_thrift_writer.writeStructStop();
+  m-m_thwift_wwitew.wwitestwuctstop();
+  m_thwift_wwitew.wwitestwuctstop();
 }
 
-TWMLAPI uint32_t TensorRecordWriter::getRecordsWritten() {
-  return m_records_written;
+t-twmwapi uint32_t t-tensowwecowdwwitew::getwecowdswwitten() {
+  wetuwn m_wecowds_wwitten;
 }
 
-// Caller (usually DataRecordWriter) must precede with struct header field
-// like thrift_writer.writeStructFieldHeader(TTYPE_MAP, DR_GENERAL_TENSOR)
-TWMLAPI uint64_t TensorRecordWriter::write(twml::TensorRecord &record) {
-  uint64_t bytes_written_before = m_thrift_writer.getBytesWritten();
+// c-cawwew (usuawwy d-datawecowdwwitew) must pwecede with s-stwuct headew fiewd
+// w-wike thwift_wwitew.wwitestwuctfiewdheadew(ttype_map, ʘwʘ dw_genewaw_tensow)
+twmwapi uint64_t tensowwecowdwwitew::wwite(twmw::tensowwecowd &wecowd) {
+  uint64_t b-bytes_wwitten_befowe = m-m_thwift_wwitew.getbyteswwitten();
 
-  m_thrift_writer.writeMapHeader(TTYPE_I64, TTYPE_STRUCT, record.getRawTensors().size());
+  m-m_thwift_wwitew.wwitemapheadew(ttype_i64, 😳😳😳 ttype_stwuct, ^^;; w-wecowd.getwawtensows().size());
 
-  for (auto id_tensor_pairs : record.getRawTensors()) {
-    m_thrift_writer.writeInt64(id_tensor_pairs.first);
+  f-fow (auto id_tensow_paiws : w-wecowd.getwawtensows()) {
+    m_thwift_wwitew.wwiteint64(id_tensow_paiws.fiwst);
 
-    // all tensors written as RawTensor Thrift except for StringTensors
-    // this avoids the overhead of converting little endian to big endian
-    if (id_tensor_pairs.second.getType() == TWML_TYPE_STRING)
-      writeTensor(id_tensor_pairs.second);
-    else
-      writeRawTensor(id_tensor_pairs.second);
+    // aww tensows wwitten as wawtensow thwift except f-fow stwingtensows
+    // t-this avoids the ovewhead of convewting w-wittwe endian to b-big endian
+    if (id_tensow_paiws.second.gettype() == twmw_type_stwing)
+      wwitetensow(id_tensow_paiws.second);
+    e-ewse
+      wwitewawtensow(id_tensow_paiws.second);
   }
 
-  m_records_written++;
+  m_wecowds_wwitten++;
 
-  return m_thrift_writer.getBytesWritten() - bytes_written_before;
+  wetuwn m_thwift_wwitew.getbyteswwitten() - b-bytes_wwitten_befowe;
 }
 
-}  // namespace twml
+}  // nyamespace twmw

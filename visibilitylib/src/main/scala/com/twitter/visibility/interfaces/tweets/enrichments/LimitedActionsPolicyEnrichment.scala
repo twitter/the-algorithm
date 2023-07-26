@@ -1,173 +1,173 @@
-package com.twitter.visibility.interfaces.tweets.enrichments
+package com.twittew.visibiwity.intewfaces.tweets.enwichments
 
-import com.twitter.featureswitches.FSRecipient
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.common.LocalizedLimitedActionsSource
-import com.twitter.visibility.common.actions.converter.scala.LimitedActionTypeConverter
-import com.twitter.visibility.common.actions.LimitedActionsPolicy
-import com.twitter.visibility.common.actions.LimitedActionType
-import com.twitter.visibility.common.actions.LimitedEngagementReason
-import com.twitter.visibility.rules.Action
-import com.twitter.visibility.rules.EmergencyDynamicInterstitial
-import com.twitter.visibility.rules.InterstitialLimitedEngagements
-import com.twitter.visibility.rules.LimitedEngagements
+impowt c-com.twittew.featuweswitches.fswecipient
+i-impowt c-com.twittew.featuweswitches.v2.featuweswitches
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.visibiwity.buiwdew.visibiwitywesuwt
+i-impowt com.twittew.visibiwity.common.wocawizedwimitedactionssouwce
+i-impowt c-com.twittew.visibiwity.common.actions.convewtew.scawa.wimitedactiontypeconvewtew
+impowt com.twittew.visibiwity.common.actions.wimitedactionspowicy
+impowt com.twittew.visibiwity.common.actions.wimitedactiontype
+impowt com.twittew.visibiwity.common.actions.wimitedengagementweason
+impowt c-com.twittew.visibiwity.wuwes.action
+impowt com.twittew.visibiwity.wuwes.emewgencydynamicintewstitiaw
+impowt com.twittew.visibiwity.wuwes.intewstitiawwimitedengagements
+i-impowt com.twittew.visibiwity.wuwes.wimitedengagements
 
-case class PolicyFeatureSwitchResults(
-  limitedActionTypes: Option[Seq[LimitedActionType]],
-  copyNamespace: String,
-  promptType: String,
-  learnMoreUrl: Option[String])
+case cwass powicyfeatuweswitchwesuwts(
+  w-wimitedactiontypes: option[seq[wimitedactiontype]], /(^•ω•^)
+  copynamespace: stwing, (⑅˘꒳˘)
+  pwompttype: s-stwing, ( ͡o ω ͡o )
+  weawnmoweuww: option[stwing])
 
-object LimitedActionsPolicyEnrichment {
-  object FeatureSwitchKeys {
-    val LimitedActionTypes = "limited_actions_policy_limited_actions"
-    val CopyNamespace = "limited_actions_policy_copy_namespace"
-    val PromptType = "limited_actions_policy_prompt_type"
-    val LearnMoreUrl = "limited_actions_policy_prompt_learn_more_url"
+o-object w-wimitedactionspowicyenwichment {
+  object featuweswitchkeys {
+    vaw wimitedactiontypes = "wimited_actions_powicy_wimited_actions"
+    vaw copynamespace = "wimited_actions_powicy_copy_namespace"
+    v-vaw pwompttype = "wimited_actions_powicy_pwompt_type"
+    vaw weawnmoweuww = "wimited_actions_powicy_pwompt_weawn_mowe_uww"
   }
 
-  val DefaultCopyNameSpace = "Default"
-  val DefaultPromptType = "basic"
-  val LimitedActionsPolicyEnrichmentScope = "limited_actions_policy_enrichment"
-  val MissingLimitedActionTypesScope = "missing_limited_action_types"
-  val ExecutedScope = "executed"
+  vaw defauwtcopynamespace = "defauwt"
+  vaw defauwtpwompttype = "basic"
+  v-vaw wimitedactionspowicyenwichmentscope = "wimited_actions_powicy_enwichment"
+  vaw missingwimitedactiontypesscope = "missing_wimited_action_types"
+  v-vaw e-exekawaii~dscope = "exekawaii~d"
 
-  def apply(
-    result: VisibilityResult,
-    localizedLimitedActionSource: LocalizedLimitedActionsSource,
-    languageCode: String,
-    countryCode: Option[String],
-    featureSwitches: FeatureSwitches,
-    statsReceiver: StatsReceiver
-  ): VisibilityResult = {
-    val scopedStatsReceiver = statsReceiver.scope(LimitedActionsPolicyEnrichmentScope)
+  d-def appwy(
+    w-wesuwt: visibiwitywesuwt, òωó
+    wocawizedwimitedactionsouwce: wocawizedwimitedactionssouwce, (⑅˘꒳˘)
+    w-wanguagecode: stwing, XD
+    countwycode: option[stwing], -.-
+    featuweswitches: f-featuweswitches, :3
+    statsweceivew: statsweceivew
+  ): visibiwitywesuwt = {
+    vaw scopedstatsweceivew = statsweceivew.scope(wimitedactionspowicyenwichmentscope)
 
-    val enrichVerdict_ = enrichVerdict(
-      _: Action,
-      localizedLimitedActionSource,
-      languageCode,
-      countryCode,
-      featureSwitches,
-      scopedStatsReceiver
+    v-vaw enwichvewdict_ = enwichvewdict(
+      _: a-action, nyaa~~
+      w-wocawizedwimitedactionsouwce, 😳
+      w-wanguagecode, (⑅˘꒳˘)
+      countwycode, nyaa~~
+      featuweswitches, OwO
+      scopedstatsweceivew
     )
 
-    result.copy(
-      verdict = enrichVerdict_(result.verdict),
-      secondaryVerdicts = result.secondaryVerdicts.map(enrichVerdict_)
+    w-wesuwt.copy(
+      v-vewdict = enwichvewdict_(wesuwt.vewdict), rawr x3
+      s-secondawyvewdicts = w-wesuwt.secondawyvewdicts.map(enwichvewdict_)
     )
   }
 
-  private def enrichVerdict(
-    verdict: Action,
-    localizedLimitedActionsSource: LocalizedLimitedActionsSource,
-    languageCode: String,
-    countryCode: Option[String],
-    featureSwitches: FeatureSwitches,
-    statsReceiver: StatsReceiver
-  ): Action = {
-    val limitedActionsPolicyForReason_ = limitedActionsPolicyForReason(
-      _: LimitedEngagementReason,
-      localizedLimitedActionsSource,
-      languageCode,
-      countryCode,
-      featureSwitches,
-      statsReceiver
+  pwivate def e-enwichvewdict(
+    vewdict: action, XD
+    w-wocawizedwimitedactionssouwce: wocawizedwimitedactionssouwce, σωσ
+    wanguagecode: s-stwing, (U ᵕ U❁)
+    countwycode: o-option[stwing], (U ﹏ U)
+    featuweswitches: f-featuweswitches, :3
+    s-statsweceivew: statsweceivew
+  ): action = {
+    vaw wimitedactionspowicyfowweason_ = wimitedactionspowicyfowweason(
+      _: wimitedengagementweason, ( ͡o ω ͡o )
+      w-wocawizedwimitedactionssouwce, σωσ
+      w-wanguagecode, >w<
+      countwycode, 😳😳😳
+      f-featuweswitches, OwO
+      s-statsweceivew
     )
-    val executedCounter = statsReceiver.scope(ExecutedScope)
+    v-vaw exekawaii~dcountew = statsweceivew.scope(exekawaii~dscope)
 
-    verdict match {
-      case le: LimitedEngagements => {
-        executedCounter.counter("").incr()
-        executedCounter.counter(le.name).incr()
-        le.copy(
-          policy = limitedActionsPolicyForReason_(le.getLimitedEngagementReason)
+    vewdict match {
+      case w-we: wimitedengagements => {
+        exekawaii~dcountew.countew("").incw()
+        exekawaii~dcountew.countew(we.name).incw()
+        we.copy(
+          powicy = w-wimitedactionspowicyfowweason_(we.getwimitedengagementweason)
         )
       }
-      case ile: InterstitialLimitedEngagements => {
-        executedCounter.counter("").incr()
-        executedCounter.counter(ile.name).incr()
-        ile.copy(
-          policy = limitedActionsPolicyForReason_(
-            ile.getLimitedEngagementReason
+      case iwe: i-intewstitiawwimitedengagements => {
+        e-exekawaii~dcountew.countew("").incw()
+        e-exekawaii~dcountew.countew(iwe.name).incw()
+        iwe.copy(
+          p-powicy = wimitedactionspowicyfowweason_(
+            i-iwe.getwimitedengagementweason
           )
         )
       }
-      case edi: EmergencyDynamicInterstitial => {
-        executedCounter.counter("").incr()
-        executedCounter.counter(edi.name).incr()
-        EmergencyDynamicInterstitial(
-          copy = edi.copy,
-          linkOpt = edi.linkOpt,
-          localizedMessage = edi.localizedMessage,
-          policy = limitedActionsPolicyForReason_(edi.getLimitedEngagementReason)
+      c-case e-edi: emewgencydynamicintewstitiaw => {
+        exekawaii~dcountew.countew("").incw()
+        exekawaii~dcountew.countew(edi.name).incw()
+        e-emewgencydynamicintewstitiaw(
+          c-copy = e-edi.copy, 😳
+          w-winkopt = e-edi.winkopt, 😳😳😳
+          wocawizedmessage = edi.wocawizedmessage, (˘ω˘)
+          powicy = w-wimitedactionspowicyfowweason_(edi.getwimitedengagementweason)
         )
       }
-      case _ => verdict
+      case _ => vewdict
     }
   }
 
-  private def limitedActionsPolicyForReason(
-    reason: LimitedEngagementReason,
-    localizedLimitedActionsSource: LocalizedLimitedActionsSource,
-    languageCode: String,
-    countryCode: Option[String],
-    featureSwitches: FeatureSwitches,
-    statsReceiver: StatsReceiver
-  ): Option[LimitedActionsPolicy] = {
-    val policyConfig = getPolicyFeatureSwitchResults(featureSwitches, reason)
+  pwivate def wimitedactionspowicyfowweason(
+    weason: w-wimitedengagementweason, ʘwʘ
+    wocawizedwimitedactionssouwce: wocawizedwimitedactionssouwce, ( ͡o ω ͡o )
+    wanguagecode: stwing, o.O
+    c-countwycode: o-option[stwing], >w<
+    f-featuweswitches: featuweswitches, 😳
+    s-statsweceivew: statsweceivew
+  ): o-option[wimitedactionspowicy] = {
+    v-vaw powicyconfig = getpowicyfeatuweswitchwesuwts(featuweswitches, 🥺 weason)
 
-    policyConfig.limitedActionTypes match {
-      case Some(limitedActionTypes) if limitedActionTypes.nonEmpty =>
-        Some(
-          LimitedActionsPolicy(
-            limitedActionTypes.map(
-              localizedLimitedActionsSource.fetch(
-                _,
-                languageCode,
-                countryCode,
-                policyConfig.promptType,
-                policyConfig.copyNamespace,
-                policyConfig.learnMoreUrl
+    powicyconfig.wimitedactiontypes match {
+      case some(wimitedactiontypes) i-if wimitedactiontypes.nonempty =>
+        some(
+          w-wimitedactionspowicy(
+            wimitedactiontypes.map(
+              wocawizedwimitedactionssouwce.fetch(
+                _, rawr x3
+                w-wanguagecode, o.O
+                c-countwycode, rawr
+                powicyconfig.pwompttype, ʘwʘ
+                powicyconfig.copynamespace, 😳😳😳
+                p-powicyconfig.weawnmoweuww
               )
             )
           )
         )
-      case _ => {
-        statsReceiver
-          .scope(MissingLimitedActionTypesScope).counter(reason.toLimitedActionsString).incr()
-        None
+      c-case _ => {
+        statsweceivew
+          .scope(missingwimitedactiontypesscope).countew(weason.towimitedactionsstwing).incw()
+        n-nyone
       }
     }
   }
 
-  private def getPolicyFeatureSwitchResults(
-    featureSwitches: FeatureSwitches,
-    reason: LimitedEngagementReason
-  ): PolicyFeatureSwitchResults = {
-    val recipient = FSRecipient().withCustomFields(
-      ("LimitedEngagementReason", reason.toLimitedActionsString)
+  p-pwivate def getpowicyfeatuweswitchwesuwts(
+    featuweswitches: featuweswitches, ^^;;
+    weason: w-wimitedengagementweason
+  ): powicyfeatuweswitchwesuwts = {
+    v-vaw wecipient = f-fswecipient().withcustomfiewds(
+      ("wimitedengagementweason", o.O weason.towimitedactionsstwing)
     )
-    val featureSwitchesResults = featureSwitches
-      .matchRecipient(recipient)
+    v-vaw f-featuweswitcheswesuwts = featuweswitches
+      .matchwecipient(wecipient)
 
-    val limitedActionTypes = featureSwitchesResults
-      .getStringArray(FeatureSwitchKeys.LimitedActionTypes)
-      .map(_.map(LimitedActionTypeConverter.fromString).flatten)
+    v-vaw wimitedactiontypes = featuweswitcheswesuwts
+      .getstwingawway(featuweswitchkeys.wimitedactiontypes)
+      .map(_.map(wimitedactiontypeconvewtew.fwomstwing).fwatten)
 
-    val copyNamespace = featureSwitchesResults
-      .getString(FeatureSwitchKeys.CopyNamespace)
-      .getOrElse(DefaultCopyNameSpace)
+    vaw copynamespace = featuweswitcheswesuwts
+      .getstwing(featuweswitchkeys.copynamespace)
+      .getowewse(defauwtcopynamespace)
 
-    val promptType = featureSwitchesResults
-      .getString(FeatureSwitchKeys.PromptType)
-      .getOrElse(DefaultPromptType)
+    vaw pwompttype = f-featuweswitcheswesuwts
+      .getstwing(featuweswitchkeys.pwompttype)
+      .getowewse(defauwtpwompttype)
 
-    val learnMoreUrl = featureSwitchesResults
-      .getString(FeatureSwitchKeys.LearnMoreUrl)
-      .filter(_.nonEmpty)
+    v-vaw weawnmoweuww = featuweswitcheswesuwts
+      .getstwing(featuweswitchkeys.weawnmoweuww)
+      .fiwtew(_.nonempty)
 
-    PolicyFeatureSwitchResults(limitedActionTypes, copyNamespace, promptType, learnMoreUrl)
+    powicyfeatuweswitchwesuwts(wimitedactiontypes, (///ˬ///✿) c-copynamespace, σωσ p-pwompttype, nyaa~~ weawnmoweuww)
   }
 }

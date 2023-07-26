@@ -1,53 +1,53 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.twittew.home_mixew.functionaw_component.decowatow.uwt.buiwdew
 
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableNahFeedbackInfoParam
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.service.{thriftscala => t}
-import com.twitter.timelines.util.FeedbackMetadataSerializer
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.suggesttypefeatuwe
+i-impowt c-com.twittew.home_mixew.modew.wequest.fowwowingpwoduct
+i-impowt c-com.twittew.home_mixew.modew.wequest.fowyoupwoduct
+i-impowt com.twittew.home_mixew.pawam.homegwobawpawams.enabwenahfeedbackinfopawam
+i-impowt com.twittew.home_mixew.utiw.candidatesutiw
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.timewines.sewvice.{thwiftscawa => t-t}
+impowt com.twittew.timewines.utiw.feedbackmetadatasewiawizew
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class HomeFeedbackActionInfoBuilder @Inject() (
-  notInterestedTopicFeedbackActionBuilder: NotInterestedTopicFeedbackActionBuilder,
-  dontLikeFeedbackActionBuilder: DontLikeFeedbackActionBuilder)
-    extends BaseFeedbackActionInfoBuilder[PipelineQuery, TweetCandidate] {
+@singweton
+cwass homefeedbackactioninfobuiwdew @inject() (
+  notintewestedtopicfeedbackactionbuiwdew: n-nyotintewestedtopicfeedbackactionbuiwdew, 😳😳😳
+  dontwikefeedbackactionbuiwdew: d-dontwikefeedbackactionbuiwdew)
+    e-extends basefeedbackactioninfobuiwdew[pipewinequewy, 😳😳😳 tweetcandidate] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[FeedbackActionInfo] = {
-    val supportedProduct = query.product match {
-      case FollowingProduct => query.params(EnableNahFeedbackInfoParam)
-      case ForYouProduct => true
-      case _ => false
+  ovewwide def appwy(
+    quewy: pipewinequewy, o.O
+    candidate: tweetcandidate, ( ͡o ω ͡o )
+    c-candidatefeatuwes: featuwemap
+  ): option[feedbackactioninfo] = {
+    vaw suppowtedpwoduct = quewy.pwoduct m-match {
+      case fowwowingpwoduct => q-quewy.pawams(enabwenahfeedbackinfopawam)
+      c-case fowyoupwoduct => t-twue
+      c-case _ => fawse
     }
-    val isAuthoredByViewer = CandidatesUtil.isAuthoredByViewer(query, candidateFeatures)
+    vaw isauthowedbyviewew = c-candidatesutiw.isauthowedbyviewew(quewy, (U ﹏ U) candidatefeatuwes)
 
-    if (supportedProduct && !isAuthoredByViewer) {
-      val feedbackActions = Seq(
-        notInterestedTopicFeedbackActionBuilder(candidateFeatures),
-        dontLikeFeedbackActionBuilder(query, candidate, candidateFeatures)
-      ).flatten
-      val feedbackMetadata = FeedbackMetadataSerializer.serialize(
-        t.FeedbackMetadata(injectionType = candidateFeatures.getOrElse(SuggestTypeFeature, None)))
+    if (suppowtedpwoduct && !isauthowedbyviewew) {
+      vaw f-feedbackactions = seq(
+        nyotintewestedtopicfeedbackactionbuiwdew(candidatefeatuwes), (///ˬ///✿)
+        dontwikefeedbackactionbuiwdew(quewy, >w< candidate, candidatefeatuwes)
+      ).fwatten
+      vaw f-feedbackmetadata = feedbackmetadatasewiawizew.sewiawize(
+        t-t.feedbackmetadata(injectiontype = c-candidatefeatuwes.getowewse(suggesttypefeatuwe, rawr n-nyone)))
 
-      Some(
-        FeedbackActionInfo(
-          feedbackActions = feedbackActions,
-          feedbackMetadata = Some(feedbackMetadata),
-          displayContext = None,
-          clientEventInfo = None
+      some(
+        feedbackactioninfo(
+          feedbackactions = f-feedbackactions, mya
+          f-feedbackmetadata = some(feedbackmetadata), ^^
+          d-dispwaycontext = n-nyone, 😳😳😳
+          cwienteventinfo = n-nyone
         ))
-    } else None
+    } ewse n-nyone
   }
 }

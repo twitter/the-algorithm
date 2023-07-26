@@ -1,118 +1,118 @@
-package com.twitter.tweetypie.additionalfields
+package com.twittew.tweetypie.additionawfiewds
 
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.scrooge.TFieldBlob
-import com.twitter.scrooge.ThriftStructField
+impowt com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt c-com.twittew.scwooge.tfiewdbwob
+i-impowt com.twittew.scwooge.thwiftstwuctfiewd
 
-object AdditionalFields {
-  type FieldId = Short
+o-object additionawfiewds {
+  t-type f-fiewdid = showt
 
-  /** additional fields really start at 100, be we are ignoring conversation id for now */
-  val StartAdditionalId = 101
+  /** a-additionaw f-fiewds weawwy stawt at 100, 🥺 be we awe ignowing convewsation id fow nyow */
+  v-vaw stawtadditionawid = 101
 
-  /** all known [[Tweet]] field IDs */
-  val CompiledFieldIds: Seq[FieldId] = Tweet.metaData.fields.map(_.id)
+  /** aww known [[tweet]] fiewd ids */
+  v-vaw compiwedfiewdids: seq[fiewdid] = t-tweet.metadata.fiewds.map(_.id)
 
-  /** all known [[Tweet]] fields in the "additional-field" range (excludes id) */
-  val CompiledAdditionalFieldMetaDatas: Seq[ThriftStructField[Tweet]] =
-    Tweet.metaData.fields.filter(f => isAdditionalFieldId(f.id))
+  /** aww known [[tweet]] fiewds in the "additionaw-fiewd" w-wange (excwudes id) */
+  v-vaw compiwedadditionawfiewdmetadatas: s-seq[thwiftstwuctfiewd[tweet]] =
+    tweet.metadata.fiewds.fiwtew(f => isadditionawfiewdid(f.id))
 
-  val CompiledAdditionalFieldsMap: Map[Short, ThriftStructField[Tweet]] =
-    CompiledAdditionalFieldMetaDatas.map(field => (field.id, field)).toMap
+  vaw compiwedadditionawfiewdsmap: m-map[showt, òωó thwiftstwuctfiewd[tweet]] =
+    compiwedadditionawfiewdmetadatas.map(fiewd => (fiewd.id, (ˆ ﻌ ˆ)♡ fiewd)).tomap
 
-  /** all known [[Tweet]] field IDs in the "additional-field" range */
-  val CompiledAdditionalFieldIds: Seq[FieldId] =
-    CompiledAdditionalFieldsMap.keys.toSeq
+  /** aww known [[tweet]] f-fiewd ids in the "additionaw-fiewd" w-wange */
+  v-vaw compiwedadditionawfiewdids: s-seq[fiewdid] =
+    c-compiwedadditionawfiewdsmap.keys.toseq
 
-  /** all [[Tweet]] field IDs which should be rejected when set as additional
-   * fields on via PostTweetRequest.additionalFields or RetweetRequest.additionalFields */
-  val RejectedFieldIds: Seq[FieldId] = Seq(
-    // Should be provided via PostTweetRequest.conversationControl field. go/convocontrolsbackend
-    Tweet.ConversationControlField.id,
-    // This field should only be set based on whether the client sets the right community
-    // tweet annotation.
-    Tweet.CommunitiesField.id,
-    // This field should not be set by clients and should opt for
-    // [[PostTweetRequest.ExclusiveTweetControlOptions]].
-    // The exclusiveTweetControl field requires the userId to be set
-    // and we shouldn't trust the client to provide the right one.
-    Tweet.ExclusiveTweetControlField.id,
-    // This field should not be set by clients and should opt for
-    // [[PostTweetRequest.TrustedFriendsControlOptions]].
-    // The trustedFriendsControl field requires the trustedFriendsListId to be
-    // set and we shouldn't trust the client to provide the right one.
-    Tweet.TrustedFriendsControlField.id,
-    // This field should not be set by clients and should opt for
-    // [[PostTweetRequest.CollabControlOptions]].
-    // The collabControl field requires a list of Collaborators to be
-    // set and we shouldn't trust the client to provide the right one.
-    Tweet.CollabControlField.id
+  /** aww [[tweet]] fiewd ids w-which shouwd be wejected when set as additionaw
+   * f-fiewds on via posttweetwequest.additionawfiewds ow wetweetwequest.additionawfiewds */
+  vaw wejectedfiewdids: seq[fiewdid] = seq(
+    // s-shouwd be pwovided via posttweetwequest.convewsationcontwow f-fiewd. -.- g-go/convocontwowsbackend
+    tweet.convewsationcontwowfiewd.id, :3
+    // t-this fiewd shouwd onwy be set based on whethew the cwient s-sets the wight c-community
+    // tweet annotation. ʘwʘ
+    t-tweet.communitiesfiewd.id, 🥺
+    // t-this fiewd shouwd nyot b-be set by cwients and shouwd opt f-fow
+    // [[posttweetwequest.excwusivetweetcontwowoptions]]. >_<
+    // the excwusivetweetcontwow fiewd wequiwes t-the usewid to be set
+    // and w-we shouwdn't twust the cwient to p-pwovide the wight o-one. ʘwʘ
+    tweet.excwusivetweetcontwowfiewd.id, (˘ω˘)
+    // this fiewd shouwd nyot be set by cwients and shouwd opt fow
+    // [[posttweetwequest.twustedfwiendscontwowoptions]]. (✿oωo)
+    // the twustedfwiendscontwow f-fiewd wequiwes the t-twustedfwiendswistid to be
+    // s-set and we s-shouwdn't twust t-the cwient to pwovide the wight one. (///ˬ///✿)
+    tweet.twustedfwiendscontwowfiewd.id,
+    // this fiewd s-shouwd nyot be set by cwients and shouwd opt fow
+    // [[posttweetwequest.cowwabcontwowoptions]]. rawr x3
+    // the cowwabcontwow fiewd w-wequiwes a wist of cowwabowatows t-to be
+    // s-set and we shouwdn't t-twust the cwient to pwovide t-the wight one. -.-
+    t-tweet.cowwabcontwowfiewd.id
   )
 
-  def isAdditionalFieldId(fieldId: FieldId): Boolean =
-    fieldId >= StartAdditionalId
+  d-def isadditionawfiewdid(fiewdid: f-fiewdid): boowean =
+    fiewdid >= stawtadditionawid
 
   /**
-   * Provides a list of all additional field IDs on the tweet, which include all
-   * the compiled additional fields and all the provided passthrough fields.  This includes
-   * compiled additional fields where the value is None.
+   * p-pwovides a-a wist of aww a-additionaw fiewd i-ids on the tweet, ^^ w-which incwude aww
+   * the compiwed additionaw fiewds and aww t-the pwovided passthwough fiewds. (⑅˘꒳˘)  this incwudes
+   * compiwed additionaw fiewds whewe the vawue i-is nyone. nyaa~~
    */
-  def allAdditionalFieldIds(tweet: Tweet): Seq[FieldId] =
-    CompiledAdditionalFieldIds ++ tweet._passthroughFields.keys
+  def awwadditionawfiewdids(tweet: tweet): seq[fiewdid] =
+    compiwedadditionawfiewdids ++ tweet._passthwoughfiewds.keys
 
   /**
-   * Provides a list of all field IDs that have a value on the tweet which are not known compiled
-   * additional fields (excludes [[Tweet.id]]).
+   * p-pwovides a-a wist of aww fiewd i-ids that have a vawue on the t-tweet which awe nyot known compiwed
+   * a-additionaw f-fiewds (excwudes [[tweet.id]]). /(^•ω•^)
    */
-  def unsettableAdditionalFieldIds(tweet: Tweet): Seq[FieldId] =
-    CompiledFieldIds
-      .filter { id =>
-        !isAdditionalFieldId(id) && id != Tweet.IdField.id && tweet.getFieldBlob(id).isDefined
+  def unsettabweadditionawfiewdids(tweet: tweet): seq[fiewdid] =
+    compiwedfiewdids
+      .fiwtew { id =>
+        !isadditionawfiewdid(id) && i-id != tweet.idfiewd.id && t-tweet.getfiewdbwob(id).isdefined
       } ++
-      tweet._passthroughFields.keys
+      tweet._passthwoughfiewds.keys
 
   /**
-   * Provides a list of all field IDs that have a value on the tweet which are explicitly disallowed
-   * from being set via PostTweetRequest.additionalFields and RetweetRequest.additionalFields
+   * p-pwovides a wist o-of aww fiewd ids that have a vawue on the tweet w-which awe expwicitwy d-disawwowed
+   * fwom being s-set via posttweetwequest.additionawfiewds a-and wetweetwequest.additionawfiewds
    */
-  def rejectedAdditionalFieldIds(tweet: Tweet): Seq[FieldId] =
-    RejectedFieldIds
-      .filter { id => tweet.getFieldBlob(id).isDefined }
+  def wejectedadditionawfiewdids(tweet: tweet): seq[fiewdid] =
+    wejectedfiewdids
+      .fiwtew { i-id => tweet.getfiewdbwob(id).isdefined }
 
-  def unsettableAdditionalFieldIdsErrorMessage(unsettableFieldIds: Seq[FieldId]): String =
-    s"request may not contain fields: [${unsettableFieldIds.sorted.mkString(", ")}]"
+  d-def unsettabweadditionawfiewdidsewwowmessage(unsettabwefiewdids: s-seq[fiewdid]): stwing =
+    s-s"wequest may n-nyot contain fiewds: [${unsettabwefiewdids.sowted.mkstwing(", (U ﹏ U) ")}]"
 
   /**
-   * Provides a list of all additional field IDs that have a value on the tweet,
-   * compiled and passthrough (excludes Tweet.id).
+   * pwovides a wist o-of aww additionaw fiewd ids that have a vawue on the tweet, 😳😳😳
+   * compiwed and passthwough (excwudes t-tweet.id). >w<
    */
-  def nonEmptyAdditionalFieldIds(tweet: Tweet): Seq[FieldId] =
-    CompiledAdditionalFieldMetaDatas.collect {
-      case f if f.getValue(tweet) != None => f.id
-    } ++ tweet._passthroughFields.keys
+  d-def nyonemptyadditionawfiewdids(tweet: tweet): seq[fiewdid] =
+    c-compiwedadditionawfiewdmetadatas.cowwect {
+      c-case f if f.getvawue(tweet) != nyone => f.id
+    } ++ t-tweet._passthwoughfiewds.keys
 
-  def additionalFields(tweet: Tweet): Seq[TFieldBlob] =
-    (tweet.getFieldBlobs(CompiledAdditionalFieldIds) ++ tweet._passthroughFields).values.toSeq
+  def additionawfiewds(tweet: tweet): seq[tfiewdbwob] =
+    (tweet.getfiewdbwobs(compiwedadditionawfiewdids) ++ tweet._passthwoughfiewds).vawues.toseq
 
   /**
-   * Merge base tweet with additional fields.
-   * Non-additional fields in the additional tweet are ignored.
-   * @param base: a tweet that contains basic fields
-   * @param additional: a tweet object that carries additional fields
+   * mewge base tweet w-with additionaw fiewds. XD
+   * nyon-additionaw f-fiewds in the additionaw t-tweet awe ignowed. o.O
+   * @pawam base: a tweet that contains b-basic fiewds
+   * @pawam a-additionaw: a tweet object that cawwies additionaw f-fiewds
    */
-  def setAdditionalFields(base: Tweet, additional: Tweet): Tweet =
-    setAdditionalFields(base, additionalFields(additional))
+  def setadditionawfiewds(base: t-tweet, mya additionaw: tweet): tweet =
+    setadditionawfiewds(base, a-additionawfiewds(additionaw))
 
-  def setAdditionalFields(base: Tweet, additional: Option[Tweet]): Tweet =
-    additional.map(setAdditionalFields(base, _)).getOrElse(base)
+  def setadditionawfiewds(base: t-tweet, 🥺 a-additionaw: option[tweet]): t-tweet =
+    additionaw.map(setadditionawfiewds(base, ^^;; _)).getowewse(base)
 
-  def setAdditionalFields(base: Tweet, additional: Traversable[TFieldBlob]): Tweet =
-    additional.foldLeft(base) { case (t, f) => t.setField(f) }
+  def s-setadditionawfiewds(base: t-tweet, :3 a-additionaw: twavewsabwe[tfiewdbwob]): tweet =
+    a-additionaw.fowdweft(base) { case (t, (U ﹏ U) f-f) => t.setfiewd(f) }
 
   /**
-   * Unsets the specified fields on the given tweet.
+   * unsets the specified fiewds o-on the given t-tweet. OwO
    */
-  def unsetFields(tweet: Tweet, fieldIds: Iterable[FieldId]): Tweet = {
-    tweet.unsetFields(fieldIds.toSet)
+  d-def unsetfiewds(tweet: tweet, 😳😳😳 fiewdids: itewabwe[fiewdid]): t-tweet = {
+    tweet.unsetfiewds(fiewdids.toset)
   }
 }

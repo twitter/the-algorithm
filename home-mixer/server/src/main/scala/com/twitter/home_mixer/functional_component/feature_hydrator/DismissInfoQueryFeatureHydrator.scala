@@ -1,45 +1,45 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.twittew.home_mixew.functionaw_component.featuwe_hydwatow
 
-import com.twitter.home_mixer.model.HomeFeatures.DismissInfoFeature
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.timelinemixer.clients.manhattan.InjectionHistoryClient
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinemixer.clients.manhattan.DismissInfo
-import com.twitter.timelineservice.suggests.thriftscala.SuggestType
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.modew.homefeatuwes.dismissinfofeatuwe
+i-impowt c-com.twittew.home_mixew.sewvice.homemixewawewtconfig
+i-impowt com.twittew.timewinemixew.cwients.manhattan.injectionhistowycwient
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.stitch.stitch
+impowt com.twittew.timewinemixew.cwients.manhattan.dismissinfo
+i-impowt com.twittew.timewinesewvice.suggests.thwiftscawa.suggesttype
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-object DismissInfoQueryFeatureHydrator {
-  val DismissInfoSuggestTypes = Seq(SuggestType.WhoToFollow)
+object dismissinfoquewyfeatuwehydwatow {
+  v-vaw dismissinfosuggesttypes = seq(suggesttype.whotofowwow)
 }
 
-@Singleton
-case class DismissInfoQueryFeatureHydrator @Inject() (
-  dismissInfoClient: InjectionHistoryClient)
-    extends QueryFeatureHydrator[PipelineQuery] {
+@singweton
+c-case c-cwass dismissinfoquewyfeatuwehydwatow @inject() (
+  dismissinfocwient: injectionhistowycwient)
+    extends quewyfeatuwehydwatow[pipewinequewy] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("DismissInfo")
+  ovewwide vaw i-identifiew: featuwehydwatowidentifiew = featuwehydwatowidentifiew("dismissinfo")
 
-  override val features: Set[Feature[_, _]] = Set(DismissInfoFeature)
+  ovewwide vaw featuwes: set[featuwe[_, 😳😳😳 _]] = set(dismissinfofeatuwe)
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] =
-    Stitch.callFuture {
-      dismissInfoClient
-        .readDismissInfoEntries(
-          query.getRequiredUserId,
-          DismissInfoQueryFeatureHydrator.DismissInfoSuggestTypes).map { response =>
-          val dismissInfoMap = response.mapValues(DismissInfo.fromThrift)
-          FeatureMapBuilder().add(DismissInfoFeature, dismissInfoMap).build()
+  o-ovewwide def hydwate(quewy: p-pipewinequewy): s-stitch[featuwemap] =
+    s-stitch.cawwfutuwe {
+      d-dismissinfocwient
+        .weaddismissinfoentwies(
+          quewy.getwequiwedusewid, 🥺
+          dismissinfoquewyfeatuwehydwatow.dismissinfosuggesttypes).map { w-wesponse =>
+          vaw dismissinfomap = wesponse.mapvawues(dismissinfo.fwomthwift)
+          f-featuwemapbuiwdew().add(dismissinfofeatuwe, mya dismissinfomap).buiwd()
         }
     }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.8, 50, 60, 60)
+  ovewwide vaw awewts = seq(
+    homemixewawewtconfig.businesshouws.defauwtsuccesswateawewt(99.8, 🥺 50, >_< 60, 60)
   )
 }

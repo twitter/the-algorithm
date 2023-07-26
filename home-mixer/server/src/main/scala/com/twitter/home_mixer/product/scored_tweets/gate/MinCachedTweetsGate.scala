@@ -1,34 +1,34 @@
-package com.twitter.home_mixer.product.scored_tweets.gate
+package com.twittew.home_mixew.pwoduct.scowed_tweets.gate
 
-import com.twitter.home_mixer.product.scored_tweets.gate.MinCachedTweetsGate.identifierSuffix
-import com.twitter.home_mixer.util.CachedScoredTweetsHelper
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.gate.mincachedtweetsgate.identifiewsuffix
+i-impowt com.twittew.home_mixew.utiw.cachedscowedtweetshewpew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.gateidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.configapi.pawam
 
-case class MinCachedTweetsGate(
-  candidatePipelineIdentifier: CandidatePipelineIdentifier,
-  minCachedTweetsParam: Param[Int])
-    extends Gate[PipelineQuery] {
+case c-cwass mincachedtweetsgate(
+  candidatepipewineidentifiew: candidatepipewineidentifiew, >_<
+  m-mincachedtweetspawam: pawam[int])
+    e-extends gate[pipewinequewy] {
 
-  override val identifier: GateIdentifier =
-    GateIdentifier(candidatePipelineIdentifier + identifierSuffix)
+  ovewwide vaw identifiew: gateidentifiew =
+    gateidentifiew(candidatepipewineidentifiew + identifiewsuffix)
 
-  override def shouldContinue(query: PipelineQuery): Stitch[Boolean] = {
-    val minCachedTweets = query.params(minCachedTweetsParam)
-    val cachedScoredTweets =
-      query.features.map(CachedScoredTweetsHelper.unseenCachedScoredTweets).getOrElse(Seq.empty)
-    val numCachedTweets = cachedScoredTweets.count { tweet =>
-      tweet.candidatePipelineIdentifier.exists(
-        CandidatePipelineIdentifier(_).equals(candidatePipelineIdentifier))
+  o-ovewwide def shouwdcontinue(quewy: pipewinequewy): s-stitch[boowean] = {
+    v-vaw mincachedtweets = quewy.pawams(mincachedtweetspawam)
+    vaw cachedscowedtweets =
+      quewy.featuwes.map(cachedscowedtweetshewpew.unseencachedscowedtweets).getowewse(seq.empty)
+    v-vaw nyumcachedtweets = cachedscowedtweets.count { tweet =>
+      tweet.candidatepipewineidentifiew.exists(
+        candidatepipewineidentifiew(_).equaws(candidatepipewineidentifiew))
     }
-    Stitch.value(numCachedTweets < minCachedTweets)
+    s-stitch.vawue(numcachedtweets < mincachedtweets)
   }
 }
 
-object MinCachedTweetsGate {
-  val identifierSuffix = "MinCachedTweets"
+object m-mincachedtweetsgate {
+  v-vaw i-identifiewsuffix = "mincachedtweets"
 }

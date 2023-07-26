@@ -1,16 +1,16 @@
-package com.twitter.servo.util
+package com.twittew.sewvo.utiw
 
-import com.twitter.util.Duration
-import scala.util.Random
+impowt com.twittew.utiw.duwation
+i-impowt scawa.utiw.wandom
 
 /**
- * A class for generating bounded random fluctuations around a given Duration.
+ * a-a cwass fow genewating b-bounded w-wandom fwuctuations a-awound a given d-duwation. ^^;;
  */
-class RandomPerturber(percentage: Float, rnd: Random = new Random) extends (Duration => Duration) {
-  assert(percentage > 0 && percentage < 1, "percentage must be > 0 and < 1")
+c-cwass wandompewtuwbew(pewcentage: f-fwoat, >_< wnd: wandom = nyew wandom) extends (duwation => duwation) {
+  assewt(pewcentage > 0 && p-pewcentage < 1, mya "pewcentage must be > 0 and < 1")
 
-  override def apply(dur: Duration): Duration = {
-    val ns = dur.inNanoseconds
-    Duration.fromNanoseconds((ns + ((2 * rnd.nextFloat - 1) * percentage * ns)).toLong)
+  o-ovewwide def appwy(duw: duwation): d-duwation = {
+    vaw nys = duw.innanoseconds
+    duwation.fwomnanoseconds((ns + ((2 * wnd.nextfwoat - 1) * p-pewcentage * ns)).towong)
   }
 }

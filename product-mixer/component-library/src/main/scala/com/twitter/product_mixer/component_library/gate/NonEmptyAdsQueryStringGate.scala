@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.component_library.gate
+package com.twittew.pwoduct_mixew.component_wibwawy.gate
 
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.quewy.ads.adsquewy
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.gateidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.stitch
 
-object NonEmptyAdsQueryStringGate extends Gate[PipelineQuery with AdsQuery] {
-  override val identifier: GateIdentifier = GateIdentifier("NonEmptyAdsQueryString")
+o-object nyonemptyadsquewystwinggate e-extends gate[pipewinequewy with adsquewy] {
+  ovewwide vaw identifiew: g-gateidentifiew = gateidentifiew("nonemptyadsquewystwing")
 
-  override def shouldContinue(query: PipelineQuery with AdsQuery): Stitch[Boolean] = {
-    val queryString = query.searchRequestContext.flatMap(_.queryString)
-    Stitch.value(queryString.exists(_.trim.nonEmpty))
+  ovewwide d-def shouwdcontinue(quewy: pipewinequewy with a-adsquewy): stitch[boowean] = {
+    vaw quewystwing = quewy.seawchwequestcontext.fwatmap(_.quewystwing)
+    stitch.vawue(quewystwing.exists(_.twim.nonempty))
   }
 }

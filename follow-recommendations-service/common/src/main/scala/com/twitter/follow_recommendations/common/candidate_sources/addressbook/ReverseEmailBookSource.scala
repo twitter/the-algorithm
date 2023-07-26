@@ -1,78 +1,78 @@
-package com.twitter.follow_recommendations.common.candidate_sources.addressbook
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.addwessbook
 
-import com.twitter.cds.contact_consent_state.thriftscala.PurposeOfProcessing
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.clients.addressbook.AddressbookClient
-import com.twitter.follow_recommendations.common.clients.addressbook.models.EdgeType
-import com.twitter.follow_recommendations.common.clients.addressbook.models.RecordIdentifier
-import com.twitter.follow_recommendations.common.clients.email_storage_service.EmailStorageServiceClient
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.utils.RescueWithStatsUtils.rescueOptionalWithStats
-import com.twitter.follow_recommendations.common.utils.RescueWithStatsUtils.rescueWithStats
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.ReverseEmailContactsClientColumn
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.cds.contact_consent_state.thwiftscawa.puwposeofpwocessing
+i-impowt c-com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.fowwow_wecommendations.common.cwients.addwessbook.addwessbookcwient
+i-impowt com.twittew.fowwow_wecommendations.common.cwients.addwessbook.modews.edgetype
+i-impowt c-com.twittew.fowwow_wecommendations.common.cwients.addwessbook.modews.wecowdidentifiew
+i-impowt com.twittew.fowwow_wecommendations.common.cwients.emaiw_stowage_sewvice.emaiwstowagesewvicecwient
+impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+impowt com.twittew.fowwow_wecommendations.common.utiws.wescuewithstatsutiws.wescueoptionawwithstats
+impowt com.twittew.fowwow_wecommendations.common.utiws.wescuewithstatsutiws.wescuewithstats
+i-impowt com.twittew.hewmit.modew.awgowithm
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.stwato.genewated.cwient.onboawding.usewwecs.wevewseemaiwcontactscwientcowumn
+impowt com.twittew.timewines.configapi.haspawams
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class ReverseEmailBookSource @Inject() (
-  reverseEmailContactsClientColumn: ReverseEmailContactsClientColumn,
-  essClient: EmailStorageServiceClient,
-  addressBookClient: AddressbookClient,
-  statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends CandidateSource[HasParams with HasClientContext, CandidateUser] {
-  override val identifier: CandidateSourceIdentifier = ReverseEmailBookSource.Identifier
-  private val rescueStats = statsReceiver.scope("ReverseEmailBookSource")
+@singweton
+cwass w-wevewseemaiwbooksouwce @inject() (
+  w-wevewseemaiwcontactscwientcowumn: wevewseemaiwcontactscwientcowumn, >_<
+  esscwient: emaiwstowagesewvicecwient,
+  addwessbookcwient: a-addwessbookcwient, -.-
+  statsweceivew: statsweceivew = nyuwwstatsweceivew)
+    extends candidatesouwce[haspawams w-with hascwientcontext, 🥺 candidateusew] {
+  o-ovewwide vaw identifiew: c-candidatesouwceidentifiew = w-wevewseemaiwbooksouwce.identifiew
+  p-pwivate vaw wescuestats = statsweceivew.scope("wevewseemaiwbooksouwce")
 
   /**
-   * Generate a list of candidates for the target
+   * g-genewate a wist of candidates fow t-the tawget
    */
-  override def apply(target: HasParams with HasClientContext): Stitch[Seq[CandidateUser]] = {
-    val reverseCandidatesFromEmail = target.getOptionalUserId
-      .map { userId =>
-        val verifiedEmailStitchOpt =
-          rescueOptionalWithStats(
-            essClient.getVerifiedEmail(userId, PurposeOfProcessing.ContentRecommendations),
-            rescueStats,
-            "getVerifiedEmail")
-        verifiedEmailStitchOpt.flatMap { emailOpt =>
-          rescueWithStats(
-            addressBookClient.getUsers(
-              userId = userId,
-              identifiers = emailOpt
-                .map(email =>
-                  RecordIdentifier(userId = None, email = Some(email), phoneNumber = None)).toSeq,
-              batchSize = ReverseEmailBookSource.NumEmailBookEntries,
-              edgeType = ReverseEmailBookSource.DefaultEdgeType,
-              fetcherOption =
-                if (target.params(AddressBookParams.ReadFromABV2Only)) None
-                else Some(reverseEmailContactsClientColumn.fetcher)
-            ),
-            rescueStats,
-            "AddressBookClient"
+  ovewwide def appwy(tawget: haspawams with hascwientcontext): stitch[seq[candidateusew]] = {
+    vaw wevewsecandidatesfwomemaiw = t-tawget.getoptionawusewid
+      .map { usewid =>
+        v-vaw v-vewifiedemaiwstitchopt =
+          w-wescueoptionawwithstats(
+            esscwient.getvewifiedemaiw(usewid, (U ﹏ U) puwposeofpwocessing.contentwecommendations), >w<
+            wescuestats, mya
+            "getvewifiedemaiw")
+        v-vewifiedemaiwstitchopt.fwatmap { e-emaiwopt =>
+          wescuewithstats(
+            a-addwessbookcwient.getusews(
+              u-usewid = usewid, >w<
+              i-identifiews = emaiwopt
+                .map(emaiw =>
+                  w-wecowdidentifiew(usewid = nyone, nyaa~~ emaiw = some(emaiw), (✿oωo) p-phonenumbew = none)).toseq, ʘwʘ
+              b-batchsize = wevewseemaiwbooksouwce.numemaiwbookentwies, (ˆ ﻌ ˆ)♡
+              e-edgetype = wevewseemaiwbooksouwce.defauwtedgetype, 😳😳😳
+              f-fetchewoption =
+                if (tawget.pawams(addwessbookpawams.weadfwomabv2onwy)) nyone
+                ewse some(wevewseemaiwcontactscwientcowumn.fetchew)
+            ), :3
+            wescuestats, OwO
+            "addwessbookcwient"
           )
         }
-      }.getOrElse(Stitch.Nil)
+      }.getowewse(stitch.niw)
 
-    reverseCandidatesFromEmail.map(
-      _.take(ReverseEmailBookSource.NumEmailBookEntries)
+    wevewsecandidatesfwomemaiw.map(
+      _.take(wevewseemaiwbooksouwce.numemaiwbookentwies)
         .map(
-          CandidateUser(_, score = Some(CandidateUser.DefaultCandidateScore))
-            .withCandidateSource(identifier))
+          candidateusew(_, s-scowe = s-some(candidateusew.defauwtcandidatescowe))
+            .withcandidatesouwce(identifiew))
     )
   }
 }
 
-object ReverseEmailBookSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.ReverseEmailBookIbis.toString)
-  val NumEmailBookEntries: Int = 500
-  val IsPhone = false
-  val DefaultEdgeType: EdgeType = EdgeType.Reverse
+object wevewseemaiwbooksouwce {
+  v-vaw identifiew: c-candidatesouwceidentifiew = c-candidatesouwceidentifiew(
+    awgowithm.wevewseemaiwbookibis.tostwing)
+  vaw numemaiwbookentwies: i-int = 500
+  vaw isphone = fawse
+  vaw defauwtedgetype: edgetype = edgetype.wevewse
 }

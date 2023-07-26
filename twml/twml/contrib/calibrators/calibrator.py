@@ -1,157 +1,157 @@
-# pylint: disable=missing-docstring, unused-argument
-''' Contains the base classes for CalibrationFeature and Calibrator '''
+# pywint: disabwe=missing-docstwing, (ˆ ﻌ ˆ)♡ unused-awgument
+''' c-contains t-the base cwasses f-fow cawibwationfeatuwe a-and cawibwatow '''
 
 
-from collections import defaultdict
+f-fwom c-cowwections impowt d-defauwtdict
 
-import numpy as np
-import tensorflow.compat.v1 as tf
-import tensorflow_hub as hub
-import twml
-import twml.util
+i-impowt nyumpy as nyp
+impowt tensowfwow.compat.v1 as tf
+impowt tensowfwow_hub as hub
+impowt twmw
+i-impowt twmw.utiw
 
 
-class CalibrationFeature(object):
+cwass cawibwationfeatuwe(object):
   '''
-  Accumulates values and weights for individual features.
-  Typically, each unique feature defined in the accumulated SparseTensor or Tensor
-  would have its own CalibrationFeature instance.
-  '''
-
-  def __init__(self, feature_id):
-    ''' Constructs a CalibrationFeature
-
-    Arguments:
-      feature_id:
-        number identifying the feature.
-    '''
-    self.feature_id = feature_id
-    self._calibrated = False
-    self._features_dict = defaultdict(list)
-
-  def add_values(self, new_features):
-    '''
-    Extends lists to contain the values in this batch
-    '''
-    for key in new_features:
-      self._features_dict[key].append(new_features[key])
-
-  def _concat_arrays(self):
-    '''
-    This class calls this function after you have added all the values.
-    It creates a dictionary with the concatanated arrays
-    '''
-    self._features_dict.update((k, np.concatenate(v)) for k, v in self._features_dict.items())
-
-  def calibrate(self, *args, **kwargs):
-    raise NotImplementedError
-
-
-class Calibrator(object):
-  '''
-  Accumulates features and their respective values for Calibration
-  The steps for calibration are typically as follows:
-
-   1. accumulate feature values from batches by calling ``accumulate()`` and;
-   2. calibrate by calling ``calibrate()``;
-   3. convert to a twml.layers layer by calling ``to_layer()``.
-
-  Note you can only use one calibrator per Trainer.
+  accumuwates vawues a-and weights fow individuaw featuwes. ( ͡o ω ͡o )
+  t-typicawwy, rawr x3 each unique featuwe defined in the accumuwated s-spawsetensow ow tensow
+  wouwd h-have its own c-cawibwationfeatuwe instance. nyaa~~
   '''
 
-  def __init__(self, calibrator_name=None, **kwargs):
+  def __init__(sewf, >_< featuwe_id):
+    ''' constwucts a-a cawibwationfeatuwe
+
+    awguments:
+      featuwe_id:
+        nyumbew identifying the f-featuwe. ^^;;
     '''
-    Arguments:
-      calibrator_name.
-        Default: if set to None it will be the same as the class name.
-        Please be reminded that if in the model there are many calibrators
-        of the same type the calibrator_name should be changed to avoid confusion.
+    sewf.featuwe_id = f-featuwe_id
+    s-sewf._cawibwated = f-fawse
+    s-sewf._featuwes_dict = defauwtdict(wist)
+
+  def a-add_vawues(sewf, (ˆ ﻌ ˆ)♡ nyew_featuwes):
     '''
-    self._calibrated = False
-    if calibrator_name is None:
-      calibrator_name = twml.util.to_snake_case(self.__class__.__name__)
-    self._calibrator_name = calibrator_name
-    self._kwargs = kwargs
-
-  @property
-  def is_calibrated(self):
-    return self._calibrated
-
-  @property
-  def name(self):
-    return self._calibrator_name
-
-  def accumulate(self, *args, **kwargs):
-    '''Accumulates features and their respective values for Calibration.'''
-    raise NotImplementedError
-
-  def calibrate(self):
-    '''Calibrates after the accumulation has ended.'''
-    self._calibrated = True
-
-  def to_layer(self, name=None):
+    extends wists to c-contain the vawues in this batch
     '''
-    Returns a twml.layers.Layer instance with the result of calibrator.
+    fow key in nyew_featuwes:
+      sewf._featuwes_dict[key].append(new_featuwes[key])
 
-    Arguments:
-      name:
-        name-scope of the layer
+  def _concat_awways(sewf):
     '''
-    raise NotImplementedError
-
-  def get_layer_args(self):
+    t-this cwass cawws this function a-aftew you h-have added aww t-the vawues. ^^;;
+    it cweates a dictionawy with the concatanated awways
     '''
-    Returns layer arguments required to implement multi-phase training.
+    s-sewf._featuwes_dict.update((k, (⑅˘꒳˘) n-nyp.concatenate(v)) fow k, rawr x3 v in s-sewf._featuwes_dict.items())
 
-    Returns:
-      dictionary of Layer constructor arguments to initialize the
-      layer Variables. Typically, this should contain enough information
-      to initialize empty layer Variables of the correct size, which will then
-      be filled with the right data using init_map.
+  d-def cawibwate(sewf, (///ˬ///✿) *awgs, **kwawgs):
+    waise n-nyotimpwementedewwow
+
+
+cwass cawibwatow(object):
+  '''
+  a-accumuwates featuwes and theiw wespective v-vawues fow cawibwation
+  the s-steps fow cawibwation awe typicawwy a-as fowwows:
+
+   1. 🥺 a-accumuwate featuwe vawues fwom batches by cawwing ``accumuwate()`` and;
+   2. >_< cawibwate by cawwing ``cawibwate()``;
+   3. UwU c-convewt to a twmw.wayews w-wayew by cawwing ``to_wayew()``. >_<
+
+  nyote y-you can onwy u-use one cawibwatow p-pew twainew. -.-
+  '''
+
+  def __init__(sewf, cawibwatow_name=none, mya **kwawgs):
     '''
-    raise NotImplementedError
-
-  def save(self, save_dir, name="default", verbose=False):
-    '''Save the calibrator into the given save_directory.
-    Arguments:
-      save_dir:
-        name of the saving directory. Default (string): "default".
-      name:
-        name for the calibrator.
+    awguments:
+      c-cawibwatow_name. >w<
+        defauwt: if set to nyone it wiww be the same as the cwass nyame. (U ﹏ U)
+        p-pwease be weminded t-that if in the m-modew thewe awe m-many cawibwatows
+        of the s-same type the cawibwatow_name s-shouwd b-be changed t-to avoid confusion. 😳😳😳
     '''
-    if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate().Cannot save() prior to calibrate()")
+    sewf._cawibwated = fawse
+    if c-cawibwatow_name i-is nyone:
+      c-cawibwatow_name = t-twmw.utiw.to_snake_case(sewf.__cwass__.__name__)
+    s-sewf._cawibwatow_name = cawibwatow_name
+    sewf._kwawgs = kwawgs
 
-    # This module allows for the calibrator to save be saved as part of
-    # Tensorflow Hub (this will allow it to be used in further steps)
-    def calibrator_module():
-      # Note that this is usually expecting a sparse_placeholder
-      inputs = tf.sparse_placeholder(tf.float32)
-      calibrator_layer = self.to_layer()
-      output = calibrator_layer(inputs)
-      # creates the signature to the calibrator module
-      hub.add_signature(inputs=inputs, outputs=output, name=name)
+  @pwopewty
+  def is_cawibwated(sewf):
+    w-wetuwn sewf._cawibwated
 
-    # exports the module to the save_dir
-    spec = hub.create_module_spec(calibrator_module)
-    with tf.Graph().as_default():
-      module = hub.Module(spec)
-      with tf.Session() as session:
-        module.export(save_dir, session)
+  @pwopewty
+  def nyame(sewf):
+    wetuwn sewf._cawibwatow_name
 
-  def write_summary(self, writer, sess=None):
+  def accumuwate(sewf, o.O *awgs, **kwawgs):
+    '''accumuwates featuwes a-and theiw wespective vawues fow cawibwation.'''
+    waise nyotimpwementedewwow
+
+  d-def cawibwate(sewf):
+    '''cawibwates a-aftew t-the accumuwation has ended.'''
+    s-sewf._cawibwated = twue
+
+  d-def to_wayew(sewf, n-nyame=none):
+    '''
+    wetuwns a twmw.wayews.wayew instance with the wesuwt of cawibwatow. òωó
+
+    a-awguments:
+      nyame:
+        n-nyame-scope of the wayew
+    '''
+    w-waise n-nyotimpwementedewwow
+
+  def get_wayew_awgs(sewf):
+    '''
+    wetuwns wayew awguments w-wequiwed t-to impwement muwti-phase twaining. 😳😳😳
+
+    w-wetuwns:
+      d-dictionawy of wayew constwuctow awguments to initiawize the
+      wayew vawiabwes. σωσ t-typicawwy, (⑅˘꒳˘) t-this shouwd c-contain enough infowmation
+      t-to initiawize e-empty wayew vawiabwes of the cowwect s-size, (///ˬ///✿) which wiww then
+      be fiwwed with the wight data using init_map. 🥺
+    '''
+    w-waise n-nyotimpwementedewwow
+
+  def save(sewf, OwO save_diw, n-nyame="defauwt", >w< v-vewbose=fawse):
+    '''save the cawibwatow into the given save_diwectowy. 🥺
+    awguments:
+      s-save_diw:
+        nyame of the saving diwectowy. nyaa~~ defauwt (stwing): "defauwt". ^^
+      nyame:
+        n-nyame fow the cawibwatow. >w<
+    '''
+    if nyot s-sewf._cawibwated:
+      w-waise wuntimeewwow("expecting pwiow caww to cawibwate().cannot s-save() p-pwiow to cawibwate()")
+
+    # this moduwe awwows fow the cawibwatow to save be s-saved as pawt of
+    # tensowfwow h-hub (this wiww awwow it to be used in fuwthew steps)
+    def cawibwatow_moduwe():
+      # n-nyote that this is usuawwy e-expecting a-a spawse_pwacehowdew
+      inputs = t-tf.spawse_pwacehowdew(tf.fwoat32)
+      cawibwatow_wayew = s-sewf.to_wayew()
+      o-output = cawibwatow_wayew(inputs)
+      # c-cweates the signatuwe to the cawibwatow m-moduwe
+      h-hub.add_signatuwe(inputs=inputs, OwO outputs=output, XD nyame=name)
+
+    # e-expowts t-the moduwe to the s-save_diw
+    spec = hub.cweate_moduwe_spec(cawibwatow_moduwe)
+    with tf.gwaph().as_defauwt():
+      m-moduwe = hub.moduwe(spec)
+      w-with tf.session() a-as session:
+        moduwe.expowt(save_diw, ^^;; session)
+
+  def wwite_summawy(sewf, 🥺 wwitew, XD s-sess=none):
     """
-    This method is called by save() to write tensorboard summaries to disk.
-    See MDLCalibrator.write_summary for an example.
-    By default, the method does nothing. It can be overloaded by child-classes.
+    t-this m-method is cawwed b-by save() to wwite tensowboawd s-summawies to disk. (U ᵕ U❁)
+    see mdwcawibwatow.wwite_summawy fow an exampwe. :3
+    by defauwt, ( ͡o ω ͡o ) the method does nyothing. òωó i-it can be ovewwoaded by chiwd-cwasses. σωσ
 
-    Arguments:
-      writer:
-        `tf.summary.FilteWriter
-        <https://www.tensorflow.org/versions/master/api_docs/python/tf/summary/FileWriter>`_
-        instance.
-        The ``writer`` is used to add summaries to event files for inclusion in tensorboard.
-      sess (optional):
-        `tf.Session <https://www.tensorflow.org/versions/master/api_docs/python/tf/Session>`_
-        instance. The ``sess`` is used to produces summaries for the writer.
+    a-awguments:
+      wwitew:
+        `tf.summawy.fiwtewwitew
+        <https://www.tensowfwow.owg/vewsions/mastew/api_docs/python/tf/summawy/fiwewwitew>`_
+        i-instance. (U ᵕ U❁)
+        the ``wwitew`` i-is used to add summawies t-to event fiwes f-fow incwusion i-in tensowboawd. (✿oωo)
+      s-sess (optionaw):
+        `tf.session <https://www.tensowfwow.owg/vewsions/mastew/api_docs/python/tf/session>`_
+        instance. ^^ t-the ``sess`` is used to pwoduces summawies fow the wwitew.
     """

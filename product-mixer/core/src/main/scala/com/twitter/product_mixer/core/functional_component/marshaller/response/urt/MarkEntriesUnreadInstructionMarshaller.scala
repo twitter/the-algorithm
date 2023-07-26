@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.MarkEntriesUnreadInstruction
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.render.{thriftscala => urt}
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.mawkentwiesunweadinstwuction
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
+impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
 
-@Singleton
-class MarkEntriesUnreadInstructionMarshaller @Inject() () {
+@singweton
+c-cwass mawkentwiesunweadinstwuctionmawshawwew @inject() () {
 
-  def apply(instruction: MarkEntriesUnreadInstruction): urt.MarkEntriesUnread =
-    urt.MarkEntriesUnread(entryIds = instruction.entryIds)
+  d-def appwy(instwuction: m-mawkentwiesunweadinstwuction): u-uwt.mawkentwiesunwead =
+    uwt.mawkentwiesunwead(entwyids = instwuction.entwyids)
 }

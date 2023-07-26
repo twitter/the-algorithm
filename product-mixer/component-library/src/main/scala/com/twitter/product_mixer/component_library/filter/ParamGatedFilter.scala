@@ -1,41 +1,41 @@
-package com.twitter.product_mixer.component_library.filter
+package com.twittew.pwoduct_mixew.component_wibwawy.fiwtew
 
-import com.twitter.product_mixer.component_library.filter.ParamGatedFilter.IdentifierPrefix
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.fiwtew.pawamgatedfiwtew.identifiewpwefix
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.awewt
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.conditionawwy
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.timewines.configapi.pawam
 
 /**
- * A [[Filter]] with [[Conditionally]] based on a [[Param]]
+ * a [[fiwtew]] with [[conditionawwy]] b-based on a [[pawam]]
  *
- * @param enabledParam the param to turn this filter on and off
- * @param filter the underlying filter to run when `enabledParam` is true
- * @tparam Query The domain model for the query or request
- * @tparam Candidate The type of the candidates
+ * @pawam e-enabwedpawam the pawam to tuwn this fiwtew on and off
+ * @pawam f-fiwtew the undewwying fiwtew to w-wun when `enabwedpawam` i-is twue
+ * @tpawam quewy the domain modew fow the quewy ow wequest
+ * @tpawam c-candidate the type of the candidates
  */
-case class ParamGatedFilter[-Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-  enabledParam: Param[Boolean],
-  filter: Filter[Query, Candidate])
-    extends Filter[Query, Candidate]
-    with Filter.Conditionally[Query, Candidate] {
-  override val identifier: FilterIdentifier = FilterIdentifier(
-    IdentifierPrefix + filter.identifier.name)
-  override val alerts: Seq[Alert] = filter.alerts
-  override def onlyIf(query: Query, candidates: Seq[CandidateWithFeatures[Candidate]]): Boolean =
-    Conditionally.and(Filter.Input(query, candidates), filter, query.params(enabledParam))
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = filter.apply(query, candidates)
+case cwass pawamgatedfiwtew[-quewy <: pipewinequewy, o.O c-candidate <: univewsawnoun[any]](
+  e-enabwedpawam: p-pawam[boowean], ( ͡o ω ͡o )
+  f-fiwtew: f-fiwtew[quewy, (U ﹏ U) candidate])
+    extends fiwtew[quewy, (///ˬ///✿) c-candidate]
+    with fiwtew.conditionawwy[quewy, >w< candidate] {
+  o-ovewwide vaw identifiew: fiwtewidentifiew = fiwtewidentifiew(
+    identifiewpwefix + fiwtew.identifiew.name)
+  ovewwide vaw awewts: seq[awewt] = f-fiwtew.awewts
+  ovewwide def o-onwyif(quewy: quewy, rawr c-candidates: s-seq[candidatewithfeatuwes[candidate]]): boowean =
+    conditionawwy.and(fiwtew.input(quewy, mya candidates), f-fiwtew, ^^ q-quewy.pawams(enabwedpawam))
+  ovewwide def appwy(
+    q-quewy: q-quewy, 😳😳😳
+    candidates: seq[candidatewithfeatuwes[candidate]]
+  ): s-stitch[fiwtewwesuwt[candidate]] = fiwtew.appwy(quewy, mya c-candidates)
 }
 
-object ParamGatedFilter {
-  val IdentifierPrefix = "ParamGated"
+object pawamgatedfiwtew {
+  vaw identifiewpwefix = "pawamgated"
 }

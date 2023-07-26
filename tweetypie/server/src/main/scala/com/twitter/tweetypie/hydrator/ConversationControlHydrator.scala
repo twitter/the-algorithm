@@ -1,107 +1,107 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.ValueState
-import com.twitter.tweetypie.repository.ConversationControlRepository
-import com.twitter.tweetypie.serverutil.ExceptionCounter
-import com.twitter.tweetypie.thriftscala.ConversationControl
+impowt c-com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.cowe.vawuestate
+i-impowt c-com.twittew.tweetypie.wepositowy.convewsationcontwowwepositowy
+i-impowt com.twittew.tweetypie.sewvewutiw.exceptioncountew
+i-impowt c-com.twittew.tweetypie.thwiftscawa.convewsationcontwow
 
-private object ReplyTweetConversationControlHydrator {
-  type Type = ConversationControlHydrator.Type
-  type Ctx = ConversationControlHydrator.Ctx
+pwivate object wepwytweetconvewsationcontwowhydwatow {
+  type type = convewsationcontwowhydwatow.type
+  type ctx = convewsationcontwowhydwatow.ctx
 
-  // The conversation control thrift field was added Feb 17th, 2020.
-  // No conversation before this will have a conversation control field to hydrate.
-  // We explicitly short circuit to save resources from querying for tweets we
-  // know do not have conversation control fields set.
-  val FirstValidDate: Time = Time.fromMilliseconds(1554076800000L) // 2020-02-17
+  // t-the convewsation contwow thwift fiewd was added f-feb 17th, (⑅˘꒳˘) 2020.
+  // nyo convewsation b-befowe this wiww have a convewsation contwow fiewd to hydwate. XD
+  // w-we expwicitwy showt c-ciwcuit to save w-wesouwces fwom quewying fow tweets we
+  // know do nyot have convewsation contwow f-fiewds set. -.-
+  vaw fiwstvawiddate: time = time.fwommiwwiseconds(1554076800000w) // 2020-02-17
 
-  def apply(
-    repo: ConversationControlRepository.Type,
-    stats: StatsReceiver
-  ): Type = {
-    val exceptionCounter = ExceptionCounter(stats)
+  def appwy(
+    wepo: convewsationcontwowwepositowy.type, :3
+    s-stats: statsweceivew
+  ): type = {
+    v-vaw exceptioncountew = e-exceptioncountew(stats)
 
-    ValueHydrator[Option[ConversationControl], Ctx] { (curr, ctx) =>
-      repo(ctx.conversationId.get, ctx.opts.cacheControl).liftToTry.map {
-        case Return(conversationControl) =>
-          ValueState.delta(curr, conversationControl)
-        case Throw(exception) => {
-          // In the case where we get an exception, we want to count the
-          // exception but fail open.
-          exceptionCounter(exception)
+    v-vawuehydwatow[option[convewsationcontwow], nyaa~~ c-ctx] { (cuww, 😳 ctx) =>
+      wepo(ctx.convewsationid.get, (⑅˘꒳˘) ctx.opts.cachecontwow).wifttotwy.map {
+        c-case wetuwn(convewsationcontwow) =>
+          vawuestate.dewta(cuww, nyaa~~ c-convewsationcontwow)
+        case thwow(exception) => {
+          // in the case whewe we get an exception, OwO we want to count t-the
+          // exception but faiw o-open. rawr x3
+          e-exceptioncountew(exception)
 
-          // Reply Tweet Tweet.ConversationControlField hydration should fail open.
-          // Ideally we would return ValueState.partial here to notify Tweetypie the caller
-          // that requested the Tweet.ConversationControlField field was not hydrated.
-          // We cannot do so because GetTweetFields will return TweetFieldsResultFailed
-          // for partial results which would fail closed.
-          ValueState.unmodified(curr)
+          // w-wepwy tweet tweet.convewsationcontwowfiewd hydwation shouwd faiw open. XD
+          // i-ideawwy we wouwd w-wetuwn vawuestate.pawtiaw hewe t-to nyotify tweetypie t-the cawwew
+          // that wequested the t-tweet.convewsationcontwowfiewd fiewd was nyot h-hydwated. σωσ
+          // we cannot do so because gettweetfiewds w-wiww wetuwn tweetfiewdswesuwtfaiwed
+          // fow p-pawtiaw wesuwts which wouwd faiw c-cwosed. (U ᵕ U❁)
+          v-vawuestate.unmodified(cuww)
         }
       }
-    }.onlyIf { (_, ctx) =>
-      // This hydrator is specifically for replies so only run when Tweet is a reply
-      ctx.inReplyToTweetId.isDefined &&
-      // See comment for FirstValidDate
-      ctx.createdAt > FirstValidDate &&
-      // We need conversation id to get ConversationControl
-      ctx.conversationId.isDefined &&
-      // Only run if the ConversationControl was requested
-      ctx.tweetFieldRequested(Tweet.ConversationControlField)
+    }.onwyif { (_, (U ﹏ U) ctx) =>
+      // this hydwatow is specificawwy fow wepwies so onwy wun when tweet is a wepwy
+      c-ctx.inwepwytotweetid.isdefined &&
+      // s-see comment fow fiwstvawiddate
+      c-ctx.cweatedat > f-fiwstvawiddate &&
+      // w-we nyeed convewsation id to get convewsationcontwow
+      ctx.convewsationid.isdefined &&
+      // onwy wun i-if the convewsationcontwow was wequested
+      ctx.tweetfiewdwequested(tweet.convewsationcontwowfiewd)
     }
   }
 }
 
 /**
- * ConversationControlHydrator is used to hydrate the conversationControl field.
- * For root Tweets, this hydrator just passes through the existing conversationControl.
- * For reply Tweets, it loads the conversationControl from the root Tweet of the conversation.
- * Only root Tweets in a conversation (i.e. the Tweet pointed to by conversationId) have
- * a persisted conversationControl, so we have to hydrate that field for all replies in order
- * to know if a Tweet in a conversation can be replied to.
+ * convewsationcontwowhydwatow i-is used to hydwate the convewsationcontwow f-fiewd. :3
+ * fow w-woot tweets, ( ͡o ω ͡o ) this h-hydwatow just passes thwough t-the existing convewsationcontwow.
+ * f-fow wepwy tweets, σωσ i-it woads t-the convewsationcontwow fwom the woot tweet of the c-convewsation. >w<
+ * o-onwy woot tweets i-in a convewsation (i.e. 😳😳😳 t-the t-tweet pointed to by convewsationid) have
+ * a pewsisted convewsationcontwow, OwO s-so we have to hydwate that fiewd fow aww wepwies in owdew
+ * to know if a tweet in a-a convewsation can be wepwied to. 😳
  */
-object ConversationControlHydrator {
-  type Type = ValueHydrator[Option[ConversationControl], Ctx]
+object convewsationcontwowhydwatow {
+  type t-type = vawuehydwatow[option[convewsationcontwow], 😳😳😳 c-ctx]
 
-  case class Ctx(conversationId: Option[ConversationId], underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy
+  case c-cwass ctx(convewsationid: option[convewsationid], (˘ω˘) u-undewwyingtweetctx: tweetctx)
+      e-extends t-tweetctx.pwoxy
 
-  private def scrubInviteViaMention(
-    ccOpt: Option[ConversationControl]
-  ): Option[ConversationControl] = {
-    ccOpt collect {
-      case ConversationControl.ByInvitation(byInvitation) =>
-        ConversationControl.ByInvitation(byInvitation.copy(inviteViaMention = None))
-      case ConversationControl.Community(community) =>
-        ConversationControl.Community(community.copy(inviteViaMention = None))
-      case ConversationControl.Followers(followers) =>
-        ConversationControl.Followers(followers.copy(inviteViaMention = None))
+  pwivate def scwubinviteviamention(
+    ccopt: option[convewsationcontwow]
+  ): option[convewsationcontwow] = {
+    ccopt cowwect {
+      c-case convewsationcontwow.byinvitation(byinvitation) =>
+        c-convewsationcontwow.byinvitation(byinvitation.copy(inviteviamention = nyone))
+      case c-convewsationcontwow.community(community) =>
+        c-convewsationcontwow.community(community.copy(inviteviamention = nyone))
+      case convewsationcontwow.fowwowews(fowwowews) =>
+        c-convewsationcontwow.fowwowews(fowwowews.copy(inviteviamention = n-nyone))
     }
   }
 
-  def apply(
-    repo: ConversationControlRepository.Type,
-    disableInviteViaMention: Gate[Unit],
-    stats: StatsReceiver
-  ): Type = {
-    val replyTweetConversationControlHydrator = ReplyTweetConversationControlHydrator(
-      repo,
+  def appwy(
+    w-wepo: convewsationcontwowwepositowy.type, ʘwʘ
+    d-disabweinviteviamention: gate[unit], ( ͡o ω ͡o )
+    stats: statsweceivew
+  ): type = {
+    v-vaw wepwytweetconvewsationcontwowhydwatow = w-wepwytweetconvewsationcontwowhydwatow(
+      w-wepo, o.O
       stats
     )
 
-    ValueHydrator[Option[ConversationControl], Ctx] { (curr, ctx) =>
-      val ccUpdated = if (disableInviteViaMention()) {
-        scrubInviteViaMention(curr)
-      } else {
-        curr
+    v-vawuehydwatow[option[convewsationcontwow], >w< c-ctx] { (cuww, 😳 ctx) =>
+      vaw c-ccupdated = if (disabweinviteviamention()) {
+        scwubinviteviamention(cuww)
+      } ewse {
+        cuww
       }
 
-      if (ctx.inReplyToTweetId.isEmpty) {
-        // For non-reply tweets, pass through the existing conversation control
-        Stitch.value(ValueState.delta(curr, ccUpdated))
-      } else {
-        replyTweetConversationControlHydrator(ccUpdated, ctx)
+      if (ctx.inwepwytotweetid.isempty) {
+        // f-fow n-nyon-wepwy tweets, 🥺 pass thwough the existing convewsation c-contwow
+        s-stitch.vawue(vawuestate.dewta(cuww, ccupdated))
+      } ewse {
+        wepwytweetconvewsationcontwowhydwatow(ccupdated, rawr x3 c-ctx)
       }
     }
   }

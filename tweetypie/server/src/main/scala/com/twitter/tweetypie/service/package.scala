@@ -1,12 +1,12 @@
-package com.twitter.tweetypie
+package com.twittew.tweetypie
 
-import com.twitter.servo.request
-import com.twitter.servo.request.ClientRequestAuthorizer
+impowt c-com.twittew.sewvo.wequest
+impowt c-com.twittew.sewvo.wequest.cwientwequestauthowizew
 
-package object service {
-  type ClientRequestAuthorizer = request.ClientRequestAuthorizer
+p-package o-object sewvice {
+  t-type cwientwequestauthowizew = w-wequest.cwientwequestauthowizew
 
-  type UnauthorizedException = request.ClientRequestAuthorizer.UnauthorizedException
-  val UnauthorizedException: ClientRequestAuthorizer.UnauthorizedException.type =
-    request.ClientRequestAuthorizer.UnauthorizedException
+  t-type unauthowizedexception = w-wequest.cwientwequestauthowizew.unauthowizedexception
+  vaw unauthowizedexception: cwientwequestauthowizew.unauthowizedexception.type =
+    wequest.cwientwequestauthowizew.unauthowizedexception
 }

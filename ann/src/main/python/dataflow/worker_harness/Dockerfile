@@ -1,34 +1,34 @@
-FROM --platform=linux/amd64 nvidia/cuda:11.2.2-cudnn8-runtime-ubuntu20.04
+fwom --pwatfowm=winux/amd64 nyvidia/cuda:11.2.2-cudnn8-wuntime-ubuntu20.04
 
-RUN \
-  # Add Deadsnakes repository that has a variety of Python packages for Ubuntu.
-  # See: https://launchpad.net/~deadsnakes/+archive/ubuntu/ppa
-  apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F23C5A6CF475977595C89F51BA6932366A755776 \
-  && echo "deb http://ppa.launchpad.net/deadsnakes/ppa/ubuntu focal main" >> /etc/apt/sources.list.d/custom.list \
-  && echo "deb-src http://ppa.launchpad.net/deadsnakes/ppa/ubuntu focal main" >> /etc/apt/sources.list.d/custom.list \
+wun \
+  # a-add deadsnakes w-wepositowy that h-has a vawiety o-of python packages f-fow ubuntu. /(^•ω•^)
+  # s-see: https://waunchpad.net/~deadsnakes/+awchive/ubuntu/ppa
+  a-apt-key adv --keysewvew k-keysewvew.ubuntu.com --wecv-keys f23c5a6cf475977595c89f51ba6932366a755776 \
+  && echo "deb http://ppa.waunchpad.net/deadsnakes/ppa/ubuntu focaw main" >> /etc/apt/souwces.wist.d/custom.wist \
+  && e-echo "deb-swc http://ppa.waunchpad.net/deadsnakes/ppa/ubuntu focaw m-main" >> /etc/apt/souwces.wist.d/custom.wist \
   && apt-get update \
-  && apt-get install -y curl \
+  && a-apt-get instaww -y cuww \
   python3.7 \
-  # With python3.8 package, distutils need to be installed separately.
-  python3.7-distutils \
+  # with python3.8 p-package, rawr x3 distutiws nyeed to b-be instawwed sepawatewy. (U ﹏ U)
+  p-python3.7-distutiws \
   python3-dev \
   python3.7-dev \
-  libpython3.7-dev \
+  wibpython3.7-dev \
   python3-apt \
-  gcc \
+  g-gcc \
   g++ \
-  && rm -rf /var/lib/apt/lists/*
-RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.7 10
-RUN rm -f /usr/bin/python3 && ln -s /usr/bin/python3.7 /usr/bin/python3
-RUN \
-  curl https://bootstrap.pypa.io/get-pip.py | python \
-  && pip3 install pip==22.0.3 \
-  && python3 -m pip install --no-cache-dir apache-beam[gcp]==2.39.0
-# Verify that there are no conflicting dependencies.
-RUN pip3 check
+  && wm -wf /vaw/wib/apt/wists/*
+wun update-awtewnatives --instaww /usw/bin/python python /usw/bin/python3.7 10
+wun wm -f /usw/bin/python3 && w-wn -s /usw/bin/python3.7 /usw/bin/python3
+wun \
+  cuww https://bootstwap.pypa.io/get-pip.py | p-python \
+  && p-pip3 instaww p-pip==22.0.3 \
+  && p-python3 -m pip instaww --no-cache-diw apache-beam[gcp]==2.39.0
+# v-vewify that thewe awe nyo confwicting dependencies. (U ﹏ U)
+w-wun pip3 check
 
-# Copy the Apache Beam worker dependencies from the Beam Python 3.7 SDK image.
-COPY --from=apache/beam_python3.7_sdk:2.39.0 /opt/apache/beam /opt/apache/beam
+# copy the apache beam wowkew dependencies fwom the beam python 3.7 sdk i-image. (⑅˘꒳˘)
+copy --fwom=apache/beam_python3.7_sdk:2.39.0 /opt/apache/beam /opt/apache/beam
 
-# Set the entrypoint to Apache Beam SDK worker launcher.
-ENTRYPOINT [ "/opt/apache/beam/boot" ]
+# set the e-entwypoint to a-apache beam sdk w-wowkew waunchew. òωó
+entwypoint [ "/opt/apache/beam/boot" ]

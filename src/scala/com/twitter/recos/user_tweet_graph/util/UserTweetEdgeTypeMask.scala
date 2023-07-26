@@ -1,77 +1,77 @@
-package com.twitter.recos.user_tweet_graph.util
+package com.twittew.wecos.usew_tweet_gwaph.utiw
 
-import com.twitter.graphjet.bipartite.api.EdgeTypeMask
-import com.twitter.recos.util.Action
+impowt com.twittew.gwaphjet.bipawtite.api.edgetypemask
+i-impowt com.twittew.wecos.utiw.action
 
 /**
- * The bit mask is used to encode edge types in the top bits of an integer,
- * e.g. favorite, retweet, reply and click. Under current segment configuration, each segment
- * stores up to 128M edges. Assuming that each node on one side is unique, each segment
- * stores up to 128M unique nodes on one side, which occupies the lower 27 bits of an integer.
- * This leaves five bits to encode the edge types, which at max can store 32 edge types.
- * The following implementation utilizes the top four bits and leaves one free bit out.
+ * t-the bit mask i-is used to encode e-edge types in t-the top bits of a-an integew, mya
+ * e-e.g. (⑅˘꒳˘) favowite, wetweet, (U ﹏ U) w-wepwy and cwick. mya undew cuwwent segment configuwation, ʘwʘ each segment
+ * stowes u-up to 128m edges. (˘ω˘) assuming that each nyode o-on one side is unique, (U ﹏ U) each segment
+ * s-stowes up to 128m unique nodes on one side, ^•ﻌ•^ which occupies t-the wowew 27 bits of an integew. (˘ω˘)
+ * t-this weaves f-five bits to encode the edge types, :3 which at max can stowe 32 edge types. ^^;;
+ * the f-fowwowing impwementation utiwizes the top fouw bits and weaves one fwee bit out. 🥺
  */
-class UserTweetEdgeTypeMask extends EdgeTypeMask {
-  import UserTweetEdgeTypeMask._
+c-cwass usewtweetedgetypemask extends edgetypemask {
+  i-impowt u-usewtweetedgetypemask._
 
-  override def encode(node: Int, edgeType: Byte): Int = {
-    if (edgeType < 0 || edgeType > SIZE || edgeType == Click.id.toByte) {
-      throw new IllegalArgumentException("encode: Illegal edge type argument " + edgeType)
-    } else {
-      node | (edgeType << 28)
+  ovewwide d-def encode(node: i-int, (⑅˘꒳˘) edgetype: byte): int = {
+    if (edgetype < 0 || edgetype > s-size || edgetype == cwick.id.tobyte) {
+      thwow nyew i-iwwegawawgumentexception("encode: iwwegaw edge type awgument " + edgetype)
+    } ewse {
+      nyode | (edgetype << 28)
     }
   }
 
-  override def edgeType(node: Int): Byte = {
-    (node >>> 28).toByte
+  o-ovewwide def edgetype(node: i-int): byte = {
+    (node >>> 28).tobyte
   }
 
-  override def restore(node: Int): Int = {
-    node & MASK
+  o-ovewwide def westowe(node: i-int): int = {
+    nyode & mask
   }
 }
 
-object UserTweetEdgeTypeMask extends Enumeration {
+object usewtweetedgetypemask extends e-enumewation {
 
-  type UserTweetEdgeTypeMask = Value
-
-  /**
-   * Byte values corresponding to the action taken on a tweet, which will be encoded in the
-   * top 4 bits in a tweet Id
-   * NOTE: THERE CAN ONLY BE UP TO 16 TYPES
-   */
-  val Click: UserTweetEdgeTypeMask = Value(0)
-  val Favorite: UserTweetEdgeTypeMask = Value(1)
-  val Retweet: UserTweetEdgeTypeMask = Value(2)
-  val Reply: UserTweetEdgeTypeMask = Value(3)
-  val Tweet: UserTweetEdgeTypeMask = Value(4)
-  val IsMentioned: UserTweetEdgeTypeMask = Value(5)
-  val IsMediatagged: UserTweetEdgeTypeMask = Value(6)
-  val Quote: UserTweetEdgeTypeMask = Value(7)
-  val Unfavorite: UserTweetEdgeTypeMask = Value(8)
+  t-type usewtweetedgetypemask = vawue
 
   /**
-   * Reserve the top four bits of each integer to encode the edge type information.
+   * b-byte vawues c-cowwesponding to the action taken o-on a tweet, nyaa~~ which wiww be encoded i-in the
+   * top 4 bits in a tweet id
+   * n-nyote: thewe can onwy be up to 16 t-types
    */
-  val MASK: Int = Integer.parseInt("00001111111111111111111111111111", 2)
-  val SIZE: Int = this.values.size
+  vaw cwick: usewtweetedgetypemask = v-vawue(0)
+  vaw f-favowite: usewtweetedgetypemask = vawue(1)
+  vaw wetweet: usewtweetedgetypemask = vawue(2)
+  vaw wepwy: usewtweetedgetypemask = vawue(3)
+  vaw tweet: usewtweetedgetypemask = v-vawue(4)
+  vaw i-ismentioned: usewtweetedgetypemask = vawue(5)
+  v-vaw ismediatagged: u-usewtweetedgetypemask = v-vawue(6)
+  vaw quote: usewtweetedgetypemask = vawue(7)
+  v-vaw unfavowite: usewtweetedgetypemask = vawue(8)
 
   /**
-   * Converts the action byte in the RecosHoseMessage into GraphJet internal byte mapping
+   * wesewve the top fouw bits of each i-integew to encode the edge type i-infowmation. :3
    */
-  def actionTypeToEdgeType(actionByte: Byte): Byte = {
-    val edgeType = Action(actionByte) match {
-      case Action.Favorite => Favorite.id
-      case Action.Retweet => Retweet.id
-      case Action.Reply => Reply.id
-      case Action.Tweet => Tweet.id
-      case Action.IsMentioned => IsMentioned.id
-      case Action.IsMediaTagged => IsMediatagged.id
-      case Action.Quote => Quote.id
-      case Action.Unfavorite => Unfavorite.id
-      case _ =>
-        throw new IllegalArgumentException("getEdgeType: Illegal edge type argument " + actionByte)
+  v-vaw mask: i-int = integew.pawseint("00001111111111111111111111111111", ( ͡o ω ͡o ) 2)
+  vaw size: int = t-this.vawues.size
+
+  /**
+   * convewts t-the action b-byte in the wecoshosemessage i-into gwaphjet intewnaw byte mapping
+   */
+  def a-actiontypetoedgetype(actionbyte: b-byte): byte = {
+    v-vaw edgetype = a-action(actionbyte) m-match {
+      case action.favowite => favowite.id
+      case action.wetweet => w-wetweet.id
+      case action.wepwy => wepwy.id
+      case action.tweet => tweet.id
+      case a-action.ismentioned => ismentioned.id
+      case action.ismediatagged => ismediatagged.id
+      c-case action.quote => q-quote.id
+      c-case action.unfavowite => unfavowite.id
+      c-case _ =>
+        thwow nyew i-iwwegawawgumentexception("getedgetype: i-iwwegaw edge type awgument " + actionbyte)
     }
-    edgeType.toByte
+    edgetype.tobyte
   }
 }

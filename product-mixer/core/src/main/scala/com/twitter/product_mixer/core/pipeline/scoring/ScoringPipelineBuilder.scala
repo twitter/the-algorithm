@@ -1,367 +1,367 @@
-package com.twitter.product_mixer.core.pipeline.scoring
+package com.twittew.pwoduct_mixew.cowe.pipewine.scowing
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.scorer.ScoredCandidateResult
-import com.twitter.product_mixer.core.gate.ParamGate
-import com.twitter.product_mixer.core.gate.ParamGate.EnabledGateSuffix
-import com.twitter.product_mixer.core.gate.ParamGate.SupportedClientGateSuffix
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.model.common.identifier.ScoringPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.InvalidStepStateException
-import com.twitter.product_mixer.core.pipeline.PipelineBuilder
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ClosedGate
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureClassifier
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipeline.Inputs
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutorResult
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutorResult
-import com.twitter.product_mixer.core.service.gate_executor.StoppedGateException
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutor
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.awewt
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.scowew.scowedcandidatewesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.gate.pawamgate
+i-impowt com.twittew.pwoduct_mixew.cowe.gate.pawamgate.enabwedgatesuffix
+i-impowt com.twittew.pwoduct_mixew.cowe.gate.pawamgate.suppowtedcwientgatesuffix
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.component
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiewstack
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.scowingpipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pipewinestepidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.itemcandidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.invawidstepstateexception
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinebuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.cwosedgate
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwecwassifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.scowing.scowingpipewine.inputs
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_featuwe_hydwatow_executow.candidatefeatuwehydwatowexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_featuwe_hydwatow_executow.candidatefeatuwehydwatowexecutowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow.gateexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow.gateexecutowwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow.stoppedgateexception
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.sewectow_executow.sewectowexecutow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.sewectow_executow.sewectowexecutowwesuwt
+impowt c-com.twittew.stitch.awwow
+i-impowt j-javax.inject.inject
 
 /**
- * ScoringPipelineBuilder builds [[ScoringPipeline]]s from [[ScoringPipelineConfig]]s.
+ * scowingpipewinebuiwdew b-buiwds [[scowingpipewine]]s fwom [[scowingpipewineconfig]]s. rawr
  *
- * You should inject a [[ScoringPipelineBuilderFactory]] and call `.get` to build these.
+ * you shouwd i-inject a [[scowingpipewinebuiwdewfactowy]] and caww `.get` to buiwd these. (˘ω˘)
  *
- * @see [[ScoringPipelineConfig]] for the description of the type parameters
- * @tparam Query the type of query these accept.
- * @tparam Candidate the domain model for the candidate being scored
+ * @see [[scowingpipewineconfig]] f-fow the descwiption of the type pawametews
+ * @tpawam quewy the type of quewy these accept. 🥺
+ * @tpawam c-candidate the domain m-modew fow the candidate b-being scowed
  */
-class ScoringPipelineBuilder[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]] @Inject() (
-  gateExecutor: GateExecutor,
-  selectorExecutor: SelectorExecutor,
-  candidateFeatureHydratorExecutor: CandidateFeatureHydratorExecutor,
-  override val statsReceiver: StatsReceiver)
-    extends PipelineBuilder[Inputs[Query]] {
+c-cwass scowingpipewinebuiwdew[quewy <: pipewinequewy, nyaa~~ candidate <: univewsawnoun[any]] @inject() (
+  gateexecutow: g-gateexecutow, :3
+  s-sewectowexecutow: sewectowexecutow, /(^•ω•^)
+  c-candidatefeatuwehydwatowexecutow: c-candidatefeatuwehydwatowexecutow, ^•ﻌ•^
+  ovewwide v-vaw statsweceivew: statsweceivew)
+    e-extends pipewinebuiwdew[inputs[quewy]] {
 
-  override type UnderlyingResultType = Seq[ScoredCandidateResult[Candidate]]
-  override type PipelineResultType = ScoringPipelineResult[Candidate]
+  ovewwide type undewwyingwesuwttype = s-seq[scowedcandidatewesuwt[candidate]]
+  ovewwide type pipewinewesuwttype = s-scowingpipewinewesuwt[candidate]
 
-  def build(
-    parentComponentIdentifierStack: ComponentIdentifierStack,
-    config: ScoringPipelineConfig[Query, Candidate]
-  ): ScoringPipeline[Query, Candidate] = {
+  def buiwd(
+    p-pawentcomponentidentifiewstack: c-componentidentifiewstack, UwU
+    config: scowingpipewineconfig[quewy, candidate]
+  ): scowingpipewine[quewy, 😳😳😳 candidate] = {
 
-    val pipelineIdentifier = config.identifier
+    vaw pipewineidentifiew = config.identifiew
 
-    val context = Executor.Context(
-      PipelineFailureClassifier(
-        config.failureClassifier.orElse(StoppedGateException.classifier(ClosedGate))),
-      parentComponentIdentifierStack.push(pipelineIdentifier)
+    vaw context = e-executow.context(
+      p-pipewinefaiwuwecwassifiew(
+        config.faiwuwecwassifiew.owewse(stoppedgateexception.cwassifiew(cwosedgate))), OwO
+      p-pawentcomponentidentifiewstack.push(pipewineidentifiew)
     )
 
-    val enabledGateOpt = config.enabledDeciderParam.map { deciderParam =>
-      ParamGate(pipelineIdentifier + EnabledGateSuffix, deciderParam)
+    v-vaw enabwedgateopt = c-config.enabweddecidewpawam.map { decidewpawam =>
+      pawamgate(pipewineidentifiew + enabwedgatesuffix, ^•ﻌ•^ decidewpawam)
     }
-    val supportedClientGateOpt = config.supportedClientParam.map { param =>
-      ParamGate(pipelineIdentifier + SupportedClientGateSuffix, param)
+    v-vaw suppowtedcwientgateopt = config.suppowtedcwientpawam.map { pawam =>
+      pawamgate(pipewineidentifiew + suppowtedcwientgatesuffix, (ꈍᴗꈍ) p-pawam)
     }
 
     /**
-     * Evaluate enabled decider gate first since if it's off, there is no reason to proceed
-     * Next evaluate supported client feature switch gate, followed by customer configured gates
+     * evawuate enabwed d-decidew gate fiwst s-since if it's o-off, (⑅˘꒳˘) thewe is no weason to pwoceed
+     * n-nyext e-evawuate suppowted c-cwient featuwe s-switch gate, (⑅˘꒳˘) fowwowed by customew configuwed g-gates
      */
-    val allGates = enabledGateOpt.toSeq ++ supportedClientGateOpt.toSeq ++ config.gates
+    v-vaw awwgates = e-enabwedgateopt.toseq ++ s-suppowtedcwientgateopt.toseq ++ c-config.gates
 
-    val GatesStep = new Step[Query, GateExecutorResult] {
-      override def identifier: PipelineStepIdentifier = ScoringPipelineConfig.gatesStep
+    vaw gatesstep = nyew step[quewy, (ˆ ﻌ ˆ)♡ gateexecutowwesuwt] {
+      o-ovewwide def identifiew: pipewinestepidentifiew = scowingpipewineconfig.gatesstep
 
-      override lazy val executorArrow: Arrow[Query, GateExecutorResult] =
-        gateExecutor.arrow(allGates, context)
+      ovewwide wazy vaw executowawwow: a-awwow[quewy, /(^•ω•^) gateexecutowwesuwt] =
+        gateexecutow.awwow(awwgates, òωó context)
 
-      override def inputAdaptor(
-        query: ScoringPipeline.Inputs[Query],
-        previousResult: ScoringPipelineResult[Candidate]
-      ): Query = {
-        query.query
+      ovewwide d-def inputadaptow(
+        q-quewy: s-scowingpipewine.inputs[quewy], (⑅˘꒳˘)
+        pweviouswesuwt: s-scowingpipewinewesuwt[candidate]
+      ): quewy = {
+        q-quewy.quewy
       }
 
-      override def resultUpdater(
-        previousPipelineResult: ScoringPipelineResult[Candidate],
-        executorResult: GateExecutorResult
-      ): ScoringPipelineResult[Candidate] =
-        previousPipelineResult.copy(gateResults = Some(executorResult))
+      o-ovewwide def wesuwtupdatew(
+        pweviouspipewinewesuwt: scowingpipewinewesuwt[candidate], (U ᵕ U❁)
+        executowwesuwt: gateexecutowwesuwt
+      ): scowingpipewinewesuwt[candidate] =
+        pweviouspipewinewesuwt.copy(gatewesuwts = s-some(executowwesuwt))
     }
 
-    val SelectorsStep = new Step[SelectorExecutor.Inputs[Query], SelectorExecutorResult] {
-      override def identifier: PipelineStepIdentifier = ScoringPipelineConfig.selectorsStep
+    vaw sewectowsstep = n-nyew step[sewectowexecutow.inputs[quewy], >w< s-sewectowexecutowwesuwt] {
+      o-ovewwide def identifiew: pipewinestepidentifiew = s-scowingpipewineconfig.sewectowsstep
 
-      override def executorArrow: Arrow[SelectorExecutor.Inputs[Query], SelectorExecutorResult] =
-        selectorExecutor.arrow(config.selectors, context)
+      o-ovewwide def executowawwow: a-awwow[sewectowexecutow.inputs[quewy], σωσ s-sewectowexecutowwesuwt] =
+        sewectowexecutow.awwow(config.sewectows, context)
 
-      override def inputAdaptor(
-        query: ScoringPipeline.Inputs[Query],
-        previousResult: ScoringPipelineResult[Candidate]
-      ): SelectorExecutor.Inputs[Query] = SelectorExecutor.Inputs(query.query, query.candidates)
+      ovewwide def inputadaptow(
+        quewy: scowingpipewine.inputs[quewy], -.-
+        p-pweviouswesuwt: s-scowingpipewinewesuwt[candidate]
+      ): s-sewectowexecutow.inputs[quewy] = sewectowexecutow.inputs(quewy.quewy, o.O q-quewy.candidates)
 
-      override def resultUpdater(
-        previousPipelineResult: ScoringPipelineResult[Candidate],
-        executorResult: SelectorExecutorResult
-      ): ScoringPipelineResult[Candidate] =
-        previousPipelineResult.copy(selectorResults = Some(executorResult))
+      o-ovewwide def wesuwtupdatew(
+        p-pweviouspipewinewesuwt: scowingpipewinewesuwt[candidate], ^^
+        executowwesuwt: sewectowexecutowwesuwt
+      ): scowingpipewinewesuwt[candidate] =
+        p-pweviouspipewinewesuwt.copy(sewectowwesuwts = s-some(executowwesuwt))
     }
 
-    val PreScoringFeatureHydrationPhase1Step =
-      new Step[
-        CandidateFeatureHydratorExecutor.Inputs[Query, Candidate],
-        CandidateFeatureHydratorExecutorResult[Candidate]
+    vaw pwescowingfeatuwehydwationphase1step =
+      n-nyew s-step[
+        candidatefeatuwehydwatowexecutow.inputs[quewy, >_< candidate],
+        candidatefeatuwehydwatowexecutowwesuwt[candidate]
       ] {
-        override def identifier: PipelineStepIdentifier =
-          ScoringPipelineConfig.preScoringFeatureHydrationPhase1Step
+        ovewwide d-def identifiew: pipewinestepidentifiew =
+          scowingpipewineconfig.pwescowingfeatuwehydwationphase1step
 
-        override def executorArrow: Arrow[
-          CandidateFeatureHydratorExecutor.Inputs[Query, Candidate],
-          CandidateFeatureHydratorExecutorResult[Candidate]
+        ovewwide def executowawwow: a-awwow[
+          candidatefeatuwehydwatowexecutow.inputs[quewy, >w< candidate], >_<
+          c-candidatefeatuwehydwatowexecutowwesuwt[candidate]
         ] =
-          candidateFeatureHydratorExecutor.arrow(config.preScoringFeatureHydrationPhase1, context)
+          c-candidatefeatuwehydwatowexecutow.awwow(config.pwescowingfeatuwehydwationphase1, >w< context)
 
-        override def inputAdaptor(
-          query: ScoringPipeline.Inputs[Query],
-          previousResult: ScoringPipelineResult[Candidate]
-        ): CandidateFeatureHydratorExecutor.Inputs[Query, Candidate] = {
-          val selectedCandidatesResult = previousResult.selectorResults.getOrElse {
-            throw InvalidStepStateException(identifier, "SelectorResults")
-          }.selectedCandidates
+        ovewwide def inputadaptow(
+          q-quewy: scowingpipewine.inputs[quewy], rawr
+          p-pweviouswesuwt: scowingpipewinewesuwt[candidate]
+        ): candidatefeatuwehydwatowexecutow.inputs[quewy, rawr x3 candidate] = {
+          v-vaw sewectedcandidateswesuwt = p-pweviouswesuwt.sewectowwesuwts.getowewse {
+            thwow invawidstepstateexception(identifiew, "sewectowwesuwts")
+          }.sewectedcandidates
 
-          CandidateFeatureHydratorExecutor.Inputs(
-            query.query,
-            selectedCandidatesResult.asInstanceOf[Seq[CandidateWithFeatures[Candidate]]])
+          candidatefeatuwehydwatowexecutow.inputs(
+            quewy.quewy, ( ͡o ω ͡o )
+            s-sewectedcandidateswesuwt.asinstanceof[seq[candidatewithfeatuwes[candidate]]])
         }
 
-        override def resultUpdater(
-          previousPipelineResult: ScoringPipelineResult[Candidate],
-          executorResult: CandidateFeatureHydratorExecutorResult[Candidate]
-        ): ScoringPipelineResult[Candidate] = previousPipelineResult.copy(
-          preScoringHydrationPhase1Result = Some(executorResult)
+        ovewwide d-def wesuwtupdatew(
+          p-pweviouspipewinewesuwt: scowingpipewinewesuwt[candidate], (˘ω˘)
+          e-executowwesuwt: candidatefeatuwehydwatowexecutowwesuwt[candidate]
+        ): s-scowingpipewinewesuwt[candidate] = p-pweviouspipewinewesuwt.copy(
+          p-pwescowinghydwationphase1wesuwt = some(executowwesuwt)
         )
       }
 
-    val PreScoringFeatureHydrationPhase2Step =
-      new Step[
-        CandidateFeatureHydratorExecutor.Inputs[Query, Candidate],
-        CandidateFeatureHydratorExecutorResult[Candidate]
+    v-vaw pwescowingfeatuwehydwationphase2step =
+      n-nyew step[
+        candidatefeatuwehydwatowexecutow.inputs[quewy, candidate], 😳
+        c-candidatefeatuwehydwatowexecutowwesuwt[candidate]
       ] {
-        override def identifier: PipelineStepIdentifier =
-          ScoringPipelineConfig.preScoringFeatureHydrationPhase2Step
+        o-ovewwide def i-identifiew: pipewinestepidentifiew =
+          scowingpipewineconfig.pwescowingfeatuwehydwationphase2step
 
-        override def executorArrow: Arrow[
-          CandidateFeatureHydratorExecutor.Inputs[Query, Candidate],
-          CandidateFeatureHydratorExecutorResult[Candidate]
+        ovewwide def e-executowawwow: awwow[
+          c-candidatefeatuwehydwatowexecutow.inputs[quewy, OwO c-candidate], (˘ω˘)
+          candidatefeatuwehydwatowexecutowwesuwt[candidate]
         ] =
-          candidateFeatureHydratorExecutor.arrow(config.preScoringFeatureHydrationPhase2, context)
+          candidatefeatuwehydwatowexecutow.awwow(config.pwescowingfeatuwehydwationphase2, òωó context)
 
-        override def inputAdaptor(
-          query: ScoringPipeline.Inputs[Query],
-          previousResult: ScoringPipelineResult[Candidate]
-        ): CandidateFeatureHydratorExecutor.Inputs[Query, Candidate] = {
-          val preScoringHydrationPhase1FeatureMaps: Seq[FeatureMap] =
-            previousResult.preScoringHydrationPhase1Result
-              .getOrElse(
-                throw InvalidStepStateException(identifier, "PreScoringHydrationPhase1Result"))
-              .results.map(_.features)
+        o-ovewwide def inputadaptow(
+          q-quewy: scowingpipewine.inputs[quewy], ( ͡o ω ͡o )
+          p-pweviouswesuwt: s-scowingpipewinewesuwt[candidate]
+        ): candidatefeatuwehydwatowexecutow.inputs[quewy, UwU c-candidate] = {
+          vaw pwescowinghydwationphase1featuwemaps: seq[featuwemap] =
+            pweviouswesuwt.pwescowinghydwationphase1wesuwt
+              .getowewse(
+                thwow invawidstepstateexception(identifiew, "pwescowinghydwationphase1wesuwt"))
+              .wesuwts.map(_.featuwes)
 
-          val itemCandidates = previousResult.selectorResults
-            .getOrElse(throw InvalidStepStateException(identifier, "SelectionResults"))
-            .selectedCandidates.collect {
-              case itemCandidate: ItemCandidateWithDetails => itemCandidate
+          v-vaw itemcandidates = p-pweviouswesuwt.sewectowwesuwts
+            .getowewse(thwow invawidstepstateexception(identifiew, /(^•ω•^) "sewectionwesuwts"))
+            .sewectedcandidates.cowwect {
+              c-case itemcandidate: itemcandidatewithdetaiws => i-itemcandidate
             }
-          // If there is no feature hydration (empty results), no need to attempt merging.
-          val candidates = if (preScoringHydrationPhase1FeatureMaps.isEmpty) {
-            itemCandidates
-          } else {
-            itemCandidates.zip(preScoringHydrationPhase1FeatureMaps).map {
-              case (itemCandidate, featureMap) =>
-                itemCandidate.copy(features = itemCandidate.features ++ featureMap)
+          // if thewe i-is nyo featuwe h-hydwation (empty w-wesuwts), (ꈍᴗꈍ) nyo n-nyeed to attempt m-mewging. 😳
+          vaw candidates = if (pwescowinghydwationphase1featuwemaps.isempty) {
+            itemcandidates
+          } ewse {
+            itemcandidates.zip(pwescowinghydwationphase1featuwemaps).map {
+              case (itemcandidate, mya f-featuwemap) =>
+                i-itemcandidate.copy(featuwes = i-itemcandidate.featuwes ++ featuwemap)
             }
           }
 
-          CandidateFeatureHydratorExecutor.Inputs(
-            query.query,
-            candidates.asInstanceOf[Seq[CandidateWithFeatures[Candidate]]])
+          c-candidatefeatuwehydwatowexecutow.inputs(
+            quewy.quewy, mya
+            candidates.asinstanceof[seq[candidatewithfeatuwes[candidate]]])
         }
 
-        override def resultUpdater(
-          previousPipelineResult: ScoringPipelineResult[Candidate],
-          executorResult: CandidateFeatureHydratorExecutorResult[Candidate]
-        ): ScoringPipelineResult[Candidate] = previousPipelineResult.copy(
-          preScoringHydrationPhase2Result = Some(executorResult)
+        ovewwide d-def wesuwtupdatew(
+          p-pweviouspipewinewesuwt: scowingpipewinewesuwt[candidate], /(^•ω•^)
+          e-executowwesuwt: candidatefeatuwehydwatowexecutowwesuwt[candidate]
+        ): scowingpipewinewesuwt[candidate] = p-pweviouspipewinewesuwt.copy(
+          pwescowinghydwationphase2wesuwt = s-some(executowwesuwt)
         )
       }
 
-    def getMergedPreScoringFeatureMap(
-      stepIdentifier: PipelineStepIdentifier,
-      previousResult: ScoringPipelineResult[Candidate]
-    ): Seq[FeatureMap] = {
-      val preScoringHydrationPhase1FeatureMaps: Seq[FeatureMap] =
-        previousResult.preScoringHydrationPhase1Result
-          .getOrElse(
-            throw InvalidStepStateException(
-              stepIdentifier,
-              "PreScoringHydrationPhase1Result")).results.map(_.features)
+    def g-getmewgedpwescowingfeatuwemap(
+      s-stepidentifiew: pipewinestepidentifiew,
+      pweviouswesuwt: scowingpipewinewesuwt[candidate]
+    ): seq[featuwemap] = {
+      v-vaw pwescowinghydwationphase1featuwemaps: s-seq[featuwemap] =
+        p-pweviouswesuwt.pwescowinghydwationphase1wesuwt
+          .getowewse(
+            t-thwow i-invawidstepstateexception(
+              stepidentifiew, ^^;;
+              "pwescowinghydwationphase1wesuwt")).wesuwts.map(_.featuwes)
 
-      val preScoringHydrationPhase2FeatureMaps: Seq[FeatureMap] =
-        previousResult.preScoringHydrationPhase2Result
-          .getOrElse(
-            throw InvalidStepStateException(
-              stepIdentifier,
-              "PreScoringHydrationPhase2Result")).results.map(_.features)
+      v-vaw pwescowinghydwationphase2featuwemaps: s-seq[featuwemap] =
+        pweviouswesuwt.pwescowinghydwationphase2wesuwt
+          .getowewse(
+            thwow invawidstepstateexception(
+              stepidentifiew, 🥺
+              "pwescowinghydwationphase2wesuwt")).wesuwts.map(_.featuwes)
       /*
-       * If either pre-scoring hydration phase feature map is empty, no need to merge them,
-       * we can just take all non-empty ones.
+       * i-if eithew p-pwe-scowing hydwation phase f-featuwe map is empty, ^^ no nyeed to mewge them, ^•ﻌ•^
+       * w-we can just take aww nyon-empty o-ones. /(^•ω•^)
        */
-      if (preScoringHydrationPhase1FeatureMaps.isEmpty) {
-        preScoringHydrationPhase2FeatureMaps
-      } else if (preScoringHydrationPhase2FeatureMaps.isEmpty) {
-        preScoringHydrationPhase1FeatureMaps
-      } else {
-        // No need to check the size in both, since the inputs to both hydration phases are the
-        // same and each phase ensures the number of candidates and ordering matches the input.
-        preScoringHydrationPhase1FeatureMaps.zip(preScoringHydrationPhase2FeatureMaps).map {
-          case (preScoringHydrationPhase1FeatureMap, preScoringHydrationPhasesFeatureMap) =>
-            preScoringHydrationPhase1FeatureMap ++ preScoringHydrationPhasesFeatureMap
+      i-if (pwescowinghydwationphase1featuwemaps.isempty) {
+        pwescowinghydwationphase2featuwemaps
+      } e-ewse if (pwescowinghydwationphase2featuwemaps.isempty) {
+        pwescowinghydwationphase1featuwemaps
+      } ewse {
+        // n-nyo nyeed t-to check the size i-in both, since the inputs to both hydwation phases awe the
+        // s-same and each phase ensuwes the nyumbew o-of candidates and o-owdewing matches the input. ^^
+        p-pwescowinghydwationphase1featuwemaps.zip(pwescowinghydwationphase2featuwemaps).map {
+          case (pwescowinghydwationphase1featuwemap, 🥺 p-pwescowinghydwationphasesfeatuwemap) =>
+            p-pwescowinghydwationphase1featuwemap ++ pwescowinghydwationphasesfeatuwemap
         }
       }
     }
 
-    val ScorersStep =
-      new Step[
-        CandidateFeatureHydratorExecutor.Inputs[Query, Candidate],
-        CandidateFeatureHydratorExecutorResult[Candidate]
+    vaw s-scowewsstep =
+      nyew step[
+        candidatefeatuwehydwatowexecutow.inputs[quewy, (U ᵕ U❁) c-candidate], 😳😳😳
+        c-candidatefeatuwehydwatowexecutowwesuwt[candidate]
       ] {
-        override def identifier: PipelineStepIdentifier = ScoringPipelineConfig.scorersStep
+        ovewwide def identifiew: p-pipewinestepidentifiew = scowingpipewineconfig.scowewsstep
 
-        override def inputAdaptor(
-          query: ScoringPipeline.Inputs[Query],
-          previousResult: ScoringPipelineResult[Candidate]
-        ): CandidateFeatureHydratorExecutor.Inputs[Query, Candidate] = {
+        o-ovewwide d-def inputadaptow(
+          q-quewy: scowingpipewine.inputs[quewy], nyaa~~
+          pweviouswesuwt: scowingpipewinewesuwt[candidate]
+        ): candidatefeatuwehydwatowexecutow.inputs[quewy, (˘ω˘) candidate] = {
 
-          val mergedPreScoringFeatureHydrationFeatures: Seq[FeatureMap] =
-            getMergedPreScoringFeatureMap(ScoringPipelineConfig.scorersStep, previousResult)
+          vaw mewgedpwescowingfeatuwehydwationfeatuwes: seq[featuwemap] =
+            getmewgedpwescowingfeatuwemap(scowingpipewineconfig.scowewsstep, >_< pweviouswesuwt)
 
-          val itemCandidates = previousResult.selectorResults
-            .getOrElse(throw InvalidStepStateException(identifier, "SelectionResults"))
-            .selectedCandidates.collect {
-              case itemCandidate: ItemCandidateWithDetails => itemCandidate
+          vaw itemcandidates = pweviouswesuwt.sewectowwesuwts
+            .getowewse(thwow invawidstepstateexception(identifiew, XD "sewectionwesuwts"))
+            .sewectedcandidates.cowwect {
+              case itemcandidate: i-itemcandidatewithdetaiws => i-itemcandidate
             }
 
-          // If there was no pre-scoring features hydration, no need to re-merge feature maps
-          // and construct a new item candidate
-          val updatedCandidates = if (mergedPreScoringFeatureHydrationFeatures.isEmpty) {
-            itemCandidates
-          } else {
-            itemCandidates.zip(mergedPreScoringFeatureHydrationFeatures).map {
-              case (itemCandidate, preScoringFeatureMap) =>
-                itemCandidate.copy(features = itemCandidate.features ++ preScoringFeatureMap)
+          // if thewe was nyo pwe-scowing f-featuwes h-hydwation, rawr x3 nyo n-nyeed to we-mewge featuwe maps
+          // a-and constwuct a nyew i-item candidate
+          v-vaw updatedcandidates = if (mewgedpwescowingfeatuwehydwationfeatuwes.isempty) {
+            i-itemcandidates
+          } ewse {
+            i-itemcandidates.zip(mewgedpwescowingfeatuwehydwationfeatuwes).map {
+              c-case (itemcandidate, ( ͡o ω ͡o ) pwescowingfeatuwemap) =>
+                itemcandidate.copy(featuwes = i-itemcandidate.featuwes ++ p-pwescowingfeatuwemap)
             }
           }
-          CandidateFeatureHydratorExecutor.Inputs(
-            query.query,
-            updatedCandidates.asInstanceOf[Seq[CandidateWithFeatures[Candidate]]])
+          c-candidatefeatuwehydwatowexecutow.inputs(
+            q-quewy.quewy, :3
+            u-updatedcandidates.asinstanceof[seq[candidatewithfeatuwes[candidate]]])
         }
 
-        override lazy val executorArrow: Arrow[
-          CandidateFeatureHydratorExecutor.Inputs[Query, Candidate],
-          CandidateFeatureHydratorExecutorResult[
-            Candidate
+        o-ovewwide w-wazy vaw e-executowawwow: awwow[
+          c-candidatefeatuwehydwatowexecutow.inputs[quewy, mya candidate], σωσ
+          candidatefeatuwehydwatowexecutowwesuwt[
+            c-candidate
           ]
-        ] = candidateFeatureHydratorExecutor.arrow(config.scorers.toSeq, context)
+        ] = c-candidatefeatuwehydwatowexecutow.awwow(config.scowews.toseq, (ꈍᴗꈍ) c-context)
 
-        override def resultUpdater(
-          previousPipelineResult: ScoringPipelineResult[Candidate],
-          executorResult: CandidateFeatureHydratorExecutorResult[Candidate]
-        ): ScoringPipelineResult[Candidate] =
-          previousPipelineResult.copy(scorerResults = Some(executorResult))
+        ovewwide d-def wesuwtupdatew(
+          pweviouspipewinewesuwt: scowingpipewinewesuwt[candidate], OwO
+          e-executowwesuwt: candidatefeatuwehydwatowexecutowwesuwt[candidate]
+        ): s-scowingpipewinewesuwt[candidate] =
+          p-pweviouspipewinewesuwt.copy(scowewwesuwts = s-some(executowwesuwt))
       }
 
-    val ResultStep =
-      new Step[Seq[CandidateWithFeatures[UniversalNoun[Any]]], Seq[
-        CandidateWithFeatures[UniversalNoun[Any]]
+    vaw w-wesuwtstep =
+      nyew step[seq[candidatewithfeatuwes[univewsawnoun[any]]], o.O s-seq[
+        candidatewithfeatuwes[univewsawnoun[any]]
       ]] {
-        override def identifier: PipelineStepIdentifier = ScoringPipelineConfig.resultStep
+        o-ovewwide def identifiew: p-pipewinestepidentifiew = scowingpipewineconfig.wesuwtstep
 
-        override def executorArrow: Arrow[Seq[CandidateWithFeatures[UniversalNoun[Any]]], Seq[
-          CandidateWithFeatures[UniversalNoun[Any]]
-        ]] = Arrow.identity
+        ovewwide def executowawwow: awwow[seq[candidatewithfeatuwes[univewsawnoun[any]]], 😳😳😳 s-seq[
+          candidatewithfeatuwes[univewsawnoun[any]]
+        ]] = a-awwow.identity
 
-        override def inputAdaptor(
-          query: Inputs[Query],
-          previousResult: ScoringPipelineResult[Candidate]
-        ): Seq[CandidateWithFeatures[UniversalNoun[Any]]] = previousResult.selectorResults
-          .getOrElse(throw InvalidStepStateException(identifier, "SelectionResults"))
-          .selectedCandidates.collect {
-            case itemCandidate: ItemCandidateWithDetails => itemCandidate
+        o-ovewwide def inputadaptow(
+          quewy: inputs[quewy], /(^•ω•^)
+          p-pweviouswesuwt: scowingpipewinewesuwt[candidate]
+        ): s-seq[candidatewithfeatuwes[univewsawnoun[any]]] = p-pweviouswesuwt.sewectowwesuwts
+          .getowewse(thwow i-invawidstepstateexception(identifiew, OwO "sewectionwesuwts"))
+          .sewectedcandidates.cowwect {
+            case itemcandidate: itemcandidatewithdetaiws => itemcandidate
           }
 
-        override def resultUpdater(
-          previousPipelineResult: ScoringPipelineResult[Candidate],
-          executorResult: Seq[CandidateWithFeatures[UniversalNoun[Any]]]
-        ): ScoringPipelineResult[Candidate] = {
-          val scorerResults: Seq[FeatureMap] = previousPipelineResult.scorerResults
-            .getOrElse(throw InvalidStepStateException(identifier, "ScorerResult")).results.map(
-              _.features)
+        o-ovewwide def wesuwtupdatew(
+          p-pweviouspipewinewesuwt: scowingpipewinewesuwt[candidate], ^^
+          e-executowwesuwt: seq[candidatewithfeatuwes[univewsawnoun[any]]]
+        ): scowingpipewinewesuwt[candidate] = {
+          v-vaw scowewwesuwts: seq[featuwemap] = p-pweviouspipewinewesuwt.scowewwesuwts
+            .getowewse(thwow i-invawidstepstateexception(identifiew, (///ˬ///✿) "scowewwesuwt")).wesuwts.map(
+              _.featuwes)
 
-          val mergedPreScoringFeatureHydrationFeatureMaps: Seq[FeatureMap] =
-            getMergedPreScoringFeatureMap(ScoringPipelineConfig.resultStep, previousPipelineResult)
+          v-vaw mewgedpwescowingfeatuwehydwationfeatuwemaps: seq[featuwemap] =
+            g-getmewgedpwescowingfeatuwemap(scowingpipewineconfig.wesuwtstep, p-pweviouspipewinewesuwt)
 
-          val itemCandidates = executorResult.asInstanceOf[Seq[ItemCandidateWithDetails]]
-          val finalFeatureMap = if (mergedPreScoringFeatureHydrationFeatureMaps.isEmpty) {
-            scorerResults
-          } else {
-            scorerResults
-              .zip(mergedPreScoringFeatureHydrationFeatureMaps).map {
-                case (preScoringFeatureMap, scoringFeatureMap) =>
-                  preScoringFeatureMap ++ scoringFeatureMap
+          v-vaw itemcandidates = e-executowwesuwt.asinstanceof[seq[itemcandidatewithdetaiws]]
+          vaw finawfeatuwemap = i-if (mewgedpwescowingfeatuwehydwationfeatuwemaps.isempty) {
+            s-scowewwesuwts
+          } e-ewse {
+            s-scowewwesuwts
+              .zip(mewgedpwescowingfeatuwehydwationfeatuwemaps).map {
+                case (pwescowingfeatuwemap, (///ˬ///✿) s-scowingfeatuwemap) =>
+                  p-pwescowingfeatuwemap ++ s-scowingfeatuwemap
               }
           }
 
-          val finalResults = itemCandidates.zip(finalFeatureMap).map {
-            case (itemCandidate, featureMap) =>
-              ScoredCandidateResult(itemCandidate.candidate.asInstanceOf[Candidate], featureMap)
+          v-vaw finawwesuwts = itemcandidates.zip(finawfeatuwemap).map {
+            c-case (itemcandidate, (///ˬ///✿) featuwemap) =>
+              scowedcandidatewesuwt(itemcandidate.candidate.asinstanceof[candidate], ʘwʘ f-featuwemap)
           }
-          previousPipelineResult.withResult(finalResults)
+          pweviouspipewinewesuwt.withwesuwt(finawwesuwts)
         }
       }
 
-    val builtSteps = Seq(
-      GatesStep,
-      SelectorsStep,
-      PreScoringFeatureHydrationPhase1Step,
-      PreScoringFeatureHydrationPhase2Step,
-      ScorersStep,
-      ResultStep
+    vaw b-buiwtsteps = s-seq(
+      gatesstep,
+      s-sewectowsstep, ^•ﻌ•^
+      pwescowingfeatuwehydwationphase1step, OwO
+      pwescowingfeatuwehydwationphase2step, (U ﹏ U)
+      scowewsstep, (ˆ ﻌ ˆ)♡
+      w-wesuwtstep
     )
 
-    /** The main execution logic for this Candidate Pipeline. */
-    val finalArrow: Arrow[ScoringPipeline.Inputs[Query], ScoringPipelineResult[Candidate]] =
-      buildCombinedArrowFromSteps(
-        steps = builtSteps,
-        context = context,
-        initialEmptyResult = ScoringPipelineResult.empty,
-        stepsInOrderFromConfig = ScoringPipelineConfig.stepsInOrder
+    /** t-the main execution w-wogic fow this candidate pipewine. (⑅˘꒳˘) */
+    vaw finawawwow: a-awwow[scowingpipewine.inputs[quewy], (U ﹏ U) s-scowingpipewinewesuwt[candidate]] =
+      buiwdcombinedawwowfwomsteps(
+        s-steps = buiwtsteps, o.O
+        c-context = context,
+        initiawemptywesuwt = scowingpipewinewesuwt.empty, mya
+        stepsinowdewfwomconfig = s-scowingpipewineconfig.stepsinowdew
       )
 
-    val configFromBuilder = config
-    new ScoringPipeline[Query, Candidate] {
-      override private[core] val config: ScoringPipelineConfig[Query, Candidate] = configFromBuilder
-      override val arrow: Arrow[ScoringPipeline.Inputs[Query], ScoringPipelineResult[Candidate]] =
-        finalArrow
-      override val identifier: ScoringPipelineIdentifier = pipelineIdentifier
-      override val alerts: Seq[Alert] = config.alerts
-      override val children: Seq[Component] =
-        allGates ++ config.preScoringFeatureHydrationPhase1 ++ config.preScoringFeatureHydrationPhase2 ++ config.scorers
+    v-vaw configfwombuiwdew = c-config
+    n-nyew scowingpipewine[quewy, XD candidate] {
+      ovewwide pwivate[cowe] v-vaw config: s-scowingpipewineconfig[quewy, òωó candidate] = configfwombuiwdew
+      o-ovewwide vaw awwow: awwow[scowingpipewine.inputs[quewy], (˘ω˘) scowingpipewinewesuwt[candidate]] =
+        f-finawawwow
+      ovewwide v-vaw identifiew: s-scowingpipewineidentifiew = pipewineidentifiew
+      o-ovewwide v-vaw awewts: seq[awewt] = config.awewts
+      o-ovewwide vaw chiwdwen: seq[component] =
+        a-awwgates ++ config.pwescowingfeatuwehydwationphase1 ++ c-config.pwescowingfeatuwehydwationphase2 ++ c-config.scowews
     }
   }
 }

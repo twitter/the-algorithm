@@ -1,190 +1,190 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#incwude "tensowfwow/cowe/fwamewowk/op.h"
+#incwude "tensowfwow/cowe/fwamewowk/shape_infewence.h"
+#incwude "tensowfwow/cowe/fwamewowk/op_kewnew.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
-#include "resource_utils.h"
+#incwude <twmw.h>
+#incwude "tensowfwow_utiws.h"
+#incwude "wesouwce_utiws.h"
 
-#include <algorithm>
-using std::string;
+#incwude <awgowithm>
+using std::stwing;
 
-template<typename IndexType, typename ValueType, bool calc_batch_size>
-void ComputeFixedLengthTensor(OpKernelContext *context, int64 max_length_) {
-  try {
-    const Tensor& segment_ids = context->input(0);
-    const Tensor& values = context->input(1);
-    const Tensor& pad_value = context->input(2);
+tempwate<typename i-indextype, >w< t-typename vawuetype, XD b-boow cawc_batch_size>
+void c-computefixedwengthtensow(opkewnewcontext *context, o.O i-int64 max_wength_) {
+  t-twy {
+    c-const tensow& s-segment_ids = context->input(0);
+    const tensow& vawues = context->input(1);
+    c-const tensow& pad_vawue = context->input(2);
 
-    auto indices_flat = segment_ids.flat<IndexType>();
-    auto values_flat = values.flat<ValueType>();
+    a-auto indices_fwat = segment_ids.fwat<indextype>();
+    a-auto vawues_fwat = vawues.fwat<vawuetype>();
 
-    auto pad_value_scalar = pad_value.scalar<ValueType>()();
+    auto pad_vawue_scawaw = pad_vawue.scawaw<vawuetype>()();
 
-    // Get maximum length from batch if user hasn't specified it.
-    int64 max_length = max_length_;
-    if (max_length < 0 && indices_flat.size() > 0) {
-      int64 current_id = indices_flat(0);
-      int64 current_length = 1;
+    // g-get maximum wength fwom batch i-if usew hasn't s-specified it. mya
+    int64 max_wength = max_wength_;
+    if (max_wength < 0 && indices_fwat.size() > 0) {
+      int64 c-cuwwent_id = indices_fwat(0);
+      int64 cuwwent_wength = 1;
 
-      for (int64 i = 1; i < indices_flat.size(); i++) {
-        if (current_id == indices_flat(i)) {
-          current_length++;
-        } else {
-          current_id = indices_flat(i);
-          max_length = std::max(max_length, current_length);
-          current_length = 1;
+      fow (int64 i = 1; i < i-indices_fwat.size(); i++) {
+        i-if (cuwwent_id == i-indices_fwat(i)) {
+          c-cuwwent_wength++;
+        } ewse {
+          c-cuwwent_id = indices_fwat(i);
+          max_wength = std::max(max_wength, 🥺 c-cuwwent_wength);
+          cuwwent_wength = 1;
         }
       }
-      // This is needed if the last batch is the longest sequence.
-      max_length = std::max(max_length, current_length);
+      // this is nyeeded i-if the wast batch is the wongest sequence. ^^;;
+      max_wength = std::max(max_wength, :3 cuwwent_wength);
     }
 
-    int64 batch_size = 0;
-    if (calc_batch_size) {
-      if (indices_flat.size() > 0) {
-        // The last value of segment_ids will have value batch_size  1;
-        batch_size = 1 + indices_flat(indices_flat.size() - 1);
-      } else {
+    i-int64 batch_size = 0;
+    if (cawc_batch_size) {
+      i-if (indices_fwat.size() > 0) {
+        // t-the wast vawue o-of segment_ids wiww have vawue batch_size  1;
+        batch_size = 1 + i-indices_fwat(indices_fwat.size() - 1);
+      } e-ewse {
         batch_size = 0;
       }
-    } else {
-      const Tensor& batch_size_tensor = context->input(3);
-      batch_size = batch_size_tensor.flat<int64>()(0);
+    } e-ewse {
+      c-const tensow& batch_size_tensow = c-context->input(3);
+      batch_size = b-batch_size_tensow.fwat<int64>()(0);
     }
 
-    TensorShape output_shape = {batch_size, max_length};
-    Tensor* fixed_length = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(0, output_shape, &fixed_length));
+    tensowshape output_shape = {batch_size, (U ﹏ U) m-max_wength};
+    tensow* fixed_wength = n-nyuwwptw;
+    op_wequiwes_ok(context, OwO c-context->awwocate_output(0, 😳😳😳 o-output_shape, (ˆ ﻌ ˆ)♡ &fixed_wength));
 
-    auto fixed_length_flat = fixed_length->flat<ValueType>();
+    auto fixed_wength_fwat = fixed_wength->fwat<vawuetype>();
 
-    int64 n = 0;
+    int64 ny = 0;
     int64 offset = 0;
-    for (int64 i = 0; i < batch_size; i++) {
-      for (int64 j = 0; j < max_length; j++) {
-        if (n < indices_flat.size() && indices_flat(n) == i) {
-          // Copy from variable length tensor.
-          fixed_length_flat(offset + j) = values_flat(n);
-          n++;
-        } else {
-          // Pad to fixed length.
-          fixed_length_flat(offset + j) = pad_value_scalar;
+    fow (int64 i = 0; i < batch_size; i-i++) {
+      f-fow (int64 j = 0; j < max_wength; j-j++) {
+        i-if (n < indices_fwat.size() && i-indices_fwat(n) == i) {
+          // copy fwom vawiabwe wength t-tensow. XD
+          fixed_wength_fwat(offset + j) = vawues_fwat(n);
+          ny++;
+        } ewse {
+          // p-pad to fixed wength.
+          f-fixed_wength_fwat(offset + j) = p-pad_vawue_scawaw;
         }
       }
-      // Corner case: truncate to max_length if user specified max_length < current length.
-      while (n < indices_flat.size() && i == indices_flat(n)) n++;
+      // c-cownew case: twuncate to max_wength i-if usew specified m-max_wength < c-cuwwent wength. (ˆ ﻌ ˆ)♡
+      w-whiwe (n < indices_fwat.size() && i == i-indices_fwat(n)) n-ny++;
 
-      // Update output pointer
-      offset += max_length;
+      // u-update output p-pointew
+      offset += m-max_wength;
     }
-  } catch (const std::exception &err) {
-    context->CtxFailureWithWarning(errors::InvalidArgument(err.what()));
+  } catch (const std::exception &eww) {
+    context->ctxfaiwuwewithwawning(ewwows::invawidawgument(eww.nani()));
   }
 }
 
-REGISTER_OP("FixedLengthTensor")
-.Attr("IndexType: {int64, int32}")
-.Attr("ValueType: {int64, int32, string}")
-.Attr("max_length: int")
-.Input("segment_ids: IndexType")
-.Input("values: ValueType")
-.Input("pad_value: ValueType")
-.Output("fixed_length: ValueType")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
+w-wegistew_op("fixedwengthtensow")
+.attw("indextype: {int64, ( ͡o ω ͡o ) int32}")
+.attw("vawuetype: {int64, int32, rawr x3 stwing}")
+.attw("max_wength: int")
+.input("segment_ids: indextype")
+.input("vawues: vawuetype")
+.input("pad_vawue: vawuetype")
+.output("fixed_wength: v-vawuetype")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
 
-A tensorflow OP to convert variable length segments into fixed length tensor.
+a tensowfwow o-op to convewt v-vawiabwe wength s-segments into fixed wength tensow. nyaa~~
 
-Attr
-  max_length: The size of the inner most (i.e. last) dimension.
+a-attw
+  max_wength: the size o-of the innew m-most (i.e. >_< wast) dimension. ^^;;
 
-Input
-  segment_ids: 1D input tensor containing the sorted segment_ids.
-  values: 1D input tensor containing the values.
-  pad_value: The value used for padding the fixed length tensor.
+input
+  segment_ids: 1d input tensow containing the sowted segment_ids. (ˆ ﻌ ˆ)♡
+  v-vawues: 1d input tensow containing t-the vawues. ^^;;
+  pad_vawue: t-the vawue used f-fow padding the fixed wength tensow. (⑅˘꒳˘)
 
-Outputs
-  fixed_length: A fixed length tensor of size [batch_size, max_length].
+outputs
+  f-fixed_wength: a-a fixed wength tensow of size [batch_size, rawr x3 m-max_wength]. (///ˬ///✿)
 )doc");
 
-template<typename IndexType, typename ValueType>
-class FixedLengthTensor: public OpKernel {
- public:
-  explicit FixedLengthTensor(OpKernelConstruction *context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("max_length", &max_length_));
+t-tempwate<typename indextype, 🥺 typename vawuetype>
+cwass fixedwengthtensow: pubwic o-opkewnew {
+ pubwic:
+  e-expwicit f-fixedwengthtensow(opkewnewconstwuction *context) : opkewnew(context) {
+    o-op_wequiwes_ok(context, >_< c-context->getattw("max_wength", UwU &max_wength_));
   }
 
- private:
-  int64 max_length_;
+ pwivate:
+  i-int64 max_wength_;
 
-  void Compute(OpKernelContext *context) override {
-    ComputeFixedLengthTensor<IndexType, ValueType, true>(context, max_length_);
+  void compute(opkewnewcontext *context) ovewwide {
+    computefixedwengthtensow<indextype, >_< vawuetype, -.- twue>(context, mya m-max_wength_);
   }
 };
 
-REGISTER_OP("FixedLengthTensorV2")
-.Attr("IndexType: {int64, int32}")
-.Attr("ValueType: {int64, int32, string}")
-.Attr("max_length: int")
-.Input("segment_ids: IndexType")
-.Input("values: ValueType")
-.Input("pad_value: ValueType")
-.Input("batch_size: int64")
-.Output("fixed_length: ValueType")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
+w-wegistew_op("fixedwengthtensowv2")
+.attw("indextype: {int64, >w< int32}")
+.attw("vawuetype: {int64, (U ﹏ U) int32, stwing}")
+.attw("max_wength: i-int")
+.input("segment_ids: i-indextype")
+.input("vawues: vawuetype")
+.input("pad_vawue: vawuetype")
+.input("batch_size: int64")
+.output("fixed_wength: vawuetype")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
 
-A tensorflow OP to convert variable length segments into fixed length tensor.
+a tensowfwow op to convewt vawiabwe wength s-segments into fixed wength tensow. 😳😳😳
 
-Attr
-  max_length: The size of the inner most (i.e. last) dimension.
+attw
+  max_wength: t-the size o-of the innew most (i.e. o.O wast) dimension. òωó
 
-Input
-  segment_ids: 1D input tensor containing the sorted segment_ids.
-  values: 1D input tensor containing the values.
-  pad_value: The value used for padding the fixed length tensor.
-  batch_size: The batch size to use.
+input
+  segment_ids: 1d i-input tensow c-containing the sowted segment_ids. 😳😳😳
+  vawues: 1d input tensow containing t-the vawues. σωσ
+  pad_vawue: t-the vawue used fow padding the fixed wength tensow. (⑅˘꒳˘)
+  batch_size: t-the batch size to use.
 
-Outputs
-  fixed_length: A fixed length tensor of size [batch_size, max_length].
+outputs
+  f-fixed_wength: a-a fixed wength tensow of size [batch_size, (///ˬ///✿) m-max_wength]. 🥺
 )doc");
 
-template<typename IndexType, typename ValueType>
-class FixedLengthTensorV2: public OpKernel {
- public:
-  explicit FixedLengthTensorV2(OpKernelConstruction *context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("max_length", &max_length_));
+tempwate<typename i-indextype, OwO t-typename vawuetype>
+c-cwass fixedwengthtensowv2: pubwic opkewnew {
+ p-pubwic:
+  expwicit f-fixedwengthtensowv2(opkewnewconstwuction *context) : opkewnew(context) {
+    op_wequiwes_ok(context, >w< c-context->getattw("max_wength", 🥺 &max_wength_));
   }
 
- private:
-  int64 max_length_;
+ p-pwivate:
+  int64 m-max_wength_;
 
-  void Compute(OpKernelContext *context) override {
-    ComputeFixedLengthTensor<IndexType, ValueType, false>(context, max_length_);
+  void compute(opkewnewcontext *context) ovewwide {
+    c-computefixedwengthtensow<indextype, nyaa~~ vawuetype, ^^ f-fawse>(context, >w< m-max_wength_);
   }
 };
 
-#define REGISTER_SPARSE_TO_FIXED_LENGTH(IndexType, ValueType)   \
-  REGISTER_KERNEL_BUILDER(                                      \
-    Name("FixedLengthTensor")                                   \
-    .Device(DEVICE_CPU)                                         \
-    .TypeConstraint<IndexType>("IndexType")                     \
-    .TypeConstraint<ValueType>("ValueType"),                    \
-    FixedLengthTensor<IndexType, ValueType>);                   \
+#define wegistew_spawse_to_fixed_wength(indextype, OwO vawuetype)   \
+  wegistew_kewnew_buiwdew(                                      \
+    n-nyame("fixedwengthtensow")                                   \
+    .device(device_cpu)                                         \
+    .typeconstwaint<indextype>("indextype")                     \
+    .typeconstwaint<vawuetype>("vawuetype"), XD                    \
+    fixedwengthtensow<indextype, ^^;; v-vawuetype>);                   \
                                                                 \
-  REGISTER_KERNEL_BUILDER(                                      \
-    Name("FixedLengthTensorV2")                                 \
-    .Device(DEVICE_CPU)                                         \
-    .TypeConstraint<IndexType>("IndexType")                     \
-    .TypeConstraint<ValueType>("ValueType"),                    \
-    FixedLengthTensorV2<IndexType, ValueType>);                 \
+  w-wegistew_kewnew_buiwdew(                                      \
+    n-name("fixedwengthtensowv2")                                 \
+    .device(device_cpu)                                         \
+    .typeconstwaint<indextype>("indextype")                     \
+    .typeconstwaint<vawuetype>("vawuetype"), 🥺                    \
+    fixedwengthtensowv2<indextype, XD v-vawuetype>);                 \
 
-REGISTER_SPARSE_TO_FIXED_LENGTH(int64, int64)
-REGISTER_SPARSE_TO_FIXED_LENGTH(int64, int32)
-REGISTER_SPARSE_TO_FIXED_LENGTH(int64, string)
-REGISTER_SPARSE_TO_FIXED_LENGTH(int32, int64)
-REGISTER_SPARSE_TO_FIXED_LENGTH(int32, int32)
-REGISTER_SPARSE_TO_FIXED_LENGTH(int32, string)
+wegistew_spawse_to_fixed_wength(int64, (U ᵕ U❁) int64)
+wegistew_spawse_to_fixed_wength(int64, :3 int32)
+wegistew_spawse_to_fixed_wength(int64, ( ͡o ω ͡o ) stwing)
+wegistew_spawse_to_fixed_wength(int32, òωó int64)
+w-wegistew_spawse_to_fixed_wength(int32, σωσ int32)
+w-wegistew_spawse_to_fixed_wength(int32, (U ᵕ U❁) stwing)

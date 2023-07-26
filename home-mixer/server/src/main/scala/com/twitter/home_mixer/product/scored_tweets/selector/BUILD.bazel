@@ -1,12 +1,35 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/selector",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common/presentation",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
+scawa_wibwawy(
+    souwces = ["**/*.scawa"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/inject:guice", òωó
+        "3wdpawty/jvm/com/twittew/stowehaus:cowe", o.O
+        "3wdpawty/jvm/javax/inject:javax.inject", (U ᵕ U❁)
+        "3wdpawty/jvm/net/codingweww:scawa-guice", (⑅˘꒳˘)
+        "3wdpawty/jvm/owg/wz4:wz4-java", ( ͡o ω ͡o )
+        "3wdpawty/jvm/owg/swf4j:swf4j-api", UwU
+        "discovewy-common/swc/main/scawa/com/twittew/discovewy/common/stats", rawr x3
+        "finagwe/finagwe-http/swc/main/scawa", rawr
+        "finatwa-intewnaw/decidew/swc/main/scawa", σωσ
+        "finatwa-intewnaw/mtws-thwiftmux/swc/main/scawa", σωσ
+        "finatwa/inject/inject-app/swc/main/scawa", >_<
+        "finatwa/inject/inject-cowe/swc/main/scawa", :3
+        "finatwa/inject/inject-sewvew/swc/main/scawa", (U ﹏ U)
+        "finatwa/inject/inject-thwift-cwient/swc/main/scawa", -.-
+        "finatwa/inject/inject-utiws/swc/main/scawa", (ˆ ﻌ ˆ)♡
+        "finatwa/thwift/swc/main/scawa/com/twittew/finatwa/thwift", (⑅˘꒳˘)
+        "finatwa/thwift/swc/main/scawa/com/twittew/finatwa/thwift:contwowwew", (U ᵕ U❁)
+        "finatwa/thwift/swc/main/scawa/com/twittew/finatwa/thwift/fiwtews", -.-
+        "finatwa/thwift/swc/main/scawa/com/twittew/finatwa/thwift/wouting", ^^;;
+        "gwaph-featuwe-sewvice/swc/main/wesouwces", >_<
+        "gwaph-featuwe-sewvice/swc/main/scawa/com/twittew/gwaph_featuwe_sewvice/common", mya
+        "gwaph-featuwe-sewvice/swc/main/scawa/com/twittew/gwaph_featuwe_sewvice/utiw", mya
+        "gwaph-featuwe-sewvice/swc/main/thwift/com/twittew/gwaph_featuwe_sewvice:gwaph_featuwe_sewvice_thwift-scawa", 😳
+        "hewmit/hewmit-cowe/swc/main/scawa/com/twittew/hewmit/stowe/common", XD
+        "sewvo/wequest/swc/main/scawa", :3
+        "swc/scawa/com/twittew/stowehaus_intewnaw/memcache",
+        "utiw/utiw-app/swc/main/scawa", 😳😳😳
+        "utiw/utiw-swf4j-api/swc/main/scawa", -.-
     ],
 )

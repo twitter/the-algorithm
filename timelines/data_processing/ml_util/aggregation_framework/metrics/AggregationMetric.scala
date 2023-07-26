@@ -1,184 +1,184 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.metwics
 
-import com.twitter.ml.api._
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.util.Duration
-import java.lang.{Long => JLong}
+impowt com.twittew.mw.api._
+i-impowt com.twittew.mw.api.constant.shawedfeatuwes
+i-impowt com.twittew.mw.api.utiw.swichdatawecowd
+i-impowt com.twittew.utiw.duwation
+i-impowt java.wang.{wong => j-jwong}
 
 /**
- * Represents an aggregation operator (e.g. count or mean).
- * Override all functions in this trait to implement your own metric.
- * The operator is parameterized on an input type T, which is the type
- * of feature it aggregates, and a TimedValue[A] which is
- * the result type of aggregation for this metric.
+ * w-wepwesents a-an aggwegation o-opewatow (e.g. ^•ﻌ•^ count ow mean). >_<
+ * ovewwide aww functions in this twait to impwement y-youw own metwic. OwO
+ * the opewatow is pawametewized o-on an input type t, >_< which i-is the type
+ * of featuwe it aggwegates, (ꈍᴗꈍ) and a timedvawue[a] w-which is
+ * the wesuwt type of a-aggwegation fow t-this metwic. >w<
  */
-trait AggregationMetric[T, A] extends FeatureCache[T] {
+twait aggwegationmetwic[t, (U ﹏ U) a] extends featuwecache[t] {
   /*
-   * Combines two timed aggregate values ''left'' and ''right''
-   * with the specified half life ''halfLife'' to produce a result
-   * TimedValue
+   * combines two t-timed aggwegate vawues ''weft'' and ''wight''
+   * with the specified hawf wife ''hawfwife'' t-to pwoduce a wesuwt
+   * t-timedvawue
    *
-   * @param left Left timed value
-   * @param right Right timed value
-   * @param halfLife Half life to use for adding timed values
-   * @return Result timed value
+   * @pawam w-weft weft timed v-vawue
+   * @pawam w-wight wight timed vawue
+   * @pawam hawfwife h-hawf wife to use fow adding timed vawues
+   * @wetuwn w-wesuwt timed vawue
    */
-  def plus(left: TimedValue[A], right: TimedValue[A], halfLife: Duration): TimedValue[A]
+  def pwus(weft: timedvawue[a], ^^ wight: timedvawue[a], (U ﹏ U) hawfwife: d-duwation): timedvawue[a]
 
   /*
-   * Gets increment value given a datarecord and a feature.
+   * gets incwement v-vawue given a-a datawecowd and a-a featuwe.
    *
-   * @param dataRecord to get increment value from.
-   * @param feature Feature to get increment value for. If None,
-     then the semantics is to just aggregate the label.
-   * @param timestampFeature Feature to use as millisecond timestamp
-     for decayed value aggregation.
-   * @return The incremental contribution to the aggregate of ''feature'' from ''dataRecord''.
+   * @pawam datawecowd to get incwement vawue fwom. :3
+   * @pawam f-featuwe featuwe t-to get incwement vawue fow. (✿oωo) if n-nyone, XD
+     then t-the semantics is to just aggwegate t-the wabew. >w<
+   * @pawam timestampfeatuwe f-featuwe to use as miwwisecond timestamp
+     f-fow decayed vawue aggwegation. òωó
+   * @wetuwn t-the incwementaw contwibution t-to the aggwegate o-of ''featuwe'' fwom ''datawecowd''. (ꈍᴗꈍ)
    *
-   * For example, if the aggregation metric is count, the incremental
-   * contribution is always a TimedValue (1.0, time). If the aggregation metric
-   * is mean, and the feature is a continuous feature (double), the incremental
-   * contribution looks like a tuple (value, 1.0, time)
+   * fow exampwe, rawr x3 if the aggwegation metwic is count, rawr x3 the incwementaw
+   * contwibution i-is awways a t-timedvawue (1.0, σωσ time). (ꈍᴗꈍ) if the aggwegation m-metwic
+   * i-is mean, a-and the featuwe is a continuous featuwe (doubwe), rawr the incwementaw
+   * c-contwibution wooks wike a tupwe (vawue, ^^;; 1.0, time)
    */
-  def getIncrementValue(
-    dataRecord: DataRecord,
-    feature: Option[Feature[T]],
-    timestampFeature: Feature[JLong]
-  ): TimedValue[A]
+  def getincwementvawue(
+    d-datawecowd: datawecowd, rawr x3
+    f-featuwe: o-option[featuwe[t]],
+    t-timestampfeatuwe: featuwe[jwong]
+  ): t-timedvawue[a]
 
   /*
-   * The "zero" value for aggregation.
-   * For example, the zero is 0 for the count operator.
+   * t-the "zewo" v-vawue fow aggwegation. (ˆ ﻌ ˆ)♡
+   * f-fow exampwe, σωσ the zewo is 0 fow the count opewatow. (U ﹏ U)
    */
-  def zero(timeOpt: Option[Long] = None): TimedValue[A]
+  d-def zewo(timeopt: o-option[wong] = n-nyone): t-timedvawue[a]
 
   /*
-   * Gets the value of aggregate feature(s) stored in a datarecord, if any.
-   * Different aggregate operators might store this info in the datarecord
-   * differently. E.g. count just stores a count, while mean needs to
-   * store both a sum and a count, and compile them into a TimedValue. We call
-   * these features stored in the record "output" features.
+   * g-gets the vawue of aggwegate featuwe(s) stowed in a d-datawecowd, >w< if any. σωσ
+   * diffewent aggwegate opewatows might stowe this info in the datawecowd
+   * d-diffewentwy. nyaa~~ e.g. count just stowes a count, 🥺 whiwe mean nyeeds t-to
+   * stowe b-both a sum and a-a count, rawr x3 and compiwe them into a t-timedvawue. σωσ we caww
+   * these f-featuwes stowed i-in the wecowd "output" featuwes. (///ˬ///✿)
    *
-   * @param record Record to get value from
-   * @param query AggregateFeature (see above) specifying details of aggregate
-   * @param aggregateOutputs An optional precomputed set of aggregation "output"
-   * feature hashes for this (query, metric) pair. This can be derived from ''query'',
-   * but we precompute and pass this in for significantly (approximately 4x = 400%)
-   * faster performance. If not passed in, the operator should reconstruct these features
-   * from scratch.
+   * @pawam wecowd wecowd to get vawue fwom
+   * @pawam quewy aggwegatefeatuwe (see a-above) specifying detaiws o-of aggwegate
+   * @pawam aggwegateoutputs a-an o-optionaw pwecomputed set of aggwegation "output"
+   * featuwe hashes f-fow this (quewy, (U ﹏ U) m-metwic) paiw. ^^;; this can be d-dewived fwom ''quewy'', 🥺
+   * b-but we pwecompute and pass this in fow significantwy (appwoximatewy 4x = 400%)
+   * fastew pewfowmance. òωó i-if nyot passed i-in, XD the opewatow s-shouwd weconstwuct these featuwes
+   * f-fwom s-scwatch. :3
    *
-   * @return The aggregate value if found in ''record'', else the appropriate "zero"
-     for this type of aggregation.
+   * @wetuwn the a-aggwegate vawue if found in ''wecowd'', (U ﹏ U) ewse the appwopwiate "zewo"
+     fow this t-type of aggwegation. >w<
    */
-  def getAggregateValue(
-    record: DataRecord,
-    query: AggregateFeature[T],
-    aggregateOutputs: Option[List[JLong]] = None
-  ): TimedValue[A]
+  d-def getaggwegatevawue(
+    wecowd: datawecowd, /(^•ω•^)
+    q-quewy: aggwegatefeatuwe[t], (⑅˘꒳˘)
+    a-aggwegateoutputs: option[wist[jwong]] = nyone
+  ): timedvawue[a]
 
   /*
-   * Sets the value of aggregate feature(s) in a datarecord. Different operators
-   * will have different representations (see example above).
+   * sets t-the vawue of aggwegate featuwe(s) in a datawecowd. ʘwʘ diffewent opewatows
+   * w-wiww have diffewent wepwesentations (see exampwe a-above). rawr x3
    *
-   * @param record Record to set value in
-   * @param query AggregateFeature (see above) specifying details of aggregate
-   * @param aggregateOutputs An optional precomputed set of aggregation "output"
-   * features for this (query, metric) pair. This can be derived from ''query'',
-   * but we precompute and pass this in for significantly (approximately 4x = 400%)
-   * faster performance. If not passed in, the operator should reconstruct these features
-   * from scratch.
+   * @pawam w-wecowd wecowd to set vawue in
+   * @pawam quewy aggwegatefeatuwe (see a-above) specifying d-detaiws of aggwegate
+   * @pawam aggwegateoutputs an optionaw pwecomputed set o-of aggwegation "output"
+   * featuwes f-fow this (quewy, (˘ω˘) metwic) paiw. o.O this can be dewived fwom ''quewy'', 😳
+   * b-but we pwecompute a-and pass this in f-fow significantwy (appwoximatewy 4x = 400%)
+   * fastew pewfowmance. o.O i-if nyot passed in, ^^;; the opewatow s-shouwd weconstwuct t-these featuwes
+   * f-fwom scwatch. ( ͡o ω ͡o )
    *
-   * @param value Value to set for aggregate feature in the record being passed in via ''query''
+   * @pawam v-vawue v-vawue to set fow aggwegate featuwe in the wecowd b-being passed i-in via ''quewy''
    */
-  def setAggregateValue(
-    record: DataRecord,
-    query: AggregateFeature[T],
-    aggregateOutputs: Option[List[JLong]] = None,
-    value: TimedValue[A]
-  ): Unit
+  d-def setaggwegatevawue(
+    wecowd: datawecowd, ^^;;
+    quewy: a-aggwegatefeatuwe[t], ^^;;
+    aggwegateoutputs: o-option[wist[jwong]] = n-nyone, XD
+    vawue: timedvawue[a]
+  ): unit
 
   /**
-   * Get features used to store aggregate output representation
-   * in partially aggregated data records.
+   * get featuwes u-used to stowe a-aggwegate output w-wepwesentation
+   * i-in pawtiawwy aggwegated d-data wecowds. 🥺
    *
-   * @query AggregateFeature (see above) specifying details of aggregate
-   * @return A list of "output" features used by this metric to store
-   * output representation. For example, for the "count" operator, we
-   * have only one element in this list, which is the result "count" feature.
-   * For the "mean" operator, we have three elements in this list: the "count"
-   * feature, the "sum" feature and the "mean" feature.
+   * @quewy aggwegatefeatuwe (see above) specifying detaiws of aggwegate
+   * @wetuwn a wist o-of "output" featuwes used by this m-metwic to stowe
+   * output w-wepwesentation. fow exampwe, (///ˬ///✿) fow t-the "count" opewatow, (U ᵕ U❁) we
+   * have o-onwy one ewement i-in this wist, ^^;; w-which is the w-wesuwt "count" featuwe. ^^;;
+   * f-fow the "mean" opewatow, rawr we have thwee ewements in this wist: the "count"
+   * featuwe, (˘ω˘) the "sum" featuwe a-and the "mean" f-featuwe. 🥺
    */
-  def getOutputFeatures(query: AggregateFeature[T]): List[Feature[_]]
+  d-def getoutputfeatuwes(quewy: aggwegatefeatuwe[t]): w-wist[featuwe[_]]
 
   /**
-   * Get feature hashes used to store aggregate output representation
-   * in partially aggregated data records.
+   * get featuwe hashes used to stowe aggwegate o-output wepwesentation
+   * i-in pawtiawwy aggwegated d-data wecowds. nyaa~~
    *
-   * @query AggregateFeature (see above) specifying details of aggregate
-   * @return A list of "output" feature hashes used by this metric to store
-   * output representation. For example, for the "count" operator, we
-   * have only one element in this list, which is the result "count" feature.
-   * For the "mean" operator, we have three elements in this list: the "count"
-   * feature, the "sum" feature and the "mean" feature.
+   * @quewy aggwegatefeatuwe (see above) s-specifying detaiws o-of aggwegate
+   * @wetuwn a w-wist of "output" f-featuwe hashes used by this metwic to stowe
+   * output wepwesentation. :3 fow exampwe, /(^•ω•^) f-fow the "count" o-opewatow, ^•ﻌ•^ w-we
+   * have onwy o-one ewement in t-this wist, UwU which is the wesuwt "count" f-featuwe. 😳😳😳
+   * f-fow the "mean" opewatow, OwO we h-have thwee ewements i-in this wist: the "count"
+   * f-featuwe, ^•ﻌ•^ the "sum" featuwe and the "mean" featuwe. (ꈍᴗꈍ)
    */
-  def getOutputFeatureIds(query: AggregateFeature[T]): List[JLong] =
-    getOutputFeatures(query)
-      .map(_.getDenseFeatureId().asInstanceOf[JLong])
+  d-def getoutputfeatuweids(quewy: aggwegatefeatuwe[t]): wist[jwong] =
+    g-getoutputfeatuwes(quewy)
+      .map(_.getdensefeatuweid().asinstanceof[jwong])
 
   /*
-   * Sums the given feature in two datarecords into a result record
-   * WARNING: this method has side-effects; it modifies combined
+   * s-sums the given featuwe in two datawecowds i-into a wesuwt wecowd
+   * wawning: this m-method has side-effects; i-it modifies c-combined
    *
-   * @param combined Result datarecord to mutate and store addition result in
-   * @param left Left datarecord to add
-   * @param right Right datarecord to add
-   * @param query Details of aggregate to add
-   * @param aggregateOutputs An optional precomputed set of aggregation "output"
-   * feature hashes for this (query, metric) pair. This can be derived from ''query'',
-   * but we precompute and pass this in for significantly (approximately 4x = 400%)
-   * faster performance. If not passed in, the operator should reconstruct these features
-   * from scratch.
+   * @pawam combined wesuwt datawecowd to mutate and stowe a-addition wesuwt in
+   * @pawam weft weft datawecowd t-to add
+   * @pawam w-wight wight datawecowd to a-add
+   * @pawam quewy detaiws o-of aggwegate to a-add
+   * @pawam aggwegateoutputs an optionaw pwecomputed s-set of aggwegation "output"
+   * featuwe h-hashes fow this (quewy, (⑅˘꒳˘) m-metwic) paiw. (⑅˘꒳˘) this can b-be dewived fwom ''quewy'', (ˆ ﻌ ˆ)♡
+   * but we pwecompute a-and pass this i-in fow significantwy (appwoximatewy 4x = 400%)
+   * f-fastew pewfowmance. /(^•ω•^) if nyot passed in, òωó the opewatow shouwd weconstwuct these featuwes
+   * fwom scwatch. (⑅˘꒳˘)
    */
-  def mutatePlus(
-    combined: DataRecord,
-    left: DataRecord,
-    right: DataRecord,
-    query: AggregateFeature[T],
-    aggregateOutputs: Option[List[JLong]] = None
-  ): Unit = {
-    val leftValue = getAggregateValue(left, query, aggregateOutputs)
-    val rightValue = getAggregateValue(right, query, aggregateOutputs)
-    val combinedValue = plus(leftValue, rightValue, query.halfLife)
-    setAggregateValue(combined, query, aggregateOutputs, combinedValue)
+  def mutatepwus(
+    combined: datawecowd, (U ᵕ U❁)
+    weft: datawecowd, >w<
+    wight: datawecowd, σωσ
+    q-quewy: aggwegatefeatuwe[t], -.-
+    a-aggwegateoutputs: option[wist[jwong]] = nyone
+  ): u-unit = {
+    v-vaw weftvawue = g-getaggwegatevawue(weft, o.O quewy, a-aggwegateoutputs)
+    vaw wightvawue = g-getaggwegatevawue(wight, ^^ q-quewy, >_< aggwegateoutputs)
+    vaw c-combinedvawue = pwus(weftvawue, >w< w-wightvawue, quewy.hawfwife)
+    s-setaggwegatevawue(combined, >_< quewy, aggwegateoutputs, >w< c-combinedvawue)
   }
 
   /**
-   * Helper function to get increment value from an input DataRecord
-   * and copy it to an output DataRecord, given an AggregateFeature query spec.
+   * h-hewpew function t-to get incwement v-vawue fwom a-an input datawecowd
+   * a-and copy i-it to an output d-datawecowd, rawr given a-an aggwegatefeatuwe quewy spec. rawr x3
    *
-   * @param output Datarecord to output increment to (will be mutated by this method)
-   * @param input Datarecord to get increment from
-   * @param query Details of aggregation
-   * @param aggregateOutputs An optional precomputed set of aggregation "output"
-   * feature hashes for this (query, metric) pair. This can be derived from ''query'',
-   * but we precompute and pass this in for significantly (approximately 4x = 400%)
-   * faster performance. If not passed in, the operator should reconstruct these features
-   * from scratch.
-   * @return True if an increment was set in the output record, else false
+   * @pawam o-output datawecowd t-to output i-incwement to (wiww be mutated b-by this method)
+   * @pawam input datawecowd to g-get incwement fwom
+   * @pawam quewy detaiws of a-aggwegation
+   * @pawam a-aggwegateoutputs a-an optionaw pwecomputed s-set of aggwegation "output"
+   * featuwe hashes f-fow this (quewy, ( ͡o ω ͡o ) metwic) paiw. (˘ω˘) t-this can be dewived fwom ''quewy'',
+   * b-but we pwecompute and pass this in fow significantwy (appwoximatewy 4x = 400%)
+   * fastew p-pewfowmance. 😳 if nyot passed i-in, OwO the opewatow s-shouwd weconstwuct these featuwes
+   * fwom scwatch. (˘ω˘)
+   * @wetuwn twue if an incwement w-was set in the output wecowd, òωó e-ewse fawse
    */
-  def setIncrement(
-    output: DataRecord,
-    input: DataRecord,
-    query: AggregateFeature[T],
-    timestampFeature: Feature[JLong] = SharedFeatures.TIMESTAMP,
-    aggregateOutputs: Option[List[JLong]] = None
-  ): Boolean = {
-    if (query.label == None ||
-      (query.label.isDefined && SRichDataRecord(input).hasFeature(query.label.get))) {
-      val incrementValue: TimedValue[A] = getIncrementValue(input, query.feature, timestampFeature)
-      setAggregateValue(output, query, aggregateOutputs, incrementValue)
-      true
-    } else false
+  d-def setincwement(
+    output: d-datawecowd, ( ͡o ω ͡o )
+    input: datawecowd, UwU
+    quewy: a-aggwegatefeatuwe[t], /(^•ω•^)
+    t-timestampfeatuwe: featuwe[jwong] = s-shawedfeatuwes.timestamp, (ꈍᴗꈍ)
+    aggwegateoutputs: option[wist[jwong]] = nyone
+  ): b-boowean = {
+    if (quewy.wabew == n-nyone ||
+      (quewy.wabew.isdefined && s-swichdatawecowd(input).hasfeatuwe(quewy.wabew.get))) {
+      v-vaw incwementvawue: timedvawue[a] = getincwementvawue(input, 😳 quewy.featuwe, mya t-timestampfeatuwe)
+      setaggwegatevawue(output, mya q-quewy, a-aggwegateoutputs, /(^•ω•^) i-incwementvawue)
+      twue
+    } e-ewse fawse
   }
 }

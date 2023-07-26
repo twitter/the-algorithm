@@ -1,64 +1,64 @@
-package com.twitter.product_mixer.core.pipeline.step.filter
+package com.twittew.pwoduct_mixew.cowe.pipewine.step.fiwtew
 
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithFeatures
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.filter_executor.FilterExecutor
-import com.twitter.product_mixer.core.service.filter_executor.FilterExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.state.hascandidateswithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hasquewy
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.step.step
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.fiwtew_executow.fiwtewexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.fiwtew_executow.fiwtewexecutowwesuwt
+i-impowt com.twittew.stitch.awwow
+i-impowt javax.inject.inject
 
 /**
- * A candidate filter step, it takes the input list of candidates and the given filter and applies
- * the filters on the candidates in sequence, returning the final kept candidates list to State.
+ * a candidate fiwtew step, >w< i-it takes the input wist of c-candidates and the g-given fiwtew and appwies
+ * the fiwtews on the candidates in sequence, mya wetuwning t-the finaw kept candidates wist to state. >w<
  *
- * @param filterExecutor Filter Executor
- * @tparam Query Type of PipelineQuery domain model
- * @tparam Candidate Type of Candidates to filter
- * @tparam State The pipeline state domain model.
+ * @pawam fiwtewexecutow fiwtew e-executow
+ * @tpawam quewy type of p-pipewinequewy d-domain modew
+ * @tpawam c-candidate t-type of candidates to fiwtew
+ * @tpawam state t-the pipewine state domain modew. nyaa~~
  */
-case class FilterStep[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
-  State <: HasQuery[Query, State] with HasCandidatesWithFeatures[
-    Candidate,
-    State
-  ]] @Inject() (filterExecutor: FilterExecutor)
-    extends Step[State, Seq[
-      Filter[Query, Candidate]
-    ], (Query, Seq[CandidateWithFeatures[Candidate]]), FilterExecutorResult[Candidate]] {
+case cwass f-fiwtewstep[
+  quewy <: pipewinequewy, (✿oωo)
+  candidate <: univewsawnoun[any], ʘwʘ
+  state <: hasquewy[quewy, s-state] with hascandidateswithfeatuwes[
+    candidate, (ˆ ﻌ ˆ)♡
+    s-state
+  ]] @inject() (fiwtewexecutow: f-fiwtewexecutow)
+    e-extends step[state, seq[
+      fiwtew[quewy, 😳😳😳 candidate]
+    ], :3 (quewy, OwO seq[candidatewithfeatuwes[candidate]]), (U ﹏ U) f-fiwtewexecutowwesuwt[candidate]] {
 
-  override def isEmpty(config: Seq[Filter[Query, Candidate]]): Boolean = config.isEmpty
+  o-ovewwide def isempty(config: s-seq[fiwtew[quewy, >w< c-candidate]]): boowean = c-config.isempty
 
-  override def adaptInput(
-    state: State,
-    config: Seq[Filter[Query, Candidate]]
-  ): (Query, Seq[CandidateWithFeatures[Candidate]]) =
-    (state.query, state.candidatesWithFeatures)
+  ovewwide def a-adaptinput(
+    state: state, (U ﹏ U)
+    config: seq[fiwtew[quewy, 😳 candidate]]
+  ): (quewy, (ˆ ﻌ ˆ)♡ s-seq[candidatewithfeatuwes[candidate]]) =
+    (state.quewy, 😳😳😳 state.candidateswithfeatuwes)
 
-  override def arrow(
-    config: Seq[Filter[Query, Candidate]],
-    context: Executor.Context
-  ): Arrow[(Query, Seq[CandidateWithFeatures[Candidate]]), FilterExecutorResult[Candidate]] =
-    filterExecutor.arrow(config, context)
+  o-ovewwide def awwow(
+    config: s-seq[fiwtew[quewy, (U ﹏ U) c-candidate]], (///ˬ///✿)
+    context: executow.context
+  ): awwow[(quewy, 😳 seq[candidatewithfeatuwes[candidate]]), 😳 fiwtewexecutowwesuwt[candidate]] =
+    fiwtewexecutow.awwow(config, σωσ c-context)
 
-  override def updateState(
-    state: State,
-    executorResult: FilterExecutorResult[Candidate],
-    config: Seq[Filter[Query, Candidate]]
-  ): State = {
-    val keptCandidates = executorResult.result
-    val candidatesMap = state.candidatesWithFeatures.map { candidatesWithFeatures =>
-      candidatesWithFeatures.candidate -> candidatesWithFeatures
-    }.toMap
-    val newCandidates = keptCandidates.flatMap { candidate =>
-      candidatesMap.get(candidate)
+  ovewwide d-def updatestate(
+    state: s-state, rawr x3
+    executowwesuwt: f-fiwtewexecutowwesuwt[candidate], OwO
+    c-config: seq[fiwtew[quewy, /(^•ω•^) candidate]]
+  ): state = {
+    vaw keptcandidates = executowwesuwt.wesuwt
+    v-vaw candidatesmap = state.candidateswithfeatuwes.map { candidateswithfeatuwes =>
+      candidateswithfeatuwes.candidate -> candidateswithfeatuwes
+    }.tomap
+    v-vaw newcandidates = keptcandidates.fwatmap { candidate =>
+      c-candidatesmap.get(candidate)
     }
-    state.updateCandidatesWithFeatures(newCandidates)
+    s-state.updatecandidateswithfeatuwes(newcandidates)
   }
 }

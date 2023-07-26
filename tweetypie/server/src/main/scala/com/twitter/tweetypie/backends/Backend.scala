@@ -1,172 +1,172 @@
-package com.twitter.tweetypie
-package backends
+package com.twittew.tweetypie
+package b-backends
 
-import com.twitter.finagle.context.Deadline
-import com.twitter.finagle.service.RetryBudget
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.servo.util.FutureArrow
-import com.twitter.servo.util.RetryHandler
-import com.twitter.tweetypie.core.OverCapacity
-import com.twitter.util.Timer
-import com.twitter.util.TimeoutException
+impowt c-com.twittew.finagwe.context.deadwine
+i-impowt c-com.twittew.finagwe.sewvice.wetwybudget
+i-impowt c-com.twittew.finagwe.sewvice.wetwypowicy
+i-impowt c-com.twittew.sewvo.utiw.futuweawwow
+impowt com.twittew.sewvo.utiw.wetwyhandwew
+impowt com.twittew.tweetypie.cowe.ovewcapacity
+impowt c-com.twittew.utiw.timew
+impowt com.twittew.utiw.timeoutexception
 
-object Backend {
-  val log: Logger = Logger(getClass)
-
-  /**
-   * Common stuff that is needed as part of the configuration of all
-   * of the backends.
-   */
-  case class Context(val timer: Timer, val stats: StatsReceiver)
+o-object backend {
+  vaw wog: w-woggew = woggew(getcwass)
 
   /**
-   * All backend operations are encapsulated in the FutureArrow type.  The Builder type
-   * represents functions that can decorate the FutureArrow, typically by calling the various
-   * combinator methods on FutureArrow.
+   * common stuff that is nyeeded as pawt of the c-configuwation of aww
+   * of t-the backends. ^•ﻌ•^
    */
-  type Builder[A, B] = FutureArrow[A, B] => FutureArrow[A, B]
+  c-case cwass context(vaw timew: timew, XD vaw stats: statsweceivew)
 
   /**
-   * A Policy defines some behavior to apply to a FutureArrow that wraps an endpoint.
+   * aww backend opewations a-awe encapsuwated in the futuweawwow type.  the buiwdew type
+   * wepwesents f-functions that can decowate t-the futuweawwow, :3 t-typicawwy by cawwing t-the vawious
+   * c-combinatow methods on futuweawwow. (ꈍᴗꈍ)
    */
-  trait Policy {
+  type buiwdew[a, :3 b-b] = futuweawwow[a, b] => futuweawwow[a, (U ﹏ U) b]
+
+  /**
+   * a-a powicy defines some behaviow to appwy to a futuweawwow that wwaps an endpoint. UwU
+   */
+  t-twait powicy {
 
     /**
-     * Using an endpoint name and Context, returns a Builder that does the actual
-     * application of the policy to the FutureArrow.
+     * using an endpoint n-nyame and context, 😳😳😳 w-wetuwns a b-buiwdew that does the actuaw
+     * appwication of the powicy to t-the futuweawwow. XD
      */
-    def apply[A, B](name: String, ctx: Context): Builder[A, B]
+    def a-appwy[a, o.O b](name: stwing, (⑅˘꒳˘) ctx: c-context): buiwdew[a, 😳😳😳 b-b]
 
     /**
-     * Sequentially combines policies, first applying this policy and then applying
-     * the next policy.  Order matters!  For example, to retry on timeouts, the FailureRetryPolicy
-     * needs to be applied after the TimeoutPolicy:
+     * sequentiawwy c-combines powicies, nyaa~~ fiwst a-appwying this powicy and then appwying
+     * the n-nyext powicy. rawr  owdew mattews! -.-  f-fow exampwe, (✿oωo) to wetwy on timeouts, /(^•ω•^) t-the faiwuwewetwypowicy
+     * n-needs to be appwied aftew the timeoutpowicy:
      *
-     *     TimeoutPolicy(100.milliseconds) >>> FailureRetryPolicy(retryPolicy)
+     *     timeoutpowicy(100.miwwiseconds) >>> faiwuwewetwypowicy(wetwypowicy)
      */
-    def andThen(next: Policy): Policy = {
-      val first = this
-      new Policy {
-        def apply[A, B](name: String, ctx: Context): Builder[A, B] =
-          first(name, ctx).andThen(next(name, ctx))
+    def andthen(next: powicy): powicy = {
+      v-vaw f-fiwst = this
+      nyew powicy {
+        d-def appwy[a, 🥺 b-b](name: s-stwing, ʘwʘ ctx: context): buiwdew[a, UwU b] =
+          fiwst(name, XD ctx).andthen(next(name, (✿oωo) c-ctx))
 
-        override def toString = s"$first >>> $next"
+        ovewwide def tostwing = s"$fiwst >>> $next"
       }
     }
 
     /**
-     * An alias for `andThen`.
+     * an awias fow `andthen`. :3
      */
-    def >>>(next: Policy): Policy = andThen(next)
+    d-def >>>(next: powicy): powicy = a-andthen(next)
   }
 
   /**
-   * Applies a timeout to the underlying FutureArrow.
+   * a-appwies a timeout t-to the undewwying futuweawwow. (///ˬ///✿)
    */
-  case class TimeoutPolicy(timeout: Duration) extends Policy {
-    def apply[A, B](name: String, ctx: Context): Builder[A, B] = {
-      val stats = ctx.stats.scope(name)
-      val ex = new TimeoutException(name + ": " + timeout)
-      (_: FutureArrow[A, B]).raiseWithin(ctx.timer, timeout, ex)
+  c-case cwass t-timeoutpowicy(timeout: d-duwation) e-extends powicy {
+    def appwy[a, nyaa~~ b](name: s-stwing, >w< ctx: context): b-buiwdew[a, -.- b-b] = {
+      vaw s-stats = ctx.stats.scope(name)
+      v-vaw ex = nyew timeoutexception(name + ": " + timeout)
+      (_: futuweawwow[a, (✿oωo) b-b]).waisewithin(ctx.timew, (˘ω˘) timeout, ex)
     }
   }
 
   /**
-   * Attaches a RetryHandler with the given RetryPolicy to retry failures.
+   * attaches a wetwyhandwew with the given wetwypowicy to wetwy f-faiwuwes. rawr
    */
-  case class FailureRetryPolicy(
-    retryPolicy: RetryPolicy[Try[Nothing]],
-    retryBudget: RetryBudget = RetryBudget())
-      extends Policy {
-    def apply[A, B](name: String, ctx: Context): Builder[A, B] = {
-      val stats = ctx.stats.scope(name)
-      (_: FutureArrow[A, B])
-        .retry(RetryHandler.failuresOnly(retryPolicy, ctx.timer, stats, retryBudget))
+  case cwass faiwuwewetwypowicy(
+    wetwypowicy: wetwypowicy[twy[nothing]], OwO
+    w-wetwybudget: wetwybudget = w-wetwybudget())
+      e-extends powicy {
+    def appwy[a, ^•ﻌ•^ b-b](name: stwing, UwU ctx: context): b-buiwdew[a, (˘ω˘) b] = {
+      v-vaw stats = ctx.stats.scope(name)
+      (_: futuweawwow[a, (///ˬ///✿) b])
+        .wetwy(wetwyhandwew.faiwuwesonwy(wetwypowicy, σωσ ctx.timew, /(^•ω•^) stats, wetwybudget))
     }
   }
 
   /**
-   * This policy applies standardized endpoint metrics.  This should be used with every endpoint.
+   * t-this powicy appwies standawdized e-endpoint metwics. 😳  this shouwd b-be used with e-evewy endpoint. 😳
    */
-  case object TrackPolicy extends Policy {
-    def apply[A, B](name: String, ctx: Context): Builder[A, B] = {
-      val stats = ctx.stats.scope(name)
-      (_: FutureArrow[A, B])
-        .onFailure(countOverCapacityExceptions(stats))
-        .trackOutcome(ctx.stats, (_: A) => name)
-        .trackLatency(ctx.stats, (_: A) => name)
+  case object twackpowicy e-extends powicy {
+    d-def appwy[a, (⑅˘꒳˘) b](name: stwing, c-ctx: context): b-buiwdew[a, 😳😳😳 b] = {
+      vaw stats = ctx.stats.scope(name)
+      (_: futuweawwow[a, 😳 b])
+        .onfaiwuwe(countovewcapacityexceptions(stats))
+        .twackoutcome(ctx.stats, XD (_: a-a) => nyame)
+        .twackwatency(ctx.stats, mya (_: a-a) => n-nyame)
     }
   }
 
   /**
-   * The default "policy" for timeouts, retries, exception counting, latency tracking, etc. to
-   * apply to each backend operation.  This returns a Builder type (an endofunction on FutureArrow),
-   * which can be composed with other Builders via simple function composition.
+   * the d-defauwt "powicy" f-fow timeouts, ^•ﻌ•^ wetwies, ʘwʘ exception c-counting, ( ͡o ω ͡o ) watency twacking, mya etc. to
+   * appwy to each backend opewation. o.O  this w-wetuwns a buiwdew t-type (an endofunction on futuweawwow), (✿oωo)
+   * which can be composed w-with othew b-buiwdews via simpwe function composition. :3
    */
-  def defaultPolicy[A, B](
-    name: String,
-    requestTimeout: Duration,
-    retryPolicy: RetryPolicy[Try[B]],
-    ctx: Context,
-    retryBudget: RetryBudget = RetryBudget(),
-    totalTimeout: Duration = Duration.Top,
-    exceptionCategorizer: Throwable => Option[String] = _ => None
-  ): Builder[A, B] = {
-    val scopedStats = ctx.stats.scope(name)
-    val requestTimeoutException = new TimeoutException(
-      s"$name: hit request timeout of $requestTimeout"
+  def defauwtpowicy[a, 😳 b](
+    n-nyame: stwing, (U ﹏ U)
+    wequesttimeout: duwation, mya
+    wetwypowicy: wetwypowicy[twy[b]], (U ᵕ U❁)
+    ctx: context, :3
+    w-wetwybudget: wetwybudget = wetwybudget(), mya
+    t-totawtimeout: d-duwation = duwation.top, OwO
+    exceptioncategowizew: thwowabwe => o-option[stwing] = _ => n-nyone
+  ): buiwdew[a, b] = {
+    vaw scopedstats = ctx.stats.scope(name)
+    v-vaw wequesttimeoutexception = nyew timeoutexception(
+      s-s"$name: hit wequest timeout of $wequesttimeout"
     )
-    val totalTimeoutException = new TimeoutException(s"$name: hit total timeout of $totalTimeout")
+    vaw totawtimeoutexception = n-nyew timeoutexception(s"$name: h-hit totaw t-timeout of $totawtimeout")
     base =>
-      base
-        .raiseWithin(
-          ctx.timer,
-          // We defer to a per-request deadline. When the deadline is missing or wasn't toggled,
-          // 'requestTimeout' is used instead. This mimics the behavior happening within a standard
-          // Finagle client stack and its 'TimeoutFilter'.
-          Deadline.currentToggled.fold(requestTimeout)(_.remaining),
-          requestTimeoutException
+      b-base
+        .waisewithin(
+          ctx.timew, (ˆ ﻌ ˆ)♡
+          // w-we d-defew to a pew-wequest d-deadwine. ʘwʘ when the deadwine i-is missing ow w-wasn't toggwed, o.O
+          // 'wequesttimeout' is used instead. UwU this mimics the b-behaviow happening w-within a standawd
+          // f-finagwe cwient stack and its 'timeoutfiwtew'. rawr x3
+          deadwine.cuwwenttoggwed.fowd(wequesttimeout)(_.wemaining),
+          w-wequesttimeoutexception
         )
-        .retry(RetryHandler(retryPolicy, ctx.timer, scopedStats, retryBudget))
-        .raiseWithin(ctx.timer, totalTimeout, totalTimeoutException)
-        .onFailure(countOverCapacityExceptions(scopedStats))
-        .trackOutcome(ctx.stats, (_: A) => name, exceptionCategorizer)
-        .trackLatency(ctx.stats, (_: A) => name)
+        .wetwy(wetwyhandwew(wetwypowicy, 🥺 ctx.timew, :3 s-scopedstats, (ꈍᴗꈍ) w-wetwybudget))
+        .waisewithin(ctx.timew, 🥺 totawtimeout, totawtimeoutexception)
+        .onfaiwuwe(countovewcapacityexceptions(scopedstats))
+        .twackoutcome(ctx.stats, (✿oωo) (_: a) => nyame, (U ﹏ U) exceptioncategowizew)
+        .twackwatency(ctx.stats, :3 (_: a-a) => nyame)
   }
 
   /**
-   * An onFailure FutureArrow callback that counts OverCapacity exceptions to a special counter.
-   * These will also be counted as failures and by exception class name, but having a special
-   * counter for this is easier to use in success rate computations where you want to factor out
-   * backpressure responses.
+   * a-an o-onfaiwuwe futuweawwow c-cawwback that counts ovewcapacity e-exceptions to a speciaw countew. ^^;;
+   * these wiww awso be counted as faiwuwes and by exception c-cwass name, rawr but having a speciaw
+   * c-countew fow this is e-easiew to use in success wate computations w-whewe you want to factow o-out
+   * backpwessuwe w-wesponses. 😳😳😳
    */
-  def countOverCapacityExceptions[A](scopedStats: StatsReceiver): (A, Throwable) => Unit = {
-    val overCapacityCounter = scopedStats.counter("over_capacity")
+  d-def c-countovewcapacityexceptions[a](scopedstats: s-statsweceivew): (a, (✿oωo) thwowabwe) => unit = {
+    vaw ovewcapacitycountew = scopedstats.countew("ovew_capacity")
 
     {
-      case (_, ex: OverCapacity) => overCapacityCounter.incr()
-      case _ => ()
+      case (_, OwO ex: ovewcapacity) => o-ovewcapacitycountew.incw()
+      c-case _ => ()
     }
   }
 
   /**
-   * Provides a simple mechanism for applying a Policy to an endpoint FutureArrow from
-   * an underlying service interface.
+   * p-pwovides a simpwe mechanism f-fow appwying a powicy to an endpoint futuweawwow fwom
+   * a-an undewwying sewvice i-intewface. ʘwʘ
    */
-  class PolicyAdvocate[S](backendName: String, ctx: Backend.Context, svc: S) {
+  cwass p-powicyadvocate[s](backendname: stwing, (ˆ ﻌ ˆ)♡ ctx: backend.context, (U ﹏ U) svc: s-s) {
 
     /**
-     * Tacks on the TrackPolicy to the given base policy, and then applies the policy to
-     * a FutureArrow.  This is more of a convenience method that every Backend can use to
-     * build the fully configured FutureArrow.
+     * t-tacks on the twackpowicy t-to the given base p-powicy, UwU and then appwies the powicy to
+     * a futuweawwow. XD  this is mowe of a-a convenience method t-that evewy b-backend can use t-to
+     * buiwd t-the fuwwy configuwed futuweawwow. ʘwʘ
      */
-    def apply[A, B](
-      endpointName: String,
-      policy: Policy,
-      endpoint: S => FutureArrow[A, B]
-    ): FutureArrow[A, B] = {
-      log.info(s"appling policy to $backendName.$endpointName: $policy")
-      policy.andThen(TrackPolicy)(endpointName, ctx)(endpoint(svc))
+    d-def a-appwy[a, rawr x3 b](
+      endpointname: s-stwing, ^^;;
+      p-powicy: powicy, ʘwʘ
+      endpoint: s-s => futuweawwow[a, (U ﹏ U) b]
+    ): futuweawwow[a, (˘ω˘) b] = {
+      w-wog.info(s"appwing powicy t-to $backendname.$endpointname: $powicy")
+      p-powicy.andthen(twackpowicy)(endpointname, (ꈍᴗꈍ) ctx)(endpoint(svc))
     }
   }
 }

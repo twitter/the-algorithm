@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet_composer
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tweet_composew
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet_composer.TweetComposerItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.uwwmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tweet_composew.tweetcomposewitem
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class TweetComposerItemMarshaller @Inject() (
-  tweetComposerDisplayTypeMarshaller: TweetComposerDisplayTypeMarshaller,
-  urlMarshaller: UrlMarshaller) {
+@singweton
+c-cwass t-tweetcomposewitemmawshawwew @inject() (
+  t-tweetcomposewdispwaytypemawshawwew: tweetcomposewdispwaytypemawshawwew, (ˆ ﻌ ˆ)♡
+  uwwmawshawwew: uwwmawshawwew) {
 
-  def apply(tweetComposer: TweetComposerItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.TweetComposer(
-      urt.TweetComposer(
-        displayType = tweetComposerDisplayTypeMarshaller(tweetComposer.displayType),
-        text = tweetComposer.text,
-        url = urlMarshaller(tweetComposer.url)
+  def appwy(tweetcomposew: tweetcomposewitem): u-uwt.timewineitemcontent =
+    uwt.timewineitemcontent.tweetcomposew(
+      uwt.tweetcomposew(
+        d-dispwaytype = tweetcomposewdispwaytypemawshawwew(tweetcomposew.dispwaytype), (⑅˘꒳˘)
+        t-text = tweetcomposew.text, (U ᵕ U❁)
+        uww = uwwmawshawwew(tweetcomposew.uww)
       )
     )
 }

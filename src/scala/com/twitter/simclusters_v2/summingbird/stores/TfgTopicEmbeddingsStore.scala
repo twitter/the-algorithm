@@ -1,46 +1,46 @@
-package com.twitter.simclusters_v2.summingbird.stores
+package com.twittew.simcwustews_v2.summingbiwd.stowes
 
-import com.twitter.frigate.common.store.strato.StratoStore
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.ModelVersions._
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.Client
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
+impowt com.twittew.fwigate.common.stowe.stwato.stwatostowe
+i-impowt com.twittew.simcwustews_v2.common.modewvewsions
+i-impowt com.twittew.simcwustews_v2.common.modewvewsions._
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembeddingid
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.topicid
+impowt com.twittew.simcwustews_v2.thwiftscawa.{simcwustewsembedding => thwiftsimcwustewsembedding}
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.stwato.cwient.cwient
+i-impowt com.twittew.stwato.thwift.scwoogeconvimpwicits._
+impowt com.twittew.simcwustews_v2.common.simcwustewsembedding
 
 /**
- * TopicId -> List< cluster>
+ * topicid -> w-wist< cwustew>
  */
-object TfgTopicEmbeddingsStore {
+object tfgtopicembeddingsstowe {
 
-  private val favBasedColumn20M145K2020 =
-    "recommendations/simclusters_v2/embeddings/favBasedTFGTopic20M145K2020"
+  p-pwivate vaw favbasedcowumn20m145k2020 =
+    "wecommendations/simcwustews_v2/embeddings/favbasedtfgtopic20m145k2020"
 
-  private def getStore(
-    stratoClient: Client,
-    column: String
-  ): ReadableStore[SimClustersEmbeddingId, ThriftSimClustersEmbedding] = {
-    StratoStore
-      .withUnitView[SimClustersEmbeddingId, ThriftSimClustersEmbedding](stratoClient, column)
+  pwivate def getstowe(
+    s-stwatocwient: cwient, >_<
+    c-cowumn: stwing
+  ): w-weadabwestowe[simcwustewsembeddingid, rawr x3 thwiftsimcwustewsembedding] = {
+    stwatostowe
+      .withunitview[simcwustewsembeddingid, mya thwiftsimcwustewsembedding](stwatocwient, nyaa~~ cowumn)
   }
 
-  def getFavBasedLocaleEntityEmbedding2020Store(
-    stratoClient: Client,
-  ): ReadableStore[TopicId, SimClustersEmbedding] = {
+  d-def getfavbasedwocaweentityembedding2020stowe(
+    stwatocwient: cwient, (⑅˘꒳˘)
+  ): weadabwestowe[topicid, rawr x3 simcwustewsembedding] = {
 
-    getStore(stratoClient, favBasedColumn20M145K2020)
-      .composeKeyMapping[TopicId] { topicId =>
-        SimClustersEmbeddingId(
-          EmbeddingType.FavTfgTopic,
-          ModelVersions.Model20M145K2020,
-          InternalId.TopicId(topicId)
+    getstowe(stwatocwient, (✿oωo) f-favbasedcowumn20m145k2020)
+      .composekeymapping[topicid] { topicid =>
+        s-simcwustewsembeddingid(
+          e-embeddingtype.favtfgtopic, (ˆ ﻌ ˆ)♡
+          m-modewvewsions.modew20m145k2020, (˘ω˘)
+          intewnawid.topicid(topicid)
         )
       }
-      .mapValues(SimClustersEmbedding(_))
+      .mapvawues(simcwustewsembedding(_))
   }
 }

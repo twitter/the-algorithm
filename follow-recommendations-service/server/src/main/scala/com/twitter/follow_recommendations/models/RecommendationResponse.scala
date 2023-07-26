@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.models
+package com.twittew.fowwow_wecommendations.modews
 
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.common.models.Recommendation
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
+impowt com.twittew.fowwow_wecommendations.{thwiftscawa => t-t}
+impowt c-com.twittew.fowwow_wecommendations.wogging.{thwiftscawa => o-offwine}
+impowt c-com.twittew.fowwow_wecommendations.common.modews.wecommendation
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.hasmawshawwing
 
-case class RecommendationResponse(recommendations: Seq[Recommendation]) extends HasMarshalling {
-  lazy val toThrift: t.RecommendationResponse =
-    t.RecommendationResponse(recommendations.map(_.toThrift))
+c-case cwass w-wecommendationwesponse(wecommendations: s-seq[wecommendation]) extends hasmawshawwing {
+  wazy vaw tothwift: t.wecommendationwesponse =
+    t.wecommendationwesponse(wecommendations.map(_.tothwift))
 
-  lazy val toOfflineThrift: offline.OfflineRecommendationResponse =
-    offline.OfflineRecommendationResponse(recommendations.map(_.toOfflineThrift))
+  w-wazy vaw tooffwinethwift: offwine.offwinewecommendationwesponse =
+    o-offwine.offwinewecommendationwesponse(wecommendations.map(_.tooffwinethwift))
 }

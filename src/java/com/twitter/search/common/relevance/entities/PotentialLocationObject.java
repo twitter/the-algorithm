@@ -1,122 +1,122 @@
-package com.twitter.search.common.relevance.entities;
+package com.twittew.seawch.common.wewevance.entities;
 
-import java.util.Locale;
+impowt java.utiw.wocawe;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.commons.lang.StringUtils;
+i-impowt o-owg.apache.commons.wang.stwingutiws;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.indexing.thriftjava.PotentialLocation;
-import com.twitter.search.common.util.text.LanguageIdentifierHelper;
-import com.twitter.search.common.util.text.NormalizerHelper;
-import com.twitter.search.common.util.text.TokenizerHelper;
+i-impowt c-com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+i-impowt c-com.twittew.seawch.common.indexing.thwiftjava.potentiawwocation;
+i-impowt com.twittew.seawch.common.utiw.text.wanguageidentifiewhewpew;
+impowt com.twittew.seawch.common.utiw.text.nowmawizewhewpew;
+impowt com.twittew.seawch.common.utiw.text.tokenizewhewpew;
 
 /**
- * An immutable tuple to wrap a country code, region and locality. Based on the PotentialLocation
- * struct in status.thrift.
+ * an immutabwe tupwe to wwap a-a countwy code, (U ﹏ U) wegion and wocawity. mya based on t-the potentiawwocation
+ * stwuct i-in status.thwift. ʘwʘ
  */
-public class PotentialLocationObject {
-  private final String countryCode;
-  private final String region;
-  private final String locality;
+pubwic cwass potentiawwocationobject {
+  pwivate finaw stwing c-countwycode;
+  pwivate finaw s-stwing wegion;
+  p-pwivate finaw stwing wocawity;
 
   /**
-   * Creates a new PotentialLocationObject instance.
+   * cweates a nyew potentiawwocationobject instance. (˘ω˘)
    *
-   * @param countryCode The country code.
-   * @param region The region.
-   * @param locality The locality.
+   * @pawam countwycode the c-countwy code. (U ﹏ U)
+   * @pawam wegion the wegion. ^•ﻌ•^
+   * @pawam wocawity the wocawity. (˘ω˘)
    */
-  public PotentialLocationObject(String countryCode, String region, String locality) {
-    this.countryCode = countryCode;
-    this.region = region;
-    this.locality = locality;
+  p-pubwic potentiawwocationobject(stwing countwycode, :3 s-stwing w-wegion, ^^;; stwing w-wocawity) {
+    t-this.countwycode = countwycode;
+    this.wegion = w-wegion;
+    this.wocawity = wocawity;
   }
 
-  public String getCountryCode() {
-    return countryCode;
+  p-pubwic stwing getcountwycode() {
+    wetuwn countwycode;
   }
 
-  public String getRegion() {
-    return region;
+  pubwic stwing getwegion() {
+    wetuwn wegion;
   }
 
-  public String getLocality() {
-    return locality;
+  pubwic stwing getwocawity() {
+    w-wetuwn wocawity;
   }
 
   /**
-   * Converts this PotentialLocationObject instance to a PotentialLocation thrift struct.
+   * c-convewts t-this potentiawwocationobject i-instance to a potentiawwocation thwift stwuct. 🥺
    *
-   * @param penguinVersion The penguin version to use for normalization and tokenization.
+   * @pawam penguinvewsion the penguin vewsion t-to use fow nyowmawization a-and tokenization. (⑅˘꒳˘)
    */
-  public PotentialLocation toThriftPotentialLocation(PenguinVersion penguinVersion) {
-    Preconditions.checkNotNull(penguinVersion);
+  p-pubwic potentiawwocation t-tothwiftpotentiawwocation(penguinvewsion penguinvewsion) {
+    pweconditions.checknotnuww(penguinvewsion);
 
-    String normalizedCountryCode = null;
-    if (countryCode != null) {
-      Locale countryCodeLocale = LanguageIdentifierHelper.identifyLanguage(countryCode);
-      normalizedCountryCode =
-          NormalizerHelper.normalize(countryCode, countryCodeLocale, penguinVersion);
+    s-stwing nyowmawizedcountwycode = nyuww;
+    if (countwycode != n-nyuww) {
+      wocawe countwycodewocawe = w-wanguageidentifiewhewpew.identifywanguage(countwycode);
+      nyowmawizedcountwycode =
+          n-nyowmawizewhewpew.nowmawize(countwycode, nyaa~~ countwycodewocawe, :3 p-penguinvewsion);
     }
 
-    String tokenizedRegion = null;
-    if (region != null) {
-      Locale regionLocale = LanguageIdentifierHelper.identifyLanguage(region);
-      String normalizedRegion = NormalizerHelper.normalize(region, regionLocale, penguinVersion);
-      tokenizedRegion = StringUtils.join(
-          TokenizerHelper.tokenizeQuery(normalizedRegion, regionLocale, penguinVersion), " ");
+    s-stwing tokenizedwegion = nyuww;
+    if (wegion != nyuww) {
+      wocawe wegionwocawe = wanguageidentifiewhewpew.identifywanguage(wegion);
+      stwing nowmawizedwegion = n-nyowmawizewhewpew.nowmawize(wegion, ( ͡o ω ͡o ) wegionwocawe, mya p-penguinvewsion);
+      tokenizedwegion = s-stwingutiws.join(
+          t-tokenizewhewpew.tokenizequewy(nowmawizedwegion, (///ˬ///✿) w-wegionwocawe, (˘ω˘) penguinvewsion), ^^;; " ");
     }
 
-    String tokenizedLocality = null;
-    if (locality != null) {
-      Locale localityLocale = LanguageIdentifierHelper.identifyLanguage(locality);
-      String normalizedLocality =
-          NormalizerHelper.normalize(locality, localityLocale, penguinVersion);
-      tokenizedLocality =
-          StringUtils.join(TokenizerHelper.tokenizeQuery(
-                               normalizedLocality, localityLocale, penguinVersion), " ");
+    stwing tokenizedwocawity = nyuww;
+    i-if (wocawity != nyuww) {
+      wocawe wocawitywocawe = wanguageidentifiewhewpew.identifywanguage(wocawity);
+      stwing nyowmawizedwocawity =
+          n-nyowmawizewhewpew.nowmawize(wocawity, (✿oωo) wocawitywocawe, (U ﹏ U) p-penguinvewsion);
+      t-tokenizedwocawity =
+          s-stwingutiws.join(tokenizewhewpew.tokenizequewy(
+                               nyowmawizedwocawity, -.- w-wocawitywocawe, ^•ﻌ•^ p-penguinvewsion), rawr " ");
     }
 
-    return new PotentialLocation()
-        .setCountryCode(normalizedCountryCode)
-        .setRegion(tokenizedRegion)
-        .setLocality(tokenizedLocality);
+    w-wetuwn nyew potentiawwocation()
+        .setcountwycode(nowmawizedcountwycode)
+        .setwegion(tokenizedwegion)
+        .setwocawity(tokenizedwocawity);
   }
 
-  @Override
-  public int hashCode() {
-    return ((countryCode == null) ? 0 : countryCode.hashCode())
-        + 13 * ((region == null) ? 0 : region.hashCode())
-        + 19 * ((locality == null) ? 0 : locality.hashCode());
+  @ovewwide
+  p-pubwic int hashcode() {
+    wetuwn ((countwycode == nyuww) ? 0 : c-countwycode.hashcode())
+        + 13 * ((wegion == n-nyuww) ? 0 : w-wegion.hashcode())
+        + 19 * ((wocawity == n-nyuww) ? 0 : wocawity.hashcode());
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof PotentialLocationObject)) {
-      return false;
+  @ovewwide
+  p-pubwic boowean equaws(object obj) {
+    if (!(obj instanceof p-potentiawwocationobject)) {
+      wetuwn fawse;
     }
 
-    PotentialLocationObject entry = (PotentialLocationObject) obj;
-    return (countryCode == null
-            ? entry.countryCode == null
-            : countryCode.equals(entry.countryCode))
-        && (region == null
-            ? entry.region == null
-            : region.equals(entry.region))
-        && (locality == null
-            ? entry.locality == null
-            : locality.equals(entry.locality));
+    potentiawwocationobject entwy = (potentiawwocationobject) obj;
+    wetuwn (countwycode == n-nyuww
+            ? entwy.countwycode == nuww
+            : countwycode.equaws(entwy.countwycode))
+        && (wegion == n-nuww
+            ? e-entwy.wegion == n-nyuww
+            : wegion.equaws(entwy.wegion))
+        && (wocawity == nyuww
+            ? e-entwy.wocawity == nuww
+            : w-wocawity.equaws(entwy.wocawity));
   }
 
-  @Override
-  public String toString() {
-    return new StringBuilder("PotentialLocationObject {")
-        .append("countryCode=").append(countryCode)
-        .append(", region=").append(region)
-        .append(", locality=").append(locality)
+  @ovewwide
+  p-pubwic stwing tostwing() {
+    wetuwn nyew stwingbuiwdew("potentiawwocationobject {")
+        .append("countwycode=").append(countwycode)
+        .append(", (˘ω˘) wegion=").append(wegion)
+        .append(", nyaa~~ wocawity=").append(wocawity)
         .append("}")
-        .toString();
+        .tostwing();
   }
 }

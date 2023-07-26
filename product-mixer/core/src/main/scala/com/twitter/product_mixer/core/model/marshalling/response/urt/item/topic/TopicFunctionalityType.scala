@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic
 
-sealed trait TopicFunctionalityType
+seawed twait topicfunctionawitytype
 
-case object BasicTopicFunctionalityType extends TopicFunctionalityType
-case object PivotTopicFunctionalityType extends TopicFunctionalityType
-case object RecommendationTopicFunctionalityType extends TopicFunctionalityType
+c-case object b-basictopicfunctionawitytype e-extends t-topicfunctionawitytype
+c-case o-object pivottopicfunctionawitytype e-extends topicfunctionawitytype
+c-case object wecommendationtopicfunctionawitytype extends topicfunctionawitytype

@@ -1,56 +1,56 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.expandodo.thriftscala._
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.compat.LegacySeqGroup
-import com.twitter.tweetypie.backends.Expandodo
+i-impowt com.twittew.expandodo.thwiftscawa._
+i-impowt c-com.twittew.stitch.seqgwoup
+impowt c-com.twittew.stitch.stitch
+i-impowt com.twittew.stitch.compat.wegacyseqgwoup
+i-impowt com.twittew.tweetypie.backends.expandodo
 
-sealed trait Card2Key {
-  def toCard2Request: Card2Request
+s-seawed twait cawd2key {
+  def tocawd2wequest: cawd2wequest
 }
 
-final case class UrlCard2Key(url: String) extends Card2Key {
-  override def toCard2Request: Card2Request =
-    Card2Request(`type` = Card2RequestType.ByUrl, url = Some(url))
+finaw case cwass uwwcawd2key(uww: stwing) extends c-cawd2key {
+  ovewwide def tocawd2wequest: cawd2wequest =
+    c-cawd2wequest(`type` = cawd2wequesttype.byuww, u-uww = some(uww))
 }
 
-final case class ImmediateValuesCard2Key(values: Seq[Card2ImmediateValue], tweetId: TweetId)
-    extends Card2Key {
-  override def toCard2Request: Card2Request =
-    Card2Request(
-      `type` = Card2RequestType.ByImmediateValues,
-      immediateValues = Some(values),
-      statusId = Some(tweetId)
+finaw case cwass immediatevawuescawd2key(vawues: s-seq[cawd2immediatevawue], /(^•ω•^) tweetid: t-tweetid)
+    e-extends cawd2key {
+  ovewwide def tocawd2wequest: cawd2wequest =
+    cawd2wequest(
+      `type` = c-cawd2wequesttype.byimmediatevawues, ʘwʘ
+      immediatevawues = some(vawues), σωσ
+      statusid = some(tweetid)
     )
 }
 
-object Card2Repository {
-  type Type = (Card2Key, Card2RequestOptions) => Stitch[Card2]
+object cawd2wepositowy {
+  type type = (cawd2key, OwO c-cawd2wequestoptions) => stitch[cawd2]
 
-  def apply(getCards2: Expandodo.GetCards2, maxRequestSize: Int): Type = {
-    case class RequestGroup(opts: Card2RequestOptions) extends SeqGroup[Card2Key, Option[Card2]] {
-      override def run(keys: Seq[Card2Key]): Future[Seq[Try[Option[Card2]]]] =
-        LegacySeqGroup.liftToSeqTry(
-          getCards2((keys.map(_.toCard2Request), opts)).map { res =>
-            res.responsesCode match {
-              case Card2ResponsesCode.Ok =>
-                res.responses.map(_.card)
+  def appwy(getcawds2: e-expandodo.getcawds2, 😳😳😳 m-maxwequestsize: i-int): t-type = {
+    case cwass wequestgwoup(opts: cawd2wequestoptions) e-extends seqgwoup[cawd2key, 😳😳😳 option[cawd2]] {
+      ovewwide def wun(keys: s-seq[cawd2key]): futuwe[seq[twy[option[cawd2]]]] =
+        wegacyseqgwoup.wifttoseqtwy(
+          getcawds2((keys.map(_.tocawd2wequest), o.O opts)).map { wes =>
+            wes.wesponsescode m-match {
+              case cawd2wesponsescode.ok =>
+                w-wes.wesponses.map(_.cawd)
 
-              case _ =>
-                // treat all other failure cases as card-not-found
-                Seq.fill(keys.size)(None)
+              c-case _ =>
+                // t-tweat aww othew faiwuwe cases as cawd-not-found
+                seq.fiww(keys.size)(none)
             }
           }
         )
 
-      override def maxSize: Int = maxRequestSize
+      o-ovewwide def maxsize: i-int = maxwequestsize
     }
 
-    (card2Key, opts) =>
-      Stitch
-        .call(card2Key, RequestGroup(opts))
-        .lowerFromOption()
+    (cawd2key, ( ͡o ω ͡o ) opts) =>
+      s-stitch
+        .caww(cawd2key, (U ﹏ U) w-wequestgwoup(opts))
+        .wowewfwomoption()
   }
 }

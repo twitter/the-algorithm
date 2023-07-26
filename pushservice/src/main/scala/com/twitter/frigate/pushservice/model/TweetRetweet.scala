@@ -1,51 +1,51 @@
-package com.twitter.frigate.pushservice.model
+package com.twittew.fwigate.pushsewvice.modew
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.SocialContextAction
-import com.twitter.frigate.common.base.SocialContextUserDetails
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.common.base.TweetRetweetCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.model.ibis.TweetRetweetCandidateIbis2Hydrator
-import com.twitter.frigate.pushservice.model.ntab.TweetRetweetNTabRequestHydrator
-import com.twitter.frigate.pushservice.util.CandidateHydrationUtil.TweetWithSocialContextTraits
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.stitch.tweetypie.TweetyPie
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.sociawcontextaction
+i-impowt com.twittew.fwigate.common.base.sociawcontextusewdetaiws
+i-impowt com.twittew.fwigate.common.base.tweetauthowdetaiws
+i-impowt com.twittew.fwigate.common.base.tweetwetweetcandidate
+impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+impowt com.twittew.fwigate.pushsewvice.mw.pushmwmodewscowew
+impowt com.twittew.fwigate.pushsewvice.modew.candidate.copyids
+impowt com.twittew.fwigate.pushsewvice.modew.ibis.tweetwetweetcandidateibis2hydwatow
+impowt com.twittew.fwigate.pushsewvice.modew.ntab.tweetwetweetntabwequesthydwatow
+i-impowt com.twittew.fwigate.pushsewvice.utiw.candidatehydwationutiw.tweetwithsociawcontexttwaits
+impowt c-com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+impowt c-com.twittew.gizmoduck.thwiftscawa.usew
+impowt com.twittew.stitch.tweetypie.tweetypie
+impowt com.twittew.utiw.futuwe
 
-class TweetRetweetPushCandidate(
-  candidate: RawCandidate with TweetWithSocialContextTraits,
-  socialContextUserMap: Future[Map[Long, Option[User]]],
-  author: Future[Option[User]],
-  copyIds: CopyIds
+cwass tweetwetweetpushcandidate(
+  c-candidate: wawcandidate w-with tweetwithsociawcontexttwaits, nyaa~~
+  s-sociawcontextusewmap: futuwe[map[wong, :3 option[usew]]], 😳😳😳
+  authow: futuwe[option[usew]], (˘ω˘)
+  copyids: copyids
 )(
-  implicit stats: StatsReceiver,
-  pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
-    with TweetRetweetCandidate
-    with SocialContextUserDetails
-    with TweetAuthorDetails
-    with TweetRetweetNTabRequestHydrator
-    with TweetRetweetCandidateIbis2Hydrator {
-  override val statsReceiver: StatsReceiver = stats
-  override val weightedOpenOrNtabClickModelScorer: PushMLModelScorer = pushModelScorer
-  override val tweetId: Long = candidate.tweetId
-  override val socialContextActions: Seq[SocialContextAction] =
-    candidate.socialContextActions
+  i-impwicit stats: statsweceivew, ^^
+  pushmodewscowew: pushmwmodewscowew)
+    extends p-pushcandidate
+    with tweetwetweetcandidate
+    w-with sociawcontextusewdetaiws
+    w-with tweetauthowdetaiws
+    w-with tweetwetweetntabwequesthydwatow
+    w-with tweetwetweetcandidateibis2hydwatow {
+  ovewwide v-vaw statsweceivew: statsweceivew = stats
+  ovewwide v-vaw weightedopenowntabcwickmodewscowew: pushmwmodewscowew = pushmodewscowew
+  ovewwide vaw tweetid: wong = candidate.tweetid
+  ovewwide vaw s-sociawcontextactions: seq[sociawcontextaction] =
+    c-candidate.sociawcontextactions
 
-  override val socialContextAllTypeActions: Seq[SocialContextAction] =
-    candidate.socialContextAllTypeActions
+  o-ovewwide v-vaw sociawcontextawwtypeactions: seq[sociawcontextaction] =
+    candidate.sociawcontextawwtypeactions
 
-  override lazy val scUserMap: Future[Map[Long, Option[User]]] = socialContextUserMap
-  override lazy val tweetAuthor: Future[Option[User]] = author
-  override lazy val commonRecType: CommonRecommendationType = candidate.commonRecType
-  override val target: PushTypes.Target = candidate.target
-  override lazy val tweetyPieResult: Option[TweetyPie.TweetyPieResult] = candidate.tweetyPieResult
-  override val pushCopyId: Option[Int] = copyIds.pushCopyId
-  override val ntabCopyId: Option[Int] = copyIds.ntabCopyId
-  override val copyAggregationId: Option[String] = copyIds.aggregationId
+  ovewwide w-wazy vaw scusewmap: f-futuwe[map[wong, :3 option[usew]]] = s-sociawcontextusewmap
+  o-ovewwide wazy vaw tweetauthow: f-futuwe[option[usew]] = authow
+  o-ovewwide wazy vaw commonwectype: commonwecommendationtype = c-candidate.commonwectype
+  ovewwide v-vaw tawget: pushtypes.tawget = candidate.tawget
+  ovewwide wazy v-vaw tweetypiewesuwt: o-option[tweetypie.tweetypiewesuwt] = candidate.tweetypiewesuwt
+  ovewwide vaw pushcopyid: option[int] = copyids.pushcopyid
+  ovewwide vaw nytabcopyid: option[int] = c-copyids.ntabcopyid
+  o-ovewwide vaw copyaggwegationid: o-option[stwing] = copyids.aggwegationid
 }

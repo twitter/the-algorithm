@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.features
+package com.twittew.fowwow_wecommendations.common.featuwes
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.cowe_wowkfwows.usew_modew.thwiftscawa.usewstate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case object UserStateFeature extends Feature[PipelineQuery, Option[UserState]] {}
+c-case object usewstatefeatuwe extends f-featuwe[pipewinequewy, (U ᵕ U❁) o-option[usewstate]] {}

@@ -1,6 +1,6 @@
-package com.twitter.representationscorer
+package com.twittew.wepwesentationscowew
 
-package object common {
-  type UserId = Long
-  type TweetId = Long
+package o-object common {
+  t-type usewid = w-wong
+  type tweetid = w-wong
 }

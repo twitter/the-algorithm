@@ -1,71 +1,71 @@
-package com.twitter.timelineranker.parameters.revchron
+package com.twittew.timewinewankew.pawametews.wevchwon
 
-import com.twitter.timelineranker.config.RuntimeConfiguration
-import com.twitter.timelineranker.decider.DeciderKey
-import com.twitter.timelineranker.model._
-import com.twitter.timelineranker.parameters.util.RequestContextBuilder
-import com.twitter.timelines.configapi.Config
-import com.twitter.timelines.decider.FeatureValue
-import com.twitter.util.Future
+impowt com.twittew.timewinewankew.config.wuntimeconfiguwation
+i-impowt com.twittew.timewinewankew.decidew.decidewkey
+i-impowt c-com.twittew.timewinewankew.modew._
+i-impowt com.twittew.timewinewankew.pawametews.utiw.wequestcontextbuiwdew
+i-impowt c-com.twittew.timewines.configapi.config
+i-impowt c-com.twittew.timewines.decidew.featuwevawue
+impowt com.twittew.utiw.futuwe
 
-object ReverseChronTimelineQueryContextBuilder {
-  val MaxCountLimitKey: Seq[String] = Seq("search_request_max_count_limit")
+object wevewsechwontimewinequewycontextbuiwdew {
+  vaw m-maxcountwimitkey: seq[stwing] = seq("seawch_wequest_max_count_wimit")
 }
 
-class ReverseChronTimelineQueryContextBuilder(
-  config: Config,
-  runtimeConfig: RuntimeConfiguration,
-  requestContextBuilder: RequestContextBuilder) {
+c-cwass wevewsechwontimewinequewycontextbuiwdew(
+  c-config: config, 😳😳😳
+  wuntimeconfig: wuntimeconfiguwation, mya
+  wequestcontextbuiwdew: w-wequestcontextbuiwdew) {
 
-  import ReverseChronTimelineQueryContext._
-  import ReverseChronTimelineQueryContextBuilder._
+  impowt w-wevewsechwontimewinequewycontext._
+  i-impowt wevewsechwontimewinequewycontextbuiwdew._
 
-  private val maxCountMultiplier = FeatureValue(
-    runtimeConfig.deciderGateBuilder,
-    DeciderKey.MultiplierOfMaterializationTweetsFetched,
-    MaxCountMultiplier,
-    value => (value / 100.0)
+  pwivate vaw maxcountmuwtipwiew = featuwevawue(
+    wuntimeconfig.decidewgatebuiwdew, 😳
+    d-decidewkey.muwtipwiewofmatewiawizationtweetsfetched, -.-
+    maxcountmuwtipwiew, 🥺
+    vawue => (vawue / 100.0)
   )
 
-  private val backfillFilteredEntriesGate =
-    runtimeConfig.deciderGateBuilder.linearGate(DeciderKey.BackfillFilteredEntries)
+  pwivate vaw backfiwwfiwtewedentwiesgate =
+    wuntimeconfig.decidewgatebuiwdew.wineawgate(decidewkey.backfiwwfiwtewedentwies)
 
-  private val tweetsFilteringLossageThresholdPercent = FeatureValue(
-    runtimeConfig.deciderGateBuilder,
-    DeciderKey.TweetsFilteringLossageThreshold,
-    TweetsFilteringLossageThresholdPercent,
-    value => (value / 100)
+  p-pwivate vaw tweetsfiwtewingwossagethweshowdpewcent = f-featuwevawue(
+    w-wuntimeconfig.decidewgatebuiwdew, o.O
+    d-decidewkey.tweetsfiwtewingwossagethweshowd, /(^•ω•^)
+    t-tweetsfiwtewingwossagethweshowdpewcent, nyaa~~
+    vawue => (vawue / 100)
   )
 
-  private val tweetsFilteringLossageLimitPercent = FeatureValue(
-    runtimeConfig.deciderGateBuilder,
-    DeciderKey.TweetsFilteringLossageLimit,
-    TweetsFilteringLossageLimitPercent,
-    value => (value / 100)
+  pwivate v-vaw tweetsfiwtewingwossagewimitpewcent = featuwevawue(
+    wuntimeconfig.decidewgatebuiwdew, nyaa~~
+    d-decidewkey.tweetsfiwtewingwossagewimit, :3
+    tweetsfiwtewingwossagewimitpewcent,
+    vawue => (vawue / 100)
   )
 
-  private def getMaxCountFromConfigStore(): Int = {
-    runtimeConfig.configStore.getAsInt(MaxCountLimitKey).getOrElse(MaxCount.default)
+  pwivate def getmaxcountfwomconfigstowe(): int = {
+    wuntimeconfig.configstowe.getasint(maxcountwimitkey).getowewse(maxcount.defauwt)
   }
 
-  def apply(query: ReverseChronTimelineQuery): Future[ReverseChronTimelineQueryContext] = {
-    requestContextBuilder(Some(query.userId), deviceContext = None).map { baseContext =>
-      val params = config(baseContext, runtimeConfig.statsReceiver)
+  d-def appwy(quewy: wevewsechwontimewinequewy): f-futuwe[wevewsechwontimewinequewycontext] = {
+    w-wequestcontextbuiwdew(some(quewy.usewid), 😳😳😳 d-devicecontext = nyone).map { basecontext =>
+      vaw p-pawams = config(basecontext, (˘ω˘) wuntimeconfig.statsweceivew)
 
-      new ReverseChronTimelineQueryContextImpl(
-        query,
-        getMaxCount = () => getMaxCountFromConfigStore(),
-        getMaxCountMultiplier = () => maxCountMultiplier(),
-        getMaxFollowedUsers = () => params(ReverseChronParams.MaxFollowedUsersParam),
-        getReturnEmptyWhenOverMaxFollows =
-          () => params(ReverseChronParams.ReturnEmptyWhenOverMaxFollowsParam),
-        getDirectedAtNarrowastingViaSearch =
-          () => params(ReverseChronParams.DirectedAtNarrowcastingViaSearchParam),
-        getPostFilteringBasedOnSearchMetadataEnabled =
-          () => params(ReverseChronParams.PostFilteringBasedOnSearchMetadataEnabledParam),
-        getBackfillFilteredEntries = () => backfillFilteredEntriesGate(),
-        getTweetsFilteringLossageThresholdPercent = () => tweetsFilteringLossageThresholdPercent(),
-        getTweetsFilteringLossageLimitPercent = () => tweetsFilteringLossageLimitPercent()
+      n-nyew wevewsechwontimewinequewycontextimpw(
+        quewy, ^^
+        g-getmaxcount = () => g-getmaxcountfwomconfigstowe(), :3
+        getmaxcountmuwtipwiew = () => maxcountmuwtipwiew(), -.-
+        g-getmaxfowwowedusews = () => pawams(wevewsechwonpawams.maxfowwowedusewspawam), 😳
+        g-getwetuwnemptywhenovewmaxfowwows =
+          () => pawams(wevewsechwonpawams.wetuwnemptywhenovewmaxfowwowspawam), mya
+        getdiwectedatnawwowastingviaseawch =
+          () => p-pawams(wevewsechwonpawams.diwectedatnawwowcastingviaseawchpawam), (˘ω˘)
+        getpostfiwtewingbasedonseawchmetadataenabwed =
+          () => p-pawams(wevewsechwonpawams.postfiwtewingbasedonseawchmetadataenabwedpawam), >_<
+        getbackfiwwfiwtewedentwies = () => backfiwwfiwtewedentwiesgate(), -.-
+        g-gettweetsfiwtewingwossagethweshowdpewcent = () => t-tweetsfiwtewingwossagethweshowdpewcent(), 🥺
+        gettweetsfiwtewingwossagewimitpewcent = () => tweetsfiwtewingwossagewimitpewcent()
       )
     }
   }

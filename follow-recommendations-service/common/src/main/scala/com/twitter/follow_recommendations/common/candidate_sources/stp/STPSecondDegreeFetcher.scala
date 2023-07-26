@@ -1,94 +1,94 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.stp
 
-import com.twitter.follow_recommendations.common.models.IntermediateSecondDegreeEdge
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.StrongTiePredictionFeaturesOnUserClientColumn
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdge
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.SecondDegreeEdge
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.SecondDegreeEdgeInfo
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.common.modews.intewmediateseconddegweeedge
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+i-impowt c-com.twittew.stitch.stitch
+impowt c-com.twittew.stwato.genewated.cwient.onboawding.usewwecs.stwongtiepwedictionfeatuwesonusewcwientcowumn
+i-impowt c-com.twittew.timewines.configapi.haspawams
+i-impowt com.twittew.wtf.scawding.jobs.stwong_tie_pwediction.fiwstdegweeedge
+impowt com.twittew.wtf.scawding.jobs.stwong_tie_pwediction.seconddegweeedge
+impowt com.twittew.wtf.scawding.jobs.stwong_tie_pwediction.seconddegweeedgeinfo
+impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
-// Link to code functionality we're migrating
-@Singleton
-class STPSecondDegreeFetcher @Inject() (
-  strongTiePredictionFeaturesOnUserClientColumn: StrongTiePredictionFeaturesOnUserClientColumn) {
+// wink to code functionawity we'we m-migwating
+@singweton
+cwass stpseconddegweefetchew @inject() (
+  s-stwongtiepwedictionfeatuwesonusewcwientcowumn: stwongtiepwedictionfeatuwesonusewcwientcowumn) {
 
-  private def scoreSecondDegreeEdge(edge: SecondDegreeEdge): (Int, Int, Int) = {
-    def bool2int(b: Boolean): Int = if (b) 1 else 0
+  pwivate def scoweseconddegweeedge(edge: s-seconddegweeedge): (int, (U ﹏ U) int, 😳 int) = {
+    d-def boow2int(b: b-boowean): int = if (b) 1 ewse 0
     (
-      -edge.edgeInfo.numMutualFollowPath,
-      -edge.edgeInfo.numLowTweepcredFollowPath,
-      -(bool2int(edge.edgeInfo.forwardEmailPath) + bool2int(edge.edgeInfo.reverseEmailPath) +
-        bool2int(edge.edgeInfo.forwardPhonePath) + bool2int(edge.edgeInfo.reversePhonePath))
+      -edge.edgeinfo.nummutuawfowwowpath, (ˆ ﻌ ˆ)♡
+      -edge.edgeinfo.numwowtweepcwedfowwowpath, 😳😳😳
+      -(boow2int(edge.edgeinfo.fowwawdemaiwpath) + boow2int(edge.edgeinfo.wevewseemaiwpath) +
+        boow2int(edge.edgeinfo.fowwawdphonepath) + b-boow2int(edge.edgeinfo.wevewsephonepath))
     )
   }
 
-  // Use each first-degree edge(w/ candidateId) to expand and find mutual follows.
-  // Then, with the mutual follows, group-by candidateId and join edge information
-  // to create secondDegree edges.
-  def getSecondDegreeEdges(
-    target: HasClientContext with HasParams,
-    firstDegreeEdges: Seq[FirstDegreeEdge]
-  ): Stitch[Seq[SecondDegreeEdge]] = {
-    target.getOptionalUserId
-      .map { userId =>
-        val firstDegreeConnectingIds = firstDegreeEdges.map(_.dstId)
-        val firstDegreeEdgeInfoMap = firstDegreeEdges.map(e => (e.dstId, e.edgeInfo)).toMap
+  // use each fiwst-degwee edge(w/ candidateid) to expand and find m-mutuaw fowwows. (U ﹏ U)
+  // then, with t-the mutuaw fowwows, (///ˬ///✿) g-gwoup-by candidateid a-and join e-edge infowmation
+  // to cweate seconddegwee e-edges. 😳
+  def getseconddegweeedges(
+    tawget: hascwientcontext with haspawams, 😳
+    f-fiwstdegweeedges: seq[fiwstdegweeedge]
+  ): stitch[seq[seconddegweeedge]] = {
+    tawget.getoptionawusewid
+      .map { usewid =>
+        vaw f-fiwstdegweeconnectingids = fiwstdegweeedges.map(_.dstid)
+        v-vaw fiwstdegweeedgeinfomap = f-fiwstdegweeedges.map(e => (e.dstid, σωσ e-e.edgeinfo)).tomap
 
-        val intermediateSecondDegreeEdgesStitch = Stitch
-          .traverse(firstDegreeConnectingIds) { connectingId =>
-            val stpFeaturesOptStitch = strongTiePredictionFeaturesOnUserClientColumn.fetcher
-              .fetch(connectingId)
+        vaw intewmediateseconddegweeedgesstitch = stitch
+          .twavewse(fiwstdegweeconnectingids) { connectingid =>
+            v-vaw s-stpfeatuwesoptstitch = stwongtiepwedictionfeatuwesonusewcwientcowumn.fetchew
+              .fetch(connectingid)
               .map(_.v)
-            stpFeaturesOptStitch.map { stpFeatureOpt =>
-              val intermediateSecondDegreeEdges = for {
-                edgeInfo <- firstDegreeEdgeInfoMap.get(connectingId)
-                stpFeatures <- stpFeatureOpt
-                topSecondDegreeUserIds =
-                  stpFeatures.topMutualFollows
-                    .getOrElse(Nil)
-                    .map(_.userId)
-                    .take(STPSecondDegreeFetcher.MaxNumOfMutualFollows)
-              } yield topSecondDegreeUserIds.map(
-                IntermediateSecondDegreeEdge(connectingId, _, edgeInfo))
-              intermediateSecondDegreeEdges.getOrElse(Nil)
+            s-stpfeatuwesoptstitch.map { s-stpfeatuweopt =>
+              vaw intewmediateseconddegweeedges = f-fow {
+                edgeinfo <- f-fiwstdegweeedgeinfomap.get(connectingid)
+                stpfeatuwes <- stpfeatuweopt
+                t-topseconddegweeusewids =
+                  stpfeatuwes.topmutuawfowwows
+                    .getowewse(niw)
+                    .map(_.usewid)
+                    .take(stpseconddegweefetchew.maxnumofmutuawfowwows)
+              } y-yiewd topseconddegweeusewids.map(
+                intewmediateseconddegweeedge(connectingid, rawr x3 _, e-edgeinfo))
+              i-intewmediateseconddegweeedges.getowewse(niw)
             }
-          }.map(_.flatten)
+          }.map(_.fwatten)
 
-        intermediateSecondDegreeEdgesStitch.map { intermediateSecondDegreeEdges =>
-          val secondaryDegreeEdges = intermediateSecondDegreeEdges.groupBy(_.candidateId).map {
-            case (candidateId, intermediateEdges) =>
-              SecondDegreeEdge(
-                srcId = userId,
-                dstId = candidateId,
-                edgeInfo = SecondDegreeEdgeInfo(
-                  numMutualFollowPath = intermediateEdges.count(_.edgeInfo.mutualFollow),
-                  numLowTweepcredFollowPath =
-                    intermediateEdges.count(_.edgeInfo.lowTweepcredFollow),
-                  forwardEmailPath = intermediateEdges.exists(_.edgeInfo.forwardEmail),
-                  reverseEmailPath = intermediateEdges.exists(_.edgeInfo.reverseEmail),
-                  forwardPhonePath = intermediateEdges.exists(_.edgeInfo.forwardPhone),
-                  reversePhonePath = intermediateEdges.exists(_.edgeInfo.reversePhone),
-                  socialProof = intermediateEdges
-                    .filter { e => e.edgeInfo.mutualFollow || e.edgeInfo.lowTweepcredFollow }
-                    .sortBy(-_.edgeInfo.realGraphWeight)
+        intewmediateseconddegweeedgesstitch.map { intewmediateseconddegweeedges =>
+          vaw secondawydegweeedges = intewmediateseconddegweeedges.gwoupby(_.candidateid).map {
+            case (candidateid, OwO intewmediateedges) =>
+              s-seconddegweeedge(
+                s-swcid = usewid, /(^•ω•^)
+                d-dstid = c-candidateid, 😳😳😳
+                edgeinfo = s-seconddegweeedgeinfo(
+                  nyummutuawfowwowpath = intewmediateedges.count(_.edgeinfo.mutuawfowwow), ( ͡o ω ͡o )
+                  nyumwowtweepcwedfowwowpath =
+                    i-intewmediateedges.count(_.edgeinfo.wowtweepcwedfowwow), >_<
+                  fowwawdemaiwpath = intewmediateedges.exists(_.edgeinfo.fowwawdemaiw), >w<
+                  wevewseemaiwpath = intewmediateedges.exists(_.edgeinfo.wevewseemaiw), rawr
+                  f-fowwawdphonepath = intewmediateedges.exists(_.edgeinfo.fowwawdphone), 😳
+                  w-wevewsephonepath = i-intewmediateedges.exists(_.edgeinfo.wevewsephone),
+                  s-sociawpwoof = intewmediateedges
+                    .fiwtew { e-e => e.edgeinfo.mutuawfowwow || e-e.edgeinfo.wowtweepcwedfowwow }
+                    .sowtby(-_.edgeinfo.weawgwaphweight)
                     .take(3)
-                    .map { c => (c.connectingId, c.edgeInfo.realGraphWeight) }
+                    .map { c-c => (c.connectingid, >w< c-c.edgeinfo.weawgwaphweight) }
                 )
               )
           }
-          secondaryDegreeEdges.toSeq
-            .sortBy(scoreSecondDegreeEdge)
-            .take(STPSecondDegreeFetcher.MaxNumSecondDegreeEdges)
+          secondawydegweeedges.toseq
+            .sowtby(scoweseconddegweeedge)
+            .take(stpseconddegweefetchew.maxnumseconddegweeedges)
         }
-      }.getOrElse(Stitch.Nil)
+      }.getowewse(stitch.niw)
   }
 }
 
-object STPSecondDegreeFetcher {
-  val MaxNumSecondDegreeEdges = 200
-  val MaxNumOfMutualFollows = 50
+object s-stpseconddegweefetchew {
+  v-vaw m-maxnumseconddegweeedges = 200
+  v-vaw maxnumofmutuawfowwows = 50
 }

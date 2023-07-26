@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.assembler.models
+package com.twittew.fowwow_wecommendations.assembwew.modews
 
-import com.twitter.stringcenter.client.core.ExternalString
+impowt c-com.twittew.stwingcentew.cwient.cowe.extewnawstwing
 
-sealed trait SocialProof
+s-seawed twait s-sociawpwoof
 
-case class GeoContextProof(popularInCountryText: ExternalString) extends SocialProof
-case class FollowedByUsersProof(text1: ExternalString, text2: ExternalString, textN: ExternalString)
-    extends SocialProof
+c-case cwass geocontextpwoof(popuwawincountwytext: e-extewnawstwing) e-extends sociawpwoof
+c-case cwass f-fowwowedbyusewspwoof(text1: extewnawstwing, ^^;; text2: extewnawstwing, >_< textn: extewnawstwing)
+    e-extends sociawpwoof
 
-sealed trait SocialText {
-  def text: String
+seawed twait sociawtext {
+  d-def text: stwing
 }
 
-case class GeoSocialText(text: String) extends SocialText
-case class FollowedByUsersText(text: String) extends SocialText
+case cwass g-geosociawtext(text: stwing) extends sociawtext
+case cwass fowwowedbyusewstext(text: s-stwing) extends sociawtext

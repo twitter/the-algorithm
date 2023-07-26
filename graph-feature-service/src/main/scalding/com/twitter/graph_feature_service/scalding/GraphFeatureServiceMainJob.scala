@@ -1,296 +1,296 @@
-package com.twitter.graph_feature_service.scalding
+package com.twittew.gwaph_featuwe_sewvice.scawding
 
-import com.twitter.bijection.Injection
-import com.twitter.frigate.common.constdb_util.Injections
-import com.twitter.frigate.common.constdb_util.ScaldingUtil
-import com.twitter.graph_feature_service.common.Configs
-import com.twitter.graph_feature_service.common.Configs._
-import com.twitter.interaction_graph.scio.agg_all.InteractionGraphHistoryAggregatedEdgeSnapshotScalaDataset
-import com.twitter.interaction_graph.scio.ml.scores.RealGraphInScoresScalaDataset
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.{EdgeFeature => TEdgeFeature}
-import com.twitter.pluck.source.user_audits.UserAuditFinalScalaDataset
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.Execution
-import com.twitter.scalding.Stat
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.util.Time
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
-import java.nio.ByteBuffer
-import java.util.TimeZone
+impowt com.twittew.bijection.injection
+i-impowt c-com.twittew.fwigate.common.constdb_utiw.injections
+i-impowt com.twittew.fwigate.common.constdb_utiw.scawdingutiw
+i-impowt com.twittew.gwaph_featuwe_sewvice.common.configs
+i-impowt com.twittew.gwaph_featuwe_sewvice.common.configs._
+i-impowt com.twittew.intewaction_gwaph.scio.agg_aww.intewactiongwaphhistowyaggwegatededgesnapshotscawadataset
+i-impowt c-com.twittew.intewaction_gwaph.scio.mw.scowes.weawgwaphinscowesscawadataset
+impowt com.twittew.intewaction_gwaph.thwiftscawa.featuwename
+impowt com.twittew.intewaction_gwaph.thwiftscawa.{edgefeatuwe => tedgefeatuwe}
+i-impowt com.twittew.pwuck.souwce.usew_audits.usewauditfinawscawadataset
+impowt com.twittew.scawding.datewange
+i-impowt com.twittew.scawding.days
+i-impowt com.twittew.scawding.execution
+impowt com.twittew.scawding.stat
+impowt com.twittew.scawding.uniqueid
+i-impowt com.twittew.scawding.typed.typedpipe
+impowt com.twittew.scawding_intewnaw.dawv2.daw
+i-impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.awwowcwosscwustewsamedc
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.utiw.time
+impowt com.twittew.wtf.candidate.thwiftscawa.candidateseq
+impowt java.nio.bytebuffew
+impowt j-java.utiw.timezone
 
-trait GraphFeatureServiceMainJob extends GraphFeatureServiceBaseJob {
+twait gwaphfeatuwesewvicemainjob extends gwaphfeatuwesewvicebasejob {
 
-  // keeping hdfsPath as a separate variable in order to override it in unit tests
-  protected val hdfsPath: String = BaseHdfsPath
+  // keeping hdfspath as a sepawate v-vawiabwe in owdew to ovewwide it i-in unit tests
+  p-pwotected vaw hdfspath: s-stwing = b-basehdfspath
 
-  protected def getShardIdForUser(userId: Long): Int = shardForUser(userId)
+  pwotected def getshawdidfowusew(usewid: w-wong): int = shawdfowusew(usewid)
 
-  protected implicit val keyInj: Injection[Long, ByteBuffer] = Injections.long2Varint
+  pwotected impwicit v-vaw keyinj: injection[wong, (˘ω˘) bytebuffew] = injections.wong2vawint
 
-  protected implicit val valueInj: Injection[Long, ByteBuffer] = Injections.long2ByteBuffer
+  pwotected impwicit vaw vawueinj: injection[wong, (///ˬ///✿) b-bytebuffew] = injections.wong2bytebuffew
 
-  protected val bufferSize: Int = 1 << 26
+  p-pwotected vaw b-buffewsize: int = 1 << 26
 
-  protected val maxNumKeys: Int = 1 << 24
+  p-pwotected vaw maxnumkeys: int = 1 << 24
 
-  protected val numReducers: Int = NumGraphShards
+  pwotected v-vaw nyumweducews: i-int = nyumgwaphshawds
 
-  protected val outputStreamBufferSize: Int = 1 << 26
+  pwotected v-vaw outputstweambuffewsize: i-int = 1 << 26
 
-  protected final val shardingByKey = { (k: Long, _: Long) =>
-    getShardIdForUser(k)
+  pwotected finaw v-vaw shawdingbykey = { (k: wong, σωσ _: wong) =>
+    g-getshawdidfowusew(k)
   }
 
-  protected final val shardingByValue = { (_: Long, v: Long) =>
-    getShardIdForUser(v)
+  pwotected finaw vaw shawdingbyvawue = { (_: w-wong, /(^•ω•^) v: wong) =>
+    g-getshawdidfowusew(v)
   }
 
-  private def writeGraphToDB(
-    graph: TypedPipe[(Long, Long)],
-    shardingFunction: (Long, Long) => Int,
-    path: String
+  pwivate def wwitegwaphtodb(
+    gwaph: t-typedpipe[(wong, 😳 w-wong)], 😳
+    shawdingfunction: (wong, (⑅˘꒳˘) wong) => int, 😳😳😳
+    path: stwing
   )(
-    implicit dateRange: DateRange
-  ): Execution[TypedPipe[(Int, Unit)]] = {
-    ScaldingUtil
-      .writeConstDB[Long, Long](
-        graph.withDescription(s"sharding $path"),
-        shardingFunction,
-        shardId =>
-          getTimedHdfsShardPath(
-            shardId,
-            getHdfsPath(path, Some(hdfsPath)),
-            Time.fromMilliseconds(dateRange.end.timestamp)
-          ),
-        Int.MaxValue,
-        bufferSize,
-        maxNumKeys,
-        numReducers,
-        outputStreamBufferSize
+    impwicit datewange: datewange
+  ): e-execution[typedpipe[(int, 😳 u-unit)]] = {
+    scawdingutiw
+      .wwiteconstdb[wong, XD w-wong](
+        g-gwaph.withdescwiption(s"shawding $path"), mya
+        s-shawdingfunction, ^•ﻌ•^
+        shawdid =>
+          gettimedhdfsshawdpath(
+            shawdid, ʘwʘ
+            g-gethdfspath(path, ( ͡o ω ͡o ) some(hdfspath)), mya
+            time.fwommiwwiseconds(datewange.end.timestamp)
+          ), o.O
+        int.maxvawue, (✿oωo)
+        buffewsize, :3
+        maxnumkeys, 😳
+        n-numweducews, (U ﹏ U)
+        outputstweambuffewsize
       )(
-        keyInj,
-        valueInj,
-        Ordering[(Long, Long)]
+        k-keyinj, mya
+        v-vawueinj, (U ᵕ U❁)
+        o-owdewing[(wong, :3 wong)]
       )
-      .forceToDiskExecution
+      .fowcetodiskexecution
   }
 
-  def extractFeature(
-    featureList: Seq[TEdgeFeature],
-    featureName: FeatureName
-  ): Option[Float] = {
-    featureList
-      .find(_.name == featureName)
-      .map(_.tss.ewma.toFloat)
-      .filter(_ > 0.0)
+  d-def extwactfeatuwe(
+    f-featuwewist: s-seq[tedgefeatuwe], mya
+    f-featuwename: featuwename
+  ): option[fwoat] = {
+    f-featuwewist
+      .find(_.name == f-featuwename)
+      .map(_.tss.ewma.tofwoat)
+      .fiwtew(_ > 0.0)
   }
 
   /**
-   * Function to extract a subgraph (e.g., follow graph) from real graph and take top K by real graph
-   * weight.
+   * f-function t-to extwact a subgwaph (e.g., f-fowwow gwaph) fwom weaw gwaph and take top k by weaw g-gwaph
+   * weight. OwO
    *
-   * @param input input real graph
-   * @param edgeFilter filter function to only get the edges needed (e.g., only follow edges)
-   * @param counter counter
-   * @return a subgroup that contains topK, e.g., follow graph for each user.
+   * @pawam input input weaw gwaph
+   * @pawam edgefiwtew fiwtew function to onwy get t-the edges nyeeded (e.g., onwy fowwow edges)
+   * @pawam countew c-countew
+   * @wetuwn a-a subgwoup t-that contains topk, (ˆ ﻌ ˆ)♡ e.g., fowwow g-gwaph fow each usew.
    */
-  private def getSubGraph(
-    input: TypedPipe[(Long, Long, EdgeFeature)],
-    edgeFilter: EdgeFeature => Boolean,
-    counter: Stat
-  ): TypedPipe[(Long, Long)] = {
+  pwivate d-def getsubgwaph(
+    i-input: typedpipe[(wong, ʘwʘ wong, edgefeatuwe)], o.O
+    edgefiwtew: edgefeatuwe => boowean, UwU
+    c-countew: stat
+  ): typedpipe[(wong, rawr x3 w-wong)] = {
     input
-      .filter(c => edgeFilter(c._3))
+      .fiwtew(c => e-edgefiwtew(c._3))
       .map {
-        case (srcId, destId, features) =>
-          (srcId, (destId, features.realGraphScore))
+        c-case (swcid, 🥺 destid, :3 featuwes) =>
+          (swcid, (ꈍᴗꈍ) (destid, featuwes.weawgwaphscowe))
       }
-      .group
-      // auto reducer estimation only allocates 15 reducers, so setting an explicit number here
-      .withReducers(2000)
-      .sortedReverseTake(TopKRealGraph)(Ordering.by(_._2))
-      .flatMap {
-        case (srcId, topKNeighbors) =>
-          counter.inc()
-          topKNeighbors.map {
-            case (destId, _) =>
-              (srcId, destId)
+      .gwoup
+      // a-auto w-weducew estimation onwy awwocates 15 w-weducews, 🥺 s-so setting an expwicit nyumbew hewe
+      .withweducews(2000)
+      .sowtedwevewsetake(topkweawgwaph)(owdewing.by(_._2))
+      .fwatmap {
+        case (swcid, (✿oωo) topkneighbows) =>
+          countew.inc()
+          topkneighbows.map {
+            c-case (destid, (U ﹏ U) _) =>
+              (swcid, :3 d-destid)
           }
       }
   }
 
-  def getMauIds()(implicit dateRange: DateRange, uniqueID: UniqueID): TypedPipe[Long] = {
-    val numMAUs = Stat("NUM_MAUS")
-    val uniqueMAUs = Stat("UNIQUE_MAUS")
+  d-def getmauids()(impwicit datewange: d-datewange, ^^;; uniqueid: u-uniqueid): typedpipe[wong] = {
+    v-vaw nyummaus = stat("num_maus")
+    vaw uniquemaus = stat("unique_maus")
 
-    DAL
-      .read(UserAuditFinalScalaDataset)
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
-      .collect {
-        case user_audit if user_audit.isValid =>
-          numMAUs.inc()
-          user_audit.userId
+    daw
+      .wead(usewauditfinawscawadataset)
+      .withwemoteweadpowicy(awwowcwosscwustewsamedc)
+      .totypedpipe
+      .cowwect {
+        c-case usew_audit i-if usew_audit.isvawid =>
+          nyummaus.inc()
+          usew_audit.usewid
       }
       .distinct
-      .map { u =>
-        uniqueMAUs.inc()
+      .map { u-u =>
+        u-uniquemaus.inc()
         u
       }
   }
 
-  def getRealGraphWithMAUOnly(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[(Long, Long, EdgeFeature)] = {
-    val numMAUs = Stat("NUM_MAUS")
-    val uniqueMAUs = Stat("UNIQUE_MAUS")
+  def getweawgwaphwithmauonwy(
+    impwicit datewange: d-datewange, rawr
+    timezone: timezone, 😳😳😳
+    uniqueid: uniqueid
+  ): typedpipe[(wong, (✿oωo) w-wong, OwO edgefeatuwe)] = {
+    vaw nyummaus = stat("num_maus")
+    v-vaw uniquemaus = s-stat("unique_maus")
 
-    val monthlyActiveUsers = DAL
-      .read(UserAuditFinalScalaDataset)
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
-      .collect {
-        case user_audit if user_audit.isValid =>
-          numMAUs.inc()
-          user_audit.userId
+    vaw monthwyactiveusews = daw
+      .wead(usewauditfinawscawadataset)
+      .withwemoteweadpowicy(awwowcwosscwustewsamedc)
+      .totypedpipe
+      .cowwect {
+        case usew_audit i-if usew_audit.isvawid =>
+          n-nyummaus.inc()
+          usew_audit.usewid
       }
       .distinct
       .map { u =>
-        uniqueMAUs.inc()
+        uniquemaus.inc()
         u
       }
-      .asKeys
+      .askeys
 
-    val realGraphAggregates = DAL
-      .readMostRecentSnapshot(
-        InteractionGraphHistoryAggregatedEdgeSnapshotScalaDataset,
-        dateRange.embiggen(Days(5)))
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
+    v-vaw weawgwaphaggwegates = d-daw
+      .weadmostwecentsnapshot(
+        intewactiongwaphhistowyaggwegatededgesnapshotscawadataset, ʘwʘ
+        datewange.embiggen(days(5)))
+      .withwemoteweadpowicy(awwowcwosscwustewsamedc)
+      .totypedpipe
       .map { edge =>
-        val featureList = edge.features
-        val edgeFeature = EdgeFeature(
-          edge.weight.getOrElse(0.0).toFloat,
-          extractFeature(featureList, FeatureName.NumMutualFollows),
-          extractFeature(featureList, FeatureName.NumFavorites),
-          extractFeature(featureList, FeatureName.NumRetweets),
-          extractFeature(featureList, FeatureName.NumMentions)
+        v-vaw featuwewist = edge.featuwes
+        v-vaw e-edgefeatuwe = edgefeatuwe(
+          e-edge.weight.getowewse(0.0).tofwoat, (ˆ ﻌ ˆ)♡
+          extwactfeatuwe(featuwewist, (U ﹏ U) f-featuwename.nummutuawfowwows), UwU
+          e-extwactfeatuwe(featuwewist, XD f-featuwename.numfavowites), ʘwʘ
+          extwactfeatuwe(featuwewist, rawr x3 f-featuwename.numwetweets), ^^;;
+          e-extwactfeatuwe(featuwewist, ʘwʘ featuwename.nummentions)
         )
-        (edge.sourceId, (edge.destinationId, edgeFeature))
+        (edge.souwceid, (U ﹏ U) (edge.destinationid, (˘ω˘) edgefeatuwe))
       }
-      .join(monthlyActiveUsers)
+      .join(monthwyactiveusews)
       .map {
-        case (srcId, ((destId, feature), _)) =>
-          (destId, (srcId, feature))
+        c-case (swcid, (ꈍᴗꈍ) ((destid, f-featuwe), /(^•ω•^) _)) =>
+          (destid, >_< (swcid, f-featuwe))
       }
-      .join(monthlyActiveUsers)
+      .join(monthwyactiveusews)
       .map {
-        case (destId, ((srcId, feature), _)) =>
-          (srcId, destId, feature)
+        case (destid, σωσ ((swcid, featuwe), ^^;; _)) =>
+          (swcid, d-destid, 😳 featuwe)
       }
-    realGraphAggregates
+    weawgwaphaggwegates
   }
 
-  def getTopKFollowGraph(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[(Long, Long)] = {
-    val followGraphMauStat = Stat("NumFollowEdges_MAU")
-    val mau: TypedPipe[Long] = getMauIds()
-    DAL
-      .readMostRecentSnapshot(RealGraphInScoresScalaDataset, dateRange.embiggen(Days(7)))
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
-      .groupBy(_.key)
-      .join(mau.asKeys)
-      .withDescription("filtering srcId by mau")
-      .flatMap {
-        case (_, (KeyVal(srcId, CandidateSeq(candidates)), _)) =>
-          followGraphMauStat.inc()
-          val topK = candidates.sortBy(-_.score).take(TopKRealGraph)
-          topK.map { c => (srcId, c.userId) }
+  d-def g-gettopkfowwowgwaph(
+    impwicit datewange: datewange, >_<
+    timezone: t-timezone, -.-
+    u-uniqueid: uniqueid
+  ): t-typedpipe[(wong, UwU w-wong)] = {
+    vaw f-fowwowgwaphmaustat = stat("numfowwowedges_mau")
+    vaw mau: typedpipe[wong] = getmauids()
+    daw
+      .weadmostwecentsnapshot(weawgwaphinscowesscawadataset, :3 datewange.embiggen(days(7)))
+      .withwemoteweadpowicy(awwowcwosscwustewsamedc)
+      .totypedpipe
+      .gwoupby(_.key)
+      .join(mau.askeys)
+      .withdescwiption("fiwtewing s-swcid by mau")
+      .fwatmap {
+        case (_, σωσ (keyvaw(swcid, >w< c-candidateseq(candidates)), (ˆ ﻌ ˆ)♡ _)) =>
+          fowwowgwaphmaustat.inc()
+          v-vaw topk = candidates.sowtby(-_.scowe).take(topkweawgwaph)
+          t-topk.map { c => (swcid, ʘwʘ c-c.usewid) }
       }
   }
 
-  override def runOnDateRange(
-    enableValueGraphs: Option[Boolean],
-    enableKeyGraphs: Option[Boolean]
+  o-ovewwide d-def wunondatewange(
+    e-enabwevawuegwaphs: o-option[boowean], :3
+    enabwekeygwaphs: option[boowean]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    impwicit datewange: datewange, (˘ω˘)
+    timezone: timezone, 😳😳😳
+    uniqueid: u-uniqueid
+  ): e-execution[unit] = {
 
-    val processValueGraphs = enableValueGraphs.getOrElse(Configs.EnableValueGraphs)
-    val processKeyGraphs = enableKeyGraphs.getOrElse(Configs.EnableKeyGraphs)
+    v-vaw pwocessvawuegwaphs = e-enabwevawuegwaphs.getowewse(configs.enabwevawuegwaphs)
+    vaw pwocesskeygwaphs = enabwekeygwaphs.getowewse(configs.enabwekeygwaphs)
 
-    if (!processKeyGraphs && !processValueGraphs) {
-      // Skip the batch job
-      Execution.unit
-    } else {
-      // val favoriteGraphStat = Stat("NumFavoriteEdges")
-      // val retweetGraphStat = Stat("NumRetweetEdges")
-      // val mentionGraphStat = Stat("NumMentionEdges")
+    if (!pwocesskeygwaphs && !pwocessvawuegwaphs) {
+      // skip the b-batch job
+      e-execution.unit
+    } ewse {
+      // v-vaw favowitegwaphstat = stat("numfavowiteedges")
+      // vaw wetweetgwaphstat = s-stat("numwetweetedges")
+      // v-vaw mentiongwaphstat = stat("nummentionedges")
 
-      // val realGraphAggregates = getRealGraphWithMAUOnly
+      // vaw weawgwaphaggwegates = g-getweawgwaphwithmauonwy
 
-      val followGraph = getTopKFollowGraph
-      // val mutualFollowGraph = followGraph.asKeys.join(followGraph.swap.asKeys).keys
+      v-vaw fowwowgwaph = gettopkfowwowgwaph
+      // vaw mutuawfowwowgwaph = fowwowgwaph.askeys.join(fowwowgwaph.swap.askeys).keys
 
-      // val favoriteGraph =
-      //   getSubGraph(realGraphAggregates, _.favoriteScore.isDefined, favoriteGraphStat)
+      // vaw favowitegwaph =
+      //   getsubgwaph(weawgwaphaggwegates, rawr x3 _.favowitescowe.isdefined, (✿oωo) f-favowitegwaphstat)
 
-      // val retweetGraph =
-      //   getSubGraph(realGraphAggregates, _.retweetScore.isDefined, retweetGraphStat)
+      // v-vaw wetweetgwaph =
+      //   g-getsubgwaph(weawgwaphaggwegates, (ˆ ﻌ ˆ)♡ _.wetweetscowe.isdefined, :3 w-wetweetgwaphstat)
 
-      // val mentionGraph =
-      //   getSubGraph(realGraphAggregates, _.mentionScore.isDefined, mentionGraphStat)
+      // v-vaw mentiongwaph =
+      //   g-getsubgwaph(weawgwaphaggwegates, (U ᵕ U❁) _.mentionscowe.isdefined, ^^;; m-mentiongwaphstat)
 
-      val writeValDataSetExecutions = if (processValueGraphs) {
-        Seq(
-          (followGraph, shardingByValue, FollowOutValPath),
-          (followGraph.swap, shardingByValue, FollowInValPath)
-          // (mutualFollowGraph, shardingByValue, MutualFollowValPath),
-          // (favoriteGraph, shardingByValue, FavoriteOutValPath),
-          // (favoriteGraph.swap, shardingByValue, FavoriteInValPath),
-          // (retweetGraph, shardingByValue, RetweetOutValPath),
-          // (retweetGraph.swap, shardingByValue, RetweetInValPath),
-          // (mentionGraph, shardingByValue, MentionOutValPath),
-          // (mentionGraph.swap, shardingByValue, MentionInValPath)
+      vaw wwitevawdatasetexecutions = if (pwocessvawuegwaphs) {
+        s-seq(
+          (fowwowgwaph, s-shawdingbyvawue, mya fowwowoutvawpath), 😳😳😳
+          (fowwowgwaph.swap, OwO shawdingbyvawue, rawr fowwowinvawpath)
+          // (mutuawfowwowgwaph, XD s-shawdingbyvawue, (U ﹏ U) mutuawfowwowvawpath), (˘ω˘)
+          // (favowitegwaph, UwU shawdingbyvawue, >_< f-favowiteoutvawpath), σωσ
+          // (favowitegwaph.swap, 🥺 shawdingbyvawue, 🥺 favowiteinvawpath), ʘwʘ
+          // (wetweetgwaph, :3 shawdingbyvawue, (U ﹏ U) w-wetweetoutvawpath), (U ﹏ U)
+          // (wetweetgwaph.swap, ʘwʘ s-shawdingbyvawue, >w< wetweetinvawpath), rawr x3
+          // (mentiongwaph, OwO s-shawdingbyvawue, ^•ﻌ•^ mentionoutvawpath), >_<
+          // (mentiongwaph.swap, OwO shawdingbyvawue, >_< m-mentioninvawpath)
         )
-      } else {
-        Seq.empty
+      } e-ewse {
+        seq.empty
       }
 
-      val writeKeyDataSetExecutions = if (processKeyGraphs) {
-        Seq(
-          (followGraph, shardingByKey, FollowOutKeyPath),
-          (followGraph.swap, shardingByKey, FollowInKeyPath)
-          // (favoriteGraph, shardingByKey, FavoriteOutKeyPath),
-          // (favoriteGraph.swap, shardingByKey, FavoriteInKeyPath),
-          // (retweetGraph, shardingByKey, RetweetOutKeyPath),
-          // (retweetGraph.swap, shardingByKey, RetweetInKeyPath),
-          // (mentionGraph, shardingByKey, MentionOutKeyPath),
-          // (mentionGraph.swap, shardingByKey, MentionInKeyPath),
-          // (mutualFollowGraph, shardingByKey, MutualFollowKeyPath)
+      v-vaw wwitekeydatasetexecutions = if (pwocesskeygwaphs) {
+        seq(
+          (fowwowgwaph, (ꈍᴗꈍ) shawdingbykey, >w< f-fowwowoutkeypath), (U ﹏ U)
+          (fowwowgwaph.swap, ^^ shawdingbykey, (U ﹏ U) fowwowinkeypath)
+          // (favowitegwaph, :3 s-shawdingbykey, (✿oωo) f-favowiteoutkeypath), XD
+          // (favowitegwaph.swap, >w< shawdingbykey, f-favowiteinkeypath), òωó
+          // (wetweetgwaph, (ꈍᴗꈍ) shawdingbykey, rawr x3 w-wetweetoutkeypath), rawr x3
+          // (wetweetgwaph.swap, σωσ s-shawdingbykey, (ꈍᴗꈍ) wetweetinkeypath), rawr
+          // (mentiongwaph, ^^;; shawdingbykey, rawr x3 m-mentionoutkeypath), (ˆ ﻌ ˆ)♡
+          // (mentiongwaph.swap, σωσ shawdingbykey, (U ﹏ U) mentioninkeypath),
+          // (mutuawfowwowgwaph, >w< shawdingbykey, m-mutuawfowwowkeypath)
         )
-      } else {
-        Seq.empty
+      } e-ewse {
+        seq.empty
       }
 
-      Execution
-        .sequence((writeValDataSetExecutions ++ writeKeyDataSetExecutions).map {
-          case (graph, shardingMethod, path) =>
-            writeGraphToDB(graph, shardingMethod, path)
+      e-execution
+        .sequence((wwitevawdatasetexecutions ++ wwitekeydatasetexecutions).map {
+          c-case (gwaph, σωσ shawdingmethod, nyaa~~ path) =>
+            w-wwitegwaphtodb(gwaph, 🥺 s-shawdingmethod, rawr x3 path)
         }).unit
     }
   }

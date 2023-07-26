@@ -1,253 +1,253 @@
-package com.twitter.usersignalservice.config
+package com.twittew.usewsignawsewvice.config
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.ReadableStore
-import com.twitter.usersignalservice.base.BaseSignalFetcher
-import com.twitter.usersignalservice.base.AggregatedSignalController
-import com.twitter.usersignalservice.base.FilteredSignalFetcherController
-import com.twitter.usersignalservice.base.MemcachedSignalFetcherWrapper
-import com.twitter.usersignalservice.base.Query
-import com.twitter.usersignalservice.base.SignalAggregatedInfo
-import com.twitter.usersignalservice.signals.AccountBlocksFetcher
-import com.twitter.usersignalservice.signals.AccountFollowsFetcher
-import com.twitter.usersignalservice.signals.AccountMutesFetcher
-import com.twitter.usersignalservice.signals.NotificationOpenAndClickFetcher
-import com.twitter.usersignalservice.signals.OriginalTweetsFetcher
-import com.twitter.usersignalservice.signals.ProfileVisitsFetcher
-import com.twitter.usersignalservice.signals.ProfileClickFetcher
-import com.twitter.usersignalservice.signals.RealGraphOonFetcher
-import com.twitter.usersignalservice.signals.ReplyTweetsFetcher
-import com.twitter.usersignalservice.signals.RetweetsFetcher
-import com.twitter.usersignalservice.signals.TweetClickFetcher
-import com.twitter.usersignalservice.signals.TweetFavoritesFetcher
-import com.twitter.usersignalservice.signals.TweetSharesFetcher
-import com.twitter.usersignalservice.signals.VideoTweetsPlayback50Fetcher
-import com.twitter.usersignalservice.signals.VideoTweetsQualityViewFetcher
-import com.twitter.usersignalservice.signals.NegativeEngagedUserFetcher
-import com.twitter.usersignalservice.signals.NegativeEngagedTweetFetcher
-import com.twitter.usersignalservice.thriftscala.Signal
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.util.Timer
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.finagwe.memcached.{cwient => m-memcachedcwient}
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.usewsignawsewvice.base.basesignawfetchew
+impowt com.twittew.usewsignawsewvice.base.aggwegatedsignawcontwowwew
+impowt com.twittew.usewsignawsewvice.base.fiwtewedsignawfetchewcontwowwew
+impowt com.twittew.usewsignawsewvice.base.memcachedsignawfetchewwwappew
+i-impowt com.twittew.usewsignawsewvice.base.quewy
+impowt com.twittew.usewsignawsewvice.base.signawaggwegatedinfo
+impowt com.twittew.usewsignawsewvice.signaws.accountbwocksfetchew
+i-impowt com.twittew.usewsignawsewvice.signaws.accountfowwowsfetchew
+i-impowt com.twittew.usewsignawsewvice.signaws.accountmutesfetchew
+impowt com.twittew.usewsignawsewvice.signaws.notificationopenandcwickfetchew
+i-impowt com.twittew.usewsignawsewvice.signaws.owiginawtweetsfetchew
+i-impowt c-com.twittew.usewsignawsewvice.signaws.pwofiwevisitsfetchew
+impowt com.twittew.usewsignawsewvice.signaws.pwofiwecwickfetchew
+impowt com.twittew.usewsignawsewvice.signaws.weawgwaphoonfetchew
+impowt com.twittew.usewsignawsewvice.signaws.wepwytweetsfetchew
+impowt com.twittew.usewsignawsewvice.signaws.wetweetsfetchew
+i-impowt com.twittew.usewsignawsewvice.signaws.tweetcwickfetchew
+impowt com.twittew.usewsignawsewvice.signaws.tweetfavowitesfetchew
+impowt com.twittew.usewsignawsewvice.signaws.tweetshawesfetchew
+i-impowt com.twittew.usewsignawsewvice.signaws.videotweetspwayback50fetchew
+impowt c-com.twittew.usewsignawsewvice.signaws.videotweetsquawityviewfetchew
+i-impowt com.twittew.usewsignawsewvice.signaws.negativeengagedusewfetchew
+i-impowt c-com.twittew.usewsignawsewvice.signaws.negativeengagedtweetfetchew
+impowt com.twittew.usewsignawsewvice.thwiftscawa.signaw
+impowt c-com.twittew.usewsignawsewvice.thwiftscawa.signawtype
+impowt com.twittew.utiw.timew
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class SignalFetcherConfig @Inject() (
-  notificationOpenAndClickFetcher: NotificationOpenAndClickFetcher,
-  accountFollowsFetcher: AccountFollowsFetcher,
-  profileVisitsFetcher: ProfileVisitsFetcher,
-  tweetFavoritesFetcher: TweetFavoritesFetcher,
-  retweetsFetcher: RetweetsFetcher,
-  replyTweetsFetcher: ReplyTweetsFetcher,
-  originalTweetsFetcher: OriginalTweetsFetcher,
-  tweetSharesFetcher: TweetSharesFetcher,
-  memcachedClient: MemcachedClient,
-  realGraphOonFetcher: RealGraphOonFetcher,
-  tweetClickFetcher: TweetClickFetcher,
-  videoTweetsPlayback50Fetcher: VideoTweetsPlayback50Fetcher,
-  videoTweetsQualityViewFetcher: VideoTweetsQualityViewFetcher,
-  accountMutesFetcher: AccountMutesFetcher,
-  accountBlocksFetcher: AccountBlocksFetcher,
-  profileClickFetcher: ProfileClickFetcher,
-  negativeEngagedTweetFetcher: NegativeEngagedTweetFetcher,
-  negativeEngagedUserFetcher: NegativeEngagedUserFetcher,
-  statsReceiver: StatsReceiver,
-  timer: Timer) {
+@singweton
+cwass signawfetchewconfig @inject() (
+  nyotificationopenandcwickfetchew: nyotificationopenandcwickfetchew, (˘ω˘)
+  a-accountfowwowsfetchew: accountfowwowsfetchew, rawr
+  p-pwofiwevisitsfetchew: p-pwofiwevisitsfetchew, OwO
+  t-tweetfavowitesfetchew: tweetfavowitesfetchew, ^•ﻌ•^
+  wetweetsfetchew: wetweetsfetchew, UwU
+  w-wepwytweetsfetchew: w-wepwytweetsfetchew, (˘ω˘)
+  owiginawtweetsfetchew: o-owiginawtweetsfetchew, (///ˬ///✿)
+  t-tweetshawesfetchew: tweetshawesfetchew, σωσ
+  m-memcachedcwient: memcachedcwient, /(^•ω•^)
+  w-weawgwaphoonfetchew: weawgwaphoonfetchew, 😳
+  tweetcwickfetchew: t-tweetcwickfetchew, 😳
+  videotweetspwayback50fetchew: v-videotweetspwayback50fetchew, (⑅˘꒳˘)
+  videotweetsquawityviewfetchew: v-videotweetsquawityviewfetchew, 😳😳😳
+  a-accountmutesfetchew: accountmutesfetchew, 😳
+  accountbwocksfetchew: accountbwocksfetchew, XD
+  pwofiwecwickfetchew: pwofiwecwickfetchew, mya
+  nyegativeengagedtweetfetchew: n-nyegativeengagedtweetfetchew, ^•ﻌ•^
+  n-nyegativeengagedusewfetchew: nyegativeengagedusewfetchew, ʘwʘ
+  s-statsweceivew: s-statsweceivew, ( ͡o ω ͡o )
+  t-timew: timew) {
 
-  val MemcachedProfileVisitsFetcher: BaseSignalFetcher =
-    MemcachedSignalFetcherWrapper(
-      memcachedClient,
-      profileVisitsFetcher,
-      ttl = 8.hours,
-      statsReceiver,
-      keyPrefix = "uss:pv",
-      timer)
+  vaw memcachedpwofiwevisitsfetchew: basesignawfetchew =
+    memcachedsignawfetchewwwappew(
+      m-memcachedcwient, mya
+      pwofiwevisitsfetchew, o.O
+      ttw = 8.houws,
+      statsweceivew, (✿oωo)
+      keypwefix = "uss:pv", :3
+      t-timew)
 
-  val MemcachedAccountFollowsFetcher: BaseSignalFetcher = MemcachedSignalFetcherWrapper(
-    memcachedClient,
-    accountFollowsFetcher,
-    ttl = 5.minute,
-    statsReceiver,
-    keyPrefix = "uss:af",
-    timer)
+  vaw memcachedaccountfowwowsfetchew: b-basesignawfetchew = m-memcachedsignawfetchewwwappew(
+    m-memcachedcwient, 😳
+    accountfowwowsfetchew,
+    t-ttw = 5.minute, (U ﹏ U)
+    s-statsweceivew, mya
+    keypwefix = "uss:af", (U ᵕ U❁)
+    t-timew)
 
-  val GoodTweetClickDdgFetcher: SignalType => FilteredSignalFetcherController = signalType =>
-    FilteredSignalFetcherController(
-      tweetClickFetcher,
-      signalType,
-      statsReceiver,
-      timer,
-      Map(SignalType.NegativeEngagedTweetId -> negativeEngagedTweetFetcher)
+  v-vaw goodtweetcwickddgfetchew: signawtype => fiwtewedsignawfetchewcontwowwew = signawtype =>
+    f-fiwtewedsignawfetchewcontwowwew(
+      t-tweetcwickfetchew, :3
+      s-signawtype, mya
+      s-statsweceivew,
+      t-timew, OwO
+      map(signawtype.negativeengagedtweetid -> nyegativeengagedtweetfetchew)
     )
 
-  val GoodProfileClickDdgFetcher: SignalType => FilteredSignalFetcherController = signalType =>
-    FilteredSignalFetcherController(
-      profileClickFetcher,
-      signalType,
-      statsReceiver,
-      timer,
-      Map(SignalType.NegativeEngagedUserId -> negativeEngagedUserFetcher)
+  vaw goodpwofiwecwickddgfetchew: s-signawtype => fiwtewedsignawfetchewcontwowwew = signawtype =>
+    fiwtewedsignawfetchewcontwowwew(
+      pwofiwecwickfetchew, (ˆ ﻌ ˆ)♡
+      signawtype, ʘwʘ
+      s-statsweceivew, o.O
+      timew, UwU
+      map(signawtype.negativeengagedusewid -> nyegativeengagedusewfetchew)
     )
 
-  val GoodProfileClickDdgFetcherWithBlocksMutes: SignalType => FilteredSignalFetcherController =
-    signalType =>
-      FilteredSignalFetcherController(
-        profileClickFetcher,
-        signalType,
-        statsReceiver,
-        timer,
-        Map(
-          SignalType.NegativeEngagedUserId -> negativeEngagedUserFetcher,
-          SignalType.AccountMute -> accountMutesFetcher,
-          SignalType.AccountBlock -> accountBlocksFetcher
+  vaw g-goodpwofiwecwickddgfetchewwithbwocksmutes: s-signawtype => f-fiwtewedsignawfetchewcontwowwew =
+    signawtype =>
+      f-fiwtewedsignawfetchewcontwowwew(
+        pwofiwecwickfetchew, rawr x3
+        s-signawtype, 🥺
+        s-statsweceivew, :3
+        timew, (ꈍᴗꈍ)
+        map(
+          signawtype.negativeengagedusewid -> negativeengagedusewfetchew, 🥺
+          signawtype.accountmute -> a-accountmutesfetchew, (✿oωo)
+          signawtype.accountbwock -> a-accountbwocksfetchew
         )
       )
 
-  val realGraphOonFilteredFetcher: FilteredSignalFetcherController =
-    FilteredSignalFetcherController(
-      realGraphOonFetcher,
-      SignalType.RealGraphOon,
-      statsReceiver,
-      timer,
-      Map(
-        SignalType.NegativeEngagedUserId -> negativeEngagedUserFetcher
+  vaw weawgwaphoonfiwtewedfetchew: f-fiwtewedsignawfetchewcontwowwew =
+    f-fiwtewedsignawfetchewcontwowwew(
+      weawgwaphoonfetchew, (U ﹏ U)
+      signawtype.weawgwaphoon, :3
+      s-statsweceivew, ^^;;
+      t-timew, rawr
+      map(
+        s-signawtype.negativeengagedusewid -> n-nyegativeengagedusewfetchew
       )
     )
 
-  val videoTweetsQualityViewFilteredFetcher: FilteredSignalFetcherController =
-    FilteredSignalFetcherController(
-      videoTweetsQualityViewFetcher,
-      SignalType.VideoView90dQualityV1,
-      statsReceiver,
-      timer,
-      Map(SignalType.NegativeEngagedTweetId -> negativeEngagedTweetFetcher)
+  vaw videotweetsquawityviewfiwtewedfetchew: fiwtewedsignawfetchewcontwowwew =
+    fiwtewedsignawfetchewcontwowwew(
+      videotweetsquawityviewfetchew, 😳😳😳
+      s-signawtype.videoview90dquawityv1, (✿oωo)
+      s-statsweceivew, OwO
+      t-timew, ʘwʘ
+      map(signawtype.negativeengagedtweetid -> n-nyegativeengagedtweetfetchew)
     )
 
-  val videoTweetsPlayback50FilteredFetcher: FilteredSignalFetcherController =
-    FilteredSignalFetcherController(
-      videoTweetsPlayback50Fetcher,
-      SignalType.VideoView90dPlayback50V1,
-      statsReceiver,
-      timer,
-      Map(SignalType.NegativeEngagedTweetId -> negativeEngagedTweetFetcher)
+  v-vaw videotweetspwayback50fiwtewedfetchew: fiwtewedsignawfetchewcontwowwew =
+    f-fiwtewedsignawfetchewcontwowwew(
+      videotweetspwayback50fetchew, (ˆ ﻌ ˆ)♡
+      signawtype.videoview90dpwayback50v1, (U ﹏ U)
+      statsweceivew, UwU
+      timew, XD
+      m-map(signawtype.negativeengagedtweetid -> n-nyegativeengagedtweetfetchew)
     )
 
-  val uniformTweetSignalInfo: Seq[SignalAggregatedInfo] = Seq(
-    SignalAggregatedInfo(SignalType.TweetFavorite, tweetFavoritesFetcher),
-    SignalAggregatedInfo(SignalType.Retweet, retweetsFetcher),
-    SignalAggregatedInfo(SignalType.Reply, replyTweetsFetcher),
-    SignalAggregatedInfo(SignalType.OriginalTweet, originalTweetsFetcher),
-    SignalAggregatedInfo(SignalType.TweetShareV1, tweetSharesFetcher),
-    SignalAggregatedInfo(SignalType.VideoView90dQualityV1, videoTweetsQualityViewFilteredFetcher),
+  vaw unifowmtweetsignawinfo: seq[signawaggwegatedinfo] = s-seq(
+    s-signawaggwegatedinfo(signawtype.tweetfavowite, ʘwʘ tweetfavowitesfetchew), rawr x3
+    signawaggwegatedinfo(signawtype.wetweet, ^^;; wetweetsfetchew), ʘwʘ
+    s-signawaggwegatedinfo(signawtype.wepwy, (U ﹏ U) wepwytweetsfetchew), (˘ω˘)
+    signawaggwegatedinfo(signawtype.owiginawtweet, owiginawtweetsfetchew), (ꈍᴗꈍ)
+    signawaggwegatedinfo(signawtype.tweetshawev1, /(^•ω•^) t-tweetshawesfetchew), >_<
+    signawaggwegatedinfo(signawtype.videoview90dquawityv1, σωσ videotweetsquawityviewfiwtewedfetchew), ^^;;
   )
 
-  val uniformProducerSignalInfo: Seq[SignalAggregatedInfo] = Seq(
-    SignalAggregatedInfo(SignalType.AccountFollow, MemcachedAccountFollowsFetcher),
-    SignalAggregatedInfo(
-      SignalType.RepeatedProfileVisit90dMinVisit6V1,
-      MemcachedProfileVisitsFetcher),
+  vaw unifowmpwoducewsignawinfo: s-seq[signawaggwegatedinfo] = s-seq(
+    signawaggwegatedinfo(signawtype.accountfowwow, 😳 memcachedaccountfowwowsfetchew), >_<
+    signawaggwegatedinfo(
+      signawtype.wepeatedpwofiwevisit90dminvisit6v1, -.-
+      m-memcachedpwofiwevisitsfetchew), UwU
   )
 
-  val memcachedAccountBlocksFetcher: MemcachedSignalFetcherWrapper = MemcachedSignalFetcherWrapper(
-    memcachedClient,
-    accountBlocksFetcher,
-    ttl = 5.minutes,
-    statsReceiver,
-    keyPrefix = "uss:ab",
-    timer)
+  v-vaw memcachedaccountbwocksfetchew: memcachedsignawfetchewwwappew = memcachedsignawfetchewwwappew(
+    memcachedcwient, :3
+    a-accountbwocksfetchew, σωσ
+    ttw = 5.minutes, >w<
+    statsweceivew, (ˆ ﻌ ˆ)♡
+    k-keypwefix = "uss:ab", ʘwʘ
+    timew)
 
-  val memcachedAccountMutesFetcher: MemcachedSignalFetcherWrapper = MemcachedSignalFetcherWrapper(
-    memcachedClient,
-    accountMutesFetcher,
-    ttl = 5.minutes,
-    statsReceiver,
-    keyPrefix = "uss:am",
-    timer)
+  vaw memcachedaccountmutesfetchew: memcachedsignawfetchewwwappew = m-memcachedsignawfetchewwwappew(
+    memcachedcwient,
+    a-accountmutesfetchew, :3
+    t-ttw = 5.minutes, (˘ω˘)
+    statsweceivew, 😳😳😳
+    k-keypwefix = "uss:am", rawr x3
+    timew)
 
-  val SignalFetcherMapper: Map[SignalType, ReadableStore[Query, Seq[Signal]]] = Map(
-    /* Raw Signals */
-    SignalType.AccountFollow -> accountFollowsFetcher,
-    SignalType.AccountFollowWithDelay -> MemcachedAccountFollowsFetcher,
-    SignalType.GoodProfileClick -> GoodProfileClickDdgFetcher(SignalType.GoodProfileClick),
-    SignalType.GoodProfileClick20s -> GoodProfileClickDdgFetcher(SignalType.GoodProfileClick20s),
-    SignalType.GoodProfileClick30s -> GoodProfileClickDdgFetcher(SignalType.GoodProfileClick30s),
-    SignalType.GoodProfileClickFiltered -> GoodProfileClickDdgFetcherWithBlocksMutes(
-      SignalType.GoodProfileClick),
-    SignalType.GoodProfileClick20sFiltered -> GoodProfileClickDdgFetcherWithBlocksMutes(
-      SignalType.GoodProfileClick20s),
-    SignalType.GoodProfileClick30sFiltered -> GoodProfileClickDdgFetcherWithBlocksMutes(
-      SignalType.GoodProfileClick30s),
-    SignalType.GoodTweetClick -> GoodTweetClickDdgFetcher(SignalType.GoodTweetClick),
-    SignalType.GoodTweetClick5s -> GoodTweetClickDdgFetcher(SignalType.GoodTweetClick5s),
-    SignalType.GoodTweetClick10s -> GoodTweetClickDdgFetcher(SignalType.GoodTweetClick10s),
-    SignalType.GoodTweetClick30s -> GoodTweetClickDdgFetcher(SignalType.GoodTweetClick30s),
-    SignalType.NegativeEngagedTweetId -> negativeEngagedTweetFetcher,
-    SignalType.NegativeEngagedUserId -> negativeEngagedUserFetcher,
-    SignalType.NotificationOpenAndClickV1 -> notificationOpenAndClickFetcher,
-    SignalType.OriginalTweet -> originalTweetsFetcher,
-    SignalType.OriginalTweet90dV2 -> originalTweetsFetcher,
-    SignalType.RealGraphOon -> realGraphOonFilteredFetcher,
-    SignalType.RepeatedProfileVisit14dMinVisit2V1 -> MemcachedProfileVisitsFetcher,
-    SignalType.RepeatedProfileVisit14dMinVisit2V1NoNegative -> FilteredSignalFetcherController(
-      MemcachedProfileVisitsFetcher,
-      SignalType.RepeatedProfileVisit14dMinVisit2V1NoNegative,
-      statsReceiver,
-      timer,
-      Map(
-        SignalType.AccountMute -> accountMutesFetcher,
-        SignalType.AccountBlock -> accountBlocksFetcher)
-    ),
-    SignalType.RepeatedProfileVisit90dMinVisit6V1 -> MemcachedProfileVisitsFetcher,
-    SignalType.RepeatedProfileVisit90dMinVisit6V1NoNegative -> FilteredSignalFetcherController(
-      MemcachedProfileVisitsFetcher,
-      SignalType.RepeatedProfileVisit90dMinVisit6V1NoNegative,
-      statsReceiver,
-      timer,
-      Map(
-        SignalType.AccountMute -> accountMutesFetcher,
-        SignalType.AccountBlock -> accountBlocksFetcher),
-    ),
-    SignalType.RepeatedProfileVisit180dMinVisit6V1 -> MemcachedProfileVisitsFetcher,
-    SignalType.RepeatedProfileVisit180dMinVisit6V1NoNegative -> FilteredSignalFetcherController(
-      MemcachedProfileVisitsFetcher,
-      SignalType.RepeatedProfileVisit180dMinVisit6V1NoNegative,
-      statsReceiver,
-      timer,
-      Map(
-        SignalType.AccountMute -> accountMutesFetcher,
-        SignalType.AccountBlock -> accountBlocksFetcher),
-    ),
-    SignalType.Reply -> replyTweetsFetcher,
-    SignalType.Reply90dV2 -> replyTweetsFetcher,
-    SignalType.Retweet -> retweetsFetcher,
-    SignalType.Retweet90dV2 -> retweetsFetcher,
-    SignalType.TweetFavorite -> tweetFavoritesFetcher,
-    SignalType.TweetFavorite90dV2 -> tweetFavoritesFetcher,
-    SignalType.TweetShareV1 -> tweetSharesFetcher,
-    SignalType.VideoView90dQualityV1 -> videoTweetsQualityViewFilteredFetcher,
-    SignalType.VideoView90dPlayback50V1 -> videoTweetsPlayback50FilteredFetcher,
-    /* Aggregated Signals */
-    SignalType.ProducerBasedUnifiedEngagementWeightedSignal -> AggregatedSignalController(
-      uniformProducerSignalInfo,
-      uniformProducerSignalEngagementAggregation,
-      statsReceiver,
-      timer
-    ),
-    SignalType.TweetBasedUnifiedEngagementWeightedSignal -> AggregatedSignalController(
-      uniformTweetSignalInfo,
-      uniformTweetSignalEngagementAggregation,
-      statsReceiver,
-      timer
-    ),
-    SignalType.AdFavorite -> tweetFavoritesFetcher,
-    /* Negative Signals */
-    SignalType.AccountBlock -> memcachedAccountBlocksFetcher,
-    SignalType.AccountMute -> memcachedAccountMutesFetcher,
-    SignalType.TweetDontLike -> negativeEngagedTweetFetcher,
-    SignalType.TweetReport -> negativeEngagedTweetFetcher,
-    SignalType.TweetSeeFewer -> negativeEngagedTweetFetcher,
+  v-vaw signawfetchewmappew: m-map[signawtype, (✿oωo) w-weadabwestowe[quewy, (ˆ ﻌ ˆ)♡ seq[signaw]]] = m-map(
+    /* waw s-signaws */
+    signawtype.accountfowwow -> accountfowwowsfetchew, :3
+    s-signawtype.accountfowwowwithdeway -> m-memcachedaccountfowwowsfetchew, (U ᵕ U❁)
+    s-signawtype.goodpwofiwecwick -> goodpwofiwecwickddgfetchew(signawtype.goodpwofiwecwick), ^^;;
+    signawtype.goodpwofiwecwick20s -> g-goodpwofiwecwickddgfetchew(signawtype.goodpwofiwecwick20s), mya
+    signawtype.goodpwofiwecwick30s -> g-goodpwofiwecwickddgfetchew(signawtype.goodpwofiwecwick30s), 😳😳😳
+    s-signawtype.goodpwofiwecwickfiwtewed -> goodpwofiwecwickddgfetchewwithbwocksmutes(
+      signawtype.goodpwofiwecwick), OwO
+    signawtype.goodpwofiwecwick20sfiwtewed -> g-goodpwofiwecwickddgfetchewwithbwocksmutes(
+      s-signawtype.goodpwofiwecwick20s), rawr
+    s-signawtype.goodpwofiwecwick30sfiwtewed -> g-goodpwofiwecwickddgfetchewwithbwocksmutes(
+      signawtype.goodpwofiwecwick30s),
+    s-signawtype.goodtweetcwick -> goodtweetcwickddgfetchew(signawtype.goodtweetcwick), XD
+    signawtype.goodtweetcwick5s -> goodtweetcwickddgfetchew(signawtype.goodtweetcwick5s), (U ﹏ U)
+    signawtype.goodtweetcwick10s -> goodtweetcwickddgfetchew(signawtype.goodtweetcwick10s), (˘ω˘)
+    s-signawtype.goodtweetcwick30s -> goodtweetcwickddgfetchew(signawtype.goodtweetcwick30s), UwU
+    s-signawtype.negativeengagedtweetid -> nyegativeengagedtweetfetchew, >_<
+    s-signawtype.negativeengagedusewid -> nyegativeengagedusewfetchew, σωσ
+    signawtype.notificationopenandcwickv1 -> n-nyotificationopenandcwickfetchew, 🥺
+    signawtype.owiginawtweet -> owiginawtweetsfetchew, 🥺
+    s-signawtype.owiginawtweet90dv2 -> o-owiginawtweetsfetchew, ʘwʘ
+    s-signawtype.weawgwaphoon -> w-weawgwaphoonfiwtewedfetchew, :3
+    s-signawtype.wepeatedpwofiwevisit14dminvisit2v1 -> memcachedpwofiwevisitsfetchew, (U ﹏ U)
+    signawtype.wepeatedpwofiwevisit14dminvisit2v1nonegative -> fiwtewedsignawfetchewcontwowwew(
+      memcachedpwofiwevisitsfetchew, (U ﹏ U)
+      signawtype.wepeatedpwofiwevisit14dminvisit2v1nonegative, ʘwʘ
+      statsweceivew, >w<
+      timew,
+      m-map(
+        s-signawtype.accountmute -> a-accountmutesfetchew, rawr x3
+        signawtype.accountbwock -> a-accountbwocksfetchew)
+    ), OwO
+    signawtype.wepeatedpwofiwevisit90dminvisit6v1 -> memcachedpwofiwevisitsfetchew, ^•ﻌ•^
+    signawtype.wepeatedpwofiwevisit90dminvisit6v1nonegative -> f-fiwtewedsignawfetchewcontwowwew(
+      m-memcachedpwofiwevisitsfetchew, >_<
+      signawtype.wepeatedpwofiwevisit90dminvisit6v1nonegative, OwO
+      s-statsweceivew, >_<
+      timew, (ꈍᴗꈍ)
+      map(
+        s-signawtype.accountmute -> a-accountmutesfetchew,
+        signawtype.accountbwock -> a-accountbwocksfetchew), >w<
+    ), (U ﹏ U)
+    s-signawtype.wepeatedpwofiwevisit180dminvisit6v1 -> memcachedpwofiwevisitsfetchew, ^^
+    signawtype.wepeatedpwofiwevisit180dminvisit6v1nonegative -> fiwtewedsignawfetchewcontwowwew(
+      memcachedpwofiwevisitsfetchew,
+      signawtype.wepeatedpwofiwevisit180dminvisit6v1nonegative,
+      s-statsweceivew, (U ﹏ U)
+      t-timew, :3
+      m-map(
+        s-signawtype.accountmute -> a-accountmutesfetchew, (✿oωo)
+        signawtype.accountbwock -> a-accountbwocksfetchew), XD
+    ), >w<
+    s-signawtype.wepwy -> wepwytweetsfetchew, òωó
+    s-signawtype.wepwy90dv2 -> w-wepwytweetsfetchew, (ꈍᴗꈍ)
+    signawtype.wetweet -> w-wetweetsfetchew, rawr x3
+    signawtype.wetweet90dv2 -> wetweetsfetchew, rawr x3
+    signawtype.tweetfavowite -> tweetfavowitesfetchew, σωσ
+    s-signawtype.tweetfavowite90dv2 -> tweetfavowitesfetchew, (ꈍᴗꈍ)
+    s-signawtype.tweetshawev1 -> t-tweetshawesfetchew, rawr
+    signawtype.videoview90dquawityv1 -> v-videotweetsquawityviewfiwtewedfetchew, ^^;;
+    signawtype.videoview90dpwayback50v1 -> videotweetspwayback50fiwtewedfetchew, rawr x3
+    /* a-aggwegated s-signaws */
+    s-signawtype.pwoducewbasedunifiedengagementweightedsignaw -> aggwegatedsignawcontwowwew(
+      unifowmpwoducewsignawinfo, (ˆ ﻌ ˆ)♡
+      unifowmpwoducewsignawengagementaggwegation,
+      statsweceivew, σωσ
+      t-timew
+    ), (U ﹏ U)
+    signawtype.tweetbasedunifiedengagementweightedsignaw -> aggwegatedsignawcontwowwew(
+      u-unifowmtweetsignawinfo, >w<
+      u-unifowmtweetsignawengagementaggwegation, σωσ
+      statsweceivew, nyaa~~
+      timew
+    ), 🥺
+    s-signawtype.adfavowite -> tweetfavowitesfetchew, rawr x3
+    /* n-nyegative s-signaws */
+    signawtype.accountbwock -> memcachedaccountbwocksfetchew, σωσ
+    s-signawtype.accountmute -> memcachedaccountmutesfetchew, (///ˬ///✿)
+    signawtype.tweetdontwike -> nyegativeengagedtweetfetchew, (U ﹏ U)
+    s-signawtype.tweetwepowt -> n-nyegativeengagedtweetfetchew, ^^;;
+    signawtype.tweetseefewew -> n-nyegativeengagedtweetfetchew, 🥺
   )
 
 }

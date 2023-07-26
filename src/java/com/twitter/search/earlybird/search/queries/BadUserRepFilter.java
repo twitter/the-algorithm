@@ -1,115 +1,115 @@
-package com.twitter.search.earlybird.search.queries;
+package com.twittew.seawch.eawwybiwd.seawch.quewies;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+i-impowt owg.apache.wucene.index.weafweadew;
+i-impowt o-owg.apache.wucene.index.weafweadewcontext;
+impowt o-owg.apache.wucene.index.numewicdocvawues;
+i-impowt owg.apache.wucene.seawch.booweancwause;
+impowt o-owg.apache.wucene.seawch.booweanquewy;
+i-impowt o-owg.apache.wucene.seawch.docidsetitewatow;
+impowt owg.apache.wucene.seawch.indexseawchew;
+impowt owg.apache.wucene.seawch.quewy;
+impowt owg.apache.wucene.seawch.scowemode;
+i-impowt owg.apache.wucene.seawch.weight;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
+impowt com.twittew.seawch.common.quewy.defauwtfiwtewweight;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.utiw.awwdocsitewatow;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.utiw.wangefiwtewdisi;
 
-public final class BadUserRepFilter extends Query {
+p-pubwic finaw cwass badusewwepfiwtew e-extends q-quewy {
   /**
-   * Creates a query that filters out results coming from users with bad reputation.
+   * cweates a quewy that fiwtews out wesuwts coming fwom usews with b-bad weputation. ( ͡o ω ͡o )
    *
-   * @param minTweepCred The lowest acceptable user reputation.
-   * @return A query that filters out results from bad reputation users.
+   * @pawam mintweepcwed the wowest acceptabwe usew weputation. σωσ
+   * @wetuwn a quewy that f-fiwtews out wesuwts fwom bad weputation u-usews. >w<
    */
-  public static Query getBadUserRepFilter(int minTweepCred) {
-    if (minTweepCred <= 0) {
-      return null;
+  p-pubwic s-static quewy getbadusewwepfiwtew(int m-mintweepcwed) {
+    if (mintweepcwed <= 0) {
+      wetuwn nuww;
     }
 
-    return new BooleanQuery.Builder()
-        .add(new BadUserRepFilter(minTweepCred), BooleanClause.Occur.FILTER)
-        .build();
+    w-wetuwn nyew booweanquewy.buiwdew()
+        .add(new badusewwepfiwtew(mintweepcwed), 😳😳😳 booweancwause.occuw.fiwtew)
+        .buiwd();
   }
 
-  private final int minTweepCred;
+  p-pwivate finaw int mintweepcwed;
 
-  private BadUserRepFilter(int minTweepCred) {
-    this.minTweepCred = minTweepCred;
+  pwivate badusewwepfiwtew(int mintweepcwed) {
+    this.mintweepcwed = m-mintweepcwed;
   }
 
-  @Override
-  public int hashCode() {
-    return minTweepCred;
+  @ovewwide
+  pubwic int hashcode() {
+    w-wetuwn m-mintweepcwed;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof BadUserRepFilter)) {
-      return false;
+  @ovewwide
+  p-pubwic boowean equaws(object obj) {
+    if (!(obj instanceof b-badusewwepfiwtew)) {
+      w-wetuwn fawse;
     }
 
-    return minTweepCred == BadUserRepFilter.class.cast(obj).minTweepCred;
+    w-wetuwn mintweepcwed == b-badusewwepfiwtew.cwass.cast(obj).mintweepcwed;
   }
 
-  @Override
-  public String toString(String field) {
-    return "BadUserRepFilter:" + minTweepCred;
+  @ovewwide
+  pubwic stwing tostwing(stwing f-fiewd) {
+    wetuwn "badusewwepfiwtew:" + m-mintweepcwed;
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        LeafReader reader = context.reader();
-        if (!(reader instanceof EarlybirdIndexSegmentAtomicReader)) {
-          return new AllDocsIterator(reader);
+  @ovewwide
+  pubwic weight cweateweight(indexseawchew s-seawchew, OwO scowemode scowemode, 😳 f-fwoat boost) {
+    wetuwn nyew d-defauwtfiwtewweight(this) {
+      @ovewwide
+      p-pwotected docidsetitewatow getdocidsetitewatow(weafweadewcontext context) thwows ioexception {
+        weafweadew weadew = context.weadew();
+        if (!(weadew i-instanceof eawwybiwdindexsegmentatomicweadew)) {
+          wetuwn n-nyew awwdocsitewatow(weadew);
         }
 
-        return new BadUserExcludeDocIdSetIterator(
-            (EarlybirdIndexSegmentAtomicReader) context.reader(), minTweepCred);
+        wetuwn nyew b-badusewexcwudedocidsetitewatow(
+            (eawwybiwdindexsegmentatomicweadew) c-context.weadew(), 😳😳😳 m-mintweepcwed);
       }
     };
   }
 
-  private static final class BadUserExcludeDocIdSetIterator extends RangeFilterDISI {
-    private final NumericDocValues userReputationDocValues;
-    private final int minTweepCred;
+  pwivate static finaw cwass badusewexcwudedocidsetitewatow e-extends wangefiwtewdisi {
+    pwivate finaw nyumewicdocvawues usewweputationdocvawues;
+    pwivate finaw int m-mintweepcwed;
 
-    BadUserExcludeDocIdSetIterator(EarlybirdIndexSegmentAtomicReader indexReader,
-                                   int minTweepCred) throws IOException {
-      super(indexReader);
-      this.userReputationDocValues =
-          indexReader.getNumericDocValues(EarlybirdFieldConstant.USER_REPUTATION.getFieldName());
-      this.minTweepCred = minTweepCred;
+    badusewexcwudedocidsetitewatow(eawwybiwdindexsegmentatomicweadew i-indexweadew, (˘ω˘)
+                                   i-int mintweepcwed) t-thwows ioexception {
+      supew(indexweadew);
+      t-this.usewweputationdocvawues =
+          i-indexweadew.getnumewicdocvawues(eawwybiwdfiewdconstant.usew_weputation.getfiewdname());
+      t-this.mintweepcwed = m-mintweepcwed;
     }
 
-    @Override
-    public boolean shouldReturnDoc() throws IOException {
-      // We need this explicit casting to byte, because of how we encode and decode features in our
-      // encoded_tweet_features field. If a feature is an int (uses all 32 bits of the int), then
-      // encoding the feature and then decoding it preserves its original value. However, if the
-      // feature does not use the entire int (and especially if it uses bits somewhere in the middle
-      // of the int), then the feature value is assumed to be unsigned when it goes through this
-      // process of encoding and decoding. So a user rep of
-      // RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL (-128) will be correctly encoded as the
-      // binary value 10000000, but will be treated as an unsigned value when decoded, and therefore
-      // the decoded value will be 128.
+    @ovewwide
+    pubwic boowean shouwdwetuwndoc() thwows i-ioexception {
+      // w-we n-nyeed this expwicit c-casting to byte, ʘwʘ b-because of how we encode and decode featuwes in ouw
+      // e-encoded_tweet_featuwes fiewd. if a featuwe is an int (uses aww 32 bits of the int), ( ͡o ω ͡o ) then
+      // e-encoding the featuwe and then decoding it pwesewves its owiginaw v-vawue. howevew, o.O i-if the
+      // f-featuwe does nyot use the entiwe i-int (and especiawwy if it u-uses bits somewhewe i-in the middwe
+      // of the int), >w< then the featuwe vawue is assumed to be unsigned when it g-goes thwough this
+      // pwocess o-of encoding and decoding. so a-a usew wep of
+      // w-wewevancesignawconstants.unset_weputation_sentinew (-128) wiww be cowwectwy encoded as the
+      // b-binawy v-vawue 10000000, 😳 but wiww be tweated a-as an unsigned v-vawue when decoded, 🥺 and thewefowe
+      // the decoded vawue wiww be 128. rawr x3
       //
-      // In retrospect, this seems like a really poor design decision. It seems like it would be
-      // better if all feature values were considered to be signed, even if most features can never
-      // have negative values. Unfortunately, making this change is not easy, because some features
-      // store normalized values, so we would also need to change the range of allowed values
-      // produced by those normalizers, as well as all code that depends on those values.
+      // in wetwospect, o.O t-this seems wike a-a weawwy poow design d-decision. rawr it seems wike it w-wouwd be
+      // b-bettew if aww featuwe vawues w-wewe considewed to be signed, ʘwʘ even if most featuwes can nyevew
+      // have nyegative v-vawues. 😳😳😳 unfowtunatewy, ^^;; m-making this change is nyot easy, o.O because s-some featuwes
+      // s-stowe nyowmawized vawues, (///ˬ///✿) so we wouwd awso nyeed to c-change the wange of awwowed vawues
+      // pwoduced by those nyowmawizews, σωσ as w-weww as aww code that depends on those vawues. nyaa~~
       //
-      // So for now, just cast this value to a byte, to get the proper negative value.
-      return userReputationDocValues.advanceExact(docID())
-          && ((byte) userReputationDocValues.longValue() >= minTweepCred);
+      // s-so fow nyow, ^^;; just c-cast this vawue to a byte, ^•ﻌ•^ to get the pwopew nyegative vawue. σωσ
+      w-wetuwn usewweputationdocvawues.advanceexact(docid())
+          && ((byte) u-usewweputationdocvawues.wongvawue() >= mintweepcwed);
     }
   }
 }

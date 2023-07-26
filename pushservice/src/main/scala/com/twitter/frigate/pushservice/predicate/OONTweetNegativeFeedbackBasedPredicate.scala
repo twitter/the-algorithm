@@ -1,82 +1,82 @@
-package com.twitter.frigate.pushservice.predicate
+package com.twittew.fwigate.pushsewvice.pwedicate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.util.CandidateUtil
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.base._
+i-impowt c-com.twittew.fwigate.common.wec_types.wectypes
+impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt c-com.twittew.fwigate.pushsewvice.utiw.candidateutiw
+i-impowt com.twittew.hewmit.pwedicate.namedpwedicate
+impowt com.twittew.hewmit.pwedicate.pwedicate
+impowt com.twittew.utiw.futuwe
 
-object OONTweetNegativeFeedbackBasedPredicate {
+object oontweetnegativefeedbackbasedpwedicate {
 
-  def ntabDislikeBasedPredicate(
+  def nytabdiswikebasedpwedicate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[
-    PushCandidate with TweetCandidate with RecommendationType
+    i-impwicit stats: statsweceivew
+  ): nyamedpwedicate[
+    p-pushcandidate with tweetcandidate w-with wecommendationtype
   ] = {
-    val name = "oon_tweet_dislike_based_predicate"
-    val scopedStatsReceiver = stats.scope(name)
-    val allOonCandidatesCounter = scopedStatsReceiver.counter("all_oon_candidates")
-    val oonCandidatesImpressedCounter =
-      scopedStatsReceiver.counter("oon_candidates_impressed")
-    val filteredCandidatesCounter =
-      scopedStatsReceiver.counter("filtered_oon_candidates")
+    vaw nyame = "oon_tweet_diswike_based_pwedicate"
+    vaw scopedstatsweceivew = s-stats.scope(name)
+    vaw awwooncandidatescountew = s-scopedstatsweceivew.countew("aww_oon_candidates")
+    v-vaw ooncandidatesimpwessedcountew =
+      scopedstatsweceivew.countew("oon_candidates_impwessed")
+    vaw fiwtewedcandidatescountew =
+      scopedstatsweceivew.countew("fiwtewed_oon_candidates")
 
-    val ntabDislikeCountFeature =
-      "tweet.magic_recs_tweet_real_time_aggregates_v2.pair.v2.magicrecs.realtime.is_ntab_disliked.any_feature.Duration.Top.count"
-    val sentFeature =
-      "tweet.magic_recs_tweet_real_time_aggregates_v2.pair.v2.magicrecs.realtime.is_sent.any_feature.Duration.Top.count"
+    vaw n-nytabdiswikecountfeatuwe =
+      "tweet.magic_wecs_tweet_weaw_time_aggwegates_v2.paiw.v2.magicwecs.weawtime.is_ntab_diswiked.any_featuwe.duwation.top.count"
+    vaw sentfeatuwe =
+      "tweet.magic_wecs_tweet_weaw_time_aggwegates_v2.paiw.v2.magicwecs.weawtime.is_sent.any_featuwe.duwation.top.count"
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetCandidate with RecommendationType =>
-        val target = candidate.target
-        val crt = candidate.commonRecType
-        val isOonCandidate = RecTypes.isOutOfNetworkTweetRecType(crt) ||
-          RecTypes.outOfNetworkTopicTweetTypes.contains(crt)
+    pwedicate
+      .fwomasync { candidate: pushcandidate with tweetcandidate w-with wecommendationtype =>
+        v-vaw tawget = candidate.tawget
+        v-vaw cwt = c-candidate.commonwectype
+        v-vaw isooncandidate = wectypes.isoutofnetwowktweetwectype(cwt) ||
+          wectypes.outofnetwowktopictweettypes.contains(cwt)
 
-        lazy val ntabDislikeCountThreshold =
-          target.params(PushFeatureSwitchParams.TweetNtabDislikeCountThresholdParam)
-        lazy val ntabDislikeRateThreshold =
-          target.params(PushFeatureSwitchParams.TweetNtabDislikeRateThresholdParam)
-        lazy val ntabDislikeCountThresholdForMrTwistly =
-          target.params(PushFeatureSwitchParams.TweetNtabDislikeCountThresholdForMrTwistlyParam)
-        lazy val ntabDislikeRateThresholdForMrTwistly =
-          target.params(PushFeatureSwitchParams.TweetNtabDislikeRateThresholdForMrTwistlyParam)
+        w-wazy vaw nytabdiswikecountthweshowd =
+          tawget.pawams(pushfeatuweswitchpawams.tweetntabdiswikecountthweshowdpawam)
+        w-wazy vaw ntabdiswikewatethweshowd =
+          tawget.pawams(pushfeatuweswitchpawams.tweetntabdiswikewatethweshowdpawam)
+        wazy vaw ntabdiswikecountthweshowdfowmwtwistwy =
+          tawget.pawams(pushfeatuweswitchpawams.tweetntabdiswikecountthweshowdfowmwtwistwypawam)
+        w-wazy vaw nytabdiswikewatethweshowdfowmwtwistwy =
+          tawget.pawams(pushfeatuweswitchpawams.tweetntabdiswikewatethweshowdfowmwtwistwypawam)
 
-        val isMrTwistly = CandidateUtil.isMrTwistlyCandidate(candidate)
+        vaw i-ismwtwistwy = c-candidateutiw.ismwtwistwycandidate(candidate)
 
-        lazy val dislikeCount = candidate.numericFeatures.getOrElse(ntabDislikeCountFeature, 0.0)
-        lazy val sentCount = candidate.numericFeatures.getOrElse(sentFeature, 0.0)
-        lazy val dislikeRate = if (sentCount > 0) dislikeCount / sentCount else 0.0
+        w-wazy vaw diswikecount = candidate.numewicfeatuwes.getowewse(ntabdiswikecountfeatuwe, (˘ω˘) 0.0)
+        wazy vaw s-sentcount = candidate.numewicfeatuwes.getowewse(sentfeatuwe, >_< 0.0)
+        w-wazy vaw diswikewate = i-if (sentcount > 0) d-diswikecount / sentcount e-ewse 0.0
 
-        if (CandidateUtil.shouldApplyHealthQualityFilters(candidate) && isOonCandidate) {
-          allOonCandidatesCounter.incr()
-          val (countThreshold, rateThreshold) = if (isMrTwistly) {
-            (ntabDislikeCountThresholdForMrTwistly, ntabDislikeRateThresholdForMrTwistly)
-          } else {
-            (ntabDislikeCountThreshold, ntabDislikeRateThreshold)
+        if (candidateutiw.shouwdappwyheawthquawityfiwtews(candidate) && i-isooncandidate) {
+          awwooncandidatescountew.incw()
+          vaw (countthweshowd, -.- w-watethweshowd) = if (ismwtwistwy) {
+            (ntabdiswikecountthweshowdfowmwtwistwy, 🥺 n-nytabdiswikewatethweshowdfowmwtwistwy)
+          } ewse {
+            (ntabdiswikecountthweshowd, (U ﹏ U) n-ntabdiswikewatethweshowd)
           }
-          candidate.cachePredicateInfo(
-            name + "_count",
-            dislikeCount,
-            countThreshold,
-            dislikeCount > countThreshold)
-          candidate.cachePredicateInfo(
-            name + "_rate",
-            dislikeRate,
-            rateThreshold,
-            dislikeRate > rateThreshold)
-          if (dislikeCount > countThreshold && dislikeRate > rateThreshold) {
-            filteredCandidatesCounter.incr()
-            Future.False
-          } else Future.True
-        } else Future.True
+          c-candidate.cachepwedicateinfo(
+            nyame + "_count", >w<
+            diswikecount, mya
+            countthweshowd,
+            diswikecount > countthweshowd)
+          candidate.cachepwedicateinfo(
+            n-name + "_wate", >w<
+            d-diswikewate, nyaa~~
+            watethweshowd, (✿oωo)
+            d-diswikewate > w-watethweshowd)
+          i-if (diswikecount > countthweshowd && diswikewate > watethweshowd) {
+            f-fiwtewedcandidatescountew.incw()
+            futuwe.fawse
+          } ewse futuwe.twue
+        } ewse futuwe.twue
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .withstats(stats.scope(name))
+      .withname(name)
   }
 }

@@ -1,11 +1,11 @@
-package com.twitter.timelineranker.config
+package com.twittew.timewinewankew.config
 
-import com.twitter.storehaus.Store
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelines.model.TweetId
-class ClientWrappers(config: RuntimeConfiguration) {
-  private[this] val backendClientConfiguration = config.underlyingClients
+impowt c-com.twittew.stowehaus.stowe
+i-impowt c-com.twittew.timewinewankew.wecap.modew.contentfeatuwes
+i-impowt c-com.twittew.timewines.modew.tweetid
+c-cwass cwientwwappews(config: w-wuntimeconfiguwation) {
+  p-pwivate[this] vaw backendcwientconfiguwation = config.undewwyingcwients
 
-  val contentFeaturesCache: Store[TweetId, ContentFeatures] =
-    backendClientConfiguration.contentFeaturesCache
+  vaw contentfeatuwescache: stowe[tweetid, σωσ c-contentfeatuwes] =
+    backendcwientconfiguwation.contentfeatuwescache
 }

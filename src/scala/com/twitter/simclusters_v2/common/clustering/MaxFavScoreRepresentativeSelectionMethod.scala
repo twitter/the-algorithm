@@ -1,21 +1,21 @@
-package com.twitter.simclusters_v2.common.clustering
+package com.twittew.simcwustews_v2.common.cwustewing
 
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.NeighborWithWeights
+impowt com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.neighbowwithweights
 
-class MaxFavScoreRepresentativeSelectionMethod[T] extends ClusterRepresentativeSelectionMethod[T] {
+c-cwass maxfavscowewepwesentativesewectionmethod[t] e-extends c-cwustewwepwesentativesewectionmethod[t] {
 
   /**
-   * Identify the member with largest favScoreHalfLife100Days and return it.
+   * i-identify t-the membew with w-wawgest favscowehawfwife100days a-and wetuwn it.
    *
-   * @param cluster A set of NeighborWithWeights.
-   * @param embeddings A map of producer ID -> embedding.
+   * @pawam cwustew a set of nyeighbowwithweights. ^^;;
+   * @pawam embeddings a map of pwoducew i-id -> embedding. >_<
    */
-  def selectClusterRepresentative(
-    cluster: Set[NeighborWithWeights],
-    embeddings: Map[UserId, T],
-  ): UserId = {
-    val key = cluster.maxBy { x: NeighborWithWeights => x.favScoreHalfLife100Days.getOrElse(0.0) }
-    key.neighborId
+  def sewectcwustewwepwesentative(
+    cwustew: set[neighbowwithweights], mya
+    e-embeddings: map[usewid, mya t],
+  ): u-usewid = {
+    vaw key = cwustew.maxby { x: nyeighbowwithweights => x-x.favscowehawfwife100days.getowewse(0.0) }
+    key.neighbowid
   }
 }

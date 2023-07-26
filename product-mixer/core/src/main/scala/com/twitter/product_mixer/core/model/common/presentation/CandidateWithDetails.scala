@@ -1,140 +1,140 @@
-package com.twitter.product_mixer.core.model.common.presentation
+package com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.UnexpectedCandidateResult
-import scala.collection.immutable.ListSet
-import scala.reflect.ClassTag
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.unexpectedcandidatewesuwt
+impowt scawa.cowwection.immutabwe.wistset
+impowt scawa.wefwect.cwasstag
 
-sealed trait CandidateWithDetails { self =>
-  def presentation: Option[UniversalPresentation]
-  def features: FeatureMap
+seawed twait c-candidatewithdetaiws { sewf =>
+  def pwesentation: o-option[univewsawpwesentation]
+  def featuwes: f-featuwemap
 
-  // last of the set because in ListSet, the last element is the first inserted one with O(1)
-  // access
-  lazy val source: CandidatePipelineIdentifier = features.get(CandidatePipelines).last
-  lazy val sourcePosition: Int = features.get(CandidateSourcePosition)
+  // wast of the set because in wistset, the wast e-ewement is the fiwst insewted o-one with o(1)
+  // a-access
+  wazy vaw souwce: candidatepipewineidentifiew = featuwes.get(candidatepipewines).wast
+  wazy vaw souwceposition: int = f-featuwes.get(candidatesouwceposition)
 
   /**
-   * @see [[getCandidateId]]
+   * @see [[getcandidateid]]
    */
-  def candidateIdLong: Long = getCandidateId[Long]
+  def candidateidwong: wong = getcandidateid[wong]
 
   /**
-   * @see [[getCandidateId]]
+   * @see [[getcandidateid]]
    */
-  def candidateIdString: String = getCandidateId[String]
+  def candidateidstwing: s-stwing = getcandidateid[stwing]
 
   /**
-   * Convenience method for retrieving a candidate ID off of the base [[CandidateWithDetails]] trait
-   * without manually pattern matching.
+   * c-convenience m-method fow wetwieving a-a candidate i-id off of the base [[candidatewithdetaiws]] twait
+   * without m-manuawwy pattewn matching. 😳😳😳
    *
-   * @throws PipelineFailure if CandidateIdType does not match the expected Item Candidate Id type,
-   *                         or if invoked on a Module Candidate
+   * @thwows pipewinefaiwuwe if candidateidtype d-does nyot match the expected item candidate id type, OwO
+   *                         ow if invoked on a moduwe candidate
    */
-  def getCandidateId[CandidateIdType](
+  d-def getcandidateid[candidateidtype](
   )(
-    implicit tag: ClassTag[CandidateIdType]
-  ): CandidateIdType =
-    self match {
-      case item: ItemCandidateWithDetails =>
+    impwicit t-tag: cwasstag[candidateidtype]
+  ): c-candidateidtype =
+    s-sewf match {
+      case item: itemcandidatewithdetaiws =>
         item.candidate.id match {
-          case id: CandidateIdType => id
-          case _ =>
-            throw PipelineFailure(
-              UnexpectedCandidateResult,
-              s"Invalid Item Candidate ID type expected $tag for Item Candidate type ${item.candidate.getClass}")
+          c-case id: c-candidateidtype => id
+          c-case _ =>
+            t-thwow pipewinefaiwuwe(
+              unexpectedcandidatewesuwt, 😳
+              s-s"invawid item candidate id t-type expected $tag fow item candidate type ${item.candidate.getcwass}")
         }
-      case _: ModuleCandidateWithDetails =>
-        throw PipelineFailure(
-          UnexpectedCandidateResult,
-          "Cannot retrieve Item Candidate ID for a Module")
+      c-case _: moduwecandidatewithdetaiws =>
+        t-thwow pipewinefaiwuwe(
+          unexpectedcandidatewesuwt, 😳😳😳
+          "cannot w-wetwieve item c-candidate id fow a moduwe")
     }
 
   /**
-   * Convenience method for retrieving a candidate off of the base [[CandidateWithDetails]] trait
-   * without manually pattern matching.
+   * convenience method fow wetwieving a candidate off of the base [[candidatewithdetaiws]] twait
+   * w-without manuawwy p-pattewn matching. (˘ω˘)
    *
-   * @throws PipelineFailure if CandidateType does not match the expected Item Candidate type, or
-   *                         if invoked on a Module Candidate
+   * @thwows pipewinefaiwuwe i-if candidatetype d-does nyot m-match the expected item candidate type, ʘwʘ ow
+   *                         if invoked o-on a moduwe candidate
    */
-  def getCandidate[CandidateType <: UniversalNoun[_]](
+  def getcandidate[candidatetype <: univewsawnoun[_]](
   )(
-    implicit tag: ClassTag[CandidateType]
-  ): CandidateType =
-    self match {
-      case ItemCandidateWithDetails(candidate: CandidateType, _, _) => candidate
-      case item: ItemCandidateWithDetails =>
-        throw PipelineFailure(
-          UnexpectedCandidateResult,
-          s"Invalid Item Candidate type expected $tag for Item Candidate type ${item.candidate.getClass}")
-      case _: ModuleCandidateWithDetails =>
-        throw PipelineFailure(
-          UnexpectedCandidateResult,
-          "Cannot retrieve Item Candidate for a Module")
+    impwicit tag: cwasstag[candidatetype]
+  ): c-candidatetype =
+    sewf match {
+      c-case itemcandidatewithdetaiws(candidate: c-candidatetype, ( ͡o ω ͡o ) _, _) => c-candidate
+      case item: itemcandidatewithdetaiws =>
+        t-thwow pipewinefaiwuwe(
+          u-unexpectedcandidatewesuwt, o.O
+          s-s"invawid i-item candidate type expected $tag fow item candidate t-type ${item.candidate.getcwass}")
+      c-case _: moduwecandidatewithdetaiws =>
+        t-thwow p-pipewinefaiwuwe(
+          unexpectedcandidatewesuwt, >w<
+          "cannot w-wetwieve item candidate fow a moduwe")
     }
 
   /**
-   * Convenience method for checking if this contains a certain candidate type
+   * convenience m-method fow checking if this contains a cewtain candidate type
    *
-   * @throws PipelineFailure if CandidateType does not match the expected Item Candidate type, or
-   *                         if invoked on a Module Candidate
+   * @thwows pipewinefaiwuwe if candidatetype d-does nyot match the expected item candidate type, 😳 ow
+   *                         i-if invoked on a-a moduwe candidate
    */
-  def isCandidateType[CandidateType <: UniversalNoun[_]](
+  d-def iscandidatetype[candidatetype <: u-univewsawnoun[_]](
   )(
-    implicit tag: ClassTag[CandidateType]
-  ): Boolean = self match {
-    case ItemCandidateWithDetails(_: CandidateType, _, _) => true
-    case _ => false
+    impwicit t-tag: cwasstag[candidatetype]
+  ): b-boowean = sewf match {
+    case itemcandidatewithdetaiws(_: candidatetype, 🥺 _, _) => twue
+    case _ => f-fawse
   }
 }
 
-case class ItemCandidateWithDetails(
-  override val candidate: UniversalNoun[Any],
-  presentation: Option[UniversalPresentation],
-  override val features: FeatureMap)
-    extends CandidateWithDetails
-    with CandidateWithFeatures[UniversalNoun[Any]]
+case cwass itemcandidatewithdetaiws(
+  o-ovewwide vaw candidate: univewsawnoun[any], rawr x3
+  p-pwesentation: o-option[univewsawpwesentation], o.O
+  ovewwide vaw featuwes: featuwemap)
+    e-extends c-candidatewithdetaiws
+    with candidatewithfeatuwes[univewsawnoun[any]]
 
-case class ModuleCandidateWithDetails(
-  candidates: Seq[ItemCandidateWithDetails],
-  presentation: Option[ModulePresentation],
-  override val features: FeatureMap)
-    extends CandidateWithDetails
+c-case cwass m-moduwecandidatewithdetaiws(
+  candidates: seq[itemcandidatewithdetaiws], rawr
+  pwesentation: option[moduwepwesentation], ʘwʘ
+  ovewwide vaw featuwes: f-featuwemap)
+    e-extends candidatewithdetaiws
 
-object ItemCandidateWithDetails {
-  def apply(
-    candidate: UniversalNoun[Any],
-    presentation: Option[UniversalPresentation],
-    source: CandidatePipelineIdentifier,
-    sourcePosition: Int,
-    features: FeatureMap
-  ): ItemCandidateWithDetails = {
-    val newFeatureMap =
-      FeatureMapBuilder()
-        .add(CandidateSourcePosition, sourcePosition)
-        .add(CandidatePipelines, ListSet.empty + source).build() ++ features
-    ItemCandidateWithDetails(candidate, presentation, newFeatureMap)
+o-object itemcandidatewithdetaiws {
+  def appwy(
+    c-candidate: univewsawnoun[any], 😳😳😳
+    p-pwesentation: option[univewsawpwesentation], ^^;;
+    s-souwce: candidatepipewineidentifiew, o.O
+    souwceposition: int, (///ˬ///✿)
+    featuwes: featuwemap
+  ): itemcandidatewithdetaiws = {
+    v-vaw nyewfeatuwemap =
+      featuwemapbuiwdew()
+        .add(candidatesouwceposition, σωσ s-souwceposition)
+        .add(candidatepipewines, nyaa~~ wistset.empty + souwce).buiwd() ++ f-featuwes
+    i-itemcandidatewithdetaiws(candidate, pwesentation, ^^;; nyewfeatuwemap)
   }
 }
 
-object ModuleCandidateWithDetails {
-  def apply(
-    candidates: Seq[ItemCandidateWithDetails],
-    presentation: Option[ModulePresentation],
-    source: CandidatePipelineIdentifier,
-    sourcePosition: Int,
-    features: FeatureMap
-  ): ModuleCandidateWithDetails = {
-    val newFeatureMap =
-      FeatureMapBuilder()
-        .add(CandidateSourcePosition, sourcePosition)
-        .add(CandidatePipelines, ListSet.empty + source).build() ++ features
+object moduwecandidatewithdetaiws {
+  d-def appwy(
+    candidates: seq[itemcandidatewithdetaiws], ^•ﻌ•^
+    pwesentation: option[moduwepwesentation], σωσ
+    s-souwce: candidatepipewineidentifiew,
+    souwceposition: int, -.-
+    f-featuwes: f-featuwemap
+  ): moduwecandidatewithdetaiws = {
+    vaw nyewfeatuwemap =
+      featuwemapbuiwdew()
+        .add(candidatesouwceposition, ^^;; souwceposition)
+        .add(candidatepipewines, XD w-wistset.empty + s-souwce).buiwd() ++ featuwes
 
-    ModuleCandidateWithDetails(candidates, presentation, newFeatureMap)
+    moduwecandidatewithdetaiws(candidates, pwesentation, 🥺 n-nyewfeatuwemap)
   }
 }

@@ -1,9 +1,9 @@
-package com.twitter.search.common.search;
+package com.twittew.seawch.common.seawch;
 
 /**
- * Any class that can track and return query cost.
+ * any cwass that c-can twack and wetuwn q-quewy cost. (U ᵕ U❁)
  */
-public interface QueryCostProvider {
-  /** Returns the total cost. */
-  double getTotalCost();
+p-pubwic intewface q-quewycostpwovidew {
+  /** w-wetuwns the totaw c-cost. (⑅˘꒳˘) */
+  doubwe g-gettotawcost();
 }

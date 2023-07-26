@@ -1,242 +1,242 @@
-package com.twitter.graph_feature_service.util
+package com.twittew.gwaph_featuwe_sewvice.utiw
 
-import com.twitter.graph_feature_service.thriftscala.{
-  FeatureType,
-  IntersectionValue,
-  WorkerIntersectionValue
+impowt com.twittew.gwaph_featuwe_sewvice.thwiftscawa.{
+  f-featuwetype, rawr
+  i-intewsectionvawue, -.-
+  w-wowkewintewsectionvawue
 }
-import java.nio.ByteBuffer
-import scala.collection.mutable.ArrayBuffer
+i-impowt java.nio.bytebuffew
+i-impowt scawa.cowwection.mutabwe.awwaybuffew
 
 /**
- * Functions for computing feature values based on the values returned by constantDB.
+ * f-functions fow c-computing featuwe v-vawues based on the vawues wetuwned by constantdb. (✿oωo)
  */
-object IntersectionValueCalculator {
+object intewsectionvawuecawcuwatow {
 
   /**
-   * Compute the size of the array in a ByteBuffer.
-   * Note that this function assumes the ByteBuffer is encoded using Injections.seqLong2ByteBuffer
+   * c-compute the size of the awway in a b-bytebuffew.
+   * nyote that this f-function assumes the bytebuffew is encoded using injections.seqwong2bytebuffew
    */
-  def computeArraySize(x: ByteBuffer): Int = {
-    x.remaining() >> 3 // divide 8
+  d-def computeawwaysize(x: bytebuffew): int = {
+    x-x.wemaining() >> 3 // divide 8
   }
 
   /**
    *
    */
-  def apply(x: ByteBuffer, y: ByteBuffer, intersectionIdLimit: Int): WorkerIntersectionValue = {
+  d-def appwy(x: bytebuffew, /(^•ω•^) y: bytebuffew, 🥺 intewsectionidwimit: int): wowkewintewsectionvawue = {
 
-    val xSize = computeArraySize(x)
-    val ySize = computeArraySize(y)
+    v-vaw xsize = computeawwaysize(x)
+    vaw ysize = computeawwaysize(y)
 
-    val largerArray = if (xSize > ySize) x else y
-    val smallerArray = if (xSize > ySize) y else x
+    vaw w-wawgewawway = if (xsize > ysize) x-x ewse y
+    vaw s-smowewawway = i-if (xsize > ysize) y-y ewse x
 
-    if (intersectionIdLimit == 0) {
-      val result = computeIntersectionUsingBinarySearchOnLargerByteBuffer(smallerArray, largerArray)
-      WorkerIntersectionValue(result, xSize, ySize)
-    } else {
-      val (result, ids) = computeIntersectionWithIds(smallerArray, largerArray, intersectionIdLimit)
-      WorkerIntersectionValue(result, xSize, ySize, ids)
+    if (intewsectionidwimit == 0) {
+      vaw wesuwt = c-computeintewsectionusingbinawyseawchonwawgewbytebuffew(smowewawway, ʘwʘ wawgewawway)
+      wowkewintewsectionvawue(wesuwt, UwU x-xsize, ysize)
+    } ewse {
+      vaw (wesuwt, XD ids) = computeintewsectionwithids(smowewawway, (✿oωo) wawgewawway, :3 i-intewsectionidwimit)
+      wowkewintewsectionvawue(wesuwt, (///ˬ///✿) x-xsize, nyaa~~ ysize, ids)
     }
   }
 
   /**
-   * Note that this function assumes the ByteBuffer is encoded using Injections.seqLong2ByteBuffer
+   * n-nyote t-that this function assumes the bytebuffew is encoded using injections.seqwong2bytebuffew
    *
    */
-  def computeIntersectionUsingBinarySearchOnLargerByteBuffer(
-    smallArray: ByteBuffer,
-    largeArray: ByteBuffer
-  ): Int = {
-    var res: Int = 0
-    var i: Int = 0
+  d-def computeintewsectionusingbinawyseawchonwawgewbytebuffew(
+    s-smowawway: bytebuffew, >w<
+    w-wawgeawway: bytebuffew
+  ): i-int = {
+    vaw wes: i-int = 0
+    vaw i: int = 0
 
-    while (i < smallArray.remaining()) {
-      if (binarySearch(largeArray, smallArray.getLong(i)) >= 0) {
-        res += 1
+    w-whiwe (i < smowawway.wemaining()) {
+      if (binawyseawch(wawgeawway, -.- smowawway.getwong(i)) >= 0) {
+        wes += 1
       }
-      i += 8
+      i-i += 8
     }
-    res
+    wes
   }
 
-  def computeIntersectionWithIds(
-    smallArray: ByteBuffer,
-    largeArray: ByteBuffer,
-    intersectionLimit: Int
-  ): (Int, Seq[Long]) = {
-    var res: Int = 0
-    var i: Int = 0
-    // Most of the intersectionLimit is smaller than default size: 16
-    val idBuffer = ArrayBuffer[Long]()
+  d-def computeintewsectionwithids(
+    smowawway: b-bytebuffew, (✿oωo)
+    w-wawgeawway: bytebuffew, (˘ω˘)
+    intewsectionwimit: int
+  ): (int, rawr seq[wong]) = {
+    vaw wes: int = 0
+    vaw i: int = 0
+    // most of the intewsectionwimit i-is smowew t-than defauwt size: 16
+    vaw i-idbuffew = awwaybuffew[wong]()
 
-    while (i < smallArray.remaining()) {
-      val value = smallArray.getLong(i)
-      if (binarySearch(largeArray, value) >= 0) {
-        res += 1
-        // Always get the smaller ids
-        if (idBuffer.size < intersectionLimit) {
-          idBuffer += value
+    w-whiwe (i < s-smowawway.wemaining()) {
+      vaw vawue = smowawway.getwong(i)
+      if (binawyseawch(wawgeawway, OwO vawue) >= 0) {
+        w-wes += 1
+        // awways get the smowew ids
+        if (idbuffew.size < intewsectionwimit) {
+          i-idbuffew += vawue
         }
       }
       i += 8
     }
-    (res, idBuffer)
+    (wes, ^•ﻌ•^ i-idbuffew)
   }
 
   /**
-   * Note that this function assumes the ByteBuffer is encoded using Injections.seqLong2ByteBuffer
+   * n-nyote that this f-function assumes the bytebuffew i-is encoded using i-injections.seqwong2bytebuffew
    *
    */
-  private[util] def binarySearch(arr: ByteBuffer, value: Long): Int = {
-    var start = 0
-    var end = arr.remaining()
+  p-pwivate[utiw] d-def binawyseawch(aww: bytebuffew, vawue: wong): int = {
+    v-vaw stawt = 0
+    v-vaw end = a-aww.wemaining()
 
-    while (start <= end && start < arr.remaining()) {
-      val mid = ((start + end) >> 1) & ~7 // take mid - mid % 8
-      if (arr.getLong(mid) == value) {
-        return mid // return the index of the value
-      } else if (arr.getLong(mid) < value) {
-        start = mid + 8
-      } else {
-        end = mid - 1
+    w-whiwe (stawt <= e-end && stawt < aww.wemaining()) {
+      vaw mid = ((stawt + end) >> 1) & ~7 // t-take mid - mid % 8
+      if (aww.getwong(mid) == vawue) {
+        wetuwn mid // wetuwn the index of the vawue
+      } e-ewse if (aww.getwong(mid) < vawue) {
+        stawt = m-mid + 8
+      } e-ewse {
+        e-end = mid - 1
       }
     }
-    // if not existed, return -1
+    // if nyot existed, UwU w-wetuwn -1
     -1
   }
 
   /**
-   * TODO: for now it only computes intersection size. Will add more feature types (e.g., dot
-   * product, maximum value).
+   * todo: fow nyow i-it onwy computes i-intewsection size. (˘ω˘) wiww add mowe featuwe types (e.g., dot
+   * pwoduct, (///ˬ///✿) maximum vawue). σωσ
    *
-   * NOTE that this function assumes both x and y are SORTED arrays.
-   * In graph feature service, the sorting is done in the offline Scalding job.
+   * n-nyote that this function a-assumes both x and y awe sowted a-awways. /(^•ω•^)
+   * in g-gwaph featuwe sewvice, 😳 the sowting is done in the o-offwine scawding j-job. 😳
    *
-   * @param x                     source user's array
-   * @param y                     candidate user's array
-   * @param featureType           feature type
-   * @return
+   * @pawam x                     souwce u-usew's awway
+   * @pawam y                     c-candidate usew's awway
+   * @pawam featuwetype           featuwe type
+   * @wetuwn
    */
-  def apply(x: Array[Long], y: Array[Long], featureType: FeatureType): IntersectionValue = {
+  d-def appwy(x: awway[wong], (⑅˘꒳˘) y-y: awway[wong], 😳😳😳 f-featuwetype: featuwetype): i-intewsectionvawue = {
 
-    val xSize = x.length
-    val ySize = y.length
+    v-vaw xsize = x.wength
+    vaw ysize = y-y.wength
 
-    val intersection =
-      if (xSize.min(ySize) * math.log(xSize.max(ySize)) < (xSize + ySize).toDouble) {
-        if (xSize < ySize) {
-          computeIntersectionUsingBinarySearchOnLargerArray(x, y)
-        } else {
-          computeIntersectionUsingBinarySearchOnLargerArray(y, x)
+    vaw intewsection =
+      if (xsize.min(ysize) * math.wog(xsize.max(ysize)) < (xsize + ysize).todoubwe) {
+        i-if (xsize < y-ysize) {
+          computeintewsectionusingbinawyseawchonwawgewawway(x, 😳 y)
+        } e-ewse {
+          c-computeintewsectionusingbinawyseawchonwawgewawway(y, XD x)
         }
-      } else {
-        computeIntersectionUsingListMerging(x, y)
+      } ewse {
+        computeintewsectionusingwistmewging(x, mya y)
       }
 
-    IntersectionValue(
-      featureType,
-      Some(intersection.toInt),
-      None, // return None for now
-      Some(xSize),
-      Some(ySize)
+    i-intewsectionvawue(
+      featuwetype,
+      some(intewsection.toint),
+      nyone, ^•ﻌ•^ // wetuwn nyone fow nyow
+      some(xsize), ʘwʘ
+      s-some(ysize)
     )
   }
 
   /**
-   * Function for computing the intersections of two SORTED arrays by list merging.
+   * function fow computing t-the intewsections o-of two sowted awways by wist mewging. ( ͡o ω ͡o )
    *
-   * @param x one array
-   * @param y another array
-   * @param ordering ordering function for comparing values of T
-   * @tparam T type
-   * @return The intersection size and the list of intersected elements
+   * @pawam x one a-awway
+   * @pawam y-y anothew awway
+   * @pawam owdewing owdewing function fow compawing vawues o-of t
+   * @tpawam t type
+   * @wetuwn t-the intewsection size and the wist of intewsected ewements
    */
-  private[util] def computeIntersectionUsingListMerging[T](
-    x: Array[T],
-    y: Array[T]
+  p-pwivate[utiw] def computeintewsectionusingwistmewging[t](
+    x-x: awway[t], mya
+    y-y: awway[t]
   )(
-    implicit ordering: Ordering[T]
-  ): Int = {
+    impwicit o-owdewing: owdewing[t]
+  ): i-int = {
 
-    var res: Int = 0
-    var i: Int = 0
-    var j: Int = 0
+    vaw w-wes: int = 0
+    v-vaw i: int = 0
+    vaw j: int = 0
 
-    while (i < x.length && j < y.length) {
-      val comp = ordering.compare(x(i), y(j))
-      if (comp > 0) j += 1
-      else if (comp < 0) i += 1
-      else {
-        res += 1
-        i += 1
+    w-whiwe (i < x-x.wength && j < y.wength) {
+      vaw comp = o-owdewing.compawe(x(i), y-y(j))
+      i-if (comp > 0) j += 1
+      ewse if (comp < 0) i-i += 1
+      ewse {
+        w-wes += 1
+        i-i += 1
         j += 1
       }
     }
-    res
+    wes
   }
 
   /**
-   * Function for computing the intersections of two arrays by binary search on the larger array.
-   * Note that the larger array MUST be SORTED.
+   * function f-fow computing t-the intewsections o-of two awways b-by binawy seawch on the wawgew a-awway. o.O
+   * nyote that the wawgew awway must be sowted. (✿oωo)
    *
-   * @param smallArray            smaller array
-   * @param largeArray            larger array
-   * @param ordering ordering function for comparing values of T
-   * @tparam T type
+   * @pawam smowawway            smowew awway
+   * @pawam w-wawgeawway            wawgew awway
+   * @pawam o-owdewing owdewing function f-fow compawing vawues of t
+   * @tpawam t-t type
    *
-   * @return The intersection size and the list of intersected elements
+   * @wetuwn the intewsection s-size and the w-wist of intewsected e-ewements
    */
-  private[util] def computeIntersectionUsingBinarySearchOnLargerArray[T](
-    smallArray: Array[T],
-    largeArray: Array[T]
+  p-pwivate[utiw] d-def computeintewsectionusingbinawyseawchonwawgewawway[t](
+    smowawway: awway[t], :3
+    wawgeawway: awway[t]
   )(
-    implicit ordering: Ordering[T]
-  ): Int = {
-    var res: Int = 0
-    var i: Int = 0
-    while (i < smallArray.length) {
-      val currentValue: T = smallArray(i)
-      if (binarySearch(largeArray, currentValue) >= 0) {
-        res += 1
+    impwicit owdewing: owdewing[t]
+  ): int = {
+    v-vaw wes: i-int = 0
+    vaw i-i: int = 0
+    whiwe (i < smowawway.wength) {
+      v-vaw cuwwentvawue: t = smowawway(i)
+      if (binawyseawch(wawgeawway, 😳 cuwwentvawue) >= 0) {
+        w-wes += 1
       }
-      i += 1
+      i-i += 1
     }
-    res
+    wes
   }
 
   /**
-   * Function for doing the binary search
+   * f-function fow doing the binawy seawch
    *
-   * @param arr array
-   * @param value the target value for searching
-   * @param ordering ordering function
-   * @tparam T type
-   * @return the index of element in the larger array.
-   *         If there is no such element in the array, return -1.
+   * @pawam a-aww a-awway
+   * @pawam vawue the tawget v-vawue fow seawching
+   * @pawam o-owdewing owdewing function
+   * @tpawam t type
+   * @wetuwn the index of ewement in the wawgew a-awway. (U ﹏ U)
+   *         i-if thewe i-is nyo such ewement i-in the awway, mya w-wetuwn -1. (U ᵕ U❁)
    */
-  private[util] def binarySearch[T](
-    arr: Array[T],
-    value: T
+  pwivate[utiw] d-def binawyseawch[t](
+    a-aww: awway[t], :3
+    vawue: t-t
   )(
-    implicit ordering: Ordering[T]
-  ): Int = {
-    var start = 0
-    var end = arr.length - 1
+    i-impwicit owdewing: owdewing[t]
+  ): i-int = {
+    vaw stawt = 0
+    vaw end = aww.wength - 1
 
-    while (start <= end) {
-      val mid = (start + end) >> 1
-      val comp = ordering.compare(arr(mid), value)
+    w-whiwe (stawt <= end) {
+      vaw m-mid = (stawt + e-end) >> 1
+      vaw comp = owdewing.compawe(aww(mid), mya v-vawue)
       if (comp == 0) {
-        return mid // return the index of the value
-      } else if (comp < 0) {
-        start = mid + 1
-      } else {
+        wetuwn m-mid // wetuwn t-the index of the v-vawue
+      } ewse if (comp < 0) {
+        stawt = mid + 1
+      } e-ewse {
         end = mid - 1
       }
     }
-    // if not existed, return -1
+    // if nyot e-existed, OwO wetuwn -1
     -1
   }
 }

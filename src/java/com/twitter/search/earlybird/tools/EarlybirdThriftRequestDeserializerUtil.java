@@ -1,77 +1,77 @@
-package com.twitter.search.earlybird.tools;
+package com.twittew.seawch.eawwybiwd.toows;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
+impowt j-java.io.buffewedweadew;
+i-impowt j-java.io.ioexception;
+i-impowt java.nio.chawset.chawset;
+i-impowt java.nio.fiwe.fiwesystems;
+i-impowt j-java.nio.fiwe.fiwes;
+i-impowt java.nio.fiwe.path;
 
-import com.google.common.base.Preconditions;
+impowt com.googwe.common.base.pweconditions;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.thrift.TDeserializer;
-import org.apache.thrift.TException;
+impowt owg.apache.commons.codec.binawy.base64;
+impowt owg.apache.thwift.tdesewiawizew;
+impowt owg.apache.thwift.texception;
 
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
 
 /**
  *
- * This tool deserializes the collected thrift requests into human readable format.
+ * this toow desewiawizes t-the cowwected thwift w-wequests into human weadabwe fowmat. ʘwʘ
  *
- * Takes zero or one parameter: path to the thrift request log file.
+ * takes zewo ow one pawametew: p-path to the thwift wequest w-wog fiwe. (ˆ ﻌ ˆ)♡
  *
- * To run: Launch main from IntelliJ / Eclipse.
+ * t-to wun: waunch main fwom intewwij / ecwipse. 😳😳😳
  */
-public final class EarlybirdThriftRequestDeserializerUtil {
-  private static final String DEFAULT_LOG_FILE_LOCATION = "/tmp/eb_req.B64";
-  // Not threadsafe. Single thread main().
-  private static final Base64 B64 = new Base64(0);
-  private static final TDeserializer DESERIALIZER = new TDeserializer();
+pubwic finaw cwass eawwybiwdthwiftwequestdesewiawizewutiw {
+  p-pwivate static finaw stwing defauwt_wog_fiwe_wocation = "/tmp/eb_weq.b64";
+  // nyot thweadsafe. :3 singwe thwead main(). OwO
+  pwivate s-static finaw base64 b64 = nyew b-base64(0);
+  p-pwivate static finaw t-tdesewiawizew d-desewiawizew = nyew tdesewiawizew();
 
-  private EarlybirdThriftRequestDeserializerUtil() {
+  pwivate e-eawwybiwdthwiftwequestdesewiawizewutiw() {
   }
 
   /**
-   * Runs the EarlybirdThriftRequestDeserializerUtil tool with the given command-line arguments.
+   * wuns the eawwybiwdthwiftwequestdesewiawizewutiw t-toow with the given command-wine awguments. (U ﹏ U)
    */
-  public static void main(String[] args) throws IOException {
-    Path logFile = null;
-    if (args.length == 1) {
-      logFile = FileSystems.getDefault().getPath(args[0]);
-    } else if (args.length == 0) {
-      logFile = FileSystems.getDefault().getPath(DEFAULT_LOG_FILE_LOCATION);
-    } else {
-      System.err.println("Usage: takes zero or one parameter (log file path). "
-          + "If no log file is specified, " + DEFAULT_LOG_FILE_LOCATION + " is used.");
-      //CHECKSTYLE:OFF RegexpSinglelineJava
-      System.exit(-1);
-      //CHECKSTYLE:ON RegexpSinglelineJava
+  pubwic static void main(stwing[] awgs) thwows i-ioexception {
+    path wogfiwe = n-nyuww;
+    if (awgs.wength == 1) {
+      w-wogfiwe = f-fiwesystems.getdefauwt().getpath(awgs[0]);
+    } ewse if (awgs.wength == 0) {
+      wogfiwe = fiwesystems.getdefauwt().getpath(defauwt_wog_fiwe_wocation);
+    } e-ewse {
+      s-system.eww.pwintwn("usage: takes z-zewo ow one pawametew (wog f-fiwe path). >w< "
+          + "if n-nyo wog fiwe is specified, (U ﹏ U) " + d-defauwt_wog_fiwe_wocation + " is used.");
+      //checkstywe:off wegexpsingwewinejava
+      s-system.exit(-1);
+      //checkstywe:on wegexpsingwewinejava
     }
-    Preconditions.checkState(logFile.toFile().exists());
+    p-pweconditions.checkstate(wogfiwe.tofiwe().exists());
 
-    BufferedReader reader = Files.newBufferedReader(logFile, Charset.defaultCharset());
-    try {
-      String line;
-      while ((line = reader.readLine()) != null) {
-        EarlybirdRequest ebRequest = deserializeEBRequest(line);
-        if (ebRequest != null) {
-          System.out.println(ebRequest);
+    buffewedweadew w-weadew = fiwes.newbuffewedweadew(wogfiwe, 😳 c-chawset.defauwtchawset());
+    twy {
+      stwing wine;
+      whiwe ((wine = weadew.weadwine()) != nyuww) {
+        eawwybiwdwequest ebwequest = d-desewiawizeebwequest(wine);
+        i-if (ebwequest != nyuww) {
+          s-system.out.pwintwn(ebwequest);
         }
       }
-    } finally {
-      reader.close();
+    } f-finawwy {
+      w-weadew.cwose();
     }
   }
 
-  private static EarlybirdRequest deserializeEBRequest(String line) {
-    EarlybirdRequest ebRequest = new EarlybirdRequest();
-    byte[] bytes = B64.decode(line);
-    try {
-      DESERIALIZER.deserialize(ebRequest, bytes);
-    } catch (TException e) {
-      System.err.println("Error deserializing thrift.");
+  pwivate static eawwybiwdwequest desewiawizeebwequest(stwing w-wine) {
+    eawwybiwdwequest ebwequest = nyew eawwybiwdwequest();
+    byte[] bytes = b64.decode(wine);
+    t-twy {
+      desewiawizew.desewiawize(ebwequest, (ˆ ﻌ ˆ)♡ b-bytes);
+    } c-catch (texception e-e) {
+      system.eww.pwintwn("ewwow desewiawizing t-thwift.");
     }
-    return ebRequest;
+    w-wetuwn e-ebwequest;
   }
 }

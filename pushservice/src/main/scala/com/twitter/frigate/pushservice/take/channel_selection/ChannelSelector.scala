@@ -1,15 +1,15 @@
-package com.twitter.frigate.pushservice.take
+package com.twittew.fwigate.pushsewvice.take
 
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.thriftscala.ChannelName
-import com.twitter.util.Future
+impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.thwiftscawa.channewname
+i-impowt com.twittew.utiw.futuwe
 
-abstract class ChannelSelector {
+a-abstwact cwass c-channewsewectow {
 
-  // Returns a map of channel name, and the candidates that can be sent on that channel.
-  def selectChannel(
-    candidate: PushCandidate
-  ): Future[Seq[ChannelName]]
+  // w-wetuwns a-a map of channew n-nyame, (U ﹏ U) and the candidates that can be sent on that channew. -.-
+  def sewectchannew(
+    c-candidate: pushcandidate
+  ): futuwe[seq[channewname]]
 
-  def getSelectorName(): String
+  d-def getsewectowname(): stwing
 }

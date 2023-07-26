@@ -1,39 +1,39 @@
-package com.twitter.product_mixer.core.feature.featurestorev1.featurevalue
+package com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1.featuwevawue
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.twitter.ml.api.DataRecordMerger
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.ml.featurestore.lib.data.HydrationError
-import com.twitter.product_mixer.core.feature.Feature
+impowt c-com.fastewxmw.jackson.annotation.jsonignowepwopewties
+i-impowt com.fastewxmw.jackson.annotation.jsonpwopewty
+i-impowt c-com.twittew.mw.api.datawecowdmewgew
+i-impowt com.twittew.mw.api.utiw.swichdatawecowd
+i-impowt com.twittew.mw.featuwestowe.wib.data.hydwationewwow
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
 
-private[product_mixer] object FeatureStoreV1ResponseFeature
-    extends Feature[Any, FeatureStoreV1Response]
+p-pwivate[pwoduct_mixew] object featuwestowev1wesponsefeatuwe
+    extends featuwe[any, 😳😳😳 featuwestowev1wesponse]
 
-@JsonIgnoreProperties(Array("richDataRecord", "failedFeatures"))
-private[product_mixer] case class FeatureStoreV1Response(
-  @JsonProperty("richDataRecord") richDataRecord: SRichDataRecord,
-  @JsonProperty("failedFeatures") failedFeatures: Map[_ <: Feature[_, _], Set[HydrationError]]) {
-  // Since RichDataRecord is Java, we need to override this.
-  override def equals(obj: Any): Boolean = obj match {
-    case that: FeatureStoreV1Response =>
-      failedFeatures == that.failedFeatures && richDataRecord.getRecord.equals(
-        that.richDataRecord.getRecord)
-    case _ => false
+@jsonignowepwopewties(awway("wichdatawecowd", 🥺 "faiwedfeatuwes"))
+pwivate[pwoduct_mixew] case c-cwass featuwestowev1wesponse(
+  @jsonpwopewty("wichdatawecowd") wichdatawecowd: swichdatawecowd, mya
+  @jsonpwopewty("faiwedfeatuwes") f-faiwedfeatuwes: map[_ <: f-featuwe[_, 🥺 _], set[hydwationewwow]]) {
+  // since wichdatawecowd is java, we nyeed t-to ovewwide this. >_<
+  ovewwide d-def equaws(obj: a-any): boowean = obj match {
+    case that: featuwestowev1wesponse =>
+      faiwedfeatuwes == that.faiwedfeatuwes && w-wichdatawecowd.getwecowd.equaws(
+        that.wichdatawecowd.getwecowd)
+    case _ => fawse
   }
 }
 
-private[product_mixer] object FeatureStoreV1Response {
-  val dataRecordMerger = new DataRecordMerger
-  def merge(
-    left: FeatureStoreV1Response,
-    right: FeatureStoreV1Response
-  ): FeatureStoreV1Response = {
-    val newDataRecord = left.richDataRecord.getRecord.deepCopy()
-    dataRecordMerger.merge(newDataRecord, right.richDataRecord.getRecord)
-    FeatureStoreV1Response(
-      richDataRecord = SRichDataRecord(newDataRecord),
-      left.failedFeatures ++ right.failedFeatures
+pwivate[pwoduct_mixew] object f-featuwestowev1wesponse {
+  vaw datawecowdmewgew = n-nyew datawecowdmewgew
+  def m-mewge(
+    weft: f-featuwestowev1wesponse, >_<
+    w-wight: featuwestowev1wesponse
+  ): featuwestowev1wesponse = {
+    vaw nyewdatawecowd = w-weft.wichdatawecowd.getwecowd.deepcopy()
+    datawecowdmewgew.mewge(newdatawecowd, (⑅˘꒳˘) wight.wichdatawecowd.getwecowd)
+    f-featuwestowev1wesponse(
+      wichdatawecowd = swichdatawecowd(newdatawecowd), /(^•ω•^)
+      weft.faiwedfeatuwes ++ wight.faiwedfeatuwes
     )
   }
 }

@@ -1,43 +1,43 @@
-package com.twitter.tweetypie
-package backends
+package com.twittew.tweetypie
+package b-backends
 
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.mediainfo.server.thriftscala.GetTweetMediaInfoRequest
-import com.twitter.mediainfo.server.thriftscala.GetTweetMediaInfoResponse
-import com.twitter.mediainfo.server.{thriftscala => mis}
-import com.twitter.servo.util.FutureArrow
-import com.twitter.tweetypie.util.RetryPolicyBuilder
+impowt c-com.twittew.finagwe.sewvice.wetwypowicy
+i-impowt c-com.twittew.mediainfo.sewvew.thwiftscawa.gettweetmediainfowequest
+i-impowt com.twittew.mediainfo.sewvew.thwiftscawa.gettweetmediainfowesponse
+i-impowt com.twittew.mediainfo.sewvew.{thwiftscawa => m-mis}
+impowt c-com.twittew.sewvo.utiw.futuweawwow
+impowt com.twittew.tweetypie.utiw.wetwypowicybuiwdew
 
-object MediaInfoService {
-  import Backend._
+object mediainfosewvice {
+  impowt backend._
 
-  type GetTweetMediaInfo = FutureArrow[mis.GetTweetMediaInfoRequest, mis.GetTweetMediaInfoResponse]
+  t-type gettweetmediainfo = futuweawwow[mis.gettweetmediainfowequest, >_< mis.gettweetmediainfowesponse]
 
-  def fromClient(client: mis.MediaInfoService.MethodPerEndpoint): MediaInfoService =
-    new MediaInfoService {
-      val getTweetMediaInfo = FutureArrow(client.getTweetMediaInfo)
+  def f-fwomcwient(cwient: mis.mediainfosewvice.methodpewendpoint): mediainfosewvice =
+    n-nyew mediainfosewvice {
+      vaw gettweetmediainfo = futuweawwow(cwient.gettweetmediainfo)
     }
 
-  case class Config(
-    requestTimeout: Duration,
-    totalTimeout: Duration,
-    timeoutBackoffs: Stream[Duration]) {
+  case c-cwass config(
+    wequesttimeout: d-duwation, (⑅˘꒳˘)
+    t-totawtimeout: duwation, /(^•ω•^)
+    timeoutbackoffs: stweam[duwation]) {
 
-    def apply(svc: MediaInfoService, ctx: Backend.Context): MediaInfoService =
-      new MediaInfoService {
-        val getTweetMediaInfo: FutureArrow[GetTweetMediaInfoRequest, GetTweetMediaInfoResponse] =
-          policy("getTweetMediaInfo", ctx)(svc.getTweetMediaInfo)
+    def appwy(svc: mediainfosewvice, rawr x3 c-ctx: backend.context): mediainfosewvice =
+      nyew mediainfosewvice {
+        vaw gettweetmediainfo: futuweawwow[gettweetmediainfowequest, (U ﹏ U) g-gettweetmediainfowesponse] =
+          powicy("gettweetmediainfo", (U ﹏ U) c-ctx)(svc.gettweetmediainfo)
       }
 
-    private[this] def policy[A, B](name: String, ctx: Context): Builder[A, B] =
-      defaultPolicy(name, requestTimeout, retryPolicy, ctx, totalTimeout = totalTimeout)
+    p-pwivate[this] def p-powicy[a, (⑅˘꒳˘) b](name: s-stwing, òωó ctx: context): buiwdew[a, ʘwʘ b] =
+      d-defauwtpowicy(name, wequesttimeout, wetwypowicy, /(^•ω•^) c-ctx, ʘwʘ totawtimeout = totawtimeout)
 
-    private[this] def retryPolicy[B]: RetryPolicy[Try[B]] =
-      RetryPolicyBuilder.timeouts[Any](timeoutBackoffs)
+    pwivate[this] def wetwypowicy[b]: wetwypowicy[twy[b]] =
+      wetwypowicybuiwdew.timeouts[any](timeoutbackoffs)
   }
 }
 
-trait MediaInfoService {
-  import MediaInfoService._
-  val getTweetMediaInfo: GetTweetMediaInfo
+t-twait mediainfosewvice {
+  impowt m-mediainfosewvice._
+  v-vaw gettweetmediainfo: gettweetmediainfo
 }

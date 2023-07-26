@@ -1,19 +1,19 @@
-package com.twitter.search.common.relevance.features;
+package com.twittew.seawch.common.wewevance.featuwes;
 
-public class TweetFeatures {
-  private final TweetTextQuality tweetTextQuality = new TweetTextQuality();
-  private final TweetTextFeatures tweetTextFeatures = new TweetTextFeatures();
-  private final TweetUserFeatures tweetUserFeatures = new TweetUserFeatures();
+pubwic cwass t-tweetfeatuwes {
+  p-pwivate finaw t-tweettextquawity t-tweettextquawity = n-nyew tweettextquawity();
+  p-pwivate finaw t-tweettextfeatuwes t-tweettextfeatuwes = nyew tweettextfeatuwes();
+  pwivate finaw tweetusewfeatuwes tweetusewfeatuwes = n-nyew tweetusewfeatuwes();
 
-  public TweetTextFeatures getTweetTextFeatures() {
-    return tweetTextFeatures;
+  pubwic tweettextfeatuwes gettweettextfeatuwes() {
+    w-wetuwn tweettextfeatuwes;
   }
 
-  public TweetTextQuality getTweetTextQuality() {
-    return tweetTextQuality;
+  p-pubwic tweettextquawity gettweettextquawity() {
+    wetuwn t-tweettextquawity;
   }
 
-  public TweetUserFeatures getTweetUserFeatures() {
-    return tweetUserFeatures;
+  pubwic t-tweetusewfeatuwes g-gettweetusewfeatuwes() {
+    wetuwn tweetusewfeatuwes;
   }
 }

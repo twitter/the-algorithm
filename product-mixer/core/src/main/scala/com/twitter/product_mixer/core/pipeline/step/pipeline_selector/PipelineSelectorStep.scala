@@ -1,43 +1,43 @@
-package com.twitter.product_mixer.core.pipeline.step.pipeline_selector
+package com.twittew.pwoduct_mixew.cowe.pipewine.step.pipewine_sewectow
 
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hasquewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.step.step
+i-impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.executow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.executowwesuwt
+i-impowt com.twittew.stitch.awwow
+impowt javax.inject.inject
 
 /**
- * Pipeline Selection step to decide which pipeline to execute. This step doesn't update state, as
- * the selected pipeline identifier is added to the executor results list map for later retrieval
+ * pipewine sewection step to decide which pipewine t-to exekawaii~. ( ͡o ω ͡o ) this step doesn't update state, (U ﹏ U) a-as
+ * the sewected pipewine i-identifiew is added to the executow wesuwts wist map fow watew wetwievaw
  *
- * @tparam Query Pipeline query model
- * @tparam State The pipeline state domain model.
+ * @tpawam q-quewy pipewine quewy modew
+ * @tpawam s-state t-the pipewine state domain modew.
  */
-case class PipelineSelectorStep[Query <: PipelineQuery, State <: HasQuery[Query, State]] @Inject() (
-) extends Step[State, Query => ComponentIdentifier, Query, PipelineSelectorResult] {
-  override def isEmpty(config: Query => ComponentIdentifier): Boolean = false
+case cwass pipewinesewectowstep[quewy <: pipewinequewy, (///ˬ///✿) s-state <: hasquewy[quewy, >w< state]] @inject() (
+) extends step[state, rawr quewy => componentidentifiew, mya quewy, ^^ pipewinesewectowwesuwt] {
+  o-ovewwide def isempty(config: q-quewy => componentidentifiew): b-boowean = fawse
 
-  override def adaptInput(
-    state: State,
-    config: Query => ComponentIdentifier
-  ): Query = state.query
+  o-ovewwide def a-adaptinput(
+    state: state, 😳😳😳
+    config: quewy => c-componentidentifiew
+  ): quewy = state.quewy
 
-  override def arrow(
-    config: Query => ComponentIdentifier,
-    context: Executor.Context
-  ): Arrow[Query, PipelineSelectorResult] = Arrow.map { query: Query =>
-    PipelineSelectorResult(config(query))
+  o-ovewwide def awwow(
+    config: quewy => componentidentifiew, mya
+    context: executow.context
+  ): awwow[quewy, 😳 pipewinesewectowwesuwt] = a-awwow.map { quewy: quewy =>
+    p-pipewinesewectowwesuwt(config(quewy))
   }
 
-  // Noop since we keep the identifier in the executor results
-  override def updateState(
-    state: State,
-    executorResult: PipelineSelectorResult,
-    config: Query => ComponentIdentifier
-  ): State = state
+  // n-nyoop s-since we keep the identifiew in the executow wesuwts
+  ovewwide d-def updatestate(
+    s-state: state, -.-
+    executowwesuwt: p-pipewinesewectowwesuwt, 🥺
+    c-config: quewy => componentidentifiew
+  ): s-state = state
 }
 
-case class PipelineSelectorResult(pipelineIdentifier: ComponentIdentifier) extends ExecutorResult
+case c-cwass pipewinesewectowwesuwt(pipewineidentifiew: componentidentifiew) extends e-executowwesuwt

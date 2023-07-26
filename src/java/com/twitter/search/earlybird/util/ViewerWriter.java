@@ -1,47 +1,47 @@
-package com.twitter.search.earlybird.util;
+package com.twittew.seawch.eawwybiwd.utiw;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
 /**
- * Interface class for writer.  Writer should be passed in
- * and have these methods.  Currently keeps the hierarchy for
- * completed and valid json, methods mirror the ones found in
- * JsonWriter
- * http://google-gson.googlecode.com/svn/trunk/gson/docs/javadocs/com/google/gson/stream/JsonWriter.html
+ * intewface c-cwass fow w-wwitew. /(^•ω•^)  wwitew s-shouwd be passed i-in
+ * and have t-these methods. rawr x3  c-cuwwentwy keeps t-the hiewawchy fow
+ * compweted and vawid json, (U ﹏ U) methods miwwow the ones found i-in
+ * jsonwwitew
+ * http://googwe-gson.googwecode.com/svn/twunk/gson/docs/javadocs/com/googwe/gson/stweam/jsonwwitew.htmw
  */
-public interface ViewerWriter {
+pubwic i-intewface viewewwwitew {
   /**
-   * Writes a mark for the beginning of an array.
+   * wwites a-a mawk fow the beginning of an awway. (U ﹏ U)
    */
-  ViewerWriter beginArray() throws IOException;
+  viewewwwitew beginawway() t-thwows ioexception;
 
   /**
-   * Writes a mark for the beginning of an object.
+   * wwites a m-mawk fow the beginning o-of an object. (⑅˘꒳˘)
    */
-  ViewerWriter beginObject() throws IOException;
+  viewewwwitew beginobject() thwows ioexception;
 
   /**
-   * Writes a mark for the end of an array.
+   * w-wwites a mawk fow the end of an awway. òωó
    */
-  ViewerWriter endArray() throws IOException;
+  viewewwwitew endawway() t-thwows ioexception;
 
   /**
-   * Writes a mark for the end of an object.
+   * wwites a mawk fow t-the end of an o-object. ʘwʘ
    */
-  ViewerWriter endObject() throws IOException;
+  v-viewewwwitew endobject() t-thwows ioexception;
 
   /**
-   * Writes the name (key) of a property.
+   * wwites t-the nyame (key) of a pwopewty. /(^•ω•^)
    */
-  ViewerWriter name(String field) throws IOException;
+  viewewwwitew n-nyame(stwing fiewd) thwows ioexception;
 
   /**
-   * Writes the value of a property.
+   * wwites the vawue of a pwopewty. ʘwʘ
    */
-  ViewerWriter value(String s) throws IOException;
+  viewewwwitew vawue(stwing s) thwows i-ioexception;
 
   /**
-   * Writes a new line.
+   * wwites a-a nyew wine. σωσ
    */
-  ViewerWriter newline() throws IOException;
+  v-viewewwwitew n-nyewwine() thwows ioexception;
 }

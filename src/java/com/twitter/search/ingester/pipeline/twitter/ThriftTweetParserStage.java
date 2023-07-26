@@ -1,178 +1,178 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import java.util.List;
-import java.util.Map;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.naming.NamingException;
+impowt java.utiw.wist;
+i-impowt j-java.utiw.map;
+i-impowt javax.annotation.nonnuww;
+i-impowt javax.annotation.nuwwabwe;
+i-impowt javax.naming.namingexception;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+i-impowt c-com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.wists;
+impowt com.googwe.common.cowwect.maps;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducedTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.commons.pipewine.stageexception;
+i-impowt owg.apache.commons.pipewine.vawidation.consumedtypes;
+impowt o-owg.apache.commons.pipewine.vawidation.pwoducedtypes;
+impowt owg.swf4j.woggew;
+impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.debug.thriftjava.DebugEvents;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.ingester.model.IngesterTweetEvent;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.twitter.thriftparse.ThriftTweetParsingException;
-import com.twitter.search.ingester.pipeline.twitter.thriftparse.TweetEventParseHelper;
-import com.twitter.tweetypie.thriftjava.TweetCreateEvent;
-import com.twitter.tweetypie.thriftjava.TweetDeleteEvent;
-import com.twitter.tweetypie.thriftjava.TweetEventData;
+impowt com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+impowt com.twittew.seawch.common.debug.thwiftjava.debugevents;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.wewevance.entities.twittewmessage;
+impowt c-com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+impowt c-com.twittew.seawch.ingestew.modew.ingestewtweetevent;
+impowt com.twittew.seawch.ingestew.modew.ingestewtwittewmessage;
+impowt com.twittew.seawch.ingestew.pipewine.twittew.thwiftpawse.thwifttweetpawsingexception;
+i-impowt com.twittew.seawch.ingestew.pipewine.twittew.thwiftpawse.tweeteventpawsehewpew;
+impowt com.twittew.tweetypie.thwiftjava.tweetcweateevent;
+impowt com.twittew.tweetypie.thwiftjava.tweetdeweteevent;
+i-impowt com.twittew.tweetypie.thwiftjava.tweeteventdata;
 
-@ConsumedTypes(IngesterTweetEvent.class)
-@ProducedTypes(IngesterTwitterMessage.class)
-public class ThriftTweetParserStage extends TwitterBaseStage<IngesterTweetEvent, TwitterMessage> {
-  private static final Logger LOG = LoggerFactory.getLogger(ThriftTweetParserStage.class);
+@consumedtypes(ingestewtweetevent.cwass)
+@pwoducedtypes(ingestewtwittewmessage.cwass)
+pubwic cwass t-thwifttweetpawsewstage e-extends t-twittewbasestage<ingestewtweetevent, (///ˬ///✿) t-twittewmessage> {
+  pwivate static finaw woggew w-wog = woggewfactowy.getwoggew(thwifttweetpawsewstage.cwass);
 
-  // TweetEventData is a union of all possible tweet event types. TweetEventData._Fields is an enum
-  // that corresponds to the fields in that union. So essentially, TweetEventData._Fields tells us
-  // which tweet event we're getting inside TweetEventData. We want to keep track of how many tweet
-  // events of each type we're getting.
-  private final Map<TweetEventData._Fields, SearchCounter> tweetEventCounters =
-      Maps.newEnumMap(TweetEventData._Fields.class);
+  // tweeteventdata is a union o-of aww possibwe tweet event types. 🥺 tweeteventdata._fiewds is an enum
+  // that cowwesponds to t-the fiewds in that union. OwO so essentiawwy, >w< t-tweeteventdata._fiewds t-tewws us
+  // which t-tweet event we'we getting inside tweeteventdata. 🥺 we want to k-keep twack of how m-many tweet
+  // events of each t-type we'we getting.
+  p-pwivate finaw map<tweeteventdata._fiewds, nyaa~~ s-seawchcountew> tweeteventcountews =
+      m-maps.newenummap(tweeteventdata._fiewds.cwass);
 
-  private final List<String> tweetCreateEventBranches = Lists.newArrayList();
-  private final List<String> tweetDeleteEventBranches = Lists.newArrayList();
+  pwivate finaw wist<stwing> t-tweetcweateeventbwanches = wists.newawwaywist();
+  p-pwivate finaw wist<stwing> t-tweetdeweteeventbwanches = w-wists.newawwaywist();
 
-  private boolean shouldIndexProtectedTweets;
-  private SearchCounter totalEventsCount;
-  private SearchCounter thriftParsingErrorsCount;
+  pwivate boowean shouwdindexpwotectedtweets;
+  pwivate seawchcountew totaweventscount;
+  pwivate seawchcountew thwiftpawsingewwowscount;
 
-  private List<PenguinVersion> supportedPenguinVersions;
+  p-pwivate wist<penguinvewsion> s-suppowtedpenguinvewsions;
 
-  @Override
-  protected void initStats() {
-    super.initStats();
+  @ovewwide
+  pwotected v-void initstats() {
+    s-supew.initstats();
 
-    for (TweetEventData._Fields field : TweetEventData._Fields.values()) {
-      tweetEventCounters.put(
-          field,
-          this.makeStageCounter(field.name().toLowerCase() + "_count"));
+    f-fow (tweeteventdata._fiewds fiewd : tweeteventdata._fiewds.vawues()) {
+      tweeteventcountews.put(
+          fiewd, ^^
+          t-this.makestagecountew(fiewd.name().towowewcase() + "_count"));
     }
-    totalEventsCount = this.makeStageCounter("total_events_count");
-    thriftParsingErrorsCount = this.makeStageCounter("thrift_parsing_errors_count");
+    totaweventscount = this.makestagecountew("totaw_events_count");
+    thwiftpawsingewwowscount = this.makestagecountew("thwift_pawsing_ewwows_count");
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    supportedPenguinVersions = wireModule.getPenguinVersions();
-    LOG.info("Supported penguin versions: {}", supportedPenguinVersions);
+  @ovewwide
+  p-pwotected void doinnewpwepwocess() t-thwows s-stageexception, >w< n-nyamingexception {
+    suppowtedpenguinvewsions = w-wiwemoduwe.getpenguinvewsions();
+    w-wog.info("suppowted p-penguin v-vewsions: {}", OwO suppowtedpenguinvewsions);
 
-    shouldIndexProtectedTweets = earlybirdCluster == EarlybirdCluster.PROTECTED
-        || earlybirdCluster == EarlybirdCluster.REALTIME_CG;
+    shouwdindexpwotectedtweets = eawwybiwdcwustew == e-eawwybiwdcwustew.pwotected
+        || e-eawwybiwdcwustew == e-eawwybiwdcwustew.weawtime_cg;
 
-    Preconditions.checkState(!tweetDeleteEventBranches.isEmpty(),
-                             "At least one delete branch must be specified.");
+    p-pweconditions.checkstate(!tweetdeweteeventbwanches.isempty(), XD
+                             "at weast o-one dewete bwanch must be specified.");
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof TweetEventData || obj instanceof IngesterTweetEvent)) {
-      LOG.error("Object is not a TweetEventData or IngesterTweetEvent: {}", obj);
-      throw new StageException(this, "Object is not a TweetEventData or IngesterTweetEvent");
+  @ovewwide
+  pubwic void innewpwocess(object obj) thwows stageexception {
+    i-if (!(obj instanceof tweeteventdata || obj instanceof ingestewtweetevent)) {
+      wog.ewwow("object is nyot a t-tweeteventdata ow ingestewtweetevent: {}", ^^;; obj);
+      thwow nyew s-stageexception(this, 🥺 "object is n-not a tweeteventdata o-ow ingestewtweetevent");
     }
 
-    supportedPenguinVersions = wireModule.getCurrentlyEnabledPenguinVersions();
+    suppowtedpenguinvewsions = w-wiwemoduwe.getcuwwentwyenabwedpenguinvewsions();
 
-    try {
-      IngesterTweetEvent ingesterTweetEvent = (IngesterTweetEvent) obj;
-      TweetEventData tweetEventData = ingesterTweetEvent.getData();
-      DebugEvents debugEvents = ingesterTweetEvent.getDebugEvents();
+    twy {
+      i-ingestewtweetevent i-ingestewtweetevent = (ingestewtweetevent) obj;
+      tweeteventdata tweeteventdata = ingestewtweetevent.getdata();
+      debugevents debugevents = ingestewtweetevent.getdebugevents();
 
-      // Determine if the message is a tweet delete event before the next stages mutate it.
-      IngesterTwitterMessage message = getTwitterMessage(tweetEventData, debugEvents);
-      boolean shouldEmitMessage = message != null
-          && message.isIndexable(shouldIndexProtectedTweets);
+      // d-detewmine if the message i-is a tweet dewete event befowe t-the nyext stages m-mutate it. XD
+      ingestewtwittewmessage message = g-gettwittewmessage(tweeteventdata, (U ᵕ U❁) d-debugevents);
+      boowean s-shouwdemitmessage = m-message != nyuww
+          && message.isindexabwe(shouwdindexpwotectedtweets);
 
-      if (shouldEmitMessage) {
-        if (!message.isDeleted()) {
-          emitAndCount(message);
+      if (shouwdemitmessage) {
+        if (!message.isdeweted()) {
+          e-emitandcount(message);
 
-          for (String tweetCreateEventBranch : tweetCreateEventBranches) {
-            // If we need to send the message to another branch, we need to make a copy.
-            // Otherwise, we'll have multiple stages mutating the same object in parallel.
-            IngesterTwitterMessage tweetCreateEventBranchMessage =
-                getTwitterMessage(tweetEventData, debugEvents);
-            emitToBranchAndCount(tweetCreateEventBranch, tweetCreateEventBranchMessage);
+          f-fow (stwing t-tweetcweateeventbwanch : tweetcweateeventbwanches) {
+            // i-if we nyeed t-to send the message to anothew b-bwanch, :3 we nyeed to make a copy. ( ͡o ω ͡o )
+            // othewwise, òωó we'ww have muwtipwe stages mutating t-the same object i-in pawawwew. σωσ
+            ingestewtwittewmessage tweetcweateeventbwanchmessage =
+                g-gettwittewmessage(tweeteventdata, (U ᵕ U❁) d-debugevents);
+            emittobwanchandcount(tweetcweateeventbwanch, (✿oωo) tweetcweateeventbwanchmessage);
           }
-        } else {
-          for (String tweetDeleteEventBranch : tweetDeleteEventBranches) {
-            // If we need to send the message to another branch, we need to make a copy.
-            // Otherwise, we'll have multiple stages mutating the same object in parallel.
-            IngesterTwitterMessage tweetDeleteEventBranchMessage =
-                getTwitterMessage(tweetEventData, debugEvents);
-            emitToBranchAndCount(tweetDeleteEventBranch, tweetDeleteEventBranchMessage);
+        } ewse {
+          fow (stwing tweetdeweteeventbwanch : t-tweetdeweteeventbwanches) {
+            // if we nyeed to send the message to anothew bwanch, ^^ we nyeed to m-make a copy. ^•ﻌ•^
+            // othewwise, XD we'ww have m-muwtipwe stages m-mutating the same object in pawawwew. :3
+            ingestewtwittewmessage t-tweetdeweteeventbwanchmessage =
+                g-gettwittewmessage(tweeteventdata, (ꈍᴗꈍ) debugevents);
+            emittobwanchandcount(tweetdeweteeventbwanch, :3 tweetdeweteeventbwanchmessage);
           }
         }
       }
-    } catch (ThriftTweetParsingException e) {
-      thriftParsingErrorsCount.increment();
-      LOG.error("Failed to parse Thrift tweet event: " + obj, e);
-      throw new StageException(this, e);
+    } catch (thwifttweetpawsingexception e-e) {
+      thwiftpawsingewwowscount.incwement();
+      w-wog.ewwow("faiwed to pawse thwift tweet event: " + obj, (U ﹏ U) e);
+      t-thwow nyew stageexception(this, UwU e-e);
     }
   }
 
-  @Nullable
-  private IngesterTwitterMessage getTwitterMessage(
-      @Nonnull TweetEventData tweetEventData,
-      @Nullable DebugEvents debugEvents)
-      throws ThriftTweetParsingException {
-    totalEventsCount.increment();
+  @nuwwabwe
+  p-pwivate ingestewtwittewmessage gettwittewmessage(
+      @nonnuww t-tweeteventdata tweeteventdata, 😳😳😳
+      @nuwwabwe d-debugevents debugevents)
+      t-thwows thwifttweetpawsingexception {
+    t-totaweventscount.incwement();
 
-    // TweetEventData is a union of all possible tweet event types. TweetEventData._Fields is an
-    // enum that corresponds to all TweetEventData fields. By calling TweetEventData.getSetField(),
-    // we can determine which field is set.
-    TweetEventData._Fields tweetEventDataField = tweetEventData.getSetField();
-    Preconditions.checkNotNull(tweetEventDataField);
-    tweetEventCounters.get(tweetEventDataField).increment();
+    // tweeteventdata i-is a union of aww p-possibwe tweet event types. XD tweeteventdata._fiewds is an
+    // e-enum that cowwesponds t-to aww tweeteventdata f-fiewds. by cawwing tweeteventdata.getsetfiewd(), o.O
+    // w-we can detewmine which fiewd i-is set. (⑅˘꒳˘)
+    tweeteventdata._fiewds t-tweeteventdatafiewd = tweeteventdata.getsetfiewd();
+    pweconditions.checknotnuww(tweeteventdatafiewd);
+    tweeteventcountews.get(tweeteventdatafiewd).incwement();
 
-    if (tweetEventDataField == TweetEventData._Fields.TWEET_CREATE_EVENT) {
-      TweetCreateEvent tweetCreateEvent = tweetEventData.getTweet_create_event();
-      return TweetEventParseHelper.getTwitterMessageFromCreationEvent(
-          tweetCreateEvent, supportedPenguinVersions, debugEvents);
+    i-if (tweeteventdatafiewd == t-tweeteventdata._fiewds.tweet_cweate_event) {
+      tweetcweateevent t-tweetcweateevent = t-tweeteventdata.gettweet_cweate_event();
+      wetuwn tweeteventpawsehewpew.gettwittewmessagefwomcweationevent(
+          t-tweetcweateevent, 😳😳😳 suppowtedpenguinvewsions, nyaa~~ debugevents);
     }
-    if (tweetEventDataField == TweetEventData._Fields.TWEET_DELETE_EVENT) {
-      TweetDeleteEvent tweetDeleteEvent = tweetEventData.getTweet_delete_event();
-      return TweetEventParseHelper.getTwitterMessageFromDeletionEvent(
-          tweetDeleteEvent, supportedPenguinVersions, debugEvents);
+    if (tweeteventdatafiewd == tweeteventdata._fiewds.tweet_dewete_event) {
+      tweetdeweteevent tweetdeweteevent = t-tweeteventdata.gettweet_dewete_event();
+      wetuwn tweeteventpawsehewpew.gettwittewmessagefwomdewetionevent(
+          t-tweetdeweteevent, rawr suppowtedpenguinvewsions, -.- d-debugevents);
     }
-    return null;
+    wetuwn nyuww;
   }
 
   /**
-   * Sets the branches to which all TweetDeleteEvents should be emitted.
+   * s-sets the bwanches to w-which aww tweetdeweteevents s-shouwd b-be emitted. (✿oωo)
    *
-   * @param tweetDeleteEventBranchNames A comma-separated list of branches.
+   * @pawam t-tweetdeweteeventbwanchnames a-a comma-sepawated wist of bwanches. /(^•ω•^)
    */
-  public void setTweetDeleteEventBranchNames(String tweetDeleteEventBranchNames) {
-    parseBranches(tweetDeleteEventBranchNames, tweetDeleteEventBranches);
+  pubwic void settweetdeweteeventbwanchnames(stwing tweetdeweteeventbwanchnames) {
+    pawsebwanches(tweetdeweteeventbwanchnames, 🥺 tweetdeweteeventbwanches);
   }
 
   /**
-   * Sets the additional branches to which all TweetCreateEvents should be emitted.
+   * s-sets the additionaw b-bwanches t-to which aww tweetcweateevents shouwd be emitted. ʘwʘ
    *
-   * @param tweetCreateEventBranchNames A comma-separated list of branches.
+   * @pawam t-tweetcweateeventbwanchnames a comma-sepawated wist of bwanches. UwU
    */
-  public void setTweetCreateEventBranchNames(String tweetCreateEventBranchNames) {
-    parseBranches(tweetCreateEventBranchNames, tweetCreateEventBranches);
+  pubwic v-void settweetcweateeventbwanchnames(stwing tweetcweateeventbwanchnames) {
+    p-pawsebwanches(tweetcweateeventbwanchnames, XD tweetcweateeventbwanches);
   }
 
-  private void parseBranches(String branchNames, List<String> branches) {
-    branches.clear();
-    for (String branch : branchNames.split(",")) {
-      String trimmedBranch = branch.trim();
-      Preconditions.checkState(!trimmedBranch.isEmpty(), "Branches cannot be empty strings.");
-      branches.add(trimmedBranch);
+  pwivate v-void pawsebwanches(stwing bwanchnames, (✿oωo) wist<stwing> bwanches) {
+    b-bwanches.cweaw();
+    f-fow (stwing bwanch : bwanchnames.spwit(",")) {
+      s-stwing twimmedbwanch = b-bwanch.twim();
+      pweconditions.checkstate(!twimmedbwanch.isempty(), :3 "bwanches cannot be empty stwings.");
+      bwanches.add(twimmedbwanch);
     }
   }
 }

@@ -1,28 +1,28 @@
-package com.twitter.interaction_graph.scio.agg_address_book
+package com.twittew.intewaction_gwaph.scio.agg_addwess_book
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.addressbook.jobs.simplematches.SimpleUserMatchesScalaDataset
-import com.twitter.addressbook.matches.thriftscala.UserMatchesRecord
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.cde.scio.dal_read.SourceUtil
-import org.joda.time.Interval
+impowt c-com.spotify.scio.sciocontext
+i-impowt com.spotify.scio.vawues.scowwection
+i-impowt c-com.twittew.addwessbook.jobs.simpwematches.simpweusewmatchesscawadataset
+i-impowt c-com.twittew.addwessbook.matches.thwiftscawa.usewmatcheswecowd
+i-impowt com.twittew.beam.job.sewviceidentifiewoptions
+i-impowt com.twittew.cde.scio.daw_wead.souwceutiw
+impowt owg.joda.time.intewvaw
 
-case class InteractionGraphAddressBookSource(
-  pipelineOptions: InteractionGraphAddressBookOption
+case cwass intewactiongwaphaddwessbooksouwce(
+  pipewineoptions: intewactiongwaphaddwessbookoption
 )(
-  implicit sc: ScioContext,
+  i-impwicit sc: sciocontext, mya
 ) {
-  val dalEnvironment: String = pipelineOptions
-    .as(classOf[ServiceIdentifierOptions])
-    .getEnvironment()
+  vaw d-dawenviwonment: stwing = pipewineoptions
+    .as(cwassof[sewviceidentifiewoptions])
+    .getenviwonment()
 
-  def readSimpleUserMatches(
-    dateInterval: Interval
-  ): SCollection[UserMatchesRecord] = {
-    SourceUtil.readMostRecentSnapshotDALDataset[UserMatchesRecord](
-      SimpleUserMatchesScalaDataset,
-      dateInterval,
-      dalEnvironment)
+  d-def weadsimpweusewmatches(
+    dateintewvaw: intewvaw
+  ): s-scowwection[usewmatcheswecowd] = {
+    souwceutiw.weadmostwecentsnapshotdawdataset[usewmatcheswecowd](
+      simpweusewmatchesscawadataset, mya
+      d-dateintewvaw, 😳
+      d-dawenviwonment)
   }
 }

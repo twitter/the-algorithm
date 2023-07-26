@@ -1,15 +1,15 @@
-package com.twitter.search.core.earlybird.index.extensions;
+package com.twittew.seawch.cowe.eawwybiwd.index.extensions;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+i-impowt c-com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
 
 /**
- * Base index extensions class.
+ * b-base index extensions c-cwass. σωσ
  */
-public interface EarlybirdIndexExtensionsData {
+p-pubwic intewface e-eawwybiwdindexextensionsdata {
   /**
-   * Sets up the extensions for the given reader.
+   * sets u-up the extensions fow the given weadew. >_<
    */
-  void setupExtensions(EarlybirdIndexSegmentAtomicReader atomicReader) throws IOException;
+  void setupextensions(eawwybiwdindexsegmentatomicweadew atomicweadew) t-thwows ioexception;
 }

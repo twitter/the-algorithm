@@ -1,35 +1,35 @@
-class Profile(Struct):
-  project = Required(String)
-  date = Required(String)
-  build_target = Required(String)
-  environment = Default(String, 'dev')
-  job_name = Default(String, 'ftr-recs-d6w-job')
-  machine = Default(String, 'n2-highmem-4')
+cwass pwofiwe(stwuct):
+  pwoject = w-wequiwed(stwing)
+  d-date = wequiwed(stwing)
+  buiwd_tawget = w-wequiwed(stwing)
+  e-enviwonment = defauwt(stwing, :3 'dev')
+  j-job_name = d-defauwt(stwing, 😳😳😳 'ftw-wecs-d6w-job')
+  m-machine = d-defauwt(stwing, -.- 'n2-highmem-4')
 
-job = Job(
-   name='{{profile.job_name}}',
-   project='{{profile.project}}',
-   staging_bucket='{{profile.project}}',
-   service_account='{{profile.user_name}}-shdw@twttr-dp-svc-accounts.iam.gserviceaccount.com',
-   region='us-central1',
-   worker_config=WorkerConfig(
-       num_workers=2,
-       worker_machine_type='{{profile.machine}}',
-       worker_disk_type=WorkerDiskType('HDD'),
-   ),
-   extra_args={
-     "date": '{{profile.date}}'
-   },
-   service_identifier='twtr:svc:{{profile.user_name}}:{{profile.job_name}}:{{profile.environment}}:{{profile.cluster}}',
-   deployment_config=BatchDeploymentConfig(
-     role='{{profile.user_name}}',
-     build_target='{{profile.build_target}}',
-     gcp_deployment_credentials='/var/lib/tss/keys/{{profile.user_name}}/cloud/gcp/dp/shadow.json',
-     statebird_config=StatebirdConfig(
-       batch_width='PT4H',
-       first_time='{{profile.date}}',
+job = job(
+   nyame='{{pwofiwe.job_name}}',
+   pwoject='{{pwofiwe.pwoject}}', ( ͡o ω ͡o )
+   staging_bucket='{{pwofiwe.pwoject}}', rawr x3
+   s-sewvice_account='{{pwofiwe.usew_name}}-shdw@twttw-dp-svc-accounts.iam.gsewviceaccount.com', nyaa~~
+   wegion='us-centwaw1', /(^•ω•^)
+   wowkew_config=wowkewconfig(
+       n-nyum_wowkews=2, rawr
+       wowkew_machine_type='{{pwofiwe.machine}}', OwO
+       w-wowkew_disk_type=wowkewdisktype('hdd'),
+   ), (U ﹏ U)
+   extwa_awgs={
+     "date": '{{pwofiwe.date}}'
+   }, >_<
+   sewvice_identifiew='twtw:svc:{{pwofiwe.usew_name}}:{{pwofiwe.job_name}}:{{pwofiwe.enviwonment}}:{{pwofiwe.cwustew}}', rawr x3
+   depwoyment_config=batchdepwoymentconfig(
+     w-wowe='{{pwofiwe.usew_name}}', mya
+     buiwd_tawget='{{pwofiwe.buiwd_tawget}}', nyaa~~
+     g-gcp_depwoyment_cwedentiaws='/vaw/wib/tss/keys/{{pwofiwe.usew_name}}/cwoud/gcp/dp/shadow.json', (⑅˘꒳˘)
+     s-statebiwd_config=statebiwdconfig(
+       batch_width='pt4h', rawr x3
+       fiwst_time='{{pwofiwe.date}}', (✿oωo)
      ),
-     timeout='PT8H'
+     timeout='pt8h'
    )
 )
 

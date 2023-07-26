@@ -1,42 +1,42 @@
-package com.twitter.tweetypie.decider.overrides
+package com.twittew.tweetypie.decidew.ovewwides
 
-import com.twitter.decider.LocalOverrides
+impowt com.twittew.decidew.wocawuvwwides
 
-object TweetyPieDeciderOverrides extends LocalOverrides.Namespace("tweetypie", "tweetypie_") {
-  val CheckSpamOnRetweet: LocalOverrides.Override = feature("check_spam_on_retweet")
-  val CheckSpamOnTweet: LocalOverrides.Override = feature("check_spam_on_tweet")
-  val ConversationControlUseFeatureSwitchResults: LocalOverrides.Override = feature(
-    "conversation_control_use_feature_switch_results")
-  val ConversationControlTweetCreateEnabled: LocalOverrides.Override = feature(
-    "conversation_control_tweet_create_enabled")
-  val EnableExclusiveTweetControlValidation: LocalOverrides.Override = feature(
-    "enable_exclusive_tweet_control_validation")
-  val EnableHotKeyCaches: LocalOverrides.Override = feature("enable_hot_key_caches")
-  val HydrateConversationMuted: LocalOverrides.Override = feature("hydrate_conversation_muted")
-  val HydrateExtensionsOnWrite: LocalOverrides.Override = feature("hydrate_extensions_on_write")
-  val HydrateEscherbirdAnnotations: LocalOverrides.Override = feature(
-    "hydrate_escherbird_annotations")
-  val HydrateGnipProfileGeoEnrichment: LocalOverrides.Override = feature(
-    "hydrate_gnip_profile_geo_enrichment")
-  val HydratePastedPics: LocalOverrides.Override = feature("hydrate_pasted_pics")
-  val HydratePerspectivesEditsForOtherSafetyLevels: LocalOverrides.Override = feature(
-    "hydrate_perspectives_edits_for_other_levels")
-  val HydrateScrubEngagements: LocalOverrides.Override = feature("hydrate_scrub_engagements")
-  val LogRepoExceptions: LocalOverrides.Override = feature("log_repo_exceptions")
-  val MediaRefsHydratorIncludePastedMedia: LocalOverrides.Override = feature(
-    "media_refs_hydrator_include_pasted_media")
-  val ShortCircuitLikelyPartialTweetReads: LocalOverrides.Override = feature(
-    "short_circuit_likely_partial_tweet_reads_ms")
-  val RateLimitByLimiterService: LocalOverrides.Override = feature("rate_limit_by_limiter_service")
-  val RateLimitTweetCreationFailure: LocalOverrides.Override = feature(
-    "rate_limit_tweet_creation_failure")
-  val ReplyTweetConversationControlHydrationEnabled = feature(
-    "reply_tweet_conversation_control_hydration_enabled"
+o-object t-tweetypiedecidewovewwides e-extends w-wocawuvwwides.namespace("tweetypie", "tweetypie_") {
+  v-vaw checkspamonwetweet: w-wocawuvwwides.ovewwide = f-featuwe("check_spam_on_wetweet")
+  v-vaw checkspamontweet: wocawuvwwides.ovewwide = featuwe("check_spam_on_tweet")
+  vaw c-convewsationcontwowusefeatuweswitchwesuwts: wocawuvwwides.ovewwide = featuwe(
+    "convewsation_contwow_use_featuwe_switch_wesuwts")
+  v-vaw convewsationcontwowtweetcweateenabwed: wocawuvwwides.ovewwide = f-featuwe(
+    "convewsation_contwow_tweet_cweate_enabwed")
+  vaw enabweexcwusivetweetcontwowvawidation: wocawuvwwides.ovewwide = featuwe(
+    "enabwe_excwusive_tweet_contwow_vawidation")
+  v-vaw enabwehotkeycaches: wocawuvwwides.ovewwide = f-featuwe("enabwe_hot_key_caches")
+  v-vaw hydwateconvewsationmuted: wocawuvwwides.ovewwide = featuwe("hydwate_convewsation_muted")
+  vaw h-hydwateextensionsonwwite: wocawuvwwides.ovewwide = featuwe("hydwate_extensions_on_wwite")
+  vaw hydwateeschewbiwdannotations: w-wocawuvwwides.ovewwide = featuwe(
+    "hydwate_eschewbiwd_annotations")
+  v-vaw hydwategnippwofiwegeoenwichment: w-wocawuvwwides.ovewwide = f-featuwe(
+    "hydwate_gnip_pwofiwe_geo_enwichment")
+  v-vaw hydwatepastedpics: wocawuvwwides.ovewwide = f-featuwe("hydwate_pasted_pics")
+  vaw hydwatepewspectiveseditsfowothewsafetywevews: wocawuvwwides.ovewwide = f-featuwe(
+    "hydwate_pewspectives_edits_fow_othew_wevews")
+  vaw hydwatescwubengagements: wocawuvwwides.ovewwide = featuwe("hydwate_scwub_engagements")
+  vaw wogwepoexceptions: wocawuvwwides.ovewwide = f-featuwe("wog_wepo_exceptions")
+  vaw mediawefshydwatowincwudepastedmedia: w-wocawuvwwides.ovewwide = f-featuwe(
+    "media_wefs_hydwatow_incwude_pasted_media")
+  v-vaw showtciwcuitwikewypawtiawtweetweads: wocawuvwwides.ovewwide = featuwe(
+    "showt_ciwcuit_wikewy_pawtiaw_tweet_weads_ms")
+  vaw watewimitbywimitewsewvice: w-wocawuvwwides.ovewwide = f-featuwe("wate_wimit_by_wimitew_sewvice")
+  vaw watewimittweetcweationfaiwuwe: w-wocawuvwwides.ovewwide = f-featuwe(
+    "wate_wimit_tweet_cweation_faiwuwe")
+  vaw wepwytweetconvewsationcontwowhydwationenabwed = f-featuwe(
+    "wepwy_tweet_convewsation_contwow_hydwation_enabwed"
   )
-  val DisableInviteViaMention = feature(
-    "disable_invite_via_mention"
+  vaw disabweinviteviamention = f-featuwe(
+    "disabwe_invite_via_mention"
   )
-  val EnableRemoveUnmentionedImplicitMentions: LocalOverrides.Override = feature(
-    "enable_remove_unmentioned_implicit_mentions")
-  val useReplicatedDeleteTweet2: LocalOverrides.Override = feature("use_replicated_delete_tweet_2")
+  vaw enabwewemoveunmentionedimpwicitmentions: w-wocawuvwwides.ovewwide = featuwe(
+    "enabwe_wemove_unmentioned_impwicit_mentions")
+  v-vaw usewepwicateddewetetweet2: wocawuvwwides.ovewwide = f-featuwe("use_wepwicated_dewete_tweet_2")
 }

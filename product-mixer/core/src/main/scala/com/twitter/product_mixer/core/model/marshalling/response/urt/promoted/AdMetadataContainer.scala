@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted
 
-case class AdMetadataContainer(
-  removePromotedAttributionForPreroll: Option[Boolean],
-  sponsorshipCandidate: Option[String],
-  sponsorshipOrganization: Option[String],
-  sponsorshipOrganizationWebsite: Option[String],
-  sponsorshipType: Option[SponsorshipType],
-  disclaimerType: Option[DisclaimerType],
-  skAdNetworkDataList: Option[Seq[SkAdNetworkData]],
-  unifiedCardOverride: Option[String])
+case cwass admetadatacontainew(
+  w-wemovepwomotedattwibutionfowpwewoww: o-option[boowean], σωσ
+  s-sponsowshipcandidate: option[stwing], >_<
+  s-sponsowshipowganization: o-option[stwing], :3
+  s-sponsowshipowganizationwebsite: o-option[stwing], (U ﹏ U)
+  s-sponsowshiptype: option[sponsowshiptype], -.-
+  discwaimewtype: option[discwaimewtype], (ˆ ﻌ ˆ)♡
+  skadnetwowkdatawist: option[seq[skadnetwowkdata]], (⑅˘꒳˘)
+  u-unifiedcawdovewwide: option[stwing])

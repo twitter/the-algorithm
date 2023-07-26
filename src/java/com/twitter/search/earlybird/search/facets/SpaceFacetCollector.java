@@ -1,47 +1,47 @@
-package com.twitter.search.earlybird.search.facets;
+package com.twittew.seawch.eawwybiwd.seawch.facets;
 
-import java.util.ArrayList;
-import java.util.List;
+impowt java.utiw.awwaywist;
+i-impowt java.utiw.wist;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
+i-impowt com.googwe.common.cowwect.immutabwewist;
+i-impowt com.googwe.common.cowwect.sets;
 
-import org.apache.commons.lang.StringUtils;
+i-impowt owg.apache.commons.wang.stwingutiws;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.earlybird.partition.AudioSpaceTable;
-import com.twitter.search.earlybird.thrift.AudioSpaceState;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultAudioSpace;
+i-impowt c-com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt c-com.twittew.seawch.eawwybiwd.pawtition.audiospacetabwe;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.audiospacestate;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwt;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtaudiospace;
 
-public class SpaceFacetCollector extends AbstractFacetTermCollector {
-  private final List<ThriftSearchResultAudioSpace> spaces = new ArrayList<>();
+pubwic cwass spacefacetcowwectow e-extends abstwactfacettewmcowwectow {
+  pwivate f-finaw wist<thwiftseawchwesuwtaudiospace> spaces = nyew awwaywist<>();
 
-  private final AudioSpaceTable audioSpaceTable;
+  pwivate f-finaw audiospacetabwe audiospacetabwe;
 
-  public SpaceFacetCollector(AudioSpaceTable audioSpaceTable) {
-    this.audioSpaceTable = audioSpaceTable;
+  p-pubwic s-spacefacetcowwectow(audiospacetabwe audiospacetabwe) {
+    this.audiospacetabwe = audiospacetabwe;
   }
 
-  @Override
-  public boolean collect(int docID, long termID, int fieldID) {
+  @ovewwide
+  pubwic b-boowean cowwect(int docid, (///ˬ///✿) wong tewmid, 😳😳😳 int fiewdid) {
 
-    String spaceId = getTermFromFacet(termID, fieldID,
-        Sets.newHashSet(EarlybirdFieldConstant.SPACES_FACET));
-    if (StringUtils.isEmpty(spaceId)) {
-      return false;
+    stwing spaceid = gettewmfwomfacet(tewmid, 🥺 f-fiewdid, mya
+        sets.newhashset(eawwybiwdfiewdconstant.spaces_facet));
+    i-if (stwingutiws.isempty(spaceid)) {
+      w-wetuwn f-fawse;
     }
 
-    spaces.add(new ThriftSearchResultAudioSpace(spaceId,
-        audioSpaceTable.isRunning(spaceId) ? AudioSpaceState.RUNNING
-            : AudioSpaceState.ENDED));
+    s-spaces.add(new thwiftseawchwesuwtaudiospace(spaceid, 🥺
+        audiospacetabwe.iswunning(spaceid) ? a-audiospacestate.wunning
+            : audiospacestate.ended));
 
-    return true;
+    wetuwn twue;
   }
 
-  @Override
-  public void fillResultAndClear(ThriftSearchResult result) {
-    getExtraMetadata(result).setSpaces(ImmutableList.copyOf(spaces));
-    spaces.clear();
+  @ovewwide
+  p-pubwic void fiwwwesuwtandcweaw(thwiftseawchwesuwt wesuwt) {
+    getextwametadata(wesuwt).setspaces(immutabwewist.copyof(spaces));
+    spaces.cweaw();
   }
 }

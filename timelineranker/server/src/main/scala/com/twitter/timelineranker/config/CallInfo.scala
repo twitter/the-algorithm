@@ -1,119 +1,119 @@
-package com.twitter.timelineranker.config
+package com.twittew.timewinewankew.config
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.util.Duration
-import java.util.concurrent.TimeUnit
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.utiw.duwation
+i-impowt java.utiw.concuwwent.timeunit
 
 /**
- * Information about a single method call.
+ * i-infowmation a-about a singwe m-method caww. 😳
  *
- * The purpose of this class is to allow one to express a call graph and latency associated with each (sub)call.
- * Once a call graph is defined, calling getOverAllLatency() off the top level call returns total time taken by that call.
- * That value can then be compared with the timeout budget allocated to that call to see if the
- * value fits within the overall timeout budget of that call.
+ * t-the puwpose of t-this cwass is to awwow one to expwess a caww gwaph and watency associated with e-each (sub)caww. 😳😳😳
+ * once a caww gwaph is defined, (˘ω˘) c-cawwing getovewawwwatency() off t-the top wevew caww wetuwns totaw time taken by that caww. ʘwʘ
+ * that v-vawue can then be compawed with t-the timeout b-budget awwocated to that caww to see if the
+ * vawue fits within the ovewaww timeout b-budget of that caww. ( ͡o ω ͡o )
  *
- * This is useful in case of a complex call graph where it is hard to mentally estimate the effect on
- * overall latency when updating timeout value of one or more sub-calls.
+ * this is usefuw in case of a compwex caww gwaph whewe i-it is hawd to mentawwy estimate t-the effect o-on
+ * ovewaww watency w-when updating t-timeout vawue of one ow mowe sub-cawws. o.O
  *
- * @param methodName name of the called method.
- * @param latency P999 Latency incurred in calling a service if the method calls an external service. Otherwise 0.
- * @param dependsOn Other calls that this call depends on.
+ * @pawam m-methodname nyame of the cawwed method. >w<
+ * @pawam w-watency p999 watency incuwwed in cawwing a sewvice if the method cawws an extewnaw sewvice. 😳 o-othewwise 0. 🥺
+ * @pawam dependson o-othew cawws t-that this caww d-depends on. rawr x3
  */
-case class Call(
-  methodName: String,
-  latency: Duration = 0.milliseconds,
-  dependsOn: Seq[Call] = Nil) {
+case cwass caww(
+  methodname: stwing, o.O
+  watency: d-duwation = 0.miwwiseconds, rawr
+  d-dependson: seq[caww] = nyiw) {
 
   /**
-   * Latency incurred in this call as well as recursively all calls this call depends on.
+   * w-watency i-incuwwed in this caww as weww a-as wecuwsivewy aww cawws this c-caww depends on. ʘwʘ
    */
-  def getOverAllLatency: Duration = {
-    val dependencyLatency = if (dependsOn.isEmpty) {
-      0.milliseconds
-    } else {
-      dependsOn.map(_.getOverAllLatency).max
+  def getovewawwwatency: duwation = {
+    v-vaw dependencywatency = if (dependson.isempty) {
+      0.miwwiseconds
+    } e-ewse {
+      dependson.map(_.getovewawwwatency).max
     }
-    latency + dependencyLatency
+    w-watency + d-dependencywatency
   }
 
   /**
-   * Call paths starting at this call and recursively traversing all dependencies.
-   * Typically used for debugging or logging.
+   * caww paths stawting at this caww and wecuwsivewy twavewsing aww dependencies. 😳😳😳
+   * typicawwy u-used fow debugging o-ow wogging. ^^;;
    */
-  def getLatencyPaths: String = {
-    val sb = new StringBuilder
-    getLatencyPaths(sb, 1)
-    sb.toString
+  def getwatencypaths: s-stwing = {
+    vaw s-sb = nyew stwingbuiwdew
+    getwatencypaths(sb, o.O 1)
+    s-sb.tostwing
   }
 
-  def getLatencyPaths(sb: StringBuilder, level: Int): Unit = {
-    sb.append(s"${getPrefix(level)} ${getLatencyString(getOverAllLatency)} $methodName\n")
-    if ((latency > 0.milliseconds) && !dependsOn.isEmpty) {
-      sb.append(s"${getPrefix(level + 1)} ${getLatencyString(latency)} self\n")
+  def getwatencypaths(sb: stwingbuiwdew, (///ˬ///✿) w-wevew: int): unit = {
+    sb.append(s"${getpwefix(wevew)} ${getwatencystwing(getovewawwwatency)} $methodname\n")
+    if ((watency > 0.miwwiseconds) && !dependson.isempty) {
+      sb.append(s"${getpwefix(wevew + 1)} ${getwatencystwing(watency)} sewf\n")
     }
-    dependsOn.foreach(_.getLatencyPaths(sb, level + 1))
+    d-dependson.foweach(_.getwatencypaths(sb, σωσ wevew + 1))
   }
 
-  private def getLatencyString(latencyValue: Duration): String = {
-    val latencyMs = latencyValue.inUnit(TimeUnit.MILLISECONDS)
-    f"[$latencyMs%3d]"
+  p-pwivate def g-getwatencystwing(watencyvawue: d-duwation): stwing = {
+    vaw watencyms = w-watencyvawue.inunit(timeunit.miwwiseconds)
+    f-f"[$watencyms%3d]"
   }
 
-  private def getPrefix(level: Int): String = {
-    " " * (level * 4) + "--"
+  p-pwivate def g-getpwefix(wevew: int): stwing = {
+    " " * (wevew * 4) + "--"
   }
 }
 
 /**
- * Information about the getRecapTweetCandidates call.
+ * infowmation a-about the g-getwecaptweetcandidates c-caww. nyaa~~
  *
- * Acronyms used:
- *     : call internal to TLR
- * EB  : Earlybird (search super root)
- * GZ  : Gizmoduck
- * MH  : Manhattan
- * SGS : Social graph service
+ * a-acwonyms u-used:
+ *     : caww intewnaw to tww
+ * eb  : eawwybiwd (seawch supew woot)
+ * gz  : g-gizmoduck
+ * mh  : manhattan
+ * sgs : sociaw gwaph sewvice
  *
- * The latency values are based on p9999 values observed over 1 week.
+ * the watency vawues awe based o-on p9999 vawues obsewved ovew 1 week. ^^;;
  */
-object GetRecycledTweetCandidatesCall {
-  val getUserProfileInfo: Call = Call("GZ.getUserProfileInfo", 200.milliseconds)
-  val getUserLanguages: Call = Call("MH.getUserLanguages", 300.milliseconds) // p99: 15ms
+object getwecycwedtweetcandidatescaww {
+  v-vaw getusewpwofiweinfo: c-caww = c-caww("gz.getusewpwofiweinfo", ^•ﻌ•^ 200.miwwiseconds)
+  vaw getusewwanguages: c-caww = caww("mh.getusewwanguages", σωσ 300.miwwiseconds) // p-p99: 15ms
 
-  val getFollowing: Call = Call("SGS.getFollowing", 250.milliseconds) // p99: 75ms
-  val getMutuallyFollowing: Call =
-    Call("SGS.getMutuallyFollowing", 400.milliseconds, Seq(getFollowing)) // p99: 100
-  val getVisibilityProfiles: Call =
-    Call("SGS.getVisibilityProfiles", 400.milliseconds, Seq(getFollowing)) // p99: 100
-  val getVisibilityData: Call = Call(
-    "getVisibilityData",
-    dependsOn = Seq(getFollowing, getMutuallyFollowing, getVisibilityProfiles)
+  v-vaw getfowwowing: caww = caww("sgs.getfowwowing", -.- 250.miwwiseconds) // p99: 75ms
+  vaw getmutuawwyfowwowing: caww =
+    caww("sgs.getmutuawwyfowwowing", ^^;; 400.miwwiseconds, XD seq(getfowwowing)) // p-p99: 100
+  vaw getvisibiwitypwofiwes: c-caww =
+    caww("sgs.getvisibiwitypwofiwes", 🥺 400.miwwiseconds, òωó s-seq(getfowwowing)) // p-p99: 100
+  vaw getvisibiwitydata: caww = caww(
+    "getvisibiwitydata", (ˆ ﻌ ˆ)♡
+    d-dependson = s-seq(getfowwowing, -.- getmutuawwyfowwowing, :3 g-getvisibiwitypwofiwes)
   )
-  val getTweetsForRecapRegular: Call =
-    Call("EB.getTweetsForRecap(regular)", 500.milliseconds, Seq(getVisibilityData)) // p99: 250
-  val getTweetsForRecapProtected: Call =
-    Call("EB.getTweetsForRecap(protected)", 250.milliseconds, Seq(getVisibilityData)) // p99: 150
-  val getSearchResults: Call =
-    Call("getSearchResults", dependsOn = Seq(getTweetsForRecapRegular, getTweetsForRecapProtected))
-  val getTweetsScoredForRecap: Call =
-    Call("EB.getTweetsScoredForRecap", 400.milliseconds, Seq(getSearchResults)) // p99: 100
+  v-vaw gettweetsfowwecapweguwaw: caww =
+    caww("eb.gettweetsfowwecap(weguwaw)", ʘwʘ 500.miwwiseconds, 🥺 seq(getvisibiwitydata)) // p99: 250
+  v-vaw gettweetsfowwecappwotected: c-caww =
+    caww("eb.gettweetsfowwecap(pwotected)", >_< 250.miwwiseconds, ʘwʘ s-seq(getvisibiwitydata)) // p99: 150
+  vaw g-getseawchwesuwts: c-caww =
+    caww("getseawchwesuwts", (˘ω˘) dependson = s-seq(gettweetsfowwecapweguwaw, (✿oωo) gettweetsfowwecappwotected))
+  vaw gettweetsscowedfowwecap: caww =
+    caww("eb.gettweetsscowedfowwecap", (///ˬ///✿) 400.miwwiseconds, rawr x3 s-seq(getseawchwesuwts)) // p-p99: 100
 
-  val hydrateSearchResults: Call = Call("hydrateSearchResults")
-  val getSourceTweetSearchResults: Call =
-    Call("getSourceTweetSearchResults", dependsOn = Seq(getSearchResults))
-  val hydrateTweets: Call =
-    Call("hydrateTweets", dependsOn = Seq(getSearchResults, hydrateSearchResults))
-  val hydrateSourceTweets: Call =
-    Call("hydrateSourceTweets", dependsOn = Seq(getSourceTweetSearchResults, hydrateSearchResults))
-  val topLevel: Call = Call(
-    "getRecapTweetCandidates",
-    dependsOn = Seq(
-      getUserProfileInfo,
-      getUserLanguages,
-      getVisibilityData,
-      getSearchResults,
-      hydrateSearchResults,
-      hydrateSourceTweets
+  vaw hydwateseawchwesuwts: caww = c-caww("hydwateseawchwesuwts")
+  v-vaw getsouwcetweetseawchwesuwts: caww =
+    caww("getsouwcetweetseawchwesuwts", -.- dependson = seq(getseawchwesuwts))
+  vaw hydwatetweets: c-caww =
+    caww("hydwatetweets", dependson = seq(getseawchwesuwts, ^^ hydwateseawchwesuwts))
+  v-vaw hydwatesouwcetweets: caww =
+    caww("hydwatesouwcetweets", (⑅˘꒳˘) dependson = s-seq(getsouwcetweetseawchwesuwts, nyaa~~ h-hydwateseawchwesuwts))
+  vaw topwevew: caww = caww(
+    "getwecaptweetcandidates", /(^•ω•^)
+    d-dependson = s-seq(
+      getusewpwofiweinfo, (U ﹏ U)
+      getusewwanguages, 😳😳😳
+      getvisibiwitydata, >w<
+      g-getseawchwesuwts, XD
+      hydwateseawchwesuwts, o.O
+      h-hydwatesouwcetweets
     )
   )
 }

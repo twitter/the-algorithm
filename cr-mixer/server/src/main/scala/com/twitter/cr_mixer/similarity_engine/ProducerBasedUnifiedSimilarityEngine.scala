@@ -1,640 +1,640 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.twittew.cw_mixew.simiwawity_engine
 
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.model.TweetWithCandidateGenerationInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.param.ProducerBasedCandidateGenerationParams
-import com.twitter.cr_mixer.param.UnifiedSETweetCombinationMethod
-import com.twitter.cr_mixer.param.RelatedTweetProducerBasedParams
-import com.twitter.cr_mixer.param.SimClustersANNParams
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.cr_mixer.util.InterleaveUtil
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import javax.inject.Named
-import javax.inject.Singleton
-import scala.collection.mutable.ArrayBuffer
+impowt com.twittew.cw_mixew.modew.candidategenewationinfo
+i-impowt c-com.twittew.cw_mixew.modew.moduwenames
+i-impowt com.twittew.cw_mixew.modew.simiwawityengineinfo
+i-impowt c-com.twittew.cw_mixew.modew.souwceinfo
+i-impowt c-com.twittew.cw_mixew.modew.tweetwithcandidategenewationinfo
+i-impowt com.twittew.cw_mixew.modew.tweetwithscowe
+impowt com.twittew.cw_mixew.pawam.gwobawpawams
+impowt com.twittew.cw_mixew.pawam.pwoducewbasedcandidategenewationpawams
+i-impowt com.twittew.cw_mixew.pawam.unifiedsetweetcombinationmethod
+impowt com.twittew.cw_mixew.pawam.wewatedtweetpwoducewbasedpawams
+i-impowt com.twittew.cw_mixew.pawam.simcwustewsannpawams
+i-impowt com.twittew.cw_mixew.thwiftscawa.simiwawityenginetype
+impowt com.twittew.cw_mixew.thwiftscawa.souwcetype
+impowt com.twittew.cw_mixew.utiw.intewweaveutiw
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.utiw.statsutiw
+impowt com.twittew.simcwustews_v2.common.modewvewsions
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.embeddingtype
+impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+impowt com.twittew.stowehaus.weadabwestowe
+impowt c-com.twittew.timewines.configapi
+impowt com.twittew.utiw.duwation
+impowt com.twittew.utiw.futuwe
+impowt javax.inject.named
+impowt j-javax.inject.singweton
+impowt scawa.cowwection.mutabwe.awwaybuffew
 
 /**
- * This store looks for similar tweets from UserTweetGraph for a Source ProducerId
- * For a query producerId,User Tweet Graph (UTG),
- * lets us find out which tweets the query producer's followers co-engaged
+ * t-this s-stowe wooks fow s-simiwaw tweets f-fwom usewtweetgwaph fow a souwce pwoducewid
+ * fow a-a quewy pwoducewid,usew tweet gwaph (utg), >_<
+ * w-wets us find out which tweets the quewy pwoducew's fowwowews co-engaged
  */
-@Singleton
-case class ProducerBasedUnifiedSimilarityEngine(
-  @Named(ModuleNames.ProducerBasedUserTweetGraphSimilarityEngine)
-  producerBasedUserTweetGraphSimilarityEngine: StandardSimilarityEngine[
-    ProducerBasedUserTweetGraphSimilarityEngine.Query,
-    TweetWithScore
-  ],
-  simClustersANNSimilarityEngine: StandardSimilarityEngine[
-    SimClustersANNSimilarityEngine.Query,
-    TweetWithScore
-  ],
-  statsReceiver: StatsReceiver)
-    extends ReadableStore[ProducerBasedUnifiedSimilarityEngine.Query, Seq[
-      TweetWithCandidateGenerationInfo
+@singweton
+case cwass pwoducewbasedunifiedsimiwawityengine(
+  @named(moduwenames.pwoducewbasedusewtweetgwaphsimiwawityengine)
+  p-pwoducewbasedusewtweetgwaphsimiwawityengine: standawdsimiwawityengine[
+    p-pwoducewbasedusewtweetgwaphsimiwawityengine.quewy, ^^;;
+    tweetwithscowe
+  ], ^^;;
+  s-simcwustewsannsimiwawityengine: s-standawdsimiwawityengine[
+    simcwustewsannsimiwawityengine.quewy, /(^•ω•^)
+    tweetwithscowe
+  ], nyaa~~
+  statsweceivew: s-statsweceivew)
+    e-extends weadabwestowe[pwoducewbasedunifiedsimiwawityengine.quewy, (✿oωo) seq[
+      t-tweetwithcandidategenewationinfo
     ]] {
 
-  import ProducerBasedUnifiedSimilarityEngine._
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val fetchCandidatesStat = stats.scope("fetchCandidates")
+  impowt p-pwoducewbasedunifiedsimiwawityengine._
+  pwivate vaw stats = s-statsweceivew.scope(this.getcwass.getsimpwename)
+  pwivate vaw f-fetchcandidatesstat = stats.scope("fetchcandidates")
 
-  override def get(
-    query: Query
-  ): Future[Option[Seq[TweetWithCandidateGenerationInfo]]] = {
-    query.sourceInfo.internalId match {
-      case _: InternalId.UserId =>
-        StatsUtil.trackOptionItemsStats(fetchCandidatesStat) {
-          val sannCandidatesFut = if (query.enableSimClustersANN) {
-            simClustersANNSimilarityEngine.getCandidates(query.simClustersANNQuery)
-          } else Future.None
+  ovewwide d-def get(
+    quewy: quewy
+  ): f-futuwe[option[seq[tweetwithcandidategenewationinfo]]] = {
+    quewy.souwceinfo.intewnawid m-match {
+      c-case _: intewnawid.usewid =>
+        statsutiw.twackoptionitemsstats(fetchcandidatesstat) {
+          vaw sanncandidatesfut = if (quewy.enabwesimcwustewsann) {
+            simcwustewsannsimiwawityengine.getcandidates(quewy.simcwustewsannquewy)
+          } ewse futuwe.none
 
-          val sann1CandidatesFut =
-            if (query.enableSimClustersANN1) {
-              simClustersANNSimilarityEngine.getCandidates(query.simClustersANN1Query)
-            } else Future.None
+          vaw sann1candidatesfut =
+            i-if (quewy.enabwesimcwustewsann1) {
+              s-simcwustewsannsimiwawityengine.getcandidates(quewy.simcwustewsann1quewy)
+            } ewse futuwe.none
 
-          val sann2CandidatesFut =
-            if (query.enableSimClustersANN2) {
-              simClustersANNSimilarityEngine.getCandidates(query.simClustersANN2Query)
-            } else Future.None
+          vaw s-sann2candidatesfut =
+            i-if (quewy.enabwesimcwustewsann2) {
+              s-simcwustewsannsimiwawityengine.getcandidates(quewy.simcwustewsann2quewy)
+            } ewse futuwe.none
 
-          val sann3CandidatesFut =
-            if (query.enableSimClustersANN3) {
-              simClustersANNSimilarityEngine.getCandidates(query.simClustersANN3Query)
-            } else Future.None
+          vaw sann3candidatesfut =
+            i-if (quewy.enabwesimcwustewsann3) {
+              simcwustewsannsimiwawityengine.getcandidates(quewy.simcwustewsann3quewy)
+            } ewse futuwe.none
 
-          val sann4CandidatesFut =
-            if (query.enableSimClustersANN4) {
-              simClustersANNSimilarityEngine.getCandidates(query.simClustersANN4Query)
-            } else Future.None
+          vaw sann4candidatesfut =
+            if (quewy.enabwesimcwustewsann4) {
+              s-simcwustewsannsimiwawityengine.getcandidates(quewy.simcwustewsann4quewy)
+            } ewse f-futuwe.none
 
-          val sann5CandidatesFut =
-            if (query.enableSimClustersANN5) {
-              simClustersANNSimilarityEngine.getCandidates(query.simClustersANN5Query)
-            } else Future.None
+          v-vaw sann5candidatesfut =
+            if (quewy.enabwesimcwustewsann5) {
+              s-simcwustewsannsimiwawityengine.getcandidates(quewy.simcwustewsann5quewy)
+            } ewse futuwe.none
 
-          val experimentalSANNCandidatesFut =
-            if (query.enableExperimentalSimClustersANN) {
-              simClustersANNSimilarityEngine.getCandidates(query.experimentalSimClustersANNQuery)
-            } else Future.None
+          v-vaw expewimentawsanncandidatesfut =
+            i-if (quewy.enabweexpewimentawsimcwustewsann) {
+              simcwustewsannsimiwawityengine.getcandidates(quewy.expewimentawsimcwustewsannquewy)
+            } e-ewse futuwe.none
 
-          val utgCandidatesFut = if (query.enableUtg) {
-            producerBasedUserTweetGraphSimilarityEngine.getCandidates(query.utgQuery)
-          } else Future.None
+          v-vaw utgcandidatesfut = if (quewy.enabweutg) {
+            p-pwoducewbasedusewtweetgwaphsimiwawityengine.getcandidates(quewy.utgquewy)
+          } e-ewse f-futuwe.none
 
-          Future
+          f-futuwe
             .join(
-              sannCandidatesFut,
-              sann1CandidatesFut,
-              sann2CandidatesFut,
-              sann3CandidatesFut,
-              sann4CandidatesFut,
-              sann5CandidatesFut,
-              experimentalSANNCandidatesFut,
-              utgCandidatesFut
+              s-sanncandidatesfut, ( ͡o ω ͡o )
+              sann1candidatesfut, (U ᵕ U❁)
+              sann2candidatesfut, òωó
+              sann3candidatesfut, σωσ
+              s-sann4candidatesfut, :3
+              sann5candidatesfut, OwO
+              expewimentawsanncandidatesfut, ^^
+              utgcandidatesfut
             ).map {
               case (
-                    simClustersAnnCandidates,
-                    simClustersAnn1Candidates,
-                    simClustersAnn2Candidates,
-                    simClustersAnn3Candidates,
-                    simClustersAnn4Candidates,
-                    simClustersAnn5Candidates,
-                    experimentalSANNCandidates,
-                    userTweetGraphCandidates) =>
-                val filteredSANNTweets = simClustersCandidateMinScoreFilter(
-                  simClustersAnnCandidates.toSeq.flatten,
-                  query.simClustersMinScore,
-                  query.simClustersANNQuery.storeQuery.simClustersANNConfigId)
+                    simcwustewsanncandidates, (˘ω˘)
+                    s-simcwustewsann1candidates, OwO
+                    simcwustewsann2candidates, UwU
+                    simcwustewsann3candidates,
+                    simcwustewsann4candidates, ^•ﻌ•^
+                    s-simcwustewsann5candidates,
+                    e-expewimentawsanncandidates, (ꈍᴗꈍ)
+                    u-usewtweetgwaphcandidates) =>
+                vaw f-fiwtewedsanntweets = simcwustewscandidateminscowefiwtew(
+                  s-simcwustewsanncandidates.toseq.fwatten,
+                  q-quewy.simcwustewsminscowe, /(^•ω•^)
+                  quewy.simcwustewsannquewy.stowequewy.simcwustewsannconfigid)
 
-                val filteredExperimentalSANNTweets = simClustersCandidateMinScoreFilter(
-                  experimentalSANNCandidates.toSeq.flatten,
-                  query.simClustersMinScore,
-                  query.experimentalSimClustersANNQuery.storeQuery.simClustersANNConfigId)
+                vaw fiwtewedexpewimentawsanntweets = simcwustewscandidateminscowefiwtew(
+                  expewimentawsanncandidates.toseq.fwatten, (U ᵕ U❁)
+                  quewy.simcwustewsminscowe, (✿oωo)
+                  q-quewy.expewimentawsimcwustewsannquewy.stowequewy.simcwustewsannconfigid)
 
-                val filteredSANN1Tweets = simClustersCandidateMinScoreFilter(
-                  simClustersAnn1Candidates.toSeq.flatten,
-                  query.simClustersMinScore,
-                  query.simClustersANN1Query.storeQuery.simClustersANNConfigId)
+                vaw fiwtewedsann1tweets = s-simcwustewscandidateminscowefiwtew(
+                  simcwustewsann1candidates.toseq.fwatten, OwO
+                  quewy.simcwustewsminscowe, :3
+                  q-quewy.simcwustewsann1quewy.stowequewy.simcwustewsannconfigid)
 
-                val filteredSANN2Tweets = simClustersCandidateMinScoreFilter(
-                  simClustersAnn2Candidates.toSeq.flatten,
-                  query.simClustersMinScore,
-                  query.simClustersANN2Query.storeQuery.simClustersANNConfigId)
+                v-vaw fiwtewedsann2tweets = simcwustewscandidateminscowefiwtew(
+                  simcwustewsann2candidates.toseq.fwatten, nyaa~~
+                  q-quewy.simcwustewsminscowe, ^•ﻌ•^
+                  q-quewy.simcwustewsann2quewy.stowequewy.simcwustewsannconfigid)
 
-                val filteredSANN3Tweets = simClustersCandidateMinScoreFilter(
-                  simClustersAnn3Candidates.toSeq.flatten,
-                  query.simClustersMinScore,
-                  query.simClustersANN3Query.storeQuery.simClustersANNConfigId)
+                vaw f-fiwtewedsann3tweets = s-simcwustewscandidateminscowefiwtew(
+                  simcwustewsann3candidates.toseq.fwatten, ( ͡o ω ͡o )
+                  quewy.simcwustewsminscowe, ^^;;
+                  quewy.simcwustewsann3quewy.stowequewy.simcwustewsannconfigid)
 
-                val filteredSANN4Tweets = simClustersCandidateMinScoreFilter(
-                  simClustersAnn4Candidates.toSeq.flatten,
-                  query.simClustersMinScore,
-                  query.simClustersANN4Query.storeQuery.simClustersANNConfigId)
+                vaw fiwtewedsann4tweets = s-simcwustewscandidateminscowefiwtew(
+                  s-simcwustewsann4candidates.toseq.fwatten, mya
+                  quewy.simcwustewsminscowe, (U ᵕ U❁)
+                  q-quewy.simcwustewsann4quewy.stowequewy.simcwustewsannconfigid)
 
-                val filteredSANN5Tweets = simClustersCandidateMinScoreFilter(
-                  simClustersAnn5Candidates.toSeq.flatten,
-                  query.simClustersMinScore,
-                  query.simClustersANN5Query.storeQuery.simClustersANNConfigId)
+                vaw fiwtewedsann5tweets = s-simcwustewscandidateminscowefiwtew(
+                  s-simcwustewsann5candidates.toseq.fwatten, ^•ﻌ•^
+                  quewy.simcwustewsminscowe, (U ﹏ U)
+                  q-quewy.simcwustewsann5quewy.stowequewy.simcwustewsannconfigid)
 
-                val filteredUTGTweets =
-                  userTweetGraphFilter(userTweetGraphCandidates.toSeq.flatten)
+                vaw fiwtewedutgtweets =
+                  usewtweetgwaphfiwtew(usewtweetgwaphcandidates.toseq.fwatten)
 
-                val sannTweetsWithCGInfo = filteredSANNTweets.map { tweetWithScore =>
-                  val similarityEngineInfo = SimClustersANNSimilarityEngine
-                    .toSimilarityEngineInfo(query.simClustersANNQuery, tweetWithScore.score)
-                  TweetWithCandidateGenerationInfo(
-                    tweetWithScore.tweetId,
-                    CandidateGenerationInfo(
-                      Some(query.sourceInfo),
-                      similarityEngineInfo,
-                      Seq(similarityEngineInfo)
+                vaw sanntweetswithcginfo = fiwtewedsanntweets.map { t-tweetwithscowe =>
+                  v-vaw simiwawityengineinfo = simcwustewsannsimiwawityengine
+                    .tosimiwawityengineinfo(quewy.simcwustewsannquewy, /(^•ω•^) tweetwithscowe.scowe)
+                  t-tweetwithcandidategenewationinfo(
+                    t-tweetwithscowe.tweetid, ʘwʘ
+                    candidategenewationinfo(
+                      some(quewy.souwceinfo), XD
+                      simiwawityengineinfo, (⑅˘꒳˘)
+                      s-seq(simiwawityengineinfo)
                     ))
                 }
-                val sann1TweetsWithCGInfo = filteredSANN1Tweets.map { tweetWithScore =>
-                  val similarityEngineInfo = SimClustersANNSimilarityEngine
-                    .toSimilarityEngineInfo(query.simClustersANN1Query, tweetWithScore.score)
-                  TweetWithCandidateGenerationInfo(
-                    tweetWithScore.tweetId,
-                    CandidateGenerationInfo(
-                      Some(query.sourceInfo),
-                      similarityEngineInfo,
-                      Seq(similarityEngineInfo)
+                vaw sann1tweetswithcginfo = fiwtewedsann1tweets.map { tweetwithscowe =>
+                  vaw simiwawityengineinfo = simcwustewsannsimiwawityengine
+                    .tosimiwawityengineinfo(quewy.simcwustewsann1quewy, nyaa~~ t-tweetwithscowe.scowe)
+                  tweetwithcandidategenewationinfo(
+                    tweetwithscowe.tweetid, UwU
+                    candidategenewationinfo(
+                      s-some(quewy.souwceinfo), (˘ω˘)
+                      s-simiwawityengineinfo, rawr x3
+                      seq(simiwawityengineinfo)
                     ))
                 }
-                val sann2TweetsWithCGInfo = filteredSANN2Tweets.map { tweetWithScore =>
-                  val similarityEngineInfo = SimClustersANNSimilarityEngine
-                    .toSimilarityEngineInfo(query.simClustersANN2Query, tweetWithScore.score)
-                  TweetWithCandidateGenerationInfo(
-                    tweetWithScore.tweetId,
-                    CandidateGenerationInfo(
-                      Some(query.sourceInfo),
-                      similarityEngineInfo,
-                      Seq(similarityEngineInfo)
-                    ))
-                }
-
-                val sann3TweetsWithCGInfo = filteredSANN3Tweets.map { tweetWithScore =>
-                  val similarityEngineInfo = SimClustersANNSimilarityEngine
-                    .toSimilarityEngineInfo(query.simClustersANN3Query, tweetWithScore.score)
-                  TweetWithCandidateGenerationInfo(
-                    tweetWithScore.tweetId,
-                    CandidateGenerationInfo(
-                      Some(query.sourceInfo),
-                      similarityEngineInfo,
-                      Seq(similarityEngineInfo)
+                vaw sann2tweetswithcginfo = fiwtewedsann2tweets.map { t-tweetwithscowe =>
+                  v-vaw simiwawityengineinfo = simcwustewsannsimiwawityengine
+                    .tosimiwawityengineinfo(quewy.simcwustewsann2quewy, (///ˬ///✿) tweetwithscowe.scowe)
+                  tweetwithcandidategenewationinfo(
+                    tweetwithscowe.tweetid, 😳😳😳
+                    c-candidategenewationinfo(
+                      some(quewy.souwceinfo), (///ˬ///✿)
+                      s-simiwawityengineinfo, ^^;;
+                      seq(simiwawityengineinfo)
                     ))
                 }
 
-                val sann4TweetsWithCGInfo = filteredSANN4Tweets.map { tweetWithScore =>
-                  val similarityEngineInfo = SimClustersANNSimilarityEngine
-                    .toSimilarityEngineInfo(query.simClustersANN4Query, tweetWithScore.score)
-                  TweetWithCandidateGenerationInfo(
-                    tweetWithScore.tweetId,
-                    CandidateGenerationInfo(
-                      Some(query.sourceInfo),
-                      similarityEngineInfo,
-                      Seq(similarityEngineInfo)
+                vaw sann3tweetswithcginfo = f-fiwtewedsann3tweets.map { tweetwithscowe =>
+                  v-vaw simiwawityengineinfo = s-simcwustewsannsimiwawityengine
+                    .tosimiwawityengineinfo(quewy.simcwustewsann3quewy, ^^ tweetwithscowe.scowe)
+                  t-tweetwithcandidategenewationinfo(
+                    tweetwithscowe.tweetid, (///ˬ///✿)
+                    c-candidategenewationinfo(
+                      s-some(quewy.souwceinfo), -.-
+                      s-simiwawityengineinfo, /(^•ω•^)
+                      seq(simiwawityengineinfo)
                     ))
                 }
 
-                val sann5TweetsWithCGInfo = filteredSANN5Tweets.map { tweetWithScore =>
-                  val similarityEngineInfo = SimClustersANNSimilarityEngine
-                    .toSimilarityEngineInfo(query.simClustersANN5Query, tweetWithScore.score)
-                  TweetWithCandidateGenerationInfo(
-                    tweetWithScore.tweetId,
-                    CandidateGenerationInfo(
-                      Some(query.sourceInfo),
-                      similarityEngineInfo,
-                      Seq(similarityEngineInfo)
+                v-vaw sann4tweetswithcginfo = f-fiwtewedsann4tweets.map { tweetwithscowe =>
+                  vaw simiwawityengineinfo = s-simcwustewsannsimiwawityengine
+                    .tosimiwawityengineinfo(quewy.simcwustewsann4quewy, UwU t-tweetwithscowe.scowe)
+                  t-tweetwithcandidategenewationinfo(
+                    tweetwithscowe.tweetid, (⑅˘꒳˘)
+                    candidategenewationinfo(
+                      s-some(quewy.souwceinfo), ʘwʘ
+                      simiwawityengineinfo, σωσ
+                      s-seq(simiwawityengineinfo)
                     ))
                 }
 
-                val experimentalSANNTweetsWithCGInfo = filteredExperimentalSANNTweets.map {
-                  tweetWithScore =>
-                    val similarityEngineInfo = SimClustersANNSimilarityEngine
-                      .toSimilarityEngineInfo(
-                        query.experimentalSimClustersANNQuery,
-                        tweetWithScore.score)
-                    TweetWithCandidateGenerationInfo(
-                      tweetWithScore.tweetId,
-                      CandidateGenerationInfo(
-                        Some(query.sourceInfo),
-                        similarityEngineInfo,
-                        Seq(similarityEngineInfo)
+                v-vaw sann5tweetswithcginfo = fiwtewedsann5tweets.map { tweetwithscowe =>
+                  vaw s-simiwawityengineinfo = s-simcwustewsannsimiwawityengine
+                    .tosimiwawityengineinfo(quewy.simcwustewsann5quewy, ^^ t-tweetwithscowe.scowe)
+                  t-tweetwithcandidategenewationinfo(
+                    tweetwithscowe.tweetid, OwO
+                    c-candidategenewationinfo(
+                      some(quewy.souwceinfo), (ˆ ﻌ ˆ)♡
+                      simiwawityengineinfo, o.O
+                      seq(simiwawityengineinfo)
+                    ))
+                }
+
+                vaw expewimentawsanntweetswithcginfo = fiwtewedexpewimentawsanntweets.map {
+                  t-tweetwithscowe =>
+                    vaw simiwawityengineinfo = s-simcwustewsannsimiwawityengine
+                      .tosimiwawityengineinfo(
+                        quewy.expewimentawsimcwustewsannquewy, (˘ω˘)
+                        t-tweetwithscowe.scowe)
+                    tweetwithcandidategenewationinfo(
+                      t-tweetwithscowe.tweetid, 😳
+                      candidategenewationinfo(
+                        s-some(quewy.souwceinfo), (U ᵕ U❁)
+                        s-simiwawityengineinfo, :3
+                        s-seq(simiwawityengineinfo)
                       ))
                 }
-                val utgTweetsWithCGInfo = filteredUTGTweets.map { tweetWithScore =>
-                  val similarityEngineInfo =
-                    ProducerBasedUserTweetGraphSimilarityEngine
-                      .toSimilarityEngineInfo(tweetWithScore.score)
-                  TweetWithCandidateGenerationInfo(
-                    tweetWithScore.tweetId,
-                    CandidateGenerationInfo(
-                      Some(query.sourceInfo),
-                      similarityEngineInfo,
-                      Seq(similarityEngineInfo)
+                vaw u-utgtweetswithcginfo = f-fiwtewedutgtweets.map { tweetwithscowe =>
+                  vaw simiwawityengineinfo =
+                    pwoducewbasedusewtweetgwaphsimiwawityengine
+                      .tosimiwawityengineinfo(tweetwithscowe.scowe)
+                  tweetwithcandidategenewationinfo(
+                    tweetwithscowe.tweetid,
+                    candidategenewationinfo(
+                      s-some(quewy.souwceinfo), o.O
+                      s-simiwawityengineinfo, (///ˬ///✿)
+                      s-seq(simiwawityengineinfo)
                     ))
                 }
 
-                val candidateSourcesToBeInterleaved =
-                  ArrayBuffer[Seq[TweetWithCandidateGenerationInfo]](
-                    sannTweetsWithCGInfo,
-                    sann1TweetsWithCGInfo,
-                    sann2TweetsWithCGInfo,
-                    sann3TweetsWithCGInfo,
-                    sann4TweetsWithCGInfo,
-                    sann5TweetsWithCGInfo,
-                    experimentalSANNTweetsWithCGInfo,
+                vaw candidatesouwcestobeintewweaved =
+                  a-awwaybuffew[seq[tweetwithcandidategenewationinfo]](
+                    sanntweetswithcginfo, OwO
+                    sann1tweetswithcginfo, >w<
+                    sann2tweetswithcginfo, ^^
+                    sann3tweetswithcginfo,
+                    s-sann4tweetswithcginfo, (⑅˘꒳˘)
+                    s-sann5tweetswithcginfo, ʘwʘ
+                    expewimentawsanntweetswithcginfo,
                   )
 
-                if (query.utgCombinationMethod == UnifiedSETweetCombinationMethod.Interleave) {
-                  candidateSourcesToBeInterleaved += utgTweetsWithCGInfo
+                i-if (quewy.utgcombinationmethod == unifiedsetweetcombinationmethod.intewweave) {
+                  candidatesouwcestobeintewweaved += utgtweetswithcginfo
                 }
 
-                val interleavedCandidates =
-                  InterleaveUtil.interleave(candidateSourcesToBeInterleaved)
+                vaw intewweavedcandidates =
+                  i-intewweaveutiw.intewweave(candidatesouwcestobeintewweaved)
 
-                val candidateSourcesToBeOrdered =
-                  ArrayBuffer[Seq[TweetWithCandidateGenerationInfo]](interleavedCandidates)
+                v-vaw candidatesouwcestobeowdewed =
+                  awwaybuffew[seq[tweetwithcandidategenewationinfo]](intewweavedcandidates)
 
-                if (query.utgCombinationMethod == UnifiedSETweetCombinationMethod.Frontload)
-                  candidateSourcesToBeOrdered.prepend(utgTweetsWithCGInfo)
+                i-if (quewy.utgcombinationmethod == u-unifiedsetweetcombinationmethod.fwontwoad)
+                  candidatesouwcestobeowdewed.pwepend(utgtweetswithcginfo)
 
-                val candidatesFromGivenOrderCombination =
-                  SimilaritySourceOrderingUtil.keepGivenOrder(candidateSourcesToBeOrdered)
+                vaw candidatesfwomgivenowdewcombination =
+                  simiwawitysouwceowdewingutiw.keepgivenowdew(candidatesouwcestobeowdewed)
 
-                val unifiedCandidatesWithUnifiedCGInfo = candidatesFromGivenOrderCombination.map {
-                  candidate =>
+                vaw unifiedcandidateswithunifiedcginfo = c-candidatesfwomgivenowdewcombination.map {
+                  c-candidate =>
                     /***
-                     * when a candidate was made by interleave/keepGivenOrder,
-                     * then we apply getProducerBasedUnifiedCGInfo() to override with the unified CGInfo
+                     * w-when a candidate w-was made by i-intewweave/keepgivenowdew, (///ˬ///✿)
+                     * then we appwy g-getpwoducewbasedunifiedcginfo() t-to ovewwide with the unified cginfo
                      *
-                     * in contributingSE list for interleave. We only have the chosen SE available.
-                     * This is hard to add for interleave, and we plan to add it later after abstraction improvement.
+                     * i-in contwibutingse w-wist fow intewweave. XD we onwy h-have the chosen se avaiwabwe. 😳
+                     * this is hawd t-to add fow intewweave, >w< and we p-pwan to add it w-watew aftew abstwaction impwovement. (˘ω˘)
                      */
-                    TweetWithCandidateGenerationInfo(
-                      tweetId = candidate.tweetId,
-                      candidateGenerationInfo = getProducerBasedUnifiedCGInfo(
-                        candidate.candidateGenerationInfo.sourceInfoOpt,
-                        candidate.getSimilarityScore,
-                        candidate.candidateGenerationInfo.contributingSimilarityEngines
-                      ) // getSimilarityScore comes from either unifiedScore or single score
+                    t-tweetwithcandidategenewationinfo(
+                      tweetid = candidate.tweetid, nyaa~~
+                      c-candidategenewationinfo = g-getpwoducewbasedunifiedcginfo(
+                        c-candidate.candidategenewationinfo.souwceinfoopt, 😳😳😳
+                        candidate.getsimiwawityscowe, (U ﹏ U)
+                        candidate.candidategenewationinfo.contwibutingsimiwawityengines
+                      ) // getsimiwawityscowe c-comes fwom eithew unifiedscowe ow singwe s-scowe
                     )
                 }
-                stats.stat("unified_candidate_size").add(unifiedCandidatesWithUnifiedCGInfo.size)
-                val truncatedCandidates =
-                  unifiedCandidatesWithUnifiedCGInfo.take(query.maxCandidateNumPerSourceKey)
-                stats.stat("truncatedCandidates_size").add(truncatedCandidates.size)
+                s-stats.stat("unified_candidate_size").add(unifiedcandidateswithunifiedcginfo.size)
+                vaw twuncatedcandidates =
+                  unifiedcandidateswithunifiedcginfo.take(quewy.maxcandidatenumpewsouwcekey)
+                s-stats.stat("twuncatedcandidates_size").add(twuncatedcandidates.size)
 
-                Some(truncatedCandidates)
+                some(twuncatedcandidates)
 
             }
         }
 
-      case _ =>
-        stats.counter("sourceId_is_not_userId_cnt").incr()
-        Future.None
+      c-case _ =>
+        s-stats.countew("souwceid_is_not_usewid_cnt").incw()
+        futuwe.none
     }
   }
 
-  private def simClustersCandidateMinScoreFilter(
-    simClustersAnnCandidates: Seq[TweetWithScore],
-    simClustersMinScore: Double,
-    simClustersANNConfigId: String
-  ): Seq[TweetWithScore] = {
-    val filteredCandidates = simClustersAnnCandidates
-      .filter { candidate =>
-        candidate.score > simClustersMinScore
+  pwivate def simcwustewscandidateminscowefiwtew(
+    s-simcwustewsanncandidates: seq[tweetwithscowe], (˘ω˘)
+    simcwustewsminscowe: d-doubwe, :3
+    s-simcwustewsannconfigid: stwing
+  ): seq[tweetwithscowe] = {
+    v-vaw fiwtewedcandidates = simcwustewsanncandidates
+      .fiwtew { c-candidate =>
+        candidate.scowe > s-simcwustewsminscowe
       }
 
-    stats.stat(simClustersANNConfigId, "simClustersAnnCandidates_size").add(filteredCandidates.size)
-    stats.counter(simClustersANNConfigId, "simClustersAnnRequests").incr()
-    if (filteredCandidates.isEmpty)
-      stats.counter(simClustersANNConfigId, "emptyFilteredSimClustersAnnCandidates").incr()
+    s-stats.stat(simcwustewsannconfigid, >w< "simcwustewsanncandidates_size").add(fiwtewedcandidates.size)
+    stats.countew(simcwustewsannconfigid, ^^ "simcwustewsannwequests").incw()
+    if (fiwtewedcandidates.isempty)
+      stats.countew(simcwustewsannconfigid, 😳😳😳 "emptyfiwtewedsimcwustewsanncandidates").incw()
 
-    filteredCandidates.map { candidate =>
-      TweetWithScore(candidate.tweetId, candidate.score)
+    fiwtewedcandidates.map { candidate =>
+      tweetwithscowe(candidate.tweetid, nyaa~~ candidate.scowe)
     }
   }
 
-  /** A no-op filter as UTG filter already happened at UTG service side */
-  private def userTweetGraphFilter(
-    userTweetGraphCandidates: Seq[TweetWithScore]
-  ): Seq[TweetWithScore] = {
-    val filteredCandidates = userTweetGraphCandidates
+  /** a nyo-op fiwtew as utg fiwtew awweady happened at utg sewvice side */
+  pwivate def usewtweetgwaphfiwtew(
+    u-usewtweetgwaphcandidates: s-seq[tweetwithscowe]
+  ): seq[tweetwithscowe] = {
+    vaw fiwtewedcandidates = u-usewtweetgwaphcandidates
 
-    stats.stat("userTweetGraphCandidates_size").add(userTweetGraphCandidates.size)
-    if (filteredCandidates.isEmpty) stats.counter("emptyFilteredUserTweetGraphCandidates").incr()
+    s-stats.stat("usewtweetgwaphcandidates_size").add(usewtweetgwaphcandidates.size)
+    i-if (fiwtewedcandidates.isempty) stats.countew("emptyfiwtewedusewtweetgwaphcandidates").incw()
 
-    filteredCandidates.map { candidate =>
-      TweetWithScore(candidate.tweetId, candidate.score)
+    f-fiwtewedcandidates.map { candidate =>
+      t-tweetwithscowe(candidate.tweetid, (⑅˘꒳˘) c-candidate.scowe)
     }
   }
 
 }
-object ProducerBasedUnifiedSimilarityEngine {
+object p-pwoducewbasedunifiedsimiwawityengine {
 
   /***
-   * Every candidate will have the CG Info with ProducerBasedUnifiedSimilarityEngine
-   * as they are generated by a composite of Similarity Engines.
-   * Additionally, we store the contributing SEs (eg., SANN, UTG).
+   * evewy candidate w-wiww have the c-cg info with pwoducewbasedunifiedsimiwawityengine
+   * as they awe genewated by a-a composite of s-simiwawity engines. :3
+   * a-additionawwy, ʘwʘ w-we stowe t-the contwibuting s-ses (eg., sann, rawr x3 u-utg).
    */
-  private def getProducerBasedUnifiedCGInfo(
-    sourceInfoOpt: Option[SourceInfo],
-    unifiedScore: Double,
-    contributingSimilarityEngines: Seq[SimilarityEngineInfo]
-  ): CandidateGenerationInfo = {
-    CandidateGenerationInfo(
-      sourceInfoOpt,
-      SimilarityEngineInfo(
-        similarityEngineType = SimilarityEngineType.ProducerBasedUnifiedSimilarityEngine,
-        modelId = None, // We do not assign modelId for a unified similarity engine
-        score = Some(unifiedScore)
-      ),
-      contributingSimilarityEngines
+  p-pwivate def getpwoducewbasedunifiedcginfo(
+    souwceinfoopt: o-option[souwceinfo], (///ˬ///✿)
+    unifiedscowe: d-doubwe, 😳😳😳
+    c-contwibutingsimiwawityengines: seq[simiwawityengineinfo]
+  ): c-candidategenewationinfo = {
+    candidategenewationinfo(
+      s-souwceinfoopt, XD
+      simiwawityengineinfo(
+        simiwawityenginetype = s-simiwawityenginetype.pwoducewbasedunifiedsimiwawityengine, >_<
+        modewid = n-nyone, >w< // we d-do nyot assign m-modewid fow a unified simiwawity e-engine
+        scowe = some(unifiedscowe)
+      ), /(^•ω•^)
+      c-contwibutingsimiwawityengines
     )
   }
 
-  case class Query(
-    sourceInfo: SourceInfo,
-    maxCandidateNumPerSourceKey: Int,
-    maxTweetAgeHours: Duration,
-    // SimClusters
-    enableSimClustersANN: Boolean,
-    simClustersANNQuery: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    enableExperimentalSimClustersANN: Boolean,
-    experimentalSimClustersANNQuery: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    enableSimClustersANN1: Boolean,
-    simClustersANN1Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    enableSimClustersANN2: Boolean,
-    simClustersANN2Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    enableSimClustersANN4: Boolean,
-    simClustersANN4Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    enableSimClustersANN3: Boolean,
-    simClustersANN3Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    enableSimClustersANN5: Boolean,
-    simClustersANN5Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    simClustersMinScore: Double,
-    // UTG
-    enableUtg: Boolean,
-    utgCombinationMethod: UnifiedSETweetCombinationMethod.Value,
-    utgQuery: EngineQuery[ProducerBasedUserTweetGraphSimilarityEngine.Query])
+  case cwass q-quewy(
+    souwceinfo: souwceinfo, :3
+    m-maxcandidatenumpewsouwcekey: int, ʘwʘ
+    maxtweetagehouws: duwation, (˘ω˘)
+    // simcwustews
+    enabwesimcwustewsann: boowean, (ꈍᴗꈍ)
+    s-simcwustewsannquewy: enginequewy[simcwustewsannsimiwawityengine.quewy], ^^
+    enabweexpewimentawsimcwustewsann: b-boowean, ^^
+    expewimentawsimcwustewsannquewy: enginequewy[simcwustewsannsimiwawityengine.quewy], ( ͡o ω ͡o )
+    e-enabwesimcwustewsann1: boowean, -.-
+    simcwustewsann1quewy: enginequewy[simcwustewsannsimiwawityengine.quewy], ^^;;
+    e-enabwesimcwustewsann2: boowean, ^•ﻌ•^
+    s-simcwustewsann2quewy: e-enginequewy[simcwustewsannsimiwawityengine.quewy], (˘ω˘)
+    e-enabwesimcwustewsann4: boowean, o.O
+    simcwustewsann4quewy: enginequewy[simcwustewsannsimiwawityengine.quewy], (✿oωo)
+    e-enabwesimcwustewsann3: b-boowean, 😳😳😳
+    simcwustewsann3quewy: enginequewy[simcwustewsannsimiwawityengine.quewy], (ꈍᴗꈍ)
+    e-enabwesimcwustewsann5: boowean, σωσ
+    simcwustewsann5quewy: enginequewy[simcwustewsannsimiwawityengine.quewy], UwU
+    s-simcwustewsminscowe: doubwe, ^•ﻌ•^
+    // utg
+    e-enabweutg: b-boowean, mya
+    utgcombinationmethod: u-unifiedsetweetcombinationmethod.vawue, /(^•ω•^)
+    utgquewy: enginequewy[pwoducewbasedusewtweetgwaphsimiwawityengine.quewy])
 
-  def fromParams(
-    sourceInfo: SourceInfo,
-    params: configapi.Params,
-  ): EngineQuery[Query] = {
-    val maxCandidateNumPerSourceKey = params(GlobalParams.MaxCandidateNumPerSourceKeyParam)
-    val maxTweetAgeHours = params(GlobalParams.MaxTweetAgeHoursParam)
-    // SimClusters
-    val enableSimClustersANN = params(
-      ProducerBasedCandidateGenerationParams.EnableSimClustersANNParam)
-    val simClustersModelVersion =
-      ModelVersions.Enum.enumToSimClustersModelVersionMap(params(GlobalParams.ModelVersionParam))
-    val simClustersANNConfigId = params(SimClustersANNParams.SimClustersANNConfigId)
-    // SimClusters - Experimental SANN Similarity Engine
-    val enableExperimentalSimClustersANN = params(
-      ProducerBasedCandidateGenerationParams.EnableExperimentalSimClustersANNParam)
-    val experimentalSimClustersANNConfigId = params(
-      SimClustersANNParams.ExperimentalSimClustersANNConfigId)
-    // SimClusters - SANN cluster 1 Similarity Engine
-    val enableSimClustersANN1 = params(
-      ProducerBasedCandidateGenerationParams.EnableSimClustersANN1Param)
-    val simClustersANN1ConfigId = params(SimClustersANNParams.SimClustersANN1ConfigId)
-    // SimClusters - SANN cluster 2 Similarity Engine
-    val enableSimClustersANN2 = params(
-      ProducerBasedCandidateGenerationParams.EnableSimClustersANN2Param)
-    val simClustersANN2ConfigId = params(SimClustersANNParams.SimClustersANN2ConfigId)
-    // SimClusters - SANN cluster 3 Similarity Engine
-    val enableSimClustersANN3 = params(
-      ProducerBasedCandidateGenerationParams.EnableSimClustersANN3Param)
-    val simClustersANN3ConfigId = params(SimClustersANNParams.SimClustersANN3ConfigId)
-    // SimClusters - SANN cluster 5 Similarity Engine
-    val enableSimClustersANN5 = params(
-      ProducerBasedCandidateGenerationParams.EnableSimClustersANN5Param)
-    val simClustersANN5ConfigId = params(SimClustersANNParams.SimClustersANN5ConfigId)
-    val enableSimClustersANN4 = params(
-      ProducerBasedCandidateGenerationParams.EnableSimClustersANN4Param)
-    val simClustersANN4ConfigId = params(SimClustersANNParams.SimClustersANN4ConfigId)
+  d-def f-fwompawams(
+    s-souwceinfo: souwceinfo, rawr
+    p-pawams: configapi.pawams, nyaa~~
+  ): e-enginequewy[quewy] = {
+    v-vaw maxcandidatenumpewsouwcekey = p-pawams(gwobawpawams.maxcandidatenumpewsouwcekeypawam)
+    v-vaw maxtweetagehouws = p-pawams(gwobawpawams.maxtweetagehouwspawam)
+    // s-simcwustews
+    v-vaw e-enabwesimcwustewsann = pawams(
+      p-pwoducewbasedcandidategenewationpawams.enabwesimcwustewsannpawam)
+    vaw simcwustewsmodewvewsion =
+      modewvewsions.enum.enumtosimcwustewsmodewvewsionmap(pawams(gwobawpawams.modewvewsionpawam))
+    vaw s-simcwustewsannconfigid = pawams(simcwustewsannpawams.simcwustewsannconfigid)
+    // s-simcwustews - e-expewimentaw s-sann simiwawity engine
+    vaw enabweexpewimentawsimcwustewsann = pawams(
+      p-pwoducewbasedcandidategenewationpawams.enabweexpewimentawsimcwustewsannpawam)
+    v-vaw expewimentawsimcwustewsannconfigid = p-pawams(
+      simcwustewsannpawams.expewimentawsimcwustewsannconfigid)
+    // simcwustews - sann cwustew 1 s-simiwawity e-engine
+    vaw enabwesimcwustewsann1 = p-pawams(
+      p-pwoducewbasedcandidategenewationpawams.enabwesimcwustewsann1pawam)
+    vaw simcwustewsann1configid = pawams(simcwustewsannpawams.simcwustewsann1configid)
+    // simcwustews - s-sann cwustew 2 s-simiwawity e-engine
+    vaw e-enabwesimcwustewsann2 = pawams(
+      pwoducewbasedcandidategenewationpawams.enabwesimcwustewsann2pawam)
+    v-vaw s-simcwustewsann2configid = pawams(simcwustewsannpawams.simcwustewsann2configid)
+    // simcwustews - s-sann cwustew 3 simiwawity engine
+    vaw enabwesimcwustewsann3 = p-pawams(
+      pwoducewbasedcandidategenewationpawams.enabwesimcwustewsann3pawam)
+    v-vaw simcwustewsann3configid = p-pawams(simcwustewsannpawams.simcwustewsann3configid)
+    // simcwustews - s-sann cwustew 5 s-simiwawity engine
+    vaw enabwesimcwustewsann5 = p-pawams(
+      pwoducewbasedcandidategenewationpawams.enabwesimcwustewsann5pawam)
+    v-vaw simcwustewsann5configid = p-pawams(simcwustewsannpawams.simcwustewsann5configid)
+    v-vaw enabwesimcwustewsann4 = p-pawams(
+      pwoducewbasedcandidategenewationpawams.enabwesimcwustewsann4pawam)
+    v-vaw simcwustewsann4configid = pawams(simcwustewsannpawams.simcwustewsann4configid)
 
-    val simClustersMinScore = params(
-      ProducerBasedCandidateGenerationParams.SimClustersMinScoreParam)
+    v-vaw simcwustewsminscowe = p-pawams(
+      pwoducewbasedcandidategenewationpawams.simcwustewsminscowepawam)
 
-    // SimClusters ANN Query
-    val simClustersANNQuery = SimClustersANNSimilarityEngine.fromParams(
-      sourceInfo.internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      simClustersANNConfigId,
-      params
+    // s-simcwustews ann quewy
+    vaw simcwustewsannquewy = s-simcwustewsannsimiwawityengine.fwompawams(
+      souwceinfo.intewnawid, ( ͡o ω ͡o )
+      e-embeddingtype.favbasedpwoducew, σωσ
+      s-simcwustewsmodewvewsion, (✿oωo)
+      simcwustewsannconfigid, (///ˬ///✿)
+      pawams
     )
-    val experimentalSimClustersANNQuery = SimClustersANNSimilarityEngine.fromParams(
-      sourceInfo.internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      experimentalSimClustersANNConfigId,
-      params
+    vaw expewimentawsimcwustewsannquewy = simcwustewsannsimiwawityengine.fwompawams(
+      souwceinfo.intewnawid, σωσ
+      e-embeddingtype.favbasedpwoducew,
+      simcwustewsmodewvewsion, UwU
+      e-expewimentawsimcwustewsannconfigid, (⑅˘꒳˘)
+      p-pawams
     )
-    val simClustersANN1Query = SimClustersANNSimilarityEngine.fromParams(
-      sourceInfo.internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      simClustersANN1ConfigId,
-      params
+    vaw simcwustewsann1quewy = simcwustewsannsimiwawityengine.fwompawams(
+      souwceinfo.intewnawid, /(^•ω•^)
+      e-embeddingtype.favbasedpwoducew, -.-
+      simcwustewsmodewvewsion, (ˆ ﻌ ˆ)♡
+      s-simcwustewsann1configid, nyaa~~
+      p-pawams
     )
-    val simClustersANN2Query = SimClustersANNSimilarityEngine.fromParams(
-      sourceInfo.internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      simClustersANN2ConfigId,
-      params
+    v-vaw simcwustewsann2quewy = s-simcwustewsannsimiwawityengine.fwompawams(
+      s-souwceinfo.intewnawid, ʘwʘ
+      embeddingtype.favbasedpwoducew, :3
+      simcwustewsmodewvewsion, (U ᵕ U❁)
+      simcwustewsann2configid, (U ﹏ U)
+      pawams
     )
-    val simClustersANN3Query = SimClustersANNSimilarityEngine.fromParams(
-      sourceInfo.internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      simClustersANN3ConfigId,
-      params
+    vaw simcwustewsann3quewy = s-simcwustewsannsimiwawityengine.fwompawams(
+      souwceinfo.intewnawid, ^^
+      e-embeddingtype.favbasedpwoducew, òωó
+      simcwustewsmodewvewsion, /(^•ω•^)
+      simcwustewsann3configid, 😳😳😳
+      pawams
     )
-    val simClustersANN5Query = SimClustersANNSimilarityEngine.fromParams(
-      sourceInfo.internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      simClustersANN5ConfigId,
-      params
+    vaw s-simcwustewsann5quewy = simcwustewsannsimiwawityengine.fwompawams(
+      souwceinfo.intewnawid, :3
+      embeddingtype.favbasedpwoducew, (///ˬ///✿)
+      simcwustewsmodewvewsion, rawr x3
+      s-simcwustewsann5configid, (U ᵕ U❁)
+      p-pawams
     )
-    val simClustersANN4Query = SimClustersANNSimilarityEngine.fromParams(
-      sourceInfo.internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      simClustersANN4ConfigId,
-      params
+    vaw s-simcwustewsann4quewy = simcwustewsannsimiwawityengine.fwompawams(
+      souwceinfo.intewnawid, (⑅˘꒳˘)
+      e-embeddingtype.favbasedpwoducew, (˘ω˘)
+      s-simcwustewsmodewvewsion,
+      simcwustewsann4configid, :3
+      p-pawams
     )
-    // UTG
-    val enableUtg = params(ProducerBasedCandidateGenerationParams.EnableUTGParam)
-    val utgCombinationMethod = params(
-      ProducerBasedCandidateGenerationParams.UtgCombinationMethodParam)
+    // utg
+    v-vaw enabweutg = pawams(pwoducewbasedcandidategenewationpawams.enabweutgpawam)
+    vaw utgcombinationmethod = pawams(
+      p-pwoducewbasedcandidategenewationpawams.utgcombinationmethodpawam)
 
-    EngineQuery(
-      Query(
-        sourceInfo = sourceInfo,
-        maxCandidateNumPerSourceKey = maxCandidateNumPerSourceKey,
-        maxTweetAgeHours = maxTweetAgeHours,
-        enableSimClustersANN = enableSimClustersANN,
-        simClustersANNQuery = simClustersANNQuery,
-        enableExperimentalSimClustersANN = enableExperimentalSimClustersANN,
-        experimentalSimClustersANNQuery = experimentalSimClustersANNQuery,
-        enableSimClustersANN1 = enableSimClustersANN1,
-        simClustersANN1Query = simClustersANN1Query,
-        enableSimClustersANN2 = enableSimClustersANN2,
-        simClustersANN2Query = simClustersANN2Query,
-        enableSimClustersANN3 = enableSimClustersANN3,
-        simClustersANN3Query = simClustersANN3Query,
-        enableSimClustersANN5 = enableSimClustersANN5,
-        simClustersANN5Query = simClustersANN5Query,
-        enableSimClustersANN4 = enableSimClustersANN4,
-        simClustersANN4Query = simClustersANN4Query,
-        simClustersMinScore = simClustersMinScore,
-        enableUtg = enableUtg,
-        utgCombinationMethod = utgCombinationMethod,
-        utgQuery = ProducerBasedUserTweetGraphSimilarityEngine
-          .fromParams(sourceInfo.internalId, params)
-      ),
-      params
+    enginequewy(
+      quewy(
+        s-souwceinfo = s-souwceinfo, XD
+        m-maxcandidatenumpewsouwcekey = maxcandidatenumpewsouwcekey, >_<
+        maxtweetagehouws = m-maxtweetagehouws, (✿oωo)
+        enabwesimcwustewsann = enabwesimcwustewsann, (ꈍᴗꈍ)
+        simcwustewsannquewy = simcwustewsannquewy, XD
+        enabweexpewimentawsimcwustewsann = e-enabweexpewimentawsimcwustewsann, :3
+        expewimentawsimcwustewsannquewy = e-expewimentawsimcwustewsannquewy,
+        e-enabwesimcwustewsann1 = e-enabwesimcwustewsann1, mya
+        simcwustewsann1quewy = simcwustewsann1quewy,
+        e-enabwesimcwustewsann2 = e-enabwesimcwustewsann2, òωó
+        simcwustewsann2quewy = simcwustewsann2quewy,
+        e-enabwesimcwustewsann3 = enabwesimcwustewsann3, nyaa~~
+        simcwustewsann3quewy = s-simcwustewsann3quewy,
+        enabwesimcwustewsann5 = enabwesimcwustewsann5, 🥺
+        s-simcwustewsann5quewy = s-simcwustewsann5quewy,
+        enabwesimcwustewsann4 = e-enabwesimcwustewsann4, -.-
+        s-simcwustewsann4quewy = s-simcwustewsann4quewy, 🥺
+        simcwustewsminscowe = simcwustewsminscowe, (˘ω˘)
+        e-enabweutg = enabweutg, òωó
+        utgcombinationmethod = utgcombinationmethod, UwU
+        u-utgquewy = pwoducewbasedusewtweetgwaphsimiwawityengine
+          .fwompawams(souwceinfo.intewnawid, ^•ﻌ•^ pawams)
+      ), mya
+      pawams
     )
   }
 
-  def fromParamsForRelatedTweet(
-    internalId: InternalId,
-    params: configapi.Params
-  ): EngineQuery[Query] = {
-    val maxCandidateNumPerSourceKey = params(GlobalParams.MaxCandidateNumPerSourceKeyParam)
-    val maxTweetAgeHours = params(GlobalParams.MaxTweetAgeHoursParam)
-    // SimClusters
-    val enableSimClustersANN = params(RelatedTweetProducerBasedParams.EnableSimClustersANNParam)
-    val simClustersModelVersion =
-      ModelVersions.Enum.enumToSimClustersModelVersionMap(params(GlobalParams.ModelVersionParam))
-    val simClustersANNConfigId = params(SimClustersANNParams.SimClustersANNConfigId)
-    val simClustersMinScore =
-      params(RelatedTweetProducerBasedParams.SimClustersMinScoreParam)
-    // SimClusters - Experimental SANN Similarity Engine
-    val enableExperimentalSimClustersANN = params(
-      RelatedTweetProducerBasedParams.EnableExperimentalSimClustersANNParam)
-    val experimentalSimClustersANNConfigId = params(
-      SimClustersANNParams.ExperimentalSimClustersANNConfigId)
-    // SimClusters - SANN cluster 1 Similarity Engine
-    val enableSimClustersANN1 = params(RelatedTweetProducerBasedParams.EnableSimClustersANN1Param)
-    val simClustersANN1ConfigId = params(SimClustersANNParams.SimClustersANN1ConfigId)
-    // SimClusters - SANN cluster 2 Similarity Engine
-    val enableSimClustersANN2 = params(RelatedTweetProducerBasedParams.EnableSimClustersANN2Param)
-    val simClustersANN2ConfigId = params(SimClustersANNParams.SimClustersANN2ConfigId)
-    // SimClusters - SANN cluster 3 Similarity Engine
-    val enableSimClustersANN3 = params(RelatedTweetProducerBasedParams.EnableSimClustersANN3Param)
-    val simClustersANN3ConfigId = params(SimClustersANNParams.SimClustersANN3ConfigId)
-    // SimClusters - SANN cluster 5 Similarity Engine
-    val enableSimClustersANN5 = params(RelatedTweetProducerBasedParams.EnableSimClustersANN5Param)
-    val simClustersANN5ConfigId = params(SimClustersANNParams.SimClustersANN5ConfigId)
+  d-def f-fwompawamsfowwewatedtweet(
+    intewnawid: i-intewnawid, (✿oωo)
+    p-pawams: c-configapi.pawams
+  ): enginequewy[quewy] = {
+    v-vaw maxcandidatenumpewsouwcekey = pawams(gwobawpawams.maxcandidatenumpewsouwcekeypawam)
+    vaw maxtweetagehouws = p-pawams(gwobawpawams.maxtweetagehouwspawam)
+    // simcwustews
+    v-vaw enabwesimcwustewsann = pawams(wewatedtweetpwoducewbasedpawams.enabwesimcwustewsannpawam)
+    vaw simcwustewsmodewvewsion =
+      m-modewvewsions.enum.enumtosimcwustewsmodewvewsionmap(pawams(gwobawpawams.modewvewsionpawam))
+    v-vaw simcwustewsannconfigid = p-pawams(simcwustewsannpawams.simcwustewsannconfigid)
+    vaw simcwustewsminscowe =
+      p-pawams(wewatedtweetpwoducewbasedpawams.simcwustewsminscowepawam)
+    // s-simcwustews - expewimentaw s-sann simiwawity e-engine
+    vaw enabweexpewimentawsimcwustewsann = p-pawams(
+      wewatedtweetpwoducewbasedpawams.enabweexpewimentawsimcwustewsannpawam)
+    vaw expewimentawsimcwustewsannconfigid = pawams(
+      s-simcwustewsannpawams.expewimentawsimcwustewsannconfigid)
+    // simcwustews - s-sann cwustew 1 simiwawity engine
+    vaw enabwesimcwustewsann1 = p-pawams(wewatedtweetpwoducewbasedpawams.enabwesimcwustewsann1pawam)
+    v-vaw s-simcwustewsann1configid = pawams(simcwustewsannpawams.simcwustewsann1configid)
+    // s-simcwustews - s-sann cwustew 2 simiwawity e-engine
+    vaw enabwesimcwustewsann2 = pawams(wewatedtweetpwoducewbasedpawams.enabwesimcwustewsann2pawam)
+    v-vaw simcwustewsann2configid = p-pawams(simcwustewsannpawams.simcwustewsann2configid)
+    // s-simcwustews - sann cwustew 3 simiwawity engine
+    vaw enabwesimcwustewsann3 = pawams(wewatedtweetpwoducewbasedpawams.enabwesimcwustewsann3pawam)
+    v-vaw s-simcwustewsann3configid = pawams(simcwustewsannpawams.simcwustewsann3configid)
+    // simcwustews - sann cwustew 5 s-simiwawity engine
+    vaw enabwesimcwustewsann5 = p-pawams(wewatedtweetpwoducewbasedpawams.enabwesimcwustewsann5pawam)
+    v-vaw simcwustewsann5configid = pawams(simcwustewsannpawams.simcwustewsann5configid)
 
-    val enableSimClustersANN4 = params(RelatedTweetProducerBasedParams.EnableSimClustersANN4Param)
-    val simClustersANN4ConfigId = params(SimClustersANNParams.SimClustersANN4ConfigId)
-    // Build SANN Query
-    val simClustersANNQuery = SimClustersANNSimilarityEngine.fromParams(
-      internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      simClustersANNConfigId,
-      params
+    vaw enabwesimcwustewsann4 = pawams(wewatedtweetpwoducewbasedpawams.enabwesimcwustewsann4pawam)
+    v-vaw simcwustewsann4configid = pawams(simcwustewsannpawams.simcwustewsann4configid)
+    // buiwd sann quewy
+    v-vaw simcwustewsannquewy = simcwustewsannsimiwawityengine.fwompawams(
+      i-intewnawid, XD
+      e-embeddingtype.favbasedpwoducew, :3
+      simcwustewsmodewvewsion, (U ﹏ U)
+      s-simcwustewsannconfigid, UwU
+      p-pawams
     )
-    val experimentalSimClustersANNQuery = SimClustersANNSimilarityEngine.fromParams(
-      internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      experimentalSimClustersANNConfigId,
-      params
+    v-vaw expewimentawsimcwustewsannquewy = simcwustewsannsimiwawityengine.fwompawams(
+      i-intewnawid, ʘwʘ
+      e-embeddingtype.favbasedpwoducew, >w<
+      s-simcwustewsmodewvewsion, 😳😳😳
+      expewimentawsimcwustewsannconfigid, rawr
+      pawams
     )
-    val simClustersANN1Query = SimClustersANNSimilarityEngine.fromParams(
-      internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      simClustersANN1ConfigId,
-      params
+    vaw simcwustewsann1quewy = simcwustewsannsimiwawityengine.fwompawams(
+      intewnawid, ^•ﻌ•^
+      e-embeddingtype.favbasedpwoducew, σωσ
+      s-simcwustewsmodewvewsion, :3
+      s-simcwustewsann1configid,
+      p-pawams
     )
-    val simClustersANN2Query = SimClustersANNSimilarityEngine.fromParams(
-      internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      simClustersANN2ConfigId,
-      params
+    v-vaw simcwustewsann2quewy = s-simcwustewsannsimiwawityengine.fwompawams(
+      intewnawid, rawr x3
+      embeddingtype.favbasedpwoducew, nyaa~~
+      simcwustewsmodewvewsion, :3
+      simcwustewsann2configid, >w<
+      p-pawams
     )
-    val simClustersANN3Query = SimClustersANNSimilarityEngine.fromParams(
-      internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      simClustersANN3ConfigId,
-      params
+    v-vaw simcwustewsann3quewy = simcwustewsannsimiwawityengine.fwompawams(
+      intewnawid, rawr
+      embeddingtype.favbasedpwoducew, 😳
+      s-simcwustewsmodewvewsion, 😳
+      s-simcwustewsann3configid, 🥺
+      p-pawams
     )
-    val simClustersANN5Query = SimClustersANNSimilarityEngine.fromParams(
-      internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      simClustersANN5ConfigId,
-      params
+    vaw simcwustewsann5quewy = simcwustewsannsimiwawityengine.fwompawams(
+      i-intewnawid, rawr x3
+      embeddingtype.favbasedpwoducew, ^^
+      simcwustewsmodewvewsion, ( ͡o ω ͡o )
+      simcwustewsann5configid, XD
+      p-pawams
     )
-    val simClustersANN4Query = SimClustersANNSimilarityEngine.fromParams(
-      internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      simClustersANN4ConfigId,
-      params
+    v-vaw simcwustewsann4quewy = simcwustewsannsimiwawityengine.fwompawams(
+      i-intewnawid,
+      embeddingtype.favbasedpwoducew, ^^
+      s-simcwustewsmodewvewsion, (⑅˘꒳˘)
+      s-simcwustewsann4configid, (⑅˘꒳˘)
+      pawams
     )
-    // UTG
-    val enableUtg = params(RelatedTweetProducerBasedParams.EnableUTGParam)
-    val utgCombinationMethod = params(
-      ProducerBasedCandidateGenerationParams.UtgCombinationMethodParam)
+    // u-utg
+    vaw e-enabweutg = pawams(wewatedtweetpwoducewbasedpawams.enabweutgpawam)
+    v-vaw utgcombinationmethod = p-pawams(
+      p-pwoducewbasedcandidategenewationpawams.utgcombinationmethodpawam)
 
-    // SourceType.RequestUserId is a placeholder.
-    val sourceInfo = SourceInfo(SourceType.RequestUserId, internalId, None)
+    // s-souwcetype.wequestusewid is a pwacehowdew. ^•ﻌ•^
+    v-vaw souwceinfo = s-souwceinfo(souwcetype.wequestusewid, ( ͡o ω ͡o ) intewnawid, ( ͡o ω ͡o ) nyone)
 
-    EngineQuery(
-      Query(
-        sourceInfo = sourceInfo,
-        maxCandidateNumPerSourceKey = maxCandidateNumPerSourceKey,
-        maxTweetAgeHours = maxTweetAgeHours,
-        enableSimClustersANN = enableSimClustersANN,
-        simClustersANNQuery = simClustersANNQuery,
-        enableExperimentalSimClustersANN = enableExperimentalSimClustersANN,
-        experimentalSimClustersANNQuery = experimentalSimClustersANNQuery,
-        enableSimClustersANN1 = enableSimClustersANN1,
-        simClustersANN1Query = simClustersANN1Query,
-        enableSimClustersANN2 = enableSimClustersANN2,
-        simClustersANN2Query = simClustersANN2Query,
-        enableSimClustersANN3 = enableSimClustersANN3,
-        simClustersANN3Query = simClustersANN3Query,
-        enableSimClustersANN5 = enableSimClustersANN5,
-        simClustersANN5Query = simClustersANN5Query,
-        enableSimClustersANN4 = enableSimClustersANN4,
-        simClustersANN4Query = simClustersANN4Query,
-        simClustersMinScore = simClustersMinScore,
-        enableUtg = enableUtg,
-        utgQuery = ProducerBasedUserTweetGraphSimilarityEngine.fromParams(internalId, params),
-        utgCombinationMethod = utgCombinationMethod
-      ),
-      params
+    e-enginequewy(
+      quewy(
+        souwceinfo = s-souwceinfo, (✿oωo)
+        maxcandidatenumpewsouwcekey = m-maxcandidatenumpewsouwcekey, 😳😳😳
+        maxtweetagehouws = m-maxtweetagehouws, OwO
+        e-enabwesimcwustewsann = enabwesimcwustewsann, ^^
+        simcwustewsannquewy = simcwustewsannquewy, rawr x3
+        e-enabweexpewimentawsimcwustewsann = enabweexpewimentawsimcwustewsann, 🥺
+        expewimentawsimcwustewsannquewy = expewimentawsimcwustewsannquewy, (ˆ ﻌ ˆ)♡
+        e-enabwesimcwustewsann1 = e-enabwesimcwustewsann1, ( ͡o ω ͡o )
+        simcwustewsann1quewy = simcwustewsann1quewy, >w<
+        e-enabwesimcwustewsann2 = e-enabwesimcwustewsann2, /(^•ω•^)
+        simcwustewsann2quewy = s-simcwustewsann2quewy, 😳😳😳
+        enabwesimcwustewsann3 = enabwesimcwustewsann3, (U ᵕ U❁)
+        s-simcwustewsann3quewy = s-simcwustewsann3quewy, (˘ω˘)
+        enabwesimcwustewsann5 = e-enabwesimcwustewsann5, 😳
+        s-simcwustewsann5quewy = simcwustewsann5quewy, (ꈍᴗꈍ)
+        enabwesimcwustewsann4 = e-enabwesimcwustewsann4, :3
+        s-simcwustewsann4quewy = s-simcwustewsann4quewy,
+        s-simcwustewsminscowe = simcwustewsminscowe, /(^•ω•^)
+        enabweutg = enabweutg, ^^;;
+        utgquewy = pwoducewbasedusewtweetgwaphsimiwawityengine.fwompawams(intewnawid, o.O pawams), 😳
+        u-utgcombinationmethod = u-utgcombinationmethod
+      ), UwU
+      p-pawams
     )
   }
 

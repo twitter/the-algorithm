@@ -1,53 +1,53 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.timewine_moduwe
 
-import com.twitter.product_mixer.core.functional_component.configapi.StaticParam
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleDisplayTypeBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Carousel
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.CompactCarousel
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ConversationTree
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.GridCarousel
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Vertical
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalConversation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalGrid
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalWithContextLine
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.configapi.staticpawam
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.timewine_moduwe.basemoduwedispwaytypebuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.cawousew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.compactcawousew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.convewsationtwee
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.gwidcawousew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.moduwedispwaytype
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.vewticaw
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.vewticawconvewsation
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.vewticawgwid
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.vewticawwithcontextwine
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.timewines.configapi.pawam
 
-object WhoToFollowModuleDisplayType extends Enumeration {
-  type ModuleDisplayType = Value
+object whotofowwowmoduwedispwaytype e-extends e-enumewation {
+  type moduwedispwaytype = vawue
 
-  val Carousel = Value
-  val CompactCarousel = Value
-  val ConversationTree = Value
-  val GridCarousel = Value
-  val Vertical = Value
-  val VerticalConversation = Value
-  val VerticalGrid = Value
-  val VerticalWithContextLine = Value
+  vaw cawousew = vawue
+  vaw c-compactcawousew = vawue
+  vaw convewsationtwee = vawue
+  vaw gwidcawousew = vawue
+  vaw vewticaw = v-vawue
+  vaw vewticawconvewsation = vawue
+  vaw v-vewticawgwid = v-vawue
+  vaw vewticawwithcontextwine = v-vawue
 }
 
-case class ParamWhoToFollowModuleDisplayTypeBuilder(
-  displayTypeParam: Param[WhoToFollowModuleDisplayType.Value] =
-    StaticParam(WhoToFollowModuleDisplayType.Vertical))
-    extends BaseModuleDisplayTypeBuilder[PipelineQuery, UniversalNoun[Any]] {
+c-case cwass pawamwhotofowwowmoduwedispwaytypebuiwdew(
+  dispwaytypepawam: pawam[whotofowwowmoduwedispwaytype.vawue] =
+    s-staticpawam(whotofowwowmoduwedispwaytype.vewticaw))
+    extends basemoduwedispwaytypebuiwdew[pipewinequewy, o.O univewsawnoun[any]] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[UniversalNoun[Any]]]
-  ): ModuleDisplayType = {
-    val displayType = query.params(displayTypeParam)
-    displayType match {
-      case WhoToFollowModuleDisplayType.Carousel => Carousel
-      case WhoToFollowModuleDisplayType.CompactCarousel => CompactCarousel
-      case WhoToFollowModuleDisplayType.ConversationTree => ConversationTree
-      case WhoToFollowModuleDisplayType.GridCarousel => GridCarousel
-      case WhoToFollowModuleDisplayType.Vertical => Vertical
-      case WhoToFollowModuleDisplayType.VerticalConversation => VerticalConversation
-      case WhoToFollowModuleDisplayType.VerticalGrid => VerticalGrid
-      case WhoToFollowModuleDisplayType.VerticalWithContextLine => VerticalWithContextLine
+  o-ovewwide def appwy(
+    quewy: pipewinequewy, ( ͡o ω ͡o )
+    candidates: seq[candidatewithfeatuwes[univewsawnoun[any]]]
+  ): moduwedispwaytype = {
+    vaw dispwaytype = q-quewy.pawams(dispwaytypepawam)
+    dispwaytype match {
+      c-case whotofowwowmoduwedispwaytype.cawousew => c-cawousew
+      c-case whotofowwowmoduwedispwaytype.compactcawousew => compactcawousew
+      case whotofowwowmoduwedispwaytype.convewsationtwee => convewsationtwee
+      c-case w-whotofowwowmoduwedispwaytype.gwidcawousew => gwidcawousew
+      c-case whotofowwowmoduwedispwaytype.vewticaw => v-vewticaw
+      case whotofowwowmoduwedispwaytype.vewticawconvewsation => v-vewticawconvewsation
+      case whotofowwowmoduwedispwaytype.vewticawgwid => v-vewticawgwid
+      case whotofowwowmoduwedispwaytype.vewticawwithcontextwine => vewticawwithcontextwine
     }
   }
 }

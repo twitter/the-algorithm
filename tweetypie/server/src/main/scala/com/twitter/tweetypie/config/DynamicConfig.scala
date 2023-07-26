@@ -1,100 +1,100 @@
-package com.twitter.tweetypie.config
+package com.twittew.tweetypie.config
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.tweetypie.Gate
-import com.twitter.tweetypie.backends.ConfigBus
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.util.Activity
+impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.tweetypie.gate
+i-impowt com.twittew.tweetypie.backends.configbus
+i-impowt com.twittew.tweetypie.cwient_id.cwientidhewpew
+i-impowt c-com.twittew.utiw.activity
 
-case class DynamicConfig(
-  // A map of fully-qualified client ID (including the environment suffix, e.g. tweetypie.prod) to Client case class
-  clientsByFullyQualifiedId: Option[Map[String, Client]],
-  // Clients by service identifier parts.
-  clientsByRole: Option[Map[String, Seq[Client]]] = None,
-  clientsByService: Option[Map[String, Seq[Client]]] = None,
-  onlyEnvClients: Option[Seq[Client]] = None,
-  // These endpoints do not need permissions to be accessed
-  unprotectedEndpoints: Set[String] = Set("get_tweet_counts", "get_tweet_fields", "get_tweets")) {
+case c-cwass dynamicconfig(
+  // a-a map of fuwwy-quawified cwient id (incwuding the enviwonment suffix, (✿oωo) e-e.g. tweetypie.pwod) to cwient case cwass
+  c-cwientsbyfuwwyquawifiedid: option[map[stwing, (U ﹏ U) c-cwient]],
+  // cwients by sewvice identifiew pawts. -.-
+  c-cwientsbywowe: option[map[stwing, ^•ﻌ•^ s-seq[cwient]]] = n-nyone, rawr
+  cwientsbysewvice: option[map[stwing, seq[cwient]]] = nyone, (˘ω˘)
+  onwyenvcwients: option[seq[cwient]] = n-nyone, nyaa~~
+  // these endpoints do not nyeed pewmissions to be accessed
+  unpwotectedendpoints: set[stwing] = s-set("get_tweet_counts", UwU "get_tweet_fiewds", :3 "get_tweets")) {
 
   /**
-   * Function that takes a fully qualified client id and says whether it is included in the allowList
+   * function that t-takes a fuwwy q-quawified cwient i-id and says whethew i-it is incwuded in the awwowwist
    */
-  val isAllowListedClient: String => Boolean =
-    clientsByFullyQualifiedId.map(clients => clients.contains _).getOrElse(_ => true)
+  vaw isawwowwistedcwient: s-stwing => boowean =
+    cwientsbyfuwwyquawifiedid.map(cwients => c-cwients.contains _).getowewse(_ => twue)
 
-  def byServiceIdentifier(serviceIdentifier: ServiceIdentifier): Set[Client] =
-    Iterable.concat(
-      get(clientsByRole, serviceIdentifier.role),
-      get(clientsByService, serviceIdentifier.service),
-      onlyEnvClients.getOrElse(Seq()),
+  def bysewviceidentifiew(sewviceidentifiew: sewviceidentifiew): set[cwient] =
+    itewabwe.concat(
+      g-get(cwientsbywowe, (⑅˘꒳˘) sewviceidentifiew.wowe), (///ˬ///✿)
+      get(cwientsbysewvice, ^^;; s-sewviceidentifiew.sewvice), >_<
+      o-onwyenvcwients.getowewse(seq()), rawr x3
     )
-      .filter(_.matches(serviceIdentifier))
-      .toSet
+      .fiwtew(_.matches(sewviceidentifiew))
+      .toset
 
-  private def get(clientsByKey: Option[Map[String, Seq[Client]]], key: String): Seq[Client] =
-    clientsByKey match {
-      case Some(map) => map.getOrElse(key, Seq())
-      case None => Seq()
+  p-pwivate def get(cwientsbykey: option[map[stwing, /(^•ω•^) seq[cwient]]], :3 k-key: stwing): s-seq[cwient] =
+    cwientsbykey m-match {
+      c-case some(map) => map.getowewse(key, (ꈍᴗꈍ) s-seq())
+      case nyone => s-seq()
     }
 
   /**
-   * Take a fully qualified client id and says if the client has offered to shed reads if tweetypie
-   * is in an emergency
+   * take a fuwwy quawified c-cwient id and says if the cwient h-has offewed to shed weads if t-tweetypie
+   * i-is in an emewgency
    */
-  val loadShedEligible: Gate[String] = Gate { (clientId: String) =>
-    val env = ClientIdHelper.getClientIdEnv(clientId)
-    clientsByFullyQualifiedId.flatMap(clients => clients.get(clientId)).exists { c =>
-      c.loadShedEnvs.contains(env)
+  vaw woadshedewigibwe: gate[stwing] = gate { (cwientid: stwing) =>
+    vaw env = cwientidhewpew.getcwientidenv(cwientid)
+    c-cwientsbyfuwwyquawifiedid.fwatmap(cwients => c-cwients.get(cwientid)).exists { c =>
+      c-c.woadshedenvs.contains(env)
     }
   }
 }
 
 /**
- * DynamicConfig uses ConfigBus to update Tweetypie with configuration changes
- * dynamically. Every time the config changes, the Activity[DynamicConfig] is
- * updated, and anything relying on that config will be reinitialized.
+ * d-dynamicconfig uses c-configbus to update tweetypie with configuwation changes
+ * d-dynamicawwy. /(^•ω•^) evewy time the config changes, the activity[dynamicconfig] is
+ * updated, (⑅˘꒳˘) a-and anything wewying on that c-config wiww b-be weinitiawized. ( ͡o ω ͡o )
  */
-object DynamicConfig {
-  def fullyQualifiedClientIds(client: Client): Seq[String] = {
-    val clientId = client.clientId
-    client.environments match {
-      case Nil => Seq(clientId)
-      case envs => envs.map(env => s"$clientId.$env")
+o-object dynamicconfig {
+  def fuwwyquawifiedcwientids(cwient: c-cwient): seq[stwing] = {
+    v-vaw cwientid = cwient.cwientid
+    c-cwient.enviwonments m-match {
+      case nyiw => seq(cwientid)
+      c-case envs => e-envs.map(env => s-s"$cwientid.$env")
     }
   }
 
-  // Make a Map of fully qualified client id to Client
-  def byClientId(clients: Seq[Client]): Map[String, Client] =
-    clients.flatMap { client =>
-      fullyQualifiedClientIds(client).map { fullClientId => fullClientId -> client }
-    }.toMap
+  // m-make a map o-of fuwwy quawified cwient id to cwient
+  def bycwientid(cwients: seq[cwient]): m-map[stwing, òωó cwient] =
+    cwients.fwatmap { cwient =>
+      fuwwyquawifiedcwientids(cwient).map { fuwwcwientid => fuwwcwientid -> c-cwient }
+    }.tomap
 
-  def by(get: ServiceIdentifierPattern => Option[String])(clients: Seq[Client]): Map[String, Seq[Client]] =
-    clients.flatMap { c =>
-      c.serviceIdentifiers.collect {
-        case s if get(s).isDefined => (get(s).get, c)
+  def by(get: sewviceidentifiewpattewn => option[stwing])(cwients: s-seq[cwient]): m-map[stwing, (⑅˘꒳˘) s-seq[cwient]] =
+    cwients.fwatmap { c-c =>
+      c.sewviceidentifiews.cowwect {
+        c-case s-s if get(s).isdefined => (get(s).get, XD c)
       }
-    }.groupBy(_._1).mapValues(_.map(_._2))
+    }.gwoupby(_._1).mapvawues(_.map(_._2))
 
-  private[this] val clientsPath = "config/clients.yml"
+  pwivate[this] vaw cwientspath = "config/cwients.ymw"
 
-  def apply(
-    stats: StatsReceiver,
-    configBus: ConfigBus,
-    settings: TweetServiceSettings
-  ): Activity[DynamicConfig] =
-    DynamicConfigLoader(configBus.file)
-      .apply(clientsPath, stats.scope("client_allowlist"), ClientsParser.apply)
-      .map(fromClients)
+  def appwy(
+    stats: statsweceivew, -.-
+    c-configbus: configbus, :3
+    settings: t-tweetsewvicesettings
+  ): activity[dynamicconfig] =
+    dynamicconfigwoadew(configbus.fiwe)
+      .appwy(cwientspath, nyaa~~ s-stats.scope("cwient_awwowwist"), c-cwientspawsew.appwy)
+      .map(fwomcwients)
 
-  def fromClients(clients: Option[Seq[Client]]): DynamicConfig =
-    DynamicConfig(
-      clientsByFullyQualifiedId = clients.map(byClientId),
-      clientsByRole = clients.map(by(_.role)),
-      clientsByService = clients.map(by(_.service)),
-      onlyEnvClients = clients.map(_.filter { client =>
-        client.serviceIdentifiers.exists(_.onlyEnv)
-      }),
+  def fwomcwients(cwients: o-option[seq[cwient]]): d-dynamicconfig =
+    dynamicconfig(
+      cwientsbyfuwwyquawifiedid = c-cwients.map(bycwientid), 😳
+      cwientsbywowe = cwients.map(by(_.wowe)), (⑅˘꒳˘)
+      c-cwientsbysewvice = cwients.map(by(_.sewvice)), nyaa~~
+      onwyenvcwients = cwients.map(_.fiwtew { cwient =>
+        c-cwient.sewviceidentifiews.exists(_.onwyenv)
+      }), OwO
     )
 }

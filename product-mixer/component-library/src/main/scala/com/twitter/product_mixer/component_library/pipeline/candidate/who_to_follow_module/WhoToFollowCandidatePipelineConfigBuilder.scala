@@ -1,69 +1,69 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+package com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.who_to_fowwow_moduwe
 
-import com.twitter.product_mixer.component_library.candidate_source.people_discovery.PeopleDiscoveryCandidateSource
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.configapi.StaticParam
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleDisplayTypeBuilder
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
-import com.twitter.timelines.configapi.decider.DeciderParam
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.peopwe_discovewy.peopwediscovewycandidatesouwce
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.usewcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.awewt
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.configapi.staticpawam
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.timewine_moduwe.basemoduwedispwaytypebuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.timewines.configapi.fspawam
+i-impowt com.twittew.timewines.configapi.pawam
+impowt c-com.twittew.timewines.configapi.decidew.decidewpawam
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class WhoToFollowCandidatePipelineConfigBuilder @Inject() (
-  whoToFollowCandidateSource: PeopleDiscoveryCandidateSource) {
+@singweton
+c-cwass whotofowwowcandidatepipewineconfigbuiwdew @inject() (
+  w-whotofowwowcandidatesouwce: p-peopwediscovewycandidatesouwce) {
 
   /**
-   * Build a WhoToFollowCandidatePipelineConfig
+   * buiwd a whotofowwowcandidatepipewineconfig
    *
-   * To create a DependentCandidatePipelineConfig instead see [[WhoToFollowDependentCandidatePipelineConfigBuilder]].
+   * to cweate a dependentcandidatepipewineconfig instead s-see [[whotofowwowdependentcandidatepipewineconfigbuiwdew]]. (U ﹏ U)
    *
-   * @note If injected classes are needed to populate parameters in this method, consider creating a
-   *       ProductWhoToFollowCandidatePipelineConfigBuilder with a single `def build()` method. That
-   *       product-specific builder class can then inject everything it needs (including this class),
-   *       and delegate to this class's build() method within its own build() method.
+   * @note if injected cwasses awe nyeeded to popuwate pawametews i-in this method, (///ˬ///✿) considew cweating a-a
+   *       p-pwoductwhotofowwowcandidatepipewineconfigbuiwdew w-with a singwe `def b-buiwd()` method. 😳 that
+   *       pwoduct-specific b-buiwdew cwass can then inject evewything i-it nyeeds (incwuding this cwass), 😳
+   *       and dewegate to this cwass's buiwd() method within i-its own buiwd() method. σωσ
    */
-  def build[Query <: PipelineQuery](
-    moduleDisplayTypeBuilder: BaseModuleDisplayTypeBuilder[Query, UserCandidate],
-    identifier: CandidatePipelineIdentifier = WhoToFollowCandidatePipelineConfig.identifier,
-    enabledDeciderParam: Option[DeciderParam[Boolean]] = None,
-    supportedClientParam: Option[FSParam[Boolean]] = None,
-    alerts: Seq[Alert] = Seq.empty,
-    gates: Seq[Gate[Query]] = Seq.empty,
-    filters: Seq[Filter[Query, UserCandidate]] = Seq.empty,
-    feedbackActionInfoBuilder: Option[BaseFeedbackActionInfoBuilder[
-      PipelineQuery,
-      UserCandidate
-    ]] = None,
-    displayLocationParam: Param[String] =
-      StaticParam(WhoToFollowCandidatePipelineQueryTransformer.DisplayLocation),
-    supportedLayoutsParam: Param[Seq[String]] =
-      StaticParam(WhoToFollowCandidatePipelineQueryTransformer.SupportedLayouts),
-    layoutVersionParam: Param[Int] =
-      StaticParam(WhoToFollowCandidatePipelineQueryTransformer.LayoutVersion),
-    excludedUserIdsFeature: Option[Feature[PipelineQuery, Seq[Long]]] = None,
-  ): WhoToFollowCandidatePipelineConfig[Query] =
-    new WhoToFollowCandidatePipelineConfig(
-      identifier = identifier,
-      enabledDeciderParam = enabledDeciderParam,
-      supportedClientParam = supportedClientParam,
-      alerts = alerts,
-      gates = gates,
-      moduleDisplayTypeBuilder = moduleDisplayTypeBuilder,
-      whoToFollowCandidateSource = whoToFollowCandidateSource,
-      filters = filters,
-      feedbackActionInfoBuilder = feedbackActionInfoBuilder,
-      displayLocationParam = displayLocationParam,
-      supportedLayoutsParam = supportedLayoutsParam,
-      layoutVersionParam = layoutVersionParam,
-      excludedUserIdsFeature = excludedUserIdsFeature
+  d-def buiwd[quewy <: p-pipewinequewy](
+    m-moduwedispwaytypebuiwdew: basemoduwedispwaytypebuiwdew[quewy, rawr x3 usewcandidate], OwO
+    identifiew: c-candidatepipewineidentifiew = w-whotofowwowcandidatepipewineconfig.identifiew, /(^•ω•^)
+    enabweddecidewpawam: o-option[decidewpawam[boowean]] = n-nyone, 😳😳😳
+    suppowtedcwientpawam: o-option[fspawam[boowean]] = nyone, ( ͡o ω ͡o )
+    a-awewts: seq[awewt] = seq.empty, >_<
+    gates: seq[gate[quewy]] = s-seq.empty, >w<
+    fiwtews: seq[fiwtew[quewy, rawr u-usewcandidate]] = seq.empty, 😳
+    f-feedbackactioninfobuiwdew: o-option[basefeedbackactioninfobuiwdew[
+      pipewinequewy, >w<
+      usewcandidate
+    ]] = nyone, (⑅˘꒳˘)
+    dispwaywocationpawam: pawam[stwing] =
+      staticpawam(whotofowwowcandidatepipewinequewytwansfowmew.dispwaywocation), OwO
+    suppowtedwayoutspawam: p-pawam[seq[stwing]] =
+      s-staticpawam(whotofowwowcandidatepipewinequewytwansfowmew.suppowtedwayouts), (ꈍᴗꈍ)
+    wayoutvewsionpawam: p-pawam[int] =
+      s-staticpawam(whotofowwowcandidatepipewinequewytwansfowmew.wayoutvewsion), 😳
+    e-excwudedusewidsfeatuwe: option[featuwe[pipewinequewy, 😳😳😳 seq[wong]]] = nyone, mya
+  ): whotofowwowcandidatepipewineconfig[quewy] =
+    n-nyew whotofowwowcandidatepipewineconfig(
+      identifiew = identifiew, mya
+      enabweddecidewpawam = enabweddecidewpawam, (⑅˘꒳˘)
+      s-suppowtedcwientpawam = suppowtedcwientpawam, (U ﹏ U)
+      a-awewts = a-awewts, mya
+      g-gates = gates, ʘwʘ
+      moduwedispwaytypebuiwdew = m-moduwedispwaytypebuiwdew, (˘ω˘)
+      w-whotofowwowcandidatesouwce = w-whotofowwowcandidatesouwce, (U ﹏ U)
+      f-fiwtews = fiwtews, ^•ﻌ•^
+      feedbackactioninfobuiwdew = feedbackactioninfobuiwdew, (˘ω˘)
+      d-dispwaywocationpawam = d-dispwaywocationpawam, :3
+      s-suppowtedwayoutspawam = s-suppowtedwayoutspawam, ^^;;
+      w-wayoutvewsionpawam = wayoutvewsionpawam, 🥺
+      excwudedusewidsfeatuwe = excwudedusewidsfeatuwe
     )
 }

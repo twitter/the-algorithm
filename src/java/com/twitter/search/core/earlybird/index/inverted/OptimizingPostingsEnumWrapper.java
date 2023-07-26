@@ -1,128 +1,128 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+impowt j-java.io.ioexception;
+i-impowt java.utiw.cowwections;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.map;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.base.pweconditions;
+impowt c-com.googwe.common.cowwect.wists;
+i-impowt com.googwe.common.cowwect.maps;
 
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.util.BytesRef;
+impowt owg.apache.wucene.index.postingsenum;
+impowt owg.apache.wucene.utiw.byteswef;
 
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.docidtotweetidmappew;
 
 /**
- * A PostingsEnum that maps doc IDs in one DocIDToTweetIDMapper instance to doc IDs in another
- * DocIDToTweetIDMapper.
+ * a-a postingsenum that maps doc ids in one docidtotweetidmappew instance t-to doc ids in anothew
+ * d-docidtotweetidmappew. OwO
  *
- * Unoptimized segments can use any DocIDToTweetIDMapper they want, which means that there are no
- * guarantees on the distribution of the doc IDs in this mapper. However, optimized segments must
- * use an OptimizedTweetIDMapper: we want to assign sequential doc IDs and use delta encondings in
- * order to save space. So when an Earlybird segment needs to be optimized, we might need to convert
- * the doc ID space of the unoptimized tweet ID mapper to the doc ID space of the optimized mapper.
- * However, once we do this, the doc IDs stored in the posting lists in that segment will no longer
- * be valid, unless we remap them too. So the goal of this class is to provide a way to do that.
+ * unoptimized segments can use any docidtotweetidmappew t-they want, rawr x3 which means that thewe a-awe nyo
+ * g-guawantees on the distwibution of the doc ids in this mappew. XD howevew, σωσ optimized s-segments must
+ * use an optimizedtweetidmappew: we want to assign sequentiaw doc ids and use dewta e-encondings in
+ * owdew to save s-space. (U ᵕ U❁) so when a-an eawwybiwd segment n-nyeeds to b-be optimized, (U ﹏ U) we might nyeed to convewt
+ * the d-doc id space of the unoptimized tweet id mappew t-to the doc id space of the optimized mappew. :3
+ * howevew, ( ͡o ω ͡o ) once we do this, σωσ the doc ids stowed in t-the posting wists in that segment w-wiww nyo wongew
+ * b-be vawid, >w< unwess w-we wemap them too. 😳😳😳 so the goaw of this cwass is to pwovide a-a way to do that. OwO
  *
- * When we want to optimize a posting list, we need to traverse it and pack it. This class provides
- * a wrapper around the original posting list that does the doc ID remapping at traversal time.
+ * w-when we want to optimize a-a posting wist, 😳 w-we nyeed to twavewse it and pack i-it. 😳😳😳 this cwass pwovides
+ * a w-wwappew awound the owiginaw posting wist that does t-the doc id wemapping at twavewsaw t-time. (˘ω˘)
  */
-public class OptimizingPostingsEnumWrapper extends PostingsEnum {
-  private final List<Integer> docIds = Lists.newArrayList();
-  private final Map<Integer, List<Integer>> positions = Maps.newHashMap();
+pubwic cwass optimizingpostingsenumwwappew e-extends p-postingsenum {
+  pwivate finaw wist<integew> docids = wists.newawwaywist();
+  pwivate finaw map<integew, ʘwʘ wist<integew>> positions = m-maps.newhashmap();
 
-  private int docIdIndex = -1;
-  private int positionIndex = -1;
+  p-pwivate int docidindex = -1;
+  p-pwivate i-int positionindex = -1;
 
-  public OptimizingPostingsEnumWrapper(PostingsEnum source,
-                                       DocIDToTweetIDMapper originalTweetIdMapper,
-                                       DocIDToTweetIDMapper newTweetIdMapper) throws IOException {
-    int docId;
-    while ((docId = source.nextDoc()) != NO_MORE_DOCS) {
-      long tweetId = originalTweetIdMapper.getTweetID(docId);
-      int newDocId = newTweetIdMapper.getDocID(tweetId);
-      Preconditions.checkState(newDocId != DocIDToTweetIDMapper.ID_NOT_FOUND,
-          "Did not find a mapping in the new tweet ID mapper for tweet ID %s, doc ID %s",
-          tweetId, docId);
+  p-pubwic optimizingpostingsenumwwappew(postingsenum souwce, ( ͡o ω ͡o )
+                                       docidtotweetidmappew owiginawtweetidmappew, o.O
+                                       d-docidtotweetidmappew nyewtweetidmappew) thwows ioexception {
+    int docid;
+    w-whiwe ((docid = souwce.nextdoc()) != n-nyo_mowe_docs) {
+      w-wong t-tweetid = owiginawtweetidmappew.gettweetid(docid);
+      int n-nyewdocid = nyewtweetidmappew.getdocid(tweetid);
+      p-pweconditions.checkstate(newdocid != d-docidtotweetidmappew.id_not_found, >w<
+          "did n-nyot find a mapping in the new tweet i-id mappew fow t-tweet id %s, 😳 doc i-id %s", 🥺
+          t-tweetid, rawr x3 docid);
 
-      docIds.add(newDocId);
-      List<Integer> docPositions = Lists.newArrayListWithCapacity(source.freq());
-      positions.put(newDocId, docPositions);
-      for (int i = 0; i < source.freq(); ++i) {
-        docPositions.add(source.nextPosition());
+      d-docids.add(newdocid);
+      wist<integew> docpositions = wists.newawwaywistwithcapacity(souwce.fweq());
+      p-positions.put(newdocid, o.O docpositions);
+      fow (int i = 0; i < souwce.fweq(); ++i) {
+        docpositions.add(souwce.nextposition());
       }
     }
-    Collections.sort(docIds);
+    cowwections.sowt(docids);
   }
 
-  @Override
-  public int nextDoc() {
-    ++docIdIndex;
-    if (docIdIndex >= docIds.size()) {
-      return NO_MORE_DOCS;
+  @ovewwide
+  p-pubwic int nyextdoc() {
+    ++docidindex;
+    if (docidindex >= docids.size()) {
+      wetuwn nyo_mowe_docs;
     }
 
-    positionIndex = -1;
-    return docIds.get(docIdIndex);
+    positionindex = -1;
+    w-wetuwn docids.get(docidindex);
   }
 
-  @Override
-  public int freq() {
-    Preconditions.checkState(docIdIndex >= 0, "freq() called before nextDoc().");
-    Preconditions.checkState(docIdIndex < docIds.size(),
-                             "freq() called after nextDoc() returned NO_MORE_DOCS.");
-    return positions.get(docIds.get(docIdIndex)).size();
+  @ovewwide
+  p-pubwic int fweq() {
+    p-pweconditions.checkstate(docidindex >= 0, rawr "fweq() cawwed b-befowe nextdoc().");
+    pweconditions.checkstate(docidindex < d-docids.size(), ʘwʘ
+                             "fweq() c-cawwed aftew nyextdoc() wetuwned nyo_mowe_docs.");
+    wetuwn positions.get(docids.get(docidindex)).size();
   }
 
-  @Override
-  public int nextPosition() {
-    Preconditions.checkState(docIdIndex >= 0, "nextPosition() called before nextDoc().");
-    Preconditions.checkState(docIdIndex < docIds.size(),
-                             "nextPosition() called after nextDoc() returned NO_MORE_DOCS.");
+  @ovewwide
+  pubwic int n-nyextposition() {
+    pweconditions.checkstate(docidindex >= 0, 😳😳😳 "nextposition() c-cawwed befowe nyextdoc().");
+    pweconditions.checkstate(docidindex < d-docids.size(), ^^;;
+                             "nextposition() c-cawwed aftew nyextdoc() wetuwned nyo_mowe_docs.");
 
-    ++positionIndex;
-    Preconditions.checkState(positionIndex < positions.get(docIds.get(docIdIndex)).size(),
-                             "nextPosition() called more than freq() times.");
-    return positions.get(docIds.get(docIdIndex)).get(positionIndex);
+    ++positionindex;
+    p-pweconditions.checkstate(positionindex < p-positions.get(docids.get(docidindex)).size(), o.O
+                             "nextposition() cawwed mowe t-than fweq() times.");
+    w-wetuwn positions.get(docids.get(docidindex)).get(positionindex);
   }
 
-  // All other methods are not supported.
+  // aww othew methods awe nyot suppowted. (///ˬ///✿)
 
-  @Override
-  public int advance(int target) {
-    throw new UnsupportedOperationException(
-        "OptimizingPostingsEnumWrapper.advance() is not supported.");
+  @ovewwide
+  p-pubwic i-int advance(int t-tawget) {
+    thwow nyew unsuppowtedopewationexception(
+        "optimizingpostingsenumwwappew.advance() i-is nyot s-suppowted.");
   }
 
-  @Override
-  public long cost() {
-    throw new UnsupportedOperationException(
-        "OptimizingPostingsEnumWrapper.cost() is not supported.");
+  @ovewwide
+  pubwic wong c-cost() {
+    thwow nyew unsuppowtedopewationexception(
+        "optimizingpostingsenumwwappew.cost() is nyot suppowted.");
   }
 
-  @Override
-  public int docID() {
-    throw new UnsupportedOperationException(
-        "OptimizingPostingsEnumWrapper.docID() is not supported.");
+  @ovewwide
+  pubwic int docid() {
+    t-thwow nyew u-unsuppowtedopewationexception(
+        "optimizingpostingsenumwwappew.docid() is nyot suppowted.");
   }
 
-  @Override
-  public int endOffset() {
-    throw new UnsupportedOperationException(
-        "OptimizingPostingsEnumWrapper.endOffset() is not supported.");
+  @ovewwide
+  pubwic i-int endoffset() {
+    t-thwow nyew unsuppowtedopewationexception(
+        "optimizingpostingsenumwwappew.endoffset() is nyot suppowted.");
   }
 
-  @Override
-  public BytesRef getPayload() {
-    throw new UnsupportedOperationException(
-        "OptimizingPostingsEnumWrapper.getPayload() is not supported.");
+  @ovewwide
+  pubwic b-byteswef getpaywoad() {
+    thwow nyew unsuppowtedopewationexception(
+        "optimizingpostingsenumwwappew.getpaywoad() is nyot suppowted.");
   }
 
-  @Override
-  public int startOffset() {
-    throw new UnsupportedOperationException(
-        "OptimizingPostingsEnumWrapper.startOffset() is not supported.");
+  @ovewwide
+  pubwic int s-stawtoffset() {
+    thwow nyew unsuppowtedopewationexception(
+        "optimizingpostingsenumwwappew.stawtoffset() i-is nyot suppowted.");
   }
 }

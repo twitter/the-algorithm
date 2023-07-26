@@ -1,33 +1,33 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namespace java com.twittew.cw_mixew.thwiftjava
+#@namespace scawa c-com.twittew.cw_mixew.thwiftscawa
+#@namespace s-stwato c-com.twittew.cw_mixew
 
-include "product.thrift"
-include "product_context.thrift"
+i-incwude "pwoduct.thwift"
+i-incwude "pwoduct_context.thwift"
 
-include "com/twitter/product_mixer/core/client_context.thrift"
-include "com/twitter/ads/schema/shared.thrift"
+i-incwude "com/twittew/pwoduct_mixew/cowe/cwient_context.thwift"
+i-incwude "com/twittew/ads/schema/shawed.thwift"
 
-struct AdsRequest {
-	1: required client_context.ClientContext clientContext
-	2: required product.Product product
-	# Product-specific parameters should be placed in the Product Context
-	3: optional product_context.ProductContext productContext
-	4: optional list<i64> excludedTweetIds (personalDataType = 'TweetId')
-} (persisted='true', hasPersonalData='true')
+s-stwuct adswequest {
+	1: wequiwed cwient_context.cwientcontext cwientcontext
+	2: wequiwed pwoduct.pwoduct p-pwoduct
+	# pwoduct-specific pawametews s-shouwd be pwaced in the pwoduct c-context
+	3: optionaw pwoduct_context.pwoductcontext pwoductcontext
+	4: optionaw w-wist<i64> excwudedtweetids (pewsonawdatatype = 'tweetid')
+} (pewsisted='twue', rawr x3 haspewsonawdata='twue')
 
-struct AdsResponse {
-  1: required list<AdTweetRecommendation> ads
-} (persisted='true')
+s-stwuct a-adswesponse {
+  1: wequiwed wist<adtweetwecommendation> ads
+} (pewsisted='twue')
 
-struct AdTweetRecommendation {
-  1: required i64 tweetId (personalDataType = 'TweetId')
-  2: required double score
-  3: optional list<LineItemInfo> lineItems
+stwuct adtweetwecommendation {
+  1: wequiwed i-i64 tweetid (pewsonawdatatype = 'tweetid')
+  2: wequiwed doubwe scowe
+  3: optionaw wist<wineiteminfo> wineitems
 
-} (persisted='true')
+} (pewsisted='twue')
 
-struct LineItemInfo {
-  1: required i64 lineItemId (personalDataType = 'LineItemId')
-  2: required shared.LineItemObjective lineItemObjective
-} (persisted='true')
+s-stwuct wineiteminfo {
+  1: w-wequiwed i64 w-wineitemid (pewsonawdatatype = 'wineitemid')
+  2: w-wequiwed shawed.wineitemobjective w-wineitemobjective
+} (pewsisted='twue')

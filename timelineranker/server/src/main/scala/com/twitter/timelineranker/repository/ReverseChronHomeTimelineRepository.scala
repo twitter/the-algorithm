@@ -1,20 +1,20 @@
-package com.twitter.timelineranker.repository
+package com.twittew.timewinewankew.wepositowy
 
-import com.twitter.timelineranker.model.ReverseChronTimelineQuery
-import com.twitter.timelineranker.model.Timeline
-import com.twitter.timelineranker.parameters.revchron.ReverseChronTimelineQueryContextBuilder
-import com.twitter.timelineranker.source.ReverseChronHomeTimelineSource
-import com.twitter.util.Future
+impowt c-com.twittew.timewinewankew.modew.wevewsechwontimewinequewy
+i-impowt com.twittew.timewinewankew.modew.timewine
+i-impowt com.twittew.timewinewankew.pawametews.wevchwon.wevewsechwontimewinequewycontextbuiwdew
+impowt c-com.twittew.timewinewankew.souwce.wevewsechwonhometimewinesouwce
+i-impowt com.twittew.utiw.futuwe
 
 /**
- * A repository of reverse-chron home timelines.
+ * a-a w-wepositowy of wevewse-chwon h-home timewines. ^^;;
  *
- * It does not cache any results therefore forwards all calls to the underlying source.
+ * it does nyot cache any wesuwts thewefowe fowwawds a-aww cawws to the undewwying souwce. >_<
  */
-class ReverseChronHomeTimelineRepository(
-  source: ReverseChronHomeTimelineSource,
-  contextBuilder: ReverseChronTimelineQueryContextBuilder) {
-  def get(query: ReverseChronTimelineQuery): Future[Timeline] = {
-    contextBuilder(query).flatMap(source.get)
+cwass w-wevewsechwonhometimewinewepositowy(
+  souwce: w-wevewsechwonhometimewinesouwce, mya
+  contextbuiwdew: wevewsechwontimewinequewycontextbuiwdew) {
+  def get(quewy: wevewsechwontimewinequewy): f-futuwe[timewine] = {
+    contextbuiwdew(quewy).fwatmap(souwce.get)
   }
 }

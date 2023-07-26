@@ -1,100 +1,100 @@
-package com.twitter.unified_user_actions.enricher
+package com.twittew.unified_usew_actions.enwichew
 
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentPlan
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentStage
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentStageStatus
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentStageType
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.AuthorInfo
-import com.twitter.unified_user_actions.thriftscala.EventMetadata
-import com.twitter.unified_user_actions.thriftscala.Item
-import com.twitter.unified_user_actions.thriftscala.MultiTweetNotification
-import com.twitter.unified_user_actions.thriftscala.NotificationContent
-import com.twitter.unified_user_actions.thriftscala.NotificationInfo
-import com.twitter.unified_user_actions.thriftscala.ProfileInfo
-import com.twitter.unified_user_actions.thriftscala.SourceLineage
-import com.twitter.unified_user_actions.thriftscala.TweetInfo
-import com.twitter.unified_user_actions.thriftscala.TweetNotification
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import com.twitter.unified_user_actions.thriftscala.UnknownNotification
-import com.twitter.unified_user_actions.thriftscala.UserIdentifier
+impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentinstwuction
+i-impowt c-com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentpwan
+i-impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentstage
+i-impowt c-com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentstagestatus
+i-impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentstagetype
+impowt c-com.twittew.unified_usew_actions.thwiftscawa.actiontype
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.authowinfo
+impowt com.twittew.unified_usew_actions.thwiftscawa.eventmetadata
+impowt com.twittew.unified_usew_actions.thwiftscawa.item
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.muwtitweetnotification
+impowt com.twittew.unified_usew_actions.thwiftscawa.notificationcontent
+impowt c-com.twittew.unified_usew_actions.thwiftscawa.notificationinfo
+impowt com.twittew.unified_usew_actions.thwiftscawa.pwofiweinfo
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.souwcewineage
+impowt com.twittew.unified_usew_actions.thwiftscawa.tweetinfo
+impowt com.twittew.unified_usew_actions.thwiftscawa.tweetnotification
+impowt com.twittew.unified_usew_actions.thwiftscawa.unifiedusewaction
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.unknownnotification
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.usewidentifiew
 
-trait EnricherFixture {
-  val partitionedTopic = "unified_user_actions_keyed_dev"
-  val tweetInfoEnrichmentPlan = EnrichmentPlan(
-    Seq(
-      // first stage: to repartition on tweet id -> done
-      EnrichmentStage(
-        EnrichmentStageStatus.Completion,
-        EnrichmentStageType.Repartition,
-        Seq(EnrichmentInstruction.TweetEnrichment),
-        Some(partitionedTopic)
-      ),
-      // next stage: to hydrate more metadata based on tweet id -> initialized
-      EnrichmentStage(
-        EnrichmentStageStatus.Initialized,
-        EnrichmentStageType.Hydration,
-        Seq(EnrichmentInstruction.TweetEnrichment)
+t-twait enwichewfixtuwe {
+  vaw pawtitionedtopic = "unified_usew_actions_keyed_dev"
+  vaw tweetinfoenwichmentpwan = enwichmentpwan(
+    s-seq(
+      // fiwst stage: to wepawtition on tweet id -> done
+      e-enwichmentstage(
+        enwichmentstagestatus.compwetion, 😳😳😳
+        e-enwichmentstagetype.wepawtition, (U ﹏ U)
+        s-seq(enwichmentinstwuction.tweetenwichment), (///ˬ///✿)
+        s-some(pawtitionedtopic)
+      ), 😳
+      // n-nyext stage: to hydwate mowe metadata b-based on tweet id -> initiawized
+      enwichmentstage(
+        e-enwichmentstagestatus.initiawized,
+        enwichmentstagetype.hydwation, 😳
+        seq(enwichmentinstwuction.tweetenwichment)
       )
     ))
 
-  val tweetNotificationEnrichmentPlan = EnrichmentPlan(
-    Seq(
-      // first stage: to repartition on tweet id -> done
-      EnrichmentStage(
-        EnrichmentStageStatus.Completion,
-        EnrichmentStageType.Repartition,
-        Seq(EnrichmentInstruction.NotificationTweetEnrichment),
-        Some(partitionedTopic)
-      ),
-      // next stage: to hydrate more metadata based on tweet id -> initialized
-      EnrichmentStage(
-        EnrichmentStageStatus.Initialized,
-        EnrichmentStageType.Hydration,
-        Seq(EnrichmentInstruction.NotificationTweetEnrichment),
+  vaw tweetnotificationenwichmentpwan = enwichmentpwan(
+    seq(
+      // f-fiwst stage: to wepawtition o-on tweet id -> d-done
+      enwichmentstage(
+        e-enwichmentstagestatus.compwetion, σωσ
+        enwichmentstagetype.wepawtition, rawr x3
+        seq(enwichmentinstwuction.notificationtweetenwichment), OwO
+        some(pawtitionedtopic)
+      ), /(^•ω•^)
+      // n-nyext stage: t-to hydwate mowe metadata based on t-tweet id -> initiawized
+      e-enwichmentstage(
+        enwichmentstagestatus.initiawized, 😳😳😳
+        e-enwichmentstagetype.hydwation, ( ͡o ω ͡o )
+        seq(enwichmentinstwuction.notificationtweetenwichment), >_<
       )
     ))
 
-  def mkUUATweetEvent(tweetId: Long, author: Option[AuthorInfo] = None): UnifiedUserAction = {
-    UnifiedUserAction(
-      UserIdentifier(userId = Some(1L)),
-      item = Item.TweetInfo(TweetInfo(actionTweetId = tweetId, actionTweetAuthorInfo = author)),
-      actionType = ActionType.ClientTweetReport,
-      eventMetadata = EventMetadata(1234L, 2345L, SourceLineage.ServerTweetypieEvents)
+  d-def mkuuatweetevent(tweetid: wong, >w< authow: option[authowinfo] = n-nyone): unifiedusewaction = {
+    unifiedusewaction(
+      u-usewidentifiew(usewid = some(1w)), rawr
+      i-item = i-item.tweetinfo(tweetinfo(actiontweetid = tweetid, 😳 actiontweetauthowinfo = authow)), >w<
+      actiontype = actiontype.cwienttweetwepowt, (⑅˘꒳˘)
+      eventmetadata = e-eventmetadata(1234w, OwO 2345w, (ꈍᴗꈍ) s-souwcewineage.sewvewtweetypieevents)
     )
   }
 
-  def mkUUATweetNotificationEvent(tweetId: Long): UnifiedUserAction = {
-    mkUUATweetEvent(-1L).copy(
-      item = Item.NotificationInfo(
-        NotificationInfo(
-          actionNotificationId = "123456",
-          content = NotificationContent.TweetNotification(TweetNotification(tweetId = tweetId))))
+  def mkuuatweetnotificationevent(tweetid: w-wong): unifiedusewaction = {
+    m-mkuuatweetevent(-1w).copy(
+      i-item = item.notificationinfo(
+        nyotificationinfo(
+          actionnotificationid = "123456", 😳
+          content = nyotificationcontent.tweetnotification(tweetnotification(tweetid = tweetid))))
     )
   }
 
-  def mkUUAMultiTweetNotificationEvent(tweetIds: Long*): UnifiedUserAction = {
-    mkUUATweetEvent(-1L).copy(
-      item = Item.NotificationInfo(
-        NotificationInfo(
-          actionNotificationId = "123456",
-          content = NotificationContent.MultiTweetNotification(
-            MultiTweetNotification(tweetIds = tweetIds))))
+  d-def mkuuamuwtitweetnotificationevent(tweetids: wong*): unifiedusewaction = {
+    mkuuatweetevent(-1w).copy(
+      item = item.notificationinfo(
+        n-nyotificationinfo(
+          actionnotificationid = "123456", 😳😳😳
+          c-content = n-nyotificationcontent.muwtitweetnotification(
+            m-muwtitweetnotification(tweetids = tweetids))))
     )
   }
 
-  def mkUUATweetNotificationUnknownEvent(): UnifiedUserAction = {
-    mkUUATweetEvent(-1L).copy(
-      item = Item.NotificationInfo(
-        NotificationInfo(
-          actionNotificationId = "123456",
-          content = NotificationContent.UnknownNotification(UnknownNotification())))
+  d-def mkuuatweetnotificationunknownevent(): u-unifiedusewaction = {
+    m-mkuuatweetevent(-1w).copy(
+      i-item = item.notificationinfo(
+        nyotificationinfo(
+          actionnotificationid = "123456", mya
+          c-content = n-nyotificationcontent.unknownnotification(unknownnotification())))
     )
   }
 
-  def mkUUAProfileEvent(userId: Long): UnifiedUserAction = {
-    val event = mkUUATweetEvent(1L)
-    event.copy(item = Item.ProfileInfo(ProfileInfo(userId)))
+  d-def mkuuapwofiweevent(usewid: w-wong): unifiedusewaction = {
+    v-vaw event = mkuuatweetevent(1w)
+    event.copy(item = item.pwofiweinfo(pwofiweinfo(usewid)))
   }
 }

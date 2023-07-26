@@ -1,80 +1,80 @@
-package com.twitter.cr_mixer.filter
+package com.twittew.cw_mixew.fiwtew
 
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.UtegTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.param.UtegTweetGlobalParams
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
+impowt com.twittew.cw_mixew.modew.candidategenewatowquewy
+i-impowt c-com.twittew.cw_mixew.modew.initiawcandidate
+i-impowt com.twittew.cw_mixew.modew.moduwenames
+impowt c-com.twittew.cw_mixew.modew.utegtweetcandidategenewatowquewy
+i-impowt com.twittew.cw_mixew.pawam.utegtweetgwobawpawams
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.utiw.statsutiw
+impowt com.twittew.simcwustews_v2.common.usewid
+impowt c-com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.utiw.futuwe
+impowt com.twittew.wtf.candidate.thwiftscawa.candidateseq
 
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+impowt j-javax.inject.inject
+impowt j-javax.inject.named
+impowt javax.inject.singweton
 
 /***
- * Filters in-network tweets
+ * fiwtews in-netwowk tweets
  */
-@Singleton
-case class InNetworkFilter @Inject() (
-  @Named(ModuleNames.RealGraphInStore) realGraphStoreMh: ReadableStore[UserId, CandidateSeq],
-  globalStats: StatsReceiver)
-    extends FilterBase {
-  override val name: String = this.getClass.getCanonicalName
-  import InNetworkFilter._
+@singweton
+c-case cwass innetwowkfiwtew @inject() (
+  @named(moduwenames.weawgwaphinstowe) weawgwaphstowemh: w-weadabwestowe[usewid, :3 c-candidateseq], 😳😳😳
+  gwobawstats: statsweceivew)
+    extends fiwtewbase {
+  o-ovewwide vaw name: stwing = this.getcwass.getcanonicawname
+  impowt innetwowkfiwtew._
 
-  override type ConfigType = FilterConfig
-  private val stats: StatsReceiver = globalStats.scope(this.getClass.getCanonicalName)
-  private val filterCandidatesStats = stats.scope("filter_candidates")
+  ovewwide type configtype = f-fiwtewconfig
+  pwivate vaw s-stats: statsweceivew = g-gwobawstats.scope(this.getcwass.getcanonicawname)
+  p-pwivate v-vaw fiwtewcandidatesstats = stats.scope("fiwtew_candidates")
 
-  override def filter(
-    candidates: Seq[Seq[InitialCandidate]],
-    filterConfig: FilterConfig,
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    StatsUtil.trackItemsStats(filterCandidatesStats) {
-      filterCandidates(candidates, filterConfig)
+  ovewwide def f-fiwtew(
+    candidates: seq[seq[initiawcandidate]], (˘ω˘)
+    fiwtewconfig: f-fiwtewconfig, ^^
+  ): futuwe[seq[seq[initiawcandidate]]] = {
+    statsutiw.twackitemsstats(fiwtewcandidatesstats) {
+      fiwtewcandidates(candidates, :3 fiwtewconfig)
     }
   }
 
-  private def filterCandidates(
-    candidates: Seq[Seq[InitialCandidate]],
-    filterConfig: FilterConfig,
-  ): Future[Seq[Seq[InitialCandidate]]] = {
+  pwivate def f-fiwtewcandidates(
+    candidates: s-seq[seq[initiawcandidate]],
+    f-fiwtewconfig: f-fiwtewconfig, -.-
+  ): futuwe[seq[seq[initiawcandidate]]] = {
 
-    if (!filterConfig.enableInNetworkFilter) {
-      Future.value(candidates)
-    } else {
-      filterConfig.userIdOpt match {
-        case Some(userId) =>
-          realGraphStoreMh
-            .get(userId).map(_.map(_.candidates.map(_.userId)).getOrElse(Seq.empty).toSet).map {
-              realGraphInNetworkAuthorsSet =>
-                candidates.map(_.filterNot { candidate =>
-                  realGraphInNetworkAuthorsSet.contains(candidate.tweetInfo.authorId)
+    if (!fiwtewconfig.enabweinnetwowkfiwtew) {
+      futuwe.vawue(candidates)
+    } e-ewse {
+      fiwtewconfig.usewidopt m-match {
+        case some(usewid) =>
+          w-weawgwaphstowemh
+            .get(usewid).map(_.map(_.candidates.map(_.usewid)).getowewse(seq.empty).toset).map {
+              w-weawgwaphinnetwowkauthowsset =>
+                candidates.map(_.fiwtewnot { c-candidate =>
+                  weawgwaphinnetwowkauthowsset.contains(candidate.tweetinfo.authowid)
                 })
             }
-        case None => Future.value(candidates)
+        c-case nyone => futuwe.vawue(candidates)
       }
     }
   }
 
-  override def requestToConfig[CGQueryType <: CandidateGeneratorQuery](
-    request: CGQueryType
-  ): FilterConfig = {
-    request match {
-      case UtegTweetCandidateGeneratorQuery(userId, _, _, _, _, params, _) =>
-        FilterConfig(Some(userId), params(UtegTweetGlobalParams.EnableInNetworkFilterParam))
-      case _ => FilterConfig(None, false)
+  ovewwide d-def wequesttoconfig[cgquewytype <: candidategenewatowquewy](
+    w-wequest: cgquewytype
+  ): fiwtewconfig = {
+    w-wequest match {
+      c-case utegtweetcandidategenewatowquewy(usewid, 😳 _, mya _, _, _, pawams, (˘ω˘) _) =>
+        fiwtewconfig(some(usewid), >_< pawams(utegtweetgwobawpawams.enabweinnetwowkfiwtewpawam))
+      case _ => fiwtewconfig(none, -.- fawse)
     }
   }
 }
 
-object InNetworkFilter {
-  case class FilterConfig(
-    userIdOpt: Option[UserId],
-    enableInNetworkFilter: Boolean)
+object innetwowkfiwtew {
+  case c-cwass fiwtewconfig(
+    u-usewidopt: option[usewid], 🥺
+    e-enabweinnetwowkfiwtew: b-boowean)
 }

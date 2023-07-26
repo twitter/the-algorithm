@@ -1,31 +1,31 @@
-package com.twitter.tsp.utils
+package com.twittew.tsp.utiws
 
-import com.twitter.bijection.Injection
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
-import java.io.Serializable
-import scala.util.Try
+impowt c-com.twittew.bijection.injection
+i-impowt java.io.byteawwayinputstweam
+i-impowt j-java.io.byteawwayoutputstweam
+i-impowt j-java.io.objectinputstweam
+impowt j-java.io.objectoutputstweam
+i-impowt java.io.sewiawizabwe
+impowt scawa.utiw.twy
 
 /**
- * @tparam T must be a serializable class
+ * @tpawam t must be a sewiawizabwe cwass
  */
-case class SeqObjectInjection[T <: Serializable]() extends Injection[Seq[T], Array[Byte]] {
+c-case cwass seqobjectinjection[t <: sewiawizabwe]() e-extends injection[seq[t], nyaa~~ a-awway[byte]] {
 
-  override def apply(seq: Seq[T]): Array[Byte] = {
-    val byteStream = new ByteArrayOutputStream()
-    val outputStream = new ObjectOutputStream(byteStream)
-    outputStream.writeObject(seq)
-    outputStream.close()
-    byteStream.toByteArray
+  ovewwide def appwy(seq: seq[t]): awway[byte] = {
+    v-vaw bytestweam = nyew b-byteawwayoutputstweam()
+    v-vaw outputstweam = nyew objectoutputstweam(bytestweam)
+    outputstweam.wwiteobject(seq)
+    outputstweam.cwose()
+    b-bytestweam.tobyteawway
   }
 
-  override def invert(bytes: Array[Byte]): Try[Seq[T]] = {
-    Try {
-      val inputStream = new ObjectInputStream(new ByteArrayInputStream(bytes))
-      val seq = inputStream.readObject().asInstanceOf[Seq[T]]
-      inputStream.close()
+  ovewwide def invewt(bytes: awway[byte]): twy[seq[t]] = {
+    twy {
+      v-vaw inputstweam = nyew o-objectinputstweam(new b-byteawwayinputstweam(bytes))
+      v-vaw seq = i-inputstweam.weadobject().asinstanceof[seq[t]]
+      inputstweam.cwose()
       seq
     }
   }

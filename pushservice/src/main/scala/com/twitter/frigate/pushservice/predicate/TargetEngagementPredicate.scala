@@ -1,27 +1,27 @@
-package com.twitter.frigate.pushservice.predicate
+package com.twittew.fwigate.pushsewvice.pwedicate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.TweetCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.tweetypie.EngagementsPredicate
-import com.twitter.hermit.predicate.tweetypie.Perspective
-import com.twitter.hermit.predicate.tweetypie.UserTweet
-import com.twitter.storehaus.ReadableStore
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.base.tweetcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt c-com.twittew.hewmit.pwedicate.namedpwedicate
+impowt c-com.twittew.hewmit.pwedicate.tweetypie.engagementspwedicate
+i-impowt com.twittew.hewmit.pwedicate.tweetypie.pewspective
+i-impowt c-com.twittew.hewmit.pwedicate.tweetypie.usewtweet
+impowt com.twittew.stowehaus.weadabwestowe
 
-object TargetEngagementPredicate {
-  val name = "target_engagement"
-  def apply(
-    perspectiveStore: ReadableStore[UserTweet, Perspective],
-    defaultForMissing: Boolean
+object tawgetengagementpwedicate {
+  vaw nyame = "tawget_engagement"
+  def appwy(
+    p-pewspectivestowe: weadabwestowe[usewtweet, XD pewspective], :3
+    d-defauwtfowmissing: boowean
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetCandidate] = {
-    EngagementsPredicate(perspectiveStore, defaultForMissing)
-      .on { candidate: PushCandidate with TweetCandidate =>
-        UserTweet(candidate.target.targetId, candidate.tweetId)
+    i-impwicit statsweceivew: statsweceivew
+  ): nyamedpwedicate[pushcandidate with tweetcandidate] = {
+    e-engagementspwedicate(pewspectivestowe, 😳😳😳 defauwtfowmissing)
+      .on { c-candidate: pushcandidate w-with tweetcandidate =>
+        usewtweet(candidate.tawget.tawgetid, -.- candidate.tweetid)
       }
-      .withStats(statsReceiver.scope(s"predicate_$name"))
-      .withName(name)
+      .withstats(statsweceivew.scope(s"pwedicate_$name"))
+      .withname(name)
   }
 }

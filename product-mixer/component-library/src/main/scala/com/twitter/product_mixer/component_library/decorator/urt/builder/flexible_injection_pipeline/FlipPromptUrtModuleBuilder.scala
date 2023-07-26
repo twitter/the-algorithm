@@ -1,54 +1,54 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.fwexibwe_injection_pipewine
 
-import com.twitter.onboarding.injections.thriftscala.Injection
-import com.twitter.onboarding.injections.{thriftscala => onboardingthrift}
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.AutomaticUniqueModuleId
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.ModuleIdGeneration
-import com.twitter.product_mixer.component_library.model.candidate.BasePromptCandidate
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptInjectionsFeature
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseTimelineModuleBuilder
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Carousel
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.onboawding.injections.thwiftscawa.injection
+i-impowt com.twittew.onboawding.injections.{thwiftscawa => o-onboawdingthwift}
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.timewine_moduwe.automaticuniquemoduweid
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.timewine_moduwe.moduweidgenewation
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basepwomptcandidate
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.fwexibwe_injection_pipewine.twansfowmew.fwippwomptinjectionsfeatuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.timewine_moduwe.basetimewinemoduwebuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.twanspowtmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.entwynamespace
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewinemoduwe
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.cawousew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case class FlipPromptUrtModuleBuilder[-Query <: PipelineQuery](
-  moduleIdGeneration: ModuleIdGeneration = AutomaticUniqueModuleId())
-    extends BaseTimelineModuleBuilder[Query, BasePromptCandidate[Any]] {
+c-case cwass fwippwomptuwtmoduwebuiwdew[-quewy <: pipewinequewy](
+  moduweidgenewation: moduweidgenewation = a-automaticuniquemoduweid())
+    extends b-basetimewinemoduwebuiwdew[quewy, (U ﹏ U) b-basepwomptcandidate[any]] {
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[BasePromptCandidate[Any]]]
-  ): TimelineModule = {
-    val firstCandidate = candidates.head
-    val injection = firstCandidate.features.get(FlipPromptInjectionsFeature)
-    injection match {
-      case Injection.TilesCarousel(candidate) =>
-        TimelineModule(
-          id = moduleIdGeneration.moduleId,
-          sortIndex = None,
-          entryNamespace = EntryNamespace("flip-timeline-module"),
-          clientEventInfo =
-            Some(OnboardingInjectionConversions.convertClientEventInfo(candidate.clientEventInfo)),
-          feedbackActionInfo =
-            candidate.feedbackInfo.map(OnboardingInjectionConversions.convertFeedbackInfo),
-          isPinned = Some(candidate.isPinnedEntry),
-          // Items are automatically set in the domain marshaller phase
-          items = Seq.empty,
-          displayType = Carousel,
-          header = candidate.header.map(TilesCarouselConversions.convertModuleHeader),
-          footer = None,
-          metadata = None,
-          showMoreBehavior = None
+  ovewwide def appwy(
+    quewy: quewy, (///ˬ///✿)
+    candidates: seq[candidatewithfeatuwes[basepwomptcandidate[any]]]
+  ): t-timewinemoduwe = {
+    vaw fiwstcandidate = candidates.head
+    vaw injection = fiwstcandidate.featuwes.get(fwippwomptinjectionsfeatuwe)
+    injection m-match {
+      case injection.tiwescawousew(candidate) =>
+        t-timewinemoduwe(
+          i-id = moduweidgenewation.moduweid, >w<
+          s-sowtindex = nyone, rawr
+          e-entwynamespace = entwynamespace("fwip-timewine-moduwe"), mya
+          cwienteventinfo =
+            s-some(onboawdinginjectionconvewsions.convewtcwienteventinfo(candidate.cwienteventinfo)),
+          feedbackactioninfo =
+            candidate.feedbackinfo.map(onboawdinginjectionconvewsions.convewtfeedbackinfo), ^^
+          i-ispinned = some(candidate.ispinnedentwy), 😳😳😳
+          // items awe automaticawwy set in the domain mawshawwew phase
+          i-items = seq.empty, mya
+          dispwaytype = c-cawousew, 😳
+          h-headew = candidate.headew.map(tiwescawousewconvewsions.convewtmoduweheadew), -.-
+          f-footew = nyone, 🥺
+          metadata = nyone, o.O
+          s-showmowebehaviow = n-nyone
         )
-      case _ => throw new UnsupportedFlipPromptInModuleException(injection)
+      case _ => t-thwow nyew u-unsuppowtedfwippwomptinmoduweexception(injection)
     }
   }
 }
 
-class UnsupportedFlipPromptInModuleException(injection: onboardingthrift.Injection)
-    extends UnsupportedOperationException(
-      "Unsupported timeline item in a Flip prompt module " + TransportMarshaller.getSimpleName(
-        injection.getClass))
+cwass unsuppowtedfwippwomptinmoduweexception(injection: o-onboawdingthwift.injection)
+    extends u-unsuppowtedopewationexception(
+      "unsuppowted timewine item in a fwip pwompt m-moduwe " + twanspowtmawshawwew.getsimpwename(
+        injection.getcwass))

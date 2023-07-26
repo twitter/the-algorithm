@@ -1,73 +1,73 @@
-package com.twitter.graph_feature_service.common
+package com.twittew.gwaph_featuwe_sewvice.common
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import java.nio.ByteBuffer
-import scala.util.hashing.MurmurHash3
+impowt com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.utiw.duwation
+impowt c-com.twittew.utiw.time
+i-impowt j-java.nio.bytebuffew
+i-impowt scawa.utiw.hashing.muwmuwhash3
 
-object Configs {
+o-object c-configs {
 
-  // NOTE: notify #recos-platform slack room, if you want to change this.
-  // This SHOULD be updated together with NUM_SHARDS in worker.aurora
-  final val NumGraphShards: Int = 40
+  // nyote: nyotify #wecos-pwatfowm swack woom, if you want to change this. rawr x3
+  // t-this shouwd be updated togethew with nyum_shawds i-in wowkew.auwowa
+  finaw vaw nyumgwaphshawds: i-int = 40
 
-  final val TopKRealGraph: Int = 512
+  finaw vaw topkweawgwaph: int = 512
 
-  final val BaseHdfsPath: String = "/user/cassowary/processed/gfs/constant_db/"
+  finaw vaw basehdfspath: s-stwing = "/usew/cassowawy/pwocessed/gfs/constant_db/"
 
-  // whether or not to write in_value and out_value graphs. Used in the scalding job.
-  final val EnableValueGraphs: Boolean = true
-  // whether or not to write in_key and out_key graphs. Used in the scalding job.
-  final val EnableKeyGraphs: Boolean = false
+  // whethew ow n-nyot to wwite in_vawue a-and out_vawue gwaphs. OwO used in the scawding job. /(^•ω•^)
+  finaw vaw enabwevawuegwaphs: b-boowean = twue
+  // whethew ow nyot to wwite in_key and out_key gwaphs. 😳😳😳 used i-in the scawding job. ( ͡o ω ͡o )
+  finaw v-vaw enabwekeygwaphs: b-boowean = f-fawse
 
-  final val FollowOutValPath: String = "follow_out_val/"
-  final val FollowOutKeyPath: String = "follow_out_key/"
-  final val FollowInValPath: String = "follow_in_val/"
-  final val FollowInKeyPath: String = "follow_in_key/"
+  finaw vaw f-fowwowoutvawpath: stwing = "fowwow_out_vaw/"
+  finaw vaw fowwowoutkeypath: s-stwing = "fowwow_out_key/"
+  finaw vaw fowwowinvawpath: s-stwing = "fowwow_in_vaw/"
+  finaw vaw fowwowinkeypath: stwing = "fowwow_in_key/"
 
-  final val MutualFollowValPath: String = "mutual_follow_val/"
-  final val MutualFollowKeyPath: String = "mutual_follow_key/"
+  finaw vaw mutuawfowwowvawpath: stwing = "mutuaw_fowwow_vaw/"
+  f-finaw vaw mutuawfowwowkeypath: s-stwing = "mutuaw_fowwow_key/"
 
-  final val FavoriteOutValPath: String = "favorite_out_val/"
-  final val FavoriteInValPath: String = "favorite_in_val/"
-  final val FavoriteOutKeyPath: String = "favorite_out_key/"
-  final val FavoriteInKeyPath: String = "favorite_in_key/"
+  f-finaw vaw f-favowiteoutvawpath: stwing = "favowite_out_vaw/"
+  finaw vaw favowiteinvawpath: s-stwing = "favowite_in_vaw/"
+  f-finaw vaw favowiteoutkeypath: stwing = "favowite_out_key/"
+  finaw v-vaw favowiteinkeypath: s-stwing = "favowite_in_key/"
 
-  final val RetweetOutValPath: String = "retweet_out_val/"
-  final val RetweetInValPath: String = "retweet_in_val/"
-  final val RetweetOutKeyPath: String = "retweet_out_key/"
-  final val RetweetInKeyPath: String = "retweet_in_key/"
+  finaw v-vaw wetweetoutvawpath: stwing = "wetweet_out_vaw/"
+  f-finaw vaw wetweetinvawpath: stwing = "wetweet_in_vaw/"
+  finaw v-vaw wetweetoutkeypath: stwing = "wetweet_out_key/"
+  f-finaw vaw wetweetinkeypath: s-stwing = "wetweet_in_key/"
 
-  final val MentionOutValPath: String = "mention_out_val/"
-  final val MentionInValPath: String = "mention_in_val/"
-  final val MentionOutKeyPath: String = "mention_out_key/"
-  final val MentionInKeyPath: String = "mention_in_key/"
+  f-finaw vaw mentionoutvawpath: stwing = "mention_out_vaw/"
+  finaw vaw mentioninvawpath: stwing = "mention_in_vaw/"
+  finaw vaw mentionoutkeypath: s-stwing = "mention_out_key/"
+  f-finaw vaw mentioninkeypath: stwing = "mention_in_key/"
 
-  final val MemCacheTTL: Duration = 8.hours
+  f-finaw v-vaw memcachettw: d-duwation = 8.houws
 
-  final val RandomSeed: Int = 39582942
+  finaw vaw wandomseed: int = 39582942
 
-  def getTimedHdfsShardPath(shardId: Int, path: String, time: Time): String = {
-    val timeStr = time.format("yyyy/MM/dd")
-    s"$path/$timeStr/shard_$shardId"
+  def gettimedhdfsshawdpath(shawdid: i-int, >_< path: stwing, >w< time: time): stwing = {
+    vaw timestw = time.fowmat("yyyy/mm/dd")
+    s"$path/$timestw/shawd_$shawdid"
   }
 
-  def getHdfsPath(path: String, overrideBaseHdfsPath: Option[String] = None): String = {
-    val basePath = overrideBaseHdfsPath.getOrElse(BaseHdfsPath)
-    s"$basePath$path"
+  d-def gethdfspath(path: stwing, rawr o-ovewwidebasehdfspath: o-option[stwing] = n-nyone): stwing = {
+    v-vaw basepath = o-ovewwidebasehdfspath.getowewse(basehdfspath)
+    s-s"$basepath$path"
   }
 
-  private def hash(kArr: Array[Byte], seed: Int): Int = {
-    MurmurHash3.bytesHash(kArr, seed) & 0x7fffffff // keep positive
+  p-pwivate def hash(kaww: awway[byte], 😳 s-seed: int): int = {
+    m-muwmuwhash3.byteshash(kaww, >w< s-seed) & 0x7fffffff // k-keep positive
   }
 
-  private def hashLong(l: Long, seed: Int): Int = {
-    hash(ByteBuffer.allocate(8).putLong(l).array(), seed)
+  pwivate d-def hashwong(w: wong, (⑅˘꒳˘) seed: int): int = {
+    hash(bytebuffew.awwocate(8).putwong(w).awway(), OwO s-seed)
   }
 
-  def shardForUser(userId: Long): Int = {
-    hashLong(userId, RandomSeed) % NumGraphShards
+  def shawdfowusew(usewid: wong): int = {
+    hashwong(usewid, (ꈍᴗꈍ) wandomseed) % nyumgwaphshawds
   }
 
 }

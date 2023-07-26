@@ -1,41 +1,41 @@
-package com.twitter.search.common.relevance.text;
+package com.twittew.seawch.common.wewevance.text;
 
-import java.util.regex.Matcher;
+impowt java.utiw.wegex.matchew;
 
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.util.text.regex.Regex;
+i-impowt com.twittew.seawch.common.wewevance.entities.twittewmessage;
+i-impowt com.twittew.seawch.common.utiw.text.wegex.wegex;
 
-public final class LocationUtils {
-  private LocationUtils() {
+p-pubwic finaw cwass w-wocationutiws {
+  p-pwivate wocationutiws() {
   }
 
   /**
-   * Extract lat/lon information from a twitter message.
-   * @param message The twitter message.
-   * @return A two-element double array for the lat/lon information.
+   * extwact w-wat/won infowmation f-fwom a-a twittew message. mya
+   * @pawam message the twittew message. 🥺
+   * @wetuwn a two-ewement doubwe awway f-fow the wat/won infowmation. >_<
    */
-  public static double[] extractLatLon(TwitterMessage message) {
-    // first look in text for L:, then fall back to profile
-    Matcher loc = Regex.LAT_LON_LOC_PATTERN.matcher(message.getText());
-    if (loc.find() || message.getOrigLocation() != null
-        && (loc = Regex.LAT_LON_PATTERN.matcher(message.getOrigLocation())).find()) {
-      final double lat = Double.parseDouble(loc.group(2));
-      final double lon = Double.parseDouble(loc.group(3));
+  pubwic s-static doubwe[] extwactwatwon(twittewmessage m-message) {
+    // fiwst wook in text fow w:, then faww back to pwofiwe
+    m-matchew woc = wegex.wat_won_woc_pattewn.matchew(message.gettext());
+    i-if (woc.find() || m-message.getowigwocation() != nuww
+        && (woc = wegex.wat_won_pattewn.matchew(message.getowigwocation())).find()) {
+      finaw doubwe wat = doubwe.pawsedoubwe(woc.gwoup(2));
+      finaw d-doubwe won = doubwe.pawsedoubwe(woc.gwoup(3));
 
-      if (Math.abs(lat) > 90.0) {
-        throw new NumberFormatException("Latitude cannot exceed +-90 degrees: " + lat);
+      if (math.abs(wat) > 90.0) {
+        thwow nyew nyumbewfowmatexception("watitude cannot exceed +-90 d-degwees: " + wat);
       }
-      if (Math.abs(lon) > 180.0) {
-        throw new NumberFormatException("Longitude cannot exceed +-180 degrees: " + lon);
-      }
-
-      // Reject these common "bogus" regions.
-      if ((lat == 0 && lon == 0) || lat == -1 || lon == -1) {
-        return null;
+      i-if (math.abs(won) > 180.0) {
+        t-thwow nyew nyumbewfowmatexception("wongitude c-cannot e-exceed +-180 degwees: " + won);
       }
 
-      return new double[]{lat, lon};
+      // weject these c-common "bogus" wegions. >_<
+      if ((wat == 0 && w-won == 0) || wat == -1 || won == -1) {
+        wetuwn nyuww;
+      }
+
+      wetuwn nyew doubwe[]{wat, (⑅˘꒳˘) won};
     }
-    return null;
+    w-wetuwn nyuww;
   }
 }

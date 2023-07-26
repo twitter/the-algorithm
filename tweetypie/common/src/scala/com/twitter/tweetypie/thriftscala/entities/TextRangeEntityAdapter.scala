@@ -1,11 +1,11 @@
-package com.twitter.tweetypie.thriftscala.entities
+package com.twittew.tweetypie.thwiftscawa.entities
 
-import com.twitter.tweetypie.thriftscala.TextRange
-import com.twitter.tweetypie.tweettext.TextEntity
+impowt com.twittew.tweetypie.thwiftscawa.textwange
+i-impowt com.twittew.tweetypie.tweettext.textentity
 
-object TextRangeEntityAdapter extends TextEntity[TextRange] {
-  override def fromIndex(entity: TextRange): Short = entity.fromIndex.toShort
-  override def toIndex(entity: TextRange): Short = entity.toIndex.toShort
-  override def move(entity: TextRange, fromIndex: Short, toIndex: Short): TextRange =
-    entity.copy(fromIndex = fromIndex, toIndex = toIndex)
+o-object t-textwangeentityadaptew e-extends textentity[textwange] {
+  o-ovewwide d-def fwomindex(entity: t-textwange): s-showt = entity.fwomindex.toshowt
+  ovewwide def toindex(entity: textwange): showt = entity.toindex.toshowt
+  o-ovewwide def move(entity: textwange, (⑅˘꒳˘) fwomindex: s-showt, (U ᵕ U❁) toindex: showt): textwange =
+    e-entity.copy(fwomindex = fwomindex, -.- toindex = toindex)
 }

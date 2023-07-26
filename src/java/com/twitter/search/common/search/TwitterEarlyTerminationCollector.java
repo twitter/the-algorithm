@@ -1,328 +1,328 @@
-package com.twitter.search.common.search;
+package com.twittew.seawch.common.seawch;
 
-import java.io.IOException;
-import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+impowt j-java.io.ioexception;
+i-impowt java.utiw.wist;
+i-impowt j-javax.annotation.nonnuww;
+i-impowt j-javax.annotation.nuwwabwe;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.LeafCollector;
-import org.apache.lucene.search.Scorable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.wucene.index.weafweadew;
+impowt owg.apache.wucene.index.weafweadewcontext;
+impowt owg.apache.wucene.seawch.weafcowwectow;
+i-impowt owg.apache.wucene.seawch.scowabwe;
+impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.query.thriftjava.CollectorParams;
-import com.twitter.search.common.query.thriftjava.CollectorTerminationParams;
+impowt com.twittew.common.utiw.cwock;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt com.twittew.seawch.common.quewy.thwiftjava.cowwectowpawams;
+i-impowt com.twittew.seawch.common.quewy.thwiftjava.cowwectowtewminationpawams;
 
 /**
- * A TwitterCollector containing the most common early termination logic based on
- * timeout, cost, and max hits. This class does not do any actual hit collection---this class
- * is abstract and cannot be instantiated.
+ * a twittewcowwectow c-containing t-the most common eawwy tewmination wogic based on
+ * timeout, 🥺 cost, and max h-hits. nyaa~~ this cwass does nyot do any actuaw hit cowwection---this cwass
+ * is abstwact a-and cannot be instantiated. :3
  *
- * If a Collector and all its subclasses need early termination, it should extend this class.
+ * i-if a cowwectow a-and aww i-its subcwasses nyeed e-eawwy tewmination, it shouwd extend this cwass. /(^•ω•^)
  *
- * However, if one just wants to add EarlyTermination to any single collector, he can just
- * use {@link DelegatingEarlyTerminationCollector}
- * as a wrapper.
+ * h-howevew, ^•ﻌ•^ if one just wants to add eawwytewmination t-to any singwe cowwectow, UwU he can just
+ * use {@wink dewegatingeawwytewminationcowwectow}
+ * as a wwappew. 😳😳😳
  */
-public abstract class TwitterEarlyTerminationCollector
-    extends TwitterCollector implements LeafCollector {
-  private static final Logger LOG = LoggerFactory.getLogger(TwitterEarlyTerminationCollector.class);
-  private static final SearchCounter NEGATIVE_TIME_PER_SEGMENT =
-      SearchCounter.export("TwitterEarlyTerminationCollector_negative_time_per_segment");
-  private static final SearchRateCounter QUERY_TIMEOUT_ENFORCED =
-      SearchRateCounter.export("TwitterEarlyTerminationCollector_query_timeout_enforced");
+p-pubwic abstwact cwass t-twitteweawwytewminationcowwectow
+    e-extends twittewcowwectow impwements w-weafcowwectow {
+  pwivate static finaw woggew wog = woggewfactowy.getwoggew(twitteweawwytewminationcowwectow.cwass);
+  p-pwivate static f-finaw seawchcountew nyegative_time_pew_segment =
+      s-seawchcountew.expowt("twitteweawwytewminationcowwectow_negative_time_pew_segment");
+  p-pwivate static finaw s-seawchwatecountew quewy_timeout_enfowced =
+      s-seawchwatecountew.expowt("twitteweawwytewminationcowwectow_quewy_timeout_enfowced");
 
-  protected int curDocId = -1;
+  pwotected int cuwdocid = -1;
 
-  protected Scorable scorer = null;
-  private LeafReader curReader = null;
-  private final long maxHitsToProcess;
-  private long numHitsProcessed = 0;
-  private int lastEarlyTerminationCheckDocId = -1;
-  private final Clock clock;
+  p-pwotected scowabwe scowew = n-nyuww;
+  pwivate weafweadew c-cuwweadew = nyuww;
+  p-pwivate finaw wong maxhitstopwocess;
+  pwivate wong nyumhitspwocessed = 0;
+  pwivate int wasteawwytewminationcheckdocid = -1;
+  pwivate finaw cwock cwock;
 
-  @Nullable
-  private final QueryCostProvider queryCostProvider;
+  @nuwwabwe
+  p-pwivate finaw q-quewycostpwovidew quewycostpwovidew;
 
-  private final TerminationTracker terminationTracker;
+  p-pwivate f-finaw tewminationtwackew t-tewminationtwackew;
 
-  // This determines how often the expensive early termination check is performed.
-  // If set to be negative, expensive early termination check only performed at segment boundaries.
-  // If set to a positive number X, this check is performed every X docs processed.
-  private int numDocsBetweenTimeoutChecks;
+  // this detewmines how often the expensive eawwy t-tewmination check is pewfowmed. OwO
+  // if set to be nyegative, ^•ﻌ•^ expensive eawwy tewmination c-check onwy pewfowmed at s-segment boundawies. (ꈍᴗꈍ)
+  // i-if set t-to a positive nyumbew x, (⑅˘꒳˘) this c-check is pewfowmed e-evewy x docs p-pwocessed. (⑅˘꒳˘)
+  pwivate i-int nyumdocsbetweentimeoutchecks;
 
-  // Number of segments searched so far.
-  // This is used to predicatively early terminate.
-  // Expensive early termination checks may not happen often enough. Sometimes the request
-  // times out in between the termination checks.
-  // After finishing searching a segment, we estimate how much time is needed to search one
-  // segment on average.  If searching the next segment would cause a timeout, we early terminate.
-  private int numSearchedSegments = 0;
+  // nyumbew of segments s-seawched so faw. (ˆ ﻌ ˆ)♡
+  // t-this is used t-to pwedicativewy e-eawwy tewminate. /(^•ω•^)
+  // e-expensive eawwy tewmination checks may nyot happen often e-enough. òωó sometimes the wequest
+  // times out in between the tewmination checks. (⑅˘꒳˘)
+  // aftew finishing s-seawching a segment, we estimate how much time is nyeeded t-to seawch one
+  // s-segment on a-avewage. (U ᵕ U❁)  if seawching the nyext s-segment wouwd cause a timeout, >w< w-we eawwy tewminate. σωσ
+  p-pwivate int nyumseawchedsegments = 0;
 
   /**
-   * Creates a new TwitterEarlyTerminationCollector instance.
+   * cweates a nyew twitteweawwytewminationcowwectow instance. -.-
    *
-   * @param collectorParams the parameters needed to guide early termination.
-   * @param terminationTracker If null is passed in, a new TerminationTrack is created. Otherwise,
-   *        the one passed in is used.
-   * @param numDocsBetweenTimeoutChecks TerminationTracker based check are performed upon a hit
-   *        every numDocsBetweenTimeoutChecks docs. If a non-positive number is passed
-   *        in, TerminationTracker based checks are disabled.
-   *        If collectorParams specifies a value as well, that value is used.
+   * @pawam cowwectowpawams t-the pawametews nyeeded to guide e-eawwy tewmination. o.O
+   * @pawam tewminationtwackew i-if nyuww is p-passed in, ^^ a nyew tewminationtwack is cweated. >_< o-othewwise, >w<
+   *        t-the one passed in is used. >_<
+   * @pawam nyumdocsbetweentimeoutchecks t-tewminationtwackew based c-check awe pewfowmed upon a hit
+   *        evewy nyumdocsbetweentimeoutchecks docs. >w< if a nyon-positive n-nyumbew i-is passed
+   *        i-in, rawr tewminationtwackew based checks awe d-disabwed. rawr x3
+   *        i-if cowwectowpawams specifies a-a vawue as weww, that vawue is used. ( ͡o ω ͡o )
    */
-  public TwitterEarlyTerminationCollector(
-      CollectorParams collectorParams,
-      TerminationTracker terminationTracker,
-      @Nullable QueryCostProvider queryCostProvider,
-      int numDocsBetweenTimeoutChecks,
-      Clock clock) {
-    CollectorTerminationParams terminationParams = collectorParams.getTerminationParams();
+  pubwic twitteweawwytewminationcowwectow(
+      cowwectowpawams c-cowwectowpawams, (˘ω˘)
+      t-tewminationtwackew tewminationtwackew, 😳
+      @nuwwabwe quewycostpwovidew quewycostpwovidew, OwO
+      i-int nyumdocsbetweentimeoutchecks, (˘ω˘)
+      c-cwock cwock) {
+    cowwectowtewminationpawams tewminationpawams = cowwectowpawams.gettewminationpawams();
 
-    if (terminationParams == null) {
-      terminationParams = new CollectorTerminationParams()
-          .setMaxHitsToProcess(Integer.MAX_VALUE)
-          .setMaxQueryCost(Double.MAX_VALUE)
-          .setTimeoutMs(Integer.MAX_VALUE);
+    i-if (tewminationpawams == nyuww) {
+      tewminationpawams = nyew cowwectowtewminationpawams()
+          .setmaxhitstopwocess(integew.max_vawue)
+          .setmaxquewycost(doubwe.max_vawue)
+          .settimeoutms(integew.max_vawue);
     }
 
-    if (!terminationParams.isSetMaxHitsToProcess() || terminationParams.getMaxHitsToProcess() < 0) {
-      maxHitsToProcess = Integer.MAX_VALUE;
-    } else {
-      maxHitsToProcess = terminationParams.getMaxHitsToProcess();
+    i-if (!tewminationpawams.issetmaxhitstopwocess() || tewminationpawams.getmaxhitstopwocess() < 0) {
+      maxhitstopwocess = integew.max_vawue;
+    } e-ewse {
+      m-maxhitstopwocess = tewminationpawams.getmaxhitstopwocess();
     }
 
-    if (terminationParams.isSetNumDocsBetweenTimeoutChecks()) {
-      this.numDocsBetweenTimeoutChecks = terminationParams.getNumDocsBetweenTimeoutChecks();
-    } else {
-      this.numDocsBetweenTimeoutChecks = numDocsBetweenTimeoutChecks;
+    if (tewminationpawams.issetnumdocsbetweentimeoutchecks()) {
+      this.numdocsbetweentimeoutchecks = t-tewminationpawams.getnumdocsbetweentimeoutchecks();
+    } e-ewse {
+      this.numdocsbetweentimeoutchecks = nyumdocsbetweentimeoutchecks;
     }
 
-    this.terminationTracker = Preconditions.checkNotNull(terminationTracker);
-    this.queryCostProvider = queryCostProvider;
-    this.clock = clock;
+    this.tewminationtwackew = p-pweconditions.checknotnuww(tewminationtwackew);
+    this.quewycostpwovidew = q-quewycostpwovidew;
+    this.cwock = cwock;
   }
 
-  public final LeafCollector getLeafCollector(LeafReaderContext context) throws IOException {
-    this.setNextReader(context);
-    return this;
+  pubwic finaw weafcowwectow g-getweafcowwectow(weafweadewcontext context) t-thwows ioexception {
+    t-this.setnextweadew(context);
+    wetuwn t-this;
   }
 
   /**
-   * Sub-classes may override this to add more collection logic.
+   * sub-cwasses m-may ovewwide t-this to add m-mowe cowwection wogic. òωó
    */
-  protected abstract void doCollect() throws IOException;
+  pwotected a-abstwact v-void docowwect() thwows ioexception;
 
   /**
-   * Sub-classes may override this to add more segment completion logic.
-   * @param lastSearchedDocID is the last docid searched before termination,
-   * or NO_MORE_DOCS if there was no early termination.  This doc may not be a hit!
+   * sub-cwasses may o-ovewwide this t-to add mowe segment c-compwetion wogic. ( ͡o ω ͡o )
+   * @pawam wastseawcheddocid i-is the wast docid seawched b-befowe tewmination, UwU
+   * o-ow nyo_mowe_docs if thewe was nyo eawwy tewmination. /(^•ω•^)  this d-doc may nyot b-be a hit! (ꈍᴗꈍ)
    */
-  protected abstract void doFinishSegment(int lastSearchedDocID) throws IOException;
+  p-pwotected abstwact v-void dofinishsegment(int wastseawcheddocid) thwows ioexception;
 
   /**
-   *  sub classes can override this to perform more early termination checks.
+   *  s-sub cwasses can ovewwide this to pewfowm mowe eawwy tewmination checks. 😳
    */
-  public EarlyTerminationState innerShouldCollectMore() throws IOException {
-    return EarlyTerminationState.COLLECTING;
+  pubwic eawwytewminationstate i-innewshouwdcowwectmowe() thwows i-ioexception {
+    wetuwn eawwytewminationstate.cowwecting;
   }
 
   /**
-   * After early termination, this method can be used to retrieve early termination reason.
+   * a-aftew eawwy tewmination, mya t-this method can be used to wetwieve e-eawwy tewmination w-weason. mya
    */
-  @Nonnull
-  public final EarlyTerminationState getEarlyTerminationState() {
-    return terminationTracker.getEarlyTerminationState();
+  @nonnuww
+  p-pubwic finaw e-eawwytewminationstate g-geteawwytewminationstate() {
+    wetuwn tewminationtwackew.geteawwytewminationstate();
   }
 
-  protected final EarlyTerminationState setEarlyTerminationState(
-      EarlyTerminationState newEarlyTerminationState) {
-    terminationTracker.setEarlyTerminationState(newEarlyTerminationState);
-    return newEarlyTerminationState;
+  pwotected finaw eawwytewminationstate seteawwytewminationstate(
+      eawwytewminationstate n-nyeweawwytewminationstate) {
+    t-tewminationtwackew.seteawwytewminationstate(neweawwytewminationstate);
+    w-wetuwn nyeweawwytewminationstate;
   }
 
-  @Override
-  public final boolean isTerminated() throws IOException {
-    EarlyTerminationState earlyTerminationState = getEarlyTerminationState();
+  @ovewwide
+  p-pubwic finaw boowean istewminated() thwows ioexception {
+    eawwytewminationstate e-eawwytewminationstate = g-geteawwytewminationstate();
 
-    if (earlyTerminationState.isTerminated()) {
-      return true;
+    if (eawwytewminationstate.istewminated()) {
+      wetuwn twue;
     }
 
-    if (getNumHitsProcessed() >= getMaxHitsToProcess()) {
-      collectedEnoughResults();
-      if (shouldTerminate()) {
-        return setEarlyTerminationState(EarlyTerminationState.TERMINATED_MAX_HITS_EXCEEDED)
-            .isTerminated();
-      } else {
-        return false;
+    i-if (getnumhitspwocessed() >= getmaxhitstopwocess()) {
+      cowwectedenoughwesuwts();
+      i-if (shouwdtewminate()) {
+        w-wetuwn seteawwytewminationstate(eawwytewminationstate.tewminated_max_hits_exceeded)
+            .istewminated();
+      } ewse {
+        wetuwn f-fawse;
       }
     }
 
-    return innerShouldCollectMore().isTerminated();
+    wetuwn i-innewshouwdcowwectmowe().istewminated();
   }
 
   /**
-   * Note: subclasses overriding this method are expected to call "super.setNextReader"
-   * in their setNextReader().
-   * @deprecated Remove this methods in favor of {@link #getLeafCollector(LeafReaderContext)}
+   * nyote: subcwasses ovewwiding this method awe expected to caww "supew.setnextweadew"
+   * i-in theiw s-setnextweadew(). /(^•ω•^)
+   * @depwecated w-wemove this methods i-in favow o-of {@wink #getweafcowwectow(weafweadewcontext)}
    */
-  @Deprecated
-  public void setNextReader(LeafReaderContext context) throws IOException {
-    if (!terminationTracker.useLastSearchedDocIdOnTimeout()) {
-      expensiveEarlyTerminationCheck();
+  @depwecated
+  pubwic void s-setnextweadew(weafweadewcontext c-context) thwows ioexception {
+    i-if (!tewminationtwackew.usewastseawcheddocidontimeout()) {
+      e-expensiveeawwytewminationcheck();
     }
 
-    // Reset curDocId for next segment
-    curDocId = -1;
-    lastEarlyTerminationCheckDocId = -1;
-    curReader = context.reader();
+    // weset cuwdocid f-fow nyext segment
+    cuwdocid = -1;
+    wasteawwytewminationcheckdocid = -1;
+    c-cuwweadew = context.weadew();
   }
 
   /**
-   * Sub-classes overriding this method are expected to call super.setScorer()
+   * s-sub-cwasses o-ovewwiding this method awe expected t-to caww supew.setscowew()
    */
-  @Override
-  public void setScorer(Scorable scorer) throws IOException {
-    this.scorer = scorer;
+  @ovewwide
+  pubwic void setscowew(scowabwe scowew) thwows i-ioexception {
+    t-this.scowew = s-scowew;
   }
 
-  @Override
-  public final void collect(int doc) throws IOException {
-    curDocId = doc;
-    doCollect();
-    numHitsProcessed++;
-    if (numDocsBetweenTimeoutChecks > 0
-        && (curDocId - lastEarlyTerminationCheckDocId) >= numDocsBetweenTimeoutChecks) {
-      lastEarlyTerminationCheckDocId = curDocId;
+  @ovewwide
+  pubwic finaw void cowwect(int doc) thwows i-ioexception {
+    cuwdocid = doc;
+    docowwect();
+    n-nyumhitspwocessed++;
+    i-if (numdocsbetweentimeoutchecks > 0
+        && (cuwdocid - wasteawwytewminationcheckdocid) >= n-nyumdocsbetweentimeoutchecks) {
+      wasteawwytewminationcheckdocid = c-cuwdocid;
 
-      if (!terminationTracker.useLastSearchedDocIdOnTimeout()) {
-        expensiveEarlyTerminationCheck();
+      i-if (!tewminationtwackew.usewastseawcheddocidontimeout()) {
+        expensiveeawwytewminationcheck();
       }
     }
   }
 
   /**
-   * Accounting for a segment searched.
-   * @param lastSearchedDocID is the last docid searched before termination,
-   * or NO_MORE_DOCS if there was no early termination.  This doc may not be a hit!
+   * accounting f-fow a segment seawched. ^^;;
+   * @pawam wastseawcheddocid is t-the wast docid s-seawched befowe tewmination, 🥺
+   * o-ow nyo_mowe_docs if thewe was n-nyo eawwy tewmination. ^^  t-this doc m-may nyot be a hit! ^•ﻌ•^
    */
-  protected final void trackCompleteSegment(int lastSearchedDocID) throws IOException {
-    doFinishSegment(lastSearchedDocID);
+  pwotected finaw void twackcompwetesegment(int wastseawcheddocid) thwows ioexception {
+    dofinishsegment(wastseawcheddocid);
   }
 
-  @Override
-  public final void finishSegment(int lastSearchedDocID) throws IOException {
-    // finished searching a segment. Computer average time needed to search a segment.
-    Preconditions.checkState(curReader != null, "Did subclass call super.setNextReader()?");
-    numSearchedSegments++;
+  @ovewwide
+  pubwic finaw void finishsegment(int wastseawcheddocid) thwows ioexception {
+    // f-finished seawching a-a segment. /(^•ω•^) computew avewage time needed to seawch a-a segment. ^^
+    p-pweconditions.checkstate(cuwweadew != n-nyuww, 🥺 "did subcwass c-caww supew.setnextweadew()?");
+    nyumseawchedsegments++;
 
-    long totalTime = clock.nowMillis() - terminationTracker.getLocalStartTimeMillis();
+    w-wong totawtime = c-cwock.nowmiwwis() - tewminationtwackew.getwocawstawttimemiwwis();
 
-    if (totalTime >= Integer.MAX_VALUE) {
-      String msg = String.format(
-          "%s: A query runs for %d that is longer than Integer.MAX_VALUE ms. lastSearchedDocID: %d",
-          getClass().getSimpleName(), totalTime, lastSearchedDocID
+    i-if (totawtime >= integew.max_vawue) {
+      s-stwing msg = s-stwing.fowmat(
+          "%s: a quewy wuns fow %d that is wongew t-than integew.max_vawue m-ms. (U ᵕ U❁) wastseawcheddocid: %d", 😳😳😳
+          getcwass().getsimpwename(), nyaa~~ t-totawtime, w-wastseawcheddocid
       );
-      LOG.error(msg);
-      throw new IllegalStateException(msg);
+      w-wog.ewwow(msg);
+      t-thwow n-nyew iwwegawstateexception(msg);
     }
 
-    int timePerSegment = ((int) totalTime) / numSearchedSegments;
+    int t-timepewsegment = ((int) t-totawtime) / numseawchedsegments;
 
-    if (timePerSegment < 0) {
-      NEGATIVE_TIME_PER_SEGMENT.increment();
-      timePerSegment = 0;
+    i-if (timepewsegment < 0) {
+      n-nyegative_time_pew_segment.incwement();
+      t-timepewsegment = 0;
     }
 
-    // If we're enforcing timeout via the last searched doc ID, we don't need to add this buffer,
-    // since we'll detect the timeout right away.
-    if (!terminationTracker.useLastSearchedDocIdOnTimeout()) {
-      terminationTracker.setPreTerminationSafeBufferTimeMillis(timePerSegment);
+    // if we'we enfowcing t-timeout via the wast seawched doc id, (˘ω˘) we don't n-nyeed to add this buffew, >_<
+    // s-since we'ww d-detect the timeout w-wight away. XD
+    if (!tewminationtwackew.usewastseawcheddocidontimeout()) {
+      t-tewminationtwackew.setpwetewminationsafebuffewtimemiwwis(timepewsegment);
     }
 
-    // Check whether we timed out and are checking for timeout at the leaves. If so, we should use
-    // the captured lastSearchedDocId from the tracker instead, which is the most up-to-date amongst
-    // the query nodes.
-    if (terminationTracker.useLastSearchedDocIdOnTimeout()
-        && EarlyTerminationState.TERMINATED_TIME_OUT_EXCEEDED.equals(
-            terminationTracker.getEarlyTerminationState())) {
-      QUERY_TIMEOUT_ENFORCED.increment();
-      trackCompleteSegment(terminationTracker.getLastSearchedDocId());
-    } else {
-      trackCompleteSegment(lastSearchedDocID);
+    // check w-whethew we timed out and awe c-checking fow timeout at the weaves. i-if so, rawr x3 we shouwd use
+    // the captuwed wastseawcheddocid fwom the twackew instead, ( ͡o ω ͡o ) which is t-the most up-to-date amongst
+    // t-the quewy nyodes. :3
+    i-if (tewminationtwackew.usewastseawcheddocidontimeout()
+        && eawwytewminationstate.tewminated_time_out_exceeded.equaws(
+            tewminationtwackew.geteawwytewminationstate())) {
+      quewy_timeout_enfowced.incwement();
+      t-twackcompwetesegment(tewminationtwackew.getwastseawcheddocid());
+    } ewse {
+      t-twackcompwetesegment(wastseawcheddocid);
     }
 
-    // We finished a segment, so clear out the DocIdTrackers. The next segment will register its
-    // own trackers, and we don't need to keep the trackers from the current segment.
-    terminationTracker.resetDocIdTrackers();
+    // w-we finished a segment, mya s-so cweaw out the docidtwackews. σωσ the nyext s-segment wiww wegistew i-its
+    // own twackews, (ꈍᴗꈍ) a-and we don't nyeed to keep the twackews fwom the c-cuwwent segment. OwO
+    tewminationtwackew.wesetdocidtwackews();
 
-    curDocId = -1;
-    curReader = null;
-    scorer = null;
+    c-cuwdocid = -1;
+    c-cuwweadew = n-nyuww;
+    scowew = nyuww;
   }
 
   /**
-   * More expensive Early Termination checks, which are not called every hit.
-   * This sets EarlyTerminationState if it decides that early termination should kick in.
-   * See: SEARCH-29723.
+   * mowe e-expensive eawwy t-tewmination c-checks, o.O which awe n-nyot cawwed evewy hit. 😳😳😳
+   * this s-sets eawwytewminationstate i-if i-it decides that e-eawwy tewmination s-shouwd kick in. /(^•ω•^)
+   * s-see: seawch-29723. OwO
    */
-  private void expensiveEarlyTerminationCheck() {
-    if (queryCostProvider != null) {
-      double totalQueryCost = queryCostProvider.getTotalCost();
-      double maxQueryCost = terminationTracker.getMaxQueryCost();
-      if (totalQueryCost >= maxQueryCost) {
-        setEarlyTerminationState(EarlyTerminationState.TERMINATED_MAX_QUERY_COST_EXCEEDED);
+  p-pwivate void e-expensiveeawwytewminationcheck() {
+    if (quewycostpwovidew != n-nuww) {
+      doubwe totawquewycost = q-quewycostpwovidew.gettotawcost();
+      doubwe m-maxquewycost = t-tewminationtwackew.getmaxquewycost();
+      i-if (totawquewycost >= maxquewycost) {
+        seteawwytewminationstate(eawwytewminationstate.tewminated_max_quewy_cost_exceeded);
       }
     }
 
-    final long nowMillis = clock.nowMillis();
-    if (nowMillis >= terminationTracker.getTimeoutEndTimeWithReservation()) {
-      setEarlyTerminationState(EarlyTerminationState.TERMINATED_TIME_OUT_EXCEEDED);
+    finaw wong n-nowmiwwis = cwock.nowmiwwis();
+    i-if (nowmiwwis >= t-tewminationtwackew.gettimeoutendtimewithwesewvation()) {
+      seteawwytewminationstate(eawwytewminationstate.tewminated_time_out_exceeded);
     }
   }
 
-  public long getMaxHitsToProcess() {
-    return maxHitsToProcess;
+  pubwic wong getmaxhitstopwocess() {
+    w-wetuwn maxhitstopwocess;
   }
 
-  public final void setNumHitsProcessed(long numHitsProcessed) {
-    this.numHitsProcessed = numHitsProcessed;
+  p-pubwic finaw void setnumhitspwocessed(wong n-nyumhitspwocessed) {
+    t-this.numhitspwocessed = nyumhitspwocessed;
   }
 
-  protected final long getNumHitsProcessed() {
-    return numHitsProcessed;
+  pwotected finaw wong g-getnumhitspwocessed() {
+    w-wetuwn n-nyumhitspwocessed;
   }
 
-  protected final int getNumSearchedSegments() {
-    return numSearchedSegments;
+  p-pwotected finaw int getnumseawchedsegments() {
+    w-wetuwn nyumseawchedsegments;
   }
 
-  protected final Clock getClock() {
-    return clock;
+  p-pwotected finaw cwock getcwock() {
+    wetuwn c-cwock;
   }
 
-  @VisibleForTesting
-  protected final TerminationTracker getTerminationTracker() {
-    return this.terminationTracker;
+  @visibwefowtesting
+  pwotected finaw tewminationtwackew g-gettewminationtwackew() {
+    wetuwn this.tewminationtwackew;
   }
 
-  protected void collectedEnoughResults() throws IOException {
+  p-pwotected v-void cowwectedenoughwesuwts() thwows ioexception {
   }
 
-  protected boolean shouldTerminate() {
-    return true;
+  p-pwotected boowean s-shouwdtewminate() {
+    wetuwn t-twue;
   }
 
   /**
-   * Debug info collected during execution.
+   * debug info c-cowwected duwing e-execution. ^^
    */
-  public abstract List<String> getDebugInfo();
+  p-pubwic abstwact w-wist<stwing> getdebuginfo();
 }

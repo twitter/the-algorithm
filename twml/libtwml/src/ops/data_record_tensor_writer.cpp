@@ -1,81 +1,81 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#incwude "tensowfwow/cowe/fwamewowk/op.h"
+#incwude "tensowfwow/cowe/fwamewowk/shape_infewence.h"
+#incwude "tensowfwow/cowe/fwamewowk/op_kewnew.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
+#incwude <twmw.h>
+#incwude "tensowfwow_utiws.h"
 
-using namespace tensorflow;
+using nyamespace tensowfwow;
 
-REGISTER_OP("DataRecordTensorWriter")
-.Attr("T: list({string, int32, int64, float, double, bool})")
-.Input("keys: int64")
-.Input("values: T")
-.Output("result: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-  return Status::OK();
-  }).Doc(R"doc(
+w-wegistew_op("datawecowdtensowwwitew")
+.attw("t: w-wist({stwing, :3 int32, i-int64, OwO fwoat, d-doubwe, (U ﹏ U) boow})")
+.input("keys: i-int64")
+.input("vawues: t-t")
+.output("wesuwt: u-uint8")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+  wetuwn status::ok();
+  }).doc(w"doc(
 
-A tensorflow OP that packages keys and dense tensors into a DataRecord.
+a tensowfwow op that packages keys and dense t-tensows into a datawecowd. >w<
 
-values: list of tensors
-keys: feature ids from the original DataRecord (int64)
+vawues: wist of tensows
+k-keys: featuwe ids fwom the o-owiginaw datawecowd (int64)
 
-Outputs
-  bytes: output DataRecord serialized using Thrift into a uint8 tensor.
+outputs
+  bytes: output datawecowd s-sewiawized using thwift into a u-uint8 tensow. (U ﹏ U)
 )doc");
 
-class DataRecordTensorWriter : public OpKernel {
- public:
-  explicit DataRecordTensorWriter(OpKernelConstruction* context)
-  : OpKernel(context) {}
+c-cwass datawecowdtensowwwitew : pubwic opkewnew {
+ pubwic:
+  expwicit datawecowdtensowwwitew(opkewnewconstwuction* context)
+  : o-opkewnew(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    const Tensor& keys = context->input(0);
+  void compute(opkewnewcontext* context) ovewwide {
+    c-const tensow& keys = context->input(0);
 
-    try {
-      // set keys as twml::Tensor
-      const twml::Tensor in_keys_ = TFTensor_to_twml_tensor(keys);
+    t-twy {
+      // s-set keys as twmw::tensow
+      const t-twmw::tensow i-in_keys_ = tftensow_to_twmw_tensow(keys);
 
       // check sizes
-      uint64_t num_keys = in_keys_.getNumElements();
-      uint64_t num_values = context->num_inputs() - 1;
+      uint64_t n-nyum_keys = in_keys_.getnumewements();
+      uint64_t nyum_vawues = c-context->num_inputs() - 1;
 
-      OP_REQUIRES(context, num_keys == num_values,
-        errors::InvalidArgument("Number of dense keys and dense tensors do not match"));
+      op_wequiwes(context, 😳 nyum_keys == nyum_vawues, (ˆ ﻌ ˆ)♡
+        ewwows::invawidawgument("numbew of d-dense keys and dense tensows do n-nyot match"));
 
-      // populate DataRecord object
-      const int64_t *keys = in_keys_.getData<int64_t>();
-      twml::DataRecord record = twml::DataRecord();
+      // p-popuwate d-datawecowd object
+      const int64_t *keys = in_keys_.getdata<int64_t>();
+      t-twmw::datawecowd w-wecowd = twmw::datawecowd();
 
-      for (int i = 1; i < context->num_inputs(); i++) {
-        const twml::RawTensor& value = TFTensor_to_twml_raw_tensor(context->input(i));
-        record.addRawTensor(keys[i-1], value);
+      fow (int i-i = 1; i < context->num_inputs(); i-i++) {
+        const twmw::wawtensow& v-vawue = tftensow_to_twmw_waw_tensow(context->input(i));
+        w-wecowd.addwawtensow(keys[i-1], 😳😳😳 vawue);
       }
 
-      // determine the length of the encoded result (no memory is copied)
-      twml::ThriftWriter thrift_dry_writer = twml::ThriftWriter(nullptr, 0, true);
-      twml::DataRecordWriter record_dry_writer = twml::DataRecordWriter(thrift_dry_writer);
-      record_dry_writer.write(record);
-      int len = thrift_dry_writer.getBytesWritten();
-      TensorShape result_shape = {1, len};
+      // detewmine the w-wength of the encoded wesuwt (no m-memowy is copied)
+      twmw::thwiftwwitew t-thwift_dwy_wwitew = t-twmw::thwiftwwitew(nuwwptw, (U ﹏ U) 0, twue);
+      twmw::datawecowdwwitew wecowd_dwy_wwitew = twmw::datawecowdwwitew(thwift_dwy_wwitew);
+      wecowd_dwy_wwitew.wwite(wecowd);
+      int wen = thwift_dwy_wwitew.getbyteswwitten();
+      tensowshape w-wesuwt_shape = {1, (///ˬ///✿) w-wen};
 
-      // allocate output tensor
-      Tensor* result = NULL;
-      OP_REQUIRES_OK(context, context->allocate_output(0, result_shape, &result));
-      twml::Tensor out_result = TFTensor_to_twml_tensor(*result);
+      // awwocate output t-tensow
+      t-tensow* wesuwt = n-nyuww;
+      op_wequiwes_ok(context, 😳 context->awwocate_output(0, 😳 wesuwt_shape, σωσ &wesuwt));
+      twmw::tensow out_wesuwt = t-tftensow_to_twmw_tensow(*wesuwt);
 
-      // write to output tensor
-      uint8_t *buffer = out_result.getData<uint8_t>();
-      twml::ThriftWriter thrift_writer = twml::ThriftWriter(buffer, len, false);
-      twml::DataRecordWriter record_writer = twml::DataRecordWriter(thrift_writer);
-      record_writer.write(record);
-    } catch(const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      // wwite to output tensow
+      uint8_t *buffew = out_wesuwt.getdata<uint8_t>();
+      t-twmw::thwiftwwitew thwift_wwitew = twmw::thwiftwwitew(buffew, wen, rawr x3 fawse);
+      t-twmw::datawecowdwwitew w-wecowd_wwitew = t-twmw::datawecowdwwitew(thwift_wwitew);
+      wecowd_wwitew.wwite(wecowd);
+    } c-catch(const s-std::exception &e) {
+      c-context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(
-    Name("DataRecordTensorWriter").Device(DEVICE_CPU),
-    DataRecordTensorWriter);
+w-wegistew_kewnew_buiwdew(
+    nyame("datawecowdtensowwwitew").device(device_cpu), OwO
+    datawecowdtensowwwitew);

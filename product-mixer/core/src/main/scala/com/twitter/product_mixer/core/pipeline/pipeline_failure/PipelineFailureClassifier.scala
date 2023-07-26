@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.pipeline.pipeline_failure
+package com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe
 
-/** Represents a way to classify a given [[Throwable]] to a [[PipelineFailure]] */
-case class PipelineFailureClassifier(
-  classifier: PartialFunction[Throwable, PipelineFailure])
-    extends PartialFunction[Throwable, PipelineFailure] {
-  override def isDefinedAt(throwable: Throwable): Boolean = classifier.isDefinedAt(throwable)
-  override def apply(throwable: Throwable): PipelineFailure = classifier.apply(throwable)
+/** wepwesents a-a way to cwassify a-a given [[thwowabwe]] t-to a [[pipewinefaiwuwe]] */
+c-case cwass pipewinefaiwuwecwassifiew(
+  c-cwassifiew: p-pawtiawfunction[thwowabwe, -.- p-pipewinefaiwuwe])
+    e-extends pawtiawfunction[thwowabwe, ^^;; pipewinefaiwuwe] {
+  ovewwide def isdefinedat(thwowabwe: thwowabwe): b-boowean = cwassifiew.isdefinedat(thwowabwe)
+  ovewwide def appwy(thwowabwe: thwowabwe): p-pipewinefaiwuwe = cwassifiew.appwy(thwowabwe)
 }
 
-private[core] object PipelineFailureClassifier {
-  val Empty: PipelineFailureClassifier = PipelineFailureClassifier(PartialFunction.empty)
+p-pwivate[cowe] object pipewinefaiwuwecwassifiew {
+  vaw empty: pipewinefaiwuwecwassifiew = p-pipewinefaiwuwecwassifiew(pawtiawfunction.empty)
 }

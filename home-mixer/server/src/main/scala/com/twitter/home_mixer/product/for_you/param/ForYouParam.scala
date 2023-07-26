@@ -1,215 +1,215 @@
-package com.twitter.home_mixer.product.for_you.param
+package com.twittew.home_mixew.pwoduct.fow_you.pawam
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.param.decider.DeciderKey
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.WhoToFollowModuleDisplayType
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.decider.BooleanDeciderParam
-import com.twitter.util.Duration
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.home_mixew.pawam.decidew.decidewkey
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.timewine_moduwe.whotofowwowmoduwedispwaytype
+impowt c-com.twittew.timewines.configapi.duwationconvewsion
+i-impowt c-com.twittew.timewines.configapi.fsboundedpawam
+impowt c-com.twittew.timewines.configapi.fsenumpawam
+i-impowt com.twittew.timewines.configapi.fspawam
+impowt com.twittew.timewines.configapi.hasduwationconvewsion
+impowt com.twittew.timewines.configapi.decidew.booweandecidewpawam
+impowt com.twittew.utiw.duwation
 
-object ForYouParam {
-  val SupportedClientFSName = "for_you_supported_client"
+o-object fowyoupawam {
+  vaw suppowtedcwientfsname = "fow_you_suppowted_cwient"
 
-  object EnableTopicSocialContextFilterParam
-      extends FSParam[Boolean](
-        name = "for_you_enable_topic_social_context_filter",
-        default = true
+  object enabwetopicsociawcontextfiwtewpawam
+      e-extends fspawam[boowean](
+        nyame = "fow_you_enabwe_topic_sociaw_context_fiwtew", 😳😳😳
+        d-defauwt = twue
       )
 
-  object EnableVerifiedAuthorSocialContextBypassParam
-      extends FSParam[Boolean](
-        name = "for_you_enable_verified_author_social_context_bypass",
-        default = true
+  object enabwevewifiedauthowsociawcontextbypasspawam
+      extends fspawam[boowean](
+        n-nyame = "fow_you_enabwe_vewified_authow_sociaw_context_bypass", OwO
+        defauwt = twue
       )
 
-  object EnableTimelineScorerCandidatePipelineParam
-      extends FSParam[Boolean](
-        name = "for_you_enable_timeline_scorer_candidate_pipeline",
-        default = false
+  o-object e-enabwetimewinescowewcandidatepipewinepawam
+      extends fspawam[boowean](
+        nyame = "fow_you_enabwe_timewine_scowew_candidate_pipewine",
+        defauwt = fawse
       )
 
-  object EnableScoredTweetsCandidatePipelineParam
-      extends BooleanDeciderParam(DeciderKey.EnableForYouScoredTweetsCandidatePipeline)
+  o-object enabwescowedtweetscandidatepipewinepawam
+      extends booweandecidewpawam(decidewkey.enabwefowyouscowedtweetscandidatepipewine)
 
-  object EnableWhoToFollowCandidatePipelineParam
-      extends FSParam[Boolean](
-        name = "for_you_enable_who_to_follow",
-        default = true
+  object enabwewhotofowwowcandidatepipewinepawam
+      extends fspawam[boowean](
+        n-nyame = "fow_you_enabwe_who_to_fowwow", 😳
+        defauwt = t-twue
       )
 
-  object EnableWhoToSubscribeCandidatePipelineParam
-      extends FSParam[Boolean](
-        name = "for_you_enable_who_to_subscribe",
-        default = true
+  o-object enabwewhotosubscwibecandidatepipewinepawam
+      e-extends f-fspawam[boowean](
+        nyame = "fow_you_enabwe_who_to_subscwibe",
+        defauwt = twue
       )
 
-  object EnableTweetPreviewsCandidatePipelineParam
-      extends FSParam[Boolean](
-        name = "for_you_enable_tweet_previews_candidate_pipeline",
-        default = true
+  o-object enabwetweetpweviewscandidatepipewinepawam
+      extends fspawam[boowean](
+        n-nyame = "fow_you_enabwe_tweet_pweviews_candidate_pipewine", 😳😳😳
+        defauwt = twue
       )
 
-  object EnablePushToHomeMixerPipelineParam
-      extends FSParam[Boolean](
-        name = "for_you_enable_push_to_home_mixer_pipeline",
-        default = false
+  object enabwepushtohomemixewpipewinepawam
+      extends fspawam[boowean](
+        nyame = "fow_you_enabwe_push_to_home_mixew_pipewine", (˘ω˘)
+        d-defauwt = fawse
       )
 
-  object EnableScoredTweetsMixerPipelineParam
-      extends FSParam[Boolean](
-        name = "for_you_enable_scored_tweets_mixer_pipeline",
-        default = true
+  object e-enabwescowedtweetsmixewpipewinepawam
+      e-extends f-fspawam[boowean](
+        nyame = "fow_you_enabwe_scowed_tweets_mixew_pipewine", ʘwʘ
+        defauwt = twue
       )
 
-  object ServerMaxResultsParam
-      extends FSBoundedParam[Int](
-        name = "for_you_server_max_results",
-        default = 35,
-        min = 1,
+  object s-sewvewmaxwesuwtspawam
+      e-extends fsboundedpawam[int](
+        n-nyame = "fow_you_sewvew_max_wesuwts", ( ͡o ω ͡o )
+        defauwt = 35, o.O
+        m-min = 1, >w<
         max = 500
       )
 
-  object AdsNumOrganicItemsParam
-      extends FSBoundedParam[Int](
-        name = "for_you_ads_num_organic_items",
-        default = 35,
-        min = 1,
+  o-object adsnumowganicitemspawam
+      e-extends fsboundedpawam[int](
+        nyame = "fow_you_ads_num_owganic_items", 😳
+        defauwt = 35, 🥺
+        m-min = 1, rawr x3
         max = 100
       )
 
-  object WhoToFollowPositionParam
-      extends FSBoundedParam[Int](
-        name = "for_you_who_to_follow_position",
-        default = 5,
-        min = 0,
+  o-object whotofowwowpositionpawam
+      extends f-fsboundedpawam[int](
+        n-nyame = "fow_you_who_to_fowwow_position", o.O
+        defauwt = 5, rawr
+        min = 0, ʘwʘ
         max = 99
       )
 
-  object WhoToFollowMinInjectionIntervalParam
-      extends FSBoundedParam[Duration](
-        "for_you_who_to_follow_min_injection_interval_in_minutes",
-        default = 1800.minutes,
-        min = 0.minutes,
+  object whotofowwowmininjectionintewvawpawam
+      extends fsboundedpawam[duwation](
+        "fow_you_who_to_fowwow_min_injection_intewvaw_in_minutes", 😳😳😳
+        d-defauwt = 1800.minutes, ^^;;
+        m-min = 0.minutes, o.O
         max = 6000.minutes)
-      with HasDurationConversion {
-    override val durationConversion: DurationConversion = DurationConversion.FromMinutes
+      w-with h-hasduwationconvewsion {
+    o-ovewwide vaw duwationconvewsion: duwationconvewsion = duwationconvewsion.fwomminutes
   }
 
-  object WhoToFollowDisplayTypeIdParam
-      extends FSEnumParam[WhoToFollowModuleDisplayType.type](
-        name = "for_you_enable_who_to_follow_display_type_id",
-        default = WhoToFollowModuleDisplayType.Vertical,
-        enum = WhoToFollowModuleDisplayType
+  o-object whotofowwowdispwaytypeidpawam
+      extends fsenumpawam[whotofowwowmoduwedispwaytype.type](
+        nyame = "fow_you_enabwe_who_to_fowwow_dispway_type_id", (///ˬ///✿)
+        defauwt = whotofowwowmoduwedispwaytype.vewticaw, σωσ
+        enum = w-whotofowwowmoduwedispwaytype
       )
 
-  object WhoToFollowDisplayLocationParam
-      extends FSParam[String](
-        name = "for_you_who_to_follow_display_location",
-        default = "timeline"
+  object w-whotofowwowdispwaywocationpawam
+      e-extends f-fspawam[stwing](
+        nyame = "fow_you_who_to_fowwow_dispway_wocation", nyaa~~
+        d-defauwt = "timewine"
       )
 
-  object WhoToSubscribePositionParam
-      extends FSBoundedParam[Int](
-        name = "for_you_who_to_subscribe_position",
-        default = 7,
-        min = 0,
-        max = 99
+  o-object whotosubscwibepositionpawam
+      e-extends f-fsboundedpawam[int](
+        nyame = "fow_you_who_to_subscwibe_position", ^^;;
+        defauwt = 7, ^•ﻌ•^
+        m-min = 0, σωσ
+        m-max = 99
       )
 
-  object WhoToSubscribeMinInjectionIntervalParam
-      extends FSBoundedParam[Duration](
-        "for_you_who_to_subscribe_min_injection_interval_in_minutes",
-        default = 1800.minutes,
-        min = 0.minutes,
+  o-object whotosubscwibemininjectionintewvawpawam
+      e-extends fsboundedpawam[duwation](
+        "fow_you_who_to_subscwibe_min_injection_intewvaw_in_minutes", -.-
+        d-defauwt = 1800.minutes, ^^;;
+        min = 0.minutes, XD
         max = 6000.minutes)
-      with HasDurationConversion {
-    override val durationConversion: DurationConversion = DurationConversion.FromMinutes
+      with hasduwationconvewsion {
+    o-ovewwide vaw duwationconvewsion: duwationconvewsion = duwationconvewsion.fwomminutes
   }
 
-  object WhoToSubscribeDisplayTypeIdParam
-      extends FSEnumParam[WhoToFollowModuleDisplayType.type](
-        name = "for_you_enable_who_to_subscribe_display_type_id",
-        default = WhoToFollowModuleDisplayType.Vertical,
-        enum = WhoToFollowModuleDisplayType
+  object whotosubscwibedispwaytypeidpawam
+      extends fsenumpawam[whotofowwowmoduwedispwaytype.type](
+        nyame = "fow_you_enabwe_who_to_subscwibe_dispway_type_id", 🥺
+        d-defauwt = whotofowwowmoduwedispwaytype.vewticaw, òωó
+        enum = whotofowwowmoduwedispwaytype
       )
 
-  object TweetPreviewsPositionParam
-      extends FSBoundedParam[Int](
-        name = "for_you_tweet_previews_position",
-        default = 3,
-        min = 0,
+  object t-tweetpweviewspositionpawam
+      e-extends fsboundedpawam[int](
+        n-nyame = "fow_you_tweet_pweviews_position", (ˆ ﻌ ˆ)♡
+        defauwt = 3, -.-
+        m-min = 0, :3
         max = 99
       )
 
-  object TweetPreviewsMinInjectionIntervalParam
-      extends FSBoundedParam[Duration](
-        "for_you_tweet_previews_min_injection_interval_in_minutes",
-        default = 2.hours,
-        min = 0.minutes,
+  o-object tweetpweviewsmininjectionintewvawpawam
+      e-extends fsboundedpawam[duwation](
+        "fow_you_tweet_pweviews_min_injection_intewvaw_in_minutes",
+        defauwt = 2.houws, ʘwʘ
+        min = 0.minutes, 🥺
         max = 600.minutes)
-      with HasDurationConversion {
-    override val durationConversion: DurationConversion = DurationConversion.FromMinutes
+      with hasduwationconvewsion {
+    o-ovewwide vaw duwationconvewsion: d-duwationconvewsion = duwationconvewsion.fwomminutes
   }
 
-  object TweetPreviewsMaxCandidatesParam
-      extends FSBoundedParam[Int](
-        name = "for_you_tweet_previews_max_candidates",
-        default = 1,
-        min = 0,
-        // NOTE: previews are injected at a fixed position, so max candidates = 1
-        // to avoid bunching of previews.
+  o-object tweetpweviewsmaxcandidatespawam
+      e-extends fsboundedpawam[int](
+        nyame = "fow_you_tweet_pweviews_max_candidates", >_<
+        defauwt = 1, ʘwʘ
+        min = 0, (˘ω˘)
+        // n-nyote: pweviews a-awe injected at a fixed p-position, (✿oωo) so max c-candidates = 1
+        // to avoid bunching of pweviews. (///ˬ///✿)
         max = 1
       )
 
-  object EnableFlipInjectionModuleCandidatePipelineParam
-      extends FSParam[Boolean](
-        name = "for_you_enable_flip_inline_injection_module",
-        default = true
+  o-object enabwefwipinjectionmoduwecandidatepipewinepawam
+      e-extends fspawam[boowean](
+        n-nyame = "fow_you_enabwe_fwip_inwine_injection_moduwe", rawr x3
+        defauwt = twue
       )
 
-  object FlipInlineInjectionModulePosition
-      extends FSBoundedParam[Int](
-        name = "for_you_flip_inline_injection_module_position",
-        default = 0,
-        min = 0,
+  o-object f-fwipinwineinjectionmoduweposition
+      extends f-fsboundedpawam[int](
+        nyame = "fow_you_fwip_inwine_injection_moduwe_position", -.-
+        defauwt = 0, ^^
+        min = 0, (⑅˘꒳˘)
         max = 1000
       )
 
-  object ClearCacheOnPtr {
-    object EnableParam
-        extends FSParam[Boolean](
-          name = "for_you_clear_cache_ptr_enable",
-          default = false
+  o-object c-cweawcacheonptw {
+    object enabwepawam
+        e-extends fspawam[boowean](
+          n-nyame = "fow_you_cweaw_cache_ptw_enabwe", nyaa~~
+          defauwt = fawse
         )
 
-    case object MinEntriesParam
-        extends FSBoundedParam[Int](
-          name = "for_you_clear_cache_ptr_min_entries",
-          default = 10,
-          min = 0,
-          max = 35
+    case o-object minentwiespawam
+        extends fsboundedpawam[int](
+          nyame = "fow_you_cweaw_cache_ptw_min_entwies", /(^•ω•^)
+          defauwt = 10, (U ﹏ U)
+          min = 0, 😳😳😳
+          m-max = 35
         )
   }
 
-  object EnableClearCacheOnPushToHome
-      extends FSParam[Boolean](
-        name = "for_you_enable_clear_cache_push_to_home",
-        default = false
+  object enabwecweawcacheonpushtohome
+      extends fspawam[boowean](
+        n-nyame = "fow_you_enabwe_cweaw_cache_push_to_home", >w<
+        d-defauwt = fawse
       )
 
-  object EnableServedCandidateKafkaPublishingParam
-      extends FSParam[Boolean](
-        name = "for_you_enable_served_candidate_kafka_publishing",
-        default = true
+  object enabwesewvedcandidatekafkapubwishingpawam
+      extends fspawam[boowean](
+        n-nyame = "fow_you_enabwe_sewved_candidate_kafka_pubwishing", XD
+        d-defauwt = twue
       )
 
-  object ExperimentStatsParam
-      extends FSParam[String](
-        name = "for_you_experiment_stats",
-        default = ""
+  object expewimentstatspawam
+      extends fspawam[stwing](
+        nyame = "fow_you_expewiment_stats", o.O
+        d-defauwt = ""
       )
 }

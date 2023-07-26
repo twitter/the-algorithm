@@ -1,83 +1,83 @@
-package com.twitter.tweetypie
-package backends
+package com.twittew.tweetypie
+package b-backends
 
-import com.twitter.expandodo.thriftscala.AttachmentEligibilityRequest
-import com.twitter.expandodo.thriftscala.AttachmentEligibilityResponses
-import com.twitter.expandodo.thriftscala.Card2Request
-import com.twitter.expandodo.thriftscala.Card2RequestOptions
-import com.twitter.expandodo.thriftscala.Card2Responses
-import com.twitter.expandodo.thriftscala.CardsResponse
-import com.twitter.expandodo.thriftscala.GetCardUsersRequests
-import com.twitter.expandodo.thriftscala.GetCardUsersResponses
-import com.twitter.expandodo.{thriftscala => expandodo}
-import com.twitter.finagle.Backoff
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.servo.util.FutureArrow
-import com.twitter.tweetypie.util.RetryPolicyBuilder
+impowt c-com.twittew.expandodo.thwiftscawa.attachmentewigibiwitywequest
+i-impowt com.twittew.expandodo.thwiftscawa.attachmentewigibiwitywesponses
+i-impowt c-com.twittew.expandodo.thwiftscawa.cawd2wequest
+i-impowt com.twittew.expandodo.thwiftscawa.cawd2wequestoptions
+i-impowt com.twittew.expandodo.thwiftscawa.cawd2wesponses
+i-impowt com.twittew.expandodo.thwiftscawa.cawdswesponse
+impowt com.twittew.expandodo.thwiftscawa.getcawdusewswequests
+impowt com.twittew.expandodo.thwiftscawa.getcawdusewswesponses
+impowt c-com.twittew.expandodo.{thwiftscawa => expandodo}
+impowt com.twittew.finagwe.backoff
+i-impowt com.twittew.finagwe.sewvice.wetwypowicy
+impowt com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.tweetypie.utiw.wetwypowicybuiwdew
 
-object Expandodo {
-  import Backend._
+object expandodo {
+  impowt backend._
 
-  type GetCards = FutureArrow[Set[String], collection.Map[String, expandodo.CardsResponse]]
-  type GetCards2 = FutureArrow[
-    (Seq[expandodo.Card2Request], expandodo.Card2RequestOptions),
-    expandodo.Card2Responses
+  type g-getcawds = futuweawwow[set[stwing], cowwection.map[stwing, (U ﹏ U) expandodo.cawdswesponse]]
+  t-type g-getcawds2 = futuweawwow[
+    (seq[expandodo.cawd2wequest], 😳 expandodo.cawd2wequestoptions), (ˆ ﻌ ˆ)♡
+    expandodo.cawd2wesponses
   ]
-  type GetCardUsers = FutureArrow[expandodo.GetCardUsersRequests, expandodo.GetCardUsersResponses]
-  type CheckAttachmentEligibility =
-    FutureArrow[Seq[
-      expandodo.AttachmentEligibilityRequest
-    ], expandodo.AttachmentEligibilityResponses]
+  type getcawdusews = futuweawwow[expandodo.getcawdusewswequests, 😳😳😳 e-expandodo.getcawdusewswesponses]
+  type checkattachmentewigibiwity =
+    futuweawwow[seq[
+      expandodo.attachmentewigibiwitywequest
+    ], (U ﹏ U) expandodo.attachmentewigibiwitywesponses]
 
-  def fromClient(client: expandodo.CardsService.MethodPerEndpoint): Expandodo =
-    new Expandodo {
-      val getCards = FutureArrow(client.getCards _)
-      val getCards2 = FutureArrow((client.getCards2 _).tupled)
-      val getCardUsers = FutureArrow(client.getCardUsers _)
-      val checkAttachmentEligibility = FutureArrow(client.checkAttachmentEligibility _)
+  d-def fwomcwient(cwient: expandodo.cawdssewvice.methodpewendpoint): e-expandodo =
+    n-nyew e-expandodo {
+      v-vaw getcawds = futuweawwow(cwient.getcawds _)
+      vaw getcawds2 = f-futuweawwow((cwient.getcawds2 _).tupwed)
+      vaw getcawdusews = futuweawwow(cwient.getcawdusews _)
+      v-vaw checkattachmentewigibiwity = futuweawwow(cwient.checkattachmentewigibiwity _)
     }
 
-  case class Config(
-    requestTimeout: Duration,
-    timeoutBackoffs: Stream[Duration],
-    serverErrorBackoffs: Stream[Duration]) {
-    def apply(svc: Expandodo, ctx: Backend.Context): Expandodo =
-      new Expandodo {
-        val getCards: FutureArrow[Set[String], collection.Map[String, CardsResponse]] =
-          policy("getCards", ctx)(svc.getCards)
-        val getCards2: FutureArrow[(Seq[Card2Request], Card2RequestOptions), Card2Responses] =
-          policy("getCards2", ctx)(svc.getCards2)
-        val getCardUsers: FutureArrow[GetCardUsersRequests, GetCardUsersResponses] =
-          policy("getCardUsers", ctx)(svc.getCardUsers)
-        val checkAttachmentEligibility: FutureArrow[Seq[
-          AttachmentEligibilityRequest
-        ], AttachmentEligibilityResponses] =
-          policy("checkAttachmentEligibility", ctx)(svc.checkAttachmentEligibility)
+  case cwass config(
+    wequesttimeout: duwation, (///ˬ///✿)
+    t-timeoutbackoffs: stweam[duwation], 😳
+    s-sewvewewwowbackoffs: s-stweam[duwation]) {
+    d-def appwy(svc: expandodo, 😳 ctx: backend.context): expandodo =
+      n-nyew expandodo {
+        v-vaw getcawds: futuweawwow[set[stwing], cowwection.map[stwing, σωσ cawdswesponse]] =
+          p-powicy("getcawds", rawr x3 c-ctx)(svc.getcawds)
+        vaw getcawds2: f-futuweawwow[(seq[cawd2wequest], OwO cawd2wequestoptions), /(^•ω•^) c-cawd2wesponses] =
+          powicy("getcawds2", 😳😳😳 ctx)(svc.getcawds2)
+        v-vaw getcawdusews: futuweawwow[getcawdusewswequests, g-getcawdusewswesponses] =
+          powicy("getcawdusews", ( ͡o ω ͡o ) c-ctx)(svc.getcawdusews)
+        v-vaw checkattachmentewigibiwity: futuweawwow[seq[
+          attachmentewigibiwitywequest
+        ], >_< attachmentewigibiwitywesponses] =
+          powicy("checkattachmentewigibiwity", >w< ctx)(svc.checkattachmentewigibiwity)
       }
 
-    private[this] def policy[A, B](name: String, ctx: Context): Builder[A, B] =
-      defaultPolicy(name, requestTimeout, retryPolicy, ctx)
+    pwivate[this] d-def powicy[a, rawr b-b](name: stwing, 😳 ctx: context): b-buiwdew[a, >w< b-b] =
+      defauwtpowicy(name, (⑅˘꒳˘) w-wequesttimeout, OwO wetwypowicy, (ꈍᴗꈍ) ctx)
 
-    private[this] def retryPolicy[B]: RetryPolicy[Try[B]] =
-      RetryPolicy.combine[Try[B]](
-        RetryPolicyBuilder.timeouts[B](timeoutBackoffs),
-        RetryPolicy.backoff(Backoff.fromStream(serverErrorBackoffs)) {
-          case Throw(ex: expandodo.InternalServerError) => true
+    pwivate[this] def wetwypowicy[b]: w-wetwypowicy[twy[b]] =
+      wetwypowicy.combine[twy[b]](
+        wetwypowicybuiwdew.timeouts[b](timeoutbackoffs), 😳
+        wetwypowicy.backoff(backoff.fwomstweam(sewvewewwowbackoffs)) {
+          case thwow(ex: expandodo.intewnawsewvewewwow) => t-twue
         }
       )
   }
 
-  implicit val warmup: Warmup[Expandodo] =
-    Warmup[Expandodo]("expandodo")(
-      _.getCards2((Seq.empty, expandodo.Card2RequestOptions("iPhone-13")))
+  impwicit v-vaw wawmup: w-wawmup[expandodo] =
+    w-wawmup[expandodo]("expandodo")(
+      _.getcawds2((seq.empty, 😳😳😳 expandodo.cawd2wequestoptions("iphone-13")))
     )
 }
 
-trait Expandodo {
-  import Expandodo._
+twait e-expandodo {
+  i-impowt expandodo._
 
-  val getCards: GetCards
-  val getCards2: GetCards2
-  val getCardUsers: GetCardUsers
-  val checkAttachmentEligibility: CheckAttachmentEligibility
+  v-vaw getcawds: g-getcawds
+  vaw getcawds2: getcawds2
+  vaw g-getcawdusews: getcawdusews
+  v-vaw c-checkattachmentewigibiwity: c-checkattachmentewigibiwity
 }

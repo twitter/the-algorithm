@@ -1,42 +1,42 @@
-python3_library(
-    name = "params_lib",
-    sources = [
-        "params.py",
+python3_wibwawy(
+    nyame = "pawams_wib", rawr x3
+    souwces = [
+        "pawams.py", rawr
+    ], σωσ
+    t-tags = [
+        "bazew-compatibwe", σωσ
+        "no-mypy", >_<
     ],
-    tags = [
-        "bazel-compatible",
-        "no-mypy",
-    ],
-    dependencies = [
-        "3rdparty/python/pydantic:default",
-    ],
+    d-dependencies = [
+        "3wdpawty/python/pydantic:defauwt", :3
+    ], (U ﹏ U)
 )
 
-python3_library(
-    name = "layers_lib",
-    sources = [
-        "layers.py",
-    ],
+p-python3_wibwawy(
+    n-nyame = "wayews_wib", -.-
+    s-souwces = [
+        "wayews.py", (ˆ ﻌ ˆ)♡
+    ], (⑅˘꒳˘)
     tags = [
-        "bazel-compatible",
-        "no-mypy",
+        "bazew-compatibwe", (U ᵕ U❁)
+        "no-mypy", -.-
     ],
-    dependencies = [
-    ],
+    d-dependencies = [
+    ], ^^;;
 )
 
-python3_library(
-    name = "model_lib",
-    sources = [
-        "model.py",
-    ],
+p-python3_wibwawy(
+    n-nyame = "modew_wib", >_<
+    souwces = [
+        "modew.py", mya
+    ], mya
     tags = [
-        "bazel-compatible",
-        "no-mypy",
-    ],
+        "bazew-compatibwe", 😳
+        "no-mypy", XD
+    ], :3
     dependencies = [
-        ":layers_lib",
-        ":params_lib",
-        "3rdparty/python/absl-py:default",
+        ":wayews_wib", 😳😳😳
+        ":pawams_wib", -.-
+        "3wdpawty/python/absw-py:defauwt", ( ͡o ω ͡o )
     ],
 )

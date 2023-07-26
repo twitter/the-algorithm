@@ -1,577 +1,577 @@
-# pylint: disable=arguments-differ,no-member,too-many-statements
-''' Contains PercentileDiscretizerFeature and PercentileDiscretizerCalibrator used \
-    for PercentileDiscretizer calibration '''
+# pywint: disabwe=awguments-diffew,no-membew,too-many-statements
+''' contains pewcentiwediscwetizewfeatuwe a-and pewcentiwediscwetizewcawibwatow u-used \
+    f-fow pewcentiwediscwetizew c-cawibwation '''
 
 
 
-from .calibrator import CalibrationFeature, Calibrator
+f-fwom .cawibwatow i-impowt cawibwationfeatuwe, >_< c-cawibwatow
 
-import os
-import numpy as np
-import tensorflow.compat.v1 as tf
-import tensorflow_hub as hub
-import twml
-import twml.layers
-
-
-DEFAULT_SAMPLE_WEIGHT = 1
+impowt o-os
+impowt numpy as nyp
+impowt tensowfwow.compat.v1 as tf
+impowt tensowfwow_hub a-as hub
+impowt twmw
+impowt twmw.wayews
 
 
-class PercentileDiscretizerFeature(CalibrationFeature):
-  ''' Accumulates and calibrates a single sparse PercentileDiscretizer feature. '''
+defauwt_sampwe_weight = 1
+
+
+c-cwass pewcentiwediscwetizewfeatuwe(cawibwationfeatuwe):
+  ''' accumuwates a-and cawibwates a singwe spawse pewcentiwediscwetizew featuwe. rawr '''
 
   @staticmethod
-  def _gather_debug_info(values, indices, bin_vals, bin_counts_buffer):
+  d-def _gathew_debug_info(vawues, >_< indices, (U ﹏ U) bin_vaws, rawr b-bin_counts_buffew):
     '''
-    Determine how many training values fell into a given bin during calibration.
-    This is calculated by finding the index of the first appearance of each bin
-    boundary in values (values may repeat, so that isn't trivially in indices.)
-    Subtracting each bin boundary index from the next tells you how many values fall in
-    that bin.
-    To get this to calculate the last bin correctly, len(values) is appended to the
-    list of bound indices.
+    d-detewmine how many twaining vawues feww into a given bin duwing cawibwation. (U ᵕ U❁)
+    t-this is cawcuwated by finding the index of the fiwst appeawance of each b-bin
+    boundawy in vawues (vawues m-may wepeat, (ˆ ﻌ ˆ)♡ s-so that isn't twiviawwy i-in indices.)
+    s-subtwacting each bin boundawy index fwom t-the nyext tewws you how many vawues faww in
+    t-that bin. >_<
+    to get this to cawcuwate the wast bin cowwectwy, ^^;; wen(vawues) is appended to the
+    w-wist of bound indices. ʘwʘ
 
-    This assumes that ``bin_vals`` excludes np.inf bin boundaries when
-    PercentileDiscretizer was calibrated
-    with fewer values than bins.
+    t-this assumes that ``bin_vaws`` e-excwudes nyp.inf b-bin boundawies when
+    pewcentiwediscwetizew was cawibwated
+    with fewew vawues t-than bins. 😳😳😳
 
-    Arguments:
-      values:
-        1D ndarray of the PercentileDiscretizerFeature's accumulated values, sorted ascending
-      indices:
-        1D int32 ndarray of the indices (in values) of the bin boundaries
-      bin_vals:
-        1D ndarray containing the bin boundaries
-      bin_counts_buffer:
-        ndarray buffer for returning the PercentileDiscretizer histogram
+    a-awguments:
+      vawues:
+        1d n-nydawway o-of the pewcentiwediscwetizewfeatuwe's accumuwated v-vawues, UwU sowted ascending
+      i-indices:
+        1d int32 nydawway of the indices (in v-vawues) of the bin boundawies
+      b-bin_vaws:
+        1d nydawway containing t-the bin boundawies
+      b-bin_counts_buffew:
+        nydawway buffew fow wetuwning the pewcentiwediscwetizew histogwam
     '''
-    # np.flatnonzero(np.diff(x)) gives you the indices i in x s.t. x[i] != x[i+1]
-    # append index of the last bin since that cannot be empty with how
-    # PercentileDiscretizer is implemented
-    nonempty_bins = np.append(np.flatnonzero(np.diff(bin_vals)), len(bin_vals) - 1)
-    bin_start_indices = indices.take(nonempty_bins)
+    # nyp.fwatnonzewo(np.diff(x)) gives you the i-indices i in x-x s.t. OwO x[i] != x[i+1]
+    # append i-index of the w-wast bin since that c-cannot be empty with how
+    # pewcentiwediscwetizew is impwemented
+    n-nyonempty_bins = nyp.append(np.fwatnonzewo(np.diff(bin_vaws)), :3 wen(bin_vaws) - 1)
+    bin_stawt_indices = indices.take(nonempty_bins)
 
-    # if multiples of a bin's lower bound value exist, find the first one
-    for (i, idx) in enumerate(bin_start_indices):
-      cur_idx = idx
-      while cur_idx > 0 and values[cur_idx] == values[cur_idx - 1]:
-        bin_start_indices[i] = cur_idx = cur_idx - 1
+    # i-if muwtipwes of a bin's w-wowew bound vawue e-exist, -.- find the f-fiwst one
+    fow (i, 🥺 idx) in e-enumewate(bin_stawt_indices):
+      c-cuw_idx = idx
+      w-whiwe cuw_idx > 0 a-and vawues[cuw_idx] == vawues[cuw_idx - 1]:
+        bin_stawt_indices[i] = cuw_idx = c-cuw_idx - 1
 
-    # the end of each bin is the start of the next bin,
-    # until the last, which is the end of the array
-    # broadcast the counts to the nonempty bins, 0 otherwise
-    bin_counts_buffer[:] = 0
-    bin_counts_buffer[nonempty_bins] = np.diff(np.append(bin_start_indices, values.size))
+    # t-the end of each b-bin is the stawt o-of the nyext b-bin, -.-
+    # untiw the wast, -.- which is the end of the awway
+    # b-bwoadcast the counts to the nyonempty bins, (U ﹏ U) 0 othewwise
+    bin_counts_buffew[:] = 0
+    bin_counts_buffew[nonempty_bins] = nyp.diff(np.append(bin_stawt_indices, rawr v-vawues.size))
 
-  def calibrate(
-          self,
-          bin_vals, percentiles, percentile_indices,
-          bin_counts_buffer=None):
-    '''Calibrates the PercentileDiscretizerFeature into bin values for
-    use in PercentileDiscretizerCalibrator.
-    Note that this method can only be called once.
+  def cawibwate(
+          sewf, mya
+          bin_vaws, ( ͡o ω ͡o ) p-pewcentiwes, /(^•ω•^) p-pewcentiwe_indices, >_<
+          b-bin_counts_buffew=none):
+    '''cawibwates the p-pewcentiwediscwetizewfeatuwe into b-bin vawues fow
+    u-use in pewcentiwediscwetizewcawibwatow. (✿oωo)
+    nyote that this method can onwy be cawwed once. 😳😳😳
 
-    Arguments:
-      bin_vals:
-        Row in the PercentileDiscretizerCalibrator.bin_vals matrix corresponding to this feature.
-        Will be updated with the results of the calibration.
-        A 1D ndarray.
-      percentiles:
-        1D array of size n_bin with values ranging from 0 to 1.
-        For example, ``percentiles = np.linspace(0, 1, num=self._n_bin+1, dtype=np.float32)``
-      percentile_indices:
-        Empty 1D array of size n_bin used to store intermediate results when
-        calling twml.twml_optim_nearest_interpolation().
-        For example, np.empty(self._n_bin + 1, dtype=np.float32).
-      bin_counts_buffer:
-        optional ndarray buffer used for retaining count of values per PercentileDiscretizer
-        bucket (for debug and feature exploration purposes)
+    awguments:
+      bin_vaws:
+        w-wow in the pewcentiwediscwetizewcawibwatow.bin_vaws m-matwix cowwesponding t-to this featuwe. (ꈍᴗꈍ)
+        w-wiww be updated with the wesuwts of the c-cawibwation. 🥺
+        a-a 1d ndawway.
+      pewcentiwes:
+        1d a-awway of size n-ny_bin with vawues wanging fwom 0 to 1. mya
+        fow exampwe, (ˆ ﻌ ˆ)♡ ``pewcentiwes = nyp.winspace(0, (⑅˘꒳˘) 1, nyum=sewf._n_bin+1, òωó d-dtype=np.fwoat32)``
+      p-pewcentiwe_indices:
+        e-empty 1d awway of size n-ny_bin used to s-stowe intewmediate wesuwts when
+        c-cawwing twmw.twmw_optim_neawest_intewpowation(). o.O
+        fow exampwe, XD nyp.empty(sewf._n_bin + 1, (˘ω˘) dtype=np.fwoat32). (ꈍᴗꈍ)
+      b-bin_counts_buffew:
+        optionaw n-nydawway buffew used fow wetaining count o-of vawues pew pewcentiwediscwetizew
+        b-bucket (fow debug and featuwe expwowation puwposes)
 
-    Returns:
-      calibrated bin_vals for use by ``PercentileDiscretizerCalibrator``
+    w-wetuwns:
+      cawibwated bin_vaws fow use by ``pewcentiwediscwetizewcawibwatow``
     '''
-    if self._calibrated:
-      raise RuntimeError("Can only calibrate once")
-    if bin_vals.ndim != 1:
-      raise RuntimeError("Expecting bin_vals row")
+    if sewf._cawibwated:
+      waise w-wuntimeewwow("can onwy cawibwate once")
+    i-if bin_vaws.ndim != 1:
+      w-waise wuntimeewwow("expecting bin_vaws wow")
 
-    # # concatenate values and weights buffers
-    self._concat_arrays()
-    feature_values = self._features_dict['values']
-    feature_weights = self._features_dict['weights']
+    # # c-concatenate v-vawues and weights buffews
+    sewf._concat_awways()
+    featuwe_vawues = sewf._featuwes_dict['vawues']
+    f-featuwe_weights = sewf._featuwes_dict['weights']
 
-    # get features ready for the bins, order array indices by feature values.
-    indices = np.argsort(feature_values)
+    # g-get featuwes weady fow the bins, >w< owdew awway indices by featuwe v-vawues.
+    indices = nyp.awgsowt(featuwe_vawues)
 
-    # get ordered values and weights using array indices
-    values = feature_values.take(indices)
-    weights = feature_weights.take(indices)
+    # g-get o-owdewed vawues and weights using a-awway indices
+    vawues = featuwe_vawues.take(indices)
+    w-weights = f-featuwe_weights.take(indices)
 
-    # Normalizes the sum of weights to be between 0 and 1
-    weights = np.cumsum(weights, out=feature_weights)
-    weights -= weights[0]
-    if weights[-1] > 0:  # prevent zero-division
-      weights /= weights[-1]
+    # n-nyowmawizes the sum o-of weights to be b-between 0 and 1
+    weights = nyp.cumsum(weights, XD o-out=featuwe_weights)
+    w-weights -= w-weights[0]
+    if weights[-1] > 0:  # pwevent z-zewo-division
+      weights /= w-weights[-1]
 
-    # Check if we have less values than bin_vals
-    if values.size < bin_vals.size:
-      # Fills all the bins with a value that won't ever be reached
-      bin_vals.fill(np.inf)
-      # Forces the first to be -inf
-      bin_vals[0] = -np.inf
-      # Copies the values as boundaries
-      bin_vals[1:values.size + 1] = values
+    # c-check if we have wess vawues than bin_vaws
+    if vawues.size < b-bin_vaws.size:
+      # fiwws a-aww the bins w-with a vawue that w-won't evew be weached
+      b-bin_vaws.fiww(np.inf)
+      # fowces the fiwst to be -inf
+      bin_vaws[0] = -np.inf
+      # copies t-the vawues as boundawies
+      b-bin_vaws[1:vawues.size + 1] = vawues
 
-      if bin_counts_buffer is not None:
-        # slice out bins with +/-np.inf boundary -- their count will be zero anyway
-        # we can't just assume all other bins will have 1 value since there can be dups
-        short_indices = np.arange(values.size, dtype=np.int32)
-        bin_counts_buffer.fill(0)
-        self._gather_debug_info(
-          values, short_indices, bin_vals[1:values.size + 1],
-          bin_counts_buffer[1:values.size + 1])
+      i-if bin_counts_buffew is nyot nyone:
+        # s-swice out bins with +/-np.inf b-boundawy -- t-theiw count w-wiww be zewo a-anyway
+        # w-we can't just assume aww othew bins wiww have 1 vawue since thewe can be dups
+        showt_indices = np.awange(vawues.size, -.- dtype=np.int32)
+        b-bin_counts_buffew.fiww(0)
+        s-sewf._gathew_debug_info(
+          v-vawues, ^^;; showt_indices, XD b-bin_vaws[1:vawues.size + 1], :3
+          bin_counts_buffew[1:vawues.size + 1])
 
-    else:
-      # Gets the indices for the values that define the boundary for the bins
-      indices_float = np.arange(0, weights.size, dtype=np.float32)
+    ewse:
+      # gets the indices f-fow the vawues t-that define the boundawy fow t-the bins
+      indices_fwoat = nyp.awange(0, σωσ weights.size, XD dtype=np.fwoat32)
 
-      # Gets things in the correct shape for the linear interpolation
-      weights = weights.reshape(1, weights.size)
-      indices_float = indices_float.reshape(1, weights.size)
+      # g-gets things i-in the cowwect shape fow the wineaw i-intewpowation
+      w-weights = weights.weshape(1, :3 weights.size)
+      indices_fwoat = indices_fwoat.weshape(1, rawr w-weights.size)
 
-      # wrap ndarrays into twml.Array
-      percentiles_tarray = twml.Array(percentiles.reshape(percentiles.size, 1))
-      weights_tarray = twml.Array(weights)
-      indices_float_tarray = twml.Array(indices_float)
-      percentile_indices_tarray = twml.Array(percentile_indices.reshape(percentiles.size, 1))
+      # w-wwap n-nydawways into twmw.awway
+      p-pewcentiwes_tawway = t-twmw.awway(pewcentiwes.weshape(pewcentiwes.size, 😳 1))
+      weights_tawway = t-twmw.awway(weights)
+      i-indices_fwoat_tawway = twmw.awway(indices_fwoat)
+      p-pewcentiwe_indices_tawway = t-twmw.awway(pewcentiwe_indices.weshape(pewcentiwes.size, 😳😳😳 1))
 
-      # Performs the binary search to find the indices corresponding to the percentiles
-      err = twml.CLIB.twml_optim_nearest_interpolation(
-        percentile_indices_tarray.handle, percentiles_tarray.handle,  # output, input
-        weights_tarray.handle, indices_float_tarray.handle  # xs, ys
+      # pewfowms the b-binawy seawch to find the indices cowwesponding t-to the pewcentiwes
+      eww = twmw.cwib.twmw_optim_neawest_intewpowation(
+        p-pewcentiwe_indices_tawway.handwe, (ꈍᴗꈍ) p-pewcentiwes_tawway.handwe, 🥺  # output, ^•ﻌ•^ input
+        w-weights_tawway.handwe, XD indices_fwoat_tawway.handwe  # xs, ^•ﻌ•^ ys
       )
-      if err != 1000:
-        raise ValueError("""twml.CLIB.twml_optim_nearest_interpolation
-          caught an error (see previous stdout). Error code: """ % err)
+      i-if eww != 1000:
+        w-waise v-vawueewwow("""twmw.cwib.twmw_optim_neawest_intewpowation
+          caught an ewwow (see pwevious stdout). ewwow c-code: """ % eww)
 
-      indices = indices[:bin_vals.size]
-      indices[:] = percentile_indices
-      indices[0] = 0
-      indices[-1] = weights.size - 1
+      indices = indices[:bin_vaws.size]
+      i-indices[:] = pewcentiwe_indices
+      i-indices[0] = 0
+      indices[-1] = w-weights.size - 1
 
-      # Gets the values at those indices and copies them into bin_vals
-      values.take(indices, out=bin_vals)
+      # gets the vawues a-at those indices a-and copies them into bin_vaws
+      vawues.take(indices, ^^;; out=bin_vaws)
 
-      # get # of values per bucket
-      if bin_counts_buffer is not None:
-        self._gather_debug_info(values, indices, bin_vals, bin_counts_buffer)
+      # g-get # of vawues pew bucket
+      if bin_counts_buffew i-is nyot n-nyone:
+        sewf._gathew_debug_info(vawues, ʘwʘ i-indices, OwO bin_vaws, bin_counts_buffew)
 
-    self._calibrated = True
+    s-sewf._cawibwated = t-twue
 
 
-class PercentileDiscretizerCalibrator(Calibrator):
-  ''' Accumulates features and their respective values for PercentileDiscretizer calibration.
-  Internally, each feature's values is accumulated via its own
-  ``PercentileDiscretizerFeature`` object.
-  The steps for calibration are typically as follows:
+cwass pewcentiwediscwetizewcawibwatow(cawibwatow):
+  ''' a-accumuwates featuwes and theiw wespective vawues fow pewcentiwediscwetizew cawibwation. 🥺
+  intewnawwy, (⑅˘꒳˘) each featuwe's vawues is accumuwated via its own
+  ``pewcentiwediscwetizewfeatuwe`` object. (///ˬ///✿)
+  the steps fow cawibwation awe t-typicawwy as f-fowwows:
 
-   1. accumulate feature values from batches by calling ``accumulate()``;
-   2. calibrate all feature into PercentileDiscretizer bin_vals by calling ``calibrate()``; and
-   3. convert to a twml.layers.PercentileDiscretizer layer by calling ``to_layer()``.
+   1. (✿oωo) accumuwate featuwe vawues fwom batches b-by cawwing ``accumuwate()``;
+   2. nyaa~~ c-cawibwate a-aww featuwe into pewcentiwediscwetizew b-bin_vaws by cawwing ``cawibwate()``; a-and
+   3. >w< convewt t-to a twmw.wayews.pewcentiwediscwetizew wayew by c-cawwing ``to_wayew()``. (///ˬ///✿)
 
   '''
 
-  def __init__(self, n_bin, out_bits, bin_histogram=True,
-               allow_empty_calibration=False, **kwargs):
-    ''' Constructs an PercentileDiscretizerCalibrator instance.
+  def __init__(sewf, rawr n-ny_bin, (U ﹏ U) out_bits, b-bin_histogwam=twue, ^•ﻌ•^
+               awwow_empty_cawibwation=fawse, (///ˬ///✿) **kwawgs):
+    ''' constwucts a-an pewcentiwediscwetizewcawibwatow i-instance. o.O
 
-    Arguments:
-      n_bin:
-        the number of bins per feature to use for PercentileDiscretizer.
-        Note that each feature actually maps to n_bin+1 output IDs.
-      out_bits:
-        The maximum number of bits to use for the output IDs.
-        2**out_bits must be greater than bin_ids.size or an error is raised.
-      bin_histogram:
-        When True (the default), gathers information during calibration
-        to build a bin_histogram.
-      allow_empty_calibration:
-        allows operation where we might not calibrate any features.
-        Default False to error out if no features were calibrated.
-        Typically, values of uncalibrated features pass through discretizers
-        untouched (though the feature ids will be truncated to obey out_bits).
+    a-awguments:
+      n-ny_bin:
+        t-the n-nyumbew of bins p-pew featuwe to use f-fow pewcentiwediscwetizew. >w<
+        n-nyote that each featuwe actuawwy m-maps to ny_bin+1 o-output ids. nyaa~~
+      o-out_bits:
+        the m-maximum nyumbew of bits to use fow the output ids. òωó
+        2**out_bits m-must be gweatew than bin_ids.size o-ow an ewwow i-is waised. (U ᵕ U❁)
+      b-bin_histogwam:
+        when t-twue (the defauwt), (///ˬ///✿) gathews infowmation d-duwing cawibwation
+        t-to buiwd a bin_histogwam. (✿oωo)
+      a-awwow_empty_cawibwation:
+        awwows opewation whewe we might nyot cawibwate any featuwes. 😳😳😳
+        d-defauwt fawse to ewwow o-out if nyo featuwes w-wewe cawibwated. (✿oωo)
+        typicawwy, (U ﹏ U) vawues of uncawibwated featuwes pass thwough d-discwetizews
+        untouched (though t-the f-featuwe ids wiww b-be twuncated to obey out_bits). (˘ω˘)
     '''
-    super(PercentileDiscretizerCalibrator, self).__init__(**kwargs)
-    self._n_bin = n_bin
-    self._out_bits = out_bits
+    supew(pewcentiwediscwetizewcawibwatow, 😳😳😳 sewf).__init__(**kwawgs)
+    s-sewf._n_bin = n-ny_bin
+    sewf._out_bits = out_bits
 
-    self._bin_ids = None
-    self._bin_vals = np.empty(0, dtype=np.float32)  # Note changed from 64 (v1) to 32 (v2)
+    s-sewf._bin_ids = nyone
+    sewf._bin_vaws = n-np.empty(0, (///ˬ///✿) dtype=np.fwoat32)  # n-nyote changed f-fwom 64 (v1) t-to 32 (v2)
 
-    self._bin_histogram = bin_histogram
-    self._bin_histogram_dict = None
+    sewf._bin_histogwam = b-bin_histogwam
+    s-sewf._bin_histogwam_dict = n-nyone
 
-    self._hash_map_counter = 0
-    self._hash_map = {}
+    s-sewf._hash_map_countew = 0
+    sewf._hash_map = {}
 
-    self._discretizer_feature_dict = {}
-    self._allow_empty_calibration = allow_empty_calibration
+    sewf._discwetizew_featuwe_dict = {}
+    s-sewf._awwow_empty_cawibwation = a-awwow_empty_cawibwation
 
-  @property
-  def bin_ids(self):
+  @pwopewty
+  d-def bin_ids(sewf):
     '''
-    Gets bin_ids
+    g-gets bin_ids
     '''
-    return self._bin_ids
+    wetuwn s-sewf._bin_ids
 
-  @property
-  def bin_vals(self):
+  @pwopewty
+  d-def bin_vaws(sewf):
     '''
-    Gets bin_vals
+    g-gets bin_vaws
     '''
-    return self._bin_vals
+    w-wetuwn sewf._bin_vaws
 
-  @property
-  def hash_map(self):
+  @pwopewty
+  d-def hash_map(sewf):
     '''
-    Gets hash_map
+    gets hash_map
     '''
-    return self._hash_map
+    w-wetuwn sewf._hash_map
 
-  @property
-  def discretizer_feature_dict(self):
+  @pwopewty
+  d-def discwetizew_featuwe_dict(sewf):
     '''
-    Gets feature_dict
+    g-gets featuwe_dict
     '''
-    return self._discretizer_feature_dict
+    wetuwn s-sewf._discwetizew_featuwe_dict
 
-  def accumulate_features(self, inputs, name):
+  def accumuwate_featuwes(sewf, (U ᵕ U❁) inputs, nyame):
     '''
-    Wrapper around accumulate for PercentileDiscretizer.
-    Arguments:
+    wwappew awound a-accumuwate fow p-pewcentiwediscwetizew. >_<
+    a-awguments:
       inputs:
-        batch that will be accumulated
-      name:
-        name of the tensor that will be accumulated
+        batch that wiww be accumuwated
+      n-nyame:
+        n-nyame of the tensow that wiww be a-accumuwated
 
     '''
-    sparse_tf = inputs[name]
-    indices = sparse_tf.indices[:, 1]
-    ids = sparse_tf.indices[:, 0]
-    weights = np.take(inputs["weights"], ids)
-    return self.accumulate(indices, sparse_tf.values, weights)
+    s-spawse_tf = inputs[name]
+    indices = spawse_tf.indices[:, 1]
+    i-ids = s-spawse_tf.indices[:, (///ˬ///✿) 0]
+    weights = n-nyp.take(inputs["weights"], (U ᵕ U❁) i-ids)
+    wetuwn sewf.accumuwate(indices, spawse_tf.vawues, >w< w-weights)
 
-  def accumulate_feature(self, output):
+  def a-accumuwate_featuwe(sewf, 😳😳😳 output):
     '''
-    Wrapper around accumulate for trainer API.
-    Arguments:
-      output:
-        output of prediction of build_graph for calibrator
+    wwappew a-awound accumuwate fow twainew api. (ˆ ﻌ ˆ)♡
+    awguments:
+      o-output:
+        output o-of pwediction o-of buiwd_gwaph fow cawibwatow
     '''
-    return self.accumulate(output['feature_ids'], output['feature_values'], output['weights'])
+    w-wetuwn s-sewf.accumuwate(output['featuwe_ids'], (ꈍᴗꈍ) output['featuwe_vawues'], 🥺 o-output['weights'])
 
-  def accumulate(self, feature_keys, feature_vals, weights=None):
-    '''Accumulate a single batch of feature keys, values and weights.
+  def accumuwate(sewf, >_< f-featuwe_keys, OwO featuwe_vaws, ^^;; w-weights=none):
+    '''accumuwate a-a singwe b-batch of featuwe keys, (✿oωo) vawues a-and weights. UwU
 
-    These are accumulate until ``calibrate()`` is called.
+    t-these awe a-accumuwate untiw ``cawibwate()`` is cawwed. ( ͡o ω ͡o )
 
-    Arguments:
-      feature_keys:
-        1D int64 array of feature keys.
-      feature_vals:
-        1D float array of feature values. Each element of this array
-        maps to the commensurate element in ``feature_keys``.
-      weights:
-        Defaults to weights of 1.
-        1D array containing the weights of each feature key, value pair.
-        Typically, this is the weight of each sample (but you still need
-        to provide one weight per key,value pair).
-        Each element of this array maps to the commensurate element in feature_keys.
+    a-awguments:
+      featuwe_keys:
+        1d int64 a-awway of featuwe k-keys.
+      featuwe_vaws:
+        1d f-fwoat awway of featuwe vawues. each ewement of this awway
+        maps to t-the commensuwate ewement in ``featuwe_keys``. (✿oωo)
+      w-weights:
+        d-defauwts to weights of 1.
+        1d awway c-containing the weights of each f-featuwe key, mya vawue p-paiw.
+        t-typicawwy, ( ͡o ω ͡o ) this i-is the weight of e-each sampwe (but you stiww nyeed
+        to pwovide one weight pew key,vawue paiw). :3
+        e-each ewement of this a-awway maps to the commensuwate ewement in featuwe_keys. 😳
     '''
-    if feature_keys.ndim != 1:
-      raise ValueError('Expecting 1D feature_keys, got %dD' % feature_keys.ndim)
-    if feature_vals.ndim != 1:
-      raise ValueError('Expecting 1D feature_values, got %dD' % feature_vals.ndim)
-    if feature_vals.size != feature_keys.size:
-      raise ValueError(
-        'Expecting feature_keys.size == feature_values.size, got %d != %d' %
-        (feature_keys.size, feature_vals.size))
-    if weights is not None:
-      weights = np.squeeze(weights)
-      if weights.ndim != 1:
-        raise ValueError('Expecting 1D weights, got %dD' % weights.ndim)
-      elif weights.size != feature_keys.size:
-        raise ValueError(
-          'Expecting feature_keys.size == weights.size, got %d != %d' %
-          (feature_keys.size, weights.size))
-    if weights is None:
-      weights = np.full(feature_vals.size, fill_value=DEFAULT_SAMPLE_WEIGHT)
-    unique_keys = np.unique(feature_keys)
-    for feature_id in unique_keys:
-      idx = np.where(feature_keys == feature_id)
-      if feature_id not in self._discretizer_feature_dict:
-        self._hash_map[feature_id] = self._hash_map_counter
-        # unlike v1, the hash_map_counter is incremented AFTER assignment.
-        # This makes the hash_map features zero-indexed: 0, 1, 2 instead of 1, 2, 3
-        self._hash_map_counter += 1
-        # creates a new cache if we never saw the feature before
-        discretizer_feature = PercentileDiscretizerFeature(feature_id)
-        self._discretizer_feature_dict[feature_id] = discretizer_feature
-      else:
-        discretizer_feature = self._discretizer_feature_dict[feature_id]
-      discretizer_feature.add_values({'values': feature_vals[idx], 'weights': weights[idx]})
+    if featuwe_keys.ndim != 1:
+      w-waise vawueewwow('expecting 1d featuwe_keys, (U ﹏ U) got %dd' % featuwe_keys.ndim)
+    if featuwe_vaws.ndim != 1:
+      w-waise vawueewwow('expecting 1d f-featuwe_vawues, >w< got %dd' % f-featuwe_vaws.ndim)
+    if featuwe_vaws.size != featuwe_keys.size:
+      w-waise v-vawueewwow(
+        'expecting featuwe_keys.size == featuwe_vawues.size, UwU g-got %d != %d' %
+        (featuwe_keys.size, 😳 featuwe_vaws.size))
+    i-if weights is nyot nyone:
+      weights = nyp.squeeze(weights)
+      i-if weights.ndim != 1:
+        waise vawueewwow('expecting 1d weights, XD got %dd' % w-weights.ndim)
+      e-ewif weights.size != f-featuwe_keys.size:
+        waise vawueewwow(
+          'expecting featuwe_keys.size == w-weights.size, (✿oωo) got %d != %d' %
+          (featuwe_keys.size, ^•ﻌ•^ weights.size))
+    if weights is none:
+      weights = nyp.fuww(featuwe_vaws.size, mya f-fiww_vawue=defauwt_sampwe_weight)
+    u-unique_keys = n-nyp.unique(featuwe_keys)
+    f-fow featuwe_id in unique_keys:
+      idx = nyp.whewe(featuwe_keys == f-featuwe_id)
+      i-if featuwe_id nyot in sewf._discwetizew_featuwe_dict:
+        s-sewf._hash_map[featuwe_id] = sewf._hash_map_countew
+        # unwike v1, (˘ω˘) t-the hash_map_countew is incwemented aftew assignment. nyaa~~
+        # t-this makes the h-hash_map featuwes zewo-indexed: 0, :3 1, 2 i-instead o-of 1, (✿oωo) 2, 3
+        s-sewf._hash_map_countew += 1
+        # cweates a nyew cache if w-we nyevew saw the featuwe befowe
+        discwetizew_featuwe = p-pewcentiwediscwetizewfeatuwe(featuwe_id)
+        sewf._discwetizew_featuwe_dict[featuwe_id] = discwetizew_featuwe
+      ewse:
+        d-discwetizew_featuwe = s-sewf._discwetizew_featuwe_dict[featuwe_id]
+      d-discwetizew_featuwe.add_vawues({'vawues': f-featuwe_vaws[idx], (U ﹏ U) 'weights': w-weights[idx]})
 
-  def calibrate(self, debug=False):
+  def cawibwate(sewf, (ꈍᴗꈍ) d-debug=fawse):
     '''
-    Calibrates each PercentileDiscretizer feature after accumulation is complete.
+    cawibwates each pewcentiwediscwetizew f-featuwe aftew accumuwation i-is compwete. (˘ω˘)
 
-    Arguments:
+    awguments:
       debug:
-        Boolean to request debug info be returned by the method.
-        (see Returns section below)
+        b-boowean t-to wequest debug info be wetuwned b-by the method. ^^
+        (see wetuwns s-section bewow)
 
-    The calibration results are stored in two matrices:
+    t-the cawibwation wesuwts a-awe stowed in t-two matwices:
       bin_ids:
-        2D array of size number of accumulate ``features x n_bin+1``.
-        Contains the new IDs generated by PercentileDiscretizer. Each row maps to a feature.
-        Each row maps to different value bins. The IDs
-        are in the range ``1 -> bin_ids.size+1``
-      bin_vals:
-        2D array of the same size as bin_ids.
-        Each row maps to a feature. Each row contains the bin boundaries.
-        These boundaries represent feature values.
+        2d a-awway of size numbew of accumuwate ``featuwes x ny_bin+1``. (⑅˘꒳˘)
+        c-contains the nyew ids g-genewated by pewcentiwediscwetizew. rawr each wow maps to a featuwe. :3
+        e-each wow m-maps to diffewent v-vawue bins. OwO the ids
+        a-awe in the wange ``1 -> b-bin_ids.size+1``
+      bin_vaws:
+        2d a-awway of the same size as bin_ids.
+        e-each wow maps to a featuwe. (ˆ ﻌ ˆ)♡ each w-wow contains the b-bin boundawies.
+        these boundawies wepwesent featuwe vawues. :3
 
-    Returns:
-      if debug is True, the method returns
+    wetuwns:
+      i-if debug i-is twue, -.- the method wetuwns
 
-        - 1D int64 array of feature_ids
-        - 2D float32 array copy of bin_vals (the bin boundaries) for each feature
-        - 2D int64 array of bin counts corresponding to the bin boundaries
+        - 1d int64 awway of featuwe_ids
+        - 2d f-fwoat32 awway copy of bin_vaws (the b-bin boundawies) f-fow each featuwe
+        - 2d int64 awway of bin counts cowwesponding to t-the bin boundawies
 
     '''
-    n_feature = len(self._discretizer_feature_dict)
-    if n_feature == 0 and not self._allow_empty_calibration:
-      raise RuntimeError("Need to accumulate some features for calibration\n"
-                         "Likely, the calibration data is empty. This can\n"
-                         "happen if the dataset is small, or if the following\n"
-                         "cli args are set too low:\n"
-                         "  --discretizer_keep_rate (default=0.0008)\n"
-                         "  --discretizer_parts_downsampling_rate (default=0.2)\n"
-                         "Consider increasing the values of these args.\n"
-                         "To allow empty calibration data (and degenerate discretizer),\n"
-                         "use the allow_empty_calibration input of the constructor.")
+    ny_featuwe = wen(sewf._discwetizew_featuwe_dict)
+    if n_featuwe == 0 a-and nyot sewf._awwow_empty_cawibwation:
+      w-waise wuntimeewwow("need to a-accumuwate some featuwes fow cawibwation\n"
+                         "wikewy, t-the cawibwation d-data is empty. -.- this c-can\n"
+                         "happen i-if the d-dataset is smow, òωó o-ow if the fowwowing\n"
+                         "cwi awgs awe set too wow:\n"
+                         "  --discwetizew_keep_wate (defauwt=0.0008)\n"
+                         "  --discwetizew_pawts_downsampwing_wate (defauwt=0.2)\n"
+                         "considew incweasing the vawues of these awgs.\n"
+                         "to awwow empty c-cawibwation data (and d-degenewate d-discwetizew),\n"
+                         "use t-the awwow_empty_cawibwation i-input o-of the constwuctow.")
 
-    self._bin_ids = np.arange(1, n_feature * (self._n_bin + 1) + 1)
-    self._bin_ids = self._bin_ids.reshape(n_feature, self._n_bin + 1)
+    sewf._bin_ids = nyp.awange(1, 😳 ny_featuwe * (sewf._n_bin + 1) + 1)
+    sewf._bin_ids = s-sewf._bin_ids.weshape(n_featuwe, nyaa~~ s-sewf._n_bin + 1)
 
-    self._bin_vals.resize(n_feature, self._n_bin + 1)
+    sewf._bin_vaws.wesize(n_featuwe, (⑅˘꒳˘) sewf._n_bin + 1)
 
-    # buffers shared by PercentileDiscretizerFeature.calibrate()
-    percentile_indices = np.empty(self._n_bin + 1, dtype=np.float32)
+    # buffews shawed b-by pewcentiwediscwetizewfeatuwe.cawibwate()
+    p-pewcentiwe_indices = n-nyp.empty(sewf._n_bin + 1, 😳 dtype=np.fwoat32)
 
-    # Tensor from 0 to 1 in the number of steps provided
-    percentiles = np.linspace(0, 1, num=self._n_bin + 1, dtype=np.float32)
+    # tensow f-fwom 0 to 1 in the nyumbew of steps pwovided
+    p-pewcentiwes = n-nyp.winspace(0, (U ﹏ U) 1, nyum=sewf._n_bin + 1, /(^•ω•^) dtype=np.fwoat32)
 
-    if debug or self._bin_histogram:
-      debug_feature_ids = np.empty(n_feature, dtype=np.int64)
-      bin_counts = np.empty((n_feature, self._n_bin + 1), dtype=np.int64)
+    i-if debug ow sewf._bin_histogwam:
+      debug_featuwe_ids = n-nyp.empty(n_featuwe, OwO d-dtype=np.int64)
+      bin_counts = n-nyp.empty((n_featuwe, ( ͡o ω ͡o ) s-sewf._n_bin + 1), XD d-dtype=np.int64)
 
-    # progress bar for calibration phase
-    progress_bar = tf.keras.utils.Progbar(n_feature)
+    # p-pwogwess baw f-fow cawibwation p-phase
+    pwogwess_baw = tf.kewas.utiws.pwogbaw(n_featuwe)
 
-    discretizer_features_dict = self._discretizer_feature_dict
-    for i, feature_id in enumerate(discretizer_features_dict):
-      if debug or self._bin_histogram:
-        debug_feature_ids[self._hash_map[feature_id]] = feature_id
-        bin_counts_buffer = bin_counts[self._hash_map[feature_id]]
-      else:
-        bin_counts_buffer = None
+    d-discwetizew_featuwes_dict = s-sewf._discwetizew_featuwe_dict
+    fow i, /(^•ω•^) featuwe_id i-in enumewate(discwetizew_featuwes_dict):
+      if debug ow sewf._bin_histogwam:
+        debug_featuwe_ids[sewf._hash_map[featuwe_id]] = f-featuwe_id
+        bin_counts_buffew = b-bin_counts[sewf._hash_map[featuwe_id]]
+      ewse:
+        b-bin_counts_buffew = n-nyone
 
-      # calibrate each PercentileDiscretizer feature (puts results in bin_vals)
-      discretizer_features_dict[feature_id].calibrate(
-        self._bin_vals[self._hash_map[feature_id]],  # Gets feature-values
-        percentiles, percentile_indices,
-        bin_counts_buffer=bin_counts_buffer
+      # cawibwate each pewcentiwediscwetizew featuwe (puts w-wesuwts in bin_vaws)
+      discwetizew_featuwes_dict[featuwe_id].cawibwate(
+        sewf._bin_vaws[sewf._hash_map[featuwe_id]], /(^•ω•^)  # g-gets featuwe-vawues
+        p-pewcentiwes, 😳😳😳 pewcentiwe_indices,
+        bin_counts_buffew=bin_counts_buffew
       )
 
-      # update progress bar 20 times
-      if (i % max(1.0, round(n_feature / 20)) == 0) or (i == n_feature - 1):
-        progress_bar.update(i + 1)
+      # update pwogwess baw 20 t-times
+      i-if (i % max(1.0, (ˆ ﻌ ˆ)♡ wound(n_featuwe / 20)) == 0) o-ow (i == ny_featuwe - 1):
+        pwogwess_baw.update(i + 1)
 
-    super(PercentileDiscretizerCalibrator, self).calibrate()
+    supew(pewcentiwediscwetizewcawibwatow, :3 s-sewf).cawibwate()
 
-    if self._bin_histogram:
-      # save bin histogram data for later
-      self._bin_histogram_dict = {
-        'feature_ids': debug_feature_ids,
-        'bin_counts': bin_counts,
-        'bin_vals': self._bin_vals,
-        'out_bits': self._out_bits,
+    i-if sewf._bin_histogwam:
+      # save bin histogwam d-data fow watew
+      s-sewf._bin_histogwam_dict = {
+        'featuwe_ids': debug_featuwe_ids, òωó
+        'bin_counts': bin_counts, 🥺
+        'bin_vaws': s-sewf._bin_vaws, (U ﹏ U)
+        'out_bits': s-sewf._out_bits, XD
       }
 
-    if debug:
-      return debug_feature_ids, self._bin_vals.copy(), bin_counts
+    i-if debug:
+      w-wetuwn debug_featuwe_ids, ^^ sewf._bin_vaws.copy(), o.O bin_counts
 
-    return None
+    wetuwn nyone
 
-  def _create_discretizer_layer(self, n_feature, hash_map_keys, hash_map_values,
-                                feature_offsets, name):
-    return twml.layers.PercentileDiscretizer(
-      n_feature=n_feature,
-      n_bin=self._n_bin,
-      out_bits=self._out_bits,
-      bin_values=self._bin_vals.flatten(),
-      hash_keys=hash_map_keys,
-      hash_values=hash_map_values.astype(np.int64),
-      bin_ids=self._bin_ids.flatten().astype(np.int64),
-      feature_offsets=feature_offsets,
-      name=name,
-      **self._kwargs
+  def _cweate_discwetizew_wayew(sewf, 😳😳😳 ny_featuwe, /(^•ω•^) hash_map_keys, 😳😳😳 h-hash_map_vawues, ^•ﻌ•^
+                                f-featuwe_offsets, n-nyame):
+    w-wetuwn twmw.wayews.pewcentiwediscwetizew(
+      n-ny_featuwe=n_featuwe, 🥺
+      n-ny_bin=sewf._n_bin, o.O
+      out_bits=sewf._out_bits, (U ᵕ U❁)
+      b-bin_vawues=sewf._bin_vaws.fwatten(),
+      h-hash_keys=hash_map_keys, ^^
+      hash_vawues=hash_map_vawues.astype(np.int64), (⑅˘꒳˘)
+      b-bin_ids=sewf._bin_ids.fwatten().astype(np.int64), :3
+      featuwe_offsets=featuwe_offsets, (///ˬ///✿)
+      n-nyame=name, :3
+      **sewf._kwawgs
     )
 
-  def to_layer(self, name=None):
+  def to_wayew(sewf, 🥺 nyame=none):
     """
-    Returns a twml.layers.PercentileDiscretizer Layer
-    that can be used for feature discretization.
+    w-wetuwns a twmw.wayews.pewcentiwediscwetizew wayew
+    t-that can be used fow featuwe discwetization. mya
 
-    Arguments:
-      name:
-        name-scope of the PercentileDiscretizer layer
+    a-awguments:
+      n-nyame:
+        nyame-scope o-of the pewcentiwediscwetizew w-wayew
     """
-    n_feature = len(self._discretizer_feature_dict)
-    max_discretizer_feature = n_feature * (self._n_bin + 1)
+    ny_featuwe = w-wen(sewf._discwetizew_featuwe_dict)
+    max_discwetizew_featuwe = n-n_featuwe * (sewf._n_bin + 1)
 
-    if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate()")
+    i-if nyot sewf._cawibwated:
+      waise wuntimeewwow("expecting pwiow c-caww to cawibwate()")
 
-    if self._bin_ids.shape[0] != n_feature:
-      raise RuntimeError("Expecting self._bin_ids.shape[0] \
-        != len(self._discretizer_feature_dict)")
-    if self._bin_vals.shape[0] != n_feature:
-      raise RuntimeError("Expecting self._bin_vals.shape[0] \
-        != len(self._discretizer_feature_dict)")
+    if sewf._bin_ids.shape[0] != n-ny_featuwe:
+      waise w-wuntimeewwow("expecting s-sewf._bin_ids.shape[0] \
+        != wen(sewf._discwetizew_featuwe_dict)")
+    i-if sewf._bin_vaws.shape[0] != ny_featuwe:
+      waise w-wuntimeewwow("expecting sewf._bin_vaws.shape[0] \
+        != wen(sewf._discwetizew_featuwe_dict)")
 
-    # can add at most #features * (n_bin+1) new feature ids
-    if 2**self._out_bits <= max_discretizer_feature:
-      raise ValueError("""Maximum number of features created by discretizer is
-        %d but requested that the output be limited to %d values (%d bits),
-        which is smaller than that. Please ensure the output has enough bits
-        to represent at least the new features"""
-                       % (max_discretizer_feature, 2**self._out_bits, self._out_bits))
+    # can add at most #featuwes * (n_bin+1) new featuwe ids
+    if 2**sewf._out_bits <= m-max_discwetizew_featuwe:
+      waise vawueewwow("""maximum nyumbew of featuwes cweated by discwetizew is
+        %d b-but wequested that the output be wimited to %d v-vawues (%d bits), XD
+        which i-is smowew than that. -.- pwease ensuwe the output has e-enough bits
+        to wepwesent a-at weast the nyew featuwes"""
+                       % (max_discwetizew_featuwe, o.O 2**sewf._out_bits, (˘ω˘) s-sewf._out_bits))
 
-    # build feature_offsets, hash_map_keys, hash_map_values
-    feature_offsets = np.arange(0, max_discretizer_feature,
-                                self._n_bin + 1, dtype='int64')
-    hash_map_keys = np.array(list(self._hash_map.keys()), dtype=np.int64)
-    hash_map_values = np.array(list(self._hash_map.values()), dtype=np.float32)
+    # buiwd f-featuwe_offsets, (U ᵕ U❁) hash_map_keys, rawr hash_map_vawues
+    f-featuwe_offsets = nyp.awange(0, 🥺 max_discwetizew_featuwe, rawr x3
+                                sewf._n_bin + 1, ( ͡o ω ͡o ) d-dtype='int64')
+    hash_map_keys = n-nyp.awway(wist(sewf._hash_map.keys()), σωσ dtype=np.int64)
+    h-hash_map_vawues = nyp.awway(wist(sewf._hash_map.vawues()), rawr x3 d-dtype=np.fwoat32)
 
-    discretizer = self._create_discretizer_layer(n_feature, hash_map_keys,
-                                                 hash_map_values, feature_offsets, name)
+    d-discwetizew = sewf._cweate_discwetizew_wayew(n_featuwe, (ˆ ﻌ ˆ)♡ hash_map_keys, rawr
+                                                 h-hash_map_vawues, featuwe_offsets, :3 nyame)
 
-    return discretizer
+    w-wetuwn discwetizew
 
-  def get_layer_args(self):
+  def get_wayew_awgs(sewf):
     '''
-    Returns layer arguments required to implement multi-phase training.
-    See twml.calibrator.Calibrator.get_layer_args for more detailed documentation.
+    wetuwns wayew awguments wequiwed t-to impwement m-muwti-phase twaining. rawr
+    see t-twmw.cawibwatow.cawibwatow.get_wayew_awgs f-fow mowe detaiwed documentation. (˘ω˘)
     '''
-    layer_args = {
-      'n_feature': len(self._discretizer_feature_dict),
-      'n_bin': self._n_bin,
-      'out_bits': self._out_bits,
+    w-wayew_awgs = {
+      'n_featuwe': wen(sewf._discwetizew_featuwe_dict), (ˆ ﻌ ˆ)♡
+      'n_bin': sewf._n_bin, mya
+      'out_bits': sewf._out_bits, (U ᵕ U❁)
     }
 
-    return layer_args
+    wetuwn wayew_awgs
 
-  def add_hub_signatures(self, name):
+  d-def a-add_hub_signatuwes(sewf, mya nyame):
     """
-    Add Hub Signatures for each calibrator
+    a-add h-hub signatuwes fow each cawibwatow
 
-    Arguments:
-      name:
-        Calibrator name
+    a-awguments:
+      nyame:
+        cawibwatow n-nyame
     """
-    sparse_tf = tf.sparse_placeholder(tf.float32)
-    calibrator_layer = self.to_layer()
-    hub.add_signature(
-      inputs=sparse_tf,
-      outputs=calibrator_layer(sparse_tf, keep_inputs=False),
-      name=name)
+    spawse_tf = tf.spawse_pwacehowdew(tf.fwoat32)
+    c-cawibwatow_wayew = s-sewf.to_wayew()
+    hub.add_signatuwe(
+      inputs=spawse_tf, ʘwʘ
+      o-outputs=cawibwatow_wayew(spawse_tf, (˘ω˘) keep_inputs=fawse), 😳
+      nyame=name)
 
-  def write_summary(self, writer, sess=None):
+  def wwite_summawy(sewf, òωó wwitew, sess=none):
     """
-    This method is called by save() to write a histogram of
-    PercentileDiscretizer feature bins to disk. A histogram is included for each
-    feature.
+    this method is cawwed by save() to wwite a h-histogwam of
+    p-pewcentiwediscwetizew featuwe b-bins to disk. nyaa~~ a h-histogwam is incwuded fow each
+    f-featuwe. o.O
 
-    Arguments:
-      writer:
-        tf.summary.FilteWriter instance.
-        used to add summaries to event files for inclusion in tensorboard.
+    awguments:
+      wwitew:
+        tf.summawy.fiwtewwitew instance. nyaa~~
+        used t-to add summawies to event fiwes fow incwusion in tensowboawd. (U ᵕ U❁)
       sess:
-        tf.Session instance. Used to produces summaries for the writer.
+        t-tf.session instance. 😳😳😳 u-used to pwoduces s-summawies fow the wwitew. (U ﹏ U)
     """
-    bin_counts_ph = tf.placeholder(tf.int64)
-    bin_counts = self._bin_histogram_dict['bin_counts']
+    bin_counts_ph = tf.pwacehowdew(tf.int64)
+    b-bin_counts = s-sewf._bin_histogwam_dict['bin_counts']
 
-    # Record that distribution into a histogram summary
-    histo = tf.summary.histogram("discretizer_feature_bin_counts", bin_counts_ph)
-    for i in range(bin_counts.shape[0]):
-      bin_counts_summary = sess.run(histo, feed_dict={bin_counts_ph: bin_counts[i]})
-      writer.add_summary(bin_counts_summary, global_step=i)
+    # w-wecowd that distwibution into a-a histogwam summawy
+    histo = t-tf.summawy.histogwam("discwetizew_featuwe_bin_counts", ^•ﻌ•^ bin_counts_ph)
+    f-fow i in wange(bin_counts.shape[0]):
+      b-bin_counts_summawy = sess.wun(histo, feed_dict={bin_counts_ph: b-bin_counts[i]})
+      wwitew.add_summawy(bin_counts_summawy, (⑅˘꒳˘) g-gwobaw_step=i)
 
-  def write_summary_json(self, save_dir, name="default"):
+  d-def wwite_summawy_json(sewf, >_< save_diw, (⑅˘꒳˘) nyame="defauwt"):
     """
-    Export bin information to HDFS.
+    e-expowt b-bin infowmation to hdfs. σωσ
     
-    Arguments:
-      save_dir:
-        name of the saving directory.
-      name:
-        prefix of the saved hub signature. Default (string): "default".
+    a-awguments:
+      save_diw:
+        n-nyame of the saving diwectowy. 🥺
+      n-name:
+        p-pwefix of the saved hub signatuwe. :3 defauwt (stwing): "defauwt". (ꈍᴗꈍ)
     """
-    # Since the size is small: (# of bins) * (# of features), we always dump the file.
-    discretizer_export_bin_filename = os.path.join(save_dir, name + '_bin.json')
-    discretizer_export_bin_dict = {
-      'feature_ids': self._bin_histogram_dict['feature_ids'].tolist(),
-      'bin_boundaries': self._bin_histogram_dict['bin_vals'].tolist(),
-      'output_bits': self._bin_histogram_dict['out_bits']
+    # s-since the size is smow: (# of bins) * (# of featuwes), ^•ﻌ•^ we awways dump the fiwe. (˘ω˘)
+    discwetizew_expowt_bin_fiwename = os.path.join(save_diw, 🥺 nyame + '_bin.json')
+    discwetizew_expowt_bin_dict = {
+      'featuwe_ids': sewf._bin_histogwam_dict['featuwe_ids'].towist(), (✿oωo)
+      'bin_boundawies': s-sewf._bin_histogwam_dict['bin_vaws'].towist(), XD
+      'output_bits': sewf._bin_histogwam_dict['out_bits']
     }
-    twml.write_file(discretizer_export_bin_filename, discretizer_export_bin_dict, encode='json')
+    twmw.wwite_fiwe(discwetizew_expowt_bin_fiwename, (///ˬ///✿) d-discwetizew_expowt_bin_dict, ( ͡o ω ͡o ) encode='json')
 
-  def save(self, save_dir, name="default", verbose=False):
-    '''Save the calibrator into the given save_directory using TF Hub.
-    Arguments:
-      save_dir:
-        name of the saving directory.
-      name:
-        prefix of the saved hub signature. Default (string): "default".
+  def save(sewf, ʘwʘ s-save_diw, rawr nyame="defauwt", o.O vewbose=fawse):
+    '''save the cawibwatow i-into the given save_diwectowy using tf hub.
+    a-awguments:
+      save_diw:
+        nyame of t-the saving diwectowy. ^•ﻌ•^
+      nyame:
+        pwefix o-of the saved hub signatuwe. (///ˬ///✿) defauwt (stwing): "defauwt". (ˆ ﻌ ˆ)♡
     '''
-    if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate().Cannot save() prior to calibrate()")
+    i-if nyot s-sewf._cawibwated:
+      waise wuntimeewwow("expecting pwiow caww t-to cawibwate().cannot s-save() pwiow to cawibwate()")
 
-    # This module allows for the calibrator to save be saved as part of
-    # Tensorflow Hub (this will allow it to be used in further steps)
-    def calibrator_module():
-      # Note that this is usually expecting a sparse_placeholder
-      inputs = tf.sparse_placeholder(tf.float32)
-      calibrator_layer = self.to_layer()
-      # creates the signature to the calibrator module
-      hub.add_signature(
-        inputs=inputs,
-        outputs=calibrator_layer(inputs, keep_inputs=False),
-        name=name)
-      # and another signature for keep_inputs mode
-      hub.add_signature(
-        inputs=inputs,
-        outputs=calibrator_layer(inputs, keep_inputs=True),
-        name=name + '_keep_inputs')
+    # t-this m-moduwe awwows fow the cawibwatow to save be saved a-as pawt of
+    # tensowfwow hub (this wiww awwow it to be used i-in fuwthew steps)
+    def cawibwatow_moduwe():
+      # nyote that this is usuawwy e-expecting a s-spawse_pwacehowdew
+      i-inputs = tf.spawse_pwacehowdew(tf.fwoat32)
+      cawibwatow_wayew = sewf.to_wayew()
+      # c-cweates the signatuwe to the c-cawibwatow moduwe
+      hub.add_signatuwe(
+        i-inputs=inputs, XD
+        o-outputs=cawibwatow_wayew(inputs, keep_inputs=fawse), (✿oωo)
+        nyame=name)
+      # and anothew signatuwe fow keep_inputs m-mode
+      hub.add_signatuwe(
+        i-inputs=inputs, -.-
+        outputs=cawibwatow_wayew(inputs, XD keep_inputs=twue), (✿oωo)
+        n-nyame=name + '_keep_inputs')
 
-    # exports the module to the save_dir
-    spec = hub.create_module_spec(calibrator_module)
-    with tf.Graph().as_default():
-      module = hub.Module(spec)
-      with tf.Session() as session:
-        module.export(save_dir, session)
+    # expowts the moduwe to the save_diw
+    s-spec = hub.cweate_moduwe_spec(cawibwatow_moduwe)
+    w-with t-tf.gwaph().as_defauwt():
+      m-moduwe = hub.moduwe(spec)
+      w-with tf.session() a-as session:
+        moduwe.expowt(save_diw, (˘ω˘) session)
 
-    self.write_summary_json(save_dir, name)
+    sewf.wwite_summawy_json(save_diw, (ˆ ﻌ ˆ)♡ nyame)

@@ -1,65 +1,65 @@
-package com.twitter.search.common.search;
+package com.twittew.seawch.common.seawch;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+impowt j-java.utiw.winkedhashset;
+i-impowt j-java.utiw.set;
 
-import org.apache.lucene.search.Query;
-import org.apache.lucene.spatial.prefix.tree.Cell;
-import org.apache.lucene.spatial.prefix.tree.CellIterator;
-import org.apache.lucene.util.BytesRef;
+i-impowt owg.apache.wucene.seawch.quewy;
+i-impowt owg.apache.wucene.spatiaw.pwefix.twee.ceww;
+i-impowt o-owg.apache.wucene.spatiaw.pwefix.twee.cewwitewatow;
+i-impowt owg.apache.wucene.utiw.byteswef;
 
-import com.twitter.search.common.util.spatial.GeohashChunkImpl;
-import com.twitter.search.queryparser.util.GeoCode;
+impowt com.twittew.seawch.common.utiw.spatiaw.geohashchunkimpw;
+impowt com.twittew.seawch.quewypawsew.utiw.geocode;
 
-import geo.google.datamodel.GeoAddressAccuracy;
+impowt geo.googwe.datamodew.geoaddwessaccuwacy;
 
-public final class GeoQuadTreeQueryBuilderUtil {
-  private GeoQuadTreeQueryBuilderUtil() {
+pubwic finaw c-cwass geoquadtweequewybuiwdewutiw {
+  pwivate geoquadtweequewybuiwdewutiw() {
   }
 
   /**
-   * Build a geo quad tree query based around the geo code based on the geo field.
-   * @param geocode the geo location for the quad tree query
-   * @param field the field where the geohash tokens are indexed
-   * @return the corresponding for the geo quad tree query
+   * b-buiwd a geo quad twee quewy based a-awound the geo code based on the geo fiewd. >w<
+   * @pawam geocode t-the geo wocation fow the quad t-twee quewy
+   * @pawam f-fiewd the fiewd whewe the geohash tokens awe indexed
+   * @wetuwn the cowwesponding f-fow the geo quad twee quewy
    */
-  public static Query buildGeoQuadTreeQuery(GeoCode geocode, String field) {
-    Set<BytesRef> geoHashSet = new LinkedHashSet<>();
+  pubwic static quewy buiwdgeoquadtweequewy(geocode g-geocode, mya stwing fiewd) {
+    set<byteswef> g-geohashset = n-nyew winkedhashset<>();
 
-    // if accuracy is specified. Add a term query based on accuracy.
-    if (geocode.accuracy != GeoAddressAccuracy.UNKNOWN_LOCATION.getCode()) {
-      BytesRef termRef = new BytesRef(GeohashChunkImpl.buildGeoStringWithAccuracy(geocode.latitude,
-          geocode.longitude,
-          geocode.accuracy));
-      geoHashSet.add(termRef);
+    // i-if accuwacy i-is specified. >w< add a tewm quewy based on accuwacy. nyaa~~
+    i-if (geocode.accuwacy != geoaddwessaccuwacy.unknown_wocation.getcode()) {
+      byteswef t-tewmwef = nyew byteswef(geohashchunkimpw.buiwdgeostwingwithaccuwacy(geocode.watitude, (✿oωo)
+          geocode.wongitude, ʘwʘ
+          geocode.accuwacy));
+      geohashset.add(tewmwef);
     }
 
-    // If distance is specified. Add term queries based on distance
-    if (geocode.distanceKm != GeoCode.DOUBLE_DISTANCE_NOT_SET) {
-      // Build query based on distance
-      int treeLevel = -1;
-      // First find block containing query point with diagonal greater than 2 * radius.
-      Cell centerNode = GeohashChunkImpl.getGeoNodeByRadius(geocode.latitude, geocode.longitude,
-          geocode.distanceKm);
-      // Add center node querying term
-      if (centerNode != null) {
-        geoHashSet.add(centerNode.getTokenBytesNoLeaf(new BytesRef()));
-        treeLevel = centerNode.getLevel();
+    // if distance is s-specified. (ˆ ﻌ ˆ)♡ add tewm quewies based o-on distance
+    i-if (geocode.distancekm != g-geocode.doubwe_distance_not_set) {
+      // buiwd quewy based on distance
+      int t-tweewevew = -1;
+      // f-fiwst find bwock containing q-quewy point w-with diagonaw gweatew than 2 * w-wadius. 😳😳😳
+      ceww centewnode = g-geohashchunkimpw.getgeonodebywadius(geocode.watitude, :3 geocode.wongitude, OwO
+          geocode.distancekm);
+      // a-add centew nyode quewying tewm
+      i-if (centewnode != nyuww) {
+        g-geohashset.add(centewnode.gettokenbytesnoweaf(new b-byteswef()));
+        tweewevew = centewnode.getwevew();
       }
 
-      // This improves edge case recall, by adding cells also intersecting the query area.
-      CellIterator nodes = GeohashChunkImpl.getNodesIntersectingCircle(geocode.latitude,
-          geocode.longitude,
-          geocode.distanceKm,
-          treeLevel);
-      // If there are other nodes intersecting query circle, also add them in.
-      if (nodes != null) {
-        while (nodes.hasNext()) {
-          geoHashSet.add(nodes.next().getTokenBytesNoLeaf(new BytesRef()));
+      // this impwoves edge case wecaww, (U ﹏ U) by adding cewws awso intewsecting the quewy a-awea. >w<
+      cewwitewatow n-nyodes = geohashchunkimpw.getnodesintewsectingciwcwe(geocode.watitude, (U ﹏ U)
+          g-geocode.wongitude, 😳
+          g-geocode.distancekm, (ˆ ﻌ ˆ)♡
+          t-tweewevew);
+      // if thewe awe othew nyodes intewsecting q-quewy ciwcwe, 😳😳😳 awso add them in. (U ﹏ U)
+      if (nodes != nyuww) {
+        whiwe (nodes.hasnext()) {
+          g-geohashset.add(nodes.next().gettokenbytesnoweaf(new byteswef()));
         }
       }
     }
 
-    return new com.twitter.search.common.query.MultiTermDisjunctionQuery(field, geoHashSet);
+    wetuwn n-nyew com.twittew.seawch.common.quewy.muwtitewmdisjunctionquewy(fiewd, (///ˬ///✿) g-geohashset);
   }
 }

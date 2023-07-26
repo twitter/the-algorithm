@@ -1,21 +1,21 @@
-package com.twitter.follow_recommendations.common.predicates.gizmoduck
+package com.twittew.fowwow_wecommendations.common.pwedicates.gizmoduck
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
-import com.twitter.conversions.DurationOps._
+impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt c-com.twittew.timewines.configapi.duwationconvewsion
+i-impowt com.twittew.timewines.configapi.hasduwationconvewsion
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.convewsions.duwationops._
 
-object GizmoduckPredicateParams {
-  case object GizmoduckGetTimeout
-      extends FSBoundedParam[Duration](
-        name = "gizmoduck_predicate_timeout_in_millis",
-        default = 200.millisecond,
-        min = 1.millisecond,
-        max = 500.millisecond)
-      with HasDurationConversion {
-    override def durationConversion: DurationConversion = DurationConversion.FromMillis
+o-object gizmoduckpwedicatepawams {
+  c-case object g-gizmoduckgettimeout
+      extends fsboundedpawam[duwation](
+        nyame = "gizmoduck_pwedicate_timeout_in_miwwis", >_<
+        defauwt = 200.miwwisecond, mya
+        m-min = 1.miwwisecond, mya
+        max = 500.miwwisecond)
+      with h-hasduwationconvewsion {
+    ovewwide d-def duwationconvewsion: duwationconvewsion = duwationconvewsion.fwommiwwis
   }
-  val MaxCacheSize: Int = 250000
-  val CacheTTL: Duration = Duration.fromHours(6)
+  vaw maxcachesize: int = 250000
+  v-vaw cachettw: duwation = d-duwation.fwomhouws(6)
 }

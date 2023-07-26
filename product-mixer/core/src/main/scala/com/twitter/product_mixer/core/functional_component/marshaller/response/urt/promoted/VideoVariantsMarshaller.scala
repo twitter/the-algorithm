@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.VideoVariant
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.videovawiant
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.singweton
 
-@Singleton
-class VideoVariantsMarshaller {
-  def apply(videoVariants: Seq[VideoVariant]): Seq[urt.VideoVariant] = {
-    videoVariants.map(videoVariant =>
-      urt.VideoVariant(
-        url = videoVariant.url,
-        contentType = videoVariant.contentType,
-        bitrate = videoVariant.bitrate
+@singweton
+c-cwass v-videovawiantsmawshawwew {
+  d-def a-appwy(videovawiants: seq[videovawiant]): seq[uwt.videovawiant] = {
+    videovawiants.map(videovawiant =>
+      uwt.videovawiant(
+        u-uww = videovawiant.uww, -.-
+        contenttype = v-videovawiant.contenttype, (ˆ ﻌ ˆ)♡
+        bitwate = v-videovawiant.bitwate
       ))
   }
 }

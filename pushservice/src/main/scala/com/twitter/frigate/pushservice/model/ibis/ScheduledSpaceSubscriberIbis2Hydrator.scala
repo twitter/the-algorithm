@@ -1,29 +1,29 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.twittew.fwigate.pushsewvice.modew.ibis
 
-import com.twitter.frigate.pushservice.model.ScheduledSpaceSubscriberPushCandidate
-import com.twitter.frigate.pushservice.util.PushIbisUtil._
-import com.twitter.util.Future
+impowt com.twittew.fwigate.pushsewvice.modew.scheduwedspacesubscwibewpushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.utiw.pushibisutiw._
+i-impowt com.twittew.utiw.futuwe
 
-trait ScheduledSpaceSubscriberIbis2Hydrator extends Ibis2HydratorForCandidate {
-  self: ScheduledSpaceSubscriberPushCandidate =>
+t-twait scheduwedspacesubscwibewibis2hydwatow e-extends i-ibis2hydwatowfowcandidate {
+  s-sewf: scheduwedspacesubscwibewpushcandidate =>
 
-  override lazy val senderId: Option[Long] = hostId
+  o-ovewwide wazy v-vaw sendewid: option[wong] = hostid
 
-  private lazy val targetModelValues: Future[Map[String, String]] = {
-    hostId match {
-      case Some(spaceHostId) =>
-        audioSpaceFut.map { audioSpace =>
-          Map(
-            "host_id" -> s"$spaceHostId",
-            "space_id" -> spaceId,
-          ) ++ audioSpace.flatMap(_.title.map("space_title" -> _))
+  pwivate wazy vaw tawgetmodewvawues: futuwe[map[stwing, -.- s-stwing]] = {
+    hostid match {
+      case some(spacehostid) =>
+        a-audiospacefut.map { audiospace =>
+          m-map(
+            "host_id" -> s"$spacehostid", ( ͡o ω ͡o )
+            "space_id" -> spaceid, rawr x3
+          ) ++ audiospace.fwatmap(_.titwe.map("space_titwe" -> _))
         }
-      case _ =>
-        Future.exception(
-          new RuntimeException("Unable to get host id for ScheduledSpaceSubscriberIbis2Hydrator"))
+      c-case _ =>
+        futuwe.exception(
+          n-nyew wuntimeexception("unabwe t-to get host id fow scheduwedspacesubscwibewibis2hydwatow"))
     }
   }
 
-  override lazy val modelValues: Future[Map[String, String]] =
-    mergeFutModelValues(super.modelValues, targetModelValues)
+  ovewwide wazy vaw modewvawues: futuwe[map[stwing, nyaa~~ stwing]] =
+    m-mewgefutmodewvawues(supew.modewvawues, /(^•ω•^) tawgetmodewvawues)
 }

@@ -1,93 +1,93 @@
-package com.twitter.home_mixer.util
+package com.twittew.home_mixew.utiw
 
-import com.twitter.search.common.constants.{thriftscala => scc}
-import com.twitter.search.common.util.lang.ThriftLanguageUtil
-import com.twitter.service.metastore.gen.{thriftscala => smg}
+impowt com.twittew.seawch.common.constants.{thwiftscawa => scc}
+i-impowt com.twittew.seawch.common.utiw.wang.thwiftwanguageutiw
+i-impowt com.twittew.sewvice.metastowe.gen.{thwiftscawa => s-smg}
 
-object LanguageUtil {
+o-object wanguageutiw {
 
-  private val DefaultMinProducedLanguageRatio = 0.05
-  private val DefaultMinConsumedLanguageConfidence = 0.8
+  p-pwivate v-vaw defauwtminpwoducedwanguagewatio = 0.05
+  pwivate v-vaw defauwtminconsumedwanguageconfidence = 0.8
 
   /**
-   * Computes a list of languages based on UserLanguages information retrieved from Metastore.
+   * c-computes a wist of wanguages based on usewwanguages infowmation wetwieved fwom m-metastowe. /(^•ω•^)
    *
-   * The list is sorted in descending order of confidence score associated with each language.
-   * That is, language with highest confidence value is in index 0.
+   * the wist is sowted in descending o-owdew of confidence scowe a-associated with each wanguage. 😳😳😳
+   * that is, ( ͡o ω ͡o ) wanguage with highest c-confidence vawue is in index 0. >_<
    */
-  def computeLanguages(
-    userLanguages: smg.UserLanguages,
-    minProducedLanguageRatio: Double = DefaultMinProducedLanguageRatio,
-    minConsumedLanguageConfidence: Double = DefaultMinConsumedLanguageConfidence
-  ): Seq[scc.ThriftLanguage] = {
-    val languageConfidenceMap = computeLanguageConfidenceMap(
-      userLanguages,
-      minProducedLanguageRatio,
-      minConsumedLanguageConfidence
+  d-def c-computewanguages(
+    usewwanguages: smg.usewwanguages, >w<
+    minpwoducedwanguagewatio: doubwe = defauwtminpwoducedwanguagewatio, rawr
+    m-minconsumedwanguageconfidence: doubwe = defauwtminconsumedwanguageconfidence
+  ): seq[scc.thwiftwanguage] = {
+    vaw wanguageconfidencemap = computewanguageconfidencemap(
+      u-usewwanguages, 😳
+      minpwoducedwanguagewatio, >w<
+      m-minconsumedwanguageconfidence
     )
-    languageConfidenceMap.toSeq.sortBy(-_._2).map(_._1) // _1 = language, _2 = score
+    w-wanguageconfidencemap.toseq.sowtby(-_._2).map(_._1) // _1 = wanguage, (⑅˘꒳˘) _2 = s-scowe
   }
 
   /**
-   * Computes confidence map based on UserLanguages information retrieved from Metastore.
-   * where,
-   * key   = language code
-   * value = level of confidence that the language is applicable to a user.
+   * c-computes confidence map based on usewwanguages i-infowmation wetwieved fwom metastowe. OwO
+   * whewe,
+   * k-key   = wanguage code
+   * vawue = wevew of confidence that the wanguage is appwicabwe t-to a usew. (ꈍᴗꈍ)
    */
-  private def computeLanguageConfidenceMap(
-    userLanguages: smg.UserLanguages,
-    minProducedLanguageRatio: Double,
-    minConsumedLanguageConfidence: Double
-  ): Map[scc.ThriftLanguage, Double] = {
+  pwivate def c-computewanguageconfidencemap(
+    u-usewwanguages: s-smg.usewwanguages, 😳
+    minpwoducedwanguagewatio: doubwe, 😳😳😳
+    minconsumedwanguageconfidence: doubwe
+  ): m-map[scc.thwiftwanguage, mya d-doubwe] = {
 
-    val producedLanguages = getLanguageMap(userLanguages.produced)
-    val consumedLanguages = getLanguageMap(userLanguages.consumed)
-    val languages = (producedLanguages.keys ++ consumedLanguages.keys).toSet
-    var maxConfidence = 0.0
+    vaw pwoducedwanguages = g-getwanguagemap(usewwanguages.pwoduced)
+    v-vaw consumedwanguages = getwanguagemap(usewwanguages.consumed)
+    v-vaw wanguages = (pwoducedwanguages.keys ++ consumedwanguages.keys).toset
+    v-vaw maxconfidence = 0.0
 
-    val confidenceMap = languages.map { language =>
-      val produceRatio = producedLanguages
-        .get(language)
-        .map { score => if (score < minProducedLanguageRatio) 0.0 else score }
-        .getOrElse(0.0)
+    vaw confidencemap = wanguages.map { w-wanguage =>
+      vaw pwoducewatio = p-pwoducedwanguages
+        .get(wanguage)
+        .map { scowe => if (scowe < m-minpwoducedwanguagewatio) 0.0 e-ewse scowe }
+        .getowewse(0.0)
 
-      val consumeConfidence = consumedLanguages
-        .get(language)
-        .map { score => if (score < minConsumedLanguageConfidence) 0.0 else score }
-        .getOrElse(0.0)
+      vaw consumeconfidence = consumedwanguages
+        .get(wanguage)
+        .map { scowe => if (scowe < minconsumedwanguageconfidence) 0.0 ewse scowe }
+        .getowewse(0.0)
 
-      val overallConfidence = (0.3 + 4 * produceRatio) * (0.1 + consumeConfidence)
-      maxConfidence = Math.max(maxConfidence, overallConfidence)
+      vaw ovewawwconfidence = (0.3 + 4 * p-pwoducewatio) * (0.1 + c-consumeconfidence)
+      maxconfidence = m-math.max(maxconfidence, mya o-ovewawwconfidence)
 
-      (language -> overallConfidence)
-    }.toMap
+      (wanguage -> o-ovewawwconfidence)
+    }.tomap
 
-    val normalizedConfidenceMap = if (maxConfidence > 0) {
-      confidenceMap.map {
-        case (language, confidenceScore) =>
-          val normalizedScore = (confidenceScore / maxConfidence * 0.9) + 0.1
-          (language -> normalizedScore)
+    vaw nyowmawizedconfidencemap = if (maxconfidence > 0) {
+      c-confidencemap.map {
+        case (wanguage, (⑅˘꒳˘) confidencescowe) =>
+          vaw nyowmawizedscowe = (confidencescowe / maxconfidence * 0.9) + 0.1
+          (wanguage -> n-nyowmawizedscowe)
       }
-    } else {
-      confidenceMap
+    } ewse {
+      confidencemap
     }
-    normalizedConfidenceMap
+    n-nyowmawizedconfidencemap
   }
 
-  private def getLanguageMap(
-    scoredLanguages: Seq[smg.ScoredString]
-  ): Map[scc.ThriftLanguage, Double] = {
-    scoredLanguages.flatMap { scoredLanguage =>
-      getThriftLanguage(scoredLanguage.item).map { language => (language -> scoredLanguage.weight) }
-    }.toMap
+  p-pwivate def g-getwanguagemap(
+    scowedwanguages: s-seq[smg.scowedstwing]
+  ): m-map[scc.thwiftwanguage, (U ﹏ U) d-doubwe] = {
+    s-scowedwanguages.fwatmap { scowedwanguage =>
+      getthwiftwanguage(scowedwanguage.item).map { w-wanguage => (wanguage -> s-scowedwanguage.weight) }
+    }.tomap
   }
 
-  private def getThriftLanguage(languageName: String): Option[scc.ThriftLanguage] = {
-    val languageOrdinal = ThriftLanguageUtil.getThriftLanguageOf(languageName).ordinal
-    val language = scc.ThriftLanguage(languageOrdinal)
-    language match {
-      case scc.ThriftLanguage.Unknown => None
-      case _ => Some(language)
+  p-pwivate d-def getthwiftwanguage(wanguagename: s-stwing): option[scc.thwiftwanguage] = {
+    vaw wanguageowdinaw = thwiftwanguageutiw.getthwiftwanguageof(wanguagename).owdinaw
+    v-vaw wanguage = scc.thwiftwanguage(wanguageowdinaw)
+    wanguage match {
+      case scc.thwiftwanguage.unknown => nyone
+      case _ => s-some(wanguage)
     }
   }
 }

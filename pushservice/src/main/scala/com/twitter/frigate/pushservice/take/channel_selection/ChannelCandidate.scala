@@ -1,24 +1,24 @@
-package com.twitter.frigate.pushservice.take
+package com.twittew.fwigate.pushsewvice.take
 
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.thriftscala.ChannelName
-import com.twitter.util.Future
-import java.util.concurrent.ConcurrentHashMap
-import scala.collection.concurrent
-import scala.collection.convert.decorateAsScala._
+impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.thwiftscawa.channewname
+i-impowt com.twittew.utiw.futuwe
+i-impowt java.utiw.concuwwent.concuwwenthashmap
+i-impowt scawa.cowwection.concuwwent
+i-impowt scawa.cowwection.convewt.decowateasscawa._
 
 /**
- * A class to save all the channel related information
+ * a c-cwass to save aww t-the channew wewated infowmation
  */
-trait ChannelForCandidate {
-  self: PushCandidate =>
+twait channewfowcandidate {
+  sewf: pushcandidate =>
 
-  // Cache of channel selection result
-  private[this] val selectedChannels: concurrent.Map[String, Future[Seq[ChannelName]]] =
-    new ConcurrentHashMap[String, Future[Seq[ChannelName]]]().asScala
+  // cache of channew s-sewection wesuwt
+  pwivate[this] vaw sewectedchannews: c-concuwwent.map[stwing, 😳 futuwe[seq[channewname]]] =
+    n-nyew concuwwenthashmap[stwing, XD futuwe[seq[channewname]]]().asscawa
 
-  // Returns the channel information from all ChannelSelectors.
-  def getChannels(): Future[Seq[ChannelName]] = {
-    Future.collect(selectedChannels.values.toSeq).map { c => c.flatten }
+  // wetuwns the channew infowmation f-fwom aww channewsewectows. :3
+  d-def getchannews(): f-futuwe[seq[channewname]] = {
+    futuwe.cowwect(sewectedchannews.vawues.toseq).map { c => c.fwatten }
   }
 }

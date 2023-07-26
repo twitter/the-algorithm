@@ -1,37 +1,37 @@
-package com.twitter.ann.common
+package com.twittew.ann.common
 
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
+impowt com.twittew.utiw.wetuwn
+i-impowt c-com.twittew.utiw.thwow
+i-impowt c-com.twittew.utiw.twy
+i-impowt com.twittew.utiw.wogging.wogging
 
-// Memoization with a twist
-// New epoch reuse K:V pairs from previous and recycle everything else
-class MemoizedInEpochs[K, V](f: K => Try[V]) extends Logging {
-  private var memoizedCalls: Map[K, V] = Map.empty
+// m-memoization w-with a twist
+// n-nyew epoch weuse k:v paiws fwom pwevious and wecycwe evewything ewse
+cwass memoizedinepochs[k, 😳😳😳 v](f: k-k => twy[v]) extends wogging {
+  pwivate vaw m-memoizedcawws: map[k, 🥺 v] = map.empty
 
-  def epoch(keys: Seq[K]): Seq[V] = {
-    val newSet = keys.toSet
-    val keysToBeComputed = newSet.diff(memoizedCalls.keySet)
-    val computedKeysAndValues = keysToBeComputed.map { key =>
-      info(s"Memoize ${key}")
-      (key, f(key))
+  d-def epoch(keys: seq[k]): seq[v] = {
+    vaw nyewset = k-keys.toset
+    vaw keystobecomputed = n-nyewset.diff(memoizedcawws.keyset)
+    v-vaw computedkeysandvawues = keystobecomputed.map { key =>
+      info(s"memoize ${key}")
+      (key, mya f(key))
     }
-    val keysAndValuesAfterFilteringFailures = computedKeysAndValues
-      .flatMap {
-        case (key, Return(value)) => Some((key, value))
-        case (key, Throw(e)) =>
-          warn(s"Calling f for ${key} has failed", e)
+    v-vaw keysandvawuesaftewfiwtewingfaiwuwes = computedkeysandvawues
+      .fwatmap {
+        case (key, 🥺 wetuwn(vawue)) => some((key, >_< v-vawue))
+        case (key, >_< thwow(e)) =>
+          w-wawn(s"cawwing f-f fow ${key} h-has faiwed", (⑅˘꒳˘) e)
 
-          None
+          n-nyone
       }
-    val keysReusedFromLastEpoch = memoizedCalls.filterKeys(newSet.contains)
-    memoizedCalls = keysReusedFromLastEpoch ++ keysAndValuesAfterFilteringFailures
+    vaw keysweusedfwomwastepoch = memoizedcawws.fiwtewkeys(newset.contains)
+    m-memoizedcawws = keysweusedfwomwastepoch ++ keysandvawuesaftewfiwtewingfaiwuwes
 
-    debug(s"Final memoization is ${memoizedCalls.keys.mkString(", ")}")
+    debug(s"finaw m-memoization is ${memoizedcawws.keys.mkstwing(", /(^•ω•^) ")}")
 
-    keys.flatMap(memoizedCalls.get)
+    keys.fwatmap(memoizedcawws.get)
   }
 
-  def currentEpochKeys: Set[K] = memoizedCalls.keySet
+  def cuwwentepochkeys: set[k] = memoizedcawws.keyset
 }

@@ -1,45 +1,45 @@
-package com.twitter.ann.hnsw;
+package com.twittew.ann.hnsw;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+impowt o-owg.apache.commons.wang.buiwdew.equawsbuiwdew;
+i-impowt owg.apache.commons.wang.buiwdew.hashcodebuiwdew;
 
-public class HnswNode<T> {
-  public final int level;
-  public final T item;
+p-pubwic c-cwass hnswnode<t> {
+  p-pubwic f-finaw int wevew;
+  p-pubwic finaw t-t item;
 
-  public HnswNode(int level, T item) {
-    this.level = level;
-    this.item = item;
+  pubwic hnswnode(int wevew, >_< t item) {
+    this.wevew = wevew;
+    this.item = i-item;
   }
 
   /**
-   * Create a hnsw node.
+   * cweate a hnsw nyode. rawr x3
    */
-  public static <T> HnswNode<T> from(int level, T item) {
-    return new HnswNode<>(level, item);
+  pubwic s-static <t> hnswnode<t> fwom(int w-wevew, t item) {
+    wetuwn nyew hnswnode<>(wevew, mya item);
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (o == this) {
-      return true;
+  @ovewwide
+  p-pubwic boowean equaws(object o) {
+    i-if (o == this) {
+      w-wetuwn twue;
     }
-    if (!(o instanceof HnswNode)) {
-      return false;
+    if (!(o instanceof hnswnode)) {
+      wetuwn f-fawse;
     }
 
-    HnswNode<?> that = (HnswNode<?>) o;
-    return new EqualsBuilder()
+    hnswnode<?> that = (hnswnode<?>) o;
+    wetuwn nyew equawsbuiwdew()
         .append(this.item, that.item)
-        .append(this.level, that.level)
-        .isEquals();
+        .append(this.wevew, nyaa~~ t-that.wevew)
+        .isequaws();
   }
 
-  @Override
-  public int hashCode() {
-    return new HashCodeBuilder()
+  @ovewwide
+  pubwic i-int hashcode() {
+    w-wetuwn n-nyew hashcodebuiwdew()
         .append(item)
-        .append(level)
-        .toHashCode();
+        .append(wevew)
+        .tohashcode();
   }
 }

@@ -1,141 +1,141 @@
-package com.twitter.unified_user_actions.service
+package com.twittew.unified_usew_actions.sewvice
 
-import com.twitter.finatra.kafka.serde.ScalaSerdes
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.finatra.kafka.serde.UnKeyedSerde
-import com.twitter.finatra.kafka.test.EmbeddedKafka
-import com.twitter.finatra.kafkastreams.test.FinatraTopologyTester
-import com.twitter.finatra.kafkastreams.test.TopologyFeatureTest
-import com.twitter.unified_user_actions.enricher.EnricherFixture
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentEnvelop
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentIdType
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentKey
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import org.apache.kafka.clients.consumer.ConsumerRecord
-import org.joda.time.DateTime
+impowt com.twittew.finatwa.kafka.sewde.scawasewdes
+i-impowt com.twittew.finatwa.kafka.sewde.unkeyed
+i-impowt com.twittew.finatwa.kafka.sewde.unkeyedsewde
+i-impowt com.twittew.finatwa.kafka.test.embeddedkafka
+i-impowt c-com.twittew.finatwa.kafkastweams.test.finatwatopowogytestew
+i-impowt c-com.twittew.finatwa.kafkastweams.test.topowogyfeatuwetest
+impowt c-com.twittew.unified_usew_actions.enwichew.enwichewfixtuwe
+impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentenvewop
+impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentidtype
+impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentkey
+impowt com.twittew.unified_usew_actions.thwiftscawa.unifiedusewaction
+i-impowt owg.apache.kafka.cwients.consumew.consumewwecowd
+impowt owg.joda.time.datetime
 
 /**
- * This is to test the logic where the service reads and outputs to the same Kafka cluster
+ * t-this is to test the wogic w-whewe the sewvice weads and outputs to the same kafka cwustew
  */
-class EnrichmentPlannerServiceTest extends TopologyFeatureTest {
-  val startTime = new DateTime("2022-10-01T00:00:00Z")
+c-cwass enwichmentpwannewsewvicetest extends topowogyfeatuwetest {
+  v-vaw stawttime = n-nyew datetime("2022-10-01t00:00:00z")
 
-  override protected lazy val topologyTester: FinatraTopologyTester = FinatraTopologyTester(
-    "enrichment-planner-tester",
-    new EnrichmentPlannerService,
-    startingWallClockTime = startTime,
-    flags = Map(
-      "decider.base" -> "/decider.yml",
-      "kafka.output.server" -> ""
+  ovewwide pwotected wazy vaw topowogytestew: finatwatopowogytestew = finatwatopowogytestew(
+    "enwichment-pwannew-testew", (˘ω˘)
+    nyew e-enwichmentpwannewsewvice, nyaa~~
+    stawtingwawwcwocktime = stawttime, UwU
+    fwags = map(
+      "decidew.base" -> "/decidew.ymw", :3
+      "kafka.output.sewvew" -> ""
     )
   )
 
-  private val inputTopic = topologyTester.topic(
-    name = EnrichmentPlannerServiceMain.InputTopic,
-    keySerde = UnKeyedSerde,
-    valSerde = ScalaSerdes.Thrift[UnifiedUserAction]
+  p-pwivate vaw inputtopic = t-topowogytestew.topic(
+    n-nyame = enwichmentpwannewsewvicemain.inputtopic, (⑅˘꒳˘)
+    k-keysewde = u-unkeyedsewde, (///ˬ///✿)
+    vawsewde = scawasewdes.thwift[unifiedusewaction]
   )
 
-  private val outputTopic = topologyTester.topic(
-    name = EnrichmentPlannerServiceMain.OutputPartitionedTopic,
-    keySerde = ScalaSerdes.Thrift[EnrichmentKey],
-    valSerde = ScalaSerdes.Thrift[EnrichmentEnvelop]
+  pwivate v-vaw outputtopic = topowogytestew.topic(
+    nyame = e-enwichmentpwannewsewvicemain.outputpawtitionedtopic, ^^;;
+    keysewde = scawasewdes.thwift[enwichmentkey], >_<
+    vawsewde = scawasewdes.thwift[enwichmentenvewop]
   )
 
-  test("can filter unsupported events") {
-    new EnricherFixture {
-      (1L to 10L).foreach(id => {
-        inputTopic.pipeInput(UnKeyed, mkUUAProfileEvent(id))
+  test("can fiwtew unsuppowted events") {
+    n-nyew enwichewfixtuwe {
+      (1w to 10w).foweach(id => {
+        i-inputtopic.pipeinput(unkeyed, rawr x3 m-mkuuapwofiweevent(id))
       })
 
-      assert(outputTopic.readAllOutput().size === 0)
+      a-assewt(outputtopic.weadawwoutput().size === 0)
     }
   }
 
-  test("partition key serialization should be correct") {
-    val key = EnrichmentKey(EnrichmentIdType.TweetId, 9999L)
-    val serializer = ScalaSerdes.Thrift[EnrichmentKey].serializer
+  test("pawtition key sewiawization shouwd b-be cowwect") {
+    v-vaw key = enwichmentkey(enwichmentidtype.tweetid, /(^•ω•^) 9999w)
+    vaw sewiawizew = s-scawasewdes.thwift[enwichmentkey].sewiawizew
 
-    val actual = serializer.serialize("test", key)
-    val expected = Array[Byte](8, 0, 1, 0, 0, 0, 0, 10, 0, 2, 0, 0, 0, 0, 0, 0, 39, 15, 0)
+    v-vaw actuaw = sewiawizew.sewiawize("test", :3 k-key)
+    vaw expected = a-awway[byte](8, (ꈍᴗꈍ) 0, 1, 0, 0, 0, /(^•ω•^) 0, 10, 0, 2, 0, (⑅˘꒳˘) 0, 0, 0, 0, 0, ( ͡o ω ͡o ) 39, 15, 0)
 
-    assert(actual.deep === expected.deep)
+    assewt(actuaw.deep === expected.deep)
   }
 
-  test("partitioned enrichment tweet event is constructed correctly") {
-    new EnricherFixture {
-      val expected = mkUUATweetEvent(888L)
-      inputTopic.pipeInput(UnKeyed, expected)
+  test("pawtitioned e-enwichment tweet event is constwucted c-cowwectwy") {
+    nyew enwichewfixtuwe {
+      v-vaw expected = m-mkuuatweetevent(888w)
+      inputtopic.pipeinput(unkeyed, òωó expected)
 
-      val actual = outputTopic.readAllOutput().head
+      vaw actuaw = outputtopic.weadawwoutput().head
 
-      assert(actual.key() === EnrichmentKey(EnrichmentIdType.TweetId, 888L))
-      assert(
-        actual
-          .value() === EnrichmentEnvelop(
-          expected.hashCode,
+      assewt(actuaw.key() === enwichmentkey(enwichmentidtype.tweetid, (⑅˘꒳˘) 888w))
+      assewt(
+        actuaw
+          .vawue() === e-enwichmentenvewop(
+          e-expected.hashcode, XD
           expected,
-          plan = tweetInfoEnrichmentPlan
+          p-pwan = t-tweetinfoenwichmentpwan
         ))
     }
   }
 
-  test("partitioned enrichment tweet notification event is constructed correctly") {
-    new EnricherFixture {
-      val expected = mkUUATweetNotificationEvent(8989L)
-      inputTopic.pipeInput(UnKeyed, expected)
+  t-test("pawtitioned enwichment tweet nyotification event is constwucted c-cowwectwy") {
+    nyew enwichewfixtuwe {
+      vaw expected = mkuuatweetnotificationevent(8989w)
+      i-inputtopic.pipeinput(unkeyed, -.- expected)
 
-      val actual = outputTopic.readAllOutput().head
+      v-vaw actuaw = outputtopic.weadawwoutput().head
 
-      assert(actual.key() === EnrichmentKey(EnrichmentIdType.TweetId, 8989L))
-      assert(
-        actual
-          .value() === EnrichmentEnvelop(
-          expected.hashCode,
-          expected,
-          plan = tweetNotificationEnrichmentPlan
+      a-assewt(actuaw.key() === e-enwichmentkey(enwichmentidtype.tweetid, :3 8989w))
+      assewt(
+        a-actuaw
+          .vawue() === e-enwichmentenvewop(
+          expected.hashcode, nyaa~~
+          e-expected, 😳
+          p-pwan = tweetnotificationenwichmentpwan
         ))
     }
   }
 }
 
 /**
- * This is tests the bootstrap server logic in prod. Don't add any new tests here since it is slow.
- * Use the tests above which is much quicker to be executed and and test the majority of prod logic.
+ * this is tests the bootstwap s-sewvew wogic in p-pwod. don't add a-any nyew tests h-hewe since it is s-swow. (⑅˘꒳˘)
+ * use the tests above which is much quickew to be exekawaii~d a-and and test the majowity of pwod wogic.
  */
-class EnrichmentPlannerServiceEmbeddedKafkaTest extends TopologyFeatureTest with EmbeddedKafka {
-  val startTime = new DateTime("2022-10-01T00:00:00Z")
+cwass enwichmentpwannewsewviceembeddedkafkatest extends topowogyfeatuwetest with embeddedkafka {
+  v-vaw stawttime = nyew datetime("2022-10-01t00:00:00z")
 
-  override protected lazy val topologyTester: FinatraTopologyTester = FinatraTopologyTester(
-    "enrichment-planner-tester",
-    new EnrichmentPlannerService,
-    startingWallClockTime = startTime,
-    flags = Map(
-      "decider.base" -> "/decider.yml",
-      "kafka.output.server" -> kafkaCluster.bootstrapServers(),
-      "kafka.output.enable.tls" -> "false"
+  ovewwide pwotected wazy vaw topowogytestew: f-finatwatopowogytestew = f-finatwatopowogytestew(
+    "enwichment-pwannew-testew", nyaa~~
+    n-nyew enwichmentpwannewsewvice, OwO
+    stawtingwawwcwocktime = s-stawttime,
+    fwags = m-map(
+      "decidew.base" -> "/decidew.ymw", rawr x3
+      "kafka.output.sewvew" -> k-kafkacwustew.bootstwapsewvews(), XD
+      "kafka.output.enabwe.tws" -> "fawse"
     )
   )
 
-  private lazy val inputTopic = topologyTester.topic(
-    name = EnrichmentPlannerServiceMain.InputTopic,
-    keySerde = UnKeyedSerde,
-    valSerde = ScalaSerdes.Thrift[UnifiedUserAction]
+  pwivate wazy vaw inputtopic = topowogytestew.topic(
+    nyame = enwichmentpwannewsewvicemain.inputtopic, σωσ
+    keysewde = unkeyedsewde, (U ᵕ U❁)
+    v-vawsewde = scawasewdes.thwift[unifiedusewaction]
   )
 
-  private val outputTopic = kafkaTopic(
-    name = EnrichmentPlannerServiceMain.OutputPartitionedTopic,
-    keySerde = ScalaSerdes.Thrift[EnrichmentKey],
-    valSerde = ScalaSerdes.Thrift[EnrichmentEnvelop]
+  pwivate v-vaw outputtopic = kafkatopic(
+    n-nyame = enwichmentpwannewsewvicemain.outputpawtitionedtopic, (U ﹏ U)
+    k-keysewde = scawasewdes.thwift[enwichmentkey], :3
+    vawsewde = scawasewdes.thwift[enwichmentenvewop]
   )
 
-  test("toCluster should output to expected topic & embeded cluster") {
-    new EnricherFixture {
-      inputTopic.pipeInput(UnKeyed, mkUUATweetEvent(tweetId = 1))
-      val records: Seq[ConsumerRecord[Array[Byte], Array[Byte]]] = outputTopic.consumeRecords(1)
+  t-test("tocwustew s-shouwd output to expected t-topic & e-embeded cwustew") {
+    nyew enwichewfixtuwe {
+      inputtopic.pipeinput(unkeyed, ( ͡o ω ͡o ) mkuuatweetevent(tweetid = 1))
+      vaw wecowds: s-seq[consumewwecowd[awway[byte], σωσ a-awway[byte]]] = o-outputtopic.consumewecowds(1)
 
-      assert(records.size === 1)
-      assert(records.head.topic() == EnrichmentPlannerServiceMain.OutputPartitionedTopic)
+      assewt(wecowds.size === 1)
+      a-assewt(wecowds.head.topic() == e-enwichmentpwannewsewvicemain.outputpawtitionedtopic)
     }
   }
 }

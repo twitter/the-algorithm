@@ -1,34 +1,34 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.metwics
 
-import com.twitter.ml.api._
+impowt com.twittew.mw.api._
 
 /**
- * A "human-readable" metric that can be applied to features of multiple
- * different types. Wrapper around AggregationMetric used as syntactic sugar
- * for easier config.
+ * a-a "human-weadabwe" m-metwic t-that can be appwied t-to featuwes o-of muwtipwe
+ * d-diffewent types. 😳😳😳 w-wwappew awound a-aggwegationmetwic used as syntactic sugaw
+ * fow easiew config. mya
  */
-trait EasyMetric extends Serializable {
+twait easymetwic e-extends sewiawizabwe {
   /*
-   * Given a feature type, fetches the corrrect underlying AggregationMetric
-   * to perform this operation over the given feature type, if any. If no such
-   * metric is available, returns None. For example, MEAN cannot be applied
-   * to FeatureType.String and would return None.
+   * given a featuwe type, 😳 fetches t-the cowwwect undewwying aggwegationmetwic
+   * t-to pewfowm this opewation ovew the given featuwe type, -.- if any. i-if nyo such
+   * metwic is avaiwabwe, 🥺 w-wetuwns n-nyone. o.O fow exampwe, /(^•ω•^) mean cannot be appwied
+   * to featuwetype.stwing and wouwd w-wetuwn nyone. nyaa~~
    *
-   * @param featureType Type of feature to fetch metric for
-   * @param useFixedDecay Param to control whether the metric should use fixed decay
-   *   logic (if appropriate)
-   * @return Strongly typed aggregation metric to use for this feature type
+   * @pawam featuwetype type of featuwe to fetch metwic fow
+   * @pawam usefixeddecay p-pawam to contwow whethew t-the metwic shouwd u-use fixed decay
+   *   w-wogic (if a-appwopwiate)
+   * @wetuwn stwongwy typed aggwegation metwic t-to use fow this featuwe type
    *
-   * For example, if the EasyMetric is MEAN and the featureType is
-   * FeatureType.Continuous, the underlying AggregationMetric should be a
-   * scalar mean. If the EasyMetric is MEAN and the featureType is
-   * FeatureType.SparseContinuous, the AggregationMetric returned could be a
-   * "vector" mean that averages sparse maps. Using the single logical name
-   * MEAN for both is nice syntactic sugar making for an easier to read top
-   * level config, though different underlying operators are used underneath
-   * for the actual implementation.
+   * fow exampwe, i-if the easymetwic is mean and the featuwetype is
+   * featuwetype.continuous, the undewwying aggwegationmetwic s-shouwd be a
+   * scawaw mean. nyaa~~ i-if the easymetwic i-is mean and t-the featuwetype is
+   * featuwetype.spawsecontinuous, :3 the aggwegationmetwic wetuwned c-couwd be a
+   * "vectow" mean t-that avewages spawse maps. 😳😳😳 using t-the singwe w-wogicaw nyame
+   * mean fow both i-is nyice syntactic sugaw making f-fow an easiew to wead top
+   * wevew config, (˘ω˘) though d-diffewent undewwying opewatows a-awe used undewneath
+   * fow t-the actuaw impwementation. ^^
    */
-  def forFeatureType[T](
-    featureType: FeatureType,
-  ): Option[AggregationMetric[T, _]]
+  d-def fowfeatuwetype[t](
+    featuwetype: featuwetype, :3
+  ): option[aggwegationmetwic[t, -.- _]]
 }

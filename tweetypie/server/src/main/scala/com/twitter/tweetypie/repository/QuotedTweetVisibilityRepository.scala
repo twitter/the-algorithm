@@ -1,48 +1,48 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.spam.rtf.thriftscala.{SafetyLevel => ThriftSafetyLevel}
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository.VisibilityResultToFilteredState.toFilteredState
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.interfaces.tweets.QuotedTweetVisibilityLibrary
-import com.twitter.visibility.interfaces.tweets.QuotedTweetVisibilityRequest
-import com.twitter.visibility.interfaces.tweets.TweetAndAuthor
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+i-impowt com.twittew.spam.wtf.thwiftscawa.{safetywevew => t-thwiftsafetywevew}
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.wepositowy.visibiwitywesuwttofiwtewedstate.tofiwtewedstate
+impowt com.twittew.visibiwity.configapi.configs.visibiwitydecidewgates
+impowt com.twittew.visibiwity.intewfaces.tweets.quotedtweetvisibiwitywibwawy
+impowt c-com.twittew.visibiwity.intewfaces.tweets.quotedtweetvisibiwitywequest
+impowt com.twittew.visibiwity.intewfaces.tweets.tweetandauthow
+i-impowt com.twittew.visibiwity.modews.safetywevew
+i-impowt com.twittew.visibiwity.modews.viewewcontext
 
 /**
- * This repository handles visibility filtering of inner quoted tweets
- * based on relationships between the inner and outer tweets. This is
- * additive to independent visibility filtering of the inner tweet.
+ * this wepositowy handwes visibiwity f-fiwtewing of innew quoted t-tweets
+ * based o-on wewationships between the innew and outew tweets. 😳😳😳 this is
+ * additive to independent v-visibiwity fiwtewing of the innew tweet. 😳😳😳
  */
-object QuotedTweetVisibilityRepository {
-  type Type = Request => Stitch[Option[FilteredState]]
+object quotedtweetvisibiwitywepositowy {
+  type type = wequest => s-stitch[option[fiwtewedstate]]
 
-  case class Request(
-    outerTweetId: TweetId,
-    outerAuthorId: UserId,
-    innerTweetId: TweetId,
-    innerAuthorId: UserId,
-    viewerId: Option[UserId],
-    safetyLevel: ThriftSafetyLevel)
+  case cwass w-wequest(
+    o-outewtweetid: t-tweetid, o.O
+    outewauthowid: u-usewid, ( ͡o ω ͡o )
+    innewtweetid: tweetid, (U ﹏ U)
+    i-innewauthowid: usewid, (///ˬ///✿)
+    viewewid: option[usewid], >w<
+    s-safetywevew: thwiftsafetywevew)
 
-  def apply(
-    quotedTweetVisibilityLibrary: QuotedTweetVisibilityLibrary.Type,
-    visibilityDeciderGates: VisibilityDeciderGates,
-  ): QuotedTweetVisibilityRepository.Type = { request: Request =>
-    quotedTweetVisibilityLibrary(
-      QuotedTweetVisibilityRequest(
-        quotedTweet = TweetAndAuthor(request.innerTweetId, request.innerAuthorId),
-        outerTweet = TweetAndAuthor(request.outerTweetId, request.outerAuthorId),
-        ViewerContext.fromContextWithViewerIdFallback(request.viewerId),
-        safetyLevel = SafetyLevel.fromThrift(request.safetyLevel)
+  def appwy(
+    quotedtweetvisibiwitywibwawy: quotedtweetvisibiwitywibwawy.type, rawr
+    visibiwitydecidewgates: visibiwitydecidewgates, mya
+  ): q-quotedtweetvisibiwitywepositowy.type = { wequest: wequest =>
+    q-quotedtweetvisibiwitywibwawy(
+      q-quotedtweetvisibiwitywequest(
+        q-quotedtweet = tweetandauthow(wequest.innewtweetid, ^^ wequest.innewauthowid), 😳😳😳
+        outewtweet = t-tweetandauthow(wequest.outewtweetid, mya w-wequest.outewauthowid), 😳
+        viewewcontext.fwomcontextwithviewewidfawwback(wequest.viewewid), -.-
+        s-safetywevew = safetywevew.fwomthwift(wequest.safetywevew)
       )
-    ).map(visibilityResult =>
-      toFilteredState(
-        visibilityResult = visibilityResult,
-        disableLegacyInterstitialFilteredReason =
-          visibilityDeciderGates.disableLegacyInterstitialFilteredReason()))
+    ).map(visibiwitywesuwt =>
+      t-tofiwtewedstate(
+        visibiwitywesuwt = v-visibiwitywesuwt, 🥺
+        disabwewegacyintewstitiawfiwtewedweason =
+          v-visibiwitydecidewgates.disabwewegacyintewstitiawfiwtewedweason()))
   }
 }

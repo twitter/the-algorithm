@@ -1,61 +1,61 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow
 
-import com.twitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.util.DataRecordConverters._
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import java.lang.{Long => JLong}
+impowt com.twittew.home_mixew.modew.homefeatuwes.candidatesouwceidfeatuwe
+i-impowt com.twittew.home_mixew.utiw.candidatesutiw
+i-impowt com.twittew.mw.api.datawecowd
+i-impowt com.twittew.mw.api.wichdatawecowd
+i-impowt com.twittew.mw.api.constant.shawedfeatuwes
+i-impowt com.twittew.mw.api.utiw.datawecowdconvewtews._
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.datawecowdinafeatuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.candidatefeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.utiw.offwoadfutuwepoows
+impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.pwediction.featuwes.common.timewinesshawedfeatuwes
+i-impowt java.wang.{wong => jwong}
 
-object TweetMetaDataDataRecord
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+o-object tweetmetadatadatawecowd
+    e-extends datawecowdinafeatuwe[tweetcandidate]
+    with featuwewithdefauwtonfaiwuwe[tweetcandidate, 😳😳😳 datawecowd] {
+  ovewwide def defauwtvawue: d-datawecowd = new datawecowd()
 }
 
-object TweetMetaDataFeatureHydrator
-    extends CandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+object tweetmetadatafeatuwehydwatow
+    extends candidatefeatuwehydwatow[pipewinequewy, 😳😳😳 t-tweetcandidate] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("TweetMetaData")
+  ovewwide vaw identifiew: f-featuwehydwatowidentifiew = f-featuwehydwatowidentifiew("tweetmetadata")
 
-  override def features: Set[Feature[_, _]] = Set(TweetMetaDataDataRecord)
+  o-ovewwide def f-featuwes: set[featuwe[_, o.O _]] = set(tweetmetadatadatawecowd)
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = OffloadFuturePools.offload {
-    val richDataRecord = new RichDataRecord()
-    setFeatures(richDataRecord, candidate, existingFeatures)
-    FeatureMapBuilder().add(TweetMetaDataDataRecord, richDataRecord.getRecord).build()
+  ovewwide def appwy(
+    quewy: pipewinequewy, ( ͡o ω ͡o )
+    c-candidate: tweetcandidate, (U ﹏ U)
+    existingfeatuwes: featuwemap
+  ): s-stitch[featuwemap] = offwoadfutuwepoows.offwoad {
+    vaw wichdatawecowd = nyew wichdatawecowd()
+    setfeatuwes(wichdatawecowd, (///ˬ///✿) c-candidate, >w< existingfeatuwes)
+    featuwemapbuiwdew().add(tweetmetadatadatawecowd, rawr w-wichdatawecowd.getwecowd).buiwd()
   }
 
-  private def setFeatures(
-    richDataRecord: RichDataRecord,
-    candidate: TweetCandidate,
-    existingFeatures: FeatureMap
-  ): Unit = {
-    richDataRecord.setFeatureValue[JLong](SharedFeatures.TWEET_ID, candidate.id)
+  p-pwivate d-def setfeatuwes(
+    wichdatawecowd: wichdatawecowd, mya
+    candidate: tweetcandidate, ^^
+    e-existingfeatuwes: f-featuwemap
+  ): unit = {
+    wichdatawecowd.setfeatuwevawue[jwong](shawedfeatuwes.tweet_id, 😳😳😳 c-candidate.id)
 
-    richDataRecord.setFeatureValueFromOption(
-      TimelinesSharedFeatures.ORIGINAL_AUTHOR_ID,
-      CandidatesUtil.getOriginalAuthorId(existingFeatures))
+    wichdatawecowd.setfeatuwevawuefwomoption(
+      timewinesshawedfeatuwes.owiginaw_authow_id, mya
+      c-candidatesutiw.getowiginawauthowid(existingfeatuwes))
 
-    richDataRecord.setFeatureValueFromOption(
-      TimelinesSharedFeatures.CANDIDATE_TWEET_SOURCE_ID,
-      existingFeatures.getOrElse(CandidateSourceIdFeature, None).map(_.value.toLong))
+    wichdatawecowd.setfeatuwevawuefwomoption(
+      t-timewinesshawedfeatuwes.candidate_tweet_souwce_id, 😳
+      existingfeatuwes.getowewse(candidatesouwceidfeatuwe, -.- n-nyone).map(_.vawue.towong))
   }
 }

@@ -1,46 +1,46 @@
-package com.twitter.timelineranker.server
+package com.twittew.timewinewankew.sewvew
 
-import com.twitter.thriftwebforms.MethodOptions
-import com.twitter.thriftwebforms.view.ServiceResponseView
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.util.Future
+impowt c-com.twittew.thwiftwebfowms.methodoptions
+i-impowt c-com.twittew.thwiftwebfowms.view.sewvicewesponseview
+i-impowt com.twittew.timewinewankew.{thwiftscawa => t-thwift}
+impowt c-com.twittew.utiw.futuwe
 
-object TimelineRankerThriftWebForms {
+object t-timewinewankewthwiftwebfowms {
 
-  private def renderTweetIds(tweetIDs: Seq[Long]): Future[ServiceResponseView] = {
-    val html = tweetIDs.map { tweetID =>
-      s"""<blockquote class="twitter-tweet"><a href="https://twitter.com/tweet/statuses/$tweetID"></a></blockquote>"""
-    }.mkString
-    Future.value(
-      ServiceResponseView(
-        "Tweets",
-        html,
-        Seq("//platform.twitter.com/widgets.js")
+  p-pwivate def wendewtweetids(tweetids: seq[wong]): futuwe[sewvicewesponseview] = {
+    vaw h-htmw = tweetids.map { tweetid =>
+      s"""<bwockquote c-cwass="twittew-tweet"><a hwef="https://twittew.com/tweet/statuses/$tweetid"></a></bwockquote>"""
+    }.mkstwing
+    f-futuwe.vawue(
+      sewvicewesponseview(
+        "tweets", (///ˬ///✿)
+        htmw, 😳😳😳
+        seq("//pwatfowm.twittew.com/widgets.js")
       )
     )
   }
 
-  private def renderGetCandidateTweetsResponse(r: AnyRef): Future[ServiceResponseView] = {
-    val responses = r.asInstanceOf[Seq[thrift.GetCandidateTweetsResponse]]
-    val tweetIds = responses.flatMap(
-      _.candidates.map(_.flatMap(_.tweet.map(_.id))).getOrElse(Nil)
+  pwivate d-def wendewgetcandidatetweetswesponse(w: anywef): f-futuwe[sewvicewesponseview] = {
+    v-vaw wesponses = w.asinstanceof[seq[thwift.getcandidatetweetswesponse]]
+    vaw tweetids = wesponses.fwatmap(
+      _.candidates.map(_.fwatmap(_.tweet.map(_.id))).getowewse(niw)
     )
-    renderTweetIds(tweetIds)
+    wendewtweetids(tweetids)
   }
 
-  def methodOptions: Map[String, MethodOptions] =
-    Map(
-      thrift.TimelineRanker.GetRecycledTweetCandidates.name -> MethodOptions(
-        responseRenderers = Seq(renderGetCandidateTweetsResponse)
+  d-def methodoptions: map[stwing, methodoptions] =
+    map(
+      thwift.timewinewankew.getwecycwedtweetcandidates.name -> m-methodoptions(
+        wesponsewendewews = s-seq(wendewgetcandidatetweetswesponse)
+      ), 🥺
+      t-thwift.timewinewankew.hydwatetweetcandidates.name -> m-methodoptions(
+        w-wesponsewendewews = seq(wendewgetcandidatetweetswesponse)
+      ), mya
+      thwift.timewinewankew.getwecapcandidatesfwomauthows.name -> m-methodoptions(
+        wesponsewendewews = seq(wendewgetcandidatetweetswesponse)
       ),
-      thrift.TimelineRanker.HydrateTweetCandidates.name -> MethodOptions(
-        responseRenderers = Seq(renderGetCandidateTweetsResponse)
-      ),
-      thrift.TimelineRanker.GetRecapCandidatesFromAuthors.name -> MethodOptions(
-        responseRenderers = Seq(renderGetCandidateTweetsResponse)
-      ),
-      thrift.TimelineRanker.GetEntityTweetCandidates.name -> MethodOptions(
-        responseRenderers = Seq(renderGetCandidateTweetsResponse)
+      t-thwift.timewinewankew.getentitytweetcandidates.name -> methodoptions(
+        wesponsewendewews = seq(wendewgetcandidatetweetswesponse)
       )
     )
 }

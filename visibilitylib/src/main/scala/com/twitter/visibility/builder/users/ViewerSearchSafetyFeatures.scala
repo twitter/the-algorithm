@@ -1,49 +1,49 @@
-package com.twitter.visibility.builder.users
+package com.twittew.visibiwity.buiwdew.usews
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.common.UserSearchSafetySource
-import com.twitter.visibility.features.ViewerId
-import com.twitter.visibility.features.ViewerOptInBlocking
-import com.twitter.visibility.features.ViewerOptInFiltering
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+i-impowt com.twittew.visibiwity.common.usewid
+i-impowt com.twittew.visibiwity.common.usewseawchsafetysouwce
+i-impowt com.twittew.visibiwity.featuwes.viewewid
+impowt com.twittew.visibiwity.featuwes.viewewoptinbwocking
+impowt com.twittew.visibiwity.featuwes.viewewoptinfiwtewing
 
-class ViewerSearchSafetyFeatures(
-  userSearchSafetySource: UserSearchSafetySource,
-  statsReceiver: StatsReceiver) {
-  private[this] val scopedStatsReceiver = statsReceiver.scope("viewer_search_safety_features")
+c-cwass viewewseawchsafetyfeatuwes(
+  usewseawchsafetysouwce: usewseawchsafetysouwce, (⑅˘꒳˘)
+  s-statsweceivew: statsweceivew) {
+  p-pwivate[this] vaw scopedstatsweceivew = statsweceivew.scope("viewew_seawch_safety_featuwes")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  pwivate[this] v-vaw wequests = scopedstatsweceivew.countew("wequests")
 
-  private[this] val viewerOptInBlockingRequests =
-    scopedStatsReceiver.scope(ViewerOptInBlocking.name).counter("requests")
+  p-pwivate[this] v-vaw viewewoptinbwockingwequests =
+    scopedstatsweceivew.scope(viewewoptinbwocking.name).countew("wequests")
 
-  private[this] val viewerOptInFilteringRequests =
-    scopedStatsReceiver.scope(ViewerOptInFiltering.name).counter("requests")
+  pwivate[this] vaw viewewoptinfiwtewingwequests =
+    scopedstatsweceivew.scope(viewewoptinfiwtewing.name).countew("wequests")
 
-  def forViewerId(viewerId: Option[UserId]): FeatureMapBuilder => FeatureMapBuilder = { builder =>
-    requests.incr()
+  d-def fowviewewid(viewewid: option[usewid]): featuwemapbuiwdew => featuwemapbuiwdew = { buiwdew =>
+    wequests.incw()
 
-    builder
-      .withConstantFeature(ViewerId, viewerId)
-      .withFeature(ViewerOptInBlocking, viewerOptInBlocking(viewerId))
-      .withFeature(ViewerOptInFiltering, viewerOptInFiltering(viewerId))
+    buiwdew
+      .withconstantfeatuwe(viewewid, /(^•ω•^) v-viewewid)
+      .withfeatuwe(viewewoptinbwocking, rawr x3 viewewoptinbwocking(viewewid))
+      .withfeatuwe(viewewoptinfiwtewing, (U ﹏ U) v-viewewoptinfiwtewing(viewewid))
   }
 
-  def viewerOptInBlocking(viewerId: Option[UserId]): Stitch[Boolean] = {
-    viewerOptInBlockingRequests.incr()
-    viewerId match {
-      case Some(userId) => userSearchSafetySource.optInBlocking(userId)
-      case _ => Stitch.False
+  d-def v-viewewoptinbwocking(viewewid: option[usewid]): s-stitch[boowean] = {
+    viewewoptinbwockingwequests.incw()
+    viewewid match {
+      c-case some(usewid) => usewseawchsafetysouwce.optinbwocking(usewid)
+      case _ => s-stitch.fawse
     }
   }
 
-  def viewerOptInFiltering(viewerId: Option[UserId]): Stitch[Boolean] = {
-    viewerOptInFilteringRequests.incr()
-    viewerId match {
-      case Some(userId) => userSearchSafetySource.optInFiltering(userId)
-      case _ => Stitch.False
+  def viewewoptinfiwtewing(viewewid: option[usewid]): stitch[boowean] = {
+    viewewoptinfiwtewingwequests.incw()
+    viewewid match {
+      c-case some(usewid) => u-usewseawchsafetysouwce.optinfiwtewing(usewid)
+      c-case _ => s-stitch.fawse
     }
   }
 }

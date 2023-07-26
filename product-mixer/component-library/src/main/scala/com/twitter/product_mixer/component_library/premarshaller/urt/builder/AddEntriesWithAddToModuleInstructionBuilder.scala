@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.addentwiestimewineinstwuction
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewinemoduwe
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Build the AddEntries instruction with special handling for AddToModule entries.
+ * b-buiwd t-the addentwies i-instwuction with s-speciaw handwing fow addtomoduwe entwies. mya
  *
- * Entries which are going to be added to a module are going to be added via
- * AddToModuleInstructionBuilder, for other entries in the same response (like cursor entries) we
- * still need an AddEntriesTimelineInstruction which is going to be created by this builder.
+ * entwies which awe going to be a-added to a moduwe awe going to be added via
+ * a-addtomoduweinstwuctionbuiwdew, 🥺 fow othew entwies i-in the same wesponse (wike cuwsow entwies) we
+ * stiww nyeed an a-addentwiestimewineinstwuction which is going to b-be cweated by this b-buiwdew. >_<
  */
-case class AddEntriesWithAddToModuleInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, AddEntriesTimelineInstruction] {
+case cwass addentwieswithaddtomoduweinstwuctionbuiwdew[quewy <: pipewinequewy](
+  ovewwide vaw incwudeinstwuction: i-incwudeinstwuction[quewy] = awwaysincwude)
+    extends uwtinstwuctionbuiwdew[quewy, >_< addentwiestimewineinstwuction] {
 
-  override def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[AddEntriesTimelineInstruction] = {
-    if (includeInstruction(query, entries)) {
-      val entriesToAdd = entries.filter {
-        case _: TimelineModule => false
-        case _ => true
+  ovewwide d-def buiwd(
+    quewy: quewy, (⑅˘꒳˘)
+    e-entwies: seq[timewineentwy]
+  ): s-seq[addentwiestimewineinstwuction] = {
+    i-if (incwudeinstwuction(quewy, /(^•ω•^) e-entwies)) {
+      vaw entwiestoadd = entwies.fiwtew {
+        c-case _: timewinemoduwe => fawse
+        c-case _ => twue
       }
-      if (entriesToAdd.nonEmpty) Seq(AddEntriesTimelineInstruction(entriesToAdd))
-      else Seq.empty
-    } else
-      Seq.empty
+      if (entwiestoadd.nonempty) seq(addentwiestimewineinstwuction(entwiestoadd))
+      ewse seq.empty
+    } ewse
+      s-seq.empty
   }
 }

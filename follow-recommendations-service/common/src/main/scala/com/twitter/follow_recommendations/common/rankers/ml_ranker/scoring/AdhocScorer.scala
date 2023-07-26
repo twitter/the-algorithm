@@ -1,28 +1,28 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
+package com.twittew.fowwow_wecommendations.common.wankews.mw_wankew.scowing
 
-import com.twitter.follow_recommendations.common.rankers.common.AdhocScoreModificationType.AdhocScoreModificationType
-import com.twitter.follow_recommendations.common.models.Score
-import com.twitter.ml.api.DataRecord
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.fowwow_wecommendations.common.wankews.common.adhocscowemodificationtype.adhocscowemodificationtype
+i-impowt com.twittew.fowwow_wecommendations.common.modews.scowe
+i-impowt com.twittew.mw.api.datawecowd
+i-impowt com.twittew.stitch.stitch
 
-trait AdhocScorer extends Scorer {
+t-twait adhocscowew e-extends s-scowew {
 
   /**
-   * NOTE: For instances of [[AdhocScorer]] this function SHOULD NOT be used.
-   * Please use:
-   *   [[score(target: HasClientContext with HasParams, candidates: Seq[CandidateUser])]]
-   * instead.
+   * n-nyote: fow instances of [[adhocscowew]] this function shouwd nyot be used. rawr x3
+   * p-pwease use:
+   *   [[scowe(tawget: hascwientcontext with haspawams, (✿oωo) c-candidates: seq[candidateusew])]]
+   * i-instead.
    */
-  @Deprecated
-  override def score(records: Seq[DataRecord]): Stitch[Seq[Score]] =
-    throw new UnsupportedOperationException(
-      "For instances of AdhocScorer this operation is not defined. Please use " +
-        "`def score(target: HasClientContext with HasParams, candidates: Seq[CandidateUser])` " +
+  @depwecated
+  ovewwide def scowe(wecowds: seq[datawecowd]): stitch[seq[scowe]] =
+    t-thwow nyew unsuppowtedopewationexception(
+      "fow i-instances o-of adhocscowew this opewation is nyot defined. (ˆ ﻌ ˆ)♡ pwease use " +
+        "`def scowe(tawget: h-hascwientcontext with haspawams, (˘ω˘) candidates: seq[candidateusew])` " +
         "instead.")
 
   /**
-   * This helps us manage the extend of adhoc modification on candidates' score. There is a hard
-   * limit of applying ONLY ONE scorer of each type to a score.
+   * this hewps us manage the extend o-of adhoc modification on candidates' s-scowe. (⑅˘꒳˘) t-thewe is a hawd
+   * w-wimit of a-appwying onwy one scowew of each type to a scowe. (///ˬ///✿)
    */
-  val scoreModificationType: AdhocScoreModificationType
+  v-vaw scowemodificationtype: adhocscowemodificationtype
 }

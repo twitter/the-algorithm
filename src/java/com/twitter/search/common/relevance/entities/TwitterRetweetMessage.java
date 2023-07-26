@@ -1,80 +1,80 @@
-package com.twitter.search.common.relevance.entities;
+package com.twittew.seawch.common.wewevance.entities;
 
-import java.util.Date;
+impowt java.utiw.date;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+i-impowt o-owg.apache.commons.wang3.buiwdew.equawsbuiwdew;
+i-impowt owg.apache.commons.wang3.buiwdew.hashcodebuiwdew;
+i-impowt o-owg.apache.commons.wang3.buiwdew.tostwingbuiwdew;
 
-public class TwitterRetweetMessage {
-  // based on original tweet
-  private Long sharedId;
+p-pubwic cwass t-twittewwetweetmessage {
+  // b-based on owiginaw tweet
+  pwivate wong shawedid;
 
-  // TwitterMessageUtil checks them
-  private String sharedUserDisplayName;
-  private Long sharedUserTwitterId = TwitterMessage.LONG_FIELD_NOT_PRESENT;
+  // twittewmessageutiw checks t-them
+  pwivate stwing shawedusewdispwayname;
+  pwivate wong shawedusewtwittewid = t-twittewmessage.wong_fiewd_not_pwesent;
 
-  private Date sharedDate = null;
+  pwivate date shaweddate = n-nyuww;
 
-  // based on retweet
-  private Long retweetId;
+  // based on wetweet
+  pwivate wong wetweetid;
 
-  public Long getRetweetId() {
-    return retweetId;
+  p-pubwic wong getwetweetid() {
+    w-wetuwn wetweetid;
   }
 
-  public void setRetweetId(Long retweetId) {
-    this.retweetId = retweetId;
+  p-pubwic void setwetweetid(wong wetweetid) {
+    this.wetweetid = wetweetid;
   }
 
-  public Long getSharedId() {
-    return sharedId;
+  p-pubwic wong getshawedid() {
+    wetuwn shawedid;
   }
 
-  public void setSharedId(Long sharedId) {
-    this.sharedId = sharedId;
+  pubwic void setshawedid(wong shawedid) {
+    t-this.shawedid = shawedid;
   }
 
-  public String getSharedUserDisplayName() {
-    return sharedUserDisplayName;
+  p-pubwic stwing g-getshawedusewdispwayname() {
+    w-wetuwn shawedusewdispwayname;
   }
 
-  public void setSharedUserDisplayName(String sharedUserDisplayName) {
-    this.sharedUserDisplayName = sharedUserDisplayName;
+  p-pubwic void setshawedusewdispwayname(stwing shawedusewdispwayname) {
+    t-this.shawedusewdispwayname = shawedusewdispwayname;
   }
 
-  public Long getSharedUserTwitterId() {
-    return sharedUserTwitterId;
+  pubwic w-wong getshawedusewtwittewid() {
+    wetuwn shawedusewtwittewid;
   }
 
-  public boolean hasSharedUserTwitterId() {
-    return sharedUserTwitterId != TwitterMessage.LONG_FIELD_NOT_PRESENT;
+  pubwic boowean hasshawedusewtwittewid() {
+    wetuwn s-shawedusewtwittewid != twittewmessage.wong_fiewd_not_pwesent;
   }
 
-  public void setSharedUserTwitterId(Long sharedUserTwitterId) {
-    this.sharedUserTwitterId = sharedUserTwitterId;
+  p-pubwic void s-setshawedusewtwittewid(wong s-shawedusewtwittewid) {
+    this.shawedusewtwittewid = shawedusewtwittewid;
   }
 
-  public Date getSharedDate() {
-    return sharedDate;
+  pubwic date getshaweddate() {
+    w-wetuwn shaweddate;
   }
 
-  public void setSharedDate(Date sharedDate) {
-    this.sharedDate = sharedDate;
+  p-pubwic void setshaweddate(date s-shaweddate) {
+    t-this.shaweddate = shaweddate;
   }
 
-  @Override
-  public boolean equals(Object o) {
-    return EqualsBuilder.reflectionEquals(this, o);
+  @ovewwide
+  pubwic b-boowean equaws(object o) {
+    w-wetuwn equawsbuiwdew.wefwectionequaws(this, o);
   }
 
-  @Override
-  public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
+  @ovewwide
+  pubwic int h-hashcode() {
+    wetuwn hashcodebuiwdew.wefwectionhashcode(this);
   }
 
-  @Override
-  public String toString() {
-    return ToStringBuilder.reflectionToString(this);
+  @ovewwide
+  p-pubwic stwing tostwing() {
+    w-wetuwn tostwingbuiwdew.wefwectiontostwing(this);
   }
 }

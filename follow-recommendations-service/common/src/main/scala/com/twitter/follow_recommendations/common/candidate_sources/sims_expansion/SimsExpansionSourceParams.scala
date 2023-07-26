@@ -1,17 +1,17 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
-import com.twitter.timelines.configapi.FSEnumParam
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.sims_expansion
+impowt com.twittew.timewines.configapi.fsenumpawam
 
-object SimsExpansionSourceParams {
-  case object Aggregator
-      extends FSEnumParam[SimsExpansionSourceAggregatorId.type](
-        name = "sims_expansion_aggregator_id",
-        default = SimsExpansionSourceAggregatorId.Sum,
-        enum = SimsExpansionSourceAggregatorId)
+o-object simsexpansionsouwcepawams {
+  c-case o-object aggwegatow
+      e-extends f-fsenumpawam[simsexpansionsouwceaggwegatowid.type](
+        n-nyame = "sims_expansion_aggwegatow_id", -.-
+        d-defauwt = s-simsexpansionsouwceaggwegatowid.sum, ^^;;
+        enum = simsexpansionsouwceaggwegatowid)
 }
 
-object SimsExpansionSourceAggregatorId extends Enumeration {
-  type AggregatorId = Value
-  val Sum: AggregatorId = Value("sum")
-  val Max: AggregatorId = Value("max")
-  val MultiDecay: AggregatorId = Value("multi_decay")
+object simsexpansionsouwceaggwegatowid extends enumewation {
+  t-type aggwegatowid = vawue
+  vaw sum: a-aggwegatowid = vawue("sum")
+  vaw m-max: aggwegatowid = vawue("max")
+  vaw muwtidecay: aggwegatowid = v-vawue("muwti_decay")
 }

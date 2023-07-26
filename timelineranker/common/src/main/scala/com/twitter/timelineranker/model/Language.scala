@@ -1,31 +1,31 @@
-package com.twitter.timelineranker.model
+package com.twittew.timewinewankew.modew
 
-import com.twitter.common.text.language.LocaleUtil
-import com.twitter.timelineranker.{thriftscala => thrift}
+impowt c-com.twittew.common.text.wanguage.wocaweutiw
+i-impowt c-com.twittew.timewinewankew.{thwiftscawa => t-thwift}
 
-object Language {
+o-object wanguage {
 
-  def fromThrift(lang: thrift.Language): Language = {
-    require(lang.language.isDefined, "language can't be None")
-    require(lang.scope.isDefined, "scope can't be None")
-    Language(lang.language.get, LanguageScope.fromThrift(lang.scope.get))
+  d-def f-fwomthwift(wang: t-thwift.wanguage): wanguage = {
+    wequiwe(wang.wanguage.isdefined, OwO "wanguage can't be nyone")
+    wequiwe(wang.scope.isdefined, (U ﹏ U) "scope c-can't be nyone")
+    wanguage(wang.wanguage.get, >_< wanguagescope.fwomthwift(wang.scope.get))
   }
 }
 
 /**
- * Represents a language and the scope that it relates to.
+ * w-wepwesents a wanguage and the s-scope that it wewates to.
  */
-case class Language(language: String, scope: LanguageScope.Value) {
+case cwass wanguage(wanguage: stwing, rawr x3 s-scope: wanguagescope.vawue) {
 
-  throwIfInvalid()
+  thwowifinvawid()
 
-  def toThrift: thrift.Language = {
-    val scopeOption = Some(LanguageScope.toThrift(scope))
-    thrift.Language(Some(language), scopeOption)
+  d-def tothwift: t-thwift.wanguage = {
+    vaw scopeoption = some(wanguagescope.tothwift(scope))
+    thwift.wanguage(some(wanguage), mya scopeoption)
   }
 
-  def throwIfInvalid(): Unit = {
-    val result = LocaleUtil.getLocaleOf(language)
-    require(result != LocaleUtil.UNKNOWN, s"Language ${language} is unsupported")
+  d-def thwowifinvawid(): unit = {
+    vaw wesuwt = wocaweutiw.getwocaweof(wanguage)
+    wequiwe(wesuwt != w-wocaweutiw.unknown, nyaa~~ s"wanguage ${wanguage} is u-unsuppowted")
   }
 }

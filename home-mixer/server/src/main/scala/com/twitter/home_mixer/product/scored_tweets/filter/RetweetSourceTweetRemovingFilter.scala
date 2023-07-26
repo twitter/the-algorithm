@@ -1,40 +1,40 @@
-package com.twitter.home_mixer.product.scored_tweets.filter
+package com.twittew.home_mixew.pwoduct.scowed_tweets.fiwtew
 
-import com.twitter.home_mixer.model.HomeFeatures.EarlybirdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.util.ReplyRetweetUtil
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.eawwybiwdfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.inwepwytotweetidfeatuwe
+i-impowt com.twittew.home_mixew.utiw.wepwywetweetutiw
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.stitch.stitch
 
 /**
- * This filter removes source tweets of retweets, added via second EB call in TLR
+ * this fiwtew wemoves s-souwce tweets of wetweets, 🥺 added via second eb caww in tww
  */
-object RetweetSourceTweetRemovingFilter extends Filter[PipelineQuery, TweetCandidate] {
+o-object wetweetsouwcetweetwemovingfiwtew extends f-fiwtew[pipewinequewy, mya t-tweetcandidate] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("RetweetSourceTweetRemoving")
+  ovewwide vaw identifiew: fiwtewidentifiew = fiwtewidentifiew("wetweetsouwcetweetwemoving")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
-    val (kept, removed) =
-      candidates.partition(
-        _.features.getOrElse(EarlybirdFeature, None).exists(_.isSourceTweet)) match {
-        case (sourceTweets, nonSourceTweets) =>
-          val inReplyToTweetIds: Set[Long] =
-            nonSourceTweets
-              .filter(ReplyRetweetUtil.isEligibleReply(_)).flatMap(
-                _.features.getOrElse(InReplyToTweetIdFeature, None)).toSet
-          val (keptSourceTweets, removedSourceTweets) = sourceTweets
+  ovewwide def appwy(
+    q-quewy: pipewinequewy, 🥺
+    candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): stitch[fiwtewwesuwt[tweetcandidate]] = {
+    vaw (kept, >_< wemoved) =
+      c-candidates.pawtition(
+        _.featuwes.getowewse(eawwybiwdfeatuwe, >_< nyone).exists(_.issouwcetweet)) m-match {
+        c-case (souwcetweets, (⑅˘꒳˘) nyonsouwcetweets) =>
+          v-vaw i-inwepwytotweetids: set[wong] =
+            nyonsouwcetweets
+              .fiwtew(wepwywetweetutiw.isewigibwewepwy(_)).fwatmap(
+                _.featuwes.getowewse(inwepwytotweetidfeatuwe, /(^•ω•^) n-nyone)).toset
+          vaw (keptsouwcetweets, rawr x3 wemovedsouwcetweets) = souwcetweets
             .map(_.candidate)
-            .partition(candidate => inReplyToTweetIds.contains(candidate.id))
-          (nonSourceTweets.map(_.candidate) ++ keptSourceTweets, removedSourceTweets)
+            .pawtition(candidate => i-inwepwytotweetids.contains(candidate.id))
+          (nonsouwcetweets.map(_.candidate) ++ keptsouwcetweets, (U ﹏ U) wemovedsouwcetweets)
       }
-    Stitch.value(FilterResult(kept = kept, removed = removed))
+    stitch.vawue(fiwtewwesuwt(kept = kept, (U ﹏ U) wemoved = wemoved))
   }
 }

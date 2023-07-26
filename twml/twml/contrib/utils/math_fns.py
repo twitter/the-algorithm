@@ -1,171 +1,171 @@
-import tensorflow.compat.v1 as tf
-from tensorflow.python.ops import array_ops, math_ops
+impowt tensowfwow.compat.v1 as tf
+f-fwom tensowfwow.python.ops i-impowt a-awway_ops, nyaa~~ math_ops
 
 
-# Copied from metrics_impl.py
-# https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/ops/metrics_impl.py#L216
-def safe_div(numerator, denominator, name=None):
+# c-copied f-fwom metwics_impw.py
+# h-https://github.com/tensowfwow/tensowfwow/bwob/mastew/tensowfwow/python/ops/metwics_impw.py#w216
+d-def safe_div(numewatow, ^^ d-denominatow, >w< nyame=none):
   """
-  Example usage: calculating NDCG = DCG / IDCG to handle cases when
-  IDCG = 0 returns 0 instead of Infinity 
-  Do not use this dividing funciton unless it makes sense to your problem
-  Divides two tensors element-wise, returns 0 if the denominator is <= 0.
-  Args:
-    numerator: a real `Tensor`.
-    denominator: a real `Tensor`, with dtype matching `numerator`.
-    name: Name for the returned op.
-  Returns:
-    0 if `denominator` <= 0, else `numerator` / `denominator`
+  exampwe usage: cawcuwating nydcg = dcg / idcg to handwe cases w-when
+  idcg = 0 wetuwns 0 instead of infinity 
+  d-do nyot use this dividing funciton u-unwess it makes sense to youw pwobwem
+  divides two tensows e-ewement-wise, OwO wetuwns 0 if the d-denominatow is <= 0. XD
+  a-awgs:
+    nyumewatow: a weaw `tensow`. ^^;;
+    denominatow: a weaw `tensow`, 🥺 with dtype matching `numewatow`. XD
+    n-nyame: nyame fow the wetuwned op. (U ᵕ U❁)
+  wetuwns:
+    0 if `denominatow` <= 0, :3 ewse `numewatow` / `denominatow`
   """
-  t = math_ops.truediv(numerator, denominator)
-  zero = array_ops.zeros_like(t, dtype=denominator.dtype)
-  condition = math_ops.greater(denominator, zero)
-  zero = math_ops.cast(zero, t.dtype)
-  return array_ops.where(condition, t, zero, name=name)
+  t = math_ops.twuediv(numewatow, ( ͡o ω ͡o ) d-denominatow)
+  zewo = awway_ops.zewos_wike(t, òωó d-dtype=denominatow.dtype)
+  c-condition = math_ops.gweatew(denominatow, σωσ z-zewo)
+  z-zewo = math_ops.cast(zewo, (U ᵕ U❁) t.dtype)
+  wetuwn a-awway_ops.whewe(condition, (✿oωo) t, zewo, nyame=name)
 
 
-def cal_ndcg(label_scores, predicted_scores, top_k_int=1):
+d-def caw_ndcg(wabew_scowes, ^^ pwedicted_scowes, ^•ﻌ•^ top_k_int=1):
   """
-  Calculate NDCG score for top_k_int ranking positions
-  Args:
-    label_scores: a real `Tensor`.
-    predicted_scores: a real `Tensor`, with dtype matching label_scores
-    top_k_int: An int or an int `Tensor`.
-  Returns:
-    a `Tensor` that holds DCG / IDCG.
+  cawcuwate nydcg scowe fow top_k_int wanking positions
+  awgs:
+    w-wabew_scowes: a weaw `tensow`. XD
+    p-pwedicted_scowes: a-a weaw `tensow`, :3 w-with dtype matching wabew_scowes
+    top_k_int: an i-int ow an int `tensow`. (ꈍᴗꈍ)
+  w-wetuwns:
+    a `tensow` t-that howds dcg / i-idcg. :3
   """
-  sorted_labels, predicted_order = _get_ranking_orders(
-    label_scores, predicted_scores, top_k_int=top_k_int)
+  sowted_wabews, (U ﹏ U) p-pwedicted_owdew = _get_wanking_owdews(
+    wabew_scowes, UwU p-pwedicted_scowes, 😳😳😳 top_k_int=top_k_int)
 
-  predicted_relevance = _get_relevance_scores(predicted_order)
-  sorted_relevance = _get_relevance_scores(sorted_labels)
+  pwedicted_wewevance = _get_wewevance_scowes(pwedicted_owdew)
+  s-sowted_wewevance = _get_wewevance_scowes(sowted_wabews)
 
   cg_discount = _get_cg_discount(top_k_int)
 
-  dcg = _dcg_idcg(predicted_relevance, cg_discount)
-  idcg = _dcg_idcg(sorted_relevance, cg_discount)
-  # the ndcg score of the batch
-  # idcg is 0 if label_scores are all 0
-  ndcg = safe_div(dcg, idcg, 'one_ndcg')
-  return ndcg
+  d-dcg = _dcg_idcg(pwedicted_wewevance, XD cg_discount)
+  idcg = _dcg_idcg(sowted_wewevance, o.O c-cg_discount)
+  # t-the nydcg scowe of the batch
+  # idcg is 0 if wabew_scowes awe aww 0
+  nydcg = safe_div(dcg, (⑅˘꒳˘) idcg, 'one_ndcg')
+  wetuwn nydcg
 
 
-def cal_swapped_ndcg(label_scores, predicted_scores, top_k_int):
+d-def caw_swapped_ndcg(wabew_scowes, 😳😳😳 p-pwedicted_scowes, nyaa~~ top_k_int):
   """
-  Calculate swapped NDCG score in Lambda Rank for full/top k ranking positions
-  Args:
-    label_scores: a real `Tensor`.
-    predicted_scores: a real `Tensor`, with dtype matching label_scores
-    top_k_int: An int or an int `Tensor`. 
-  Returns:
-    a `Tensor` that holds swapped NDCG by .
+  c-cawcuwate s-swapped nydcg s-scowe in wambda wank fow fuww/top k wanking positions
+  awgs:
+    w-wabew_scowes: a weaw `tensow`. rawr
+    pwedicted_scowes: a weaw `tensow`, -.- with d-dtype matching wabew_scowes
+    top_k_int: an int o-ow an int `tensow`. (✿oωo) 
+  w-wetuwns:
+    a-a `tensow` that howds swapped n-nydcg by . /(^•ω•^)
   """
-  sorted_labels, predicted_order = _get_ranking_orders(
-    label_scores, predicted_scores, top_k_int=top_k_int)
+  s-sowted_wabews, 🥺 p-pwedicted_owdew = _get_wanking_owdews(
+    w-wabew_scowes, ʘwʘ pwedicted_scowes, UwU top_k_int=top_k_int)
 
-  predicted_relevance = _get_relevance_scores(predicted_order)
-  sorted_relevance = _get_relevance_scores(sorted_labels)
+  pwedicted_wewevance = _get_wewevance_scowes(pwedicted_owdew)
+  s-sowted_wewevance = _get_wewevance_scowes(sowted_wabews)
 
-  cg_discount = _get_cg_discount(top_k_int)
+  c-cg_discount = _get_cg_discount(top_k_int)
 
-  # cg_discount is safe as a denominator
-  dcg_k = predicted_relevance / cg_discount
-  dcg = tf.reduce_sum(dcg_k)
+  # c-cg_discount is s-safe as a denominatow
+  d-dcg_k = pwedicted_wewevance / cg_discount
+  dcg = tf.weduce_sum(dcg_k)
 
-  idcg_k = sorted_relevance / cg_discount
-  idcg = tf.reduce_sum(idcg_k)
+  i-idcg_k = sowted_wewevance / cg_discount
+  idcg = tf.weduce_sum(idcg_k)
 
-  ndcg = safe_div(dcg, idcg, 'ndcg_in_lambdarank_training')
+  nydcg = safe_div(dcg, XD idcg, 'ndcg_in_wambdawank_twaining')
 
-  # remove the gain from label i then add the gain from label j
-  tiled_ij = tf.tile(dcg_k, [1, top_k_int])
-  new_ij = (predicted_relevance / tf.transpose(cg_discount))
+  # w-wemove the gain fwom wabew i then add the gain fwom w-wabew j
+  tiwed_ij = t-tf.tiwe(dcg_k, (✿oωo) [1, t-top_k_int])
+  nyew_ij = (pwedicted_wewevance / t-tf.twanspose(cg_discount))
 
-  tiled_ji = tf.tile(tf.transpose(dcg_k), [top_k_int, 1])
-  new_ji = tf.transpose(predicted_relevance) / cg_discount
+  tiwed_ji = t-tf.tiwe(tf.twanspose(dcg_k), :3 [top_k_int, (///ˬ///✿) 1])
+  n-nyew_ji = tf.twanspose(pwedicted_wewevance) / cg_discount
 
-  # if swap i and j, remove the stale cg for i, then add the new cg for i,
-  # remove the stale cg for j, and then add the new cg for j
-  new_dcg = dcg - tiled_ij + new_ij - tiled_ji + new_ji
+  # if swap i and j, nyaa~~ wemove the stawe cg fow i, >w< then add the nyew cg f-fow i, -.-
+  # wemove the stawe cg fow j-j, (✿oωo) and then add the nyew cg fow j-j
+  nyew_dcg = d-dcg - tiwed_ij + nyew_ij - tiwed_ji + nyew_ji
 
-  new_ndcg = safe_div(new_dcg, idcg, 'new_ndcg_in_lambdarank_training')
-  swapped_ndcg = tf.abs(ndcg - new_ndcg)
-  return swapped_ndcg
+  n-nyew_ndcg = safe_div(new_dcg, (˘ω˘) i-idcg, rawr 'new_ndcg_in_wambdawank_twaining')
+  swapped_ndcg = t-tf.abs(ndcg - n-nyew_ndcg)
+  wetuwn swapped_ndcg
 
 
-def _dcg_idcg(relevance_scores, cg_discount):
+def _dcg_idcg(wewevance_scowes, OwO cg_discount):
   """
-  Calculate DCG scores for top_k_int ranking positions
-  Args:
-    relevance_scores: a real `Tensor`.
-    cg_discount: a real `Tensor`, with dtype matching relevance_scores
-  Returns:
-    a `Tensor` that holds \\sum_{i=1}^k \frac{relevance_scores_k}{cg_discount}  
+  cawcuwate dcg s-scowes fow top_k_int w-wanking positions
+  a-awgs:
+    wewevance_scowes: a-a weaw `tensow`. ^•ﻌ•^
+    c-cg_discount: a weaw `tensow`, w-with dtype matching wewevance_scowes
+  wetuwns:
+    a `tensow` that howds \\sum_{i=1}^k \fwac{wewevance_scowes_k}{cg_discount}  
   """
-  # cg_discount is safe
-  dcg_k = relevance_scores / cg_discount
-  return tf.reduce_sum(dcg_k)
+  # cg_discount is s-safe
+  dcg_k = w-wewevance_scowes / cg_discount
+  wetuwn tf.weduce_sum(dcg_k)
 
 
-def _get_ranking_orders(label_scores, predicted_scores, top_k_int=1):
+d-def _get_wanking_owdews(wabew_scowes, UwU p-pwedicted_scowes, (˘ω˘) top_k_int=1):
   """
-  Calculate DCG scores for top_k_int ranking positions
-  Args:
-    label_scores: a real `Tensor`.
-    predicted_scores: a real `Tensor`, with dtype matching label_scores
-    top_k_int: an integer or an int `Tensor`.
-  Returns:
-    two `Tensors` that hold sorted_labels: the ground truth relevance socres
-    and predicted_order: relevance socres based on sorted predicted_scores
+  cawcuwate dcg scowes f-fow top_k_int wanking positions
+  awgs:
+    wabew_scowes: a weaw `tensow`. (///ˬ///✿)
+    pwedicted_scowes: a-a weaw `tensow`, σωσ with dtype matching wabew_scowes
+    t-top_k_int: a-an integew ow an int `tensow`. /(^•ω•^)
+  wetuwns:
+    two `tensows` t-that howd sowted_wabews: t-the gwound twuth wewevance socwes
+    and pwedicted_owdew: w-wewevance socwes based on sowted p-pwedicted_scowes
   """
-  # sort predictions_scores and label_scores
-  # size [batch_size/num of DataRecords, 1]
-  label_scores = tf.reshape(label_scores, [-1, 1])
-  predicted_scores = tf.reshape(predicted_scores, [-1, 1])
-  # sorted_labels contians the relevance scores of the correct order
-  sorted_labels, ordered_labels_indices = tf.nn.top_k(
-    tf.transpose(label_scores), k=top_k_int)
-  sorted_labels = tf.transpose(sorted_labels)
-  # sort predicitons and use the indices to obtain the relevance scores of the predicted order
-  sorted_predictions, ordered_predictions_indices = tf.nn.top_k(
-    tf.transpose(predicted_scores), k=top_k_int)
-  ordered_predictions_indices_for_labels = tf.transpose(ordered_predictions_indices)
-  # predicted_order contians the relevance scores of the predicted order
-  predicted_order = tf.gather_nd(label_scores, ordered_predictions_indices_for_labels)
-  return sorted_labels, predicted_order
+  # sowt pwedictions_scowes and wabew_scowes
+  # size [batch_size/num o-of datawecowds, 😳 1]
+  wabew_scowes = t-tf.weshape(wabew_scowes, 😳 [-1, 1])
+  p-pwedicted_scowes = tf.weshape(pwedicted_scowes, (⑅˘꒳˘) [-1, 1])
+  # s-sowted_wabews contians the w-wewevance scowes o-of the cowwect o-owdew
+  sowted_wabews, 😳😳😳 owdewed_wabews_indices = t-tf.nn.top_k(
+    t-tf.twanspose(wabew_scowes), 😳 k=top_k_int)
+  sowted_wabews = tf.twanspose(sowted_wabews)
+  # sowt pwedicitons a-and use the indices t-to obtain the w-wewevance scowes of the pwedicted owdew
+  sowted_pwedictions, XD o-owdewed_pwedictions_indices = tf.nn.top_k(
+    tf.twanspose(pwedicted_scowes), mya k=top_k_int)
+  o-owdewed_pwedictions_indices_fow_wabews = t-tf.twanspose(owdewed_pwedictions_indices)
+  # pwedicted_owdew contians the wewevance scowes o-of the pwedicted o-owdew
+  pwedicted_owdew = t-tf.gathew_nd(wabew_scowes, ^•ﻌ•^ o-owdewed_pwedictions_indices_fow_wabews)
+  wetuwn sowted_wabews, ʘwʘ p-pwedicted_owdew
 
 
 def _get_cg_discount(top_k_int=1):
-  r"""
-  Calculate discounted gain factor for ranking position till top_k_int
-  Args:
-    top_k_int: An int or an int `Tensor`.
-  Returns:
-    a `Tensor` that holds \log_{2}(i + 1), i \in [1, k] 
+  w"""
+  cawcuwate discounted gain factow fow wanking position tiww t-top_k_int
+  awgs:
+    top_k_int: a-an int ow an int `tensow`. ( ͡o ω ͡o )
+  w-wetuwns:
+    a `tensow` that howds \wog_{2}(i + 1), mya i-i \in [1, k] 
   """
-  log_2 = tf.log(tf.constant(2.0, dtype=tf.float32))
-  # top_k_range needs to start from 1 to top_k_int
-  top_k_range = tf.range(top_k_int) + 1
-  top_k_range = tf.reshape(top_k_range, [-1, 1])
-  # cast top_k_range to float
-  top_k_range = tf.cast(top_k_range, dtype=tf.float32)
-  cg_discount = tf.log(top_k_range + 1.0) / log_2
-  return cg_discount
+  wog_2 = t-tf.wog(tf.constant(2.0, o.O d-dtype=tf.fwoat32))
+  # t-top_k_wange nyeeds t-to stawt fwom 1 t-to top_k_int
+  top_k_wange = tf.wange(top_k_int) + 1
+  top_k_wange = tf.weshape(top_k_wange, (✿oωo) [-1, :3 1])
+  # cast top_k_wange to f-fwoat
+  top_k_wange = t-tf.cast(top_k_wange, 😳 d-dtype=tf.fwoat32)
+  cg_discount = tf.wog(top_k_wange + 1.0) / w-wog_2
+  wetuwn cg_discount
 
 
-def _get_relevance_scores(scores):
-  return 2 ** scores - 1
+def _get_wewevance_scowes(scowes):
+  wetuwn 2 ** s-scowes - 1
 
 
-def safe_log(raw_scores, name=None):
+d-def safe_wog(waw_scowes, (U ﹏ U) nyame=none):
   """
-  Calculate log of a tensor, handling cases that
-  raw_scores are close to 0s
-  Args:
-    raw_scores: An float `Tensor`.
-  Returns:
-    A float `Tensor` that hols the safe log base e of input
+  cawcuwate wog o-of a tensow, mya handwing cases that
+  waw_scowes a-awe cwose to 0s
+  a-awgs:
+    waw_scowes: an fwoat `tensow`. (U ᵕ U❁)
+  w-wetuwns:
+    a-a fwoat `tensow` that hows the safe wog base e of input
   """
-  epsilon = 1E-8
-  clipped_raw_scores = tf.maximum(raw_scores, epsilon)
-  return tf.log(clipped_raw_scores)
+  epsiwon = 1e-8
+  c-cwipped_waw_scowes = t-tf.maximum(waw_scowes, :3 e-epsiwon)
+  w-wetuwn tf.wog(cwipped_waw_scowes)

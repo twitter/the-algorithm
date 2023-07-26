@@ -1,165 +1,165 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations
+package com.twittew.simcwustews_v2.scawding.topic_wecommendations
 
-import com.twitter.bijection.Bufferable
-import com.twitter.bijection.Injection
-import com.twitter.recos.entities.thriftscala.SemanticCoreEntity
-import com.twitter.recos.entities.thriftscala.SemanticCoreEntityScoreList
-import com.twitter.recos.entities.thriftscala.SemanticEntityScore
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding.Execution
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.Proc2Atla
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.SemanticCoreEntityId
-import com.twitter.simclusters_v2.hdfs_sources.GeopopularTopTweetImpressedTopicsScalaDataset
-import com.twitter.timelines.per_topic_metrics.thriftscala.PerTopicAggregateEngagementMetric
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
-import timelines.data_processing.jobs.metrics.per_topic_metrics.PerTopicAggregateEngagementScalaDataset
+impowt com.twittew.bijection.buffewabwe
+i-impowt c-com.twittew.bijection.injection
+i-impowt com.twittew.wecos.entities.thwiftscawa.semanticcoweentity
+i-impowt com.twittew.wecos.entities.thwiftscawa.semanticcoweentityscowewist
+i-impowt c-com.twittew.wecos.entities.thwiftscawa.semanticentityscowe
+i-impowt c-com.twittew.scawding.commons.souwce.vewsionedkeyvawsouwce
+impowt com.twittew.scawding.execution
+impowt com.twittew.scawding._
+impowt com.twittew.scawding_intewnaw.dawv2.daw
+impowt com.twittew.scawding_intewnaw.dawv2.dawwwite._
+i-impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.expwicitwocation
+impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.pwoc2atwa
+impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+i-impowt com.twittew.simcwustews_v2.common.semanticcoweentityid
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.geopopuwawtoptweetimpwessedtopicsscawadataset
+impowt com.twittew.timewines.pew_topic_metwics.thwiftscawa.pewtopicaggwegateengagementmetwic
+impowt com.twittew.wtf.scawding.jobs.common.adhocexecutionapp
+i-impowt com.twittew.wtf.scawding.jobs.common.scheduwedexecutionapp
+impowt java.utiw.timezone
+i-impowt t-timewines.data_pwocessing.jobs.metwics.pew_topic_metwics.pewtopicaggwegateengagementscawadataset
 
 /**
- scalding remote run \
- --target src/scala/com/twitter/simclusters_v2/scalding/topic_recommendations:geopopular_top_tweets_impressed_topics_adhoc \
- --main-class com.twitter.simclusters_v2.scalding.topic_recommendations.GeoPopularTopicsAdhocApp \
- --submitter  hadoopnest1.atla.twitter.com --user recos-platform \
+ scawding wemote wun \
+ --tawget swc/scawa/com/twittew/simcwustews_v2/scawding/topic_wecommendations:geopopuwaw_top_tweets_impwessed_topics_adhoc \
+ --main-cwass com.twittew.simcwustews_v2.scawding.topic_wecommendations.geopopuwawtopicsadhocapp \
+ --submittew  hadoopnest1.atwa.twittew.com --usew w-wecos-pwatfowm \
  -- \
- --date 2020-03-28 --output_dir /user/recos-platform/adhoc/your_ldap/topics_country_counts
+ --date 2020-03-28 --output_diw /usew/wecos-pwatfowm/adhoc/youw_wdap/topics_countwy_counts
  */
-object GeoPopularTopicsAdhocApp extends AdhocExecutionApp {
-  override def runOnDateRange(
-    args: Args
+object geopopuwawtopicsadhocapp extends adhocexecutionapp {
+  o-ovewwide def wunondatewange(
+    a-awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val maxTopicsPerCountry = args.int("maxTopics", 2000)
-    val typedTsv = args.boolean("tsv")
-    implicit val inj: Injection[List[(SemanticCoreEntityId, Double)], Array[Byte]] =
-      Bufferable.injectionOf[List[(SemanticCoreEntityId, Double)]]
+    i-impwicit d-datewange: d-datewange, (⑅˘꒳˘)
+    timezone: timezone, XD
+    uniqueid: u-uniqueid
+  ): execution[unit] = {
+    vaw maxtopicspewcountwy = awgs.int("maxtopics", -.- 2000)
+    v-vaw typedtsv = awgs.boowean("tsv")
+    impwicit vaw inj: injection[wist[(semanticcoweentityid, :3 doubwe)], nyaa~~ awway[byte]] =
+      buffewabwe.injectionof[wist[(semanticcoweentityid, 😳 doubwe)]]
 
-    val perTopicEngagementLogData = DAL
-      .read(PerTopicAggregateEngagementScalaDataset, dateRange.prepend(Days(7)))
-      .toTypedPipe
-    val topicsWithEngagement =
-      GeoPopularTopicsApp
-        .getPopularTopicsFromLogs(perTopicEngagementLogData, maxTopicsPerCountry)
-        .mapValues(_.toList)
+    v-vaw pewtopicengagementwogdata = daw
+      .wead(pewtopicaggwegateengagementscawadataset, (⑅˘꒳˘) d-datewange.pwepend(days(7)))
+      .totypedpipe
+    v-vaw t-topicswithengagement =
+      geopopuwawtopicsapp
+        .getpopuwawtopicsfwomwogs(pewtopicengagementwogdata, nyaa~~ maxtopicspewcountwy)
+        .mapvawues(_.towist)
 
-    if (typedTsv) {
-      topicsWithEngagement.writeExecution(
-        TypedTsv(args("/user/recos-platform/adhoc/your_ldap/topics_country_counts_tsv"))
+    if (typedtsv) {
+      topicswithengagement.wwiteexecution(
+        t-typedtsv(awgs("/usew/wecos-pwatfowm/adhoc/youw_wdap/topics_countwy_counts_tsv"))
       )
-    } else {
-      topicsWithEngagement.writeExecution(
-        VersionedKeyValSource[String, List[(SemanticCoreEntityId, Double)]](args("output_dir"))
+    } e-ewse {
+      topicswithengagement.wwiteexecution(
+        v-vewsionedkeyvawsouwce[stwing, OwO w-wist[(semanticcoweentityid, rawr x3 doubwe)]](awgs("output_diw"))
       )
     }
   }
 }
 
 /**
- capesospy-v2 update --build_locally \
- --start_cron popular_topics_per_country \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+ c-capesospy-v2 update --buiwd_wocawwy \
+ --stawt_cwon p-popuwaw_topics_pew_countwy \
+ swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc3.yamw
  */
-object GeoPopularTopicsBatchApp extends ScheduledExecutionApp {
-  override val firstTime: RichDate = RichDate("2020-04-06")
+object g-geopopuwawtopicsbatchapp extends s-scheduwedexecutionapp {
+  ovewwide vaw fiwsttime: w-wichdate = w-wichdate("2020-04-06")
 
-  override val batchIncrement: Duration = Days(1)
+  ovewwide vaw batchincwement: duwation = days(1)
 
-  override def runOnDateRange(
-    args: Args
+  ovewwide def wunondatewange(
+    awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val maxTopicsPerCountry = args.int("maxTopics", 2000)
+    i-impwicit datewange: d-datewange,
+    timezone: t-timezone, XD
+    u-uniqueid: uniqueid
+  ): e-execution[unit] = {
+    vaw maxtopicspewcountwy = awgs.int("maxtopics", σωσ 2000)
 
-    val geoPopularTopicsPath: String =
-      "/user/cassowary/manhattan_sequence_files/geo_popular_top_tweet_impressed_topics"
+    vaw geopopuwawtopicspath: s-stwing =
+      "/usew/cassowawy/manhattan_sequence_fiwes/geo_popuwaw_top_tweet_impwessed_topics"
 
-    // Read engagement logs from the past 7 days
-    val perTopicEngagementLogData = DAL
-      .read(PerTopicAggregateEngagementScalaDataset, dateRange.prepend(Days(7)))
-      .withRemoteReadPolicy(ExplicitLocation(Proc2Atla))
-      .toTypedPipe
+    // wead engagement wogs fwom the past 7 days
+    vaw p-pewtopicengagementwogdata = daw
+      .wead(pewtopicaggwegateengagementscawadataset, (U ᵕ U❁) d-datewange.pwepend(days(7)))
+      .withwemoteweadpowicy(expwicitwocation(pwoc2atwa))
+      .totypedpipe
 
-    val topicsWithScores =
-      GeoPopularTopicsApp.getPopularTopicsFromLogs(perTopicEngagementLogData, maxTopicsPerCountry)
+    v-vaw topicswithscowes =
+      geopopuwawtopicsapp.getpopuwawtopicsfwomwogs(pewtopicengagementwogdata, (U ﹏ U) m-maxtopicspewcountwy)
 
-    val topicsWithEntityScores = topicsWithScores
-      .mapValues(_.map {
-        case (topicid, topicScore) =>
-          SemanticEntityScore(SemanticCoreEntity(entityId = topicid), topicScore)
+    vaw topicswithentityscowes = t-topicswithscowes
+      .mapvawues(_.map {
+        c-case (topicid, :3 topicscowe) =>
+          s-semanticentityscowe(semanticcoweentity(entityid = t-topicid), ( ͡o ω ͡o ) topicscowe)
       })
-      .mapValues(SemanticCoreEntityScoreList(_))
+      .mapvawues(semanticcoweentityscowewist(_))
 
-    val writeKeyValResultExec = topicsWithEntityScores
-      .map { case (country, topics) => KeyVal(country, topics) }
-      .writeDALVersionedKeyValExecution(
-        GeopopularTopTweetImpressedTopicsScalaDataset,
-        D.Suffix(geoPopularTopicsPath)
+    vaw wwitekeyvawwesuwtexec = t-topicswithentityscowes
+      .map { case (countwy, σωσ t-topics) => k-keyvaw(countwy, >w< t-topics) }
+      .wwitedawvewsionedkeyvawexecution(
+        g-geopopuwawtoptweetimpwessedtopicsscawadataset, 😳😳😳
+        d.suffix(geopopuwawtopicspath)
       )
-    writeKeyValResultExec
+    wwitekeyvawwesuwtexec
   }
 }
 
-object GeoPopularTopicsApp {
+object geopopuwawtopicsapp {
 
-  def getPopularTopicsFromLogs(
-    engagementLogs: TypedPipe[PerTopicAggregateEngagementMetric],
-    maxTopics: Int
+  d-def getpopuwawtopicsfwomwogs(
+    engagementwogs: typedpipe[pewtopicaggwegateengagementmetwic], OwO
+    maxtopics: int
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[(String, Seq[(SemanticCoreEntityId, Double)])] = {
-    val numTopicEngagementsRead = Stat("num_topic_engagements_read")
-    val intermediate = engagementLogs
+    impwicit uniqueid: u-uniqueid
+  ): typedpipe[(stwing, 😳 seq[(semanticcoweentityid, doubwe)])] = {
+    v-vaw nyumtopicengagementswead = s-stat("num_topic_engagements_wead")
+    v-vaw intewmediate = engagementwogs
       .map {
-        case PerTopicAggregateEngagementMetric(
-              topicId,
-              dateId,
-              country,
-              page,
+        c-case pewtopicaggwegateengagementmetwic(
+              t-topicid, 😳😳😳
+              d-dateid, (˘ω˘)
+              countwy, ʘwʘ
+              page, ( ͡o ω ͡o )
               item,
-              engagementType,
-              engagementCount,
-              algorithmType,
-              annotationType) =>
-          numTopicEngagementsRead.inc()
+              engagementtype, o.O
+              engagementcount, >w<
+              a-awgowithmtype, 😳
+              annotationtype) =>
+          n-nyumtopicengagementswead.inc()
           (
-            topicId,
-            dateId,
-            country,
-            page,
-            item,
-            engagementType,
-            engagementCount,
-            algorithmType,
-            annotationType)
+            topicid, 🥺
+            d-dateid, rawr x3
+            c-countwy, o.O
+            page, rawr
+            item, ʘwʘ
+            e-engagementtype, 😳😳😳
+            e-engagementcount, ^^;;
+            awgowithmtype, o.O
+            a-annotationtype)
       }
 
-    // We want to find the topics with the most impressed tweets in each country
-    // This will ensure that the topics suggested as recommendations also have tweets that can be recommended
-    intermediate
-      .collect {
-        case (topicId, _, Some(country), _, item, engagementType, engagementCount, _, _)
-            if item == "Tweet" && engagementType == "impression" =>
-          ((country, topicId), engagementCount)
+    // w-we want to find the topics with the most impwessed tweets in each countwy
+    // t-this wiww ensuwe t-that the topics s-suggested as wecommendations a-awso have tweets t-that can be wecommended
+    i-intewmediate
+      .cowwect {
+        case (topicid, (///ˬ///✿) _, σωσ some(countwy), nyaa~~ _, item, engagementtype, ^^;; e-engagementcount, ^•ﻌ•^ _, _)
+            i-if item == "tweet" && engagementtype == "impwession" =>
+          ((countwy, σωσ topicid), -.- engagementcount)
       }
-      .sumByKey // returns country-wise engagements for topics
+      .sumbykey // w-wetuwns countwy-wise e-engagements fow topics
       .map {
-        case ((country, topicId), totalEngagementCountryCount) =>
-          (country, (topicId, totalEngagementCountryCount.toDouble))
+        case ((countwy, ^^;; topicid), XD t-totawengagementcountwycount) =>
+          (countwy, 🥺 (topicid, òωó totawengagementcountwycount.todoubwe))
       }
-      .group
-      .sortedReverseTake(maxTopics)(Ordering.by(_._2))
-      .toTypedPipe
+      .gwoup
+      .sowtedwevewsetake(maxtopics)(owdewing.by(_._2))
+      .totypedpipe
   }
 
 }

@@ -1,38 +1,38 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.twittew.fwigate.pushsewvice.modew.ntab
 
-import com.twitter.frigate.common.base.SocialContextActions
-import com.twitter.frigate.common.base.SocialContextUserDetails
-import com.twitter.frigate.common.base.TweetAuthor
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.common.base.TweetCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.take.NotificationServiceSender
-import com.twitter.notificationservice.thriftscala.DisplayTextEntity
-import com.twitter.util.Future
+impowt com.twittew.fwigate.common.base.sociawcontextactions
+impowt c-com.twittew.fwigate.common.base.sociawcontextusewdetaiws
+impowt c-com.twittew.fwigate.common.base.tweetauthow
+i-impowt com.twittew.fwigate.common.base.tweetauthowdetaiws
+i-impowt c-com.twittew.fwigate.common.base.tweetcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.take.notificationsewvicesendew
+i-impowt com.twittew.notificationsewvice.thwiftscawa.dispwaytextentity
+impowt com.twittew.utiw.futuwe
 
-trait TweetFavoriteNTabRequestHydrator extends TweetNTabRequestHydrator with NTabSocialContext {
-  self: PushCandidate
-    with TweetCandidate
-    with TweetAuthor
-    with TweetAuthorDetails
-    with SocialContextActions
-    with SocialContextUserDetails =>
+twait tweetfavowitentabwequesthydwatow extends t-tweetntabwequesthydwatow with ntabsociawcontext {
+  sewf: pushcandidate
+    w-with tweetcandidate
+    w-with tweetauthow
+    with tweetauthowdetaiws
+    with sociawcontextactions
+    with sociawcontextusewdetaiws =>
 
-  override lazy val displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] = {
-    Future
+  o-ovewwide wazy vaw dispwaytextentitiesfut: f-futuwe[seq[dispwaytextentity]] = {
+    f-futuwe
       .join(
-        NotificationServiceSender
-          .getDisplayTextEntityFromUser(tweetAuthor, "tweetAuthorName", isBold = false),
-        NotificationServiceSender
-          .generateSocialContextTextEntities(
-            rankedNtabDisplayNamesAndIds(defaultToRecency = false),
-            otherCount)
+        nyotificationsewvicesendew
+          .getdispwaytextentityfwomusew(tweetauthow, rawr x3 "tweetauthowname", mya isbowd = fawse), nyaa~~
+        nyotificationsewvicesendew
+          .genewatesociawcontexttextentities(
+            w-wankedntabdispwaynamesandids(defauwttowecency = fawse), (⑅˘꒳˘)
+            othewcount)
       )
       .map {
-        case (authorDisplay, socialContextDisplay) =>
-          socialContextDisplay ++ authorDisplay
+        case (authowdispway, rawr x3 sociawcontextdispway) =>
+          s-sociawcontextdispway ++ authowdispway
       }
   }
 
-  override lazy val facepileUsersFut: Future[Seq[Long]] = Future.value(socialContextUserIds)
+  o-ovewwide wazy vaw f-facepiweusewsfut: f-futuwe[seq[wong]] = f-futuwe.vawue(sociawcontextusewids)
 }

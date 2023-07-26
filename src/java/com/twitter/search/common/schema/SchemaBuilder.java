@@ -1,693 +1,693 @@
-package com.twitter.search.common.schema;
+package com.twittew.seawch.common.schema;
 
-import java.util.Map;
-import java.util.Set;
-import javax.annotation.Nullable;
+impowt j-java.utiw.map;
+i-impowt java.utiw.set;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
+i-impowt c-com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.immutabwewist;
+i-impowt com.googwe.common.cowwect.sets;
 
-import com.twitter.common.text.util.CharSequenceTermAttributeSerializer;
-import com.twitter.common.text.util.PositionIncrementAttributeSerializer;
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.common.text.util.TokenTypeAttributeSerializer;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.FieldNameToIdMapping;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFViewSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftFacetFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftFeatureNormalizationType;
-import com.twitter.search.common.schema.thriftjava.ThriftFeatureUpdateConstraint;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldConfiguration;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftFixedLengthCSFSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexOptions;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexedFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexedNumericFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftNumericType;
-import com.twitter.search.common.schema.thriftjava.ThriftSchema;
-import com.twitter.search.common.schema.thriftjava.ThriftSearchFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftTokenStreamSerializer;
-import com.twitter.search.common.util.analysis.CharTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.IntTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.LongTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.PayloadAttributeSerializer;
+i-impowt com.twittew.common.text.utiw.chawsequencetewmattwibutesewiawizew;
+impowt com.twittew.common.text.utiw.positionincwementattwibutesewiawizew;
+impowt com.twittew.common.text.utiw.tokenstweamsewiawizew;
+impowt c-com.twittew.common.text.utiw.tokentypeattwibutesewiawizew;
+impowt com.twittew.seawch.common.schema.base.featuweconfiguwation;
+i-impowt com.twittew.seawch.common.schema.base.fiewdnametoidmapping;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftcsffiewdsettings;
+impowt c-com.twittew.seawch.common.schema.thwiftjava.thwiftcsftype;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftcsfviewsettings;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfacetfiewdsettings;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfeatuwenowmawizationtype;
+impowt c-com.twittew.seawch.common.schema.thwiftjava.thwiftfeatuweupdateconstwaint;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfiewdconfiguwation;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfiewdsettings;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfixedwengthcsfsettings;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexoptions;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexedfiewdsettings;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexednumewicfiewdsettings;
+impowt c-com.twittew.seawch.common.schema.thwiftjava.thwiftnumewictype;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftschema;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftseawchfiewdsettings;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwifttokenstweamsewiawizew;
+i-impowt com.twittew.seawch.common.utiw.anawysis.chawtewmattwibutesewiawizew;
+i-impowt com.twittew.seawch.common.utiw.anawysis.inttewmattwibutesewiawizew;
+impowt com.twittew.seawch.common.utiw.anawysis.wongtewmattwibutesewiawizew;
+i-impowt com.twittew.seawch.common.utiw.anawysis.paywoadattwibutesewiawizew;
 
-public class SchemaBuilder {
+pubwic cwass schemabuiwdew {
 
-  public static final String CSF_VIEW_NAME_SEPARATOR = ".";
-  protected final ThriftSchema schema = new ThriftSchema();
-  protected final FieldNameToIdMapping idMapping;
-  protected final int tokenStreamSerializerVersion;
+  p-pubwic static finaw stwing csf_view_name_sepawatow = ".";
+  pwotected finaw thwiftschema schema = nyew thwiftschema();
+  pwotected f-finaw fiewdnametoidmapping idmapping;
+  pwotected f-finaw int t-tokenstweamsewiawizewvewsion;
 
-  // As of now, we do not allow two fields to share the same field name.
-  // This set is used to perform this check.
-  private final Set<String> fieldNameSet = Sets.newHashSet();
+  // a-as of nyow, σωσ we do nyot awwow two fiewds to shawe the same f-fiewd nyame. :3
+  // t-this set is used to pewfowm this c-check. rawr x3
+  pwivate f-finaw set<stwing> fiewdnameset = s-sets.newhashset();
 
   /**
-   * Construct a schema builder with the given FieldNameToIdMapper.
-   * A SchemaBuilder is used to build a ThriftSchema incrementally.
+   * constwuct a s-schema buiwdew with the given fiewdnametoidmappew. nyaa~~
+   * a schemabuiwdew i-is used to buiwd a thwiftschema i-incwementawwy. :3
    */
-  public SchemaBuilder(FieldNameToIdMapping idMapping,
-                       TokenStreamSerializer.Version tokenStreamSerializerVersion) {
-    this.idMapping = idMapping;
-    Preconditions.checkArgument(
-        tokenStreamSerializerVersion == TokenStreamSerializer.Version.VERSION_2);
-    this.tokenStreamSerializerVersion = tokenStreamSerializerVersion.ordinal();
+  pubwic schemabuiwdew(fiewdnametoidmapping i-idmapping, >w<
+                       t-tokenstweamsewiawizew.vewsion tokenstweamsewiawizewvewsion) {
+    this.idmapping = idmapping;
+    pweconditions.checkawgument(
+        tokenstweamsewiawizewvewsion == tokenstweamsewiawizew.vewsion.vewsion_2);
+    t-this.tokenstweamsewiawizewvewsion = t-tokenstweamsewiawizewvewsion.owdinaw();
   }
 
   /**
-   * Build ThriftSchema using settings accumulated so far.
+   * buiwd t-thwiftschema using s-settings accumuwated s-so faw. rawr
    */
-  public final ThriftSchema build() {
-    return schema;
+  pubwic finaw thwiftschema buiwd() {
+    w-wetuwn schema;
   }
 
   /**
-   * Uses fieldName also as facetName.
+   * uses fiewdname awso as facetname. 😳
    */
-  public final SchemaBuilder withFacetConfigs(String fieldName,
-      boolean storeSkipList,
-      boolean storeOffensiveCounters,
-      boolean useCSFForFacetCounting) {
-    return withFacetConfigs(
-        fieldName,
-        fieldName,
-        storeSkipList,
-        storeOffensiveCounters,
-        useCSFForFacetCounting);
+  pubwic finaw schemabuiwdew w-withfacetconfigs(stwing fiewdname, 😳
+      boowean s-stoweskipwist, 🥺
+      b-boowean s-stoweoffensivecountews, rawr x3
+      boowean usecsffowfacetcounting) {
+    w-wetuwn withfacetconfigs(
+        f-fiewdname, ^^
+        f-fiewdname, ( ͡o ω ͡o )
+        stoweskipwist,
+        s-stoweoffensivecountews, XD
+        usecsffowfacetcounting);
   }
 
   /**
-   * Add facet field configuration.
+   * add facet fiewd configuwation. ^^
    */
-  public final SchemaBuilder withFacetConfigs(String fieldName,
-      String facetName,
-      boolean storeSkipList,
-      boolean storeOffensiveCounters,
-      boolean useCSFForFacetCounting) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  p-pubwic finaw s-schemabuiwdew w-withfacetconfigs(stwing f-fiewdname,
+      s-stwing facetname, (⑅˘꒳˘)
+      boowean stoweskipwist, (⑅˘꒳˘)
+      boowean stoweoffensivecountews, ^•ﻌ•^
+      b-boowean usecsffowfacetcounting) {
+    if (!shouwdincwudefiewd(fiewdname)) {
+      wetuwn this;
     }
-    ThriftFacetFieldSettings facetSettings = new ThriftFacetFieldSettings();
-    // As of now, all our facet names are the same as field names
-    facetSettings.setFacetName(facetName);
-    facetSettings.setStoreSkiplist(storeSkipList);
-    facetSettings.setStoreOffensiveCounters(storeOffensiveCounters);
-    facetSettings.setUseCSFForFacetCounting(useCSFForFacetCounting);
+    thwiftfacetfiewdsettings facetsettings = nyew thwiftfacetfiewdsettings();
+    // as o-of nyow, ( ͡o ω ͡o ) aww ouw facet nyames awe the same as fiewd names
+    f-facetsettings.setfacetname(facetname);
+    f-facetsettings.setstoweskipwist(stoweskipwist);
+    f-facetsettings.setstoweoffensivecountews(stoweoffensivecountews);
+    facetsettings.setusecsffowfacetcounting(usecsffowfacetcounting);
 
-    int fieldId = idMapping.getFieldID(fieldName);
-    ThriftFieldConfiguration fieldConfiguration = schema.getFieldConfigs().get(fieldId);
-    Preconditions.checkNotNull(fieldConfiguration,
-        "In Earlybird, a facet field must be indexed. "
-            + "No ThriftIndexedFieldSettings found for field " + fieldName);
-    fieldConfiguration.getSettings().setFacetFieldSettings(facetSettings);
-    return this;
+    i-int fiewdid = idmapping.getfiewdid(fiewdname);
+    t-thwiftfiewdconfiguwation f-fiewdconfiguwation = schema.getfiewdconfigs().get(fiewdid);
+    pweconditions.checknotnuww(fiewdconfiguwation, ( ͡o ω ͡o )
+        "in eawwybiwd, (✿oωo) a facet fiewd must be indexed. 😳😳😳 "
+            + "no t-thwiftindexedfiewdsettings found fow f-fiewd " + fiewdname);
+    fiewdconfiguwation.getsettings().setfacetfiewdsettings(facetsettings);
+    w-wetuwn this;
   }
 
   /**
-   * Configure the given field ID to be used for partitioning.
+   * c-configuwe the given fiewd id to be used fow p-pawtitioning. OwO
    */
-  public final SchemaBuilder withPartitionFieldId(int partitionFieldId) {
-    schema.setPartitionFieldId(partitionFieldId);
-    return this;
+  p-pubwic finaw schemabuiwdew w-withpawtitionfiewdid(int p-pawtitionfiewdid) {
+    schema.setpawtitionfiewdid(pawtitionfiewdid);
+    wetuwn this;
   }
 
   /**
-   * Add a column stride field into schema.
+   * add a cowumn stwide fiewd into s-schema. ^^
    */
-  public final SchemaBuilder withColumnStrideField(String fieldName,
-      ThriftCSFType type,
-      int numValuesPerDoc,
-      boolean updatable,
-      boolean loadIntoRam) {
-    return withColumnStrideField(fieldName, type, numValuesPerDoc, updatable, loadIntoRam, null);
+  p-pubwic finaw schemabuiwdew w-withcowumnstwidefiewd(stwing fiewdname, rawr x3
+      t-thwiftcsftype t-type, 🥺
+      int nyumvawuespewdoc, (ˆ ﻌ ˆ)♡
+      b-boowean updatabwe, ( ͡o ω ͡o )
+      boowean woadintowam) {
+    wetuwn withcowumnstwidefiewd(fiewdname, >w< type, n-nyumvawuespewdoc, u-updatabwe, /(^•ω•^) woadintowam, 😳😳😳 nyuww);
   }
 
   /**
-   * Add a column stride field into schema that is variable length.
+   * add a cowumn s-stwide fiewd into s-schema that is vawiabwe wength. (U ᵕ U❁)
    */
-  public final SchemaBuilder withBinaryColumnStrideField(String fieldName,
-                                                         boolean loadIntoRam) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  pubwic finaw schemabuiwdew w-withbinawycowumnstwidefiewd(stwing fiewdname, (˘ω˘)
+                                                         boowean woadintowam) {
+    if (!shouwdincwudefiewd(fiewdname)) {
+      w-wetuwn this;
     }
-    ThriftCSFFieldSettings csfFieldSettings = new ThriftCSFFieldSettings();
-    csfFieldSettings.setCsfType(ThriftCSFType.BYTE)
-        .setVariableLength(true)
-        .setLoadIntoRAM(loadIntoRam);
+    thwiftcsffiewdsettings csffiewdsettings = n-nyew thwiftcsffiewdsettings();
+    c-csffiewdsettings.setcsftype(thwiftcsftype.byte)
+        .setvawiabwewength(twue)
+        .setwoadintowam(woadintowam);
 
-    ThriftFieldSettings fieldSettings =
-        new ThriftFieldSettings().setCsfFieldSettings(csfFieldSettings);
-    ThriftFieldConfiguration fieldConf =
-        new ThriftFieldConfiguration(fieldName).setSettings(fieldSettings);
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName), fieldConf);
-    return this;
+    thwiftfiewdsettings fiewdsettings =
+        nyew thwiftfiewdsettings().setcsffiewdsettings(csffiewdsettings);
+    t-thwiftfiewdconfiguwation fiewdconf =
+        n-nyew thwiftfiewdconfiguwation(fiewdname).setsettings(fiewdsettings);
+    putintofiewdconfigs(idmapping.getfiewdid(fiewdname), 😳 fiewdconf);
+    wetuwn this;
   }
 
   /**
-   * Add a column stride field into schema which has a default value.
+   * a-add a cowumn stwide f-fiewd into schema which has a defauwt vawue. (ꈍᴗꈍ)
    */
-  public final SchemaBuilder withColumnStrideField(String fieldName,
-      ThriftCSFType type,
-      int numValuesPerDoc,
-      boolean updatable,
-      boolean loadIntoRam,
-      Long defaultValue) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  pubwic finaw s-schemabuiwdew withcowumnstwidefiewd(stwing fiewdname, :3
+      t-thwiftcsftype type, /(^•ω•^)
+      i-int nyumvawuespewdoc, ^^;;
+      boowean updatabwe, o.O
+      boowean w-woadintowam, 😳
+      wong defauwtvawue) {
+    i-if (!shouwdincwudefiewd(fiewdname)) {
+      wetuwn t-this;
     }
-    ThriftCSFFieldSettings csfFieldSettings = new ThriftCSFFieldSettings();
-    csfFieldSettings.setCsfType(type)
-        .setVariableLength(false)
-        .setFixedLengthSettings(
-            new ThriftFixedLengthCSFSettings()
-                .setNumValuesPerDoc(numValuesPerDoc)
-                .setUpdateable(updatable))
-        .setLoadIntoRAM(loadIntoRam);
+    t-thwiftcsffiewdsettings csffiewdsettings = n-nyew thwiftcsffiewdsettings();
+    c-csffiewdsettings.setcsftype(type)
+        .setvawiabwewength(fawse)
+        .setfixedwengthsettings(
+            nyew thwiftfixedwengthcsfsettings()
+                .setnumvawuespewdoc(numvawuespewdoc)
+                .setupdateabwe(updatabwe))
+        .setwoadintowam(woadintowam);
 
-    if (defaultValue != null) {
-      csfFieldSettings.setDefaultValue(defaultValue);
-    }
-
-    ThriftFieldSettings fieldSettings =
-        new ThriftFieldSettings().setCsfFieldSettings(csfFieldSettings);
-    ThriftFieldConfiguration fieldConf =
-        new ThriftFieldConfiguration(fieldName).setSettings(fieldSettings);
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName), fieldConf);
-    return this;
-  }
-
-  /**
-   * Add a CSF view into schema. A view is a portion of another CSF.
-   */
-  public final SchemaBuilder withColumnStrideFieldView(
-      String fieldName,
-      ThriftCSFType csfType,
-      ThriftCSFType outputCSFType,
-      String baseFieldName,
-      int valueIndex,
-      int bitStartPosition,
-      int bitLength,
-      ThriftFeatureNormalizationType featureNormalizationType,
-      @Nullable Set<ThriftFeatureUpdateConstraint> constraints) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+    if (defauwtvawue != n-nyuww) {
+      c-csffiewdsettings.setdefauwtvawue(defauwtvawue);
     }
 
-    int baseFieldConfigID = idMapping.getFieldID(baseFieldName);
-
-    ThriftCSFViewSettings csfViewSettings = new ThriftCSFViewSettings()
-            .setBaseFieldConfigId(baseFieldConfigID)
-            .setCsfType(csfType)
-            .setValueIndex(valueIndex)
-            .setBitStartPosition(bitStartPosition)
-            .setBitLength(bitLength);
-    if (outputCSFType != null) {
-      csfViewSettings.setOutputCSFType(outputCSFType);
-    }
-    if (featureNormalizationType != ThriftFeatureNormalizationType.NONE) {
-      csfViewSettings.setNormalizationType(featureNormalizationType);
-    }
-    if (constraints != null) {
-      csfViewSettings.setFeatureUpdateConstraints(constraints);
-    }
-    ThriftFieldSettings fieldSettings = new ThriftFieldSettings()
-            .setCsfViewSettings(csfViewSettings);
-    ThriftFieldConfiguration fieldConf = new ThriftFieldConfiguration(fieldName)
-            .setSettings(fieldSettings);
-
-    Map<Integer, ThriftFieldConfiguration> fieldConfigs = schema.getFieldConfigs();
-    verifyCSFViewSettings(fieldConfigs, fieldConf);
-
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName), fieldConf);
-    return this;
+    t-thwiftfiewdsettings fiewdsettings =
+        nyew t-thwiftfiewdsettings().setcsffiewdsettings(csffiewdsettings);
+    thwiftfiewdconfiguwation f-fiewdconf =
+        n-nyew thwiftfiewdconfiguwation(fiewdname).setsettings(fiewdsettings);
+    putintofiewdconfigs(idmapping.getfiewdid(fiewdname), UwU fiewdconf);
+    wetuwn t-this;
   }
 
   /**
-   * Sanity checks for CSF view settings.
+   * a-add a c-csf view into schema. >w< a-a view is a powtion of anothew c-csf. o.O
    */
-  public static void verifyCSFViewSettings(Map<Integer, ThriftFieldConfiguration> fieldConfigs,
-      ThriftFieldConfiguration fieldConf) {
-    Preconditions.checkNotNull(fieldConf.getSettings());
-    Preconditions.checkNotNull(fieldConf.getSettings().getCsfViewSettings());
-    ThriftCSFViewSettings csfViewSettings = fieldConf.getSettings().getCsfViewSettings();
+  pubwic finaw schemabuiwdew withcowumnstwidefiewdview(
+      stwing fiewdname, (˘ω˘)
+      thwiftcsftype csftype, òωó
+      t-thwiftcsftype outputcsftype, nyaa~~
+      s-stwing basefiewdname, ( ͡o ω ͡o )
+      int vawueindex, 😳😳😳
+      i-int bitstawtposition, ^•ﻌ•^
+      int bitwength, (˘ω˘)
+      t-thwiftfeatuwenowmawizationtype featuwenowmawizationtype, (˘ω˘)
+      @nuwwabwe s-set<thwiftfeatuweupdateconstwaint> c-constwaints) {
+    i-if (!shouwdincwudefiewd(fiewdname)) {
+      w-wetuwn this;
+    }
 
-    if (fieldConfigs != null) {
-      ThriftFieldConfiguration baseFieldConfig = fieldConfigs.get(
-              csfViewSettings.getBaseFieldConfigId());
-      if (baseFieldConfig != null) {
-        String baseFieldName = baseFieldConfig.getFieldName();
-        String expectedViewNamePrefix = baseFieldName + CSF_VIEW_NAME_SEPARATOR;
-        if (fieldConf.getFieldName().startsWith(expectedViewNamePrefix)) {
-          ThriftFieldSettings baseFieldSettings = baseFieldConfig.getSettings();
-          ThriftCSFFieldSettings baseFieldCSFSettings = baseFieldSettings.getCsfFieldSettings();
+    i-int basefiewdconfigid = idmapping.getfiewdid(basefiewdname);
 
-          if (baseFieldCSFSettings != null) {
-             if (!baseFieldCSFSettings.isVariableLength()
-                 && baseFieldCSFSettings.getFixedLengthSettings() != null) {
+    thwiftcsfviewsettings csfviewsettings = nyew thwiftcsfviewsettings()
+            .setbasefiewdconfigid(basefiewdconfigid)
+            .setcsftype(csftype)
+            .setvawueindex(vawueindex)
+            .setbitstawtposition(bitstawtposition)
+            .setbitwength(bitwength);
+    if (outputcsftype != nuww) {
+      c-csfviewsettings.setoutputcsftype(outputcsftype);
+    }
+    i-if (featuwenowmawizationtype != t-thwiftfeatuwenowmawizationtype.none) {
+      csfviewsettings.setnowmawizationtype(featuwenowmawizationtype);
+    }
+    i-if (constwaints != nyuww) {
+      csfviewsettings.setfeatuweupdateconstwaints(constwaints);
+    }
+    thwiftfiewdsettings f-fiewdsettings = n-nyew thwiftfiewdsettings()
+            .setcsfviewsettings(csfviewsettings);
+    t-thwiftfiewdconfiguwation fiewdconf = nyew thwiftfiewdconfiguwation(fiewdname)
+            .setsettings(fiewdsettings);
 
-               ThriftCSFType baseCSFType = baseFieldCSFSettings.getCsfType();
-               switch (baseCSFType) {
-                 case BYTE:
-                   checkCSFViewPositions(baseFieldCSFSettings, 8, csfViewSettings);
-                   break;
-                 case INT:
-                   checkCSFViewPositions(baseFieldCSFSettings, 32, csfViewSettings);
-                   break;
-                 default:
-                   throw new IllegalStateException("Base field: " + baseFieldName
-                           + " is of a non-supported CSFType: " + baseCSFType);
+    m-map<integew, -.- t-thwiftfiewdconfiguwation> fiewdconfigs = s-schema.getfiewdconfigs();
+    v-vewifycsfviewsettings(fiewdconfigs, ^•ﻌ•^ fiewdconf);
+
+    putintofiewdconfigs(idmapping.getfiewdid(fiewdname), /(^•ω•^) fiewdconf);
+    wetuwn this;
+  }
+
+  /**
+   * s-sanity checks f-fow csf view s-settings. (///ˬ///✿)
+   */
+  p-pubwic static v-void vewifycsfviewsettings(map<integew, mya thwiftfiewdconfiguwation> f-fiewdconfigs, o.O
+      t-thwiftfiewdconfiguwation fiewdconf) {
+    pweconditions.checknotnuww(fiewdconf.getsettings());
+    p-pweconditions.checknotnuww(fiewdconf.getsettings().getcsfviewsettings());
+    t-thwiftcsfviewsettings csfviewsettings = fiewdconf.getsettings().getcsfviewsettings();
+
+    i-if (fiewdconfigs != nuww) {
+      thwiftfiewdconfiguwation b-basefiewdconfig = fiewdconfigs.get(
+              csfviewsettings.getbasefiewdconfigid());
+      if (basefiewdconfig != n-nyuww) {
+        s-stwing basefiewdname = basefiewdconfig.getfiewdname();
+        s-stwing expectedviewnamepwefix = basefiewdname + csf_view_name_sepawatow;
+        i-if (fiewdconf.getfiewdname().stawtswith(expectedviewnamepwefix)) {
+          t-thwiftfiewdsettings b-basefiewdsettings = basefiewdconfig.getsettings();
+          thwiftcsffiewdsettings basefiewdcsfsettings = b-basefiewdsettings.getcsffiewdsettings();
+
+          if (basefiewdcsfsettings != nyuww) {
+             i-if (!basefiewdcsfsettings.isvawiabwewength()
+                 && b-basefiewdcsfsettings.getfixedwengthsettings() != nyuww) {
+
+               t-thwiftcsftype basecsftype = basefiewdcsfsettings.getcsftype();
+               s-switch (basecsftype) {
+                 c-case byte:
+                   checkcsfviewpositions(basefiewdcsfsettings, ^•ﻌ•^ 8, csfviewsettings);
+                   b-bweak;
+                 case int:
+                   checkcsfviewpositions(basefiewdcsfsettings, (U ᵕ U❁) 32, :3 c-csfviewsettings);
+                   b-bweak;
+                 defauwt:
+                   t-thwow nyew iwwegawstateexception("base f-fiewd: " + basefiewdname
+                           + " i-is of a n-nyon-suppowted csftype: " + basecsftype);
                }
-             } else {
-               throw new IllegalStateException("Base field: " + baseFieldName
-                       + " must be a fixed-length CSF field");
+             } ewse {
+               thwow nyew iwwegawstateexception("base fiewd: " + basefiewdname
+                       + " must be a fixed-wength csf fiewd");
              }
-          } else {
-            throw new IllegalStateException("Base field: " + baseFieldName + " is not a CSF field");
+          } ewse {
+            thwow nyew iwwegawstateexception("base fiewd: " + basefiewdname + " i-is nyot a csf fiewd");
           }
-        } else {
-          throw new IllegalStateException("View field name for baseFieldConfigID: "
-                  + csfViewSettings.getBaseFieldConfigId() + " must start with: '"
-                  + expectedViewNamePrefix + "'");
+        } e-ewse {
+          thwow nyew iwwegawstateexception("view fiewd nyame f-fow basefiewdconfigid: "
+                  + csfviewsettings.getbasefiewdconfigid() + " m-must stawt w-with: '"
+                  + expectedviewnamepwefix + "'");
         }
-      } else {
-        throw new IllegalStateException("Can't add a view, no field defined for base fieldID: "
-                + csfViewSettings.getBaseFieldConfigId());
+      } e-ewse {
+        thwow nyew iwwegawstateexception("can't a-add a v-view, (///ˬ///✿) nyo fiewd defined fow base f-fiewdid: "
+                + csfviewsettings.getbasefiewdconfigid());
       }
-    } else {
-      throw new IllegalStateException("Can't add a view, no field configs defined.");
+    } e-ewse {
+      t-thwow nyew iwwegawstateexception("can't add a view, (///ˬ///✿) nyo fiewd c-configs defined.");
     }
   }
 
-  private static void checkCSFViewPositions(ThriftCSFFieldSettings baseFieldCSFSettings,
-      int bitsPerValue,
-      ThriftCSFViewSettings csfViewSettings) {
-    ThriftFixedLengthCSFSettings fixedLengthCSFSettings =
-            baseFieldCSFSettings.getFixedLengthSettings();
-    Preconditions.checkNotNull(fixedLengthCSFSettings);
+  p-pwivate static v-void checkcsfviewpositions(thwiftcsffiewdsettings b-basefiewdcsfsettings, 🥺
+      i-int b-bitspewvawue,
+      t-thwiftcsfviewsettings c-csfviewsettings) {
+    t-thwiftfixedwengthcsfsettings fixedwengthcsfsettings =
+            b-basefiewdcsfsettings.getfixedwengthsettings();
+    p-pweconditions.checknotnuww(fixedwengthcsfsettings);
 
-    int numValues = fixedLengthCSFSettings.getNumValuesPerDoc();
-    Preconditions.checkState(csfViewSettings.getValueIndex() >= 0,
-        "value index must be positive: " + csfViewSettings.getValueIndex());
-    Preconditions.checkState(csfViewSettings.getValueIndex() < numValues, "value index "
-        + csfViewSettings.getValueIndex() + " must be less than numValues: " + numValues);
+    i-int nyumvawues = fixedwengthcsfsettings.getnumvawuespewdoc();
+    p-pweconditions.checkstate(csfviewsettings.getvawueindex() >= 0,
+        "vawue index must be positive: " + csfviewsettings.getvawueindex());
+    p-pweconditions.checkstate(csfviewsettings.getvawueindex() < nyumvawues, -.- "vawue i-index "
+        + c-csfviewsettings.getvawueindex() + " m-must be wess than nyumvawues: " + n-nyumvawues);
 
-    Preconditions.checkState(csfViewSettings.getBitStartPosition() >= 0,
-        "bitStartPosition must be positive: " + csfViewSettings.getBitStartPosition());
-    Preconditions.checkState(csfViewSettings.getBitStartPosition() < bitsPerValue,
-        "bitStartPosition " + csfViewSettings.getBitStartPosition()
-            + " must be less than bitsPerValue " + bitsPerValue);
+    pweconditions.checkstate(csfviewsettings.getbitstawtposition() >= 0, nyaa~~
+        "bitstawtposition m-must be positive: " + c-csfviewsettings.getbitstawtposition());
+    pweconditions.checkstate(csfviewsettings.getbitstawtposition() < b-bitspewvawue, (///ˬ///✿)
+        "bitstawtposition " + csfviewsettings.getbitstawtposition()
+            + " must be wess than bitspewvawue " + bitspewvawue);
 
-    Preconditions.checkState(csfViewSettings.getBitLength() >= 1,
-        "bitLength must be positive: " + csfViewSettings.getBitLength());
+    p-pweconditions.checkstate(csfviewsettings.getbitwength() >= 1, 🥺
+        "bitwength must be positive: " + c-csfviewsettings.getbitwength());
 
-    Preconditions.checkState(
-        csfViewSettings.getBitStartPosition() + csfViewSettings.getBitLength() <= bitsPerValue,
-        String.format("bitStartPosition (%d) + bitLength (%d) must be less than bitsPerValue (%d)",
-        csfViewSettings.getBitStartPosition(), csfViewSettings.getBitLength(), bitsPerValue));
+    p-pweconditions.checkstate(
+        csfviewsettings.getbitstawtposition() + csfviewsettings.getbitwength() <= bitspewvawue, >w<
+        stwing.fowmat("bitstawtposition (%d) + b-bitwength (%d) must b-be wess than bitspewvawue (%d)", rawr x3
+        c-csfviewsettings.getbitstawtposition(), (⑅˘꒳˘) c-csfviewsettings.getbitwength(), σωσ bitspewvawue));
   }
 
-  // No position; no freq; not pretokenized; not tokenized.
+  // nyo position; n-nyo fweq; n-nyot pwetokenized; nyot tokenized. XD
   /**
-   * Norm is disabled as default. Like Lucene string field, or int/long fields.
+   * n-nyowm is disabwed as defauwt. wike wucene stwing f-fiewd, -.- ow int/wong fiewds.
    */
-  public final SchemaBuilder withIndexedNotTokenizedField(String fieldName) {
-    return withIndexedNotTokenizedField(fieldName, false);
+  p-pubwic finaw s-schemabuiwdew withindexednottokenizedfiewd(stwing f-fiewdname) {
+    wetuwn withindexednottokenizedfiewd(fiewdname, >_< f-fawse);
   }
 
   /**
-   * Add an indexed but not tokenized field. This is similar to Lucene's StringField.
+   * a-add an i-indexed but nyot t-tokenized fiewd. rawr this is simiwaw t-to wucene's s-stwingfiewd. 😳😳😳
    */
-  public final SchemaBuilder withIndexedNotTokenizedField(String fieldName,
-                                                          boolean supportOutOfOrderAppends) {
-    return withIndexedNotTokenizedField(fieldName, supportOutOfOrderAppends, true);
+  p-pubwic finaw s-schemabuiwdew w-withindexednottokenizedfiewd(stwing f-fiewdname, UwU
+                                                          b-boowean s-suppowtoutofowdewappends) {
+    wetuwn withindexednottokenizedfiewd(fiewdname, (U ﹏ U) s-suppowtoutofowdewappends, (˘ω˘) twue);
   }
 
-  private final SchemaBuilder withIndexedNotTokenizedField(String fieldName,
-                                                          boolean supportOutOfOrderAppends,
-                                                          boolean omitNorms) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  p-pwivate finaw schemabuiwdew w-withindexednottokenizedfiewd(stwing f-fiewdname, /(^•ω•^)
+                                                          b-boowean suppowtoutofowdewappends, (U ﹏ U)
+                                                          boowean omitnowms) {
+    i-if (!shouwdincwudefiewd(fiewdname)) {
+      w-wetuwn t-this;
     }
-    ThriftFieldSettings settings = getNoPositionNoFreqSettings(supportOutOfOrderAppends);
-    settings.getIndexedFieldSettings().setOmitNorms(omitNorms);
-    ThriftFieldConfiguration config = new ThriftFieldConfiguration(fieldName)
-        .setSettings(settings);
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName), config);
-    return this;
+    thwiftfiewdsettings settings = getnopositionnofweqsettings(suppowtoutofowdewappends);
+    settings.getindexedfiewdsettings().setomitnowms(omitnowms);
+    thwiftfiewdconfiguwation c-config = n-nyew thwiftfiewdconfiguwation(fiewdname)
+        .setsettings(settings);
+    putintofiewdconfigs(idmapping.getfiewdid(fiewdname), ^•ﻌ•^ c-config);
+    w-wetuwn this;
   }
 
 
-  /** Makes the given field searchable by default, with the given weight. */
-  public final SchemaBuilder withSearchFieldByDefault(
-      String fieldName, float textSearchableFieldWeight) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  /** makes the given fiewd seawchabwe by defauwt, w-with the given w-weight. >w< */
+  p-pubwic finaw schemabuiwdew w-withseawchfiewdbydefauwt(
+      stwing fiewdname, ʘwʘ fwoat t-textseawchabwefiewdweight) {
+    i-if (!shouwdincwudefiewd(fiewdname)) {
+      wetuwn this;
     }
 
-    ThriftFieldSettings settings =
-        schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
-    settings.setSearchFieldSettings(
-        new ThriftSearchFieldSettings()
-            .setTextSearchableFieldWeight(textSearchableFieldWeight)
-            .setTextDefaultSearchable(true));
+    thwiftfiewdsettings s-settings =
+        schema.getfiewdconfigs().get(idmapping.getfiewdid(fiewdname)).getsettings();
+    settings.setseawchfiewdsettings(
+        n-nyew thwiftseawchfiewdsettings()
+            .settextseawchabwefiewdweight(textseawchabwefiewdweight)
+            .settextdefauwtseawchabwe(twue));
 
-    return this;
+    w-wetuwn this;
   }
 
   /**
-   * Similar to Lucene's TextField. The string is analyzed using the default/override analyzer.
-   * @param fieldName
-   * @param addHfPairIfHfFieldsArePresent Add hfPair fields if they exists in the schema.
-   *            For certain text fields, adding hfPair fields are usually preferred, but they may
-   *            not exist in the schema, in which case the hfPair fields will not be added.
+   * s-simiwaw to wucene's textfiewd. òωó t-the stwing is anawyzed u-using the defauwt/ovewwide a-anawyzew.
+   * @pawam fiewdname
+   * @pawam a-addhfpaiwifhffiewdsawepwesent a-add h-hfpaiw fiewds if t-they exists in the schema. o.O
+   *            f-fow c-cewtain text fiewds, ( ͡o ω ͡o ) a-adding hfpaiw fiewds awe usuawwy p-pwefewwed, mya but they may
+   *            nyot e-exist in the s-schema, in which c-case the hfpaiw fiewds wiww nyot be added. >_<
    */
-  public final SchemaBuilder withTextField(String fieldName,
-                                           boolean addHfPairIfHfFieldsArePresent) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  pubwic finaw schemabuiwdew withtextfiewd(stwing f-fiewdname, rawr
+                                           boowean a-addhfpaiwifhffiewdsawepwesent) {
+    i-if (!shouwdincwudefiewd(fiewdname)) {
+      wetuwn this;
     }
-    ThriftFieldConfiguration config = new ThriftFieldConfiguration(fieldName).setSettings(
-        getDefaultSettings(ThriftIndexOptions.DOCS_AND_FREQS_AND_POSITIONS));
+    thwiftfiewdconfiguwation c-config = nyew thwiftfiewdconfiguwation(fiewdname).setsettings(
+        g-getdefauwtsettings(thwiftindexoptions.docs_and_fweqs_and_positions));
 
-    if (addHfPairIfHfFieldsArePresent) {
-      // Add hfPair fields only if they exist in the schema for the cluster
-      boolean hfPair = shouldIncludeField(ImmutableSchema.HF_TERM_PAIRS_FIELD)
-                       && shouldIncludeField(ImmutableSchema.HF_PHRASE_PAIRS_FIELD);
-      config.getSettings().getIndexedFieldSettings().setIndexHighFreqTermPairs(hfPair);
+    i-if (addhfpaiwifhffiewdsawepwesent) {
+      // a-add hfpaiw fiewds o-onwy if they e-exist in the schema fow the cwustew
+      boowean hfpaiw = shouwdincwudefiewd(immutabweschema.hf_tewm_paiws_fiewd)
+                       && shouwdincwudefiewd(immutabweschema.hf_phwase_paiws_fiewd);
+      config.getsettings().getindexedfiewdsettings().setindexhighfweqtewmpaiws(hfpaiw);
     }
 
-    config.getSettings().getIndexedFieldSettings().setTokenized(true);
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName), config);
-    return this;
+    c-config.getsettings().getindexedfiewdsettings().settokenized(twue);
+    putintofiewdconfigs(idmapping.getfiewdid(fiewdname), >_< c-config);
+    wetuwn this;
   }
 
   /**
-   * Marked the given field as having per position payload.
+   * mawked the given fiewd as having p-pew position paywoad. (U ﹏ U)
    */
-  public final SchemaBuilder withPerPositionPayload(String fieldName, int defaultPayloadLength) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  pubwic finaw schemabuiwdew withpewpositionpaywoad(stwing fiewdname, rawr i-int defauwtpaywoadwength) {
+    i-if (!shouwdincwudefiewd(fiewdname)) {
+      wetuwn this;
     }
-    ThriftFieldSettings settings =
-            schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
+    t-thwiftfiewdsettings settings =
+            schema.getfiewdconfigs().get(idmapping.getfiewdid(fiewdname)).getsettings();
 
-    settings.getIndexedFieldSettings().setStorePerPositionPayloads(true);
-    settings.getIndexedFieldSettings().setDefaultPerPositionPayloadLength(defaultPayloadLength);
-    return this;
+    s-settings.getindexedfiewdsettings().setstowepewpositionpaywoads(twue);
+    s-settings.getindexedfiewdsettings().setdefauwtpewpositionpaywoadwength(defauwtpaywoadwength);
+    wetuwn this;
   }
 
   /**
-   * Add field into schema that is pre-tokenized and does not have position.
-   * E.g. hashtags / stocks / card_domain
+   * a-add fiewd into schema t-that is pwe-tokenized and does not have position. (U ᵕ U❁)
+   * e.g. h-hashtags / stocks / cawd_domain
    */
-  public final SchemaBuilder withPretokenizedNoPositionField(String fieldName) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  pubwic finaw s-schemabuiwdew w-withpwetokenizednopositionfiewd(stwing f-fiewdname) {
+    if (!shouwdincwudefiewd(fiewdname)) {
+      wetuwn this;
     }
-    ThriftFieldConfiguration config = new ThriftFieldConfiguration(fieldName)
-        .setSettings(getPretokenizedNoPositionFieldSetting());
-    // Add hfPair fields only if they exist in the schema for the cluster
-    boolean hfPair = shouldIncludeField(ImmutableSchema.HF_TERM_PAIRS_FIELD)
-                         && shouldIncludeField(ImmutableSchema.HF_PHRASE_PAIRS_FIELD);
-    config.getSettings().getIndexedFieldSettings().setIndexHighFreqTermPairs(hfPair);
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName), config);
-    return this;
+    t-thwiftfiewdconfiguwation config = nyew thwiftfiewdconfiguwation(fiewdname)
+        .setsettings(getpwetokenizednopositionfiewdsetting());
+    // add hfpaiw fiewds onwy if they exist i-in the schema f-fow the cwustew
+    b-boowean hfpaiw = s-shouwdincwudefiewd(immutabweschema.hf_tewm_paiws_fiewd)
+                         && shouwdincwudefiewd(immutabweschema.hf_phwase_paiws_fiewd);
+    config.getsettings().getindexedfiewdsettings().setindexhighfweqtewmpaiws(hfpaiw);
+    p-putintofiewdconfigs(idmapping.getfiewdid(fiewdname), (ˆ ﻌ ˆ)♡ c-config);
+    wetuwn this;
   }
 
   /**
-   * Mark the field to have ordered term dictionary.
-   * In Lucene, term dictionary is sorted. In Earlybird, term dictionary order is not
-   * guaranteed unless this is turned on.
+   * mawk the fiewd to h-have owdewed tewm dictionawy. >_<
+   * in wucene, ^^;; tewm d-dictionawy is sowted. ʘwʘ in eawwybiwd, 😳😳😳 tewm dictionawy o-owdew is n-nyot
+   * guawanteed unwess this i-is tuwned on.
    */
-  public final SchemaBuilder withOrderedTerms(String fieldName) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  p-pubwic finaw s-schemabuiwdew withowdewedtewms(stwing fiewdname) {
+    i-if (!shouwdincwudefiewd(fiewdname)) {
+      wetuwn this;
     }
-    ThriftFieldSettings settings =
-        schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
+    thwiftfiewdsettings settings =
+        s-schema.getfiewdconfigs().get(idmapping.getfiewdid(fiewdname)).getsettings();
 
-    settings.getIndexedFieldSettings().setSupportOrderedTerms(true);
-    return this;
+    settings.getindexedfiewdsettings().setsuppowtowdewedtewms(twue);
+    wetuwn this;
   }
 
   /**
-   * Support lookup of term text by term id in the term dictionary.
+   * s-suppowt w-wookup of tewm t-text by tewm id i-in the tewm dictionawy. UwU
    */
-  public final SchemaBuilder withTermTextLookup(String fieldName) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  p-pubwic finaw schemabuiwdew withtewmtextwookup(stwing f-fiewdname) {
+    if (!shouwdincwudefiewd(fiewdname)) {
+      wetuwn this;
     }
-    ThriftFieldSettings settings =
-        schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
+    t-thwiftfiewdsettings settings =
+        s-schema.getfiewdconfigs().get(idmapping.getfiewdid(fiewdname)).getsettings();
 
-    settings.getIndexedFieldSettings().setSupportTermTextLookup(true);
-    return this;
+    settings.getindexedfiewdsettings().setsuppowttewmtextwookup(twue);
+    wetuwn t-this;
   }
 
   /**
-   * Add a text field that is pre-tokenized, so not analyzed again in the index (e.g. Earlybird).
+   * a-add a text fiewd that is p-pwe-tokenized, OwO so nyot anawyzed a-again in the index (e.g. :3 e-eawwybiwd). -.-
    *
-   * Note that the token streams MUST be created using the attributes defined in
-   * {@link com.twitter.search.common.util.text.TweetTokenStreamSerializer}.
+   * nyote that the token s-stweams must b-be cweated using the attwibutes d-defined in
+   * {@wink com.twittew.seawch.common.utiw.text.tweettokenstweamsewiawizew}. 🥺
    */
-  public final SchemaBuilder withPretokenizedTextField(
-      String fieldName,
-      boolean addHfPairIfHfFieldsArePresent) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  pubwic finaw schemabuiwdew withpwetokenizedtextfiewd(
+      s-stwing fiewdname, -.-
+      b-boowean addhfpaiwifhffiewdsawepwesent) {
+    if (!shouwdincwudefiewd(fiewdname)) {
+      wetuwn t-this;
     }
-    ThriftFieldConfiguration config = new ThriftFieldConfiguration(fieldName)
-        .setSettings(getDefaultPretokenizedSettings(
-            ThriftIndexOptions.DOCS_AND_FREQS_AND_POSITIONS));
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName), config);
-    // Add hfPair fields only if they exist in the schema for the cluster
-    if (addHfPairIfHfFieldsArePresent) {
-      // Add hfPair fields only if they exist in the schema for the cluster
-      boolean hfPair = shouldIncludeField(ImmutableSchema.HF_TERM_PAIRS_FIELD)
-                       && shouldIncludeField(ImmutableSchema.HF_PHRASE_PAIRS_FIELD);
-      config.getSettings().getIndexedFieldSettings().setIndexHighFreqTermPairs(hfPair);
+    t-thwiftfiewdconfiguwation c-config = new thwiftfiewdconfiguwation(fiewdname)
+        .setsettings(getdefauwtpwetokenizedsettings(
+            t-thwiftindexoptions.docs_and_fweqs_and_positions));
+    p-putintofiewdconfigs(idmapping.getfiewdid(fiewdname), -.- config);
+    // a-add hfpaiw fiewds onwy i-if they exist in the schema fow t-the cwustew
+    i-if (addhfpaiwifhffiewdsawepwesent) {
+      // add hfpaiw fiewds onwy if they exist in the schema fow the cwustew
+      b-boowean h-hfpaiw = shouwdincwudefiewd(immutabweschema.hf_tewm_paiws_fiewd)
+                       && shouwdincwudefiewd(immutabweschema.hf_phwase_paiws_fiewd);
+      config.getsettings().getindexedfiewdsettings().setindexhighfweqtewmpaiws(hfpaiw);
     }
-    return this;
+    wetuwn t-this;
   }
 
   /**
-   * Add a feature configuration
+   * add a featuwe c-configuwation
    */
-  public final SchemaBuilder withFeatureConfiguration(String baseFieldName, String viewName,
-                                                      FeatureConfiguration featureConfiguration) {
-    return withColumnStrideFieldView(
-        viewName,
-        // Defaulting all encoded tweet features to int since the underlying encoded tweet features
-        // are ints.
-        ThriftCSFType.INT,
-        featureConfiguration.getOutputType(),
-        baseFieldName,
-        featureConfiguration.getValueIndex(),
-        featureConfiguration.getBitStartPosition(),
-        featureConfiguration.getBitLength(),
-        featureConfiguration.getFeatureNormalizationType(),
-        featureConfiguration.getUpdateConstraints()
+  p-pubwic finaw schemabuiwdew withfeatuweconfiguwation(stwing basefiewdname, (U ﹏ U) stwing viewname, rawr
+                                                      f-featuweconfiguwation featuweconfiguwation) {
+    wetuwn w-withcowumnstwidefiewdview(
+        viewname, mya
+        // d-defauwting a-aww encoded tweet featuwes t-to int since the u-undewwying encoded t-tweet featuwes
+        // a-awe ints. ( ͡o ω ͡o )
+        t-thwiftcsftype.int, /(^•ω•^)
+        f-featuweconfiguwation.getoutputtype(), >_<
+        basefiewdname, (✿oωo)
+        featuweconfiguwation.getvawueindex(), 😳😳😳
+        featuweconfiguwation.getbitstawtposition(), (ꈍᴗꈍ)
+        featuweconfiguwation.getbitwength(), 🥺
+        featuweconfiguwation.getfeatuwenowmawizationtype(), mya
+        f-featuweconfiguwation.getupdateconstwaints()
     );
   }
 
   /**
-   * Add a long field in schema. This field uses LongTermAttribute.
+   * a-add a wong fiewd i-in schema. (ˆ ﻌ ˆ)♡ this f-fiewd uses wongtewmattwibute. (⑅˘꒳˘)
    */
-  private SchemaBuilder addLongTermField(String fieldName, boolean useSortableEncoding) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  p-pwivate schemabuiwdew a-addwongtewmfiewd(stwing fiewdname, òωó boowean usesowtabweencoding) {
+    if (!shouwdincwudefiewd(fiewdname)) {
+      wetuwn this;
     }
-    ThriftFieldSettings longTermSettings = getEarlybirdNumericFieldSettings();
-    ThriftTokenStreamSerializer tokenStreamSerializer =
-        new ThriftTokenStreamSerializer(tokenStreamSerializerVersion);
-    tokenStreamSerializer.setAttributeSerializerClassNames(
-        ImmutableList.<String>of(LongTermAttributeSerializer.class.getName()));
-    longTermSettings.getIndexedFieldSettings().setTokenStreamSerializer(tokenStreamSerializer);
+    t-thwiftfiewdsettings w-wongtewmsettings = geteawwybiwdnumewicfiewdsettings();
+    thwifttokenstweamsewiawizew tokenstweamsewiawizew =
+        n-nyew thwifttokenstweamsewiawizew(tokenstweamsewiawizewvewsion);
+    t-tokenstweamsewiawizew.setattwibutesewiawizewcwassnames(
+        i-immutabwewist.<stwing>of(wongtewmattwibutesewiawizew.cwass.getname()));
+    wongtewmsettings.getindexedfiewdsettings().settokenstweamsewiawizew(tokenstweamsewiawizew);
 
-    ThriftIndexedNumericFieldSettings numericFieldSettings =
-        new ThriftIndexedNumericFieldSettings(true);
-    numericFieldSettings.setNumericType(ThriftNumericType.LONG);
-    numericFieldSettings.setUseSortableEncoding(useSortableEncoding);
-    longTermSettings.getIndexedFieldSettings().setNumericFieldSettings(numericFieldSettings);
+    thwiftindexednumewicfiewdsettings n-nyumewicfiewdsettings =
+        nyew thwiftindexednumewicfiewdsettings(twue);
+    nyumewicfiewdsettings.setnumewictype(thwiftnumewictype.wong);
+    n-nyumewicfiewdsettings.setusesowtabweencoding(usesowtabweencoding);
+    wongtewmsettings.getindexedfiewdsettings().setnumewicfiewdsettings(numewicfiewdsettings);
 
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName),
-        new ThriftFieldConfiguration(fieldName).setSettings(longTermSettings));
-    return this;
+    p-putintofiewdconfigs(idmapping.getfiewdid(fiewdname), o.O
+        nyew thwiftfiewdconfiguwation(fiewdname).setsettings(wongtewmsettings));
+    w-wetuwn this;
   }
 
-  public final SchemaBuilder withSortableLongTermField(String fieldName) {
-    return addLongTermField(fieldName, true);
+  pubwic f-finaw schemabuiwdew w-withsowtabwewongtewmfiewd(stwing fiewdname) {
+    w-wetuwn a-addwongtewmfiewd(fiewdname, XD t-twue);
   }
 
-  public final SchemaBuilder withLongTermField(String fieldName) {
-    return addLongTermField(fieldName, false);
+  p-pubwic f-finaw schemabuiwdew w-withwongtewmfiewd(stwing fiewdname) {
+    wetuwn a-addwongtewmfiewd(fiewdname, (˘ω˘) f-fawse);
   }
 
   /**
-   * Add an int field in schema. This field uses IntTermAttribute.
+   * add an i-int fiewd in schema. (ꈍᴗꈍ) this fiewd uses inttewmattwibute. >w<
    */
-  public final SchemaBuilder withIntTermField(String fieldName) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  p-pubwic finaw schemabuiwdew withinttewmfiewd(stwing f-fiewdname) {
+    if (!shouwdincwudefiewd(fiewdname)) {
+      w-wetuwn this;
     }
-    ThriftFieldSettings intTermSettings = getEarlybirdNumericFieldSettings();
-    ThriftTokenStreamSerializer attributeSerializer =
-        new ThriftTokenStreamSerializer(tokenStreamSerializerVersion);
-    attributeSerializer.setAttributeSerializerClassNames(
-        ImmutableList.<String>of(IntTermAttributeSerializer.class.getName()));
-    intTermSettings.getIndexedFieldSettings().setTokenStreamSerializer(attributeSerializer);
+    t-thwiftfiewdsettings inttewmsettings = geteawwybiwdnumewicfiewdsettings();
+    t-thwifttokenstweamsewiawizew attwibutesewiawizew =
+        nyew thwifttokenstweamsewiawizew(tokenstweamsewiawizewvewsion);
+    a-attwibutesewiawizew.setattwibutesewiawizewcwassnames(
+        i-immutabwewist.<stwing>of(inttewmattwibutesewiawizew.cwass.getname()));
+    inttewmsettings.getindexedfiewdsettings().settokenstweamsewiawizew(attwibutesewiawizew);
 
-    ThriftIndexedNumericFieldSettings numericFieldSettings =
-        new ThriftIndexedNumericFieldSettings(true);
-    numericFieldSettings.setNumericType(ThriftNumericType.INT);
-    intTermSettings.getIndexedFieldSettings().setNumericFieldSettings(numericFieldSettings);
+    thwiftindexednumewicfiewdsettings n-nyumewicfiewdsettings =
+        n-nyew thwiftindexednumewicfiewdsettings(twue);
+    n-nyumewicfiewdsettings.setnumewictype(thwiftnumewictype.int);
+    inttewmsettings.getindexedfiewdsettings().setnumewicfiewdsettings(numewicfiewdsettings);
 
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName),
-        new ThriftFieldConfiguration(fieldName).setSettings(intTermSettings));
-    return this;
+    putintofiewdconfigs(idmapping.getfiewdid(fiewdname), XD
+        nyew thwiftfiewdconfiguwation(fiewdname).setsettings(inttewmsettings));
+    w-wetuwn this;
   }
 
   /**
-   * Timeline and ExpertSearch uses
-   * {@link com.twitter.search.common.util.analysis.PayloadWeightedTokenizer} to store weighted
-   * values.
+   * t-timewine and expewtseawch uses
+   * {@wink c-com.twittew.seawch.common.utiw.anawysis.paywoadweightedtokenizew} t-to stowe weighted
+   * vawues. -.-
    *
-   * E.g. for the PRODUCED_LANGUAGES and CONSUMED_LANGUAGES fields, they contain not a single,
-   * value, but instead a list of values with a weight associated with each value.
+   * e.g. ^^;; fow t-the pwoduced_wanguages a-and consumed_wanguages f-fiewds, XD they contain n-nyot a singwe, :3
+   * vawue, σωσ but instead a wist of vawues with a weight associated with each vawue. XD
    *
-   * This method adds an indexed field that uses
-   * {@link com.twitter.search.common.util.analysis.PayloadWeightedTokenizer}.
+   * t-this method adds a-an indexed fiewd t-that uses
+   * {@wink c-com.twittew.seawch.common.utiw.anawysis.paywoadweightedtokenizew}. :3
    */
-  public final SchemaBuilder withCharTermPayloadWeightedField(String fieldName) {
-    ThriftFieldConfiguration config = new ThriftFieldConfiguration(fieldName)
-        .setSettings(getPayloadWeightedSettings(ThriftIndexOptions.DOCS_AND_FREQS_AND_POSITIONS));
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName), config);
-    return this;
+  p-pubwic finaw s-schemabuiwdew withchawtewmpaywoadweightedfiewd(stwing fiewdname) {
+    t-thwiftfiewdconfiguwation c-config = nyew thwiftfiewdconfiguwation(fiewdname)
+        .setsettings(getpaywoadweightedsettings(thwiftindexoptions.docs_and_fweqs_and_positions));
+    putintofiewdconfigs(idmapping.getfiewdid(fiewdname), rawr config);
+    w-wetuwn t-this;
   }
 
   /**
-   * Set the version and description of this schema.
+   * set the vewsion and descwiption o-of this schema. 😳
    */
-  public final SchemaBuilder withSchemaVersion(
-      int majorVersionNumber,
-      int minorVersionNumber,
-      String versionDesc,
-      boolean isOfficial) {
-    schema.setMajorVersionNumber(majorVersionNumber);
-    schema.setMinorVersionNumber(minorVersionNumber);
+  pubwic finaw schemabuiwdew w-withschemavewsion(
+      int majowvewsionnumbew, 😳😳😳
+      i-int minowvewsionnumbew, (ꈍᴗꈍ)
+      s-stwing vewsiondesc, 🥺
+      boowean i-isofficiaw) {
+    s-schema.setmajowvewsionnumbew(majowvewsionnumbew);
+    s-schema.setminowvewsionnumbew(minowvewsionnumbew);
 
-    schema.setVersion(majorVersionNumber + ":" + versionDesc);
-    schema.setVersionIsOfficial(isOfficial);
+    schema.setvewsion(majowvewsionnumbew + ":" + vewsiondesc);
+    s-schema.setvewsionisofficiaw(isofficiaw);
 
-    return this;
+    wetuwn t-this;
   }
 
-  public final SchemaBuilder withSchemaVersion(
-      int majorVersionNumber,
-      String versionDesc,
-      boolean isOfficial) {
-    return withSchemaVersion(majorVersionNumber, 0, versionDesc, isOfficial);
+  pubwic finaw s-schemabuiwdew withschemavewsion(
+      int majowvewsionnumbew, ^•ﻌ•^
+      s-stwing vewsiondesc, XD
+      boowean i-isofficiaw) {
+    w-wetuwn withschemavewsion(majowvewsionnumbew, ^•ﻌ•^ 0, v-vewsiondesc, ^^;; isofficiaw);
   }
 
-  protected void putIntoFieldConfigs(int id, ThriftFieldConfiguration config) {
-    if (schema.getFieldConfigs() != null && schema.getFieldConfigs().containsKey(id)) {
-      throw new IllegalStateException("Already have a ThriftFieldConfiguration for field id " + id);
+  pwotected v-void putintofiewdconfigs(int id, ʘwʘ thwiftfiewdconfiguwation config) {
+    if (schema.getfiewdconfigs() != nyuww && schema.getfiewdconfigs().containskey(id)) {
+      thwow nyew i-iwwegawstateexception("awweady have a thwiftfiewdconfiguwation fow fiewd id " + id);
     }
 
-    if (fieldNameSet.contains(config.getFieldName())) {
-      throw new IllegalStateException("Already have a ThriftFieldConfiguration for field "
-          + config.getFieldName());
+    if (fiewdnameset.contains(config.getfiewdname())) {
+      thwow nyew iwwegawstateexception("awweady h-have a thwiftfiewdconfiguwation fow fiewd "
+          + config.getfiewdname());
     }
-    fieldNameSet.add(config.getFieldName());
-    schema.putToFieldConfigs(id, config);
+    f-fiewdnameset.add(config.getfiewdname());
+    schema.puttofiewdconfigs(id, OwO c-config);
   }
 
-  // Default field settings. Most field settings are similar to this.
-  protected ThriftFieldSettings getDefaultSettings(ThriftIndexOptions indexOption) {
-    return getDefaultSettings(indexOption, false);
+  // defauwt fiewd settings. 🥺 m-most fiewd settings awe simiwaw t-to this.
+  pwotected thwiftfiewdsettings g-getdefauwtsettings(thwiftindexoptions i-indexoption) {
+    wetuwn getdefauwtsettings(indexoption, (⑅˘꒳˘) fawse);
   }
 
-  protected ThriftFieldSettings getDefaultSettings(ThriftIndexOptions indexOption,
-                                                   boolean supportOutOfOrderAppends) {
-    ThriftFieldSettings fieldSettings = new ThriftFieldSettings();
-    ThriftIndexedFieldSettings indexedFieldSettings = new ThriftIndexedFieldSettings();
-    indexedFieldSettings
-        .setIndexed(true)
-        .setStored(false)
-        .setTokenized(false)
-        .setStoreTermVectors(false)
-        .setStoreTermVectorOffsets(false)
-        .setStoreTermVectorPayloads(false)
-        .setStoreTermVectorPositions(false)
-        .setSupportOutOfOrderAppends(supportOutOfOrderAppends)
-        .setIndexOptions(indexOption)
-        .setOmitNorms(true); // All Earlybird fields omit norms.
-    fieldSettings.setIndexedFieldSettings(indexedFieldSettings);
-    return fieldSettings;
+  p-pwotected thwiftfiewdsettings getdefauwtsettings(thwiftindexoptions indexoption, (///ˬ///✿)
+                                                   b-boowean suppowtoutofowdewappends) {
+    thwiftfiewdsettings f-fiewdsettings = nyew t-thwiftfiewdsettings();
+    thwiftindexedfiewdsettings i-indexedfiewdsettings = nyew t-thwiftindexedfiewdsettings();
+    indexedfiewdsettings
+        .setindexed(twue)
+        .setstowed(fawse)
+        .settokenized(fawse)
+        .setstowetewmvectows(fawse)
+        .setstowetewmvectowoffsets(fawse)
+        .setstowetewmvectowpaywoads(fawse)
+        .setstowetewmvectowpositions(fawse)
+        .setsuppowtoutofowdewappends(suppowtoutofowdewappends)
+        .setindexoptions(indexoption)
+        .setomitnowms(twue); // aww eawwybiwd f-fiewds omit nyowms. (✿oωo)
+    fiewdsettings.setindexedfiewdsettings(indexedfiewdsettings);
+    wetuwn f-fiewdsettings;
   }
 
   /**
-   * Default field settings for fields that are pretokenized
+   * defauwt fiewd settings fow fiewds that awe pwetokenized
    *
-   * The fields that use these settings will need to be tokenized using a serializer with the
-   * attributes defined in {@link com.twitter.search.common.util.text.TweetTokenStreamSerializer}.
+   * the fiewds t-that use these settings w-wiww nyeed to be tokenized u-using a sewiawizew w-with the
+   * attwibutes defined i-in {@wink com.twittew.seawch.common.utiw.text.tweettokenstweamsewiawizew}. nyaa~~
    */
-  protected final ThriftFieldSettings getDefaultPretokenizedSettings(
-      ThriftIndexOptions indexOption) {
-    ThriftFieldSettings fieldSettings = getDefaultSettings(indexOption);
-    fieldSettings.getIndexedFieldSettings().setTokenized(true);
-    ThriftTokenStreamSerializer attributeSerializer =
-        new ThriftTokenStreamSerializer(tokenStreamSerializerVersion);
-    attributeSerializer.setAttributeSerializerClassNames(
-        ImmutableList.<String>of(
-            CharSequenceTermAttributeSerializer.class.getName(),
-            PositionIncrementAttributeSerializer.class.getName(),
-            TokenTypeAttributeSerializer.class.getName()));
+  pwotected finaw thwiftfiewdsettings getdefauwtpwetokenizedsettings(
+      t-thwiftindexoptions i-indexoption) {
+    thwiftfiewdsettings f-fiewdsettings = g-getdefauwtsettings(indexoption);
+    fiewdsettings.getindexedfiewdsettings().settokenized(twue);
+    t-thwifttokenstweamsewiawizew attwibutesewiawizew =
+        nyew thwifttokenstweamsewiawizew(tokenstweamsewiawizewvewsion);
+    a-attwibutesewiawizew.setattwibutesewiawizewcwassnames(
+        immutabwewist.<stwing>of(
+            chawsequencetewmattwibutesewiawizew.cwass.getname(), >w<
+            positionincwementattwibutesewiawizew.cwass.getname(), (///ˬ///✿)
+            t-tokentypeattwibutesewiawizew.cwass.getname()));
 
-    fieldSettings.getIndexedFieldSettings().setTokenStreamSerializer(attributeSerializer);
-    return fieldSettings;
+    f-fiewdsettings.getindexedfiewdsettings().settokenstweamsewiawizew(attwibutesewiawizew);
+    wetuwn fiewdsettings;
   }
 
-  protected final ThriftFieldSettings getPretokenizedNoPositionFieldSetting() {
-    return getDefaultPretokenizedSettings(ThriftIndexOptions.DOCS_AND_FREQS);
+  pwotected finaw t-thwiftfiewdsettings getpwetokenizednopositionfiewdsetting() {
+    wetuwn getdefauwtpwetokenizedsettings(thwiftindexoptions.docs_and_fweqs);
   }
 
-  protected final ThriftFieldSettings getNoPositionNoFreqSettings() {
-    return getNoPositionNoFreqSettings(false);
+  pwotected finaw thwiftfiewdsettings getnopositionnofweqsettings() {
+    wetuwn getnopositionnofweqsettings(fawse);
   }
 
-  protected final ThriftFieldSettings getNoPositionNoFreqSettings(
-      boolean supportOutOfOrderAppends) {
-    return getDefaultSettings(ThriftIndexOptions.DOCS_ONLY, supportOutOfOrderAppends);
+  pwotected finaw t-thwiftfiewdsettings g-getnopositionnofweqsettings(
+      boowean s-suppowtoutofowdewappends) {
+    w-wetuwn getdefauwtsettings(thwiftindexoptions.docs_onwy, rawr suppowtoutofowdewappends);
   }
 
-  protected final ThriftFieldSettings getEarlybirdNumericFieldSettings() {
-    // Supposedly numeric fields are not tokenized.
-    // However, Earlybird uses SingleTokenTokenStream to handle int/long fields.
-    // So we need to set indexed to true for these fields.
-    ThriftFieldSettings settings = getNoPositionNoFreqSettings();
-    settings.getIndexedFieldSettings().setTokenized(true);
-    return settings;
+  p-pwotected finaw thwiftfiewdsettings geteawwybiwdnumewicfiewdsettings() {
+    // supposedwy nyumewic fiewds awe nyot tokenized. (U ﹏ U)
+    // howevew, ^•ﻌ•^ eawwybiwd u-uses singwetokentokenstweam to handwe int/wong fiewds. (///ˬ///✿)
+    // so we nyeed to set indexed to t-twue fow these fiewds. o.O
+    t-thwiftfiewdsettings settings = g-getnopositionnofweqsettings();
+    settings.getindexedfiewdsettings().settokenized(twue);
+    wetuwn settings;
   }
 
-  private ThriftFieldSettings getPayloadWeightedSettings(ThriftIndexOptions indexOption) {
-    ThriftFieldSettings fieldSettings = getDefaultSettings(indexOption);
-    fieldSettings.getIndexedFieldSettings().setTokenized(true);
-    ThriftTokenStreamSerializer attributeSerializer =
-        new ThriftTokenStreamSerializer(tokenStreamSerializerVersion);
-    attributeSerializer.setAttributeSerializerClassNames(
-        ImmutableList.<String>of(CharTermAttributeSerializer.class.getName(),
-            PositionIncrementAttributeSerializer.class.getName(),
-            PayloadAttributeSerializer.class.getName()));
-    fieldSettings.getIndexedFieldSettings().setTokenStreamSerializer(attributeSerializer);
-    return fieldSettings;
+  pwivate thwiftfiewdsettings g-getpaywoadweightedsettings(thwiftindexoptions i-indexoption) {
+    t-thwiftfiewdsettings fiewdsettings = g-getdefauwtsettings(indexoption);
+    fiewdsettings.getindexedfiewdsettings().settokenized(twue);
+    t-thwifttokenstweamsewiawizew attwibutesewiawizew =
+        n-nyew thwifttokenstweamsewiawizew(tokenstweamsewiawizewvewsion);
+    attwibutesewiawizew.setattwibutesewiawizewcwassnames(
+        i-immutabwewist.<stwing>of(chawtewmattwibutesewiawizew.cwass.getname(), >w<
+            positionincwementattwibutesewiawizew.cwass.getname(), nyaa~~
+            paywoadattwibutesewiawizew.cwass.getname()));
+    f-fiewdsettings.getindexedfiewdsettings().settokenstweamsewiawizew(attwibutesewiawizew);
+    wetuwn fiewdsettings;
   }
 
-  protected boolean shouldIncludeField(String fieldName) {
-    return true;
+  p-pwotected boowean s-shouwdincwudefiewd(stwing fiewdname) {
+    w-wetuwn t-twue;
   }
 }

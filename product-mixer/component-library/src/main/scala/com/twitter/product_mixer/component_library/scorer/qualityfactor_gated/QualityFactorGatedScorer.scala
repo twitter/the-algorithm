@@ -1,59 +1,59 @@
-package com.twitter.product_mixer.component_library.scorer.qualityfactor_gated
+package com.twittew.pwoduct_mixew.component_wibwawy.scowew.quawityfactow_gated
 
-import com.twitter.product_mixer.component_library.scorer.qualityfactor_gated.QualityFactorGatedScorer.IdentifierPrefix
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.pwoduct_mixew.component_wibwawy.scowew.quawityfactow_gated.quawityfactowgatedscowew.identifiewpwefix
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.awewt
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.scowew.scowew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.conditionawwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.scowewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.hasquawityfactowstatus
+i-impowt com.twittew.stitch.stitch
+impowt c-com.twittew.timewines.configapi.pawam
 
 /**
- * A [[scorer]] with [[Conditionally]] based on quality factor value and threshold
+ * a [[scowew]] w-with [[conditionawwy]] based on quawity factow vawue and thweshowd
  *
- * @param qualityFactorThreshold quliaty factor threshold that turn off the scorer
- * @param pipelineIdentifier identifier of the pipeline that quality factor is based on
- * @param scorer the underlying [[scorer]] to run when `enabledParam` is true
- * @tparam Query The domain model for the query or request
- * @tparam Result The type of the candidates
+ * @pawam q-quawityfactowthweshowd quwiaty factow t-thweshowd t-that tuwn off the scowew
+ * @pawam pipewineidentifiew identifiew of the pipewine t-that quawity factow is based on
+ * @pawam scowew the undewwying [[scowew]] to wun w-when `enabwedpawam` is twue
+ * @tpawam q-quewy t-the domain modew f-fow the quewy ow w-wequest
+ * @tpawam wesuwt the type of the candidates
  */
-case class QualityFactorGatedScorer[
-  -Query <: PipelineQuery with HasQualityFactorStatus,
-  Result <: UniversalNoun[Any]
+c-case cwass quawityfactowgatedscowew[
+  -quewy <: pipewinequewy w-with hasquawityfactowstatus, nyaa~~
+  wesuwt <: univewsawnoun[any]
 ](
-  pipelineIdentifier: ComponentIdentifier,
-  qualityFactorThresholdParam: Param[Double],
-  scorer: Scorer[Query, Result])
-    extends Scorer[Query, Result]
-    with Conditionally[Query] {
+  pipewineidentifiew: componentidentifiew,
+  quawityfactowthweshowdpawam: pawam[doubwe], nyaa~~
+  s-scowew: scowew[quewy, :3 wesuwt])
+    e-extends scowew[quewy, 😳😳😳 w-wesuwt]
+    w-with conditionawwy[quewy] {
 
-  override val identifier: ScorerIdentifier = ScorerIdentifier(
-    IdentifierPrefix + scorer.identifier.name)
+  ovewwide vaw identifiew: scowewidentifiew = s-scowewidentifiew(
+    i-identifiewpwefix + scowew.identifiew.name)
 
-  override val alerts: Seq[Alert] = scorer.alerts
+  o-ovewwide v-vaw awewts: seq[awewt] = scowew.awewts
 
-  override val features: Set[Feature[_, _]] = scorer.features
+  o-ovewwide vaw featuwes: s-set[featuwe[_, (˘ω˘) _]] = scowew.featuwes
 
-  override def onlyIf(query: Query): Boolean =
-    Conditionally.and(
-      query,
-      scorer,
-      query.getQualityFactorCurrentValue(pipelineIdentifier) >= query.params(
-        qualityFactorThresholdParam))
+  ovewwide d-def onwyif(quewy: quewy): boowean =
+    c-conditionawwy.and(
+      quewy, ^^
+      s-scowew, :3
+      quewy.getquawityfactowcuwwentvawue(pipewineidentifiew) >= q-quewy.pawams(
+        quawityfactowthweshowdpawam))
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Result]]
-  ): Stitch[Seq[FeatureMap]] = scorer(query, candidates)
+  ovewwide def appwy(
+    quewy: quewy, -.-
+    candidates: seq[candidatewithfeatuwes[wesuwt]]
+  ): stitch[seq[featuwemap]] = scowew(quewy, 😳 c-candidates)
 }
 
-object QualityFactorGatedScorer {
-  val IdentifierPrefix = "QualityFactorGated"
+o-object quawityfactowgatedscowew {
+  vaw identifiewpwefix = "quawityfactowgated"
 }

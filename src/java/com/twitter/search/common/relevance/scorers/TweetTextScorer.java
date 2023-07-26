@@ -1,242 +1,242 @@
-package com.twitter.search.common.relevance.scorers;
+package com.twittew.seawch.common.wewevance.scowews;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
+impowt java.utiw.map;
+i-impowt j-java.utiw.concuwwent.concuwwentmap;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.metrics.RelevanceStats;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.relevance.config.TweetProcessingConfig;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.features.TweetFeatures;
-import com.twitter.search.common.relevance.features.TweetTextFeatures;
-import com.twitter.search.common.relevance.features.TweetTextQuality;
+i-impowt com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+impowt com.twittew.seawch.common.metwics.wewevancestats;
+impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt com.twittew.seawch.common.wewevance.config.tweetpwocessingconfig;
+i-impowt com.twittew.seawch.common.wewevance.entities.twittewmessage;
+impowt com.twittew.seawch.common.wewevance.featuwes.tweetfeatuwes;
+impowt c-com.twittew.seawch.common.wewevance.featuwes.tweettextfeatuwes;
+impowt com.twittew.seawch.common.wewevance.featuwes.tweettextquawity;
 
 /**
- * Compute a text score for TwitterMessage based on its offensiveness,
- * shoutness, length, readability and hashtag properties extracted from
- * tweet text.
+ * c-compute a text scowe fow twittewmessage based on its offensiveness, :3
+ * s-shoutness, ^^;; wength, rawr weadabiwity a-and hashtag p-pwopewties extwacted fwom
+ * tweet text. 😳😳😳
  * <p/>
- * Formula:
- * text_score = offensive_text_damping * offensive_username_damping *
- * Sigma(feature_score_weight * feature_score)
+ * fowmuwa:
+ * text_scowe = offensive_text_damping * o-offensive_usewname_damping *
+ * sigma(featuwe_scowe_weight * featuwe_scowe)
  * <p/>
- * scored features are: length, readability, shout, entropy, links
+ * scowed featuwes awe: wength, (✿oωo) weadabiwity, OwO s-shout, entwopy, ʘwʘ winks
  */
-public class TweetTextScorer extends TweetScorer {
-  private static final Logger LOG = LoggerFactory.getLogger(TweetTextScorer.class);
+p-pubwic cwass t-tweettextscowew e-extends tweetscowew {
+  p-pwivate static finaw woggew wog = woggewfactowy.getwoggew(tweettextscowew.cwass);
 
-  private static final double DEFAULT_OFFENSIVE_TERM_DAMPING = 0.2d;
-  private static final double DEFAULT_OFFENSIVE_NAME_DAMPING = 0.2d;
+  p-pwivate static finaw doubwe defauwt_offensive_tewm_damping = 0.2d;
+  p-pwivate static finaw doubwe defauwt_offensive_name_damping = 0.2d;
 
-  // Sigma of all weights = 1.0d
-  private static final double DEFAULT_LENGTH_WEIGHT = 0.5d;
-  private static final double DEFAULT_READABILITY_WEIGHT = 0.1d;
-  private static final double DEFAULT_SHOUT_WEIGHT = 0.1d;
-  private static final double DEFAULT_ENTROPY_WEIGHT = 0.25d;
-  private static final double DEFAULT_LINK_WEIGHT = 0.05d;
+  // sigma of aww weights = 1.0d
+  pwivate static finaw doubwe d-defauwt_wength_weight = 0.5d;
+  pwivate static f-finaw doubwe d-defauwt_weadabiwity_weight = 0.1d;
+  p-pwivate static finaw doubwe defauwt_shout_weight = 0.1d;
+  pwivate static f-finaw doubwe defauwt_entwopy_weight = 0.25d;
+  pwivate s-static finaw doubwe defauwt_wink_weight = 0.05d;
 
-  private static final double DEFAULT_NO_DAMPING = 1.0d;
+  p-pwivate s-static finaw doubwe defauwt_no_damping = 1.0d;
 
-  // Sigmoid alpha values for normalization
-  private static final double DEFAULT_READABILITY_ALPHA = 0.05d;
-  private static final double DEFAULT_ENTROPY_ALPHA = 0.5d;
-  private static final double DEFAULT_LENGTH_ALPHA = 0.03d;
+  // s-sigmoid awpha vawues fow n-nyowmawization
+  pwivate static finaw doubwe defauwt_weadabiwity_awpha = 0.05d;
+  p-pwivate static finaw doubwe defauwt_entwopy_awpha = 0.5d;
+  pwivate s-static finaw doubwe defauwt_wength_awpha = 0.03d;
 
-  private static final ConcurrentMap<String, SearchRateCounter> RATE_COUNTERS =
-      Maps.newConcurrentMap();
-  private static final ConcurrentMap<PenguinVersion, Map<Integer, SearchRateCounter>>
-      SCORE_HISTOGRAMS = Maps.newConcurrentMap();
+  p-pwivate s-static finaw concuwwentmap<stwing, (ˆ ﻌ ˆ)♡ seawchwatecountew> wate_countews =
+      maps.newconcuwwentmap();
+  pwivate static finaw c-concuwwentmap<penguinvewsion, (U ﹏ U) m-map<integew, UwU seawchwatecountew>>
+      s-scowe_histogwams = m-maps.newconcuwwentmap();
 
-  private double offensiveTermDamping = DEFAULT_OFFENSIVE_TERM_DAMPING;
-  private double offensiveNameDamping = DEFAULT_OFFENSIVE_NAME_DAMPING;
+  p-pwivate doubwe offensivetewmdamping = defauwt_offensive_tewm_damping;
+  pwivate d-doubwe offensivenamedamping = defauwt_offensive_name_damping;
 
-  private double lengthWeight = DEFAULT_LENGTH_WEIGHT;
-  private double readabilityWeight = DEFAULT_READABILITY_WEIGHT;
-  private double shoutWeight = DEFAULT_SHOUT_WEIGHT;
-  private double entropyWeight = DEFAULT_ENTROPY_WEIGHT;
-  private double linkWeight = DEFAULT_LINK_WEIGHT;
+  pwivate doubwe wengthweight = defauwt_wength_weight;
+  p-pwivate doubwe weadabiwityweight = defauwt_weadabiwity_weight;
+  p-pwivate d-doubwe shoutweight = d-defauwt_shout_weight;
+  pwivate doubwe e-entwopyweight = d-defauwt_entwopy_weight;
+  p-pwivate d-doubwe winkweight = defauwt_wink_weight;
 
-  private double readabilityAlpha = DEFAULT_READABILITY_ALPHA;
-  private double entropyAlpha = DEFAULT_ENTROPY_ALPHA;
-  private double lengthAlpha = DEFAULT_LENGTH_ALPHA;
+  pwivate doubwe weadabiwityawpha = d-defauwt_weadabiwity_awpha;
+  p-pwivate d-doubwe entwopyawpha = d-defauwt_entwopy_awpha;
+  p-pwivate doubwe wengthawpha = defauwt_wength_awpha;
 
-  /** Configure from a config file, validate the configuration. */
-  public TweetTextScorer(String configFile) {
-    TweetProcessingConfig.init(configFile);
+  /** configuwe fwom a c-config fiwe, XD vawidate the configuwation. ʘwʘ */
+  pubwic tweettextscowew(stwing configfiwe) {
+    tweetpwocessingconfig.init(configfiwe);
 
-    // get dampings
-    checkWeightRange(offensiveTermDamping = TweetProcessingConfig
-        .getDouble("offensive_term_damping", DEFAULT_OFFENSIVE_TERM_DAMPING));
-    checkWeightRange(offensiveNameDamping = TweetProcessingConfig
-        .getDouble("offensive_name_damping", DEFAULT_OFFENSIVE_NAME_DAMPING));
+    // g-get dampings
+    checkweightwange(offensivetewmdamping = tweetpwocessingconfig
+        .getdoubwe("offensive_tewm_damping", rawr x3 defauwt_offensive_tewm_damping));
+    c-checkweightwange(offensivenamedamping = t-tweetpwocessingconfig
+        .getdoubwe("offensive_name_damping", ^^;; d-defauwt_offensive_name_damping));
 
     // get weights
-    checkWeightRange(lengthWeight = TweetProcessingConfig
-        .getDouble("length_weight", DEFAULT_LENGTH_WEIGHT));
-    checkWeightRange(readabilityWeight = TweetProcessingConfig
-        .getDouble("readability_weight", DEFAULT_READABILITY_WEIGHT));
-    checkWeightRange(shoutWeight = TweetProcessingConfig
-        .getDouble("shout_weight", DEFAULT_SHOUT_WEIGHT));
-    checkWeightRange(entropyWeight = TweetProcessingConfig
-        .getDouble("entropy_weight", DEFAULT_ENTROPY_WEIGHT));
-    checkWeightRange(linkWeight = TweetProcessingConfig
-        .getDouble("link_weight", DEFAULT_LINK_WEIGHT));
+    c-checkweightwange(wengthweight = tweetpwocessingconfig
+        .getdoubwe("wength_weight", ʘwʘ defauwt_wength_weight));
+    c-checkweightwange(weadabiwityweight = t-tweetpwocessingconfig
+        .getdoubwe("weadabiwity_weight", (U ﹏ U) defauwt_weadabiwity_weight));
+    checkweightwange(shoutweight = tweetpwocessingconfig
+        .getdoubwe("shout_weight", (˘ω˘) defauwt_shout_weight));
+    checkweightwange(entwopyweight = t-tweetpwocessingconfig
+        .getdoubwe("entwopy_weight", (ꈍᴗꈍ) defauwt_entwopy_weight));
+    c-checkweightwange(winkweight = tweetpwocessingconfig
+        .getdoubwe("wink_weight", /(^•ω•^) d-defauwt_wink_weight));
 
-    // check sigma of weights
-    Preconditions.checkArgument(
-        lengthWeight + readabilityWeight + shoutWeight + entropyWeight + linkWeight == 1.0d);
+    // c-check sigma of weights
+    pweconditions.checkawgument(
+        w-wengthweight + w-weadabiwityweight + shoutweight + e-entwopyweight + w-winkweight == 1.0d);
 
-    readabilityAlpha = TweetProcessingConfig
-        .getDouble("readability_alpha", DEFAULT_READABILITY_ALPHA);
-    entropyAlpha = TweetProcessingConfig.getDouble("entropy_alpha", DEFAULT_ENTROPY_ALPHA);
-    lengthAlpha = TweetProcessingConfig.getDouble("length_alpha", DEFAULT_LENGTH_ALPHA);
+    weadabiwityawpha = tweetpwocessingconfig
+        .getdoubwe("weadabiwity_awpha", >_< defauwt_weadabiwity_awpha);
+    entwopyawpha = t-tweetpwocessingconfig.getdoubwe("entwopy_awpha", σωσ d-defauwt_entwopy_awpha);
+    w-wengthawpha = tweetpwocessingconfig.getdoubwe("wength_awpha", ^^;; d-defauwt_wength_awpha);
   }
 
-  /** Creates a new TweetTextScorer instance. */
-  public TweetTextScorer() {
+  /** c-cweates a nyew tweettextscowew i-instance. */
+  pubwic tweettextscowew() {
   }
 
-  /** Scores the given tweet. */
-  public void scoreTweet(final TwitterMessage tweet) {
-    Preconditions.checkNotNull(tweet);
+  /** scowes the given tweet. 😳 */
+  pubwic v-void scowetweet(finaw t-twittewmessage tweet) {
+    pweconditions.checknotnuww(tweet);
 
-    for (PenguinVersion penguinVersion : tweet.getSupportedPenguinVersions()) {
-      TweetFeatures features = Preconditions.checkNotNull(tweet.getTweetFeatures(penguinVersion));
-      TweetTextFeatures textFeatures = Preconditions.checkNotNull(features.getTweetTextFeatures());
-      TweetTextQuality textQuality = Preconditions.checkNotNull(features.getTweetTextQuality());
-      boolean isOffensiveText = textQuality.hasBoolQuality(
-          TweetTextQuality.BooleanQualityType.OFFENSIVE);
-      boolean isOffensiveScreenName = textQuality.hasBoolQuality(
-          TweetTextQuality.BooleanQualityType.OFFENSIVE_USER);
-      double shoutScore = DEFAULT_NO_DAMPING - textQuality.getShout();
-      double lengthScore = normalize(textFeatures.getLength(), lengthAlpha);
-      double readabilityScore = normalize(textQuality.getReadability(), readabilityAlpha);
-      double entropyScore = normalize(textQuality.getEntropy(), entropyAlpha);
+    fow (penguinvewsion p-penguinvewsion : t-tweet.getsuppowtedpenguinvewsions()) {
+      tweetfeatuwes featuwes = pweconditions.checknotnuww(tweet.gettweetfeatuwes(penguinvewsion));
+      tweettextfeatuwes t-textfeatuwes = pweconditions.checknotnuww(featuwes.gettweettextfeatuwes());
+      tweettextquawity textquawity = pweconditions.checknotnuww(featuwes.gettweettextquawity());
+      b-boowean isoffensivetext = textquawity.hasboowquawity(
+          t-tweettextquawity.booweanquawitytype.offensive);
+      boowean i-isoffensivescweenname = textquawity.hasboowquawity(
+          tweettextquawity.booweanquawitytype.offensive_usew);
+      doubwe shoutscowe = defauwt_no_damping - t-textquawity.getshout();
+      d-doubwe wengthscowe = nyowmawize(textfeatuwes.getwength(), >_< wengthawpha);
+      doubwe weadabiwityscowe = nyowmawize(textquawity.getweadabiwity(), -.- w-weadabiwityawpha);
+      doubwe entwopyscowe = n-nyowmawize(textquawity.getentwopy(), UwU entwopyawpha);
 
-      double score = (isOffensiveText ? offensiveTermDamping : DEFAULT_NO_DAMPING)
-        * (isOffensiveScreenName ? offensiveNameDamping : DEFAULT_NO_DAMPING)
-        * (lengthWeight * lengthScore
-           + readabilityWeight * readabilityScore
-           + shoutWeight * shoutScore
-           + entropyWeight * entropyScore
-           + linkWeight * (tweet.getExpandedUrlMapSize() > 0 ? 1 : 0));
+      doubwe scowe = (isoffensivetext ? offensivetewmdamping : d-defauwt_no_damping)
+        * (isoffensivescweenname ? offensivenamedamping : d-defauwt_no_damping)
+        * (wengthweight * w-wengthscowe
+           + weadabiwityweight * w-weadabiwityscowe
+           + shoutweight * s-shoutscowe
+           + e-entwopyweight * e-entwopyscowe
+           + winkweight * (tweet.getexpandeduwwmapsize() > 0 ? 1 : 0));
 
-      // scale to [0, 100] byte
-      textQuality.setTextScore((byte) (score * 100));
+      // s-scawe to [0, :3 100] b-byte
+      textquawity.settextscowe((byte) (scowe * 100));
 
-      updateStats(
-          isOffensiveText,
-          isOffensiveScreenName,
-          textFeatures,
-          score,
-          getRateCounterStat("num_offensive_text_", penguinVersion),
-          getRateCounterStat("num_offensive_user_", penguinVersion),
-          getRateCounterStat("num_no_trends_", penguinVersion),
-          getRateCounterStat("num_has_trends_", penguinVersion),
-          getRateCounterStat("num_too_many_trends_", penguinVersion),
-          getRateCounterStat("num_scored_tweets_", penguinVersion),
-          getScoreHistogram(penguinVersion));
+      updatestats(
+          i-isoffensivetext, σωσ
+          i-isoffensivescweenname, >w<
+          t-textfeatuwes, (ˆ ﻌ ˆ)♡
+          scowe, ʘwʘ
+          getwatecountewstat("num_offensive_text_", :3 p-penguinvewsion), (˘ω˘)
+          getwatecountewstat("num_offensive_usew_", 😳😳😳 p-penguinvewsion), rawr x3
+          g-getwatecountewstat("num_no_twends_", (✿oωo) penguinvewsion), (ˆ ﻌ ˆ)♡
+          getwatecountewstat("num_has_twends_", :3 penguinvewsion), (U ᵕ U❁)
+          g-getwatecountewstat("num_too_many_twends_", ^^;; p-penguinvewsion), mya
+          g-getwatecountewstat("num_scowed_tweets_", 😳😳😳 p-penguinvewsion), OwO
+          getscowehistogwam(penguinvewsion));
 
-      if (LOG.isDebugEnabled()) {
-        LOG.debug(String.format(
-            "Tweet length [%.2f] weighted length [%.2f], readability [%.2f] "
-            + "weighted readability [%.2f], shout [%.2f] weighted shout [%.2f], "
-            + "entropy [%.2f], weighted entropy [%.2f], "
-            + "score [%.2f], text [%s], penguin version [%s]",
-            lengthScore,
-            lengthWeight * lengthScore,
-            readabilityScore,
-            readabilityWeight * readabilityScore,
-            shoutScore,
-            shoutWeight * shoutScore,
-            entropyScore,
-            entropyWeight * entropyScore,
-            score,
-            tweet.getText(),
-            penguinVersion));
+      i-if (wog.isdebugenabwed()) {
+        wog.debug(stwing.fowmat(
+            "tweet wength [%.2f] weighted wength [%.2f], rawr weadabiwity [%.2f] "
+            + "weighted weadabiwity [%.2f], XD s-shout [%.2f] weighted s-shout [%.2f], "
+            + "entwopy [%.2f], (U ﹏ U) weighted entwopy [%.2f], (˘ω˘) "
+            + "scowe [%.2f], UwU t-text [%s], >_< penguin vewsion [%s]", σωσ
+            w-wengthscowe, 🥺
+            wengthweight * w-wengthscowe, 🥺
+            w-weadabiwityscowe, ʘwʘ
+            w-weadabiwityweight * w-weadabiwityscowe, :3
+            s-shoutscowe, (U ﹏ U)
+            shoutweight * shoutscowe, (U ﹏ U)
+            entwopyscowe, ʘwʘ
+            entwopyweight * entwopyscowe, >w<
+            scowe, rawr x3
+            tweet.gettext(), OwO
+            p-penguinvewsion));
       }
     }
   }
 
-  private void updateStats(boolean isOffensiveText,
-                           boolean isOffensiveScreenName,
-                           TweetTextFeatures textFeatures,
-                           double score,
-                           SearchRateCounter offensiveTextCounter,
-                           SearchRateCounter offensiveUserNameCounter,
-                           SearchRateCounter noTrendsCounter,
-                           SearchRateCounter hasTrendsCounter,
-                           SearchRateCounter tooManyTrendsHashtagsCounter,
-                           SearchRateCounter scoredTweets,
-                           Map<Integer, SearchRateCounter> scoreHistogram) {
-    // set stats
-    if (isOffensiveText) {
-      offensiveTextCounter.increment();
+  p-pwivate void u-updatestats(boowean isoffensivetext, ^•ﻌ•^
+                           b-boowean isoffensivescweenname, >_<
+                           tweettextfeatuwes textfeatuwes, OwO
+                           doubwe scowe, >_<
+                           s-seawchwatecountew o-offensivetextcountew, (ꈍᴗꈍ)
+                           seawchwatecountew o-offensiveusewnamecountew, >w<
+                           seawchwatecountew nyotwendscountew, (U ﹏ U)
+                           s-seawchwatecountew h-hastwendscountew, ^^
+                           seawchwatecountew t-toomanytwendshashtagscountew, (U ﹏ U)
+                           s-seawchwatecountew scowedtweets, :3
+                           map<integew, (✿oωo) seawchwatecountew> scowehistogwam) {
+    // s-set stats
+    i-if (isoffensivetext) {
+      o-offensivetextcountew.incwement();
     }
-    if (isOffensiveScreenName) {
-      offensiveUserNameCounter.increment();
+    i-if (isoffensivescweenname) {
+      offensiveusewnamecountew.incwement();
     }
-    if (textFeatures.getTrendingTermsSize() == 0) {
-      noTrendsCounter.increment();
-    } else {
-      hasTrendsCounter.increment();
+    if (textfeatuwes.gettwendingtewmssize() == 0) {
+      n-notwendscountew.incwement();
+    } ewse {
+      h-hastwendscountew.incwement();
     }
-    if (TwitterMessage.hasMultipleHashtagsOrTrends(textFeatures)) {
-      tooManyTrendsHashtagsCounter.increment();
+    i-if (twittewmessage.hasmuwtipwehashtagsowtwends(textfeatuwes)) {
+      toomanytwendshashtagscountew.incwement();
     }
-    scoredTweets.increment();
+    s-scowedtweets.incwement();
 
-    int bucket = (int) Math.floor(score * 10) * 10;
-    scoreHistogram.get(bucket).increment();
+    i-int bucket = (int) math.fwoow(scowe * 10) * 10;
+    s-scowehistogwam.get(bucket).incwement();
   }
 
-  // normalize the passed in value to smoothed [0, 1.0d] range
-  private static double normalize(double value, double alpha) {
-    return 2 * (1.0d / (1.0d + Math.exp(-(alpha * value))) - 0.5);
+  // nyowmawize the passed i-in vawue to smoothed [0, XD 1.0d] wange
+  pwivate s-static doubwe nyowmawize(doubwe v-vawue, >w< doubwe awpha) {
+    wetuwn 2 * (1.0d / (1.0d + m-math.exp(-(awpha * vawue))) - 0.5);
   }
 
-  // Make sure weight values are within the range of [0.0, 1.0]
-  private void checkWeightRange(double value) {
-    Preconditions.checkArgument(value >= 0.0d && value <= 1.0d);
+  // make suwe weight v-vawues awe w-within the wange o-of [0.0, òωó 1.0]
+  pwivate void checkweightwange(doubwe vawue) {
+    pweconditions.checkawgument(vawue >= 0.0d && v-vawue <= 1.0d);
   }
 
-  private Map<Integer, SearchRateCounter> getScoreHistogram(PenguinVersion penguinVersion) {
-    Map<Integer, SearchRateCounter> scoreHistogram = SCORE_HISTOGRAMS.get(penguinVersion);
-    if (scoreHistogram == null) {
-      scoreHistogram = Maps.newHashMap();
-      String statsName = "num_text_score_%d_%s";
+  pwivate map<integew, (ꈍᴗꈍ) seawchwatecountew> g-getscowehistogwam(penguinvewsion p-penguinvewsion) {
+    map<integew, rawr x3 s-seawchwatecountew> scowehistogwam = s-scowe_histogwams.get(penguinvewsion);
+    i-if (scowehistogwam == nyuww) {
+      scowehistogwam = m-maps.newhashmap();
+      stwing statsname = "num_text_scowe_%d_%s";
 
-      for (int i = 0; i <= 100; i += 10) {
-        scoreHistogram.put(i, RelevanceStats.exportRate(
-                               String.format(statsName, i, penguinVersion.name().toLowerCase())));
+      fow (int i = 0; i-i <= 100; i += 10) {
+        s-scowehistogwam.put(i, rawr x3 wewevancestats.expowtwate(
+                               s-stwing.fowmat(statsname, σωσ i, penguinvewsion.name().towowewcase())));
       }
 
-      scoreHistogram = SCORE_HISTOGRAMS.putIfAbsent(penguinVersion, scoreHistogram);
-      if (scoreHistogram == null) {
-        scoreHistogram = SCORE_HISTOGRAMS.get(penguinVersion);
+      s-scowehistogwam = s-scowe_histogwams.putifabsent(penguinvewsion, (ꈍᴗꈍ) s-scowehistogwam);
+      if (scowehistogwam == nyuww) {
+        scowehistogwam = scowe_histogwams.get(penguinvewsion);
       }
     }
 
-    return scoreHistogram;
+    wetuwn scowehistogwam;
   }
 
-  private SearchRateCounter getRateCounterStat(String statPrefix, PenguinVersion penguinVersion) {
-    String statName = statPrefix + penguinVersion.name().toLowerCase();
-    SearchRateCounter rateCounter = RATE_COUNTERS.get(statName);
-    if (rateCounter == null) {
-      // Only one RateCounter instance is created for each stat name. So we don't need to worry
-      // that another thread might've created this instance in the meantime: we can just create/get
-      // it, and store it in the map.
-      rateCounter = RelevanceStats.exportRate(statName);
-      RATE_COUNTERS.put(statName, rateCounter);
+  pwivate seawchwatecountew getwatecountewstat(stwing statpwefix, rawr penguinvewsion penguinvewsion) {
+    stwing statname = statpwefix + p-penguinvewsion.name().towowewcase();
+    s-seawchwatecountew watecountew = wate_countews.get(statname);
+    i-if (watecountew == n-nyuww) {
+      // o-onwy one watecountew instance i-is cweated fow each stat n-nyame. ^^;; so we don't n-nyeed to wowwy
+      // that a-anothew thwead might've cweated t-this instance in t-the meantime: we can just cweate/get
+      // it, rawr x3 and stowe it i-in the map. (ˆ ﻌ ˆ)♡
+      w-watecountew = w-wewevancestats.expowtwate(statname);
+      w-wate_countews.put(statname, σωσ w-watecountew);
     }
-    return rateCounter;
+    w-wetuwn watecountew;
   }
 }

@@ -1,34 +1,34 @@
-package com.twitter.home_mixer.product.following.param
+package com.twittew.home_mixew.pwoduct.fowwowing.pawam
 
-import com.twitter.home_mixer.param.decider.DeciderKey
-import com.twitter.home_mixer.product.following.param.FollowingParam._
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.servo.decider.DeciderKeyName
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.pawam.decidew.decidewkey
+i-impowt c-com.twittew.home_mixew.pwoduct.fowwowing.pawam.fowwowingpawam._
+i-impowt com.twittew.pwoduct_mixew.cowe.pwoduct.pwoductpawamconfig
+i-impowt com.twittew.sewvo.decidew.decidewkeyname
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class FollowingParamConfig @Inject() () extends ProductParamConfig {
-  override val enabledDeciderKey: DeciderKeyName = DeciderKey.EnableFollowingProduct
-  override val supportedClientFSName: String = SupportedClientFSName
+@singweton
+c-cwass f-fowwowingpawamconfig @inject() () extends pwoductpawamconfig {
+  ovewwide vaw enabweddecidewkey: decidewkeyname = decidewkey.enabwefowwowingpwoduct
+  o-ovewwide vaw suppowtedcwientfsname: stwing = s-suppowtedcwientfsname
 
-  override val booleanFSOverrides =
-    Seq(
-      EnableFlipInjectionModuleCandidatePipelineParam,
-      EnableWhoToFollowCandidatePipelineParam,
-      EnableAdsCandidatePipelineParam,
-      EnableFastAds,
+  ovewwide v-vaw booweanfsovewwides =
+    seq(
+      enabwefwipinjectionmoduwecandidatepipewinepawam, OwO
+      enabwewhotofowwowcandidatepipewinepawam, (U ﹏ U)
+      enabweadscandidatepipewinepawam, >_<
+      e-enabwefastads, rawr x3
     )
 
-  override val boundedIntFSOverrides = Seq(
-    FlipInlineInjectionModulePosition,
-    WhoToFollowPositionParam,
-    ServerMaxResultsParam
+  ovewwide vaw b-boundedintfsovewwides = s-seq(
+    fwipinwineinjectionmoduweposition,
+    whotofowwowpositionpawam, mya
+    sewvewmaxwesuwtspawam
   )
 
-  override val stringFSOverrides = Seq(WhoToFollowDisplayLocationParam)
+  ovewwide vaw s-stwingfsovewwides = seq(whotofowwowdispwaywocationpawam)
 
-  override val boundedDurationFSOverrides = Seq(WhoToFollowMinInjectionIntervalParam)
+  ovewwide vaw boundedduwationfsovewwides = seq(whotofowwowmininjectionintewvawpawam)
 
-  override val enumFSOverrides = Seq(WhoToFollowDisplayTypeIdParam)
+  o-ovewwide vaw enumfsovewwides = s-seq(whotofowwowdispwaytypeidpawam)
 }

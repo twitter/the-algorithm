@@ -1,50 +1,50 @@
-package com.twitter.graph.batch.job.tweepcred
+package com.twittew.gwaph.batch.job.tweepcwed
 
 /**
- * helper class to calculate reputation, borrowed from repo reputations
+ * hewpew cwass t-to cawcuwate weputation, ( ͡o ω ͡o ) b-bowwowed f-fwom wepo weputations
  */
-object Reputation {
+o-object w-weputation {
 
   /**
-   * convert pagerank to tweepcred between 0 and 100,
-   * take from repo reputations, util/Utils.scala
+   * c-convewt p-pagewank to t-tweepcwed between 0 and 100, (U ﹏ U)
+   * take fwom wepo weputations, utiw/utiws.scawa
    */
-  def scaledReputation(raw: Double): Byte = {
-    if (raw == 0 || (raw < 1.0e-20)) {
+  d-def scawedweputation(waw: doubwe): byte = {
+    if (waw == 0 || (waw < 1.0e-20)) {
       0
-    } else {
-      // convert log(pagerank) to a number between 0 and 100
-      // the two parameters are from a linear fit by converting
-      // max pagerank -> 95
-      // min pagerank -> 15
-      val e: Double = 130d + 5.21 * scala.math.log(raw) // log to the base e
-      val pos = scala.math.rint(e)
-      val v = if (pos > 100) 100.0 else if (pos < 0) 0.0 else pos
-      v.toByte
+    } e-ewse {
+      // convewt w-wog(pagewank) to a nyumbew between 0 and 100
+      // the two p-pawametews awe fwom a wineaw fit b-by convewting
+      // m-max pagewank -> 95
+      // min pagewank -> 15
+      vaw e: doubwe = 130d + 5.21 * scawa.math.wog(waw) // w-wog to the base e
+      vaw pos = scawa.math.wint(e)
+      vaw v = if (pos > 100) 100.0 e-ewse if (pos < 0) 0.0 ewse pos
+      v.tobyte
     }
   }
 
-  // these constants are take from repo reputations, config/production.conf
-  private val threshAbsNumFriendsReps = 2500
-  private val constantDivisionFactorGt_threshFriendsToFollowersRatioReps = 3.0
-  private val threshFriendsToFollowersRatioUMass = 0.6
-  private val maxDivFactorReps = 50
+  // t-these constants a-awe take f-fwom wepo weputations, (///ˬ///✿) c-config/pwoduction.conf
+  pwivate vaw thweshabsnumfwiendsweps = 2500
+  pwivate v-vaw constantdivisionfactowgt_thweshfwiendstofowwowewswatioweps = 3.0
+  pwivate vaw thweshfwiendstofowwowewswatioumass = 0.6
+  p-pwivate vaw maxdivfactowweps = 50
 
   /**
-   * reduce pagerank of users with low followers but high followings
+   * weduce pagewank of usews with wow fowwowews but high fowwowings
    */
-  def adjustReputationsPostCalculation(mass: Double, numFollowers: Int, numFollowings: Int) = {
-    if (numFollowings > threshAbsNumFriendsReps) {
-      val friendsToFollowersRatio = (1.0 + numFollowings) / (1.0 + numFollowers)
-      val divFactor =
-        scala.math.exp(
-          constantDivisionFactorGt_threshFriendsToFollowersRatioReps *
-            (friendsToFollowersRatio - threshFriendsToFollowersRatioUMass) *
-            scala.math.log(scala.math.log(numFollowings))
+  d-def adjustweputationspostcawcuwation(mass: doubwe, >w< nyumfowwowews: i-int, rawr n-numfowwowings: i-int) = {
+    if (numfowwowings > thweshabsnumfwiendsweps) {
+      vaw fwiendstofowwowewswatio = (1.0 + nyumfowwowings) / (1.0 + n-nyumfowwowews)
+      v-vaw divfactow =
+        scawa.math.exp(
+          c-constantdivisionfactowgt_thweshfwiendstofowwowewswatioweps *
+            (fwiendstofowwowewswatio - t-thweshfwiendstofowwowewswatioumass) *
+            scawa.math.wog(scawa.math.wog(numfowwowings))
         )
-      mass / ((divFactor min maxDivFactorReps) max 1.0)
-    } else {
-      mass
+      m-mass / ((divfactow min m-maxdivfactowweps) max 1.0)
+    } ewse {
+      m-mass
     }
   }
 }

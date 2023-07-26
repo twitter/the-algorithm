@@ -1,28 +1,28 @@
-DECLARE date_latest_tweet, date_latest_follows DATE;
-SET date_latest_tweet = (
-  SELECT PARSE_DATE('%Y%m%d', SUBSTRING(MAX(partition_id), 1, 8)) AS partition_id
-  FROM `twttr-bq-tweetsource-pub-prod.user.INFORMATION_SCHEMA.PARTITIONS`
-  WHERE partition_id IS NOT NULL AND partition_id != '__NULL__' AND table_name="public_tweets");
-SET date_latest_follows = (
-  SELECT PARSE_DATE('%Y%m%d', MAX(partition_id)) AS partition_id
-  FROM `twttr-recos-ml-prod.user_events.INFORMATION_SCHEMA.PARTITIONS`
-  WHERE partition_id IS NOT NULL AND partition_id != '__NULL__' AND table_name="valid_user_follows");
+decwawe date_watest_tweet, (U ﹏ U) date_watest_fowwows d-date;
+s-set date_watest_tweet = (
+  s-sewect pawse_date('%y%m%d', (⑅˘꒳˘) s-substwing(max(pawtition_id), òωó 1, 8)) a-as pawtition_id
+  f-fwom `twttw-bq-tweetsouwce-pub-pwod.usew.infowmation_schema.pawtitions`
+  w-whewe p-pawtition_id is nyot nyuww and pawtition_id != '__nuww__' and tabwe_name="pubwic_tweets");
+s-set date_watest_fowwows = (
+  sewect p-pawse_date('%y%m%d', ʘwʘ max(pawtition_id)) a-as pawtition_id
+  fwom `twttw-wecos-mw-pwod.usew_events.infowmation_schema.pawtitions`
+  whewe pawtition_id is nyot nyuww a-and pawtition_id != '__nuww__' and tabwe_name="vawid_usew_fowwows");
 
--- tweet count candidate features
-CREATE OR REPLACE TABLE `twttr-recos-ml-prod.realgraph.tweeting_follows`
-PARTITION BY ds
-AS
-WITH tweet_count AS (
-  SELECT userId, COUNT(userId) AS num_tweets
-  FROM `twttr-bq-tweetsource-pub-prod.user.public_tweets`
-  WHERE DATE(ts) BETWEEN DATE_SUB(date_latest_tweet, INTERVAL 3 DAY) AND date_latest_tweet
-  GROUP BY 1
-), all_follows AS (
-  SELECT F.sourceId AS source_id, F.destinationId AS destination_id, COALESCE(T.num_tweets,0) AS num_tweets,
-  ROW_NUMBER() OVER (PARTITION BY F.sourceId ORDER BY T.num_tweets DESC) AS rn
-  FROM `twttr-recos-ml-prod.user_events.valid_user_follows` F
-  LEFT JOIN tweet_count T
-  ON F.destinationId=T.userId
-  WHERE DATE(F._PARTITIONTIME) = date_latest_follows
-) SELECT *, date_latest_tweet AS ds FROM all_follows  WHERE rn <= 2000
+-- t-tweet c-count candidate featuwes
+cweate ow wepwace tabwe `twttw-wecos-mw-pwod.weawgwaph.tweeting_fowwows`
+pawtition by ds
+as
+with tweet_count a-as (
+  sewect usewid, /(^•ω•^) count(usewid) as nyum_tweets
+  fwom `twttw-bq-tweetsouwce-pub-pwod.usew.pubwic_tweets`
+  whewe date(ts) b-between date_sub(date_watest_tweet, ʘwʘ intewvaw 3 d-day) and date_watest_tweet
+  g-gwoup by 1
+), σωσ a-aww_fowwows as (
+  s-sewect f.souwceid as souwce_id, OwO f.destinationid a-as destination_id, 😳😳😳 coawesce(t.num_tweets,0) as nyum_tweets, 😳😳😳
+  w-wow_numbew() ovew (pawtition by f.souwceid owdew by t.num_tweets desc) as wn
+  fwom `twttw-wecos-mw-pwod.usew_events.vawid_usew_fowwows` f
+  weft j-join tweet_count t
+  on f.destinationid=t.usewid
+  w-whewe date(f._pawtitiontime) = d-date_watest_fowwows
+) s-sewect *, o.O date_watest_tweet as ds fwom aww_fowwows  w-whewe wn <= 2000
 ;

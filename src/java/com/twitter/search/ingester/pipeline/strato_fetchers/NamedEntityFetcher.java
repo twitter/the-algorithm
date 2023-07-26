@@ -1,47 +1,47 @@
-package com.twitter.search.ingester.pipeline.strato_fetchers;
+package com.twittew.seawch.ingestew.pipewine.stwato_fetchews;
 
-import scala.Option;
+impowt s-scawa.option;
 
-import com.twitter.cuad.ner.plain.thriftjava.NamedEntities;
-import com.twitter.cuad.ner.plain.thriftjava.NamedEntitiesRequestOptions;
-import com.twitter.cuad.ner.thriftjava.ModelFamily;
-import com.twitter.cuad.ner.thriftjava.NERCalibrateRequest;
-import com.twitter.cuad.thriftjava.CalibrationLevel;
-import com.twitter.cuad.thriftjava.NERCandidateSource;
-import com.twitter.stitch.Stitch;
-import com.twitter.strato.catalog.Fetch;
-import com.twitter.strato.client.Client;
-import com.twitter.strato.client.Fetcher;
-import com.twitter.strato.data.Conv;
-import com.twitter.strato.opcontext.ServeWithin;
-import com.twitter.strato.thrift.TBaseConv;
-import com.twitter.util.Duration;
-import com.twitter.util.Future;
+i-impowt com.twittew.cuad.new.pwain.thwiftjava.namedentities;
+i-impowt com.twittew.cuad.new.pwain.thwiftjava.namedentitieswequestoptions;
+i-impowt c-com.twittew.cuad.new.thwiftjava.modewfamiwy;
+i-impowt c-com.twittew.cuad.new.thwiftjava.newcawibwatewequest;
+i-impowt com.twittew.cuad.thwiftjava.cawibwationwevew;
+impowt com.twittew.cuad.thwiftjava.newcandidatesouwce;
+impowt com.twittew.stitch.stitch;
+impowt com.twittew.stwato.catawog.fetch;
+i-impowt com.twittew.stwato.cwient.cwient;
+impowt com.twittew.stwato.cwient.fetchew;
+i-impowt com.twittew.stwato.data.conv;
+impowt c-com.twittew.stwato.opcontext.sewvewithin;
+impowt com.twittew.stwato.thwift.tbaseconv;
+impowt com.twittew.utiw.duwation;
+i-impowt com.twittew.utiw.futuwe;
 
-public class NamedEntityFetcher {
-  private static final String NAMED_ENTITY_STRATO_COLUMN = "";
+pubwic c-cwass nyamedentityfetchew {
+  p-pwivate static finaw stwing nyamed_entity_stwato_cowumn = "";
 
-  private static final ServeWithin SERVE_WITHIN = new ServeWithin(
-      Duration.fromMilliseconds(100), Option.empty());
+  pwivate static finaw sewvewithin s-sewve_within = nyew sewvewithin(
+      duwation.fwommiwwiseconds(100), (⑅˘꒳˘) option.empty());
 
-  private static final NamedEntitiesRequestOptions REQUEST_OPTIONS =
-      new NamedEntitiesRequestOptions(
-      new NERCalibrateRequest(CalibrationLevel.HIGH_PRECISION, NERCandidateSource.NER_CRF)
-          .setModel_family(ModelFamily.CFB))
-      .setDisplay_entity_info(false);
+  pwivate s-static finaw nyamedentitieswequestoptions w-wequest_options =
+      n-nyew nyamedentitieswequestoptions(
+      n-nyew n-nyewcawibwatewequest(cawibwationwevew.high_pwecision, òωó nyewcandidatesouwce.new_cwf)
+          .setmodew_famiwy(modewfamiwy.cfb))
+      .setdispway_entity_info(fawse);
 
-  private final Fetcher<Long, NamedEntitiesRequestOptions, NamedEntities> fetcher;
+  pwivate f-finaw fetchew<wong, ʘwʘ namedentitieswequestoptions, /(^•ω•^) nyamedentities> f-fetchew;
 
-  public NamedEntityFetcher(Client stratoClient) {
-    fetcher = stratoClient.fetcher(
-        NAMED_ENTITY_STRATO_COLUMN,
-        true, // enables checking types against catalog
-        Conv.longConv(),
-        TBaseConv.forClass(NamedEntitiesRequestOptions.class),
-        TBaseConv.forClass(NamedEntities.class)).serveWithin(SERVE_WITHIN);
+  pubwic nyamedentityfetchew(cwient stwatocwient) {
+    fetchew = stwatocwient.fetchew(
+        nyamed_entity_stwato_cowumn, ʘwʘ
+        twue, σωσ // enabwes c-checking types against catawog
+        c-conv.wongconv(), OwO
+        t-tbaseconv.fowcwass(namedentitieswequestoptions.cwass), 😳😳😳
+        t-tbaseconv.fowcwass(namedentities.cwass)).sewvewithin(sewve_within);
   }
 
-  public Future<Fetch.Result<NamedEntities>> fetch(long tweetId) {
-    return Stitch.run(fetcher.fetch(tweetId, REQUEST_OPTIONS));
+  pubwic futuwe<fetch.wesuwt<namedentities>> fetch(wong tweetid) {
+    w-wetuwn stitch.wun(fetchew.fetch(tweetid, 😳😳😳 w-wequest_options));
   }
 }

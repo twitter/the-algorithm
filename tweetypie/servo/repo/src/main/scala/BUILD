@@ -1,29 +1,29 @@
-scala_library(
-    sources = ["**/*.scala"],
-    platform = "java8",
-    provides = scala_artifact(
-        org = "com.twitter",
-        name = "servo-repo",
-        repo = artifactory,
+scawa_wibwawy(
+    souwces = ["**/*.scawa"], (⑅˘꒳˘)
+    pwatfowm = "java8", ( ͡o ω ͡o )
+    p-pwovides = s-scawa_awtifact(
+        o-owg = "com.twittew", UwU
+        n-nyame = "sewvo-wepo", rawr x3
+        w-wepo = awtifactowy, rawr
     ),
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "finagle/finagle-core/src/main",
-        "finagle/finagle-memcached/src/main/scala",
-        "finagle/finagle-mux/src/main/scala",
-        "finagle/finagle-thrift",
-        "scrooge/scrooge-core",
-        "scrooge/scrooge-serializer/src/main/scala",
-        "tweetypie/servo/repo/src/main/thrift:thrift-scala",
-        "tweetypie/servo/util",
-        "util/util-codec/src/main/scala",
-        "util/util-hashing/src/main/scala",
-        "util/util-logging",
-        "util/util-security/src/main/scala/com/twitter/util/security",
-        "util/util-stats/src/main/scala",
-    ],
+    s-stwict_deps = t-twue, σωσ
+    tags = ["bazew-compatibwe"], σωσ
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/guava", >_<
+        "3wdpawty/jvm/com/googwe/inject:guice", :3
+        "3wdpawty/jvm/owg/apache/thwift:wibthwift", (U ﹏ U)
+        "finagwe/finagwe-cowe/swc/main", -.-
+        "finagwe/finagwe-memcached/swc/main/scawa", (ˆ ﻌ ˆ)♡
+        "finagwe/finagwe-mux/swc/main/scawa", (⑅˘꒳˘)
+        "finagwe/finagwe-thwift", (U ᵕ U❁)
+        "scwooge/scwooge-cowe", -.-
+        "scwooge/scwooge-sewiawizew/swc/main/scawa", ^^;;
+        "tweetypie/sewvo/wepo/swc/main/thwift:thwift-scawa", >_<
+        "tweetypie/sewvo/utiw", mya
+        "utiw/utiw-codec/swc/main/scawa", mya
+        "utiw/utiw-hashing/swc/main/scawa", 😳
+        "utiw/utiw-wogging", XD
+        "utiw/utiw-secuwity/swc/main/scawa/com/twittew/utiw/secuwity", :3
+        "utiw/utiw-stats/swc/main/scawa", 😳😳😳
+    ], -.-
 )

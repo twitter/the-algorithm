@@ -1,16 +1,16 @@
-package com.twitter.unified_user_actions.adapter.ads_callback_engagements
+package com.twittew.unified_usew_actions.adaptew.ads_cawwback_engagements
 
-import com.twitter.ads.spendserver.thriftscala.SpendServerEvent
-import com.twitter.unified_user_actions.thriftscala._
+impowt c-com.twittew.ads.spendsewvew.thwiftscawa.spendsewvewevent
+i-impowt c-com.twittew.unified_usew_actions.thwiftscawa._
 
-abstract class BaseTrendAdsCallbackEngagement(actionType: ActionType)
-    extends BaseAdsCallbackEngagement(actionType = actionType) {
+a-abstwact cwass b-basetwendadscawwbackengagement(actiontype: a-actiontype)
+    e-extends b-baseadscawwbackengagement(actiontype = actiontype) {
 
-  override protected def getItem(input: SpendServerEvent): Option[Item] = {
-    input.engagementEvent.flatMap { e =>
-      e.impressionData.flatMap { i =>
-        i.promotedTrendId.map { promotedTrendId =>
-          Item.TrendInfo(TrendInfo(actionTrendId = promotedTrendId))
+  ovewwide pwotected def getitem(input: s-spendsewvewevent): option[item] = {
+    input.engagementevent.fwatmap { e-e =>
+      e.impwessiondata.fwatmap { i =>
+        i-i.pwomotedtwendid.map { pwomotedtwendid =>
+          item.twendinfo(twendinfo(actiontwendid = pwomotedtwendid))
         }
       }
     }

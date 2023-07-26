@@ -1,21 +1,21 @@
-package com.twitter.follow_recommendations.common.rankers.first_n_ranker
+package com.twittew.fowwow_wecommendations.common.wankews.fiwst_n_wankew
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
+i-impowt com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+i-impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt com.twittew.timewines.configapi.fspawam
 
-@Singleton
-class FirstNRankerFSConfig @Inject() extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[FSParam[Boolean]] =
-    Seq(FirstNRankerParams.ScribeRankingInfoInFirstNRanker)
+@singweton
+c-cwass fiwstnwankewfsconfig @inject() e-extends featuweswitchconfig {
+  o-ovewwide vaw booweanfspawams: seq[fspawam[boowean]] =
+    seq(fiwstnwankewpawams.scwibewankinginfoinfiwstnwankew)
 
-  override val intFSParams: Seq[FSBoundedParam[Int]] = Seq(
-    FirstNRankerParams.CandidatesToRank
+  ovewwide v-vaw intfspawams: seq[fsboundedpawam[int]] = seq(
+    fiwstnwankewpawams.candidatestowank
   )
 
-  override val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
-    FirstNRankerParams.MinNumCandidatesScoredScaleDownFactor
+  o-ovewwide vaw doubwefspawams: s-seq[fsboundedpawam[doubwe]] = seq(
+    fiwstnwankewpawams.minnumcandidatesscowedscawedownfactow
   )
 }

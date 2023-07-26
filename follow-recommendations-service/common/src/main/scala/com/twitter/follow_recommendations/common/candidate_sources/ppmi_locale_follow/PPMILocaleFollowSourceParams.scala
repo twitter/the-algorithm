@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.ppmi_wocawe_fowwow
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt c-com.twittew.timewines.configapi.fspawam
 
-class PPMILocaleFollowSourceParams {}
-object PPMILocaleFollowSourceParams {
-  case object LocaleToExcludeFromRecommendation
-      extends FSParam[Seq[String]](
-        "ppmilocale_follow_source_locales_to_exclude_from_recommendation",
-        default = Seq.empty)
+c-cwass p-ppmiwocawefowwowsouwcepawams {}
+o-object ppmiwocawefowwowsouwcepawams {
+  c-case o-object wocawetoexcwudefwomwecommendation
+      extends f-fspawam[seq[stwing]](
+        "ppmiwocawe_fowwow_souwce_wocawes_to_excwude_fwom_wecommendation", (ˆ ﻌ ˆ)♡
+        defauwt = seq.empty)
 
-  case object CandidateSourceEnabled
-      extends FSParam[Boolean]("ppmilocale_follow_source_enabled", true)
+  case object candidatesouwceenabwed
+      extends fspawam[boowean]("ppmiwocawe_fowwow_souwce_enabwed", (⑅˘꒳˘) t-twue)
 
-  case object CandidateSourceWeight
-      extends FSBoundedParam[Double](
-        "ppmilocale_follow_source_candidate_source_weight",
-        default = 1,
-        min = 0.001,
+  case object candidatesouwceweight
+      extends f-fsboundedpawam[doubwe](
+        "ppmiwocawe_fowwow_souwce_candidate_souwce_weight", (U ᵕ U❁)
+        defauwt = 1, -.-
+        m-min = 0.001, ^^;;
         max = 2000)
 }

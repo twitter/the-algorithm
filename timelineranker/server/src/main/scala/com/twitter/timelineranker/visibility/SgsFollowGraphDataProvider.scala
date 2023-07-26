@@ -1,266 +1,266 @@
-package com.twitter.timelineranker.visibility
+package com.twittew.timewinewankew.visibiwity
 
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.timelineranker.core.FollowGraphData
-import com.twitter.timelineranker.core.FollowGraphDataFuture
-import com.twitter.timelines.clients.socialgraph.ScopedSocialGraphClientFactory
-import com.twitter.timelines.model._
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.timelines.util.stats._
-import com.twitter.timelines.visibility._
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.stat
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.timewinewankew.cowe.fowwowgwaphdata
+i-impowt c-com.twittew.timewinewankew.cowe.fowwowgwaphdatafutuwe
+i-impowt com.twittew.timewines.cwients.sociawgwaph.scopedsociawgwaphcwientfactowy
+i-impowt com.twittew.timewines.modew._
+i-impowt com.twittew.timewines.utiw.faiwopenhandwew
+impowt com.twittew.timewines.utiw.stats._
+impowt com.twittew.timewines.visibiwity._
+i-impowt com.twittew.utiw.futuwe
 
-object SgsFollowGraphDataProvider {
-  val EmptyUserIdsSet: Set[UserId] = Set.empty[UserId]
-  val EmptyUserIdsSetFuture: Future[Set[UserId]] = Future.value(EmptyUserIdsSet)
-  val EmptyUserIdsSeq: Seq[UserId] = Seq.empty[UserId]
-  val EmptyUserIdsSeqFuture: Future[Seq[UserId]] = Future.value(EmptyUserIdsSeq)
-  val EmptyVisibilityProfiles: Map[UserId, VisibilityProfile] = Map.empty[UserId, VisibilityProfile]
-  val EmptyVisibilityProfilesFuture: Future[Map[UserId, VisibilityProfile]] =
-    Future.value(EmptyVisibilityProfiles)
+object sgsfowwowgwaphdatapwovidew {
+  vaw emptyusewidsset: s-set[usewid] = set.empty[usewid]
+  vaw e-emptyusewidssetfutuwe: futuwe[set[usewid]] = futuwe.vawue(emptyusewidsset)
+  vaw emptyusewidsseq: s-seq[usewid] = seq.empty[usewid]
+  v-vaw emptyusewidsseqfutuwe: f-futuwe[seq[usewid]] = futuwe.vawue(emptyusewidsseq)
+  vaw emptyvisibiwitypwofiwes: map[usewid, mya visibiwitypwofiwe] = m-map.empty[usewid, ^•ﻌ•^ visibiwitypwofiwe]
+  vaw emptyvisibiwitypwofiwesfutuwe: futuwe[map[usewid, ʘwʘ v-visibiwitypwofiwe]] =
+    futuwe.vawue(emptyvisibiwitypwofiwes)
 }
 
-object SgsFollowGraphDataFields extends Enumeration {
-  val FollowedUserIds: Value = Value
-  val MutuallyFollowingUserIds: Value = Value
-  val MutedUserIds: Value = Value
-  val RetweetsMutedUserIds: Value = Value
+o-object sgsfowwowgwaphdatafiewds e-extends enumewation {
+  v-vaw f-fowwowedusewids: vawue = vawue
+  vaw mutuawwyfowwowingusewids: v-vawue = vawue
+  vaw mutedusewids: vawue = vawue
+  v-vaw wetweetsmutedusewids: vawue = vawue
 
-  val None: ValueSet = SgsFollowGraphDataFields.ValueSet()
+  vaw nyone: vawueset = sgsfowwowgwaphdatafiewds.vawueset()
 
-  def throwIfInvalid(fields: SgsFollowGraphDataFields.ValueSet): Unit = {
-    if (fields.contains(MutuallyFollowingUserIds) && !fields.contains(FollowedUserIds)) {
-      throw new IllegalArgumentException(
-        "MutuallyFollowingUserIds field requires FollowedUserIds field to be defined."
+  def thwowifinvawid(fiewds: s-sgsfowwowgwaphdatafiewds.vawueset): unit = {
+    i-if (fiewds.contains(mutuawwyfowwowingusewids) && !fiewds.contains(fowwowedusewids)) {
+      t-thwow nyew iwwegawawgumentexception(
+        "mutuawwyfowwowingusewids f-fiewd wequiwes fowwowedusewids fiewd to be defined."
       )
     }
   }
 }
 
 /**
- * Provides information on the follow graph of a given user.
+ * p-pwovides i-infowmation on the fowwow gwaph o-of a given usew. ( ͡o ω ͡o )
  */
-class SgsFollowGraphDataProvider(
-  socialGraphClientFactory: ScopedSocialGraphClientFactory,
-  visibilityProfileHydratorFactory: VisibilityProfileHydratorFactory,
-  fieldsToFetch: SgsFollowGraphDataFields.ValueSet,
-  scope: RequestScope,
-  statsReceiver: StatsReceiver)
-    extends FollowGraphDataProvider
-    with RequestStats {
+c-cwass sgsfowwowgwaphdatapwovidew(
+  sociawgwaphcwientfactowy: s-scopedsociawgwaphcwientfactowy, mya
+  visibiwitypwofiwehydwatowfactowy: v-visibiwitypwofiwehydwatowfactowy, o.O
+  fiewdstofetch: sgsfowwowgwaphdatafiewds.vawueset, (✿oωo)
+  scope: wequestscope, :3
+  s-statsweceivew: statsweceivew)
+    e-extends fowwowgwaphdatapwovidew
+    w-with wequeststats {
 
-  SgsFollowGraphDataFields.throwIfInvalid(fieldsToFetch)
+  s-sgsfowwowgwaphdatafiewds.thwowifinvawid(fiewdstofetch)
 
-  private[this] val stats = scope.stats("followGraphDataProvider", statsReceiver)
-  private[this] val scopedStatsReceiver = stats.scopedStatsReceiver
+  pwivate[this] vaw stats = scope.stats("fowwowgwaphdatapwovidew", 😳 statsweceivew)
+  pwivate[this] vaw scopedstatsweceivew = stats.scopedstatsweceivew
 
-  private[this] val followingScope = scopedStatsReceiver.scope("following")
-  private[this] val followingLatencyStat = followingScope.stat(LatencyMs)
-  private[this] val followingSizeStat = followingScope.stat(Size)
-  private[this] val followingTruncatedCounter = followingScope.counter("numTruncated")
+  p-pwivate[this] v-vaw fowwowingscope = scopedstatsweceivew.scope("fowwowing")
+  p-pwivate[this] v-vaw fowwowingwatencystat = f-fowwowingscope.stat(watencyms)
+  pwivate[this] vaw fowwowingsizestat = f-fowwowingscope.stat(size)
+  pwivate[this] vaw fowwowingtwuncatedcountew = fowwowingscope.countew("numtwuncated")
 
-  private[this] val mutuallyFollowingScope = scopedStatsReceiver.scope("mutuallyFollowing")
-  private[this] val mutuallyFollowingLatencyStat = mutuallyFollowingScope.stat(LatencyMs)
-  private[this] val mutuallyFollowingSizeStat = mutuallyFollowingScope.stat(Size)
+  pwivate[this] v-vaw mutuawwyfowwowingscope = scopedstatsweceivew.scope("mutuawwyfowwowing")
+  p-pwivate[this] v-vaw mutuawwyfowwowingwatencystat = m-mutuawwyfowwowingscope.stat(watencyms)
+  pwivate[this] v-vaw m-mutuawwyfowwowingsizestat = m-mutuawwyfowwowingscope.stat(size)
 
-  private[this] val visibilityScope = scopedStatsReceiver.scope("visibility")
-  private[this] val visibilityLatencyStat = visibilityScope.stat(LatencyMs)
-  private[this] val mutedStat = visibilityScope.stat("muted")
-  private[this] val retweetsMutedStat = visibilityScope.stat("retweetsMuted")
+  p-pwivate[this] vaw visibiwityscope = scopedstatsweceivew.scope("visibiwity")
+  pwivate[this] v-vaw v-visibiwitywatencystat = v-visibiwityscope.stat(watencyms)
+  p-pwivate[this] v-vaw mutedstat = visibiwityscope.stat("muted")
+  pwivate[this] vaw wetweetsmutedstat = visibiwityscope.stat("wetweetsmuted")
 
-  private[this] val socialGraphClient = socialGraphClientFactory.scope(scope)
-  private[this] val visibilityProfileHydrator =
-    createVisibilityProfileHydrator(visibilityProfileHydratorFactory, scope, fieldsToFetch)
+  p-pwivate[this] vaw sociawgwaphcwient = sociawgwaphcwientfactowy.scope(scope)
+  pwivate[this] vaw visibiwitypwofiwehydwatow =
+    cweatevisibiwitypwofiwehydwatow(visibiwitypwofiwehydwatowfactowy, (U ﹏ U) s-scope, mya fiewdstofetch)
 
-  private[this] val failOpenScope = scopedStatsReceiver.scope("failOpen")
-  private[this] val mutuallyFollowingHandler =
-    new FailOpenHandler(failOpenScope, "mutuallyFollowing")
+  pwivate[this] vaw faiwopenscope = s-scopedstatsweceivew.scope("faiwopen")
+  p-pwivate[this] v-vaw mutuawwyfowwowinghandwew =
+    nyew f-faiwopenhandwew(faiwopenscope, (U ᵕ U❁) "mutuawwyfowwowing")
 
-  private[this] val obtainVisibilityProfiles = fieldsToFetch.contains(
-    SgsFollowGraphDataFields.MutedUserIds
-  ) || fieldsToFetch.contains(SgsFollowGraphDataFields.RetweetsMutedUserIds)
+  pwivate[this] v-vaw obtainvisibiwitypwofiwes = f-fiewdstofetch.contains(
+    sgsfowwowgwaphdatafiewds.mutedusewids
+  ) || fiewdstofetch.contains(sgsfowwowgwaphdatafiewds.wetweetsmutedusewids)
 
   /**
-   * Gets follow graph data for the given user.
+   * gets fowwow gwaph data fow the given usew. :3
    *
-   * @param userId user whose follow graph details are to be obtained.
-   * @param maxFollowingCount Maximum number of followed user IDs to fetch.
-   *          If the given user follows more than these many users,
-   *          then the most recent maxFollowingCount users are returned.
+   * @pawam u-usewid usew whose f-fowwow gwaph detaiws awe to be obtained. mya
+   * @pawam m-maxfowwowingcount m-maximum nyumbew of fowwowed usew ids to fetch. OwO
+   *          i-if the given u-usew fowwows mowe than these many u-usews, (ˆ ﻌ ˆ)♡
+   *          t-then the most wecent maxfowwowingcount usews awe wetuwned. ʘwʘ
    */
   def get(
-    userId: UserId,
-    maxFollowingCount: Int
-  ): Future[FollowGraphData] = {
-    getAsync(
-      userId,
-      maxFollowingCount
+    usewid: u-usewid, o.O
+    maxfowwowingcount: int
+  ): f-futuwe[fowwowgwaphdata] = {
+    g-getasync(
+      usewid, UwU
+      m-maxfowwowingcount
     ).get()
   }
 
-  def getAsync(
-    userId: UserId,
-    maxFollowingCount: Int
-  ): FollowGraphDataFuture = {
+  d-def getasync(
+    usewid: u-usewid, rawr x3
+    maxfowwowingcount: int
+  ): fowwowgwaphdatafutuwe = {
 
-    stats.statRequest()
-    val followedUserIdsFuture =
-      if (fieldsToFetch.contains(SgsFollowGraphDataFields.FollowedUserIds)) {
-        getFollowing(userId, maxFollowingCount)
-      } else {
-        SgsFollowGraphDataProvider.EmptyUserIdsSeqFuture
+    stats.statwequest()
+    vaw fowwowedusewidsfutuwe =
+      i-if (fiewdstofetch.contains(sgsfowwowgwaphdatafiewds.fowwowedusewids)) {
+        g-getfowwowing(usewid, 🥺 maxfowwowingcount)
+      } ewse {
+        s-sgsfowwowgwaphdatapwovidew.emptyusewidsseqfutuwe
       }
 
-    val mutuallyFollowingUserIdsFuture =
-      if (fieldsToFetch.contains(SgsFollowGraphDataFields.MutuallyFollowingUserIds)) {
-        followedUserIdsFuture.flatMap { followedUserIds =>
-          getMutuallyFollowingUserIds(userId, followedUserIds)
+    v-vaw mutuawwyfowwowingusewidsfutuwe =
+      if (fiewdstofetch.contains(sgsfowwowgwaphdatafiewds.mutuawwyfowwowingusewids)) {
+        fowwowedusewidsfutuwe.fwatmap { fowwowedusewids =>
+          g-getmutuawwyfowwowingusewids(usewid, :3 fowwowedusewids)
         }
-      } else {
-        SgsFollowGraphDataProvider.EmptyUserIdsSetFuture
+      } ewse {
+        sgsfowwowgwaphdatapwovidew.emptyusewidssetfutuwe
       }
 
-    val visibilityProfilesFuture = if (obtainVisibilityProfiles) {
-      followedUserIdsFuture.flatMap { followedUserIds =>
-        getVisibilityProfiles(userId, followedUserIds)
+    vaw visibiwitypwofiwesfutuwe = i-if (obtainvisibiwitypwofiwes) {
+      fowwowedusewidsfutuwe.fwatmap { fowwowedusewids =>
+        g-getvisibiwitypwofiwes(usewid, (ꈍᴗꈍ) f-fowwowedusewids)
       }
-    } else {
-      SgsFollowGraphDataProvider.EmptyVisibilityProfilesFuture
+    } ewse {
+      sgsfowwowgwaphdatapwovidew.emptyvisibiwitypwofiwesfutuwe
     }
 
-    val mutedUserIdsFuture = if (fieldsToFetch.contains(SgsFollowGraphDataFields.MutedUserIds)) {
-      getMutedUsers(visibilityProfilesFuture).map { mutedUserIds =>
-        mutedStat.add(mutedUserIds.size)
-        mutedUserIds
+    vaw mutedusewidsfutuwe = if (fiewdstofetch.contains(sgsfowwowgwaphdatafiewds.mutedusewids)) {
+      g-getmutedusews(visibiwitypwofiwesfutuwe).map { m-mutedusewids =>
+        mutedstat.add(mutedusewids.size)
+        mutedusewids
       }
-    } else {
-      SgsFollowGraphDataProvider.EmptyUserIdsSetFuture
+    } ewse {
+      s-sgsfowwowgwaphdatapwovidew.emptyusewidssetfutuwe
     }
 
-    val retweetsMutedUserIdsFuture =
-      if (fieldsToFetch.contains(SgsFollowGraphDataFields.RetweetsMutedUserIds)) {
-        getRetweetsMutedUsers(visibilityProfilesFuture).map { retweetsMutedUserIds =>
-          retweetsMutedStat.add(retweetsMutedUserIds.size)
-          retweetsMutedUserIds
+    vaw w-wetweetsmutedusewidsfutuwe =
+      if (fiewdstofetch.contains(sgsfowwowgwaphdatafiewds.wetweetsmutedusewids)) {
+        getwetweetsmutedusews(visibiwitypwofiwesfutuwe).map { wetweetsmutedusewids =>
+          wetweetsmutedstat.add(wetweetsmutedusewids.size)
+          w-wetweetsmutedusewids
         }
-      } else {
-        SgsFollowGraphDataProvider.EmptyUserIdsSetFuture
+      } ewse {
+        s-sgsfowwowgwaphdatapwovidew.emptyusewidssetfutuwe
       }
 
-    FollowGraphDataFuture(
-      userId,
-      followedUserIdsFuture,
-      mutuallyFollowingUserIdsFuture,
-      mutedUserIdsFuture,
-      retweetsMutedUserIdsFuture
+    f-fowwowgwaphdatafutuwe(
+      usewid, 🥺
+      f-fowwowedusewidsfutuwe, (✿oωo)
+      mutuawwyfowwowingusewidsfutuwe, (U ﹏ U)
+      m-mutedusewidsfutuwe, :3
+      w-wetweetsmutedusewidsfutuwe
     )
   }
 
-  private[this] def getVisibilityProfiles(
-    userId: UserId,
-    followingIds: Seq[UserId]
-  ): Future[Map[UserId, VisibilityProfile]] = {
-    Stat.timeFuture(visibilityLatencyStat) {
-      visibilityProfileHydrator(Some(userId), Future.value(followingIds.toSeq))
+  p-pwivate[this] def getvisibiwitypwofiwes(
+    u-usewid: u-usewid, ^^;;
+    fowwowingids: seq[usewid]
+  ): futuwe[map[usewid, rawr v-visibiwitypwofiwe]] = {
+    stat.timefutuwe(visibiwitywatencystat) {
+      v-visibiwitypwofiwehydwatow(some(usewid), 😳😳😳 f-futuwe.vawue(fowwowingids.toseq))
     }
   }
 
-  def getFollowing(userId: UserId, maxFollowingCount: Int): Future[Seq[UserId]] = {
-    Stat.timeFuture(followingLatencyStat) {
-      // We fetch 1 more than the limit so that we can decide if we ended up
-      // truncating the followings.
-      val followingIdsFuture = socialGraphClient.getFollowing(userId, Some(maxFollowingCount + 1))
-      followingIdsFuture.map { followingIds =>
-        followingSizeStat.add(followingIds.length)
-        if (followingIds.length > maxFollowingCount) {
-          followingTruncatedCounter.incr()
-          followingIds.take(maxFollowingCount)
-        } else {
-          followingIds
+  def getfowwowing(usewid: usewid, m-maxfowwowingcount: int): futuwe[seq[usewid]] = {
+    s-stat.timefutuwe(fowwowingwatencystat) {
+      // w-we fetch 1 mowe than the wimit so that we can decide i-if we ended up
+      // t-twuncating t-the fowwowings. (✿oωo)
+      v-vaw fowwowingidsfutuwe = sociawgwaphcwient.getfowwowing(usewid, OwO s-some(maxfowwowingcount + 1))
+      fowwowingidsfutuwe.map { fowwowingids =>
+        fowwowingsizestat.add(fowwowingids.wength)
+        if (fowwowingids.wength > maxfowwowingcount) {
+          f-fowwowingtwuncatedcountew.incw()
+          fowwowingids.take(maxfowwowingcount)
+        } e-ewse {
+          fowwowingids
         }
       }
     }
   }
 
-  def getMutuallyFollowingUserIds(
-    userId: UserId,
-    followingIds: Seq[UserId]
-  ): Future[Set[UserId]] = {
-    Stat.timeFuture(mutuallyFollowingLatencyStat) {
-      mutuallyFollowingHandler {
-        val mutuallyFollowingIdsFuture =
-          socialGraphClient.getFollowOverlap(followingIds.toSeq, userId)
-        mutuallyFollowingIdsFuture.map { mutuallyFollowingIds =>
-          mutuallyFollowingSizeStat.add(mutuallyFollowingIds.size)
+  d-def getmutuawwyfowwowingusewids(
+    usewid: usewid, ʘwʘ
+    f-fowwowingids: seq[usewid]
+  ): f-futuwe[set[usewid]] = {
+    s-stat.timefutuwe(mutuawwyfowwowingwatencystat) {
+      m-mutuawwyfowwowinghandwew {
+        v-vaw m-mutuawwyfowwowingidsfutuwe =
+          sociawgwaphcwient.getfowwowovewwap(fowwowingids.toseq, (ˆ ﻌ ˆ)♡ usewid)
+        mutuawwyfowwowingidsfutuwe.map { mutuawwyfowwowingids =>
+          mutuawwyfowwowingsizestat.add(mutuawwyfowwowingids.size)
         }
-        mutuallyFollowingIdsFuture
-      } { e: Throwable => SgsFollowGraphDataProvider.EmptyUserIdsSetFuture }
+        mutuawwyfowwowingidsfutuwe
+      } { e-e: thwowabwe => s-sgsfowwowgwaphdatapwovidew.emptyusewidssetfutuwe }
     }
   }
 
-  private[this] def getRetweetsMutedUsers(
-    visibilityProfilesFuture: Future[Map[UserId, VisibilityProfile]]
-  ): Future[Set[UserId]] = {
-    // If the hydrator is not able to fetch retweets-muted status, we default to true.
-    getUsersMatchingVisibilityPredicate(
-      visibilityProfilesFuture,
-      (visibilityProfile: VisibilityProfile) => visibilityProfile.areRetweetsMuted.getOrElse(true)
+  p-pwivate[this] def getwetweetsmutedusews(
+    v-visibiwitypwofiwesfutuwe: futuwe[map[usewid, (U ﹏ U) visibiwitypwofiwe]]
+  ): futuwe[set[usewid]] = {
+    // i-if the hydwatow i-is nyot abwe to fetch wetweets-muted s-status, UwU we defauwt to twue.
+    getusewsmatchingvisibiwitypwedicate(
+      v-visibiwitypwofiwesfutuwe, XD
+      (visibiwitypwofiwe: v-visibiwitypwofiwe) => visibiwitypwofiwe.awewetweetsmuted.getowewse(twue)
     )
   }
 
-  private[this] def getMutedUsers(
-    visibilityProfilesFuture: Future[Map[UserId, VisibilityProfile]]
-  ): Future[Set[UserId]] = {
-    // If the hydrator is not able to fetch muted status, we default to true.
-    getUsersMatchingVisibilityPredicate(
-      visibilityProfilesFuture,
-      (visibilityProfile: VisibilityProfile) => visibilityProfile.isMuted.getOrElse(true)
+  pwivate[this] def g-getmutedusews(
+    v-visibiwitypwofiwesfutuwe: futuwe[map[usewid, ʘwʘ visibiwitypwofiwe]]
+  ): futuwe[set[usewid]] = {
+    // if the h-hydwatow is nyot a-abwe to fetch muted s-status, rawr x3 we d-defauwt to twue. ^^;;
+    g-getusewsmatchingvisibiwitypwedicate(
+      visibiwitypwofiwesfutuwe, ʘwʘ
+      (visibiwitypwofiwe: v-visibiwitypwofiwe) => v-visibiwitypwofiwe.ismuted.getowewse(twue)
     )
   }
 
-  private[this] def getUsersMatchingVisibilityPredicate(
-    visibilityProfilesFuture: Future[Map[UserId, VisibilityProfile]],
-    predicate: (VisibilityProfile => Boolean)
-  ): Future[Set[UserId]] = {
-    visibilityProfilesFuture.map { visibilityProfiles =>
-      visibilityProfiles
-        .filter {
-          case (_, visibilityProfile) =>
-            predicate(visibilityProfile)
+  pwivate[this] def g-getusewsmatchingvisibiwitypwedicate(
+    v-visibiwitypwofiwesfutuwe: futuwe[map[usewid, (U ﹏ U) v-visibiwitypwofiwe]], (˘ω˘)
+    pwedicate: (visibiwitypwofiwe => boowean)
+  ): f-futuwe[set[usewid]] = {
+    visibiwitypwofiwesfutuwe.map { v-visibiwitypwofiwes =>
+      v-visibiwitypwofiwes
+        .fiwtew {
+          case (_, (ꈍᴗꈍ) v-visibiwitypwofiwe) =>
+            pwedicate(visibiwitypwofiwe)
         }
-        .collect { case (userId, _) => userId }
-        .toSet
+        .cowwect { case (usewid, /(^•ω•^) _) => u-usewid }
+        .toset
     }
   }
 
-  private[this] def createVisibilityProfileHydrator(
-    factory: VisibilityProfileHydratorFactory,
-    scope: RequestScope,
-    fieldsToFetch: SgsFollowGraphDataFields.ValueSet
-  ): VisibilityProfileHydrator = {
-    val hydrationProfileRequest = HydrationProfileRequest(
-      getMuted = fieldsToFetch.contains(SgsFollowGraphDataFields.MutedUserIds),
-      getRetweetsMuted = fieldsToFetch.contains(SgsFollowGraphDataFields.RetweetsMutedUserIds)
+  p-pwivate[this] d-def cweatevisibiwitypwofiwehydwatow(
+    factowy: visibiwitypwofiwehydwatowfactowy, >_<
+    scope: w-wequestscope, σωσ
+    fiewdstofetch: sgsfowwowgwaphdatafiewds.vawueset
+  ): v-visibiwitypwofiwehydwatow = {
+    v-vaw hydwationpwofiwewequest = h-hydwationpwofiwewequest(
+      getmuted = f-fiewdstofetch.contains(sgsfowwowgwaphdatafiewds.mutedusewids), ^^;;
+      g-getwetweetsmuted = fiewdstofetch.contains(sgsfowwowgwaphdatafiewds.wetweetsmutedusewids)
     )
-    factory(hydrationProfileRequest, scope)
+    factowy(hydwationpwofiwewequest, 😳 s-scope)
   }
 }
 
-class ScopedSgsFollowGraphDataProviderFactory(
-  socialGraphClientFactory: ScopedSocialGraphClientFactory,
-  visibilityProfileHydratorFactory: VisibilityProfileHydratorFactory,
-  fieldsToFetch: SgsFollowGraphDataFields.ValueSet,
-  statsReceiver: StatsReceiver)
-    extends ScopedFactory[SgsFollowGraphDataProvider] {
+cwass scopedsgsfowwowgwaphdatapwovidewfactowy(
+  s-sociawgwaphcwientfactowy: s-scopedsociawgwaphcwientfactowy, >_<
+  visibiwitypwofiwehydwatowfactowy: v-visibiwitypwofiwehydwatowfactowy, -.-
+  fiewdstofetch: s-sgsfowwowgwaphdatafiewds.vawueset, UwU
+  s-statsweceivew: s-statsweceivew)
+    extends scopedfactowy[sgsfowwowgwaphdatapwovidew] {
 
-  override def scope(scope: RequestScope): SgsFollowGraphDataProvider = {
-    new SgsFollowGraphDataProvider(
-      socialGraphClientFactory,
-      visibilityProfileHydratorFactory,
-      fieldsToFetch,
+  ovewwide def scope(scope: wequestscope): sgsfowwowgwaphdatapwovidew = {
+    nyew sgsfowwowgwaphdatapwovidew(
+      sociawgwaphcwientfactowy, :3
+      visibiwitypwofiwehydwatowfactowy, σωσ
+      fiewdstofetch, >w<
       scope,
-      statsReceiver
+      statsweceivew
     )
   }
 }

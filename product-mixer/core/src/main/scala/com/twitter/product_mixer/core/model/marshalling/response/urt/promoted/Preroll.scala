@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted
 
-case class Preroll(
-  prerollId: Option[String],
-  dynamicPrerollType: Option[DynamicPrerollType],
-  mediaInfo: Option[MediaInfo])
+case cwass pwewoww(
+  p-pwewowwid: o-option[stwing], òωó
+  d-dynamicpwewowwtype: o-option[dynamicpwewowwtype], o.O
+  m-mediainfo: option[mediainfo])

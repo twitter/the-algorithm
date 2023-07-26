@@ -1,241 +1,241 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.context.thriftscala.FeatureContext
-import com.twitter.tweetypie.backends.LimiterService
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.serverutil.ExceptionCounter
-import com.twitter.tweetypie.store.InsertTweet
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.util.TweetCreationLock.{Key => TweetCreationLockKey}
+impowt c-com.twittew.context.thwiftscawa.featuwecontext
+i-impowt com.twittew.tweetypie.backends.wimitewsewvice
+i-impowt c-com.twittew.tweetypie.cowe._
+i-impowt c-com.twittew.tweetypie.sewvewutiw.exceptioncountew
+i-impowt com.twittew.tweetypie.stowe.insewttweet
+impowt com.twittew.tweetypie.thwiftscawa._
+impowt com.twittew.tweetypie.utiw.tweetcweationwock.{key => tweetcweationwockkey}
 
-object PostTweet {
-  type Type[R] = FutureArrow[R, PostTweetResult]
+object posttweet {
+  t-type type[w] = futuweawwow[w, òωó posttweetwesuwt]
 
   /**
-   * A type-class to abstract over tweet creation requests.
+   * a-a type-cwass to abstwact ovew t-tweet cweation wequests.
    */
-  trait RequestView[R] {
-    def isDark(req: R): Boolean
-    def sourceTweetId(req: R): Option[TweetId]
-    def options(req: R): Option[WritePathHydrationOptions]
-    def userId(req: R): UserId
-    def uniquenessId(req: R): Option[Long]
-    def returnSuccessOnDuplicate(req: R): Boolean
-    def returnDuplicateTweet(req: R): Boolean =
-      returnSuccessOnDuplicate(req) || uniquenessId(req).nonEmpty
-    def lockKey(req: R): TweetCreationLockKey
-    def geo(req: R): Option[TweetCreateGeo]
-    def featureContext(req: R): Option[FeatureContext]
-    def additionalContext(req: R): Option[collection.Map[TweetCreateContextKey, String]]
-    def transientContext(req: R): Option[TransientCreateContext]
-    def additionalFields(req: R): Option[Tweet]
-    def duplicateState: TweetCreateState
-    def scope: String
-    def isNullcast(req: R): Boolean
-    def creativesContainerId(req: R): Option[CreativesContainerId]
-    def noteTweetMentionedUserIds(req: R): Option[Seq[Long]]
+  twait wequestview[w] {
+    def i-isdawk(weq: w): boowean
+    def s-souwcetweetid(weq: w-w): option[tweetid]
+    def options(weq: w): option[wwitepathhydwationoptions]
+    def usewid(weq: w-w): usewid
+    def uniquenessid(weq: w): option[wong]
+    def wetuwnsuccessondupwicate(weq: w-w): boowean
+    def wetuwndupwicatetweet(weq: w-w): boowean =
+      w-wetuwnsuccessondupwicate(weq) || u-uniquenessid(weq).nonempty
+    d-def wockkey(weq: w): tweetcweationwockkey
+    def geo(weq: w-w): option[tweetcweategeo]
+    def featuwecontext(weq: w): option[featuwecontext]
+    d-def additionawcontext(weq: w): option[cowwection.map[tweetcweatecontextkey, ^^;; stwing]]
+    def twansientcontext(weq: w): option[twansientcweatecontext]
+    def additionawfiewds(weq: w-w): option[tweet]
+    def dupwicatestate: t-tweetcweatestate
+    d-def scope: s-stwing
+    def isnuwwcast(weq: w): boowean
+    def cweativescontainewid(weq: w-w): option[cweativescontainewid]
+    d-def nyotetweetmentionedusewids(weq: w): option[seq[wong]]
   }
 
   /**
-   * An implementation of `RequestView` for `PostTweetRequest`.
+   * a-an impwementation o-of `wequestview` fow `posttweetwequest`. rawr
    */
-  implicit object PostTweetRequestView extends RequestView[PostTweetRequest] {
-    def isDark(req: PostTweetRequest): Boolean = req.dark
-    def sourceTweetId(req: PostTweetRequest): None.type = None
-    def options(req: PostTweetRequest): Option[WritePathHydrationOptions] = req.hydrationOptions
-    def userId(req: PostTweetRequest): UserId = req.userId
-    def uniquenessId(req: PostTweetRequest): Option[Long] = req.uniquenessId
-    def returnSuccessOnDuplicate(req: PostTweetRequest) = false
-    def lockKey(req: PostTweetRequest): TweetCreationLockKey = TweetCreationLockKey.byRequest(req)
-    def geo(req: PostTweetRequest): Option[TweetCreateGeo] = req.geo
-    def featureContext(req: PostTweetRequest): Option[FeatureContext] = req.featureContext
-    def additionalContext(
-      req: PostTweetRequest
-    ): Option[collection.Map[TweetCreateContextKey, String]] = req.additionalContext
-    def transientContext(req: PostTweetRequest): Option[TransientCreateContext] =
-      req.transientContext
-    def additionalFields(req: PostTweetRequest): Option[Tweet] = req.additionalFields
-    def duplicateState: TweetCreateState.Duplicate.type = TweetCreateState.Duplicate
+  i-impwicit object posttweetwequestview e-extends wequestview[posttweetwequest] {
+    def isdawk(weq: p-posttweetwequest): boowean = w-weq.dawk
+    def souwcetweetid(weq: p-posttweetwequest): n-nyone.type = nyone
+    def options(weq: posttweetwequest): option[wwitepathhydwationoptions] = weq.hydwationoptions
+    def usewid(weq: p-posttweetwequest): u-usewid = weq.usewid
+    def uniquenessid(weq: p-posttweetwequest): o-option[wong] = w-weq.uniquenessid
+    def wetuwnsuccessondupwicate(weq: posttweetwequest) = fawse
+    d-def wockkey(weq: posttweetwequest): tweetcweationwockkey = tweetcweationwockkey.bywequest(weq)
+    def geo(weq: p-posttweetwequest): option[tweetcweategeo] = w-weq.geo
+    d-def featuwecontext(weq: p-posttweetwequest): option[featuwecontext] = w-weq.featuwecontext
+    d-def additionawcontext(
+      w-weq: posttweetwequest
+    ): o-option[cowwection.map[tweetcweatecontextkey, (ˆ ﻌ ˆ)♡ stwing]] = weq.additionawcontext
+    def twansientcontext(weq: p-posttweetwequest): o-option[twansientcweatecontext] =
+      w-weq.twansientcontext
+    d-def additionawfiewds(weq: p-posttweetwequest): option[tweet] = weq.additionawfiewds
+    def dupwicatestate: t-tweetcweatestate.dupwicate.type = tweetcweatestate.dupwicate
     def scope = "tweet"
-    def isNullcast(req: PostTweetRequest): Boolean = req.nullcast
-    def creativesContainerId(req: PostTweetRequest): Option[CreativesContainerId] =
-      req.underlyingCreativesContainerId
-    def noteTweetMentionedUserIds(req: PostTweetRequest): Option[Seq[Long]] =
-      req.noteTweetOptions match {
-        case Some(noteTweetOptions) => noteTweetOptions.mentionedUserIds
-        case _ => None
+    def isnuwwcast(weq: posttweetwequest): boowean = w-weq.nuwwcast
+    def cweativescontainewid(weq: posttweetwequest): option[cweativescontainewid] =
+      weq.undewwyingcweativescontainewid
+    d-def nyotetweetmentionedusewids(weq: p-posttweetwequest): o-option[seq[wong]] =
+      weq.notetweetoptions m-match {
+        case s-some(notetweetoptions) => n-nyotetweetoptions.mentionedusewids
+        case _ => nyone
       }
   }
 
   /**
-   * An implementation of `RequestView` for `RetweetRequest`.
+   * an impwementation of `wequestview` f-fow `wetweetwequest`. XD
    */
-  implicit object RetweetRequestView extends RequestView[RetweetRequest] {
-    def isDark(req: RetweetRequest): Boolean = req.dark
-    def sourceTweetId(req: RetweetRequest): None.type = None
-    def options(req: RetweetRequest): Option[WritePathHydrationOptions] = req.hydrationOptions
-    def userId(req: RetweetRequest): UserId = req.userId
-    def uniquenessId(req: RetweetRequest): Option[Long] = req.uniquenessId
-    def returnSuccessOnDuplicate(req: RetweetRequest): Boolean = req.returnSuccessOnDuplicate
-    def lockKey(req: RetweetRequest): TweetCreationLockKey =
-      req.uniquenessId match {
-        case Some(id) => TweetCreationLockKey.byUniquenessId(req.userId, id)
-        case None => TweetCreationLockKey.bySourceTweetId(req.userId, req.sourceStatusId)
+  impwicit object wetweetwequestview e-extends wequestview[wetweetwequest] {
+    def i-isdawk(weq: wetweetwequest): b-boowean = weq.dawk
+    def souwcetweetid(weq: w-wetweetwequest): n-nyone.type = nyone
+    d-def options(weq: w-wetweetwequest): option[wwitepathhydwationoptions] = weq.hydwationoptions
+    def usewid(weq: wetweetwequest): u-usewid = weq.usewid
+    d-def uniquenessid(weq: w-wetweetwequest): option[wong] = w-weq.uniquenessid
+    d-def wetuwnsuccessondupwicate(weq: wetweetwequest): b-boowean = weq.wetuwnsuccessondupwicate
+    def wockkey(weq: wetweetwequest): tweetcweationwockkey =
+      w-weq.uniquenessid m-match {
+        case some(id) => tweetcweationwockkey.byuniquenessid(weq.usewid, >_< i-id)
+        c-case nyone => tweetcweationwockkey.bysouwcetweetid(weq.usewid, (˘ω˘) weq.souwcestatusid)
       }
-    def geo(req: RetweetRequest): None.type = None
-    def featureContext(req: RetweetRequest): Option[FeatureContext] = req.featureContext
-    def additionalContext(req: RetweetRequest): None.type = None
-    def transientContext(req: RetweetRequest): None.type = None
-    def additionalFields(req: RetweetRequest): Option[Tweet] = req.additionalFields
-    def duplicateState: TweetCreateState.AlreadyRetweeted.type = TweetCreateState.AlreadyRetweeted
-    def scope = "retweet"
-    def isNullcast(req: RetweetRequest): Boolean = req.nullcast
-    def creativesContainerId(req: RetweetRequest): Option[CreativesContainerId] = None
-    def noteTweetMentionedUserIds(req: RetweetRequest): Option[Seq[Long]] = None
+    def geo(weq: wetweetwequest): nyone.type = n-nyone
+    def featuwecontext(weq: wetweetwequest): option[featuwecontext] = weq.featuwecontext
+    d-def additionawcontext(weq: wetweetwequest): n-none.type = n-nyone
+    def twansientcontext(weq: wetweetwequest): none.type = n-nyone
+    d-def additionawfiewds(weq: wetweetwequest): option[tweet] = weq.additionawfiewds
+    d-def dupwicatestate: tweetcweatestate.awweadywetweeted.type = t-tweetcweatestate.awweadywetweeted
+    def scope = "wetweet"
+    def isnuwwcast(weq: wetweetwequest): b-boowean = weq.nuwwcast
+    d-def cweativescontainewid(weq: w-wetweetwequest): option[cweativescontainewid] = n-nyone
+    def nyotetweetmentionedusewids(weq: wetweetwequest): option[seq[wong]] = n-nyone
   }
 
   /**
-   * A `Filter` is used to decorate a `FutureArrow` that has a known return type
-   * and an input type for which there is a `RequestView` type-class instance.
+   * a-a `fiwtew` i-is used to decowate a `futuweawwow` t-that has a-a known wetuwn type
+   * and an input type fow w-which thewe is a `wequestview` type-cwass i-instance. 😳
    */
-  trait Filter[Res] { self =>
-    type T[Req] = FutureArrow[Req, Res]
+  t-twait fiwtew[wes] { sewf =>
+    type t-t[weq] = futuweawwow[weq, o.O wes]
 
     /**
-     * Wraps a base arrow with additional behavior.
+     * w-wwaps a base awwow w-with additionaw behaviow. (ꈍᴗꈍ)
      */
-    def apply[Req: RequestView](base: T[Req]): T[Req]
+    def appwy[weq: wequestview](base: t-t[weq]): t-t[weq]
 
     /**
-     * Composes two filter.  The resulting filter itself composes FutureArrows.
+     * c-composes t-two fiwtew. rawr x3  the wesuwting fiwtew i-itsewf composes futuweawwows. ^^
      */
-    def andThen(next: Filter[Res]): Filter[Res] =
-      new Filter[Res] {
-        def apply[Req: RequestView](base: T[Req]): T[Req] =
-          next(self(base))
+    def andthen(next: fiwtew[wes]): fiwtew[wes] =
+      nyew fiwtew[wes] {
+        def a-appwy[weq: wequestview](base: t[weq]): t[weq] =
+          n-nyext(sewf(base))
       }
   }
 
   /**
-   * This filter attempts to prevent some race-condition related duplicate tweet creations,
-   * via use of a `TweetCreateLock`.  When a duplicate is detected, this filter can synthesize
-   * a successful `PostTweetResult` if applicable, or return the appropriate coded response.
+   * this fiwtew a-attempts to pwevent some wace-condition w-wewated dupwicate tweet c-cweations, OwO
+   * v-via use of a `tweetcweatewock`. ^^  w-when a dupwicate i-is detected, :3 t-this fiwtew can synthesize
+   * a successfuw `posttweetwesuwt` if appwicabwe, o.O ow wetuwn the appwopwiate coded wesponse. -.-
    */
-  object DuplicateHandler {
-    def apply(
-      tweetCreationLock: TweetCreationLock,
-      getTweets: GetTweetsHandler.Type,
-      stats: StatsReceiver
-    ): Filter[PostTweetResult] =
-      new Filter[PostTweetResult] {
-        def apply[R: RequestView](base: T[R]): T[R] = {
-          val view = implicitly[RequestView[R]]
-          val notFoundCount = stats.counter(view.scope, "not_found")
-          val foundCounter = stats.counter(view.scope, "found")
+  o-object dupwicatehandwew {
+    d-def appwy(
+      t-tweetcweationwock: tweetcweationwock, (U ﹏ U)
+      g-gettweets: gettweetshandwew.type, o.O
+      stats: statsweceivew
+    ): fiwtew[posttweetwesuwt] =
+      n-new fiwtew[posttweetwesuwt] {
+        d-def appwy[w: wequestview](base: t-t[w]): t[w] = {
+          vaw view = impwicitwy[wequestview[w]]
+          vaw nyotfoundcount = s-stats.countew(view.scope, OwO "not_found")
+          v-vaw foundcountew = stats.countew(view.scope, ^•ﻌ•^ "found")
 
-          FutureArrow.rec[R, PostTweetResult] { self => req =>
-            val duplicateKey = view.lockKey(req)
+          f-futuweawwow.wec[w, ʘwʘ p-posttweetwesuwt] { sewf => weq =>
+            vaw dupwicatekey = view.wockkey(weq)
 
-            // attempts to find the duplicate tweet.
+            // a-attempts t-to find the d-dupwicate tweet. :3
             //
-            // if `returnDupTweet` is true and we find the tweet, then we return a
-            // successful `PostTweetResult` with that tweet.  if we don't find the
-            // tweet, we throw an `InternalServerError`.
+            // i-if `wetuwnduptweet` i-is twue and we find the tweet, 😳 t-then we wetuwn a-a
+            // successfuw `posttweetwesuwt` w-with that tweet. òωó  i-if we don't find the
+            // t-tweet, 🥺 we thwow an `intewnawsewvewewwow`. rawr x3
             //
-            // if `returnDupTweet` is false and we find the tweet, then we return
-            // the appropriate duplicate state.  if we don't find the tweet, then
-            // we unlock the duplicate key and try again.
-            def duplicate(tweetId: TweetId, returnDupTweet: Boolean) =
-              findDuplicate(tweetId, req).flatMap {
-                case Some(postTweetResult) =>
-                  foundCounter.incr()
-                  if (returnDupTweet) Future.value(postTweetResult)
-                  else Future.value(PostTweetResult(state = view.duplicateState))
+            // if `wetuwnduptweet` i-is fawse and we find the tweet, ^•ﻌ•^ t-then we wetuwn
+            // t-the appwopwiate dupwicate state. :3  i-if we don't find the tweet, (ˆ ﻌ ˆ)♡ then
+            // w-we unwock the d-dupwicate key a-and twy again. (U ᵕ U❁)
+            def dupwicate(tweetid: tweetid, :3 wetuwnduptweet: boowean) =
+              f-finddupwicate(tweetid, ^^;; weq).fwatmap {
+                case some(posttweetwesuwt) =>
+                  f-foundcountew.incw()
+                  i-if (wetuwnduptweet) futuwe.vawue(posttweetwesuwt)
+                  e-ewse futuwe.vawue(posttweetwesuwt(state = view.dupwicatestate))
 
-                case None =>
-                  notFoundCount.incr()
-                  if (returnDupTweet) {
-                    // If we failed to load the tweet, but we know that it
-                    // should exist, then return an InternalServerError, so that
-                    // the client treats it as a failed tweet creation req.
-                    Future.exception(
-                      InternalServerError("Failed to load duplicate existing tweet: " + tweetId)
+                c-case nyone =>
+                  n-nyotfoundcount.incw()
+                  if (wetuwnduptweet) {
+                    // if we f-faiwed to woad the tweet, ( ͡o ω ͡o ) but we know that it
+                    // s-shouwd exist, o.O t-then wetuwn an intewnawsewvewewwow, ^•ﻌ•^ s-so that
+                    // the cwient t-tweats it as a f-faiwed tweet cweation w-weq. XD
+                    futuwe.exception(
+                      intewnawsewvewewwow("faiwed to woad dupwicate existing tweet: " + tweetid)
                     )
-                  } else {
-                    // Assume the lock is stale if we can't load the tweet. It's
-                    // possible that the lock is not stale, but the tweet is not
-                    // yet available, which requires that it not be present in
-                    // cache and not yet available from the backend. This means
-                    // that the failure mode is to allow tweeting if we can't
-                    // determine the state, but it should be rare that we can't
-                    // determine it.
-                    tweetCreationLock.unlock(duplicateKey).before(self(req))
+                  } ewse {
+                    // assume the wock is stawe if we can't woad the tweet. ^^ it's
+                    // possibwe that the wock is nyot stawe, o.O b-but the tweet is n-nyot
+                    // yet avaiwabwe, ( ͡o ω ͡o ) which w-wequiwes that i-it nyot be pwesent i-in
+                    // cache a-and nyot yet avaiwabwe fwom t-the backend. /(^•ω•^) this m-means
+                    // that the faiwuwe m-mode is to awwow tweeting if we c-can't
+                    // d-detewmine the state, 🥺 but it shouwd b-be wawe that we c-can't
+                    // d-detewmine i-it. nyaa~~
+                    tweetcweationwock.unwock(dupwicatekey).befowe(sewf(weq))
                   }
               }
 
-            tweetCreationLock(duplicateKey, view.isDark(req), view.isNullcast(req)) {
-              base(req)
-            }.rescue {
-              case TweetCreationInProgress =>
-                Future.value(PostTweetResult(state = TweetCreateState.Duplicate))
+            t-tweetcweationwock(dupwicatekey, mya v-view.isdawk(weq), XD v-view.isnuwwcast(weq)) {
+              b-base(weq)
+            }.wescue {
+              c-case tweetcweationinpwogwess =>
+                futuwe.vawue(posttweetwesuwt(state = t-tweetcweatestate.dupwicate))
 
-              // if tweetCreationLock detected a duplicate, look up the duplicate
-              // and return the appropriate result
-              case DuplicateTweetCreation(tweetId) =>
-                duplicate(tweetId, view.returnDuplicateTweet(req))
+              // i-if tweetcweationwock d-detected a dupwicate, nyaa~~ wook u-up the dupwicate
+              // and wetuwn the appwopwiate w-wesuwt
+              case dupwicatetweetcweation(tweetid) =>
+                d-dupwicate(tweetid, ʘwʘ v-view.wetuwndupwicatetweet(weq))
 
-              // it's possible that tweetCreationLock didn't find a duplicate for a
-              // retweet attempt, but `RetweetBuilder` did.
-              case TweetCreateFailure.AlreadyRetweeted(tweetId) if view.returnDuplicateTweet(req) =>
-                duplicate(tweetId, true)
+              // i-it's possibwe that tweetcweationwock d-didn't find a dupwicate f-fow a
+              // wetweet attempt, (⑅˘꒳˘) b-but `wetweetbuiwdew` did. :3
+              c-case tweetcweatefaiwuwe.awweadywetweeted(tweetid) if view.wetuwndupwicatetweet(weq) =>
+                dupwicate(tweetid, -.- twue)
             }
           }
         }
 
-        private def findDuplicate[R: RequestView](
-          tweetId: TweetId,
-          req: R
-        ): Future[Option[PostTweetResult]] = {
-          val view = implicitly[RequestView[R]]
-          val readRequest =
-            GetTweetsRequest(
-              tweetIds = Seq(tweetId),
-              // Assume that the defaults are OK for all of the hydration
-              // options except the ones that are explicitly set in the
-              // req.
-              options = Some(
-                GetTweetOptions(
-                  forUserId = Some(view.userId(req)),
-                  includePerspectivals = true,
-                  includeCards = view.options(req).exists(_.includeCards),
-                  cardsPlatformKey = view.options(req).flatMap(_.cardsPlatformKey)
+        pwivate d-def finddupwicate[w: wequestview](
+          t-tweetid: tweetid, 😳😳😳
+          w-weq: w
+        ): futuwe[option[posttweetwesuwt]] = {
+          vaw v-view = impwicitwy[wequestview[w]]
+          vaw w-weadwequest =
+            g-gettweetswequest(
+              t-tweetids = seq(tweetid), (U ﹏ U)
+              // assume that t-the defauwts awe o-ok fow aww of the hydwation
+              // o-options except the ones that awe expwicitwy set i-in the
+              // weq. o.O
+              o-options = s-some(
+                g-gettweetoptions(
+                  fowusewid = s-some(view.usewid(weq)), ( ͡o ω ͡o )
+                  i-incwudepewspectivaws = t-twue, òωó
+                  i-incwudecawds = view.options(weq).exists(_.incwudecawds), 🥺
+                  c-cawdspwatfowmkey = v-view.options(weq).fwatmap(_.cawdspwatfowmkey)
                 )
               )
             )
 
-          getTweets(readRequest).map {
-            case Seq(result) =>
-              if (result.tweetState == StatusState.Found) {
-                // If the tweet was successfully found, then convert the
-                // read result into a successful write result.
-                Some(
-                  PostTweetResult(
-                    TweetCreateState.Ok,
-                    result.tweet,
-                    // if the retweet is really old, the retweet perspective might no longer
-                    // be available, but we want to maintain the invariant that the `postRetweet`
-                    // endpoint always returns a source tweet with the correct perspective.
-                    result.sourceTweet.map { srcTweet =>
-                      TweetLenses.perspective
-                        .update(_.map(_.copy(retweeted = true, retweetId = Some(tweetId))))
-                        .apply(srcTweet)
-                    },
-                    result.quotedTweet
+          g-gettweets(weadwequest).map {
+            c-case seq(wesuwt) =>
+              i-if (wesuwt.tweetstate == s-statusstate.found) {
+                // i-if the tweet w-was successfuwwy found, /(^•ω•^) then c-convewt the
+                // wead wesuwt into a-a successfuw wwite wesuwt. 😳😳😳
+                s-some(
+                  p-posttweetwesuwt(
+                    t-tweetcweatestate.ok, ^•ﻌ•^
+                    wesuwt.tweet, nyaa~~
+                    // if the wetweet is weawwy owd, t-the wetweet p-pewspective might n-nyo wongew
+                    // be avaiwabwe, OwO but we want to maintain the invawiant t-that the `postwetweet`
+                    // e-endpoint awways wetuwns a s-souwce tweet with t-the cowwect pewspective. ^•ﻌ•^
+                    wesuwt.souwcetweet.map { swctweet =>
+                      tweetwenses.pewspective
+                        .update(_.map(_.copy(wetweeted = twue, σωσ w-wetweetid = some(tweetid))))
+                        .appwy(swctweet)
+                    }, -.-
+                    w-wesuwt.quotedtweet
                   )
                 )
-              } else {
-                None
+              } e-ewse {
+                n-nyone
               }
           }
         }
@@ -243,42 +243,42 @@ object PostTweet {
   }
 
   /**
-   * A `Filter` that applies rate limiting to failing requests.
+   * a `fiwtew` that appwies wate w-wimiting to faiwing w-wequests. (˘ω˘)
    */
-  object RateLimitFailures {
-    def apply(
-      validateLimit: RateLimitChecker.Validate,
-      incrementSuccess: LimiterService.IncrementByOne,
-      incrementFailure: LimiterService.IncrementByOne
-    ): Filter[TweetBuilderResult] =
-      new Filter[TweetBuilderResult] {
-        def apply[R: RequestView](base: T[R]): T[R] = {
-          val view = implicitly[RequestView[R]]
+  object watewimitfaiwuwes {
+    d-def appwy(
+      vawidatewimit: watewimitcheckew.vawidate, rawr x3
+      i-incwementsuccess: wimitewsewvice.incwementbyone, rawr x3
+      i-incwementfaiwuwe: w-wimitewsewvice.incwementbyone
+    ): fiwtew[tweetbuiwdewwesuwt] =
+      n-new fiwtew[tweetbuiwdewwesuwt] {
+        d-def appwy[w: wequestview](base: t-t[w]): t[w] = {
+          vaw v-view = impwicitwy[wequestview[w]]
 
-          FutureArrow[R, TweetBuilderResult] { req =>
-            val userId = view.userId(req)
-            val dark = view.isDark(req)
-            val contributorUserId: Option[UserId] = getContributor(userId).map(_.userId)
+          f-futuweawwow[w, σωσ t-tweetbuiwdewwesuwt] { w-weq =>
+            vaw usewid = v-view.usewid(weq)
+            v-vaw dawk = view.isdawk(weq)
+            v-vaw contwibutowusewid: option[usewid] = getcontwibutow(usewid).map(_.usewid)
 
-            validateLimit((userId, dark))
-              .before {
-                base(req).onFailure { _ =>
-                  // We don't increment the failure rate limit if the failure
-                  // was from the failure rate limit so that the user can't
-                  // get in a loop where tweet creation is never attempted. We
-                  // don't increment it if the creation is dark because there
-                  // is no way to perform a dark tweet creation through the
-                  // API, so it's most likey some kind of test traffic like
-                  // tap-compare.
-                  if (!dark) incrementFailure(userId, contributorUserId)
+            v-vawidatewimit((usewid, nyaa~~ dawk))
+              .befowe {
+                base(weq).onfaiwuwe { _ =>
+                  // w-we don't i-incwement the faiwuwe w-wate wimit if the faiwuwe
+                  // was fwom the faiwuwe wate wimit so that the u-usew can't
+                  // get in a woop w-whewe tweet cweation i-is nyevew attempted. (ꈍᴗꈍ) we
+                  // don't incwement i-it if the cweation is dawk because t-thewe
+                  // i-is nyo way to pewfowm a-a dawk tweet c-cweation thwough t-the
+                  // api, ^•ﻌ•^ so it's most wikey some kind of test twaffic wike
+                  // t-tap-compawe. >_<
+                  if (!dawk) i-incwementfaiwuwe(usewid, ^^;; contwibutowusewid)
                 }
               }
-              .onSuccess { resp =>
-                // If we return a silent failure, then we want to
-                // increment the rate limit as if the tweet was fully
-                // created, because we want it to appear that way to the
-                // user whose creation silently failed.
-                if (resp.isSilentFail) incrementSuccess(userId, contributorUserId)
+              .onsuccess { wesp =>
+                // if we wetuwn a-a siwent faiwuwe, ^^;; then we want to
+                // incwement the wate wimit a-as if the tweet w-was fuwwy
+                // cweated, /(^•ω•^) because w-we want it to appeaw that way to the
+                // u-usew whose c-cweation siwentwy faiwed. nyaa~~
+                i-if (wesp.issiwentfaiw) incwementsuccess(usewid, (✿oωo) c-contwibutowusewid)
               }
           }
         }
@@ -286,110 +286,110 @@ object PostTweet {
   }
 
   /**
-   * A `Filter` for counting non-`TweetCreateFailure` failures.
+   * a `fiwtew` fow counting nyon-`tweetcweatefaiwuwe` f-faiwuwes. ( ͡o ω ͡o )
    */
-  object CountFailures {
-    def apply[Res](stats: StatsReceiver, scopeSuffix: String = "_builder"): Filter[Res] =
-      new Filter[Res] {
-        def apply[R: RequestView](base: T[R]): T[R] = {
-          val view = implicitly[RequestView[R]]
-          val exceptionCounter = ExceptionCounter(stats.scope(view.scope + scopeSuffix))
-          base.onFailure {
-            case (_, _: TweetCreateFailure) =>
-            case (_, ex) => exceptionCounter(ex)
+  object countfaiwuwes {
+    def a-appwy[wes](stats: s-statsweceivew, (U ᵕ U❁) s-scopesuffix: stwing = "_buiwdew"): fiwtew[wes] =
+      nyew fiwtew[wes] {
+        d-def appwy[w: wequestview](base: t[w]): t[w] = {
+          vaw view = impwicitwy[wequestview[w]]
+          v-vaw e-exceptioncountew = e-exceptioncountew(stats.scope(view.scope + scopesuffix))
+          b-base.onfaiwuwe {
+            case (_, òωó _: tweetcweatefaiwuwe) =>
+            c-case (_, ex) => e-exceptioncountew(ex)
           }
         }
       }
   }
 
   /**
-   * A `Filter` for logging failures.
+   * a `fiwtew` fow wogging faiwuwes. σωσ
    */
-  object LogFailures extends Filter[PostTweetResult] {
-    private[this] val failedTweetCreationsLogger = Logger(
-      "com.twitter.tweetypie.FailedTweetCreations"
+  object w-wogfaiwuwes extends fiwtew[posttweetwesuwt] {
+    pwivate[this] v-vaw faiwedtweetcweationswoggew = woggew(
+      "com.twittew.tweetypie.faiwedtweetcweations"
     )
 
-    def apply[R: RequestView](base: T[R]): T[R] =
-      FutureArrow[R, PostTweetResult] { req =>
-        base(req).onFailure {
-          case failure => failedTweetCreationsLogger.info(s"request: $req\nfailure: $failure")
+    def a-appwy[w: wequestview](base: t-t[w]): t[w] =
+      f-futuweawwow[w, p-posttweetwesuwt] { w-weq =>
+        base(weq).onfaiwuwe {
+          case faiwuwe => f-faiwedtweetcweationswoggew.info(s"wequest: $weq\nfaiwuwe: $faiwuwe")
         }
       }
   }
 
   /**
-   * A `Filter` for converting a thrown `TweetCreateFailure` into a `PostTweetResult`.
+   * a `fiwtew` fow convewting a-a thwown `tweetcweatefaiwuwe` into a `posttweetwesuwt`. :3
    */
-  object RescueTweetCreateFailure extends Filter[PostTweetResult] {
-    def apply[R: RequestView](base: T[R]): T[R] =
-      FutureArrow[R, PostTweetResult] { req =>
-        base(req).rescue {
-          case failure: TweetCreateFailure => Future.value(failure.toPostTweetResult)
+  object wescuetweetcweatefaiwuwe extends fiwtew[posttweetwesuwt] {
+    d-def appwy[w: w-wequestview](base: t-t[w]): t-t[w] =
+      futuweawwow[w, OwO p-posttweetwesuwt] { weq =>
+        base(weq).wescue {
+          c-case faiwuwe: tweetcweatefaiwuwe => futuwe.vawue(faiwuwe.toposttweetwesuwt)
         }
       }
   }
 
   /**
-   * Builds a base handler for `PostTweetRequest` and `RetweetRequest`.  The handler
-   * calls an underlying tweet builder, creates a `InsertTweet.Event`, hydrates
-   * that, passes it to `tweetStore`, and then converts it to a `PostTweetResult`.
+   * buiwds a-a base handwew fow `posttweetwequest` and `wetweetwequest`. ^^  t-the handwew
+   * cawws an undewwying t-tweet buiwdew, (˘ω˘) c-cweates a `insewttweet.event`, OwO hydwates
+   * that, p-passes it to `tweetstowe`, UwU and then convewts i-it to a `posttweetwesuwt`. ^•ﻌ•^
    */
-  object Handler {
-    def apply[R: RequestView](
-      tweetBuilder: FutureArrow[R, TweetBuilderResult],
-      hydrateInsertEvent: FutureArrow[InsertTweet.Event, InsertTweet.Event],
-      tweetStore: InsertTweet.Store,
-    ): Type[R] = {
-      FutureArrow { req =>
-        for {
-          bldrRes <- tweetBuilder(req)
-          event <- hydrateInsertEvent(toInsertTweetEvent(req, bldrRes))
-          _ <- Future.when(!event.dark)(tweetStore.insertTweet(event))
-        } yield toPostTweetResult(event)
+  o-object handwew {
+    def appwy[w: w-wequestview](
+      t-tweetbuiwdew: futuweawwow[w, (ꈍᴗꈍ) t-tweetbuiwdewwesuwt], /(^•ω•^)
+      hydwateinsewtevent: futuweawwow[insewttweet.event, (U ᵕ U❁) insewttweet.event], (✿oωo)
+      tweetstowe: i-insewttweet.stowe, OwO
+    ): type[w] = {
+      f-futuweawwow { weq =>
+        fow {
+          b-bwdwwes <- tweetbuiwdew(weq)
+          e-event <- h-hydwateinsewtevent(toinsewttweetevent(weq, :3 bwdwwes))
+          _ <- futuwe.when(!event.dawk)(tweetstowe.insewttweet(event))
+        } y-yiewd t-toposttweetwesuwt(event)
       }
     }
 
     /**
-     * Converts a request/`TweetBuilderResult` pair into an `InsertTweet.Event`.
+     * convewts a-a wequest/`tweetbuiwdewwesuwt` paiw into an `insewttweet.event`. nyaa~~
      */
-    def toInsertTweetEvent[R: RequestView](
-      req: R,
-      bldrRes: TweetBuilderResult
-    ): InsertTweet.Event = {
-      val view = implicitly[RequestView[R]]
-      InsertTweet.Event(
-        tweet = bldrRes.tweet,
-        user = bldrRes.user,
-        sourceTweet = bldrRes.sourceTweet,
-        sourceUser = bldrRes.sourceUser,
-        parentUserId = bldrRes.parentUserId,
-        timestamp = bldrRes.createdAt,
-        dark = view.isDark(req) || bldrRes.isSilentFail,
-        hydrateOptions = view.options(req).getOrElse(WritePathHydrationOptions()),
-        featureContext = view.featureContext(req),
-        initialTweetUpdateRequest = bldrRes.initialTweetUpdateRequest,
-        geoSearchRequestId = for {
-          geo <- view.geo(req)
-          searchRequestID <- geo.geoSearchRequestId
-        } yield {
-          GeoSearchRequestId(requestID = searchRequestID.id)
-        },
-        additionalContext = view.additionalContext(req),
-        transientContext = view.transientContext(req),
-        noteTweetMentionedUserIds = view.noteTweetMentionedUserIds(req)
+    d-def toinsewttweetevent[w: w-wequestview](
+      w-weq: w, ^•ﻌ•^
+      bwdwwes: tweetbuiwdewwesuwt
+    ): insewttweet.event = {
+      vaw view = i-impwicitwy[wequestview[w]]
+      i-insewttweet.event(
+        tweet = bwdwwes.tweet, ( ͡o ω ͡o )
+        usew = bwdwwes.usew, ^^;;
+        s-souwcetweet = bwdwwes.souwcetweet, mya
+        s-souwceusew = b-bwdwwes.souwceusew, (U ᵕ U❁)
+        pawentusewid = bwdwwes.pawentusewid, ^•ﻌ•^
+        timestamp = bwdwwes.cweatedat, (U ﹏ U)
+        dawk = view.isdawk(weq) || b-bwdwwes.issiwentfaiw, /(^•ω•^)
+        hydwateoptions = view.options(weq).getowewse(wwitepathhydwationoptions()), ʘwʘ
+        featuwecontext = v-view.featuwecontext(weq), XD
+        initiawtweetupdatewequest = b-bwdwwes.initiawtweetupdatewequest, (⑅˘꒳˘)
+        g-geoseawchwequestid = fow {
+          g-geo <- v-view.geo(weq)
+          s-seawchwequestid <- g-geo.geoseawchwequestid
+        } y-yiewd {
+          g-geoseawchwequestid(wequestid = seawchwequestid.id)
+        }, nyaa~~
+        additionawcontext = view.additionawcontext(weq), UwU
+        twansientcontext = view.twansientcontext(weq), (˘ω˘)
+        n-nyotetweetmentionedusewids = v-view.notetweetmentionedusewids(weq)
       )
     }
 
     /**
-     * Converts an `InsertTweet.Event` into a successful `PostTweetResult`.
+     * c-convewts a-an `insewttweet.event` i-into a successfuw `posttweetwesuwt`. rawr x3
      */
-    def toPostTweetResult(event: InsertTweet.Event): PostTweetResult =
-      PostTweetResult(
-        TweetCreateState.Ok,
-        Some(event.tweet),
-        sourceTweet = event.sourceTweet,
-        quotedTweet = event.quotedTweet
+    d-def toposttweetwesuwt(event: insewttweet.event): posttweetwesuwt =
+      posttweetwesuwt(
+        tweetcweatestate.ok, (///ˬ///✿)
+        s-some(event.tweet), 😳😳😳
+        s-souwcetweet = event.souwcetweet,
+        quotedtweet = event.quotedtweet
       )
   }
 }

@@ -1,272 +1,272 @@
-package com.twitter.unified_user_actions.adapter.client_event
+package com.twittew.unified_usew_actions.adaptew.cwient_event
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.clientapp.thriftscala.EventNamespace
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.unified_user_actions.adapter.AbstractAdapter
-import com.twitter.unified_user_actions.adapter.client_event.ClientEventImpression._
-import com.twitter.unified_user_actions.adapter.client_event.ClientEventEngagement._
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import scala.util.matching.Regex
+impowt c-com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.cwientapp.thwiftscawa.eventnamespace
+i-impowt com.twittew.cwientapp.thwiftscawa.wogevent
+i-impowt c-com.twittew.finatwa.kafka.sewde.unkeyed
+i-impowt c-com.twittew.unified_usew_actions.adaptew.abstwactadaptew
+impowt com.twittew.unified_usew_actions.adaptew.cwient_event.cwienteventimpwession._
+impowt com.twittew.unified_usew_actions.adaptew.cwient_event.cwienteventengagement._
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.unifiedusewaction
+impowt scawa.utiw.matching.wegex
 
-class ClientEventAdapter extends AbstractAdapter[LogEvent, UnKeyed, UnifiedUserAction] {
-  import ClientEventAdapter._
+c-cwass cwienteventadaptew e-extends abstwactadaptew[wogevent, (˘ω˘) unkeyed, 😳 unifiedusewaction] {
+  impowt cwienteventadaptew._
 
-  override def adaptOneToKeyedMany(
-    input: LogEvent,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Seq[(UnKeyed, UnifiedUserAction)] =
-    adaptEvent(input).map { e => (UnKeyed, e) }
+  ovewwide def a-adaptonetokeyedmany(
+    input: w-wogevent, OwO
+    s-statsweceivew: statsweceivew = nuwwstatsweceivew
+  ): seq[(unkeyed, unifiedusewaction)] =
+    adaptevent(input).map { e => (unkeyed, (˘ω˘) e-e) }
 }
 
-object ClientEventAdapter {
-  // Refer to go/cme-scribing and go/interaction-event-spec for details
-  def isVideoEvent(element: String): Boolean = Seq[String](
-    "gif_player",
-    "periscope_player",
-    "platform_amplify_card",
-    "video_player",
-    "vine_player").contains(element)
+object cwienteventadaptew {
+  // wefew to go/cme-scwibing and go/intewaction-event-spec f-fow detaiws
+  def isvideoevent(ewement: s-stwing): b-boowean = s-seq[stwing](
+    "gif_pwayew", òωó
+    "pewiscope_pwayew", ( ͡o ω ͡o )
+    "pwatfowm_ampwify_cawd", UwU
+    "video_pwayew", /(^•ω•^)
+    "vine_pwayew").contains(ewement)
 
   /**
-   * Tweet clicks on the Notification Tab on iOS are a special case because the `element` is different
-   * from Tweet clicks everywhere else on the platform.
+   * t-tweet cwicks on the nyotification tab on i-ios awe a speciaw case because the `ewement` is d-diffewent
+   * fwom tweet cwicks evewywhewe ewse on the pwatfowm.
    *
-   * For Notification Tab on iOS, `element` could be one of `user_mentioned_you`,
-   * `user_mentioned_you_in_a_quote_tweet`, `user_replied_to_your_tweet`, or `user_quoted_your_tweet`.
+   * fow nyotification t-tab on ios, (ꈍᴗꈍ) `ewement` couwd be one o-of `usew_mentioned_you`, 😳
+   * `usew_mentioned_you_in_a_quote_tweet`, mya `usew_wepwied_to_youw_tweet`, mya o-ow `usew_quoted_youw_tweet`. /(^•ω•^)
    *
-   * In other places, `element` = `tweet`.
+   * i-in othew pwaces, ^^;; `ewement` = `tweet`. 🥺
    */
-  def isTweetClickEvent(element: String): Boolean =
-    Seq[String](
-      "tweet",
-      "user_mentioned_you",
-      "user_mentioned_you_in_a_quote_tweet",
-      "user_replied_to_your_tweet",
-      "user_quoted_your_tweet"
-    ).contains(element)
+  def istweetcwickevent(ewement: stwing): b-boowean =
+    s-seq[stwing](
+      "tweet", ^^
+      "usew_mentioned_you", ^•ﻌ•^
+      "usew_mentioned_you_in_a_quote_tweet", /(^•ω•^)
+      "usew_wepwied_to_youw_tweet", ^^
+      "usew_quoted_youw_tweet"
+    ).contains(ewement)
 
-  final val validUASIosClientIds = Seq[Long](
-    129032L, // Twitter for iPhone
-    191841L // Twitter for iPad
+  finaw vaw vawiduasioscwientids = s-seq[wong](
+    129032w, 🥺 // t-twittew fow iphone
+    191841w // twittew fow ipad
   )
-  // Twitter for Android
-  final val validUASAndroidClientIds = Seq[Long](258901L)
+  // t-twittew fow andwoid
+  f-finaw vaw vawiduasandwoidcwientids = seq[wong](258901w)
 
-  def adaptEvent(inputLogEvent: LogEvent): Seq[UnifiedUserAction] =
-    Option(inputLogEvent).toSeq
-      .filterNot { logEvent: LogEvent =>
-        shouldIgnoreClientEvent(logEvent.eventNamespace)
+  def a-adaptevent(inputwogevent: wogevent): s-seq[unifiedusewaction] =
+    option(inputwogevent).toseq
+      .fiwtewnot { w-wogevent: wogevent =>
+        s-shouwdignowecwientevent(wogevent.eventnamespace)
       }
-      .flatMap { logEvent: LogEvent =>
-        val actionTypesPerEvent: Seq[BaseClientEvent] = logEvent.eventNamespace.toSeq.flatMap {
-          name =>
-            (name.page, name.section, name.component, name.element, name.action) match {
-              case (_, _, _, _, Some("favorite")) => Seq(TweetFav)
-              case (_, _, _, _, Some("unfavorite")) => Seq(TweetUnfav)
-              case (_, _, Some("stream"), Some("linger"), Some("results")) =>
-                Seq(TweetLingerImpression)
-              case (_, _, Some("stream"), None, Some("results")) =>
-                Seq(TweetRenderImpression)
-              case (_, _, _, _, Some("send_reply")) => Seq(TweetReply)
-              // Different clients may have different actions of the same "send quote"
-              // but it turns out that both send_quote and retweet_with_comment should correspond to
+      .fwatmap { wogevent: wogevent =>
+        vaw actiontypespewevent: seq[basecwientevent] = wogevent.eventnamespace.toseq.fwatmap {
+          nyame =>
+            (name.page, (U ᵕ U❁) n-nyame.section, 😳😳😳 n-nyame.component, nyaa~~ nyame.ewement, (˘ω˘) n-nyame.action) m-match {
+              c-case (_, >_< _, _, _, XD some("favowite")) => seq(tweetfav)
+              case (_, rawr x3 _, _, ( ͡o ω ͡o ) _, s-some("unfavowite")) => seq(tweetunfav)
+              case (_, :3 _, some("stweam"), mya some("wingew"), σωσ s-some("wesuwts")) =>
+                seq(tweetwingewimpwession)
+              c-case (_, (ꈍᴗꈍ) _, some("stweam"), OwO n-nyone, s-some("wesuwts")) =>
+                seq(tweetwendewimpwession)
+              c-case (_, o.O _, _, _, 😳😳😳 s-some("send_wepwy")) => s-seq(tweetwepwy)
+              // d-diffewent cwients may have diffewent a-actions of the same "send q-quote"
+              // b-but it tuwns out t-that both send_quote a-and wetweet_with_comment shouwd cowwespond to
               // "send quote"
-              case (_, _, _, _, Some("send_quote_tweet")) |
-                  (_, _, _, _, Some("retweet_with_comment")) =>
-                Seq(TweetQuote)
-              case (_, _, _, _, Some("retweet")) => Seq(TweetRetweet)
-              case (_, _, _, _, Some("unretweet")) => Seq(TweetUnretweet)
-              case (_, _, _, _, Some("reply")) => Seq(TweetClickReply)
-              case (_, _, _, _, Some("quote")) => Seq(TweetClickQuote)
-              case (_, _, _, Some(element), Some("playback_start")) if isVideoEvent(element) =>
-                Seq(TweetVideoPlaybackStart)
-              case (_, _, _, Some(element), Some("playback_complete")) if isVideoEvent(element) =>
-                Seq(TweetVideoPlaybackComplete)
-              case (_, _, _, Some(element), Some("playback_25")) if isVideoEvent(element) =>
-                Seq(TweetVideoPlayback25)
-              case (_, _, _, Some(element), Some("playback_50")) if isVideoEvent(element) =>
-                Seq(TweetVideoPlayback50)
-              case (_, _, _, Some(element), Some("playback_75")) if isVideoEvent(element) =>
-                Seq(TweetVideoPlayback75)
-              case (_, _, _, Some(element), Some("playback_95")) if isVideoEvent(element) =>
-                Seq(TweetVideoPlayback95)
-              case (_, _, _, Some(element), Some("play_from_tap")) if isVideoEvent(element) =>
-                Seq(TweetVideoPlayFromTap)
-              case (_, _, _, Some(element), Some("video_quality_view")) if isVideoEvent(element) =>
-                Seq(TweetVideoQualityView)
-              case (_, _, _, Some(element), Some("video_view")) if isVideoEvent(element) =>
-                Seq(TweetVideoView)
-              case (_, _, _, Some(element), Some("video_mrc_view")) if isVideoEvent(element) =>
-                Seq(TweetVideoMrcView)
-              case (_, _, _, Some(element), Some("view_threshold")) if isVideoEvent(element) =>
-                Seq(TweetVideoViewThreshold)
-              case (_, _, _, Some(element), Some("cta_url_click")) if isVideoEvent(element) =>
-                Seq(TweetVideoCtaUrlClick)
-              case (_, _, _, Some(element), Some("cta_watch_click")) if isVideoEvent(element) =>
-                Seq(TweetVideoCtaWatchClick)
-              case (_, _, _, Some("platform_photo_card"), Some("click")) => Seq(TweetPhotoExpand)
-              case (_, _, _, Some("platform_card"), Some("click")) => Seq(CardClick)
-              case (_, _, _, _, Some("open_app")) => Seq(CardOpenApp)
-              case (_, _, _, _, Some("install_app")) => Seq(CardAppInstallAttempt)
-              case (_, _, _, Some("platform_card"), Some("vote")) |
-                  (_, _, _, Some("platform_forward_card"), Some("vote")) =>
-                Seq(PollCardVote)
-              case (_, _, _, Some("mention"), Some("click")) |
-                  (_, _, _, _, Some("mention_click")) =>
-                Seq(TweetClickMentionScreenName)
-              case (_, _, _, Some(element), Some("click")) if isTweetClickEvent(element) =>
-                Seq(TweetClick)
-              case // Follow from the Topic page (or so-called landing page)
-                  (_, _, _, Some("topic"), Some("follow")) |
-                  // Actually not sure how this is generated ... but saw quite some events in BQ
-                  (_, _, _, Some("social_proof"), Some("follow")) |
-                  // Click on Tweet's caret menu of "Follow (the topic)", it needs to be:
-                  // 1) user follows the Topic already, 2) and clicked on the "Unfollow Topic" first.
-                  (_, _, _, Some("feedback_follow_topic"), Some("click")) =>
-                Seq(TopicFollow)
-              case (_, _, _, Some("topic"), Some("unfollow")) |
-                  (_, _, _, Some("social_proof"), Some("unfollow")) |
-                  (_, _, _, Some("feedback_unfollow_topic"), Some("click")) =>
-                Seq(TopicUnfollow)
-              case (_, _, _, Some("topic"), Some("not_interested")) |
-                  (_, _, _, Some("feedback_not_interested_in_topic"), Some("click")) =>
-                Seq(TopicNotInterestedIn)
-              case (_, _, _, Some("topic"), Some("un_not_interested")) |
-                  (_, _, _, Some("feedback_not_interested_in_topic"), Some("undo")) =>
-                Seq(TopicUndoNotInterestedIn)
-              case (_, _, _, Some("feedback_givefeedback"), Some("click")) =>
-                Seq(TweetNotHelpful)
-              case (_, _, _, Some("feedback_givefeedback"), Some("undo")) =>
-                Seq(TweetUndoNotHelpful)
-              case (_, _, _, Some("report_tweet"), Some("click")) |
-                  (_, _, _, Some("report_tweet"), Some("done")) =>
-                Seq(TweetReport)
-              case (_, _, _, Some("feedback_dontlike"), Some("click")) =>
-                Seq(TweetNotInterestedIn)
-              case (_, _, _, Some("feedback_dontlike"), Some("undo")) =>
-                Seq(TweetUndoNotInterestedIn)
-              case (_, _, _, Some("feedback_notabouttopic"), Some("click")) =>
-                Seq(TweetNotAboutTopic)
-              case (_, _, _, Some("feedback_notabouttopic"), Some("undo")) =>
-                Seq(TweetUndoNotAboutTopic)
-              case (_, _, _, Some("feedback_notrecent"), Some("click")) =>
-                Seq(TweetNotRecent)
-              case (_, _, _, Some("feedback_notrecent"), Some("undo")) =>
-                Seq(TweetUndoNotRecent)
-              case (_, _, _, Some("feedback_seefewer"), Some("click")) =>
-                Seq(TweetSeeFewer)
-              case (_, _, _, Some("feedback_seefewer"), Some("undo")) =>
-                Seq(TweetUndoSeeFewer)
-              // Only when action = "submit" we get all fields in ReportDetails, such as reportType
-              // See https://confluence.twitter.biz/pages/viewpage.action?spaceKey=HEALTH&title=Understanding+ReportDetails
-              case (Some(page), _, _, Some("ticket"), Some("submit"))
-                  if page.startsWith("report_") =>
-                Seq(TweetReportServer)
-              case (Some("profile"), _, _, _, Some("block")) =>
-                Seq(ProfileBlock)
-              case (Some("profile"), _, _, _, Some("unblock")) =>
-                Seq(ProfileUnblock)
-              case (Some("profile"), _, _, _, Some("mute_user")) =>
-                Seq(ProfileMute)
-              case (Some("profile"), _, _, _, Some("report")) =>
-                Seq(ProfileReport)
-              case (Some("profile"), _, _, _, Some("show")) =>
-                Seq(ProfileShow)
-              case (_, _, _, Some("follow"), Some("click")) => Seq(TweetFollowAuthor)
-              case (_, _, _, _, Some("follow")) => Seq(TweetFollowAuthor, ProfileFollow)
-              case (_, _, _, Some("unfollow"), Some("click")) => Seq(TweetUnfollowAuthor)
-              case (_, _, _, _, Some("unfollow")) => Seq(TweetUnfollowAuthor)
-              case (_, _, _, Some("block"), Some("click")) => Seq(TweetBlockAuthor)
-              case (_, _, _, Some("unblock"), Some("click")) => Seq(TweetUnblockAuthor)
-              case (_, _, _, Some("mute"), Some("click")) => Seq(TweetMuteAuthor)
-              case (_, _, _, Some(element), Some("click")) if isTweetClickEvent(element) =>
-                Seq(TweetClick)
-              case (_, _, _, _, Some("profile_click")) => Seq(TweetClickProfile, ProfileClick)
-              case (_, _, _, _, Some("share_menu_click")) => Seq(TweetClickShare)
-              case (_, _, _, _, Some("copy_link")) => Seq(TweetShareViaCopyLink)
-              case (_, _, _, _, Some("share_via_dm")) => Seq(TweetClickSendViaDirectMessage)
-              case (_, _, _, _, Some("bookmark")) => Seq(TweetShareViaBookmark, TweetBookmark)
-              case (_, _, _, _, Some("unbookmark")) => Seq(TweetUnbookmark)
-              case (_, _, _, _, Some("hashtag_click")) |
-                  // This scribe is triggered on mobile platforms (android/iphone) when user click on hashtag in a tweet.
-                  (_, _, _, Some("hashtag"), Some("search")) =>
-                Seq(TweetClickHashtag)
-              case (_, _, _, _, Some("open_link")) => Seq(TweetOpenLink)
-              case (_, _, _, _, Some("take_screenshot")) => Seq(TweetTakeScreenshot)
-              case (_, _, _, Some("feedback_notrelevant"), Some("click")) =>
-                Seq(TweetNotRelevant)
-              case (_, _, _, Some("feedback_notrelevant"), Some("undo")) =>
-                Seq(TweetUndoNotRelevant)
-              case (_, _, _, _, Some("follow_attempt")) => Seq(ProfileFollowAttempt)
-              case (_, _, _, _, Some("favorite_attempt")) => Seq(TweetFavoriteAttempt)
-              case (_, _, _, _, Some("retweet_attempt")) => Seq(TweetRetweetAttempt)
-              case (_, _, _, _, Some("reply_attempt")) => Seq(TweetReplyAttempt)
-              case (_, _, _, _, Some("login")) => Seq(CTALoginClick)
-              case (Some("login"), _, _, _, Some("show")) => Seq(CTALoginStart)
-              case (Some("login"), _, _, _, Some("success")) => Seq(CTALoginSuccess)
-              case (_, _, _, _, Some("signup")) => Seq(CTASignupClick)
-              case (Some("signup"), _, _, _, Some("success")) => Seq(CTASignupSuccess)
-              case // Android app running in the background
-                  (Some("notification"), Some("status_bar"), None, _, Some("background_open")) |
-                  // Android app running in the foreground
-                  (Some("notification"), Some("status_bar"), None, _, Some("open")) |
-                  // iOS app running in the background
-                  (Some("notification"), Some("notification_center"), None, _, Some("open")) |
-                  // iOS app running in the foreground
-                  (None, Some("toasts"), Some("social"), Some("favorite"), Some("open")) |
+              c-case (_, /(^•ω•^) _, _, OwO _, some("send_quote_tweet")) |
+                  (_, ^^ _, _, _, some("wetweet_with_comment")) =>
+                seq(tweetquote)
+              case (_, (///ˬ///✿) _, _, _, some("wetweet")) => seq(tweetwetweet)
+              c-case (_, (///ˬ///✿) _, (///ˬ///✿) _, _, some("unwetweet")) => seq(tweetunwetweet)
+              case (_, ʘwʘ _, _, _, ^•ﻌ•^ s-some("wepwy")) => s-seq(tweetcwickwepwy)
+              c-case (_, OwO _, _, _, some("quote")) => s-seq(tweetcwickquote)
+              case (_, (U ﹏ U) _, (ˆ ﻌ ˆ)♡ _, s-some(ewement), (⑅˘꒳˘) s-some("pwayback_stawt")) if isvideoevent(ewement) =>
+                seq(tweetvideopwaybackstawt)
+              case (_, _, (U ﹏ U) _, some(ewement), o.O some("pwayback_compwete")) i-if isvideoevent(ewement) =>
+                seq(tweetvideopwaybackcompwete)
+              c-case (_, mya _, _, some(ewement), XD s-some("pwayback_25")) if i-isvideoevent(ewement) =>
+                seq(tweetvideopwayback25)
+              case (_, òωó _, _, s-some(ewement), (˘ω˘) s-some("pwayback_50")) if isvideoevent(ewement) =>
+                s-seq(tweetvideopwayback50)
+              c-case (_, :3 _, _, some(ewement), OwO some("pwayback_75")) if isvideoevent(ewement) =>
+                s-seq(tweetvideopwayback75)
+              c-case (_, mya _, _, (˘ω˘) s-some(ewement), o.O some("pwayback_95")) if isvideoevent(ewement) =>
+                s-seq(tweetvideopwayback95)
+              c-case (_, (✿oωo) _, _, some(ewement), (ˆ ﻌ ˆ)♡ s-some("pway_fwom_tap")) if isvideoevent(ewement) =>
+                seq(tweetvideopwayfwomtap)
+              case (_, ^^;; _, _, s-some(ewement), OwO s-some("video_quawity_view")) if isvideoevent(ewement) =>
+                seq(tweetvideoquawityview)
+              c-case (_, 🥺 _, _, s-some(ewement), mya some("video_view")) if isvideoevent(ewement) =>
+                seq(tweetvideoview)
+              case (_, 😳 _, _, òωó some(ewement), /(^•ω•^) some("video_mwc_view")) i-if isvideoevent(ewement) =>
+                seq(tweetvideomwcview)
+              case (_, -.- _, _, some(ewement), òωó some("view_thweshowd")) i-if isvideoevent(ewement) =>
+                seq(tweetvideoviewthweshowd)
+              c-case (_, /(^•ω•^) _, _, s-some(ewement), /(^•ω•^) some("cta_uww_cwick")) if isvideoevent(ewement) =>
+                seq(tweetvideoctauwwcwick)
+              case (_, 😳 _, _, s-some(ewement), :3 s-some("cta_watch_cwick")) if isvideoevent(ewement) =>
+                seq(tweetvideoctawatchcwick)
+              case (_, (U ᵕ U❁) _, _, s-some("pwatfowm_photo_cawd"), ʘwʘ some("cwick")) => s-seq(tweetphotoexpand)
+              case (_, o.O _, _, some("pwatfowm_cawd"), ʘwʘ some("cwick")) => seq(cawdcwick)
+              c-case (_, ^^ _, _, _, some("open_app")) => s-seq(cawdopenapp)
+              c-case (_, ^•ﻌ•^ _, _, mya _, some("instaww_app")) => s-seq(cawdappinstawwattempt)
+              case (_, _, UwU _, s-some("pwatfowm_cawd"), >_< s-some("vote")) |
+                  (_, /(^•ω•^) _, _, some("pwatfowm_fowwawd_cawd"), òωó s-some("vote")) =>
+                seq(powwcawdvote)
+              case (_, σωσ _, _, some("mention"), ( ͡o ω ͡o ) some("cwick")) |
+                  (_, nyaa~~ _, _, _, some("mention_cwick")) =>
+                s-seq(tweetcwickmentionscweenname)
+              c-case (_, :3 _, _, some(ewement), UwU some("cwick")) i-if istweetcwickevent(ewement) =>
+                s-seq(tweetcwick)
+              c-case // fowwow fwom the topic page (ow so-cawwed w-wanding page)
+                  (_, o.O _, _, some("topic"), (ˆ ﻌ ˆ)♡ some("fowwow")) |
+                  // a-actuawwy nyot s-suwe how this is genewated ... but saw quite some events in bq
+                  (_, ^^;; _, _, s-some("sociaw_pwoof"), ʘwʘ s-some("fowwow")) |
+                  // c-cwick o-on tweet's cawet menu of "fowwow (the t-topic)", σωσ it nyeeds to be:
+                  // 1) usew fowwows the topic awweady, ^^;; 2) and cwicked on the "unfowwow t-topic" fiwst. ʘwʘ
+                  (_, ^^ _, _, s-some("feedback_fowwow_topic"), some("cwick")) =>
+                s-seq(topicfowwow)
+              case (_, nyaa~~ _, _, (///ˬ///✿) s-some("topic"), XD some("unfowwow")) |
+                  (_, :3 _, _, òωó s-some("sociaw_pwoof"), ^^ s-some("unfowwow")) |
+                  (_, ^•ﻌ•^ _, _, s-some("feedback_unfowwow_topic"), s-some("cwick")) =>
+                s-seq(topicunfowwow)
+              case (_, _, σωσ _, some("topic"), (ˆ ﻌ ˆ)♡ some("not_intewested")) |
+                  (_, nyaa~~ _, _, some("feedback_not_intewested_in_topic"), ʘwʘ some("cwick")) =>
+                seq(topicnotintewestedin)
+              case (_, ^•ﻌ•^ _, _, s-some("topic"), rawr x3 s-some("un_not_intewested")) |
+                  (_, 🥺 _, _, s-some("feedback_not_intewested_in_topic"), ʘwʘ some("undo")) =>
+                s-seq(topicundonotintewestedin)
+              case (_, (˘ω˘) _, o.O _, some("feedback_givefeedback"), σωσ some("cwick")) =>
+                seq(tweetnothewpfuw)
+              c-case (_, (ꈍᴗꈍ) _, _, s-some("feedback_givefeedback"), (ˆ ﻌ ˆ)♡ some("undo")) =>
+                s-seq(tweetundonothewpfuw)
+              case (_, o.O _, _, :3 some("wepowt_tweet"), -.- some("cwick")) |
+                  (_, _, ( ͡o ω ͡o ) _, s-some("wepowt_tweet"), /(^•ω•^) s-some("done")) =>
+                seq(tweetwepowt)
+              c-case (_, (⑅˘꒳˘) _, _, òωó s-some("feedback_dontwike"), 🥺 some("cwick")) =>
+                seq(tweetnotintewestedin)
+              case (_, (ˆ ﻌ ˆ)♡ _, _, some("feedback_dontwike"), -.- s-some("undo")) =>
+                s-seq(tweetundonotintewestedin)
+              c-case (_, σωσ _, >_< _, s-some("feedback_notabouttopic"), :3 s-some("cwick")) =>
+                seq(tweetnotabouttopic)
+              c-case (_, OwO _, _, rawr s-some("feedback_notabouttopic"), (///ˬ///✿) some("undo")) =>
+                s-seq(tweetundonotabouttopic)
+              c-case (_, ^^ _, _, XD some("feedback_notwecent"), UwU s-some("cwick")) =>
+                seq(tweetnotwecent)
+              case (_, o.O _, _, 😳 s-some("feedback_notwecent"), some("undo")) =>
+                s-seq(tweetundonotwecent)
+              case (_, (˘ω˘) _, _, s-some("feedback_seefewew"), 🥺 some("cwick")) =>
+                s-seq(tweetseefewew)
+              case (_, ^^ _, _, some("feedback_seefewew"), >w< s-some("undo")) =>
+                s-seq(tweetundoseefewew)
+              // onwy w-when action = "submit" we get aww fiewds in wepowtdetaiws, ^^;; such a-as wepowttype
+              // see https://confwuence.twittew.biz/pages/viewpage.action?spacekey=heawth&titwe=undewstanding+wepowtdetaiws
+              case (some(page), (˘ω˘) _, _, s-some("ticket"), OwO s-some("submit"))
+                  if page.stawtswith("wepowt_") =>
+                s-seq(tweetwepowtsewvew)
+              case (some("pwofiwe"), (ꈍᴗꈍ) _, òωó _, _, s-some("bwock")) =>
+                s-seq(pwofiwebwock)
+              case (some("pwofiwe"), ʘwʘ _, _, _, some("unbwock")) =>
+                s-seq(pwofiweunbwock)
+              case (some("pwofiwe"), ʘwʘ _, _, nyaa~~ _, some("mute_usew")) =>
+                s-seq(pwofiwemute)
+              c-case (some("pwofiwe"), UwU _, _, _, some("wepowt")) =>
+                s-seq(pwofiwewepowt)
+              case (some("pwofiwe"), (⑅˘꒳˘) _, _, (˘ω˘) _, s-some("show")) =>
+                s-seq(pwofiweshow)
+              c-case (_, :3 _, _, some("fowwow"), (˘ω˘) some("cwick")) => seq(tweetfowwowauthow)
+              case (_, nyaa~~ _, _, _, (U ﹏ U) some("fowwow")) => seq(tweetfowwowauthow, nyaa~~ pwofiwefowwow)
+              case (_, ^^;; _, _, some("unfowwow"), OwO some("cwick")) => seq(tweetunfowwowauthow)
+              case (_, nyaa~~ _, _, UwU _, some("unfowwow")) => seq(tweetunfowwowauthow)
+              c-case (_, 😳 _, _, 😳 s-some("bwock"), (ˆ ﻌ ˆ)♡ some("cwick")) => seq(tweetbwockauthow)
+              c-case (_, (✿oωo) _, _, s-some("unbwock"), nyaa~~ s-some("cwick")) => seq(tweetunbwockauthow)
+              c-case (_, ^^ _, _, some("mute"), (///ˬ///✿) some("cwick")) => seq(tweetmuteauthow)
+              c-case (_, 😳 _, _, s-some(ewement), òωó some("cwick")) if i-istweetcwickevent(ewement) =>
+                seq(tweetcwick)
+              c-case (_, ^^;; _, _, _, rawr s-some("pwofiwe_cwick")) => seq(tweetcwickpwofiwe, (ˆ ﻌ ˆ)♡ pwofiwecwick)
+              c-case (_, XD _, _, >_< _, some("shawe_menu_cwick")) => s-seq(tweetcwickshawe)
+              case (_, _, (˘ω˘) _, _, s-some("copy_wink")) => s-seq(tweetshaweviacopywink)
+              c-case (_, 😳 _, _, _, s-some("shawe_via_dm")) => s-seq(tweetcwicksendviadiwectmessage)
+              c-case (_, o.O _, _, _, (ꈍᴗꈍ) some("bookmawk")) => s-seq(tweetshaweviabookmawk, rawr x3 tweetbookmawk)
+              case (_, ^^ _, _, OwO _, s-some("unbookmawk")) => s-seq(tweetunbookmawk)
+              c-case (_, ^^ _, _, :3 _, some("hashtag_cwick")) |
+                  // t-this scwibe is twiggewed on mobiwe pwatfowms (andwoid/iphone) w-when usew cwick on hashtag i-in a tweet. o.O
+                  (_, -.- _, _, s-some("hashtag"), (U ﹏ U) s-some("seawch")) =>
+                seq(tweetcwickhashtag)
+              c-case (_, o.O _, _, _, some("open_wink")) => s-seq(tweetopenwink)
+              case (_, OwO _, ^•ﻌ•^ _, _, s-some("take_scweenshot")) => seq(tweettakescweenshot)
+              c-case (_, ʘwʘ _, _, some("feedback_notwewevant"), :3 some("cwick")) =>
+                seq(tweetnotwewevant)
+              case (_, 😳 _, _, some("feedback_notwewevant"), òωó some("undo")) =>
+                s-seq(tweetundonotwewevant)
+              case (_, 🥺 _, _, _, s-some("fowwow_attempt")) => s-seq(pwofiwefowwowattempt)
+              case (_, rawr x3 _, _, ^•ﻌ•^ _, some("favowite_attempt")) => seq(tweetfavowiteattempt)
+              c-case (_, :3 _, _, _, some("wetweet_attempt")) => s-seq(tweetwetweetattempt)
+              c-case (_, (ˆ ﻌ ˆ)♡ _, _, (U ᵕ U❁) _, s-some("wepwy_attempt")) => seq(tweetwepwyattempt)
+              case (_, _, :3 _, _, s-some("wogin")) => seq(ctawogincwick)
+              c-case (some("wogin"), ^^;; _, _, _, some("show")) => seq(ctawoginstawt)
+              c-case (some("wogin"), ( ͡o ω ͡o ) _, _, _, some("success")) => seq(ctawoginsuccess)
+              c-case (_, o.O _, _, _, some("signup")) => s-seq(ctasignupcwick)
+              c-case (some("signup"), ^•ﻌ•^ _, _, _, XD s-some("success")) => seq(ctasignupsuccess)
+              case // andwoid a-app wunning in t-the backgwound
+                  (some("notification"), ^^ s-some("status_baw"), o.O n-nyone, ( ͡o ω ͡o ) _, some("backgwound_open")) |
+                  // a-andwoid a-app wunning in the f-fowegwound
+                  (some("notification"), /(^•ω•^) s-some("status_baw"), 🥺 n-nyone, _, nyaa~~ s-some("open")) |
+                  // i-ios app w-wunning in the backgwound
+                  (some("notification"), mya s-some("notification_centew"), XD nyone, _, some("open")) |
+                  // i-ios app wunning in the fowegwound
+                  (none, nyaa~~ s-some("toasts"), ʘwʘ s-some("sociaw"), (⑅˘꒳˘) s-some("favowite"), :3 some("open")) |
                   // m5
-                  (Some("app"), Some("push"), _, _, Some("open")) =>
-                Seq(NotificationOpen)
-              case (Some("ntab"), Some("all"), Some("urt"), _, Some("navigate")) =>
-                Seq(NotificationClick)
-              case (Some("ntab"), Some("all"), Some("urt"), _, Some("see_less_often")) =>
-                Seq(NotificationSeeLessOften)
-              case (Some("notification"), Some("status_bar"), None, _, Some("background_dismiss")) |
-                  (Some("notification"), Some("status_bar"), None, _, Some("dismiss")) | (
-                    Some("notification"),
-                    Some("notification_center"),
-                    None,
-                    _,
-                    Some("dismiss")
+                  (some("app"), -.- some("push"), _, 😳😳😳 _, s-some("open")) =>
+                s-seq(notificationopen)
+              case (some("ntab"), (U ﹏ U) s-some("aww"), o.O some("uwt"), _, ( ͡o ω ͡o ) some("navigate")) =>
+                seq(notificationcwick)
+              c-case (some("ntab"), òωó s-some("aww"), 🥺 some("uwt"), _, /(^•ω•^) s-some("see_wess_often")) =>
+                s-seq(notificationseewessoften)
+              case (some("notification"), 😳😳😳 some("status_baw"), ^•ﻌ•^ nyone, nyaa~~ _, some("backgwound_dismiss")) |
+                  (some("notification"), OwO s-some("status_baw"), ^•ﻌ•^ n-nyone, _, s-some("dismiss")) | (
+                    s-some("notification"), σωσ
+                    some("notification_centew"), -.-
+                    nyone, (˘ω˘)
+                    _, rawr x3
+                    s-some("dismiss")
                   ) =>
-                Seq(NotificationDismiss)
-              case (_, _, _, Some("typeahead"), Some("click")) => Seq(TypeaheadClick)
-              case (Some("search"), _, Some(component), _, Some("click"))
-                  if component == "relevance_prompt_module" || component == "did_you_find_it_module" =>
-                Seq(FeedbackPromptSubmit)
-              case (Some("app"), Some("enter_background"), _, _, Some("become_inactive"))
-                  if logEvent.logBase
-                    .flatMap(_.clientAppId)
-                    .exists(validUASIosClientIds.contains(_)) =>
-                Seq(AppExit)
-              case (Some("app"), _, _, _, Some("become_inactive"))
-                  if logEvent.logBase
-                    .flatMap(_.clientAppId)
-                    .exists(validUASAndroidClientIds.contains(_)) =>
-                Seq(AppExit)
-              case (_, _, Some("gallery"), Some("photo"), Some("impression")) =>
-                Seq(TweetGalleryImpression)
-              case (_, _, _, _, _)
-                  if TweetDetailsImpression.isTweetDetailsImpression(logEvent.eventNamespace) =>
-                Seq(TweetDetailsImpression)
-              case _ => Nil
+                s-seq(notificationdismiss)
+              case (_, rawr x3 _, _, some("typeahead"), σωσ s-some("cwick")) => seq(typeaheadcwick)
+              case (some("seawch"), nyaa~~ _, s-some(component), (ꈍᴗꈍ) _, ^•ﻌ•^ some("cwick"))
+                  i-if component == "wewevance_pwompt_moduwe" || c-component == "did_you_find_it_moduwe" =>
+                seq(feedbackpwomptsubmit)
+              case (some("app"), >_< s-some("entew_backgwound"), ^^;; _, _, s-some("become_inactive"))
+                  if wogevent.wogbase
+                    .fwatmap(_.cwientappid)
+                    .exists(vawiduasioscwientids.contains(_)) =>
+                s-seq(appexit)
+              case (some("app"), ^^;; _, _, _, /(^•ω•^) s-some("become_inactive"))
+                  i-if wogevent.wogbase
+                    .fwatmap(_.cwientappid)
+                    .exists(vawiduasandwoidcwientids.contains(_)) =>
+                s-seq(appexit)
+              c-case (_, nyaa~~ _, some("gawwewy"), (✿oωo) s-some("photo"), ( ͡o ω ͡o ) s-some("impwession")) =>
+                s-seq(tweetgawwewyimpwession)
+              case (_, _, (U ᵕ U❁) _, _, _)
+                  i-if tweetdetaiwsimpwession.istweetdetaiwsimpwession(wogevent.eventnamespace) =>
+                seq(tweetdetaiwsimpwession)
+              case _ => niw
             }
         }
-        actionTypesPerEvent.map(_.toUnifiedUserAction(logEvent))
-      }.flatten
+        a-actiontypespewevent.map(_.tounifiedusewaction(wogevent))
+      }.fwatten
 
-  def shouldIgnoreClientEvent(eventNamespace: Option[EventNamespace]): Boolean =
-    eventNamespace.exists { name =>
-      (name.page, name.section, name.component, name.element, name.action) match {
-        case (Some("ddg"), _, _, _, Some("experiment")) => true
-        case (Some("qig_ranker"), _, _, _, _) => true
-        case (Some("timelinemixer"), _, _, _, _) => true
-        case (Some("timelineservice"), _, _, _, _) => true
-        case (Some("tweetconvosvc"), _, _, _, _) => true
-        case _ => false
+  def s-shouwdignowecwientevent(eventnamespace: o-option[eventnamespace]): boowean =
+    eventnamespace.exists { nyame =>
+      (name.page, òωó nyame.section, σωσ n-nyame.component, :3 nyame.ewement, n-nyame.action) m-match {
+        case (some("ddg"), OwO _, _, _, some("expewiment")) => t-twue
+        case (some("qig_wankew"), ^^ _, (˘ω˘) _, _, _) => t-twue
+        c-case (some("timewinemixew"), OwO _, _, UwU _, _) => t-twue
+        c-case (some("timewinesewvice"), ^•ﻌ•^ _, _, _, (ꈍᴗꈍ) _) => twue
+        c-case (some("tweetconvosvc"), /(^•ω•^) _, _, _, _) => twue
+        case _ => fawse
       }
     }
 }

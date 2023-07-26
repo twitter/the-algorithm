@@ -1,186 +1,186 @@
-package com.twitter.visibility.interfaces.cards
+package com.twittew.visibiwity.intewfaces.cawds
 
-import com.twitter.appsec.sanitization.URLSafety
-import com.twitter.decider.Decider
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.{thriftscala => tweetypiethrift}
-import com.twitter.util.Stopwatch
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.tweets.CommunityTweetFeatures
-import com.twitter.visibility.builder.tweets.CommunityTweetFeaturesV2
-import com.twitter.visibility.builder.tweets.NilTweetLabelMaps
-import com.twitter.visibility.builder.tweets.TweetFeatures
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.common.CommunitiesSource
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.features.CardIsPoll
-import com.twitter.visibility.features.CardUriHost
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ContentId.CardId
-import com.twitter.visibility.models.ViewerContext
+impowt com.twittew.appsec.sanitization.uwwsafety
+i-impowt com.twittew.decidew.decidew
+i-impowt com.twittew.sewvo.utiw.gate
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.{thwiftscawa => t-tweetypiethwift}
+i-impowt com.twittew.utiw.stopwatch
+i-impowt com.twittew.visibiwity.visibiwitywibwawy
+i-impowt com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+impowt com.twittew.visibiwity.buiwdew.visibiwitywesuwt
+impowt com.twittew.visibiwity.buiwdew.tweets.communitytweetfeatuwes
+impowt com.twittew.visibiwity.buiwdew.tweets.communitytweetfeatuwesv2
+i-impowt com.twittew.visibiwity.buiwdew.tweets.niwtweetwabewmaps
+impowt com.twittew.visibiwity.buiwdew.tweets.tweetfeatuwes
+impowt c-com.twittew.visibiwity.buiwdew.usews.authowfeatuwes
+impowt com.twittew.visibiwity.buiwdew.usews.wewationshipfeatuwes
+i-impowt com.twittew.visibiwity.buiwdew.usews.viewewfeatuwes
+impowt com.twittew.visibiwity.common.communitiessouwce
+impowt com.twittew.visibiwity.common.usewid
+i-impowt com.twittew.visibiwity.common.usewwewationshipsouwce
+impowt com.twittew.visibiwity.common.usewsouwce
+i-impowt com.twittew.visibiwity.configapi.configs.visibiwitydecidewgates
+i-impowt com.twittew.visibiwity.featuwes.cawdispoww
+impowt com.twittew.visibiwity.featuwes.cawduwihost
+impowt com.twittew.visibiwity.featuwes.featuwemap
+impowt c-com.twittew.visibiwity.modews.contentid.cawdid
+impowt com.twittew.visibiwity.modews.viewewcontext
 
-object CardVisibilityLibrary {
-  type Type = CardVisibilityRequest => Stitch[VisibilityResult]
+object cawdvisibiwitywibwawy {
+  type type = c-cawdvisibiwitywequest => stitch[visibiwitywesuwt]
 
-  private[this] def getAuthorFeatures(
-    authorIdOpt: Option[Long],
-    authorFeatures: AuthorFeatures
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    authorIdOpt match {
-      case Some(authorId) => authorFeatures.forAuthorId(authorId)
-      case _ => authorFeatures.forNoAuthor()
+  pwivate[this] d-def getauthowfeatuwes(
+    a-authowidopt: o-option[wong], 🥺
+    a-authowfeatuwes: authowfeatuwes
+  ): featuwemapbuiwdew => f-featuwemapbuiwdew = {
+    authowidopt match {
+      c-case some(authowid) => authowfeatuwes.fowauthowid(authowid)
+      case _ => authowfeatuwes.fownoauthow()
     }
   }
 
-  private[this] def getCardUriFeatures(
-    cardUri: String,
-    enableCardVisibilityLibraryCardUriParsing: Boolean,
-    trackCardUriHost: Option[String] => Unit
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    if (enableCardVisibilityLibraryCardUriParsing) {
-      val safeCardUriHost = URLSafety.getHostSafe(cardUri)
-      trackCardUriHost(safeCardUriHost)
+  pwivate[this] def getcawduwifeatuwes(
+    cawduwi: stwing, òωó
+    e-enabwecawdvisibiwitywibwawycawduwipawsing: boowean, (ˆ ﻌ ˆ)♡
+    twackcawduwihost: option[stwing] => u-unit
+  ): featuwemapbuiwdew => f-featuwemapbuiwdew = {
+    i-if (enabwecawdvisibiwitywibwawycawduwipawsing) {
+      vaw safecawduwihost = uwwsafety.gethostsafe(cawduwi)
+      twackcawduwihost(safecawduwihost)
 
-      _.withConstantFeature(CardUriHost, safeCardUriHost)
-    } else {
-      identity
+      _.withconstantfeatuwe(cawduwihost, -.- s-safecawduwihost)
+    } ewse {
+      i-identity
     }
   }
 
-  private[this] def getRelationshipFeatures(
-    authorIdOpt: Option[Long],
-    viewerIdOpt: Option[Long],
-    relationshipFeatures: RelationshipFeatures
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    authorIdOpt match {
-      case Some(authorId) => relationshipFeatures.forAuthorId(authorId, viewerIdOpt)
-      case _ => relationshipFeatures.forNoAuthor()
+  pwivate[this] d-def getwewationshipfeatuwes(
+    a-authowidopt: option[wong], :3
+    viewewidopt: option[wong], ʘwʘ
+    wewationshipfeatuwes: w-wewationshipfeatuwes
+  ): featuwemapbuiwdew => featuwemapbuiwdew = {
+    a-authowidopt match {
+      case some(authowid) => wewationshipfeatuwes.fowauthowid(authowid, 🥺 v-viewewidopt)
+      case _ => w-wewationshipfeatuwes.fownoauthow()
     }
   }
 
-  private[this] def getTweetFeatures(
-    tweetOpt: Option[tweetypiethrift.Tweet],
-    tweetFeatures: TweetFeatures
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    tweetOpt match {
-      case Some(tweet) => tweetFeatures.forTweet(tweet)
-      case _ => identity
+  pwivate[this] d-def gettweetfeatuwes(
+    tweetopt: o-option[tweetypiethwift.tweet],
+    tweetfeatuwes: tweetfeatuwes
+  ): featuwemapbuiwdew => featuwemapbuiwdew = {
+    tweetopt match {
+      c-case some(tweet) => t-tweetfeatuwes.fowtweet(tweet)
+      case _ => i-identity
     }
   }
 
-  private[this] def getCommunityFeatures(
-    tweetOpt: Option[tweetypiethrift.Tweet],
-    viewerContext: ViewerContext,
-    communityTweetFeatures: CommunityTweetFeatures
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    tweetOpt match {
-      case Some(tweet) => communityTweetFeatures.forTweet(tweet, viewerContext)
-      case _ => identity
+  p-pwivate[this] d-def getcommunityfeatuwes(
+    tweetopt: option[tweetypiethwift.tweet], >_<
+    viewewcontext: v-viewewcontext, ʘwʘ
+    communitytweetfeatuwes: communitytweetfeatuwes
+  ): featuwemapbuiwdew => featuwemapbuiwdew = {
+    tweetopt m-match {
+      case some(tweet) => c-communitytweetfeatuwes.fowtweet(tweet, (˘ω˘) v-viewewcontext)
+      c-case _ => identity
     }
   }
 
-  def apply(
-    visibilityLibrary: VisibilityLibrary,
-    userSource: UserSource = UserSource.empty,
-    userRelationshipSource: UserRelationshipSource = UserRelationshipSource.empty,
-    communitiesSource: CommunitiesSource = CommunitiesSource.empty,
-    enableVfParityTest: Gate[Unit] = Gate.False,
-    enableVfFeatureHydration: Gate[Unit] = Gate.False,
-    decider: Decider
-  ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val vfLatencyOverallStat = libraryStatsReceiver.stat("vf_latency_overall")
-    val vfLatencyStitchBuildStat = libraryStatsReceiver.stat("vf_latency_stitch_build")
-    val vfLatencyStitchRunStat = libraryStatsReceiver.stat("vf_latency_stitch_run")
-    val cardUriStats = libraryStatsReceiver.scope("card_uri")
-    val visibilityDeciderGates = VisibilityDeciderGates(decider)
+  def appwy(
+    v-visibiwitywibwawy: v-visibiwitywibwawy, (✿oωo)
+    u-usewsouwce: u-usewsouwce = usewsouwce.empty, (///ˬ///✿)
+    usewwewationshipsouwce: u-usewwewationshipsouwce = u-usewwewationshipsouwce.empty,
+    c-communitiessouwce: communitiessouwce = c-communitiessouwce.empty, rawr x3
+    e-enabwevfpawitytest: gate[unit] = gate.fawse, -.-
+    enabwevffeatuwehydwation: g-gate[unit] = gate.fawse, ^^
+    decidew: decidew
+  ): type = {
+    vaw wibwawystatsweceivew = visibiwitywibwawy.statsweceivew
+    v-vaw vfwatencyovewawwstat = wibwawystatsweceivew.stat("vf_watency_ovewaww")
+    vaw vfwatencystitchbuiwdstat = wibwawystatsweceivew.stat("vf_watency_stitch_buiwd")
+    v-vaw vfwatencystitchwunstat = w-wibwawystatsweceivew.stat("vf_watency_stitch_wun")
+    v-vaw cawduwistats = wibwawystatsweceivew.scope("cawd_uwi")
+    v-vaw visibiwitydecidewgates = visibiwitydecidewgates(decidew)
 
-    val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
-    val viewerFeatures = new ViewerFeatures(userSource, libraryStatsReceiver)
-    val tweetFeatures = new TweetFeatures(NilTweetLabelMaps, libraryStatsReceiver)
-    val communityTweetFeatures = new CommunityTweetFeaturesV2(
-      communitiesSource = communitiesSource,
+    v-vaw authowfeatuwes = n-nyew authowfeatuwes(usewsouwce, (⑅˘꒳˘) wibwawystatsweceivew)
+    vaw viewewfeatuwes = nyew viewewfeatuwes(usewsouwce, nyaa~~ wibwawystatsweceivew)
+    vaw tweetfeatuwes = n-nyew tweetfeatuwes(niwtweetwabewmaps, /(^•ω•^) wibwawystatsweceivew)
+    v-vaw communitytweetfeatuwes = nyew communitytweetfeatuwesv2(
+      c-communitiessouwce = c-communitiessouwce, (U ﹏ U)
     )
-    val relationshipFeatures =
-      new RelationshipFeatures(userRelationshipSource, libraryStatsReceiver)
-    val parityTest = new CardVisibilityLibraryParityTest(libraryStatsReceiver)
+    vaw wewationshipfeatuwes =
+      nyew w-wewationshipfeatuwes(usewwewationshipsouwce, 😳😳😳 w-wibwawystatsweceivew)
+    vaw pawitytest = n-nyew cawdvisibiwitywibwawypawitytest(wibwawystatsweceivew)
 
-    { r: CardVisibilityRequest =>
-      val elapsed = Stopwatch.start()
-      var runStitchStartMs = 0L
+    { w-w: cawdvisibiwitywequest =>
+      vaw ewapsed = stopwatch.stawt()
+      vaw wunstitchstawtms = 0w
 
-      val viewerId: Option[UserId] = r.viewerContext.userId
+      vaw viewewid: o-option[usewid] = w-w.viewewcontext.usewid
 
-      val featureMap =
-        visibilityLibrary
-          .featureMapBuilder(
-            Seq(
-              viewerFeatures.forViewerId(viewerId),
-              getAuthorFeatures(r.authorId, authorFeatures),
-              getCardUriFeatures(
-                cardUri = r.cardUri,
-                enableCardVisibilityLibraryCardUriParsing =
-                  visibilityDeciderGates.enableCardVisibilityLibraryCardUriParsing(),
-                trackCardUriHost = { safeCardUriHost: Option[String] =>
-                  if (safeCardUriHost.isEmpty) {
-                    cardUriStats.counter("empty").incr()
+      v-vaw featuwemap =
+        visibiwitywibwawy
+          .featuwemapbuiwdew(
+            s-seq(
+              v-viewewfeatuwes.fowviewewid(viewewid), >w<
+              getauthowfeatuwes(w.authowid, XD a-authowfeatuwes), o.O
+              getcawduwifeatuwes(
+                cawduwi = w.cawduwi, mya
+                enabwecawdvisibiwitywibwawycawduwipawsing =
+                  v-visibiwitydecidewgates.enabwecawdvisibiwitywibwawycawduwipawsing(),
+                t-twackcawduwihost = { safecawduwihost: option[stwing] =>
+                  i-if (safecawduwihost.isempty) {
+                    c-cawduwistats.countew("empty").incw()
                   }
                 }
-              ),
-              getCommunityFeatures(r.tweetOpt, r.viewerContext, communityTweetFeatures),
-              getRelationshipFeatures(r.authorId, r.viewerContext.userId, relationshipFeatures),
-              getTweetFeatures(r.tweetOpt, tweetFeatures),
-              _.withConstantFeature(CardIsPoll, r.isPollCardType)
+              ), 🥺
+              getcommunityfeatuwes(w.tweetopt, ^^;; w.viewewcontext, :3 communitytweetfeatuwes), (U ﹏ U)
+              g-getwewationshipfeatuwes(w.authowid, OwO w.viewewcontext.usewid, 😳😳😳 wewationshipfeatuwes), (ˆ ﻌ ˆ)♡
+              gettweetfeatuwes(w.tweetopt, XD tweetfeatuwes), (ˆ ﻌ ˆ)♡
+              _.withconstantfeatuwe(cawdispoww, ( ͡o ω ͡o ) w-w.ispowwcawdtype)
             )
           )
 
-      val response = visibilityLibrary
-        .runRuleEngine(
-          CardId(r.cardUri),
-          featureMap,
-          r.viewerContext,
-          r.safetyLevel
+      vaw wesponse = visibiwitywibwawy
+        .wunwuweengine(
+          c-cawdid(w.cawduwi), rawr x3
+          f-featuwemap, nyaa~~
+          w.viewewcontext, >_<
+          w.safetywevew
         )
-        .onSuccess(_ => {
-          val overallStatMs = elapsed().inMilliseconds
-          vfLatencyOverallStat.add(overallStatMs)
-          val runStitchEndMs = elapsed().inMilliseconds
-          vfLatencyStitchRunStat.add(runStitchEndMs - runStitchStartMs)
+        .onsuccess(_ => {
+          vaw ovewawwstatms = e-ewapsed().inmiwwiseconds
+          v-vfwatencyovewawwstat.add(ovewawwstatms)
+          vaw wunstitchendms = ewapsed().inmiwwiseconds
+          vfwatencystitchwunstat.add(wunstitchendms - wunstitchstawtms)
         })
 
-      runStitchStartMs = elapsed().inMilliseconds
-      val buildStitchStatMs = elapsed().inMilliseconds
-      vfLatencyStitchBuildStat.add(buildStitchStatMs)
+      w-wunstitchstawtms = ewapsed().inmiwwiseconds
+      v-vaw buiwdstitchstatms = ewapsed().inmiwwiseconds
+      vfwatencystitchbuiwdstat.add(buiwdstitchstatms)
 
-      lazy val hydratedFeatureResponse: Stitch[VisibilityResult] =
-        FeatureMap.resolve(featureMap, libraryStatsReceiver).flatMap { resolvedFeatureMap =>
-          visibilityLibrary.runRuleEngine(
-            CardId(r.cardUri),
-            resolvedFeatureMap,
-            r.viewerContext,
-            r.safetyLevel
+      wazy vaw hydwatedfeatuwewesponse: s-stitch[visibiwitywesuwt] =
+        featuwemap.wesowve(featuwemap, ^^;; w-wibwawystatsweceivew).fwatmap { w-wesowvedfeatuwemap =>
+          visibiwitywibwawy.wunwuweengine(
+            c-cawdid(w.cawduwi), (ˆ ﻌ ˆ)♡
+            wesowvedfeatuwemap, ^^;;
+            w-w.viewewcontext,
+            w-w.safetywevew
           )
         }
 
-      val isVfParityTestEnabled = enableVfParityTest()
-      val isVfFeatureHydrationEnabled = enableVfFeatureHydration()
+      v-vaw isvfpawitytestenabwed = enabwevfpawitytest()
+      v-vaw isvffeatuwehydwationenabwed = e-enabwevffeatuwehydwation()
 
-      if (!isVfParityTestEnabled && !isVfFeatureHydrationEnabled) {
-        response
-      } else if (isVfParityTestEnabled && !isVfFeatureHydrationEnabled) {
-        response.applyEffect { resp =>
-          Stitch.async(parityTest.runParityTest(hydratedFeatureResponse, resp))
+      if (!isvfpawitytestenabwed && !isvffeatuwehydwationenabwed) {
+        wesponse
+      } e-ewse i-if (isvfpawitytestenabwed && !isvffeatuwehydwationenabwed) {
+        w-wesponse.appwyeffect { wesp =>
+          stitch.async(pawitytest.wunpawitytest(hydwatedfeatuwewesponse, (⑅˘꒳˘) wesp))
         }
-      } else {
-        hydratedFeatureResponse
+      } e-ewse {
+        hydwatedfeatuwewesponse
       }
     }
   }

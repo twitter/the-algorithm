@@ -1,22 +1,22 @@
-package com.twitter.tweetypie.federated.columns
+package com.twittew.tweetypie.fedewated.cowumns
 
-import com.twitter.tweetypie.{thriftscala => thrift}
+impowt com.twittew.tweetypie.{thwiftscawa => t-thwift}
 
-object HydrationOptions {
+o-object hydwationoptions {
 
-  def writePathHydrationOptions(
-    cardsPlatformKey: Option[String]
+  d-def wwitepathhydwationoptions(
+    c-cawdspwatfowmkey: o-option[stwing]
   ) =
-    thrift.WritePathHydrationOptions(
-      // The GraphQL API extracts or "lifts" the ApiTweet.card reference field from the
-      // ApiTweet.card.url returned by Tweetypie. Tweetypie's card hydration business logic
-      // selects the single correct Card URL by first making Expandodo.getCards2 requests for
-      // the Tweet's cardReference, or all of the Tweet's URL entities in cases where Tweet
-      // does not have a stored cardReference, and then selecting the last of the hydrated
-      // cards returned by Expandodo.
-      includeCards = true,
-      cardsPlatformKey = cardsPlatformKey,
-      // The GraphQL API only supports quoted tweet results formatted per go/simplequotedtweet.
-      simpleQuotedTweet = true,
+    t-thwift.wwitepathhydwationoptions(
+      // t-the g-gwaphqw api extwacts ow "wifts" the apitweet.cawd wefewence fiewd fwom the
+      // a-apitweet.cawd.uww wetuwned by tweetypie. (⑅˘꒳˘) tweetypie's c-cawd hydwation business w-wogic
+      // sewects the singwe cowwect cawd uww by fiwst making e-expandodo.getcawds2 wequests f-fow
+      // the t-tweet's cawdwefewence, (///ˬ///✿) ow aww of the tweet's uww entities in cases whewe tweet
+      // d-does not have a stowed cawdwefewence, 😳😳😳 and then sewecting the wast of the h-hydwated
+      // cawds wetuwned b-by expandodo. 🥺
+      i-incwudecawds = t-twue, mya
+      c-cawdspwatfowmkey = cawdspwatfowmkey,
+      // the gwaphqw api o-onwy suppowts quoted tweet wesuwts fowmatted pew g-go/simpwequotedtweet. 🥺
+      simpwequotedtweet = twue, >_<
     )
 }

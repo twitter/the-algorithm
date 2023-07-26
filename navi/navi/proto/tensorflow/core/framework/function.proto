@@ -1,136 +1,136 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "tensorflow/core/framework/attr_value.proto";
-import "tensorflow/core/framework/node_def.proto";
-import "tensorflow/core/framework/op_def.proto";
+impowt "tensowfwow/cowe/fwamewowk/attw_vawue.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/node_def.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/op_def.pwoto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "FunctionProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/function_go_proto";
+o-option cc_enabwe_awenas = t-twue;
+o-option java_outew_cwassname = "functionpwotos";
+o-option java_muwtipwe_fiwes = twue;
+o-option java_package = "owg.tensowfwow.fwamewowk";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/fwamewowk/function_go_pwoto";
 
-// A library is a set of named functions.
-message FunctionDefLibrary {
-  repeated FunctionDef function = 1;
-  repeated GradientDef gradient = 2;
-  repeated RegisteredGradient registered_gradients = 3;
+// a wibwawy is a set of nyamed functions. 🥺
+message functiondefwibwawy {
+  w-wepeated functiondef function = 1;
+  wepeated g-gwadientdef gwadient = 2;
+  w-wepeated wegistewedgwadient wegistewed_gwadients = 3;
 }
 
-// A function can be instantiated when the runtime can bind every attr
-// with a value. When a GraphDef has a call to a function, it must
-// have binding for every attr defined in the signature.
+// a function can be instantiated when the wuntime can b-bind evewy attw
+// with a vawue. ʘwʘ w-when a gwaphdef h-has a caww to a function, UwU it must
+// have binding fow evewy attw defined in t-the signatuwe. XD
 //
-// TODO(zhifengc):
-//   * device spec, etc.
-message FunctionDef {
-  // The definition of the function's name, arguments, return values,
-  // attrs etc.
-  OpDef signature = 1;
+// todo(zhifengc):
+//   * device spec, (✿oωo) etc.
+message functiondef {
+  // t-the definition of the function's n-nyame, :3 a-awguments, wetuwn v-vawues, (///ˬ///✿)
+  // a-attws etc. nyaa~~
+  opdef signatuwe = 1;
 
-  // Attributes specific to this function definition.
-  map<string, AttrValue> attr = 5;
+  // attwibutes s-specific to this function definition. >w<
+  map<stwing, -.- a-attwvawue> attw = 5;
 
-  // Attributes for function arguments. These attributes are the same set of
-  // valid attributes as to _Arg nodes.
-  message ArgAttrs {
-    map<string, AttrValue> attr = 1;
+  // attwibutes fow function awguments. (✿oωo) these attwibutes awe the same s-set of
+  // vawid attwibutes a-as to _awg nyodes. (˘ω˘)
+  m-message awgattws {
+    m-map<stwing, rawr attwvawue> attw = 1;
   }
-  map<uint32, ArgAttrs> arg_attr = 7;
+  map<uint32, OwO awgattws> a-awg_attw = 7;
 
-  // Unique IDs for each resource argument, used to track aliasing resources. If
-  // Argument A and Argument B alias each other, then
-  // resource_arg_unique_ids[A.index] == resource_arg_unique_ids[B.index].
+  // u-unique ids fow each w-wesouwce awgument, ^•ﻌ•^ u-used to twack awiasing wesouwces. UwU i-if
+  // awgument a and awgument b-b awias each othew, (˘ω˘) then
+  // wesouwce_awg_unique_ids[a.index] == w-wesouwce_awg_unique_ids[b.index]. (///ˬ///✿)
   //
-  // If this field is empty, none of the arguments could alias; otherwise, every
-  // resource argument should have an entry in this field.
+  // if this fiewd i-is empty, nyone of the awguments c-couwd awias; o-othewwise, σωσ evewy
+  // wesouwce awgument shouwd have an entwy in this fiewd. /(^•ω•^)
   //
-  // When instantiated, the unique IDs will be attached to the _Arg nodes'
-  // "_resource_arg_unique_id" attribute.
-  map<uint32, uint32> resource_arg_unique_id = 8;
+  // when instantiated, 😳 the unique i-ids wiww be a-attached to the _awg nyodes'
+  // "_wesouwce_awg_unique_id" a-attwibute. 😳
+  m-map<uint32, (⑅˘꒳˘) u-uint32> wesouwce_awg_unique_id = 8;
 
-  // NOTE: field id 2 deleted on Jan 11, 2017, GraphDef version 21.
-  reserved 2;
+  // nyote: fiewd id 2 deweted on jan 11, 😳😳😳 2017, gwaphdef v-vewsion 21. 😳
+  wesewved 2;
 
-  // In both of the following fields, there is the need to specify an
-  // output that is used as either the input to another node (in
-  // `node_def`) or as a return value of the function (in `ret`).
-  // Unlike the NodeDefs in GraphDef, we need to be able to specify a
-  // list in some cases (instead of just single outputs).  Also, we
-  // need to be able to deal with lists of unknown length (so the
-  // output index may not be known at function definition time).  So
-  // we use the following format instead:
-  // * "fun_in" where "fun_in" is the name of a function input arg in
-  //   the `signature` field above.  This represents that input, whether
-  //   it is a single tensor or a list.
-  // * "fun_in:0" gives the first element of a function input arg (a
-  //   non-list input is considered a list of length 1 for these
-  //   purposes).
-  // * "node:out" where "node" is the name of a node in `node_def` and
-  //   "out" is the name one of its op's output arguments (the name
-  //   comes from the OpDef of the node's op). This represents that
-  //   node's output, whether it is a single tensor or a list.
-  //   Note: We enforce that an op's output arguments are never
-  //   renamed in the backwards-compatibility test.
-  // * "node:out:0" gives the first element of a node output arg (a
-  //   non-list output is considered a list of length 1 for these
-  //   purposes).
+  // in both of the fowwowing fiewds, XD thewe is the n-nyeed to specify an
+  // output t-that is used as e-eithew the input t-to anothew nyode (in
+  // `node_def`) ow as a w-wetuwn vawue of t-the function (in `wet`). mya
+  // u-unwike t-the nyodedefs in gwaphdef, ^•ﻌ•^ we nyeed to be abwe t-to specify a
+  // w-wist in some c-cases (instead o-of just singwe o-outputs). ʘwʘ  awso, we
+  // nyeed to be abwe to deaw with wists of u-unknown wength (so the
+  // output index may nyot be known at function definition time). ( ͡o ω ͡o )  so
+  // w-we use the fowwowing fowmat instead:
+  // * "fun_in" whewe "fun_in" is the nyame o-of a function i-input awg in
+  //   t-the `signatuwe` fiewd above. mya  t-this wepwesents that input, o.O w-whethew
+  //   it i-is a singwe tensow ow a wist. (✿oωo)
+  // * "fun_in:0" gives the fiwst ewement of a function input awg (a
+  //   non-wist i-input is considewed a wist o-of wength 1 fow these
+  //   puwposes). :3
+  // * "node:out" w-whewe "node" i-is the nyame of a nyode in `node_def` and
+  //   "out" i-is t-the nyame one of its op's output a-awguments (the n-nyame
+  //   comes fwom the opdef of the nyode's op). 😳 this wepwesents that
+  //   n-nyode's output, (U ﹏ U) w-whethew it is a-a singwe tensow ow a wist.
+  //   n-nyote: we enfowce t-that an op's output awguments a-awe nyevew
+  //   wenamed in the backwawds-compatibiwity test. mya
+  // * "node:out:0" gives the f-fiwst ewement of a-a nyode output awg (a
+  //   nyon-wist output is c-considewed a wist o-of wength 1 fow these
+  //   puwposes). (U ᵕ U❁)
   //
-  // NOT CURRENTLY SUPPORTED (but may be in the future):
-  // * "node:out:-1" gives last element in a node output list
-  // * "node:out:1:" gives a list with all but the first element in a
-  //   node output list
-  // * "node:out::-1" gives a list with all but the last element in a
-  //   node output list
+  // not cuwwentwy s-suppowted (but may be in the futuwe):
+  // * "node:out:-1" gives wast ewement in a nyode output w-wist
+  // * "node:out:1:" gives a wist with a-aww but the fiwst e-ewement in a
+  //   nyode output wist
+  // * "node:out::-1" gives a-a wist with a-aww but the wast ewement in a
+  //   nyode output wist
 
-  // The body of the function.  Unlike the NodeDefs in a GraphDef, attrs
-  // may have values of type `placeholder` and the `input` field uses
-  // the "output" format above.
+  // the b-body of the function. :3  unwike the n-nyodedefs in a gwaphdef, mya attws
+  // may have vawues of type `pwacehowdew` a-and the `input` fiewd u-uses
+  // the "output" f-fowmat above.
 
-  // By convention, "op" in node_def is resolved by consulting with a
-  // user-defined library first. If not resolved, "func" is assumed to
-  // be a builtin op.
-  repeated NodeDef node_def = 3;
+  // by c-convention, OwO "op" in nyode_def is w-wesowved by consuwting w-with a
+  // u-usew-defined wibwawy fiwst. (ˆ ﻌ ˆ)♡ i-if nyot wesowved, ʘwʘ "func" i-is assumed to
+  // be a buiwtin op. o.O
+  w-wepeated nyodedef n-nyode_def = 3;
 
-  // A mapping from the output arg names from `signature` to the
-  // outputs from `node_def` that should be returned by the function.
-  map<string, string> ret = 4;
+  // a-a mapping fwom the output awg nyames fwom `signatuwe` t-to the
+  // outputs f-fwom `node_def` t-that shouwd be wetuwned by the function. UwU
+  map<stwing, rawr x3 stwing> w-wet = 4;
 
-  // A mapping from control output names from `signature` to node names in
-  // `node_def` which should be control outputs of this function.
-  map<string, string> control_ret = 6;
+  // a m-mapping fwom contwow o-output nyames f-fwom `signatuwe` to nyode nyames i-in
+  // `node_def` which shouwd be contwow outputs of this function. 🥺
+  map<stwing, :3 stwing> c-contwow_wet = 6;
 }
 
-// GradientDef defines the gradient function of a function defined in
-// a function library.
+// gwadientdef d-defines the gwadient function o-of a function defined in
+// a function w-wibwawy. (ꈍᴗꈍ)
 //
-// A gradient function g (specified by gradient_func) for a function f
-// (specified by function_name) must follow the following:
+// a gwadient f-function g (specified b-by gwadient_func) f-fow a f-function f
+// (specified b-by function_name) must fowwow the fowwowing:
 //
-// The function 'f' must be a numerical function which takes N inputs
-// and produces M outputs. Its gradient function 'g', which is a
-// function taking N + M inputs and produces N outputs.
+// the function 'f' must be a nyumewicaw function which t-takes ny inputs
+// a-and pwoduces m-m outputs. 🥺 its gwadient function 'g', (✿oωo) w-which is a
+// function taking ny + m inputs and pwoduces n-ny outputs. (U ﹏ U)
 //
-// I.e. if we have
-//    (y1, y2, ..., y_M) = f(x1, x2, ..., x_N),
-// then, g is
-//    (dL/dx1, dL/dx2, ..., dL/dx_N) = g(x1, x2, ..., x_N,
-//                                      dL/dy1, dL/dy2, ..., dL/dy_M),
-// where L is a scalar-value function of (x1, x2, ..., xN) (e.g., the
-// loss function). dL/dx_i is the partial derivative of L with respect
-// to x_i.
-message GradientDef {
-  string function_name = 1;  // The function name.
-  string gradient_func = 2;  // The gradient function's name.
+// i-i.e. if we have
+//    (y1, :3 y2, ..., y-y_m) = f(x1, ^^;; x2, rawr ..., x_n),
+// then, 😳😳😳 g is
+//    (dw/dx1, (✿oωo) dw/dx2, OwO ..., d-dw/dx_n) = g-g(x1, ʘwʘ x2, ..., x_n, (ˆ ﻌ ˆ)♡
+//                                      d-dw/dy1, (U ﹏ U) dw/dy2, UwU ..., d-dw/dy_m), XD
+// whewe w is a scawaw-vawue function of (x1, ʘwʘ x2, ..., xn) (e.g., t-the
+// woss f-function). rawr x3 dw/dx_i i-is the pawtiaw d-dewivative of w-w with wespect
+// to x_i. ^^;;
+message g-gwadientdef {
+  s-stwing function_name = 1;  // the function nyame. ʘwʘ
+  s-stwing gwadient_func = 2;  // t-the gwadient function's nyame. (U ﹏ U)
 }
 
-// RegisteredGradient stores a gradient function that is registered in the
-// gradients library and used in the ops of a function in the function library.
-// Unlike GradientDef, these gradients are identified by op type, and not
-// directly linked to any function.
-message RegisteredGradient {
-  string gradient_func = 1;       // The gradient function's name.
-  string registered_op_type = 2;  // The gradient function's registered op type.
+// w-wegistewedgwadient stowes a gwadient function t-that is wegistewed in the
+// g-gwadients wibwawy a-and used in the ops of a function i-in the function wibwawy. (˘ω˘)
+// unwike gwadientdef, (ꈍᴗꈍ) t-these gwadients a-awe identified b-by op type, /(^•ω•^) and nyot
+// diwectwy winked to any function. >_<
+m-message wegistewedgwadient {
+  stwing gwadient_func = 1;       // the gwadient function's n-nyame. σωσ
+  s-stwing wegistewed_op_type = 2;  // the gwadient f-function's wegistewed op type. ^^;;
 }

@@ -1,3 +1,3 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt
 
-trait Cover extends TimelineItem
+twait covew e-extends timewineitem

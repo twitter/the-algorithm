@@ -1,26 +1,26 @@
-package com.twitter.home_mixer.functional_component.decorator.builder
+package com.twittew.home_mixew.functionaw_component.decowatow.buiwdew
 
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableSendScoresToClient
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.tweet.BaseTimelinesScoreInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TimelinesScoreInfo
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.home_mixew.modew.homefeatuwes.scowefeatuwe
+i-impowt com.twittew.home_mixew.pawam.homegwobawpawams.enabwesendscowestocwient
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.item.tweet.basetimewinesscoweinfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tweet.timewinesscoweinfo
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object HomeTimelinesScoreInfoBuilder
-    extends BaseTimelinesScoreInfoBuilder[PipelineQuery, TweetCandidate] {
+o-object hometimewinesscoweinfobuiwdew
+    e-extends basetimewinesscoweinfobuiwdew[pipewinequewy, >_< tweetcandidate] {
 
-  private val UndefinedTweetScore = -1.0
+  pwivate vaw undefinedtweetscowe = -1.0
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[TimelinesScoreInfo] = {
-    if (query.params(EnableSendScoresToClient)) {
-      val score = candidateFeatures.getOrElse(ScoreFeature, None).getOrElse(UndefinedTweetScore)
-      Some(TimelinesScoreInfo(score))
-    } else None
+  o-ovewwide def appwy(
+    quewy: pipewinequewy,
+    candidate: tweetcandidate, mya
+    c-candidatefeatuwes: featuwemap
+  ): o-option[timewinesscoweinfo] = {
+    if (quewy.pawams(enabwesendscowestocwient)) {
+      vaw scowe = candidatefeatuwes.getowewse(scowefeatuwe, mya n-nyone).getowewse(undefinedtweetscowe)
+      some(timewinesscoweinfo(scowe))
+    } e-ewse nyone
   }
 }

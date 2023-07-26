@@ -1,62 +1,62 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.twittew.home_mixew.functionaw_component.featuwe_hydwatow
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures.ImpressionBloomFilterFeature
-import com.twitter.home_mixer.model.request.HasSeenTweetIds
-import com.twitter.home_mixer.param.HomeGlobalParams.ImpressionBloomFilterFalsePositiveRateParam
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.clients.manhattan.store.ManhattanStoreClient
-import com.twitter.timelines.impressionbloomfilter.{thriftscala => blm}
-import com.twitter.timelines.impressionstore.impressionbloomfilter.ImpressionBloomFilter
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.impwessionbwoomfiwtewfeatuwe
+i-impowt com.twittew.home_mixew.modew.wequest.hasseentweetids
+i-impowt c-com.twittew.home_mixew.pawam.homegwobawpawams.impwessionbwoomfiwtewfawsepositivewatepawam
+i-impowt c-com.twittew.home_mixew.sewvice.homemixewawewtconfig
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.cwients.manhattan.stowe.manhattanstowecwient
+i-impowt com.twittew.timewines.impwessionbwoomfiwtew.{thwiftscawa => bwm}
+impowt com.twittew.timewines.impwessionstowe.impwessionbwoomfiwtew.impwessionbwoomfiwtew
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-case class ImpressionBloomFilterQueryFeatureHydrator[
-  Query <: PipelineQuery with HasSeenTweetIds] @Inject() (
-  bloomFilterClient: ManhattanStoreClient[
-    blm.ImpressionBloomFilterKey,
-    blm.ImpressionBloomFilterSeq
-  ]) extends QueryFeatureHydrator[Query] {
+@singweton
+c-case cwass impwessionbwoomfiwtewquewyfeatuwehydwatow[
+  q-quewy <: pipewinequewy with hasseentweetids] @inject() (
+  bwoomfiwtewcwient: manhattanstowecwient[
+    b-bwm.impwessionbwoomfiwtewkey,
+    bwm.impwessionbwoomfiwtewseq
+  ]) extends quewyfeatuwehydwatow[quewy] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    "ImpressionBloomFilter")
+  ovewwide vaw identifiew: f-featuwehydwatowidentifiew = featuwehydwatowidentifiew(
+    "impwessionbwoomfiwtew")
 
-  private val ImpressionBloomFilterTTL = 7.day
+  p-pwivate vaw impwessionbwoomfiwtewttw = 7.day
 
-  override val features: Set[Feature[_, _]] = Set(ImpressionBloomFilterFeature)
+  o-ovewwide vaw featuwes: s-set[featuwe[_, o.O _]] = s-set(impwessionbwoomfiwtewfeatuwe)
 
-  private val SurfaceArea = blm.SurfaceArea.HomeTimeline
+  pwivate vaw suwfaceawea = bwm.suwfaceawea.hometimewine
 
-  override def hydrate(query: Query): Stitch[FeatureMap] = {
-    val userId = query.getRequiredUserId
-    bloomFilterClient
-      .get(blm.ImpressionBloomFilterKey(userId, SurfaceArea))
-      .map(_.getOrElse(blm.ImpressionBloomFilterSeq(Seq.empty)))
-      .map { bloomFilterSeq =>
-        val updatedBloomFilterSeq =
-          if (query.seenTweetIds.forall(_.isEmpty)) bloomFilterSeq
-          else {
-            ImpressionBloomFilter.addSeenTweetIds(
-              surfaceArea = SurfaceArea,
-              tweetIds = query.seenTweetIds.get,
-              bloomFilterSeq = bloomFilterSeq,
-              timeToLive = ImpressionBloomFilterTTL,
-              falsePositiveRate = query.params(ImpressionBloomFilterFalsePositiveRateParam)
+  o-ovewwide def hydwate(quewy: quewy): s-stitch[featuwemap] = {
+    vaw usewid = quewy.getwequiwedusewid
+    bwoomfiwtewcwient
+      .get(bwm.impwessionbwoomfiwtewkey(usewid, ( ͡o ω ͡o ) suwfaceawea))
+      .map(_.getowewse(bwm.impwessionbwoomfiwtewseq(seq.empty)))
+      .map { bwoomfiwtewseq =>
+        v-vaw updatedbwoomfiwtewseq =
+          i-if (quewy.seentweetids.fowaww(_.isempty)) b-bwoomfiwtewseq
+          e-ewse {
+            impwessionbwoomfiwtew.addseentweetids(
+              suwfaceawea = suwfaceawea, (U ﹏ U)
+              t-tweetids = q-quewy.seentweetids.get, (///ˬ///✿)
+              bwoomfiwtewseq = b-bwoomfiwtewseq, >w<
+              t-timetowive = impwessionbwoomfiwtewttw, rawr
+              f-fawsepositivewate = quewy.pawams(impwessionbwoomfiwtewfawsepositivewatepawam)
             )
           }
-        FeatureMapBuilder().add(ImpressionBloomFilterFeature, updatedBloomFilterSeq).build()
+        featuwemapbuiwdew().add(impwessionbwoomfiwtewfeatuwe, mya u-updatedbwoomfiwtewseq).buiwd()
       }
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.8)
+  ovewwide vaw awewts = seq(
+    homemixewawewtconfig.businesshouws.defauwtsuccesswateawewt(99.8)
   )
 }

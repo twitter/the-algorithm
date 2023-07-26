@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.timewinesdetaiws
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class TimelinesDetailsMarshaller @Inject() () {
+@singweton
+c-cwass t-timewinesdetaiwsmawshawwew @inject() () {
 
-  def apply(timelinesDetails: TimelinesDetails): urt.TimelinesDetails = urt.TimelinesDetails(
-    injectionType = timelinesDetails.injectionType,
-    controllerData = timelinesDetails.controllerData,
-    sourceData = timelinesDetails.sourceData
+  d-def appwy(timewinesdetaiws: timewinesdetaiws): uwt.timewinesdetaiws = uwt.timewinesdetaiws(
+    i-injectiontype = timewinesdetaiws.injectiontype, -.-
+    contwowwewdata = t-timewinesdetaiws.contwowwewdata, (ˆ ﻌ ˆ)♡
+    souwcedata = t-timewinesdetaiws.souwcedata
   )
 }

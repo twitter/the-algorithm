@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.model.common.identifier
+package com.twittew.pwoduct_mixew.cowe.modew.common.identifiew
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
+impowt com.fastewxmw.jackson.cowe.jsongenewatow
+impowt c-com.fastewxmw.jackson.databind.jsonsewiawizew
+i-impowt com.fastewxmw.jackson.databind.sewiawizewpwovidew
 
-private[identifier] class ComponentIdentifierSerializer()
-    extends JsonSerializer[ComponentIdentifier] {
+p-pwivate[identifiew] c-cwass componentidentifiewsewiawizew()
+    e-extends j-jsonsewiawizew[componentidentifiew] {
 
-  private case class SerializableComponentIdentifier(
-    identifier: String,
-    sourceFile: String)
+  p-pwivate c-case cwass sewiawizabwecomponentidentifiew(
+    identifiew: stwing, mya
+    souwcefiwe: stwing)
 
-  override def serialize(
-    componentIdentifier: ComponentIdentifier,
-    gen: JsonGenerator,
-    serializers: SerializerProvider
-  ): Unit = serializers.defaultSerializeValue(
-    SerializableComponentIdentifier(componentIdentifier.toString, componentIdentifier.file.value),
-    gen)
+  o-ovewwide def sewiawize(
+    componentidentifiew: c-componentidentifiew, mya
+    gen: j-jsongenewatow, 😳
+    sewiawizews: sewiawizewpwovidew
+  ): unit = s-sewiawizews.defauwtsewiawizevawue(
+    sewiawizabwecomponentidentifiew(componentidentifiew.tostwing, XD c-componentidentifiew.fiwe.vawue), :3
+    g-gen)
 }

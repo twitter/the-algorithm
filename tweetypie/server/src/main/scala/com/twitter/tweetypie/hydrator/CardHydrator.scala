@@ -1,47 +1,47 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.expandodo.thriftscala.Card
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.expandodo.thwiftscawa.cawd
+i-impowt c-com.twittew.stitch.notfound
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.wepositowy._
+impowt c-com.twittew.tweetypie.thwiftscawa._
 
-object CardHydrator {
-  type Type = ValueHydrator[Option[Seq[Card]], Ctx]
+object cawdhydwatow {
+  type type = vawuehydwatow[option[seq[cawd]], ctx]
 
-  case class Ctx(
-    urlEntities: Seq[UrlEntity],
-    mediaEntities: Seq[MediaEntity],
-    underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy
+  case cwass c-ctx(
+    uwwentities: seq[uwwentity], /(^•ω•^)
+    mediaentities: s-seq[mediaentity], rawr x3
+    undewwyingtweetctx: t-tweetctx)
+      extends tweetctx.pwoxy
 
-  val hydratedField: FieldByPath = fieldByPath(Tweet.CardsField)
+  vaw hydwatedfiewd: fiewdbypath = f-fiewdbypath(tweet.cawdsfiewd)
 
-  private[this] val partialResult = ValueState.partial(None, hydratedField)
+  pwivate[this] v-vaw pawtiawwesuwt = v-vawuestate.pawtiaw(none, (U ﹏ U) hydwatedfiewd)
 
-  def apply(repo: CardRepository.Type): Type = {
-    def getCards(url: String): Stitch[Seq[Card]] =
-      repo(url).handle { case NotFound => Nil }
+  def appwy(wepo: cawdwepositowy.type): type = {
+    def getcawds(uww: s-stwing): stitch[seq[cawd]] =
+      wepo(uww).handwe { case notfound => nyiw }
 
-    ValueHydrator[Option[Seq[Card]], Ctx] { (_, ctx) =>
-      val urls = ctx.urlEntities.map(_.url)
+    vawuehydwatow[option[seq[cawd]], (U ﹏ U) c-ctx] { (_, (⑅˘꒳˘) ctx) =>
+      v-vaw uwws = ctx.uwwentities.map(_.uww)
 
-      Stitch.traverse(urls)(getCards _).liftToTry.map {
-        case Return(cards) =>
-          // even though we are hydrating a type of Option[Seq[Card]], we only
-          // ever return at most one card, and always the last one.
-          val res = cards.flatten.lastOption.toSeq
-          if (res.isEmpty) ValueState.UnmodifiedNone
-          else ValueState.modified(Some(res))
-        case _ => partialResult
+      s-stitch.twavewse(uwws)(getcawds _).wifttotwy.map {
+        c-case wetuwn(cawds) =>
+          // e-even though we awe hydwating a type of o-option[seq[cawd]], òωó we onwy
+          // evew wetuwn a-at most one cawd, ʘwʘ and awways the wast one. /(^•ω•^)
+          vaw wes = cawds.fwatten.wastoption.toseq
+          if (wes.isempty) vawuestate.unmodifiednone
+          e-ewse vawuestate.modified(some(wes))
+        case _ => pawtiawwesuwt
       }
-    }.onlyIf { (curr, ctx) =>
-      curr.isEmpty &&
-      ctx.tweetFieldRequested(Tweet.CardsField) &&
-      !ctx.isRetweet &&
-      ctx.mediaEntities.isEmpty
+    }.onwyif { (cuww, ʘwʘ c-ctx) =>
+      c-cuww.isempty &&
+      c-ctx.tweetfiewdwequested(tweet.cawdsfiewd) &&
+      !ctx.iswetweet &&
+      ctx.mediaentities.isempty
     }
   }
 }

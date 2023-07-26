@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.service.scoring_pipeline_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.scowing_pipewine_executow
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipelineResult
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.itemcandidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.scowing.scowingpipewinewesuwt
 
-case class ScoringPipelineExecutorResult[Candidate <: UniversalNoun[Any]](
-  result: Seq[ItemCandidateWithDetails],
-  individualPipelineResults: Seq[ScoringPipelineResult[Candidate]])
+c-case cwass scowingpipewineexecutowwesuwt[candidate <: u-univewsawnoun[any]](
+  w-wesuwt: s-seq[itemcandidatewithdetaiws], UwU
+  individuawpipewinewesuwts: seq[scowingpipewinewesuwt[candidate]])

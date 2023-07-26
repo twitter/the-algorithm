@@ -1,22 +1,22 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.media.MediaMetadata
-import com.twitter.tweetypie.media.MediaMetadataRequest
+i-impowt com.twittew.stitch.seqgwoup
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.media.mediametadata
+i-impowt com.twittew.tweetypie.media.mediametadatawequest
 
-object MediaMetadataRepository {
-  type Type = MediaMetadataRequest => Stitch[MediaMetadata]
+object m-mediametadatawepositowy {
+  t-type type = mediametadatawequest => s-stitch[mediametadata]
 
-  def apply(getMediaMetadata: FutureArrow[MediaMetadataRequest, MediaMetadata]): Type = {
-    // use an `SeqGroup` to group the future-calls together, even though they can be
-    // executed independently, in order to help keep hydration between different tweets
-    // in sync, to improve batching in hydrators which occur later in the pipeline.
-    val requestGroup = SeqGroup[MediaMetadataRequest, MediaMetadata] {
-      requests: Seq[MediaMetadataRequest] =>
-        Future.collect(requests.map(r => getMediaMetadata(r).liftToTry))
+  def appwy(getmediametadata: futuweawwow[mediametadatawequest, (U ﹏ U) mediametadata]): type = {
+    // u-use an `seqgwoup` to gwoup the futuwe-cawws t-togethew, >_< even though t-they can be
+    // exekawaii~d independentwy, rawr x3 in owdew to hewp keep h-hydwation between diffewent t-tweets
+    // in s-sync, mya to impwove batching in hydwatows which occuw watew in the pipewine. nyaa~~
+    vaw w-wequestgwoup = seqgwoup[mediametadatawequest, (⑅˘꒳˘) mediametadata] {
+      wequests: seq[mediametadatawequest] =>
+        f-futuwe.cowwect(wequests.map(w => getmediametadata(w).wifttotwy))
     }
-    mediaReq => Stitch.call(mediaReq, requestGroup)
+    m-mediaweq => stitch.caww(mediaweq, rawr x3 w-wequestgwoup)
   }
 }

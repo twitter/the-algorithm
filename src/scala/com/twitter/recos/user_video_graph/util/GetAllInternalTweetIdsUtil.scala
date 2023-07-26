@@ -1,33 +1,33 @@
-package com.twitter.recos.user_video_graph.util
+package com.twittew.wecos.usew_video_gwaph.utiw
 
-import com.twitter.graphjet.algorithms.TweetIDMask
-import com.twitter.graphjet.bipartite.api.BipartiteGraph
+impowt com.twittew.gwaphjet.awgowithms.tweetidmask
+i-impowt com.twittew.gwaphjet.bipawtite.api.bipawtitegwaph
 
-object GetAllInternalTweetIdsUtil {
+o-object g-getawwintewnawtweetidsutiw {
 
-  def getAllInternalTweetIds(tweetId: Long, bipartiteGraph: BipartiteGraph): Seq[Long] = {
-    val internalTweetIds = getAllMasks(tweetId)
-    sortByDegrees(internalTweetIds, bipartiteGraph)
+  d-def getawwintewnawtweetids(tweetid: w-wong, (U ﹏ U) bipawtitegwaph: b-bipawtitegwaph): seq[wong] = {
+    v-vaw intewnawtweetids = g-getawwmasks(tweetid)
+    sowtbydegwees(intewnawtweetids, >_< bipawtitegwaph)
   }
 
-  private def getAllMasks(tweetId: Long): Seq[Long] = {
-    Seq(
-      tweetId,
-      TweetIDMask.summary(tweetId),
-      TweetIDMask.photo(tweetId),
-      TweetIDMask.player(tweetId),
-      TweetIDMask.promotion(tweetId)
+  pwivate def getawwmasks(tweetid: w-wong): seq[wong] = {
+    seq(
+      tweetid, rawr x3
+      t-tweetidmask.summawy(tweetid), mya
+      tweetidmask.photo(tweetid),
+      t-tweetidmask.pwayew(tweetid), nyaa~~
+      tweetidmask.pwomotion(tweetid)
     )
   }
 
-  private def sortByDegrees(
-    encodedTweetIds: Seq[Long],
-    bipartiteGraph: BipartiteGraph
-  ): Seq[Long] = {
-    encodedTweetIds
-      .map { encodedTweetId => (encodedTweetId, bipartiteGraph.getRightNodeDegree(encodedTweetId)) }
-      .filter { case (_, degree) => degree > 0 } // keep only tweetds with positive degree
-      .sortBy { case (_, degree) => -degree } // sort by degree in descending order
-      .map { case (encodedTweetId, _) => encodedTweetId }
+  pwivate def sowtbydegwees(
+    encodedtweetids: s-seq[wong], (⑅˘꒳˘)
+    bipawtitegwaph: b-bipawtitegwaph
+  ): s-seq[wong] = {
+    encodedtweetids
+      .map { encodedtweetid => (encodedtweetid, rawr x3 bipawtitegwaph.getwightnodedegwee(encodedtweetid)) }
+      .fiwtew { case (_, d-degwee) => degwee > 0 } // keep onwy tweetds with positive degwee
+      .sowtby { case (_, (✿oωo) degwee) => -degwee } // sowt by degwee i-in descending owdew
+      .map { c-case (encodedtweetid, (ˆ ﻌ ˆ)♡ _) => e-encodedtweetid }
   }
 }

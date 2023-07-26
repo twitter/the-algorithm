@@ -1,36 +1,19 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/selector:insert_append_results",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/pipeline_failure",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/state",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/step",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/step/candidate_feature_hydrator",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/step/gate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/step/scorer",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/step/selector",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product/guice",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/util",
-        "stitch/stitch-core",
-        "util/util-core:scala",
+scawa_wibwawy(
+    souwces = ["*.scawa"], òωó
+    compiwew_option_sets = ["fataw_wawnings"], o.O
+    p-pwatfowm = "java8", (U ᵕ U❁)
+    s-stwict_deps = t-twue, (⑅˘꒳˘)
+    tags = ["bazew-compatibwe"], ( ͡o ω ͡o )
+    d-dependencies = [
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/featuwe", UwU
+        "swc/scawa/com/twittew/mw/api/utiw:datawecowd", rawr x3
+        "swc/scawa/com/twittew/mw/featuwestowe/wib/data", rawr
+        "swc/scawa/com/twittew/mw/featuwestowe/wib/dynamic", σωσ
     ],
-    exports = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/pipeline_failure",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/step",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/step/candidate_feature_hydrator",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/step/gate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/step/scorer",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/step/selector",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product/guice",
-        "stitch/stitch-core",
+    e-expowts = [
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/featuwe", σωσ
+        "swc/scawa/com/twittew/mw/api/utiw:datawecowd", >_<
+        "swc/scawa/com/twittew/mw/featuwestowe/wib/data", :3
+        "swc/scawa/com/twittew/mw/featuwestowe/wib/dynamic", (U ﹏ U)
     ],
 )

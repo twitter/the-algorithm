@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.operation
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation.CursorEntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.cuwsowopewation.cuwsowentwynamespace
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.entwynamespace
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineitem
 
 /**
- * CursorItem should only be used for Module cursors
- * For timeline cursors, see
- * [[com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation]]
+ * c-cuwsowitem shouwd onwy be used fow moduwe cuwsows
+ * fow timewine cuwsows, nyaa~~ see
+ * [[com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.cuwsowopewation]]
  */
-case class CursorItem(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  value: String,
-  cursorType: CursorType,
-  displayTreatment: Option[CursorDisplayTreatment])
-    extends TimelineItem {
+c-case cwass cuwsowitem(
+  ovewwide vaw id: w-wong, (⑅˘꒳˘)
+  ovewwide vaw sowtindex: o-option[wong], rawr x3
+  ovewwide vaw cwienteventinfo: option[cwienteventinfo], (✿oωo)
+  ovewwide v-vaw feedbackactioninfo: option[feedbackactioninfo], (ˆ ﻌ ˆ)♡
+  v-vawue: stwing, (˘ω˘)
+  c-cuwsowtype: cuwsowtype, (⑅˘꒳˘)
+  dispwaytweatment: option[cuwsowdispwaytweatment])
+    extends t-timewineitem {
 
-  override val entryNamespace: EntryNamespace = CursorEntryNamespace
+  ovewwide vaw entwynamespace: entwynamespace = cuwsowentwynamespace
 
-  override lazy val entryIdentifier: String =
-    s"$entryNamespace-${cursorType.entryNamespace}-$id"
+  o-ovewwide wazy vaw entwyidentifiew: s-stwing =
+    s-s"$entwynamespace-${cuwsowtype.entwynamespace}-$id"
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  o-ovewwide def withsowtindex(sowtindex: w-wong): timewineentwy = copy(sowtindex = some(sowtindex))
 }

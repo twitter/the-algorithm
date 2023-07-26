@@ -1,37 +1,37 @@
-package com.twitter.unified_user_actions.client.config
+package com.twittew.unified_usew_actions.cwient.config
 
-import com.twitter.inject.Test
+impowt com.twittew.inject.test
 
-class KafkaConfigsSpec extends Test {
-  test("configs should be correct") {
-    val states = Seq(
+c-cwass kafkaconfigsspec e-extends t-test {
+  test("configs s-shouwd b-be cowwect") {
+    v-vaw states = s-seq(
       (
-        KafkaConfigs.ProdUnifiedUserActions,
-        Constants.UuaProdEnv,
-        Constants.UuaKafkaTopicName,
-        Constants.UuaKafkaProdClusterName),
+        k-kafkaconfigs.pwodunifiedusewactions, rawr
+        constants.uuapwodenv, OwO
+        constants.uuakafkatopicname, (U ﹏ U)
+        constants.uuakafkapwodcwustewname), >_<
       (
-        KafkaConfigs.ProdUnifiedUserActionsEngagementOnly,
-        Constants.UuaProdEnv,
-        Constants.UuaEngagementOnlyKafkaTopicName,
-        Constants.UuaKafkaProdClusterName),
+        kafkaconfigs.pwodunifiedusewactionsengagementonwy,
+        c-constants.uuapwodenv,
+        constants.uuaengagementonwykafkatopicname, rawr x3
+        constants.uuakafkapwodcwustewname), mya
       (
-        KafkaConfigs.StagingUnifiedUserActions,
-        Constants.UuaStagingEnv,
-        Constants.UuaKafkaTopicName,
-        Constants.UuaKafkaStagingClusterName),
+        k-kafkaconfigs.stagingunifiedusewactions, nyaa~~
+        constants.uuastagingenv, (⑅˘꒳˘)
+        c-constants.uuakafkatopicname, rawr x3
+        constants.uuakafkastagingcwustewname),
       (
-        KafkaConfigs.StagingUnifiedUserActionsEngagementOnly,
-        Constants.UuaStagingEnv,
-        Constants.UuaEngagementOnlyKafkaTopicName,
-        Constants.UuaKafkaStagingClusterName)
+        kafkaconfigs.stagingunifiedusewactionsengagementonwy, (✿oωo)
+        constants.uuastagingenv, (ˆ ﻌ ˆ)♡
+        c-constants.uuaengagementonwykafkatopicname, (˘ω˘)
+        constants.uuakafkastagingcwustewname)
     )
 
-    states.foreach {
-      case (actual, expectedEnv, expectedTopic, expectedClusterName) =>
-        assert(expectedEnv == actual.environment.name, s"in $actual")
-        assert(expectedTopic == actual.topic, s"in $actual")
-        assert(expectedClusterName == actual.cluster.name, s"in $actual")
+    s-states.foweach {
+      c-case (actuaw, (⑅˘꒳˘) expectedenv, (///ˬ///✿) expectedtopic, 😳😳😳 expectedcwustewname) =>
+        assewt(expectedenv == actuaw.enviwonment.name, 🥺 s-s"in $actuaw")
+        assewt(expectedtopic == actuaw.topic, mya s"in $actuaw")
+        assewt(expectedcwustewname == actuaw.cwustew.name, 🥺 s-s"in $actuaw")
       case _ =>
     }
   }

@@ -1,438 +1,438 @@
-package com.twitter.ann.scalding.offline
+package com.twittew.ann.scawding.offwine
 
-import com.twitter.ann.common._
-import com.twitter.ann.hnsw.{HnswParams, TypedHnswIndex}
-import com.twitter.bijection.Injection
-import com.twitter.cortex.ml.embeddings.common.{EntityKind, Helpers, UserKind}
-import com.twitter.entityembeddings.neighbors.thriftscala.{EntityKey, NearestNeighbors, Neighbor}
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.ml.api.embedding.EmbeddingMath.{Float => math}
-import com.twitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
-import com.twitter.ml.featurestore.lib.{EntityId, UserId}
-import com.twitter.scalding.typed.{TypedPipe, UnsortedGrouped}
-import com.twitter.scalding.{Args, DateRange, Stat, TextLine, UniqueID}
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.util.{Await, FuturePool}
-import scala.util.Random
+impowt c-com.twittew.ann.common._
+i-impowt c-com.twittew.ann.hnsw.{hnswpawams, 😳 t-typedhnswindex}
+i-impowt com.twittew.bijection.injection
+i-impowt c-com.twittew.cowtex.mw.embeddings.common.{entitykind, òωó h-hewpews, usewkind}
+impowt com.twittew.entityembeddings.neighbows.thwiftscawa.{entitykey, 🥺 nyeawestneighbows, rawr x3 nyeighbow}
+impowt com.twittew.mw.api.embedding.embedding
+i-impowt com.twittew.mw.api.embedding.embeddingmath.{fwoat => math}
+impowt c-com.twittew.mw.featuwestowe.wib.embedding.embeddingwithentity
+impowt com.twittew.mw.featuwestowe.wib.{entityid, ^•ﻌ•^ u-usewid}
+impowt com.twittew.scawding.typed.{typedpipe, :3 unsowtedgwouped}
+impowt c-com.twittew.scawding.{awgs, (ˆ ﻌ ˆ)♡ datewange, s-stat, (U ᵕ U❁) textwine, :3 u-uniqueid}
+impowt com.twittew.seawch.common.fiwe.abstwactfiwe
+impowt com.twittew.utiw.{await, ^^;; futuwepoow}
+impowt scawa.utiw.wandom
 
-case class Index[T, D <: Distance[D]](
-  injection: Injection[T, Array[Byte]],
-  metric: Metric[D],
-  dimension: Int,
-  directory: AbstractFile) {
-  lazy val annIndex = TypedHnswIndex.loadIndex[T, D](
-    dimension,
-    metric,
-    injection,
-    ReadWriteFuturePool(FuturePool.immediatePool),
-    directory
+c-case cwass index[t, ( ͡o ω ͡o ) d <: distance[d]](
+  injection: injection[t, o.O awway[byte]], ^•ﻌ•^
+  m-metwic: metwic[d], XD
+  d-dimension: int, ^^
+  d-diwectowy: abstwactfiwe) {
+  w-wazy vaw annindex = t-typedhnswindex.woadindex[t, o.O d](
+    dimension, ( ͡o ω ͡o )
+    metwic, /(^•ω•^)
+    i-injection, 🥺
+    weadwwitefutuwepoow(futuwepoow.immediatepoow), nyaa~~
+    diwectowy
   )
 }
 
-object KnnHelper {
-  def getFilteredUserEmbeddings(
-    args: Args,
-    filterPath: Option[String],
-    reducers: Int,
-    useHashJoin: Boolean
+o-object knnhewpew {
+  def getfiwtewedusewembeddings(
+    awgs: awgs, mya
+    fiwtewpath: option[stwing], XD
+    weducews: i-int, nyaa~~
+    usehashjoin: boowean
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[EmbeddingWithEntity[UserId]] = {
-    val userEmbeddings: TypedPipe[EmbeddingWithEntity[UserId]] =
-      UserKind.parser.getEmbeddingFormat(args, "consumer").getEmbeddings
-    filterPath match {
-      case Some(fileName: String) =>
-        val filterUserIds: TypedPipe[UserId] = TypedPipe
-          .from(TextLine(fileName))
-          .flatMap { idLine =>
-            Helpers.optionalToLong(idLine)
+    impwicit d-datewange: d-datewange
+  ): t-typedpipe[embeddingwithentity[usewid]] = {
+    vaw usewembeddings: typedpipe[embeddingwithentity[usewid]] =
+      usewkind.pawsew.getembeddingfowmat(awgs, ʘwʘ "consumew").getembeddings
+    f-fiwtewpath m-match {
+      case some(fiwename: s-stwing) =>
+        v-vaw fiwtewusewids: typedpipe[usewid] = t-typedpipe
+          .fwom(textwine(fiwename))
+          .fwatmap { idwine =>
+            h-hewpews.optionawtowong(idwine)
           }
           .map { id =>
-            UserId(id)
+            usewid(id)
           }
-        Helpers
-          .adjustableJoin(
-            left = userEmbeddings.groupBy(_.entityId),
-            right = filterUserIds.asKeys,
-            useHashJoin = useHashJoin,
-            reducers = Some(reducers)
+        h-hewpews
+          .adjustabwejoin(
+            weft = usewembeddings.gwoupby(_.entityid), (⑅˘꒳˘)
+            w-wight = fiwtewusewids.askeys,
+            u-usehashjoin = u-usehashjoin, :3
+            weducews = some(weducews)
           ).map {
-            case (_, (embedding, _)) => embedding
+            case (_, -.- (embedding, 😳😳😳 _)) => embedding
           }
-      case None => userEmbeddings
+      case nyone => usewembeddings
     }
   }
 
-  def getNeighborsPipe[T <: EntityId, D <: Distance[D]](
-    args: Args,
-    uncastEntityKind: EntityKind[_],
-    uncastMetric: Metric[_],
-    ef: Int,
-    consumerEmbeddings: TypedPipe[EmbeddingWithEntity[UserId]],
-    abstractFile: Option[AbstractFile],
-    reducers: Int,
-    numNeighbors: Int,
-    dimension: Int
+  def getneighbowspipe[t <: entityid, (U ﹏ U) d <: d-distance[d]](
+    a-awgs: awgs, o.O
+    uncastentitykind: e-entitykind[_], ( ͡o ω ͡o )
+    u-uncastmetwic: m-metwic[_], òωó
+    ef: int, 🥺
+    consumewembeddings: typedpipe[embeddingwithentity[usewid]], /(^•ω•^)
+    a-abstwactfiwe: option[abstwactfiwe], 😳😳😳
+    weducews: int, ^•ﻌ•^
+    nyumneighbows: int, nyaa~~
+    d-dimension: int
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(EntityKey, NearestNeighbors)] = {
-    val entityKind = uncastEntityKind.asInstanceOf[EntityKind[T]]
-    val injection = entityKind.byteInjection
-    val metric = uncastMetric.asInstanceOf[Metric[D]]
-    abstractFile match {
-      case Some(directory: AbstractFile) =>
-        val index = Index(injection, metric, dimension, directory)
-        consumerEmbeddings
-          .map { embedding =>
-            val knn = Await.result(
-              index.annIndex.queryWithDistance(
-                Embedding(embedding.embedding.toArray),
-                numNeighbors,
-                HnswParams(ef)
+    impwicit d-datewange: d-datewange
+  ): t-typedpipe[(entitykey, OwO nyeawestneighbows)] = {
+    v-vaw entitykind = u-uncastentitykind.asinstanceof[entitykind[t]]
+    v-vaw injection = e-entitykind.byteinjection
+    vaw metwic = uncastmetwic.asinstanceof[metwic[d]]
+    abstwactfiwe m-match {
+      c-case some(diwectowy: a-abstwactfiwe) =>
+        v-vaw index = index(injection, ^•ﻌ•^ m-metwic, σωσ dimension, diwectowy)
+        consumewembeddings
+          .map { e-embedding =>
+            vaw knn = await.wesuwt(
+              index.annindex.quewywithdistance(
+                embedding(embedding.embedding.toawway), -.-
+                nyumneighbows,
+                hnswpawams(ef)
               )
             )
-            val neighborList = knn
-              .filter(_.neighbor.toString != embedding.entityId.userId.toString)
+            v-vaw nyeighbowwist = knn
+              .fiwtew(_.neighbow.tostwing != embedding.entityid.usewid.tostwing)
               .map(nn =>
-                Neighbor(
-                  neighbor = EntityKey(nn.neighbor.toString),
-                  similarity = Some(1 - nn.distance.distance)))
-            EntityKey(embedding.entityId.toString) -> NearestNeighbors(neighborList)
+                nyeighbow(
+                  n-nyeighbow = e-entitykey(nn.neighbow.tostwing), (˘ω˘)
+                  s-simiwawity = some(1 - nyn.distance.distance)))
+            e-entitykey(embedding.entityid.tostwing) -> nyeawestneighbows(neighbowwist)
           }
-      case None =>
-        val producerEmbeddings: TypedPipe[EmbeddingWithEntity[UserId]] =
-          UserKind.parser.getEmbeddingFormat(args, "producer").getEmbeddings
+      c-case n-nyone =>
+        vaw pwoducewembeddings: typedpipe[embeddingwithentity[usewid]] =
+          usewkind.pawsew.getembeddingfowmat(awgs, rawr x3 "pwoducew").getembeddings
 
-        bruteForceNearestNeighbors(
-          consumerEmbeddings,
-          producerEmbeddings,
-          numNeighbors,
-          reducers
+        bwutefowceneawestneighbows(
+          consumewembeddings, rawr x3
+          pwoducewembeddings, σωσ
+          nyumneighbows, nyaa~~
+          w-weducews
         )
     }
   }
 
-  def bruteForceNearestNeighbors(
-    consumerEmbeddings: TypedPipe[EmbeddingWithEntity[UserId]],
-    producerEmbeddings: TypedPipe[EmbeddingWithEntity[UserId]],
-    numNeighbors: Int,
-    reducers: Int
-  ): TypedPipe[(EntityKey, NearestNeighbors)] = {
-    consumerEmbeddings
-      .cross(producerEmbeddings)
+  def bwutefowceneawestneighbows(
+    c-consumewembeddings: typedpipe[embeddingwithentity[usewid]], (ꈍᴗꈍ)
+    p-pwoducewembeddings: t-typedpipe[embeddingwithentity[usewid]], ^•ﻌ•^
+    nyumneighbows: int, >_<
+    w-weducews: int
+  ): t-typedpipe[(entitykey, ^^;; nyeawestneighbows)] = {
+    c-consumewembeddings
+      .cwoss(pwoducewembeddings)
       .map {
-        case (cEmbed: EmbeddingWithEntity[UserId], pEmbed: EmbeddingWithEntity[UserId]) =>
-          // Cosine similarity
-          val cEmbedNorm = math.l2Norm(cEmbed.embedding).toFloat
-          val pEmbedNorm = math.l2Norm(pEmbed.embedding).toFloat
-          val distance: Float = -math.dotProduct(
-            (math.scalarProduct(cEmbed.embedding, 1 / cEmbedNorm)),
-            math.scalarProduct(pEmbed.embedding, 1 / pEmbedNorm))
+        c-case (cembed: embeddingwithentity[usewid], ^^;; pembed: embeddingwithentity[usewid]) =>
+          // cosine simiwawity
+          vaw c-cembednowm = math.w2nowm(cembed.embedding).tofwoat
+          v-vaw p-pembednowm = math.w2nowm(pembed.embedding).tofwoat
+          vaw d-distance: fwoat = -math.dotpwoduct(
+            (math.scawawpwoduct(cembed.embedding, /(^•ω•^) 1 / c-cembednowm)), nyaa~~
+            math.scawawpwoduct(pembed.embedding, (✿oωo) 1 / pembednowm))
           (
-            UserKind.stringInjection(cEmbed.entityId),
-            (distance, UserKind.stringInjection(pEmbed.entityId)))
+            u-usewkind.stwinginjection(cembed.entityid), ( ͡o ω ͡o )
+            (distance, usewkind.stwinginjection(pembed.entityid)))
       }
-      .groupBy(_._1).withReducers(reducers)
-      .sortWithTake(numNeighbors) {
-        case ((_: String, (sim1: Float, _: String)), (_: String, (sim2: Float, _: String))) =>
+      .gwoupby(_._1).withweducews(weducews)
+      .sowtwithtake(numneighbows) {
+        case ((_: stwing, (U ᵕ U❁) (sim1: fwoat, òωó _: stwing)), σωσ (_: s-stwing, :3 (sim2: f-fwoat, OwO _: stwing))) =>
           sim1 < sim2
       }
       .map {
-        case (consumerId: String, (prodSims: Seq[(String, (Float, String))])) =>
-          EntityKey(consumerId) -> NearestNeighbors(
-            prodSims.map {
-              case (consumerId: String, (sim: Float, prodId: String)) =>
-                Neighbor(neighbor = EntityKey(prodId), similarity = Some(-sim.toDouble))
+        case (consumewid: s-stwing, ^^ (pwodsims: s-seq[(stwing, (fwoat, (˘ω˘) stwing))])) =>
+          entitykey(consumewid) -> nyeawestneighbows(
+            pwodsims.map {
+              c-case (consumewid: stwing, OwO (sim: fwoat, pwodid: stwing)) =>
+                neighbow(neighbow = entitykey(pwodid), UwU s-simiwawity = some(-sim.todoubwe))
             }
           )
       }
   }
 
   /**
-   * Calculate the nearest neighbors exhaustively between two entity embeddings using one as query and other as the search space.
-   * @param queryEmbeddings entity embeddings for queries
-   * @param searchSpaceEmbeddings entity embeddings for search space
-   * @param metric distance metric
-   * @param numNeighbors number of neighbors
-   * @param queryIdsFilter optional query ids to filter to query entity embeddings
-   * @param reducers number of reducers for grouping
-   * @param isSearchSpaceLarger Used for optimization: Is the search space larger than the query space? Ignored if numOfSearchGroups > 1.
-   * @param numOfSearchGroups we divide the search space into these groups (randomly). Useful when the search space is too large. Overrides isSearchSpaceLarger.
-   * @param numReplicas Each search group will be responsible for 1/numReplicas queryEmebeddings.
-   *                    This might speed up the search when the size of the index embeddings is
-   *                    large.
-   * @tparam A type of query entity
-   * @tparam B type of search space entity
-   * @tparam D type of distance
+   * cawcuwate t-the nyeawest n-nyeighbows exhaustivewy between two entity embeddings using one a-as quewy and othew a-as the seawch space. ^•ﻌ•^
+   * @pawam quewyembeddings entity embeddings f-fow quewies
+   * @pawam seawchspaceembeddings entity embeddings f-fow seawch space
+   * @pawam metwic distance metwic
+   * @pawam n-nyumneighbows nyumbew of n-nyeighbows
+   * @pawam q-quewyidsfiwtew optionaw quewy i-ids to fiwtew to quewy entity e-embeddings
+   * @pawam w-weducews n-nyumbew of weducews fow gwouping
+   * @pawam i-isseawchspacewawgew u-used fow optimization: is the seawch space wawgew t-than the quewy s-space? ignowed i-if nyumofseawchgwoups > 1. (ꈍᴗꈍ)
+   * @pawam nyumofseawchgwoups we d-divide the seawch space into these g-gwoups (wandomwy). /(^•ω•^) u-usefuw when the seawch space is too wawge. (U ᵕ U❁) ovewwides isseawchspacewawgew. (✿oωo)
+   * @pawam n-nyumwepwicas e-each seawch g-gwoup wiww b-be wesponsibwe fow 1/numwepwicas q-quewyemebeddings. OwO
+   *                    this might speed up the seawch when the size of the index embeddings i-is
+   *                    wawge. :3
+   * @tpawam a-a type of quewy entity
+   * @tpawam b-b type of seawch space entity
+   * @tpawam d t-type of distance
    */
-  def findNearestNeighbours[A <: EntityId, B <: EntityId, D <: Distance[D]](
-    queryEmbeddings: TypedPipe[EmbeddingWithEntity[A]],
-    searchSpaceEmbeddings: TypedPipe[EmbeddingWithEntity[B]],
-    metric: Metric[D],
-    numNeighbors: Int = 10,
-    queryIdsFilter: Option[TypedPipe[A]] = Option.empty,
-    reducers: Int = 100,
-    mappers: Int = 100,
-    isSearchSpaceLarger: Boolean = true,
-    numOfSearchGroups: Int = 1,
-    numReplicas: Int = 1,
-    useCounters: Boolean = true
+  def findneawestneighbouws[a <: e-entityid, nyaa~~ b-b <: entityid, ^•ﻌ•^ d-d <: distance[d]](
+    q-quewyembeddings: t-typedpipe[embeddingwithentity[a]], ( ͡o ω ͡o )
+    seawchspaceembeddings: typedpipe[embeddingwithentity[b]], ^^;;
+    metwic: metwic[d], mya
+    nyumneighbows: int = 10, (U ᵕ U❁)
+    quewyidsfiwtew: o-option[typedpipe[a]] = o-option.empty, ^•ﻌ•^
+    w-weducews: int = 100, (U ﹏ U)
+    m-mappews: int = 100, /(^•ω•^)
+    isseawchspacewawgew: boowean = twue, ʘwʘ
+    nyumofseawchgwoups: i-int = 1, XD
+    n-nyumwepwicas: int = 1, (⑅˘꒳˘)
+    u-usecountews: boowean = twue
   )(
-    implicit ordering: Ordering[A],
-    uid: UniqueID
-  ): TypedPipe[(A, Seq[(B, D)])] = {
-    val filteredQueryEmbeddings = queryIdsFilter match {
-      case Some(filter) => {
-        queryEmbeddings.groupBy(_.entityId).hashJoin(filter.asKeys).map {
-          case (x, (embedding, _)) => embedding
+    impwicit o-owdewing: owdewing[a], nyaa~~
+    u-uid: uniqueid
+  ): typedpipe[(a, UwU s-seq[(b, (˘ω˘) d-d)])] = {
+    vaw fiwtewedquewyembeddings = quewyidsfiwtew match {
+      case some(fiwtew) => {
+        q-quewyembeddings.gwoupby(_.entityid).hashjoin(fiwtew.askeys).map {
+          c-case (x, rawr x3 (embedding, (///ˬ///✿) _)) => e-embedding
         }
       }
-      case None => queryEmbeddings
+      c-case none => q-quewyembeddings
     }
 
-    if (numOfSearchGroups > 1) {
-      val indexingStrategy = BruteForceIndexingStrategy(metric)
-      findNearestNeighboursWithIndexingStrategy(
-        queryEmbeddings,
-        searchSpaceEmbeddings,
-        numNeighbors,
-        numOfSearchGroups,
-        indexingStrategy,
-        numReplicas,
-        Some(reducers),
-        useCounters = useCounters
+    if (numofseawchgwoups > 1) {
+      v-vaw indexingstwategy = b-bwutefowceindexingstwategy(metwic)
+      findneawestneighbouwswithindexingstwategy(
+        q-quewyembeddings, 😳😳😳
+        s-seawchspaceembeddings, (///ˬ///✿)
+        nyumneighbows, ^^;;
+        n-nyumofseawchgwoups, ^^
+        indexingstwategy, (///ˬ///✿)
+        nyumwepwicas, -.-
+        some(weducews), /(^•ω•^)
+        usecountews = u-usecountews
       )
-    } else {
-      findNearestNeighboursViaCross(
-        filteredQueryEmbeddings,
-        searchSpaceEmbeddings,
-        metric,
-        numNeighbors,
-        reducers,
-        mappers,
-        isSearchSpaceLarger)
+    } ewse {
+      findneawestneighbouwsviacwoss(
+        f-fiwtewedquewyembeddings, UwU
+        s-seawchspaceembeddings, (⑅˘꒳˘)
+        metwic, ʘwʘ
+        n-nyumneighbows,
+        weducews, σωσ
+        mappews, ^^
+        i-isseawchspacewawgew)
     }
   }
 
   /**
-   * Calculate the nearest neighbors using the specified indexing strategy between two entity
-   * embeddings using one as query and other as the search space.
-   * @param queryEmbeddings entity embeddings for queries
-   * @param searchSpaceEmbeddings entity embeddings for search space. You should be able to fit
-   *                              searchSpaceEmbeddings.size / numOfSearchGroups into memory.
-   * @param numNeighbors number of neighbors
-   * @param reducersOption number of reducers for the final sortedTake.
-   * @param numOfSearchGroups we divide the search space into these groups (randomly). Useful when
-   *                          the search space is too large. Search groups are shards. Choose this
-   *                          number by ensuring searchSpaceEmbeddings.size / numOfSearchGroups
-   *                          embeddings will fit into memory.
-   * @param numReplicas Each search group will be responsible for 1/numReplicas queryEmebeddings.
-   *                    By increasing this number, we can parallelize the work and reduce end to end
-   *                    running times.
-   * @param indexingStrategy How we will search for nearest neighbors within a search group
-   * @param queryShards one step we have is to fan out the query embeddings. We create one entry
-   *                    per search group. If numOfSearchGroups is large, then this fan out can take
-   *                    a long time. You can shard the query shard first to parallelize this
-   *                    process. One way to estimate what value to use:
-   *                    queryEmbeddings.size * numOfSearchGroups / queryShards should be around 1GB.
-   * @param searchSpaceShards this param is similar to queryShards. Except it shards the search
-   *                          space when numReplicas is too large. One way to estimate what value
-   *                          to use: searchSpaceEmbeddings.size * numReplicas / searchSpaceShards
-   *                          should be around 1GB.
-   * @tparam A type of query entity
-   * @tparam B type of search space entity
-   * @tparam D type of distance
-   * @return a pipe keyed by the index embedding. The values are the list of numNeighbors nearest
-   *         neighbors along with their distances.
+   * c-cawcuwate t-the nyeawest nyeighbows using the specified indexing stwategy b-between two entity
+   * embeddings using one as q-quewy and othew a-as the seawch space. OwO
+   * @pawam quewyembeddings e-entity embeddings fow quewies
+   * @pawam s-seawchspaceembeddings e-entity embeddings fow seawch space. (ˆ ﻌ ˆ)♡ you shouwd b-be abwe to fit
+   *                              seawchspaceembeddings.size / nyumofseawchgwoups i-into memowy. o.O
+   * @pawam n-nyumneighbows nyumbew o-of nyeighbows
+   * @pawam weducewsoption n-nyumbew o-of weducews fow t-the finaw sowtedtake. (˘ω˘)
+   * @pawam nyumofseawchgwoups we divide the seawch space into these gwoups (wandomwy). 😳 usefuw when
+   *                          the seawch space is too wawge. (U ᵕ U❁) seawch gwoups awe shawds. choose this
+   *                          nyumbew by ensuwing s-seawchspaceembeddings.size / n-nyumofseawchgwoups
+   *                          embeddings wiww fit i-into memowy. :3
+   * @pawam n-nyumwepwicas e-each seawch gwoup wiww be w-wesponsibwe fow 1/numwepwicas quewyemebeddings. o.O
+   *                    b-by incweasing t-this nyumbew, (///ˬ///✿) we can pawawwewize t-the wowk and weduce end t-to end
+   *                    w-wunning times. OwO
+   * @pawam indexingstwategy how w-we wiww seawch fow n-nyeawest neighbows w-within a seawch g-gwoup
+   * @pawam q-quewyshawds o-one step we h-have is to fan out t-the quewy embeddings. >w< w-we cweate one entwy
+   *                    p-pew seawch g-gwoup. ^^ if nyumofseawchgwoups i-is wawge, (⑅˘꒳˘) then this f-fan out can take
+   *                    a wong time. ʘwʘ you can shawd t-the quewy shawd fiwst to pawawwewize t-this
+   *                    p-pwocess. (///ˬ///✿) o-one way to estimate nyani vawue t-to use:
+   *                    quewyembeddings.size * n-nyumofseawchgwoups / quewyshawds s-shouwd be awound 1gb. XD
+   * @pawam s-seawchspaceshawds this pawam is simiwaw to quewyshawds. except it shawds t-the seawch
+   *                          space w-when nyumwepwicas i-is too wawge. 😳 one way to estimate nyani vawue
+   *                          to use: seawchspaceembeddings.size * n-nyumwepwicas / seawchspaceshawds
+   *                          s-shouwd be awound 1gb. >w<
+   * @tpawam a-a type of q-quewy entity
+   * @tpawam b type of seawch space e-entity
+   * @tpawam d-d type of distance
+   * @wetuwn a-a pipe keyed by the index embedding. (˘ω˘) the vawues a-awe the wist of nyumneighbows n-nyeawest
+   *         n-nyeighbows a-awong with theiw distances. nyaa~~
    */
-  def findNearestNeighboursWithIndexingStrategy[A <: EntityId, B <: EntityId, D <: Distance[D]](
-    queryEmbeddings: TypedPipe[EmbeddingWithEntity[A]],
-    searchSpaceEmbeddings: TypedPipe[EmbeddingWithEntity[B]],
-    numNeighbors: Int,
-    numOfSearchGroups: Int,
-    indexingStrategy: IndexingStrategy[D],
-    numReplicas: Int = 1,
-    reducersOption: Option[Int] = None,
-    queryShards: Option[Int] = None,
-    searchSpaceShards: Option[Int] = None,
-    useCounters: Boolean = true
+  d-def findneawestneighbouwswithindexingstwategy[a <: e-entityid, 😳😳😳 b-b <: entityid, (U ﹏ U) d-d <: distance[d]](
+    quewyembeddings: t-typedpipe[embeddingwithentity[a]], (˘ω˘)
+    s-seawchspaceembeddings: t-typedpipe[embeddingwithentity[b]], :3
+    n-nyumneighbows: i-int, >w<
+    nyumofseawchgwoups: i-int, ^^
+    i-indexingstwategy: i-indexingstwategy[d],
+    nyumwepwicas: i-int = 1, 😳😳😳
+    weducewsoption: option[int] = n-nyone, nyaa~~
+    quewyshawds: o-option[int] = n-nyone, (⑅˘꒳˘)
+    seawchspaceshawds: option[int] = n-nyone,
+    usecountews: boowean = twue
   )(
-    implicit ordering: Ordering[A],
-    uid: UniqueID
-  ): UnsortedGrouped[A, Seq[(B, D)]] = {
+    impwicit o-owdewing: o-owdewing[a], :3
+    u-uid: uniqueid
+  ): unsowtedgwouped[a, ʘwʘ seq[(b, rawr x3 d)]] = {
 
-    implicit val ord: Ordering[NNKey] = Ordering.by(NNKey.unapply)
+    impwicit v-vaw owd: owdewing[nnkey] = o-owdewing.by(nnkey.unappwy)
 
-    val entityEmbeddings = searchSpaceEmbeddings.map { embedding: EmbeddingWithEntity[B] =>
-      val entityEmbedding =
-        EntityEmbedding(embedding.entityId, Embedding(embedding.embedding.toArray))
-      entityEmbedding
+    vaw entityembeddings = s-seawchspaceembeddings.map { e-embedding: embeddingwithentity[b] =>
+      vaw entityembedding =
+        entityembedding(embedding.entityid, (///ˬ///✿) embedding(embedding.embedding.toawway))
+      entityembedding
     }
 
-    val shardedSearchSpace = shard(entityEmbeddings, searchSpaceShards)
+    v-vaw shawdedseawchspace = s-shawd(entityembeddings, 😳😳😳 s-seawchspaceshawds)
 
-    val groupedSearchSpaceEmbeddings = shardedSearchSpace
-      .flatMap { entityEmbedding =>
-        val searchGroup = Random.nextInt(numOfSearchGroups)
-        (0 until numReplicas).map { replica =>
-          (NNKey(searchGroup, replica, Some(numReplicas)), entityEmbedding)
+    v-vaw gwoupedseawchspaceembeddings = shawdedseawchspace
+      .fwatmap { entityembedding =>
+        v-vaw seawchgwoup = w-wandom.nextint(numofseawchgwoups)
+        (0 untiw nyumwepwicas).map { wepwica =>
+          (nnkey(seawchgwoup, XD w-wepwica, >_< some(numwepwicas)), >w< entityembedding)
         }
       }
 
-    val shardedQueries = shard(queryEmbeddings, queryShards)
+    v-vaw shawdedquewies = s-shawd(quewyembeddings, /(^•ω•^) q-quewyshawds)
 
-    val groupedQueryEmbeddings = shardedQueries
-      .flatMap { entity =>
-        val replica = Random.nextInt(numReplicas)
-        (0 until numOfSearchGroups).map { searchGroup =>
-          (NNKey(searchGroup, replica, Some(numReplicas)), entity)
+    vaw gwoupedquewyembeddings = s-shawdedquewies
+      .fwatmap { e-entity =>
+        vaw wepwica = w-wandom.nextint(numwepwicas)
+        (0 untiw n-nyumofseawchgwoups).map { s-seawchgwoup =>
+          (nnkey(seawchgwoup, :3 w-wepwica, s-some(numwepwicas)), ʘwʘ entity)
         }
-      }.group
-      .withReducers(reducersOption.getOrElse(numOfSearchGroups * numReplicas))
+      }.gwoup
+      .withweducews(weducewsoption.getowewse(numofseawchgwoups * n-nyumwepwicas))
 
-    val numberAnnIndexQueries = Stat("NumberAnnIndexQueries")
-    val annIndexQueryTotalMs = Stat("AnnIndexQueryTotalMs")
-    val numberIndexBuilds = Stat("NumberIndexBuilds")
-    val annIndexBuildTotalMs = Stat("AnnIndexBuildTotalMs")
-    val groupedKnn = groupedQueryEmbeddings
-      .cogroup(groupedSearchSpaceEmbeddings) {
-        case (_, queryIter, searchSpaceIter) =>
-          // This index build happens numReplicas times. Ideally we could serialize the queryable.
-          // And only build the index once per search group.
-          // The issues with that now are:
-          // - The HNSW queryable is not serializable in scalding
-          // - The way that map reduce works requires that there is a job that write out the search
-          //   space embeddings numReplicas times. In the current setup, we can do that by sharding
-          //   the embeddings first and then fanning out. But if we had a single queryable, we would
-          //   not be able to shard it easily and writing this out would take a long time.
-          val indexBuildStartTime = System.currentTimeMillis()
-          val queryable = indexingStrategy.buildIndex(searchSpaceIter)
-          if (useCounters) {
-            numberIndexBuilds.inc()
-            annIndexBuildTotalMs.incBy(System.currentTimeMillis() - indexBuildStartTime)
+    v-vaw n-nyumbewannindexquewies = stat("numbewannindexquewies")
+    v-vaw annindexquewytotawms = stat("annindexquewytotawms")
+    v-vaw nyumbewindexbuiwds = s-stat("numbewindexbuiwds")
+    vaw a-annindexbuiwdtotawms = stat("annindexbuiwdtotawms")
+    vaw gwoupedknn = gwoupedquewyembeddings
+      .cogwoup(gwoupedseawchspaceembeddings) {
+        case (_, (˘ω˘) q-quewyitew, (ꈍᴗꈍ) seawchspaceitew) =>
+          // this index buiwd h-happens nyumwepwicas t-times. ^^ ideawwy we couwd sewiawize the quewyabwe. ^^
+          // a-and onwy buiwd the index once p-pew seawch gwoup. ( ͡o ω ͡o )
+          // t-the issues with t-that nyow awe:
+          // - t-the h-hnsw quewyabwe is nyot sewiawizabwe in scawding
+          // - the way that map weduce wowks wequiwes t-that thewe is a job that w-wwite out the seawch
+          //   space embeddings nyumwepwicas times. -.- in the c-cuwwent setup, ^^;; we can do that by shawding
+          //   the embeddings fiwst and t-then fanning o-out. ^•ﻌ•^ but if we had a singwe quewyabwe, (˘ω˘) w-we wouwd
+          //   nyot be abwe to shawd it easiwy and w-wwiting this o-out wouwd take a wong time. o.O
+          v-vaw indexbuiwdstawttime = system.cuwwenttimemiwwis()
+          v-vaw quewyabwe = indexingstwategy.buiwdindex(seawchspaceitew)
+          if (usecountews) {
+            nyumbewindexbuiwds.inc()
+            a-annindexbuiwdtotawms.incby(system.cuwwenttimemiwwis() - indexbuiwdstawttime)
           }
-          queryIter.flatMap { query =>
-            val queryStartTime = System.currentTimeMillis()
-            val embedding = Embedding(query.embedding.toArray)
-            val result = Await.result(
-              queryable.queryWithDistance(embedding, numNeighbors)
+          quewyitew.fwatmap { q-quewy =>
+            v-vaw q-quewystawttime = system.cuwwenttimemiwwis()
+            vaw embedding = e-embedding(quewy.embedding.toawway)
+            vaw wesuwt = await.wesuwt(
+              quewyabwe.quewywithdistance(embedding, (✿oωo) nyumneighbows)
             )
-            val queryToTopNeighbors = result
-              .map { neighbor =>
-                (query.entityId, (neighbor.neighbor, neighbor.distance))
+            v-vaw quewytotopneighbows = w-wesuwt
+              .map { n-nyeighbow =>
+                (quewy.entityid, 😳😳😳 (neighbow.neighbow, (ꈍᴗꈍ) n-neighbow.distance))
               }
-            if (useCounters) {
-              numberAnnIndexQueries.inc()
-              annIndexQueryTotalMs.incBy(System.currentTimeMillis() - queryStartTime)
+            if (usecountews) {
+              nyumbewannindexquewies.inc()
+              a-annindexquewytotawms.incby(system.cuwwenttimemiwwis() - q-quewystawttime)
             }
-            queryToTopNeighbors
+            quewytotopneighbows
           }
       }
-      .values
-      .group
+      .vawues
+      .gwoup
 
-    val groupedKnnWithReducers = reducersOption
-      .map { reducers =>
-        groupedKnn
-          .withReducers(reducers)
-      }.getOrElse(groupedKnn)
+    vaw g-gwoupedknnwithweducews = weducewsoption
+      .map { weducews =>
+        g-gwoupedknn
+          .withweducews(weducews)
+      }.getowewse(gwoupedknn)
 
-    groupedKnnWithReducers
-      .sortedTake(numNeighbors) {
-        Ordering
-          .by[(B, D), D] {
-            case (_, distance) => distance
+    gwoupedknnwithweducews
+      .sowtedtake(numneighbows) {
+        owdewing
+          .by[(b, σωσ d-d), d] {
+            c-case (_, UwU distance) => d-distance
           }
       }
   }
 
-  private[this] def shard[T](
-    pipe: TypedPipe[T],
-    numberOfShards: Option[Int]
-  ): TypedPipe[T] = {
-    numberOfShards
-      .map { shards =>
-        pipe.shard(shards)
-      }.getOrElse(pipe)
+  p-pwivate[this] d-def shawd[t](
+    pipe: typedpipe[t], ^•ﻌ•^
+    nyumbewofshawds: option[int]
+  ): t-typedpipe[t] = {
+    nyumbewofshawds
+      .map { shawds =>
+        p-pipe.shawd(shawds)
+      }.getowewse(pipe)
   }
 
-  private[this] def findNearestNeighboursViaCross[A <: EntityId, B <: EntityId, D <: Distance[D]](
-    queryEmbeddings: TypedPipe[EmbeddingWithEntity[A]],
-    searchSpaceEmbeddings: TypedPipe[EmbeddingWithEntity[B]],
-    metric: Metric[D],
-    numNeighbors: Int,
-    reducers: Int,
-    mappers: Int,
-    isSearchSpaceLarger: Boolean
+  pwivate[this] def findneawestneighbouwsviacwoss[a <: entityid, mya b-b <: entityid, /(^•ω•^) d-d <: distance[d]](
+    q-quewyembeddings: t-typedpipe[embeddingwithentity[a]], rawr
+    s-seawchspaceembeddings: typedpipe[embeddingwithentity[b]], nyaa~~
+    m-metwic: metwic[d], ( ͡o ω ͡o )
+    nyumneighbows: int,
+    w-weducews: int, σωσ
+    mappews: int, (✿oωo)
+    i-isseawchspacewawgew: boowean
   )(
-    implicit ordering: Ordering[A]
-  ): TypedPipe[(A, Seq[(B, D)])] = {
+    impwicit o-owdewing: owdewing[a]
+  ): typedpipe[(a, (///ˬ///✿) s-seq[(b, σωσ d)])] = {
 
-    val crossed: TypedPipe[(A, (B, D))] = if (isSearchSpaceLarger) {
-      searchSpaceEmbeddings
-        .shard(mappers)
-        .cross(queryEmbeddings).map {
-          case (searchSpaceEmbedding, queryEmbedding) =>
-            val distance = metric.distance(searchSpaceEmbedding.embedding, queryEmbedding.embedding)
-            (queryEmbedding.entityId, (searchSpaceEmbedding.entityId, distance))
+    v-vaw cwossed: typedpipe[(a, UwU (b, (⑅˘꒳˘) d-d))] = if (isseawchspacewawgew) {
+      s-seawchspaceembeddings
+        .shawd(mappews)
+        .cwoss(quewyembeddings).map {
+          case (seawchspaceembedding, /(^•ω•^) q-quewyembedding) =>
+            v-vaw distance = metwic.distance(seawchspaceembedding.embedding, -.- q-quewyembedding.embedding)
+            (quewyembedding.entityid, (ˆ ﻌ ˆ)♡ (seawchspaceembedding.entityid, nyaa~~ distance))
         }
-    } else {
-      queryEmbeddings
-        .shard(mappers)
-        .cross(searchSpaceEmbeddings).map {
-          case (queryEmbedding, searchSpaceEmbedding) =>
-            val distance = metric.distance(searchSpaceEmbedding.embedding, queryEmbedding.embedding)
-            (queryEmbedding.entityId, (searchSpaceEmbedding.entityId, distance))
+    } ewse {
+      quewyembeddings
+        .shawd(mappews)
+        .cwoss(seawchspaceembeddings).map {
+          c-case (quewyembedding, ʘwʘ seawchspaceembedding) =>
+            vaw distance = m-metwic.distance(seawchspaceembedding.embedding, :3 quewyembedding.embedding)
+            (quewyembedding.entityid, (U ᵕ U❁) (seawchspaceembedding.entityid, (U ﹏ U) distance))
         }
     }
 
-    crossed
-      .groupBy(_._1)
-      .withReducers(reducers)
-      .sortedTake(numNeighbors) {
-        Ordering
-          .by[(A, (B, D)), D] {
-            case (_, (_, distance)) => distance
-          } // Sort by distance metric in ascending order
+    c-cwossed
+      .gwoupby(_._1)
+      .withweducews(weducews)
+      .sowtedtake(numneighbows) {
+        o-owdewing
+          .by[(a, ^^ (b, d-d)), d] {
+            case (_, òωó (_, d-distance)) => d-distance
+          } // sowt by distance m-metwic in ascending owdew
       }.map {
-        case (queryId, neighbors) =>
-          (queryId, neighbors.map(_._2))
+        c-case (quewyid, /(^•ω•^) nyeighbows) =>
+          (quewyid, 😳😳😳 n-nyeighbows.map(_._2))
       }
   }
 
   /**
-   * Convert nearest neighbors to string format.
-   * By default format would be (queryId  neighbourId:distance  neighbourId:distance .....) in ascending order of distance.
-   * @param nearestNeighbors nearest neighbors tuple in form of (queryId, Seq[(neighborId, distance)]
-   * @param queryEntityKind entity kind of query
-   * @param neighborEntityKind entity kind of search space/neighbors
-   * @param idDistanceSeparator String separator to separate a single neighborId and distance. Default to colon (:)
-   * @param neighborSeparator String operator to separate neighbors. Default to tab
-   * @tparam A type of query entity
-   * @tparam B type of search space entity
-   * @tparam D type of distance
+   * c-convewt nyeawest nyeighbows to stwing fowmat. :3
+   * by defauwt fowmat wouwd be (quewyid  n-nyeighbouwid:distance  n-nyeighbouwid:distance .....) in ascending owdew of distance. (///ˬ///✿)
+   * @pawam n-nyeawestneighbows nyeawest n-neighbows tupwe i-in fowm of (quewyid, rawr x3 seq[(neighbowid, (U ᵕ U❁) distance)]
+   * @pawam quewyentitykind entity kind of q-quewy
+   * @pawam nyeighbowentitykind entity kind o-of seawch space/neighbows
+   * @pawam iddistancesepawatow s-stwing s-sepawatow to sepawate a singwe n-nyeighbowid and d-distance. defauwt t-to cowon (:)
+   * @pawam n-nyeighbowsepawatow s-stwing opewatow t-to sepawate nyeighbows. (⑅˘꒳˘) defauwt to tab
+   * @tpawam a type of quewy entity
+   * @tpawam b type of s-seawch space entity
+   * @tpawam d-d type of distance
    */
-  def nearestNeighborsToString[A <: EntityId, B <: EntityId, D <: Distance[D]](
-    nearestNeighbors: (A, Seq[(B, D)]),
-    queryEntityKind: EntityKind[A],
-    neighborEntityKind: EntityKind[B],
-    idDistanceSeparator: String = ":",
-    neighborSeparator: String = "\t"
-  ): String = {
-    val (queryId, neighbors) = nearestNeighbors
-    val formattedNeighbors = neighbors.map {
-      case (neighbourId, distance) =>
-        s"${neighborEntityKind.stringInjection.apply(neighbourId)}$idDistanceSeparator${distance.distance}"
+  d-def n-nyeawestneighbowstostwing[a <: e-entityid, (˘ω˘) b <: e-entityid, :3 d <: distance[d]](
+    nyeawestneighbows: (a, seq[(b, XD d)]),
+    quewyentitykind: entitykind[a], >_<
+    n-nyeighbowentitykind: e-entitykind[b], (✿oωo)
+    iddistancesepawatow: stwing = ":", (ꈍᴗꈍ)
+    nyeighbowsepawatow: s-stwing = "\t"
+  ): s-stwing = {
+    v-vaw (quewyid, XD nyeighbows) = nyeawestneighbows
+    vaw fowmattedneighbows = n-neighbows.map {
+      case (neighbouwid, :3 distance) =>
+        s-s"${neighbowentitykind.stwinginjection.appwy(neighbouwid)}$iddistancesepawatow${distance.distance}"
     }
-    (queryEntityKind.stringInjection.apply(queryId) +: formattedNeighbors)
-      .mkString(neighborSeparator)
+    (quewyentitykind.stwinginjection.appwy(quewyid) +: f-fowmattedneighbows)
+      .mkstwing(neighbowsepawatow)
   }
 
-  private[this] case class NNKey(
-    searchGroup: Int,
-    replica: Int,
-    maxReplica: Option[Int] = None) {
-    override def hashCode(): Int =
-      maxReplica.map(_ * searchGroup + replica).getOrElse(super.hashCode())
+  pwivate[this] case cwass n-nynkey(
+    seawchgwoup: int, mya
+    w-wepwica: int,
+    m-maxwepwica: option[int] = n-nyone) {
+    ovewwide d-def hashcode(): i-int =
+      m-maxwepwica.map(_ * s-seawchgwoup + w-wepwica).getowewse(supew.hashcode())
   }
 }

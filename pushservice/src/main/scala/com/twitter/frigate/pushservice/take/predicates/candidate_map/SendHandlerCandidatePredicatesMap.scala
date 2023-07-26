@@ -1,78 +1,78 @@
-package com.twitter.frigate.pushservice.take.predicates.candidate_map
+package com.twittew.fwigate.pushsewvice.take.pwedicates.candidate_map
 
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model._
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.frigate.thriftscala.CommonRecommendationType._
-import com.twitter.hermit.predicate.NamedPredicate
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.modew._
+i-impowt c-com.twittew.fwigate.pushsewvice.config.config
+impowt c-com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+impowt c-com.twittew.fwigate.thwiftscawa.commonwecommendationtype._
+i-impowt com.twittew.hewmit.pwedicate.namedpwedicate
 
-object SendHandlerCandidatePredicatesMap {
+o-object sendhandwewcandidatepwedicatesmap {
 
-  def preCandidatePredicates(
-    implicit config: Config
-  ): Map[CommonRecommendationType, List[NamedPredicate[_ <: PushCandidate]]] = {
-    val magicFanoutNewsEventCandidatePredicates =
-      MagicFanoutNewsEventCandidatePredicates(config).preCandidateSpecificPredicates
+  def pwecandidatepwedicates(
+    impwicit config: config
+  ): map[commonwecommendationtype, nyaa~~ w-wist[namedpwedicate[_ <: pushcandidate]]] = {
+    vaw magicfanoutnewseventcandidatepwedicates =
+      m-magicfanoutnewseventcandidatepwedicates(config).pwecandidatespecificpwedicates
 
-    val scheduledSpaceSubscriberPredicates = ScheduledSpaceSubscriberCandidatePredicates(
-      config).preCandidateSpecificPredicates
+    vaw scheduwedspacesubscwibewpwedicates = s-scheduwedspacesubscwibewcandidatepwedicates(
+      config).pwecandidatespecificpwedicates
 
-    val scheduledSpaceSpeakerPredicates = ScheduledSpaceSpeakerCandidatePredicates(
-      config).preCandidateSpecificPredicates
+    vaw scheduwedspacespeakewpwedicates = scheduwedspacespeakewcandidatepwedicates(
+      c-config).pwecandidatespecificpwedicates
 
-    val magicFanoutSportsEventCandidatePredicates =
-      MagicFanoutSportsEventCandidatePredicates(config).preCandidateSpecificPredicates
+    vaw magicfanoutspowtseventcandidatepwedicates =
+      m-magicfanoutspowtseventcandidatepwedicates(config).pwecandidatespecificpwedicates
 
-    val magicFanoutProductLaunchPredicates = MagicFanoutProductLaunchPushCandidatePredicates(
-      config).preCandidateSpecificPredicates
+    v-vaw magicfanoutpwoductwaunchpwedicates = magicfanoutpwoductwaunchpushcandidatepwedicates(
+      config).pwecandidatespecificpwedicates
 
-    val creatorSubscriptionFanoutPredicates = MagicFanouCreatorSubscriptionEventPushPredicates(
-      config).preCandidateSpecificPredicates
+    vaw cweatowsubscwiptionfanoutpwedicates = m-magicfanoucweatowsubscwiptioneventpushpwedicates(
+      config).pwecandidatespecificpwedicates
 
-    val newCreatorFanoutPredicates = MagicFanoutNewCreatorEventPushPredicates(
-      config).preCandidateSpecificPredicates
+    vaw nyewcweatowfanoutpwedicates = magicfanoutnewcweatoweventpushpwedicates(
+      config).pwecandidatespecificpwedicates
 
-    Map(
-      MagicFanoutNewsEvent -> magicFanoutNewsEventCandidatePredicates,
-      ScheduledSpaceSubscriber -> scheduledSpaceSubscriberPredicates,
-      ScheduledSpaceSpeaker -> scheduledSpaceSpeakerPredicates,
-      MagicFanoutSportsEvent -> magicFanoutSportsEventCandidatePredicates,
-      MagicFanoutProductLaunch -> magicFanoutProductLaunchPredicates,
-      NewCreator -> newCreatorFanoutPredicates,
-      CreatorSubscriber -> creatorSubscriptionFanoutPredicates
+    m-map(
+      magicfanoutnewsevent -> m-magicfanoutnewseventcandidatepwedicates, :3
+      s-scheduwedspacesubscwibew -> s-scheduwedspacesubscwibewpwedicates, 😳😳😳
+      s-scheduwedspacespeakew -> scheduwedspacespeakewpwedicates,
+      magicfanoutspowtsevent -> m-magicfanoutspowtseventcandidatepwedicates, (˘ω˘)
+      magicfanoutpwoductwaunch -> magicfanoutpwoductwaunchpwedicates, ^^
+      nyewcweatow -> n-nyewcweatowfanoutpwedicates, :3
+      cweatowsubscwibew -> cweatowsubscwiptionfanoutpwedicates
     )
   }
 
-  def postCandidatePredicates(
-    implicit config: Config
-  ): Map[CommonRecommendationType, List[NamedPredicate[_ <: PushCandidate]]] = {
-    val magicFanoutNewsEventCandidatePredicates =
-      MagicFanoutNewsEventCandidatePredicates(config).postCandidateSpecificPredicates
+  def postcandidatepwedicates(
+    impwicit config: config
+  ): m-map[commonwecommendationtype, -.- wist[namedpwedicate[_ <: p-pushcandidate]]] = {
+    v-vaw magicfanoutnewseventcandidatepwedicates =
+      m-magicfanoutnewseventcandidatepwedicates(config).postcandidatespecificpwedicates
 
-    val scheduledSpaceSubscriberPredicates = ScheduledSpaceSubscriberCandidatePredicates(
-      config).postCandidateSpecificPredicates
+    vaw scheduwedspacesubscwibewpwedicates = scheduwedspacesubscwibewcandidatepwedicates(
+      c-config).postcandidatespecificpwedicates
 
-    val scheduledSpaceSpeakerPredicates = ScheduledSpaceSpeakerCandidatePredicates(
-      config).postCandidateSpecificPredicates
+    v-vaw scheduwedspacespeakewpwedicates = scheduwedspacespeakewcandidatepwedicates(
+      c-config).postcandidatespecificpwedicates
 
-    val magicFanoutSportsEventCandidatePredicates =
-      MagicFanoutSportsEventCandidatePredicates(config).postCandidateSpecificPredicates
-    val magicFanoutProductLaunchPredicates = MagicFanoutProductLaunchPushCandidatePredicates(
-      config).postCandidateSpecificPredicates
-    val creatorSubscriptionFanoutPredicates = MagicFanouCreatorSubscriptionEventPushPredicates(
-      config).postCandidateSpecificPredicates
-    val newCreatorFanoutPredicates = MagicFanoutNewCreatorEventPushPredicates(
-      config).postCandidateSpecificPredicates
+    v-vaw magicfanoutspowtseventcandidatepwedicates =
+      magicfanoutspowtseventcandidatepwedicates(config).postcandidatespecificpwedicates
+    v-vaw magicfanoutpwoductwaunchpwedicates = magicfanoutpwoductwaunchpushcandidatepwedicates(
+      config).postcandidatespecificpwedicates
+    v-vaw cweatowsubscwiptionfanoutpwedicates = magicfanoucweatowsubscwiptioneventpushpwedicates(
+      config).postcandidatespecificpwedicates
+    v-vaw nyewcweatowfanoutpwedicates = magicfanoutnewcweatoweventpushpwedicates(
+      c-config).postcandidatespecificpwedicates
 
-    Map(
-      MagicFanoutNewsEvent -> magicFanoutNewsEventCandidatePredicates,
-      ScheduledSpaceSubscriber -> scheduledSpaceSubscriberPredicates,
-      ScheduledSpaceSpeaker -> scheduledSpaceSpeakerPredicates,
-      MagicFanoutSportsEvent -> magicFanoutSportsEventCandidatePredicates,
-      MagicFanoutProductLaunch -> magicFanoutProductLaunchPredicates,
-      NewCreator -> newCreatorFanoutPredicates,
-      CreatorSubscriber -> creatorSubscriptionFanoutPredicates
+    map(
+      magicfanoutnewsevent -> m-magicfanoutnewseventcandidatepwedicates, 😳
+      s-scheduwedspacesubscwibew -> scheduwedspacesubscwibewpwedicates, mya
+      scheduwedspacespeakew -> scheduwedspacespeakewpwedicates, (˘ω˘)
+      magicfanoutspowtsevent -> magicfanoutspowtseventcandidatepwedicates, >_<
+      magicfanoutpwoductwaunch -> m-magicfanoutpwoductwaunchpwedicates, -.-
+      n-nyewcweatow -> nyewcweatowfanoutpwedicates,
+      c-cweatowsubscwibew -> cweatowsubscwiptionfanoutpwedicates
     )
   }
 }

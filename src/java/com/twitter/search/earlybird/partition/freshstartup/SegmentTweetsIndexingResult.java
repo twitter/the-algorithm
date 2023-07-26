@@ -1,46 +1,46 @@
-package com.twitter.search.earlybird.partition.freshstartup;
+package com.twittew.seawch.eawwybiwd.pawtition.fweshstawtup;
 
-import com.twitter.search.earlybird.partition.SegmentWriter;
+impowt c-com.twittew.seawch.eawwybiwd.pawtition.segmentwwitew;
 
 /**
-   * Data collected and created while indexing tweets for a single segment.
+   * d-data cowwected a-and cweated whiwe i-indexing tweets f-fow a singwe s-segment. 🥺
    */
-class SegmentTweetsIndexingResult {
-  private final long minRecordTimestampMs;
-  private final long maxRecordTimestampMs;
-  private final long maxIndexedTweetId;
-  private final SegmentWriter segmentWriter;
+c-cwass segmenttweetsindexingwesuwt {
+  p-pwivate finaw wong minwecowdtimestampms;
+  pwivate finaw wong maxwecowdtimestampms;
+  pwivate f-finaw wong maxindexedtweetid;
+  pwivate finaw s-segmentwwitew segmentwwitew;
 
-  public SegmentTweetsIndexingResult(long minRecordTimestampMs, long maxRecordTimestampMs,
-                                     long maxIndexedTweetId,
-                                     SegmentWriter segmentWriter) {
-    this.minRecordTimestampMs = minRecordTimestampMs;
-    this.maxRecordTimestampMs = maxRecordTimestampMs;
-    this.maxIndexedTweetId = maxIndexedTweetId;
-    this.segmentWriter = segmentWriter;
+  p-pubwic segmenttweetsindexingwesuwt(wong minwecowdtimestampms, >_< wong maxwecowdtimestampms, >_<
+                                     wong maxindexedtweetid, (⑅˘꒳˘)
+                                     s-segmentwwitew segmentwwitew) {
+    t-this.minwecowdtimestampms = m-minwecowdtimestampms;
+    this.maxwecowdtimestampms = maxwecowdtimestampms;
+    this.maxindexedtweetid = maxindexedtweetid;
+    t-this.segmentwwitew = segmentwwitew;
   }
 
-  public long getMinRecordTimestampMs() {
-    return minRecordTimestampMs;
+  pubwic wong getminwecowdtimestampms() {
+    wetuwn minwecowdtimestampms;
   }
 
-  public long getMaxRecordTimestampMs() {
-    return maxRecordTimestampMs;
+  p-pubwic wong getmaxwecowdtimestampms() {
+    w-wetuwn maxwecowdtimestampms;
   }
 
-  public SegmentWriter getSegmentWriter() {
-    return segmentWriter;
+  p-pubwic segmentwwitew g-getsegmentwwitew() {
+    w-wetuwn segmentwwitew;
   }
 
-  public long getMaxIndexedTweetId() {
-    return maxIndexedTweetId;
+  pubwic wong getmaxindexedtweetid() {
+    wetuwn m-maxindexedtweetid;
   }
 
-  @Override
-  public String toString() {
-    return String.format("Start time: %d, end time: %d, segment name: %s, max indexed: %d",
-        minRecordTimestampMs, maxRecordTimestampMs,
-        segmentWriter.getSegmentInfo().getSegmentName(),
-        maxIndexedTweetId);
+  @ovewwide
+  pubwic stwing tostwing() {
+    w-wetuwn stwing.fowmat("stawt time: %d, /(^•ω•^) end time: %d, rawr x3 segment nyame: %s, (U ﹏ U) max indexed: %d", (U ﹏ U)
+        minwecowdtimestampms, (⑅˘꒳˘) maxwecowdtimestampms, òωó
+        s-segmentwwitew.getsegmentinfo().getsegmentname(), ʘwʘ
+        maxindexedtweetid);
   }
 }

@@ -1,5 +1,5 @@
-scala_library(
-    sources = ["*.scala"],
-    tags = ["bazel-compatible"],
-    dependencies = [],
+scawa_wibwawy(
+    souwces = ["*.scawa"], (ꈍᴗꈍ)
+    tags = ["bazew-compatibwe"], ^•ﻌ•^
+    d-dependencies = [], OwO
 )

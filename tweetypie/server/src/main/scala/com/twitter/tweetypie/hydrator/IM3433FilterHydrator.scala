@@ -1,25 +1,25 @@
-package com.twitter.tweetypie.hydrator
+package com.twittew.tweetypie.hydwatow
 
-import com.twitter.coreservices.IM3433
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.FilteredState
-import com.twitter.tweetypie.core.ValueState
+impowt com.twittew.cowesewvices.im3433
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.tweetypie.cowe.fiwtewedstate
+i-impowt c-com.twittew.tweetypie.cowe.vawuestate
 
-object IM3433FilterHydrator {
-  type Type = ValueHydrator[Unit, TweetCtx]
+object im3433fiwtewhydwatow {
+  type type = vawuehydwatow[unit, nyaa~~ t-tweetctx]
 
-  private val Drop =
-    Stitch.exception(FilteredState.Unavailable.DropUnspecified)
-  private val Success = Stitch.value(ValueState.unmodified(()))
+  pwivate vaw dwop =
+    s-stitch.exception(fiwtewedstate.unavaiwabwe.dwopunspecified)
+  pwivate v-vaw success = stitch.vawue(vawuestate.unmodified(()))
 
-  def apply(stats: StatsReceiver): Type = {
+  def appwy(stats: statsweceivew): t-type = {
 
-    ValueHydrator[Unit, TweetCtx] { (_, ctx) =>
-      val userAgent = TwitterContext().flatMap(_.userAgent)
-      val userAgentAffected = userAgent.exists(IM3433.isAffectedClient)
-      val mightCrash = userAgentAffected && IM3433.textMightCrashIOS(ctx.text)
-      if (mightCrash) Drop else Success
+    vawuehydwatow[unit, /(^•ω•^) tweetctx] { (_, rawr c-ctx) =>
+      v-vaw usewagent = twittewcontext().fwatmap(_.usewagent)
+      vaw usewagentaffected = usewagent.exists(im3433.isaffectedcwient)
+      v-vaw mightcwash = usewagentaffected && im3433.textmightcwashios(ctx.text)
+      if (mightcwash) dwop ewse success
     }
   }
 }

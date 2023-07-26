@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.core.pipeline.candidate
+package com.twittew.pwoduct_mixew.cowe.pipewine.candidate
 
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Arrow
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt c-com.twittew.stitch.awwow
 
 /**
- * A Candidate Pipeline
+ * a-a candidate pipewine
  *
- * This is an abstract class, as we only construct these via the [[CandidatePipelineBuilder]].
+ * this is an abstwact cwass, (ˆ ﻌ ˆ)♡ as we onwy constwuct t-these via the [[candidatepipewinebuiwdew]]. (˘ω˘)
  *
- * A [[CandidatePipeline]] is capable of processing requests (queries) and returning candidates
- * in the form of a [[CandidatePipelineResult]]
+ * a [[candidatepipewine]] is capabwe o-of pwocessing wequests (quewies) a-and wetuwning candidates
+ * in the fowm of a [[candidatepipewinewesuwt]]
  *
- * @tparam Query the domain model for the query or request
+ * @tpawam q-quewy the domain modew f-fow the quewy o-ow wequest
  */
-abstract class CandidatePipeline[-Query <: PipelineQuery] private[candidate]
-    extends Pipeline[CandidatePipeline.Inputs[Query], Seq[CandidateWithDetails]] {
-  override private[core] val config: BaseCandidatePipelineConfig[Query, _, _, _]
-  override val arrow: Arrow[CandidatePipeline.Inputs[Query], CandidatePipelineResult]
-  override val identifier: CandidatePipelineIdentifier
+abstwact cwass candidatepipewine[-quewy <: pipewinequewy] pwivate[candidate]
+    e-extends pipewine[candidatepipewine.inputs[quewy], (⑅˘꒳˘) seq[candidatewithdetaiws]] {
+  ovewwide pwivate[cowe] vaw config: basecandidatepipewineconfig[quewy, (///ˬ///✿) _, _, _]
+  o-ovewwide vaw awwow: awwow[candidatepipewine.inputs[quewy], c-candidatepipewinewesuwt]
+  o-ovewwide v-vaw identifiew: c-candidatepipewineidentifiew
 }
 
-object CandidatePipeline {
-  case class Inputs[+Query <: PipelineQuery](
-    query: Query,
-    existingCandidates: Seq[CandidateWithDetails])
+object candidatepipewine {
+  case cwass inputs[+quewy <: p-pipewinequewy](
+    quewy: quewy, 😳😳😳
+    existingcandidates: s-seq[candidatewithdetaiws])
 }

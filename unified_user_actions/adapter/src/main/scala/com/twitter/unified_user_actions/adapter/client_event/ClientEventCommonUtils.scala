@@ -1,169 +1,169 @@
-package com.twitter.unified_user_actions.adapter.client_event
+package com.twittew.unified_usew_actions.adaptew.cwient_event
 
-import com.twitter.clientapp.thriftscala.EventNamespace
-import com.twitter.clientapp.thriftscala.Item
-import com.twitter.clientapp.thriftscala.ItemType.User
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.clientapp.thriftscala.{Item => LogEventItem}
-import com.twitter.unified_user_actions.adapter.common.AdapterUtils
-import com.twitter.unified_user_actions.thriftscala.AuthorInfo
-import com.twitter.unified_user_actions.thriftscala.ClientEventNamespace
-import com.twitter.unified_user_actions.thriftscala.EventMetadata
-import com.twitter.unified_user_actions.thriftscala.ProductSurface
-import com.twitter.unified_user_actions.thriftscala.SourceLineage
-import com.twitter.unified_user_actions.thriftscala.TweetAuthorFollowClickSource
-import com.twitter.unified_user_actions.thriftscala.TweetAuthorUnfollowClickSource
-import com.twitter.unified_user_actions.thriftscala.TweetInfo
+impowt c-com.twittew.cwientapp.thwiftscawa.eventnamespace
+i-impowt com.twittew.cwientapp.thwiftscawa.item
+i-impowt com.twittew.cwientapp.thwiftscawa.itemtype.usew
+i-impowt c-com.twittew.cwientapp.thwiftscawa.wogevent
+i-impowt c-com.twittew.cwientapp.thwiftscawa.{item => wogeventitem}
+i-impowt com.twittew.unified_usew_actions.adaptew.common.adaptewutiws
+impowt com.twittew.unified_usew_actions.thwiftscawa.authowinfo
+impowt com.twittew.unified_usew_actions.thwiftscawa.cwienteventnamespace
+impowt c-com.twittew.unified_usew_actions.thwiftscawa.eventmetadata
+impowt com.twittew.unified_usew_actions.thwiftscawa.pwoductsuwface
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.souwcewineage
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.tweetauthowfowwowcwicksouwce
+impowt com.twittew.unified_usew_actions.thwiftscawa.tweetauthowunfowwowcwicksouwce
+impowt com.twittew.unified_usew_actions.thwiftscawa.tweetinfo
 
 /**
- * Comprises helper methods that:
- * 1. need not be overridden by subclasses of `BaseClientEvent`
- * 2. need not be invoked by instances of subclasses of `BaseClientEvent`
- * 3. need to be accessible to subclasses of `BaseClientEvent` and other utils
+ * compwises h-hewpew methods that:
+ * 1. XD need n-nyot be ovewwidden b-by subcwasses of `basecwientevent`
+ * 2. ^^;; need nyot be invoked by instances of subcwasses o-of `basecwientevent`
+ * 3. 🥺 nyeed to be accessibwe to subcwasses of `basecwientevent` a-and othew utiws
  */
-object ClientEventCommonUtils {
+object c-cwienteventcommonutiws {
 
-  def getBasicTweetInfo(
-    actionTweetId: Long,
-    ceItem: LogEventItem,
-    ceNamespaceOpt: Option[EventNamespace]
-  ): TweetInfo = TweetInfo(
-    actionTweetId = actionTweetId,
-    actionTweetTopicSocialProofId = getTopicId(ceItem, ceNamespaceOpt),
-    retweetingTweetId = ceItem.tweetDetails.flatMap(_.retweetingTweetId),
-    quotedTweetId = ceItem.tweetDetails.flatMap(_.quotedTweetId),
-    inReplyToTweetId = ceItem.tweetDetails.flatMap(_.inReplyToTweetId),
-    quotingTweetId = ceItem.tweetDetails.flatMap(_.quotingTweetId),
-    // only set AuthorInfo when authorId is present
-    actionTweetAuthorInfo = getAuthorInfo(ceItem),
-    retweetingAuthorId = ceItem.tweetDetails.flatMap(_.retweetAuthorId),
-    quotedAuthorId = ceItem.tweetDetails.flatMap(_.quotedAuthorId),
-    inReplyToAuthorId = ceItem.tweetDetails.flatMap(_.inReplyToAuthorId),
-    tweetPosition = ceItem.position,
-    promotedId = ceItem.promotedId
+  d-def g-getbasictweetinfo(
+    a-actiontweetid: wong, XD
+    ceitem: wogeventitem, (U ᵕ U❁)
+    c-cenamespaceopt: option[eventnamespace]
+  ): tweetinfo = t-tweetinfo(
+    actiontweetid = actiontweetid, :3
+    actiontweettopicsociawpwoofid = gettopicid(ceitem, ( ͡o ω ͡o ) cenamespaceopt), òωó
+    w-wetweetingtweetid = ceitem.tweetdetaiws.fwatmap(_.wetweetingtweetid),
+    q-quotedtweetid = c-ceitem.tweetdetaiws.fwatmap(_.quotedtweetid), σωσ
+    i-inwepwytotweetid = ceitem.tweetdetaiws.fwatmap(_.inwepwytotweetid),
+    quotingtweetid = ceitem.tweetdetaiws.fwatmap(_.quotingtweetid), (U ᵕ U❁)
+    // o-onwy set a-authowinfo when authowid is pwesent
+    a-actiontweetauthowinfo = g-getauthowinfo(ceitem), (✿oωo)
+    wetweetingauthowid = c-ceitem.tweetdetaiws.fwatmap(_.wetweetauthowid), ^^
+    quotedauthowid = c-ceitem.tweetdetaiws.fwatmap(_.quotedauthowid), ^•ﻌ•^
+    inwepwytoauthowid = ceitem.tweetdetaiws.fwatmap(_.inwepwytoauthowid), XD
+    t-tweetposition = ceitem.position, :3
+    p-pwomotedid = ceitem.pwomotedid
   )
 
-  def getTopicId(
-    ceItem: LogEventItem,
-    ceNamespaceOpt: Option[EventNamespace] = None,
-  ): Option[Long] =
-    ceNamespaceOpt.flatMap {
-      TopicIdUtils.getTopicId(item = ceItem, _)
+  d-def g-gettopicid(
+    ceitem: wogeventitem, (ꈍᴗꈍ)
+    cenamespaceopt: option[eventnamespace] = nyone, :3
+  ): option[wong] =
+    cenamespaceopt.fwatmap {
+      t-topicidutiws.gettopicid(item = c-ceitem, (U ﹏ U) _)
     }
 
-  def getAuthorInfo(
-    ceItem: LogEventItem,
-  ): Option[AuthorInfo] =
-    ceItem.tweetDetails.flatMap(_.authorId).map { authorId =>
-      AuthorInfo(
-        authorId = Some(authorId),
-        isFollowedByActingUser = ceItem.isViewerFollowsTweetAuthor,
-        isFollowingActingUser = ceItem.isTweetAuthorFollowsViewer,
+  def getauthowinfo(
+    c-ceitem: w-wogeventitem, UwU
+  ): o-option[authowinfo] =
+    ceitem.tweetdetaiws.fwatmap(_.authowid).map { authowid =>
+      authowinfo(
+        a-authowid = some(authowid), 😳😳😳
+        isfowwowedbyactingusew = ceitem.isviewewfowwowstweetauthow, XD
+        isfowwowingactingusew = ceitem.istweetauthowfowwowsviewew, o.O
       )
     }
 
-  def getEventMetadata(
-    eventTimestamp: Long,
-    logEvent: LogEvent,
-    ceItem: LogEventItem,
-    productSurface: Option[ProductSurface] = None
-  ): EventMetadata = EventMetadata(
-    sourceTimestampMs = eventTimestamp,
-    receivedTimestampMs = AdapterUtils.currentTimestampMs,
-    sourceLineage = SourceLineage.ClientEvents,
-    // Client UI language or from Gizmoduck which is what user set in Twitter App.
-    // Please see more at https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/finatra-internal/international/src/main/scala/com/twitter/finatra/international/LanguageIdentifier.scala
-    // The format should be ISO 639-1.
-    language = logEvent.logBase.flatMap(_.language).map(AdapterUtils.normalizeLanguageCode),
-    // Country code could be IP address (geoduck) or User registration country (gizmoduck) and the former takes precedence.
-    // We don’t know exactly which one is applied, unfortunately,
-    // see https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/finatra-internal/international/src/main/scala/com/twitter/finatra/international/CountryIdentifier.scala
-    // The format should be ISO_3166-1_alpha-2.
-    countryCode = logEvent.logBase.flatMap(_.country).map(AdapterUtils.normalizeCountryCode),
-    clientAppId = logEvent.logBase.flatMap(_.clientAppId),
-    clientVersion = logEvent.clientVersion,
-    clientEventNamespace = logEvent.eventNamespace.map(en => toClientEventNamespace(en)),
-    traceId = getTraceId(productSurface, ceItem),
-    requestJoinId = getRequestJoinId(productSurface, ceItem),
-    clientEventTriggeredOn = logEvent.eventDetails.flatMap(_.triggeredOn)
+  d-def geteventmetadata(
+    eventtimestamp: w-wong, (⑅˘꒳˘)
+    wogevent: w-wogevent, 😳😳😳
+    c-ceitem: wogeventitem, nyaa~~
+    pwoductsuwface: o-option[pwoductsuwface] = n-nyone
+  ): e-eventmetadata = e-eventmetadata(
+    souwcetimestampms = eventtimestamp, rawr
+    w-weceivedtimestampms = a-adaptewutiws.cuwwenttimestampms, -.-
+    s-souwcewineage = s-souwcewineage.cwientevents, (✿oωo)
+    // c-cwient ui wanguage ow fwom gizmoduck which is nyani usew s-set in twittew app. /(^•ω•^)
+    // pwease see mowe at https://souwcegwaph.twittew.biz/git.twittew.biz/souwce/-/bwob/finatwa-intewnaw/intewnationaw/swc/main/scawa/com/twittew/finatwa/intewnationaw/wanguageidentifiew.scawa
+    // the fowmat shouwd be iso 639-1. 🥺
+    w-wanguage = wogevent.wogbase.fwatmap(_.wanguage).map(adaptewutiws.nowmawizewanguagecode), ʘwʘ
+    // countwy code couwd be ip addwess (geoduck) ow u-usew wegistwation c-countwy (gizmoduck) a-and the fowmew takes pwecedence.
+    // we d-don’t know exactwy which one i-is appwied, UwU unfowtunatewy, XD
+    // s-see https://souwcegwaph.twittew.biz/git.twittew.biz/souwce/-/bwob/finatwa-intewnaw/intewnationaw/swc/main/scawa/com/twittew/finatwa/intewnationaw/countwyidentifiew.scawa
+    // the fowmat shouwd be iso_3166-1_awpha-2. (✿oωo)
+    countwycode = wogevent.wogbase.fwatmap(_.countwy).map(adaptewutiws.nowmawizecountwycode), :3
+    cwientappid = wogevent.wogbase.fwatmap(_.cwientappid), (///ˬ///✿)
+    cwientvewsion = w-wogevent.cwientvewsion, nyaa~~
+    cwienteventnamespace = w-wogevent.eventnamespace.map(en => tocwienteventnamespace(en)), >w<
+    twaceid = gettwaceid(pwoductsuwface, -.- c-ceitem), (✿oωo)
+    w-wequestjoinid = getwequestjoinid(pwoductsuwface, (˘ω˘) ceitem), rawr
+    c-cwienteventtwiggewedon = w-wogevent.eventdetaiws.fwatmap(_.twiggewedon)
   )
 
-  def toClientEventNamespace(eventNamespace: EventNamespace): ClientEventNamespace =
-    ClientEventNamespace(
-      page = eventNamespace.page,
-      section = eventNamespace.section,
-      component = eventNamespace.component,
-      element = eventNamespace.element,
-      action = eventNamespace.action
+  def t-tocwienteventnamespace(eventnamespace: e-eventnamespace): cwienteventnamespace =
+    cwienteventnamespace(
+      page = eventnamespace.page, OwO
+      section = eventnamespace.section, ^•ﻌ•^
+      c-component = e-eventnamespace.component, UwU
+      e-ewement = eventnamespace.ewement, (˘ω˘)
+      a-action = e-eventnamespace.action
     )
 
   /**
-   * Get the profileId from Item.id, which itemType = 'USER'.
+   * get the pwofiweid f-fwom item.id, (///ˬ///✿) which itemtype = 'usew'. σωσ
    *
-   * The profileId can be also be found in the event_details.profile_id.
-   * However, the item.id is more reliable than event_details.profile_id,
-   * in particular, 45% of the client events with USER items have
-   * Null for event_details.profile_id while 0.13% item.id is Null.
-   * As such, we only use item.id to populate the profile_id.
+   * the pwofiweid can be awso be found in the event_detaiws.pwofiwe_id.
+   * h-howevew, t-the item.id is mowe wewiabwe than event_detaiws.pwofiwe_id, /(^•ω•^)
+   * i-in pawticuwaw, 😳 45% o-of the cwient events with usew items have
+   * nyuww fow e-event_detaiws.pwofiwe_id whiwe 0.13% item.id is nyuww. 😳
+   * as such, (⑅˘꒳˘) we onwy use i-item.id to popuwate the pwofiwe_id. 😳😳😳
    */
-  def getProfileIdFromUserItem(item: Item): Option[Long] =
-    if (item.itemType.contains(User))
+  def g-getpwofiweidfwomusewitem(item: i-item): option[wong] =
+    if (item.itemtype.contains(usew))
       item.id
-    else None
+    ewse nyone
 
   /**
-   * TraceId is going to be deprecated and replaced by requestJoinId.
+   * t-twaceid is g-going to be depwecated and wepwaced by wequestjoinid. 😳
    *
-   * Get the traceId from LogEventItem based on productSurface.
+   * get the twaceid f-fwom wogeventitem based on pwoductsuwface. XD
    *
-   * The traceId is hydrated in controller data from backend. Different product surfaces
-   * populate different controller data. Thus, the product surface is checked first to decide
-   * which controller data should be read to ge the requestJoinId.
+   * t-the twaceid is hydwated in contwowwew data fwom backend. mya diffewent p-pwoduct suwfaces
+   * popuwate d-diffewent c-contwowwew data. ^•ﻌ•^ thus, ʘwʘ the pwoduct s-suwface is checked fiwst to d-decide
+   * which c-contwowwew data s-shouwd be wead to ge the wequestjoinid. ( ͡o ω ͡o )
    */
-  def getTraceId(productSurface: Option[ProductSurface], ceItem: LogEventItem): Option[Long] =
-    productSurface match {
-      case Some(ProductSurface.HomeTimeline) => HomeInfoUtils.getTraceId(ceItem)
-      case Some(ProductSurface.SearchResultsPage) => { new SearchInfoUtils(ceItem) }.getTraceId
-      case _ => None
+  d-def gettwaceid(pwoductsuwface: o-option[pwoductsuwface], mya ceitem: wogeventitem): o-option[wong] =
+    p-pwoductsuwface m-match {
+      case some(pwoductsuwface.hometimewine) => homeinfoutiws.gettwaceid(ceitem)
+      c-case some(pwoductsuwface.seawchwesuwtspage) => { nyew seawchinfoutiws(ceitem) }.gettwaceid
+      c-case _ => nyone
     }
 
   /**
-   * Get the requestJoinId from LogEventItem based on productSurface.
+   * g-get the wequestjoinid fwom wogeventitem based on pwoductsuwface. o.O
    *
-   * The requestJoinId is hydrated in controller data from backend. Different product surfaces
-   * populate different controller data. Thus, the product surface is checked first to decide
-   * which controller data should be read to get the requestJoinId.
+   * t-the wequestjoinid i-is hydwated in c-contwowwew data f-fwom backend. (✿oωo) diffewent pwoduct s-suwfaces
+   * popuwate diffewent contwowwew data. :3 thus, 😳 the pwoduct suwface is checked fiwst to d-decide
+   * which contwowwew data s-shouwd be wead to get the wequestjoinid. (U ﹏ U)
    *
-   * Support Home / Home_latest / SearchResults for now, to add other surfaces based on requirement.
+   * s-suppowt home / home_watest / s-seawchwesuwts fow nyow, mya to add o-othew suwfaces b-based on wequiwement. (U ᵕ U❁)
    */
-  def getRequestJoinId(productSurface: Option[ProductSurface], ceItem: LogEventItem): Option[Long] =
-    productSurface match {
-      case Some(ProductSurface.HomeTimeline) => HomeInfoUtils.getRequestJoinId(ceItem)
-      case Some(ProductSurface.SearchResultsPage) => {
-          new SearchInfoUtils(ceItem)
-        }.getRequestJoinId
-      case _ => None
+  def g-getwequestjoinid(pwoductsuwface: o-option[pwoductsuwface], :3 c-ceitem: wogeventitem): option[wong] =
+    pwoductsuwface match {
+      case some(pwoductsuwface.hometimewine) => homeinfoutiws.getwequestjoinid(ceitem)
+      c-case some(pwoductsuwface.seawchwesuwtspage) => {
+          n-nyew seawchinfoutiws(ceitem)
+        }.getwequestjoinid
+      c-case _ => nyone
     }
 
-  def getTweetAuthorFollowSource(
-    eventNamespace: Option[EventNamespace]
-  ): TweetAuthorFollowClickSource = {
-    eventNamespace
-      .map(ns => (ns.element, ns.action)).map {
-        case (Some("follow"), Some("click")) => TweetAuthorFollowClickSource.CaretMenu
-        case (_, Some("follow")) => TweetAuthorFollowClickSource.ProfileImage
-        case _ => TweetAuthorFollowClickSource.Unknown
-      }.getOrElse(TweetAuthorFollowClickSource.Unknown)
+  def g-gettweetauthowfowwowsouwce(
+    eventnamespace: option[eventnamespace]
+  ): tweetauthowfowwowcwicksouwce = {
+    e-eventnamespace
+      .map(ns => (ns.ewement, mya n-nys.action)).map {
+        case (some("fowwow"), OwO some("cwick")) => t-tweetauthowfowwowcwicksouwce.cawetmenu
+        case (_, (ˆ ﻌ ˆ)♡ some("fowwow")) => tweetauthowfowwowcwicksouwce.pwofiweimage
+        c-case _ => t-tweetauthowfowwowcwicksouwce.unknown
+      }.getowewse(tweetauthowfowwowcwicksouwce.unknown)
   }
 
-  def getTweetAuthorUnfollowSource(
-    eventNamespace: Option[EventNamespace]
-  ): TweetAuthorUnfollowClickSource = {
-    eventNamespace
-      .map(ns => (ns.element, ns.action)).map {
-        case (Some("unfollow"), Some("click")) => TweetAuthorUnfollowClickSource.CaretMenu
-        case (_, Some("unfollow")) => TweetAuthorUnfollowClickSource.ProfileImage
-        case _ => TweetAuthorUnfollowClickSource.Unknown
-      }.getOrElse(TweetAuthorUnfollowClickSource.Unknown)
+  def g-gettweetauthowunfowwowsouwce(
+    e-eventnamespace: option[eventnamespace]
+  ): tweetauthowunfowwowcwicksouwce = {
+    eventnamespace
+      .map(ns => (ns.ewement, ʘwʘ nys.action)).map {
+        c-case (some("unfowwow"), o.O s-some("cwick")) => t-tweetauthowunfowwowcwicksouwce.cawetmenu
+        c-case (_, UwU s-some("unfowwow")) => tweetauthowunfowwowcwicksouwce.pwofiweimage
+        c-case _ => t-tweetauthowunfowwowcwicksouwce.unknown
+      }.getowewse(tweetauthowunfowwowcwicksouwce.unknown)
   }
 }

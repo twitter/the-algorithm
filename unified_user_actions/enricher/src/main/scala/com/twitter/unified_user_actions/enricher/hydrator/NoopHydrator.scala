@@ -1,27 +1,27 @@
-package com.twitter.unified_user_actions.enricher.hydrator
-import com.twitter.unified_user_actions.enricher.ImplementationException
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentEnvelop
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentKey
-import com.twitter.util.Future
+package com.twittew.unified_usew_actions.enwichew.hydwatow
+impowt c-com.twittew.unified_usew_actions.enwichew.impwementationexception
+i-impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentenvewop
+i-impowt c-com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentinstwuction
+i-impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentkey
+i-impowt c-com.twittew.utiw.futuwe
 
 /**
- * This hydrator does nothing. If it's used by mistake for any reason, an exception will be thrown.
- * Use this when you expect to have no hydration (for example, the planner shouldn't hydrate anything
- * and only would perform the partitioning function).
+ * t-this hydwatow does nyothing. nyaa~~ if it's used by mistake fow any weason, (⑅˘꒳˘) an exception w-wiww be thwown. rawr x3
+ * use this when you expect t-to have nyo hydwation (fow exampwe, (✿oωo) t-the pwannew shouwdn't hydwate anything
+ * and onwy wouwd pewfowm t-the pawtitioning function). (ˆ ﻌ ˆ)♡
  */
-object NoopHydrator {
-  val OutputTopic: Option[String] = None
+o-object nyoophydwatow {
+  v-vaw outputtopic: option[stwing] = nyone
 }
 
-class NoopHydrator extends Hydrator {
-  override def hydrate(
-    instruction: EnrichmentInstruction,
-    key: Option[EnrichmentKey],
-    envelop: EnrichmentEnvelop
-  ): Future[EnrichmentEnvelop] = {
-    throw new ImplementationException(
-      "NoopHydrator shouldn't be invoked when configure. Check your " +
-        "enrichment plan.")
+cwass nyoophydwatow extends hydwatow {
+  o-ovewwide def hydwate(
+    instwuction: enwichmentinstwuction, (˘ω˘)
+    key: option[enwichmentkey], (⑅˘꒳˘)
+    envewop: enwichmentenvewop
+  ): f-futuwe[enwichmentenvewop] = {
+    thwow nyew i-impwementationexception(
+      "noophydwatow s-shouwdn't b-be invoked w-when configuwe. (///ˬ///✿) check youw " +
+        "enwichment pwan.")
   }
 }

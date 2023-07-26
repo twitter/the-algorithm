@@ -1,13 +1,13 @@
-scala_library(
-    sources = ["*.scala"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/thrift/com/twitter/hermit/candidate:hermit-candidate-scala",
-        "src/thrift/com/twitter/ml/api:embedding-scala",
-        "src/thrift/com/twitter/recos/entities:entities-thrift-scala",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "swc/scawa/com/twittew/scawding_intewnaw/muwtifowmat/fowmat", òωó
+        "swc/scawa/com/twittew/simcwustews_v2/common", o.O
+        "swc/thwift/com/twittew/hewmit/candidate:hewmit-candidate-scawa", (U ᵕ U❁)
+        "swc/thwift/com/twittew/mw/api:embedding-scawa", (⑅˘꒳˘)
+        "swc/thwift/com/twittew/wecos/entities:entities-thwift-scawa", ( ͡o ω ͡o )
+        "swc/thwift/com/twittew/simcwustews_v2:simcwustews_v2-thwift-scawa", UwU
+    ], rawr x3
 )

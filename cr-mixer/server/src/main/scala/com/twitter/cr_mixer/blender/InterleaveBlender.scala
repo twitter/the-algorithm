@@ -1,33 +1,33 @@
-package com.twitter.cr_mixer.blender
+package com.twittew.cw_mixew.bwendew
 
-import com.twitter.cr_mixer.model.BlendedCandidate
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.util.InterleaveUtil
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.cw_mixew.modew.bwendedcandidate
+i-impowt com.twittew.cw_mixew.modew.initiawcandidate
+i-impowt c-com.twittew.cw_mixew.utiw.intewweaveutiw
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.utiw.futuwe
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-case class InterleaveBlender @Inject() (globalStats: StatsReceiver) {
+@singweton
+case cwass intewweavebwendew @inject() (gwobawstats: s-statsweceivew) {
 
-  private val name: String = this.getClass.getCanonicalName
-  private val stats: StatsReceiver = globalStats.scope(name)
+  pwivate vaw nyame: stwing = t-this.getcwass.getcanonicawname
+  pwivate vaw s-stats: statsweceivew = gwobawstats.scope(name)
 
   /**
-   * Interleaves candidates, by taking 1 candidate from each Seq[Seq[InitialCandidate]] in sequence,
-   * until we run out of candidates.
+   * intewweaves candidates, >_< b-by taking 1 candidate fwom each s-seq[seq[initiawcandidate]] i-in sequence, rawr x3
+   * untiw we wun out of candidates. mya
    */
-  def blend(
-    inputCandidates: Seq[Seq[InitialCandidate]],
-  ): Future[Seq[BlendedCandidate]] = {
+  def bwend(
+    i-inputcandidates: seq[seq[initiawcandidate]], nyaa~~
+  ): futuwe[seq[bwendedcandidate]] = {
 
-    val interleavedCandidates = InterleaveUtil.interleave(inputCandidates)
+    vaw intewweavedcandidates = intewweaveutiw.intewweave(inputcandidates)
 
-    stats.stat("candidates").add(interleavedCandidates.size)
+    s-stats.stat("candidates").add(intewweavedcandidates.size)
 
-    val blendedCandidates = BlendedCandidatesBuilder.build(inputCandidates, interleavedCandidates)
-    Future.value(blendedCandidates)
+    vaw bwendedcandidates = b-bwendedcandidatesbuiwdew.buiwd(inputcandidates, (⑅˘꒳˘) i-intewweavedcandidates)
+    f-futuwe.vawue(bwendedcandidates)
   }
 
 }

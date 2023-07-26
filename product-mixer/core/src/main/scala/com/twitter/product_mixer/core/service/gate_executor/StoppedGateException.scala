@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.service.gate_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow
 
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureCategory
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureClassifier
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.gateidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwecategowy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwecwassifiew
 
-import scala.util.control.NoStackTrace
+i-impowt s-scawa.utiw.contwow.nostacktwace
 
-case class StoppedGateException(identifier: GateIdentifier)
-    extends Exception("Closed gate stopped execution of the pipeline")
-    with NoStackTrace {
-  override def toString: String = s"StoppedGateException($identifier)"
+case cwass stoppedgateexception(identifiew: gateidentifiew)
+    extends exception("cwosed gate s-stopped execution of the pipewine")
+    with n-nyostacktwace {
+  ovewwide def t-tostwing: stwing = s"stoppedgateexception($identifiew)"
 }
 
-object StoppedGateException {
+object stoppedgateexception {
 
   /**
-   * Creates a [[PipelineFailureClassifier]] that is used as the default for classifying failures
-   * in a pipeline by mapping [[StoppedGateException]] to a [[PipelineFailure]] with the provided
-   * [[PipelineFailureCategory]]
+   * c-cweates a [[pipewinefaiwuwecwassifiew]] that i-is used as the d-defauwt fow cwassifying faiwuwes
+   * in a pipewine by mapping [[stoppedgateexception]] to a [[pipewinefaiwuwe]] w-with the pwovided
+   * [[pipewinefaiwuwecategowy]]
    */
-  def classifier(
-    category: PipelineFailureCategory
-  ): PipelineFailureClassifier = PipelineFailureClassifier {
-    case stoppedGateException: StoppedGateException =>
-      PipelineFailure(category, stoppedGateException.getMessage, Some(stoppedGateException))
+  def cwassifiew(
+    categowy: pipewinefaiwuwecategowy
+  ): pipewinefaiwuwecwassifiew = p-pipewinefaiwuwecwassifiew {
+    case stoppedgateexception: stoppedgateexception =>
+      p-pipewinefaiwuwe(categowy, >_< s-stoppedgateexception.getmessage, rawr x3 s-some(stoppedgateexception))
   }
 }

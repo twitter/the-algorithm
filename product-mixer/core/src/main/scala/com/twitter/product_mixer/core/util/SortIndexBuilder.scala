@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.util
+package com.twittew.pwoduct_mixew.cowe.utiw
 
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Time
+impowt c-com.twittew.snowfwake.id.snowfwakeid
+i-impowt com.twittew.utiw.time
 
-object SortIndexBuilder {
+o-object sowtindexbuiwdew {
 
-  /** the [[Time]] from a [[SnowflakeId]] */
-  def idToTime(id: Long): Time =
-    Time.fromMilliseconds(SnowflakeId.unixTimeMillisOrFloorFromId(id))
+  /** t-the [[time]] f-fwom a [[snowfwakeid]] */
+  d-def idtotime(id: w-wong): time =
+    t-time.fwommiwwiseconds(snowfwakeid.unixtimemiwwisowfwoowfwomid(id))
 
-  /** the first [[SnowflakeId]] possible for a given [[Time]]  */
-  def timeToId(time: Time): Long = SnowflakeId.firstIdFor(time)
+  /** the fiwst [[snowfwakeid]] possibwe fow a given [[time]]  */
+  d-def timetoid(time: time): wong = snowfwakeid.fiwstidfow(time)
 
-  /** the first [[SnowflakeId]] possible for a given unix epoch millis  */
-  def timeToId(timeMillis: Long): Long = SnowflakeId.firstIdFor(timeMillis)
+  /** t-the fiwst [[snowfwakeid]] possibwe f-fow a given unix epoch miwwis  */
+  def timetoid(timemiwwis: wong): wong = snowfwakeid.fiwstidfow(timemiwwis)
 }

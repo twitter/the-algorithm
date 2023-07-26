@@ -1,365 +1,365 @@
-package com.twitter.search.earlybird.querycache;
+package com.twittew.seawch.eawwybiwd.quewycache;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+impowt java.utiw.cowwection;
+i-impowt j-java.utiw.cowwections;
+i-impowt j-java.utiw.hashmap;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.map;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.Lists;
-import com.google.common.primitives.Longs;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+impowt com.googwe.common.base.pweconditions;
+impowt com.googwe.common.base.stopwatch;
+i-impowt com.googwe.common.cowwect.wists;
+impowt com.googwe.common.pwimitives.wongs;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.common.util.Clock;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.userupdates.UserScrubGeoMap;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentManager;
-import com.twitter.search.earlybird.partition.SegmentManager.Filter;
-import com.twitter.search.earlybird.partition.SegmentManager.Order;
-import com.twitter.search.earlybird.partition.SegmentManager.SegmentUpdateListener;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
-import com.twitter.search.queryparser.query.QueryParserException;
+i-impowt com.twittew.common.quantity.amount;
+impowt com.twittew.common.quantity.time;
+impowt com.twittew.common.utiw.cwock;
+i-impowt com.twittew.decidew.decidew;
+i-impowt c-com.twittew.seawch.common.concuwwent.scheduwedexecutowsewvicefactowy;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.metwics.seawchwonggauge;
+impowt c-com.twittew.seawch.common.metwics.seawchstatsweceivew;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+impowt com.twittew.seawch.eawwybiwd.eawwybiwdindexconfig;
+impowt c-com.twittew.seawch.eawwybiwd.eawwybiwdstatus;
+impowt c-com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+i-impowt com.twittew.seawch.eawwybiwd.common.usewupdates.usewscwubgeomap;
+i-impowt c-com.twittew.seawch.eawwybiwd.common.usewupdates.usewtabwe;
+impowt com.twittew.seawch.eawwybiwd.exception.cwiticawexceptionhandwew;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.segmentinfo;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentmanagew;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.segmentmanagew.fiwtew;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentmanagew.owdew;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentmanagew.segmentupdatewistenew;
+impowt com.twittew.seawch.eawwybiwd.stats.eawwybiwdseawchewstats;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdstatuscode;
+i-impowt c-com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
 
 /**
- * Main class to manage Earlybird's QueryCache.
+ * m-main cwass to manage eawwybiwd's quewycache. mya
  *
- * Initialize the QueryCache and new segments are notified to the QueryCache subsystem
- * through this class.
+ * initiawize t-the quewycache a-and nyew segments awe nyotified t-to the quewycache s-subsystem
+ * thwough this cwass. (˘ω˘)
  *
- * This class is thread-safe when calling methods that modify the list of tasks that
- * we're executing or when we need to traverse all tasks and check something. The way
- * thread-safety is achieved here right now is through making methods synchronized.
+ * t-this cwass is thwead-safe w-when cawwing methods that modify the wist of t-tasks that
+ * we'we executing o-ow when we nyeed to twavewse aww t-tasks and check s-something. o.O the way
+ * thwead-safety is achieved hewe wight nyow is thwough making methods synchwonized. (✿oωo)
  */
-public class QueryCacheManager implements SegmentUpdateListener {
-  private static final Logger LOG = LoggerFactory.getLogger(QueryCacheManager.class);
+pubwic c-cwass quewycachemanagew i-impwements segmentupdatewistenew {
+  p-pwivate static f-finaw woggew wog = w-woggewfactowy.getwoggew(quewycachemanagew.cwass);
 
-  private static final Amount<Long, Time> ZERO_SECONDS = Amount.of(0L, Time.SECONDS);
+  pwivate static finaw amount<wong, (ˆ ﻌ ˆ)♡ time> z-zewo_seconds = amount.of(0w, ^^;; time.seconds);
 
-  private final boolean enabled = EarlybirdConfig.getBool("querycache", false);
+  pwivate finaw boowean enabwed = eawwybiwdconfig.getboow("quewycache", OwO fawse);
 
-  // segments are removed from SegmentInfoMap lazily, and there may be a wait time.
-  // So, beware that there's short period of time where there's more segments than
-  // maxEnabledSegments.
-  private final int maxEnabledSegments;
+  // s-segments awe wemoved fwom segmentinfomap w-waziwy, 🥺 a-and thewe may b-be a wait time. mya
+  // so, 😳 bewawe t-that thewe's showt p-pewiod of time w-whewe thewe's m-mowe segments than
+  // maxenabwedsegments. òωó
+  pwivate finaw int m-maxenabwedsegments;
 
-  private final UserTable userTable;
-  private final UserScrubGeoMap userScrubGeoMap;
-  private final EarlybirdIndexConfig indexConfig;
-  private QueryCacheUpdater updater;
-  private final Map<String, QueryCacheFilter> filters;
-  private final ScheduledExecutorServiceFactory updaterScheduledExecutorServiceFactory;
+  p-pwivate f-finaw usewtabwe u-usewtabwe;
+  pwivate f-finaw usewscwubgeomap usewscwubgeomap;
+  pwivate finaw eawwybiwdindexconfig indexconfig;
+  p-pwivate quewycacheupdatew updatew;
+  pwivate finaw map<stwing, quewycachefiwtew> fiwtews;
+  pwivate f-finaw scheduwedexecutowsewvicefactowy updatewscheduwedexecutowsewvicefactowy;
 
-  private final SearchStatsReceiver searchStatsReceiver;
+  pwivate finaw seawchstatsweceivew s-seawchstatsweceivew;
 
-  private static final SearchLongGauge NUM_CACHE_ENTRY_STAT =
-      SearchLongGauge.export("querycache_num_entries");
+  p-pwivate static finaw s-seawchwonggauge nyum_cache_entwy_stat =
+      s-seawchwonggauge.expowt("quewycache_num_entwies");
 
-  private static final SearchCounter NUM_UPDATE_SEGMENTS_CALLS =
-      SearchCounter.export("querycache_num_update_segments_calls");
+  pwivate s-static finaw seawchcountew n-nyum_update_segments_cawws =
+      seawchcountew.expowt("quewycache_num_update_segments_cawws");
 
-  private volatile boolean didSetup = false;
+  pwivate vowatiwe boowean didsetup = fawse;
 
-  private final EarlybirdSearcherStats searcherStats;
-  private final Decider decider;
-  private final CriticalExceptionHandler criticalExceptionHandler;
-  private final Clock clock;
+  pwivate finaw eawwybiwdseawchewstats s-seawchewstats;
+  pwivate finaw d-decidew decidew;
+  pwivate finaw c-cwiticawexceptionhandwew c-cwiticawexceptionhandwew;
+  pwivate finaw cwock cwock;
 
-  public QueryCacheManager(
-      QueryCacheConfig config,
-      EarlybirdIndexConfig indexConfig,
-      int maxEnabledSegments,
-      UserTable userTable,
-      UserScrubGeoMap userScrubGeoMap,
-      ScheduledExecutorServiceFactory updaterScheduledExecutorServiceFactory,
-      SearchStatsReceiver searchStatsReceiver,
-      EarlybirdSearcherStats searcherStats,
-      Decider decider,
-      CriticalExceptionHandler criticalExceptionHandler,
-      Clock clock) {
+  p-pubwic quewycachemanagew(
+      q-quewycacheconfig config, /(^•ω•^)
+      e-eawwybiwdindexconfig i-indexconfig, -.-
+      int maxenabwedsegments, òωó
+      usewtabwe usewtabwe, /(^•ω•^)
+      u-usewscwubgeomap u-usewscwubgeomap, /(^•ω•^)
+      s-scheduwedexecutowsewvicefactowy updatewscheduwedexecutowsewvicefactowy, 😳
+      s-seawchstatsweceivew s-seawchstatsweceivew, :3
+      eawwybiwdseawchewstats s-seawchewstats, (U ᵕ U❁)
+      decidew decidew,
+      cwiticawexceptionhandwew cwiticawexceptionhandwew, ʘwʘ
+      cwock cwock) {
 
-    Preconditions.checkArgument(maxEnabledSegments > 0);
+    p-pweconditions.checkawgument(maxenabwedsegments > 0);
 
-    QueryCacheConfig queryCacheConfig = config;
-    if (queryCacheConfig == null) {
-      queryCacheConfig = new QueryCacheConfig(searchStatsReceiver);
+    q-quewycacheconfig quewycacheconfig = config;
+    i-if (quewycacheconfig == n-nyuww) {
+      quewycacheconfig = nyew quewycacheconfig(seawchstatsweceivew);
     }
-    this.indexConfig = indexConfig;
-    this.maxEnabledSegments = maxEnabledSegments;
-    this.userTable = userTable;
-    this.userScrubGeoMap = userScrubGeoMap;
-    this.updaterScheduledExecutorServiceFactory = updaterScheduledExecutorServiceFactory;
-    this.searchStatsReceiver = searchStatsReceiver;
-    this.searcherStats = searcherStats;
-    this.filters = new HashMap<>();
-    this.decider = decider;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.clock = clock;
-    for (QueryCacheFilter filter : queryCacheConfig.filters()) {
-      filters.put(filter.getFilterName(), filter);
+    t-this.indexconfig = indexconfig;
+    this.maxenabwedsegments = maxenabwedsegments;
+    this.usewtabwe = u-usewtabwe;
+    this.usewscwubgeomap = usewscwubgeomap;
+    t-this.updatewscheduwedexecutowsewvicefactowy = u-updatewscheduwedexecutowsewvicefactowy;
+    this.seawchstatsweceivew = seawchstatsweceivew;
+    this.seawchewstats = seawchewstats;
+    t-this.fiwtews = n-nyew hashmap<>();
+    this.decidew = decidew;
+    this.cwiticawexceptionhandwew = cwiticawexceptionhandwew;
+    t-this.cwock = cwock;
+    f-fow (quewycachefiwtew fiwtew : quewycacheconfig.fiwtews()) {
+      fiwtews.put(fiwtew.getfiwtewname(), o.O f-fiwtew);
     }
-    NUM_CACHE_ENTRY_STAT.set(filters.size());
+    nyum_cache_entwy_stat.set(fiwtews.size());
   }
 
-  public EarlybirdIndexConfig getIndexConfig() {
-    return indexConfig;
+  p-pubwic e-eawwybiwdindexconfig getindexconfig() {
+    w-wetuwn indexconfig;
   }
 
-  public UserScrubGeoMap getUserScrubGeoMap() {
-    return userScrubGeoMap;
+  pubwic u-usewscwubgeomap g-getusewscwubgeomap() {
+    w-wetuwn usewscwubgeomap;
   }
 
-  /** Setup all update tasks at once, should only be called after Earlybird has loaded/indexed all
-   * segments during start-up
+  /** s-setup aww update t-tasks at once, ʘwʘ shouwd onwy be cawwed aftew eawwybiwd h-has woaded/indexed a-aww
+   * s-segments duwing stawt-up
    *
-   * Only the first call to the function has effect, subsequent calls are no-ops
+   * onwy the fiwst c-caww to the function has effect, ^^ s-subsequent c-cawws awe nyo-ops
    */
-  public void setupTasksIfNeeded(SegmentManager segmentManager)
-      throws QueryParserException {
-    setupTasks(
-        segmentManager.getSegmentInfos(Filter.All, Order.OLD_TO_NEW),
-        segmentManager.getEarlybirdIndexConfig().getCluster());
+  pubwic void setuptasksifneeded(segmentmanagew segmentmanagew)
+      thwows q-quewypawsewexception {
+    s-setuptasks(
+        s-segmentmanagew.getsegmentinfos(fiwtew.aww, ^•ﻌ•^ o-owdew.owd_to_new), mya
+        segmentmanagew.geteawwybiwdindexconfig().getcwustew());
   }
 
-  @VisibleForTesting
-  synchronized void setupTasks(
-      Iterable<SegmentInfo> newSegments,
-      EarlybirdCluster earlybirdCluster) throws QueryParserException {
-    // Setup needs to be done only once after all index caught up.
-    if (didSetup) {
-      return;
+  @visibwefowtesting
+  synchwonized v-void setuptasks(
+      itewabwe<segmentinfo> nyewsegments, UwU
+      eawwybiwdcwustew eawwybiwdcwustew) t-thwows quewypawsewexception {
+    // setup needs t-to be done onwy once aftew aww i-index caught up. >_<
+    if (didsetup) {
+      w-wetuwn;
     }
 
-    LOG.info("Setting up {} query cache tasks", filters.values().size());
+    wog.info("setting u-up {} quewy cache t-tasks", fiwtews.vawues().size());
 
-    for (QueryCacheFilter filter : filters.values()) {
-      filter.setup(this, userTable, earlybirdCluster);
+    f-fow (quewycachefiwtew fiwtew : f-fiwtews.vawues()) {
+      f-fiwtew.setup(this, /(^•ω•^) usewtabwe, eawwybiwdcwustew);
     }
 
-    if (!enabled()) {
-      // Note that the definition of disabling the query caches here is "don't compute the caches".
-      // We still load the queries from the .yml, we still rewrite search queries to use
-      // cached queries. The reason we are choosing this definition is that it's somewhat simpler
-      // to implement (no need to turn off rewriting) and because we might get external queries that
-      // contain cached filters (they're listed in go/searchsyntax).
+    if (!enabwed()) {
+      // nyote that the definition of disabwing t-the quewy caches h-hewe is "don't c-compute the caches". òωó
+      // we s-stiww woad the quewies fwom the .ymw, σωσ we stiww wewwite seawch quewies t-to use
+      // c-cached quewies. ( ͡o ω ͡o ) the weason w-we awe choosing this definition is that it's somenani s-simpwew
+      // t-to impwement (no nyeed t-to tuwn off wewwiting) a-and because we might get extewnaw quewies that
+      // contain cached fiwtews (they'we wisted i-in go/seawchsyntax). nyaa~~
       //
-      // If we need a stricter definition of turning off query caches, we can implement it too, or
-      // just tighten this one.
-      return;
+      // i-if w-we nyeed a stwictew d-definition of t-tuwning off quewy caches, :3 we can i-impwement it t-too, UwU ow
+      // just tighten this o-one. o.O
+      wetuwn;
     }
 
-    Preconditions.checkState(updater == null);
-    updater = new QueryCacheUpdater(
-        filters.values(),
-        updaterScheduledExecutorServiceFactory,
-        userTable,
-        searchStatsReceiver,
-        searcherStats,
-        decider,
-        criticalExceptionHandler,
-        clock);
+    p-pweconditions.checkstate(updatew == nyuww);
+    u-updatew = nyew quewycacheupdatew(
+        fiwtews.vawues(), (ˆ ﻌ ˆ)♡
+        u-updatewscheduwedexecutowsewvicefactowy, ^^;;
+        usewtabwe, ʘwʘ
+        s-seawchstatsweceivew, σωσ
+        s-seawchewstats,
+        decidew, ^^;;
+        c-cwiticawexceptionhandwew, ʘwʘ
+        cwock);
 
-    LOG.info("Finished setting up query cache updater.");
+    wog.info("finished setting up quewy c-cache updatew.");
 
-    scheduleTasks(newSegments, false);
+    s-scheduwetasks(newsegments, ^^ f-fawse);
 
-    didSetup = true;
+    didsetup = twue;
   }
 
-  private void scheduleTasks(Iterable<SegmentInfo> segments, boolean isCurrent) {
-    List<SegmentInfo> sortedSegments = Lists.newArrayList(segments);
-    Collections.sort(sortedSegments, (o1, o2) -> {
-      // sort new to old (o2 and o1 are reversed here)
-      return Longs.compare(o2.getTimeSliceID(), o1.getTimeSliceID());
+  pwivate void scheduwetasks(itewabwe<segmentinfo> s-segments, nyaa~~ boowean iscuwwent) {
+    wist<segmentinfo> s-sowtedsegments = w-wists.newawwaywist(segments);
+    cowwections.sowt(sowtedsegments, (///ˬ///✿) (o1, o-o2) -> {
+      // sowt nyew t-to owd (o2 and o-o1 awe wevewsed hewe)
+      wetuwn wongs.compawe(o2.gettimeswiceid(), XD o-o1.gettimeswiceid());
     });
 
-    LOG.info("Scheduling tasks for {} segments.", sortedSegments.size());
+    wog.info("scheduwing tasks fow {} segments.", :3 s-sowtedsegments.size());
 
-    for (int segmentIndex = 0; segmentIndex < sortedSegments.size(); ++segmentIndex) {
-      SegmentInfo segmentInfo = sortedSegments.get(segmentIndex);
-      if (segmentIndex == maxEnabledSegments) {
-        LOG.warn("Tried to add more segments than MaxEnabledSegments (" + maxEnabledSegments
-            + "). Removed oldest segment " + segmentInfo.getTimeSliceID());
+    f-fow (int segmentindex = 0; segmentindex < sowtedsegments.size(); ++segmentindex) {
+      s-segmentinfo segmentinfo = s-sowtedsegments.get(segmentindex);
+      i-if (segmentindex == m-maxenabwedsegments) {
+        wog.wawn("twied to add mowe segments than maxenabwedsegments (" + maxenabwedsegments
+            + "). òωó wemoved owdest segment " + segmentinfo.gettimeswiceid());
         continue;
       }
-      addQueryCacheTasksForSegment(segmentInfo, segmentIndex, !isCurrent);
+      addquewycachetasksfowsegment(segmentinfo, ^^ segmentindex, ^•ﻌ•^ !iscuwwent);
     }
   }
 
   /**
-   * Rebuilds the query cache for the given segment after it was optimized.
+   * webuiwds the quewy c-cache fow the given s-segment aftew it was optimized. σωσ
    */
-  public synchronized void rebuildQueryCachesAfterSegmentOptimization(
-      SegmentInfo optimizedSegment) {
-    Preconditions.checkState(optimizedSegment.getIndexSegment().isOptimized(),
-                             "Segment " + optimizedSegment.getSegmentName() + " is not optimized.");
+  pubwic s-synchwonized v-void webuiwdquewycachesaftewsegmentoptimization(
+      s-segmentinfo optimizedsegment) {
+    p-pweconditions.checkstate(optimizedsegment.getindexsegment().isoptimized(), (ˆ ﻌ ˆ)♡
+                             "segment " + optimizedsegment.getsegmentname() + " i-is nyot optimized.");
 
-    if (!didSetup) {
-      // Once our indexing is current, we'll just start tasks for all segments, optimized or not.
-      // Before that event, we don't do anything query cache related.
-      LOG.info("Haven't done initial setup, returning.");
-      return;
+    i-if (!didsetup) {
+      // once o-ouw indexing is cuwwent, nyaa~~ we'ww j-just stawt tasks f-fow aww segments, ʘwʘ optimized ow nyot. ^•ﻌ•^
+      // befowe t-that event, rawr x3 w-we don't do anything q-quewy cache w-wewated. 🥺
+      w-wog.info("haven't d-done initiaw s-setup, ʘwʘ wetuwning.");
+      w-wetuwn;
     }
 
-    LOG.info("Rebuilding query caches for optimized segment {}",
-        optimizedSegment.getSegmentName());
+    wog.info("webuiwding q-quewy caches fow optimized segment {}", (˘ω˘)
+        o-optimizedsegment.getsegmentname());
 
-    // The optimized segment should always be the 1st segment (the current segment has index 0).
-    Stopwatch stopwatch = Stopwatch.createStarted();
-    updater.removeAllTasksForSegment(optimizedSegment);
-    addQueryCacheTasksForSegment(optimizedSegment, 1, true);
+    // t-the optimized segment s-shouwd awways be the 1st segment (the c-cuwwent segment has index 0). o.O
+    stopwatch s-stopwatch = stopwatch.cweatestawted();
+    u-updatew.wemoveawwtasksfowsegment(optimizedsegment);
+    a-addquewycachetasksfowsegment(optimizedsegment, σωσ 1, (ꈍᴗꈍ) t-twue);
 
-    while (!updater.allTasksRanForSegment(optimizedSegment)) {
-      try {
-        Thread.sleep(1000);
-      } catch (InterruptedException e) {
-        // Ignore
+    whiwe (!updatew.awwtaskswanfowsegment(optimizedsegment)) {
+      t-twy {
+        thwead.sweep(1000);
+      } c-catch (intewwuptedexception e) {
+        // i-ignowe
       }
     }
 
-    LOG.info("Rebuilding all query caches for the optimized segment {} took {}.",
-             optimizedSegment.getSegmentName(), stopwatch);
+    wog.info("webuiwding aww q-quewy caches fow the optimized segment {} took {}.", (ˆ ﻌ ˆ)♡
+             optimizedsegment.getsegmentname(), o.O stopwatch);
   }
 
   /**
-   * Block until all the tasks inside this manager have ran at least once.
+   * b-bwock untiw aww the tasks inside t-this managew h-have wan at weast once. :3
    */
-  public void waitUntilAllQueryCachesAreBuilt() {
-    LOG.info("Waiting until all query caches are built...");
+  pubwic void waituntiwawwquewycachesawebuiwt() {
+    wog.info("waiting u-untiw aww quewy caches awe b-buiwt...");
 
-    Stopwatch stopwatch = Stopwatch.createStarted();
-    while (!allTasksRan()) {
-      try {
-        Thread.sleep(1000);
-      } catch (InterruptedException ex) {
-        Thread.currentThread().interrupt();
+    s-stopwatch stopwatch = s-stopwatch.cweatestawted();
+    whiwe (!awwtaskswan()) {
+      twy {
+        t-thwead.sweep(1000);
+      } c-catch (intewwuptedexception ex) {
+        t-thwead.cuwwentthwead().intewwupt();
       }
     }
 
-    LOG.info("Ran query cache tasks in: {}", stopwatch);
+    wog.info("wan quewy cache tasks i-in: {}", stopwatch);
   }
 
-  private void addQueryCacheTasksForSegment(
-      SegmentInfo segmentInfo, int segmentIndex, boolean scheduleImmediately) {
-    LOG.info("Adding query cache tasks for segment {}.", segmentInfo.getTimeSliceID());
-    double updateIntervalMultiplier =
-        EarlybirdConfig.getDouble("query_cache_update_interval_multiplier", 1.0);
-    for (QueryCacheFilter filter : filters.values()) {
-      Amount<Long, Time> updateIntervalFromConfig = filter.getUpdateInterval(segmentIndex);
-      Amount<Long, Time> updateInterval = Amount.of(
-          (long) (updateIntervalFromConfig.getValue() * updateIntervalMultiplier),
-          updateIntervalFromConfig.getUnit());
+  pwivate void addquewycachetasksfowsegment(
+      s-segmentinfo segmentinfo, -.- i-int segmentindex, ( ͡o ω ͡o ) b-boowean scheduweimmediatewy) {
+    w-wog.info("adding quewy c-cache tasks f-fow segment {}.", /(^•ω•^) s-segmentinfo.gettimeswiceid());
+    doubwe updateintewvawmuwtipwiew =
+        e-eawwybiwdconfig.getdoubwe("quewy_cache_update_intewvaw_muwtipwiew", (⑅˘꒳˘) 1.0);
+    f-fow (quewycachefiwtew f-fiwtew : fiwtews.vawues()) {
+      a-amount<wong, òωó t-time> updateintewvawfwomconfig = f-fiwtew.getupdateintewvaw(segmentindex);
+      a-amount<wong, t-time> updateintewvaw = amount.of(
+          (wong) (updateintewvawfwomconfig.getvawue() * u-updateintewvawmuwtipwiew), 🥺
+          updateintewvawfwomconfig.getunit());
 
-      Amount<Long, Time> initialDelay = scheduleImmediately ? ZERO_SECONDS : updateInterval;
-      updater.addTask(filter, segmentInfo, updateInterval, initialDelay);
+      amount<wong, (ˆ ﻌ ˆ)♡ t-time> initiawdeway = scheduweimmediatewy ? z-zewo_seconds : u-updateintewvaw;
+      u-updatew.addtask(fiwtew, -.- segmentinfo, σωσ updateintewvaw, >_< initiawdeway);
     }
   }
 
   /**
-   * Notify QueryCacheManager of a new list of segments we currently have, so that cache tasks
-   * can be updated.
+   * nyotify quewycachemanagew o-of a n-nyew wist of segments w-we cuwwentwy have, :3 so that cache tasks
+   * can be updated. OwO
    *
-   * @param segments fresh list of all segments
+   * @pawam s-segments fwesh w-wist of aww segments
    *
-   * All existing tasks will be canceled/removed/destroyed, new tasks will be created for all
-   * segments.
+   * aww existing tasks w-wiww be cancewed/wemoved/destwoyed, rawr n-nyew tasks wiww be cweated fow aww
+   * segments. (///ˬ///✿)
    */
-  @Override
-  public synchronized void update(Collection<SegmentInfo> segments, String message) {
-    if (!enabled()) {
-      return;
+  @ovewwide
+  pubwic s-synchwonized v-void update(cowwection<segmentinfo> s-segments, ^^ s-stwing message) {
+    if (!enabwed()) {
+      wetuwn;
     }
 
-    // This manager is created right at the beginning of a startup. Before we set it up,
-    // we'll read tweets and create segments and therefore this method will be called.
-    // We don't want to start computing query caches during that time, so we just return.
-    if (!didSetup) {
-      return;
+    // this managew i-is cweated wight a-at the beginning of a stawtup. XD befowe we set i-it up, UwU
+    // we'ww wead tweets and cweate segments a-and thewefowe this method wiww b-be cawwed. o.O
+    // w-we don't want to stawt computing q-quewy caches d-duwing that time, 😳 so we just w-wetuwn. (˘ω˘)
+    if (!didsetup) {
+      wetuwn;
     }
 
-    NUM_UPDATE_SEGMENTS_CALLS.increment();
+    n-num_update_segments_cawws.incwement();
 
-    LOG.info("Rescheduling all query cache tasks ({}). Number of segments received = {}.",
-        message, segments.size());
-    updater.clearTasks(); // cancel and remove all scheduled tasks
+    w-wog.info("wescheduwing a-aww quewy c-cache tasks ({}). 🥺 nyumbew of s-segments weceived = {}.", ^^
+        m-message, >w< segments.size());
+    u-updatew.cweawtasks(); // cancew a-and wemove aww scheduwed tasks
 
-    // If Earlybird is still starting up, and we get a partition roll, don't delay rebuilding
-    // the query cache.
-    boolean isCurrent = EarlybirdStatus.getStatusCode() == EarlybirdStatusCode.CURRENT;
-    scheduleTasks(segments, isCurrent);
+    // if eawwybiwd i-is stiww stawting u-up, ^^;; and we g-get a pawtition woww, (˘ω˘) don't deway webuiwding
+    // the quewy cache. OwO
+    boowean i-iscuwwent = eawwybiwdstatus.getstatuscode() == eawwybiwdstatuscode.cuwwent;
+    s-scheduwetasks(segments, (ꈍᴗꈍ) i-iscuwwent);
   }
 
   /**
-   * Determines if all query cache tasks ran at least once (even if they failed).
+   * detewmines if aww quewy cache t-tasks wan at weast once (even i-if they faiwed). òωó
    */
-  public synchronized boolean allTasksRan() {
-    return (!(enabled() && didSetup)) || updater.allTasksRan();
+  p-pubwic s-synchwonized b-boowean awwtaskswan() {
+    w-wetuwn (!(enabwed() && didsetup)) || updatew.awwtaskswan();
   }
 
   /**
-   * Determines if the query cache manager is enabled.
+   * detewmines if the quewy c-cache managew is enabwed. ʘwʘ
    */
-  public boolean enabled() {
-    return enabled;
+  p-pubwic boowean enabwed() {
+    wetuwn enabwed;
   }
 
   /**
-   * Returns the query cache filter with the given name.
+   * wetuwns the quewy c-cache fiwtew with the given nyame. ʘwʘ
    */
-  public QueryCacheFilter getFilter(String filterName) {
-    return filters.get(filterName);
+  pubwic quewycachefiwtew getfiwtew(stwing f-fiwtewname) {
+    w-wetuwn fiwtews.get(fiwtewname);
   }
 
   /**
-   * Shuts down the query cache manager.
+   * s-shuts down the quewy cache managew. nyaa~~
    */
-  public synchronized void shutdown() throws InterruptedException {
-    LOG.info("Shutting down QueryCacheManager");
-    if (updater != null) {
-      updater.shutdown();
-      updater = null;
+  p-pubwic synchwonized v-void shutdown() thwows i-intewwuptedexception {
+    wog.info("shutting d-down quewycachemanagew");
+    if (updatew != nyuww) {
+      u-updatew.shutdown();
+      updatew = nyuww;
     }
-    didSetup = false; // needed for unit test
+    didsetup = fawse; // n-nyeeded fow u-unit test
   }
 
   /**
-   * After startup, we want only one thread to update the query cache.
+   * a-aftew stawtup, UwU we want onwy one thwead t-to update the quewy cache. (⑅˘꒳˘)
    */
-  public void setWorkerPoolSizeAfterStartup() {
-    if (this.updater != null) {
-      this.updater.setWorkerPoolSizeAfterStartup();
+  pubwic void setwowkewpoowsizeaftewstawtup() {
+    if (this.updatew != n-nyuww) {
+      t-this.updatew.setwowkewpoowsizeaftewstawtup();
     }
   }
 
-  public Decider getDecider() {
-    return this.decider;
+  p-pubwic decidew g-getdecidew() {
+    wetuwn this.decidew;
   }
 
   //////////////////////////
-  // for unit tests only
+  // fow unit tests o-onwy
   //////////////////////////
-  QueryCacheUpdater getUpdaterForTest() {
-    return updater;
+  q-quewycacheupdatew getupdatewfowtest() {
+    wetuwn updatew;
   }
-  Map<String, QueryCacheFilter> getCacheMapForTest() {
-    return filters;
+  m-map<stwing, (˘ω˘) quewycachefiwtew> getcachemapfowtest() {
+    w-wetuwn fiwtews;
   }
 }

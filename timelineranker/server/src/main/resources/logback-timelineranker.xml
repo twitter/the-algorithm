@@ -1,124 +1,124 @@
-<configuration>
-  <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
-  <property name="async_queue_size" value="${queue.size:-50000}"/>
-  <property name="async_max_flush_time" value="${max.flush.time:-0}"/>
-  <property name="SERVICE_OUTPUT" value="${log.service.output:-server.log}"/>
-  <property name="DEBUG_TRANSCRIPTS_OUTPUT"
-            value="${log.debug_transcripts.output:-debug_transcripts.log}"/>
-  <property name="DEFAULT_SERVICE_PATTERN"
-            value="%5p [%d{yyyyMMdd-HH:mm:ss.SSS}] %logger{0}: %m%n"/>
-  <!-- JUL/JDK14 to Logback bridge -->
-  <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
-    <resetJUL>true</resetJUL>
-  </contextListener>
+<configuwation>
+  <shutdownhook cwass="ch.qos.wogback.cowe.hook.dewayingshutdownhook"/>
+  <pwopewty nyame="async_queue_size" vawue="${queue.size:-50000}"/>
+  <pwopewty n-nyame="async_max_fwush_time" v-vawue="${max.fwush.time:-0}"/>
+  <pwopewty nyame="sewvice_output" v-vawue="${wog.sewvice.output:-sewvew.wog}"/>
+  <pwopewty n-nyame="debug_twanscwipts_output"
+            v-vawue="${wog.debug_twanscwipts.output:-debug_twanscwipts.wog}"/>
+  <pwopewty n-nyame="defauwt_sewvice_pattewn"
+            v-vawue="%5p [%d{yyyymmdd-hh:mm:ss.sss}] %woggew{0}: %m%n"/>
+  <!-- j-juw/jdk14 to wogback bwidge -->
+  <contextwistenew cwass="ch.qos.wogback.cwassic.juw.wevewchangepwopagatow">
+    <wesetjuw>twue</wesetjuw>
+  </contextwistenew>
 
-  <!-- Service Log -->
-  <appender name="SERVICE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${SERVICE_OUTPUT}</file>
-    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-      <!-- daily rollover -->
-      <fileNamePattern>${SERVICE_OUTPUT}.%d.%i.gz</fileNamePattern>
-      <maxFileSize>500MB</maxFileSize>
-      <!-- keep 21 days' worth of history -->
-      <maxHistory>21</maxHistory>
-      <cleanHistoryOnStart>true</cleanHistoryOnStart>
-    </rollingPolicy>
-    <encoder>
-      <pattern>${DEFAULT_SERVICE_PATTERN}</pattern>
-    </encoder>
-  </appender>
+  <!-- sewvice wog -->
+  <appendew n-nyame="sewvice" cwass="ch.qos.wogback.cowe.wowwing.wowwingfiweappendew">
+    <fiwe>${sewvice_output}</fiwe>
+    <wowwingpowicy cwass="ch.qos.wogback.cowe.wowwing.sizeandtimebasedwowwingpowicy">
+      <!-- d-daiwy wowwuvw -->
+      <fiwenamepattewn>${sewvice_output}.%d.%i.gz</fiwenamepattewn>
+      <maxfiwesize>500mb</maxfiwesize>
+      <!-- keep 21 days' wowth o-of histowy -->
+      <maxhistowy>21</maxhistowy>
+      <cweanhistowyonstawt>twue</cweanhistowyonstawt>
+    </wowwingpowicy>
+    <encodew>
+      <pattewn>${defauwt_sewvice_pattewn}</pattewn>
+    </encodew>
+  </appendew>
 
-  <!-- debug transcripts -->
-  <appender name="DEBUG-TRANSCRIPTS" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${DEBUG_TRANSCRIPTS_OUTPUT}</file>
-    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-      <!-- daily rollover -->
-      <fileNamePattern>${DEBUG_TRANSCRIPTS_OUTPUT}.%d.%i.gz</fileNamePattern>
-      <maxFileSize>500MB</maxFileSize>
-      <!-- keep 21 days' worth of history -->
-      <maxHistory>21</maxHistory>
-      <cleanHistoryOnStart>true</cleanHistoryOnStart>
-    </rollingPolicy>
-    <encoder>
-      <pattern>${DEFAULT_SERVICE_PATTERN}</pattern>
-    </encoder>
-  </appender>
+  <!-- debug twanscwipts -->
+  <appendew nyame="debug-twanscwipts" cwass="ch.qos.wogback.cowe.wowwing.wowwingfiweappendew">
+    <fiwe>${debug_twanscwipts_output}</fiwe>
+    <wowwingpowicy c-cwass="ch.qos.wogback.cowe.wowwing.sizeandtimebasedwowwingpowicy">
+      <!-- daiwy wowwuvw -->
+      <fiwenamepattewn>${debug_twanscwipts_output}.%d.%i.gz</fiwenamepattewn>
+      <maxfiwesize>500mb</maxfiwesize>
+      <!-- k-keep 21 d-days' wowth of histowy -->
+      <maxhistowy>21</maxhistowy>
+      <cweanhistowyonstawt>twue</cweanhistowyonstawt>
+    </wowwingpowicy>
+    <encodew>
+      <pattewn>${defauwt_sewvice_pattewn}</pattewn>
+    </encodew>
+  </appendew>
 
-  <!-- LogLens/splunk -->
-  <appender name="LOGLENS" class="com.twitter.loglens.logback.LoglensAppender">
-    <mdcAdditionalContext>true</mdcAdditionalContext>
-    <category>loglens</category>
-    <index>${log.lens.index:-timelineranker}</index>
-    <tag>${log.lens.tag}</tag>
-    <encoder>
-      <pattern>%msg%n</pattern>
-    </encoder>
-    <filter class="com.twitter.strato.logging.logback.RegexFilter">
-      <forLogger>manhattan-client</forLogger>
-      <excludeRegex>.*InvalidRequest.*</excludeRegex>
-    </filter>
-  </appender>
-
-  <!-- ===================================================== -->
-  <!-- Primary Async Appenders -->
-  <!-- ===================================================== -->
-
-  <appender name="ASYNC-SERVICE" class="ch.qos.logback.classic.AsyncAppender">
-    <queueSize>${async_queue_size}</queueSize>
-    <maxFlushTime>${async_max_flush_time}</maxFlushTime>
-    <appender-ref ref="SERVICE"/>
-  </appender>
-
-  <appender name="ASYNC-DEBUG-TRANSCRIPTS" class="ch.qos.logback.classic.AsyncAppender">
-    <queueSize>${async_queue_size}</queueSize>
-    <maxFlushTime>${async_max_flush_time}</maxFlushTime>
-    <appender-ref ref="DEBUG-TRANSCRIPTS"/>
-  </appender>
-
-  <appender name="ASYNC-LOGLENS" class="ch.qos.logback.classic.AsyncAppender">
-    <queueSize>${async_queue_size}</queueSize>
-    <maxFlushTime>${async_max_flush_time}</maxFlushTime>
-    <appender-ref ref="LOGLENS"/>
-  </appender>
+  <!-- wogwens/spwunk -->
+  <appendew nyame="wogwens" cwass="com.twittew.wogwens.wogback.wogwensappendew">
+    <mdcadditionawcontext>twue</mdcadditionawcontext>
+    <categowy>wogwens</categowy>
+    <index>${wog.wens.index:-timewinewankew}</index>
+    <tag>${wog.wens.tag}</tag>
+    <encodew>
+      <pattewn>%msg%n</pattewn>
+    </encodew>
+    <fiwtew c-cwass="com.twittew.stwato.wogging.wogback.wegexfiwtew">
+      <fowwoggew>manhattan-cwient</fowwoggew>
+      <excwudewegex>.*invawidwequest.*</excwudewegex>
+    </fiwtew>
+  </appendew>
 
   <!-- ===================================================== -->
-  <!-- Package Config -->
+  <!-- pwimawy async appendews -->
   <!-- ===================================================== -->
 
-  <!-- Per-Package Config -->
-  <logger name="OptimisticLockingCache" level="off"/>
-  <logger name="ZkSession" level="info"/>
-  <logger name="com.twitter" level="info"/>
-  <logger name="com.twitter.decider.StoreDecider" level="warn"/>
-  <logger name="com.twitter.distributedlog.client" level="warn"/>
-  <logger name="com.twitter.finagle.liveness" level="warn"/>
-  <logger name="com.twitter.finagle.mtls.authorization.config.AccessControlListConfiguration" level="warn"/>
-  <logger name="com.twitter.finagle.mux" level="warn"/>
-  <logger name="com.twitter.finagle.serverset2" level="warn"/>
-  <logger name="com.twitter.finatra.kafka.common.kerberoshelpers" level="warn"/>
-  <logger name="com.twitter.finatra.kafka.utils.BootstrapServerUtils" level="warn"/>
-  <logger name="com.twitter.logging.ScribeHandler" level="warn"/>
-  <logger name="com.twitter.server.coordinate" level="error"/>
-  <logger name="com.twitter.wilyns" level="warn"/>
-  <logger name="com.twitter.zookeeper.client" level="info"/>
-  <logger name="com.twitter.zookeeper.client.internal" level="warn"/>
-  <logger name="manhattan-client" level="warn"/>
-  <logger name="org.apache.kafka.clients.NetworkClient" level="error"/>
-  <logger name="org.apache.kafka.clients.consumer.internals" level="error"/>
-  <logger name="org.apache.kafka.clients.producer.internals" level="error"/>
-  <logger name="org.apache.kafka.common.network" level="warn"/>
-  <logger name="org.apache.zookeeper" level="error"/>
-  <logger name="org.apache.zookeeper.ClientCnxn" level="warn"/>
+  <appendew nyame="async-sewvice" cwass="ch.qos.wogback.cwassic.asyncappendew">
+    <queuesize>${async_queue_size}</queuesize>
+    <maxfwushtime>${async_max_fwush_time}</maxfwushtime>
+    <appendew-wef w-wef="sewvice"/>
+  </appendew>
 
-  <!-- Root Config -->
-  <root level="${log_level:-INFO}">
-    <appender-ref ref="ASYNC-SERVICE"/>
-    <appender-ref ref="ASYNC-LOGLENS"/>
-  </root>
+  <appendew nyame="async-debug-twanscwipts" c-cwass="ch.qos.wogback.cwassic.asyncappendew">
+    <queuesize>${async_queue_size}</queuesize>
+    <maxfwushtime>${async_max_fwush_time}</maxfwushtime>
+    <appendew-wef w-wef="debug-twanscwipts"/>
+  </appendew>
 
-  <!-- debug transcripts: logger name MUST be c.t.timelines.util.debuglog.DebugLog.DebugTranscriptsLog -->
-  <logger name="DebugTranscripts" level="info">
-    <appender-ref ref="ASYNC-DEBUG-TRANSCRIPTS"/>
-    <appender-ref ref="ASYNC-LOGLENS"/>
-  </logger>
-</configuration>
+  <appendew n-nyame="async-wogwens" c-cwass="ch.qos.wogback.cwassic.asyncappendew">
+    <queuesize>${async_queue_size}</queuesize>
+    <maxfwushtime>${async_max_fwush_time}</maxfwushtime>
+    <appendew-wef wef="wogwens"/>
+  </appendew>
+
+  <!-- ===================================================== -->
+  <!-- package config -->
+  <!-- ===================================================== -->
+
+  <!-- p-pew-package config -->
+  <woggew nyame="optimisticwockingcache" w-wevew="off"/>
+  <woggew nyame="zksession" wevew="info"/>
+  <woggew nyame="com.twittew" wevew="info"/>
+  <woggew nyame="com.twittew.decidew.stowedecidew" wevew="wawn"/>
+  <woggew n-name="com.twittew.distwibutedwog.cwient" wevew="wawn"/>
+  <woggew n-nyame="com.twittew.finagwe.wiveness" w-wevew="wawn"/>
+  <woggew n-nyame="com.twittew.finagwe.mtws.authowization.config.accesscontwowwistconfiguwation" wevew="wawn"/>
+  <woggew nyame="com.twittew.finagwe.mux" wevew="wawn"/>
+  <woggew n-nyame="com.twittew.finagwe.sewvewset2" w-wevew="wawn"/>
+  <woggew nyame="com.twittew.finatwa.kafka.common.kewbewoshewpews" w-wevew="wawn"/>
+  <woggew n-nyame="com.twittew.finatwa.kafka.utiws.bootstwapsewvewutiws" wevew="wawn"/>
+  <woggew n-nyame="com.twittew.wogging.scwibehandwew" wevew="wawn"/>
+  <woggew n-nyame="com.twittew.sewvew.coowdinate" wevew="ewwow"/>
+  <woggew nyame="com.twittew.wiwyns" w-wevew="wawn"/>
+  <woggew nyame="com.twittew.zookeepew.cwient" w-wevew="info"/>
+  <woggew nyame="com.twittew.zookeepew.cwient.intewnaw" w-wevew="wawn"/>
+  <woggew n-name="manhattan-cwient" wevew="wawn"/>
+  <woggew nyame="owg.apache.kafka.cwients.netwowkcwient" wevew="ewwow"/>
+  <woggew nyame="owg.apache.kafka.cwients.consumew.intewnaws" wevew="ewwow"/>
+  <woggew nyame="owg.apache.kafka.cwients.pwoducew.intewnaws" w-wevew="ewwow"/>
+  <woggew nyame="owg.apache.kafka.common.netwowk" w-wevew="wawn"/>
+  <woggew nyame="owg.apache.zookeepew" w-wevew="ewwow"/>
+  <woggew n-nyame="owg.apache.zookeepew.cwientcnxn" wevew="wawn"/>
+
+  <!-- w-woot config -->
+  <woot wevew="${wog_wevew:-info}">
+    <appendew-wef wef="async-sewvice"/>
+    <appendew-wef wef="async-wogwens"/>
+  </woot>
+
+  <!-- d-debug twanscwipts: woggew nyame must be c.t.timewines.utiw.debugwog.debugwog.debugtwanscwiptswog -->
+  <woggew nyame="debugtwanscwipts" w-wevew="info">
+    <appendew-wef wef="async-debug-twanscwipts"/>
+    <appendew-wef w-wef="async-wogwens"/>
+  </woggew>
+</configuwation>

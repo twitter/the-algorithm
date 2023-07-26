@@ -1,31 +1,31 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.base
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+impowt c-com.twittew.timewines.configapi.fsboundedpawam
+impowt c-com.twittew.timewines.configapi.fspawam
 
-object SimilarUserExpanderParams {
+object s-simiwawusewexpandewpawams {
 
-  case object EnableNonDirectFollowExpansion
-      extends FSParam[Boolean]("similar_user_enable_non_direct_follow_expansion", true)
+  c-case object e-enabwenondiwectfowwowexpansion
+      e-extends fspawam[boowean]("simiwaw_usew_enabwe_non_diwect_fowwow_expansion", -.- t-twue)
 
-  case object EnableSimsExpandSeedAccountsSort
-      extends FSParam[Boolean]("similar_user_enable_sims_expander_seed_account_sort", false)
+  case o-object enabwesimsexpandseedaccountssowt
+      extends fspawam[boowean]("simiwaw_usew_enabwe_sims_expandew_seed_account_sowt", ( ͡o ω ͡o ) fawse)
 
-  case object DefaultExpansionInputCount
-      extends FSBoundedParam[Int](
-        name = "similar_user_default_expansion_input_count",
-        default = Integer.MAX_VALUE,
-        min = 0,
-        max = Integer.MAX_VALUE)
+  case object d-defauwtexpansioninputcount
+      extends fsboundedpawam[int](
+        nyame = "simiwaw_usew_defauwt_expansion_input_count", rawr x3
+        d-defauwt = integew.max_vawue, nyaa~~
+        m-min = 0, /(^•ω•^)
+        max = integew.max_vawue)
 
-  case object DefaultFinalCandidatesReturnedCount
-      extends FSBoundedParam[Int](
-        name = "similar_user_default_final_candidates_returned_count",
-        default = Integer.MAX_VALUE,
-        min = 0,
-        max = Integer.MAX_VALUE)
+  case object d-defauwtfinawcandidateswetuwnedcount
+      extends fsboundedpawam[int](
+        n-nyame = "simiwaw_usew_defauwt_finaw_candidates_wetuwned_count", rawr
+        d-defauwt = integew.max_vawue, OwO
+        min = 0, (U ﹏ U)
+        max = integew.max_vawue)
 
-  case object DefaultEnableImplicitEngagedExpansion
-      extends FSParam[Boolean]("similar_user_enable_implicit_engaged_expansion", true)
+  case object defauwtenabweimpwicitengagedexpansion
+      e-extends fspawam[boowean]("simiwaw_usew_enabwe_impwicit_engaged_expansion", twue)
 
 }

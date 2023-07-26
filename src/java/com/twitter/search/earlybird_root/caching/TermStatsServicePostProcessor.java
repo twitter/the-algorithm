@@ -1,25 +1,25 @@
-package com.twitter.search.earlybird_root.caching;
+package com.twittew.seawch.eawwybiwd_woot.caching;
 
-import com.google.common.base.Preconditions;
+impowt com.googwe.common.base.pweconditions;
 
-import com.twitter.search.common.caching.Cache;
-import com.twitter.search.common.caching.TermStatsCacheUtil;
-import com.twitter.search.common.caching.filter.ServicePostProcessor;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+i-impowt com.twittew.seawch.common.caching.cache;
+i-impowt com.twittew.seawch.common.caching.tewmstatscacheutiw;
+i-impowt c-com.twittew.seawch.common.caching.fiwtew.sewvicepostpwocessow;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
 
-public class TermStatsServicePostProcessor
-    extends ServicePostProcessor<EarlybirdRequestContext, EarlybirdResponse> {
-  private final Cache<EarlybirdRequest, EarlybirdResponse> cache;
+p-pubwic cwass tewmstatssewvicepostpwocessow
+    extends sewvicepostpwocessow<eawwybiwdwequestcontext, :3 eawwybiwdwesponse> {
+  p-pwivate finaw cache<eawwybiwdwequest, 😳😳😳 eawwybiwdwesponse> c-cache;
 
-  public TermStatsServicePostProcessor(Cache<EarlybirdRequest, EarlybirdResponse> cache) {
-    this.cache = Preconditions.checkNotNull(cache);
+  pubwic tewmstatssewvicepostpwocessow(cache<eawwybiwdwequest, -.- e-eawwybiwdwesponse> cache) {
+    this.cache = pweconditions.checknotnuww(cache);
   }
 
-  @Override
-  public void processServiceResponse(EarlybirdRequestContext requestContext,
-                                     EarlybirdResponse serviceResponse) {
-    TermStatsCacheUtil.cacheResults(cache, requestContext.getRequest(), serviceResponse);
+  @ovewwide
+  p-pubwic void pwocesssewvicewesponse(eawwybiwdwequestcontext w-wequestcontext, ( ͡o ω ͡o )
+                                     e-eawwybiwdwesponse sewvicewesponse) {
+    tewmstatscacheutiw.cachewesuwts(cache, rawr x3 wequestcontext.getwequest(), nyaa~~ sewvicewesponse);
   }
 }

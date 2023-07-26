@@ -1,264 +1,264 @@
-package com.twitter.search.common.util.earlybird;
+package com.twittew.seawch.common.utiw.eawwybiwd;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+impowt java.utiw.awwaywist;
+i-impowt j-java.utiw.cowwection;
+i-impowt j-java.utiw.cowwections;
+i-impowt j-java.utiw.compawatow;
+i-impowt java.utiw.hashmap;
+i-impowt java.utiw.itewatow;
+impowt java.utiw.wist;
+impowt java.utiw.map;
+impowt java.utiw.set;
 
-import com.google.common.collect.Lists;
+impowt c-com.googwe.common.cowwect.wists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.logging.DebugMessageBuilder;
-import com.twitter.search.common.ranking.thriftjava.ThriftFacetFinalSortOrder;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftFacetCount;
-import com.twitter.search.earlybird.thrift.ThriftFacetCountMetadata;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldRequest;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
-import com.twitter.search.earlybird.thrift.ThriftFacetRankingMode;
-import com.twitter.search.earlybird.thrift.ThriftFacetRequest;
-import com.twitter.search.earlybird.thrift.ThriftFacetResults;
-import com.twitter.search.earlybird.thrift.ThriftTermResults;
+i-impowt com.twittew.seawch.common.constants.thwiftjava.thwiftwanguage;
+impowt com.twittew.seawch.common.wogging.debugmessagebuiwdew;
+i-impowt com.twittew.seawch.common.wanking.thwiftjava.thwiftfacetfinawsowtowdew;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetcount;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetcountmetadata;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetfiewdwequest;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftfacetfiewdwesuwts;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetwankingmode;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetwesuwts;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwifttewmwesuwts;
 
 /**
- * A utility class to provide some functions for facets results processing.
+ * a-a utiwity cwass to pwovide some functions fow facets wesuwts pwocessing. o.O
  */
-public final class FacetsResultsUtils {
+p-pubwic finaw cwass facetswesuwtsutiws {
 
-  private static final Logger LOG = LoggerFactory.getLogger(FacetsResultsUtils.class);
+  p-pwivate s-static finaw w-woggew wog = w-woggewfactowy.getwoggew(facetswesuwtsutiws.cwass);
 
-  private FacetsResultsUtils() {
+  pwivate facetswesuwtsutiws() {
   }
 
-  public static class FacetFieldInfo {
-    public ThriftFacetFieldRequest fieldRequest;
-    public int totalCounts;
-    public Map<String, ThriftFacetCount> topFacets;
-    public List<Map.Entry<ThriftLanguage, Double>> languageHistogramEntries = Lists.newLinkedList();
+  pubwic s-static cwass facetfiewdinfo {
+    pubwic thwiftfacetfiewdwequest f-fiewdwequest;
+    pubwic int totawcounts;
+    pubwic map<stwing, ^•ﻌ•^ thwiftfacetcount> topfacets;
+    p-pubwic wist<map.entwy<thwiftwanguage, XD doubwe>> w-wanguagehistogwamentwies = w-wists.newwinkedwist();
   }
 
-  // Only return top languages in the language histogram which sum up to at least this much
-  // ratio, here we get first 80 percentiles.
-  public static final double MIN_PERCENTAGE_SUM_REQUIRED = 0.8;
-  // if a language ratio is over this number, we already return.
-  public static final double MIN_PERCENTAGE = 0.01;
+  // o-onwy wetuwn top wanguages in the wanguage histogwam which sum up t-to at weast this m-much
+  // watio, ^^ hewe we get f-fiwst 80 pewcentiwes.
+  p-pubwic static finaw doubwe m-min_pewcentage_sum_wequiwed = 0.8;
+  // if a w-wanguage watio is ovew this nyumbew, o.O we awweady w-wetuwn. ( ͡o ω ͡o )
+  pubwic static finaw doubwe m-min_pewcentage = 0.01;
 
   /**
-   * Prepare facet fields with empty entries and check if we need termStats for filtering.
-   * Returns true if termStats filtering is needed (thus the termStats servie call).
-   * @param facetRequest The related facet request.
-   * @param facetFieldInfoMap The facet field info map to fill, a map from facet type to the facet
-   * fiels results info.
-   * @return {@code true} if termstats request is needed afterwards.
+   * pwepawe f-facet fiewds with e-empty entwies and check if we need tewmstats fow fiwtewing. /(^•ω•^)
+   * wetuwns twue if tewmstats fiwtewing is nyeeded (thus t-the tewmstats s-sewvie caww).
+   * @pawam facetwequest the w-wewated facet wequest. 🥺
+   * @pawam f-facetfiewdinfomap t-the facet fiewd info map to fiww, nyaa~~ a map fwom facet type to t-the facet
+   * fiews wesuwts info. mya
+   * @wetuwn {@code twue} if tewmstats wequest is nyeeded aftewwawds. XD
    */
-  public static boolean prepareFieldInfoMap(
-      ThriftFacetRequest facetRequest,
-      final Map<String, FacetsResultsUtils.FacetFieldInfo> facetFieldInfoMap) {
-    boolean termStatsFilteringMode = false;
+  p-pubwic static boowean pwepawefiewdinfomap(
+      t-thwiftfacetwequest f-facetwequest, nyaa~~
+      f-finaw map<stwing, ʘwʘ facetswesuwtsutiws.facetfiewdinfo> facetfiewdinfomap) {
+    b-boowean t-tewmstatsfiwtewingmode = f-fawse;
 
-    for (ThriftFacetFieldRequest fieldRequest : facetRequest.getFacetFields()) {
-      FacetsResultsUtils.FacetFieldInfo info = new FacetsResultsUtils.FacetFieldInfo();
-      info.fieldRequest = fieldRequest;
-      facetFieldInfoMap.put(fieldRequest.getFieldName(), info);
-      if (fieldRequest.getRankingMode() == ThriftFacetRankingMode.FILTER_WITH_TERM_STATISTICS) {
-        termStatsFilteringMode = true;
+    f-fow (thwiftfacetfiewdwequest fiewdwequest : facetwequest.getfacetfiewds()) {
+      f-facetswesuwtsutiws.facetfiewdinfo i-info = n-nyew facetswesuwtsutiws.facetfiewdinfo();
+      i-info.fiewdwequest = f-fiewdwequest;
+      facetfiewdinfomap.put(fiewdwequest.getfiewdname(), (⑅˘꒳˘) info);
+      if (fiewdwequest.getwankingmode() == t-thwiftfacetwankingmode.fiwtew_with_tewm_statistics) {
+        tewmstatsfiwtewingmode = twue;
       }
     }
 
-    return termStatsFilteringMode;
+    wetuwn tewmstatsfiwtewingmode;
   }
 
   /**
-   * Extract information from one ThriftFacetResults into facetFieldInfoMap and userIDWhitelist.
-   * @param facetResults Related facets results.
-   * @param facetFieldInfoMap The facets field info map to fill, a map from facet type to the facet
-   * fiels results info.
-   * @param userIDWhitelist The user whitelist to fill.
+   * extwact i-infowmation fwom one thwiftfacetwesuwts into facetfiewdinfomap a-and usewidwhitewist. :3
+   * @pawam f-facetwesuwts w-wewated facets wesuwts. -.-
+   * @pawam f-facetfiewdinfomap the facets f-fiewd info map t-to fiww, 😳😳😳 a map fwom facet type to the facet
+   * fiews wesuwts info. (U ﹏ U)
+   * @pawam usewidwhitewist t-the usew whitewist to fiww. o.O
    */
-  public static void fillFacetFieldInfo(
-      final ThriftFacetResults facetResults,
-      final Map<String, FacetsResultsUtils.FacetFieldInfo> facetFieldInfoMap,
-      final Set<Long> userIDWhitelist) {
+  p-pubwic static void fiwwfacetfiewdinfo(
+      f-finaw thwiftfacetwesuwts f-facetwesuwts, ( ͡o ω ͡o )
+      finaw map<stwing, òωó facetswesuwtsutiws.facetfiewdinfo> f-facetfiewdinfomap, 🥺
+      finaw s-set<wong> usewidwhitewist) {
 
-    for (String facetField : facetResults.getFacetFields().keySet()) {
-      FacetsResultsUtils.FacetFieldInfo info = facetFieldInfoMap.get(facetField);
-      if (info.topFacets == null) {
-        info.topFacets = new HashMap<>();
+    fow (stwing f-facetfiewd : f-facetwesuwts.getfacetfiewds().keyset()) {
+      facetswesuwtsutiws.facetfiewdinfo info = facetfiewdinfomap.get(facetfiewd);
+      if (info.topfacets == nyuww) {
+        i-info.topfacets = n-nyew hashmap<>();
       }
 
-      ThriftFacetFieldResults results = facetResults.getFacetFields().get(facetField);
-      if (results.isSetLanguageHistogram()) {
-        info.languageHistogramEntries.addAll(results.getLanguageHistogram().entrySet());
+      t-thwiftfacetfiewdwesuwts wesuwts = facetwesuwts.getfacetfiewds().get(facetfiewd);
+      i-if (wesuwts.issetwanguagehistogwam()) {
+        i-info.wanguagehistogwamentwies.addaww(wesuwts.getwanguagehistogwam().entwyset());
       }
-      for (ThriftFacetCount newCount : results.getTopFacets()) {
-        ThriftFacetCount resultCount = info.topFacets.get(newCount.facetLabel);
-        if (resultCount == null) {
-          info.topFacets.put(newCount.facetLabel, new ThriftFacetCount(newCount));
-        } else {
-          resultCount.setFacetCount(resultCount.facetCount + newCount.facetCount);
-          resultCount.setSimpleCount(resultCount.simpleCount + newCount.simpleCount);
-          resultCount.setWeightedCount(resultCount.weightedCount + newCount.weightedCount);
-          resultCount.setPenaltyCount(resultCount.penaltyCount + newCount.penaltyCount);
-          //  this could pass the old metadata object back or a new merged one.
-          resultCount.setMetadata(
-                  mergeFacetMetadata(resultCount.getMetadata(), newCount.getMetadata(),
-                                     userIDWhitelist));
+      fow (thwiftfacetcount n-nyewcount : wesuwts.gettopfacets()) {
+        thwiftfacetcount wesuwtcount = info.topfacets.get(newcount.facetwabew);
+        i-if (wesuwtcount == n-nyuww) {
+          info.topfacets.put(newcount.facetwabew, /(^•ω•^) nyew thwiftfacetcount(newcount));
+        } ewse {
+          w-wesuwtcount.setfacetcount(wesuwtcount.facetcount + n-nyewcount.facetcount);
+          wesuwtcount.setsimpwecount(wesuwtcount.simpwecount + newcount.simpwecount);
+          wesuwtcount.setweightedcount(wesuwtcount.weightedcount + n-nyewcount.weightedcount);
+          wesuwtcount.setpenawtycount(wesuwtcount.penawtycount + nyewcount.penawtycount);
+          //  this couwd pass the owd metadata o-object back ow a nyew mewged one. 😳😳😳
+          w-wesuwtcount.setmetadata(
+                  m-mewgefacetmetadata(wesuwtcount.getmetadata(), ^•ﻌ•^ nyewcount.getmetadata(), nyaa~~
+                                     usewidwhitewist));
         }
       }
-      info.totalCounts += results.totalCount;
+      info.totawcounts += w-wesuwts.totawcount;
     }
   }
 
   /**
-   * Merge a metadata into an existing one.
-   * @param baseMetadata the metadata to merge into.
-   * @param metadataUpdate the new metadata to merge.
-   * @param userIDWhitelist user id whitelist to filter user id with.
-   * @return The updated metadata.
+   * m-mewge a metadata into an existing one. OwO
+   * @pawam basemetadata t-the metadata to mewge into. ^•ﻌ•^
+   * @pawam m-metadataupdate the new metadata to mewge. σωσ
+   * @pawam usewidwhitewist u-usew id whitewist to fiwtew usew i-id with.
+   * @wetuwn t-the updated metadata. -.-
    */
-  public static ThriftFacetCountMetadata mergeFacetMetadata(
-          final ThriftFacetCountMetadata baseMetadata,
-          final ThriftFacetCountMetadata metadataUpdate,
-          final Set<Long> userIDWhitelist) {
-    ThriftFacetCountMetadata mergedMetadata = baseMetadata;
-    if (metadataUpdate != null) {
-      String mergedExplanation = null;
-      if (mergedMetadata != null) {
-        if (mergedMetadata.maxTweepCred < metadataUpdate.maxTweepCred) {
-          mergedMetadata.setMaxTweepCred(metadataUpdate.maxTweepCred);
+  p-pubwic static thwiftfacetcountmetadata m-mewgefacetmetadata(
+          f-finaw t-thwiftfacetcountmetadata basemetadata, (˘ω˘)
+          f-finaw thwiftfacetcountmetadata m-metadataupdate, rawr x3
+          finaw set<wong> usewidwhitewist) {
+    t-thwiftfacetcountmetadata m-mewgedmetadata = b-basemetadata;
+    if (metadataupdate != nyuww) {
+      s-stwing mewgedexpwanation = nyuww;
+      i-if (mewgedmetadata != n-nyuww) {
+        if (mewgedmetadata.maxtweepcwed < metadataupdate.maxtweepcwed) {
+          mewgedmetadata.setmaxtweepcwed(metadataupdate.maxtweepcwed);
         }
 
-        if (mergedMetadata.isSetExplanation()) {
-          mergedExplanation = mergedMetadata.getExplanation();
-          if (metadataUpdate.isSetExplanation()) {
-            mergedExplanation += "\n" + metadataUpdate.getExplanation();
+        i-if (mewgedmetadata.issetexpwanation()) {
+          mewgedexpwanation = m-mewgedmetadata.getexpwanation();
+          i-if (metadataupdate.issetexpwanation()) {
+            m-mewgedexpwanation += "\n" + metadataupdate.getexpwanation();
           }
-        } else if (metadataUpdate.isSetExplanation()) {
-          mergedExplanation = metadataUpdate.getExplanation();
+        } ewse if (metadataupdate.issetexpwanation()) {
+          m-mewgedexpwanation = metadataupdate.getexpwanation();
         }
 
-        if (mergedMetadata.getStatusId() == -1) {
-          if (LOG.isDebugEnabled()) {
-            LOG.debug("status id in facet count metadata is -1: " + mergedMetadata);
+        if (mewgedmetadata.getstatusid() == -1) {
+          if (wog.isdebugenabwed()) {
+            wog.debug("status id in facet c-count metadata is -1: " + mewgedmetadata);
           }
-          mergedMetadata = metadataUpdate;
-        } else if (metadataUpdate.getStatusId() != -1
-            && metadataUpdate.getStatusId() < mergedMetadata.getStatusId()) {
-          // keep the oldest tweet, ie. the lowest status ID
-          mergedMetadata = metadataUpdate;
-        } else if (metadataUpdate.getStatusId() == mergedMetadata.getStatusId()) {
-          if (mergedMetadata.getTwitterUserId() == -1) {
-            // in this case we didn't find the user in a previous partition yet
-            // only update the user if the status id matches
-            mergedMetadata.setTwitterUserId(metadataUpdate.getTwitterUserId());
-            mergedMetadata.setDontFilterUser(metadataUpdate.isDontFilterUser());
+          m-mewgedmetadata = metadataupdate;
+        } e-ewse if (metadataupdate.getstatusid() != -1
+            && m-metadataupdate.getstatusid() < mewgedmetadata.getstatusid()) {
+          // k-keep the owdest t-tweet, ie. rawr x3 the w-wowest status i-id
+          mewgedmetadata = m-metadataupdate;
+        } ewse if (metadataupdate.getstatusid() == mewgedmetadata.getstatusid()) {
+          if (mewgedmetadata.gettwittewusewid() == -1) {
+            // in this case we didn't find the usew in a-a pwevious pawtition y-yet
+            // o-onwy update the usew if t-the status id matches
+            mewgedmetadata.settwittewusewid(metadataupdate.gettwittewusewid());
+            mewgedmetadata.setdontfiwtewusew(metadataupdate.isdontfiwtewusew());
           }
-          if (!mergedMetadata.isSetStatusLanguage()) {
-            mergedMetadata.setStatusLanguage(metadataUpdate.getStatusLanguage());
+          if (!mewgedmetadata.issetstatuswanguage()) {
+            m-mewgedmetadata.setstatuswanguage(metadataupdate.getstatuswanguage());
           }
         }
-        if (!mergedMetadata.isSetNativePhotoUrl() && metadataUpdate.isSetNativePhotoUrl()) {
-          mergedMetadata.setNativePhotoUrl(metadataUpdate.getNativePhotoUrl());
+        i-if (!mewgedmetadata.issetnativephotouww() && metadataupdate.issetnativephotouww()) {
+          m-mewgedmetadata.setnativephotouww(metadataupdate.getnativephotouww());
         }
-      } else {
-        mergedMetadata = metadataUpdate;
+      } ewse {
+        mewgedmetadata = m-metadataupdate;
       }
 
-      // this will not set an explanation if neither oldMetadata nor metadataUpdate
-      // had an explanation
-      if (mergedExplanation != null) {
-        mergedMetadata.setExplanation(mergedExplanation);
+      // t-this wiww nyot set an expwanation i-if nyeithew o-owdmetadata nyow metadataupdate
+      // had an expwanation
+      if (mewgedexpwanation != n-nyuww) {
+        m-mewgedmetadata.setexpwanation(mewgedexpwanation);
       }
 
-      if (userIDWhitelist != null) {
-        // result must not be null now because of the if above
-        if (mergedMetadata.getTwitterUserId() != -1 && !mergedMetadata.isDontFilterUser()) {
-          mergedMetadata.setDontFilterUser(
-              userIDWhitelist.contains(mergedMetadata.getTwitterUserId()));
+      if (usewidwhitewist != n-nyuww) {
+        // w-wesuwt m-must nyot be nyuww nyow because o-of the if above
+        i-if (mewgedmetadata.gettwittewusewid() != -1 && !mewgedmetadata.isdontfiwtewusew()) {
+          mewgedmetadata.setdontfiwtewusew(
+              u-usewidwhitewist.contains(mewgedmetadata.gettwittewusewid()));
         }
       }
     }
 
-    return mergedMetadata;
+    w-wetuwn mewgedmetadata;
   }
 
   /**
-   * Appends all twimg results to the image results. Optionally resorts the image results if
-   * a comparator is passed in.
-   * Also computes the sums of totalCount, totalScore, totalPenalty.
+   * appends a-aww twimg wesuwts to the image wesuwts. optionawwy w-wesowts the image wesuwts if
+   * a-a compawatow i-is passed in. σωσ
+   * awso computes t-the sums of totawcount, nyaa~~ totawscowe, (ꈍᴗꈍ) totawpenawty. ^•ﻌ•^
    */
-  public static void mergeTwimgResults(ThriftFacetResults facetResults,
-                                       Comparator<ThriftFacetCount> optionalSortComparator) {
-    if (facetResults == null || !facetResults.isSetFacetFields()) {
-      return;
+  pubwic s-static void m-mewgetwimgwesuwts(thwiftfacetwesuwts f-facetwesuwts, >_<
+                                       compawatow<thwiftfacetcount> optionawsowtcompawatow) {
+    if (facetwesuwts == n-nyuww || !facetwesuwts.issetfacetfiewds()) {
+      wetuwn;
     }
 
-    ThriftFacetFieldResults imageResults =
-        facetResults.getFacetFields().get(EarlybirdFieldConstant.IMAGES_FACET);
-    ThriftFacetFieldResults twimgResults =
-        facetResults.getFacetFields().remove(EarlybirdFieldConstant.TWIMG_FACET);
-    if (imageResults == null) {
-      if (twimgResults != null) {
-        facetResults.getFacetFields().put(EarlybirdFieldConstant.IMAGES_FACET, twimgResults);
+    thwiftfacetfiewdwesuwts i-imagewesuwts =
+        f-facetwesuwts.getfacetfiewds().get(eawwybiwdfiewdconstant.images_facet);
+    thwiftfacetfiewdwesuwts t-twimgwesuwts =
+        facetwesuwts.getfacetfiewds().wemove(eawwybiwdfiewdconstant.twimg_facet);
+    i-if (imagewesuwts == n-nyuww) {
+      if (twimgwesuwts != nyuww) {
+        f-facetwesuwts.getfacetfiewds().put(eawwybiwdfiewdconstant.images_facet, ^^;; twimgwesuwts);
       }
-      return;
+      wetuwn;
     }
 
-    if (twimgResults != null) {
-      imageResults.setTotalCount(imageResults.getTotalCount() + twimgResults.getTotalCount());
-      imageResults.setTotalPenalty(imageResults.getTotalPenalty() + twimgResults.getTotalPenalty());
-      imageResults.setTotalScore(imageResults.getTotalScore() + twimgResults.getTotalScore());
-      for (ThriftFacetCount count : twimgResults.getTopFacets()) {
-        imageResults.addToTopFacets(count);
+    i-if (twimgwesuwts != n-nyuww) {
+      imagewesuwts.settotawcount(imagewesuwts.gettotawcount() + t-twimgwesuwts.gettotawcount());
+      imagewesuwts.settotawpenawty(imagewesuwts.gettotawpenawty() + t-twimgwesuwts.gettotawpenawty());
+      imagewesuwts.settotawscowe(imagewesuwts.gettotawscowe() + t-twimgwesuwts.gettotawscowe());
+      f-fow (thwiftfacetcount count : twimgwesuwts.gettopfacets()) {
+        imagewesuwts.addtotopfacets(count);
       }
-      if (optionalSortComparator != null) {
-        Collections.sort(imageResults.topFacets, optionalSortComparator);
+      if (optionawsowtcompawatow != nyuww) {
+        cowwections.sowt(imagewesuwts.topfacets, ^^;; optionawsowtcompawatow);
       }
     }
   }
 
   /**
-   * Dedup twimg facets.
+   * dedup twimg facets. /(^•ω•^)
    *
-   * Twimg facet uses the status ID as the facet label, instead of the twimg URL, a.k.a.
-   * native photo URL. It is possible to have the same twimg URL appearing in two different
-   * facet label (RT style retweet? copy & paste the twimg URL?). Therefore, to dedup twimg
-   * facet correctly, we need to look at ThriftFacetCount.metadata.nativePhotoUrl
+   * twimg facet uses the status id as the facet wabew, nyaa~~ instead of t-the twimg uww, (✿oωo) a.k.a. ( ͡o ω ͡o )
+   * n-nyative photo uww. it is possibwe to h-have the same twimg u-uww appeawing i-in two diffewent
+   * facet wabew (wt s-stywe wetweet? copy & paste t-the twimg uww?). (U ᵕ U❁) t-thewefowe, to dedup twimg
+   * f-facet cowwectwy, òωó we nyeed to w-wook at thwiftfacetcount.metadata.nativephotouww
    *
-   * @param dedupSet A set holding the native URLs from the twimg facetFieldResults. By having
-   *                 the caller passing in the set, it allows the caller to dedup the facet
-   *                 across different ThriftFacetFieldResults.
-   * @param facetFieldResults The twimg facet field results to be debupped
-   * @param debugMessageBuilder
+   * @pawam d-dedupset a set howding the nyative uwws fwom t-the twimg facetfiewdwesuwts. σωσ b-by h-having
+   *                 t-the c-cawwew passing in t-the set, :3 it awwows t-the cawwew t-to dedup the facet
+   *                 a-acwoss diffewent thwiftfacetfiewdwesuwts. OwO
+   * @pawam f-facetfiewdwesuwts t-the twimg facet f-fiewd wesuwts to be debupped
+   * @pawam d-debugmessagebuiwdew
    */
-  public static void dedupTwimgFacet(Set<String> dedupSet,
-                                     ThriftFacetFieldResults facetFieldResults,
-                                     DebugMessageBuilder debugMessageBuilder) {
-    if (facetFieldResults == null || facetFieldResults.getTopFacets() == null) {
-      return;
+  pubwic static void deduptwimgfacet(set<stwing> d-dedupset, ^^
+                                     thwiftfacetfiewdwesuwts f-facetfiewdwesuwts,
+                                     d-debugmessagebuiwdew d-debugmessagebuiwdew) {
+    if (facetfiewdwesuwts == n-nyuww || facetfiewdwesuwts.gettopfacets() == n-nyuww) {
+      wetuwn;
     }
 
-    Iterator<ThriftFacetCount> iterator = facetFieldResults.getTopFacetsIterator();
+    i-itewatow<thwiftfacetcount> itewatow = f-facetfiewdwesuwts.gettopfacetsitewatow();
 
-    while (iterator.hasNext()) {
-      ThriftFacetCount count = iterator.next();
-      if (count.isSetMetadata() && count.getMetadata().isSetNativePhotoUrl()) {
-        String nativeUrl = count.getMetadata().getNativePhotoUrl();
+    whiwe (itewatow.hasnext()) {
+      thwiftfacetcount count = itewatow.next();
+      if (count.issetmetadata() && count.getmetadata().issetnativephotouww()) {
+        stwing nyativeuww = c-count.getmetadata().getnativephotouww();
 
-        if (dedupSet.contains(nativeUrl)) {
-          iterator.remove();
-          debugMessageBuilder.detailed("dedupTwimgFacet removed %s", nativeUrl);
-        } else {
-          dedupSet.add(nativeUrl);
+        if (dedupset.contains(nativeuww)) {
+          i-itewatow.wemove();
+          d-debugmessagebuiwdew.detaiwed("deduptwimgfacet wemoved %s", (˘ω˘) nyativeuww);
+        } ewse {
+          d-dedupset.add(nativeuww);
         }
       }
     }
@@ -266,230 +266,230 @@ public final class FacetsResultsUtils {
 
   }
 
-  private static final class LanguageCount {
-    private final ThriftLanguage lang;
-    private final double count;
-    private LanguageCount(ThriftLanguage lang, double count) {
-      this.lang = lang;
-      this.count = count;
+  pwivate static f-finaw cwass wanguagecount {
+    p-pwivate finaw thwiftwanguage w-wang;
+    pwivate finaw doubwe count;
+    p-pwivate w-wanguagecount(thwiftwanguage wang, OwO d-doubwe count) {
+      this.wang = wang;
+      t-this.count = count;
     }
   }
 
   /**
-   * Calculate the top languages and store them in the results.
+   * cawcuwate t-the top wanguages a-and stowe t-them in the wesuwts.
    */
-  public static void fillTopLanguages(FacetsResultsUtils.FacetFieldInfo info,
-                                      final ThriftFacetFieldResults results) {
-    double sumForLanguage = 0.0;
-    double[] sums = new double[ThriftLanguage.values().length];
-    for (Map.Entry<ThriftLanguage, Double> entry : info.languageHistogramEntries) {
-      sumForLanguage += entry.getValue();
-      if (entry.getKey() == null) {
-        // EB might be setting null key for unknown language. SEARCH-1294
-        continue;
+  pubwic s-static void f-fiwwtopwanguages(facetswesuwtsutiws.facetfiewdinfo i-info, UwU
+                                      f-finaw thwiftfacetfiewdwesuwts wesuwts) {
+    d-doubwe s-sumfowwanguage = 0.0;
+    d-doubwe[] s-sums = nyew d-doubwe[thwiftwanguage.vawues().wength];
+    fow (map.entwy<thwiftwanguage, ^•ﻌ•^ d-doubwe> e-entwy : info.wanguagehistogwamentwies) {
+      s-sumfowwanguage += entwy.getvawue();
+      if (entwy.getkey() == n-nuww) {
+        // eb might b-be setting nyuww key fow unknown w-wanguage. (ꈍᴗꈍ) seawch-1294
+        c-continue;
       }
-      sums[entry.getKey().getValue()] += entry.getValue();
+      s-sums[entwy.getkey().getvawue()] += entwy.getvawue();
     }
-    if (sumForLanguage == 0.0) {
-      return;
+    if (sumfowwanguage == 0.0) {
+      wetuwn;
     }
-    List<LanguageCount> langCounts = new ArrayList<>(ThriftLanguage.values().length);
-    for (int i = 0; i < sums.length; i++) {
-      if (sums[i] > 0.0) {
-        // ThriftLanguage.findByValue() might return null, which should fall back to UNKNOWN.
-        ThriftLanguage lang = ThriftLanguage.findByValue(i);
-        lang = lang == null ? ThriftLanguage.UNKNOWN : lang;
-        langCounts.add(new LanguageCount(lang, sums[i]));
+    w-wist<wanguagecount> w-wangcounts = nyew a-awwaywist<>(thwiftwanguage.vawues().wength);
+    fow (int i = 0; i < sums.wength; i++) {
+      i-if (sums[i] > 0.0) {
+        // t-thwiftwanguage.findbyvawue() might w-wetuwn nyuww, /(^•ω•^) w-which shouwd faww back to unknown. (U ᵕ U❁)
+        thwiftwanguage wang = t-thwiftwanguage.findbyvawue(i);
+        w-wang = w-wang == nyuww ? t-thwiftwanguage.unknown : wang;
+        wangcounts.add(new w-wanguagecount(wang, (✿oωo) sums[i]));
       }
     }
-    Collections.sort(langCounts, (left, right) -> Double.compare(right.count, left.count));
-    double percentageSum = 0.0;
-    Map<ThriftLanguage, Double> languageHistogramMap =
-        new HashMap<>(langCounts.size());
-    int numAdded = 0;
-    for (LanguageCount langCount : langCounts) {
-      if (langCount.count == 0.0) {
-        break;
+    c-cowwections.sowt(wangcounts, OwO (weft, :3 wight) -> doubwe.compawe(wight.count, nyaa~~ weft.count));
+    d-doubwe pewcentagesum = 0.0;
+    map<thwiftwanguage, ^•ﻌ•^ doubwe> w-wanguagehistogwammap =
+        nyew hashmap<>(wangcounts.size());
+    i-int nyumadded = 0;
+    f-fow (wanguagecount wangcount : w-wangcounts) {
+      i-if (wangcount.count == 0.0) {
+        bweak;
       }
-      double percentage = langCount.count / sumForLanguage;
-      if (percentageSum > MIN_PERCENTAGE_SUM_REQUIRED
-          && percentage < MIN_PERCENTAGE && numAdded >= 3) {
-        break;
+      doubwe p-pewcentage = wangcount.count / s-sumfowwanguage;
+      i-if (pewcentagesum > min_pewcentage_sum_wequiwed
+          && p-pewcentage < m-min_pewcentage && nyumadded >= 3) {
+        b-bweak;
       }
-      languageHistogramMap.put(langCount.lang, percentage);
-      percentageSum += percentage;
-      numAdded++;
+      w-wanguagehistogwammap.put(wangcount.wang, ( ͡o ω ͡o ) pewcentage);
+      p-pewcentagesum += pewcentage;
+      n-nyumadded++;
     }
-    results.setLanguageHistogram(languageHistogramMap);
+    wesuwts.setwanguagehistogwam(wanguagehistogwammap);
   }
 
   /**
-   * Replace "p.twimg.com/" part of the native photo (twimg) URL with "pbs.twimg.com/media/".
-   * We need to do this because of blobstore and it's suppose to be a temporary measure. This
-   * code should be removed once we verified that all native photo URL being sent to Search
-   * are prefixed with "pbs.twimg.com/media/" and no native photo URL in our index contains
+   * wepwace "p.twimg.com/" p-pawt of the n-nyative photo (twimg) u-uww with "pbs.twimg.com/media/". ^^;;
+   * we nyeed to do this because of bwobstowe and it's suppose to be a t-tempowawy measuwe. this
+   * code s-shouwd be wemoved o-once we vewified that aww native photo uww b-being sent to seawch
+   * awe pwefixed w-with "pbs.twimg.com/media/" a-and nyo nyative p-photo uww in o-ouw index contains
    * "p.twimg.com/"
    *
-   * Please see SEARCH-783 and EVENTS-539 for more details.
+   * p-pwease see seawch-783 and events-539 fow mowe detaiws. mya
    *
-   * @param response response containing the facet results
+   * @pawam wesponse wesponse containing t-the facet wesuwts
    */
-  public static void fixNativePhotoUrl(EarlybirdResponse response) {
-    if (response == null
-        || !response.isSetFacetResults()
-        || !response.getFacetResults().isSetFacetFields()) {
-      return;
+  p-pubwic static void fixnativephotouww(eawwybiwdwesponse wesponse) {
+    if (wesponse == n-nyuww
+        || !wesponse.issetfacetwesuwts()
+        || !wesponse.getfacetwesuwts().issetfacetfiewds()) {
+      wetuwn;
     }
 
-    for (Map.Entry<String, ThriftFacetFieldResults> facetMapEntry
-        : response.getFacetResults().getFacetFields().entrySet()) {
-      final String facetResultField = facetMapEntry.getKey();
+    fow (map.entwy<stwing, (U ᵕ U❁) thwiftfacetfiewdwesuwts> facetmapentwy
+        : w-wesponse.getfacetwesuwts().getfacetfiewds().entwyset()) {
+      f-finaw stwing facetwesuwtfiewd = f-facetmapentwy.getkey();
 
-      if (EarlybirdFieldConstant.TWIMG_FACET.equals(facetResultField)
-          || EarlybirdFieldConstant.IMAGES_FACET.equals(facetResultField)) {
-        ThriftFacetFieldResults facetFieldResults = facetMapEntry.getValue();
-        for (ThriftFacetCount facetCount : facetFieldResults.getTopFacets()) {
-          replacePhotoUrl(facetCount.getMetadata());
+      if (eawwybiwdfiewdconstant.twimg_facet.equaws(facetwesuwtfiewd)
+          || eawwybiwdfiewdconstant.images_facet.equaws(facetwesuwtfiewd)) {
+        t-thwiftfacetfiewdwesuwts f-facetfiewdwesuwts = facetmapentwy.getvawue();
+        f-fow (thwiftfacetcount facetcount : f-facetfiewdwesuwts.gettopfacets()) {
+          wepwacephotouww(facetcount.getmetadata());
         }
       }
     }
   }
 
   /**
-   * Replace "p.twimg.com/" part of the native photo (twimg) URL with "pbs.twimg.com/media/".
-   * We need to do this because of blobstore and it's suppose to be a temporary measure. This
-   * code should be removed once we verified that all native photo URL being sent to Search
-   * are prefixed with "pbs.twimg.com/media/" and no native photo URL in our index contains
+   * wepwace "p.twimg.com/" pawt of the nyative p-photo (twimg) uww with "pbs.twimg.com/media/". ^•ﻌ•^
+   * we nyeed t-to do this because o-of bwobstowe a-and it's suppose to be a tempowawy measuwe. (U ﹏ U) this
+   * c-code shouwd be wemoved once we vewified that aww nyative photo uww being s-sent to seawch
+   * a-awe pwefixed w-with "pbs.twimg.com/media/" a-and nyo native photo uww in ouw index c-contains
    * "p.twimg.com/"
    *
-   * Please see SEARCH-783 and EVENTS-539 for more details.
+   * p-pwease see seawch-783 and events-539 f-fow mowe detaiws. /(^•ω•^)
    *
-   * @param termResultsCollection collection of ThriftTermResults containing the native photo URL
+   * @pawam tewmwesuwtscowwection cowwection o-of thwifttewmwesuwts containing the nyative p-photo uww
    */
-  public static void fixNativePhotoUrl(Collection<ThriftTermResults> termResultsCollection) {
-    if (termResultsCollection == null) {
-      return;
+  p-pubwic static void fixnativephotouww(cowwection<thwifttewmwesuwts> t-tewmwesuwtscowwection) {
+    i-if (tewmwesuwtscowwection == nyuww) {
+      w-wetuwn;
     }
 
-    for (ThriftTermResults termResults : termResultsCollection) {
-      if (!termResults.isSetMetadata()) {
+    fow (thwifttewmwesuwts tewmwesuwts : t-tewmwesuwtscowwection) {
+      if (!tewmwesuwts.issetmetadata()) {
         continue;
       }
-      replacePhotoUrl(termResults.getMetadata());
+      w-wepwacephotouww(tewmwesuwts.getmetadata());
     }
   }
 
   /**
-   * Helper function for fixNativePhotoUrl()
+   * hewpew function fow fixnativephotouww()
    */
-  private static void replacePhotoUrl(ThriftFacetCountMetadata metadata) {
-    if (metadata != null
-        && metadata.isSetNativePhotoUrl()) {
-      String nativePhotoUrl = metadata.getNativePhotoUrl();
-      nativePhotoUrl = nativePhotoUrl.replace("://p.twimg.com/", "://pbs.twimg.com/media/");
-      metadata.setNativePhotoUrl(nativePhotoUrl);
+  pwivate s-static void wepwacephotouww(thwiftfacetcountmetadata m-metadata) {
+    i-if (metadata != n-nuww
+        && m-metadata.issetnativephotouww()) {
+      stwing nyativephotouww = m-metadata.getnativephotouww();
+      nyativephotouww = nyativephotouww.wepwace("://p.twimg.com/", ʘwʘ "://pbs.twimg.com/media/");
+      metadata.setnativephotouww(nativephotouww);
     }
   }
 
   /**
-   * Deepcopy of an EarlybirdResponse without explanation
+   * d-deepcopy of an eawwybiwdwesponse without e-expwanation
    */
-  public static EarlybirdResponse deepCopyWithoutExplanation(EarlybirdResponse facetsResponse) {
-    if (facetsResponse == null) {
-      return null;
-    } else if (!facetsResponse.isSetFacetResults()
-        || facetsResponse.getFacetResults().getFacetFieldsSize() == 0) {
-      return facetsResponse.deepCopy();
+  pubwic static eawwybiwdwesponse d-deepcopywithoutexpwanation(eawwybiwdwesponse f-facetswesponse) {
+    if (facetswesponse == n-nyuww) {
+      wetuwn nyuww;
+    } e-ewse if (!facetswesponse.issetfacetwesuwts()
+        || facetswesponse.getfacetwesuwts().getfacetfiewdssize() == 0) {
+      w-wetuwn facetswesponse.deepcopy();
     }
-    EarlybirdResponse copy = facetsResponse.deepCopy();
-    for (Map.Entry<String, ThriftFacetFieldResults> entry
-        : copy.getFacetResults().getFacetFields().entrySet()) {
-      if (entry.getValue().getTopFacetsSize() > 0) {
-        for (ThriftFacetCount fc : entry.getValue().getTopFacets()) {
-          fc.getMetadata().unsetExplanation();
+    eawwybiwdwesponse copy = facetswesponse.deepcopy();
+    f-fow (map.entwy<stwing, XD t-thwiftfacetfiewdwesuwts> entwy
+        : c-copy.getfacetwesuwts().getfacetfiewds().entwyset()) {
+      if (entwy.getvawue().gettopfacetssize() > 0) {
+        fow (thwiftfacetcount fc : entwy.getvawue().gettopfacets()) {
+          f-fc.getmetadata().unsetexpwanation();
         }
       }
     }
-    return copy;
+    wetuwn copy;
   }
 
   /**
-   * Returns a comparator used to compare facet counts by calling
-   * getFacetCountComparator(ThriftFacetFinalSortOrder).  The sort order is determined by
-   * the facetRankingOptions on the facet request.
+   * w-wetuwns a compawatow used to compawe facet counts b-by cawwing
+   * g-getfacetcountcompawatow(thwiftfacetfinawsowtowdew). (⑅˘꒳˘)  t-the sowt owdew is detewmined b-by
+   * the f-facetwankingoptions on the facet w-wequest. nyaa~~
    */
-  public static Comparator<ThriftFacetCount> getFacetCountComparator(
-      ThriftFacetRequest facetRequest) {
+  pubwic static c-compawatow<thwiftfacetcount> getfacetcountcompawatow(
+      t-thwiftfacetwequest facetwequest) {
 
-    ThriftFacetFinalSortOrder sortOrder = ThriftFacetFinalSortOrder.SCORE;
+    t-thwiftfacetfinawsowtowdew sowtowdew = thwiftfacetfinawsowtowdew.scowe;
 
-    if (facetRequest.isSetFacetRankingOptions()
-        && facetRequest.getFacetRankingOptions().isSetFinalSortOrder()) {
-      sortOrder = facetRequest.getFacetRankingOptions().getFinalSortOrder();
+    if (facetwequest.issetfacetwankingoptions()
+        && facetwequest.getfacetwankingoptions().issetfinawsowtowdew()) {
+      s-sowtowdew = f-facetwequest.getfacetwankingoptions().getfinawsowtowdew();
     }
 
-    return getFacetCountComparator(sortOrder);
+    wetuwn getfacetcountcompawatow(sowtowdew);
   }
 
   /**
-   * Returns a comparator using the specified order.
+   * wetuwns a-a compawatow using the specified o-owdew. UwU
    */
-  public static Comparator<ThriftFacetCount> getFacetCountComparator(
-      ThriftFacetFinalSortOrder sortOrder) {
+  p-pubwic static compawatow<thwiftfacetcount> getfacetcountcompawatow(
+      thwiftfacetfinawsowtowdew sowtowdew) {
 
-    switch (sortOrder) {
-      case SIMPLE_COUNT:   return SIMPLE_COUNT_COMPARATOR;
-      case SCORE:          return SCORE_COMPARATOR;
-      case CREATED_AT:     return CREATED_AT_COMPARATOR;
-      case WEIGHTED_COUNT: return WEIGHTED_COUNT_COMPARATOR;
-      default:             return SCORE_COMPARATOR;
+    switch (sowtowdew) {
+      c-case simpwe_count:   wetuwn simpwe_count_compawatow;
+      case s-scowe:          wetuwn scowe_compawatow;
+      c-case cweated_at:     w-wetuwn cweated_at_compawatow;
+      case weighted_count: wetuwn w-weighted_count_compawatow;
+      d-defauwt:             w-wetuwn s-scowe_compawatow;
     }
   }
 
-  private static final Comparator<ThriftFacetCount> SIMPLE_COUNT_COMPARATOR =
-      (count1, count2) -> {
-        if (count1.simpleCount > count2.simpleCount) {
-          return 1;
-        } else if (count1.simpleCount < count2.simpleCount) {
-          return -1;
+  p-pwivate static f-finaw compawatow<thwiftfacetcount> simpwe_count_compawatow =
+      (count1, (˘ω˘) count2) -> {
+        if (count1.simpwecount > count2.simpwecount) {
+          wetuwn 1;
+        } ewse i-if (count1.simpwecount < c-count2.simpwecount) {
+          w-wetuwn -1;
         }
 
-        return count1.facetLabel.compareTo(count2.facetLabel);
+        w-wetuwn c-count1.facetwabew.compaweto(count2.facetwabew);
       };
 
-  private static final Comparator<ThriftFacetCount> WEIGHTED_COUNT_COMPARATOR =
-      (count1, count2) -> {
-        if (count1.weightedCount > count2.weightedCount) {
-          return 1;
-        } else if (count1.weightedCount < count2.weightedCount) {
-          return -1;
+  p-pwivate static finaw compawatow<thwiftfacetcount> weighted_count_compawatow =
+      (count1, rawr x3 count2) -> {
+        i-if (count1.weightedcount > c-count2.weightedcount) {
+          wetuwn 1;
+        } ewse if (count1.weightedcount < count2.weightedcount) {
+          w-wetuwn -1;
         }
 
-        return SIMPLE_COUNT_COMPARATOR.compare(count1, count2);
+        w-wetuwn simpwe_count_compawatow.compawe(count1, c-count2);
       };
 
-  private static final Comparator<ThriftFacetCount> SCORE_COMPARATOR =
-      (count1, count2) -> {
-        if (count1.score > count2.score) {
-          return 1;
-        } else if (count1.score < count2.score) {
-          return -1;
+  pwivate static finaw compawatow<thwiftfacetcount> s-scowe_compawatow =
+      (count1, (///ˬ///✿) count2) -> {
+        if (count1.scowe > c-count2.scowe) {
+          w-wetuwn 1;
+        } ewse if (count1.scowe < count2.scowe) {
+          w-wetuwn -1;
         }
-        return SIMPLE_COUNT_COMPARATOR.compare(count1, count2);
+        wetuwn s-simpwe_count_compawatow.compawe(count1, 😳😳😳 c-count2);
       };
 
-  private static final Comparator<ThriftFacetCount> CREATED_AT_COMPARATOR =
-      (count1, count2) -> {
-        if (count1.isSetMetadata() && count1.getMetadata().isSetCreated_at()
-            && count2.isSetMetadata() && count2.getMetadata().isSetCreated_at()) {
-          // more recent items have higher created_at values
-          if (count1.getMetadata().getCreated_at() > count2.getMetadata().getCreated_at()) {
-            return 1;
-          } else if (count1.getMetadata().getCreated_at() < count2.getMetadata().getCreated_at()) {
-            return -1;
+  pwivate static f-finaw compawatow<thwiftfacetcount> c-cweated_at_compawatow =
+      (count1, (///ˬ///✿) c-count2) -> {
+        i-if (count1.issetmetadata() && c-count1.getmetadata().issetcweated_at()
+            && c-count2.issetmetadata() && count2.getmetadata().issetcweated_at()) {
+          // m-mowe wecent i-items have highew cweated_at vawues
+          if (count1.getmetadata().getcweated_at() > c-count2.getmetadata().getcweated_at()) {
+            wetuwn 1;
+          } ewse if (count1.getmetadata().getcweated_at() < c-count2.getmetadata().getcweated_at()) {
+            wetuwn -1;
           }
         }
 
-        return SCORE_COMPARATOR.compare(count1, count2);
+        w-wetuwn scowe_compawatow.compawe(count1, ^^;; count2);
       };
 }

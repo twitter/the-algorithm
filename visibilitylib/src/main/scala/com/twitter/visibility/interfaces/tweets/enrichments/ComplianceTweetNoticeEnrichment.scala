@@ -1,55 +1,55 @@
-package com.twitter.visibility.interfaces.tweets.enrichments
+package com.twittew.visibiwity.intewfaces.tweets.enwichments
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.results.richtext.PublicInterestReasonToPlainText
-import com.twitter.visibility.rules.Action
-import com.twitter.visibility.rules.ComplianceTweetNoticePreEnrichment
-import com.twitter.visibility.rules.PublicInterest
-import com.twitter.visibility.rules.Reason
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.visibiwity.buiwdew.visibiwitywesuwt
+i-impowt com.twittew.visibiwity.wesuwts.wichtext.pubwicintewestweasontopwaintext
+i-impowt com.twittew.visibiwity.wuwes.action
+i-impowt c-com.twittew.visibiwity.wuwes.compwiancetweetnoticepweenwichment
+i-impowt com.twittew.visibiwity.wuwes.pubwicintewest
+impowt com.twittew.visibiwity.wuwes.weason
 
-object ComplianceTweetNoticeEnrichment {
-  val ComplianceTweetNoticeEnrichmentScope = "compliance_tweet_notice_enrichment"
-  val ComplianceTweetNoticePreEnrichmentActionScope =
-    "compliance_tweet_notice_pre_enrichment_action"
+object compwiancetweetnoticeenwichment {
+  vaw compwiancetweetnoticeenwichmentscope = "compwiance_tweet_notice_enwichment"
+  v-vaw compwiancetweetnoticepweenwichmentactionscope =
+    "compwiance_tweet_notice_pwe_enwichment_action"
 
-  val englishLanguageTag = "en"
+  vaw engwishwanguagetag = "en"
 
-  def apply(result: VisibilityResult, statsReceiver: StatsReceiver): VisibilityResult = {
-    val scopedStatsReceiver = statsReceiver.scope(ComplianceTweetNoticeEnrichmentScope)
+  def a-appwy(wesuwt: visibiwitywesuwt, rawr x3 statsweceivew: statsweceivew): visibiwitywesuwt = {
+    v-vaw scopedstatsweceivew = statsweceivew.scope(compwiancetweetnoticeenwichmentscope)
 
-    val enrichedVerdict = enrichVerdict(result.verdict, scopedStatsReceiver)
-    result.copy(verdict = enrichedVerdict)
+    vaw enwichedvewdict = enwichvewdict(wesuwt.vewdict, (U ﹏ U) s-scopedstatsweceivew)
+    wesuwt.copy(vewdict = e-enwichedvewdict)
   }
 
-  private def enrichVerdict(
-    verdict: Action,
-    statsReceiver: StatsReceiver
-  ): Action = {
-    val preEnrichmentActionScope =
-      statsReceiver.scope(ComplianceTweetNoticePreEnrichmentActionScope)
+  p-pwivate def enwichvewdict(
+    vewdict: action, (U ﹏ U)
+    statsweceivew: statsweceivew
+  ): a-action = {
+    vaw pweenwichmentactionscope =
+      statsweceivew.scope(compwiancetweetnoticepweenwichmentactionscope)
 
-    verdict match {
-      case complianceTweetNoticePreEnrichmentVerdict: ComplianceTweetNoticePreEnrichment =>
-        preEnrichmentActionScope.counter("").incr()
+    vewdict match {
+      c-case compwiancetweetnoticepweenwichmentvewdict: compwiancetweetnoticepweenwichment =>
+        p-pweenwichmentactionscope.countew("").incw()
 
-        val verdictWithDetailsAndUrl = complianceTweetNoticePreEnrichmentVerdict.reason match {
-          case Reason.Unspecified =>
-            preEnrichmentActionScope.counter("reason_unspecified").incr()
-            complianceTweetNoticePreEnrichmentVerdict
+        v-vaw vewdictwithdetaiwsanduww = c-compwiancetweetnoticepweenwichmentvewdict.weason m-match {
+          case weason.unspecified =>
+            pweenwichmentactionscope.countew("weason_unspecified").incw()
+            c-compwiancetweetnoticepweenwichmentvewdict
 
-          case reason =>
-            preEnrichmentActionScope.counter("reason_specified").incr()
-            val safetyResultReason = PublicInterest.ReasonToSafetyResultReason(reason)
-            val (details, url) =
-              PublicInterestReasonToPlainText(safetyResultReason, englishLanguageTag)
-            complianceTweetNoticePreEnrichmentVerdict.copy(
-              details = Some(details),
-              extendedDetailsUrl = Some(url))
+          case weason =>
+            pweenwichmentactionscope.countew("weason_specified").incw()
+            v-vaw safetywesuwtweason = pubwicintewest.weasontosafetywesuwtweason(weason)
+            vaw (detaiws, (⑅˘꒳˘) uww) =
+              pubwicintewestweasontopwaintext(safetywesuwtweason, òωó engwishwanguagetag)
+            c-compwiancetweetnoticepweenwichmentvewdict.copy(
+              detaiws = s-some(detaiws), ʘwʘ
+              e-extendeddetaiwsuww = s-some(uww))
         }
-        verdictWithDetailsAndUrl.toComplianceTweetNotice()
+        vewdictwithdetaiwsanduww.tocompwiancetweetnotice()
 
-      case _ => verdict
+      case _ => vewdict
     }
   }
 }

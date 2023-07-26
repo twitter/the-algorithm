@@ -1,61 +1,61 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow
 
-import com.twitter.home_mixer.model.HomeFeatures.AncestorsFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.tweetconvosvc.tweet_ancestor.{thriftscala => ta}
-import com.twitter.tweetconvosvc.{thriftscala => tcs}
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.modew.homefeatuwes.ancestowsfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.inwepwytotweetidfeatuwe
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.candidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.utiw.offwoadfutuwepoows
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.tweetconvosvc.tweet_ancestow.{thwiftscawa => ta}
+impowt com.twittew.tweetconvosvc.{thwiftscawa => t-tcs}
+impowt com.twittew.utiw.futuwe
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class AncestorFeatureHydrator @Inject() (
-  conversationServiceClient: tcs.ConversationService.MethodPerEndpoint)
-    extends CandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@singweton
+cwass ancestowfeatuwehydwatow @inject() (
+  c-convewsationsewvicecwient: tcs.convewsationsewvice.methodpewendpoint)
+    e-extends candidatefeatuwehydwatow[pipewinequewy, (U ﹏ U) t-tweetcandidate] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("Ancestor")
+  ovewwide vaw identifiew: featuwehydwatowidentifiew = featuwehydwatowidentifiew("ancestow")
 
-  override val features: Set[Feature[_, _]] = Set(AncestorsFeature)
+  ovewwide v-vaw featuwes: set[featuwe[_, (///ˬ///✿) _]] = set(ancestowsfeatuwe)
 
-  private val DefaultFeatureMap = FeatureMapBuilder().add(AncestorsFeature, Seq.empty).build()
+  pwivate vaw defauwtfeatuwemap = featuwemapbuiwdew().add(ancestowsfeatuwe, >w< s-seq.empty).buiwd()
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = OffloadFuturePools.offloadFuture {
-    if (existingFeatures.getOrElse(InReplyToTweetIdFeature, None).isDefined) {
-      val ancestorsRequest = tcs.GetAncestorsRequest(Seq(candidate.id))
-      conversationServiceClient.getAncestors(ancestorsRequest).map { getAncestorsResponse =>
-        val ancestors = getAncestorsResponse.ancestors.headOption
-          .collect {
-            case tcs.TweetAncestorsResult.TweetAncestors(ancestorsResult)
-                if ancestorsResult.nonEmpty =>
-              ancestorsResult.head.ancestors ++ getTruncatedRootTweet(ancestorsResult.head)
-          }.getOrElse(Seq.empty)
+  ovewwide d-def appwy(
+    q-quewy: pipewinequewy, rawr
+    candidate: t-tweetcandidate,
+    e-existingfeatuwes: featuwemap
+  ): stitch[featuwemap] = o-offwoadfutuwepoows.offwoadfutuwe {
+    if (existingfeatuwes.getowewse(inwepwytotweetidfeatuwe, mya nyone).isdefined) {
+      v-vaw ancestowswequest = tcs.getancestowswequest(seq(candidate.id))
+      convewsationsewvicecwient.getancestows(ancestowswequest).map { getancestowswesponse =>
+        vaw ancestows = g-getancestowswesponse.ancestows.headoption
+          .cowwect {
+            case tcs.tweetancestowswesuwt.tweetancestows(ancestowswesuwt)
+                i-if a-ancestowswesuwt.nonempty =>
+              a-ancestowswesuwt.head.ancestows ++ gettwuncatedwoottweet(ancestowswesuwt.head)
+          }.getowewse(seq.empty)
 
-        FeatureMapBuilder().add(AncestorsFeature, ancestors).build()
+        featuwemapbuiwdew().add(ancestowsfeatuwe, ^^ ancestows).buiwd()
       }
-    } else Future.value(DefaultFeatureMap)
+    } e-ewse f-futuwe.vawue(defauwtfeatuwemap)
   }
 
-  private def getTruncatedRootTweet(
-    ancestors: ta.TweetAncestors,
-  ): Option[ta.TweetAncestor] = {
-    ancestors.conversationRootAuthorId.collect {
-      case rootAuthorId
-          if ancestors.state == ta.ReplyState.Partial &&
-            ancestors.ancestors.last.tweetId != ancestors.conversationId =>
-        ta.TweetAncestor(ancestors.conversationId, rootAuthorId)
+  pwivate d-def gettwuncatedwoottweet(
+    a-ancestows: ta.tweetancestows, 😳😳😳
+  ): option[ta.tweetancestow] = {
+    a-ancestows.convewsationwootauthowid.cowwect {
+      case wootauthowid
+          i-if ancestows.state == ta.wepwystate.pawtiaw &&
+            ancestows.ancestows.wast.tweetid != ancestows.convewsationid =>
+        t-ta.tweetancestow(ancestows.convewsationid, mya wootauthowid)
     }
   }
 }

@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet_composer
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tweet_composew
 
-sealed trait TweetComposerDisplayType
+seawed t-twait tweetcomposewdispwaytype
 
-case object TweetComposerSelfThread extends TweetComposerDisplayType
-case object Reply extends TweetComposerDisplayType
+c-case object tweetcomposewsewfthwead e-extends tweetcomposewdispwaytype
+c-case object w-wepwy extends t-tweetcomposewdispwaytype

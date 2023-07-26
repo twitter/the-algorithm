@@ -1,41 +1,41 @@
-package com.twitter.product_mixer.component_library.decorator.slice
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.swice
 
-import com.twitter.product_mixer.component_library.model.candidate.CursorCandidate
-import com.twitter.product_mixer.component_library.model.presentation.slice.SliceItemPresentation
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.DecoratorIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.functional_component.decorator.slice.builder.CandidateSliceItemBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.stitch.Stitch
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.cuwsowcandidate
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.pwesentation.swice.swiceitempwesentation
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.decowatowidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.swice.cuwsowitem
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.candidatedecowatow
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.decowation
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.swice.buiwdew.candidateswiceitembuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt c-com.twittew.stitch.stitch
 
 /**
- * Adds a [[Decoration]] for all `candidates` that are [[CursorCandidate]]s
+ * adds a [[decowation]] f-fow aww `candidates` that awe [[cuwsowcandidate]]s
  *
- * @note Only [[CursorCandidate]]s get decorated in [[SliceItemCandidateDecorator]]
- *       because the [[com.twitter.product_mixer.component_library.premarshaller.slice.SliceDomainMarshaller]]
- *       handles the undecorated non-[[CursorCandidate]] `candidates` directly.
+ * @note onwy [[cuwsowcandidate]]s g-get decowated in [[swiceitemcandidatedecowatow]]
+ *       because t-the [[com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.swice.swicedomainmawshawwew]]
+ *       h-handwes the undecowated nyon-[[cuwsowcandidate]] `candidates` diwectwy. ʘwʘ
  */
-case class SliceItemCandidateDecorator[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-  cursorBuilder: CandidateSliceItemBuilder[Query, CursorCandidate, CursorItem],
-  override val identifier: DecoratorIdentifier = DecoratorIdentifier("SliceItemCandidate"))
-    extends CandidateDecorator[Query, Candidate] {
+case cwass s-swiceitemcandidatedecowatow[quewy <: pipewinequewy, /(^•ω•^) candidate <: univewsawnoun[any]](
+  cuwsowbuiwdew: c-candidateswiceitembuiwdew[quewy, ʘwʘ cuwsowcandidate, σωσ c-cuwsowitem], OwO
+  o-ovewwide v-vaw identifiew: d-decowatowidentifiew = decowatowidentifiew("swiceitemcandidate"))
+    extends candidatedecowatow[quewy, 😳😳😳 c-candidate] {
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[Seq[Decoration]] = {
-    val cursorPresentations = candidates.collect {
-      case CandidateWithFeatures(candidate: CursorCandidate, features) =>
-        val cursorItem = cursorBuilder(query, candidate, features)
-        val presentation = SliceItemPresentation(sliceItem = cursorItem)
+  ovewwide def appwy(
+    q-quewy: quewy, 😳😳😳
+    candidates: seq[candidatewithfeatuwes[candidate]]
+  ): stitch[seq[decowation]] = {
+    vaw cuwsowpwesentations = candidates.cowwect {
+      case candidatewithfeatuwes(candidate: c-cuwsowcandidate, o.O featuwes) =>
+        v-vaw cuwsowitem = c-cuwsowbuiwdew(quewy, ( ͡o ω ͡o ) c-candidate, featuwes)
+        vaw pwesentation = swiceitempwesentation(swiceitem = c-cuwsowitem)
 
-        Decoration(candidate, presentation)
+        d-decowation(candidate, (U ﹏ U) pwesentation)
     }
 
-    Stitch.value(cursorPresentations)
+    s-stitch.vawue(cuwsowpwesentations)
   }
 }

@@ -1,20 +1,20 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    scalac_plugins = ["no-roomba"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common/presentation",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
+scawa_wibwawy(
+    souwces = ["*.scawa"], (U ᵕ U❁)
+    compiwew_option_sets = ["fataw_wawnings"], (⑅˘꒳˘)
+    p-pwatfowm = "java8", ( ͡o ω ͡o )
+    s-scawac_pwugins = ["no-woomba"], UwU
+    s-stwict_deps = t-twue, rawr x3
+    t-tags = ["bazew-compatibwe"], rawr
+    d-dependencies = [
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/featuwe", σωσ
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/modew/common", σωσ
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/modew/common/pwesentation", >_<
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine", :3
     ],
-    exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common/presentation",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
+    e-expowts = [
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/featuwe", (U ﹏ U)
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/modew/common", -.-
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/modew/common/pwesentation", (ˆ ﻌ ˆ)♡
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine", (⑅˘꒳˘)
     ],
 )

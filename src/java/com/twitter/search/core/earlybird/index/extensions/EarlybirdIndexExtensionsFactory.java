@@ -1,19 +1,19 @@
-package com.twitter.search.core.earlybird.index.extensions;
+package com.twittew.seawch.cowe.eawwybiwd.index.extensions;
 
 /**
- * Base class to implement factories that create realtime and Lucene index extensions.
+ * base cwass to i-impwement factowies t-that cweate w-weawtime and wucene i-index extensions. rawr x3
  *
- * The factory needs to be able to create instances for new segments, as well as load
- * index extensions of existing segments from disk.
+ * t-the f-factowy nyeeds t-to be abwe to cweate i-instances fow nyew segments, nyaa~~ as weww as woad
+ * index extensions of existing s-segments fwom disk. /(^•ω•^)
  */
-public abstract class EarlybirdIndexExtensionsFactory {
+pubwic abstwact cwass e-eawwybiwdindexextensionsfactowy {
   /**
-   * Returns the {@link EarlybirdRealtimeIndexExtensionsData} instance to be used for a new segment.
+   * wetuwns t-the {@wink eawwybiwdweawtimeindexextensionsdata} instance to be used fow a n-nyew segment. rawr
    */
-  public abstract EarlybirdRealtimeIndexExtensionsData newRealtimeIndexExtensionsData();
+  pubwic abstwact e-eawwybiwdweawtimeindexextensionsdata n-nyewweawtimeindexextensionsdata();
 
   /**
-   * Returns the {@link EarlybirdIndexExtensionsData} instance to be used for a new Lucene segment.
+   * wetuwns the {@wink eawwybiwdindexextensionsdata} instance to be used fow a-a nyew wucene segment. OwO
    */
-  public abstract EarlybirdIndexExtensionsData newLuceneIndexExtensionsData();
+  pubwic abstwact eawwybiwdindexextensionsdata nyewwuceneindexextensionsdata();
 }

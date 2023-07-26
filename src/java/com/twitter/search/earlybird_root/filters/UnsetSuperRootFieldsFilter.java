@@ -1,30 +1,30 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestUtil;
-import com.twitter.util.Future;
+impowt com.twittew.finagwe.sewvice;
+i-impowt com.twittew.finagwe.simpwefiwtew;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestutiw;
+i-impowt com.twittew.utiw.futuwe;
 
 /**
- * A filter that unsets some request fields that make sense only on the SuperRoot, before sending
- * them to the individual roots.
+ * a-a fiwtew that unsets some wequest fiewds that make sense onwy on the supewwoot, rawr b-befowe sending
+ * them to the individuaw w-woots. OwO
  */
-public class UnsetSuperRootFieldsFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private final boolean unsetFollowedUserIds;
+pubwic cwass unsetsupewwootfiewdsfiwtew e-extends simpwefiwtew<eawwybiwdwequest, (U ﹏ U) eawwybiwdwesponse> {
+  pwivate finaw boowean unsetfowwowedusewids;
 
-  public UnsetSuperRootFieldsFilter() {
-    this(true);
+  p-pubwic unsetsupewwootfiewdsfiwtew() {
+    this(twue);
   }
 
-  public UnsetSuperRootFieldsFilter(boolean unsetFollowedUserIds) {
-    this.unsetFollowedUserIds = unsetFollowedUserIds;
+  pubwic u-unsetsupewwootfiewdsfiwtew(boowean u-unsetfowwowedusewids) {
+    this.unsetfowwowedusewids = unsetfowwowedusewids;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    return service.apply(EarlybirdRequestUtil.unsetSuperRootFields(request, unsetFollowedUserIds));
+  @ovewwide
+  pubwic futuwe<eawwybiwdwesponse> a-appwy(eawwybiwdwequest wequest, >_<
+                                         sewvice<eawwybiwdwequest, rawr x3 eawwybiwdwesponse> sewvice) {
+    w-wetuwn sewvice.appwy(eawwybiwdwequestutiw.unsetsupewwootfiewds(wequest, mya unsetfowwowedusewids));
   }
 }

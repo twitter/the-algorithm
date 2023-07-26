@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.core.pipeline.mixer
+package com.twittew.pwoduct_mixew.cowe.pipewine.mixew
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineBuilderFactory
-import com.twitter.product_mixer.core.service.candidate_pipeline_executor.CandidatePipelineExecutor
-import com.twitter.product_mixer.core.service.domain_marshaller_executor.DomainMarshallerExecutor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutor
-import com.twitter.product_mixer.core.service.pipeline_result_side_effect_executor.PipelineResultSideEffectExecutor
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutor
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutor
-import com.twitter.product_mixer.core.service.transport_marshaller_executor.TransportMarshallerExecutor
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.hasmawshawwing
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewinebuiwdewfactowy
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_pipewine_executow.candidatepipewineexecutow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.domain_mawshawwew_executow.domainmawshawwewexecutow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow.gateexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_wesuwt_side_effect_executow.pipewinewesuwtsideeffectexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.async_featuwe_map_executow.asyncfeatuwemapexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.quewy_featuwe_hydwatow_executow.quewyfeatuwehydwatowexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.sewectow_executow.sewectowexecutow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.twanspowt_mawshawwew_executow.twanspowtmawshawwewexecutow
 
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class MixerPipelineBuilderFactory @Inject() (
-  candidatePipelineExecutor: CandidatePipelineExecutor,
-  gateExecutor: GateExecutor,
-  selectorExecutor: SelectorExecutor,
-  queryFeatureHydratorExecutor: QueryFeatureHydratorExecutor,
-  asyncFeatureMapExecutor: AsyncFeatureMapExecutor,
-  domainMarshallerExecutor: DomainMarshallerExecutor,
-  transportMarshallerExecutor: TransportMarshallerExecutor,
-  pipelineResultSideEffectExecutor: PipelineResultSideEffectExecutor,
-  candidatePipelineBuilderFactory: CandidatePipelineBuilderFactory,
-  statsReceiver: StatsReceiver) {
-  def get[
-    Query <: PipelineQuery,
-    DomainResultType <: HasMarshalling,
-    Result
-  ]: MixerPipelineBuilder[Query, DomainResultType, Result] = {
-    new MixerPipelineBuilder[Query, DomainResultType, Result](
-      candidatePipelineExecutor,
-      gateExecutor,
-      selectorExecutor,
-      queryFeatureHydratorExecutor,
-      asyncFeatureMapExecutor,
-      domainMarshallerExecutor,
-      transportMarshallerExecutor,
-      pipelineResultSideEffectExecutor,
-      candidatePipelineBuilderFactory,
-      statsReceiver
+@singweton
+cwass mixewpipewinebuiwdewfactowy @inject() (
+  c-candidatepipewineexecutow: candidatepipewineexecutow, (U ﹏ U)
+  gateexecutow: gateexecutow, (U ﹏ U)
+  s-sewectowexecutow: sewectowexecutow, (⑅˘꒳˘)
+  q-quewyfeatuwehydwatowexecutow: q-quewyfeatuwehydwatowexecutow, òωó
+  asyncfeatuwemapexecutow: asyncfeatuwemapexecutow, ʘwʘ
+  domainmawshawwewexecutow: domainmawshawwewexecutow, /(^•ω•^)
+  t-twanspowtmawshawwewexecutow: twanspowtmawshawwewexecutow, ʘwʘ
+  pipewinewesuwtsideeffectexecutow: pipewinewesuwtsideeffectexecutow, σωσ
+  candidatepipewinebuiwdewfactowy: c-candidatepipewinebuiwdewfactowy, OwO
+  statsweceivew: s-statsweceivew) {
+  d-def g-get[
+    quewy <: p-pipewinequewy, 😳😳😳
+    domainwesuwttype <: hasmawshawwing, 😳😳😳
+    w-wesuwt
+  ]: mixewpipewinebuiwdew[quewy, o.O domainwesuwttype, ( ͡o ω ͡o ) w-wesuwt] = {
+    nyew mixewpipewinebuiwdew[quewy, (U ﹏ U) domainwesuwttype, (///ˬ///✿) wesuwt](
+      candidatepipewineexecutow,
+      gateexecutow, >w<
+      s-sewectowexecutow, rawr
+      quewyfeatuwehydwatowexecutow, mya
+      a-asyncfeatuwemapexecutow, ^^
+      d-domainmawshawwewexecutow, 😳😳😳
+      t-twanspowtmawshawwewexecutow, mya
+      pipewinewesuwtsideeffectexecutow, 😳
+      candidatepipewinebuiwdewfactowy, -.-
+      statsweceivew
     )
   }
 }

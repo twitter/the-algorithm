@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.awewt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.Navigate
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.NewTweets
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.awewt.navigate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.awewt.newtweets
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.awewt.showawewttype
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class ShowAlertTypeMarshaller @Inject() () {
+@singweton
+cwass showawewttypemawshawwew @inject() () {
 
-  def apply(alertType: ShowAlertType): urt.AlertType = alertType match {
-    case NewTweets => urt.AlertType.NewTweets
-    case Navigate => urt.AlertType.Navigate
+  def appwy(awewttype: showawewttype): uwt.awewttype = awewttype match {
+    c-case nyewtweets => uwt.awewttype.newtweets
+    case nyavigate => u-uwt.awewttype.navigate
   }
 }

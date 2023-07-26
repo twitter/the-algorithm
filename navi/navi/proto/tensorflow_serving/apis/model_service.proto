@@ -1,24 +1,24 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-option cc_enable_arenas = true;
+option cc_enabwe_awenas = twue;
 
-import "tensorflow_serving/apis/get_model_status.proto";
-import "tensorflow_serving/apis/model_management.proto";
+i-impowt "tensowfwow_sewving/apis/get_modew_status.pwoto";
+i-impowt "tensowfwow_sewving/apis/modew_management.pwoto";
 
-package tensorflow.serving;
+p-package tensowfwow.sewving;
 
-// ModelService provides methods to query and update the state of the server,
-// e.g. which models/versions are being served.
-service ModelService {
-  // Gets status of model. If the ModelSpec in the request does not specify
-  // version, information about all versions of the model will be returned. If
-  // the ModelSpec in the request does specify a version, the status of only
-  // that version will be returned.
-  rpc GetModelStatus(GetModelStatusRequest) returns (GetModelStatusResponse);
+// m-modewsewvice p-pwovides methods t-to quewy and u-update the state o-of the sewvew, rawr x3
+// e.g. which modews/vewsions awe being sewved. (✿oωo)
+sewvice modewsewvice {
+  // g-gets status of modew. (ˆ ﻌ ˆ)♡ if the modewspec i-in the wequest does nyot specify
+  // v-vewsion, (˘ω˘) infowmation about aww vewsions of the modew w-wiww be wetuwned. (⑅˘꒳˘) if
+  // the modewspec i-in the wequest d-does specify a vewsion, (///ˬ///✿) the status of onwy
+  // that vewsion wiww be wetuwned. 😳😳😳
+  w-wpc getmodewstatus(getmodewstatuswequest) wetuwns (getmodewstatuswesponse);
 
-  // Reloads the set of served models. The new config supersedes the old one,
-  // so if a model is omitted from the new config it will be unloaded and no
-  // longer served.
-  rpc HandleReloadConfigRequest(ReloadConfigRequest)
-      returns (ReloadConfigResponse);
+  // wewoads the set of sewved modews. 🥺 the n-new config supewsedes the owd one, mya
+  // s-so if a m-modew is omitted f-fwom the nyew config i-it wiww be unwoaded and nyo
+  // wongew sewved. 🥺
+  w-wpc handwewewoadconfigwequest(wewoadconfigwequest)
+      wetuwns (wewoadconfigwesponse);
 }

@@ -1,16 +1,16 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    dependencies = [
-        "explore/explore-ranker/thrift/src/main/thrift:thrift-scala",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/marshaller/timelines",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/util/tweetypie/content",
-        "home-mixer/thrift/src/main/thrift:thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/transformer",
-        "src/thrift/com/twitter/timelineranker:thrift-scala",
-        "topic-social-proof/server/src/main/thrift:thrift-scala",
-        "tweet-mixer/thrift/src/main/thrift:thrift-scala",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], OwO
+    compiwew_option_sets = ["fataw_wawnings"], 🥺
+    s-stwict_deps = t-twue, òωó
+    d-dependencies = [
+        "expwowe/expwowe-wankew/thwift/swc/main/thwift:thwift-scawa", o.O
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/mawshawwew/timewines", (U ᵕ U❁)
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/modew", (⑅˘꒳˘)
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/utiw/tweetypie/content", ( ͡o ω ͡o )
+        "home-mixew/thwift/swc/main/thwift:thwift-scawa", UwU
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/twansfowmew", rawr x3
+        "swc/thwift/com/twittew/timewinewankew:thwift-scawa", rawr
+        "topic-sociaw-pwoof/sewvew/swc/main/thwift:thwift-scawa", σωσ
+        "tweet-mixew/thwift/swc/main/thwift:thwift-scawa", σωσ
+    ], >_<
 )

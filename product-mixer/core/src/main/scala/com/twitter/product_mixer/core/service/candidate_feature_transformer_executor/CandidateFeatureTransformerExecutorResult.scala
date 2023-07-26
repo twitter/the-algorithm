@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.service.candidate_feature_transformer_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.candidate_featuwe_twansfowmew_executow
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twansfowmewidentifiew
 
-case class CandidateFeatureTransformerExecutorResult(
-  featureMaps: Seq[FeatureMap],
-  individualFeatureMaps: Seq[Map[TransformerIdentifier, FeatureMap]])
+case c-cwass candidatefeatuwetwansfowmewexecutowwesuwt(
+  f-featuwemaps: s-seq[featuwemap], (⑅˘꒳˘)
+  i-individuawfeatuwemaps: s-seq[map[twansfowmewidentifiew, ( ͡o ω ͡o ) f-featuwemap]])

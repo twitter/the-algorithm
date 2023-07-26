@@ -1,16 +1,16 @@
-package com.twitter.timelineranker.repository
+package com.twittew.timewinewankew.wepositowy
 
-import com.twitter.timelineranker.model.Timeline
-import com.twitter.timelineranker.model.TimelineQuery
-import com.twitter.util.Future
+impowt c-com.twittew.timewinewankew.modew.timewine
+impowt c-com.twittew.timewinewankew.modew.timewinequewy
+i-impowt com.twittew.utiw.futuwe
 
-trait TimelineRepository {
-  def get(queries: Seq[TimelineQuery]): Seq[Future[Timeline]]
-  def get(query: TimelineQuery): Future[Timeline] = get(Seq(query)).head
+t-twait timewinewepositowy {
+  d-def get(quewies: s-seq[timewinequewy]): s-seq[futuwe[timewine]]
+  d-def get(quewy: timewinequewy): futuwe[timewine] = get(seq(quewy)).head
 }
 
-class EmptyTimelineRepository extends TimelineRepository {
-  def get(queries: Seq[TimelineQuery]): Seq[Future[Timeline]] = {
-    queries.map(q => Future.value(Timeline.empty(q.id)))
+cwass emptytimewinewepositowy extends t-timewinewepositowy {
+  def get(quewies: seq[timewinequewy]): s-seq[futuwe[timewine]] = {
+    quewies.map(q => f-futuwe.vawue(timewine.empty(q.id)))
   }
 }

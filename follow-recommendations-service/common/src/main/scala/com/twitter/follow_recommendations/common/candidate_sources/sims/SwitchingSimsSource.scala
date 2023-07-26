@@ -1,55 +1,55 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.sims
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+impowt c-com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.hassimiwawtocontext
+i-impowt c-com.twittew.hewmit.modew.awgowithm
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.timewines.configapi.haspawams
 
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt j-javax.inject.inject
+impowt j-javax.inject.singweton
 
-@Singleton
-class SwitchingSimsSource @Inject() (
-  cachedDBV2SimsStore: CachedDBV2SimsStore,
-  cachedDBV2SimsRefreshStore: CachedDBV2SimsRefreshStore,
-  cachedSimsExperimentalStore: CachedSimsExperimentalStore,
-  cachedSimsStore: CachedSimsStore,
-  statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends CandidateSource[HasParams with HasSimilarToContext, CandidateUser] {
+@singweton
+cwass switchingsimssouwce @inject() (
+  cacheddbv2simsstowe: cacheddbv2simsstowe, 😳😳😳
+  c-cacheddbv2simswefweshstowe: cacheddbv2simswefweshstowe, mya
+  c-cachedsimsexpewimentawstowe: c-cachedsimsexpewimentawstowe, 😳
+  cachedsimsstowe: cachedsimsstowe, -.-
+  statsweceivew: statsweceivew = n-nyuwwstatsweceivew)
+    extends candidatesouwce[haspawams with hassimiwawtocontext, 🥺 candidateusew] {
 
-  override val identifier: CandidateSourceIdentifier = SwitchingSimsSource.Identifier
+  o-ovewwide vaw identifiew: c-candidatesouwceidentifiew = s-switchingsimssouwce.identifiew
 
-  private val stats = statsReceiver.scope("SwitchingSimsSource")
-  private val dbV2SimsStoreCounter = stats.counter("DBV2SimsStore")
-  private val dbV2SimsRefreshStoreCounter = stats.counter("DBV2SimsRefreshStore")
-  private val simsExperimentalStoreCounter = stats.counter("SimsExperimentalStore")
-  private val simsStoreCounter = stats.counter("SimsStore")
+  pwivate v-vaw stats = s-statsweceivew.scope("switchingsimssouwce")
+  pwivate vaw dbv2simsstowecountew = stats.countew("dbv2simsstowe")
+  p-pwivate vaw dbv2simswefweshstowecountew = stats.countew("dbv2simswefweshstowe")
+  p-pwivate vaw simsexpewimentawstowecountew = stats.countew("simsexpewimentawstowe")
+  pwivate vaw simsstowecountew = stats.countew("simsstowe")
 
-  override def apply(request: HasParams with HasSimilarToContext): Stitch[Seq[CandidateUser]] = {
-    val selectedSimsStore =
-      if (request.params(SimsSourceParams.EnableDBV2SimsStore)) {
-        dbV2SimsStoreCounter.incr()
-        cachedDBV2SimsStore
-      } else if (request.params(SimsSourceParams.EnableDBV2SimsRefreshStore)) {
-        dbV2SimsRefreshStoreCounter.incr()
-        cachedDBV2SimsRefreshStore
-      } else if (request.params(SimsSourceParams.EnableExperimentalSimsStore)) {
-        simsExperimentalStoreCounter.incr()
-        cachedSimsExperimentalStore
-      } else {
-        simsStoreCounter.incr()
-        cachedSimsStore
+  o-ovewwide def appwy(wequest: h-haspawams with h-hassimiwawtocontext): s-stitch[seq[candidateusew]] = {
+    vaw sewectedsimsstowe =
+      if (wequest.pawams(simssouwcepawams.enabwedbv2simsstowe)) {
+        dbv2simsstowecountew.incw()
+        c-cacheddbv2simsstowe
+      } e-ewse if (wequest.pawams(simssouwcepawams.enabwedbv2simswefweshstowe)) {
+        d-dbv2simswefweshstowecountew.incw()
+        c-cacheddbv2simswefweshstowe
+      } ewse i-if (wequest.pawams(simssouwcepawams.enabweexpewimentawsimsstowe)) {
+        simsexpewimentawstowecountew.incw()
+        c-cachedsimsexpewimentawstowe
+      } ewse {
+        simsstowecountew.incw()
+        c-cachedsimsstowe
       }
-    stats.counter("total").incr()
-    selectedSimsStore(request)
+    stats.countew("totaw").incw()
+    s-sewectedsimsstowe(wequest)
   }
 }
 
-object SwitchingSimsSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(Algorithm.Sims.toString)
+object s-switchingsimssouwce {
+  v-vaw identifiew: candidatesouwceidentifiew = candidatesouwceidentifiew(awgowithm.sims.tostwing)
 }

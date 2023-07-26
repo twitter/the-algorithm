@@ -1,24 +1,24 @@
-package com.twitter.timelineranker.model
+package com.twittew.timewinewankew.modew
 
-import com.twitter.timelineranker.{thriftscala => thrift}
+impowt c-com.twittew.timewinewankew.{thwiftscawa => t-thwift}
 
-object TimelineEntryEnvelope {
-  def fromThrift(entryEnvelope: thrift.TimelineEntryEnvelope): TimelineEntryEnvelope = {
-    TimelineEntryEnvelope(
-      entry = TimelineEntry.fromThrift(entryEnvelope.entry)
+o-object timewineentwyenvewope {
+  d-def fwomthwift(entwyenvewope: t-thwift.timewineentwyenvewope): t-timewineentwyenvewope = {
+    t-timewineentwyenvewope(
+      e-entwy = timewineentwy.fwomthwift(entwyenvewope.entwy)
     )
   }
 }
 
-case class TimelineEntryEnvelope(entry: TimelineEntry) {
+case cwass timewineentwyenvewope(entwy: timewineentwy) {
 
-  throwIfInvalid()
+  thwowifinvawid()
 
-  def toThrift: thrift.TimelineEntryEnvelope = {
-    thrift.TimelineEntryEnvelope(entry.toTimelineEntryThrift)
+  d-def tothwift: thwift.timewineentwyenvewope = {
+    thwift.timewineentwyenvewope(entwy.totimewineentwythwift)
   }
 
-  def throwIfInvalid(): Unit = {
-    entry.throwIfInvalid()
+  def thwowifinvawid(): u-unit = {
+    entwy.thwowifinvawid()
   }
 }

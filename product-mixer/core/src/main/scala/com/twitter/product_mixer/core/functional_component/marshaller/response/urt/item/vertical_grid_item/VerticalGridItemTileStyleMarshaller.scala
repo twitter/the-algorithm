@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.vewticaw_gwid_item
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.SingleStateDefaultVerticalGridItemTileStyle
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.DoubleStateDefaultVerticalGridItemTileStyle
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.VerticalGridItemTileStyle
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.vewticaw_gwid_item.singwestatedefauwtvewticawgwiditemtiwestywe
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.vewticaw_gwid_item.doubwestatedefauwtvewticawgwiditemtiwestywe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.vewticaw_gwid_item.vewticawgwiditemtiwestywe
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class VerticalGridItemTileStyleMarshaller @Inject() () {
+@singweton
+cwass vewticawgwiditemtiwestywemawshawwew @inject() () {
 
-  def apply(verticalGridItemTileStyle: VerticalGridItemTileStyle): urt.VerticalGridItemTileStyle =
-    verticalGridItemTileStyle match {
-      case SingleStateDefaultVerticalGridItemTileStyle =>
-        urt.VerticalGridItemTileStyle.SingleStateDefault
-      case DoubleStateDefaultVerticalGridItemTileStyle =>
-        urt.VerticalGridItemTileStyle.DoubleStateDefault
+  def appwy(vewticawgwiditemtiwestywe: vewticawgwiditemtiwestywe): u-uwt.vewticawgwiditemtiwestywe =
+    vewticawgwiditemtiwestywe match {
+      c-case singwestatedefauwtvewticawgwiditemtiwestywe =>
+        u-uwt.vewticawgwiditemtiwestywe.singwestatedefauwt
+      case doubwestatedefauwtvewticawgwiditemtiwestywe =>
+        uwt.vewticawgwiditemtiwestywe.doubwestatedefauwt
     }
 }

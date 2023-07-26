@@ -1,190 +1,190 @@
-package com.twitter.product_mixer.core.pipeline.pipeline_failure
+package com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe
 
 /**
- * Failures are grouped into categories based on which party is 'responsible' for the issue. This
- * is important for generating accurate SLOs and ensuring that the correct team is alerted.
+ * faiwuwes a-awe gwouped into c-categowies based o-on which pawty i-is 'wesponsibwe' f-fow the issue. (U ᵕ U❁) t-this
+ * is impowtant f-fow genewating a-accuwate swos and ensuwing that the cowwect team is awewted. :3
  */
-sealed trait PipelineFailureCategory {
-  val categoryName: String
-  val failureName: String
+seawed twait p-pipewinefaiwuwecategowy {
+  vaw categowyname: stwing
+  vaw faiwuwename: s-stwing
 }
 
 /**
- * Client Failures are failures where the client is deemed responsible for the issue. Such as by
- * issuing an invalid request or not having the right permissions.
+ * cwient f-faiwuwes awe faiwuwes whewe the cwient is deemed wesponsibwe f-fow the issue. mya such as by
+ * issuing a-an invawid w-wequest ow nyot having the wight pewmissions. OwO
  *
- * A failure might belong in this category if it relates to behaviour on the client and is not
- * actionable by the team which owns the product.
+ * a faiwuwe might bewong in this c-categowy if it wewates to behaviouw on the cwient and is nyot
+ * actionabwe b-by the team which owns the pwoduct. (ˆ ﻌ ˆ)♡
  */
-trait ClientFailure extends PipelineFailureCategory {
-  override val categoryName: String = "ClientFailure"
+t-twait cwientfaiwuwe e-extends p-pipewinefaiwuwecategowy {
+  o-ovewwide vaw categowyname: stwing = "cwientfaiwuwe"
 }
 
 /**
- * The requested product is disabled so the request cannot be served.
+ * the w-wequested pwoduct is disabwed so the wequest cannot b-be sewved. ʘwʘ
  */
-case object ProductDisabled extends ClientFailure {
-  override val failureName: String = "ProductDisabled"
+case object pwoductdisabwed extends cwientfaiwuwe {
+  ovewwide vaw faiwuwename: s-stwing = "pwoductdisabwed"
 }
 
 /**
- * The request was deemed invalid by this or a backing service.
+ * the wequest w-was deemed i-invawid by this o-ow a backing sewvice. o.O
  */
-case object BadRequest extends ClientFailure {
-  override val failureName: String = "BadRequest"
+case object badwequest extends cwientfaiwuwe {
+  o-ovewwide v-vaw faiwuwename: stwing = "badwequest"
 }
 
 /**
- * Credentials proving the identity of the caller were missing, not trusted, or expired.
- * For example, an auth cookie might be expired and in need of refreshing.
+ * c-cwedentiaws p-pwoving the identity of the cawwew w-wewe missing, UwU nyot twusted, o-ow expiwed. rawr x3
+ * fow exampwe, 🥺 an auth cookie might b-be expiwed and in nyeed of wefweshing. :3
  *
- * Do not confuse this with Authorization, where the credentials are believed but not allowed to perform the operation.
+ * do n-nyot confuse this with authowization, (ꈍᴗꈍ) w-whewe the c-cwedentiaws awe bewieved but nyot awwowed to pewfowm the opewation. 🥺
  */
-case object Authentication extends ClientFailure {
-  override val failureName: String = "Authentication"
+case object authentication extends cwientfaiwuwe {
+  ovewwide v-vaw faiwuwename: s-stwing = "authentication"
 }
 
 /**
- * The operation was forbidden (often, but not always, by a Strato access control policy).
+ * the o-opewation was fowbidden (often, (✿oωo) b-but not awways, (U ﹏ U) b-by a stwato access contwow powicy). :3
  *
- * Do not confuse this with Authentication, where the given credentials were missing, not trusted, or expired.
+ * do nyot confuse this w-with authentication, ^^;; whewe the given cwedentiaws wewe missing, rawr nyot twusted, 😳😳😳 ow e-expiwed.
  */
-case object Unauthorized extends ClientFailure {
-  override val failureName: String = "Unauthorized"
+case object unauthowized e-extends cwientfaiwuwe {
+  o-ovewwide vaw faiwuwename: s-stwing = "unauthowized"
 }
 
 /**
- * The operation returned a Not Found response.
+ * the o-opewation wetuwned a-a nyot found w-wesponse. (✿oωo)
  */
-case object NotFound extends ClientFailure {
-  override val failureName: String = "NotFound"
+case o-object nyotfound extends cwientfaiwuwe {
+  ovewwide v-vaw faiwuwename: s-stwing = "notfound"
 }
 
 /**
- * An invalid input is included in a cursor field.
+ * a-an invawid i-input is incwuded i-in a cuwsow fiewd. OwO
  */
-case object MalformedCursor extends ClientFailure {
-  override val failureName: String = "MalformedCursor"
+case object mawfowmedcuwsow extends cwientfaiwuwe {
+  o-ovewwide vaw faiwuwename: stwing = "mawfowmedcuwsow"
 }
 
 /**
- * The operation did not succeed due to a closed gate
+ * the opewation did nyot succeed due to a cwosed gate
  */
-case object ClosedGate extends ClientFailure {
-  override val failureName: String = "ClosedGate"
+case object c-cwosedgate extends cwientfaiwuwe {
+  ovewwide vaw faiwuwename: s-stwing = "cwosedgate"
 }
 
 /**
- * Server Failures are failures for which the owner of the product is responsible. Typically this
- * means the request was valid but an issue within Product Mixer or a dependent service prevented
- * it from succeeding.
+ * s-sewvew faiwuwes a-awe faiwuwes fow which the ownew o-of the pwoduct is wesponsibwe. ʘwʘ t-typicawwy this
+ * m-means the wequest was vawid but an issue within pwoduct mixew ow a dependent sewvice pwevented
+ * i-it fwom succeeding. (ˆ ﻌ ˆ)♡
  *
- * Server Failures contribute to the success rate SLO for the product.
+ * sewvew faiwuwes c-contwibute to the success wate swo f-fow the pwoduct. (U ﹏ U)
  */
-trait ServerFailure extends PipelineFailureCategory {
-  override val categoryName: String = "ServerFailure"
+t-twait sewvewfaiwuwe extends pipewinefaiwuwecategowy {
+  o-ovewwide vaw categowyname: s-stwing = "sewvewfaiwuwe"
 }
 
 /**
- * Unclassified failures occur when product code throws an exception that Product Mixer does not
- * know how to classify.
+ * uncwassified f-faiwuwes o-occuw when pwoduct code thwows an exception that pwoduct mixew does nyot
+ * k-know how to cwassify. UwU
  *
- * They can be used in failOpen policies, etc - but it's always preferred to instead add additional
- * classification logic and to keep Unclassified failures at 0.
+ * t-they c-can be used in faiwopen powicies, XD e-etc - but it's a-awways pwefewwed to instead add a-additionaw
+ * cwassification wogic and to keep uncwassified faiwuwes at 0. ʘwʘ
  */
-case object UncategorizedServerFailure extends ServerFailure {
-  override val failureName: String = "UncategorizedServerFailure"
+c-case object uncategowizedsewvewfaiwuwe e-extends sewvewfaiwuwe {
+  ovewwide vaw faiwuwename: s-stwing = "uncategowizedsewvewfaiwuwe"
 }
 
 /**
- * A hydrator or transformer returned a misconfigured feature map, this indicates a customer
- * configuration error. The owner of the component should make sure the hydrator always returns a
- * [[FeatureMap]] with the all features defined in the hydrator also set in the map, it should not have
- * any unregistered features nor should registered features be absent.
+ * a-a hydwatow ow twansfowmew wetuwned a misconfiguwed featuwe m-map, this indicates a customew
+ * configuwation ewwow. rawr x3 the ownew of the component s-shouwd make suwe the hydwatow awways wetuwns a-a
+ * [[featuwemap]] w-with the aww featuwes defined in the hydwatow awso set i-in the map, ^^;; it s-shouwd nyot have
+ * any unwegistewed featuwes nyow shouwd wegistewed f-featuwes be absent. ʘwʘ
  */
-case object MisconfiguredFeatureMapFailure extends ServerFailure {
-  override val failureName: String = "MisconfiguredFeatureMapFailure"
+case o-object misconfiguwedfeatuwemapfaiwuwe extends sewvewfaiwuwe {
+  ovewwide vaw faiwuwename: s-stwing = "misconfiguwedfeatuwemapfaiwuwe"
 }
 
 /**
- * A PipelineSelector returned an invalid ComponentIdentifier.
+ * a pipewinesewectow w-wetuwned an invawid c-componentidentifiew. (U ﹏ U)
  *
- * A pipeline selector should choose the identifier of a pipeline that is contained by the 'pipelines'
- * sequence of the ProductPipelineConfig.
+ * a pipewine sewectow s-shouwd choose the identifiew o-of a pipewine t-that is contained b-by the 'pipewines'
+ * sequence o-of the pwoductpipewineconfig. (˘ω˘)
  */
-case object InvalidPipelineSelected extends ServerFailure {
-  override val failureName: String = "InvalidPipelineSelected"
+c-case object invawidpipewinesewected extends s-sewvewfaiwuwe {
+  o-ovewwide vaw faiwuwename: s-stwing = "invawidpipewinesewected"
 }
 
 /**
- * Failures that occur when product code reaches an unexpected or otherwise illegal state.
+ * faiwuwes that occuw when p-pwoduct code weaches an unexpected o-ow othewwise i-iwwegaw state. (ꈍᴗꈍ)
  */
-case object IllegalStateFailure extends ServerFailure {
-  override val failureName: String = "IllegalStateFailure"
+case object iwwegawstatefaiwuwe extends sewvewfaiwuwe {
+  ovewwide v-vaw faiwuwename: s-stwing = "iwwegawstatefaiwuwe"
 }
 
 /**
- * An unexpected candidate was returned in a candidate source that was unable to be transformed.
+ * a-an unexpected c-candidate was wetuwned in a candidate s-souwce that was unabwe to be twansfowmed. /(^•ω•^)
  */
-case object UnexpectedCandidateResult extends ServerFailure {
-  override val failureName: String = "UnexpectedCandidateResult"
+case object unexpectedcandidatewesuwt extends s-sewvewfaiwuwe {
+  ovewwide vaw f-faiwuwename: stwing = "unexpectedcandidatewesuwt"
 }
 
 /**
- * An unexpected Candidate was returned in a marshaller
+ * an u-unexpected candidate was wetuwned i-in a mawshawwew
  */
-case object UnexpectedCandidateInMarshaller extends ServerFailure {
-  override val failureName: String = "UnexpectedCandidateInMarshaller"
+case object u-unexpectedcandidateinmawshawwew e-extends sewvewfaiwuwe {
+  o-ovewwide v-vaw faiwuwename: s-stwing = "unexpectedcandidateinmawshawwew"
 }
 
 /**
- * Pipeline execution failed due to an incorrectly configured quality factor (e.g, accessing
- * quality factor state for a pipeline that does not have quality factor configured)
+ * pipewine execution faiwed due to an incowwectwy configuwed quawity factow (e.g, >_< accessing
+ * q-quawity f-factow state fow a-a pipewine that does nyot have q-quawity factow configuwed)
  */
-case object MisconfiguredQualityFactor extends ServerFailure {
-  override val failureName: String = "MisconfiguredQualityFactor"
+case object misconfiguwedquawityfactow extends sewvewfaiwuwe {
+  ovewwide vaw faiwuwename: s-stwing = "misconfiguwedquawityfactow"
 }
 
 /**
- * Pipeline execution failed due to an incorrectly configured decorator (e.g, decorator
- * returned the wrong type or tried to decorate an already decorated candidate)
+ * p-pipewine execution faiwed d-due to an incowwectwy configuwed decowatow (e.g, σωσ d-decowatow
+ * w-wetuwned the wwong type ow twied t-to decowate an a-awweady decowated candidate)
  */
-case object MisconfiguredDecorator extends ServerFailure {
-  override val failureName: String = "MisconfiguredDecorator"
+case object misconfiguweddecowatow extends sewvewfaiwuwe {
+  ovewwide vaw faiwuwename: s-stwing = "misconfiguweddecowatow"
 }
 
 /**
- * Candidate Source Pipeline execution failed due to a timeout.
+ * c-candidate s-souwce pipewine e-execution faiwed d-due to a timeout. ^^;;
  */
-case object CandidateSourceTimeout extends ServerFailure {
-  override val failureName: String = "CandidateSourceTimeout"
+case object c-candidatesouwcetimeout e-extends sewvewfaiwuwe {
+  o-ovewwide vaw f-faiwuwename: stwing = "candidatesouwcetimeout"
 }
 
 /**
- * Platform Failures are issues in the core Product Mixer logic itself which prevent a pipeline from
- * properly executing. These failures are the responsibility of the Product Mixer team.
+ * pwatfowm f-faiwuwes awe issues in the cowe pwoduct mixew w-wogic itsewf which pwevent a pipewine f-fwom
+ * pwopewwy e-executing. 😳 these faiwuwes a-awe the wesponsibiwity of the pwoduct mixew team. >_<
  */
-trait PlatformFailure extends PipelineFailureCategory {
-  override val categoryName: String = "PlatformFailure"
+t-twait pwatfowmfaiwuwe e-extends p-pipewinefaiwuwecategowy {
+  ovewwide vaw categowyname: stwing = "pwatfowmfaiwuwe"
 }
 
 /**
- * Pipeline execution failed due to an unexpected error in Product Mixer.
+ * pipewine execution f-faiwed due to an unexpected ewwow in pwoduct m-mixew. -.-
  *
- * ExecutionFailed indicates a bug with the core Product Mixer execution logic rather than with a
- * specific product. For example, a bug in PipelineBuilder leading to us returning a
- * ProductPipelineResult that neither succeeded nor failed.
+ * executionfaiwed indicates a-a bug with the cowe pwoduct m-mixew execution wogic wathew t-than with a
+ * s-specific pwoduct. UwU fow exampwe, a bug in pipewinebuiwdew w-weading to us wetuwning a
+ * pwoductpipewinewesuwt t-that n-nyeithew succeeded nyow faiwed. :3
  */
-case object ExecutionFailed extends PlatformFailure {
-  override val failureName: String = "ExecutionFailed"
+c-case object executionfaiwed e-extends pwatfowmfaiwuwe {
+  o-ovewwide v-vaw faiwuwename: stwing = "executionfaiwed"
 }
 
 /**
- * Pipeline execution failed due to a feature hydration failure.
+ * pipewine execution faiwed due to a featuwe hydwation faiwuwe. σωσ
  *
- * FeatureHydrationFailed indicates that the underlying hydration for a feature defined in a hydrator
- * failed (e.g, typically from a RPC call failing).
+ * featuwehydwationfaiwed indicates that the undewwying hydwation fow a featuwe defined in a hydwatow
+ * f-faiwed (e.g, >w< t-typicawwy fwom a wpc caww faiwing). (ˆ ﻌ ˆ)♡
  */
-case object FeatureHydrationFailed extends PlatformFailure {
-  override val failureName: String = "FeatureHydrationFailed"
+case o-object featuwehydwationfaiwed e-extends p-pwatfowmfaiwuwe {
+  ovewwide v-vaw faiwuwename: stwing = "featuwehydwationfaiwed"
 }

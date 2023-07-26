@@ -1,64 +1,64 @@
-package com.twitter.cr_mixer.source_signal
+package com.twittew.cw_mixew.souwce_signaw
 
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.param.FrsParams
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.source_signal.FrsStore.FrsQueryResult
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import javax.inject.Singleton
-import javax.inject.Inject
-import javax.inject.Named
+impowt c-com.twittew.cw_mixew.config.timeoutconfig
+i-impowt c-com.twittew.cw_mixew.modew.moduwenames
+i-impowt c-com.twittew.cw_mixew.modew.souwceinfo
+i-impowt com.twittew.cw_mixew.pawam.fwspawams
+i-impowt com.twittew.cw_mixew.pawam.gwobawpawams
+i-impowt com.twittew.cw_mixew.souwce_signaw.fwsstowe.fwsquewywesuwt
+impowt com.twittew.cw_mixew.souwce_signaw.souwcefetchew.fetchewquewy
+impowt com.twittew.cw_mixew.thwiftscawa.souwcetype
+impowt c-com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+i-impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.utiw.futuwe
+impowt javax.inject.singweton
+i-impowt javax.inject.inject
+i-impowt javax.inject.named
 
-@Singleton
-case class FrsSourceSignalFetcher @Inject() (
-  @Named(ModuleNames.FrsStore) frsStore: ReadableStore[FrsStore.Query, Seq[FrsQueryResult]],
-  override val timeoutConfig: TimeoutConfig,
-  globalStats: StatsReceiver)
-    extends SourceSignalFetcher {
+@singweton
+c-case cwass fwssouwcesignawfetchew @inject() (
+  @named(moduwenames.fwsstowe) fwsstowe: weadabwestowe[fwsstowe.quewy, (U ﹏ U) seq[fwsquewywesuwt]], (///ˬ///✿)
+  o-ovewwide vaw timeoutconfig: timeoutconfig, >w<
+  gwobawstats: statsweceivew)
+    e-extends souwcesignawfetchew {
 
-  override protected val stats: StatsReceiver = globalStats.scope(identifier)
-  override type SignalConvertType = UserId
+  ovewwide p-pwotected vaw stats: s-statsweceivew = g-gwobawstats.scope(identifiew)
+  o-ovewwide type signawconvewttype = usewid
 
-  override def isEnabled(query: FetcherQuery): Boolean = {
-    query.params(FrsParams.EnableSourceParam)
+  o-ovewwide def isenabwed(quewy: fetchewquewy): boowean = {
+    quewy.pawams(fwspawams.enabwesouwcepawam)
   }
 
-  override def fetchAndProcess(query: FetcherQuery): Future[Option[Seq[SourceInfo]]] = {
-    // Fetch raw signals
-    val rawSignals = frsStore
-      .get(FrsStore.Query(query.userId, query.params(GlobalParams.UnifiedMaxSourceKeyNum)))
+  ovewwide def fetchandpwocess(quewy: f-fetchewquewy): futuwe[option[seq[souwceinfo]]] = {
+    // fetch waw signaws
+    vaw wawsignaws = fwsstowe
+      .get(fwsstowe.quewy(quewy.usewid, rawr q-quewy.pawams(gwobawpawams.unifiedmaxsouwcekeynum)))
       .map {
         _.map {
           _.map {
-            _.userId
+            _.usewid
           }
         }
       }
-    // Process signals
-    rawSignals.map {
-      _.map { frsUsers =>
-        convertSourceInfo(SourceType.FollowRecommendation, frsUsers)
+    // pwocess signaws
+    w-wawsignaws.map {
+      _.map { f-fwsusews =>
+        c-convewtsouwceinfo(souwcetype.fowwowwecommendation, mya fwsusews)
       }
     }
   }
 
-  override def convertSourceInfo(
-    sourceType: SourceType,
-    signals: Seq[SignalConvertType]
-  ): Seq[SourceInfo] = {
-    signals.map { signal =>
-      SourceInfo(
-        sourceType = sourceType,
-        internalId = InternalId.UserId(signal),
-        sourceEventTime = None
+  ovewwide def convewtsouwceinfo(
+    s-souwcetype: souwcetype, ^^
+    s-signaws: seq[signawconvewttype]
+  ): s-seq[souwceinfo] = {
+    s-signaws.map { signaw =>
+      s-souwceinfo(
+        souwcetype = s-souwcetype, 😳😳😳
+        intewnawid = intewnawid.usewid(signaw), mya
+        s-souwceeventtime = nyone
       )
     }
   }

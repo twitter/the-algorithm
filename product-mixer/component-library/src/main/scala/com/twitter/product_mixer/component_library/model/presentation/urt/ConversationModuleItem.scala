@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.component_library.model.presentation.urt
+package com.twittew.pwoduct_mixew.component_wibwawy.modew.pwesentation.uwt
 
-import com.twitter.product_mixer.core.model.common.presentation.urt.BaseUrtItemPresentation
-import com.twitter.product_mixer.core.model.common.presentation.urt.IsDispensable
-import com.twitter.product_mixer.core.model.common.presentation.urt.WithItemTreeDisplay
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.uwt.baseuwtitempwesentation
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.uwt.isdispensabwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.uwt.withitemtweedispway
 
-trait ConversationModuleItem
-    extends BaseUrtItemPresentation
-    with IsDispensable
-    with WithItemTreeDisplay
+t-twait convewsationmoduweitem
+    e-extends baseuwtitempwesentation
+    w-with isdispensabwe
+    w-with withitemtweedispway

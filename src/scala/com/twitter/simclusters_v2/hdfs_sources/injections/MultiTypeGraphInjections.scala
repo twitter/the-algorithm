@@ -1,31 +1,31 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.twittew.simcwustews_v2.hdfs_souwces.injections
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaCompactThrift
-import com.twitter.simclusters_v2.thriftscala.LeftNode
-import com.twitter.simclusters_v2.thriftscala.NounWithFrequencyList
-import com.twitter.simclusters_v2.thriftscala.RightNode
-import com.twitter.simclusters_v2.thriftscala.RightNodeTypeStruct
-import com.twitter.simclusters_v2.thriftscala.RightNodeWithEdgeWeightList
-import com.twitter.simclusters_v2.thriftscala.SimilarRightNodes
-import com.twitter.simclusters_v2.thriftscala.CandidateTweetsList
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
+impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection
+i-impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection.scawacompactthwift
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.weftnode
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.nounwithfwequencywist
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.wightnode
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.wightnodetypestwuct
+impowt com.twittew.simcwustews_v2.thwiftscawa.wightnodewithedgeweightwist
+impowt com.twittew.simcwustews_v2.thwiftscawa.simiwawwightnodes
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.candidatetweetswist
+impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection.wong2bigendian
 
-object MultiTypeGraphInjections {
-  final val truncatedMultiTypeGraphInjection =
-    KeyValInjection(ScalaCompactThrift(LeftNode), ScalaCompactThrift(RightNodeWithEdgeWeightList))
-  final val topKRightNounListInjection =
-    KeyValInjection(
-      ScalaCompactThrift(RightNodeTypeStruct),
-      ScalaCompactThrift(NounWithFrequencyList))
-  final val similarRightNodesInjection =
-    KeyValInjection[RightNode, SimilarRightNodes](
-      ScalaCompactThrift(RightNode),
-      ScalaCompactThrift(SimilarRightNodes)
+o-object muwtitypegwaphinjections {
+  f-finaw vaw twuncatedmuwtitypegwaphinjection =
+    keyvawinjection(scawacompactthwift(weftnode), rawr x3 scawacompactthwift(wightnodewithedgeweightwist))
+  finaw vaw topkwightnounwistinjection =
+    keyvawinjection(
+      s-scawacompactthwift(wightnodetypestwuct), nyaa~~
+      scawacompactthwift(nounwithfwequencywist))
+  f-finaw vaw simiwawwightnodesinjection =
+    k-keyvawinjection[wightnode, /(^•ω•^) simiwawwightnodes](
+      scawacompactthwift(wightnode), rawr
+      scawacompactthwift(simiwawwightnodes)
     )
-  final val tweetRecommendationsInjection =
-    KeyValInjection[Long, CandidateTweetsList](
-      Long2BigEndian,
-      ScalaCompactThrift(CandidateTweetsList)
+  finaw vaw tweetwecommendationsinjection =
+    k-keyvawinjection[wong, OwO candidatetweetswist](
+      wong2bigendian, (U ﹏ U)
+      scawacompactthwift(candidatetweetswist)
     )
 }

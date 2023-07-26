@@ -1,214 +1,214 @@
-package com.twitter.search.common.schema;
+package com.twittew.seawch.common.schema;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
+impowt j-java.utiw.cowwection;
+i-impowt java.utiw.map;
+i-impowt j-java.utiw.concuwwent.atomic.atomicwefewence;
 
-import javax.annotation.Nullable;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableMap;
+i-impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.base.pwedicate;
+i-impowt com.googwe.common.cowwect.immutabwecowwection;
+impowt com.googwe.common.cowwect.immutabwemap;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.facet.FacetsConfig;
-import org.apache.lucene.index.FieldInfos;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.wucene.anawysis.anawyzew;
+impowt o-owg.apache.wucene.facet.facetsconfig;
+impowt owg.apache.wucene.index.fiewdinfos;
+i-impowt owg.swf4j.woggew;
+impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchema;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.FieldWeightDefault;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.thriftjava.ThriftAnalyzer;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldConfiguration;
+impowt com.twittew.seawch.common.featuwes.thwift.thwiftseawchfeatuweschema;
+impowt com.twittew.seawch.common.schema.base.featuweconfiguwation;
+i-impowt com.twittew.seawch.common.schema.base.fiewdweightdefauwt;
+impowt c-com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+i-impowt com.twittew.seawch.common.schema.base.schema;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftanawyzew;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftcsftype;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfiewdconfiguwation;
 
 /**
- * A schema implementation that allow minor version increments at run time.
+ * a schema impwementation that awwow minow vewsion incwements a-at wun time. XD
  */
-public class DynamicSchema implements Schema {
-  private static final Logger LOG = LoggerFactory.getLogger(DynamicSchema.class);
+pubwic cwass dynamicschema i-impwements s-schema {
+  p-pwivate static f-finaw woggew wog = woggewfactowy.getwoggew(dynamicschema.cwass);
 
-  private final AtomicReference<ImmutableSchema> schema;
+  pwivate finaw a-atomicwefewence<immutabweschema> schema;
 
-  public DynamicSchema(ImmutableSchema schema) {
-    this.schema = new AtomicReference<>(schema);
+  pubwic dynamicschema(immutabweschema s-schema) {
+    this.schema = nyew atomicwefewence<>(schema);
   }
 
-  public ImmutableSchemaInterface getSchemaSnapshot() {
-    return schema.get();
+  pubwic immutabweschemaintewface getschemasnapshot() {
+    wetuwn schema.get();
   }
 
   /**
-   * Update the schema reference inside this DynamicSchema.
+   * u-update the schema wefewence i-inside this dynamicschema. 🥺
    */
-  public synchronized void updateSchema(ImmutableSchema newSchema) throws SchemaUpdateException {
-    ImmutableSchema oldSchema = schema.get();
-    if (newSchema.getMajorVersionNumber() != oldSchema.getMajorVersionNumber()) {
-      throw new SchemaUpdateException("Dynamic major version update is not supported.");
-    } else {
-      if (newSchema.getMinorVersionNumber() <= oldSchema.getMinorVersionNumber()) {
-        throw new SchemaUpdateException("Dynamic backward minor version update is not supported.");
-      } else {
-        LOG.info("DynamicSchema accepted update. Old version is {}.{}; new version is {}.{}",
-            oldSchema.getMajorVersionNumber(),
-            oldSchema.getMinorVersionNumber(),
-            newSchema.getMajorVersionNumber(),
-            newSchema.getMinorVersionNumber());
-        schema.set(newSchema);
+  p-pubwic synchwonized v-void updateschema(immutabweschema nyewschema) thwows schemaupdateexception {
+    immutabweschema o-owdschema = s-schema.get();
+    if (newschema.getmajowvewsionnumbew() != o-owdschema.getmajowvewsionnumbew()) {
+      t-thwow nyew schemaupdateexception("dynamic m-majow vewsion update is nyot s-suppowted.");
+    } ewse {
+      if (newschema.getminowvewsionnumbew() <= o-owdschema.getminowvewsionnumbew()) {
+        thwow n-nyew schemaupdateexception("dynamic backwawd minow v-vewsion update i-is nyot suppowted.");
+      } ewse {
+        wog.info("dynamicschema accepted update. òωó owd vewsion is {}.{}; nyew vewsion is {}.{}", (ˆ ﻌ ˆ)♡
+            o-owdschema.getmajowvewsionnumbew(),
+            o-owdschema.getminowvewsionnumbew(), -.-
+            nyewschema.getmajowvewsionnumbew(), :3
+            n-nyewschema.getminowvewsionnumbew());
+        s-schema.set(newschema);
       }
     }
   }
 
-  public static class SchemaUpdateException extends Exception {
-    public SchemaUpdateException(String message) {
-      super(message);
+  p-pubwic static cwass schemaupdateexception extends exception {
+    pubwic s-schemaupdateexception(stwing message) {
+      supew(message);
     }
   }
 
-  // The below are all methods in the Schema interface delegated to the underlying ImmutableSchema.
-  // The below is generated by IntelliJ, and reviewers can stop reviewing this file here.
-  // If you are adding logic into this class, please do so above this line.
-  @Override
-  public FieldInfos getLuceneFieldInfos(
-      Predicate<String> acceptedFields) {
-    return schema.get().getLuceneFieldInfos(acceptedFields);
+  // the bewow awe aww methods in the s-schema intewface dewegated to t-the undewwying immutabweschema. ʘwʘ
+  // t-the bewow is g-genewated by intewwij, 🥺 and weviewews c-can stop w-weviewing this fiwe h-hewe. >_<
+  // if y-you awe adding wogic into this cwass, ʘwʘ pwease do s-so above this w-wine. (˘ω˘)
+  @ovewwide
+  p-pubwic fiewdinfos g-getwucenefiewdinfos(
+      p-pwedicate<stwing> acceptedfiewds) {
+    wetuwn schema.get().getwucenefiewdinfos(acceptedfiewds);
   }
 
-  @Override
-  public FacetsConfig getFacetsConfig() {
-    return schema.get().getFacetsConfig();
+  @ovewwide
+  p-pubwic facetsconfig getfacetsconfig() {
+    wetuwn schema.get().getfacetsconfig();
   }
 
-  @Override
-  public Analyzer getDefaultAnalyzer(
-      ThriftAnalyzer override) {
-    return schema.get().getDefaultAnalyzer(override);
+  @ovewwide
+  pubwic anawyzew getdefauwtanawyzew(
+      thwiftanawyzew o-ovewwide) {
+    wetuwn schema.get().getdefauwtanawyzew(ovewwide);
   }
 
-  @Override
-  public ImmutableCollection<FieldInfo> getFieldInfos() {
-    return schema.get().getFieldInfos();
+  @ovewwide
+  pubwic immutabwecowwection<fiewdinfo> getfiewdinfos() {
+    w-wetuwn schema.get().getfiewdinfos();
   }
 
-  @Override
-  public boolean hasField(int fieldConfigId) {
-    return schema.get().hasField(fieldConfigId);
+  @ovewwide
+  p-pubwic b-boowean hasfiewd(int fiewdconfigid) {
+    w-wetuwn schema.get().hasfiewd(fiewdconfigid);
   }
 
-  @Override
-  public boolean hasField(String fieldName) {
-    return schema.get().hasField(fieldName);
+  @ovewwide
+  p-pubwic b-boowean hasfiewd(stwing fiewdname) {
+    wetuwn schema.get().hasfiewd(fiewdname);
   }
 
-  @Override
-  @Nullable
-  public FieldInfo getFieldInfo(int fieldConfigId) {
-    return schema.get().getFieldInfo(fieldConfigId);
+  @ovewwide
+  @nuwwabwe
+  pubwic fiewdinfo getfiewdinfo(int f-fiewdconfigid) {
+    wetuwn s-schema.get().getfiewdinfo(fiewdconfigid);
   }
 
-  @Override
-  @Nullable
-  public FieldInfo getFieldInfo(String fieldName) {
-    return schema.get().getFieldInfo(fieldName);
+  @ovewwide
+  @nuwwabwe
+  pubwic f-fiewdinfo getfiewdinfo(stwing f-fiewdname) {
+    wetuwn schema.get().getfiewdinfo(fiewdname);
   }
 
-  @Override
-  public String getFieldName(int fieldConfigId) {
-    return schema.get().getFieldName(fieldConfigId);
+  @ovewwide
+  pubwic stwing g-getfiewdname(int f-fiewdconfigid) {
+    wetuwn schema.get().getfiewdname(fiewdconfigid);
   }
 
-  @Override
-  public FieldInfo getFieldInfo(int fieldConfigId,
-                                ThriftFieldConfiguration override) {
-    return schema.get().getFieldInfo(fieldConfigId, override);
+  @ovewwide
+  p-pubwic f-fiewdinfo getfiewdinfo(int fiewdconfigid, (✿oωo)
+                                thwiftfiewdconfiguwation ovewwide) {
+    wetuwn schema.get().getfiewdinfo(fiewdconfigid, (///ˬ///✿) o-ovewwide);
   }
 
-  @Override
-  public int getNumFacetFields() {
-    return schema.get().getNumFacetFields();
+  @ovewwide
+  p-pubwic int getnumfacetfiewds() {
+    w-wetuwn schema.get().getnumfacetfiewds();
   }
 
-  @Override
-  public FieldInfo getFacetFieldByFacetName(
-      String facetName) {
-    return schema.get().getFacetFieldByFacetName(facetName);
+  @ovewwide
+  pubwic fiewdinfo g-getfacetfiewdbyfacetname(
+      s-stwing facetname) {
+    wetuwn s-schema.get().getfacetfiewdbyfacetname(facetname);
   }
 
-  @Override
-  public FieldInfo getFacetFieldByFieldName(
-      String fieldName) {
-    return schema.get().getFacetFieldByFieldName(fieldName);
+  @ovewwide
+  pubwic fiewdinfo getfacetfiewdbyfiewdname(
+      stwing fiewdname) {
+    w-wetuwn schema.get().getfacetfiewdbyfiewdname(fiewdname);
   }
 
-  @Override
-  public Collection<FieldInfo> getFacetFields() {
-    return schema.get().getFacetFields();
+  @ovewwide
+  p-pubwic cowwection<fiewdinfo> getfacetfiewds() {
+    w-wetuwn schema.get().getfacetfiewds();
   }
 
-  @Override
-  public Collection<FieldInfo> getCsfFacetFields() {
-    return schema.get().getCsfFacetFields();
+  @ovewwide
+  p-pubwic cowwection<fiewdinfo> getcsffacetfiewds() {
+    wetuwn schema.get().getcsffacetfiewds();
   }
 
-  @Override
-  public String getVersionDescription() {
-    return schema.get().getVersionDescription();
+  @ovewwide
+  p-pubwic stwing getvewsiondescwiption() {
+    wetuwn schema.get().getvewsiondescwiption();
   }
 
-  @Override
-  public int getMajorVersionNumber() {
-    return schema.get().getMajorVersionNumber();
+  @ovewwide
+  pubwic i-int getmajowvewsionnumbew() {
+    wetuwn schema.get().getmajowvewsionnumbew();
   }
 
-  @Override
-  public int getMinorVersionNumber() {
-    return schema.get().getMinorVersionNumber();
+  @ovewwide
+  pubwic int getminowvewsionnumbew() {
+    w-wetuwn s-schema.get().getminowvewsionnumbew();
   }
 
-  @Override
-  public boolean isVersionOfficial() {
-    return schema.get().isVersionOfficial();
+  @ovewwide
+  pubwic boowean isvewsionofficiaw() {
+    wetuwn schema.get().isvewsionofficiaw();
   }
 
-  @Override
-  public Map<String, FieldWeightDefault> getFieldWeightMap() {
-    return schema.get().getFieldWeightMap();
+  @ovewwide
+  p-pubwic map<stwing, f-fiewdweightdefauwt> getfiewdweightmap() {
+    wetuwn schema.get().getfiewdweightmap();
   }
 
-  @Override
-  public FeatureConfiguration getFeatureConfigurationByName(
-      String featureName) {
-    return schema.get().getFeatureConfigurationByName(featureName);
+  @ovewwide
+  pubwic f-featuweconfiguwation getfeatuweconfiguwationbyname(
+      stwing f-featuwename) {
+    wetuwn schema.get().getfeatuweconfiguwationbyname(featuwename);
   }
 
-  @Override
-  public FeatureConfiguration getFeatureConfigurationById(int featureFieldId) {
-    return Preconditions.checkNotNull(schema.get().getFeatureConfigurationById(featureFieldId));
+  @ovewwide
+  pubwic f-featuweconfiguwation getfeatuweconfiguwationbyid(int f-featuwefiewdid) {
+    w-wetuwn pweconditions.checknotnuww(schema.get().getfeatuweconfiguwationbyid(featuwefiewdid));
   }
 
-  @Override
-  @Nullable
-  public ThriftCSFType getCSFFieldType(
-      String fieldName) {
-    return schema.get().getCSFFieldType(fieldName);
+  @ovewwide
+  @nuwwabwe
+  p-pubwic thwiftcsftype getcsffiewdtype(
+      s-stwing fiewdname) {
+    w-wetuwn s-schema.get().getcsffiewdtype(fiewdname);
   }
 
-  @Override
-  public ThriftSearchFeatureSchema getSearchFeatureSchema() {
-    return schema.get().getSearchFeatureSchema();
+  @ovewwide
+  pubwic thwiftseawchfeatuweschema g-getseawchfeatuweschema() {
+    w-wetuwn schema.get().getseawchfeatuweschema();
   }
 
-  @Override
-  public ImmutableMap<Integer, FeatureConfiguration> getFeatureIdToFeatureConfig() {
-    return schema.get().getFeatureIdToFeatureConfig();
+  @ovewwide
+  pubwic immutabwemap<integew, rawr x3 featuweconfiguwation> getfeatuweidtofeatuweconfig() {
+    w-wetuwn s-schema.get().getfeatuweidtofeatuweconfig();
   }
 
-  @Override
-  public ImmutableMap<String, FeatureConfiguration> getFeatureNameToFeatureConfig() {
-    return schema.get().getFeatureNameToFeatureConfig();
+  @ovewwide
+  pubwic i-immutabwemap<stwing, -.- featuweconfiguwation> getfeatuwenametofeatuweconfig() {
+    w-wetuwn schema.get().getfeatuwenametofeatuweconfig();
   }
 }

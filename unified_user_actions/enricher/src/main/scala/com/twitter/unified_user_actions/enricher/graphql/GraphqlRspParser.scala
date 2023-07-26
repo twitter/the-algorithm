@@ -1,66 +1,66 @@
-package com.twitter.unified_user_actions.enricher.graphql
+package com.twittew.unified_usew_actions.enwichew.gwaphqw
 
-import com.google.common.util.concurrent.RateLimiter
-import com.twitter.dynmap.DynMap
-import com.twitter.dynmap.json.DynMapJson
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.util.logging.Logging
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+impowt c-com.googwe.common.utiw.concuwwent.watewimitew
+impowt c-com.twittew.dynmap.dynmap
+i-impowt com.twittew.dynmap.json.dynmapjson
+i-impowt c-com.twittew.finagwe.stats.countew
+i-impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.utiw.wogging.wogging
+i-impowt com.twittew.utiw.wetuwn
+impowt com.twittew.utiw.thwow
+impowt c-com.twittew.utiw.twy
 
 /**
- * @param dm The DynMap parsed from the returned Json string
+ * @pawam dm the dynmap pawsed fwom t-the wetuwned json stwing
  */
-case class GraphqlRspErrors(dm: DynMap) extends Exception {
-  override def toString: String = dm.toString()
+case c-cwass gwaphqwwspewwows(dm: dynmap) extends exception {
+  ovewwide d-def tostwing: stwing = dm.tostwing()
 }
 
-object GraphqlRspParser extends Logging {
-  private val rateLimiter = RateLimiter.create(1.0) // at most 1 log message per second
-  private def rateLimitedLogError(e: Throwable): Unit =
-    if (rateLimiter.tryAcquire()) {
-      error(e.getMessage, e)
+o-object g-gwaphqwwsppawsew extends wogging {
+  pwivate vaw watewimitew = watewimitew.cweate(1.0) // a-at most 1 wog message pew second
+  pwivate def watewimitedwogewwow(e: thwowabwe): unit =
+    i-if (watewimitew.twyacquiwe()) {
+      ewwow(e.getmessage, 🥺 e-e)
     }
 
   /**
-   * GraphQL's response is a Json string.
-   * This function first parses the raw response as a Json string, then it checks if the returned
-   * object has the "data" field which means the response is expected. The response could also
-   * return a valid Json string but with errors inside it as a list of "errors".
+   * g-gwaphqw's w-wesponse is a j-json stwing. (U ﹏ U)
+   * this function fiwst pawses the w-waw wesponse as a json stwing, >w< then it checks i-if the wetuwned
+   * object has the "data" fiewd which means the wesponse is expected. mya the wesponse c-couwd awso
+   * wetuwn a vawid j-json stwing but w-with ewwows inside i-it as a wist of "ewwows". >w<
    */
-  def toDynMap(
-    rsp: String,
-    invalidRspCounter: Counter = NullStatsReceiver.NullCounter,
-    failedReqCounter: Counter = NullStatsReceiver.NullCounter
-  ): Try[DynMap] = {
-    val rawRsp: Try[DynMap] = DynMapJson.fromJsonString(rsp)
-    rawRsp match {
-      case Return(r) =>
-        if (r.getMapOpt("data").isDefined) Return(r)
-        else {
-          invalidRspCounter.incr()
-          rateLimitedLogError(GraphqlRspErrors(r))
-          Throw(GraphqlRspErrors(r))
+  def todynmap(
+    wsp: stwing, nyaa~~
+    i-invawidwspcountew: c-countew = nyuwwstatsweceivew.nuwwcountew,
+    f-faiwedweqcountew: c-countew = nyuwwstatsweceivew.nuwwcountew
+  ): t-twy[dynmap] = {
+    vaw wawwsp: twy[dynmap] = d-dynmapjson.fwomjsonstwing(wsp)
+    wawwsp match {
+      c-case wetuwn(w) =>
+        if (w.getmapopt("data").isdefined) wetuwn(w)
+        e-ewse {
+          invawidwspcountew.incw()
+          w-watewimitedwogewwow(gwaphqwwspewwows(w))
+          t-thwow(gwaphqwwspewwows(w))
         }
-      case Throw(e) =>
-        rateLimitedLogError(e)
-        failedReqCounter.incr()
-        Throw(e)
+      case thwow(e) =>
+        watewimitedwogewwow(e)
+        faiwedweqcountew.incw()
+        thwow(e)
     }
   }
 
   /**
-   * Similar to `toDynMap` above, but returns an Option
+   * simiwaw to `todynmap` a-above, (✿oωo) but wetuwns a-an option
    */
-  def toDynMapOpt(
-    rsp: String,
-    invalidRspCounter: Counter = NullStatsReceiver.NullCounter,
-    failedReqCounter: Counter = NullStatsReceiver.NullCounter
-  ): Option[DynMap] =
-    toDynMap(
-      rsp = rsp,
-      invalidRspCounter = invalidRspCounter,
-      failedReqCounter = failedReqCounter).toOption
+  def todynmapopt(
+    w-wsp: stwing, ʘwʘ
+    i-invawidwspcountew: c-countew = nyuwwstatsweceivew.nuwwcountew, (ˆ ﻌ ˆ)♡
+    faiwedweqcountew: countew = n-nyuwwstatsweceivew.nuwwcountew
+  ): option[dynmap] =
+    todynmap(
+      wsp = wsp,
+      invawidwspcountew = i-invawidwspcountew, 😳😳😳
+      faiwedweqcountew = faiwedweqcountew).tooption
 }

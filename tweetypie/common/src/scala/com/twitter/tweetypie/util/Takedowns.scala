@@ -1,49 +1,49 @@
-package com.twitter.tweetypie.util
+package com.twittew.tweetypie.utiw
 
-import com.twitter.takedown.util.TakedownReasons
-import com.twitter.takedown.util.TakedownReasons.CountryCode
-import com.twitter.tseng.withholding.thriftscala.TakedownReason
-import com.twitter.tseng.withholding.thriftscala.UnspecifiedReason
-import com.twitter.tweetypie.thriftscala.Tweet
+impowt com.twittew.takedown.utiw.takedownweasons
+i-impowt com.twittew.takedown.utiw.takedownweasons.countwycode
+i-impowt com.twittew.tseng.withhowding.thwiftscawa.takedownweason
+i-impowt com.twittew.tseng.withhowding.thwiftscawa.unspecifiedweason
+i-impowt com.twittew.tweetypie.thwiftscawa.tweet
 
 /**
- * Contains tweetypie-specific utils for working with TakedownReasons.
+ * c-contains t-tweetypie-specific u-utiws fow w-wowking with takedownweasons. (U ﹏ U)
  */
-object Takedowns {
+object takedowns {
 
-  type CountryCode = String
+  type countwycode = stwing
 
   /**
-   * Take a list of [[TakedownReason]] and return values to be saved on the [[Tweet]] in fields
-   * tweetypieOnlyTakedownCountryCode and tweetypieOnlyTakedownReason.
+   * take a wist of [[takedownweason]] a-and wetuwn vawues to be saved on the [[tweet]] i-in fiewds
+   * tweetypieonwytakedowncountwycode and tweetypieonwytakedownweason. (⑅˘꒳˘)
    *
-   * - tweetypieOnlyTakedownCountryCode contains the country_code of all UnspecifiedReasons
-   * - tweetypieOnlyTakedownReason contains all other reasons
+   * - t-tweetypieonwytakedowncountwycode contains the countwy_code of aww unspecifiedweasons
+   * - t-tweetypieonwytakedownweason contains aww o-othew weasons
    */
-  def partitionReasons(reasons: Seq[TakedownReason]): (Seq[String], Seq[TakedownReason]) = {
-    val (unspecifiedReasons, specifiedReasons) = reasons.partition {
-      case TakedownReason.UnspecifiedReason(UnspecifiedReason(_)) => true
-      case _ => false
+  d-def pawtitionweasons(weasons: seq[takedownweason]): (seq[stwing], òωó seq[takedownweason]) = {
+    vaw (unspecifiedweasons, ʘwʘ specifiedweasons) = w-weasons.pawtition {
+      case takedownweason.unspecifiedweason(unspecifiedweason(_)) => twue
+      case _ => f-fawse
     }
-    val unspecifiedCountryCodes = unspecifiedReasons.collect(TakedownReasons.reasonToCountryCode)
-    (unspecifiedCountryCodes, specifiedReasons)
+    vaw unspecifiedcountwycodes = u-unspecifiedweasons.cowwect(takedownweasons.weasontocountwycode)
+    (unspecifiedcountwycodes, s-specifiedweasons)
   }
 
-  def fromTweet(t: Tweet): Takedowns =
-    Takedowns(
-      Seq
+  d-def fwomtweet(t: t-tweet): takedowns =
+    takedowns(
+      s-seq
         .concat(
-          t.tweetypieOnlyTakedownCountryCodes
-            .getOrElse(Nil).map(TakedownReasons.countryCodeToReason),
-          t.tweetypieOnlyTakedownReasons.getOrElse(Nil)
-        ).toSet
+          t.tweetypieonwytakedowncountwycodes
+            .getowewse(niw).map(takedownweasons.countwycodetoweason), /(^•ω•^)
+          t.tweetypieonwytakedownweasons.getowewse(niw)
+        ).toset
     )
 }
 
 /**
- * This class is used to ensure the caller has access to both the full list of reasons as well
- * as the backwards-compatible list of country codes.
+ * t-this cwass is used to ensuwe the cawwew has access to both the fuww wist of weasons as weww
+ * a-as the backwawds-compatibwe wist o-of countwy codes. ʘwʘ
  */
-case class Takedowns(reasons: Set[TakedownReason]) {
-  def countryCodes: Set[CountryCode] = reasons.collect(TakedownReasons.reasonToCountryCode)
+c-case cwass t-takedowns(weasons: set[takedownweason]) {
+  def countwycodes: set[countwycode] = w-weasons.cowwect(takedownweasons.weasontocountwycode)
 }

@@ -1,24 +1,24 @@
-package com.twitter.home_mixer.service
+package com.twittew.home_mixew.sewvice
 
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineRequest
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Params
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.reflect.runtime.universe._
+impowt com.twittew.home_mixew.{thwiftscawa => t-t}
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.wequest
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct.pwoductpipewinewequest
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pwoduct.wegistwy.pwoductpipewinewegistwy
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.timewines.configapi.pawams
+impowt javax.inject.inject
+impowt javax.inject.singweton
+impowt scawa.wefwect.wuntime.univewse._
 
-@Singleton
-class ScoredTweetsService @Inject() (productPipelineRegistry: ProductPipelineRegistry) {
+@singweton
+c-cwass scowedtweetssewvice @inject() (pwoductpipewinewegistwy: pwoductpipewinewegistwy) {
 
-  def getScoredTweetsResponse[RequestType <: Request](
-    request: RequestType,
-    params: Params
+  def getscowedtweetswesponse[wequesttype <: w-wequest](
+    wequest: wequesttype, mya
+    p-pawams: pawams
   )(
-    implicit requestTypeTag: TypeTag[RequestType]
-  ): Stitch[t.ScoredTweetsResponse] = productPipelineRegistry
-    .getProductPipeline[RequestType, t.ScoredTweetsResponse](request.product)
-    .process(ProductPipelineRequest(request, params))
+    impwicit wequesttypetag: typetag[wequesttype]
+  ): s-stitch[t.scowedtweetswesponse] = pwoductpipewinewegistwy
+    .getpwoductpipewine[wequesttype, mya t-t.scowedtweetswesponse](wequest.pwoduct)
+    .pwocess(pwoductpipewinewequest(wequest, 😳 p-pawams))
 }

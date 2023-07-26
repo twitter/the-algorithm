@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.topic
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.BasicTopicDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.NoIconTopicDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.PillTopicDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.PillWithoutActionIconDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicDisplayType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.basictopicdispwaytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.noicontopicdispwaytype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.piwwtopicdispwaytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.piwwwithoutactionicondispwaytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.topicdispwaytype
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class TopicDisplayTypeMarshaller @Inject() () {
+@singweton
+cwass topicdispwaytypemawshawwew @inject() () {
 
-  def apply(topicDisplayType: TopicDisplayType): urt.TopicDisplayType = topicDisplayType match {
-    case BasicTopicDisplayType => urt.TopicDisplayType.Basic
-    case PillTopicDisplayType => urt.TopicDisplayType.Pill
-    case NoIconTopicDisplayType => urt.TopicDisplayType.NoIcon
-    case PillWithoutActionIconDisplayType => urt.TopicDisplayType.PillWithoutActionIcon
+  def appwy(topicdispwaytype: topicdispwaytype): u-uwt.topicdispwaytype = topicdispwaytype match {
+    c-case basictopicdispwaytype => uwt.topicdispwaytype.basic
+    c-case piwwtopicdispwaytype => uwt.topicdispwaytype.piww
+    case nyoicontopicdispwaytype => uwt.topicdispwaytype.noicon
+    case piwwwithoutactionicondispwaytype => u-uwt.topicdispwaytype.piwwwithoutactionicon
   }
 }

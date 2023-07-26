@@ -1,30 +1,30 @@
-package com.twitter.tsp.stores
+package com.twittew.tsp.stowes
 
-import com.twitter.storehaus.ReadableStore
-import com.twitter.topiclisting.FollowableTopicProductId
-import com.twitter.topiclisting.ProductId
-import com.twitter.topiclisting.SemanticCoreEntityId
-import com.twitter.topiclisting.TopicListingViewerContext
-import com.twitter.topiclisting.utt.UttLocalization
-import com.twitter.util.Future
+impowt com.twittew.stowehaus.weadabwestowe
+i-impowt c-com.twittew.topicwisting.fowwowabwetopicpwoductid
+i-impowt com.twittew.topicwisting.pwoductid
+i-impowt c-com.twittew.topicwisting.semanticcoweentityid
+i-impowt com.twittew.topicwisting.topicwistingviewewcontext
+i-impowt c-com.twittew.topicwisting.utt.uttwocawization
+impowt com.twittew.utiw.futuwe
 
-case class LocalizedUttTopicNameRequest(
-  productId: ProductId.Value,
-  viewerContext: TopicListingViewerContext,
-  enableInternationalTopics: Boolean)
+case cwass wocawizedutttopicnamewequest(
+  pwoductid: pwoductid.vawue, rawr x3
+  v-viewewcontext: topicwistingviewewcontext, nyaa~~
+  enabweintewnationawtopics: b-boowean)
 
-class LocalizedUttRecommendableTopicsStore(uttLocalization: UttLocalization)
-    extends ReadableStore[LocalizedUttTopicNameRequest, Set[SemanticCoreEntityId]] {
+cwass wocawizeduttwecommendabwetopicsstowe(uttwocawization: u-uttwocawization)
+    extends weadabwestowe[wocawizedutttopicnamewequest, /(^•ω•^) set[semanticcoweentityid]] {
 
-  override def get(
-    request: LocalizedUttTopicNameRequest
-  ): Future[Option[Set[SemanticCoreEntityId]]] = {
-    uttLocalization
-      .getRecommendableTopics(
-        productId = request.productId,
-        viewerContext = request.viewerContext,
-        enableInternationalTopics = request.enableInternationalTopics,
-        followableTopicProductId = FollowableTopicProductId.AllFollowable
-      ).map { response => Some(response) }
+  ovewwide def get(
+    w-wequest: wocawizedutttopicnamewequest
+  ): futuwe[option[set[semanticcoweentityid]]] = {
+    u-uttwocawization
+      .getwecommendabwetopics(
+        p-pwoductid = wequest.pwoductid, rawr
+        viewewcontext = wequest.viewewcontext, OwO
+        enabweintewnationawtopics = wequest.enabweintewnationawtopics, (U ﹏ U)
+        f-fowwowabwetopicpwoductid = fowwowabwetopicpwoductid.awwfowwowabwe
+      ).map { wesponse => some(wesponse) }
   }
 }

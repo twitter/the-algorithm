@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.component_library.candidate_source.timelines_impression_store
+package com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.timewines_impwession_stowe
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyFetcherSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.timelines.impression_store.TweetImpressionStoreManhattanV2OnUserClientColumn
-import com.twitter.timelines.impression.thriftscala.TweetImpressionsEntries
-import com.twitter.timelines.impression.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.stwato.stwatokeyfetchewsouwce
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.stwato.cwient.fetchew
+i-impowt c-com.twittew.stwato.genewated.cwient.timewines.impwession_stowe.tweetimpwessionstowemanhattanv2onusewcwientcowumn
+i-impowt com.twittew.timewines.impwession.thwiftscawa.tweetimpwessionsentwies
+impowt c-com.twittew.timewines.impwession.{thwiftscawa => t-t}
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class TimelinesImpressionStoreCandidateSourceV2 @Inject() (
-  client: TweetImpressionStoreManhattanV2OnUserClientColumn)
-    extends StratoKeyFetcherSource[
-      Long,
-      t.TweetImpressionsEntries,
-      t.TweetImpressionsEntry
+@singweton
+cwass timewinesimpwessionstowecandidatesouwcev2 @inject() (
+  cwient: t-tweetimpwessionstowemanhattanv2onusewcwientcowumn)
+    extends stwatokeyfetchewsouwce[
+      w-wong, :3
+      t.tweetimpwessionsentwies, 😳😳😳
+      t.tweetimpwessionsentwy
     ] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    "TimelinesImpressionStore")
+  ovewwide vaw identifiew: c-candidatesouwceidentifiew = candidatesouwceidentifiew(
+    "timewinesimpwessionstowe")
 
-  override val fetcher: Fetcher[Long, Unit, TweetImpressionsEntries] = client.fetcher
+  ovewwide vaw fetchew: fetchew[wong, -.- u-unit, ( ͡o ω ͡o ) tweetimpwessionsentwies] = cwient.fetchew
 
-  override def stratoResultTransformer(
-    stratoResult: t.TweetImpressionsEntries
-  ): Seq[t.TweetImpressionsEntry] =
-    stratoResult.entries
+  o-ovewwide d-def stwatowesuwttwansfowmew(
+    stwatowesuwt: t.tweetimpwessionsentwies
+  ): seq[t.tweetimpwessionsentwy] =
+    stwatowesuwt.entwies
 }

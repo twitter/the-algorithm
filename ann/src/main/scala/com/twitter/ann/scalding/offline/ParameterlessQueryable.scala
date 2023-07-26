@@ -1,24 +1,24 @@
-package com.twitter.ann.scalding.offline
+package com.twittew.ann.scawding.offwine
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.ann.common.{Distance, NeighborWithDistance, Queryable, RuntimeParams}
-import com.twitter.util.Future
+impowt c-com.twittew.ann.common.embeddingtype.embeddingvectow
+i-impowt com.twittew.ann.common.{distance, /(^•ω•^) n-nyeighbowwithdistance, rawr q-quewyabwe, OwO w-wuntimepawams}
+impowt c-com.twittew.utiw.futuwe
 
-private[offline] case class ParameterlessQueryable[T, P <: RuntimeParams, D <: Distance[D]](
-  queryable: Queryable[T, P, D],
-  runtimeParamsForAllQueries: P) {
+pwivate[offwine] c-case cwass pawametewwessquewyabwe[t, (U ﹏ U) p-p <: wuntimepawams, >_< d <: distance[d]](
+  quewyabwe: quewyabwe[t, rawr x3 p, d],
+  wuntimepawamsfowawwquewies: p-p) {
 
   /**
-   * ANN query for ids with distance.
+   * ann quewy fow ids with d-distance. mya
    *
-   * @param embedding      : Embedding/Vector to be queried with.
-   * @param numOfNeighbors : Number of neighbours to be queried for.
+   * @pawam embedding      : embedding/vectow t-to be quewied with. nyaa~~
+   * @pawam numofneighbows : nyumbew of nyeighbouws to be quewied f-fow. (⑅˘꒳˘)
    *
-   * @return List of approximate nearest neighbour ids with distance from the query embedding.
+   * @wetuwn wist o-of appwoximate n-nyeawest nyeighbouw ids with distance fwom the quewy embedding. rawr x3
    */
-  def queryWithDistance(
-    embedding: EmbeddingVector,
-    numOfNeighbors: Int
-  ): Future[List[NeighborWithDistance[T, D]]] =
-    queryable.queryWithDistance(embedding, numOfNeighbors, runtimeParamsForAllQueries)
+  def quewywithdistance(
+    e-embedding: embeddingvectow, (✿oωo)
+    numofneighbows: int
+  ): futuwe[wist[neighbowwithdistance[t, (ˆ ﻌ ˆ)♡ d]]] =
+    quewyabwe.quewywithdistance(embedding, (˘ω˘) nyumofneighbows, (⑅˘꒳˘) w-wuntimepawamsfowawwquewies)
 }

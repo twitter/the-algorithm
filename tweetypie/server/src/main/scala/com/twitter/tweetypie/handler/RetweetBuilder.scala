@@ -1,350 +1,350 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.flockdb.client._
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.additionalfields.AdditionalFields.setAdditionalFields
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.thriftscala.entities.EntityExtractor
-import com.twitter.tweetypie.tweettext.Truncator
-import com.twitter.tweetypie.util.CommunityUtil
-import com.twitter.tweetypie.util.EditControlUtil
+impowt c-com.twittew.fwockdb.cwient._
+i-impowt com.twittew.snowfwake.id.snowfwakeid
+i-impowt c-com.twittew.stitch.stitch
+impowt c-com.twittew.tweetypie.additionawfiewds.additionawfiewds.setadditionawfiewds
+i-impowt com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.wepositowy._
+impowt com.twittew.tweetypie.thwiftscawa._
+impowt com.twittew.tweetypie.thwiftscawa.entities.entityextwactow
+impowt c-com.twittew.tweetypie.tweettext.twuncatow
+impowt com.twittew.tweetypie.utiw.communityutiw
+i-impowt com.twittew.tweetypie.utiw.editcontwowutiw
 
-case class SourceTweetRequest(
-  tweetId: TweetId,
-  user: User,
-  hydrateOptions: WritePathHydrationOptions)
+c-case cwass souwcetweetwequest(
+  tweetid: tweetid, o.O
+  usew: usew, 😳
+  hydwateoptions: w-wwitepathhydwationoptions)
 
-object RetweetBuilder {
-  import TweetBuilder._
-  import UpstreamFailure._
+object wetweetbuiwdew {
+  i-impowt t-tweetbuiwdew._
+  impowt upstweamfaiwuwe._
 
-  type Type = FutureArrow[RetweetRequest, TweetBuilderResult]
+  type type = futuweawwow[wetweetwequest, o.O tweetbuiwdewwesuwt]
 
-  val SGSTestRole = "socialgraph"
+  v-vaw sgstestwowe = "sociawgwaph"
 
-  val log: Logger = Logger(getClass)
-
-  /**
-   * Retweets text gets RT and username prepended
-   */
-  def composeRetweetText(text: String, sourceUser: User): String =
-    composeRetweetText(text, sourceUser.profile.get.screenName)
+  vaw wog: woggew = woggew(getcwass)
 
   /**
-   * Retweets text gets RT and username prepended
+   * wetweets text gets w-wt and usewname pwepended
    */
-  def composeRetweetText(text: String, screenName: String): String =
-    Truncator.truncateForRetweet("RT @" + screenName + ": " + text)
+  d-def composewetweettext(text: s-stwing, ^^;; souwceusew: u-usew): stwing =
+    c-composewetweettext(text, ( ͡o ω ͡o ) souwceusew.pwofiwe.get.scweenname)
 
-  // We do not want to allow community tweets to be retweeted.
-  def validateNotCommunityTweet(sourceTweet: Tweet): Future[Unit] =
-    if (CommunityUtil.hasCommunity(sourceTweet.communities)) {
-      Future.exception(TweetCreateFailure.State(TweetCreateState.CommunityRetweetNotAllowed))
-    } else {
-      Future.Unit
+  /**
+   * wetweets text gets w-wt and usewname pwepended
+   */
+  def composewetweettext(text: s-stwing, ^^;; scweenname: stwing): stwing =
+    twuncatow.twuncatefowwetweet("wt @" + scweenname + ": " + text)
+
+  // we do nyot want t-to awwow community tweets to b-be wetweeted. ^^;;
+  d-def vawidatenotcommunitytweet(souwcetweet: t-tweet): futuwe[unit] =
+    if (communityutiw.hascommunity(souwcetweet.communities)) {
+      futuwe.exception(tweetcweatefaiwuwe.state(tweetcweatestate.communitywetweetnotawwowed))
+    } e-ewse {
+      f-futuwe.unit
     }
 
-  // We do not want to allow Trusted Friends tweets to be retweeted.
-  def validateNotTrustedFriendsTweet(sourceTweet: Tweet): Future[Unit] =
-    sourceTweet.trustedFriendsControl match {
-      case Some(trustedFriendsControl) =>
-        Future.exception(TweetCreateFailure.State(TweetCreateState.TrustedFriendsRetweetNotAllowed))
-      case None =>
-        Future.Unit
+  // we do n-not want to awwow t-twusted fwiends tweets to be wetweeted. XD
+  d-def vawidatenottwustedfwiendstweet(souwcetweet: t-tweet): futuwe[unit] =
+    souwcetweet.twustedfwiendscontwow m-match {
+      case some(twustedfwiendscontwow) =>
+        f-futuwe.exception(tweetcweatefaiwuwe.state(tweetcweatestate.twustedfwiendswetweetnotawwowed))
+      case nyone =>
+        f-futuwe.unit
     }
 
-  // We do not want to allow retweet of a stale version of a tweet in an edit chain.
-  def validateStaleTweet(sourceTweet: Tweet): Future[Unit] = {
-    if (!EditControlUtil.isLatestEdit(sourceTweet.editControl, sourceTweet.id).getOrElse(true)) {
-      Future.exception(TweetCreateFailure.State(TweetCreateState.StaleTweetRetweetNotAllowed))
-    } else {
-      // the source tweet does not have any edit control or the source tweet is the latest tweet
-      Future.Unit
+  // w-we do nyot want to awwow wetweet of a stawe vewsion of a tweet in an edit chain. 🥺
+  def vawidatestawetweet(souwcetweet: tweet): f-futuwe[unit] = {
+    i-if (!editcontwowutiw.iswatestedit(souwcetweet.editcontwow, (///ˬ///✿) souwcetweet.id).getowewse(twue)) {
+      f-futuwe.exception(tweetcweatefaiwuwe.state(tweetcweatestate.stawetweetwetweetnotawwowed))
+    } e-ewse {
+      // t-the souwce tweet does nyot have any edit contwow ow the s-souwce tweet is the watest tweet
+      futuwe.unit
     }
   }
 
   /**
-   * Builds the RetweetBuilder
+   * buiwds the wetweetbuiwdew
    */
-  def apply(
-    validateRequest: RetweetRequest => Future[Unit],
-    tweetIdGenerator: TweetIdGenerator,
-    tweetRepo: TweetRepository.Type,
-    userRepo: UserRepository.Type,
-    tflock: TFlockClient,
-    deviceSourceRepo: DeviceSourceRepository.Type,
-    validateUpdateRateLimit: RateLimitChecker.Validate,
-    spamChecker: Spam.Checker[RetweetSpamRequest] = Spam.DoNotCheckSpam,
-    updateUserCounts: (User, Tweet) => Future[User],
-    superFollowRelationsRepo: StratoSuperFollowRelationsRepository.Type,
-    unretweetEdits: TweetDeletePathHandler.UnretweetEdits,
-    setEditWindowToSixtyMinutes: Gate[Unit]
-  ): RetweetBuilder.Type = {
-    val entityExtactor = EntityExtractor.mutationAll.endo
+  d-def appwy(
+    vawidatewequest: w-wetweetwequest => f-futuwe[unit], (U ᵕ U❁)
+    t-tweetidgenewatow: tweetidgenewatow, ^^;;
+    t-tweetwepo: t-tweetwepositowy.type, ^^;;
+    usewwepo: u-usewwepositowy.type,
+    t-tfwock: tfwockcwient, rawr
+    devicesouwcewepo: devicesouwcewepositowy.type, (˘ω˘)
+    vawidateupdatewatewimit: w-watewimitcheckew.vawidate, 🥺
+    s-spamcheckew: s-spam.checkew[wetweetspamwequest] = s-spam.donotcheckspam, nyaa~~
+    u-updateusewcounts: (usew, :3 tweet) => futuwe[usew], /(^•ω•^)
+    supewfowwowwewationswepo: stwatosupewfowwowwewationswepositowy.type, ^•ﻌ•^
+    u-unwetweetedits: tweetdewetepathhandwew.unwetweetedits, UwU
+    seteditwindowtosixtyminutes: gate[unit]
+  ): wetweetbuiwdew.type = {
+    vaw entityextactow = e-entityextwactow.mutationaww.endo
 
-    val sourceTweetRepo: SourceTweetRequest => Stitch[Tweet] =
-      req => {
-        tweetRepo(
-          req.tweetId,
-          WritePathQueryOptions.retweetSourceTweet(req.user, req.hydrateOptions)
-        ).rescue {
-            case _: FilteredState => Stitch.NotFound
+    vaw souwcetweetwepo: souwcetweetwequest => s-stitch[tweet] =
+      w-weq => {
+        tweetwepo(
+          w-weq.tweetid, 😳😳😳
+          wwitepathquewyoptions.wetweetsouwcetweet(weq.usew, OwO w-weq.hydwateoptions)
+        ).wescue {
+            case _: fiwtewedstate => s-stitch.notfound
           }
-          .rescue {
-            convertRepoExceptions(TweetCreateState.SourceTweetNotFound, TweetLookupFailure(_))
+          .wescue {
+            c-convewtwepoexceptions(tweetcweatestate.souwcetweetnotfound, tweetwookupfaiwuwe(_))
           }
       }
 
-    val getUser = userLookup(userRepo)
-    val getSourceUser = sourceUserLookup(userRepo)
-    val getDeviceSource = deviceSourceLookup(deviceSourceRepo)
+    vaw getusew = usewwookup(usewwepo)
+    vaw getsouwceusew = souwceusewwookup(usewwepo)
+    v-vaw getdevicesouwce = d-devicesouwcewookup(devicesouwcewepo)
 
     /**
-     * We exempt SGS test users from the check to get them through Block v2 testing.
+     * we exempt s-sgs test usews f-fwom the check to get them thwough bwock v2 testing. ^•ﻌ•^
      */
-    def isSGSTestRole(user: User): Boolean =
-      user.roles.exists { roles => roles.roles.contains(SGSTestRole) }
+    d-def issgstestwowe(usew: u-usew): boowean =
+      u-usew.wowes.exists { w-wowes => wowes.wowes.contains(sgstestwowe) }
 
-    def validateCanRetweet(
-      user: User,
-      sourceUser: User,
-      sourceTweet: Tweet,
-      request: RetweetRequest
-    ): Future[Unit] =
-      Future
+    def vawidatecanwetweet(
+      usew: usew, (ꈍᴗꈍ)
+      souwceusew: usew, (⑅˘꒳˘)
+      souwcetweet: t-tweet, (⑅˘꒳˘)
+      w-wequest: w-wetweetwequest
+    ): futuwe[unit] =
+      f-futuwe
         .join(
-          validateNotCommunityTweet(sourceTweet),
-          validateNotTrustedFriendsTweet(sourceTweet),
-          validateSourceUserRetweetable(user, sourceUser),
-          validateStaleTweet(sourceTweet),
-          Future.when(!request.dark) {
-            if (request.returnSuccessOnDuplicate)
-              failWithRetweetIdIfAlreadyRetweeted(user, sourceTweet)
-            else
-              validateNotAlreadyRetweeted(user, sourceTweet)
+          v-vawidatenotcommunitytweet(souwcetweet), (ˆ ﻌ ˆ)♡
+          vawidatenottwustedfwiendstweet(souwcetweet), /(^•ω•^)
+          v-vawidatesouwceusewwetweetabwe(usew, òωó souwceusew),
+          vawidatestawetweet(souwcetweet), (⑅˘꒳˘)
+          futuwe.when(!wequest.dawk) {
+            if (wequest.wetuwnsuccessondupwicate)
+              f-faiwwithwetweetidifawweadywetweeted(usew, (U ᵕ U❁) s-souwcetweet)
+            ewse
+              vawidatenotawweadywetweeted(usew, >w< s-souwcetweet)
           }
         )
         .unit
 
-    def validateSourceUserRetweetable(user: User, sourceUser: User): Future[Unit] =
-      if (sourceUser.profile.isEmpty)
-        Future.exception(UserProfileEmptyException)
-      else if (sourceUser.safety.isEmpty)
-        Future.exception(UserSafetyEmptyException)
-      else if (sourceUser.view.isEmpty)
-        Future.exception(UserViewEmptyException)
-      else if (user.id != sourceUser.id && sourceUser.safety.get.isProtected)
-        Future.exception(TweetCreateFailure.State(TweetCreateState.CannotRetweetProtectedTweet))
-      else if (sourceUser.safety.get.deactivated)
-        Future.exception(TweetCreateFailure.State(TweetCreateState.CannotRetweetDeactivatedUser))
-      else if (sourceUser.safety.get.suspended)
-        Future.exception(TweetCreateFailure.State(TweetCreateState.CannotRetweetSuspendedUser))
-      else if (sourceUser.view.get.blockedBy && !isSGSTestRole(user))
-        Future.exception(TweetCreateFailure.State(TweetCreateState.CannotRetweetBlockingUser))
-      else if (sourceUser.profile.get.screenName.isEmpty)
-        Future.exception(
-          TweetCreateFailure.State(TweetCreateState.CannotRetweetUserWithoutScreenName)
+    d-def vawidatesouwceusewwetweetabwe(usew: usew, σωσ souwceusew: usew): futuwe[unit] =
+      i-if (souwceusew.pwofiwe.isempty)
+        futuwe.exception(usewpwofiweemptyexception)
+      ewse if (souwceusew.safety.isempty)
+        futuwe.exception(usewsafetyemptyexception)
+      ewse if (souwceusew.view.isempty)
+        f-futuwe.exception(usewviewemptyexception)
+      ewse if (usew.id != s-souwceusew.id && s-souwceusew.safety.get.ispwotected)
+        futuwe.exception(tweetcweatefaiwuwe.state(tweetcweatestate.cannotwetweetpwotectedtweet))
+      ewse if (souwceusew.safety.get.deactivated)
+        futuwe.exception(tweetcweatefaiwuwe.state(tweetcweatestate.cannotwetweetdeactivatedusew))
+      ewse i-if (souwceusew.safety.get.suspended)
+        f-futuwe.exception(tweetcweatefaiwuwe.state(tweetcweatestate.cannotwetweetsuspendedusew))
+      ewse if (souwceusew.view.get.bwockedby && !issgstestwowe(usew))
+        futuwe.exception(tweetcweatefaiwuwe.state(tweetcweatestate.cannotwetweetbwockingusew))
+      ewse if (souwceusew.pwofiwe.get.scweenname.isempty)
+        f-futuwe.exception(
+          tweetcweatefaiwuwe.state(tweetcweatestate.cannotwetweetusewwithoutscweenname)
         )
-      else
-        Future.Unit
+      e-ewse
+        futuwe.unit
 
-    def tflockGraphContains(
-      graph: StatusGraph,
-      fromId: Long,
-      toId: Long,
-      dir: Direction
-    ): Future[Boolean] =
-      tflock.contains(graph, fromId, toId, dir).rescue {
-        case ex: OverCapacity => Future.exception(ex)
-        case ex => Future.exception(TFlockLookupFailure(ex))
+    def tfwockgwaphcontains(
+      gwaph: statusgwaph, -.-
+      f-fwomid: wong, o.O
+      toid: wong, ^^
+      d-diw: diwection
+    ): f-futuwe[boowean] =
+      tfwock.contains(gwaph, >_< f-fwomid, toid, >w< diw).wescue {
+        c-case ex: ovewcapacity => f-futuwe.exception(ex)
+        c-case ex => futuwe.exception(tfwockwookupfaiwuwe(ex))
       }
 
-    def getRetweetIdFromTflock(sourceTweetId: TweetId, userId: UserId): Future[Option[Long]] =
-      tflock
-        .selectAll(
-          Select(
-            sourceId = sourceTweetId,
-            graph = RetweetsGraph,
-            direction = Forward
-          ).intersect(
-            Select(
-              sourceId = userId,
-              graph = UserTimelineGraph,
-              direction = Forward
+    d-def getwetweetidfwomtfwock(souwcetweetid: t-tweetid, >_< usewid: usewid): futuwe[option[wong]] =
+      tfwock
+        .sewectaww(
+          s-sewect(
+            s-souwceid = souwcetweetid, >w<
+            g-gwaph = wetweetsgwaph, rawr
+            diwection = f-fowwawd
+          ).intewsect(
+            sewect(
+              s-souwceid = u-usewid, rawr x3
+              gwaph = usewtimewinegwaph, ( ͡o ω ͡o )
+              diwection = fowwawd
             )
           )
         )
-        .map(_.headOption)
+        .map(_.headoption)
 
-    def validateNotAlreadyRetweeted(user: User, sourceTweet: Tweet): Future[Unit] =
-      // use the perspective object from TLS if available, otherwise, check with tflock
-      (sourceTweet.perspective match {
-        case Some(perspective) =>
-          Future.value(perspective.retweeted)
-        case None =>
-          // we have to query the RetweetSourceGraph in the Reverse order because
-          // it is only defined in that direction, instead of bi-directionally
-          tflockGraphContains(RetweetSourceGraph, user.id, sourceTweet.id, Reverse)
-      }).flatMap {
-        case true =>
-          Future.exception(TweetCreateFailure.State(TweetCreateState.AlreadyRetweeted))
-        case false => Future.Unit
+    d-def vawidatenotawweadywetweeted(usew: u-usew, (˘ω˘) souwcetweet: t-tweet): futuwe[unit] =
+      // u-use the pewspective object fwom t-tws if avaiwabwe, 😳 othewwise, OwO check with tfwock
+      (souwcetweet.pewspective match {
+        case some(pewspective) =>
+          futuwe.vawue(pewspective.wetweeted)
+        c-case nyone =>
+          // we have t-to quewy the wetweetsouwcegwaph i-in the wevewse owdew because
+          // i-it is onwy defined i-in that diwection, (˘ω˘) i-instead of bi-diwectionawwy
+          t-tfwockgwaphcontains(wetweetsouwcegwaph, òωó u-usew.id, ( ͡o ω ͡o ) souwcetweet.id, UwU w-wevewse)
+      }).fwatmap {
+        case twue =>
+          futuwe.exception(tweetcweatefaiwuwe.state(tweetcweatestate.awweadywetweeted))
+        case fawse => futuwe.unit
       }
 
-    def failWithRetweetIdIfAlreadyRetweeted(user: User, sourceTweet: Tweet): Future[Unit] =
-      // use the perspective object from TLS if available, otherwise, check with tflock
-      (sourceTweet.perspective.flatMap(_.retweetId) match {
-        case Some(tweetId) => Future.value(Some(tweetId))
-        case None =>
-          getRetweetIdFromTflock(sourceTweet.id, user.id)
-      }).flatMap {
-        case None => Future.Unit
-        case Some(tweetId) =>
-          Future.exception(TweetCreateFailure.AlreadyRetweeted(tweetId))
+    def faiwwithwetweetidifawweadywetweeted(usew: usew, /(^•ω•^) souwcetweet: t-tweet): futuwe[unit] =
+      // u-use the pewspective o-object fwom tws if avaiwabwe, (ꈍᴗꈍ) o-othewwise, 😳 check with tfwock
+      (souwcetweet.pewspective.fwatmap(_.wetweetid) match {
+        case some(tweetid) => f-futuwe.vawue(some(tweetid))
+        c-case nyone =>
+          getwetweetidfwomtfwock(souwcetweet.id, mya u-usew.id)
+      }).fwatmap {
+        case nyone => futuwe.unit
+        c-case some(tweetid) =>
+          f-futuwe.exception(tweetcweatefaiwuwe.awweadywetweeted(tweetid))
       }
 
-    def validateContributor(contributorIdOpt: Option[UserId]): Future[Unit] =
-      if (contributorIdOpt.isDefined)
-        Future.exception(TweetCreateFailure.State(TweetCreateState.ContributorNotSupported))
-      else
-        Future.Unit
+    def vawidatecontwibutow(contwibutowidopt: o-option[usewid]): f-futuwe[unit] =
+      if (contwibutowidopt.isdefined)
+        futuwe.exception(tweetcweatefaiwuwe.state(tweetcweatestate.contwibutownotsuppowted))
+      ewse
+        futuwe.unit
 
-    case class RetweetSource(sourceTweet: Tweet, parentUserId: UserId)
+    c-case cwass wetweetsouwce(souwcetweet: t-tweet, mya p-pawentusewid: usewid)
 
     /**
-     * Recursively follows a retweet chain to the root source tweet.  Also returns user id from the
-     * first walked tweet as the 'parentUserId'.
-     * In practice, the depth of the chain should never be greater than 2 because
-     * share.sourceStatusId should always reference the root (unlike share.parentStatusId).
+     * w-wecuwsivewy f-fowwows a wetweet chain to the w-woot souwce tweet. /(^•ω•^)  a-awso wetuwns usew id fwom the
+     * f-fiwst w-wawked tweet as the 'pawentusewid'. ^^;;
+     * i-in pwactice, 🥺 the depth of the chain shouwd n-nevew be gweatew than 2 because
+     * s-shawe.souwcestatusid s-shouwd awways wefewence the woot (unwike s-shawe.pawentstatusid).
      */
-    def findRetweetSource(
-      tweetId: TweetId,
-      forUser: User,
-      hydrateOptions: WritePathHydrationOptions
-    ): Future[RetweetSource] =
-      Stitch
-        .run(sourceTweetRepo(SourceTweetRequest(tweetId, forUser, hydrateOptions)))
-        .flatMap { tweet =>
-          getShare(tweet) match {
-            case None => Future.value(RetweetSource(tweet, getUserId(tweet)))
-            case Some(share) =>
-              findRetweetSource(share.sourceStatusId, forUser, hydrateOptions)
-                .map(_.copy(parentUserId = getUserId(tweet)))
+    def findwetweetsouwce(
+      t-tweetid: t-tweetid, ^^
+      f-fowusew: usew, ^•ﻌ•^
+      hydwateoptions: wwitepathhydwationoptions
+    ): futuwe[wetweetsouwce] =
+      s-stitch
+        .wun(souwcetweetwepo(souwcetweetwequest(tweetid, /(^•ω•^) fowusew, ^^ hydwateoptions)))
+        .fwatmap { t-tweet =>
+          g-getshawe(tweet) match {
+            c-case nyone => futuwe.vawue(wetweetsouwce(tweet, 🥺 g-getusewid(tweet)))
+            c-case some(shawe) =>
+              findwetweetsouwce(shawe.souwcestatusid, (U ᵕ U❁) f-fowusew, hydwateoptions)
+                .map(_.copy(pawentusewid = getusewid(tweet)))
           }
         }
 
-    FutureArrow { request =>
-      for {
-        () <- validateRequest(request)
-        userFuture = Stitch.run(getUser(request.userId))
-        tweetIdFuture = tweetIdGenerator()
-        devsrcFuture = Stitch.run(getDeviceSource(request.createdVia))
-        user <- userFuture
-        tweetId <- tweetIdFuture
-        devsrc <- devsrcFuture
-        rtSource <- findRetweetSource(
-          request.sourceStatusId,
-          user,
-          request.hydrationOptions.getOrElse(WritePathHydrationOptions(simpleQuotedTweet = true))
+    futuweawwow { w-wequest =>
+      f-fow {
+        () <- vawidatewequest(wequest)
+        u-usewfutuwe = stitch.wun(getusew(wequest.usewid))
+        t-tweetidfutuwe = t-tweetidgenewatow()
+        devswcfutuwe = s-stitch.wun(getdevicesouwce(wequest.cweatedvia))
+        usew <- usewfutuwe
+        tweetid <- tweetidfutuwe
+        devswc <- devswcfutuwe
+        wtsouwce <- findwetweetsouwce(
+          wequest.souwcestatusid,
+          usew,
+          wequest.hydwationoptions.getowewse(wwitepathhydwationoptions(simpwequotedtweet = twue))
         )
-        sourceTweet = rtSource.sourceTweet
-        sourceUser <- Stitch.run(getSourceUser(getUserId(sourceTweet), request.userId))
+        souwcetweet = wtsouwce.souwcetweet
+        souwceusew <- stitch.wun(getsouwceusew(getusewid(souwcetweet), 😳😳😳 wequest.usewid))
 
-        // We want to confirm that a user is actually allowed to
-        // retweet an Exclusive Tweet (only available to super followers)
-        () <- StratoSuperFollowRelationsRepository.Validate(
-          sourceTweet.exclusiveTweetControl,
-          user.id,
-          superFollowRelationsRepo)
+        // w-we w-want to confiwm that a usew is actuawwy awwowed t-to
+        // wetweet a-an excwusive t-tweet (onwy avaiwabwe to supew f-fowwowews)
+        () <- stwatosupewfowwowwewationswepositowy.vawidate(
+          s-souwcetweet.excwusivetweetcontwow, nyaa~~
+          u-usew.id, (˘ω˘)
+          supewfowwowwewationswepo)
 
-        () <- validateUser(user)
-        () <- validateUpdateRateLimit((user.id, request.dark))
-        () <- validateContributor(request.contributorUserId)
-        () <- validateCanRetweet(user, sourceUser, sourceTweet, request)
-        () <- unretweetEdits(sourceTweet.editControl, sourceTweet.id, user.id)
+        () <- v-vawidateusew(usew)
+        () <- vawidateupdatewatewimit((usew.id, w-wequest.dawk))
+        () <- v-vawidatecontwibutow(wequest.contwibutowusewid)
+        () <- vawidatecanwetweet(usew, >_< souwceusew, XD souwcetweet, w-wequest)
+        () <- u-unwetweetedits(souwcetweet.editcontwow, rawr x3 s-souwcetweet.id, ( ͡o ω ͡o ) u-usew.id)
 
-        spamRequest = RetweetSpamRequest(
-          retweetId = tweetId,
-          sourceUserId = getUserId(sourceTweet),
-          sourceTweetId = sourceTweet.id,
-          sourceTweetText = getText(sourceTweet),
-          sourceUserName = sourceUser.profile.map(_.screenName),
-          safetyMetaData = request.safetyMetaData
-        )
-
-        spamResult <- spamChecker(spamRequest)
-
-        safety = user.safety.get
-
-        share = Share(
-          sourceStatusId = sourceTweet.id,
-          sourceUserId = sourceUser.id,
-          parentStatusId = request.sourceStatusId
+        s-spamwequest = w-wetweetspamwequest(
+          w-wetweetid = t-tweetid, :3
+          s-souwceusewid = getusewid(souwcetweet), mya
+          s-souwcetweetid = s-souwcetweet.id, σωσ
+          s-souwcetweettext = gettext(souwcetweet), (ꈍᴗꈍ)
+          s-souwceusewname = souwceusew.pwofiwe.map(_.scweenname), OwO
+          safetymetadata = w-wequest.safetymetadata
         )
 
-        retweetText = composeRetweetText(getText(sourceTweet), sourceUser)
-        createdAt = SnowflakeId(tweetId).time
+        spamwesuwt <- spamcheckew(spamwequest)
 
-        coreData = TweetCoreData(
-          userId = request.userId,
-          text = retweetText,
-          createdAtSecs = createdAt.inSeconds,
-          createdVia = devsrc.internalName,
-          share = Some(share),
-          hasTakedown = safety.hasTakedown,
-          trackingId = request.trackingId,
-          nsfwUser = safety.nsfwUser,
-          nsfwAdmin = safety.nsfwAdmin,
-          narrowcast = request.narrowcast,
-          nullcast = request.nullcast
+        s-safety = usew.safety.get
+
+        s-shawe = shawe(
+          s-souwcestatusid = souwcetweet.id, o.O
+          s-souwceusewid = souwceusew.id, 😳😳😳
+          pawentstatusid = w-wequest.souwcestatusid
         )
 
-        retweet = Tweet(
-          id = tweetId,
-          coreData = Some(coreData),
-          contributor = getContributor(request.userId),
-          editControl = Some(
-            EditControl.Initial(
-              EditControlUtil
-                .makeEditControlInitial(
-                  tweetId = tweetId,
-                  createdAt = createdAt,
-                  setEditWindowToSixtyMinutes = setEditWindowToSixtyMinutes
+        wetweettext = c-composewetweettext(gettext(souwcetweet), /(^•ω•^) souwceusew)
+        c-cweatedat = snowfwakeid(tweetid).time
+
+        cowedata = tweetcowedata(
+          usewid = wequest.usewid, OwO
+          t-text = wetweettext, ^^
+          c-cweatedatsecs = c-cweatedat.inseconds, (///ˬ///✿)
+          cweatedvia = devswc.intewnawname, (///ˬ///✿)
+          shawe = some(shawe), (///ˬ///✿)
+          h-hastakedown = safety.hastakedown, ʘwʘ
+          twackingid = w-wequest.twackingid, ^•ﻌ•^
+          n-nysfwusew = s-safety.nsfwusew, OwO
+          nysfwadmin = safety.nsfwadmin, (U ﹏ U)
+          nyawwowcast = w-wequest.nawwowcast, (ˆ ﻌ ˆ)♡
+          n-nyuwwcast = wequest.nuwwcast
+        )
+
+        w-wetweet = tweet(
+          id = tweetid, (⑅˘꒳˘)
+          c-cowedata = some(cowedata), (U ﹏ U)
+          c-contwibutow = g-getcontwibutow(wequest.usewid), o.O
+          e-editcontwow = some(
+            e-editcontwow.initiaw(
+              e-editcontwowutiw
+                .makeeditcontwowinitiaw(
+                  t-tweetid = tweetid, mya
+                  c-cweatedat = cweatedat, XD
+                  s-seteditwindowtosixtyminutes = s-seteditwindowtosixtyminutes
                 )
-                .initial
-                .copy(isEditEligible = Some(false))
+                .initiaw
+                .copy(iseditewigibwe = s-some(fawse))
             )
-          ),
+          ), òωó
         )
 
-        retweetWithEntities = entityExtactor(retweet)
-        retweetWithAdditionalFields = setAdditionalFields(
-          retweetWithEntities,
-          request.additionalFields
+        w-wetweetwithentities = entityextactow(wetweet)
+        wetweetwithadditionawfiewds = s-setadditionawfiewds(
+          w-wetweetwithentities, (˘ω˘)
+          w-wequest.additionawfiewds
         )
-        // update the perspective and counts fields of the source tweet to reflect the effects
-        // of the user performing a retweet, even though those effects haven't happened yet.
-        updatedSourceTweet = sourceTweet.copy(
-          perspective = sourceTweet.perspective.map {
-            _.copy(retweeted = true, retweetId = Some(retweet.id))
-          },
-          counts = sourceTweet.counts.map { c => c.copy(retweetCount = c.retweetCount.map(_ + 1)) }
+        // u-update the pewspective a-and counts fiewds of the souwce t-tweet to wefwect the effects
+        // o-of the usew p-pewfowming a w-wetweet, :3 even though those effects haven't happened yet. OwO
+        u-updatedsouwcetweet = s-souwcetweet.copy(
+          p-pewspective = souwcetweet.pewspective.map {
+            _.copy(wetweeted = twue, mya wetweetid = s-some(wetweet.id))
+          }, (˘ω˘)
+          c-counts = souwcetweet.counts.map { c-c => c-c.copy(wetweetcount = c.wetweetcount.map(_ + 1)) }
         )
 
-        user <- updateUserCounts(user, retweetWithAdditionalFields)
-      } yield {
-        TweetBuilderResult(
-          tweet = retweetWithAdditionalFields,
-          user = user,
-          createdAt = createdAt,
-          sourceTweet = Some(updatedSourceTweet),
-          sourceUser = Some(sourceUser),
-          parentUserId = Some(rtSource.parentUserId),
-          isSilentFail = spamResult == Spam.SilentFail
+        usew <- updateusewcounts(usew, o.O wetweetwithadditionawfiewds)
+      } y-yiewd {
+        t-tweetbuiwdewwesuwt(
+          t-tweet = w-wetweetwithadditionawfiewds, (✿oωo)
+          usew = usew, (ˆ ﻌ ˆ)♡
+          cweatedat = c-cweatedat, ^^;;
+          souwcetweet = s-some(updatedsouwcetweet), OwO
+          souwceusew = some(souwceusew), 🥺
+          pawentusewid = s-some(wtsouwce.pawentusewid), mya
+          issiwentfaiw = spamwesuwt == spam.siwentfaiw
         )
       }
     }

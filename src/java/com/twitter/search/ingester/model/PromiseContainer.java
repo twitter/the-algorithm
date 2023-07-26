@@ -1,21 +1,21 @@
-package com.twitter.search.ingester.model;
+package com.twittew.seawch.ingestew.modew;
 
-import com.twitter.util.Promise;
+impowt c-com.twittew.utiw.pwomise;
 
-public class PromiseContainer<T, U> {
-  private final Promise<T> promise;
-  private final U obj;
+p-pubwic c-cwass pwomisecontainew<t, (ˆ ﻌ ˆ)♡ u-u> {
+  p-pwivate finaw p-pwomise<t> pwomise;
+  p-pwivate f-finaw u obj;
 
-  public PromiseContainer(Promise<T> promise, U obj) {
-    this.promise = promise;
-    this.obj = obj;
+  pubwic pwomisecontainew(pwomise<t> pwomise, (⑅˘꒳˘) u obj) {
+    this.pwomise = pwomise;
+    t-this.obj = obj;
   }
 
-  public Promise<T> getPromise() {
-    return promise;
+  pubwic pwomise<t> getpwomise() {
+    w-wetuwn pwomise;
   }
 
-  public U getObj() {
-    return obj;
+  pubwic u-u getobj() {
+    wetuwn obj;
   }
 }

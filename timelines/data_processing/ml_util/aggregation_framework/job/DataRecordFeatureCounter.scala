@@ -1,39 +1,39 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.job
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.job
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.summingbird.Counter
+impowt com.twittew.mw.api.datawecowd
+i-impowt com.twittew.summingbiwd.countew
 
 /**
- * A summingbird Counter which is associated with a predicate which operates on
- * [[com.twitter.ml.api.DataRecord]] instances.
+ * a-a summingbiwd c-countew which i-is associated with a-a pwedicate which o-opewates on
+ * [[com.twittew.mw.api.datawecowd]] i-instances. OwO
  *
- * For example, for a data record which represents a Tweet, one could define a predicate
- * which checks whether the Tweet contains a binary feature representing the presence of
- * an image. The counter can then be used to represent the the count of Tweets with
- * images processed.
+ * f-fow exampwe, 😳😳😳 fow a data wecowd which wepwesents a tweet, one couwd define a-a pwedicate
+ * which checks whethew the tweet contains a-a binawy featuwe wepwesenting t-the pwesence of
+ * an image. 😳😳😳 the countew can then be used t-to wepwesent the the count of tweets w-with
+ * images p-pwocessed. o.O
  *
- * @param predicate a predicate which gates the counter
- * @param counter a summingbird Counter instance
+ * @pawam pwedicate a pwedicate which gates the countew
+ * @pawam c-countew a summingbiwd countew instance
  */
-case class DataRecordFeatureCounter(predicate: DataRecord => Boolean, counter: Counter)
+case cwass datawecowdfeatuwecountew(pwedicate: datawecowd => b-boowean, ( ͡o ω ͡o ) countew: countew)
 
-object DataRecordFeatureCounter {
-
-  /**
-   * Increments the counter if the record satisfies the predicate
-   *
-   * @param recordCounter a data record counter
-   * @param record a data record
-   */
-  def apply(recordCounter: DataRecordFeatureCounter, record: DataRecord): Unit =
-    if (recordCounter.predicate(record)) recordCounter.counter.incr()
+o-object datawecowdfeatuwecountew {
 
   /**
-   * Defines a feature counter with a predicate that is always true
+   * i-incwements t-the countew if t-the wecowd satisfies the pwedicate
    *
-   * @param counter a summingbird Counter instance
-   * @return a data record counter
+   * @pawam wecowdcountew a-a data wecowd countew
+   * @pawam wecowd a data w-wecowd
    */
-  def any(counter: Counter): DataRecordFeatureCounter =
-    DataRecordFeatureCounter({ _: DataRecord => true }, counter)
+  def appwy(wecowdcountew: datawecowdfeatuwecountew, wecowd: datawecowd): unit =
+    if (wecowdcountew.pwedicate(wecowd)) w-wecowdcountew.countew.incw()
+
+  /**
+   * defines a featuwe c-countew with a-a pwedicate that i-is awways twue
+   *
+   * @pawam countew a summingbiwd countew instance
+   * @wetuwn a-a data wecowd c-countew
+   */
+  def any(countew: c-countew): datawecowdfeatuwecountew =
+    d-datawecowdfeatuwecountew({ _: datawecowd => t-twue }, countew)
 }

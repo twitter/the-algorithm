@@ -1,52 +1,52 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+package com.twittew.seawch.eawwybiwd.seawch.wewevance.scowing;
 
-import org.apache.lucene.search.Explanation;
+impowt owg.apache.wucene.seawch.expwanation;
 
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
+i-impowt c-com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+i-impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtmetadata;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtmetadataoptions;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwttype;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtswewevancestats;
 
 /**
- * A dummy scoring function for test, the score is always tweetId/10000.0
- * Since score_filter: operator requires all score to be between [0, 1], if you want to use this
- * with it, don't use any tweet id larger than 10000 in your test.
+ * a dummy scowing function fow test, òωó the scowe i-is awways tweetid/10000.0
+ * since scowe_fiwtew: opewatow wequiwes a-aww scowe to be between [0, ʘwʘ 1], i-if you want to use this
+ * with it, /(^•ω•^) don't use any tweet id w-wawgew than 10000 in youw test. ʘwʘ
  */
-public class TestScoringFunction extends ScoringFunction {
-  private ThriftSearchResultMetadata metadata = null;
-  private float score;
+p-pubwic cwass t-testscowingfunction extends scowingfunction {
+  pwivate thwiftseawchwesuwtmetadata metadata = nuww;
+  pwivate fwoat s-scowe;
 
-  public TestScoringFunction(ImmutableSchemaInterface schema) {
-    super(schema);
+  pubwic testscowingfunction(immutabweschemaintewface schema) {
+    supew(schema);
   }
 
-  @Override
-  protected float score(float luceneQueryScore) {
-    long tweetId = tweetIDMapper.getTweetID(getCurrentDocID());
-    this.score = (float) (tweetId / 10000.0);
-    System.out.println(String.format("score for tweet %10d is %6.3f", tweetId, score));
-    return this.score;
+  @ovewwide
+  pwotected fwoat s-scowe(fwoat wucenequewyscowe) {
+    wong tweetid = t-tweetidmappew.gettweetid(getcuwwentdocid());
+    t-this.scowe = (fwoat) (tweetid / 10000.0);
+    s-system.out.pwintwn(stwing.fowmat("scowe f-fow tweet %10d is %6.3f", σωσ tweetid, OwO s-scowe));
+    wetuwn this.scowe;
   }
 
-  @Override
-  protected Explanation doExplain(float luceneScore) {
-    return null;
+  @ovewwide
+  pwotected expwanation d-doexpwain(fwoat wucenescowe) {
+    wetuwn nyuww;
   }
 
-  @Override
-  public ThriftSearchResultMetadata getResultMetadata(ThriftSearchResultMetadataOptions options) {
-    if (metadata == null) {
-      metadata = new ThriftSearchResultMetadata()
-          .setResultType(ThriftSearchResultType.RELEVANCE)
-          .setPenguinVersion(EarlybirdConfig.getPenguinVersionByte());
-      metadata.setScore(score);
+  @ovewwide
+  pubwic thwiftseawchwesuwtmetadata getwesuwtmetadata(thwiftseawchwesuwtmetadataoptions o-options) {
+    if (metadata == n-nyuww) {
+      m-metadata = nyew t-thwiftseawchwesuwtmetadata()
+          .setwesuwttype(thwiftseawchwesuwttype.wewevance)
+          .setpenguinvewsion(eawwybiwdconfig.getpenguinvewsionbyte());
+      metadata.setscowe(scowe);
     }
-    return metadata;
+    wetuwn metadata;
   }
 
-  @Override
-  public void updateRelevanceStats(ThriftSearchResultsRelevanceStats relevanceStats) {
+  @ovewwide
+  p-pubwic v-void updatewewevancestats(thwiftseawchwesuwtswewevancestats wewevancestats) {
   }
 }

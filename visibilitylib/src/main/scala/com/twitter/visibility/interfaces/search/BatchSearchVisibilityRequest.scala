@@ -1,9 +1,9 @@
-package com.twitter.visibility.interfaces.search
+package com.twittew.visibiwity.intewfaces.seawch
 
-import com.twitter.visibility.interfaces.common.search.SearchVFRequestContext
-import com.twitter.visibility.models.ViewerContext
+impowt com.twittew.visibiwity.intewfaces.common.seawch.seawchvfwequestcontext
+impowt c-com.twittew.visibiwity.modews.viewewcontext
 
-case class BatchSearchVisibilityRequest(
-  tweetContexts: Seq[TweetContext],
-  viewerContext: ViewerContext,
-  searchVFRequestContext: SearchVFRequestContext)
+c-case cwass batchseawchvisibiwitywequest(
+  t-tweetcontexts: s-seq[tweetcontext], (⑅˘꒳˘)
+  v-viewewcontext: v-viewewcontext, ( ͡o ω ͡o )
+  s-seawchvfwequestcontext: s-seawchvfwequestcontext)

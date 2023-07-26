@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.item.awewt
 
-import com.twitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertDisplayLocation
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.showawewtcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.awewt.showawewtdispwaywocation
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-trait BaseShowAlertDisplayLocationBuilder[-Query <: PipelineQuery] {
+t-twait baseshowawewtdispwaywocationbuiwdew[-quewy <: p-pipewinequewy] {
 
-  def apply(
-    query: Query,
-    candidate: ShowAlertCandidate,
-    features: FeatureMap
-  ): ShowAlertDisplayLocation
+  d-def appwy(
+    quewy: quewy, rawr x3
+    candidate: showawewtcandidate, rawr
+    featuwes: featuwemap
+  ): showawewtdispwaywocation
 }

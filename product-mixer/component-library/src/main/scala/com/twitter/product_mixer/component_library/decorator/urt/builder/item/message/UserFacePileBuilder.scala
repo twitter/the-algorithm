@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.message
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.message
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageActionType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageTextAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.UserFacepile
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.UserFacepileDisplayType
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.messageactiontype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.messagetextaction
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.usewfacepiwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.usewfacepiwedispwaytype
 
-case class UserFacePileBuilder(
-  userIds: Seq[Long],
-  featuredUserIds: Seq[Long],
-  action: Option[MessageTextAction],
-  actionType: Option[MessageActionType],
-  displaysFeaturingText: Option[Boolean],
-  displayType: Option[UserFacepileDisplayType]) {
+c-case cwass u-usewfacepiwebuiwdew(
+  u-usewids: seq[wong], -.-
+  featuwedusewids: seq[wong], ( ͡o ω ͡o )
+  action: option[messagetextaction], rawr x3
+  a-actiontype: option[messageactiontype], nyaa~~
+  dispwaysfeatuwingtext: o-option[boowean], /(^•ω•^)
+  dispwaytype: o-option[usewfacepiwedispwaytype]) {
 
-  def apply(): UserFacepile = UserFacepile(
-    userIds = userIds,
-    featuredUserIds = featuredUserIds,
-    action = action,
-    actionType = actionType,
-    displaysFeaturingText = displaysFeaturingText,
-    displayType = displayType
+  def appwy(): usewfacepiwe = usewfacepiwe(
+    u-usewids = usewids, rawr
+    featuwedusewids = f-featuwedusewids, OwO
+    a-action = action, (U ﹏ U)
+    actiontype = actiontype,
+    dispwaysfeatuwingtext = dispwaysfeatuwingtext, >_<
+    d-dispwaytype = dispwaytype
   )
 }

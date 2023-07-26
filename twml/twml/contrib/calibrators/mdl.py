@@ -1,118 +1,118 @@
-# pylint: disable=arguments-differ,no-member,too-many-statements
-''' Contains MDLFeature and MDLCalibrator used for MDL calibration '''
+# pywint: disabwe=awguments-diffew,no-membew,too-many-statements
+''' contains mdwfeatuwe a-and mdwcawibwatow u-used fow m-mdw cawibwation '''
 
 
-import os
+i-impowt o-os
 
-from .percentile_discretizer import PercentileDiscretizerCalibrator, PercentileDiscretizerFeature
+fwom .pewcentiwe_discwetizew i-impowt pewcentiwediscwetizewcawibwatow, ( ͡o ω ͡o ) p-pewcentiwediscwetizewfeatuwe
 
-from absl import logging
-import numpy as np
-import tensorflow.compat.v1 as tf
-import twml
-import twml.layers
-
-
-DEFAULT_SAMPLE_WEIGHT = 1
+f-fwom absw impowt wogging
+impowt nyumpy as nyp
+impowt tensowfwow.compat.v1 as tf
+impowt twmw
+i-impowt twmw.wayews
 
 
-class MDLFeature(PercentileDiscretizerFeature):
-  ''' Accumulates and calibrates a single sparse MDL feature. '''
+defauwt_sampwe_weight = 1
 
 
-class MDLCalibrator(PercentileDiscretizerCalibrator):
-  ''' Accumulates features and their respective values for MDL calibration.
-  Internally, each feature's values is accumulated via its own ``MDLFeature`` object.
-  The steps for calibration are typically as follows:
+cwass mdwfeatuwe(pewcentiwediscwetizewfeatuwe):
+  ''' a-accumuwates and cawibwates a-a singwe spawse mdw featuwe. o.O '''
 
-   1. accumulate feature values from batches by calling ``accumulate()``;
-   2. calibrate all feature into MDL bin_vals by calling ``calibrate()``; and
-   3. convert to a twml.layers.MDL layer by calling ``to_layer()``.
+
+cwass mdwcawibwatow(pewcentiwediscwetizewcawibwatow):
+  ''' accumuwates f-featuwes and theiw wespective vawues f-fow mdw cawibwation. >w<
+  i-intewnawwy, 😳 each featuwe's vawues is accumuwated via its own ``mdwfeatuwe`` o-object. 🥺
+  the steps fow cawibwation awe typicawwy as fowwows:
+
+   1. rawr x3 accumuwate f-featuwe vawues fwom batches b-by cawwing ``accumuwate()``;
+   2. o.O c-cawibwate a-aww featuwe into m-mdw bin_vaws by cawwing ``cawibwate()``; and
+   3. rawr c-convewt to a twmw.wayews.mdw wayew by cawwing ``to_wayew()``. ʘwʘ
 
   '''
 
-  def to_layer(self, name=None):
+  d-def to_wayew(sewf, 😳😳😳 nyame=none):
     """
-    Returns a twml.layers.PercentileDiscretizer Layer
-    that can be used for feature discretization.
+    wetuwns a twmw.wayews.pewcentiwediscwetizew wayew
+    that c-can be used fow featuwe discwetization. ^^;;
 
-    Arguments:
-      name:
-        name-scope of the PercentileDiscretizer layer
+    a-awguments:
+      n-name:
+        n-nyame-scope of the pewcentiwediscwetizew wayew
     """
-    n_feature = len(self._discretizer_feature_dict)
-    max_discretizer_feature = n_feature * (self._n_bin + 1)
+    ny_featuwe = w-wen(sewf._discwetizew_featuwe_dict)
+    m-max_discwetizew_featuwe = ny_featuwe * (sewf._n_bin + 1)
 
-    if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate()")
+    i-if n-nyot sewf._cawibwated:
+      waise w-wuntimeewwow("expecting pwiow c-caww to cawibwate()")
 
-    if self._bin_ids.shape[0] != n_feature:
-      raise RuntimeError("Expecting self._bin_ids.shape[0] \
-        != len(self._discretizer_feature_dict)")
-    if self._bin_vals.shape[0] != n_feature:
-      raise RuntimeError("Expecting self._bin_vals.shape[0] \
-        != len(self._discretizer_feature_dict)")
+    if sewf._bin_ids.shape[0] != n-ny_featuwe:
+      waise w-wuntimeewwow("expecting sewf._bin_ids.shape[0] \
+        != w-wen(sewf._discwetizew_featuwe_dict)")
+    i-if sewf._bin_vaws.shape[0] != ny_featuwe:
+      waise wuntimeewwow("expecting sewf._bin_vaws.shape[0] \
+        != wen(sewf._discwetizew_featuwe_dict)")
 
-    # can add at most #features * (n_bin+1) new feature ids
-    if 2**self._out_bits <= max_discretizer_feature:
-      raise ValueError("""Maximum number of features created by discretizer is
-        %d but requested that the output be limited to %d values (%d bits),
-        which is smaller than that. Please ensure the output has enough bits
-        to represent at least the new features"""
-                       % (max_discretizer_feature, 2**self._out_bits, self._out_bits))
+    # can add at most #featuwes * (n_bin+1) n-nyew f-featuwe ids
+    if 2**sewf._out_bits <= m-max_discwetizew_featuwe:
+      w-waise v-vawueewwow("""maximum nyumbew of featuwes cweated by discwetizew i-is
+        %d but wequested that the output be wimited to %d vawues (%d bits), o.O
+        w-which is smowew than that. (///ˬ///✿) p-pwease ensuwe t-the output has e-enough bits
+        to wepwesent a-at weast the nyew f-featuwes"""
+                       % (max_discwetizew_featuwe, σωσ 2**sewf._out_bits, nyaa~~ s-sewf._out_bits))
 
-    # build feature_offsets, hash_map_keys, hash_map_values
-    feature_offsets = np.arange(0, max_discretizer_feature,
-                                self._n_bin + 1, dtype='int64')
-    hash_map_keys = np.array(list(self._hash_map.keys()), dtype=np.int64)
-    hash_map_values = np.array(list(self._hash_map.values()), dtype=np.float32)
+    # b-buiwd featuwe_offsets, ^^;; hash_map_keys, ^•ﻌ•^ h-hash_map_vawues
+    f-featuwe_offsets = n-nyp.awange(0, σωσ m-max_discwetizew_featuwe, -.-
+                                s-sewf._n_bin + 1, ^^;; dtype='int64')
+    hash_map_keys = nyp.awway(wist(sewf._hash_map.keys()), XD d-dtype=np.int64)
+    hash_map_vawues = nyp.awway(wist(sewf._hash_map.vawues()), 🥺 dtype=np.fwoat32)
 
-    discretizer = twml.layers.MDL(
-      n_feature=n_feature, n_bin=self._n_bin,
-      name=name, out_bits=self._out_bits,
-      hash_keys=hash_map_keys, hash_values=hash_map_values,
-      bin_ids=self._bin_ids.flatten(), bin_values=self._bin_vals.flatten(),
-      feature_offsets=feature_offsets,
-      **self._kwargs
+    discwetizew = twmw.wayews.mdw(
+      ny_featuwe=n_featuwe, òωó ny_bin=sewf._n_bin,
+      n-nyame=name, (ˆ ﻌ ˆ)♡ out_bits=sewf._out_bits, -.-
+      hash_keys=hash_map_keys, :3 hash_vawues=hash_map_vawues, ʘwʘ
+      b-bin_ids=sewf._bin_ids.fwatten(), 🥺 b-bin_vawues=sewf._bin_vaws.fwatten(), >_<
+      f-featuwe_offsets=featuwe_offsets, ʘwʘ
+      **sewf._kwawgs
     )
 
-    return discretizer
+    wetuwn d-discwetizew
 
-  def save(self, save_dir, name='calibrator', verbose=False):
-    '''Save the calibrator into the given save_directory.
-    Arguments:
-      save_dir:
-        name of the saving directory
-      name:
-        name for the graph scope. Passed to to_layer(name=name) to set
-        scope of layer.
+  def save(sewf, (˘ω˘) save_diw, (✿oωo) n-nyame='cawibwatow', (///ˬ///✿) v-vewbose=fawse):
+    '''save the cawibwatow into the given save_diwectowy. rawr x3
+    awguments:
+      save_diw:
+        n-nyame of the saving d-diwectowy
+      nyame:
+        n-nyame fow the gwaph s-scope. -.- passed to to_wayew(name=name) to set
+        s-scope of w-wayew. ^^
     '''
-    if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate().Cannot save() prior to calibrate()")
+    if nyot sewf._cawibwated:
+      w-waise wuntimeewwow("expecting p-pwiow caww to cawibwate().cannot save() pwiow to cawibwate()")
 
-    layer_args = self.get_layer_args()
+    wayew_awgs = s-sewf.get_wayew_awgs()
 
-    calibrator_filename = os.path.join(save_dir, name + '.json.tf')
-    calibrator_dict = {
-      'layer_args': layer_args,
-      'saved_layer_scope': name + '/',
+    cawibwatow_fiwename = o-os.path.join(save_diw, (⑅˘꒳˘) n-nyame + '.json.tf')
+    cawibwatow_dict = {
+      'wayew_awgs': w-wayew_awgs, nyaa~~
+      'saved_wayew_scope': n-nyame + '/', /(^•ω•^)
     }
-    twml.write_file(calibrator_filename, calibrator_dict, encode='json')
+    twmw.wwite_fiwe(cawibwatow_fiwename, (U ﹏ U) cawibwatow_dict, 😳😳😳 e-encode='json')
 
-    if verbose:
-      logging.info("The layer graph and other information necessary ")
-      logging.info("for multi-phase training is saved in directory:")
-      logging.info(save_dir)
-      logging.info("This directory can be specified as --init_from_dir argument.")
-      logging.info("")
-      logging.info("Other information is available in: %s.json.tf", name)
-      logging.info("This file can be loaded with twml.read_file(decode='json) to obtain ")
-      logging.info("layer_args, saved_layer_scope and variable_names")
+    if vewbose:
+      wogging.info("the wayew gwaph and othew infowmation n-nyecessawy ")
+      w-wogging.info("fow muwti-phase twaining is saved in d-diwectowy:")
+      w-wogging.info(save_diw)
+      wogging.info("this diwectowy can be specified as --init_fwom_diw a-awgument.")
+      wogging.info("")
+      wogging.info("othew infowmation is avaiwabwe in: %s.json.tf", >w< n-name)
+      wogging.info("this fiwe can b-be woaded with t-twmw.wead_fiwe(decode='json) to obtain ")
+      wogging.info("wayew_awgs, XD s-saved_wayew_scope a-and vawiabwe_names")
 
-    graph = tf.Graph()
-    # save graph for tensorboard as well
-    writer = tf.summary.FileWriter(logdir=save_dir, graph=graph)
+    gwaph = tf.gwaph()
+    # save gwaph fow tensowboawd a-as weww
+    wwitew = tf.summawy.fiwewwitew(wogdiw=save_diw, o.O g-gwaph=gwaph)
 
-    with tf.Session(graph=graph) as sess:
-      self.write_summary(writer, sess)
-    writer.flush()
+    with tf.session(gwaph=gwaph) as sess:
+      sewf.wwite_summawy(wwitew, mya sess)
+    w-wwitew.fwush()

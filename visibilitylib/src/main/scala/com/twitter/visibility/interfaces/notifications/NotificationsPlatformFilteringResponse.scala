@@ -1,13 +1,13 @@
-package com.twitter.visibility.interfaces.notifications
+package com.twittew.visibiwity.intewfaces.notifications
 
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.rules.Action
+impowt com.twittew.visibiwity.featuwes.featuwe
+i-impowt com.twittew.visibiwity.wuwes.action
 
-trait NotificationsPlatformFilteringResponse
+t-twait nyotificationspwatfowmfiwtewingwesponse
 
-case object AllowVerdict extends NotificationsPlatformFilteringResponse
+c-case object awwowvewdict e-extends n-nyotificationspwatfowmfiwtewingwesponse
 
-case class FilteredVerdict(action: Action) extends NotificationsPlatformFilteringResponse
+c-case c-cwass fiwtewedvewdict(action: action) e-extends nyotificationspwatfowmfiwtewingwesponse
 
-case class FailedVerdict(featuresMap: Map[Feature[_], String])
-    extends NotificationsPlatformFilteringResponse
+case cwass faiwedvewdict(featuwesmap: map[featuwe[_], σωσ stwing])
+    e-extends nyotificationspwatfowmfiwtewingwesponse

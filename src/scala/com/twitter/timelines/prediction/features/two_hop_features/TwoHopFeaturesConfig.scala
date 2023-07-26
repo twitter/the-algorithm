@@ -1,30 +1,30 @@
-package com.twitter.timelines.prediction.features.two_hop_features
+package com.twittew.timewines.pwediction.featuwes.two_hop_featuwes
 
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType
-import com.twitter.graph_feature_service.thriftscala.{EdgeType, FeatureType}
+impowt com.twittew.daw.pewsonaw_data.thwiftjava.pewsonawdatatype
+i-impowt com.twittew.gwaph_featuwe_sewvice.thwiftscawa.{edgetype, OwO f-featuwetype}
 
-object TwoHopFeaturesConfig {
-  val leftEdgeTypes = Seq(EdgeType.Following, EdgeType.Favorite, EdgeType.MutualFollow)
-  val rightEdgeTypes = Seq(
-    EdgeType.FollowedBy,
-    EdgeType.FavoritedBy,
-    EdgeType.RetweetedBy,
-    EdgeType.MentionedBy,
-    EdgeType.MutualFollow)
+o-object twohopfeatuwesconfig {
+  v-vaw weftedgetypes = s-seq(edgetype.fowwowing, (U ﹏ U) e-edgetype.favowite, >_< e-edgetype.mutuawfowwow)
+  v-vaw wightedgetypes = seq(
+    edgetype.fowwowedby, rawr x3
+    edgetype.favowitedby, mya
+    edgetype.wetweetedby, nyaa~~
+    edgetype.mentionedby, (⑅˘꒳˘)
+    edgetype.mutuawfowwow)
 
-  val edgeTypePairs: Seq[(EdgeType, EdgeType)] = {
-    for (leftEdgeType <- leftEdgeTypes; rightEdgeType <- rightEdgeTypes)
-      yield (leftEdgeType, rightEdgeType)
+  v-vaw edgetypepaiws: seq[(edgetype, rawr x3 edgetype)] = {
+    f-fow (weftedgetype <- weftedgetypes; w-wightedgetype <- wightedgetypes)
+      yiewd (weftedgetype, (✿oωo) wightedgetype)
   }
 
-  val featureTypes: Seq[FeatureType] = edgeTypePairs.map(pair => FeatureType(pair._1, pair._2))
+  v-vaw featuwetypes: seq[featuwetype] = e-edgetypepaiws.map(paiw => f-featuwetype(paiw._1, (ˆ ﻌ ˆ)♡ paiw._2))
 
-  val personalDataTypesMap: Map[EdgeType, Set[PersonalDataType]] = Map(
-    EdgeType.Following -> Set(PersonalDataType.CountOfFollowersAndFollowees),
-    EdgeType.Favorite -> Set(
-      PersonalDataType.CountOfPrivateLikes,
-      PersonalDataType.CountOfPublicLikes),
-    EdgeType.MutualFollow -> Set(PersonalDataType.CountOfFollowersAndFollowees),
-    EdgeType.FollowedBy -> Set(PersonalDataType.CountOfFollowersAndFollowees)
+  vaw pewsonawdatatypesmap: map[edgetype, (˘ω˘) set[pewsonawdatatype]] = map(
+    edgetype.fowwowing -> s-set(pewsonawdatatype.countoffowwowewsandfowwowees), (⑅˘꒳˘)
+    edgetype.favowite -> set(
+      pewsonawdatatype.countofpwivatewikes, (///ˬ///✿)
+      pewsonawdatatype.countofpubwicwikes), 😳😳😳
+    edgetype.mutuawfowwow -> s-set(pewsonawdatatype.countoffowwowewsandfowwowees),
+    edgetype.fowwowedby -> s-set(pewsonawdatatype.countoffowwowewsandfowwowees)
   )
 }

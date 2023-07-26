@@ -1,7 +1,7 @@
-java_library(
-    sources = ["*.java"],
+java_wibwawy(
+    souwces = ["*.java"], >_<
     dependencies = [
-        "src/java/com/twitter/common/util:system-mocks",
-        "src/java/com/twitter/search/earlybird/config",
-    ],
+        "swc/java/com/twittew/common/utiw:system-mocks", (ꈍᴗꈍ)
+        "swc/java/com/twittew/seawch/eawwybiwd/config", ^•ﻌ•^
+    ], OwO
 )

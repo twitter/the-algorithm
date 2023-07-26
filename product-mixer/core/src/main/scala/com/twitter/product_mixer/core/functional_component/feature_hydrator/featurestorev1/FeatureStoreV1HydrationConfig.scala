@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.featuwestowev1
 
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.dynamic.BaseDynamicHydrationConfig
-import com.twitter.product_mixer.core.feature.featurestorev1.BaseFeatureStoreV1CandidateFeature
-import com.twitter.product_mixer.core.feature.featurestorev1.BaseFeatureStoreV1QueryFeature
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.mw.featuwestowe.wib.entityid
+i-impowt c-com.twittew.mw.featuwestowe.wib.dynamic.basedynamichydwationconfig
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1.basefeatuwestowev1candidatefeatuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1.basefeatuwestowev1quewyfeatuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case class FeatureStoreV1QueryFeatureHydrationConfig[Query <: PipelineQuery](
-  features: Set[BaseFeatureStoreV1QueryFeature[Query, _ <: EntityId, _]])
-    extends BaseDynamicHydrationConfig[
-      Query,
-      BaseFeatureStoreV1QueryFeature[Query, _ <: EntityId, _]
-    ](features)
+c-case cwass featuwestowev1quewyfeatuwehydwationconfig[quewy <: pipewinequewy](
+  featuwes: set[basefeatuwestowev1quewyfeatuwe[quewy, XD _ <: entityid, :3 _]])
+    extends basedynamichydwationconfig[
+      q-quewy,
+      basefeatuwestowev1quewyfeatuwe[quewy, 😳😳😳 _ <: entityid, -.- _]
+    ](featuwes)
 
-case class FeatureStoreV1CandidateFeatureHydrationConfig[
-  Query <: PipelineQuery,
-  Input <: UniversalNoun[Any]
+case c-cwass featuwestowev1candidatefeatuwehydwationconfig[
+  quewy <: p-pipewinequewy, ( ͡o ω ͡o )
+  input <: univewsawnoun[any]
 ](
-  features: Set[BaseFeatureStoreV1CandidateFeature[Query, Input, _ <: EntityId, _]])
-    extends BaseDynamicHydrationConfig[
-      Query,
-      BaseFeatureStoreV1CandidateFeature[Query, Input, _ <: EntityId, _]
-    ](features)
+  featuwes: set[basefeatuwestowev1candidatefeatuwe[quewy, rawr x3 input, _ <: e-entityid, nyaa~~ _]])
+    extends b-basedynamichydwationconfig[
+      q-quewy, /(^•ω•^)
+      basefeatuwestowev1candidatefeatuwe[quewy, rawr input, _ <: entityid, OwO _]
+    ](featuwes)

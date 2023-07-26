@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.topic
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.IncentiveFocusTopicFollowPromptDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicFocusTopicFollowPromptDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicFollowPromptDisplayType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.incentivefocustopicfowwowpwomptdispwaytype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.topicfocustopicfowwowpwomptdispwaytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.topicfowwowpwomptdispwaytype
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class TopicFollowPromptDisplayTypeMarshaller @Inject() () {
+@singweton
+c-cwass topicfowwowpwomptdispwaytypemawshawwew @inject() () {
 
-  def apply(
-    topicFollowPromptDisplayType: TopicFollowPromptDisplayType
-  ): urt.TopicFollowPromptDisplayType =
-    topicFollowPromptDisplayType match {
-      case IncentiveFocusTopicFollowPromptDisplayType =>
-        urt.TopicFollowPromptDisplayType.IncentiveFocus
-      case TopicFocusTopicFollowPromptDisplayType => urt.TopicFollowPromptDisplayType.TopicFocus
+  def appwy(
+    topicfowwowpwomptdispwaytype: topicfowwowpwomptdispwaytype
+  ): u-uwt.topicfowwowpwomptdispwaytype =
+    topicfowwowpwomptdispwaytype match {
+      c-case incentivefocustopicfowwowpwomptdispwaytype =>
+        u-uwt.topicfowwowpwomptdispwaytype.incentivefocus
+      case topicfocustopicfowwowpwomptdispwaytype => uwt.topicfowwowpwomptdispwaytype.topicfocus
     }
 }

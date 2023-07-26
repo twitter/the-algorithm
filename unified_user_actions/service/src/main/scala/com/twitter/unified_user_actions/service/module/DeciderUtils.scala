@@ -1,27 +1,27 @@
-package com.twitter.unified_user_actions.service.module
+package com.twittew.unified_usew_actions.sewvice.moduwe
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
+impowt com.twittew.decidew.decidew
+i-impowt c-com.twittew.decidew.wandomwecipient
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.actiontype
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.unifiedusewaction
 
-sealed trait DeciderUtils {
-  def shouldPublish(decider: Decider, uua: UnifiedUserAction, sinkTopic: String): Boolean
+s-seawed t-twait decidewutiws {
+  d-def shouwdpubwish(decidew: d-decidew, (✿oωo) uua: unifiedusewaction, (ˆ ﻌ ˆ)♡ sinktopic: stwing): boowean
 }
 
-object DefaultDeciderUtils extends DeciderUtils {
-  override def shouldPublish(decider: Decider, uua: UnifiedUserAction, sinkTopic: String): Boolean =
-    decider.isAvailable(feature = s"Publish${uua.actionType}", Some(RandomRecipient))
+object defauwtdecidewutiws e-extends decidewutiws {
+  ovewwide def shouwdpubwish(decidew: d-decidew, (˘ω˘) uua: unifiedusewaction, (⑅˘꒳˘) s-sinktopic: stwing): boowean =
+    decidew.isavaiwabwe(featuwe = s-s"pubwish${uua.actiontype}", (///ˬ///✿) some(wandomwecipient))
 }
 
-object ClientEventDeciderUtils extends DeciderUtils {
-  override def shouldPublish(decider: Decider, uua: UnifiedUserAction, sinkTopic: String): Boolean =
-    decider.isAvailable(
-      feature = s"Publish${uua.actionType}",
-      Some(RandomRecipient)) && (uua.actionType match {
-      // for heavy impressions UUA only publishes to the "all" topic, not the engagementsOnly topic.
-      case ActionType.ClientTweetLingerImpression | ActionType.ClientTweetRenderImpression =>
-        sinkTopic == TopicsMapping().all
-      case _ => true
+o-object cwienteventdecidewutiws e-extends decidewutiws {
+  ovewwide def shouwdpubwish(decidew: decidew, 😳😳😳 uua: unifiedusewaction, 🥺 sinktopic: stwing): b-boowean =
+    decidew.isavaiwabwe(
+      featuwe = s"pubwish${uua.actiontype}", mya
+      some(wandomwecipient)) && (uua.actiontype match {
+      // f-fow heavy impwessions uua o-onwy pubwishes t-to the "aww" topic, 🥺 n-nyot the engagementsonwy t-topic. >_<
+      case actiontype.cwienttweetwingewimpwession | actiontype.cwienttweetwendewimpwession =>
+        s-sinktopic == topicsmapping().aww
+      case _ => twue
     })
 }

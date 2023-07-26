@@ -1,14 +1,14 @@
-package com.twitter.tweetypie
-package core
+package com.twittew.tweetypie
+package c-cowe
 
-import scala.util.control.NoStackTrace
+impowt s-scawa.utiw.contwow.nostacktwace
 
-case class InternalServerError(message: String) extends Exception(message) with NoStackTrace
+c-case cwass intewnawsewvewewwow(message: s-stwing) e-extends exception(message) w-with n-nyostacktwace
 
-case class OverCapacity(message: String) extends Exception(message) with NoStackTrace
+c-case cwass ovewcapacity(message: stwing) extends exception(message) with nyostacktwace
 
-case class RateLimited(message: String) extends Exception(message) with NoStackTrace
+case cwass w-watewimited(message: stwing) extends exception(message) w-with nyostacktwace
 
-case class TweetHydrationError(message: String, cause: Option[Throwable] = None)
-    extends Exception(message, cause.getOrElse(null))
-    with NoStackTrace
+c-case cwass tweethydwationewwow(message: stwing, mya cause: option[thwowabwe] = nyone)
+    e-extends exception(message, mya cause.getowewse(nuww))
+    w-with n-nyostacktwace

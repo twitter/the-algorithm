@@ -1,82 +1,82 @@
-package com.twitter.search.earlybird_root.collectors;
+package com.twittew.seawch.eawwybiwd_woot.cowwectows;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+impowt java.utiw.cowwections;
+i-impowt java.utiw.compawatow;
+i-impowt java.utiw.wist;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+i-impowt c-com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.wists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
 
 /**
- * Generic MultiwayMergeCollector class for doing k-way merge of earlybird responses
- * that takes a comparator and returns a list of results sorted by the comparator.
+ * genewic muwtiwaymewgecowwectow cwass fow doing k-way m-mewge of eawwybiwd wesponses
+ * that takes a c-compawatow and wetuwns a wist of w-wesuwts sowted by the compawatow. ( ͡o ω ͡o )
  */
-public abstract class MultiwayMergeCollector<T> {
-  protected static final Logger LOG = LoggerFactory.getLogger(MultiwayMergeCollector.class);
+pubwic abstwact cwass muwtiwaymewgecowwectow<t> {
+  p-pwotected static finaw w-woggew wog = w-woggewfactowy.getwoggew(muwtiwaymewgecowwectow.cwass);
 
-  private final Comparator<T> resultComparator;
-  private final int numResponsesToMerge;
-  private final List<T> results = Lists.newArrayList();
-  private int numResponsesAdded = 0;
+  pwivate finaw compawatow<t> wesuwtcompawatow;
+  pwivate f-finaw int nyumwesponsestomewge;
+  pwivate finaw wist<t> wesuwts = wists.newawwaywist();
+  pwivate i-int nyumwesponsesadded = 0;
 
   /**
-   * Constructor that does multi way merge and takes in a custom predicate search result filter.
+   * constwuctow t-that does m-muwti way mewge a-and takes in a c-custom pwedicate seawch wesuwt fiwtew.
    */
-  public MultiwayMergeCollector(int numResponses,
-                                Comparator<T> comparator) {
-    Preconditions.checkNotNull(comparator);
-    this.resultComparator = comparator;
-    this.numResponsesToMerge = numResponses;
+  p-pubwic muwtiwaymewgecowwectow(int nyumwesponses, >_<
+                                compawatow<t> compawatow) {
+    p-pweconditions.checknotnuww(compawatow);
+    this.wesuwtcompawatow = compawatow;
+    this.numwesponsestomewge = nyumwesponses;
   }
 
   /**
-   * Add a single response from one partition, updates stats.
+   * add a singwe wesponse f-fwom one pawtition, >w< updates s-stats. rawr
    *
-   * @param response response from one partition
+   * @pawam w-wesponse w-wesponse fwom one pawtition
    */
-  public final void addResponse(EarlybirdResponse response) {
-    // On prod, does it ever happen we receive more responses than numPartitions ?
-    Preconditions.checkArgument(numResponsesAdded++ < numResponsesToMerge,
-        String.format("Attempting to merge more than %d responses", numResponsesToMerge));
-    if (!isResponseValid(response)) {
-      return;
+  pubwic finaw void addwesponse(eawwybiwdwesponse w-wesponse) {
+    // o-on pwod, 😳 does it evew happen w-we weceive m-mowe wesponses than nyumpawtitions ?
+    p-pweconditions.checkawgument(numwesponsesadded++ < nyumwesponsestomewge,
+        s-stwing.fowmat("attempting to mewge mowe than %d wesponses", >w< n-nyumwesponsestomewge));
+    if (!iswesponsevawid(wesponse)) {
+      w-wetuwn;
     }
-    collectStats(response);
-    List<T> resultsFromResponse = collectResults(response);
-    if (resultsFromResponse != null && resultsFromResponse.size() > 0) {
-      results.addAll(resultsFromResponse);
+    cowwectstats(wesponse);
+    w-wist<t> w-wesuwtsfwomwesponse = cowwectwesuwts(wesponse);
+    if (wesuwtsfwomwesponse != nyuww && wesuwtsfwomwesponse.size() > 0) {
+      wesuwts.addaww(wesuwtsfwomwesponse);
     }
   }
 
   /**
-   * Parse the EarlybirdResponse and retrieve list of results to be appended.
+   * pawse the eawwybiwdwesponse a-and wetwieve w-wist of wesuwts to be appended.
    *
-   * @param response earlybird response from where results are extracted
-   * @return  resultsList to be appended
+   * @pawam w-wesponse eawwybiwd w-wesponse f-fwom whewe wesuwts awe extwacted
+   * @wetuwn  wesuwtswist to be appended
    */
-  protected abstract List<T> collectResults(EarlybirdResponse response);
+  p-pwotected abstwact wist<t> cowwectwesuwts(eawwybiwdwesponse wesponse);
 
   /**
-   * It is recommended that sub-class overrides this function to add custom logic to
-   * collect more stat and call this base function.
+   * it is wecommended that sub-cwass ovewwides t-this function to add custom wogic t-to
+   * cowwect m-mowe stat and c-caww this base function. (⑅˘꒳˘)
    */
-  protected void collectStats(EarlybirdResponse response) {
+  p-pwotected void c-cowwectstats(eawwybiwdwesponse w-wesponse) {
   }
 
   /**
-   * Get full list of results, after addResponse calls have been invoked.
+   * g-get fuww wist of wesuwts, OwO aftew addwesponse c-cawws have b-been invoked. (ꈍᴗꈍ)
    *
-   * @return list of results extracted from all EarlybirdResponses that have been collected so far
+   * @wetuwn w-wist of wesuwts e-extwacted fwom a-aww eawwybiwdwesponses that have been cowwected so faw
    */
-  protected final List<T> getResultsList() {
-    Collections.sort(results, resultComparator);
-    return results;
+  p-pwotected finaw wist<t> getwesuwtswist() {
+    cowwections.sowt(wesuwts, 😳 wesuwtcompawatow);
+    wetuwn wesuwts;
   }
 
-  protected abstract boolean isResponseValid(EarlybirdResponse response);
+  pwotected a-abstwact boowean iswesponsevawid(eawwybiwdwesponse wesponse);
 }

@@ -1,95 +1,95 @@
-package com.twitter.timelineranker.common
+package com.twittew.timewinewankew.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.core.HydratedTweets
-import com.twitter.timelineranker.util.TweetFilters
-import com.twitter.timelineranker.util.TweetsPostFilter
-import com.twitter.timelines.model.UserId
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.wogging.woggew
+i-impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.timewinewankew.cowe.candidateenvewope
+i-impowt c-com.twittew.timewinewankew.cowe.hydwatedtweets
+impowt com.twittew.timewinewankew.utiw.tweetfiwtews
+impowt com.twittew.timewinewankew.utiw.tweetspostfiwtew
+impowt com.twittew.timewines.modew.usewid
+impowt c-com.twittew.utiw.futuwe
 
-object HydratedTweetsFilterTransform {
-  val EmptyFollowGraphDataTuple: (Seq[UserId], Seq[UserId], Set[UserId]) =
-    (Seq.empty[UserId], Seq.empty[UserId], Set.empty[UserId])
-  val DefaultNumRetweetsAllowed = 1
+object hydwatedtweetsfiwtewtwansfowm {
+  v-vaw emptyfowwowgwaphdatatupwe: (seq[usewid], (U ﹏ U) seq[usewid], -.- set[usewid]) =
+    (seq.empty[usewid], ^•ﻌ•^ s-seq.empty[usewid], rawr set.empty[usewid])
+  vaw defauwtnumwetweetsawwowed = 1
 
-  // Number of duplicate retweets (including the first one) allowed.
-  // For example,
-  // If there are 7 retweets of a given tweet, the following value will cause 5 of them
-  // to be returned after filtering and the additional 2 will be filtered out.
-  val NumDuplicateRetweetsAllowed = 5
+  // n-nyumbew of dupwicate wetweets (incwuding t-the f-fiwst one) awwowed. (˘ω˘)
+  // fow exampwe, nyaa~~
+  // if thewe awe 7 wetweets of a given tweet, UwU t-the fowwowing vawue wiww cause 5 of them
+  // to be wetuwned aftew fiwtewing a-and the additionaw 2 wiww be f-fiwtewed out.
+  v-vaw nyumdupwicatewetweetsawwowed = 5
 }
 
 /**
- * Transform which takes TweetFilters ValueSets for inner and outer tweets and uses
- * TweetsPostFilter to filter down the HydratedTweets using the supplied filters
+ * twansfowm w-which takes t-tweetfiwtews vawuesets fow innew and outew t-tweets and uses
+ * tweetspostfiwtew to fiwtew down t-the hydwatedtweets using the suppwied fiwtews
  *
- * @param useFollowGraphData - use follow graph for filtering; otherwise only does filtering
- *                           independent of follow graph data
- * @param useSourceTweets - only needed when filtering extended replies
- * @param statsReceiver - scoped stats receiver
+ * @pawam usefowwowgwaphdata - use fowwow gwaph fow fiwtewing; o-othewwise onwy does fiwtewing
+ *                           i-independent o-of fowwow g-gwaph data
+ * @pawam usesouwcetweets - onwy nyeeded when fiwtewing e-extended w-wepwies
+ * @pawam statsweceivew - s-scoped stats weceivew
  */
-class HydratedTweetsFilterTransform(
-  outerFilters: TweetFilters.ValueSet,
-  innerFilters: TweetFilters.ValueSet,
-  useFollowGraphData: Boolean,
-  useSourceTweets: Boolean,
-  statsReceiver: StatsReceiver,
-  numRetweetsAllowed: Int = HydratedTweetsFilterTransform.DefaultNumRetweetsAllowed)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  import HydratedTweetsFilterTransform._
+c-cwass hydwatedtweetsfiwtewtwansfowm(
+  o-outewfiwtews: tweetfiwtews.vawueset, :3
+  i-innewfiwtews: tweetfiwtews.vawueset, (⑅˘꒳˘)
+  usefowwowgwaphdata: b-boowean,
+  usesouwcetweets: b-boowean, (///ˬ///✿)
+  statsweceivew: statsweceivew, ^^;;
+  n-nyumwetweetsawwowed: i-int = hydwatedtweetsfiwtewtwansfowm.defauwtnumwetweetsawwowed)
+    extends futuweawwow[candidateenvewope, >_< candidateenvewope] {
+  impowt hydwatedtweetsfiwtewtwansfowm._
 
-  val logger: Logger = Logger.get(getClass.getSimpleName)
+  vaw woggew: woggew = woggew.get(getcwass.getsimpwename)
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    if (outerFilters == TweetFilters.None) {
-      Future.value(envelope)
-    } else {
-      val tweetsPostOuterFilter = new TweetsPostFilter(outerFilters, logger, statsReceiver)
-      val tweetsPostInnerFilter = new TweetsPostFilter(innerFilters, logger, statsReceiver)
+  o-ovewwide d-def appwy(envewope: candidateenvewope): f-futuwe[candidateenvewope] = {
+    i-if (outewfiwtews == t-tweetfiwtews.none) {
+      futuwe.vawue(envewope)
+    } ewse {
+      vaw tweetspostoutewfiwtew = nyew t-tweetspostfiwtew(outewfiwtews, rawr x3 woggew, statsweceivew)
+      vaw tweetspostinnewfiwtew = nyew tweetspostfiwtew(innewfiwtews, /(^•ω•^) w-woggew, statsweceivew)
 
-      val graphData = if (useFollowGraphData) {
-        Future.join(
-          envelope.followGraphData.followedUserIdsFuture,
-          envelope.followGraphData.inNetworkUserIdsFuture,
-          envelope.followGraphData.mutedUserIdsFuture
+      vaw g-gwaphdata = if (usefowwowgwaphdata) {
+        f-futuwe.join(
+          e-envewope.fowwowgwaphdata.fowwowedusewidsfutuwe, :3
+          envewope.fowwowgwaphdata.innetwowkusewidsfutuwe, (ꈍᴗꈍ)
+          e-envewope.fowwowgwaphdata.mutedusewidsfutuwe
         )
-      } else {
-        Future.value(EmptyFollowGraphDataTuple)
+      } e-ewse {
+        f-futuwe.vawue(emptyfowwowgwaphdatatupwe)
       }
 
-      val sourceTweets = if (useSourceTweets) {
-        envelope.sourceHydratedTweets.outerTweets
-      } else {
-        Nil
+      v-vaw souwcetweets = if (usesouwcetweets) {
+        envewope.souwcehydwatedtweets.outewtweets
+      } e-ewse {
+        n-nyiw
       }
 
-      graphData.map {
-        case (followedUserIds, inNetworkUserIds, mutedUserIds) =>
-          val outerTweets = tweetsPostOuterFilter(
-            userId = envelope.query.userId,
-            followedUserIds = followedUserIds,
-            inNetworkUserIds = inNetworkUserIds,
-            mutedUserIds = mutedUserIds,
-            tweets = envelope.hydratedTweets.outerTweets,
-            numRetweetsAllowed = numRetweetsAllowed,
-            sourceTweets = sourceTweets
+      g-gwaphdata.map {
+        case (fowwowedusewids, i-innetwowkusewids, /(^•ω•^) m-mutedusewids) =>
+          vaw outewtweets = tweetspostoutewfiwtew(
+            usewid = e-envewope.quewy.usewid, (⑅˘꒳˘)
+            fowwowedusewids = fowwowedusewids, ( ͡o ω ͡o )
+            innetwowkusewids = innetwowkusewids, òωó
+            mutedusewids = m-mutedusewids, (⑅˘꒳˘)
+            tweets = envewope.hydwatedtweets.outewtweets, XD
+            nyumwetweetsawwowed = n-nyumwetweetsawwowed, -.-
+            s-souwcetweets = s-souwcetweets
           )
-          val innerTweets = tweetsPostInnerFilter(
-            userId = envelope.query.userId,
-            followedUserIds = followedUserIds,
-            inNetworkUserIds = inNetworkUserIds,
-            mutedUserIds = mutedUserIds,
-            // inner tweets refers to quoted tweets not source tweets, and special rulesets
-            // in birdherd handle visibility of viewer to inner tweet author for these tweets.
-            tweets = envelope.hydratedTweets.innerTweets,
-            numRetweetsAllowed = numRetweetsAllowed,
-            sourceTweets = sourceTweets
+          vaw innewtweets = t-tweetspostinnewfiwtew(
+            usewid = envewope.quewy.usewid, :3
+            f-fowwowedusewids = f-fowwowedusewids, nyaa~~
+            innetwowkusewids = innetwowkusewids, 😳
+            mutedusewids = mutedusewids, (⑅˘꒳˘)
+            // innew t-tweets wefews to quoted tweets n-nyot souwce tweets, nyaa~~ and speciaw w-wuwesets
+            // i-in biwdhewd handwe visibiwity of viewew t-to innew tweet a-authow fow these tweets. OwO
+            t-tweets = envewope.hydwatedtweets.innewtweets,
+            n-nyumwetweetsawwowed = nyumwetweetsawwowed, rawr x3
+            souwcetweets = souwcetweets
           )
 
-          envelope.copy(hydratedTweets = HydratedTweets(outerTweets, innerTweets))
+          envewope.copy(hydwatedtweets = h-hydwatedtweets(outewtweets, XD i-innewtweets))
       }
     }
   }

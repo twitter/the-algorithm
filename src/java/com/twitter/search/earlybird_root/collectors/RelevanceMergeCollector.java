@@ -1,39 +1,39 @@
-package com.twitter.search.earlybird_root.collectors;
+package com.twittew.seawch.eawwybiwd_woot.cowwectows;
 
-import com.twitter.search.common.relevance.utils.ResultComparators;
-import com.twitter.search.common.util.earlybird.ThriftSearchResultsRelevanceStatsUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
+impowt com.twittew.seawch.common.wewevance.utiws.wesuwtcompawatows;
+i-impowt c-com.twittew.seawch.common.utiw.eawwybiwd.thwiftseawchwesuwtswewevancestatsutiw;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtswewevancestats;
 
 /**
- * RelevanceMergeCollector class extends (@link RecencyMergeCollector} to do k-way merge of
- * earlybird responses, but sorted by relevance score.
+ * w-wewevancemewgecowwectow c-cwass e-extends (@wink w-wecencymewgecowwectow} to do k-way mewge of
+ * eawwybiwd wesponses, (˘ω˘) but sowted b-by wewevance scowe. (⑅˘꒳˘)
  *
- * Note that this is a superset of functionality found in
- * {@link com.twitter.search.blender.services.earlybird.relevance.RelevanceCollector}
- * If you make changes here, evaluate if they should be made in RelevanceCollector as well.
+ * nyote that this is a s-supewset of functionawity found i-in
+ * {@wink com.twittew.seawch.bwendew.sewvices.eawwybiwd.wewevance.wewevancecowwectow}
+ * if you make changes hewe, (///ˬ///✿) evawuate if t-they shouwd be made in wewevancecowwectow a-as weww. 😳😳😳
  */
-public class RelevanceMergeCollector extends RecencyMergeCollector {
+p-pubwic cwass wewevancemewgecowwectow extends wecencymewgecowwectow {
 
-  public RelevanceMergeCollector(int numResponses) {
-    super(numResponses, ResultComparators.SCORE_COMPARATOR);
+  pubwic wewevancemewgecowwectow(int n-nyumwesponses) {
+    supew(numwesponses, 🥺 wesuwtcompawatows.scowe_compawatow);
   }
 
-  @Override
-  protected void collectStats(EarlybirdResponse response) {
-    super.collectStats(response);
+  @ovewwide
+  pwotected void cowwectstats(eawwybiwdwesponse w-wesponse) {
+    supew.cowwectstats(wesponse);
 
-    if (!response.getSearchResults().isSetRelevanceStats()) {
-      return;
+    i-if (!wesponse.getseawchwesuwts().issetwewevancestats()) {
+      w-wetuwn;
     }
 
-    if (!finalResults.isSetRelevanceStats()) {
-      finalResults.setRelevanceStats(new ThriftSearchResultsRelevanceStats());
+    i-if (!finawwesuwts.issetwewevancestats()) {
+      f-finawwesuwts.setwewevancestats(new thwiftseawchwesuwtswewevancestats());
     }
 
-    ThriftSearchResultsRelevanceStats base = finalResults.getRelevanceStats();
-    ThriftSearchResultsRelevanceStats delta = response.getSearchResults().getRelevanceStats();
+    thwiftseawchwesuwtswewevancestats b-base = finawwesuwts.getwewevancestats();
+    thwiftseawchwesuwtswewevancestats dewta = wesponse.getseawchwesuwts().getwewevancestats();
 
-    ThriftSearchResultsRelevanceStatsUtil.addRelevanceStats(base, delta);
+    t-thwiftseawchwesuwtswewevancestatsutiw.addwewevancestats(base, mya dewta);
   }
 }

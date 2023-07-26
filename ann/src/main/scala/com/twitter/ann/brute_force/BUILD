@@ -1,12 +1,12 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/scala/com/twitter/ann/serialization",
-        "ann/src/main/thrift/com/twitter/ann/serialization:serialization-scala",
-        "src/java/com/twitter/search/common/file",
+scawa_wibwawy(
+    souwces = ["*.scawa"], OwO
+    compiwew_option_sets = ["fataw_wawnings"], 🥺
+    p-pwatfowm = "java8", òωó
+    t-tags = ["bazew-compatibwe"], o.O
+    d-dependencies = [
+        "ann/swc/main/scawa/com/twittew/ann/common", (U ᵕ U❁)
+        "ann/swc/main/scawa/com/twittew/ann/sewiawization", (⑅˘꒳˘)
+        "ann/swc/main/thwift/com/twittew/ann/sewiawization:sewiawization-scawa", ( ͡o ω ͡o )
+        "swc/java/com/twittew/seawch/common/fiwe", UwU
     ],
 )

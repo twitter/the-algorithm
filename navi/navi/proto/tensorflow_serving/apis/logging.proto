@@ -1,17 +1,17 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow.serving;
+package tensowfwow.sewving;
 
-import "tensorflow_serving/apis/model.proto";
-import "tensorflow_serving/config/logging_config.proto";
+impowt "tensowfwow_sewving/apis/modew.pwoto";
+i-impowt "tensowfwow_sewving/config/wogging_config.pwoto";
 
-option cc_enable_arenas = true;
+o-option cc_enabwe_awenas = t-twue;
 
-// Metadata logged along with the request logs.
-message LogMetadata {
-  ModelSpec model_spec = 1;
-  SamplingConfig sampling_config = 2;
-  // List of tags used to load the relevant MetaGraphDef from SavedModel.
-  repeated string saved_model_tags = 3;
-  // TODO(b/33279154): Add more metadata as mentioned in the bug.
+// metadata w-wogged awong w-with the wequest w-wogs. (U ᵕ U❁)
+message w-wogmetadata {
+  m-modewspec modew_spec = 1;
+  sampwingconfig sampwing_config = 2;
+  // wist of tags used to woad t-the wewevant metagwaphdef fwom savedmodew. -.-
+  wepeated s-stwing saved_modew_tags = 3;
+  // todo(b/33279154): a-add mowe metadata as mentioned in the bug. ^^;;
 }

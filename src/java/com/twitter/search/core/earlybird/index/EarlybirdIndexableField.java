@@ -1,22 +1,22 @@
-package com.twitter.search.core.earlybird.index;
+package com.twittew.seawch.cowe.eawwybiwd.index;
 
-import org.apache.lucene.document.Field;
-import org.apache.lucene.index.DocValuesType;
+impowt owg.apache.wucene.document.fiewd;
+i-impowt o-owg.apache.wucene.index.docvawuestype;
 
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
+i-impowt c-com.twittew.seawch.common.schema.base.eawwybiwdfiewdtype;
 
-public class EarlybirdIndexableField extends Field {
+p-pubwic c-cwass eawwybiwdindexabwefiewd e-extends fiewd {
 
   /**
-   * Creates a new indexable field with the given name, value and {@link EarlybirdFieldType}.
+   * c-cweates a nyew indexabwe fiewd with the given nyame, :3 vawue and {@wink e-eawwybiwdfiewdtype}. 😳😳😳
    */
-  public EarlybirdIndexableField(String name, Object value, EarlybirdFieldType fieldType) {
-    super(name, fieldType);
-    if (fieldType.docValuesType() == DocValuesType.NUMERIC) {
-      if (value instanceof Number) {
-        super.fieldsData = ((Number) value).longValue();
-      } else {
-        throw new IllegalArgumentException("value not a number: " + value.getClass());
+  pubwic eawwybiwdindexabwefiewd(stwing nyame, -.- object v-vawue, ( ͡o ω ͡o ) eawwybiwdfiewdtype fiewdtype) {
+    s-supew(name, fiewdtype);
+    if (fiewdtype.docvawuestype() == docvawuestype.numewic) {
+      i-if (vawue instanceof nyumbew) {
+        s-supew.fiewdsdata = ((numbew) vawue).wongvawue();
+      } e-ewse {
+        thwow nyew iwwegawawgumentexception("vawue nyot a nyumbew: " + vawue.getcwass());
       }
     }
   }

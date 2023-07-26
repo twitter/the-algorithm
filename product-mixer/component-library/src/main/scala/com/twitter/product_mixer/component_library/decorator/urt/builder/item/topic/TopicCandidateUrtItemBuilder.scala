@@ -1,47 +1,47 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.topic
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.topic
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.topic.TopicCandidateUrtItemBuilder.TopicClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.BaseTopicCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.topic.BaseTopicDisplayTypeBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.topic.BaseTopicFunctionalityTypeBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.topic.topiccandidateuwtitembuiwdew.topiccwienteventinfoewement
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetopiccandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.candidateuwtentwybuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.item.topic.basetopicdispwaytypebuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.item.topic.basetopicfunctionawitytypebuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventinfobuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.topicitem
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object TopicCandidateUrtItemBuilder {
-  val TopicClientEventInfoElement: String = "topic"
+object topiccandidateuwtitembuiwdew {
+  vaw topiccwienteventinfoewement: s-stwing = "topic"
 }
 
-case class TopicCandidateUrtItemBuilder[-Query <: PipelineQuery, Candidate <: BaseTopicCandidate](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, Candidate],
-  topicFunctionalityTypeBuilder: Option[BaseTopicFunctionalityTypeBuilder[Query, Candidate]] = None,
-  topicDisplayTypeBuilder: Option[BaseTopicDisplayTypeBuilder[Query, Candidate]] = None,
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, Candidate]
-  ] = None)
-    extends CandidateUrtEntryBuilder[Query, Candidate, TopicItem] {
+case c-cwass topiccandidateuwtitembuiwdew[-quewy <: pipewinequewy, o.O candidate <: basetopiccandidate](
+  cwienteventinfobuiwdew: b-basecwienteventinfobuiwdew[quewy, ( ͡o ω ͡o ) candidate], (U ﹏ U)
+  t-topicfunctionawitytypebuiwdew: o-option[basetopicfunctionawitytypebuiwdew[quewy, (///ˬ///✿) candidate]] = nyone, >w<
+  topicdispwaytypebuiwdew: option[basetopicdispwaytypebuiwdew[quewy, c-candidate]] = nyone, rawr
+  feedbackactioninfobuiwdew: option[
+    basefeedbackactioninfobuiwdew[quewy, mya candidate]
+  ] = n-nyone)
+    extends candidateuwtentwybuiwdew[quewy, ^^ c-candidate, 😳😳😳 t-topicitem] {
 
-  override def apply(
-    query: Query,
-    topicCandidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): TopicItem =
-    TopicItem(
-      id = topicCandidate.id,
-      sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-      clientEventInfo = clientEventInfoBuilder(
-        query,
-        topicCandidate,
-        candidateFeatures,
-        Some(TopicClientEventInfoElement)),
-      feedbackActionInfo =
-        feedbackActionInfoBuilder.flatMap(_.apply(query, topicCandidate, candidateFeatures)),
-      topicFunctionalityType =
-        topicFunctionalityTypeBuilder.flatMap(_.apply(query, topicCandidate, candidateFeatures)),
-      topicDisplayType =
-        topicDisplayTypeBuilder.flatMap(_.apply(query, topicCandidate, candidateFeatures))
+  o-ovewwide def a-appwy(
+    quewy: quewy, mya
+    topiccandidate: c-candidate, 😳
+    candidatefeatuwes: featuwemap
+  ): topicitem =
+    t-topicitem(
+      id = topiccandidate.id, -.-
+      sowtindex = nyone, // sowt indexes awe automaticawwy set in the d-domain mawshawwew phase
+      cwienteventinfo = c-cwienteventinfobuiwdew(
+        q-quewy, 🥺
+        t-topiccandidate, o.O
+        candidatefeatuwes, /(^•ω•^)
+        some(topiccwienteventinfoewement)), nyaa~~
+      feedbackactioninfo =
+        f-feedbackactioninfobuiwdew.fwatmap(_.appwy(quewy, nyaa~~ t-topiccandidate, :3 candidatefeatuwes)), 😳😳😳
+      t-topicfunctionawitytype =
+        t-topicfunctionawitytypebuiwdew.fwatmap(_.appwy(quewy, (˘ω˘) topiccandidate, ^^ c-candidatefeatuwes)), :3
+      topicdispwaytype =
+        t-topicdispwaytypebuiwdew.fwatmap(_.appwy(quewy, -.- topiccandidate, 😳 candidatefeatuwes))
     )
 }

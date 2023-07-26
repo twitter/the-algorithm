@@ -1,24 +1,24 @@
-package com.twitter.follow_recommendations.common.predicates
+package com.twittew.fowwow_wecommendations.common.pwedicates
 
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.FilterReason.ExcludedId
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasExcludedUserIds
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.fowwow_wecommendations.common.base.pwedicate
+i-impowt c-com.twittew.fowwow_wecommendations.common.base.pwedicatewesuwt
+i-impowt com.twittew.fowwow_wecommendations.common.modews.fiwtewweason.excwudedid
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.hasexcwudedusewids
+i-impowt com.twittew.stitch.stitch
 
-object ExcludedUserIdPredicate extends Predicate[(HasExcludedUserIds, CandidateUser)] {
+object excwudedusewidpwedicate extends pwedicate[(hasexcwudedusewids, mya candidateusew)] {
 
-  val ValidStitch: Stitch[PredicateResult.Valid.type] = Stitch.value(PredicateResult.Valid)
-  val ExcludedStitch: Stitch[PredicateResult.Invalid] =
-    Stitch.value(PredicateResult.Invalid(Set(ExcludedId)))
+  vaw vawidstitch: s-stitch[pwedicatewesuwt.vawid.type] = stitch.vawue(pwedicatewesuwt.vawid)
+  vaw e-excwudedstitch: stitch[pwedicatewesuwt.invawid] =
+    s-stitch.vawue(pwedicatewesuwt.invawid(set(excwudedid)))
 
-  override def apply(pair: (HasExcludedUserIds, CandidateUser)): Stitch[PredicateResult] = {
-    val (excludedUserIds, candidate) = pair
-    if (excludedUserIds.excludedUserIds.contains(candidate.id)) {
-      ExcludedStitch
-    } else {
-      ValidStitch
+  ovewwide def appwy(paiw: (hasexcwudedusewids, 😳 candidateusew)): stitch[pwedicatewesuwt] = {
+    vaw (excwudedusewids, XD c-candidate) = paiw
+    if (excwudedusewids.excwudedusewids.contains(candidate.id)) {
+      e-excwudedstitch
+    } e-ewse {
+      vawidstitch
     }
   }
 }

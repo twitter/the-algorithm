@@ -1,12 +1,12 @@
-scala_library(
-    sources = ["*.scala"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
+tawget(
+    nyame = "eawwybiwd_wanking", >_<
     dependencies = [
-        "finagle/finagle-stats",
-        "src/java/com/twitter/ml/api:api-base",
-        "src/thrift/com/twitter/ml/api:data-scala",
-        "src/thrift/com/twitter/ml/api:interpretable-model-java",
-        "timelines/data_processing/ml_util/aggregation_framework/metrics",
+        "timewines/data_pwocessing/ad_hoc/eawwybiwd_wanking/common", (ꈍᴗꈍ)
+        "timewines/data_pwocessing/ad_hoc/eawwybiwd_wanking/modew_evawuation", ^•ﻌ•^
+        "timewines/data_pwocessing/ad_hoc/eawwybiwd_wanking/twaining_data_genewation", OwO
     ],
+)
+bwe-modew-java", (U ᵕ U❁)
+        "timewines/data_pwocessing/mw_utiw/aggwegation_fwamewowk/metwics", (⑅˘꒳˘)
+    ], ( ͡o ω ͡o )
 )

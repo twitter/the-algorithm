@@ -1,15 +1,15 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "tweetypie/servo/repo",
-        "tweetypie/servo/util",
-        "snowflake:id",
-        "tweetypie/server/src/main/scala/com/twitter/tweetypie",
-        "tweetypie/server/src/main/scala/com/twitter/tweetypie/core",
-        "tweetypie/server/src/main/thrift:compiled-scala",
-        "util/util-slf4j-api/src/main/scala/com/twitter/util/logging",
-    ],
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], 🥺
+    pwatfowm = "java8", òωó
+    s-stwict_deps = t-twue, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "tweetypie/sewvo/wepo", (⑅˘꒳˘)
+        "tweetypie/sewvo/utiw", ( ͡o ω ͡o )
+        "snowfwake:id", UwU
+        "tweetypie/sewvew/swc/main/scawa/com/twittew/tweetypie", rawr x3
+        "tweetypie/sewvew/swc/main/scawa/com/twittew/tweetypie/cowe", rawr
+        "tweetypie/sewvew/swc/main/thwift:compiwed-scawa", σωσ
+        "utiw/utiw-swf4j-api/swc/main/scawa/com/twittew/utiw/wogging", σωσ
+    ], >_<
 )

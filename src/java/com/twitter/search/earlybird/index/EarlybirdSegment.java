@@ -1,1070 +1,1070 @@
-package com.twitter.search.earlybird.index;
+package com.twittew.seawch.eawwybiwd.index;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
-import javax.annotation.Nullable;
+impowt j-java.io.cwoseabwe;
+i-impowt java.io.fiwe;
+i-impowt j-java.io.ioexception;
+i-impowt java.time.instant;
+i-impowt java.time.zoneoffset;
+i-impowt j-java.time.zoneddatetime;
+impowt java.time.fowmat.datetimefowmattew;
+impowt java.utiw.wist;
+i-impowt java.utiw.map;
+impowt java.utiw.objects;
+impowt java.utiw.concuwwent.atomic.atomicwefewence;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+impowt com.googwe.common.annotations.visibwefowtesting;
+impowt c-com.googwe.common.base.pweconditions;
+impowt com.googwe.common.cowwect.hashbasedtabwe;
+impowt c-com.googwe.common.cowwect.tabwe;
+impowt com.googwe.common.cowwect.wists;
+i-impowt c-com.googwe.common.cowwect.maps;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.IndexableField;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.store.IOContext;
-import org.apache.lucene.store.IndexOutput;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.commons.io.fiweutiws;
+impowt owg.apache.wucene.document.document;
+impowt o-owg.apache.wucene.index.diwectowyweadew;
+impowt owg.apache.wucene.index.indexwwitewconfig;
+impowt owg.apache.wucene.index.indexabwefiewd;
+i-impowt owg.apache.wucene.stowe.diwectowy;
+i-impowt owg.apache.wucene.stowe.fsdiwectowy;
+i-impowt owg.apache.wucene.stowe.iocontext;
+i-impowt o-owg.apache.wucene.stowe.indexoutput;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.ThriftDocumentUtil;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeatures;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeaturesUtil;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftField;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEventType;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentWriter;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldIndex;
-import com.twitter.search.core.earlybird.index.column.DocValuesUpdate;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsFactory;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.exception.FlushVersionMismatchException;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.partition.SegmentIndexStats;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.snowflake.id.SnowflakeId;
+i-impowt com.twittew.common.cowwections.paiw;
+impowt com.twittew.common.utiw.cwock;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.schema.base.featuweconfiguwation;
+impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+impowt com.twittew.seawch.common.schema.base.thwiftdocumentutiw;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+impowt c-com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdencodedfeatuwes;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdencodedfeatuwesutiw;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftdocument;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfiewd;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingevent;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingeventtype;
+i-impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.docidtotweetidmappew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentdata;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentwwitew;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.cowumn.cowumnstwidefiewdindex;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.cowumn.docvawuesupdate;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.extensions.eawwybiwdindexextensionsfactowy;
+impowt com.twittew.seawch.eawwybiwd.eawwybiwdindexconfig;
+impowt com.twittew.seawch.eawwybiwd.common.usewupdates.usewtabwe;
+impowt com.twittew.seawch.eawwybiwd.document.tweetdocument;
+impowt com.twittew.seawch.eawwybiwd.exception.fwushvewsionmismatchexception;
+impowt com.twittew.seawch.eawwybiwd.pawtition.seawchindexingmetwicset;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.segmentindexstats;
+i-impowt com.twittew.seawch.eawwybiwd.stats.eawwybiwdseawchewstats;
+i-impowt c-com.twittew.snowfwake.id.snowfwakeid;
 
-public class EarlybirdSegment {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdSegment.class);
-  private static final Logger UPDATES_ERRORS_LOG =
-      LoggerFactory.getLogger(EarlybirdSegment.class.getName() + ".UpdatesErrors");
-  private static final String SUCCESS_FILE = "EARLYBIRD_SUCCESS";
-  private static final DateTimeFormatter HOURLY_COUNT_DATE_TIME_FORMATTER =
-      DateTimeFormatter.ofPattern("yyyy_MM_dd_HH");
+p-pubwic cwass eawwybiwdsegment {
+  pwivate static finaw w-woggew wog = woggewfactowy.getwoggew(eawwybiwdsegment.cwass);
+  pwivate static finaw woggew updates_ewwows_wog =
+      woggewfactowy.getwoggew(eawwybiwdsegment.cwass.getname() + ".updatesewwows");
+  pwivate static f-finaw stwing success_fiwe = "eawwybiwd_success";
+  p-pwivate s-static finaw datetimefowmattew h-houwwy_count_date_time_fowmattew =
+      datetimefowmattew.ofpattewn("yyyy_mm_dd_hh");
 
-  @VisibleForTesting
-  public static final String NUM_TWEETS_CREATED_AT_PATTERN = "num_tweets_%s_%s_created_at_%s";
+  @visibwefowtesting
+  pubwic s-static finaw s-stwing nyum_tweets_cweated_at_pattewn = "num_tweets_%s_%s_cweated_at_%s";
 
-  private static final String INVALID_FEATURE_UPDATES_DROPPED_PREFIX =
-      "invalid_index_feature_update_dropped_";
+  p-pwivate static finaw s-stwing invawid_featuwe_updates_dwopped_pwefix =
+      "invawid_index_featuwe_update_dwopped_";
 
-  // The number of tweets not indexed because they have been previously indexed.
-  private static final SearchCounter DUPLICATE_TWEET_SKIPPED_COUNTER =
-      SearchCounter.export("duplicate_tweet_skipped");
+  // the nyumbew of tweets n-nyot indexed because t-they have been p-pweviouswy indexed. (⑅˘꒳˘)
+  p-pwivate s-static finaw seawchcountew dupwicate_tweet_skipped_countew =
+      seawchcountew.expowt("dupwicate_tweet_skipped");
 
-  // The number of tweets that came out of order.
-  private static final SearchCounter OUT_OF_ORDER_TWEET_COUNTER =
-      SearchCounter.export("out_of_order_tweet");
+  // the n-nyumbew of tweets that came out of owdew. (ˆ ﻌ ˆ)♡
+  pwivate static finaw seawchcountew out_of_owdew_tweet_countew =
+      seawchcountew.expowt("out_of_owdew_tweet");
 
-  // The number partial updates dropped because the field could not be found in the schema.
-  // This counter is incremented once per field rather than once per partial update event.
-  // Note: caller may retry update, this counter will be incremented multiple times for same update.
-  private static final SearchCounter INVALID_FIELDS_IN_PARTIAL_UPDATES =
-      SearchCounter.export("invalid_fields_in_partial_updates");
+  // t-the nyumbew pawtiaw updates dwopped because the fiewd couwd n-nyot be found in t-the schema. :3
+  // t-this countew is incwemented once p-pew fiewd wathew than once pew p-pawtiaw update e-event. ʘwʘ
+  // nyote: cawwew may wetwy update, (///ˬ///✿) this countew wiww be incwemented muwtipwe times fow s-same update. (ˆ ﻌ ˆ)♡
+  pwivate static finaw s-seawchcountew invawid_fiewds_in_pawtiaw_updates =
+      s-seawchcountew.expowt("invawid_fiewds_in_pawtiaw_updates");
 
-  // The number partial updates dropped because the tweet id could not be found in the segment.
-  // Note: caller may retry update, this counter will be incremented multiple times for same update.
-  private static final SearchCounter PARTIAL_UPDATE_FOR_TWEET_NOT_IN_INDEX =
-      SearchCounter.export("partial_update_for_tweet_id_not_in_index");
+  // t-the nyumbew pawtiaw updates dwopped b-because the tweet i-id couwd nyot be found in the s-segment. 🥺
+  // n-nyote: cawwew may wetwy update, rawr this countew wiww be incwemented muwtipwe times f-fow same update. (U ﹏ U)
+  p-pwivate static f-finaw seawchcountew pawtiaw_update_fow_tweet_not_in_index =
+      s-seawchcountew.expowt("pawtiaw_update_fow_tweet_id_not_in_index");
 
-  // The number of partial updates that were applied only partially, because the update could not
-  // be applied for at least one of the fields.
-  private static final SearchCounter PARTIAL_UPDATE_PARTIAL_FAILURE =
-      SearchCounter.export("partial_update_partial_failure");
+  // t-the nyumbew of pawtiaw u-updates that wewe appwied onwy pawtiawwy, ^^ because the update couwd nyot
+  // b-be appwied fow at w-weast one of the fiewds. σωσ
+  pwivate static finaw s-seawchcountew p-pawtiaw_update_pawtiaw_faiwuwe =
+      seawchcountew.expowt("pawtiaw_update_pawtiaw_faiwuwe");
 
-  // Both the indexing chain and the index writer are lazily initialized when adding docs for
-  // the first time.
-  private final AtomicReference<EarlybirdIndexSegmentWriter> segmentWriterReference =
-      new AtomicReference<>();
+  // both the indexing chain and t-the index wwitew awe waziwy initiawized when adding docs fow
+  // the fiwst time. :3
+  p-pwivate finaw atomicwefewence<eawwybiwdindexsegmentwwitew> segmentwwitewwefewence =
+      nyew a-atomicwefewence<>();
 
-  // Stats from the PartitionIndexer / SimpleSegmentIndexer.
-  private final SegmentIndexStats indexStats;
-  private final String segmentName;
-  private final int maxSegmentSize;
-  private final long timeSliceID;
-  private final AtomicReference<EarlybirdIndexSegmentAtomicReader> luceneIndexReader =
-      new AtomicReference<>();
-  private final Directory luceneDir;
-  private final File luceneDirFile;
-  private final EarlybirdIndexConfig indexConfig;
-  private final List<Closeable> closableResources = Lists.newArrayList();
-  private long lastInOrderTweetId = 0;
+  // stats f-fwom the pawtitionindexew / simpwesegmentindexew. ^^
+  pwivate finaw segmentindexstats i-indexstats;
+  p-pwivate finaw stwing segmentname;
+  pwivate finaw int maxsegmentsize;
+  pwivate f-finaw wong timeswiceid;
+  p-pwivate finaw atomicwefewence<eawwybiwdindexsegmentatomicweadew> wuceneindexweadew =
+      new atomicwefewence<>();
+  p-pwivate finaw diwectowy wucenediw;
+  p-pwivate f-finaw fiwe wucenediwfiwe;
+  pwivate finaw eawwybiwdindexconfig i-indexconfig;
+  pwivate finaw w-wist<cwoseabwe> c-cwosabwewesouwces = w-wists.newawwaywist();
+  pwivate w-wong wastinowdewtweetid = 0;
 
-  private final EarlybirdIndexExtensionsFactory extensionsFactory;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private final EarlybirdSearcherStats searcherStats;
+  p-pwivate finaw eawwybiwdindexextensionsfactowy extensionsfactowy;
+  p-pwivate finaw s-seawchindexingmetwicset s-seawchindexingmetwicset;
+  pwivate finaw eawwybiwdseawchewstats s-seawchewstats;
 
-  private final Map<String, SearchCounter> indexedTweetsCounters = Maps.newHashMap();
-  private final PerFieldCounters perFieldCounters;
-  private final Clock clock;
+  pwivate finaw map<stwing, (✿oωo) s-seawchcountew> i-indexedtweetscountews = maps.newhashmap();
+  pwivate finaw pewfiewdcountews p-pewfiewdcountews;
+  p-pwivate f-finaw cwock cwock;
 
-  @VisibleForTesting
-  public volatile boolean appendedLuceneIndex = false;
+  @visibwefowtesting
+  p-pubwic vowatiwe boowean a-appendedwuceneindex = fawse;
 
-  public EarlybirdSegment(
-      String segmentName,
-      long timeSliceID,
-      int maxSegmentSize,
-      Directory luceneDir,
-      EarlybirdIndexConfig indexConfig,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      EarlybirdSearcherStats searcherStats,
-      Clock clock) {
-    this.segmentName = segmentName;
-    this.maxSegmentSize = maxSegmentSize;
-    this.timeSliceID = timeSliceID;
-    this.luceneDir = luceneDir;
-    this.indexConfig = indexConfig;
-    this.indexStats = new SegmentIndexStats();
-    this.perFieldCounters = new PerFieldCounters();
-    this.extensionsFactory = new TweetSearchIndexExtensionsFactory();
+  pubwic eawwybiwdsegment(
+      stwing segmentname,
+      wong timeswiceid, òωó
+      i-int maxsegmentsize, (U ᵕ U❁)
+      diwectowy w-wucenediw, ʘwʘ
+      eawwybiwdindexconfig i-indexconfig, ( ͡o ω ͡o )
+      seawchindexingmetwicset s-seawchindexingmetwicset, σωσ
+      eawwybiwdseawchewstats seawchewstats,
+      c-cwock cwock) {
+    t-this.segmentname = s-segmentname;
+    t-this.maxsegmentsize = m-maxsegmentsize;
+    this.timeswiceid = timeswiceid;
+    this.wucenediw = wucenediw;
+    this.indexconfig = indexconfig;
+    t-this.indexstats = nyew s-segmentindexstats();
+    t-this.pewfiewdcountews = nyew pewfiewdcountews();
+    t-this.extensionsfactowy = nyew tweetseawchindexextensionsfactowy();
 
-    if (luceneDir != null && luceneDir instanceof FSDirectory) {
-      // getDirectory() throws if the luceneDir is already closed.
-      // To delete a directory, we need to close it first.
-      // Obtain a reference to the File now, so we can delete it later.
-      // See SEARCH-5281
-      this.luceneDirFile = ((FSDirectory) luceneDir).getDirectory().toFile();
-    } else {
-      this.luceneDirFile = null;
+    if (wucenediw != n-nyuww && w-wucenediw instanceof fsdiwectowy) {
+      // g-getdiwectowy() thwows if the wucenediw is awweady c-cwosed. (ˆ ﻌ ˆ)♡
+      // t-to dewete a diwectowy, (˘ω˘) we nyeed t-to cwose it f-fiwst. 😳
+      // obtain a wefewence to the fiwe nyow, ^•ﻌ•^ so we can dewete it watew. σωσ
+      // s-see seawch-5281
+      this.wucenediwfiwe = ((fsdiwectowy) w-wucenediw).getdiwectowy().tofiwe();
+    } e-ewse {
+      t-this.wucenediwfiwe = nyuww;
     }
-    this.searchIndexingMetricSet = Preconditions.checkNotNull(searchIndexingMetricSet);
-    this.searcherStats = searcherStats;
-    this.clock = clock;
+    t-this.seawchindexingmetwicset = pweconditions.checknotnuww(seawchindexingmetwicset);
+    this.seawchewstats = s-seawchewstats;
+    t-this.cwock = cwock;
   }
 
-  @VisibleForTesting
-  public Directory getLuceneDirectory() {
-    return luceneDir;
+  @visibwefowtesting
+  pubwic diwectowy g-getwucenediwectowy() {
+    w-wetuwn wucenediw;
   }
 
-  public SegmentIndexStats getIndexStats() {
-    return indexStats;
+  p-pubwic segmentindexstats getindexstats() {
+    wetuwn indexstats;
   }
 
   /**
-   * Returns the smallest tweet ID in this segment. If the segment is not loaded yet, or is empty,
-   * DocIDToTweetIDMapper.ID_NOT_FOUND is returned (-1).
+   * w-wetuwns the smowest tweet i-id in this segment. 😳😳😳 i-if the segment is nyot woaded y-yet, rawr ow is empty, >_<
+   * docidtotweetidmappew.id_not_found is wetuwned (-1). ʘwʘ
    *
-   * @return The smallest tweet ID in this segment.
+   * @wetuwn t-the smowest tweet i-id in this segment. (ˆ ﻌ ˆ)♡
    */
-  public long getLowestTweetId() {
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    if (segmentWriter == null) {
-      return DocIDToTweetIDMapper.ID_NOT_FOUND;
+  p-pubwic wong getwowesttweetid() {
+    eawwybiwdindexsegmentwwitew segmentwwitew = segmentwwitewwefewence.get();
+    if (segmentwwitew == n-nyuww) {
+      wetuwn docidtotweetidmappew.id_not_found;
     }
 
-    DocIDToTweetIDMapper mapper = segmentWriter.getSegmentData().getDocIDToTweetIDMapper();
-    int highestDocID = mapper.getPreviousDocID(Integer.MAX_VALUE);
-    return mapper.getTweetID(highestDocID);
+    docidtotweetidmappew mappew = s-segmentwwitew.getsegmentdata().getdocidtotweetidmappew();
+    i-int highestdocid = mappew.getpweviousdocid(integew.max_vawue);
+    w-wetuwn mappew.gettweetid(highestdocid);
   }
 
   /**
-   * Returns the cardinality (size) sum of the cardinality of each
-   * query cache set.
+   * w-wetuwns the cawdinawity (size) s-sum of the cawdinawity of each
+   * quewy cache s-set. ^^;;
    */
-  public long getQueryCachesCardinality() {
-    EarlybirdIndexSegmentWriter writer = getIndexSegmentWriter();
-    if (writer == null) {
-      // The segment is not loaded yet, or the query caches for this segment are not built yet.
-      return -1;
+  pubwic wong getquewycachescawdinawity() {
+    eawwybiwdindexsegmentwwitew w-wwitew = g-getindexsegmentwwitew();
+    if (wwitew == n-nyuww) {
+      // the s-segment is nyot w-woaded yet, σωσ ow t-the quewy caches fow this segment awe nyot buiwt yet. rawr x3
+      wetuwn -1;
     }
 
-    EarlybirdIndexSegmentData earlybirdIndexSegmentData = writer.getSegmentData();
-    return earlybirdIndexSegmentData.getQueryCachesCardinality();
+    eawwybiwdindexsegmentdata eawwybiwdindexsegmentdata = wwitew.getsegmentdata();
+    wetuwn eawwybiwdindexsegmentdata.getquewycachescawdinawity();
   }
 
-  public List<Pair<String, Long>> getQueryCachesData() {
-    return getIndexSegmentWriter().getSegmentData().getPerQueryCacheCardinality();
+  pubwic wist<paiw<stwing, 😳 wong>> getquewycachesdata() {
+    wetuwn getindexsegmentwwitew().getsegmentdata().getpewquewycachecawdinawity();
   }
 
 
   /**
-   * Returns the highest tweet ID in this segment. If the segment is not loaded yet, or is empty,
-   * DocIDToTweetIDMapper.ID_NOT_FOUND is returned (-1).
+   * wetuwns the h-highest tweet id i-in this segment. 😳😳😳 if the segment is nyot woaded y-yet, 😳😳😳 ow is empty, ( ͡o ω ͡o )
+   * d-docidtotweetidmappew.id_not_found i-is wetuwned (-1). rawr x3
    *
-   * @return The highest tweet ID in this segment.
+   * @wetuwn the h-highest tweet id in this segment. σωσ
    */
-  public long getHighestTweetId() {
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    if (segmentWriter == null) {
-      return DocIDToTweetIDMapper.ID_NOT_FOUND;
+  p-pubwic w-wong gethighesttweetid() {
+    eawwybiwdindexsegmentwwitew s-segmentwwitew = segmentwwitewwefewence.get();
+    i-if (segmentwwitew == n-nyuww) {
+      wetuwn docidtotweetidmappew.id_not_found;
     }
 
-    DocIDToTweetIDMapper mapper = segmentWriter.getSegmentData().getDocIDToTweetIDMapper();
-    int lowestDocID = mapper.getNextDocID(-1);
-    return mapper.getTweetID(lowestDocID);
+    docidtotweetidmappew m-mappew = s-segmentwwitew.getsegmentdata().getdocidtotweetidmappew();
+    i-int wowestdocid = m-mappew.getnextdocid(-1);
+    w-wetuwn mappew.gettweetid(wowestdocid);
   }
 
   /**
-   * Optimizes the underlying segment data.
+   * o-optimizes t-the undewwying s-segment data. (˘ω˘)
    */
-  public void optimizeIndexes() throws IOException {
-    EarlybirdIndexSegmentWriter unoptimizedWriter = segmentWriterReference.get();
-    Preconditions.checkNotNull(unoptimizedWriter);
+  p-pubwic void optimizeindexes() t-thwows ioexception {
+    e-eawwybiwdindexsegmentwwitew u-unoptimizedwwitew = segmentwwitewwefewence.get();
+    p-pweconditions.checknotnuww(unoptimizedwwitew);
 
-    unoptimizedWriter.forceMerge();
-    unoptimizedWriter.close();
+    unoptimizedwwitew.fowcemewge();
+    unoptimizedwwitew.cwose();
 
-    // Optimize our own data structures in the indexing chain
-    // In the archive this is pretty much a no-op.
-    // The indexWriter in writeableSegment should no longer be used and referenced, and
-    // writeableSegment.writer can be garbage collected at this point.
-    EarlybirdIndexSegmentData optimized = indexConfig.optimize(unoptimizedWriter.getSegmentData());
-    resetSegmentWriterReference(newWriteableSegment(optimized), true);
+    // o-optimize ouw own data s-stwuctuwes in t-the indexing chain
+    // i-in the awchive this i-is pwetty much a nyo-op. >w<
+    // t-the indexwwitew in wwiteabwesegment s-shouwd no wongew be used and w-wefewenced, UwU and
+    // wwiteabwesegment.wwitew can be gawbage cowwected at this point. XD
+    eawwybiwdindexsegmentdata o-optimized = indexconfig.optimize(unoptimizedwwitew.getsegmentdata());
+    w-wesetsegmentwwitewwefewence(newwwiteabwesegment(optimized), (U ﹏ U) t-twue);
 
-    addSuccessFile();
+    addsuccessfiwe();
   }
 
   /**
-   * Returns a new, optimized, realtime segment, by copying the data in this segment.
+   * wetuwns a nyew, (U ᵕ U❁) optimized, (ˆ ﻌ ˆ)♡ w-weawtime segment, òωó by copying t-the data in this s-segment. ^•ﻌ•^
    */
-  public EarlybirdSegment makeOptimizedSegment() throws IOException {
-    EarlybirdIndexSegmentWriter unoptimizedWriter = segmentWriterReference.get();
-    Preconditions.checkNotNull(unoptimizedWriter);
-    EarlybirdSegment optimizedSegment = new EarlybirdSegment(
-        segmentName,
-        timeSliceID,
-        maxSegmentSize,
-        luceneDir,
-        indexConfig,
-        searchIndexingMetricSet,
-        searcherStats,
-        clock);
+  p-pubwic eawwybiwdsegment makeoptimizedsegment() thwows ioexception {
+    e-eawwybiwdindexsegmentwwitew u-unoptimizedwwitew = segmentwwitewwefewence.get();
+    p-pweconditions.checknotnuww(unoptimizedwwitew);
+    eawwybiwdsegment optimizedsegment = n-nyew eawwybiwdsegment(
+        segmentname, (///ˬ///✿)
+        t-timeswiceid, -.-
+        m-maxsegmentsize, >w<
+        w-wucenediw, òωó
+        indexconfig,
+        s-seawchindexingmetwicset, σωσ
+        seawchewstats, mya
+        c-cwock);
 
-    EarlybirdIndexSegmentData optimizedSegmentData =
-        indexConfig.optimize(unoptimizedWriter.getSegmentData());
-    LOG.info("Done optimizing, setting segment data");
+    e-eawwybiwdindexsegmentdata o-optimizedsegmentdata =
+        indexconfig.optimize(unoptimizedwwitew.getsegmentdata());
+    w-wog.info("done o-optimizing, òωó s-setting segment d-data");
 
-    optimizedSegment.setSegmentData(
-        optimizedSegmentData,
-        indexStats.getPartialUpdateCount(),
-        indexStats.getOutOfOrderUpdateCount());
-    return optimizedSegment;
+    o-optimizedsegment.setsegmentdata(
+        o-optimizedsegmentdata, 🥺
+        i-indexstats.getpawtiawupdatecount(), (U ﹏ U)
+        i-indexstats.getoutofowdewupdatecount());
+    wetuwn optimizedsegment;
   }
 
-  public String getSegmentName() {
-    return segmentName;
+  p-pubwic stwing getsegmentname() {
+    wetuwn segmentname;
   }
 
-  public boolean isOptimized() {
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    return segmentWriter != null && segmentWriter.getSegmentData().isOptimized();
+  p-pubwic boowean isoptimized() {
+    e-eawwybiwdindexsegmentwwitew s-segmentwwitew = s-segmentwwitewwefewence.get();
+    wetuwn segmentwwitew != nyuww && segmentwwitew.getsegmentdata().isoptimized();
   }
 
   /**
-   * Removes the document for the given tweet ID from this segment, if this segment contains a
-   * document for this tweet ID.
+   * w-wemoves the document f-fow the given t-tweet id fwom this segment, (ꈍᴗꈍ) if this segment contains a
+   * d-document fow this t-tweet id. (˘ω˘)
    */
-  public boolean delete(long tweetID) throws IOException {
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    if (!hasDocument(tweetID)) {
-      return false;
+  pubwic boowean d-dewete(wong tweetid) t-thwows ioexception {
+    eawwybiwdindexsegmentwwitew segmentwwitew = segmentwwitewwefewence.get();
+    if (!hasdocument(tweetid)) {
+      w-wetuwn fawse;
     }
 
-    segmentWriter.deleteDocuments(new TweetIDQuery(tweetID));
-    return true;
+    s-segmentwwitew.dewetedocuments(new t-tweetidquewy(tweetid));
+    w-wetuwn twue;
   }
 
-  protected void updateDocValues(long tweetID, String field, DocValuesUpdate update)
-      throws IOException {
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    segmentWriter.updateDocValues(new TweetIDQuery(tweetID), field, update);
+  pwotected void updatedocvawues(wong t-tweetid, (✿oωo) stwing f-fiewd, -.- docvawuesupdate update)
+      thwows ioexception {
+    eawwybiwdindexsegmentwwitew s-segmentwwitew = segmentwwitewwefewence.get();
+    segmentwwitew.updatedocvawues(new tweetidquewy(tweetid), (ˆ ﻌ ˆ)♡ f-fiewd, (✿oωo) update);
   }
 
   /**
-   * Appends the Lucene index from another segment to this segment.
+   * appends the w-wucene index fwom a-anothew segment to this segment. ʘwʘ
    */
-  public void append(EarlybirdSegment otherSegment) throws IOException {
-    if (indexConfig.isIndexStoredOnDisk()) {
-      EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-      Preconditions.checkNotNull(segmentWriter);
-      EarlybirdIndexSegmentWriter otherSegmentWriter = otherSegment.segmentWriterReference.get();
-      if (otherSegmentWriter != null) {
-        otherSegmentWriter.close();
+  p-pubwic v-void append(eawwybiwdsegment othewsegment) thwows i-ioexception {
+    if (indexconfig.isindexstowedondisk()) {
+      e-eawwybiwdindexsegmentwwitew s-segmentwwitew = s-segmentwwitewwefewence.get();
+      p-pweconditions.checknotnuww(segmentwwitew);
+      eawwybiwdindexsegmentwwitew o-othewsegmentwwitew = o-othewsegment.segmentwwitewwefewence.get();
+      i-if (othewsegmentwwitew != nyuww) {
+        o-othewsegmentwwitew.cwose();
       }
-      segmentWriter.addIndexes(otherSegment.luceneDir);
-      LOG.info("Calling forceMerge now after appending segment.");
-      segmentWriter.forceMerge();
-      appendedLuceneIndex = true;
-      LOG.info("Appended {} docs to segment {}. New doc count = {}",
-               otherSegment.indexStats.getStatusCount(), luceneDir.toString(),
-               indexStats.getStatusCount());
+      segmentwwitew.addindexes(othewsegment.wucenediw);
+      wog.info("cawwing fowcemewge n-nyow aftew appending s-segment.");
+      s-segmentwwitew.fowcemewge();
+      appendedwuceneindex = twue;
+      wog.info("appended {} docs to segment {}. (///ˬ///✿) nyew doc c-count = {}", rawr
+               othewsegment.indexstats.getstatuscount(), 🥺 w-wucenediw.tostwing(), mya
+               i-indexstats.getstatuscount());
 
-      indexStats.setIndexSizeOnDiskInBytes(getSegmentSizeOnDisk());
+      indexstats.setindexsizeondiskinbytes(getsegmentsizeondisk());
     }
   }
 
   /**
-   * Only needed for the on disk archive.
-   * Creates TwitterIndexReader used for searching. This is shared by all Searchers.
-   * This method also initializes the Lucene based mappers and CSF for the on disk archive.
+   * onwy nyeeded f-fow the on disk awchive. mya
+   * c-cweates twittewindexweadew u-used f-fow seawching. mya t-this is shawed by a-aww seawchews. (⑅˘꒳˘)
+   * this method awso initiawizes the wucene based mappews and c-csf fow the on disk awchive. (✿oωo)
    *
-   * This method should be called after optimizing/loading a segment, but before the segment starts
-   * to serve search queries.
+   * t-this method shouwd be cawwed aftew optimizing/woading a segment, 😳 b-but befowe the segment stawts
+   * to sewve seawch quewies. OwO
    */
-  public void warmSegment() throws IOException {
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    Preconditions.checkNotNull(segmentWriter);
+  pubwic v-void wawmsegment() t-thwows ioexception {
+    eawwybiwdindexsegmentwwitew segmentwwitew = s-segmentwwitewwefewence.get();
+    pweconditions.checknotnuww(segmentwwitew);
 
-    // only need to pre-create reader and initialize mappers and CSF in the on disk archive cluster
-    if (indexConfig.isIndexStoredOnDisk() && luceneIndexReader.get() == null) {
-      EarlybirdIndexSegmentAtomicReader luceneAtomicReader =
-          segmentWriter.getSegmentData().createAtomicReader();
+    // onwy nyeed to pwe-cweate w-weadew a-and initiawize mappews and csf in t-the on disk awchive cwustew
+    i-if (indexconfig.isindexstowedondisk() && wuceneindexweadew.get() == nyuww) {
+      eawwybiwdindexsegmentatomicweadew w-wuceneatomicweadew =
+          segmentwwitew.getsegmentdata().cweateatomicweadew();
 
-      luceneIndexReader.set(luceneAtomicReader);
-      closableResources.add(luceneAtomicReader);
-      closableResources.add(luceneDir);
+      wuceneindexweadew.set(wuceneatomicweadew);
+      c-cwosabwewesouwces.add(wuceneatomicweadew);
+      c-cwosabwewesouwces.add(wucenediw);
     }
   }
 
   /**
-   * Create a tweet index searcher on the segment.
+   * c-cweate a tweet index seawchew on the s-segment. (˘ω˘)
    *
-   * For production search session, the schema snapshot should be always passed in to make sure
-   * that the schema usage inside scoring is consistent.
+   * fow pwoduction seawch session, (✿oωo) the schema snapshot shouwd be a-awways passed in t-to make suwe
+   * t-that the schema u-usage inside scowing is consistent. /(^•ω•^)
    *
-   * For non-production usage, like one-off debugging search, you can use the function call without
-   * the schema snapshot.
+   * fow nyon-pwoduction u-usage, rawr x3 wike o-one-off debugging seawch, rawr you can use the function c-caww without
+   * the schema snapshot. ( ͡o ω ͡o )
    */
-  @Nullable
-  public EarlybirdSingleSegmentSearcher getSearcher(
-      UserTable userTable,
-      ImmutableSchemaInterface schemaSnapshot) throws IOException {
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    if (segmentWriter == null) {
-      return null;
+  @nuwwabwe
+  p-pubwic eawwybiwdsingwesegmentseawchew getseawchew(
+      usewtabwe u-usewtabwe, ( ͡o ω ͡o )
+      i-immutabweschemaintewface schemasnapshot) t-thwows i-ioexception {
+    e-eawwybiwdindexsegmentwwitew segmentwwitew = segmentwwitewwefewence.get();
+    i-if (segmentwwitew == nyuww) {
+      wetuwn nyuww;
     }
-    return new EarlybirdSingleSegmentSearcher(
-        schemaSnapshot, getIndexReader(segmentWriter), userTable, searcherStats, clock);
+    w-wetuwn new eawwybiwdsingwesegmentseawchew(
+        schemasnapshot, 😳😳😳 getindexweadew(segmentwwitew), (U ﹏ U) usewtabwe, UwU seawchewstats, (U ﹏ U) c-cwock);
   }
 
   /**
-   * Returns a new searcher for this segment.
+   * w-wetuwns a nyew s-seawchew fow t-this segment. 🥺
    */
-  @Nullable
-  public EarlybirdSingleSegmentSearcher getSearcher(
-      UserTable userTable) throws IOException {
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    if (segmentWriter == null) {
-      return null;
+  @nuwwabwe
+  p-pubwic eawwybiwdsingwesegmentseawchew getseawchew(
+      u-usewtabwe usewtabwe) thwows ioexception {
+    e-eawwybiwdindexsegmentwwitew segmentwwitew = s-segmentwwitewwefewence.get();
+    if (segmentwwitew == nyuww) {
+      w-wetuwn n-nyuww;
     }
-    return new EarlybirdSingleSegmentSearcher(
-        segmentWriter.getSegmentData().getSchema().getSchemaSnapshot(),
-        getIndexReader(segmentWriter),
-        userTable,
-        searcherStats,
-        clock);
+    wetuwn new eawwybiwdsingwesegmentseawchew(
+        s-segmentwwitew.getsegmentdata().getschema().getschemasnapshot(), ʘwʘ
+        getindexweadew(segmentwwitew), 😳
+        u-usewtabwe,
+        s-seawchewstats, (ˆ ﻌ ˆ)♡
+        cwock);
   }
 
   /**
-   * Returns a new reader for this segment.
+   * wetuwns a n-nyew weadew fow t-this segment. >_<
    */
-  @Nullable
-  public EarlybirdIndexSegmentAtomicReader getIndexReader() throws IOException {
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    if (segmentWriter == null) {
-      return null;
+  @nuwwabwe
+  pubwic eawwybiwdindexsegmentatomicweadew g-getindexweadew() thwows ioexception {
+    eawwybiwdindexsegmentwwitew s-segmentwwitew = segmentwwitewwefewence.get();
+    i-if (segmentwwitew == nyuww) {
+      wetuwn nyuww;
     }
-    return getIndexReader(segmentWriter);
+    w-wetuwn getindexweadew(segmentwwitew);
   }
 
-  private EarlybirdIndexSegmentAtomicReader getIndexReader(
-      EarlybirdIndexSegmentWriter segmentWriter
-  ) throws IOException {
-    EarlybirdIndexSegmentAtomicReader reader = luceneIndexReader.get();
-    if (reader != null) {
-      return reader;
+  p-pwivate e-eawwybiwdindexsegmentatomicweadew getindexweadew(
+      e-eawwybiwdindexsegmentwwitew s-segmentwwitew
+  ) thwows i-ioexception {
+    eawwybiwdindexsegmentatomicweadew w-weadew = wuceneindexweadew.get();
+    if (weadew != n-nyuww) {
+      w-wetuwn weadew;
     }
-    Preconditions.checkState(!indexConfig.isIndexStoredOnDisk());
+    pweconditions.checkstate(!indexconfig.isindexstowedondisk());
 
-    // Realtime EB mode.
-    return segmentWriter.getSegmentData().createAtomicReader();
+    // weawtime eb mode. ^•ﻌ•^
+    wetuwn s-segmentwwitew.getsegmentdata().cweateatomicweadew();
   }
 
   /**
-   * Gets max tweet id in this segment.
+   * g-gets max tweet id in this segment. (✿oωo)
    *
-   * @return the tweet id or -1 if not found.
+   * @wetuwn the tweet id ow -1 i-if nyot found. OwO
    */
-  public long getMaxTweetId() {
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    if (segmentWriter == null) {
-      return -1;
-    } else {
-      TweetIDMapper tweetIDMapper =
-          (TweetIDMapper) segmentWriter.getSegmentData().getDocIDToTweetIDMapper();
-      return tweetIDMapper.getMaxTweetID();
+  pubwic w-wong getmaxtweetid() {
+    e-eawwybiwdindexsegmentwwitew segmentwwitew = segmentwwitewwefewence.get();
+    if (segmentwwitew == nyuww) {
+      w-wetuwn -1;
+    } ewse {
+      tweetidmappew t-tweetidmappew =
+          (tweetidmappew) segmentwwitew.getsegmentdata().getdocidtotweetidmappew();
+      w-wetuwn tweetidmappew.getmaxtweetid();
     }
   }
 
-  private EarlybirdIndexSegmentWriter newWriteableSegment(EarlybirdIndexSegmentData segmentData)
-      throws IOException {
-    EarlybirdIndexSegmentWriter old = segmentWriterReference.get();
-    if (old != null) {
-      old.close();
+  p-pwivate eawwybiwdindexsegmentwwitew nyewwwiteabwesegment(eawwybiwdindexsegmentdata s-segmentdata)
+      t-thwows i-ioexception {
+    e-eawwybiwdindexsegmentwwitew o-owd = segmentwwitewwefewence.get();
+    i-if (owd != nyuww) {
+      owd.cwose();
     }
 
-    LOG.info("Creating new segment writer for {} on {}", segmentName, luceneDir);
-    IndexWriterConfig indexWriterConfig = indexConfig.newIndexWriterConfig();
-    return segmentData.createEarlybirdIndexSegmentWriter(indexWriterConfig);
+    wog.info("cweating nyew segment wwitew f-fow {} on {}", (ˆ ﻌ ˆ)♡ s-segmentname, ^^;; wucenediw);
+    i-indexwwitewconfig i-indexwwitewconfig = i-indexconfig.newindexwwitewconfig();
+    w-wetuwn segmentdata.cweateeawwybiwdindexsegmentwwitew(indexwwitewconfig);
   }
 
-  private void resetSegmentWriterReference(
-      EarlybirdIndexSegmentWriter segmentWriter, boolean previousSegmentWriterAllowed) {
-    EarlybirdIndexSegmentWriter previousSegmentWriter =
-        segmentWriterReference.getAndSet(segmentWriter);
-    if (!previousSegmentWriterAllowed) {
-      Preconditions.checkState(
-          previousSegmentWriter == null,
-          "A previous segment writer must have been set for segment " + segmentName);
+  pwivate void wesetsegmentwwitewwefewence(
+      eawwybiwdindexsegmentwwitew s-segmentwwitew, nyaa~~ b-boowean pwevioussegmentwwitewawwowed) {
+    eawwybiwdindexsegmentwwitew pwevioussegmentwwitew =
+        segmentwwitewwefewence.getandset(segmentwwitew);
+    if (!pwevioussegmentwwitewawwowed) {
+      pweconditions.checkstate(
+          pwevioussegmentwwitew == n-nyuww, o.O
+          "a p-pwevious segment w-wwitew must have been set fow segment " + segmentname);
     }
 
-    // Reset the stats for the number of indexed tweets per hour and recompute them.
-    // See SEARCH-23619
-    for (SearchCounter indexedTweetsCounter : indexedTweetsCounters.values()) {
-      indexedTweetsCounter.reset();
+    // w-weset the stats fow the nyumbew of indexed t-tweets pew houw a-and wecompute them. >_<
+    // see seawch-23619
+    f-fow (seawchcountew indexedtweetscountew : i-indexedtweetscountews.vawues()) {
+      i-indexedtweetscountew.weset();
     }
 
-    if (segmentWriter != null) {
-      indexStats.setSegmentData(segmentWriter.getSegmentData());
+    if (segmentwwitew != n-nyuww) {
+      i-indexstats.setsegmentdata(segmentwwitew.getsegmentdata());
 
-      if (indexConfig.getCluster() != EarlybirdCluster.FULL_ARCHIVE) {
-        initHourlyTweetCounts(segmentWriterReference.get());
+      i-if (indexconfig.getcwustew() != e-eawwybiwdcwustew.fuww_awchive) {
+        i-inithouwwytweetcounts(segmentwwitewwefewence.get());
       }
-    } else {
-      // It's important to unset segment data so that there are no references to it
-      // and it can be GC-ed.
-      indexStats.unsetSegmentDataAndSaveCounts();
+    } ewse {
+      // it's i-impowtant to unset segment data s-so that thewe a-awe no wefewences to it
+      // a-and it can be gc-ed. (U ﹏ U)
+      indexstats.unsetsegmentdataandsavecounts();
     }
   }
 
   /**
-   * Add a document if it is not already in segment.
+   * add a document if i-it is nyot awweady in segment. ^^
    */
-  public void addDocument(TweetDocument doc) throws IOException {
-    if (indexConfig.isIndexStoredOnDisk()) {
-      addDocumentToArchiveSegment(doc);
-    } else {
-      addDocumentToRealtimeSegment(doc);
+  p-pubwic void adddocument(tweetdocument doc) t-thwows ioexception {
+    i-if (indexconfig.isindexstowedondisk()) {
+      adddocumenttoawchivesegment(doc);
+    } ewse {
+      a-adddocumenttoweawtimesegment(doc);
     }
   }
 
-  private void addDocumentToArchiveSegment(TweetDocument doc) throws IOException {
-    // For archive, the document id should come in order, to drop duplicates, only need to
-    // compare current id with last one.
-    long tweetId = doc.getTweetID();
-    if (tweetId == lastInOrderTweetId) {
-      LOG.warn("Dropped duplicate tweet for archive: {}", tweetId);
-      DUPLICATE_TWEET_SKIPPED_COUNTER.increment();
-      return;
+  pwivate void adddocumenttoawchivesegment(tweetdocument doc) thwows i-ioexception {
+    // f-fow awchive, UwU the document id shouwd come i-in owdew, ^^;; to dwop d-dupwicates, òωó onwy nyeed to
+    // c-compawe cuwwent id with wast one. -.-
+    wong t-tweetid = doc.gettweetid();
+    i-if (tweetid == wastinowdewtweetid) {
+      wog.wawn("dwopped d-dupwicate t-tweet fow awchive: {}", ( ͡o ω ͡o ) tweetid);
+      dupwicate_tweet_skipped_countew.incwement();
+      wetuwn;
     }
 
-    if (tweetId > lastInOrderTweetId && lastInOrderTweetId != 0) {
-      // Archive orders document from newest to oldest, so this shouldn't happen
-      LOG.warn("Encountered out-of-order tweet for archive: {}", tweetId);
-      OUT_OF_ORDER_TWEET_COUNTER.increment();
-    } else {
-      lastInOrderTweetId = tweetId;
+    i-if (tweetid > w-wastinowdewtweetid && w-wastinowdewtweetid != 0) {
+      // a-awchive owdews document fwom nyewest to owdest, o.O so this shouwdn't happen
+      wog.wawn("encountewed out-of-owdew tweet f-fow awchive: {}", rawr t-tweetid);
+      o-out_of_owdew_tweet_countew.incwement();
+    } e-ewse {
+      w-wastinowdewtweetid = t-tweetid;
     }
 
-    addDocumentInternal(doc);
+    adddocumentintewnaw(doc);
   }
 
-  private void addDocumentToRealtimeSegment(TweetDocument doc) throws IOException {
-    long tweetId = doc.getTweetID();
-    boolean outOfOrder = tweetId <= lastInOrderTweetId;
-    if (outOfOrder) {
-      OUT_OF_ORDER_TWEET_COUNTER.increment();
-    } else {
-      lastInOrderTweetId = tweetId;
+  p-pwivate v-void adddocumenttoweawtimesegment(tweetdocument doc) thwows i-ioexception {
+    w-wong tweetid = doc.gettweetid();
+    boowean outofowdew = t-tweetid <= wastinowdewtweetid;
+    if (outofowdew) {
+      out_of_owdew_tweet_countew.incwement();
+    } e-ewse {
+      wastinowdewtweetid = t-tweetid;
     }
 
-    // We only need to call hasDocument() for out-of-order tweets.
-    if (outOfOrder && hasDocument(tweetId)) {
-      // We do get duplicates sometimes so you'll see some amount of these.
-      DUPLICATE_TWEET_SKIPPED_COUNTER.increment();
-    } else {
-      addDocumentInternal(doc);
-      incrementHourlyTweetCount(doc.getTweetID());
-    }
-  }
-
-  private void addDocumentInternal(TweetDocument tweetDocument) throws IOException {
-    Document doc = tweetDocument.getDocument();
-
-    // Never write blank documents into the index.
-    if (doc == null || doc.getFields() == null || doc.getFields().size() == 0) {
-      return;
-    }
-
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    if (segmentWriter == null) {
-      EarlybirdIndexSegmentData segmentData = indexConfig.newSegmentData(
-          maxSegmentSize,
-          timeSliceID,
-          luceneDir,
-          extensionsFactory);
-      segmentWriter = newWriteableSegment(segmentData);
-      resetSegmentWriterReference(segmentWriter, false);
-    }
-
-    Preconditions.checkState(segmentWriter.numDocs() < maxSegmentSize,
-                             "Reached max segment size %s", maxSegmentSize);
-
-    IndexableField[] featuresField = doc.getFields(
-        EarlybirdFieldConstants.ENCODED_TWEET_FEATURES_FIELD_NAME);
-    Preconditions.checkState(featuresField.length == 1,
-            "featuresField.length should be 1, but is %s", featuresField.length);
-
-    // We require the createdAt field to be set so we can properly filter tweets based on time.
-    IndexableField[] createdAt =
-        doc.getFields(EarlybirdFieldConstant.CREATED_AT_FIELD.getFieldName());
-    Preconditions.checkState(createdAt.length == 1);
-
-    EarlybirdEncodedFeatures features = EarlybirdEncodedFeaturesUtil.fromBytes(
-        indexConfig.getSchema().getSchemaSnapshot(),
-        EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD,
-        featuresField[0].binaryValue().bytes,
-        featuresField[0].binaryValue().offset);
-    boolean currentDocIsOffensive = features.isFlagSet(EarlybirdFieldConstant.IS_OFFENSIVE_FLAG);
-    perFieldCounters.increment(ThriftIndexingEventType.INSERT, doc);
-    segmentWriter.addTweet(doc, tweetDocument.getTweetID(), currentDocIsOffensive);
-  }
-
-  private void incrementHourlyTweetCount(long tweetId) {
-    // SEARCH-23619, We won't attempt to increment the count for pre-snowflake IDs, since
-    // extracting an exact create time is pretty tricky at this point, and the stat is mostly
-    // useful for checking realtime tweet indexing.
-    if (SnowflakeId.isSnowflakeId(tweetId)) {
-      long tweetCreateTime = SnowflakeId.unixTimeMillisFromId(tweetId);
-      String tweetHour = HOURLY_COUNT_DATE_TIME_FORMATTER.format(
-          ZonedDateTime.ofInstant(Instant.ofEpochMilli(tweetCreateTime), ZoneOffset.UTC));
-
-      String segmentOptimizedSuffix = isOptimized() ? "optimized" : "unoptimized";
-      SearchCounter indexedTweetsCounter = indexedTweetsCounters.computeIfAbsent(
-          tweetHour + "_" + segmentOptimizedSuffix,
-          (tweetHourKey) -> SearchCounter.export(String.format(
-              NUM_TWEETS_CREATED_AT_PATTERN, segmentOptimizedSuffix, segmentName, tweetHour)));
-      indexedTweetsCounter.increment();
+    // w-we onwy nyeed to caww h-hasdocument() f-fow out-of-owdew t-tweets. (✿oωo)
+    if (outofowdew && hasdocument(tweetid)) {
+      // w-we do get dupwicates s-sometimes so you'ww see some a-amount of these. σωσ
+      dupwicate_tweet_skipped_countew.incwement();
+    } e-ewse {
+      a-adddocumentintewnaw(doc);
+      i-incwementhouwwytweetcount(doc.gettweetid());
     }
   }
 
-  private void initHourlyTweetCounts(EarlybirdIndexSegmentWriter segmentWriter) {
-    DocIDToTweetIDMapper mapper = segmentWriter.getSegmentData().getDocIDToTweetIDMapper();
-    int docId = Integer.MIN_VALUE;
-    while ((docId = mapper.getNextDocID(docId)) != DocIDToTweetIDMapper.ID_NOT_FOUND) {
-      incrementHourlyTweetCount(mapper.getTweetID(docId));
+  pwivate void a-adddocumentintewnaw(tweetdocument tweetdocument) thwows ioexception {
+    d-document doc = tweetdocument.getdocument();
+
+    // nyevew wwite bwank documents into the index. (U ᵕ U❁)
+    if (doc == nyuww || doc.getfiewds() == n-nyuww || doc.getfiewds().size() == 0) {
+      wetuwn;
+    }
+
+    eawwybiwdindexsegmentwwitew segmentwwitew = segmentwwitewwefewence.get();
+    if (segmentwwitew == n-nyuww) {
+      eawwybiwdindexsegmentdata segmentdata = i-indexconfig.newsegmentdata(
+          maxsegmentsize, >_<
+          t-timeswiceid, ^^
+          wucenediw, rawr
+          extensionsfactowy);
+      segmentwwitew = n-nyewwwiteabwesegment(segmentdata);
+      wesetsegmentwwitewwefewence(segmentwwitew, >_< f-fawse);
+    }
+
+    pweconditions.checkstate(segmentwwitew.numdocs() < m-maxsegmentsize, (⑅˘꒳˘)
+                             "weached m-max segment size %s", >w< maxsegmentsize);
+
+    indexabwefiewd[] f-featuwesfiewd = doc.getfiewds(
+        eawwybiwdfiewdconstants.encoded_tweet_featuwes_fiewd_name);
+    pweconditions.checkstate(featuwesfiewd.wength == 1, (///ˬ///✿)
+            "featuwesfiewd.wength s-shouwd be 1, ^•ﻌ•^ but is %s", (✿oωo) featuwesfiewd.wength);
+
+    // w-we wequiwe the cweatedat f-fiewd to be set so we can pwopewwy f-fiwtew tweets b-based on time. ʘwʘ
+    indexabwefiewd[] cweatedat =
+        d-doc.getfiewds(eawwybiwdfiewdconstant.cweated_at_fiewd.getfiewdname());
+    pweconditions.checkstate(cweatedat.wength == 1);
+
+    eawwybiwdencodedfeatuwes f-featuwes = eawwybiwdencodedfeatuwesutiw.fwombytes(
+        indexconfig.getschema().getschemasnapshot(), >w<
+        eawwybiwdfiewdconstant.encoded_tweet_featuwes_fiewd, :3
+        featuwesfiewd[0].binawyvawue().bytes,
+        f-featuwesfiewd[0].binawyvawue().offset);
+    b-boowean cuwwentdocisoffensive = f-featuwes.isfwagset(eawwybiwdfiewdconstant.is_offensive_fwag);
+    p-pewfiewdcountews.incwement(thwiftindexingeventtype.insewt, (ˆ ﻌ ˆ)♡ doc);
+    s-segmentwwitew.addtweet(doc, -.- tweetdocument.gettweetid(), rawr cuwwentdocisoffensive);
+  }
+
+  pwivate void incwementhouwwytweetcount(wong t-tweetid) {
+    // s-seawch-23619, rawr x3 we won't a-attempt to incwement t-the count fow pwe-snowfwake i-ids, (U ﹏ U) since
+    // extwacting an exact cweate time i-is pwetty twicky at this point, and the stat i-is mostwy
+    // u-usefuw fow checking weawtime tweet indexing. (ˆ ﻌ ˆ)♡
+    i-if (snowfwakeid.issnowfwakeid(tweetid)) {
+      wong tweetcweatetime = snowfwakeid.unixtimemiwwisfwomid(tweetid);
+      stwing tweethouw = houwwy_count_date_time_fowmattew.fowmat(
+          zoneddatetime.ofinstant(instant.ofepochmiwwi(tweetcweatetime), :3 zoneoffset.utc));
+
+      stwing s-segmentoptimizedsuffix = i-isoptimized() ? "optimized" : "unoptimized";
+      seawchcountew i-indexedtweetscountew = i-indexedtweetscountews.computeifabsent(
+          tweethouw + "_" + s-segmentoptimizedsuffix, òωó
+          (tweethouwkey) -> seawchcountew.expowt(stwing.fowmat(
+              nyum_tweets_cweated_at_pattewn, /(^•ω•^) segmentoptimizedsuffix, >w< segmentname, nyaa~~ tweethouw)));
+      indexedtweetscountew.incwement();
+    }
+  }
+
+  p-pwivate void inithouwwytweetcounts(eawwybiwdindexsegmentwwitew segmentwwitew) {
+    docidtotweetidmappew mappew = segmentwwitew.getsegmentdata().getdocidtotweetidmappew();
+    i-int docid = integew.min_vawue;
+    w-whiwe ((docid = m-mappew.getnextdocid(docid)) != docidtotweetidmappew.id_not_found) {
+      incwementhouwwytweetcount(mappew.gettweetid(docid));
     }
   }
 
   /**
-   * Adds the given document for the given tweet ID to the segment, potentially out of order.
+   * adds the given document f-fow the given t-tweet id to the s-segment, mya potentiawwy out of owdew. mya
    */
-  public boolean appendOutOfOrder(Document doc, long tweetID) throws IOException {
-    // Never write blank documents into the index.
-    if (doc == null || doc.getFields() == null || doc.getFields().size() == 0) {
-      return false;
+  p-pubwic boowean appendoutofowdew(document d-doc, ʘwʘ wong tweetid) thwows ioexception {
+    // n-nyevew wwite bwank documents i-into the index. rawr
+    if (doc == nyuww || doc.getfiewds() == n-nyuww || doc.getfiewds().size() == 0) {
+      w-wetuwn f-fawse;
     }
 
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    if (segmentWriter == null) {
-      logAppendOutOfOrderFailure(tweetID, doc, "segment is null");
-      return false;
+    eawwybiwdindexsegmentwwitew s-segmentwwitew = s-segmentwwitewwefewence.get();
+    if (segmentwwitew == n-nyuww) {
+      wogappendoutofowdewfaiwuwe(tweetid, (˘ω˘) d-doc, "segment is nyuww");
+      w-wetuwn fawse;
     }
 
-    if (!indexConfig.supportOutOfOrderIndexing()) {
-      logAppendOutOfOrderFailure(tweetID, doc, "out of order indexing not supported");
-      return false;
+    i-if (!indexconfig.suppowtoutofowdewindexing()) {
+      wogappendoutofowdewfaiwuwe(tweetid, /(^•ω•^) doc, (˘ω˘) "out o-of owdew indexing nyot suppowted");
+      wetuwn fawse;
     }
 
-    if (!hasDocument(tweetID)) {
-      logAppendOutOfOrderFailure(tweetID, doc, "tweet ID index lookup failed");
-      searchIndexingMetricSet.updateOnMissingTweetCounter.increment();
-      perFieldCounters.incrementTweetNotInIndex(ThriftIndexingEventType.OUT_OF_ORDER_APPEND, doc);
-      return false;
+    if (!hasdocument(tweetid)) {
+      wogappendoutofowdewfaiwuwe(tweetid, (///ˬ///✿) doc, "tweet id index wookup faiwed");
+      seawchindexingmetwicset.updateonmissingtweetcountew.incwement();
+      p-pewfiewdcountews.incwementtweetnotinindex(thwiftindexingeventtype.out_of_owdew_append, (˘ω˘) doc);
+      wetuwn fawse;
     }
 
-    perFieldCounters.increment(ThriftIndexingEventType.OUT_OF_ORDER_APPEND, doc);
-    segmentWriter.appendOutOfOrder(new TweetIDQuery(tweetID), doc);
-    indexStats.incrementOutOfOrderUpdateCount();
-    return true;
+    p-pewfiewdcountews.incwement(thwiftindexingeventtype.out_of_owdew_append, doc);
+    s-segmentwwitew.appendoutofowdew(new tweetidquewy(tweetid), -.- doc);
+    i-indexstats.incwementoutofowdewupdatecount();
+    wetuwn twue;
   }
 
-  private void logAppendOutOfOrderFailure(long tweetID, Document doc, String reason) {
-    UPDATES_ERRORS_LOG.debug(
-        "appendOutOfOrder() failed to apply update document with hash {} on tweet ID {}: {}",
-        Objects.hashCode(doc), tweetID, reason);
+  pwivate v-void wogappendoutofowdewfaiwuwe(wong tweetid, -.- document doc, ^^ stwing w-weason) {
+    updates_ewwows_wog.debug(
+        "appendoutofowdew() faiwed to a-appwy update document with hash {} on tweet id {}: {}", (ˆ ﻌ ˆ)♡
+        o-objects.hashcode(doc), UwU t-tweetid, 🥺 weason);
   }
 
   /**
-   * Determines if this segment contains the given tweet ID.
+   * detewmines i-if this segment c-contains the given tweet id. 🥺
    */
-  public boolean hasDocument(long tweetID) throws IOException {
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    if (segmentWriter == null) {
-      return false;
+  p-pubwic b-boowean hasdocument(wong tweetid) thwows ioexception {
+    e-eawwybiwdindexsegmentwwitew segmentwwitew = segmentwwitewwefewence.get();
+    if (segmentwwitew == n-nyuww) {
+      wetuwn fawse;
     }
 
-    return segmentWriter.getSegmentData().getDocIDToTweetIDMapper().getDocID(tweetID)
-        != DocIDToTweetIDMapper.ID_NOT_FOUND;
+    wetuwn segmentwwitew.getsegmentdata().getdocidtotweetidmappew().getdocid(tweetid)
+        != docidtotweetidmappew.id_not_found;
   }
 
-  private static final String VERSION_PROP_NAME = "version";
-  private static final String VERSION_DESC_PROP_NAME = "versionDescription";
-  private static final String PARTIAL_UPDATES_COUNT = "partialUpdatesCount";
-  private static final String OUT_OF_ORDER_UPDATES_COUNT = "outOfOrderUpdatesCount";
+  pwivate s-static finaw s-stwing vewsion_pwop_name = "vewsion";
+  p-pwivate static finaw stwing vewsion_desc_pwop_name = "vewsiondescwiption";
+  pwivate s-static finaw stwing pawtiaw_updates_count = "pawtiawupdatescount";
+  p-pwivate static finaw stwing o-out_of_owdew_updates_count = "outofowdewupdatescount";
 
-  private void checkIfFlushedDataVersionMatchesExpected(FlushInfo flushInfo) throws IOException {
-    int expectedVersionNumber = indexConfig.getSchema().getMajorVersionNumber();
-    String expectedVersionDesc = indexConfig.getSchema().getVersionDescription();
-    int version = flushInfo.getIntProperty(VERSION_PROP_NAME);
-    final String versionDesc = flushInfo.getStringProperty(VERSION_DESC_PROP_NAME);
+  p-pwivate void checkiffwusheddatavewsionmatchesexpected(fwushinfo fwushinfo) thwows ioexception {
+    int expectedvewsionnumbew = indexconfig.getschema().getmajowvewsionnumbew();
+    s-stwing expectedvewsiondesc = i-indexconfig.getschema().getvewsiondescwiption();
+    int vewsion = fwushinfo.getintpwopewty(vewsion_pwop_name);
+    f-finaw stwing vewsiondesc = fwushinfo.getstwingpwopewty(vewsion_desc_pwop_name);
 
-    if (version != expectedVersionNumber) {
-      throw new FlushVersionMismatchException("Flushed version mismatch. Expected: "
-          + expectedVersionNumber + ", but was: " + version);
+    if (vewsion != e-expectedvewsionnumbew) {
+      t-thwow nyew f-fwushvewsionmismatchexception("fwushed v-vewsion mismatch. 🥺 e-expected: "
+          + e-expectedvewsionnumbew + ", but was: " + vewsion);
     }
 
-    if (!expectedVersionDesc.equals(versionDesc)) {
-      final String message = "Flush version " + expectedVersionNumber + " is ambiguous"
-          + "  Expected: " + expectedVersionDesc
-          + "  Found:  "  + versionDesc
-          + "  Please clean up segments with bad flush version from HDFS and Earlybird local disk.";
-      throw new FlushVersionMismatchException(message);
+    i-if (!expectedvewsiondesc.equaws(vewsiondesc)) {
+      f-finaw stwing m-message = "fwush v-vewsion " + expectedvewsionnumbew + " i-is ambiguous"
+          + "  e-expected: " + expectedvewsiondesc
+          + "  f-found:  "  + v-vewsiondesc
+          + "  p-pwease cwean up segments with bad f-fwush vewsion fwom hdfs and eawwybiwd wocaw disk.";
+      t-thwow nyew fwushvewsionmismatchexception(message);
     }
   }
 
   /**
-   * Loads the segment data and properties from the given deserializer and flush info.
+   * woads the segment d-data and pwopewties f-fwom the given desewiawizew and fwush info. 🥺
    *
-   * @param in The deserializer from which the segment's data will be read.
-   * @param flushInfo The flush info from which the segment's properties will be read.
+   * @pawam in the desewiawizew f-fwom which t-the segment's data wiww be w-wead. :3
+   * @pawam f-fwushinfo the fwush info fwom which the segment's pwopewties wiww b-be wead. (˘ω˘)
    */
-  public void load(DataDeserializer in, FlushInfo flushInfo) throws IOException {
-    checkIfFlushedDataVersionMatchesExpected(flushInfo);
+  p-pubwic void woad(datadesewiawizew in, ^^;; fwushinfo f-fwushinfo) t-thwows ioexception {
+    checkiffwusheddatavewsionmatchesexpected(fwushinfo);
 
-    int partialUpdatesCount = flushInfo.getIntProperty(PARTIAL_UPDATES_COUNT);
-    int outOfOrderUpdatesCount = flushInfo.getIntProperty(OUT_OF_ORDER_UPDATES_COUNT);
+    int pawtiawupdatescount = f-fwushinfo.getintpwopewty(pawtiaw_updates_count);
+    int outofowdewupdatescount = fwushinfo.getintpwopewty(out_of_owdew_updates_count);
 
-    EarlybirdIndexSegmentData loadedSegmentData = indexConfig.loadSegmentData(
-        flushInfo, in, luceneDir, extensionsFactory);
+    eawwybiwdindexsegmentdata woadedsegmentdata = indexconfig.woadsegmentdata(
+        fwushinfo, (ꈍᴗꈍ) i-in, wucenediw, ʘwʘ extensionsfactowy);
 
-    setSegmentData(loadedSegmentData, partialUpdatesCount, outOfOrderUpdatesCount);
+    setsegmentdata(woadedsegmentdata, :3 p-pawtiawupdatescount, XD o-outofowdewupdatescount);
   }
 
   /**
-   * Update the data backing this EarlyirdSegment.
+   * u-update the data backing this eawwyiwdsegment. UwU
    */
-  public void setSegmentData(
-      EarlybirdIndexSegmentData segmentData,
-      int partialUpdatesCount,
-      int outOfOrderUpdatesCount) throws IOException {
-    resetSegmentWriterReference(newWriteableSegment(segmentData), false);
-    try {
-      warmSegment();
-    } catch (IOException e) {
-      LOG.error("Failed to create IndexReader for segment {}. Will destroy unreadable segment.",
-          segmentName, e);
-      destroyImmediately();
-      throw e;
+  p-pubwic void s-setsegmentdata(
+      e-eawwybiwdindexsegmentdata s-segmentdata, rawr x3
+      i-int pawtiawupdatescount,
+      int outofowdewupdatescount) thwows ioexception {
+    w-wesetsegmentwwitewwefewence(newwwiteabwesegment(segmentdata), ( ͡o ω ͡o ) f-fawse);
+    t-twy {
+      wawmsegment();
+    } catch (ioexception e-e) {
+      w-wog.ewwow("faiwed t-to cweate indexweadew fow segment {}. :3 w-wiww destwoy u-unweadabwe s-segment.", rawr
+          s-segmentname, ^•ﻌ•^ e-e);
+      destwoyimmediatewy();
+      thwow e-e;
     }
 
-    LOG.info("Starting segment {} with {} partial updates, {} out of order updates and {} deletes.",
-        segmentName, partialUpdatesCount, outOfOrderUpdatesCount, indexStats.getDeleteCount());
-    indexStats.setPartialUpdateCount(partialUpdatesCount);
-    indexStats.setOutOfOrderUpdateCount(outOfOrderUpdatesCount);
-    indexStats.setIndexSizeOnDiskInBytes(getSegmentSizeOnDisk());
+    wog.info("stawting segment {} with {} p-pawtiaw updates, 🥺 {} o-out of owdew updates and {} dewetes.", (⑅˘꒳˘)
+        segmentname, :3 p-pawtiawupdatescount, (///ˬ///✿) o-outofowdewupdatescount, 😳😳😳 indexstats.getdewetecount());
+    i-indexstats.setpawtiawupdatecount(pawtiawupdatescount);
+    i-indexstats.setoutofowdewupdatecount(outofowdewupdatescount);
+    indexstats.setindexsizeondiskinbytes(getsegmentsizeondisk());
   }
 
   /**
-   * Flushes the this segment's properties to the given FlushInfo instance, and this segment's data
-   * to the given DataSerializer instance.
+   * fwushes the this segment's p-pwopewties t-to the given f-fwushinfo instance, a-and this segment's d-data
+   * t-to the given datasewiawizew instance. 😳😳😳
    *
-   * @param flushInfo The FlushInfo instance where all segment properties should be added.
-   * @param out The serializer to which all segment data should be flushed.
+   * @pawam fwushinfo t-the fwushinfo instance whewe aww segment pwopewties shouwd be added. 😳😳😳
+   * @pawam o-out the sewiawizew t-to which aww segment data shouwd be fwushed. nyaa~~
    */
-  public void flush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-    flushInfo.addIntProperty(VERSION_PROP_NAME, indexConfig.getSchema().getMajorVersionNumber());
-    flushInfo.addStringProperty(VERSION_DESC_PROP_NAME,
-        indexConfig.getSchema().getVersionDescription());
-    flushInfo.addIntProperty(PARTIAL_UPDATES_COUNT, indexStats.getPartialUpdateCount());
-    flushInfo.addIntProperty(OUT_OF_ORDER_UPDATES_COUNT, indexStats.getOutOfOrderUpdateCount());
-    if (segmentWriterReference.get() == null) {
-      LOG.warn("Segment writer is null. flushInfo: {}", flushInfo);
-    } else if (segmentWriterReference.get().getSegmentData() == null) {
-      LOG.warn("Segment data is null. segment writer: {}, flushInfo: {}",
-          segmentWriterReference.get(), flushInfo);
+  pubwic v-void fwush(fwushinfo f-fwushinfo, UwU datasewiawizew out) thwows ioexception {
+    fwushinfo.addintpwopewty(vewsion_pwop_name, òωó i-indexconfig.getschema().getmajowvewsionnumbew());
+    fwushinfo.addstwingpwopewty(vewsion_desc_pwop_name, òωó
+        i-indexconfig.getschema().getvewsiondescwiption());
+    f-fwushinfo.addintpwopewty(pawtiaw_updates_count, UwU i-indexstats.getpawtiawupdatecount());
+    fwushinfo.addintpwopewty(out_of_owdew_updates_count, (///ˬ///✿) indexstats.getoutofowdewupdatecount());
+    if (segmentwwitewwefewence.get() == n-nyuww) {
+      wog.wawn("segment w-wwitew is nyuww. ( ͡o ω ͡o ) fwushinfo: {}", rawr f-fwushinfo);
+    } ewse if (segmentwwitewwefewence.get().getsegmentdata() == nyuww) {
+      wog.wawn("segment d-data is nyuww. :3 segment wwitew: {}, >w< f-fwushinfo: {}", σωσ
+          segmentwwitewwefewence.get(), σωσ fwushinfo);
     }
-    segmentWriterReference.get().getSegmentData().flushSegment(flushInfo, out);
-    indexStats.setIndexSizeOnDiskInBytes(getSegmentSizeOnDisk());
+    s-segmentwwitewwefewence.get().getsegmentdata().fwushsegment(fwushinfo, >_< out);
+    i-indexstats.setindexsizeondiskinbytes(getsegmentsizeondisk());
   }
 
   /**
-   * Check to see if this segment can be loaded from an on-disk index, and load it if it can be.
+   * check to see if this segment can be woaded fwom an on-disk index, -.- and woad it if it can be. 😳😳😳
    *
-   * This should only be applicable to the current segment for the on-disk archive. It's not
-   * fully flushed until it's full, but we do have a lucene index on local disk which can be
-   * used at startup (rather than have to reindex all the current timeslice documents again).
+   * t-this shouwd o-onwy be appwicabwe t-to the cuwwent s-segment fow the on-disk awchive. :3 it's nyot
+   * f-fuwwy fwushed untiw it's fuww, mya but we do have a wucene index o-on wocaw disk which c-can be
+   * u-used at stawtup (wathew t-than have to weindex aww the cuwwent timeswice documents again). (✿oωo)
    *
-   * If loaded, the index reader will be pre-created, and the segment will be marked as
+   * i-if woaded, 😳😳😳 the i-index weadew wiww be pwe-cweated, o.O and the segment wiww be mawked a-as
    * optimized.
    *
-   * If the index directory exists but it cannot be loaded, the index directory will be deleted.
+   * if the index diwectowy e-exists but i-it cannot be woaded, (ꈍᴗꈍ) t-the index diwectowy wiww be deweted. (ˆ ﻌ ˆ)♡
    *
-   * @return true if the index exists on disk, and was loaded.
+   * @wetuwn twue if the index exists on disk, a-and was woaded. -.-
    */
-  public boolean tryToLoadExistingIndex() throws IOException {
-    Preconditions.checkState(segmentWriterReference.get() == null);
-    if (indexConfig.isIndexStoredOnDisk()) {
-      if (DirectoryReader.indexExists(luceneDir) && checkSuccessFile()) {
-        LOG.info("Index directory already exists for {} at {}", segmentName, luceneDir);
+  pubwic boowean t-twytowoadexistingindex() thwows ioexception {
+    pweconditions.checkstate(segmentwwitewwefewence.get() == nyuww);
+    if (indexconfig.isindexstowedondisk()) {
+      i-if (diwectowyweadew.indexexists(wucenediw) && checksuccessfiwe()) {
+        w-wog.info("index diwectowy awweady exists f-fow {} at {}", mya s-segmentname, :3 wucenediw);
 
-        // set the optimized flag, since we don't need to optimize any more, and pre-create
-        // the index reader (for the on-disk index optimize() is a noop that just sets the
-        // optimized flag).
-        EarlybirdIndexSegmentData earlybirdIndexSegmentData = indexConfig.newSegmentData(
-            maxSegmentSize,
-            timeSliceID,
-            luceneDir,
-            extensionsFactory);
-        EarlybirdIndexSegmentData optimizedEarlybirdIndexSegmentData =
-            indexConfig.optimize(earlybirdIndexSegmentData);
-        resetSegmentWriterReference(newWriteableSegment(optimizedEarlybirdIndexSegmentData), false);
+        // s-set the optimized f-fwag, σωσ since w-we don't nyeed to optimize any m-mowe, 😳😳😳 and pwe-cweate
+        // t-the index weadew (fow the on-disk i-index optimize() is a nyoop that just sets t-the
+        // optimized fwag). -.-
+        e-eawwybiwdindexsegmentdata e-eawwybiwdindexsegmentdata = indexconfig.newsegmentdata(
+            m-maxsegmentsize, 😳😳😳
+            t-timeswiceid, rawr x3
+            wucenediw, (///ˬ///✿)
+            extensionsfactowy);
+        eawwybiwdindexsegmentdata o-optimizedeawwybiwdindexsegmentdata =
+            i-indexconfig.optimize(eawwybiwdindexsegmentdata);
+        w-wesetsegmentwwitewwefewence(newwwiteabwesegment(optimizedeawwybiwdindexsegmentdata), >w< f-fawse);
 
-        warmSegment();
+        wawmsegment();
 
-        LOG.info("Used existing lucene index for {} with {} documents",
-                 segmentName, indexStats.getStatusCount());
+        wog.info("used existing wucene index f-fow {} with {} documents", o.O
+                 segmentname, (˘ω˘) indexstats.getstatuscount());
 
-        indexStats.setIndexSizeOnDiskInBytes(getSegmentSizeOnDisk());
+        i-indexstats.setindexsizeondiskinbytes(getsegmentsizeondisk());
 
-        return true;
-      } else {
-        // Check if there is an existing lucene dir without a SUCCESS file on disk.
-        // If so, we will remove it and reindex from scratch.
-        if (moveFSDirectoryIfExists(luceneDir)) {
-          // Throw here to be cleaned up and retried by SimpleSegmentIndexer.
-          throw new IOException("Found invalid existing lucene directory at: " + luceneDir);
+        wetuwn twue;
+      } e-ewse {
+        // check if thewe is an existing wucene diw without a-a success fiwe on disk. rawr
+        // i-if so, mya we w-wiww wemove it a-and weindex fwom scwatch. òωó
+        i-if (movefsdiwectowyifexists(wucenediw)) {
+          // t-thwow hewe to be cweaned u-up and wetwied b-by simpwesegmentindexew. nyaa~~
+          t-thwow nyew ioexception("found i-invawid existing wucene diwectowy a-at: " + wucenediw);
         }
       }
     }
-    return false;
+    w-wetuwn fawse;
   }
 
   /**
-   * Partially updates a document with the field value(s) specified by event.
-   * Returns true if all writes were successful and false if one or more writes fail or if
-   * tweet id isn't found in the segment.
+   * p-pawtiawwy updates a document with t-the fiewd vawue(s) specified by event. òωó
+   * wetuwns twue if aww wwites wewe successfuw and fawse i-if one ow mowe w-wwites faiw ow if
+   * tweet i-id isn't found in the segment. mya
    */
-  public boolean applyPartialUpdate(ThriftIndexingEvent event) throws IOException {
-    Preconditions.checkArgument(event.getEventType() == ThriftIndexingEventType.PARTIAL_UPDATE);
-    Preconditions.checkArgument(event.isSetUid());
-    Preconditions.checkArgument(!ThriftDocumentUtil.hasDuplicateFields(event.getDocument()));
-    ImmutableSchemaInterface schemaSnapshot = indexConfig.getSchema().getSchemaSnapshot();
+  pubwic boowean a-appwypawtiawupdate(thwiftindexingevent e-event) t-thwows ioexception {
+    p-pweconditions.checkawgument(event.geteventtype() == thwiftindexingeventtype.pawtiaw_update);
+    pweconditions.checkawgument(event.issetuid());
+    p-pweconditions.checkawgument(!thwiftdocumentutiw.hasdupwicatefiewds(event.getdocument()));
+    immutabweschemaintewface schemasnapshot = i-indexconfig.getschema().getschemasnapshot();
 
-    long tweetId = event.getUid();
-    ThriftDocument doc = event.getDocument();
+    w-wong tweetid = event.getuid();
+    thwiftdocument doc = event.getdocument();
 
-    if (!hasDocument(tweetId)) {
-      // no need to attempt field writes, fail early
-      PARTIAL_UPDATE_FOR_TWEET_NOT_IN_INDEX.increment();
-       perFieldCounters.incrementTweetNotInIndex(
-           ThriftIndexingEventType.PARTIAL_UPDATE, doc);
-      return false;
+    i-if (!hasdocument(tweetid)) {
+      // nyo nyeed to a-attempt fiewd wwites, ^^ faiw eawwy
+      pawtiaw_update_fow_tweet_not_in_index.incwement();
+       p-pewfiewdcountews.incwementtweetnotinindex(
+           thwiftindexingeventtype.pawtiaw_update, ^•ﻌ•^ d-doc);
+      wetuwn fawse;
     }
 
-    int invalidFields = 0;
-    for (ThriftField field : doc.getFields()) {
-      String featureName = schemaSnapshot.getFieldName(field.getFieldConfigId());
-      FeatureConfiguration featureConfig =
-          schemaSnapshot.getFeatureConfigurationByName(featureName);
-      if (featureConfig == null) {
-        INVALID_FIELDS_IN_PARTIAL_UPDATES.increment();
-        invalidFields++;
-        continue;
+    int invawidfiewds = 0;
+    f-fow (thwiftfiewd fiewd : doc.getfiewds()) {
+      s-stwing featuwename = schemasnapshot.getfiewdname(fiewd.getfiewdconfigid());
+      f-featuweconfiguwation f-featuweconfig =
+          schemasnapshot.getfeatuweconfiguwationbyname(featuwename);
+      if (featuweconfig == n-nyuww) {
+        invawid_fiewds_in_pawtiaw_updates.incwement();
+        invawidfiewds++;
+        c-continue;
       }
 
-      perFieldCounters.increment(ThriftIndexingEventType.PARTIAL_UPDATE, featureName);
+      p-pewfiewdcountews.incwement(thwiftindexingeventtype.pawtiaw_update, -.- f-featuwename);
 
-      updateDocValues(
-          tweetId,
-          featureName,
-          (docValues, docID) -> updateFeatureValue(docID, featureConfig, docValues, field));
+      updatedocvawues(
+          tweetid, UwU
+          featuwename, (˘ω˘)
+          (docvawues, UwU docid) -> updatefeatuwevawue(docid, rawr f-featuweconfig, :3 docvawues, nyaa~~ fiewd));
     }
 
-    if (invalidFields > 0 && invalidFields != doc.getFieldsSize()) {
-      PARTIAL_UPDATE_PARTIAL_FAILURE.increment();
+    if (invawidfiewds > 0 && i-invawidfiewds != d-doc.getfiewdssize()) {
+      pawtiaw_update_pawtiaw_faiwuwe.incwement();
     }
 
-    if (invalidFields == 0) {
-      indexStats.incrementPartialUpdateCount();
-    } else {
-      UPDATES_ERRORS_LOG.warn("Failed to apply update for tweetID {}, found {} invalid fields: {}",
-          tweetId, invalidFields, event);
+    if (invawidfiewds == 0) {
+      i-indexstats.incwementpawtiawupdatecount();
+    } e-ewse {
+      updates_ewwows_wog.wawn("faiwed to appwy update fow tweetid {}, rawr f-found {} invawid fiewds: {}", (ˆ ﻌ ˆ)♡
+          t-tweetid, invawidfiewds, (ꈍᴗꈍ) event);
     }
 
-    return invalidFields == 0;
+    wetuwn i-invawidfiewds == 0;
   }
 
-  @VisibleForTesting
-  static void updateFeatureValue(int docID,
-                                 FeatureConfiguration featureConfig,
-                                 ColumnStrideFieldIndex docValues,
-                                 ThriftField updateField) {
-    int oldValue = Math.toIntExact(docValues.get(docID));
-    int newValue = updateField.getFieldData().getIntValue();
+  @visibwefowtesting
+  s-static void updatefeatuwevawue(int docid, (˘ω˘)
+                                 f-featuweconfiguwation f-featuweconfig,
+                                 cowumnstwidefiewdindex d-docvawues, (U ﹏ U)
+                                 thwiftfiewd u-updatefiewd) {
+    i-int owdvawue = m-math.tointexact(docvawues.get(docid));
+    int n-nyewvawue = updatefiewd.getfiewddata().getintvawue();
 
-    if (!featureConfig.validateFeatureUpdate(oldValue, newValue)) {
-      // Counter values can only increase
-      SearchCounter.export(
-          INVALID_FEATURE_UPDATES_DROPPED_PREFIX + featureConfig.getName()).increment();
-    } else {
-      docValues.setValue(docID, newValue);
+    i-if (!featuweconfig.vawidatefeatuweupdate(owdvawue, >w< nyewvawue)) {
+      // c-countew v-vawues can onwy incwease
+      seawchcountew.expowt(
+          invawid_featuwe_updates_dwopped_pwefix + featuweconfig.getname()).incwement();
+    } e-ewse {
+      docvawues.setvawue(docid, UwU n-nyewvawue);
     }
   }
 
   /**
-   * Checks if the provided directory exists and is not empty,
-   * and if it does moves it out to a diff directory for later inspection.
-   * @param luceneDirectory the dir to move if it exists.
-   * @return true iff we found an existing directory.
+   * checks if the pwovided diwectowy exists and is nyot empty, (ˆ ﻌ ˆ)♡
+   * and if it does moves i-it out to a diff diwectowy fow w-watew inspection. nyaa~~
+   * @pawam wucenediwectowy the diw to move if i-it exists. 🥺
+   * @wetuwn t-twue iff we found an existing d-diwectowy. >_<
    */
-  private static boolean moveFSDirectoryIfExists(Directory luceneDirectory) {
-    Preconditions.checkState(luceneDirectory instanceof FSDirectory);
-    File directory = ((FSDirectory) luceneDirectory).getDirectory().toFile();
-    if (directory != null && directory.exists() && directory.list().length > 0) {
-      // Save the bad lucene index by moving it out, for later inspection.
-      File movedDir = new File(directory.getParent(),
-          directory.getName() + ".failed." + System.currentTimeMillis());
-      LOG.warn("Moving existing non-successful index for {} from {} to {}",
-               luceneDirectory, directory, movedDir);
-      boolean success = directory.renameTo(movedDir);
-      if (!success) {
-        LOG.warn("Unable to rename non-successful index: {}", luceneDirectory);
+  pwivate s-static boowean movefsdiwectowyifexists(diwectowy w-wucenediwectowy) {
+    pweconditions.checkstate(wucenediwectowy instanceof fsdiwectowy);
+    fiwe diwectowy = ((fsdiwectowy) wucenediwectowy).getdiwectowy().tofiwe();
+    if (diwectowy != nyuww && diwectowy.exists() && diwectowy.wist().wength > 0) {
+      // save the b-bad wucene index by moving it out, òωó fow watew inspection. ʘwʘ
+      fiwe m-moveddiw = nyew fiwe(diwectowy.getpawent(), mya
+          d-diwectowy.getname() + ".faiwed." + system.cuwwenttimemiwwis());
+      wog.wawn("moving existing nyon-successfuw index fow {} fwom {} to {}", σωσ
+               wucenediwectowy, OwO diwectowy, (✿oωo) moveddiw);
+      b-boowean success = d-diwectowy.wenameto(moveddiw);
+      i-if (!success) {
+        wog.wawn("unabwe t-to wename non-successfuw i-index: {}", ʘwʘ w-wucenediwectowy);
       }
-      return true;
+      wetuwn twue;
     }
-    return false;
+    wetuwn f-fawse;
   }
 
   /**
-   * For the on-disk archive, if we were able to successfully merge and flush the Lucene index to
-   * disk, we mark it explicitly with a SUCCESS file, so that it can be safely reused.
+   * f-fow the on-disk awchive, mya i-if we wewe a-abwe to successfuwwy m-mewge and fwush t-the wucene i-index to
+   * disk, -.- we mawk it expwicitwy w-with a s-success fiwe, -.- so t-that it can be s-safewy weused. ^^;;
    */
-  private void addSuccessFile() throws IOException {
-    if (indexConfig.isIndexStoredOnDisk()) {
-      IndexOutput successFile = luceneDir.createOutput(SUCCESS_FILE, IOContext.DEFAULT);
-      successFile.close();
-    }
-  }
-
-  /**
-   * Returns the current number of documents in this segment.
-   */
-  public int getNumDocs() throws IOException {
-    return indexStats.getStatusCount();
-  }
-
-  /**
-   * Reclaim resources used by this segment (E.g. closing lucene index reader).
-   * Resources will be reclaimed within the calling thread with no delay.
-   */
-  public void destroyImmediately() {
-    try {
-      closeSegmentWriter();
-      maybeDeleteSegmentOnDisk();
-      unloadSegmentFromMemory();
-    } finally {
-      indexConfig.getResourceCloser().closeResourcesImmediately(closableResources);
+  p-pwivate v-void addsuccessfiwe() t-thwows ioexception {
+    if (indexconfig.isindexstowedondisk()) {
+      i-indexoutput s-successfiwe = w-wucenediw.cweateoutput(success_fiwe, (ꈍᴗꈍ) iocontext.defauwt);
+      successfiwe.cwose();
     }
   }
 
   /**
-   * Close the in-memory resources belonging to this segment. This should allow the in-memory
-   * segment data to be garbage collected. After closing, the segment is not writable.
+   * wetuwns the cuwwent n-nyumbew of documents in this s-segment. rawr
    */
-  public void close() {
-    if (segmentWriterReference.get() == null) {
-      LOG.info("Segment {} already closed.", segmentName);
-      return;
-    }
+  pubwic int getnumdocs() thwows i-ioexception {
+    w-wetuwn indexstats.getstatuscount();
+  }
 
-    LOG.info("Closing segment {}.", segmentName);
-    try {
-      closeSegmentWriter();
-      unloadSegmentFromMemory();
-    } finally {
-      indexConfig.getResourceCloser().closeResourcesImmediately(closableResources);
+  /**
+   * w-wecwaim wesouwces used b-by this segment (e.g. ^^ c-cwosing wucene index weadew). nyaa~~
+   * wesouwces wiww be wecwaimed within the cawwing thwead with n-nyo deway. (⑅˘꒳˘)
+   */
+  pubwic void destwoyimmediatewy() {
+    twy {
+      c-cwosesegmentwwitew();
+      m-maybedewetesegmentondisk();
+      unwoadsegmentfwommemowy();
+    } f-finawwy {
+      i-indexconfig.getwesouwcecwosew().cwosewesouwcesimmediatewy(cwosabwewesouwces);
     }
   }
 
-  private void closeSegmentWriter() {
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    if (segmentWriter != null) {
-      closableResources.add(() -> {
-          LOG.info("Closing writer for segment: {}", segmentName);
-          segmentWriter.close();
+  /**
+   * c-cwose t-the in-memowy w-wesouwces bewonging t-to this segment. (U ᵕ U❁) t-this shouwd awwow the in-memowy
+   * segment d-data to be gawbage cowwected. (ꈍᴗꈍ) a-aftew cwosing, (✿oωo) the segment is nyot w-wwitabwe. UwU
+   */
+  p-pubwic void cwose() {
+    i-if (segmentwwitewwefewence.get() == nyuww) {
+      wog.info("segment {} a-awweady c-cwosed.", ^^ segmentname);
+      w-wetuwn;
+    }
+
+    w-wog.info("cwosing segment {}.", :3 s-segmentname);
+    t-twy {
+      cwosesegmentwwitew();
+      u-unwoadsegmentfwommemowy();
+    } finawwy {
+      i-indexconfig.getwesouwcecwosew().cwosewesouwcesimmediatewy(cwosabwewesouwces);
+    }
+  }
+
+  pwivate void cwosesegmentwwitew() {
+    eawwybiwdindexsegmentwwitew segmentwwitew = segmentwwitewwefewence.get();
+    if (segmentwwitew != nyuww) {
+      cwosabwewesouwces.add(() -> {
+          wog.info("cwosing w-wwitew f-fow segment: {}", ( ͡o ω ͡o ) segmentname);
+          segmentwwitew.cwose();
       });
     }
   }
 
-  private void maybeDeleteSegmentOnDisk() {
-    if (indexConfig.isIndexStoredOnDisk()) {
-      Preconditions.checkState(
-          luceneDir instanceof FSDirectory,
-          "On-disk indexes should have an underlying directory that we can close and remove.");
-      closableResources.add(luceneDir);
+  pwivate void maybedewetesegmentondisk() {
+    i-if (indexconfig.isindexstowedondisk()) {
+      p-pweconditions.checkstate(
+          wucenediw instanceof fsdiwectowy, ( ͡o ω ͡o )
+          "on-disk i-indexes shouwd have a-an undewwying diwectowy that w-we can cwose and w-wemove.");
+      cwosabwewesouwces.add(wucenediw);
 
-      if (luceneDirFile != null && luceneDirFile.exists()) {
-        closableResources.add(new Closeable() {
-          @Override
-          public void close() throws IOException {
-            FileUtils.deleteDirectory(luceneDirFile);
+      i-if (wucenediwfiwe != nuww && wucenediwfiwe.exists()) {
+        c-cwosabwewesouwces.add(new c-cwoseabwe() {
+          @ovewwide
+          pubwic void cwose() thwows ioexception {
+            fiweutiws.dewetediwectowy(wucenediwfiwe);
           }
 
-          @Override
-          public String toString() {
-            return "delete {" + luceneDirFile + "}";
+          @ovewwide
+          p-pubwic s-stwing tostwing() {
+            w-wetuwn "dewete {" + w-wucenediwfiwe + "}";
           }
         });
       }
     }
   }
 
-  private void unloadSegmentFromMemory() {
-    // Make sure we don't retain a reference to the IndexWriter or SegmentData.
-    resetSegmentWriterReference(null, true);
+  pwivate v-void unwoadsegmentfwommemowy() {
+    // m-make suwe w-we don't wetain a-a wefewence to the indexwwitew ow segmentdata. (U ﹏ U)
+    w-wesetsegmentwwitewwefewence(nuww, -.- t-twue);
   }
 
-  private long getSegmentSizeOnDisk() throws IOException {
-    searchIndexingMetricSet.segmentSizeCheckCount.increment();
+  pwivate wong getsegmentsizeondisk() thwows ioexception {
+    s-seawchindexingmetwicset.segmentsizecheckcount.incwement();
 
-    long totalSize = 0;
-    if (luceneDir != null) {
-      for (String file : luceneDir.listAll()) {
-        totalSize += luceneDir.fileLength(file);
+    w-wong totawsize = 0;
+    if (wucenediw != n-nyuww) {
+      fow (stwing fiwe : wucenediw.wistaww()) {
+        totawsize += w-wucenediw.fiwewength(fiwe);
       }
     }
-    return totalSize;
+    w-wetuwn totawsize;
   }
 
   //////////////////////////
-  // for unit tests only
+  // f-fow unit tests onwy
   //////////////////////////
 
-  public EarlybirdIndexConfig getEarlybirdIndexConfig() {
-    return indexConfig;
+  pubwic eawwybiwdindexconfig g-geteawwybiwdindexconfig() {
+    w-wetuwn indexconfig;
   }
 
-  @VisibleForTesting
-  public boolean checkSuccessFile() {
-    return new File(luceneDirFile, SUCCESS_FILE).exists();
+  @visibwefowtesting
+  pubwic boowean checksuccessfiwe() {
+    wetuwn nyew f-fiwe(wucenediwfiwe, 😳😳😳 s-success_fiwe).exists();
   }
 
-  @VisibleForTesting
-  EarlybirdIndexSegmentWriter getIndexSegmentWriter() {
-    return segmentWriterReference.get();
+  @visibwefowtesting
+  e-eawwybiwdindexsegmentwwitew g-getindexsegmentwwitew() {
+    w-wetuwn segmentwwitewwefewence.get();
   }
 
-  // Helper class to encapsulate counter tables, patterns and various ways to increment
-  private class PerFieldCounters {
-    // The number of update/append events for each field in the schema.
-    private static final String PER_FIELD_EVENTS_COUNTER_PATTERN = "%s_for_field_%s";
-    // The number of dropped update/append events for each field due to tweetId not found
-    private static final String TWEET_NOT_IN_INDEX_PER_FIELD_EVENTS_COUNTER_PATTERN =
-        "%s_for_tweet_id_not_in_index_for_field_%s";
-    private final Table<ThriftIndexingEventType, String, SearchCounter> perFieldTable =
-        HashBasedTable.create();
-    private final Table<ThriftIndexingEventType, String, SearchCounter> notInIndexPerFieldTable =
-        HashBasedTable.create();
+  // h-hewpew cwass to encapsuwate countew tabwes, UwU pattewns and vawious ways to incwement
+  pwivate c-cwass pewfiewdcountews {
+    // the nyumbew of u-update/append events f-fow each fiewd in the schema.
+    pwivate static finaw stwing p-pew_fiewd_events_countew_pattewn = "%s_fow_fiewd_%s";
+    // t-the nyumbew of dwopped update/append e-events fow each fiewd due t-to tweetid nyot found
+    pwivate static finaw stwing tweet_not_in_index_pew_fiewd_events_countew_pattewn =
+        "%s_fow_tweet_id_not_in_index_fow_fiewd_%s";
+    p-pwivate finaw tabwe<thwiftindexingeventtype, >w< stwing, seawchcountew> pewfiewdtabwe =
+        hashbasedtabwe.cweate();
+    p-pwivate f-finaw tabwe<thwiftindexingeventtype, mya s-stwing, s-seawchcountew> nyotinindexpewfiewdtabwe =
+        hashbasedtabwe.cweate();
 
-    public void increment(
-        ThriftIndexingEventType eventType, ThriftDocument doc) {
-      ImmutableSchemaInterface schemaSnapshot = indexConfig.getSchema().getSchemaSnapshot();
-      for (ThriftField field : doc.getFields()) {
-        String fieldName = schemaSnapshot.getFieldName(field.getFieldConfigId());
-        incrementForPattern(
-            eventType, fieldName, perFieldTable, PER_FIELD_EVENTS_COUNTER_PATTERN);
+    p-pubwic void incwement(
+        thwiftindexingeventtype e-eventtype, :3 thwiftdocument doc) {
+      i-immutabweschemaintewface s-schemasnapshot = i-indexconfig.getschema().getschemasnapshot();
+      fow (thwiftfiewd fiewd : doc.getfiewds()) {
+        s-stwing fiewdname = schemasnapshot.getfiewdname(fiewd.getfiewdconfigid());
+        incwementfowpattewn(
+            eventtype, (ˆ ﻌ ˆ)♡ fiewdname, (U ﹏ U) pewfiewdtabwe, ʘwʘ pew_fiewd_events_countew_pattewn);
       }
     }
 
-    public void incrementTweetNotInIndex(
-        ThriftIndexingEventType eventType, ThriftDocument doc) {
-      ImmutableSchemaInterface schemaSnapshot = indexConfig.getSchema().getSchemaSnapshot();
-      for (ThriftField field : doc.getFields()) {
-        String fieldName = schemaSnapshot.getFieldName(field.getFieldConfigId());
-        incrementForPattern(
-            eventType, fieldName, notInIndexPerFieldTable,
-            TWEET_NOT_IN_INDEX_PER_FIELD_EVENTS_COUNTER_PATTERN);
+    pubwic void incwementtweetnotinindex(
+        t-thwiftindexingeventtype e-eventtype, rawr thwiftdocument doc) {
+      immutabweschemaintewface schemasnapshot = indexconfig.getschema().getschemasnapshot();
+      fow (thwiftfiewd f-fiewd : doc.getfiewds()) {
+        stwing f-fiewdname = s-schemasnapshot.getfiewdname(fiewd.getfiewdconfigid());
+        i-incwementfowpattewn(
+            e-eventtype, (ꈍᴗꈍ) fiewdname, notinindexpewfiewdtabwe, ( ͡o ω ͡o )
+            tweet_not_in_index_pew_fiewd_events_countew_pattewn);
       }
     }
 
-    public void increment(ThriftIndexingEventType eventType, Document doc) {
-      for (IndexableField field : doc.getFields()) {
-        incrementForPattern(
-            eventType, field.name(),
-            perFieldTable, PER_FIELD_EVENTS_COUNTER_PATTERN);
+    pubwic void incwement(thwiftindexingeventtype eventtype, 😳😳😳 document d-doc) {
+      f-fow (indexabwefiewd f-fiewd : d-doc.getfiewds()) {
+        incwementfowpattewn(
+            e-eventtype, òωó fiewd.name(), mya
+            p-pewfiewdtabwe, rawr x3 pew_fiewd_events_countew_pattewn);
       }
     }
 
-    public void increment(ThriftIndexingEventType eventType, String fieldName) {
-      incrementForPattern(eventType, fieldName, perFieldTable, PER_FIELD_EVENTS_COUNTER_PATTERN);
+    pubwic void incwement(thwiftindexingeventtype e-eventtype, XD stwing f-fiewdname) {
+      i-incwementfowpattewn(eventtype, (ˆ ﻌ ˆ)♡ f-fiewdname, pewfiewdtabwe, >w< p-pew_fiewd_events_countew_pattewn);
     }
 
-    public void incrementTweetNotInIndex(ThriftIndexingEventType eventType, Document doc) {
-      for (IndexableField field : doc.getFields()) {
-        incrementForPattern(
-            eventType, field.name(),
-            notInIndexPerFieldTable,
-            TWEET_NOT_IN_INDEX_PER_FIELD_EVENTS_COUNTER_PATTERN);
+    p-pubwic void incwementtweetnotinindex(thwiftindexingeventtype eventtype, (ꈍᴗꈍ) document doc) {
+      fow (indexabwefiewd f-fiewd : doc.getfiewds()) {
+        i-incwementfowpattewn(
+            eventtype, (U ﹏ U) fiewd.name(), >_<
+            nyotinindexpewfiewdtabwe, >_<
+            t-tweet_not_in_index_pew_fiewd_events_countew_pattewn);
       }
     }
 
-    private void incrementForPattern(
-        ThriftIndexingEventType eventType, String fieldName,
-        Table<ThriftIndexingEventType, String, SearchCounter> counterTable, String pattern) {
+    pwivate v-void incwementfowpattewn(
+        t-thwiftindexingeventtype e-eventtype, -.- stwing fiewdname, òωó
+        tabwe<thwiftindexingeventtype, o.O stwing, σωσ seawchcountew> countewtabwe, σωσ stwing pattewn) {
 
-      SearchCounter stat;
-      if (counterTable.contains(eventType, fieldName)) {
-        stat = counterTable.get(eventType, fieldName);
-      } else {
-        stat = SearchCounter.export(String.format(pattern, eventType, fieldName).toLowerCase());
-        counterTable.put(eventType, fieldName, stat);
+      s-seawchcountew stat;
+      i-if (countewtabwe.contains(eventtype, mya fiewdname)) {
+        stat = countewtabwe.get(eventtype, o.O f-fiewdname);
+      } ewse {
+        s-stat = s-seawchcountew.expowt(stwing.fowmat(pattewn, XD e-eventtype, f-fiewdname).towowewcase());
+        c-countewtabwe.put(eventtype, XD fiewdname, s-stat);
       }
-      stat.increment();
+      stat.incwement();
     }
   }
 }

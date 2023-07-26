@@ -1,292 +1,292 @@
-package com.twitter.frigate.pushservice.predicate
+package com.twittew.fwigate.pushsewvice.pwedicate
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.TargetUser
-import com.twitter.frigate.common.candidate.FrigateHistory
-import com.twitter.frigate.common.candidate.HTLVisitHistory
-import com.twitter.frigate.common.candidate.TargetABDecider
-import com.twitter.frigate.common.candidate.UserDetails
-import com.twitter.frigate.common.predicate.TargetUserPredicates
-import com.twitter.frigate.common.predicate.{FatiguePredicate => CommonFatiguePredicate}
-import com.twitter.frigate.common.store.deviceinfo.MobileClientType
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.target.TargetScoringDetails
-import com.twitter.frigate.pushservice.util.PushCapUtil
-import com.twitter.frigate.thriftscala.NotificationDisplayLocation
-import com.twitter.frigate.thriftscala.{CommonRecommendationType => CRT}
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
-import com.twitter.util.Future
+impowt com.twittew.convewsions.duwationops._
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.tawgetusew
+i-impowt com.twittew.fwigate.common.candidate.fwigatehistowy
+i-impowt c-com.twittew.fwigate.common.candidate.htwvisithistowy
+i-impowt com.twittew.fwigate.common.candidate.tawgetabdecidew
+i-impowt com.twittew.fwigate.common.candidate.usewdetaiws
+impowt com.twittew.fwigate.common.pwedicate.tawgetusewpwedicates
+impowt com.twittew.fwigate.common.pwedicate.{fatiguepwedicate => c-commonfatiguepwedicate}
+impowt com.twittew.fwigate.common.stowe.deviceinfo.mobiwecwienttype
+impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.fwigate.pushsewvice.tawget.tawgetscowingdetaiws
+impowt com.twittew.fwigate.pushsewvice.utiw.pushcaputiw
+impowt com.twittew.fwigate.thwiftscawa.notificationdispwaywocation
+i-impowt com.twittew.fwigate.thwiftscawa.{commonwecommendationtype => cwt}
+i-impowt com.twittew.hewmit.pwedicate.namedpwedicate
+i-impowt com.twittew.hewmit.pwedicate.pwedicate
+impowt com.twittew.timewines.configapi.fsboundedpawam
+impowt com.twittew.timewines.configapi.pawam
+impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.futuwe
 
-object TargetPredicates {
+object tawgetpwedicates {
 
-  def paramPredicate[T <: Target](
-    param: Param[Boolean]
+  def pawampwedicate[t <: t-tawget](
+    pawam: p-pawam[boowean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
-    val name = param.getClass.getSimpleName.stripSuffix("$")
-    Predicate
-      .from { target: T => target.params(param) }
-      .withStats(statsReceiver.scope(s"param_${name}_controlled_predicate"))
-      .withName(s"param_${name}_controlled_predicate")
+    i-impwicit s-statsweceivew: s-statsweceivew
+  ): nyamedpwedicate[t] = {
+    vaw nyame = pawam.getcwass.getsimpwename.stwipsuffix("$")
+    p-pwedicate
+      .fwom { tawget: t => tawget.pawams(pawam) }
+      .withstats(statsweceivew.scope(s"pawam_${name}_contwowwed_pwedicate"))
+      .withname(s"pawam_${name}_contwowwed_pwedicate")
   }
 
   /**
-   * Use the predicate except fn is true., Same as the candidate version but for Target
+   * u-use the pwedicate except fn is twue., same as the candidate vewsion but fow tawget
    */
-  def exceptedPredicate[T <: TargetUser](
-    name: String,
-    fn: T => Future[Boolean],
-    predicate: Predicate[T]
+  d-def exceptedpwedicate[t <: tawgetusew](
+    n-nyame: stwing, XD
+    f-fn: t => f-futuwe[boowean], :3
+    pwedicate: pwedicate[t]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
-    Predicate
-      .fromAsync { e: T => fn(e) }
-      .or(predicate)
-      .withStats(statsReceiver.scope(name))
-      .withName(name)
+    impwicit s-statsweceivew: statsweceivew
+  ): n-namedpwedicate[t] = {
+    pwedicate
+      .fwomasync { e-e: t => f-fn(e) }
+      .ow(pwedicate)
+      .withstats(statsweceivew.scope(name))
+      .withname(name)
   }
 
   /**
-   * Refresh For push handler target user predicate to fatigue on visiting Home timeline
+   * wefwesh fow push h-handwew tawget usew pwedicate to f-fatigue on visiting home timewine
    */
-  def targetHTLVisitPredicate[
-    T <: TargetUser with UserDetails with TargetABDecider with HTLVisitHistory
+  def t-tawgethtwvisitpwedicate[
+    t <: t-tawgetusew with usewdetaiws with t-tawgetabdecidew w-with htwvisithistowy
   ](
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
-    val name = "target_htl_visit_predicate"
-    Predicate
-      .fromAsync { target: T =>
-        val hoursToFatigue = target.params(PushFeatureSwitchParams.HTLVisitFatigueTime)
-        TargetUserPredicates
-          .homeTimelineFatigue(hoursToFatigue.hours)
-          .apply(Seq(target))
+    impwicit statsweceivew: statsweceivew
+  ): nyamedpwedicate[t] = {
+    vaw nyame = "tawget_htw_visit_pwedicate"
+    pwedicate
+      .fwomasync { t-tawget: t =>
+        v-vaw houwstofatigue = tawget.pawams(pushfeatuweswitchpawams.htwvisitfatiguetime)
+        t-tawgetusewpwedicates
+          .hometimewinefatigue(houwstofatigue.houws)
+          .appwy(seq(tawget))
           .map(_.head)
       }
-      .withStats(statsReceiver.scope(name))
-      .withName(name)
+      .withstats(statsweceivew.scope(name))
+      .withname(name)
   }
 
-  def targetPushBitEnabledPredicate[T <: Target](
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
-    val name = "push_bit_enabled"
-    val scopedStats = statsReceiver.scope(s"targetpredicate_$name")
+  d-def tawgetpushbitenabwedpwedicate[t <: t-tawget](
+    impwicit statsweceivew: statsweceivew
+  ): nyamedpwedicate[t] = {
+    v-vaw nyame = "push_bit_enabwed"
+    vaw scopedstats = statsweceivew.scope(s"tawgetpwedicate_$name")
 
-    Predicate
-      .fromAsync { target: T =>
-        target.deviceInfo
-          .map { info =>
-            info.exists { deviceInfo =>
-              deviceInfo.isRecommendationsEligible ||
-              deviceInfo.isNewsEligible ||
-              deviceInfo.isTopicsEligible ||
-              deviceInfo.isSpacesEligible
+    pwedicate
+      .fwomasync { t-tawget: t =>
+        tawget.deviceinfo
+          .map { i-info =>
+            i-info.exists { d-deviceinfo =>
+              deviceinfo.iswecommendationsewigibwe ||
+              d-deviceinfo.isnewsewigibwe ||
+              d-deviceinfo.istopicsewigibwe ||
+              d-deviceinfo.isspacesewigibwe
             }
           }
-      }.withStats(scopedStats)
-      .withName(name)
+      }.withstats(scopedstats)
+      .withname(name)
   }
 
-  def targetFatiguePredicate[T <: Target](
+  d-def tawgetfatiguepwedicate[t <: tawget](
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
-    val name = "target_fatigue_predicate"
-    val predicateStatScope = statsReceiver.scope(name)
-    Predicate
-      .fromAsync { target: T =>
-        PushCapUtil
-          .getPushCapFatigue(target, predicateStatScope)
-          .flatMap { pushCapInfo =>
-            CommonFatiguePredicate
-              .magicRecsPushTargetFatiguePredicate(
-                interval = pushCapInfo.fatigueInterval,
-                maxInInterval = pushCapInfo.pushcap
+    impwicit s-statsweceivew: s-statsweceivew
+  ): n-nyamedpwedicate[t] = {
+    v-vaw nyame = "tawget_fatigue_pwedicate"
+    v-vaw pwedicatestatscope = statsweceivew.scope(name)
+    pwedicate
+      .fwomasync { tawget: t =>
+        p-pushcaputiw
+          .getpushcapfatigue(tawget, (ꈍᴗꈍ) pwedicatestatscope)
+          .fwatmap { pushcapinfo =>
+            commonfatiguepwedicate
+              .magicwecspushtawgetfatiguepwedicate(
+                intewvaw = pushcapinfo.fatigueintewvaw, :3
+                maxinintewvaw = p-pushcapinfo.pushcap
               )
-              .apply(Seq(target))
-              .map(_.headOption.getOrElse(false))
+              .appwy(seq(tawget))
+              .map(_.headoption.getowewse(fawse))
           }
       }
-      .withStats(predicateStatScope)
-      .withName(name)
+      .withstats(pwedicatestatscope)
+      .withname(name)
   }
 
-  def teamExceptedPredicate[T <: TargetUser](
-    predicate: NamedPredicate[T]
+  def teamexceptedpwedicate[t <: tawgetusew](
+    pwedicate: n-nyamedpwedicate[t]
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[T] = {
-    Predicate
-      .fromAsync { t: T => t.isTeamMember }
-      .or(predicate)
-      .withStats(stats.scope(predicate.name))
-      .withName(predicate.name)
+    i-impwicit stats: s-statsweceivew
+  ): nyamedpwedicate[t] = {
+    pwedicate
+      .fwomasync { t-t: t => t.isteammembew }
+      .ow(pwedicate)
+      .withstats(stats.scope(pwedicate.name))
+      .withname(pwedicate.name)
   }
 
-  def targetValidMobileSDKPredicate[T <: Target](
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
-    val name = "valid_mobile_sdk"
-    val scopedStats = statsReceiver.scope(s"targetpredicate_$name")
+  def t-tawgetvawidmobiwesdkpwedicate[t <: t-tawget](
+    impwicit statsweceivew: statsweceivew
+  ): nyamedpwedicate[t] = {
+    vaw nyame = "vawid_mobiwe_sdk"
+    vaw s-scopedstats = statsweceivew.scope(s"tawgetpwedicate_$name")
 
-    Predicate
-      .fromAsync { target: T =>
-        TargetUserPredicates.validMobileSDKPredicate
-          .apply(Seq(target)).map(_.headOption.getOrElse(false))
-      }.withStats(scopedStats)
-      .withName(name)
+    pwedicate
+      .fwomasync { t-tawget: t =>
+        t-tawgetusewpwedicates.vawidmobiwesdkpwedicate
+          .appwy(seq(tawget)).map(_.headoption.getowewse(fawse))
+      }.withstats(scopedstats)
+      .withname(name)
   }
 
-  def magicRecsMinDurationSinceSent[T <: Target](
+  d-def magicwecsminduwationsincesent[t <: tawget](
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
-    val name = "target_min_duration_since_push"
-    Predicate
-      .fromAsync { target: T =>
-        PushCapUtil.getMinDurationSincePush(target, statsReceiver).flatMap { minDurationSincePush =>
-          CommonFatiguePredicate
-            .magicRecsMinDurationSincePush(interval = minDurationSincePush)
-            .apply(Seq(target)).map(_.head)
+    i-impwicit statsweceivew: s-statsweceivew
+  ): nyamedpwedicate[t] = {
+    v-vaw n-nyame = "tawget_min_duwation_since_push"
+    pwedicate
+      .fwomasync { tawget: t =>
+        pushcaputiw.getminduwationsincepush(tawget, (U ﹏ U) statsweceivew).fwatmap { m-minduwationsincepush =>
+          c-commonfatiguepwedicate
+            .magicwecsminduwationsincepush(intewvaw = m-minduwationsincepush)
+            .appwy(seq(tawget)).map(_.head)
         }
       }
-      .withStats(statsReceiver.scope(name))
-      .withName(name)
+      .withstats(statsweceivew.scope(name))
+      .withname(name)
   }
 
-  def optoutProbPredicate[
-    T <: TargetUser with TargetABDecider with TargetScoringDetails with FrigateHistory
+  def optoutpwobpwedicate[
+    t-t <: t-tawgetusew with tawgetabdecidew w-with tawgetscowingdetaiws with fwigatehistowy
   ](
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
-    val name = "target_has_high_optout_probability"
-    Predicate
-      .fromAsync { target: T =>
-        val isNewUser = target.is30DayNewUserFromSnowflakeIdTime
-        if (isNewUser) {
-          statsReceiver.scope(name).counter("all_new_users").incr()
+    impwicit statsweceivew: s-statsweceivew
+  ): n-nyamedpwedicate[t] = {
+    vaw nyame = "tawget_has_high_optout_pwobabiwity"
+    pwedicate
+      .fwomasync { t-tawget: t =>
+        v-vaw isnewusew = tawget.is30daynewusewfwomsnowfwakeidtime
+        if (isnewusew) {
+          statsweceivew.scope(name).countew("aww_new_usews").incw()
         }
-        target.bucketOptoutProbability
-          .flatMap {
-            case Some(optoutProb) =>
-              if (optoutProb >= target.params(PushFeatureSwitchParams.BucketOptoutThresholdParam)) {
-                CommonFatiguePredicate
-                  .magicRecsPushTargetFatiguePredicate(
-                    interval = 24.hours,
-                    maxInInterval = target.params(PushFeatureSwitchParams.OptoutExptPushCapParam)
+        t-tawget.bucketoptoutpwobabiwity
+          .fwatmap {
+            case some(optoutpwob) =>
+              if (optoutpwob >= tawget.pawams(pushfeatuweswitchpawams.bucketoptoutthweshowdpawam)) {
+                commonfatiguepwedicate
+                  .magicwecspushtawgetfatiguepwedicate(
+                    i-intewvaw = 24.houws, UwU
+                    maxinintewvaw = tawget.pawams(pushfeatuweswitchpawams.optoutexptpushcappawam)
                   )
-                  .apply(Seq(target))
-                  .map { values =>
-                    val isValid = values.headOption.getOrElse(false)
-                    if (!isValid && isNewUser) {
-                      statsReceiver.scope(name).counter("filtered_new_users").incr()
+                  .appwy(seq(tawget))
+                  .map { v-vawues =>
+                    v-vaw isvawid = vawues.headoption.getowewse(fawse)
+                    if (!isvawid && isnewusew) {
+                      s-statsweceivew.scope(name).countew("fiwtewed_new_usews").incw()
                     }
-                    isValid
+                    i-isvawid
                   }
-              } else Future.True
-            case _ => Future.True
+              } ewse futuwe.twue
+            case _ => futuwe.twue
           }
       }
-      .withStats(statsReceiver.scope(name))
-      .withName(name)
+      .withstats(statsweceivew.scope(name))
+      .withname(name)
   }
 
   /**
-   * Predicate used to specify CRT fatigue given interval and max number of candidates within interval.
-   * @param crt                   The specific CRT that this predicate is being applied to
-   * @param intervalParam         The fatigue interval
-   * @param maxInIntervalParam    The max number of the given CRT's candidates that are acceptable
-   *                              in the interval
-   * @param stats                 StatsReceiver
-   * @return                      Target Predicate
+   * p-pwedicate used to specify cwt f-fatigue given intewvaw and max nyumbew of candidates within intewvaw. 😳😳😳
+   * @pawam c-cwt                   the specific c-cwt that this p-pwedicate is being appwied to
+   * @pawam i-intewvawpawam         the fatigue intewvaw
+   * @pawam m-maxinintewvawpawam    t-the max n-nyumbew of the given cwt's candidates t-that awe a-acceptabwe
+   *                              in the intewvaw
+   * @pawam s-stats                 s-statsweceivew
+   * @wetuwn                      t-tawget pwedicate
    */
-  def pushRecTypeFatiguePredicate(
-    crt: CRT,
-    intervalParam: Param[Duration],
-    maxInIntervalParam: FSBoundedParam[Int],
-    stats: StatsReceiver
-  ): Predicate[Target] =
-    Predicate.fromAsync { target: Target =>
-      val interval = target.params(intervalParam)
-      val maxIninterval = target.params(maxInIntervalParam)
-      CommonFatiguePredicate
-        .recTypeTargetFatiguePredicate(
-          interval = interval,
-          maxInInterval = maxIninterval,
-          recommendationType = crt,
-          notificationDisplayLocation = NotificationDisplayLocation.PushToMobileDevice,
-          minInterval = 30.minutes
-        )(stats.scope(s"${crt}_push_candidate_fatigue")).apply(Seq(target)).map(_.head)
+  def pushwectypefatiguepwedicate(
+    cwt: c-cwt, XD
+    intewvawpawam: pawam[duwation], o.O
+    m-maxinintewvawpawam: f-fsboundedpawam[int], (⑅˘꒳˘)
+    stats: statsweceivew
+  ): pwedicate[tawget] =
+    pwedicate.fwomasync { t-tawget: tawget =>
+      v-vaw i-intewvaw = tawget.pawams(intewvawpawam)
+      vaw m-maxinintewvaw = tawget.pawams(maxinintewvawpawam)
+      c-commonfatiguepwedicate
+        .wectypetawgetfatiguepwedicate(
+          intewvaw = intewvaw, 😳😳😳
+          maxinintewvaw = maxinintewvaw, nyaa~~
+          wecommendationtype = cwt,
+          n-nyotificationdispwaywocation = nyotificationdispwaywocation.pushtomobiwedevice, rawr
+          minintewvaw = 30.minutes
+        )(stats.scope(s"${cwt}_push_candidate_fatigue")).appwy(seq(tawget)).map(_.head)
     }
 
-  def inlineActionFatiguePredicate(
+  d-def inwineactionfatiguepwedicate(
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[Target] = {
-    val name = "inline_action_fatigue"
-    val predicateRequests = statsReceiver.scope(name).counter("requests")
-    val targetIsInExpt = statsReceiver.scope(name).counter("target_in_expt")
-    val predicateEnabled = statsReceiver.scope(name).counter("enabled")
-    val predicateDisabled = statsReceiver.scope(name).counter("disabled")
-    val inlineFatigueDisabled = statsReceiver.scope(name).counter("inline_fatigue_disabled")
+    impwicit statsweceivew: s-statsweceivew
+  ): nyamedpwedicate[tawget] = {
+    v-vaw nyame = "inwine_action_fatigue"
+    vaw pwedicatewequests = s-statsweceivew.scope(name).countew("wequests")
+    v-vaw t-tawgetisinexpt = s-statsweceivew.scope(name).countew("tawget_in_expt")
+    v-vaw pwedicateenabwed = statsweceivew.scope(name).countew("enabwed")
+    vaw pwedicatedisabwed = statsweceivew.scope(name).countew("disabwed")
+    vaw inwinefatiguedisabwed = statsweceivew.scope(name).countew("inwine_fatigue_disabwed")
 
-    Predicate
-      .fromAsync { target: Target =>
-        predicateRequests.incr()
-        if (target.params(PushFeatureSwitchParams.TargetInInlineActionAppVisitFatigue)) {
-          targetIsInExpt.incr()
-          target.inlineActionHistory.map { inlineHistory =>
-            if (inlineHistory.nonEmpty && target.params(
-                PushFeatureSwitchParams.EnableInlineActionAppVisitFatigue)) {
-              predicateEnabled.incr()
-              val inlineFatigue = target.params(PushFeatureSwitchParams.InlineActionAppVisitFatigue)
-              val lookbackInMs = inlineFatigue.ago.inMilliseconds
-              val filteredHistory = inlineHistory.filter {
-                case (time, _) => time > lookbackInMs
+    pwedicate
+      .fwomasync { t-tawget: tawget =>
+        p-pwedicatewequests.incw()
+        i-if (tawget.pawams(pushfeatuweswitchpawams.tawgetininwineactionappvisitfatigue)) {
+          tawgetisinexpt.incw()
+          t-tawget.inwineactionhistowy.map { inwinehistowy =>
+            if (inwinehistowy.nonempty && tawget.pawams(
+                p-pushfeatuweswitchpawams.enabweinwineactionappvisitfatigue)) {
+              p-pwedicateenabwed.incw()
+              vaw inwinefatigue = t-tawget.pawams(pushfeatuweswitchpawams.inwineactionappvisitfatigue)
+              vaw wookbackinms = inwinefatigue.ago.inmiwwiseconds
+              v-vaw fiwtewedhistowy = i-inwinehistowy.fiwtew {
+                case (time, -.- _) => t-time > wookbackinms
               }
-              filteredHistory.isEmpty
-            } else {
-              inlineFatigueDisabled.incr()
-              true
+              f-fiwtewedhistowy.isempty
+            } ewse {
+              inwinefatiguedisabwed.incw()
+              twue
             }
           }
-        } else {
-          predicateDisabled.incr()
-          Future.True
+        } ewse {
+          p-pwedicatedisabwed.incw()
+          f-futuwe.twue
         }
       }
-      .withStats(statsReceiver.scope(name))
-      .withName(name)
+      .withstats(statsweceivew.scope(name))
+      .withname(name)
   }
 
-  def webNotifsHoldback[T <: TargetUser with UserDetails with TargetABDecider](
+  d-def w-webnotifshowdback[t <: t-tawgetusew with usewdetaiws w-with tawgetabdecidew](
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[T] = {
-    val name = "mr_web_notifs_holdback"
-    Predicate
-      .fromAsync { targetUserContext: T =>
-        targetUserContext.deviceInfo.map { deviceInfoOpt =>
-          val isPrimaryWeb = deviceInfoOpt.exists {
-            _.guessedPrimaryClient.exists { clientType =>
-              clientType == MobileClientType.Web
+    i-impwicit stats: statsweceivew
+  ): n-namedpwedicate[t] = {
+    v-vaw nyame = "mw_web_notifs_howdback"
+    pwedicate
+      .fwomasync { t-tawgetusewcontext: t =>
+        tawgetusewcontext.deviceinfo.map { d-deviceinfoopt =>
+          vaw ispwimawyweb = d-deviceinfoopt.exists {
+            _.guessedpwimawycwient.exists { c-cwienttype =>
+              cwienttype == m-mobiwecwienttype.web
             }
           }
-          !(isPrimaryWeb && targetUserContext.params(PushFeatureSwitchParams.MRWebHoldbackParam))
+          !(ispwimawyweb && tawgetusewcontext.pawams(pushfeatuweswitchpawams.mwwebhowdbackpawam))
         }
       }
-      .withStats(stats.scope(s"predicate_$name"))
-      .withName(name)
+      .withstats(stats.scope(s"pwedicate_$name"))
+      .withname(name)
   }
 }

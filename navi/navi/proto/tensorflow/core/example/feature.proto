@@ -1,110 +1,110 @@
-// Protocol messages for describing features for machine learning model
-// training or inference.
+// pwotocow messages fow descwibing f-featuwes fow m-machine weawning m-modew
+// twaining o-ow infewence. >w<
 //
-// There are three base Feature types:
-//   - bytes
-//   - float
+// t-thewe awe t-thwee base featuwe t-types:
+//   - b-bytes
+//   - fwoat
 //   - int64
 //
-// A Feature contains Lists which may hold zero or more values.  These
-// lists are the base values BytesList, FloatList, Int64List.
+// a featuwe contains wists which may howd z-zewo ow mowe vawues. (⑅˘꒳˘)  these
+// wists awe the base v-vawues byteswist, OwO fwoatwist, (ꈍᴗꈍ) int64wist.
 //
-// Features are organized into categories by name.  The Features message
-// contains the mapping from name to Feature.
+// f-featuwes awe owganized into categowies by nyame. 😳  the featuwes message
+// c-contains the mapping fwom n-nyame to featuwe.
 //
-// Example Features for a movie recommendation application:
-//   feature {
-//     key: "age"
-//     value { float_list {
-//       value: 29.0
+// e-exampwe featuwes fow a movie wecommendation appwication:
+//   featuwe {
+//     k-key: "age"
+//     vawue { fwoat_wist {
+//       vawue: 29.0
 //     }}
 //   }
-//   feature {
-//     key: "movie"
-//     value { bytes_list {
-//       value: "The Shawshank Redemption"
-//       value: "Fight Club"
+//   featuwe {
+//     k-key: "movie"
+//     vawue { bytes_wist {
+//       v-vawue: "the shawshank w-wedemption"
+//       v-vawue: "fight c-cwub"
 //     }}
 //   }
-//   feature {
-//     key: "movie_ratings"
-//     value { float_list {
-//       value: 9.0
-//       value: 9.7
+//   featuwe {
+//     key: "movie_watings"
+//     v-vawue { fwoat_wist {
+//       vawue: 9.0
+//       vawue: 9.7
 //     }}
 //   }
-//   feature {
+//   f-featuwe {
 //     key: "suggestion"
-//     value { bytes_list {
-//       value: "Inception"
+//     vawue { bytes_wist {
+//       vawue: "inception"
 //     }}
 //   }
-//   feature {
-//     key: "suggestion_purchased"
-//     value { int64_list {
-//       value: 1
+//   featuwe {
+//     key: "suggestion_puwchased"
+//     v-vawue { int64_wist {
+//       v-vawue: 1
 //     }}
 //   }
-//   feature {
-//     key: "purchase_price"
-//     value { float_list {
-//       value: 9.99
+//   f-featuwe {
+//     k-key: "puwchase_pwice"
+//     vawue { fwoat_wist {
+//       vawue: 9.99
 //     }}
 //   }
 //
 
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+p-package t-tensowfwow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "FeatureProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.example";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/example";
+option cc_enabwe_awenas = t-twue;
+option j-java_outew_cwassname = "featuwepwotos";
+option j-java_muwtipwe_fiwes = twue;
+option j-java_package = "owg.tensowfwow.exampwe";
+option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/exampwe";
 
-// LINT.IfChange
-// Containers to hold repeated fundamental values.
-message BytesList {
-  repeated bytes value = 1;
+// wint.ifchange
+// c-containews to howd wepeated f-fundamentaw vawues. 😳😳😳
+message byteswist {
+  w-wepeated b-bytes vawue = 1;
 }
-message FloatList {
-  repeated float value = 1 [packed = true];
+message fwoatwist {
+  wepeated fwoat vawue = 1 [packed = twue];
 }
-message Int64List {
-  repeated int64 value = 1 [packed = true];
+message int64wist {
+  wepeated int64 v-vawue = 1 [packed = t-twue];
 }
 
-// Containers for non-sequential data.
-message Feature {
-  // Each feature can be exactly one kind.
+// containews fow n-nyon-sequentiaw d-data. mya
+message featuwe {
+  // e-each featuwe can be exactwy one kind. mya
   oneof kind {
-    BytesList bytes_list = 1;
-    FloatList float_list = 2;
-    Int64List int64_list = 3;
+    b-byteswist bytes_wist = 1;
+    fwoatwist fwoat_wist = 2;
+    int64wist int64_wist = 3;
   }
 }
 
-message Features {
-  // Map from feature name to feature.
-  map<string, Feature> feature = 1;
+message featuwes {
+  // m-map fwom featuwe nyame t-to featuwe. (⑅˘꒳˘)
+  m-map<stwing, (U ﹏ U) featuwe> f-featuwe = 1;
 }
 
-// Containers for sequential data.
+// containews f-fow sequentiaw d-data. mya
 //
-// A FeatureList contains lists of Features.  These may hold zero or more
-// Feature values.
+// a f-featuwewist contains w-wists of featuwes. ʘwʘ  these may howd zewo ow m-mowe
+// featuwe v-vawues.
 //
-// FeatureLists are organized into categories by name.  The FeatureLists message
-// contains the mapping from name to FeatureList.
+// featuwewists a-awe owganized i-into categowies b-by nyame. (˘ω˘)  the featuwewists message
+// contains the mapping f-fwom nyame to featuwewist.
 //
-message FeatureList {
-  repeated Feature feature = 1;
+message featuwewist {
+  wepeated featuwe featuwe = 1;
 }
 
-message FeatureLists {
-  // Map from feature name to feature list.
-  map<string, FeatureList> feature_list = 1;
+message f-featuwewists {
+  // map fwom featuwe nyame to featuwe wist. (U ﹏ U)
+  m-map<stwing, ^•ﻌ•^ featuwewist> f-featuwe_wist = 1;
 }
-// LINT.ThenChange(
-//     https://www.tensorflow.org/code/tensorflow/python/training/training.py)
+// w-wint.thenchange(
+//     https://www.tensowfwow.owg/code/tensowfwow/python/twaining/twaining.py)

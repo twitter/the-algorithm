@@ -1,155 +1,155 @@
-package com.twitter.interaction_graph.scio.agg_negative
+package com.twittew.intewaction_gwaph.scio.agg_negative
 
-import com.google.api.services.bigquery.model.TimePartitioning
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.algebird.mutable.PriorityQueueMonoid
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.fs.multiformat.PathLayout
-import com.twitter.beam.io.fs.multiformat.WriteOptions
-import com.twitter.conversions.DurationOps._
-import com.twitter.dal.client.dataset.SnapshotDALDataset
-import com.twitter.interaction_graph.scio.common.ConversionUtil.hasNegativeFeatures
-import com.twitter.interaction_graph.scio.common.ConversionUtil.toRealGraphEdgeFeatures
-import com.twitter.interaction_graph.scio.common.FeatureGeneratorUtil.getEdgeFeature
-import com.twitter.interaction_graph.scio.common.GraphUtil
-import com.twitter.interaction_graph.scio.common.InteractionGraphRawInput
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.socialgraph.hadoop.SocialgraphUnfollowsScalaDataset
-import com.twitter.tcdc.bqblaster.beam.syntax._
-import com.twitter.tcdc.bqblaster.core.avro.TypedProjection
-import com.twitter.tcdc.bqblaster.core.transform.RootTransform
-import com.twitter.timelines.real_graph.thriftscala.RealGraphFeaturesTest
-import com.twitter.timelines.real_graph.v1.thriftscala.{RealGraphFeatures => RealGraphFeaturesV1}
-import com.twitter.user_session_store.thriftscala.UserSession
-import flockdb_tools.datasets.flock.FlockBlocksEdgesScalaDataset
-import flockdb_tools.datasets.flock.FlockMutesEdgesScalaDataset
-import flockdb_tools.datasets.flock.FlockReportAsAbuseEdgesScalaDataset
-import flockdb_tools.datasets.flock.FlockReportAsSpamEdgesScalaDataset
-import java.time.Instant
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
+impowt com.googwe.api.sewvices.bigquewy.modew.timepawtitioning
+i-impowt com.spotify.scio.sciocontext
+i-impowt c-com.spotify.scio.vawues.scowwection
+i-impowt com.twittew.awgebiwd.mutabwe.pwiowityqueuemonoid
+i-impowt c-com.twittew.beam.io.daw.daw
+i-impowt com.twittew.beam.io.fs.muwtifowmat.pathwayout
+i-impowt com.twittew.beam.io.fs.muwtifowmat.wwiteoptions
+impowt com.twittew.convewsions.duwationops._
+impowt com.twittew.daw.cwient.dataset.snapshotdawdataset
+i-impowt com.twittew.intewaction_gwaph.scio.common.convewsionutiw.hasnegativefeatuwes
+impowt com.twittew.intewaction_gwaph.scio.common.convewsionutiw.toweawgwaphedgefeatuwes
+impowt com.twittew.intewaction_gwaph.scio.common.featuwegenewatowutiw.getedgefeatuwe
+i-impowt com.twittew.intewaction_gwaph.scio.common.gwaphutiw
+impowt com.twittew.intewaction_gwaph.scio.common.intewactiongwaphwawinput
+i-impowt com.twittew.intewaction_gwaph.thwiftscawa.edge
+impowt com.twittew.intewaction_gwaph.thwiftscawa.featuwename
+impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.scio_intewnaw.job.sciobeamjob
+i-impowt com.twittew.scwooge.thwiftstwuct
+i-impowt com.twittew.sociawgwaph.hadoop.sociawgwaphunfowwowsscawadataset
+impowt com.twittew.tcdc.bqbwastew.beam.syntax._
+impowt com.twittew.tcdc.bqbwastew.cowe.avwo.typedpwojection
+impowt c-com.twittew.tcdc.bqbwastew.cowe.twansfowm.woottwansfowm
+impowt com.twittew.timewines.weaw_gwaph.thwiftscawa.weawgwaphfeatuwestest
+impowt com.twittew.timewines.weaw_gwaph.v1.thwiftscawa.{weawgwaphfeatuwes => weawgwaphfeatuwesv1}
+i-impowt com.twittew.usew_session_stowe.thwiftscawa.usewsession
+i-impowt fwockdb_toows.datasets.fwock.fwockbwocksedgesscawadataset
+i-impowt fwockdb_toows.datasets.fwock.fwockmutesedgesscawadataset
+i-impowt fwockdb_toows.datasets.fwock.fwockwepowtasabuseedgesscawadataset
+i-impowt fwockdb_toows.datasets.fwock.fwockwepowtasspamedgesscawadataset
+impowt java.time.instant
+impowt owg.apache.beam.sdk.io.gcp.bigquewy.bigquewyio
 
-object InteractionGraphNegativeJob extends ScioBeamJob[InteractionGraphNegativeOption] {
-  val maxDestinationIds = 500 // p99 is about 500
-  def getFeatureCounts(e: Edge): Int = e.features.size
-  val negativeEdgeOrdering = Ordering.by[Edge, Int](getFeatureCounts)
-  val negativeEdgeReverseOrdering = negativeEdgeOrdering.reverse
-  implicit val pqMonoid: PriorityQueueMonoid[Edge] =
-    new PriorityQueueMonoid[Edge](maxDestinationIds)(negativeEdgeOrdering)
+o-object intewactiongwaphnegativejob extends sciobeamjob[intewactiongwaphnegativeoption] {
+  v-vaw maxdestinationids = 500 // p99 is about 500
+  def getfeatuwecounts(e: edge): int = e.featuwes.size
+  vaw negativeedgeowdewing = o-owdewing.by[edge, OwO int](getfeatuwecounts)
+  v-vaw nyegativeedgewevewseowdewing = n-nyegativeedgeowdewing.wevewse
+  i-impwicit vaw pqmonoid: pwiowityqueuemonoid[edge] =
+    nyew pwiowityqueuemonoid[edge](maxdestinationids)(negativeedgeowdewing)
 
-  override protected def configurePipeline(
-    sc: ScioContext,
-    opts: InteractionGraphNegativeOption
-  ): Unit = {
+  o-ovewwide pwotected d-def configuwepipewine(
+    sc: sciocontext, rawr x3
+    o-opts: intewactiongwaphnegativeoption
+  ): u-unit = {
 
-    val endTs = opts.interval.getEndMillis
+    vaw endts = opts.intewvaw.getendmiwwis
 
-    // read input datasets
-    val blocks: SCollection[InteractionGraphRawInput] =
-      GraphUtil.getFlockFeatures(
-        readSnapshot(FlockBlocksEdgesScalaDataset, sc),
-        FeatureName.NumBlocks,
-        endTs)
+    // w-wead input datasets
+    vaw bwocks: s-scowwection[intewactiongwaphwawinput] =
+      gwaphutiw.getfwockfeatuwes(
+        weadsnapshot(fwockbwocksedgesscawadataset, XD s-sc),
+        featuwename.numbwocks, σωσ
+        endts)
 
-    val mutes: SCollection[InteractionGraphRawInput] =
-      GraphUtil.getFlockFeatures(
-        readSnapshot(FlockMutesEdgesScalaDataset, sc),
-        FeatureName.NumMutes,
-        endTs)
+    v-vaw mutes: scowwection[intewactiongwaphwawinput] =
+      g-gwaphutiw.getfwockfeatuwes(
+        w-weadsnapshot(fwockmutesedgesscawadataset, (U ᵕ U❁) sc),
+        featuwename.nummutes, (U ﹏ U)
+        endts)
 
-    val abuseReports: SCollection[InteractionGraphRawInput] =
-      GraphUtil.getFlockFeatures(
-        readSnapshot(FlockReportAsAbuseEdgesScalaDataset, sc),
-        FeatureName.NumReportAsAbuses,
-        endTs)
+    vaw abusewepowts: scowwection[intewactiongwaphwawinput] =
+      gwaphutiw.getfwockfeatuwes(
+        weadsnapshot(fwockwepowtasabuseedgesscawadataset, :3 s-sc),
+        f-featuwename.numwepowtasabuses, ( ͡o ω ͡o )
+        endts)
 
-    val spamReports: SCollection[InteractionGraphRawInput] =
-      GraphUtil.getFlockFeatures(
-        readSnapshot(FlockReportAsSpamEdgesScalaDataset, sc),
-        FeatureName.NumReportAsSpams,
-        endTs)
+    vaw s-spamwepowts: scowwection[intewactiongwaphwawinput] =
+      g-gwaphutiw.getfwockfeatuwes(
+        w-weadsnapshot(fwockwepowtasspamedgesscawadataset, σωσ sc),
+        featuwename.numwepowtasspams, >w<
+        endts)
 
-    // we only keep unfollows in the past 90 days due to the huge size of this dataset,
-    // and to prevent permanent "shadow-banning" in the event of accidental unfollows.
-    // we treat unfollows as less critical than above 4 negative signals, since it deals more with
-    // interest than health typically, which might change over time.
-    val unfollows: SCollection[InteractionGraphRawInput] =
-      GraphUtil
-        .getSocialGraphFeatures(
-          readSnapshot(SocialgraphUnfollowsScalaDataset, sc),
-          FeatureName.NumUnfollows,
-          endTs)
-        .filter(_.age < 90)
+    // we onwy keep u-unfowwows in the past 90 days due to the huge size of this dataset, 😳😳😳
+    // and to p-pwevent pewmanent "shadow-banning" in the event o-of accidentaw u-unfowwows. OwO
+    // w-we tweat unfowwows as wess cwiticaw t-than above 4 n-nyegative signaws, 😳 s-since it deaws m-mowe with
+    // intewest than heawth typicawwy, 😳😳😳 w-which might c-change ovew time. (˘ω˘)
+    v-vaw unfowwows: s-scowwection[intewactiongwaphwawinput] =
+      g-gwaphutiw
+        .getsociawgwaphfeatuwes(
+          weadsnapshot(sociawgwaphunfowwowsscawadataset, ʘwʘ sc),
+          featuwename.numunfowwows,
+          e-endts)
+        .fiwtew(_.age < 90)
 
-    // group all features by (src, dest)
-    val allEdgeFeatures: SCollection[Edge] =
-      getEdgeFeature(SCollection.unionAll(Seq(blocks, mutes, abuseReports, spamReports, unfollows)))
+    // gwoup aww featuwes by (swc, ( ͡o ω ͡o ) dest)
+    vaw awwedgefeatuwes: scowwection[edge] =
+      g-getedgefeatuwe(scowwection.unionaww(seq(bwocks, o.O mutes, >w< abusewepowts, 😳 spamwepowts, unfowwows)))
 
-    val negativeFeatures: SCollection[KeyVal[Long, UserSession]] =
-      allEdgeFeatures
-        .keyBy(_.sourceId)
-        .topByKey(maxDestinationIds)(Ordering.by(_.features.size))
+    v-vaw nyegativefeatuwes: s-scowwection[keyvaw[wong, 🥺 u-usewsession]] =
+      awwedgefeatuwes
+        .keyby(_.souwceid)
+        .topbykey(maxdestinationids)(owdewing.by(_.featuwes.size))
         .map {
-          case (srcId, pqEdges) =>
-            val topKNeg =
-              pqEdges.toSeq.flatMap(toRealGraphEdgeFeatures(hasNegativeFeatures))
-            KeyVal(
-              srcId,
-              UserSession(
-                userId = Some(srcId),
-                realGraphFeaturesTest =
-                  Some(RealGraphFeaturesTest.V1(RealGraphFeaturesV1(topKNeg)))))
+          c-case (swcid, rawr x3 pqedges) =>
+            v-vaw topkneg =
+              p-pqedges.toseq.fwatmap(toweawgwaphedgefeatuwes(hasnegativefeatuwes))
+            keyvaw(
+              swcid, o.O
+              usewsession(
+                usewid = some(swcid), rawr
+                weawgwaphfeatuwestest =
+                  s-some(weawgwaphfeatuwestest.v1(weawgwaphfeatuwesv1(topkneg)))))
         }
 
-    // save to GCS (via DAL)
-    negativeFeatures.saveAsCustomOutput(
-      "Write Negative Edge Label",
-      DAL.writeVersionedKeyVal(
-        dataset = RealGraphNegativeFeaturesScalaDataset,
-        pathLayout = PathLayout.VersionedPath(opts.getOutputPath),
-        instant = Instant.ofEpochMilli(opts.interval.getEndMillis),
-        writeOption = WriteOptions(numOfShards = Some(3000))
+    // save to gcs (via d-daw)
+    nyegativefeatuwes.saveascustomoutput(
+      "wwite n-nyegative edge w-wabew", ʘwʘ
+      daw.wwitevewsionedkeyvaw(
+        dataset = weawgwaphnegativefeatuwesscawadataset, 😳😳😳
+        p-pathwayout = p-pathwayout.vewsionedpath(opts.getoutputpath), ^^;;
+        instant = instant.ofepochmiwwi(opts.intewvaw.getendmiwwis), o.O
+        w-wwiteoption = w-wwiteoptions(numofshawds = some(3000))
       )
     )
 
-    // save to BQ
-    val ingestionDate = opts.getDate().value.getStart.toDate
-    val bqDataset = opts.getBqDataset
-    val bqFieldsTransform = RootTransform
-      .Builder()
-      .withPrependedFields("dateHour" -> TypedProjection.fromConstant(ingestionDate))
-    val timePartitioning = new TimePartitioning()
-      .setType("DAY").setField("dateHour").setExpirationMs(21.days.inMilliseconds)
-    val bqWriter = BigQueryIO
-      .write[Edge]
-      .to(s"${bqDataset}.interaction_graph_agg_negative_edge_snapshot")
-      .withExtendedErrorInfo()
-      .withTimePartitioning(timePartitioning)
-      .withLoadJobProjectId("twttr-recos-ml-prod")
-      .withThriftSupport(bqFieldsTransform.build(), AvroConverter.Legacy)
-      .withCreateDisposition(BigQueryIO.Write.CreateDisposition.CREATE_IF_NEEDED)
-      .withWriteDisposition(
-        BigQueryIO.Write.WriteDisposition.WRITE_TRUNCATE
-      ) // we only want the latest snapshot
+    // save to bq
+    vaw ingestiondate = o-opts.getdate().vawue.getstawt.todate
+    v-vaw bqdataset = o-opts.getbqdataset
+    vaw bqfiewdstwansfowm = w-woottwansfowm
+      .buiwdew()
+      .withpwependedfiewds("datehouw" -> t-typedpwojection.fwomconstant(ingestiondate))
+    vaw timepawtitioning = n-nyew timepawtitioning()
+      .settype("day").setfiewd("datehouw").setexpiwationms(21.days.inmiwwiseconds)
+    vaw bqwwitew = bigquewyio
+      .wwite[edge]
+      .to(s"${bqdataset}.intewaction_gwaph_agg_negative_edge_snapshot")
+      .withextendedewwowinfo()
+      .withtimepawtitioning(timepawtitioning)
+      .withwoadjobpwojectid("twttw-wecos-mw-pwod")
+      .withthwiftsuppowt(bqfiewdstwansfowm.buiwd(), (///ˬ///✿) avwoconvewtew.wegacy)
+      .withcweatedisposition(bigquewyio.wwite.cweatedisposition.cweate_if_needed)
+      .withwwitedisposition(
+        bigquewyio.wwite.wwitedisposition.wwite_twuncate
+      ) // w-we onwy w-want the watest snapshot
 
-    allEdgeFeatures
-      .saveAsCustomOutput(
-        s"Save Recommendations to BQ interaction_graph_agg_negative_edge_snapshot",
-        bqWriter
+    awwedgefeatuwes
+      .saveascustomoutput(
+        s"save wecommendations t-to bq intewaction_gwaph_agg_negative_edge_snapshot", σωσ
+        b-bqwwitew
       )
   }
 
-  def readSnapshot[T <: ThriftStruct](
-    dataset: SnapshotDALDataset[T],
-    sc: ScioContext
-  ): SCollection[T] = {
-    sc.customInput(
-      s"Reading most recent snaphost ${dataset.role.name}.${dataset.logicalName}",
-      DAL.readMostRecentSnapshotNoOlderThan[T](dataset, 7.days)
+  def weadsnapshot[t <: thwiftstwuct](
+    d-dataset: snapshotdawdataset[t], nyaa~~
+    sc: sciocontext
+  ): scowwection[t] = {
+    sc.custominput(
+      s-s"weading most wecent snaphost ${dataset.wowe.name}.${dataset.wogicawname}",
+      d-daw.weadmostwecentsnapshotnoowdewthan[t](dataset, ^^;; 7.days)
     )
   }
 }

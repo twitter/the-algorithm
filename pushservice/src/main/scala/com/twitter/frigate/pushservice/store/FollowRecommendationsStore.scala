@@ -1,45 +1,45 @@
-package com.twitter.frigate.pushservice.store
+package com.twittew.fwigate.pushsewvice.stowe
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
-import com.twitter.follow_recommendations.thriftscala.Recommendation
-import com.twitter.follow_recommendations.thriftscala.RecommendationRequest
-import com.twitter.follow_recommendations.thriftscala.RecommendationResponse
-import com.twitter.follow_recommendations.thriftscala.UserRecommendation
-import com.twitter.inject.Logging
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fowwow_wecommendations.thwiftscawa.fowwowwecommendationsthwiftsewvice
+i-impowt com.twittew.fowwow_wecommendations.thwiftscawa.wecommendation
+i-impowt c-com.twittew.fowwow_wecommendations.thwiftscawa.wecommendationwequest
+i-impowt com.twittew.fowwow_wecommendations.thwiftscawa.wecommendationwesponse
+i-impowt com.twittew.fowwow_wecommendations.thwiftscawa.usewwecommendation
+impowt com.twittew.inject.wogging
+impowt com.twittew.stowehaus.weadabwestowe
+impowt c-com.twittew.utiw.futuwe
 
-case class FollowRecommendationsStore(
-  frsClient: FollowRecommendationsThriftService.MethodPerEndpoint,
-  statsReceiver: StatsReceiver)
-    extends ReadableStore[RecommendationRequest, RecommendationResponse]
-    with Logging {
+case cwass fowwowwecommendationsstowe(
+  f-fwscwient: fowwowwecommendationsthwiftsewvice.methodpewendpoint, (⑅˘꒳˘)
+  statsweceivew: s-statsweceivew)
+    extends weadabwestowe[wecommendationwequest, /(^•ω•^) wecommendationwesponse]
+    w-with wogging {
 
-  private val scopedStats = statsReceiver.scope(getClass.getSimpleName)
-  private val requests = scopedStats.counter("requests")
-  private val valid = scopedStats.counter("valid")
-  private val invalid = scopedStats.counter("invalid")
-  private val numTotalResults = scopedStats.stat("total_results")
-  private val numValidResults = scopedStats.stat("valid_results")
+  pwivate vaw scopedstats = s-statsweceivew.scope(getcwass.getsimpwename)
+  p-pwivate vaw wequests = scopedstats.countew("wequests")
+  pwivate vaw vawid = scopedstats.countew("vawid")
+  p-pwivate vaw invawid = scopedstats.countew("invawid")
+  pwivate vaw nyumtotawwesuwts = scopedstats.stat("totaw_wesuwts")
+  p-pwivate vaw nyumvawidwesuwts = scopedstats.stat("vawid_wesuwts")
 
-  override def get(request: RecommendationRequest): Future[Option[RecommendationResponse]] = {
-    requests.incr()
-    frsClient.getRecommendations(request).map { response =>
-      numTotalResults.add(response.recommendations.size)
-      val validRecs = response.recommendations.filter {
-        case Recommendation.User(_: UserRecommendation) =>
-          valid.incr()
-          true
+  o-ovewwide def g-get(wequest: wecommendationwequest): f-futuwe[option[wecommendationwesponse]] = {
+    w-wequests.incw()
+    fwscwient.getwecommendations(wequest).map { wesponse =>
+      n-nyumtotawwesuwts.add(wesponse.wecommendations.size)
+      vaw vawidwecs = wesponse.wecommendations.fiwtew {
+        c-case wecommendation.usew(_: usewwecommendation) =>
+          vawid.incw()
+          twue
         case _ =>
-          invalid.incr()
-          false
+          invawid.incw()
+          f-fawse
       }
 
-      numValidResults.add(validRecs.size)
-      Some(
-        RecommendationResponse(
-          recommendations = validRecs
+      nyumvawidwesuwts.add(vawidwecs.size)
+      some(
+        w-wecommendationwesponse(
+          w-wecommendations = v-vawidwecs
         ))
     }
   }

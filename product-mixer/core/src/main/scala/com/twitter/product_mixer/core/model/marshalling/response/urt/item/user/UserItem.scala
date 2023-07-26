@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.user
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.usew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.sociawcontext
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.entwynamespace
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineitem
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.pwomotedmetadata
 
-object UserItem {
-  val UserEntryNamespace: EntryNamespace = EntryNamespace("user")
+object usewitem {
+  vaw usewentwynamespace: entwynamespace = entwynamespace("usew")
 }
 
-case class UserItem(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  override val isMarkUnread: Option[Boolean],
-  displayType: UserDisplayType,
-  promotedMetadata: Option[PromotedMetadata],
-  socialContext: Option[SocialContext],
-  reactiveTriggers: Option[UserReactiveTriggers],
-  enableReactiveBlending: Option[Boolean])
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace = UserItem.UserEntryNamespace
+c-case cwass usewitem(
+  ovewwide vaw id: w-wong, (⑅˘꒳˘)
+  ovewwide vaw sowtindex: o-option[wong], (///ˬ///✿)
+  ovewwide vaw cwienteventinfo: option[cwienteventinfo],
+  o-ovewwide vaw feedbackactioninfo: o-option[feedbackactioninfo], 😳😳😳
+  o-ovewwide vaw ismawkunwead: option[boowean], 🥺
+  dispwaytype: usewdispwaytype, mya
+  p-pwomotedmetadata: option[pwomotedmetadata], 🥺
+  sociawcontext: option[sociawcontext], >_<
+  weactivetwiggews: option[usewweactivetwiggews], >_<
+  e-enabweweactivebwending: option[boowean])
+    e-extends t-timewineitem {
+  o-ovewwide v-vaw entwynamespace: entwynamespace = usewitem.usewentwynamespace
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  o-ovewwide def withsowtindex(sowtindex: wong): t-timewineentwy = copy(sowtindex = some(sowtindex))
 }

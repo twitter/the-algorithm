@@ -1,288 +1,288 @@
-package com.twitter.tweetypie
-package media
+package com.twittew.tweetypie
+package m-media
 
-import com.twitter.mediainfo.server.{thriftscala => mis}
-import com.twitter.mediaservices.commons.mediainformation.thriftscala.UserDefinedProductMetadata
-import com.twitter.mediaservices.commons.photurkey.thriftscala.PrivacyType
-import com.twitter.mediaservices.commons.servercommon.thriftscala.{ServerError => CommonServerError}
-import com.twitter.mediaservices.commons.thriftscala.ProductKey
-import com.twitter.mediaservices.commons.thriftscala.MediaKey
-import com.twitter.servo.util.FutureArrow
-import com.twitter.thumbingbird.{thriftscala => ifs}
-import com.twitter.tweetypie.backends.MediaInfoService
-import com.twitter.tweetypie.backends.UserImageService
-import com.twitter.tweetypie.core.UpstreamFailure
-import com.twitter.user_image_service.{thriftscala => uis}
-import com.twitter.user_image_service.thriftscala.MediaUpdateAction
-import com.twitter.user_image_service.thriftscala.MediaUpdateAction.Delete
-import com.twitter.user_image_service.thriftscala.MediaUpdateAction.Undelete
-import java.nio.ByteBuffer
-import scala.util.control.NoStackTrace
+impowt c-com.twittew.mediainfo.sewvew.{thwiftscawa => m-mis}
+impowt com.twittew.mediasewvices.commons.mediainfowmation.thwiftscawa.usewdefinedpwoductmetadata
+i-impowt com.twittew.mediasewvices.commons.photuwkey.thwiftscawa.pwivacytype
+i-impowt com.twittew.mediasewvices.commons.sewvewcommon.thwiftscawa.{sewvewewwow => c-commonsewvewewwow}
+i-impowt com.twittew.mediasewvices.commons.thwiftscawa.pwoductkey
+i-impowt com.twittew.mediasewvices.commons.thwiftscawa.mediakey
+impowt com.twittew.sewvo.utiw.futuweawwow
+impowt com.twittew.thumbingbiwd.{thwiftscawa => ifs}
+i-impowt com.twittew.tweetypie.backends.mediainfosewvice
+impowt com.twittew.tweetypie.backends.usewimagesewvice
+i-impowt com.twittew.tweetypie.cowe.upstweamfaiwuwe
+impowt com.twittew.usew_image_sewvice.{thwiftscawa => u-uis}
+impowt com.twittew.usew_image_sewvice.thwiftscawa.mediaupdateaction
+impowt com.twittew.usew_image_sewvice.thwiftscawa.mediaupdateaction.dewete
+impowt c-com.twittew.usew_image_sewvice.thwiftscawa.mediaupdateaction.undewete
+impowt j-java.nio.bytebuffew
+i-impowt scawa.utiw.contwow.nostacktwace
 
 /**
- * The MediaClient trait encapsulates the various operations we make to the different media services
- * backends.
+ * the mediacwient twait encapsuwates the vawious opewations we m-make to the diffewent media sewvices
+ * backends. ʘwʘ
  */
-trait MediaClient {
-  import MediaClient._
+twait mediacwient {
+  impowt m-mediacwient._
 
   /**
-   * On tweet creation, if the tweet contains media upload ids, we call this operation to process
-   * that media and get back metadata about the media.
+   * on t-tweet cweation, :3 i-if the tweet contains m-media upwoad i-ids, (U ﹏ U) we caww this opewation to pwocess
+   * t-that media and get back metadata about the media. (U ﹏ U)
    */
-  def processMedia: ProcessMedia
+  d-def pwocessmedia: pwocessmedia
 
   /**
-   * On the read path, when hydrating a MediaEntity, we call this operation to get metadata
-   * about existing media.
+   * on the wead path, ʘwʘ when hydwating a mediaentity, >w< we caww this o-opewation to get metadata
+   * a-about existing m-media. rawr x3
    */
-  def getMediaMetadata: GetMediaMetadata
+  def g-getmediametadata: getmediametadata
 
-  def deleteMedia: DeleteMedia
+  def dewetemedia: dewetemedia
 
-  def undeleteMedia: UndeleteMedia
+  d-def undewetemedia: u-undewetemedia
 }
 
 /**
- * Request type for the MediaClient.updateMedia operation.
+ * wequest type f-fow the mediacwient.updatemedia o-opewation. OwO
  */
-private case class UpdateMediaRequest(
-  mediaKey: MediaKey,
-  action: MediaUpdateAction,
-  tweetId: TweetId)
+pwivate case cwass u-updatemediawequest(
+  mediakey: m-mediakey, ^•ﻌ•^
+  action: mediaupdateaction, >_<
+  tweetid: t-tweetid)
 
-case class DeleteMediaRequest(mediaKey: MediaKey, tweetId: TweetId) {
-  private[media] def toUpdateMediaRequest = UpdateMediaRequest(mediaKey, Delete, tweetId)
+case cwass dewetemediawequest(mediakey: m-mediakey, OwO tweetid: tweetid) {
+  p-pwivate[media] d-def toupdatemediawequest = updatemediawequest(mediakey, >_< dewete, tweetid)
 }
 
-case class UndeleteMediaRequest(mediaKey: MediaKey, tweetId: TweetId) {
-  private[media] def toUpdateMediaRequest = UpdateMediaRequest(mediaKey, Undelete, tweetId)
+case cwass undewetemediawequest(mediakey: mediakey, (ꈍᴗꈍ) tweetid: tweetid) {
+  p-pwivate[media] d-def toupdatemediawequest = updatemediawequest(mediakey, >w< u-undewete, (U ﹏ U) tweetid)
 }
 
 /**
- * Request type for the MediaClient.processMedia operation.
+ * w-wequest type fow t-the mediacwient.pwocessmedia opewation. ^^
  */
-case class ProcessMediaRequest(
-  mediaIds: Seq[MediaId],
-  userId: UserId,
-  tweetId: TweetId,
-  isProtected: Boolean,
-  productMetadata: Option[Map[MediaId, UserDefinedProductMetadata]]) {
-  private[media] def toProcessTweetMediaRequest =
-    uis.ProcessTweetMediaRequest(mediaIds, userId, tweetId)
+case cwass pwocessmediawequest(
+  mediaids: s-seq[mediaid], (U ﹏ U)
+  usewid: usewid, :3
+  tweetid: tweetid, (✿oωo)
+  ispwotected: boowean, XD
+  p-pwoductmetadata: option[map[mediaid, >w< u-usewdefinedpwoductmetadata]]) {
+  p-pwivate[media] d-def topwocesstweetmediawequest =
+    u-uis.pwocesstweetmediawequest(mediaids, òωó u-usewid, (ꈍᴗꈍ) t-tweetid)
 
-  private[media] def toUpdateProductMetadataRequests(mediaKeys: Seq[MediaKey]) =
-    productMetadata match {
-      case None => Seq()
-      case Some(map) =>
-        mediaKeys.flatMap { mediaKey =>
-          map.get(mediaKey.mediaId).map { metadata =>
-            uis.UpdateProductMetadataRequest(ProductKey(tweetId.toString, mediaKey), metadata)
+  pwivate[media] d-def toupdatepwoductmetadatawequests(mediakeys: seq[mediakey]) =
+    p-pwoductmetadata m-match {
+      case n-nyone => seq()
+      c-case some(map) =>
+        m-mediakeys.fwatmap { mediakey =>
+          map.get(mediakey.mediaid).map { metadata =>
+            u-uis.updatepwoductmetadatawequest(pwoductkey(tweetid.tostwing, rawr x3 mediakey), metadata)
           }
         }
     }
 }
 
 /**
- * Request type for the MediaClient.getMediaMetdata operation.
+ * wequest type fow the mediacwient.getmediametdata opewation. rawr x3
  */
-case class MediaMetadataRequest(
-  mediaKey: MediaKey,
-  tweetId: TweetId,
-  isProtected: Boolean,
-  extensionsArgs: Option[ByteBuffer]) {
-  private[media] def privacyType = MediaClient.toPrivacyType(isProtected)
+c-case cwass mediametadatawequest(
+  mediakey: mediakey, σωσ
+  tweetid: tweetid, (ꈍᴗꈍ)
+  i-ispwotected: b-boowean, rawr
+  e-extensionsawgs: option[bytebuffew]) {
+  p-pwivate[media] def pwivacytype = m-mediacwient.topwivacytype(ispwotected)
 
   /**
-   * For debugging purposes, make a copy of the byte buffer at object
-   * creation time, so that we can inspect the original buffer if there
-   * is an error.
+   * f-fow debugging puwposes, ^^;; make a copy of the byte buffew at object
+   * cweation time, rawr x3 s-so that we can inspect the owiginaw b-buffew if thewe
+   * is an e-ewwow. (ˆ ﻌ ˆ)♡
    *
-   * Once we have found the problem, this method should be removed.
+   * o-once we have found the pwobwem, σωσ this method shouwd b-be wemoved. (U ﹏ U)
    */
-  val savedExtensionArgs: Option[ByteBuffer] =
-    extensionsArgs.map { buf =>
-      val b = buf.asReadOnlyBuffer()
-      val ary = new Array[Byte](b.remaining)
-      b.get(ary)
-      ByteBuffer.wrap(ary)
+  v-vaw savedextensionawgs: option[bytebuffew] =
+    e-extensionsawgs.map { b-buf =>
+      vaw b = buf.asweadonwybuffew()
+      vaw awy = nyew awway[byte](b.wemaining)
+      b.get(awy)
+      b-bytebuffew.wwap(awy)
     }
 
-  private[media] def toGetTweetMediaInfoRequest =
-    mis.GetTweetMediaInfoRequest(
-      mediaKey = mediaKey,
-      tweetId = Some(tweetId),
-      privacyType = privacyType,
-      stratoExtensionsArgs = extensionsArgs
+  pwivate[media] d-def t-togettweetmediainfowequest =
+    mis.gettweetmediainfowequest(
+      m-mediakey = m-mediakey, >w<
+      tweetid = some(tweetid), σωσ
+      p-pwivacytype = pwivacytype, nyaa~~
+      stwatoextensionsawgs = extensionsawgs
     )
 }
 
-object MediaClient {
-  import MediaExceptions._
+object mediacwient {
+  impowt mediaexceptions._
 
   /**
-   * Operation type for processing uploaded media during tweet creation.
+   * o-opewation t-type fow pwocessing upwoaded media duwing t-tweet cweation. 🥺
    */
-  type ProcessMedia = FutureArrow[ProcessMediaRequest, Seq[MediaKey]]
+  t-type pwocessmedia = futuweawwow[pwocessmediawequest, seq[mediakey]]
 
   /**
-   * Operation type for deleting and undeleting tweets.
+   * opewation t-type fow deweting and undeweting tweets.
    */
-  private[media] type UpdateMedia = FutureArrow[UpdateMediaRequest, Unit]
+  pwivate[media] type updatemedia = f-futuweawwow[updatemediawequest, rawr x3 unit]
 
-  type UndeleteMedia = FutureArrow[UndeleteMediaRequest, Unit]
+  type undewetemedia = f-futuweawwow[undewetemediawequest, σωσ u-unit]
 
-  type DeleteMedia = FutureArrow[DeleteMediaRequest, Unit]
+  type dewetemedia = futuweawwow[dewetemediawequest, (///ˬ///✿) unit]
 
   /**
-   * Operation type for getting media metadata for existing media during tweet reads.
+   * o-opewation type f-fow getting media metadata fow existing media duwing tweet weads. (U ﹏ U)
    */
-  type GetMediaMetadata = FutureArrow[MediaMetadataRequest, MediaMetadata]
+  t-type getmediametadata = f-futuweawwow[mediametadatawequest, ^^;; mediametadata]
 
   /**
-   * Builds a UpdateMedia FutureArrow using UserImageService endpoints.
+   * buiwds a updatemedia futuweawwow u-using usewimagesewvice endpoints. 🥺
    */
-  private[media] object UpdateMedia {
-    def apply(updateTweetMedia: UserImageService.UpdateTweetMedia): UpdateMedia =
-      FutureArrow[UpdateMediaRequest, Unit] { r =>
-        updateTweetMedia(uis.UpdateTweetMediaRequest(r.mediaKey, r.action, Some(r.tweetId))).unit
-      }.translateExceptions(handleMediaExceptions)
+  p-pwivate[media] o-object updatemedia {
+    d-def appwy(updatetweetmedia: usewimagesewvice.updatetweetmedia): u-updatemedia =
+      f-futuweawwow[updatemediawequest, òωó u-unit] { w =>
+        updatetweetmedia(uis.updatetweetmediawequest(w.mediakey, XD w-w.action, :3 s-some(w.tweetid))).unit
+      }.twanswateexceptions(handwemediaexceptions)
   }
 
   /**
-   * Builds a ProcessMedia FutureArrow using UserImageService endpoints.
+   * buiwds a pwocessmedia f-futuweawwow using u-usewimagesewvice e-endpoints. (U ﹏ U)
    */
-  object ProcessMedia {
+  object pwocessmedia {
 
-    def apply(
-      updateProductMetadata: UserImageService.UpdateProductMetadata,
-      processTweetMedia: UserImageService.ProcessTweetMedia
-    ): ProcessMedia = {
+    def appwy(
+      u-updatepwoductmetadata: usewimagesewvice.updatepwoductmetadata, >w<
+      p-pwocesstweetmedia: u-usewimagesewvice.pwocesstweetmedia
+    ): pwocessmedia = {
 
-      val updateProductMetadataSeq = updateProductMetadata.liftSeq
+      vaw updatepwoductmetadataseq = u-updatepwoductmetadata.wiftseq
 
-      FutureArrow[ProcessMediaRequest, Seq[MediaKey]] { req =>
-        for {
-          mediaKeys <- processTweetMedia(req.toProcessTweetMediaRequest).map(_.mediaKeys)
-          _ <- updateProductMetadataSeq(req.toUpdateProductMetadataRequests(mediaKeys))
-        } yield {
-          sortKeysByIds(req.mediaIds, mediaKeys)
+      f-futuweawwow[pwocessmediawequest, /(^•ω•^) s-seq[mediakey]] { w-weq =>
+        fow {
+          m-mediakeys <- pwocesstweetmedia(weq.topwocesstweetmediawequest).map(_.mediakeys)
+          _ <- updatepwoductmetadataseq(weq.toupdatepwoductmetadatawequests(mediakeys))
+        } yiewd {
+          sowtkeysbyids(weq.mediaids, (⑅˘꒳˘) mediakeys)
         }
-      }.translateExceptions(handleMediaExceptions)
+      }.twanswateexceptions(handwemediaexceptions)
     }
 
     /**
-     * Sort the mediaKeys Seq based on the media id ordering specified by the
-     * caller's request mediaIds Seq.
+     * sowt the mediakeys s-seq based on the media id owdewing s-specified by the
+     * cawwew's w-wequest mediaids seq. ʘwʘ
      */
-    private def sortKeysByIds(mediaIds: Seq[MediaId], mediaKeys: Seq[MediaKey]): Seq[MediaKey] = {
-      val idToKeyMap = mediaKeys.map(key => (key.mediaId, key)).toMap
-      mediaIds.flatMap(idToKeyMap.get)
+    p-pwivate def sowtkeysbyids(mediaids: s-seq[mediaid], rawr x3 m-mediakeys: s-seq[mediakey]): s-seq[mediakey] = {
+      v-vaw idtokeymap = mediakeys.map(key => (key.mediaid, (˘ω˘) key)).tomap
+      mediaids.fwatmap(idtokeymap.get)
     }
   }
 
   /**
-   * Builds a GetMediaMetadata FutureArrow using MediaInfoService endpoints.
+   * buiwds a getmediametadata futuweawwow u-using mediainfosewvice e-endpoints. o.O
    */
-  object GetMediaMetadata {
+  o-object getmediametadata {
 
-    private[this] val log = Logger(getClass)
+    p-pwivate[this] vaw wog = woggew(getcwass)
 
-    def apply(getTweetMediaInfo: MediaInfoService.GetTweetMediaInfo): GetMediaMetadata =
-      FutureArrow[MediaMetadataRequest, MediaMetadata] { req =>
-        getTweetMediaInfo(req.toGetTweetMediaInfoRequest).map { res =>
-          MediaMetadata(
-            res.mediaKey,
-            res.assetUrlHttps,
-            res.sizes.toSet,
-            res.mediaInfo,
-            res.additionalMetadata.flatMap(_.productMetadata),
-            res.stratoExtensionsReply,
-            res.additionalMetadata
+    def appwy(gettweetmediainfo: m-mediainfosewvice.gettweetmediainfo): g-getmediametadata =
+      futuweawwow[mediametadatawequest, 😳 m-mediametadata] { weq =>
+        gettweetmediainfo(weq.togettweetmediainfowequest).map { w-wes =>
+          m-mediametadata(
+            wes.mediakey, o.O
+            w-wes.assetuwwhttps, ^^;;
+            w-wes.sizes.toset, ( ͡o ω ͡o )
+            wes.mediainfo,
+            wes.additionawmetadata.fwatmap(_.pwoductmetadata), ^^;;
+            wes.stwatoextensionswepwy, ^^;;
+            wes.additionawmetadata
           )
         }
-      }.translateExceptions(handleMediaExceptions)
+      }.twanswateexceptions(handwemediaexceptions)
   }
 
-  private[media] def toPrivacyType(isProtected: Boolean): PrivacyType =
-    if (isProtected) PrivacyType.Protected else PrivacyType.Public
+  pwivate[media] d-def topwivacytype(ispwotected: b-boowean): pwivacytype =
+    i-if (ispwotected) p-pwivacytype.pwotected e-ewse pwivacytype.pubwic
 
   /**
-   * Constructs an implementation of the MediaClient interface using backend instances.
+   * constwucts a-an impwementation o-of the mediacwient intewface u-using backend i-instances. XD
    */
-  def fromBackends(
-    userImageService: UserImageService,
-    mediaInfoService: MediaInfoService
-  ): MediaClient =
-    new MediaClient {
+  def fwombackends(
+    u-usewimagesewvice: usewimagesewvice, 🥺
+    mediainfosewvice: mediainfosewvice
+  ): m-mediacwient =
+    nyew mediacwient {
 
-      val getMediaMetadata =
-        GetMediaMetadata(
-          getTweetMediaInfo = mediaInfoService.getTweetMediaInfo
+      v-vaw getmediametadata =
+        g-getmediametadata(
+          gettweetmediainfo = m-mediainfosewvice.gettweetmediainfo
         )
 
-      val processMedia =
-        ProcessMedia(
-          userImageService.updateProductMetadata,
-          userImageService.processTweetMedia
+      vaw pwocessmedia =
+        p-pwocessmedia(
+          usewimagesewvice.updatepwoductmetadata, (///ˬ///✿)
+          u-usewimagesewvice.pwocesstweetmedia
         )
 
-      private val updateMedia =
-        UpdateMedia(
-          userImageService.updateTweetMedia
+      p-pwivate vaw updatemedia =
+        updatemedia(
+          usewimagesewvice.updatetweetmedia
         )
 
-      val deleteMedia: FutureArrow[DeleteMediaRequest, Unit] =
-        FutureArrow[DeleteMediaRequest, Unit](r => updateMedia(r.toUpdateMediaRequest))
+      v-vaw dewetemedia: futuweawwow[dewetemediawequest, (U ᵕ U❁) unit] =
+        f-futuweawwow[dewetemediawequest, ^^;; u-unit](w => updatemedia(w.toupdatemediawequest))
 
-      val undeleteMedia: FutureArrow[UndeleteMediaRequest, Unit] =
-        FutureArrow[UndeleteMediaRequest, Unit](r => updateMedia(r.toUpdateMediaRequest))
+      vaw undewetemedia: f-futuweawwow[undewetemediawequest, ^^;; unit] =
+        f-futuweawwow[undewetemediawequest, rawr u-unit](w => updatemedia(w.toupdatemediawequest))
     }
 }
 
 /**
- * Exceptions from the various media services backends that indicate bad requests (validation
- * failures) are converted to a MediaClientException.  Exceptions that indicate a server
- * error are converted to a UpstreamFailure.MediaServiceServerError.
+ * exceptions fwom the vawious media s-sewvices backends that indicate bad wequests (vawidation
+ * f-faiwuwes) a-awe convewted to a mediacwientexception. (˘ω˘)  e-exceptions that indicate a sewvew
+ * e-ewwow awe c-convewted to a u-upstweamfaiwuwe.mediasewvicesewvewewwow. 🥺
  *
- * MediaNotFound: Given media id does not exist. It could have been expired
- * BadMedia:      Given media is corrupted and can not be processed.
- * InvalidMedia:  Given media has failed to pass one or more validations (size, dimensions, type etc.)
- * BadRequest     Request is bad, but reason not available
+ * medianotfound: given media id does not exist. nyaa~~ it couwd have been expiwed
+ * badmedia:      given media is cowwupted and can nyot be pwocessed. :3
+ * invawidmedia:  given media has faiwed to pass one o-ow mowe vawidations (size, /(^•ω•^) d-dimensions, ^•ﻌ•^ type etc.)
+ * badwequest     w-wequest is b-bad, UwU but weason n-nyot avaiwabwe
  */
-object MediaExceptions {
-  import UpstreamFailure.MediaServiceServerError
+object mediaexceptions {
+  i-impowt upstweamfaiwuwe.mediasewvicesewvewewwow
 
-  // Extends NoStackTrace because the circumstances in which the
-  // exceptions are generated don't yield useful stack traces
-  // (e.g. you can't tell from the stack trace anything about what
-  // backend call was being made.)
-  abstract class MediaClientException(message: String) extends Exception(message) with NoStackTrace
+  // extends nyostacktwace b-because t-the ciwcumstances in which the
+  // e-exceptions awe genewated d-don't yiewd usefuw s-stack twaces
+  // (e.g. 😳😳😳 you can't teww fwom the s-stack twace anything a-about nyani
+  // b-backend c-caww was being m-made.)
+  abstwact c-cwass mediacwientexception(message: s-stwing) extends e-exception(message) w-with nyostacktwace
 
-  class MediaNotFound(message: String) extends MediaClientException(message)
-  class BadMedia(message: String) extends MediaClientException(message)
-  class InvalidMedia(message: String) extends MediaClientException(message)
-  class BadRequest(message: String) extends MediaClientException(message)
+  cwass medianotfound(message: s-stwing) e-extends mediacwientexception(message)
+  c-cwass badmedia(message: s-stwing) extends mediacwientexception(message)
+  cwass invawidmedia(message: s-stwing) extends mediacwientexception(message)
+  c-cwass badwequest(message: s-stwing) e-extends mediacwientexception(message)
 
-  // translations from various media service errors into MediaExceptions
-  val handleMediaExceptions: PartialFunction[Any, Exception] = {
-    case uis.BadRequest(msg, reason) =>
-      reason match {
-        case Some(uis.BadRequestReason.MediaNotFound) => new MediaNotFound(msg)
-        case Some(uis.BadRequestReason.BadMedia) => new BadMedia(msg)
-        case Some(uis.BadRequestReason.InvalidMedia) => new InvalidMedia(msg)
-        case _ => new BadRequest(msg)
+  // twanswations f-fwom vawious media sewvice e-ewwows into mediaexceptions
+  v-vaw handwemediaexceptions: pawtiawfunction[any, exception] = {
+    c-case uis.badwequest(msg, OwO weason) =>
+      weason match {
+        case some(uis.badwequestweason.medianotfound) => nyew medianotfound(msg)
+        c-case some(uis.badwequestweason.badmedia) => nyew badmedia(msg)
+        c-case some(uis.badwequestweason.invawidmedia) => n-nyew invawidmedia(msg)
+        case _ => nyew badwequest(msg)
       }
-    case ifs.BadRequest(msg, reason) =>
-      reason match {
-        case Some(ifs.BadRequestReason.NotFound) => new MediaNotFound(msg)
-        case _ => new BadRequest(msg)
+    case ifs.badwequest(msg, ^•ﻌ•^ weason) =>
+      w-weason match {
+        case s-some(ifs.badwequestweason.notfound) => n-nyew medianotfound(msg)
+        c-case _ => nyew badwequest(msg)
       }
-    case mis.BadRequest(msg, reason) =>
-      reason match {
-        case Some(mis.BadRequestReason.MediaNotFound) => new MediaNotFound(msg)
-        case _ => new BadRequest(msg)
+    case mis.badwequest(msg, (ꈍᴗꈍ) w-weason) =>
+      w-weason match {
+        c-case some(mis.badwequestweason.medianotfound) => nyew medianotfound(msg)
+        case _ => new b-badwequest(msg)
       }
-    case ex: CommonServerError => MediaServiceServerError(ex)
+    case e-ex: commonsewvewewwow => m-mediasewvicesewvewewwow(ex)
   }
 }

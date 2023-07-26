@@ -1,28 +1,28 @@
-namespace java com.twitter.tweetypiecomparison.thriftjava
-#@namespace scala com.twitter.tweetypiecomparison.thriftscala
-#@namespace strato com.twitter.tweetypiecomparison
+namespace java com.twittew.tweetypiecompawison.thwiftjava
+#@namespace scawa com.twittew.tweetypiecompawison.thwiftscawa
+#@namespace s-stwato com.twittew.tweetypiecompawison
 
-include "com/twitter/tweetypie/tweet_service.thrift"
-include "com/twitter/context/viewer.thrift"
+i-incwude "com/twittew/tweetypie/tweet_sewvice.thwift"
+i-incwude "com/twittew/context/viewew.thwift"
 
-service TweetComparisonService {
-  void compare_retweet(
-    1: tweet_service.RetweetRequest request,
-    2: optional viewer.Viewer viewer
+s-sewvice t-tweetcompawisonsewvice {
+  v-void compawe_wetweet(
+    1: t-tweet_sewvice.wetweetwequest w-wequest, 😳
+    2: optionaw viewew.viewew viewew
   )
 
-  void compare_post_tweet(
-    1: tweet_service.PostTweetRequest request,
-    2: optional viewer.Viewer viewer
+  void compawe_post_tweet(
+    1: tweet_sewvice.posttweetwequest w-wequest, XD
+    2: optionaw viewew.viewew v-viewew
   )
 
-  void compare_unretweet(
-    1: tweet_service.UnretweetRequest request,
-    2: optional viewer.Viewer viewer
+  void compawe_unwetweet(
+    1: t-tweet_sewvice.unwetweetwequest wequest,
+    2: optionaw viewew.viewew viewew
   )
 
-  void compare_delete_tweets(
-    1: tweet_service.DeleteTweetsRequest request,
-    2: optional viewer.Viewer viewer
+  v-void compawe_dewete_tweets(
+    1: tweet_sewvice.dewetetweetswequest w-wequest, :3
+    2: o-optionaw viewew.viewew viewew
   )
 }

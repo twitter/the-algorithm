@@ -1,162 +1,162 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.servo.cache.Cached
-import com.twitter.servo.cache.CachedValueStatus
-import com.twitter.servo.cache.LockingCache
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.tweetypie.backends.GeoScrubEventStore
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.sewvo.cache.cached
+impowt c-com.twittew.sewvo.cache.cachedvawuestatus
+i-impowt com.twittew.sewvo.cache.wockingcache
+i-impowt c-com.twittew.snowfwake.id.snowfwakeid
+impowt com.twittew.tweetypie.backends.geoscwubeventstowe
+impowt com.twittew.tweetypie.thwiftscawa._
 
 /**
- * Scrub geo information from Tweets.
+ * scwub geo infowmation fwom tweets. 😳😳😳
  */
-object ScrubGeo extends TweetStore.SyncModule {
+o-object scwubgeo extends tweetstowe.syncmoduwe {
 
-  case class Event(
-    tweetIdSet: Set[TweetId],
-    userId: UserId,
-    optUser: Option[User],
-    timestamp: Time,
-    enqueueMax: Boolean)
-      extends SyncTweetStoreEvent("scrub_geo")
-      with TweetStoreTweetEvent {
+  c-case cwass event(
+    t-tweetidset: set[tweetid], (˘ω˘)
+    usewid: usewid, ʘwʘ
+    optusew: option[usew], ( ͡o ω ͡o )
+    t-timestamp: time, o.O
+    enqueuemax: b-boowean)
+      e-extends synctweetstoweevent("scwub_geo")
+      with tweetstowetweetevent {
 
-    val tweetIds: Seq[TweetId] = tweetIdSet.toSeq
+    vaw tweetids: seq[tweetid] = tweetidset.toseq
 
-    override def toTweetEventData: Seq[TweetEventData] =
-      tweetIds.map { tweetId =>
-        TweetEventData.TweetScrubGeoEvent(
-          TweetScrubGeoEvent(
-            tweetId = tweetId,
-            userId = userId
+    ovewwide def t-totweeteventdata: seq[tweeteventdata] =
+      tweetids.map { tweetid =>
+        tweeteventdata.tweetscwubgeoevent(
+          tweetscwubgeoevent(
+            t-tweetid = tweetid, >w<
+            u-usewid = u-usewid
           )
         )
       }
   }
 
-  trait Store {
-    val scrubGeo: FutureEffect[Event]
+  t-twait stowe {
+    v-vaw scwubgeo: futuweeffect[event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val scrubGeo: FutureEffect[Event] = wrap(underlying.scrubGeo)
+  twait s-stowewwappew extends stowe { sewf: tweetstowewwappew[stowe] =>
+    o-ovewwide vaw scwubgeo: futuweeffect[event] = wwap(undewwying.scwubgeo)
   }
 
-  object Store {
-    def apply(
-      logLensStore: LogLensStore,
-      manhattanStore: ManhattanTweetStore,
-      cachingTweetStore: CachingTweetStore,
-      eventBusEnqueueStore: TweetEventBusStore,
-      replicatingStore: ReplicatingTweetStore
-    ): Store =
-      new Store {
-        override val scrubGeo: FutureEffect[Event] =
-          FutureEffect.inParallel(
-            logLensStore.scrubGeo,
-            manhattanStore.scrubGeo,
-            cachingTweetStore.scrubGeo,
-            eventBusEnqueueStore.scrubGeo,
-            replicatingStore.scrubGeo
+  object stowe {
+    def appwy(
+      wogwensstowe: w-wogwensstowe, 😳
+      manhattanstowe: m-manhattantweetstowe, 🥺
+      c-cachingtweetstowe: c-cachingtweetstowe, rawr x3
+      eventbusenqueuestowe: tweeteventbusstowe, o.O
+      wepwicatingstowe: w-wepwicatingtweetstowe
+    ): s-stowe =
+      nyew stowe {
+        o-ovewwide vaw s-scwubgeo: futuweeffect[event] =
+          futuweeffect.inpawawwew(
+            wogwensstowe.scwubgeo, rawr
+            m-manhattanstowe.scwubgeo, ʘwʘ
+            cachingtweetstowe.scwubgeo, 😳😳😳
+            eventbusenqueuestowe.scwubgeo, ^^;;
+            w-wepwicatingstowe.scwubgeo
           )
       }
   }
 }
 
-object ReplicatedScrubGeo extends TweetStore.ReplicatedModule {
+object wepwicatedscwubgeo extends t-tweetstowe.wepwicatedmoduwe {
 
-  case class Event(tweetIds: Seq[TweetId]) extends ReplicatedTweetStoreEvent("replicated_scrub_geo")
+  case cwass event(tweetids: s-seq[tweetid]) extends w-wepwicatedtweetstoweevent("wepwicated_scwub_geo")
 
-  trait Store {
-    val replicatedScrubGeo: FutureEffect[Event]
+  t-twait stowe {
+    vaw wepwicatedscwubgeo: futuweeffect[event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val replicatedScrubGeo: FutureEffect[Event] = wrap(underlying.replicatedScrubGeo)
+  twait stowewwappew extends stowe { sewf: tweetstowewwappew[stowe] =>
+    o-ovewwide vaw w-wepwicatedscwubgeo: futuweeffect[event] = w-wwap(undewwying.wepwicatedscwubgeo)
   }
 
-  object Store {
-    def apply(cachingTweetStore: CachingTweetStore): Store = {
-      new Store {
-        override val replicatedScrubGeo: FutureEffect[Event] =
-          cachingTweetStore.replicatedScrubGeo
+  o-object stowe {
+    d-def appwy(cachingtweetstowe: cachingtweetstowe): stowe = {
+      nyew s-stowe {
+        ovewwide vaw wepwicatedscwubgeo: futuweeffect[event] =
+          cachingtweetstowe.wepwicatedscwubgeo
       }
     }
   }
 }
 
 /**
- * Update the timestamp of the user's most recent request to delete all
- * location data attached to her tweets. We use the timestamp to ensure
- * that even if we fail to scrub a particular tweet in storage, we will
- * not return geo information with that tweet.
+ * update the timestamp o-of the usew's most wecent w-wequest to dewete a-aww
+ * wocation d-data attached to hew tweets. o.O w-we use the timestamp t-to ensuwe
+ * t-that even if w-we faiw to scwub a pawticuwaw tweet in stowage, (///ˬ///✿) w-we wiww
+ * nyot w-wetuwn geo infowmation w-with that t-tweet. σωσ
  *
- * See http://go/geoscrub for more details.
+ * see h-http://go/geoscwub fow mowe detaiws. nyaa~~
  */
-object ScrubGeoUpdateUserTimestamp extends TweetStore.SyncModule {
+object scwubgeoupdateusewtimestamp e-extends tweetstowe.syncmoduwe {
 
-  case class Event(userId: UserId, timestamp: Time, optUser: Option[User])
-      extends SyncTweetStoreEvent("scrub_geo_update_user_timestamp")
-      with TweetStoreTweetEvent {
+  case cwass event(usewid: usewid, ^^;; timestamp: time, ^•ﻌ•^ optusew: option[usew])
+      e-extends synctweetstoweevent("scwub_geo_update_usew_timestamp")
+      with tweetstowetweetevent {
 
-    def mightHaveGeotaggedStatuses: Boolean =
-      optUser.forall(_.account.forall(_.hasGeotaggedStatuses == true))
+    def mighthavegeotaggedstatuses: boowean =
+      o-optusew.fowaww(_.account.fowaww(_.hasgeotaggedstatuses == t-twue))
 
-    def maxTweetId: TweetId = SnowflakeId.firstIdFor(timestamp + 1.millisecond) - 1
+    def m-maxtweetid: tweetid = snowfwakeid.fiwstidfow(timestamp + 1.miwwisecond) - 1
 
-    override def toTweetEventData: Seq[TweetEventData] =
-      Seq(
-        TweetEventData.UserScrubGeoEvent(
-          UserScrubGeoEvent(
-            userId = userId,
-            maxTweetId = maxTweetId
+    o-ovewwide def totweeteventdata: seq[tweeteventdata] =
+      s-seq(
+        t-tweeteventdata.usewscwubgeoevent(
+          usewscwubgeoevent(
+            usewid = usewid, σωσ
+            maxtweetid = maxtweetid
           )
         )
       )
 
     /**
-     * How to update a geo scrub timestamp cache entry. Always prefers
-     * the highest timestamp value that is available, regardless of when
-     * it was added to cache.
+     * how to update a geo scwub t-timestamp cache entwy. -.- awways pwefews
+     * t-the highest timestamp v-vawue that is a-avaiwabwe, ^^;; wegawdwess of when
+     * it was added t-to cache. XD
      */
-    def cacheHandler: LockingCache.Handler[Cached[Time]] = {
-      case Some(c) if c.value.exists(_ >= timestamp) => None
-      case _ => Some(Cached(Some(timestamp), CachedValueStatus.Found, Time.now))
+    d-def cachehandwew: wockingcache.handwew[cached[time]] = {
+      c-case some(c) i-if c.vawue.exists(_ >= timestamp) => nyone
+      case _ => some(cached(some(timestamp), 🥺 c-cachedvawuestatus.found, òωó t-time.now))
     }
   }
 
-  trait Store {
-    val scrubGeoUpdateUserTimestamp: FutureEffect[Event]
+  twait s-stowe {
+    vaw scwubgeoupdateusewtimestamp: f-futuweeffect[event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val scrubGeoUpdateUserTimestamp: FutureEffect[Event] = wrap(
-      underlying.scrubGeoUpdateUserTimestamp)
+  t-twait stowewwappew e-extends stowe { sewf: tweetstowewwappew[stowe] =>
+    ovewwide vaw scwubgeoupdateusewtimestamp: futuweeffect[event] = w-wwap(
+      u-undewwying.scwubgeoupdateusewtimestamp)
   }
 
-  object Store {
-    def apply(
-      geotagUpdateStore: GizmoduckUserGeotagUpdateStore,
-      tweetEventBusStore: TweetEventBusStore,
-      setInManhattan: GeoScrubEventStore.SetGeoScrubTimestamp,
-      cache: LockingCache[UserId, Cached[Time]]
-    ): Store = {
-      val manhattanEffect =
-        setInManhattan.asFutureEffect
-          .contramap[Event](e => (e.userId, e.timestamp))
+  object stowe {
+    def appwy(
+      g-geotagupdatestowe: g-gizmoduckusewgeotagupdatestowe, (ˆ ﻌ ˆ)♡
+      tweeteventbusstowe: tweeteventbusstowe, -.-
+      setinmanhattan: g-geoscwubeventstowe.setgeoscwubtimestamp, :3
+      cache: wockingcache[usewid, ʘwʘ cached[time]]
+    ): stowe = {
+      v-vaw manhattaneffect =
+        setinmanhattan.asfutuweeffect
+          .contwamap[event](e => (e.usewid, 🥺 e-e.timestamp))
 
-      val cacheEffect =
-        FutureEffect[Event](e => cache.lockAndSet(e.userId, e.cacheHandler).unit)
+      v-vaw cacheeffect =
+        futuweeffect[event](e => cache.wockandset(e.usewid, >_< e.cachehandwew).unit)
 
-      new Store {
-        override val scrubGeoUpdateUserTimestamp: FutureEffect[Event] =
-          FutureEffect.inParallel(
-            manhattanEffect,
-            cacheEffect,
-            geotagUpdateStore.scrubGeoUpdateUserTimestamp,
-            tweetEventBusStore.scrubGeoUpdateUserTimestamp
+      n-nyew stowe {
+        o-ovewwide vaw scwubgeoupdateusewtimestamp: futuweeffect[event] =
+          futuweeffect.inpawawwew(
+            m-manhattaneffect, ʘwʘ
+            cacheeffect, (˘ω˘)
+            g-geotagupdatestowe.scwubgeoupdateusewtimestamp, (✿oωo)
+            tweeteventbusstowe.scwubgeoupdateusewtimestamp
           )
       }
     }

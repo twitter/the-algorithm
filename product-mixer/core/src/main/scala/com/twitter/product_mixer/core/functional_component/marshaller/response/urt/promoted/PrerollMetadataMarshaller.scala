@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PrerollMetadata
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.pwewowwmetadata
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => uwt}
+i-impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
-@Singleton
-class PrerollMetadataMarshaller @Inject() (
-  prerollMarshaller: PrerollMarshaller) {
-  def apply(prerollMetadata: PrerollMetadata): urt.PrerollMetadata =
-    urt.PrerollMetadata(
-      preroll = prerollMetadata.preroll.map(prerollMarshaller(_)),
-      videoAnalyticsScribePassthrough = prerollMetadata.videoAnalyticsScribePassthrough
+@singweton
+c-cwass pwewowwmetadatamawshawwew @inject() (
+  p-pwewowwmawshawwew: p-pwewowwmawshawwew) {
+  def appwy(pwewowwmetadata: pwewowwmetadata): uwt.pwewowwmetadata =
+    uwt.pwewowwmetadata(
+      p-pwewoww = pwewowwmetadata.pwewoww.map(pwewowwmawshawwew(_)), >_<
+      videoanawyticsscwibepassthwough = pwewowwmetadata.videoanawyticsscwibepassthwough
     )
 }

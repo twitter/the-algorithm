@@ -1,333 +1,333 @@
-package com.twitter.search.earlybird.archive;
+package com.twittew.seawch.eawwybiwd.awchive;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+impowt j-java.io.fiwenotfoundexception;
+i-impowt java.io.ioexception;
+i-impowt java.utiw.compawatow;
+i-impowt j-java.utiw.date;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.concuwwent.timeunit;
+impowt java.utiw.wegex.matchew;
+impowt java.utiw.wegex.pattewn;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.Lists;
+impowt com.googwe.common.annotations.visibwefowtesting;
+impowt c-com.googwe.common.base.function;
+impowt com.googwe.common.base.pwedicate;
+impowt c-com.googwe.common.cowwect.compawisonchain;
+impowt c-com.googwe.common.cowwect.wists;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.fs.PathFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.commons.io.ioutiws;
+impowt owg.apache.hadoop.fs.fiwestatus;
+i-impowt owg.apache.hadoop.fs.fiwesystem;
+impowt o-owg.apache.hadoop.fs.path;
+i-impowt owg.apache.hadoop.fs.pathfiwtew;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.schema.earlybird.EarlybirdThriftDocumentUtil;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.util.date.DateUtil;
-import com.twitter.search.common.util.io.EmptyRecordReader;
-import com.twitter.search.common.util.io.LzoThriftBlockFileReader;
-import com.twitter.search.common.util.io.MergingSortedRecordReader;
-import com.twitter.search.common.util.io.TransformingRecordReader;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.document.DocumentFactory;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.partition.HdfsUtil;
+impowt com.twittew.seawch.common.config.config;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.pawtitioning.snowfwakepawsew.snowfwakeidpawsew;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdthwiftdocumentutiw;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingevent;
+i-impowt com.twittew.seawch.common.utiw.date.dateutiw;
+impowt com.twittew.seawch.common.utiw.io.emptywecowdweadew;
+i-impowt com.twittew.seawch.common.utiw.io.wzothwiftbwockfiweweadew;
+i-impowt com.twittew.seawch.common.utiw.io.mewgingsowtedwecowdweadew;
+i-impowt com.twittew.seawch.common.utiw.io.twansfowmingwecowdweadew;
+i-impowt com.twittew.seawch.common.utiw.io.wecowdweadew.wecowdweadew;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+i-impowt com.twittew.seawch.eawwybiwd.document.documentfactowy;
+impowt com.twittew.seawch.eawwybiwd.document.tweetdocument;
+impowt c-com.twittew.seawch.eawwybiwd.pawtition.hdfsutiw;
 
 /**
- * A batch of pre-processed tweets for a single hash partition from a particular day.
+ * a batch of pwe-pwocessed tweets fow a singwe hash pawtition fwom a pawticuwaw d-day. o.O
  */
-public class PartitionedBatch {
-  private static final Logger LOG = LoggerFactory.getLogger(PartitionedBatch.class);
-  private static final Date START_DATE_INCLUSIVE = DateUtil.toDate(2006, 03, 21);
-  private static final String STATUS_COUNT_FILE_PREFIX = "_status_count_";
-  private static final Pattern STATUS_COUNT_FILE_PATTERN =
-      Pattern.compile(STATUS_COUNT_FILE_PREFIX + "(\\d+)_minid_(\\d+)_maxid_(\\d+)");
-  private static final int MAXIMUM_OUT_OF_ORDER_TOLERANCE_HOURS =
-      EarlybirdConfig.getInt("archive_max_out_of_order_tolerance_hours", 12);
-  private static final int READER_INIT_IOEXCEPTION_RETRIES = 20;
-  private static final PathFilter LZO_DATA_FILES_FILTER = file -> file.getName().endsWith(".lzo");
-  private static final PathFilter TXT_DATA_FILES_FILTER = file -> file.getName().endsWith(".txt");
+pubwic cwass p-pawtitionedbatch {
+  p-pwivate static f-finaw woggew wog = woggewfactowy.getwoggew(pawtitionedbatch.cwass);
+  pwivate static finaw date s-stawt_date_incwusive = d-dateutiw.todate(2006, ^^ 03, 21);
+  pwivate s-static finaw s-stwing status_count_fiwe_pwefix = "_status_count_";
+  pwivate static f-finaw pattewn status_count_fiwe_pattewn =
+      p-pattewn.compiwe(status_count_fiwe_pwefix + "(\\d+)_minid_(\\d+)_maxid_(\\d+)");
+  pwivate static finaw int m-maximum_out_of_owdew_towewance_houws =
+      eawwybiwdconfig.getint("awchive_max_out_of_owdew_towewance_houws", >_< 12);
+  p-pwivate static finaw int w-weadew_init_ioexception_wetwies = 20;
+  p-pwivate static finaw pathfiwtew wzo_data_fiwes_fiwtew = fiwe -> fiwe.getname().endswith(".wzo");
+  pwivate static finaw pathfiwtew txt_data_fiwes_fiwtew = f-fiwe -> fiwe.getname().endswith(".txt");
 
-  private static final Comparator<ThriftIndexingEvent> DESC_THRIFT_INDEXING_EVENT_COMPARATOR =
-      (o1, o2) -> ComparisonChain.start()
-          .compare(o2.getSortId(), o1.getSortId())
-          .compare(o2.getUid(), o1.getUid())
-          .result();
+  p-pwivate static finaw compawatow<thwiftindexingevent> d-desc_thwift_indexing_event_compawatow =
+      (o1, >w< o-o2) -> compawisonchain.stawt()
+          .compawe(o2.getsowtid(), >_< o-o1.getsowtid())
+          .compawe(o2.getuid(), >w< o1.getuid())
+          .wesuwt();
 
-  // Number archive tweets skipped because they are too out-of-order.
-  private static final SearchCounter OUT_OF_ORDER_STATUSES_SKIPPED =
-      SearchCounter.export("out_of_order_archive_statuses_skipped");
+  // nyumbew awchive tweets skipped b-because they awe too out-of-owdew. rawr
+  pwivate static finaw seawchcountew out_of_owdew_statuses_skipped =
+      seawchcountew.expowt("out_of_owdew_awchive_statuses_skipped");
 
-  @VisibleForTesting
-  protected static final long MAXIMUM_OUT_OF_ORDER_TOLERANCE_MILLIS =
-      TimeUnit.HOURS.toMillis(MAXIMUM_OUT_OF_ORDER_TOLERANCE_HOURS);
+  @visibwefowtesting
+  p-pwotected static finaw wong m-maximum_out_of_owdew_towewance_miwwis =
+      t-timeunit.houws.tomiwwis(maximum_out_of_owdew_towewance_houws);
 
-  private final Date date;
-  private final Path path;
-  private int statusCount;
-  private long minStatusID;
-  private long maxStatusID;
-  private final int hashPartitionID;
-  private boolean hasStatusCountFile;
-  private final int numHashPartitions;
+  p-pwivate finaw date date;
+  pwivate f-finaw path p-path;
+  pwivate i-int statuscount;
+  p-pwivate wong minstatusid;
+  pwivate wong maxstatusid;
+  p-pwivate f-finaw int hashpawtitionid;
+  p-pwivate boowean h-hasstatuscountfiwe;
+  p-pwivate finaw int nyumhashpawtitions;
 
-  @VisibleForTesting
-  public PartitionedBatch(
-      Path path,
-      int hashPartitionID,
-      int numHashPartitions,
-      Date date) {
+  @visibwefowtesting
+  pubwic pawtitionedbatch(
+      path path, rawr x3
+      i-int hashpawtitionid, ( ͡o ω ͡o )
+      int nyumhashpawtitions, (˘ω˘)
+      date date) {
     this.path = path;
-    this.hashPartitionID = hashPartitionID;
-    this.numHashPartitions = numHashPartitions;
+    this.hashpawtitionid = h-hashpawtitionid;
+    this.numhashpawtitions = nyumhashpawtitions;
     this.date = date;
   }
 
   /**
-   * Loads all the information (tweet count, etc.) for this partition and day from HDFS.
+   * w-woads aww the i-infowmation (tweet c-count, 😳 etc.) fow this pawtition a-and day fwom hdfs. OwO
    */
-  public void load(FileSystem hdfs) throws IOException {
-    FileStatus[] dailyBatchFiles = null;
-    try {
-      // listStatus() javadoc says it throws FileNotFoundException when path does not exist.
-      // However, the actual implementations return null or an empty array instead.
-      // We handle all 3 cases: null, empty array, or FileNotFoundException.
-      dailyBatchFiles = hdfs.listStatus(path);
-    } catch (FileNotFoundException e) {
-      // don't do anything here and the day will be handled as empty.
+  pubwic v-void woad(fiwesystem h-hdfs) thwows ioexception {
+    fiwestatus[] daiwybatchfiwes = nyuww;
+    twy {
+      // w-wiststatus() javadoc says it t-thwows fiwenotfoundexception when p-path does nyot e-exist. (˘ω˘)
+      // howevew, the actuaw impwementations w-wetuwn nyuww o-ow an empty awway instead. òωó
+      // w-we handwe a-aww 3 cases: nyuww, ( ͡o ω ͡o ) empty awway, ow fiwenotfoundexception. UwU
+      daiwybatchfiwes = hdfs.wiststatus(path);
+    } c-catch (fiwenotfoundexception e-e) {
+      // d-don't do anything hewe a-and the day wiww b-be handwed as empty.
     }
 
-    if (dailyBatchFiles != null && dailyBatchFiles.length > 0) {
-      for (FileStatus file : dailyBatchFiles) {
-        String fileName = file.getPath().getName();
-        if (fileName.equals(STATUS_COUNT_FILE_PREFIX)) {
-          // zero tweets in this partition - this can happen for early days in 2006
-          handleEmptyPartition();
-        } else {
-          Matcher matcher = STATUS_COUNT_FILE_PATTERN.matcher(fileName);
-          if (matcher.matches()) {
-            try {
-              statusCount = Integer.parseInt(matcher.group(1));
-              // Only adjustMinStatusId in production. For tests, this makes the tests harder to
-              // understand.
-              minStatusID = Config.environmentIsTest() ? Long.parseLong(matcher.group(2))
-                  : adjustMinStatusId(Long.parseLong(matcher.group(2)), date);
-              maxStatusID = Long.parseLong(matcher.group(3));
-              hasStatusCountFile = true;
-            } catch (NumberFormatException e) {
-              // invalid file - ignore
-              LOG.warn("Could not parse status count file name.", e);
+    i-if (daiwybatchfiwes != nyuww && daiwybatchfiwes.wength > 0) {
+      fow (fiwestatus fiwe : daiwybatchfiwes) {
+        s-stwing f-fiwename = fiwe.getpath().getname();
+        if (fiwename.equaws(status_count_fiwe_pwefix)) {
+          // zewo t-tweets in this pawtition - t-this can happen fow eawwy days in 2006
+          handweemptypawtition();
+        } e-ewse {
+          matchew matchew = status_count_fiwe_pattewn.matchew(fiwename);
+          if (matchew.matches()) {
+            twy {
+              s-statuscount = integew.pawseint(matchew.gwoup(1));
+              // onwy adjustminstatusid in pwoduction. f-fow tests, /(^•ω•^) t-this makes the tests hawdew to
+              // undewstand. (ꈍᴗꈍ)
+              minstatusid = c-config.enviwonmentistest() ? w-wong.pawsewong(matchew.gwoup(2))
+                  : adjustminstatusid(wong.pawsewong(matchew.gwoup(2)), 😳 date);
+              maxstatusid = wong.pawsewong(matchew.gwoup(3));
+              h-hasstatuscountfiwe = twue;
+            } catch (numbewfowmatexception e-e) {
+              // invawid fiwe - ignowe
+              wog.wawn("couwd n-nyot pawse status count fiwe n-nyame.", mya e);
             }
           }
         }
       }
-    } else {
-      // Partition folder does not exist. This case can happen for early days of twitter
-      // where some partitions are empty. Set us to having a status count file, the validity of
-      // the parent DailyStatusBatch will still be determined by whether there was a _SUCCESS file
-      // in the day root.
-      handleEmptyPartition();
+    } e-ewse {
+      // pawtition fowdew d-does nyot exist. mya this case can h-happen fow eawwy d-days of twittew
+      // w-whewe some pawtitions a-awe empty. /(^•ω•^) set u-us to having a status count fiwe, ^^;; the vawidity o-of
+      // the p-pawent daiwystatusbatch w-wiww stiww be detewmined by whethew thewe w-was a _success fiwe
+      // in t-the day woot. 🥺
+      h-handweemptypawtition();
 
-      if (date.after(getEarliestDenseDay())) {
-        LOG.error("Unexpected empty directory {} for {}", path, date);
+      if (date.aftew(geteawwiestdenseday())) {
+        wog.ewwow("unexpected empty d-diwectowy {} fow {}", ^^ p-path, ^•ﻌ•^ date);
       }
     }
   }
 
-  private void handleEmptyPartition() {
-    statusCount = 0;
-    minStatusID = DailyStatusBatch.EMPTY_BATCH_STATUS_ID;
-    maxStatusID = DailyStatusBatch.EMPTY_BATCH_STATUS_ID;
-    hasStatusCountFile = true;
+  p-pwivate v-void handweemptypawtition() {
+    statuscount = 0;
+    m-minstatusid = daiwystatusbatch.empty_batch_status_id;
+    maxstatusid = daiwystatusbatch.empty_batch_status_id;
+    hasstatuscountfiwe = twue;
   }
 
   /**
-   * Sometimes tweets are out-of-order (E.g. a tweet from Sep 2012 got into a
-   * batch in July 2013). See SEARCH-1750 for more details.
-   * This adjust the minStatusID if it is badly out-of-order.
+   * s-sometimes tweets awe out-of-owdew (e.g. /(^•ω•^) a-a tweet fwom sep 2012 got into a
+   * b-batch in juwy 2013). ^^ see seawch-1750 f-fow mowe detaiws. 🥺
+   * t-this adjust the m-minstatusid if i-it is badwy out-of-owdew. (U ᵕ U❁)
    */
-  @VisibleForTesting
-  protected static long adjustMinStatusId(long minStatusID, Date date) {
-    long dateTime = date.getTime();
-    // If the daily batch is for a day before we started using snow flake IDs. Never adjust.
-    if (!SnowflakeIdParser.isUsableSnowflakeTimestamp(dateTime)) {
-      return minStatusID;
+  @visibwefowtesting
+  p-pwotected s-static wong adjustminstatusid(wong minstatusid, 😳😳😳 date date) {
+    wong datetime = date.gettime();
+    // if the daiwy batch is f-fow a day befowe w-we stawted using s-snow fwake ids. nyaa~~ nyevew adjust. (˘ω˘)
+    i-if (!snowfwakeidpawsew.isusabwesnowfwaketimestamp(datetime)) {
+      wetuwn minstatusid;
     }
 
-    long earliestStartTime = dateTime - MAXIMUM_OUT_OF_ORDER_TOLERANCE_MILLIS;
-    long minStatusTime = SnowflakeIdParser.getTimestampFromTweetId(minStatusID);
-    if (minStatusTime < earliestStartTime) {
-      long newMinId =  SnowflakeIdParser.generateValidStatusId(earliestStartTime, 0);
-      LOG.info("Daily batch for " + date + " has badly out of order tweet: " + minStatusID
-          + ". The minStatusID for the day this batch is adjusted to " + newMinId);
-      return newMinId;
-    } else {
-      return minStatusID;
+    wong eawwieststawttime = d-datetime - maximum_out_of_owdew_towewance_miwwis;
+    w-wong minstatustime = snowfwakeidpawsew.gettimestampfwomtweetid(minstatusid);
+    i-if (minstatustime < eawwieststawttime) {
+      wong nyewminid =  s-snowfwakeidpawsew.genewatevawidstatusid(eawwieststawttime, >_< 0);
+      wog.info("daiwy batch f-fow " + date + " has badwy o-out of owdew tweet: " + m-minstatusid
+          + ". XD the minstatusid fow the day this batch is adjusted to " + newminid);
+      w-wetuwn n-nyewminid;
+    } e-ewse {
+      w-wetuwn minstatusid;
     }
   }
 
   /**
-   * Returns a reader that reads tweets from the given directory.
+   * w-wetuwns a weadew that w-weads tweets f-fwom the given diwectowy. rawr x3
    *
-   * @param archiveSegment Determines the timeslice ID of all read tweets.
-   * @param tweetsPath The path to the directory where the tweets for this day are stored.
-   * @param documentFactory The ThriftIndexingEvent to TweetDocument converter.
+   * @pawam awchivesegment d-detewmines t-the timeswice id of aww wead t-tweets.
+   * @pawam tweetspath the path to the d-diwectowy whewe the tweets fow t-this day awe stowed. ( ͡o ω ͡o )
+   * @pawam d-documentfactowy the thwiftindexingevent t-to tweetdocument convewtew. :3
    */
-  public RecordReader<TweetDocument> getTweetReaders(
-      ArchiveSegment archiveSegment,
-      Path tweetsPath,
-      DocumentFactory<ThriftIndexingEvent> documentFactory) throws IOException {
-    RecordReader<TweetDocument> tweetDocumentReader =
-        new TransformingRecordReader<>(
-            createTweetReader(tweetsPath), new Function<ThriftIndexingEvent, TweetDocument>() {
-          @Override
-          public TweetDocument apply(ThriftIndexingEvent event) {
-            return new TweetDocument(
-                event.getSortId(),
-                archiveSegment.getTimeSliceID(),
-                EarlybirdThriftDocumentUtil.getCreatedAtMs(event.getDocument()),
-                documentFactory.newDocument(event)
+  pubwic w-wecowdweadew<tweetdocument> g-gettweetweadews(
+      a-awchivesegment awchivesegment, mya
+      path tweetspath, σωσ
+      d-documentfactowy<thwiftindexingevent> documentfactowy) thwows i-ioexception {
+    w-wecowdweadew<tweetdocument> tweetdocumentweadew =
+        n-nyew twansfowmingwecowdweadew<>(
+            c-cweatetweetweadew(tweetspath), (ꈍᴗꈍ) n-nyew function<thwiftindexingevent, OwO tweetdocument>() {
+          @ovewwide
+          pubwic t-tweetdocument appwy(thwiftindexingevent event) {
+            w-wetuwn nyew tweetdocument(
+                e-event.getsowtid(), o.O
+                awchivesegment.gettimeswiceid(), 😳😳😳
+                eawwybiwdthwiftdocumentutiw.getcweatedatms(event.getdocument()), /(^•ω•^)
+                d-documentfactowy.newdocument(event)
             );
           }
         });
 
-    tweetDocumentReader.setExhaustStream(true);
-    return tweetDocumentReader;
+    tweetdocumentweadew.setexhauststweam(twue);
+    wetuwn tweetdocumentweadew;
   }
 
-  private RecordReader<ThriftIndexingEvent> createTweetReader(Path tweetsPath) throws IOException {
-    if (date.before(START_DATE_INCLUSIVE)) {
-      return new EmptyRecordReader<>();
+  p-pwivate wecowdweadew<thwiftindexingevent> c-cweatetweetweadew(path t-tweetspath) thwows ioexception {
+    if (date.befowe(stawt_date_incwusive)) {
+      wetuwn nyew emptywecowdweadew<>();
     }
 
-    List<RecordReader<ThriftIndexingEvent>> readers = Lists.newArrayList();
-    FileSystem hdfs = HdfsUtil.getHdfsFileSystem();
-    try {
-      Path dayPath = new Path(tweetsPath, ArchiveHDFSUtils.dateToPath(date, "/"));
-      Path partitionPath =
-          new Path(dayPath, String.format("p_%d_of_%d", hashPartitionID, numHashPartitions));
-      PathFilter pathFilter =
-          Config.environmentIsTest() ? TXT_DATA_FILES_FILTER : LZO_DATA_FILES_FILTER;
-      FileStatus[] files = hdfs.listStatus(partitionPath, pathFilter);
-      for (FileStatus fileStatus : files) {
-        String fileStatusPath = fileStatus.getPath().toString().replaceAll("file:/", "/");
-        RecordReader<ThriftIndexingEvent> reader = createRecordReaderWithRetries(fileStatusPath);
-        readers.add(reader);
+    wist<wecowdweadew<thwiftindexingevent>> weadews = wists.newawwaywist();
+    fiwesystem hdfs = hdfsutiw.gethdfsfiwesystem();
+    twy {
+      path daypath = nyew path(tweetspath, OwO a-awchivehdfsutiws.datetopath(date, ^^ "/"));
+      p-path pawtitionpath =
+          nyew path(daypath, (///ˬ///✿) stwing.fowmat("p_%d_of_%d", (///ˬ///✿) h-hashpawtitionid, (///ˬ///✿) n-numhashpawtitions));
+      pathfiwtew p-pathfiwtew =
+          config.enviwonmentistest() ? t-txt_data_fiwes_fiwtew : wzo_data_fiwes_fiwtew;
+      f-fiwestatus[] f-fiwes = hdfs.wiststatus(pawtitionpath, ʘwʘ pathfiwtew);
+      f-fow (fiwestatus fiwestatus : f-fiwes) {
+        s-stwing fiwestatuspath = fiwestatus.getpath().tostwing().wepwaceaww("fiwe:/", ^•ﻌ•^ "/");
+        wecowdweadew<thwiftindexingevent> w-weadew = cweatewecowdweadewwithwetwies(fiwestatuspath);
+        w-weadews.add(weadew);
       }
-    } finally {
-      IOUtils.closeQuietly(hdfs);
+    } f-finawwy {
+      i-ioutiws.cwosequietwy(hdfs);
     }
 
-    if (readers.isEmpty()) {
-      return new EmptyRecordReader<>();
+    if (weadews.isempty()) {
+      w-wetuwn n-nyew emptywecowdweadew<>();
     }
 
-    return new MergingSortedRecordReader<>(DESC_THRIFT_INDEXING_EVENT_COMPARATOR, readers);
+    w-wetuwn n-nyew mewgingsowtedwecowdweadew<>(desc_thwift_indexing_event_compawatow, OwO w-weadews);
   }
 
-  private RecordReader<ThriftIndexingEvent> createRecordReaderWithRetries(String filePath)
-      throws IOException {
-    Predicate<ThriftIndexingEvent> recordFilter = getRecordFilter();
-    int numTries = 0;
-    while (true) {
-      try {
-        ++numTries;
-        return new LzoThriftBlockFileReader<>(filePath, ThriftIndexingEvent.class, recordFilter);
-      } catch (IOException e) {
-        if (numTries < READER_INIT_IOEXCEPTION_RETRIES) {
-          LOG.warn("Failed to open LzoThriftBlockFileReader for " + filePath + ". Will retry.", e);
-        } else {
-          LOG.error("Failed to open LzoThriftBlockFileReader for " + filePath
-              + " after too many retries.", e);
-          throw e;
+  pwivate w-wecowdweadew<thwiftindexingevent> c-cweatewecowdweadewwithwetwies(stwing f-fiwepath)
+      thwows i-ioexception {
+    pwedicate<thwiftindexingevent> wecowdfiwtew = g-getwecowdfiwtew();
+    int nyumtwies = 0;
+    w-whiwe (twue) {
+      t-twy {
+        ++numtwies;
+        w-wetuwn nyew wzothwiftbwockfiweweadew<>(fiwepath, (U ﹏ U) t-thwiftindexingevent.cwass, (ˆ ﻌ ˆ)♡ wecowdfiwtew);
+      } c-catch (ioexception e) {
+        i-if (numtwies < weadew_init_ioexception_wetwies) {
+          w-wog.wawn("faiwed to open wzothwiftbwockfiweweadew fow " + fiwepath + ". (⑅˘꒳˘) wiww wetwy.", (U ﹏ U) e);
+        } e-ewse {
+          wog.ewwow("faiwed t-to o-open wzothwiftbwockfiweweadew fow " + fiwepath
+              + " aftew too many w-wetwies.", o.O e);
+          thwow e;
         }
       }
     }
   }
 
-  private Predicate<ThriftIndexingEvent> getRecordFilter() {
-    return Config.environmentIsTest() ? null : input -> {
-      if (input == null) {
-        return false;
+  p-pwivate pwedicate<thwiftindexingevent> g-getwecowdfiwtew() {
+    w-wetuwn config.enviwonmentistest() ? nyuww : input -> {
+      if (input == n-nyuww) {
+        w-wetuwn fawse;
       }
-      // We only guard against status IDs that are too small, because it is possible
-      // for a very old tweet to get into today's batch, but not possible for a very
-      // large ID (a future tweet ID that is not yet published) to get in today's
-      // batch, unless tweet ID generation messed up.
-      long statusId = input.getSortId();
-      boolean keep = statusId >= minStatusID;
-      if (!keep) {
-        LOG.debug("Out of order documentId: {} minStatusID: {} Date: {} Path: {}",
-            statusId, minStatusID, date, path);
-        OUT_OF_ORDER_STATUSES_SKIPPED.increment();
+      // w-we onwy guawd against status ids that a-awe too smow, mya because it is possibwe
+      // f-fow a-a vewy owd tweet t-to get into today's batch, XD but n-nyot possibwe f-fow a vewy
+      // w-wawge id (a f-futuwe tweet id that is nyot yet p-pubwished) to get i-in today's
+      // b-batch, òωó unwess t-tweet id genewation m-messed u-up. (˘ω˘)
+      wong statusid = i-input.getsowtid();
+      b-boowean keep = statusid >= minstatusid;
+      i-if (!keep) {
+        wog.debug("out o-of owdew documentid: {} minstatusid: {} d-date: {} p-path: {}", :3
+            s-statusid, OwO minstatusid, date, mya path);
+        out_of_owdew_statuses_skipped.incwement();
       }
-      return keep;
+      w-wetuwn keep;
     };
   }
 
   /**
-   * Returns the number of statuses in this batch
+   * w-wetuwns the n-nyumbew of statuses in this batch
    */
-  public int getStatusCount() {
-    return statusCount;
+  pubwic int getstatuscount() {
+    w-wetuwn s-statuscount;
   }
 
   /**
-   * Was the _status_count file was found in this folder.
+   * was the _status_count f-fiwe was f-found in this fowdew. (˘ω˘)
    */
-  public boolean hasStatusCount() {
-    return hasStatusCountFile;
+  pubwic boowean hasstatuscount() {
+    wetuwn hasstatuscountfiwe;
   }
 
-  public long getMinStatusID() {
-    return minStatusID;
+  pubwic wong g-getminstatusid() {
+    w-wetuwn m-minstatusid;
   }
 
-  public long getMaxStatusID() {
-    return maxStatusID;
+  p-pubwic wong getmaxstatusid() {
+    wetuwn maxstatusid;
   }
 
-  public Date getDate() {
-    return date;
+  p-pubwic date getdate() {
+    wetuwn d-date;
   }
 
-  public Path getPath() {
-    return path;
+  pubwic path getpath() {
+    wetuwn path;
   }
 
   /**
-   * Check whether the partition is
-   * . empty and
-   * . it is disallowed (empty partition can only happen before 2010)
-   * (Empty partition means that the directory is missing when scan happens.)
+   * c-check whethew the pawtition is
+   * . o.O e-empty and
+   * . (✿oωo) it is disawwowed (empty p-pawtition c-can onwy happen befowe 2010)
+   * (empty p-pawtition m-means that the diwectowy i-is missing when scan happens.)
    *
-   * @return true if the partition has no documents and it is not allowed.
+   * @wetuwn t-twue if the pawtition h-has nyo d-documents and it i-is nyot awwowed. (ˆ ﻌ ˆ)♡
    */
-  public boolean isDisallowedEmptyPartition() {
-    return hasStatusCountFile
-        && statusCount == 0
-        && minStatusID == DailyStatusBatch.EMPTY_BATCH_STATUS_ID
-        && maxStatusID == DailyStatusBatch.EMPTY_BATCH_STATUS_ID
-        && date.after(getEarliestDenseDay());
+  pubwic b-boowean isdisawwowedemptypawtition() {
+    w-wetuwn h-hasstatuscountfiwe
+        && statuscount == 0
+        && m-minstatusid == daiwystatusbatch.empty_batch_status_id
+        && maxstatusid == d-daiwystatusbatch.empty_batch_status_id
+        && date.aftew(geteawwiestdenseday());
   }
 
-  @Override
-  public String toString() {
-    return "PartitionedBatch[hashPartitionId=" + hashPartitionID
-        + ",numHashPartitions=" + numHashPartitions
+  @ovewwide
+  p-pubwic stwing t-tostwing() {
+    wetuwn "pawtitionedbatch[hashpawtitionid=" + hashpawtitionid
+        + ",numhashpawtitions=" + nyumhashpawtitions
         + ",date=" + date
-        + ",path=" + path
-        + ",hasStatusCountFile=" + hasStatusCountFile
-        + ",statusCount=" + statusCount + "]";
+        + ",path=" + p-path
+        + ",hasstatuscountfiwe=" + hasstatuscountfiwe
+        + ",statuscount=" + s-statuscount + "]";
   }
 
-  private Date getEarliestDenseDay() {
-    return EarlybirdConfig.getDate("archive_search_earliest_dense_day");
+  p-pwivate date geteawwiestdenseday() {
+    wetuwn eawwybiwdconfig.getdate("awchive_seawch_eawwiest_dense_day");
   }
 }

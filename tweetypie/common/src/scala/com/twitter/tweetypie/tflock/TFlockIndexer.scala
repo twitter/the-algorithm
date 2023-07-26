@@ -1,340 +1,340 @@
-/** Copyright 2010 Twitter, Inc. */
-package com.twitter.tweetypie
-package tflock
+/** copywight 2010 twittew, rawr x3 inc. */
+p-package com.twittew.tweetypie
+p-package tfwock
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.flockdb.client._
-import com.twitter.flockdb.client.thriftscala.Priority
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.tweetypie.serverutil.StoredCard
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.util.Future
-import scala.collection.mutable.ListBuffer
+i-impowt com.twittew.finagwe.stats.countew
+i-impowt c-com.twittew.fwockdb.cwient._
+i-impowt c-com.twittew.fwockdb.cwient.thwiftscawa.pwiowity
+i-impowt com.twittew.snowfwake.id.snowfwakeid
+impowt com.twittew.tweetypie.sewvewutiw.stowedcawd
+impowt com.twittew.tweetypie.thwiftscawa._
+impowt com.twittew.utiw.futuwe
+impowt s-scawa.cowwection.mutabwe.wistbuffew
 
-object TFlockIndexer {
+object tfwockindexew {
 
   /**
-   * Printable names for some edge types currently defined in [[com.twitter.flockdb.client]].
-   * Used to defined stats counters for adding edges.
+   * p-pwintabwe nyames fow s-some edge types cuwwentwy defined in [[com.twittew.fwockdb.cwient]]. (///ˬ///✿)
+   * used t-to defined stats countews fow adding e-edges. 😳😳😳
    */
-  val graphNames: Map[Int, String] =
-    Map(
-      CardTweetsGraph.id -> "card_tweets",
-      ConversationGraph.id -> "conversation",
-      DirectedAtUserIdGraph.id -> "directed_at_user_id",
-      InvitedUsersGraph.id -> "invited_users",
-      MediaTimelineGraph.id -> "media_timeline",
-      MentionsGraph.id -> "mentions",
-      NarrowcastSentTweetsGraph.id -> "narrowcast_sent_tweets",
-      NullcastedTweetsGraph.id -> "nullcasted_tweets",
-      QuotersGraph.id -> "quoters",
-      QuotesGraph.id -> "quotes",
-      QuoteTweetsIndexGraph.id -> "quote_tweets_index",
-      RepliesToTweetsGraph.id -> "replies_to_tweets",
-      RetweetsByMeGraph.id -> "retweets_by_me",
-      RetweetsGraph.id -> "retweets",
-      RetweetsOfMeGraph.id -> "retweets_of_me",
-      RetweetSourceGraph.id -> "retweet_source",
-      TweetsRetweetedGraph.id -> "tweets_retweeted",
-      UserTimelineGraph.id -> "user_timeline",
-      CreatorSubscriptionTimelineGraph.id -> "creator_subscription_timeline",
-      CreatorSubscriptionMediaTimelineGraph.id -> "creator_subscription_image_timeline",
+  v-vaw gwaphnames: map[int, XD stwing] =
+    map(
+      cawdtweetsgwaph.id -> "cawd_tweets", >_<
+      convewsationgwaph.id -> "convewsation", >w<
+      d-diwectedatusewidgwaph.id -> "diwected_at_usew_id", /(^•ω•^)
+      invitedusewsgwaph.id -> "invited_usews",
+      mediatimewinegwaph.id -> "media_timewine", :3
+      mentionsgwaph.id -> "mentions", ʘwʘ
+      nyawwowcastsenttweetsgwaph.id -> "nawwowcast_sent_tweets", (˘ω˘)
+      nyuwwcastedtweetsgwaph.id -> "nuwwcasted_tweets",
+      q-quotewsgwaph.id -> "quotews", (ꈍᴗꈍ)
+      quotesgwaph.id -> "quotes", ^^
+      q-quotetweetsindexgwaph.id -> "quote_tweets_index", ^^
+      w-wepwiestotweetsgwaph.id -> "wepwies_to_tweets", ( ͡o ω ͡o )
+      w-wetweetsbymegwaph.id -> "wetweets_by_me", -.-
+      w-wetweetsgwaph.id -> "wetweets", ^^;;
+      wetweetsofmegwaph.id -> "wetweets_of_me", ^•ﻌ•^
+      wetweetsouwcegwaph.id -> "wetweet_souwce", (˘ω˘)
+      t-tweetswetweetedgwaph.id -> "tweets_wetweeted", o.O
+      usewtimewinegwaph.id -> "usew_timewine", (✿oωo)
+      cweatowsubscwiptiontimewinegwaph.id -> "cweatow_subscwiption_timewine", 😳😳😳
+      c-cweatowsubscwiptionmediatimewinegwaph.id -> "cweatow_subscwiption_image_timewine", (ꈍᴗꈍ)
     )
 
   /**
-   * On edge deletion, edges are either archived permanently or retained for 3 months, based on
-   * the retention policy in the above confluence page.
+   * on edge dewetion, σωσ edges awe eithew awchived pewmanentwy ow wetained fow 3 m-months, UwU based on
+   * the wetention p-powicy in t-the above confwuence p-page. ^•ﻌ•^
    *
-   * These two retention policies correspond to the two deletion techniques: archive and remove.
-   * We call removeEdges for edges with a short retention policy and archiveEdges for edges with
-   * a permanent retention policy.
+   * these two wetention powicies cowwespond to t-the two dewetion t-techniques: awchive and wemove. mya
+   * w-we caww w-wemoveedges fow edges with a showt w-wetention powicy and awchiveedges f-fow edges with
+   * a pewmanent wetention powicy. /(^•ω•^)
    */
-  val graphsWithRemovedEdges: Seq[Int] =
-    Seq(
-      CardTweetsGraph.id,
-      CuratedTimelineGraph.id,
-      CuratedTweetsGraph.id,
-      DirectedAtUserIdGraph.id,
-      MediaTimelineGraph.id,
-      MutedConversationsGraph.id,
-      QuotersGraph.id,
-      QuotesGraph.id,
-      QuoteTweetsIndexGraph.id,
-      ReportedTweetsGraph.id,
-      RetweetsOfMeGraph.id,
-      RetweetSourceGraph.id,
-      SoftLikesGraph.id,
-      TweetsRetweetedGraph.id,
-      CreatorSubscriptionTimelineGraph.id,
-      CreatorSubscriptionMediaTimelineGraph.id,
+  vaw g-gwaphswithwemovededges: seq[int] =
+    s-seq(
+      cawdtweetsgwaph.id, rawr
+      cuwatedtimewinegwaph.id, nyaa~~
+      c-cuwatedtweetsgwaph.id, ( ͡o ω ͡o )
+      d-diwectedatusewidgwaph.id, σωσ
+      mediatimewinegwaph.id, (✿oωo)
+      mutedconvewsationsgwaph.id, (///ˬ///✿)
+      quotewsgwaph.id, σωσ
+      quotesgwaph.id, UwU
+      quotetweetsindexgwaph.id, (⑅˘꒳˘)
+      wepowtedtweetsgwaph.id, /(^•ω•^)
+      w-wetweetsofmegwaph.id, -.-
+      w-wetweetsouwcegwaph.id, (ˆ ﻌ ˆ)♡
+      softwikesgwaph.id, nyaa~~
+      t-tweetswetweetedgwaph.id, ʘwʘ
+      c-cweatowsubscwiptiontimewinegwaph.id, :3
+      c-cweatowsubscwiptionmediatimewinegwaph.id, (U ᵕ U❁)
     )
 
   /**
-   * These edges should be left in place when bounced tweets are deleted.
-   * These edges are removed during hard deletion.
+   * these edges shouwd be weft in pwace w-when bounced tweets awe deweted. (U ﹏ U)
+   * these edges awe wemoved duwing hawd dewetion. ^^
    *
-   * This is done so external teams (timelines) can execute on these edges for
-   * tombstone feature.
+   * this i-is done so extewnaw teams (timewines) c-can exekawaii~ o-on these e-edges fow
+   * tombstone featuwe.
    */
-  val bounceDeleteGraphIds: Set[Int] =
-    Set(
-      UserTimelineGraph.id,
-      ConversationGraph.id
+  v-vaw b-bouncedewetegwaphids: s-set[int] =
+    s-set(
+      usewtimewinegwaph.id, òωó
+      convewsationgwaph.id
     )
 
-  def makeCounters(stats: StatsReceiver, operation: String): Map[Int, Counter] = {
-    TFlockIndexer.graphNames
-      .mapValues(stats.scope(_).counter(operation))
-      .withDefaultValue(stats.scope("unknown").counter(operation))
+  d-def makecountews(stats: s-statsweceivew, /(^•ω•^) o-opewation: stwing): m-map[int, 😳😳😳 countew] = {
+    tfwockindexew.gwaphnames
+      .mapvawues(stats.scope(_).countew(opewation))
+      .withdefauwtvawue(stats.scope("unknown").countew(opewation))
   }
 }
 
 /**
- * @param backgroundIndexingPriority specifies the queue to use for
- *   background indexing operations. This is useful for making the
- *   effects of background indexing operations (such as deleting edges
- *   for deleted Tweets) available sooner in testing scenarios
- *   (end-to-end tests or development instances). It is set to
- *   Priority.Low in production to reduce the load on high priority
- *   queues that we use for prominently user-visible operations.
+ * @pawam b-backgwoundindexingpwiowity specifies the queue to use fow
+ *   backgwound indexing o-opewations. :3 this is usefuw fow making the
+ *   effects of backgwound indexing opewations (such a-as deweting edges
+ *   fow deweted tweets) avaiwabwe soonew i-in testing scenawios
+ *   (end-to-end t-tests ow d-devewopment instances). (///ˬ///✿) it is set t-to
+ *   pwiowity.wow in pwoduction t-to weduce t-the woad on high pwiowity
+ *   queues that we use fow pwominentwy usew-visibwe opewations. rawr x3
  */
-class TFlockIndexer(
-  tflock: TFlockClient,
-  hasMedia: Tweet => Boolean,
-  backgroundIndexingPriority: Priority,
-  stats: StatsReceiver)
-    extends TweetIndexer {
-  private[this] val FutureNil = Future.Nil
+cwass tfwockindexew(
+  t-tfwock: tfwockcwient, (U ᵕ U❁)
+  hasmedia: t-tweet => boowean, (⑅˘꒳˘)
+  backgwoundindexingpwiowity: p-pwiowity, (˘ω˘)
+  s-stats: statsweceivew)
+    extends tweetindexew {
+  p-pwivate[this] v-vaw futuweniw = futuwe.niw
 
-  private[this] val archiveCounters = TFlockIndexer.makeCounters(stats, "archive")
-  private[this] val removeCounters = TFlockIndexer.makeCounters(stats, "remove")
-  private[this] val insertCounters = TFlockIndexer.makeCounters(stats, "insert")
-  private[this] val negateCounters = TFlockIndexer.makeCounters(stats, "negate")
+  p-pwivate[this] v-vaw awchivecountews = tfwockindexew.makecountews(stats, :3 "awchive")
+  pwivate[this] vaw wemovecountews = tfwockindexew.makecountews(stats, XD "wemove")
+  p-pwivate[this] v-vaw insewtcountews = t-tfwockindexew.makecountews(stats, "insewt")
+  pwivate[this] v-vaw nyegatecountews = t-tfwockindexew.makecountews(stats, >_< "negate")
 
-  private[this] val foregroundIndexingPriority: Priority = Priority.High
+  pwivate[this] v-vaw fowegwoundindexingpwiowity: pwiowity = pwiowity.high
 
-  override def createIndex(tweet: Tweet): Future[Unit] =
-    createEdges(tweet, isUndelete = false)
+  ovewwide def cweateindex(tweet: t-tweet): futuwe[unit] =
+    c-cweateedges(tweet, (✿oωo) isundewete = fawse)
 
-  override def undeleteIndex(tweet: Tweet): Future[Unit] =
-    createEdges(tweet, isUndelete = true)
+  ovewwide d-def undeweteindex(tweet: t-tweet): futuwe[unit] =
+    cweateedges(tweet, (ꈍᴗꈍ) isundewete = t-twue)
 
-  private[this] case class PartitionedEdges(
-    longRetention: Seq[ExecuteEdge[StatusGraph]] = Nil,
-    shortRetention: Seq[ExecuteEdge[StatusGraph]] = Nil,
-    negate: Seq[ExecuteEdge[StatusGraph]] = Nil,
-    ignore: Seq[ExecuteEdge[StatusGraph]] = Nil)
+  pwivate[this] case cwass pawtitionededges(
+    wongwetention: seq[exekawaii~edge[statusgwaph]] = nyiw, XD
+    showtwetention: s-seq[exekawaii~edge[statusgwaph]] = nyiw, :3
+    nyegate: s-seq[exekawaii~edge[statusgwaph]] = n-nyiw, mya
+    ignowe: seq[exekawaii~edge[statusgwaph]] = nyiw)
 
-  private[this] def partitionEdgesForDelete(
-    edges: Seq[ExecuteEdge[StatusGraph]],
-    isBounceDelete: Boolean
+  pwivate[this] d-def pawtitionedgesfowdewete(
+    e-edges: seq[exekawaii~edge[statusgwaph]], òωó
+    isbouncedewete: boowean
   ) =
-    edges.foldLeft(PartitionedEdges()) {
-      // Two dependees of UserTimelineGraph edge states to satisfy: timelines & safety tools.
-      // Timelines show bounce-deleted tweets as tombstones; regular deletes are not shown.
-      //   - i.e. timelineIds = UserTimelineGraph(Normal || Negative)
-      // Safety tools show deleted tweets to authorized internal review agents
-      //   - i.e. deletedIds = UserTimelineGraph(Removed || Negative)
-      case (partitionedEdges, edge) if isBounceDelete && edge.graphId == UserTimelineGraph.id =>
-        partitionedEdges.copy(negate = edge +: partitionedEdges.negate)
+    edges.fowdweft(pawtitionededges()) {
+      // t-two dependees of usewtimewinegwaph e-edge states to satisfy: timewines & safety toows. nyaa~~
+      // timewines s-show bounce-deweted tweets a-as tombstones; w-weguwaw dewetes awe nyot shown. 🥺
+      //   - i-i.e. -.- timewineids = u-usewtimewinegwaph(nowmaw || n-nyegative)
+      // s-safety toows show deweted tweets t-to authowized intewnaw w-weview agents
+      //   - i.e. 🥺 dewetedids = usewtimewinegwaph(wemoved || n-nyegative)
+      c-case (pawtitionededges, (˘ω˘) e-edge) if isbouncedewete && edge.gwaphid == u-usewtimewinegwaph.id =>
+        pawtitionededges.copy(negate = e-edge +: pawtitionededges.negate)
 
-      case (partitionedEdges, edge) if isBounceDelete && edge.graphId == ConversationGraph.id =>
-        // Bounce-deleted tweets remain rendered as tombstones in conversations, so do not modify
-        // the ConversationGraph edge state
-        partitionedEdges.copy(ignore = edge +: partitionedEdges.ignore)
+      c-case (pawtitionededges, òωó edge) if isbouncedewete && edge.gwaphid == convewsationgwaph.id =>
+        // b-bounce-deweted t-tweets wemain w-wendewed as tombstones i-in convewsations, UwU so do nyot m-modify
+        // the convewsationgwaph edge state
+        pawtitionededges.copy(ignowe = edge +: pawtitionededges.ignowe)
 
-      case (partitionedEdges, edge)
-          if TFlockIndexer.graphsWithRemovedEdges.contains(edge.graphId) =>
-        partitionedEdges.copy(shortRetention = edge +: partitionedEdges.shortRetention)
+      c-case (pawtitionededges, ^•ﻌ•^ edge)
+          i-if tfwockindexew.gwaphswithwemovededges.contains(edge.gwaphid) =>
+        p-pawtitionededges.copy(showtwetention = edge +: pawtitionededges.showtwetention)
 
-      case (partitionedEdges, edge) =>
-        partitionedEdges.copy(longRetention = edge +: partitionedEdges.longRetention)
+      case (pawtitionededges, mya e-edge) =>
+        pawtitionededges.copy(wongwetention = e-edge +: p-pawtitionededges.wongwetention)
     }
 
-  override def deleteIndex(tweet: Tweet, isBounceDelete: Boolean): Future[Unit] =
-    for {
-      edges <- getEdges(tweet, isCreate = false, isDelete = true, isUndelete = false)
-      partitionedEdges = partitionEdgesForDelete(edges, isBounceDelete)
+  ovewwide d-def deweteindex(tweet: tweet, (✿oωo) i-isbouncedewete: b-boowean): futuwe[unit] =
+    fow {
+      edges <- getedges(tweet, XD iscweate = fawse, :3 isdewete = twue, (U ﹏ U) isundewete = f-fawse)
+      p-pawtitionededges = p-pawtitionedgesfowdewete(edges, UwU isbouncedewete)
       () <-
-        Future
+        f-futuwe
           .join(
-            tflock
-              .archiveEdges(partitionedEdges.longRetention, backgroundIndexingPriority)
-              .onSuccess(_ =>
-                partitionedEdges.longRetention.foreach(e => archiveCounters(e.graphId).incr())),
-            tflock
-              .removeEdges(partitionedEdges.shortRetention, backgroundIndexingPriority)
-              .onSuccess(_ =>
-                partitionedEdges.shortRetention.foreach(e => removeCounters(e.graphId).incr())),
-            tflock
-              .negateEdges(partitionedEdges.negate, backgroundIndexingPriority)
-              .onSuccess(_ =>
-                partitionedEdges.negate.foreach(e => negateCounters(e.graphId).incr()))
+            tfwock
+              .awchiveedges(pawtitionededges.wongwetention, ʘwʘ backgwoundindexingpwiowity)
+              .onsuccess(_ =>
+                pawtitionededges.wongwetention.foweach(e => awchivecountews(e.gwaphid).incw())), >w<
+            t-tfwock
+              .wemoveedges(pawtitionededges.showtwetention, 😳😳😳 b-backgwoundindexingpwiowity)
+              .onsuccess(_ =>
+                pawtitionededges.showtwetention.foweach(e => w-wemovecountews(e.gwaphid).incw())), rawr
+            tfwock
+              .negateedges(pawtitionededges.negate, ^•ﻌ•^ backgwoundindexingpwiowity)
+              .onsuccess(_ =>
+                p-pawtitionededges.negate.foweach(e => n-nyegatecountews(e.gwaphid).incw()))
           )
           .unit
-    } yield ()
+    } yiewd ()
 
   /**
-   * This operation is called when a user is put into or taken out of
-   * a state in which their retweets should no longer be visible
-   * (e.g. suspended or ROPO).
+   * t-this opewation i-is cawwed when a usew is put into ow taken out of
+   * a state in which theiw w-wetweets shouwd n-nyo wongew b-be visibwe
+   * (e.g. σωσ s-suspended o-ow wopo). :3
    */
-  override def setRetweetVisibility(retweetId: TweetId, setVisible: Boolean): Future[Unit] = {
-    val retweetEdge = Seq(ExecuteEdge(retweetId, RetweetsGraph, None, Reverse))
+  ovewwide def setwetweetvisibiwity(wetweetid: tweetid, rawr x3 s-setvisibwe: b-boowean): futuwe[unit] = {
+    vaw wetweetedge = s-seq(exekawaii~edge(wetweetid, nyaa~~ w-wetweetsgwaph, :3 nyone, wevewse))
 
-    if (setVisible) {
-      tflock
-        .insertEdges(retweetEdge, backgroundIndexingPriority)
-        .onSuccess(_ => insertCounters(RetweetsGraph.id).incr())
-    } else {
-      tflock
-        .archiveEdges(retweetEdge, backgroundIndexingPriority)
-        .onSuccess(_ => archiveCounters(RetweetsGraph.id).incr())
+    i-if (setvisibwe) {
+      tfwock
+        .insewtedges(wetweetedge, >w< backgwoundindexingpwiowity)
+        .onsuccess(_ => i-insewtcountews(wetweetsgwaph.id).incw())
+    } ewse {
+      t-tfwock
+        .awchiveedges(wetweetedge, rawr b-backgwoundindexingpwiowity)
+        .onsuccess(_ => awchivecountews(wetweetsgwaph.id).incw())
     }
   }
 
-  private[this] def createEdges(tweet: Tweet, isUndelete: Boolean): Future[Unit] =
-    for {
-      edges <- getEdges(tweet = tweet, isCreate = true, isDelete = false, isUndelete = isUndelete)
-      () <- tflock.insertEdges(edges, foregroundIndexingPriority)
-    } yield {
-      // Count all the edges we've successfully added:
-      edges.foreach(e => insertCounters(e.graphId).incr())
+  p-pwivate[this] def cweateedges(tweet: t-tweet, 😳 isundewete: b-boowean): f-futuwe[unit] =
+    fow {
+      edges <- getedges(tweet = tweet, 😳 i-iscweate = twue, 🥺 isdewete = fawse, rawr x3 isundewete = i-isundewete)
+      () <- t-tfwock.insewtedges(edges, ^^ fowegwoundindexingpwiowity)
+    } y-yiewd {
+      // count aww the e-edges we've successfuwwy a-added:
+      edges.foweach(e => insewtcountews(e.gwaphid).incw())
     }
 
-  private[this] def addRTEdges(
-    tweet: Tweet,
-    share: Share,
-    isCreate: Boolean,
-    edges: ListBuffer[ExecuteEdge[StatusGraph]],
-    futureEdges: ListBuffer[Future[Seq[ExecuteEdge[StatusGraph]]]]
-  ): Unit = {
+  p-pwivate[this] def addwtedges(
+    tweet: t-tweet, ( ͡o ω ͡o )
+    shawe: s-shawe, XD
+    iscweate: boowean, ^^
+    e-edges: wistbuffew[exekawaii~edge[statusgwaph]], (⑅˘꒳˘)
+    futuweedges: w-wistbuffew[futuwe[seq[exekawaii~edge[statusgwaph]]]]
+  ): unit = {
 
-    edges += RetweetsOfMeGraph.edge(share.sourceUserId, tweet.id)
-    edges += RetweetsByMeGraph.edge(getUserId(tweet), tweet.id)
-    edges += RetweetsGraph.edge(share.sourceStatusId, tweet.id)
+    e-edges += w-wetweetsofmegwaph.edge(shawe.souwceusewid, (⑅˘꒳˘) tweet.id)
+    edges += wetweetsbymegwaph.edge(getusewid(tweet), ^•ﻌ•^ tweet.id)
+    edges += wetweetsgwaph.edge(shawe.souwcestatusid, ( ͡o ω ͡o ) tweet.id)
 
-    if (isCreate) {
-      edges += ExecuteEdge(
-        sourceId = getUserId(tweet),
-        graph = RetweetSourceGraph,
-        destinationIds = Some(Seq(share.sourceStatusId)),
-        direction = Forward,
-        position = Some(SnowflakeId(tweet.id).time.inMillis)
+    if (iscweate) {
+      edges += exekawaii~edge(
+        souwceid = getusewid(tweet), ( ͡o ω ͡o )
+        gwaph = wetweetsouwcegwaph, (✿oωo)
+        destinationids = s-some(seq(shawe.souwcestatusid)), 😳😳😳
+        d-diwection = fowwawd, OwO
+        position = s-some(snowfwakeid(tweet.id).time.inmiwwis)
       )
-      edges.append(TweetsRetweetedGraph.edge(share.sourceUserId, share.sourceStatusId))
-    } else {
-      edges += RetweetSourceGraph.edge(getUserId(tweet), share.sourceStatusId)
+      e-edges.append(tweetswetweetedgwaph.edge(shawe.souwceusewid, ^^ s-shawe.souwcestatusid))
+    } ewse {
+      edges += w-wetweetsouwcegwaph.edge(getusewid(tweet), rawr x3 shawe.souwcestatusid)
 
-      // if this is the last retweet we need to remove it from the source user's
-      // tweets retweeted graph
-      futureEdges.append(
-        tflock.count(RetweetsGraph.from(share.sourceStatusId)).flatMap { count =>
-          if (count <= 1) {
-            tflock.selectAll(RetweetsGraph.from(share.sourceStatusId)).map { tweets =>
-              if (tweets.size <= 1)
-                Seq(TweetsRetweetedGraph.edge(share.sourceUserId, share.sourceStatusId))
-              else
-                Nil
+      // i-if this is the w-wast wetweet we nyeed to wemove i-it fwom the souwce usew's
+      // t-tweets wetweeted g-gwaph
+      futuweedges.append(
+        tfwock.count(wetweetsgwaph.fwom(shawe.souwcestatusid)).fwatmap { c-count =>
+          i-if (count <= 1) {
+            tfwock.sewectaww(wetweetsgwaph.fwom(shawe.souwcestatusid)).map { t-tweets =>
+              i-if (tweets.size <= 1)
+                s-seq(tweetswetweetedgwaph.edge(shawe.souwceusewid, 🥺 s-shawe.souwcestatusid))
+              e-ewse
+                n-nyiw
             }
-          } else {
-            FutureNil
+          } e-ewse {
+            futuweniw
           }
         }
       )
     }
   }
 
-  private[this] def addReplyEdges(
-    tweet: Tweet,
-    edges: ListBuffer[ExecuteEdge[StatusGraph]]
-  ): Unit = {
-    getReply(tweet).foreach { reply =>
-      reply.inReplyToStatusId.flatMap { inReplyToStatusId =>
-        edges += RepliesToTweetsGraph.edge(inReplyToStatusId, tweet.id)
+  p-pwivate[this] def a-addwepwyedges(
+    t-tweet: tweet,
+    edges: wistbuffew[exekawaii~edge[statusgwaph]]
+  ): u-unit = {
+    getwepwy(tweet).foweach { wepwy =>
+      w-wepwy.inwepwytostatusid.fwatmap { inwepwytostatusid =>
+        e-edges += wepwiestotweetsgwaph.edge(inwepwytostatusid, (ˆ ﻌ ˆ)♡ t-tweet.id)
 
-        // only index conversationId if this is a reply to another tweet
-        TweetLenses.conversationId.get(tweet).map { conversationId =>
-          edges += ConversationGraph.edge(conversationId, tweet.id)
+        // o-onwy index convewsationid i-if this is a wepwy to anothew t-tweet
+        tweetwenses.convewsationid.get(tweet).map { convewsationid =>
+          e-edges += convewsationgwaph.edge(convewsationid, ( ͡o ω ͡o ) t-tweet.id)
         }
       }
     }
   }
 
-  private[this] def addDirectedAtEdges(
-    tweet: Tweet,
-    edges: ListBuffer[ExecuteEdge[StatusGraph]]
-  ): Unit = {
-    TweetLenses.directedAtUser.get(tweet).foreach { directedAtUser =>
-      edges += DirectedAtUserIdGraph.edge(directedAtUser.userId, tweet.id)
+  pwivate[this] def adddiwectedatedges(
+    tweet: tweet, >w<
+    e-edges: wistbuffew[exekawaii~edge[statusgwaph]]
+  ): unit = {
+    t-tweetwenses.diwectedatusew.get(tweet).foweach { d-diwectedatusew =>
+      edges += diwectedatusewidgwaph.edge(diwectedatusew.usewid, /(^•ω•^) tweet.id)
     }
   }
 
-  private[this] def addMentionEdges(
-    tweet: Tweet,
-    edges: ListBuffer[ExecuteEdge[StatusGraph]]
-  ): Unit = {
-    getMentions(tweet)
-      .flatMap(_.userId).foreach { mention =>
-        edges += MentionsGraph.edge(mention, tweet.id)
+  p-pwivate[this] def addmentionedges(
+    t-tweet: tweet, 😳😳😳
+    e-edges: wistbuffew[exekawaii~edge[statusgwaph]]
+  ): u-unit = {
+    getmentions(tweet)
+      .fwatmap(_.usewid).foweach { mention =>
+        e-edges += m-mentionsgwaph.edge(mention, (U ᵕ U❁) tweet.id)
       }
   }
 
-  private[this] def addQTEdges(
-    tweet: Tweet,
-    edges: ListBuffer[ExecuteEdge[StatusGraph]],
-    futureEdges: ListBuffer[Future[Seq[ExecuteEdge[StatusGraph]]]],
-    isCreate: Boolean
-  ): Unit = {
-    val userId = getUserId(tweet)
+  p-pwivate[this] def addqtedges(
+    tweet: t-tweet,
+    edges: wistbuffew[exekawaii~edge[statusgwaph]], (˘ω˘)
+    f-futuweedges: w-wistbuffew[futuwe[seq[exekawaii~edge[statusgwaph]]]], 😳
+    i-iscweate: boowean
+  ): u-unit = {
+    vaw u-usewid = getusewid(tweet)
 
-    tweet.quotedTweet.foreach { quotedTweet =>
-      // Regardless of tweet creates/deletes, we add the corresponding edges to the
-      // following two graphs. Note that we're handling the case for
-      // the QuotersGraph slightly differently in the tweet delete case.
-      edges.append(QuotesGraph.edge(quotedTweet.userId, tweet.id))
-      edges.append(QuoteTweetsIndexGraph.edge(quotedTweet.tweetId, tweet.id))
-      if (isCreate) {
-        // As mentioned above, for tweet creates we go ahead and add an edge
-        // to the QuotersGraph without any additional checks.
-        edges.append(QuotersGraph.edge(quotedTweet.tweetId, userId))
-      } else {
-        // For tweet deletes, we only add an edge to be deleted from the
-        // QuotersGraph if the tweeting user isn't quoting the tweet anymore
-        // i.e. if a user has quoted a tweet multiple times, we only delete
-        // an edge from the QuotersGraph if they've deleted all the quotes,
-        // otherwise an edge should exist by definition of what the QuotersGraph
-        // represents.
+    t-tweet.quotedtweet.foweach { q-quotedtweet =>
+      // wegawdwess o-of tweet cweates/dewetes, (ꈍᴗꈍ) w-we add t-the cowwesponding e-edges to the
+      // f-fowwowing t-two gwaphs. :3 n-nyote that we'we h-handwing the case fow
+      // t-the quotewsgwaph swightwy diffewentwy i-in the tweet dewete case. /(^•ω•^)
+      e-edges.append(quotesgwaph.edge(quotedtweet.usewid, t-tweet.id))
+      e-edges.append(quotetweetsindexgwaph.edge(quotedtweet.tweetid, ^^;; tweet.id))
+      if (iscweate) {
+        // as mentioned above, o.O f-fow tweet c-cweates we go ahead a-and add an edge
+        // to the quotewsgwaph without any additionaw checks. 😳
+        e-edges.append(quotewsgwaph.edge(quotedtweet.tweetid, UwU u-usewid))
+      } ewse {
+        // fow tweet dewetes, >w< w-we onwy add a-an edge to be deweted fwom the
+        // quotewsgwaph if the tweeting u-usew isn't q-quoting the tweet a-anymowe
+        // i-i.e. o.O if a usew has quoted a tweet muwtipwe t-times, (˘ω˘) we onwy d-dewete
+        // an edge fwom the quotewsgwaph i-if they've deweted aww the quotes, òωó
+        // othewwise an edge s-shouwd exist by definition of nyani t-the quotewsgwaph
+        // w-wepwesents. nyaa~~
 
-        // Note: There can be a potential edge case here due to a race condition
-        // in the following scenario.
-        // i)   A quotes a tweet T twice resulting in tweets T1 and T2.
-        // ii)  There should exist edges in the QuotersGraph from T -> A and T1 <-> T, T2 <-> T in
-        //      the QuoteTweetsIndexGraph, but one of the edges haven't been written
-        //      to the QuoteTweetsIndex graph in TFlock yet.
-        // iii) In this scenario, we shouldn't really be deleting an edge as we're doing below.
-        // The approach that we're taking below is a "best effort" approach similar to what we
-        // currently do for RTs.
+        // nyote: t-thewe can be a potentiaw e-edge case hewe due to a w-wace condition
+        // in the f-fowwowing scenawio. ( ͡o ω ͡o )
+        // i-i)   a quotes a t-tweet t twice wesuwting i-in tweets t1 and t2. 😳😳😳
+        // i-ii)  thewe s-shouwd exist e-edges in the quotewsgwaph fwom t-t -> a and t1 <-> t, ^•ﻌ•^ t2 <-> t in
+        //      the quotetweetsindexgwaph, b-but o-one of the edges h-haven't been wwitten
+        //      to the quotetweetsindex gwaph in tfwock yet. (˘ω˘)
+        // iii) i-in this scenawio, (˘ω˘) we shouwdn't w-weawwy be deweting a-an edge as we'we doing bewow. -.-
+        // the a-appwoach that we'we taking bewow i-is a "best effowt" a-appwoach simiwaw t-to nyani w-we
+        // cuwwentwy d-do fow wts.
 
-        // Find all the quotes of the quoted tweet from the quoting user
-        val quotesFromQuotingUser = QuoteTweetsIndexGraph
-          .from(quotedTweet.tweetId)
-          .intersect(UserTimelineGraph.from(userId))
-        futureEdges.append(
-          tflock
-            .count(quotesFromQuotingUser).flatMap { count =>
-              // If this is the last quote of the quoted tweet from the quoting user,
-              // we go ahead and delete the edge from the QuotersGraph.
+        // find aww the quotes of the quoted tweet fwom the quoting usew
+        v-vaw quotesfwomquotingusew = quotetweetsindexgwaph
+          .fwom(quotedtweet.tweetid)
+          .intewsect(usewtimewinegwaph.fwom(usewid))
+        f-futuweedges.append(
+          tfwock
+            .count(quotesfwomquotingusew).fwatmap { count =>
+              // if t-this is the wast quote of the quoted tweet fwom the quoting usew, ^•ﻌ•^
+              // we go ahead and d-dewete the edge f-fwom the quotewsgwaph.
               if (count <= 1) {
-                tflock.selectAll(quotesFromQuotingUser).map { tweets =>
+                t-tfwock.sewectaww(quotesfwomquotingusew).map { tweets =>
                   if (tweets.size <= 1) {
-                    Seq(QuotersGraph.edge(quotedTweet.tweetId, userId))
-                  } else {
-                    Nil
+                    s-seq(quotewsgwaph.edge(quotedtweet.tweetid, /(^•ω•^) u-usewid))
+                  } ewse {
+                    n-nyiw
                   }
                 }
-              } else {
-                FutureNil
+              } ewse {
+                f-futuweniw
               }
             }
         )
@@ -342,110 +342,110 @@ class TFlockIndexer(
     }
   }
 
-  private[this] def addCardEdges(
-    tweet: Tweet,
-    edges: ListBuffer[ExecuteEdge[StatusGraph]]
-  ): Unit = {
-    // Note that we are indexing only the TOO "stored" cards
-    // (cardUri=card://<cardId>). Rest of the cards are ignored here.
-    tweet.cardReference
-      .collect {
-        case StoredCard(id) =>
-          edges.append(CardTweetsGraph.edge(id, tweet.id))
-      }.getOrElse(())
+  pwivate[this] def addcawdedges(
+    tweet: tweet, (///ˬ///✿)
+    e-edges: wistbuffew[exekawaii~edge[statusgwaph]]
+  ): unit = {
+    // note that w-we awe indexing o-onwy the too "stowed" c-cawds
+    // (cawduwi=cawd://<cawdid>). mya west of the cawds a-awe ignowed hewe. o.O
+    tweet.cawdwefewence
+      .cowwect {
+        case stowedcawd(id) =>
+          edges.append(cawdtweetsgwaph.edge(id, ^•ﻌ•^ tweet.id))
+      }.getowewse(())
   }
 
-  // Note: on undelete, this method restores all archived edges, including those that may have
-  // been archived prior to the delete. This is incorrect behavior but in practice rarely
-  // causes problems, as undeletes are so rare.
-  private[this] def addEdgesForDeleteOrUndelete(
-    tweet: Tweet,
-    edges: ListBuffer[ExecuteEdge[StatusGraph]]
-  ): Unit = {
-    edges.appendAll(
-      Seq(
-        MentionsGraph.edges(tweet.id, None, Reverse),
-        RepliesToTweetsGraph.edges(tweet.id, None)
+  // n-nyote: on undewete, (U ᵕ U❁) t-this method w-westowes aww a-awchived edges, :3 incwuding those that may have
+  // b-been awchived p-pwiow to the dewete. (///ˬ///✿) this is incowwect behaviow b-but in pwactice wawewy
+  // causes pwobwems, (///ˬ///✿) a-as undewetes awe so wawe. 🥺
+  pwivate[this] def addedgesfowdeweteowundewete(
+    tweet: t-tweet, -.-
+    e-edges: wistbuffew[exekawaii~edge[statusgwaph]]
+  ): unit = {
+    e-edges.appendaww(
+      s-seq(
+        m-mentionsgwaph.edges(tweet.id, nyaa~~ nyone, wevewse), (///ˬ///✿)
+        wepwiestotweetsgwaph.edges(tweet.id, 🥺 n-nyone)
       )
     )
 
-    // When we delete or undelete a conversation control root Tweet we want to archive or restore
-    // all the edges in InvitedUsersGraph from the Tweet id.
-    if (hasConversationControl(tweet) && isConversationRoot(tweet)) {
-      edges.append(InvitedUsersGraph.edges(tweet.id, None))
+    // when we dewete ow undewete a convewsation c-contwow woot tweet we want to awchive ow westowe
+    // a-aww the edges in i-invitedusewsgwaph f-fwom the tweet i-id. >w<
+    if (hasconvewsationcontwow(tweet) && i-isconvewsationwoot(tweet)) {
+      edges.append(invitedusewsgwaph.edges(tweet.id, rawr x3 n-nyone))
     }
   }
 
-  private[this] def addSimpleEdges(
-    tweet: Tweet,
-    edges: ListBuffer[ExecuteEdge[StatusGraph]]
-  ): Unit = {
-    if (TweetLenses.nullcast.get(tweet)) {
-      edges.append(NullcastedTweetsGraph.edge(getUserId(tweet), tweet.id))
-    } else if (TweetLenses.narrowcast.get(tweet).isDefined) {
-      edges.append(NarrowcastSentTweetsGraph.edge(getUserId(tweet), tweet.id))
-    } else {
-      edges.append(UserTimelineGraph.edge(getUserId(tweet), tweet.id))
+  pwivate[this] def addsimpweedges(
+    t-tweet: tweet, (⑅˘꒳˘)
+    edges: w-wistbuffew[exekawaii~edge[statusgwaph]]
+  ): unit = {
+    if (tweetwenses.nuwwcast.get(tweet)) {
+      e-edges.append(nuwwcastedtweetsgwaph.edge(getusewid(tweet), σωσ t-tweet.id))
+    } ewse if (tweetwenses.nawwowcast.get(tweet).isdefined) {
+      e-edges.append(nawwowcastsenttweetsgwaph.edge(getusewid(tweet), XD tweet.id))
+    } e-ewse {
+      e-edges.append(usewtimewinegwaph.edge(getusewid(tweet), -.- tweet.id))
 
-      if (hasMedia(tweet))
-        edges.append(MediaTimelineGraph.edge(getUserId(tweet), tweet.id))
+      i-if (hasmedia(tweet))
+        e-edges.append(mediatimewinegwaph.edge(getusewid(tweet), >_< tweet.id))
 
-      // Index root creator subscription tweets.
-      // Ignore replies because those are not necessarily visible to a user who subscribes to tweet author
-      val isRootTweet: Boolean = tweet.coreData match {
-        case Some(c) => c.reply.isEmpty && c.share.isEmpty
-        case None => true
+      // i-index woot cweatow subscwiption tweets. rawr
+      // ignowe wepwies b-because those awe nyot nyecessawiwy v-visibwe to a usew who subscwibes to tweet a-authow
+      vaw i-iswoottweet: boowean = t-tweet.cowedata match {
+        c-case some(c) => c-c.wepwy.isempty && c.shawe.isempty
+        c-case nyone => twue
       }
 
-      if (tweet.exclusiveTweetControl.isDefined && isRootTweet) {
-        edges.append(CreatorSubscriptionTimelineGraph.edge(getUserId(tweet), tweet.id))
+      i-if (tweet.excwusivetweetcontwow.isdefined && iswoottweet) {
+        e-edges.append(cweatowsubscwiptiontimewinegwaph.edge(getusewid(tweet), 😳😳😳 t-tweet.id))
 
-        if (hasMedia(tweet))
-          edges.append(CreatorSubscriptionMediaTimelineGraph.edge(getUserId(tweet), tweet.id))
+        if (hasmedia(tweet))
+          edges.append(cweatowsubscwiptionmediatimewinegwaph.edge(getusewid(tweet), UwU tweet.id))
       }
     }
   }
 
   /**
-   * Issues edges for each mention of user in a conversation-controlled tweet. This way InvitedUsers
-   * graph accumulates complete set of ids for @mention-invited users, by conversation id.
+   * issues edges f-fow each mention o-of usew in a convewsation-contwowwed tweet. this way invitedusews
+   * gwaph accumuwates c-compwete set of ids fow @mention-invited u-usews, (U ﹏ U) by convewsation i-id. (˘ω˘)
    */
-  private def invitedUsersEdgesForCreate(
-    tweet: Tweet,
-    edges: ListBuffer[ExecuteEdge[StatusGraph]]
-  ): Unit = {
-    val conversationId: Long = getConversationId(tweet).getOrElse(tweet.id)
-    val mentions: Seq[UserId] = getMentions(tweet).flatMap(_.userId)
-    edges.appendAll(mentions.map(userId => InvitedUsersGraph.edge(conversationId, userId)))
+  pwivate def invitedusewsedgesfowcweate(
+    tweet: tweet, /(^•ω•^)
+    edges: wistbuffew[exekawaii~edge[statusgwaph]]
+  ): u-unit = {
+    vaw convewsationid: wong = g-getconvewsationid(tweet).getowewse(tweet.id)
+    vaw mentions: s-seq[usewid] = getmentions(tweet).fwatmap(_.usewid)
+    e-edges.appendaww(mentions.map(usewid => invitedusewsgwaph.edge(convewsationid, (U ﹏ U) u-usewid)))
   }
 
   /**
-   * Issues edges of InviteUsersGraph that ought to be deleted for a conversation controlled reply.
-   * These are mentions of users in the given tweet, only if the user was not mentioned elsewhere
-   * in the conversation. This way for a conversation, InvitedUsersGraph would always hold a set
-   * of all users invited to the conversation, and an edge is removed only after the last mention of
-   * a user is deleted.
+   * issues e-edges of inviteusewsgwaph t-that ought to be d-deweted fow a convewsation c-contwowwed w-wepwy. ^•ﻌ•^
+   * these awe mentions of usews in the given tweet, >w< onwy if the usew was nyot mentioned e-ewsewhewe
+   * i-in the convewsation. ʘwʘ t-this w-way fow a convewsation, òωó i-invitedusewsgwaph w-wouwd awways howd a set
+   * of aww usews invited to the convewsation, o.O a-and an edge is w-wemoved onwy aftew the wast mention of
+   * a usew is deweted. ( ͡o ω ͡o )
    */
-  private def invitedUsersEdgesForDelete(
-    tweet: Tweet,
-    futureEdges: ListBuffer[Future[Seq[ExecuteEdge[StatusGraph]]]]
-  ): Unit = {
-    getConversationId(tweet).foreach { conversationId: Long =>
-      val mentions: Seq[UserId] = getMentions(tweet).flatMap(_.userId)
-      mentions.foreach { userId =>
-        val tweetIdsWithinConversation = ConversationGraph.from(conversationId)
-        val tweetIdsThatMentionUser = MentionsGraph.from(userId)
-        futureEdges.append(
-          tflock
-            .selectAll(
-              query = tweetIdsThatMentionUser.intersect(tweetIdsWithinConversation),
-              limit = Some(2), // Just need to know if it is >1 or <=1, so 2 are enough.
-              pageSize = None // Provide default, otherwise Mockito complains
-            ).map { tweetIds: Seq[Long] =>
-              if (tweetIds.size <= 1) {
-                Seq(InvitedUsersGraph.edge(conversationId, userId))
-              } else {
-                Nil
+  p-pwivate def i-invitedusewsedgesfowdewete(
+    t-tweet: tweet, mya
+    futuweedges: wistbuffew[futuwe[seq[exekawaii~edge[statusgwaph]]]]
+  ): u-unit = {
+    getconvewsationid(tweet).foweach { convewsationid: w-wong =>
+      v-vaw mentions: seq[usewid] = getmentions(tweet).fwatmap(_.usewid)
+      m-mentions.foweach { usewid =>
+        v-vaw tweetidswithinconvewsation = c-convewsationgwaph.fwom(convewsationid)
+        vaw tweetidsthatmentionusew = m-mentionsgwaph.fwom(usewid)
+        f-futuweedges.append(
+          t-tfwock
+            .sewectaww(
+              q-quewy = tweetidsthatmentionusew.intewsect(tweetidswithinconvewsation), >_<
+              w-wimit = some(2), // j-just nyeed to know if i-it is >1 ow <=1, rawr s-so 2 awe enough. >_<
+              pagesize = nyone // p-pwovide defauwt, (U ﹏ U) othewwise mockito compwains
+            ).map { t-tweetids: seq[wong] =>
+              i-if (tweetids.size <= 1) {
+                seq(invitedusewsgwaph.edge(convewsationid, rawr u-usewid))
+              } e-ewse {
+                niw
               }
             }
         )
@@ -453,80 +453,80 @@ class TFlockIndexer(
     }
   }
 
-  private def hasInviteViaMention(tweet: Tweet): Boolean = {
-    tweet.conversationControl match {
-      case Some(ConversationControl.ByInvitation(controls)) =>
-        controls.inviteViaMention.getOrElse(false)
-      case Some(ConversationControl.Community(controls)) =>
-        controls.inviteViaMention.getOrElse(false)
-      case Some(ConversationControl.Followers(followers)) =>
-        followers.inviteViaMention.getOrElse(false)
-      case _ =>
-        false
+  pwivate def hasinviteviamention(tweet: t-tweet): boowean = {
+    tweet.convewsationcontwow m-match {
+      c-case some(convewsationcontwow.byinvitation(contwows)) =>
+        contwows.inviteviamention.getowewse(fawse)
+      case some(convewsationcontwow.community(contwows)) =>
+        c-contwows.inviteviamention.getowewse(fawse)
+      c-case some(convewsationcontwow.fowwowews(fowwowews)) =>
+        fowwowews.inviteviamention.getowewse(fawse)
+      c-case _ =>
+        fawse
     }
   }
 
-  private def hasConversationControl(tweet: Tweet): Boolean =
-    tweet.conversationControl.isDefined
+  pwivate def hasconvewsationcontwow(tweet: t-tweet): b-boowean =
+    tweet.convewsationcontwow.isdefined
 
-  // If a Tweet has a ConversationControl, it must have a ConversationId associated with it so we
-  // can compare the ConversationId with the current Tweet ID to determine if it's the root of the
-  // conversation. See ConversationIdHydrator for more details
-  private def isConversationRoot(tweet: Tweet): Boolean =
-    getConversationId(tweet).get == tweet.id
+  // if a tweet h-has a convewsationcontwow, (U ᵕ U❁) it m-must have a convewsationid associated with it s-so we
+  // can compawe t-the convewsationid w-with the c-cuwwent tweet id to detewmine if it's the woot of the
+  // convewsation. see convewsationidhydwatow fow mowe d-detaiws
+  pwivate d-def isconvewsationwoot(tweet: t-tweet): boowean =
+    g-getconvewsationid(tweet).get == t-tweet.id
 
-  private def addInvitedUsersEdges(
-    tweet: Tweet,
-    isCreate: Boolean,
-    isUndelete: Boolean,
-    edges: ListBuffer[ExecuteEdge[StatusGraph]],
-    futureEdges: ListBuffer[Future[Seq[ExecuteEdge[StatusGraph]]]]
-  ): Unit = {
-    if (hasConversationControl(tweet)) {
-      if (isCreate) {
-        if (isConversationRoot(tweet) && !isUndelete) {
-          // For root Tweets, only add edges for original creates, not for undeletes.
-          // Undeletes are handled by addEdgesForDeleteOrUndelete.
-          invitedUsersEdgesForCreate(tweet, edges)
+  p-pwivate def addinvitedusewsedges(
+    tweet: tweet, (ˆ ﻌ ˆ)♡
+    i-iscweate: b-boowean, >_<
+    isundewete: boowean, ^^;;
+    e-edges: w-wistbuffew[exekawaii~edge[statusgwaph]], ʘwʘ
+    futuweedges: wistbuffew[futuwe[seq[exekawaii~edge[statusgwaph]]]]
+  ): u-unit = {
+    if (hasconvewsationcontwow(tweet)) {
+      if (iscweate) {
+        i-if (isconvewsationwoot(tweet) && !isundewete) {
+          // fow woot tweets, 😳😳😳 o-onwy add edges f-fow owiginaw cweates, UwU nyot fow u-undewetes. OwO
+          // u-undewetes a-awe handwed by addedgesfowdeweteowundewete. :3
+          i-invitedusewsedgesfowcweate(tweet, -.- e-edges)
         }
-        if (!isConversationRoot(tweet) && hasInviteViaMention(tweet)) {
-          // For replies, only add edges when the conversation control is in inviteViaMention mode.
-          invitedUsersEdgesForCreate(tweet, edges)
+        if (!isconvewsationwoot(tweet) && h-hasinviteviamention(tweet)) {
+          // fow wepwies, 🥺 onwy a-add edges when t-the convewsation c-contwow is in inviteviamention m-mode. -.-
+          invitedusewsedgesfowcweate(tweet, -.- edges)
         }
-      } else {
-        if (!isConversationRoot(tweet)) {
-          invitedUsersEdgesForDelete(tweet, futureEdges)
+      } e-ewse {
+        if (!isconvewsationwoot(tweet)) {
+          invitedusewsedgesfowdewete(tweet, futuweedges)
         }
       }
     }
   }
 
-  private[this] def getEdges(
-    tweet: Tweet,
-    isCreate: Boolean,
-    isDelete: Boolean,
-    isUndelete: Boolean
-  ): Future[Seq[ExecuteEdge[StatusGraph]]] = {
-    val edges = ListBuffer[ExecuteEdge[StatusGraph]]()
-    val futureEdges = ListBuffer[Future[Seq[ExecuteEdge[StatusGraph]]]]()
+  pwivate[this] def getedges(
+    tweet: tweet, (U ﹏ U)
+    i-iscweate: boowean, rawr
+    isdewete: boowean, mya
+    isundewete: boowean
+  ): futuwe[seq[exekawaii~edge[statusgwaph]]] = {
+    vaw edges = wistbuffew[exekawaii~edge[statusgwaph]]()
+    vaw futuweedges = w-wistbuffew[futuwe[seq[exekawaii~edge[statusgwaph]]]]()
 
-    addSimpleEdges(tweet, edges)
-    getShare(tweet) match {
-      case Some(share) => addRTEdges(tweet, share, isCreate, edges, futureEdges)
-      case _ =>
-        addInvitedUsersEdges(tweet, isCreate, isUndelete, edges, futureEdges)
-        addReplyEdges(tweet, edges)
-        addDirectedAtEdges(tweet, edges)
-        addMentionEdges(tweet, edges)
-        addQTEdges(tweet, edges, futureEdges, isCreate)
-        addCardEdges(tweet, edges)
-        if (isDelete || isUndelete) {
-          addEdgesForDeleteOrUndelete(tweet, edges)
+    addsimpweedges(tweet, ( ͡o ω ͡o ) edges)
+    g-getshawe(tweet) match {
+      c-case some(shawe) => addwtedges(tweet, /(^•ω•^) shawe, >_< i-iscweate, edges, (✿oωo) futuweedges)
+      c-case _ =>
+        addinvitedusewsedges(tweet, 😳😳😳 i-iscweate, (ꈍᴗꈍ) i-isundewete, 🥺 edges, futuweedges)
+        addwepwyedges(tweet, mya e-edges)
+        adddiwectedatedges(tweet, (ˆ ﻌ ˆ)♡ edges)
+        addmentionedges(tweet, (⑅˘꒳˘) e-edges)
+        addqtedges(tweet, òωó e-edges, futuweedges, o.O i-iscweate)
+        addcawdedges(tweet, XD e-edges)
+        i-if (isdewete || isundewete) {
+          addedgesfowdeweteowundewete(tweet, (˘ω˘) e-edges)
         }
     }
 
-    Future
-      .collect(futureEdges)
-      .map { moreEdges => (edges ++= moreEdges.flatten).toList }
+    futuwe
+      .cowwect(futuweedges)
+      .map { moweedges => (edges ++= m-moweedges.fwatten).towist }
   }
 }

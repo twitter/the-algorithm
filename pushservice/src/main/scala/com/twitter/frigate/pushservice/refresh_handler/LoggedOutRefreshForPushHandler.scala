@@ -1,258 +1,258 @@
-package com.twitter.frigate.pushservice.refresh_handler
+package com.twittew.fwigate.pushsewvice.wefwesh_handwew
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.common.base.CandidateResult
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.frigate.common.base.FetchRankFlowWithHydratedCandidates
-import com.twitter.frigate.common.base.Invalid
-import com.twitter.frigate.common.base.OK
-import com.twitter.frigate.common.base.Response
-import com.twitter.frigate.common.base.Result
-import com.twitter.frigate.common.base.Stats.track
-import com.twitter.frigate.common.base.Stats.trackSeq
-import com.twitter.frigate.common.logger.MRLogger
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.adaptor.LoggedOutPushCandidateSourceGenerator
-import com.twitter.frigate.pushservice.predicate.LoggedOutPreRankingPredicates
-import com.twitter.frigate.pushservice.predicate.LoggedOutTargetPredicates
-import com.twitter.frigate.pushservice.rank.LoggedOutRanker
-import com.twitter.frigate.pushservice.take.LoggedOutRefreshForPushNotifier
-import com.twitter.frigate.pushservice.scriber.MrRequestScribeHandler
-import com.twitter.frigate.pushservice.target.LoggedOutPushTargetUserBuilder
-import com.twitter.frigate.pushservice.thriftscala.LoggedOutRequest
-import com.twitter.frigate.pushservice.thriftscala.LoggedOutResponse
-import com.twitter.frigate.pushservice.thriftscala.PushContext
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.hermit.predicate.SequentialPredicate
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.countew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.base.candidatedetaiws
+i-impowt com.twittew.fwigate.common.base.candidatewesuwt
+impowt c-com.twittew.fwigate.common.base.candidatesouwce
+i-impowt com.twittew.fwigate.common.base.fetchwankfwowwithhydwatedcandidates
+i-impowt com.twittew.fwigate.common.base.invawid
+i-impowt com.twittew.fwigate.common.base.ok
+i-impowt com.twittew.fwigate.common.base.wesponse
+impowt com.twittew.fwigate.common.base.wesuwt
+impowt com.twittew.fwigate.common.base.stats.twack
+i-impowt com.twittew.fwigate.common.base.stats.twackseq
+impowt com.twittew.fwigate.common.woggew.mwwoggew
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+impowt com.twittew.fwigate.pushsewvice.adaptow.woggedoutpushcandidatesouwcegenewatow
+impowt c-com.twittew.fwigate.pushsewvice.pwedicate.woggedoutpwewankingpwedicates
+impowt c-com.twittew.fwigate.pushsewvice.pwedicate.woggedouttawgetpwedicates
+i-impowt com.twittew.fwigate.pushsewvice.wank.woggedoutwankew
+impowt com.twittew.fwigate.pushsewvice.take.woggedoutwefweshfowpushnotifiew
+impowt com.twittew.fwigate.pushsewvice.scwibew.mwwequestscwibehandwew
+impowt com.twittew.fwigate.pushsewvice.tawget.woggedoutpushtawgetusewbuiwdew
+i-impowt com.twittew.fwigate.pushsewvice.thwiftscawa.woggedoutwequest
+impowt com.twittew.fwigate.pushsewvice.thwiftscawa.woggedoutwesponse
+impowt com.twittew.fwigate.pushsewvice.thwiftscawa.pushcontext
+impowt c-com.twittew.hewmit.pwedicate.namedpwedicate
+impowt com.twittew.hewmit.pwedicate.pwedicate
+i-impowt c-com.twittew.hewmit.pwedicate.sequentiawpwedicate
+i-impowt com.twittew.utiw.futuwe
 
-class LoggedOutRefreshForPushHandler(
-  val loPushTargetUserBuilder: LoggedOutPushTargetUserBuilder,
-  val loPushCandidateSourceGenerator: LoggedOutPushCandidateSourceGenerator,
-  candidateHydrator: PushCandidateHydrator,
-  val loRanker: LoggedOutRanker,
-  val loRfphNotifier: LoggedOutRefreshForPushNotifier,
-  loMrRequestScriberNode: String
+c-cwass woggedoutwefweshfowpushhandwew(
+  vaw wopushtawgetusewbuiwdew: w-woggedoutpushtawgetusewbuiwdew, òωó
+  vaw wopushcandidatesouwcegenewatow: w-woggedoutpushcandidatesouwcegenewatow, σωσ
+  candidatehydwatow: pushcandidatehydwatow, (U ᵕ U❁)
+  vaw wowankew: woggedoutwankew,
+  vaw wowfphnotifiew: w-woggedoutwefweshfowpushnotifiew, (✿oωo)
+  womwwequestscwibewnode: s-stwing
 )(
-  globalStats: StatsReceiver)
-    extends FetchRankFlowWithHydratedCandidates[Target, RawCandidate, PushCandidate] {
+  g-gwobawstats: statsweceivew)
+    e-extends fetchwankfwowwithhydwatedcandidates[tawget, ^^ wawcandidate, ^•ﻌ•^ pushcandidate] {
 
-  val log = MRLogger("LORefreshForPushHandler")
-  implicit val statsReceiver: StatsReceiver =
-    globalStats.scope("LORefreshForPushHandler")
-  private val loggedOutBuildStats = statsReceiver.scope("logged_out_build_target")
-  private val loggedOutProcessStats = statsReceiver.scope("logged_out_process")
-  private val loggedOutNotifyStats = statsReceiver.scope("logged_out_notify")
-  private val loCandidateHydrationStats: StatsReceiver =
-    statsReceiver.scope("logged_out_candidate_hydration")
-  val mrLORequestCandidateScribeStats =
-    statsReceiver.scope("mr_logged_out_request_scribe_candidates")
+  vaw wog = m-mwwoggew("wowefweshfowpushhandwew")
+  i-impwicit vaw statsweceivew: s-statsweceivew =
+    g-gwobawstats.scope("wowefweshfowpushhandwew")
+  pwivate vaw w-woggedoutbuiwdstats = statsweceivew.scope("wogged_out_buiwd_tawget")
+  p-pwivate vaw woggedoutpwocessstats = statsweceivew.scope("wogged_out_pwocess")
+  p-pwivate vaw woggedoutnotifystats = s-statsweceivew.scope("wogged_out_notify")
+  pwivate vaw w-wocandidatehydwationstats: s-statsweceivew =
+    statsweceivew.scope("wogged_out_candidate_hydwation")
+  vaw mwwowequestcandidatescwibestats =
+    statsweceivew.scope("mw_wogged_out_wequest_scwibe_candidates")
 
-  val mrRequestScribeHandler =
-    new MrRequestScribeHandler(loMrRequestScriberNode, statsReceiver.scope("lo_mr_request_scribe"))
-  val loMrRequestTargetScribeStats = statsReceiver.scope("lo_mr_request_scribe_target")
+  vaw mwwequestscwibehandwew =
+    nyew mwwequestscwibehandwew(womwwequestscwibewnode, XD statsweceivew.scope("wo_mw_wequest_scwibe"))
+  v-vaw womwwequesttawgetscwibestats = s-statsweceivew.scope("wo_mw_wequest_scwibe_tawget")
 
-  lazy val loCandSourceEligibleCounter: Counter =
-    loCandidateStats.counter("logged_out_cand_source_eligible")
-  lazy val loCandSourceNotEligibleCounter: Counter =
-    loCandidateStats.counter("logged_out_cand_source_not_eligible")
-  lazy val allCandidatesCounter: Counter = statsReceiver.counter("all_logged_out_candidates")
-  val allCandidatesFilteredPreRank = filterStats.counter("all_logged_out_candidates_filtered")
+  wazy vaw wocandsouwceewigibwecountew: c-countew =
+    w-wocandidatestats.countew("wogged_out_cand_souwce_ewigibwe")
+  w-wazy vaw wocandsouwcenotewigibwecountew: countew =
+    wocandidatestats.countew("wogged_out_cand_souwce_not_ewigibwe")
+  wazy v-vaw awwcandidatescountew: countew = statsweceivew.countew("aww_wogged_out_candidates")
+  vaw awwcandidatesfiwtewedpwewank = fiwtewstats.countew("aww_wogged_out_candidates_fiwtewed")
 
-  override def targetPredicates(target: Target): List[Predicate[Target]] = List(
-    LoggedOutTargetPredicates.targetFatiguePredicate(),
-    LoggedOutTargetPredicates.loggedOutRecsHoldbackPredicate()
+  o-ovewwide def tawgetpwedicates(tawget: t-tawget): wist[pwedicate[tawget]] = w-wist(
+    woggedouttawgetpwedicates.tawgetfatiguepwedicate(), :3
+    w-woggedouttawgetpwedicates.woggedoutwecshowdbackpwedicate()
   )
 
-  override def isTargetValid(target: Target): Future[Result] = {
-    val resultFut =
-      if (target.skipFilters) {
-        Future.value(OK)
-      } else {
-        predicateSeq(target).track(Seq(target)).map { resultArr =>
-          trackTargetPredStats(resultArr(0))
+  ovewwide d-def istawgetvawid(tawget: t-tawget): f-futuwe[wesuwt] = {
+    v-vaw wesuwtfut =
+      if (tawget.skipfiwtews) {
+        f-futuwe.vawue(ok)
+      } e-ewse {
+        p-pwedicateseq(tawget).twack(seq(tawget)).map { w-wesuwtaww =>
+          t-twacktawgetpwedstats(wesuwtaww(0))
         }
       }
-    track(targetStats)(resultFut)
+    twack(tawgetstats)(wesuwtfut)
   }
 
-  override def rank(
-    target: Target,
-    candidateDetails: Seq[CandidateDetails[PushCandidate]]
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
-    loRanker.rank(candidateDetails)
+  ovewwide def wank(
+    tawget: tawget, (ꈍᴗꈍ)
+    c-candidatedetaiws: seq[candidatedetaiws[pushcandidate]]
+  ): futuwe[seq[candidatedetaiws[pushcandidate]]] = {
+    wowankew.wank(candidatedetaiws)
   }
 
-  override def validCandidates(
-    target: Target,
-    candidates: Seq[PushCandidate]
-  ): Future[Seq[Result]] = {
-    Future.value(candidates.map { c => OK })
+  ovewwide def vawidcandidates(
+    tawget: tawget, :3
+    c-candidates: seq[pushcandidate]
+  ): futuwe[seq[wesuwt]] = {
+    futuwe.vawue(candidates.map { c-c => ok })
   }
 
-  override def desiredCandidateCount(target: Target): Int = 1
+  o-ovewwide d-def desiwedcandidatecount(tawget: tawget): int = 1
 
-  private val loggedOutPreRankingPredicates =
-    LoggedOutPreRankingPredicates(filterStats.scope("logged_out_predicates"))
+  p-pwivate vaw woggedoutpwewankingpwedicates =
+    w-woggedoutpwewankingpwedicates(fiwtewstats.scope("wogged_out_pwedicates"))
 
-  private val loggedOutPreRankingPredicateChain =
-    new SequentialPredicate[PushCandidate](loggedOutPreRankingPredicates)
+  p-pwivate vaw woggedoutpwewankingpwedicatechain =
+    nyew sequentiawpwedicate[pushcandidate](woggedoutpwewankingpwedicates)
 
-  override def filter(
-    target: Target,
-    candidates: Seq[CandidateDetails[PushCandidate]]
-  ): Future[
-    (Seq[CandidateDetails[PushCandidate]], Seq[CandidateResult[PushCandidate, Result]])
+  ovewwide def fiwtew(
+    tawget: tawget, (U ﹏ U)
+    candidates: s-seq[candidatedetaiws[pushcandidate]]
+  ): futuwe[
+    (seq[candidatedetaiws[pushcandidate]], UwU s-seq[candidatewesuwt[pushcandidate, 😳😳😳 wesuwt]])
   ] = {
-    val predicateChain = loggedOutPreRankingPredicateChain
-    predicateChain
-      .track(candidates.map(_.candidate))
-      .map { results =>
-        val resultForPreRankingFiltering =
-          results
+    v-vaw pwedicatechain = w-woggedoutpwewankingpwedicatechain
+    pwedicatechain
+      .twack(candidates.map(_.candidate))
+      .map { wesuwts =>
+        v-vaw wesuwtfowpwewankingfiwtewing =
+          w-wesuwts
             .zip(candidates)
-            .foldLeft(
+            .fowdweft(
               (
-                Seq.empty[CandidateDetails[PushCandidate]],
-                Seq.empty[CandidateResult[PushCandidate, Result]]
+                seq.empty[candidatedetaiws[pushcandidate]], XD
+                s-seq.empty[candidatewesuwt[pushcandidate, o.O w-wesuwt]]
               )
             ) {
-              case ((goodCandidates, filteredCandidates), (result, candidateDetails)) =>
-                result match {
-                  case None =>
-                    (goodCandidates :+ candidateDetails, filteredCandidates)
+              case ((goodcandidates, (⑅˘꒳˘) fiwtewedcandidates), 😳😳😳 (wesuwt, candidatedetaiws)) =>
+                wesuwt match {
+                  case nyone =>
+                    (goodcandidates :+ c-candidatedetaiws, nyaa~~ f-fiwtewedcandidates)
 
-                  case Some(pred: NamedPredicate[_]) =>
-                    val r = Invalid(Some(pred.name))
+                  c-case some(pwed: nyamedpwedicate[_]) =>
+                    vaw w-w = invawid(some(pwed.name))
                     (
-                      goodCandidates,
-                      filteredCandidates :+ CandidateResult[PushCandidate, Result](
-                        candidateDetails.candidate,
-                        candidateDetails.source,
-                        r
+                      g-goodcandidates, rawr
+                      fiwtewedcandidates :+ c-candidatewesuwt[pushcandidate, -.- wesuwt](
+                        candidatedetaiws.candidate, (✿oωo)
+                        candidatedetaiws.souwce, /(^•ω•^)
+                        w
                       )
                     )
-                  case Some(_) =>
-                    val r = Invalid(Some("Filtered by un-named predicate"))
+                  case s-some(_) =>
+                    v-vaw w = invawid(some("fiwtewed by un-named pwedicate"))
                     (
-                      goodCandidates,
-                      filteredCandidates :+ CandidateResult[PushCandidate, Result](
-                        candidateDetails.candidate,
-                        candidateDetails.source,
-                        r
+                      goodcandidates, 🥺
+                      f-fiwtewedcandidates :+ c-candidatewesuwt[pushcandidate, ʘwʘ wesuwt](
+                        candidatedetaiws.candidate, UwU
+                        candidatedetaiws.souwce, XD
+                        w-w
                       )
                     )
                 }
             }
-        resultForPreRankingFiltering match {
-          case (validCandidates, _) if validCandidates.isEmpty && candidates.nonEmpty =>
-            allCandidatesFilteredPreRank.incr()
+        wesuwtfowpwewankingfiwtewing match {
+          case (vawidcandidates, (✿oωo) _) if vawidcandidates.isempty && candidates.nonempty =>
+            a-awwcandidatesfiwtewedpwewank.incw()
           case _ => ()
 
         }
-        resultForPreRankingFiltering
+        wesuwtfowpwewankingfiwtewing
 
       }
 
   }
 
-  override def candidateSources(
-    target: Target
-  ): Future[Seq[CandidateSource[Target, RawCandidate]]] = {
-    Future
-      .collect(loPushCandidateSourceGenerator.sources.map { cs =>
-        cs.isCandidateSourceAvailable(target).map { isEligible =>
-          if (isEligible) {
-            loCandSourceEligibleCounter.incr()
-            Some(cs)
-          } else {
-            loCandSourceNotEligibleCounter.incr()
-            None
+  o-ovewwide def c-candidatesouwces(
+    tawget: tawget
+  ): futuwe[seq[candidatesouwce[tawget, :3 wawcandidate]]] = {
+    f-futuwe
+      .cowwect(wopushcandidatesouwcegenewatow.souwces.map { c-cs =>
+        cs.iscandidatesouwceavaiwabwe(tawget).map { isewigibwe =>
+          if (isewigibwe) {
+            w-wocandsouwceewigibwecountew.incw()
+            some(cs)
+          } ewse {
+            w-wocandsouwcenotewigibwecountew.incw()
+            nyone
           }
         }
-      }).map(_.flatten)
+      }).map(_.fwatten)
   }
 
-  override def process(
-    target: Target,
-    externalCandidates: Seq[RawCandidate] = Nil
-  ): Future[Response[PushCandidate, Result]] = {
-    isTargetValid(target).flatMap {
-      case OK =>
-        for {
-          candidatesFromSources <- trackSeq(fetchStats)(fetchCandidates(target))
-          externalCandidateDetails = externalCandidates.map(
-            CandidateDetails(_, "logged_out_refresh_for_push_handler_external_candidates"))
-          allCandidates = candidatesFromSources ++ externalCandidateDetails
-          hydratedCandidatesWithCopy <-
-            trackSeq(loCandidateHydrationStats)(hydrateCandidates(allCandidates))
-          (candidates, preRankingFilteredCandidates) <-
-            track(filterStats)(filter(target, hydratedCandidatesWithCopy))
-          rankedCandidates <- trackSeq(rankingStats)(rank(target, candidates))
-          allTakeCandidateResults <- track(takeStats)(
-            take(target, rankedCandidates, desiredCandidateCount(target))
+  ovewwide def pwocess(
+    tawget: t-tawget, (///ˬ///✿)
+    extewnawcandidates: seq[wawcandidate] = n-nyiw
+  ): futuwe[wesponse[pushcandidate, nyaa~~ w-wesuwt]] = {
+    istawgetvawid(tawget).fwatmap {
+      case ok =>
+        f-fow {
+          candidatesfwomsouwces <- t-twackseq(fetchstats)(fetchcandidates(tawget))
+          e-extewnawcandidatedetaiws = e-extewnawcandidates.map(
+            candidatedetaiws(_, >w< "wogged_out_wefwesh_fow_push_handwew_extewnaw_candidates"))
+          a-awwcandidates = c-candidatesfwomsouwces ++ extewnawcandidatedetaiws
+          hydwatedcandidateswithcopy <-
+            t-twackseq(wocandidatehydwationstats)(hydwatecandidates(awwcandidates))
+          (candidates, -.- p-pwewankingfiwtewedcandidates) <-
+            t-twack(fiwtewstats)(fiwtew(tawget, (✿oωo) hydwatedcandidateswithcopy))
+          wankedcandidates <- twackseq(wankingstats)(wank(tawget, (˘ω˘) c-candidates))
+          awwtakecandidatewesuwts <- t-twack(takestats)(
+            t-take(tawget, wankedcandidates, rawr desiwedcandidatecount(tawget))
           )
-          _ <- track(mrLORequestCandidateScribeStats)(
-            mrRequestScribeHandler.scribeForCandidateFiltering(
-              target,
-              hydratedCandidatesWithCopy,
-              preRankingFilteredCandidates,
-              rankedCandidates,
-              rankedCandidates,
-              rankedCandidates,
-              allTakeCandidateResults
+          _ <- twack(mwwowequestcandidatescwibestats)(
+            m-mwwequestscwibehandwew.scwibefowcandidatefiwtewing(
+              t-tawget, OwO
+              h-hydwatedcandidateswithcopy, ^•ﻌ•^
+              p-pwewankingfiwtewedcandidates, UwU
+              wankedcandidates, (˘ω˘)
+              w-wankedcandidates, (///ˬ///✿)
+              wankedcandidates, σωσ
+              awwtakecandidatewesuwts
             ))
 
-        } yield {
-          val takeCandidateResults = allTakeCandidateResults.filterNot { candResult =>
-            candResult.result == MoreThanDesiredCandidates
+        } yiewd {
+          vaw takecandidatewesuwts = awwtakecandidatewesuwts.fiwtewnot { c-candwesuwt =>
+            candwesuwt.wesuwt == m-mowethandesiwedcandidates
           }
-          val allCandidateResults = takeCandidateResults ++ preRankingFilteredCandidates
-          allCandidatesCounter.incr(allCandidateResults.size)
-          Response(OK, allCandidateResults)
+          vaw awwcandidatewesuwts = t-takecandidatewesuwts ++ pwewankingfiwtewedcandidates
+          a-awwcandidatescountew.incw(awwcandidatewesuwts.size)
+          wesponse(ok, /(^•ω•^) a-awwcandidatewesuwts)
         }
 
-      case result: Result =>
-        for (_ <- track(loMrRequestTargetScribeStats)(
-            mrRequestScribeHandler.scribeForTargetFiltering(target, result))) yield {
-          Response(result, Nil)
+      c-case wesuwt: w-wesuwt =>
+        f-fow (_ <- t-twack(womwwequesttawgetscwibestats)(
+            mwwequestscwibehandwew.scwibefowtawgetfiwtewing(tawget, 😳 wesuwt))) yiewd {
+          wesponse(wesuwt, 😳 nyiw)
         }
     }
   }
 
-  def buildTarget(
-    guestId: Long,
-    inputPushContext: Option[PushContext]
-  ): Future[Target] =
-    loPushTargetUserBuilder.buildTarget(guestId, inputPushContext)
+  def buiwdtawget(
+    g-guestid: w-wong, (⑅˘꒳˘)
+    inputpushcontext: o-option[pushcontext]
+  ): futuwe[tawget] =
+    w-wopushtawgetusewbuiwdew.buiwdtawget(guestid, 😳😳😳 inputpushcontext)
 
   /**
-   * Hydrate candidate by querying downstream services
+   * hydwate candidate by quewying d-downstweam s-sewvices
    *
-   * @param candidates - candidates
+   * @pawam candidates - c-candidates
    *
-   * @return - hydrated candidates
+   * @wetuwn - hydwated candidates
    */
-  override def hydrateCandidates(
-    candidates: Seq[CandidateDetails[RawCandidate]]
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = candidateHydrator(candidates)
+  o-ovewwide def h-hydwatecandidates(
+    candidates: s-seq[candidatedetaiws[wawcandidate]]
+  ): f-futuwe[seq[candidatedetaiws[pushcandidate]]] = candidatehydwatow(candidates)
 
-  override def batchForCandidatesCheck(target: Target): Int = 1
+  ovewwide def batchfowcandidatescheck(tawget: tawget): i-int = 1
 
-  def refreshAndSend(request: LoggedOutRequest): Future[LoggedOutResponse] = {
-    for {
-      target <- track(loggedOutBuildStats)(
-        loPushTargetUserBuilder.buildTarget(request.guestId, request.context))
-      response <- track(loggedOutProcessStats)(process(target, externalCandidates = Seq.empty))
-      loggedOutRefreshResponse <-
-        track(loggedOutNotifyStats)(loRfphNotifier.checkResponseAndNotify(response))
-    } yield {
-      loggedOutRefreshResponse
+  def w-wefweshandsend(wequest: w-woggedoutwequest): f-futuwe[woggedoutwesponse] = {
+    fow {
+      t-tawget <- twack(woggedoutbuiwdstats)(
+        w-wopushtawgetusewbuiwdew.buiwdtawget(wequest.guestid, 😳 w-wequest.context))
+      wesponse <- t-twack(woggedoutpwocessstats)(pwocess(tawget, XD extewnawcandidates = s-seq.empty))
+      woggedoutwefweshwesponse <-
+        t-twack(woggedoutnotifystats)(wowfphnotifiew.checkwesponseandnotify(wesponse))
+    } yiewd {
+      woggedoutwefweshwesponse
     }
   }
 

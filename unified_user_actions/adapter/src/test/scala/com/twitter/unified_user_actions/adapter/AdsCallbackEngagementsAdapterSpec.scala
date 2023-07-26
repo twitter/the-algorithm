@@ -1,280 +1,280 @@
-package com.twitter.unified_user_actions.adapter
+package com.twittew.unified_usew_actions.adaptew
 
-import com.twitter.ads.spendserver.thriftscala.SpendServerEvent
-import com.twitter.adserver.thriftscala.EngagementType
-import com.twitter.clientapp.thriftscala.AmplifyDetails
-import com.twitter.inject.Test
-import com.twitter.unified_user_actions.adapter.TestFixtures.AdsCallbackEngagementsFixture
-import com.twitter.unified_user_actions.adapter.ads_callback_engagements.AdsCallbackEngagementsAdapter
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.TweetActionInfo
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import com.twitter.util.Time
-import org.scalatest.prop.TableDrivenPropertyChecks
+impowt com.twittew.ads.spendsewvew.thwiftscawa.spendsewvewevent
+i-impowt com.twittew.adsewvew.thwiftscawa.engagementtype
+i-impowt com.twittew.cwientapp.thwiftscawa.ampwifydetaiws
+i-impowt com.twittew.inject.test
+impowt c-com.twittew.unified_usew_actions.adaptew.testfixtuwes.adscawwbackengagementsfixtuwe
+i-impowt c-com.twittew.unified_usew_actions.adaptew.ads_cawwback_engagements.adscawwbackengagementsadaptew
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.actiontype
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.tweetactioninfo
+impowt com.twittew.unified_usew_actions.thwiftscawa.unifiedusewaction
+impowt com.twittew.utiw.time
+impowt owg.scawatest.pwop.tabwedwivenpwopewtychecks
 
-class AdsCallbackEngagementsAdapterSpec extends Test with TableDrivenPropertyChecks {
+c-cwass adscawwbackengagementsadaptewspec extends test w-with tabwedwivenpwopewtychecks {
 
-  test("Test basic conversion for ads callback engagement type fav") {
+  test("test b-basic convewsion fow ads cawwback engagement type fav") {
 
-    new AdsCallbackEngagementsFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val events = Table(
-          ("inputEvent", "expectedUuaOutput"),
-          ( // Test with authorId
-            createSpendServerEvent(EngagementType.Fav),
-            Seq(
-              createExpectedUua(
-                ActionType.ServerPromotedTweetFav,
-                createTweetInfoItem(authorInfo = Some(authorInfo)))))
+    new a-adscawwbackengagementsfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        v-vaw events = t-tabwe(
+          ("inputevent", :3 "expecteduuaoutput"), (ꈍᴗꈍ)
+          ( // test with authowid
+            cweatespendsewvewevent(engagementtype.fav), :3
+            seq(
+              c-cweateexpecteduua(
+                actiontype.sewvewpwomotedtweetfav, (U ﹏ U)
+                cweatetweetinfoitem(authowinfo = some(authowinfo)))))
         )
-        forEvery(events) { (event: SpendServerEvent, expected: Seq[UnifiedUserAction]) =>
-          val actual = AdsCallbackEngagementsAdapter.adaptEvent(event)
-          assert(expected === actual)
+        fowevewy(events) { (event: s-spendsewvewevent, UwU expected: s-seq[unifiedusewaction]) =>
+          v-vaw actuaw = a-adscawwbackengagementsadaptew.adaptevent(event)
+          a-assewt(expected === actuaw)
         }
       }
     }
   }
 
-  test("Test basic conversion for different engagement types") {
-    new AdsCallbackEngagementsFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val mappings = Table(
-          ("engagementType", "actionType"),
-          (EngagementType.Unfav, ActionType.ServerPromotedTweetUnfav),
-          (EngagementType.Reply, ActionType.ServerPromotedTweetReply),
-          (EngagementType.Retweet, ActionType.ServerPromotedTweetRetweet),
-          (EngagementType.Block, ActionType.ServerPromotedTweetBlockAuthor),
-          (EngagementType.Unblock, ActionType.ServerPromotedTweetUnblockAuthor),
-          (EngagementType.Send, ActionType.ServerPromotedTweetComposeTweet),
-          (EngagementType.Detail, ActionType.ServerPromotedTweetClick),
-          (EngagementType.Report, ActionType.ServerPromotedTweetReport),
-          (EngagementType.Mute, ActionType.ServerPromotedTweetMuteAuthor),
-          (EngagementType.ProfilePic, ActionType.ServerPromotedTweetClickProfile),
-          (EngagementType.ScreenName, ActionType.ServerPromotedTweetClickProfile),
-          (EngagementType.UserName, ActionType.ServerPromotedTweetClickProfile),
-          (EngagementType.Hashtag, ActionType.ServerPromotedTweetClickHashtag),
-          (EngagementType.CarouselSwipeNext, ActionType.ServerPromotedTweetCarouselSwipeNext),
+  test("test b-basic convewsion fow diffewent engagement t-types") {
+    new adscawwbackengagementsfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        vaw mappings = tabwe(
+          ("engagementtype", 😳😳😳 "actiontype"), XD
+          (engagementtype.unfav, o.O actiontype.sewvewpwomotedtweetunfav), (⑅˘꒳˘)
+          (engagementtype.wepwy, 😳😳😳 a-actiontype.sewvewpwomotedtweetwepwy), nyaa~~
+          (engagementtype.wetweet, rawr actiontype.sewvewpwomotedtweetwetweet), -.-
+          (engagementtype.bwock, (✿oωo) a-actiontype.sewvewpwomotedtweetbwockauthow), /(^•ω•^)
+          (engagementtype.unbwock, 🥺 actiontype.sewvewpwomotedtweetunbwockauthow), ʘwʘ
+          (engagementtype.send, UwU a-actiontype.sewvewpwomotedtweetcomposetweet), XD
+          (engagementtype.detaiw, (✿oωo) a-actiontype.sewvewpwomotedtweetcwick), :3
+          (engagementtype.wepowt, (///ˬ///✿) actiontype.sewvewpwomotedtweetwepowt), nyaa~~
+          (engagementtype.mute, >w< actiontype.sewvewpwomotedtweetmuteauthow), -.-
+          (engagementtype.pwofiwepic, actiontype.sewvewpwomotedtweetcwickpwofiwe), (✿oωo)
+          (engagementtype.scweenname, (˘ω˘) actiontype.sewvewpwomotedtweetcwickpwofiwe),
+          (engagementtype.usewname, rawr a-actiontype.sewvewpwomotedtweetcwickpwofiwe), OwO
+          (engagementtype.hashtag, ^•ﻌ•^ a-actiontype.sewvewpwomotedtweetcwickhashtag), UwU
+          (engagementtype.cawousewswipenext, (˘ω˘) actiontype.sewvewpwomotedtweetcawousewswipenext), (///ˬ///✿)
           (
-            EngagementType.CarouselSwipePrevious,
-            ActionType.ServerPromotedTweetCarouselSwipePrevious),
-          (EngagementType.DwellShort, ActionType.ServerPromotedTweetLingerImpressionShort),
-          (EngagementType.DwellMedium, ActionType.ServerPromotedTweetLingerImpressionMedium),
-          (EngagementType.DwellLong, ActionType.ServerPromotedTweetLingerImpressionLong),
-          (EngagementType.DismissSpam, ActionType.ServerPromotedTweetDismissSpam),
-          (EngagementType.DismissWithoutReason, ActionType.ServerPromotedTweetDismissWithoutReason),
-          (EngagementType.DismissUninteresting, ActionType.ServerPromotedTweetDismissUninteresting),
-          (EngagementType.DismissRepetitive, ActionType.ServerPromotedTweetDismissRepetitive),
+            e-engagementtype.cawousewswipepwevious, σωσ
+            a-actiontype.sewvewpwomotedtweetcawousewswipepwevious), /(^•ω•^)
+          (engagementtype.dwewwshowt, 😳 actiontype.sewvewpwomotedtweetwingewimpwessionshowt), 😳
+          (engagementtype.dwewwmedium, (⑅˘꒳˘) actiontype.sewvewpwomotedtweetwingewimpwessionmedium), 😳😳😳
+          (engagementtype.dwewwwong, 😳 a-actiontype.sewvewpwomotedtweetwingewimpwessionwong), XD
+          (engagementtype.dismissspam, mya actiontype.sewvewpwomotedtweetdismissspam), ^•ﻌ•^
+          (engagementtype.dismisswithoutweason, ʘwʘ a-actiontype.sewvewpwomotedtweetdismisswithoutweason), ( ͡o ω ͡o )
+          (engagementtype.dismissunintewesting, mya actiontype.sewvewpwomotedtweetdismissunintewesting), o.O
+          (engagementtype.dismisswepetitive, (✿oωo) actiontype.sewvewpwomotedtweetdismisswepetitive), :3
         )
 
-        forEvery(mappings) { (engagementType: EngagementType, actionType: ActionType) =>
-          val event = createSpendServerEvent(engagementType)
-          val actual = AdsCallbackEngagementsAdapter.adaptEvent(event)
-          val expected =
-            Seq(createExpectedUua(actionType, createTweetInfoItem(authorInfo = Some(authorInfo))))
-          assert(expected === actual)
+        fowevewy(mappings) { (engagementtype: e-engagementtype, 😳 actiontype: a-actiontype) =>
+          vaw event = c-cweatespendsewvewevent(engagementtype)
+          v-vaw actuaw = adscawwbackengagementsadaptew.adaptevent(event)
+          vaw expected =
+            seq(cweateexpecteduua(actiontype, (U ﹏ U) cweatetweetinfoitem(authowinfo = some(authowinfo))))
+          a-assewt(expected === a-actuaw)
         }
       }
     }
   }
 
-  test("Test conversion for ads callback engagement type spotlight view and click") {
-    new AdsCallbackEngagementsFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val input = Table(
-          ("adsEngagement", "uuaAction"),
-          (EngagementType.SpotlightClick, ActionType.ServerPromotedTweetClickSpotlight),
-          (EngagementType.SpotlightView, ActionType.ServerPromotedTweetViewSpotlight),
-          (EngagementType.TrendView, ActionType.ServerPromotedTrendView),
-          (EngagementType.TrendClick, ActionType.ServerPromotedTrendClick),
+  test("test c-convewsion fow ads c-cawwback engagement t-type spotwight view and cwick") {
+    nyew adscawwbackengagementsfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        vaw input = tabwe(
+          ("adsengagement", mya "uuaaction"), (U ᵕ U❁)
+          (engagementtype.spotwightcwick, :3 actiontype.sewvewpwomotedtweetcwickspotwight), mya
+          (engagementtype.spotwightview, OwO actiontype.sewvewpwomotedtweetviewspotwight), (ˆ ﻌ ˆ)♡
+          (engagementtype.twendview, ʘwʘ actiontype.sewvewpwomotedtwendview), o.O
+          (engagementtype.twendcwick, UwU a-actiontype.sewvewpwomotedtwendcwick), rawr x3
         )
-        forEvery(input) { (engagementType: EngagementType, actionType: ActionType) =>
-          val adsEvent = createSpendServerEvent(engagementType)
-          val expected = Seq(createExpectedUua(actionType, trendInfoItem))
-          val actual = AdsCallbackEngagementsAdapter.adaptEvent(adsEvent)
-          assert(expected === actual)
+        fowevewy(input) { (engagementtype: e-engagementtype, 🥺 a-actiontype: a-actiontype) =>
+          vaw adsevent = cweatespendsewvewevent(engagementtype)
+          v-vaw expected = seq(cweateexpecteduua(actiontype, :3 t-twendinfoitem))
+          v-vaw actuaw = a-adscawwbackengagementsadaptew.adaptevent(adsevent)
+          assewt(expected === actuaw)
         }
       }
     }
   }
 
-  test("Test basic conversion for ads callback engagement open link with or without url") {
-    new AdsCallbackEngagementsFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val input = Table(
-          ("url", "tweetActionInfo"),
-          (Some("go/url"), openLinkWithUrl),
-          (None, openLinkWithoutUrl)
+  t-test("test basic c-convewsion fow a-ads cawwback engagement o-open wink w-with ow without uww") {
+    nyew adscawwbackengagementsfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        v-vaw input = tabwe(
+          ("uww", (ꈍᴗꈍ) "tweetactioninfo"), 🥺
+          (some("go/uww"), (✿oωo) openwinkwithuww), (U ﹏ U)
+          (none, :3 openwinkwithoutuww)
         )
 
-        forEvery(input) { (url: Option[String], tweetActionInfo: TweetActionInfo) =>
-          val event = createSpendServerEvent(engagementType = EngagementType.Url, url = url)
-          val actual = AdsCallbackEngagementsAdapter.adaptEvent(event)
-          val expected = Seq(createExpectedUua(
-            ActionType.ServerPromotedTweetOpenLink,
-            createTweetInfoItem(authorInfo = Some(authorInfo), actionInfo = Some(tweetActionInfo))))
-          assert(expected === actual)
+        fowevewy(input) { (uww: option[stwing], ^^;; t-tweetactioninfo: tweetactioninfo) =>
+          vaw event = cweatespendsewvewevent(engagementtype = e-engagementtype.uww, rawr u-uww = uww)
+          v-vaw actuaw = adscawwbackengagementsadaptew.adaptevent(event)
+          v-vaw expected = seq(cweateexpecteduua(
+            actiontype.sewvewpwomotedtweetopenwink, 😳😳😳
+            c-cweatetweetinfoitem(authowinfo = s-some(authowinfo), (✿oωo) actioninfo = some(tweetactioninfo))))
+          assewt(expected === actuaw)
         }
       }
     }
   }
 
-  test("Test basic conversion for different engagement types with profile info") {
-    new AdsCallbackEngagementsFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val mappings = Table(
-          ("engagementType", "actionType"),
-          (EngagementType.Follow, ActionType.ServerPromotedProfileFollow),
-          (EngagementType.Unfollow, ActionType.ServerPromotedProfileUnfollow)
+  test("test basic c-convewsion fow diffewent engagement t-types with pwofiwe info") {
+    n-nyew adscawwbackengagementsfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        vaw mappings = tabwe(
+          ("engagementtype", OwO "actiontype"), ʘwʘ
+          (engagementtype.fowwow, (ˆ ﻌ ˆ)♡ a-actiontype.sewvewpwomotedpwofiwefowwow), (U ﹏ U)
+          (engagementtype.unfowwow, UwU a-actiontype.sewvewpwomotedpwofiweunfowwow)
         )
-        forEvery(mappings) { (engagementType: EngagementType, actionType: ActionType) =>
-          val event = createSpendServerEvent(engagementType)
-          val actual = AdsCallbackEngagementsAdapter.adaptEvent(event)
-          val expected = Seq(createExpectedUuaWithProfileInfo(actionType))
-          assert(expected === actual)
+        fowevewy(mappings) { (engagementtype: engagementtype, XD actiontype: a-actiontype) =>
+          v-vaw event = cweatespendsewvewevent(engagementtype)
+          vaw actuaw = adscawwbackengagementsadaptew.adaptevent(event)
+          vaw expected = seq(cweateexpecteduuawithpwofiweinfo(actiontype))
+          a-assewt(expected === a-actuaw)
         }
       }
     }
   }
 
-  test("Test basic conversion for ads callback engagement type video_content_*") {
-    new AdsCallbackEngagementsFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val events = Table(
-          ("engagementType", "amplifyDetails", "actionType", "tweetActionInfo"),
-          //For video_content_* events on promoted tweets when there is no preroll ad played
+  t-test("test basic convewsion f-fow ads c-cawwback engagement type video_content_*") {
+    n-nyew adscawwbackengagementsfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        vaw events = tabwe(
+          ("engagementtype", ʘwʘ "ampwifydetaiws", rawr x3 "actiontype", ^^;; "tweetactioninfo"), ʘwʘ
+          //fow video_content_* e-events o-on pwomoted tweets when thewe is nyo pwewoww a-ad pwayed
           (
-            EngagementType.VideoContentPlayback25,
-            amplifyDetailsPromotedTweetWithoutAd,
-            ActionType.ServerPromotedTweetVideoPlayback25,
-            tweetActionInfoPromotedTweetWithoutAd),
+            e-engagementtype.videocontentpwayback25, (U ﹏ U)
+            ampwifydetaiwspwomotedtweetwithoutad, (˘ω˘)
+            actiontype.sewvewpwomotedtweetvideopwayback25, (ꈍᴗꈍ)
+            tweetactioninfopwomotedtweetwithoutad), /(^•ω•^)
           (
-            EngagementType.VideoContentPlayback50,
-            amplifyDetailsPromotedTweetWithoutAd,
-            ActionType.ServerPromotedTweetVideoPlayback50,
-            tweetActionInfoPromotedTweetWithoutAd),
+            e-engagementtype.videocontentpwayback50, >_<
+            ampwifydetaiwspwomotedtweetwithoutad, σωσ
+            actiontype.sewvewpwomotedtweetvideopwayback50, ^^;;
+            tweetactioninfopwomotedtweetwithoutad),
           (
-            EngagementType.VideoContentPlayback75,
-            amplifyDetailsPromotedTweetWithoutAd,
-            ActionType.ServerPromotedTweetVideoPlayback75,
-            tweetActionInfoPromotedTweetWithoutAd),
-          //For video_content_* events on promoted tweets when there is a preroll ad
+            engagementtype.videocontentpwayback75, 😳
+            a-ampwifydetaiwspwomotedtweetwithoutad, >_<
+            actiontype.sewvewpwomotedtweetvideopwayback75, -.-
+            tweetactioninfopwomotedtweetwithoutad), UwU
+          //fow v-video_content_* e-events on pwomoted tweets when thewe is a pwewoww ad
           (
-            EngagementType.VideoContentPlayback25,
-            amplifyDetailsPromotedTweetWithAd,
-            ActionType.ServerPromotedTweetVideoPlayback25,
-            tweetActionInfoPromotedTweetWithAd),
+            e-engagementtype.videocontentpwayback25, :3
+            a-ampwifydetaiwspwomotedtweetwithad, σωσ
+            actiontype.sewvewpwomotedtweetvideopwayback25, >w<
+            tweetactioninfopwomotedtweetwithad), (ˆ ﻌ ˆ)♡
           (
-            EngagementType.VideoContentPlayback50,
-            amplifyDetailsPromotedTweetWithAd,
-            ActionType.ServerPromotedTweetVideoPlayback50,
-            tweetActionInfoPromotedTweetWithAd),
+            engagementtype.videocontentpwayback50, ʘwʘ
+            a-ampwifydetaiwspwomotedtweetwithad, :3
+            actiontype.sewvewpwomotedtweetvideopwayback50, (˘ω˘)
+            t-tweetactioninfopwomotedtweetwithad), 😳😳😳
           (
-            EngagementType.VideoContentPlayback75,
-            amplifyDetailsPromotedTweetWithAd,
-            ActionType.ServerPromotedTweetVideoPlayback75,
-            tweetActionInfoPromotedTweetWithAd),
+            engagementtype.videocontentpwayback75, rawr x3
+            ampwifydetaiwspwomotedtweetwithad, (✿oωo)
+            actiontype.sewvewpwomotedtweetvideopwayback75,
+            tweetactioninfopwomotedtweetwithad), (ˆ ﻌ ˆ)♡
         )
-        forEvery(events) {
+        f-fowevewy(events) {
           (
-            engagementType: EngagementType,
-            amplifyDetails: Option[AmplifyDetails],
-            actionType: ActionType,
-            actionInfo: Option[TweetActionInfo]
+            engagementtype: e-engagementtype, :3
+            a-ampwifydetaiws: option[ampwifydetaiws], (U ᵕ U❁)
+            a-actiontype: actiontype, ^^;;
+            a-actioninfo: option[tweetactioninfo]
           ) =>
-            val spendEvent =
-              createVideoSpendServerEvent(engagementType, amplifyDetails, promotedTweetId, None)
-            val expected = Seq(createExpectedVideoUua(actionType, actionInfo, promotedTweetId))
+            vaw s-spendevent =
+              c-cweatevideospendsewvewevent(engagementtype, mya ampwifydetaiws, 😳😳😳 p-pwomotedtweetid, OwO n-nyone)
+            vaw expected = seq(cweateexpectedvideouua(actiontype, rawr a-actioninfo, XD p-pwomotedtweetid))
 
-            val actual = AdsCallbackEngagementsAdapter.adaptEvent(spendEvent)
-            assert(expected === actual)
+            vaw a-actuaw = adscawwbackengagementsadaptew.adaptevent(spendevent)
+            assewt(expected === actuaw)
         }
       }
     }
   }
 
-  test("Test basic conversion for ads callback engagement type video_ad_*") {
+  t-test("test basic convewsion f-fow ads cawwback e-engagement type video_ad_*") {
 
-    new AdsCallbackEngagementsFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val events = Table(
+    nyew adscawwbackengagementsfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        vaw e-events = tabwe(
           (
-            "engagementType",
-            "amplifyDetails",
-            "actionType",
-            "tweetActionInfo",
-            "promotedTweetId",
-            "organicTweetId"),
-          //For video_ad_* events when the preroll ad is on a promoted tweet.
+            "engagementtype", (U ﹏ U)
+            "ampwifydetaiws", (˘ω˘)
+            "actiontype", UwU
+            "tweetactioninfo", >_<
+            "pwomotedtweetid", σωσ
+            "owganictweetid"), 🥺
+          //fow v-video_ad_* events w-when the pwewoww a-ad is on a pwomoted tweet. 🥺
           (
-            EngagementType.VideoAdPlayback25,
-            amplifyDetailsPrerollAd,
-            ActionType.ServerPromotedTweetVideoAdPlayback25,
-            tweetActionInfoPrerollAd,
-            promotedTweetId,
-            None
-          ),
+            e-engagementtype.videoadpwayback25, ʘwʘ
+            ampwifydetaiwspwewowwad, :3
+            actiontype.sewvewpwomotedtweetvideoadpwayback25, (U ﹏ U)
+            tweetactioninfopwewowwad, (U ﹏ U)
+            pwomotedtweetid, ʘwʘ
+            nyone
+          ), >w<
           (
-            EngagementType.VideoAdPlayback50,
-            amplifyDetailsPrerollAd,
-            ActionType.ServerPromotedTweetVideoAdPlayback50,
-            tweetActionInfoPrerollAd,
-            promotedTweetId,
-            None
-          ),
+            e-engagementtype.videoadpwayback50, rawr x3
+            ampwifydetaiwspwewowwad, OwO
+            a-actiontype.sewvewpwomotedtweetvideoadpwayback50, ^•ﻌ•^
+            tweetactioninfopwewowwad, >_<
+            p-pwomotedtweetid, OwO
+            nyone
+          ), >_<
           (
-            EngagementType.VideoAdPlayback75,
-            amplifyDetailsPrerollAd,
-            ActionType.ServerPromotedTweetVideoAdPlayback75,
-            tweetActionInfoPrerollAd,
-            promotedTweetId,
-            None
-          ),
-          // For video_ad_* events when the preroll ad is on an organic tweet.
+            e-engagementtype.videoadpwayback75, (ꈍᴗꈍ)
+            ampwifydetaiwspwewowwad, >w<
+            a-actiontype.sewvewpwomotedtweetvideoadpwayback75, (U ﹏ U)
+            t-tweetactioninfopwewowwad, ^^
+            p-pwomotedtweetid, (U ﹏ U)
+            n-nyone
+          ), :3
+          // f-fow video_ad_* events when the pwewoww ad is on an owganic tweet. (✿oωo)
           (
-            EngagementType.VideoAdPlayback25,
-            amplifyDetailsPrerollAd,
-            ActionType.ServerTweetVideoAdPlayback25,
-            tweetActionInfoPrerollAd,
-            None,
-            organicTweetId
-          ),
+            engagementtype.videoadpwayback25, XD
+            ampwifydetaiwspwewowwad, >w<
+            actiontype.sewvewtweetvideoadpwayback25, òωó
+            t-tweetactioninfopwewowwad, (ꈍᴗꈍ)
+            nyone, rawr x3
+            o-owganictweetid
+          ), rawr x3
           (
-            EngagementType.VideoAdPlayback50,
-            amplifyDetailsPrerollAd,
-            ActionType.ServerTweetVideoAdPlayback50,
-            tweetActionInfoPrerollAd,
-            None,
-            organicTweetId
-          ),
+            e-engagementtype.videoadpwayback50, σωσ
+            ampwifydetaiwspwewowwad, (ꈍᴗꈍ)
+            a-actiontype.sewvewtweetvideoadpwayback50, rawr
+            tweetactioninfopwewowwad, ^^;;
+            nyone, rawr x3
+            owganictweetid
+          ), (ˆ ﻌ ˆ)♡
           (
-            EngagementType.VideoAdPlayback75,
-            amplifyDetailsPrerollAd,
-            ActionType.ServerTweetVideoAdPlayback75,
-            tweetActionInfoPrerollAd,
-            None,
-            organicTweetId
-          ),
+            e-engagementtype.videoadpwayback75, σωσ
+            a-ampwifydetaiwspwewowwad, (U ﹏ U)
+            actiontype.sewvewtweetvideoadpwayback75, >w<
+            t-tweetactioninfopwewowwad, σωσ
+            nyone, nyaa~~
+            owganictweetid
+          ), 🥺
         )
-        forEvery(events) {
+        f-fowevewy(events) {
           (
-            engagementType: EngagementType,
-            amplifyDetails: Option[AmplifyDetails],
-            actionType: ActionType,
-            actionInfo: Option[TweetActionInfo],
-            promotedTweetId: Option[Long],
-            organicTweetId: Option[Long],
+            e-engagementtype: engagementtype, rawr x3
+            a-ampwifydetaiws: o-option[ampwifydetaiws], σωσ
+            actiontype: actiontype, (///ˬ///✿)
+            actioninfo: option[tweetactioninfo],
+            p-pwomotedtweetid: o-option[wong], (U ﹏ U)
+            o-owganictweetid: o-option[wong], ^^;;
           ) =>
-            val spendEvent =
-              createVideoSpendServerEvent(
-                engagementType,
-                amplifyDetails,
-                promotedTweetId,
-                organicTweetId)
-            val actionTweetId = if (organicTweetId.isDefined) organicTweetId else promotedTweetId
-            val expected = Seq(createExpectedVideoUua(actionType, actionInfo, actionTweetId))
+            v-vaw spendevent =
+              c-cweatevideospendsewvewevent(
+                e-engagementtype, 🥺
+                ampwifydetaiws, òωó
+                p-pwomotedtweetid, XD
+                o-owganictweetid)
+            vaw actiontweetid = i-if (owganictweetid.isdefined) owganictweetid ewse pwomotedtweetid
+            v-vaw expected = seq(cweateexpectedvideouua(actiontype, :3 actioninfo, (U ﹏ U) a-actiontweetid))
 
-            val actual = AdsCallbackEngagementsAdapter.adaptEvent(spendEvent)
-            assert(expected === actual)
+            v-vaw actuaw = adscawwbackengagementsadaptew.adaptevent(spendevent)
+            a-assewt(expected === actuaw)
         }
       }
     }

@@ -1,501 +1,501 @@
-package com.twitter.servo.util
+package com.twittew.sewvo.utiw
 
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.Trace
-import com.twitter.finagle.FailedFastException
-import com.twitter.finagle.Filter
-import com.twitter.finagle.Service
-import com.twitter.util._
-import scala.util.control.NonFatal
+impowt com.twittew.finagwe.sewvice.wetwypowicy
+i-impowt c-com.twittew.finagwe.stats.stat
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.finagwe.twacing.twace
+i-impowt c-com.twittew.finagwe.faiwedfastexception
+i-impowt c-com.twittew.finagwe.fiwtew
+impowt com.twittew.finagwe.sewvice
+impowt com.twittew.utiw._
+impowt s-scawa.utiw.contwow.nonfataw
 
 /**
- * A collection of FutureArrow factory functions.
+ * a cowwection of futuweawwow f-factowy functions. ^•ﻌ•^
  */
-object FutureArrow {
+object futuweawwow {
 
   /**
-   * Produce a FutureArrow from a function `A => Future[B]`.
+   * p-pwoduce a futuweawwow fwom a function `a => futuwe[b]`. (˘ω˘)
    */
-  def apply[A, B](f: A => Future[B]): FutureArrow[A, B] =
-    new FutureArrow[A, B] {
-      override def apply(a: A): Future[B] =
-        try f(a)
+  d-def appwy[a, o.O b](f: a => f-futuwe[b]): futuweawwow[a, (✿oωo) b-b] =
+    nyew futuweawwow[a, 😳😳😳 b] {
+      ovewwide def appwy(a: a): futuwe[b] =
+        t-twy f(a)
         catch {
-          case NonFatal(e) => Future.exception(e)
+          case nyonfataw(e) => futuwe.exception(e)
         }
     }
 
   /**
-   * Produce a FutureArrow that supports recursive calls.  Recursing from a `Future`
-   * continuation is stack-safe, but direct recursion will use the stack, like a
-   * normal method invocation.
+   * pwoduce a-a futuweawwow that suppowts wecuwsive c-cawws. (ꈍᴗꈍ)  w-wecuwsing fwom a `futuwe`
+   * continuation i-is stack-safe, σωσ b-but diwect wecuwsion wiww use the stack, UwU w-wike a
+   * nyowmaw method invocation. ^•ﻌ•^
    */
-  def rec[A, B](f: FutureArrow[A, B] => A => Future[B]): FutureArrow[A, B] =
-    new FutureArrow[A, B] { self =>
-      private val g: A => Future[B] = f(this)
-      override def apply(a: A): Future[B] =
-        try g(a)
+  def wec[a, mya b](f: f-futuweawwow[a, /(^•ω•^) b] => a => futuwe[b]): futuweawwow[a, rawr b] =
+    new futuweawwow[a, nyaa~~ b] { sewf =>
+      p-pwivate vaw g: a => futuwe[b] = f-f(this)
+      o-ovewwide def a-appwy(a: a): futuwe[b] =
+        twy g(a)
         catch {
-          case NonFatal(e) => Future.exception(e)
+          c-case nyonfataw(e) => f-futuwe.exception(e)
         }
     }
 
   /**
-   * Produce a FutureArrow from an FunctionArrow.
+   * pwoduce a-a futuweawwow f-fwom an functionawwow. ( ͡o ω ͡o )
    */
-  def fromFunctionArrow[A, B](f: FunctionArrow[A, B]): FutureArrow[A, B] =
-    FutureArrow[A, B](a => Future(f(a)))
+  def fwomfunctionawwow[a, σωσ b-b](f: functionawwow[a, (✿oωo) b-b]): futuweawwow[a, (///ˬ///✿) b] =
+    futuweawwow[a, σωσ b](a => f-futuwe(f(a)))
 
   /**
-   * Produce a FutureArrow from a function.
+   * pwoduce a futuweawwow f-fwom a function. UwU
    */
-  def fromFunction[A, B](f: A => B): FutureArrow[A, B] = fromFunctionArrow(FunctionArrow(f))
+  def f-fwomfunction[a, (⑅˘꒳˘) b-b](f: a => b): futuweawwow[a, /(^•ω•^) b] = fwomfunctionawwow(functionawwow(f))
 
   /**
-   * Produce a FutureArrow from a function `A => Try[B]`.
+   * pwoduce a futuweawwow fwom a function `a => twy[b]`. -.-
    *
-   * The Try is evaluated within a Future. Thus, Throw results are translated
-   * to `Future.exception`s.
+   * t-the twy is evawuated w-within a futuwe. (ˆ ﻌ ˆ)♡ thus, t-thwow wesuwts awe t-twanswated
+   * t-to `futuwe.exception`s. nyaa~~
    */
-  def fromTry[A, B](f: A => Try[B]): FutureArrow[A, B] =
-    FutureArrow[A, B](a => Future.const(f(a)))
+  def fwomtwy[a, ʘwʘ b](f: a => twy[b]): futuweawwow[a, :3 b-b] =
+    futuweawwow[a, b](a => futuwe.const(f(a)))
 
   /**
-   * A FutureArrow that simply returns a Future of its argument.
+   * a futuweawwow that simpwy wetuwns a-a futuwe of its awgument. (U ᵕ U❁)
    */
-  def identity[A]: FutureArrow[A, A] =
-    FutureArrow[A, A](a => Future.value(a))
+  d-def identity[a]: f-futuweawwow[a, (U ﹏ U) a-a] =
+    futuweawwow[a, ^^ a-a](a => futuwe.vawue(a))
 
   /**
-   * A FutureArrow with a constant result, regardless of input.
+   * a-a futuweawwow w-with a constant w-wesuwt, òωó wegawdwess of input. /(^•ω•^)
    */
-  def const[A, B](value: Future[B]): FutureArrow[A, B] =
-    FutureArrow[A, B](_ => value)
+  def const[a, 😳😳😳 b-b](vawue: futuwe[b]): f-futuweawwow[a, :3 b-b] =
+    f-futuweawwow[a, (///ˬ///✿) b-b](_ => vawue)
 
   /**
-   * Appends two FutureArrows together.
+   * appends two futuweawwows togethew. rawr x3
    *
-   * This forms a category with 'identity'.
+   * t-this fowms a categowy with 'identity'. (U ᵕ U❁)
    */
-  def append[A, B, C](a: FutureArrow[A, B], b: FutureArrow[B, C]) = a.andThen(b)
+  def append[a, (⑅˘꒳˘) b, c](a: futuweawwow[a, (˘ω˘) b], :3 b-b: futuweawwow[b, XD c]) = a.andthen(b)
 
   /**
-   * Produce a FutureArrow that applies an FutureEffect, returning the argument
-   * value as-is on success. If the effect returns an Future exception, then the
-   * result of the filter will also be that exception.
+   * pwoduce a futuweawwow that appwies a-an futuweeffect, >_< w-wetuwning t-the awgument
+   * vawue as-is o-on success. (✿oωo) if the effect wetuwns a-an futuwe exception, (ꈍᴗꈍ) t-then the
+   * wesuwt of the fiwtew wiww awso be that exception. XD
    */
-  def effect[A](effect: FutureEffect[A]): FutureArrow[A, A] =
-    apply(a => effect(a).map(_ => a))
+  def effect[a](effect: futuweeffect[a]): f-futuweawwow[a, :3 a] =
+    appwy(a => e-effect(a).map(_ => a))
 
   /**
-   * Produces a FutureArrow that proxies to one of two others, depending on a
-   * predicate.
+   * p-pwoduces a-a futuweawwow that pwoxies to one of two othews, mya d-depending o-on a
+   * pwedicate.
    */
-  def choose[A, B](predicate: A => Boolean, ifTrue: FutureArrow[A, B], ifFalse: FutureArrow[A, B]) =
-    FutureArrow[A, B](a => if (predicate(a)) ifTrue(a) else ifFalse(a))
+  def c-choose[a, òωó b](pwedicate: a-a => boowean, nyaa~~ iftwue: futuweawwow[a, 🥺 b], -.- iffawse: futuweawwow[a, 🥺 b]) =
+    f-futuweawwow[a, (˘ω˘) b-b](a => if (pwedicate(a)) i-iftwue(a) ewse iffawse(a))
 
   /**
-   * Produces a FutureArrow whose application is guarded by a predicate. `f` is
-   * applied if the predicate returns true, otherwise the argument is simply
-   * returned.
+   * p-pwoduces a f-futuweawwow whose appwication is g-guawded by a pwedicate. òωó `f` is
+   * appwied if the pwedicate wetuwns twue, UwU othewwise t-the awgument i-is simpwy
+   * wetuwned. ^•ﻌ•^
    */
-  def onlyIf[A](predicate: A => Boolean, f: FutureArrow[A, A]) =
-    choose(predicate, f, identity[A])
+  def onwyif[a](pwedicate: a-a => b-boowean, mya f: futuweawwow[a, (✿oωo) a]) =
+    choose(pwedicate, XD f, identity[a])
 
   /**
-   * Produces a FutureArrow that forwards to multiple FutureArrows and collects
-   * the results into a `Seq[B]`. Results are gathered via Future.collect, so
-   * failure semantics are inherited from that method.
+   * p-pwoduces a futuweawwow that fowwawds to muwtipwe futuweawwows and cowwects
+   * t-the wesuwts into a `seq[b]`. :3 wesuwts awe gathewed v-via futuwe.cowwect, (U ﹏ U) s-so
+   * faiwuwe semantics awe inhewited fwom that method. UwU
    */
-  def collect[A, B](arrows: Seq[FutureArrow[A, B]]): FutureArrow[A, Seq[B]] =
-    apply(a => Future.collect(arrows.map(arrow => arrow(a))))
+  d-def c-cowwect[a, ʘwʘ b](awwows: seq[futuweawwow[a, >w< b]]): futuweawwow[a, 😳😳😳 seq[b]] =
+    a-appwy(a => futuwe.cowwect(awwows.map(awwow => a-awwow(a))))
 
-  private val RetryOnNonFailedFast: PartialFunction[Try[Any], Boolean] = {
-    case Throw(_: FailedFastException) => false
-    case Throw(_: Exception) => true
+  pwivate vaw wetwyonnonfaiwedfast: pawtiawfunction[twy[any], rawr b-boowean] = {
+    case thwow(_: f-faiwedfastexception) => f-fawse
+    case thwow(_: e-exception) => twue
   }
 }
 
 /**
- * A function encapsulating an asynchronous computation.
+ * a-a function e-encapsuwating an a-asynchwonous computation. ^•ﻌ•^
  *
- * Background on the Arrow abstraction:
- * http://en.wikipedia.org/wiki/Arrow_(computer_science)
+ * backgwound on t-the awwow abstwaction:
+ * h-http://en.wikipedia.owg/wiki/awwow_(computew_science)
  */
-trait FutureArrow[-A, +B] extends (A => Future[B]) { self =>
+twait futuweawwow[-a, σωσ +b] extends (a => f-futuwe[b]) { s-sewf =>
 
   /**
-   * Composes two FutureArrows. Produces a new FutureArrow that performs both in
-   * series, depending on the success of the first.
+   * c-composes two futuweawwows. :3 pwoduces a-a new futuweawwow that pewfowms b-both in
+   * sewies, rawr x3 d-depending on the success of the fiwst. nyaa~~
    */
-  def andThen[C](next: FutureArrow[B, C]): FutureArrow[A, C] =
-    FutureArrow[A, C](a => self(a).flatMap(next.apply))
+  def andthen[c](next: f-futuweawwow[b, :3 c-c]): futuweawwow[a, >w< c-c] =
+    f-futuweawwow[a, rawr c](a => sewf(a).fwatmap(next.appwy))
 
   /**
-   * Combines this FutureArrow with another, producing one that translates a
-   * tuple of its constituents' arguments into a tuple of their results.
+   * c-combines this futuweawwow with anothew, 😳 pwoducing one that twanswates a
+   * tupwe of its c-constituents' awguments into a tupwe o-of theiw wesuwts. 😳
    */
-  def zipjoin[C, D](other: FutureArrow[C, D]): FutureArrow[(A, C), (B, D)] =
-    FutureArrow[(A, C), (B, D)] {
-      case (a, c) => self(a) join other(c)
+  def zipjoin[c, 🥺 d](othew: f-futuweawwow[c, rawr x3 d]): futuweawwow[(a, ^^ c-c), ( ͡o ω ͡o ) (b, d)] =
+    futuweawwow[(a, c-c), XD (b, d-d)] {
+      c-case (a, ^^ c) => s-sewf(a) join othew(c)
     }
 
   /**
-   * Converts a FutureArrow on a scalar input and output value into a FutureArrow on a
-   * Sequence of input values producing a pairwise sequence of output values.  The elements
-   * of the input sequence are processed in parallel, so execution order is not guaranteed.
-   * Results are gathered via Future.collect, so failure semantics are inherited from that method.
+   * c-convewts a futuweawwow on a scawaw input and output vawue into a futuweawwow on a
+   * sequence of input v-vawues pwoducing a-a paiwwise sequence o-of output vawues. (⑅˘꒳˘)  the ewements
+   * o-of the input sequence awe pwocessed in pawawwew, (⑅˘꒳˘) so e-execution owdew i-is not guawanteed. ^•ﻌ•^
+   * wesuwts a-awe gathewed via futuwe.cowwect, ( ͡o ω ͡o ) so faiwuwe semantics a-awe inhewited f-fwom that method. ( ͡o ω ͡o )
    */
-  def liftSeq: FutureArrow[Seq[A], Seq[B]] =
-    FutureArrow[Seq[A], Seq[B]] { seqA =>
-      Future.collect(seqA.map(this))
+  def w-wiftseq: futuweawwow[seq[a], (✿oωo) seq[b]] =
+    f-futuweawwow[seq[a], 😳😳😳 seq[b]] { seqa =>
+      futuwe.cowwect(seqa.map(this))
     }
 
   /**
-   * Converts this FutureArrow to a FutureEffect, where the result value is ignored.
+   * convewts this futuweawwow t-to a futuweeffect, OwO w-whewe the w-wesuwt vawue is i-ignowed. ^^
    */
-  def asFutureEffect[A2 <: A]: FutureEffect[A2] =
-    FutureEffect(this.unit)
+  d-def asfutuweeffect[a2 <: a]: futuweeffect[a2] =
+    f-futuweeffect(this.unit)
 
   /**
-   * Combines this FutureArrow with another, producing one that applies both
-   * in parallel, producing a tuple of their results.
+   * c-combines this futuweawwow w-with anothew, rawr x3 p-pwoducing one that appwies both
+   * i-in pawawwew, 🥺 pwoducing a tupwe of theiw wesuwts. (ˆ ﻌ ˆ)♡
    */
-  def inParallel[A2 <: A, C](other: FutureArrow[A2, C]): FutureArrow[A2, (B, C)] = {
-    val paired = self.zipjoin(other)
-    FutureArrow[A2, (B, C)](a => paired((a, a)))
+  d-def inpawawwew[a2 <: a, c](othew: f-futuweawwow[a2, ( ͡o ω ͡o ) c-c]): futuweawwow[a2, >w< (b, c)] = {
+    v-vaw paiwed = sewf.zipjoin(othew)
+    futuweawwow[a2, /(^•ω•^) (b, c-c)](a => paiwed((a, 😳😳😳 a-a)))
   }
 
   /**
-   * Wrap a FutureArrow with an ExceptionCounter, thus providing
-   * observability into the arrow's success and failure.
+   * w-wwap a futuweawwow with an exceptioncountew, (U ᵕ U❁) thus pwoviding
+   * o-obsewvabiwity into the awwow's success a-and faiwuwe. (˘ω˘)
    */
-  def countExceptions(
-    exceptionCounter: ExceptionCounter
-  ): FutureArrow[A, B] =
-    FutureArrow[A, B](request => exceptionCounter(self(request)))
+  d-def countexceptions(
+    exceptioncountew: exceptioncountew
+  ): f-futuweawwow[a, 😳 b] =
+    futuweawwow[a, (ꈍᴗꈍ) b-b](wequest => e-exceptioncountew(sewf(wequest)))
 
   /**
-   * Returns a chained FutureArrow in which the given function will be called for any
-   * input that succeeds.
+   * wetuwns a chained futuweawwow i-in which the given function wiww be cawwed f-fow any
+   * input t-that succeeds. :3
    */
-  def onSuccess[A2 <: A](f: (A2, B) => Unit): FutureArrow[A2, B] =
-    FutureArrow[A2, B](a => self(a).onSuccess(b => f(a, b)))
+  def o-onsuccess[a2 <: a](f: (a2, /(^•ω•^) b) => u-unit): futuweawwow[a2, ^^;; b-b] =
+    f-futuweawwow[a2, o.O b](a => sewf(a).onsuccess(b => f(a, 😳 b)))
 
   /**
-   * Returns a chained FutureArrow in which the given function will be called for any
-   * input that fails.
+   * wetuwns a chained futuweawwow in which the given function wiww be cawwed fow any
+   * input that faiws. UwU
    */
-  def onFailure[A2 <: A](f: (A2, Throwable) => Unit): FutureArrow[A2, B] =
-    FutureArrow[A2, B](a => self(a).onFailure(t => f(a, t)))
+  def onfaiwuwe[a2 <: a](f: (a2, >w< thwowabwe) => u-unit): futuweawwow[a2, o.O b-b] =
+    futuweawwow[a2, (˘ω˘) b](a => sewf(a).onfaiwuwe(t => f-f(a, òωó t)))
 
   /**
-   * Translate exception returned by a FutureArrow according to a
-   * PartialFunction.
+   * t-twanswate e-exception wetuwned by a futuweawwow a-accowding to a
+   * pawtiawfunction. nyaa~~
    */
-  def translateExceptions(
-    translateException: PartialFunction[Throwable, Throwable]
-  ): FutureArrow[A, B] =
-    FutureArrow[A, B] { request =>
-      self(request).rescue {
-        case t if translateException.isDefinedAt(t) => Future.exception(translateException(t))
-        case t => Future.exception(t)
+  d-def twanswateexceptions(
+    t-twanswateexception: pawtiawfunction[thwowabwe, ( ͡o ω ͡o ) thwowabwe]
+  ): futuweawwow[a, 😳😳😳 b-b] =
+    futuweawwow[a, ^•ﻌ•^ b-b] { wequest =>
+      s-sewf(wequest).wescue {
+        case t if twanswateexception.isdefinedat(t) => f-futuwe.exception(twanswateexception(t))
+        c-case t => f-futuwe.exception(t)
       }
     }
 
   /**
-   * Apply a FutureArrow, lifting any non-Future exceptions thrown into
-   * `Future.exception`s.
+   * a-appwy a futuweawwow, (˘ω˘) w-wifting any n-non-futuwe exceptions t-thwown i-into
+   * `futuwe.exception`s. (˘ω˘)
    */
-  def liftExceptions: FutureArrow[A, B] =
-    FutureArrow[A, B] { request =>
-      // Flattening the Future[Future[Response]] is equivalent, but more concise
-      // than wrapping the arrow(request) call in a try/catch block that transforms
-      // the exception to a Future.exception, or at least was more concise before
-      // I added a four-line comment.
-      Future(self(request)).flatten
+  d-def wiftexceptions: futuweawwow[a, b-b] =
+    f-futuweawwow[a, -.- b-b] { wequest =>
+      // fwattening t-the futuwe[futuwe[wesponse]] is equivawent, but mowe concise
+      // t-than wwapping the awwow(wequest) c-caww i-in a twy/catch b-bwock that twansfowms
+      // the exception to a-a futuwe.exception, ^•ﻌ•^ ow at weast w-was mowe concise befowe
+      // i-i added a fouw-wine comment. /(^•ω•^)
+      f-futuwe(sewf(wequest)).fwatten
     }
 
   /**
-   * Wrap a FutureArrow in exception-tracking and -translation. Given a
-   * filter and a handler, exceptional results will be observed and translated
-   * according to the function passed in this function's second argument list.
+   * wwap a futuweawwow in exception-twacking and -twanswation. (///ˬ///✿) given a
+   * fiwtew a-and a handwew, mya exceptionaw wesuwts w-wiww be obsewved a-and twanswated
+   * accowding to the function passed in t-this function's second awgument w-wist. o.O
    */
-  def cleanly(
-    exceptionCounter: ExceptionCounter
+  def c-cweanwy(
+    exceptioncountew: e-exceptioncountew
   )(
-    translateException: PartialFunction[Throwable, Throwable] = { case t => t }
-  ): FutureArrow[A, B] = {
-    liftExceptions
-      .translateExceptions(translateException)
-      .countExceptions(exceptionCounter)
+    twanswateexception: pawtiawfunction[thwowabwe, ^•ﻌ•^ thwowabwe] = { c-case t => t-t }
+  ): futuweawwow[a, (U ᵕ U❁) b] = {
+    w-wiftexceptions
+      .twanswateexceptions(twanswateexception)
+      .countexceptions(exceptioncountew)
   }
 
   /**
-   * Produces a FutureArrow that tracks its own application latency.
+   * pwoduces a futuweawwow t-that twacks its own appwication w-watency. :3
    */
-  @deprecated("use trackLatency(StatsReceiver, (A2 => String)", "2.11.1")
-  def trackLatency[A2 <: A](
-    extractName: (A2 => String),
-    statsReceiver: StatsReceiver
-  ): FutureArrow[A2, B] =
-    trackLatency(statsReceiver, extractName)
+  @depwecated("use t-twackwatency(statsweceivew, (///ˬ///✿) (a2 => s-stwing)", (///ˬ///✿) "2.11.1")
+  def twackwatency[a2 <: a-a](
+    extwactname: (a2 => s-stwing), 🥺
+    statsweceivew: s-statsweceivew
+  ): f-futuweawwow[a2, -.- b] =
+    twackwatency(statsweceivew, nyaa~~ e-extwactname)
 
   /**
-   * Produces a FutureArrow that tracks its own application latency.
+   * pwoduces a-a futuweawwow t-that twacks i-its own appwication w-watency. (///ˬ///✿)
    */
-  def trackLatency[A2 <: A](
-    statsReceiver: StatsReceiver,
-    extractName: (A2 => String)
-  ): FutureArrow[A2, B] =
-    FutureArrow[A2, B] { request =>
-      Stat.timeFuture(statsReceiver.stat(extractName(request), "latency_ms")) {
-        self(request)
+  d-def twackwatency[a2 <: a-a](
+    s-statsweceivew: statsweceivew, 🥺
+    e-extwactname: (a2 => stwing)
+  ): f-futuweawwow[a2, >w< b] =
+    f-futuweawwow[a2, rawr x3 b-b] { wequest =>
+      s-stat.timefutuwe(statsweceivew.stat(extwactname(wequest), (⑅˘꒳˘) "watency_ms")) {
+        sewf(wequest)
       }
     }
 
   /**
-   * Produces a FutureArrow that tracks the outcome (i.e. success vs failure) of
-   * requests.
+   * pwoduces a futuweawwow that twacks t-the outcome (i.e. σωσ s-success vs f-faiwuwe) of
+   * wequests. XD
    */
-  @deprecated("use trackOutcome(StatsReceiver, (A2 => String)", "2.11.1")
-  def trackOutcome[A2 <: A](
-    extractName: (A2 => String),
-    statsReceiver: StatsReceiver
-  ): FutureArrow[A2, B] =
-    trackOutcome(statsReceiver, extractName)
+  @depwecated("use twackoutcome(statsweceivew, -.- (a2 => stwing)", >_< "2.11.1")
+  def t-twackoutcome[a2 <: a-a](
+    extwactname: (a2 => stwing), rawr
+    statsweceivew: s-statsweceivew
+  ): f-futuweawwow[a2, 😳😳😳 b] =
+    twackoutcome(statsweceivew, extwactname)
 
-  def trackOutcome[A2 <: A](
-    statsReceiver: StatsReceiver,
-    extractName: (A2 => String)
-  ): FutureArrow[A2, B] =
-    trackOutcome(statsReceiver, extractName, _ => None)
+  def twackoutcome[a2 <: a-a](
+    s-statsweceivew: s-statsweceivew, UwU
+    e-extwactname: (a2 => stwing)
+  ): futuweawwow[a2, (U ﹏ U) b-b] =
+    t-twackoutcome(statsweceivew, (˘ω˘) extwactname, _ => nyone)
 
   /**
-   * Produces a FutureArrow that tracks the outcome (i.e. success vs failure) of
-   * requests.
+   * pwoduces a futuweawwow t-that twacks the outcome (i.e. /(^•ω•^) success vs f-faiwuwe) of
+   * wequests. (U ﹏ U)
    */
-  def trackOutcome[A2 <: A](
-    statsReceiver: StatsReceiver,
-    extractName: (A2 => String),
-    exceptionCategorizer: Throwable => Option[String]
-  ): FutureArrow[A2, B] =
-    FutureArrow[A2, B] { request =>
-      val scope = statsReceiver.scope(extractName(request))
+  d-def twackoutcome[a2 <: a-a](
+    statsweceivew: s-statsweceivew, ^•ﻌ•^
+    e-extwactname: (a2 => stwing), >w<
+    e-exceptioncategowizew: thwowabwe => o-option[stwing]
+  ): f-futuweawwow[a2, ʘwʘ b-b] =
+    f-futuweawwow[a2, òωó b] { wequest =>
+      v-vaw s-scope = statsweceivew.scope(extwactname(wequest))
 
-      self(request).respond { r =>
-        statsReceiver.counter("requests").incr()
-        scope.counter("requests").incr()
+      s-sewf(wequest).wespond { w =>
+        statsweceivew.countew("wequests").incw()
+        s-scope.countew("wequests").incw()
 
-        r match {
-          case Return(_) =>
-            statsReceiver.counter("success").incr()
-            scope.counter("success").incr()
+        w match {
+          case w-wetuwn(_) =>
+            s-statsweceivew.countew("success").incw()
+            s-scope.countew("success").incw()
 
-          case Throw(t) =>
-            val category = exceptionCategorizer(t).getOrElse("failures")
-            statsReceiver.counter(category).incr()
-            scope.counter(category).incr()
-            scope.scope(category).counter(ThrowableHelper.sanitizeClassnameChain(t): _*).incr()
+          case thwow(t) =>
+            vaw categowy = exceptioncategowizew(t).getowewse("faiwuwes")
+            s-statsweceivew.countew(categowy).incw()
+            scope.countew(categowy).incw()
+            scope.scope(categowy).countew(thwowabwehewpew.sanitizecwassnamechain(t): _*).incw()
         }
       }
     }
 
   /**
-   * Observe latency and success rate for any FutureArrow[A, B] where A is Observable
+   * o-obsewve watency a-and success wate fow any futuweawwow[a, o.O b] w-whewe a is obsewvabwe
    */
-  def observed[A2 <: A with Observable](
-    statsReceiver: StatsReceiver
-  ): FutureArrow[A2, B] =
-    observed(statsReceiver, exceptionCategorizer = _ => None)
+  def obsewved[a2 <: a-a with obsewvabwe](
+    s-statsweceivew: s-statsweceivew
+  ): f-futuweawwow[a2, ( ͡o ω ͡o ) b-b] =
+    obsewved(statsweceivew, mya exceptioncategowizew = _ => nyone)
 
   /**
-   * Observe latency and success rate for any FutureArrow[A, B] where A is Observable
+   * obsewve w-watency and success wate fow a-any futuweawwow[a, >_< b] whewe a is obsewvabwe
    */
-  def observed[A2 <: A with Observable](
-    statsReceiver: StatsReceiver,
-    exceptionCategorizer: Throwable => Option[String]
-  ): FutureArrow[A2, B] =
-    self.observed(
-      statsReceiver.scope("client_request"),
-      (a: A2) => a.requestName,
-      exceptionCategorizer
+  def obsewved[a2 <: a-a with obsewvabwe](
+    statsweceivew: statsweceivew, rawr
+    exceptioncategowizew: t-thwowabwe => o-option[stwing]
+  ): futuweawwow[a2, b-b] =
+    sewf.obsewved(
+      statsweceivew.scope("cwient_wequest"), >_<
+      (a: a-a2) => a-a.wequestname, (U ﹏ U)
+      exceptioncategowizew
     )
 
   /**
-   * Observe latency and success rate for any FutureArrow
+   * o-obsewve watency and s-success wate fow any futuweawwow
    */
-  def observed[A2 <: A](
-    statsReceiver: StatsReceiver,
-    statsScope: A2 => String,
-    exceptionCategorizer: Throwable => Option[String] = _ => None
-  ): FutureArrow[A2, B] =
-    self
-      .trackLatency(statsReceiver, statsScope)
-      .trackOutcome(statsReceiver, statsScope, exceptionCategorizer)
+  def obsewved[a2 <: a](
+    s-statsweceivew: statsweceivew, rawr
+    statsscope: a-a2 => stwing, (U ᵕ U❁)
+    e-exceptioncategowizew: t-thwowabwe => option[stwing] = _ => nyone
+  ): f-futuweawwow[a2, (ˆ ﻌ ˆ)♡ b] =
+    sewf
+      .twackwatency(statsweceivew, >_< statsscope)
+      .twackoutcome(statsweceivew, ^^;; statsscope, e-exceptioncategowizew)
 
   /**
-   * Trace the future arrow using local spans as documented here:
-   * https://docbird.twitter.biz/finagle/Tracing.html
+   * t-twace the f-futuwe awwow using w-wocaw spans as documented hewe:
+   * https://docbiwd.twittew.biz/finagwe/twacing.htmw
    */
-  def traced[A2 <: A](
-    traceScope: A2 => String
-  ): FutureArrow[A2, B] = {
-    FutureArrow[A2, B] { a =>
-      Trace.traceLocalFuture(traceScope(a))(self(a))
+  d-def twaced[a2 <: a-a](
+    twacescope: a2 => stwing
+  ): futuweawwow[a2, ʘwʘ b-b] = {
+    futuweawwow[a2, 😳😳😳 b] { a =>
+      t-twace.twacewocawfutuwe(twacescope(a))(sewf(a))
     }
   }
 
   /**
-   * Produces a new FutureArrow where the given function is applied to the input, and the result
-   * passed to this FutureArrow.
+   * pwoduces a nyew futuweawwow w-whewe the given f-function is appwied to the input, UwU a-and the wesuwt
+   * p-passed t-to this futuweawwow. OwO
    */
-  def contramap[C](f: C => A): FutureArrow[C, B] =
-    FutureArrow[C, B](f.andThen(self))
+  def contwamap[c](f: c-c => a): futuweawwow[c, b] =
+    futuweawwow[c, :3 b-b](f.andthen(sewf))
 
   /**
-   * Produces a new FutureArrow where the given function is applied to the result of this
-   * FutureArrow.
+   * pwoduces a nyew futuweawwow whewe the given function i-is appwied t-to the wesuwt o-of this
+   * futuweawwow. -.-
    */
-  def map[C](f: B => C): FutureArrow[A, C] =
-    mapResult(_.map(f))
+  d-def map[c](f: b-b => c): futuweawwow[a, 🥺 c] =
+    m-mapwesuwt(_.map(f))
 
   /**
-   * Produces a new FutureArrow where the given function is applied to the resulting Future of
-   * this FutureArrow.
+   * pwoduces a nyew futuweawwow whewe t-the given function is appwied t-to the wesuwting futuwe of
+   * this futuweawwow. -.-
    */
-  def mapResult[C](f: Future[B] => Future[C]): FutureArrow[A, C] =
-    FutureArrow[A, C](a => f(self(a)))
+  d-def mapwesuwt[c](f: futuwe[b] => f-futuwe[c]): futuweawwow[a, -.- c-c] =
+    futuweawwow[a, (U ﹏ U) c](a => f-f(sewf(a)))
 
   /**
-   * Produces a new FutureArrow which translates exceptions into futures
+   * pwoduces a-a nyew futuweawwow which t-twanswates exceptions i-into futuwes
    */
-  def rescue[B2 >: B](
-    rescueException: PartialFunction[Throwable, Future[B2]]
-  ): FutureArrow[A, B2] = {
-    FutureArrow[A, B2] { a =>
-      self(a).rescue(rescueException)
+  def w-wescue[b2 >: b](
+    wescueexception: pawtiawfunction[thwowabwe, rawr futuwe[b2]]
+  ): f-futuweawwow[a, mya b2] = {
+    futuweawwow[a, ( ͡o ω ͡o ) b-b2] { a =>
+      sewf(a).wescue(wescueexception)
     }
   }
 
   /**
-   * Produces a new FutureArrow where the result value is ignored, and Unit is returned.
+   * pwoduces a nyew f-futuweawwow whewe t-the wesuwt v-vawue is ignowed, /(^•ω•^) and unit is wetuwned. >_<
    */
-  def unit: FutureArrow[A, Unit] =
-    mapResult(_.unit)
+  d-def unit: futuweawwow[a, (✿oωo) u-unit] =
+    mapwesuwt(_.unit)
 
   /**
-   * Returns a copy of this FutureArrow where the returned Future has its `.masked`
-   * method called.
+   * w-wetuwns a copy of this futuweawwow w-whewe the wetuwned futuwe h-has its `.masked`
+   * m-method cawwed. 😳😳😳
    */
-  def masked: FutureArrow[A, B] =
-    mapResult(_.masked)
+  def masked: futuweawwow[a, (ꈍᴗꈍ) b] =
+    mapwesuwt(_.masked)
 
   /**
-   * Wraps this FutureArrow by passing the underlying operation to the given retry handler
-   * for possible retries.
+   * w-wwaps this futuweawwow b-by passing the undewwying opewation to the given wetwy h-handwew
+   * fow possibwe wetwies. 🥺
    */
-  def retry(handler: RetryHandler[B]): FutureArrow[A, B] =
-    FutureArrow[A, B](a => handler(self(a)))
+  d-def wetwy(handwew: w-wetwyhandwew[b]): futuweawwow[a, mya b] =
+    futuweawwow[a, (ˆ ﻌ ˆ)♡ b](a => handwew(sewf(a)))
 
-  def retry[A2 <: A](
-    policy: RetryPolicy[Try[B]],
-    timer: Timer,
-    statsReceiver: StatsReceiver,
-    extractName: (A2 => String)
-  ): FutureArrow[A2, B] =
-    FutureArrow[A2, B] { a =>
-      val scoped = statsReceiver.scope(extractName(a))
-      RetryHandler(policy, timer, scoped)(self(a))
+  def wetwy[a2 <: a-a](
+    powicy: wetwypowicy[twy[b]], (⑅˘꒳˘)
+    timew: t-timew, òωó
+    statsweceivew: statsweceivew, o.O
+    e-extwactname: (a2 => s-stwing)
+  ): futuweawwow[a2, XD b-b] =
+    futuweawwow[a2, (˘ω˘) b-b] { a-a =>
+      vaw scoped = s-statsweceivew.scope(extwactname(a))
+      w-wetwyhandwew(powicy, (ꈍᴗꈍ) t-timew, scoped)(sewf(a))
     }
 
   /**
-   * Produces a new FutureArrow where the returned Future[B] must complete within the specified
-   * timeout, otherwise the Future fails with a com.twitter.util.TimeoutException.
+   * pwoduces a nyew futuweawwow whewe the wetuwned futuwe[b] must compwete within the s-specified
+   * t-timeout, >w< othewwise t-the futuwe f-faiws with a com.twittew.utiw.timeoutexception. XD
    *
-   * The [[timeout]] is passed by name to take advantage of deadlines passed in the request context.
+   * t-the [[timeout]] i-is passed by nyame to take advantage of deadwines passed in the wequest c-context. -.-
    *
-   * ''Note'': On timeout, the underlying future is NOT interrupted.
+   * ''note'': on t-timeout, ^^;; the undewwying futuwe is nyot intewwupted. XD
    */
-  def withTimeout(timer: Timer, timeout: => Duration): FutureArrow[A, B] =
-    mapResult(_.within(timer, timeout))
+  def w-withtimeout(timew: t-timew, :3 timeout: => d-duwation): futuweawwow[a, σωσ b] =
+    mapwesuwt(_.within(timew, XD t-timeout))
 
   /**
-   * Produces a new FutureArrow where the returned Future must complete within the specified
-   * timeout, otherwise the Future fails with the specified Throwable.
+   * pwoduces a nyew futuweawwow w-whewe the w-wetuwned futuwe must compwete within the specified
+   * t-timeout, :3 othewwise the f-futuwe faiws with t-the specified thwowabwe. rawr
    *
-   * The [[timeout]] is passed by name to take advantage of deadlines passed in the request context.
+   * t-the [[timeout]] i-is passed by n-nyame to take a-advantage of deadwines p-passed in t-the wequest context.
    *
-   * ''Note'': On timeout, the underlying future is NOT interrupted.
+   * ''note'': on timeout, t-the undewwying f-futuwe is nyot intewwupted. 😳
    */
-  def withTimeout(timer: Timer, timeout: => Duration, exc: => Throwable): FutureArrow[A, B] =
-    mapResult(_.within(timer, timeout, exc))
+  d-def withtimeout(timew: timew, 😳😳😳 timeout: => duwation, (ꈍᴗꈍ) exc: => t-thwowabwe): futuweawwow[a, 🥺 b-b] =
+    mapwesuwt(_.within(timew, ^•ﻌ•^ timeout, exc))
 
   /**
-   * Produces a new FutureArrow where the returned Future[B] must complete within the specified
-   * timeout, otherwise the Future fails with a com.twitter.util.TimeoutException.
+   * p-pwoduces a-a nyew futuweawwow whewe the wetuwned futuwe[b] m-must compwete within the specified
+   * timeout, XD o-othewwise t-the futuwe faiws with a com.twittew.utiw.timeoutexception. ^•ﻌ•^
    *
-   * The [[timeout]] is passed by name to take advantage of deadlines passed in the request context.
+   * the [[timeout]] i-is passed b-by nyame to take advantage of deadwines p-passed in the wequest context. ^^;;
    *
-   * ''Note'': On timeout, the underlying future is interrupted.
+   * ''note'': on timeout, ʘwʘ t-the undewwying f-futuwe is intewwupted. OwO
    */
-  def raiseWithin(timer: Timer, timeout: => Duration): FutureArrow[A, B] =
-    mapResult(_.raiseWithin(timeout)(timer))
+  d-def waisewithin(timew: t-timew, timeout: => duwation): futuweawwow[a, 🥺 b-b] =
+    m-mapwesuwt(_.waisewithin(timeout)(timew))
 
   /**
-   * Produces a new FutureArrow where the returned Future must complete within the specified
-   * timeout, otherwise the Future fails with the specified Throwable.
+   * p-pwoduces a-a new futuweawwow whewe the wetuwned futuwe must compwete within the specified
+   * timeout, (⑅˘꒳˘) othewwise the futuwe f-faiws with the s-specified thwowabwe. (///ˬ///✿)
    *
-   * [[timeout]] is passed by name to take advantage of deadlines passed in the request context.
+   * [[timeout]] i-is p-passed by nyame t-to take advantage o-of deadwines passed in the wequest c-context.
    *
-   * ''Note'': On timeout, the underlying future is interrupted.
+   * ''note'': o-on timeout, (✿oωo) the undewwying futuwe i-is intewwupted. nyaa~~
    */
-  def raiseWithin(timer: Timer, timeout: => Duration, exc: => Throwable): FutureArrow[A, B] =
-    mapResult(_.raiseWithin(timer, timeout, exc))
+  d-def waisewithin(timew: timew, >w< timeout: => d-duwation, (///ˬ///✿) exc: => thwowabwe): futuweawwow[a, rawr b-b] =
+    mapwesuwt(_.waisewithin(timew, (U ﹏ U) timeout, e-exc))
 
   /**
-   * Produces a finagle.Service instance that invokes this arrow.
+   * p-pwoduces a finagwe.sewvice i-instance that invokes t-this awwow. ^•ﻌ•^
    */
-  def asService: Service[A, B] = Service.mk(this)
+  d-def assewvice: sewvice[a, (///ˬ///✿) b-b] = sewvice.mk(this)
 
   /**
-   * Produces a new FutureArrow with the given finagle.Filter applied to this instance.
+   * p-pwoduces a nyew futuweawwow w-with the given finagwe.fiwtew a-appwied to this i-instance. o.O
    */
-  def withFilter[A2, B2](filter: Filter[A2, B2, A, B]): FutureArrow[A2, B2] =
-    FutureArrow[A2, B2](filter.andThen(asService))
+  d-def withfiwtew[a2, >w< b2](fiwtew: f-fiwtew[a2, nyaa~~ b2, a, b]): futuweawwow[a2, òωó b2] =
+    f-futuweawwow[a2, (U ᵕ U❁) b2](fiwtew.andthen(assewvice))
 
   /**
-   * Produces a new FutureArrow with the given timeout which retries on Exceptions or timeouts and
-   * records stats about the logical request.  This is only appropriate for idempotent operations.
+   * pwoduces a nyew futuweawwow with the given timeout which wetwies on e-exceptions ow timeouts and
+   * wecowds stats about the wogicaw wequest. (///ˬ///✿)  this is onwy appwopwiate fow idempotent o-opewations. (✿oωo)
    */
-  def observedWithTimeoutAndRetry[A2 <: A](
-    statsReceiver: StatsReceiver,
-    extractName: (A2 => String),
-    timer: Timer,
-    timeout: Duration,
-    numTries: Int,
-    shouldRetry: PartialFunction[Try[B], Boolean] = FutureArrow.RetryOnNonFailedFast
-  ): FutureArrow[A2, B] = {
-    val retryPolicy = RetryPolicy.tries(numTries, shouldRetry)
-    withTimeout(timer, timeout)
-      .retry(retryPolicy, timer, statsReceiver, extractName)
-      .trackLatency(statsReceiver, extractName)
-      .trackOutcome(statsReceiver, extractName)
+  def obsewvedwithtimeoutandwetwy[a2 <: a](
+    s-statsweceivew: statsweceivew,
+    e-extwactname: (a2 => stwing), 😳😳😳
+    timew: t-timew, (✿oωo)
+    timeout: duwation, (U ﹏ U)
+    n-nyumtwies: int, (˘ω˘)
+    shouwdwetwy: p-pawtiawfunction[twy[b], 😳😳😳 b-boowean] = futuweawwow.wetwyonnonfaiwedfast
+  ): futuweawwow[a2, (///ˬ///✿) b-b] = {
+    vaw wetwypowicy = wetwypowicy.twies(numtwies, (U ᵕ U❁) shouwdwetwy)
+    w-withtimeout(timew, >_< timeout)
+      .wetwy(wetwypowicy, (///ˬ///✿) t-timew, statsweceivew, (U ᵕ U❁) e-extwactname)
+      .twackwatency(statsweceivew, extwactname)
+      .twackoutcome(statsweceivew, e-extwactname)
   }
 
   /**
-   * Produces a new FutureArrow with the given timeout and records stats about the logical request.
-   * This does not retry and is appropriate for non-idempotent operations.
+   * pwoduces a-a nyew futuweawwow with the given timeout a-and wecowds stats about the wogicaw wequest. >w<
+   * t-this does nyot wetwy and is appwopwiate fow nyon-idempotent opewations. 😳😳😳
    */
-  def observedWithTimeout[A2 <: A](
-    statsReceiver: StatsReceiver,
-    extractName: (A2 => String),
-    timer: Timer,
-    timeout: Duration
-  ): FutureArrow[A2, B] =
-    withTimeout(timer, timeout)
-      .trackLatency(statsReceiver, extractName)
-      .trackOutcome(statsReceiver, extractName)
+  d-def obsewvedwithtimeout[a2 <: a-a](
+    statsweceivew: statsweceivew, (ˆ ﻌ ˆ)♡
+    e-extwactname: (a2 => s-stwing), (ꈍᴗꈍ)
+    timew: timew, 🥺
+    timeout: d-duwation
+  ): futuweawwow[a2, >_< b] =
+    withtimeout(timew, OwO timeout)
+      .twackwatency(statsweceivew, ^^;; extwactname)
+      .twackoutcome(statsweceivew, (✿oωo) e-extwactname)
 }

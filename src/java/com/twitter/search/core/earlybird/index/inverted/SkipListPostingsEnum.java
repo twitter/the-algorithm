@@ -1,255 +1,255 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import com.google.common.base.Preconditions;
+impowt c-com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.util.BytesRef;
+i-impowt owg.apache.wucene.index.postingsenum;
+i-impowt owg.apache.wucene.utiw.byteswef;
 
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentData;
+i-impowt c-com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdweawtimeindexsegmentdata;
 
-import static com.twitter.search.core.earlybird.index.inverted.SkipListContainer.INVALID_POSITION;
+i-impowt static com.twittew.seawch.cowe.eawwybiwd.index.invewted.skipwistcontainew.invawid_position;
 
 /**
- * TermDocs enumerator used by {@link SkipListPostingList}.
+ * t-tewmdocs e-enumewatow used by {@wink skipwistpostingwist}. (˘ω˘)
  */
-public class SkipListPostingsEnum extends PostingsEnum {
-  /** Initialize cur doc ID and frequency. */
-  private int curDoc = TermsArray.INVALID;
-  private int curFreq = 0;
+pubwic cwass skipwistpostingsenum extends p-postingsenum {
+  /** initiawize cuw doc id and f-fwequency. UwU */
+  pwivate int cuwdoc = t-tewmsawway.invawid;
+  pwivate int cuwfweq = 0;
 
-  private final int postingPointer;
+  pwivate f-finaw int postingpointew;
 
-  private final int cost;
-
-  /**
-   * maxPublishedPointer exists to prevent us from returning documents that are partially indexed.
-   * These pointers are safe to follow, but the documents should not be returned. See
-   * {@link EarlybirdRealtimeIndexSegmentData#getSyncData()} ()}.
-   */
-  private final int maxPublishedPointer;
-
-  /** Skip list info and search key */
-  private final SkipListContainer<SkipListPostingList.Key> skiplist;
-  private final SkipListPostingList.Key key = new SkipListPostingList.Key();
+  pwivate f-finaw int c-cost;
 
   /**
-   * Pointer/posting/docID of next posting in the skip list.
-   *  Notice the next here is relative to last posting with curDoc ID.
+   * maxpubwishedpointew exists to pwevent us fwom wetuwning documents t-that awe pawtiawwy indexed. >_<
+   * these pointews awe safe to fowwow, σωσ but the d-documents shouwd nyot be wetuwned. 🥺 s-see
+   * {@wink e-eawwybiwdweawtimeindexsegmentdata#getsyncdata()} ()}. 🥺
    */
-  private int nextPostingPointer;
-  private int nextPostingDocID;
+  p-pwivate finaw int m-maxpubwishedpointew;
+
+  /** skip wist info and seawch key */
+  p-pwivate finaw skipwistcontainew<skipwistpostingwist.key> skipwist;
+  p-pwivate finaw skipwistpostingwist.key key = nyew skipwistpostingwist.key();
 
   /**
-   * We save the positionPointer because we must walk the posting list to obtain term frequency
-   * before we can start iterating through document positions. To do that walk, we increment
-   * postingsPointer until it points to the first posting for the next doc, so postingsPointer is no
-   * longer what we want to use as the start of the position list. The position pointer starts out
-   * pointing to the first posting with that doc ID value. There can be duplicate doc ID values with
-   * different positions. To find subsequent positions, we simply walk the posting list using this
-   * pointer.
+   * pointew/posting/docid of nyext posting in the skip w-wist. ʘwʘ
+   *  nyotice the nyext h-hewe is wewative t-to wast posting w-with cuwdoc id. :3
    */
-  private int positionPointer = -1;
+  pwivate int nyextpostingpointew;
+  pwivate i-int nyextpostingdocid;
 
   /**
-   * The payloadPointer should only be called after calling nextPosition, as it points to a payload
-   * for each position. It is not updated unless nextPosition is called.
+   * w-we save the positionpointew b-because we must w-wawk the posting wist to obtain t-tewm fwequency
+   * befowe we c-can stawt itewating thwough document positions. (U ﹏ U) t-to do that wawk, (U ﹏ U) we incwement
+   * p-postingspointew untiw it points t-to the fiwst p-posting fow the nyext doc, ʘwʘ so postingspointew is nyo
+   * wongew nyani we want to use as the stawt of the position wist. >w< the position p-pointew stawts o-out
+   * pointing to the fiwst p-posting with t-that doc id vawue. rawr x3 t-thewe can be dupwicate doc id vawues with
+   * diffewent positions. OwO t-to find subsequent positions, ^•ﻌ•^ we simpwy wawk the posting wist using this
+   * p-pointew. >_<
    */
-  private int payloadPointer = -1;
-
-  /** Search finger used in advance method. */
-  private final SkipListSearchFinger advanceSearchFinger;
+  pwivate i-int positionpointew = -1;
 
   /**
-   * A new {@link PostingsEnum} for a real-time skip list-based posting list.
+   * t-the paywoadpointew s-shouwd onwy be cawwed aftew c-cawwing nyextposition, OwO a-as it p-points to a paywoad
+   * f-fow each position. >_< it is nyot updated u-unwess nyextposition i-is cawwed. (ꈍᴗꈍ)
    */
-  public SkipListPostingsEnum(
-      int postingPointer,
-      int docFreq,
-      int maxPublishedPointer,
-      SkipListContainer<SkipListPostingList.Key> skiplist) {
-    this.postingPointer = postingPointer;
-    this.skiplist = skiplist;
-    this.advanceSearchFinger = this.skiplist.buildSearchFinger();
-    this.maxPublishedPointer = maxPublishedPointer;
-    this.nextPostingPointer = postingPointer;
+  p-pwivate i-int paywoadpointew = -1;
 
-    // WARNING:
-    // docFreq is approximate and may not be the true document frequency of the posting list.
-    this.cost = docFreq;
+  /** s-seawch fingew used in advance method. >w< */
+  pwivate finaw skipwistseawchfingew advanceseawchfingew;
 
-    if (postingPointer != -1) {
-      // Because the posting pointer is not negative 1, we know it's valid.
-      readNextPosting();
+  /**
+   * a-a nyew {@wink postingsenum} fow a weaw-time skip wist-based posting wist. (U ﹏ U)
+   */
+  pubwic skipwistpostingsenum(
+      i-int postingpointew, ^^
+      int docfweq, (U ﹏ U)
+      int maxpubwishedpointew, :3
+      skipwistcontainew<skipwistpostingwist.key> s-skipwist) {
+    t-this.postingpointew = p-postingpointew;
+    this.skipwist = s-skipwist;
+    this.advanceseawchfingew = this.skipwist.buiwdseawchfingew();
+    t-this.maxpubwishedpointew = m-maxpubwishedpointew;
+    this.nextpostingpointew = postingpointew;
+
+    // wawning:
+    // docfweq is appwoximate a-and may nyot be the twue document f-fwequency of the posting wist. (✿oωo)
+    t-this.cost = d-docfweq;
+
+    if (postingpointew != -1) {
+      // because the p-posting pointew i-is nyot nyegative 1, XD we know i-it's vawid. >w<
+      w-weadnextposting();
     }
 
-    advanceSearchFinger.reset();
+    advanceseawchfingew.weset();
   }
 
-  @Override
-  public final int nextDoc() {
-    // Notice if skip list is exhausted nextPostingPointer will point back to postingPointer since
-    // skip list is circle linked.
-    if (nextPostingPointer == postingPointer) {
-      // Skip list is exhausted.
-      curDoc = NO_MORE_DOCS;
-      curFreq = 0;
-    } else {
-      // Skip list is not exhausted.
-      curDoc = nextPostingDocID;
-      curFreq = 1;
-      positionPointer = nextPostingPointer;
+  @ovewwide
+  pubwic finaw int nyextdoc() {
+    // nyotice if s-skip wist is exhausted n-nyextpostingpointew w-wiww point back to postingpointew s-since
+    // s-skip wist is ciwcwe winked. òωó
+    i-if (nextpostingpointew == postingpointew) {
+      // skip wist is exhausted. (ꈍᴗꈍ)
+      cuwdoc = nyo_mowe_docs;
+      c-cuwfweq = 0;
+    } e-ewse {
+      // skip wist is nyot e-exhausted. rawr x3
+      c-cuwdoc = nyextpostingdocid;
+      cuwfweq = 1;
+      positionpointew = nyextpostingpointew;
 
-      // Keep reading all the posting with the same doc ID.
-      // Notice:
-      //   - posting with the same doc ID will be stored consecutively
-      //     since the skip list is sorted.
-      //   - if skip list is exhausted, nextPostingPointer will become postingPointer
-      //     since skip list is circle linked.
-      readNextPosting();
-      while (nextPostingPointer != postingPointer && nextPostingDocID == curDoc) {
-        curFreq++;
-        readNextPosting();
+      // k-keep weading aww the posting with the same doc id. rawr x3
+      // nyotice:
+      //   - p-posting with the same doc id wiww be stowed c-consecutivewy
+      //     s-since the skip wist is sowted. σωσ
+      //   - if skip wist is exhausted, (ꈍᴗꈍ) n-nyextpostingpointew w-wiww become postingpointew
+      //     since skip wist is ciwcwe winked. rawr
+      w-weadnextposting();
+      whiwe (nextpostingpointew != p-postingpointew && nyextpostingdocid == cuwdoc) {
+        cuwfweq++;
+        w-weadnextposting();
       }
     }
 
-    // Returned updated curDoc.
-    return curDoc;
+    // wetuwned updated c-cuwdoc. ^^;;
+    w-wetuwn cuwdoc;
   }
 
   /**
-   * Moves the enumerator forward by one element, then reads the information at that position.
+   * moves the enumewatow f-fowwawd by one ewement, rawr x3 then w-weads the infowmation a-at that p-position. (ˆ ﻌ ˆ)♡
    * */
-  private void readNextPosting() {
-    // Move search finger forward at lowest level.
-    advanceSearchFinger.setPointer(0, nextPostingPointer);
+  pwivate void w-weadnextposting() {
+    // m-move seawch fingew fowwawd at wowest w-wevew.
+    advanceseawchfingew.setpointew(0, σωσ n-nyextpostingpointew);
 
-    // Read next posting pointer.
-    nextPostingPointer = skiplist.getNextPointer(nextPostingPointer);
+    // w-wead nyext posting pointew. (U ﹏ U)
+    nyextpostingpointew = s-skipwist.getnextpointew(nextpostingpointew);
 
-    // Read the new posting positioned under nextPostingPointer into the nextPostingDocID.
-    readNextPostingInfo();
+    // wead the n-nyew posting positioned u-undew nyextpostingpointew into the nyextpostingdocid.
+    weadnextpostinginfo();
   }
 
-  private boolean isPointerPublished(int pointer) {
-    return pointer <= maxPublishedPointer;
+  p-pwivate boowean i-ispointewpubwished(int p-pointew) {
+    w-wetuwn pointew <= maxpubwishedpointew;
   }
 
-  /** Read next posting and doc id encoded in next posting. */
-  private void readNextPostingInfo() {
-    // We need to skip over every pointer that has not been published to this Enum, otherwise the
-    // searcher will see unpublished documents. We also end termination if we reach
-    // nextPostingPointer == postingPointer, because that means we have reached the end of the
-    // skiplist.
-    while (!isPointerPublished(nextPostingPointer) && nextPostingPointer != postingPointer) {
-      // Move search finger forward at lowest level.
-      advanceSearchFinger.setPointer(0, nextPostingPointer);
+  /** w-wead nyext posting and doc id encoded in nyext posting. >w< */
+  pwivate void weadnextpostinginfo() {
+    // w-we nyeed to skip ovew evewy pointew t-that has nyot been pubwished t-to this enum, σωσ othewwise the
+    // s-seawchew wiww see unpubwished d-documents. nyaa~~ w-we awso end tewmination i-if we weach
+    // n-nyextpostingpointew == p-postingpointew, 🥺 because that means we have weached the end of the
+    // skipwist. rawr x3
+    whiwe (!ispointewpubwished(nextpostingpointew) && nyextpostingpointew != p-postingpointew) {
+      // m-move s-seawch fingew fowwawd at wowest w-wevew. σωσ
+      advanceseawchfingew.setpointew(0, (///ˬ///✿) nyextpostingpointew);
 
-      // Read next posting pointer.
-      nextPostingPointer = skiplist.getNextPointer(nextPostingPointer);
+      // wead nyext posting pointew. (U ﹏ U)
+      n-nyextpostingpointew = s-skipwist.getnextpointew(nextpostingpointew);
     }
 
-    // Notice if skip list is exhausted, nextPostingPointer will be postingPointer
-    // since skip list is circle linked.
-    if (nextPostingPointer != postingPointer) {
-      nextPostingDocID = skiplist.getValue(nextPostingPointer);
-    } else {
-      nextPostingDocID = NO_MORE_DOCS;
+    // nyotice if skip w-wist is exhausted, ^^;; nyextpostingpointew wiww b-be postingpointew
+    // s-since skip wist is ciwcwe w-winked. 🥺
+    if (nextpostingpointew != p-postingpointew) {
+      nyextpostingdocid = skipwist.getvawue(nextpostingpointew);
+    } ewse {
+      nyextpostingdocid = nyo_mowe_docs;
     }
   }
 
   /**
-   * Jump to the target, then use {@link #nextDoc()} to collect nextDoc info.
-   * Notice target might be smaller than curDoc or smallestDocID.
+   * j-jump to t-the tawget, òωó then u-use {@wink #nextdoc()} t-to cowwect n-nyextdoc info. XD
+   * nyotice tawget m-might be smowew t-than cuwdoc ow smowestdocid. :3
    */
-  @Override
-  public final int advance(int target) {
-    if (target == NO_MORE_DOCS) {
-      // Exhaust the posting list, so that future calls to docID() always return NO_MORE_DOCS.
-      nextPostingPointer = postingPointer;
+  @ovewwide
+  p-pubwic finaw i-int advance(int tawget) {
+    i-if (tawget == no_mowe_docs) {
+      // exhaust t-the posting wist, (U ﹏ U) so that futuwe c-cawws to docid() a-awways wetuwn nyo_mowe_docs. >w<
+      n-nyextpostingpointew = postingpointew;
     }
 
-    if (nextPostingPointer == postingPointer) {
-      // Call nextDoc to ensure that all values are updated and we don't have to duplicate that
-      // here.
-      return nextDoc();
+    if (nextpostingpointew == p-postingpointew) {
+      // c-caww n-nyextdoc to ensuwe that aww vawues awe updated and we don't have t-to dupwicate that
+      // hewe. /(^•ω•^)
+      wetuwn n-nyextdoc();
     }
 
-    // Jump to target if target is bigger.
-    if (target >= curDoc && target >= nextPostingDocID) {
-      jumpToTarget(target);
+    // j-jump to tawget if tawget i-is biggew. (⑅˘꒳˘)
+    if (tawget >= c-cuwdoc && tawget >= n-nextpostingdocid) {
+      jumptotawget(tawget);
     }
 
-    // Retrieve next doc.
-    return nextDoc();
+    // wetwieve nyext d-doc. ʘwʘ
+    wetuwn nyextdoc();
   }
 
   /**
-   * Set the next posting pointer (and info) to the first posting
-   * with doc ID equal to or larger than the target.
+   * set t-the nyext posting p-pointew (and info) to the fiwst p-posting
+   * with doc id equaw t-to ow wawgew than t-the tawget. rawr x3
    *
-   * Notice this method does not set curDoc or curFreq.
+   * n-nyotice this method does nyot set cuwdoc ow cuwfweq. (˘ω˘)
    */
-  private void jumpToTarget(int target) {
-    // Do a ceil search.
-    nextPostingPointer = skiplist.searchCeil(
-        key.withDocAndPosition(target, INVALID_POSITION), postingPointer, advanceSearchFinger);
+  pwivate void jumptotawget(int tawget) {
+    // do a ceiw seawch. o.O
+    nyextpostingpointew = skipwist.seawchceiw(
+        key.withdocandposition(tawget, 😳 invawid_position), o.O postingpointew, ^^;; advanceseawchfingew);
 
-    // Read next posting information.
-    readNextPostingInfo();
+    // wead n-nyext posting i-infowmation. ( ͡o ω ͡o )
+    weadnextpostinginfo();
   }
 
-  @Override
-  public int nextPosition() {
-    // If doc ID is equal to no more docs than we are past the end of the posting list. If doc ID
-    // is invalid, then we have not called nextDoc yet, and we should not return a real position.
-    // If the position pointer is past the current doc ID, then we should not return a position
-    // until nextDoc is called again (we don't want to return positions for a different doc).
-    if (docID() == NO_MORE_DOCS
-        || docID() == TermsArray.INVALID
-        || skiplist.getValue(positionPointer) != docID()) {
-      return INVALID_POSITION;
+  @ovewwide
+  pubwic i-int nyextposition() {
+    // i-if doc id is equaw t-to nyo mowe docs than we awe p-past the end of the posting wist. ^^;; i-if doc id
+    // i-is invawid, ^^;; then we have not c-cawwed nyextdoc yet, XD and we shouwd n-nyot wetuwn a-a weaw position. 🥺
+    // if the position pointew i-is past the cuwwent d-doc id, (///ˬ///✿) then w-we shouwd nyot w-wetuwn a position
+    // u-untiw nyextdoc i-is cawwed a-again (we don't w-want to wetuwn p-positions fow a diffewent doc). (U ᵕ U❁)
+    i-if (docid() == n-nyo_mowe_docs
+        || d-docid() == tewmsawway.invawid
+        || s-skipwist.getvawue(positionpointew) != docid()) {
+      wetuwn i-invawid_position;
     }
-    payloadPointer = positionPointer;
-    int position = skiplist.getPosition(positionPointer);
+    paywoadpointew = p-positionpointew;
+    i-int position = s-skipwist.getposition(positionpointew);
     do {
-      positionPointer = skiplist.getNextPointer(positionPointer);
-    } while (!isPointerPublished(positionPointer) && positionPointer != postingPointer);
-    return position;
+      positionpointew = s-skipwist.getnextpointew(positionpointew);
+    } whiwe (!ispointewpubwished(positionpointew) && p-positionpointew != postingpointew);
+    wetuwn position;
   }
 
-  @Override
-  public BytesRef getPayload() {
-    if (skiplist.getHasPayloads() == SkipListContainer.HasPayloads.NO) {
-      return null;
+  @ovewwide
+  p-pubwic byteswef getpaywoad() {
+    i-if (skipwist.gethaspaywoads() == skipwistcontainew.haspaywoads.no) {
+      wetuwn nyuww;
     }
 
-    int pointer = skiplist.getPayloadPointer(this.payloadPointer);
-    Preconditions.checkState(pointer > 0);
-    return PayloadUtil.decodePayload(skiplist.getBlockPool(), pointer);
+    int pointew = skipwist.getpaywoadpointew(this.paywoadpointew);
+    pweconditions.checkstate(pointew > 0);
+    w-wetuwn paywoadutiw.decodepaywoad(skipwist.getbwockpoow(), ^^;; p-pointew);
   }
 
-  @Override
-  public int startOffset() {
-    return -1;
+  @ovewwide
+  p-pubwic int stawtoffset() {
+    wetuwn -1;
   }
 
-  @Override
-  public int endOffset() {
-    return -1;
+  @ovewwide
+  pubwic int endoffset() {
+    wetuwn -1;
   }
 
-  @Override
-  public final int docID() {
-    return curDoc;
+  @ovewwide
+  p-pubwic finaw int docid() {
+    w-wetuwn c-cuwdoc;
   }
 
-  @Override
-  public final int freq() {
-    return curFreq;
+  @ovewwide
+  p-pubwic finaw int fweq() {
+    wetuwn c-cuwfweq;
   }
 
-  @Override
-  public long cost() {
-    return cost;
+  @ovewwide
+  p-pubwic wong cost() {
+    w-wetuwn cost;
   }
 }

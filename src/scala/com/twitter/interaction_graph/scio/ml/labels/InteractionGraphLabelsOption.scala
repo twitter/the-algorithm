@@ -1,28 +1,28 @@
-package com.twitter.interaction_graph.scio.ml.labels
+package com.twittew.intewaction_gwaph.scio.mw.wabews
 
-import com.twitter.beam.io.dal.DALOptions
-import com.twitter.beam.job.DateRangeOptions
-import org.apache.beam.sdk.options.Default
-import org.apache.beam.sdk.options.Description
-import org.apache.beam.sdk.options.Validation.Required
+impowt com.twittew.beam.io.daw.dawoptions
+impowt c-com.twittew.beam.job.datewangeoptions
+i-impowt o-owg.apache.beam.sdk.options.defauwt
+i-impowt owg.apache.beam.sdk.options.descwiption
+i-impowt owg.apache.beam.sdk.options.vawidation.wequiwed
 
-trait InteractionGraphLabelsOption extends DALOptions with DateRangeOptions {
-  @Required
-  @Description("Output path for storing the final dataset")
-  def getOutputPath: String
-  def setOutputPath(value: String): Unit
+t-twait i-intewactiongwaphwabewsoption e-extends dawoptions with datewangeoptions {
+  @wequiwed
+  @descwiption("output path fow stowing the finaw dataset")
+  def getoutputpath: s-stwing
+  def setoutputpath(vawue: stwing): u-unit
 
-  @Description("Output bq table name")
-  def getBqTableName: String
-  def setBqTableName(value: String): Unit
+  @descwiption("output bq tabwe nyame")
+  d-def getbqtabwename: stwing
+  def setbqtabwename(vawue: stwing): u-unit
 
-  @Description("Indicates DAL write environment. Can be set to dev/stg during local validation")
-  @Default.String("PROD")
-  def getDALWriteEnvironment: String
-  def setDALWriteEnvironment(value: String): Unit
+  @descwiption("indicates daw wwite enviwonment. (U ﹏ U) c-can be s-set to dev/stg duwing wocaw vawidation")
+  @defauwt.stwing("pwod")
+  def getdawwwiteenviwonment: stwing
+  def setdawwwiteenviwonment(vawue: s-stwing): unit
 
-  @Description("Number of shards/partitions for saving the final dataset.")
-  @Default.Integer(10)
-  def getNumberOfShards: Integer
-  def setNumberOfShards(value: Integer): Unit
+  @descwiption("numbew of shawds/pawtitions fow saving the finaw dataset.")
+  @defauwt.integew(10)
+  d-def getnumbewofshawds: integew
+  d-def setnumbewofshawds(vawue: i-integew): unit
 }

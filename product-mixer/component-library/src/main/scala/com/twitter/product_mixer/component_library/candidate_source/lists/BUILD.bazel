@@ -1,14 +1,14 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "interests_discovery/thrift/src/main/thrift:service-thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source/strato",
-        "strato/config/columns/recommendations/interests_discovery/recommendations_mh:recommendations_mh-strato-client",
-    ],
-    exports = [
-        "strato/config/columns/recommendations/interests_discovery/recommendations_mh:recommendations_mh-strato-client",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], òωó
+    compiwew_option_sets = ["fataw_wawnings"], o.O
+    s-stwict_deps = t-twue, (U ᵕ U❁)
+    t-tags = ["bazew-compatibwe"], (⑅˘꒳˘)
+    d-dependencies = [
+        "intewests_discovewy/thwift/swc/main/thwift:sewvice-thwift-scawa", ( ͡o ω ͡o )
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/candidate_souwce/stwato", UwU
+        "stwato/config/cowumns/wecommendations/intewests_discovewy/wecommendations_mh:wecommendations_mh-stwato-cwient", rawr x3
+    ], rawr
+    e-expowts = [
+        "stwato/config/cowumns/wecommendations/intewests_discovewy/wecommendations_mh:wecommendations_mh-stwato-cwient", σωσ
+    ], σωσ
 )

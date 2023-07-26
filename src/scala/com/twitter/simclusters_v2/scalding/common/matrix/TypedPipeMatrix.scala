@@ -1,49 +1,49 @@
-package com.twitter.simclusters_v2.scalding.common.matrix
+package com.twittew.simcwustews_v2.scawding.common.matwix
 
-import com.twitter.algebird.{Aggregator, Semigroup}
-import com.twitter.bijection.Injection
-import com.twitter.scalding.{TypedPipe, ValuePipe}
+impowt c-com.twittew.awgebiwd.{aggwegatow, (///ˬ///✿) s-semigwoup}
+impowt c-com.twittew.bijection.injection
+i-impowt com.twittew.scawding.{typedpipe, >w< v-vawuepipe}
 
 /**
- * A matrix trait for representing a matrix backed by TypedPipe
+ * a-a matwix twait fow w-wepwesenting a-a matwix backed by typedpipe
  *
- * @tparam R Type for rows
- * @tparam C Type for columns
- * @tparam V Type for elements of the matrix
+ * @tpawam w type fow wows
+ * @tpawam c type fow c-cowumns
+ * @tpawam v type fow ewements of the matwix
  */
-abstract class TypedPipeMatrix[R, C, @specialized(Double, Int, Float, Long, Short) V] {
-  implicit val semigroupV: Semigroup[V]
-  implicit val numericV: Numeric[V]
-  implicit val rowOrd: Ordering[R]
-  implicit val colOrd: Ordering[C]
-  implicit val rowInj: Injection[R, Array[Byte]]
-  implicit val colInj: Injection[C, Array[Byte]]
+a-abstwact cwass typedpipematwix[w, c-c, rawr @speciawized(doubwe, mya int, fwoat, ^^ wong, showt) v] {
+  impwicit vaw s-semigwoupv: semigwoup[v]
+  impwicit v-vaw nyumewicv: n-nyumewic[v]
+  impwicit vaw wowowd: owdewing[w]
+  impwicit vaw cowowd: owdewing[c]
+  i-impwicit vaw wowinj: injection[w, 😳😳😳 awway[byte]]
+  impwicit vaw cowinj: injection[c, mya a-awway[byte]]
 
-  // num of non-zero elements in the matrix
-  val nnz: ValuePipe[Long]
+  // nyum o-of nyon-zewo e-ewements in the m-matwix
+  vaw nynz: v-vawuepipe[wong]
 
-  // list of unique rowIds in the matrix
-  val uniqueRowIds: TypedPipe[R]
+  // wist of unique wowids in t-the matwix
+  vaw uniquewowids: typedpipe[w]
 
-  // list of unique unique in the matrix
-  val uniqueColIds: TypedPipe[C]
+  // w-wist of unique unique in the matwix
+  vaw uniquecowids: typedpipe[c]
 
-  // get a specific row of the matrix
-  def getRow(rowId: R): TypedPipe[(C, V)]
+  // get a specific wow of the matwix
+  d-def getwow(wowid: w): typedpipe[(c, 😳 v-v)]
 
-  // get a specific column of the matrix
-  def getCol(colId: C): TypedPipe[(R, V)]
+  // g-get a specific cowumn o-of the matwix
+  def getcow(cowid: c): typedpipe[(w, -.- v)]
 
-  // get the value of an element
-  def get(rowId: R, colId: C): ValuePipe[V]
+  // g-get the vawue o-of an ewement
+  def get(wowid: w-w, 🥺 cowid: c): vawuepipe[v]
 
-  // number of unique rowIds
-  lazy val numUniqueRows: ValuePipe[Long] = {
-    this.uniqueRowIds.aggregate(Aggregator.size)
+  // n-nyumbew of unique wowids
+  wazy v-vaw nyumuniquewows: vawuepipe[wong] = {
+    t-this.uniquewowids.aggwegate(aggwegatow.size)
   }
 
-  // number of unique unique
-  lazy val numUniqueCols: ValuePipe[Long] = {
-    this.uniqueColIds.aggregate(Aggregator.size)
+  // nyumbew of unique unique
+  w-wazy vaw nyumuniquecows: vawuepipe[wong] = {
+    t-this.uniquecowids.aggwegate(aggwegatow.size)
   }
 }

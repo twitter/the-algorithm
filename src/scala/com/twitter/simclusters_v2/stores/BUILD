@@ -1,14 +1,14 @@
-scala_library(
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/storehaus:core",
-        "hermit/hermit-core/src/main/scala/com/twitter/hermit/store/common",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/scala/com/twitter/storehaus_internal/manhattan",
-        "src/scala/com/twitter/storehaus_internal/util",
-        "src/scala/com/twitter/wtf/scalding/jobs/injection",
-        "src/thrift/com/twitter/recos/entities:entities-thrift-scala",
-        "storage/clients/manhattan/client/src/main/scala",
-    ],
+scawa_wibwawy(
+    pwatfowm = "java8", (ꈍᴗꈍ)
+    tags = ["bazew-compatibwe"], ^•ﻌ•^
+    d-dependencies = [
+        "3wdpawty/jvm/com/twittew/stowehaus:cowe", OwO
+        "hewmit/hewmit-cowe/swc/main/scawa/com/twittew/hewmit/stowe/common", 🥺
+        "swc/scawa/com/twittew/simcwustews_v2/common", òωó
+        "swc/scawa/com/twittew/stowehaus_intewnaw/manhattan", o.O
+        "swc/scawa/com/twittew/stowehaus_intewnaw/utiw", (U ᵕ U❁)
+        "swc/scawa/com/twittew/wtf/scawding/jobs/injection", (⑅˘꒳˘)
+        "swc/thwift/com/twittew/wecos/entities:entities-thwift-scawa",
+        "stowage/cwients/manhattan/cwient/swc/main/scawa", ( ͡o ω ͡o )
+    ], UwU
 )

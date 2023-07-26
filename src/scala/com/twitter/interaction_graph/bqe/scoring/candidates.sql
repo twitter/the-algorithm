@@ -1,42 +1,42 @@
-DECLARE date_start, date_end DATE;
-SET date_end = (
-  SELECT PARSE_DATE('%Y%m%d', MAX(partition_id)) AS partition_id
-  FROM `twttr-bq-cassowary-prod.user.INFORMATION_SCHEMA.PARTITIONS`
-  WHERE partition_id IS NOT NULL AND partition_id != '__NULL__' AND table_name="interaction_graph_labels_daily"
+decwawe date_stawt, rawr date_end date;
+s-set date_end = (
+  s-sewect pawse_date('%y%m%d', mya m-max(pawtition_id)) a-as pawtition_id
+  f-fwom `twttw-bq-cassowawy-pwod.usew.infowmation_schema.pawtitions`
+  w-whewe p-pawtition_id is n-nyot nyuww and pawtition_id != '__nuww__' and tabwe_name="intewaction_gwaph_wabews_daiwy"
 );
-SET date_start = DATE_SUB(date_end, INTERVAL 30 DAY);
+set date_stawt = date_sub(date_end, ^^ intewvaw 30 day);
 
--- all candidates and their features
-CREATE OR REPLACE TABLE `twttr-recos-ml-prod.realgraph.candidates` 
-PARTITION BY ds
-AS
-WITH T1 AS (
-  SELECT source_id, destination_id, label, dateHour
-  FROM `twttr-bq-cassowary-prod.user.interaction_graph_labels_daily`
-  LEFT JOIN UNNEST(labels) AS label
-  WHERE DATE(dateHour) BETWEEN date_start AND date_end
-), T2 AS (
-    SELECT source_id, destination_id, num_tweets
-  FROM `twttr-recos-ml-prod.realgraph.tweeting_follows`
-), T3 AS (
-SELECT 
-COALESCE(T1.source_id, T2.source_id) AS source_id,
-COALESCE(T1.destination_id, T2.destination_id) AS destination_id,
-COUNT(DISTINCT(T1.dateHour)) AS num_days,
-MIN(COALESCE(num_tweets,0)) AS num_tweets, -- all rows' num_tweets should be the same
-COALESCE(DATE_DIFF(date_end, DATE(MAX(T1.dateHour)), DAY),30) AS days_since_last_interaction,
-COUNT(DISTINCT(label)) AS label_types,
-COUNTIF(label="num_follows") AS num_follows,
-COUNTIF(label="num_favorites") AS num_favorites,
-COUNTIF(label="num_tweet_clicks") AS num_tweet_clicks,
-COUNTIF(label="num_profile_views") AS num_profile_views,
-FROM T1 
-FULL JOIN T2
-USING (source_id, destination_id)
-GROUP BY 1,2
-ORDER BY 3 DESC,4 DESC
-), T4 AS (
-  SELECT RANK() OVER (PARTITION BY source_id ORDER BY num_days DESC, num_tweets DESC) AS rn, *
-  FROM T3
-) SELECT *, date_end AS ds FROM T4 WHERE rn <= 2000
+-- a-aww candidates and theiw featuwes
+cweate o-ow wepwace tabwe `twttw-wecos-mw-pwod.weawgwaph.candidates` 
+pawtition b-by ds
+as
+with t1 as (
+  sewect souwce_id, 😳😳😳 destination_id, mya w-wabew, datehouw
+  fwom `twttw-bq-cassowawy-pwod.usew.intewaction_gwaph_wabews_daiwy`
+  w-weft join u-unnest(wabews) as wabew
+  whewe date(datehouw) between date_stawt and date_end
+), t-t2 as (
+    sewect souwce_id, destination_id, nyum_tweets
+  fwom `twttw-wecos-mw-pwod.weawgwaph.tweeting_fowwows`
+), 😳 t-t3 as (
+sewect 
+coawesce(t1.souwce_id, t-t2.souwce_id) as s-souwce_id,
+coawesce(t1.destination_id, -.- t-t2.destination_id) a-as destination_id, 🥺
+count(distinct(t1.datehouw)) as nyum_days, o.O
+m-min(coawesce(num_tweets,0)) as nyum_tweets, /(^•ω•^) -- aww wows' n-nyum_tweets shouwd be the same
+coawesce(date_diff(date_end, nyaa~~ date(max(t1.datehouw)), nyaa~~ day),30) as days_since_wast_intewaction, :3
+count(distinct(wabew)) a-as wabew_types, 😳😳😳
+countif(wabew="num_fowwows") a-as nyum_fowwows, (˘ω˘)
+c-countif(wabew="num_favowites") a-as num_favowites, ^^
+countif(wabew="num_tweet_cwicks") as nyum_tweet_cwicks, :3
+countif(wabew="num_pwofiwe_views") a-as nyum_pwofiwe_views, -.-
+f-fwom t1 
+fuww join t2
+using (souwce_id, 😳 destination_id)
+gwoup b-by 1,2
+owdew b-by 3 desc,4 desc
+), mya t4 as (
+  s-sewect wank() ovew (pawtition by s-souwce_id owdew by nyum_days desc, (˘ω˘) nyum_tweets d-desc) as wn, >_< *
+  fwom t3
+) sewect *, -.- d-date_end as ds fwom t4 whewe w-wn <= 2000
 

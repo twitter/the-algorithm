@@ -1,67 +1,67 @@
-alias(
-    name = "graph_feature_service-server",
-    target = ":graph_feature_service-server_lib",
+awias(
+    nyame = "gwaph_featuwe_sewvice-sewvew", :3
+    tawget = ":gwaph_featuwe_sewvice-sewvew_wib", 😳😳😳
 )
 
-target(
-    name = "graph_feature_service-server_lib",
-    dependencies = [
-        "graph-feature-service/src/main/scala/com/twitter/graph_feature_service/server",
+t-tawget(
+    n-nyame = "gwaph_featuwe_sewvice-sewvew_wib", -.-
+    d-dependencies = [
+        "gwaph-featuwe-sewvice/swc/main/scawa/com/twittew/gwaph_featuwe_sewvice/sewvew", ( ͡o ω ͡o )
     ],
 )
 
-alias(
-    name = "graph_feature_service-worker",
-    target = ":graph_feature_service-worker_lib",
+a-awias(
+    n-nyame = "gwaph_featuwe_sewvice-wowkew", rawr x3
+    t-tawget = ":gwaph_featuwe_sewvice-wowkew_wib", nyaa~~
 )
 
-target(
-    name = "graph_feature_service-worker_lib",
-    dependencies = [
-        "graph-feature-service/src/main/scala/com/twitter/graph_feature_service/worker",
+tawget(
+    n-nyame = "gwaph_featuwe_sewvice-wowkew_wib", /(^•ω•^)
+    d-dependencies = [
+        "gwaph-featuwe-sewvice/swc/main/scawa/com/twittew/gwaph_featuwe_sewvice/wowkew", rawr
     ],
 )
 
-jvm_binary(
-    name = "server-bin",
-    basename = "graph_feature_service-server",
-    main = "com.twitter.graph_feature_service.server.Main",
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":graph_feature_service-server",
-        "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "finagle/finagle-zipkin-scribe/src/main/scala",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server/logback-classic/src/main/scala",
-    ],
+jvm_binawy(
+    nyame = "sewvew-bin", OwO
+    basename = "gwaph_featuwe_sewvice-sewvew", (U ﹏ U)
+    main = "com.twittew.gwaph_featuwe_sewvice.sewvew.main",
+    pwatfowm = "java8", >_<
+    tags = ["bazew-compatibwe"], rawr x3
+    d-dependencies = [
+        ":gwaph_featuwe_sewvice-sewvew", mya
+        "3wdpawty/jvm/ch/qos/wogback:wogback-cwassic",
+        "finagwe/finagwe-zipkin-scwibe/swc/main/scawa", nyaa~~
+        "wogwens/wogwens-wogback/swc/main/scawa/com/twittew/wogwens/wogback", (⑅˘꒳˘)
+        "twittew-sewvew/wogback-cwassic/swc/main/scawa", rawr x3
+    ], (✿oωo)
 )
 
-jvm_binary(
-    name = "worker-bin",
-    basename = "graph_feature_service-worker",
-    main = "com.twitter.graph_feature_service.worker.Main",
-    platform = "java8",
-    tags = ["bazel-compatible"],
+jvm_binawy(
+    nyame = "wowkew-bin", (ˆ ﻌ ˆ)♡
+    b-basename = "gwaph_featuwe_sewvice-wowkew",
+    main = "com.twittew.gwaph_featuwe_sewvice.wowkew.main", (˘ω˘)
+    p-pwatfowm = "java8", (⑅˘꒳˘)
+    tags = ["bazew-compatibwe"], (///ˬ///✿)
     dependencies = [
-        ":graph_feature_service-worker",
-        "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "finagle/finagle-zipkin-scribe/src/main/scala",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server/logback-classic/src/main/scala",
-    ],
+        ":gwaph_featuwe_sewvice-wowkew", 😳😳😳
+        "3wdpawty/jvm/ch/qos/wogback:wogback-cwassic", 🥺
+        "finagwe/finagwe-zipkin-scwibe/swc/main/scawa", mya
+        "wogwens/wogwens-wogback/swc/main/scawa/com/twittew/wogwens/wogback", 🥺
+        "twittew-sewvew/wogback-cwassic/swc/main/scawa", >_<
+    ], >_<
 )
 
 jvm_app(
-    name = "server-bundle",
-    basename = "graph_feature_service-server-dist",
-    binary = ":server-bin",
-    tags = ["bazel-compatible"],
+    nyame = "sewvew-bundwe", (⑅˘꒳˘)
+    b-basename = "gwaph_featuwe_sewvice-sewvew-dist", /(^•ω•^)
+    binawy = ":sewvew-bin", rawr x3
+    t-tags = ["bazew-compatibwe"],
 )
 
-jvm_app(
-    name = "worker-bundle",
-    basename = "graph_feature_service-worker-dist",
-    binary = ":worker-bin",
-    tags = ["bazel-compatible"],
+j-jvm_app(
+    name = "wowkew-bundwe", (U ﹏ U)
+    basename = "gwaph_featuwe_sewvice-wowkew-dist", (U ﹏ U)
+    binawy = ":wowkew-bin", (⑅˘꒳˘)
+    tags = ["bazew-compatibwe"], òωó
 )

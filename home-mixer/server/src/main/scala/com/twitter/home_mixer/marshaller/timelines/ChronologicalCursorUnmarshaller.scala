@@ -1,26 +1,26 @@
-package com.twitter.home_mixer.marshaller.timelines
+package com.twittew.home_mixew.mawshawwew.timewines
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.timelines.service.{thriftscala => t}
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.uwtowdewedcuwsow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.bottomcuwsow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.gapcuwsow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.topcuwsow
+i-impowt com.twittew.timewines.sewvice.{thwiftscawa => t-t}
 
-object ChronologicalCursorUnmarshaller {
+object c-chwonowogicawcuwsowunmawshawwew {
 
-  def apply(requestCursor: t.RequestCursor): Option[UrtOrderedCursor] = {
-    requestCursor match {
-      case t.RequestCursor.ChronologicalCursor(cursor) =>
-        (cursor.top, cursor.bottom) match {
-          case (Some(top), None) =>
-            Some(UrtOrderedCursor(top, cursor.top, Some(BottomCursor)))
-          case (None, Some(bottom)) =>
-            Some(UrtOrderedCursor(bottom, cursor.bottom, Some(TopCursor)))
-          case (Some(top), Some(bottom)) =>
-            Some(UrtOrderedCursor(top, cursor.top, Some(GapCursor), cursor.bottom))
-          case _ => None
+  d-def appwy(wequestcuwsow: t.wequestcuwsow): option[uwtowdewedcuwsow] = {
+    wequestcuwsow match {
+      c-case t.wequestcuwsow.chwonowogicawcuwsow(cuwsow) =>
+        (cuwsow.top, rawr x3 cuwsow.bottom) match {
+          c-case (some(top), nyaa~~ nyone) =>
+            s-some(uwtowdewedcuwsow(top, /(^•ω•^) cuwsow.top, some(bottomcuwsow)))
+          case (none, rawr s-some(bottom)) =>
+            some(uwtowdewedcuwsow(bottom, OwO c-cuwsow.bottom, (U ﹏ U) s-some(topcuwsow)))
+          case (some(top), >_< some(bottom)) =>
+            some(uwtowdewedcuwsow(top, rawr x3 cuwsow.top, mya some(gapcuwsow), nyaa~~ cuwsow.bottom))
+          c-case _ => nyone
         }
-      case _ => None
+      case _ => nyone
     }
   }
 }

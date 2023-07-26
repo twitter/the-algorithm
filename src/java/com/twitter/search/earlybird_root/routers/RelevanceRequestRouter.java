@@ -1,100 +1,100 @@
-package com.twitter.search.earlybird_root.routers;
+package com.twittew.seawch.eawwybiwd_woot.woutews;
 
-import java.util.concurrent.TimeUnit;
+impowt java.utiw.concuwwent.timeunit;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+i-impowt j-javax.inject.inject;
+i-impowt javax.inject.named;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.query.thriftjava.CollectorTerminationParams;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.InjectionNames;
-import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
+i-impowt com.twittew.common.utiw.cwock;
+i-impowt com.twittew.finagwe.sewvice;
+i-impowt c-com.twittew.seawch.common.decidew.seawchdecidew;
+impowt com.twittew.seawch.common.pawtitioning.snowfwakepawsew.snowfwakeidpawsew;
+impowt com.twittew.seawch.common.quewy.thwiftjava.cowwectowtewminationpawams;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwankingmode;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwt;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdfeatuweschemamewgew;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt com.twittew.seawch.eawwybiwd_woot.common.injectionnames;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.eawwybiwdtimewangefiwtew;
 
-public class RelevanceRequestRouter extends AbstractRecencyAndRelevanceRequestRouter {
-  private static final long MILLIS_IN_ONE_DAY = TimeUnit.DAYS.toMillis(1);
+p-pubwic cwass wewevancewequestwoutew extends abstwactwecencyandwewevancewequestwoutew {
+  p-pwivate s-static finaw wong miwwis_in_one_day = timeunit.days.tomiwwis(1);
 
-  @Inject
-  public RelevanceRequestRouter(
-      @Named(InjectionNames.REALTIME)
-      Service<EarlybirdRequestContext, EarlybirdResponse> realtime,
-      @Named(InjectionNames.PROTECTED)
-      Service<EarlybirdRequestContext, EarlybirdResponse> protectedRealtime,
-      @Named(InjectionNames.FULL_ARCHIVE)
-      Service<EarlybirdRequestContext, EarlybirdResponse> fullArchive,
-      @Named(RelevanceRequestRouterModule.REALTIME_TIME_RANGE_FILTER)
-      EarlybirdTimeRangeFilter realtimeTimeRangeFilter,
-      @Named(RelevanceRequestRouterModule.PROTECTED_TIME_RANGE_FILTER)
-      EarlybirdTimeRangeFilter protectedTimeRangeFilter,
-      @Named(RelevanceRequestRouterModule.FULL_ARCHIVE_TIME_RANGE_FILTER)
-      EarlybirdTimeRangeFilter fullArchiveTimeRangeFilter,
-      Clock clock,
-      SearchDecider decider,
-      EarlybirdFeatureSchemaMerger featureSchemaMerger) {
-    super(realtime,
-          protectedRealtime,
-          fullArchive,
-          realtimeTimeRangeFilter,
-          protectedTimeRangeFilter,
-          fullArchiveTimeRangeFilter,
-          ThriftSearchRankingMode.RELEVANCE,
-          clock,
-          decider,
-          featureSchemaMerger);
+  @inject
+  pubwic wewevancewequestwoutew(
+      @named(injectionnames.weawtime)
+      sewvice<eawwybiwdwequestcontext, (ꈍᴗꈍ) e-eawwybiwdwesponse> weawtime, 😳
+      @named(injectionnames.pwotected)
+      sewvice<eawwybiwdwequestcontext, 😳😳😳 eawwybiwdwesponse> pwotectedweawtime, mya
+      @named(injectionnames.fuww_awchive)
+      s-sewvice<eawwybiwdwequestcontext, mya eawwybiwdwesponse> fuwwawchive, (⑅˘꒳˘)
+      @named(wewevancewequestwoutewmoduwe.weawtime_time_wange_fiwtew)
+      e-eawwybiwdtimewangefiwtew w-weawtimetimewangefiwtew, (U ﹏ U)
+      @named(wewevancewequestwoutewmoduwe.pwotected_time_wange_fiwtew)
+      e-eawwybiwdtimewangefiwtew p-pwotectedtimewangefiwtew, mya
+      @named(wewevancewequestwoutewmoduwe.fuww_awchive_time_wange_fiwtew)
+      eawwybiwdtimewangefiwtew fuwwawchivetimewangefiwtew, ʘwʘ
+      c-cwock cwock, (˘ω˘)
+      seawchdecidew decidew, (U ﹏ U)
+      e-eawwybiwdfeatuweschemamewgew featuweschemamewgew) {
+    supew(weawtime, ^•ﻌ•^
+          pwotectedweawtime, (˘ω˘)
+          fuwwawchive,
+          weawtimetimewangefiwtew, :3
+          p-pwotectedtimewangefiwtew, ^^;;
+          fuwwawchivetimewangefiwtew, 🥺
+          t-thwiftseawchwankingmode.wewevance, (⑅˘꒳˘)
+          c-cwock, nyaa~~
+          d-decidew, :3
+          featuweschemamewgew);
   }
 
-  @Override
-  protected boolean shouldSendRequestToFullArchiveCluster(
-      EarlybirdRequest request, EarlybirdResponse realtimeResponse) {
-    int numResultsRequested = request.getSearchQuery().getNumResults();
-    int numHitsProcessed = realtimeResponse.getSearchResults().isSetNumHitsProcessed()
-        ? realtimeResponse.getSearchResults().getNumHitsProcessed()
+  @ovewwide
+  pwotected boowean shouwdsendwequesttofuwwawchivecwustew(
+      e-eawwybiwdwequest w-wequest, ( ͡o ω ͡o ) eawwybiwdwesponse weawtimewesponse) {
+    i-int nyumwesuwtswequested = w-wequest.getseawchquewy().getnumwesuwts();
+    int nyumhitspwocessed = w-weawtimewesponse.getseawchwesuwts().issetnumhitspwocessed()
+        ? weawtimewesponse.getseawchwesuwts().getnumhitspwocessed()
         : -1;
-    if (numHitsProcessed < numResultsRequested) {
-      // Send query to the full archive cluster, if we went through fewer hits in the realtime
-      // cluster than the requested number of results.
-      return true;
+    if (numhitspwocessed < n-nyumwesuwtswequested) {
+      // send quewy to the fuww awchive c-cwustew, mya if we went thwough fewew h-hits in the weawtime
+      // c-cwustew than the w-wequested nyumbew of wesuwts. (///ˬ///✿)
+      wetuwn twue;
     }
 
-    // If we have enough hits, don't query the full archive cluster yet.
-    int numSuccessfulPartitions = realtimeResponse.getNumSuccessfulPartitions();
-    CollectorTerminationParams terminationParams =
-        request.getSearchQuery().getCollectorParams().getTerminationParams();
+    // if we have enough hits, (˘ω˘) don't quewy the fuww awchive cwustew yet. ^^;;
+    i-int nyumsuccessfuwpawtitions = w-weawtimewesponse.getnumsuccessfuwpawtitions();
+    cowwectowtewminationpawams t-tewminationpawams =
+        w-wequest.getseawchquewy().getcowwectowpawams().gettewminationpawams();
 
-    Preconditions.checkArgument(terminationParams.isSetMaxHitsToProcess());
-    int maxHits = terminationParams.getMaxHitsToProcess() * numSuccessfulPartitions;
+    p-pweconditions.checkawgument(tewminationpawams.issetmaxhitstopwocess());
+    int maxhits = tewminationpawams.getmaxhitstopwocess() * nyumsuccessfuwpawtitions;
 
-    if (numHitsProcessed >= maxHits) {
-      return false;
+    if (numhitspwocessed >= m-maxhits) {
+      wetuwn fawse;
     }
 
-    // Check if there is a gap between the last result and the min status ID of current search.
-    // If the difference is larger than one day, then we can still get more tweets from the realtime
-    // cluster, so there's no need to query the full archive cluster just yet. If we don't check
-    // this, then we might end up with a big gap in the returned results.
-    int numReturnedResults = realtimeResponse.getSearchResults().getResultsSize();
-    if (numReturnedResults > 0) {
-      ThriftSearchResult lastResult =
-          realtimeResponse.getSearchResults().getResults().get(numReturnedResults - 1);
-      long lastResultTimeMillis = SnowflakeIdParser.getTimestampFromTweetId(lastResult.getId());
-      long minSearchedStatusID = realtimeResponse.getSearchResults().getMinSearchedStatusID();
-      long minSearchedStatusIDTimeMillis =
-          SnowflakeIdParser.getTimestampFromTweetId(minSearchedStatusID);
-      if (lastResultTimeMillis - minSearchedStatusIDTimeMillis > MILLIS_IN_ONE_DAY) {
-        return false;
+    // check if thewe is a gap between the wast wesuwt a-and the min status id of cuwwent s-seawch. (✿oωo)
+    // i-if the diffewence i-is wawgew than one day, (U ﹏ U) then w-we can stiww g-get mowe tweets f-fwom the weawtime
+    // c-cwustew, -.- so thewe's nyo nyeed to quewy t-the fuww awchive c-cwustew just yet. ^•ﻌ•^ i-if we don't check
+    // t-this, rawr t-then we might end up with a big gap in the wetuwned wesuwts. (˘ω˘)
+    i-int numwetuwnedwesuwts = weawtimewesponse.getseawchwesuwts().getwesuwtssize();
+    if (numwetuwnedwesuwts > 0) {
+      thwiftseawchwesuwt wastwesuwt =
+          weawtimewesponse.getseawchwesuwts().getwesuwts().get(numwetuwnedwesuwts - 1);
+      w-wong wastwesuwttimemiwwis = snowfwakeidpawsew.gettimestampfwomtweetid(wastwesuwt.getid());
+      wong minseawchedstatusid = weawtimewesponse.getseawchwesuwts().getminseawchedstatusid();
+      w-wong minseawchedstatusidtimemiwwis =
+          s-snowfwakeidpawsew.gettimestampfwomtweetid(minseawchedstatusid);
+      i-if (wastwesuwttimemiwwis - minseawchedstatusidtimemiwwis > m-miwwis_in_one_day) {
+        wetuwn fawse;
       }
     }
 
-    return true;
+    w-wetuwn twue;
   }
 }

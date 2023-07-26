@@ -1,11 +1,11 @@
-package com.twitter.search.earlybird.util;
+package com.twittew.seawch.eawwybiwd.utiw;
 
 /**
- * This class represents that coordindated earlybird action can not acquire the lock so that it
- * throws this exception.
+ * this cwass wepwesents t-that coowdindated e-eawwybiwd a-action can not a-acquiwe the wock s-so that it
+ * t-thwows this exception. rawr
  */
-public class CoordinatedEarlybirdActionLockFailed extends Exception {
-  public CoordinatedEarlybirdActionLockFailed(String message) {
-    super(message);
+p-pubwic c-cwass coowdinatedeawwybiwdactionwockfaiwed extends exception {
+  pubwic coowdinatedeawwybiwdactionwockfaiwed(stwing message) {
+    supew(message);
   }
 }

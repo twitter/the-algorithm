@@ -1,13 +1,13 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "configapi/configapi-core/src/main/scala/com/twitter/timelines/configapi",
-        "servo/decider/src/main/scala",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/decider",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/parameters/util",
-        "timelines/src/main/scala/com/twitter/timelines/util/bounds",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    s-stwict_deps = t-twue, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "configapi/configapi-cowe/swc/main/scawa/com/twittew/timewines/configapi", (⑅˘꒳˘)
+        "sewvo/decidew/swc/main/scawa", ( ͡o ω ͡o )
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/decidew", UwU
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/pawametews/utiw", rawr x3
+        "timewines/swc/main/scawa/com/twittew/timewines/utiw/bounds", rawr
+    ], σωσ
 )

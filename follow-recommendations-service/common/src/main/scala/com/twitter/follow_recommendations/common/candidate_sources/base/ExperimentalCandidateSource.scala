@@ -1,66 +1,66 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Param
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.base
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.timewines.configapi.haspawams
+i-impowt com.twittew.timewines.configapi.pawam
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
 
 /**
- * A wrapper of CandidateSource to make it easier to do experimentation
- * on new candidate generation algorithms
+ * a-a wwappew of candidatesouwce to m-make it easiew t-to do expewimentation
+ * on nyew candidate genewation awgowithms
  *
- * @param baseSource base candidate source
- * @param darkreadAlgorithmParam controls whether or not to darkread candidates (fetch them even if they will not be included)
- * @param keepCandidatesParam controls whether or not to keep candidates from the base source
- * @param resultCountThresholdParam controls how many results the source must return to bucket the user and return results (greater-than-or-equal-to)
- * @tparam T request type. it must extend HasParams
- * @tparam V value type
+ * @pawam basesouwce base candidate s-souwce
+ * @pawam dawkweadawgowithmpawam contwows whethew o-ow nyot to dawkwead candidates (fetch t-them even if they wiww nyot be incwuded)
+ * @pawam keepcandidatespawam contwows w-whethew ow nyot to keep c-candidates fwom t-the base souwce
+ * @pawam wesuwtcountthweshowdpawam contwows how many wesuwts the souwce must wetuwn t-to bucket the usew and wetuwn wesuwts (gweatew-than-ow-equaw-to)
+ * @tpawam t wequest type. -.- it must extend h-haspawams
+ * @tpawam v vawue type
  */
-class ExperimentalCandidateSource[T <: HasParams, V](
-  baseSource: CandidateSource[T, V],
-  darkreadAlgorithmParam: Param[Boolean],
-  keepCandidatesParam: Param[Boolean],
-  resultCountThresholdParam: Param[Int],
-  baseStatsReceiver: StatsReceiver)
-    extends CandidateSource[T, V] {
+c-cwass expewimentawcandidatesouwce[t <: h-haspawams, 🥺 v-v](
+  basesouwce: c-candidatesouwce[t, (U ﹏ U) v],
+  dawkweadawgowithmpawam: p-pawam[boowean], >w<
+  keepcandidatespawam: pawam[boowean], mya
+  w-wesuwtcountthweshowdpawam: pawam[int], >w<
+  basestatsweceivew: statsweceivew)
+    extends candidatesouwce[t, nyaa~~ v] {
 
-  override val identifier: CandidateSourceIdentifier = baseSource.identifier
-  private[base] val statsReceiver =
-    baseStatsReceiver.scope(s"Experimental/${identifier.name}")
-  private[base] val requestsCounter = statsReceiver.counter("requests")
-  private[base] val resultCountGreaterThanThresholdCounter =
-    statsReceiver.counter("with_results_at_or_above_count_threshold")
-  private[base] val keepResultsCounter = statsReceiver.counter("keep_results")
-  private[base] val discardResultsCounter = statsReceiver.counter("discard_results")
+  ovewwide vaw i-identifiew: candidatesouwceidentifiew = basesouwce.identifiew
+  p-pwivate[base] v-vaw statsweceivew =
+    b-basestatsweceivew.scope(s"expewimentaw/${identifiew.name}")
+  pwivate[base] vaw wequestscountew = statsweceivew.countew("wequests")
+  pwivate[base] v-vaw w-wesuwtcountgweatewthanthweshowdcountew =
+    statsweceivew.countew("with_wesuwts_at_ow_above_count_thweshowd")
+  p-pwivate[base] v-vaw keepwesuwtscountew = statsweceivew.countew("keep_wesuwts")
+  p-pwivate[base] vaw discawdwesuwtscountew = s-statsweceivew.countew("discawd_wesuwts")
 
-  override def apply(request: T): Stitch[Seq[V]] = {
-    if (request.params(darkreadAlgorithmParam)) {
-      requestsCounter.incr()
-      fetchFromCandidateSourceAndProcessResults(request)
-    } else {
-      Stitch.Nil
+  ovewwide def appwy(wequest: t-t): stitch[seq[v]] = {
+    if (wequest.pawams(dawkweadawgowithmpawam)) {
+      w-wequestscountew.incw()
+      fetchfwomcandidatesouwceandpwocesswesuwts(wequest)
+    } ewse {
+      s-stitch.niw
     }
   }
 
-  private def fetchFromCandidateSourceAndProcessResults(request: T): Stitch[Seq[V]] = {
-    baseSource(request).map { results =>
-      if (results.length >= request.params(resultCountThresholdParam)) {
-        processResults(results, request.params(keepCandidatesParam))
-      } else {
-        Nil
+  p-pwivate def fetchfwomcandidatesouwceandpwocesswesuwts(wequest: t): stitch[seq[v]] = {
+    basesouwce(wequest).map { wesuwts =>
+      if (wesuwts.wength >= w-wequest.pawams(wesuwtcountthweshowdpawam)) {
+        p-pwocesswesuwts(wesuwts, (✿oωo) wequest.pawams(keepcandidatespawam))
+      } e-ewse {
+        n-nyiw
       }
     }
   }
 
-  private def processResults(results: Seq[V], keepResults: Boolean): Seq[V] = {
-    resultCountGreaterThanThresholdCounter.incr()
-    if (keepResults) {
-      keepResultsCounter.incr()
-      results
-    } else {
-      discardResultsCounter.incr()
-      Nil
+  p-pwivate def pwocesswesuwts(wesuwts: seq[v], ʘwʘ keepwesuwts: boowean): seq[v] = {
+    w-wesuwtcountgweatewthanthweshowdcountew.incw()
+    if (keepwesuwts) {
+      keepwesuwtscountew.incw()
+      wesuwts
+    } ewse {
+      discawdwesuwtscountew.incw()
+      n-nyiw
     }
   }
 }

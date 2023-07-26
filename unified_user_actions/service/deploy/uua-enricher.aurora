@@ -1,151 +1,151 @@
-import os
-import itertools
-import subprocess
-import math
+impowt os
+impowt itewtoows
+impowt s-subpwocess
+impowt m-math
 
-SERVICE_NAME = 'uua-enricher'
+sewvice_name = 'uua-enwichew'
 
-CPU_NUM = 3
-HEAP_SIZE = 6 * GB
-RAM_SIZE = 8 * GB
-DISK_SIZE = 3 * GB
+c-cpu_num = 3
+h-heap_size = 6 * g-gb
+wam_size = 8 * g-gb
+disk_size = 3 * g-gb
 
-class Profile(Struct):
-  package = Default(String, SERVICE_NAME)
-  cmdline_flags = Default(String, '')
-  log_level = Default(String, 'INFO')
-  instances = Default(Integer, 10)
-  kafka_bootstrap_servers = Default(String, '/s/kafka/bluebird-1:kafka-tls')
+cwass p-pwofiwe(stwuct):
+  package = defauwt(stwing, sewvice_name)
+  cmdwine_fwags = d-defauwt(stwing, ( ͡o ω ͡o ) '')
+  wog_wevew = defauwt(stwing, >_< 'info')
+  i-instances = defauwt(integew, >w< 10)
+  kafka_bootstwap_sewvews = d-defauwt(stwing, rawr '/s/kafka/bwuebiwd-1:kafka-tws')
 
-resources = Resources(
-  cpu = CPU_NUM,
-  ram = RAM_SIZE,
-  disk = DISK_SIZE
+wesouwces = wesouwces(
+  cpu = cpu_num, 😳
+  w-wam = wam_size, >w<
+  disk = disk_size
 )
 
-install = Packer.install(
-  name = '{{profile.package}}',
-  version = Workflows.package_version()
+i-instaww = p-packew.instaww(
+  nyame = '{{pwofiwe.package}}', (⑅˘꒳˘)
+  vewsion = wowkfwows.package_vewsion()
 )
 
-async_profiler_install = Packer.install(
-  name = 'async-profiler',
-  role = 'csl-perf',
-  version = 'latest'
+async_pwofiwew_instaww = p-packew.instaww(
+  nyame = 'async-pwofiwew', OwO
+  wowe = 'csw-pewf', (ꈍᴗꈍ)
+  vewsion = 'watest'
 )
 
-setup_jaas_config = Process(
-    name           = 'setup_jaas_config',
-    cmdline        = '''
-    mkdir -p jaas_config
-    echo "KafkaClient {
-      com.sun.security.auth.module.Krb5LoginModule required
-      principal=\\"discode@TWITTER.BIZ\\"
-      useKeyTab=true
-      storeKey=true
-      keyTab=\\"/var/lib/tss/keys/fluffy/keytabs/client/discode.keytab\\"
-      doNotPrompt=true;
+setup_jaas_config = p-pwocess(
+    nyame           = 'setup_jaas_config', 😳
+    cmdwine        = '''
+    m-mkdiw -p j-jaas_config
+    e-echo "kafkacwient {
+      c-com.sun.secuwity.auth.moduwe.kwb5woginmoduwe wequiwed
+      pwincipaw=\\"discode@twittew.biz\\"
+      u-usekeytab=twue
+      stowekey=twue
+      keytab=\\"/vaw/wib/tss/keys/fwoofy/keytabs/cwient/discode.keytab\\"
+      d-donotpwompt=twue;
   };" >> jaas_config/jaas.conf
   '''
 )
 
-main = JVMProcess(
-  name = SERVICE_NAME,
-  jvm = Java11(
-   heap                     = HEAP_SIZE,
-   extra_jvm_flags =
-      '-Djava.net.preferIPv4Stack=true'
+main = jvmpwocess(
+  nyame = sewvice_name, 😳😳😳
+  jvm = java11(
+   heap                     = h-heap_size,
+   extwa_jvm_fwags =
+      '-djava.net.pwefewipv4stack=twue'
 
-      ' -XX:+UseNUMA'
-      ' -XX:+AggressiveOpts'
-      ' -XX:+PerfDisableSharedMem' # http://www.evanjones.ca/jvm-mmap-pause.html
+      ' -xx:+usenuma'
+      ' -xx:+aggwessiveopts'
+      ' -xx:+pewfdisabweshawedmem' # h-http://www.evanjones.ca/jvm-mmap-pause.htmw
 
-      ' -Dlog_level={{profile.log_level}}'
-      ' -Dlog.access.output=access.log'
-      ' -Dlog.service.output={{name}}.log'
-      ' -Djava.security.auth.login.config=jaas_config/jaas.conf'
-  ),
-  arguments =
-    '-jar {{name}}-bin.jar'
-    ' -admin.port=:{{thermos.ports[health]}}'
-    ' -kafka.bootstrap.servers={{profile.kafka_bootstrap_servers}}'
-    ' -kafka.application.id={{name}}.{{environment}}'
-    ' -kafka.application.num.instances={{instances}}' # Used for static partitioning
-    ' -kafka.application.server={{mesos.instance}}.{{name}}.{{environment}}.{{role}}.service.{{cluster}}.twitter.com:80'
-    ' -com.twitter.finatra.kafkastreams.config.principal={{role}}'
-    ' -thrift.client.id={{name}}.{{environment}}'
-    ' -service.identifier="{{role}}:{{name}}:{{environment}}:{{cluster}}"'
-    ' -local.cache.ttl.seconds=86400'
-    ' -local.cache.max.size=400000000'
-    ' {{profile.cmdline_flags}}',
-  resources = resources
+      ' -dwog_wevew={{pwofiwe.wog_wevew}}'
+      ' -dwog.access.output=access.wog'
+      ' -dwog.sewvice.output={{name}}.wog'
+      ' -djava.secuwity.auth.wogin.config=jaas_config/jaas.conf'
+  ), mya
+  a-awguments =
+    '-jaw {{name}}-bin.jaw'
+    ' -admin.powt=:{{thewmos.powts[heawth]}}'
+    ' -kafka.bootstwap.sewvews={{pwofiwe.kafka_bootstwap_sewvews}}'
+    ' -kafka.appwication.id={{name}}.{{enviwonment}}'
+    ' -kafka.appwication.num.instances={{instances}}' # u-used fow static pawtitioning
+    ' -kafka.appwication.sewvew={{mesos.instance}}.{{name}}.{{enviwonment}}.{{wowe}}.sewvice.{{cwustew}}.twittew.com:80'
+    ' -com.twittew.finatwa.kafkastweams.config.pwincipaw={{wowe}}'
+    ' -thwift.cwient.id={{name}}.{{enviwonment}}'
+    ' -sewvice.identifiew="{{wowe}}:{{name}}:{{enviwonment}}:{{cwustew}}"'
+    ' -wocaw.cache.ttw.seconds=86400'
+    ' -wocaw.cache.max.size=400000000'
+    ' {{pwofiwe.cmdwine_fwags}}', mya
+  wesouwces = wesouwces
 )
 
-stats = Stats(
-  library = 'metrics',
-  port = 'admin'
+s-stats = stats(
+  w-wibwawy = 'metwics', (⑅˘꒳˘)
+  powt = 'admin'
 )
 
-job_template = Service(
-  name = SERVICE_NAME,
-  role = 'discode',
-  instances = '{{profile.instances}}',
-  contact = 'disco-data-eng@twitter.com',
-  constraints = {'rack': 'limit:1', 'host': 'limit:1'},
-  announce = Announcer(
-    primary_port = 'health',
-    portmap = {'aurora': 'health', 'admin': 'health'}
-  ),
-  task = Task(
-    resources = resources,
-    name = SERVICE_NAME,
-    processes = [async_profiler_install, install, setup_jaas_config, main, stats],
-    constraints = order(async_profiler_install, install, setup_jaas_config, main)
-  ),
-  health_check_config         = HealthCheckConfig(
-    initial_interval_secs     = 100,
-    interval_secs             = 60,
-    timeout_secs              = 60,
-    max_consecutive_failures  = 4
-  ),
-  update_config               = UpdateConfig(
-    batch_size                = 50,
-    watch_secs                = 90,
-    max_per_shard_failures    = 3,
-    max_total_failures        = 0,
-    rollback_on_failure       = False
+j-job_tempwate = s-sewvice(
+  nyame = sewvice_name, (U ﹏ U)
+  wowe = 'discode', mya
+  i-instances = '{{pwofiwe.instances}}', ʘwʘ
+  contact = 'disco-data-eng@twittew.com',
+  c-constwaints = {'wack': 'wimit:1', (˘ω˘) 'host': 'wimit:1'}, (U ﹏ U)
+  announce = announcew(
+    p-pwimawy_powt = 'heawth', ^•ﻌ•^
+    powtmap = {'auwowa': 'heawth', (˘ω˘) 'admin': 'heawth'}
+  ), :3
+  t-task = task(
+    wesouwces = w-wesouwces, ^^;;
+    n-nyame = sewvice_name, 🥺
+    pwocesses = [async_pwofiwew_instaww, (⑅˘꒳˘) instaww, nyaa~~ setup_jaas_config, :3 main, ( ͡o ω ͡o ) stats],
+    constwaints = o-owdew(async_pwofiwew_instaww, mya i-instaww, (///ˬ///✿) setup_jaas_config, (˘ω˘) main)
+  ), ^^;;
+  h-heawth_check_config         = h-heawthcheckconfig(
+    initiaw_intewvaw_secs     = 100,
+    i-intewvaw_secs             = 60, (✿oωo)
+    timeout_secs              = 60, (U ﹏ U)
+    max_consecutive_faiwuwes  = 4
+  ), -.-
+  update_config               = updateconfig(
+    b-batch_size                = 50, ^•ﻌ•^
+    watch_secs                = 90, rawr
+    max_pew_shawd_faiwuwes    = 3, (˘ω˘)
+    max_totaw_faiwuwes        = 0, nyaa~~
+    wowwback_on_faiwuwe       = fawse
   )
 )
 
-PRODUCTION = Profile(
+p-pwoduction = pwofiwe(
 )
 
-STAGING = Profile(
-  package = SERVICE_NAME+'-staging',
-  cmdline_flags = '',
-  kafka_bootstrap_servers = '/s/kafka/custdevel:kafka-tls'
+s-staging = pwofiwe(
+  p-package = s-sewvice_name+'-staging', UwU
+  cmdwine_fwags = '', :3
+  k-kafka_bootstwap_sewvews = '/s/kafka/custdevew:kafka-tws'
 )
 
-DEVEL = STAGING(
-  log_level = 'DEBUG',
+d-devew = s-staging(
+  w-wog_wevew = 'debug', (⑅˘꒳˘)
 )
 
 
-prod_job = job_template(
-  tier = 'preferred',
-  environment = 'prod',
-).bind(profile = PRODUCTION)
+pwod_job = job_tempwate(
+  t-tiew = 'pwefewwed', (///ˬ///✿)
+  e-enviwonment = 'pwod', ^^;;
+).bind(pwofiwe = p-pwoduction)
 
-staging_job = job_template(
-  environment = 'staging'
-).bind(profile = STAGING)
+staging_job = j-job_tempwate(
+  e-enviwonment = 'staging'
+).bind(pwofiwe = staging)
 
-devel_job = job_template(
-  environment = 'devel'
-).bind(profile = DEVEL)
+devew_job = job_tempwate(
+  enviwonment = 'devew'
+).bind(pwofiwe = d-devew)
 
 jobs = []
-for cluster in ['atla', 'pdxa']:
-  jobs.append(prod_job(cluster = cluster))
-  jobs.append(staging_job(cluster = cluster))
-  jobs.append(devel_job(cluster = cluster))
+fow cwustew in ['atwa', >_< 'pdxa']:
+  jobs.append(pwod_job(cwustew = cwustew))
+  jobs.append(staging_job(cwustew = c-cwustew))
+  jobs.append(devew_job(cwustew = cwustew))

@@ -1,143 +1,143 @@
-package com.twitter.usersignalservice.signals
+package com.twittew.usewsignawsewvice.signaws
 
-import com.twitter.bijection.Codec
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.dds.jobs.repeated_profile_visits.thriftscala.ProfileVisitSet
-import com.twitter.dds.jobs.repeated_profile_visits.thriftscala.ProfileVisitorInfo
-import com.twitter.experiments.general_metrics.thriftscala.IdType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus_internal.manhattan.Apollo
-import com.twitter.storehaus_internal.manhattan.ManhattanCluster
-import com.twitter.twistly.common.UserId
-import com.twitter.usersignalservice.base.ManhattanSignalFetcher
-import com.twitter.usersignalservice.base.Query
-import com.twitter.usersignalservice.thriftscala.Signal
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.util.Future
-import com.twitter.util.Timer
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.bijection.codec
+i-impowt com.twittew.bijection.scwooge.binawyscawacodec
+i-impowt com.twittew.dds.jobs.wepeated_pwofiwe_visits.thwiftscawa.pwofiwevisitset
+i-impowt com.twittew.dds.jobs.wepeated_pwofiwe_visits.thwiftscawa.pwofiwevisitowinfo
+i-impowt c-com.twittew.expewiments.genewaw_metwics.thwiftscawa.idtype
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+impowt com.twittew.stowage.cwient.manhattan.kv.manhattankvcwientmtwspawams
+impowt com.twittew.stowehaus_intewnaw.manhattan.apowwo
+i-impowt com.twittew.stowehaus_intewnaw.manhattan.manhattancwustew
+impowt com.twittew.twistwy.common.usewid
+impowt com.twittew.usewsignawsewvice.base.manhattansignawfetchew
+i-impowt com.twittew.usewsignawsewvice.base.quewy
+impowt com.twittew.usewsignawsewvice.thwiftscawa.signaw
+i-impowt com.twittew.usewsignawsewvice.thwiftscawa.signawtype
+impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.timew
+i-impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
-case class ProfileVisitMetadata(
-  targetId: Option[Long],
-  totalTargetVisitsInLast14Days: Option[Int],
-  totalTargetVisitsInLast90Days: Option[Int],
-  totalTargetVisitsInLast180Days: Option[Int],
-  latestTargetVisitTimestampInLast90Days: Option[Long])
+c-case cwass pwofiwevisitmetadata(
+  tawgetid: option[wong], (⑅˘꒳˘)
+  totawtawgetvisitsinwast14days: option[int], ( ͡o ω ͡o )
+  t-totawtawgetvisitsinwast90days: option[int], òωó
+  totawtawgetvisitsinwast180days: option[int],
+  watesttawgetvisittimestampinwast90days: o-option[wong])
 
-@Singleton
-case class ProfileVisitsFetcher @Inject() (
-  manhattanKVClientMtlsParams: ManhattanKVClientMtlsParams,
-  timer: Timer,
-  stats: StatsReceiver)
-    extends ManhattanSignalFetcher[ProfileVisitorInfo, ProfileVisitSet] {
-  import ProfileVisitsFetcher._
+@singweton
+case cwass p-pwofiwevisitsfetchew @inject() (
+  m-manhattankvcwientmtwspawams: m-manhattankvcwientmtwspawams, (⑅˘꒳˘)
+  t-timew: timew, XD
+  stats: statsweceivew)
+    extends m-manhattansignawfetchew[pwofiwevisitowinfo, -.- pwofiwevisitset] {
+  impowt pwofiwevisitsfetchew._
 
-  override type RawSignalType = ProfileVisitMetadata
+  o-ovewwide type wawsignawtype = pwofiwevisitmetadata
 
-  override val manhattanAppId: String = MHAppId
-  override val manhattanDatasetName: String = MHDatasetName
-  override val manhattanClusterId: ManhattanCluster = Apollo
-  override val manhattanKeyCodec: Codec[ProfileVisitorInfo] = BinaryScalaCodec(ProfileVisitorInfo)
-  override val manhattanRawSignalCodec: Codec[ProfileVisitSet] = BinaryScalaCodec(ProfileVisitSet)
+  ovewwide vaw manhattanappid: stwing = mhappid
+  o-ovewwide vaw manhattandatasetname: s-stwing = m-mhdatasetname
+  o-ovewwide vaw manhattancwustewid: manhattancwustew = apowwo
+  o-ovewwide vaw manhattankeycodec: c-codec[pwofiwevisitowinfo] = binawyscawacodec(pwofiwevisitowinfo)
+  o-ovewwide vaw m-manhattanwawsignawcodec: codec[pwofiwevisitset] = b-binawyscawacodec(pwofiwevisitset)
 
-  override protected def toManhattanKey(userId: UserId): ProfileVisitorInfo =
-    ProfileVisitorInfo(userId, IdType.User)
+  ovewwide p-pwotected def tomanhattankey(usewid: usewid): p-pwofiwevisitowinfo =
+    pwofiwevisitowinfo(usewid, :3 i-idtype.usew)
 
-  override protected def toRawSignals(manhattanValue: ProfileVisitSet): Seq[ProfileVisitMetadata] =
-    manhattanValue.profileVisitSet
+  ovewwide pwotected d-def towawsignaws(manhattanvawue: p-pwofiwevisitset): seq[pwofiwevisitmetadata] =
+    manhattanvawue.pwofiwevisitset
       .map {
-        _.collect {
-          // only keep the Non-NSFW and not-following profile visits
-          case profileVisit
-              if profileVisit.targetId.nonEmpty
-              // The below check covers 180 days, not only 90 days as the name implies.
-              // See comment on [[ProfileVisit.latestTargetVisitTimestampInLast90Days]] thrift.
-                && profileVisit.latestTargetVisitTimestampInLast90Days.nonEmpty
-                && !profileVisit.isTargetNSFW.getOrElse(false)
-                && !profileVisit.doesSourceIdFollowTargetId.getOrElse(false) =>
-            ProfileVisitMetadata(
-              targetId = profileVisit.targetId,
-              totalTargetVisitsInLast14Days = profileVisit.totalTargetVisitsInLast14Days,
-              totalTargetVisitsInLast90Days = profileVisit.totalTargetVisitsInLast90Days,
-              totalTargetVisitsInLast180Days = profileVisit.totalTargetVisitsInLast180Days,
-              latestTargetVisitTimestampInLast90Days =
-                profileVisit.latestTargetVisitTimestampInLast90Days
+        _.cowwect {
+          // onwy keep the nyon-nsfw and nyot-fowwowing pwofiwe visits
+          c-case p-pwofiwevisit
+              if pwofiwevisit.tawgetid.nonempty
+              // t-the b-bewow check covews 180 d-days, nyaa~~ nyot onwy 90 days as the nyame impwies. 😳
+              // see comment o-on [[pwofiwevisit.watesttawgetvisittimestampinwast90days]] thwift. (⑅˘꒳˘)
+                && pwofiwevisit.watesttawgetvisittimestampinwast90days.nonempty
+                && !pwofiwevisit.istawgetnsfw.getowewse(fawse)
+                && !pwofiwevisit.doessouwceidfowwowtawgetid.getowewse(fawse) =>
+            pwofiwevisitmetadata(
+              tawgetid = pwofiwevisit.tawgetid, nyaa~~
+              t-totawtawgetvisitsinwast14days = pwofiwevisit.totawtawgetvisitsinwast14days, OwO
+              t-totawtawgetvisitsinwast90days = p-pwofiwevisit.totawtawgetvisitsinwast90days, rawr x3
+              t-totawtawgetvisitsinwast180days = pwofiwevisit.totawtawgetvisitsinwast180days, XD
+              w-watesttawgetvisittimestampinwast90days =
+                pwofiwevisit.watesttawgetvisittimestampinwast90days
             )
-        }.toSeq
-      }.getOrElse(Seq.empty)
+        }.toseq
+      }.getowewse(seq.empty)
 
-  override val name: String = this.getClass.getCanonicalName
+  o-ovewwide vaw nyame: s-stwing = this.getcwass.getcanonicawname
 
-  override val statsReceiver: StatsReceiver = stats.scope(name)
+  o-ovewwide vaw statsweceivew: statsweceivew = stats.scope(name)
 
-  override def process(
-    query: Query,
-    rawSignals: Future[Option[Seq[ProfileVisitMetadata]]]
-  ): Future[Option[Seq[Signal]]] = rawSignals.map { profiles =>
-    profiles
+  o-ovewwide def pwocess(
+    q-quewy: q-quewy, σωσ
+    wawsignaws: f-futuwe[option[seq[pwofiwevisitmetadata]]]
+  ): f-futuwe[option[seq[signaw]]] = wawsignaws.map { pwofiwes =>
+    pwofiwes
       .map {
-        _.filter(profileVisitMetadata => visitCountFilter(profileVisitMetadata, query.signalType))
-          .sortBy(profileVisitMetadata =>
-            -visitCountMap(query.signalType)(profileVisitMetadata).getOrElse(0))
-          .map(profileVisitMetadata =>
-            signalFromProfileVisit(profileVisitMetadata, query.signalType))
-          .take(query.maxResults.getOrElse(Int.MaxValue))
+        _.fiwtew(pwofiwevisitmetadata => v-visitcountfiwtew(pwofiwevisitmetadata, (U ᵕ U❁) quewy.signawtype))
+          .sowtby(pwofiwevisitmetadata =>
+            -visitcountmap(quewy.signawtype)(pwofiwevisitmetadata).getowewse(0))
+          .map(pwofiwevisitmetadata =>
+            signawfwompwofiwevisit(pwofiwevisitmetadata, (U ﹏ U) quewy.signawtype))
+          .take(quewy.maxwesuwts.getowewse(int.maxvawue))
       }
   }
 }
 
-object ProfileVisitsFetcher {
-  private val MHAppId = "repeated_profile_visits_aggregated"
-  private val MHDatasetName = "repeated_profile_visits_aggregated"
+object pwofiwevisitsfetchew {
+  pwivate vaw m-mhappid = "wepeated_pwofiwe_visits_aggwegated"
+  pwivate vaw mhdatasetname = "wepeated_pwofiwe_visits_aggwegated"
 
-  private val minVisitCountMap: Map[SignalType, Int] = Map(
-    SignalType.RepeatedProfileVisit14dMinVisit2V1 -> 2,
-    SignalType.RepeatedProfileVisit14dMinVisit2V1NoNegative -> 2,
-    SignalType.RepeatedProfileVisit90dMinVisit6V1 -> 6,
-    SignalType.RepeatedProfileVisit90dMinVisit6V1NoNegative -> 6,
-    SignalType.RepeatedProfileVisit180dMinVisit6V1 -> 6,
-    SignalType.RepeatedProfileVisit180dMinVisit6V1NoNegative -> 6
+  pwivate v-vaw minvisitcountmap: m-map[signawtype, :3 i-int] = map(
+    signawtype.wepeatedpwofiwevisit14dminvisit2v1 -> 2, ( ͡o ω ͡o )
+    s-signawtype.wepeatedpwofiwevisit14dminvisit2v1nonegative -> 2, σωσ
+    signawtype.wepeatedpwofiwevisit90dminvisit6v1 -> 6, >w<
+    s-signawtype.wepeatedpwofiwevisit90dminvisit6v1nonegative -> 6, 😳😳😳
+    s-signawtype.wepeatedpwofiwevisit180dminvisit6v1 -> 6, OwO
+    signawtype.wepeatedpwofiwevisit180dminvisit6v1nonegative -> 6
   )
 
-  private val visitCountMap: Map[SignalType, ProfileVisitMetadata => Option[Int]] = Map(
-    SignalType.RepeatedProfileVisit14dMinVisit2V1 ->
-      ((profileVisitMetadata: ProfileVisitMetadata) =>
-        profileVisitMetadata.totalTargetVisitsInLast14Days),
-    SignalType.RepeatedProfileVisit14dMinVisit2V1NoNegative ->
-      ((profileVisitMetadata: ProfileVisitMetadata) =>
-        profileVisitMetadata.totalTargetVisitsInLast14Days),
-    SignalType.RepeatedProfileVisit90dMinVisit6V1 ->
-      ((profileVisitMetadata: ProfileVisitMetadata) =>
-        profileVisitMetadata.totalTargetVisitsInLast90Days),
-    SignalType.RepeatedProfileVisit90dMinVisit6V1NoNegative ->
-      ((profileVisitMetadata: ProfileVisitMetadata) =>
-        profileVisitMetadata.totalTargetVisitsInLast90Days),
-    SignalType.RepeatedProfileVisit180dMinVisit6V1 ->
-      ((profileVisitMetadata: ProfileVisitMetadata) =>
-        profileVisitMetadata.totalTargetVisitsInLast180Days),
-    SignalType.RepeatedProfileVisit180dMinVisit6V1NoNegative ->
-      ((profileVisitMetadata: ProfileVisitMetadata) =>
-        profileVisitMetadata.totalTargetVisitsInLast180Days)
+  pwivate vaw visitcountmap: map[signawtype, 😳 pwofiwevisitmetadata => o-option[int]] = map(
+    s-signawtype.wepeatedpwofiwevisit14dminvisit2v1 ->
+      ((pwofiwevisitmetadata: pwofiwevisitmetadata) =>
+        p-pwofiwevisitmetadata.totawtawgetvisitsinwast14days), 😳😳😳
+    s-signawtype.wepeatedpwofiwevisit14dminvisit2v1nonegative ->
+      ((pwofiwevisitmetadata: pwofiwevisitmetadata) =>
+        pwofiwevisitmetadata.totawtawgetvisitsinwast14days), (˘ω˘)
+    signawtype.wepeatedpwofiwevisit90dminvisit6v1 ->
+      ((pwofiwevisitmetadata: p-pwofiwevisitmetadata) =>
+        pwofiwevisitmetadata.totawtawgetvisitsinwast90days), ʘwʘ
+    s-signawtype.wepeatedpwofiwevisit90dminvisit6v1nonegative ->
+      ((pwofiwevisitmetadata: pwofiwevisitmetadata) =>
+        p-pwofiwevisitmetadata.totawtawgetvisitsinwast90days), ( ͡o ω ͡o )
+    s-signawtype.wepeatedpwofiwevisit180dminvisit6v1 ->
+      ((pwofiwevisitmetadata: pwofiwevisitmetadata) =>
+        pwofiwevisitmetadata.totawtawgetvisitsinwast180days),
+    signawtype.wepeatedpwofiwevisit180dminvisit6v1nonegative ->
+      ((pwofiwevisitmetadata: pwofiwevisitmetadata) =>
+        p-pwofiwevisitmetadata.totawtawgetvisitsinwast180days)
   )
 
-  def signalFromProfileVisit(
-    profileVisitMetadata: ProfileVisitMetadata,
-    signalType: SignalType
-  ): Signal = {
-    Signal(
-      signalType,
-      profileVisitMetadata.latestTargetVisitTimestampInLast90Days.get,
-      profileVisitMetadata.targetId.map(targetId => InternalId.UserId(targetId))
+  d-def s-signawfwompwofiwevisit(
+    pwofiwevisitmetadata: p-pwofiwevisitmetadata, o.O
+    s-signawtype: signawtype
+  ): s-signaw = {
+    signaw(
+      signawtype, >w<
+      pwofiwevisitmetadata.watesttawgetvisittimestampinwast90days.get, 😳
+      pwofiwevisitmetadata.tawgetid.map(tawgetid => intewnawid.usewid(tawgetid))
     )
   }
 
-  def visitCountFilter(
-    profileVisitMetadata: ProfileVisitMetadata,
-    signalType: SignalType
-  ): Boolean = {
-    visitCountMap(signalType)(profileVisitMetadata).exists(_ >= minVisitCountMap(signalType))
+  d-def visitcountfiwtew(
+    p-pwofiwevisitmetadata: pwofiwevisitmetadata, 🥺
+    signawtype: signawtype
+  ): b-boowean = {
+    v-visitcountmap(signawtype)(pwofiwevisitmetadata).exists(_ >= minvisitcountmap(signawtype))
   }
 }

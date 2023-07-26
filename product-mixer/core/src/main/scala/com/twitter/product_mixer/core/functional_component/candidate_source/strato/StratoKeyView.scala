@@ -1,4 +1,4 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source.strato
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.stwato
 
-/** Represents a Strato column's Key and View arguments */
-case class StratoKeyView[StratoKey, StratoView](key: StratoKey, view: StratoView)
+/** wepwesents a-a stwato cowumn's k-key and view a-awguments */
+case c-cwass stwatokeyview[stwatokey, (U ᵕ U❁) s-stwatoview](key: s-stwatokey, (⑅˘꒳˘) view: s-stwatoview)

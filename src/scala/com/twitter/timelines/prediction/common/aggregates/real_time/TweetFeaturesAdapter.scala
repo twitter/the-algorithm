@@ -1,35 +1,35 @@
-package com.twitter.timelines.prediction.common.aggregates.real_time
+package com.twittew.timewines.pwediction.common.aggwegates.weaw_time
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.featurestore.catalog.entities.core.Tweet
-import com.twitter.ml.featurestore.catalog.features.trends.TweetTrendsScores
-import com.twitter.ml.featurestore.lib.TweetId
-import com.twitter.ml.featurestore.lib.data.PredictionRecord
-import com.twitter.ml.featurestore.lib.data.PredictionRecordAdapter
-import com.twitter.ml.featurestore.lib.feature.BoundFeature
-import com.twitter.ml.featurestore.lib.feature.BoundFeatureSet
-import com.twitter.timelines.prediction.common.adapters.TimelinesAdapterBase
-import java.util
-import scala.collection.JavaConverters._
+impowt com.twittew.mw.api.datawecowd
+i-impowt c-com.twittew.mw.api.featuwe
+i-impowt c-com.twittew.mw.api.featuwecontext
+i-impowt com.twittew.mw.featuwestowe.catawog.entities.cowe.tweet
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.twends.tweettwendsscowes
+i-impowt com.twittew.mw.featuwestowe.wib.tweetid
+i-impowt com.twittew.mw.featuwestowe.wib.data.pwedictionwecowd
+impowt com.twittew.mw.featuwestowe.wib.data.pwedictionwecowdadaptew
+impowt com.twittew.mw.featuwestowe.wib.featuwe.boundfeatuwe
+impowt c-com.twittew.mw.featuwestowe.wib.featuwe.boundfeatuweset
+impowt com.twittew.timewines.pwediction.common.adaptews.timewinesadaptewbase
+i-impowt java.utiw
+impowt s-scawa.cowwection.javaconvewtews._
 
-object TweetFeaturesAdapter extends TimelinesAdapterBase[PredictionRecord] {
+object tweetfeatuwesadaptew extends timewinesadaptewbase[pwedictionwecowd] {
 
-  private val ContinuousFeatureMap: Map[BoundFeature[TweetId, Double], Feature.Continuous] = Map()
+  pwivate vaw c-continuousfeatuwemap: map[boundfeatuwe[tweetid, (⑅˘꒳˘) d-doubwe], rawr x3 featuwe.continuous] = map()
 
-  val TweetFeaturesSet: BoundFeatureSet = new BoundFeatureSet(ContinuousFeatureMap.keys.toSet)
+  v-vaw tweetfeatuwesset: boundfeatuweset = nyew boundfeatuweset(continuousfeatuwemap.keys.toset)
 
-  val AllFeatures: Seq[Feature[_]] =
-    ContinuousFeatureMap.values.toSeq
+  vaw awwfeatuwes: seq[featuwe[_]] =
+    c-continuousfeatuwemap.vawues.toseq
 
-  private val adapter = PredictionRecordAdapter.oneToOne(TweetFeaturesSet)
+  pwivate vaw adaptew = pwedictionwecowdadaptew.onetoone(tweetfeatuwesset)
 
-  override def getFeatureContext: FeatureContext = new FeatureContext(AllFeatures: _*)
+  ovewwide def getfeatuwecontext: featuwecontext = n-nyew featuwecontext(awwfeatuwes: _*)
 
-  override def commonFeatures: Set[Feature[_]] = Set.empty
+  ovewwide d-def commonfeatuwes: s-set[featuwe[_]] = s-set.empty
 
-  override def adaptToDataRecords(record: PredictionRecord): util.List[DataRecord] = {
-    List(adapter.adaptToDataRecord(record)).asJava
+  o-ovewwide def adapttodatawecowds(wecowd: pwedictionwecowd): u-utiw.wist[datawecowd] = {
+    wist(adaptew.adapttodatawecowd(wecowd)).asjava
   }
 }

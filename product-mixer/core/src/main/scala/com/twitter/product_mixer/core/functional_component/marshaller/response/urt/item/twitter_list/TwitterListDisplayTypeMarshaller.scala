@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.twitter_list
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.twittew_wist
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.List
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.ListTile
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.ListWithPin
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.ListWithSubscribe
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.TwitterListDisplayType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.twittew_wist.wist
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.twittew_wist.wisttiwe
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.twittew_wist.wistwithpin
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.twittew_wist.wistwithsubscwibe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.twittew_wist.twittewwistdispwaytype
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class TwitterListDisplayTypeMarshaller @Inject() () {
+@singweton
+cwass twittewwistdispwaytypemawshawwew @inject() () {
 
-  def apply(twitterListDisplayType: TwitterListDisplayType): urt.TwitterListDisplayType =
-    twitterListDisplayType match {
-      case List => urt.TwitterListDisplayType.List
-      case ListTile => urt.TwitterListDisplayType.ListTile
-      case ListWithPin => urt.TwitterListDisplayType.ListWithPin
-      case ListWithSubscribe => urt.TwitterListDisplayType.ListWithSubscribe
+  def appwy(twittewwistdispwaytype: t-twittewwistdispwaytype): uwt.twittewwistdispwaytype =
+    twittewwistdispwaytype match {
+      c-case wist => uwt.twittewwistdispwaytype.wist
+      c-case wisttiwe => uwt.twittewwistdispwaytype.wisttiwe
+      case wistwithpin => uwt.twittewwistdispwaytype.wistwithpin
+      c-case wistwithsubscwibe => uwt.twittewwistdispwaytype.wistwithsubscwibe
     }
 }

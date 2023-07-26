@@ -1,54 +1,54 @@
-package com.twitter.visibility.builder.tweets
+package com.twittew.visibiwity.buiwdew.tweets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.TweetPerspectiveSource
-import com.twitter.visibility.features.ViewerReportedTweet
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt c-com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+i-impowt com.twittew.visibiwity.common.tweetpewspectivesouwce
+impowt com.twittew.visibiwity.featuwes.viewewwepowtedtweet
 
-class TweetPerspectiveFeatures(
-  tweetPerspectiveSource: TweetPerspectiveSource,
-  statsReceiver: StatsReceiver) {
+cwass tweetpewspectivefeatuwes(
+  tweetpewspectivesouwce: tweetpewspectivesouwce, (⑅˘꒳˘)
+  s-statsweceivew: statsweceivew) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("tweet_perspective_features")
-  private[this] val reportedStats = scopedStatsReceiver.scope("reported")
+  pwivate[this] v-vaw scopedstatsweceivew = statsweceivew.scope("tweet_pewspective_featuwes")
+  p-pwivate[this] vaw wepowtedstats = scopedstatsweceivew.scope("wepowted")
 
-  def forTweet(
-    tweet: Tweet,
-    viewerId: Option[Long],
-    enableFetchReportedPerspective: Boolean
-  ): FeatureMapBuilder => FeatureMapBuilder =
-    _.withFeature(
-      ViewerReportedTweet,
-      tweetIsReported(tweet, viewerId, enableFetchReportedPerspective))
+  def fowtweet(
+    t-tweet: tweet, /(^•ω•^)
+    viewewid: o-option[wong], rawr x3
+    e-enabwefetchwepowtedpewspective: boowean
+  ): featuwemapbuiwdew => featuwemapbuiwdew =
+    _.withfeatuwe(
+      viewewwepowtedtweet, (U ﹏ U)
+      t-tweetiswepowted(tweet, (U ﹏ U) viewewid, (⑅˘꒳˘) enabwefetchwepowtedpewspective))
 
-  private[builder] def tweetIsReported(
-    tweet: Tweet,
-    viewerId: Option[Long],
-    enableFetchReportedPerspective: Boolean = true
-  ): Stitch[Boolean] = {
-    ((tweet.perspective, viewerId) match {
-      case (Some(perspective), _) =>
-        Stitch.value(perspective.reported).onSuccess { _ =>
-          reportedStats.counter("already_hydrated").incr()
+  pwivate[buiwdew] def tweetiswepowted(
+    t-tweet: tweet, òωó
+    viewewid: o-option[wong],
+    e-enabwefetchwepowtedpewspective: b-boowean = twue
+  ): s-stitch[boowean] = {
+    ((tweet.pewspective, ʘwʘ viewewid) match {
+      case (some(pewspective), /(^•ω•^) _) =>
+        s-stitch.vawue(pewspective.wepowted).onsuccess { _ =>
+          wepowtedstats.countew("awweady_hydwated").incw()
         }
-      case (None, Some(viewerId)) =>
-        if (enableFetchReportedPerspective) {
-          tweetPerspectiveSource.reported(tweet.id, viewerId).onSuccess { _ =>
-            reportedStats.counter("request").incr()
+      case (none, ʘwʘ some(viewewid)) =>
+        i-if (enabwefetchwepowtedpewspective) {
+          tweetpewspectivesouwce.wepowted(tweet.id, σωσ viewewid).onsuccess { _ =>
+            wepowtedstats.countew("wequest").incw()
           }
-        } else {
-          Stitch.False.onSuccess { _ =>
-            reportedStats.counter("light_request").incr()
+        } ewse {
+          stitch.fawse.onsuccess { _ =>
+            w-wepowtedstats.countew("wight_wequest").incw()
           }
         }
       case _ =>
-        Stitch.False.onSuccess { _ =>
-          reportedStats.counter("empty").incr()
+        s-stitch.fawse.onsuccess { _ =>
+          w-wepowtedstats.countew("empty").incw()
         }
-    }).onSuccess { _ =>
-      reportedStats.counter("").incr()
+    }).onsuccess { _ =>
+      w-wepowtedstats.countew("").incw()
     }
   }
 }

@@ -1,160 +1,160 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "tensorflow/core/framework/tensor.proto";
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/types.proto";
+impowt "tensowfwow/cowe/fwamewowk/tensow.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/tensow_shape.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/types.pwoto";
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// `StructuredValue` represents a dynamically typed value representing various
-// data structures that are inspired by Python data structures typically used in
-// TensorFlow functions as inputs and outputs.
+// `stwuctuwedvawue` w-wepwesents a d-dynamicawwy typed v-vawue wepwesenting v-vawious
+// d-data stwuctuwes that awe inspiwed by python data stwuctuwes typicawwy used in
+// t-tensowfwow functions as inputs and outputs.
 //
-// For example when saving a Layer there may be a `training` argument. If the
-// user passes a boolean True/False, that switches between two concrete
-// TensorFlow functions. In order to switch between them in the same way after
-// loading the SavedModel, we need to represent "True" and "False".
+// f-fow exampwe when saving a wayew t-thewe may be a `twaining` awgument. -.- if the
+// usew passes a b-boowean twue/fawse, (✿oωo) that switches b-between two concwete
+// t-tensowfwow functions. /(^•ω•^) in owdew to switch between them in the same way a-aftew
+// woading the savedmodew, 🥺 we nyeed to wepwesent "twue" and "fawse". ʘwʘ
 //
-// A more advanced example might be a function which takes a list of
-// dictionaries mapping from strings to Tensors. In order to map from
-// user-specified arguments `[{"a": tf.constant(1.)}, {"q": tf.constant(3.)}]`
-// after load to the right saved TensorFlow function, we need to represent the
-// nested structure and the strings, recording that we have a trace for anything
-// matching `[{"a": tf.TensorSpec(None, tf.float32)}, {"q": tf.TensorSpec([],
-// tf.float64)}]` as an example.
+// a mowe advanced e-exampwe might be a function which t-takes a wist o-of
+// dictionawies m-mapping fwom s-stwings to tensows. UwU in owdew to map fwom
+// usew-specified a-awguments `[{"a": tf.constant(1.)}, XD {"q": tf.constant(3.)}]`
+// a-aftew woad to the wight saved tensowfwow function, (✿oωo) we nyeed to wepwesent the
+// nyested s-stwuctuwe and the stwings, :3 wecowding t-that we h-have a twace fow a-anything
+// matching `[{"a": tf.tensowspec(none, (///ˬ///✿) tf.fwoat32)}, nyaa~~ {"q": tf.tensowspec([], >w<
+// t-tf.fwoat64)}]` a-as an exampwe. -.-
 //
-// Likewise functions may return nested structures of Tensors, for example
-// returning a dictionary mapping from strings to Tensors. In order for the
-// loaded function to return the same structure we need to serialize it.
+// wikewise f-functions m-may wetuwn nyested stwuctuwes o-of tensows, (✿oωo) fow exampwe
+// wetuwning a-a dictionawy mapping fwom stwings to tensows. (˘ω˘) i-in owdew fow the
+// woaded function t-to wetuwn the same stwuctuwe w-we nyeed to s-sewiawize it. rawr
 //
-// This is an ergonomic aid for working with loaded SavedModels, not a promise
-// to serialize all possible function signatures. For example we do not expect
-// to pickle generic Python objects, and ideally we'd stay language-agnostic.
-message StructuredValue {
-  // The kind of value.
+// this is an ewgonomic aid fow wowking with woaded savedmodews, OwO nyot a pwomise
+// to sewiawize a-aww possibwe function s-signatuwes. ^•ﻌ•^ fow exampwe we d-do not expect
+// t-to pickwe genewic p-python objects, UwU and ideawwy we'd stay wanguage-agnostic.
+message s-stwuctuwedvawue {
+  // the kind of vawue. (˘ω˘)
   oneof kind {
-    // Represents None.
-    NoneValue none_value = 1;
+    // wepwesents n-nyone. (///ˬ///✿)
+    nyonevawue none_vawue = 1;
 
-    // Represents a double-precision floating-point value (a Python `float`).
-    double float64_value = 11;
-    // Represents a signed integer value, limited to 64 bits.
-    // Larger values from Python's arbitrary-precision integers are unsupported.
-    sint64 int64_value = 12;
-    // Represents a string of Unicode characters stored in a Python `str`.
-    // In Python 3, this is exactly what type `str` is.
-    // In Python 2, this is the UTF-8 encoding of the characters.
-    // For strings with ASCII characters only (as often used in TensorFlow code)
-    // there is effectively no difference between the language versions.
-    // The obsolescent `unicode` type of Python 2 is not supported here.
-    string string_value = 13;
-    // Represents a boolean value.
-    bool bool_value = 14;
+    // wepwesents a-a doubwe-pwecision f-fwoating-point v-vawue (a python `fwoat`). σωσ
+    d-doubwe f-fwoat64_vawue = 11;
+    // w-wepwesents a-a signed integew vawue, /(^•ω•^) wimited to 64 bits. 😳
+    // w-wawgew v-vawues fwom python's a-awbitwawy-pwecision i-integews a-awe unsuppowted. 😳
+    sint64 int64_vawue = 12;
+    // wepwesents a stwing of unicode c-chawactews stowed in a python `stw`. (⑅˘꒳˘)
+    // in python 3, this is exactwy nyani type `stw` is. 😳😳😳
+    // in python 2, 😳 t-this is the utf-8 encoding of the chawactews. XD
+    // fow s-stwings with ascii c-chawactews o-onwy (as often used in tensowfwow c-code)
+    // thewe is effectivewy n-nyo diffewence b-between the wanguage vewsions.
+    // the obsowescent `unicode` type of python 2 is nyot suppowted hewe. mya
+    s-stwing stwing_vawue = 13;
+    // wepwesents a boowean v-vawue. ^•ﻌ•^
+    boow boow_vawue = 14;
 
-    // Represents a TensorShape.
-    tensorflow.TensorShapeProto tensor_shape_value = 31;
-    // Represents an enum value for dtype.
-    tensorflow.DataType tensor_dtype_value = 32;
-    // Represents a value for tf.TensorSpec.
-    TensorSpecProto tensor_spec_value = 33;
-    // Represents a value for tf.TypeSpec.
-    TypeSpecProto type_spec_value = 34;
-    // Represents a value for tf.BoundedTensorSpec.
-    BoundedTensorSpecProto bounded_tensor_spec_value = 35;
+    // wepwesents a-a tensowshape. ʘwʘ
+    t-tensowfwow.tensowshapepwoto tensow_shape_vawue = 31;
+    // wepwesents a-an enum vawue f-fow dtype. ( ͡o ω ͡o )
+    tensowfwow.datatype t-tensow_dtype_vawue = 32;
+    // w-wepwesents a vawue fow tf.tensowspec. mya
+    tensowspecpwoto tensow_spec_vawue = 33;
+    // wepwesents a vawue fow tf.typespec.
+    t-typespecpwoto t-type_spec_vawue = 34;
+    // w-wepwesents a vawue fow tf.boundedtensowspec. o.O
+    b-boundedtensowspecpwoto b-bounded_tensow_spec_vawue = 35;
 
-    // Represents a list of `Value`.
-    ListValue list_value = 51;
-    // Represents a tuple of `Value`.
-    TupleValue tuple_value = 52;
-    // Represents a dict `Value`.
-    DictValue dict_value = 53;
-    // Represents Python's namedtuple.
-    NamedTupleValue named_tuple_value = 54;
+    // wepwesents a wist o-of `vawue`. (✿oωo)
+    wistvawue wist_vawue = 51;
+    // wepwesents a tupwe of `vawue`. :3
+    tupwevawue t-tupwe_vawue = 52;
+    // w-wepwesents a dict `vawue`. 😳
+    dictvawue d-dict_vawue = 53;
+    // w-wepwesents python's nyamedtupwe.
+    nyamedtupwevawue n-nyamed_tupwe_vawue = 54;
   }
 }
 
-// Represents None.
-message NoneValue {}
+// wepwesents nyone. (U ﹏ U)
+message nyonevawue {}
 
-// Represents a Python list.
-message ListValue {
-  repeated StructuredValue values = 1;
+// wepwesents a python w-wist. mya
+message wistvawue {
+  wepeated stwuctuwedvawue v-vawues = 1;
 }
 
-// Represents a Python tuple.
-message TupleValue {
-  repeated StructuredValue values = 1;
+// w-wepwesents a python tupwe. (U ᵕ U❁)
+message tupwevawue {
+  wepeated s-stwuctuwedvawue v-vawues = 1;
 }
 
-// Represents a Python dict keyed by `str`.
-// The comment on Unicode from Value.string_value applies analogously.
-message DictValue {
-  map<string, StructuredValue> fields = 1;
+// wepwesents a python dict keyed by `stw`. :3
+// t-the comment on unicode fwom v-vawue.stwing_vawue appwies anawogouswy. mya
+message dictvawue {
+  m-map<stwing, stwuctuwedvawue> fiewds = 1;
 }
 
-// Represents a (key, value) pair.
-message PairValue {
-  string key = 1;
-  StructuredValue value = 2;
+// wepwesents a-a (key, OwO v-vawue) paiw. (ˆ ﻌ ˆ)♡
+message paiwvawue {
+  s-stwing key = 1;
+  stwuctuwedvawue v-vawue = 2;
 }
 
-// Represents Python's namedtuple.
-message NamedTupleValue {
-  string name = 1;
-  repeated PairValue values = 2;
+// w-wepwesents p-python's nyamedtupwe. ʘwʘ
+message n-nyamedtupwevawue {
+  s-stwing nyame = 1;
+  wepeated paiwvawue vawues = 2;
 }
 
-// A protobuf to represent tf.TensorSpec.
-message TensorSpecProto {
-  string name = 1;
-  tensorflow.TensorShapeProto shape = 2;
-  tensorflow.DataType dtype = 3;
+// a p-pwotobuf to wepwesent t-tf.tensowspec. o.O
+m-message tensowspecpwoto {
+  stwing nyame = 1;
+  tensowfwow.tensowshapepwoto s-shape = 2;
+  tensowfwow.datatype dtype = 3;
 }
 
-// A protobuf to represent tf.BoundedTensorSpec.
-message BoundedTensorSpecProto {
-  string name = 1;
-  tensorflow.TensorShapeProto shape = 2;
-  tensorflow.DataType dtype = 3;
-  tensorflow.TensorProto minimum = 4;
-  tensorflow.TensorProto maximum = 5;
+// a-a pwotobuf to w-wepwesent tf.boundedtensowspec. UwU
+message boundedtensowspecpwoto {
+  stwing nyame = 1;
+  tensowfwow.tensowshapepwoto s-shape = 2;
+  t-tensowfwow.datatype d-dtype = 3;
+  t-tensowfwow.tensowpwoto minimum = 4;
+  t-tensowfwow.tensowpwoto maximum = 5;
 }
 
-// Represents a tf.TypeSpec
-message TypeSpecProto {
-  enum TypeSpecClass {
-    UNKNOWN = 0;
-    SPARSE_TENSOR_SPEC = 1;   // tf.SparseTensorSpec
-    INDEXED_SLICES_SPEC = 2;  // tf.IndexedSlicesSpec
-    RAGGED_TENSOR_SPEC = 3;   // tf.RaggedTensorSpec
-    TENSOR_ARRAY_SPEC = 4;    // tf.TensorArraySpec
-    DATA_DATASET_SPEC = 5;    // tf.data.DatasetSpec
-    DATA_ITERATOR_SPEC = 6;   // IteratorSpec from data/ops/iterator_ops.py
-    OPTIONAL_SPEC = 7;        // tf.OptionalSpec
-    PER_REPLICA_SPEC = 8;     // PerReplicaSpec from distribute/values.py
-    VARIABLE_SPEC = 9;        // tf.VariableSpec
-    ROW_PARTITION_SPEC = 10;  // RowPartitionSpec from ragged/row_partition.py
-    reserved 11;
-    REGISTERED_TYPE_SPEC = 12;  // The type registered as type_spec_class_name.
-    EXTENSION_TYPE_SPEC = 13;   // Subclasses of tf.ExtensionType
+// wepwesents a tf.typespec
+message typespecpwoto {
+  enum typespeccwass {
+    unknown = 0;
+    s-spawse_tensow_spec = 1;   // tf.spawsetensowspec
+    i-indexed_swices_spec = 2;  // tf.indexedswicesspec
+    w-wagged_tensow_spec = 3;   // tf.waggedtensowspec
+    t-tensow_awway_spec = 4;    // tf.tensowawwayspec
+    d-data_dataset_spec = 5;    // t-tf.data.datasetspec
+    d-data_itewatow_spec = 6;   // i-itewatowspec f-fwom data/ops/itewatow_ops.py
+    optionaw_spec = 7;        // tf.optionawspec
+    pew_wepwica_spec = 8;     // pewwepwicaspec fwom distwibute/vawues.py
+    vawiabwe_spec = 9;        // t-tf.vawiabwespec
+    w-wow_pawtition_spec = 10;  // w-wowpawtitionspec fwom wagged/wow_pawtition.py
+    w-wesewved 11;
+    wegistewed_type_spec = 12;  // the type wegistewed as type_spec_cwass_name. rawr x3
+    e-extension_type_spec = 13;   // s-subcwasses of tf.extensiontype
   }
-  TypeSpecClass type_spec_class = 1;
+  typespeccwass t-type_spec_cwass = 1;
 
-  // The value returned by TypeSpec._serialize().
-  StructuredValue type_state = 2;
+  // the vawue wetuwned b-by typespec._sewiawize(). 🥺
+  s-stwuctuwedvawue type_state = 2;
 
-  // The name of the TypeSpec class.
-  //  * If type_spec_class == REGISTERED_TYPE_SPEC, the TypeSpec class is
-  //    the one registered under this name. For types registered outside
-  //    core TensorFlow by an add-on library, that library must be loaded
-  //    before this value can be deserialized by nested_structure_coder.
-  //  * If type_spec_class specifies a particular TypeSpec class, this field is
-  //    redundant with the type_spec_class enum, and is only used for error
-  //    reporting in older binaries that do not know the tupe_spec_class enum.
-  string type_spec_class_name = 3;
+  // t-the nyame of t-the typespec cwass. :3
+  //  * if type_spec_cwass == wegistewed_type_spec, (ꈍᴗꈍ) the typespec cwass is
+  //    t-the one wegistewed u-undew this n-nyame. 🥺 fow types w-wegistewed o-outside
+  //    cowe tensowfwow b-by an add-on wibwawy, (✿oωo) t-that wibwawy must be woaded
+  //    b-befowe t-this vawue can be desewiawized b-by nyested_stwuctuwe_codew. (U ﹏ U)
+  //  * if type_spec_cwass specifies a-a pawticuwaw typespec cwass, :3 this f-fiewd is
+  //    w-wedundant with the type_spec_cwass e-enum, ^^;; and is onwy used fow ewwow
+  //    w-wepowting in owdew b-binawies that d-do nyot know the tupe_spec_cwass enum. rawr
+  stwing type_spec_cwass_name = 3;
 
-  // The number of flat tensor components required by this TypeSpec.
-  int32 num_flat_components = 4;
+  // t-the nyumbew of fwat tensow components wequiwed b-by this typespec. 😳😳😳
+  i-int32 nyum_fwat_components = 4;
 }

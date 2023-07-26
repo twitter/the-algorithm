@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.topic
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.topic
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.component_library.model.candidate.BaseTopicCandidate
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.topic.BaseTopicFunctionalityTypeBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicFunctionalityType
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetopiccandidate
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.item.topic.basetopicfunctionawitytypebuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.topicfunctionawitytype
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case class StaticTopicFunctionalityTypeBuilder(
-  functionalityType: TopicFunctionalityType)
-    extends BaseTopicFunctionalityTypeBuilder[PipelineQuery, BaseTopicCandidate] {
+c-case cwass statictopicfunctionawitytypebuiwdew(
+  f-functionawitytype: topicfunctionawitytype)
+    extends basetopicfunctionawitytypebuiwdew[pipewinequewy, (⑅˘꒳˘) basetopiccandidate] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: BaseTopicCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[TopicFunctionalityType] = Some(functionalityType)
+  ovewwide def a-appwy(
+    quewy: pipewinequewy, (U ᵕ U❁)
+    candidate: b-basetopiccandidate, -.-
+    candidatefeatuwes: f-featuwemap
+  ): option[topicfunctionawitytype] = some(functionawitytype)
 }

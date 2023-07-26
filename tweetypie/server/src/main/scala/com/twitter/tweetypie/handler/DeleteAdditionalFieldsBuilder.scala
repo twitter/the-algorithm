@@ -1,41 +1,41 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.repository.TweetRepository
-import com.twitter.tweetypie.repository.UserKey
-import com.twitter.tweetypie.repository.UserQueryOptions
-import com.twitter.tweetypie.repository.UserRepository
-import com.twitter.tweetypie.repository.UserVisibility
-import com.twitter.tweetypie.store.AsyncDeleteAdditionalFields
-import com.twitter.tweetypie.store.DeleteAdditionalFields
-import com.twitter.tweetypie.store.TweetStoreEventOrRetry
-import com.twitter.tweetypie.thriftscala.AsyncDeleteAdditionalFieldsRequest
-import com.twitter.tweetypie.thriftscala.DeleteAdditionalFieldsRequest
+impowt c-com.twittew.stitch.notfound
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.wepositowy.tweetquewy
+i-impowt com.twittew.tweetypie.wepositowy.tweetwepositowy
+i-impowt c-com.twittew.tweetypie.wepositowy.usewkey
+i-impowt com.twittew.tweetypie.wepositowy.usewquewyoptions
+impowt com.twittew.tweetypie.wepositowy.usewwepositowy
+impowt com.twittew.tweetypie.wepositowy.usewvisibiwity
+i-impowt com.twittew.tweetypie.stowe.asyncdeweteadditionawfiewds
+impowt com.twittew.tweetypie.stowe.deweteadditionawfiewds
+impowt c-com.twittew.tweetypie.stowe.tweetstoweeventowwetwy
+impowt com.twittew.tweetypie.thwiftscawa.asyncdeweteadditionawfiewdswequest
+i-impowt com.twittew.tweetypie.thwiftscawa.deweteadditionawfiewdswequest
 
-object DeleteAdditionalFieldsBuilder {
-  type Type = DeleteAdditionalFieldsRequest => Future[Seq[DeleteAdditionalFields.Event]]
+object deweteadditionawfiewdsbuiwdew {
+  type type = d-deweteadditionawfiewdswequest => futuwe[seq[deweteadditionawfiewds.event]]
 
-  val tweetQueryOptions = TweetQuery.Options(include = GetTweetsHandler.BaseInclude)
+  v-vaw t-tweetquewyoptions = tweetquewy.options(incwude = gettweetshandwew.baseincwude)
 
-  def apply(tweetRepo: TweetRepository.Type): Type = {
-    def getTweet(tweetId: TweetId) =
-      Stitch.run(
-        tweetRepo(tweetId, tweetQueryOptions)
-          .rescue(HandlerError.translateNotFoundToClientError(tweetId))
+  def appwy(tweetwepo: tweetwepositowy.type): t-type = {
+    def gettweet(tweetid: tweetid) =
+      stitch.wun(
+        tweetwepo(tweetid, ( ͡o ω ͡o ) t-tweetquewyoptions)
+          .wescue(handwewewwow.twanswatenotfoundtocwientewwow(tweetid))
       )
 
-    request => {
-      Future.collect(
-        request.tweetIds.map { tweetId =>
-          getTweet(tweetId).map { tweet =>
-            DeleteAdditionalFields.Event(
-              tweetId = tweetId,
-              fieldIds = request.fieldIds,
-              userId = getUserId(tweet),
-              timestamp = Time.now
+    wequest => {
+      f-futuwe.cowwect(
+        w-wequest.tweetids.map { t-tweetid =>
+          g-gettweet(tweetid).map { tweet =>
+            deweteadditionawfiewds.event(
+              t-tweetid = tweetid,
+              fiewdids = wequest.fiewdids, (U ﹏ U)
+              usewid = getusewid(tweet), (///ˬ///✿)
+              t-timestamp = time.now
             )
           }
         }
@@ -44,23 +44,23 @@ object DeleteAdditionalFieldsBuilder {
   }
 }
 
-object AsyncDeleteAdditionalFieldsBuilder {
-  type Type = AsyncDeleteAdditionalFieldsRequest => Future[
-    TweetStoreEventOrRetry[AsyncDeleteAdditionalFields.Event]
+object asyncdeweteadditionawfiewdsbuiwdew {
+  type type = asyncdeweteadditionawfiewdswequest => futuwe[
+    t-tweetstoweeventowwetwy[asyncdeweteadditionawfiewds.event]
   ]
 
-  val userQueryOpts: UserQueryOptions = UserQueryOptions(Set(UserField.Safety), UserVisibility.All)
+  vaw usewquewyopts: u-usewquewyoptions = u-usewquewyoptions(set(usewfiewd.safety), >w< u-usewvisibiwity.aww)
 
-  def apply(userRepo: UserRepository.Type): Type = {
-    def getUser(userId: UserId): Future[User] =
-      Stitch.run(
-        userRepo(UserKey.byId(userId), userQueryOpts)
-          .rescue { case NotFound => Stitch.exception(HandlerError.userNotFound(userId)) }
+  def appwy(usewwepo: usewwepositowy.type): type = {
+    def g-getusew(usewid: u-usewid): futuwe[usew] =
+      stitch.wun(
+        u-usewwepo(usewkey.byid(usewid), rawr u-usewquewyopts)
+          .wescue { case nyotfound => s-stitch.exception(handwewewwow.usewnotfound(usewid)) }
       )
 
-    request =>
-      getUser(request.userId).map { user =>
-        AsyncDeleteAdditionalFields.Event.fromAsyncRequest(request, user)
+    wequest =>
+      g-getusew(wequest.usewid).map { usew =>
+        asyncdeweteadditionawfiewds.event.fwomasyncwequest(wequest, mya u-usew)
       }
   }
 }

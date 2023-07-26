@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.core.gate
+package com.twittew.pwoduct_mixew.cowe.gate
 
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.gate.DenyLoggedOutUsersGate.Suffix
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.Authentication
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+i-impowt com.twittew.pwoduct_mixew.cowe.gate.denywoggedoutusewsgate.suffix
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.gateidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.authentication
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+impowt com.twittew.stitch.stitch
 
-case class DenyLoggedOutUsersGate(pipelineIdentifier: ComponentIdentifier)
-    extends Gate[PipelineQuery] {
-  override val identifier: GateIdentifier = GateIdentifier(pipelineIdentifier + Suffix)
+case cwass d-denywoggedoutusewsgate(pipewineidentifiew: componentidentifiew)
+    extends gate[pipewinequewy] {
+  o-ovewwide vaw identifiew: gateidentifiew = g-gateidentifiew(pipewineidentifiew + suffix)
 
-  override def shouldContinue(query: PipelineQuery): Stitch[Boolean] = {
-    if (query.getUserOrGuestId.nonEmpty) {
-      Stitch.value(!query.isLoggedOut)
-    } else {
-      Stitch.exception(
-        PipelineFailure(
-          Authentication,
-          "Expected either a `userId` (for logged in users) or `guestId` (for logged out users) but found neither"
+  ovewwide def shouwdcontinue(quewy: pipewinequewy): s-stitch[boowean] = {
+    if (quewy.getusewowguestid.nonempty) {
+      s-stitch.vawue(!quewy.iswoggedout)
+    } e-ewse {
+      stitch.exception(
+        pipewinefaiwuwe(
+          authentication, (U ﹏ U)
+          "expected eithew a `usewid` (fow w-wogged in usews) ow `guestid` (fow wogged out usews) but found nyeithew"
         ))
     }
   }
 }
 
-object DenyLoggedOutUsersGate {
-  val Suffix = "DenyLoggedOutUsers"
+o-object denywoggedoutusewsgate {
+  v-vaw s-suffix = "denywoggedoutusews"
 }

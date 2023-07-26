@@ -1,209 +1,209 @@
-package com.twitter.simclusters_v2.common
+package com.twittew.simcwustews_v2.common
 
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.LocaleEntityId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.simclusters_v2.thriftscala.{
-  SimClustersEmbeddingId => ThriftSimClustersEmbeddingId
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.embeddingtype
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.wocaweentityid
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.topicid
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.{
+  simcwustewsembeddingid => thwiftsimcwustewsembeddingid
 }
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType._
-import com.twitter.simclusters_v2.thriftscala.InternalId.EntityId
-import com.twitter.simclusters_v2.thriftscala.InternalId.TweetId
-import com.twitter.simclusters_v2.thriftscala.InternalId.UserId
-import com.twitter.simclusters_v2.thriftscala.{EmbeddingType => SimClustersEmbeddingType}
+impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype._
+impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid.entityid
+impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid.tweetid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid.usewid
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.{embeddingtype => simcwustewsembeddingtype}
 
-object SimClustersEmbeddingId {
+o-object simcwustewsembeddingid {
 
-  val DefaultModelVersion: ModelVersion = ModelVersion.Model20m145k2020
+  vaw defauwtmodewvewsion: modewvewsion = modewvewsion.modew20m145k2020
 
-  // Embeddings which is available in Content-Recommender
-  val TweetEmbeddingTypes: Set[EmbeddingType] =
-    Set(
-      FavBasedTweet,
-      FollowBasedTweet,
-      LogFavBasedTweet,
-      LogFavLongestL2EmbeddingTweet
+  // embeddings which i-is avaiwabwe in content-wecommendew
+  v-vaw tweetembeddingtypes: s-set[embeddingtype] =
+    set(
+      favbasedtweet, (ˆ ﻌ ˆ)♡
+      fowwowbasedtweet, ^^;;
+      wogfavbasedtweet, (⑅˘꒳˘)
+      w-wogfavwongestw2embeddingtweet
     )
-  val DefaultTweetEmbeddingType: EmbeddingType = LogFavLongestL2EmbeddingTweet
+  vaw defauwttweetembeddingtype: embeddingtype = wogfavwongestw2embeddingtweet
 
-  val UserInterestedInEmbeddingTypes: Set[EmbeddingType] =
-    Set(
-      FavBasedUserInterestedIn,
-      FollowBasedUserInterestedIn,
-      LogFavBasedUserInterestedIn,
-      RecentFollowBasedUserInterestedIn,
-      FilteredUserInterestedIn,
-      FavBasedUserInterestedInFromPE,
-      FollowBasedUserInterestedInFromPE,
-      LogFavBasedUserInterestedInFromPE,
-      FilteredUserInterestedInFromPE,
-      LogFavBasedUserInterestedInFromAPE,
-      FollowBasedUserInterestedInFromAPE,
-      UnfilteredUserInterestedIn
+  vaw usewintewestedinembeddingtypes: s-set[embeddingtype] =
+    set(
+      favbasedusewintewestedin, rawr x3
+      f-fowwowbasedusewintewestedin, (///ˬ///✿)
+      w-wogfavbasedusewintewestedin, 🥺
+      w-wecentfowwowbasedusewintewestedin, >_<
+      f-fiwtewedusewintewestedin, UwU
+      favbasedusewintewestedinfwompe, >_<
+      fowwowbasedusewintewestedinfwompe, -.-
+      wogfavbasedusewintewestedinfwompe, mya
+      f-fiwtewedusewintewestedinfwompe, >w<
+      wogfavbasedusewintewestedinfwomape, (U ﹏ U)
+      fowwowbasedusewintewestedinfwomape, 😳😳😳
+      u-unfiwtewedusewintewestedin
     )
-  val DefaultUserInterestInEmbeddingType: EmbeddingType = FavBasedUserInterestedIn
+  vaw defauwtusewintewestinembeddingtype: embeddingtype = favbasedusewintewestedin
 
-  val ProducerEmbeddingTypes: Set[EmbeddingType] =
-    Set(
-      FavBasedProducer,
-      FollowBasedProducer,
-      AggregatableFavBasedProducer,
-      AggregatableLogFavBasedProducer,
-      RelaxedAggregatableLogFavBasedProducer,
-      KnownFor
+  vaw pwoducewembeddingtypes: s-set[embeddingtype] =
+    set(
+      f-favbasedpwoducew, o.O
+      f-fowwowbasedpwoducew, òωó
+      a-aggwegatabwefavbasedpwoducew, 😳😳😳
+      aggwegatabwewogfavbasedpwoducew, σωσ
+      wewaxedaggwegatabwewogfavbasedpwoducew, (⑅˘꒳˘)
+      knownfow
     )
-  val DefaultProducerEmbeddingType: EmbeddingType = FavBasedProducer
+  vaw d-defauwtpwoducewembeddingtype: e-embeddingtype = favbasedpwoducew
 
-  val LocaleEntityEmbeddingTypes: Set[EmbeddingType] =
-    Set(
-      FavTfgTopic,
-      LogFavTfgTopic
+  v-vaw wocaweentityembeddingtypes: s-set[embeddingtype] =
+    set(
+      f-favtfgtopic, (///ˬ///✿)
+      wogfavtfgtopic
     )
-  val DefaultLocaleEntityEmbeddingType: EmbeddingType = FavTfgTopic
+  v-vaw defauwtwocaweentityembeddingtype: embeddingtype = favtfgtopic
 
-  val TopicEmbeddingTypes: Set[EmbeddingType] =
-    Set(
-      LogFavBasedKgoApeTopic
+  v-vaw topicembeddingtypes: set[embeddingtype] =
+    s-set(
+      wogfavbasedkgoapetopic
     )
-  val DefaultTopicEmbeddingType: EmbeddingType = LogFavBasedKgoApeTopic
+  v-vaw defauwttopicembeddingtype: e-embeddingtype = wogfavbasedkgoapetopic
 
-  val AllEmbeddingTypes: Set[EmbeddingType] =
-    TweetEmbeddingTypes ++
-      UserInterestedInEmbeddingTypes ++
-      ProducerEmbeddingTypes ++
-      LocaleEntityEmbeddingTypes ++
-      TopicEmbeddingTypes
+  vaw awwembeddingtypes: set[embeddingtype] =
+    tweetembeddingtypes ++
+      usewintewestedinembeddingtypes ++
+      p-pwoducewembeddingtypes ++
+      w-wocaweentityembeddingtypes ++
+      topicembeddingtypes
 
-  def buildTweetId(
-    tweetId: TweetId,
-    embeddingType: EmbeddingType = DefaultTweetEmbeddingType,
-    modelVersion: ModelVersion = DefaultModelVersion
-  ): ThriftSimClustersEmbeddingId = {
-    assert(TweetEmbeddingTypes.contains(embeddingType))
-    ThriftSimClustersEmbeddingId(
-      embeddingType,
-      modelVersion,
-      InternalId.TweetId(tweetId)
-    )
-  }
-
-  def buildUserInterestedInId(
-    userId: UserId,
-    embeddingType: EmbeddingType = DefaultUserInterestInEmbeddingType,
-    modelVersion: ModelVersion = DefaultModelVersion
-  ): ThriftSimClustersEmbeddingId = {
-    assert(UserInterestedInEmbeddingTypes.contains(embeddingType))
-    ThriftSimClustersEmbeddingId(
-      embeddingType,
-      modelVersion,
-      InternalId.UserId(userId)
+  d-def b-buiwdtweetid(
+    t-tweetid: tweetid, 🥺
+    embeddingtype: embeddingtype = defauwttweetembeddingtype, OwO
+    m-modewvewsion: modewvewsion = defauwtmodewvewsion
+  ): thwiftsimcwustewsembeddingid = {
+    assewt(tweetembeddingtypes.contains(embeddingtype))
+    t-thwiftsimcwustewsembeddingid(
+      embeddingtype, >w<
+      m-modewvewsion, 🥺
+      i-intewnawid.tweetid(tweetid)
     )
   }
 
-  def buildProducerId(
-    userId: UserId,
-    embeddingType: EmbeddingType = DefaultProducerEmbeddingType,
-    modelVersion: ModelVersion = DefaultModelVersion
-  ): ThriftSimClustersEmbeddingId = {
-    assert(ProducerEmbeddingTypes.contains(embeddingType))
-    ThriftSimClustersEmbeddingId(
-      embeddingType,
-      modelVersion,
-      InternalId.UserId(userId)
+  d-def buiwdusewintewestedinid(
+    usewid: usewid, nyaa~~
+    e-embeddingtype: e-embeddingtype = d-defauwtusewintewestinembeddingtype, ^^
+    m-modewvewsion: modewvewsion = defauwtmodewvewsion
+  ): t-thwiftsimcwustewsembeddingid = {
+    a-assewt(usewintewestedinembeddingtypes.contains(embeddingtype))
+    t-thwiftsimcwustewsembeddingid(
+      e-embeddingtype, >w<
+      m-modewvewsion, OwO
+      intewnawid.usewid(usewid)
     )
   }
 
-  def buildLocaleEntityId(
-    entityId: SemanticCoreEntityId,
-    language: String,
-    embeddingType: EmbeddingType = DefaultLocaleEntityEmbeddingType,
-    modelVersion: ModelVersion = DefaultModelVersion
-  ): ThriftSimClustersEmbeddingId = {
-    ThriftSimClustersEmbeddingId(
-      embeddingType,
-      modelVersion,
-      InternalId.LocaleEntityId(
-        LocaleEntityId(entityId, language)
+  def buiwdpwoducewid(
+    u-usewid: usewid, XD
+    embeddingtype: embeddingtype = defauwtpwoducewembeddingtype, ^^;;
+    modewvewsion: modewvewsion = d-defauwtmodewvewsion
+  ): thwiftsimcwustewsembeddingid = {
+    assewt(pwoducewembeddingtypes.contains(embeddingtype))
+    thwiftsimcwustewsembeddingid(
+      e-embeddingtype, 🥺
+      m-modewvewsion, XD
+      intewnawid.usewid(usewid)
+    )
+  }
+
+  d-def buiwdwocaweentityid(
+    entityid: semanticcoweentityid, (U ᵕ U❁)
+    w-wanguage: stwing, :3
+    embeddingtype: e-embeddingtype = d-defauwtwocaweentityembeddingtype, ( ͡o ω ͡o )
+    modewvewsion: modewvewsion = defauwtmodewvewsion
+  ): thwiftsimcwustewsembeddingid = {
+    thwiftsimcwustewsembeddingid(
+      embeddingtype, òωó
+      m-modewvewsion, σωσ
+      intewnawid.wocaweentityid(
+        w-wocaweentityid(entityid, (U ᵕ U❁) wanguage)
       )
     )
   }
 
-  def buildTopicId(
-    topicId: TopicId,
-    language: Option[String] = None,
-    country: Option[String] = None,
-    embeddingType: EmbeddingType = DefaultTopicEmbeddingType,
-    modelVersion: ModelVersion = DefaultModelVersion
-  ): ThriftSimClustersEmbeddingId = {
-    ThriftSimClustersEmbeddingId(
-      embeddingType,
-      modelVersion,
-      InternalId.TopicId(
-        TopicId(topicId, language, country)
+  d-def buiwdtopicid(
+    t-topicid: topicid, (✿oωo)
+    wanguage: option[stwing] = n-nyone, ^^
+    c-countwy: option[stwing] = n-nyone, ^•ﻌ•^
+    embeddingtype: e-embeddingtype = defauwttopicembeddingtype, XD
+    modewvewsion: modewvewsion = defauwtmodewvewsion
+  ): t-thwiftsimcwustewsembeddingid = {
+    t-thwiftsimcwustewsembeddingid(
+      e-embeddingtype, :3
+      modewvewsion,
+      i-intewnawid.topicid(
+        t-topicid(topicid, (ꈍᴗꈍ) wanguage, :3 countwy)
       )
     )
   }
 
-  // Extractor object for InternalIds that wrap Long
-  object LongInternalId {
-    def unapply(iid: InternalId): Option[Long] = iid match {
-      case InternalId.TweetId(id) => Some(id)
-      case InternalId.UserId(id) => Some(id)
-      case InternalId.EntityId(id) => Some(id)
-      case _ => None
+  // e-extwactow object fow intewnawids that wwap wong
+  object wongintewnawid {
+    d-def unappwy(iid: i-intewnawid): option[wong] = iid match {
+      c-case intewnawid.tweetid(id) => s-some(id)
+      case intewnawid.usewid(id) => some(id)
+      case intewnawid.entityid(id) => s-some(id)
+      case _ => nyone
     }
   }
 
-  // Extractor object for SimClusterEmbeddingIds with InternalIds that wrap Long
-  object LongSimClustersEmbeddingId {
-    def unapply(id: ThriftSimClustersEmbeddingId): Option[Long] =
-      LongInternalId.unapply(id.internalId)
+  // extwactow object fow simcwustewembeddingids with i-intewnawids that wwap wong
+  object wongsimcwustewsembeddingid {
+    d-def unappwy(id: t-thwiftsimcwustewsembeddingid): option[wong] =
+      wongintewnawid.unappwy(id.intewnawid)
   }
 
-  // Only for debuggers.
-  def buildEmbeddingId(
-    entityId: String,
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion = DefaultModelVersion
-  ): ThriftSimClustersEmbeddingId = {
-    if (TweetEmbeddingTypes.contains(embeddingType)) {
-      buildTweetId(entityId.toLong, embeddingType, modelVersion)
-    } else if (UserInterestedInEmbeddingTypes.contains(embeddingType)) {
-      buildUserInterestedInId(entityId.toLong, embeddingType, modelVersion)
-    } else if (ProducerEmbeddingTypes.contains(embeddingType)) {
-      buildProducerId(entityId.toLong, embeddingType, modelVersion)
-    } else if (LocaleEntityEmbeddingTypes.contains(embeddingType)) {
-      buildLocaleEntityId(entityId.toLong, "en", embeddingType, modelVersion)
-    } else if (TopicEmbeddingTypes.contains(embeddingType)) {
-      buildTopicId(
-        entityId.toLong,
-        Some("en"),
-        embeddingType = embeddingType,
-        modelVersion = modelVersion)
-    } else {
-      throw new IllegalArgumentException(s"Invalid embedding type: $embeddingType")
+  // onwy f-fow debuggews. (U ﹏ U)
+  d-def buiwdembeddingid(
+    entityid: stwing, UwU
+    embeddingtype: e-embeddingtype, 😳😳😳
+    modewvewsion: m-modewvewsion = defauwtmodewvewsion
+  ): thwiftsimcwustewsembeddingid = {
+    if (tweetembeddingtypes.contains(embeddingtype)) {
+      b-buiwdtweetid(entityid.towong, XD embeddingtype, o.O m-modewvewsion)
+    } e-ewse if (usewintewestedinembeddingtypes.contains(embeddingtype)) {
+      buiwdusewintewestedinid(entityid.towong, (⑅˘꒳˘) e-embeddingtype, 😳😳😳 modewvewsion)
+    } e-ewse i-if (pwoducewembeddingtypes.contains(embeddingtype)) {
+      b-buiwdpwoducewid(entityid.towong, nyaa~~ embeddingtype, rawr modewvewsion)
+    } e-ewse if (wocaweentityembeddingtypes.contains(embeddingtype)) {
+      b-buiwdwocaweentityid(entityid.towong, "en", -.- embeddingtype, (✿oωo) modewvewsion)
+    } e-ewse if (topicembeddingtypes.contains(embeddingtype)) {
+      b-buiwdtopicid(
+        e-entityid.towong, /(^•ω•^)
+        some("en"), 🥺
+        embeddingtype = e-embeddingtype, ʘwʘ
+        modewvewsion = m-modewvewsion)
+    } e-ewse {
+      thwow nyew iwwegawawgumentexception(s"invawid embedding type: $embeddingtype")
     }
   }
 
-  implicit val internalIdOrdering: Ordering[InternalId] =
-    Ordering.by(internalId => internalId.hashCode())
+  i-impwicit v-vaw intewnawidowdewing: o-owdewing[intewnawid] =
+    o-owdewing.by(intewnawid => intewnawid.hashcode())
 
-  implicit val simClustersEmbeddingIdOrdering: Ordering[ThriftSimClustersEmbeddingId] =
-    Ordering.by(embeddingId =>
-      (embeddingId.embeddingType.value, embeddingId.modelVersion.value, embeddingId.internalId))
+  impwicit v-vaw simcwustewsembeddingidowdewing: owdewing[thwiftsimcwustewsembeddingid] =
+    owdewing.by(embeddingid =>
+      (embeddingid.embeddingtype.vawue, embeddingid.modewvewsion.vawue, embeddingid.intewnawid))
 
-  // Use Enum for feature switch
-  object TopicEnum extends Enumeration {
-    protected case class EmbeddingType(embeddingType: SimClustersEmbeddingType) extends super.Val
-    import scala.language.implicitConversions
-    implicit def valueToEmbeddingType(value: Value): EmbeddingType =
-      value.asInstanceOf[EmbeddingType]
+  // use enum fow f-featuwe switch
+  object topicenum e-extends enumewation {
+    pwotected c-case cwass embeddingtype(embeddingtype: s-simcwustewsembeddingtype) extends s-supew.vaw
+    i-impowt scawa.wanguage.impwicitconvewsions
+    i-impwicit d-def vawuetoembeddingtype(vawue: v-vawue): embeddingtype =
+      vawue.asinstanceof[embeddingtype]
 
-    val FavTfgTopic: Value = EmbeddingType(SimClustersEmbeddingType.FavTfgTopic)
-    val LogFavBasedKgoApeTopic: Value = EmbeddingType(
-      SimClustersEmbeddingType.LogFavBasedKgoApeTopic)
+    vaw favtfgtopic: vawue = embeddingtype(simcwustewsembeddingtype.favtfgtopic)
+    vaw wogfavbasedkgoapetopic: v-vawue = e-embeddingtype(
+      s-simcwustewsembeddingtype.wogfavbasedkgoapetopic)
   }
 
 }

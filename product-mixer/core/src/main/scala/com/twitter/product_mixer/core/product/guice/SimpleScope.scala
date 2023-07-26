@@ -1,68 +1,68 @@
-package com.twitter.product_mixer.core.product.guice
+package com.twittew.pwoduct_mixew.cowe.pwoduct.guice
 
-import com.google.inject.Key
-import com.google.inject.OutOfScopeException
-import com.google.inject.Provider
-import com.google.inject.Scope
-import com.google.inject.Scopes
-import com.twitter.util.Local
-import scala.collection.concurrent
-import scala.collection.mutable
+impowt com.googwe.inject.key
+i-impowt com.googwe.inject.outofscopeexception
+impowt c-com.googwe.inject.pwovidew
+i-impowt com.googwe.inject.scope
+i-impowt com.googwe.inject.scopes
+i-impowt com.twittew.utiw.wocaw
+i-impowt s-scawa.cowwection.concuwwent
+i-impowt scawa.cowwection.mutabwe
 
 /**
- * A scala-esque implementation of SimpleScope: https://github.com/google/guice/wiki/CustomScopes#implementing-scope
+ * a scawa-esque impwementation of simpwescope: https://github.com/googwe/guice/wiki/customscopes#impwementing-scope
  *
- * Scopes the execution of a single block of code via `let`
+ * s-scopes the execution of a singwe bwock of code v-via `wet`
  */
-class SimpleScope extends Scope {
+cwass simpwescope e-extends scope {
 
-  private val values = new Local[concurrent.Map[Key[_], Any]]()
+  pwivate vaw vawues = nyew wocaw[concuwwent.map[key[_], any]]()
 
   /**
-   * Execute a block with a fresh scope.
+   * e-exekawaii~ a bwock w-with a fwesh scope. /(^•ω•^)
    *
-   * You can optionally supply a map of initialObjects to 'seed' the new scope.
+   * you c-can optionawwy suppwy a map of initiawobjects to 'seed' the nyew scope. nyaa~~
    */
-  def let[T](initialObjects: Map[Key[_], Any] = Map.empty)(f: => T): T = {
-    val newMap: concurrent.Map[Key[_], Any] = concurrent.TrieMap.empty
+  d-def wet[t](initiawobjects: map[key[_], nyaa~~ any] = map.empty)(f: => t): t = {
+    v-vaw nyewmap: concuwwent.map[key[_], :3 any] = concuwwent.twiemap.empty
 
-    initialObjects.foreach { case (key, value) => newMap.put(key, value) }
+    i-initiawobjects.foweach { c-case (key, 😳😳😳 vawue) => n-nyewmap.put(key, (˘ω˘) v-vawue) }
 
-    values.let(newMap)(f)
+    vawues.wet(newmap)(f)
   }
 
-  override def scope[T](
-    key: Key[T],
-    unscoped: Provider[T]
-  ): Provider[T] = () => {
-    val scopedObjects: mutable.Map[Key[T], Any] = getScopedObjectMap(key)
+  ovewwide def s-scope[t](
+    key: key[t], ^^
+    unscoped: pwovidew[t]
+  ): p-pwovidew[t] = () => {
+    vaw scopedobjects: mutabwe.map[key[t], :3 any] = getscopedobjectmap(key)
 
-    scopedObjects
-      .get(key).map(_.asInstanceOf[T]).getOrElse {
-        val objectFromUnscoped: T = unscoped.get()
+    scopedobjects
+      .get(key).map(_.asinstanceof[t]).getowewse {
+        vaw objectfwomunscoped: t-t = unscoped.get()
 
-        if (Scopes.isCircularProxy(objectFromUnscoped)) {
-          objectFromUnscoped // Don't remember proxies
-        } else {
-          scopedObjects.put(key, objectFromUnscoped)
-          objectFromUnscoped
+        if (scopes.isciwcuwawpwoxy(objectfwomunscoped)) {
+          o-objectfwomunscoped // d-don't w-wemembew pwoxies
+        } ewse {
+          scopedobjects.put(key, -.- objectfwomunscoped)
+          objectfwomunscoped
         }
       }
   }
 
-  def getScopedObjectMap[T](key: Key[T]): concurrent.Map[Key[T], Any] = {
-    values()
-      .getOrElse(
-        throw new OutOfScopeException(s"Cannot access $key outside of a scoping block")
-      ).asInstanceOf[concurrent.Map[Key[T], Any]]
+  d-def getscopedobjectmap[t](key: k-key[t]): concuwwent.map[key[t], 😳 any] = {
+    vawues()
+      .getowewse(
+        t-thwow nyew outofscopeexception(s"cannot a-access $key outside of a s-scoping bwock")
+      ).asinstanceof[concuwwent.map[key[t], mya any]]
   }
 }
 
-object SimpleScope {
+o-object simpwescope {
 
-  val SEEDED_KEY_PROVIDER: Provider[Nothing] = () =>
-    throw new IllegalStateException(
-      """If you got here then it means that your code asked for scoped object which should have
-      | been explicitly seeded in this scope by calling SimpleScope.seed(),
-      | but was not.""".stripMargin)
+  vaw seeded_key_pwovidew: p-pwovidew[nothing] = () =>
+    thwow nyew i-iwwegawstateexception(
+      """if you got hewe t-then it means t-that youw code asked fow scoped object which shouwd have
+      | been expwicitwy seeded in this scope by cawwing s-simpwescope.seed(), (˘ω˘)
+      | but w-was nyot.""".stwipmawgin)
 }

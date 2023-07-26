@@ -1,129 +1,129 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.FilteredState
-import com.twitter.tweetypie.media.Media
-import com.twitter.tweetypie.media.MediaUrl
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.util.MediaId
-import java.nio.ByteBuffer
+i-impowt com.twittew.spam.wtf.thwiftscawa.safetywevew
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.cowe.fiwtewedstate
+i-impowt com.twittew.tweetypie.media.media
+impowt c-com.twittew.tweetypie.media.mediauww
+i-impowt c-com.twittew.tweetypie.thwiftscawa._
+impowt com.twittew.tweetypie.utiw.mediaid
+impowt java.nio.bytebuffew
 
-case class PastedMedia(mediaEntities: Seq[MediaEntity], mediaTags: Map[MediaId, Seq[MediaTag]]) {
+case cwass pastedmedia(mediaentities: s-seq[mediaentity], :3 mediatags: map[mediaid, nyaa~~ seq[mediatag]]) {
 
   /**
-   * Updates the copied media entities to have the same indices as the given UrlEntity.
+   * u-updates the copied media e-entities to have the same indices as the given uwwentity. 😳
    */
-  def updateEntities(urlEntity: UrlEntity): PastedMedia =
-    if (mediaEntities.isEmpty) this
-    else copy(mediaEntities = mediaEntities.map(Media.copyFromUrlEntity(_, urlEntity)))
+  d-def updateentities(uwwentity: uwwentity): pastedmedia =
+    i-if (mediaentities.isempty) t-this
+    ewse copy(mediaentities = mediaentities.map(media.copyfwomuwwentity(_, (⑅˘꒳˘) uwwentity)))
 
-  def merge(that: PastedMedia): PastedMedia =
-    PastedMedia(
-      mediaEntities = this.mediaEntities ++ that.mediaEntities,
-      mediaTags = this.mediaTags ++ that.mediaTags
+  def mewge(that: pastedmedia): p-pastedmedia =
+    pastedmedia(
+      mediaentities = this.mediaentities ++ that.mediaentities, nyaa~~
+      mediatags = this.mediatags ++ that.mediatags
     )
 
   /**
-   * Return a new PastedMedia that contains only the first maxMediaEntities media entities
+   * w-wetuwn a nyew pastedmedia t-that contains o-onwy the fiwst m-maxmediaentities m-media entities
    */
-  def take(maxMediaEntities: Int): PastedMedia = {
-    val entities = this.mediaEntities.take(maxMediaEntities)
-    val mediaIds = entities.map(_.mediaId)
-    val pastedTags = mediaTags.filterKeys { id => mediaIds.contains(id) }
+  def take(maxmediaentities: i-int): pastedmedia = {
+    vaw entities = this.mediaentities.take(maxmediaentities)
+    vaw m-mediaids = entities.map(_.mediaid)
+    vaw pastedtags = mediatags.fiwtewkeys { id => mediaids.contains(id) }
 
-    PastedMedia(
-      mediaEntities = entities,
-      mediaTags = pastedTags
+    pastedmedia(
+      mediaentities = e-entities,
+      mediatags = p-pastedtags
     )
   }
 
-  def mergeTweetMediaTags(ownedTags: Option[TweetMediaTags]): Option[TweetMediaTags] = {
-    val merged = ownedTags.map(_.tagMap).getOrElse(Map.empty) ++ mediaTags
-    if (merged.nonEmpty) {
-      Some(TweetMediaTags(merged))
-    } else {
-      None
+  d-def m-mewgetweetmediatags(ownedtags: option[tweetmediatags]): option[tweetmediatags] = {
+    vaw mewged = ownedtags.map(_.tagmap).getowewse(map.empty) ++ m-mediatags
+    i-if (mewged.nonempty) {
+      some(tweetmediatags(mewged))
+    } ewse {
+      nyone
     }
   }
 }
 
-object PastedMedia {
-  import MediaUrl.Permalink.hasTweetId
+o-object pastedmedia {
+  i-impowt mediauww.pewmawink.hastweetid
 
-  val empty: PastedMedia = PastedMedia(Nil, Map.empty)
+  v-vaw empty: pastedmedia = pastedmedia(niw, OwO m-map.empty)
 
   /**
-   * @param tweet: the tweet whose media URL was pasted.
+   * @pawam tweet: the tweet whose m-media uww was pasted. rawr x3
    *
-   * @return the media that should be copied to a tweet that has a
-   *   link to the media in this tweet, along with its protection
-   *   status. The returned media entities will have sourceStatusId
-   *   and sourceUserId set appropriately for inclusion in a different
-   *   tweet.
+   * @wetuwn the media t-that shouwd be copied to a tweet t-that has a
+   *   w-wink to the media in this tweet, XD awong with its pwotection
+   *   status. σωσ the wetuwned media entities wiww h-have souwcestatusid
+   *   a-and souwceusewid set a-appwopwiatewy fow i-incwusion in a d-diffewent
+   *   tweet. (U ᵕ U❁)
    */
-  def getMediaEntities(tweet: Tweet): Seq[MediaEntity] =
-    getMedia(tweet).collect {
-      case mediaEntity if hasTweetId(mediaEntity, tweet.id) =>
-        setSource(mediaEntity, tweet.id, getUserId(tweet))
+  def getmediaentities(tweet: tweet): s-seq[mediaentity] =
+    getmedia(tweet).cowwect {
+      case mediaentity if hastweetid(mediaentity, (U ﹏ U) t-tweet.id) =>
+        setsouwce(mediaentity, :3 t-tweet.id, ( ͡o ω ͡o ) getusewid(tweet))
     }
 
-  def setSource(mediaEntity: MediaEntity, tweetId: TweetId, userId: TweetId): MediaEntity =
-    mediaEntity.copy(
-      sourceStatusId = Some(tweetId),
-      sourceUserId = Some(mediaEntity.sourceUserId.getOrElse(userId))
+  d-def setsouwce(mediaentity: m-mediaentity, σωσ tweetid: tweetid, >w< u-usewid: tweetid): m-mediaentity =
+    m-mediaentity.copy(
+      souwcestatusid = s-some(tweetid), 😳😳😳
+      souwceusewid = some(mediaentity.souwceusewid.getowewse(usewid))
     )
 }
 
-object PastedMediaRepository {
-  type Type = (TweetId, Ctx) => Stitch[PastedMedia]
+o-object p-pastedmediawepositowy {
+  type t-type = (tweetid, OwO c-ctx) => stitch[pastedmedia]
 
-  case class Ctx(
-    includeMediaEntities: Boolean,
-    includeAdditionalMetadata: Boolean,
-    includeMediaTags: Boolean,
-    extensionsArgs: Option[ByteBuffer],
-    safetyLevel: SafetyLevel) {
-    def asTweetQueryOptions: TweetQuery.Options =
-      TweetQuery.Options(
-        enforceVisibilityFiltering = true,
-        extensionsArgs = extensionsArgs,
-        safetyLevel = safetyLevel,
-        include = TweetQuery.Include(
-          tweetFields =
-            Set(Tweet.CoreDataField.id) ++
-              (if (includeMediaEntities) Set(Tweet.MediaField.id) else Set.empty) ++
-              (if (includeMediaTags) Set(Tweet.MediaTagsField.id) else Set.empty),
-          mediaFields = if (includeMediaEntities && includeAdditionalMetadata) {
-            Set(MediaEntity.AdditionalMetadataField.id)
-          } else {
-            Set.empty
-          },
-          // don't recursively load pasted media
-          pastedMedia = false
+  c-case cwass ctx(
+    incwudemediaentities: boowean, 😳
+    incwudeadditionawmetadata: b-boowean, 😳😳😳
+    incwudemediatags: boowean, (˘ω˘)
+    extensionsawgs: option[bytebuffew], ʘwʘ
+    safetywevew: s-safetywevew) {
+    def astweetquewyoptions: tweetquewy.options =
+      tweetquewy.options(
+        e-enfowcevisibiwityfiwtewing = t-twue, ( ͡o ω ͡o )
+        e-extensionsawgs = extensionsawgs, o.O
+        s-safetywevew = safetywevew, >w<
+        i-incwude = tweetquewy.incwude(
+          t-tweetfiewds =
+            set(tweet.cowedatafiewd.id) ++
+              (if (incwudemediaentities) set(tweet.mediafiewd.id) ewse set.empty) ++
+              (if (incwudemediatags) set(tweet.mediatagsfiewd.id) ewse set.empty), 😳
+          m-mediafiewds = if (incwudemediaentities && i-incwudeadditionawmetadata) {
+            set(mediaentity.additionawmetadatafiewd.id)
+          } ewse {
+            s-set.empty
+          }, 🥺
+          // d-don't wecuwsivewy woad pasted media
+          p-pastedmedia = f-fawse
         )
       )
   }
 
   /**
-   * A Repository of PastedMedia fetched from other tweets.  We query the tweet with
-   * default global visibility filtering enabled, so we won't see entities for users that
-   * are protected, deactivated, suspended, etc.
+   * a wepositowy o-of pastedmedia f-fetched fwom othew tweets. rawr x3  we quewy the tweet with
+   * defauwt gwobaw visibiwity f-fiwtewing e-enabwed, o.O so we w-won't see entities fow usews that
+   * a-awe pwotected, rawr d-deactivated, ʘwʘ suspended, 😳😳😳 e-etc.
    */
-  def apply(tweetRepo: TweetRepository.Type): Type =
-    (tweetId, ctx) =>
-      tweetRepo(tweetId, ctx.asTweetQueryOptions)
-        .flatMap { t =>
-          val entities = PastedMedia.getMediaEntities(t)
-          if (entities.nonEmpty) {
-            Stitch.value(PastedMedia(entities, getMediaTagMap(t)))
-          } else {
-            Stitch.NotFound
+  def appwy(tweetwepo: tweetwepositowy.type): type =
+    (tweetid, ^^;; ctx) =>
+      t-tweetwepo(tweetid, o.O ctx.astweetquewyoptions)
+        .fwatmap { t-t =>
+          vaw entities = pastedmedia.getmediaentities(t)
+          i-if (entities.nonempty) {
+            s-stitch.vawue(pastedmedia(entities, (///ˬ///✿) getmediatagmap(t)))
+          } ewse {
+            stitch.notfound
           }
         }
-        .rescue {
-          // drop filtered tweets
-          case _: FilteredState => Stitch.NotFound
+        .wescue {
+          // d-dwop fiwtewed tweets
+          case _: fiwtewedstate => stitch.notfound
         }
 }

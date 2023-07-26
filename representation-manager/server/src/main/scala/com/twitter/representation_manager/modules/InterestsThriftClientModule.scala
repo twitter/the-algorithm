@@ -1,40 +1,40 @@
-package com.twitter.representation_manager.modules
+package com.twittew.wepwesentation_managew.moduwes
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMuxClientSyntax
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.service.ReqRep
-import com.twitter.finagle.service.ResponseClass
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.inject.TwitterModule
-import com.twitter.interests.thriftscala.InterestsThriftService
-import com.twitter.util.Throw
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.thwiftmux
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.mtws.cwient.mtwsstackcwient.mtwsthwiftmuxcwientsyntax
+i-impowt c-com.twittew.finagwe.mux.cwientdiscawdedwequestexception
+i-impowt com.twittew.finagwe.sewvice.weqwep
+i-impowt com.twittew.finagwe.sewvice.wesponsecwass
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.finagwe.thwift.cwientid
+impowt com.twittew.inject.twittewmoduwe
+i-impowt com.twittew.intewests.thwiftscawa.inteweststhwiftsewvice
+impowt com.twittew.utiw.thwow
+impowt javax.inject.singweton
 
-object InterestsThriftClientModule extends TwitterModule {
+o-object inteweststhwiftcwientmoduwe extends twittewmoduwe {
 
-  @Singleton
-  @Provides
-  def providesInterestsThriftClient(
-    clientId: ClientId,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): InterestsThriftService.MethodPerEndpoint = {
-    ThriftMux.client
-      .withClientId(clientId)
-      .withMutualTls(serviceIdentifier)
-      .withRequestTimeout(450.milliseconds)
-      .withStatsReceiver(statsReceiver.scope("InterestsThriftClient"))
-      .withResponseClassifier {
-        case ReqRep(_, Throw(_: ClientDiscardedRequestException)) => ResponseClass.Ignorable
+  @singweton
+  @pwovides
+  d-def pwovidesinteweststhwiftcwient(
+    cwientid: cwientid, 😳😳😳
+    sewviceidentifiew: sewviceidentifiew, -.-
+    s-statsweceivew: statsweceivew
+  ): i-inteweststhwiftsewvice.methodpewendpoint = {
+    t-thwiftmux.cwient
+      .withcwientid(cwientid)
+      .withmutuawtws(sewviceidentifiew)
+      .withwequesttimeout(450.miwwiseconds)
+      .withstatsweceivew(statsweceivew.scope("inteweststhwiftcwient"))
+      .withwesponsecwassifiew {
+        case weqwep(_, ( ͡o ω ͡o ) thwow(_: cwientdiscawdedwequestexception)) => wesponsecwass.ignowabwe
       }
-      .build[InterestsThriftService.MethodPerEndpoint](
-        dest = "/s/interests-thrift-service/interests-thrift-service",
-        label = "interests_thrift_service"
+      .buiwd[inteweststhwiftsewvice.methodpewendpoint](
+        dest = "/s/intewests-thwift-sewvice/intewests-thwift-sewvice", rawr x3
+        w-wabew = "intewests_thwift_sewvice"
       )
   }
 }

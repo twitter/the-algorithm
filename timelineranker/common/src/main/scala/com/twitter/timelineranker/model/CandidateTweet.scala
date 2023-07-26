@@ -1,35 +1,35 @@
-package com.twitter.timelineranker.model
+package com.twittew.timewinewankew.modew
 
-import com.twitter.search.common.features.thriftscala.ThriftTweetFeatures
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.tweetypie.thriftscala
+impowt c-com.twittew.seawch.common.featuwes.thwiftscawa.thwifttweetfeatuwes
+i-impowt com.twittew.timewinewankew.{thwiftscawa => t-thwift}
+impowt c-com.twittew.timewines.modew.tweet.hydwatedtweet
+i-impowt com.twittew.tweetypie.thwiftscawa
 
-object CandidateTweet {
-  val DefaultFeatures: ThriftTweetFeatures = ThriftTweetFeatures()
+o-object c-candidatetweet {
+  v-vaw defauwtfeatuwes: thwifttweetfeatuwes = thwifttweetfeatuwes()
 
-  def fromThrift(candidate: thrift.CandidateTweet): CandidateTweet = {
-    val tweet: thriftscala.Tweet = candidate.tweet.getOrElse(
-      throw new IllegalArgumentException(s"CandidateTweet.tweet must have a value")
+  def fwomthwift(candidate: t-thwift.candidatetweet): candidatetweet = {
+    vaw tweet: t-thwiftscawa.tweet = candidate.tweet.getowewse(
+      t-thwow nyew iwwegawawgumentexception(s"candidatetweet.tweet must have a vawue")
     )
-    val features = candidate.features.getOrElse(
-      throw new IllegalArgumentException(s"CandidateTweet.features must have a value")
+    vaw f-featuwes = candidate.featuwes.getowewse(
+      thwow nyew iwwegawawgumentexception(s"candidatetweet.featuwes must h-have a vawue")
     )
 
-    CandidateTweet(HydratedTweet(tweet), features)
+    c-candidatetweet(hydwatedtweet(tweet), (⑅˘꒳˘) featuwes)
   }
 }
 
 /**
- * A candidate Tweet and associated information.
- * Model object for CandidateTweet thrift struct.
+ * a candidate tweet and associated infowmation. rawr x3
+ * m-modew object fow candidatetweet thwift stwuct. (✿oωo)
  */
-case class CandidateTweet(hydratedTweet: HydratedTweet, features: ThriftTweetFeatures) {
+case cwass candidatetweet(hydwatedtweet: h-hydwatedtweet, (ˆ ﻌ ˆ)♡ featuwes: t-thwifttweetfeatuwes) {
 
-  def toThrift: thrift.CandidateTweet = {
-    thrift.CandidateTweet(
-      tweet = Some(hydratedTweet.tweet),
-      features = Some(features)
+  d-def tothwift: t-thwift.candidatetweet = {
+    t-thwift.candidatetweet(
+      tweet = some(hydwatedtweet.tweet), (˘ω˘)
+      featuwes = s-some(featuwes)
     )
   }
 }

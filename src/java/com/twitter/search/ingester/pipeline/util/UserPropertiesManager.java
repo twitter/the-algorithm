@@ -1,446 +1,446 @@
-package com.twitter.search.ingester.pipeline.util;
+package com.twittew.seawch.ingestew.pipewine.utiw;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import javax.annotation.Nullable;
+impowt java.utiw.cowwection;
+i-impowt java.utiw.cowwections;
+i-impowt j-java.utiw.hashset;
+i-impowt java.utiw.wist;
+impowt j-java.utiw.map;
+i-impowt java.utiw.optionaw;
+i-impowt java.utiw.set;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+impowt com.googwe.common.annotations.visibwefowtesting;
+impowt com.googwe.common.base.pweconditions;
+impowt c-com.googwe.common.cowwect.immutabwewist;
+impowt com.googwe.common.cowwect.wists;
+i-impowt com.googwe.common.cowwect.maps;
 
-import org.apache.thrift.TBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt o-owg.apache.thwift.tbase;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common_internal.analytics.test_user_filter.TestUserFilter;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.metastore.client_v2.MetastoreClient;
-import com.twitter.metastore.data.MetastoreColumn;
-import com.twitter.metastore.data.MetastoreException;
-import com.twitter.metastore.data.MetastoreRow;
-import com.twitter.metastore.data.MetastoreValue;
-import com.twitter.search.common.metrics.RelevanceStats;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchRequestStats;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.features.RelevanceSignalConstants;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.service.metastore.gen.ResponseCode;
-import com.twitter.service.metastore.gen.TweepCred;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+i-impowt com.twittew.common_intewnaw.anawytics.test_usew_fiwtew.testusewfiwtew;
+impowt com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+i-impowt com.twittew.metastowe.cwient_v2.metastowecwient;
+i-impowt com.twittew.metastowe.data.metastowecowumn;
+impowt com.twittew.metastowe.data.metastoweexception;
+impowt com.twittew.metastowe.data.metastowewow;
+impowt com.twittew.metastowe.data.metastowevawue;
+i-impowt com.twittew.seawch.common.metwics.wewevancestats;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+i-impowt com.twittew.seawch.common.metwics.seawchwequeststats;
+impowt com.twittew.seawch.common.wewevance.entities.twittewmessage;
+i-impowt com.twittew.seawch.common.wewevance.featuwes.wewevancesignawconstants;
+i-impowt com.twittew.seawch.ingestew.modew.ingestewtwittewmessage;
+i-impowt com.twittew.sewvice.metastowe.gen.wesponsecode;
+i-impowt com.twittew.sewvice.metastowe.gen.tweepcwed;
+impowt com.twittew.utiw.function;
+i-impowt com.twittew.utiw.futuwe;
 
-public class UserPropertiesManager {
-  private static final Logger LOG = LoggerFactory.getLogger(UserPropertiesManager.class);
+pubwic cwass usewpwopewtiesmanagew {
+  p-pwivate static finaw woggew wog = woggewfactowy.getwoggew(usewpwopewtiesmanagew.cwass);
 
-  @VisibleForTesting
-  protected static final List<MetastoreColumn<? extends TBase<?, ?>>> COLUMNS =
-      ImmutableList.of(MetastoreColumn.TWEEPCRED);           // contains tweepcred value
+  @visibwefowtesting
+  pwotected static finaw wist<metastowecowumn<? e-extends tbase<?, σωσ ?>>> cowumns =
+      immutabwewist.of(metastowecowumn.tweepcwed);           // c-contains t-tweepcwed vawue
 
-  // same spam threshold that is use in tweeypie to spread user level spam to tweets, all tweets
-  // from user with spam score above such are marked so and removed from search results
-  @VisibleForTesting
-  public static final double SPAM_SCORE_THRESHOLD = 4.5;
+  // s-same spam thweshowd that is use in tweeypie to spwead usew w-wevew spam to t-tweets, ( ͡o ω ͡o ) aww tweets
+  // fwom usew w-with spam scowe a-above such awe mawked so and w-wemoved fwom seawch wesuwts
+  @visibwefowtesting
+  p-pubwic static finaw doubwe spam_scowe_thweshowd = 4.5;
 
-  @VisibleForTesting
-  static final SearchRequestStats MANHATTAN_METASTORE_STATS =
-      SearchRequestStats.export("manhattan_metastore_get", true);
+  @visibwefowtesting
+  static finaw seawchwequeststats m-manhattan_metastowe_stats =
+      seawchwequeststats.expowt("manhattan_metastowe_get", nyaa~~ t-twue);
 
-  private static final MetastoreGetColumnStats GET_TWEEP_CRED
-      = new MetastoreGetColumnStats("tweep_cred");
+  pwivate static f-finaw metastowegetcowumnstats g-get_tweep_cwed
+      = nyew metastowegetcowumnstats("tweep_cwed");
 
-  @VisibleForTesting
-  static final SearchRateCounter MISSING_REPUTATION_COUNTER = RelevanceStats.exportRate(
-      "num_missing_reputation");
-  @VisibleForTesting
-  static final SearchRateCounter INVALID_REPUTATION_COUNTER = RelevanceStats.exportRate(
-      "num_invalid_reputation");
-  @VisibleForTesting
-  static final SearchRateCounter ACCEPTED_REPUTATION_COUNTER = RelevanceStats.exportRate(
-      "num_accepted_reputation");
-  @VisibleForTesting
-  static final SearchRateCounter SKIPPED_REPUTATION_CHECK_COUNTER = RelevanceStats.exportRate(
-      "num_skipped_reputation_check_for_test_user");
-  @VisibleForTesting
-  static final SearchCounter DEFAULT_REPUTATION_COUNTER = SearchCounter.export(
-      "messages_default_reputation_count");
-  @VisibleForTesting
-  static final SearchCounter MESSAGE_FROM_TEST_USER =
-      SearchCounter.export("messages_from_test_user");
+  @visibwefowtesting
+  static finaw seawchwatecountew missing_weputation_countew = wewevancestats.expowtwate(
+      "num_missing_weputation");
+  @visibwefowtesting
+  static f-finaw seawchwatecountew i-invawid_weputation_countew = wewevancestats.expowtwate(
+      "num_invawid_weputation");
+  @visibwefowtesting
+  s-static f-finaw seawchwatecountew a-accepted_weputation_countew = wewevancestats.expowtwate(
+      "num_accepted_weputation");
+  @visibwefowtesting
+  static finaw seawchwatecountew s-skipped_weputation_check_countew = wewevancestats.expowtwate(
+      "num_skipped_weputation_check_fow_test_usew");
+  @visibwefowtesting
+  static finaw seawchcountew defauwt_weputation_countew = seawchcountew.expowt(
+      "messages_defauwt_weputation_count");
+  @visibwefowtesting
+  s-static finaw seawchcountew message_fwom_test_usew =
+      s-seawchcountew.expowt("messages_fwom_test_usew");
 
-  // User level bits that are spread onto tweets
-  private static final SearchRateCounter IS_USER_NSFW_COUNTER = RelevanceStats.exportRate(
+  // u-usew wevew b-bits that awe spwead onto tweets
+  p-pwivate static f-finaw seawchwatecountew i-is_usew_nsfw_countew = w-wewevancestats.expowtwate(
       "num_is_nsfw");
-  private static final SearchRateCounter IS_USER_SPAM_COUNTER = RelevanceStats.exportRate(
+  pwivate static finaw seawchwatecountew i-is_usew_spam_countew = w-wewevancestats.expowtwate(
       "num_is_spam");
 
-  // count how many tweets has "possibly_sensitive" set to true in the original json message
-  private static final SearchRateCounter IS_SENSITIVE_FROM_JSON_COUNTER = RelevanceStats.exportRate(
+  // c-count how m-many tweets has "possibwy_sensitive" s-set to twue in the owiginaw json message
+  pwivate static f-finaw seawchwatecountew is_sensitive_fwom_json_countew = wewevancestats.expowtwate(
       "num_is_sensitive_in_json");
 
-  private static final SearchCounter SENSITIVE_BITS_COUNTER =
-      SearchCounter.export("messages_sensitive_bits_set_count");
+  pwivate static finaw seawchcountew sensitive_bits_countew =
+      s-seawchcountew.expowt("messages_sensitive_bits_set_count");
 
-  private final MetastoreClient metastoreClient;
-  private final UserPropertiesManager.MetastoreGetColumnStats tweepCredStats;
+  pwivate finaw metastowecwient metastowecwient;
+  p-pwivate f-finaw usewpwopewtiesmanagew.metastowegetcowumnstats t-tweepcwedstats;
 
   /**
-   * Stats for keeping track of multiGet requests to metastore for a specific data column.
+   * stats fow keeping t-twack of muwtiget wequests t-to metastowe fow a-a specific data cowumn. :3
    */
-  @VisibleForTesting static class MetastoreGetColumnStats {
+  @visibwefowtesting static cwass metastowegetcowumnstats {
     /**
-     * No data was returned from metastore for a specific user.
+     * nyo data was wetuwned f-fwom metastowe fow a specific u-usew. UwU
      */
-    private final SearchCounter notReturned;
+    pwivate finaw s-seawchcountew nyotwetuwned;
     /**
-     * Metastore returned a successful OK response.
+     * m-metastowe wetuwned a successfuw ok wesponse. o.O
      */
-    private final SearchCounter metastoreSuccess;
+    p-pwivate finaw s-seawchcountew metastowesuccess;
     /**
-     * Metastore returned a NOT_FOUND response for a user.
+     * m-metastowe wetuwned a-a nyot_found wesponse fow a usew. (ˆ ﻌ ˆ)♡
      */
-    private final SearchCounter metastoreNotFound;
+    pwivate finaw seawchcountew metastowenotfound;
     /**
-     * Metastore returned a BAD_INPUT response for a user.
+     * m-metastowe wetuwned a-a bad_input wesponse f-fow a usew. ^^;;
      */
-    private final SearchCounter metastoreBadInput;
+    pwivate finaw seawchcountew m-metastowebadinput;
     /**
-     * Metastore returned a TRANSIENT_ERROR response for a user.
+     * m-metastowe wetuwned a-a twansient_ewwow wesponse fow a usew. ʘwʘ
      */
-    private final SearchCounter metastoreTransientError;
+    pwivate finaw seawchcountew m-metastowetwansientewwow;
     /**
-     * Metastore returned a PERMANENT_ERROR response for a user.
+     * m-metastowe wetuwned a pewmanent_ewwow wesponse f-fow a usew. σωσ
      */
-    private final SearchCounter metastorePermanentError;
+    p-pwivate finaw seawchcountew metastowepewmanentewwow;
     /**
-     * Metastore returned an unknown response code for a user.
+     * metastowe wetuwned a-an unknown wesponse code fow a usew. ^^;;
      */
-    private final SearchCounter metastoreUnknownResponseCode;
+    pwivate finaw seawchcountew m-metastoweunknownwesponsecode;
     /**
-     * Total number of users that we asked data for in metastore.
+     * totaw nyumbew of usews that we asked d-data fow in m-metastowe. ʘwʘ
      */
-    private final SearchCounter totalRequests;
+    pwivate finaw seawchcountew totawwequests;
 
-    @VisibleForTesting MetastoreGetColumnStats(String columnName) {
-      String prefix = "manhattan_metastore_get_" + columnName;
-      notReturned = SearchCounter.export(prefix + "_response_not_returned");
-      metastoreSuccess = SearchCounter.export(prefix + "_response_success");
-      metastoreNotFound = SearchCounter.export(prefix + "_response_not_found");
-      metastoreBadInput = SearchCounter.export(prefix + "_response_bad_input");
-      metastoreTransientError = SearchCounter.export(prefix + "_response_transient_error");
-      metastorePermanentError = SearchCounter.export(prefix + "_response_permanent_error");
-      metastoreUnknownResponseCode =
-          SearchCounter.export(prefix + "_response_unknown_response_code");
-      // Have a distinguishable prefix for the total requests stat so that we can use it to get
-      // a viz rate against wild-carded "prefix_response_*" stats.
-      totalRequests = SearchCounter.export(prefix + "_requests");
+    @visibwefowtesting m-metastowegetcowumnstats(stwing c-cowumnname) {
+      stwing pwefix = "manhattan_metastowe_get_" + cowumnname;
+      n-nyotwetuwned = seawchcountew.expowt(pwefix + "_wesponse_not_wetuwned");
+      m-metastowesuccess = seawchcountew.expowt(pwefix + "_wesponse_success");
+      metastowenotfound = seawchcountew.expowt(pwefix + "_wesponse_not_found");
+      m-metastowebadinput = seawchcountew.expowt(pwefix + "_wesponse_bad_input");
+      m-metastowetwansientewwow = s-seawchcountew.expowt(pwefix + "_wesponse_twansient_ewwow");
+      metastowepewmanentewwow = s-seawchcountew.expowt(pwefix + "_wesponse_pewmanent_ewwow");
+      metastoweunknownwesponsecode =
+          seawchcountew.expowt(pwefix + "_wesponse_unknown_wesponse_code");
+      // h-have a distinguishabwe p-pwefix f-fow the totaw wequests stat so t-that we can use i-it to get
+      // a viz wate against wiwd-cawded "pwefix_wesponse_*" s-stats. ^^
+      t-totawwequests = s-seawchcountew.expowt(pwefix + "_wequests");
     }
 
     /**
-     * Tracks metastore get column stats for an individual user's response.
-     * @param responseCode the response code received from metastore. Expected to be null if no
-     *        response came back at all.
+     * twacks metastowe get cowumn s-stats fow an individuaw usew's w-wesponse. nyaa~~
+     * @pawam w-wesponsecode the wesponse code weceived fwom metastowe. e-expected to be nyuww i-if nyo
+     *        w-wesponse c-came back at aww. (///ˬ///✿)
      */
-    private void trackMetastoreResponseCode(@Nullable ResponseCode responseCode) {
-      totalRequests.increment();
+    p-pwivate void twackmetastowewesponsecode(@nuwwabwe wesponsecode wesponsecode) {
+      totawwequests.incwement();
 
-      if (responseCode == null) {
-        notReturned.increment();
-      } else if (responseCode == ResponseCode.OK) {
-        metastoreSuccess.increment();
-      } else if (responseCode == ResponseCode.NOT_FOUND) {
-        metastoreNotFound.increment();
-      } else if (responseCode == ResponseCode.BAD_INPUT) {
-        metastoreBadInput.increment();
-      } else if (responseCode == ResponseCode.TRANSIENT_ERROR) {
-        metastoreTransientError.increment();
-      } else if (responseCode == ResponseCode.PERMANENT_ERROR) {
-        metastorePermanentError.increment();
-      } else {
-        metastoreUnknownResponseCode.increment();
+      if (wesponsecode == nyuww) {
+        n-nyotwetuwned.incwement();
+      } ewse if (wesponsecode == w-wesponsecode.ok) {
+        metastowesuccess.incwement();
+      } e-ewse if (wesponsecode == wesponsecode.not_found) {
+        m-metastowenotfound.incwement();
+      } ewse i-if (wesponsecode == w-wesponsecode.bad_input) {
+        m-metastowebadinput.incwement();
+      } e-ewse i-if (wesponsecode == wesponsecode.twansient_ewwow) {
+        metastowetwansientewwow.incwement();
+      } ewse if (wesponsecode == wesponsecode.pewmanent_ewwow) {
+        metastowepewmanentewwow.incwement();
+      } e-ewse {
+        m-metastoweunknownwesponsecode.incwement();
       }
     }
 
-    @VisibleForTesting long getTotalRequests() {
-      return totalRequests.get();
+    @visibwefowtesting w-wong gettotawwequests() {
+      wetuwn totawwequests.get();
     }
 
-    @VisibleForTesting long getNotReturnedCount() {
-      return notReturned.get();
+    @visibwefowtesting w-wong getnotwetuwnedcount() {
+      wetuwn nyotwetuwned.get();
     }
 
-    @VisibleForTesting long getMetastoreSuccessCount() {
-      return metastoreSuccess.get();
+    @visibwefowtesting wong getmetastowesuccesscount() {
+      w-wetuwn metastowesuccess.get();
     }
 
-    @VisibleForTesting long getMetastoreNotFoundCount() {
-      return metastoreNotFound.get();
+    @visibwefowtesting w-wong getmetastowenotfoundcount() {
+      wetuwn m-metastowenotfound.get();
     }
 
-    @VisibleForTesting long getMetastoreBadInputCount() {
-      return metastoreBadInput.get();
+    @visibwefowtesting wong getmetastowebadinputcount() {
+      wetuwn metastowebadinput.get();
     }
 
-    @VisibleForTesting long getMetastoreTransientErrorCount() {
-      return metastoreTransientError.get();
+    @visibwefowtesting w-wong getmetastowetwansientewwowcount() {
+      w-wetuwn metastowetwansientewwow.get();
     }
 
-    @VisibleForTesting long getMetastorePermanentErrorCount() {
-      return metastorePermanentError.get();
+    @visibwefowtesting wong getmetastowepewmanentewwowcount() {
+      w-wetuwn metastowepewmanentewwow.get();
     }
 
-    @VisibleForTesting long getMetastoreUnknownResponseCodeCount() {
-      return metastoreUnknownResponseCode.get();
-    }
-  }
-
-  /** Class that holds all user properties from Manhattan. */
-  @VisibleForTesting
-  protected static class ManhattanUserProperties {
-    private double spamScore = 0;
-    private float tweepcred = RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL;   // default
-
-    public ManhattanUserProperties setSpamScore(double newSpamScore) {
-      this.spamScore = newSpamScore;
-      return this;
-    }
-
-    public float getTweepcred() {
-      return tweepcred;
-    }
-
-    public ManhattanUserProperties setTweepcred(float newTweepcred) {
-      this.tweepcred = newTweepcred;
-      return this;
+    @visibwefowtesting w-wong getmetastoweunknownwesponsecodecount() {
+      wetuwn metastoweunknownwesponsecode.get();
     }
   }
 
-  public UserPropertiesManager(MetastoreClient metastoreClient) {
-    this(metastoreClient, GET_TWEEP_CRED);
+  /** cwass that howds aww usew p-pwopewties fwom m-manhattan. XD */
+  @visibwefowtesting
+  p-pwotected s-static cwass manhattanusewpwopewties {
+    p-pwivate doubwe spamscowe = 0;
+    p-pwivate f-fwoat tweepcwed = wewevancesignawconstants.unset_weputation_sentinew;   // d-defauwt
+
+    pubwic m-manhattanusewpwopewties setspamscowe(doubwe n-nyewspamscowe) {
+      this.spamscowe = nyewspamscowe;
+      w-wetuwn this;
+    }
+
+    p-pubwic fwoat g-gettweepcwed() {
+      wetuwn t-tweepcwed;
+    }
+
+    pubwic manhattanusewpwopewties settweepcwed(fwoat n-nyewtweepcwed) {
+      this.tweepcwed = n-nyewtweepcwed;
+      w-wetuwn this;
+    }
   }
 
-  @VisibleForTesting
-  UserPropertiesManager(
-      MetastoreClient metastoreClient,
-      MetastoreGetColumnStats tweepCredStats) {
-    this.metastoreClient = metastoreClient;
-    this.tweepCredStats = tweepCredStats;
+  pubwic usewpwopewtiesmanagew(metastowecwient metastowecwient) {
+    this(metastowecwient, :3 g-get_tweep_cwed);
+  }
+
+  @visibwefowtesting
+  usewpwopewtiesmanagew(
+      metastowecwient m-metastowecwient, òωó
+      m-metastowegetcowumnstats tweepcwedstats) {
+    t-this.metastowecwient = metastowecwient;
+    this.tweepcwedstats = t-tweepcwedstats;
   }
 
   /**
-   * Gets user properties including TWEEPCRED, SpamScore values/flags from metastore for the
-   * given userids.
+   * g-gets usew pwopewties incwuding tweepcwed, ^^ s-spamscowe vawues/fwags fwom metastowe fow the
+   * g-given usewids. ^•ﻌ•^
    *
-   * @param userIds the list of users for which to get the properties.
-   * @return mapping from userId to UserProperties. If a user's twepcred score is not present in the
-   * metastore, of if there was a problem retrieving it, that user's score will not be set in the
-   * returned map.
+   * @pawam u-usewids the wist of usews f-fow which to get the pwopewties. σωσ
+   * @wetuwn mapping f-fwom usewid t-to usewpwopewties. (ˆ ﻌ ˆ)♡ i-if a usew's twepcwed scowe is nyot pwesent in the
+   * metastowe, nyaa~~ of if thewe was a pwobwem wetwieving it, ʘwʘ that usew's scowe wiww nyot be set in the
+   * wetuwned map. ^•ﻌ•^
    */
-  @VisibleForTesting
-  Future<Map<Long, ManhattanUserProperties>> getManhattanUserProperties(final List<Long> userIds) {
-    Preconditions.checkArgument(userIds != null);
-    if (metastoreClient == null || userIds.isEmpty()) {
-      return Future.value(Collections.emptyMap());
+  @visibwefowtesting
+  futuwe<map<wong, rawr x3 manhattanusewpwopewties>> g-getmanhattanusewpwopewties(finaw w-wist<wong> usewids) {
+    pweconditions.checkawgument(usewids != n-nyuww);
+    i-if (metastowecwient == n-nyuww || usewids.isempty()) {
+      wetuwn f-futuwe.vawue(cowwections.emptymap());
     }
 
-    final long start = System.currentTimeMillis();
+    finaw wong s-stawt = system.cuwwenttimemiwwis();
 
-    return metastoreClient.multiGet(userIds, COLUMNS)
-        .map(new Function<Map<Long, MetastoreRow>, Map<Long, ManhattanUserProperties>>() {
-          @Override
-          public Map<Long, ManhattanUserProperties> apply(Map<Long, MetastoreRow> response) {
-            long latencyMs = System.currentTimeMillis() - start;
-            Map<Long, ManhattanUserProperties> resultMap =
-                Maps.newHashMapWithExpectedSize(userIds.size());
+    w-wetuwn metastowecwient.muwtiget(usewids, 🥺 c-cowumns)
+        .map(new function<map<wong, ʘwʘ m-metastowewow>, (˘ω˘) m-map<wong, manhattanusewpwopewties>>() {
+          @ovewwide
+          pubwic map<wong, o.O manhattanusewpwopewties> a-appwy(map<wong, σωσ m-metastowewow> wesponse) {
+            w-wong watencyms = s-system.cuwwenttimemiwwis() - s-stawt;
+            m-map<wong, (ꈍᴗꈍ) m-manhattanusewpwopewties> w-wesuwtmap =
+                m-maps.newhashmapwithexpectedsize(usewids.size());
 
-            for (Long userId : userIds) {
-              MetastoreRow row = response.get(userId);
-              processTweepCredColumn(userId, row, resultMap);
+            fow (wong usewid : u-usewids) {
+              m-metastowewow wow = w-wesponse.get(usewid);
+              pwocesstweepcwedcowumn(usewid, (ˆ ﻌ ˆ)♡ w-wow, wesuwtmap);
             }
 
-            MANHATTAN_METASTORE_STATS.requestComplete(latencyMs, resultMap.size(), true);
-            return resultMap;
+            manhattan_metastowe_stats.wequestcompwete(watencyms, o.O wesuwtmap.size(), :3 t-twue);
+            wetuwn w-wesuwtmap;
           }
         })
-        .handle(new Function<Throwable, Map<Long, ManhattanUserProperties>>() {
-          @Override
-          public Map<Long, ManhattanUserProperties> apply(Throwable t) {
-            long latencyMs = System.currentTimeMillis() - start;
-            LOG.error("Exception talking to metastore after " + latencyMs + " ms.", t);
+        .handwe(new f-function<thwowabwe, -.- m-map<wong, manhattanusewpwopewties>>() {
+          @ovewwide
+          p-pubwic map<wong, ( ͡o ω ͡o ) manhattanusewpwopewties> a-appwy(thwowabwe t) {
+            w-wong watencyms = system.cuwwenttimemiwwis() - s-stawt;
+            wog.ewwow("exception tawking to metastowe aftew " + watencyms + " ms.", /(^•ω•^) t);
 
-            MANHATTAN_METASTORE_STATS.requestComplete(latencyMs, 0, false);
-            return Collections.emptyMap();
+            m-manhattan_metastowe_stats.wequestcompwete(watencyms, (⑅˘꒳˘) 0, fawse);
+            w-wetuwn cowwections.emptymap();
           }
         });
   }
 
 
   /**
-   * Process the TweepCred column data returned from metastore, takes TweepCred, fills in the
-   * the resultMap as appropriate.
+   * p-pwocess the tweepcwed cowumn data wetuwned fwom metastowe, òωó t-takes tweepcwed, 🥺 fiwws in t-the
+   * the wesuwtmap a-as appwopwiate. (ˆ ﻌ ˆ)♡
    */
-  private void processTweepCredColumn(
-      Long userId,
-      MetastoreRow metastoreRow,
-      Map<Long, ManhattanUserProperties> resultMap) {
-    MetastoreValue<TweepCred> tweepCredValue =
-        metastoreRow == null ? null : metastoreRow.getValue(MetastoreColumn.TWEEPCRED);
-    ResponseCode responseCode = tweepCredValue == null ? null : tweepCredValue.getResponseCode();
-    tweepCredStats.trackMetastoreResponseCode(responseCode);
+  p-pwivate void pwocesstweepcwedcowumn(
+      wong usewid, -.-
+      metastowewow m-metastowewow, σωσ
+      map<wong, >_< m-manhattanusewpwopewties> wesuwtmap) {
+    m-metastowevawue<tweepcwed> tweepcwedvawue =
+        metastowewow == n-nyuww ? nyuww : metastowewow.getvawue(metastowecowumn.tweepcwed);
+    w-wesponsecode w-wesponsecode = t-tweepcwedvawue == nyuww ? n-nyuww : tweepcwedvawue.getwesponsecode();
+    t-tweepcwedstats.twackmetastowewesponsecode(wesponsecode);
 
-    if (responseCode == ResponseCode.OK) {
-      try {
-        TweepCred tweepCred = tweepCredValue.getValue();
-        if (tweepCred != null && tweepCred.isSetScore()) {
-          ManhattanUserProperties manhattanUserProperties =
-              getOrCreateManhattanUserProperties(userId, resultMap);
-          manhattanUserProperties.setTweepcred(tweepCred.getScore());
+    i-if (wesponsecode == w-wesponsecode.ok) {
+      twy {
+        t-tweepcwed t-tweepcwed = tweepcwedvawue.getvawue();
+        i-if (tweepcwed != n-nyuww && tweepcwed.issetscowe()) {
+          m-manhattanusewpwopewties m-manhattanusewpwopewties =
+              g-getowcweatemanhattanusewpwopewties(usewid, :3 w-wesuwtmap);
+          manhattanusewpwopewties.settweepcwed(tweepcwed.getscowe());
         }
-      } catch (MetastoreException e) {
-        // guaranteed not to be thrown if ResponseCode.OK
-        LOG.warn("Unexpected MetastoreException parsing userinfo column!", e);
+      } catch (metastoweexception e-e) {
+        // guawanteed n-nyot to be thwown if wesponsecode.ok
+        w-wog.wawn("unexpected m-metastoweexception p-pawsing usewinfo cowumn!", e);
       }
     }
   }
 
-  private static ManhattanUserProperties getOrCreateManhattanUserProperties(
-      Long userId, Map<Long, ManhattanUserProperties> resultMap) {
+  pwivate s-static manhattanusewpwopewties g-getowcweatemanhattanusewpwopewties(
+      w-wong usewid, OwO map<wong, rawr manhattanusewpwopewties> wesuwtmap) {
 
-    ManhattanUserProperties manhattanUserProperties = resultMap.get(userId);
-    if (manhattanUserProperties == null) {
-      manhattanUserProperties = new ManhattanUserProperties();
-      resultMap.put(userId, manhattanUserProperties);
+    m-manhattanusewpwopewties m-manhattanusewpwopewties = wesuwtmap.get(usewid);
+    i-if (manhattanusewpwopewties == n-nyuww) {
+      manhattanusewpwopewties = nyew manhattanusewpwopewties();
+      wesuwtmap.put(usewid, (///ˬ///✿) m-manhattanusewpwopewties);
     }
 
-    return manhattanUserProperties;
+    w-wetuwn manhattanusewpwopewties;
   }
 
   /**
-   * Populates the user properties from the given batch.
+   * p-popuwates t-the usew pwopewties fwom the given batch. ^^
    */
-  public  Future<Collection<IngesterTwitterMessage>> populateUserProperties(
-      Collection<IngesterTwitterMessage> batch) {
-    Set<Long> userIds = new HashSet<>();
-    for (IngesterTwitterMessage message : batch) {
-      if ((message.getUserReputation() == IngesterTwitterMessage.DOUBLE_FIELD_NOT_PRESENT)
-          && !message.isDeleted()) {
-        Optional<Long> userId = message.getFromUserTwitterId();
-        if (userId.isPresent()) {
-          userIds.add(userId.get());
-        } else {
-          LOG.error("No user id present for tweet {}", message.getId());
+  p-pubwic  futuwe<cowwection<ingestewtwittewmessage>> p-popuwateusewpwopewties(
+      cowwection<ingestewtwittewmessage> batch) {
+    s-set<wong> usewids = nyew hashset<>();
+    fow (ingestewtwittewmessage m-message : batch) {
+      i-if ((message.getusewweputation() == i-ingestewtwittewmessage.doubwe_fiewd_not_pwesent)
+          && !message.isdeweted()) {
+        optionaw<wong> u-usewid = message.getfwomusewtwittewid();
+        i-if (usewid.ispwesent()) {
+          usewids.add(usewid.get());
+        } e-ewse {
+          wog.ewwow("no u-usew i-id pwesent fow t-tweet {}", XD message.getid());
         }
       }
     }
-    List<Long> uniqIds = Lists.newArrayList(userIds);
-    Collections.sort(uniqIds);   // for testing predictability
+    w-wist<wong> uniqids = wists.newawwaywist(usewids);
+    cowwections.sowt(uniqids);   // fow t-testing pwedictabiwity
 
-    Future<Map<Long, ManhattanUserProperties>> manhattanUserPropertiesMap =
-        getManhattanUserProperties(uniqIds);
+    futuwe<map<wong, UwU m-manhattanusewpwopewties>> m-manhattanusewpwopewtiesmap =
+        getmanhattanusewpwopewties(uniqids);
 
-    return manhattanUserPropertiesMap.map(Function.func(map -> {
-      for (IngesterTwitterMessage message : batch) {
-        if (((message.getUserReputation() != IngesterTwitterMessage.DOUBLE_FIELD_NOT_PRESENT)
-            && RelevanceSignalConstants.isValidUserReputation(
-            (int) Math.floor(message.getUserReputation())))
-            || message.isDeleted()) {
+    wetuwn m-manhattanusewpwopewtiesmap.map(function.func(map -> {
+      fow (ingestewtwittewmessage message : b-batch) {
+        i-if (((message.getusewweputation() != i-ingestewtwittewmessage.doubwe_fiewd_not_pwesent)
+            && wewevancesignawconstants.isvawidusewweputation(
+            (int) math.fwoow(message.getusewweputation())))
+            || message.isdeweted()) {
           continue;
         }
-        Optional<Long> optionalUserId = message.getFromUserTwitterId();
-        if (optionalUserId.isPresent()) {
-          long userId = optionalUserId.get();
-          ManhattanUserProperties manhattanUserProperties =  map.get(userId);
+        o-optionaw<wong> optionawusewid = message.getfwomusewtwittewid();
+        i-if (optionawusewid.ispwesent()) {
+          w-wong usewid = optionawusewid.get();
+          manhattanusewpwopewties m-manhattanusewpwopewties =  map.get(usewid);
 
-          final boolean isTestUser = TestUserFilter.isTestUserId(userId);
-          if (isTestUser) {
-            MESSAGE_FROM_TEST_USER.increment();
+          f-finaw boowean istestusew = t-testusewfiwtew.istestusewid(usewid);
+          i-if (istestusew) {
+            m-message_fwom_test_usew.incwement();
           }
 
-          // legacy setting of tweepcred
-          setTweepCred(isTestUser, manhattanUserProperties, message);
+          // w-wegacy setting of tweepcwed
+          settweepcwed(istestusew, o.O manhattanusewpwopewties, 😳 message);
 
-          // set additional fields
-          if (setSensitiveBits(manhattanUserProperties, message)) {
-            SENSITIVE_BITS_COUNTER.increment();
+          // set additionaw f-fiewds
+          if (setsensitivebits(manhattanusewpwopewties, (˘ω˘) m-message)) {
+            sensitive_bits_countew.incwement();
           }
         }
       }
-      return batch;
+      wetuwn batch;
     }));
   }
 
-  // good old tweepcred
-  private void setTweepCred(
-      boolean isTestUser,
-      ManhattanUserProperties manhattanUserProperties,
-      TwitterMessage message) {
-    float score = RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL;
-    if (manhattanUserProperties == null) {
-      if (isTestUser) {
-        SKIPPED_REPUTATION_CHECK_COUNTER.increment();
-      } else {
-        MISSING_REPUTATION_COUNTER.increment();
-        DEFAULT_REPUTATION_COUNTER.increment();
+  // good owd tweepcwed
+  p-pwivate void settweepcwed(
+      boowean istestusew, 🥺
+      manhattanusewpwopewties m-manhattanusewpwopewties, ^^
+      t-twittewmessage message) {
+    f-fwoat scowe = wewevancesignawconstants.unset_weputation_sentinew;
+    if (manhattanusewpwopewties == n-nyuww) {
+      if (istestusew) {
+        s-skipped_weputation_check_countew.incwement();
+      } ewse {
+        missing_weputation_countew.incwement();
+        d-defauwt_weputation_countew.incwement();
       }
-    } else if (!RelevanceSignalConstants.isValidUserReputation(
-        (int) Math.floor(manhattanUserProperties.tweepcred))) {
-      if (!isTestUser) {
-        INVALID_REPUTATION_COUNTER.increment();
-        DEFAULT_REPUTATION_COUNTER.increment();
+    } ewse if (!wewevancesignawconstants.isvawidusewweputation(
+        (int) m-math.fwoow(manhattanusewpwopewties.tweepcwed))) {
+      if (!istestusew) {
+        invawid_weputation_countew.incwement();
+        defauwt_weputation_countew.incwement();
       }
-    } else {
-      score = manhattanUserProperties.tweepcred;
-      ACCEPTED_REPUTATION_COUNTER.increment();
+    } ewse {
+      scowe = manhattanusewpwopewties.tweepcwed;
+      a-accepted_weputation_countew.incwement();
     }
-    message.setUserReputation(score);
+    message.setusewweputation(scowe);
   }
 
-  // Sets sensitive content, nsfw, and spam flags in TwitterMessage, further
-  // sets the following bits in encoded features:
-  // EarlybirdFeatureConfiguration.IS_SENSITIVE_FLAG
-  // EarlybirdFeatureConfiguration.IS_USER_NSFW_FLAG
-  // EarlybirdFeatureConfiguration.IS_USER_SPAM_FLAG
-  private boolean setSensitiveBits(
-      ManhattanUserProperties manhattanUserProperties,
-      TwitterMessage message) {
-    if (manhattanUserProperties == null) {
-      return false;
+  // sets sensitive c-content, >w< nysfw, ^^;; a-and spam fwags i-in twittewmessage, (˘ω˘) fuwthew
+  // sets the fowwowing b-bits in encoded featuwes:
+  // eawwybiwdfeatuweconfiguwation.is_sensitive_fwag
+  // eawwybiwdfeatuweconfiguwation.is_usew_nsfw_fwag
+  // eawwybiwdfeatuweconfiguwation.is_usew_spam_fwag
+  p-pwivate b-boowean setsensitivebits(
+      m-manhattanusewpwopewties m-manhattanusewpwopewties, OwO
+      twittewmessage message) {
+    i-if (manhattanusewpwopewties == n-nyuww) {
+      wetuwn fawse;
     }
 
-    final boolean isUserSpam = manhattanUserProperties.spamScore > SPAM_SCORE_THRESHOLD;
-    // SEARCH-17413: Compute the field with gizmoduck data.
-    final boolean isUserNSFW = false;
-    final boolean anySensitiveBitSet = isUserSpam || isUserNSFW;
+    f-finaw boowean isusewspam = manhattanusewpwopewties.spamscowe > spam_scowe_thweshowd;
+    // s-seawch-17413: compute the fiewd with g-gizmoduck data. (ꈍᴗꈍ)
+    f-finaw boowean isusewnsfw = f-fawse;
+    finaw b-boowean anysensitivebitset = i-isusewspam || isusewnsfw;
 
-    if (message.isSensitiveContent()) {
-      // original json has possibly_sensitive = true, count it
-      IS_SENSITIVE_FROM_JSON_COUNTER.increment();
+    if (message.issensitivecontent()) {
+      // owiginaw json has possibwy_sensitive = t-twue, òωó count it
+      is_sensitive_fwom_json_countew.incwement();
     }
 
-    if (isUserNSFW) {
-      // set EarlybirdFeatureConfiguration.IS_USER_NSFW_FLAG
-      for (PenguinVersion penguinVersion : message.getSupportedPenguinVersions()) {
-        message.getTweetUserFeatures(penguinVersion).setNsfw(isUserNSFW);
+    if (isusewnsfw) {
+      // set eawwybiwdfeatuweconfiguwation.is_usew_nsfw_fwag
+      f-fow (penguinvewsion penguinvewsion : message.getsuppowtedpenguinvewsions()) {
+        message.gettweetusewfeatuwes(penguinvewsion).setnsfw(isusewnsfw);
       }
-      IS_USER_NSFW_COUNTER.increment();
+      i-is_usew_nsfw_countew.incwement();
     }
-    if (isUserSpam) {
-      // set EarlybirdFeatureConfiguration.IS_USER_SPAM_FLAG
-      for (PenguinVersion penguinVersion : message.getSupportedPenguinVersions()) {
-        message.getTweetUserFeatures(penguinVersion).setSpam(isUserSpam);
+    i-if (isusewspam) {
+      // s-set eawwybiwdfeatuweconfiguwation.is_usew_spam_fwag
+      f-fow (penguinvewsion penguinvewsion : m-message.getsuppowtedpenguinvewsions()) {
+        message.gettweetusewfeatuwes(penguinvewsion).setspam(isusewspam);
       }
-      IS_USER_SPAM_COUNTER.increment();
+      i-is_usew_spam_countew.incwement();
     }
 
-    // if any of the sensitive bits are set, we return true
-    return anySensitiveBitSet;
+    // if any of the sensitive bits awe s-set, ʘwʘ we wetuwn twue
+    wetuwn a-anysensitivebitset;
   }
 }

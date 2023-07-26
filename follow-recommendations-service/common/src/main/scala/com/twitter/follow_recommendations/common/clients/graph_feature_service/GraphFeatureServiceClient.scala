@@ -1,50 +1,50 @@
-package com.twitter.follow_recommendations.common.clients.graph_feature_service
+package com.twittew.fowwow_wecommendations.common.cwients.gwaph_featuwe_sewvice
 
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.graph_feature_service.thriftscala.PresetFeatureTypes.WtfTwoHop
-import com.twitter.graph_feature_service.thriftscala.EdgeType
-import com.twitter.graph_feature_service.thriftscala.GfsIntersectionResponse
-import com.twitter.graph_feature_service.thriftscala.GfsPresetIntersectionRequest
-import com.twitter.graph_feature_service.thriftscala.{Server => GraphFeatureService}
-import com.twitter.stitch.Stitch
-import javax.inject.{Inject, Singleton}
+impowt com.twittew.fowwow_wecommendations.common.modews.fowwowpwoof
+i-impowt com.twittew.gwaph_featuwe_sewvice.thwiftscawa.pwesetfeatuwetypes.wtftwohop
+i-impowt com.twittew.gwaph_featuwe_sewvice.thwiftscawa.edgetype
+i-impowt com.twittew.gwaph_featuwe_sewvice.thwiftscawa.gfsintewsectionwesponse
+i-impowt com.twittew.gwaph_featuwe_sewvice.thwiftscawa.gfspwesetintewsectionwequest
+i-impowt com.twittew.gwaph_featuwe_sewvice.thwiftscawa.{sewvew => g-gwaphfeatuwesewvice}
+i-impowt com.twittew.stitch.stitch
+i-impowt javax.inject.{inject, (U ﹏ U) singweton}
 
-@Singleton
-class GraphFeatureServiceClient @Inject() (
-  graphFeatureService: GraphFeatureService.MethodPerEndpoint) {
+@singweton
+cwass gwaphfeatuwesewvicecwient @inject() (
+  g-gwaphfeatuwesewvice: gwaphfeatuwesewvice.methodpewendpoint) {
 
-  import GraphFeatureServiceClient._
-  def getIntersections(
-    userId: Long,
-    candidateIds: Seq[Long],
-    numIntersectionIds: Int
-  ): Stitch[Map[Long, FollowProof]] = {
-    Stitch
-      .callFuture(
-        graphFeatureService.getPresetIntersection(
-          GfsPresetIntersectionRequest(userId, candidateIds, WtfTwoHop, Some(numIntersectionIds))
+  impowt g-gwaphfeatuwesewvicecwient._
+  def getintewsections(
+    u-usewid: wong, (U ﹏ U)
+    candidateids: seq[wong], (⑅˘꒳˘)
+    nyumintewsectionids: int
+  ): s-stitch[map[wong, òωó fowwowpwoof]] = {
+    stitch
+      .cawwfutuwe(
+        g-gwaphfeatuwesewvice.getpwesetintewsection(
+          g-gfspwesetintewsectionwequest(usewid, ʘwʘ candidateids, /(^•ω•^) wtftwohop, some(numintewsectionids))
         )
       ).map {
-        case GfsIntersectionResponse(gfsIntersectionResults) =>
-          (for {
-            candidateId <- candidateIds
-            gfsIntersectionResultForCandidate =
-              gfsIntersectionResults.filter(_.candidateUserId == candidateId)
-            followProof <- for {
-              result <- gfsIntersectionResultForCandidate
-              intersection <- result.intersectionValues
-              if leftEdgeTypes.contains(intersection.featureType.leftEdgeType)
-              if rightEdgeTypes.contains(intersection.featureType.rightEdgeType)
-              intersectionIds <- intersection.intersectionIds.toSeq
-            } yield FollowProof(intersectionIds, intersection.count.getOrElse(0))
-          } yield {
-            candidateId -> followProof
-          }).toMap
+        case g-gfsintewsectionwesponse(gfsintewsectionwesuwts) =>
+          (fow {
+            candidateid <- candidateids
+            gfsintewsectionwesuwtfowcandidate =
+              gfsintewsectionwesuwts.fiwtew(_.candidateusewid == c-candidateid)
+            fowwowpwoof <- f-fow {
+              w-wesuwt <- g-gfsintewsectionwesuwtfowcandidate
+              i-intewsection <- wesuwt.intewsectionvawues
+              if w-weftedgetypes.contains(intewsection.featuwetype.weftedgetype)
+              if wightedgetypes.contains(intewsection.featuwetype.wightedgetype)
+              i-intewsectionids <- intewsection.intewsectionids.toseq
+            } yiewd fowwowpwoof(intewsectionids, ʘwʘ intewsection.count.getowewse(0))
+          } yiewd {
+            candidateid -> f-fowwowpwoof
+          }).tomap
       }
   }
 }
 
-object GraphFeatureServiceClient {
-  val leftEdgeTypes: Set[EdgeType] = Set(EdgeType.Following)
-  val rightEdgeTypes: Set[EdgeType] = Set(EdgeType.FollowedBy)
+object gwaphfeatuwesewvicecwient {
+  v-vaw weftedgetypes: s-set[edgetype] = s-set(edgetype.fowwowing)
+  vaw wightedgetypes: set[edgetype] = set(edgetype.fowwowedby)
 }

@@ -1,41 +1,41 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.twitter.tweetypie.additionalfields.AdditionalFields
-import com.twitter.tweetypie.storage_internal.thriftscala.StoredTweet
-import com.twitter.tweetypie.thriftscala.{Tweet => TpTweet}
+impowt com.twittew.tweetypie.additionawfiewds.additionawfiewds
+i-impowt com.twittew.tweetypie.stowage_intewnaw.thwiftscawa.stowedtweet
+i-impowt c-com.twittew.tweetypie.thwiftscawa.{tweet => t-tptweet}
 
 /**
- * A field of the stored version of a tweet to read, update, or delete.
+ * a f-fiewd of the stowed v-vewsion of a-a tweet to wead, (U ﹏ U) u-update, (///ˬ///✿) ow dewete. >w<
  *
- * There is not a one-to-one correspondence between the fields ids of
- * [[com.twitter.tweetypie.thriftscala.Tweet]] and
- * [[com.twitter.tweetypie.storage_internal.thriftscala.StoredTweet]]. For example, in StoredTweet,
- * the nsfwUser property is field 11; in Tweet, it is a property of the coreData struct in field 2.
- * To circumvent the confusion of using one set of field ids or the other, callers use instances of
- * [[Field]] to reference the part of the object to modify.
+ * thewe is nyot a one-to-one cowwespondence between the f-fiewds ids of
+ * [[com.twittew.tweetypie.thwiftscawa.tweet]] and
+ * [[com.twittew.tweetypie.stowage_intewnaw.thwiftscawa.stowedtweet]]. rawr fow exampwe, mya i-in stowedtweet, ^^
+ * the nysfwusew p-pwopewty is fiewd 11; in tweet, 😳😳😳 it is a pwopewty of the cowedata s-stwuct in fiewd 2. mya
+ * to c-ciwcumvent the confusion o-of using one set of fiewd ids ow the othew, 😳 cawwews use instances of
+ * [[fiewd]] t-to wefewence the pawt of the object to modify. -.-
  */
-class Field private[storage] (val id: Short) extends AnyVal {
-  override def toString: String = id.toString
+cwass fiewd pwivate[stowage] (vaw i-id: showt) extends anyvaw {
+  ovewwide d-def tostwing: s-stwing = id.tostwing
 }
 
 /**
- * NOTE: Make sure `AllUpdatableCompiledFields` is kept up to date when adding any new field
+ * n-nyote: make s-suwe `awwupdatabwecompiwedfiewds` is kept up to date when adding a-any nyew fiewd
  */
-object Field {
-  import AdditionalFields.isAdditionalFieldId
-  val Geo: Field = new Field(StoredTweet.GeoField.id)
-  val HasTakedown: Field = new Field(StoredTweet.HasTakedownField.id)
-  val NsfwUser: Field = new Field(StoredTweet.NsfwUserField.id)
-  val NsfwAdmin: Field = new Field(StoredTweet.NsfwAdminField.id)
-  val TweetypieOnlyTakedownCountryCodes: Field =
-    new Field(TpTweet.TweetypieOnlyTakedownCountryCodesField.id)
-  val TweetypieOnlyTakedownReasons: Field =
-    new Field(TpTweet.TweetypieOnlyTakedownReasonsField.id)
+object fiewd {
+  impowt additionawfiewds.isadditionawfiewdid
+  v-vaw geo: fiewd = nyew fiewd(stowedtweet.geofiewd.id)
+  vaw hastakedown: fiewd = nyew fiewd(stowedtweet.hastakedownfiewd.id)
+  vaw nsfwusew: fiewd = n-nyew fiewd(stowedtweet.nsfwusewfiewd.id)
+  vaw nsfwadmin: f-fiewd = nyew fiewd(stowedtweet.nsfwadminfiewd.id)
+  v-vaw tweetypieonwytakedowncountwycodes: f-fiewd =
+    nyew fiewd(tptweet.tweetypieonwytakedowncountwycodesfiewd.id)
+  vaw tweetypieonwytakedownweasons: fiewd =
+    n-nyew fiewd(tptweet.tweetypieonwytakedownweasonsfiewd.id)
 
-  val AllUpdatableCompiledFields: Set[Field] = Set(Geo, HasTakedown, NsfwUser, NsfwAdmin)
+  v-vaw awwupdatabwecompiwedfiewds: set[fiewd] = set(geo, h-hastakedown, 🥺 n-nysfwusew, o.O nysfwadmin)
 
-  def additionalField(id: Short): Field = {
-    require(isAdditionalFieldId(id), "field id must be in the additional field range")
-    new Field(id)
+  def a-additionawfiewd(id: showt): fiewd = {
+    w-wequiwe(isadditionawfiewdid(id), /(^•ω•^) "fiewd id must be in the additionaw f-fiewd wange")
+    nyew fiewd(id)
   }
 }

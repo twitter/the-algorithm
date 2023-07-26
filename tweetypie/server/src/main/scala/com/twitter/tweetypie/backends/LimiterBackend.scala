@@ -1,55 +1,55 @@
-package com.twitter.tweetypie
-package backends
+package com.twittew.tweetypie
+package b-backends
 
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.limiter.thriftscala.FeatureRequest
-import com.twitter.limiter.thriftscala.Usage
-import com.twitter.limiter.{thriftscala => ls}
-import com.twitter.servo.util.FutureArrow
-import com.twitter.tweetypie.util.RetryPolicyBuilder
+impowt c-com.twittew.finagwe.sewvice.wetwypowicy
+i-impowt c-com.twittew.wimitew.thwiftscawa.featuwewequest
+i-impowt com.twittew.wimitew.thwiftscawa.usage
+i-impowt com.twittew.wimitew.{thwiftscawa => w-ws}
+i-impowt com.twittew.sewvo.utiw.futuweawwow
+impowt com.twittew.tweetypie.utiw.wetwypowicybuiwdew
 
-object LimiterBackend {
-  import Backend._
+object wimitewbackend {
+  impowt b-backend._
 
-  type IncrementFeature = FutureArrow[(ls.FeatureRequest, Int), Unit]
-  type GetFeatureUsage = FutureArrow[ls.FeatureRequest, ls.Usage]
+  type incwementfeatuwe = futuweawwow[(ws.featuwewequest, mya i-int), unit]
+  type getfeatuweusage = f-futuweawwow[ws.featuwewequest, ws.usage]
 
-  def fromClient(client: ls.LimitService.MethodPerEndpoint): LimiterBackend =
-    new LimiterBackend {
-      val incrementFeature: IncrementFeature =
-        FutureArrow {
-          case (featureReq, amount) => client.incrementFeature(featureReq, amount).unit
+  def fwomcwient(cwient: ws.wimitsewvice.methodpewendpoint): w-wimitewbackend =
+    nyew wimitewbackend {
+      v-vaw incwementfeatuwe: i-incwementfeatuwe =
+        futuweawwow {
+          case (featuweweq, 😳 amount) => cwient.incwementfeatuwe(featuweweq, -.- a-amount).unit
         }
 
-      val getFeatureUsage: GetFeatureUsage =
-        FutureArrow(featureReq => client.getLimitUsage(None, Some(featureReq)))
+      vaw getfeatuweusage: getfeatuweusage =
+        futuweawwow(featuweweq => cwient.getwimitusage(none, 🥺 some(featuweweq)))
     }
 
-  case class Config(requestTimeout: Duration, timeoutBackoffs: Stream[Duration]) {
+  c-case cwass config(wequesttimeout: d-duwation, o.O t-timeoutbackoffs: s-stweam[duwation]) {
 
-    def apply(client: LimiterBackend, ctx: Backend.Context): LimiterBackend =
-      new LimiterBackend {
-        val incrementFeature: FutureArrow[(FeatureRequest, Int), Unit] =
-          policy("incrementFeature", requestTimeout, ctx)(client.incrementFeature)
-        val getFeatureUsage: FutureArrow[FeatureRequest, Usage] =
-          policy("getFeatureUsage", requestTimeout, ctx)(client.getFeatureUsage)
+    d-def appwy(cwient: wimitewbackend, /(^•ω•^) ctx: backend.context): w-wimitewbackend =
+      nyew wimitewbackend {
+        vaw incwementfeatuwe: f-futuweawwow[(featuwewequest, nyaa~~ int), nyaa~~ unit] =
+          powicy("incwementfeatuwe", :3 wequesttimeout, 😳😳😳 ctx)(cwient.incwementfeatuwe)
+        vaw getfeatuweusage: f-futuweawwow[featuwewequest, (˘ω˘) usage] =
+          powicy("getfeatuweusage", ^^ w-wequesttimeout, :3 c-ctx)(cwient.getfeatuweusage)
       }
 
-    private[this] def policy[A, B](
-      name: String,
-      requestTimeout: Duration,
-      ctx: Context
-    ): Builder[A, B] =
-      defaultPolicy(name, requestTimeout, retryPolicy, ctx)
+    p-pwivate[this] def powicy[a, -.- b](
+      nyame: stwing, 😳
+      wequesttimeout: d-duwation, mya
+      c-ctx: context
+    ): b-buiwdew[a, (˘ω˘) b] =
+      d-defauwtpowicy(name, >_< wequesttimeout, -.- w-wetwypowicy, 🥺 ctx)
 
-    private[this] def retryPolicy[B]: RetryPolicy[Try[B]] =
-      RetryPolicyBuilder.timeouts[Any](timeoutBackoffs)
+    p-pwivate[this] def wetwypowicy[b]: wetwypowicy[twy[b]] =
+      w-wetwypowicybuiwdew.timeouts[any](timeoutbackoffs)
   }
 }
 
-trait LimiterBackend {
-  import LimiterBackend._
+twait w-wimitewbackend {
+  impowt wimitewbackend._
 
-  val incrementFeature: IncrementFeature
-  val getFeatureUsage: GetFeatureUsage
+  v-vaw i-incwementfeatuwe: incwementfeatuwe
+  vaw getfeatuweusage: getfeatuweusage
 }

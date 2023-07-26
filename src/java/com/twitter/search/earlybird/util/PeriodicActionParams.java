@@ -1,79 +1,79 @@
-package com.twitter.search.earlybird.util;
+package com.twittew.seawch.eawwybiwd.utiw;
 
-import java.util.concurrent.TimeUnit;
+impowt j-java.utiw.concuwwent.timeunit;
 
 /**
- * Specifies timing and type of period actions that we schedule.
+ * s-specifies t-timing and type o-of pewiod actions t-that we scheduwe. -.-
  *
- * See:
- *  https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ScheduledExecutorService.html
+ * s-see:
+ *  h-https://docs.owacwe.com/javase/8/docs/api/java/utiw/concuwwent/scheduwedexecutowsewvice.htmw
  */
-public final class PeriodicActionParams {
-  private enum DelayType {
-    FIXED_DELAY,
-    FIXED_RATE
+p-pubwic finaw cwass pewiodicactionpawams {
+  pwivate enum dewaytype {
+    fixed_deway, 😳
+    f-fixed_wate
   }
 
-  private long initialDelayDuration;
-  private long intervalDuration;
-  private TimeUnit intervalUnit;
-  private DelayType delayType;
+  pwivate wong initiawdewayduwation;
+  p-pwivate wong intewvawduwation;
+  p-pwivate timeunit intewvawunit;
+  pwivate dewaytype dewaytype;
 
-  public long getInitialDelayDuration() {
-    return initialDelayDuration;
+  p-pubwic wong getinitiawdewayduwation() {
+    w-wetuwn initiawdewayduwation;
   }
 
-  public long getIntervalDuration() {
-    return intervalDuration;
+  p-pubwic wong getintewvawduwation() {
+    wetuwn intewvawduwation;
   }
 
-  public TimeUnit getIntervalUnit() {
-    return intervalUnit;
+  pubwic timeunit getintewvawunit() {
+    w-wetuwn intewvawunit;
   }
 
-  public DelayType getDelayType() {
-    return delayType;
+  pubwic dewaytype getdewaytype() {
+    wetuwn d-dewaytype;
   }
 
-  private PeriodicActionParams(
-      DelayType delayType,
-      long initialDelayDuration,
-      long intervalDuration,
-      TimeUnit intervalUnit) {
-    this.delayType = delayType;
-    this.intervalDuration = intervalDuration;
-    this.initialDelayDuration = initialDelayDuration;
-    this.intervalUnit = intervalUnit;
+  pwivate pewiodicactionpawams(
+      d-dewaytype d-dewaytype, mya
+      w-wong initiawdewayduwation, (˘ω˘)
+      w-wong intewvawduwation, >_<
+      timeunit intewvawunit) {
+    this.dewaytype = dewaytype;
+    this.intewvawduwation = i-intewvawduwation;
+    this.initiawdewayduwation = initiawdewayduwation;
+    t-this.intewvawunit = intewvawunit;
   }
 
-  // Runs start at times start, start+X, start+2*X etc., so they can possibly overlap.
-  public static PeriodicActionParams atFixedRate(
-      long intervalDuration,
-      TimeUnit intervalUnit) {
-    return new PeriodicActionParams(DelayType.FIXED_RATE, 0,
-        intervalDuration, intervalUnit);
+  // wuns stawt at times stawt, -.- stawt+x, stawt+2*x etc., so they can possibwy o-ovewwap. 🥺
+  pubwic static p-pewiodicactionpawams a-atfixedwate(
+      w-wong intewvawduwation, (U ﹏ U)
+      timeunit intewvawunit) {
+    wetuwn nyew pewiodicactionpawams(dewaytype.fixed_wate, >w< 0, mya
+        intewvawduwation, >w< i-intewvawunit);
   }
 
-  // Delay between every run.
-  // The order of what happens is:
-  //   initial delay, run task, wait X time, run task, wait X time, etc.
-  // Runs can't overlap.
-  public static PeriodicActionParams withIntialWaitAndFixedDelay(
-      long initialDelayDuration,
-      long intervalDuration,
-      TimeUnit intervalUnit) {
-    return new PeriodicActionParams(DelayType.FIXED_DELAY, initialDelayDuration,
-        intervalDuration, intervalUnit);
+  // d-deway between evewy wun. nyaa~~
+  // the o-owdew of nyani h-happens is:
+  //   initiaw deway, (✿oωo) w-wun task, ʘwʘ wait x time, (ˆ ﻌ ˆ)♡ wun task, 😳😳😳 w-wait x time, :3 etc.
+  // wuns can't ovewwap. OwO
+  p-pubwic static pewiodicactionpawams withintiawwaitandfixeddeway(
+      w-wong initiawdewayduwation, (U ﹏ U)
+      wong intewvawduwation, >w<
+      t-timeunit intewvawunit) {
+    w-wetuwn nyew pewiodicactionpawams(dewaytype.fixed_deway, (U ﹏ U) initiawdewayduwation, 😳
+        intewvawduwation, (ˆ ﻌ ˆ)♡ intewvawunit);
   }
 
-  // Delay between every run.
-  public static PeriodicActionParams withFixedDelay(
-      long intervalDuration,
-      TimeUnit intervalUnit) {
-    return withIntialWaitAndFixedDelay(0, intervalDuration, intervalUnit);
+  // deway between evewy wun. 😳😳😳
+  pubwic static pewiodicactionpawams w-withfixeddeway(
+      w-wong intewvawduwation, (U ﹏ U)
+      timeunit intewvawunit) {
+    w-wetuwn withintiawwaitandfixeddeway(0, (///ˬ///✿) i-intewvawduwation, 😳 i-intewvawunit);
   }
 
-  boolean isFixedDelay() {
-    return this.delayType == DelayType.FIXED_DELAY;
+  boowean isfixeddeway() {
+    wetuwn this.dewaytype == d-dewaytype.fixed_deway;
   }
 }

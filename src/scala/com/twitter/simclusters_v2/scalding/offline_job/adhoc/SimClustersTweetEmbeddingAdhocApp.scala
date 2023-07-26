@@ -1,209 +1,209 @@
-package com.twitter.simclusters_v2.scalding.offline_job.adhoc
+package com.twittew.simcwustews_v2.scawding.offwine_job.adhoc
 
-import com.twitter.bijection.{Bufferable, Injection}
-import com.twitter.scalding._
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{ClusterId, TweetId, UserId}
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2InterestedIn20M145KUpdatedScalaDataset
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
-import com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJobUtil
-import com.twitter.simclusters_v2.summingbird.common.{Configs, SimClustersInterestedInUtil}
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import java.util.TimeZone
+impowt c-com.twittew.bijection.{buffewabwe, ^^;; i-injection}
+i-impowt com.twittew.scawding._
+i-impowt com.twittew.scawding.commons.souwce.vewsionedkeyvawsouwce
+i-impowt com.twittew.scawding_intewnaw.dawv2.daw
+i-impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.{expwicitwocation, 🥺 p-pwocatwa}
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.simcwustews_v2.common.{cwustewid, XD tweetid, usewid}
+impowt com.twittew.simcwustews_v2.hdfs_souwces.simcwustewsv2intewestedin20m145kupdatedscawadataset
+i-impowt com.twittew.simcwustews_v2.scawding.common.matwix.{spawsematwix, spawsewowmatwix}
+impowt com.twittew.simcwustews_v2.scawding.offwine_job.simcwustewsoffwinejobutiw
+i-impowt com.twittew.simcwustews_v2.summingbiwd.common.{configs, (U ᵕ U❁) simcwustewsintewestedinutiw}
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.cwustewsusewisintewestedin
+impowt com.twittew.wtf.scawding.jobs.common.adhocexecutionapp
+impowt java.utiw.timezone
 
 /**
- * Adhoc job for computing Tweet SimClusters embeddings.
- * The output of this job includes two data sets: tweet -> top clusters (or Tweet Embedding), and cluster -> top tweets.
- * These data sets are supposed to be the snapshot of the two index at the end of the dataRange you run.
+ * adhoc job fow c-computing tweet simcwustews embeddings. :3
+ * t-the o-output of this job incwudes two data sets: tweet -> top cwustews (ow tweet embedding), ( ͡o ω ͡o ) a-and cwustew -> top tweets. òωó
+ * these data sets awe supposed to be the snapshot o-of the two index at the end o-of the datawange y-you wun. σωσ
  *
- * Note that you can also use the output from SimClustersOfflineJobScheduledApp for analysis purpose.
- * The outputs from that job might be more close to the data we use in production.
- * The benefit of having this job is to keep the flexibility of experiment different ideas.
+ * n-nyote that you c-can awso use the output fwom simcwustewsoffwinejobscheduwedapp fow anawysis puwpose. (U ᵕ U❁)
+ * t-the outputs fwom that job might be mowe c-cwose to the data we use in pwoduction. (✿oωo)
+ * the benefit of having this job is to keep the fwexibiwity o-of expewiment diffewent ideas. ^^
  *
- * It is recommended to put at least 2 days in the --date (dataRange in the code) in order to make sure
- * we have enough engagement data for tweets have more engagements in the last 1+ days.
- *
- *
- * There are several parameters to tune in the job. They are explained in the inline comments.
+ * i-it is w-wecommended to p-put at weast 2 days in the --date (datawange in the code) in owdew t-to make suwe
+ * w-we have enough engagement data f-fow tweets have m-mowe engagements in the wast 1+ d-days. ^•ﻌ•^
  *
  *
- * To run the job:
-    scalding remote run \
-    --target src/scala/com/twitter/simclusters_v2/scalding/offline_job/adhoc:tweet_embedding-adhoc \
-    --user recos-platform \
-    --reducers 1000 \
-    --main-class com.twitter.simclusters_v2.scalding.offline_job.adhoc.SimClustersTweetEmbeddingAdhocApp -- \
+ * thewe awe sevewaw p-pawametews to tune in the job. XD they awe expwained i-in the inwine comments.
+ *
+ *
+ * t-to wun the job:
+    scawding w-wemote wun \
+    --tawget s-swc/scawa/com/twittew/simcwustews_v2/scawding/offwine_job/adhoc:tweet_embedding-adhoc \
+    --usew wecos-pwatfowm \
+    --weducews 1000 \
+    --main-cwass com.twittew.simcwustews_v2.scawding.offwine_job.adhoc.simcwustewstweetembeddingadhocapp -- \
     --date 2021-01-27 2021-01-28 \
-    --score_type logFav \
-    --output_dir /user/recos-platform/adhoc/tweet_embedding_01_27_28_unnormalized_t9
+    --scowe_type wogfav \
+    --output_diw /usew/wecos-pwatfowm/adhoc/tweet_embedding_01_27_28_unnowmawized_t9
  */
-object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
+object simcwustewstweetembeddingadhocapp extends adhocexecutionapp {
 
-  import SimClustersOfflineJobUtil._
+  i-impowt simcwustewsoffwinejobutiw._
 
-  override def runOnDateRange(
-    args: Args
+  o-ovewwide def wunondatewange(
+    a-awgs: a-awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    impwicit d-datewange: datewange,
+    timezone: timezone, :3
+    uniqueid: u-uniqueid
+  ): execution[unit] = {
 
-    val outputDir = args("output_dir")
+    vaw outputdiw = awgs("output_diw")
 
-    // what interestedIn score to use. logFav is what we use in production
-    val scoringMethod = args.getOrElse("score_type", "logFav")
+    // nyani intewestedin s-scowe to use. (ꈍᴗꈍ) wogfav is n-nani we use in p-pwoduction
+    vaw s-scowingmethod = awgs.getowewse("scowe_type", :3 "wogfav")
 
-    // whether to use normalized score in the cluster -> top tweets.
-    // Currently, we do not do this in production. DONOT turn it on unless you know what you are doing.
-    // NOTE that for scalding args, "--run_normalized" will just set the arg to be true, and
-    // even you use "--run_normalized false", it will still be true.
-    val usingNormalizedScoringFunction = args.boolean("run_normalized")
+    // w-whethew to use n-nowmawized scowe i-in the cwustew -> t-top tweets. (U ﹏ U)
+    // cuwwentwy, UwU we do nyot do t-this in pwoduction. 😳😳😳 d-donot tuwn it o-on unwess you k-know nyani you awe d-doing. XD
+    // nyote that fow scawding awgs, o.O "--wun_nowmawized" wiww just set t-the awg to be twue, (⑅˘꒳˘) and
+    // even you use "--wun_nowmawized fawse", 😳😳😳 it wiww stiww be twue. nyaa~~
+    v-vaw usingnowmawizedscowingfunction = awgs.boowean("wun_nowmawized")
 
-    // filter out tweets that has less than X favs in the dateRange.
-    val tweetFavThreshold = args.long("tweet_fav_threshold", 0L)
+    // fiwtew out tweets that h-has wess than x-x favs in the d-datewange. rawr
+    vaw tweetfavthweshowd = a-awgs.wong("tweet_fav_thweshowd", -.- 0w)
 
-    // tweet -> top clusters will be saved in this subfolder
-    val tweetTopKClustersOutputPath: String = outputDir + "/tweet_top_k_clusters"
+    // tweet -> top c-cwustews wiww be s-saved in this subfowdew
+    vaw tweettopkcwustewsoutputpath: stwing = outputdiw + "/tweet_top_k_cwustews"
 
-    // cluster -> top tweets will be saved in this subfolder
-    val clusterTopKTweetsOutputPath: String = outputDir + "/cluster_top_k_tweets"
+    // cwustew -> top tweets wiww be s-saved in this subfowdew
+    vaw c-cwustewtopktweetsoutputpath: stwing = outputdiw + "/cwustew_top_k_tweets"
 
-    val interestedInData: TypedPipe[(Long, ClustersUserIsInterestedIn)] =
-      DAL
-        .readMostRecentSnapshot(
-          SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
-          dateRange.embiggen(Days(14))
+    v-vaw intewestedindata: t-typedpipe[(wong, (✿oωo) cwustewsusewisintewestedin)] =
+      daw
+        .weadmostwecentsnapshot(
+          s-simcwustewsv2intewestedin20m145kupdatedscawadataset, /(^•ω•^)
+          d-datewange.embiggen(days(14))
         )
-        .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-        .toTypedPipe
+        .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+        .totypedpipe
         .map {
-          case KeyVal(key, value) => (key, value)
+          case keyvaw(key, 🥺 v-vawue) => (key, ʘwʘ v-vawue)
         }
 
-    // read user-tweet fav data. set the weight to be a decayed value. they will be decayed to the dateRang.end
-    val userTweetFavData: SparseMatrix[UserId, TweetId, Double] =
-      SparseMatrix(readTimelineFavoriteData(dateRange)).tripleApply {
-        case (userId, tweetId, timestamp) =>
+    // wead usew-tweet fav data. UwU set the weight to be a decayed vawue. XD t-they wiww be d-decayed to the d-datewang.end
+    vaw usewtweetfavdata: s-spawsematwix[usewid, (✿oωo) t-tweetid, doubwe] =
+      s-spawsematwix(weadtimewinefavowitedata(datewange)).twipweappwy {
+        case (usewid, :3 tweetid, timestamp) =>
           (
-            userId,
-            tweetId,
-            thriftDecayedValueMonoid
-              .plus(
-                thriftDecayedValueMonoid.build(1.0, timestamp),
-                thriftDecayedValueMonoid.build(0.0, dateRange.end.timestamp)
+            usewid, (///ˬ///✿)
+            t-tweetid, nyaa~~
+            t-thwiftdecayedvawuemonoid
+              .pwus(
+                thwiftdecayedvawuemonoid.buiwd(1.0, >w< timestamp),
+                t-thwiftdecayedvawuemonoid.buiwd(0.0, -.- d-datewange.end.timestamp)
               )
-              .value)
+              .vawue)
       }
 
-    // filter out tweets without x favs
-    val tweetSubset =
-      userTweetFavData.colNnz.filter(
-        _._2 > tweetFavThreshold.toDouble
-      ) // keep tweets with at least x favs
+    // fiwtew out tweets without x favs
+    vaw tweetsubset =
+      u-usewtweetfavdata.cownnz.fiwtew(
+        _._2 > tweetfavthweshowd.todoubwe
+      ) // keep tweets with at weast x favs
 
-    val userTweetFavDataSubset = userTweetFavData.filterCols(tweetSubset.keys)
+    vaw u-usewtweetfavdatasubset = usewtweetfavdata.fiwtewcows(tweetsubset.keys)
 
-    // construct user-simclusters matrix
-    val userSimClustersInterestedInData: SparseRowMatrix[UserId, ClusterId, Double] =
-      SparseRowMatrix(
-        interestedInData.map {
-          case (userId, clusters) =>
-            val topClustersWithScores =
-              SimClustersInterestedInUtil
-                .topClustersWithScores(clusters)
-                .collect {
-                  case (clusterId, scores)
-                      if scores.favScore > Configs
-                        .favScoreThresholdForUserInterest(
-                          clusters.knownForModelVersion
-                        ) => // this is the same threshold used in the summingbird job
-                    scoringMethod match {
+    // constwuct usew-simcwustews m-matwix
+    v-vaw usewsimcwustewsintewestedindata: spawsewowmatwix[usewid, (✿oωo) cwustewid, (˘ω˘) doubwe] =
+      spawsewowmatwix(
+        i-intewestedindata.map {
+          c-case (usewid, rawr cwustews) =>
+            vaw topcwustewswithscowes =
+              s-simcwustewsintewestedinutiw
+                .topcwustewswithscowes(cwustews)
+                .cowwect {
+                  case (cwustewid, OwO s-scowes)
+                      if scowes.favscowe > configs
+                        .favscowethweshowdfowusewintewest(
+                          cwustews.knownfowmodewvewsion
+                        ) => // t-this is the same thweshowd used i-in the summingbiwd j-job
+                    scowingmethod m-match {
                       case "fav" =>
-                        clusterId -> scores.clusterNormalizedFavScore
-                      case "follow" =>
-                        clusterId -> scores.clusterNormalizedFollowScore
-                      case "logFav" =>
-                        clusterId -> scores.clusterNormalizedLogFavScore
-                      case _ =>
-                        throw new IllegalArgumentException(
-                          "score_type can only be fav, follow or logFav")
+                        c-cwustewid -> s-scowes.cwustewnowmawizedfavscowe
+                      c-case "fowwow" =>
+                        cwustewid -> s-scowes.cwustewnowmawizedfowwowscowe
+                      c-case "wogfav" =>
+                        cwustewid -> scowes.cwustewnowmawizedwogfavscowe
+                      c-case _ =>
+                        t-thwow nyew iwwegawawgumentexception(
+                          "scowe_type can o-onwy be fav, ^•ﻌ•^ fowwow ow wogfav")
                     }
                 }
-                .filter(_._2 > 0.0)
-                .toMap
-            userId -> topClustersWithScores
-        },
-        isSkinnyMatrix = true
+                .fiwtew(_._2 > 0.0)
+                .tomap
+            usewid -> topcwustewswithscowes
+        }, UwU
+        i-isskinnymatwix = twue
       )
 
-    // multiply tweet -> user matrix with user -> cluster matrix to get tweet -> cluster matrix
-    val tweetClusterScoreMatrix = if (usingNormalizedScoringFunction) {
-      userTweetFavDataSubset.transpose.rowL2Normalize
-        .multiplySkinnySparseRowMatrix(userSimClustersInterestedInData)
-    } else {
-      userTweetFavDataSubset.transpose.multiplySkinnySparseRowMatrix(
-        userSimClustersInterestedInData)
+    // m-muwtipwy t-tweet -> usew matwix with usew -> cwustew matwix to get tweet -> c-cwustew matwix
+    v-vaw tweetcwustewscowematwix = i-if (usingnowmawizedscowingfunction) {
+      u-usewtweetfavdatasubset.twanspose.woww2nowmawize
+        .muwtipwyskinnyspawsewowmatwix(usewsimcwustewsintewestedindata)
+    } ewse {
+      usewtweetfavdatasubset.twanspose.muwtipwyskinnyspawsewowmatwix(
+        u-usewsimcwustewsintewestedindata)
     }
 
-    // get the tweet -> top clusters by taking top K in each row
-    val tweetTopClusters = tweetClusterScoreMatrix
-      .sortWithTakePerRow(Configs.topKClustersPerTweet)(Ordering.by(-_._2))
-      .fork
+    // get the tweet -> top cwustews by taking top k in each wow
+    vaw tweettopcwustews = t-tweetcwustewscowematwix
+      .sowtwithtakepewwow(configs.topkcwustewspewtweet)(owdewing.by(-_._2))
+      .fowk
 
-    // get the cluster -> top tweets by taking top K in each colum
-    val clusterTopTweets = tweetClusterScoreMatrix
-      .sortWithTakePerCol(Configs.topKTweetsPerCluster)(Ordering.by(-_._2))
-      .fork
+    // get the cwustew -> t-top tweets by taking top k in e-each cowum
+    vaw cwustewtoptweets = t-tweetcwustewscowematwix
+      .sowtwithtakepewcow(configs.topktweetspewcwustew)(owdewing.by(-_._2))
+      .fowk
 
-    // injections for saving a list
-    implicit val inj1: Injection[List[(Int, Double)], Array[Byte]] =
-      Bufferable.injectionOf[List[(Int, Double)]]
-    implicit val inj2: Injection[List[(Long, Double)], Array[Byte]] =
-      Bufferable.injectionOf[List[(Long, Double)]]
+    // injections fow saving a-a wist
+    i-impwicit vaw inj1: i-injection[wist[(int, (˘ω˘) d-doubwe)], a-awway[byte]] =
+      buffewabwe.injectionof[wist[(int, (///ˬ///✿) doubwe)]]
+    impwicit vaw inj2: injection[wist[(wong, σωσ doubwe)], /(^•ω•^) awway[byte]] =
+      buffewabwe.injectionof[wist[(wong, 😳 d-doubwe)]]
 
-    // save the data sets and also output to some tsv files for eyeballing the results
-    Execution
+    // s-save the data s-sets and awso output to some t-tsv fiwes fow eyebawwing the wesuwts
+    execution
       .zip(
-        tweetTopClusters
-          .mapValues(_.toList)
-          .writeExecution(
-            VersionedKeyValSource[TweetId, List[(ClusterId, Double)]](tweetTopKClustersOutputPath)
-          ),
-        tweetTopClusters
+        tweettopcwustews
+          .mapvawues(_.towist)
+          .wwiteexecution(
+            v-vewsionedkeyvawsouwce[tweetid, 😳 w-wist[(cwustewid, (⑅˘꒳˘) doubwe)]](tweettopkcwustewsoutputpath)
+          ), 😳😳😳
+        t-tweettopcwustews
           .map {
-            case (tweetId, topKClusters) =>
-              tweetId -> topKClusters
+            case (tweetid, 😳 topkcwustews) =>
+              t-tweetid -> t-topkcwustews
                 .map {
-                  case (clusterId, score) =>
-                    s"$clusterId:" + "%.3g".format(score)
+                  case (cwustewid, XD s-scowe) =>
+                    s-s"$cwustewid:" + "%.3g".fowmat(scowe)
                 }
-                .mkString(",")
+                .mkstwing(",")
           }
-          .writeExecution(
-            TypedTsv(tweetTopKClustersOutputPath + "_tsv")
-          ),
-        tweetSubset.writeExecution(TypedTsv(tweetTopKClustersOutputPath + "_tweet_favs")),
-        clusterTopTweets
-          .mapValues(_.toList)
-          .writeExecution(
-            VersionedKeyValSource[ClusterId, List[(TweetId, Double)]](clusterTopKTweetsOutputPath)
-          ),
-        clusterTopTweets
+          .wwiteexecution(
+            typedtsv(tweettopkcwustewsoutputpath + "_tsv")
+          ), mya
+        tweetsubset.wwiteexecution(typedtsv(tweettopkcwustewsoutputpath + "_tweet_favs")), ^•ﻌ•^
+        cwustewtoptweets
+          .mapvawues(_.towist)
+          .wwiteexecution(
+            vewsionedkeyvawsouwce[cwustewid, ʘwʘ wist[(tweetid, ( ͡o ω ͡o ) d-doubwe)]](cwustewtopktweetsoutputpath)
+          ), mya
+        c-cwustewtoptweets
           .map {
-            case (clusterId, topKTweets) =>
-              clusterId -> topKTweets
+            c-case (cwustewid, o.O t-topktweets) =>
+              c-cwustewid -> topktweets
                 .map {
-                  case (tweetId, score) => s"$tweetId:" + "%.3g".format(score)
+                  case (tweetid, (✿oωo) s-scowe) => s-s"$tweetid:" + "%.3g".fowmat(scowe)
                 }
-                .mkString(",")
+                .mkstwing(",")
           }
-          .writeExecution(
-            TypedTsv(clusterTopKTweetsOutputPath + "_tsv")
+          .wwiteexecution(
+            typedtsv(cwustewtopktweetsoutputpath + "_tsv")
           )
       )
       .unit

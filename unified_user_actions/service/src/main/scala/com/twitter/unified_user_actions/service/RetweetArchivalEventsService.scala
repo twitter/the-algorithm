@@ -1,26 +1,26 @@
-package com.twitter.unified_user_actions.service
+package com.twittew.unified_usew_actions.sewvice
 
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.inject.server.TwitterServer
-import com.twitter.kafka.client.processor.AtLeastOnceProcessor
-import com.twitter.tweetypie.thriftscala.RetweetArchivalEvent
-import com.twitter.unified_user_actions.service.module.KafkaProcessorRetweetArchivalEventsModule
+impowt com.twittew.finatwa.decidew.moduwes.decidewmoduwe
+i-impowt c-com.twittew.finatwa.kafka.sewde.unkeyed
+i-impowt c-com.twittew.inject.sewvew.twittewsewvew
+i-impowt com.twittew.kafka.cwient.pwocessow.atweastoncepwocessow
+i-impowt com.twittew.tweetypie.thwiftscawa.wetweetawchivawevent
+i-impowt com.twittew.unified_usew_actions.sewvice.moduwe.kafkapwocessowwetweetawchivaweventsmoduwe
 
-object RetweetArchivalEventsServiceMain extends RetweetArchivalEventsService
+o-object wetweetawchivaweventssewvicemain extends wetweetawchivaweventssewvice
 
-class RetweetArchivalEventsService extends TwitterServer {
+cwass wetweetawchivaweventssewvice extends twittewsewvew {
 
-  override val modules = Seq(
-    KafkaProcessorRetweetArchivalEventsModule,
-    DeciderModule
+  o-ovewwide vaw moduwes = seq(
+    kafkapwocessowwetweetawchivaweventsmoduwe,
+    d-decidewmoduwe
   )
 
-  override protected def setup(): Unit = {}
+  ovewwide p-pwotected def setup(): unit = {}
 
-  override protected def start(): Unit = {
-    val processor = injector.instance[AtLeastOnceProcessor[UnKeyed, RetweetArchivalEvent]]
-    closeOnExit(processor)
-    processor.start()
+  ovewwide pwotected def stawt(): u-unit = {
+    vaw pwocessow = i-injectow.instance[atweastoncepwocessow[unkeyed, 😳 w-wetweetawchivawevent]]
+    cwoseonexit(pwocessow)
+    pwocessow.stawt()
   }
 }

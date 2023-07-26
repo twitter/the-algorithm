@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic
 
-sealed trait TopicFollowPromptDisplayType
+seawed twait topicfowwowpwomptdispwaytype
 
-case object IncentiveFocusTopicFollowPromptDisplayType extends TopicFollowPromptDisplayType
-case object TopicFocusTopicFollowPromptDisplayType extends TopicFollowPromptDisplayType
+c-case o-object incentivefocustopicfowwowpwomptdispwaytype e-extends topicfowwowpwomptdispwaytype
+c-case object t-topicfocustopicfowwowpwomptdispwaytype e-extends t-topicfowwowpwomptdispwaytype

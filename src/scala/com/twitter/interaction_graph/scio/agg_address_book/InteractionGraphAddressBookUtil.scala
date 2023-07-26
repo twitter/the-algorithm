@@ -1,93 +1,93 @@
-package com.twitter.interaction_graph.scio.agg_address_book
+package com.twittew.intewaction_gwaph.scio.agg_addwess_book
 
-import com.spotify.scio.values.SCollection
-import com.twitter.addressbook.matches.thriftscala.UserMatchesRecord
-import com.twitter.interaction_graph.scio.common.FeatureGeneratorUtil
-import com.twitter.interaction_graph.scio.common.InteractionGraphRawInput
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.Vertex
+impowt c-com.spotify.scio.vawues.scowwection
+i-impowt com.twittew.addwessbook.matches.thwiftscawa.usewmatcheswecowd
+i-impowt c-com.twittew.intewaction_gwaph.scio.common.featuwegenewatowutiw
+i-impowt com.twittew.intewaction_gwaph.scio.common.intewactiongwaphwawinput
+i-impowt c-com.twittew.intewaction_gwaph.thwiftscawa.edge
+i-impowt com.twittew.intewaction_gwaph.thwiftscawa.featuwename
+impowt com.twittew.intewaction_gwaph.thwiftscawa.vewtex
 
-object InteractionGraphAddressBookUtil {
-  val EMAIL = "email"
-  val PHONE = "phone"
-  val BOTH = "both"
+object intewactiongwaphaddwessbookutiw {
+  vaw emaiw = "emaiw"
+  vaw phone = "phone"
+  vaw b-both = "both"
 
-  val DefaultAge = 1
-  val DegaultFeatureValue = 1.0
+  vaw defauwtage = 1
+  vaw degauwtfeatuwevawue = 1.0
 
-  def process(
-    addressBook: SCollection[UserMatchesRecord]
+  d-def pwocess(
+    addwessbook: s-scowwection[usewmatcheswecowd]
   )(
-    implicit addressBookCounters: InteractionGraphAddressBookCountersTrait
-  ): (SCollection[Vertex], SCollection[Edge]) = {
-    // First construct a data with (src, dst, name), where name can be "email", "phone", or "both"
-    val addressBookTypes: SCollection[((Long, Long), String)] = addressBook.flatMap { record =>
-      record.forwardMatches.toSeq.flatMap { matchDetails =>
-        val matchedUsers = (record.userId, matchDetails.userId)
-        (matchDetails.matchedByEmail, matchDetails.matchedByPhone) match {
-          case (true, true) =>
-            Seq((matchedUsers, EMAIL), (matchedUsers, PHONE), (matchedUsers, BOTH))
-          case (true, false) => Seq((matchedUsers, EMAIL))
-          case (false, true) => Seq((matchedUsers, PHONE))
-          case _ => Seq.empty
+    impwicit addwessbookcountews: intewactiongwaphaddwessbookcountewstwait
+  ): (scowwection[vewtex], (U ﹏ U) scowwection[edge]) = {
+    // f-fiwst constwuct a data with (swc, mya d-dst, ʘwʘ nyame), whewe n-nyame can be "emaiw", (˘ω˘) "phone", ow "both"
+    vaw addwessbooktypes: scowwection[((wong, (U ﹏ U) wong), s-stwing)] = addwessbook.fwatmap { wecowd =>
+      wecowd.fowwawdmatches.toseq.fwatmap { matchdetaiws =>
+        vaw matchedusews = (wecowd.usewid, ^•ﻌ•^ m-matchdetaiws.usewid)
+        (matchdetaiws.matchedbyemaiw, matchdetaiws.matchedbyphone) m-match {
+          case (twue, (˘ω˘) t-twue) =>
+            s-seq((matchedusews, :3 e-emaiw), ^^;; (matchedusews, 🥺 phone), (matchedusews, (⑅˘꒳˘) both))
+          c-case (twue, nyaa~~ fawse) => seq((matchedusews, :3 emaiw))
+          c-case (fawse, ( ͡o ω ͡o ) twue) => seq((matchedusews, mya phone))
+          case _ => seq.empty
         }
       }
     }
 
-    // Then construct the input data for feature calculation
-    val addressBookFeatureInput: SCollection[InteractionGraphRawInput] = addressBookTypes
+    // t-then constwuct the input d-data fow featuwe c-cawcuwation
+    v-vaw addwessbookfeatuweinput: scowwection[intewactiongwaphwawinput] = addwessbooktypes
       .map {
-        case ((src, dst), name) =>
-          if (src < dst)
-            ((src, dst, name), false)
-          else
-            ((dst, src, name), true)
-      }.groupByKey
-      .flatMap {
-        case ((src, dst, name), iterator) =>
-          val isReversedValues = iterator.toSeq
-          // check if (src, dst) is mutual follow
-          val isMutualFollow = isReversedValues.size == 2
-          // get correct srcId and dstId if there is no mutual follow and they are reversed
-          val (srcId, dstId) = {
-            if (!isMutualFollow && isReversedValues.head)
-              (dst, src)
-            else
-              (src, dst)
+        case ((swc, (///ˬ///✿) dst), n-nyame) =>
+          i-if (swc < dst)
+            ((swc, (˘ω˘) d-dst, nyame), f-fawse)
+          ewse
+            ((dst, ^^;; swc, n-nyame), (✿oωo) twue)
+      }.gwoupbykey
+      .fwatmap {
+        case ((swc, (U ﹏ U) d-dst, nyame), -.- itewatow) =>
+          vaw i-iswevewsedvawues = itewatow.toseq
+          // c-check if (swc, ^•ﻌ•^ dst) is mutuaw fowwow
+          v-vaw ismutuawfowwow = i-iswevewsedvawues.size == 2
+          // get cowwect swcid and dstid if thewe is no mutuaw fowwow and they awe wevewsed
+          v-vaw (swcid, rawr d-dstid) = {
+            if (!ismutuawfowwow && i-iswevewsedvawues.head)
+              (dst, (˘ω˘) s-swc)
+            e-ewse
+              (swc, nyaa~~ dst)
           }
-          // get the feature name and mutual follow name
-          val (featureName, mfFeatureName) = name match {
-            case EMAIL =>
-              addressBookCounters.emailFeatureInc()
-              (FeatureName.AddressBookEmail, FeatureName.AddressBookMutualEdgeEmail)
-            case PHONE =>
-              addressBookCounters.phoneFeatureInc()
-              (FeatureName.AddressBookPhone, FeatureName.AddressBookMutualEdgePhone)
-            case BOTH =>
-              addressBookCounters.bothFeatureInc()
-              (FeatureName.AddressBookInBoth, FeatureName.AddressBookMutualEdgeInBoth)
+          // get the featuwe nyame and mutuaw f-fowwow nyame
+          vaw (featuwename, UwU mffeatuwename) = nyame match {
+            c-case emaiw =>
+              addwessbookcountews.emaiwfeatuweinc()
+              (featuwename.addwessbookemaiw, :3 f-featuwename.addwessbookmutuawedgeemaiw)
+            c-case p-phone =>
+              addwessbookcountews.phonefeatuweinc()
+              (featuwename.addwessbookphone, (⑅˘꒳˘) f-featuwename.addwessbookmutuawedgephone)
+            c-case b-both =>
+              a-addwessbookcountews.bothfeatuweinc()
+              (featuwename.addwessbookinboth, featuwename.addwessbookmutuawedgeinboth)
           }
-          // construct the TypedPipe for feature calculation
-          if (isMutualFollow) {
-            Iterator(
-              InteractionGraphRawInput(srcId, dstId, featureName, DefaultAge, DegaultFeatureValue),
-              InteractionGraphRawInput(dstId, srcId, featureName, DefaultAge, DegaultFeatureValue),
-              InteractionGraphRawInput(
-                srcId,
-                dstId,
-                mfFeatureName,
-                DefaultAge,
-                DegaultFeatureValue),
-              InteractionGraphRawInput(dstId, srcId, mfFeatureName, DefaultAge, DegaultFeatureValue)
+          // constwuct t-the typedpipe f-fow featuwe c-cawcuwation
+          i-if (ismutuawfowwow) {
+            i-itewatow(
+              intewactiongwaphwawinput(swcid, dstid, (///ˬ///✿) featuwename, ^^;; defauwtage, d-degauwtfeatuwevawue), >_<
+              intewactiongwaphwawinput(dstid, rawr x3 swcid, featuwename, /(^•ω•^) defauwtage, :3 degauwtfeatuwevawue), (ꈍᴗꈍ)
+              intewactiongwaphwawinput(
+                s-swcid, /(^•ω•^)
+                dstid, (⑅˘꒳˘)
+                mffeatuwename, ( ͡o ω ͡o )
+                defauwtage, òωó
+                d-degauwtfeatuwevawue), (⑅˘꒳˘)
+              i-intewactiongwaphwawinput(dstid, XD s-swcid, mffeatuwename, -.- defauwtage, :3 d-degauwtfeatuwevawue)
             )
-          } else {
-            Iterator(
-              InteractionGraphRawInput(srcId, dstId, featureName, DefaultAge, DegaultFeatureValue))
+          } ewse {
+            i-itewatow(
+              i-intewactiongwaphwawinput(swcid, nyaa~~ dstid, 😳 featuwename, defauwtage, (⑅˘꒳˘) degauwtfeatuwevawue))
           }
       }
 
-    // Calculate the Features
-    FeatureGeneratorUtil.getFeatures(addressBookFeatureInput)
+    // cawcuwate the featuwes
+    featuwegenewatowutiw.getfeatuwes(addwessbookfeatuweinput)
   }
 }

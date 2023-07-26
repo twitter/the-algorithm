@@ -1,11 +1,11 @@
-package com.twitter.tweetypie.thriftscala.entities
+package com.twittew.tweetypie.thwiftscawa.entities
 
-import com.twitter.tweetypie.thriftscala.CashtagEntity
-import com.twitter.tweetypie.tweettext.TextEntity
+impowt com.twittew.tweetypie.thwiftscawa.cashtagentity
+i-impowt c-com.twittew.tweetypie.tweettext.textentity
 
-object CashtagTextEntity extends TextEntity[CashtagEntity] {
-  override def fromIndex(entity: CashtagEntity): Short = entity.fromIndex
-  override def toIndex(entity: CashtagEntity): Short = entity.toIndex
-  override def move(entity: CashtagEntity, fromIndex: Short, toIndex: Short): CashtagEntity =
-    entity.copy(fromIndex = fromIndex, toIndex = toIndex)
+o-object c-cashtagtextentity e-extends textentity[cashtagentity] {
+  o-ovewwide d-def fwomindex(entity: c-cashtagentity): showt = entity.fwomindex
+  ovewwide def toindex(entity: c-cashtagentity): showt = entity.toindex
+  ovewwide d-def move(entity: cashtagentity, ^^;; f-fwomindex: showt, >_< toindex: showt): cashtagentity =
+    entity.copy(fwomindex = f-fwomindex, mya toindex = toindex)
 }

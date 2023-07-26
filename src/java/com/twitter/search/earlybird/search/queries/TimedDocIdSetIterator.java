@@ -1,128 +1,128 @@
-package com.twitter.search.earlybird.search.queries;
+package com.twittew.seawch.eawwybiwd.seawch.quewies;
 
-import java.io.IOException;
-import javax.annotation.Nullable;
+impowt java.io.ioexception;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.google.common.annotations.VisibleForTesting;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
 
-import org.apache.lucene.search.DocIdSetIterator;
+i-impowt o-owg.apache.wucene.seawch.docidsetitewatow;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.search.EarlyTerminationState;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
+i-impowt com.twittew.common.utiw.cwock;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt c-com.twittew.seawch.common.seawch.eawwytewminationstate;
+impowt com.twittew.seawch.common.seawch.tewminationtwackew;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
 
 /**
- * DocIdSetIterator whose nextDoc() and advance() will early terminate by returning NO_MORE_DOCS
- * after the given deadline.
+ * d-docidsetitewatow whose nyextdoc() and advance() w-wiww eawwy tewminate by wetuwning n-nyo_mowe_docs
+ * aftew the given deadwine. :3
  */
-public class TimedDocIdSetIterator extends DocIdSetIterator {
-  // check deadline every NEXT_CALL_TIMEOUT_CHECK_PERIOD calls to nextDoc()
-  @VisibleForTesting
-  protected static final int NEXT_CALL_TIMEOUT_CHECK_PERIOD =
-      EarlybirdConfig.getInt("timed_doc_id_set_next_doc_deadline_check_period", 1000);
+pubwic cwass t-timeddocidsetitewatow extends d-docidsetitewatow {
+  // c-check deadwine evewy nyext_caww_timeout_check_pewiod cawws to nyextdoc()
+  @visibwefowtesting
+  pwotected s-static finaw int next_caww_timeout_check_pewiod =
+      eawwybiwdconfig.getint("timed_doc_id_set_next_doc_deadwine_check_pewiod", ( ͡o ω ͡o ) 1000);
 
 
-  // check deadline every ADVANCE_CALL_TIMEOUT_CHECK_PERIOD calls to advance()
-  private static final int ADVANCE_CALL_TIMEOUT_CHECK_PERIOD =
-      EarlybirdConfig.getInt("timed_doc_id_set_advance_deadline_check_period", 100);
+  // check deadwine evewy advance_caww_timeout_check_pewiod c-cawws to advance()
+  pwivate s-static finaw i-int advance_caww_timeout_check_pewiod =
+      e-eawwybiwdconfig.getint("timed_doc_id_set_advance_deadwine_check_pewiod", 100);
 
-  private final Clock clock;
-  private final DocIdSetIterator innerIterator;
-  private final SearchCounter timeoutCountStat;
+  p-pwivate finaw cwock cwock;
+  pwivate finaw docidsetitewatow innewitewatow;
+  p-pwivate finaw seawchcountew timeoutcountstat;
 
-  @Nullable
-  private final TerminationTracker terminationTracker;
-  private final long deadlineMillisFromEpoch;
+  @nuwwabwe
+  pwivate f-finaw tewminationtwackew tewminationtwackew;
+  pwivate finaw wong deadwinemiwwisfwomepoch;
 
-  private int docId = -1;
-  private int nextCounter = 0;
-  private int advanceCounter = 0;
+  pwivate int docid = -1;
+  pwivate i-int nyextcountew = 0;
+  pwivate i-int advancecountew = 0;
 
-  public TimedDocIdSetIterator(DocIdSetIterator innerIterator,
-                               @Nullable TerminationTracker terminationTracker,
-                               final long timeoutOverride,
-                               @Nullable SearchCounter timeoutCountStat) {
-    this(innerIterator, terminationTracker, timeoutOverride, timeoutCountStat, Clock.SYSTEM_CLOCK);
+  p-pubwic timeddocidsetitewatow(docidsetitewatow i-innewitewatow, mya
+                               @nuwwabwe tewminationtwackew tewminationtwackew, (///ˬ///✿)
+                               finaw w-wong timeoutovewwide, (˘ω˘)
+                               @nuwwabwe s-seawchcountew timeoutcountstat) {
+    this(innewitewatow, ^^;; t-tewminationtwackew, (✿oωo) timeoutovewwide, (U ﹏ U) t-timeoutcountstat, -.- cwock.system_cwock);
   }
 
-  protected TimedDocIdSetIterator(DocIdSetIterator innerIterator,
-                                  @Nullable TerminationTracker terminationTracker,
-                                  final long timeoutOverride,
-                                  @Nullable SearchCounter timeoutCountStat,
-                                  Clock clock) {
-    this.clock = clock;
-    this.innerIterator = innerIterator;
-    this.timeoutCountStat = timeoutCountStat;
-    this.terminationTracker = terminationTracker;
+  p-pwotected timeddocidsetitewatow(docidsetitewatow innewitewatow, ^•ﻌ•^
+                                  @nuwwabwe t-tewminationtwackew tewminationtwackew, rawr
+                                  finaw wong timeoutovewwide, (˘ω˘)
+                                  @nuwwabwe s-seawchcountew timeoutcountstat, nyaa~~
+                                  c-cwock cwock) {
+    t-this.cwock = cwock;
+    t-this.innewitewatow = innewitewatow;
+    this.timeoutcountstat = timeoutcountstat;
+    this.tewminationtwackew = tewminationtwackew;
 
-    if (terminationTracker == null) {
-      deadlineMillisFromEpoch = -1;
-    } else {
-      if (timeoutOverride > 0) {
-        deadlineMillisFromEpoch = terminationTracker.getClientStartTimeMillis() + timeoutOverride;
-      } else {
-        deadlineMillisFromEpoch = terminationTracker.getTimeoutEndTimeWithReservation();
+    if (tewminationtwackew == n-nyuww) {
+      d-deadwinemiwwisfwomepoch = -1;
+    } ewse {
+      i-if (timeoutovewwide > 0) {
+        d-deadwinemiwwisfwomepoch = t-tewminationtwackew.getcwientstawttimemiwwis() + timeoutovewwide;
+      } ewse {
+        deadwinemiwwisfwomepoch = t-tewminationtwackew.gettimeoutendtimewithwesewvation();
       }
     }
   }
 
-  @VisibleForTesting
-  protected TimedDocIdSetIterator(DocIdSetIterator innerIterator,
-          final long deadline,
-          @Nullable SearchCounter timeoutCountStat,
-          Clock clock) {
-    this.clock = clock;
-    this.innerIterator = innerIterator;
-    this.timeoutCountStat = timeoutCountStat;
-    this.terminationTracker = null;
+  @visibwefowtesting
+  pwotected timeddocidsetitewatow(docidsetitewatow innewitewatow, UwU
+          finaw wong d-deadwine,
+          @nuwwabwe seawchcountew t-timeoutcountstat, :3
+          c-cwock cwock) {
+    t-this.cwock = cwock;
+    t-this.innewitewatow = i-innewitewatow;
+    t-this.timeoutcountstat = t-timeoutcountstat;
+    this.tewminationtwackew = nyuww;
 
-    this.deadlineMillisFromEpoch = deadline;
+    this.deadwinemiwwisfwomepoch = d-deadwine;
   }
 
 
-  @Override
-  public int docID() {
-    return docId;
+  @ovewwide
+  p-pubwic i-int docid() {
+    w-wetuwn docid;
   }
 
-  @Override
-  public int nextDoc() throws IOException {
-    if (++nextCounter % NEXT_CALL_TIMEOUT_CHECK_PERIOD == 0
-        && clock.nowMillis() > deadlineMillisFromEpoch) {
-      if (timeoutCountStat != null) {
-        timeoutCountStat.increment();
+  @ovewwide
+  p-pubwic int nyextdoc() thwows ioexception {
+    if (++nextcountew % n-nyext_caww_timeout_check_pewiod == 0
+        && cwock.nowmiwwis() > deadwinemiwwisfwomepoch) {
+      if (timeoutcountstat != nyuww) {
+        timeoutcountstat.incwement();
       }
-      if (terminationTracker != null) {
-        terminationTracker.setEarlyTerminationState(
-            EarlyTerminationState.TERMINATED_TIME_OUT_EXCEEDED);
+      i-if (tewminationtwackew != nyuww) {
+        tewminationtwackew.seteawwytewminationstate(
+            eawwytewminationstate.tewminated_time_out_exceeded);
       }
 
-      return docId = NO_MORE_DOCS;
+      w-wetuwn d-docid = no_mowe_docs;
     }
-    return docId = innerIterator.nextDoc();
+    w-wetuwn docid = innewitewatow.nextdoc();
   }
 
-  @Override
-  public int advance(int target) throws IOException {
-    if (++advanceCounter % ADVANCE_CALL_TIMEOUT_CHECK_PERIOD == 0
-        && clock.nowMillis() > deadlineMillisFromEpoch) {
-      if (timeoutCountStat != null) {
-        timeoutCountStat.increment();
+  @ovewwide
+  p-pubwic int advance(int t-tawget) thwows i-ioexception {
+    if (++advancecountew % advance_caww_timeout_check_pewiod == 0
+        && cwock.nowmiwwis() > deadwinemiwwisfwomepoch) {
+      if (timeoutcountstat != n-nyuww) {
+        timeoutcountstat.incwement();
       }
-      if (terminationTracker != null) {
-        terminationTracker.setEarlyTerminationState(
-            EarlyTerminationState.TERMINATED_TIME_OUT_EXCEEDED);
+      i-if (tewminationtwackew != nyuww) {
+        t-tewminationtwackew.seteawwytewminationstate(
+            e-eawwytewminationstate.tewminated_time_out_exceeded);
       }
-      return docId = NO_MORE_DOCS;
+      wetuwn docid = nyo_mowe_docs;
     }
 
-    return docId = innerIterator.advance(target);
+    wetuwn docid = i-innewitewatow.advance(tawget);
   }
 
-  @Override
-  public long cost() {
-    return innerIterator.cost();
+  @ovewwide
+  p-pubwic wong cost() {
+    w-wetuwn innewitewatow.cost();
   }
 }

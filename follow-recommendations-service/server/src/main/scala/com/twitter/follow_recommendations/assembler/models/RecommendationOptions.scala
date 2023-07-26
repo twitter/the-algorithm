@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.assembler.models
+package com.twittew.fowwow_wecommendations.assembwew.modews
 
-sealed trait RecommendationOptions
+seawed t-twait wecommendationoptions
 
-case class UserListOptions(
-  userBioEnabled: Boolean,
-  userBioTruncated: Boolean,
-  userBioMaxLines: Option[Long],
-) extends RecommendationOptions
+c-case cwass usewwistoptions(
+  u-usewbioenabwed: b-boowean, rawr
+  u-usewbiotwuncated: b-boowean,
+  u-usewbiomaxwines: o-option[wong], σωσ
+) extends wecommendationoptions
 
-case class CarouselOptions() extends RecommendationOptions
+case cwass cawousewoptions() extends wecommendationoptions

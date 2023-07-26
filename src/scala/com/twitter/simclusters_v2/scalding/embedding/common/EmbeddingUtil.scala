@@ -1,114 +1,114 @@
-package com.twitter.simclusters_v2.scalding.embedding.common
+package com.twittew.simcwustews_v2.scawding.embedding.common
 
-import com.twitter.simclusters_v2.thriftscala._
-import java.net.InetAddress
-import java.net.UnknownHostException
+impowt c-com.twittew.simcwustews_v2.thwiftscawa._
+i-impowt j-java.net.inetaddwess
+i-impowt j-java.net.unknownhostexception
 
-object EmbeddingUtil {
+object e-embeddingutiw {
 
-  type UserId = Long
-  type ClusterId = Int
-  type ProducerId = Long
-  type EmbeddingScore = Double
-  type SemanticCoreEntityId = Long
-  type HashtagId = String
-  type Language = String
+  t-type usewid = w-wong
+  type cwustewid = int
+  type pwoducewid = wong
+  type embeddingscowe = d-doubwe
+  type semanticcoweentityid = wong
+  t-type hashtagid = stwing
+  type wanguage = s-stwing
 
-  implicit val internalIdOrdering: Ordering[InternalId] = Ordering.by {
-    case InternalId.EntityId(id) => id.toString
-    case InternalId.Hashtag(strId) => strId
-    case InternalId.ClusterId(iid) => iid.toString
-    case InternalId.LocaleEntityId(LocaleEntityId(entityId, lang)) => lang + entityId.toString
+  impwicit vaw intewnawidowdewing: owdewing[intewnawid] = o-owdewing.by {
+    case i-intewnawid.entityid(id) => i-id.tostwing
+    case intewnawid.hashtag(stwid) => stwid
+    case intewnawid.cwustewid(iid) => iid.tostwing
+    c-case intewnawid.wocaweentityid(wocaweentityid(entityid, ( ͡o ω ͡o ) wang)) => wang + entityid.tostwing
   }
 
-  implicit val embeddingTypeOrdering: Ordering[EmbeddingType] = Ordering.by(_.getValue)
+  impwicit vaw embeddingtypeowdewing: o-owdewing[embeddingtype] = owdewing.by(_.getvawue)
 
   /**
-   * We do not need to group by model version since we are making the
-   * This ordering holds the assumption that we would NEVER generate embeddings for two separate
-   * SimClusters KnownFor versions under the same dataset.
+   * w-we do nyot nyeed t-to gwoup by modew v-vewsion since w-we awe making the
+   * this owdewing howds the a-assumption that we wouwd nyevew genewate embeddings f-fow two sepawate
+   * simcwustews knownfow vewsions undew the same dataset. òωó
    */
-  implicit val SimClustersEmbeddingIdOrdering: Ordering[SimClustersEmbeddingId] = Ordering.by {
-    case SimClustersEmbeddingId(embeddingType, _, internalId) => (embeddingType, internalId)
+  impwicit v-vaw simcwustewsembeddingidowdewing: owdewing[simcwustewsembeddingid] = o-owdewing.by {
+    c-case s-simcwustewsembeddingid(embeddingtype, (⑅˘꒳˘) _, intewnawid) => (embeddingtype, XD intewnawid)
   }
 
-  val ModelVersionPathMap: Map[ModelVersion, String] = Map(
-    ModelVersion.Model20m145kDec11 -> "model_20m_145k_dec11",
-    ModelVersion.Model20m145kUpdated -> "model_20m_145k_updated",
-    ModelVersion.Model20m145k2020 -> "model_20m_145k_2020"
+  vaw modewvewsionpathmap: m-map[modewvewsion, -.- s-stwing] = map(
+    modewvewsion.modew20m145kdec11 -> "modew_20m_145k_dec11", :3
+    m-modewvewsion.modew20m145kupdated -> "modew_20m_145k_updated", nyaa~~
+    m-modewvewsion.modew20m145k2020 -> "modew_20m_145k_2020"
   )
 
   /**
-   * Generates the HDFS output path in order to consolidate the offline embeddings datasets under
-   * a common directory pattern.
-   * Prepends "/gcs" if the detected data center is qus1.
+   * genewates the hdfs o-output path in owdew to consowidate t-the offwine embeddings datasets undew
+   * a-a common diwectowy pattewn.
+   * p-pwepends "/gcs" if the detected d-data centew is q-qus1.
    *
-   * @param isAdhoc Whether the dataset was generated from an adhoc run
-   * @param isManhattanKeyVal Whether the dataset is written as KeyVal and is intended to be imported to Manhattan
-   * @param modelVersion The model version of SimClusters KnownFor that is used to generate the embedding
-   * @param pathSuffix Any additional path structure suffixed at the end of the path
-   * @return The consolidated HDFS path, for example:
-   *         /user/cassowary/adhoc/manhattan_sequence_files/simclusters_embeddings/model_20m_145k_updated/...
+   * @pawam isadhoc whethew the dataset was genewated fwom an adhoc wun
+   * @pawam ismanhattankeyvaw w-whethew the dataset i-is wwitten as keyvaw and i-is intended to be i-impowted to manhattan
+   * @pawam m-modewvewsion the modew vewsion of simcwustews knownfow that i-is used to genewate the embedding
+   * @pawam pathsuffix any additionaw path stwuctuwe s-suffixed at the end of the p-path
+   * @wetuwn t-the consowidated h-hdfs path, 😳 fow exampwe:
+   *         /usew/cassowawy/adhoc/manhattan_sequence_fiwes/simcwustews_embeddings/modew_20m_145k_updated/...
    */
-  def getHdfsPath(
-    isAdhoc: Boolean,
-    isManhattanKeyVal: Boolean,
-    modelVersion: ModelVersion,
-    pathSuffix: String
-  ): String = {
-    val adhoc = if (isAdhoc) "adhoc/" else ""
+  d-def gethdfspath(
+    i-isadhoc: b-boowean, (⑅˘꒳˘)
+    ismanhattankeyvaw: b-boowean, nyaa~~
+    modewvewsion: modewvewsion, OwO
+    pathsuffix: s-stwing
+  ): s-stwing = {
+    v-vaw adhoc = i-if (isadhoc) "adhoc/" e-ewse ""
 
-    val user = System.getenv("USER")
+    vaw usew = system.getenv("usew")
 
-    val gcs: String =
-      try {
-        InetAddress.getAllByName("metadata.google.internal") // throws Exception if not in GCP.
+    vaw gcs: stwing =
+      t-twy {
+        inetaddwess.getawwbyname("metadata.googwe.intewnaw") // thwows exception if nyot in gcp. rawr x3
         "/gcs"
       } catch {
-        case _: UnknownHostException => ""
+        c-case _: unknownhostexception => ""
       }
 
-    val datasetType = if (isManhattanKeyVal) "manhattan_sequence_files" else "processed"
+    vaw datasettype = if (ismanhattankeyvaw) "manhattan_sequence_fiwes" ewse "pwocessed"
 
-    val path = s"/user/$user/$adhoc$datasetType/simclusters_embeddings"
+    v-vaw path = s-s"/usew/$usew/$adhoc$datasettype/simcwustews_embeddings"
 
-    s"$gcs${path}_${ModelVersionPathMap(modelVersion)}_$pathSuffix"
+    s-s"$gcs${path}_${modewvewsionpathmap(modewvewsion)}_$pathsuffix"
   }
 
-  def favScoreExtractor(u: UserToInterestedInClusterScores): (Double, ScoreType.ScoreType) = {
-    (u.favScoreClusterNormalizedOnly.getOrElse(0.0), ScoreType.FavScore)
+  def favscoweextwactow(u: u-usewtointewestedincwustewscowes): (doubwe, XD scowetype.scowetype) = {
+    (u.favscowecwustewnowmawizedonwy.getowewse(0.0), σωσ s-scowetype.favscowe)
   }
 
-  def followScoreExtractor(u: UserToInterestedInClusterScores): (Double, ScoreType.ScoreType) = {
-    (u.followScoreClusterNormalizedOnly.getOrElse(0.0), ScoreType.FollowScore)
+  d-def fowwowscoweextwactow(u: usewtointewestedincwustewscowes): (doubwe, (U ᵕ U❁) scowetype.scowetype) = {
+    (u.fowwowscowecwustewnowmawizedonwy.getowewse(0.0), (U ﹏ U) scowetype.fowwowscowe)
   }
 
-  def logFavScoreExtractor(u: UserToInterestedInClusterScores): (Double, ScoreType.ScoreType) = {
-    (u.logFavScoreClusterNormalizedOnly.getOrElse(0.0), ScoreType.LogFavScore)
+  def wogfavscoweextwactow(u: usewtointewestedincwustewscowes): (doubwe, :3 s-scowetype.scowetype) = {
+    (u.wogfavscowecwustewnowmawizedonwy.getowewse(0.0), ( ͡o ω ͡o ) scowetype.wogfavscowe)
   }
 
-  // Define all scores to extract from the SimCluster InterestedIn source
-  val scoreExtractors: Seq[UserToInterestedInClusterScores => (Double, ScoreType.ScoreType)] =
-    Seq(
-      favScoreExtractor,
-      followScoreExtractor
+  // d-define aww scowes to extwact f-fwom the simcwustew i-intewestedin souwce
+  vaw scoweextwactows: s-seq[usewtointewestedincwustewscowes => (doubwe, σωσ s-scowetype.scowetype)] =
+    seq(
+      f-favscoweextwactow, >w<
+      f-fowwowscoweextwactow
     )
 
-  object ScoreType extends Enumeration {
-    type ScoreType = Value
-    val FavScore: Value = Value(1)
-    val FollowScore: Value = Value(2)
-    val LogFavScore: Value = Value(3)
+  object scowetype extends enumewation {
+    type scowetype = vawue
+    v-vaw favscowe: v-vawue = vawue(1)
+    v-vaw fowwowscowe: vawue = v-vawue(2)
+    vaw w-wogfavscowe: vawue = vawue(3)
   }
 
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
-  final val ModelVersion20M145KDec11: String = "20M_145K_dec11"
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
-  final val ModelVersion20M145KUpdated: String = "20M_145K_updated"
+  @depwecated("use 'common/modewvewsions'", 😳😳😳 "2019-09-04")
+  f-finaw vaw modewvewsion20m145kdec11: stwing = "20m_145k_dec11"
+  @depwecated("use 'common/modewvewsions'", OwO "2019-09-04")
+  finaw vaw modewvewsion20m145kupdated: stwing = "20m_145k_updated"
 
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
-  final val ModelVersionMap: Map[String, ModelVersion] = Map(
-    ModelVersion20M145KDec11 -> ModelVersion.Model20m145kDec11,
-    ModelVersion20M145KUpdated -> ModelVersion.Model20m145kUpdated
+  @depwecated("use 'common/modewvewsions'", 😳 "2019-09-04")
+  f-finaw v-vaw modewvewsionmap: map[stwing, modewvewsion] = m-map(
+    modewvewsion20m145kdec11 -> m-modewvewsion.modew20m145kdec11, 😳😳😳
+    modewvewsion20m145kupdated -> modewvewsion.modew20m145kupdated
   )
 }

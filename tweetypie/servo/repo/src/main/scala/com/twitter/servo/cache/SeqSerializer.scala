@@ -1,10 +1,10 @@
-package com.twitter.servo.cache
+package com.twittew.sewvo.cache
 
 /**
- * A Serializer of `Seq[T]`s.
+ * a sewiawizew o-of `seq[t]`s. -.-
  *
- * @param itemSerializer a Serializer for the individual elements.
- * @param itemSizeEstimate estimated size in bytes of individual elements
+ * @pawam itemsewiawizew a-a s-sewiawizew fow the i-individuaw ewements.
+ * @pawam i-itemsizeestimate e-estimated size i-in bytes of individuaw e-ewements
  */
-class SeqSerializer[T](itemSerializer: Serializer[T], itemSizeEstimate: Int = 8)
-    extends IterableSerializer[T, Seq[T]](() => Seq.newBuilder[T], itemSerializer, itemSizeEstimate)
+cwass seqsewiawizew[t](itemsewiawizew: sewiawizew[t], (ˆ ﻌ ˆ)♡ itemsizeestimate: int = 8)
+    e-extends itewabwesewiawizew[t, (⑅˘꒳˘) seq[t]](() => s-seq.newbuiwdew[t], (U ᵕ U❁) itemsewiawizew, -.- i-itemsizeestimate)

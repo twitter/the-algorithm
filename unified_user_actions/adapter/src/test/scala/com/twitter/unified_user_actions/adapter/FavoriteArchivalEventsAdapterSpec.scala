@@ -1,130 +1,130 @@
-package com.twitter.unified_user_actions.adapter
+package com.twittew.unified_usew_actions.adaptew
 
-import com.twitter.inject.Test
-import com.twitter.timelineservice.fanout.thriftscala.FavoriteArchivalEvent
-import com.twitter.unified_user_actions.adapter.favorite_archival_events.FavoriteArchivalEventsAdapter
-import com.twitter.unified_user_actions.thriftscala._
-import com.twitter.util.Time
-import org.scalatest.prop.TableDrivenPropertyChecks
+impowt com.twittew.inject.test
+i-impowt com.twittew.timewinesewvice.fanout.thwiftscawa.favowiteawchivawevent
+i-impowt c-com.twittew.unified_usew_actions.adaptew.favowite_awchivaw_events.favowiteawchivaweventsadaptew
+i-impowt com.twittew.unified_usew_actions.thwiftscawa._
+i-impowt c-com.twittew.utiw.time
+i-impowt owg.scawatest.pwop.tabwedwivenpwopewtychecks
 
-class FavoriteArchivalEventsAdapterSpec extends Test with TableDrivenPropertyChecks {
-  trait Fixture {
+c-cwass favowiteawchivaweventsadaptewspec extends test with tabwedwivenpwopewtychecks {
+  twait fixtuwe {
 
-    val frozenTime = Time.fromMilliseconds(1658949273000L)
+    v-vaw fwozentime = time.fwommiwwiseconds(1658949273000w)
 
-    val userId = 1L
-    val authorId = 2L
-    val tweetId = 101L
-    val retweetId = 102L
+    vaw usewid = 1w
+    v-vaw authowid = 2w
+    vaw t-tweetid = 101w
+    vaw wetweetid = 102w
 
-    val favArchivalEventNoRetweet = FavoriteArchivalEvent(
-      favoriterId = userId,
-      tweetId = tweetId,
-      timestampMs = 0L,
-      isArchivingAction = Some(true),
-      tweetUserId = Some(authorId)
+    vaw favawchivaweventnowetweet = favowiteawchivawevent(
+      favowitewid = u-usewid, UwU
+      tweetid = t-tweetid, :3
+      t-timestampms = 0w, (⑅˘꒳˘)
+      isawchivingaction = some(twue), (///ˬ///✿)
+      tweetusewid = some(authowid)
     )
-    val favArchivalEventRetweet = FavoriteArchivalEvent(
-      favoriterId = userId,
-      tweetId = retweetId,
-      timestampMs = 0L,
-      isArchivingAction = Some(true),
-      tweetUserId = Some(authorId),
-      sourceTweetId = Some(tweetId)
+    vaw favawchivaweventwetweet = f-favowiteawchivawevent(
+      favowitewid = usewid, ^^;;
+      tweetid = wetweetid,
+      timestampms = 0w, >_<
+      i-isawchivingaction = some(twue),
+      t-tweetusewid = s-some(authowid), rawr x3
+      s-souwcetweetid = s-some(tweetid)
     )
-    val favUnarchivalEventNoRetweet = FavoriteArchivalEvent(
-      favoriterId = userId,
-      tweetId = tweetId,
-      timestampMs = 0L,
-      isArchivingAction = Some(false),
-      tweetUserId = Some(authorId)
+    vaw favunawchivaweventnowetweet = favowiteawchivawevent(
+      f-favowitewid = usewid, /(^•ω•^)
+      tweetid = tweetid, :3
+      t-timestampms = 0w, (ꈍᴗꈍ)
+      isawchivingaction = some(fawse), /(^•ω•^)
+      tweetusewid = some(authowid)
     )
-    val favUnarchivalEventRetweet = FavoriteArchivalEvent(
-      favoriterId = userId,
-      tweetId = retweetId,
-      timestampMs = 0L,
-      isArchivingAction = Some(false),
-      tweetUserId = Some(authorId),
-      sourceTweetId = Some(tweetId)
+    vaw f-favunawchivaweventwetweet = favowiteawchivawevent(
+      f-favowitewid = u-usewid, (⑅˘꒳˘)
+      t-tweetid = wetweetid, ( ͡o ω ͡o )
+      timestampms = 0w, òωó
+      isawchivingaction = some(fawse), (⑅˘꒳˘)
+      tweetusewid = s-some(authowid), XD
+      s-souwcetweetid = some(tweetid)
     )
 
-    val expectedUua1 = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = tweetId,
-          actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(authorId))),
+    v-vaw e-expecteduua1 = unifiedusewaction(
+      usewidentifiew = u-usewidentifiew(usewid = some(usewid)), -.-
+      i-item = item.tweetinfo(
+        tweetinfo(
+          actiontweetid = t-tweetid, :3
+          actiontweetauthowinfo = s-some(authowinfo(authowid = some(authowid))), nyaa~~
         )
-      ),
-      actionType = ActionType.ServerTweetArchiveFavorite,
-      eventMetadata = EventMetadata(
-        sourceTimestampMs = 0L,
-        receivedTimestampMs = frozenTime.inMilliseconds,
-        sourceLineage = SourceLineage.ServerFavoriteArchivalEvents,
+      ), 😳
+      a-actiontype = a-actiontype.sewvewtweetawchivefavowite, (⑅˘꒳˘)
+      eventmetadata = eventmetadata(
+        souwcetimestampms = 0w, nyaa~~
+        weceivedtimestampms = fwozentime.inmiwwiseconds, OwO
+        souwcewineage = s-souwcewineage.sewvewfavowiteawchivawevents, rawr x3
       )
     )
-    val expectedUua2 = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = retweetId,
-          actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(authorId))),
-          retweetedTweetId = Some(tweetId)
+    v-vaw expecteduua2 = unifiedusewaction(
+      usewidentifiew = u-usewidentifiew(usewid = s-some(usewid)), XD
+      i-item = item.tweetinfo(
+        tweetinfo(
+          actiontweetid = w-wetweetid,
+          actiontweetauthowinfo = some(authowinfo(authowid = some(authowid))), σωσ
+          wetweetedtweetid = s-some(tweetid)
         )
-      ),
-      actionType = ActionType.ServerTweetArchiveFavorite,
-      eventMetadata = EventMetadata(
-        sourceTimestampMs = 0L,
-        receivedTimestampMs = frozenTime.inMilliseconds,
-        sourceLineage = SourceLineage.ServerFavoriteArchivalEvents,
+      ), (U ᵕ U❁)
+      actiontype = actiontype.sewvewtweetawchivefavowite, (U ﹏ U)
+      e-eventmetadata = e-eventmetadata(
+        s-souwcetimestampms = 0w, :3
+        weceivedtimestampms = f-fwozentime.inmiwwiseconds, ( ͡o ω ͡o )
+        s-souwcewineage = s-souwcewineage.sewvewfavowiteawchivawevents, σωσ
       )
     )
-    val expectedUua3 = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = tweetId,
-          actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(authorId))),
+    v-vaw expecteduua3 = unifiedusewaction(
+      usewidentifiew = u-usewidentifiew(usewid = s-some(usewid)), >w<
+      i-item = item.tweetinfo(
+        t-tweetinfo(
+          a-actiontweetid = tweetid, 😳😳😳
+          actiontweetauthowinfo = some(authowinfo(authowid = s-some(authowid))), OwO
         )
       ),
-      actionType = ActionType.ServerTweetUnarchiveFavorite,
-      eventMetadata = EventMetadata(
-        sourceTimestampMs = 0L,
-        receivedTimestampMs = frozenTime.inMilliseconds,
-        sourceLineage = SourceLineage.ServerFavoriteArchivalEvents,
+      actiontype = actiontype.sewvewtweetunawchivefavowite, 😳
+      eventmetadata = eventmetadata(
+        souwcetimestampms = 0w, 😳😳😳
+        w-weceivedtimestampms = fwozentime.inmiwwiseconds, (˘ω˘)
+        souwcewineage = souwcewineage.sewvewfavowiteawchivawevents,
       )
     )
-    val expectedUua4 = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = retweetId,
-          actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(authorId))),
-          retweetedTweetId = Some(tweetId)
+    vaw expecteduua4 = u-unifiedusewaction(
+      u-usewidentifiew = u-usewidentifiew(usewid = some(usewid)), ʘwʘ
+      i-item = item.tweetinfo(
+        t-tweetinfo(
+          a-actiontweetid = wetweetid, ( ͡o ω ͡o )
+          actiontweetauthowinfo = some(authowinfo(authowid = some(authowid))), o.O
+          wetweetedtweetid = s-some(tweetid)
         )
-      ),
-      actionType = ActionType.ServerTweetUnarchiveFavorite,
-      eventMetadata = EventMetadata(
-        sourceTimestampMs = 0L,
-        receivedTimestampMs = frozenTime.inMilliseconds,
-        sourceLineage = SourceLineage.ServerFavoriteArchivalEvents,
+      ), >w<
+      actiontype = a-actiontype.sewvewtweetunawchivefavowite, 😳
+      eventmetadata = e-eventmetadata(
+        souwcetimestampms = 0w, 🥺
+        weceivedtimestampms = f-fwozentime.inmiwwiseconds, rawr x3
+        souwcewineage = souwcewineage.sewvewfavowiteawchivawevents, o.O
       )
     )
   }
 
-  test("all tests") {
-    new Fixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val table = Table(
-          ("event", "expected"),
-          (favArchivalEventNoRetweet, expectedUua1),
-          (favArchivalEventRetweet, expectedUua2),
-          (favUnarchivalEventNoRetweet, expectedUua3),
-          (favUnarchivalEventRetweet, expectedUua4)
+  t-test("aww t-tests") {
+    nyew fixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        v-vaw tabwe = tabwe(
+          ("event", rawr "expected"), ʘwʘ
+          (favawchivaweventnowetweet, 😳😳😳 expecteduua1), ^^;;
+          (favawchivaweventwetweet, o.O expecteduua2), (///ˬ///✿)
+          (favunawchivaweventnowetweet, σωσ expecteduua3), nyaa~~
+          (favunawchivaweventwetweet, ^^;; expecteduua4)
         )
-        forEvery(table) { (event: FavoriteArchivalEvent, expected: UnifiedUserAction) =>
-          val actual = FavoriteArchivalEventsAdapter.adaptEvent(event)
-          assert(Seq(expected) === actual)
+        f-fowevewy(tabwe) { (event: f-favowiteawchivawevent, ^•ﻌ•^ e-expected: unifiedusewaction) =>
+          v-vaw actuaw = f-favowiteawchivaweventsadaptew.adaptevent(event)
+          assewt(seq(expected) === a-actuaw)
         }
       }
     }

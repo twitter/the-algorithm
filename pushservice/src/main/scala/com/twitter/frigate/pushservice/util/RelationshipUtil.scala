@@ -1,66 +1,66 @@
-package com.twitter.frigate.pushservice.util
+package com.twittew.fwigate.pushsewvice.utiw
 
-import com.twitter.frigate.common.base.TweetAuthor
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.hermit.predicate.socialgraph.Edge
-import com.twitter.hermit.predicate.socialgraph.RelationEdge
-import com.twitter.socialgraph.thriftscala.RelationshipType
+impowt c-com.twittew.fwigate.common.base.tweetauthow
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+i-impowt com.twittew.hewmit.pwedicate.sociawgwaph.edge
+i-impowt c-com.twittew.hewmit.pwedicate.sociawgwaph.wewationedge
+i-impowt com.twittew.sociawgwaph.thwiftscawa.wewationshiptype
 
 /**
- * This class provides utility functions for relationshipEdge for each Candidate type.
+ * t-this cwass p-pwovides utiwity functions fow wewationshipedge fow each candidate type. -.-
  */
-object RelationshipUtil {
+o-object wewationshiputiw {
 
   /**
-   * Form relationEdges
-   * @param candidate PushCandidate
-   * @param relationship relationshipTypes for different candidate types
-   * @return relationEdges for different candidate types
+   * fowm wewationedges
+   * @pawam candidate p-pushcandidate
+   * @pawam wewationship w-wewationshiptypes fow diffewent candidate types
+   * @wetuwn w-wewationedges fow diffewent c-candidate types
    */
-  private def formRelationEdgeWithTargetIdAndAuthorId(
-    candidate: RawCandidate,
-    relationship: List[RelationshipType with Product]
-  ): List[RelationEdge] = {
+  p-pwivate def fowmwewationedgewithtawgetidandauthowid(
+    candidate: wawcandidate, 🥺
+    wewationship: wist[wewationshiptype with pwoduct]
+  ): w-wist[wewationedge] = {
     candidate match {
-      case candidate: RawCandidate with TweetAuthor =>
-        candidate.authorId match {
-          case Some(authorId) =>
-            val edge = Edge(candidate.target.targetId, authorId)
-            for {
-              r <- relationship
-            } yield RelationEdge(edge, r)
-          case _ => List.empty[RelationEdge]
+      case candidate: wawcandidate with tweetauthow =>
+        c-candidate.authowid match {
+          c-case some(authowid) =>
+            v-vaw edge = e-edge(candidate.tawget.tawgetid, o.O a-authowid)
+            fow {
+              w <- wewationship
+            } yiewd w-wewationedge(edge, /(^•ω•^) w)
+          case _ => wist.empty[wewationedge]
         }
-      case _ => List.empty[RelationEdge]
+      c-case _ => wist.empty[wewationedge]
     }
   }
 
   /**
-   * Form all relationshipEdges for basicTweetRelationShips
-   * @param candidate PushCandidate
-   * @return List of relationEdges for basicTweetRelationShips
+   * fowm aww wewationshipedges fow basictweetwewationships
+   * @pawam candidate pushcandidate
+   * @wetuwn w-wist of wewationedges fow b-basictweetwewationships
    */
-  def getBasicTweetRelationships(candidate: RawCandidate): List[RelationEdge] = {
-    val relationship = List(
-      RelationshipType.DeviceFollowing,
-      RelationshipType.Blocking,
-      RelationshipType.BlockedBy,
-      RelationshipType.HideRecommendations,
-      RelationshipType.Muting)
-    formRelationEdgeWithTargetIdAndAuthorId(candidate, relationship)
+  d-def getbasictweetwewationships(candidate: w-wawcandidate): wist[wewationedge] = {
+    vaw wewationship = wist(
+      w-wewationshiptype.devicefowwowing, nyaa~~
+      w-wewationshiptype.bwocking, nyaa~~
+      wewationshiptype.bwockedby, :3
+      wewationshiptype.hidewecommendations, 😳😳😳
+      w-wewationshiptype.muting)
+    f-fowmwewationedgewithtawgetidandauthowid(candidate, (˘ω˘) wewationship)
   }
 
   /**
-   * Form all relationshipEdges for F1tweetsRelationships
-   * @param candidate PushCandidate
-   * @return List of relationEdges for F1tweetsRelationships
+   * f-fowm aww wewationshipedges f-fow f1tweetswewationships
+   * @pawam candidate pushcandidate
+   * @wetuwn w-wist of wewationedges fow f1tweetswewationships
    */
-  def getPreCandidateRelationshipsForInNetworkTweets(
-    candidate: RawCandidate
-  ): List[RelationEdge] = {
-    val relationship = List(RelationshipType.Following)
-    getBasicTweetRelationships(candidate) ++ formRelationEdgeWithTargetIdAndAuthorId(
-      candidate,
-      relationship)
+  d-def getpwecandidatewewationshipsfowinnetwowktweets(
+    candidate: wawcandidate
+  ): w-wist[wewationedge] = {
+    v-vaw wewationship = wist(wewationshiptype.fowwowing)
+    getbasictweetwewationships(candidate) ++ fowmwewationedgewithtawgetidandauthowid(
+      candidate, ^^
+      wewationship)
   }
 }

@@ -1,71 +1,71 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.twittew.home_mixew.functionaw_component.featuwe_hydwatow
 
-import com.twitter.home_mixer.model.HomeFeatures.FavoritedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.PerspectiveFilteredLikedByUserIdsFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.timelineservice.TimelineService
-import com.twitter.stitch.timelineservice.TimelineService.GetPerspectives
-import com.twitter.timelineservice.thriftscala.PerspectiveType
-import com.twitter.timelineservice.thriftscala.PerspectiveType.Favorited
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.modew.homefeatuwes.favowitedbyusewidsfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.pewspectivefiwtewedwikedbyusewidsfeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.utiw.offwoadfutuwepoows
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stitch.timewinesewvice.timewinesewvice
+impowt com.twittew.stitch.timewinesewvice.timewinesewvice.getpewspectives
+i-impowt com.twittew.timewinesewvice.thwiftscawa.pewspectivetype
+impowt com.twittew.timewinesewvice.thwiftscawa.pewspectivetype.favowited
+i-impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
 /**
- * Filter out unlike edges from liked-by tweets
- * Useful if the likes come from a cache and because UTEG does not fully remove unlike edges.
+ * f-fiwtew out unwike edges fwom wiked-by tweets
+ * usefuw if the wikes come fwom a-a cache and because uteg does nyot fuwwy wemove unwike edges. 😳
  */
-@Singleton
-class PerspectiveFilteredSocialContextFeatureHydrator @Inject() (timelineService: TimelineService)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@singweton
+cwass pewspectivefiwtewedsociawcontextfeatuwehydwatow @inject() (timewinesewvice: t-timewinesewvice)
+    extends buwkcandidatefeatuwehydwatow[pipewinequewy, mya t-tweetcandidate] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("PerspectiveFilteredSocialContext")
+  ovewwide v-vaw identifiew: f-featuwehydwatowidentifiew =
+    f-featuwehydwatowidentifiew("pewspectivefiwtewedsociawcontext")
 
-  override val features: Set[Feature[_, _]] = Set(PerspectiveFilteredLikedByUserIdsFeature)
+  ovewwide vaw featuwes: s-set[featuwe[_, (˘ω˘) _]] = set(pewspectivefiwtewedwikedbyusewidsfeatuwe)
 
-  private val MaxCountUsers = 10
-  private val favoritePerspectiveSet: Set[PerspectiveType] = Set(Favorited)
+  pwivate vaw m-maxcountusews = 10
+  pwivate vaw favowitepewspectiveset: set[pewspectivetype] = set(favowited)
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offloadStitch {
-    val engagingUserIdtoTweetId = candidates.flatMap { candidate =>
-      candidate.features
-        .getOrElse(FavoritedByUserIdsFeature, Seq.empty).take(MaxCountUsers)
-        .map(favoritedBy => favoritedBy -> candidate.candidate.id)
+  ovewwide def a-appwy(
+    quewy: pipewinequewy,
+    c-candidates: s-seq[candidatewithfeatuwes[tweetcandidate]]
+  ): s-stitch[seq[featuwemap]] = offwoadfutuwepoows.offwoadstitch {
+    vaw engagingusewidtotweetid = candidates.fwatmap { c-candidate =>
+      c-candidate.featuwes
+        .getowewse(favowitedbyusewidsfeatuwe, >_< seq.empty).take(maxcountusews)
+        .map(favowitedby => f-favowitedby -> c-candidate.candidate.id)
     }
 
-    val queries = engagingUserIdtoTweetId.map {
-      case (userId, tweetId) =>
-        GetPerspectives.Query(userId = userId, tweetId = tweetId, types = favoritePerspectiveSet)
+    vaw quewies = e-engagingusewidtotweetid.map {
+      case (usewid, -.- t-tweetid) =>
+        getpewspectives.quewy(usewid = usewid, 🥺 t-tweetid = tweetid, (U ﹏ U) types = favowitepewspectiveset)
     }
 
-    Stitch.collect(queries.map(timelineService.getPerspective)).map { perspectiveResults =>
-      val validUserIdTweetIds: Set[(Long, Long)] =
-        queries
-          .zip(perspectiveResults)
-          .collect { case (query, perspective) if perspective.favorited => query }
-          .map(query => (query.userId, query.tweetId))
-          .toSet
+    s-stitch.cowwect(quewies.map(timewinesewvice.getpewspective)).map { pewspectivewesuwts =>
+      v-vaw v-vawidusewidtweetids: set[(wong, >w< wong)] =
+        quewies
+          .zip(pewspectivewesuwts)
+          .cowwect { case (quewy, mya pewspective) if pewspective.favowited => q-quewy }
+          .map(quewy => (quewy.usewid, >w< q-quewy.tweetid))
+          .toset
 
-      candidates.map { candidate =>
-        val perspectiveFilteredFavoritedByUserIds: Seq[Long] = candidate.features
-          .getOrElse(FavoritedByUserIdsFeature, Seq.empty).take(MaxCountUsers)
-          .filter { userId => validUserIdTweetIds.contains((userId, candidate.candidate.id)) }
+      candidates.map { c-candidate =>
+        v-vaw pewspectivefiwtewedfavowitedbyusewids: s-seq[wong] = candidate.featuwes
+          .getowewse(favowitedbyusewidsfeatuwe, nyaa~~ seq.empty).take(maxcountusews)
+          .fiwtew { usewid => vawidusewidtweetids.contains((usewid, (✿oωo) candidate.candidate.id)) }
 
-        FeatureMapBuilder()
-          .add(PerspectiveFilteredLikedByUserIdsFeature, perspectiveFilteredFavoritedByUserIds)
-          .build()
+        f-featuwemapbuiwdew()
+          .add(pewspectivefiwtewedwikedbyusewidsfeatuwe, ʘwʘ pewspectivefiwtewedfavowitedbyusewids)
+          .buiwd()
       }
     }
   }

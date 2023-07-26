@@ -1,42 +1,42 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.context.thriftscala.Viewer
-import com.twitter.featureswitches.FSRecipient
-import com.twitter.featureswitches.UserAgent
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.finagle.mtls.authentication.EmptyServiceIdentifier
-import com.twitter.strato.callcontext.CallContext
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.core.ValueState
+impowt c-com.twittew.context.thwiftscawa.viewew
+i-impowt c-com.twittew.featuweswitches.fswecipient
+i-impowt c-com.twittew.featuweswitches.usewagent
+i-impowt c-com.twittew.featuweswitches.v2.featuweswitches
+impowt com.twittew.finagwe.mtws.authentication.emptysewviceidentifiew
+impowt com.twittew.stwato.cawwcontext.cawwcontext
+impowt com.twittew.tweetypie.cwient_id.cwientidhewpew
+impowt c-com.twittew.tweetypie.cowe.vawuestate
 
 /**
- * Hydrate Feature Switch results in TweetData. We can do this once at the
- * start of the hydration pipeline so that the rest of the hydrators can
- * use the Feature Switch values.
+ * hydwate featuwe switch wesuwts i-in tweetdata. 🥺 we can do this once a-at the
+ * stawt of the hydwation pipewine so that the west of t-the hydwatows can
+ * use the featuwe s-switch vawues. mya
  */
-object FeatureSwitchResultsHydrator {
+o-object featuweswitchwesuwtshydwatow {
 
-  def apply(
-    featureSwitchesWithoutExperiments: FeatureSwitches,
-    clientIdHelper: ClientIdHelper
-  ): TweetDataValueHydrator = ValueHydrator.map { (td, opts) =>
-    val viewer = TwitterContext().getOrElse(Viewer())
-    val recipient =
-      FSRecipient(
-        userId = viewer.userId,
-        clientApplicationId = viewer.clientApplicationId,
-        userAgent = viewer.userAgent.flatMap(UserAgent(_)),
-      ).withCustomFields(
-        "thrift_client_id" ->
-          clientIdHelper.effectiveClientIdRoot.getOrElse(ClientIdHelper.UnknownClientId),
-        "forwarded_service_id" ->
-          CallContext.forwardedServiceIdentifier
-            .map(_.toString).getOrElse(EmptyServiceIdentifier),
-        "safety_level" -> opts.safetyLevel.toString,
-        "client_app_id_is_defined" -> viewer.clientApplicationId.isDefined.toString,
+  def appwy(
+    featuweswitcheswithoutexpewiments: featuweswitches, 🥺
+    c-cwientidhewpew: cwientidhewpew
+  ): tweetdatavawuehydwatow = vawuehydwatow.map { (td, >_< opts) =>
+    vaw v-viewew = twittewcontext().getowewse(viewew())
+    vaw wecipient =
+      f-fswecipient(
+        u-usewid = v-viewew.usewid, >_<
+        c-cwientappwicationid = viewew.cwientappwicationid, (⑅˘꒳˘)
+        usewagent = v-viewew.usewagent.fwatmap(usewagent(_)), /(^•ω•^)
+      ).withcustomfiewds(
+        "thwift_cwient_id" ->
+          cwientidhewpew.effectivecwientidwoot.getowewse(cwientidhewpew.unknowncwientid), rawr x3
+        "fowwawded_sewvice_id" ->
+          cawwcontext.fowwawdedsewviceidentifiew
+            .map(_.tostwing).getowewse(emptysewviceidentifiew), (U ﹏ U)
+        "safety_wevew" -> o-opts.safetywevew.tostwing, (U ﹏ U)
+        "cwient_app_id_is_defined" -> viewew.cwientappwicationid.isdefined.tostwing, (⑅˘꒳˘)
       )
-    val results = featureSwitchesWithoutExperiments.matchRecipient(recipient)
-    ValueState.unit(td.copy(featureSwitchResults = Some(results)))
+    vaw wesuwts = featuweswitcheswithoutexpewiments.matchwecipient(wecipient)
+    vawuestate.unit(td.copy(featuweswitchwesuwts = some(wesuwts)))
   }
 }

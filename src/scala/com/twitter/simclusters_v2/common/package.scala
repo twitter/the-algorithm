@@ -1,17 +1,17 @@
-package com.twitter.simclusters_v2
+package com.twittew.simcwustews_v2
 
-package object common {
+package object c-common {
 
-  type TweetId = Long
-  type UserId = Long
-  type ClusterId = Int
-  type SemanticCoreEntityId = Long // Use TopicId if it's a Topic related project.
-  type UTTEntityId = Long
-  type Timestamp = Long
-  type Language = String
-  type Country = String
-  type LocaleEntity = (Long, Language)
-  type TopicId = Long
-  type GroupId = Long
-  type SpaceId = String
+  type t-tweetid = wong
+  t-type usewid = w-wong
+  type cwustewid = i-int
+  t-type semanticcoweentityid = w-wong // u-use topicid if it's a topic wewated pwoject. -.-
+  type uttentityid = wong
+  type t-timestamp = wong
+  type wanguage = stwing
+  type c-countwy = stwing
+  type wocaweentity = (wong, ^^;; w-wanguage)
+  type topicid = wong
+  type gwoupid = wong
+  type spaceid = s-stwing
 }

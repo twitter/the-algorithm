@@ -1,23 +1,23 @@
 junit_tests(
-    sources = ["**/*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/junit",
-        "3rdparty/jvm/org/scalatest",
-        "3rdparty/jvm/org/scalatestplus:junit",
-        "finatra/inject/inject-core/src/test/scala:test-deps",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/ads_callback_engagements",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/client_event",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/common",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/email_notification_event",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/favorite_archival_events",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/retweet_archival_events",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/social_graph_event",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/tls_favs_event",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/tweetypie_event",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/user_modification_event",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/uua_aggregates",
-        "util/util-mock/src/main/scala/com/twitter/util/mock",
+    souwces = ["**/*.scawa"], ^•ﻌ•^
+    compiwew_option_sets = ["fataw_wawnings"], OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "3wdpawty/jvm/junit", òωó
+        "3wdpawty/jvm/owg/scawatest", o.O
+        "3wdpawty/jvm/owg/scawatestpwus:junit", (U ᵕ U❁)
+        "finatwa/inject/inject-cowe/swc/test/scawa:test-deps", (⑅˘꒳˘)
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/ads_cawwback_engagements", ( ͡o ω ͡o )
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/cwient_event", UwU
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/common", rawr x3
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/emaiw_notification_event", rawr
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/favowite_awchivaw_events", σωσ
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/wetweet_awchivaw_events", σωσ
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/sociaw_gwaph_event",
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/tws_favs_event", >_<
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/tweetypie_event", :3
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/usew_modification_event", (U ﹏ U)
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/uua_aggwegates", -.-
+        "utiw/utiw-mock/swc/main/scawa/com/twittew/utiw/mock", (ˆ ﻌ ˆ)♡
     ],
 )

@@ -1,98 +1,98 @@
-package com.twitter.product_mixer.core.functional_component.common
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.common
 
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.CandidatePipelines
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatepipewines
 
 /**
- * Specifies whether a function component (e.g, [[Gate]] or [[Selector]])
- * should apply to a given [[CandidateWithDetails]]
+ * s-specifies w-whethew a f-function component (e.g, (U ﹏ U) [[gate]] o-ow [[sewectow]])
+ * s-shouwd appwy to a given [[candidatewithdetaiws]]
  */
-sealed trait CandidateScope {
+seawed twait candidatescope {
 
   /**
-   * returns True if the provided `candidate` is in scope
+   * wetuwns twue i-if the pwovided `candidate` is in scope
    */
-  def contains(candidate: CandidateWithDetails): Boolean
+  def contains(candidate: c-candidatewithdetaiws): boowean
 
-  /** partitions `candidates` into those that this scope [[contains]] and those it does not */
-  final def partition(
-    candidates: Seq[CandidateWithDetails]
-  ): CandidateScope.PartitionedCandidates = {
-    val (candidatesInScope, candidatesOutOfScope) = candidates.partition(contains)
-    CandidateScope.PartitionedCandidates(candidatesInScope, candidatesOutOfScope)
+  /** p-pawtitions `candidates` into those that this scope [[contains]] and those it does n-nyot */
+  finaw def pawtition(
+    c-candidates: s-seq[candidatewithdetaiws]
+  ): candidatescope.pawtitionedcandidates = {
+    vaw (candidatesinscope, -.- candidatesoutofscope) = candidates.pawtition(contains)
+    c-candidatescope.pawtitionedcandidates(candidatesinscope, ^•ﻌ•^ candidatesoutofscope)
   }
 }
 
-object CandidateScope {
-  case class PartitionedCandidates(
-    candidatesInScope: Seq[CandidateWithDetails],
-    candidatesOutOfScope: Seq[CandidateWithDetails])
+object candidatescope {
+  case cwass pawtitionedcandidates(
+    candidatesinscope: s-seq[candidatewithdetaiws], rawr
+    candidatesoutofscope: s-seq[candidatewithdetaiws])
 }
 
 /**
- * A [[CandidateScope]] that applies the given functional component
- * to all candidates regardless of which pipeline is their [[com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails.source]].
+ * a-a [[candidatescope]] t-that appwies t-the given functionaw component
+ * to aww candidates w-wegawdwess of which pipewine is theiw [[com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws.souwce]]. (˘ω˘)
  */
-case object AllPipelines extends CandidateScope {
-  override def contains(candidate: CandidateWithDetails): Boolean = true
+c-case object awwpipewines extends candidatescope {
+  ovewwide def contains(candidate: candidatewithdetaiws): boowean = t-twue
 }
 
 /**
- * A [[CandidateScope]] that applies the given [[com.twitter.product_mixer.core.functional_component.selector.Selector]]
- * only to candidates whose [[com.twitter.product_mixer.core.model.common.presentation.CandidatePipelines]]
- * has an Identifier in the [[pipelines]] Set.
- * In most cases where candidates are not pre-merged, the Set contains the candidate pipeline identifier the candidate
- * came from. In the case where a candidate's feature maps were merged using [[CombineFeatureMapsCandidateMerger]], the
- * set contains all candidate pipelines the merged candidate came from and this scope will include the candidate if any
- * of the pipelines match.
+ * a [[candidatescope]] t-that appwies t-the given [[com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow]]
+ * o-onwy to candidates whose [[com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatepipewines]]
+ * has an identifiew in the [[pipewines]] s-set. nyaa~~
+ * i-in most cases whewe candidates a-awe nyot pwe-mewged, UwU t-the set contains the candidate p-pipewine identifiew the c-candidate
+ * came fwom. :3 in the case whewe a candidate's f-featuwe maps wewe mewged u-using [[combinefeatuwemapscandidatemewgew]], (⑅˘꒳˘) the
+ * set contains a-aww candidate p-pipewines the mewged candidate came fwom and this scope wiww incwude the candidate if any
+ * of the pipewines match. (///ˬ///✿)
  */
-case class SpecificPipelines(pipelines: Set[CandidatePipelineIdentifier]) extends CandidateScope {
+c-case cwass s-specificpipewines(pipewines: set[candidatepipewineidentifiew]) e-extends candidatescope {
 
-  require(
-    pipelines.nonEmpty,
-    "Expected `SpecificPipelines` have a non-empty Set of CandidatePipelineIdentifiers.")
+  w-wequiwe(
+    pipewines.nonempty, ^^;;
+    "expected `specificpipewines` h-have a nyon-empty set of candidatepipewineidentifiews.")
 
-  override def contains(candidate: CandidateWithDetails): Boolean = {
-    candidate.features.get(CandidatePipelines).exists(pipelines.contains)
-  }
-}
-
-/**
- * A [[CandidateScope]] that applies the given [[com.twitter.product_mixer.core.functional_component.selector.Selector]]
- * only to candidates whose [[com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails.source]]
- * is [[pipeline]].
- */
-case class SpecificPipeline(pipeline: CandidatePipelineIdentifier) extends CandidateScope {
-
-  override def contains(candidate: CandidateWithDetails): Boolean = candidate.features
-    .get(CandidatePipelines).contains(pipeline)
-}
-
-object SpecificPipelines {
-  def apply(
-    pipeline: CandidatePipelineIdentifier,
-    pipelines: CandidatePipelineIdentifier*
-  ): CandidateScope = {
-    if (pipelines.isEmpty)
-      SpecificPipeline(pipeline)
-    else
-      SpecificPipelines((pipeline +: pipelines).toSet)
+  ovewwide def contains(candidate: candidatewithdetaiws): b-boowean = {
+    candidate.featuwes.get(candidatepipewines).exists(pipewines.contains)
   }
 }
 
 /**
- * A [[CandidateScope]] that applies the given [[com.twitter.product_mixer.core.functional_component.selector.Selector]]
- * to all candidates except for the candidates whose [[com.twitter.product_mixer.core.model.common.presentation.CandidatePipelines]]
- * has an Identifier in the [[pipelinesToExclude]] Set.
- * In most cases where candidates are not pre-merged, the Set contains the candidate pipeline identifier the candidate
- * came from. In the case where a candidate's feature maps were merged using [[CombineFeatureMapsCandidateMerger]], the
- * set contains all candidate pipelines the merged candidate came from and this scope will include the candidate if any
- * of the pipelines match.
+ * a [[candidatescope]] that appwies the given [[com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow]]
+ * o-onwy to candidates whose [[com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws.souwce]]
+ * i-is [[pipewine]]. >_<
  */
-case class AllExceptPipelines(
-  pipelinesToExclude: Set[CandidatePipelineIdentifier])
-    extends CandidateScope {
-  override def contains(candidate: CandidateWithDetails): Boolean = !candidate.features
-    .get(CandidatePipelines).exists(pipelinesToExclude.contains)
+c-case c-cwass specificpipewine(pipewine: candidatepipewineidentifiew) e-extends candidatescope {
+
+  o-ovewwide d-def contains(candidate: c-candidatewithdetaiws): boowean = candidate.featuwes
+    .get(candidatepipewines).contains(pipewine)
+}
+
+object specificpipewines {
+  d-def appwy(
+    p-pipewine: candidatepipewineidentifiew,
+    p-pipewines: c-candidatepipewineidentifiew*
+  ): c-candidatescope = {
+    if (pipewines.isempty)
+      specificpipewine(pipewine)
+    ewse
+      s-specificpipewines((pipewine +: pipewines).toset)
+  }
+}
+
+/**
+ * a [[candidatescope]] that appwies the given [[com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow]]
+ * to aww candidates e-except fow the candidates whose [[com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatepipewines]]
+ * has an identifiew in the [[pipewinestoexcwude]] s-set. rawr x3
+ * in most c-cases whewe c-candidates awe nyot pwe-mewged, /(^•ω•^) t-the set contains the candidate pipewine i-identifiew t-the candidate
+ * came fwom. :3 in the case whewe a candidate's featuwe maps wewe mewged using [[combinefeatuwemapscandidatemewgew]], (ꈍᴗꈍ) t-the
+ * set contains aww candidate p-pipewines the mewged candidate c-came fwom a-and this scope wiww incwude the candidate if any
+ * o-of the pipewines m-match. /(^•ω•^)
+ */
+case cwass awwexceptpipewines(
+  p-pipewinestoexcwude: s-set[candidatepipewineidentifiew])
+    extends candidatescope {
+  ovewwide def contains(candidate: c-candidatewithdetaiws): b-boowean = !candidate.featuwes
+    .get(candidatepipewines).exists(pipewinestoexcwude.contains)
 }

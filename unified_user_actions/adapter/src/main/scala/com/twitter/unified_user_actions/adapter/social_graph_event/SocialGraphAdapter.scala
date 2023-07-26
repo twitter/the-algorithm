@@ -1,48 +1,48 @@
-package com.twitter.unified_user_actions.adapter.social_graph_event
+package com.twittew.unified_usew_actions.adaptew.sociaw_gwaph_event
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.socialgraph.thriftscala.Action._
-import com.twitter.socialgraph.thriftscala.WriteEvent
-import com.twitter.socialgraph.thriftscala.{Action => SocialGraphAction}
-import com.twitter.unified_user_actions.adapter.AbstractAdapter
-import com.twitter.unified_user_actions.adapter.social_graph_event.SocialGraphEngagement._
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
+impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.finatwa.kafka.sewde.unkeyed
+i-impowt com.twittew.sociawgwaph.thwiftscawa.action._
+i-impowt c-com.twittew.sociawgwaph.thwiftscawa.wwiteevent
+impowt c-com.twittew.sociawgwaph.thwiftscawa.{action => s-sociawgwaphaction}
+i-impowt com.twittew.unified_usew_actions.adaptew.abstwactadaptew
+impowt com.twittew.unified_usew_actions.adaptew.sociaw_gwaph_event.sociawgwaphengagement._
+impowt com.twittew.unified_usew_actions.thwiftscawa.unifiedusewaction
 
-class SocialGraphAdapter extends AbstractAdapter[WriteEvent, UnKeyed, UnifiedUserAction] {
+cwass sociawgwaphadaptew e-extends abstwactadaptew[wwiteevent, rawr x3 unkeyed, (U ﹏ U) unifiedusewaction] {
 
-  import SocialGraphAdapter._
+  i-impowt sociawgwaphadaptew._
 
-  override def adaptOneToKeyedMany(
-    input: WriteEvent,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Seq[(UnKeyed, UnifiedUserAction)] =
-    adaptEvent(input).map { e => (UnKeyed, e) }
+  ovewwide d-def adaptonetokeyedmany(
+    input: wwiteevent, (U ﹏ U)
+    statsweceivew: s-statsweceivew = nyuwwstatsweceivew
+  ): s-seq[(unkeyed, (⑅˘꒳˘) u-unifiedusewaction)] =
+    adaptevent(input).map { e => (unkeyed, òωó e) }
 }
 
-object SocialGraphAdapter {
+object sociawgwaphadaptew {
 
-  def adaptEvent(writeEvent: WriteEvent): Seq[UnifiedUserAction] =
-    Option(writeEvent).flatMap { e =>
-      socialGraphWriteEventTypeToUuaEngagementType.get(e.action)
+  d-def adaptevent(wwiteevent: wwiteevent): seq[unifiedusewaction] =
+    option(wwiteevent).fwatmap { e =>
+      sociawgwaphwwiteeventtypetouuaengagementtype.get(e.action)
     } match {
-      case Some(uuaAction) => uuaAction.toUnifiedUserAction(writeEvent, uuaAction)
-      case None => Nil
+      c-case some(uuaaction) => u-uuaaction.tounifiedusewaction(wwiteevent, ʘwʘ uuaaction)
+      c-case nyone => nyiw
     }
 
-  private val socialGraphWriteEventTypeToUuaEngagementType: Map[
-    SocialGraphAction,
-    BaseSocialGraphWriteEvent[_]
+  p-pwivate v-vaw sociawgwaphwwiteeventtypetouuaengagementtype: map[
+    sociawgwaphaction, /(^•ω•^)
+    basesociawgwaphwwiteevent[_]
   ] =
-    Map[SocialGraphAction, BaseSocialGraphWriteEvent[_]](
-      Follow -> ProfileFollow,
-      Unfollow -> ProfileUnfollow,
-      Block -> ProfileBlock,
-      Unblock -> ProfileUnblock,
-      Mute -> ProfileMute,
-      Unmute -> ProfileUnmute,
-      ReportAsSpam -> ProfileReportAsSpam,
-      ReportAsAbuse -> ProfileReportAsAbuse
+    m-map[sociawgwaphaction, ʘwʘ basesociawgwaphwwiteevent[_]](
+      fowwow -> p-pwofiwefowwow, σωσ
+      unfowwow -> pwofiweunfowwow, OwO
+      bwock -> pwofiwebwock, 😳😳😳
+      unbwock -> p-pwofiweunbwock, 😳😳😳
+      mute -> p-pwofiwemute, o.O
+      u-unmute -> pwofiweunmute, ( ͡o ω ͡o )
+      w-wepowtasspam -> pwofiwewepowtasspam, (U ﹏ U)
+      wepowtasabuse -> pwofiwewepowtasabuse
     )
 }

@@ -1,15 +1,15 @@
-package com.twitter.search.earlybird.exception;
+package com.twittew.seawch.eawwybiwd.exception;
 
-public class TransientException extends Exception {
-  public TransientException(Throwable t) {
-    super(t);
+pubwic cwass twansientexception e-extends exception {
+  p-pubwic twansientexception(thwowabwe t-t) {
+    s-supew(t);
   }
 
-  public TransientException(String message, Throwable cause) {
-    super(message, cause);
+  p-pubwic twansientexception(stwing m-message, rawr thwowabwe c-cause) {
+    s-supew(message, σωσ cause);
   }
 
-  public TransientException(String message) {
-    super(message);
+  pubwic twansientexception(stwing message) {
+    supew(message);
   }
 }

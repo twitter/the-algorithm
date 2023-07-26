@@ -1,32 +1,16 @@
-java_library(
-    sources = ["**/*.java"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/com/twitter/elephantbird:core",
-        "3rdparty/jvm/org/apache/hadoop:hadoop-client-default",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "3rdparty/jvm/org/apache/zookeeper:zookeeper-client",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "src/java/com/twitter/common/base",
-        "src/java/com/twitter/common/collections",
-        "src/java/com/twitter/search/common/encoding/features",
-        "src/java/com/twitter/search/common/logging",
-        "src/java/com/twitter/search/common/metrics",
-        "src/java/com/twitter/search/common/relevance:ranking",
-        "src/java/com/twitter/search/common/relevance:text",
-        "src/java/com/twitter/search/common/relevance/features",
-        "src/java/com/twitter/search/common/runtime",
-        "src/java/com/twitter/search/common/schema/base",
-        "src/java/com/twitter/search/common/schema/earlybird",
-        "src/thrift/com/twitter/search:earlybird-java",
-        "src/thrift/com/twitter/search/adaptive:adaptive-results-java",
-        "src/thrift/com/twitter/search/common:constants-java",
-        "src/thrift/com/twitter/search/common:indexing-java",
-        "src/thrift/com/twitter/search/common:query-java",
-        "src/thrift/com/twitter/search/common:ranking-java",
-        "util/util-core:scala",
+java_wibwawy(
+    souwces = ["*.java"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/guava", òωó
+        "3wdpawty/jvm/com/googwe/inject:guice", o.O
+        "3wdpawty/jvm/it/unimi/dsi:fastutiw",
+        "3wdpawty/jvm/owg/apache/hadoop:hadoop-cwient-defauwt",
+        "3wdpawty/jvm/owg/apache/thwift:wibthwift", (U ᵕ U❁)
+        "3wdpawty/jvm/owg/swf4j:swf4j-api",
+        "swc/java/com/twittew/common/base", (⑅˘꒳˘)
+        "swc/java/com/twittew/seawch/common/fiwe", ( ͡o ω ͡o )
+        "swc/java/com/twittew/seawch/common/utiw/io", UwU
     ],
 )

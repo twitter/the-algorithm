@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe
 
-sealed trait ModuleShowMoreBehavior
+seawed twait m-moduweshowmowebehaviow
 
-case class ModuleShowMoreBehaviorRevealByCount(
-  initialItemsCount: Int,
-  showMoreItemsCount: Int)
-    extends ModuleShowMoreBehavior
+c-case c-cwass moduweshowmowebehaviowweveawbycount(
+  i-initiawitemscount: i-int, (U ᵕ U❁)
+  showmoweitemscount: i-int)
+    e-extends moduweshowmowebehaviow

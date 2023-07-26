@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.component_library.module
+package com.twittew.pwoduct_mixew.component_wibwawy.moduwe
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.home_scorer.{thriftscala => t}
-import com.twitter.util.Duration
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.convewsions.pewcentops._
+i-impowt com.twittew.finagwe.thwiftmux.methodbuiwdew
+i-impowt com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwscwient
+i-impowt com.twittew.inject.injectow
+i-impowt com.twittew.inject.thwift.moduwes.thwiftmethodbuiwdewcwientmoduwe
+i-impowt com.twittew.home_scowew.{thwiftscawa => t}
+i-impowt com.twittew.utiw.duwation
 
-object HomeScorerClientModule
-    extends ThriftMethodBuilderClientModule[
-      t.HomeScorer.ServicePerEndpoint,
-      t.HomeScorer.MethodPerEndpoint
+object homescowewcwientmoduwe
+    extends thwiftmethodbuiwdewcwientmoduwe[
+      t.homescowew.sewvicepewendpoint, mya
+      t.homescowew.methodpewendpoint
     ]
-    with MtlsClient {
+    w-with mtwscwient {
 
-  override val label = "home-scorer"
-  override val dest = "/s/home-scorer/home-scorer"
+  ovewwide vaw wabew = "home-scowew"
+  ovewwide v-vaw dest = "/s/home-scowew/home-scowew"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    methodBuilder
-      .withTimeoutPerRequest(1200.millis)
-      .withTimeoutTotal(2400.millis)
-      .idempotent(1.percent)
+  ovewwide pwotected d-def configuwemethodbuiwdew(
+    injectow: injectow,
+    methodbuiwdew: methodbuiwdew
+  ): m-methodbuiwdew = {
+    methodbuiwdew
+      .withtimeoutpewwequest(1200.miwwis)
+      .withtimeouttotaw(2400.miwwis)
+      .idempotent(1.pewcent)
   }
 
-  override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+  o-ovewwide p-pwotected def sessionacquisitiontimeout: duwation = 500.miwwiseconds
 }

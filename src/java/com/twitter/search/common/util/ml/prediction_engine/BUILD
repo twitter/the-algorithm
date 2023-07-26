@@ -1,68 +1,30 @@
-java_library(
-    sources = ["*.java"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
+tawget(
+    nyame = "ingestew-wib", (U ᵕ U❁)
     dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/org/apache/hadoop:hadoop-client-default",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "src/java/com/twitter/common/base",
-        "src/java/com/twitter/common_internal/hadoop",
-        "src/java/com/twitter/ml/api:api-base",
-        "src/java/com/twitter/ml/api/transform",
-        "src/java/com/twitter/ml/common/base",
-        "src/java/com/twitter/ml/prediction/core",
-        "src/java/com/twitter/ml/tool/prediction:ModelInterpreter",
-        "src/java/com/twitter/ml/vw/constant",
-        "src/java/com/twitter/mlv2/trees/predictor",
-        "src/java/com/twitter/mlv2/trees/scorer",
-        "src/java/com/twitter/search/common/features",
-        "src/java/com/twitter/search/common/file",
-        "src/java/com/twitter/search/common/metrics",
-        "src/java/com/twitter/search/common/util/ml/models_manager",
-        "src/java/com/twitter/search/modeling/common",
-        "src/thrift/com/twitter/ml/api:data-java",
-        "src/thrift/com/twitter/search/common:features-java",
-    ],
+        "swc/java/com/twittew/seawch/common/convewtew/eawwybiwd", (⑅˘꒳˘)
+        "swc/java/com/twittew/seawch/ingestew/modew",
+        "swc/java/com/twittew/seawch/ingestew/pipewine/app", ( ͡o ω ͡o )
+        "swc/java/com/twittew/seawch/ingestew/pipewine/twittew", UwU
+        "swc/java/com/twittew/seawch/ingestew/pipewine/twittew/engagements", rawr x3
+        "swc/java/com/twittew/seawch/ingestew/pipewine/twittew/fiwtews", rawr
+        "swc/java/com/twittew/seawch/ingestew/pipewine/twittew/kafka", σωσ
+        "swc/java/com/twittew/seawch/ingestew/pipewine/twittew/thwiftpawse", σωσ
+        "swc/java/com/twittew/seawch/ingestew/pipewine/twittew/usewupdates", >_<
+        "swc/java/com/twittew/seawch/ingestew/pipewine/utiw", :3
+        "swc/java/com/twittew/seawch/ingestew/utiw/jndi", (U ﹏ U)
+    ], -.-
 )
 
-java_library(
-    name = "for-timelines",
-    sources = [
-        "BaseLegacyScoreAccumulator.java",
-        "BaseModelBuilder.java",
-        "BaseScoreAccumulator.java",
-        "CompositeFeatureContext.java",
-        "DiscretizedFeature.java",
-        "DiscretizedFeatureRange.java",
-        "LegacyModelBuilder.java",
-        "LightweightLinearModel.java",
-        "ModelBuilder.java",
-        "SchemaBasedModelBuilder.java",
+j-jvm_binawy(
+    n-nyame = "ingestew-binawy", (ˆ ﻌ ˆ)♡
+    b-basename = "ingestew", (⑅˘꒳˘)
+    m-main = "com.twittew.seawch.ingestew.pipewine.app.ingestewpipewineappwication\\$main", (U ᵕ U❁)
+    p-pwatfowm = "java8", -.-
+    t-tags = [
+        "bazew-compatibwe", ^^;;
     ],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/org/apache/hadoop:hadoop-client-default",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "src/java/com/twitter/common/base",
-        "src/java/com/twitter/common_internal/hadoop",
-        "src/java/com/twitter/ml/api:api-base",
-        "src/java/com/twitter/ml/api/transform:DiscretizerTransform",
-        "src/java/com/twitter/ml/common/base",
-        "src/java/com/twitter/ml/tool/prediction:ModelInterpreter",
-        "src/java/com/twitter/ml/vw/constant",
-        "src/java/com/twitter/search/common/features",
-        "src/java/com/twitter/search/common/file",
-        "src/java/com/twitter/search/common/metrics",
-        "src/java/com/twitter/search/common/util/ml/models_manager",
-        "src/java/com/twitter/search/modeling/common",
-        "src/thrift/com/twitter/ml/api:data-java",
-        "src/thrift/com/twitter/search/common:features-java",
-    ],
+    d-dependencies = [
+        ":ingestew-wib", >_<
+        "swc/java/com/twittew/seawch/common/wogging:seawch-wog4j", mya
+    ], mya
 )

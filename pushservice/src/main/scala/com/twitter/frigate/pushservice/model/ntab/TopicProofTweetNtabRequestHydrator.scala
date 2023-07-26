@@ -1,60 +1,60 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.twittew.fwigate.pushsewvice.modew.ntab
 
-import com.twitter.frigate.pushservice.model.TopicProofTweetPushCandidate
-import com.twitter.frigate.pushservice.exception.TweetNTabRequestHydratorException
-import com.twitter.frigate.pushservice.exception.UttEntityNotFoundException
-import com.twitter.frigate.pushservice.take.NotificationServiceSender
-import com.twitter.notificationservice.thriftscala.DisplayText
-import com.twitter.notificationservice.thriftscala.DisplayTextEntity
-import com.twitter.notificationservice.thriftscala.StoryContext
-import com.twitter.notificationservice.thriftscala.StoryContextValue
-import com.twitter.notificationservice.thriftscala.TextValue
-import com.twitter.util.Future
+impowt com.twittew.fwigate.pushsewvice.modew.topicpwooftweetpushcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.exception.tweetntabwequesthydwatowexception
+i-impowt com.twittew.fwigate.pushsewvice.exception.uttentitynotfoundexception
+i-impowt c-com.twittew.fwigate.pushsewvice.take.notificationsewvicesendew
+i-impowt com.twittew.notificationsewvice.thwiftscawa.dispwaytext
+i-impowt com.twittew.notificationsewvice.thwiftscawa.dispwaytextentity
+i-impowt com.twittew.notificationsewvice.thwiftscawa.stowycontext
+impowt com.twittew.notificationsewvice.thwiftscawa.stowycontextvawue
+impowt com.twittew.notificationsewvice.thwiftscawa.textvawue
+impowt com.twittew.utiw.futuwe
 
-trait TopicProofTweetNtabRequestHydrator extends NTabRequestHydrator {
-  self: TopicProofTweetPushCandidate =>
+t-twait topicpwooftweetntabwequesthydwatow extends nytabwequesthydwatow {
+  sewf: topicpwooftweetpushcandidate =>
 
-  override def displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] = NotificationServiceSender
-    .getDisplayTextEntityFromUser(tweetAuthor, "tweetAuthorName", true)
-    .map(_.toSeq)
+  o-ovewwide def dispwaytextentitiesfut: f-futuwe[seq[dispwaytextentity]] = nyotificationsewvicesendew
+    .getdispwaytextentityfwomusew(tweetauthow, ^^ "tweetauthowname", 😳😳😳 twue)
+    .map(_.toseq)
 
-  private lazy val uttEntity = localizedUttEntity.getOrElse(
-    throw new UttEntityNotFoundException(
-      s"${getClass.getSimpleName} UttEntity missing for $tweetId")
+  pwivate w-wazy vaw uttentity = wocawizeduttentity.getowewse(
+    t-thwow nyew u-uttentitynotfoundexception(
+      s"${getcwass.getsimpwename} uttentity missing fow $tweetid")
   )
 
-  override lazy val tapThroughFut: Future[String] = {
-    tweetAuthor.map {
-      case Some(author) =>
-        val authorProfile = author.profile.getOrElse(
-          throw new TweetNTabRequestHydratorException(
-            s"Unable to obtain author profile for: ${author.id}"))
-        s"${authorProfile.screenName}/status/${tweetId.toString}"
+  ovewwide w-wazy vaw tapthwoughfut: futuwe[stwing] = {
+    tweetauthow.map {
+      case some(authow) =>
+        vaw authowpwofiwe = a-authow.pwofiwe.getowewse(
+          thwow n-nyew tweetntabwequesthydwatowexception(
+            s-s"unabwe t-to obtain authow p-pwofiwe fow: ${authow.id}"))
+        s"${authowpwofiwe.scweenname}/status/${tweetid.tostwing}"
       case _ =>
-        throw new TweetNTabRequestHydratorException(
-          s"Unable to obtain author and target details to generate tap through for Tweet: $tweetId")
+        t-thwow nyew tweetntabwequesthydwatowexception(
+          s"unabwe to obtain a-authow and tawget detaiws to genewate tap thwough fow tweet: $tweetid")
     }
   }
 
-  override lazy val socialProofDisplayText: Option[DisplayText] = {
-    Some(
-      DisplayText(values =
-        Seq(DisplayTextEntity("topic_name", TextValue.Text(uttEntity.localizedNameForDisplay))))
+  ovewwide wazy vaw sociawpwoofdispwaytext: o-option[dispwaytext] = {
+    some(
+      dispwaytext(vawues =
+        s-seq(dispwaytextentity("topic_name", mya t-textvawue.text(uttentity.wocawizednamefowdispway))))
     )
   }
 
-  override lazy val facepileUsersFut: Future[Seq[Long]] = senderIdFut.map(Seq(_))
+  o-ovewwide wazy vaw facepiweusewsfut: futuwe[seq[wong]] = s-sendewidfut.map(seq(_))
 
-  override val inlineCard = None
+  o-ovewwide vaw inwinecawd = nyone
 
-  override def storyContext: Option[StoryContext] = Some(
-    StoryContext("", Some(StoryContextValue.Tweets(Seq(tweetId)))))
+  o-ovewwide def s-stowycontext: option[stowycontext] = some(
+    s-stowycontext("", 😳 some(stowycontextvawue.tweets(seq(tweetid)))))
 
-  override def senderIdFut: Future[Long] =
-    tweetAuthor.map {
-      case Some(author) => author.id
-      case _ =>
-        throw new TweetNTabRequestHydratorException(
-          s"Unable to obtain Author ID for: $commonRecType")
+  o-ovewwide def sendewidfut: futuwe[wong] =
+    tweetauthow.map {
+      c-case some(authow) => authow.id
+      c-case _ =>
+        thwow new tweetntabwequesthydwatowexception(
+          s-s"unabwe to o-obtain authow id fow: $commonwectype")
     }
 }

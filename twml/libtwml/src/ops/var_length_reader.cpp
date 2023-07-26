@@ -1,46 +1,46 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#incwude "tensowfwow/cowe/fwamewowk/op.h"
+#incwude "tensowfwow/cowe/fwamewowk/shape_infewence.h"
+#incwude "tensowfwow/cowe/fwamewowk/op_kewnew.h"
 
-using namespace tensorflow;
+using nyamespace tensowfwow;
 
-REGISTER_OP("VarLengthReader")
-.Input("input1: int32")
-.Output("output: int32")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    ::tensorflow::shape_inference::ShapeHandle input;
-    // check that input has only 1 dimension.
-    TF_RETURN_IF_ERROR(c->WithRank(c->input(0), 1, &input));
-    // there's no inference on output shape.
-    return Status::OK();
+w-wegistew_op("vawwengthweadew")
+.input("input1: int32")
+.output("output: i-int32")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    ::tensowfwow::shape_infewence::shapehandwe i-input;
+    // c-check that input h-has onwy 1 dimension. rawr x3
+    t-tf_wetuwn_if_ewwow(c->withwank(c->input(0), (U ﹏ U) 1, &input));
+    // t-thewe's nyo infewence on output shape. (U ﹏ U)
+    wetuwn status::ok();
   });
 
 
-class VarLengthReaderOp : public OpKernel {
- public:
-  explicit VarLengthReaderOp(OpKernelConstruction* context) : OpKernel(context) {}
+cwass vawwengthweadewop : pubwic o-opkewnew {
+ pubwic:
+  expwicit vawwengthweadewop(opkewnewconstwuction* c-context) : opkewnew(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    // Grab the input tensor
-    const Tensor& input_tensor = context->input(0);
-    auto input = input_tensor.flat<int32>();
+  v-void compute(opkewnewcontext* context) ovewwide {
+    // gwab the i-input tensow
+    const tensow& i-input_tensow = c-context->input(0);
+    auto input = input_tensow.fwat<int32>();
 
-    // get the first element in the input tensor, use it as output shape.
-    int32 len = input(0);
-    TensorShape output_shape = {1, len};
+    // get the fiwst ewement in t-the input tensow, (⑅˘꒳˘) use it as output shape. òωó
+    int32 wen = input(0);
+    tensowshape o-output_shape = {1, ʘwʘ wen};
 
-    // Create an output tensor, the size is determined by the content of input.
-    Tensor* output_tensor = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(0, output_shape, &output_tensor));
+    // c-cweate an o-output tensow, /(^•ω•^) the s-size is detewmined b-by the content of input. ʘwʘ
+    tensow* output_tensow = n-nyuwwptw;
+    op_wequiwes_ok(context, σωσ context->awwocate_output(0, OwO o-output_shape, 😳😳😳 &output_tensow));
 
-    auto output_flat = output_tensor->flat<int32>();
+    auto output_fwat = output_tensow->fwat<int32>();
 
-    // Fill output with ones.
-    const int N = output_flat.size();
-    for (int i = 0; i < N; i++) {
-      output_flat(i) = 1;
+    // fiww output with ones. 😳😳😳
+    const int n-ny = output_fwat.size();
+    fow (int i-i = 0; i < n-ny; i++) {
+      o-output_fwat(i) = 1;
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(Name("VarLengthReader").Device(DEVICE_CPU), VarLengthReaderOp);
+wegistew_kewnew_buiwdew(name("vawwengthweadew").device(device_cpu), o.O vawwengthweadewop);

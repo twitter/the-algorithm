@@ -1,20 +1,20 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/storehaus:core",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "3rdparty/src/jvm/com/twitter/storehaus:core",
-        "configapi/configapi-core",
-        "content-recommender/thrift/src/main/thrift:thrift-scala",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/model",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/param",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/util",
-        "cr-mixer/thrift/src/main/thrift:thrift-scala",
-        "snowflake/src/main/scala/com/twitter/snowflake/id",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/thrift/com/twitter/core_workflows/user_model:user_model-scala",
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    s-stwict_deps = t-twue, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "3wdpawty/jvm/com/twittew/stowehaus:cowe", (⑅˘꒳˘)
+        "3wdpawty/jvm/javax/inject:javax.inject", ( ͡o ω ͡o )
+        "3wdpawty/swc/jvm/com/twittew/stowehaus:cowe", UwU
+        "configapi/configapi-cowe", rawr x3
+        "content-wecommendew/thwift/swc/main/thwift:thwift-scawa", rawr
+        "cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/modew", σωσ
+        "cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/pawam", σωσ
+        "cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/utiw", >_<
+        "cw-mixew/thwift/swc/main/thwift:thwift-scawa", :3
+        "snowfwake/swc/main/scawa/com/twittew/snowfwake/id", (U ﹏ U)
+        "swc/scawa/com/twittew/simcwustews_v2/common", -.-
+        "swc/thwift/com/twittew/cowe_wowkfwows/usew_modew:usew_modew-scawa", (ˆ ﻌ ˆ)♡
     ],
 )

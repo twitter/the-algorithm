@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-import com.twitter.hermit.model.Algorithm.Algorithm
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdge
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdgeInfo
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.SecondDegreeEdge
+impowt c-com.twittew.hewmit.modew.awgowithm.awgowithm
+i-impowt c-com.twittew.wtf.scawding.jobs.stwong_tie_pwediction.fiwstdegweeedge
+i-impowt com.twittew.wtf.scawding.jobs.stwong_tie_pwediction.fiwstdegweeedgeinfo
+i-impowt com.twittew.wtf.scawding.jobs.stwong_tie_pwediction.seconddegweeedge
 
-case class PotentialFirstDegreeEdge(
-  userId: Long,
-  connectingId: Long,
-  algorithm: Algorithm,
-  score: Double,
-  edgeInfo: FirstDegreeEdgeInfo)
+c-case cwass potentiawfiwstdegweeedge(
+  u-usewid: w-wong, >_<
+  connectingid: wong, mya
+  awgowithm: awgowithm, mya
+  scowe: doubwe, 😳
+  edgeinfo: f-fiwstdegweeedgeinfo)
 
-case class IntermediateSecondDegreeEdge(
-  connectingId: Long,
-  candidateId: Long,
-  edgeInfo: FirstDegreeEdgeInfo)
+case cwass intewmediateseconddegweeedge(
+  c-connectingid: wong, XD
+  candidateid: w-wong, :3
+  edgeinfo: fiwstdegweeedgeinfo)
 
-case class STPGraph(
-  firstDegreeEdgeInfoList: List[FirstDegreeEdge],
-  secondDegreeEdgeInfoList: List[SecondDegreeEdge])
+case cwass stpgwaph(
+  fiwstdegweeedgeinfowist: w-wist[fiwstdegweeedge], 😳😳😳
+  seconddegweeedgeinfowist: w-wist[seconddegweeedge])

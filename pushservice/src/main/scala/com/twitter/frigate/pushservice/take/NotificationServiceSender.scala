@@ -1,271 +1,271 @@
-package com.twitter.frigate.pushservice.take
+package com.twittew.fwigate.pushsewvice.take
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.logger.MRLogger
-import com.twitter.frigate.common.ntab.InvalidNTABWriteRequestException
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.notificationservice.thriftscala._
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Future
-import scala.util.control.NoStackTrace
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.woggew.mwwoggew
+i-impowt c-com.twittew.fwigate.common.ntab.invawidntabwwitewequestexception
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+impowt com.twittew.fwigate.pushsewvice.pawams.pushpawams
+impowt com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+impowt com.twittew.gizmoduck.thwiftscawa.usew
+i-impowt com.twittew.notificationsewvice.thwiftscawa._
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.timewines.configapi.pawam
+i-impowt com.twittew.utiw.futuwe
+i-impowt scawa.utiw.contwow.nostacktwace
 
-class NtabCopyIdNotFoundException(private val message: String)
-    extends Exception(message)
-    with NoStackTrace
+cwass nytabcopyidnotfoundexception(pwivate vaw message: stwing)
+    e-extends exception(message)
+    w-with nyostacktwace
 
-class InvalidNtabCopyIdException(private val message: String)
-    extends Exception(message)
-    with NoStackTrace
+c-cwass invawidntabcopyidexception(pwivate vaw message: stwing)
+    extends exception(message)
+    w-with nostacktwace
 
-object NotificationServiceSender {
+object nyotificationsewvicesendew {
 
-  def generateSocialContextTextEntities(
-    ntabDisplayNamesAndIdsFut: Future[Seq[(String, Long)]],
-    otherCountFut: Future[Int]
-  ): Future[Seq[DisplayTextEntity]] = {
-    Future.join(ntabDisplayNamesAndIdsFut, otherCountFut).map {
-      case (namesWithIdInOrder, otherCount) =>
-        val displays = namesWithIdInOrder.zipWithIndex.map {
-          case ((name, id), index) =>
-            DisplayTextEntity(
-              name = "user" + s"${index + 1}",
-              value = TextValue.Text(name),
-              emphasis = true,
-              userId = Some(id)
+  def genewatesociawcontexttextentities(
+    nytabdispwaynamesandidsfut: f-futuwe[seq[(stwing, :3 wong)]],
+    othewcountfut: f-futuwe[int]
+  ): f-futuwe[seq[dispwaytextentity]] = {
+    f-futuwe.join(ntabdispwaynamesandidsfut, (U ﹏ U) o-othewcountfut).map {
+      case (nameswithidinowdew, UwU othewcount) =>
+        v-vaw dispways = nyameswithidinowdew.zipwithindex.map {
+          case ((name, 😳😳😳 i-id), XD index) =>
+            dispwaytextentity(
+              nyame = "usew" + s"${index + 1}", o.O
+              vawue = textvawue.text(name), (⑅˘꒳˘)
+              emphasis = t-twue, 😳😳😳
+              usewid = s-some(id)
             )
-        } ++ Seq(
-          DisplayTextEntity(name = "nameCount", value = TextValue.Number(namesWithIdInOrder.size))
+        } ++ s-seq(
+          d-dispwaytextentity(name = "namecount", nyaa~~ vawue = textvawue.numbew(nameswithidinowdew.size))
         )
 
-        val otherDisplay = if (otherCount > 0) {
-          Some(
-            DisplayTextEntity(
-              name = "otherCount",
-              value = TextValue.Number(otherCount)
+        vaw othewdispway = i-if (othewcount > 0) {
+          s-some(
+            dispwaytextentity(
+              n-nyame = "othewcount", rawr
+              v-vawue = textvawue.numbew(othewcount)
             )
           )
-        } else None
-        displays ++ otherDisplay
+        } e-ewse nyone
+        dispways ++ o-othewdispway
     }
   }
 
-  def getDisplayTextEntityFromUser(
-    userOpt: Option[User],
-    fieldName: String,
-    isBold: Boolean
-  ): Option[DisplayTextEntity] = {
-    for {
-      user <- userOpt
-      profile <- user.profile
-    } yield {
-      DisplayTextEntity(
-        name = fieldName,
-        value = TextValue.Text(profile.name),
-        emphasis = isBold,
-        userId = Some(user.id)
+  def getdispwaytextentityfwomusew(
+    usewopt: option[usew], -.-
+    f-fiewdname: stwing, (✿oωo)
+    isbowd: b-boowean
+  ): option[dispwaytextentity] = {
+    fow {
+      usew <- u-usewopt
+      p-pwofiwe <- usew.pwofiwe
+    } yiewd {
+      dispwaytextentity(
+        nyame = fiewdname, /(^•ω•^)
+        vawue = textvawue.text(pwofiwe.name), 🥺
+        emphasis = isbowd, ʘwʘ
+        usewid = s-some(usew.id)
       )
     }
   }
 
-  def getDisplayTextEntityFromUser(
-    user: Future[Option[User]],
-    fieldName: String,
-    isBold: Boolean
-  ): Future[Option[DisplayTextEntity]] = {
-    user.map { getDisplayTextEntityFromUser(_, fieldName, isBold) }
+  d-def getdispwaytextentityfwomusew(
+    usew: f-futuwe[option[usew]], UwU
+    f-fiewdname: s-stwing, XD
+    isbowd: boowean
+  ): futuwe[option[dispwaytextentity]] = {
+    usew.map { getdispwaytextentityfwomusew(_, (✿oωo) fiewdname, i-isbowd) }
   }
 }
 
-case class NotificationServiceRequest(
-  candidate: PushCandidate,
-  impressionId: String,
-  isBadgeUpdate: Boolean,
-  overrideId: Option[String] = None)
+case cwass nyotificationsewvicewequest(
+  candidate: pushcandidate, :3
+  i-impwessionid: stwing, (///ˬ///✿)
+  isbadgeupdate: b-boowean, nyaa~~
+  o-ovewwideid: option[stwing] = n-nyone)
 
-class NotificationServiceSender(
-  send: (Target, CreateGenericNotificationRequest) => Future[CreateGenericNotificationResponse],
-  enableWritesParam: Param[Boolean],
-  enableForEmployeesParam: Param[Boolean],
-  enableForEveryoneParam: Param[Boolean]
+cwass nyotificationsewvicesendew(
+  send: (tawget, >w< c-cweategenewicnotificationwequest) => f-futuwe[cweategenewicnotificationwesponse], -.-
+  e-enabwewwitespawam: p-pawam[boowean], (✿oωo)
+  enabwefowempwoyeespawam: pawam[boowean], (˘ω˘)
+  e-enabwefowevewyonepawam: p-pawam[boowean]
 )(
-  implicit globalStats: StatsReceiver)
-    extends ReadableStore[NotificationServiceRequest, CreateGenericNotificationResponse] {
+  i-impwicit g-gwobawstats: statsweceivew)
+    e-extends weadabwestowe[notificationsewvicewequest, rawr cweategenewicnotificationwesponse] {
 
-  val log = MRLogger(this.getClass.getName)
+  vaw wog = mwwoggew(this.getcwass.getname)
 
-  val stats = globalStats.scope("NotificationServiceSender")
-  val requestEmpty = stats.scope("request_empty")
-  val requestNonEmpty = stats.counter("request_non_empty")
+  v-vaw stats = gwobawstats.scope("notificationsewvicesendew")
+  vaw wequestempty = stats.scope("wequest_empty")
+  vaw wequestnonempty = stats.countew("wequest_non_empty")
 
-  val requestBadgeCount = stats.counter("request_badge_count")
+  v-vaw wequestbadgecount = stats.countew("wequest_badge_count")
 
-  val successfulWrite = stats.counter("successful_write")
-  val successfulWriteScope = stats.scope("successful_write")
-  val failedWriteScope = stats.scope("failed_write")
-  val gotNonSuccessResponse = stats.counter("got_non_success_response")
-  val gotEmptyResponse = stats.counter("got_empty_response")
-  val deciderTurnedOffResponse = stats.scope("decider_turned_off_response")
+  vaw successfuwwwite = stats.countew("successfuw_wwite")
+  v-vaw s-successfuwwwitescope = s-stats.scope("successfuw_wwite")
+  vaw faiwedwwitescope = s-stats.scope("faiwed_wwite")
+  vaw gotnonsuccesswesponse = s-stats.countew("got_non_success_wesponse")
+  v-vaw gotemptywesponse = stats.countew("got_empty_wesponse")
+  vaw decidewtuwnedoffwesponse = stats.scope("decidew_tuwned_off_wesponse")
 
-  val disabledByDeciderForCandidate = stats.scope("model/candidate").counter("disabled_by_decider")
-  val sentToAlphaUserForCandidate =
-    stats.scope("model/candidate").counter("send_to_employee_or_team")
-  val sentToNonBucketedUserForCandidate =
-    stats.scope("model/candidate").counter("send_to_non_bucketed_decidered_user")
-  val noSendForCandidate = stats.scope("model/candidate").counter("no_send")
+  vaw disabwedbydecidewfowcandidate = stats.scope("modew/candidate").countew("disabwed_by_decidew")
+  vaw senttoawphausewfowcandidate =
+    s-stats.scope("modew/candidate").countew("send_to_empwoyee_ow_team")
+  vaw senttononbucketedusewfowcandidate =
+    s-stats.scope("modew/candidate").countew("send_to_non_bucketed_decidewed_usew")
+  vaw n-nyosendfowcandidate = s-stats.scope("modew/candidate").countew("no_send")
 
-  val ineligibleUsersForCandidate = stats.scope("model/candidate").counter("ineligible_users")
+  vaw inewigibweusewsfowcandidate = s-stats.scope("modew/candidate").countew("inewigibwe_usews")
 
-  val darkWriteRequestsForCandidate = stats.scope("model/candidate").counter("dark_write_traffic")
+  v-vaw dawkwwitewequestsfowcandidate = s-stats.scope("modew/candidate").countew("dawk_wwite_twaffic")
 
-  val heavyUserForCandidateCounter = stats.scope("model/candidate").counter("target_heavy")
-  val nonHeavyUserForCandidateCounter = stats.scope("model/candidate").counter("target_non_heavy")
+  v-vaw heavyusewfowcandidatecountew = stats.scope("modew/candidate").countew("tawget_heavy")
+  vaw nyonheavyusewfowcandidatecountew = stats.scope("modew/candidate").countew("tawget_non_heavy")
 
-  val skipWritingToNTAB = stats.counter("skip_writing_to_ntab")
+  v-vaw skipwwitingtontab = s-stats.countew("skip_wwiting_to_ntab")
 
-  val ntabWriteDisabledForCandidate = stats.scope("model/candidate").counter("ntab_write_disabled")
+  v-vaw nytabwwitedisabwedfowcandidate = stats.scope("modew/candidate").countew("ntab_wwite_disabwed")
 
-  val ntabOverrideEnabledForCandidate = stats.scope("model/candidate").counter("override_enabled")
-  val ntabTTLForCandidate = stats.scope("model/candidate").counter("ttl_enabled")
+  v-vaw nytabovewwideenabwedfowcandidate = stats.scope("modew/candidate").countew("ovewwide_enabwed")
+  v-vaw nytabttwfowcandidate = s-stats.scope("modew/candidate").countew("ttw_enabwed")
 
-  override def get(
-    notifRequest: NotificationServiceRequest
-  ): Future[Option[CreateGenericNotificationResponse]] = {
-    notifRequest.candidate.target.deviceInfo.flatMap { deviceInfoOpt =>
-      val disableWritingToNtab =
-        notifRequest.candidate.target.params(PushParams.DisableWritingToNTAB)
+  ovewwide def get(
+    nyotifwequest: nyotificationsewvicewequest
+  ): futuwe[option[cweategenewicnotificationwesponse]] = {
+    n-nyotifwequest.candidate.tawget.deviceinfo.fwatmap { d-deviceinfoopt =>
+      vaw disabwewwitingtontab =
+        nyotifwequest.candidate.tawget.pawams(pushpawams.disabwewwitingtontab)
 
-      if (disableWritingToNtab) {
-        skipWritingToNTAB.incr()
-        Future.None
-      } else {
-        if (notifRequest.overrideId.nonEmpty) { ntabOverrideEnabledForCandidate.incr() }
-        Future
+      i-if (disabwewwitingtontab) {
+        s-skipwwitingtontab.incw()
+        futuwe.none
+      } ewse {
+        if (notifwequest.ovewwideid.nonempty) { n-nytabovewwideenabwedfowcandidate.incw() }
+        futuwe
           .join(
-            notifRequest.candidate.ntabRequest,
-            ntabWritesEnabledForCandidate(notifRequest.candidate)).flatMap {
-            case (Some(ntabRequest), ntabWritesEnabled) if ntabWritesEnabled =>
-              if (ntabRequest.expiryTimeMillis.nonEmpty) { ntabTTLForCandidate.incr() }
-              sendNTabRequest(
-                ntabRequest,
-                notifRequest.candidate.target,
-                notifRequest.isBadgeUpdate,
-                notifRequest.candidate.commonRecType,
-                isFromCandidate = true,
-                overrideId = notifRequest.overrideId
+            nyotifwequest.candidate.ntabwequest, OwO
+            nytabwwitesenabwedfowcandidate(notifwequest.candidate)).fwatmap {
+            case (some(ntabwequest), ^•ﻌ•^ n-nytabwwitesenabwed) if nytabwwitesenabwed =>
+              i-if (ntabwequest.expiwytimemiwwis.nonempty) { n-nytabttwfowcandidate.incw() }
+              sendntabwequest(
+                nytabwequest, UwU
+                nyotifwequest.candidate.tawget, (˘ω˘)
+                nyotifwequest.isbadgeupdate, (///ˬ///✿)
+                n-nyotifwequest.candidate.commonwectype, σωσ
+                i-isfwomcandidate = twue, /(^•ω•^)
+                ovewwideid = nyotifwequest.ovewwideid
               )
-            case (Some(_), ntabWritesEnabled) if !ntabWritesEnabled =>
-              ntabWriteDisabledForCandidate.incr()
-              Future.None
-            case (None, ntabWritesEnabled) =>
-              if (!ntabWritesEnabled) ntabWriteDisabledForCandidate.incr()
-              requestEmpty.counter(s"candidate_${notifRequest.candidate.commonRecType}").incr()
-              Future.None
+            c-case (some(_), 😳 nytabwwitesenabwed) i-if !ntabwwitesenabwed =>
+              nytabwwitedisabwedfowcandidate.incw()
+              futuwe.none
+            case (none, 😳 nytabwwitesenabwed) =>
+              i-if (!ntabwwitesenabwed) nytabwwitedisabwedfowcandidate.incw()
+              w-wequestempty.countew(s"candidate_${notifwequest.candidate.commonwectype}").incw()
+              f-futuwe.none
           }
       }
     }
   }
 
-  private def sendNTabRequest(
-    genericNotificationRequest: CreateGenericNotificationRequest,
-    target: Target,
-    isBadgeUpdate: Boolean,
-    crt: CommonRecommendationType,
-    isFromCandidate: Boolean,
-    overrideId: Option[String]
-  ): Future[Option[CreateGenericNotificationResponse]] = {
-    requestNonEmpty.incr()
-    val notifSvcReq =
-      genericNotificationRequest.copy(
-        sendBadgeCountUpdate = isBadgeUpdate,
-        overrideId = overrideId
+  pwivate d-def sendntabwequest(
+    genewicnotificationwequest: c-cweategenewicnotificationwequest, (⑅˘꒳˘)
+    t-tawget: t-tawget, 😳😳😳
+    isbadgeupdate: b-boowean, 😳
+    cwt: c-commonwecommendationtype, XD
+    isfwomcandidate: boowean, mya
+    ovewwideid: o-option[stwing]
+  ): futuwe[option[cweategenewicnotificationwesponse]] = {
+    w-wequestnonempty.incw()
+    v-vaw nyotifsvcweq =
+      genewicnotificationwequest.copy(
+        sendbadgecountupdate = i-isbadgeupdate, ^•ﻌ•^
+        ovewwideid = o-ovewwideid
       )
-    requestBadgeCount.incr()
-    send(target, notifSvcReq)
-      .map { response =>
-        if (response.responseType.equals(CreateGenericNotificationResponseType.DecideredOff)) {
-          deciderTurnedOffResponse.counter(s"$crt").incr()
-          deciderTurnedOffResponse.counter(s"${genericNotificationRequest.genericType}").incr()
-          throw InvalidNTABWriteRequestException("Decider is turned off")
-        } else {
-          Some(response)
+    w-wequestbadgecount.incw()
+    send(tawget, ʘwʘ nyotifsvcweq)
+      .map { wesponse =>
+        i-if (wesponse.wesponsetype.equaws(cweategenewicnotificationwesponsetype.decidewedoff)) {
+          d-decidewtuwnedoffwesponse.countew(s"$cwt").incw()
+          d-decidewtuwnedoffwesponse.countew(s"${genewicnotificationwequest.genewictype}").incw()
+          t-thwow invawidntabwwitewequestexception("decidew i-is tuwned off")
+        } ewse {
+          some(wesponse)
         }
       }
-      .onFailure { ex =>
-        stats.counter(s"error_${ex.getClass.getCanonicalName}").incr()
-        failedWriteScope.counter(s"${crt}").incr()
-        log
-          .error(
-            ex,
-            s"NTAB failure $notifSvcReq"
+      .onfaiwuwe { ex =>
+        stats.countew(s"ewwow_${ex.getcwass.getcanonicawname}").incw()
+        f-faiwedwwitescope.countew(s"${cwt}").incw()
+        wog
+          .ewwow(
+            e-ex, ( ͡o ω ͡o )
+            s"ntab faiwuwe $notifsvcweq"
           )
       }
-      .onSuccess {
-        case Some(response) =>
-          successfulWrite.incr()
-          val successfulWriteScopeString = if (isFromCandidate) "model/candidate" else "envelope"
-          successfulWriteScope.scope(successfulWriteScopeString).counter(s"$crt").incr()
-          if (response.responseType != CreateGenericNotificationResponseType.Success) {
-            gotNonSuccessResponse.incr()
-            log.warning(s"NTAB dropped $notifSvcReq with response $response")
+      .onsuccess {
+        c-case some(wesponse) =>
+          successfuwwwite.incw()
+          v-vaw successfuwwwitescopestwing = if (isfwomcandidate) "modew/candidate" e-ewse "envewope"
+          s-successfuwwwitescope.scope(successfuwwwitescopestwing).countew(s"$cwt").incw()
+          i-if (wesponse.wesponsetype != c-cweategenewicnotificationwesponsetype.success) {
+            g-gotnonsuccesswesponse.incw()
+            wog.wawning(s"ntab dwopped $notifsvcweq with wesponse $wesponse")
           }
 
         case _ =>
-          gotEmptyResponse.incr()
+          gotemptywesponse.incw()
       }
   }
 
-  private def ntabWritesEnabledForCandidate(cand: PushCandidate): Future[Boolean] = {
-    if (!cand.target.params(enableWritesParam)) {
-      disabledByDeciderForCandidate.incr()
-      Future.False
-    } else {
-      Future
+  p-pwivate def n-nytabwwitesenabwedfowcandidate(cand: p-pushcandidate): futuwe[boowean] = {
+    i-if (!cand.tawget.pawams(enabwewwitespawam)) {
+      disabwedbydecidewfowcandidate.incw()
+      futuwe.fawse
+    } ewse {
+      futuwe
         .join(
-          cand.target.isAnEmployee,
-          cand.target.isInNotificationsServiceWhitelist,
-          cand.target.isTeamMember
+          c-cand.tawget.isanempwoyee, mya
+          c-cand.tawget.isinnotificationssewvicewhitewist, o.O
+          cand.tawget.isteammembew
         )
-        .flatMap {
-          case (isEmployee, isInNotificationsServiceWhitelist, isTeamMember) =>
-            cand.target.deviceInfo.flatMap { deviceInfoOpt =>
-              deviceInfoOpt
-                .map { deviceInfo =>
-                  cand.target.isHeavyUserState.map { isHeavyUser =>
-                    val isAlphaTester = (isEmployee && cand.target
-                      .params(enableForEmployeesParam)) || isInNotificationsServiceWhitelist || isTeamMember
-                    if (cand.target.isDarkWrite) {
-                      stats
-                        .scope("model/candidate").counter(
-                          s"dark_write_${cand.commonRecType}").incr()
-                      darkWriteRequestsForCandidate.incr()
-                      false
-                    } else if (isAlphaTester || deviceInfo.isMRinNTabEligible
-                      || cand.target.insertMagicrecsIntoNTabForNonPushableUsers) {
-                      if (isHeavyUser) heavyUserForCandidateCounter.incr()
-                      else nonHeavyUserForCandidateCounter.incr()
+        .fwatmap {
+          c-case (isempwoyee, (✿oωo) isinnotificationssewvicewhitewist, :3 isteammembew) =>
+            cand.tawget.deviceinfo.fwatmap { d-deviceinfoopt =>
+              d-deviceinfoopt
+                .map { deviceinfo =>
+                  c-cand.tawget.isheavyusewstate.map { i-isheavyusew =>
+                    vaw isawphatestew = (isempwoyee && cand.tawget
+                      .pawams(enabwefowempwoyeespawam)) || isinnotificationssewvicewhitewist || isteammembew
+                    i-if (cand.tawget.isdawkwwite) {
+                      s-stats
+                        .scope("modew/candidate").countew(
+                          s-s"dawk_wwite_${cand.commonwectype}").incw()
+                      d-dawkwwitewequestsfowcandidate.incw()
+                      f-fawse
+                    } ewse if (isawphatestew || d-deviceinfo.ismwinntabewigibwe
+                      || c-cand.tawget.insewtmagicwecsintontabfownonpushabweusews) {
+                      if (isheavyusew) h-heavyusewfowcandidatecountew.incw()
+                      e-ewse nyonheavyusewfowcandidatecountew.incw()
 
-                      val enabledForDesiredUsers = cand.target.params(enableForEveryoneParam)
-                      if (isAlphaTester) {
-                        sentToAlphaUserForCandidate.incr()
-                        true
-                      } else if (enabledForDesiredUsers) {
-                        sentToNonBucketedUserForCandidate.incr()
-                        true
-                      } else {
-                        noSendForCandidate.incr()
-                        false
+                      v-vaw enabwedfowdesiwedusews = cand.tawget.pawams(enabwefowevewyonepawam)
+                      if (isawphatestew) {
+                        s-senttoawphausewfowcandidate.incw()
+                        twue
+                      } e-ewse if (enabwedfowdesiwedusews) {
+                        s-senttononbucketedusewfowcandidate.incw()
+                        twue
+                      } ewse {
+                        n-nyosendfowcandidate.incw()
+                        fawse
                       }
-                    } else {
-                      ineligibleUsersForCandidate.incr()
-                      false
+                    } ewse {
+                      inewigibweusewsfowcandidate.incw()
+                      f-fawse
                     }
                   }
-                }.getOrElse(Future.False)
+                }.getowewse(futuwe.fawse)
             }
         }
     }

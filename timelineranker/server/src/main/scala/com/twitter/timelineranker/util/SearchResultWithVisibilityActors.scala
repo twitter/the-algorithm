@@ -1,61 +1,61 @@
-package com.twitter.timelineranker.util
+package com.twittew.timewinewankew.utiw
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.visibility.model.CheckedUserActor
-import com.twitter.timelines.visibility.model.HasVisibilityActors
-import com.twitter.timelines.visibility.model.VisibilityCheckUser
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.seawch.eawwybiwd.thwiftscawa.thwiftseawchwesuwt
+i-impowt c-com.twittew.timewines.modew.tweetid
+i-impowt com.twittew.timewines.modew.usewid
+impowt c-com.twittew.timewines.visibiwity.modew.checkedusewactow
+i-impowt c-com.twittew.timewines.visibiwity.modew.hasvisibiwityactows
+i-impowt com.twittew.timewines.visibiwity.modew.visibiwitycheckusew
 
-case class SearchResultWithVisibilityActors(
-  searchResult: ThriftSearchResult,
-  statsReceiver: StatsReceiver)
-    extends HasVisibilityActors {
+case cwass seawchwesuwtwithvisibiwityactows(
+  seawchwesuwt: thwiftseawchwesuwt, /(^•ω•^)
+  statsweceivew: s-statsweceivew)
+    extends hasvisibiwityactows {
 
-  private[this] val searchResultWithoutMetadata =
-    statsReceiver.counter("searchResultWithoutMetadata")
+  p-pwivate[this] vaw seawchwesuwtwithoutmetadata =
+    s-statsweceivew.countew("seawchwesuwtwithoutmetadata")
 
-  val tweetId: TweetId = searchResult.id
-  val metadata = searchResult.metadata
-  val (userId, isRetweet, sourceUserId, sourceTweetId) = metadata match {
-    case Some(md) => {
+  vaw tweetid: tweetid = seawchwesuwt.id
+  vaw m-metadata = seawchwesuwt.metadata
+  vaw (usewid, nyaa~~ i-iswetweet, nyaa~~ souwceusewid, :3 s-souwcetweetid) = metadata match {
+    case some(md) => {
       (
-        md.fromUserId,
-        md.isRetweet,
-        md.isRetweet.getOrElse(false) match {
-          case true => Some(md.referencedTweetAuthorId)
-          case false => None
-        },
-        // metadata.sharedStatusId is defaulting to 0 for tweets that don't have one
-        // 0 is not a valid tweet id so converting to None. Also disregarding sharedStatusId
-        // for non-retweets.
-        if (md.isRetweet.isDefined && md.isRetweet.get)
-          md.sharedStatusId match {
-            case 0 => None
-            case id => Some(id)
+        md.fwomusewid, 😳😳😳
+        m-md.iswetweet, (˘ω˘)
+        md.iswetweet.getowewse(fawse) match {
+          case twue => some(md.wefewencedtweetauthowid)
+          case fawse => nyone
+        }, ^^
+        // m-metadata.shawedstatusid is defauwting t-to 0 fow t-tweets that don't h-have one
+        // 0 i-is nyot a vawid tweet id so convewting t-to nyone. :3 awso diswegawding shawedstatusid
+        // fow nyon-wetweets. -.-
+        i-if (md.iswetweet.isdefined && md.iswetweet.get)
+          md.shawedstatusid match {
+            case 0 => nyone
+            case i-id => some(id)
           }
-        else None
+        ewse nyone
       )
     }
-    case None => {
-      searchResultWithoutMetadata.incr()
-      throw new IllegalArgumentException(
-        "searchResult is missing metadata: " + searchResult.toString)
+    c-case nyone => {
+      s-seawchwesuwtwithoutmetadata.incw()
+      t-thwow nyew iwwegawawgumentexception(
+        "seawchwesuwt is missing metadata: " + seawchwesuwt.tostwing)
     }
   }
 
   /**
-   * Returns the set of users (or 'actors') relevant for Tweet visibility filtering. Usually the
-   * Tweet author, but if this is a Retweet, then the source Tweet author is also relevant.
+   * w-wetuwns the set o-of usews (ow 'actows') wewevant f-fow tweet visibiwity f-fiwtewing. 😳 usuawwy the
+   * t-tweet authow, but if this is a-a wetweet, mya then the souwce tweet authow is awso w-wewevant. (˘ω˘)
    */
-  def getVisibilityActors(viewerIdOpt: Option[UserId]): Seq[CheckedUserActor] = {
-    val isSelf = isViewerAlsoTweetAuthor(viewerIdOpt, Some(userId))
-    Seq(
-      Some(CheckedUserActor(isSelf, VisibilityCheckUser.Tweeter, userId)),
-      sourceUserId.map {
-        CheckedUserActor(isSelf, VisibilityCheckUser.SourceUser, _)
+  def getvisibiwityactows(viewewidopt: o-option[usewid]): seq[checkedusewactow] = {
+    v-vaw issewf = i-isviewewawsotweetauthow(viewewidopt, >_< some(usewid))
+    seq(
+      some(checkedusewactow(issewf, -.- visibiwitycheckusew.tweetew, 🥺 usewid)), (U ﹏ U)
+      souwceusewid.map {
+        c-checkedusewactow(issewf, >w< v-visibiwitycheckusew.souwceusew, mya _)
       }
-    ).flatten
+    ).fwatten
   }
 }

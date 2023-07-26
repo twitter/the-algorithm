@@ -1,72 +1,72 @@
-package com.twitter.simclusters_v2.scalding.common
+package com.twittew.simcwustews_v2.scawding.common
 
-import com.twitter.algebird._
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.{Execution, Stat, UniqueID}
+impowt com.twittew.awgebiwd._
+i-impowt com.twittew.scawding.typed.typedpipe
+i-impowt c-com.twittew.scawding.{execution, mya s-stat, ^^ uniqueid}
 
 /**
- * A richer version of TypedPipe.
+ * a-a wichew v-vewsion of t-typedpipe. 😳😳😳
  */
-class TypedRichPipe[V](pipe: TypedPipe[V]) {
+c-cwass typedwichpipe[v](pipe: typedpipe[v]) {
 
-  def count(counterName: String)(implicit uniqueID: UniqueID): TypedPipe[V] = {
-    val stat = Stat(counterName)
+  def count(countewname: stwing)(impwicit uniqueid: u-uniqueid): typedpipe[v] = {
+    vaw stat = stat(countewname)
     pipe.map { v =>
-      stat.inc()
+      s-stat.inc()
       v
     }
   }
 
   /**
-   * Print a summary of the TypedPipe with total size and some randomly selected records
+   * p-pwint a summawy of the typedpipe with totaw size and some wandomwy s-sewected wecowds
    */
-  def getSummary(numRecords: Int = 100): Execution[Option[(Long, String)]] = {
-    val randomSample = Aggregator.reservoirSample[V](numRecords)
+  def g-getsummawy(numwecowds: i-int = 100): execution[option[(wong, mya stwing)]] = {
+    vaw wandomsampwe = aggwegatow.wesewvoiwsampwe[v](numwecowds)
 
-    // more aggregator can be added here
+    // m-mowe aggwegatow can be added hewe
     pipe
-      .aggregate(randomSample.join(Aggregator.size))
+      .aggwegate(wandomsampwe.join(aggwegatow.size))
       .map {
-        case (randomSamples, size) =>
-          val samplesStr = randomSamples
-            .map { sample =>
-              Util.prettyJsonMapper
-                .writeValueAsString(sample)
-                .replaceAll("\n", " ")
+        case (wandomsampwes, 😳 size) =>
+          v-vaw sampwesstw = wandomsampwes
+            .map { s-sampwe =>
+              u-utiw.pwettyjsonmappew
+                .wwitevawueasstwing(sampwe)
+                .wepwaceaww("\n", -.- " ")
             }
-            .mkString("\n\t")
+            .mkstwing("\n\t")
 
-          (size, samplesStr)
+          (size, 🥺 s-sampwesstw)
       }
-      .toOptionExecution
+      .tooptionexecution
   }
 
-  def getSummaryString(name: String, numRecords: Int = 100): Execution[String] = {
-    getSummary(numRecords)
+  d-def getsummawystwing(name: stwing, o.O nyumwecowds: int = 100): e-execution[stwing] = {
+    getsummawy(numwecowds)
       .map {
-        case Some((size, string)) =>
-          s"TypedPipeName: $name \nTotal size: $size. \nSample records: \n$string"
-        case None => s"TypedPipeName: $name is empty"
+        case some((size, /(^•ω•^) s-stwing)) =>
+          s"typedpipename: $name \ntotaw size: $size. nyaa~~ \nsampwe wecowds: \n$stwing"
+        case nyone => s"typedpipename: $name is empty"
       }
 
   }
 
   /**
-   * Print a summary of the TypedPipe with total size and some randomly selected records
+   * pwint a s-summawy of the typedpipe with totaw s-size and some w-wandomwy sewected w-wecowds
    */
-  def printSummary(name: String, numRecords: Int = 100): Execution[Unit] = {
-    getSummaryString(name, numRecords).map { s => println(s) }
+  def pwintsummawy(name: stwing, nyaa~~ nyumwecowds: i-int = 100): execution[unit] = {
+    g-getsummawystwing(name, :3 nyumwecowds).map { s-s => p-pwintwn(s) }
   }
 }
 
-object TypedRichPipe extends java.io.Serializable {
-  import scala.language.implicitConversions
+object typedwichpipe e-extends java.io.sewiawizabwe {
+  i-impowt scawa.wanguage.impwicitconvewsions
 
-  implicit def typedPipeToRichPipe[V](
-    pipe: TypedPipe[V]
+  impwicit d-def typedpipetowichpipe[v](
+    pipe: typedpipe[v]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedRichPipe[V] = {
-    new TypedRichPipe(pipe)
+    impwicit u-uniqueid: uniqueid
+  ): t-typedwichpipe[v] = {
+    n-nyew typedwichpipe(pipe)
   }
 }

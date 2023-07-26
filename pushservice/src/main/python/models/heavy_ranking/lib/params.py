@@ -1,49 +1,49 @@
 """
-Parameters used in ClemNet.
+pawametews used in cwemnet. (˘ω˘)
 """
-from typing import List, Optional
+f-fwom typing impowt w-wist, optionaw
 
-from pydantic import BaseModel, Extra, Field, PositiveInt
-
-
-# checkstyle: noqa
+f-fwom pydantic i-impowt basemodew, (⑅˘꒳˘) e-extwa, (///ˬ///✿) fiewd, p-positiveint
 
 
-class ExtendedBaseModel(BaseModel):
-  class Config:
-    extra = Extra.forbid
+# c-checkstywe: n-nyoqa
 
 
-class DenseParams(ExtendedBaseModel):
-  name: Optional[str]
-  bias_initializer: str = "zeros"
-  kernel_initializer: str = "glorot_uniform"
-  output_size: PositiveInt
-  use_bias: bool = Field(True)
+cwass extendedbasemodew(basemodew):
+  cwass config:
+    extwa = extwa.fowbid
 
 
-class ConvParams(ExtendedBaseModel):
-  name: Optional[str]
-  bias_initializer: str = "zeros"
-  filters: PositiveInt
-  kernel_initializer: str = "glorot_uniform"
-  kernel_size: PositiveInt
-  padding: str = "SAME"
-  strides: PositiveInt = 1
-  use_bias: bool = Field(True)
+cwass densepawams(extendedbasemodew):
+  nyame: o-optionaw[stw]
+  bias_initiawizew: stw = "zewos"
+  k-kewnew_initiawizew: stw = "gwowot_unifowm"
+  o-output_size: positiveint
+  use_bias: boow = fiewd(twue)
 
 
-class BlockParams(ExtendedBaseModel):
-  activation: Optional[str]
-  conv: Optional[ConvParams]
-  dense: Optional[DenseParams]
-  residual: Optional[bool]
+cwass c-convpawams(extendedbasemodew):
+  nyame: optionaw[stw]
+  b-bias_initiawizew: stw = "zewos"
+  fiwtews: p-positiveint
+  kewnew_initiawizew: stw = "gwowot_unifowm"
+  kewnew_size: positiveint
+  padding: s-stw = "same"
+  stwides: positiveint = 1
+  use_bias: boow = fiewd(twue)
 
 
-class TopLayerParams(ExtendedBaseModel):
-  n_labels: PositiveInt
+cwass bwockpawams(extendedbasemodew):
+  a-activation: optionaw[stw]
+  c-conv: optionaw[convpawams]
+  d-dense: optionaw[densepawams]
+  w-wesiduaw: optionaw[boow]
 
 
-class ClemNetParams(ExtendedBaseModel):
-  blocks: List[BlockParams] = []
-  top: Optional[TopLayerParams]
+c-cwass topwayewpawams(extendedbasemodew):
+  ny_wabews: p-positiveint
+
+
+cwass cwemnetpawams(extendedbasemodew):
+  bwocks: w-wist[bwockpawams] = []
+  top: optionaw[topwayewpawams]

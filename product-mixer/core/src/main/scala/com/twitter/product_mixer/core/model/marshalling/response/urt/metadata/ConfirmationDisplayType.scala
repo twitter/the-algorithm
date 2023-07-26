@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata
 
-sealed trait ConfirmationDisplayType
+seawed twait confiwmationdispwaytype
 
-case object Inline extends ConfirmationDisplayType
-case object BottomSheet extends ConfirmationDisplayType
+c-case object i-inwine extends c-confiwmationdispwaytype
+c-case object b-bottomsheet e-extends confiwmationdispwaytype

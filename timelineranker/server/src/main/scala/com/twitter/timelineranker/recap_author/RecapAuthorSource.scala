@@ -1,212 +1,212 @@
-package com.twitter.timelineranker.recap_author
+package com.twittew.timewinewankew.wecap_authow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.storehaus.Store
-import com.twitter.timelineranker.common._
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.model._
-import com.twitter.timelineranker.monitoring.UsersSearchResultMonitoringTransform
-import com.twitter.timelineranker.parameters.monitoring.MonitoringParams
-import com.twitter.timelineranker.parameters.recap.RecapParams
-import com.twitter.timelineranker.parameters.recap_author.RecapAuthorParams
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelineranker.util.CopyContentFeaturesIntoHydratedTweetsTransform
-import com.twitter.timelineranker.util.CopyContentFeaturesIntoThriftTweetFeaturesTransform
-import com.twitter.timelineranker.util.TweetFilters
-import com.twitter.timelineranker.visibility.FollowGraphDataProvider
-import com.twitter.timelines.clients.gizmoduck.GizmoduckClient
-import com.twitter.timelines.clients.manhattan.UserMetadataClient
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.clients.tweetypie.TweetyPieClient
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.timelines.util.stats.RequestStatsReceiver
-import com.twitter.timelines.visibility.VisibilityEnforcer
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt c-com.twittew.stowehaus.stowe
+i-impowt c-com.twittew.timewinewankew.common._
+i-impowt com.twittew.timewinewankew.cowe.candidateenvewope
+i-impowt com.twittew.timewinewankew.cowe.hydwatedcandidatesandfeatuwesenvewope
+i-impowt com.twittew.timewinewankew.modew.wecapquewy.dependencypwovidew
+impowt com.twittew.timewinewankew.modew._
+impowt com.twittew.timewinewankew.monitowing.usewsseawchwesuwtmonitowingtwansfowm
+impowt c-com.twittew.timewinewankew.pawametews.monitowing.monitowingpawams
+impowt com.twittew.timewinewankew.pawametews.wecap.wecappawams
+impowt com.twittew.timewinewankew.pawametews.wecap_authow.wecapauthowpawams
+i-impowt com.twittew.timewinewankew.wecap.modew.contentfeatuwes
+impowt com.twittew.timewinewankew.utiw.copycontentfeatuwesintohydwatedtweetstwansfowm
+i-impowt com.twittew.timewinewankew.utiw.copycontentfeatuwesintothwifttweetfeatuwestwansfowm
+impowt com.twittew.timewinewankew.utiw.tweetfiwtews
+impowt com.twittew.timewinewankew.visibiwity.fowwowgwaphdatapwovidew
+impowt c-com.twittew.timewines.cwients.gizmoduck.gizmoduckcwient
+impowt c-com.twittew.timewines.cwients.manhattan.usewmetadatacwient
+i-impowt com.twittew.timewines.cwients.wewevance_seawch.seawchcwient
+impowt com.twittew.timewines.cwients.tweetypie.tweetypiecwient
+impowt com.twittew.timewines.modew.tweetid
+i-impowt com.twittew.timewines.utiw.faiwopenhandwew
+impowt com.twittew.timewines.utiw.stats.wequeststatsweceivew
+impowt com.twittew.timewines.visibiwity.visibiwityenfowcew
+i-impowt com.twittew.utiw.futuwe
 
 /**
- * This source controls what tweets are fetched from earlybird given a
- * list of authors to fetch tweets from. The controls available are:
- * 1. The ''filters'' val, which is also overridden
- * by the query options in TweetKindOptions (see Recap.scala, the
- * parent class, for details on how this override works). For example, one
- * can choose to retrieve replies, retweets and/or extended replies
- * by changing the options passed in, which get added to ''filters''.
- * 2. The visiblityEnforcer passed in, which controls what visibility rules
- * are applied to the tweets returned from earlybird (e.g. mutes, blocks).
+ * this souwce c-contwows nani t-tweets awe fetched f-fwom eawwybiwd g-given a
+ * wist of authows to fetch tweets f-fwom. XD the contwows avaiwabwe awe:
+ * 1. mya the ''fiwtews'' v-vaw, ^•ﻌ•^ which is awso ovewwidden
+ * by the quewy options in tweetkindoptions (see wecap.scawa, ʘwʘ t-the
+ * pawent cwass, ( ͡o ω ͡o ) fow detaiws o-on how this o-ovewwide wowks). mya f-fow exampwe, o.O one
+ * can choose to wetwieve wepwies, (✿oωo) wetweets a-and/ow extended w-wepwies
+ * by changing the options p-passed in, :3 which g-get added to ''fiwtews''. 😳
+ * 2. the visibwityenfowcew p-passed in, (U ﹏ U) which contwows n-nyani visibiwity wuwes
+ * awe appwied to the t-tweets wetuwned fwom eawwybiwd (e.g. mya m-mutes, (U ᵕ U❁) bwocks).
  */
-class RecapAuthorSource(
-  gizmoduckClient: GizmoduckClient,
-  searchClient: SearchClient,
-  tweetyPieClient: TweetyPieClient,
-  userMetadataClient: UserMetadataClient,
-  followGraphDataProvider: FollowGraphDataProvider,
-  contentFeaturesCache: Store[TweetId, ContentFeatures],
-  visibilityEnforcer: VisibilityEnforcer,
-  statsReceiver: StatsReceiver) {
+cwass w-wecapauthowsouwce(
+  g-gizmoduckcwient: gizmoduckcwient, :3
+  seawchcwient: seawchcwient, mya
+  tweetypiecwient: tweetypiecwient, OwO
+  usewmetadatacwient: usewmetadatacwient, (ˆ ﻌ ˆ)♡
+  f-fowwowgwaphdatapwovidew: f-fowwowgwaphdatapwovidew, ʘwʘ
+  contentfeatuwescache: stowe[tweetid, o.O c-contentfeatuwes], UwU
+  v-visibiwityenfowcew: v-visibiwityenfowcew, rawr x3
+  statsweceivew: statsweceivew) {
 
-  private[this] val baseScope = statsReceiver.scope("recapAuthor")
-  private[this] val requestStats = RequestStatsReceiver(baseScope)
+  pwivate[this] vaw b-basescope = statsweceivew.scope("wecapauthow")
+  pwivate[this] vaw wequeststats = wequeststatsweceivew(basescope)
 
-  private[this] val failOpenScope = baseScope.scope("failOpen")
-  private[this] val userProfileHandler = new FailOpenHandler(failOpenScope, "userProfileInfo")
-  private[this] val userLanguagesHandler = new FailOpenHandler(failOpenScope, "userLanguages")
+  pwivate[this] v-vaw faiwopenscope = basescope.scope("faiwopen")
+  p-pwivate[this] v-vaw usewpwofiwehandwew = n-nyew faiwopenhandwew(faiwopenscope, 🥺 "usewpwofiweinfo")
+  p-pwivate[this] v-vaw usewwanguageshandwew = nyew f-faiwopenhandwew(faiwopenscope, :3 "usewwanguages")
 
   /*
-   * Similar to RecapSource, we filter out tweets directed at non-followed users that
-   * are not "replies" i.e. those that begin with the @-handle.
-   * For tweets to non-followed users that are replies, these are "extended replies"
-   * and are handled separately by the dynamic filters (see Recap.scala for details).
-   * Reply and retweet filtering is also handled by dynamic filters, overriden by
-   * TweetKindOptions passed in with the query (again, details in Recap.scala)
-   * We however do not filter out tweets from non-followed users, unlike RecapSource,
-   * because one of the main use cases of this endpoint is to retrieve tweets from out
-   * of network authors.
+   * simiwaw t-to wecapsouwce, (ꈍᴗꈍ) we fiwtew out tweets diwected a-at nyon-fowwowed u-usews that
+   * a-awe nyot "wepwies" i-i.e. 🥺 those t-that begin with the @-handwe.
+   * fow tweets to nyon-fowwowed u-usews that awe wepwies, (✿oωo) these awe "extended wepwies"
+   * and awe handwed sepawatewy by the dynamic f-fiwtews (see wecap.scawa fow detaiws).
+   * wepwy and wetweet f-fiwtewing is a-awso handwed by d-dynamic fiwtews, (U ﹏ U) ovewwiden by
+   * t-tweetkindoptions passed in w-with the quewy (again, :3 d-detaiws in wecap.scawa)
+   * we howevew do nyot fiwtew out tweets fwom nyon-fowwowed usews, ^^;; u-unwike wecapsouwce, rawr
+   * because o-one of the main use cases of t-this endpoint is t-to wetwieve tweets fwom out
+   * of nyetwowk authows. 😳😳😳
    */
-  val filters: TweetFilters.ValueSet = TweetFilters.ValueSet(
-    TweetFilters.DuplicateTweets,
-    TweetFilters.DuplicateRetweets,
-    TweetFilters.DirectedAtNotFollowedUsers,
-    TweetFilters.NonReplyDirectedAtNotFollowedUsers
+  v-vaw fiwtews: tweetfiwtews.vawueset = t-tweetfiwtews.vawueset(
+    tweetfiwtews.dupwicatetweets, (✿oωo)
+    t-tweetfiwtews.dupwicatewetweets, OwO
+    t-tweetfiwtews.diwectedatnotfowwowedusews, ʘwʘ
+    tweetfiwtews.nonwepwydiwectedatnotfowwowedusews
   )
 
-  private[this] val visibilityEnforcingTransform = new VisibilityEnforcingTransform(
-    visibilityEnforcer
+  pwivate[this] vaw visibiwityenfowcingtwansfowm = nyew v-visibiwityenfowcingtwansfowm(
+    v-visibiwityenfowcew
   )
 
-  private[this] val hydratedTweetsFilter = new HydratedTweetsFilterTransform(
-    outerFilters = filters,
-    innerFilters = TweetFilters.None,
-    useFollowGraphData = true,
-    useSourceTweets = false,
-    statsReceiver = baseScope,
-    numRetweetsAllowed = HydratedTweetsFilterTransform.NumDuplicateRetweetsAllowed
+  p-pwivate[this] vaw hydwatedtweetsfiwtew = n-nyew hydwatedtweetsfiwtewtwansfowm(
+    o-outewfiwtews = fiwtews, (ˆ ﻌ ˆ)♡
+    i-innewfiwtews = tweetfiwtews.none, (U ﹏ U)
+    usefowwowgwaphdata = twue, UwU
+    usesouwcetweets = fawse, XD
+    statsweceivew = basescope,
+    n-numwetweetsawwowed = hydwatedtweetsfiwtewtwansfowm.numdupwicatewetweetsawwowed
   )
 
-  private[this] val dynamicHydratedTweetsFilter = new TweetKindOptionHydratedTweetsFilterTransform(
-    useFollowGraphData = false,
-    useSourceTweets = false,
-    statsReceiver = baseScope
+  p-pwivate[this] vaw dynamichydwatedtweetsfiwtew = nyew tweetkindoptionhydwatedtweetsfiwtewtwansfowm(
+    u-usefowwowgwaphdata = f-fawse, ʘwʘ
+    usesouwcetweets = fawse, rawr x3
+    statsweceivew = b-basescope
   )
 
-  private[this] val maxFollowedUsersProvider =
-    DependencyProvider.value(RecapParams.MaxFollowedUsers.default)
-  private[this] val followGraphDataTransform =
-    new FollowGraphDataTransform(followGraphDataProvider, maxFollowedUsersProvider)
-  private[this] val maxSearchResultCountProvider = DependencyProvider { query =>
-    query.maxCount.getOrElse(query.params(RecapParams.DefaultMaxTweetCount))
+  pwivate[this] vaw maxfowwowedusewspwovidew =
+    dependencypwovidew.vawue(wecappawams.maxfowwowedusews.defauwt)
+  pwivate[this] v-vaw fowwowgwaphdatatwansfowm =
+    nyew fowwowgwaphdatatwansfowm(fowwowgwaphdatapwovidew, ^^;; maxfowwowedusewspwovidew)
+  pwivate[this] v-vaw maxseawchwesuwtcountpwovidew = d-dependencypwovidew { quewy =>
+    quewy.maxcount.getowewse(quewy.pawams(wecappawams.defauwtmaxtweetcount))
   }
-  private[this] val relevanceOptionsMaxHitsToProcessProvider =
-    DependencyProvider.from(RecapParams.RelevanceOptionsMaxHitsToProcessParam)
+  pwivate[this] vaw wewevanceoptionsmaxhitstopwocesspwovidew =
+    d-dependencypwovidew.fwom(wecappawams.wewevanceoptionsmaxhitstopwocesspawam)
 
-  private[this] val retrieveSearchResultsTransform = new RecapAuthorSearchResultsTransform(
-    searchClient = searchClient,
-    maxCountProvider = maxSearchResultCountProvider,
-    relevanceOptionsMaxHitsToProcessProvider = relevanceOptionsMaxHitsToProcessProvider,
-    enableSettingTweetTypesWithTweetKindOptionProvider =
-      DependencyProvider.from(RecapParams.EnableSettingTweetTypesWithTweetKindOption),
-    statsReceiver = baseScope,
-    logSearchDebugInfo = false)
+  p-pwivate[this] vaw wetwieveseawchwesuwtstwansfowm = nyew wecapauthowseawchwesuwtstwansfowm(
+    seawchcwient = s-seawchcwient, ʘwʘ
+    maxcountpwovidew = maxseawchwesuwtcountpwovidew, (U ﹏ U)
+    w-wewevanceoptionsmaxhitstopwocesspwovidew = wewevanceoptionsmaxhitstopwocesspwovidew, (˘ω˘)
+    enabwesettingtweettypeswithtweetkindoptionpwovidew =
+      dependencypwovidew.fwom(wecappawams.enabwesettingtweettypeswithtweetkindoption), (ꈍᴗꈍ)
+    s-statsweceivew = basescope, /(^•ω•^)
+    w-wogseawchdebuginfo = f-fawse)
 
-  private[this] val debugAuthorsMonitoringProvider =
-    DependencyProvider.from(MonitoringParams.DebugAuthorsAllowListParam)
-  private[this] val preTruncateSearchResultsTransform =
-    new UsersSearchResultMonitoringTransform(
-      name = "RecapSearchResultsTruncationTransform",
-      new RecapSearchResultsTruncationTransform(
-        extraSortBeforeTruncationGate = DependencyProvider.True,
-        maxCountProvider = maxSearchResultCountProvider,
-        statsReceiver = baseScope.scope("afterSearchResultsTransform")
-      ),
-      baseScope.scope("afterSearchResultsTransform"),
-      debugAuthorsMonitoringProvider
+  pwivate[this] v-vaw debugauthowsmonitowingpwovidew =
+    dependencypwovidew.fwom(monitowingpawams.debugauthowsawwowwistpawam)
+  pwivate[this] v-vaw pwetwuncateseawchwesuwtstwansfowm =
+    n-nyew usewsseawchwesuwtmonitowingtwansfowm(
+      n-nyame = "wecapseawchwesuwtstwuncationtwansfowm", >_<
+      nyew wecapseawchwesuwtstwuncationtwansfowm(
+        e-extwasowtbefowetwuncationgate = d-dependencypwovidew.twue, σωσ
+        maxcountpwovidew = maxseawchwesuwtcountpwovidew, ^^;;
+        s-statsweceivew = b-basescope.scope("aftewseawchwesuwtstwansfowm")
+      ), 😳
+      b-basescope.scope("aftewseawchwesuwtstwansfowm"), >_<
+      debugauthowsmonitowingpwovidew
     )
 
-  private[this] val searchResultsTransform = retrieveSearchResultsTransform
-    .andThen(preTruncateSearchResultsTransform)
+  pwivate[this] v-vaw seawchwesuwtstwansfowm = wetwieveseawchwesuwtstwansfowm
+    .andthen(pwetwuncateseawchwesuwtstwansfowm)
 
-  private[this] val userProfileInfoTransform =
-    new UserProfileInfoTransform(userProfileHandler, gizmoduckClient)
-  private[this] val languagesTransform =
-    new UserLanguagesTransform(userLanguagesHandler, userMetadataClient)
+  pwivate[this] v-vaw u-usewpwofiweinfotwansfowm =
+    new usewpwofiweinfotwansfowm(usewpwofiwehandwew, -.- gizmoduckcwient)
+  pwivate[this] v-vaw wanguagestwansfowm =
+    nyew u-usewwanguagestwansfowm(usewwanguageshandwew, UwU u-usewmetadatacwient)
 
-  private[this] val contentFeaturesHydrationTransform =
-    new ContentFeaturesHydrationTransformBuilder(
-      tweetyPieClient = tweetyPieClient,
-      contentFeaturesCache = contentFeaturesCache,
-      enableContentFeaturesGate =
-        RecapQuery.paramGate(RecapAuthorParams.EnableContentFeaturesHydrationParam),
-      enableTokensInContentFeaturesGate =
-        RecapQuery.paramGate(RecapAuthorParams.EnableTokensInContentFeaturesHydrationParam),
-      enableTweetTextInContentFeaturesGate =
-        RecapQuery.paramGate(RecapAuthorParams.EnableTweetTextInContentFeaturesHydrationParam),
-      enableConversationControlContentFeaturesGate = RecapQuery.paramGate(
-        RecapAuthorParams.EnableConversationControlInContentFeaturesHydrationParam),
-      enableTweetMediaHydrationGate =
-        RecapQuery.paramGate(RecapAuthorParams.EnableTweetMediaHydrationParam),
-      hydrateInReplyToTweets = false,
-      statsReceiver = baseScope
-    ).build()
+  p-pwivate[this] vaw contentfeatuweshydwationtwansfowm =
+    n-nyew contentfeatuweshydwationtwansfowmbuiwdew(
+      tweetypiecwient = tweetypiecwient, :3
+      contentfeatuwescache = contentfeatuwescache, σωσ
+      enabwecontentfeatuwesgate =
+        w-wecapquewy.pawamgate(wecapauthowpawams.enabwecontentfeatuweshydwationpawam),
+      enabwetokensincontentfeatuwesgate =
+        w-wecapquewy.pawamgate(wecapauthowpawams.enabwetokensincontentfeatuweshydwationpawam), >w<
+      enabwetweettextincontentfeatuwesgate =
+        w-wecapquewy.pawamgate(wecapauthowpawams.enabwetweettextincontentfeatuweshydwationpawam), (ˆ ﻌ ˆ)♡
+      enabweconvewsationcontwowcontentfeatuwesgate = w-wecapquewy.pawamgate(
+        wecapauthowpawams.enabweconvewsationcontwowincontentfeatuweshydwationpawam), ʘwʘ
+      e-enabwetweetmediahydwationgate =
+        w-wecapquewy.pawamgate(wecapauthowpawams.enabwetweetmediahydwationpawam), :3
+      h-hydwateinwepwytotweets = f-fawse, (˘ω˘)
+      s-statsweceivew = basescope
+    ).buiwd()
 
-  private[this] def hydratesContentFeatures(
-    hydratedEnvelope: HydratedCandidatesAndFeaturesEnvelope
-  ): Boolean =
-    hydratedEnvelope.candidateEnvelope.query.hydratesContentFeatures.getOrElse(true)
+  pwivate[this] def hydwatescontentfeatuwes(
+    hydwatedenvewope: hydwatedcandidatesandfeatuwesenvewope
+  ): boowean =
+    hydwatedenvewope.candidateenvewope.quewy.hydwatescontentfeatuwes.getowewse(twue)
 
-  private[this] val contentFeaturesTransformer = FutureArrow.choose(
-    predicate = hydratesContentFeatures,
-    ifTrue = contentFeaturesHydrationTransform
-      .andThen(CopyContentFeaturesIntoThriftTweetFeaturesTransform)
-      .andThen(CopyContentFeaturesIntoHydratedTweetsTransform),
-    ifFalse = FutureArrow[
-      HydratedCandidatesAndFeaturesEnvelope,
-      HydratedCandidatesAndFeaturesEnvelope
-    ](Future.value) // empty transformer
+  p-pwivate[this] v-vaw contentfeatuwestwansfowmew = f-futuweawwow.choose(
+    pwedicate = h-hydwatescontentfeatuwes, 😳😳😳
+    iftwue = contentfeatuweshydwationtwansfowm
+      .andthen(copycontentfeatuwesintothwifttweetfeatuwestwansfowm)
+      .andthen(copycontentfeatuwesintohydwatedtweetstwansfowm), rawr x3
+    iffawse = futuweawwow[
+      h-hydwatedcandidatesandfeatuwesenvewope,
+      h-hydwatedcandidatesandfeatuwesenvewope
+    ](futuwe.vawue) // empty t-twansfowmew
   )
 
-  private[this] val candidateGenerationTransform = new CandidateGenerationTransform(baseScope)
+  pwivate[this] vaw candidategenewationtwansfowm = n-nyew candidategenewationtwansfowm(basescope)
 
-  val hydrationAndFilteringPipeline: FutureArrow[RecapQuery, CandidateEnvelope] =
-    CreateCandidateEnvelopeTransform // Create empty CandidateEnvelope
-      .andThen(followGraphDataTransform) // Fetch follow graph data
-      .andThen(searchResultsTransform) // Fetch search results
-      .andThen(SearchResultDedupAndSortingTransform)
-      .andThen(CandidateTweetHydrationTransform) // candidate hydration
-      .andThen(visibilityEnforcingTransform) // filter hydrated tweets to visible ones
-      .andThen(hydratedTweetsFilter) // filter hydrated tweets based on predefined filter
-      .andThen(dynamicHydratedTweetsFilter) // filter hydrated tweets based on query TweetKindOption
-      .andThen(
-        TrimToMatchHydratedTweetsTransform
-      ) // trim search result set to match filtered hydrated tweets (this needs to be accurate for feature hydration)
+  v-vaw hydwationandfiwtewingpipewine: futuweawwow[wecapquewy, c-candidateenvewope] =
+    c-cweatecandidateenvewopetwansfowm // cweate empty candidateenvewope
+      .andthen(fowwowgwaphdatatwansfowm) // fetch fowwow gwaph data
+      .andthen(seawchwesuwtstwansfowm) // fetch s-seawch wesuwts
+      .andthen(seawchwesuwtdedupandsowtingtwansfowm)
+      .andthen(candidatetweethydwationtwansfowm) // c-candidate h-hydwation
+      .andthen(visibiwityenfowcingtwansfowm) // f-fiwtew h-hydwated tweets to visibwe o-ones
+      .andthen(hydwatedtweetsfiwtew) // f-fiwtew hydwated tweets b-based on pwedefined f-fiwtew
+      .andthen(dynamichydwatedtweetsfiwtew) // fiwtew h-hydwated tweets based on quewy tweetkindoption
+      .andthen(
+        t-twimtomatchhydwatedtweetstwansfowm
+      ) // twim seawch w-wesuwt set t-to match fiwtewed hydwated tweets (this n-nyeeds to be accuwate fow featuwe hydwation)
 
-  // runs the main pipeline in parallel with fetching user profile info and user languages
-  val featureHydrationDataTransform: FeatureHydrationDataTransform =
-    new FeatureHydrationDataTransform(
-      hydrationAndFilteringPipeline,
-      languagesTransform,
-      userProfileInfoTransform
+  // w-wuns t-the main pipewine i-in pawawwew with fetching usew pwofiwe info and usew wanguages
+  v-vaw featuwehydwationdatatwansfowm: featuwehydwationdatatwansfowm =
+    nyew f-featuwehydwationdatatwansfowm(
+      h-hydwationandfiwtewingpipewine, (✿oωo)
+      wanguagestwansfowm, (ˆ ﻌ ˆ)♡
+      u-usewpwofiweinfotwansfowm
     )
 
-  // Copy transforms must go after the search features transform, as the search transform
-  // overwrites the ThriftTweetFeatures.
-  val featureHydrationPipeline: FutureArrow[RecapQuery, CandidateTweetsResult] =
-    featureHydrationDataTransform
-      .andThen(
-        InNetworkTweetsSearchFeaturesHydrationTransform
-      ) // RecapAuthorSource uses InNetworkTweetsSearchFeaturesHydrationTransform because PYLE uses the in-network model and features.
-      .andThen(contentFeaturesTransformer)
-      .andThen(candidateGenerationTransform)
+  // copy twansfowms m-must go a-aftew the seawch featuwes twansfowm, :3 as the seawch t-twansfowm
+  // ovewwwites the thwifttweetfeatuwes. (U ᵕ U❁)
+  v-vaw featuwehydwationpipewine: f-futuweawwow[wecapquewy, ^^;; candidatetweetswesuwt] =
+    featuwehydwationdatatwansfowm
+      .andthen(
+        i-innetwowktweetsseawchfeatuweshydwationtwansfowm
+      ) // wecapauthowsouwce uses i-innetwowktweetsseawchfeatuweshydwationtwansfowm b-because pywe u-uses the in-netwowk modew and featuwes. mya
+      .andthen(contentfeatuwestwansfowmew)
+      .andthen(candidategenewationtwansfowm)
 
-  def get(query: RecapQuery): Future[CandidateTweetsResult] = {
-    requestStats.addEventStats {
-      featureHydrationPipeline(query)
+  def get(quewy: wecapquewy): futuwe[candidatetweetswesuwt] = {
+    wequeststats.addeventstats {
+      featuwehydwationpipewine(quewy)
     }
   }
 
-  def get(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
-    Future.collect(queries.map(get))
+  def get(quewies: seq[wecapquewy]): futuwe[seq[candidatetweetswesuwt]] = {
+    futuwe.cowwect(quewies.map(get))
   }
 }

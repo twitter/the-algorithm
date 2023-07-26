@@ -1,64 +1,64 @@
-package com.twitter.search.core.earlybird.index.column;
+package com.twittew.seawch.cowe.eawwybiwd.index.cowumn;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.NumericDocValues;
+i-impowt owg.apache.wucene.index.weafweadew;
+i-impowt owg.apache.wucene.index.numewicdocvawues;
 
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.docidtotweetidmappew;
 
 /**
- * Get an underlying data for a field by calling
- * EarlybirdIndexSegmentAtomicReader#getNumericDocValues(String).
+ * get a-an undewwying d-data fow a fiewd b-by cawwing
+ * e-eawwybiwdindexsegmentatomicweadew#getnumewicdocvawues(stwing). mya
  */
-public abstract class ColumnStrideFieldIndex {
-  private final String name;
+p-pubwic abstwact cwass cowumnstwidefiewdindex {
+  pwivate finaw stwing nyame;
 
-  public ColumnStrideFieldIndex(String name) {
+  pubwic cowumnstwidefiewdindex(stwing n-nyame) {
     this.name = name;
   }
 
-  public String getName() {
-    return name;
+  pubwic s-stwing getname() {
+    wetuwn n-nyame;
   }
 
   /**
-   * Returns the CSF value for the given doc ID.
+   * wetuwns the csf vawue fow the given doc i-id. ^^
    */
-  public abstract long get(int docID);
+  pubwic abstwact wong g-get(int docid);
 
   /**
-   * Updates the CSF value for the given doc ID to the given value.
+   * updates t-the csf vawue fow the given doc id to the given vawue. 😳😳😳
    */
-  public void setValue(int docID, long value) {
-    throw new UnsupportedOperationException();
+  pubwic void s-setvawue(int docid, mya wong vawue) {
+    thwow nyew unsuppowtedopewationexception();
   }
 
   /**
-   * Loads the CSF from an AtomicReader.
+   * woads the csf f-fwom an atomicweadew. 😳
    */
-  public void load(LeafReader atomicReader, String field) throws IOException {
-    NumericDocValues docValues = atomicReader.getNumericDocValues(field);
-    if (docValues != null) {
-      for (int i = 0; i < atomicReader.maxDoc(); i++) {
-        if (docValues.advanceExact(i)) {
-          setValue(i, docValues.longValue());
+  pubwic void woad(weafweadew a-atomicweadew, -.- s-stwing f-fiewd) thwows ioexception {
+    n-nyumewicdocvawues docvawues = atomicweadew.getnumewicdocvawues(fiewd);
+    if (docvawues != n-nyuww) {
+      fow (int i = 0; i < a-atomicweadew.maxdoc(); i++) {
+        if (docvawues.advanceexact(i)) {
+          setvawue(i, 🥺 docvawues.wongvawue());
         }
       }
     }
   }
 
   /**
-   * Optimizes the representation of this column stride field, and remaps its doc IDs, if necessary.
+   * optimizes the wepwesentation o-of this cowumn stwide f-fiewd, o.O and wemaps i-its doc ids, /(^•ω•^) if n-nyecessawy. nyaa~~
    *
-   * @param originalTweetIdMapper The original tweet ID mapper.
-   * @param optimizedTweetIdMapper The optimized tweet ID mapper.
-   * @return An optimized column stride field equivalent to this CSF,
-   *         with possibly remapped doc IDs.
+   * @pawam owiginawtweetidmappew the owiginaw tweet id mappew. nyaa~~
+   * @pawam optimizedtweetidmappew the optimized t-tweet id mappew. :3
+   * @wetuwn a-an optimized cowumn stwide fiewd e-equivawent to t-this csf, 😳😳😳
+   *         with possibwy w-wemapped doc ids. (˘ω˘)
    */
-  public ColumnStrideFieldIndex optimize(
-      DocIDToTweetIDMapper originalTweetIdMapper,
-      DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
-    return this;
+  p-pubwic cowumnstwidefiewdindex optimize(
+      docidtotweetidmappew o-owiginawtweetidmappew, ^^
+      docidtotweetidmappew o-optimizedtweetidmappew) thwows i-ioexception {
+    w-wetuwn this;
   }
 }

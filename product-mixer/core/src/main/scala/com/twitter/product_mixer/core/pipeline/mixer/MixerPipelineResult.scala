@@ -1,70 +1,70 @@
-package com.twitter.product_mixer.core.pipeline.mixer
+package com.twittew.pwoduct_mixew.cowe.pipewine.mixew
 
-import com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineResult
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutorResults
-import com.twitter.product_mixer.core.service.candidate_pipeline_executor.CandidatePipelineExecutorResult
-import com.twitter.product_mixer.core.service.domain_marshaller_executor.DomainMarshallerExecutor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutorResult
-import com.twitter.product_mixer.core.service.pipeline_result_side_effect_executor.PipelineResultSideEffectExecutor
-import com.twitter.product_mixer.core.service.quality_factor_executor.QualityFactorExecutorResult
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutorResult
-import com.twitter.product_mixer.core.service.transport_marshaller_executor.TransportMarshallerExecutor
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.asyncfeatuwemap.asyncfeatuwemap
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.hasmawshawwing
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinewesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.async_featuwe_map_executow.asyncfeatuwemapexecutowwesuwts
+i-impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.candidate_pipewine_executow.candidatepipewineexecutowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.domain_mawshawwew_executow.domainmawshawwewexecutow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow.gateexecutowwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_wesuwt_side_effect_executow.pipewinewesuwtsideeffectexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.quawity_factow_executow.quawityfactowexecutowwesuwt
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.quewy_featuwe_hydwatow_executow.quewyfeatuwehydwatowexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.sewectow_executow.sewectowexecutowwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.twanspowt_mawshawwew_executow.twanspowtmawshawwewexecutow
 
 /**
- * A [[MixerPipelineResult]] includes both the user-visible [[PipelineResult]] and all the
- * Execution details possible - intermediate results, what components did, etc.
+ * a [[mixewpipewinewesuwt]] i-incwudes both the usew-visibwe [[pipewinewesuwt]] a-and aww the
+ * execution detaiws possibwe - intewmediate w-wesuwts, 🥺 nyani components did, (U ﹏ U) e-etc. >w<
  */
-case class MixerPipelineResult[Result](
-  qualityFactorResult: Option[QualityFactorExecutorResult],
-  gateResult: Option[GateExecutorResult],
-  queryFeatures: Option[QueryFeatureHydratorExecutor.Result],
-  queryFeaturesPhase2: Option[QueryFeatureHydratorExecutor.Result],
-  mergedAsyncQueryFeatures: Option[AsyncFeatureMap],
-  candidatePipelineResults: Option[CandidatePipelineExecutorResult],
-  dependentCandidatePipelineResults: Option[CandidatePipelineExecutorResult],
-  resultSelectorResults: Option[SelectorExecutorResult],
-  domainMarshallerResults: Option[DomainMarshallerExecutor.Result[HasMarshalling]],
-  resultSideEffectResults: Option[PipelineResultSideEffectExecutor.Result],
-  asyncFeatureHydrationResults: Option[AsyncFeatureMapExecutorResults],
-  transportMarshallerResults: Option[TransportMarshallerExecutor.Result[Result]],
-  failure: Option[PipelineFailure],
-  result: Option[Result])
-    extends PipelineResult[Result] {
+case c-cwass mixewpipewinewesuwt[wesuwt](
+  quawityfactowwesuwt: option[quawityfactowexecutowwesuwt], mya
+  gatewesuwt: option[gateexecutowwesuwt], >w<
+  quewyfeatuwes: o-option[quewyfeatuwehydwatowexecutow.wesuwt], nyaa~~
+  quewyfeatuwesphase2: option[quewyfeatuwehydwatowexecutow.wesuwt], (✿oωo)
+  mewgedasyncquewyfeatuwes: option[asyncfeatuwemap], ʘwʘ
+  candidatepipewinewesuwts: o-option[candidatepipewineexecutowwesuwt], (ˆ ﻌ ˆ)♡
+  dependentcandidatepipewinewesuwts: o-option[candidatepipewineexecutowwesuwt], 😳😳😳
+  w-wesuwtsewectowwesuwts: o-option[sewectowexecutowwesuwt], :3
+  domainmawshawwewwesuwts: o-option[domainmawshawwewexecutow.wesuwt[hasmawshawwing]], OwO
+  wesuwtsideeffectwesuwts: option[pipewinewesuwtsideeffectexecutow.wesuwt], (U ﹏ U)
+  asyncfeatuwehydwationwesuwts: o-option[asyncfeatuwemapexecutowwesuwts], >w<
+  twanspowtmawshawwewwesuwts: option[twanspowtmawshawwewexecutow.wesuwt[wesuwt]], (U ﹏ U)
+  f-faiwuwe: option[pipewinefaiwuwe], 😳
+  wesuwt: option[wesuwt])
+    extends pipewinewesuwt[wesuwt] {
 
-  override def withFailure(failure: PipelineFailure): PipelineResult[Result] =
-    copy(failure = Some(failure))
+  o-ovewwide def withfaiwuwe(faiwuwe: pipewinefaiwuwe): p-pipewinewesuwt[wesuwt] =
+    c-copy(faiwuwe = s-some(faiwuwe))
 
-  override def withResult(result: Result): PipelineResult[Result] = copy(result = Some(result))
+  ovewwide def withwesuwt(wesuwt: wesuwt): pipewinewesuwt[wesuwt] = copy(wesuwt = some(wesuwt))
 
   /**
-   * resultSize is calculated based on the selector results rather than the marshalled results. The
-   * structure of the marshalled format is unknown, making operating on selector results more
-   * convenient. This will implicitly excluded cursors built during marshalling but cursors don't
-   * contribute to the result size anyway.
+   * w-wesuwtsize i-is cawcuwated based on the sewectow w-wesuwts w-wathew than the mawshawwed wesuwts. t-the
+   * stwuctuwe of the mawshawwed f-fowmat is unknown, (ˆ ﻌ ˆ)♡ making opewating on s-sewectow wesuwts mowe
+   * convenient. 😳😳😳 t-this wiww impwicitwy excwuded c-cuwsows buiwt d-duwing mawshawwing but cuwsows don't
+   * contwibute to the wesuwt size anyway. (U ﹏ U)
    */
-  override val resultSize: Int =
-    resultSelectorResults.map(_.selectedCandidates).map(PipelineResult.resultSize).getOrElse(0)
+  ovewwide vaw wesuwtsize: i-int =
+    wesuwtsewectowwesuwts.map(_.sewectedcandidates).map(pipewinewesuwt.wesuwtsize).getowewse(0)
 }
 
-object MixerPipelineResult {
-  def empty[A]: MixerPipelineResult[A] = MixerPipelineResult(
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None
+o-object mixewpipewinewesuwt {
+  d-def e-empty[a]: mixewpipewinewesuwt[a] = m-mixewpipewinewesuwt(
+    nyone, (///ˬ///✿)
+    nyone,
+    none, 😳
+    nyone, 😳
+    n-nyone, σωσ
+    nyone,
+    nyone, rawr x3
+    nyone, OwO
+    nyone,
+    nyone, /(^•ω•^)
+    none, 😳😳😳
+    n-nyone,
+    nyone, ( ͡o ω ͡o )
+    nyone
   )
 }

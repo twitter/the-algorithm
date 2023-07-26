@@ -1,120 +1,120 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import scala.collection.mutable
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.specificpipewine
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.specificpipewines
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt scawa.cowwection.mutabwe
 
-object InsertAppendWeaveResults {
-  def apply[Query <: PipelineQuery, Bucket](
-    candidatePipelines: Set[CandidatePipelineIdentifier],
-    bucketer: Bucketer[Bucket],
-  ): InsertAppendWeaveResults[Query, Bucket] =
-    new InsertAppendWeaveResults(SpecificPipelines(candidatePipelines), bucketer)
+object insewtappendweavewesuwts {
+  def appwy[quewy <: p-pipewinequewy, 😳😳😳 bucket](
+    candidatepipewines: s-set[candidatepipewineidentifiew], OwO
+    bucketew: bucketew[bucket], 😳
+  ): i-insewtappendweavewesuwts[quewy, 😳😳😳 bucket] =
+    nyew insewtappendweavewesuwts(specificpipewines(candidatepipewines), (˘ω˘) bucketew)
 
-  def apply[Query <: PipelineQuery, Bucket](
-    candidatePipeline: CandidatePipelineIdentifier,
-    bucketer: Bucketer[Bucket],
-  ): InsertAppendWeaveResults[Query, Bucket] =
-    new InsertAppendWeaveResults(SpecificPipeline(candidatePipeline), bucketer)
+  d-def appwy[quewy <: pipewinequewy, ʘwʘ b-bucket](
+    candidatepipewine: c-candidatepipewineidentifiew, ( ͡o ω ͡o )
+    bucketew: bucketew[bucket], o.O
+  ): insewtappendweavewesuwts[quewy, bucket] =
+    nyew insewtappendweavewesuwts(specificpipewine(candidatepipewine), >w< b-bucketew)
 }
 
 /**
- * Select candidates weave them together according to their [[Bucket]].
+ * sewect candidates weave them togethew accowding to theiw [[bucket]]. 😳
  *
- * Candidates are grouped according to [[Bucket]] and one candidate is added from each group until
- * no candidates belonging to any group are left.
+ * c-candidates awe gwouped accowding t-to [[bucket]] a-and one candidate i-is added fwom e-each gwoup untiw
+ * nyo candidates bewonging t-to any gwoup awe weft. 🥺
  *
- * Functionally similar to [[InsertAppendPatternResults]]. [[InsertAppendPatternResults]] is useful
- * if you have more complex ordering requirements but it requires you to know all the buckets in
- * advance.
+ * functionawwy simiwaw t-to [[insewtappendpattewnwesuwts]]. rawr x3 [[insewtappendpattewnwesuwts]] is usefuw
+ * if you have mowe compwex owdewing wequiwements but it wequiwes y-you to know aww the buckets in
+ * a-advance. o.O
  *
- * @note The order in which candidates are weaved together depends on the order in which the buckets
- *       were first seen on candidates.
+ * @note t-the owdew i-in which candidates awe weaved togethew depends on the owdew in w-which the buckets
+ *       w-wewe fiwst seen on candidates. rawr
  *
- * @example If the candidates are Seq(Tweet(10), Tweet(8), Tweet(3), Tweet(13)) and they are bucketed
- *          using an IsEven bucketing function, then the resulting buckets would be:
+ * @exampwe i-if the c-candidates awe seq(tweet(10), ʘwʘ tweet(8), 😳😳😳 t-tweet(3), ^^;; tweet(13)) and t-they awe bucketed
+ *          using an iseven bucketing function, o.O t-then the wesuwting buckets wouwd b-be:
  *
- *          - Seq(Tweet(10), Tweet(8))
- *          - Seq(Tweet(3), Tweet(13))
+ *          - seq(tweet(10), (///ˬ///✿) t-tweet(8))
+ *          - s-seq(tweet(3), σωσ tweet(13))
  *
- *          The selector would then loop through these buckets and produce:
+ *          the sewectow wouwd then woop thwough these buckets and pwoduce:
  *
- *          - Tweet(10)
- *          - Tweet(3)
- *          - Tweet(8)
- *          - Tweet(13)
+ *          - tweet(10)
+ *          - t-tweet(3)
+ *          - t-tweet(8)
+ *          - tweet(13)
  *
- *          Note that first bucket encountered was the 'even' bucket so weaving proceeds first with
- *          the even bucket then the odd bucket. Tweet(3) had been first then the opposite would be
- *          true.
+ *          n-nyote that f-fiwst bucket e-encountewed was the 'even' bucket so weaving pwoceeds fiwst with
+ *          t-the even bucket then the odd bucket. nyaa~~ tweet(3) had been fiwst then t-the opposite wouwd be
+ *          t-twue.
  */
-case class InsertAppendWeaveResults[-Query <: PipelineQuery, Bucket](
-  override val pipelineScope: CandidateScope,
-  bucketer: Bucketer[Bucket])
-    extends Selector[Query] {
+case c-cwass insewtappendweavewesuwts[-quewy <: p-pipewinequewy, ^^;; bucket](
+  o-ovewwide vaw p-pipewinescope: c-candidatescope, ^•ﻌ•^
+  b-bucketew: bucketew[bucket])
+    extends sewectow[quewy] {
 
-  override def apply(
-    query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val (bucketableCandidates, otherCandidates) =
-      remainingCandidates.partition(pipelineScope.contains)
+  ovewwide def appwy(
+    q-quewy: quewy, σωσ
+    w-wemainingcandidates: s-seq[candidatewithdetaiws], -.-
+    w-wesuwt: s-seq[candidatewithdetaiws]
+  ): sewectowwesuwt = {
+    vaw (bucketabwecandidates, ^^;; othewcandidates) =
+      wemainingcandidates.pawtition(pipewinescope.contains)
 
-    val groupedCandidates = groupByBucket(bucketableCandidates)
+    v-vaw gwoupedcandidates = gwoupbybucket(bucketabwecandidates)
 
-    val candidateBucketQueues: mutable.Queue[mutable.Queue[CandidateWithDetails]] =
-      mutable.Queue() ++= groupedCandidates
-    val newResult = mutable.ArrayBuffer[CandidateWithDetails]()
+    vaw candidatebucketqueues: mutabwe.queue[mutabwe.queue[candidatewithdetaiws]] =
+      mutabwe.queue() ++= gwoupedcandidates
+    v-vaw nyewwesuwt = mutabwe.awwaybuffew[candidatewithdetaiws]()
 
-    // Take the next group of candidates from the queue and attempt to add the first candidate from
-    // that group into the result. The loop will terminate when every queue is empty.
-    while (candidateBucketQueues.nonEmpty) {
-      val nextCandidateQueue = candidateBucketQueues.dequeue()
+    // take the nyext gwoup of candidates f-fwom the queue a-and attempt to a-add the fiwst candidate fwom
+    // t-that gwoup into the wesuwt. XD t-the woop wiww tewminate w-when evewy queue is empty. 🥺
+    whiwe (candidatebucketqueues.nonempty) {
+      vaw nyextcandidatequeue = candidatebucketqueues.dequeue()
 
-      if (nextCandidateQueue.nonEmpty) {
-        newResult += nextCandidateQueue.dequeue()
+      if (nextcandidatequeue.nonempty) {
+        n-nyewwesuwt += nyextcandidatequeue.dequeue()
 
-        // Re-queue this bucket of candidates if it's still non-empty
-        if (nextCandidateQueue.nonEmpty) {
-          candidateBucketQueues.enqueue(nextCandidateQueue)
+        // w-we-queue this bucket o-of candidates if i-it's stiww nyon-empty
+        if (nextcandidatequeue.nonempty) {
+          candidatebucketqueues.enqueue(nextcandidatequeue)
         }
       }
     }
 
-    SelectorResult(remainingCandidates = otherCandidates, result = result ++ newResult)
+    sewectowwesuwt(wemainingcandidates = o-othewcandidates, òωó w-wesuwt = wesuwt ++ nyewwesuwt)
   }
 
   /**
-   * Similar to `groupBy` but respect the order in which individual bucket values are first seen.
-   * This is useful when the candidates have already been sorted prior to the selector running.
+   * s-simiwaw to `gwoupby` b-but wespect the owdew in which individuaw bucket vawues awe fiwst seen. (ˆ ﻌ ˆ)♡
+   * t-this is usefuw w-when the candidates h-have awweady been sowted pwiow t-to the sewectow w-wunning. -.-
    */
-  private def groupByBucket(
-    candidates: Seq[CandidateWithDetails]
-  ): mutable.ArrayBuffer[mutable.Queue[CandidateWithDetails]] = {
-    val bucketToCandidateGroupIndex = mutable.Map.empty[Bucket, Int]
-    val candidateGroups = mutable.ArrayBuffer[mutable.Queue[CandidateWithDetails]]()
+  pwivate def g-gwoupbybucket(
+    candidates: seq[candidatewithdetaiws]
+  ): mutabwe.awwaybuffew[mutabwe.queue[candidatewithdetaiws]] = {
+    vaw buckettocandidategwoupindex = mutabwe.map.empty[bucket, :3 i-int]
+    v-vaw candidategwoups = mutabwe.awwaybuffew[mutabwe.queue[candidatewithdetaiws]]()
 
-    candidates.foreach { candidate =>
-      val bucket = bucketer(candidate)
+    candidates.foweach { c-candidate =>
+      v-vaw bucket = bucketew(candidate)
 
-      // Index points to the specific sub-group in candidateGroups where we want to insert the next
-      // candidate. If a bucket has already been seen then this value is known, otherwise we need
-      // to add a new entry for it.
-      if (!bucketToCandidateGroupIndex.contains(bucket)) {
-        candidateGroups.append(mutable.Queue())
-        bucketToCandidateGroupIndex.put(bucket, candidateGroups.length - 1)
+      // index points to the s-specific sub-gwoup in candidategwoups whewe we want to insewt the nyext
+      // c-candidate. ʘwʘ if a bucket has awweady been seen t-then this vawue i-is known, 🥺 othewwise we nyeed
+      // to add a nyew entwy fow it. >_<
+      i-if (!buckettocandidategwoupindex.contains(bucket)) {
+        c-candidategwoups.append(mutabwe.queue())
+        buckettocandidategwoupindex.put(bucket, ʘwʘ candidategwoups.wength - 1)
       }
 
-      candidateGroups(bucketToCandidateGroupIndex(bucket)).enqueue(candidate)
+      candidategwoups(buckettocandidategwoupindex(bucket)).enqueue(candidate)
     }
 
-    candidateGroups
+    c-candidategwoups
   }
 }

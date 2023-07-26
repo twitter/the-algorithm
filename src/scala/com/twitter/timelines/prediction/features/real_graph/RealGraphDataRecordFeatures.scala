@@ -1,534 +1,534 @@
-package com.twitter.timelines.prediction.features.real_graph
+package com.twittew.timewines.pwediction.featuwes.weaw_gwaph
 
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType._
-import com.twitter.ml.api.Feature._
-import com.twitter.timelines.real_graph.v1.thriftscala.RealGraphEdgeFeature
-import scala.collection.JavaConverters._
+impowt c-com.twittew.daw.pewsonaw_data.thwiftjava.pewsonawdatatype._
+i-impowt com.twittew.mw.api.featuwe._
+i-impowt com.twittew.timewines.weaw_gwaph.v1.thwiftscawa.weawgwaphedgefeatuwe
+i-impowt scawa.cowwection.javaconvewtews._
 
 
-object RealGraphDataRecordFeatures {
-  // the source user id
-  val SRC_ID = new Discrete("realgraph.src_id", Set(UserId).asJava)
-  // the destination user id
-  val DST_ID = new Discrete("realgraph.dst_id", Set(UserId).asJava)
-  // real graph weight
-  val WEIGHT = new Continuous("realgraph.weight", Set(UsersRealGraphScore).asJava)
-  // the number of retweets that the source user sent to the destination user
-  val NUM_RETWEETS_MEAN =
-    new Continuous("realgraph.num_retweets.mean", Set(PrivateRetweets, PublicRetweets).asJava)
-  val NUM_RETWEETS_EWMA =
-    new Continuous("realgraph.num_retweets.ewma", Set(PrivateRetweets, PublicRetweets).asJava)
-  val NUM_RETWEETS_VARIANCE =
-    new Continuous("realgraph.num_retweets.variance", Set(PrivateRetweets, PublicRetweets).asJava)
-  val NUM_RETWEETS_NON_ZERO_DAYS = new Continuous(
-    "realgraph.num_retweets.non_zero_days",
-    Set(PrivateRetweets, PublicRetweets).asJava)
-  val NUM_RETWEETS_ELAPSED_DAYS = new Continuous(
-    "realgraph.num_retweets.elapsed_days",
-    Set(PrivateRetweets, PublicRetweets).asJava)
-  val NUM_RETWEETS_DAYS_SINCE_LAST = new Continuous(
-    "realgraph.num_retweets.days_since_last",
-    Set(PrivateRetweets, PublicRetweets).asJava)
-  val NUM_RETWEETS_IS_MISSING =
-    new Binary("realgraph.num_retweets.is_missing", Set(PrivateRetweets, PublicRetweets).asJava)
-  // the number of favories that the source user sent to the destination user
-  val NUM_FAVORITES_MEAN =
-    new Continuous("realgraph.num_favorites.mean", Set(PublicLikes, PrivateLikes).asJava)
-  val NUM_FAVORITES_EWMA =
-    new Continuous("realgraph.num_favorites.ewma", Set(PublicLikes, PrivateLikes).asJava)
-  val NUM_FAVORITES_VARIANCE =
-    new Continuous("realgraph.num_favorites.variance", Set(PublicLikes, PrivateLikes).asJava)
-  val NUM_FAVORITES_NON_ZERO_DAYS =
-    new Continuous("realgraph.num_favorites.non_zero_days", Set(PublicLikes, PrivateLikes).asJava)
-  val NUM_FAVORITES_ELAPSED_DAYS =
-    new Continuous("realgraph.num_favorites.elapsed_days", Set(PublicLikes, PrivateLikes).asJava)
-  val NUM_FAVORITES_DAYS_SINCE_LAST =
-    new Continuous("realgraph.num_favorites.days_since_last", Set(PublicLikes, PrivateLikes).asJava)
-  val NUM_FAVORITES_IS_MISSING =
-    new Binary("realgraph.num_favorites.is_missing", Set(PublicLikes, PrivateLikes).asJava)
-  // the number of mentions that the source user sent to the destination user
-  val NUM_MENTIONS_MEAN =
-    new Continuous("realgraph.num_mentions.mean", Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val NUM_MENTIONS_EWMA =
-    new Continuous("realgraph.num_mentions.ewma", Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val NUM_MENTIONS_VARIANCE = new Continuous(
-    "realgraph.num_mentions.variance",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val NUM_MENTIONS_NON_ZERO_DAYS = new Continuous(
-    "realgraph.num_mentions.non_zero_days",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val NUM_MENTIONS_ELAPSED_DAYS = new Continuous(
-    "realgraph.num_mentions.elapsed_days",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val NUM_MENTIONS_DAYS_SINCE_LAST = new Continuous(
-    "realgraph.num_mentions.days_since_last",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val NUM_MENTIONS_IS_MISSING = new Binary(
-    "realgraph.num_mentions.is_missing",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  // the number of direct messages that the source user sent to the destination user
-  val NUM_DIRECT_MESSAGES_MEAN = new Continuous(
-    "realgraph.num_direct_messages.mean",
-    Set(DmEntitiesAndMetadata, CountOfDms).asJava)
-  val NUM_DIRECT_MESSAGES_EWMA = new Continuous(
-    "realgraph.num_direct_messages.ewma",
-    Set(DmEntitiesAndMetadata, CountOfDms).asJava)
-  val NUM_DIRECT_MESSAGES_VARIANCE = new Continuous(
-    "realgraph.num_direct_messages.variance",
-    Set(DmEntitiesAndMetadata, CountOfDms).asJava)
-  val NUM_DIRECT_MESSAGES_NON_ZERO_DAYS = new Continuous(
-    "realgraph.num_direct_messages.non_zero_days",
-    Set(DmEntitiesAndMetadata, CountOfDms).asJava
+o-object w-weawgwaphdatawecowdfeatuwes {
+  // t-the souwce u-usew id
+  vaw swc_id = nyew discwete("weawgwaph.swc_id", ^^ set(usewid).asjava)
+  // the destination usew id
+  vaw d-dst_id = nyew discwete("weawgwaph.dst_id", o.O set(usewid).asjava)
+  // weaw gwaph weight
+  v-vaw weight = nyew continuous("weawgwaph.weight", ( ͡o ω ͡o ) s-set(usewsweawgwaphscowe).asjava)
+  // the nyumbew of wetweets that the souwce usew sent t-to the destination usew
+  vaw nyum_wetweets_mean =
+    n-nyew continuous("weawgwaph.num_wetweets.mean", /(^•ω•^) s-set(pwivatewetweets, 🥺 pubwicwetweets).asjava)
+  vaw nyum_wetweets_ewma =
+    nyew continuous("weawgwaph.num_wetweets.ewma", nyaa~~ set(pwivatewetweets, mya p-pubwicwetweets).asjava)
+  vaw nyum_wetweets_vawiance =
+    nyew continuous("weawgwaph.num_wetweets.vawiance", XD set(pwivatewetweets, nyaa~~ pubwicwetweets).asjava)
+  v-vaw nyum_wetweets_non_zewo_days = nyew continuous(
+    "weawgwaph.num_wetweets.non_zewo_days", ʘwʘ
+    s-set(pwivatewetweets, (⑅˘꒳˘) p-pubwicwetweets).asjava)
+  v-vaw nyum_wetweets_ewapsed_days = n-nyew continuous(
+    "weawgwaph.num_wetweets.ewapsed_days", :3
+    set(pwivatewetweets, -.- pubwicwetweets).asjava)
+  v-vaw nyum_wetweets_days_since_wast = nyew continuous(
+    "weawgwaph.num_wetweets.days_since_wast", 😳😳😳
+    set(pwivatewetweets, (U ﹏ U) p-pubwicwetweets).asjava)
+  vaw nyum_wetweets_is_missing =
+    nyew binawy("weawgwaph.num_wetweets.is_missing", o.O set(pwivatewetweets, ( ͡o ω ͡o ) pubwicwetweets).asjava)
+  // t-the nyumbew of favowies that the s-souwce usew sent t-to the destination u-usew
+  vaw num_favowites_mean =
+    nyew continuous("weawgwaph.num_favowites.mean", òωó s-set(pubwicwikes, 🥺 p-pwivatewikes).asjava)
+  vaw nyum_favowites_ewma =
+    n-nyew continuous("weawgwaph.num_favowites.ewma", /(^•ω•^) s-set(pubwicwikes, 😳😳😳 pwivatewikes).asjava)
+  v-vaw nyum_favowites_vawiance =
+    nyew c-continuous("weawgwaph.num_favowites.vawiance", ^•ﻌ•^ set(pubwicwikes, nyaa~~ pwivatewikes).asjava)
+  v-vaw nyum_favowites_non_zewo_days =
+    nyew continuous("weawgwaph.num_favowites.non_zewo_days", OwO s-set(pubwicwikes, ^•ﻌ•^ pwivatewikes).asjava)
+  v-vaw nyum_favowites_ewapsed_days =
+    n-nyew continuous("weawgwaph.num_favowites.ewapsed_days", σωσ set(pubwicwikes, -.- pwivatewikes).asjava)
+  vaw nyum_favowites_days_since_wast =
+    nyew continuous("weawgwaph.num_favowites.days_since_wast", (˘ω˘) set(pubwicwikes, rawr x3 pwivatewikes).asjava)
+  vaw nyum_favowites_is_missing =
+    n-nyew b-binawy("weawgwaph.num_favowites.is_missing", rawr x3 set(pubwicwikes, σωσ p-pwivatewikes).asjava)
+  // t-the nyumbew o-of mentions that the souwce usew sent to the destination usew
+  v-vaw nyum_mentions_mean =
+    nyew continuous("weawgwaph.num_mentions.mean", nyaa~~ set(engagementspwivate, (ꈍᴗꈍ) engagementspubwic).asjava)
+  vaw nyum_mentions_ewma =
+    n-new continuous("weawgwaph.num_mentions.ewma", ^•ﻌ•^ set(engagementspwivate, >_< e-engagementspubwic).asjava)
+  v-vaw nyum_mentions_vawiance = n-nyew continuous(
+    "weawgwaph.num_mentions.vawiance", ^^;;
+    set(engagementspwivate, ^^;; engagementspubwic).asjava)
+  v-vaw nyum_mentions_non_zewo_days = n-new continuous(
+    "weawgwaph.num_mentions.non_zewo_days", /(^•ω•^)
+    s-set(engagementspwivate, e-engagementspubwic).asjava)
+  vaw nyum_mentions_ewapsed_days = nyew c-continuous(
+    "weawgwaph.num_mentions.ewapsed_days", nyaa~~
+    s-set(engagementspwivate, (✿oωo) e-engagementspubwic).asjava)
+  v-vaw nyum_mentions_days_since_wast = n-nyew continuous(
+    "weawgwaph.num_mentions.days_since_wast", ( ͡o ω ͡o )
+    set(engagementspwivate, (U ᵕ U❁) engagementspubwic).asjava)
+  vaw n-nyum_mentions_is_missing = nyew binawy(
+    "weawgwaph.num_mentions.is_missing", òωó
+    set(engagementspwivate, σωσ engagementspubwic).asjava)
+  // the n-nyumbew of diwect messages that the souwce usew sent to the destination u-usew
+  v-vaw nyum_diwect_messages_mean = n-nyew continuous(
+    "weawgwaph.num_diwect_messages.mean", :3
+    set(dmentitiesandmetadata, OwO c-countofdms).asjava)
+  vaw nyum_diwect_messages_ewma = n-nyew continuous(
+    "weawgwaph.num_diwect_messages.ewma", ^^
+    s-set(dmentitiesandmetadata, (˘ω˘) countofdms).asjava)
+  vaw nyum_diwect_messages_vawiance = nyew continuous(
+    "weawgwaph.num_diwect_messages.vawiance", OwO
+    set(dmentitiesandmetadata, UwU countofdms).asjava)
+  v-vaw nyum_diwect_messages_non_zewo_days = nyew continuous(
+    "weawgwaph.num_diwect_messages.non_zewo_days", ^•ﻌ•^
+    s-set(dmentitiesandmetadata, (ꈍᴗꈍ) countofdms).asjava
   )
-  val NUM_DIRECT_MESSAGES_ELAPSED_DAYS = new Continuous(
-    "realgraph.num_direct_messages.elapsed_days",
-    Set(DmEntitiesAndMetadata, CountOfDms).asJava
+  v-vaw n-nyum_diwect_messages_ewapsed_days = new continuous(
+    "weawgwaph.num_diwect_messages.ewapsed_days", /(^•ω•^)
+    set(dmentitiesandmetadata, (U ᵕ U❁) c-countofdms).asjava
   )
-  val NUM_DIRECT_MESSAGES_DAYS_SINCE_LAST = new Continuous(
-    "realgraph.num_direct_messages.days_since_last",
-    Set(DmEntitiesAndMetadata, CountOfDms).asJava
+  v-vaw nyum_diwect_messages_days_since_wast = nyew c-continuous(
+    "weawgwaph.num_diwect_messages.days_since_wast", (✿oωo)
+    s-set(dmentitiesandmetadata, OwO countofdms).asjava
   )
-  val NUM_DIRECT_MESSAGES_IS_MISSING = new Binary(
-    "realgraph.num_direct_messages.is_missing",
-    Set(DmEntitiesAndMetadata, CountOfDms).asJava)
-  // the number of tweet clicks that the source user sent to the destination user
-  val NUM_TWEET_CLICKS_MEAN =
-    new Continuous("realgraph.num_tweet_clicks.mean", Set(TweetsClicked).asJava)
-  val NUM_TWEET_CLICKS_EWMA =
-    new Continuous("realgraph.num_tweet_clicks.ewma", Set(TweetsClicked).asJava)
-  val NUM_TWEET_CLICKS_VARIANCE =
-    new Continuous("realgraph.num_tweet_clicks.variance", Set(TweetsClicked).asJava)
-  val NUM_TWEET_CLICKS_NON_ZERO_DAYS =
-    new Continuous("realgraph.num_tweet_clicks.non_zero_days", Set(TweetsClicked).asJava)
-  val NUM_TWEET_CLICKS_ELAPSED_DAYS =
-    new Continuous("realgraph.num_tweet_clicks.elapsed_days", Set(TweetsClicked).asJava)
-  val NUM_TWEET_CLICKS_DAYS_SINCE_LAST = new Continuous(
-    "realgraph.num_tweet_clicks.days_since_last",
-    Set(TweetsClicked).asJava
+  vaw nyum_diwect_messages_is_missing = nyew binawy(
+    "weawgwaph.num_diwect_messages.is_missing", :3
+    set(dmentitiesandmetadata, nyaa~~ c-countofdms).asjava)
+  // t-the nyumbew o-of tweet cwicks that the souwce u-usew sent to the d-destination usew
+  vaw nyum_tweet_cwicks_mean =
+    n-nyew continuous("weawgwaph.num_tweet_cwicks.mean", ^•ﻌ•^ set(tweetscwicked).asjava)
+  vaw nyum_tweet_cwicks_ewma =
+    nyew continuous("weawgwaph.num_tweet_cwicks.ewma", ( ͡o ω ͡o ) set(tweetscwicked).asjava)
+  v-vaw nyum_tweet_cwicks_vawiance =
+    n-nyew continuous("weawgwaph.num_tweet_cwicks.vawiance", set(tweetscwicked).asjava)
+  vaw n-nyum_tweet_cwicks_non_zewo_days =
+    n-nyew continuous("weawgwaph.num_tweet_cwicks.non_zewo_days", ^^;; set(tweetscwicked).asjava)
+  vaw nyum_tweet_cwicks_ewapsed_days =
+    nyew c-continuous("weawgwaph.num_tweet_cwicks.ewapsed_days", mya set(tweetscwicked).asjava)
+  vaw nyum_tweet_cwicks_days_since_wast = nyew continuous(
+    "weawgwaph.num_tweet_cwicks.days_since_wast", (U ᵕ U❁)
+    s-set(tweetscwicked).asjava
   )
-  val NUM_TWEET_CLICKS_IS_MISSING =
-    new Binary("realgraph.num_tweet_clicks.is_missing", Set(TweetsClicked).asJava)
-  // the number of link clicks that the source user sent to the destination user
-  val NUM_LINK_CLICKS_MEAN =
-    new Continuous("realgraph.num_link_clicks.mean", Set(CountOfTweetEntitiesClicked).asJava)
-  val NUM_LINK_CLICKS_EWMA =
-    new Continuous("realgraph.num_link_clicks.ewma", Set(CountOfTweetEntitiesClicked).asJava)
-  val NUM_LINK_CLICKS_VARIANCE =
-    new Continuous("realgraph.num_link_clicks.variance", Set(CountOfTweetEntitiesClicked).asJava)
-  val NUM_LINK_CLICKS_NON_ZERO_DAYS = new Continuous(
-    "realgraph.num_link_clicks.non_zero_days",
-    Set(CountOfTweetEntitiesClicked).asJava)
-  val NUM_LINK_CLICKS_ELAPSED_DAYS = new Continuous(
-    "realgraph.num_link_clicks.elapsed_days",
-    Set(CountOfTweetEntitiesClicked).asJava)
-  val NUM_LINK_CLICKS_DAYS_SINCE_LAST = new Continuous(
-    "realgraph.num_link_clicks.days_since_last",
-    Set(CountOfTweetEntitiesClicked).asJava)
-  val NUM_LINK_CLICKS_IS_MISSING =
-    new Binary("realgraph.num_link_clicks.is_missing", Set(CountOfTweetEntitiesClicked).asJava)
-  // the number of profile views that the source user sent to the destination user
-  val NUM_PROFILE_VIEWS_MEAN =
-    new Continuous("realgraph.num_profile_views.mean", Set(ProfilesViewed).asJava)
-  val NUM_PROFILE_VIEWS_EWMA =
-    new Continuous("realgraph.num_profile_views.ewma", Set(ProfilesViewed).asJava)
-  val NUM_PROFILE_VIEWS_VARIANCE =
-    new Continuous("realgraph.num_profile_views.variance", Set(ProfilesViewed).asJava)
-  val NUM_PROFILE_VIEWS_NON_ZERO_DAYS =
-    new Continuous("realgraph.num_profile_views.non_zero_days", Set(ProfilesViewed).asJava)
-  val NUM_PROFILE_VIEWS_ELAPSED_DAYS =
-    new Continuous("realgraph.num_profile_views.elapsed_days", Set(ProfilesViewed).asJava)
-  val NUM_PROFILE_VIEWS_DAYS_SINCE_LAST = new Continuous(
-    "realgraph.num_profile_views.days_since_last",
-    Set(ProfilesViewed).asJava
+  vaw nyum_tweet_cwicks_is_missing =
+    nyew binawy("weawgwaph.num_tweet_cwicks.is_missing", ^•ﻌ•^ s-set(tweetscwicked).asjava)
+  // t-the nyumbew of wink cwicks that the souwce usew sent t-to the destination u-usew
+  vaw nyum_wink_cwicks_mean =
+    nyew continuous("weawgwaph.num_wink_cwicks.mean", (U ﹏ U) set(countoftweetentitiescwicked).asjava)
+  v-vaw nyum_wink_cwicks_ewma =
+    nyew continuous("weawgwaph.num_wink_cwicks.ewma", /(^•ω•^) s-set(countoftweetentitiescwicked).asjava)
+  vaw nyum_wink_cwicks_vawiance =
+    nyew continuous("weawgwaph.num_wink_cwicks.vawiance", ʘwʘ s-set(countoftweetentitiescwicked).asjava)
+  vaw n-num_wink_cwicks_non_zewo_days = n-new continuous(
+    "weawgwaph.num_wink_cwicks.non_zewo_days", XD
+    set(countoftweetentitiescwicked).asjava)
+  v-vaw nyum_wink_cwicks_ewapsed_days = n-nyew continuous(
+    "weawgwaph.num_wink_cwicks.ewapsed_days", (⑅˘꒳˘)
+    s-set(countoftweetentitiescwicked).asjava)
+  v-vaw nyum_wink_cwicks_days_since_wast = nyew continuous(
+    "weawgwaph.num_wink_cwicks.days_since_wast", nyaa~~
+    s-set(countoftweetentitiescwicked).asjava)
+  v-vaw nyum_wink_cwicks_is_missing =
+    nyew binawy("weawgwaph.num_wink_cwicks.is_missing", UwU s-set(countoftweetentitiescwicked).asjava)
+  // t-the nyumbew of pwofiwe v-views that the souwce usew sent to the destination u-usew
+  vaw nyum_pwofiwe_views_mean =
+    n-nyew continuous("weawgwaph.num_pwofiwe_views.mean", (˘ω˘) s-set(pwofiwesviewed).asjava)
+  vaw num_pwofiwe_views_ewma =
+    nyew continuous("weawgwaph.num_pwofiwe_views.ewma", rawr x3 set(pwofiwesviewed).asjava)
+  v-vaw nyum_pwofiwe_views_vawiance =
+    n-nyew c-continuous("weawgwaph.num_pwofiwe_views.vawiance", (///ˬ///✿) s-set(pwofiwesviewed).asjava)
+  vaw nyum_pwofiwe_views_non_zewo_days =
+    nyew c-continuous("weawgwaph.num_pwofiwe_views.non_zewo_days", 😳😳😳 set(pwofiwesviewed).asjava)
+  vaw num_pwofiwe_views_ewapsed_days =
+    nyew continuous("weawgwaph.num_pwofiwe_views.ewapsed_days", (///ˬ///✿) set(pwofiwesviewed).asjava)
+  vaw nyum_pwofiwe_views_days_since_wast = n-nyew continuous(
+    "weawgwaph.num_pwofiwe_views.days_since_wast", ^^;;
+    set(pwofiwesviewed).asjava
   )
-  val NUM_PROFILE_VIEWS_IS_MISSING =
-    new Binary("realgraph.num_profile_views.is_missing", Set(ProfilesViewed).asJava)
-  // the total dwell time the source user spends on the target user's tweets
-  val TOTAL_DWELL_TIME_MEAN =
-    new Continuous("realgraph.total_dwell_time.mean", Set(CountOfImpression).asJava)
-  val TOTAL_DWELL_TIME_EWMA =
-    new Continuous("realgraph.total_dwell_time.ewma", Set(CountOfImpression).asJava)
-  val TOTAL_DWELL_TIME_VARIANCE =
-    new Continuous("realgraph.total_dwell_time.variance", Set(CountOfImpression).asJava)
-  val TOTAL_DWELL_TIME_NON_ZERO_DAYS =
-    new Continuous("realgraph.total_dwell_time.non_zero_days", Set(CountOfImpression).asJava)
-  val TOTAL_DWELL_TIME_ELAPSED_DAYS =
-    new Continuous("realgraph.total_dwell_time.elapsed_days", Set(CountOfImpression).asJava)
-  val TOTAL_DWELL_TIME_DAYS_SINCE_LAST = new Continuous(
-    "realgraph.total_dwell_time.days_since_last",
-    Set(CountOfImpression).asJava
+  vaw n-nyum_pwofiwe_views_is_missing =
+    nyew binawy("weawgwaph.num_pwofiwe_views.is_missing", ^^ s-set(pwofiwesviewed).asjava)
+  // the t-totaw dweww time the souwce usew s-spends on the t-tawget usew's tweets
+  v-vaw totaw_dweww_time_mean =
+    n-nyew continuous("weawgwaph.totaw_dweww_time.mean", (///ˬ///✿) s-set(countofimpwession).asjava)
+  vaw totaw_dweww_time_ewma =
+    nyew continuous("weawgwaph.totaw_dweww_time.ewma", -.- set(countofimpwession).asjava)
+  vaw totaw_dweww_time_vawiance =
+    nyew continuous("weawgwaph.totaw_dweww_time.vawiance", /(^•ω•^) s-set(countofimpwession).asjava)
+  v-vaw t-totaw_dweww_time_non_zewo_days =
+    nyew continuous("weawgwaph.totaw_dweww_time.non_zewo_days", UwU s-set(countofimpwession).asjava)
+  vaw totaw_dweww_time_ewapsed_days =
+    nyew continuous("weawgwaph.totaw_dweww_time.ewapsed_days", (⑅˘꒳˘) set(countofimpwession).asjava)
+  v-vaw totaw_dweww_time_days_since_wast = n-nyew continuous(
+    "weawgwaph.totaw_dweww_time.days_since_wast", ʘwʘ
+    s-set(countofimpwession).asjava
   )
-  val TOTAL_DWELL_TIME_IS_MISSING =
-    new Binary("realgraph.total_dwell_time.is_missing", Set(CountOfImpression).asJava)
-  // the number of the target user's tweets that the source user has inspected
-  val NUM_INSPECTED_TWEETS_MEAN =
-    new Continuous("realgraph.num_inspected_tweets.mean", Set(CountOfImpression).asJava)
-  val NUM_INSPECTED_TWEETS_EWMA =
-    new Continuous("realgraph.num_inspected_tweets.ewma", Set(CountOfImpression).asJava)
-  val NUM_INSPECTED_TWEETS_VARIANCE =
-    new Continuous("realgraph.num_inspected_tweets.variance", Set(CountOfImpression).asJava)
-  val NUM_INSPECTED_TWEETS_NON_ZERO_DAYS = new Continuous(
-    "realgraph.num_inspected_tweets.non_zero_days",
-    Set(CountOfImpression).asJava
+  vaw totaw_dweww_time_is_missing =
+    nyew b-binawy("weawgwaph.totaw_dweww_time.is_missing", σωσ s-set(countofimpwession).asjava)
+  // the nyumbew o-of the tawget u-usew's tweets that the souwce usew has inspected
+  vaw nyum_inspected_tweets_mean =
+    nyew continuous("weawgwaph.num_inspected_tweets.mean", ^^ s-set(countofimpwession).asjava)
+  v-vaw nyum_inspected_tweets_ewma =
+    n-nyew continuous("weawgwaph.num_inspected_tweets.ewma", OwO s-set(countofimpwession).asjava)
+  v-vaw nyum_inspected_tweets_vawiance =
+    n-nyew continuous("weawgwaph.num_inspected_tweets.vawiance", s-set(countofimpwession).asjava)
+  vaw nyum_inspected_tweets_non_zewo_days = n-nyew c-continuous(
+    "weawgwaph.num_inspected_tweets.non_zewo_days", (ˆ ﻌ ˆ)♡
+    set(countofimpwession).asjava
   )
-  val NUM_INSPECTED_TWEETS_ELAPSED_DAYS = new Continuous(
-    "realgraph.num_inspected_tweets.elapsed_days",
-    Set(CountOfImpression).asJava
+  v-vaw nyum_inspected_tweets_ewapsed_days = nyew continuous(
+    "weawgwaph.num_inspected_tweets.ewapsed_days", o.O
+    set(countofimpwession).asjava
   )
-  val NUM_INSPECTED_TWEETS_DAYS_SINCE_LAST = new Continuous(
-    "realgraph.num_inspected_tweets.days_since_last",
-    Set(CountOfImpression).asJava
+  vaw n-nyum_inspected_tweets_days_since_wast = nyew c-continuous(
+    "weawgwaph.num_inspected_tweets.days_since_wast", (˘ω˘)
+    s-set(countofimpwession).asjava
   )
-  val NUM_INSPECTED_TWEETS_IS_MISSING =
-    new Binary("realgraph.num_inspected_tweets.is_missing", Set(CountOfImpression).asJava)
-  // the number of photos in which the source user has tagged the target user
-  val NUM_PHOTO_TAGS_MEAN = new Continuous(
-    "realgraph.num_photo_tags.mean",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val NUM_PHOTO_TAGS_EWMA = new Continuous(
-    "realgraph.num_photo_tags.ewma",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val NUM_PHOTO_TAGS_VARIANCE = new Continuous(
-    "realgraph.num_photo_tags.variance",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val NUM_PHOTO_TAGS_NON_ZERO_DAYS = new Continuous(
-    "realgraph.num_photo_tags.non_zero_days",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val NUM_PHOTO_TAGS_ELAPSED_DAYS = new Continuous(
-    "realgraph.num_photo_tags.elapsed_days",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val NUM_PHOTO_TAGS_DAYS_SINCE_LAST = new Continuous(
-    "realgraph.num_photo_tags.days_since_last",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val NUM_PHOTO_TAGS_IS_MISSING = new Binary(
-    "realgraph.num_photo_tags.is_missing",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
+  vaw nyum_inspected_tweets_is_missing =
+    n-nyew binawy("weawgwaph.num_inspected_tweets.is_missing", 😳 set(countofimpwession).asjava)
+  // the nyumbew of p-photos in which t-the souwce usew h-has tagged the tawget usew
+  vaw nyum_photo_tags_mean = nyew continuous(
+    "weawgwaph.num_photo_tags.mean", (U ᵕ U❁)
+    s-set(engagementspwivate, :3 engagementspubwic).asjava)
+  vaw num_photo_tags_ewma = n-nyew continuous(
+    "weawgwaph.num_photo_tags.ewma",
+    s-set(engagementspwivate, o.O engagementspubwic).asjava)
+  v-vaw nyum_photo_tags_vawiance = nyew continuous(
+    "weawgwaph.num_photo_tags.vawiance", (///ˬ///✿)
+    s-set(engagementspwivate, OwO e-engagementspubwic).asjava)
+  vaw nyum_photo_tags_non_zewo_days = nyew continuous(
+    "weawgwaph.num_photo_tags.non_zewo_days", >w<
+    s-set(engagementspwivate, ^^ engagementspubwic).asjava)
+  vaw nyum_photo_tags_ewapsed_days = n-new continuous(
+    "weawgwaph.num_photo_tags.ewapsed_days", (⑅˘꒳˘)
+    s-set(engagementspwivate, ʘwʘ engagementspubwic).asjava)
+  v-vaw nyum_photo_tags_days_since_wast = nyew c-continuous(
+    "weawgwaph.num_photo_tags.days_since_wast", (///ˬ///✿)
+    s-set(engagementspwivate, XD e-engagementspubwic).asjava)
+  vaw nyum_photo_tags_is_missing = nyew binawy(
+    "weawgwaph.num_photo_tags.is_missing", 😳
+    set(engagementspwivate, >w< engagementspubwic).asjava)
 
-  val NUM_FOLLOW_MEAN = new Continuous(
-    "realgraph.num_follow.mean",
-    Set(Follow, PrivateAccountsFollowedBy, PublicAccountsFollowedBy).asJava)
-  val NUM_FOLLOW_EWMA = new Continuous(
-    "realgraph.num_follow.ewma",
-    Set(Follow, PrivateAccountsFollowedBy, PublicAccountsFollowedBy).asJava)
-  val NUM_FOLLOW_VARIANCE = new Continuous(
-    "realgraph.num_follow.variance",
-    Set(Follow, PrivateAccountsFollowedBy, PublicAccountsFollowedBy).asJava)
-  val NUM_FOLLOW_NON_ZERO_DAYS = new Continuous(
-    "realgraph.num_follow.non_zero_days",
-    Set(Follow, PrivateAccountsFollowedBy, PublicAccountsFollowedBy).asJava)
-  val NUM_FOLLOW_ELAPSED_DAYS = new Continuous(
-    "realgraph.num_follow.elapsed_days",
-    Set(Follow, PrivateAccountsFollowedBy, PublicAccountsFollowedBy).asJava)
-  val NUM_FOLLOW_DAYS_SINCE_LAST = new Continuous(
-    "realgraph.num_follow.days_since_last",
-    Set(Follow, PrivateAccountsFollowedBy, PublicAccountsFollowedBy).asJava)
-  val NUM_FOLLOW_IS_MISSING = new Binary(
-    "realgraph.num_follow.is_missing",
-    Set(Follow, PrivateAccountsFollowedBy, PublicAccountsFollowedBy).asJava)
-  // the number of blocks that the source user sent to the destination user
-  val NUM_BLOCKS_MEAN =
-    new Continuous("realgraph.num_blocks.mean", Set(CountOfBlocks).asJava)
-  val NUM_BLOCKS_EWMA =
-    new Continuous("realgraph.num_blocks.ewma", Set(CountOfBlocks).asJava)
-  val NUM_BLOCKS_VARIANCE =
-    new Continuous("realgraph.num_blocks.variance", Set(CountOfBlocks).asJava)
-  val NUM_BLOCKS_NON_ZERO_DAYS =
-    new Continuous("realgraph.num_blocks.non_zero_days", Set(CountOfBlocks).asJava)
-  val NUM_BLOCKS_ELAPSED_DAYS =
-    new Continuous("realgraph.num_blocks.elapsed_days", Set(CountOfBlocks).asJava)
-  val NUM_BLOCKS_DAYS_SINCE_LAST =
-    new Continuous("realgraph.num_blocks.days_since_last", Set(CountOfBlocks).asJava)
-  val NUM_BLOCKS_IS_MISSING =
-    new Binary("realgraph.num_blocks.is_missing", Set(CountOfBlocks).asJava)
-  // the number of mutes that the source user sent to the destination user
-  val NUM_MUTES_MEAN =
-    new Continuous("realgraph.num_mutes.mean", Set(CountOfMutes).asJava)
-  val NUM_MUTES_EWMA =
-    new Continuous("realgraph.num_mutes.ewma", Set(CountOfMutes).asJava)
-  val NUM_MUTES_VARIANCE =
-    new Continuous("realgraph.num_mutes.variance", Set(CountOfMutes).asJava)
-  val NUM_MUTES_NON_ZERO_DAYS =
-    new Continuous("realgraph.num_mutes.non_zero_days", Set(CountOfMutes).asJava)
-  val NUM_MUTES_ELAPSED_DAYS =
-    new Continuous("realgraph.num_mutes.elapsed_days", Set(CountOfMutes).asJava)
-  val NUM_MUTES_DAYS_SINCE_LAST =
-    new Continuous("realgraph.num_mutes.days_since_last", Set(CountOfMutes).asJava)
-  val NUM_MUTES_IS_MISSING =
-    new Binary("realgraph.num_mutes.is_missing", Set(CountOfMutes).asJava)
-  // the number of report as abuses that the source user sent to the destination user
-  val NUM_REPORTS_AS_ABUSES_MEAN =
-    new Continuous("realgraph.num_report_as_abuses.mean", Set(CountOfAbuseReports).asJava)
-  val NUM_REPORTS_AS_ABUSES_EWMA =
-    new Continuous("realgraph.num_report_as_abuses.ewma", Set(CountOfAbuseReports).asJava)
-  val NUM_REPORTS_AS_ABUSES_VARIANCE =
-    new Continuous("realgraph.num_report_as_abuses.variance", Set(CountOfAbuseReports).asJava)
-  val NUM_REPORTS_AS_ABUSES_NON_ZERO_DAYS =
-    new Continuous("realgraph.num_report_as_abuses.non_zero_days", Set(CountOfAbuseReports).asJava)
-  val NUM_REPORTS_AS_ABUSES_ELAPSED_DAYS =
-    new Continuous("realgraph.num_report_as_abuses.elapsed_days", Set(CountOfAbuseReports).asJava)
-  val NUM_REPORTS_AS_ABUSES_DAYS_SINCE_LAST =
-    new Continuous(
-      "realgraph.num_report_as_abuses.days_since_last",
-      Set(CountOfAbuseReports).asJava)
-  val NUM_REPORTS_AS_ABUSES_IS_MISSING =
-    new Binary("realgraph.num_report_as_abuses.is_missing", Set(CountOfAbuseReports).asJava)
-  // the number of report as spams that the source user sent to the destination user
-  val NUM_REPORTS_AS_SPAMS_MEAN =
-    new Continuous(
-      "realgraph.num_report_as_spams.mean",
-      Set(CountOfAbuseReports, SafetyRelationships).asJava)
-  val NUM_REPORTS_AS_SPAMS_EWMA =
-    new Continuous(
-      "realgraph.num_report_as_spams.ewma",
-      Set(CountOfAbuseReports, SafetyRelationships).asJava)
-  val NUM_REPORTS_AS_SPAMS_VARIANCE =
-    new Continuous(
-      "realgraph.num_report_as_spams.variance",
-      Set(CountOfAbuseReports, SafetyRelationships).asJava)
-  val NUM_REPORTS_AS_SPAMS_NON_ZERO_DAYS =
-    new Continuous(
-      "realgraph.num_report_as_spams.non_zero_days",
-      Set(CountOfAbuseReports, SafetyRelationships).asJava)
-  val NUM_REPORTS_AS_SPAMS_ELAPSED_DAYS =
-    new Continuous(
-      "realgraph.num_report_as_spams.elapsed_days",
-      Set(CountOfAbuseReports, SafetyRelationships).asJava)
-  val NUM_REPORTS_AS_SPAMS_DAYS_SINCE_LAST =
-    new Continuous(
-      "realgraph.num_report_as_spams.days_since_last",
-      Set(CountOfAbuseReports, SafetyRelationships).asJava)
-  val NUM_REPORTS_AS_SPAMS_IS_MISSING =
-    new Binary(
-      "realgraph.num_report_as_spams.is_missing",
-      Set(CountOfAbuseReports, SafetyRelationships).asJava)
+  vaw nyum_fowwow_mean = nyew continuous(
+    "weawgwaph.num_fowwow.mean", (˘ω˘)
+    set(fowwow, nyaa~~ pwivateaccountsfowwowedby, 😳😳😳 pubwicaccountsfowwowedby).asjava)
+  vaw nyum_fowwow_ewma = nyew continuous(
+    "weawgwaph.num_fowwow.ewma", (U ﹏ U)
+    set(fowwow, (˘ω˘) pwivateaccountsfowwowedby, :3 pubwicaccountsfowwowedby).asjava)
+  v-vaw nyum_fowwow_vawiance = n-nyew continuous(
+    "weawgwaph.num_fowwow.vawiance", >w<
+    set(fowwow, ^^ pwivateaccountsfowwowedby, 😳😳😳 pubwicaccountsfowwowedby).asjava)
+  v-vaw nyum_fowwow_non_zewo_days = n-nyew c-continuous(
+    "weawgwaph.num_fowwow.non_zewo_days", nyaa~~
+    set(fowwow, (⑅˘꒳˘) p-pwivateaccountsfowwowedby, :3 pubwicaccountsfowwowedby).asjava)
+  v-vaw nyum_fowwow_ewapsed_days = n-nyew continuous(
+    "weawgwaph.num_fowwow.ewapsed_days", ʘwʘ
+    set(fowwow, rawr x3 pwivateaccountsfowwowedby, (///ˬ///✿) p-pubwicaccountsfowwowedby).asjava)
+  vaw n-nyum_fowwow_days_since_wast = nyew c-continuous(
+    "weawgwaph.num_fowwow.days_since_wast",
+    set(fowwow, pwivateaccountsfowwowedby, 😳😳😳 pubwicaccountsfowwowedby).asjava)
+  v-vaw nyum_fowwow_is_missing = n-nyew binawy(
+    "weawgwaph.num_fowwow.is_missing", XD
+    s-set(fowwow, >_< pwivateaccountsfowwowedby, >w< p-pubwicaccountsfowwowedby).asjava)
+  // t-the n-nyumbew of bwocks t-that the souwce u-usew sent to t-the destination usew
+  vaw nyum_bwocks_mean =
+    n-nyew continuous("weawgwaph.num_bwocks.mean", /(^•ω•^) s-set(countofbwocks).asjava)
+  v-vaw nyum_bwocks_ewma =
+    n-new continuous("weawgwaph.num_bwocks.ewma", :3 set(countofbwocks).asjava)
+  vaw nyum_bwocks_vawiance =
+    n-nyew continuous("weawgwaph.num_bwocks.vawiance", ʘwʘ set(countofbwocks).asjava)
+  v-vaw n-nyum_bwocks_non_zewo_days =
+    n-nyew continuous("weawgwaph.num_bwocks.non_zewo_days", (˘ω˘) set(countofbwocks).asjava)
+  v-vaw nyum_bwocks_ewapsed_days =
+    nyew continuous("weawgwaph.num_bwocks.ewapsed_days", (ꈍᴗꈍ) s-set(countofbwocks).asjava)
+  vaw num_bwocks_days_since_wast =
+    nyew c-continuous("weawgwaph.num_bwocks.days_since_wast", ^^ set(countofbwocks).asjava)
+  v-vaw nyum_bwocks_is_missing =
+    nyew binawy("weawgwaph.num_bwocks.is_missing", ^^ set(countofbwocks).asjava)
+  // the nyumbew of mutes that the s-souwce usew sent to the destination u-usew
+  vaw n-nyum_mutes_mean =
+    nyew continuous("weawgwaph.num_mutes.mean", ( ͡o ω ͡o ) set(countofmutes).asjava)
+  vaw nyum_mutes_ewma =
+    n-nyew continuous("weawgwaph.num_mutes.ewma", -.- set(countofmutes).asjava)
+  v-vaw nyum_mutes_vawiance =
+    nyew c-continuous("weawgwaph.num_mutes.vawiance", ^^;; set(countofmutes).asjava)
+  v-vaw nyum_mutes_non_zewo_days =
+    nyew continuous("weawgwaph.num_mutes.non_zewo_days", ^•ﻌ•^ s-set(countofmutes).asjava)
+  vaw n-nyum_mutes_ewapsed_days =
+    nyew continuous("weawgwaph.num_mutes.ewapsed_days", (˘ω˘) s-set(countofmutes).asjava)
+  vaw nyum_mutes_days_since_wast =
+    nyew continuous("weawgwaph.num_mutes.days_since_wast", o.O s-set(countofmutes).asjava)
+  vaw nyum_mutes_is_missing =
+    n-nyew binawy("weawgwaph.num_mutes.is_missing", (✿oωo) s-set(countofmutes).asjava)
+  // t-the nyumbew of wepowt as abuses t-that the souwce u-usew sent t-to the destination u-usew
+  vaw nyum_wepowts_as_abuses_mean =
+    nyew continuous("weawgwaph.num_wepowt_as_abuses.mean", 😳😳😳 s-set(countofabusewepowts).asjava)
+  v-vaw nyum_wepowts_as_abuses_ewma =
+    n-nyew continuous("weawgwaph.num_wepowt_as_abuses.ewma", (ꈍᴗꈍ) s-set(countofabusewepowts).asjava)
+  v-vaw nyum_wepowts_as_abuses_vawiance =
+    n-nyew continuous("weawgwaph.num_wepowt_as_abuses.vawiance", σωσ set(countofabusewepowts).asjava)
+  v-vaw nyum_wepowts_as_abuses_non_zewo_days =
+    n-nyew continuous("weawgwaph.num_wepowt_as_abuses.non_zewo_days", UwU set(countofabusewepowts).asjava)
+  v-vaw nyum_wepowts_as_abuses_ewapsed_days =
+    nyew continuous("weawgwaph.num_wepowt_as_abuses.ewapsed_days", ^•ﻌ•^ s-set(countofabusewepowts).asjava)
+  vaw nyum_wepowts_as_abuses_days_since_wast =
+    n-nyew continuous(
+      "weawgwaph.num_wepowt_as_abuses.days_since_wast", mya
+      s-set(countofabusewepowts).asjava)
+  v-vaw nyum_wepowts_as_abuses_is_missing =
+    nyew binawy("weawgwaph.num_wepowt_as_abuses.is_missing", /(^•ω•^) set(countofabusewepowts).asjava)
+  // the nyumbew of w-wepowt as spams t-that the souwce u-usew sent to the destination usew
+  vaw nyum_wepowts_as_spams_mean =
+    nyew continuous(
+      "weawgwaph.num_wepowt_as_spams.mean", rawr
+      s-set(countofabusewepowts, nyaa~~ s-safetywewationships).asjava)
+  vaw nyum_wepowts_as_spams_ewma =
+    n-nyew continuous(
+      "weawgwaph.num_wepowt_as_spams.ewma", ( ͡o ω ͡o )
+      s-set(countofabusewepowts, safetywewationships).asjava)
+  vaw nyum_wepowts_as_spams_vawiance =
+    nyew c-continuous(
+      "weawgwaph.num_wepowt_as_spams.vawiance", σωσ
+      s-set(countofabusewepowts, (✿oωo) s-safetywewationships).asjava)
+  v-vaw nyum_wepowts_as_spams_non_zewo_days =
+    nyew c-continuous(
+      "weawgwaph.num_wepowt_as_spams.non_zewo_days", (///ˬ///✿)
+      s-set(countofabusewepowts, σωσ safetywewationships).asjava)
+  vaw nyum_wepowts_as_spams_ewapsed_days =
+    n-nyew continuous(
+      "weawgwaph.num_wepowt_as_spams.ewapsed_days", UwU
+      set(countofabusewepowts, (⑅˘꒳˘) s-safetywewationships).asjava)
+  vaw nyum_wepowts_as_spams_days_since_wast =
+    nyew c-continuous(
+      "weawgwaph.num_wepowt_as_spams.days_since_wast", /(^•ω•^)
+      s-set(countofabusewepowts, -.- safetywewationships).asjava)
+  v-vaw nyum_wepowts_as_spams_is_missing =
+    n-nyew binawy(
+      "weawgwaph.num_wepowt_as_spams.is_missing", (ˆ ﻌ ˆ)♡
+      set(countofabusewepowts, s-safetywewationships).asjava)
 
-  val NUM_MUTUAL_FOLLOW_MEAN = new Continuous(
-    "realgraph.num_mutual_follow.mean",
-    Set(
-      Follow,
-      PrivateAccountsFollowedBy,
-      PublicAccountsFollowedBy,
-      PrivateAccountsFollowing,
-      PublicAccountsFollowing).asJava
+  vaw n-nyum_mutuaw_fowwow_mean = n-nyew c-continuous(
+    "weawgwaph.num_mutuaw_fowwow.mean", nyaa~~
+    s-set(
+      fowwow, ʘwʘ
+      p-pwivateaccountsfowwowedby, :3
+      p-pubwicaccountsfowwowedby, (U ᵕ U❁)
+      p-pwivateaccountsfowwowing, (U ﹏ U)
+      pubwicaccountsfowwowing).asjava
   )
-  val NUM_MUTUAL_FOLLOW_EWMA = new Continuous(
-    "realgraph.num_mutual_follow.ewma",
-    Set(
-      Follow,
-      PrivateAccountsFollowedBy,
-      PublicAccountsFollowedBy,
-      PrivateAccountsFollowing,
-      PublicAccountsFollowing).asJava
+  v-vaw nyum_mutuaw_fowwow_ewma = nyew continuous(
+    "weawgwaph.num_mutuaw_fowwow.ewma", ^^
+    set(
+      fowwow, òωó
+      p-pwivateaccountsfowwowedby, /(^•ω•^)
+      p-pubwicaccountsfowwowedby,
+      p-pwivateaccountsfowwowing, 😳😳😳
+      pubwicaccountsfowwowing).asjava
   )
-  val NUM_MUTUAL_FOLLOW_VARIANCE = new Continuous(
-    "realgraph.num_mutual_follow.variance",
-    Set(
-      Follow,
-      PrivateAccountsFollowedBy,
-      PublicAccountsFollowedBy,
-      PrivateAccountsFollowing,
-      PublicAccountsFollowing).asJava
+  vaw nyum_mutuaw_fowwow_vawiance = nyew continuous(
+    "weawgwaph.num_mutuaw_fowwow.vawiance", :3
+    set(
+      f-fowwow, (///ˬ///✿)
+      pwivateaccountsfowwowedby, rawr x3
+      p-pubwicaccountsfowwowedby, (U ᵕ U❁)
+      p-pwivateaccountsfowwowing, (⑅˘꒳˘)
+      pubwicaccountsfowwowing).asjava
   )
-  val NUM_MUTUAL_FOLLOW_NON_ZERO_DAYS = new Continuous(
-    "realgraph.num_mutual_follow.non_zero_days",
-    Set(
-      Follow,
-      PrivateAccountsFollowedBy,
-      PublicAccountsFollowedBy,
-      PrivateAccountsFollowing,
-      PublicAccountsFollowing).asJava
+  vaw nyum_mutuaw_fowwow_non_zewo_days = n-nyew continuous(
+    "weawgwaph.num_mutuaw_fowwow.non_zewo_days", (˘ω˘)
+    s-set(
+      fowwow, :3
+      p-pwivateaccountsfowwowedby, XD
+      p-pubwicaccountsfowwowedby,
+      p-pwivateaccountsfowwowing, >_<
+      p-pubwicaccountsfowwowing).asjava
   )
-  val NUM_MUTUAL_FOLLOW_ELAPSED_DAYS = new Continuous(
-    "realgraph.num_mutual_follow.elapsed_days",
-    Set(
-      Follow,
-      PrivateAccountsFollowedBy,
-      PublicAccountsFollowedBy,
-      PrivateAccountsFollowing,
-      PublicAccountsFollowing).asJava
+  vaw nyum_mutuaw_fowwow_ewapsed_days = nyew continuous(
+    "weawgwaph.num_mutuaw_fowwow.ewapsed_days", (✿oωo)
+    set(
+      fowwow, (ꈍᴗꈍ)
+      pwivateaccountsfowwowedby, XD
+      p-pubwicaccountsfowwowedby, :3
+      pwivateaccountsfowwowing, mya
+      p-pubwicaccountsfowwowing).asjava
   )
-  val NUM_MUTUAL_FOLLOW_DAYS_SINCE_LAST = new Continuous(
-    "realgraph.num_mutual_follow.days_since_last",
-    Set(
-      Follow,
-      PrivateAccountsFollowedBy,
-      PublicAccountsFollowedBy,
-      PrivateAccountsFollowing,
-      PublicAccountsFollowing).asJava
+  vaw nyum_mutuaw_fowwow_days_since_wast = nyew continuous(
+    "weawgwaph.num_mutuaw_fowwow.days_since_wast", òωó
+    set(
+      fowwow, nyaa~~
+      p-pwivateaccountsfowwowedby, 🥺
+      pubwicaccountsfowwowedby, -.-
+      pwivateaccountsfowwowing, 🥺
+      pubwicaccountsfowwowing).asjava
   )
-  val NUM_MUTUAL_FOLLOW_IS_MISSING = new Binary(
-    "realgraph.num_mutual_follow.is_missing",
-    Set(
-      Follow,
-      PrivateAccountsFollowedBy,
-      PublicAccountsFollowedBy,
-      PrivateAccountsFollowing,
-      PublicAccountsFollowing).asJava
-  )
-
-  val NUM_SMS_FOLLOW_MEAN = new Continuous(
-    "realgraph.num_sms_follow.mean",
-    Set(Follow, PrivateAccountsFollowedBy, PublicAccountsFollowedBy).asJava)
-  val NUM_SMS_FOLLOW_EWMA = new Continuous(
-    "realgraph.num_sms_follow.ewma",
-    Set(Follow, PrivateAccountsFollowedBy, PublicAccountsFollowedBy).asJava)
-  val NUM_SMS_FOLLOW_VARIANCE = new Continuous(
-    "realgraph.num_sms_follow.variance",
-    Set(Follow, PrivateAccountsFollowedBy, PublicAccountsFollowedBy).asJava)
-  val NUM_SMS_FOLLOW_NON_ZERO_DAYS = new Continuous(
-    "realgraph.num_sms_follow.non_zero_days",
-    Set(Follow, PrivateAccountsFollowedBy, PublicAccountsFollowedBy).asJava)
-  val NUM_SMS_FOLLOW_ELAPSED_DAYS = new Continuous(
-    "realgraph.num_sms_follow.elapsed_days",
-    Set(Follow, PrivateAccountsFollowedBy, PublicAccountsFollowedBy).asJava)
-  val NUM_SMS_FOLLOW_DAYS_SINCE_LAST = new Continuous(
-    "realgraph.num_sms_follow.days_since_last",
-    Set(Follow, PrivateAccountsFollowedBy, PublicAccountsFollowedBy).asJava)
-  val NUM_SMS_FOLLOW_IS_MISSING = new Binary(
-    "realgraph.num_sms_follow.is_missing",
-    Set(Follow, PrivateAccountsFollowedBy, PublicAccountsFollowedBy).asJava)
-
-  val NUM_ADDRESS_BOOK_EMAIL_MEAN =
-    new Continuous("realgraph.num_address_book_email.mean", Set(AddressBook).asJava)
-  val NUM_ADDRESS_BOOK_EMAIL_EWMA =
-    new Continuous("realgraph.num_address_book_email.ewma", Set(AddressBook).asJava)
-  val NUM_ADDRESS_BOOK_EMAIL_VARIANCE =
-    new Continuous("realgraph.num_address_book_email.variance", Set(AddressBook).asJava)
-  val NUM_ADDRESS_BOOK_EMAIL_NON_ZERO_DAYS = new Continuous(
-    "realgraph.num_address_book_email.non_zero_days",
-    Set(AddressBook).asJava
-  )
-  val NUM_ADDRESS_BOOK_EMAIL_ELAPSED_DAYS = new Continuous(
-    "realgraph.num_address_book_email.elapsed_days",
-    Set(AddressBook).asJava
-  )
-  val NUM_ADDRESS_BOOK_EMAIL_DAYS_SINCE_LAST = new Continuous(
-    "realgraph.num_address_book_email.days_since_last",
-    Set(AddressBook).asJava
-  )
-  val NUM_ADDRESS_BOOK_EMAIL_IS_MISSING =
-    new Binary("realgraph.num_address_book_email.is_missing", Set(AddressBook).asJava)
-
-  val NUM_ADDRESS_BOOK_IN_BOTH_MEAN =
-    new Continuous("realgraph.num_address_book_in_both.mean", Set(AddressBook).asJava)
-  val NUM_ADDRESS_BOOK_IN_BOTH_EWMA =
-    new Continuous("realgraph.num_address_book_in_both.ewma", Set(AddressBook).asJava)
-  val NUM_ADDRESS_BOOK_IN_BOTH_VARIANCE = new Continuous(
-    "realgraph.num_address_book_in_both.variance",
-    Set(AddressBook).asJava
-  )
-  val NUM_ADDRESS_BOOK_IN_BOTH_NON_ZERO_DAYS = new Continuous(
-    "realgraph.num_address_book_in_both.non_zero_days",
-    Set(AddressBook).asJava
-  )
-  val NUM_ADDRESS_BOOK_IN_BOTH_ELAPSED_DAYS = new Continuous(
-    "realgraph.num_address_book_in_both.elapsed_days",
-    Set(AddressBook).asJava
-  )
-  val NUM_ADDRESS_BOOK_IN_BOTH_DAYS_SINCE_LAST = new Continuous(
-    "realgraph.num_address_book_in_both.days_since_last",
-    Set(AddressBook).asJava
-  )
-  val NUM_ADDRESS_BOOK_IN_BOTH_IS_MISSING = new Binary(
-    "realgraph.num_address_book_in_both.is_missing",
-    Set(AddressBook).asJava
+  vaw nyum_mutuaw_fowwow_is_missing = n-nyew binawy(
+    "weawgwaph.num_mutuaw_fowwow.is_missing", (˘ω˘)
+    s-set(
+      fowwow, òωó
+      pwivateaccountsfowwowedby, UwU
+      p-pubwicaccountsfowwowedby, ^•ﻌ•^
+      pwivateaccountsfowwowing, mya
+      pubwicaccountsfowwowing).asjava
   )
 
-  val NUM_ADDRESS_BOOK_PHONE_MEAN =
-    new Continuous("realgraph.num_address_book_phone.mean", Set(AddressBook).asJava)
-  val NUM_ADDRESS_BOOK_PHONE_EWMA =
-    new Continuous("realgraph.num_address_book_phone.ewma", Set(AddressBook).asJava)
-  val NUM_ADDRESS_BOOK_PHONE_VARIANCE =
-    new Continuous("realgraph.num_address_book_phone.variance", Set(AddressBook).asJava)
-  val NUM_ADDRESS_BOOK_PHONE_NON_ZERO_DAYS = new Continuous(
-    "realgraph.num_address_book_phone.non_zero_days",
-    Set(AddressBook).asJava
-  )
-  val NUM_ADDRESS_BOOK_PHONE_ELAPSED_DAYS = new Continuous(
-    "realgraph.num_address_book_phone.elapsed_days",
-    Set(AddressBook).asJava
-  )
-  val NUM_ADDRESS_BOOK_PHONE_DAYS_SINCE_LAST = new Continuous(
-    "realgraph.num_address_book_phone.days_since_last",
-    Set(AddressBook).asJava
-  )
-  val NUM_ADDRESS_BOOK_PHONE_IS_MISSING =
-    new Binary("realgraph.num_address_book_phone.is_missing", Set(AddressBook).asJava)
+  v-vaw nyum_sms_fowwow_mean = nyew c-continuous(
+    "weawgwaph.num_sms_fowwow.mean", (✿oωo)
+    set(fowwow, XD p-pwivateaccountsfowwowedby, :3 pubwicaccountsfowwowedby).asjava)
+  v-vaw nyum_sms_fowwow_ewma = new continuous(
+    "weawgwaph.num_sms_fowwow.ewma", (U ﹏ U)
+    set(fowwow, UwU pwivateaccountsfowwowedby, ʘwʘ pubwicaccountsfowwowedby).asjava)
+  v-vaw nyum_sms_fowwow_vawiance = nyew continuous(
+    "weawgwaph.num_sms_fowwow.vawiance", >w<
+    set(fowwow, 😳😳😳 pwivateaccountsfowwowedby, rawr p-pubwicaccountsfowwowedby).asjava)
+  v-vaw nyum_sms_fowwow_non_zewo_days = nyew c-continuous(
+    "weawgwaph.num_sms_fowwow.non_zewo_days", ^•ﻌ•^
+    set(fowwow, σωσ pwivateaccountsfowwowedby, :3 pubwicaccountsfowwowedby).asjava)
+  v-vaw nyum_sms_fowwow_ewapsed_days = nyew continuous(
+    "weawgwaph.num_sms_fowwow.ewapsed_days", rawr x3
+    set(fowwow, nyaa~~ pwivateaccountsfowwowedby, :3 pubwicaccountsfowwowedby).asjava)
+  v-vaw n-nyum_sms_fowwow_days_since_wast = n-nyew continuous(
+    "weawgwaph.num_sms_fowwow.days_since_wast", >w<
+    s-set(fowwow, rawr pwivateaccountsfowwowedby, 😳 pubwicaccountsfowwowedby).asjava)
+  vaw num_sms_fowwow_is_missing = n-nyew binawy(
+    "weawgwaph.num_sms_fowwow.is_missing", 😳
+    set(fowwow, 🥺 p-pwivateaccountsfowwowedby, rawr x3 pubwicaccountsfowwowedby).asjava)
 
-  val NUM_ADDRESS_BOOK_MUTUAL_EDGE_EMAIL_MEAN =
-    new Continuous("realgraph.num_address_book_mutual_edge_email.mean", Set(AddressBook).asJava)
-  val NUM_ADDRESS_BOOK_MUTUAL_EDGE_EMAIL_EWMA =
-    new Continuous("realgraph.num_address_book_mutual_edge_email.ewma", Set(AddressBook).asJava)
-  val NUM_ADDRESS_BOOK_MUTUAL_EDGE_EMAIL_VARIANCE =
-    new Continuous("realgraph.num_address_book_mutual_edge_email.variance", Set(AddressBook).asJava)
-  val NUM_ADDRESS_BOOK_MUTUAL_EDGE_EMAIL_NON_ZERO_DAYS = new Continuous(
-    "realgraph.num_address_book_mutual_edge_email.non_zero_days",
-    Set(AddressBook).asJava
+  vaw nyum_addwess_book_emaiw_mean =
+    n-nyew continuous("weawgwaph.num_addwess_book_emaiw.mean", ^^ set(addwessbook).asjava)
+  vaw num_addwess_book_emaiw_ewma =
+    n-nyew continuous("weawgwaph.num_addwess_book_emaiw.ewma", ( ͡o ω ͡o ) set(addwessbook).asjava)
+  v-vaw nyum_addwess_book_emaiw_vawiance =
+    n-nyew continuous("weawgwaph.num_addwess_book_emaiw.vawiance", XD s-set(addwessbook).asjava)
+  v-vaw nyum_addwess_book_emaiw_non_zewo_days = nyew c-continuous(
+    "weawgwaph.num_addwess_book_emaiw.non_zewo_days", ^^
+    set(addwessbook).asjava
   )
-  val NUM_ADDRESS_BOOK_MUTUAL_EDGE_EMAIL_ELAPSED_DAYS = new Continuous(
-    "realgraph.num_address_book_mutual_edge_email.elapsed_days",
-    Set(AddressBook).asJava
+  vaw nyum_addwess_book_emaiw_ewapsed_days = n-nyew continuous(
+    "weawgwaph.num_addwess_book_emaiw.ewapsed_days", (⑅˘꒳˘)
+    set(addwessbook).asjava
   )
-  val NUM_ADDRESS_BOOK_MUTUAL_EDGE_EMAIL_DAYS_SINCE_LAST = new Continuous(
-    "realgraph.num_address_book_mutual_edge_email.days_since_last",
-    Set(AddressBook).asJava
+  vaw nyum_addwess_book_emaiw_days_since_wast = n-nyew continuous(
+    "weawgwaph.num_addwess_book_emaiw.days_since_wast", (⑅˘꒳˘)
+    set(addwessbook).asjava
   )
-  val NUM_ADDRESS_BOOK_MUTUAL_EDGE_EMAIL_IS_MISSING =
-    new Binary("realgraph.num_address_book_mutual_edge_email.is_missing", Set(AddressBook).asJava)
+  vaw nyum_addwess_book_emaiw_is_missing =
+    nyew binawy("weawgwaph.num_addwess_book_emaiw.is_missing", ^•ﻌ•^ s-set(addwessbook).asjava)
 
-  val NUM_ADDRESS_BOOK_MUTUAL_EDGE_IN_BOTH_MEAN =
-    new Continuous("realgraph.num_address_book_mutual_edge_in_both.mean", Set(AddressBook).asJava)
-  val NUM_ADDRESS_BOOK_MUTUAL_EDGE_IN_BOTH_EWMA =
-    new Continuous("realgraph.num_address_book_mutual_edge_in_both.ewma", Set(AddressBook).asJava)
-  val NUM_ADDRESS_BOOK_MUTUAL_EDGE_IN_BOTH_VARIANCE = new Continuous(
-    "realgraph.num_address_book_mutual_edge_in_both.variance",
-    Set(AddressBook).asJava
+  v-vaw nyum_addwess_book_in_both_mean =
+    n-nyew continuous("weawgwaph.num_addwess_book_in_both.mean", ( ͡o ω ͡o ) s-set(addwessbook).asjava)
+  v-vaw nyum_addwess_book_in_both_ewma =
+    nyew continuous("weawgwaph.num_addwess_book_in_both.ewma", ( ͡o ω ͡o ) s-set(addwessbook).asjava)
+  vaw nyum_addwess_book_in_both_vawiance = nyew continuous(
+    "weawgwaph.num_addwess_book_in_both.vawiance", (✿oωo)
+    s-set(addwessbook).asjava
   )
-  val NUM_ADDRESS_BOOK_MUTUAL_EDGE_IN_BOTH_NON_ZERO_DAYS = new Continuous(
-    "realgraph.num_address_book_mutual_edge_in_both.non_zero_days",
-    Set(AddressBook).asJava
+  vaw nyum_addwess_book_in_both_non_zewo_days = n-nyew continuous(
+    "weawgwaph.num_addwess_book_in_both.non_zewo_days", 😳😳😳
+    set(addwessbook).asjava
   )
-  val NUM_ADDRESS_BOOK_MUTUAL_EDGE_IN_BOTH_ELAPSED_DAYS = new Continuous(
-    "realgraph.num_address_book_mutual_edge_in_both.elapsed_days",
-    Set(AddressBook).asJava
+  vaw n-nyum_addwess_book_in_both_ewapsed_days = n-nyew continuous(
+    "weawgwaph.num_addwess_book_in_both.ewapsed_days", OwO
+    s-set(addwessbook).asjava
   )
-  val NUM_ADDRESS_BOOK_MUTUAL_EDGE_IN_BOTH_DAYS_SINCE_LAST = new Continuous(
-    "realgraph.num_address_book_mutual_edge_in_both.days_since_last",
-    Set(AddressBook).asJava
+  vaw nyum_addwess_book_in_both_days_since_wast = n-nyew continuous(
+    "weawgwaph.num_addwess_book_in_both.days_since_wast",
+    s-set(addwessbook).asjava
   )
-  val NUM_ADDRESS_BOOK_MUTUAL_EDGE_IN_BOTH_IS_MISSING = new Binary(
-    "realgraph.num_address_book_mutual_edge_in_both.is_missing",
-    Set(AddressBook).asJava
+  vaw nyum_addwess_book_in_both_is_missing = n-nyew b-binawy(
+    "weawgwaph.num_addwess_book_in_both.is_missing", ^^
+    set(addwessbook).asjava
   )
 
-  val NUM_ADDRESS_BOOK_MUTUAL_EDGE_PHONE_MEAN =
-    new Continuous("realgraph.num_address_book_mutual_edge_phone.mean", Set(AddressBook).asJava)
-  val NUM_ADDRESS_BOOK_MUTUAL_EDGE_PHONE_EWMA =
-    new Continuous("realgraph.num_address_book_mutual_edge_phone.ewma", Set(AddressBook).asJava)
-  val NUM_ADDRESS_BOOK_MUTUAL_EDGE_PHONE_VARIANCE =
-    new Continuous("realgraph.num_address_book_mutual_edge_phone.variance", Set(AddressBook).asJava)
-  val NUM_ADDRESS_BOOK_MUTUAL_EDGE_PHONE_NON_ZERO_DAYS = new Continuous(
-    "realgraph.num_address_book_mutual_edge_phone.non_zero_days",
-    Set(AddressBook).asJava
+  v-vaw nyum_addwess_book_phone_mean =
+    nyew continuous("weawgwaph.num_addwess_book_phone.mean", rawr x3 set(addwessbook).asjava)
+  vaw n-nyum_addwess_book_phone_ewma =
+    nyew continuous("weawgwaph.num_addwess_book_phone.ewma", 🥺 s-set(addwessbook).asjava)
+  vaw nyum_addwess_book_phone_vawiance =
+    nyew continuous("weawgwaph.num_addwess_book_phone.vawiance", (ˆ ﻌ ˆ)♡ s-set(addwessbook).asjava)
+  v-vaw nyum_addwess_book_phone_non_zewo_days = n-nyew continuous(
+    "weawgwaph.num_addwess_book_phone.non_zewo_days",
+    set(addwessbook).asjava
   )
-  val NUM_ADDRESS_BOOK_MUTUAL_EDGE_PHONE_ELAPSED_DAYS = new Continuous(
-    "realgraph.num_address_book_mutual_edge_phone.elapsed_days",
-    Set(AddressBook).asJava
+  v-vaw nyum_addwess_book_phone_ewapsed_days = n-nyew continuous(
+    "weawgwaph.num_addwess_book_phone.ewapsed_days", ( ͡o ω ͡o )
+    s-set(addwessbook).asjava
   )
-  val NUM_ADDRESS_BOOK_MUTUAL_EDGE_PHONE_DAYS_SINCE_LAST = new Continuous(
-    "realgraph.num_address_book_mutual_edge_phone.days_since_last",
-    Set(AddressBook).asJava
+  vaw nyum_addwess_book_phone_days_since_wast = n-nyew continuous(
+    "weawgwaph.num_addwess_book_phone.days_since_wast", >w<
+    set(addwessbook).asjava
   )
-  val NUM_ADDRESS_BOOK_MUTUAL_EDGE_PHONE_IS_MISSING =
-    new Binary("realgraph.num_address_book_mutual_edge_phone.is_missing", Set(AddressBook).asJava)
+  v-vaw n-nyum_addwess_book_phone_is_missing =
+    nyew binawy("weawgwaph.num_addwess_book_phone.is_missing", /(^•ω•^) set(addwessbook).asjava)
+
+  vaw nyum_addwess_book_mutuaw_edge_emaiw_mean =
+    nyew continuous("weawgwaph.num_addwess_book_mutuaw_edge_emaiw.mean", 😳😳😳 s-set(addwessbook).asjava)
+  v-vaw nyum_addwess_book_mutuaw_edge_emaiw_ewma =
+    nyew continuous("weawgwaph.num_addwess_book_mutuaw_edge_emaiw.ewma", (U ᵕ U❁) set(addwessbook).asjava)
+  vaw nyum_addwess_book_mutuaw_edge_emaiw_vawiance =
+    n-nyew continuous("weawgwaph.num_addwess_book_mutuaw_edge_emaiw.vawiance", (˘ω˘) s-set(addwessbook).asjava)
+  v-vaw nyum_addwess_book_mutuaw_edge_emaiw_non_zewo_days = nyew continuous(
+    "weawgwaph.num_addwess_book_mutuaw_edge_emaiw.non_zewo_days", 😳
+    set(addwessbook).asjava
+  )
+  vaw nyum_addwess_book_mutuaw_edge_emaiw_ewapsed_days = n-nyew continuous(
+    "weawgwaph.num_addwess_book_mutuaw_edge_emaiw.ewapsed_days", (ꈍᴗꈍ)
+    set(addwessbook).asjava
+  )
+  vaw nyum_addwess_book_mutuaw_edge_emaiw_days_since_wast = n-nyew continuous(
+    "weawgwaph.num_addwess_book_mutuaw_edge_emaiw.days_since_wast", :3
+    set(addwessbook).asjava
+  )
+  v-vaw nyum_addwess_book_mutuaw_edge_emaiw_is_missing =
+    n-nyew binawy("weawgwaph.num_addwess_book_mutuaw_edge_emaiw.is_missing", /(^•ω•^) set(addwessbook).asjava)
+
+  v-vaw nyum_addwess_book_mutuaw_edge_in_both_mean =
+    n-nyew c-continuous("weawgwaph.num_addwess_book_mutuaw_edge_in_both.mean", ^^;; s-set(addwessbook).asjava)
+  v-vaw n-num_addwess_book_mutuaw_edge_in_both_ewma =
+    new continuous("weawgwaph.num_addwess_book_mutuaw_edge_in_both.ewma", o.O set(addwessbook).asjava)
+  vaw nyum_addwess_book_mutuaw_edge_in_both_vawiance = nyew continuous(
+    "weawgwaph.num_addwess_book_mutuaw_edge_in_both.vawiance", 😳
+    set(addwessbook).asjava
+  )
+  v-vaw nyum_addwess_book_mutuaw_edge_in_both_non_zewo_days = n-nyew continuous(
+    "weawgwaph.num_addwess_book_mutuaw_edge_in_both.non_zewo_days", UwU
+    s-set(addwessbook).asjava
+  )
+  v-vaw nyum_addwess_book_mutuaw_edge_in_both_ewapsed_days = n-nyew continuous(
+    "weawgwaph.num_addwess_book_mutuaw_edge_in_both.ewapsed_days", >w<
+    s-set(addwessbook).asjava
+  )
+  vaw nyum_addwess_book_mutuaw_edge_in_both_days_since_wast = nyew continuous(
+    "weawgwaph.num_addwess_book_mutuaw_edge_in_both.days_since_wast", o.O
+    set(addwessbook).asjava
+  )
+  vaw n-nyum_addwess_book_mutuaw_edge_in_both_is_missing = n-nyew binawy(
+    "weawgwaph.num_addwess_book_mutuaw_edge_in_both.is_missing", (˘ω˘)
+    set(addwessbook).asjava
+  )
+
+  vaw nyum_addwess_book_mutuaw_edge_phone_mean =
+    nyew continuous("weawgwaph.num_addwess_book_mutuaw_edge_phone.mean", òωó s-set(addwessbook).asjava)
+  v-vaw num_addwess_book_mutuaw_edge_phone_ewma =
+    n-nyew continuous("weawgwaph.num_addwess_book_mutuaw_edge_phone.ewma", nyaa~~ set(addwessbook).asjava)
+  v-vaw nyum_addwess_book_mutuaw_edge_phone_vawiance =
+    nyew continuous("weawgwaph.num_addwess_book_mutuaw_edge_phone.vawiance", ( ͡o ω ͡o ) set(addwessbook).asjava)
+  v-vaw nyum_addwess_book_mutuaw_edge_phone_non_zewo_days = n-nyew continuous(
+    "weawgwaph.num_addwess_book_mutuaw_edge_phone.non_zewo_days", 😳😳😳
+    set(addwessbook).asjava
+  )
+  v-vaw nyum_addwess_book_mutuaw_edge_phone_ewapsed_days = nyew continuous(
+    "weawgwaph.num_addwess_book_mutuaw_edge_phone.ewapsed_days", ^•ﻌ•^
+    s-set(addwessbook).asjava
+  )
+  v-vaw nyum_addwess_book_mutuaw_edge_phone_days_since_wast = n-nyew continuous(
+    "weawgwaph.num_addwess_book_mutuaw_edge_phone.days_since_wast", (˘ω˘)
+    s-set(addwessbook).asjava
+  )
+  vaw n-nyum_addwess_book_mutuaw_edge_phone_is_missing =
+    n-nyew binawy("weawgwaph.num_addwess_book_mutuaw_edge_phone.is_missing", (˘ω˘) set(addwessbook).asjava)
 }
 
-case class RealGraphEdgeDataRecordFeatures(
-  edgeFeatureOpt: Option[RealGraphEdgeFeature],
-  meanFeature: Continuous,
-  ewmaFeature: Continuous,
-  varianceFeature: Continuous,
-  nonZeroDaysFeature: Continuous,
-  elapsedDaysFeature: Continuous,
-  daysSinceLastFeature: Continuous,
-  isMissingFeature: Binary)
+c-case c-cwass weawgwaphedgedatawecowdfeatuwes(
+  edgefeatuweopt: o-option[weawgwaphedgefeatuwe], -.-
+  m-meanfeatuwe: continuous,
+  e-ewmafeatuwe: continuous, ^•ﻌ•^
+  vawiancefeatuwe: continuous, /(^•ω•^)
+  nyonzewodaysfeatuwe: c-continuous, (///ˬ///✿)
+  ewapseddaysfeatuwe: c-continuous, mya
+  dayssincewastfeatuwe: c-continuous, o.O
+  i-ismissingfeatuwe: binawy)

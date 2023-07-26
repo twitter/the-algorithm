@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.pipeline.state
+package com.twittew.pwoduct_mixew.cowe.pipewine.state
 
-import com.twitter.product_mixer.core.model.marshalling.request.Request
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.wequest
 
-trait HasRequest[TRequest <: Request] {
-  def request: TRequest
+twait h-haswequest[twequest <: w-wequest] {
+  d-def wequest: t-twequest
 }

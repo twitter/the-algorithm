@@ -1,16 +1,16 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow.serving;
+package tensowfwow.sewving;
 
-import "tensorflow_serving/apis/status.proto";
-import "tensorflow_serving/config/model_server_config.proto";
+impowt "tensowfwow_sewving/apis/status.pwoto";
+impowt "tensowfwow_sewving/config/modew_sewvew_config.pwoto";
 
-option cc_enable_arenas = true;
+o-option c-cc_enabwe_awenas = t-twue;
 
-message ReloadConfigRequest {
-  ModelServerConfig config = 1;
+message w-wewoadconfigwequest {
+  modewsewvewconfig c-config = 1;
 }
 
-message ReloadConfigResponse {
-  StatusProto status = 1;
+m-message wewoadconfigwesponse {
+  s-statuspwoto status = 1;
 }

@@ -1,449 +1,449 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations
+package com.twittew.simcwustews_v2.scawding.topic_wecommendations.modew_based_topic_wecommendations
 
-import com.twitter.algebird.Monoid
-import com.twitter.bijection.Injection
-import com.twitter.dal.client.dataset.SnapshotDALDatasetBase
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api._
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.dataset.DALWrite._
-import com.twitter.simclusters_v2.common.Country
-import com.twitter.simclusters_v2.common.Language
-import com.twitter.simclusters_v2.common.TopicId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
-import scala.util.Random
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.scalding.source.DailySuffixCsv
-import com.twitter.scalding.source.DailySuffixTypedTsv
-import com.twitter.simclusters_v2.hdfs_sources.FavTfgTopicEmbeddingsScalaDataset
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
+impowt com.twittew.awgebiwd.monoid
+i-impowt com.twittew.bijection.injection
+i-impowt c-com.twittew.daw.cwient.dataset.snapshotdawdatasetbase
+i-impowt c-com.twittew.mw.api.datawecowd
+i-impowt com.twittew.mw.api._
+i-impowt c-com.twittew.scawding.typedpipe
+impowt com.twittew.scawding._
+impowt com.twittew.scawding_intewnaw.dawv2.dawwwite.d
+impowt com.twittew.scawding_intewnaw.dawv2.dataset.dawwwite._
+impowt com.twittew.simcwustews_v2.common.countwy
+i-impowt com.twittew.simcwustews_v2.common.wanguage
+impowt com.twittew.simcwustews_v2.common.topicid
+impowt com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.wtf.scawding.jobs.common.adhocexecutionapp
+impowt com.twittew.wtf.scawding.jobs.common.scheduwedexecutionapp
+i-impowt java.utiw.timezone
+impowt scawa.utiw.wandom
+impowt com.twittew.mw.api.utiw.fdsw._
+i-impowt com.twittew.scawding.souwce.daiwysuffixcsv
+impowt com.twittew.scawding.souwce.daiwysuffixtypedtsv
+i-impowt c-com.twittew.simcwustews_v2.hdfs_souwces.favtfgtopicembeddingsscawadataset
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.extewnawdatasouwces
+impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype
 
 /**
- This job is to obtain the training and test data for the model-based approach to topic recommendations:
- Approach:
- 1. Read FavTfgTopicEmbeddingsScalaDataset - to get topic simclusters embeddings for the followed and not interested in topics
- 2. Read SimclustersV2InterestedIn20M145KUpdatedScalaDataset - to get user's interestedIn Simclusters embeddings
- 3. Read UsersourceScalaDataset - to get user's countryCode and language
- Use the datasets above to get the features for the model and generate DataRecords.
+ t-this job is to obtain the twaining and test data fow the modew-based a-appwoach to topic wecommendations:
+ a-appwoach:
+ 1. rawr x3 w-wead favtfgtopicembeddingsscawadataset - t-to g-get topic simcwustews embeddings fow the fowwowed a-and nyot intewested in topics
+ 2. ( ͡o ω ͡o ) wead simcwustewsv2intewestedin20m145kupdatedscawadataset - to g-get usew's intewestedin simcwustews embeddings
+ 3. :3 wead usewsouwcescawadataset - to get usew's countwycode and w-wanguage
+ use the datasets above t-to get the featuwes f-fow the modew a-and genewate datawecowds. mya
  */
 
 /*
-To run:
-scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/topic_recommendations/model_based_topic_recommendations:training_data_for_topic_recommendations-adhoc \
---user cassowary \
---submitter atla-aor-08-sr1 \
---main-class com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations.UserTopicFeatureHydrationAdhocApp \
---submitter-memory 128192.megabyte --hadoop-properties "mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce.memory.mb=8192 mapreduce.reduce.java.opts='-Xmx7618M'" \
+to wun:
+scawding wemote wun --tawget s-swc/scawa/com/twittew/simcwustews_v2/scawding/topic_wecommendations/modew_based_topic_wecommendations:twaining_data_fow_topic_wecommendations-adhoc \
+--usew c-cassowawy \
+--submittew atwa-aow-08-sw1 \
+--main-cwass com.twittew.simcwustews_v2.scawding.topic_wecommendations.modew_based_topic_wecommendations.usewtopicfeatuwehydwationadhocapp \
+--submittew-memowy 128192.megabyte --hadoop-pwopewties "mapweduce.map.memowy.mb=8192 m-mapweduce.map.java.opts='-xmx7618m' m-mapweduce.weduce.memowy.mb=8192 mapweduce.weduce.java.opts='-xmx7618m'" \
 -- \
 --date 2020-10-14 \
---outputDir "/user/cassowary/adhoc/your_ldap/user_topic_features_popular_clusters_filtered_oct_16"
+--outputdiw "/usew/cassowawy/adhoc/youw_wdap/usew_topic_featuwes_popuwaw_cwustews_fiwtewed_oct_16"
  */
 
-object UserTopicFeatureHydrationAdhocApp extends AdhocExecutionApp {
+o-object usewtopicfeatuwehydwationadhocapp extends a-adhocexecutionapp {
 
-  import UserTopicModellingJobUtils._
+  impowt usewtopicmodewwingjobutiws._
 
-  override def runOnDateRange(
-    args: Args
+  o-ovewwide def wunondatewange(
+    awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    i-impwicit datewange: datewange, σωσ
+    t-timezone: t-timezone, (ꈍᴗꈍ)
+    uniqueid: uniqueid
+  ): execution[unit] = {
 
-    val outputDir = args("outputDir")
-    val numDataRecordsTraining = Stat("num_data_records_training")
-    val numDataRecordsTesting = Stat("num_data_records_testing")
-    val testingRatio = args.double("testingRatio", 0.2)
+    vaw outputdiw = awgs("outputdiw")
+    vaw nyumdatawecowdstwaining = stat("num_data_wecowds_twaining")
+    v-vaw n-numdatawecowdstesting = stat("num_data_wecowds_testing")
+    v-vaw t-testingwatio = a-awgs.doubwe("testingwatio", OwO 0.2)
 
-    val (trainingDataSamples, testDataSamples, sortedVocab) = UserTopicModellingJobUtils.run(
-      ExternalDataSources.topicFollowGraphSource,
-      ExternalDataSources.notInterestedTopicsSource,
-      ExternalDataSources.userSource,
-      DataSources.getUserInterestedInData,
-      DataSources.getPerLanguageTopicEmbeddings,
-      testingRatio
+    vaw (twainingdatasampwes, o.O testdatasampwes, 😳😳😳 sowtedvocab) = u-usewtopicmodewwingjobutiws.wun(
+      extewnawdatasouwces.topicfowwowgwaphsouwce, /(^•ω•^)
+      extewnawdatasouwces.notintewestedtopicssouwce, OwO
+      extewnawdatasouwces.usewsouwce, ^^
+      datasouwces.getusewintewestedindata, (///ˬ///✿)
+      datasouwces.getpewwanguagetopicembeddings, (///ˬ///✿)
+      t-testingwatio
     )
 
-    val userTopicAdapter = new UserTopicDataRecordAdapter()
-    Execution
+    vaw usewtopicadaptew = nyew u-usewtopicdatawecowdadaptew()
+    e-execution
       .zip(
-        convertTypedPipeToDataSetPipe(
-          trainingDataSamples.map { train =>
-            numDataRecordsTraining.inc()
-            train
-          },
-          userTopicAdapter)
-          .writeExecution(
-            DailySuffixFeatureSink(outputDir + "/training")
-          ),
-        convertTypedPipeToDataSetPipe(
-          testDataSamples.map { test =>
-            numDataRecordsTesting.inc()
-            test
-          },
-          userTopicAdapter)
-          .writeExecution(
-            DailySuffixFeatureSink(outputDir + "/testing")
-          ),
-        sortedVocab
-          .map { topicsWithSortedIndexes =>
-            topicsWithSortedIndexes.map(_._1)
-          }.flatten.writeExecution(DailySuffixTypedTsv(outputDir + "/vocab"))
+        c-convewttypedpipetodatasetpipe(
+          twainingdatasampwes.map { t-twain =>
+            n-nyumdatawecowdstwaining.inc()
+            t-twain
+          }, (///ˬ///✿)
+          u-usewtopicadaptew)
+          .wwiteexecution(
+            daiwysuffixfeatuwesink(outputdiw + "/twaining")
+          ), ʘwʘ
+        convewttypedpipetodatasetpipe(
+          t-testdatasampwes.map { test =>
+            n-numdatawecowdstesting.inc()
+            t-test
+          }, ^•ﻌ•^
+          u-usewtopicadaptew)
+          .wwiteexecution(
+            d-daiwysuffixfeatuwesink(outputdiw + "/testing")
+          ), OwO
+        sowtedvocab
+          .map { topicswithsowtedindexes =>
+            topicswithsowtedindexes.map(_._1)
+          }.fwatten.wwiteexecution(daiwysuffixtypedtsv(outputdiw + "/vocab"))
       ).unit
   }
 }
 
 /**
-capesospy-v2 update --build_locally \
- --start_cron training_data_for_topic_recommendations \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+c-capesospy-v2 update --buiwd_wocawwy \
+ --stawt_cwon twaining_data_fow_topic_wecommendations \
+ swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc3.yamw
  */
 
-object UserTopicFeatureHydrationScheduledApp extends ScheduledExecutionApp {
+object usewtopicfeatuwehydwationscheduwedapp extends scheduwedexecutionapp {
 
-  import UserTopicModellingJobUtils._
+  impowt usewtopicmodewwingjobutiws._
 
-  private val outputPath: String =
-    "/user/cassowary/processed/user_topic_modelling"
+  pwivate vaw outputpath: s-stwing =
+    "/usew/cassowawy/pwocessed/usew_topic_modewwing"
 
-  override def batchIncrement: Duration = Days(1)
+  ovewwide def batchincwement: duwation = d-days(1)
 
-  override def firstTime: RichDate = RichDate("2020-10-13")
+  ovewwide d-def fiwsttime: w-wichdate = wichdate("2020-10-13")
 
-  override def runOnDateRange(
-    args: Args
+  ovewwide d-def wunondatewange(
+    awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val testingRatio = args.double("testingRatio", 0.2)
+    i-impwicit d-datewange: datewange, (U ﹏ U)
+    timezone: timezone, (ˆ ﻌ ˆ)♡
+    uniqueid: uniqueid
+  ): execution[unit] = {
+    v-vaw testingwatio = awgs.doubwe("testingwatio", (⑅˘꒳˘) 0.2)
 
-    val (trainingDataSamples, testDataSamples, sortedVocab) = UserTopicModellingJobUtils.run(
-      ExternalDataSources.topicFollowGraphSource,
-      ExternalDataSources.notInterestedTopicsSource,
-      ExternalDataSources.userSource,
-      DataSources.getUserInterestedInData,
-      DataSources.getPerLanguageTopicEmbeddings,
-      testingRatio
+    v-vaw (twainingdatasampwes, (U ﹏ U) testdatasampwes, o.O s-sowtedvocab) = u-usewtopicmodewwingjobutiws.wun(
+      extewnawdatasouwces.topicfowwowgwaphsouwce, mya
+      extewnawdatasouwces.notintewestedtopicssouwce, XD
+      e-extewnawdatasouwces.usewsouwce,
+      d-datasouwces.getusewintewestedindata, òωó
+      datasouwces.getpewwanguagetopicembeddings, (˘ω˘)
+      t-testingwatio
     )
 
-    val userTopicAdapter = new UserTopicDataRecordAdapter()
-    Execution
+    v-vaw usewtopicadaptew = nyew usewtopicdatawecowdadaptew()
+    execution
       .zip(
-        getTrainTestExec(
-          trainingDataSamples,
-          testDataSamples,
-          TopicRecommendationsTrainDatarecordsJavaDataset,
-          TopicRecommendationsTestDatarecordsJavaDataset,
-          outputPath,
-          userTopicAdapter
-        ),
-        sortedVocab
-          .map { topicsWithSortedIndexes =>
-            topicsWithSortedIndexes.map(_._1)
-          }.flatten.writeExecution(DailySuffixTypedTsv(outputPath + "/vocab"))
+        gettwaintestexec(
+          twainingdatasampwes, :3
+          testdatasampwes, OwO
+          t-topicwecommendationstwaindatawecowdsjavadataset, mya
+          t-topicwecommendationstestdatawecowdsjavadataset,
+          o-outputpath, (˘ω˘)
+          usewtopicadaptew
+        ), o.O
+        s-sowtedvocab
+          .map { topicswithsowtedindexes =>
+            t-topicswithsowtedindexes.map(_._1)
+          }.fwatten.wwiteexecution(daiwysuffixtypedtsv(outputpath + "/vocab"))
       ).unit
 
   }
 }
 
-object UserTopicModellingJobUtils {
+object u-usewtopicmodewwingjobutiws {
 
   /**
-   * The main function that produces training and the test data
+   * the main function that pwoduces twaining and the test d-data
    *
-   * @param topicFollowGraphSource user with followed topics from TFG
-   * @param notInterestedTopicsSource  user with not interested in topics
-   * @param userSource user with country and language
-   * @param userInterestedInData user with interestedin simcluster embeddings
-   * @param topicPerLanguageEmbeddings topics with simcluster embeddings
+   * @pawam t-topicfowwowgwaphsouwce usew with fowwowed topics fwom tfg
+   * @pawam n-nyotintewestedtopicssouwce  u-usew with nyot intewested in topics
+   * @pawam usewsouwce u-usew with countwy and wanguage
+   * @pawam usewintewestedindata usew with intewestedin simcwustew e-embeddings
+   * @pawam topicpewwanguageembeddings topics w-with simcwustew e-embeddings
    *
-   * @return Tuple (trainingDataSamples, testingDataSamples, sortedTopicsVocab)
+   * @wetuwn tupwe (twainingdatasampwes, (✿oωo) testingdatasampwes, (ˆ ﻌ ˆ)♡ sowtedtopicsvocab)
    */
-  def run(
-    topicFollowGraphSource: TypedPipe[(TopicId, UserId)],
-    notInterestedTopicsSource: TypedPipe[(TopicId, UserId)],
-    userSource: TypedPipe[(UserId, (Country, Language))],
-    userInterestedInData: TypedPipe[(UserId, Map[Int, Double])],
-    topicPerLanguageEmbeddings: TypedPipe[((TopicId, Language), Map[Int, Double])],
-    testingRatio: Double
+  d-def wun(
+    t-topicfowwowgwaphsouwce: typedpipe[(topicid, ^^;; usewid)], OwO
+    nyotintewestedtopicssouwce: typedpipe[(topicid, 🥺 usewid)], mya
+    u-usewsouwce: typedpipe[(usewid, 😳 (countwy, òωó w-wanguage))], /(^•ω•^)
+    usewintewestedindata: typedpipe[(usewid, -.- map[int, doubwe])], òωó
+    t-topicpewwanguageembeddings: typedpipe[((topicid, /(^•ω•^) w-wanguage), /(^•ω•^) m-map[int, 😳 doubwe])],
+    testingwatio: d-doubwe
   )(
-    implicit uniqueID: UniqueID,
-    dateRange: DateRange,
-    timeZone: TimeZone
+    impwicit u-uniqueid: uniqueid, :3
+    d-datewange: d-datewange, (U ᵕ U❁)
+    timezone: timezone
   ): (
-    TypedPipe[UserTopicTrainingSample],
-    TypedPipe[UserTopicTrainingSample],
-    TypedPipe[Seq[(TopicId, Int)]]
+    t-typedpipe[usewtopictwainingsampwe], ʘwʘ
+    t-typedpipe[usewtopictwainingsampwe], o.O
+    typedpipe[seq[(topicid, ʘwʘ int)]]
   ) = {
-    val allFollowableTopics: TypedPipe[TopicId] =
-      topicFollowGraphSource.map(_._1).distinct
+    v-vaw a-awwfowwowabwetopics: t-typedpipe[topicid] =
+      topicfowwowgwaphsouwce.map(_._1).distinct
 
-    val allFollowableTopicsWithMappedIds: TypedPipe[(TopicId, Int)] =
-      allFollowableTopics.groupAll.mapGroup {
-        case (_, topicIter) =>
-          topicIter.zipWithIndex.map {
-            case (topicId, mappedId) =>
-              (topicId, mappedId)
+    vaw awwfowwowabwetopicswithmappedids: t-typedpipe[(topicid, ^^ int)] =
+      a-awwfowwowabwetopics.gwoupaww.mapgwoup {
+        c-case (_, ^•ﻌ•^ topicitew) =>
+          topicitew.zipwithindex.map {
+            case (topicid, mya m-mappedid) =>
+              (topicid, UwU m-mappedid)
           }
-      }.values
+      }.vawues
 
-    val sortedVocab: TypedPipe[Seq[(TopicId, Int)]] =
-      allFollowableTopicsWithMappedIds.map(Seq(_)).map(_.sortBy(_._2))
+    v-vaw sowtedvocab: t-typedpipe[seq[(topicid, >_< int)]] =
+      a-awwfowwowabwetopicswithmappedids.map(seq(_)).map(_.sowtby(_._2))
 
-    val dataTrainingSamples: TypedPipe[UserTopicTrainingSample] = getDataSamplesFromTrainingData(
-      topicFollowGraphSource,
-      notInterestedTopicsSource,
-      userSource,
-      userInterestedInData,
-      topicPerLanguageEmbeddings,
-      allFollowableTopicsWithMappedIds
+    vaw datatwainingsampwes: typedpipe[usewtopictwainingsampwe] = getdatasampwesfwomtwainingdata(
+      topicfowwowgwaphsouwce, /(^•ω•^)
+      nyotintewestedtopicssouwce, òωó
+      u-usewsouwce, σωσ
+      usewintewestedindata, ( ͡o ω ͡o )
+      t-topicpewwanguageembeddings, nyaa~~
+      awwfowwowabwetopicswithmappedids
     )
-    val (trainSplit, testSplit) = splitByUser(dataTrainingSamples, testingRatio)
+    v-vaw (twainspwit, :3 testspwit) = spwitbyusew(datatwainingsampwes, UwU t-testingwatio)
 
-    (trainSplit, testSplit, sortedVocab)
+    (twainspwit, o.O testspwit, (ˆ ﻌ ˆ)♡ s-sowtedvocab)
   }
 
   /**
-   * Split the data samples based on user_id into train and test data. This ensures that the same
-   * user's data records are not part of both train and test data.
+   * s-spwit the data s-sampwes based o-on usew_id into t-twain and test data. ^^;; this ensuwes that the same
+   * usew's data wecowds awe nyot pawt of both twain and test d-data. ʘwʘ
    */
-  def splitByUser(
-    dataTrainingSamples: TypedPipe[UserTopicTrainingSample],
-    testingRatio: Double
-  ): (TypedPipe[UserTopicTrainingSample], TypedPipe[UserTopicTrainingSample]) = {
-    val (trainSplit, testSplit) = dataTrainingSamples
-      .map { currSmple => (currSmple.userId, currSmple) }.groupBy(_._1).partition(_ =>
-        Random.nextDouble() > testingRatio)
-    val trainingData = trainSplit.values.map(_._2)
-    val testingData = testSplit.values.map(_._2)
-    (trainingData, testingData)
+  def s-spwitbyusew(
+    d-datatwainingsampwes: typedpipe[usewtopictwainingsampwe], σωσ
+    t-testingwatio: doubwe
+  ): (typedpipe[usewtopictwainingsampwe], ^^;; typedpipe[usewtopictwainingsampwe]) = {
+    vaw (twainspwit, testspwit) = datatwainingsampwes
+      .map { c-cuwwsmpwe => (cuwwsmpwe.usewid, c-cuwwsmpwe) }.gwoupby(_._1).pawtition(_ =>
+        wandom.nextdoubwe() > t-testingwatio)
+    vaw twainingdata = twainspwit.vawues.map(_._2)
+    v-vaw testingdata = t-testspwit.vawues.map(_._2)
+    (twainingdata, ʘwʘ testingdata)
   }
 
   /**
-   * To get the target topic for each training data sample for a user from the TopicFollowGraph
+   * t-to get the tawget t-topic fow each twaining data sampwe fow a usew fwom the topicfowwowgwaph
    *
-   * @param topicFollowSource
-   * @return (UserId, Set(allFollowedTopicsExceptTargetTopic), targetTopic)
+   * @pawam topicfowwowsouwce
+   * @wetuwn (usewid, ^^ s-set(awwfowwowedtopicsexcepttawgettopic), nyaa~~ t-tawgettopic)
    */
-  def getTargetTopicsFromTFG(
-    topicFollowSource: TypedPipe[(TopicId, UserId)]
+  d-def gettawgettopicsfwomtfg(
+    t-topicfowwowsouwce: t-typedpipe[(topicid, (///ˬ///✿) usewid)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(UserId, Set[TopicId], TopicId)] = {
-    val numTrainingSamples = Stat("num_positive_training_samples")
+    impwicit u-uniqueid: u-uniqueid
+  ): typedpipe[(usewid, XD s-set[topicid], :3 t-topicid)] = {
+    vaw nyumtwainingsampwes = s-stat("num_positive_twaining_sampwes")
 
-    val userFollowedTopics = topicFollowSource.swap
+    vaw usewfowwowedtopics = topicfowwowsouwce.swap
       .map {
-        case (userId, topicId) => (userId, Set(topicId))
-      }.sumByKey.toTypedPipe
+        c-case (usewid, òωó topicid) => (usewid, ^^ s-set(topicid))
+      }.sumbykey.totypedpipe
 
-    userFollowedTopics.flatMap {
-      case (userID, followedTopicsSet) =>
-        followedTopicsSet.map { currFollowedTopic =>
-          numTrainingSamples.inc()
-          val remainingTopics = followedTopicsSet - currFollowedTopic
-          (userID, remainingTopics, currFollowedTopic)
+    u-usewfowwowedtopics.fwatmap {
+      case (usewid, ^•ﻌ•^ f-fowwowedtopicsset) =>
+        fowwowedtopicsset.map { cuwwfowwowedtopic =>
+          nyumtwainingsampwes.inc()
+          v-vaw wemainingtopics = f-fowwowedtopicsset - c-cuwwfowwowedtopic
+          (usewid, σωσ wemainingtopics, (ˆ ﻌ ˆ)♡ cuwwfowwowedtopic)
         }
     }
   }
 
   /**
-   * Helper function that does the intermediate join operation between a user's followed,
-   * not-interested, interestedIn, country and language typedpipe sources, read from different sources.
+   * hewpew f-function that does the intewmediate join opewation b-between a u-usew's fowwowed, nyaa~~
+   * nyot-intewested, ʘwʘ i-intewestedin, ^•ﻌ•^ countwy and w-wanguage typedpipe s-souwces, rawr x3 wead fwom diffewent souwces. 🥺
    */
 
-  def getFeaturesIntermediateJoin(
-    topicFollowGraphSource: TypedPipe[(TopicId, UserId)],
-    notInterestedTopicsSource: TypedPipe[(TopicId, UserId)],
-    allFollowableTopicsWithMappedIds: TypedPipe[(TopicId, Int)],
-    userCountryAndLanguage: TypedPipe[(UserId, (Country, Language))],
-    userInterestedInData: TypedPipe[(UserId, Map[Int, Double])]
+  d-def getfeatuwesintewmediatejoin(
+    topicfowwowgwaphsouwce: typedpipe[(topicid, ʘwʘ u-usewid)], (˘ω˘)
+    n-nyotintewestedtopicssouwce: typedpipe[(topicid, o.O usewid)], σωσ
+    a-awwfowwowabwetopicswithmappedids: typedpipe[(topicid, (ꈍᴗꈍ) i-int)], (ˆ ﻌ ˆ)♡
+    u-usewcountwyandwanguage: t-typedpipe[(usewid, o.O (countwy, :3 wanguage))], -.-
+    usewintewestedindata: typedpipe[(usewid, ( ͡o ω ͡o ) map[int, /(^•ω•^) doubwe])]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[
+    impwicit uniqueid: uniqueid
+  ): typedpipe[
     (
-      UserId,
-      Set[TopicId],
-      Set[TopicId],
-      TopicId,
-      Int,
-      Country,
-      Language,
-      Map[Int, Double]
+      usewid, (⑅˘꒳˘)
+      set[topicid], òωó
+      set[topicid], 🥺
+      topicid, (ˆ ﻌ ˆ)♡
+      int,
+      c-countwy, -.-
+      w-wanguage,
+      map[int, σωσ doubwe]
     )
   ] = {
-    implicit val l2b: Long => Array[Byte] = Injection.long2BigEndian
+    impwicit v-vaw w2b: wong => a-awway[byte] = injection.wong2bigendian
 
-    val userWithFollowedTargetTopics: TypedPipe[
-      (UserId, Set[TopicId], TopicId)
-    ] = getTargetTopicsFromTFG(topicFollowGraphSource)
+    v-vaw usewwithfowwowedtawgettopics: typedpipe[
+      (usewid, >_< s-set[topicid], :3 topicid)
+    ] = g-gettawgettopicsfwomtfg(topicfowwowgwaphsouwce)
 
-    val userWithNotInterestedTopics: TypedPipe[(UserId, Set[TopicId])] =
-      notInterestedTopicsSource.swap.mapValues(Set(_)).sumByKey.toTypedPipe
+    v-vaw usewwithnotintewestedtopics: t-typedpipe[(usewid, set[topicid])] =
+      n-nyotintewestedtopicssouwce.swap.mapvawues(set(_)).sumbykey.totypedpipe
 
-    userWithFollowedTargetTopics
-      .groupBy(_._1).leftJoin(userWithNotInterestedTopics).values.map {
-        case ((userId, followedTopics, targetFollowedTopic), notInterestedOpt) =>
+    u-usewwithfowwowedtawgettopics
+      .gwoupby(_._1).weftjoin(usewwithnotintewestedtopics).vawues.map {
+        case ((usewid, OwO fowwowedtopics, rawr tawgetfowwowedtopic), (///ˬ///✿) nyotintewestedopt) =>
           (
-            userId,
-            followedTopics,
-            targetFollowedTopic,
-            notInterestedOpt.getOrElse(Set.empty[TopicId]))
+            u-usewid, ^^
+            f-fowwowedtopics, XD
+            t-tawgetfowwowedtopic, UwU
+            n-nyotintewestedopt.getowewse(set.empty[topicid]))
       }
       .map {
-        case (userId, followedTopics, targetFollowedTopic, notInterestedTopics) =>
-          (targetFollowedTopic, (userId, followedTopics, notInterestedTopics))
-      }.join(allFollowableTopicsWithMappedIds).map {
-        case (targetTopic, ((userId, followedTopics, notInterestedTopics), targetTopicIdx)) =>
-          (userId, followedTopics, notInterestedTopics, targetTopic, targetTopicIdx)
+        c-case (usewid, o.O f-fowwowedtopics, t-tawgetfowwowedtopic, 😳 n-nyotintewestedtopics) =>
+          (tawgetfowwowedtopic, (˘ω˘) (usewid, f-fowwowedtopics, 🥺 nyotintewestedtopics))
+      }.join(awwfowwowabwetopicswithmappedids).map {
+        c-case (tawgettopic, ^^ ((usewid, f-fowwowedtopics, >w< n-nyotintewestedtopics), ^^;; tawgettopicidx)) =>
+          (usewid, (˘ω˘) fowwowedtopics, OwO n-nyotintewestedtopics, (ꈍᴗꈍ) tawgettopic, òωó tawgettopicidx)
       }
-      .groupBy(_._1).sketch(4000)
-      .join(userCountryAndLanguage
-        .groupBy(_._1)).sketch(4000).leftJoin(userInterestedInData)
-      .values.map {
-        case (
+      .gwoupby(_._1).sketch(4000)
+      .join(usewcountwyandwanguage
+        .gwoupby(_._1)).sketch(4000).weftjoin(usewintewestedindata)
+      .vawues.map {
+        c-case (
               (
-                (userId, followedTopics, notInterestedTopics, targetTopic, targetTopicIdx),
-                (_, (userCountry, userLanguage))
-              ),
-              userIntOpt) =>
+                (usewid, ʘwʘ fowwowedtopics, ʘwʘ n-nyotintewestedtopics, nyaa~~ t-tawgettopic, UwU t-tawgettopicidx),
+                (_, (⑅˘꒳˘) (usewcountwy, (˘ω˘) usewwanguage))
+              ), :3
+              u-usewintopt) =>
           (
-            userId,
-            followedTopics,
-            notInterestedTopics,
-            targetTopic,
-            targetTopicIdx,
-            userCountry,
-            userLanguage,
-            userIntOpt.getOrElse(Map.empty))
+            usewid, (˘ω˘)
+            f-fowwowedtopics, nyaa~~
+            nyotintewestedtopics, (U ﹏ U)
+            t-tawgettopic, nyaa~~
+            tawgettopicidx, ^^;;
+            u-usewcountwy, OwO
+            usewwanguage, nyaa~~
+            usewintopt.getowewse(map.empty))
       }
   }
 
   /**
-   * Helper function that aggregates user's followed topics, not-interested topics,
-   * country, language with join operations and generates the UserTopicTrainingSample
-   * for each DataRecord
+   * hewpew function that aggwegates u-usew's fowwowed topics, UwU nyot-intewested t-topics, 😳
+   * c-countwy, 😳 wanguage with join opewations and genewates the u-usewtopictwainingsampwe
+   * fow each datawecowd
    */
-  def getDataSamplesFromTrainingData(
-    topicFollowGraphSource: TypedPipe[(TopicId, UserId)],
-    notInterestedTopicsSource: TypedPipe[(TopicId, UserId)],
-    userCountryAndLanguage: TypedPipe[(UserId, (Country, Language))],
-    userInterestedInData: TypedPipe[(UserId, Map[Int, Double])],
-    topicPerLanguageEmbeddings: TypedPipe[((TopicId, Language), Map[Int, Double])],
-    allFollowableTopicsWithMappedIds: TypedPipe[(TopicId, Int)]
+  d-def getdatasampwesfwomtwainingdata(
+    t-topicfowwowgwaphsouwce: t-typedpipe[(topicid, (ˆ ﻌ ˆ)♡ usewid)], (✿oωo)
+    nyotintewestedtopicssouwce: typedpipe[(topicid, nyaa~~ u-usewid)], ^^
+    u-usewcountwyandwanguage: typedpipe[(usewid, (///ˬ///✿) (countwy, w-wanguage))], 😳
+    usewintewestedindata: typedpipe[(usewid, òωó m-map[int, ^^;; doubwe])], rawr
+    t-topicpewwanguageembeddings: t-typedpipe[((topicid, (ˆ ﻌ ˆ)♡ w-wanguage), XD map[int, >_< doubwe])],
+    a-awwfowwowabwetopicswithmappedids: t-typedpipe[(topicid, (˘ω˘) i-int)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[UserTopicTrainingSample] = {
+    i-impwicit uniqueid: uniqueid
+  ): t-typedpipe[usewtopictwainingsampwe] = {
 
-    implicit val l2b: Long => Array[Byte] = Injection.long2BigEndian
+    i-impwicit v-vaw w2b: wong => a-awway[byte] = i-injection.wong2bigendian
 
-    val allTopicEmbeddingsMap: ValuePipe[Map[(TopicId, Language), Map[Int, Double]]] =
-      topicPerLanguageEmbeddings.map {
-        case (topicWithLang, embedding) =>
-          Map(topicWithLang -> embedding)
+    v-vaw a-awwtopicembeddingsmap: v-vawuepipe[map[(topicid, 😳 wanguage), map[int, o.O d-doubwe]]] =
+      topicpewwanguageembeddings.map {
+        c-case (topicwithwang, (ꈍᴗꈍ) embedding) =>
+          m-map(topicwithwang -> e-embedding)
       }.sum
 
-    val userWithFollowedAndNotInterestedTopics = getFeaturesIntermediateJoin(
-      topicFollowGraphSource,
-      notInterestedTopicsSource,
-      allFollowableTopicsWithMappedIds,
-      userCountryAndLanguage,
-      userInterestedInData)
+    v-vaw usewwithfowwowedandnotintewestedtopics = getfeatuwesintewmediatejoin(
+      topicfowwowgwaphsouwce, rawr x3
+      n-nyotintewestedtopicssouwce, ^^
+      a-awwfowwowabwetopicswithmappedids,
+      u-usewcountwyandwanguage,
+      usewintewestedindata)
 
-    userWithFollowedAndNotInterestedTopics.flatMapWithValue(allTopicEmbeddingsMap) {
+    usewwithfowwowedandnotintewestedtopics.fwatmapwithvawue(awwtopicembeddingsmap) {
       case (
             (
-              userId,
-              followedTopics,
-              notInterestedTopics,
-              targetTopic,
-              targetTopicIdx,
-              userCountry,
-              userLanguage,
-              userInt),
-            Some(allTopicEmbeddings)) =>
-        val averageFollowedTopicsSimClusters = Monoid
-          .sum(followedTopics.toSeq.map { topicId =>
-            allTopicEmbeddings.getOrElse((topicId, userLanguage), Map.empty)
-          }).mapValues(v =>
-            v / followedTopics.size) // average simcluster embedding of the followed topics
+              usewid, OwO
+              fowwowedtopics, ^^
+              n-nyotintewestedtopics, :3
+              t-tawgettopic, o.O
+              tawgettopicidx, -.-
+              u-usewcountwy, (U ﹏ U)
+              u-usewwanguage, o.O
+              usewint), OwO
+            some(awwtopicembeddings)) =>
+        vaw a-avewagefowwowedtopicssimcwustews = m-monoid
+          .sum(fowwowedtopics.toseq.map { t-topicid =>
+            a-awwtopicembeddings.getowewse((topicid, ^•ﻌ•^ usewwanguage), ʘwʘ map.empty)
+          }).mapvawues(v =>
+            v-v / fowwowedtopics.size) // a-avewage simcwustew embedding of the fowwowed topics
 
-        val averageNotInterestedTopicsSimClusters = Monoid
-          .sum(notInterestedTopics.toSeq.map { topicId =>
-            allTopicEmbeddings.getOrElse((topicId, userLanguage), Map.empty)
-          }).mapValues(v =>
-            v / notInterestedTopics.size) // average simcluster embedding of the notInterested topics
+        v-vaw avewagenotintewestedtopicssimcwustews = monoid
+          .sum(notintewestedtopics.toseq.map { topicid =>
+            a-awwtopicembeddings.getowewse((topicid, :3 usewwanguage), 😳 m-map.empty)
+          }).mapvawues(v =>
+            v / n-nyotintewestedtopics.size) // avewage simcwustew e-embedding of t-the nyotintewested topics
 
-        Some(
-          UserTopicTrainingSample(
-            userId,
-            followedTopics,
-            notInterestedTopics,
-            userCountry,
-            userLanguage,
-            targetTopicIdx,
-            userInt,
-            averageFollowedTopicsSimClusters,
-            averageNotInterestedTopicsSimClusters
+        s-some(
+          usewtopictwainingsampwe(
+            u-usewid, òωó
+            f-fowwowedtopics, 🥺
+            n-nyotintewestedtopics, rawr x3
+            u-usewcountwy, ^•ﻌ•^
+            usewwanguage, :3
+            t-tawgettopicidx, (ˆ ﻌ ˆ)♡
+            u-usewint, (U ᵕ U❁)
+            avewagefowwowedtopicssimcwustews, :3
+            a-avewagenotintewestedtopicssimcwustews
           )
         )
 
       case _ =>
-        None
+        n-nyone
     }
   }
 
   /**
-   * Write train and test data
+   * wwite twain and test d-data
    */
-  def getTrainTestExec(
-    trainingData: TypedPipe[UserTopicTrainingSample],
-    testingData: TypedPipe[UserTopicTrainingSample],
-    trainDataset: SnapshotDALDatasetBase[DataRecord],
-    testDataset: SnapshotDALDatasetBase[DataRecord],
-    outputPath: String,
-    adapter: IRecordOneToOneAdapter[UserTopicTrainingSample]
+  d-def gettwaintestexec(
+    t-twainingdata: typedpipe[usewtopictwainingsampwe], ^^;;
+    testingdata: typedpipe[usewtopictwainingsampwe], ( ͡o ω ͡o )
+    twaindataset: snapshotdawdatasetbase[datawecowd], o.O
+    t-testdataset: snapshotdawdatasetbase[datawecowd], ^•ﻌ•^
+    o-outputpath: stwing, XD
+    a-adaptew: iwecowdonetooneadaptew[usewtopictwainingsampwe]
   )(
-    implicit dateRange: DateRange
-  ): Execution[Unit] = {
-    val trainExec =
-      convertTypedPipeToDataSetPipe(trainingData, adapter)
-        .writeDALSnapshotExecution(
-          trainDataset,
-          D.Daily,
-          D.Suffix(s"$outputPath/training"),
-          D.EBLzo(),
-          dateRange.end)
-    val testExec =
-      convertTypedPipeToDataSetPipe(testingData, adapter)
-        .writeDALSnapshotExecution(
-          testDataset,
-          D.Daily,
-          D.Suffix(s"$outputPath/testing"),
-          D.EBLzo(),
-          dateRange.end)
-    Execution.zip(trainExec, testExec).unit
+    impwicit d-datewange: datewange
+  ): execution[unit] = {
+    v-vaw twainexec =
+      c-convewttypedpipetodatasetpipe(twainingdata, ^^ a-adaptew)
+        .wwitedawsnapshotexecution(
+          t-twaindataset, o.O
+          d-d.daiwy, ( ͡o ω ͡o )
+          d.suffix(s"$outputpath/twaining"), /(^•ω•^)
+          d.ebwzo(), 🥺
+          datewange.end)
+    vaw t-testexec =
+      convewttypedpipetodatasetpipe(testingdata, nyaa~~ a-adaptew)
+        .wwitedawsnapshotexecution(
+          testdataset, mya
+          d.daiwy, XD
+          d.suffix(s"$outputpath/testing"), nyaa~~
+          d.ebwzo(), ʘwʘ
+          d-datewange.end)
+    execution.zip(twainexec, (⑅˘꒳˘) testexec).unit
   }
 
   /**
-   * To get the datasetPipe containing datarecords hydrated by datarecordAdapter
-   * @param userTrainingSamples
-   * @param adapter
-   * @return DataSetPipe
+   * to get the datasetpipe c-containing datawecowds h-hydwated by datawecowdadaptew
+   * @pawam u-usewtwainingsampwes
+   * @pawam adaptew
+   * @wetuwn datasetpipe
    */
-  def convertTypedPipeToDataSetPipe(
-    userTrainingSamples: TypedPipe[UserTopicTrainingSample],
-    adapter: IRecordOneToOneAdapter[UserTopicTrainingSample]
-  ): DataSetPipe = {
-    userTrainingSamples.toDataSetPipe(adapter)
+  d-def c-convewttypedpipetodatasetpipe(
+    usewtwainingsampwes: t-typedpipe[usewtopictwainingsampwe], :3
+    adaptew: iwecowdonetooneadaptew[usewtopictwainingsampwe]
+  ): d-datasetpipe = {
+    usewtwainingsampwes.todatasetpipe(adaptew)
   }
 }

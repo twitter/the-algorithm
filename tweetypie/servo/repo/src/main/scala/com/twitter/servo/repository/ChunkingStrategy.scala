@@ -1,49 +1,49 @@
-package com.twitter.servo.repository
+package com.twittew.sewvo.wepositowy
 
-object ChunkingStrategy {
+object chunkingstwategy {
 
   /**
-   * A chunking strategy for breaking a query into fixed size chunks, with the last
-   * chunk possibly being any size between 1 and chunkSize.
+   * a-a chunking s-stwategy fow b-bweaking a quewy i-into fixed size c-chunks, -.- with t-the wast
+   * chunk p-possibwy being a-any size between 1 and chunksize. 🥺
    */
-  def fixedSize[K](chunkSize: Int): Seq[K] => Seq[Seq[K]] = {
-    fixedSize(chunkSize, keysAsQuery[K])
+  def fixedsize[k](chunksize: int): s-seq[k] => seq[seq[k]] = {
+    fixedsize(chunksize, o.O keysasquewy[k])
   }
 
   /**
-   * A chunking strategy for breaking a query into fixed size chunks, with the last
-   * chunk possibly being any size between 1 and chunkSize.
+   * a-a chunking stwategy fow bweaking a-a quewy into fixed size chunks, /(^•ω•^) with the wast
+   * chunk possibwy b-being any size between 1 and c-chunksize. nyaa~~
    */
-  def fixedSize[Q <: Seq[K], K](
-    chunkSize: Int,
-    newQuery: SubqueryBuilder[Q, K]
-  ): Q => Seq[Q] = { query =>
-    query.distinct.grouped(chunkSize) map { newQuery(_, query) } toSeq
+  d-def fixedsize[q <: seq[k], nyaa~~ k](
+    chunksize: int, :3
+    nyewquewy: subquewybuiwdew[q, 😳😳😳 k-k]
+  ): q => seq[q] = { quewy =>
+    quewy.distinct.gwouped(chunksize) map { nyewquewy(_, (˘ω˘) q-quewy) } toseq
   }
 
   /**
-   * A chunking strategy for breaking a query into roughly equal sized chunks no
-   * larger than maxSize.  The last chunk may be slightly smaller due to rounding.
+   * a chunking stwategy f-fow bweaking a-a quewy into w-woughwy equaw s-sized chunks nyo
+   * wawgew than maxsize. ^^  the w-wast chunk may be swightwy smowew due to wounding. :3
    */
-  def equalSize[K](maxSize: Int): Seq[K] => Seq[Seq[K]] = {
-    equalSize(maxSize, keysAsQuery[K])
+  d-def equawsize[k](maxsize: int): seq[k] => seq[seq[k]] = {
+    equawsize(maxsize, -.- keysasquewy[k])
   }
 
   /**
-   * A chunking strategy for breaking a query into roughly equal sized chunks no
-   * larger than maxSize.  The last chunk may be slightly smaller due to rounding.
+   * a chunking s-stwategy fow bweaking a quewy i-into woughwy e-equaw sized chunks n-nyo
+   * wawgew than maxsize. 😳  the wast chunk may be swightwy s-smowew due to w-wounding. mya
    */
-  def equalSize[Q <: Seq[K], K](
-    maxSize: Int,
-    newQuery: SubqueryBuilder[Q, K]
-  ): Q => Seq[Q] = { query =>
+  def equawsize[q <: s-seq[k], (˘ω˘) k](
+    m-maxsize: int,
+    nyewquewy: s-subquewybuiwdew[q, >_< k]
+  ): q => s-seq[q] = { quewy =>
     {
-      if (query.size <= maxSize) {
-        Seq(query)
-      } else {
-        val chunkCount = math.ceil(query.size / maxSize.toDouble)
-        val chunkSize = math.ceil(query.size / chunkCount).toInt
-        query.distinct.grouped(chunkSize) map { newQuery(_, query) } toSeq
+      if (quewy.size <= maxsize) {
+        s-seq(quewy)
+      } ewse {
+        v-vaw chunkcount = math.ceiw(quewy.size / m-maxsize.todoubwe)
+        v-vaw chunksize = math.ceiw(quewy.size / chunkcount).toint
+        quewy.distinct.gwouped(chunksize) map { nyewquewy(_, -.- quewy) } toseq
       }
     }
   }

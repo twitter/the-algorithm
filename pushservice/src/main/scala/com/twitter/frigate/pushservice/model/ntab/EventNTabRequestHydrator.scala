@@ -1,21 +1,21 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.twittew.fwigate.pushsewvice.modew.ntab
 
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.notificationservice.thriftscala.DisplayText
-import com.twitter.notificationservice.thriftscala.InlineCard
-import com.twitter.notificationservice.thriftscala.StoryContext
-import com.twitter.util.Future
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.notificationsewvice.thwiftscawa.dispwaytext
+i-impowt com.twittew.notificationsewvice.thwiftscawa.inwinecawd
+i-impowt com.twittew.notificationsewvice.thwiftscawa.stowycontext
+i-impowt com.twittew.utiw.futuwe
 
-trait EventNTabRequestHydrator extends NTabRequestHydrator {
-  self: PushCandidate =>
+t-twait eventntabwequesthydwatow e-extends nytabwequesthydwatow {
+  s-sewf: pushcandidate =>
 
-  override def senderIdFut: Future[Long] = Future.value(0L)
+  ovewwide d-def sendewidfut: futuwe[wong] = futuwe.vawue(0w)
 
-  override def facepileUsersFut: Future[Seq[Long]] = Future.Nil
+  ovewwide def facepiweusewsfut: f-futuwe[seq[wong]] = futuwe.niw
 
-  override val storyContext: Option[StoryContext] = None
+  ovewwide vaw stowycontext: o-option[stowycontext] = nyone
 
-  override val inlineCard: Option[InlineCard] = None
+  ovewwide v-vaw inwinecawd: option[inwinecawd] = nyone
 
-  override val socialProofDisplayText: Option[DisplayText] = Some(DisplayText())
+  ovewwide vaw sociawpwoofdispwaytext: o-option[dispwaytext] = some(dispwaytext())
 }

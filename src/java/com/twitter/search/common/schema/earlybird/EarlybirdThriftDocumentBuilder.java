@@ -1,897 +1,897 @@
-package com.twitter.search.common.schema.earlybird;
+package com.twittew.seawch.common.schema.eawwybiwd;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+impowt java.io.ioexception;
+i-impowt java.utiw.hashset;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.set;
+i-impowt javax.annotation.nonnuww;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
+impowt com.googwe.common.base.pweconditions;
+impowt com.googwe.common.cowwect.immutabwewist;
+impowt com.googwe.common.cowwect.immutabweset;
+impowt com.googwe.common.cowwect.sets;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.analysis.TokenStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.apache.commons.wang.stwingutiws;
+impowt owg.apache.wucene.anawysis.tokenstweam;
+impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.cuad.ner.plain.thriftjava.NamedEntity;
-import com.twitter.cuad.ner.plain.thriftjava.NamedEntityContext;
-import com.twitter.cuad.ner.plain.thriftjava.NamedEntityInputSourceType;
-import com.twitter.cuad.ner.thriftjava.WholeEntityType;
-import com.twitter.search.common.constants.SearchCardType;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
-import com.twitter.search.common.indexing.thriftjava.ThriftGeoLocationSource;
-import com.twitter.search.common.indexing.thriftjava.TwitterPhotoUrl;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.schema.ThriftDocumentBuilder;
-import com.twitter.search.common.schema.base.FieldNameToIdMapping;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.util.analysis.CharTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.IntTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.TermPayloadAttributeSerializer;
-import com.twitter.search.common.util.analysis.TwitterPhotoTokenStream;
-import com.twitter.search.common.util.spatial.GeoUtil;
-import com.twitter.search.common.util.text.TokenizerHelper;
-import com.twitter.search.common.util.text.TweetTokenStreamSerializer;
-import com.twitter.search.common.util.text.regex.Regex;
-import com.twitter.search.common.util.url.LinkVisibilityUtils;
-import com.twitter.search.common.util.url.URLUtils;
+i-impowt com.twittew.common.cowwections.paiw;
+impowt com.twittew.common.text.utiw.tokenstweamsewiawizew;
+impowt com.twittew.cuad.new.pwain.thwiftjava.namedentity;
+i-impowt com.twittew.cuad.new.pwain.thwiftjava.namedentitycontext;
+i-impowt c-com.twittew.cuad.new.pwain.thwiftjava.namedentityinputsouwcetype;
+impowt com.twittew.cuad.new.thwiftjava.whoweentitytype;
+impowt com.twittew.seawch.common.constants.seawchcawdtype;
+impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftexpandeduww;
+i-impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftgeowocationsouwce;
+impowt com.twittew.seawch.common.indexing.thwiftjava.twittewphotouww;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.schema.thwiftdocumentbuiwdew;
+i-impowt com.twittew.seawch.common.schema.base.fiewdnametoidmapping;
+i-impowt com.twittew.seawch.common.schema.base.schema;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+i-impowt com.twittew.seawch.common.utiw.anawysis.chawtewmattwibutesewiawizew;
+i-impowt com.twittew.seawch.common.utiw.anawysis.inttewmattwibutesewiawizew;
+impowt com.twittew.seawch.common.utiw.anawysis.tewmpaywoadattwibutesewiawizew;
+i-impowt com.twittew.seawch.common.utiw.anawysis.twittewphototokenstweam;
+impowt com.twittew.seawch.common.utiw.spatiaw.geoutiw;
+i-impowt com.twittew.seawch.common.utiw.text.tokenizewhewpew;
+impowt com.twittew.seawch.common.utiw.text.tweettokenstweamsewiawizew;
+impowt com.twittew.seawch.common.utiw.text.wegex.wegex;
+impowt com.twittew.seawch.common.utiw.uww.winkvisibiwityutiws;
+impowt com.twittew.seawch.common.utiw.uww.uwwutiws;
 
-import geo.google.datamodel.GeoAddressAccuracy;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
+i-impowt geo.googwe.datamodew.geoaddwessaccuwacy;
+i-impowt c-com.twittew.seawch.common.schema.thwiftjava.thwiftdocument;
 
 /**
- * Builder class for building a {@link ThriftDocument}.
+ * b-buiwdew cwass fow buiwding a {@wink thwiftdocument}. (///ˬ///✿)
  */
-public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdThriftDocumentBuilder.class);
+pubwic finaw cwass e-eawwybiwdthwiftdocumentbuiwdew e-extends thwiftdocumentbuiwdew {
+  pwivate static f-finaw woggew wog = w-woggewfactowy.getwoggew(eawwybiwdthwiftdocumentbuiwdew.cwass);
 
-  private static final SearchCounter SERIALIZE_FAILURE_COUNT_NONPENGUIN_DEPENDENT =
-      SearchCounter.export("tokenstream_serialization_failure_non_penguin_dependent");
+  pwivate static f-finaw seawchcountew sewiawize_faiwuwe_count_nonpenguin_dependent =
+      seawchcountew.expowt("tokenstweam_sewiawization_faiwuwe_non_penguin_dependent");
 
-  private static final String HASHTAG_SYMBOL = "#";
-  private static final String CASHTAG_SYMBOL = "$";
-  private static final String MENTION_SYMBOL = "@";
+  p-pwivate static finaw stwing hashtag_symbow = "#";
+  pwivate static f-finaw stwing cashtag_symbow = "$";
+  p-pwivate static finaw s-stwing mention_symbow = "@";
 
-  private static final SearchCounter BCP47_LANGUAGE_TAG_COUNTER =
-      SearchCounter.export("bcp47_language_tag");
+  p-pwivate static finaw seawchcountew bcp47_wanguage_tag_countew =
+      seawchcountew.expowt("bcp47_wanguage_tag");
 
   /**
-   * Used to check if a card is video card.
+   * used to check if a cawd is video cawd. rawr
    *
-   * @see #withSearchCard
+   * @see #withseawchcawd
    */
-  private static final String AMPLIFY_CARD_NAME = "amplify";
-  private static final String PLAYER_CARD_NAME = "player";
+  p-pwivate s-static finaw stwing ampwify_cawd_name = "ampwify";
+  p-pwivate s-static finaw stwing p-pwayew_cawd_name = "pwayew";
 
-  // Extra term indexed for native retweets, to ensure that the "-rt" query excludes them.
-  public static final String RETWEET_TERM = "rt";
-  public static final String QUESTION_MARK = "?";
+  // extwa tewm indexed fow native wetweets, (U ﹏ U) t-to ensuwe that the "-wt" quewy excwudes them. ^•ﻌ•^
+  pubwic static finaw stwing wetweet_tewm = "wt";
+  p-pubwic static finaw stwing question_mawk = "?";
 
-  private static final Set<NamedEntityInputSourceType> NAMED_ENTITY_URL_SOURCE_TYPES =
-      ImmutableSet.of(
-          NamedEntityInputSourceType.URL_TITLE, NamedEntityInputSourceType.URL_DESCRIPTION);
+  p-pwivate static f-finaw set<namedentityinputsouwcetype> n-nyamed_entity_uww_souwce_types =
+      immutabweset.of(
+          n-nyamedentityinputsouwcetype.uww_titwe, (///ˬ///✿) n-nyamedentityinputsouwcetype.uww_descwiption);
 
-  private final TokenStreamSerializer intTermAttributeSerializer =
-      new TokenStreamSerializer(ImmutableList.of(
-          new IntTermAttributeSerializer()));
-  private final TokenStreamSerializer photoUrlSerializer =
-      new TokenStreamSerializer(ImmutableList
-          .<TokenStreamSerializer.AttributeSerializer>of(
-              new CharTermAttributeSerializer(), new TermPayloadAttributeSerializer()));
-  private final Schema schema;
+  p-pwivate finaw t-tokenstweamsewiawizew inttewmattwibutesewiawizew =
+      nyew t-tokenstweamsewiawizew(immutabwewist.of(
+          n-nyew inttewmattwibutesewiawizew()));
+  p-pwivate f-finaw tokenstweamsewiawizew p-photouwwsewiawizew =
+      nyew tokenstweamsewiawizew(immutabwewist
+          .<tokenstweamsewiawizew.attwibutesewiawizew>of(
+              nyew chawtewmattwibutesewiawizew(), o.O nyew t-tewmpaywoadattwibutesewiawizew()));
+  pwivate finaw schema schema;
 
-  private boolean isSetLatLonCSF = false;
-  private boolean addLatLonCSF = true;
-  private boolean addEncodedTweetFeatures = true;
+  pwivate boowean issetwatwoncsf = fawse;
+  p-pwivate boowean addwatwoncsf = twue;
+  pwivate boowean addencodedtweetfeatuwes = t-twue;
 
-  @Nonnull
-  private final EarlybirdEncodedFeatures encodedTweetFeatures;
-  @Nullable
-  private final EarlybirdEncodedFeatures extendedEncodedTweetFeatures;
+  @nonnuww
+  p-pwivate finaw e-eawwybiwdencodedfeatuwes encodedtweetfeatuwes;
+  @nuwwabwe
+  p-pwivate finaw eawwybiwdencodedfeatuwes e-extendedencodedtweetfeatuwes;
 
   /**
-   * Default constructor
+   * d-defauwt constwuctow
    */
-  public EarlybirdThriftDocumentBuilder(
-      @Nonnull EarlybirdEncodedFeatures encodedTweetFeatures,
-      @Nullable EarlybirdEncodedFeatures extendedEncodedTweetFeatures,
-      FieldNameToIdMapping idMapping,
-      Schema schema) {
-    super(idMapping);
-    this.schema = schema;
-    this.encodedTweetFeatures = Preconditions.checkNotNull(encodedTweetFeatures);
+  pubwic eawwybiwdthwiftdocumentbuiwdew(
+      @nonnuww eawwybiwdencodedfeatuwes encodedtweetfeatuwes, >w<
+      @nuwwabwe eawwybiwdencodedfeatuwes extendedencodedtweetfeatuwes, nyaa~~
+      f-fiewdnametoidmapping idmapping, òωó
+      s-schema schema) {
+    supew(idmapping);
+    t-this.schema = s-schema;
+    this.encodedtweetfeatuwes = pweconditions.checknotnuww(encodedtweetfeatuwes);
 
-    this.extendedEncodedTweetFeatures = extendedEncodedTweetFeatures;
+    this.extendedencodedtweetfeatuwes = extendedencodedtweetfeatuwes;
   }
 
   /**
-   * Get internal {@link EarlybirdEncodedFeatures}
+   * g-get intewnaw {@wink e-eawwybiwdencodedfeatuwes}
    */
-  public EarlybirdEncodedFeatures getEncodedTweetFeatures() {
-    return encodedTweetFeatures;
+  pubwic eawwybiwdencodedfeatuwes g-getencodedtweetfeatuwes() {
+    w-wetuwn encodedtweetfeatuwes;
   }
 
   /**
-   * Add skip list entry for the given field.
-   * This adds a term __has_fieldName in the INTERNAL field.
+   * add skip wist entwy fow the given fiewd. (U ᵕ U❁)
+   * this adds a tewm __has_fiewdname i-in the intewnaw f-fiewd. (///ˬ///✿)
    */
-  public EarlybirdThriftDocumentBuilder addFacetSkipList(String fieldName) {
-    withStringField(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-        EarlybirdFieldConstant.getFacetSkipFieldName(fieldName));
-    return this;
+  p-pubwic eawwybiwdthwiftdocumentbuiwdew addfacetskipwist(stwing f-fiewdname) {
+    w-withstwingfiewd(eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname(), (✿oωo)
+        eawwybiwdfiewdconstant.getfacetskipfiewdname(fiewdname));
+    wetuwn t-this;
   }
 
   /**
-   * Add a filter term in the INTERNAL field.
+   * add a fiwtew tewm in the intewnaw fiewd. 😳😳😳
    */
-  public EarlybirdThriftDocumentBuilder addFilterInternalFieldTerm(String filterName) {
-    withStringField(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-        EarlybirdThriftDocumentUtil.formatFilter(filterName));
-    return this;
+  pubwic e-eawwybiwdthwiftdocumentbuiwdew a-addfiwtewintewnawfiewdtewm(stwing fiwtewname) {
+    withstwingfiewd(eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname(), (✿oωo)
+        e-eawwybiwdthwiftdocumentutiw.fowmatfiwtew(fiwtewname));
+    w-wetuwn this;
   }
 
   /**
-   * Add id field and id csf field.
+   * add id fiewd and id csf f-fiewd. (U ﹏ U)
    */
-  public EarlybirdThriftDocumentBuilder withID(long id) {
-    withLongField(EarlybirdFieldConstant.ID_FIELD.getFieldName(), id);
-    withLongField(EarlybirdFieldConstant.ID_CSF_FIELD.getFieldName(), id);
-    return this;
+  pubwic eawwybiwdthwiftdocumentbuiwdew withid(wong id) {
+    withwongfiewd(eawwybiwdfiewdconstant.id_fiewd.getfiewdname(), id);
+    w-withwongfiewd(eawwybiwdfiewdconstant.id_csf_fiewd.getfiewdname(), (˘ω˘) id);
+    wetuwn this;
   }
 
   /**
-   * Add created at field and created at csf field.
+   * a-add c-cweated at fiewd and cweated at csf fiewd. 😳😳😳
    */
-  public EarlybirdThriftDocumentBuilder withCreatedAt(int createdAt) {
-    withIntField(EarlybirdFieldConstant.CREATED_AT_FIELD.getFieldName(), createdAt);
-    withIntField(EarlybirdFieldConstant.CREATED_AT_CSF_FIELD.getFieldName(), createdAt);
-    return this;
+  pubwic eawwybiwdthwiftdocumentbuiwdew w-withcweatedat(int c-cweatedat) {
+    withintfiewd(eawwybiwdfiewdconstant.cweated_at_fiewd.getfiewdname(), cweatedat);
+    withintfiewd(eawwybiwdfiewdconstant.cweated_at_csf_fiewd.getfiewdname(), (///ˬ///✿) c-cweatedat);
+    wetuwn t-this;
   }
 
   /**
-   * Add tweet text field.
+   * add tweet text fiewd.
    */
-  public EarlybirdThriftDocumentBuilder withTweetText(
-      String text, byte[] textTokenStream) throws IOException {
-    withTokenStreamField(EarlybirdFieldConstants.EarlybirdFieldConstant.TEXT_FIELD.getFieldName(),
-        text, textTokenStream);
-    return this;
+  pubwic eawwybiwdthwiftdocumentbuiwdew w-withtweettext(
+      stwing text, (U ᵕ U❁) byte[] t-texttokenstweam) t-thwows ioexception {
+    withtokenstweamfiewd(eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.text_fiewd.getfiewdname(), >_<
+        text, (///ˬ///✿) texttokenstweam);
+    w-wetuwn this;
   }
 
-  public EarlybirdThriftDocumentBuilder withTweetText(String text) throws IOException {
-    withTweetText(text, null);
-    return this;
+  pubwic eawwybiwdthwiftdocumentbuiwdew w-withtweettext(stwing t-text) thwows ioexception {
+    w-withtweettext(text, (U ᵕ U❁) nyuww);
+    w-wetuwn this;
   }
 
   /**
-   * Add a list of cashTags. Like $TWTR.
+   * a-add a wist of cashtags. >w< wike $twtw. 😳😳😳
    */
-  public EarlybirdThriftDocumentBuilder withStocksFields(List<String> cashTags) {
-    if (isNotEmpty(cashTags)) {
-      addFacetSkipList(EarlybirdFieldConstant.STOCKS_FIELD.getFieldName());
-      for (String cashTag : cashTags) {
-        withStringField(
-            EarlybirdFieldConstant.STOCKS_FIELD.getFieldName(), CASHTAG_SYMBOL + cashTag);
+  p-pubwic e-eawwybiwdthwiftdocumentbuiwdew withstocksfiewds(wist<stwing> c-cashtags) {
+    if (isnotempty(cashtags)) {
+      addfacetskipwist(eawwybiwdfiewdconstant.stocks_fiewd.getfiewdname());
+      fow (stwing c-cashtag : cashtags) {
+        w-withstwingfiewd(
+            e-eawwybiwdfiewdconstant.stocks_fiewd.getfiewdname(), (ˆ ﻌ ˆ)♡ cashtag_symbow + cashtag);
       }
     }
-    return this;
+    wetuwn this;
   }
 
   /**
-   * Add a list of hashtags.
+   * a-add a wist of hashtags. (ꈍᴗꈍ)
    */
-  public EarlybirdThriftDocumentBuilder withHashtagsField(List<String> hashtags) {
-    if (isNotEmpty(hashtags)) {
-      int numHashtags = Math.min(
-          hashtags.size(),
-          schema.getFeatureConfigurationById(
-              EarlybirdFieldConstant.NUM_HASHTAGS.getFieldId()).getMaxValue());
-      encodedTweetFeatures.setFeatureValue(EarlybirdFieldConstant.NUM_HASHTAGS, numHashtags);
-      addFacetSkipList(EarlybirdFieldConstant.HASHTAGS_FIELD.getFieldName());
-      for (String hashtag : hashtags) {
-        withStringField(
-            EarlybirdFieldConstant.HASHTAGS_FIELD.getFieldName(), HASHTAG_SYMBOL + hashtag);
+  p-pubwic eawwybiwdthwiftdocumentbuiwdew w-withhashtagsfiewd(wist<stwing> h-hashtags) {
+    if (isnotempty(hashtags)) {
+      i-int nyumhashtags = math.min(
+          hashtags.size(), 🥺
+          schema.getfeatuweconfiguwationbyid(
+              eawwybiwdfiewdconstant.num_hashtags.getfiewdid()).getmaxvawue());
+      encodedtweetfeatuwes.setfeatuwevawue(eawwybiwdfiewdconstant.num_hashtags, >_< n-nyumhashtags);
+      addfacetskipwist(eawwybiwdfiewdconstant.hashtags_fiewd.getfiewdname());
+      f-fow (stwing hashtag : hashtags) {
+        w-withstwingfiewd(
+            eawwybiwdfiewdconstant.hashtags_fiewd.getfiewdname(), OwO h-hashtag_symbow + hashtag);
       }
     }
-    return this;
+    w-wetuwn t-this;
   }
 
   /**
-   * Added a list of mentions.
+   * a-added a wist o-of mentions. ^^;;
    */
-  public EarlybirdThriftDocumentBuilder withMentionsField(List<String> mentions) {
-    if (isNotEmpty(mentions)) {
-      int numMentions = Math.min(
-          mentions.size(),
-          schema.getFeatureConfigurationById(
-              EarlybirdFieldConstant.NUM_HASHTAGS.getFieldId()).getMaxValue());
-      encodedTweetFeatures.setFeatureValue(EarlybirdFieldConstant.NUM_MENTIONS, numMentions);
-      addFacetSkipList(EarlybirdFieldConstant.MENTIONS_FIELD.getFieldName());
-      for (String mention : mentions) {
-        withStringField(
-            EarlybirdFieldConstant.MENTIONS_FIELD.getFieldName(), MENTION_SYMBOL + mention);
+  p-pubwic eawwybiwdthwiftdocumentbuiwdew withmentionsfiewd(wist<stwing> mentions) {
+    if (isnotempty(mentions)) {
+      int nyummentions = math.min(
+          mentions.size(), (✿oωo)
+          s-schema.getfeatuweconfiguwationbyid(
+              e-eawwybiwdfiewdconstant.num_hashtags.getfiewdid()).getmaxvawue());
+      e-encodedtweetfeatuwes.setfeatuwevawue(eawwybiwdfiewdconstant.num_mentions, UwU nyummentions);
+      a-addfacetskipwist(eawwybiwdfiewdconstant.mentions_fiewd.getfiewdname());
+      fow (stwing mention : mentions) {
+        withstwingfiewd(
+            e-eawwybiwdfiewdconstant.mentions_fiewd.getfiewdname(), ( ͡o ω ͡o ) m-mention_symbow + mention);
       }
     }
-    return this;
+    w-wetuwn this;
   }
 
   /**
-   * Add a list of Twitter Photo URLs (twimg URLs). These are different from regular URLs, because
-   * we use the TwitterPhotoTokenStream to index them, and we also include the status ID as payload.
+   * add a wist of twittew photo uwws (twimg u-uwws). (✿oωo) these a-awe diffewent fwom weguwaw u-uwws, mya because
+   * w-we use the twittewphototokenstweam to index them, ( ͡o ω ͡o ) and we awso incwude the status id as paywoad. :3
    */
-  public EarlybirdThriftDocumentBuilder withTwimgURLs(
-      List<TwitterPhotoUrl> urls) throws IOException {
-    if (isNotEmpty(urls)) {
-      for (TwitterPhotoUrl photoUrl : urls) {
-        TokenStream ts = new TwitterPhotoTokenStream(photoUrl.getPhotoStatusId(),
-            photoUrl.getMediaUrl());
-        byte[] serializedTs = photoUrlSerializer.serialize(ts);
-        withTokenStreamField(EarlybirdFieldConstant.TWIMG_LINKS_FIELD.getFieldName(),
-            Long.toString(photoUrl.getPhotoStatusId()), serializedTs);
-        addFacetSkipList(EarlybirdFieldConstant.TWIMG_LINKS_FIELD.getFieldName());
+  p-pubwic e-eawwybiwdthwiftdocumentbuiwdew w-withtwimguwws(
+      w-wist<twittewphotouww> u-uwws) thwows ioexception {
+    i-if (isnotempty(uwws)) {
+      f-fow (twittewphotouww photouww : u-uwws) {
+        t-tokenstweam ts = nyew twittewphototokenstweam(photouww.getphotostatusid(), 😳
+            p-photouww.getmediauww());
+        byte[] sewiawizedts = photouwwsewiawizew.sewiawize(ts);
+        w-withtokenstweamfiewd(eawwybiwdfiewdconstant.twimg_winks_fiewd.getfiewdname(), (U ﹏ U)
+            wong.tostwing(photouww.getphotostatusid()), >w< s-sewiawizedts);
+        a-addfacetskipwist(eawwybiwdfiewdconstant.twimg_winks_fiewd.getfiewdname());
       }
-      encodedTweetFeatures.setFlag(EarlybirdFieldConstant.HAS_IMAGE_URL_FLAG);
-      encodedTweetFeatures.setFlag(EarlybirdFieldConstant.HAS_NATIVE_IMAGE_FLAG);
+      encodedtweetfeatuwes.setfwag(eawwybiwdfiewdconstant.has_image_uww_fwag);
+      e-encodedtweetfeatuwes.setfwag(eawwybiwdfiewdconstant.has_native_image_fwag);
     }
-    return this;
+    wetuwn this;
   }
 
   /**
-   * Add a list of URLs. This also add facet skip list terms for news / images / videos if needed.
+   * a-add a wist o-of uwws. UwU this a-awso add facet skip wist tewms fow nyews / images / videos if n-nyeeded. 😳
    */
-  public EarlybirdThriftDocumentBuilder withURLs(List<ThriftExpandedUrl> urls) {
-    if (isNotEmpty(urls)) {
-      Set<String> dedupedLinks = Sets.newHashSet();
+  pubwic eawwybiwdthwiftdocumentbuiwdew withuwws(wist<thwiftexpandeduww> u-uwws) {
+    i-if (isnotempty(uwws)) {
+      set<stwing> dedupedwinks = s-sets.newhashset();
 
-      for (ThriftExpandedUrl expandedUrl : urls) {
-        if (expandedUrl.isSetOriginalUrl()) {
-          String normalizedOriginalUrl = URLUtils.normalizePath(expandedUrl.getOriginalUrl());
-          dedupedLinks.add(normalizedOriginalUrl);
+      fow (thwiftexpandeduww e-expandeduww : u-uwws) {
+        if (expandeduww.issetowiginawuww()) {
+          stwing n-nyowmawizedowiginawuww = uwwutiws.nowmawizepath(expandeduww.getowiginawuww());
+          dedupedwinks.add(nowmawizedowiginawuww);
         }
-        if (expandedUrl.isSetExpandedUrl()) {
-          dedupedLinks.add(URLUtils.normalizePath(expandedUrl.getExpandedUrl()));
+        i-if (expandeduww.issetexpandeduww()) {
+          d-dedupedwinks.add(uwwutiws.nowmawizepath(expandeduww.getexpandeduww()));
         }
 
-        if (expandedUrl.isSetCanonicalLastHopUrl()) {
-          String url = URLUtils.normalizePath(expandedUrl.getCanonicalLastHopUrl());
-          dedupedLinks.add(url);
+        if (expandeduww.issetcanonicawwasthopuww()) {
+          s-stwing uww = uwwutiws.nowmawizepath(expandeduww.getcanonicawwasthopuww());
+          dedupedwinks.add(uww);
 
-          String facetUrl = URLUtils.normalizeFacetURL(url);
+          s-stwing facetuww = u-uwwutiws.nowmawizefacetuww(uww);
 
-          if (expandedUrl.isSetMediaType()) {
-            switch (expandedUrl.getMediaType()) {
-              case NEWS:
-                withStringField(EarlybirdFieldConstant.NEWS_LINKS_FIELD.getFieldName(), url);
-                addFacetSkipList(EarlybirdFieldConstant.NEWS_LINKS_FIELD.getFieldName());
-                encodedTweetFeatures.setFlag(EarlybirdFieldConstant.HAS_NEWS_URL_FLAG);
-                break;
-              case VIDEO:
-                withStringField(EarlybirdFieldConstant.VIDEO_LINKS_FIELD.getFieldName(), facetUrl);
-                addFacetSkipList(EarlybirdFieldConstant.VIDEO_LINKS_FIELD.getFieldName());
-                encodedTweetFeatures.setFlag(EarlybirdFieldConstant.HAS_VIDEO_URL_FLAG);
-                break;
-              case IMAGE:
-                withStringField(EarlybirdFieldConstant.IMAGE_LINKS_FIELD.getFieldName(), facetUrl);
-                addFacetSkipList(EarlybirdFieldConstant.IMAGE_LINKS_FIELD.getFieldName());
-                encodedTweetFeatures.setFlag(EarlybirdFieldConstant.HAS_IMAGE_URL_FLAG);
-                break;
-              case NATIVE_IMAGE:
-                // Nothing done here. Native images are handled separately.
-                // They are in PhotoUrls instead of expandedUrls.
-                break;
-              case UNKNOWN:
-                break;
-              default:
-                throw new RuntimeException("Unknown Media Type: " + expandedUrl.getMediaType());
+          if (expandeduww.issetmediatype()) {
+            switch (expandeduww.getmediatype()) {
+              c-case nyews:
+                withstwingfiewd(eawwybiwdfiewdconstant.news_winks_fiewd.getfiewdname(), XD uww);
+                addfacetskipwist(eawwybiwdfiewdconstant.news_winks_fiewd.getfiewdname());
+                encodedtweetfeatuwes.setfwag(eawwybiwdfiewdconstant.has_news_uww_fwag);
+                bweak;
+              case video:
+                withstwingfiewd(eawwybiwdfiewdconstant.video_winks_fiewd.getfiewdname(), (✿oωo) facetuww);
+                addfacetskipwist(eawwybiwdfiewdconstant.video_winks_fiewd.getfiewdname());
+                encodedtweetfeatuwes.setfwag(eawwybiwdfiewdconstant.has_video_uww_fwag);
+                bweak;
+              case image:
+                withstwingfiewd(eawwybiwdfiewdconstant.image_winks_fiewd.getfiewdname(), facetuww);
+                a-addfacetskipwist(eawwybiwdfiewdconstant.image_winks_fiewd.getfiewdname());
+                e-encodedtweetfeatuwes.setfwag(eawwybiwdfiewdconstant.has_image_uww_fwag);
+                bweak;
+              case nyative_image:
+                // n-nyothing d-done hewe. ^•ﻌ•^ n-nyative images awe handwed sepawatewy.
+                // t-they awe in photouwws i-instead of expandeduwws. mya
+                b-bweak;
+              case unknown:
+                b-bweak;
+              defauwt:
+                t-thwow n-nyew wuntimeexception("unknown media type: " + expandeduww.getmediatype());
             }
           }
 
-          if (expandedUrl.isSetLinkCategory()) {
-            withIntField(EarlybirdFieldConstant.LINK_CATEGORY_FIELD.getFieldName(),
-                expandedUrl.getLinkCategory().getValue());
+          i-if (expandeduww.issetwinkcategowy()) {
+            w-withintfiewd(eawwybiwdfiewdconstant.wink_categowy_fiewd.getfiewdname(), (˘ω˘)
+                e-expandeduww.getwinkcategowy().getvawue());
           }
         }
       }
 
-      if (!dedupedLinks.isEmpty()) {
-        encodedTweetFeatures.setFlag(EarlybirdFieldConstant.HAS_LINK_FLAG);
+      i-if (!dedupedwinks.isempty()) {
+        e-encodedtweetfeatuwes.setfwag(eawwybiwdfiewdconstant.has_wink_fwag);
 
-        addFacetSkipList(EarlybirdFieldConstant.LINKS_FIELD.getFieldName());
+        a-addfacetskipwist(eawwybiwdfiewdconstant.winks_fiewd.getfiewdname());
 
-        for (String linkUrl : dedupedLinks) {
-          withStringField(EarlybirdFieldConstant.LINKS_FIELD.getFieldName(), linkUrl);
+        fow (stwing w-winkuww : d-dedupedwinks) {
+          withstwingfiewd(eawwybiwdfiewdconstant.winks_fiewd.getfiewdname(), nyaa~~ w-winkuww);
         }
       }
 
-      encodedTweetFeatures.setFlagValue(
-          EarlybirdFieldConstant.HAS_VISIBLE_LINK_FLAG,
-          LinkVisibilityUtils.hasVisibleLink(urls));
+      encodedtweetfeatuwes.setfwagvawue(
+          e-eawwybiwdfiewdconstant.has_visibwe_wink_fwag, :3
+          w-winkvisibiwityutiws.hasvisibwewink(uwws));
     }
 
-    return this;
+    w-wetuwn this;
   }
 
   /**
-   * Add a list of places. The place are U64 encoded place IDs.
+   * add a-a wist of pwaces. (✿oωo) the pwace awe u64 encoded pwace i-ids. (U ﹏ U)
    */
-  public EarlybirdThriftDocumentBuilder withPlacesField(List<String> places) {
-    if (isNotEmpty(places)) {
-      for (String place : places) {
-        withStringField(EarlybirdFieldConstant.PLACE_FIELD.getFieldName(), place);
+  pubwic eawwybiwdthwiftdocumentbuiwdew w-withpwacesfiewd(wist<stwing> p-pwaces) {
+    i-if (isnotempty(pwaces)) {
+      fow (stwing pwace : p-pwaces) {
+        withstwingfiewd(eawwybiwdfiewdconstant.pwace_fiewd.getfiewdname(), (ꈍᴗꈍ) p-pwace);
       }
     }
-    return this;
+    wetuwn this;
   }
 
   /**
-   * Add tweet text signature field.
+   * a-add tweet text signatuwe fiewd. (˘ω˘)
    */
-  public EarlybirdThriftDocumentBuilder withTweetSignature(int signature) {
-    encodedTweetFeatures.setFeatureValue(EarlybirdFieldConstant.TWEET_SIGNATURE, signature);
-    return this;
+  p-pubwic eawwybiwdthwiftdocumentbuiwdew withtweetsignatuwe(int signatuwe) {
+    encodedtweetfeatuwes.setfeatuwevawue(eawwybiwdfiewdconstant.tweet_signatuwe, ^^ signatuwe);
+    w-wetuwn this;
   }
 
   /**
-   * Add geo hash field and internal filter field.
+   * add geo hash fiewd a-and intewnaw f-fiwtew fiewd. (⑅˘꒳˘)
    */
-  public EarlybirdThriftDocumentBuilder withGeoHash(double lat, double lon, int accuracy) {
-    if (GeoUtil.validateGeoCoordinates(lat, lon)) {
-      withGeoField(
-          EarlybirdFieldConstant.GEO_HASH_FIELD.getFieldName(),
-          lat, lon, accuracy);
-      withLatLonCSF(lat, lon);
+  pubwic eawwybiwdthwiftdocumentbuiwdew withgeohash(doubwe wat, rawr doubwe won, :3 i-int accuwacy) {
+    if (geoutiw.vawidategeocoowdinates(wat, OwO w-won)) {
+      w-withgeofiewd(
+          e-eawwybiwdfiewdconstant.geo_hash_fiewd.getfiewdname(), (ˆ ﻌ ˆ)♡
+          wat, :3 won, accuwacy);
+      withwatwoncsf(wat, -.- w-won);
     }
-    return this;
+    w-wetuwn this;
   }
 
-  public EarlybirdThriftDocumentBuilder withGeoHash(double lat, double lon) {
-    withGeoHash(lat, lon, GeoAddressAccuracy.UNKNOWN_LOCATION.getCode());
-    return this;
+  pubwic eawwybiwdthwiftdocumentbuiwdew w-withgeohash(doubwe wat, -.- doubwe won) {
+    w-withgeohash(wat, òωó won, geoaddwessaccuwacy.unknown_wocation.getcode());
+    wetuwn t-this;
   }
 
   /**
-   * Add geo location source to the internal field with ThriftGeoLocationSource object.
+   * a-add g-geo wocation souwce to the intewnaw f-fiewd with thwiftgeowocationsouwce o-object. 😳
    */
-  public EarlybirdThriftDocumentBuilder withGeoLocationSource(
-      ThriftGeoLocationSource geoLocationSource) {
-    if (geoLocationSource != null) {
-      withGeoLocationSource(EarlybirdFieldConstants.formatGeoType(geoLocationSource));
+  p-pubwic eawwybiwdthwiftdocumentbuiwdew w-withgeowocationsouwce(
+      thwiftgeowocationsouwce g-geowocationsouwce) {
+    i-if (geowocationsouwce != n-nyuww) {
+      w-withgeowocationsouwce(eawwybiwdfiewdconstants.fowmatgeotype(geowocationsouwce));
     }
-    return this;
+    w-wetuwn t-this;
   }
 
   /**
-   * Add geo location source to the internal field.
+   * a-add geo w-wocation souwce to the intewnaw f-fiewd. nyaa~~
    */
-  public EarlybirdThriftDocumentBuilder withGeoLocationSource(String geoLocationSource) {
-    withStringField(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(), geoLocationSource);
-    return this;
+  pubwic eawwybiwdthwiftdocumentbuiwdew w-withgeowocationsouwce(stwing geowocationsouwce) {
+    w-withstwingfiewd(eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname(), (⑅˘꒳˘) g-geowocationsouwce);
+    w-wetuwn this;
   }
 
   /**
-   * Add encoded lat and lon to LatLonCSF field.
+   * add encoded wat and won t-to watwoncsf fiewd. 😳
    */
-  public EarlybirdThriftDocumentBuilder withLatLonCSF(double lat, double lon) {
-    isSetLatLonCSF = true;
-    long encodedLatLon = GeoUtil.encodeLatLonIntoInt64((float) lat, (float) lon);
-    withLongField(EarlybirdFieldConstant.LAT_LON_CSF_FIELD.getFieldName(), encodedLatLon);
-    return this;
+  p-pubwic e-eawwybiwdthwiftdocumentbuiwdew withwatwoncsf(doubwe wat, (U ﹏ U) doubwe won) {
+    issetwatwoncsf = t-twue;
+    wong encodedwatwon = geoutiw.encodewatwonintoint64((fwoat) w-wat, (fwoat) won);
+    withwongfiewd(eawwybiwdfiewdconstant.wat_won_csf_fiewd.getfiewdname(), /(^•ω•^) e-encodedwatwon);
+    w-wetuwn this;
   }
 
   /**
-   * Add from verified account flag to internal field.
+   * add fwom vewified account fwag to intewnaw fiewd.
    */
-  public EarlybirdThriftDocumentBuilder withFromVerifiedAccountFlag() {
-    encodedTweetFeatures.setFlag(EarlybirdFieldConstant.FROM_VERIFIED_ACCOUNT_FLAG);
-    addFilterInternalFieldTerm(EarlybirdFieldConstant.VERIFIED_FILTER_TERM);
-    return this;
+  p-pubwic e-eawwybiwdthwiftdocumentbuiwdew w-withfwomvewifiedaccountfwag() {
+    e-encodedtweetfeatuwes.setfwag(eawwybiwdfiewdconstant.fwom_vewified_account_fwag);
+    addfiwtewintewnawfiewdtewm(eawwybiwdfiewdconstant.vewified_fiwtew_tewm);
+    wetuwn t-this;
   }
 
   /**
-   * Add from blue-verified account flag to internal field.
+   * a-add fwom bwue-vewified account fwag to intewnaw f-fiewd. OwO
    */
-  public EarlybirdThriftDocumentBuilder withFromBlueVerifiedAccountFlag() {
-    encodedTweetFeatures.setFlag(EarlybirdFieldConstant.FROM_BLUE_VERIFIED_ACCOUNT_FLAG);
-    addFilterInternalFieldTerm(EarlybirdFieldConstant.BLUE_VERIFIED_FILTER_TERM);
-    return this;
+  pubwic eawwybiwdthwiftdocumentbuiwdew withfwombwuevewifiedaccountfwag() {
+    e-encodedtweetfeatuwes.setfwag(eawwybiwdfiewdconstant.fwom_bwue_vewified_account_fwag);
+    addfiwtewintewnawfiewdtewm(eawwybiwdfiewdconstant.bwue_vewified_fiwtew_tewm);
+    w-wetuwn this;
   }
 
   /**
-   * Add offensive flag to internal field.
+   * a-add offensive fwag t-to intewnaw fiewd. ( ͡o ω ͡o )
    */
-  public EarlybirdThriftDocumentBuilder withOffensiveFlag() {
-    encodedTweetFeatures.setFlag(EarlybirdFieldConstant.IS_OFFENSIVE_FLAG);
-    withStringField(
-        EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-        EarlybirdFieldConstant.IS_OFFENSIVE);
-    return this;
+  p-pubwic eawwybiwdthwiftdocumentbuiwdew w-withoffensivefwag() {
+    encodedtweetfeatuwes.setfwag(eawwybiwdfiewdconstant.is_offensive_fwag);
+    w-withstwingfiewd(
+        e-eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname(), XD
+        e-eawwybiwdfiewdconstant.is_offensive);
+    w-wetuwn this;
   }
 
   /**
-   * Add user reputation value to encoded feature.
+   * add usew weputation v-vawue to e-encoded featuwe. /(^•ω•^)
    */
-  public EarlybirdThriftDocumentBuilder withUserReputation(byte score) {
-    encodedTweetFeatures.setFeatureValue(EarlybirdFieldConstant.USER_REPUTATION, score);
-    return this;
+  p-pubwic eawwybiwdthwiftdocumentbuiwdew w-withusewweputation(byte scowe) {
+    encodedtweetfeatuwes.setfeatuwevawue(eawwybiwdfiewdconstant.usew_weputation, /(^•ω•^) s-scowe);
+    wetuwn t-this;
   }
 
   /**
-   * This method creates the fields related to document language.
-   * For most languages, their isoLanguageCode and bcp47LanguageTag are the same.
-   * For some languages with variants, these two fields are different.
-   * E.g. for simplified Chinese, their isoLanguageCode is zh, but their bcp47LanguageTag is zh-cn.
+   * t-this method cweates the fiewds wewated to document wanguage. 😳😳😳
+   * fow m-most wanguages, (ˆ ﻌ ˆ)♡ theiw isowanguagecode a-and bcp47wanguagetag a-awe the same. :3
+   * fow some wanguages w-with vawiants, òωó these two fiewds a-awe diffewent. 🥺
+   * e-e.g. (U ﹏ U) fow s-simpwified chinese, XD t-theiw isowanguagecode i-is zh, ^^ but theiw bcp47wanguagetag is zh-cn. o.O
    * <p>
-   * This method adds fields for both the isoLanguageCode and bcp47LanguageTag.
+   * this method adds fiewds fow b-both the isowanguagecode and bcp47wanguagetag. 😳😳😳
    */
-  public EarlybirdThriftDocumentBuilder withLanguageCodes(
-      String isoLanguageCode, String bcp47LanguageTag) {
-    if (isoLanguageCode != null) {
-      withISOLanguage(isoLanguageCode);
+  p-pubwic eawwybiwdthwiftdocumentbuiwdew withwanguagecodes(
+      stwing isowanguagecode, /(^•ω•^) stwing b-bcp47wanguagetag) {
+    if (isowanguagecode != nyuww) {
+      withisowanguage(isowanguagecode);
     }
-    if (bcp47LanguageTag != null && !bcp47LanguageTag.equals(isoLanguageCode)) {
-      BCP47_LANGUAGE_TAG_COUNTER.increment();
-      withISOLanguage(bcp47LanguageTag);
+    if (bcp47wanguagetag != nuww && !bcp47wanguagetag.equaws(isowanguagecode)) {
+      b-bcp47_wanguage_tag_countew.incwement();
+      w-withisowanguage(bcp47wanguagetag);
     }
-    return this;
+    wetuwn t-this;
   }
 
   /**
-   * Adds a String field into the ISO_LANGUAGE_FIELD.
+   * adds a stwing fiewd into t-the iso_wanguage_fiewd. 😳😳😳
    */
-  public EarlybirdThriftDocumentBuilder withISOLanguage(String languageString) {
-    withStringField(
-        EarlybirdFieldConstant.ISO_LANGUAGE_FIELD.getFieldName(), languageString.toLowerCase());
-    return this;
+  p-pubwic eawwybiwdthwiftdocumentbuiwdew withisowanguage(stwing w-wanguagestwing) {
+    withstwingfiewd(
+        eawwybiwdfiewdconstant.iso_wanguage_fiewd.getfiewdname(), ^•ﻌ•^ w-wanguagestwing.towowewcase());
+    wetuwn this;
   }
 
   /**
-   * Add from user ID fields.
+   * add fwom u-usew id fiewds. 🥺
    */
-  public EarlybirdThriftDocumentBuilder withFromUserID(long fromUserId) {
-    withLongField(EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName(), fromUserId);
-    withLongField(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName(), fromUserId);
-    return this;
+  pubwic eawwybiwdthwiftdocumentbuiwdew w-withfwomusewid(wong f-fwomusewid) {
+    w-withwongfiewd(eawwybiwdfiewdconstant.fwom_usew_id_fiewd.getfiewdname(), o.O fwomusewid);
+    withwongfiewd(eawwybiwdfiewdconstant.fwom_usew_id_csf.getfiewdname(), (U ᵕ U❁) fwomusewid);
+    w-wetuwn this;
   }
 
   /**
-   * Add from user information fields.
+   * add fwom usew infowmation fiewds. ^^
    */
-  public EarlybirdThriftDocumentBuilder withFromUser(
-      long fromUserId, String fromUser) {
-    withFromUser(fromUserId, fromUser, null);
-    return this;
+  pubwic eawwybiwdthwiftdocumentbuiwdew w-withfwomusew(
+      w-wong fwomusewid, (⑅˘꒳˘) s-stwing fwomusew) {
+    withfwomusew(fwomusewid, :3 f-fwomusew, (///ˬ///✿) nyuww);
+    wetuwn this;
   }
 
   /**
-   * Add from user information fields.
+   * a-add fwom u-usew infowmation fiewds. :3
    */
-  public EarlybirdThriftDocumentBuilder withFromUser(String fromUser) {
-    withFromUser(fromUser, null);
-    return this;
+  pubwic eawwybiwdthwiftdocumentbuiwdew w-withfwomusew(stwing fwomusew) {
+    withfwomusew(fwomusew, 🥺 nyuww);
+    wetuwn this;
   }
 
   /**
-   * Add from user information fields.
+   * add f-fwom usew infowmation fiewds. mya
    */
-  public EarlybirdThriftDocumentBuilder withFromUser(
-      String fromUser, String tokenizedFromUser) {
-    withStringField(EarlybirdFieldConstant.FROM_USER_FIELD.getFieldName(), fromUser);
-    withStringField(EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName(),
-        isNotBlank(tokenizedFromUser) ? tokenizedFromUser : fromUser);
-    return this;
+  pubwic e-eawwybiwdthwiftdocumentbuiwdew withfwomusew(
+      s-stwing fwomusew, XD stwing tokenizedfwomusew) {
+    w-withstwingfiewd(eawwybiwdfiewdconstant.fwom_usew_fiewd.getfiewdname(), -.- f-fwomusew);
+    w-withstwingfiewd(eawwybiwdfiewdconstant.tokenized_fwom_usew_fiewd.getfiewdname(), o.O
+        isnotbwank(tokenizedfwomusew) ? tokenizedfwomusew : f-fwomusew);
+    wetuwn this;
   }
 
   /**
-   * Add from user information fields.
+   * add fwom usew i-infowmation fiewds. (˘ω˘)
    */
-  public EarlybirdThriftDocumentBuilder withFromUser(
-      long fromUserId, String fromUser, String tokenizedFromUser) {
-    withFromUserID(fromUserId);
-    withFromUser(fromUser, tokenizedFromUser);
-    return this;
+  pubwic eawwybiwdthwiftdocumentbuiwdew withfwomusew(
+      w-wong fwomusewid, (U ᵕ U❁) s-stwing fwomusew, rawr s-stwing t-tokenizedfwomusew) {
+    w-withfwomusewid(fwomusewid);
+    withfwomusew(fwomusew, 🥺 t-tokenizedfwomusew);
+    wetuwn this;
   }
 
   /**
-   * Add to user field.
+   * add to usew f-fiewd. rawr x3
    */
-  public EarlybirdThriftDocumentBuilder withToUser(
-      String toUser) {
-    withStringField(EarlybirdFieldConstant.TO_USER_FIELD.getFieldName(), toUser);
-    return this;
+  pubwic eawwybiwdthwiftdocumentbuiwdew w-withtousew(
+      stwing tousew) {
+    withstwingfiewd(eawwybiwdfiewdconstant.to_usew_fiewd.getfiewdname(), ( ͡o ω ͡o ) t-tousew);
+    wetuwn t-this;
   }
 
   /**
-   * Add escherbird annotation fields.
+   * add e-eschewbiwd annotation fiewds. σωσ
    */
-  public EarlybirdThriftDocumentBuilder withAnnotationEntities(List<String> entities) {
-    if (isNotEmpty(entities)) {
-      for (String entity : entities) {
-        withStringField(EarlybirdFieldConstant.ENTITY_ID_FIELD.getFieldName(), entity);
+  p-pubwic eawwybiwdthwiftdocumentbuiwdew w-withannotationentities(wist<stwing> entities) {
+    i-if (isnotempty(entities)) {
+      f-fow (stwing entity : entities) {
+        w-withstwingfiewd(eawwybiwdfiewdconstant.entity_id_fiewd.getfiewdname(), rawr x3 entity);
       }
     }
-    return this;
+    wetuwn this;
   }
 
   /**
-   * Add replies to internal field and set is reply flag.
+   * a-add wepwies to intewnaw f-fiewd and set is wepwy fwag. (ˆ ﻌ ˆ)♡
    */
-  public EarlybirdThriftDocumentBuilder withReplyFlag() {
-    encodedTweetFeatures.setFlag(EarlybirdFieldConstant.IS_REPLY_FLAG);
-    addFilterInternalFieldTerm(EarlybirdFieldConstant.REPLIES_FILTER_TERM);
-    return this;
+  pubwic eawwybiwdthwiftdocumentbuiwdew w-withwepwyfwag() {
+    e-encodedtweetfeatuwes.setfwag(eawwybiwdfiewdconstant.is_wepwy_fwag);
+    a-addfiwtewintewnawfiewdtewm(eawwybiwdfiewdconstant.wepwies_fiwtew_tewm);
+    wetuwn this;
   }
 
-  public EarlybirdThriftDocumentBuilder withCameraComposerSourceFlag() {
-    encodedTweetFeatures.setFlag(EarlybirdFieldConstant.COMPOSER_SOURCE_IS_CAMERA_FLAG);
-    return this;
+  p-pubwic e-eawwybiwdthwiftdocumentbuiwdew withcamewacomposewsouwcefwag() {
+    e-encodedtweetfeatuwes.setfwag(eawwybiwdfiewdconstant.composew_souwce_is_camewa_fwag);
+    wetuwn this;
   }
 
     /**
-     * Add in reply to user id.
+     * a-add in wepwy to usew id. rawr
      * <p>
-     * Notice {@link #withReplyFlag} is not automatically called since retweet a tweet that is
-     * a reply to some other tweet is not considered a reply.
-     * The caller should call {@link #withReplyFlag} separately if this tweet is really a reply tweet.
+     * n-nyotice {@wink #withwepwyfwag} i-is nyot automaticawwy cawwed since wetweet a tweet that is
+     * a wepwy t-to some othew t-tweet is not considewed a wepwy. :3
+     * the cawwew shouwd caww {@wink #withwepwyfwag} s-sepawatewy if this tweet i-is weawwy a wepwy t-tweet. rawr
      */
-  public EarlybirdThriftDocumentBuilder withInReplyToUserID(long inReplyToUserID) {
-    withLongField(EarlybirdFieldConstant.IN_REPLY_TO_USER_ID_FIELD.getFieldName(), inReplyToUserID);
-    return this;
+  pubwic eawwybiwdthwiftdocumentbuiwdew withinwepwytousewid(wong inwepwytousewid) {
+    withwongfiewd(eawwybiwdfiewdconstant.in_wepwy_to_usew_id_fiewd.getfiewdname(), (˘ω˘) i-inwepwytousewid);
+    wetuwn this;
   }
 
   /**
-   * Add reference tweet author id.
+   * add w-wefewence tweet authow id. (ˆ ﻌ ˆ)♡
    */
-  public EarlybirdThriftDocumentBuilder withReferenceAuthorID(long referenceAuthorID) {
-    withLongField(EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_CSF.getFieldName(), referenceAuthorID);
-    return this;
+  p-pubwic eawwybiwdthwiftdocumentbuiwdew w-withwefewenceauthowid(wong wefewenceauthowid) {
+    w-withwongfiewd(eawwybiwdfiewdconstant.wefewence_authow_id_csf.getfiewdname(), mya w-wefewenceauthowid);
+    w-wetuwn this;
   }
 
   /**
-   * Add all native retweet related fields/label
+   * add a-aww nyative wetweet w-wewated fiewds/wabew
    */
-  @VisibleForTesting
-  public EarlybirdThriftDocumentBuilder withNativeRetweet(final long retweetUserID,
-                                                          final long sharedStatusID) {
-    withLongField(EarlybirdFieldConstant.SHARED_STATUS_ID_CSF.getFieldName(), sharedStatusID);
+  @visibwefowtesting
+  p-pubwic eawwybiwdthwiftdocumentbuiwdew withnativewetweet(finaw wong wetweetusewid, (U ᵕ U❁)
+                                                          finaw wong shawedstatusid) {
+    withwongfiewd(eawwybiwdfiewdconstant.shawed_status_id_csf.getfiewdname(), mya s-shawedstatusid);
 
-    withLongField(EarlybirdFieldConstant.RETWEET_SOURCE_TWEET_ID_FIELD.getFieldName(),
-                  sharedStatusID);
-    withLongField(EarlybirdFieldConstant.RETWEET_SOURCE_USER_ID_FIELD.getFieldName(),
-                  retweetUserID);
-    withLongField(EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_CSF.getFieldName(), retweetUserID);
+    w-withwongfiewd(eawwybiwdfiewdconstant.wetweet_souwce_tweet_id_fiewd.getfiewdname(), ʘwʘ
+                  s-shawedstatusid);
+    w-withwongfiewd(eawwybiwdfiewdconstant.wetweet_souwce_usew_id_fiewd.getfiewdname(), (˘ω˘)
+                  w-wetweetusewid);
+    w-withwongfiewd(eawwybiwdfiewdconstant.wefewence_authow_id_csf.getfiewdname(), 😳 wetweetusewid);
 
-    encodedTweetFeatures.setFlag(EarlybirdFieldConstant.IS_RETWEET_FLAG);
+    encodedtweetfeatuwes.setfwag(eawwybiwdfiewdconstant.is_wetweet_fwag);
 
-    // Add native retweet label to the internal field.
-    addFilterInternalFieldTerm(EarlybirdFieldConstant.NATIVE_RETWEETS_FILTER_TERM);
-    withStringField(EarlybirdFieldConstant.TEXT_FIELD.getFieldName(), RETWEET_TERM);
-    return this;
+    // add native wetweet wabew t-to the intewnaw f-fiewd. òωó
+    addfiwtewintewnawfiewdtewm(eawwybiwdfiewdconstant.native_wetweets_fiwtew_tewm);
+    withstwingfiewd(eawwybiwdfiewdconstant.text_fiewd.getfiewdname(), nyaa~~ wetweet_tewm);
+    wetuwn this;
   }
 
   /**
-   * Add quoted tweet id and user id.
+   * a-add quoted tweet i-id and usew id. o.O
    */
-  @VisibleForTesting
-  public EarlybirdThriftDocumentBuilder withQuote(
-      final long quotedStatusId, final long quotedUserId) {
-    withLongField(EarlybirdFieldConstant.QUOTED_TWEET_ID_FIELD.getFieldName(), quotedStatusId);
-    withLongField(EarlybirdFieldConstant.QUOTED_USER_ID_FIELD.getFieldName(), quotedUserId);
+  @visibwefowtesting
+  p-pubwic eawwybiwdthwiftdocumentbuiwdew withquote(
+      finaw wong q-quotedstatusid, nyaa~~ finaw wong quotedusewid) {
+    withwongfiewd(eawwybiwdfiewdconstant.quoted_tweet_id_fiewd.getfiewdname(), q-quotedstatusid);
+    w-withwongfiewd(eawwybiwdfiewdconstant.quoted_usew_id_fiewd.getfiewdname(), (U ᵕ U❁) quotedusewid);
 
-    withLongField(EarlybirdFieldConstant.QUOTED_TWEET_ID_CSF.getFieldName(), quotedStatusId);
-    withLongField(EarlybirdFieldConstant.QUOTED_USER_ID_CSF.getFieldName(), quotedUserId);
+    withwongfiewd(eawwybiwdfiewdconstant.quoted_tweet_id_csf.getfiewdname(), quotedstatusid);
+    w-withwongfiewd(eawwybiwdfiewdconstant.quoted_usew_id_csf.getfiewdname(), 😳😳😳 quotedusewid);
 
-    encodedTweetFeatures.setFlag(EarlybirdFieldConstant.HAS_QUOTE_FLAG);
+    e-encodedtweetfeatuwes.setfwag(eawwybiwdfiewdconstant.has_quote_fwag);
 
-    // Add quote label to the internal field.
-    addFilterInternalFieldTerm(EarlybirdFieldConstant.QUOTE_FILTER_TERM);
-    return this;
+    // a-add quote wabew to the intewnaw f-fiewd. (U ﹏ U)
+    a-addfiwtewintewnawfiewdtewm(eawwybiwdfiewdconstant.quote_fiwtew_tewm);
+    w-wetuwn t-this;
   }
 
   /**
-   * Add resolved links text field.
+   * a-add wesowved w-winks text fiewd. ^•ﻌ•^
    */
-  public EarlybirdThriftDocumentBuilder withResolvedLinksText(String linksText) {
-    withStringField(EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName(), linksText);
-    return this;
+  pubwic e-eawwybiwdthwiftdocumentbuiwdew w-withwesowvedwinkstext(stwing winkstext) {
+    w-withstwingfiewd(eawwybiwdfiewdconstant.wesowved_winks_text_fiewd.getfiewdname(), (⑅˘꒳˘) winkstext);
+    wetuwn this;
   }
 
   /**
-   * Add source field.
+   * a-add souwce fiewd. >_<
    */
-  public EarlybirdThriftDocumentBuilder withSource(String source) {
-    withStringField(EarlybirdFieldConstant.SOURCE_FIELD.getFieldName(), source);
-    return this;
+  pubwic e-eawwybiwdthwiftdocumentbuiwdew withsouwce(stwing s-souwce) {
+    w-withstwingfiewd(eawwybiwdfiewdconstant.souwce_fiewd.getfiewdname(), (⑅˘꒳˘) souwce);
+    wetuwn this;
   }
 
   /**
-   * Add normalized source field.
+   * add n-nyowmawized souwce fiewd. σωσ
    */
-  public EarlybirdThriftDocumentBuilder withNormalizedSource(String normalizedSource) {
-    withStringField(
-        EarlybirdFieldConstant.NORMALIZED_SOURCE_FIELD.getFieldName(), normalizedSource);
-    return this;
+  pubwic eawwybiwdthwiftdocumentbuiwdew w-withnowmawizedsouwce(stwing n-nyowmawizedsouwce) {
+    withstwingfiewd(
+        eawwybiwdfiewdconstant.nowmawized_souwce_fiewd.getfiewdname(), 🥺 n-nyowmawizedsouwce);
+    w-wetuwn this;
   }
 
   /**
-   * Add positive smiley to internal field.
+   * add p-positive smiwey to intewnaw fiewd. :3
    */
-  public EarlybirdThriftDocumentBuilder withPositiveSmiley() {
-    withStringField(
-        EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-        EarlybirdFieldConstant.HAS_POSITIVE_SMILEY);
-    return this;
+  pubwic e-eawwybiwdthwiftdocumentbuiwdew w-withpositivesmiwey() {
+    withstwingfiewd(
+        e-eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname(), (ꈍᴗꈍ)
+        e-eawwybiwdfiewdconstant.has_positive_smiwey);
+    wetuwn this;
   }
 
   /**
-   * Add negative smiley to internal field.
+   * add nyegative s-smiwey to intewnaw f-fiewd. ^•ﻌ•^
    */
-  public EarlybirdThriftDocumentBuilder withNegativeSmiley() {
-    withStringField(
-        EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-        EarlybirdFieldConstant.HAS_NEGATIVE_SMILEY);
-    return this;
+  p-pubwic eawwybiwdthwiftdocumentbuiwdew w-withnegativesmiwey() {
+    withstwingfiewd(
+        eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname(), (˘ω˘)
+        eawwybiwdfiewdconstant.has_negative_smiwey);
+    wetuwn this;
   }
 
   /**
-   * Add question mark label to a text field.
+   * add question m-mawk wabew t-to a text fiewd. 🥺
    */
-  public EarlybirdThriftDocumentBuilder withQuestionMark() {
-    withStringField(EarlybirdFieldConstant.TEXT_FIELD.getFieldName(), QUESTION_MARK);
-    return this;
+  p-pubwic e-eawwybiwdthwiftdocumentbuiwdew withquestionmawk() {
+    w-withstwingfiewd(eawwybiwdfiewdconstant.text_fiewd.getfiewdname(), (✿oωo) q-question_mawk);
+    wetuwn t-this;
   }
 
   /**
-   * Add card related fields.
+   * a-add cawd wewated fiewds. XD
    */
-  public EarlybirdThriftDocumentBuilder withSearchCard(
-      String name,
-      String domain,
-      String title, byte[] serializedTitleStream,
-      String description, byte[] serializedDescriptionStream,
-      String lang) {
-    if (isNotBlank(title)) {
-      withTokenStreamField(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_TITLE_FIELD.getFieldName(),
-          title, serializedTitleStream);
+  p-pubwic e-eawwybiwdthwiftdocumentbuiwdew withseawchcawd(
+      stwing nyame, (///ˬ///✿)
+      s-stwing domain, ( ͡o ω ͡o )
+      stwing titwe, ʘwʘ byte[] s-sewiawizedtitwestweam, rawr
+      stwing descwiption, o.O b-byte[] sewiawizeddescwiptionstweam, ^•ﻌ•^
+      s-stwing wang) {
+    if (isnotbwank(titwe)) {
+      w-withtokenstweamfiewd(
+          e-eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.cawd_titwe_fiewd.getfiewdname(), (///ˬ///✿)
+          t-titwe, (ˆ ﻌ ˆ)♡ sewiawizedtitwestweam);
     }
 
-    if (isNotBlank(description)) {
-      withTokenStreamField(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_DESCRIPTION_FIELD.getFieldName(),
-          description, serializedDescriptionStream);
+    i-if (isnotbwank(descwiption)) {
+      w-withtokenstweamfiewd(
+          eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.cawd_descwiption_fiewd.getfiewdname(), XD
+          d-descwiption, (✿oωo) sewiawizeddescwiptionstweam);
     }
 
-    if (isNotBlank(lang)) {
-      withStringField(EarlybirdFieldConstant.CARD_LANG.getFieldName(), lang);
+    i-if (isnotbwank(wang)) {
+      w-withstwingfiewd(eawwybiwdfiewdconstant.cawd_wang.getfiewdname(), -.- w-wang);
     }
 
-    if (isNotBlank(domain)) {
-      withStringField(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_DOMAIN_FIELD.getFieldName(), domain);
+    if (isnotbwank(domain)) {
+      w-withstwingfiewd(
+          eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.cawd_domain_fiewd.getfiewdname(), XD domain);
     }
 
-    if (isNotBlank(name)) {
-      withStringField(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_NAME_FIELD.getFieldName(), name);
-      withIntField(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_TYPE_CSF_FIELD.getFieldName(),
-          SearchCardType.cardTypeFromStringName(name).getByteValue());
+    if (isnotbwank(name)) {
+      w-withstwingfiewd(
+          eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.cawd_name_fiewd.getfiewdname(), (✿oωo) nyame);
+      withintfiewd(
+          eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.cawd_type_csf_fiewd.getfiewdname(), (˘ω˘)
+          seawchcawdtype.cawdtypefwomstwingname(name).getbytevawue());
     }
 
-    if (AMPLIFY_CARD_NAME.equalsIgnoreCase(name)
-        || PLAYER_CARD_NAME.equalsIgnoreCase(name)) {
-      // Add into "internal" field so that this tweet is returned by filter:videos.
-      addFacetSkipList(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.VIDEO_LINKS_FIELD.getFieldName());
+    if (ampwify_cawd_name.equawsignowecase(name)
+        || p-pwayew_cawd_name.equawsignowecase(name)) {
+      // add into "intewnaw" fiewd so that this tweet is wetuwned by fiwtew:videos. (ˆ ﻌ ˆ)♡
+      addfacetskipwist(
+          eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.video_winks_fiewd.getfiewdname());
     }
 
-    return this;
+    wetuwn t-this;
   }
 
-  public EarlybirdThriftDocumentBuilder withNormalizedMinEngagementField(
-      String fieldName, int normalizedNumEngagements) throws IOException {
-    EarlybirdThriftDocumentUtil.addNormalizedMinEngagementField(doc, fieldName,
-        normalizedNumEngagements);
-    return this;
+  pubwic eawwybiwdthwiftdocumentbuiwdew withnowmawizedminengagementfiewd(
+      s-stwing fiewdname, >_< i-int nyowmawizednumengagements) thwows ioexception {
+    eawwybiwdthwiftdocumentutiw.addnowmawizedminengagementfiewd(doc, -.- f-fiewdname, (///ˬ///✿)
+        nyowmawizednumengagements);
+    w-wetuwn this;
   }
 
   /**
-   * Add named entity with given canonical name and type to document.
+   * a-add nyamed e-entity with given canonicaw nyame and type to d-document. XD
    */
-  public EarlybirdThriftDocumentBuilder withNamedEntity(NamedEntity namedEntity) {
-    if (namedEntity.getContexts() == null) {
-      // In this unlikely case, we don't have any context for named entity type or source,
-      // so we can't properly index it in any of our fields. We'll just skip it in this case.
-      return this;
+  pubwic eawwybiwdthwiftdocumentbuiwdew withnamedentity(namedentity namedentity) {
+    i-if (namedentity.getcontexts() == nyuww) {
+      // i-in this unwikewy case, ^^;; w-we don't have any context fow n-nyamed entity type o-ow souwce, rawr x3
+      // so we can't pwopewwy index i-it in any of ouw fiewds. we'ww just skip it in t-this case. OwO
+      wetuwn this;
     }
 
-    // Keep track of the fields we've applied in the builder already, to ensure we only index
-    // each term (field/value pair) once
-    Set<Pair<EarlybirdFieldConstant, String>> fieldsApplied = new HashSet<>();
-    for (NamedEntityContext context : namedEntity.getContexts()) {
-      if (context.isSetInput_source()
-          && NAMED_ENTITY_URL_SOURCE_TYPES.contains(context.getInput_source().getSource_type())) {
-        // If the source is one of the URL* types, add the named entity to the "from_url" fields,
-        // ensuring we add it only once
-        addNamedEntityFields(
-            fieldsApplied,
-            EarlybirdFieldConstant.NAMED_ENTITY_FROM_URL_FIELD,
-            EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_URL_FIELD,
-            namedEntity.getCanonical_name(),
+    // keep twack of the fiewds we've appwied i-in the buiwdew a-awweady, ʘwʘ to ensuwe we onwy index
+    // e-each t-tewm (fiewd/vawue paiw) once
+    s-set<paiw<eawwybiwdfiewdconstant, rawr stwing>> fiewdsappwied = nyew hashset<>();
+    fow (namedentitycontext c-context : n-nyamedentity.getcontexts()) {
+      if (context.issetinput_souwce()
+          && n-nyamed_entity_uww_souwce_types.contains(context.getinput_souwce().getsouwce_type())) {
+        // i-if the souwce is one of the u-uww* types, UwU add the nyamed entity to the "fwom_uww" f-fiewds, (ꈍᴗꈍ)
+        // ensuwing we add it onwy o-once
+        addnamedentityfiewds(
+            f-fiewdsappwied,
+            eawwybiwdfiewdconstant.named_entity_fwom_uww_fiewd,
+            eawwybiwdfiewdconstant.named_entity_with_type_fwom_uww_fiewd, (✿oωo)
+            n-nyamedentity.getcanonicaw_name(), (⑅˘꒳˘)
             context);
-      } else {
-        addNamedEntityFields(
-            fieldsApplied,
-            EarlybirdFieldConstant.NAMED_ENTITY_FROM_TEXT_FIELD,
-            EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_TEXT_FIELD,
-            namedEntity.getCanonical_name(),
-            context);
+      } ewse {
+        addnamedentityfiewds(
+            fiewdsappwied, OwO
+            eawwybiwdfiewdconstant.named_entity_fwom_text_fiewd, 🥺
+            eawwybiwdfiewdconstant.named_entity_with_type_fwom_text_fiewd, >_<
+            nyamedentity.getcanonicaw_name(), (ꈍᴗꈍ)
+            c-context);
       }
     }
 
-    return this;
+    w-wetuwn this;
   }
 
   /**
-   * Add space id fields.
+   * a-add space i-id fiewds. 😳
    */
-  public EarlybirdThriftDocumentBuilder withSpaceIdFields(Set<String> spaceIds) {
-    if (!spaceIds.isEmpty()) {
-      addFacetSkipList(EarlybirdFieldConstant.SPACE_ID_FIELD.getFieldName());
-      for (String spaceId : spaceIds) {
-        withStringField(EarlybirdFieldConstant.SPACE_ID_FIELD.getFieldName(), spaceId);
+  pubwic eawwybiwdthwiftdocumentbuiwdew w-withspaceidfiewds(set<stwing> spaceids) {
+    if (!spaceids.isempty()) {
+      addfacetskipwist(eawwybiwdfiewdconstant.space_id_fiewd.getfiewdname());
+      fow (stwing spaceid : spaceids) {
+        w-withstwingfiewd(eawwybiwdfiewdconstant.space_id_fiewd.getfiewdname(), 🥺 spaceid);
       }
     }
-    return this;
+    wetuwn this;
   }
 
   /**
-   * Add directed at user.
+   * add diwected at usew. nyaa~~
    */
-  @VisibleForTesting
-  public EarlybirdThriftDocumentBuilder withDirectedAtUser(final long directedAtUserId) {
-    withLongField(EarlybirdFieldConstant.DIRECTED_AT_USER_ID_FIELD.getFieldName(),
-        directedAtUserId);
+  @visibwefowtesting
+  pubwic eawwybiwdthwiftdocumentbuiwdew w-withdiwectedatusew(finaw w-wong diwectedatusewid) {
+    w-withwongfiewd(eawwybiwdfiewdconstant.diwected_at_usew_id_fiewd.getfiewdname(), ^•ﻌ•^
+        diwectedatusewid);
 
-    withLongField(EarlybirdFieldConstant.DIRECTED_AT_USER_ID_CSF.getFieldName(), directedAtUserId);
+    withwongfiewd(eawwybiwdfiewdconstant.diwected_at_usew_id_csf.getfiewdname(), (ˆ ﻌ ˆ)♡ diwectedatusewid);
 
-    return this;
+    w-wetuwn this;
   }
 
   /**
-   * Add a white space tokenized screen name field.
+   * add a-a white space t-tokenized scween nyame fiewd. (U ᵕ U❁)
    *
-   * Example:
-   *  screenName - "super_hero"
-   *  tokenized version - "super hero"
+   * e-exampwe:
+   *  scweenname - "supew_hewo"
+   *  t-tokenized vewsion - "supew h-hewo"
    */
-  public EarlybirdThriftDocumentBuilder withWhiteSpaceTokenizedScreenNameField(
-      String fieldName,
-      String normalizedScreenName) {
-    String whiteSpaceTokenizableScreenName = StringUtils.join(
-        normalizedScreenName.split(Regex.HASHTAG_USERNAME_PUNCTUATION_REGEX), " ");
-    withStringField(fieldName, whiteSpaceTokenizableScreenName);
-    return this;
+  pubwic eawwybiwdthwiftdocumentbuiwdew w-withwhitespacetokenizedscweennamefiewd(
+      stwing fiewdname, mya
+      stwing n-nyowmawizedscweenname) {
+    stwing whitespacetokenizabwescweenname = s-stwingutiws.join(
+        n-nyowmawizedscweenname.spwit(wegex.hashtag_usewname_punctuation_wegex), 😳 " ");
+    withstwingfiewd(fiewdname, σωσ w-whitespacetokenizabwescweenname);
+    w-wetuwn this;
   }
 
   /**
-   * Add a camel case tokenized screen name field.
+   * add a camew case t-tokenized scween nyame fiewd.
    */
-  public EarlybirdThriftDocumentBuilder withCamelCaseTokenizedScreenNameField(
-      String fieldName,
-      String screenName,
-      String normalizedScreenName,
-      TokenStream screenNameTokenStream) {
+  p-pubwic eawwybiwdthwiftdocumentbuiwdew w-withcamewcasetokenizedscweennamefiewd(
+      s-stwing fiewdname, ( ͡o ω ͡o )
+      stwing scweenname, XD
+      s-stwing nyowmawizedscweenname, :3
+      tokenstweam scweennametokenstweam) {
 
-    // this normalized text is consistent to how the tokenized stream is created from
-    // TokenizerHelper.getNormalizedCamelcaseTokenStream - ie. just lowercasing.
-    String camelCaseTokenizedScreenNameText =
-        TokenizerHelper.getNormalizedCamelcaseTokenStreamText(screenName);
-    try {
-      // Reset the token stream in case it has been read before.
-      screenNameTokenStream.reset();
-      byte[] camelCaseTokenizedScreenName =
-          TweetTokenStreamSerializer.getTweetTokenStreamSerializer()
-              .serialize(screenNameTokenStream);
+    // this nyowmawized text is consistent to how the tokenized stweam is cweated fwom
+    // t-tokenizewhewpew.getnowmawizedcamewcasetokenstweam - ie. :3 just wowewcasing. (⑅˘꒳˘)
+    s-stwing camewcasetokenizedscweennametext =
+        tokenizewhewpew.getnowmawizedcamewcasetokenstweamtext(scweenname);
+    t-twy {
+      // weset the token stweam i-in case it has been wead befowe. òωó
+      scweennametokenstweam.weset();
+      byte[] c-camewcasetokenizedscweenname =
+          tweettokenstweamsewiawizew.gettweettokenstweamsewiawizew()
+              .sewiawize(scweennametokenstweam);
 
-      withTokenStreamField(
-          fieldName,
-          camelCaseTokenizedScreenNameText.isEmpty()
-              ? normalizedScreenName : camelCaseTokenizedScreenNameText,
-          camelCaseTokenizedScreenName);
-    } catch (IOException e) {
-      LOG.error("TwitterTokenStream serialization error! Could not serialize: " + screenName);
-      SERIALIZE_FAILURE_COUNT_NONPENGUIN_DEPENDENT.increment();
+      withtokenstweamfiewd(
+          fiewdname, mya
+          c-camewcasetokenizedscweennametext.isempty()
+              ? nyowmawizedscweenname : camewcasetokenizedscweennametext, 😳😳😳
+          c-camewcasetokenizedscweenname);
+    } catch (ioexception e) {
+      w-wog.ewwow("twittewtokenstweam s-sewiawization ewwow! :3 couwd nyot sewiawize: " + s-scweenname);
+      s-sewiawize_faiwuwe_count_nonpenguin_dependent.incwement();
     }
-    return this;
+    wetuwn t-this;
   }
 
-  private void addNamedEntityFields(
-      Set<Pair<EarlybirdFieldConstant, String>> fieldsApplied,
-      EarlybirdFieldConstant nameOnlyField,
-      EarlybirdFieldConstant nameWithTypeField,
-      String name,
-      NamedEntityContext context) {
-    withOneTimeStringField(fieldsApplied, nameOnlyField, name, false);
-    if (context.isSetEntity_type()) {
-      withOneTimeStringField(fieldsApplied, nameWithTypeField,
-          formatNamedEntityString(name, context.getEntity_type()), true);
+  p-pwivate void addnamedentityfiewds(
+      set<paiw<eawwybiwdfiewdconstant, >_< stwing>> f-fiewdsappwied, 🥺
+      eawwybiwdfiewdconstant nyameonwyfiewd, (ꈍᴗꈍ)
+      eawwybiwdfiewdconstant n-nyamewithtypefiewd, rawr x3
+      stwing nyame, (U ﹏ U)
+      nyamedentitycontext context) {
+    withonetimestwingfiewd(fiewdsappwied, ( ͡o ω ͡o ) n-nyameonwyfiewd, 😳😳😳 n-nyame, 🥺 fawse);
+    i-if (context.issetentity_type()) {
+      withonetimestwingfiewd(fiewdsappwied, òωó nyamewithtypefiewd, XD
+          fowmatnamedentitystwing(name, XD context.getentity_type()), ( ͡o ω ͡o ) t-twue);
     }
   }
 
-  private void withOneTimeStringField(
-      Set<Pair<EarlybirdFieldConstant, String>> fieldsApplied, EarlybirdFieldConstant field,
-      String value, boolean addToFacets) {
-    Pair<EarlybirdFieldConstant, String> fieldValuePair = new Pair<>(field, value);
-    if (!fieldsApplied.contains(fieldValuePair)) {
-      if (addToFacets) {
-        addFacetSkipList(field.getFieldName());
+  pwivate void withonetimestwingfiewd(
+      s-set<paiw<eawwybiwdfiewdconstant, >w< stwing>> f-fiewdsappwied, mya e-eawwybiwdfiewdconstant fiewd, (ꈍᴗꈍ)
+      stwing vawue, -.- boowean addtofacets) {
+    paiw<eawwybiwdfiewdconstant, stwing> f-fiewdvawuepaiw = n-nyew paiw<>(fiewd, vawue);
+    if (!fiewdsappwied.contains(fiewdvawuepaiw)) {
+      i-if (addtofacets) {
+        addfacetskipwist(fiewd.getfiewdname());
       }
-      withStringField(field.getFieldName(), value);
-      fieldsApplied.add(fieldValuePair);
+      withstwingfiewd(fiewd.getfiewdname(), (⑅˘꒳˘) v-vawue);
+      f-fiewdsappwied.add(fiewdvawuepaiw);
     }
   }
 
-  private String formatNamedEntityString(String name, WholeEntityType type) {
-    return String.format("%s:%s", name, type).toLowerCase();
+  p-pwivate stwing fowmatnamedentitystwing(stwing n-name, (U ﹏ U) w-whoweentitytype t-type) {
+    wetuwn stwing.fowmat("%s:%s", σωσ name, t-type).towowewcase();
   }
 
   /**
-   * Set whether set LAT_LON_CSF_FIELD or not before build
-   * if LAT_LON_CSF_FIELD is not set deliberately.
+   * s-set whethew s-set wat_won_csf_fiewd o-ow not b-befowe buiwd
+   * i-if wat_won_csf_fiewd is nyot s-set dewibewatewy. :3
    *
-   * @see #prepareToBuild()
+   * @see #pwepawetobuiwd()
    */
-  public EarlybirdThriftDocumentBuilder setAddLatLonCSF(boolean isSet) {
-    addLatLonCSF = isSet;
-    return this;
+  p-pubwic e-eawwybiwdthwiftdocumentbuiwdew setaddwatwoncsf(boowean isset) {
+    a-addwatwoncsf = isset;
+    wetuwn this;
   }
 
   /**
-   * Set if add encoded tweet feature field in the end.
+   * s-set if add encoded tweet featuwe fiewd i-in the end. /(^•ω•^)
    *
-   * @see #prepareToBuild()
+   * @see #pwepawetobuiwd()
    */
-  public EarlybirdThriftDocumentBuilder setAddEncodedTweetFeatures(boolean isSet) {
-    addEncodedTweetFeatures = isSet;
-    return this;
+  p-pubwic eawwybiwdthwiftdocumentbuiwdew setaddencodedtweetfeatuwes(boowean isset) {
+    a-addencodedtweetfeatuwes = i-isset;
+    wetuwn this;
   }
 
-  @Override
-  protected void prepareToBuild() {
-    if (!isSetLatLonCSF && addLatLonCSF) {
-      // In lucene archives, this CSF is needed regardless of whether geoLocation is set.
-      withLatLonCSF(GeoUtil.ILLEGAL_LATLON, GeoUtil.ILLEGAL_LATLON);
+  @ovewwide
+  p-pwotected void p-pwepawetobuiwd() {
+    if (!issetwatwoncsf && addwatwoncsf) {
+      // in wucene a-awchives, σωσ this c-csf is nyeeded wegawdwess of whethew geowocation i-is set. (U ᵕ U❁)
+      w-withwatwoncsf(geoutiw.iwwegaw_watwon, 😳 geoutiw.iwwegaw_watwon);
     }
 
-    if (addEncodedTweetFeatures) {
-      // Add encoded_tweet_features before building the document.
-      withBytesField(
-          EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD.getFieldName(),
-          EarlybirdEncodedFeaturesUtil.toBytesForThriftDocument(encodedTweetFeatures));
+    if (addencodedtweetfeatuwes) {
+      // a-add encoded_tweet_featuwes befowe buiwding the document. ʘwʘ
+      withbytesfiewd(
+          eawwybiwdfiewdconstant.encoded_tweet_featuwes_fiewd.getfiewdname(), (⑅˘꒳˘)
+          eawwybiwdencodedfeatuwesutiw.tobytesfowthwiftdocument(encodedtweetfeatuwes));
     }
 
-    if (extendedEncodedTweetFeatures != null) {
-      // Add extended_encoded_tweet_features before building the document.
-      withBytesField(
-          EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD.getFieldName(),
-          EarlybirdEncodedFeaturesUtil.toBytesForThriftDocument(extendedEncodedTweetFeatures));
+    i-if (extendedencodedtweetfeatuwes != nyuww) {
+      // add extended_encoded_tweet_featuwes befowe b-buiwding the d-document. ^•ﻌ•^
+      w-withbytesfiewd(
+          eawwybiwdfiewdconstant.extended_encoded_tweet_featuwes_fiewd.getfiewdname(), nyaa~~
+          e-eawwybiwdencodedfeatuwesutiw.tobytesfowthwiftdocument(extendedencodedtweetfeatuwes));
     }
   }
 
-  private static boolean isNotBlank(String value) {
-    return value != null && !value.isEmpty();
+  p-pwivate static b-boowean isnotbwank(stwing v-vawue) {
+    wetuwn v-vawue != nyuww && !vawue.isempty();
   }
 
-  private static boolean isNotEmpty(List<?> value) {
-    return value != null && !value.isEmpty();
+  pwivate static boowean isnotempty(wist<?> v-vawue) {
+    w-wetuwn vawue != n-nyuww && !vawue.isempty();
   }
 }

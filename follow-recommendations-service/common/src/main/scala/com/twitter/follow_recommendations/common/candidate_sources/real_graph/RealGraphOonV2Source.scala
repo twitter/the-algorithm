@@ -1,58 +1,58 @@
-package com.twitter.follow_recommendations.common.candidate_sources.real_graph
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.weaw_gwaph
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.realGraph.UserRealgraphOonV2ClientColumn
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.hewmit.modew.awgowithm
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.genewated.cwient.onboawding.weawgwaph.usewweawgwaphoonv2cwientcowumn
+i-impowt com.twittew.timewines.configapi.haspawams
+impowt com.twittew.wtf.candidate.thwiftscawa.candidateseq
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class RealGraphOonV2Source @Inject() (
-  realGraphClientColumn: UserRealgraphOonV2ClientColumn)
-    extends CandidateSource[HasParams with HasClientContext, CandidateUser] {
+@singweton
+c-cwass weawgwaphoonv2souwce @inject() (
+  weawgwaphcwientcowumn: usewweawgwaphoonv2cwientcowumn)
+    e-extends candidatesouwce[haspawams w-with hascwientcontext, /(^•ω•^) candidateusew] {
 
-  override val identifier: CandidateSourceIdentifier =
-    RealGraphOonV2Source.Identifier
+  ovewwide vaw identifiew: candidatesouwceidentifiew =
+    w-weawgwaphoonv2souwce.identifiew
 
-  override def apply(request: HasParams with HasClientContext): Stitch[Seq[CandidateUser]] = {
-    request.getOptionalUserId
-      .map { userId =>
-        realGraphClientColumn.fetcher
-          .fetch(userId)
-          .map { result =>
-            result.v
-              .map { candidates => parseStratoResults(request, candidates) }
-              .getOrElse(Nil)
-              // returned candidates are sorted by score in descending order
-              .take(request.params(RealGraphOonParams.MaxResults))
-              .map(_.withCandidateSource(identifier))
+  ovewwide def appwy(wequest: h-haspawams w-with hascwientcontext): stitch[seq[candidateusew]] = {
+    wequest.getoptionawusewid
+      .map { usewid =>
+        weawgwaphcwientcowumn.fetchew
+          .fetch(usewid)
+          .map { wesuwt =>
+            w-wesuwt.v
+              .map { candidates => pawsestwatowesuwts(wequest, rawr x3 candidates) }
+              .getowewse(niw)
+              // wetuwned c-candidates awe sowted by s-scowe in descending o-owdew
+              .take(wequest.pawams(weawgwaphoonpawams.maxwesuwts))
+              .map(_.withcandidatesouwce(identifiew))
           }
-      }.getOrElse(Stitch(Seq.empty))
+      }.getowewse(stitch(seq.empty))
   }
 
-  private def parseStratoResults(
-    request: HasParams with HasClientContext,
-    candidateSeqThrift: CandidateSeq
-  ): Seq[CandidateUser] = {
-    candidateSeqThrift.candidates.collect {
-      case candidate if candidate.score >= request.params(RealGraphOonParams.ScoreThreshold) =>
-        CandidateUser(
-          candidate.userId,
-          Some(candidate.score)
+  p-pwivate d-def pawsestwatowesuwts(
+    wequest: haspawams with hascwientcontext, (U ﹏ U)
+    c-candidateseqthwift: candidateseq
+  ): seq[candidateusew] = {
+    c-candidateseqthwift.candidates.cowwect {
+      case candidate if candidate.scowe >= wequest.pawams(weawgwaphoonpawams.scowethweshowd) =>
+        candidateusew(
+          candidate.usewid, (U ﹏ U)
+          s-some(candidate.scowe)
         )
     }
   }
 
 }
 
-object RealGraphOonV2Source {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.RealGraphOonV2.toString
+object weawgwaphoonv2souwce {
+  v-vaw identifiew: c-candidatesouwceidentifiew = c-candidatesouwceidentifiew(
+    awgowithm.weawgwaphoonv2.tostwing
   )
 }

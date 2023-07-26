@@ -1,1777 +1,1777 @@
-# pylint: disable=too-many-lines
+# pywint: disabwe=too-many-wines
 """
-``twml.trainers.Trainer`` is a wrapper around `tf.estimator.Estimator
-<https://www.tensorflow.org/versions/master/api_docs/python/tf/estimator/Estimator>`_
-to expose an easier to use API by
-hiding rarely used config knobs and supplying default values.
+``twmw.twainews.twainew`` is a-a wwappew awound `tf.estimatow.estimatow
+<https://www.tensowfwow.owg/vewsions/mastew/api_docs/python/tf/estimatow/estimatow>`_
+t-to expose an easiew t-to use api by
+h-hiding wawewy u-used config knobs a-and suppwying d-defauwt vawues. σωσ
 
-The `Trainer` facilitates multi-phase training commonly used at Twitter: e.g.
-MDL calibration -> MLP training -> Isotonic calibration.
-The `Trainer` also facilitates hyperparameters tuning,
-with its simple `add_parser_arguments()` method.
+t-the `twainew` faciwitates muwti-phase twaining commonwy used at twittew: e.g. ʘwʘ
+mdw c-cawibwation -> mwp twaining -> isotonic cawibwation. 😳😳😳
+t-the `twainew` awso faciwitates h-hypewpawametews tuning, ^•ﻌ•^
+with its simpwe `add_pawsew_awguments()` method. (˘ω˘)
 
-Learning rate decay functions
+w-weawning wate decay functions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Please note that we have four learning rate decay functions to choose from.
-Additionally, each trainer can only take one learning rate decay function and its parameters.
-If that is not the case, it will throw an error.
-Also, please note that the learning rate decay is a positional argument and should be placed as
-the last argument to the trainer, as you can see in the example above.
-The four learning decays options are:
+p-pwease n-nyote that we have fouw weawning wate decay functions to choose fwom. (U ﹏ U)
+additionawwy, >w< e-each twainew can onwy take one weawning wate decay function and its pawametews. XD
+i-if that is nyot the case, XD i-it wiww thwow a-an ewwow. (U ﹏ U)
+awso, (✿oωo) p-pwease nyote that t-the weawning wate decay is a positionaw awgument a-and shouwd be pwaced as
+the wast awgument to t-the twainew, ^^;; as you can see in the exampwe above. (U ﹏ U)
+the fouw weawning decays options awe:
 
-1. inverse_learning_rate_decay:
+1. OwO invewse_weawning_wate_decay:
 
-  The function returns the decayed learning rate. It is computed as:
-
-  ::
-
-    decayed_learning_rate = learning_rate / (1 + decay_rate * global_step /decay_step)
-    final_decayed_learning_rate = max(decayed_learning_rate, min_learning_rate)
-
-
-2. polynomial_learning_rate_decay:
-
-  The function returns the decayed learning rate. It is computed as:
+  t-the function wetuwns t-the decayed weawning w-wate. 😳😳😳 it i-is computed as:
 
   ::
 
-    global_step = min(global_step, decay_steps)
-    decayed_learning_rate = (learning_rate - end_learning_rate) *
-                            (1 - global_step / decay_steps) ^ (power) +
-                            end_learning_rate
+    decayed_weawning_wate = weawning_wate / (1 + decay_wate * g-gwobaw_step /decay_step)
+    f-finaw_decayed_weawning_wate = max(decayed_weawning_wate, 😳😳😳 m-min_weawning_wate)
 
 
-3. piecewise_constant_learning_rate_decay:
+2. (✿oωo) p-powynomiaw_weawning_wate_decay:
 
-  Piecewise constant from boundaries and interval values.
-
-  Example: use a learning rate that's 1.0 for the first 100001 steps, 0.5 for
-  the next 10000 steps, and 0.1 for any additional steps.
+  the function w-wetuwns the decayed weawning w-wate. UwU it is computed as:
 
   ::
 
-    global_step = tf.Variable(0, trainable=False)
-    boundaries = [100000, 110000]
-    values = [1.0, 0.5, 0.1]
-    learning_rate = tf.train.piecewise_constant(global_step, boundaries, values)
+    gwobaw_step = m-min(gwobaw_step, mya decay_steps)
+    d-decayed_weawning_wate = (weawning_wate - end_weawning_wate) *
+                            (1 - g-gwobaw_step / d-decay_steps) ^ (powew) +
+                            end_weawning_wate
 
-4. exponential_learning_rate_decay:
 
-  The function returns the decayed learning rate. It is computed as:
+3. rawr x3 piecewise_constant_weawning_wate_decay:
+
+  piecewise constant fwom boundawies and intewvaw vawues. /(^•ω•^)
+
+  e-exampwe: use a-a weawning wate that's 1.0 fow the f-fiwst 100001 s-steps, >_< 0.5 fow
+  t-the nyext 10000 steps, :3 and 0.1 fow any additionaw steps. o.O
 
   ::
 
-    decayed_learning_rate = learning_rate * decay_rate ^ (global_step / decay_steps)
+    g-gwobaw_step = tf.vawiabwe(0, UwU twainabwe=fawse)
+    boundawies = [100000, (ꈍᴗꈍ) 110000]
+    vawues = [1.0, >_< 0.5, òωó 0.1]
+    w-weawning_wate = tf.twain.piecewise_constant(gwobaw_step, (ꈍᴗꈍ) boundawies, 😳😳😳 v-vawues)
+
+4. e-exponentiaw_weawning_wate_decay:
+
+  t-the function wetuwns t-the decayed weawning w-wate. ( ͡o ω ͡o ) it is c-computed as:
+
+  ::
+
+    d-decayed_weawning_wate = weawning_wate * decay_wate ^ (gwobaw_step / d-decay_steps)
 
 """
 
-import datetime
-import functools
-import math
-from operator import itemgetter
-import os
-import pprint as pp
-import random
-from string import Template
-import subprocess
-import sys
-import time
-from threading import Thread
+i-impowt datetime
+i-impowt functoows
+i-impowt math
+fwom o-opewatow impowt itemgettew
+impowt os
+impowt ppwint as pp
+impowt w-wandom
+fwom stwing impowt tempwate
+impowt subpwocess
+impowt sys
+impowt time
+fwom thweading impowt t-thwead
 
-from twitter.common.metrics import AtomicGauge
-from twitter.deepbird.stats_server import utils as stats_server_utils
-from twitter.deepbird.stats_server.stats_exporter import StatsExporter
-from twitter.ml.common import metrics
-from twitter.ml.common.kubernetes import kubectl_delete_by_name, Resource
-from twitter.ml.twml.status import get_distributed_training_job_status, TrainingJobStatus
+fwom twittew.common.metwics impowt atomicgauge
+fwom t-twittew.deepbiwd.stats_sewvew i-impowt u-utiws as stats_sewvew_utiws
+fwom twittew.deepbiwd.stats_sewvew.stats_expowtew i-impowt statsexpowtew
+fwom twittew.mw.common impowt m-metwics
+fwom t-twittew.mw.common.kubewnetes impowt kubectw_dewete_by_name, mya wesouwce
+fwom twittew.mw.twmw.status impowt get_distwibuted_twaining_job_status, UwU twainingjobstatus
 
-from absl import logging
-from twml.optimizers import LazyAdamOptimizer, optimize_loss, OPTIMIZER_SUMMARIES
-from twml.contrib.optimizers import DeepGradientCompressionOptimizer
-from twml.tracking import ExperimentTracker
-from twml.util import (delete_file_or_dir,
-                       get_distributed_training_job_path,
+fwom absw impowt w-wogging
+fwom twmw.optimizews i-impowt wazyadamoptimizew, òωó optimize_woss, -.- o-optimizew_summawies
+f-fwom twmw.contwib.optimizews impowt d-deepgwadientcompwessionoptimizew
+f-fwom twmw.twacking impowt expewimenttwackew
+fwom t-twmw.utiw impowt (dewete_fiwe_ow_diw, :3
+                       g-get_distwibuted_twaining_job_path, ^•ﻌ•^
                        sanitize_hdfs_path)
-try:
-  from urllib import quote as encode_url
-except ImportError:
-  from urllib.parse import quote as encode_url
-import tensorflow.compat.v1 as tf
-import tensorflow
-import tensorflow_hub as hub
+twy:
+  fwom uwwwib impowt quote as encode_uww
+except i-impowtewwow:
+  f-fwom uwwwib.pawse i-impowt quote as encode_uww
+i-impowt tensowfwow.compat.v1 a-as tf
+impowt tensowfwow
+i-impowt tensowfwow_hub as hub
 
-import twitter.ml.twml.kubernetes.status as k8s_status
-import twml
-import twml.export_output_fns
-import twml.learning_rate_decay
-import twml.metrics
+impowt twittew.mw.twmw.kubewnetes.status as k8s_status
+impowt t-twmw
+impowt twmw.expowt_output_fns
+i-impowt twmw.weawning_wate_decay
+impowt twmw.metwics
 
 
-_CLUSTER_TEMPLATE = Template('''{
-  "cluster": {
-    "ps": [$PS],
-    "chief": [$CHIEF],
-    "worker": [$WORKER]
-  },
-  "task": {"type": "$TYPE", "index": $INDEX}
+_cwustew_tempwate = tempwate('''{
+  "cwustew": {
+    "ps": [$ps], (˘ω˘)
+    "chief": [$chief],
+    "wowkew": [$wowkew]
+  }, 😳😳😳
+  "task": {"type": "$type", (///ˬ///✿) "index": $index}
 }
 ''')
 
 
-def init_from_checkpoint(init_dir, init_map):
+d-def init_fwom_checkpoint(init_diw, 🥺 i-init_map):
   """
-  Wrapper around tf.train.init_from_checkpoint
+  wwappew awound tf.twain.init_fwom_checkpoint
   """
-  if init_dir:
-    init_dir = sanitize_hdfs_path(init_dir)
-    tf.train.init_from_checkpoint(init_dir, init_map)
+  if init_diw:
+    i-init_diw = sanitize_hdfs_path(init_diw)
+    tf.twain.init_fwom_checkpoint(init_diw, (U ᵕ U❁) init_map)
 
 
-class Trainer(object):
+cwass twainew(object):
   """
-  This class wraps ``tf.estimator.Estimator`` to make construction, saving, and loading easier.
-  Supports multi-phase training (for example, use a Trainer for MDL calibration, then
-  another for training the rest of the model, then another for isotonic calibration).
-  The Trainer also implements a training and evaluation loop via the ``learn()`` method.
-  Each Trainer is associated to a fixed set of hyper parameters (params), and a single model
-  specified by ``build_graph``. Given these constraints, a single Trainer can be called
-  multiple times for training and evaluation over multiple epochs.
+  this cwass wwaps ``tf.estimatow.estimatow`` t-to make constwuction, (˘ω˘) saving, and woading e-easiew. UwU
+  s-suppowts muwti-phase twaining (fow exampwe, 😳 use a twainew fow mdw c-cawibwation, :3 then
+  a-anothew fow twaining the west of the modew, then anothew fow i-isotonic cawibwation). mya
+  the t-twainew awso impwements a twaining and evawuation woop via the ``weawn()`` m-method. nyaa~~
+  each twainew i-is associated t-to a fixed set of hypew pawametews (pawams), 😳😳😳 a-and a singwe modew
+  s-specified by ``buiwd_gwaph``. ^•ﻌ•^ g-given these constwaints, UwU a-a singwe twainew can be c-cawwed
+  muwtipwe t-times fow twaining and evawuation ovew muwtipwe e-epochs. (ꈍᴗꈍ)
 
-  However, if you intend to try different sets of hyper-parameters, we recommend you instantiate
-  a different Trainer for each such experiment. That way, each experiment can be tracked
-  in a different ``save_dir``. Indeed, after calling ``learn``, a Trainer's save_dir will contain
-  checkpoints of the model (its graph, and variables), and the history of metrics (for example,
-  evaluation accuracy at each epoch), and other store observations like the average time per step.
-  The latter metrics can be viewed by pointing
-  TensorBoard to the save_dir and accessing TensorBoard via your browser.
+  howevew, i-if you intend t-to twy diffewent sets of hypew-pawametews, (⑅˘꒳˘) we wecommend you i-instantiate
+  a diffewent twainew f-fow each such e-expewiment. OwO that way, UwU each expewiment can be twacked
+  in a diffewent ``save_diw``. OwO i-indeed, aftew c-cawwing ``weawn``, (///ˬ///✿) a-a twainew's s-save_diw wiww contain
+  checkpoints o-of the modew (its gwaph, (U ﹏ U) and vawiabwes), (⑅˘꒳˘) and the histowy of metwics (fow exampwe, /(^•ω•^)
+  evawuation a-accuwacy at each epoch), :3 and o-othew stowe obsewvations wike t-the avewage time pew step. ( ͡o ω ͡o )
+  the w-wattew metwics can be viewed by p-pointing
+  tensowboawd t-to the save_diw a-and accessing t-tensowboawd v-via youw bwowsew.
   """
 
-  def __init__(self, name, params, build_graph_fn,
-               metric_fn=None,
-               optimize_loss_fn=None,
-               run_config=None,
-               save_dir=None,
-               init_from_dir=None,
-               init_map=None,
-               warm_start_from=None,
-               profiler_steps=None,
-               **kwargs):
+  def __init__(sewf, (ˆ ﻌ ˆ)♡ nyame, XD pawams, buiwd_gwaph_fn, :3
+               metwic_fn=none, σωσ
+               optimize_woss_fn=none,
+               wun_config=none,
+               save_diw=none, mya
+               i-init_fwom_diw=none, -.-
+               i-init_map=none, :3
+               w-wawm_stawt_fwom=none, rawr
+               pwofiwew_steps=none, >_<
+               **kwawgs):
     """
 
-    Args:
-      name (String):
-        string name of this estimator; used as scope names for variables and tensors.
-      params (HParams, Namespace, or Dict):
-        hyper-parameters to be passed to Estimator constructor.
-        Must include params.train_batch_size and params.eval_batch_size.
-        Note that params is passed to twml.util.convert_to_hparams() to produce an HParams.
-      build_graph_fn:
-        A function for building tensorflow graphs.
-        This matches TensorFlow Estimator's model_fn signature.
-        For example,
+    a-awgs:
+      nyame (stwing):
+        stwing nyame of this estimatow; used as scope n-nyames fow v-vawiabwes and tensows. -.-
+      pawams (hpawams, :3 n-nyamespace, XD ow dict):
+        hypew-pawametews t-to b-be passed to estimatow constwuctow. ^^
+        m-must i-incwude pawams.twain_batch_size and pawams.evaw_batch_size. rawr
+        nyote that pawams is passed to twmw.utiw.convewt_to_hpawams() t-to pwoduce an h-hpawams.
+      b-buiwd_gwaph_fn:
+        a-a function f-fow buiwding tensowfwow gwaphs. (///ˬ///✿)
+        t-this m-matches tensowfwow estimatow's modew_fn s-signatuwe. ^^;;
+        f-fow exampwe, :3
 
-        .. code-block:: python
+        .. code-bwock:: p-python
 
-          def build_graph(features, label, mode, params, config=None):
-            # Implements a simple binary logistic regression model
-            sparse_tf = twml.util.convert_to_sparse(features, params.input_size_bits)
+          def buiwd_gwaph(featuwes, :3 wabew, m-mode, ( ͡o ω ͡o ) pawams, config=none):
+            # i-impwements a-a simpwe binawy wogistic w-wegwession modew
+            spawse_tf = twmw.utiw.convewt_to_spawse(featuwes, (✿oωo) pawams.input_size_bits)
 
-            logits = twml.layers.full_sparse(sparse_tf, 1 << params.input_size_bits, 1)
+            w-wogits = twmw.wayews.fuww_spawse(spawse_tf, UwU 1 << p-pawams.input_size_bits, ( ͡o ω ͡o ) 1)
 
-            if mode == 'infer':
-              loss = None
-            else:
-              loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=label, logits=logits)
-              loss = twml.util.weighted_average(loss, features['weights'])
+            if m-mode == 'infew':
+              woss = nyone
+            ewse:
+              woss = t-tf.nn.sigmoid_cwoss_entwopy_with_wogits(wabews=wabew, o.O wogits=wogits)
+              woss = twmw.utiw.weighted_avewage(woss, rawr f-featuwes['weights'])
 
-            output = tf.nn.sigmoid(logits)
+            o-output = tf.nn.sigmoid(wogits)
 
-            return {'output': output, 'loss': loss}
+            wetuwn {'output': o-output, (ꈍᴗꈍ) 'woss': woss}
 
-        Args:
-          features (dict of Tensor keyed by a string name):
-            input tensors.
-          mode (tf.estimator.ModeKeys / String):
-            one of 'train', 'eval', 'infer'.
-          label (Tensor):
-            if in ``mode == 'train'`` mode, these contain the corresponding labels for input.
-          params (HParams):
-            hyper parameters that control how to build a graph.
+        awgs:
+          featuwes (dict o-of t-tensow keyed by a stwing name):
+            input t-tensows. mya
+          mode (tf.estimatow.modekeys / stwing):
+            o-one of 'twain', mya 'evaw', UwU 'infew'.
+          w-wabew (tensow):
+            if in ``mode == 'twain'`` m-mode, ^^;; these contain the c-cowwesponding w-wabews fow input. -.-
+          p-pawams (hpawams):
+            hypew pawametews that contwow how to buiwd a gwaph. XD
           config:
-            the RunConfig object passed to Estimator constructor.
+            the wunconfig object passed to estimatow constwuctow.
 
-        This function is expected to return a dictionary containing the following keys:
+        this function is expected to wetuwn a d-dictionawy containing t-the fowwowing keys:
 
-        * 'output': a node representing model output; required.
-        * 'loss': (required) a loss node used for optimization; required for training and
-          evaluation.
-        * 'train_op': (optional) an operation that minimizes the loss (as output by
-          `tf.train.Optimizer.minimize`). If train_op is specified, train_op is used
-          for optimization as opposed to loss. Loss is always logged to tensorboard.
+        * 'output': a nyode wepwesenting m-modew output; w-wequiwed. nyaa~~
+        * 'woss': (wequiwed) a-a woss nyode used fow o-optimization; wequiwed fow twaining a-and
+          e-evawuation. (ꈍᴗꈍ)
+        * 'twain_op': (optionaw) an opewation that m-minimizes the woss (as output by
+          `tf.twain.optimizew.minimize`). ^^;; i-if twain_op i-is specified, :3 twain_op is used
+          f-fow optimization a-as opposed to w-woss. woss is awways w-wogged to tensowboawd. (///ˬ///✿)
 
-        Notes:
+        n-nyotes:
 
-        * any tf.summary written inside build graph are logged to tensorboard during training.
-        * the ``build_graph_fn`` is called once or twice per epoch (once per training,
-          once per evaluation). All data loading (and preprocessing) logic not required
-          for serving should be in the ``input_fn`` passed to ``learn``, ``train``,
-          ``evalulate``, etc.
+        * a-any tf.summawy w-wwitten inside b-buiwd gwaph a-awe wogged to tensowboawd duwing t-twaining. /(^•ω•^)
+        * t-the ``buiwd_gwaph_fn`` i-is cawwed once ow t-twice pew epoch (once pew twaining, σωσ
+          once p-pew evawuation). >w< aww data woading (and p-pwepwocessing) w-wogic nyot w-wequiwed
+          fow sewving s-shouwd be in the ``input_fn`` p-passed to ``weawn``, ``twain``, (ˆ ﻌ ˆ)♡
+          ``evawuwate``, rawr x3 etc.
 
-      optimize_loss_fn:
-        Defaults to Trainer.get_train_op. A function that takes params and loss as arguments
-        and returns a training op. The training op is used to update parameters (that is, to learn).
-      metric_fn:
-        A function that returns the eval_metric_ops dict given graph_output, labels and weights.
-        Defaults to None.
-        Use ``twml.metrics.get_binary_class_metric_fn()`` to return a ``metric_fn``
-        which implements many binary classification metrics.
-      run_config (RunConfig):
-        optional configuration to be passed to Estimator constructor. Defaults to None.
-      save_dir (String):
-        optional directory where to save model checkpoints,
-        tensorboard event files and trained parameters.
-        Overwrites and defaults to run_config.model_dir.
-      init_from_dir (String):
-        optional directory to load weights from.
-        if set to None (the default), do not init from any directory.
-      init_map (map from String to String):
-        Must be specified if init_from_dir is specified.
-        Defines which scopes and variables to load.
-        Keys are the variables and scopes to load from the directory.
-        Values are the destinations (in the current graph) to load into.
-        See tf.init_from_checkpoint for more information.
-        Note that the the trainer prepends name_scope of the form `name`/model/ to the name_scope
-        of any variable defined inside `build_graph_fn` and this should be taken into account when
-        defining the values.
-      warm_start_from:
-        Optional string filepath to a checkpoint to warm-start from,
-        or a tf.estimator.WarmStartSettings object to fully configure warm-starting.
-        If the string filepath is provided instead of a WarmStartSettings,
-        then all variables are warm-started, and it is assumed that
-        vocabularies and Tensor names are unchanged.
-      profiler_steps (Integer):
-        Defaults to None. If set defines the number of steps in the
-        `tf.train.ProfileHook <https://www.tensorflow.org/api_docs/python/tf/train/ProfilerHook>`_.
-        Captures CPU/GPU profiling information every ``profiler_steps`` steps or seconds.
-        When executing ``learn``, ``train`` or ``predict`` methods,
-        with ``profiler_steps`` set to a number,
-        a ``timeline_X.json`` file is created in the save_dir. This file contains profiling data
-        storedin Chrome trace format. To view stored data, use the Chrome browser to follow
-        these steps:
+      o-optimize_woss_fn:
+        defauwts to twainew.get_twain_op. -.- a-a function that takes pawams and woss as awguments
+        and wetuwns a twaining o-op. (ˆ ﻌ ˆ)♡ the twaining op is used t-to update pawametews (that i-is, /(^•ω•^) to weawn).
+      metwic_fn:
+        a function that w-wetuwns the evaw_metwic_ops dict given gwaph_output, (⑅˘꒳˘) w-wabews and w-weights. (˘ω˘)
+        d-defauwts to nyone. ^•ﻌ•^
+        use ``twmw.metwics.get_binawy_cwass_metwic_fn()`` to wetuwn a ``metwic_fn``
+        w-which impwements m-many binawy cwassification metwics. o.O
+      w-wun_config (wunconfig):
+        optionaw configuwation t-to be passed to estimatow constwuctow. d-defauwts t-to nyone. (⑅˘꒳˘)
+      s-save_diw (stwing):
+        optionaw diwectowy w-whewe to save m-modew checkpoints, σωσ
+        t-tensowboawd e-event fiwes and twained p-pawametews.
+        o-ovewwwites and d-defauwts to wun_config.modew_diw. >_<
+      i-init_fwom_diw (stwing):
+        o-optionaw d-diwectowy to w-woad weights fwom. ʘwʘ
+        i-if set to nyone (the d-defauwt), (✿oωo) do nyot init fwom any d-diwectowy. o.O
+      init_map (map f-fwom stwing to stwing):
+        m-must be specified i-if init_fwom_diw is specified. 😳
+        defines which scopes and v-vawiabwes to woad. nyaa~~
+        k-keys a-awe the vawiabwes and scopes to woad fwom the diwectowy. XD
+        v-vawues awe the d-destinations (in the cuwwent gwaph) t-to woad into. ^^;;
+        s-see tf.init_fwom_checkpoint fow mowe infowmation. /(^•ω•^)
+        n-nyote that t-the the twainew p-pwepends nyame_scope o-of the fowm `name`/modew/ to the nyame_scope
+        of any v-vawiabwe defined i-inside `buiwd_gwaph_fn` and this shouwd be taken i-into account when
+        defining the vawues. >_<
+      w-wawm_stawt_fwom:
+        optionaw stwing f-fiwepath to a c-checkpoint to wawm-stawt fwom, (U ﹏ U)
+        o-ow a tf.estimatow.wawmstawtsettings o-object to fuwwy configuwe w-wawm-stawting. 😳😳😳
+        if the s-stwing fiwepath i-is pwovided instead o-of a wawmstawtsettings, XD
+        t-then aww vawiabwes awe wawm-stawted, OwO a-and i-it is assumed that
+        v-vocabuwawies and tensow n-nyames awe unchanged. (U ᵕ U❁)
+      pwofiwew_steps (integew):
+        defauwts to nyone. (⑅˘꒳˘) if set defines t-the numbew of s-steps in the
+        `tf.twain.pwofiwehook <https://www.tensowfwow.owg/api_docs/python/tf/twain/pwofiwewhook>`_. UwU
+        c-captuwes cpu/gpu pwofiwing infowmation evewy ``pwofiwew_steps`` steps o-ow seconds. 😳😳😳
+        when executing ``weawn``, mya ``twain`` o-ow ``pwedict`` m-methods,
+        with ``pwofiwew_steps`` set to a nyumbew, 🥺
+        a-a ``timewine_x.json`` fiwe is cweated i-in the save_diw. ^^ t-this fiwe contains p-pwofiwing data
+        s-stowedin c-chwome twace fowmat. -.- to view stowed data, ^^ use the chwome bwowsew to fowwow
+        t-these steps:
 
-        1) Go to the page chrome://tracing.
-        2) In the upper left corner, you will find Load button.
-        3) Press it and load our JSON file, which can be found in the ``save_dir``
+        1) go to the page chwome://twacing. o.O
+        2) i-in the uppew weft cownew, σωσ you wiww find woad button. ^•ﻌ•^
+        3) p-pwess it and woad ouw json fiwe, 😳 which can be found in the ``save_diw``
 
-        *Warning*: This could create too many these json files which can be a potential problem,
-        e.g. for  HDFS there is normally quota forfile count, so use with caution.
+        *wawning*: t-this couwd c-cweate too many these json fiwes w-which can be a potentiaw pwobwem, nyaa~~
+        e.g. ^•ﻌ•^ f-fow  hdfs thewe i-is nyowmawwy quota fowfiwe count, >_< s-so use with caution. (⑅˘꒳˘)
 
-        Note: this argument is ignored when a non-None ``hooks`` argument is pasesd to
-        ``train``, ``learn``, or ``predict`` methods. The hook can be added manually by passing
-        ``trainer.train(..., hooks=myhooks.extend(trainer.get_train_hooks()))``, for example.
+        n-nyote: this awgument is ignowed when a non-none ``hooks`` awgument i-is pasesd to
+        ``twain``, ^^ ``weawn``, :3 ow ``pwedict`` m-methods. 😳 the hook c-can be added manuawwy b-by passing
+        ``twainew.twain(..., hooks=myhooks.extend(twainew.get_twain_hooks()))``, (˘ω˘) fow exampwe. >w<
     """
 
-    if tensorflow.__version__ >= "2.0":
-      RuntimeError("Trainer not yet supported for Tensorflow >= 2.0")
+    i-if tensowfwow.__vewsion__ >= "2.0":
+      wuntimeewwow("twainew nyot yet suppowted f-fow tensowfwow >= 2.0")
 
-    self._name = name
-    self._build_graph_fn = build_graph_fn
-    self._metric_fn = metric_fn
-    self._tensorboard_handle = None
-    self._current_estimator_spec = None  # holds the current estimator spec
-    self._profiler_steps = profiler_steps
-    self._export_output_fn = None
-    self._is_early_stopping = False
+    s-sewf._name = n-name
+    s-sewf._buiwd_gwaph_fn = buiwd_gwaph_fn
+    sewf._metwic_fn = m-metwic_fn
+    sewf._tensowboawd_handwe = n-nyone
+    sewf._cuwwent_estimatow_spec = nyone  # howds t-the cuwwent estimatow spec
+    sewf._pwofiwew_steps = p-pwofiwew_steps
+    sewf._expowt_output_fn = nyone
+    sewf._is_eawwy_stopping = f-fawse
 
-    # NOTE: Sanitize all HDFS paths first.
-    save_dir = sanitize_hdfs_path(save_dir)
-    init_from_dir = sanitize_hdfs_path(init_from_dir)
+    # n-nyote: sanitize aww hdfs paths f-fiwst. 😳
+    save_diw = s-sanitize_hdfs_path(save_diw)
+    i-init_fwom_diw = sanitize_hdfs_path(init_fwom_diw)
 
-    # warm_start_from can be of type tf.estimator.WarmStartSettings.
-    if isinstance(warm_start_from, str):
-      warm_start_from = sanitize_hdfs_path(warm_start_from)
+    # wawm_stawt_fwom c-can be of type tf.estimatow.wawmstawtsettings. ^^;;
+    if isinstance(wawm_stawt_fwom, rawr x3 s-stw):
+      wawm_stawt_fwom = sanitize_hdfs_path(wawm_stawt_fwom)
 
-    # convert to twitter.deepbird.hparam.hparam.HParams object
-    params = twml.util.convert_to_hparams(params)
+    # convewt t-to twittew.deepbiwd.hpawam.hpawam.hpawams o-object
+    pawams = t-twmw.utiw.convewt_to_hpawams(pawams)
 
-    # keep a copy of the params because calling self._estimator.params creates a deepcopy
-    self._params = params
-    self.check_params()
+    # k-keep a copy of the p-pawams because cawwing sewf._estimatow.pawams c-cweates a deepcopy
+    sewf._pawams = pawams
+    s-sewf.check_pawams()
 
-    self._using_hogwild = True if os.environ.get('TWML_HOGWILD_PORTS') else False
-    # configure Hogwild (needs to be called before RunConfig is created)
-    self._hogwild_setup()
+    sewf._using_hogwiwd = t-twue if os.enviwon.get('twmw_hogwiwd_powts') ewse fawse
+    # configuwe h-hogwiwd (needs t-to be cawwed befowe wunconfig i-is cweated)
+    sewf._hogwiwd_setup()
 
-    if not run_config:
-      session_config = tf.ConfigProto()
-      # By default each process tries to allocate (almost) all of the memory.
-      # This option ensures the gpu memory grows dynamically instead.
-      session_config.gpu_options.allow_growth = True  # pylint: disable=no-member
+    i-if nyot wun_config:
+      s-session_config = tf.configpwoto()
+      # b-by defauwt e-each pwocess twies to awwocate (awmost) a-aww of the memowy. òωó
+      # this option ensuwes the gpu memowy g-gwows dynamicawwy instead. ^^;;
+      s-session_config.gpu_options.awwow_gwowth = twue  # pywint: disabwe=no-membew
 
-      if 'TWML_NUM_CPUS' in os.environ:
-        num_available_cpus = int(os.environ.get("TWML_MESOS_CPU", "8"))
-        if params.num_mkl_threads > 1:
-          os.environ["OMP_NUM_THREADS"] = str(params.num_mkl_threads)
-          os.environ["MKL_NUM_THREADS"] = str(params.num_mkl_threads)
-          session_config.inter_op_parallelism_threads = num_available_cpus // params.num_mkl_threads
-          session_config.intra_op_parallelism_threads = params.num_mkl_threads
+      i-if 'twmw_num_cpus' i-in o-os.enviwon:
+        nyum_avaiwabwe_cpus = i-int(os.enviwon.get("twmw_mesos_cpu", :3 "8"))
+        i-if pawams.num_mkw_thweads > 1:
+          o-os.enviwon["omp_num_thweads"] = stw(pawams.num_mkw_thweads)
+          o-os.enviwon["mkw_num_thweads"] = stw(pawams.num_mkw_thweads)
+          s-session_config.intew_op_pawawwewism_thweads = n-nyum_avaiwabwe_cpus // pawams.num_mkw_thweads
+          session_config.intwa_op_pawawwewism_thweads = pawams.num_mkw_thweads
 
-      run_config = tf.estimator.RunConfig(
-        session_config=session_config,
-        keep_checkpoint_max=self._params.get('keep_checkpoint_max', 20),
-        log_step_count_steps=10000,
-        save_checkpoints_secs=self._params.get('save_checkpoints_secs', 600),
-        tf_random_seed=self._tf_random_seed())
-    elif not isinstance(run_config, tf.estimator.RunConfig):
-      raise ValueError("Expecting run_config argument of type None or tf.estimator.RunConfig"
-        "Got %s instead." % type(run_config).__name__)
-    elif os.environ.get('TWML_HOGWILD_PORTS'):
-      raise ValueError("Custom RunConfig not supported with Hogwild")
+      wun_config = t-tf.estimatow.wunconfig(
+        s-session_config=session_config, (ꈍᴗꈍ)
+        keep_checkpoint_max=sewf._pawams.get('keep_checkpoint_max', 😳😳😳 20),
+        wog_step_count_steps=10000, :3
+        save_checkpoints_secs=sewf._pawams.get('save_checkpoints_secs', ʘwʘ 600),
+        t-tf_wandom_seed=sewf._tf_wandom_seed())
+    ewif n-nyot isinstance(wun_config, :3 tf.estimatow.wunconfig):
+      w-waise vawueewwow("expecting wun_config awgument of type nyone ow tf.estimatow.wunconfig"
+        "got %s i-instead." % type(wun_config).__name__)
+    ewif os.enviwon.get('twmw_hogwiwd_powts'):
+      w-waise vawueewwow("custom wunconfig n-nyot suppowted w-with hogwiwd")
 
-    if run_config.model_dir is None and save_dir is None:
-      raise ValueError(
-          "Expecting either save_dir or run_config.model_dir to be specified. Got None for each.")
-    elif run_config.model_dir is None:
-      run_config = run_config.replace(model_dir=save_dir)
-    elif save_dir is None:
-      save_dir = run_config.model_dir
+    if wun_config.modew_diw i-is nyone and save_diw i-is nyone:
+      w-waise vawueewwow(
+          "expecting e-eithew s-save_diw ow w-wun_config.modew_diw to be specified. OwO got nyone fow each.")
+    ewif wun_config.modew_diw is nyone:
+      w-wun_config = w-wun_config.wepwace(modew_diw=save_diw)
+    e-ewif save_diw i-is nyone:
+      s-save_diw = wun_config.modew_diw
 
-    self._save_dir = save_dir
-    self.experiment_tracker = ExperimentTracker(self._params, run_config, self._save_dir)
+    s-sewf._save_diw = save_diw
+    sewf.expewiment_twackew = expewimenttwackew(sewf._pawams, mya wun_config, σωσ s-sewf._save_diw)
 
-    # Check if should delete the tsd running this training job. In certain use case when 
-    # there are other tf operations following trainer.train_and_evaluate (or trainer.learn),
-    # additional state files need to be specified to ensure those steps are executed after job restart.
-    kwargs['gke_state_files'] = kwargs.get('gke_state_files', ['_SUCCESS'])
-    self._maybe_del_tsd_exit(kwargs['gke_state_files'])
-    logging.info("Checkpoint and event files will be saved at save_dir=%s", save_dir)
-    self._optimize_loss_fn = self.get_train_op if optimize_loss_fn is None else optimize_loss_fn
+    # c-check if shouwd dewete the tsd wunning this twaining job. (⑅˘꒳˘) in cewtain u-use case when 
+    # t-thewe a-awe othew tf opewations fowwowing twainew.twain_and_evawuate (ow t-twainew.weawn), (˘ω˘)
+    # additionaw state fiwes nyeed t-to be specified t-to ensuwe those steps awe exekawaii~d aftew j-job westawt. >w<
+    kwawgs['gke_state_fiwes'] = k-kwawgs.get('gke_state_fiwes', ( ͡o ω ͡o ) ['_success'])
+    s-sewf._maybe_dew_tsd_exit(kwawgs['gke_state_fiwes'])
+    wogging.info("checkpoint and e-event fiwes wiww b-be saved at s-save_diw=%s", ^^;; save_diw)
+    s-sewf._optimize_woss_fn = s-sewf.get_twain_op i-if optimize_woss_fn is nyone e-ewse optimize_woss_fn
 
-    # overwrite the current save_dir
-    if self._params.get('overwrite_save_dir') and tf.io.gfile.exists(self._save_dir):
-      logging.info("Trainer overwriting existing save directory: %s (params.overwrite_save_dir)"
-                   % self._save_dir)
-      # if distributed or hogwild:
-      if self._params.get('distributed', False):
-        # sleep for 30 seconds to allow each worker to get to this point.
-        time.sleep(30)
-        if run_config.is_chief:
-          logging.info("Chief deleting the save_dir now")
-          delete_file_or_dir(self._save_dir)
-        # sleep for 30 seconds to allow each worker to get to this point.
-        time.sleep(30)
-      else:
-        delete_file_or_dir(self._save_dir)
+    # o-ovewwwite the cuwwent save_diw
+    i-if sewf._pawams.get('ovewwwite_save_diw') and tf.io.gfiwe.exists(sewf._save_diw):
+      w-wogging.info("twainew ovewwwiting existing s-save diwectowy: %s (pawams.ovewwwite_save_diw)"
+                   % sewf._save_diw)
+      # i-if distwibuted o-ow hogwiwd:
+      if sewf._pawams.get('distwibuted', fawse):
+        # s-sweep fow 30 seconds to awwow each wowkew t-to get to this p-point. (✿oωo)
+        time.sweep(30)
+        if wun_config.is_chief:
+          w-wogging.info("chief deweting t-the save_diw nyow")
+          d-dewete_fiwe_ow_diw(sewf._save_diw)
+        # sweep fow 30 seconds to awwow e-each wowkew to g-get to this point. (✿oωo)
+        time.sweep(30)
+      e-ewse:
+        dewete_fiwe_ow_diw(sewf._save_diw)
 
-    # Exposing stats to a /vars.json endpoint that will be collected
-    # by the absorber
-    if self._params.get('stats_port'):
-      try:
-        stats_server_utils.start_stats_server(self._params.get('stats_port'), self._save_dir)
-      except Exception as err:
-        logging.error('Failed to start the stats server. Error: %s', str(err))
+    # e-exposing stats to a /vaws.json endpoint t-that wiww be cowwected
+    # b-by t-the absowbew
+    i-if sewf._pawams.get('stats_powt'):
+      twy:
+        stats_sewvew_utiws.stawt_stats_sewvew(sewf._pawams.get('stats_powt'), (⑅˘꒳˘) sewf._save_diw)
+      except exception as eww:
+        wogging.ewwow('faiwed t-to stawt t-the stats sewvew. -.- e-ewwow: %s', XD s-stw(eww))
 
-    checkpoint = os.path.join(self._save_dir, 'checkpoint')
-    if tf.io.gfile.exists(checkpoint):
-      logging.info("The provided save_dir directory %s already exists."
-                   " Training will be resumed."
+    c-checkpoint = os.path.join(sewf._save_diw, òωó 'checkpoint')
+    i-if tf.io.gfiwe.exists(checkpoint):
+      wogging.info("the p-pwovided s-save_diw diwectowy %s awweady exists."
+                   " t-twaining w-wiww be wesumed."
                    % checkpoint)
 
-    self._maybe_restore_checkpoint = lambda: init_from_checkpoint(init_from_dir, init_map)
+    sewf._maybe_westowe_checkpoint = w-wambda: init_fwom_checkpoint(init_fwom_diw, :3 init_map)
 
-    if init_from_dir is not None and init_map is None:
-      raise ValueError("Need to provide init_map when init_from_dir is provided.")
+    i-if init_fwom_diw is not n-nyone and init_map i-is nyone:
+      waise vawueewwow("need t-to pwovide i-init_map when i-init_fwom_diw is pwovided.")
 
-    if not tf.io.gfile.exists(self._save_dir):
-      # so tensorboard can point to a directory that exists
-      tf.io.gfile.mkdir(self._save_dir)
+    i-if nyot tf.io.gfiwe.exists(sewf._save_diw):
+      # s-so tensowboawd can point t-to a diwectowy that exists
+      t-tf.io.gfiwe.mkdiw(sewf._save_diw)
 
-    self._estimator = tf.estimator.Estimator(
-      model_fn=self._model_fn,
-      params=self._params,  # HParams
-      config=run_config,  # RunConfig
-      warm_start_from=warm_start_from,
-      model_dir=self._save_dir,  # By this point it is same as run_config.model_dir
+    s-sewf._estimatow = t-tf.estimatow.estimatow(
+      modew_fn=sewf._modew_fn, (///ˬ///✿)
+      p-pawams=sewf._pawams, òωó  # hpawams
+      config=wun_config, UwU  # w-wunconfig
+      wawm_stawt_fwom=wawm_stawt_fwom, >w<
+      modew_diw=sewf._save_diw, ʘwʘ  # by this point it is same as wun_config.modew_diw
     )
 
-    # Log parameters that are used to construct trainer. This allows people to see default values.
-    logging.info("Trainer constructed using the following parameters: ")
-    pp_params = pp.pformat(self._params.values())
-    logging.info(pp_params)
+    # wog pawametews t-that awe used to constwuct twainew. /(^•ω•^) this awwows peopwe to see defauwt vawues. (⑅˘꒳˘)
+    wogging.info("twainew constwucted using t-the fowwowing pawametews: ")
+    pp_pawams = pp.pfowmat(sewf._pawams.vawues())
+    wogging.info(pp_pawams)
 
-    # Start TensorBoard
-    if self._params.get('disable_tensorboard', False):
-      logging.info("Skipping launching TensorBoard [--disable_tensorboard is set]")
-    elif "tensorboard_port" in self._params.values() and self._params.tensorboard_port is not None:
-      self.start_tensorboard(self._params.tensorboard_port)
+    # s-stawt tensowboawd
+    if sewf._pawams.get('disabwe_tensowboawd', f-fawse):
+      wogging.info("skipping waunching t-tensowboawd [--disabwe_tensowboawd is set]")
+    e-ewif "tensowboawd_powt" in sewf._pawams.vawues() a-and sewf._pawams.tensowboawd_powt i-is nyot nyone:
+      sewf.stawt_tensowboawd(sewf._pawams.tensowboawd_powt)
 
-    # Export gauge that will track whether a model was exported
-    self.stats_exporter = StatsExporter("twml.trainer")
-    self.export_gauge = AtomicGauge('export_model')
-    self.stats_exporter.register_metrics(self.export_gauge)
+    # expowt g-gauge that wiww twack whethew a modew was expowted
+    sewf.stats_expowtew = s-statsexpowtew("twmw.twainew")
+    sewf.expowt_gauge = atomicgauge('expowt_modew')
+    s-sewf.stats_expowtew.wegistew_metwics(sewf.expowt_gauge)
 
-  def _hogwild_setup(self):
+  def _hogwiwd_setup(sewf):
     """
-    Setup the parameters required for hogwild.
+    s-setup the pawametews wequiwed f-fow hogwiwd. (ˆ ﻌ ˆ)♡
     """
-    self._num_workers = self._params.get('num_workers') or 1
-    logging.info("NUM_WORKERS: %d", self._num_workers)
-    if self._num_workers <= 1:
-      self._ports = None
-      return
+    s-sewf._num_wowkews = sewf._pawams.get('num_wowkews') ow 1
+    wogging.info("num_wowkews: %d", OwO sewf._num_wowkews)
+    if s-sewf._num_wowkews <= 1:
+      sewf._powts = nyone
+      wetuwn
 
-    # a hogwild job is considered distributed
-    if 'distributed' in self._params:
-      self._params.set_hparam('distributed', True)
-    else:
-      self._params.add_hparam('distributed', True)
+    # a-a hogwiwd job is considewed distwibuted
+    if 'distwibuted' in sewf._pawams:
+      s-sewf._pawams.set_hpawam('distwibuted', ^^;; t-twue)
+    ewse:
+      sewf._pawams.add_hpawam('distwibuted', (///ˬ///✿) t-twue)
 
-    ports = os.environ.get('TWML_HOGWILD_PORTS')
-    if ports:
-      self._ports = [int(port) for port in ports.strip().split(",")]
-      if (self._num_workers + 1!= len(self._ports)):
-        raise ValueError("Number of (workers + PS) and ports need to match")
-    else:
-      if self._num_workers > 1:
-        raise ValueError("TWML_HOGWILD_PORTS needs to be set to use hogwild training")
+    powts = o-os.enviwon.get('twmw_hogwiwd_powts')
+    if powts:
+      s-sewf._powts = [int(powt) fow powt in powts.stwip().spwit(",")]
+      if (sewf._num_wowkews + 1!= wen(sewf._powts)):
+        w-waise vawueewwow("numbew o-of (wowkews + ps) and powts nyeed t-to match")
+    e-ewse:
+      if sewf._num_wowkews > 1:
+        w-waise vawueewwow("twmw_hogwiwd_powts nyeeds to be set to use hogwiwd t-twaining")
 
-    # Split the number of data threads across multiple workers
-    num_threads = self._params.get('num_threads')
-    num_threads_per_worker = int(math.ceil(float(num_threads) / self._num_workers))
-    self._params.set_hparam('num_threads', num_threads_per_worker)
+    # spwit the nyumbew of data t-thweads acwoss m-muwtipwe wowkews
+    nyum_thweads = sewf._pawams.get('num_thweads')
+    n-nyum_thweads_pew_wowkew = int(math.ceiw(fwoat(num_thweads) / sewf._num_wowkews))
+    sewf._pawams.set_hpawam('num_thweads', ^•ﻌ•^ nyum_thweads_pew_wowkew)
 
-    hogwild_task_type = os.environ.get('TWML_HOGWILD_TASK_TYPE')
-    hogwild_task_id = int(os.environ.get('TWML_HOGWILD_TASK_ID'))
-    os.environ['TF_CONFIG'] = self._get_cluster_config(hogwild_task_type, hogwild_task_id)
+    hogwiwd_task_type = os.enviwon.get('twmw_hogwiwd_task_type')
+    hogwiwd_task_id = i-int(os.enviwon.get('twmw_hogwiwd_task_id'))
+    o-os.enviwon['tf_config'] = sewf._get_cwustew_config(hogwiwd_task_type, rawr hogwiwd_task_id)
 
-  def _tf_random_seed(self):
-    """ Returns user set seed and deal with Hogwild multiple seeds """
-    tf_random_seed = self._params.get('tf_random_seed', None)
-    if tf_random_seed is None:
-      return None
-    elif self.using_hogwild and os.environ.get('TWML_HOGWILD_TASK_TYPE') == 'worker':
-      # chief (tf_random_seed), worker_0 (tf_random_seed + 1), worker_1 (tf_random_seed + 2)...
-      return tf_random_seed + 1 + int(os.environ.get('TWML_HOGWILD_TASK_ID'))
-    else:
-      return tf_random_seed
+  def _tf_wandom_seed(sewf):
+    """ w-wetuwns usew set s-seed and deaw with hogwiwd muwtipwe s-seeds """
+    tf_wandom_seed = sewf._pawams.get('tf_wandom_seed', ^^;; none)
+    if tf_wandom_seed is nyone:
+      w-wetuwn nyone
+    ewif sewf.using_hogwiwd and os.enviwon.get('twmw_hogwiwd_task_type') == 'wowkew':
+      # chief (tf_wandom_seed), òωó w-wowkew_0 (tf_wandom_seed + 1), σωσ w-wowkew_1 (tf_wandom_seed + 2)...
+      w-wetuwn tf_wandom_seed + 1 + int(os.enviwon.get('twmw_hogwiwd_task_id'))
+    ewse:
+      w-wetuwn tf_wandom_seed
 
-  def check_params(self):
-    """ Verify that params has the correct key,values """
-    param_values = self._params.values()
+  def c-check_pawams(sewf):
+    """ vewify t-that pawams has the cowwect k-key,vawues """
+    pawam_vawues = s-sewf._pawams.vawues()
 
-    if 'train_batch_size' in param_values:
-      if not isinstance(self._params.train_batch_size, int):
-        raise ValueError("Expecting params.train_batch_size to be an integer.")
-      if self._params.train_batch_size <= 0:
-        raise ValueError("train_batch_size needs to be positive")
-    else:
-      raise ValueError("train_batch_size needs to be present in params")
+    if 'twain_batch_size' in pawam_vawues:
+      i-if nyot isinstance(sewf._pawams.twain_batch_size, 😳😳😳 i-int):
+        waise vawueewwow("expecting p-pawams.twain_batch_size to be an integew.")
+      i-if sewf._pawams.twain_batch_size <= 0:
+        w-waise vawueewwow("twain_batch_size needs t-to be positive")
+    e-ewse:
+      waise vawueewwow("twain_batch_size n-nyeeds to be pwesent in pawams")
 
-    if 'eval_batch_size' in param_values:
-      if not isinstance(self._params.eval_batch_size, int):
-        raise ValueError("Expecting params.eval_batch_size to be an integer.")
-      if self._params.eval_batch_size <= 0:
-        raise ValueError("eval_batch_size needs to be positive.")
-    else:
-      self._params.add_hparam('eval_batch_size', self._params.train_batch_size)
+    i-if 'evaw_batch_size' in pawam_vawues:
+      i-if nyot i-isinstance(sewf._pawams.evaw_batch_size, (///ˬ///✿) int):
+        waise vawueewwow("expecting p-pawams.evaw_batch_size to be an integew.")
+      if sewf._pawams.evaw_batch_size <= 0:
+        waise vawueewwow("evaw_batch_size nyeeds to be positive.")
+    ewse:
+      sewf._pawams.add_hpawam('evaw_batch_size', ^•ﻌ•^ s-sewf._pawams.twain_batch_size)
 
-    if (self._params.get('distributed_training_cleanup') and
-      not self._params.get('distributed')):
-      # we only need to support training discontinuation for distributed training
-      # bc we are still using TSDs on GKE for distributed training
-      raise ValueError(
-        "Expecting params.distributed to be set if "
-        "params.distributed_training_cleanup is set."
+    if (sewf._pawams.get('distwibuted_twaining_cweanup') and
+      nyot s-sewf._pawams.get('distwibuted')):
+      # we onwy n-nyeed to suppowt twaining discontinuation fow d-distwibuted twaining
+      # bc we awe stiww using t-tsds on gke fow distwibuted twaining
+      waise v-vawueewwow(
+        "expecting pawams.distwibuted to be set i-if "
+        "pawams.distwibuted_twaining_cweanup is set."
       )
 
-  def _get_cluster_config(self, name, index):
-    """Create a tensorflow cluster config from ports, name and index"""
-    host = '"localhost:%d"'
-    ps = host % self._ports[0]
-    chief = host % self._ports[1]
-    workers = ", ".join([host % port for port in self._ports[2:]])
-    config = _CLUSTER_TEMPLATE.substitute(
-      PS=ps,
-      CHIEF=chief,
-      WORKER=workers,
-      TYPE=name,
-      INDEX=index,
+  def _get_cwustew_config(sewf, 😳😳😳 n-nyame, (U ᵕ U❁) index):
+    """cweate a-a tensowfwow cwustew config fwom powts, (U ﹏ U) nyame and i-index"""
+    h-host = '"wocawhost:%d"'
+    ps = h-host % sewf._powts[0]
+    c-chief = host % sewf._powts[1]
+    wowkews = ", σωσ ".join([host % p-powt fow powt in sewf._powts[2:]])
+    config = _cwustew_tempwate.substitute(
+      ps=ps, (˘ω˘)
+      c-chief=chief, ^^
+      wowkew=wowkews, ^^
+      type=name, (✿oωo)
+      index=index, /(^•ω•^)
     )
-    return config
+    w-wetuwn c-config
 
-  @property
-  def current_estimator_spec(self):
+  @pwopewty
+  d-def cuwwent_estimatow_spec(sewf):
     """
-    returns the current estimator (warning: often reset)
+    wetuwns the cuwwent estimatow (wawning: often w-weset)
     """
-    return self._current_estimator_spec
+    wetuwn sewf._cuwwent_estimatow_spec
 
-  @property
-  def estimator(self):
-    """ returns estimator encapsulated by Trainer """
-    return self._estimator
+  @pwopewty
+  d-def estimatow(sewf):
+    """ wetuwns estimatow e-encapsuwated b-by twainew """
+    wetuwn sewf._estimatow
 
-  @property
-  def num_workers(self):
-    """ returns number of workers """
-    return self._estimator.config.num_worker_replicas
+  @pwopewty
+  def num_wowkews(sewf):
+    """ wetuwns nyumbew of w-wowkews """
+    w-wetuwn sewf._estimatow.config.num_wowkew_wepwicas
 
-  @property
-  def worker_index(self):
+  @pwopewty
+  def wowkew_index(sewf):
     """
-    returns index of worker in the cluster
+    wetuwns index o-of wowkew in the cwustew
     chief has index 0
-    non-chief workers have indices 1 through (num_workers - 1)
+    n-nyon-chief w-wowkews have indices 1 t-thwough (num_wowkews - 1)
     """
-    return self._estimator.config.global_id_in_cluster
+    wetuwn s-sewf._estimatow.config.gwobaw_id_in_cwustew
 
-  @property
-  def using_hogwild(self):
-    """ returns a bool indicating whether hogwild is being used """
-    return self._using_hogwild
+  @pwopewty
+  d-def using_hogwiwd(sewf):
+    """ w-wetuwns a boow indicating whethew hogwiwd is being u-used """
+    w-wetuwn sewf._using_hogwiwd
 
-  def set_estimator(self, estimator):
-    """ sets the estimator used internally by Trainer """
-    if not isinstance(estimator, tf.estimator.Estimator):
-      raise ValueError("Expecting tf.estimator.Estimator")
-    self._estimator = estimator
-    self._params = self.estimator.params
+  d-def set_estimatow(sewf, -.- e-estimatow):
+    """ s-sets t-the estimatow used intewnawwy by t-twainew """
+    i-if not isinstance(estimatow, ʘwʘ tf.estimatow.estimatow):
+      w-waise vawueewwow("expecting tf.estimatow.estimatow")
+    s-sewf._estimatow = estimatow
+    sewf._pawams = s-sewf.estimatow.pawams
 
-  @property
-  def params(self):
+  @pwopewty
+  def pawams(sewf):
     """
-    returns the hyper-parameters passed to the constructor.
+    wetuwns t-the hypew-pawametews p-passed to the constwuctow. XD
     """
-    return self._params
+    wetuwn sewf._pawams
 
   @staticmethod
-  def add_parser_arguments():
+  d-def add_pawsew_awguments():
     """
-    Add common commandline args to parse for the Trainer class.
-    Typically, the user calls this function and then parses cmd-line arguments
-    into an argparse.Namespace object which is then passed to the Trainer constructor
-    via the params argument.
+    a-add common commandwine a-awgs to pawse f-fow the twainew cwass. (U ᵕ U❁)
+    typicawwy, /(^•ω•^) the usew cawws this function a-and then pawses c-cmd-wine awguments
+    into an awgpawse.namespace o-object which i-is then passed to the twainew constwuctow
+    v-via the pawams awgument. XD
 
-    See the `code <_modules/twml/argument_parser.html#get_trainer_parser>`_
-    for a list and description of all cmd-line arguments.
+    see the `code <_moduwes/twmw/awgument_pawsew.htmw#get_twainew_pawsew>`_
+    fow a wist and descwiption of aww cmd-wine a-awguments. ^•ﻌ•^
 
-    Returns:
-      argparse.ArgumentParser instance with some useful args already added.
+    wetuwns:
+      awgpawse.awgumentpawsew i-instance w-with some u-usefuw awgs awweady added. ( ͡o ω ͡o )
     """
-    return twml.argument_parser.get_trainer_parser()
+    w-wetuwn twmw.awgument_pawsew.get_twainew_pawsew()
 
   @staticmethod
-  def get_train_op(params, loss):
+  d-def get_twain_op(pawams, w-woss):
     """
-    Return a training Op, that is, a `twml.optimizers.optimize_loss
-    <https://www.tensorflow.org/api_docs/python/tf/contrib/layers/optimize_loss>`_
-    instance given params and loss.
-    This method can be overwritten by passing the optimize_loss_fn to the Trainer
-    constructor.
+    w-wetuwn a t-twaining op, (U ﹏ U) that is, /(^•ω•^) a `twmw.optimizews.optimize_woss
+    <https://www.tensowfwow.owg/api_docs/python/tf/contwib/wayews/optimize_woss>`_
+    instance g-given pawams a-and woss. 🥺
+    t-this method can be ovewwwitten b-by passing the o-optimize_woss_fn t-to the twainew
+    constwuctow. rawr
 
-    Args:
-      params:
-        tensorflow.contrib.training.HParams instance. Recognizes the optimizer, optimizer_summaries,
-        gradient_noise_scale, clip_gradients and learning_rate_decay (including
-        other learning rate decay arguments).
-      loss:
-        scalar Op returned by the build_graph that specifies the training loss to
-        be minimized.
+    a-awgs:
+      p-pawams:
+        t-tensowfwow.contwib.twaining.hpawams i-instance. :3 w-wecognizes the optimizew, σωσ optimizew_summawies, òωó
+        g-gwadient_noise_scawe, ^•ﻌ•^ cwip_gwadients a-and w-weawning_wate_decay (incwuding
+        othew weawning wate decay awguments). (U ᵕ U❁)
+      w-woss:
+        s-scawaw op wetuwned by the buiwd_gwaph t-that specifies t-the twaining woss to
+        be minimized. òωó
     """
-    optimizer = params.get('optimizer')
+    o-optimizew = p-pawams.get('optimizew')
 
-    if not optimizer:
-      optimizer = 'SGD'
+    i-if nyot optimizew:
+      optimizew = 'sgd'
 
-    if optimizer == 'LazyAdam':
-      optimizer = LazyAdamOptimizer
+    i-if optimizew == 'wazyadam':
+      o-optimizew = w-wazyadamoptimizew
 
-    if optimizer == 'DGC':
-      optimizer = DeepGradientCompressionOptimizer(
-          learning_rate=params.learning_rate,
-          use_locking=False,
-          name="Sparse",
-          density=params.get('dgc_density'),
-          density_decay=params.get('dgc_density_decay'),
-          density_decay_steps=params.get('dgc_density_decay_steps'),
-          density_decay_rate=params.get('dgc_density_decay_rate'),
-          min_density=params.get('dgc_min_density'),
-          accumulation=params.get('dgc_accumulation')
+    if optimizew == 'dgc':
+      optimizew = d-deepgwadientcompwessionoptimizew(
+          weawning_wate=pawams.weawning_wate, ^^
+          use_wocking=fawse, 😳😳😳
+          nyame="spawse", rawr x3
+          density=pawams.get('dgc_density'), ^^;;
+          d-density_decay=pawams.get('dgc_density_decay'), :3
+          d-density_decay_steps=pawams.get('dgc_density_decay_steps'), (✿oωo)
+          density_decay_wate=pawams.get('dgc_density_decay_wate'), XD
+          min_density=pawams.get('dgc_min_density'), (///ˬ///✿)
+          accumuwation=pawams.get('dgc_accumuwation')
       )
 
-    summaries = ['loss']
-    if params.get('show_optimizer_summaries'):
-      summaries = OPTIMIZER_SUMMARIES
+    s-summawies = ['woss']
+    i-if pawams.get('show_optimizew_summawies'):
+      summawies = optimizew_summawies
 
-    train_op = optimize_loss(
-      loss=loss,
-      global_step=tf.train.get_global_step(),
-      optimizer=optimizer,
-      learning_rate=params.learning_rate,
-      summaries=summaries,
-      colocate_gradients_with_ops=True,
-      gradient_noise_scale=params.get('gradient_noise_scale'),
-      clip_gradients=params.get('clip_gradients'),
-      learning_rate_decay_fn=twml.learning_rate_decay.get_learning_rate_decay_fn(params)
+    t-twain_op = optimize_woss(
+      woss=woss, o.O
+      g-gwobaw_step=tf.twain.get_gwobaw_step(), σωσ
+      optimizew=optimizew, òωó
+      w-weawning_wate=pawams.weawning_wate,
+      s-summawies=summawies, (///ˬ///✿)
+      cowocate_gwadients_with_ops=twue, :3
+      gwadient_noise_scawe=pawams.get('gwadient_noise_scawe'), mya
+      cwip_gwadients=pawams.get('cwip_gwadients'), ^^
+      weawning_wate_decay_fn=twmw.weawning_wate_decay.get_weawning_wate_decay_fn(pawams)
     )
-    return train_op
+    w-wetuwn twain_op
 
-  def export_model_effects(self, export_path, feature_spec=None, log_features=True):
+  def expowt_modew_effects(sewf, (˘ω˘) e-expowt_path, -.- featuwe_spec=none, w-wog_featuwes=twue):
 
-    # DO NOT CHANGE THE ORDER.
-    # This needs to be done before registering the model.
-    if feature_spec:
-      if log_features:
-        features = feature_spec['features']
-        feature_names = ['.'.join(features[fid]['featureName'].split('.')[1:]) for fid in features.keys()]
-        features_to_log = ','.join(feature_names)
-        try:
-          model_hash = self.experiment_tracker.compute_model_hash(export_path)
-          metrics.log_usage('dbv2', 'export_model_effects', 'v1', custom_attrs=[model_hash, "feature config present", features_to_log])
-        except:  # noqa: T803
-          logging.info("Failed to log Feature Config features")
+    # do nyot change the owdew. XD
+    # t-this needs to be done befowe w-wegistewing the modew. rawr
+    if featuwe_spec:
+      if wog_featuwes:
+        f-featuwes = featuwe_spec['featuwes']
+        f-featuwe_names = ['.'.join(featuwes[fid]['featuwename'].spwit('.')[1:]) fow fid in featuwes.keys()]
+        featuwes_to_wog = ','.join(featuwe_names)
+        twy:
+          modew_hash = sewf.expewiment_twackew.compute_modew_hash(expowt_path)
+          m-metwics.wog_usage('dbv2', 'expowt_modew_effects', >_< 'v1', c-custom_attws=[modew_hash, :3 "featuwe c-config p-pwesent", :3 featuwes_to_wog])
+        except:  # nyoqa: t803
+          w-wogging.info("faiwed to wog featuwe config featuwes")
 
-      twml.contrib.export.export_fn.export_feature_spec(export_path, feature_spec)
-      export_start_time = time.time()
-      self.experiment_tracker.export_feature_spec(feature_spec)
-      logging.info("Exported feature spec to ML Metastore in %s seconds.", time.time() - export_start_time)
+      t-twmw.contwib.expowt.expowt_fn.expowt_featuwe_spec(expowt_path, XD f-featuwe_spec)
+      e-expowt_stawt_time = t-time.time()
+      sewf.expewiment_twackew.expowt_featuwe_spec(featuwe_spec)
+      wogging.info("expowted featuwe spec to mw metastowe in %s seconds.", ( ͡o ω ͡o ) time.time() - e-expowt_stawt_time)
 
-    self.experiment_tracker.register_model(str(export_path))
-    self.export_gauge.increment()
+    s-sewf.expewiment_twackew.wegistew_modew(stw(expowt_path))
+    sewf.expowt_gauge.incwement()
 
-  @property
-  def best_or_latest_checkpoint(self):
-    if self._is_early_stopping:
-      best_checkpoint_path = os.path.join(self._save_dir, "best_checkpoint")
-      checkpoint_path = tf.train.latest_checkpoint(best_checkpoint_path)
-      # Return best checkpoint if necessary
+  @pwopewty
+  def best_ow_watest_checkpoint(sewf):
+    if s-sewf._is_eawwy_stopping:
+      best_checkpoint_path = os.path.join(sewf._save_diw, rawr x3 "best_checkpoint")
+      c-checkpoint_path = t-tf.twain.watest_checkpoint(best_checkpoint_path)
+      # w-wetuwn best checkpoint if nyecessawy
       if checkpoint_path:
-        return checkpoint_path
-      else:
-        raise ValueError("Best checkpoint not found at %s." % best_checkpoint_path)
-    else:  # Fallback to latest checkpoint from save directory
-      return self.latest_checkpoint
+        wetuwn checkpoint_path
+      e-ewse:
+        waise vawueewwow("best c-checkpoint nyot found at %s." % best_checkpoint_path)
+    ewse:  # f-fawwback to watest checkpoint f-fwom save diwectowy
+      wetuwn sewf.watest_checkpoint
 
-  @property
-  def latest_checkpoint(self):
-    return self.estimator.latest_checkpoint()
+  @pwopewty
+  d-def watest_checkpoint(sewf):
+    w-wetuwn s-sewf.estimatow.watest_checkpoint()
 
-  def export_model(self, serving_input_receiver_fn,
-                   export_output_fn=None,
-                   export_dir=None, checkpoint_path=None,
-                   feature_spec=None,
-                   log_features=True):
+  d-def expowt_modew(sewf, (⑅˘꒳˘) s-sewving_input_weceivew_fn, UwU
+                   expowt_output_fn=none, (˘ω˘)
+                   e-expowt_diw=none, (˘ω˘) c-checkpoint_path=none, rawr
+                   featuwe_spec=none, nyaa~~
+                   wog_featuwes=twue):
     """
-    Export the model for prediction. Typically, the exported model
-    will later be run in production servers. This method is called
-    by the user to export the PREDICTgraph to disk.
+    e-expowt the modew fow pwediction. 😳😳😳 typicawwy, ^^;; t-the expowted modew
+    wiww watew b-be wun in pwoduction s-sewvews. >w< this method is c-cawwed
+    by the u-usew to expowt the pwedictgwaph to disk. ʘwʘ
 
-    Internally, this method calls `tf.estimator.Estimator.export_savedmodel
-    <https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator#export_savedmodel>`_.
+    intewnawwy, XD this m-method cawws `tf.estimatow.estimatow.expowt_savedmodew
+    <https://www.tensowfwow.owg/api_docs/python/tf/estimatow/estimatow#expowt_savedmodew>`_. (ˆ ﻌ ˆ)♡
 
-    Note that a valid self._export_output_fn is required.
-    If export_ouput_fn is provided, it is used to set the self._export_output_fn.
+    n-nyote t-that a vawid sewf._expowt_output_fn i-is wequiwed. >_<
+    if expowt_ouput_fn is pwovided, >_< it is used t-to set the sewf._expowt_output_fn. ʘwʘ
 
-    Args:
-      serving_input_receiver_fn:
-        function preparing the model for inference requests.
-        This funtion returns the ``features`` dict passed to ``build_graph``.
-      export_dir:
-        directory to export a SavedModel for prediction servers.
-        Defaults to ``[save_dir]/exported_models``.
-      checkpoint_path:
-        the checkpoint path to export. If None (the default), the most recent checkpoint
-        found within the model directory is chosen.
-      export_output_fn:
-        Function to export the graph_output (output of build_graph) for
-        prediction. Takes a graph_output dict as sole argument and returns
-        the export_output_fns dict.
-        Defaults to `twml.export_output_fns.default_output_fn`.
+    awgs:
+      sewving_input_weceivew_fn:
+        f-function pwepawing the modew fow infewence w-wequests. rawr
+        this funtion wetuwns the ``featuwes`` dict passed t-to ``buiwd_gwaph``. nyaa~~
+      expowt_diw:
+        d-diwectowy to e-expowt a savedmodew f-fow pwediction sewvews. >w<
+        d-defauwts to ``[save_diw]/expowted_modews``. (ˆ ﻌ ˆ)♡
+      c-checkpoint_path:
+        the checkpoint path t-to expowt. :3 if n-nyone (the defauwt), OwO t-the most w-wecent checkpoint
+        found w-within the modew d-diwectowy is chosen. mya
+      e-expowt_output_fn:
+        function to e-expowt the gwaph_output (output of buiwd_gwaph) fow
+        pwediction. /(^•ω•^) takes a gwaph_output dict as sowe awgument a-and wetuwns
+        t-the expowt_output_fns dict. nyaa~~
+        defauwts t-to `twmw.expowt_output_fns.defauwt_output_fn`. (˘ω˘)
 
-    Return:
-      returns a string path to exported directory.
+    wetuwn:
+      wetuwns a-a stwing path to e-expowted diwectowy. (ꈍᴗꈍ)
 
-    # set the export output function
+    # s-set t-the expowt output function
     """
-    if not self.is_chief():
-      logging.info("Trainer.export_model ignored due to the process not being chief.")
-      return
+    i-if nyot sewf.is_chief():
+      wogging.info("twainew.expowt_modew ignowed d-due to the pwocess n-nyot being chief.")
+      wetuwn
 
-    self._export_output_fn = export_output_fn or twml.export_output_fns.default_output_fn
+    sewf._expowt_output_fn = expowt_output_fn o-ow twmw.expowt_output_fns.defauwt_output_fn
 
-    if not callable(self._export_output_fn):
-      raise RuntimeError(
-        "Expecting export_output_fn function. Got %s."
-        % type(self._export_output_fn).__name__)
+    if nyot cawwabwe(sewf._expowt_output_fn):
+      w-waise wuntimeewwow(
+        "expecting expowt_output_fn function. >w< g-got %s."
+        % type(sewf._expowt_output_fn).__name__)
 
-    if export_dir:
-      export_dir = sanitize_hdfs_path(export_dir)
+    i-if expowt_diw:
+      expowt_diw = sanitize_hdfs_path(expowt_diw)
 
-    if checkpoint_path:
-      checkpoint_path = sanitize_hdfs_path(checkpoint_path)
-    else:
-      checkpoint_path = self.best_or_latest_checkpoint
+    i-if checkpoint_path:
+      checkpoint_path = s-sanitize_hdfs_path(checkpoint_path)
+    ewse:
+      checkpoint_path = s-sewf.best_ow_watest_checkpoint
 
-    # actually export the model using the Estimator API
-    export_path = self._estimator.export_savedmodel(
-      export_dir_base=export_dir or os.path.join(self._save_dir, 'exported_models'),
-      serving_input_receiver_fn=serving_input_receiver_fn,
-      checkpoint_path=checkpoint_path)
+    # a-actuawwy expowt the modew using the estimatow a-api
+    expowt_path = sewf._estimatow.expowt_savedmodew(
+      expowt_diw_base=expowt_diw o-ow os.path.join(sewf._save_diw, 'expowted_modews'), nyaa~~
+      s-sewving_input_weceivew_fn=sewving_input_weceivew_fn, (✿oωo)
+      c-checkpoint_path=checkpoint_path)
 
-    # export_path is bytes, need to convert to string for python3 to work.
-    logging.info("The exported model path is: " + str(export_path))
+    # expowt_path is bytes, (⑅˘꒳˘) nyeed to convewt to stwing fow python3 to wowk. (ˆ ﻌ ˆ)♡
+    w-wogging.info("the expowted modew path is: " + s-stw(expowt_path))
 
-    self.export_model_effects(export_path, feature_spec, log_features)
+    s-sewf.expowt_modew_effects(expowt_path, òωó featuwe_spec, -.- wog_featuwes)
 
-    return export_path
+    wetuwn expowt_path
 
-  def _model_fn(self, features, labels, mode, params, config=None):
+  d-def _modew_fn(sewf, 😳😳😳 f-featuwes, rawr x3 wabews, mode, 😳 pawams, config=none):
     """
-    returns tf.estimator.EstimatorSpec that can be used with tf.estimator.Estimators.
-    You would probably never need to modify this method.
-    Instead, you should override build_graph, which this method calls.
+    wetuwns tf.estimatow.estimatowspec t-that can be used with tf.estimatow.estimatows. 🥺
+    y-you wouwd pwobabwy nyevew nyeed to modify t-this method. (⑅˘꒳˘)
+    i-instead, (✿oωo) you shouwd ovewwide b-buiwd_gwaph, 😳 which t-this method cawws. mya
 
-    Args:
-      features:
-        Dict of input tensors.
-      labels:
-        Tensor of target labels.
-      mode:
-        an instance of tf.estimator.ModeKeys.
-        Typically used to toggle TRAINing or EVALuation.
-      params:
-        HParams object containing hyper-parameters.
+    awgs:
+      f-featuwes:
+        dict o-of input tensows. (U ﹏ U)
+      w-wabews:
+        t-tensow of t-tawget wabews. 😳
+      m-mode:
+        an instance o-of tf.estimatow.modekeys. 🥺
+        t-typicawwy used to toggwe twaining ow evawuation. -.-
+      p-pawams:
+        hpawams o-object containing hypew-pawametews. (ˆ ﻌ ˆ)♡
     """
-    # pylint: disable=too-many-branches
-    if isinstance(features, dict):
-      weights = features.get('weights', None)
-    else:
-      weights = None
+    # pywint: disabwe=too-many-bwanches
+    if isinstance(featuwes, >_< dict):
+      weights = featuwes.get('weights', rawr nyone)
+    ewse:
+      w-weights = nyone
 
-    with tf.variable_scope(self._name + '/model'):
-      graph_output = self._build_graph_fn(features, labels, mode, params, config)
-      loss = graph_output['loss'] if 'loss' in graph_output else None
+    with t-tf.vawiabwe_scope(sewf._name + '/modew'):
+      gwaph_output = s-sewf._buiwd_gwaph_fn(featuwes, rawr x3 w-wabews, OwO mode, pawams, config)
+      w-woss = gwaph_output['woss'] if 'woss' in gwaph_output e-ewse nyone
 
-    self._maybe_restore_checkpoint()
+    sewf._maybe_westowe_checkpoint()
 
-    with tf.variable_scope(self._name + '/optim'):
-      train_op = None
-      if mode == tf.estimator.ModeKeys.TRAIN:
-        if 'train_op' in graph_output:
-          train_op = graph_output['train_op']
-          graph_output['train_op'] = None  # remove from preds to prevent error
-        elif loss is not None:
-          train_op = self._optimize_loss_fn(params, loss)
+    w-with tf.vawiabwe_scope(sewf._name + '/optim'):
+      twain_op = nyone
+      if mode == tf.estimatow.modekeys.twain:
+        if 'twain_op' in gwaph_output:
+          twain_op = g-gwaph_output['twain_op']
+          gwaph_output['twain_op'] = nyone  # w-wemove fwom pweds to pwevent e-ewwow
+        ewif woss is nyot nyone:
+          twain_op = sewf._optimize_woss_fn(pawams, nyaa~~ woss)
 
-        if params.get('train_log_metrics') and self._metric_fn:
-          metric_ops = self._metric_fn(graph_output=graph_output, labels=labels, weights=weights)
-          for metric_name in metric_ops:
-            tf.summary.scalar(
-              name="training_metric_" + metric_name,
-              tensor=metric_ops[metric_name][1])  # index 0 contains value_op, 1 contains update_op
+        if pawams.get('twain_wog_metwics') and sewf._metwic_fn:
+          metwic_ops = sewf._metwic_fn(gwaph_output=gwaph_output, 😳 w-wabews=wabews, UwU w-weights=weights)
+          f-fow metwic_name in metwic_ops:
+            t-tf.summawy.scawaw(
+              n-nyame="twaining_metwic_" + m-metwic_name, ʘwʘ
+              tensow=metwic_ops[metwic_name][1])  # index 0 c-contains vawue_op, 🥺 1 c-contains update_op
 
-    if mode == tf.estimator.ModeKeys.PREDICT and self._export_output_fn is not None:
-      # note that this is ignored by the predict method.
-      # Estimator only uses export_output_fn for export_model.
-      export_outputs = self._export_output_fn(graph_output)
-    else:
-      export_outputs = None
+    if m-mode == tf.estimatow.modekeys.pwedict a-and sewf._expowt_output_fn i-is nyot nyone:
+      # n-nyote t-that this is ignowed by the pwedict m-method. 🥺
+      # e-estimatow onwy u-uses expowt_output_fn f-fow expowt_modew. òωó
+      e-expowt_outputs = s-sewf._expowt_output_fn(gwaph_output)
+    e-ewse:
+      e-expowt_outputs = n-nyone
 
-    if mode == tf.estimator.ModeKeys.EVAL and self._metric_fn:
-      eval_metric_ops = self._metric_fn(graph_output=graph_output, labels=labels, weights=weights)
-    else:
-      eval_metric_ops = None
+    i-if mode == tf.estimatow.modekeys.evaw and sewf._metwic_fn:
+      evaw_metwic_ops = sewf._metwic_fn(gwaph_output=gwaph_output, 🥺 w-wabews=wabews, ʘwʘ weights=weights)
+    e-ewse:
+      evaw_metwic_ops = nyone
 
-    # None and loss (scalar, not sliceable by TFMA) should be removed from the graph_output
-    preds = {key: graph_output[key] for key in graph_output if (graph_output[key] is not None) and (key is not 'loss')}
+    # n-none and woss (scawaw, XD n-nyot swiceabwe b-by tfma) shouwd be wemoved f-fwom the gwaph_output
+    p-pweds = {key: gwaph_output[key] fow key in gwaph_output if (gwaph_output[key] is nyot n-nyone) and (key is nyot 'woss')}
 
-    init_feed_dict = twml.contrib.initializers.get_init_feed_dict()
-    scaffold = tf.train.Scaffold(init_feed_dict=init_feed_dict)
+    init_feed_dict = twmw.contwib.initiawizews.get_init_feed_dict()
+    s-scaffowd = t-tf.twain.scaffowd(init_feed_dict=init_feed_dict)
 
-    # Clear the init feed collection to avoid serializing the initializers.
-    twml.contrib.initializers.clear_init_feed_collection()
+    # cweaw t-the init feed c-cowwection to a-avoid sewiawizing t-the initiawizews. OwO
+    t-twmw.contwib.initiawizews.cweaw_init_feed_cowwection()
 
-    # save estimator for use by later methods and hooks (warning: often reset)
-    self._current_estimator_spec = tf.estimator.EstimatorSpec(
-      mode=mode,
-      predictions=preds,
-      export_outputs=export_outputs,
-      loss=loss,
-      train_op=train_op,
-      eval_metric_ops=eval_metric_ops,
-      scaffold=scaffold,
+    # s-save estimatow f-fow use by watew methods and hooks (wawning: o-often weset)
+    sewf._cuwwent_estimatow_spec = t-tf.estimatow.estimatowspec(
+      mode=mode, ʘwʘ
+      p-pwedictions=pweds, :3
+      e-expowt_outputs=expowt_outputs, nyaa~~
+      woss=woss, >w<
+      t-twain_op=twain_op, (U ᵕ U❁)
+      evaw_metwic_ops=evaw_metwic_ops, :3
+      scaffowd=scaffowd, (ˆ ﻌ ˆ)♡
     )
 
-    return self._current_estimator_spec
+    w-wetuwn sewf._cuwwent_estimatow_spec
 
-  def get_train_hooks(self):
-    """Return SessionRunHooks used during training.
+  d-def get_twain_hooks(sewf):
+    """wetuwn s-sessionwunhooks u-used duwing twaining.
 
-    By default training uses one hooks `tf.train.StepCounterHook` for monitoring step speed.
+    by d-defauwt twaining u-uses one hooks `tf.twain.stepcountewhook` f-fow monitowing step speed. o.O
 
-    If self._profiler_steps is set then we also use the ProfilerHook `tf.train.ProfilerHook`
-    for monitoring the profile.
+    i-if sewf._pwofiwew_steps is set then we awso use the pwofiwewhook `tf.twain.pwofiwewhook`
+    fow monitowing the pwofiwe. rawr x3
 
     """
-    # Instead of having every_n_steps be a constant number,
-    # change it dynamically based on batch size.
-    # Ideally we should be using every_n_secs, but that seems buggy as of 1.7.
-    # The every_n_steps = 20K / batch_size
-    every_n_steps = ((2048 * 100) // self._params.train_batch_size)
-    step_counter = tf.train.StepCounterHook(
-      every_n_steps=every_n_steps, output_dir=self._save_dir
+    # instead of having evewy_n_steps be a constant nyumbew, (U ᵕ U❁)
+    # c-change it dynamicawwy b-based on batch size. (✿oωo)
+    # ideawwy we shouwd be using evewy_n_secs, /(^•ω•^) but that s-seems buggy as o-of 1.7. o.O
+    # the evewy_n_steps = 20k / batch_size
+    evewy_n_steps = ((2048 * 100) // s-sewf._pawams.twain_batch_size)
+    s-step_countew = tf.twain.stepcountewhook(
+      e-evewy_n_steps=evewy_n_steps, (U ᵕ U❁) o-output_diw=sewf._save_diw
     )
-    train_hooks = [step_counter]
+    twain_hooks = [step_countew]
 
-    if self._profiler_steps is not None:
-      if not self._params.get('distributed') or self._estimator.config.is_chief:
-        profiler = tf.train.ProfilerHook(
-          save_steps=self._profiler_steps,
-          output_dir=self._save_dir
+    if s-sewf._pwofiwew_steps is nyot nyone:
+      i-if nyot s-sewf._pawams.get('distwibuted') ow sewf._estimatow.config.is_chief:
+        pwofiwew = tf.twain.pwofiwewhook(
+          save_steps=sewf._pwofiwew_steps, 🥺
+          o-output_diw=sewf._save_diw
         )
-        train_hooks.append(profiler)
+        t-twain_hooks.append(pwofiwew)
 
-    return train_hooks
+    w-wetuwn twain_hooks
 
-  def is_task_type(self, name):
+  d-def is_task_type(sewf, nyame):
     """
-    Helper function to specify if the current process is of the given worker type.
-    Note: This an only be called *after* self._hogwild_setup() is called in __init__()
+    h-hewpew function t-to specify i-if the cuwwent p-pwocess is of the given wowkew type. òωó
+    note: this a-an onwy be cawwed *aftew* s-sewf._hogwiwd_setup() is cawwed in __init__()
     """
-    if os.environ.get('TF_CONFIG'):
-      if self._estimator.config.task_type == name:
-        return True
-      else:
-        return False
-    return True
+    if os.enviwon.get('tf_config'):
+      if sewf._estimatow.config.task_type == n-nyame:
+        w-wetuwn twue
+      ewse:
+        w-wetuwn fawse
+    wetuwn twue
 
-  def is_evaluator(self):
+  def is_evawuatow(sewf):
     """
-    Helper function to let you know if the worker is evaluator.
-    Note: This an only be called *after* self._hogwild_setup() is called in __init__()
+    hewpew function t-to wet you k-know if the wowkew i-is evawuatow. ʘwʘ
+    nyote: this a-an onwy be cawwed *aftew* s-sewf._hogwiwd_setup() is cawwed in __init__()
     """
-    return self.is_task_type("evaluator")
+    wetuwn sewf.is_task_type("evawuatow")
 
-  def is_chief(self):
+  d-def is_chief(sewf):
     """
-    Helper function to let you know if the worker is chief.
-    Note: This an only be called *after* self._hogwild_setup() is called in __init__()
+    h-hewpew function t-to wet you know i-if the wowkew is c-chief. rawr x3
+    nyote: t-this an onwy be cawwed *aftew* sewf._hogwiwd_setup() is cawwed in __init__()
     """
-    return self.is_task_type("chief") or self.is_task_type("master")
+    wetuwn s-sewf.is_task_type("chief") ow sewf.is_task_type("mastew")
 
-  def is_ps(self):
+  d-def is_ps(sewf):
     """
-    Helper function to let you know if the task is parameter server.
+    h-hewpew function to wet you know if the task is pawametew s-sewvew. >_<
     """
-    if os.environ.get('TF_CONFIG') and self._estimator.config.task_type == 'ps':
-      return True
-    return False
+    i-if os.enviwon.get('tf_config') and sewf._estimatow.config.task_type == 'ps':
+      w-wetuwn twue
+    wetuwn f-fawse
 
-  def _exit_ps_after_training_complete(self):
+  def _exit_ps_aftew_twaining_compwete(sewf):
     """
-    Helper function to shutdown parameter server after training job complete (either succeed or failed).
+    hewpew function to shutdown pawametew sewvew a-aftew twaining job compwete (eithew succeed ow faiwed). (˘ω˘)
     """
-    if not self.is_ps():
-      return
+    if nyot sewf.is_ps():
+      w-wetuwn
 
-    # No need to exit ps if on the same machine
-    if os.environ.get('TWML_HOGWILD_PORTS'):
-      return
+    # n-nyo nyeed to exit p-ps if on the s-same machine
+    if os.enviwon.get('twmw_hogwiwd_powts'):
+      wetuwn
 
-    if self._params.get('disable_auto_ps_shutdown', False):
-      logging.info("Skip shutting down parameter server after training complete [--disable_auto_ps_shutdown is set]")
-      return
+    if sewf._pawams.get('disabwe_auto_ps_shutdown', ^•ﻌ•^ f-fawse):
+      wogging.info("skip s-shutting down pawametew sewvew aftew t-twaining compwete [--disabwe_auto_ps_shutdown i-is set]")
+      w-wetuwn
 
-    # checking job status is different on gke vs aurora
-    if self._is_on_gke():
-      get_job_status = functools.partial(
-        k8s_status.get_training_job_status,
-        cluster=None,
-        namespace=os.environ['TWML_JOB_ROLE'],
-        environment=os.environ['TWML_JOB_ENV'],
-        job_name=os.environ['TWML_JOB_NAME'],
-        using_tsd=True)
-    else:
-      get_job_status = functools.partial(
-        get_distributed_training_job_path,
-        base_job_path=get_distributed_training_job_path()
+    # checking job status is diffewent on g-gke vs auwowa
+    if sewf._is_on_gke():
+      get_job_status = functoows.pawtiaw(
+        k8s_status.get_twaining_job_status, (✿oωo)
+        cwustew=none,
+        nyamespace=os.enviwon['twmw_job_wowe'],
+        e-enviwonment=os.enviwon['twmw_job_env'], ( ͡o ω ͡o )
+        j-job_name=os.enviwon['twmw_job_name'], (˘ω˘)
+        using_tsd=twue)
+    ewse:
+      get_job_status = functoows.pawtiaw(
+        get_distwibuted_twaining_job_path, >w<
+        base_job_path=get_distwibuted_twaining_job_path()
       )
 
-    def wait_complete_then_exit():
-      retry_max = 60
-      retry = 0
-      while True:
-        try:
-          training_status = get_job_status()
-          if training_status == TrainingJobStatus.FINISHED:
-            logging.info("Distributed training job succeed, shutting down parameter server.")
-            os._exit(0)
-          elif training_status == TrainingJobStatus.FAILED:
-            logging.info("Distributed training job failed, shutting down parameter server.")
-            os._exit(0)
-          elif training_status == TrainingJobStatus.NOT_FOUND:
-            raise Exception("Distributed training job status not found.")
-          else:
-            poke_interval = random.randrange(60, 90)  # prevent spike QPS to aurora endpoint
-            time.sleep(poke_interval)
-            retry = 0
-        except Exception as e:
-          if retry >= retry_max:
-            raise e  # only exception in this thread, won't fail parameter server thread
-          retry += 1
-          poke_interval = random.randrange(60, 90) + retry * 10
-          logging.warn("Error getting distributed training job status, will retry after %s seconds." % poke_interval)
-          time.sleep(poke_interval)
-    Thread(target=wait_complete_then_exit).start()
+    d-def wait_compwete_then_exit():
+      wetwy_max = 60
+      wetwy = 0
+      w-whiwe t-twue:
+        t-twy:
+          twaining_status = g-get_job_status()
+          if twaining_status == twainingjobstatus.finished:
+            wogging.info("distwibuted twaining job succeed, (⑅˘꒳˘) shutting d-down pawametew s-sewvew.")
+            o-os._exit(0)
+          e-ewif twaining_status == t-twainingjobstatus.faiwed:
+            wogging.info("distwibuted t-twaining job faiwed, (U ᵕ U❁) shutting down pawametew sewvew.")
+            o-os._exit(0)
+          ewif t-twaining_status == t-twainingjobstatus.not_found:
+            w-waise exception("distwibuted twaining j-job status n-nyot found.")
+          ewse:
+            poke_intewvaw = wandom.wandwange(60, 90)  # p-pwevent spike q-qps to auwowa endpoint
+            time.sweep(poke_intewvaw)
+            wetwy = 0
+        e-except exception as e:
+          i-if wetwy >= wetwy_max:
+            w-waise e  # onwy e-exception in this thwead, OwO won't faiw pawametew sewvew thwead
+          wetwy += 1
+          poke_intewvaw = w-wandom.wandwange(60, òωó 90) + wetwy * 10
+          w-wogging.wawn("ewwow getting distwibuted twaining j-job status, ^•ﻌ•^ wiww wetwy aftew %s s-seconds." % poke_intewvaw)
+          t-time.sweep(poke_intewvaw)
+    t-thwead(tawget=wait_compwete_then_exit).stawt()
 
-  def get_eval_hooks(self):  # pylint: disable=no-self-use
-    """ Return SessionRunHooks used during evaluation."""
-    return None
+  d-def get_evaw_hooks(sewf):  # p-pywint: disabwe=no-sewf-use
+    """ wetuwn sessionwunhooks u-used duwing evawuation."""
+    wetuwn nyone
 
-  def get_predict_hooks(self):
-    """ Return hooks used during prediction.
-    If profiler_steps is set in the constructor to the Trainer,
-    we pass a tf.Train.ProfilerHook to the estimator's predict function.
+  def get_pwedict_hooks(sewf):
+    """ w-wetuwn hooks used duwing pwediction. 😳😳😳
+    if pwofiwew_steps i-is s-set in the constwuctow t-to the twainew, o.O
+    we pass a tf.twain.pwofiwewhook to the estimatow's pwedict f-function. :3
     """
-    hooks = []
-    if self._profiler_steps is not None:
-      profiler = tf.train.ProfilerHook(
-        save_steps=self._profiler_steps,
-        output_dir=self._save_dir
+    h-hooks = []
+    i-if sewf._pwofiwew_steps i-is nyot nyone:
+      pwofiwew = tf.twain.pwofiwewhook(
+        save_steps=sewf._pwofiwew_steps, ^•ﻌ•^
+        output_diw=sewf._save_diw
       )
-      hooks.append(profiler)
-    return hooks
+      hooks.append(pwofiwew)
+    w-wetuwn hooks
 
-  def learn(self, train_input_fn=None, eval_input_fn=None,
-            train_max_steps=None,
-            train_steps=None, eval_steps=None,
-            train_hooks=None, eval_hooks=None,
-            early_stop_metric=None, early_stop_patience=-1,
-            early_stop_minimize=True, early_stop_tolerance=0, start_epoch=0,
-            exporters=None, export_output_fn=None, max_duration=None):
+  def weawn(sewf, >w< twain_input_fn=none, :3 e-evaw_input_fn=none, (✿oωo)
+            t-twain_max_steps=none, rawr
+            t-twain_steps=none, UwU evaw_steps=none, (⑅˘꒳˘)
+            t-twain_hooks=none, σωσ evaw_hooks=none, (///ˬ///✿)
+            eawwy_stop_metwic=none, (˘ω˘) eawwy_stop_patience=-1, ^•ﻌ•^
+            eawwy_stop_minimize=twue, ʘwʘ eawwy_stop_towewance=0, 😳 stawt_epoch=0, òωó
+            expowtews=none, ( ͡o ω ͡o ) expowt_output_fn=none, :3 max_duwation=none):
     """
-    Train and evaluate the estimator for ``train_max_steps`` steps.
-    Each epoch involves ``train_steps`` training steps followed
-    by ``eval_steps`` evaluation steps. Note that each step
-    is a ``session.run()``, that is, each batch is a step.
+    twain and evawuate t-the estimatow fow ``twain_max_steps`` steps. (ˆ ﻌ ˆ)♡
+    e-each epoch i-invowves ``twain_steps`` twaining s-steps fowwowed
+    b-by ``evaw_steps`` evawuation steps. XD nyote t-that each step
+    i-is a ``session.wun()``, :3 that is, each batch i-is a step. nyaa~~
 
-    Args:
-      train_max_steps:
-        maximum number of global steps of training to run.
-        Defaults to params.train_max_steps.
-        None-values cause learn() to terminate after *one* call to train() and evaluate(),
-        which is usually useful when using train_steps=-1
-        Non-positive values trains indefinitely in a loop (use with caution),
-        which is usually useful when used with early stopping.
-      train_steps:
-        number of training steps per epoch. For example, 100 means each
-        training epoch will end after processing 100 batches.
-        Defaults to params.train_steps.
-        Non-positive values and None-values go through the entire training set each epoch.
-      eval_steps:
-        number of evaluation steps per epoch.
-        Defaults to params.eval_steps.
-        Non-positive values and None-values go through the entire evaluation set each epoch.
-      train_input_fn:
-        Function to iterate through training set. It is passed to estimator.train.
-      eval_input_fn:
-        Function to iterate through evaluation set. It is passed to estimator.evaluate.
-      train_hooks:
-        List of SessionRunHooks uses for training. Defaults to self.get_train_hooks().
-      eval_hooks:
-        List of SessionRunHooks uses for evaluation. Defaults to self.get_eval_hooks()
-      start_epoch:
-        The epoch from which to start learn. If you want to do training and evaluation
-        for N epochs, you can call ``learn()`` in a loop as follows:
-      exporters:
-        List of exporters called at the end of each evaluation run.
-        Defaults to none.
-      export_output_fn:
-        The output format to use for exported models.
-        Only used if exporters is not None.
+    a-awgs:
+      twain_max_steps:
+        m-maximum nyumbew o-of gwobaw steps of twaining t-to wun. 😳😳😳
+        defauwts to pawams.twain_max_steps. (⑅˘꒳˘)
+        nyone-vawues c-cause w-weawn() to tewminate aftew *one* c-caww to twain() a-and evawuate(), ^^
+        which is usuawwy usefuw when using twain_steps=-1
+        nyon-positive v-vawues twains indefinitewy in a w-woop (use with caution), 🥺
+        w-which is usuawwy usefuw when used with eawwy stopping. OwO
+      twain_steps:
+        n-nyumbew of twaining steps pew epoch. ^^ fow exampwe, nyaa~~ 100 means e-each
+        twaining epoch wiww e-end aftew pwocessing 100 b-batches. ^^
+        d-defauwts to pawams.twain_steps. (✿oωo)
+        nyon-positive v-vawues and nyone-vawues g-go thwough t-the entiwe twaining s-set each epoch. ^^
+      evaw_steps:
+        n-nyumbew of evawuation s-steps pew e-epoch. òωó
+        d-defauwts to pawams.evaw_steps. (⑅˘꒳˘)
+        n-nyon-positive vawues and nyone-vawues go t-thwough the entiwe e-evawuation set each epoch. (U ﹏ U)
+      twain_input_fn:
+        f-function t-to itewate t-thwough twaining set. OwO it is passed t-to estimatow.twain. (///ˬ///✿)
+      e-evaw_input_fn:
+        function to i-itewate thwough e-evawuation set. o.O it is passed to e-estimatow.evawuate. (ꈍᴗꈍ)
+      twain_hooks:
+        w-wist of sessionwunhooks u-uses fow t-twaining. -.- defauwts t-to sewf.get_twain_hooks(). òωó
+      evaw_hooks:
+        wist of sessionwunhooks u-uses fow evawuation. OwO defauwts to s-sewf.get_evaw_hooks()
+      stawt_epoch:
+        t-the epoch fwom w-which to stawt weawn. (U ﹏ U) if you want t-to do twaining a-and evawuation
+        fow n epochs, ^^;; you can c-caww ``weawn()`` i-in a woop as fowwows:
+      expowtews:
+        wist of expowtews cawwed at the end of each evawuation wun. ^^;;
+        defauwts to nyone. XD
+      expowt_output_fn:
+        the output fowmat to use fow expowted modews. OwO
+        o-onwy u-used if expowtews i-is nyot nyone. (U ﹏ U)
 
-        .. code-block:: python
+        .. code-bwock:: p-python
 
-          for epoch in range(1,max_epoch):
-            trainer.learn(start_epoch=epoch)
+          fow epoch in wange(1,max_epoch):
+            t-twainew.weawn(stawt_epoch=epoch)
 
-    Early-stopping arguments:
-      early_stop_metric:
-        String specifying the metric to early-stop on. Required with positive
-        ``early_stop_patience``. For example, 'accuracy', 'accuracy_0', 'loss', etc.
-        The string is used to extract the relevant tensor Op from the dict returned by
-        the get_eval_metric_ops method. For ``metrics`` pass to the constructor,
-        the string is one of those. For multi-class (that is, multi-metric)
-        metrics, the string may be appended with a ``_0``, ``_1``, etc. or one
-        of the ``multi_metric_names`` (one per class).
-      early_stop_patience:
-        Maximum number of epochs to wait for an improvement in the early_stop_metric
-        before breaking off training. For example, a patience of 10 means that
-        training will have 10 epochs to improve the metric before it is killed.
-        Whenever the metric is improved before running out of patience,
-        patience is reset to ``early_stop_patience``.
-        Defaults to -1 (that is, no early-stopping).
-      early_stop_minimize:
-        Set this to True (the default) for metrics that need to be minimized
-        (like ``loss``). Metrics like ``accuracy`` that need to be maximized
-        should set this to False.
-      early_stop_tolerance:
-        A non-negative tolerance for comparing early_stop_metric.
-        E.g. when maximizing the condition is current_metric > best_metric + tolerance.
-        Defaults to 0.
-      max_duration:
-        A float. When this argument is defined, the job will automatically terminate after
-        `max_duration` seconds if it has not already compeleted. 
+    e-eawwy-stopping a-awguments:
+      e-eawwy_stop_metwic:
+        stwing specifying the metwic to eawwy-stop on. >w< wequiwed w-with positive
+        ``eawwy_stop_patience``. >w< f-fow exampwe, (ˆ ﻌ ˆ)♡ 'accuwacy', (ꈍᴗꈍ) 'accuwacy_0', 😳😳😳 'woss', e-etc. mya
+        the s-stwing is used to extwact the w-wewevant tensow op fwom the dict wetuwned by
+        the get_evaw_metwic_ops method. (˘ω˘) f-fow ``metwics`` pass to the c-constwuctow, (✿oωo)
+        t-the stwing is one of those. (ˆ ﻌ ˆ)♡ fow muwti-cwass (that is, (ˆ ﻌ ˆ)♡ muwti-metwic)
+        m-metwics, nyaa~~ the stwing may be appended w-with a ``_0``, ``_1``, :3 etc. ow one
+        o-of the ``muwti_metwic_names`` (one pew cwass). (✿oωo)
+      eawwy_stop_patience:
+        m-maximum nyumbew of epochs to w-wait fow an impwovement in the e-eawwy_stop_metwic
+        b-befowe bweaking off twaining. (✿oωo) fow exampwe, (⑅˘꒳˘) a patience o-of 10 means that
+        twaining wiww have 10 epochs to impwove the metwic befowe it is kiwwed. >_<
+        whenevew t-the metwic is i-impwoved befowe wunning out of patience, >_<
+        p-patience is weset to ``eawwy_stop_patience``. ʘwʘ
+        d-defauwts t-to -1 (that is, n-nyo eawwy-stopping). (U ﹏ U)
+      eawwy_stop_minimize:
+        set this t-to twue (the defauwt) fow metwics that nyeed to be minimized
+        (wike ``woss``). ^^ metwics wike ``accuwacy`` t-that nyeed to be m-maximized
+        s-shouwd set this t-to fawse. >_<
+      eawwy_stop_towewance:
+        a-a nyon-negative towewance fow c-compawing eawwy_stop_metwic. OwO
+        e-e.g. 😳 when maximizing the condition is cuwwent_metwic > b-best_metwic + t-towewance. (U ᵕ U❁)
+        d-defauwts t-to 0. 😳😳😳
+      m-max_duwation:
+        a fwoat. -.- when this awgument i-is defined, (U ᵕ U❁) t-the job wiww automaticawwy t-tewminate aftew
+        `max_duwation` seconds if it has nyot awweady c-compeweted. -.- 
 
-    Returns:
-      The directory where the checkpoints were saved.
-      That is, save_dir.
-      You can point TensorBoard to this directory to get metrics,
-      or pass it to another Trainer via ``init_from_dir`` when doing
-      multi-phase training.
+    w-wetuwns:
+      t-the diwectowy whewe the checkpoints w-wewe saved. (U ﹏ U)
+      that is, ^^ s-save_diw. UwU
+      y-you can point tensowboawd t-to this diwectowy to get metwics, o.O
+      o-ow pass it to anothew twainew via ``init_fwom_diw`` w-when doing
+      muwti-phase twaining. ^^
     """
-    # pylint: disable=too-many-branches
+    # pywint: d-disabwe=too-many-bwanches
 
-    if not callable(train_input_fn):
-      raise ValueError("Expecting callable train_input_fn function")
-    if not callable(eval_input_fn):
-      raise ValueError("Expecting callable eval_input_fn function")
+    if nyot cawwabwe(twain_input_fn):
+      w-waise vawueewwow("expecting c-cawwabwe t-twain_input_fn function")
+    i-if n-nyot cawwabwe(evaw_input_fn):
+      waise vawueewwow("expecting cawwabwe evaw_input_fn f-function")
 
-    if os.environ.get('TF_CONFIG'):
-      raise ValueError("trainer.learn() can not be used with distributed / hogwild setups")
+    if os.enviwon.get('tf_config'):
+      waise vawueewwow("twainew.weawn() can nyot be used w-with distwibuted / h-hogwiwd setups")
 
-    if exporters and export_output_fn:
-      self._export_output_fn = export_output_fn
+    i-if expowtews a-and expowt_output_fn:
+      s-sewf._expowt_output_fn = expowt_output_fn
 
-    train_hooks = self.get_train_hooks() if train_hooks is None else train_hooks
-    eval_hooks = self.get_eval_hooks() if eval_hooks is None else eval_hooks
-    eval_hooks = [] if eval_hooks is None else eval_hooks
+    t-twain_hooks = s-sewf.get_twain_hooks() if twain_hooks is nyone ewse twain_hooks
+    e-evaw_hooks = sewf.get_evaw_hooks() if evaw_hooks i-is nyone ewse evaw_hooks
+    e-evaw_hooks = [] if evaw_hooks is nyone ewse evaw_hooks
 
-    if train_max_steps is None:
-      train_max_steps = self.params.get('train_max_steps')
+    i-if twain_max_steps i-is nyone:
+      twain_max_steps = s-sewf.pawams.get('twain_max_steps')
 
-    if train_steps is None:
-      train_steps = self.params.train_steps
-    if train_steps <= 0:
-      train_steps = None
+    i-if twain_steps i-is nyone:
+      twain_steps = sewf.pawams.twain_steps
+    if twain_steps <= 0:
+      twain_steps = nyone
 
-    if eval_steps is None:
-      eval_steps = self.params.eval_steps
-    if eval_steps <= 0:
-      eval_steps = None
+    if evaw_steps is nyone:
+      e-evaw_steps = sewf.pawams.evaw_steps
+    if e-evaw_steps <= 0:
+      evaw_steps = n-nyone
 
-    if early_stop_patience > 0:
-      assert train_max_steps is not None, "Early stopping and max_steps=None are not compatible."
-      # prepare early stopping hook (which also handles logic here)
-      self._is_early_stopping = True
-      early_stop_hook = twml.hooks.EarlyStopHook(
-        metric=early_stop_metric,
-        checkpoint_dir=self._save_dir,
-        patience=early_stop_patience,
-        minimize=early_stop_minimize,
-        tolerance=early_stop_tolerance,
-        get_estimator_spec_fn=lambda: self.current_estimator_spec,
-        start_epoch=start_epoch)
-      # add early stop hook to eval hooks
-      eval_hooks.append(early_stop_hook)
+    i-if eawwy_stop_patience > 0:
+      assewt twain_max_steps i-is nyot n-nyone, 🥺 "eawwy stopping and max_steps=none awe nyot compatibwe."
+      # p-pwepawe eawwy stopping h-hook (which awso handwes wogic hewe)
+      sewf._is_eawwy_stopping = t-twue
+      eawwy_stop_hook = t-twmw.hooks.eawwystophook(
+        metwic=eawwy_stop_metwic, 😳
+        c-checkpoint_diw=sewf._save_diw, (⑅˘꒳˘)
+        p-patience=eawwy_stop_patience, >w<
+        minimize=eawwy_stop_minimize, >_<
+        towewance=eawwy_stop_towewance, rawr x3
+        get_estimatow_spec_fn=wambda: sewf.cuwwent_estimatow_spec, >_<
+        stawt_epoch=stawt_epoch)
+      # a-add eawwy stop h-hook to evaw h-hooks
+      evaw_hooks.append(eawwy_stop_hook)
 
-    if max_duration is not None:
-      train_early_stop_duration_hook = twml.hooks.EarlyStopDuration(
-        max_duration=max_duration,
-        exit_on_end=False,
-        save_dir=self._save_dir,
-        overwrite=True,
+    if max_duwation is nyot nyone:
+      t-twain_eawwy_stop_duwation_hook = twmw.hooks.eawwystopduwation(
+        m-max_duwation=max_duwation, XD
+        exit_on_end=fawse, mya
+        save_diw=sewf._save_diw, (///ˬ///✿)
+        o-ovewwwite=twue, OwO
       )
-      train_hooks.append(train_early_stop_duration_hook)
+      twain_hooks.append(twain_eawwy_stop_duwation_hook)
 
-      eval_early_stop_duration_hook = twml.hooks.EarlyStopDuration(
-        max_duration=max_duration,
-        exit_on_end=False,
-        save_dir=self._save_dir,
-        overwrite=True,
+      evaw_eawwy_stop_duwation_hook = t-twmw.hooks.eawwystopduwation(
+        max_duwation=max_duwation, mya
+        e-exit_on_end=fawse, OwO
+        s-save_diw=sewf._save_diw, :3
+        ovewwwite=twue, òωó
       )
-      eval_hooks.append(eval_early_stop_duration_hook)
+      evaw_hooks.append(evaw_eawwy_stop_duwation_hook)
 
-    if not self._is_early_stopping:
-      if (train_max_steps is not None) and (train_max_steps <= 0):
-        if ((max_duration is not None) and (max_duration < 0)) or (max_duration is None):
-          logging.warn("train.max_steps is non-positive, and no early or duration stopping is configured. "
-                      "Training job will loop forever.")
+    if nyot sewf._is_eawwy_stopping:
+      if (twain_max_steps i-is nyot nyone) and (twain_max_steps <= 0):
+        if ((max_duwation is nyot nyone) a-and (max_duwation < 0)) o-ow (max_duwation i-is none):
+          wogging.wawn("twain.max_steps i-is nyon-positive, OwO and nyo eawwy ow duwation s-stopping is configuwed. OwO "
+                      "twaining j-job wiww woop fowevew.")
 
-    if train_max_steps is not None and train_max_steps > 0:
-      # we can't pass max_steps AND steps to estimator.train.
-      # so we pass steps to estimator.train and max_steps to this hook instead...
-      stop_at_step_hook = twml.hooks.StopAtStepHook(last_step=train_max_steps)
-      train_hooks.append(stop_at_step_hook)
+    if t-twain_max_steps i-is nyot nyone and twain_max_steps > 0:
+      # w-we can't pass max_steps a-and steps t-to estimatow.twain. (U ᵕ U❁)
+      # so w-we pass steps to estimatow.twain a-and max_steps to this hook instead...
+      stop_at_step_hook = t-twmw.hooks.stopatstephook(wast_step=twain_max_steps)
+      t-twain_hooks.append(stop_at_step_hook)
 
-    with self.experiment_tracker.track_experiment(eval_hooks,
-                                                  lambda: self.current_estimator_spec):
-      # alternate training and evaluation epochs
-      epoch = start_epoch
-      while True:
-        logging.info("Training epoch %d", epoch)
-        self._estimator.train(train_input_fn, steps=train_steps, hooks=train_hooks)
+    with sewf.expewiment_twackew.twack_expewiment(evaw_hooks, mya
+                                                  wambda: sewf.cuwwent_estimatow_spec):
+      # awtewnate twaining and evawuation e-epochs
+      epoch = stawt_epoch
+      whiwe twue:
+        w-wogging.info("twaining e-epoch %d", UwU epoch)
+        sewf._estimatow.twain(twain_input_fn, /(^•ω•^) steps=twain_steps, UwU hooks=twain_hooks)
 
-        logging.info("Evaluating epoch %d", epoch)
-        eval_result = self._estimator.evaluate(
-          eval_input_fn, steps=eval_steps, hooks=eval_hooks)
+        wogging.info("evawuating epoch %d", UwU epoch)
+        e-evaw_wesuwt = s-sewf._estimatow.evawuate(
+          e-evaw_input_fn, s-steps=evaw_steps, /(^•ω•^) h-hooks=evaw_hooks)
 
-        if exporters:
-          checkpoint_path = self.estimator.latest_checkpoint()
-          for exporter in exporters:
-            export_path = os.path.join(self._save_dir, "export", exporter.name)
-            exporter.export(
-              estimator=self.estimator, export_path=export_path,
-              checkpoint_path=checkpoint_path, eval_result=eval_result,
-              is_the_final_export=False)
+        i-if expowtews:
+          checkpoint_path = sewf.estimatow.watest_checkpoint()
+          f-fow expowtew in expowtews:
+            e-expowt_path = os.path.join(sewf._save_diw, "expowt", XD e-expowtew.name)
+            expowtew.expowt(
+              e-estimatow=sewf.estimatow, ^^;; e-expowt_path=expowt_path, nyaa~~
+              c-checkpoint_path=checkpoint_path, mya e-evaw_wesuwt=evaw_wesuwt, (✿oωo)
+              i-is_the_finaw_expowt=fawse)
 
-        # If train_max_step is none. Terminate after one loop.
-        if train_max_steps is None:
-          break
+        # if twain_max_step is nyone. rawr tewminate a-aftew one woop. -.-
+        if twain_max_steps is nyone:
+          b-bweak
 
-        # If stop_at_step_hook requested a stop, break
-        if train_max_steps > 0 and stop_at_step_hook.stop_requested:
-          break
+        # if stop_at_step_hook wequested a-a stop, σωσ b-bweak
+        if twain_max_steps > 0 a-and stop_at_step_hook.stop_wequested:
+          bweak
 
-        # early-stopping logic is handled internally by the hook
-        if early_stop_patience > 0 and early_stop_hook.should_stop:
-          # but we still need to break here
-          break
+        # e-eawwy-stopping w-wogic is handwed intewnawwy b-by the hook
+        if eawwy_stop_patience > 0 a-and eawwy_stop_hook.shouwd_stop:
+          # b-but we stiww nyeed t-to bweak hewe
+          bweak
         epoch += 1
 
-      self.write_state_to_disk(save_dir=self._save_dir, filename='_SUCCESS')
+      sewf.wwite_state_to_disk(save_diw=sewf._save_diw, mya f-fiwename='_success')
 
-    return self._save_dir
+    wetuwn sewf._save_diw
 
-  def get_train_spec(self, input_fn, max_steps=None, hooks=None):
-    """Get the TrainSpec used by ``tf.train.train_and_evaluate``."""
-    if not callable(input_fn):
-      raise ValueError("Expecting callable train_input_fn")
+  d-def get_twain_spec(sewf, ^•ﻌ•^ input_fn, nyaa~~ m-max_steps=none, 🥺 hooks=none):
+    """get t-the twainspec used by ``tf.twain.twain_and_evawuate``."""
+    i-if nyot cawwabwe(input_fn):
+      waise vawueewwow("expecting c-cawwabwe twain_input_fn")
 
-    if max_steps is None:
-      max_steps = self.params.train_max_steps
+    if max_steps i-is nyone:
+      max_steps = sewf.pawams.twain_max_steps
 
-    if max_steps is not None and max_steps <= 0:
-      max_steps = None
+    if m-max_steps is nyot n-nyone and max_steps <= 0:
+      m-max_steps = nyone
 
-    hooks = self.get_train_hooks() if hooks is None else hooks
+    h-hooks = s-sewf.get_twain_hooks() i-if hooks is nyone ewse hooks
 
-    return tf.estimator.TrainSpec(input_fn=input_fn,
-                                  max_steps=max_steps,
+    w-wetuwn t-tf.estimatow.twainspec(input_fn=input_fn, (✿oωo)
+                                  m-max_steps=max_steps, rawr
                                   hooks=hooks)
 
-  def get_eval_spec(self, input_fn, steps=None, delay=None, period=None,
-                    hooks=None, exporters=None):
-    """Get the EvalSpec used by ``tf.train.train_and_evaluate``."""
-    if not callable(input_fn):
-      raise ValueError("Expecting callable eval_input_fn")
+  d-def get_evaw_spec(sewf, input_fn, (ˆ ﻌ ˆ)♡ steps=none, ^^;; d-deway=none, OwO pewiod=none, mya
+                    hooks=none, (⑅˘꒳˘) e-expowtews=none):
+    """get the evawspec used by ``tf.twain.twain_and_evawuate``."""
+    i-if nyot cawwabwe(input_fn):
+      w-waise vawueewwow("expecting cawwabwe evaw_input_fn")
 
-    if steps is None:
-      steps = self.params.eval_steps
+    i-if steps is nyone:
+      s-steps = s-sewf.pawams.evaw_steps
 
-    if steps <= 0:
-      steps = None
+    i-if steps <= 0:
+      steps = nyone
 
-    if delay is None:
-      delay = self.params.eval_delay
+    if deway is nyone:
+      deway = sewf.pawams.evaw_deway
 
-    if period is None:
-      period = self.params.eval_period
+    if pewiod is nyone:
+      p-pewiod = sewf.pawams.evaw_pewiod
 
-    hooks = self.get_eval_hooks() if hooks is None else hooks
+    h-hooks = sewf.get_evaw_hooks() if hooks is nyone e-ewse hooks
 
-    eval_name = self.params.get("eval_name", None)
+    evaw_name = sewf.pawams.get("evaw_name", (U ﹏ U) n-nyone)
 
-    return tf.estimator.EvalSpec(input_fn=input_fn,
-                                 steps=steps,
-                                 name=eval_name,
-                                 start_delay_secs=delay,
-                                 throttle_secs=period,
-                                 hooks=hooks,
-                                 exporters=exporters)
+    w-wetuwn tf.estimatow.evawspec(input_fn=input_fn, (U ﹏ U)
+                                 steps=steps, XD
+                                 n-nyame=evaw_name, OwO
+                                 s-stawt_deway_secs=deway, (///ˬ///✿)
+                                 thwottwe_secs=pewiod, XD
+                                 hooks=hooks, σωσ
+                                 e-expowtews=expowtews)
 
-  def train_and_evaluate(self, train_input_fn=None, eval_input_fn=None,
-                         train_max_steps=None, eval_steps=None,
-                         eval_delay=None, eval_period=None,
-                         train_hooks=None, eval_hooks=None,
-                         early_stop_metric=None, early_stop_patience=-1,
-                         early_stop_minimize=True, early_stop_tolerance=0, exporters=None,
-                         export_output_fn=None, max_duration=None):
+  def twain_and_evawuate(sewf, (///ˬ///✿) t-twain_input_fn=none, 😳 evaw_input_fn=none, rawr x3
+                         t-twain_max_steps=none, 😳 e-evaw_steps=none, ^^;;
+                         e-evaw_deway=none, òωó evaw_pewiod=none, >w<
+                         t-twain_hooks=none, >w< evaw_hooks=none, òωó
+                         eawwy_stop_metwic=none, 😳😳😳 eawwy_stop_patience=-1, ( ͡o ω ͡o )
+                         e-eawwy_stop_minimize=twue, o.O eawwy_stop_towewance=0, expowtews=none,
+                         expowt_output_fn=none, max_duwation=none):
     """
-    Train and evaluate the estimator for ``train_max_steps``
-    using ``tf.estimator.train_and_evaluate``.
-    With a cluster configuration provided in the ``TF_CONFIG`` environment variable, this method
-    can be used for distributed training (multi-node or multi-process).
-    Unlike the ``learn`` method, training is continuous with ``train_max_steps``.
-    For distributed use case, evaluation happens periodically.
-    That is, after ``eval_delay`` seconds, an evaluation epoch of ``eval_step`` steps
-    occurs every ``eval_period`` seconds. Evaluation happens on the most recent checkpoint.
-    TF defaults to saving checkpoints every 10 mins.
-    For local use case, training occurs for train_max_steps epochs followed by a
-    single evaluation. For local use case we therefore recommend using learn() instead
-    as it provides early-stopping and multiple evaluations.
+    twain and evawuate the estimatow fow ``twain_max_steps``
+    u-using ``tf.estimatow.twain_and_evawuate``. UwU
+    w-with a cwustew configuwation p-pwovided i-in the ``tf_config`` enviwonment vawiabwe, rawr this method
+    can b-be used fow distwibuted t-twaining (muwti-node ow m-muwti-pwocess). mya
+    u-unwike the ``weawn`` m-method, (✿oωo) t-twaining is continuous with ``twain_max_steps``. ( ͡o ω ͡o )
+    fow distwibuted u-use case, nyaa~~ evawuation happens pewiodicawwy. (///ˬ///✿)
+    that is, 😳😳😳 aftew ``evaw_deway`` s-seconds, UwU an evawuation epoch of ``evaw_step`` steps
+    occuws evewy ``evaw_pewiod`` seconds. 🥺 e-evawuation happens on the most wecent checkpoint. (///ˬ///✿)
+    tf defauwts t-to saving checkpoints e-evewy 10 m-mins. (⑅˘꒳˘)
+    fow wocaw use case, (✿oωo) twaining occuws f-fow twain_max_steps e-epochs fowwowed b-by a
+    singwe evawuation. òωó fow wocaw use case w-we thewefowe wecommend using w-weawn() instead
+    as it pwovides eawwy-stopping and muwtipwe e-evawuations. ^^
 
-    ``train_and_evaluate`` will evaluate for ``eval_steps`` every ``eval_period`` seconds.
-    It will stop after ``train_steps`` is reached.
+    ``twain_and_evawuate`` wiww evawuate f-fow ``evaw_steps`` evewy ``evaw_pewiod`` s-seconds. rawr
+    it w-wiww stop aftew ``twain_steps`` is weached. ^^;;
 
-    You must ensure that all workers/servers are assigned the same `save_dir`.
+    y-you must ensuwe that aww wowkews/sewvews awe assigned t-the same `save_diw`. (ˆ ﻌ ˆ)♡
 
-    .. Note::
+    .. nyote::
 
-      If the TF_CONFIG environment variable is set, this function assumes its running a distribute job.
+      if the tf_config enviwonment v-vawiabwe is set, (⑅˘꒳˘) this function assumes its wunning a-a distwibute job. ( ͡o ω ͡o )
 
-    Args:
-      train_input_fn:
-        Function to iterate through training set. It is passed to estimator.train_and_evalute
-      eval_input_fn:
-        Function to iterate through evaluation set. It is passed to estimator.train_and_evalute.
-      train_max_steps:
-        maximum number of global steps of training to run.
-        Defaults to params.train_max_steps.
-        Non-positive values and None-values train indefinitely (use with caution).
-      eval_steps:
-        number of steps per evaluation.
-        Defaults to params.eval_steps.
-        Non-positive values and None-values go through
-        the entire evaluation set for each evaluation.
-        Note that the number of eval_steps should be high enough to minimize noise.
-        This is especially true for early-stopping.
-      eval_delay:
-        Start the first evaluation after eval_delay. Defaults to params.eval_delay or 2*60s.
-      eval_period:
-        Run an evaluation every eval_period seconds. Defaults to params.eval_period or 10*60s.
-      exporters:
-        List of exporters called at the end of each evaluation run.
-        Defaults to none.
-      export_output_fn:
-        The output format to use for exported models.
-        Only used if exporters is not None.
+    awgs:
+      t-twain_input_fn:
+        f-function to itewate t-thwough twaining set. 🥺 it is passed t-to estimatow.twain_and_evawute
+      evaw_input_fn:
+        function to itewate t-thwough evawuation s-set. ^^;; it is passed to estimatow.twain_and_evawute.
+      t-twain_max_steps:
+        m-maximum nyumbew of gwobaw s-steps of twaining to wun. o.O
+        defauwts to pawams.twain_max_steps. rawr
+        nyon-positive vawues and nyone-vawues t-twain indefinitewy (use with caution). (⑅˘꒳˘)
+      evaw_steps:
+        nyumbew o-of steps pew evawuation. 😳
+        d-defauwts to pawams.evaw_steps. nyaa~~
+        n-nyon-positive vawues and n-nyone-vawues go t-thwough
+        the entiwe evawuation s-set fow each evawuation. ^•ﻌ•^
+        n-note that t-the nyumbew of evaw_steps shouwd be high enough to minimize nyoise. (⑅˘꒳˘)
+        t-this i-is especiawwy twue fow eawwy-stopping. σωσ
+      evaw_deway:
+        s-stawt the fiwst evawuation aftew e-evaw_deway. (U ᵕ U❁) d-defauwts to pawams.evaw_deway ow 2*60s. o.O
+      evaw_pewiod:
+        w-wun an evawuation e-evewy evaw_pewiod seconds. >w< d-defauwts to pawams.evaw_pewiod ow 10*60s. (///ˬ///✿)
+      e-expowtews:
+        wist of expowtews cawwed at the end of each e-evawuation wun. :3
+        d-defauwts t-to nyone. ^^;;
+      e-expowt_output_fn:
+        t-the output f-fowmat to u-use fow expowted modews. òωó
+        onwy used if expowtews i-is not nyone. nyaa~~
 
-    Early-stopping arguments:
-      early_stop_metric:
-        String specifying the metric to early-stop on. Required with positive
-        ``early_stop_patience``. For example, 'accuracy', 'accuracy_0', 'loss', etc.
-        The string is used to extract the relevant tensor Op from the dict returned by
-        the get_eval_metric_ops method. For ``metrics`` pass to the constructor,
-        the string is one of those. For multi-class (that is, multi-metric)
-        metrics, the string may be appended with a ``_0``, ``_1``, etc. or one
-        of the ``multi_metric_names`` (one per class).
-      early_stop_patience:
-        Maximum number of epochs to wait for an improvement in the early_stop_metric
-        before breaking off training. For example, a patience of 10 means that
-        training will have 10 epochs to improve the metric before it is killed.
-        Whenever the metric is improved before running out of patience,
-        patience is reset to ``early_stop_patience``.
-        Defaults to -1 (that is, no early-stopping).
-      early_stop_minimize:
-        Set this to True (the default) for metrics that need to be minimized
-        (like ``loss``). Metrics like ``accuracy`` that need to be maximized
-        should set this to False.
-      early_stop_tolerance:
-        A non-negative tolerance for comparing early_stop_metric.
-        E.g. when maximizing the condition is current_metric > best_metric + tolerance.
-        Defaults to 0.
-      max_duration:
-        A float. When this argument is defined, the job will automatically terminate after
-        `max_duration` seconds if it has not already compeleted. 
+    eawwy-stopping awguments:
+      e-eawwy_stop_metwic:
+        stwing specifying t-the metwic to eawwy-stop on. /(^•ω•^) wequiwed with positive
+        ``eawwy_stop_patience``. 😳 fow e-exampwe, 'accuwacy', òωó 'accuwacy_0', (⑅˘꒳˘) 'woss', ^•ﻌ•^ e-etc.
+        t-the stwing is used to extwact the wewevant tensow op fwom t-the dict wetuwned b-by
+        t-the get_evaw_metwic_ops m-method. o.O fow ``metwics`` pass to the constwuctow, σωσ
+        the stwing is one of those. 😳 fow muwti-cwass (that i-is, (ˆ ﻌ ˆ)♡ muwti-metwic)
+        m-metwics, (///ˬ///✿) t-the stwing may be appended with a ``_0``, (///ˬ///✿) ``_1``, e-etc. >_< ow one
+        of the ``muwti_metwic_names`` (one pew cwass). XD
+      e-eawwy_stop_patience:
+        maximum n-nyumbew of epochs to wait fow an impwovement in the eawwy_stop_metwic
+        b-befowe bweaking off twaining. (U ﹏ U) f-fow exampwe, ( ͡o ω ͡o ) a patience of 10 means that
+        twaining wiww h-have 10 epochs to impwove the metwic befowe it i-is kiwwed. ^•ﻌ•^
+        whenevew the m-metwic is impwoved b-befowe wunning out of patience, 😳
+        patience is weset to ``eawwy_stop_patience``. (ˆ ﻌ ˆ)♡
+        defauwts to -1 (that i-is, (ˆ ﻌ ˆ)♡ nyo eawwy-stopping). rawr x3
+      eawwy_stop_minimize:
+        set this to twue (the defauwt) fow metwics that nyeed to be minimized
+        (wike ``woss``). rawr x3 metwics wike ``accuwacy`` t-that n-nyeed to be maximized
+        shouwd set this to f-fawse. (U ᵕ U❁)
+      eawwy_stop_towewance:
+        a nyon-negative t-towewance f-fow compawing e-eawwy_stop_metwic. (ꈍᴗꈍ)
+        e.g. (ꈍᴗꈍ) when maximizing the condition is cuwwent_metwic > b-best_metwic + t-towewance. OwO
+        d-defauwts t-to 0. nyaa~~
+      max_duwation:
+        a fwoat. 🥺 when this awgument is defined, ^•ﻌ•^ the job w-wiww automaticawwy t-tewminate aftew
+        `max_duwation` seconds if it has nyot awweady compeweted. /(^•ω•^) 
 
-    Returns:
-      The directory where the checkpoints were saved.
+    wetuwns:
+      the d-diwectowy whewe the checkpoints wewe saved. (U ﹏ U)
     """
 
-    logging.info("WARNING: Trainer.train_and_evaluate is an EXPERIMENTAL API.")
-    logging.info("Trainer.train_and_evaluate may change or be removed in future versions.")
+    wogging.info("wawning: t-twainew.twain_and_evawuate i-is an e-expewimentaw api.")
+    w-wogging.info("twainew.twain_and_evawuate may change ow be wemoved in futuwe vewsions.")
 
-    if not callable(train_input_fn):
-      raise ValueError("Expecting callable train_input_fn function")
-    if not callable(eval_input_fn):
-      raise ValueError("Expecting callable eval_input_fn function")
+    if nyot cawwabwe(twain_input_fn):
+      waise v-vawueewwow("expecting cawwabwe t-twain_input_fn function")
+    i-if nyot cawwabwe(evaw_input_fn):
+      w-waise vawueewwow("expecting cawwabwe evaw_input_fn function")
 
-    self._exit_ps_after_training_complete()
+    sewf._exit_ps_aftew_twaining_compwete()
 
-    # Maybe export in eval processes.
-    if self.is_evaluator():
-      if self.params.get("eval_name") is not None:
-        # Do not export if running special eval.
-        exporters = None
-        export_output_fn = None
-      elif exporters and export_output_fn:
-        self._export_output_fn = export_output_fn
-      else:
-        # Default option.
-        self._export_output_fn = None
+    # maybe e-expowt in evaw pwocesses. :3
+    if s-sewf.is_evawuatow():
+      i-if sewf.pawams.get("evaw_name") i-is nyot n-nyone:
+        # do nyot expowt i-if wunning speciaw evaw. ^^;;
+        expowtews = n-nyone
+        expowt_output_fn = n-nyone
+      ewif e-expowtews and expowt_output_fn:
+        sewf._expowt_output_fn = e-expowt_output_fn
+      ewse:
+        # d-defauwt o-option. >w<
+        s-sewf._expowt_output_fn = n-nyone
 
-    train_hooks = self.get_train_hooks() if train_hooks is None else train_hooks
-    train_hooks = [] if train_hooks is None else train_hooks
+    twain_hooks = sewf.get_twain_hooks() if twain_hooks i-is nyone ewse twain_hooks
+    twain_hooks = [] if twain_hooks is nyone e-ewse twain_hooks
 
-    eval_hooks = self.get_eval_hooks() if eval_hooks is None else eval_hooks
-    eval_hooks = [] if eval_hooks is None else eval_hooks
+    e-evaw_hooks = sewf.get_evaw_hooks() if evaw_hooks i-is none e-ewse evaw_hooks
+    e-evaw_hooks = [] i-if evaw_hooks is nyone ewse evaw_hooks
 
-    if train_max_steps is None:
-      train_max_steps = self.params.get('train_max_steps')
+    i-if twain_max_steps is nyone:
+      twain_max_steps = s-sewf.pawams.get('twain_max_steps')
 
-    if eval_steps is None:
-      eval_steps = self.params.eval_steps
-    if eval_steps <= 0:
-      eval_steps = None
+    if e-evaw_steps is nyone:
+      e-evaw_steps = s-sewf.pawams.evaw_steps
+    i-if evaw_steps <= 0:
+      e-evaw_steps = n-nyone
 
-    if eval_delay is None:
-      eval_delay = self.params.eval_delay
-    if eval_period is None:
-      eval_period = self.params.eval_period
+    if evaw_deway is nyone:
+      e-evaw_deway = sewf.pawams.evaw_deway
+    i-if evaw_pewiod is nyone:
+      e-evaw_pewiod = s-sewf.pawams.evaw_pewiod
 
-    if early_stop_patience > 0:
-      # when training hooks detect this file, they request a stop to training
-      early_stop_path = os.path.join(self._save_dir, 'earlystop_now.txt')
-      # prepare early stopping hook (which also handles logic here)
+    i-if eawwy_stop_patience > 0:
+      # w-when twaining h-hooks detect this fiwe, nyaa~~ they wequest a stop to twaining
+      eawwy_stop_path = os.path.join(sewf._save_diw, ^^ 'eawwystop_now.txt')
+      # p-pwepawe eawwy s-stopping hook (which awso handwes w-wogic hewe)
 
-      self._is_early_stopping = True
+      s-sewf._is_eawwy_stopping = twue
 
-      eval_early_stop_hook = twml.hooks.EarlyStopHook(
-        metric=early_stop_metric,
-        checkpoint_dir=self._save_dir,
-        patience=early_stop_patience,
-        minimize=early_stop_minimize,
-        tolerance=early_stop_tolerance,
-        get_estimator_spec_fn=lambda: self.current_estimator_spec,
-        file_path=early_stop_path,
-        exit_on_end=os.environ.get('TF_CONFIG') is not None)  # only exit for distributed jobs
-      # add early stop hook to eval hooks
-      eval_hooks.append(eval_early_stop_hook)
+      evaw_eawwy_stop_hook = t-twmw.hooks.eawwystophook(
+        metwic=eawwy_stop_metwic, 😳
+        checkpoint_diw=sewf._save_diw, :3
+        patience=eawwy_stop_patience, 🥺
+        m-minimize=eawwy_stop_minimize, :3
+        towewance=eawwy_stop_towewance, >_<
+        g-get_estimatow_spec_fn=wambda: sewf.cuwwent_estimatow_spec, 🥺
+        f-fiwe_path=eawwy_stop_path, ^•ﻌ•^
+        exit_on_end=os.enviwon.get('tf_config') is n-not nyone)  # o-onwy exit fow distwibuted j-jobs
+      # a-add eawwy s-stop hook to evaw hooks
+      evaw_hooks.append(evaw_eawwy_stop_hook)
 
-      # prepare the commensurate training hook
-      train_early_stop_hook = twml.hooks.StopIfExistsHook(early_stop_path)
-      train_hooks.append(train_early_stop_hook)
+      # p-pwepawe the commensuwate t-twaining hook
+      twain_eawwy_stop_hook = twmw.hooks.stopifexistshook(eawwy_stop_path)
+      t-twain_hooks.append(twain_eawwy_stop_hook)
 
-    if max_duration is not None:
-      train_early_stop_duration_hook = twml.hooks.EarlyStopDuration(
-        max_duration=max_duration,
-        exit_on_end=False,
-        save_dir=self._save_dir,
-        overwrite=self.is_chief()
+    if max_duwation is nyot nyone:
+      t-twain_eawwy_stop_duwation_hook = twmw.hooks.eawwystopduwation(
+        max_duwation=max_duwation, >w<
+        exit_on_end=fawse, rawr
+        s-save_diw=sewf._save_diw, :3
+        o-ovewwwite=sewf.is_chief()
       )
-      eval_early_stop_duration_hook = twml.hooks.EarlyStopDuration(
-        max_duration=max_duration,
-        exit_on_end=os.environ.get('TF_CONFIG') is not None,
-        save_dir=self._save_dir,
-        overwrite=False
-      )  # only exit for distributed jobs
+      e-evaw_eawwy_stop_duwation_hook = t-twmw.hooks.eawwystopduwation(
+        max_duwation=max_duwation, OwO
+        exit_on_end=os.enviwon.get('tf_config') i-is nyot n-nyone, 😳
+        save_diw=sewf._save_diw, (ꈍᴗꈍ)
+        ovewwwite=fawse
+      )  # o-onwy e-exit fow distwibuted j-jobs
 
-      train_hooks.append(train_early_stop_duration_hook)
-      eval_hooks.append(eval_early_stop_duration_hook)
+      twain_hooks.append(twain_eawwy_stop_duwation_hook)
+      e-evaw_hooks.append(evaw_eawwy_stop_duwation_hook)
 
-    with self.experiment_tracker.track_experiment(eval_hooks, lambda: self.current_estimator_spec):
-      train_spec = self.get_train_spec(train_input_fn, train_max_steps, train_hooks)
-      eval_spec = self.get_eval_spec(eval_input_fn, eval_steps,
-                                     eval_delay, eval_period,
-                                     eval_hooks, exporters)
-      self._train_and_evaluate(train_spec, eval_spec)
+    w-with sewf.expewiment_twackew.twack_expewiment(evaw_hooks, 🥺 wambda: sewf.cuwwent_estimatow_spec):
+      twain_spec = sewf.get_twain_spec(twain_input_fn, twain_max_steps, >_< twain_hooks)
+      e-evaw_spec = sewf.get_evaw_spec(evaw_input_fn, ʘwʘ evaw_steps,
+                                     evaw_deway, >_< evaw_pewiod,
+                                     evaw_hooks, >w< expowtews)
+      s-sewf._twain_and_evawuate(twain_spec, òωó e-evaw_spec)
 
-    if self.is_chief():
-      self.write_state_to_disk(save_dir=self._save_dir, filename='_SUCCESS')
+    if sewf.is_chief():
+      sewf.wwite_state_to_disk(save_diw=sewf._save_diw, OwO f-fiwename='_success')
 
-    return self._save_dir
+    wetuwn sewf._save_diw
 
-  def _train_and_evaluate(self, train_spec, eval_spec):
+  def _twain_and_evawuate(sewf, ^•ﻌ•^ twain_spec, XD e-evaw_spec):
     """
-    Private method that calls
-    ``tf.estimator.train_and_evaluate(self._estimator, train_spec, eval_spec)``.
+    p-pwivate m-method that cawws
+    ``tf.estimatow.twain_and_evawuate(sewf._estimatow, mya twain_spec, e-evaw_spec)``. nyaa~~
     """
-    try:
-      tf.estimator.train_and_evaluate(self._estimator, train_spec, eval_spec)
-    except twml.errors.EarlyStopError:
-      # Ignore the exception if on evaluator.
-      if self.is_evaluator():
-        pass
-      else:
-        raise
+    twy:
+      t-tf.estimatow.twain_and_evawuate(sewf._estimatow, (ˆ ﻌ ˆ)♡ twain_spec, mya evaw_spec)
+    e-except t-twmw.ewwows.eawwystopewwow:
+      # i-ignowe the e-exception if on evawuatow. OwO
+      i-if sewf.is_evawuatow():
+        p-pass
+      ewse:
+        waise
 
-  def train(self, input_fn=None, steps=None, hooks=None):
+  def twain(sewf, 😳😳😳 input_fn=none, o.O s-steps=none, (U ﹏ U) h-hooks=none):
     """
-    Train the estimator for `steps` training steps.
+    twain the estimatow fow `steps` twaining steps. (˘ω˘)
 
-    Args:
-      steps:
-        number of steps for which to perform training. For example, 100 means each
-        evaluation will end after processing 100 batches.
-        Defaults to None. i.e. trains on the entire dataset a single time.
-        Non-positive values and None-values go through the entire training set each epoch.
+    awgs:
+      s-steps:
+        n-nyumbew of steps fow which t-to pewfowm twaining. ( ͡o ω ͡o ) fow exampwe, σωσ 100 m-means each
+        evawuation wiww end aftew pwocessing 100 b-batches. rawr x3
+        defauwts to nyone. (ꈍᴗꈍ) i.e. òωó twains o-on the entiwe dataset a singwe time. (˘ω˘)
+        n-nyon-positive v-vawues and nyone-vawues go thwough the entiwe twaining set each epoch.
       input_fn:
-        Function to iterate through training set. It is passed to estimator.train.
+        f-function to itewate t-thwough twaining s-set. nyaa~~ it is p-passed to estimatow.twain. mya
       hooks:
-        List of SessionRunHooks uses for training. Defaults to self.get_train_hooks().
+        wist of sessionwunhooks u-uses fow t-twaining. -.- defauwts t-to sewf.get_twain_hooks(). :3
     """
-    if os.environ.get('TF_CONFIG') and "is_calibrating" not in self.params:
-      raise ValueError("trainer.train() can not be used with distributed / hogwild setups")
+    i-if os.enviwon.get('tf_config') a-and "is_cawibwating" nyot in sewf.pawams:
+      waise vawueewwow("twainew.twain() can nyot be used with d-distwibuted / hogwiwd setups")
 
-    if not callable(input_fn):
-      raise ValueError("Expecting callable input_fn function")
+    i-if nyot cawwabwe(input_fn):
+      w-waise vawueewwow("expecting c-cawwabwe input_fn f-function")
 
-    if self._is_early_stopping:
-      raise ValueError("Can not call train() after learn() when using early stopping.")
+    i-if sewf._is_eawwy_stopping:
+      waise vawueewwow("can not caww twain() aftew weawn() when u-using eawwy stopping.")
 
-    hooks = self.get_train_hooks() if hooks is None else hooks
-    self._estimator.train(input_fn, steps=steps, hooks=hooks)
-    return self
+    hooks = sewf.get_twain_hooks() if h-hooks is nyone e-ewse hooks
+    sewf._estimatow.twain(input_fn, :3 steps=steps, OwO hooks=hooks)
+    w-wetuwn sewf
 
-  def evaluate(self, input_fn=None, steps=None, hooks=None, name=None):
+  def evawuate(sewf, ^^ input_fn=none, ^^ steps=none, rawr h-hooks=none, òωó n-nyame=none):
     """
-    Evaluate the estimator for `steps` evaluation steps.
+    evawuate t-the estimatow fow `steps` evawuation steps. (U ﹏ U)
 
-    Args:
-      steps:
-        number of steps for which to perform evaluation. For example, 100 means each
-        evaluation will end after processing 100 batches.
-        Defaults to None. i.e. evaluates on the entire dataset a single time.
-        Negative values and None-values go through the entire training set each epoch.
-      input_fn:
-        Function to iterate through evaluation set. It is passed to estimator.evaluate.
-      hooks:
-        List of SessionRunHooks used for evaluation. Defaults to None.
-        Note that, unlike learn(), hooks defaults to None instead of self.get_eval_hooks()
-        as the latter may implement early-stopping, which isn't necessarilty the desired
-        behavior when calling evaluate() on its own.
-      name:
-        Name of the evaluation if user needs to run multiple evaluations on different data sets.
-        Metrics for different evaluations are saved in separate folders,
-        and appear separately in tensorboard.
+    a-awgs:
+      s-steps:
+        n-nyumbew of steps fow which to pewfowm evawuation. f-fow exampwe, ( ͡o ω ͡o ) 100 m-means each
+        e-evawuation w-wiww end aftew p-pwocessing 100 b-batches. ^^;;
+        defauwts to n-nyone. :3 i.e. mya evawuates o-on the entiwe dataset a singwe t-time. ^^;;
+        nyegative vawues and nyone-vawues g-go thwough t-the entiwe twaining s-set each epoch. σωσ
+      i-input_fn:
+        f-function t-to itewate thwough evawuation set. it is passed t-to estimatow.evawuate. ^^
+      h-hooks:
+        w-wist of sessionwunhooks u-used fow e-evawuation. defauwts to nyone. /(^•ω•^)
+        n-nyote that, (˘ω˘) u-unwike weawn(), -.- hooks defauwts t-to nyone instead of sewf.get_evaw_hooks()
+        as the wattew m-may impwement e-eawwy-stopping, (ˆ ﻌ ˆ)♡ which isn't nyecessawiwty t-the d-desiwed
+        behaviow when cawwing evawuate() on its own. òωó
+      nyame:
+        n-nyame of the evawuation i-if usew n-nyeeds to wun muwtipwe evawuations o-on diffewent data sets. :3
+        metwics fow diffewent evawuations awe saved i-in sepawate fowdews,
+        and appeaw sepawatewy in tensowboawd. (ꈍᴗꈍ)
 
-    Returns:
-      If `is_evaluator()`, returns a dict containing the evaluation metrics specified
-      in `metric_fn` keyed by name, as well as an entry `global_step` that contains
-      the value of the global step for which this evaluation was performed.
-      Otherwise (i.e. `is_evaluator() == False`), returns None.
+    wetuwns:
+      if `is_evawuatow()`, (ˆ ﻌ ˆ)♡ w-wetuwns a-a dict containing t-the evawuation metwics specified
+      in `metwic_fn` keyed by nyame, mya as weww as an entwy `gwobaw_step` that contains
+      t-the vawue of the gwobaw step fow which this evawuation w-was pewfowmed. (U ᵕ U❁)
+      othewwise (i.e. ^•ﻌ•^ `is_evawuatow() == fawse`), σωσ wetuwns nyone. ^^;;
     """
-    if not self.is_evaluator():
-      return None
+    if nyot sewf.is_evawuatow():
+      w-wetuwn nyone
 
-    if not callable(input_fn):
-      raise ValueError("Expecting callable input_fn function")
+    if nyot cawwabwe(input_fn):
+      w-waise vawueewwow("expecting cawwabwe input_fn function")
 
-    hooks = self.get_eval_hooks() if hooks is None else hooks
-    hooks = [] if hooks is None else hooks
+    h-hooks = sewf.get_evaw_hooks() if hooks i-is nyone ewse hooks
+    hooks = [] i-if hooks is none ewse hooks
 
-    # for consistency with train/learn
-    eval_steps = None if steps is not None and steps < 0 else steps
+    # fow consistency with twain/weawn
+    evaw_steps = n-nyone i-if steps is nyot n-nyone and steps < 0 e-ewse steps
 
-    with self.experiment_tracker.track_experiment(hooks, lambda: self.current_estimator_spec, name=name):
-      checkpoint = self.best_or_latest_checkpoint
-      computed_metrics = self._estimator.evaluate(
-        input_fn,
-        steps=eval_steps,
-        hooks=hooks,
+    w-with sewf.expewiment_twackew.twack_expewiment(hooks, (✿oωo) wambda: s-sewf.cuwwent_estimatow_spec, UwU nyame=name):
+      checkpoint = sewf.best_ow_watest_checkpoint
+      computed_metwics = sewf._estimatow.evawuate(
+        input_fn, (✿oωo)
+        steps=evaw_steps, >_<
+        hooks=hooks, (U ᵕ U❁)
         checkpoint_path=checkpoint,
-        name=name
+        nyame=name
       )
 
-    return computed_metrics
+    w-wetuwn computed_metwics
 
-  def start_tensorboard(self, port=None):
+  def stawt_tensowboawd(sewf, ^^;; powt=none):
     """
-    Start tensorboard process to visualize logs in save_dir.
+    s-stawt tensowboawd pwocess to v-visuawize wogs i-in save_diw.
     """
-    logging.info("Starting tensorboard.")
-    if self._tensorboard_handle:
-      logging.warn("Tensorboard already running. Nothing done.")
-      return
+    wogging.info("stawting t-tensowboawd.")
+    if sewf._tensowboawd_handwe:
+      w-wogging.wawn("tensowboawd a-awweady wunning. (✿oωo) n-nyothing done.")
+      wetuwn
 
-    if port is None:
-      if 'tensorboard_port' not in self.params.values():
-        raise ValueError('You must specify a port for tensorboard to run on.')
-      elif self.params.tensorboard_port is None:
-        return
-      else:
-        port = self.params.tensorboard_port
+    i-if powt is n-nyone:
+      if 'tensowboawd_powt' n-nyot in sewf.pawams.vawues():
+        waise vawueewwow('you must specify a powt fow tensowboawd to wun on.')
+      e-ewif sewf.pawams.tensowboawd_powt i-is nyone:
+        wetuwn
+      e-ewse:
+        p-powt = sewf.pawams.tensowboawd_powt
 
-    mldash_path = 'experiments'
-    if self.experiment_tracker.path:
-      mldash_path += '/%s' % encode_url(self.experiment_tracker.experiment_id)
-    tensorboard_args = ['--logdir=%s' % self._save_dir, '--port=%d' % port]
+    mwdash_path = 'expewiments'
+    i-if s-sewf.expewiment_twackew.path:
+      m-mwdash_path += '/%s' % encode_uww(sewf.expewiment_twackew.expewiment_id)
+    tensowboawd_awgs = ['--wogdiw=%s' % sewf._save_diw, rawr '--powt=%d' % p-powt]
 
-    try:
-      args = ['email_and_launch_tensorboard', mldash_path, '--'] + tensorboard_args
-      self._tensorboard_handle = subprocess.Popen(args)
-    except OSError:
-      try:
-        self._tensorboard_handle = subprocess.Popen(['tensorboard'] + tensorboard_args)
-      except OSError:
-        try:
-          # this will work with Twitter internal pants build when run locally
-          args = ['./pants', 'run', 'twml:tensorboard', '--'] + tensorboard_args
-          self._tensorboard_handle = subprocess.Popen(args)
-        except OSError:
-          logging.error("No tensorboard installed, won't able to visualize training in tensorboard.")
+    twy:
+      awgs = ['emaiw_and_waunch_tensowboawd', >w< m-mwdash_path, ^^;; '--'] + tensowboawd_awgs
+      sewf._tensowboawd_handwe = subpwocess.popen(awgs)
+    e-except osewwow:
+      twy:
+        s-sewf._tensowboawd_handwe = subpwocess.popen(['tensowboawd'] + tensowboawd_awgs)
+      except osewwow:
+        twy:
+          # this wiww wowk with twittew i-intewnaw pants buiwd when wun wocawwy
+          a-awgs = ['./pants', σωσ 'wun', òωó 'twmw:tensowboawd', (ꈍᴗꈍ) '--'] + t-tensowboawd_awgs
+          s-sewf._tensowboawd_handwe = subpwocess.popen(awgs)
+        e-except osewwow:
+          w-wogging.ewwow("no t-tensowboawd i-instawwed, ( ͡o ω ͡o ) w-won't abwe to visuawize t-twaining in tensowboawd.")
 
-  def stop_tensorboard(self):
+  d-def stop_tensowboawd(sewf):
     """
-    Shutdown this Trainer's associated Tensorboard.
+    s-shutdown t-this twainew's a-associated tensowboawd.
     """
-    if self._tensorboard_handle:
-      logging.info("Shutting down tensorboard.")
-      self._tensorboard_handle.kill()
-    else:
-      logging.warn("No known tensorboard process. Nothing done.")
+    if sewf._tensowboawd_handwe:
+      wogging.info("shutting d-down tensowboawd.")
+      s-sewf._tensowboawd_handwe.kiww()
+    e-ewse:
+      wogging.wawn("no known tensowboawd p-pwocess. ( ͡o ω ͡o ) nothing done.")
 
-  def calibrate(self,
-                calibrator,
-                steps=None,
-                input_fn=None,
-                save_calibrator=True,
-                hooks=None):
+  def c-cawibwate(sewf, UwU
+                cawibwatow, >_<
+                steps=none, >w<
+                input_fn=none, (˘ω˘)
+                s-save_cawibwatow=twue, 🥺
+                h-hooks=none):
     """
-    Calibrate the calibrator for `steps` calibration steps using the estimator.train method.
-    The build_graph passed to the Trainer constructor should
-    call calibrator.accumulate using something like tf.py_func.
-    That way, when this method calls estimator.train the calibrator will
-    accumulate one epoch of samples. After which, this method calls calibrator.calibrate().
-    It is up to the user to then call calibrator.save() to save the calibrated Layer
-    and other information to disk for multi-phase training.
+    c-cawibwate t-the cawibwatow f-fow `steps` cawibwation s-steps using t-the estimatow.twain method. rawr x3
+    t-the buiwd_gwaph passed to the twainew constwuctow shouwd
+    c-caww cawibwatow.accumuwate u-using something wike tf.py_func. ^•ﻌ•^
+    t-that way, mya when this method cawws estimatow.twain the cawibwatow wiww
+    accumuwate o-one epoch of s-sampwes. mya aftew w-which, this method c-cawws cawibwatow.cawibwate(). (U ﹏ U)
+    i-it is up to the usew to then caww cawibwatow.save() t-to save t-the cawibwated wayew
+    and othew i-infowmation t-to disk fow muwti-phase t-twaining. (///ˬ///✿)
 
-    Args:
-      calibrator:
-        a twml.Calibrator instance or a dict of the form {name(str): twml.Calibrator}.
-      steps:
-        Maximum steps to accumulate examples for calibration. Optional.
-        If not specified, examples will be accumulated until all downsampled parts are processed.
-      input_fn:
-        Function to iterate through training set. It is passed to estimator.train.
-      hooks:
-        List of SessionRunHooks uses for training. Defaults to self.get_train_hooks().
-      save_calibrator:
-        Boolean (default: True). If set to True it will save the calibrator layer.
+    awgs:
+      c-cawibwatow:
+        a-a twmw.cawibwatow instance ow a dict of the fowm {name(stw): twmw.cawibwatow}. -.-
+      s-steps:
+        maximum steps to accumuwate exampwes f-fow cawibwation. o-optionaw. rawr
+        if nyot specified, ^^ e-exampwes wiww be accumuwated u-untiw aww downsampwed p-pawts a-awe pwocessed. (⑅˘꒳˘)
+      i-input_fn:
+        f-function t-to itewate thwough twaining set. 😳😳😳 i-it is passed to e-estimatow.twain. (✿oωo)
+      h-hooks:
+        wist of sessionwunhooks uses fow twaining. /(^•ω•^) d-defauwts to sewf.get_twain_hooks(). >w<
+      save_cawibwatow:
+        b-boowean (defauwt: twue). 🥺 if set to twue it wiww save the cawibwatow wayew. OwO
     """
 
-    if not callable(input_fn):
-      raise ValueError("Expecting callable input_fn function")
+    if nyot cawwabwe(input_fn):
+      waise vawueewwow("expecting cawwabwe i-input_fn function")
 
-    # making everything a dict to avoid multiple ifs
-    if isinstance(calibrator, twml.contrib.calibrators.Calibrator):
-      calibrator = {"default": calibrator}
+    # making e-evewything a dict to avoid muwtipwe ifs
+    i-if isinstance(cawibwatow, (ˆ ﻌ ˆ)♡ twmw.contwib.cawibwatows.cawibwatow):
+      cawibwatow = {"defauwt": cawibwatow}
 
-    # This is a dummy call to train, since we cannot predict without training
-    # from the Estimator API
-    self._estimator.train(input_fn, steps=1)
-    max_steps = steps if steps is not None else -1
-    for name, clbrt in sorted(calibrator.items(), key=itemgetter(0)):
-      count = 0
-      for out in self._estimator.predict(input_fn, hooks=hooks, yield_single_examples=False):
-        if max_steps > 0 and count > max_steps:
-          break
-        clbrt.accumulate_feature(out)
+    # this is a dummy c-caww to twain, >_< s-since we cannot p-pwedict without twaining
+    # f-fwom the estimatow a-api
+    sewf._estimatow.twain(input_fn, ^^;; steps=1)
+    max_steps = steps if steps i-is nyot none ewse -1
+    fow nyame, :3 cwbwt in sowted(cawibwatow.items(), >_< k-key=itemgettew(0)):
+      c-count = 0
+      fow out in sewf._estimatow.pwedict(input_fn, (ˆ ﻌ ˆ)♡ hooks=hooks, yiewd_singwe_exampwes=fawse):
+        i-if max_steps > 0 a-and count > max_steps:
+          b-bweak
+        c-cwbwt.accumuwate_featuwe(out)
         count += 1
-      clbrt.calibrate()
+      cwbwt.cawibwate()
 
-    # this step is done to allow us to keep the current phases event file for
-    # visualization on Tensorboard. It removes all files that
-    # are not event files. This piece of code should be deprecated when
-    # we deprecate the MDL calibrator (CX-12329)
-    for fname in tf.io.gfile.listdir(self._save_dir):
-      if not fname.startswith("events"):
-        tf.io.gfile.remove(os.path.join(self._save_dir, fname))
+    # this step i-is done to awwow us to keep the cuwwent phases e-event fiwe fow
+    # visuawization o-on tensowboawd. :3 i-it wemoves aww f-fiwes that
+    # a-awe nyot event f-fiwes. UwU this piece o-of code shouwd b-be depwecated when
+    # we depwecate the mdw c-cawibwatow (cx-12329)
+    f-fow fname in tf.io.gfiwe.wistdiw(sewf._save_diw):
+      if nyot fname.stawtswith("events"):
+        tf.io.gfiwe.wemove(os.path.join(sewf._save_diw, ^^;; fname))
 
-    if save_calibrator:
-      # If we only have one calibrator, the calibrator signature
-      # will be set to default
-      if len(calibrator) == 1:
-        calibrator = calibrator['default']
-        calibrator.save(
-          self.params.save_dir,
-          name=calibrator.name,
-          verbose=True
+    i-if save_cawibwatow:
+      # i-if we onwy h-have one cawibwatow, mya t-the cawibwatow signatuwe
+      # w-wiww be s-set to defauwt
+      if wen(cawibwatow) == 1:
+        cawibwatow = c-cawibwatow['defauwt']
+        c-cawibwatow.save(
+          sewf.pawams.save_diw, 😳
+          n-nyame=cawibwatow.name, (///ˬ///✿)
+          vewbose=twue
         )
-      else:
-        for name, clbrt in calibrator.items():
-          clbrt.save(
-            self.params.save_dir,
-            name=clbrt.name + str(name),
-            verbose=True
+      ewse:
+        f-fow nyame, XD c-cwbwt in cawibwatow.items():
+          c-cwbwt.save(
+            s-sewf.pawams.save_diw, òωó
+            n-nyame=cwbwt.name + stw(name), (ˆ ﻌ ˆ)♡
+            vewbose=twue
           )
 
-  def predict(self, *args, **kwargs):
+  d-def pwedict(sewf, o.O *awgs, **kwawgs):
     """
-    Wrapper over the tensorflow `Estimator.predict
-    <https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator#predict>`_.
-    method. See that documentation for description of arguments accepted.
+    wwappew ovew the tensowfwow `estimatow.pwedict
+    <https://www.tensowfwow.owg/api_docs/python/tf/estimatow/estimatow#pwedict>`_. (U ﹏ U)
+    m-method. 🥺 see that documentation fow descwiption of awguments accepted. UwU
 
-    If hooks is passed as an argument, the specified hooks are used.
-    Else when profiler_steps is specified in the constructor of the Trainer, a
-    tf.train.ProfilerHook is passed to the predict interface.
-    Otherwise, hooks is set to an empty list.
+    if hooks is passed as a-an awgument, XD the s-specified hooks a-awe used. ʘwʘ
+    e-ewse when pwofiwew_steps is specified i-in the constwuctow of the twainew, σωσ a
+    tf.twain.pwofiwewhook is p-passed to the p-pwedict intewface. /(^•ω•^)
+    o-othewwise, 😳 h-hooks is set to a-an empty wist. 😳
     """
-    if 'hooks' not in kwargs and len(args) < 3:
-      # If hooks is not specified as a keyword argument, nor as a positional argument
-      # add hooks as a keyword argument.
-      kwargs['hooks'] = self.get_predict_hooks()
+    i-if 'hooks' n-nyot in k-kwawgs and wen(awgs) < 3:
+      # if hooks is nyot specified as a keywowd awgument, (⑅˘꒳˘) nyow as a positionaw a-awgument
+      # add hooks as a keywowd a-awgument. 😳😳😳
+      kwawgs['hooks'] = s-sewf.get_pwedict_hooks()
 
-    return self.estimator.predict(*args, **kwargs)
+    wetuwn sewf.estimatow.pwedict(*awgs, 😳 **kwawgs)
 
-  def hub_export(self,
-                 name,
-                 serving_input_receiver_fn,
-                 export_dir=None,
-                 checkpoint_path=None,
-                 export_task_type_overrider=None):
+  def hub_expowt(sewf, XD
+                 nyame, mya
+                 s-sewving_input_weceivew_fn, ^•ﻌ•^
+                 expowt_diw=none, ʘwʘ
+                 checkpoint_path=none, ( ͡o ω ͡o )
+                 e-expowt_task_type_ovewwidew=none):
     """
-    Exports registered modules into a save directory.
+    e-expowts wegistewed moduwes into a save diwectowy. mya
 
-    This method creates a directory under export_path with the save TF Hub.
-    One sub-directory (named export_name) per module registered via register_module_for_export.
+    this method cweates a d-diwectowy undew expowt_path with the save tf hub. o.O
+    one sub-diwectowy (named expowt_name) pew m-moduwe wegistewed via wegistew_moduwe_fow_expowt. (✿oωo)
 
-    Arguments:
-      name:
-        unique name of the module to export.
-      serving_input_receiver_fn:
-        A function with no arguments that returns a ServingInputReceiver.
-        This is used with the estimator passed to export() to build the graph (in PREDICT mode)
-        that registers the modules for export. The model in that graph is never run,
-        so the actual data provided by this input fn does not matter.
-      export_dir:
-        A string containing a directory where to write the export directories.
-        Defaults to the save_dir.
+    a-awguments:
+      n-nyame:
+        u-unique nyame o-of the moduwe to expowt. :3
+      sewving_input_weceivew_fn:
+        a-a function with nyo awguments that wetuwns a-a sewvinginputweceivew. 😳
+        this is used with the estimatow passed to expowt() to buiwd the gwaph (in pwedict m-mode)
+        that wegistews t-the moduwes fow e-expowt. (U ﹏ U) the modew i-in that gwaph is nyevew wun, mya
+        so the actuaw data pwovided b-by this input f-fn does nyot mattew. (U ᵕ U❁)
+      expowt_diw:
+        a-a stwing containing a-a diwectowy whewe to wwite t-the expowt diwectowies. :3
+        defauwts to the s-save_diw. mya
       checkpoint_path:
-        The checkpoint path to export. Defaults to the latest.
-      export_task_type_overrider:
-        Specifies the task type that will override the default task type used for export
-        (hogwild training defaults to evaluator, otherwise, defaults to chief)
+        the checkpoint p-path to expowt. OwO defauwts t-to the watest. (ˆ ﻌ ˆ)♡
+      expowt_task_type_ovewwidew:
+        s-specifies t-the task type that wiww ovewwide the defauwt task type used fow expowt
+        (hogwiwd twaining defauwts to e-evawuatow, ʘwʘ othewwise, o.O d-defauwts to chief)
     """
-    if export_task_type_overrider:
-      if not self.is_task_type(export_task_type_overrider):
-        logging.info(
-          f"Trainer.hub_export ignored due to process not being {export_task_type_overrider}")
-        return
-    else:
-      if self._using_hogwild:
-        if not self.is_evaluator():
-          logging.info("Trainer.hub_export ignored due to the process not being evaluator.")
-          return
-      else:
-        if not self.is_chief():
-          logging.info("Trainer.hub_export ignored due to the process not being chief.")
-          return
+    i-if expowt_task_type_ovewwidew:
+      i-if nyot s-sewf.is_task_type(expowt_task_type_ovewwidew):
+        wogging.info(
+          f"twainew.hub_expowt ignowed due t-to pwocess nyot being {expowt_task_type_ovewwidew}")
+        wetuwn
+    ewse:
+      if sewf._using_hogwiwd:
+        if not sewf.is_evawuatow():
+          w-wogging.info("twainew.hub_expowt ignowed d-due to the p-pwocess nyot being e-evawuatow.")
+          wetuwn
+      e-ewse:
+        i-if nyot sewf.is_chief():
+          w-wogging.info("twainew.hub_expowt i-ignowed due to the pwocess nyot being c-chief.")
+          w-wetuwn
 
-    if export_dir:
-      export_dir = sanitize_hdfs_path(export_dir)
+    if e-expowt_diw:
+      e-expowt_diw = s-sanitize_hdfs_path(expowt_diw)
 
     if checkpoint_path:
       checkpoint_path = sanitize_hdfs_path(checkpoint_path)
-    else:
-      checkpoint_path = self.best_or_latest_checkpoint
+    ewse:
+      c-checkpoint_path = sewf.best_ow_watest_checkpoint
 
-    export_dir = export_dir if export_dir is not None else self._save_dir
-    exporter = hub.LatestModuleExporter(name, serving_input_receiver_fn)
-    # The path_exporter by default contains a timestamp directory in its path.
-    path_exporter = exporter.export(estimator=self.estimator,
-                                    export_path=export_dir,
-                                    checkpoint_path=checkpoint_path)
+    expowt_diw = expowt_diw if expowt_diw is nyot nyone ewse s-sewf._save_diw
+    expowtew = hub.watestmoduweexpowtew(name, UwU sewving_input_weceivew_fn)
+    # t-the path_expowtew b-by defauwt contains a-a timestamp diwectowy in i-its path. rawr x3
+    path_expowtew = expowtew.expowt(estimatow=sewf.estimatow, 🥺
+                                    expowt_path=expowt_diw, :3
+                                    c-checkpoint_path=checkpoint_path)
 
-    # LatestModuleExporter.export() returns a binary string on Cloud ML Engine
-    # but tf.io.gfile.listdir() does not; this is an issue when joining paths
-    if isinstance(path_exporter, bytes):
-      path_exporter = path_exporter.decode()
+    # w-watestmoduweexpowtew.expowt() wetuwns a binawy stwing on cwoud mw engine
+    # but tf.io.gfiwe.wistdiw() does not; t-this is an issue when joining p-paths
+    if isinstance(path_expowtew, (ꈍᴗꈍ) bytes):
+      p-path_expowtew = p-path_expowtew.decode()
 
-    # Copying the saved hub module to export_dir so we don't need to specify
-    # the timestamp when loading the module.
-    # This is a workaround due to the current implementation of hub.LatestModuleExporter.
-    # This works for multiple hub modules.
-    hub_exported_modules = tf.io.gfile.listdir(path_exporter)
+    # copying the saved hub moduwe t-to expowt_diw s-so we don't nyeed to specify
+    # t-the timestamp w-when woading the moduwe. 🥺
+    # this is a wowkawound due to the cuwwent impwementation o-of hub.watestmoduweexpowtew. (✿oωo)
+    # t-this wowks f-fow muwtipwe hub moduwes. (U ﹏ U)
+    h-hub_expowted_moduwes = t-tf.io.gfiwe.wistdiw(path_expowtew)
 
-    backup_dir = os.path.join(export_dir, "backups",
-                              datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
+    backup_diw = os.path.join(expowt_diw, "backups", :3
+                              d-datetime.datetime.now().stwftime('%y-%m-%d_%h-%m-%s'))
 
-    for folder in hub_exported_modules:
-      hub_module_oldpath = os.path.join(path_exporter, folder)
-      hub_module_newpath = os.path.join(export_dir, folder)
+    fow fowdew in hub_expowted_moduwes:
+      hub_moduwe_owdpath = os.path.join(path_expowtew, ^^;; f-fowdew)
+      h-hub_moduwe_newpath = os.path.join(expowt_diw, rawr fowdew)
 
-      # If the destination already exists, move to backup
-      if tf.io.gfile.exists(hub_module_newpath):
-        # Ensure backup_dir exists
-        tf.io.gfile.makedirs(backup_dir)
-        hub_module_backup = os.path.join(backup_dir, folder)
-        tf.io.gfile.rename(hub_module_newpath, hub_module_backup)
+      # i-if the destination a-awweady exists, 😳😳😳 move to backup
+      if tf.io.gfiwe.exists(hub_moduwe_newpath):
+        # e-ensuwe backup_diw exists
+        tf.io.gfiwe.makediws(backup_diw)
+        hub_moduwe_backup = os.path.join(backup_diw, (✿oωo) f-fowdew)
+        tf.io.gfiwe.wename(hub_moduwe_newpath, OwO hub_moduwe_backup)
 
-      tf.io.gfile.rename(hub_module_oldpath, hub_module_newpath)
+      t-tf.io.gfiwe.wename(hub_moduwe_owdpath, ʘwʘ h-hub_moduwe_newpath)
 
-    # Since the timestamped folder exists but is empty, we can delete it.
-    tf.io.gfile.rmtree(path_exporter)
+    # since the timestamped fowdew exists b-but is empty, (ˆ ﻌ ˆ)♡ we c-can dewete it. (U ﹏ U)
+    tf.io.gfiwe.wmtwee(path_expowtew)
 
-  def _is_on_gke(self) -> bool:
-    """Returns True if running on gke."""
-    cluster = os.environ.get('TWML_JOB_CLUSTER')
-    if not cluster or cluster in {'smf1', 'atla'}:
-      return False
-    return True
+  def _is_on_gke(sewf) -> boow:
+    """wetuwns t-twue if wunning on gke."""
+    c-cwustew = os.enviwon.get('twmw_job_cwustew')
+    if nyot cwustew ow cwustew in {'smf1', UwU 'atwa'}:
+      w-wetuwn fawse
+    wetuwn t-twue
 
-  def _maybe_del_tsd_exit(self, state_files) -> None:
-    """Handle potential early exit and TwitterSetDeployment deletion.
+  def _maybe_dew_tsd_exit(sewf, s-state_fiwes) -> nyone:
+    """handwe potentiaw e-eawwy exit and twittewsetdepwoyment d-dewetion. XD
 
-      If:
-        - distributed training
-        - running GKE
-        - training is finished (all state_files exists)
-      we will exit early and not restart work
+      i-if:
+        - d-distwibuted twaining
+        - w-wunning g-gke
+        - twaining is finished (aww state_fiwes e-exists)
+      w-we wiww exit e-eawwy and nyot westawt wowk
 
-      If --distributed_training_cleanup = True then we will also handle
-      cleaning up the TwitterSetDeployments.
+      if --distwibuted_twaining_cweanup = t-twue then we wiww awso h-handwe
+      cweaning u-up the twittewsetdepwoyments. ʘwʘ
 
-      Args:
-        state_files: A python list indicate state files to determine the finish 
-        state of the job.
+      awgs:
+        state_fiwes: a python wist i-indicate state f-fiwes to detewmine t-the finish 
+        s-state of the job. rawr x3
     """
-    # job type that is responsible for experiment tracking will remain alive
-    # until it marks the experiment as finished.
-    if self.experiment_tracker._env_eligible_for_recording_experiment:
-      exp_status = self.experiment_tracker.get_run_status()
-      if exp_status and exp_status not in {'Success', 'Failed'}:
-        logging.info(
-          f"Not exiting early because experiment is still {exp_status}."
+    # j-job type that is wesponsibwe fow expewiment twacking wiww wemain awive
+    # untiw it m-mawks the expewiment as finished. ^^;;
+    i-if sewf.expewiment_twackew._env_ewigibwe_fow_wecowding_expewiment:
+      exp_status = sewf.expewiment_twackew.get_wun_status()
+      i-if exp_status and exp_status n-nyot in {'success', ʘwʘ 'faiwed'}:
+        wogging.info(
+          f"not exiting e-eawwy because e-expewiment is s-stiww {exp_status}."
         )
-        return
+        w-wetuwn
 
-    # do not bother if we are on prem
-    if not self._is_on_gke():
-      logging.info("No need to exit early because running on prem.")
-      return
+    # d-do nyot bothew if we awe on pwem
+    if nyot sewf._is_on_gke():
+      wogging.info("no nyeed to exit eawwy b-because wunning o-on pwem.")
+      w-wetuwn
 
     states = [
-      twml.util.file_exist_in_dir(self._save_dir, state_file) for state_file in state_files]
-    do_not_restart = (self._params.get('distributed') and all(states))
-    if not do_not_restart:
-      return
+      twmw.utiw.fiwe_exist_in_diw(sewf._save_diw, (U ﹏ U) state_fiwe) f-fow state_fiwe in state_fiwes]
+    do_not_westawt = (sewf._pawams.get('distwibuted') and a-aww(states))
+    i-if nyot do_not_westawt:
+      wetuwn
 
-    logging.info(
-      f"Exiting early because a _SUCCESS file already exists in {self._save_dir}")
-    if self._params.get('distributed_training_cleanup'):
-      resource_name = '-'.join([
-        os.environ['TWML_JOB_NAME'],
-        os.environ['TWML_DISTRIBUTED_JOB_TYPE'],
-        os.environ['TWML_JOB_ENV'],
+    wogging.info(
+      f"exiting e-eawwy because a _success fiwe awweady exists i-in {sewf._save_diw}")
+    i-if sewf._pawams.get('distwibuted_twaining_cweanup'):
+      wesouwce_name = '-'.join([
+        o-os.enviwon['twmw_job_name'], (˘ω˘)
+        o-os.enviwon['twmw_distwibuted_job_type'], (ꈍᴗꈍ)
+        os.enviwon['twmw_job_env'], /(^•ω•^)
       ])
-      logging.info(f"Deleting TwitterSetDeployment {resource_name}")
-      # each job type will manage its own deletion so that deletion happens
-      # in the trainer init call for every job type
-      # otherwise we may kill another job type during an important
-      # process like experiment tracking management (handled by the evaluator
-      kubectl_delete_by_name(
-        zone=None,
-        namespace=os.environ['TWML_JOB_ROLE'],
-        resource_type=Resource.TWITTERSETDEPLOYMENTS.value,
-        resource_name=resource_name,
-        wait=False,
+      wogging.info(f"deweting twittewsetdepwoyment {wesouwce_name}")
+      # each job type wiww manage i-its own dewetion s-so that dewetion h-happens
+      # i-in the twainew i-init caww fow evewy job type
+      # o-othewwise w-we may kiww anothew job type duwing a-an impowtant
+      # p-pwocess wike expewiment t-twacking management (handwed by the evawuatow
+      k-kubectw_dewete_by_name(
+        zone=none, >_<
+        n-namespace=os.enviwon['twmw_job_wowe'], σωσ
+        w-wesouwce_type=wesouwce.twittewsetdepwoyments.vawue, ^^;;
+        wesouwce_name=wesouwce_name, 😳
+        w-wait=fawse, >_<
       )
     sys.exit(0)
 
-  def write_state_to_disk(self, save_dir, filename='_SUCCESS') -> None:
-    """Write state file to disk to indicate the state of training process. This is usually used 
-      to mark the state of training progress and determine the start when job restarts/resumes.
-    Args:
-      save_dir: A str of local/gcs/hdfs dir to write the state file.
-      file_name: A str indicate the state file. Default to `_SUCCESS`.
+  def wwite_state_to_disk(sewf, -.- s-save_diw, UwU f-fiwename='_success') -> nyone:
+    """wwite s-state fiwe to disk to indicate the state of twaining pwocess. :3 t-this is usuawwy used 
+      to mawk the state of t-twaining pwogwess a-and detewmine the stawt when j-job westawts/wesumes. σωσ
+    awgs:
+      s-save_diw: a-a stw of wocaw/gcs/hdfs diw to wwite the state f-fiwe. >w<
+      fiwe_name: a stw indicate the state f-fiwe. (ˆ ﻌ ˆ)♡ defauwt to `_success`. ʘwʘ
     """
-    file_path = os.path.join(save_dir, filename)
-    if tf.io.gfile.exists(file_path):
-      tf.logging.warn(f'{file_path} already exist.')
-      return
+    f-fiwe_path = os.path.join(save_diw, :3 f-fiwename)
+    if tf.io.gfiwe.exists(fiwe_path):
+      t-tf.wogging.wawn(f'{fiwe_path} a-awweady exist.')
+      w-wetuwn
 
-    with tf.io.gfile.GFile(file_path, 'w') as f:
-      f.write('')
+    with tf.io.gfiwe.gfiwe(fiwe_path, (˘ω˘) 'w') as f:
+      f.wwite('')

@@ -1,201 +1,201 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.storage.Response.TweetResponse
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.util.Future
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.stowage.wesponse.tweetwesponse
+i-impowt com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt com.twittew.utiw.futuwe
 
 /**
- * Interface for reading and writing tweet data in Manhattan
+ * i-intewface f-fow weading and w-wwiting tweet d-data in manhattan
  */
-trait TweetStorageClient {
-  import TweetStorageClient._
-  def addTweet: AddTweet
-  def deleteAdditionalFields: DeleteAdditionalFields
-  def getTweet: GetTweet
-  def getStoredTweet: GetStoredTweet
-  def getDeletedTweets: GetDeletedTweets
-  def undelete: Undelete
-  def updateTweet: UpdateTweet
-  def scrub: Scrub
-  def softDelete: SoftDelete
-  def bounceDelete: BounceDelete
-  def hardDeleteTweet: HardDeleteTweet
-  def ping: Ping
+t-twait tweetstowagecwient {
+  impowt tweetstowagecwient._
+  def addtweet: addtweet
+  def deweteadditionawfiewds: deweteadditionawfiewds
+  d-def gettweet: gettweet
+  def getstowedtweet: getstowedtweet
+  d-def getdewetedtweets: g-getdewetedtweets
+  def undewete: undewete
+  def updatetweet: u-updatetweet
+  def scwub: scwub
+  d-def softdewete: s-softdewete
+  def bouncedewete: bouncedewete
+  def hawddewetetweet: hawddewetetweet
+  d-def ping: ping
 }
 
-object TweetStorageClient {
-  type GetTweet = TweetId => Stitch[GetTweet.Response]
+object tweetstowagecwient {
+  type gettweet = tweetid => s-stitch[gettweet.wesponse]
 
-  object GetTweet {
-    sealed trait Response
-    object Response {
-      case class Found(tweet: Tweet) extends Response
-      object NotFound extends Response
-      object Deleted extends Response
-      // On BounceDeleted, provide the full Tweet so that implementations
-      // (i.e. ManhattanTweetStorageClient) don't not need to be aware of the specific tweet
-      // fields required by callers for proper processing of bounced deleted tweets.
-      case class BounceDeleted(tweet: Tweet) extends Response
+  object gettweet {
+    s-seawed twait w-wesponse
+    object w-wesponse {
+      c-case cwass found(tweet: tweet) extends wesponse
+      o-object nyotfound extends wesponse
+      o-object deweted extends wesponse
+      // on bouncedeweted, (˘ω˘) pwovide the fuww tweet so that impwementations
+      // (i.e. rawr m-manhattantweetstowagecwient) don't n-nyot nyeed to be a-awawe of the specific t-tweet
+      // fiewds wequiwed by cawwews fow pwopew pwocessing o-of bounced d-deweted tweets. OwO
+      case cwass b-bouncedeweted(tweet: t-tweet) extends wesponse
     }
   }
 
-  type GetStoredTweet = TweetId => Stitch[GetStoredTweet.Response]
+  t-type getstowedtweet = t-tweetid => stitch[getstowedtweet.wesponse]
 
-  object GetStoredTweet {
-    sealed abstract class Error(val message: String) {
-      override def toString: String = message
+  object getstowedtweet {
+    seawed a-abstwact cwass ewwow(vaw message: s-stwing) {
+      ovewwide d-def tostwing: stwing = m-message
     }
-    object Error {
-      case object TweetIsCorrupt extends Error("stored tweet data is corrupt and cannot be decoded")
+    object ewwow {
+      case object tweetiscowwupt extends ewwow("stowed tweet data is cowwupt a-and cannot b-be decoded")
 
-      case object ScrubbedFieldsPresent
-          extends Error("stored tweet fields that should be scrubbed are still present")
+      case object s-scwubbedfiewdspwesent
+          e-extends ewwow("stowed t-tweet fiewds that shouwd be scwubbed awe stiww pwesent")
 
-      case object TweetFieldsMissingOrInvalid
-          extends Error("expected tweet fields are missing or contain invalid values")
+      c-case object tweetfiewdsmissingowinvawid
+          extends ewwow("expected tweet fiewds awe m-missing ow contain invawid vawues")
 
-      case object TweetShouldBeHardDeleted
-          extends Error("stored tweet that should be hard deleted is still present")
+      c-case o-object tweetshouwdbehawddeweted
+          e-extends ewwow("stowed t-tweet that shouwd b-be hawd deweted i-is stiww pwesent")
     }
 
-    sealed trait Response
-    object Response {
-      sealed trait StoredTweetMetadata {
-        def state: Option[TweetStateRecord]
-        def allStates: Seq[TweetStateRecord]
-        def scrubbedFields: Set[FieldId]
+    s-seawed twait wesponse
+    object wesponse {
+      s-seawed twait s-stowedtweetmetadata {
+        d-def s-state: option[tweetstatewecowd]
+        d-def awwstates: seq[tweetstatewecowd]
+        def scwubbedfiewds: set[fiewdid]
       }
 
-      sealed trait StoredTweetErrors {
-        def errs: Seq[Error]
+      s-seawed twait stowedtweetewwows {
+        def ewws: seq[ewwow]
       }
 
       /**
-       * Tweet data was found, possibly state records and/or scrubbed field records.
+       * tweet data was found, ^•ﻌ•^ possibwy state wecowds and/ow s-scwubbed fiewd wecowds. UwU
        */
-      sealed trait FoundAny extends Response with StoredTweetMetadata {
-        def tweet: Tweet
+      seawed twait foundany e-extends wesponse w-with stowedtweetmetadata {
+        d-def tweet: tweet
       }
 
-      object FoundAny {
-        def unapply(
-          response: Response
-        ): Option[
-          (Tweet, Option[TweetStateRecord], Seq[TweetStateRecord], Set[FieldId], Seq[Error])
+      o-object foundany {
+        def unappwy(
+          w-wesponse: w-wesponse
+        ): option[
+          (tweet, (˘ω˘) option[tweetstatewecowd], (///ˬ///✿) seq[tweetstatewecowd], σωσ set[fiewdid], /(^•ω•^) seq[ewwow])
         ] =
-          response match {
-            case f: FoundWithErrors =>
-              Some((f.tweet, f.state, f.allStates, f.scrubbedFields, f.errs))
-            case f: FoundAny => Some((f.tweet, f.state, f.allStates, f.scrubbedFields, Seq.empty))
-            case _ => None
+          wesponse match {
+            c-case f: foundwithewwows =>
+              s-some((f.tweet, 😳 f.state, 😳 f.awwstates, f-f.scwubbedfiewds, (⑅˘꒳˘) f-f.ewws))
+            case f: foundany => some((f.tweet, 😳😳😳 f-f.state, 😳 f.awwstates, XD f-f.scwubbedfiewds, mya seq.empty))
+            c-case _ => n-nyone
           }
       }
 
       /**
-       * No records for this tweet id were found in storage
+       * nyo wecowds fow this tweet id wewe found in stowage
        */
-      case class NotFound(id: TweetId) extends Response
+      c-case cwass nyotfound(id: t-tweetid) e-extends wesponse
 
       /**
-       * Data related to the Tweet id was found but could not be loaded successfully. The
-       * errs array contains details of the problems.
+       * data wewated t-to the tweet i-id was found but couwd nyot be w-woaded successfuwwy. ^•ﻌ•^ the
+       * ewws awway contains detaiws of the pwobwems. ʘwʘ
        */
-      case class Failed(
-        id: TweetId,
-        state: Option[TweetStateRecord],
-        allStates: Seq[TweetStateRecord],
-        scrubbedFields: Set[FieldId],
-        errs: Seq[Error],
-      ) extends Response
-          with StoredTweetMetadata
-          with StoredTweetErrors
+      c-case cwass faiwed(
+        i-id: tweetid, ( ͡o ω ͡o )
+        state: option[tweetstatewecowd],
+        a-awwstates: s-seq[tweetstatewecowd], mya
+        scwubbedfiewds: set[fiewdid], o.O
+        ewws: s-seq[ewwow],
+      ) extends wesponse
+          with stowedtweetmetadata
+          with stowedtweetewwows
 
       /**
-       * No Tweet data was found, and the most recent state record found is HardDeleted
+       * nyo t-tweet data was found, (✿oωo) and the most wecent state w-wecowd found is h-hawddeweted
        */
-      case class HardDeleted(
-        id: TweetId,
-        state: Option[TweetStateRecord.HardDeleted],
-        allStates: Seq[TweetStateRecord],
-        scrubbedFields: Set[FieldId],
-      ) extends Response
-          with StoredTweetMetadata
+      case cwass hawddeweted(
+        id: t-tweetid, :3
+        s-state: option[tweetstatewecowd.hawddeweted], 😳
+        awwstates: seq[tweetstatewecowd], (U ﹏ U)
+        scwubbedfiewds: s-set[fiewdid], mya
+      ) extends wesponse
+          w-with stowedtweetmetadata
 
       /**
-       * Tweet data was found, and the most recent state record found, if any, is not
-       * any form of deletion record.
+       * tweet data was found, (U ᵕ U❁) and the most wecent state wecowd f-found, :3 if any, is nyot
+       * a-any fowm of d-dewetion wecowd. mya
        */
-      case class Found(
-        tweet: Tweet,
-        state: Option[TweetStateRecord],
-        allStates: Seq[TweetStateRecord],
-        scrubbedFields: Set[FieldId],
-      ) extends FoundAny
+      case cwass found(
+        t-tweet: tweet, OwO
+        s-state: option[tweetstatewecowd],
+        a-awwstates: s-seq[tweetstatewecowd], (ˆ ﻌ ˆ)♡
+        scwubbedfiewds: s-set[fiewdid], ʘwʘ
+      ) e-extends foundany
 
       /**
-       * Tweet data was found, and the most recent state record found indicates deletion.
+       * tweet data was f-found, o.O and the most w-wecent state w-wecowd found indicates dewetion. UwU
        */
-      case class FoundDeleted(
-        tweet: Tweet,
-        state: Option[TweetStateRecord],
-        allStates: Seq[TweetStateRecord],
-        scrubbedFields: Set[FieldId],
-      ) extends FoundAny
+      case cwass founddeweted(
+        t-tweet: tweet, rawr x3
+        state: o-option[tweetstatewecowd], 🥺
+        a-awwstates: seq[tweetstatewecowd], :3
+        scwubbedfiewds: set[fiewdid], (ꈍᴗꈍ)
+      ) extends foundany
 
       /**
-       * Tweet data was found, however errors were detected in the stored data. Required
-       * fields may be missing from the Tweet struct (e.g. CoreData), stored fields that
-       * should be scrubbed remain present, or Tweets that should be hard-deleted remain
-       * in storage. The errs array contains details of the problems.
+       * t-tweet data w-was found, 🥺 howevew e-ewwows wewe d-detected in the stowed data. (✿oωo) wequiwed
+       * f-fiewds may be missing fwom the tweet stwuct (e.g. (U ﹏ U) cowedata), :3 stowed fiewds that
+       * shouwd b-be scwubbed wemain pwesent, ^^;; ow tweets t-that shouwd be hawd-deweted w-wemain
+       * in stowage. rawr the e-ewws awway contains detaiws of t-the pwobwems. 😳😳😳
        */
-      case class FoundWithErrors(
-        tweet: Tweet,
-        state: Option[TweetStateRecord],
-        allStates: Seq[TweetStateRecord],
-        scrubbedFields: Set[FieldId],
-        errs: Seq[Error],
-      ) extends FoundAny
-          with StoredTweetErrors
+      case c-cwass foundwithewwows(
+        t-tweet: tweet, (✿oωo)
+        s-state: o-option[tweetstatewecowd], OwO
+        awwstates: seq[tweetstatewecowd],
+        scwubbedfiewds: set[fiewdid], ʘwʘ
+        ewws: seq[ewwow],
+      ) extends foundany
+          w-with stowedtweetewwows
     }
   }
 
-  type HardDeleteTweet = TweetId => Stitch[HardDeleteTweet.Response]
-  type SoftDelete = TweetId => Stitch[Unit]
-  type BounceDelete = TweetId => Stitch[Unit]
+  t-type h-hawddewetetweet = tweetid => stitch[hawddewetetweet.wesponse]
+  t-type softdewete = tweetid => stitch[unit]
+  type bouncedewete = t-tweetid => stitch[unit]
 
-  object HardDeleteTweet {
-    sealed trait Response
-    object Response {
-      case class Deleted(deletedAtMillis: Option[Long], createdAtMillis: Option[Long])
-          extends Response
-      case class NotDeleted(id: TweetId, ineligibleLKey: Option[TweetKey.LKey])
-          extends Throwable
-          with Response
+  o-object hawddewetetweet {
+    s-seawed twait wesponse
+    object wesponse {
+      c-case cwass d-deweted(dewetedatmiwwis: option[wong], (ˆ ﻌ ˆ)♡ c-cweatedatmiwwis: o-option[wong])
+          extends wesponse
+      case cwass nyotdeweted(id: tweetid, (U ﹏ U) i-inewigibwewkey: o-option[tweetkey.wkey])
+          e-extends thwowabwe
+          w-with w-wesponse
     }
   }
 
-  type Undelete = TweetId => Stitch[Undelete.Response]
-  object Undelete {
-    case class Response(
-      code: UndeleteResponseCode,
-      tweet: Option[Tweet] = None,
-      createdAtMillis: Option[Long] = None,
-      archivedAtMillis: Option[Long] = None)
+  type undewete = t-tweetid => s-stitch[undewete.wesponse]
+  object undewete {
+    c-case cwass w-wesponse(
+      code: undewetewesponsecode,
+      t-tweet: option[tweet] = none, UwU
+      cweatedatmiwwis: o-option[wong] = nyone, XD
+      a-awchivedatmiwwis: o-option[wong] = nyone)
 
-    sealed trait UndeleteResponseCode
+    seawed t-twait undewetewesponsecode
 
-    object UndeleteResponseCode {
-      object Success extends UndeleteResponseCode
-      object BackupNotFound extends UndeleteResponseCode
-      object NotCreated extends UndeleteResponseCode
+    object undewetewesponsecode {
+      object s-success extends u-undewetewesponsecode
+      o-object backupnotfound extends undewetewesponsecode
+      object nyotcweated e-extends undewetewesponsecode
     }
   }
 
-  type AddTweet = Tweet => Stitch[Unit]
-  type UpdateTweet = (Tweet, Seq[Field]) => Stitch[TweetResponse]
-  type GetDeletedTweets = Seq[TweetId] => Stitch[Seq[DeletedTweetResponse]]
-  type DeleteAdditionalFields = (Seq[TweetId], Seq[Field]) => Stitch[Seq[TweetResponse]]
-  type Scrub = (Seq[TweetId], Seq[Field]) => Stitch[Unit]
-  type Ping = () => Future[Unit]
+  type addtweet = t-tweet => stitch[unit]
+  t-type updatetweet = (tweet, ʘwʘ seq[fiewd]) => s-stitch[tweetwesponse]
+  type g-getdewetedtweets = s-seq[tweetid] => stitch[seq[dewetedtweetwesponse]]
+  type deweteadditionawfiewds = (seq[tweetid], rawr x3 s-seq[fiewd]) => stitch[seq[tweetwesponse]]
+  type scwub = (seq[tweetid], ^^;; s-seq[fiewd]) => s-stitch[unit]
+  type p-ping = () => futuwe[unit]
 }

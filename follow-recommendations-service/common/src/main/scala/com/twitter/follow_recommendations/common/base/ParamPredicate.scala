@@ -1,17 +1,17 @@
-package com.twitter.follow_recommendations.common.base
+package com.twittew.fowwow_wecommendations.common.base
 
-import com.twitter.follow_recommendations.common.models.FilterReason.ParamReason
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.fowwow_wecommendations.common.modews.fiwtewweason.pawamweason
+i-impowt com.twittew.stitch.stitch
+i-impowt c-com.twittew.timewines.configapi.haspawams
+i-impowt c-com.twittew.timewines.configapi.pawam
 
-case class ParamPredicate[Request <: HasParams](param: Param[Boolean]) extends Predicate[Request] {
+c-case cwass p-pawampwedicate[wequest <: h-haspawams](pawam: pawam[boowean]) extends pwedicate[wequest] {
 
-  def apply(request: Request): Stitch[PredicateResult] = {
-    if (request.params(param)) {
-      Stitch.value(PredicateResult.Valid)
-    } else {
-      Stitch.value(PredicateResult.Invalid(Set(ParamReason(param.statName))))
+  def appwy(wequest: wequest): stitch[pwedicatewesuwt] = {
+    if (wequest.pawams(pawam)) {
+      stitch.vawue(pwedicatewesuwt.vawid)
+    } e-ewse {
+      stitch.vawue(pwedicatewesuwt.invawid(set(pawamweason(pawam.statname))))
     }
   }
 }

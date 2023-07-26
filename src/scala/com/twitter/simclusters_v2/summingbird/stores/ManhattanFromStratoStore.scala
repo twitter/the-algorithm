@@ -1,108 +1,108 @@
-package com.twitter.simclusters_v2.summingbird.stores
+package com.twittew.simcwustews_v2.summingbiwd.stowes
 
-import com.twitter.bijection.Injection
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.io.Buf
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.summingbird.stores.PersistentTweetEmbeddingStore.Timestamp
-import com.twitter.simclusters_v2.thriftscala.PersistentSimClustersEmbedding
-import com.twitter.storage.client.manhattan.kv.Guarantee
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClient
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpointBuilder
-import com.twitter.storage.client.manhattan.kv.impl.FullBufKey
-import com.twitter.storage.client.manhattan.kv.impl.ValueDescriptor
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan_kv.ManhattanEndpointStore
-import com.twitter.strato.catalog.Version
-import com.twitter.strato.config.MValEncoding
-import com.twitter.strato.config.NativeEncoding
-import com.twitter.strato.config.PkeyLkey2
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Type
-import com.twitter.strato.mh.ManhattanInjections
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.strato.thrift.ScroogeConvImplicits._
+impowt com.twittew.bijection.injection
+i-impowt c-com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.io.buf
+i-impowt c-com.twittew.scwooge.thwiftstwuct
+i-impowt com.twittew.simcwustews_v2.common.tweetid
+i-impowt com.twittew.simcwustews_v2.summingbiwd.stowes.pewsistenttweetembeddingstowe.timestamp
+impowt com.twittew.simcwustews_v2.thwiftscawa.pewsistentsimcwustewsembedding
+impowt com.twittew.stowage.cwient.manhattan.kv.guawantee
+impowt com.twittew.stowage.cwient.manhattan.kv.manhattankvcwient
+i-impowt com.twittew.stowage.cwient.manhattan.kv.manhattankvcwientmtwspawams
+impowt com.twittew.stowage.cwient.manhattan.kv.manhattankvendpointbuiwdew
+impowt c-com.twittew.stowage.cwient.manhattan.kv.impw.fuwwbufkey
+impowt c-com.twittew.stowage.cwient.manhattan.kv.impw.vawuedescwiptow
+impowt com.twittew.stowehaus.weadabwestowe
+impowt c-com.twittew.stowehaus_intewnaw.manhattan_kv.manhattanendpointstowe
+impowt com.twittew.stwato.catawog.vewsion
+i-impowt c-com.twittew.stwato.config.mvawencoding
+impowt com.twittew.stwato.config.nativeencoding
+impowt com.twittew.stwato.config.pkeywkey2
+i-impowt com.twittew.stwato.data.conv
+impowt com.twittew.stwato.data.type
+impowt com.twittew.stwato.mh.manhattaninjections
+impowt c-com.twittew.stwato.thwift.scwoogeconv
+impowt c-com.twittew.stwato.thwift.scwoogeconvimpwicits._
 
-object ManhattanFromStratoStore {
-  /* This enables reading from a MH store where the data is written by Strato. Strato uses a unique
-  encoding (Conv) which needs to be reconstructed for each MH store based on the type of data that
-  is written to it. Once that encoding is generated on start-up, we can read from the store like
-  any other ReadableStore.
+o-object manhattanfwomstwatostowe {
+  /* t-this e-enabwes weading fwom a mh stowe whewe the data i-is wwitten by stwato. stwato uses a unique
+  encoding (conv) w-which nyeeds to be weconstwucted fow each mh stowe based on the type of data that
+  i-is wwitten to it. rawr x3 once that encoding i-is genewated o-on stawt-up, /(^•ω•^) w-we can wead fwom the stowe wike
+  any othew weadabwestowe. :3
    */
-  def createPersistentTweetStore(
-    dataset: String,
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): ReadableStore[(TweetId, Timestamp), PersistentSimClustersEmbedding] = {
-    val appId = "simclusters_embeddings_prod"
-    val dest = "/s/manhattan/omega.native-thrift"
+  def cweatepewsistenttweetstowe(
+    d-dataset: s-stwing,
+    mhmtwspawams: manhattankvcwientmtwspawams, (ꈍᴗꈍ)
+    s-statsweceivew: s-statsweceivew = nyuwwstatsweceivew
+  ): w-weadabwestowe[(tweetid, /(^•ω•^) timestamp), (⑅˘꒳˘) p-pewsistentsimcwustewsembedding] = {
+    vaw appid = "simcwustews_embeddings_pwod"
+    v-vaw dest = "/s/manhattan/omega.native-thwift"
 
-    val endpoint = createMhEndpoint(
-      appId = appId,
-      dest = dest,
-      mhMtlsParams = mhMtlsParams,
-      statsReceiver = statsReceiver)
+    vaw e-endpoint = cweatemhendpoint(
+      appid = appid, ( ͡o ω ͡o )
+      d-dest = d-dest,
+      mhmtwspawams = mhmtwspawams, òωó
+      statsweceivew = statsweceivew)
 
-    val (
-      keyInj: Injection[(TweetId, Timestamp), FullBufKey],
-      valueDesc: ValueDescriptor.EmptyValue[PersistentSimClustersEmbedding]) =
-      injectionsFromPkeyLkeyValueStruct[TweetId, Timestamp, PersistentSimClustersEmbedding](
-        dataset = dataset,
-        pkType = Type.Long,
-        lkType = Type.Long)
+    vaw (
+      keyinj: injection[(tweetid, (⑅˘꒳˘) timestamp), XD f-fuwwbufkey],
+      v-vawuedesc: vawuedescwiptow.emptyvawue[pewsistentsimcwustewsembedding]) =
+      i-injectionsfwompkeywkeyvawuestwuct[tweetid, -.- t-timestamp, :3 p-pewsistentsimcwustewsembedding](
+        dataset = dataset, nyaa~~
+        pktype = type.wong, 😳
+        w-wktype = type.wong)
 
-    ManhattanEndpointStore
-      .readable[(TweetId, Timestamp), PersistentSimClustersEmbedding, FullBufKey](
-        endpoint = endpoint,
-        keyDescBuilder = keyInj,
-        emptyValDesc = valueDesc)
+    manhattanendpointstowe
+      .weadabwe[(tweetid, (⑅˘꒳˘) timestamp), nyaa~~ pewsistentsimcwustewsembedding, OwO fuwwbufkey](
+        e-endpoint = endpoint, rawr x3
+        k-keydescbuiwdew = k-keyinj, XD
+        e-emptyvawdesc = vawuedesc)
   }
 
-  private def createMhEndpoint(
-    appId: String,
-    dest: String,
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    statsReceiver: StatsReceiver = NullStatsReceiver
+  p-pwivate d-def cweatemhendpoint(
+    a-appid: s-stwing,
+    dest: stwing, σωσ
+    mhmtwspawams: m-manhattankvcwientmtwspawams, (U ᵕ U❁)
+    s-statsweceivew: s-statsweceivew = n-nyuwwstatsweceivew
   ) = {
-    val mhc = ManhattanKVClient.memoizedByDest(
-      appId = appId,
-      dest = dest,
-      mtlsParams = mhMtlsParams
+    vaw m-mhc = manhattankvcwient.memoizedbydest(
+      appid = appid, (U ﹏ U)
+      dest = dest, :3
+      mtwspawams = m-mhmtwspawams
     )
 
-    ManhattanKVEndpointBuilder(mhc)
-      .defaultGuarantee(Guarantee.SoftDcReadMyWrites)
-      .statsReceiver(statsReceiver)
-      .build()
+    manhattankvendpointbuiwdew(mhc)
+      .defauwtguawantee(guawantee.softdcweadmywwites)
+      .statsweceivew(statsweceivew)
+      .buiwd()
   }
 
-  private def injectionsFromPkeyLkeyValueStruct[PK: Conv, LK: Conv, V <: ThriftStruct: Manifest](
-    dataset: String,
-    pkType: Type,
-    lkType: Type
-  ): (Injection[(PK, LK), FullBufKey], ValueDescriptor.EmptyValue[V]) = {
-    // Strato uses a unique encoding (Conv) so we need to rebuild that based on the pkey, lkey and
-    // value type before converting it to the Manhattan injections for key -> FullBufKey and
-    // value -> Buf
-    val valueConv: Conv[V] = ScroogeConv.fromStruct[V]
+  pwivate def injectionsfwompkeywkeyvawuestwuct[pk: conv, ( ͡o ω ͡o ) wk: conv, v <: thwiftstwuct: m-manifest](
+    dataset: stwing, σωσ
+    pktype: type, >w<
+    wktype: t-type
+  ): (injection[(pk, 😳😳😳 w-wk), OwO f-fuwwbufkey], 😳 vawuedescwiptow.emptyvawue[v]) = {
+    // stwato uses a-a unique encoding (conv) so we n-need to webuiwd t-that based on the pkey, 😳😳😳 wkey and
+    // vawue type befowe convewting it to the manhattan injections f-fow key -> fuwwbufkey and
+    // v-vawue -> buf
+    vaw vawueconv: c-conv[v] = s-scwoogeconv.fwomstwuct[v]
 
-    val mhEncodingMapping = PkeyLkey2(
-      pkey = pkType,
-      lkey = lkType,
-      value = valueConv.t,
-      pkeyEncoding = NativeEncoding,
-      lkeyEncoding = NativeEncoding,
-      valueEncoding = MValEncoding()
+    vaw mhencodingmapping = pkeywkey2(
+      p-pkey = p-pktype, (˘ω˘)
+      wkey = wktype, ʘwʘ
+      v-vawue = vawueconv.t, ( ͡o ω ͡o )
+      p-pkeyencoding = nyativeencoding, o.O
+      wkeyencoding = nativeencoding, >w<
+      vawueencoding = m-mvawencoding()
     )
 
-    val (keyInj: Injection[(PK, LK), FullBufKey], valueInj: Injection[V, Buf], _, _) =
-      ManhattanInjections.fromPkeyLkey[PK, LK, V](mhEncodingMapping, dataset, Version.Default)
+    v-vaw (keyinj: i-injection[(pk, 😳 wk), fuwwbufkey], 🥺 v-vawueinj: injection[v, rawr x3 b-buf], o.O _, _) =
+      manhattaninjections.fwompkeywkey[pk, rawr w-wk, v](mhencodingmapping, ʘwʘ dataset, vewsion.defauwt)
 
-    val valDesc: ValueDescriptor.EmptyValue[V] = ValueDescriptor.EmptyValue(valueInj)
+    vaw vawdesc: vawuedescwiptow.emptyvawue[v] = v-vawuedescwiptow.emptyvawue(vawueinj)
 
-    (keyInj, valDesc)
+    (keyinj, 😳😳😳 v-vawdesc)
   }
 }

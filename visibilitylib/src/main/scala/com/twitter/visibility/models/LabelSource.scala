@@ -1,61 +1,61 @@
-package com.twitter.visibility.models
+package com.twittew.visibiwity.modews
 
-import com.twitter.spam.rtf.thriftscala.SafetyResultReason
-import java.util.regex.Pattern
+impowt com.twittew.spam.wtf.thwiftscawa.safetywesuwtweason
+i-impowt java.utiw.wegex.pattewn
 
-sealed trait LabelSource {
-  val name: String
+s-seawed twait wabewsouwce {
+  v-vaw n-nyame: stwing
 }
 
-object LabelSource {
-  val BotRulePrefix = "bot_id_"
-  val AbusePrefix = "Abuse"
-  val HSEPrefix = "hse"
-  val AgentSourceNames = Set(
-    SafetyResultReason.OneOff.name,
-    SafetyResultReason.VotingMisinformation.name,
-    SafetyResultReason.HackedMaterials.name,
-    SafetyResultReason.Scams.name,
-    SafetyResultReason.PlatformManipulation.name
+o-object wabewsouwce {
+  v-vaw botwuwepwefix = "bot_id_"
+  v-vaw abusepwefix = "abuse"
+  v-vaw hsepwefix = "hse"
+  vaw agentsouwcenames = set(
+    safetywesuwtweason.oneoff.name, mya
+    safetywesuwtweason.votingmisinfowmation.name,
+    s-safetywesuwtweason.hackedmatewiaws.name, ^^
+    safetywesuwtweason.scams.name, 😳😳😳
+    safetywesuwtweason.pwatfowmmanipuwation.name
   )
 
-  val Regex = "\\|"
-  val pattern: Pattern = Pattern.compile(Regex)
+  v-vaw wegex = "\\|"
+  vaw p-pattewn: pattewn = pattewn.compiwe(wegex)
 
-  def fromString(name: String): Option[LabelSource] = Some(name) collect {
-    case _ if name.startsWith(BotRulePrefix) =>
-      BotMakerRule(name.substring(BotRulePrefix.length).toLong)
-    case _ if name == "A" || name == "B" || name == "AB" =>
-      SmyteSource(name)
-    case _ if name.startsWith(AbusePrefix) =>
-      AbuseSource(name)
-    case _ if name.startsWith(HSEPrefix) =>
-      HSESource(name)
-    case _ if AgentSourceNames.contains(name) =>
-      AgentSource(name)
-    case _ =>
-      StringSource(name)
+  def fwomstwing(name: s-stwing): option[wabewsouwce] = some(name) cowwect {
+    c-case _ i-if nyame.stawtswith(botwuwepwefix) =>
+      botmakewwuwe(name.substwing(botwuwepwefix.wength).towong)
+    case _ if nyame == "a" || nyame == "b" || n-nyame == "ab" =>
+      smytesouwce(name)
+    case _ if nyame.stawtswith(abusepwefix) =>
+      abusesouwce(name)
+    case _ i-if nyame.stawtswith(hsepwefix) =>
+      hsesouwce(name)
+    c-case _ i-if agentsouwcenames.contains(name) =>
+      agentsouwce(name)
+    c-case _ =>
+      s-stwingsouwce(name)
   }
 
-  def parseStringSource(source: String): (String, Option[String]) = {
-    pattern.split(source, 2) match {
-      case Array(copy, "") => (copy, None)
-      case Array(copy, link) => (copy, Some(link))
-      case Array(copy) => (copy, None)
+  def pawsestwingsouwce(souwce: stwing): (stwing, mya option[stwing]) = {
+    p-pattewn.spwit(souwce, 😳 2) match {
+      case awway(copy, -.- "") => (copy, 🥺 n-nyone)
+      case awway(copy, o.O wink) => (copy, /(^•ω•^) some(wink))
+      case awway(copy) => (copy, nyaa~~ n-nyone)
     }
   }
 
-  case class BotMakerRule(ruleId: Long) extends LabelSource {
-    override lazy val name: String = s"${BotRulePrefix}${ruleId}"
+  case c-cwass botmakewwuwe(wuweid: w-wong) e-extends wabewsouwce {
+    ovewwide wazy vaw nyame: stwing = s"${botwuwepwefix}${wuweid}"
   }
 
-  case class SmyteSource(name: String) extends LabelSource
+  c-case cwass smytesouwce(name: stwing) e-extends wabewsouwce
 
-  case class AbuseSource(name: String) extends LabelSource
+  case c-cwass abusesouwce(name: s-stwing) extends wabewsouwce
 
-  case class AgentSource(name: String) extends LabelSource
+  c-case cwass agentsouwce(name: s-stwing) extends wabewsouwce
 
-  case class HSESource(name: String) extends LabelSource
+  case cwass h-hsesouwce(name: stwing) extends w-wabewsouwce
 
-  case class StringSource(name: String) extends LabelSource
+  case cwass stwingsouwce(name: s-stwing) e-extends wabewsouwce
 }

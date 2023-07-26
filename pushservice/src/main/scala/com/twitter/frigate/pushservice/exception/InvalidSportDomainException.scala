@@ -1,12 +1,12 @@
-package com.twitter.frigate.pushservice.exception
+package com.twittew.fwigate.pushsewvice.exception
 
-import scala.util.control.NoStackTrace
+impowt scawa.utiw.contwow.nostacktwace
 
 /**
- * Throw exception if the sport domain is not supported by MagicFanoutSports
+ * t-thwow exception i-if the spowt domain i-is nyot suppowted b-by magicfanoutspowts
  *
- * @param message Exception message
+ * @pawam m-message e-exception message
  */
-class InvalidSportDomainException(private val message: String)
-    extends Exception(message)
-    with NoStackTrace
+c-cwass invawidspowtdomainexception(pwivate v-vaw message: stwing)
+    extends exception(message)
+    with nyostacktwace

@@ -1,34 +1,34 @@
-package com.twitter.tsp.common
+package com.twittew.tsp.common
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.featureswitches.v2.builder.{FeatureSwitchesBuilder => FsBuilder}
-import com.twitter.featureswitches.v2.experimentation.NullBucketImpressor
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Duration
+impowt com.twittew.abdecidew.woggingabdecidew
+i-impowt c-com.twittew.featuweswitches.v2.featuweswitches
+i-impowt com.twittew.featuweswitches.v2.buiwdew.{featuweswitchesbuiwdew => f-fsbuiwdew}
+i-impowt com.twittew.featuweswitches.v2.expewimentation.nuwwbucketimpwessow
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.utiw.duwation
 
-case class FeatureSwitchesBuilder(
-  statsReceiver: StatsReceiver,
-  abDecider: LoggingABDecider,
-  featuresDirectory: String,
-  addServiceDetailsFromAurora: Boolean,
-  configRepoDirectory: String = "/usr/local/config",
-  fastRefresh: Boolean = false,
-  impressExperiments: Boolean = true) {
+c-case cwass featuweswitchesbuiwdew(
+  statsweceivew: statsweceivew, rawr x3
+  abdecidew: woggingabdecidew, nyaa~~
+  f-featuwesdiwectowy: stwing, /(^•ω•^)
+  addsewvicedetaiwsfwomauwowa: b-boowean, rawr
+  configwepodiwectowy: stwing = "/usw/wocaw/config", OwO
+  f-fastwefwesh: boowean = fawse, (U ﹏ U)
+  impwessexpewiments: boowean = twue) {
 
-  def build(): FeatureSwitches = {
-    val featureSwitches = FsBuilder()
-      .abDecider(abDecider)
-      .statsReceiver(statsReceiver)
-      .configRepoAbsPath(configRepoDirectory)
-      .featuresDirectory(featuresDirectory)
-      .limitToReferencedExperiments(shouldLimit = true)
-      .experimentImpressionStatsEnabled(true)
+  d-def buiwd(): featuweswitches = {
+    v-vaw f-featuweswitches = fsbuiwdew()
+      .abdecidew(abdecidew)
+      .statsweceivew(statsweceivew)
+      .configwepoabspath(configwepodiwectowy)
+      .featuwesdiwectowy(featuwesdiwectowy)
+      .wimittowefewencedexpewiments(shouwdwimit = twue)
+      .expewimentimpwessionstatsenabwed(twue)
 
-    if (!impressExperiments) featureSwitches.experimentBucketImpressor(NullBucketImpressor)
-    if (addServiceDetailsFromAurora) featureSwitches.serviceDetailsFromAurora()
-    if (fastRefresh) featureSwitches.refreshPeriod(Duration.fromSeconds(10))
+    if (!impwessexpewiments) featuweswitches.expewimentbucketimpwessow(nuwwbucketimpwessow)
+    i-if (addsewvicedetaiwsfwomauwowa) featuweswitches.sewvicedetaiwsfwomauwowa()
+    if (fastwefwesh) featuweswitches.wefweshpewiod(duwation.fwomseconds(10))
 
-    featureSwitches.build()
+    featuweswitches.buiwd()
   }
 }

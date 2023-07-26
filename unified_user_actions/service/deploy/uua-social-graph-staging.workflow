@@ -1,39 +1,39 @@
 {
-  "role": "discode",
-  "name": "uua-social-graph-staging",
-  "config-files": [
-    "uua-social-graph.aurora"
-  ],
-  "build": {
-    "play": true,
+  "wowe": "discode", XD
+  "name": "uua-sociaw-gwaph-staging", >_<
+  "config-fiwes": [
+    "uua-sociaw-gwaph.auwowa"
+  ], (ꈍᴗꈍ)
+  "buiwd": {
+    "pway": twue, ^•ﻌ•^
     "dependencies": [
       {
-        "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "wowe": "packew", OwO
+        "name": "packew-cwient-no-pex", 🥺
+        "vewsion": "watest"
       }
-    ],
+    ], òωó
     "steps": [
       {
-        "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-social-graph"
-      },
+        "type": "bazew-bundwe", o.O
+        "name": "bundwe", (U ᵕ U❁)
+        "tawget": "unified_usew_actions/sewvice/swc/main/scawa:uua-sociaw-gwaph"
+      }, (⑅˘꒳˘)
       {
-        "type": "packer",
-        "name": "uua-social-graph-staging",
-        "artifact": "./dist/uua-social-graph.zip"
+        "type": "packew", ( ͡o ω ͡o )
+        "name": "uua-sociaw-gwaph-staging", UwU
+        "awtifact": "./dist/uua-sociaw-gwaph.zip"
       }
     ]
-  },
-  "targets": [
+  }, rawr x3
+  "tawgets": [
     {
-      "type": "group",
+      "type": "gwoup", rawr
       "name": "staging",
-      "targets": [
+      "tawgets": [
         {
-          "name": "uua-social-graph-staging-pdxa",
-          "key": "pdxa/discode/staging/uua-social-graph"
+          "name": "uua-sociaw-gwaph-staging-pdxa",
+          "key": "pdxa/discode/staging/uua-sociaw-gwaph"
         }
       ]
     }

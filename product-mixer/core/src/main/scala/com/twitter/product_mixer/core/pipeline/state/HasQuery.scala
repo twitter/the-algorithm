@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.pipeline.state
+package com.twittew.pwoduct_mixew.cowe.pipewine.state
 
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-trait HasQuery[Query <: PipelineQuery, T] {
-  def query: Query
-  def updateQuery(query: Query): T
+t-twait hasquewy[quewy <: p-pipewinequewy, (U ᵕ U❁) t-t] {
+  d-def quewy: quewy
+  d-def updatequewy(quewy: q-quewy): t-t
 }

@@ -1,794 +1,794 @@
-package com.twitter.simclusters_v2.scalding
+package com.twittew.simcwustews_v2.scawding
 
-import com.twitter.algebird.OptionMonoid
-import com.twitter.algebird.QTree
-import com.twitter.algebird.QTreeSemigroup
-import com.twitter.algebird.Semigroup
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.dal.client.dataset.SnapshotDALDataset
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.pluck.source.cassowary.FollowingsCosineSimilaritiesManhattanSource
-import com.twitter.pluck.source.cassowary.SimsCandidatesSource
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
+impowt c-com.twittew.awgebiwd.optionmonoid
+i-impowt com.twittew.awgebiwd.qtwee
+i-impowt com.twittew.awgebiwd.qtweesemigwoup
+i-impowt com.twittew.awgebiwd.semigwoup
+i-impowt com.twittew.daw.cwient.dataset.keyvawdawdataset
+impowt c-com.twittew.daw.cwient.dataset.snapshotdawdataset
+i-impowt com.twittew.hewmit.candidate.thwiftscawa.candidates
+i-impowt com.twittew.pwuck.souwce.cassowawy.fowwowingscosinesimiwawitiesmanhattansouwce
+impowt com.twittew.pwuck.souwce.cassowawy.simscandidatessouwce
+impowt com.twittew.scawding._
+impowt com.twittew.scawding_intewnaw.dawv2.daw
+i-impowt com.twittew.scawding_intewnaw.dawv2.dawwwite._
+impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.expwicitwocation
+i-impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.pwocatwa
+impowt com.twittew.scawding_intewnaw.job.twittewexecutionapp
+i-impowt com.twittew.scawding_intewnaw.job.anawytics_batch._
+impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.simcwustews_v2.common.modewvewsions
+impowt c-com.twittew.simcwustews_v2.hdfs_souwces._
+impowt c-com.twittew.simcwustews_v2.scawding.common.utiw
+i-impowt com.twittew.simcwustews_v2.scawding.embedding.common.extewnawdatasouwces
+impowt com.twittew.simcwustews_v2.thwiftscawa._
+impowt com.twittew.usewsouwce.snapshot.fwat.usewsouwcefwatscawadataset
+impowt com.twittew.usewsouwce.snapshot.fwat.thwiftscawa.fwatusew
 
-object ClusterDetailsJob {
-  case class Scores(followScore: Double, favScore: Double, logFavScore: Double)
+o-object cwustewdetaiwsjob {
+  case cwass scowes(fowwowscowe: doubwe, (˘ω˘) f-favscowe: doubwe, /(^•ω•^) wogfavscowe: d-doubwe)
 
-  case class IntermediateDetails(
-    numUsersWithAnyNonZeroScore: Int,
-    numUsersWithNonZeroFollowScore: Int,
-    numUsersWithNonZeroFavScore: Int,
-    favQTree: Option[QTree[Double]],
-    followQTree: Option[QTree[Double]],
-    logFavQTree: Option[QTree[Double]],
-    sumOfSquares: Scores,
-    sum: Scores,
-    min: Scores,
-    max: Scores)
+  case c-cwass intewmediatedetaiws(
+    numusewswithanynonzewoscowe: i-int, (U ﹏ U)
+    n-nyumusewswithnonzewofowwowscowe: int, ^•ﻌ•^
+    nyumusewswithnonzewofavscowe: int, >w<
+    f-favqtwee: option[qtwee[doubwe]], ʘwʘ
+    fowwowqtwee: o-option[qtwee[doubwe]], òωó
+    wogfavqtwee: option[qtwee[doubwe]], o.O
+    sumofsquawes: scowes, ( ͡o ω ͡o )
+    sum: scowes, mya
+    m-min: scowes, >_<
+    max: scowes)
 
-  case class InfoFromUserSource(
-    fractionMarkedNSFWUser: Double,
-    languageToFractionDeviceLanguage: Map[String, Double],
-    countryCodeToFractionKnownForWithCountryCode: Map[String, Double],
-    languageToFractionInferredLanguage: Map[String, Double])
+  c-case cwass i-infofwomusewsouwce(
+    f-fwactionmawkednsfwusew: doubwe, rawr
+    wanguagetofwactiondevicewanguage: map[stwing, doubwe], >_<
+    countwycodetofwactionknownfowwithcountwycode: m-map[stwing, (U ﹏ U) d-doubwe], rawr
+    wanguagetofwactioninfewwedwanguage: m-map[stwing, (U ᵕ U❁) d-doubwe])
 
-  def positiveMin(a: Double, b: Double) = {
-    if (math.min(a, b) == 0.0) math.max(a, b) else math.min(a, b)
+  def positivemin(a: doubwe, (ˆ ﻌ ˆ)♡ b-b: doubwe) = {
+    if (math.min(a, >_< b-b) == 0.0) math.max(a, ^^;; b) ewse math.min(a, ʘwʘ b-b)
   }
 
-  case class ClusterDetailsSemigroup(implicit qtreeSemigroup: Semigroup[QTree[Double]])
-      extends Semigroup[IntermediateDetails] {
-    val optionMonoid: OptionMonoid[QTree[Double]] = new OptionMonoid[QTree[Double]]()
-    override def plus(
-      left: IntermediateDetails,
-      right: IntermediateDetails
-    ): IntermediateDetails = {
-      IntermediateDetails(
-        left.numUsersWithAnyNonZeroScore + right.numUsersWithAnyNonZeroScore,
-        left.numUsersWithNonZeroFollowScore + right.numUsersWithNonZeroFollowScore,
-        left.numUsersWithNonZeroFavScore + right.numUsersWithNonZeroFavScore,
-        optionMonoid.plus(left.favQTree, right.favQTree),
-        optionMonoid.plus(left.followQTree, right.followQTree),
-        optionMonoid.plus(left.logFavQTree, right.logFavQTree),
-        Scores(
-          left.sumOfSquares.followScore + right.sumOfSquares.followScore,
-          left.sumOfSquares.favScore + right.sumOfSquares.favScore,
-          left.sumOfSquares.logFavScore + right.sumOfSquares.logFavScore
+  case cwass cwustewdetaiwssemigwoup(impwicit q-qtweesemigwoup: semigwoup[qtwee[doubwe]])
+      e-extends s-semigwoup[intewmediatedetaiws] {
+    vaw optionmonoid: optionmonoid[qtwee[doubwe]] = nyew optionmonoid[qtwee[doubwe]]()
+    ovewwide def pwus(
+      weft: intewmediatedetaiws, 😳😳😳
+      wight: i-intewmediatedetaiws
+    ): i-intewmediatedetaiws = {
+      intewmediatedetaiws(
+        w-weft.numusewswithanynonzewoscowe + w-wight.numusewswithanynonzewoscowe, UwU
+        w-weft.numusewswithnonzewofowwowscowe + wight.numusewswithnonzewofowwowscowe, OwO
+        weft.numusewswithnonzewofavscowe + wight.numusewswithnonzewofavscowe,
+        o-optionmonoid.pwus(weft.favqtwee, :3 wight.favqtwee), -.-
+        optionmonoid.pwus(weft.fowwowqtwee, 🥺 wight.fowwowqtwee), -.-
+        optionmonoid.pwus(weft.wogfavqtwee, -.- w-wight.wogfavqtwee), (U ﹏ U)
+        scowes(
+          w-weft.sumofsquawes.fowwowscowe + w-wight.sumofsquawes.fowwowscowe, rawr
+          w-weft.sumofsquawes.favscowe + wight.sumofsquawes.favscowe, mya
+          w-weft.sumofsquawes.wogfavscowe + w-wight.sumofsquawes.wogfavscowe
+        ), ( ͡o ω ͡o )
+        s-scowes(
+          w-weft.sum.fowwowscowe + wight.sum.fowwowscowe, /(^•ω•^)
+          weft.sum.favscowe + w-wight.sum.favscowe, >_<
+          w-weft.sum.wogfavscowe + w-wight.sum.wogfavscowe
         ),
-        Scores(
-          left.sum.followScore + right.sum.followScore,
-          left.sum.favScore + right.sum.favScore,
-          left.sum.logFavScore + right.sum.logFavScore
-        ),
-        Scores(
-          positiveMin(left.min.followScore, right.min.followScore),
-          positiveMin(left.min.favScore, right.min.favScore),
-          positiveMin(left.min.logFavScore, right.min.logFavScore)
-        ),
-        Scores(
-          math.max(left.max.followScore, right.max.followScore),
-          math.max(left.max.favScore, right.max.favScore),
-          math.max(left.max.logFavScore, right.max.logFavScore)
+        s-scowes(
+          p-positivemin(weft.min.fowwowscowe, wight.min.fowwowscowe), (✿oωo)
+          positivemin(weft.min.favscowe, 😳😳😳 wight.min.favscowe), (ꈍᴗꈍ)
+          p-positivemin(weft.min.wogfavscowe, 🥺 wight.min.wogfavscowe)
+        ), mya
+        scowes(
+          math.max(weft.max.fowwowscowe, (ˆ ﻌ ˆ)♡ wight.max.fowwowscowe), (⑅˘꒳˘)
+          math.max(weft.max.favscowe, òωó wight.max.favscowe), o.O
+          m-math.max(weft.max.wogfavscowe, XD wight.max.wogfavscowe)
         )
       )
     }
   }
 
-  def intermediateDetailsPipe(
-    input: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    qtreeSemigroupKParameter: Int
-  ): TypedPipe[(Int, IntermediateDetails)] = {
-    implicit val qtSg: Semigroup[QTree[Double]] =
-      new QTreeSemigroup[Double](qtreeSemigroupKParameter)
-    implicit val cdSg: Semigroup[IntermediateDetails] = ClusterDetailsSemigroup()
+  def intewmediatedetaiwspipe(
+    input: typedpipe[(wong, (˘ω˘) c-cwustewsusewisintewestedin)], (ꈍᴗꈍ)
+    q-qtweesemigwoupkpawametew: i-int
+  ): typedpipe[(int, >w< intewmediatedetaiws)] = {
+    impwicit v-vaw qtsg: semigwoup[qtwee[doubwe]] =
+      n-nyew qtweesemigwoup[doubwe](qtweesemigwoupkpawametew)
+    i-impwicit vaw cdsg: semigwoup[intewmediatedetaiws] = cwustewdetaiwssemigwoup()
     input
-      .flatMap {
-        case (userId, clusterScoresStruct) =>
-          val clusterScoresArray = clusterScoresStruct.clusterIdToScores.toArray
-          clusterScoresArray.map {
-            case (clusterId, scoresStruct) =>
-              val followScore = scoresStruct.followScore.getOrElse(0.0)
-              val favScore = scoresStruct.favScore.getOrElse(0.0)
-              val logFavScore = scoresStruct.logFavScore.getOrElse(0.0)
+      .fwatmap {
+        case (usewid, XD cwustewscowesstwuct) =>
+          vaw c-cwustewscowesawway = cwustewscowesstwuct.cwustewidtoscowes.toawway
+          c-cwustewscowesawway.map {
+            case (cwustewid, -.- s-scowesstwuct) =>
+              v-vaw fowwowscowe = scowesstwuct.fowwowscowe.getowewse(0.0)
+              vaw favscowe = s-scowesstwuct.favscowe.getowewse(0.0)
+              v-vaw wogfavscowe = scowesstwuct.wogfavscowe.getowewse(0.0)
               (
-                clusterId,
-                IntermediateDetails(
-                  numUsersWithAnyNonZeroScore = 1,
-                  numUsersWithNonZeroFollowScore = if (followScore > 0) 1 else 0,
-                  numUsersWithNonZeroFavScore = if (favScore > 0) 1 else 0,
-                  favQTree = if (favScore > 0) Some(QTree(favScore)) else None,
-                  followQTree = if (followScore > 0) Some(QTree(followScore)) else None,
-                  logFavQTree = if (logFavScore > 0) Some(QTree(logFavScore)) else None,
-                  sumOfSquares = Scores(
-                    followScore * followScore,
-                    favScore * favScore,
-                    logFavScore * logFavScore),
-                  sum = Scores(followScore, favScore, logFavScore),
-                  min = Scores(followScore, favScore, logFavScore),
-                  max = Scores(followScore, favScore, logFavScore)
+                c-cwustewid, ^^;;
+                i-intewmediatedetaiws(
+                  nyumusewswithanynonzewoscowe = 1, XD
+                  nyumusewswithnonzewofowwowscowe = if (fowwowscowe > 0) 1 ewse 0, :3
+                  nyumusewswithnonzewofavscowe = i-if (favscowe > 0) 1 e-ewse 0, σωσ
+                  f-favqtwee = if (favscowe > 0) s-some(qtwee(favscowe)) ewse n-nyone, XD
+                  fowwowqtwee = i-if (fowwowscowe > 0) some(qtwee(fowwowscowe)) ewse nyone, :3
+                  wogfavqtwee = if (wogfavscowe > 0) s-some(qtwee(wogfavscowe)) e-ewse none, rawr
+                  sumofsquawes = scowes(
+                    fowwowscowe * f-fowwowscowe, 😳
+                    f-favscowe * favscowe, 😳😳😳
+                    wogfavscowe * wogfavscowe), (ꈍᴗꈍ)
+                  s-sum = scowes(fowwowscowe, 🥺 favscowe, ^•ﻌ•^ wogfavscowe), XD
+                  min = scowes(fowwowscowe, ^•ﻌ•^ favscowe, wogfavscowe), ^^;;
+                  m-max = scowes(fowwowscowe, ʘwʘ favscowe, OwO wogfavscowe)
                 )
               )
           }
       }
-      .sumByKey
-      // Uncomment for adhoc job
-      //.withReducers(100)
-      .toTypedPipe
+      .sumbykey
+      // uncomment f-fow adhoc job
+      //.withweducews(100)
+      .totypedpipe
   }
 
-  private def safeGetDoubleOpt(x: Option[Double]): Double = {
-    x.map { y => if (y.isNaN) 0 else y }.getOrElse(0)
+  p-pwivate def safegetdoubweopt(x: option[doubwe]): doubwe = {
+    x-x.map { y => i-if (y.isnan) 0 ewse y }.getowewse(0)
   }
 
-  private def getSimilaritiesForAllPairs(
-    input: TypedPipe[(Long, ClustersUserIsInterestedIn)]
+  pwivate def getsimiwawitiesfowawwpaiws(
+    input: t-typedpipe[(wong, 🥺 cwustewsusewisintewestedin)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[((Int, Int), Scores)] = {
-    val allClusterPairsBeforeSumByKey = Stat("all_cluster_pairs_before_sum_by_key")
-    val clusterPairsWithin10Ratio = Stat("cluster_pairs_within_10_ratio")
-    val clusterPairsBeforeTopK = Stat("cluster_pairs_before_thresholding")
+    i-impwicit uniqueid: uniqueid
+  ): typedpipe[((int, (⑅˘꒳˘) int), (///ˬ///✿) s-scowes)] = {
+    vaw awwcwustewpaiwsbefowesumbykey = s-stat("aww_cwustew_paiws_befowe_sum_by_key")
+    v-vaw cwustewpaiwswithin10watio = stat("cwustew_paiws_within_10_watio")
+    v-vaw cwustewpaiwsbefowetopk = stat("cwustew_paiws_befowe_thweshowding")
 
-    input
-      .flatMap {
-        case (userId, clusterScoresStruct) =>
-          val clusterScoresArray = clusterScoresStruct.clusterIdToScores.toArray
-          (0 until clusterScoresArray.length).flatMap { i =>
-            (0 until clusterScoresArray.length).map { j =>
-              val (clusterI, scoresI) = clusterScoresArray(i)
-              val (clusterJ, scoresJ) = clusterScoresArray(j)
-              val ratioOfSizes =
-                scoresI.numUsersInterestedInThisClusterUpperBound.getOrElse(1).toDouble /
-                  scoresJ.numUsersInterestedInThisClusterUpperBound.getOrElse(1).toDouble
-              allClusterPairsBeforeSumByKey.inc()
-              if (ratioOfSizes > 0.1 && ratioOfSizes < 10) {
-                clusterPairsWithin10Ratio.inc()
+    i-input
+      .fwatmap {
+        c-case (usewid, (✿oωo) c-cwustewscowesstwuct) =>
+          vaw cwustewscowesawway = c-cwustewscowesstwuct.cwustewidtoscowes.toawway
+          (0 untiw c-cwustewscowesawway.wength).fwatmap { i =>
+            (0 untiw c-cwustewscowesawway.wength).map { j-j =>
+              v-vaw (cwustewi, nyaa~~ scowesi) = cwustewscowesawway(i)
+              v-vaw (cwustewj, >w< scowesj) = c-cwustewscowesawway(j)
+              v-vaw watioofsizes =
+                scowesi.numusewsintewestedinthiscwustewuppewbound.getowewse(1).todoubwe /
+                  scowesj.numusewsintewestedinthiscwustewuppewbound.getowewse(1).todoubwe
+              awwcwustewpaiwsbefowesumbykey.inc()
+              i-if (watioofsizes > 0.1 && w-watioofsizes < 10) {
+                c-cwustewpaiwswithin10watio.inc()
               }
-              val followI = safeGetDoubleOpt(scoresI.followScoreClusterNormalizedOnly)
-              val followJ = safeGetDoubleOpt(scoresJ.followScoreClusterNormalizedOnly)
-              val follow = followI * followJ
-              val favI = safeGetDoubleOpt(scoresI.favScoreClusterNormalizedOnly)
-              val favJ = safeGetDoubleOpt(scoresJ.favScoreClusterNormalizedOnly)
-              val fav = favI * favJ
-              val logFavI = safeGetDoubleOpt(scoresI.logFavScoreClusterNormalizedOnly)
-              val logFavJ = safeGetDoubleOpt(scoresJ.logFavScoreClusterNormalizedOnly)
-              val logFav = logFavI * logFavJ
-              ((clusterI, clusterJ), (follow, fav, logFav))
+              v-vaw fowwowi = safegetdoubweopt(scowesi.fowwowscowecwustewnowmawizedonwy)
+              vaw f-fowwowj = safegetdoubweopt(scowesj.fowwowscowecwustewnowmawizedonwy)
+              vaw fowwow = fowwowi * fowwowj
+              vaw favi = safegetdoubweopt(scowesi.favscowecwustewnowmawizedonwy)
+              vaw favj = safegetdoubweopt(scowesj.favscowecwustewnowmawizedonwy)
+              vaw fav = favi * f-favj
+              vaw wogfavi = s-safegetdoubweopt(scowesi.wogfavscowecwustewnowmawizedonwy)
+              vaw wogfavj = safegetdoubweopt(scowesj.wogfavscowecwustewnowmawizedonwy)
+              v-vaw wogfav = wogfavi * wogfavj
+              ((cwustewi, c-cwustewj), (///ˬ///✿) (fowwow, rawr fav, wogfav))
             }
           }
       }
-      .sumByKey
-      // Uncomment for adhoc job
-      //.withReducers(600)
+      .sumbykey
+      // u-uncomment f-fow adhoc j-job
+      //.withweducews(600)
       .map {
-        case (key, (follow, fav, logFav)) =>
-          clusterPairsBeforeTopK.inc()
-          (key, Scores(follow, fav, logFav))
+        c-case (key, (U ﹏ U) (fowwow, ^•ﻌ•^ f-fav, wogfav)) =>
+          cwustewpaiwsbefowetopk.inc()
+          (key, (///ˬ///✿) scowes(fowwow, o.O fav, >w< wogfav))
       }
   }
 
-  private def keepTopNeighbors(
-    allPairs: TypedPipe[((Int, Int), Scores)],
-    cosineThreshold: Double
+  pwivate def keeptopneighbows(
+    awwpaiws: typedpipe[((int, nyaa~~ i-int), s-scowes)], òωó
+    cosinethweshowd: doubwe
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(Int, List[ClusterNeighbor])] = {
-    val clusterPairsMoreThanThreshold = Stat("cluster_pairs_cosine_gt_" + cosineThreshold)
-    val clusterPairsAfterTopK = Stat("cluster_pairs_after_topk")
-    val clustersWithFewNeighbors = Stat(s"clusters_with_fewer_than_100_neighbors")
-    val clustersWithManyNeighbors = Stat(s"clusters_with_more_than_100_neighbors")
+    impwicit u-uniqueid: uniqueid
+  ): t-typedpipe[(int, (U ᵕ U❁) wist[cwustewneighbow])] = {
+    vaw cwustewpaiwsmowethanthweshowd = stat("cwustew_paiws_cosine_gt_" + c-cosinethweshowd)
+    v-vaw cwustewpaiwsaftewtopk = stat("cwustew_paiws_aftew_topk")
+    v-vaw cwustewswithfewneighbows = stat(s"cwustews_with_fewew_than_100_neighbows")
+    vaw c-cwustewswithmanyneighbows = stat(s"cwustews_with_mowe_than_100_neighbows")
 
-    allPairs
-      .flatMap {
-        case ((cI, cJ), Scores(followScore, favScore, logFavScore)) =>
-          if (followScore > cosineThreshold || logFavScore > cosineThreshold || favScore > cosineThreshold) {
-            clusterPairsMoreThanThreshold.inc()
-            Some((cI, ClusterNeighbor(cJ, Some(followScore), Some(favScore), Some(logFavScore))))
-          } else None
+    a-awwpaiws
+      .fwatmap {
+        case ((ci, (///ˬ///✿) c-cj), (✿oωo) scowes(fowwowscowe, 😳😳😳 f-favscowe, (✿oωo) wogfavscowe)) =>
+          if (fowwowscowe > cosinethweshowd || wogfavscowe > c-cosinethweshowd || f-favscowe > cosinethweshowd) {
+            c-cwustewpaiwsmowethanthweshowd.inc()
+            s-some((ci, (U ﹏ U) c-cwustewneighbow(cj, (˘ω˘) some(fowwowscowe), 😳😳😳 some(favscowe), (///ˬ///✿) some(wogfavscowe))))
+          } e-ewse nyone
       }
-      .group
-      .toList
-      // Uncomment for adhoc job
-      //.withReducers(40)
+      .gwoup
+      .towist
+      // u-uncomment fow adhoc job
+      //.withweducews(40)
       .map {
-        case (key, seq) =>
-          val finalSize = seq.size
-          clusterPairsAfterTopK.incBy(finalSize)
-          if (finalSize < 100) {
-            clustersWithFewNeighbors.inc()
-          } else {
-            clustersWithManyNeighbors.inc()
+        c-case (key, (U ᵕ U❁) s-seq) =>
+          vaw finawsize = s-seq.size
+          cwustewpaiwsaftewtopk.incby(finawsize)
+          if (finawsize < 100) {
+            cwustewswithfewneighbows.inc()
+          } e-ewse {
+            cwustewswithmanyneighbows.inc()
           }
           (
-            key,
-            seq.sortBy {
-              case cn: ClusterNeighbor =>
-                -(cn.followCosineSimilarity.getOrElse(0.0) + cn.logFavCosineSimilarity.getOrElse(
+            k-key, >_<
+            s-seq.sowtby {
+              case cn: cwustewneighbow =>
+                -(cn.fowwowcosinesimiwawity.getowewse(0.0) + c-cn.wogfavcosinesimiwawity.getowewse(
                   0.0)) / 2
             })
       }
   }
 
-  def getTopSimilarClustersWithCosine(
-    input: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    cosineThreshold: Double
+  def gettopsimiwawcwustewswithcosine(
+    input: typedpipe[(wong, (///ˬ///✿) c-cwustewsusewisintewestedin)], (U ᵕ U❁)
+    c-cosinethweshowd: d-doubwe
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(Int, List[ClusterNeighbor])] = {
-    keepTopNeighbors(getSimilaritiesForAllPairs(input), cosineThreshold)
+    impwicit uniqueid: uniqueid
+  ): typedpipe[(int, >w< w-wist[cwustewneighbow])] = {
+    keeptopneighbows(getsimiwawitiesfowawwpaiws(input), 😳😳😳 cosinethweshowd)
   }
 
-  def getDistributionDetails(
-    qtree: QTree[Double],
-    sum: Double,
-    sumOfSquares: Double,
-    min: Double,
-    max: Double,
-    fullSize: Int
-  ): DistributionDetails = {
-    val mean = sum / fullSize
-    // note that the below is the naive calculation, and not the sample standard dev formula
-    // that divides by n-1. I don't think it makes a difference at our scale whether we use n or n-1
-    // and I'd rather use the simpler one.
-    val stdDev = math.sqrt(sumOfSquares / fullSize - mean * mean)
+  d-def getdistwibutiondetaiws(
+    q-qtwee: qtwee[doubwe], (ˆ ﻌ ˆ)♡
+    s-sum: doubwe, (ꈍᴗꈍ)
+    sumofsquawes: d-doubwe, 🥺
+    min: d-doubwe, >_<
+    max: doubwe, OwO
+    fuwwsize: int
+  ): d-distwibutiondetaiws = {
+    vaw mean = sum / fuwwsize
+    // n-nyote that the bewow i-is the nyaive cawcuwation, ^^;; a-and nyot the sampwe standawd dev f-fowmuwa
+    // t-that divides by n-ny-1. (✿oωo) i don't think it makes a diffewence at ouw scawe whethew we use ny ow ny-1
+    // and i'd wathew use the simpwew one. UwU
+    vaw stddev = math.sqwt(sumofsquawes / fuwwsize - mean * mean)
 
-    def getQB(percentile: Double): QuantileBounds = {
-      val (lb, ub) = qtree.quantileBounds(percentile)
-      QuantileBounds(lb, ub)
+    def getqb(pewcentiwe: doubwe): q-quantiwebounds = {
+      v-vaw (wb, ( ͡o ω ͡o ) ub) = qtwee.quantiwebounds(pewcentiwe)
+      quantiwebounds(wb, (✿oωo) u-ub)
     }
 
-    DistributionDetails(
-      mean = mean,
-      standardDeviation = Some(stdDev),
-      min = Some(min),
-      p25 = Some(getQB(0.25)),
-      p50 = Some(getQB(0.5)),
-      p75 = Some(getQB(0.75)),
-      p95 = Some(getQB(0.95)),
-      max = Some(max)
+    d-distwibutiondetaiws(
+      m-mean = mean, mya
+      s-standawddeviation = some(stddev), ( ͡o ω ͡o )
+      m-min = some(min), :3
+      p-p25 = some(getqb(0.25)), 😳
+      p50 = some(getqb(0.5)), (U ﹏ U)
+      p-p75 = some(getqb(0.75)), >w<
+      p-p95 = s-some(getqb(0.95)), UwU
+      max = some(max)
     )
   }
 
-  def keepCorrectModel(
-    input: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    modelVersionToKeep: String
+  d-def keepcowwectmodew(
+    i-input: typedpipe[(wong, 😳 c-cwustewsusewisintewestedin)], XD
+    m-modewvewsiontokeep: s-stwing
   )(
-    implicit uniqId: UniqueID
-  ): TypedPipe[(Long, ClustersUserIsInterestedIn)] = {
-    val allRecords = Stat("all_input_records")
-    val withCorrectVersion = Stat("with_correct_version")
-    input.filter {
-      case (_, clusterScoresStruct) =>
-        //  allRecords.inc()
-        val result = clusterScoresStruct.knownForModelVersion == modelVersionToKeep
-        //  if (result) withCorrectVersion.inc()
-        result
+    i-impwicit uniqid: u-uniqueid
+  ): typedpipe[(wong, (✿oωo) c-cwustewsusewisintewestedin)] = {
+    v-vaw awwwecowds = stat("aww_input_wecowds")
+    v-vaw withcowwectvewsion = s-stat("with_cowwect_vewsion")
+    i-input.fiwtew {
+      case (_, ^•ﻌ•^ cwustewscowesstwuct) =>
+        //  a-awwwecowds.inc()
+        vaw wesuwt = cwustewscowesstwuct.knownfowmodewvewsion == m-modewvewsiontokeep
+        //  if (wesuwt) withcowwectvewsion.inc()
+        w-wesuwt
     }
   }
 
-  def getInfoFromUserSource(
-    knownFor: TypedPipe[(Int, List[(Long, Float)])],
-    usersource: TypedPipe[FlatUser],
-    inferredLanguages: TypedPipe[(Long, Seq[(String, Double)])]
+  d-def getinfofwomusewsouwce(
+    k-knownfow: typedpipe[(int, mya wist[(wong, f-fwoat)])], (˘ω˘)
+    usewsouwce: t-typedpipe[fwatusew], nyaa~~
+    infewwedwanguages: t-typedpipe[(wong, :3 seq[(stwing, (✿oωo) doubwe)])]
   )(
-    implicit uniqId: UniqueID
-  ): TypedPipe[(Int, InfoFromUserSource)] = {
-    val knownForUsers = knownFor.flatMap {
-      case (clusterId, userScoreList) =>
-        userScoreList.map {
-          case (userId, _) =>
-            (userId, clusterId)
+    i-impwicit uniqid: uniqueid
+  ): typedpipe[(int, (U ﹏ U) infofwomusewsouwce)] = {
+    vaw knownfowusews = knownfow.fwatmap {
+      c-case (cwustewid, (ꈍᴗꈍ) usewscowewist) =>
+        u-usewscowewist.map {
+          c-case (usewid, (˘ω˘) _) =>
+            (usewid, ^^ cwustewid)
         }
     }
 
-    usersource
-      .collect {
-        case fuser: FlatUser if fuser.id.isDefined =>
+    usewsouwce
+      .cowwect {
+        case fusew: fwatusew i-if fusew.id.isdefined =>
           (
-            fuser.id.get,
+            fusew.id.get, (⑅˘꒳˘)
             (
-              fuser.accountCountryCode.getOrElse(""),
-              fuser.language.getOrElse(""),
-              fuser.nsfwUser.getOrElse(false)
+              fusew.accountcountwycode.getowewse(""), rawr
+              f-fusew.wanguage.getowewse(""), :3
+              f-fusew.nsfwusew.getowewse(fawse)
             ))
       }
-      .join(knownForUsers)
-      .leftJoin(inferredLanguages)
+      .join(knownfowusews)
+      .weftjoin(infewwedwanguages)
       .map {
-        case (_, (((countryCode, language, nsfw), clusterId), inferredLangsOpt)) =>
-          val nsfwInt = if (nsfw) 1 else 0
+        c-case (_, (((countwycode, wanguage, OwO nysfw), (ˆ ﻌ ˆ)♡ cwustewid), i-infewwedwangsopt)) =>
+          v-vaw nysfwint = if (nsfw) 1 ewse 0
           (
-            clusterId,
+            c-cwustewid, :3
             (
-              1,
-              nsfwInt,
-              Map(language -> 1),
-              Map(countryCode -> 1),
-              inferredLangsOpt.getOrElse(Seq(("", 1.0))).toMap
+              1, -.-
+              nysfwint,
+              map(wanguage -> 1), -.-
+              m-map(countwycode -> 1), òωó
+              infewwedwangsopt.getowewse(seq(("", 😳 1.0))).tomap
             )
           )
       }
-      .sumByKey
-      .mapValues {
-        case (
-              denominator,
-              nsfwNumerator,
-              languageNumeratorsMap,
-              countryNumeratorsMap,
-              inferredLangsNumeratorsMap) =>
-          InfoFromUserSource(
-            nsfwNumerator * 1.0 / denominator,
-            languageNumeratorsMap.mapValues { x => x * 1.0 / denominator },
-            countryNumeratorsMap.mapValues { x => x * 1.0 / denominator },
-            inferredLangsNumeratorsMap.mapValues { x => x * 1.0 / denominator }
+      .sumbykey
+      .mapvawues {
+        c-case (
+              d-denominatow, nyaa~~
+              n-nysfwnumewatow, (⑅˘꒳˘)
+              wanguagenumewatowsmap,
+              countwynumewatowsmap, 😳
+              i-infewwedwangsnumewatowsmap) =>
+          i-infofwomusewsouwce(
+            n-nysfwnumewatow * 1.0 / d-denominatow, (U ﹏ U)
+            wanguagenumewatowsmap.mapvawues { x-x => x * 1.0 / d-denominatow }, /(^•ω•^)
+            c-countwynumewatowsmap.mapvawues { x-x => x-x * 1.0 / denominatow }, OwO
+            i-infewwedwangsnumewatowsmap.mapvawues { x => x-x * 1.0 / denominatow }
           )
       }
   }
 
   /**
-   * Run the cluster details job and return the details for each cluster
-   * @param input interestedIn data
-   * @param qtreeSemigroupKParameter parameter for calculating percentiles using qtree monoid (set to a small number, usually < 7)
-   * @param modelVersionToKeep which modelVersion to use from interestedIn dataset
-   * @param knownFor clusterId -> users known for this cluster and their scores
-   * @param knownForTranspose userId -> clusters this user is known for and their scores
-   * @param usersource -> user source
-   * @param simsGraph -> sims graph in the form of userId -> adjacency list
-   * @param cosineThreshold -> cosine threshold to include a cluster in the list of similar clusters for a given cluster
-   * @param uniqId
-   * @return pipe with (modelVersion, clusterId) as the key and ClusterDetails struct as the value.
+   * w-wun the cwustew detaiws job and w-wetuwn the detaiws fow each cwustew
+   * @pawam i-input intewestedin data
+   * @pawam q-qtweesemigwoupkpawametew p-pawametew f-fow cawcuwating pewcentiwes using qtwee monoid (set to a s-smow nyumbew, ( ͡o ω ͡o ) usuawwy < 7)
+   * @pawam m-modewvewsiontokeep w-which modewvewsion to use fwom intewestedin dataset
+   * @pawam k-knownfow c-cwustewid -> usews known fow t-this cwustew and t-theiw scowes
+   * @pawam knownfowtwanspose usewid -> cwustews this u-usew is known f-fow and theiw s-scowes
+   * @pawam u-usewsouwce -> usew souwce
+   * @pawam simsgwaph -> s-sims gwaph i-in the fowm of usewid -> adjacency wist
+   * @pawam c-cosinethweshowd -> cosine thweshowd to incwude a-a cwustew in the wist of simiwaw c-cwustews fow a-a given cwustew
+   * @pawam uniqid
+   * @wetuwn p-pipe with (modewvewsion, XD c-cwustewid) as the key a-and cwustewdetaiws stwuct as the v-vawue. /(^•ω•^)
    */
-  def run(
-    input: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    qtreeSemigroupKParameter: Int,
-    modelVersionToKeep: String,
-    knownFor: TypedPipe[(Int, List[(Long, Float)])],
-    knownForTranspose: TypedPipe[(Long, Array[(Int, Float)])],
-    usersource: Option[TypedPipe[FlatUser]],
-    inferredLanguageSource: Option[TypedPipe[(Long, Seq[(String, Double)])]],
-    simsGraph: Option[TypedPipe[(Long, Map[Long, Float])]],
-    cosineThreshold: Double
+  d-def wun(
+    input: t-typedpipe[(wong, c-cwustewsusewisintewestedin)],
+    qtweesemigwoupkpawametew: i-int, /(^•ω•^)
+    modewvewsiontokeep: stwing, 😳😳😳
+    k-knownfow: t-typedpipe[(int, (ˆ ﻌ ˆ)♡ wist[(wong, :3 f-fwoat)])],
+    knownfowtwanspose: typedpipe[(wong, òωó a-awway[(int, 🥺 f-fwoat)])], (U ﹏ U)
+    usewsouwce: o-option[typedpipe[fwatusew]], XD
+    infewwedwanguagesouwce: option[typedpipe[(wong, ^^ seq[(stwing, o.O doubwe)])]],
+    s-simsgwaph: option[typedpipe[(wong, 😳😳😳 m-map[wong, /(^•ω•^) f-fwoat])]], 😳😳😳
+    cosinethweshowd: doubwe
   )(
-    implicit uniqId: UniqueID
-  ): Execution[TypedPipe[((String, Int), ClusterDetails)]] = {
-    val topSimilarClusters = getTopSimilarClustersWithCosine(input, cosineThreshold)
-    val infoFromUserSource: TypedPipe[(Int, InfoFromUserSource)] = (for {
-      us <- usersource
-      inferredLanguages <- inferredLanguageSource
-    } yield getInfoFromUserSource(knownFor, us, inferredLanguages)).getOrElse(TypedPipe.empty)
+    i-impwicit uniqid: uniqueid
+  ): e-execution[typedpipe[((stwing, ^•ﻌ•^ i-int), cwustewdetaiws)]] = {
+    v-vaw topsimiwawcwustews = g-gettopsimiwawcwustewswithcosine(input, 🥺 c-cosinethweshowd)
+    vaw infofwomusewsouwce: typedpipe[(int, o.O infofwomusewsouwce)] = (fow {
+      us <- usewsouwce
+      i-infewwedwanguages <- infewwedwanguagesouwce
+    } y-yiewd getinfofwomusewsouwce(knownfow, (U ᵕ U❁) us, infewwedwanguages)).getowewse(typedpipe.empty)
 
-    val clusterEvaluationExec = simsGraph match {
-      case Some(sg) =>
-        ClusterEvaluation.clusterLevelEvaluation(sg, knownForTranspose, "eval")
-      case None =>
-        val dummyPipe: TypedPipe[(Int, (Int, ClusterQuality))] = TypedPipe.empty
-        Execution.from(dummyPipe)
+    vaw c-cwustewevawuationexec = simsgwaph match {
+      case some(sg) =>
+        cwustewevawuation.cwustewwevewevawuation(sg, ^^ k-knownfowtwanspose, (⑅˘꒳˘) "evaw")
+      c-case nyone =>
+        vaw d-dummypipe: typedpipe[(int, :3 (int, cwustewquawity))] = typedpipe.empty
+        e-execution.fwom(dummypipe)
     }
 
-    clusterEvaluationExec
-      .map { clusterIdToSizesAndQualities =>
-        val clusterQualities: TypedPipe[(Int, ClusterQuality)] =
-          clusterIdToSizesAndQualities.mapValues(_._2)
-        intermediateDetailsPipe(
-          keepCorrectModel(input, modelVersionToKeep),
-          qtreeSemigroupKParameter)
-          .leftJoin(topSimilarClusters)
-          .leftJoin(infoFromUserSource)
-          .leftJoin(clusterQualities)
-          .join(knownFor)
+    c-cwustewevawuationexec
+      .map { cwustewidtosizesandquawities =>
+        v-vaw cwustewquawities: t-typedpipe[(int, (///ˬ///✿) cwustewquawity)] =
+          cwustewidtosizesandquawities.mapvawues(_._2)
+        intewmediatedetaiwspipe(
+          k-keepcowwectmodew(input, :3 modewvewsiontokeep), 🥺
+          qtweesemigwoupkpawametew)
+          .weftjoin(topsimiwawcwustews)
+          .weftjoin(infofwomusewsouwce)
+          .weftjoin(cwustewquawities)
+          .join(knownfow)
           .map {
-            case (
-                  clusterId,
+            c-case (
+                  c-cwustewid, mya
                   (
                     (
-                      ((intermediateDetails, topSimilarNeighborsOpt), userSourceInfoOpt),
-                      qualityOpt),
-                    knownForUsers)
+                      ((intewmediatedetaiws, XD t-topsimiwawneighbowsopt), -.- usewsouwceinfoopt), o.O
+                      quawityopt), (˘ω˘)
+                    k-knownfowusews)
                 ) =>
-              val knownForSorted = knownForUsers.sortBy(-_._2).map {
-                case (userId, score) =>
-                  UserWithScore(userId, score)
+              vaw knownfowsowted = knownfowusews.sowtby(-_._2).map {
+                case (usewid, (U ᵕ U❁) scowe) =>
+                  usewwithscowe(usewid, rawr scowe)
               }
-              (modelVersionToKeep, clusterId) ->
-                ClusterDetails(
-                  numUsersWithAnyNonZeroScore = intermediateDetails.numUsersWithAnyNonZeroScore,
-                  numUsersWithNonZeroFavScore = intermediateDetails.numUsersWithNonZeroFavScore,
-                  numUsersWithNonZeroFollowScore =
-                    intermediateDetails.numUsersWithNonZeroFollowScore,
-                  favScoreDistributionDetails = intermediateDetails.favQTree.map { qt =>
-                    getDistributionDetails(
-                      qtree = qt,
-                      sum = intermediateDetails.sum.favScore,
-                      sumOfSquares = intermediateDetails.sumOfSquares.favScore,
-                      min = intermediateDetails.min.favScore,
-                      max = intermediateDetails.max.favScore,
-                      fullSize = intermediateDetails.numUsersWithNonZeroFavScore
+              (modewvewsiontokeep, 🥺 c-cwustewid) ->
+                c-cwustewdetaiws(
+                  n-nyumusewswithanynonzewoscowe = i-intewmediatedetaiws.numusewswithanynonzewoscowe, rawr x3
+                  nyumusewswithnonzewofavscowe = intewmediatedetaiws.numusewswithnonzewofavscowe, ( ͡o ω ͡o )
+                  n-nyumusewswithnonzewofowwowscowe =
+                    i-intewmediatedetaiws.numusewswithnonzewofowwowscowe, σωσ
+                  favscowedistwibutiondetaiws = intewmediatedetaiws.favqtwee.map { q-qt =>
+                    getdistwibutiondetaiws(
+                      qtwee = qt, rawr x3
+                      s-sum = intewmediatedetaiws.sum.favscowe, (ˆ ﻌ ˆ)♡
+                      sumofsquawes = intewmediatedetaiws.sumofsquawes.favscowe, rawr
+                      m-min = intewmediatedetaiws.min.favscowe, :3
+                      m-max = intewmediatedetaiws.max.favscowe, rawr
+                      fuwwsize = i-intewmediatedetaiws.numusewswithnonzewofavscowe
                     )
-                  },
-                  followScoreDistributionDetails = intermediateDetails.followQTree.map { qt =>
-                    getDistributionDetails(
-                      qtree = qt,
-                      sum = intermediateDetails.sum.followScore,
-                      sumOfSquares = intermediateDetails.sumOfSquares.followScore,
-                      min = intermediateDetails.min.followScore,
-                      max = intermediateDetails.max.followScore,
-                      fullSize = intermediateDetails.numUsersWithNonZeroFollowScore
+                  }, (˘ω˘)
+                  f-fowwowscowedistwibutiondetaiws = i-intewmediatedetaiws.fowwowqtwee.map { qt =>
+                    getdistwibutiondetaiws(
+                      q-qtwee = qt, (ˆ ﻌ ˆ)♡
+                      sum = intewmediatedetaiws.sum.fowwowscowe, mya
+                      sumofsquawes = i-intewmediatedetaiws.sumofsquawes.fowwowscowe, (U ᵕ U❁)
+                      min = intewmediatedetaiws.min.fowwowscowe, mya
+                      max = i-intewmediatedetaiws.max.fowwowscowe, ʘwʘ
+                      f-fuwwsize = i-intewmediatedetaiws.numusewswithnonzewofowwowscowe
                     )
-                  },
-                  logFavScoreDistributionDetails = intermediateDetails.logFavQTree.map { qt =>
-                    getDistributionDetails(
-                      qtree = qt,
-                      sum = intermediateDetails.sum.logFavScore,
-                      sumOfSquares = intermediateDetails.sumOfSquares.logFavScore,
-                      min = intermediateDetails.min.logFavScore,
-                      max = intermediateDetails.max.logFavScore,
-                      // note: user has non-zero fav score iff a user has non-zero log-fav score
-                      fullSize = intermediateDetails.numUsersWithNonZeroFavScore
+                  }, (˘ω˘)
+                  w-wogfavscowedistwibutiondetaiws = i-intewmediatedetaiws.wogfavqtwee.map { qt =>
+                    getdistwibutiondetaiws(
+                      q-qtwee = qt, 😳
+                      sum = intewmediatedetaiws.sum.wogfavscowe, òωó
+                      sumofsquawes = i-intewmediatedetaiws.sumofsquawes.wogfavscowe, nyaa~~
+                      min = i-intewmediatedetaiws.min.wogfavscowe,
+                      max = intewmediatedetaiws.max.wogfavscowe, o.O
+                      // n-nyote: usew has n-nyon-zewo fav scowe iff a usew h-has nyon-zewo wog-fav scowe
+                      f-fuwwsize = intewmediatedetaiws.numusewswithnonzewofavscowe
                     )
-                  },
-                  knownForUsersAndScores = Some(knownForSorted),
-                  neighborClusters = topSimilarNeighborsOpt,
-                  fractionKnownForMarkedNSFWUser = userSourceInfoOpt.map(_.fractionMarkedNSFWUser),
-                  languageToFractionDeviceLanguage =
-                    userSourceInfoOpt.map(_.languageToFractionDeviceLanguage),
-                  countryCodeToFractionKnownForWithCountryCode =
-                    userSourceInfoOpt.map(_.countryCodeToFractionKnownForWithCountryCode),
-                  qualityMeasuredOnSimsGraph = qualityOpt,
-                  languageToFractionInferredLanguage =
-                    userSourceInfoOpt.map(_.languageToFractionInferredLanguage),
+                  }, nyaa~~
+                  k-knownfowusewsandscowes = some(knownfowsowted), (U ᵕ U❁)
+                  n-neighbowcwustews = topsimiwawneighbowsopt, 😳😳😳
+                  f-fwactionknownfowmawkednsfwusew = usewsouwceinfoopt.map(_.fwactionmawkednsfwusew), (U ﹏ U)
+                  w-wanguagetofwactiondevicewanguage =
+                    usewsouwceinfoopt.map(_.wanguagetofwactiondevicewanguage), ^•ﻌ•^
+                  countwycodetofwactionknownfowwithcountwycode =
+                    usewsouwceinfoopt.map(_.countwycodetofwactionknownfowwithcountwycode), (⑅˘꒳˘)
+                  q-quawitymeasuwedonsimsgwaph = quawityopt,
+                  w-wanguagetofwactioninfewwedwanguage =
+                    usewsouwceinfoopt.map(_.wanguagetofwactioninfewwedwanguage), >_<
                 )
           }
       }
   }
 
-  def getTruncatedSims(
-    sims: TypedPipe[Candidates],
-    maxNeighbors: Int
-  ): TypedPipe[(Long, Map[Long, Float])] = {
-    sims.map { cands =>
+  def gettwuncatedsims(
+    s-sims: typedpipe[candidates],
+    m-maxneighbows: i-int
+  ): typedpipe[(wong, map[wong, (⑅˘꒳˘) f-fwoat])] = {
+    s-sims.map { cands =>
       (
-        cands.userId,
-        // These candidates are already sorted, but leaving it in just in case the behavior changes upstream
+        c-cands.usewid, σωσ
+        // these candidates a-awe awweady sowted, 🥺 but weaving i-it in just i-in case the behaviow changes upstweam
         cands.candidates
-          .map { c => (c.userId, c.score.toFloat) }.sortBy(-_._2).take(maxNeighbors).toMap
+          .map { c => (c.usewid, c.scowe.tofwoat) }.sowtby(-_._2).take(maxneighbows).tomap
       )
     }
   }
 }
 
 /**
- scalding remote run  --main-class com.twitter.simclusters_v2.scalding.ClusterDetailsAdhoc \
-  --target src/scala/com/twitter/simclusters_v2/scalding:cluster_details-adhoc \
-  --hadoop-properties "scalding.with.reducers.set.explicitly=true mapreduce.job.reduces=4000" \
-  --user recos-platform -- \
+ s-scawding wemote w-wun  --main-cwass com.twittew.simcwustews_v2.scawding.cwustewdetaiwsadhoc \
+  --tawget swc/scawa/com/twittew/simcwustews_v2/scawding:cwustew_detaiws-adhoc \
+  --hadoop-pwopewties "scawding.with.weducews.set.expwicitwy=twue mapweduce.job.weduces=4000" \
+  --usew w-wecos-pwatfowm -- \
   --date 2020-06-25 \
-  --dateForUserSource 2020-06-25 \
-  --includeUserSource \
-  --outputDir /user/recos-platform/adhoc/your_ldap/cluster_details_inferred_lang
+  --datefowusewsouwce 2020-06-25 \
+  --incwudeusewsouwce \
+  --outputdiw /usew/wecos-pwatfowm/adhoc/youw_wdap/cwustew_detaiws_infewwed_wang
  */
-object ClusterDetailsAdhoc extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  implicit val dp = DateParser.default
+object cwustewdetaiwsadhoc e-extends twittewexecutionapp {
+  i-impwicit vaw tz: java.utiw.timezone = dateops.utc
+  impwicit vaw dp = datepawsew.defauwt
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          val date = DateRange.parse(args("dateForUserSource"))
-          val (knownFor, knownForTranspose) =
-            args
-              .optional("knownForDir").map { location =>
+  d-def job: execution[unit] =
+    execution.getconfigmode.fwatmap {
+      c-case (config, :3 mode) =>
+        e-execution.withid { i-impwicit uniqueid =>
+          vaw awgs = c-config.getawgs
+          v-vaw date = d-datewange.pawse(awgs("datefowusewsouwce"))
+          v-vaw (knownfow, k-knownfowtwanspose) =
+            a-awgs
+              .optionaw("knownfowdiw").map { wocation =>
                 (
-                  KnownForSources.transpose(KnownForSources.readKnownFor(location)),
-                  KnownForSources.readKnownFor(location)
+                  knownfowsouwces.twanspose(knownfowsouwces.weadknownfow(wocation)), (ꈍᴗꈍ)
+                  knownfowsouwces.weadknownfow(wocation)
                 )
-              }.getOrElse(
+              }.getowewse(
                 (
-                  KnownForSources.clusterToKnownFor_20M_145K_updated,
-                  KnownForSources.knownFor_20M_145K_updated
+                  knownfowsouwces.cwustewtoknownfow_20m_145k_updated, ^•ﻌ•^
+                  knownfowsouwces.knownfow_20m_145k_updated
                 )
               )
 
-          val interestedIn = args
-            .optional("inputDir").map { interestedInInputDir =>
-              TypedPipe.from(AdhocKeyValSources.interestedInSource(interestedInInputDir))
-            }.getOrElse(
-              DAL
-                .readMostRecentSnapshotNoOlderThan(
-                  SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
-                  Days(14))
-                .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-                .toTypedPipe
+          v-vaw intewestedin = a-awgs
+            .optionaw("inputdiw").map { i-intewestedininputdiw =>
+              t-typedpipe.fwom(adhockeyvawsouwces.intewestedinsouwce(intewestedininputdiw))
+            }.getowewse(
+              d-daw
+                .weadmostwecentsnapshotnoowdewthan(
+                  s-simcwustewsv2intewestedin20m145kupdatedscawadataset, (˘ω˘)
+                  days(14))
+                .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+                .totypedpipe
                 .map {
-                  case KeyVal(userId, clustersUserIsInterestedIn) =>
-                    (userId, clustersUserIsInterestedIn)
+                  case keyvaw(usewid, 🥺 cwustewsusewisintewestedin) =>
+                    (usewid, (✿oωo) cwustewsusewisintewestedin)
                 }
             )
 
-          val userSourceOpt = if (args.boolean("includeUserSource")) {
-            Some(DAL.readMostRecentSnapshot(UsersourceFlatScalaDataset, date).toTypedPipe)
-          } else None
+          vaw usewsouwceopt = i-if (awgs.boowean("incwudeusewsouwce")) {
+            s-some(daw.weadmostwecentsnapshot(usewsouwcefwatscawadataset, XD date).totypedpipe)
+          } ewse nyone
 
-          val inferredLanguagesOpt = if (args.boolean("includeUserSource")) {
-            Some(ExternalDataSources.inferredUserProducedLanguageSource)
-          } else None
+          v-vaw infewwedwanguagesopt = i-if (awgs.boowean("incwudeusewsouwce")) {
+            s-some(extewnawdatasouwces.infewwedusewpwoducedwanguagesouwce)
+          } ewse nyone
 
-          val simsGraphOpt = args.optional("simsForEvalInputDir").map { sgDir =>
-            ClusterDetailsJob.getTruncatedSims(
-              TypedPipe.from(WTFCandidatesSource(sgDir)),
-              args.int("maxSimsNeighborsForEval", 20)
+          v-vaw simsgwaphopt = awgs.optionaw("simsfowevawinputdiw").map { sgdiw =>
+            cwustewdetaiwsjob.gettwuncatedsims(
+              t-typedpipe.fwom(wtfcandidatessouwce(sgdiw)), (///ˬ///✿)
+              a-awgs.int("maxsimsneighbowsfowevaw", ( ͡o ω ͡o ) 20)
             )
           }
 
-          Util.printCounters(
-            ClusterDetailsJob
-              .run(
-                interestedIn,
-                args.int("qtreeSemigroupKParameter", 3),
-                args.getOrElse("modelVersion", "20M_145K_updated"),
-                knownFor,
-                knownForTranspose,
-                userSourceOpt,
-                inferredLanguagesOpt,
-                simsGraphOpt,
-                cosineThreshold = args.double("cosineThreshold", 0.01)
-              ).flatMap(
-                _.writeExecution(AdhocKeyValSources.clusterDetailsSource(args("outputDir"))))
+          utiw.pwintcountews(
+            cwustewdetaiwsjob
+              .wun(
+                i-intewestedin, ʘwʘ
+                awgs.int("qtweesemigwoupkpawametew", 3), rawr
+                a-awgs.getowewse("modewvewsion", o.O "20m_145k_updated"), ^•ﻌ•^
+                k-knownfow, (///ˬ///✿)
+                knownfowtwanspose, (ˆ ﻌ ˆ)♡
+                u-usewsouwceopt, XD
+                i-infewwedwanguagesopt, (✿oωo)
+                s-simsgwaphopt, -.-
+                c-cosinethweshowd = a-awgs.doubwe("cosinethweshowd", XD 0.01)
+              ).fwatmap(
+                _.wwiteexecution(adhockeyvawsouwces.cwustewdetaiwssouwce(awgs("outputdiw"))))
           )
         }
     }
 }
 
-trait ClusterDetailsBatchTrait extends TwitterScheduledExecutionApp {
-  implicit val tz = DateOps.UTC
-  implicit val parser = DateParser.default
+t-twait cwustewdetaiwsbatchtwait e-extends t-twittewscheduwedexecutionapp {
+  impwicit vaw t-tz = dateops.utc
+  impwicit vaw pawsew = datepawsew.defauwt
 
-  def firstTime: String
-  def batchIncrement: Duration
-  def manhattanOutputPath: String
-  def clusterDetailsLiteOutputPath: String
-  def modelVersion: String
-  def knownForDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]]
-  def interestedInDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsInterestedIn]]
-  def outputDataset: KeyValDALDataset[KeyVal[(String, Int), ClusterDetails]]
-  def clusterDetailsLiteOutputDataset: SnapshotDALDataset[ClusterDetailsLite]
+  def f-fiwsttime: stwing
+  def batchincwement: d-duwation
+  def manhattanoutputpath: stwing
+  d-def cwustewdetaiwswiteoutputpath: s-stwing
+  def modewvewsion: stwing
+  def k-knownfowdataset: keyvawdawdataset[keyvaw[wong, (✿oωo) cwustewsusewisknownfow]]
+  d-def i-intewestedindataset: keyvawdawdataset[keyvaw[wong, (˘ω˘) cwustewsusewisintewestedin]]
+  d-def outputdataset: k-keyvawdawdataset[keyvaw[(stwing, (ˆ ﻌ ˆ)♡ int), cwustewdetaiws]]
+  def c-cwustewdetaiwswiteoutputdataset: snapshotdawdataset[cwustewdetaiwswite]
 
-  private lazy val execArgs = AnalyticsBatchExecutionArgs(
-    batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
-    firstTime = BatchFirstTime(RichDate(firstTime)),
-    lastTime = None,
-    batchIncrement = BatchIncrement(batchIncrement)
+  pwivate w-wazy vaw execawgs = a-anawyticsbatchexecutionawgs(
+    batchdesc = b-batchdescwiption(this.getcwass.getname.wepwace("$", >_< "")),
+    f-fiwsttime = batchfiwsttime(wichdate(fiwsttime)), -.-
+    wasttime = n-nyone, (///ˬ///✿)
+    b-batchincwement = b-batchincwement(batchincwement)
   )
 
-  override def scheduledJob: Execution[Unit] = AnalyticsBatchExecution(execArgs) {
-    implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
-          val qtreeSemigroupKParameter = args.int("qtreeSemigroupKParameter", 5)
-          val maxSimsNeighborsForEval = args.int("maxSimsNeighborsForEval", 20)
-          val knownForTranspose =
-            KnownForSources.fromKeyVal(
-              DAL.readMostRecentSnapshot(knownForDataset, dateRange.extend(Days(7))).toTypedPipe,
-              modelVersion)
-          val knownFor = KnownForSources.transpose(knownForTranspose)
-          val cosineThreshold = args.double("cosineThreshold", 0.01)
-          val interestedIn =
-            DAL
-              .readMostRecentSnapshot(interestedInDataset, dateRange.extend(Days(7)))
-              .toTypedPipe
+  o-ovewwide def scheduwedjob: execution[unit] = anawyticsbatchexecution(execawgs) {
+    impwicit datewange =>
+      execution.withid { i-impwicit u-uniqueid =>
+        e-execution.withawgs { a-awgs =>
+          vaw q-qtweesemigwoupkpawametew = a-awgs.int("qtweesemigwoupkpawametew", XD 5)
+          vaw maxsimsneighbowsfowevaw = a-awgs.int("maxsimsneighbowsfowevaw", ^^;; 20)
+          v-vaw knownfowtwanspose =
+            knownfowsouwces.fwomkeyvaw(
+              d-daw.weadmostwecentsnapshot(knownfowdataset, d-datewange.extend(days(7))).totypedpipe, rawr x3
+              modewvewsion)
+          vaw knownfow = k-knownfowsouwces.twanspose(knownfowtwanspose)
+          vaw cosinethweshowd = a-awgs.doubwe("cosinethweshowd", OwO 0.01)
+          vaw intewestedin =
+            d-daw
+              .weadmostwecentsnapshot(intewestedindataset, ʘwʘ d-datewange.extend(days(7)))
+              .totypedpipe
               .map {
-                case KeyVal(userId, clustersUserIsInterestedIn) =>
-                  (userId, clustersUserIsInterestedIn)
+                case k-keyvaw(usewid, rawr c-cwustewsusewisintewestedin) =>
+                  (usewid, UwU c-cwustewsusewisintewestedin)
               }
-          val sims = if (modelVersion == ModelVersions.Model20M145K2020) {
-            // The model version 20m_145k_2020 uses approximate_cosine_follow as the input sims graph
-            // to cluster users. The same graph is used to evaluate the clusters
-            TypedPipe
-              .from(FollowingsCosineSimilaritiesManhattanSource())
+          vaw sims = if (modewvewsion == modewvewsions.modew20m145k2020) {
+            // t-the modew vewsion 20m_145k_2020 u-uses appwoximate_cosine_fowwow as the input sims g-gwaph
+            // to cwustew u-usews. (ꈍᴗꈍ) the same g-gwaph is used to e-evawuate the cwustews
+            typedpipe
+              .fwom(fowwowingscosinesimiwawitiesmanhattansouwce())
               .map(_._2)
-          } else {
-            TypedPipe.from(
-              SimsCandidatesSource()(
-                dateRange = dateRange,
-                suffixPath = "/classified_candidates_rollup"
+          } e-ewse {
+            typedpipe.fwom(
+              simscandidatessouwce()(
+                datewange = d-datewange, (✿oωo)
+                suffixpath = "/cwassified_candidates_wowwup"
               ))
           }
-          val resultExec = ClusterDetailsJob
-            .run(
-              interestedIn,
-              qtreeSemigroupKParameter,
-              modelVersion,
-              knownFor,
-              knownForTranspose,
-              Some(DAL.readMostRecentSnapshot(UsersourceFlatScalaDataset, dateRange).toTypedPipe),
-              Some(ExternalDataSources.inferredUserProducedLanguageSource),
-              Some(
-                ClusterDetailsJob.getTruncatedSims(sims, maxNeighbors = maxSimsNeighborsForEval)),
-              cosineThreshold
-            ).flatMap { resultUnmapped =>
-              val clusterDetailsExec = resultUnmapped
+          vaw wesuwtexec = cwustewdetaiwsjob
+            .wun(
+              intewestedin, (⑅˘꒳˘)
+              qtweesemigwoupkpawametew, OwO
+              modewvewsion, 🥺
+              k-knownfow, >_<
+              knownfowtwanspose,
+              some(daw.weadmostwecentsnapshot(usewsouwcefwatscawadataset, (ꈍᴗꈍ) datewange).totypedpipe), 😳
+              some(extewnawdatasouwces.infewwedusewpwoducedwanguagesouwce), 🥺
+              some(
+                cwustewdetaiwsjob.gettwuncatedsims(sims, nyaa~~ m-maxneighbows = maxsimsneighbowsfowevaw)), ^•ﻌ•^
+              cosinethweshowd
+            ).fwatmap { w-wesuwtunmapped =>
+              vaw cwustewdetaiwsexec = w-wesuwtunmapped
                 .map {
-                  case (clusterKey, details) =>
-                    KeyVal(clusterKey, details)
-                }.writeDALVersionedKeyValExecution(
-                  outputDataset,
-                  D.Suffix(manhattanOutputPath)
+                  case (cwustewkey, (ˆ ﻌ ˆ)♡ detaiws) =>
+                    k-keyvaw(cwustewkey, (U ᵕ U❁) detaiws)
+                }.wwitedawvewsionedkeyvawexecution(
+                  o-outputdataset, mya
+                  d.suffix(manhattanoutputpath)
                 )
 
-              val clusterDetailsLiteExec =
-                resultUnmapped
+              v-vaw cwustewdetaiwswiteexec =
+                w-wesuwtunmapped
                   .map {
-                    case ((_, clusterId), details)
-                        if modelVersion == ModelVersions.Model20M145KDec11 =>
-                      ClusterDetailsLite(
-                        FullClusterId(ModelVersion.Model20m145kDec11, clusterId),
-                        details.numUsersWithAnyNonZeroScore,
-                        details.numUsersWithNonZeroFollowScore,
-                        details.numUsersWithNonZeroFavScore,
-                        details.knownForUsersAndScores.getOrElse(Nil)
+                    case ((_, 😳 cwustewid), detaiws)
+                        i-if modewvewsion == modewvewsions.modew20m145kdec11 =>
+                      cwustewdetaiwswite(
+                        fuwwcwustewid(modewvewsion.modew20m145kdec11, σωσ cwustewid), ( ͡o ω ͡o )
+                        d-detaiws.numusewswithanynonzewoscowe, XD
+                        detaiws.numusewswithnonzewofowwowscowe, :3
+                        d-detaiws.numusewswithnonzewofavscowe, :3
+                        detaiws.knownfowusewsandscowes.getowewse(niw)
                       )
-                    case ((_, clusterId), details)
-                        if modelVersion == ModelVersions.Model20M145KUpdated =>
-                      ClusterDetailsLite(
-                        FullClusterId(ModelVersion.Model20m145kUpdated, clusterId),
-                        details.numUsersWithAnyNonZeroScore,
-                        details.numUsersWithNonZeroFollowScore,
-                        details.numUsersWithNonZeroFavScore,
-                        details.knownForUsersAndScores.getOrElse(Nil)
+                    c-case ((_, (⑅˘꒳˘) cwustewid), òωó detaiws)
+                        i-if m-modewvewsion == modewvewsions.modew20m145kupdated =>
+                      cwustewdetaiwswite(
+                        f-fuwwcwustewid(modewvewsion.modew20m145kupdated, mya cwustewid), 😳😳😳
+                        detaiws.numusewswithanynonzewoscowe, :3
+                        d-detaiws.numusewswithnonzewofowwowscowe, >_<
+                        detaiws.numusewswithnonzewofavscowe, 🥺
+                        detaiws.knownfowusewsandscowes.getowewse(niw)
                       )
-                    case ((_, clusterId), details)
-                        if modelVersion == ModelVersions.Model20M145K2020 =>
-                      ClusterDetailsLite(
-                        FullClusterId(ModelVersion.Model20m145k2020, clusterId),
-                        details.numUsersWithAnyNonZeroScore,
-                        details.numUsersWithNonZeroFollowScore,
-                        details.numUsersWithNonZeroFavScore,
-                        details.knownForUsersAndScores.getOrElse(Nil)
+                    case ((_, cwustewid), (ꈍᴗꈍ) detaiws)
+                        i-if modewvewsion == m-modewvewsions.modew20m145k2020 =>
+                      cwustewdetaiwswite(
+                        f-fuwwcwustewid(modewvewsion.modew20m145k2020, rawr x3 c-cwustewid), (U ﹏ U)
+                        detaiws.numusewswithanynonzewoscowe, ( ͡o ω ͡o )
+                        detaiws.numusewswithnonzewofowwowscowe, 😳😳😳
+                        d-detaiws.numusewswithnonzewofavscowe, 🥺
+                        detaiws.knownfowusewsandscowes.getowewse(niw)
                       )
-                  }.writeDALSnapshotExecution(
-                    clusterDetailsLiteOutputDataset,
-                    D.Daily,
-                    D.Suffix(clusterDetailsLiteOutputPath),
-                    D.EBLzo(),
-                    dateRange.end)
+                  }.wwitedawsnapshotexecution(
+                    cwustewdetaiwswiteoutputdataset, òωó
+                    d.daiwy,
+                    d.suffix(cwustewdetaiwswiteoutputpath), XD
+                    d-d.ebwzo(), XD
+                    datewange.end)
 
-              Execution.zip(clusterDetailsExec, clusterDetailsLiteExec)
+              e-execution.zip(cwustewdetaiwsexec, ( ͡o ω ͡o ) cwustewdetaiwswiteexec)
             }
 
-          Util.printCounters(resultExec)
+          utiw.pwintcountews(wesuwtexec)
         }
       }
   }
 
 }
 
-object ClusterDetailsBatch extends ClusterDetailsBatchTrait {
-  override val firstTime: String = "2018-07-28"
-  override val batchIncrement: Duration = Days(7)
+o-object c-cwustewdetaiwsbatch extends cwustewdetaiwsbatchtwait {
+  o-ovewwide vaw fiwsttime: stwing = "2018-07-28"
+  o-ovewwide vaw batchincwement: duwation = d-days(7)
 
-  override val manhattanOutputPath: String =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_cluster_details"
+  ovewwide v-vaw manhattanoutputpath: stwing =
+    "/usew/cassowawy/manhattan_sequence_fiwes/simcwustews_v2_cwustew_detaiws"
 
-  override val clusterDetailsLiteOutputPath: String =
-    "/user/cassowary/processed/simclusters_v2_cluster_details_lite"
+  ovewwide v-vaw cwustewdetaiwswiteoutputpath: stwing =
+    "/usew/cassowawy/pwocessed/simcwustews_v2_cwustew_detaiws_wite"
 
-  override val modelVersion: String = ModelVersions.Model20M145KDec11
-  override val knownForDataset = SimclustersV2KnownFor20M145KDec11ScalaDataset
-  override val interestedInDataset = SimclustersV2InterestedInScalaDataset
-  override val outputDataset = SimclustersV2ClusterDetailsScalaDataset
-  override val clusterDetailsLiteOutputDataset =
-    SimclustersV2ClusterDetailsLiteScalaDataset
+  ovewwide vaw modewvewsion: stwing = modewvewsions.modew20m145kdec11
+  ovewwide vaw knownfowdataset = simcwustewsv2knownfow20m145kdec11scawadataset
+  o-ovewwide v-vaw intewestedindataset = simcwustewsv2intewestedinscawadataset
+  o-ovewwide vaw o-outputdataset = simcwustewsv2cwustewdetaiwsscawadataset
+  o-ovewwide vaw cwustewdetaiwswiteoutputdataset =
+    simcwustewsv2cwustewdetaiwswitescawadataset
 }
 
-object ClusterDetails20M145KUpdated extends ClusterDetailsBatchTrait {
-  override val firstTime: String = "2019-06-16"
-  override val batchIncrement: Duration = Days(7)
+object cwustewdetaiws20m145kupdated extends cwustewdetaiwsbatchtwait {
+  o-ovewwide vaw fiwsttime: stwing = "2019-06-16"
+  ovewwide vaw batchincwement: duwation = days(7)
 
-  override val manhattanOutputPath: String =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_cluster_details_20m_145k_updated"
+  o-ovewwide v-vaw manhattanoutputpath: s-stwing =
+    "/usew/cassowawy/manhattan_sequence_fiwes/simcwustews_v2_cwustew_detaiws_20m_145k_updated"
 
-  override val clusterDetailsLiteOutputPath: String =
-    "/user/cassowary/processed/simclusters_v2_cluster_details_lite_20m_145k_updated"
+  ovewwide vaw cwustewdetaiwswiteoutputpath: stwing =
+    "/usew/cassowawy/pwocessed/simcwustews_v2_cwustew_detaiws_wite_20m_145k_updated"
 
-  override val modelVersion: String = ModelVersions.Model20M145KUpdated
-  override val knownForDataset = SimclustersV2KnownFor20M145KUpdatedScalaDataset
-  override val interestedInDataset = SimclustersV2InterestedIn20M145KUpdatedScalaDataset
-  override val outputDataset = SimclustersV2ClusterDetails20M145KUpdatedScalaDataset
-  override val clusterDetailsLiteOutputDataset =
-    SimclustersV2ClusterDetailsLite20M145KUpdatedScalaDataset
+  o-ovewwide vaw modewvewsion: s-stwing = m-modewvewsions.modew20m145kupdated
+  ovewwide v-vaw knownfowdataset = simcwustewsv2knownfow20m145kupdatedscawadataset
+  o-ovewwide vaw intewestedindataset = s-simcwustewsv2intewestedin20m145kupdatedscawadataset
+  ovewwide vaw o-outputdataset = simcwustewsv2cwustewdetaiws20m145kupdatedscawadataset
+  ovewwide v-vaw cwustewdetaiwswiteoutputdataset =
+    simcwustewsv2cwustewdetaiwswite20m145kupdatedscawadataset
 }
 
 /**
- * capesospy-v2 update --build_locally --start_cron cluster_details_20m_145k_2020 \
- * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * capesospy-v2 u-update --buiwd_wocawwy --stawt_cwon c-cwustew_detaiws_20m_145k_2020 \
+ * swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc.yamw
  */
-object ClusterDetails20M145K2020 extends ClusterDetailsBatchTrait {
-  override val firstTime: String = "2020-10-15"
-  override val batchIncrement: Duration = Days(7)
+o-object c-cwustewdetaiws20m145k2020 extends c-cwustewdetaiwsbatchtwait {
+  ovewwide vaw fiwsttime: s-stwing = "2020-10-15"
+  ovewwide vaw batchincwement: d-duwation = d-days(7)
 
-  override val manhattanOutputPath: String =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_cluster_details_20m_145k_2020"
+  ovewwide vaw manhattanoutputpath: s-stwing =
+    "/usew/cassowawy/manhattan_sequence_fiwes/simcwustews_v2_cwustew_detaiws_20m_145k_2020"
 
-  override val clusterDetailsLiteOutputPath: String =
-    "/user/cassowary/processed/simclusters_v2_cluster_details_lite_20m_145k_2020"
+  ovewwide vaw cwustewdetaiwswiteoutputpath: stwing =
+    "/usew/cassowawy/pwocessed/simcwustews_v2_cwustew_detaiws_wite_20m_145k_2020"
 
-  override val modelVersion: String = ModelVersions.Model20M145K2020
-  override val knownForDataset = SimclustersV2KnownFor20M145K2020ScalaDataset
-  override val interestedInDataset = SimclustersV2InterestedIn20M145K2020ScalaDataset
-  override val outputDataset = SimclustersV2ClusterDetails20M145K2020ScalaDataset
-  override val clusterDetailsLiteOutputDataset =
-    SimclustersV2ClusterDetailsLite20M145K2020ScalaDataset
+  ovewwide vaw modewvewsion: stwing = modewvewsions.modew20m145k2020
+  ovewwide v-vaw knownfowdataset = simcwustewsv2knownfow20m145k2020scawadataset
+  ovewwide v-vaw intewestedindataset = simcwustewsv2intewestedin20m145k2020scawadataset
+  ovewwide v-vaw outputdataset = simcwustewsv2cwustewdetaiws20m145k2020scawadataset
+  ovewwide vaw cwustewdetaiwswiteoutputdataset =
+    s-simcwustewsv2cwustewdetaiwswite20m145k2020scawadataset
 }
 
 /**
-scalding remote run  --main-class com.twitter.simclusters_v2.scalding.DumpClusterDetailsAdhoc \
-  --target src/scala/com/twitter/simclusters_v2/scalding:cluster_details-dump \
-  --user recos-platform -- \
+scawding wemote wun  --main-cwass c-com.twittew.simcwustews_v2.scawding.dumpcwustewdetaiwsadhoc \
+  --tawget swc/scawa/com/twittew/simcwustews_v2/scawding:cwustew_detaiws-dump \
+  --usew wecos-pwatfowm -- \
   --date 2020-06-25 \
-  --clusterIds 5542 129677 48645 \
-  --inputDir /user/recos-platform/adhoc/your_ldap/cluster_details_inferred_lang
+  --cwustewids 5542 129677 48645 \
+  --inputdiw /usew/wecos-pwatfowm/adhoc/youw_wdap/cwustew_detaiws_infewwed_wang
  */
-object DumpClusterDetailsAdhoc extends TwitterExecutionApp {
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          val clusters = args.list("clusterIds").map(_.toInt).toSet //(1 to 2500).toSet //
-          TypedPipe
-            .from(AdhocKeyValSources.clusterDetailsSource(args("inputDir")))
-            .filter { case ((modelVersion, clusterId), details) => clusters.contains(clusterId) }
-            .toIterableExecution
-            .map { iter =>
-              iter.foreach { x => println(Util.prettyJsonMapper.writeValueAsString(x)) }
+o-object dumpcwustewdetaiwsadhoc extends t-twittewexecutionapp {
+  def job: execution[unit] =
+    e-execution.getconfigmode.fwatmap {
+      c-case (config, >w< mode) =>
+        execution.withid { i-impwicit uniqueid =>
+          v-vaw awgs = config.getawgs
+          vaw cwustews = a-awgs.wist("cwustewids").map(_.toint).toset //(1 t-to 2500).toset //
+          typedpipe
+            .fwom(adhockeyvawsouwces.cwustewdetaiwssouwce(awgs("inputdiw")))
+            .fiwtew { case ((modewvewsion, mya cwustewid), d-detaiws) => cwustews.contains(cwustewid) }
+            .toitewabweexecution
+            .map { itew =>
+              itew.foweach { x => pwintwn(utiw.pwettyjsonmappew.wwitevawueasstwing(x)) }
             }
         }
     }
 }
 
 /**
- * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:cluster_details && \
- * oscar hdfs --user cassowary --host hadoopnest2.atla.twitter.com --bundle cluster_details \
- * --tool com.twitter.simclusters_v2.scalding.DumpClusterSimilaritiesAdhoc --screen --screen-detached \
- * --tee your_ldap/dumpClusterSimilarities_20200103 -- \
- * --inputDir /user/cassowary/manhattan_sequence_files/simclusters_v2_cluster_details_20m_145k_updated/ \
- * --outputDir adhoc/your_ldap
+ * ./bazew bundwe swc/scawa/com/twittew/simcwustews_v2/scawding:cwustew_detaiws && \
+ * o-oscaw hdfs --usew cassowawy --host hadoopnest2.atwa.twittew.com --bundwe cwustew_detaiws \
+ * --toow c-com.twittew.simcwustews_v2.scawding.dumpcwustewsimiwawitiesadhoc --scween --scween-detached \
+ * --tee y-youw_wdap/dumpcwustewsimiwawities_20200103 -- \
+ * --inputdiw /usew/cassowawy/manhattan_sequence_fiwes/simcwustews_v2_cwustew_detaiws_20m_145k_updated/ \
+ * --outputdiw a-adhoc/youw_wdap
  */
-object DumpClusterSimilaritiesAdhoc extends TwitterExecutionApp {
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          TypedPipe
-            .from(AdhocKeyValSources.clusterDetailsSource(args("inputDir")))
-            .flatMap {
-              case ((_, clusterId), details) =>
-                details.neighborClusters.getOrElse(Nil).map { neighbor =>
-                  val compositeScore = (neighbor.followCosineSimilarity
-                    .getOrElse(0.0) + neighbor.favCosineSimilarity.getOrElse(0.0)) / 2
+object dumpcwustewsimiwawitiesadhoc extends twittewexecutionapp {
+  d-def job: execution[unit] =
+    e-execution.getconfigmode.fwatmap {
+      case (config, (ꈍᴗꈍ) mode) =>
+        e-execution.withid { i-impwicit uniqueid =>
+          vaw awgs = config.getawgs
+          typedpipe
+            .fwom(adhockeyvawsouwces.cwustewdetaiwssouwce(awgs("inputdiw")))
+            .fwatmap {
+              case ((_, -.- cwustewid), (⑅˘꒳˘) detaiws) =>
+                detaiws.neighbowcwustews.getowewse(niw).map { n-nyeighbow =>
+                  v-vaw compositescowe = (neighbow.fowwowcosinesimiwawity
+                    .getowewse(0.0) + nyeighbow.favcosinesimiwawity.getowewse(0.0)) / 2
                   (
-                    clusterId,
-                    neighbor.clusterId,
-                    "%.4f".format(compositeScore)
+                    cwustewid, (U ﹏ U)
+                    n-nyeighbow.cwustewid, σωσ
+                    "%.4f".fowmat(compositescowe)
                   )
                 }
-            }.writeExecution(TypedTsv(args("outputDir")))
+            }.wwiteexecution(typedtsv(awgs("outputdiw")))
         }
     }
 }

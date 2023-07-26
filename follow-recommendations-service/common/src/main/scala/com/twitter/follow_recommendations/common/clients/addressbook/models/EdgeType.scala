@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.common.clients.addressbook.models
+package com.twittew.fowwow_wecommendations.common.cwients.addwessbook.modews
 
-import com.twitter.addressbook.datatypes.{thriftscala => t}
+impowt c-com.twittew.addwessbook.datatypes.{thwiftscawa => t-t}
 
-sealed trait EdgeType {
-  def toThrift: t.EdgeType
+seawed t-twait edgetype {
+  d-def tothwift: t-t.edgetype
 }
 
-object EdgeType {
-  case object Forward extends EdgeType {
-    override val toThrift: t.EdgeType = t.EdgeType.Forward
+o-object edgetype {
+  c-case object f-fowwawd extends edgetype {
+    ovewwide vaw tothwift: t.edgetype = t.edgetype.fowwawd
   }
-  case object Reverse extends EdgeType {
-    override val toThrift: t.EdgeType = t.EdgeType.Reverse
+  c-case object wevewse extends edgetype {
+    o-ovewwide vaw tothwift: t.edgetype = t-t.edgetype.wevewse
   }
 }

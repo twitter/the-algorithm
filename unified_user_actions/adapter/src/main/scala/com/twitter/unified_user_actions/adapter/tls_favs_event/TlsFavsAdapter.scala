@@ -1,109 +1,109 @@
-package com.twitter.unified_user_actions.adapter.tls_favs_event
+package com.twittew.unified_usew_actions.adaptew.tws_favs_event
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.timelineservice.thriftscala._
-import com.twitter.unified_user_actions.adapter.AbstractAdapter
-import com.twitter.unified_user_actions.adapter.common.AdapterUtils
-import com.twitter.unified_user_actions.thriftscala._
+impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.finatwa.kafka.sewde.unkeyed
+i-impowt com.twittew.timewinesewvice.thwiftscawa._
+i-impowt com.twittew.unified_usew_actions.adaptew.abstwactadaptew
+i-impowt com.twittew.unified_usew_actions.adaptew.common.adaptewutiws
+i-impowt com.twittew.unified_usew_actions.thwiftscawa._
 
-class TlsFavsAdapter
-    extends AbstractAdapter[ContextualizedFavoriteEvent, UnKeyed, UnifiedUserAction] {
+c-cwass t-twsfavsadaptew
+    extends abstwactadaptew[contextuawizedfavowiteevent, :3 unkeyed, ^^;; unifiedusewaction] {
 
-  import TlsFavsAdapter._
+  impowt t-twsfavsadaptew._
 
-  override def adaptOneToKeyedMany(
-    input: ContextualizedFavoriteEvent,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Seq[(UnKeyed, UnifiedUserAction)] =
-    adaptEvent(input).map { e => (UnKeyed, e) }
+  ovewwide def adaptonetokeyedmany(
+    i-input: contextuawizedfavowiteevent, 🥺
+    s-statsweceivew: statsweceivew = nyuwwstatsweceivew
+  ): seq[(unkeyed, u-unifiedusewaction)] =
+    adaptevent(input).map { e-e => (unkeyed, (⑅˘꒳˘) e-e) }
 }
 
-object TlsFavsAdapter {
+object twsfavsadaptew {
 
-  def adaptEvent(e: ContextualizedFavoriteEvent): Seq[UnifiedUserAction] =
-    Option(e).flatMap { e =>
+  def adaptevent(e: contextuawizedfavowiteevent): s-seq[unifiedusewaction] =
+    option(e).fwatmap { e =>
       e.event match {
-        case FavoriteEventUnion.Favorite(favoriteEvent) =>
-          Some(
-            UnifiedUserAction(
-              userIdentifier = getUserIdentifier(Left(favoriteEvent)),
-              item = getFavItem(favoriteEvent),
-              actionType = ActionType.ServerTweetFav,
-              eventMetadata = getEventMetadata(Left(favoriteEvent), e.context),
-              productSurface = None,
-              productSurfaceInfo = None
+        case favowiteeventunion.favowite(favowiteevent) =>
+          some(
+            u-unifiedusewaction(
+              usewidentifiew = g-getusewidentifiew(weft(favowiteevent)), nyaa~~
+              i-item = g-getfavitem(favowiteevent), :3
+              a-actiontype = actiontype.sewvewtweetfav, ( ͡o ω ͡o )
+              eventmetadata = geteventmetadata(weft(favowiteevent), mya e.context), (///ˬ///✿)
+              pwoductsuwface = n-none,
+              pwoductsuwfaceinfo = nyone
             ))
 
-        case FavoriteEventUnion.Unfavorite(unfavoriteEvent) =>
-          Some(
-            UnifiedUserAction(
-              userIdentifier = getUserIdentifier(Right(unfavoriteEvent)),
-              item = getUnfavItem(unfavoriteEvent),
-              actionType = ActionType.ServerTweetUnfav,
-              eventMetadata = getEventMetadata(Right(unfavoriteEvent), e.context),
-              productSurface = None,
-              productSurfaceInfo = None
+        c-case favowiteeventunion.unfavowite(unfavowiteevent) =>
+          some(
+            unifiedusewaction(
+              usewidentifiew = getusewidentifiew(wight(unfavowiteevent)), (˘ω˘)
+              item = getunfavitem(unfavowiteevent), ^^;;
+              a-actiontype = actiontype.sewvewtweetunfav, (✿oωo)
+              e-eventmetadata = g-geteventmetadata(wight(unfavowiteevent), (U ﹏ U) e-e.context), -.-
+              pwoductsuwface = nyone,
+              pwoductsuwfaceinfo = nyone
             ))
 
-        case _ => None
+        c-case _ => n-nyone
       }
-    }.toSeq
+    }.toseq
 
-  def getFavItem(favoriteEvent: FavoriteEvent): Item =
-    Item.TweetInfo(
-      TweetInfo(
-        actionTweetId = favoriteEvent.tweetId,
-        actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(favoriteEvent.tweetUserId))),
-        retweetingTweetId = favoriteEvent.retweetId
+  def getfavitem(favowiteevent: f-favowiteevent): i-item =
+    item.tweetinfo(
+      tweetinfo(
+        a-actiontweetid = favowiteevent.tweetid, ^•ﻌ•^
+        a-actiontweetauthowinfo = some(authowinfo(authowid = some(favowiteevent.tweetusewid))), rawr
+        w-wetweetingtweetid = favowiteevent.wetweetid
       )
     )
 
-  def getUnfavItem(unfavoriteEvent: UnfavoriteEvent): Item =
-    Item.TweetInfo(
-      TweetInfo(
-        actionTweetId = unfavoriteEvent.tweetId,
-        actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(unfavoriteEvent.tweetUserId))),
-        retweetingTweetId = unfavoriteEvent.retweetId
+  d-def getunfavitem(unfavowiteevent: unfavowiteevent): i-item =
+    item.tweetinfo(
+      t-tweetinfo(
+        actiontweetid = unfavowiteevent.tweetid, (˘ω˘)
+        actiontweetauthowinfo = some(authowinfo(authowid = some(unfavowiteevent.tweetusewid))), nyaa~~
+        wetweetingtweetid = u-unfavowiteevent.wetweetid
       )
     )
 
-  def getEventMetadata(
-    event: Either[FavoriteEvent, UnfavoriteEvent],
-    context: LogEventContext
-  ): EventMetadata = {
-    val sourceTimestampMs = event match {
-      case Left(favoriteEvent) => favoriteEvent.eventTimeMs
-      case Right(unfavoriteEvent) => unfavoriteEvent.eventTimeMs
+  d-def geteventmetadata(
+    event: eithew[favowiteevent, UwU unfavowiteevent], :3
+    c-context: wogeventcontext
+  ): e-eventmetadata = {
+    v-vaw souwcetimestampms = event match {
+      case weft(favowiteevent) => favowiteevent.eventtimems
+      c-case wight(unfavowiteevent) => unfavowiteevent.eventtimems
     }
-    // Client UI language, see more at http://go/languagepriority. The format should be ISO 639-1.
-    val language = event match {
-      case Left(favoriteEvent) => favoriteEvent.viewerContext.flatMap(_.requestLanguageCode)
-      case Right(unfavoriteEvent) => unfavoriteEvent.viewerContext.flatMap(_.requestLanguageCode)
+    // cwient ui wanguage, (⑅˘꒳˘) see mowe at http://go/wanguagepwiowity. (///ˬ///✿) t-the fowmat shouwd be iso 639-1. ^^;;
+    v-vaw wanguage = e-event match {
+      c-case weft(favowiteevent) => f-favowiteevent.viewewcontext.fwatmap(_.wequestwanguagecode)
+      c-case wight(unfavowiteevent) => u-unfavowiteevent.viewewcontext.fwatmap(_.wequestwanguagecode)
     }
-    // From the request (user’s current location),
-    // see https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/thrift/com/twitter/context/viewer.thrift?L54
-    // The format should be ISO_3166-1_alpha-2.
-    val countryCode = event match {
-      case Left(favoriteEvent) => favoriteEvent.viewerContext.flatMap(_.requestCountryCode)
-      case Right(unfavoriteEvent) => unfavoriteEvent.viewerContext.flatMap(_.requestCountryCode)
+    // f-fwom the wequest (usew’s cuwwent wocation), >_<
+    // s-see https://souwcegwaph.twittew.biz/git.twittew.biz/souwce/-/bwob/swc/thwift/com/twittew/context/viewew.thwift?w54
+    // t-the fowmat shouwd b-be iso_3166-1_awpha-2. rawr x3
+    v-vaw c-countwycode = event match {
+      case weft(favowiteevent) => favowiteevent.viewewcontext.fwatmap(_.wequestcountwycode)
+      c-case wight(unfavowiteevent) => unfavowiteevent.viewewcontext.fwatmap(_.wequestcountwycode)
     }
-    EventMetadata(
-      sourceTimestampMs = sourceTimestampMs,
-      receivedTimestampMs = AdapterUtils.currentTimestampMs,
-      sourceLineage = SourceLineage.ServerTlsFavs,
-      language = language.map(AdapterUtils.normalizeLanguageCode),
-      countryCode = countryCode.map(AdapterUtils.normalizeCountryCode),
-      traceId = Some(context.traceId),
-      clientAppId = context.clientApplicationId,
+    eventmetadata(
+      souwcetimestampms = souwcetimestampms, /(^•ω•^)
+      weceivedtimestampms = adaptewutiws.cuwwenttimestampms, :3
+      s-souwcewineage = souwcewineage.sewvewtwsfavs, (ꈍᴗꈍ)
+      wanguage = wanguage.map(adaptewutiws.nowmawizewanguagecode), /(^•ω•^)
+      c-countwycode = c-countwycode.map(adaptewutiws.nowmawizecountwycode), (⑅˘꒳˘)
+      t-twaceid = some(context.twaceid), ( ͡o ω ͡o )
+      cwientappid = c-context.cwientappwicationid, òωó
     )
   }
 
-  // Get id of the user that took the action
-  def getUserIdentifier(event: Either[FavoriteEvent, UnfavoriteEvent]): UserIdentifier =
+  // get id of the u-usew that took t-the action
+  def getusewidentifiew(event: eithew[favowiteevent, (⑅˘꒳˘) unfavowiteevent]): usewidentifiew =
     event match {
-      case Left(favoriteEvent) => UserIdentifier(userId = Some(favoriteEvent.userId))
-      case Right(unfavoriteEvent) => UserIdentifier(userId = Some(unfavoriteEvent.userId))
+      c-case weft(favowiteevent) => u-usewidentifiew(usewid = some(favowiteevent.usewid))
+      c-case wight(unfavowiteevent) => u-usewidentifiew(usewid = some(unfavowiteevent.usewid))
     }
 }

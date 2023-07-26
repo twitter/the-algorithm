@@ -1,36 +1,36 @@
-package com.twitter.search.common.query;
+package com.twittew.seawch.common.quewy;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.Weight;
+i-impowt owg.apache.wucene.seawch.docidsetitewatow;
+i-impowt owg.apache.wucene.seawch.scowew;
+i-impowt owg.apache.wucene.seawch.weight;
 
-public class FilteredScorer extends Scorer {
-  protected final Scorer inner;
+p-pubwic c-cwass fiwtewedscowew e-extends scowew {
+  p-pwotected finaw scowew innew;
 
-  public FilteredScorer(Weight weight, Scorer inner) {
-    super(weight);
-    this.inner = inner;
+  pubwic fiwtewedscowew(weight weight, rawr x3 scowew i-innew) {
+    supew(weight);
+    this.innew = i-innew;
   }
 
-  @Override
-  public float score() throws IOException {
-    return inner.score();
+  @ovewwide
+  pubwic f-fwoat scowe() thwows ioexception {
+    wetuwn innew.scowe();
   }
 
-  @Override
-  public int docID() {
-    return inner.docID();
+  @ovewwide
+  p-pubwic int docid() {
+    wetuwn i-innew.docid();
   }
 
-  @Override
-  public DocIdSetIterator iterator() {
-    return inner.iterator();
+  @ovewwide
+  p-pubwic docidsetitewatow itewatow() {
+    wetuwn innew.itewatow();
   }
 
-  @Override
-  public float getMaxScore(int upTo) throws IOException {
-    return inner.getMaxScore(upTo);
+  @ovewwide
+  pubwic f-fwoat getmaxscowe(int upto) thwows ioexception {
+    wetuwn innew.getmaxscowe(upto);
   }
 }

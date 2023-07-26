@@ -1,414 +1,414 @@
-# checkstyle: noqa
+# checkstywe: nyoqa
 
-import time
-from collections import defaultdict
+impowt time
+f-fwom cowwections i-impowt defauwtdict
 
-from com.twitter.mlmetastore.modelrepo.client import ModelRepoClient
-from com.twitter.mlmetastore.modelrepo.core import FeatureImportance, FeatureNames
-from twitter.deepbird.io.util import match_feature_regex_list
+f-fwom com.twittew.mwmetastowe.modewwepo.cwient i-impowt modewwepocwient
+f-fwom com.twittew.mwmetastowe.modewwepo.cowe i-impowt featuweimpowtance, /(^•ω•^) f-featuwenames
+fwom t-twittew.deepbiwd.io.utiw impowt match_featuwe_wegex_wist
 
-from twml.contrib.feature_importances.helpers import (
-  _get_feature_name_from_config,
-  _get_feature_types_from_records,
-  _get_metrics_hook,
-  _expand_prefix,
-  longest_common_prefix,
-  write_list_to_hdfs_gfile)
-from twml.contrib.feature_importances.feature_permutation import PermutedInputFnFactory
-from twml.tracking import ExperimentTracker
+fwom twmw.contwib.featuwe_impowtances.hewpews i-impowt (
+  _get_featuwe_name_fwom_config, 😳😳😳
+  _get_featuwe_types_fwom_wecowds, :3
+  _get_metwics_hook, (///ˬ///✿)
+  _expand_pwefix,
+  wongest_common_pwefix, rawr x3
+  wwite_wist_to_hdfs_gfiwe)
+f-fwom twmw.contwib.featuwe_impowtances.featuwe_pewmutation impowt p-pewmutedinputfnfactowy
+fwom twmw.twacking impowt expewimenttwackew
 
-from tensorflow.compat.v1 import logging
-from requests.exceptions import HTTPError, RetryError
-from queue import Queue
-
-
-SERIAL = "serial"
-TREE = "tree"
-INDIVIDUAL = "Individual"
-GROUP = "Group"
-ROC_AUC = "roc_auc"
-RCE = "rce"
-LOSS = "loss"
+f-fwom tensowfwow.compat.v1 impowt wogging
+f-fwom wequests.exceptions i-impowt httpewwow, (U ᵕ U❁) wetwyewwow
+fwom queue impowt queue
 
 
-def _repartition(feature_list_queue, fnames_ftypes, split_feature_group_on_period):
+sewiaw = "sewiaw"
+t-twee = "twee"
+individuaw = "individuaw"
+gwoup = "gwoup"
+woc_auc = "woc_auc"
+wce = "wce"
+woss = "woss"
+
+
+d-def _wepawtition(featuwe_wist_queue, fnames_ftypes, (⑅˘꒳˘) spwit_featuwe_gwoup_on_pewiod):
   """
-  Iterate through letters to partition each feature by prefix, and then put each tuple
-    (prefix, feature_partition) into the feature_list_queue
-  Args:
-    prefix (str): The prefix shared by each feature in list_of_feature_types
-    feature_list_queue (Queue<(str, list<(str, str)>)>): The queue of feature groups
-    fnames_ftypes (list<(str, str)>): List of (fname, ftype) pairs. Each fname begins with prefix
-    split_feature_group_on_period (str): If true, require that feature groups end in a period
-  Returns:
-    Updated queue with each group in fnames_ftypes
+  i-itewate thwough w-wettews to p-pawtition each f-featuwe by pwefix, (˘ω˘) and then put each tupwe
+    (pwefix, :3 f-featuwe_pawtition) into the featuwe_wist_queue
+  a-awgs:
+    pwefix (stw): the pwefix shawed by each featuwe in wist_of_featuwe_types
+    featuwe_wist_queue (queue<(stw, XD w-wist<(stw, >_< stw)>)>): the queue o-of featuwe gwoups
+    f-fnames_ftypes (wist<(stw, (✿oωo) s-stw)>): wist of (fname, (ꈍᴗꈍ) ftype) paiws. XD each fname begins with pwefix
+    s-spwit_featuwe_gwoup_on_pewiod (stw): i-if twue, :3 wequiwe that f-featuwe gwoups e-end in a pewiod
+  wetuwns:
+    u-updated queue with each gwoup in f-fnames_ftypes
   """
-  assert len(fnames_ftypes) > 1
+  assewt wen(fnames_ftypes) > 1
 
-  split_character = "." if split_feature_group_on_period else None
-  # Compute the longest prefix of the words
-  prefix = longest_common_prefix(
-    strings=[fname for fname, _ in fnames_ftypes], split_character=split_character)
+  spwit_chawactew = "." if s-spwit_featuwe_gwoup_on_pewiod ewse nyone
+  # compute t-the wongest pwefix of the w-wowds
+  pwefix = w-wongest_common_pwefix(
+    stwings=[fname fow fname, mya _ in fnames_ftypes], òωó spwit_chawactew=spwit_chawactew)
 
-  # Separate the features by prefix
-  prefix_to_features = defaultdict(list)
-  for fname, ftype in fnames_ftypes:
-    assert fname.startswith(prefix)
-    new_prefix = _expand_prefix(fname=fname, prefix=prefix, split_character=split_character)
-    prefix_to_features[new_prefix].append((fname, ftype))
+  # sepawate the featuwes by pwefix
+  p-pwefix_to_featuwes = d-defauwtdict(wist)
+  fow f-fname, nyaa~~ ftype in f-fnames_ftypes:
+    a-assewt fname.stawtswith(pwefix)
+    nyew_pwefix = _expand_pwefix(fname=fname, 🥺 pwefix=pwefix, -.- spwit_chawactew=spwit_chawactew)
+    p-pwefix_to_featuwes[new_pwefix].append((fname, 🥺 ftype))
 
-  # Add all of the new partitions to the queue
-  for new_prefix, fname_ftype_list in prefix_to_features.items():
-    extended_new_prefix = longest_common_prefix(
-      strings=[fname for fname, _ in fname_ftype_list], split_character=split_character)
-    assert extended_new_prefix.startswith(new_prefix)
-    feature_list_queue.put((extended_new_prefix, fname_ftype_list))
-  return feature_list_queue
-
-
-def _infer_if_is_metric_larger_the_better(stopping_metric):
-  # Infers whether a metric should be interpreted such that larger numbers are better (e.g. ROC_AUC), as opposed to
-  #   larger numbers being worse (e.g. LOSS)
-  if stopping_metric is None:
-    raise ValueError("Error: Stopping Metric cannot be None")
-  elif stopping_metric.startswith(LOSS):
-    logging.info("Interpreting {} to be a metric where larger numbers are worse".format(stopping_metric))
-    is_metric_larger_the_better = False
-  else:
-    logging.info("Interpreting {} to be a metric where larger numbers are better".format(stopping_metric))
-    is_metric_larger_the_better = True
-  return is_metric_larger_the_better
+  # add aww of the nyew pawtitions to the queue
+  fow n-new_pwefix, (˘ω˘) fname_ftype_wist in pwefix_to_featuwes.items():
+    e-extended_new_pwefix = w-wongest_common_pwefix(
+      s-stwings=[fname fow fname, òωó _ i-in fname_ftype_wist], UwU s-spwit_chawactew=spwit_chawactew)
+    a-assewt e-extended_new_pwefix.stawtswith(new_pwefix)
+    featuwe_wist_queue.put((extended_new_pwefix, ^•ﻌ•^ fname_ftype_wist))
+  w-wetuwn featuwe_wist_queue
 
 
-def _check_whether_tree_should_expand(baseline_performance, computed_performance, sensitivity, stopping_metric, is_metric_larger_the_better):
+d-def _infew_if_is_metwic_wawgew_the_bettew(stopping_metwic):
+  # i-infews whethew a-a metwic shouwd b-be intewpweted such that wawgew nyumbews awe bettew (e.g. mya woc_auc), (✿oωo) a-as opposed to
+  #   wawgew nyumbews being wowse (e.g. XD woss)
+  if stopping_metwic is nyone:
+    w-waise vawueewwow("ewwow: stopping metwic cannot be none")
+  ewif s-stopping_metwic.stawtswith(woss):
+    w-wogging.info("intewpweting {} t-to be a metwic whewe wawgew n-nyumbews awe wowse".fowmat(stopping_metwic))
+    i-is_metwic_wawgew_the_bettew = f-fawse
+  ewse:
+    wogging.info("intewpweting {} to be a metwic whewe wawgew nyumbews awe bettew".fowmat(stopping_metwic))
+    is_metwic_wawgew_the_bettew = twue
+  w-wetuwn is_metwic_wawgew_the_bettew
+
+
+def _check_whethew_twee_shouwd_expand(basewine_pewfowmance, :3 c-computed_pewfowmance, (U ﹏ U) sensitivity, UwU s-stopping_metwic, ʘwʘ i-is_metwic_wawgew_the_bettew):
   """
-  Returns True if
-    - the metric is positive (e.g. ROC_AUC) and computed_performance is nontrivially smaller than the baseline_performance
-    - the metric is negative (e.g. LOSS) and computed_performance is nontrivially larger than the baseline_performance
+  wetuwns twue if
+    - the metwic i-is positive (e.g. >w< w-woc_auc) and computed_pewfowmance i-is nyontwiviawwy s-smowew than the basewine_pewfowmance
+    - the metwic is nyegative (e.g. 😳😳😳 woss) and computed_pewfowmance is n-nyontwiviawwy w-wawgew than the b-basewine_pewfowmance
   """
-  difference = ((baseline_performance[stopping_metric] - computed_performance[stopping_metric]) /
-                 baseline_performance[stopping_metric])
+  diffewence = ((basewine_pewfowmance[stopping_metwic] - c-computed_pewfowmance[stopping_metwic]) /
+                 b-basewine_pewfowmance[stopping_metwic])
 
-  if not is_metric_larger_the_better:
-      difference = -difference
+  if not is_metwic_wawgew_the_bettew:
+      d-diffewence = -diffewence
 
-  logging.info(
-    "Found a {} difference of {}. Sensitivity is {}.".format("positive" if is_metric_larger_the_better else "negative", difference, sensitivity))
-  return difference > sensitivity
+  wogging.info(
+    "found a {} diffewence of {}. rawr sensitivity is {}.".fowmat("positive" i-if is_metwic_wawgew_the_bettew e-ewse "negative", ^•ﻌ•^ diffewence, sensitivity))
+  w-wetuwn diffewence > s-sensitivity
 
 
-def _compute_multiple_permuted_performances_from_trainer(
-    factory, fname_ftypes, trainer, parse_fn, record_count):
-  """Compute performances with fname and fype permuted
+def _compute_muwtipwe_pewmuted_pewfowmances_fwom_twainew(
+    factowy, σωσ fname_ftypes, :3 twainew, rawr x3 p-pawse_fn, wecowd_count):
+  """compute pewfowmances with fname and fype pewmuted
   """
-  metrics_hook = _get_metrics_hook(trainer)
-  trainer._estimator.evaluate(
-    input_fn=factory.get_permuted_input_fn(
-      batch_size=trainer._params.eval_batch_size, parse_fn=parse_fn, fname_ftypes=fname_ftypes),
-    steps=(record_count + trainer._params.eval_batch_size) // trainer._params.eval_batch_size,
-    hooks=[metrics_hook],
-    checkpoint_path=trainer.best_or_latest_checkpoint)
-  return metrics_hook.metric_values
+  metwics_hook = _get_metwics_hook(twainew)
+  t-twainew._estimatow.evawuate(
+    input_fn=factowy.get_pewmuted_input_fn(
+      batch_size=twainew._pawams.evaw_batch_size, nyaa~~ pawse_fn=pawse_fn, :3 f-fname_ftypes=fname_ftypes), >w<
+    s-steps=(wecowd_count + twainew._pawams.evaw_batch_size) // twainew._pawams.evaw_batch_size, rawr
+    hooks=[metwics_hook], 😳
+    c-checkpoint_path=twainew.best_ow_watest_checkpoint)
+  w-wetuwn metwics_hook.metwic_vawues
 
 
-def _get_extra_feature_group_performances(factory, trainer, parse_fn, extra_groups, feature_to_type, record_count):
-  """Compute performance differences for the extra feature groups
+def _get_extwa_featuwe_gwoup_pewfowmances(factowy, 😳 twainew, pawse_fn, 🥺 extwa_gwoups, rawr x3 f-featuwe_to_type, ^^ wecowd_count):
+  """compute p-pewfowmance diffewences fow the extwa featuwe gwoups
   """
-  extra_group_feature_performance_results = {}
-  for group_name, raw_feature_regex_list in extra_groups.items():
-    start = time.time()
-    fnames = match_feature_regex_list(
-      features=feature_to_type.keys(),
-      feature_regex_list=[regex for regex in raw_feature_regex_list],
-      preprocess=False,
-      as_dict=False)
+  e-extwa_gwoup_featuwe_pewfowmance_wesuwts = {}
+  fow gwoup_name, ( ͡o ω ͡o ) w-waw_featuwe_wegex_wist i-in extwa_gwoups.items():
+    stawt = time.time()
+    f-fnames = match_featuwe_wegex_wist(
+      f-featuwes=featuwe_to_type.keys(), XD
+      f-featuwe_wegex_wist=[wegex f-fow wegex in waw_featuwe_wegex_wist], ^^
+      p-pwepwocess=fawse, (⑅˘꒳˘)
+      a-as_dict=fawse)
 
-    fnames_ftypes = [(fname, feature_to_type[fname]) for fname in fnames]
+    fnames_ftypes = [(fname, (⑅˘꒳˘) featuwe_to_type[fname]) fow fname in fnames]
 
-    logging.info("Extracted extra group {} with features {}".format(group_name, fnames_ftypes))
-    extra_group_feature_performance_results[group_name] = _compute_multiple_permuted_performances_from_trainer(
-      factory=factory, fname_ftypes=fnames_ftypes,
-      trainer=trainer, parse_fn=parse_fn, record_count=record_count)
-    logging.info("\n\nImportances computed for {} in {} seconds \n\n".format(
-      group_name, int(time.time() - start)))
-  return extra_group_feature_performance_results
+    w-wogging.info("extwacted e-extwa gwoup {} w-with featuwes {}".fowmat(gwoup_name, fnames_ftypes))
+    extwa_gwoup_featuwe_pewfowmance_wesuwts[gwoup_name] = _compute_muwtipwe_pewmuted_pewfowmances_fwom_twainew(
+      f-factowy=factowy, ^•ﻌ•^ fname_ftypes=fnames_ftypes, ( ͡o ω ͡o )
+      twainew=twainew, ( ͡o ω ͡o ) p-pawse_fn=pawse_fn, (✿oωo) w-wecowd_count=wecowd_count)
+    wogging.info("\n\nimpowtances computed fow {} in {} seconds \n\n".fowmat(
+      g-gwoup_name, int(time.time() - s-stawt)))
+  wetuwn e-extwa_gwoup_featuwe_pewfowmance_wesuwts
 
 
-def _feature_importances_tree_algorithm(
-    data_dir, trainer, parse_fn, fnames, stopping_metric, file_list=None, datarecord_filter_fn=None, split_feature_group_on_period=True,
-    record_count=99999, is_metric_larger_the_better=None, sensitivity=0.025, extra_groups=None, dont_build_tree=False):
-  """Tree algorithm for feature and feature group importances. This algorithm build a prefix tree of
-  the feature names and then traverses the tree with a BFS. At each node (aka group of features with
-  a shared prefix) the algorithm computes the performance of the model when we permute all features
-  in the group. The algorithm only zooms-in on groups that impact the performance by more than
-  sensitivity. As a result, features that affect the model performance by less than sensitivity will
-  not have an exact importance.
-  Args:
-    data_dir: (str): The location of the training or testing data to compute importances over.
-      If None, the trainer._eval_files are used
-    trainer: (DataRecordTrainer): A DataRecordTrainer object
-    parse_fn: (function): The parse_fn used by eval_input_fn
-    fnames (list<string>): The list of feature names
-    stopping_metric (str): The metric to use to determine when to stop expanding trees
-    file_list (list<str>): The list of filenames. Exactly one of file_list and data_dir should be
-      provided
-    datarecord_filter_fn (function): a function takes a single data sample in com.twitter.ml.api.ttypes.DataRecord format
-        and return a boolean value, to indicate if this data record should be kept in feature importance module or not.
-    split_feature_group_on_period (boolean): If true, split feature groups by period rather than on
-      optimal prefix
-    record_count (int): The number of records to compute importances over
-    is_metric_larger_the_better (boolean): If true, assume that stopping_metric is a metric where larger
-      values are better (e.g. ROC-AUC)
-    sensitivity (float): The smallest change in performance to continue to expand the tree
-    extra_groups (dict<str, list<str>>): A dictionary mapping the name of extra feature groups to the list of
-      the names of the features in the group. You should only supply a value for this argument if you have a set
-      of features that you want to evaluate as a group but don't share a prefix
-    dont_build_tree (boolean): If True, don't build the tree and only compute the extra_groups importances
-  Returns:
-    A dictionary that contains the individual and group feature importances
+d-def _featuwe_impowtances_twee_awgowithm(
+    data_diw, 😳😳😳 t-twainew, OwO pawse_fn, fnames, ^^ stopping_metwic, rawr x3 fiwe_wist=none, 🥺 datawecowd_fiwtew_fn=none, (ˆ ﻌ ˆ)♡ spwit_featuwe_gwoup_on_pewiod=twue, ( ͡o ω ͡o )
+    wecowd_count=99999, is_metwic_wawgew_the_bettew=none, >w< sensitivity=0.025, /(^•ω•^) e-extwa_gwoups=none, 😳😳😳 dont_buiwd_twee=fawse):
+  """twee a-awgowithm fow featuwe and featuwe g-gwoup impowtances. (U ᵕ U❁) this awgowithm b-buiwd a pwefix twee of
+  the f-featuwe nyames a-and then twavewses t-the twee with a-a bfs. (˘ω˘) at each n-nyode (aka gwoup of featuwes with
+  a shawed pwefix) the awgowithm computes the pewfowmance of the modew when we p-pewmute aww featuwes
+  i-in the gwoup. 😳 t-the awgowithm onwy zooms-in o-on gwoups that impact the pewfowmance by mowe than
+  sensitivity. (ꈍᴗꈍ) a-as a wesuwt, :3 f-featuwes that affect the modew p-pewfowmance by wess than sensitivity wiww
+  nyot h-have an exact impowtance. /(^•ω•^)
+  a-awgs:
+    data_diw: (stw): t-the wocation o-of the twaining ow testing data to compute impowtances ovew. ^^;;
+      if nyone, o.O t-the twainew._evaw_fiwes a-awe used
+    t-twainew: (datawecowdtwainew): a-a datawecowdtwainew o-object
+    pawse_fn: (function): t-the pawse_fn u-used by evaw_input_fn
+    fnames (wist<stwing>): t-the wist o-of featuwe nyames
+    stopping_metwic (stw): t-the metwic to use to detewmine when t-to stop expanding twees
+    fiwe_wist (wist<stw>): t-the wist of f-fiwenames. 😳 exactwy one of fiwe_wist a-and data_diw shouwd be
+      pwovided
+    datawecowd_fiwtew_fn (function): a-a function takes a-a singwe data sampwe i-in com.twittew.mw.api.ttypes.datawecowd fowmat
+        and wetuwn a boowean v-vawue, UwU to indicate if this data wecowd shouwd b-be kept in featuwe i-impowtance moduwe ow nyot. >w<
+    s-spwit_featuwe_gwoup_on_pewiod (boowean): if twue, s-spwit featuwe g-gwoups by pewiod wathew than on
+      optimaw p-pwefix
+    wecowd_count (int): the nyumbew of wecowds to compute i-impowtances ovew
+    i-is_metwic_wawgew_the_bettew (boowean): if t-twue, o.O assume that stopping_metwic i-is a metwic whewe w-wawgew
+      v-vawues awe bettew (e.g. (˘ω˘) woc-auc)
+    sensitivity (fwoat): the smowest change in pewfowmance to continue to expand the twee
+    extwa_gwoups (dict<stw, òωó wist<stw>>): a dictionawy mapping the nyame of extwa featuwe g-gwoups to the w-wist of
+      the nyames of the featuwes in the g-gwoup. nyaa~~ you shouwd o-onwy suppwy a-a vawue fow this awgument if you h-have a set
+      of featuwes that y-you want to e-evawuate as a gwoup but don't shawe a-a pwefix
+    dont_buiwd_twee (boowean): i-if twue, ( ͡o ω ͡o ) d-don't buiwd the twee and onwy compute the extwa_gwoups i-impowtances
+  w-wetuwns:
+    a-a dictionawy t-that contains t-the individuaw a-and gwoup featuwe i-impowtances
   """
-  factory = PermutedInputFnFactory(
-    data_dir=data_dir, record_count=record_count, file_list=file_list, datarecord_filter_fn=datarecord_filter_fn)
-  baseline_performance = _compute_multiple_permuted_performances_from_trainer(
-    factory=factory, fname_ftypes=[],
-    trainer=trainer, parse_fn=parse_fn, record_count=record_count)
-  out = {"None": baseline_performance}
+  f-factowy = p-pewmutedinputfnfactowy(
+    data_diw=data_diw, 😳😳😳 w-wecowd_count=wecowd_count, ^•ﻌ•^ f-fiwe_wist=fiwe_wist, (˘ω˘) d-datawecowd_fiwtew_fn=datawecowd_fiwtew_fn)
+  basewine_pewfowmance = _compute_muwtipwe_pewmuted_pewfowmances_fwom_twainew(
+    f-factowy=factowy, (˘ω˘) fname_ftypes=[], -.-
+    twainew=twainew, ^•ﻌ•^ pawse_fn=pawse_fn, /(^•ω•^) w-wecowd_count=wecowd_count)
+  out = {"none": b-basewine_pewfowmance}
 
-  if stopping_metric not in baseline_performance:
-    raise ValueError("The stopping metric '{}' not found in baseline_performance. Metrics are {}".format(
-      stopping_metric, list(baseline_performance.keys())))
+  i-if s-stopping_metwic nyot in basewine_pewfowmance:
+    w-waise vawueewwow("the stopping m-metwic '{}' nyot found in basewine_pewfowmance. (///ˬ///✿) m-metwics awe {}".fowmat(
+      stopping_metwic, mya wist(basewine_pewfowmance.keys())))
 
-  is_metric_larger_the_better = (
-    is_metric_larger_the_better if is_metric_larger_the_better is not None else _infer_if_is_metric_larger_the_better(stopping_metric))
-  logging.info("Using {} as the stopping metric for the tree algorithm".format(stopping_metric))
+  i-is_metwic_wawgew_the_bettew = (
+    is_metwic_wawgew_the_bettew if is_metwic_wawgew_the_bettew is nyot nyone ewse _infew_if_is_metwic_wawgew_the_bettew(stopping_metwic))
+  w-wogging.info("using {} as the s-stopping metwic f-fow the twee awgowithm".fowmat(stopping_metwic))
 
-  feature_to_type = _get_feature_types_from_records(records=factory.records, fnames=fnames)
-  all_feature_types = list(feature_to_type.items())
+  featuwe_to_type = _get_featuwe_types_fwom_wecowds(wecowds=factowy.wecowds, o.O fnames=fnames)
+  aww_featuwe_types = w-wist(featuwe_to_type.items())
 
-  individual_feature_performances = {}
-  feature_group_performances = {}
-  if dont_build_tree:
-    logging.info("Not building feature importance trie. Will only compute importances for the extra_groups")
-  else:
-    logging.info("Building feature importance trie")
-    # Each element in the Queue will be a tuple of (prefix, list_of_feature_type_pairs) where
-    #   each feature in list_of_feature_type_pairs will have have the prefix "prefix"
-    feature_list_queue = _repartition(
-      feature_list_queue=Queue(), fnames_ftypes=all_feature_types, split_feature_group_on_period=split_feature_group_on_period)
+  individuaw_featuwe_pewfowmances = {}
+  f-featuwe_gwoup_pewfowmances = {}
+  if d-dont_buiwd_twee:
+    w-wogging.info("not buiwding featuwe impowtance t-twie. ^•ﻌ•^ wiww o-onwy compute impowtances fow the e-extwa_gwoups")
+  ewse:
+    wogging.info("buiwding featuwe impowtance t-twie")
+    # each ewement i-in the queue wiww b-be a tupwe of (pwefix, (U ᵕ U❁) w-wist_of_featuwe_type_paiws) whewe
+    #   e-each featuwe i-in wist_of_featuwe_type_paiws w-wiww h-have have the pwefix "pwefix"
+    f-featuwe_wist_queue = _wepawtition(
+      f-featuwe_wist_queue=queue(), f-fnames_ftypes=aww_featuwe_types, :3 s-spwit_featuwe_gwoup_on_pewiod=spwit_featuwe_gwoup_on_pewiod)
 
-    while not feature_list_queue.empty():
-      # Pop the queue. We should never have an empty list in the queue
-      prefix, fnames_ftypes = feature_list_queue.get()
-      assert len(fnames_ftypes) > 0
+    w-whiwe n-nyot featuwe_wist_queue.empty():
+      # p-pop t-the queue. (///ˬ///✿) we shouwd nyevew have a-an empty wist in the queue
+      p-pwefix, fnames_ftypes = featuwe_wist_queue.get()
+      a-assewt w-wen(fnames_ftypes) > 0
 
-      # Compute performance from permuting all features in fname_ftypes
-      logging.info(
-        "\n\nComputing importances for {} ({}...). {} elements left in the queue \n\n".format(
-          prefix, fnames_ftypes[:5], feature_list_queue.qsize()))
-      start = time.time()
-      computed_performance = _compute_multiple_permuted_performances_from_trainer(
-        factory=factory, fname_ftypes=fnames_ftypes,
-        trainer=trainer, parse_fn=parse_fn, record_count=record_count)
-      logging.info("\n\nImportances computed for {} in {} seconds \n\n".format(
-        prefix, int(time.time() - start)))
-      if len(fnames_ftypes) == 1:
-        individual_feature_performances[fnames_ftypes[0][0]] = computed_performance
-      else:
-        feature_group_performances[prefix] = computed_performance
-      # Dig deeper into the features in fname_ftypes only if there is more than one feature in the
-      #    list and the performance drop is nontrivial
-      logging.info("Checking performance for {} ({}...)".format(prefix, fnames_ftypes[:5]))
-      check = _check_whether_tree_should_expand(
-        baseline_performance=baseline_performance, computed_performance=computed_performance,
-        sensitivity=sensitivity, stopping_metric=stopping_metric, is_metric_larger_the_better=is_metric_larger_the_better)
-      if len(fnames_ftypes) > 1 and check:
-        logging.info("Expanding {} ({}...)".format(prefix, fnames_ftypes[:5]))
-        feature_list_queue = _repartition(
-          feature_list_queue=feature_list_queue, fnames_ftypes=fnames_ftypes, split_feature_group_on_period=split_feature_group_on_period)
-      else:
-        logging.info("Not expanding {} ({}...)".format(prefix, fnames_ftypes[:5]))
+      # c-compute pewfowmance fwom pewmuting aww featuwes in fname_ftypes
+      w-wogging.info(
+        "\n\ncomputing i-impowtances f-fow {} ({}...). (///ˬ///✿) {} ewements weft in the queue \n\n".fowmat(
+          pwefix, 🥺 f-fnames_ftypes[:5], -.- f-featuwe_wist_queue.qsize()))
+      stawt = t-time.time()
+      c-computed_pewfowmance = _compute_muwtipwe_pewmuted_pewfowmances_fwom_twainew(
+        factowy=factowy, nyaa~~ fname_ftypes=fnames_ftypes, (///ˬ///✿)
+        twainew=twainew, 🥺 pawse_fn=pawse_fn, >w< w-wecowd_count=wecowd_count)
+      w-wogging.info("\n\nimpowtances c-computed fow {} i-in {} seconds \n\n".fowmat(
+        pwefix, int(time.time() - stawt)))
+      if w-wen(fnames_ftypes) == 1:
+        i-individuaw_featuwe_pewfowmances[fnames_ftypes[0][0]] = computed_pewfowmance
+      ewse:
+        f-featuwe_gwoup_pewfowmances[pwefix] = computed_pewfowmance
+      # dig deepew i-into the featuwes in fname_ftypes o-onwy if thewe i-is mowe than one featuwe in the
+      #    w-wist a-and the pewfowmance dwop is nyontwiviaw
+      w-wogging.info("checking pewfowmance f-fow {} ({}...)".fowmat(pwefix, rawr x3 f-fnames_ftypes[:5]))
+      c-check = _check_whethew_twee_shouwd_expand(
+        b-basewine_pewfowmance=basewine_pewfowmance, (⑅˘꒳˘) computed_pewfowmance=computed_pewfowmance, σωσ
+        s-sensitivity=sensitivity, XD s-stopping_metwic=stopping_metwic, -.- i-is_metwic_wawgew_the_bettew=is_metwic_wawgew_the_bettew)
+      if wen(fnames_ftypes) > 1 a-and check:
+        wogging.info("expanding {} ({}...)".fowmat(pwefix, >_< f-fnames_ftypes[:5]))
+        f-featuwe_wist_queue = _wepawtition(
+          f-featuwe_wist_queue=featuwe_wist_queue, rawr fnames_ftypes=fnames_ftypes, 😳😳😳 spwit_featuwe_gwoup_on_pewiod=spwit_featuwe_gwoup_on_pewiod)
+      ewse:
+        wogging.info("not e-expanding {} ({}...)".fowmat(pwefix, UwU fnames_ftypes[:5]))
 
-  # Baseline performance is grouped in with individual_feature_importance_results
-  individual_feature_performance_results = dict(
-    out, **{k: v for k, v in individual_feature_performances.items()})
-  group_feature_performance_results = {k: v for k, v in feature_group_performances.items()}
+  # b-basewine pewfowmance i-is gwouped in with individuaw_featuwe_impowtance_wesuwts
+  individuaw_featuwe_pewfowmance_wesuwts = d-dict(
+    out, (U ﹏ U) **{k: v-v fow k, (˘ω˘) v in individuaw_featuwe_pewfowmances.items()})
+  g-gwoup_featuwe_pewfowmance_wesuwts = {k: v-v fow k, /(^•ω•^) v in f-featuwe_gwoup_pewfowmances.items()}
 
-  if extra_groups is not None:
-    logging.info("Computing performances for extra groups {}".format(extra_groups.keys()))
-    for group_name, performances in _get_extra_feature_group_performances(
-        factory=factory,
-        trainer=trainer,
-        parse_fn=parse_fn,
-        extra_groups=extra_groups,
-        feature_to_type=feature_to_type,
-        record_count=record_count).items():
-      group_feature_performance_results[group_name] = performances
-  else:
-    logging.info("Not computing performances for extra groups")
+  i-if extwa_gwoups is nyot nyone:
+    wogging.info("computing pewfowmances fow extwa gwoups {}".fowmat(extwa_gwoups.keys()))
+    f-fow gwoup_name, (U ﹏ U) pewfowmances i-in _get_extwa_featuwe_gwoup_pewfowmances(
+        factowy=factowy, ^•ﻌ•^
+        twainew=twainew, >w<
+        pawse_fn=pawse_fn, ʘwʘ
+        e-extwa_gwoups=extwa_gwoups, òωó
+        featuwe_to_type=featuwe_to_type, o.O
+        wecowd_count=wecowd_count).items():
+      gwoup_featuwe_pewfowmance_wesuwts[gwoup_name] = pewfowmances
+  e-ewse:
+    w-wogging.info("not computing pewfowmances f-fow extwa gwoups")
 
-  return {INDIVIDUAL: individual_feature_performance_results,
-          GROUP: group_feature_performance_results}
+  wetuwn {individuaw: individuaw_featuwe_pewfowmance_wesuwts, ( ͡o ω ͡o )
+          g-gwoup: gwoup_featuwe_pewfowmance_wesuwts}
 
 
-def _feature_importances_serial_algorithm(
-    data_dir, trainer, parse_fn, fnames, file_list=None, datarecord_filter_fn=None, factory=None, record_count=99999):
-  """Serial algorithm for feature importances. This algorithm computes the
-  importance of each feature.
+d-def _featuwe_impowtances_sewiaw_awgowithm(
+    data_diw, mya twainew, p-pawse_fn, >_< fnames, rawr fiwe_wist=none, >_< d-datawecowd_fiwtew_fn=none, factowy=none, (U ﹏ U) wecowd_count=99999):
+  """sewiaw awgowithm fow featuwe impowtances. rawr t-this awgowithm computes the
+  impowtance of each f-featuwe.
   """
-  factory = PermutedInputFnFactory(
-    data_dir=data_dir, record_count=record_count, file_list=file_list, datarecord_filter_fn=datarecord_filter_fn)
-  feature_to_type = _get_feature_types_from_records(records=factory.records, fnames=fnames)
+  f-factowy = pewmutedinputfnfactowy(
+    d-data_diw=data_diw, (U ᵕ U❁) wecowd_count=wecowd_count, fiwe_wist=fiwe_wist, (ˆ ﻌ ˆ)♡ d-datawecowd_fiwtew_fn=datawecowd_fiwtew_fn)
+  featuwe_to_type = _get_featuwe_types_fwom_wecowds(wecowds=factowy.wecowds, >_< fnames=fnames)
 
   out = {}
-  for fname, ftype in list(feature_to_type.items()) + [(None, None)]:
-    logging.info("\n\nComputing importances for {}\n\n".format(fname))
-    start = time.time()
-    fname_ftypes = [(fname, ftype)] if fname is not None else []
-    out[str(fname)] = _compute_multiple_permuted_performances_from_trainer(
-      factory=factory, fname_ftypes=fname_ftypes,
-      trainer=trainer, parse_fn=parse_fn, record_count=record_count)
-    logging.info("\n\nImportances computed for {} in {} seconds \n\n".format(
-      fname, int(time.time() - start)))
-  # The serial algorithm does not compute group feature results.
-  return {INDIVIDUAL: out, GROUP: {}}
+  fow fname, ^^;; ftype i-in wist(featuwe_to_type.items()) + [(none, ʘwʘ n-nyone)]:
+    w-wogging.info("\n\ncomputing i-impowtances fow {}\n\n".fowmat(fname))
+    stawt = time.time()
+    f-fname_ftypes = [(fname, 😳😳😳 f-ftype)] if fname is nyot nyone ewse []
+    out[stw(fname)] = _compute_muwtipwe_pewmuted_pewfowmances_fwom_twainew(
+      f-factowy=factowy, UwU fname_ftypes=fname_ftypes, OwO
+      twainew=twainew, :3 p-pawse_fn=pawse_fn, -.- wecowd_count=wecowd_count)
+    wogging.info("\n\nimpowtances c-computed f-fow {} in {} seconds \n\n".fowmat(
+      f-fname, 🥺 int(time.time() - s-stawt)))
+  # t-the sewiaw awgowithm does not compute gwoup f-featuwe wesuwts. -.-
+  wetuwn {individuaw: out, -.- gwoup: {}}
 
 
-def _process_feature_name_for_mldash(feature_name):
-  # Using a forward slash in the name causes feature importance writing to fail because strato interprets it as
-  #   part of a url
-  return feature_name.replace("/", "__")
+d-def _pwocess_featuwe_name_fow_mwdash(featuwe_name):
+  # using a fowwawd swash in the name causes featuwe i-impowtance wwiting t-to faiw because s-stwato intewpwets i-it as
+  #   p-pawt of a uww
+  wetuwn featuwe_name.wepwace("/", (U ﹏ U) "__")
 
 
-def compute_feature_importances(
-    trainer, data_dir=None, feature_config=None, algorithm=TREE, parse_fn=None, datarecord_filter_fn=None, **kwargs):
-  """Perform a feature importance analysis on a trained model
-  Args:
-    trainer: (DataRecordTrainer): A DataRecordTrainer object
-    data_dir: (str): The location of the training or testing data to compute importances over.
-      If None, the trainer._eval_files are used
-    feature_config (contrib.FeatureConfig): The feature config object. If this is not provided, it
-      is taken from the trainer
-    algorithm (str): The algorithm to use
-    parse_fn: (function): The parse_fn used by eval_input_fn. By default this is
-      feature_config.get_parse_fn()
-    datarecord_filter_fn (function): a function takes a single data sample in com.twitter.ml.api.ttypes.DataRecord format
-        and return a boolean value, to indicate if this data record should be kept in feature importance module or not.
+d-def compute_featuwe_impowtances(
+    twainew, data_diw=none, rawr f-featuwe_config=none, mya awgowithm=twee, ( ͡o ω ͡o ) p-pawse_fn=none, /(^•ω•^) datawecowd_fiwtew_fn=none, >_< **kwawgs):
+  """pewfowm a featuwe impowtance anawysis o-on a twained modew
+  a-awgs:
+    twainew: (datawecowdtwainew): a datawecowdtwainew o-object
+    data_diw: (stw): the w-wocation of the t-twaining ow testing data to compute i-impowtances o-ovew. (✿oωo)
+      if none, 😳😳😳 the twainew._evaw_fiwes a-awe used
+    featuwe_config (contwib.featuweconfig): the featuwe config object. (ꈍᴗꈍ) if t-this is nyot pwovided, 🥺 it
+      i-is taken fwom the twainew
+    awgowithm (stw): the awgowithm to u-use
+    pawse_fn: (function): the p-pawse_fn used b-by evaw_input_fn. mya by defauwt this i-is
+      featuwe_config.get_pawse_fn()
+    d-datawecowd_fiwtew_fn (function): a function takes a-a singwe data sampwe in com.twittew.mw.api.ttypes.datawecowd f-fowmat
+        and w-wetuwn a boowean v-vawue, (ˆ ﻌ ˆ)♡ to indicate if this data wecowd shouwd be kept in featuwe impowtance moduwe o-ow nyot. (⑅˘꒳˘)
   """
 
-  # We only use the trainer's eval files if an override data_dir is not provided
-  if data_dir is None:
-    logging.info("Using trainer._eval_files (found {} as files)".format(trainer._eval_files))
-    file_list = trainer._eval_files
-  else:
-    logging.info("data_dir provided. Looking at {} for data.".format(data_dir))
-    file_list = None
+  # w-we onwy use the twainew's evaw fiwes if an ovewwide data_diw i-is nyot pwovided
+  if data_diw i-is nyone:
+    w-wogging.info("using twainew._evaw_fiwes (found {} as fiwes)".fowmat(twainew._evaw_fiwes))
+    fiwe_wist = twainew._evaw_fiwes
+  ewse:
+    wogging.info("data_diw p-pwovided. òωó wooking at {} fow data.".fowmat(data_diw))
+    fiwe_wist = n-nyone
 
-  feature_config = feature_config or trainer._feature_config
+  featuwe_config = f-featuwe_config o-ow twainew._featuwe_config
   out = {}
-  if not feature_config:
-    logging.warn("WARN: Not computing feature importance because trainer._feature_config is None")
-    out = None
-  else:
-    parse_fn = parse_fn if parse_fn is not None else feature_config.get_parse_fn()
-    fnames = _get_feature_name_from_config(feature_config)
-    logging.info("Computing importances for {}".format(fnames))
-    logging.info("Using the {} feature importance computation algorithm".format(algorithm))
-    algorithm = {
-      SERIAL: _feature_importances_serial_algorithm,
-      TREE: _feature_importances_tree_algorithm}[algorithm]
-    out = algorithm(data_dir=data_dir, trainer=trainer, parse_fn=parse_fn, fnames=fnames, file_list=file_list, datarecord_filter_fn=datarecord_filter_fn, **kwargs)
-  return out
+  i-if nyot f-featuwe_config:
+    w-wogging.wawn("wawn: n-nyot computing f-featuwe i-impowtance because twainew._featuwe_config is nyone")
+    out = nyone
+  ewse:
+    pawse_fn = pawse_fn i-if pawse_fn i-is nyot none ewse f-featuwe_config.get_pawse_fn()
+    f-fnames = _get_featuwe_name_fwom_config(featuwe_config)
+    w-wogging.info("computing i-impowtances fow {}".fowmat(fnames))
+    wogging.info("using the {} featuwe impowtance computation a-awgowithm".fowmat(awgowithm))
+    a-awgowithm = {
+      sewiaw: _featuwe_impowtances_sewiaw_awgowithm, o.O
+      twee: _featuwe_impowtances_twee_awgowithm}[awgowithm]
+    out = awgowithm(data_diw=data_diw, XD t-twainew=twainew, (˘ω˘) p-pawse_fn=pawse_fn, (ꈍᴗꈍ) f-fnames=fnames, >w< fiwe_wist=fiwe_wist, XD datawecowd_fiwtew_fn=datawecowd_fiwtew_fn, -.- **kwawgs)
+  w-wetuwn out
 
 
-def write_feature_importances_to_hdfs(
-    trainer, feature_importances, output_path=None, metric="roc_auc"):
-  """Publish a feature importance analysis to hdfs as a tsv
-  Args:
-    (see compute_feature_importances for other args)
-    trainer (Trainer)
-    feature_importances (dict): Dictionary of feature importances
-    output_path (str): The remote or local file to write the feature importances to. If not
-      provided, this is inferred to be the trainer save dir
-    metric (str): The metric to write to tsv
+def wwite_featuwe_impowtances_to_hdfs(
+    twainew, ^^;; f-featuwe_impowtances, XD o-output_path=none, :3 metwic="woc_auc"):
+  """pubwish a featuwe i-impowtance anawysis to hdfs a-as a tsv
+  awgs:
+    (see c-compute_featuwe_impowtances fow othew a-awgs)
+    twainew (twainew)
+    f-featuwe_impowtances (dict): d-dictionawy o-of featuwe i-impowtances
+    o-output_path (stw): the wemote o-ow wocaw fiwe to w-wwite the featuwe impowtances to. σωσ i-if nyot
+      pwovided, XD this is infewwed to be t-the twainew save diw
+    metwic (stw): t-the metwic to wwite to t-tsv
   """
-  # String formatting appends (Individual) or (Group) to feature name depending on type
-  perfs = {"{} ({})".format(k, importance_key) if k != "None" else k: v[metric]
-    for importance_key, importance_value in feature_importances.items()
-    for k, v in importance_value.items()}
+  # stwing f-fowmatting appends (individuaw) ow (gwoup) t-to featuwe name depending on type
+  pewfs = {"{} ({})".fowmat(k, :3 i-impowtance_key) i-if k != "none" ewse k: v[metwic]
+    fow impowtance_key, rawr i-impowtance_vawue i-in featuwe_impowtances.items()
+    fow k-k, 😳 v in impowtance_vawue.items()}
 
-  output_path = ("{}/feature_importances-{}".format(
-    trainer._save_dir[:-1] if trainer._save_dir.endswith('/') else trainer._save_dir,
-    output_path if output_path is not None else str(time.time())))
+  output_path = ("{}/featuwe_impowtances-{}".fowmat(
+    twainew._save_diw[:-1] i-if twainew._save_diw.endswith('/') e-ewse twainew._save_diw, 😳😳😳
+    output_path i-if output_path is n-nyot nyone ewse stw(time.time())))
 
-  if len(perfs) > 0:
-    logging.info("Writing feature_importances for {} to hdfs".format(perfs.keys()))
-    entries = [
+  if wen(pewfs) > 0:
+    wogging.info("wwiting f-featuwe_impowtances f-fow {} t-to hdfs".fowmat(pewfs.keys()))
+    e-entwies = [
       {
-        "name": name,
-        "drop": perfs["None"] - perfs[name],
-        "pdrop": 100 * (perfs["None"] - perfs[name]) / (perfs["None"] + 1e-8),
-        "perf": perfs[name]
-      } for name in perfs.keys()]
-    out = ["Name\tPerformance Drop\tPercent Performance Drop\tPerformance"]
-    for entry in sorted(entries, key=lambda d: d["drop"]):
-      out.append("{name}\t{drop}\t{pdrop}%\t{perf}".format(**entry))
-    logging.info("\n".join(out))
-    write_list_to_hdfs_gfile(out, output_path)
-    logging.info("Wrote feature feature_importances to {}".format(output_path))
-  else:
-    logging.info("Not writing feature_importances to hdfs")
-  return output_path
+        "name": nyame, (ꈍᴗꈍ)
+        "dwop": pewfs["none"] - pewfs[name], 🥺
+        "pdwop": 100 * (pewfs["none"] - pewfs[name]) / (pewfs["none"] + 1e-8), ^•ﻌ•^
+        "pewf": pewfs[name]
+      } fow n-nyame in pewfs.keys()]
+    o-out = ["name\tpewfowmance d-dwop\tpewcent p-pewfowmance d-dwop\tpewfowmance"]
+    f-fow entwy in sowted(entwies, XD k-key=wambda d-d: d["dwop"]):
+      out.append("{name}\t{dwop}\t{pdwop}%\t{pewf}".fowmat(**entwy))
+    w-wogging.info("\n".join(out))
+    w-wwite_wist_to_hdfs_gfiwe(out, output_path)
+    wogging.info("wwote f-featuwe featuwe_impowtances to {}".fowmat(output_path))
+  e-ewse:
+    wogging.info("not w-wwiting featuwe_impowtances to h-hdfs")
+  wetuwn output_path
 
 
-def write_feature_importances_to_ml_dash(trainer, feature_importances, feature_config=None):
-  # type: (DataRecordTrainer, FeatureConfig, dict) -> None
-  """Publish feature importances + all feature names to ML Metastore
-  Args:
-    trainer: (DataRecordTrainer): A DataRecordTrainer object
-    feature_config (contrib.FeatureConfig): The feature config object. If this is not provided, it
-      is taken from the trainer
-    feature_importances (dict, default=None): Dictionary of precomputed feature importances
-    feature_importance_metric (str, default=None): The metric to write to ML Dashboard
+d-def wwite_featuwe_impowtances_to_mw_dash(twainew, ^•ﻌ•^ f-featuwe_impowtances, ^^;; f-featuwe_config=none):
+  # type: (datawecowdtwainew, ʘwʘ f-featuweconfig, OwO d-dict) -> nyone
+  """pubwish f-featuwe impowtances + aww f-featuwe nyames to m-mw metastowe
+  a-awgs:
+    twainew: (datawecowdtwainew): a datawecowdtwainew o-object
+    featuwe_config (contwib.featuweconfig): the featuwe config o-object. 🥺 if this is nyot pwovided, (⑅˘꒳˘) it
+      is taken fwom the twainew
+    featuwe_impowtances (dict, (///ˬ///✿) defauwt=none): dictionawy o-of pwecomputed featuwe impowtances
+    featuwe_impowtance_metwic (stw, defauwt=none): the metwic to wwite to mw dashboawd
   """
-  experiment_tracking_path = trainer.experiment_tracker.tracking_path\
-    if trainer.experiment_tracker.tracking_path\
-    else ExperimentTracker.guess_path(trainer._save_dir)
+  e-expewiment_twacking_path = twainew.expewiment_twackew.twacking_path\
+    if twainew.expewiment_twackew.twacking_path\
+    e-ewse expewimenttwackew.guess_path(twainew._save_diw)
 
-  logging.info('Computing feature importances for run: {}'.format(experiment_tracking_path))
+  w-wogging.info('computing featuwe impowtances f-fow wun: {}'.fowmat(expewiment_twacking_path))
 
-  feature_importance_list = []
-  for key in feature_importances:
-    for feature, imps in feature_importances[key].items():
-      logging.info('FEATURE NAME: {}'.format(feature))
-      feature_name = feature.split(' (').pop(0)
-      for metric_name, value in imps.items():
-        try:
-          imps[metric_name] = float(value)
-          logging.info('Wrote feature importance value {} for metric: {}'.format(str(value), metric_name))
-        except Exception as ex:
-          logging.error("Skipping writing metric:{} to ML Metastore due to invalid metric value: {} or value type: {}. Exception: {}".format(metric_name, str(value), type(value), str(ex)))
+  featuwe_impowtance_wist = []
+  f-fow key in featuwe_impowtances:
+    fow featuwe, (✿oωo) i-imps in featuwe_impowtances[key].items():
+      w-wogging.info('featuwe nyame: {}'.fowmat(featuwe))
+      featuwe_name = f-featuwe.spwit(' (').pop(0)
+      fow metwic_name, nyaa~~ vawue in imps.items():
+        t-twy:
+          imps[metwic_name] = f-fwoat(vawue)
+          wogging.info('wwote f-featuwe impowtance vawue {} f-fow metwic: {}'.fowmat(stw(vawue), >w< m-metwic_name))
+        except exception as e-ex:
+          wogging.ewwow("skipping wwiting m-metwic:{} to mw metastowe due to invawid metwic vawue: {} ow vawue type: {}. (///ˬ///✿) exception: {}".fowmat(metwic_name, rawr s-stw(vawue), (U ﹏ U) type(vawue), ^•ﻌ•^ s-stw(ex)))
           pass
 
-      feature_importance_list.append(FeatureImportance(
-        run_id=experiment_tracking_path,
-        feature_name=_process_feature_name_for_mldash(feature_name),
-        feature_importance_metrics=imps,
-        is_group=key == GROUP
+      f-featuwe_impowtance_wist.append(featuweimpowtance(
+        w-wun_id=expewiment_twacking_path, (///ˬ///✿)
+        featuwe_name=_pwocess_featuwe_name_fow_mwdash(featuwe_name), o.O
+        f-featuwe_impowtance_metwics=imps, >w<
+        is_gwoup=key == gwoup
       ))
 
-# setting feature config to match the one used in compute_feature_importances
-  feature_config = feature_config or trainer._feature_config
-  feature_names = FeatureNames(
-    run_id=experiment_tracking_path,
-    names=list(feature_config.features.keys())
+# setting featuwe config t-to match the o-one used in compute_featuwe_impowtances
+  featuwe_config = f-featuwe_config o-ow twainew._featuwe_config
+  featuwe_names = f-featuwenames(
+    wun_id=expewiment_twacking_path, nyaa~~
+    nyames=wist(featuwe_config.featuwes.keys())
   )
 
-  try:
-    client = ModelRepoClient()
-    logging.info('Writing feature importances to ML Metastore')
-    client.add_feature_importances(feature_importance_list)
-    logging.info('Writing feature names to ML Metastore')
-    client.add_feature_names(feature_names)
-  except (HTTPError, RetryError) as err:
-    logging.error('Feature importance is not being written due to: '
-                  'HTTPError when attempting to write to ML Metastore: \n{}.'.format(err))
+  t-twy:
+    cwient = modewwepocwient()
+    wogging.info('wwiting featuwe i-impowtances t-to mw metastowe')
+    cwient.add_featuwe_impowtances(featuwe_impowtance_wist)
+    wogging.info('wwiting f-featuwe nyames to mw metastowe')
+    cwient.add_featuwe_names(featuwe_names)
+  except (httpewwow, òωó wetwyewwow) as eww:
+    wogging.ewwow('featuwe i-impowtance i-is nyot being wwitten due t-to: '
+                  'httpewwow w-when attempting to wwite to m-mw metastowe: \n{}.'.fowmat(eww))

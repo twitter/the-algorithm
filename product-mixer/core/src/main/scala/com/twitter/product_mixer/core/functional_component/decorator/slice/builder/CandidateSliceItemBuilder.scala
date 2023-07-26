@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.decorator.slice.builder
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.swice.buiwdew
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.slice.SliceItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.swice.swiceitem
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-trait CandidateSliceItemBuilder[
-  -Query <: PipelineQuery,
-  -BuilderInput <: UniversalNoun[Any],
-  BuilderOutput <: SliceItem] {
+t-twait candidateswiceitembuiwdew[
+  -quewy <: p-pipewinequewy, :3
+  -buiwdewinput <: u-univewsawnoun[any], (U ﹏ U)
+  buiwdewoutput <: swiceitem] {
 
-  def apply(query: Query, candidate: BuilderInput, featureMap: FeatureMap): BuilderOutput
+  def appwy(quewy: quewy, -.- c-candidate: buiwdewinput, (ˆ ﻌ ˆ)♡ featuwemap: featuwemap): b-buiwdewoutput
 }

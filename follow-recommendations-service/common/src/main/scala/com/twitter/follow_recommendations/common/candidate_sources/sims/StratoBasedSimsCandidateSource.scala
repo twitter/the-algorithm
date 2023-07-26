@@ -1,36 +1,36 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.sims
 
-import com.twitter.follow_recommendations.common.candidate_sources.base.StratoFetcherSource
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.follow_recommendations.common.models.SimilarToProof
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
+impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.base.stwatofetchewsouwce
+i-impowt com.twittew.fowwow_wecommendations.common.modews.accountpwoof
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.weason
+impowt c-com.twittew.fowwow_wecommendations.common.modews.simiwawtopwoof
+i-impowt com.twittew.hewmit.candidate.thwiftscawa.candidates
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.stwato.cwient.fetchew
 
-abstract class StratoBasedSimsCandidateSource[U](
-  fetcher: Fetcher[Long, U, Candidates],
-  view: U,
-  override val identifier: CandidateSourceIdentifier)
-    extends StratoFetcherSource[Long, U, Candidates](fetcher, view, identifier) {
+abstwact cwass stwatobasedsimscandidatesouwce[u](
+  f-fetchew: fetchew[wong, u, rawr x3 candidates],
+  v-view: u, (✿oωo)
+  ovewwide vaw identifiew: c-candidatesouwceidentifiew)
+    extends stwatofetchewsouwce[wong, (ˆ ﻌ ˆ)♡ u, candidates](fetchew, (˘ω˘) view, i-identifiew) {
 
-  override def map(target: Long, candidates: Candidates): Seq[CandidateUser] =
-    StratoBasedSimsCandidateSource.map(target, candidates)
+  ovewwide def m-map(tawget: wong, (⑅˘꒳˘) c-candidates: candidates): seq[candidateusew] =
+    stwatobasedsimscandidatesouwce.map(tawget, (///ˬ///✿) candidates)
 }
 
-object StratoBasedSimsCandidateSource {
-  def map(target: Long, candidates: Candidates): Seq[CandidateUser] = {
-    for {
-      candidate <- candidates.candidates
-    } yield CandidateUser(
-      id = candidate.userId,
-      score = Some(candidate.score),
-      reason = Some(
-        Reason(
-          Some(
-            AccountProof(
-              similarToProof = Some(SimilarToProof(Seq(target)))
+object stwatobasedsimscandidatesouwce {
+  d-def map(tawget: wong, 😳😳😳 candidates: candidates): seq[candidateusew] = {
+    fow {
+      candidate <- c-candidates.candidates
+    } yiewd candidateusew(
+      i-id = candidate.usewid, 🥺
+      s-scowe = some(candidate.scowe), mya
+      w-weason = some(
+        w-weason(
+          some(
+            accountpwoof(
+              s-simiwawtopwoof = some(simiwawtopwoof(seq(tawget)))
             )
           )
         )

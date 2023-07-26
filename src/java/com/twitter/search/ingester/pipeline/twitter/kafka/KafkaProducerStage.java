@@ -1,259 +1,259 @@
-package com.twitter.search.ingester.pipeline.twitter.kafka;
+package com.twittew.seawch.ingestew.pipewine.twittew.kafka;
 
-import java.util.Collection;
-import java.util.Map;
+impowt j-java.utiw.cowwection;
+i-impowt j-java.utiw.map;
 
-import javax.naming.NamingException;
+i-impowt javax.naming.namingexception;
 
-import scala.runtime.BoxedUnit;
+i-impowt scawa.wuntime.boxedunit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+impowt c-com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.maps;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.commons.pipewine.stageexception;
+impowt owg.apache.kafka.cwients.pwoducew.pwoducewwecowd;
+impowt owg.apache.kafka.cwients.pwoducew.wecowdmetadata;
+i-impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.finatra.kafka.producers.BlockingFinagleKafkaProducer;
-import com.twitter.search.common.debug.DebugEventUtil;
-import com.twitter.search.common.debug.thriftjava.DebugEvents;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.Percentile;
-import com.twitter.search.common.metrics.PercentileUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEventType;
-import com.twitter.search.common.util.io.kafka.CompactThriftSerializer;
-import com.twitter.search.ingester.model.IngesterThriftVersionedEvents;
-import com.twitter.search.ingester.pipeline.twitter.TwitterBaseStage;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
-import com.twitter.search.ingester.pipeline.wire.IngesterPartitioner;
-import com.twitter.util.Await;
-import com.twitter.util.Future;
+i-impowt com.twittew.finatwa.kafka.pwoducews.bwockingfinagwekafkapwoducew;
+impowt c-com.twittew.seawch.common.debug.debugeventutiw;
+impowt com.twittew.seawch.common.debug.thwiftjava.debugevents;
+impowt com.twittew.seawch.common.decidew.decidewutiw;
+impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
+i-impowt com.twittew.seawch.common.metwics.pewcentiwe;
+impowt c-com.twittew.seawch.common.metwics.pewcentiweutiw;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingevent;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingeventtype;
+impowt c-com.twittew.seawch.common.utiw.io.kafka.compactthwiftsewiawizew;
+impowt com.twittew.seawch.ingestew.modew.ingestewthwiftvewsionedevents;
+impowt com.twittew.seawch.ingestew.pipewine.twittew.twittewbasestage;
+impowt com.twittew.seawch.ingestew.pipewine.utiw.pipewinestageexception;
+i-impowt com.twittew.seawch.ingestew.pipewine.wiwe.ingestewpawtitionew;
+i-impowt com.twittew.utiw.await;
+i-impowt com.twittew.utiw.futuwe;
 
-public class KafkaProducerStage<T> extends TwitterBaseStage<T, Void> {
-  private static final Logger LOG = LoggerFactory.getLogger(KafkaProducerStage.class);
+p-pubwic cwass k-kafkapwoducewstage<t> extends twittewbasestage<t, -.- void> {
+  pwivate s-static finaw woggew wog = woggewfactowy.getwoggew(kafkapwoducewstage.cwass);
 
-  private static final Logger LATE_EVENTS_LOG = LoggerFactory.getLogger(
-      KafkaProducerStage.class.getName() + ".LateEvents");
+  pwivate static f-finaw woggew wate_events_wog = woggewfactowy.getwoggew(
+      kafkapwoducewstage.cwass.getname() + ".wateevents");
 
-  private final Map<ThriftIndexingEventType, Percentile<Long>> processingLatenciesStats =
-      Maps.newEnumMap(ThriftIndexingEventType.class);
+  pwivate finaw map<thwiftindexingeventtype, p-pewcentiwe<wong>> pwocessingwatenciesstats =
+      m-maps.newenummap(thwiftindexingeventtype.cwass);
 
-  private String kafkaClientId;
-  private String kafkaTopicName;
-  private String kafkaClusterPath;
-  private SearchCounter sendCount;
-  private String perPartitionSendCountFormat;
-  private String deciderKey;
+  p-pwivate s-stwing kafkacwientid;
+  pwivate stwing kafkatopicname;
+  pwivate s-stwing kafkacwustewpath;
+  p-pwivate seawchcountew s-sendcount;
+  p-pwivate stwing pewpawtitionsendcountfowmat;
+  pwivate s-stwing decidewkey;
 
-  protected BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> kafkaProducer;
+  pwotected b-bwockingfinagwekafkapwoducew<wong, (✿oωo) thwiftvewsionedevents> kafkapwoducew;
 
-  private int processingLatencyThresholdMillis = 10000;
+  p-pwivate int pwocessingwatencythweshowdmiwwis = 10000;
 
-  public KafkaProducerStage() { }
+  pubwic k-kafkapwoducewstage() { }
 
-  public KafkaProducerStage(String topicName, String clientId, String clusterPath) {
-    this.kafkaTopicName = topicName;
-    this.kafkaClientId = clientId;
-    this.kafkaClusterPath = clusterPath;
+  pubwic kafkapwoducewstage(stwing t-topicname, (˘ω˘) stwing c-cwientid, rawr stwing cwustewpath) {
+    this.kafkatopicname = topicname;
+    this.kafkacwientid = cwientid;
+    this.kafkacwustewpath = cwustewpath;
   }
 
-  @Override
-  protected void initStats() {
-    super.initStats();
-    setupCommonStats();
+  @ovewwide
+  p-pwotected v-void initstats() {
+    supew.initstats();
+    s-setupcommonstats();
   }
 
-  private void setupCommonStats() {
-    sendCount = SearchCounter.export(getStageNamePrefix() + "_send_count");
-    perPartitionSendCountFormat = getStageNamePrefix() + "_partition_%d_send_count";
-    for (ThriftIndexingEventType eventType : ThriftIndexingEventType.values()) {
-      processingLatenciesStats.put(
-          eventType,
-          PercentileUtil.createPercentile(
-              getStageNamePrefix() + "_" + eventType.name().toLowerCase()
-                  + "_processing_latency_ms"));
+  p-pwivate v-void setupcommonstats() {
+    sendcount = seawchcountew.expowt(getstagenamepwefix() + "_send_count");
+    pewpawtitionsendcountfowmat = getstagenamepwefix() + "_pawtition_%d_send_count";
+    f-fow (thwiftindexingeventtype eventtype : thwiftindexingeventtype.vawues()) {
+      pwocessingwatenciesstats.put(
+          eventtype, OwO
+          p-pewcentiweutiw.cweatepewcentiwe(
+              getstagenamepwefix() + "_" + eventtype.name().towowewcase()
+                  + "_pwocessing_watency_ms"));
     }
   }
 
-  @Override
-  protected void innerSetupStats() {
-   setupCommonStats();
+  @ovewwide
+  p-pwotected void i-innewsetupstats() {
+   s-setupcommonstats();
   }
 
-  private boolean isEnabled() {
-    if (this.deciderKey != null) {
-      return DeciderUtil.isAvailableForRandomRecipient(decider, deciderKey);
-    } else {
-      // No decider means it's enabled.
-      return true;
+  pwivate boowean i-isenabwed() {
+    i-if (this.decidewkey != n-nyuww) {
+      w-wetuwn decidewutiw.isavaiwabwefowwandomwecipient(decidew, ^•ﻌ•^ decidewkey);
+    } e-ewse {
+      // n-nyo decidew m-means it's e-enabwed. UwU
+      w-wetuwn twue;
     }
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    try {
-      innerSetup();
-    } catch (PipelineStageException e) {
-      throw new StageException(this, e);
+  @ovewwide
+  pwotected void doinnewpwepwocess() thwows s-stageexception, nyamingexception {
+    twy {
+      innewsetup();
+    } catch (pipewinestageexception e) {
+      t-thwow nyew stageexception(this, (˘ω˘) e);
     }
   }
 
-  @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
-    Preconditions.checkNotNull(kafkaClientId);
-    Preconditions.checkNotNull(kafkaClusterPath);
-    Preconditions.checkNotNull(kafkaTopicName);
+  @ovewwide
+  pwotected void innewsetup() t-thwows p-pipewinestageexception, (///ˬ///✿) n-nyamingexception {
+    pweconditions.checknotnuww(kafkacwientid);
+    pweconditions.checknotnuww(kafkacwustewpath);
+    p-pweconditions.checknotnuww(kafkatopicname);
 
-    kafkaProducer = wireModule.newFinagleKafkaProducer(
-        kafkaClusterPath,
-        new CompactThriftSerializer<ThriftVersionedEvents>(),
-        kafkaClientId,
-        IngesterPartitioner.class);
+    kafkapwoducew = w-wiwemoduwe.newfinagwekafkapwoducew(
+        k-kafkacwustewpath, σωσ
+        nyew compactthwiftsewiawizew<thwiftvewsionedevents>(), /(^•ω•^)
+        kafkacwientid, 😳
+        ingestewpawtitionew.cwass);
 
-    int numPartitions = wireModule.getPartitionMappingManager().getNumPartitions();
-    int numKafkaPartitions = kafkaProducer.partitionsFor(kafkaTopicName).size();
-    if (numPartitions != numKafkaPartitions) {
-      throw new PipelineStageException(String.format(
-          "Number of partitions for Kafka topic %s (%d) != number of expected partitions (%d)",
-          kafkaTopicName, numKafkaPartitions, numPartitions));
+    int nyumpawtitions = w-wiwemoduwe.getpawtitionmappingmanagew().getnumpawtitions();
+    int nyumkafkapawtitions = k-kafkapwoducew.pawtitionsfow(kafkatopicname).size();
+    if (numpawtitions != n-nyumkafkapawtitions) {
+      t-thwow nyew pipewinestageexception(stwing.fowmat(
+          "numbew of pawtitions f-fow kafka t-topic %s (%d) != nyumbew of expected p-pawtitions (%d)", 😳
+          k-kafkatopicname, (⑅˘꒳˘) nyumkafkapawtitions, 😳😳😳 nyumpawtitions));
     }
   }
 
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterThriftVersionedEvents)) {
-      throw new StageException(this, "Object is not IngesterThriftVersionedEvents: " + obj);
+  @ovewwide
+  pubwic void innewpwocess(object o-obj) thwows s-stageexception {
+    i-if (!(obj instanceof ingestewthwiftvewsionedevents)) {
+      t-thwow nyew stageexception(this, 😳 "object i-is not ingestewthwiftvewsionedevents: " + o-obj);
     }
 
-    IngesterThriftVersionedEvents events = (IngesterThriftVersionedEvents) obj;
-    tryToSendEventsToKafka(events);
+    ingestewthwiftvewsionedevents events = (ingestewthwiftvewsionedevents) obj;
+    twytosendeventstokafka(events);
   }
 
-  protected void tryToSendEventsToKafka(IngesterThriftVersionedEvents events) {
-    if (!isEnabled()) {
-      return;
+  p-pwotected v-void twytosendeventstokafka(ingestewthwiftvewsionedevents events) {
+    if (!isenabwed()) {
+      wetuwn;
     }
 
-    DebugEvents debugEvents = events.getDebugEvents();
-    // We don't propagate debug events to Kafka, because they take about 50%
-    // of the storage space.
-    events.unsetDebugEvents();
+    d-debugevents d-debugevents = events.getdebugevents();
+    // we don't pwopagate debug events t-to kafka, XD because they take about 50%
+    // of the stowage space. mya
+    events.unsetdebugevents();
 
-    ProducerRecord<Long, ThriftVersionedEvents> record = new ProducerRecord<>(
-        kafkaTopicName,
-        null,
-        clock.nowMillis(),
-        null,
-        events);
+    p-pwoducewwecowd<wong, ^•ﻌ•^ thwiftvewsionedevents> wecowd = n-nyew pwoducewwecowd<>(
+        k-kafkatopicname, ʘwʘ
+        nyuww, ( ͡o ω ͡o )
+        cwock.nowmiwwis(), mya
+        nyuww, o.O
+        e-events);
 
-    sendRecordToKafka(record).ensure(() -> {
-      updateEventProcessingLatencyStats(events, debugEvents);
-      return null;
+    sendwecowdtokafka(wecowd).ensuwe(() -> {
+      u-updateeventpwocessingwatencystats(events, (✿oωo) debugevents);
+      wetuwn nyuww;
     });
   }
 
-  private Future<RecordMetadata> sendRecordToKafka(
-      ProducerRecord<Long, ThriftVersionedEvents> record) {
-    Future<RecordMetadata> result;
-    try {
-      result = kafkaProducer.send(record);
-    } catch (Exception e) {
-      // Even though KafkaProducer.send() returns a Future, it can throw a synchronous exception,
-      // so we translate synchronous exceptions into a Future.exception so we handle all exceptions
-      // consistently.
-      result = Future.exception(e);
+  p-pwivate futuwe<wecowdmetadata> s-sendwecowdtokafka(
+      pwoducewwecowd<wong, :3 thwiftvewsionedevents> wecowd) {
+    f-futuwe<wecowdmetadata> wesuwt;
+    twy {
+      w-wesuwt = k-kafkapwoducew.send(wecowd);
+    } catch (exception e-e) {
+      // even though k-kafkapwoducew.send() w-wetuwns a futuwe, 😳 i-it can thwow a synchwonous e-exception, (U ﹏ U)
+      // s-so we twanswate synchwonous exceptions into a-a futuwe.exception s-so we handwe a-aww exceptions
+      // consistentwy. mya
+      wesuwt = f-futuwe.exception(e);
     }
 
-    return result.onSuccess(recordMetadata -> {
-      sendCount.increment();
-      SearchCounter.export(
-          String.format(perPartitionSendCountFormat, recordMetadata.partition())).increment();
-      return BoxedUnit.UNIT;
-    }).onFailure(e -> {
-      stats.incrementExceptions();
-      LOG.error("Sending a record failed.", e);
-      return BoxedUnit.UNIT;
+    wetuwn wesuwt.onsuccess(wecowdmetadata -> {
+      s-sendcount.incwement();
+      s-seawchcountew.expowt(
+          stwing.fowmat(pewpawtitionsendcountfowmat, (U ᵕ U❁) wecowdmetadata.pawtition())).incwement();
+      wetuwn boxedunit.unit;
+    }).onfaiwuwe(e -> {
+      s-stats.incwementexceptions();
+      w-wog.ewwow("sending a-a wecowd f-faiwed.", :3 e);
+      wetuwn b-boxedunit.unit;
     });
   }
 
-  private void updateEventProcessingLatencyStats(IngesterThriftVersionedEvents events,
-                                                 DebugEvents debugEvents) {
-    if ((debugEvents != null) && debugEvents.isSetProcessingStartedAt()) {
-      // Get the one indexing event out of all events we're sending.
-      Collection<ThriftIndexingEvent> indexingEvents = events.getVersionedEvents().values();
-      Preconditions.checkState(!indexingEvents.isEmpty());
-      ThriftIndexingEventType eventType = indexingEvents.iterator().next().getEventType();
+  pwivate void updateeventpwocessingwatencystats(ingestewthwiftvewsionedevents events, mya
+                                                 debugevents debugevents) {
+    if ((debugevents != n-nyuww) && debugevents.issetpwocessingstawtedat()) {
+      // g-get the one indexing event o-out of aww events we'we sending. OwO
+      c-cowwection<thwiftindexingevent> indexingevents = e-events.getvewsionedevents().vawues();
+      p-pweconditions.checkstate(!indexingevents.isempty());
+      thwiftindexingeventtype e-eventtype = i-indexingevents.itewatow().next().geteventtype();
 
-      // Check if the event took too much time to get to this current point.
-      long processingLatencyMillis =
-          clock.nowMillis() - debugEvents.getProcessingStartedAt().getEventTimestampMillis();
-      processingLatenciesStats.get(eventType).record(processingLatencyMillis);
+      // c-check if the event took too much time to get to this cuwwent point. (ˆ ﻌ ˆ)♡
+      wong pwocessingwatencymiwwis =
+          cwock.nowmiwwis() - d-debugevents.getpwocessingstawtedat().geteventtimestampmiwwis();
+      p-pwocessingwatenciesstats.get(eventtype).wecowd(pwocessingwatencymiwwis);
 
-      if (processingLatencyMillis >= processingLatencyThresholdMillis) {
-        LATE_EVENTS_LOG.warn("Event of type {} for tweet {} was processed in {}ms: {}",
-            eventType.name(),
-            events.getTweetId(),
-            processingLatencyMillis,
-            DebugEventUtil.debugEventsToString(debugEvents));
+      i-if (pwocessingwatencymiwwis >= pwocessingwatencythweshowdmiwwis) {
+        w-wate_events_wog.wawn("event of type {} fow tweet {} was pwocessed in {}ms: {}", ʘwʘ
+            e-eventtype.name(), o.O
+            e-events.gettweetid(), UwU
+            pwocessingwatencymiwwis, rawr x3
+            d-debugeventutiw.debugeventstostwing(debugevents));
       }
     }
   }
 
-  public void setProcessingLatencyThresholdMillis(int processingLatencyThresholdMillis) {
-    this.processingLatencyThresholdMillis = processingLatencyThresholdMillis;
+  pubwic void setpwocessingwatencythweshowdmiwwis(int p-pwocessingwatencythweshowdmiwwis) {
+    t-this.pwocessingwatencythweshowdmiwwis = pwocessingwatencythweshowdmiwwis;
   }
 
-  @Override
-  public void innerPostprocess() throws StageException {
-    try {
-      commonCleanup();
-    } catch (Exception e) {
-      throw new StageException(this, e);
+  @ovewwide
+  p-pubwic void i-innewpostpwocess() thwows stageexception {
+    twy {
+      commoncweanup();
+    } catch (exception e) {
+      t-thwow nyew stageexception(this, 🥺 e-e);
     }
   }
 
-  @Override
-  public void cleanupStageV2()  {
-    try {
-      commonCleanup();
-    } catch (Exception e) {
-      LOG.error("Error trying to clean up KafkaProducerStage.", e);
+  @ovewwide
+  p-pubwic v-void cweanupstagev2()  {
+    t-twy {
+      commoncweanup();
+    } catch (exception e-e) {
+      w-wog.ewwow("ewwow twying to cwean u-up kafkapwoducewstage.", :3 e-e);
     }
   }
 
-  private void commonCleanup() throws Exception {
-    Await.result(kafkaProducer.close());
+  pwivate v-void commoncweanup() thwows exception {
+    await.wesuwt(kafkapwoducew.cwose());
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setKafkaClientId(String kafkaClientId) {
-    this.kafkaClientId = kafkaClientId;
+  @suppwesswawnings("unused")  // set fwom p-pipewine config
+  pubwic void s-setkafkacwientid(stwing k-kafkacwientid) {
+    this.kafkacwientid = kafkacwientid;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setKafkaTopicName(String kafkaTopicName) {
-    this.kafkaTopicName = kafkaTopicName;
+  @suppwesswawnings("unused")  // s-set fwom pipewine config
+  pubwic void s-setkafkatopicname(stwing k-kafkatopicname) {
+    t-this.kafkatopicname = kafkatopicname;
   }
 
-  @VisibleForTesting
-  public BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> getKafkaProducer() {
-    return kafkaProducer;
+  @visibwefowtesting
+  pubwic bwockingfinagwekafkapwoducew<wong, thwiftvewsionedevents> g-getkafkapwoducew() {
+    wetuwn kafkapwoducew;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setDeciderKey(String deciderKey) {
-    this.deciderKey = deciderKey;
+  @suppwesswawnings("unused")  // s-set fwom p-pipewine config
+  pubwic void s-setdecidewkey(stwing decidewkey) {
+    t-this.decidewkey = d-decidewkey;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setKafkaClusterPath(String kafkaClusterPath) {
-    this.kafkaClusterPath = kafkaClusterPath;
+  @suppwesswawnings("unused")  // set fwom pipewine config
+  p-pubwic void setkafkacwustewpath(stwing kafkacwustewpath) {
+    t-this.kafkacwustewpath = k-kafkacwustewpath;
   }
 }

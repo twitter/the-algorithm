@@ -1,48 +1,48 @@
-create_thrift_libraries(
-    base_name = "thrift",
-    sources = ["*.thrift"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependency_roots = [
-        "finatra-internal/thrift/src/main/thrift",
-        "product-mixer/core/src/main/thrift/com/twitter/product_mixer/core:thrift",
-        "src/thrift/com/twitter/ads/schema:common",
-        "src/thrift/com/twitter/ml/api:data",
-        "src/thrift/com/twitter/recos:recos-common",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift",
-        "src/thrift/com/twitter/timelines/render:thrift",
-        "strato/config/src/thrift/com/twitter/strato/graphql",
-        "strato/config/src/thrift/com/twitter/strato/graphql:api-media-graphql",
-        "strato/config/src/thrift/com/twitter/strato/graphql:topics-graphql",
+cweate_thwift_wibwawies(
+    base_name = "thwift", σωσ
+    souwces = ["*.thwift"], >_<
+    p-pwatfowm = "java8", :3
+    t-tags = ["bazew-compatibwe"], (U ﹏ U)
+    d-dependency_woots = [
+        "finatwa-intewnaw/thwift/swc/main/thwift", -.-
+        "pwoduct-mixew/cowe/swc/main/thwift/com/twittew/pwoduct_mixew/cowe:thwift", (ˆ ﻌ ˆ)♡
+        "swc/thwift/com/twittew/ads/schema:common", (⑅˘꒳˘)
+        "swc/thwift/com/twittew/mw/api:data", (U ᵕ U❁)
+        "swc/thwift/com/twittew/wecos:wecos-common", -.-
+        "swc/thwift/com/twittew/simcwustews_v2:simcwustews_v2-thwift", ^^;;
+        "swc/thwift/com/twittew/timewines/wendew:thwift", >_<
+        "stwato/config/swc/thwift/com/twittew/stwato/gwaphqw", mya
+        "stwato/config/swc/thwift/com/twittew/stwato/gwaphqw:api-media-gwaphqw", mya
+        "stwato/config/swc/thwift/com/twittew/stwato/gwaphqw:topics-gwaphqw", 😳
     ],
-    generate_languages = [
-        "java",
-        "scala",
-        "strato",
-    ],
-    provides_java_name = "cr-mixer-thrift-java",
-    provides_scala_name = "cr-mixer-thrift-scala",
+    g-genewate_wanguages = [
+        "java", XD
+        "scawa", :3
+        "stwato", 😳😳😳
+    ], -.-
+    p-pwovides_java_name = "cw-mixew-thwift-java", ( ͡o ω ͡o )
+    p-pwovides_scawa_name = "cw-mixew-thwift-scawa", rawr x3
 )
 
-create_thrift_libraries(
-    base_name = "cr-mixer-scribe",
-    sources = ["*.thrift"],
-    tags = ["bazel-compatible"],
-    dependency_roots = [
-        "finatra-internal/thrift/src/main/thrift",
-        "product-mixer/core/src/main/thrift/com/twitter/product_mixer/core:thrift",
-        "src/thrift/com/twitter/ads/schema:common",
-        "src/thrift/com/twitter/ml/api:data",
-        "src/thrift/com/twitter/recos:recos-common",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift",
-        "src/thrift/com/twitter/timelines/render:thrift",
-        "strato/config/src/thrift/com/twitter/strato/graphql",
+c-cweate_thwift_wibwawies(
+    b-base_name = "cw-mixew-scwibe", nyaa~~
+    souwces = ["*.thwift"], /(^•ω•^)
+    tags = ["bazew-compatibwe"], rawr
+    dependency_woots = [
+        "finatwa-intewnaw/thwift/swc/main/thwift", OwO
+        "pwoduct-mixew/cowe/swc/main/thwift/com/twittew/pwoduct_mixew/cowe:thwift", (U ﹏ U)
+        "swc/thwift/com/twittew/ads/schema:common", >_<
+        "swc/thwift/com/twittew/mw/api:data", rawr x3
+        "swc/thwift/com/twittew/wecos:wecos-common",
+        "swc/thwift/com/twittew/simcwustews_v2:simcwustews_v2-thwift", mya
+        "swc/thwift/com/twittew/timewines/wendew:thwift", nyaa~~
+        "stwato/config/swc/thwift/com/twittew/stwato/gwaphqw",
+    ], (⑅˘꒳˘)
+    genewate_wanguages = [
+        "java", rawr x3
+        "scawa", (✿oωo)
+        "stwato", (ˆ ﻌ ˆ)♡
     ],
-    generate_languages = [
-        "java",
-        "scala",
-        "strato",
-    ],
-    provides_java_name = "cr-mixer-scribe-java",
-    provides_scala_name = "cr-mixer-scribe-scala",
+    p-pwovides_java_name = "cw-mixew-scwibe-java", (˘ω˘)
+    pwovides_scawa_name = "cw-mixew-scwibe-scawa", (⑅˘꒳˘)
 )

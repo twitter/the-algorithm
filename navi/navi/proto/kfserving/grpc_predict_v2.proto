@@ -1,326 +1,326 @@
-// Copyright 2020 kubeflow.org.
+// copywight 2020 kubefwow.owg. ^^;;
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// w-wicensed undew t-the apache wicense, ʘwʘ v-vewsion 2.0 (the "wicense");
+// y-you may n-nyot use this fiwe e-except in compwiance w-with the w-wicense. σωσ
+// you may obtain a copy of the wicense at
 //
-//    http://www.apache.org/licenses/LICENSE-2.0
+//    http://www.apache.owg/wicenses/wicense-2.0
 //
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// unwess wequiwed by a-appwicabwe waw ow agweed to in wwiting, ^^;; softwawe
+// d-distwibuted undew the wicense i-is distwibuted on an "as is" basis, ʘwʘ
+// without wawwanties ow c-conditions of any kind, ^^ eithew e-expwess ow impwied. nyaa~~
+// s-see the wicense fow the specific wanguage govewning pewmissions and
+// wimitations u-undew the wicense. (///ˬ///✿)
 
-syntax = "proto3";
-package inference;
+syntax = "pwoto3";
+package infewence;
 
-// Inference Server GRPC endpoints.
-service GRPCInferenceService
+// infewence sewvew gwpc endpoints. XD
+s-sewvice gwpcinfewencesewvice
 {
-  // The ServerLive API indicates if the inference server is able to receive 
-  // and respond to metadata and inference requests.
-  rpc ServerLive(ServerLiveRequest) returns (ServerLiveResponse) {}
+  // t-the s-sewvewwive api i-indicates if the i-infewence sewvew is abwe to weceive 
+  // and wespond t-to metadata and infewence wequests. :3
+  wpc s-sewvewwive(sewvewwivewequest) wetuwns (sewvewwivewesponse) {}
 
-  // The ServerReady API indicates if the server is ready for inferencing.
-  rpc ServerReady(ServerReadyRequest) returns (ServerReadyResponse) {}
+  // the sewvewweady api indicates if the sewvew is weady fow infewencing. òωó
+  wpc s-sewvewweady(sewvewweadywequest) wetuwns (sewvewweadywesponse) {}
 
-  // The ModelReady API indicates if a specific model is ready for inferencing.
-  rpc ModelReady(ModelReadyRequest) returns (ModelReadyResponse) {}
+  // t-the modewweady a-api indicates i-if a specific modew is weady fow infewencing. ^^
+  wpc modewweady(modewweadywequest) w-wetuwns (modewweadywesponse) {}
 
-  // The ServerMetadata API provides information about the server. Errors are 
-  // indicated by the google.rpc.Status returned for the request. The OK code 
-  // indicates success and other codes indicate failure.
-  rpc ServerMetadata(ServerMetadataRequest) returns (ServerMetadataResponse) {}
+  // t-the sewvewmetadata a-api pwovides infowmation a-about the sewvew. ^•ﻌ•^ ewwows a-awe 
+  // indicated by the googwe.wpc.status wetuwned f-fow the wequest. σωσ the ok code 
+  // indicates s-success and othew codes indicate f-faiwuwe. (ˆ ﻌ ˆ)♡
+  wpc sewvewmetadata(sewvewmetadatawequest) w-wetuwns (sewvewmetadatawesponse) {}
 
-  // The per-model metadata API provides information about a model. Errors are 
-  // indicated by the google.rpc.Status returned for the request. The OK code 
-  // indicates success and other codes indicate failure.
-  rpc ModelMetadata(ModelMetadataRequest) returns (ModelMetadataResponse) {}
+  // t-the pew-modew metadata api pwovides infowmation about a modew. nyaa~~ ewwows awe 
+  // indicated by the googwe.wpc.status w-wetuwned f-fow the wequest. ʘwʘ the ok code 
+  // i-indicates success a-and othew c-codes indicate faiwuwe. ^•ﻌ•^
+  wpc modewmetadata(modewmetadatawequest) wetuwns (modewmetadatawesponse) {}
 
-  // The ModelInfer API performs inference using the specified model. Errors are
-  // indicated by the google.rpc.Status returned for the request. The OK code 
-  // indicates success and other codes indicate failure.
-  rpc ModelInfer(ModelInferRequest) returns (ModelInferResponse) {}
+  // the modewinfew a-api pewfowms infewence using the specified modew. ewwows awe
+  // indicated b-by the googwe.wpc.status wetuwned fow the w-wequest. rawr x3 the ok c-code 
+  // indicates s-success and othew codes indicate f-faiwuwe. 🥺
+  w-wpc modewinfew(modewinfewwequest) w-wetuwns (modewinfewwesponse) {}
 }
 
-message ServerLiveRequest {}
+m-message sewvewwivewequest {}
 
-message ServerLiveResponse
+message sewvewwivewesponse
 {
-  // True if the inference server is live, false if not live.
-  bool live = 1;
+  // twue if the i-infewence sewvew i-is wive, ʘwʘ fawse i-if nyot wive. (˘ω˘)
+  b-boow wive = 1;
 }
 
-message ServerReadyRequest {}
+m-message sewvewweadywequest {}
 
-message ServerReadyResponse
+message sewvewweadywesponse
 {
-  // True if the inference server is ready, false if not ready.
-  bool ready = 1;
+  // twue if the infewence sewvew i-is weady, o.O fawse if nyot weady. σωσ
+  boow weady = 1;
 }
 
-message ModelReadyRequest
+message modewweadywequest
 {
-  // The name of the model to check for readiness.
-  string name = 1;
+  // the nyame of the modew to c-check fow weadiness. (ꈍᴗꈍ)
+  stwing nyame = 1;
 
-  // The version of the model to check for readiness. If not given the
-  // server will choose a version based on the model and internal policy.
-  string version = 2;
+  // the vewsion of t-the modew to check f-fow weadiness. (ˆ ﻌ ˆ)♡ i-if nyot given the
+  // sewvew w-wiww choose a vewsion based on the m-modew and intewnaw p-powicy. o.O
+  stwing vewsion = 2;
 }
 
-message ModelReadyResponse
+message modewweadywesponse
 {
-  // True if the model is ready, false if not ready.
-  bool ready = 1;
+  // twue if the modew is weady, :3 fawse if nyot w-weady. -.-
+  boow weady = 1;
 }
 
-message ServerMetadataRequest {}
+message s-sewvewmetadatawequest {}
 
-message ServerMetadataResponse
+message sewvewmetadatawesponse
 {
-  // The server name.
-  string name = 1;
+  // t-the sewvew n-nyame. ( ͡o ω ͡o )
+  stwing nyame = 1;
 
-  // The server version.
-  string version = 2;
+  // the sewvew vewsion. /(^•ω•^)
+  s-stwing v-vewsion = 2;
 
-  // The extensions supported by the server.
-  repeated string extensions = 3;
+  // the extensions s-suppowted by the s-sewvew. (⑅˘꒳˘)
+  wepeated stwing extensions = 3;
 }
 
-message ModelMetadataRequest
+message modewmetadatawequest
 {
-  // The name of the model.
-  string name = 1;
+  // the name of the modew. òωó
+  stwing n-nyame = 1;
 
-  // The version of the model to check for readiness. If not given the
-  // server will choose a version based on the model and internal policy.
-  string version = 2;
+  // t-the vewsion o-of the modew to check fow weadiness. 🥺 i-if not given t-the
+  // sewvew wiww choose a v-vewsion based on the modew and intewnaw powicy. (ˆ ﻌ ˆ)♡
+  stwing vewsion = 2;
 }
 
-message ModelMetadataResponse
+message m-modewmetadatawesponse
 {
-  // Metadata for a tensor.
-  message TensorMetadata
+  // metadata f-fow a tensow. -.-
+  message tensowmetadata
   {
-    // The tensor name.
-    string name = 1;
+    // t-the tensow n-nyame. σωσ
+    stwing nyame = 1;
 
-    // The tensor data type.
-    string datatype = 2;
+    // the tensow data type. >_<
+    s-stwing datatype = 2;
 
-    // The tensor shape. A variable-size dimension is represented
-    // by a -1 value.
-    repeated int64 shape = 3;
+    // the tensow shape. :3 a vawiabwe-size dimension is wepwesented
+    // b-by a -1 vawue. OwO
+    wepeated int64 shape = 3;
   }
 
-  // The model name.
-  string name = 1;
+  // t-the modew n-nyame. rawr
+  stwing nyame = 1;
 
-  // The versions of the model available on the server.
-  repeated string versions = 2;
+  // the vewsions of the modew avaiwabwe o-on the s-sewvew. (///ˬ///✿)
+  wepeated stwing vewsions = 2;
 
-  // The model's platform. See Platforms.
-  string platform = 3;
+  // the modew's pwatfowm. ^^ s-see pwatfowms. XD
+  stwing pwatfowm = 3;
 
-  // The model's inputs.
-  repeated TensorMetadata inputs = 4;
+  // t-the modew's inputs. UwU
+  wepeated tensowmetadata inputs = 4;
 
-  // The model's outputs.
-  repeated TensorMetadata outputs = 5;
+  // the modew's outputs. o.O
+  w-wepeated tensowmetadata outputs = 5;
 }
 
-message ModelInferRequest
+message m-modewinfewwequest
 {
-  // An input tensor for an inference request.
-  message InferInputTensor
+  // a-an input tensow fow an infewence w-wequest. 😳
+  message infewinputtensow
   {
-    // The tensor name.
-    string name = 1;
+    // t-the tensow nyame. (˘ω˘)
+    s-stwing nyame = 1;
 
-    // The tensor data type.
-    string datatype = 2;
+    // t-the tensow data type. 🥺
+    stwing d-datatype = 2;
 
-    // The tensor shape.
-    repeated int64 shape = 3;
+    // t-the tensow shape. ^^
+    wepeated int64 shape = 3;
 
-    // Optional inference input tensor parameters.
-    map<string, InferParameter> parameters = 4;
+    // optionaw i-infewence i-input tensow pawametews. >w<
+    map<stwing, ^^;; i-infewpawametew> pawametews = 4;
 
-    // The tensor contents using a data-type format. This field must
-    // not be specified if "raw" tensor contents are being used for
-    // the inference request.
-    InferTensorContents contents = 5;
+    // the tensow contents u-using a data-type fowmat. (˘ω˘) t-this fiewd must
+    // n-nyot be specified if "waw" tensow contents awe being used f-fow
+    // the i-infewence wequest. OwO
+    i-infewtensowcontents c-contents = 5;
   }
 
-  // An output tensor requested for an inference request.
-  message InferRequestedOutputTensor
+  // an output tensow w-wequested fow an infewence wequest. (ꈍᴗꈍ)
+  message infewwequestedoutputtensow
   {
-    // The tensor name.
-    string name = 1;
+    // the tensow nyame. òωó
+    stwing n-nyame = 1;
 
-    // Optional requested output tensor parameters.
-    map<string, InferParameter> parameters = 2;
+    // optionaw w-wequested output tensow pawametews. ʘwʘ
+    m-map<stwing, ʘwʘ infewpawametew> p-pawametews = 2;
   }
 
-  // The name of the model to use for inferencing.
-  string model_name = 1;
+  // the nyame of the m-modew to use fow i-infewencing. nyaa~~
+  s-stwing modew_name = 1;
 
-  // The version of the model to use for inference. If not given the
-  // server will choose a version based on the model and internal policy.
-  string model_version = 2;
+  // t-the v-vewsion of the modew to use fow infewence. UwU if nyot given the
+  // sewvew wiww choose a vewsion based on the modew a-and intewnaw p-powicy. (⑅˘꒳˘)
+  stwing m-modew_vewsion = 2;
 
-  // Optional identifier for the request. If specified will be
-  // returned in the response.
-  string id = 3;
+  // optionaw i-identifiew fow the wequest. (˘ω˘) if specified wiww be
+  // wetuwned i-in the wesponse. :3
+  s-stwing id = 3;
 
-  // Optional inference parameters.
-  map<string, InferParameter> parameters = 4;
+  // optionaw i-infewence pawametews. (˘ω˘)
+  map<stwing, nyaa~~ infewpawametew> p-pawametews = 4;
 
-  // The input tensors for the inference.
-  repeated InferInputTensor inputs = 5;
+  // t-the input tensows f-fow the infewence. (U ﹏ U)
+  w-wepeated infewinputtensow inputs = 5;
 
-  // The requested output tensors for the inference. Optional, if not
-  // specified all outputs produced by the model will be returned.
-  repeated InferRequestedOutputTensor outputs = 6;
+  // the wequested output tensows fow the infewence. nyaa~~ optionaw, if nyot
+  // s-specified a-aww outputs pwoduced b-by the modew w-wiww be wetuwned.
+  w-wepeated infewwequestedoutputtensow o-outputs = 6;
 
-  // The data contained in an input tensor can be represented in "raw"
-  // bytes form or in the repeated type that matches the tensor's data
-  // type. To use the raw representation 'raw_input_contents' must be
-  // initialized with data for each tensor in the same order as
-  // 'inputs'. For each tensor, the size of this content must match
-  // what is expected by the tensor's shape and data type. The raw
-  // data must be the flattened, one-dimensional, row-major order of
-  // the tensor elements without any stride or padding between the
-  // elements. Note that the FP16 and BF16 data types must be represented as
-  // raw content as there is no specific data type for a 16-bit float type.
+  // the d-data contained in an input tensow c-can be wepwesented i-in "waw"
+  // bytes fowm o-ow in the wepeated type that matches the tensow's d-data
+  // type. ^^;; to use the waw w-wepwesentation 'waw_input_contents' m-must be
+  // initiawized with d-data fow each tensow in the same owdew as
+  // 'inputs'. OwO f-fow e-each tensow, the s-size of this content must match
+  // nyani is expected by the t-tensow's shape and data type. nyaa~~ the waw
+  // data m-must be the fwattened, UwU o-one-dimensionaw, 😳 wow-majow o-owdew of
+  // the tensow ewements w-without any s-stwide ow padding between the
+  // ewements. 😳 nyote t-that the fp16 and bf16 data types must be wepwesented a-as
+  // w-waw content as thewe is nyo specific d-data type fow a 16-bit fwoat t-type. (ˆ ﻌ ˆ)♡
   //
-  // If this field is specified then InferInputTensor::contents must
-  // not be specified for any input tensor.
-  repeated bytes raw_input_contents = 7;
+  // i-if this fiewd i-is specified then infewinputtensow::contents must
+  // not be specified fow any input tensow. (✿oωo)
+  wepeated bytes waw_input_contents = 7;
 }
 
-message ModelInferResponse
+message modewinfewwesponse
 {
-  // An output tensor returned for an inference request.
-  message InferOutputTensor
+  // an output tensow wetuwned fow an infewence w-wequest. nyaa~~
+  m-message infewoutputtensow
   {
-    // The tensor name.
-    string name = 1;
+    // the tensow nyame. ^^
+    stwing n-nyame = 1;
 
-    // The tensor data type.
-    string datatype = 2;
+    // t-the tensow d-data type. (///ˬ///✿)
+    stwing datatype = 2;
 
-    // The tensor shape.
-    repeated int64 shape = 3;
+    // the t-tensow shape. 😳
+    wepeated int64 s-shape = 3;
 
-    // Optional output tensor parameters.
-    map<string, InferParameter> parameters = 4;
+    // o-optionaw output tensow pawametews. òωó
+    m-map<stwing, ^^;; infewpawametew> p-pawametews = 4;
 
-    // The tensor contents using a data-type format. This field must
-    // not be specified if "raw" tensor contents are being used for
-    // the inference response.
-    InferTensorContents contents = 5;
+    // t-the tensow contents using a data-type fowmat. rawr t-this fiewd must
+    // n-nyot be specified i-if "waw" t-tensow contents a-awe being used f-fow
+    // the i-infewence wesponse. (ˆ ﻌ ˆ)♡
+    i-infewtensowcontents c-contents = 5;
   }
 
-  // The name of the model used for inference.
-  string model_name = 1;
+  // the nyame of t-the modew used f-fow infewence. XD
+  s-stwing modew_name = 1;
 
-  // The version of the model used for inference.
-  string model_version = 2;
+  // the v-vewsion of the modew used fow infewence. >_<
+  stwing m-modew_vewsion = 2;
 
-  // The id of the inference request if one was specified.
-  string id = 3;
+  // the i-id of the infewence w-wequest if o-one was specified. (˘ω˘)
+  stwing id = 3;
 
-  // Optional inference response parameters.
-  map<string, InferParameter> parameters = 4;
+  // o-optionaw infewence wesponse p-pawametews. 😳
+  map<stwing, o.O i-infewpawametew> pawametews = 4;
 
-  // The output tensors holding inference results.
-  repeated InferOutputTensor outputs = 5;
+  // t-the output tensows howding infewence wesuwts. (ꈍᴗꈍ)
+  wepeated infewoutputtensow outputs = 5;
 
-  // The data contained in an output tensor can be represented in
-  // "raw" bytes form or in the repeated type that matches the
-  // tensor's data type. To use the raw representation 'raw_output_contents'
-  // must be initialized with data for each tensor in the same order as
-  // 'outputs'. For each tensor, the size of this content must match
-  // what is expected by the tensor's shape and data type. The raw
-  // data must be the flattened, one-dimensional, row-major order of
-  // the tensor elements without any stride or padding between the
-  // elements. Note that the FP16 and BF16 data types must be represented as
-  // raw content as there is no specific data type for a 16-bit float type.
+  // t-the data contained in an output t-tensow can be w-wepwesented in
+  // "waw" bytes fowm ow in the wepeated type that m-matches the
+  // tensow's data t-type. rawr x3 to use t-the waw wepwesentation 'waw_output_contents'
+  // m-must be initiawized with data fow each tensow i-in the same owdew a-as
+  // 'outputs'. ^^ fow each tensow, OwO t-the size of this content must match
+  // nyani i-is expected by the tensow's s-shape and data t-type. ^^ the waw
+  // d-data must be the fwattened, :3 one-dimensionaw, o.O w-wow-majow owdew o-of
+  // the tensow e-ewements without a-any stwide ow padding between t-the
+  // ewements. -.- n-nyote that t-the fp16 and bf16 d-data types must b-be wepwesented a-as
+  // waw content a-as thewe is n-nyo specific data type fow a 16-bit f-fwoat type. (U ﹏ U)
   //
-  // If this field is specified then InferOutputTensor::contents must
-  // not be specified for any output tensor.
-  repeated bytes raw_output_contents = 6;
+  // if this f-fiewd is specified then infewoutputtensow::contents m-must
+  // n-nyot be specified f-fow any output tensow. o.O
+  wepeated bytes waw_output_contents = 6;
 }
 
-// An inference parameter value. The Parameters message describes a 
-// “name”/”value” pair, where the “name” is the name of the parameter
-// and the “value” is a boolean, integer, or string corresponding to 
-// the parameter.
-message InferParameter
+// an infewence p-pawametew v-vawue. OwO the pawametews m-message descwibes a 
+// “name”/”vawue” paiw, ^•ﻌ•^ whewe the “name” i-is the nyame of t-the pawametew
+// and the “vawue” i-is a boowean, ʘwʘ i-integew, :3 ow stwing cowwesponding to 
+// the pawametew. 😳
+message i-infewpawametew
 {
-  // The parameter value can be a string, an int64, a boolean
-  // or a message specific to a predefined parameter.
-  oneof parameter_choice
+  // t-the pawametew v-vawue can b-be a stwing, an int64, òωó a boowean
+  // ow a message s-specific to a-a pwedefined pawametew. 🥺
+  oneof pawametew_choice
   {
-    // A boolean parameter value.
-    bool bool_param = 1;
+    // a-a boowean pawametew vawue. rawr x3
+    boow b-boow_pawam = 1;
 
-    // An int64 parameter value.
-    int64 int64_param = 2;
+    // an int64 p-pawametew vawue. ^•ﻌ•^
+    i-int64 int64_pawam = 2;
 
-    // A string parameter value.
-    string string_param = 3;
+    // a stwing pawametew v-vawue. :3
+    s-stwing stwing_pawam = 3;
   }
 }
 
-// The data contained in a tensor represented by the repeated type
-// that matches the tensor's data type. Protobuf oneof is not used
-// because oneofs cannot contain repeated fields.
-message InferTensorContents
+// the data contained i-in a tensow wepwesented b-by the wepeated t-type
+// that matches t-the tensow's d-data type. (ˆ ﻌ ˆ)♡ pwotobuf oneof is n-nyot used
+// because o-oneofs cannot c-contain wepeated fiewds. (U ᵕ U❁)
+message i-infewtensowcontents
 {
-  // Representation for BOOL data type. The size must match what is
-  // expected by the tensor's shape. The contents must be the flattened,
-  // one-dimensional, row-major order of the tensor elements.
-  repeated bool bool_contents = 1;
+  // wepwesentation fow boow data type. :3 t-the size must m-match nyani is
+  // e-expected by the tensow's shape. ^^;; the contents must be the fwattened, ( ͡o ω ͡o )
+  // one-dimensionaw, o.O w-wow-majow owdew of t-the tensow ewements. ^•ﻌ•^
+  w-wepeated boow boow_contents = 1;
 
-  // Representation for INT8, INT16, and INT32 data types. The size
-  // must match what is expected by the tensor's shape. The contents
-  // must be the flattened, one-dimensional, row-major order of the
-  // tensor elements.
-  repeated int32 int_contents = 2;
+  // wepwesentation fow i-int8, XD int16, ^^ and int32 data types. o.O t-the size
+  // m-must match nyani i-is expected b-by the tensow's s-shape. ( ͡o ω ͡o ) the contents
+  // must be the fwattened, /(^•ω•^) one-dimensionaw, 🥺 wow-majow owdew o-of the
+  // tensow ewements. nyaa~~
+  w-wepeated int32 int_contents = 2;
 
-  // Representation for INT64 data types. The size must match what
-  // is expected by the tensor's shape. The contents must be the
-  // flattened, one-dimensional, row-major order of the tensor elements.
-  repeated int64 int64_contents = 3;
+  // wepwesentation fow int64 data types. mya the s-size must match nyani
+  // is expected by the tensow's shape. the contents must b-be the
+  // fwattened, XD o-one-dimensionaw, nyaa~~ wow-majow o-owdew of the tensow ewements. ʘwʘ
+  wepeated int64 i-int64_contents = 3;
 
-  // Representation for UINT8, UINT16, and UINT32 data types. The size
-  // must match what is expected by the tensor's shape. The contents
-  // must be the flattened, one-dimensional, row-major order of the
-  // tensor elements.
-  repeated uint32 uint_contents = 4;
+  // w-wepwesentation fow uint8, (⑅˘꒳˘) u-uint16, and uint32 data types. :3 t-the size
+  // must match nyani is expected by the tensow's shape. -.- t-the contents
+  // must be the fwattened, 😳😳😳 one-dimensionaw, (U ﹏ U) w-wow-majow owdew o-of the
+  // tensow e-ewements. o.O
+  wepeated uint32 uint_contents = 4;
 
-  // Representation for UINT64 data types. The size must match what
-  // is expected by the tensor's shape. The contents must be the
-  // flattened, one-dimensional, row-major order of the tensor elements.
-  repeated uint64 uint64_contents = 5;
+  // wepwesentation f-fow uint64 data types. ( ͡o ω ͡o ) the size must match nyani
+  // is expected by the t-tensow's shape. òωó t-the contents must b-be the
+  // fwattened, 🥺 o-one-dimensionaw, /(^•ω•^) wow-majow owdew of the t-tensow ewements. 😳😳😳
+  w-wepeated uint64 uint64_contents = 5;
 
-  // Representation for FP32 data type. The size must match what is
-  // expected by the tensor's shape. The contents must be the flattened,
-  // one-dimensional, row-major order of the tensor elements.
-  repeated float fp32_contents = 6;
+  // wepwesentation fow f-fp32 data type. ^•ﻌ•^ the size must match nyani is
+  // e-expected by the tensow's shape. nyaa~~ the contents m-must be the fwattened, OwO
+  // o-one-dimensionaw, ^•ﻌ•^ wow-majow o-owdew of t-the tensow ewements. σωσ
+  w-wepeated fwoat fp32_contents = 6;
 
-  // Representation for FP64 data type. The size must match what is
-  // expected by the tensor's shape. The contents must be the flattened,
-  // one-dimensional, row-major order of the tensor elements.
-  repeated double fp64_contents = 7;
+  // wepwesentation fow f-fp64 data type. -.- the size must match nyani is
+  // e-expected by the tensow's shape. (˘ω˘) the contents must be the fwattened, rawr x3
+  // o-one-dimensionaw, rawr x3 wow-majow o-owdew of t-the tensow ewements. σωσ
+  w-wepeated d-doubwe fp64_contents = 7;
 
-  // Representation for BYTES data type. The size must match what is
-  // expected by the tensor's shape. The contents must be the flattened,
-  // one-dimensional, row-major order of the tensor elements.
-  repeated bytes bytes_contents = 8;
+  // wepwesentation f-fow bytes data type. nyaa~~ the size must match nyani i-is
+  // expected by the tensow's s-shape. the contents must be the fwattened, (ꈍᴗꈍ)
+  // o-one-dimensionaw, ^•ﻌ•^ w-wow-majow owdew of the tensow e-ewements. >_<
+  wepeated bytes bytes_contents = 8;
 }

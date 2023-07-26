@@ -1,27 +1,27 @@
-package com.twitter.search.common.schema;
+package com.twittew.seawch.common.schema;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.core.WhitespaceTokenizer;
+impowt o-owg.apache.wucene.anawysis.anawyzew;
+i-impowt owg.apache.wucene.anawysis.cowe.whitespacetokenizew;
 
 /**
- * The majority of the code is copied from Lucene 3.1 analysis.core.WhitespaceAnalyzer. The only
- * new code is the getPositionIncrementGap()
+ * t-the majowity o-of the code i-is copied fwom w-wucene 3.1 anawysis.cowe.whitespaceanawyzew. OwO the o-onwy
+ * nyew c-code is the getpositionincwementgap()
  */
-public final class SearchWhitespaceAnalyzer extends Analyzer {
-  @Override
-  protected TokenStreamComponents createComponents(final String fieldName) {
-    return new TokenStreamComponents(new WhitespaceTokenizer());
+pubwic finaw cwass seawchwhitespaceanawyzew extends anawyzew {
+  @ovewwide
+  pwotected t-tokenstweamcomponents cweatecomponents(finaw stwing f-fiewdname) {
+    wetuwn nyew t-tokenstweamcomponents(new whitespacetokenizew());
   }
 
   /**
-   * Make sure that phrase queries do not match across 2 instances of the text field.
+   * make suwe that phwase quewies d-do nyot match acwoss 2 instances o-of the text fiewd.
    *
-   * See the Javadoc for Analyzer.getPositionIncrementGap() for a good explanation of how this
-   * method works.
+   * s-see the javadoc fow anawyzew.getpositionincwementgap() fow a good expwanation of how this
+   * method w-wowks. (U ﹏ U)
    */
-  @Override
-  public int getPositionIncrementGap(String fieldName) {
-    // Hard-code "text" here, because we can't depend on EarlybirdFieldConstants.
-    return "text".equals(fieldName) ? 1 : super.getPositionIncrementGap(fieldName);
+  @ovewwide
+  pubwic int getpositionincwementgap(stwing fiewdname) {
+    // hawd-code "text" hewe, >_< because we can't depend on e-eawwybiwdfiewdconstants. rawr x3
+    wetuwn "text".equaws(fiewdname) ? 1 : s-supew.getpositionincwementgap(fiewdname);
   }
 }

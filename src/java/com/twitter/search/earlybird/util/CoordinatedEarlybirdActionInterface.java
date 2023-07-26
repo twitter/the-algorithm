@@ -1,50 +1,50 @@
-package com.twitter.search.earlybird.util;
+package com.twittew.seawch.eawwybiwd.utiw;
 
-import com.google.common.annotations.VisibleForTesting;
+impowt c-com.googwe.common.annotations.visibwefowtesting;
 
-import com.twitter.common.base.ExceptionalFunction;
+i-impowt com.twittew.common.base.exceptionawfunction;
 
-public interface CoordinatedEarlybirdActionInterface {
+p-pubwic i-intewface coowdinatedeawwybiwdactionintewface {
     /**
-     * Executes the provided Function associated with the given segment.
-     * @param description a name for the action to be exected.
-     * @param function the function to call in a coordinated manner.
-     *        As input, the function will receive a flag indicating whether or not it is being
-     *        called in a coordinated fashion. true if it is, and false otherwise.
-     * @return true iff the function was executed, and function.apply() returned true;
-     * throws CoordinatedEarlybirdActionLockFailed if function is not executed (because lock
-     * aquisition failed).
+     * exekawaii~s t-the pwovided f-function a-associated with t-the given segment. 🥺
+     * @pawam descwiption a nyame fow the action to be exected. o.O
+     * @pawam function the function t-to caww in a coowdinated mannew. /(^•ω•^)
+     *        a-as input, nyaa~~ the function wiww w-weceive a fwag indicating whethew ow nyot it is being
+     *        c-cawwed in a coowdinated fashion. t-twue if i-it is, nyaa~~ and fawse othewwise. :3
+     * @wetuwn twue iff the function was exekawaii~d, 😳😳😳 a-and function.appwy() wetuwned twue;
+     * thwows coowdinatedeawwybiwdactionwockfaiwed if function i-is nyot exekawaii~d (because wock
+     * aquisition f-faiwed). (˘ω˘)
      */
-    <E extends Exception> boolean execute(
-        String description,
-        ExceptionalFunction<Boolean, Boolean, E> function)
-          throws E, CoordinatedEarlybirdActionLockFailed;
-
-    /**
-     * Set whether this action should be synchronized.
-     * If not, the action is directly applied. If yes, Earlybirds will coordinate executing the
-     * action via ZooKeeperTryLocks.
-     */
-    boolean setShouldSynchronize(boolean shouldSynchronizeParam);
+    <e e-extends exception> b-boowean exekawaii~(
+        s-stwing descwiption, ^^
+        exceptionawfunction<boowean, :3 boowean, e-e> function)
+          thwows e, -.- coowdinatedeawwybiwdactionwockfaiwed;
 
     /**
-     * Number of times this coordinated actions has been executed.
-     * @return
+     * s-set whethew this action shouwd be synchwonized. 😳
+     * if nyot, mya the action is diwectwy appwied. (˘ω˘) if yes, e-eawwybiwds wiww coowdinate executing t-the
+     * a-action via zookeepewtwywocks. >_<
      */
-    @VisibleForTesting
-    long getNumCoordinatedFunctionCalls();
+    b-boowean setshouwdsynchwonize(boowean shouwdsynchwonizepawam);
 
     /**
-     * Number of times we have left the serverset.
-     * @return
+     * nyumbew o-of times this coowdinated a-actions has been exekawaii~d. -.-
+     * @wetuwn
      */
-    @VisibleForTesting
-    long getNumCoordinatedLeaveServersetCalls();
+    @visibwefowtesting
+    w-wong g-getnumcoowdinatedfunctioncawws();
 
     /**
-     * Retry until we can run an action on a single instance in the serverset.
-     * @param description Text description of the action.
-     * @param action A runnable to be ran.
+     * nyumbew of times w-we have weft the sewvewset. 🥺
+     * @wetuwn
      */
-    void retryActionUntilRan(String description, Runnable action);
+    @visibwefowtesting
+    w-wong getnumcoowdinatedweavesewvewsetcawws();
+
+    /**
+     * wetwy untiw we can w-wun an action on a singwe instance i-in the sewvewset. (U ﹏ U)
+     * @pawam descwiption t-text descwiption o-of the action. >w<
+     * @pawam action a wunnabwe to be wan. mya
+     */
+    void wetwyactionuntiwwan(stwing descwiption, >w< wunnabwe action);
 }

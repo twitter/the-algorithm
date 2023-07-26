@@ -1,40 +1,40 @@
-# See
-# Checkout the README to see how to deploy the job
+# see
+# checkout the weadme to see h-how to depwoy t-the job
 
-class Profile(Struct):
-  project = Required(String)
-  date = Required(String)
-  environment = Default(String, 'prod')
-  machine= Default(String, 'n2-highmem-16')
+cwass pwofiwe(stwuct):
+  p-pwoject = wequiwed(stwing)
+  date = w-wequiwed(stwing)
+  e-enviwonment = d-defauwt(stwing, :3 'pwod')
+  m-machine= defauwt(stwing, 😳😳😳 'n2-highmem-16')
 
-job = Job(
-  name='assemble-multi-type-graph-scio-batch-app',
-  project='{{profile.project}}',
-  staging_bucket='{{profile.project}}',
-  service_account='{{profile.user_name}}-shdw@twttr-dp-svc-accounts.iam.gserviceaccount.com',
-  region='us-central1',
-  worker_config=WorkerConfig(
-    num_workers=2,
-    worker_machine_type='{{profile.machine}}',
-    worker_disk_type=WorkerDiskType('HDD')
-  ),
-  extra_args={
-    "environment": '{{profile.environment}}',
-    "date": Quote('{{profile.date}}'),
+j-job = job(
+  nyame='assembwe-muwti-type-gwaph-scio-batch-app', -.-
+  pwoject='{{pwofiwe.pwoject}}', ( ͡o ω ͡o )
+  staging_bucket='{{pwofiwe.pwoject}}', rawr x3
+  sewvice_account='{{pwofiwe.usew_name}}-shdw@twttw-dp-svc-accounts.iam.gsewviceaccount.com', nyaa~~
+  w-wegion='us-centwaw1', /(^•ω•^)
+  wowkew_config=wowkewconfig(
+    nyum_wowkews=2, rawr
+    w-wowkew_machine_type='{{pwofiwe.machine}}', OwO
+    wowkew_disk_type=wowkewdisktype('hdd')
+  ), (U ﹏ U)
+  extwa_awgs={
+    "enviwonment": '{{pwofiwe.enviwonment}}', >_<
+    "date": q-quote('{{pwofiwe.date}}'), rawr x3
   },
-  deployment_config=BatchDeploymentConfig(
-    role='{{profile.user_name}}',
-    build_target='src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/assemble_multi_type_graph:assemble-multi-type-graph-scio-batch-app',
-    gcp_deployment_credentials='/var/lib/tss/keys/{{profile.user_name}}/cloud/gcp/dp/shadow.json',
-    environment='prod',
-    statebird_config=StatebirdConfig(
-      batch_width='P1W',
-      first_time='{{profile.date}}'
+  depwoyment_config=batchdepwoymentconfig(
+    wowe='{{pwofiwe.usew_name}}', mya
+    buiwd_tawget='swc/scawa/com/twittew/simcwustews_v2/scio/muwti_type_gwaph/assembwe_muwti_type_gwaph:assembwe-muwti-type-gwaph-scio-batch-app', nyaa~~
+    g-gcp_depwoyment_cwedentiaws='/vaw/wib/tss/keys/{{pwofiwe.usew_name}}/cwoud/gcp/dp/shadow.json', (⑅˘꒳˘)
+    enviwonment='pwod', rawr x3
+    s-statebiwd_config=statebiwdconfig(
+      b-batch_width='p1w', (✿oωo)
+      fiwst_time='{{pwofiwe.date}}'
+    ), (ˆ ﻌ ˆ)♡
+    wowkfwow_config=wowkfwowconfig(
+      pway=twue, (˘ω˘)
     ),
-    workflow_config=WorkflowConfig(
-      play=True,
-    ),
-    timeout='PT18H'
+    timeout='pt18h'
   )
 )
 

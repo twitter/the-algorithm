@@ -1,223 +1,223 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "tensorflow/core/framework/attr_value.proto";
-import "tensorflow/core/protobuf/verifier_config.proto";
+impowt "tensowfwow/cowe/fwamewowk/attw_vawue.pwoto";
+i-impowt "tensowfwow/cowe/pwotobuf/vewifiew_config.pwoto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "RewriterConfigProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+o-option cc_enabwe_awenas = t-twue;
+option java_outew_cwassname = "wewwitewconfigpwotos";
+o-option j-java_muwtipwe_fiwes = t-twue;
+o-option java_package = "owg.tensowfwow.fwamewowk";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-message AutoParallelOptions {
-  bool enable = 1;
-  int32 num_replicas = 2;
+message autopawawwewoptions {
+  boow enabwe = 1;
+  int32 nyum_wepwicas = 2;
 }
 
-message ScopedAllocatorOptions {
-  // If present, only perform optimization for these ops.
-  repeated string enable_op = 1;
+message scopedawwocatowoptions {
+  // i-if pwesent, o.O onwy pewfowm optimization fow these o-ops. ^^
+  wepeated stwing enabwe_op = 1;
 }
 
-message RewriterConfig {
-  // Graph rewriting is experimental and subject to change, not covered by any
-  // API stability guarantees.
+m-message wewwitewconfig {
+  // gwaph wewwiting is expewimentaw a-and subject to change, >_< n-nyot covewed b-by any
+  // api stabiwity guawantees. >w<
 
-  // Configuration options for the meta-optimizer. Unless otherwise noted, these
-  // configuration options do not apply to explicitly triggered optimization
-  // passes in the optimizers field.
+  // configuwation options fow the meta-optimizew. >_< u-unwess othewwise nyoted, >w< these
+  // configuwation options do nyot appwy t-to expwicitwy twiggewed optimization
+  // p-passes i-in the optimizews f-fiewd. rawr
 
-  enum Toggle {
-    DEFAULT = 0;
-    ON = 1;
-    OFF = 2;
-    // Enable some aggressive optimizations that use assumptions that TF graphs
-    // may break. For example, assume the shape of a placeholder matches its
-    // actual feed.
-    AGGRESSIVE = 3;
+  enum t-toggwe {
+    defauwt = 0;
+    on = 1;
+    off = 2;
+    // e-enabwe some aggwessive optimizations t-that use assumptions that tf gwaphs
+    // may bweak. rawr x3 fow exampwe, ( ͡o ω ͡o ) assume the shape of a pwacehowdew m-matches its
+    // actuaw f-feed. (˘ω˘)
+    aggwessive = 3;
   }
 
-  // Enum for layout conversion between NCHW and NHWC on CPU. Default is OFF.
-  enum CpuLayout {
-    NO_CONVERSION_ON_CPU = 0;
-    NCHW_TO_NHWC = 1;
-    NHWC_TO_NCHW = 2;
+  // e-enum fow wayout c-convewsion between nychw and nyhwc on cpu. 😳 defauwt is off. OwO
+  e-enum cpuwayout {
+    n-nyo_convewsion_on_cpu = 0;
+    nychw_to_nhwc = 1;
+    n-nyhwc_to_nchw = 2;
   }
 
-  // Enum controlling the number of times to run optimizers. The default is to
-  // run them twice.
-  enum NumIterationsType {
-    DEFAULT_NUM_ITERS = 0;
-    ONE = 1;
-    TWO = 2;
+  // e-enum contwowwing the n-nyumbew of times to wun optimizews. (˘ω˘) t-the defauwt is to
+  // wun them twice. òωó
+  enum n-nyumitewationstype {
+    defauwt_num_itews = 0;
+    o-one = 1;
+    two = 2;
   }
 
-  // CPU Conversion settings between NHCW and NCHW.
-  CpuLayout cpu_layout_conversion = 50;
+  // c-cpu convewsion s-settings between nyhcw and nychw. ( ͡o ω ͡o )
+  cpuwayout cpu_wayout_convewsion = 50;
 
-  // Optimize tensor layouts (default is ON)
-  // e.g. This will try to use NCHW layout on GPU which is faster.
-  Toggle layout_optimizer = 1;
-  // Fold constants (default is ON)
-  // Statically infer the value of tensors when possible, and materialize the
-  // result using constants.
-  Toggle constant_folding = 3;
-  // Shape optimizations (default is ON)
-  // Simplify computations made on shapes.
-  Toggle shape_optimization = 13;
-  // Remapping (default is ON)
-  // Remap subgraphs onto more efficient implementations.
-  Toggle remapping = 14;
-  // Common subgraph elimination (default is ON)
-  // e.g. Simplify arithmetic ops; merge ops with same value (like constants).
-  Toggle common_subgraph_elimination = 24;
-  // Arithmetic optimizations (default is ON)
-  // e.g. Simplify arithmetic ops; merge ops with same value (like constants).
-  Toggle arithmetic_optimization = 7;
-  // Control dependency optimizations (default is ON).
-  // Remove redundant control dependencies, which may enable other optimization.
-  Toggle dependency_optimization = 8;
-  // Loop optimizations (default is ON).
-  Toggle loop_optimization = 9;
-  // Function optimizations (default is ON).
-  Toggle function_optimization = 10;
-  // Strips debug-related nodes from the graph (off by default).
-  Toggle debug_stripper = 11;
-  // If true, don't remove unnecessary ops from the graph
-  bool disable_model_pruning = 2;
-  // Try to allocate some independent Op outputs contiguously in order to
-  // merge or eliminate downstream Ops (off by default).
-  Toggle scoped_allocator_optimization = 15;
-  // Force small ops onto the CPU (default is OFF).
-  Toggle pin_to_host_optimization = 18;
-  // Enable the swap of kernel implementations based on the device placement
-  // (default is ON).
-  Toggle implementation_selector = 22;
-  // Optimize data types for CUDA (default is OFF).
-  // This will try to use float16 on GPU which is faster.
-  // Note that this can change the numerical stability of the graph and may
-  // require the use of loss scaling to maintain model convergence.
-  Toggle auto_mixed_precision = 23;
-  // Optimize data types for MKL (default is OFF).
-  // This will try to use bfloat16 on CPUs, which is faster.
-  // Note that this can change the numerical stability of the graph.
-  Toggle auto_mixed_precision_mkl = 25;
-  // Emulate a model using data type float16 on CPU (default is OFF).
-  // This will try to emulate the float16 inputs and outputs of an operator
-  // on CPU to have better correlation with float16 on GPU; however the
-  // computation in the operator is based on float32.
-  // Note that this can change the numerical stability of the graph.
-  Toggle auto_mixed_precision_cpu = 29;
-  // Disable the entire meta optimizer (off by default).
-  bool disable_meta_optimizer = 19;
-  // Optimizers registered by plugin (default is ON)
-  Toggle use_plugin_optimizers = 28;
+  // optimize tensow wayouts (defauwt is on)
+  // e-e.g. UwU this wiww t-twy to use nchw wayout on gpu which i-is fastew. /(^•ω•^)
+  t-toggwe wayout_optimizew = 1;
+  // f-fowd constants (defauwt is on)
+  // staticawwy infew the vawue o-of tensows when possibwe, (ꈍᴗꈍ) and matewiawize the
+  // wesuwt using constants. 😳
+  t-toggwe constant_fowding = 3;
+  // shape optimizations (defauwt is o-on)
+  // simpwify c-computations m-made on shapes. mya
+  toggwe shape_optimization = 13;
+  // w-wemapping (defauwt i-is on)
+  // w-wemap subgwaphs o-onto mowe efficient impwementations.
+  toggwe w-wemapping = 14;
+  // c-common s-subgwaph ewimination (defauwt is o-on)
+  // e.g. mya s-simpwify awithmetic ops; mewge ops with same vawue (wike constants). /(^•ω•^)
+  t-toggwe common_subgwaph_ewimination = 24;
+  // awithmetic optimizations (defauwt is on)
+  // e.g. ^^;; simpwify awithmetic ops; m-mewge ops with same vawue (wike constants). 🥺
+  toggwe awithmetic_optimization = 7;
+  // c-contwow d-dependency optimizations (defauwt i-is on). ^^
+  // wemove wedundant c-contwow dependencies, which may e-enabwe othew optimization. ^•ﻌ•^
+  t-toggwe dependency_optimization = 8;
+  // woop optimizations (defauwt is on). /(^•ω•^)
+  toggwe woop_optimization = 9;
+  // function optimizations (defauwt is o-on). ^^
+  toggwe function_optimization = 10;
+  // s-stwips debug-wewated nyodes fwom t-the gwaph (off b-by defauwt). 🥺
+  toggwe debug_stwippew = 11;
+  // if twue, don't w-wemove unnecessawy o-ops fwom the gwaph
+  boow disabwe_modew_pwuning = 2;
+  // t-twy t-to awwocate some independent op outputs contiguouswy in owdew to
+  // mewge ow e-ewiminate downstweam o-ops (off by d-defauwt). (U ᵕ U❁)
+  toggwe scoped_awwocatow_optimization = 15;
+  // f-fowce s-smow ops onto the cpu (defauwt i-is off). 😳😳😳
+  toggwe pin_to_host_optimization = 18;
+  // enabwe the swap of kewnew impwementations b-based on the device p-pwacement
+  // (defauwt is on). nyaa~~
+  toggwe impwementation_sewectow = 22;
+  // o-optimize data t-types fow cuda (defauwt is off). (˘ω˘)
+  // this wiww twy to use fwoat16 o-on gpu which is fastew. >_<
+  // nyote that this can change the nyumewicaw stabiwity o-of the gwaph and may
+  // wequiwe the use of w-woss scawing to m-maintain modew convewgence. XD
+  toggwe auto_mixed_pwecision = 23;
+  // optimize data t-types fow mkw (defauwt i-is off). rawr x3
+  // this wiww twy to use bfwoat16 on cpus, ( ͡o ω ͡o ) w-which is fastew. :3
+  // nyote that t-this can change the nyumewicaw stabiwity of the gwaph. mya
+  toggwe a-auto_mixed_pwecision_mkw = 25;
+  // emuwate a modew u-using data t-type fwoat16 on cpu (defauwt is o-off).
+  // this wiww twy to emuwate t-the fwoat16 i-inputs and outputs o-of an opewatow
+  // on cpu to h-have bettew cowwewation w-with fwoat16 on gpu; howevew the
+  // computation i-in the o-opewatow is based o-on fwoat32. σωσ
+  // nyote that this can change t-the nyumewicaw stabiwity of the g-gwaph. (ꈍᴗꈍ)
+  toggwe a-auto_mixed_pwecision_cpu = 29;
+  // disabwe the entiwe meta optimizew (off by defauwt). OwO
+  b-boow disabwe_meta_optimizew = 19;
+  // o-optimizews wegistewed b-by pwugin (defauwt i-is on)
+  toggwe use_pwugin_optimizews = 28;
 
-  // Controls how many times we run the optimizers in meta optimizer (default
-  // is once).
-  NumIterationsType meta_optimizer_iterations = 12;
+  // c-contwows how many times we wun the optimizews in meta optimizew (defauwt
+  // is once). o.O
+  n-nyumitewationstype meta_optimizew_itewations = 12;
 
-  // The minimum number of nodes in a graph to optimizer. For smaller graphs,
-  // optimization is skipped.
-  // 0 means the system picks an appropriate number.
-  // < 0 means do not skip optimization.
-  int32 min_graph_nodes = 17;
+  // the m-minimum nyumbew of nyodes in a-a gwaph to optimizew. 😳😳😳 fow smowew g-gwaphs, /(^•ω•^)
+  // optimization is skipped. OwO
+  // 0 m-means t-the system picks a-an appwopwiate n-nyumbew. ^^
+  // < 0 m-means do nyot skip optimization. (///ˬ///✿)
+  int32 min_gwaph_nodes = 17;
 
-  // Disable optimizations that assume compressed tensors. Note that this flag
-  // is experimental and may be removed in the future.
-  bool experimental_disable_compressed_tensor_optimization = 26;
+  // disabwe optimizations that assume compwessed tensows. (///ˬ///✿) n-nyote that this f-fwag
+  // is expewimentaw a-and may be wemoved in t-the futuwe. (///ˬ///✿)
+  boow expewimentaw_disabwe_compwessed_tensow_optimization = 26;
 
-  // Disable folding quantization emulation ops such as FakeQuantWithMinMax* and
-  // QuantizeAndDequantize*. Some compilers (e.g. the TF-to-tflite converter)
-  // have to extract quantization configs (e.g. min/max range, number of bits,
-  // and per-channel) from the quantization emulation ops. Note that this flag
-  // is experimental and may be removed in the future. See b/174138564 for more
-  // details.
-  bool experimental_disable_folding_quantization_emulation = 27;
+  // disabwe fowding quantization e-emuwation ops such a-as fakequantwithminmax* and
+  // q-quantizeanddequantize*. ʘwʘ some compiwews (e.g. ^•ﻌ•^ t-the tf-to-tfwite c-convewtew)
+  // have to extwact q-quantization c-configs (e.g. min/max wange, OwO nyumbew of bits,
+  // and pew-channew) fwom the quantization e-emuwation o-ops. (U ﹏ U) nyote that t-this fwag
+  // i-is expewimentaw a-and may be wemoved in the futuwe. (ˆ ﻌ ˆ)♡ s-see b/174138564 f-fow mowe
+  // detaiws. (⑅˘꒳˘)
+  boow e-expewimentaw_disabwe_fowding_quantization_emuwation = 27;
 
-  enum MemOptType {
-    // The default setting (SCHEDULING and SWAPPING HEURISTICS only)
-    DEFAULT_MEM_OPT = 0;
-    // Disabled in the meta-optimizer.
-    NO_MEM_OPT = 1;
-    // Driven by manual op-level annotations.
-    MANUAL = 2;
+  e-enum memopttype {
+    // the defauwt s-setting (scheduwing and swapping heuwistics o-onwy)
+    defauwt_mem_opt = 0;
+    // disabwed i-in the meta-optimizew. (U ﹏ U)
+    n-no_mem_opt = 1;
+    // dwiven by manuaw o-op-wevew annotations. o.O
+    manuaw = 2;
 
-    // Driven by heuristics. The behavior of these heuristics is subject to
-    // change. Currently includes an experimental recomputation and swapping
-    // heuristics. Manual annotations are respected, but additional nodes are
-    // selected automatically.
+    // dwiven by heuwistics. mya t-the behaviow o-of these heuwistics i-is subject to
+    // change. XD cuwwentwy incwudes an expewimentaw w-wecomputation and swapping
+    // heuwistics. òωó m-manuaw annotations a-awe wespected, (˘ω˘) but additionaw n-nyodes awe
+    // sewected a-automaticawwy. :3
 
-    // Swapping heuristic will move a tensor from the GPU to the CPU and move
-    // it back when needed to reduce peak memory usage.
-    SWAPPING_HEURISTICS = 4;
-    // Recomputation heuristics will recompute ops (such as Relu activation)
-    // during backprop instead of storing them, reducing peak memory usage.
-    RECOMPUTATION_HEURISTICS = 5;
-    // Scheduling will split big ops such as AddN and try to enforce a schedule
-    // of the new computations that decreases peak memory usage.
-    SCHEDULING_HEURISTICS = 6;
-    // Use any combination of swapping and recomputation heuristics.
-    HEURISTICS = 3;
+    // s-swapping heuwistic wiww move a tensow fwom t-the gpu to the cpu and move
+    // it back when n-nyeeded to weduce p-peak memowy usage. OwO
+    swapping_heuwistics = 4;
+    // w-wecomputation heuwistics w-wiww wecompute o-ops (such as w-wewu activation)
+    // duwing backpwop instead of stowing them, mya weducing peak memowy usage. (˘ω˘)
+    wecomputation_heuwistics = 5;
+    // scheduwing wiww spwit big ops such as addn and twy to enfowce a scheduwe
+    // of the nyew c-computations t-that decweases peak memowy usage. o.O
+    scheduwing_heuwistics = 6;
+    // u-use any c-combination of s-swapping and wecomputation heuwistics. (✿oωo)
+    h-heuwistics = 3;
   }
-  // Configures memory optimization passes through the meta-optimizer. Has no
-  // effect on manually requested memory optimization passes in the optimizers
-  // field.
-  MemOptType memory_optimization = 4;
-  // A node name scope for node names which are valid outputs of recomputations.
-  // Inputs to nodes that match this scope may be recomputed (subject either to
-  // manual annotation of those input nodes or to manual annotation and
-  // heuristics depending on memory_optimization), but the nodes themselves will
-  // not be recomputed. This matches any sub-scopes as well, meaning the scope
-  // can appear not just as a top-level scope. For example, if the value is
-  // "gradients/", the default, it will match node name "gradients/foo",
-  // "foo/gradients/bar", but not "foo_gradients/"
-  string memory_optimizer_target_node_name_scope = 6;
-  // Maximum number of milliseconds to spend optimizing a single graph before
-  // timing out. If less than or equal to 0 (default value) the optimizer will
-  // never time out.
-  int64 meta_optimizer_timeout_ms = 20;
+  // configuwes memowy o-optimization p-passes thwough the meta-optimizew. (ˆ ﻌ ˆ)♡ h-has nyo
+  // effect on manuawwy w-wequested m-memowy optimization passes in the optimizews
+  // f-fiewd. ^^;;
+  memopttype m-memowy_optimization = 4;
+  // a-a nyode nyame s-scope fow nyode n-names which awe v-vawid outputs o-of wecomputations. OwO
+  // i-inputs to n-nodes that match this scope may b-be wecomputed (subject e-eithew t-to
+  // manuaw annotation of those i-input nyodes ow to manuaw annotation and
+  // h-heuwistics depending on memowy_optimization), 🥺 but t-the nyodes themsewves w-wiww
+  // n-nyot be wecomputed. mya this matches a-any sub-scopes as weww, 😳 meaning t-the scope
+  // can appeaw nyot j-just as a top-wevew scope. òωó fow e-exampwe, /(^•ω•^) if the vawue is
+  // "gwadients/", -.- the defauwt, òωó it wiww match nyode nyame "gwadients/foo", /(^•ω•^)
+  // "foo/gwadients/baw", /(^•ω•^) b-but nyot "foo_gwadients/"
+  stwing m-memowy_optimizew_tawget_node_name_scope = 6;
+  // m-maximum nyumbew of miwwiseconds to spend optimizing a singwe g-gwaph befowe
+  // timing out. 😳 i-if wess than ow e-equaw to 0 (defauwt v-vawue) the optimizew wiww
+  // nyevew time out.
+  i-int64 meta_optimizew_timeout_ms = 20;
 
-  // Configures AutoParallel optimization passes either through the
-  // meta-optimizer or when manually specified through the optimizers field.
-  AutoParallelOptions auto_parallel = 5;
+  // c-configuwes autopawawwew optimization p-passes eithew thwough the
+  // meta-optimizew o-ow when manuawwy specified t-thwough the optimizews f-fiewd. :3
+  a-autopawawwewoptions auto_pawawwew = 5;
 
-  // If true, any optimization pass failing will cause the MetaOptimizer to
-  // stop with an error. By default - or when set to false, failing passes are
-  // skipped silently.
-  bool fail_on_optimizer_errors = 21;
+  // i-if t-twue, (U ᵕ U❁) any optimization p-pass faiwing w-wiww cause the metaoptimizew t-to
+  // stop with a-an ewwow. ʘwʘ by d-defauwt - ow when s-set to fawse, o.O f-faiwing passes awe
+  // s-skipped s-siwentwy. ʘwʘ
+  boow f-faiw_on_optimizew_ewwows = 21;
 
-  ScopedAllocatorOptions scoped_allocator_opts = 16;
+  scopedawwocatowoptions s-scoped_awwocatow_opts = 16;
 
-  // If non-empty, will use this as an alternative way to specify a list of
-  // optimizations to turn on and the order of the optimizations (replacing the
-  // meta-optimizer).
+  // if nyon-empty, ^^ w-wiww use this as an awtewnative w-way to s-specify a wist o-of
+  // optimizations to tuwn on and the owdew of the optimizations (wepwacing t-the
+  // meta-optimizew). ^•ﻌ•^
   //
-  // Of the RewriterConfig options, only the AutoParallel configuration options
-  // (the auto_parallel field) apply to manually requested optimization passes
-  // ("autoparallel"). Memory optimization passes ("memory") invoked here are
-  // not configurable (in contrast to memory optimization passes through the
-  // meta-optimizer) and act only on manual op annotations.
+  // o-of the wewwitewconfig o-options, mya onwy the autopawawwew configuwation options
+  // (the a-auto_pawawwew f-fiewd) appwy to manuawwy w-wequested optimization p-passes
+  // ("autopawawwew"). UwU memowy optimization passes ("memowy") invoked h-hewe awe
+  // n-nyot configuwabwe (in c-contwast t-to memowy optimization passes thwough the
+  // meta-optimizew) and a-act onwy on manuaw o-op annotations. >_<
   //
-  // Custom optimizers (see custom_optimizers) that are not part of this
-  // schedule will be run after - in the order that they were specified.
-  repeated string optimizers = 100;
+  // custom optimizews (see custom_optimizews) t-that awe nyot pawt of this
+  // scheduwe w-wiww be wun aftew - in the owdew t-that they wewe s-specified. /(^•ω•^)
+  wepeated stwing o-optimizews = 100;
 
-  // Message to describe custom graph optimizer and its parameters
-  message CustomGraphOptimizer {
-    string name = 1;
-    map<string, AttrValue> parameter_map = 2;
+  // m-message to descwibe custom g-gwaph optimizew and its pawametews
+  m-message c-customgwaphoptimizew {
+    s-stwing n-nyame = 1;
+    map<stwing, òωó attwvawue> p-pawametew_map = 2;
   }
 
-  // list of CustomGraphOptimizers to apply.
-  repeated CustomGraphOptimizer custom_optimizers = 200;
+  // w-wist of customgwaphoptimizews t-to appwy. σωσ
+  wepeated customgwaphoptimizew c-custom_optimizews = 200;
 
-  // VerifierConfig specifying the verifiers to be run after every optimizer.
-  VerifierConfig inter_optimizer_verifier_config = 300;
+  // vewifiewconfig specifying t-the vewifiews t-to be wun aftew e-evewy optimizew. ( ͡o ω ͡o )
+  vewifiewconfig intew_optimizew_vewifiew_config = 300;
 
-  // VerifierConfig specifying the verifiers to be run at the end, after all
-  // optimizers have run.
-  VerifierConfig post_optimization_verifier_config = 301;
+  // vewifiewconfig specifying the v-vewifiews to be wun at the end, nyaa~~ a-aftew aww
+  // o-optimizews have wun. :3
+  vewifiewconfig post_optimization_vewifiew_config = 301;
 }

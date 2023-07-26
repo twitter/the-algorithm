@@ -1,130 +1,130 @@
-package com.twitter.home_mixer.product.list_tweets
+package com.twittew.home_mixew.pwoduct.wist_tweets
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.marshaller.timelines.ChronologicalCursorUnmarshaller
-import com.twitter.home_mixer.model.request.HomeMixerRequest
-import com.twitter.home_mixer.model.request.ListTweetsProduct
-import com.twitter.home_mixer.model.request.ListTweetsProductContext
-import com.twitter.home_mixer.product.list_tweets.model.ListTweetsQuery
-import com.twitter.home_mixer.product.list_tweets.param.ListTweetsParam.ServerMaxResultsParam
-import com.twitter.home_mixer.product.list_tweets.param.ListTweetsParamConfig
-import com.twitter.home_mixer.service.HomeMixerAccessPolicy.DefaultHomeMixerAccessPolicy
-import com.twitter.home_mixer.service.HomeMixerAlertConfig.DefaultNotificationGroup
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.common.alert.EmptyResponseRateAlert
-import com.twitter.product_mixer.core.functional_component.common.alert.LatencyAlert
-import com.twitter.product_mixer.core.functional_component.common.alert.P99
-import com.twitter.product_mixer.core.functional_component.common.alert.SuccessRateAlert
-import com.twitter.product_mixer.core.functional_component.common.alert.ThroughputAlert
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfAbove
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfBelow
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfLatencyAbove
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.product_mixer.core.pipeline.PipelineConfig
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.MalformedCursor
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineConfig
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.product_mixer.core.util.SortIndexBuilder
-import com.twitter.timelines.configapi.Params
-import com.twitter.timelines.render.{thriftscala => urt}
-import com.twitter.timelines.util.RequestCursorSerializer
-import com.twitter.util.Time
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.home_mixew.mawshawwew.timewines.chwonowogicawcuwsowunmawshawwew
+i-impowt com.twittew.home_mixew.modew.wequest.homemixewwequest
+i-impowt com.twittew.home_mixew.modew.wequest.wisttweetspwoduct
+i-impowt c-com.twittew.home_mixew.modew.wequest.wisttweetspwoductcontext
+i-impowt com.twittew.home_mixew.pwoduct.wist_tweets.modew.wisttweetsquewy
+i-impowt c-com.twittew.home_mixew.pwoduct.wist_tweets.pawam.wisttweetspawam.sewvewmaxwesuwtspawam
+impowt com.twittew.home_mixew.pwoduct.wist_tweets.pawam.wisttweetspawamconfig
+impowt com.twittew.home_mixew.sewvice.homemixewaccesspowicy.defauwthomemixewaccesspowicy
+impowt com.twittew.home_mixew.sewvice.homemixewawewtconfig.defauwtnotificationgwoup
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.uwtowdewedcuwsow
+impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.cuwsow.uwtcuwsowsewiawizew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.access_powicy.accesspowicy
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.awewt
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.emptywesponsewateawewt
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.watencyawewt
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.p99
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.successwateawewt
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.thwoughputawewt
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.pwedicate.twiggewifabove
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.pwedicate.twiggewifbewow
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.pwedicate.twiggewifwatencyabove
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pwoductpipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.gapcuwsow
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.topcuwsow
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewineconfig
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.badwequest
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.mawfowmedcuwsow
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct.pwoductpipewineconfig
+i-impowt com.twittew.pwoduct_mixew.cowe.pwoduct.pwoductpawamconfig
+impowt com.twittew.pwoduct_mixew.cowe.utiw.sowtindexbuiwdew
+impowt com.twittew.timewines.configapi.pawams
+impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt com.twittew.timewines.utiw.wequestcuwsowsewiawizew
+i-impowt com.twittew.utiw.time
+i-impowt com.twittew.utiw.twy
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class ListTweetsProductPipelineConfig @Inject() (
-  listTweetsMixerPipelineConfig: ListTweetsMixerPipelineConfig,
-  listTweetsParamConfig: ListTweetsParamConfig)
-    extends ProductPipelineConfig[HomeMixerRequest, ListTweetsQuery, urt.TimelineResponse] {
+@singweton
+cwass wisttweetspwoductpipewineconfig @inject() (
+  w-wisttweetsmixewpipewineconfig: w-wisttweetsmixewpipewineconfig, ʘwʘ
+  wisttweetspawamconfig: w-wisttweetspawamconfig)
+    e-extends pwoductpipewineconfig[homemixewwequest, ( ͡o ω ͡o ) w-wisttweetsquewy, o.O uwt.timewinewesponse] {
 
-  override val identifier: ProductPipelineIdentifier = ProductPipelineIdentifier("ListTweets")
-  override val product: request.Product = ListTweetsProduct
-  override val paramConfig: ProductParamConfig = listTweetsParamConfig
-  override val denyLoggedOutUsers: Boolean = false
+  o-ovewwide vaw identifiew: pwoductpipewineidentifiew = p-pwoductpipewineidentifiew("wisttweets")
+  ovewwide vaw p-pwoduct: wequest.pwoduct = wisttweetspwoduct
+  o-ovewwide vaw pawamconfig: p-pwoductpawamconfig = wisttweetspawamconfig
+  ovewwide vaw denywoggedoutusews: boowean = fawse
 
-  override def pipelineQueryTransformer(
-    request: HomeMixerRequest,
-    params: Params
-  ): ListTweetsQuery = {
-    val context = request.productContext match {
-      case Some(context: ListTweetsProductContext) => context
-      case _ => throw PipelineFailure(BadRequest, "ListTweetsProductContext not found")
+  ovewwide def pipewinequewytwansfowmew(
+    w-wequest: h-homemixewwequest, >w<
+    pawams: pawams
+  ): w-wisttweetsquewy = {
+    v-vaw context = w-wequest.pwoductcontext match {
+      case some(context: wisttweetspwoductcontext) => c-context
+      case _ => thwow pipewinefaiwuwe(badwequest, 😳 "wisttweetspwoductcontext nyot found")
     }
 
-    val debugOptions = request.debugParams.flatMap(_.debugOptions)
+    vaw debugoptions = w-wequest.debugpawams.fwatmap(_.debugoptions)
 
     /**
-     * Unlike other clients, newly created tweets on Android have the sort index set to the current
-     * time instead of the top sort index + 1, so these tweets get stuck at the top of the timeline
-     * if subsequent timeline responses use the sort index from the previous response instead of
-     * the current time.
+     * unwike othew cwients, 🥺 n-nyewwy cweated t-tweets on a-andwoid have the sowt index set t-to the cuwwent
+     * t-time instead o-of the top sowt i-index + 1, rawr x3 so these tweets get stuck at the top o-of the timewine
+     * i-if subsequent t-timewine w-wesponses use the s-sowt index fwom the pwevious wesponse instead of
+     * the cuwwent t-time. o.O
      */
-    val pipelineCursor = request.serializedRequestCursor.flatMap { cursor =>
-      Try(UrtCursorSerializer.deserializeOrderedCursor(cursor))
-        .getOrElse(ChronologicalCursorUnmarshaller(RequestCursorSerializer.deserialize(cursor)))
+    vaw pipewinecuwsow = wequest.sewiawizedwequestcuwsow.fwatmap { cuwsow =>
+      twy(uwtcuwsowsewiawizew.desewiawizeowdewedcuwsow(cuwsow))
+        .getowewse(chwonowogicawcuwsowunmawshawwew(wequestcuwsowsewiawizew.desewiawize(cuwsow)))
         .map {
-          case UrtOrderedCursor(_, id, Some(GapCursor), gapBoundaryId)
-              if id.isEmpty || gapBoundaryId.isEmpty =>
-            throw PipelineFailure(MalformedCursor, "Gap Cursor bounds not defined")
-          case topCursor @ UrtOrderedCursor(_, _, Some(TopCursor), _) =>
-            val queryTime = debugOptions.flatMap(_.requestTimeOverride).getOrElse(Time.now)
-            topCursor.copy(initialSortIndex = SortIndexBuilder.timeToId(queryTime))
-          case cursor => cursor
+          case u-uwtowdewedcuwsow(_, rawr id, some(gapcuwsow), ʘwʘ gapboundawyid)
+              if id.isempty || g-gapboundawyid.isempty =>
+            t-thwow p-pipewinefaiwuwe(mawfowmedcuwsow, 😳😳😳 "gap cuwsow b-bounds nyot defined")
+          case topcuwsow @ u-uwtowdewedcuwsow(_, ^^;; _, s-some(topcuwsow), o.O _) =>
+            vaw quewytime = debugoptions.fwatmap(_.wequesttimeovewwide).getowewse(time.now)
+            topcuwsow.copy(initiawsowtindex = sowtindexbuiwdew.timetoid(quewytime))
+          case cuwsow => c-cuwsow
         }
     }
 
-    ListTweetsQuery(
-      params = params,
-      clientContext = request.clientContext,
-      features = None,
-      pipelineCursor = pipelineCursor,
-      requestedMaxResults = Some(params(ServerMaxResultsParam)),
-      debugOptions = debugOptions,
-      listId = context.listId,
-      deviceContext = context.deviceContext,
-      dspClientContext = context.dspClientContext
+    wisttweetsquewy(
+      p-pawams = pawams, (///ˬ///✿)
+      c-cwientcontext = w-wequest.cwientcontext, σωσ
+      featuwes = nyone, nyaa~~
+      pipewinecuwsow = p-pipewinecuwsow,
+      w-wequestedmaxwesuwts = some(pawams(sewvewmaxwesuwtspawam)), ^^;;
+      debugoptions = d-debugoptions, ^•ﻌ•^
+      w-wistid = context.wistid, σωσ
+      devicecontext = context.devicecontext, -.-
+      dspcwientcontext = context.dspcwientcontext
     )
   }
 
-  override def pipelines: Seq[PipelineConfig] = Seq(listTweetsMixerPipelineConfig)
+  o-ovewwide d-def pipewines: seq[pipewineconfig] = s-seq(wisttweetsmixewpipewineconfig)
 
-  override def pipelineSelector(query: ListTweetsQuery): ComponentIdentifier =
-    listTweetsMixerPipelineConfig.identifier
+  ovewwide d-def pipewinesewectow(quewy: w-wisttweetsquewy): componentidentifiew =
+    w-wisttweetsmixewpipewineconfig.identifiew
 
-  override val alerts: Seq[Alert] = Seq(
-    SuccessRateAlert(
-      notificationGroup = DefaultNotificationGroup,
-      warnPredicate = TriggerIfBelow(99.9, 20, 30),
-      criticalPredicate = TriggerIfBelow(99.9, 30, 30),
+  ovewwide vaw awewts: seq[awewt] = seq(
+    successwateawewt(
+      n-nyotificationgwoup = d-defauwtnotificationgwoup, ^^;;
+      wawnpwedicate = twiggewifbewow(99.9, XD 20, 30),
+      c-cwiticawpwedicate = t-twiggewifbewow(99.9, 🥺 30, òωó 30),
     ),
-    LatencyAlert(
-      notificationGroup = DefaultNotificationGroup,
-      percentile = P99,
-      warnPredicate = TriggerIfLatencyAbove(300.millis, 15, 30),
-      criticalPredicate = TriggerIfLatencyAbove(400.millis, 15, 30)
+    watencyawewt(
+      nyotificationgwoup = defauwtnotificationgwoup, (ˆ ﻌ ˆ)♡
+      p-pewcentiwe = p99,
+      wawnpwedicate = twiggewifwatencyabove(300.miwwis, -.- 15, 30), :3
+      cwiticawpwedicate = t-twiggewifwatencyabove(400.miwwis, ʘwʘ 15, 🥺 30)
     ),
-    ThroughputAlert(
-      notificationGroup = DefaultNotificationGroup,
-      warnPredicate = TriggerIfAbove(3000),
-      criticalPredicate = TriggerIfAbove(4000)
-    ),
-    EmptyResponseRateAlert(
-      notificationGroup = DefaultNotificationGroup,
-      warnPredicate = TriggerIfAbove(65),
-      criticalPredicate = TriggerIfAbove(80)
+    thwoughputawewt(
+      nyotificationgwoup = d-defauwtnotificationgwoup, >_<
+      w-wawnpwedicate = twiggewifabove(3000), ʘwʘ
+      cwiticawpwedicate = twiggewifabove(4000)
+    ), (˘ω˘)
+    e-emptywesponsewateawewt(
+      n-notificationgwoup = defauwtnotificationgwoup, (✿oωo)
+      wawnpwedicate = twiggewifabove(65), (///ˬ///✿)
+      c-cwiticawpwedicate = twiggewifabove(80)
     )
   )
 
-  override val debugAccessPolicies: Set[AccessPolicy] = DefaultHomeMixerAccessPolicy
+  o-ovewwide vaw debugaccesspowicies: set[accesspowicy] = defauwthomemixewaccesspowicy
 }

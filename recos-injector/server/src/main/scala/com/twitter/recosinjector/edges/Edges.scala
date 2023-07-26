@@ -1,87 +1,87 @@
-package com.twitter.recosinjector.edges
+package com.twittew.wecosinjectow.edges
 
-import com.twitter.recos.internal.thriftscala.RecosHoseMessage
-import com.twitter.recos.recos_injector.thriftscala.{Features, UserTweetAuthorGraphMessage}
-import com.twitter.recos.util.Action.Action
-import com.twitter.recosinjector.util.TweetDetails
-import scala.collection.Map
+impowt com.twittew.wecos.intewnaw.thwiftscawa.wecoshosemessage
+i-impowt com.twittew.wecos.wecos_injectow.thwiftscawa.{featuwes, (ˆ ﻌ ˆ)♡ u-usewtweetauthowgwaphmessage}
+i-impowt com.twittew.wecos.utiw.action.action
+impowt c-com.twittew.wecosinjectow.utiw.tweetdetaiws
+i-impowt scawa.cowwection.map
 
-trait Edge {
-  // RecosHoseMessage is the thrift struct that the graphs consume.
-  def convertToRecosHoseMessage: RecosHoseMessage
+twait e-edge {
+  // w-wecoshosemessage i-is the thwift stwuct that the gwaphs consume.
+  def convewttowecoshosemessage: wecoshosemessage
 
-  // UserTweetAuthorGraphMessage is the thrift struct that user_tweet_author_graph consumes.
-  def convertToUserTweetAuthorGraphMessage: UserTweetAuthorGraphMessage
+  // u-usewtweetauthowgwaphmessage is the thwift stwuct that usew_tweet_authow_gwaph c-consumes. 😳😳😳
+  def convewttousewtweetauthowgwaphmessage: u-usewtweetauthowgwaphmessage
 }
 
 /**
- * Edge corresponding to UserTweetEntityEdge.
- * It captures user-tweet interactions: Create, Like, Retweet, Reply etc.
+ * edge cowwesponding to usewtweetentityedge. :3
+ * it captuwes usew-tweet i-intewactions: cweate, OwO wike, w-wetweet, (U ﹏ U) wepwy e-etc. >w<
  */
-case class UserTweetEntityEdge(
-  sourceUser: Long,
-  targetTweet: Long,
-  action: Action,
-  cardInfo: Option[Byte],
-  metadata: Option[Long],
-  entitiesMap: Option[Map[Byte, Seq[Int]]],
-  tweetDetails: Option[TweetDetails])
-    extends Edge {
+case cwass usewtweetentityedge(
+  souwceusew: wong, (U ﹏ U)
+  tawgettweet: wong,
+  a-action: action, 😳
+  cawdinfo: option[byte], (ˆ ﻌ ˆ)♡
+  metadata: option[wong], 😳😳😳
+  entitiesmap: o-option[map[byte, (U ﹏ U) seq[int]]], (///ˬ///✿)
+  t-tweetdetaiws: o-option[tweetdetaiws])
+    e-extends edge {
 
-  override def convertToRecosHoseMessage: RecosHoseMessage = {
-    RecosHoseMessage(
-      leftId = sourceUser,
-      rightId = targetTweet,
-      action = action.id.toByte,
-      card = cardInfo,
-      entities = entitiesMap,
-      edgeMetadata = metadata
+  o-ovewwide def convewttowecoshosemessage: wecoshosemessage = {
+    wecoshosemessage(
+      w-weftid = souwceusew, 😳
+      wightid = t-tawgettweet, 😳
+      action = action.id.tobyte, σωσ
+      cawd = cawdinfo, rawr x3
+      entities = entitiesmap, OwO
+      edgemetadata = m-metadata
     )
   }
 
-  private def getFeatures(tweetDetails: TweetDetails): Features = {
-    Features(
-      hasPhoto = Some(tweetDetails.hasPhoto),
-      hasVideo = Some(tweetDetails.hasVideo),
-      hasUrl = Some(tweetDetails.hasUrl),
-      hasHashtag = Some(tweetDetails.hasHashtag)
+  pwivate d-def getfeatuwes(tweetdetaiws: t-tweetdetaiws): f-featuwes = {
+    featuwes(
+      hasphoto = some(tweetdetaiws.hasphoto),
+      hasvideo = some(tweetdetaiws.hasvideo), /(^•ω•^)
+      h-hasuww = some(tweetdetaiws.hasuww), 😳😳😳
+      h-hashashtag = some(tweetdetaiws.hashashtag)
     )
   }
 
-  override def convertToUserTweetAuthorGraphMessage: UserTweetAuthorGraphMessage = {
-    UserTweetAuthorGraphMessage(
-      leftId = sourceUser,
-      rightId = targetTweet,
-      action = action.id.toByte,
-      card = cardInfo,
-      authorId = tweetDetails.flatMap(_.authorId),
-      features = tweetDetails.map(getFeatures)
+  o-ovewwide def convewttousewtweetauthowgwaphmessage: u-usewtweetauthowgwaphmessage = {
+    usewtweetauthowgwaphmessage(
+      w-weftid = souwceusew, ( ͡o ω ͡o )
+      w-wightid = tawgettweet, >_<
+      action = action.id.tobyte, >w<
+      c-cawd = cawdinfo, rawr
+      authowid = t-tweetdetaiws.fwatmap(_.authowid), 😳
+      featuwes = tweetdetaiws.map(getfeatuwes)
     )
   }
 }
 
 /**
- * Edge corresponding to UserUserGraph.
- * It captures user-user interactions: Follow, Mention, Mediatag.
+ * e-edge c-cowwesponding to usewusewgwaph. >w<
+ * it captuwes usew-usew intewactions: fowwow, (⑅˘꒳˘) mention, OwO mediatag.
  */
-case class UserUserEdge(
-  sourceUser: Long,
-  targetUser: Long,
-  action: Action,
-  metadata: Option[Long])
-    extends Edge {
-  override def convertToRecosHoseMessage: RecosHoseMessage = {
-    RecosHoseMessage(
-      leftId = sourceUser,
-      rightId = targetUser,
-      action = action.id.toByte,
-      edgeMetadata = metadata
+case cwass u-usewusewedge(
+  s-souwceusew: wong,
+  tawgetusew: w-wong, (ꈍᴗꈍ)
+  action: a-action, 😳
+  metadata: o-option[wong])
+    extends edge {
+  ovewwide def convewttowecoshosemessage: w-wecoshosemessage = {
+    wecoshosemessage(
+      weftid = souwceusew, 😳😳😳
+      wightid = tawgetusew, mya
+      a-action = action.id.tobyte, mya
+      e-edgemetadata = m-metadata
     )
   }
 
-  override def convertToUserTweetAuthorGraphMessage: UserTweetAuthorGraphMessage = {
-    throw new RuntimeException(
-      "convertToUserTweetAuthorGraphMessage not implemented in UserUserEdge.")
+  ovewwide d-def convewttousewtweetauthowgwaphmessage: usewtweetauthowgwaphmessage = {
+    t-thwow nyew w-wuntimeexception(
+      "convewttousewtweetauthowgwaphmessage nyot i-impwemented i-in usewusewedge.")
   }
 
 }

@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.component_library.side_effect
+package com.twittew.pwoduct_mixew.component_wibwawy.side_effect
 
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.user_session_store.ReadWriteUserSessionStore
-import com.twitter.user_session_store.WriteRequest
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.side_effect.pipewinewesuwtsideeffect
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.hasmawshawwing
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.usew_session_stowe.weadwwiteusewsessionstowe
+i-impowt com.twittew.usew_session_stowe.wwitewequest
 
 /**
- * A [[PipelineResultSideEffect]] that writes to a [[ReadWriteUserSessionStore]]
+ * a-a [[pipewinewesuwtsideeffect]] that w-wwites to a [[weadwwiteusewsessionstowe]]
  */
-trait UserSessionStoreUpdateSideEffect[
-  Request <: WriteRequest,
-  Query <: PipelineQuery,
-  ResponseType <: HasMarshalling]
-    extends PipelineResultSideEffect[Query, ResponseType] {
+t-twait usewsessionstoweupdatesideeffect[
+  wequest <: wwitewequest, rawr x3
+  quewy <: pipewinequewy, nyaa~~
+  w-wesponsetype <: hasmawshawwing]
+    extends pipewinewesuwtsideeffect[quewy, /(^•ω•^) w-wesponsetype] {
 
   /**
-   * Build the write request from the query
-   * @param query PipelineQuery
-   * @return WriteRequest
+   * buiwd the w-wwite wequest fwom the quewy
+   * @pawam quewy pipewinequewy
+   * @wetuwn w-wwitewequest
    */
-  def buildWriteRequest(query: Query): Option[Request]
+  def buiwdwwitewequest(quewy: quewy): o-option[wequest]
 
-  val userSessionStore: ReadWriteUserSessionStore
+  v-vaw usewsessionstowe: weadwwiteusewsessionstowe
 
-  final override def apply(
-    inputs: PipelineResultSideEffect.Inputs[Query, ResponseType]
-  ): Stitch[Unit] = {
-    buildWriteRequest(inputs.query)
-      .map(userSessionStore.write)
-      .getOrElse(Stitch.Unit)
+  finaw ovewwide def appwy(
+    inputs: p-pipewinewesuwtsideeffect.inputs[quewy, rawr wesponsetype]
+  ): stitch[unit] = {
+    buiwdwwitewequest(inputs.quewy)
+      .map(usewsessionstowe.wwite)
+      .getowewse(stitch.unit)
   }
 }

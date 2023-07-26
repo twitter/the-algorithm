@@ -1,61 +1,61 @@
-package com.twitter.timelines.prediction.features.simcluster
+package com.twittew.timewines.pwediction.featuwes.simcwustew
 
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.ml.api.Feature._
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
-import scala.collection.JavaConverters._
+impowt c-com.twittew.daw.pewsonaw_data.thwiftjava.pewsonawdatatype._
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.mw.api.featuwe._
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.cwustewsusewisintewestedin
+i-impowt c-com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.typedaggwegategwoup
+i-impowt s-scawa.cowwection.javaconvewtews._
 
-class SimclusterFeaturesHelper(statsReceiver: StatsReceiver) {
-  import SimclusterFeatures._
+cwass simcwustewfeatuweshewpew(statsweceivew: statsweceivew) {
+  impowt simcwustewfeatuwes._
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
-  private[this] val invalidSimclusterModelVersion = scopedStatsReceiver
-    .counter("invalidSimclusterModelVersion")
+  pwivate[this] v-vaw scopedstatsweceivew = statsweceivew.scope(getcwass.getsimpwename)
+  pwivate[this] v-vaw invawidsimcwustewmodewvewsion = scopedstatsweceivew
+    .countew("invawidsimcwustewmodewvewsion")
 
-  def fromUserClusterInterestsPair(
-    userInterestClustersPair: (Long, ClustersUserIsInterestedIn)
-  ): Option[SimclusterFeatures] = {
-    val (userId, userInterestClusters) = userInterestClustersPair
-    if (userInterestClusters.knownForModelVersion == SIMCLUSTER_MODEL_VERSION) {
-      val userInterestClustersFavScores = for {
-        (clusterId, scores) <- userInterestClusters.clusterIdToScores
-        favScore <- scores.favScore
-      } yield (clusterId.toString, favScore)
-      Some(
-        SimclusterFeatures(
-          userId,
-          userInterestClusters.knownForModelVersion,
-          userInterestClustersFavScores.toMap
+  d-def fwomusewcwustewintewestspaiw(
+    usewintewestcwustewspaiw: (wong, mya cwustewsusewisintewestedin)
+  ): option[simcwustewfeatuwes] = {
+    v-vaw (usewid, ^^ usewintewestcwustews) = u-usewintewestcwustewspaiw
+    if (usewintewestcwustews.knownfowmodewvewsion == s-simcwustew_modew_vewsion) {
+      vaw usewintewestcwustewsfavscowes = fow {
+        (cwustewid, 😳😳😳 scowes) <- usewintewestcwustews.cwustewidtoscowes
+        favscowe <- s-scowes.favscowe
+      } yiewd (cwustewid.tostwing, mya favscowe)
+      some(
+        simcwustewfeatuwes(
+          u-usewid, 😳
+          usewintewestcwustews.knownfowmodewvewsion, -.-
+          u-usewintewestcwustewsfavscowes.tomap
         )
       )
-    } else {
-      // We maintain this counter to make sure that the hardcoded modelVersion we are using is correct.
-      invalidSimclusterModelVersion.incr
-      None
+    } e-ewse {
+      // w-we maintain t-this countew to make suwe that the hawdcoded m-modewvewsion we awe using is cowwect. 🥺
+      invawidsimcwustewmodewvewsion.incw
+      n-nyone
     }
   }
 }
 
-object SimclusterFeatures {
-  // Check http://go/simclustersv2runbook for production versions
-  // Our models are trained for this specific model version only.
-  val SIMCLUSTER_MODEL_VERSION = "20M_145K_dec11"
-  val prefix = s"simcluster.v2.$SIMCLUSTER_MODEL_VERSION"
+object simcwustewfeatuwes {
+  // check http://go/simcwustewsv2wunbook fow pwoduction vewsions
+  // o-ouw modews awe twained f-fow this specific m-modew vewsion o-onwy. o.O
+  vaw simcwustew_modew_vewsion = "20m_145k_dec11"
+  vaw pwefix = s"simcwustew.v2.$simcwustew_modew_vewsion"
 
-  val SIMCLUSTER_USER_INTEREST_CLUSTER_SCORES = new SparseContinuous(
-    s"$prefix.user_interest_cluster_scores",
-    Set(EngagementScore, InferredInterests).asJava
+  vaw simcwustew_usew_intewest_cwustew_scowes = n-nyew spawsecontinuous(
+    s-s"$pwefix.usew_intewest_cwustew_scowes", /(^•ω•^)
+    set(engagementscowe, nyaa~~ i-infewwedintewests).asjava
   )
-  val SIMCLUSTER_USER_INTEREST_CLUSTER_IDS = new SparseBinary(
-    s"$prefix.user_interest_cluster_ids",
-    Set(InferredInterests).asJava
+  v-vaw simcwustew_usew_intewest_cwustew_ids = nyew s-spawsebinawy(
+    s"$pwefix.usew_intewest_cwustew_ids", nyaa~~
+    set(infewwedintewests).asjava
   )
-  val SIMCLUSTER_MODEL_VERSION_METADATA = new Text("meta.simcluster_version")
+  v-vaw simcwustew_modew_vewsion_metadata = nyew text("meta.simcwustew_vewsion")
 }
 
-case class SimclusterFeatures(
-  userId: Long,
-  modelVersion: String,
-  interestClusterScoresMap: Map[String, Double])
+c-case cwass simcwustewfeatuwes(
+  usewid: wong, :3
+  m-modewvewsion: stwing, 😳😳😳
+  intewestcwustewscowesmap: m-map[stwing, (˘ω˘) d-doubwe])

@@ -1,33 +1,33 @@
-package com.twitter.frigate.pushservice.module
+package com.twittew.fwigate.pushsewvice.moduwe
 
-import com.google.inject.Singleton
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.frigate.pushservice.thriftscala.PushService
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ReqRepDarkTrafficFilterModule
+impowt com.googwe.inject.singweton
+i-impowt com.twittew.decidew.decidew
+i-impowt com.twittew.decidew.wandomwecipient
+i-impowt com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwscwient
+i-impowt c-com.twittew.fwigate.pushsewvice.thwiftscawa.pushsewvice
+i-impowt c-com.twittew.inject.injectow
+impowt c-com.twittew.inject.thwift.moduwes.weqwepdawktwafficfiwtewmoduwe
 
 /**
- * The darkTraffic filter sample all requests by default
-  and set the diffy dest to nil for non prod environments
+ * the dawktwaffic fiwtew sampwe aww wequests by defauwt
+  a-and set the diffy dest to nyiw fow nyon pwod e-enviwonments
  */
-@Singleton
-object PushServiceDarkTrafficModule
-    extends ReqRepDarkTrafficFilterModule[PushService.ReqRepServicePerEndpoint]
-    with MtlsClient {
+@singweton
+object pushsewvicedawktwafficmoduwe
+    e-extends weqwepdawktwafficfiwtewmoduwe[pushsewvice.weqwepsewvicepewendpoint]
+    with mtwscwient {
 
-  override def label: String = "frigate-pushservice-diffy-proxy"
+  ovewwide def wabew: s-stwing = "fwigate-pushsewvice-diffy-pwoxy"
 
   /**
-   * Function to determine if the request should be "sampled", e.g.
-   * sent to the dark service.
+   * function t-to detewmine if t-the wequest shouwd be "sampwed", nyaa~~ e.g. (⑅˘꒳˘)
+   * sent to the dawk sewvice. rawr x3
    *
-   * @param injector the [[com.twitter.inject.Injector]] for use in determining if a given request
-   *                 should be forwarded or not.
+   * @pawam injectow the [[com.twittew.inject.injectow]] f-fow use in detewmining if a given wequest
+   *                 shouwd be fowwawded ow nyot. (✿oωo)
    */
-  override protected def enableSampling(injector: Injector): Any => Boolean = {
-    val decider = injector.instance[Decider]
-    _ => decider.isAvailable("frigate_pushservice_dark_traffic_percent", Some(RandomRecipient))
+  o-ovewwide pwotected def enabwesampwing(injectow: i-injectow): a-any => boowean = {
+    v-vaw decidew = i-injectow.instance[decidew]
+    _ => decidew.isavaiwabwe("fwigate_pushsewvice_dawk_twaffic_pewcent", (ˆ ﻌ ˆ)♡ some(wandomwecipient))
   }
 }

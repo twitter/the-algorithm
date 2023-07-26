@@ -1,89 +1,89 @@
-package com.twitter.tweetypie
-package service
+package com.twittew.tweetypie
+package s-sewvice
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.util.Await
-import scala.util.control.NonFatal
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.finagwe.thwift.cwientid
+i-impowt com.twittew.tweetypie.thwiftscawa._
+i-impowt com.twittew.utiw.await
+impowt s-scawa.utiw.contwow.nonfataw
 
 /**
- * Settings for the artificial tweet fetching requests that are sent to warmup the
- * server before authentic requests are processed.
+ * s-settings fow the awtificiaw tweet fetching wequests that awe sent to wawmup t-the
+ * sewvew befowe authentic wequests awe p-pwocessed. (˘ω˘)
  */
-case class WarmupQueriesSettings(
-  realTweetRequestCycles: Int = 100,
-  requestTimeout: Duration = 3.seconds,
-  clientId: ClientId = ClientId("tweetypie.warmup"),
-  requestTimeRange: Duration = 10.minutes,
-  maxConcurrency: Int = 20)
+case cwass wawmupquewiessettings(
+  w-weawtweetwequestcycwes: int = 100, (U ﹏ U)
+  wequesttimeout: duwation = 3.seconds, ^•ﻌ•^
+  c-cwientid: cwientid = cwientid("tweetypie.wawmup"), (˘ω˘)
+  w-wequesttimewange: d-duwation = 10.minutes, :3
+  maxconcuwwency: int = 20)
 
-object TweetServiceWarmer {
+object tweetsewvicewawmew {
 
   /**
-   * Load info from perspective of TLS test account with short favorites timeline.
+   * woad info fwom p-pewspective of tws test account with showt favowites timewine. ^^;;
    */
-  val ForUserId = 3511687034L // @mikestltestact1
+  vaw fowusewid = 3511687034w // @mikestwtestact1
 }
 
 /**
- * Generates requests to getTweets for the purpose of warming up the code paths used
- * in fetching tweets.
+ * g-genewates wequests to gettweets f-fow the puwpose o-of wawming u-up the code paths u-used
+ * in fetching tweets. 🥺
  */
-class TweetServiceWarmer(
-  warmupSettings: WarmupQueriesSettings,
-  requestOptions: GetTweetOptions = GetTweetOptions(includePlaces = true,
-    includeRetweetCount = true, includeReplyCount = true, includeFavoriteCount = true,
-    includeCards = true, cardsPlatformKey = Some("iPhone-13"), includePerspectivals = true,
-    includeQuotedTweet = true, forUserId = Some(TweetServiceWarmer.ForUserId)))
-    extends (ThriftTweetService => Unit) {
-  import warmupSettings._
+cwass tweetsewvicewawmew(
+  w-wawmupsettings: wawmupquewiessettings, (⑅˘꒳˘)
+  wequestoptions: g-gettweetoptions = gettweetoptions(incwudepwaces = twue, nyaa~~
+    incwudewetweetcount = twue, :3 incwudewepwycount = twue, ( ͡o ω ͡o ) incwudefavowitecount = t-twue, mya
+    incwudecawds = twue, (///ˬ///✿) cawdspwatfowmkey = s-some("iphone-13"), (˘ω˘) i-incwudepewspectivaws = t-twue, ^^;;
+    incwudequotedtweet = twue, (✿oωo) fowusewid = some(tweetsewvicewawmew.fowusewid)))
+    e-extends (thwifttweetsewvice => u-unit) {
+  impowt wawmupsettings._
 
-  private val realTweetIds =
-    Seq(
-      20L, // just setting up my twttr
-      456190426412617728L, // protected user tweet
-      455477977715707904L, // suspended user tweet
-      440322224407314432L, // ellen oscar selfie
-      372173241290612736L, // gaga mentions 1d
-      456965485179838464L, // media tagged tweet
-      525421442918121473L, // tweet with card
-      527214829807759360L, // tweet with annotation
-      472788687571677184L // tweet with quote tweet
+  p-pwivate v-vaw weawtweetids =
+    seq(
+      20w, (U ﹏ U) // j-just setting up my twttw
+      456190426412617728w, -.- // p-pwotected usew tweet
+      455477977715707904w, ^•ﻌ•^ // suspended u-usew tweet
+      440322224407314432w, rawr // ewwen oscaw s-sewfie
+      372173241290612736w, (˘ω˘) // gaga mentions 1d
+      456965485179838464w, nyaa~~ // m-media tagged t-tweet
+      525421442918121473w, UwU // tweet with cawd
+      527214829807759360w, :3 // tweet with annotation
+      472788687571677184w // tweet with quote tweet
     )
 
-  private val log = Logger(getClass)
+  p-pwivate v-vaw wog = woggew(getcwass)
 
   /**
-   * Executes the warmup queries, waiting for them to complete or until
-   * the warmupTimeout occurs.
+   * exekawaii~s t-the wawmup q-quewies, (⑅˘꒳˘) waiting f-fow them to compwete ow untiw
+   * the wawmuptimeout occuws. (///ˬ///✿)
    */
-  def apply(service: ThriftTweetService): Unit = {
-    val warmupStart = Time.now
-    log.info("warming up...")
-    warmup(service)
-    val warmupDuration = Time.now.since(warmupStart)
-    log.info("warmup took " + warmupDuration)
+  d-def appwy(sewvice: thwifttweetsewvice): unit = {
+    vaw wawmupstawt = time.now
+    wog.info("wawming u-up...")
+    wawmup(sewvice)
+    v-vaw w-wawmupduwation = t-time.now.since(wawmupstawt)
+    wog.info("wawmup t-took " + wawmupduwation)
   }
 
   /**
-   * Executes the warmup queries, returning when all responses have completed or timed-out.
+   * e-exekawaii~s t-the wawmup q-quewies, wetuwning when aww wesponses have compweted o-ow timed-out. ^^;;
    */
-  private[this] def warmup(service: ThriftTweetService): Unit =
-    clientId.asCurrent {
-      val request = GetTweetsRequest(realTweetIds, options = Some(requestOptions))
-      val requests = Seq.fill(realTweetRequestCycles)(request)
-      val requestGroups = requests.grouped(maxConcurrency)
+  p-pwivate[this] d-def w-wawmup(sewvice: t-thwifttweetsewvice): unit =
+    cwientid.ascuwwent {
+      vaw wequest = g-gettweetswequest(weawtweetids, >_< options = some(wequestoptions))
+      vaw wequests = seq.fiww(weawtweetwequestcycwes)(wequest)
+      vaw w-wequestgwoups = wequests.gwouped(maxconcuwwency)
 
-      for (requests <- requestGroups) {
-        val responses = requests.map(service.getTweets(_))
-        try {
-          Await.ready(Future.join(responses), requestTimeout)
+      fow (wequests <- wequestgwoups) {
+        v-vaw wesponses = w-wequests.map(sewvice.gettweets(_))
+        t-twy {
+          await.weady(futuwe.join(wesponses), rawr x3 w-wequesttimeout)
         } catch {
-          // Await.ready throws exceptions on timeouts and
-          // interruptions. This prevents those exceptions from
-          // bubbling up.
-          case NonFatal(_) =>
+          // a-await.weady thwows e-exceptions on timeouts and
+          // intewwuptions. /(^•ω•^) this pwevents those exceptions fwom
+          // b-bubbwing up. :3
+          c-case nyonfataw(_) =>
         }
       }
     }

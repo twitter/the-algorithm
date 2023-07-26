@@ -1,17 +1,17 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-import com.twitter.spam.rtf.thriftscala.{SafetyLevel => ThriftSafetyLevel}
+impowt c-com.twittew.spam.wtf.thwiftscawa.{safetywevew => t-thwiftsafetywevew}
 
-sealed trait SafetyLevel {
-  def toThrift: ThriftSafetyLevel
+s-seawed twait s-safetywevew {
+  d-def tothwift: t-thwiftsafetywevew
 }
 
-object SafetyLevel {
-  case object Recommendations extends SafetyLevel {
-    override val toThrift = ThriftSafetyLevel.Recommendations
+o-object safetywevew {
+  c-case object wecommendations extends safetywevew {
+    ovewwide vaw tothwift = t-thwiftsafetywevew.wecommendations
   }
 
-  case object TopicsLandingPageTopicRecommendations extends SafetyLevel {
-    override val toThrift = ThriftSafetyLevel.TopicsLandingPageTopicRecommendations
+  case object topicswandingpagetopicwecommendations extends safetywevew {
+    ovewwide v-vaw tothwift = thwiftsafetywevew.topicswandingpagetopicwecommendations
   }
 }

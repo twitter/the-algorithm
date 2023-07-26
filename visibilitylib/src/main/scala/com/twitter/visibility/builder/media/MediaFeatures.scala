@@ -1,90 +1,90 @@
-package com.twitter.visibility.builder.media
+package com.twittew.visibiwity.buiwdew.media
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.mediaservices.media_util.GenericMediaKey
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.MediaSafetyLabelMapSource
-import com.twitter.visibility.features.MediaSafetyLabels
-import com.twitter.visibility.models.MediaSafetyLabel
-import com.twitter.visibility.models.MediaSafetyLabelType
-import com.twitter.visibility.models.SafetyLabel
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.mediasewvices.media_utiw.genewicmediakey
+i-impowt com.twittew.stitch.stitch
+i-impowt c-com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+i-impowt com.twittew.visibiwity.common.mediasafetywabewmapsouwce
+i-impowt com.twittew.visibiwity.featuwes.mediasafetywabews
+impowt com.twittew.visibiwity.modews.mediasafetywabew
+impowt com.twittew.visibiwity.modews.mediasafetywabewtype
+impowt c-com.twittew.visibiwity.modews.safetywabew
 
-class MediaFeatures(
-  mediaSafetyLabelMap: StratoMediaLabelMaps,
-  statsReceiver: StatsReceiver) {
+cwass mediafeatuwes(
+  m-mediasafetywabewmap: stwatomediawabewmaps, /(^•ω•^)
+  statsweceivew: s-statsweceivew) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("media_features")
+  pwivate[this] vaw scopedstatsweceivew = statsweceivew.scope("media_featuwes")
 
-  private[this] val requests =
-    scopedStatsReceiver
-      .counter("requests")
+  p-pwivate[this] vaw wequests =
+    s-scopedstatsweceivew
+      .countew("wequests")
 
-  private[this] val mediaSafetyLabelsStats =
-    scopedStatsReceiver
-      .scope(MediaSafetyLabels.name)
-      .counter("requests")
+  p-pwivate[this] vaw mediasafetywabewsstats =
+    scopedstatsweceivew
+      .scope(mediasafetywabews.name)
+      .countew("wequests")
 
-  private[this] val nonEmptyMediaStats = scopedStatsReceiver.scope("non_empty_media")
-  private[this] val nonEmptyMediaRequests = nonEmptyMediaStats.counter("requests")
-  private[this] val nonEmptyMediaKeysCount = nonEmptyMediaStats.counter("keys")
-  private[this] val nonEmptyMediaKeysLength = nonEmptyMediaStats.stat("keys_length")
+  pwivate[this] vaw nyonemptymediastats = s-scopedstatsweceivew.scope("non_empty_media")
+  pwivate[this] vaw nyonemptymediawequests = nyonemptymediastats.countew("wequests")
+  pwivate[this] v-vaw nyonemptymediakeyscount = nyonemptymediastats.countew("keys")
+  p-pwivate[this] v-vaw nyonemptymediakeyswength = n-nyonemptymediastats.stat("keys_wength")
 
-  def forMediaKeys(
-    mediaKeys: Seq[GenericMediaKey],
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    nonEmptyMediaKeysCount.incr(mediaKeys.size)
-    mediaSafetyLabelsStats.incr()
+  d-def fowmediakeys(
+    mediakeys: seq[genewicmediakey], nyaa~~
+  ): f-featuwemapbuiwdew => featuwemapbuiwdew = {
+    wequests.incw()
+    n-nyonemptymediakeyscount.incw(mediakeys.size)
+    mediasafetywabewsstats.incw()
 
-    if (mediaKeys.nonEmpty) {
-      nonEmptyMediaRequests.incr()
-      nonEmptyMediaKeysLength.add(mediaKeys.size)
+    if (mediakeys.nonempty) {
+      nyonemptymediawequests.incw()
+      nyonemptymediakeyswength.add(mediakeys.size)
     }
 
-    _.withFeature(MediaSafetyLabels, mediaSafetyLabelMap.forGenericMediaKeys(mediaKeys))
+    _.withfeatuwe(mediasafetywabews, nyaa~~ mediasafetywabewmap.fowgenewicmediakeys(mediakeys))
   }
 
-  def forGenericMediaKey(
-    genericMediaKey: GenericMediaKey
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    nonEmptyMediaKeysCount.incr()
-    mediaSafetyLabelsStats.incr()
-    nonEmptyMediaRequests.incr()
-    nonEmptyMediaKeysLength.add(1L)
+  d-def fowgenewicmediakey(
+    g-genewicmediakey: g-genewicmediakey
+  ): featuwemapbuiwdew => f-featuwemapbuiwdew = {
+    wequests.incw()
+    nyonemptymediakeyscount.incw()
+    mediasafetywabewsstats.incw()
+    n-nyonemptymediawequests.incw()
+    n-nyonemptymediakeyswength.add(1w)
 
-    _.withFeature(MediaSafetyLabels, mediaSafetyLabelMap.forGenericMediaKey(genericMediaKey))
+    _.withfeatuwe(mediasafetywabews, :3 mediasafetywabewmap.fowgenewicmediakey(genewicmediakey))
   }
 }
 
-class StratoMediaLabelMaps(source: MediaSafetyLabelMapSource) {
+c-cwass stwatomediawabewmaps(souwce: m-mediasafetywabewmapsouwce) {
 
-  def forGenericMediaKeys(
-    mediaKeys: Seq[GenericMediaKey],
-  ): Stitch[Seq[MediaSafetyLabel]] = {
-    Stitch
-      .collect(
-        mediaKeys
-          .map(getFilteredSafetyLabels)
-      ).map(_.flatten)
+  def fowgenewicmediakeys(
+    m-mediakeys: seq[genewicmediakey], 😳😳😳
+  ): stitch[seq[mediasafetywabew]] = {
+    s-stitch
+      .cowwect(
+        mediakeys
+          .map(getfiwtewedsafetywabews)
+      ).map(_.fwatten)
   }
 
-  def forGenericMediaKey(
-    genericMediaKey: GenericMediaKey
-  ): Stitch[Seq[MediaSafetyLabel]] = {
-    getFilteredSafetyLabels(genericMediaKey)
+  def fowgenewicmediakey(
+    g-genewicmediakey: genewicmediakey
+  ): s-stitch[seq[mediasafetywabew]] = {
+    getfiwtewedsafetywabews(genewicmediakey)
   }
 
-  private def getFilteredSafetyLabels(
-    genericMediaKey: GenericMediaKey,
-  ): Stitch[Seq[MediaSafetyLabel]] =
-    source
-      .fetch(genericMediaKey).map(_.flatMap(_.labels.map { stratoSafetyLabelMap =>
-        stratoSafetyLabelMap
-          .map(label =>
-            MediaSafetyLabel(
-              MediaSafetyLabelType.fromThrift(label._1),
-              SafetyLabel.fromThrift(label._2)))
-      }).toSeq.flatten)
+  p-pwivate def getfiwtewedsafetywabews(
+    g-genewicmediakey: genewicmediakey, (˘ω˘)
+  ): stitch[seq[mediasafetywabew]] =
+    souwce
+      .fetch(genewicmediakey).map(_.fwatmap(_.wabews.map { stwatosafetywabewmap =>
+        stwatosafetywabewmap
+          .map(wabew =>
+            mediasafetywabew(
+              m-mediasafetywabewtype.fwomthwift(wabew._1), ^^
+              s-safetywabew.fwomthwift(wabew._2)))
+      }).toseq.fwatten)
 }

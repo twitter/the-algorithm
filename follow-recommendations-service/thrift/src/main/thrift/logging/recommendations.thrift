@@ -1,26 +1,26 @@
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+namespace java com.twittew.fowwow_wecommendations.wogging.thwiftjava
+#@namespace scawa com.twittew.fowwow_wecommendations.wogging.thwiftscawa
+#@namespace s-stwato c-com.twittew.fowwow_wecommendations.wogging
 
-include "com/twitter/ads/adserver/adserver_common.thrift"
-include "reasons.thrift"
-include "tracking.thrift"
-include "scoring.thrift"
+i-incwude "com/twittew/ads/adsewvew/adsewvew_common.thwift"
+i-incwude "weasons.thwift"
+incwude "twacking.thwift"
+i-incwude "scowing.thwift"
 
-// Offline equal of UserRecommendation
-struct OfflineUserRecommendation {
-    1: required i64 userId(personalDataType='UserId')
-    // reason for this suggestions, eg: social context
-    2: optional reasons.Reason reason
-    // present if it is a promoted account
-    3: optional adserver_common.AdImpression adImpression
-  // tracking token (unserialized) for attribution
-  4: optional tracking.TrackingToken trackingToken
-    // scoring details
-    5: optional scoring.ScoringDetails scoringDetails
-}(persisted='true', hasPersonalData='true')
+// o-offwine equaw o-of usewwecommendation
+s-stwuct offwineusewwecommendation {
+    1: wequiwed i64 usewid(pewsonawdatatype='usewid')
+    // weason f-fow this suggestions, >_< eg: sociaw context
+    2: o-optionaw weasons.weason weason
+    // p-pwesent if it is a pwomoted account
+    3: optionaw adsewvew_common.adimpwession a-adimpwession
+  // twacking t-token (unsewiawized) f-fow attwibution
+  4: optionaw twacking.twackingtoken twackingtoken
+    // scowing detaiws
+    5: o-optionaw scowing.scowingdetaiws scowingdetaiws
+}(pewsisted='twue', rawr x3 haspewsonawdata='twue')
 
-// Offline equal of Recommendation
-union OfflineRecommendation {
-    1: OfflineUserRecommendation user
-}(persisted='true', hasPersonalData='true')
+// offwine e-equaw of wecommendation
+union offwinewecommendation {
+    1: o-offwineusewwecommendation u-usew
+}(pewsisted='twue', mya h-haspewsonawdata='twue')

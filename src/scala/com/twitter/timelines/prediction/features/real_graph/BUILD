@@ -1,15 +1,15 @@
-scala_library(
-    sources = ["*.scala"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/java/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/featurestore/catalog/entities/core",
-        "src/scala/com/twitter/ml/featurestore/catalog/entities/timelines",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/timelines:realgraph",
-        "src/scala/com/twitter/ml/featurestore/lib/entity",
-        "src/scala/com/twitter/ml/featurestore/lib/feature",
-        "src/thrift/com/twitter/dal/personal_data:personal_data-java",
-        "src/thrift/com/twitter/timelines/real_graph:real_graph-scala",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "swc/java/com/twittew/mw/api:api-base", òωó
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/entities/cowe", o.O
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/entities/timewines", (U ᵕ U❁)
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/featuwes/timewines:weawgwaph", (⑅˘꒳˘)
+        "swc/scawa/com/twittew/mw/featuwestowe/wib/entity",
+        "swc/scawa/com/twittew/mw/featuwestowe/wib/featuwe", ( ͡o ω ͡o )
+        "swc/thwift/com/twittew/daw/pewsonaw_data:pewsonaw_data-java", UwU
+        "swc/thwift/com/twittew/timewines/weaw_gwaph:weaw_gwaph-scawa", rawr x3
+    ], rawr
 )

@@ -1,18 +1,18 @@
-package com.twitter.recos.user_user_graph
+package com.twittew.wecos.usew_usew_gwaph
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.tracing.{Trace, TraceId}
-import com.twitter.recos.user_user_graph.thriftscala._
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.thwift.cwientid
+i-impowt com.twittew.finagwe.twacing.{twace, (U ﹏ U) t-twaceid}
+impowt c-com.twittew.wecos.usew_usew_gwaph.thwiftscawa._
+i-impowt com.twittew.utiw.futuwe
 
-object UserUserGraph {
-  def traceId: TraceId = Trace.id
-  def clientId: Option[ClientId] = ClientId.current
+o-object usewusewgwaph {
+  d-def twaceid: t-twaceid = twace.id
+  def cwientid: option[cwientid] = cwientid.cuwwent
 }
 
-class UserUserGraph(recommendUsersHandler: RecommendUsersHandler)
-    extends thriftscala.UserUserGraph.MethodPerEndpoint {
+cwass usewusewgwaph(wecommendusewshandwew: w-wecommendusewshandwew)
+    extends thwiftscawa.usewusewgwaph.methodpewendpoint {
 
-  override def recommendUsers(request: RecommendUserRequest): Future[RecommendUserResponse] =
-    recommendUsersHandler(request)
+  ovewwide def wecommendusews(wequest: w-wecommendusewwequest): futuwe[wecommendusewwesponse] =
+    wecommendusewshandwew(wequest)
 }

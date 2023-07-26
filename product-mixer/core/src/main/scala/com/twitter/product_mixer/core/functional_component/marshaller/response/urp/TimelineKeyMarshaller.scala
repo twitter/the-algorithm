@@ -1,54 +1,54 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwp
 
-import com.twitter.product_mixer.core.model.marshalling.response.urp.FollowedTopicsMeTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.FollowedTopicsOtherTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.ForYouExploreMixerTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.NoteworthyAccountsTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.NotInterestedTopicsMeTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.NuxForYouCategoryUserRecommendationsTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.NuxGeoCategoryUserRecommendationsTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.NuxPymkCategoryUserRecommendationsTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.NuxSingleInterestCategoryUserRecommendationsTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.NuxUserRecommendationsTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.ShoppingHomeTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TimelineKey
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TopicsLandingTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TopicsPickerTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TrendingExploreMixerTimeline
-import com.twitter.strato.graphql.timelines.{thriftscala => graphql}
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.fowwowedtopicsmetimewine
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.fowwowedtopicsothewtimewine
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.fowyouexpwowemixewtimewine
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.notewowthyaccountstimewine
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.notintewestedtopicsmetimewine
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.nuxfowyoucategowyusewwecommendationstimewine
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.nuxgeocategowyusewwecommendationstimewine
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.nuxpymkcategowyusewwecommendationstimewine
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.nuxsingweintewestcategowyusewwecommendationstimewine
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.nuxusewwecommendationstimewine
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.shoppinghometimewine
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.timewinekey
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.topicswandingtimewine
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.topicspickewtimewine
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.twendingexpwowemixewtimewine
+i-impowt com.twittew.stwato.gwaphqw.timewines.{thwiftscawa => gwaphqw}
+impowt j-javax.inject.singweton
 
-@Singleton
-class TimelineKeyMarshaller {
+@singweton
+cwass timewinekeymawshawwew {
 
-  def apply(timelineKey: TimelineKey): graphql.TimelineKey = timelineKey match {
-    case TopicsLandingTimeline(topicId) =>
-      graphql.TimelineKey.TopicTimeline(graphql.TopicId(topicId))
-    case NoteworthyAccountsTimeline(topicId) =>
-      graphql.TimelineKey.NoteworthyAccountsTimeline(graphql.TopicId(topicId))
-    case TopicsPickerTimeline(topicId) =>
-      graphql.TimelineKey.TopicsPickerTimeline(graphql.TopicId(topicId))
-    case FollowedTopicsMeTimeline() =>
-      graphql.TimelineKey.FollowedTopicsMeTimeline(graphql.Void())
-    case NotInterestedTopicsMeTimeline() =>
-      graphql.TimelineKey.NotInterestedTopicsMeTimeline(graphql.Void())
-    case FollowedTopicsOtherTimeline(userId) =>
-      graphql.TimelineKey.FollowedTopicsOtherTimeline(userId)
-    case NuxUserRecommendationsTimeline() =>
-      graphql.TimelineKey.NuxUserRecommendationsTimeline(graphql.Void())
-    case NuxForYouCategoryUserRecommendationsTimeline() =>
-      graphql.TimelineKey.NuxForYouCategoryUserRecommendationsTimeline(graphql.Void())
-    case NuxPymkCategoryUserRecommendationsTimeline() =>
-      graphql.TimelineKey.NuxPymkCategoryUserRecommendationsTimeline(graphql.Void())
-    case NuxGeoCategoryUserRecommendationsTimeline() =>
-      graphql.TimelineKey.NuxGeoCategoryUserRecommendationsTimeline(graphql.Void())
-    case NuxSingleInterestCategoryUserRecommendationsTimeline(topicId) =>
-      graphql.TimelineKey.NuxSingleInterestCategoryUserRecommendationsTimeline(
-        graphql.TopicId(topicId))
-    case ShoppingHomeTimeline() => graphql.TimelineKey.ShoppingHome(graphql.Void())
-    case ForYouExploreMixerTimeline() =>
-      graphql.TimelineKey.ForYouExploreMixerTimeline(graphql.Void())
-    case TrendingExploreMixerTimeline() =>
-      graphql.TimelineKey.TrendingExploreMixerTimeline(graphql.Void())
+  def appwy(timewinekey: timewinekey): g-gwaphqw.timewinekey = timewinekey match {
+    c-case topicswandingtimewine(topicid) =>
+      g-gwaphqw.timewinekey.topictimewine(gwaphqw.topicid(topicid))
+    case nyotewowthyaccountstimewine(topicid) =>
+      gwaphqw.timewinekey.notewowthyaccountstimewine(gwaphqw.topicid(topicid))
+    case topicspickewtimewine(topicid) =>
+      gwaphqw.timewinekey.topicspickewtimewine(gwaphqw.topicid(topicid))
+    c-case fowwowedtopicsmetimewine() =>
+      gwaphqw.timewinekey.fowwowedtopicsmetimewine(gwaphqw.void())
+    case nyotintewestedtopicsmetimewine() =>
+      gwaphqw.timewinekey.notintewestedtopicsmetimewine(gwaphqw.void())
+    case fowwowedtopicsothewtimewine(usewid) =>
+      g-gwaphqw.timewinekey.fowwowedtopicsothewtimewine(usewid)
+    case nyuxusewwecommendationstimewine() =>
+      g-gwaphqw.timewinekey.nuxusewwecommendationstimewine(gwaphqw.void())
+    c-case n-nyuxfowyoucategowyusewwecommendationstimewine() =>
+      g-gwaphqw.timewinekey.nuxfowyoucategowyusewwecommendationstimewine(gwaphqw.void())
+    case nyuxpymkcategowyusewwecommendationstimewine() =>
+      gwaphqw.timewinekey.nuxpymkcategowyusewwecommendationstimewine(gwaphqw.void())
+    c-case nyuxgeocategowyusewwecommendationstimewine() =>
+      gwaphqw.timewinekey.nuxgeocategowyusewwecommendationstimewine(gwaphqw.void())
+    case n-nyuxsingweintewestcategowyusewwecommendationstimewine(topicid) =>
+      gwaphqw.timewinekey.nuxsingweintewestcategowyusewwecommendationstimewine(
+        gwaphqw.topicid(topicid))
+    case shoppinghometimewine() => gwaphqw.timewinekey.shoppinghome(gwaphqw.void())
+    case f-fowyouexpwowemixewtimewine() =>
+      gwaphqw.timewinekey.fowyouexpwowemixewtimewine(gwaphqw.void())
+    c-case t-twendingexpwowemixewtimewine() =>
+      g-gwaphqw.timewinekey.twendingexpwowemixewtimewine(gwaphqw.void())
   }
 }

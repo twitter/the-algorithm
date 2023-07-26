@@ -1,412 +1,412 @@
-package com.twitter.frigate.pushservice.adaptor
+package com.twittew.fwigate.pushsewvice.adaptow
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.frigate.common.base.CandidateSourceEligible
-import com.twitter.frigate.common.base.TweetCandidate
-import com.twitter.frigate.common.predicate.CommonOutNetworkTweetCandidatesSourcePredicates.filterOutReplyTweet
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.model.PushTypes
-import com.twitter.frigate.pushservice.params.PopGeoTweetVersion
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.pushservice.params.TopTweetsForGeoCombination
-import com.twitter.frigate.pushservice.params.TopTweetsForGeoRankingFunction
-import com.twitter.frigate.pushservice.params.{PushFeatureSwitchParams => FS}
-import com.twitter.frigate.pushservice.predicate.DiscoverTwitterPredicate
-import com.twitter.frigate.pushservice.predicate.TargetPredicates
-import com.twitter.frigate.pushservice.util.MediaCRT
-import com.twitter.frigate.pushservice.util.PushAdaptorUtil
-import com.twitter.frigate.pushservice.util.PushDeviceUtil
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.geoduck.common.thriftscala.{Location => GeoLocation}
-import com.twitter.geoduck.service.thriftscala.LocationResponse
-import com.twitter.gizmoduck.thriftscala.UserType
-import com.twitter.hermit.pop_geo.thriftscala.PopTweetsInPlace
-import com.twitter.recommendation.interests.discovery.core.model.InterestDomain
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.FutureOps
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import com.twitter.util.Time
-import scala.collection.Map
+impowt com.twittew.finagwe.stats.countew
+i-impowt c-com.twittew.finagwe.stats.stat
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.candidatesouwce
+i-impowt com.twittew.fwigate.common.base.candidatesouwceewigibwe
+i-impowt com.twittew.fwigate.common.base.tweetcandidate
+i-impowt com.twittew.fwigate.common.pwedicate.commonoutnetwowktweetcandidatessouwcepwedicates.fiwtewoutwepwytweet
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes
+i-impowt com.twittew.fwigate.pushsewvice.pawams.popgeotweetvewsion
+impowt com.twittew.fwigate.pushsewvice.pawams.pushpawams
+i-impowt com.twittew.fwigate.pushsewvice.pawams.toptweetsfowgeocombination
+impowt com.twittew.fwigate.pushsewvice.pawams.toptweetsfowgeowankingfunction
+impowt com.twittew.fwigate.pushsewvice.pawams.{pushfeatuweswitchpawams => f-fs}
+impowt com.twittew.fwigate.pushsewvice.pwedicate.discovewtwittewpwedicate
+i-impowt c-com.twittew.fwigate.pushsewvice.pwedicate.tawgetpwedicates
+impowt com.twittew.fwigate.pushsewvice.utiw.mediacwt
+impowt com.twittew.fwigate.pushsewvice.utiw.pushadaptowutiw
+impowt c-com.twittew.fwigate.pushsewvice.utiw.pushdeviceutiw
+impowt com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+impowt com.twittew.geoduck.common.thwiftscawa.{wocation => g-geowocation}
+impowt com.twittew.geoduck.sewvice.thwiftscawa.wocationwesponse
+i-impowt com.twittew.gizmoduck.thwiftscawa.usewtype
+i-impowt com.twittew.hewmit.pop_geo.thwiftscawa.poptweetsinpwace
+i-impowt com.twittew.wecommendation.intewests.discovewy.cowe.modew.intewestdomain
+i-impowt com.twittew.stitch.tweetypie.tweetypie.tweetypiewesuwt
+impowt com.twittew.stowehaus.futuweops
+impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.time
+impowt s-scawa.cowwection.map
 
-case class PlaceTweetScore(place: String, tweetId: Long, score: Double) {
-  def toTweetScore: (Long, Double) = (tweetId, score)
+case cwass pwacetweetscowe(pwace: stwing, (U ﹏ U) tweetid: wong, scowe: doubwe) {
+  d-def totweetscowe: (wong, >w< doubwe) = (tweetid, /(^•ω•^) s-scowe)
 }
-case class TopTweetsByGeoAdaptor(
-  geoduckStoreV2: ReadableStore[Long, LocationResponse],
-  softUserGeoLocationStore: ReadableStore[Long, GeoLocation],
-  topTweetsByGeoStore: ReadableStore[InterestDomain[String], Map[String, List[(Long, Double)]]],
-  topTweetsByGeoStoreV2: ReadableStore[String, PopTweetsInPlace],
-  tweetyPieStore: ReadableStore[Long, TweetyPieResult],
-  tweetyPieStoreNoVF: ReadableStore[Long, TweetyPieResult],
-  globalStats: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
-    with CandidateSourceEligible[Target, RawCandidate] {
+case c-cwass toptweetsbygeoadaptow(
+  g-geoduckstowev2: weadabwestowe[wong, (⑅˘꒳˘) wocationwesponse], ʘwʘ
+  softusewgeowocationstowe: w-weadabwestowe[wong, rawr x3 g-geowocation], (˘ω˘)
+  toptweetsbygeostowe: w-weadabwestowe[intewestdomain[stwing], o.O m-map[stwing, 😳 wist[(wong, o.O doubwe)]]], ^^;;
+  t-toptweetsbygeostowev2: weadabwestowe[stwing, ( ͡o ω ͡o ) p-poptweetsinpwace], ^^;;
+  tweetypiestowe: weadabwestowe[wong, ^^;; tweetypiewesuwt], XD
+  t-tweetypiestowenovf: weadabwestowe[wong, 🥺 t-tweetypiewesuwt], (///ˬ///✿)
+  gwobawstats: statsweceivew)
+    extends c-candidatesouwce[tawget, (U ᵕ U❁) wawcandidate]
+    w-with candidatesouwceewigibwe[tawget, ^^;; wawcandidate] {
 
-  override def name: String = this.getClass.getSimpleName
+  ovewwide def nyame: stwing = this.getcwass.getsimpwename
 
-  private[this] val stats = globalStats.scope("TopTweetsByGeoAdaptor")
-  private[this] val noGeohashUserCounter: Counter = stats.counter("users_with_no_geohash_counter")
-  private[this] val incomingRequestCounter: Counter = stats.counter("incoming_request_counter")
-  private[this] val incomingLoggedOutRequestCounter: Counter =
-    stats.counter("incoming_logged_out_request_counter")
-  private[this] val loggedOutRawCandidatesCounter =
-    stats.counter("logged_out_raw_candidates_counter")
-  private[this] val emptyLoggedOutRawCandidatesCounter =
-    stats.counter("logged_out_empty_raw_candidates")
-  private[this] val outputTopTweetsByGeoCounter: Stat =
-    stats.stat("output_top_tweets_by_geo_counter")
-  private[this] val loggedOutPopByGeoV2CandidatesCounter: Counter =
-    stats.counter("logged_out_pop_by_geo_candidates")
-  private[this] val dormantUsersSince14DaysCounter: Counter =
-    stats.counter("dormant_user_since_14_days_counter")
-  private[this] val dormantUsersSince30DaysCounter: Counter =
-    stats.counter("dormant_user_since_30_days_counter")
-  private[this] val nonDormantUsersSince14DaysCounter: Counter =
-    stats.counter("non_dormant_user_since_14_days_counter")
-  private[this] val topTweetsByGeoTake100Counter: Counter =
-    stats.counter("top_tweets_by_geo_take_100_counter")
-  private[this] val combinationRequestsCounter =
-    stats.scope("combination_method_request_counter")
-  private[this] val popGeoTweetVersionCounter =
-    stats.scope("popgeo_tweet_version_counter")
-  private[this] val nonReplyTweetsCounter = stats.counter("non_reply_tweets")
+  pwivate[this] vaw stats = gwobawstats.scope("toptweetsbygeoadaptow")
+  p-pwivate[this] v-vaw nyogeohashusewcountew: countew = stats.countew("usews_with_no_geohash_countew")
+  p-pwivate[this] vaw i-incomingwequestcountew: c-countew = stats.countew("incoming_wequest_countew")
+  pwivate[this] vaw incomingwoggedoutwequestcountew: c-countew =
+    stats.countew("incoming_wogged_out_wequest_countew")
+  pwivate[this] vaw woggedoutwawcandidatescountew =
+    stats.countew("wogged_out_waw_candidates_countew")
+  p-pwivate[this] vaw emptywoggedoutwawcandidatescountew =
+    s-stats.countew("wogged_out_empty_waw_candidates")
+  p-pwivate[this] vaw o-outputtoptweetsbygeocountew: stat =
+    stats.stat("output_top_tweets_by_geo_countew")
+  p-pwivate[this] v-vaw woggedoutpopbygeov2candidatescountew: c-countew =
+    s-stats.countew("wogged_out_pop_by_geo_candidates")
+  pwivate[this] vaw dowmantusewssince14dayscountew: c-countew =
+    s-stats.countew("dowmant_usew_since_14_days_countew")
+  p-pwivate[this] v-vaw dowmantusewssince30dayscountew: c-countew =
+    stats.countew("dowmant_usew_since_30_days_countew")
+  pwivate[this] vaw nyondowmantusewssince14dayscountew: c-countew =
+    stats.countew("non_dowmant_usew_since_14_days_countew")
+  pwivate[this] vaw toptweetsbygeotake100countew: countew =
+    stats.countew("top_tweets_by_geo_take_100_countew")
+  pwivate[this] v-vaw combinationwequestscountew =
+    stats.scope("combination_method_wequest_countew")
+  pwivate[this] vaw popgeotweetvewsioncountew =
+    s-stats.scope("popgeo_tweet_vewsion_countew")
+  p-pwivate[this] v-vaw nyonwepwytweetscountew = stats.countew("non_wepwy_tweets")
 
-  val MaxGeoHashSize = 4
+  v-vaw maxgeohashsize = 4
 
-  private def constructKeys(
-    geohash: Option[String],
-    accountCountryCode: Option[String],
-    keyLengths: Seq[Int],
-    version: PopGeoTweetVersion.Value
-  ): Set[String] = {
-    val geohashKeys = geohash match {
-      case Some(hash) => keyLengths.map { version + "_geohash_" + hash.take(_) }
-      case _ => Seq.empty
+  pwivate def c-constwuctkeys(
+    g-geohash: option[stwing], ^^;;
+    accountcountwycode: option[stwing], rawr
+    keywengths: seq[int], (˘ω˘)
+    vewsion: popgeotweetvewsion.vawue
+  ): s-set[stwing] = {
+    vaw g-geohashkeys = geohash match {
+      c-case some(hash) => k-keywengths.map { vewsion + "_geohash_" + hash.take(_) }
+      c-case _ => s-seq.empty
     }
 
-    val accountCountryCodeKeys =
-      accountCountryCode.toSeq.map(version + "_country_" + _.toUpperCase)
-    (geohashKeys ++ accountCountryCodeKeys).toSet
+    vaw accountcountwycodekeys =
+      a-accountcountwycode.toseq.map(vewsion + "_countwy_" + _.touppewcase)
+    (geohashkeys ++ a-accountcountwycodekeys).toset
   }
 
-  def convertToPlaceTweetScore(
-    popTweetsInPlace: Seq[PopTweetsInPlace]
-  ): Seq[PlaceTweetScore] = {
-    popTweetsInPlace.flatMap {
-      case p =>
-        p.popTweets.map {
-          case popTweet => PlaceTweetScore(p.place, popTweet.tweetId, popTweet.score)
+  def convewttopwacetweetscowe(
+    poptweetsinpwace: seq[poptweetsinpwace]
+  ): seq[pwacetweetscowe] = {
+    p-poptweetsinpwace.fwatmap {
+      c-case p =>
+        p-p.poptweets.map {
+          case poptweet => p-pwacetweetscowe(p.pwace, 🥺 p-poptweet.tweetid, nyaa~~ poptweet.scowe)
         }
     }
   }
 
-  def sortGeoHashTweets(
-    placeTweetScores: Seq[PlaceTweetScore],
-    rankingFunction: TopTweetsForGeoRankingFunction.Value
-  ): Seq[PlaceTweetScore] = {
-    rankingFunction match {
-      case TopTweetsForGeoRankingFunction.Score =>
-        placeTweetScores.sortBy(_.score)(Ordering[Double].reverse)
-      case TopTweetsForGeoRankingFunction.GeohashLengthAndThenScore =>
-        placeTweetScores
-          .sortBy(row => (row.place.length, row.score))(Ordering[(Int, Double)].reverse)
+  d-def sowtgeohashtweets(
+    pwacetweetscowes: seq[pwacetweetscowe], :3
+    wankingfunction: toptweetsfowgeowankingfunction.vawue
+  ): seq[pwacetweetscowe] = {
+    w-wankingfunction m-match {
+      case toptweetsfowgeowankingfunction.scowe =>
+        pwacetweetscowes.sowtby(_.scowe)(owdewing[doubwe].wevewse)
+      c-case toptweetsfowgeowankingfunction.geohashwengthandthenscowe =>
+        p-pwacetweetscowes
+          .sowtby(wow => (wow.pwace.wength, /(^•ω•^) wow.scowe))(owdewing[(int, ^•ﻌ•^ doubwe)].wevewse)
     }
   }
 
-  def getResultsForLambdaStore(
-    inputTarget: Target,
-    geohash: Option[String],
-    store: ReadableStore[String, PopTweetsInPlace],
-    topk: Int,
-    version: PopGeoTweetVersion.Value
-  ): Future[Seq[(Long, Double)]] = {
-    inputTarget.accountCountryCode.flatMap { countryCode =>
-      val keys = {
-        if (inputTarget.params(FS.EnableCountryCodeBackoffTopTweetsByGeo))
-          constructKeys(geohash, countryCode, inputTarget.params(FS.GeoHashLengthList), version)
-        else
-          constructKeys(geohash, None, inputTarget.params(FS.GeoHashLengthList), version)
+  def getwesuwtsfowwambdastowe(
+    i-inputtawget: tawget, UwU
+    geohash: option[stwing], 😳😳😳
+    stowe: weadabwestowe[stwing, poptweetsinpwace], OwO
+    t-topk: int, ^•ﻌ•^
+    vewsion: popgeotweetvewsion.vawue
+  ): futuwe[seq[(wong, (ꈍᴗꈍ) d-doubwe)]] = {
+    i-inputtawget.accountcountwycode.fwatmap { countwycode =>
+      vaw keys = {
+        if (inputtawget.pawams(fs.enabwecountwycodebackofftoptweetsbygeo))
+          c-constwuctkeys(geohash, c-countwycode, (⑅˘꒳˘) inputtawget.pawams(fs.geohashwengthwist), (⑅˘꒳˘) vewsion)
+        ewse
+          c-constwuctkeys(geohash, (ˆ ﻌ ˆ)♡ nyone, inputtawget.pawams(fs.geohashwengthwist), /(^•ω•^) v-vewsion)
       }
-      FutureOps
-        .mapCollect(store.multiGet(keys)).map {
-          case geohashTweetMap =>
-            val popTweets =
-              geohashTweetMap.values.flatten.toSeq
-            val results = sortGeoHashTweets(
-              convertToPlaceTweetScore(popTweets),
-              inputTarget.params(FS.RankingFunctionForTopTweetsByGeo))
-              .map(_.toTweetScore).take(topk)
-            results
+      futuweops
+        .mapcowwect(stowe.muwtiget(keys)).map {
+          case geohashtweetmap =>
+            v-vaw poptweets =
+              geohashtweetmap.vawues.fwatten.toseq
+            v-vaw wesuwts = sowtgeohashtweets(
+              c-convewttopwacetweetscowe(poptweets), òωó
+              inputtawget.pawams(fs.wankingfunctionfowtoptweetsbygeo))
+              .map(_.totweetscowe).take(topk)
+            w-wesuwts
         }
     }
   }
 
-  def getPopGeoTweetsForLoggedOutUsers(
-    inputTarget: Target,
-    store: ReadableStore[String, PopTweetsInPlace]
-  ): Future[Seq[(Long, Double)]] = {
-    inputTarget.countryCode.flatMap { countryCode =>
-      val keys = constructKeys(None, countryCode, Seq(4), PopGeoTweetVersion.Prod)
-      FutureOps.mapCollect(store.multiGet(keys)).map {
-        case tweetMap =>
-          val tweets = tweetMap.values.flatten.toSeq
-          loggedOutPopByGeoV2CandidatesCounter.incr(tweets.size)
-          val popTweets = sortGeoHashTweets(
-            convertToPlaceTweetScore(tweets),
-            TopTweetsForGeoRankingFunction.Score).map(_.toTweetScore)
-          popTweets
+  def getpopgeotweetsfowwoggedoutusews(
+    inputtawget: t-tawget,
+    s-stowe: weadabwestowe[stwing, (⑅˘꒳˘) p-poptweetsinpwace]
+  ): futuwe[seq[(wong, (U ᵕ U❁) d-doubwe)]] = {
+    i-inputtawget.countwycode.fwatmap { countwycode =>
+      vaw keys = c-constwuctkeys(none, >w< c-countwycode, σωσ s-seq(4), -.- popgeotweetvewsion.pwod)
+      futuweops.mapcowwect(stowe.muwtiget(keys)).map {
+        case tweetmap =>
+          v-vaw tweets = tweetmap.vawues.fwatten.toseq
+          w-woggedoutpopbygeov2candidatescountew.incw(tweets.size)
+          v-vaw poptweets = sowtgeohashtweets(
+            convewttopwacetweetscowe(tweets), o.O
+            toptweetsfowgeowankingfunction.scowe).map(_.totweetscowe)
+          p-poptweets
       }
     }
   }
 
-  def getRankedTweets(
-    inputTarget: Target,
-    geohash: Option[String]
-  ): Future[Seq[(Long, Double)]] = {
-    val MaxTopTweetsByGeoCandidatesToTake =
-      inputTarget.params(FS.MaxTopTweetsByGeoCandidatesToTake)
-    val scoringFn: String = inputTarget.params(FS.ScoringFuncForTopTweetsByGeo)
-    val combinationMethod = inputTarget.params(FS.TopTweetsByGeoCombinationParam)
-    val popGeoTweetVersion = inputTarget.params(FS.PopGeoTweetVersionParam)
+  d-def getwankedtweets(
+    i-inputtawget: t-tawget, ^^
+    geohash: option[stwing]
+  ): f-futuwe[seq[(wong, >_< doubwe)]] = {
+    vaw maxtoptweetsbygeocandidatestotake =
+      inputtawget.pawams(fs.maxtoptweetsbygeocandidatestotake)
+    vaw scowingfn: stwing = inputtawget.pawams(fs.scowingfuncfowtoptweetsbygeo)
+    v-vaw combinationmethod = inputtawget.pawams(fs.toptweetsbygeocombinationpawam)
+    v-vaw popgeotweetvewsion = inputtawget.pawams(fs.popgeotweetvewsionpawam)
 
-    inputTarget.isHeavyUserState.map { isHeavyUser =>
-      stats
-        .scope(combinationMethod.toString).scope(popGeoTweetVersion.toString).scope(
-          "IsHeavyUser_" + isHeavyUser.toString).counter().incr()
+    i-inputtawget.isheavyusewstate.map { isheavyusew =>
+      s-stats
+        .scope(combinationmethod.tostwing).scope(popgeotweetvewsion.tostwing).scope(
+          "isheavyusew_" + isheavyusew.tostwing).countew().incw()
     }
-    combinationRequestsCounter.scope(combinationMethod.toString).counter().incr()
-    popGeoTweetVersionCounter.scope(popGeoTweetVersion.toString).counter().incr()
-    lazy val geoStoreResults = if (geohash.isDefined) {
-      val hash = geohash.get.take(MaxGeoHashSize)
-      topTweetsByGeoStore
+    combinationwequestscountew.scope(combinationmethod.tostwing).countew().incw()
+    p-popgeotweetvewsioncountew.scope(popgeotweetvewsion.tostwing).countew().incw()
+    w-wazy vaw geostowewesuwts = if (geohash.isdefined) {
+      v-vaw h-hash = geohash.get.take(maxgeohashsize)
+      t-toptweetsbygeostowe
         .get(
-          InterestDomain[String](hash)
+          intewestdomain[stwing](hash)
         )
         .map {
-          case Some(scoringFnToTweetsMapOpt) =>
-            val tweetsWithScore = scoringFnToTweetsMapOpt
-              .getOrElse(scoringFn, List.empty)
-            val sortedResults = sortGeoHashTweets(
-              tweetsWithScore.map {
-                case (tweetId, score) => PlaceTweetScore(hash, tweetId, score)
-              },
-              TopTweetsForGeoRankingFunction.Score
-            ).map(_.toTweetScore).take(
-                MaxTopTweetsByGeoCandidatesToTake
+          case some(scowingfntotweetsmapopt) =>
+            vaw tweetswithscowe = scowingfntotweetsmapopt
+              .getowewse(scowingfn, >w< w-wist.empty)
+            v-vaw sowtedwesuwts = s-sowtgeohashtweets(
+              tweetswithscowe.map {
+                c-case (tweetid, >_< scowe) => pwacetweetscowe(hash, >w< tweetid, scowe)
+              }, rawr
+              toptweetsfowgeowankingfunction.scowe
+            ).map(_.totweetscowe).take(
+                m-maxtoptweetsbygeocandidatestotake
               )
-            sortedResults
-          case _ => Seq.empty
+            s-sowtedwesuwts
+          case _ => seq.empty
         }
-    } else Future.value(Seq.empty)
-    lazy val versionPopGeoTweetResults =
-      getResultsForLambdaStore(
-        inputTarget,
-        geohash,
-        topTweetsByGeoStoreV2,
-        MaxTopTweetsByGeoCandidatesToTake,
-        popGeoTweetVersion
+    } e-ewse futuwe.vawue(seq.empty)
+    wazy vaw vewsionpopgeotweetwesuwts =
+      g-getwesuwtsfowwambdastowe(
+        i-inputtawget, rawr x3
+        geohash, ( ͡o ω ͡o )
+        t-toptweetsbygeostowev2, (˘ω˘)
+        m-maxtoptweetsbygeocandidatestotake,
+        popgeotweetvewsion
       )
-    combinationMethod match {
-      case TopTweetsForGeoCombination.Default => geoStoreResults
-      case TopTweetsForGeoCombination.AccountsTweetFavAsBackfill =>
-        Future.join(geoStoreResults, versionPopGeoTweetResults).map {
-          case (geoStoreTweets, versionPopGeoTweets) =>
-            (geoStoreTweets ++ versionPopGeoTweets).take(MaxTopTweetsByGeoCandidatesToTake)
+    combinationmethod match {
+      case toptweetsfowgeocombination.defauwt => g-geostowewesuwts
+      c-case toptweetsfowgeocombination.accountstweetfavasbackfiww =>
+        f-futuwe.join(geostowewesuwts, 😳 v-vewsionpopgeotweetwesuwts).map {
+          c-case (geostowetweets, OwO vewsionpopgeotweets) =>
+            (geostowetweets ++ v-vewsionpopgeotweets).take(maxtoptweetsbygeocandidatestotake)
         }
-      case TopTweetsForGeoCombination.AccountsTweetFavIntermixed =>
-        Future.join(geoStoreResults, versionPopGeoTweetResults).map {
-          case (geoStoreTweets, versionPopGeoTweets) =>
-            CandidateSource.interleaveSeqs(Seq(geoStoreTweets, versionPopGeoTweets))
+      c-case toptweetsfowgeocombination.accountstweetfavintewmixed =>
+        f-futuwe.join(geostowewesuwts, (˘ω˘) v-vewsionpopgeotweetwesuwts).map {
+          case (geostowetweets, òωó v-vewsionpopgeotweets) =>
+            candidatesouwce.intewweaveseqs(seq(geostowetweets, ( ͡o ω ͡o ) vewsionpopgeotweets))
         }
     }
   }
 
-  override def get(inputTarget: Target): Future[Option[Seq[RawCandidate]]] = {
-    if (inputTarget.isLoggedOutUser) {
-      incomingLoggedOutRequestCounter.incr()
-      val rankedTweets = getPopGeoTweetsForLoggedOutUsers(inputTarget, topTweetsByGeoStoreV2)
-      val rawCandidates = {
-        rankedTweets.map { rt =>
-          FutureOps
-            .mapCollect(
-              tweetyPieStore
-                .multiGet(rt.map { case (tweetId, _) => tweetId }.toSet))
-            .map { tweetyPieResultMap =>
-              val results = buildTopTweetsByGeoRawCandidates(
-                inputTarget,
-                None,
-                tweetyPieResultMap
+  o-ovewwide def get(inputtawget: t-tawget): futuwe[option[seq[wawcandidate]]] = {
+    i-if (inputtawget.iswoggedoutusew) {
+      incomingwoggedoutwequestcountew.incw()
+      v-vaw wankedtweets = getpopgeotweetsfowwoggedoutusews(inputtawget, UwU t-toptweetsbygeostowev2)
+      v-vaw wawcandidates = {
+        w-wankedtweets.map { wt =>
+          futuweops
+            .mapcowwect(
+              tweetypiestowe
+                .muwtiget(wt.map { case (tweetid, /(^•ω•^) _) => t-tweetid }.toset))
+            .map { tweetypiewesuwtmap =>
+              vaw w-wesuwts = buiwdtoptweetsbygeowawcandidates(
+                i-inputtawget, (ꈍᴗꈍ)
+                nyone, 😳
+                t-tweetypiewesuwtmap
               )
-              if (results.isEmpty) {
-                emptyLoggedOutRawCandidatesCounter.incr()
+              if (wesuwts.isempty) {
+                e-emptywoggedoutwawcandidatescountew.incw()
               }
-              loggedOutRawCandidatesCounter.incr(results.size)
-              Some(results)
+              w-woggedoutwawcandidatescountew.incw(wesuwts.size)
+              some(wesuwts)
             }
-        }.flatten
+        }.fwatten
       }
-      rawCandidates
-    } else {
-      incomingRequestCounter.incr()
-      getGeoHashForUsers(inputTarget).flatMap { geohash =>
-        if (geohash.isEmpty) noGeohashUserCounter.incr()
-        getRankedTweets(inputTarget, geohash).map { rt =>
-          if (rt.size == 100) {
-            topTweetsByGeoTake100Counter.incr(1)
+      wawcandidates
+    } e-ewse {
+      incomingwequestcountew.incw()
+      getgeohashfowusews(inputtawget).fwatmap { geohash =>
+        i-if (geohash.isempty) n-nyogeohashusewcountew.incw()
+        getwankedtweets(inputtawget, mya g-geohash).map { wt =>
+          i-if (wt.size == 100) {
+            t-toptweetsbygeotake100countew.incw(1)
           }
-          FutureOps
-            .mapCollect((inputTarget.params(FS.EnableVFInTweetypie) match {
-              case true => tweetyPieStore
-              case false => tweetyPieStoreNoVF
-            }).multiGet(rt.map { case (tweetId, _) => tweetId }.toSet))
-            .map { tweetyPieResultMap =>
-              Some(
-                buildTopTweetsByGeoRawCandidates(
-                  inputTarget,
-                  None,
-                  filterOutReplyTweet(
-                    tweetyPieResultMap,
-                    nonReplyTweetsCounter
+          f-futuweops
+            .mapcowwect((inputtawget.pawams(fs.enabwevfintweetypie) match {
+              case twue => tweetypiestowe
+              case fawse => tweetypiestowenovf
+            }).muwtiget(wt.map { case (tweetid, mya _) => tweetid }.toset))
+            .map { tweetypiewesuwtmap =>
+              some(
+                buiwdtoptweetsbygeowawcandidates(
+                  inputtawget, /(^•ω•^)
+                  nyone, ^^;;
+                  fiwtewoutwepwytweet(
+                    tweetypiewesuwtmap, 🥺
+                    nyonwepwytweetscountew
                   )
                 )
               )
             }
-        }.flatten
+        }.fwatten
       }
     }
   }
 
-  private def getGeoHashForUsers(
-    inputTarget: Target
-  ): Future[Option[String]] = {
+  p-pwivate def g-getgeohashfowusews(
+    inputtawget: tawget
+  ): f-futuwe[option[stwing]] = {
 
-    inputTarget.targetUser.flatMap {
-      case Some(user) =>
-        user.userType match {
-          case UserType.Soft =>
-            softUserGeoLocationStore
-              .get(inputTarget.targetId)
-              .map(_.flatMap(_.geohash.flatMap(_.stringGeohash)))
+    i-inputtawget.tawgetusew.fwatmap {
+      c-case some(usew) =>
+        usew.usewtype m-match {
+          case usewtype.soft =>
+            s-softusewgeowocationstowe
+              .get(inputtawget.tawgetid)
+              .map(_.fwatmap(_.geohash.fwatmap(_.stwinggeohash)))
 
-          case _ =>
-            geoduckStoreV2.get(inputTarget.targetId).map(_.flatMap(_.geohash))
+          c-case _ =>
+            geoduckstowev2.get(inputtawget.tawgetid).map(_.fwatmap(_.geohash))
         }
 
-      case None => Future.None
+      c-case nyone => futuwe.none
     }
   }
 
-  private def buildTopTweetsByGeoRawCandidates(
-    target: PushTypes.Target,
-    locationName: Option[String],
-    topTweets: Map[Long, Option[TweetyPieResult]]
-  ): Seq[RawCandidate with TweetCandidate] = {
-    val candidates = topTweets.map { tweetIdTweetyPieResultMap =>
-      PushAdaptorUtil.generateOutOfNetworkTweetCandidates(
-        inputTarget = target,
-        id = tweetIdTweetyPieResultMap._1,
-        mediaCRT = MediaCRT(
-          CommonRecommendationType.GeoPopTweet,
-          CommonRecommendationType.GeoPopTweet,
-          CommonRecommendationType.GeoPopTweet
-        ),
-        result = tweetIdTweetyPieResultMap._2,
-        localizedEntity = None
+  p-pwivate def b-buiwdtoptweetsbygeowawcandidates(
+    tawget: pushtypes.tawget, ^^
+    wocationname: o-option[stwing], ^•ﻌ•^
+    t-toptweets: m-map[wong, /(^•ω•^) option[tweetypiewesuwt]]
+  ): s-seq[wawcandidate w-with t-tweetcandidate] = {
+    v-vaw candidates = t-toptweets.map { t-tweetidtweetypiewesuwtmap =>
+      pushadaptowutiw.genewateoutofnetwowktweetcandidates(
+        i-inputtawget = t-tawget, ^^
+        i-id = tweetidtweetypiewesuwtmap._1, 🥺
+        mediacwt = mediacwt(
+          c-commonwecommendationtype.geopoptweet, (U ᵕ U❁)
+          commonwecommendationtype.geopoptweet, 😳😳😳
+          commonwecommendationtype.geopoptweet
+        ), nyaa~~
+        w-wesuwt = tweetidtweetypiewesuwtmap._2,
+        w-wocawizedentity = n-nyone
       )
-    }.toSeq
-    outputTopTweetsByGeoCounter.add(candidates.length)
+    }.toseq
+    o-outputtoptweetsbygeocountew.add(candidates.wength)
     candidates
   }
 
-  private val topTweetsByGeoFrequencyPredicate = {
-    TargetPredicates
-      .pushRecTypeFatiguePredicate(
-        CommonRecommendationType.GeoPopTweet,
-        FS.TopTweetsByGeoPushInterval,
-        FS.MaxTopTweetsByGeoPushGivenInterval,
-        stats
+  pwivate vaw toptweetsbygeofwequencypwedicate = {
+    t-tawgetpwedicates
+      .pushwectypefatiguepwedicate(
+        commonwecommendationtype.geopoptweet, (˘ω˘)
+        f-fs.toptweetsbygeopushintewvaw, >_<
+        fs.maxtoptweetsbygeopushgivenintewvaw, XD
+        s-stats
       )
   }
 
-  def getAvailabilityForDormantUser(target: Target): Future[Boolean] = {
-    lazy val isDormantUserNotFatigued = topTweetsByGeoFrequencyPredicate(Seq(target)).map(_.head)
-    lazy val enableTopTweetsByGeoForDormantUsers =
-      target.params(FS.EnableTopTweetsByGeoCandidatesForDormantUsers)
+  def g-getavaiwabiwityfowdowmantusew(tawget: tawget): futuwe[boowean] = {
+    wazy vaw isdowmantusewnotfatigued = toptweetsbygeofwequencypwedicate(seq(tawget)).map(_.head)
+    w-wazy vaw enabwetoptweetsbygeofowdowmantusews =
+      t-tawget.pawams(fs.enabwetoptweetsbygeocandidatesfowdowmantusews)
 
-    target.lastHTLVisitTimestamp.flatMap {
-      case Some(lastHTLTimestamp) =>
-        val minTimeSinceLastLogin =
-          target.params(FS.MinimumTimeSinceLastLoginForGeoPopTweetPush).ago
-        val timeSinceInactive = target.params(FS.TimeSinceLastLoginForGeoPopTweetPush).ago
-        val lastActiveTimestamp = Time.fromMilliseconds(lastHTLTimestamp)
-        if (lastActiveTimestamp > minTimeSinceLastLogin) {
-          nonDormantUsersSince14DaysCounter.incr()
-          Future.False
-        } else {
-          dormantUsersSince14DaysCounter.incr()
-          isDormantUserNotFatigued.map { isUserNotFatigued =>
-            lastActiveTimestamp < timeSinceInactive &&
-            enableTopTweetsByGeoForDormantUsers &&
-            isUserNotFatigued
+    t-tawget.wasthtwvisittimestamp.fwatmap {
+      case some(wasthtwtimestamp) =>
+        vaw mintimesincewastwogin =
+          tawget.pawams(fs.minimumtimesincewastwoginfowgeopoptweetpush).ago
+        v-vaw timesinceinactive = tawget.pawams(fs.timesincewastwoginfowgeopoptweetpush).ago
+        vaw wastactivetimestamp = t-time.fwommiwwiseconds(wasthtwtimestamp)
+        i-if (wastactivetimestamp > m-mintimesincewastwogin) {
+          nyondowmantusewssince14dayscountew.incw()
+          futuwe.fawse
+        } e-ewse {
+          d-dowmantusewssince14dayscountew.incw()
+          isdowmantusewnotfatigued.map { i-isusewnotfatigued =>
+            wastactivetimestamp < timesinceinactive &&
+            e-enabwetoptweetsbygeofowdowmantusews &&
+            isusewnotfatigued
           }
         }
       case _ =>
-        dormantUsersSince30DaysCounter.incr()
-        isDormantUserNotFatigued.map { isUserNotFatigued =>
-          enableTopTweetsByGeoForDormantUsers && isUserNotFatigued
+        dowmantusewssince30dayscountew.incw()
+        i-isdowmantusewnotfatigued.map { i-isusewnotfatigued =>
+          e-enabwetoptweetsbygeofowdowmantusews && isusewnotfatigued
         }
     }
   }
 
-  def getAvailabilityForPlaybookSetUp(target: Target): Future[Boolean] = {
-    lazy val enableTopTweetsByGeoForNewUsers = target.params(FS.EnableTopTweetsByGeoCandidates)
-    val isTargetEligibleForMrFatigueCheck = target.isAccountAtleastNDaysOld(
-      target.params(FS.MrMinDurationSincePushForTopTweetsByGeoPushes))
-    val isMrFatigueCheckEnabled =
-      target.params(FS.EnableMrMinDurationSinceMrPushFatigue)
-    val applyPredicateForTopTweetsByGeo =
-      if (isMrFatigueCheckEnabled) {
-        if (isTargetEligibleForMrFatigueCheck) {
-          DiscoverTwitterPredicate
-            .minDurationElapsedSinceLastMrPushPredicate(
-              name,
-              FS.MrMinDurationSincePushForTopTweetsByGeoPushes,
-              stats
-            ).andThen(
-              topTweetsByGeoFrequencyPredicate
-            )(Seq(target)).map(_.head)
-        } else {
-          Future.False
+  d-def getavaiwabiwityfowpwaybooksetup(tawget: t-tawget): f-futuwe[boowean] = {
+    w-wazy vaw enabwetoptweetsbygeofownewusews = t-tawget.pawams(fs.enabwetoptweetsbygeocandidates)
+    v-vaw istawgetewigibwefowmwfatiguecheck = t-tawget.isaccountatweastndaysowd(
+      t-tawget.pawams(fs.mwminduwationsincepushfowtoptweetsbygeopushes))
+    v-vaw i-ismwfatiguecheckenabwed =
+      t-tawget.pawams(fs.enabwemwminduwationsincemwpushfatigue)
+    v-vaw appwypwedicatefowtoptweetsbygeo =
+      i-if (ismwfatiguecheckenabwed) {
+        if (istawgetewigibwefowmwfatiguecheck) {
+          discovewtwittewpwedicate
+            .minduwationewapsedsincewastmwpushpwedicate(
+              n-nyame, rawr x3
+              fs.mwminduwationsincepushfowtoptweetsbygeopushes, ( ͡o ω ͡o )
+              s-stats
+            ).andthen(
+              t-toptweetsbygeofwequencypwedicate
+            )(seq(tawget)).map(_.head)
+        } e-ewse {
+          futuwe.fawse
         }
-      } else {
-        topTweetsByGeoFrequencyPredicate(Seq(target)).map(_.head)
+      } ewse {
+        toptweetsbygeofwequencypwedicate(seq(tawget)).map(_.head)
       }
-    applyPredicateForTopTweetsByGeo.map { predicateResult =>
-      predicateResult && enableTopTweetsByGeoForNewUsers
+    a-appwypwedicatefowtoptweetsbygeo.map { pwedicatewesuwt =>
+      p-pwedicatewesuwt && e-enabwetoptweetsbygeofownewusews
     }
   }
 
-  override def isCandidateSourceAvailable(target: Target): Future[Boolean] = {
-    if (target.isLoggedOutUser) {
-      Future.True
-    } else {
-      PushDeviceUtil
-        .isRecommendationsEligible(target).map(
-          _ && target.params(PushParams.PopGeoCandidatesDecider)).flatMap { isAvailable =>
-          if (isAvailable) {
-            Future
-              .join(getAvailabilityForDormantUser(target), getAvailabilityForPlaybookSetUp(target))
+  ovewwide def iscandidatesouwceavaiwabwe(tawget: tawget): f-futuwe[boowean] = {
+    i-if (tawget.iswoggedoutusew) {
+      futuwe.twue
+    } ewse {
+      p-pushdeviceutiw
+        .iswecommendationsewigibwe(tawget).map(
+          _ && t-tawget.pawams(pushpawams.popgeocandidatesdecidew)).fwatmap { isavaiwabwe =>
+          if (isavaiwabwe) {
+            futuwe
+              .join(getavaiwabiwityfowdowmantusew(tawget), :3 getavaiwabiwityfowpwaybooksetup(tawget))
               .map {
-                case (isAvailableForDormantUser, isAvailableForPlaybook) =>
-                  isAvailableForDormantUser || isAvailableForPlaybook
-                case _ => false
+                case (isavaiwabwefowdowmantusew, mya i-isavaiwabwefowpwaybook) =>
+                  i-isavaiwabwefowdowmantusew || i-isavaiwabwefowpwaybook
+                c-case _ => fawse
               }
-          } else Future.False
+          } ewse futuwe.fawse
         }
     }
   }

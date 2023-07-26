@@ -1,95 +1,95 @@
-package com.twitter.visibility.interfaces.tweets.enrichments
+package com.twittew.visibiwity.intewfaces.tweets.enwichments
 
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.tweets.TweetVisibilityNudgeSourceWrapper
-import com.twitter.visibility.common.actions.TweetVisibilityNudgeReason.SemanticCoreMisinformationLabelReason
-import com.twitter.visibility.rules.Action
-import com.twitter.visibility.rules.LocalizedNudge
-import com.twitter.visibility.rules.SoftIntervention
-import com.twitter.visibility.rules.TweetVisibilityNudge
+impowt c-com.twittew.visibiwity.buiwdew.visibiwitywesuwt
+i-impowt com.twittew.visibiwity.buiwdew.tweets.tweetvisibiwitynudgesouwcewwappew
+i-impowt com.twittew.visibiwity.common.actions.tweetvisibiwitynudgeweason.semanticcowemisinfowmationwabewweason
+i-impowt com.twittew.visibiwity.wuwes.action
+i-impowt c-com.twittew.visibiwity.wuwes.wocawizednudge
+impowt c-com.twittew.visibiwity.wuwes.softintewvention
+i-impowt com.twittew.visibiwity.wuwes.tweetvisibiwitynudge
 
-object TweetVisibilityNudgeEnrichment {
+object tweetvisibiwitynudgeenwichment {
 
-  def apply(
-    result: VisibilityResult,
-    tweetVisibilityNudgeSourceWrapper: TweetVisibilityNudgeSourceWrapper,
-    languageCode: String,
-    countryCode: Option[String]
-  ): VisibilityResult = {
+  def appwy(
+    wesuwt: v-visibiwitywesuwt, :3
+    tweetvisibiwitynudgesouwcewwappew: tweetvisibiwitynudgesouwcewwappew, OwO
+    w-wanguagecode: stwing, (U ﹏ U)
+    countwycode: o-option[stwing]
+  ): visibiwitywesuwt = {
 
-    val softIntervention = extractSoftIntervention(result.verdict, result.secondaryVerdicts)
+    vaw softintewvention = extwactsoftintewvention(wesuwt.vewdict, >w< w-wesuwt.secondawyvewdicts)
 
-    val enrichedPrimaryVerdict = enrichAction(
-      result.verdict,
-      tweetVisibilityNudgeSourceWrapper,
-      softIntervention,
-      languageCode,
-      countryCode)
+    vaw enwichedpwimawyvewdict = e-enwichaction(
+      w-wesuwt.vewdict,
+      tweetvisibiwitynudgesouwcewwappew, (U ﹏ U)
+      softintewvention, 😳
+      wanguagecode, (ˆ ﻌ ˆ)♡
+      countwycode)
 
-    val enrichedSecondaryVerdicts: Seq[Action] =
-      result.secondaryVerdicts.map(sv =>
-        enrichAction(
-          sv,
-          tweetVisibilityNudgeSourceWrapper,
-          softIntervention,
-          languageCode,
-          countryCode))
+    vaw enwichedsecondawyvewdicts: s-seq[action] =
+      wesuwt.secondawyvewdicts.map(sv =>
+        enwichaction(
+          sv, 😳😳😳
+          tweetvisibiwitynudgesouwcewwappew, (U ﹏ U)
+          softintewvention, (///ˬ///✿)
+          w-wanguagecode, 😳
+          countwycode))
 
-    result.copy(verdict = enrichedPrimaryVerdict, secondaryVerdicts = enrichedSecondaryVerdicts)
+    w-wesuwt.copy(vewdict = enwichedpwimawyvewdict, 😳 s-secondawyvewdicts = e-enwichedsecondawyvewdicts)
   }
 
-  private def extractSoftIntervention(
-    primary: Action,
-    secondaries: Seq[Action]
-  ): Option[SoftIntervention] = {
-    primary match {
-      case si: SoftIntervention => Some(si)
+  p-pwivate def extwactsoftintewvention(
+    pwimawy: action, σωσ
+    s-secondawies: seq[action]
+  ): option[softintewvention] = {
+    p-pwimawy match {
+      case si: softintewvention => some(si)
       case _ =>
-        secondaries.collectFirst {
-          case sv: SoftIntervention => sv
+        secondawies.cowwectfiwst {
+          c-case sv: softintewvention => sv
         }
     }
   }
 
-  private def enrichAction(
-    action: Action,
-    tweetVisibilityNudgeSourceWrapper: TweetVisibilityNudgeSourceWrapper,
-    softIntervention: Option[SoftIntervention],
-    languageCode: String,
-    countryCode: Option[String]
-  ): Action = {
-    action match {
-      case TweetVisibilityNudge(reason, None) =>
-        val localizedNudge =
-          tweetVisibilityNudgeSourceWrapper.getLocalizedNudge(reason, languageCode, countryCode)
-        if (reason == SemanticCoreMisinformationLabelReason)
-          TweetVisibilityNudge(
-            reason,
-            enrichLocalizedMisInfoNudge(localizedNudge, softIntervention))
-        else
-          TweetVisibilityNudge(reason, localizedNudge)
+  p-pwivate d-def enwichaction(
+    a-action: action, rawr x3
+    tweetvisibiwitynudgesouwcewwappew: tweetvisibiwitynudgesouwcewwappew, OwO
+    softintewvention: option[softintewvention], /(^•ω•^)
+    w-wanguagecode: s-stwing, 😳😳😳
+    countwycode: option[stwing]
+  ): a-action = {
+    a-action match {
+      case tweetvisibiwitynudge(weason, ( ͡o ω ͡o ) n-nyone) =>
+        vaw wocawizednudge =
+          t-tweetvisibiwitynudgesouwcewwappew.getwocawizednudge(weason, >_< wanguagecode, >w< countwycode)
+        i-if (weason == semanticcowemisinfowmationwabewweason)
+          t-tweetvisibiwitynudge(
+            weason, rawr
+            e-enwichwocawizedmisinfonudge(wocawizednudge, 😳 s-softintewvention))
+        ewse
+          tweetvisibiwitynudge(weason, >w< wocawizednudge)
       case _ => action
     }
   }
 
-  private def enrichLocalizedMisInfoNudge(
-    localizedNudge: Option[LocalizedNudge],
-    softIntervention: Option[SoftIntervention]
-  ): Option[LocalizedNudge] = {
-    softIntervention match {
-      case Some(si) => {
-        val enrichedLocalizedNudge = localizedNudge.map { ln =>
-          val enrichedLocalizedNudgeActions = ln.localizedNudgeActions.map { na =>
-            val enrichedPayload = na.nudgeActionPayload.map { payload =>
-              payload.copy(ctaUrl = si.detailsUrl, heading = si.warning)
+  pwivate def enwichwocawizedmisinfonudge(
+    wocawizednudge: option[wocawizednudge],
+    s-softintewvention: o-option[softintewvention]
+  ): option[wocawizednudge] = {
+    s-softintewvention m-match {
+      c-case some(si) => {
+        vaw enwichedwocawizednudge = wocawizednudge.map { wn =>
+          v-vaw enwichedwocawizednudgeactions = wn.wocawizednudgeactions.map { nya =>
+            vaw enwichedpaywoad = n-nya.nudgeactionpaywoad.map { paywoad =>
+              p-paywoad.copy(ctauww = si.detaiwsuww, (⑅˘꒳˘) h-heading = s-si.wawning)
             }
-            na.copy(nudgeActionPayload = enrichedPayload)
+            nya.copy(nudgeactionpaywoad = e-enwichedpaywoad)
           }
-          ln.copy(localizedNudgeActions = enrichedLocalizedNudgeActions)
+          w-wn.copy(wocawizednudgeactions = e-enwichedwocawizednudgeactions)
         }
-        enrichedLocalizedNudge
+        e-enwichedwocawizednudge
       }
-      case None => localizedNudge
+      case nyone => wocawizednudge
     }
   }
 

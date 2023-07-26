@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.Predicate
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.pwedicate.pwedicate
 
 /**
- * [[Alert]]s will trigger notifications to their [[NotificationGroup]]
- * when the [[Predicate]]s are triggered.
+ * [[awewt]]s w-wiww twiggew n-nyotifications t-to theiw [[notificationgwoup]]
+ * w-when the [[pwedicate]]s a-awe t-twiggewed. >_<
  */
-trait Alert {
+t-twait awewt {
 
-  /** A group of alert levels and where the alerts for those levels should be sent */
-  val notificationGroup: NotificationGroup
+  /** a gwoup of awewt wevews and whewe the awewts fow those wevews s-shouwd be sent */
+  vaw nyotificationgwoup: nyotificationgwoup
 
-  /** Predicate indicating that the component is in a degraded state */
-  val warnPredicate: Predicate
+  /** p-pwedicate indicating that t-the component is in a degwaded state */
+  vaw wawnpwedicate: p-pwedicate
 
-  /** Predicate indicating that the component is not functioning correctly */
-  val criticalPredicate: Predicate
+  /** pwedicate indicating t-that the c-component is nyot functioning cowwectwy */
+  vaw cwiticawpwedicate: pwedicate
 
-  /** An optional link to the runbook detailing how to respond to this alert */
-  val runbookLink: Option[String]
+  /** a-an optionaw wink to the wunbook detaiwing how to wespond to this awewt */
+  v-vaw wunbookwink: option[stwing]
 
-  /** Indicates which metrics this [[Alert]] is for */
-  val alertType: AlertType
+  /** i-indicates w-which metwics t-this [[awewt]] is f-fow */
+  vaw awewttype: awewttype
 
-  /** Where the metrics are from, @see [[Source]] */
-  val source: Source = Server()
+  /** whewe t-the metwics awe fwom, >_< @see [[souwce]] */
+  vaw s-souwce: souwce = sewvew()
 
-  /** A suffix to add to the end of the metric, this is often a [[Percentile]] */
-  val metricSuffix: Option[String] = None
+  /** a suffix to add to the end of the metwic, (⑅˘꒳˘) this is often a [[pewcentiwe]] */
+  vaw m-metwicsuffix: option[stwing] = n-nyone
 }

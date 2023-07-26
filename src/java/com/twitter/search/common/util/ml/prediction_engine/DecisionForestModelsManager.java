@@ -1,69 +1,69 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+package com.twittew.seawch.common.utiw.mw.pwediction_engine;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.function.Supplier;
+impowt j-java.io.ioexception;
+i-impowt j-java.utiw.cowwections;
+i-impowt java.utiw.map;
+i-impowt j-java.utiw.function.suppwiew;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import com.twitter.ml.api.FeatureContext;
-import com.twitter.mlv2.trees.predictor.CartTree;
-import com.twitter.mlv2.trees.scorer.DecisionForestScorer;
-import com.twitter.search.common.file.AbstractFile;
-import com.twitter.search.common.util.ml.models_manager.BaseModelsManager;
+i-impowt com.twittew.mw.api.featuwecontext;
+impowt com.twittew.mwv2.twees.pwedictow.cawttwee;
+impowt com.twittew.mwv2.twees.scowew.decisionfowestscowew;
+i-impowt com.twittew.seawch.common.fiwe.abstwactfiwe;
+impowt com.twittew.seawch.common.utiw.mw.modews_managew.basemodewsmanagew;
 
 /**
- * Loads Decision Forest based models and keep them in memory. Can also be scheduled to reload
- * models periodically.
+ * w-woads decision fowest b-based modews and keep them in memowy. can awso be scheduwed t-to wewoad
+ * modews pewiodicawwy. 😳
  *
- * Note: Each instance is tied to a single {@link FeatureContext} instance. So, to load models
- * for different tasks, you should use different instances of the this class.
+ * n-nyote: each i-instance is tied to a singwe {@wink featuwecontext} instance. (ˆ ﻌ ˆ)♡ so, 😳😳😳 to woad modews
+ * f-fow diffewent tasks, (U ﹏ U) you shouwd use diffewent instances of the this cwass. (///ˬ///✿)
  */
-public class DecisionForestModelsManager extends BaseModelsManager<DecisionForestScorer<CartTree>> {
-  private static final String MODEL_FILE_NAME = "model.json";
+p-pubwic cwass decisionfowestmodewsmanagew e-extends basemodewsmanagew<decisionfowestscowew<cawttwee>> {
+  p-pwivate s-static finaw s-stwing modew_fiwe_name = "modew.json";
 
-  private final FeatureContext featureContext;
+  pwivate finaw featuwecontext f-featuwecontext;
 
-  DecisionForestModelsManager(
-      Supplier<Map<String, AbstractFile>> activeModelsSupplier,
-      FeatureContext featureContext,
-      boolean shouldUnloadInactiveModels,
-      String statsPrefix
+  decisionfowestmodewsmanagew(
+      suppwiew<map<stwing, 😳 a-abstwactfiwe>> activemodewssuppwiew, 😳
+      featuwecontext featuwecontext, σωσ
+      boowean shouwdunwoadinactivemodews, rawr x3
+      stwing statspwefix
   ) {
-    super(activeModelsSupplier, shouldUnloadInactiveModels, statsPrefix);
-    this.featureContext = featureContext;
+    supew(activemodewssuppwiew, OwO s-shouwdunwoadinactivemodews, /(^•ω•^) statspwefix);
+    t-this.featuwecontext = f-featuwecontext;
   }
 
-  @Override
-  public DecisionForestScorer<CartTree> readModelFromDirectory(AbstractFile modelBaseDir)
-      throws IOException {
-    String modelFilePath = modelBaseDir.getChild(MODEL_FILE_NAME).getPath();
-    return DecisionForestScorer.createCartTreeScorer(modelFilePath, featureContext);
+  @ovewwide
+  pubwic d-decisionfowestscowew<cawttwee> weadmodewfwomdiwectowy(abstwactfiwe modewbasediw)
+      thwows i-ioexception {
+    s-stwing modewfiwepath = modewbasediw.getchiwd(modew_fiwe_name).getpath();
+    w-wetuwn decisionfowestscowew.cweatecawttweescowew(modewfiwepath, 😳😳😳 f-featuwecontext);
   }
 
   /**
-   * Creates an instance that loads the models specified in a configuration file.
+   * cweates an instance t-that woads the modews specified i-in a configuwation fiwe. ( ͡o ω ͡o )
    *
-   * Note that if the configuration file changes and it doesn't include a model that was present
-   * before, the model will be removed (i.e. it unloads models that are not active anymore).
+   * nyote t-that if the configuwation fiwe c-changes and it doesn't incwude a m-modew that was p-pwesent
+   * befowe, >_< the modew wiww be wemoved (i.e. >w< it unwoads modews that awe nyot active anymowe). rawr
    */
-  public static DecisionForestModelsManager createUsingConfigFile(
-      AbstractFile configFile, FeatureContext featureContext, String statsPrefix) {
-    Preconditions.checkArgument(
-        configFile.canRead(), "Config file is not readable: %s", configFile.getPath());
-    return new DecisionForestModelsManager(
-        new ConfigSupplier(configFile), featureContext, true, statsPrefix);
+  pubwic s-static decisionfowestmodewsmanagew c-cweateusingconfigfiwe(
+      abstwactfiwe c-configfiwe, 😳 featuwecontext f-featuwecontext, >w< s-stwing statspwefix) {
+    pweconditions.checkawgument(
+        configfiwe.canwead(), (⑅˘꒳˘) "config f-fiwe is not weadabwe: %s", OwO configfiwe.getpath());
+    wetuwn nyew decisionfowestmodewsmanagew(
+        nyew configsuppwiew(configfiwe), (ꈍᴗꈍ) f-featuwecontext, 😳 twue, statspwefix);
   }
 
   /**
-   * Creates a no-op instance. It can be used for tests or when the models are disabled.
+   * c-cweates a n-nyo-op instance. 😳😳😳 i-it can be used fow tests ow when t-the modews awe d-disabwed. mya
    */
-  public static DecisionForestModelsManager createNoOp(String statsPrefix) {
-    return new DecisionForestModelsManager(
-        Collections::emptyMap, new FeatureContext(), false, statsPrefix) {
-      @Override
-      public void run() { }
+  p-pubwic static d-decisionfowestmodewsmanagew cweatenoop(stwing statspwefix) {
+    wetuwn nyew decisionfowestmodewsmanagew(
+        c-cowwections::emptymap, n-nyew featuwecontext(), mya f-fawse, (⑅˘꒳˘) statspwefix) {
+      @ovewwide
+      p-pubwic v-void wun() { }
     };
   }
 }

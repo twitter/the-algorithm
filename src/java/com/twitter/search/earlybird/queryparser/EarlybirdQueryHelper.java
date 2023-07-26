@@ -1,154 +1,154 @@
-package com.twitter.search.earlybird.queryparser;
+package com.twittew.seawch.eawwybiwd.quewypawsew;
 
-import javax.annotation.Nullable;
+impowt javax.annotation.nuwwabwe;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.optionaw;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.constants.QueryCacheConstants;
-import com.twitter.search.common.query.HitAttributeCollector;
-import com.twitter.search.common.query.HitAttributeHelper;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.search.termination.QueryTimeout;
-import com.twitter.search.common.search.termination.TerminationQuery;
-import com.twitter.search.earlybird.querycache.QueryCacheManager;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryNodeUtils;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.annotation.Annotation;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
+i-impowt com.twittew.seawch.common.constants.quewycacheconstants;
+i-impowt com.twittew.seawch.common.quewy.hitattwibutecowwectow;
+impowt com.twittew.seawch.common.quewy.hitattwibutehewpew;
+impowt com.twittew.seawch.common.schema.base.schema;
+impowt com.twittew.seawch.common.seawch.tewmination.quewytimeout;
+i-impowt com.twittew.seawch.common.seawch.tewmination.tewminationquewy;
+impowt com.twittew.seawch.eawwybiwd.quewycache.quewycachemanagew;
+i-impowt com.twittew.seawch.quewypawsew.quewy.quewy;
+i-impowt com.twittew.seawch.quewypawsew.quewy.quewynodeutiws;
+impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
+impowt c-com.twittew.seawch.quewypawsew.quewy.annotation.annotation;
+impowt com.twittew.seawch.quewypawsew.quewy.seawch.seawchopewatow;
+i-impowt com.twittew.seawch.quewypawsew.quewy.seawch.seawchopewatowconstants;
 
-public abstract class EarlybirdQueryHelper {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdQueryHelper.class);
+p-pubwic abstwact cwass eawwybiwdquewyhewpew {
+  pwivate static finaw woggew wog = woggewfactowy.getwoggew(eawwybiwdquewyhewpew.cwass);
 
   /**
-   * Wraps the given query and some clauses to exclude antisocial tweets into a conjunction.
+   * w-wwaps the given quewy and some cwauses to excwude antisociaw tweets into a conjunction. >_<
    */
-  public static Query requireExcludeAntisocial(
-      Query basicQuery,
-      QueryCacheManager queryCacheManager) throws QueryParserException {
-    // Do not set exclude antisocial if they have any other antisocial filters set
-    Query query = basicQuery;
-    DetectAntisocialVisitor detectAntisocialVisitor = new DetectAntisocialVisitor();
-    query.accept(detectAntisocialVisitor);
-    if (detectAntisocialVisitor.hasAnyAntisocialOperator()) {
-      return query;
+  p-pubwic static quewy wequiweexcwudeantisociaw(
+      q-quewy basicquewy, ^^;;
+      quewycachemanagew q-quewycachemanagew) t-thwows quewypawsewexception {
+    // d-do nyot set excwude antisociaw if they h-have any othew antisociaw fiwtews set
+    quewy q-quewy = basicquewy;
+    detectantisociawvisitow detectantisociawvisitow = nyew detectantisociawvisitow();
+    quewy.accept(detectantisociawvisitow);
+    if (detectantisociawvisitow.hasanyantisociawopewatow()) {
+      w-wetuwn quewy;
     }
 
-    // No operator found, force antisocial filter.
-    if (queryCacheManager.enabled()) {
-      SearchOperator filter =
-          new SearchOperator(SearchOperator.Type.CACHED_FILTER,
-              QueryCacheConstants.EXCLUDE_ANTISOCIAL);
+    // n-nyo opewatow f-found, (ˆ ﻌ ˆ)♡ fowce antisociaw f-fiwtew. ^^;;
+    if (quewycachemanagew.enabwed()) {
+      seawchopewatow fiwtew =
+          nyew seawchopewatow(seawchopewatow.type.cached_fiwtew, (⑅˘꒳˘)
+              q-quewycacheconstants.excwude_antisociaw);
 
-      query = QueryNodeUtils.appendAsConjunction(query, filter);
-    } else {
-      SearchOperator filter = new SearchOperator(SearchOperator.Type.EXCLUDE,
-          SearchOperatorConstants.ANTISOCIAL);
+      q-quewy = quewynodeutiws.appendasconjunction(quewy, fiwtew);
+    } e-ewse {
+      s-seawchopewatow fiwtew = nyew s-seawchopewatow(seawchopewatow.type.excwude, rawr x3
+          seawchopewatowconstants.antisociaw);
 
-      query = QueryNodeUtils.appendAsConjunction(query, filter);
+      q-quewy = quewynodeutiws.appendasconjunction(quewy, (///ˬ///✿) fiwtew);
     }
-    return query;
+    wetuwn quewy;
   }
 
   /**
-   * Wraps the given query into an equivalent query that will also collect hit attribution data.
+   * w-wwaps the given quewy into a-an equivawent quewy that wiww awso c-cowwect hit a-attwibution data. 🥺
    *
-   * @param query The original query.
-   * @param node The query parser node storing this query.
-   * @param fieldInfo The field in which the given query will be searching.
-   * @param hitAttributeHelper The helper that will collect all hit attribution data.
-   * @return An equivalent query that will also collect hit attribution data.
+   * @pawam quewy the owiginaw quewy. >_<
+   * @pawam nyode the quewy pawsew nyode stowing this quewy. UwU
+   * @pawam f-fiewdinfo t-the fiewd in which the given quewy w-wiww be seawching. >_<
+   * @pawam h-hitattwibutehewpew t-the hewpew that wiww cowwect aww hit attwibution data. -.-
+   * @wetuwn a-an equivawent quewy that wiww awso cowwect hit attwibution data. mya
    */
-  public static final org.apache.lucene.search.Query maybeWrapWithHitAttributionCollector(
-      org.apache.lucene.search.Query query,
-      @Nullable com.twitter.search.queryparser.query.Query node,
-      Schema.FieldInfo fieldInfo,
-      @Nullable HitAttributeHelper hitAttributeHelper) {
-    // Prevents lint error for assigning to a function parameter.
-    org.apache.lucene.search.Query luceneQuery = query;
-    if (hitAttributeHelper != null && node != null) {
-      Optional<Annotation> annotation = node.getAnnotationOf(Annotation.Type.NODE_RANK);
+  p-pubwic static finaw owg.apache.wucene.seawch.quewy m-maybewwapwithhitattwibutioncowwectow(
+      o-owg.apache.wucene.seawch.quewy q-quewy, >w<
+      @nuwwabwe com.twittew.seawch.quewypawsew.quewy.quewy n-nyode, (U ﹏ U)
+      schema.fiewdinfo f-fiewdinfo, 😳😳😳
+      @nuwwabwe h-hitattwibutehewpew h-hitattwibutehewpew) {
+    // pwevents wint ewwow fow a-assigning to a-a function pawametew. o.O
+    o-owg.apache.wucene.seawch.quewy w-wucenequewy = q-quewy;
+    if (hitattwibutehewpew != nyuww && nyode != nyuww) {
+      o-optionaw<annotation> annotation = nyode.getannotationof(annotation.type.node_wank);
 
-      if (annotation.isPresent()) {
-        Integer nodeRank = (Integer) annotation.get().getValue();
-        luceneQuery = wrapWithHitAttributionCollector(
-            luceneQuery,
-            fieldInfo,
-            nodeRank,
-            hitAttributeHelper.getFieldRankHitAttributeCollector());
+      if (annotation.ispwesent()) {
+        integew nyodewank = (integew) annotation.get().getvawue();
+        w-wucenequewy = wwapwithhitattwibutioncowwectow(
+            wucenequewy, òωó
+            fiewdinfo, 😳😳😳
+            nodewank, σωσ
+            h-hitattwibutehewpew.getfiewdwankhitattwibutecowwectow());
       }
     }
 
-    return luceneQuery;
+    w-wetuwn w-wucenequewy;
   }
 
   /**
-   * Wraps the given query into an equivalent query that will also collect hit attribution data.
+   * wwaps the given q-quewy into an equivawent quewy t-that wiww awso c-cowwect hit attwibution data. (⑅˘꒳˘)
    *
-   * @param query The original query.
-   * @param nodeRank The rank of the given query in the overall request query.
-   * @param fieldInfo The field in which the given query will be searching.
-   * @param hitAttributeHelper The helper that will collect all hit attribution data.
-   * @return An equivalent query that will also collect hit attribution data.
+   * @pawam quewy the owiginaw quewy. (///ˬ///✿)
+   * @pawam nyodewank the wank of the given q-quewy in the ovewaww wequest q-quewy. 🥺
+   * @pawam fiewdinfo the f-fiewd in which t-the given quewy wiww be seawching. OwO
+   * @pawam hitattwibutehewpew t-the hewpew that w-wiww cowwect aww hit attwibution d-data. >w<
+   * @wetuwn a-an equivawent quewy that wiww awso cowwect hit attwibution data. 🥺
    */
-  public static final org.apache.lucene.search.Query maybeWrapWithHitAttributionCollector(
-      org.apache.lucene.search.Query query,
-      int nodeRank,
-      Schema.FieldInfo fieldInfo,
-      @Nullable HitAttributeHelper hitAttributeHelper) {
+  p-pubwic static finaw o-owg.apache.wucene.seawch.quewy m-maybewwapwithhitattwibutioncowwectow(
+      owg.apache.wucene.seawch.quewy quewy, nyaa~~
+      i-int n-nyodewank, ^^
+      schema.fiewdinfo f-fiewdinfo, >w<
+      @nuwwabwe hitattwibutehewpew hitattwibutehewpew) {
 
-    org.apache.lucene.search.Query luceneQuery = query;
-    if (hitAttributeHelper != null && nodeRank != -1) {
-      Preconditions.checkArgument(nodeRank > 0);
-      luceneQuery = wrapWithHitAttributionCollector(
-          luceneQuery, fieldInfo, nodeRank, hitAttributeHelper.getFieldRankHitAttributeCollector());
+    owg.apache.wucene.seawch.quewy wucenequewy = q-quewy;
+    i-if (hitattwibutehewpew != nyuww && nyodewank != -1) {
+      pweconditions.checkawgument(nodewank > 0);
+      w-wucenequewy = wwapwithhitattwibutioncowwectow(
+          w-wucenequewy, OwO fiewdinfo, XD nyodewank, hitattwibutehewpew.getfiewdwankhitattwibutecowwectow());
     }
-    return luceneQuery;
+    wetuwn wucenequewy;
   }
 
-  private static final org.apache.lucene.search.Query wrapWithHitAttributionCollector(
-      org.apache.lucene.search.Query luceneQuery,
-      Schema.FieldInfo fieldInfo,
-      int nodeRank,
-      HitAttributeCollector hitAttributeCollector) {
-    Preconditions.checkNotNull(fieldInfo,
-        "Tried collecting hit attribution for unknown field: " + fieldInfo.getName()
-            + " luceneQuery: " + luceneQuery);
-    return hitAttributeCollector.newIdentifiableQuery(
-        luceneQuery, fieldInfo.getFieldId(), nodeRank);
-  }
-
-  /**
-   * Returns a query equivalent to the given query, and with the given timeout enforced.
-   */
-  public static org.apache.lucene.search.Query maybeWrapWithTimeout(
-      org.apache.lucene.search.Query query,
-      QueryTimeout timeout) {
-    if (timeout != null) {
-      return new TerminationQuery(query, timeout);
-    }
-    return query;
+  p-pwivate static finaw owg.apache.wucene.seawch.quewy wwapwithhitattwibutioncowwectow(
+      owg.apache.wucene.seawch.quewy wucenequewy, ^^;;
+      s-schema.fiewdinfo fiewdinfo, 🥺
+      int nyodewank, XD
+      h-hitattwibutecowwectow h-hitattwibutecowwectow) {
+    pweconditions.checknotnuww(fiewdinfo, (U ᵕ U❁)
+        "twied cowwecting hit attwibution f-fow unknown fiewd: " + f-fiewdinfo.getname()
+            + " wucenequewy: " + wucenequewy);
+    wetuwn hitattwibutecowwectow.newidentifiabwequewy(
+        w-wucenequewy, :3 fiewdinfo.getfiewdid(), ( ͡o ω ͡o ) nyodewank);
   }
 
   /**
-   * Returns a query equivalent to the given query, and with the given timeout enforced. If the
-   * given query is negated, it is returned without any modifications.
+   * w-wetuwns a quewy equivawent to the given quewy, òωó and with t-the given timeout enfowced. σωσ
    */
-  public static org.apache.lucene.search.Query maybeWrapWithTimeout(
-      org.apache.lucene.search.Query query,
-      @Nullable com.twitter.search.queryparser.query.Query node,
-      QueryTimeout timeout) {
-    // If the node is looking for negation of something, we don't want to include it in node-level
-    // timeout checks. In general, nodes keep track of the last doc seen, but non-matching docs
-    // encountered by "must not occur" node do not reflect overall progress in the index.
-    if (node != null && node.mustNotOccur()) {
-      return query;
+  p-pubwic static o-owg.apache.wucene.seawch.quewy maybewwapwithtimeout(
+      o-owg.apache.wucene.seawch.quewy quewy,
+      quewytimeout t-timeout) {
+    i-if (timeout != n-nyuww) {
+      wetuwn nyew t-tewminationquewy(quewy, (U ᵕ U❁) t-timeout);
     }
-    return maybeWrapWithTimeout(query, timeout);
+    wetuwn quewy;
+  }
+
+  /**
+   * w-wetuwns a-a quewy equivawent t-to the given quewy, (✿oωo) and with the given timeout e-enfowced. ^^ if the
+   * given q-quewy is nyegated, ^•ﻌ•^ i-it is wetuwned without any modifications. XD
+   */
+  pubwic static o-owg.apache.wucene.seawch.quewy m-maybewwapwithtimeout(
+      o-owg.apache.wucene.seawch.quewy quewy, :3
+      @nuwwabwe c-com.twittew.seawch.quewypawsew.quewy.quewy nyode,
+      quewytimeout t-timeout) {
+    // if the nyode is wooking fow nyegation of something, (ꈍᴗꈍ) we don't want to i-incwude it in nyode-wevew
+    // t-timeout checks. :3 in genewaw, nyodes k-keep twack of the wast doc s-seen, (U ﹏ U) but non-matching docs
+    // e-encountewed b-by "must nyot occuw" n-nyode do nyot w-wefwect ovewaww p-pwogwess in the index. UwU
+    if (node != nyuww && nyode.mustnotoccuw()) {
+      wetuwn quewy;
+    }
+    wetuwn maybewwapwithtimeout(quewy, 😳😳😳 t-timeout);
   }
 }

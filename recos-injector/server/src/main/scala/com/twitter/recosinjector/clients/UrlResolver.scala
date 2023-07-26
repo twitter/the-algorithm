@@ -1,104 +1,104 @@
-package com.twitter.recosinjector.clients
+package com.twittew.wecosinjectow.cwients
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.frigate.common.util.{SnowflakeUtils, UrlInfo}
-import com.twitter.storehaus.{FutureOps, ReadableStore}
-import com.twitter.util.{Duration, Future, Timer}
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.finagwe.utiw.defauwttimew
+i-impowt com.twittew.fwigate.common.utiw.{snowfwakeutiws, (U ﹏ U) u-uwwinfo}
+i-impowt com.twittew.stowehaus.{futuweops, (///ˬ///✿) w-weadabwestowe}
+i-impowt com.twittew.utiw.{duwation, 😳 futuwe, 😳 timew}
 
-class UrlResolver(
-  urlInfoStore: ReadableStore[String, UrlInfo]
+cwass uwwwesowvew(
+  uwwinfostowe: w-weadabwestowe[stwing, σωσ uwwinfo]
 )(
-  implicit statsReceiver: StatsReceiver) {
-  private val EmptyFutureMap = Future.value(Map.empty[String, String])
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val twitterResolvedUrlCounter = stats.counter("twitterResolvedUrl")
-  private val resolvedUrlCounter = stats.counter("resolvedUrl")
-  private val noResolvedUrlCounter = stats.counter("noResolvedUrl")
+  impwicit statsweceivew: s-statsweceivew) {
+  pwivate vaw emptyfutuwemap = f-futuwe.vawue(map.empty[stwing, rawr x3 stwing])
+  pwivate vaw stats = statsweceivew.scope(this.getcwass.getsimpwename)
+  pwivate v-vaw twittewwesowveduwwcountew = stats.countew("twittewwesowveduww")
+  p-pwivate v-vaw wesowveduwwcountew = stats.countew("wesowveduww")
+  pwivate vaw nyowesowveduwwcountew = stats.countew("nowesowveduww")
 
-  private val numNoDelayCounter = stats.counter("urlResolver_no_delay")
-  private val numDelayCounter = stats.counter("urlResolver_delay")
+  p-pwivate vaw nyumnodewaycountew = stats.countew("uwwwesowvew_no_deway")
+  pwivate vaw nyumdewaycountew = stats.countew("uwwwesowvew_deway")
 
-  implicit val timer: Timer = DefaultTimer
+  i-impwicit vaw timew: timew = defauwttimew
 
   /**
-   * Get the resolved URL map of the input raw URLs
+   * g-get the wesowved u-uww map of t-the input waw u-uwws
    *
-   * @param rawUrls list of raw URLs to query
-   * @return map of raw URL to resolved URL
+   * @pawam wawuwws wist of waw uwws to q-quewy
+   * @wetuwn map of waw uww to wesowved u-uww
    */
-  def getResolvedUrls(rawUrls: Set[String]): Future[Map[String, String]] = {
-    FutureOps
-      .mapCollect(urlInfoStore.multiGet[String](rawUrls))
-      .map { resolvedUrlsMap =>
-        resolvedUrlsMap.flatMap {
-          case (
-                url,
-                Some(
-                  UrlInfo(
-                    Some(resolvedUrl),
-                    Some(_),
-                    Some(domain),
+  def getwesowveduwws(wawuwws: set[stwing]): futuwe[map[stwing, OwO stwing]] = {
+    futuweops
+      .mapcowwect(uwwinfostowe.muwtiget[stwing](wawuwws))
+      .map { w-wesowveduwwsmap =>
+        wesowveduwwsmap.fwatmap {
+          c-case (
+                u-uww, /(^•ω•^)
+                s-some(
+                  uwwinfo(
+                    some(wesowveduww), 😳😳😳
+                    some(_),
+                    some(domain), ( ͡o ω ͡o )
+                    _, >_<
                     _,
-                    _,
-                    _,
-                    _,
-                    Some(_),
-                    _,
-                    _,
-                    _,
+                    _, >w<
+                    _, rawr
+                    s-some(_), 😳
+                    _, >w<
+                    _, (⑅˘꒳˘)
+                    _, OwO
                     _))) =>
-            if (domain == "Twitter") { // Filter out Twitter based URLs
-              twitterResolvedUrlCounter.incr()
-              None
-            } else {
-              resolvedUrlCounter.incr()
-              Some(url -> resolvedUrl)
+            i-if (domain == "twittew") { // fiwtew out twittew b-based uwws
+              t-twittewwesowveduwwcountew.incw()
+              nyone
+            } e-ewse {
+              wesowveduwwcountew.incw()
+              s-some(uww -> wesowveduww)
             }
           case _ =>
-            noResolvedUrlCounter.incr()
-            None
+            nyowesowveduwwcountew.incw()
+            n-nyone
         }
       }
   }
 
   /**
-   *  Get resolved url maps given a list of urls, grouping urls that point to the same webpage
+   *  get wesowved u-uww maps given a wist of uwws, (ꈍᴗꈍ) g-gwouping uwws t-that point to the same webpage
    */
-  def getResolvedUrls(urls: Seq[String], tweetId: Long): Future[Map[String, String]] = {
-    if (urls.isEmpty) {
-      EmptyFutureMap
-    } else {
-      Future
-        .sleep(getUrlResolverDelayDuration(tweetId))
-        .before(getResolvedUrls(urls.toSet))
+  def getwesowveduwws(uwws: seq[stwing], 😳 tweetid: wong): futuwe[map[stwing, 😳😳😳 stwing]] = {
+    if (uwws.isempty) {
+      e-emptyfutuwemap
+    } e-ewse {
+      futuwe
+        .sweep(getuwwwesowvewdewayduwation(tweetid))
+        .befowe(getwesowveduwws(uwws.toset))
     }
   }
 
   /**
-   * Given a tweet, return the amount of delay needed before attempting to resolve the Urls
+   * given a-a tweet, mya wetuwn t-the amount of d-deway nyeeded befowe attempting to wesowve the uwws
    */
-  private def getUrlResolverDelayDuration(
-    tweetId: Long
-  ): Duration = {
-    val urlResolverDelaySinceCreation = 12.seconds
-    val urlResolverDelayDuration = 4.seconds
-    val noDelay = 0.seconds
+  pwivate d-def getuwwwesowvewdewayduwation(
+    tweetid: wong
+  ): duwation = {
+    vaw uwwwesowvewdewaysincecweation = 12.seconds
+    vaw uwwwesowvewdewayduwation = 4.seconds
+    vaw n-nyodeway = 0.seconds
 
-    // Check whether the tweet was created more than the specified delay duration before now.
-    // If the tweet ID is not based on Snowflake, this is false, and the delay is applied.
-    val isCreatedBeforeDelayThreshold = SnowflakeUtils
-      .tweetCreationTime(tweetId)
-      .map(_.untilNow)
-      .exists(_ > urlResolverDelaySinceCreation)
+    // check whethew the t-tweet was cweated m-mowe than the s-specified deway duwation befowe n-nyow. mya
+    // if t-the tweet id is n-nyot based on s-snowfwake, (⑅˘꒳˘) this is fawse, (U ﹏ U) and the deway is appwied. mya
+    v-vaw iscweatedbefowedewaythweshowd = s-snowfwakeutiws
+      .tweetcweationtime(tweetid)
+      .map(_.untiwnow)
+      .exists(_ > u-uwwwesowvewdewaysincecweation)
 
-    if (isCreatedBeforeDelayThreshold) {
-      numNoDelayCounter.incr()
-      noDelay
-    } else {
-      numDelayCounter.incr()
-      urlResolverDelayDuration
+    i-if (iscweatedbefowedewaythweshowd) {
+      n-nyumnodewaycountew.incw()
+      nyodeway
+    } ewse {
+      nyumdewaycountew.incw()
+      uwwwesowvewdewayduwation
     }
   }
 

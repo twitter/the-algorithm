@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.conversations
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.convewsations
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleMetadataBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleConversationMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleMetadata
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.timewine_moduwe.basemoduwemetadatabuiwdew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.moduweconvewsationmetadata
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.moduwemetadata
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case class ConversationModuleMetadataBuilder[
-  Query <: PipelineQuery,
-  Candidate <: BaseTweetCandidate
+case cwass convewsationmoduwemetadatabuiwdew[
+  quewy <: pipewinequewy, rawr x3
+  c-candidate <: basetweetcandidate
 ](
-  ancestorIdsFeature: Feature[_, Seq[Long]],
-  allIdsOrdering: Ordering[Long])
-    extends BaseModuleMetadataBuilder[Query, Candidate] {
+  ancestowidsfeatuwe: f-featuwe[_, (✿oωo) seq[wong]], (ˆ ﻌ ˆ)♡
+  a-awwidsowdewing: owdewing[wong])
+    extends basemoduwemetadatabuiwdew[quewy, (˘ω˘) c-candidate] {
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): ModuleMetadata = {
+  ovewwide def a-appwy(
+    quewy: q-quewy, (⑅˘꒳˘)
+    candidates: seq[candidatewithfeatuwes[candidate]]
+  ): moduwemetadata = {
 
-    val ancestors = candidates.last.features.getOrElse(ancestorIdsFeature, Seq.empty)
-    val sortedAllTweetIds = (candidates.last.candidate.id +: ancestors).sorted(allIdsOrdering)
+    vaw ancestows = candidates.wast.featuwes.getowewse(ancestowidsfeatuwe, (///ˬ///✿) s-seq.empty)
+    vaw sowtedawwtweetids = (candidates.wast.candidate.id +: ancestows).sowted(awwidsowdewing)
 
-    ModuleMetadata(
-      adsMetadata = None,
-      conversationMetadata = Some(
-        ModuleConversationMetadata(
-          allTweetIds = Some(sortedAllTweetIds),
-          socialContext = None,
-          enableDeduplication = Some(true)
-        )),
-      gridCarouselMetadata = None
+    moduwemetadata(
+      adsmetadata = n-nyone, 😳😳😳
+      convewsationmetadata = s-some(
+        m-moduweconvewsationmetadata(
+          a-awwtweetids = s-some(sowtedawwtweetids), 🥺
+          sociawcontext = nyone, mya
+          enabwededupwication = some(twue)
+        )), 🥺
+      g-gwidcawousewmetadata = nyone
     )
   }
 }

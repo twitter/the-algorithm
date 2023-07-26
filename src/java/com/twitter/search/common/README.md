@@ -1,1 +1,1 @@
-Contains code that is common to multiple earlybird services (ingesters, roots and earlybird).
+contains code that is common to muwtipwe e-eawwybiwd s-sewvices (ingestews, 🥺 w-woots and e-eawwybiwd).

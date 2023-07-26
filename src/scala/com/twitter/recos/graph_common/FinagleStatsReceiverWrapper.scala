@@ -1,16 +1,16 @@
-package com.twitter.recos.graph_common
+package com.twittew.wecos.gwaph_common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.stats.{StatsReceiver => GraphStatsReceiver}
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.gwaphjet.stats.{statsweceivew => g-gwaphstatsweceivew}
 
 /**
- * FinagleStatsReceiverWrapper wraps Twitter's Finagle StatsReceiver.
+ * f-finagwestatsweceivewwwappew w-wwaps twittew's f-finagwe statsweceivew. ^^;;
  *
- * This is because GraphJet is an openly available library which does not
- * depend on Finagle, but tracks stats using a similar interface.
+ * this i-is because gwaphjet i-is an openwy a-avaiwabwe wibwawy which does nyot
+ * depend on finagwe, >_< but twacks stats using a-a simiwaw intewface. mya
  */
-case class FinagleStatsReceiverWrapper(statsReceiver: StatsReceiver) extends GraphStatsReceiver {
+case cwass finagwestatsweceivewwwappew(statsweceivew: s-statsweceivew) extends gwaphstatsweceivew {
 
-  def scope(namespace: String) = new FinagleStatsReceiverWrapper(statsReceiver.scope(namespace))
-  def counter(name: String) = new FinagleCounterWrapper(statsReceiver.counter(name))
+  d-def scope(namespace: stwing) = nyew finagwestatsweceivewwwappew(statsweceivew.scope(namespace))
+  def countew(name: s-stwing) = nyew finagwecountewwwappew(statsweceivew.countew(name))
 }

@@ -1,145 +1,145 @@
-import re
+impowt we
 
-from twitter.deepbird.io.util import _get_feature_id
-
-
-class Parser(object):
-  def parse(self, line):
-    match = re.search(self.pattern(), line)
-    if match:
-      return self._parse_match(match)
-    return None
-
-  def pattern(self):
-    raise NotImplementedError
-
-  def _parse_match(self, match):
-    raise NotImplementedError
+fwom twittew.deepbiwd.io.utiw impowt _get_featuwe_id
 
 
-class BiasParser(Parser):
+c-cwass pawsew(object):
+  d-def pawse(sewf, ( ͡o ω ͡o ) w-wine):
+    m-match = we.seawch(sewf.pattewn(), òωó w-wine)
+    i-if match:
+      w-wetuwn sewf._pawse_match(match)
+    w-wetuwn nyone
+
+  def pattewn(sewf):
+    waise nyotimpwementedewwow
+
+  def _pawse_match(sewf, m-match):
+    waise nyotimpwementedewwow
+
+
+cwass biaspawsew(pawsew):
   '''
-  Parses the bias feature available in lolly model tsv files.
-  '''
-
-  def pattern(self):
-    '''
-    Matches lines like:
-      unified_engagement	bias	-0.935945
-    :return: a RegEx that extracts feature weight.
-    '''
-    return r"\t(bias)\t([^\s]+)"
-
-  def _parse_match(self, match):
-    return float(match.group(2))
-
-
-class BinaryFeatureParser(Parser):
-  '''
-  Parses binary features available in lolly model tsv files.
+  p-pawses the bias featuwe a-avaiwabwe in wowwy modew tsv fiwes. (⑅˘꒳˘)
   '''
 
-  def pattern(self):
+  def pattewn(sewf):
     '''
-    Matches lines like:
-      unified_engagement	encoded_tweet_features.is_user_spam_flag	-0.181130
-    :return: a RegEx that extracts feature name and weight.
+    matches w-wines wike:
+      unified_engagement	b-bias	-0.935945
+    :wetuwn: a-a wegex that extwacts featuwe weight. XD
     '''
-    return r"\t([\w\.]+)\t([^\s]+)"
+    wetuwn w"\t(bias)\t([^\s]+)"
 
-  def _parse_match(self, match):
-    return (match.group(1), float(match.group(2)))
+  d-def _pawse_match(sewf, -.- match):
+    wetuwn fwoat(match.gwoup(2))
 
 
-class DiscretizedFeatureParser(Parser):
+cwass binawyfeatuwepawsew(pawsew):
   '''
-  Parses discretized features available in lolly model tsv files.
+  p-pawses binawy featuwes avaiwabwe i-in wowwy m-modew tsv fiwes. :3
   '''
 
-  def pattern(self):
+  d-def pattewn(sewf):
     '''
-    Matches lines like:
-      unified_engagement	encoded_tweet_features.user_reputation.dz/dz_model=mdl/dz_range=1.000000e+00_2.000000e+00	0.031004
-    :return: a RegEx that extracts feature name, bin boundaries and weight.
+    m-matches wines wike:
+      unified_engagement	e-encoded_tweet_featuwes.is_usew_spam_fwag	-0.181130
+    :wetuwn: a wegex that extwacts featuwe n-nyame and weight. nyaa~~
     '''
-    return r"([\w\.]+)\.dz\/dz_model=mdl\/dz_range=([^\s]+)\t([^\s]+)"
+    wetuwn w"\t([\w\.]+)\t([^\s]+)"
 
-  def _parse_match(self, match):
-    left_bin_side, right_bin_side = [float(number) for number in match.group(2).split("_")]
-    return (
-      match.group(1),
-      left_bin_side,
-      right_bin_side,
-      float(match.group(3))
+  def _pawse_match(sewf, 😳 match):
+    wetuwn (match.gwoup(1), (⑅˘꒳˘) fwoat(match.gwoup(2)))
+
+
+c-cwass discwetizedfeatuwepawsew(pawsew):
+  '''
+  p-pawses d-discwetized featuwes a-avaiwabwe in wowwy modew tsv fiwes. nyaa~~
+  '''
+
+  def pattewn(sewf):
+    '''
+    m-matches wines w-wike:
+      unified_engagement	encoded_tweet_featuwes.usew_weputation.dz/dz_modew=mdw/dz_wange=1.000000e+00_2.000000e+00	0.031004
+    :wetuwn: a wegex that extwacts f-featuwe nyame, OwO b-bin boundawies and weight. rawr x3
+    '''
+    w-wetuwn w"([\w\.]+)\.dz\/dz_modew=mdw\/dz_wange=([^\s]+)\t([^\s]+)"
+
+  d-def _pawse_match(sewf, XD match):
+    weft_bin_side, σωσ w-wight_bin_side = [fwoat(numbew) fow nyumbew in m-match.gwoup(2).spwit("_")]
+    wetuwn (
+      m-match.gwoup(1), (U ᵕ U❁)
+      w-weft_bin_side, (U ﹏ U)
+      wight_bin_side, :3
+      fwoat(match.gwoup(3))
     )
 
 
-class LollyModelFeaturesParser(Parser):
-  def __init__(self, bias_parser=BiasParser(), binary_feature_parser=BinaryFeatureParser(), discretized_feature_parser=DiscretizedFeatureParser()):
-    self._bias_parser = bias_parser
-    self._binary_feature_parser = binary_feature_parser
-    self._discretized_feature_parser = discretized_feature_parser
+cwass wowwymodewfeatuwespawsew(pawsew):
+  def __init__(sewf, ( ͡o ω ͡o ) bias_pawsew=biaspawsew(), σωσ binawy_featuwe_pawsew=binawyfeatuwepawsew(), >w< d-discwetized_featuwe_pawsew=discwetizedfeatuwepawsew()):
+    sewf._bias_pawsew = b-bias_pawsew
+    sewf._binawy_featuwe_pawsew = b-binawy_featuwe_pawsew
+    s-sewf._discwetized_featuwe_pawsew = d-discwetized_featuwe_pawsew
 
-  def parse(self, lolly_model_reader):
-    parsed_features = {
-      "bias": None,
-      "binary": {},
-      "discretized": {}
+  def pawse(sewf, 😳😳😳 wowwy_modew_weadew):
+    pawsed_featuwes = {
+      "bias": n-nyone, OwO
+      "binawy": {}, 😳
+      "discwetized": {}
     }
-    def process_line_fn(line):
-      bias_parser_result = self._bias_parser.parse(line)
-      if bias_parser_result:
-        parsed_features["bias"] = bias_parser_result
-        return
+    def pwocess_wine_fn(wine):
+      bias_pawsew_wesuwt = sewf._bias_pawsew.pawse(wine)
+      if b-bias_pawsew_wesuwt:
+        pawsed_featuwes["bias"] = b-bias_pawsew_wesuwt
+        w-wetuwn
 
-      binary_feature_parser_result = self._binary_feature_parser.parse(line)
-      if binary_feature_parser_result:
-        name, value = binary_feature_parser_result
-        parsed_features["binary"][name] = value
-        return
+      b-binawy_featuwe_pawsew_wesuwt = sewf._binawy_featuwe_pawsew.pawse(wine)
+      if b-binawy_featuwe_pawsew_wesuwt:
+        n-name, 😳😳😳 vawue = b-binawy_featuwe_pawsew_wesuwt
+        p-pawsed_featuwes["binawy"][name] = vawue
+        wetuwn
 
-      discretized_feature_parser_result = self._discretized_feature_parser.parse(line)
-      if discretized_feature_parser_result:
-        name, left_bin, right_bin, weight = discretized_feature_parser_result
-        discretized_features = parsed_features["discretized"]
-        if name not in discretized_features:
-          discretized_features[name] = []
-        discretized_features[name].append((left_bin, right_bin, weight))
+      d-discwetized_featuwe_pawsew_wesuwt = s-sewf._discwetized_featuwe_pawsew.pawse(wine)
+      i-if d-discwetized_featuwe_pawsew_wesuwt:
+        n-nyame, (˘ω˘) weft_bin, wight_bin, ʘwʘ weight = discwetized_featuwe_pawsew_wesuwt
+        d-discwetized_featuwes = pawsed_featuwes["discwetized"]
+        if nyame nyot in discwetized_featuwes:
+          discwetized_featuwes[name] = []
+        discwetized_featuwes[name].append((weft_bin, ( ͡o ω ͡o ) wight_bin, o.O w-weight))
 
-    lolly_model_reader.read(process_line_fn)
+    wowwy_modew_weadew.wead(pwocess_wine_fn)
 
-    return parsed_features
+    wetuwn pawsed_featuwes
 
 
-class DBv2DataExampleParser(Parser):
+cwass dbv2dataexampwepawsew(pawsew):
   '''
-  Parses data records printed by the DBv2 train.py build_graph function.
-  Format: [[dbv2 logit]][[logged lolly logit]][[space separated feature ids]][[space separated feature values]]
+  p-pawses d-data wecowds p-pwinted by the dbv2 twain.py buiwd_gwaph f-function. >w<
+  fowmat: [[dbv2 w-wogit]][[wogged w-wowwy wogit]][[space sepawated featuwe ids]][[space sepawated featuwe vawues]]
   '''
 
-  def __init__(self, lolly_model_reader, lolly_model_features_parser=LollyModelFeaturesParser()):
-    self.features = lolly_model_features_parser.parse(lolly_model_reader)
-    self.feature_name_by_dbv2_id = {}
+  def __init__(sewf, 😳 wowwy_modew_weadew, 🥺 w-wowwy_modew_featuwes_pawsew=wowwymodewfeatuwespawsew()):
+    sewf.featuwes = w-wowwy_modew_featuwes_pawsew.pawse(wowwy_modew_weadew)
+    sewf.featuwe_name_by_dbv2_id = {}
 
-    for feature_name in list(self.features["binary"].keys()) + list(self.features["discretized"].keys()):
-      self.feature_name_by_dbv2_id[str(_get_feature_id(feature_name))] = feature_name
+    f-fow featuwe_name i-in wist(sewf.featuwes["binawy"].keys()) + wist(sewf.featuwes["discwetized"].keys()):
+      sewf.featuwe_name_by_dbv2_id[stw(_get_featuwe_id(featuwe_name))] = f-featuwe_name
 
-  def pattern(self):
+  d-def pattewn(sewf):
     '''
-    :return: a RegEx that extracts dbv2 logit, logged lolly logit, feature ids and feature values.
+    :wetuwn: a wegex t-that extwacts dbv2 w-wogit, rawr x3 wogged wowwy wogit, o.O featuwe ids and featuwe vawues. rawr
     '''
-    return r"\[\[([\w\.\-]+)\]\]\[\[([\w\.\-]+)\]\]\[\[([\w\.\- ]+)\]\]\[\[([\w\. ]+)\]\]"
+    wetuwn w-w"\[\[([\w\.\-]+)\]\]\[\[([\w\.\-]+)\]\]\[\[([\w\.\- ]+)\]\]\[\[([\w\. ʘwʘ ]+)\]\]"
 
-  def _parse_match(self, match):
-    feature_ids = match.group(3).split(" ")
-    feature_values = match.group(4).split(" ")
+  d-def _pawse_match(sewf, 😳😳😳 m-match):
+    featuwe_ids = m-match.gwoup(3).spwit(" ")
+    f-featuwe_vawues = match.gwoup(4).spwit(" ")
 
-    value_by_feature_name = {}
-    for index in range(len(feature_ids)):
-      feature_id = feature_ids[index]
-      if feature_id not in self.feature_name_by_dbv2_id:
-        print("Missing feature with id: " + str(feature_id))
-        continue
-      value_by_feature_name[self.feature_name_by_dbv2_id[feature_id]] = float(feature_values[index])
+    v-vawue_by_featuwe_name = {}
+    fow index in wange(wen(featuwe_ids)):
+      featuwe_id = featuwe_ids[index]
+      if featuwe_id n-nyot in sewf.featuwe_name_by_dbv2_id:
+        p-pwint("missing featuwe with id: " + stw(featuwe_id))
+        c-continue
+      v-vawue_by_featuwe_name[sewf.featuwe_name_by_dbv2_id[featuwe_id]] = fwoat(featuwe_vawues[index])
 
-    return value_by_feature_name
+    wetuwn vawue_by_featuwe_name

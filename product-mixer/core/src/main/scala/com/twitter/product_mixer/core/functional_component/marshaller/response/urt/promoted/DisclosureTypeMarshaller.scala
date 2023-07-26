@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclosureType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Earned
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Issue
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.NoDisclosure
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Political
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.discwosuwetype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.eawned
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.issue
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.nodiscwosuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.powiticaw
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => uwt}
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class DisclosureTypeMarshaller @Inject() () {
+@singweton
+c-cwass discwosuwetypemawshawwew @inject() () {
 
-  def apply(disclosureType: DisclosureType): urt.DisclosureType = disclosureType match {
-    case NoDisclosure => urt.DisclosureType.NoDisclosure
-    case Political => urt.DisclosureType.Political
-    case Earned => urt.DisclosureType.Earned
-    case Issue => urt.DisclosureType.Issue
+  def appwy(discwosuwetype: discwosuwetype): uwt.discwosuwetype = d-discwosuwetype match {
+    c-case nyodiscwosuwe => uwt.discwosuwetype.nodiscwosuwe
+    case powiticaw => uwt.discwosuwetype.powiticaw
+    c-case eawned => uwt.discwosuwetype.eawned
+    c-case issue => u-uwt.discwosuwetype.issue
   }
 }

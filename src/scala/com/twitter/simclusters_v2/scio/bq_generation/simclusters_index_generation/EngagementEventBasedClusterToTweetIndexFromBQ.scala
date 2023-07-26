@@ -1,177 +1,177 @@
-package com.twitter.simclusters_v2.scio.bq_generation
-package simclusters_index_generation
+package com.twittew.simcwustews_v2.scio.bq_genewation
+package simcwustews_index_genewation
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getNSFWTweetIdDenylistSQL
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getTweetIdWithFavCountSQL
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getTweetIdWithMediaAndNSFWAuthorFilterSQL
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getUserTweetEngagementEventPairSQL
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.generateClusterTopTweetIntersectionWithFavBasedIndexSQL
-import com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.Config.simclustersEngagementBasedIndexGenerationSQLPath
-import com.twitter.simclusters_v2.scio.bq_generation.common.IndexGenerationUtil.TopKTweetsForClusterKey
-import com.twitter.simclusters_v2.scio.bq_generation.common.IndexGenerationUtil.parseClusterTopKTweetsFn
-import com.twitter.wtf.beam.bq_embedding_export.BQQueryUtils
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
-import org.joda.time.DateTime
+i-impowt c-com.spotify.scio.sciocontext
+impowt c-com.spotify.scio.vawues.scowwection
+i-impowt c-com.twittew.simcwustews_v2.scio.bq_genewation.common.bqgenewationutiw.getnsfwtweetiddenywistsqw
+i-impowt com.twittew.simcwustews_v2.scio.bq_genewation.common.bqgenewationutiw.gettweetidwithfavcountsqw
+i-impowt com.twittew.simcwustews_v2.scio.bq_genewation.common.bqgenewationutiw.gettweetidwithmediaandnsfwauthowfiwtewsqw
+impowt c-com.twittew.simcwustews_v2.scio.bq_genewation.common.bqgenewationutiw.getusewtweetengagementeventpaiwsqw
+impowt com.twittew.simcwustews_v2.scio.bq_genewation.common.bqgenewationutiw.genewatecwustewtoptweetintewsectionwithfavbasedindexsqw
+impowt com.twittew.simcwustews_v2.scio.bq_genewation.simcwustews_index_genewation.config.simcwustewsengagementbasedindexgenewationsqwpath
+impowt com.twittew.simcwustews_v2.scio.bq_genewation.common.indexgenewationutiw.topktweetsfowcwustewkey
+i-impowt com.twittew.simcwustews_v2.scio.bq_genewation.common.indexgenewationutiw.pawsecwustewtopktweetsfn
+impowt com.twittew.wtf.beam.bq_embedding_expowt.bqquewyutiws
+impowt o-owg.apache.beam.sdk.io.gcp.bigquewy.bigquewyio
+impowt owg.joda.time.datetime
 
-object EngagementEventBasedClusterToTweetIndexFromBQ {
+o-object engagementeventbasedcwustewtotweetindexfwombq {
 
   /*
-   * Reads the user-tweet-interaction table and apply tweet fav count filter
-   * Returns the post processed table results in SQL string format
+   * weads the usew-tweet-intewaction tabwe and appwy tweet fav count f-fiwtew
+   * wetuwns the post p-pwocessed tabwe w-wesuwts in sqw stwing fowmat
    *
-* Input:
-   *   - startTime: DateTime
-   *       The earliest timestamp from the user-tweet-interaction table
-   *   - endTime: DateTime
-   *       The latest timestamp from the user-tweet-interaction table
-   *   - minFavCount: Int
-   *       Whether we want to enable tweet fav count filters
+* input:
+   *   - stawttime: datetime
+   *       t-the eawwiest timestamp fwom the usew-tweet-intewaction tabwe
+   *   - endtime: d-datetime
+   *       the watest t-timestamp fwom t-the usew-tweet-intewaction t-tabwe
+   *   - m-minfavcount: int
+   *       whethew we w-want to enabwe tweet fav count fiwtews
    *
-* Return:
-   *   String - Post processed table results in SQL string format
+* w-wetuwn:
+   *   stwing - post pwocessed tabwe wesuwts in sqw stwing fowmat
    */
-  def getTweetInteractionTableWithFavCountFilter(
-    startTime: DateTime,
-    endTime: DateTime,
-    minFavCount: Int
-  ): String = {
-    if (minFavCount > 0) {
-      val tweetFavCountSQL = getTweetIdWithFavCountSQL(startTime, endTime)
-      s"""
-         |  WITH tweet_fav_count AS (${tweetFavCountSQL})
-         |  SELECT userId, tweetId, tsMillis
-         |  FROM user_tweet_interaction_with_min_interaction_count_filter
-         |  JOIN tweet_fav_count
-         |  USING(tweetId)
-         |  WHERE tweet_fav_count.favCount >= ${minFavCount}
-         |""".stripMargin
-    } else {
-      // Directly read from the table without applying any filters
-      s"SELECT userId, tweetId, tsMillis FROM user_tweet_interaction_with_min_interaction_count_filter"
+  def gettweetintewactiontabwewithfavcountfiwtew(
+    s-stawttime: datetime, OwO
+    endtime: d-datetime, 😳😳😳
+    m-minfavcount: i-int
+  ): stwing = {
+    if (minfavcount > 0) {
+      vaw tweetfavcountsqw = gettweetidwithfavcountsqw(stawttime, (ˆ ﻌ ˆ)♡ endtime)
+      s-s"""
+         |  w-with tweet_fav_count as (${tweetfavcountsqw})
+         |  s-sewect u-usewid, XD tweetid, (ˆ ﻌ ˆ)♡ tsmiwwis
+         |  f-fwom usew_tweet_intewaction_with_min_intewaction_count_fiwtew
+         |  j-join tweet_fav_count
+         |  using(tweetid)
+         |  whewe tweet_fav_count.favcount >= ${minfavcount}
+         |""".stwipmawgin
+    } e-ewse {
+      // diwectwy wead f-fwom the tabwe without appwying a-any fiwtews
+      s-s"sewect usewid, ( ͡o ω ͡o ) tweetid, rawr x3 tsmiwwis fwom usew_tweet_intewaction_with_min_intewaction_count_fiwtew"
     }
   }
 
   /*
-   * Reads the user-tweet-interaction table and apply health and video filters if specified.
-   * Returns the post processed table results in SQL string format
+   * weads the usew-tweet-intewaction tabwe and appwy heawth a-and video fiwtews i-if specified. nyaa~~
+   * wetuwns the p-post pwocessed t-tabwe wesuwts in s-sqw stwing fowmat
    *
-  * Input:
-   *   - tableName: String
-   *       Schema of the table
-   *         userId: Long
-   *         tweetId: Long
-   *         tsMillis: Long
-   *   - startTime: DateTime
-   *       The earliest timestamp from the user-tweet-interaction table
-   *   - endTime: DateTime
-   *       The latest timestamp from the user-tweet-interaction table
-   *   - enableHealthAndVideoFilters: Boolean
-   *       Whether we want to enable health filters and video only filters
+  * input:
+   *   - tabwename: stwing
+   *       s-schema of the tabwe
+   *         usewid: wong
+   *         tweetid: wong
+   *         t-tsmiwwis: wong
+   *   - stawttime: d-datetime
+   *       t-the eawwiest t-timestamp fwom the usew-tweet-intewaction t-tabwe
+   *   - e-endtime: d-datetime
+   *       t-the watest timestamp fwom the usew-tweet-intewaction tabwe
+   *   - e-enabweheawthandvideofiwtews: b-boowean
+   *       w-whethew w-we want to e-enabwe heawth fiwtews and video onwy fiwtews
    *
-  * Return:
-   *   String - Post processed table results in SQL string format
+  * wetuwn:
+   *   s-stwing - post pwocessed tabwe wesuwts in sqw stwing fowmat
    */
-  def getTweetInteractionTableWithHealthFilter(
-    startTime: DateTime,
-    endTime: DateTime,
-    enableHealthAndVideoFilters: Boolean,
-  ): String = {
-    if (enableHealthAndVideoFilters) {
-      // Get SQL for tweets with media and NSFW filter
-      val tweetWithMediaAndNSFWAuthorFilterSQL = getTweetIdWithMediaAndNSFWAuthorFilterSQL(
-        startTime,
-        endTime,
-        filterMediaType = Some(3), // VideoTweets MediaType = 3
-        filterNSFWAuthor = true
+  def gettweetintewactiontabwewithheawthfiwtew(
+    stawttime: d-datetime, >_<
+    endtime: datetime, ^^;;
+    enabweheawthandvideofiwtews: boowean, (ˆ ﻌ ˆ)♡
+  ): s-stwing = {
+    i-if (enabweheawthandvideofiwtews) {
+      // g-get sqw fow tweets with media and n-nysfw fiwtew
+      vaw tweetwithmediaandnsfwauthowfiwtewsqw = g-gettweetidwithmediaandnsfwauthowfiwtewsqw(
+        s-stawttime, ^^;;
+        endtime, (⑅˘꒳˘)
+        fiwtewmediatype = some(3), rawr x3 // videotweets mediatype = 3
+        f-fiwtewnsfwauthow = twue
       )
-      // Get SQL for NSFW tweet id deny list
-      val nsfwTweetDenylistSQL = getNSFWTweetIdDenylistSQL(startTime, endTime)
-      // Combine the health filter SQLs
+      // g-get sqw fow nysfw tweet id deny w-wist
+      vaw n-nysfwtweetdenywistsqw = getnsfwtweetiddenywistsqw(stawttime, (///ˬ///✿) endtime)
+      // combine t-the heawth f-fiwtew sqws
       s"""
-         |SELECT userId, tweetId, tsMillis FROM user_tweet_interaction_with_fav_count_filter JOIN (
-         |  ${tweetWithMediaAndNSFWAuthorFilterSQL}
-         |    AND tweetId NOT IN (${nsfwTweetDenylistSQL})
-         |) USING(tweetId)
-         |""".stripMargin
-    } else {
-      // Directly read from the table without applying any filters
-      s"SELECT userId, tweetId, tsMillis FROM user_tweet_interaction_with_fav_count_filter"
+         |sewect u-usewid, 🥺 t-tweetid, >_< tsmiwwis fwom usew_tweet_intewaction_with_fav_count_fiwtew join (
+         |  ${tweetwithmediaandnsfwauthowfiwtewsqw}
+         |    and tweetid nyot in (${nsfwtweetdenywistsqw})
+         |) u-using(tweetid)
+         |""".stwipmawgin
+    } e-ewse {
+      // d-diwectwy wead fwom the tabwe w-without appwying a-any fiwtews
+      s"sewect u-usewid, UwU tweetid, tsmiwwis fwom usew_tweet_intewaction_with_fav_count_fiwtew"
     }
   }
 
-  def getTopKTweetsForClusterKeyBQ(
-    sc: ScioContext,
-    queryTimestamp: DateTime,
-    maxTweetAgeHours: Int,
-    consumerEmbeddingsSQL: String,
-    userTweetEngagementEventPairSqlPath: String,
-    userTweetEngagementEventPairTemplateVariable: Map[String, String],
-    enableHealthAndVideoFilters: Boolean,
-    enableFavClusterTopKTweetsIntersection: Boolean,
-    minInteractionCount: Int,
-    minFavCount: Int,
-    tweetEmbeddingsLength: Int,
-    tweetEmbeddingsHalfLife: Int,
-    minEngagementPerCluster: Int,
-    clusterTopKTweets: Int
-  ): SCollection[TopKTweetsForClusterKey] = {
-    // Define template variables which we would like to be replaced in the corresponding sql file
-    val startTime = queryTimestamp.minusHours(maxTweetAgeHours)
-    val endTime = queryTimestamp
+  def gettopktweetsfowcwustewkeybq(
+    sc: sciocontext, >_<
+    q-quewytimestamp: d-datetime, -.-
+    maxtweetagehouws: int, mya
+    consumewembeddingssqw: s-stwing, >w<
+    u-usewtweetengagementeventpaiwsqwpath: stwing, (U ﹏ U)
+    usewtweetengagementeventpaiwtempwatevawiabwe: map[stwing, 😳😳😳 stwing], o.O
+    e-enabweheawthandvideofiwtews: boowean, òωó
+    enabwefavcwustewtopktweetsintewsection: boowean, 😳😳😳
+    minintewactioncount: i-int, σωσ
+    minfavcount: int, (⑅˘꒳˘)
+    tweetembeddingswength: i-int, (///ˬ///✿)
+    tweetembeddingshawfwife: i-int, 🥺
+    minengagementpewcwustew: int, OwO
+    cwustewtopktweets: int
+  ): scowwection[topktweetsfowcwustewkey] = {
+    // d-define t-tempwate vawiabwes which we wouwd wike to be wepwaced in the c-cowwesponding sqw fiwe
+    vaw s-stawttime = quewytimestamp.minushouws(maxtweetagehouws)
+    vaw endtime = quewytimestamp
 
-    val indexGenerationTemplateVariables =
-      Map(
-        "HALF_LIFE" -> tweetEmbeddingsHalfLife.toString,
-        "CURRENT_TS" -> queryTimestamp.toString(),
-        "START_TIME" -> startTime.toString(),
-        "END_TIME" -> endTime.toString(),
-        "USER_TWEET_ENGAGEMENT_TABLE_SQL" ->
-          getUserTweetEngagementEventPairSQL(
-            startTime,
-            endTime,
-            userTweetEngagementEventPairSqlPath,
-            userTweetEngagementEventPairTemplateVariable
-          ),
-        // Min interaction count filter
-        "MIN_INTERACTION_COUNT" -> minInteractionCount.toString,
-        // Min fav count filter
-        "TWEET_INTERACTION_WITH_FAV_COUNT_FILTER_SQL" -> getTweetInteractionTableWithFavCountFilter(
-          startTime,
-          endTime,
-          minFavCount
-        ),
-        // Health filter
-        "TWEET_INTERACTION_WITH_HEALTH_FILTER_SQL" -> getTweetInteractionTableWithHealthFilter(
-          startTime,
-          endTime,
-          enableHealthAndVideoFilters),
-        "CONSUMER_EMBEDDINGS_SQL" -> consumerEmbeddingsSQL,
-        "TWEET_EMBEDDING_LENGTH" -> tweetEmbeddingsLength.toString,
-        "MIN_ENGAGEMENT_PER_CLUSTER" -> minEngagementPerCluster.toString,
-        "CLUSTER_TOP_K_TWEETS" -> clusterTopKTweets.toString
+    vaw i-indexgenewationtempwatevawiabwes =
+      map(
+        "hawf_wife" -> t-tweetembeddingshawfwife.tostwing, >w<
+        "cuwwent_ts" -> q-quewytimestamp.tostwing(), 🥺
+        "stawt_time" -> stawttime.tostwing(), nyaa~~
+        "end_time" -> e-endtime.tostwing(), ^^
+        "usew_tweet_engagement_tabwe_sqw" ->
+          getusewtweetengagementeventpaiwsqw(
+            s-stawttime, >w<
+            e-endtime, OwO
+            u-usewtweetengagementeventpaiwsqwpath, XD
+            usewtweetengagementeventpaiwtempwatevawiabwe
+          ), ^^;;
+        // m-min i-intewaction count fiwtew
+        "min_intewaction_count" -> minintewactioncount.tostwing, 🥺
+        // m-min fav count f-fiwtew
+        "tweet_intewaction_with_fav_count_fiwtew_sqw" -> g-gettweetintewactiontabwewithfavcountfiwtew(
+          stawttime, XD
+          endtime, (U ᵕ U❁)
+          minfavcount
+        ), :3
+        // h-heawth fiwtew
+        "tweet_intewaction_with_heawth_fiwtew_sqw" -> gettweetintewactiontabwewithheawthfiwtew(
+          s-stawttime, ( ͡o ω ͡o )
+          e-endtime, òωó
+          enabweheawthandvideofiwtews), σωσ
+        "consumew_embeddings_sqw" -> consumewembeddingssqw, (U ᵕ U❁)
+        "tweet_embedding_wength" -> tweetembeddingswength.tostwing, (✿oωo)
+        "min_engagement_pew_cwustew" -> m-minengagementpewcwustew.tostwing, ^^
+        "cwustew_top_k_tweets" -> c-cwustewtopktweets.tostwing
       )
-    val query = BQQueryUtils.getBQQueryFromSqlFile(
-      simclustersEngagementBasedIndexGenerationSQLPath,
-      indexGenerationTemplateVariables)
+    v-vaw quewy = b-bqquewyutiws.getbqquewyfwomsqwfiwe(
+      simcwustewsengagementbasedindexgenewationsqwpath, ^•ﻌ•^
+      i-indexgenewationtempwatevawiabwes)
 
-    val postFilterQuery = if (enableFavClusterTopKTweetsIntersection) {
-      generateClusterTopTweetIntersectionWithFavBasedIndexSQL(
-        startTime,
-        endTime,
-        clusterTopKTweets,
-        query)
-    } else {
-      query
+    vaw postfiwtewquewy = if (enabwefavcwustewtopktweetsintewsection) {
+      genewatecwustewtoptweetintewsectionwithfavbasedindexsqw(
+        stawttime, XD
+        endtime, :3
+        c-cwustewtopktweets, (ꈍᴗꈍ)
+        quewy)
+    } e-ewse {
+      quewy
     }
-    // Generate SimClusters cluster-to-tweet index
-    sc.customInput(
-      s"SimClusters cluster-to-tweet index generation BQ job",
-      BigQueryIO
-        .read(parseClusterTopKTweetsFn(tweetEmbeddingsHalfLife))
-        .fromQuery(postFilterQuery)
-        .usingStandardSql()
+    // genewate simcwustews c-cwustew-to-tweet index
+    s-sc.custominput(
+      s"simcwustews c-cwustew-to-tweet i-index genewation b-bq job", :3
+      b-bigquewyio
+        .wead(pawsecwustewtopktweetsfn(tweetembeddingshawfwife))
+        .fwomquewy(postfiwtewquewy)
+        .usingstandawdsqw()
     )
   }
 }

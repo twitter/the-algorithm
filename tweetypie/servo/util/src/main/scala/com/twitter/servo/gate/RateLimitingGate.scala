@@ -1,64 +1,64 @@
-package com.twitter.servo.gate
+package com.twittew.sewvo.gate
 
-import com.google.common.annotations.VisibleForTesting
-import com.google.common.util.concurrent.RateLimiter
-import com.twitter.servo.util
-import java.util.concurrent.TimeUnit
+impowt com.googwe.common.annotations.visibwefowtesting
+i-impowt com.googwe.common.utiw.concuwwent.watewimitew
+i-impowt c-com.twittew.sewvo.utiw
+i-impowt j-java.utiw.concuwwent.timeunit
 
 /**
- * A Rate Limiting Gate backed by com.google.common.util.concurrent.RateLimiter
- * http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/util/concurrent/RateLimiter.html
+ * a-a wate wimiting g-gate backed b-by com.googwe.common.utiw.concuwwent.watewimitew
+ * http://docs.guava-wibwawies.googwecode.com/git/javadoc/com/googwe/common/utiw/concuwwent/watewimitew.htmw
  */
-object RateLimitingGate {
+object watewimitinggate {
 
   /**
-   * Creates a Gate[Int] that returns true if acquiring <gate_input> number of permits
-   * from the ratelimiter succeeds.
+   * cweates a gate[int] that w-wetuwns twue if acquiwing <gate_input> nyumbew o-of pewmits
+   * fwom the watewimitew s-succeeds. nyaa~~
    */
-  def weighted(permitsPerSecond: Double): util.Gate[Int] = {
-    val rateLimiter: RateLimiter = RateLimiter.create(permitsPerSecond)
-    util.Gate { rateLimiter.tryAcquire(_, 0, TimeUnit.SECONDS) }
+  def weighted(pewmitspewsecond: doubwe): utiw.gate[int] = {
+    v-vaw watewimitew: watewimitew = w-watewimitew.cweate(pewmitspewsecond)
+    u-utiw.gate { watewimitew.twyacquiwe(_, :3 0, timeunit.seconds) }
   }
 
   /**
-   * Creates a Gate[Unit] that returns true if acquiring a permit from the ratelimiter succeeds.
+   * cweates a gate[unit] that wetuwns twue i-if acquiwing a pewmit fwom the watewimitew succeeds. 😳😳😳
    */
-  def uniform(permitsPerSecond: Double): util.Gate[Unit] = {
-    weighted(permitsPerSecond) contramap { _ =>
+  def unifowm(pewmitspewsecond: doubwe): utiw.gate[unit] = {
+    w-weighted(pewmitspewsecond) contwamap { _ =>
       1
     }
   }
 
   /**
-   *  Creates a Gate[Unit] with floating limit. Could be used with deciders.
+   *  c-cweates a-a gate[unit] w-with fwoating wimit. (˘ω˘) c-couwd be used with decidews. ^^
    */
-  def dynamic(permitsPerSecond: => Double): util.Gate[Unit] =
-    dynamic(RateLimiter.create, permitsPerSecond)
+  def dynamic(pewmitspewsecond: => d-doubwe): utiw.gate[unit] =
+    dynamic(watewimitew.cweate, p-pewmitspewsecond)
 
-  @VisibleForTesting
+  @visibwefowtesting
   def dynamic(
-    rateLimiterFactory: Double => RateLimiter,
-    permitsPerSecond: => Double
-  ): util.Gate[Unit] = {
-    val rateLimiter: RateLimiter = rateLimiterFactory(permitsPerSecond)
-    util.Gate { _ =>
-      val currentRate = permitsPerSecond
-      if (rateLimiter.getRate != currentRate) {
-        rateLimiter.setRate(currentRate)
+    watewimitewfactowy: doubwe => watewimitew, :3
+    pewmitspewsecond: => doubwe
+  ): u-utiw.gate[unit] = {
+    vaw watewimitew: w-watewimitew = w-watewimitewfactowy(pewmitspewsecond)
+    u-utiw.gate { _ =>
+      vaw cuwwentwate = pewmitspewsecond
+      if (watewimitew.getwate != c-cuwwentwate) {
+        w-watewimitew.setwate(cuwwentwate)
       }
-      rateLimiter.tryAcquire(0L, TimeUnit.SECONDS)
+      watewimitew.twyacquiwe(0w, -.- t-timeunit.seconds)
     }
   }
 }
 
-@deprecated("Use RateLimitingGate.uniform", "2.8.2")
-class RateLimitingGate[T](permitsPerSecond: Double) extends util.Gate[T] {
-  private[this] val rateLimiter: RateLimiter = RateLimiter.create(permitsPerSecond)
+@depwecated("use w-watewimitinggate.unifowm", 😳 "2.8.2")
+cwass watewimitinggate[t](pewmitspewsecond: d-doubwe) extends utiw.gate[t] {
+  p-pwivate[this] vaw watewimitew: watewimitew = w-watewimitew.cweate(pewmitspewsecond)
 
   /**
-   * If a "permit" is available, this method acquires it and returns true
-   * Else returns false immediately without waiting
+   * if a "pewmit" i-is avaiwabwe, mya this method a-acquiwes it a-and wetuwns twue
+   * ewse wetuwns fawse immediatewy without waiting
    */
-  override def apply[U](u: U)(implicit asT: <:<[U, T]): Boolean =
-    rateLimiter.tryAcquire(1, 0, TimeUnit.SECONDS)
+  ovewwide def appwy[u](u: u)(impwicit a-ast: <:<[u, (˘ω˘) t]): b-boowean =
+    watewimitew.twyacquiwe(1, >_< 0, t-timeunit.seconds)
 }

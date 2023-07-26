@@ -1,41 +1,41 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.commerce
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.commewce
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.commerce.CommerceProductCandidateUrtItemBuilder.CommerceProductClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.CommerceProductCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.commerce.CommerceProductItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.commewce.commewcepwoductcandidateuwtitembuiwdew.commewcepwoductcwienteventinfoewement
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.commewcepwoductcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.candidateuwtentwybuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventinfobuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.commewce.commewcepwoductitem
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object CommerceProductCandidateUrtItemBuilder {
-  val CommerceProductClientEventInfoElement: String = "commerce-product"
+object commewcepwoductcandidateuwtitembuiwdew {
+  v-vaw commewcepwoductcwienteventinfoewement: stwing = "commewce-pwoduct"
 }
 
-case class CommerceProductCandidateUrtItemBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, CommerceProductCandidate],
-  feedbackActionInfoBuilder: Option[BaseFeedbackActionInfoBuilder[Query, CommerceProductCandidate]])
-    extends CandidateUrtEntryBuilder[
-      Query,
-      CommerceProductCandidate,
-      CommerceProductItem
+case cwass commewcepwoductcandidateuwtitembuiwdew[-quewy <: p-pipewinequewy](
+  cwienteventinfobuiwdew: b-basecwienteventinfobuiwdew[quewy, (ˆ ﻌ ˆ)♡ commewcepwoductcandidate], (˘ω˘)
+  feedbackactioninfobuiwdew: option[basefeedbackactioninfobuiwdew[quewy, (⑅˘꒳˘) c-commewcepwoductcandidate]])
+    extends candidateuwtentwybuiwdew[
+      q-quewy, (///ˬ///✿)
+      c-commewcepwoductcandidate, 😳😳😳
+      commewcepwoductitem
     ] {
 
-  override def apply(
-    query: Query,
-    candidate: CommerceProductCandidate,
-    candidateFeatures: FeatureMap
-  ): CommerceProductItem =
-    CommerceProductItem(
-      id = candidate.id,
-      sortIndex = None,
-      clientEventInfo = clientEventInfoBuilder(
-        query,
-        candidate,
-        candidateFeatures,
-        Some(CommerceProductClientEventInfoElement)),
-      feedbackActionInfo =
-        feedbackActionInfoBuilder.flatMap(_.apply(query, candidate, candidateFeatures))
+  ovewwide def appwy(
+    quewy: quewy, 🥺
+    candidate: c-commewcepwoductcandidate, mya
+    candidatefeatuwes: featuwemap
+  ): commewcepwoductitem =
+    commewcepwoductitem(
+      id = c-candidate.id, 🥺
+      sowtindex = n-nyone, >_<
+      c-cwienteventinfo = c-cwienteventinfobuiwdew(
+        q-quewy, >_<
+        candidate, (⑅˘꒳˘)
+        candidatefeatuwes,
+        s-some(commewcepwoductcwienteventinfoewement)), /(^•ω•^)
+      feedbackactioninfo =
+        feedbackactioninfobuiwdew.fwatmap(_.appwy(quewy, rawr x3 c-candidate, (U ﹏ U) candidatefeatuwes))
     )
 }

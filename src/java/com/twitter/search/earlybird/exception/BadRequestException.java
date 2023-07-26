@@ -1,11 +1,11 @@
-package com.twitter.search.earlybird.exception;
+package com.twittew.seawch.eawwybiwd.exception;
 
-public class BadRequestException extends Exception {
-  public BadRequestException(String message, Throwable cause) {
-    super(message, cause);
+pubwic cwass badwequestexception e-extends exception {
+  p-pubwic badwequestexception(stwing m-message, ( ͡o ω ͡o ) t-thwowabwe cause) {
+    s-supew(message, UwU c-cause);
   }
 
-  public BadRequestException(String message) {
-    super(message);
+  p-pubwic badwequestexception(stwing m-message) {
+    supew(message);
   }
 }

@@ -1,139 +1,139 @@
-package com.twitter.search.core.earlybird.index;
+package com.twittew.seawch.cowe.eawwybiwd.index;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.map;
+i-impowt java.utiw.set;
 
-import com.google.common.collect.Sets;
+i-impowt c-com.googwe.common.cowwect.sets;
 
-import org.apache.lucene.index.FieldInfos;
-import org.apache.lucene.index.Fields;
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.DocIdSetIterator;
+i-impowt owg.apache.wucene.index.fiewdinfos;
+i-impowt o-owg.apache.wucene.index.fiewds;
+impowt owg.apache.wucene.index.weafweadew;
+impowt owg.apache.wucene.index.numewicdocvawues;
+impowt owg.apache.wucene.index.postingsenum;
+impowt o-owg.apache.wucene.index.tewm;
+impowt owg.apache.wucene.seawch.docidsetitewatow;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.facets.AbstractFacetCountingArray;
-import com.twitter.search.core.earlybird.facets.FacetIDMap;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.index.inverted.DeletedDocs;
+impowt com.twittew.seawch.common.schema.base.schema;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.abstwactfacetcountingawway;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetidmap;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetwabewpwovidew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.deweteddocs;
 
 /**
- * Base class for atomic Earlybird segment readers.
+ * base cwass fow a-atomic eawwybiwd segment weadews. nyaa~~
  */
-public abstract class EarlybirdIndexSegmentAtomicReader extends LeafReader {
-  public static final int TERM_NOT_FOUND = -1;
+p-pubwic abstwact c-cwass eawwybiwdindexsegmentatomicweadew extends weafweadew {
+  pubwic static finaw int tewm_not_found = -1;
 
-  private final DeletedDocs.View deletesView;
-  private final EarlybirdIndexSegmentData segmentData;
-  protected final EarlybirdIndexSegmentData.SyncData syncData;
+  pwivate finaw d-deweteddocs.view dewetesview;
+  pwivate finaw eawwybiwdindexsegmentdata segmentdata;
+  p-pwotected finaw eawwybiwdindexsegmentdata.syncdata syncdata;
 
-  private FieldInfos fieldInfos;
+  p-pwivate f-fiewdinfos fiewdinfos;
 
   /**
-   * Creates a new atomic reader for this Earlybird segment.
+   * c-cweates a n-nyew atomic weadew fow this eawwybiwd segment. 😳
    */
-  public EarlybirdIndexSegmentAtomicReader(EarlybirdIndexSegmentData segmentData) {
-    super();
-    this.segmentData = segmentData;
-    this.syncData = segmentData.getSyncData();
-    this.deletesView = segmentData.getDeletedDocs().getView();
-    // fieldInfos will be initialized lazily if required
-    this.fieldInfos = null;
+  p-pubwic eawwybiwdindexsegmentatomicweadew(eawwybiwdindexsegmentdata segmentdata) {
+    supew();
+    t-this.segmentdata = segmentdata;
+    this.syncdata = segmentdata.getsyncdata();
+    this.dewetesview = segmentdata.getdeweteddocs().getview();
+    // fiewdinfos wiww be initiawized waziwy i-if wequiwed
+    this.fiewdinfos = n-nyuww;
   }
 
-  public int getSmallestDocID() {
-    return syncData.getSmallestDocID();
+  p-pubwic int g-getsmowestdocid() {
+    wetuwn syncdata.getsmowestdocid();
   }
 
-  public final FacetIDMap getFacetIDMap() {
-    return segmentData.getFacetIDMap();
+  pubwic finaw f-facetidmap getfacetidmap() {
+    w-wetuwn segmentdata.getfacetidmap();
   }
 
-  public final Map<String, FacetLabelProvider> getFacetLabelProviders() {
-    return segmentData.getFacetLabelProviders();
+  pubwic f-finaw map<stwing, (⑅˘꒳˘) f-facetwabewpwovidew> getfacetwabewpwovidews() {
+    w-wetuwn segmentdata.getfacetwabewpwovidews();
   }
 
-  public AbstractFacetCountingArray getFacetCountingArray() {
-    return segmentData.getFacetCountingArray();
+  pubwic a-abstwactfacetcountingawway getfacetcountingawway() {
+    wetuwn s-segmentdata.getfacetcountingawway();
   }
 
-  public final FacetLabelProvider getFacetLabelProviders(Schema.FieldInfo field) {
-    String facetName = field.getFieldType().getFacetName();
-    return facetName != null && segmentData.getFacetLabelProviders() != null
-            ? segmentData.getFacetLabelProviders().get(facetName) : null;
+  pubwic finaw facetwabewpwovidew getfacetwabewpwovidews(schema.fiewdinfo f-fiewd) {
+    stwing facetname = f-fiewd.getfiewdtype().getfacetname();
+    w-wetuwn facetname != nyuww && segmentdata.getfacetwabewpwovidews() != nyuww
+            ? segmentdata.getfacetwabewpwovidews().get(facetname) : nyuww;
   }
 
-  @Override
-  public FieldInfos getFieldInfos() {
-    if (fieldInfos == null) {
-      // TwitterInMemoryIndexReader is constructed per query, and this call is only needed for
-      // optimize. We wouldn't want to create a new FieldInfos per search, so we deffer it.
-      Schema schema = segmentData.getSchema();
-      final Set<String> fieldSet = Sets.newHashSet(segmentData.getPerFieldMap().keySet());
-      fieldSet.addAll(segmentData.getDocValuesManager().getDocValueNames());
-      fieldInfos = schema.getLuceneFieldInfos(input -> input != null && fieldSet.contains(input));
+  @ovewwide
+  pubwic fiewdinfos getfiewdinfos() {
+    if (fiewdinfos == n-nyuww) {
+      // t-twittewinmemowyindexweadew is constwucted pew q-quewy, nyaa~~ and this c-caww is onwy n-nyeeded fow
+      // optimize. OwO we wouwdn't want to cweate a nyew f-fiewdinfos pew seawch, rawr x3 so we deffew it. XD
+      schema schema = segmentdata.getschema();
+      finaw s-set<stwing> fiewdset = sets.newhashset(segmentdata.getpewfiewdmap().keyset());
+      f-fiewdset.addaww(segmentdata.getdocvawuesmanagew().getdocvawuenames());
+      f-fiewdinfos = s-schema.getwucenefiewdinfos(input -> input != n-nyuww && fiewdset.contains(input));
     }
-    return fieldInfos;
+    w-wetuwn f-fiewdinfos;
   }
 
   /**
-   * Returns the ID that was assigned to the given term in
-   * {@link com.twitter.search.core.earlybird.index.inverted.InvertedRealtimeIndex}
+   * w-wetuwns the id that was assigned to the given tewm i-in
+   * {@wink c-com.twittew.seawch.cowe.eawwybiwd.index.invewted.invewtedweawtimeindex}
    */
-  public abstract int getTermID(Term t) throws IOException;
+  p-pubwic abstwact i-int gettewmid(tewm t-t) thwows ioexception;
 
   /**
-   * Returns the oldest posting for the given term
-   * NOTE: This method may return a deleted doc id.
+   * wetuwns the owdest posting f-fow the given tewm
+   * nyote: this method may wetuwn a deweted doc id. σωσ
    */
-  public abstract int getOldestDocID(Term t) throws IOException;
+  pubwic abstwact i-int getowdestdocid(tewm t) thwows ioexception;
 
-  @Override
-  public abstract NumericDocValues getNumericDocValues(String field) throws IOException;
+  @ovewwide
+  pubwic abstwact n-nyumewicdocvawues g-getnumewicdocvawues(stwing fiewd) t-thwows ioexception;
 
   /**
-   * Determines if this reader has any documents to traverse. Note that it is possible for the tweet
-   * ID mapper to have documents, but for this reader to not see them yet. In this case, this method
-   * will return false.
+   * detewmines i-if this weadew has any documents t-to twavewse. (U ᵕ U❁) nyote t-that it is possibwe fow the tweet
+   * id mappew to have documents, (U ﹏ U) but fow this weadew to n-nyot see them yet. :3 in this case, ( ͡o ω ͡o ) t-this method
+   * wiww wetuwn fawse. σωσ
    */
-  public boolean hasDocs() {
-    return segmentData.numDocs() > 0;
+  p-pubwic b-boowean hasdocs() {
+    wetuwn segmentdata.numdocs() > 0;
   }
 
   /**
-   * Returns the newest posting for the given term
+   * w-wetuwns t-the nyewest posting fow the g-given tewm
    */
-  public final int getNewestDocID(Term term) throws IOException {
-    PostingsEnum td = postings(term);
-    if (td == null) {
-      return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+  p-pubwic finaw int getnewestdocid(tewm tewm) thwows ioexception {
+    postingsenum t-td = postings(tewm);
+    if (td == n-nyuww) {
+      w-wetuwn eawwybiwdindexsegmentatomicweadew.tewm_not_found;
     }
 
-    if (td.nextDoc() != DocIdSetIterator.NO_MORE_DOCS) {
-      return td.docID();
-    } else {
-      return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+    if (td.nextdoc() != d-docidsetitewatow.no_mowe_docs) {
+      w-wetuwn td.docid();
+    } ewse {
+      wetuwn e-eawwybiwdindexsegmentatomicweadew.tewm_not_found;
     }
   }
 
-  public final DeletedDocs.View getDeletesView() {
-    return deletesView;
+  pubwic finaw deweteddocs.view getdewetesview() {
+    wetuwn dewetesview;
   }
 
-  @Override
-  public final Fields getTermVectors(int docID) {
-    // Earlybird does not use term vectors.
-    return null;
+  @ovewwide
+  pubwic f-finaw fiewds g-gettewmvectows(int docid) {
+    // eawwybiwd d-does nyot use tewm v-vectows. >w<
+    wetuwn nyuww;
   }
 
-  public EarlybirdIndexSegmentData getSegmentData() {
-    return segmentData;
+  pubwic eawwybiwdindexsegmentdata getsegmentdata() {
+    w-wetuwn segmentdata;
   }
 
-  public Schema getSchema() {
-    return segmentData.getSchema();
+  pubwic schema getschema() {
+    wetuwn segmentdata.getschema();
   }
 }

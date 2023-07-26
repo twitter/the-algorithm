@@ -1,57 +1,57 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.query.impressed_tweets
+package com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.quewy.impwessed_tweets
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.impressionstore.thriftscala.ImpressionList
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
+impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.timewines.impwessionstowe.thwiftscawa.impwessionwist
+impowt com.twittew.utiw.futuwe
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
 /**
- * Query Feature to store ids of the tweets impressed by the user.
+ * q-quewy featuwe to stowe ids of the tweets impwessed by the usew. ^^
  */
-case object ImpressedTweets extends FeatureWithDefaultOnFailure[PipelineQuery, Seq[Long]] {
-  override val defaultValue: Seq[Long] = Seq.empty
+c-case object impwessedtweets e-extends featuwewithdefauwtonfaiwuwe[pipewinequewy, 😳😳😳 s-seq[wong]] {
+  ovewwide vaw defauwtvawue: seq[wong] = seq.empty
 }
 
 /**
- * Enrich the query with a list of tweet ids that the user has already seen.
+ * enwich the quewy w-with a wist of tweet ids that the usew has awweady seen. mya
  */
-@Singleton
-case class ImpressedTweetsQueryFeatureHydrator @Inject() (
-  tweetImpressionStore: ReadableStore[Long, ImpressionList])
-    extends QueryFeatureHydrator[PipelineQuery] {
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("TweetsToExclude")
+@singweton
+case c-cwass impwessedtweetsquewyfeatuwehydwatow @inject() (
+  tweetimpwessionstowe: w-weadabwestowe[wong, 😳 i-impwessionwist])
+    e-extends quewyfeatuwehydwatow[pipewinequewy] {
+  o-ovewwide vaw identifiew: featuwehydwatowidentifiew = f-featuwehydwatowidentifiew("tweetstoexcwude")
 
-  override val features: Set[Feature[_, _]] = Set(ImpressedTweets)
+  ovewwide vaw featuwes: s-set[featuwe[_, -.- _]] = set(impwessedtweets)
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    query.getOptionalUserId match {
-      case Some(userId) =>
-        val featureMapResult: Future[FeatureMap] = tweetImpressionStore
-          .get(userId).map { impressionListOpt =>
-            val tweetIdsOpt = for {
-              impressionList <- impressionListOpt
-              impressions <- impressionList.impressions
-            } yield {
-              impressions.map(_.tweetId)
+  ovewwide def hydwate(quewy: pipewinequewy): stitch[featuwemap] = {
+    quewy.getoptionawusewid match {
+      c-case some(usewid) =>
+        v-vaw featuwemapwesuwt: f-futuwe[featuwemap] = t-tweetimpwessionstowe
+          .get(usewid).map { impwessionwistopt =>
+            vaw tweetidsopt = fow {
+              i-impwessionwist <- i-impwessionwistopt
+              impwessions <- impwessionwist.impwessions
+            } y-yiewd {
+              i-impwessions.map(_.tweetid)
             }
-            val tweetIds = tweetIdsOpt.getOrElse(Seq.empty)
-            FeatureMapBuilder().add(ImpressedTweets, tweetIds).build()
+            vaw tweetids = t-tweetidsopt.getowewse(seq.empty)
+            featuwemapbuiwdew().add(impwessedtweets, 🥺 tweetids).buiwd()
           }
-        Stitch.callFuture(featureMapResult)
-      // Non-logged-in users do not have userId, returns empty feature
+        s-stitch.cawwfutuwe(featuwemapwesuwt)
+      // nyon-wogged-in usews d-do nyot have usewid, o.O wetuwns empty f-featuwe
 
-      case None =>
-        val featureMapResult = FeatureMapBuilder().add(ImpressedTweets, Seq.empty).build()
-        Stitch.value(featureMapResult)
+      case nyone =>
+        v-vaw featuwemapwesuwt = featuwemapbuiwdew().add(impwessedtweets, /(^•ω•^) s-seq.empty).buiwd()
+        stitch.vawue(featuwemapwesuwt)
     }
   }
 }

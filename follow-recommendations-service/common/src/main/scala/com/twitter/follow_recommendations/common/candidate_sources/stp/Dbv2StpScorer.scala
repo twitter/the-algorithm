@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.stp
 
-import com.twitter.cortex.deepbird.runtime.prediction_engine.TensorflowPredictionEngine
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.ml.prediction_service.PredictionRequest
-import com.twitter.stitch.Stitch
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.STPRecord
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.STPRecordAdapter
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+impowt com.twittew.cowtex.deepbiwd.wuntime.pwediction_engine.tensowfwowpwedictionengine
+i-impowt com.twittew.fowwow_wecommendations.common.constants.guicenamedconstants
+impowt c-com.twittew.mw.api.featuwe.continuous
+i-impowt c-com.twittew.mw.api.utiw.swichdatawecowd
+i-impowt c-com.twittew.mw.pwediction_sewvice.pwedictionwequest
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.wtf.scawding.jobs.stwong_tie_pwediction.stpwecowd
+impowt com.twittew.wtf.scawding.jobs.stwong_tie_pwediction.stpwecowdadaptew
+impowt javax.inject.inject
+impowt javax.inject.named
+i-impowt javax.inject.singweton
 
 /**
- * STP ML ranker trained using DeepBirdV2
+ * stp mw wankew t-twained using deepbiwdv2
  */
-@Singleton
-class Dbv2StpScorer @Inject() (
-  @Named(GuiceNamedConstants.STP_DBV2_SCORER) tfPredictionEngine: TensorflowPredictionEngine) {
-  def getScoredResponse(record: STPRecord): Stitch[Option[Double]] = {
-    val request: PredictionRequest = new PredictionRequest(
-      STPRecordAdapter.adaptToDataRecord(record))
-    val responseStitch = Stitch.callFuture(tfPredictionEngine.getPrediction(request))
-    responseStitch.map { response =>
-      val richDr = SRichDataRecord(response.getPrediction)
-      richDr.getFeatureValueOpt(new Continuous("output"))
+@singweton
+cwass dbv2stpscowew @inject() (
+  @named(guicenamedconstants.stp_dbv2_scowew) t-tfpwedictionengine: tensowfwowpwedictionengine) {
+  def getscowedwesponse(wecowd: stpwecowd): s-stitch[option[doubwe]] = {
+    vaw wequest: p-pwedictionwequest = n-nyew pwedictionwequest(
+      stpwecowdadaptew.adapttodatawecowd(wecowd))
+    vaw wesponsestitch = stitch.cawwfutuwe(tfpwedictionengine.getpwediction(wequest))
+    wesponsestitch.map { w-wesponse =>
+      vaw wichdw = swichdatawecowd(wesponse.getpwediction)
+      wichdw.getfeatuwevawueopt(new continuous("output"))
     }
   }
 }

@@ -1,40 +1,40 @@
-package com.twitter.product_mixer.component_library.feature.featurestorev1
+package com.twittew.pwoduct_mixew.component_wibwawy.featuwe.featuwestowev1
 
-import com.twitter.ml.featurestore.catalog.entities
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.lib.entity.Entity
-import com.twitter.ml.featurestore.lib.entity.EntityWithId
-import com.twitter.ml.featurestore.lib.feature.{Feature => FSv1Feature}
-import com.twitter.product_mixer.component_library.model.candidate.BaseUserCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featurestorev1._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.FSParam
+impowt c-com.twittew.mw.featuwestowe.catawog.entities
+impowt c-com.twittew.mw.featuwestowe.wib.entityid
+impowt c-com.twittew.mw.featuwestowe.wib.usewid
+i-impowt c-com.twittew.mw.featuwestowe.wib.entity.entity
+i-impowt com.twittew.mw.featuwestowe.wib.entity.entitywithid
+i-impowt c-com.twittew.mw.featuwestowe.wib.featuwe.{featuwe => fsv1featuwe}
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.baseusewcandidate
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1._
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.timewines.configapi.fspawam
 
-object FeatureStoreV1UserCandidateUserIdFeature {
-  def apply[Query <: PipelineQuery, Candidate <: BaseUserCandidate, Value](
-    feature: FSv1Feature[UserId, Value],
-    legacyName: Option[String] = None,
-    defaultValue: Option[Value] = None,
-    enabledParam: Option[FSParam[Boolean]] = None
-  ): FeatureStoreV1CandidateFeature[Query, Candidate, _ <: EntityId, Value] =
-    FeatureStoreV1CandidateFeature(
-      feature,
-      UserCandidateUserIdEntity,
-      legacyName,
-      defaultValue,
-      enabledParam)
+object featuwestowev1usewcandidateusewidfeatuwe {
+  def a-appwy[quewy <: pipewinequewy, /(^•ω•^) c-candidate <: baseusewcandidate, rawr x3 v-vawue](
+    featuwe: fsv1featuwe[usewid, (U ﹏ U) vawue],
+    wegacyname: option[stwing] = n-nyone, (U ﹏ U)
+    defauwtvawue: option[vawue] = nyone,
+    enabwedpawam: option[fspawam[boowean]] = nyone
+  ): f-featuwestowev1candidatefeatuwe[quewy, candidate, (⑅˘꒳˘) _ <: e-entityid, òωó vawue] =
+    f-featuwestowev1candidatefeatuwe(
+      f-featuwe, ʘwʘ
+      u-usewcandidateusewidentity, /(^•ω•^)
+      wegacyname, ʘwʘ
+      defauwtvawue, σωσ
+      enabwedpawam)
 }
 
-object UserCandidateUserIdEntity
-    extends FeatureStoreV1CandidateEntity[PipelineQuery, BaseUserCandidate, UserId] {
-  override val entity: Entity[UserId] = entities.core.User
+o-object usewcandidateusewidentity
+    extends featuwestowev1candidateentity[pipewinequewy, OwO b-baseusewcandidate, 😳😳😳 usewid] {
+  ovewwide vaw entity: entity[usewid] = entities.cowe.usew
 
-  override def entityWithId(
-    query: PipelineQuery,
-    user: BaseUserCandidate,
-    existingFeatures: FeatureMap
-  ): EntityWithId[UserId] =
-    entity.withId(UserId(user.id))
+  ovewwide d-def entitywithid(
+    quewy: pipewinequewy, 😳😳😳
+    u-usew: baseusewcandidate, o.O
+    existingfeatuwes: f-featuwemap
+  ): e-entitywithid[usewid] =
+    entity.withid(usewid(usew.id))
 }

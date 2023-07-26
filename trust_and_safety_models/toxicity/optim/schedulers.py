@@ -1,44 +1,44 @@
-from typing import Callable
+fwom typing impowt cawwabwe
 
-import tensorflow as tf
+impowt t-tensowfwow as t-tf
 
 
-class WarmUp(tf.keras.optimizers.schedules.LearningRateSchedule):
-  def __init__(
-    self,
-    initial_learning_rate: float,
-    decay_schedule_fn: Callable,
-    warmup_steps: int,
-    power: float = 1.0,
-    name: str = "",
+cwass wawmup(tf.kewas.optimizews.scheduwes.weawningwatescheduwe):
+  d-def __init__(
+    s-sewf, >_<
+    i-initiaw_weawning_wate: f-fwoat,
+    d-decay_scheduwe_fn: c-cawwabwe, >_<
+    wawmup_steps: int, (⑅˘꒳˘)
+    powew: fwoat = 1.0, /(^•ω•^)
+    nyame: stw = "", rawr x3
   ):
-    super().__init__()
-    self.initial_learning_rate = initial_learning_rate
-    self.warmup_steps = warmup_steps
-    self.power = power
-    self.decay_schedule_fn = decay_schedule_fn
-    self.name = name
+    s-supew().__init__()
+    sewf.initiaw_weawning_wate = initiaw_weawning_wate
+    s-sewf.wawmup_steps = wawmup_steps
+    s-sewf.powew = powew
+    sewf.decay_scheduwe_fn = decay_scheduwe_fn
+    sewf.name = n-nyame
 
-  def __call__(self, step):
-    with tf.name_scope(self.name or "WarmUp") as name:
-      global_step_float = tf.cast(step, tf.float32)
-      warmup_steps_float = tf.cast(self.warmup_steps, tf.float32)
-      warmup_percent_done = global_step_float / warmup_steps_float
-      warmup_learning_rate = self.initial_learning_rate * tf.math.pow(
-        warmup_percent_done, self.power
+  def __caww__(sewf, (U ﹏ U) s-step):
+    with t-tf.name_scope(sewf.name ow "wawmup") as nyame:
+      gwobaw_step_fwoat = tf.cast(step, (U ﹏ U) t-tf.fwoat32)
+      wawmup_steps_fwoat = tf.cast(sewf.wawmup_steps, (⑅˘꒳˘) tf.fwoat32)
+      wawmup_pewcent_done = g-gwobaw_step_fwoat / wawmup_steps_fwoat
+      w-wawmup_weawning_wate = s-sewf.initiaw_weawning_wate * t-tf.math.pow(
+        w-wawmup_pewcent_done, òωó sewf.powew
       )
-      return tf.cond(
-        global_step_float < warmup_steps_float,
-        lambda: warmup_learning_rate,
-        lambda: self.decay_schedule_fn(step - self.warmup_steps),
-        name=name,
+      wetuwn tf.cond(
+        gwobaw_step_fwoat < w-wawmup_steps_fwoat, ʘwʘ
+        wambda: wawmup_weawning_wate, /(^•ω•^)
+        wambda: sewf.decay_scheduwe_fn(step - s-sewf.wawmup_steps), ʘwʘ
+        nyame=name,
       )
 
-  def get_config(self):
-    return {
-      "initial_learning_rate": self.initial_learning_rate,
-      "decay_schedule_fn": self.decay_schedule_fn,
-      "warmup_steps": self.warmup_steps,
-      "power": self.power,
-      "name": self.name,
+  def get_config(sewf):
+    wetuwn {
+      "initiaw_weawning_wate": sewf.initiaw_weawning_wate, σωσ
+      "decay_scheduwe_fn": sewf.decay_scheduwe_fn, OwO
+      "wawmup_steps": s-sewf.wawmup_steps, 😳😳😳
+      "powew": sewf.powew, 😳😳😳
+      "name": s-sewf.name, o.O
     }

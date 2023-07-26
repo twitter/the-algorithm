@@ -1,24 +1,24 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+impowt com.twittew.finagwe.sewvice;
+i-impowt com.twittew.finagwe.simpwefiwtew;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt c-com.twittew.utiw.futuwe;
 
-/** A top level filter for handling exceptions. */
-public class TopLevelExceptionHandlingFilter
-    extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private final EarlybirdResponseExceptionHandler exceptionHandler;
+/** a-a top wevew fiwtew f-fow handwing exceptions. -.- */
+pubwic cwass topwevewexceptionhandwingfiwtew
+    extends simpwefiwtew<eawwybiwdwequest, ( ͡o ω ͡o ) eawwybiwdwesponse> {
+  p-pwivate finaw eawwybiwdwesponseexceptionhandwew exceptionhandwew;
 
-  /** Creates a new TopLevelExceptionHandlingFilter instance. */
-  public TopLevelExceptionHandlingFilter() {
-    this.exceptionHandler = new EarlybirdResponseExceptionHandler("top_level");
+  /** c-cweates a nyew topwevewexceptionhandwingfiwtew i-instance. rawr x3 */
+  pubwic topwevewexceptionhandwingfiwtew() {
+    this.exceptionhandwew = nyew e-eawwybiwdwesponseexceptionhandwew("top_wevew");
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    return exceptionHandler.handleException(request, service.apply(request));
+  @ovewwide
+  pubwic futuwe<eawwybiwdwesponse> a-appwy(eawwybiwdwequest w-wequest, nyaa~~
+                                         sewvice<eawwybiwdwequest, /(^•ω•^) eawwybiwdwesponse> sewvice) {
+    wetuwn e-exceptionhandwew.handweexception(wequest, rawr sewvice.appwy(wequest));
   }
 }

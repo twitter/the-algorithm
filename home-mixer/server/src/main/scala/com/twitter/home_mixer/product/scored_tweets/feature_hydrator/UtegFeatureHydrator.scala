@@ -1,102 +1,102 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow
 
-import com.twitter.home_mixer.model.HomeFeatures.FavoritedByCountFeature
-import com.twitter.home_mixer.model.HomeFeatures.FavoritedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.FromInNetworkSourceFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.RealGraphInNetworkScoresFeature
-import com.twitter.home_mixer.model.HomeFeatures.RepliedByCountFeature
-import com.twitter.home_mixer.model.HomeFeatures.RepliedByEngagerIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.RetweetedByCountFeature
-import com.twitter.home_mixer.model.HomeFeatures.RetweetedByEngagerIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.UtegSocialProofRepository
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.recos.recos_common.{thriftscala => rc}
-import com.twitter.recos.user_tweet_entity_graph.{thriftscala => uteg}
-import com.twitter.servo.keyvalue.KeyValueResult
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.modew.homefeatuwes.favowitedbycountfeatuwe
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.favowitedbyusewidsfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.fwominnetwowksouwcefeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.inwepwytotweetidfeatuwe
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.weawgwaphinnetwowkscowesfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.wepwiedbycountfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.wepwiedbyengagewidsfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.wetweetedbycountfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.wetweetedbyengagewidsfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.souwcetweetidfeatuwe
+i-impowt com.twittew.home_mixew.pawam.homemixewinjectionnames.utegsociawpwoofwepositowy
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.conditionawwy
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.utiw.offwoadfutuwepoows
+impowt com.twittew.wecos.wecos_common.{thwiftscawa => wc}
+impowt com.twittew.wecos.usew_tweet_entity_gwaph.{thwiftscawa => uteg}
+i-impowt com.twittew.sewvo.keyvawue.keyvawuewesuwt
+impowt com.twittew.sewvo.wepositowy.keyvawuewepositowy
+impowt com.twittew.stitch.stitch
+impowt j-javax.inject.inject
+impowt javax.inject.named
+i-impowt javax.inject.singweton
 
-@Singleton
-class UtegFeatureHydrator @Inject() (
-  @Named(UtegSocialProofRepository) client: KeyValueRepository[
-    (Seq[Long], (Long, Map[Long, Double])),
-    Long,
-    uteg.TweetRecommendation
-  ]) extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate]
-    with Conditionally[PipelineQuery] {
+@singweton
+c-cwass u-utegfeatuwehydwatow @inject() (
+  @named(utegsociawpwoofwepositowy) c-cwient: keyvawuewepositowy[
+    (seq[wong], 😳😳😳 (wong, ( ͡o ω ͡o ) map[wong, doubwe])), >_<
+    w-wong, >w<
+    uteg.tweetwecommendation
+  ]) extends buwkcandidatefeatuwehydwatow[pipewinequewy, rawr t-tweetcandidate]
+    with conditionawwy[pipewinequewy] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("Uteg")
+  ovewwide vaw identifiew: featuwehydwatowidentifiew = featuwehydwatowidentifiew("uteg")
 
-  override val features: Set[Feature[_, _]] = Set(
-    FavoritedByUserIdsFeature,
-    RetweetedByEngagerIdsFeature,
-    RepliedByEngagerIdsFeature,
-    FavoritedByCountFeature,
-    RetweetedByCountFeature,
-    RepliedByCountFeature
+  o-ovewwide vaw featuwes: set[featuwe[_, 😳 _]] = set(
+    f-favowitedbyusewidsfeatuwe, >w<
+    w-wetweetedbyengagewidsfeatuwe, (⑅˘꒳˘)
+    w-wepwiedbyengagewidsfeatuwe, OwO
+    favowitedbycountfeatuwe, (ꈍᴗꈍ)
+    wetweetedbycountfeatuwe, 😳
+    wepwiedbycountfeatuwe
   )
 
-  override def onlyIf(query: PipelineQuery): Boolean = query.features
-    .exists(_.getOrElse(RealGraphInNetworkScoresFeature, Map.empty[Long, Double]).nonEmpty)
+  o-ovewwide def onwyif(quewy: p-pipewinequewy): boowean = q-quewy.featuwes
+    .exists(_.getowewse(weawgwaphinnetwowkscowesfeatuwe, 😳😳😳 m-map.empty[wong, mya doubwe]).nonempty)
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
-    val seedUserWeights = query.features.map(_.get(RealGraphInNetworkScoresFeature)).get
+  o-ovewwide def appwy(
+    quewy: p-pipewinequewy, mya
+    candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): s-stitch[seq[featuwemap]] = offwoadfutuwepoows.offwoadfutuwe {
+    v-vaw seedusewweights = quewy.featuwes.map(_.get(weawgwaphinnetwowkscowesfeatuwe)).get
 
-    val sourceTweetIds = candidates.flatMap(_.features.getOrElse(SourceTweetIdFeature, None))
-    val inReplyToTweetIds = candidates.flatMap(_.features.getOrElse(InReplyToTweetIdFeature, None))
-    val tweetIds = candidates.map(_.candidate.id)
-    val tweetIdsToSend = (tweetIds ++ sourceTweetIds ++ inReplyToTweetIds).distinct
+    v-vaw s-souwcetweetids = candidates.fwatmap(_.featuwes.getowewse(souwcetweetidfeatuwe, (⑅˘꒳˘) none))
+    vaw inwepwytotweetids = candidates.fwatmap(_.featuwes.getowewse(inwepwytotweetidfeatuwe, (U ﹏ U) nyone))
+    vaw tweetids = candidates.map(_.candidate.id)
+    vaw tweetidstosend = (tweetids ++ s-souwcetweetids ++ i-inwepwytotweetids).distinct
 
-    val utegQuery = (tweetIdsToSend, (query.getRequiredUserId, seedUserWeights))
+    vaw utegquewy = (tweetidstosend, mya (quewy.getwequiwedusewid, ʘwʘ s-seedusewweights))
 
-    client(utegQuery).map(handleResponse(candidates, _))
+    c-cwient(utegquewy).map(handwewesponse(candidates, (˘ω˘) _))
   }
 
-  private def handleResponse(
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]],
-    results: KeyValueResult[Long, uteg.TweetRecommendation],
-  ): Seq[FeatureMap] = {
+  p-pwivate def handwewesponse(
+    candidates: seq[candidatewithfeatuwes[tweetcandidate]], (U ﹏ U)
+    w-wesuwts: keyvawuewesuwt[wong, ^•ﻌ•^ uteg.tweetwecommendation], (˘ω˘)
+  ): seq[featuwemap] = {
     candidates.map { candidate =>
-      val inNetwork = candidate.features.getOrElse(FromInNetworkSourceFeature, false)
-      val candidateProof = results(candidate.candidate.id).toOption.flatten
-      val sourceProof = candidate.features
-        .getOrElse(SourceTweetIdFeature, None).flatMap(results(_).toOption.flatten)
-      val proofs = Seq(candidateProof, sourceProof).flatten.map(_.socialProofByType)
+      v-vaw innetwowk = candidate.featuwes.getowewse(fwominnetwowksouwcefeatuwe, :3 f-fawse)
+      v-vaw candidatepwoof = w-wesuwts(candidate.candidate.id).tooption.fwatten
+      vaw s-souwcepwoof = candidate.featuwes
+        .getowewse(souwcetweetidfeatuwe, ^^;; n-nyone).fwatmap(wesuwts(_).tooption.fwatten)
+      v-vaw p-pwoofs = seq(candidatepwoof, 🥺 souwcepwoof).fwatten.map(_.sociawpwoofbytype)
 
-      val favoritedBy = proofs.flatMap(_.get(rc.SocialProofType.Favorite)).flatten
-      val retweetedBy = proofs.flatMap(_.get(rc.SocialProofType.Retweet)).flatten
-      val repliedBy = proofs.flatMap(_.get(rc.SocialProofType.Reply)).flatten
+      vaw favowitedby = p-pwoofs.fwatmap(_.get(wc.sociawpwooftype.favowite)).fwatten
+      v-vaw wetweetedby = p-pwoofs.fwatmap(_.get(wc.sociawpwooftype.wetweet)).fwatten
+      v-vaw wepwiedby = p-pwoofs.fwatmap(_.get(wc.sociawpwooftype.wepwy)).fwatten
 
-      val (favoritedByCount, retweetedByCount, repliedByCount) =
-        if (!inNetwork) {
-          (favoritedBy.size.toDouble, retweetedBy.size.toDouble, repliedBy.size.toDouble)
-        } else { (0.0, 0.0, 0.0) }
+      vaw (favowitedbycount, (⑅˘꒳˘) wetweetedbycount, nyaa~~ wepwiedbycount) =
+        if (!innetwowk) {
+          (favowitedby.size.todoubwe, :3 w-wetweetedby.size.todoubwe, ( ͡o ω ͡o ) wepwiedby.size.todoubwe)
+        } ewse { (0.0, mya 0.0, (///ˬ///✿) 0.0) }
 
-      FeatureMapBuilder()
-        .add(FavoritedByUserIdsFeature, favoritedBy)
-        .add(RetweetedByEngagerIdsFeature, retweetedBy)
-        .add(RepliedByEngagerIdsFeature, repliedBy)
-        .add(FavoritedByCountFeature, favoritedByCount)
-        .add(RetweetedByCountFeature, retweetedByCount)
-        .add(RepliedByCountFeature, repliedByCount)
-        .build()
+      featuwemapbuiwdew()
+        .add(favowitedbyusewidsfeatuwe, (˘ω˘) favowitedby)
+        .add(wetweetedbyengagewidsfeatuwe, ^^;; wetweetedby)
+        .add(wepwiedbyengagewidsfeatuwe, (✿oωo) wepwiedby)
+        .add(favowitedbycountfeatuwe, (U ﹏ U) favowitedbycount)
+        .add(wetweetedbycountfeatuwe, -.- w-wetweetedbycount)
+        .add(wepwiedbycountfeatuwe, ^•ﻌ•^ wepwiedbycount)
+        .buiwd()
     }
   }
 }

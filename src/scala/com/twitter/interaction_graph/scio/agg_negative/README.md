@@ -1,35 +1,35 @@
-## InteractionGraphNegative Dataflow Job
+## intewactiongwaphnegative datafwow j-job
 
-#### IntelliJ
+#### intewwij
 ```
-fastpass create --name rg_neg --intellij src/scala/com/twitter/interaction_graph/scio/agg_negative
-```
-
-#### Compile
-```
-bazel build src/scala/com/twitter/interaction_graph/scio/agg_negative:interaction_graph_negative_scio
+f-fastpass c-cweate --name w-wg_neg --intewwij s-swc/scawa/com/twittew/intewaction_gwaph/scio/agg_negative
 ```
 
-#### Build Jar
+#### c-compiwe
 ```
-bazel bundle src/scala/com/twitter/interaction_graph/scio/agg_negative:interaction_graph_negative_scio
+b-bazew buiwd s-swc/scawa/com/twittew/intewaction_gwaph/scio/agg_negative:intewaction_gwaph_negative_scio
 ```
 
-#### Run Scheduled Job
+#### buiwd jaw
 ```
-export PROJECTID=twttr-recos-ml-prod
-export REGION=us-central1
-export JOB_NAME=interaction-graph-negative-dataflow
+bazew bundwe swc/scawa/com/twittew/intewaction_gwaph/scio/agg_negative:intewaction_gwaph_negative_scio
+```
 
-bin/d6w schedule \
-  ${PROJECTID}/${REGION}/${JOB_NAME} \
-  src/scala/com/twitter/interaction_graph/scio/agg_negative/config.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.project=${PROJECTID} \
-  --bind=profile.region=${REGION} \
-  --bind=profile.job_name=${JOB_NAME} \
-  --bind=profile.environment=prod \
-  --bind=profile.date=2022-10-19 \
-  --bind=profile.output_path=processed/interaction_graph_agg_negative_dataflow \
-  --bind=profile.bq_dataset="twttr-bq-cassowary-prod:user"
+#### wun scheduwed job
+```
+expowt p-pwojectid=twttw-wecos-mw-pwod
+expowt wegion=us-centwaw1
+e-expowt job_name=intewaction-gwaph-negative-datafwow
+
+bin/d6w s-scheduwe \
+  ${pwojectid}/${wegion}/${job_name} \
+  swc/scawa/com/twittew/intewaction_gwaph/scio/agg_negative/config.d6w \
+  --bind=pwofiwe.usew_name=cassowawy \
+  --bind=pwofiwe.pwoject=${pwojectid} \
+  --bind=pwofiwe.wegion=${wegion} \
+  --bind=pwofiwe.job_name=${job_name} \
+  --bind=pwofiwe.enviwonment=pwod \
+  --bind=pwofiwe.date=2022-10-19 \
+  --bind=pwofiwe.output_path=pwocessed/intewaction_gwaph_agg_negative_datafwow \
+  --bind=pwofiwe.bq_dataset="twttw-bq-cassowawy-pwod:usew"
 ```

@@ -1,67 +1,67 @@
-package com.twitter.product_mixer.core.pipeline.recommendation
+package com.twittew.pwoduct_mixew.cowe.pipewine.wecommendation
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineBuilderFactory
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipelineBuilderFactory
-import com.twitter.product_mixer.core.service.candidate_decorator_executor.CandidateDecoratorExecutor
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.candidate_pipeline_executor.CandidatePipelineExecutor
-import com.twitter.product_mixer.core.service.domain_marshaller_executor.DomainMarshallerExecutor
-import com.twitter.product_mixer.core.service.filter_executor.FilterExecutor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutor
-import com.twitter.product_mixer.core.service.pipeline_result_side_effect_executor.PipelineResultSideEffectExecutor
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutor
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.scoring_pipeline_executor.ScoringPipelineExecutor
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutor
-import com.twitter.product_mixer.core.service.transport_marshaller_executor.TransportMarshallerExecutor
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.hasmawshawwing
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewinebuiwdewfactowy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.scowing.scowingpipewinebuiwdewfactowy
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_decowatow_executow.candidatedecowatowexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_featuwe_hydwatow_executow.candidatefeatuwehydwatowexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_pipewine_executow.candidatepipewineexecutow
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.domain_mawshawwew_executow.domainmawshawwewexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.fiwtew_executow.fiwtewexecutow
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow.gateexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_wesuwt_side_effect_executow.pipewinewesuwtsideeffectexecutow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.async_featuwe_map_executow.asyncfeatuwemapexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.quewy_featuwe_hydwatow_executow.quewyfeatuwehydwatowexecutow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.scowing_pipewine_executow.scowingpipewineexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.sewectow_executow.sewectowexecutow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.twanspowt_mawshawwew_executow.twanspowtmawshawwewexecutow
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class RecommendationPipelineBuilderFactory @Inject() (
-  candidatePipelineExecutor: CandidatePipelineExecutor,
-  gateExecutor: GateExecutor,
-  selectorExecutor: SelectorExecutor,
-  queryFeatureHydratorExecutor: QueryFeatureHydratorExecutor,
-  asyncFeatureMapExecutor: AsyncFeatureMapExecutor,
-  candidateFeatureHydratorExecutor: CandidateFeatureHydratorExecutor,
-  filterExecutor: FilterExecutor,
-  scoringPipelineExecutor: ScoringPipelineExecutor,
-  candidateDecoratorExecutor: CandidateDecoratorExecutor,
-  domainMarshallerExecutor: DomainMarshallerExecutor,
-  transportMarshallerExecutor: TransportMarshallerExecutor,
-  pipelineResultSideEffectExecutor: PipelineResultSideEffectExecutor,
-  candidatePipelineBuilderFactory: CandidatePipelineBuilderFactory,
-  scoringPipelineBuilderFactory: ScoringPipelineBuilderFactory,
-  statsReceiver: StatsReceiver) {
+@singweton
+cwass wecommendationpipewinebuiwdewfactowy @inject() (
+  candidatepipewineexecutow: c-candidatepipewineexecutow, nyaa~~
+  gateexecutow: gateexecutow,
+  sewectowexecutow: sewectowexecutow, :3
+  q-quewyfeatuwehydwatowexecutow: quewyfeatuwehydwatowexecutow, 😳😳😳
+  a-asyncfeatuwemapexecutow: a-asyncfeatuwemapexecutow, (˘ω˘)
+  c-candidatefeatuwehydwatowexecutow: c-candidatefeatuwehydwatowexecutow, ^^
+  fiwtewexecutow: fiwtewexecutow, :3
+  s-scowingpipewineexecutow: scowingpipewineexecutow,
+  candidatedecowatowexecutow: c-candidatedecowatowexecutow, -.-
+  domainmawshawwewexecutow: domainmawshawwewexecutow, 😳
+  twanspowtmawshawwewexecutow: twanspowtmawshawwewexecutow, mya
+  pipewinewesuwtsideeffectexecutow: p-pipewinewesuwtsideeffectexecutow, (˘ω˘)
+  candidatepipewinebuiwdewfactowy: c-candidatepipewinebuiwdewfactowy, >_<
+  s-scowingpipewinebuiwdewfactowy: s-scowingpipewinebuiwdewfactowy,
+  statsweceivew: statsweceivew) {
 
   def get[
-    Query <: PipelineQuery,
-    Candidate <: UniversalNoun[Any],
-    DomainResultType <: HasMarshalling,
-    Result
-  ]: RecommendationPipelineBuilder[Query, Candidate, DomainResultType, Result] = {
-    new RecommendationPipelineBuilder[Query, Candidate, DomainResultType, Result](
-      candidatePipelineExecutor,
-      gateExecutor,
-      selectorExecutor,
-      queryFeatureHydratorExecutor,
-      asyncFeatureMapExecutor,
-      candidateFeatureHydratorExecutor,
-      filterExecutor,
-      scoringPipelineExecutor,
-      candidateDecoratorExecutor,
-      domainMarshallerExecutor,
-      transportMarshallerExecutor,
-      pipelineResultSideEffectExecutor,
-      candidatePipelineBuilderFactory,
-      scoringPipelineBuilderFactory,
-      statsReceiver
+    quewy <: p-pipewinequewy, -.-
+    c-candidate <: univewsawnoun[any], 🥺
+    domainwesuwttype <: h-hasmawshawwing, (U ﹏ U)
+    w-wesuwt
+  ]: wecommendationpipewinebuiwdew[quewy, >w< c-candidate, mya domainwesuwttype, >w< w-wesuwt] = {
+    nyew wecommendationpipewinebuiwdew[quewy, nyaa~~ candidate, (✿oωo) domainwesuwttype, ʘwʘ w-wesuwt](
+      candidatepipewineexecutow, (ˆ ﻌ ˆ)♡
+      g-gateexecutow, 😳😳😳
+      sewectowexecutow, :3
+      q-quewyfeatuwehydwatowexecutow, OwO
+      a-asyncfeatuwemapexecutow, (U ﹏ U)
+      candidatefeatuwehydwatowexecutow, >w<
+      fiwtewexecutow, (U ﹏ U)
+      scowingpipewineexecutow, 😳
+      candidatedecowatowexecutow, (ˆ ﻌ ˆ)♡
+      domainmawshawwewexecutow, 😳😳😳
+      twanspowtmawshawwewexecutow, (U ﹏ U)
+      p-pipewinewesuwtsideeffectexecutow, (///ˬ///✿)
+      c-candidatepipewinebuiwdewfactowy, 😳
+      scowingpipewinebuiwdewfactowy, 😳
+      s-statsweceivew
     )
   }
 }

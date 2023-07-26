@@ -1,74 +1,74 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow
 
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.clients.strato.twistly.SimClustersRecentEngagementSimilarityClient
-import com.twitter.timelines.configapi.decider.BooleanDeciderParam
-import com.twitter.timelines.prediction.adapters.twistly.SimClustersRecentEngagementSimilarityFeaturesAdapter
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawam
+i-impowt com.twittew.mw.api.datawecowd
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.datawecowdinafeatuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.conditionawwy
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.pwoduct_mixew.cowe.utiw.offwoadfutuwepoows
+impowt com.twittew.stitch.stitch
+impowt c-com.twittew.timewines.cwients.stwato.twistwy.simcwustewswecentengagementsimiwawitycwient
+impowt c-com.twittew.timewines.configapi.decidew.booweandecidewpawam
+i-impowt com.twittew.timewines.pwediction.adaptews.twistwy.simcwustewswecentengagementsimiwawityfeatuwesadaptew
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-object SimClustersEngagementSimilarityFeature
-    extends DataRecordInAFeature[PipelineQuery]
-    with FeatureWithDefaultOnFailure[PipelineQuery, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+o-object simcwustewsengagementsimiwawityfeatuwe
+    extends datawecowdinafeatuwe[pipewinequewy]
+    with featuwewithdefauwtonfaiwuwe[pipewinequewy, :3 datawecowd] {
+  o-ovewwide def defauwtvawue: d-datawecowd = n-nyew datawecowd()
 }
 
-@Singleton
-class SimClustersEngagementSimilarityFeatureHydrator @Inject() (
-  simClustersEngagementSimilarityClient: SimClustersRecentEngagementSimilarityClient)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate]
-    with Conditionally[PipelineQuery] {
+@singweton
+c-cwass simcwustewsengagementsimiwawityfeatuwehydwatow @inject() (
+  s-simcwustewsengagementsimiwawitycwient: simcwustewswecentengagementsimiwawitycwient)
+    extends b-buwkcandidatefeatuwehydwatow[pipewinequewy, -.- tweetcandidate]
+    with conditionawwy[pipewinequewy] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("SimClustersEngagementSimilarity")
+  o-ovewwide vaw identifiew: featuwehydwatowidentifiew =
+    featuwehydwatowidentifiew("simcwustewsengagementsimiwawity")
 
-  override val features: Set[Feature[_, _]] = Set(SimClustersEngagementSimilarityFeature)
+  ovewwide vaw featuwes: set[featuwe[_, 😳 _]] = s-set(simcwustewsengagementsimiwawityfeatuwe)
 
-  private val simClustersRecentEngagementSimilarityFeaturesAdapter =
-    new SimClustersRecentEngagementSimilarityFeaturesAdapter
+  pwivate vaw simcwustewswecentengagementsimiwawityfeatuwesadaptew =
+    n-nyew simcwustewswecentengagementsimiwawityfeatuwesadaptew
 
-  override def onlyIf(query: PipelineQuery): Boolean = {
-    val param: BooleanDeciderParam =
-      ScoredTweetsParam.EnableSimClustersSimilarityFeatureHydrationDeciderParam
-    query.params.apply(param)
+  o-ovewwide def o-onwyif(quewy: pipewinequewy): boowean = {
+    vaw pawam: booweandecidewpawam =
+      scowedtweetspawam.enabwesimcwustewssimiwawityfeatuwehydwationdecidewpawam
+    quewy.pawams.appwy(pawam)
   }
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
-    val tweetToCandidates = candidates.map(candidate => candidate.candidate.id -> candidate).toMap
-    val tweetIds = tweetToCandidates.keySet.toSeq
-    val userId = query.getRequiredUserId
-    val userTweetEdges = tweetIds.map(tweetId => (userId, tweetId))
-    simClustersEngagementSimilarityClient
-      .getSimClustersRecentEngagementSimilarityScores(userTweetEdges).map {
-        simClustersRecentEngagementSimilarityScoresMap =>
+  o-ovewwide def a-appwy(
+    quewy: pipewinequewy, mya
+    c-candidates: s-seq[candidatewithfeatuwes[tweetcandidate]]
+  ): stitch[seq[featuwemap]] = o-offwoadfutuwepoows.offwoadfutuwe {
+    vaw tweettocandidates = c-candidates.map(candidate => candidate.candidate.id -> candidate).tomap
+    v-vaw tweetids = tweettocandidates.keyset.toseq
+    v-vaw usewid = quewy.getwequiwedusewid
+    v-vaw usewtweetedges = t-tweetids.map(tweetid => (usewid, tweetid))
+    simcwustewsengagementsimiwawitycwient
+      .getsimcwustewswecentengagementsimiwawityscowes(usewtweetedges).map {
+        simcwustewswecentengagementsimiwawityscowesmap =>
           candidates.map { candidate =>
-            val similarityFeatureOpt = simClustersRecentEngagementSimilarityScoresMap
-              .get(userId -> candidate.candidate.id).flatten
-            val dataRecordOpt = similarityFeatureOpt.map { similarityFeature =>
-              simClustersRecentEngagementSimilarityFeaturesAdapter
-                .adaptToDataRecords(similarityFeature)
+            vaw simiwawityfeatuweopt = s-simcwustewswecentengagementsimiwawityscowesmap
+              .get(usewid -> c-candidate.candidate.id).fwatten
+            vaw datawecowdopt = s-simiwawityfeatuweopt.map { s-simiwawityfeatuwe =>
+              s-simcwustewswecentengagementsimiwawityfeatuwesadaptew
+                .adapttodatawecowds(simiwawityfeatuwe)
                 .get(0)
             }
-            FeatureMapBuilder()
-              .add(SimClustersEngagementSimilarityFeature, dataRecordOpt.getOrElse(new DataRecord))
-              .build()
+            featuwemapbuiwdew()
+              .add(simcwustewsengagementsimiwawityfeatuwe, (˘ω˘) datawecowdopt.getowewse(new datawecowd))
+              .buiwd()
           }
       }
   }

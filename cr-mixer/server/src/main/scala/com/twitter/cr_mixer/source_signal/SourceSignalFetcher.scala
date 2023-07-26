@@ -1,45 +1,45 @@
-package com.twitter.cr_mixer.source_signal
+package com.twittew.cw_mixew.souwce_signaw
 
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.util.Future
+impowt c-com.twittew.cw_mixew.modew.souwceinfo
+i-impowt com.twittew.cw_mixew.souwce_signaw.souwcefetchew.fetchewquewy
+i-impowt c-com.twittew.cw_mixew.thwiftscawa.souwcetype
+i-impowt com.twittew.fwigate.common.utiw.statsutiw
+i-impowt com.twittew.utiw.futuwe
 
 /***
- * A SourceSignalFetcher is a trait that extends from `SourceFetcher`
- * and is specialized in tackling Signals (eg., USS, FRS) fetch.
- * Currently, we define Signals as (but not limited to) a set of past engagements that
- * the user makes, such as RecentFav, RecentFollow, etc.
+ * a-a souwcesignawfetchew is a-a twait that extends fwom `souwcefetchew`
+ * and is speciawized in tackwing signaws (eg., uss, mya f-fws) fetch.
+ * cuwwentwy, 🥺 we define signaws as (but n-nyot wimited to) a set of past e-engagements that
+ * the usew makes, >_< such as wecentfav, >_< wecentfowwow, e-etc. (⑅˘꒳˘)
  *
- * The [[ResultType]] of a SourceSignalFetcher is `Seq[SourceInfo]`. When we pass in userId,
- * the underlying store returns a list of signals.
+ * the [[wesuwttype]] o-of a souwcesignawfetchew i-is `seq[souwceinfo]`. /(^•ω•^) when we pass in usewid, rawr x3
+ * the undewwying stowe wetuwns a w-wist of signaws. (U ﹏ U)
  */
-trait SourceSignalFetcher extends SourceFetcher[Seq[SourceInfo]] {
+twait souwcesignawfetchew extends souwcefetchew[seq[souwceinfo]] {
 
-  protected type SignalConvertType
+  pwotected type signawconvewttype
 
-  def trackStats(
-    query: FetcherQuery
+  def t-twackstats(
+    quewy: fetchewquewy
   )(
-    func: => Future[Option[Seq[SourceInfo]]]
-  ): Future[Option[Seq[SourceInfo]]] = {
-    val productScopedStats = stats.scope(query.product.originalName)
-    val productUserStateScopedStats = productScopedStats.scope(query.userState.toString)
-    StatsUtil
-      .trackOptionItemsStats(productScopedStats) {
-        StatsUtil
-          .trackOptionItemsStats(productUserStateScopedStats) {
+    f-func: => futuwe[option[seq[souwceinfo]]]
+  ): f-futuwe[option[seq[souwceinfo]]] = {
+    v-vaw pwoductscopedstats = stats.scope(quewy.pwoduct.owiginawname)
+    v-vaw pwoductusewstatescopedstats = pwoductscopedstats.scope(quewy.usewstate.tostwing)
+    statsutiw
+      .twackoptionitemsstats(pwoductscopedstats) {
+        s-statsutiw
+          .twackoptionitemsstats(pwoductusewstatescopedstats) {
             func
           }
       }
   }
 
   /***
-   * Convert a list of Signals of type [[SignalConvertType]] into SourceInfo
+   * convewt a wist of signaws o-of type [[signawconvewttype]] into souwceinfo
    */
-  def convertSourceInfo(
-    sourceType: SourceType,
-    signals: Seq[SignalConvertType]
-  ): Seq[SourceInfo]
+  def convewtsouwceinfo(
+    souwcetype: souwcetype, (U ﹏ U)
+    signaws: seq[signawconvewttype]
+  ): s-seq[souwceinfo]
 }

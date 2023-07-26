@@ -1,34 +1,34 @@
-package com.twitter.tweetypie.config
+package com.twittew.tweetypie.config
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.servo.util.FutureArrow
-import com.twitter.tweetypie._
-import com.twitter.tweetypie.service.{ClientIdSettingTweetServiceProxy, TweetServiceProxy}
+impowt com.twittew.finagwe.thwift.cwientid
+i-impowt com.twittew.sewvo.utiw.futuweawwow
+i-impowt c-com.twittew.tweetypie._
+i-impowt c-com.twittew.tweetypie.sewvice.{cwientidsettingtweetsewvicepwoxy, (✿oωo) t-tweetsewvicepwoxy}
 
 /**
- * This class builds deciderable ThriftTweetService and FutureArrows that respect the
- * simulateDeferredrpcCallbacks decider.  When simulateDeferredrpcCallbacks=true, invocations will
- * be performed synchronously by the root ThriftTweetService.
+ * t-this c-cwass buiwds decidewabwe thwifttweetsewvice and futuweawwows that wespect the
+ * s-simuwatedefewwedwpccawwbacks decidew. (ˆ ﻌ ˆ)♡  when simuwatedefewwedwpccawwbacks=twue, (˘ω˘) invocations wiww
+ * b-be pewfowmed synchwonouswy b-by the woot thwifttweetsewvice. (⑅˘꒳˘)
  */
-class ServiceInvocationBuilder(
-  val service: ThriftTweetService,
-  simulateDeferredrpcCallbacks: Boolean) {
+cwass sewviceinvocationbuiwdew(
+  vaw sewvice: thwifttweetsewvice, (///ˬ///✿)
+  s-simuwatedefewwedwpccawwbacks: boowean) {
 
-  def withClientId(clientId: ClientId): ServiceInvocationBuilder =
-    new ServiceInvocationBuilder(
-      new ClientIdSettingTweetServiceProxy(clientId, service),
-      simulateDeferredrpcCallbacks
+  d-def withcwientid(cwientid: c-cwientid): sewviceinvocationbuiwdew =
+    nyew sewviceinvocationbuiwdew(
+      nyew cwientidsettingtweetsewvicepwoxy(cwientid, 😳😳😳 sewvice), 🥺
+      simuwatedefewwedwpccawwbacks
     )
 
-  def asyncVia(asyncService: ThriftTweetService): ServiceInvocationBuilder =
-    new ServiceInvocationBuilder(
-      new TweetServiceProxy {
-        override def underlying: ThriftTweetService =
-          if (simulateDeferredrpcCallbacks) service else asyncService
-      },
-      simulateDeferredrpcCallbacks
+  def asyncvia(asyncsewvice: thwifttweetsewvice): s-sewviceinvocationbuiwdew =
+    nyew sewviceinvocationbuiwdew(
+      nyew tweetsewvicepwoxy {
+        ovewwide def undewwying: t-thwifttweetsewvice =
+          if (simuwatedefewwedwpccawwbacks) s-sewvice ewse a-asyncsewvice
+      }, mya
+      s-simuwatedefewwedwpccawwbacks
     )
 
-  def method[A, B](op: ThriftTweetService => A => Future[B]): FutureArrow[A, B] =
-    FutureArrow(op(service))
+  d-def method[a, 🥺 b](op: thwifttweetsewvice => a => f-futuwe[b]): futuweawwow[a, >_< b] =
+    futuweawwow(op(sewvice))
 }

@@ -1,161 +1,161 @@
-package com.twitter.tweetypie.repository
+package com.twittew.tweetypie.wepositowy
 
-import com.twitter.servo.cache.{CachedValueStatus => Status, LockingCache => KVLockingCache, _}
-import com.twitter.servo.repository.{CachedResult => Result}
-import com.twitter.stitch.MapGroup
-import com.twitter.stitch.Group
-import com.twitter.stitch.Stitch
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Time
-import com.twitter.util.Try
+impowt c-com.twittew.sewvo.cache.{cachedvawuestatus => s-status, σωσ w-wockingcache => k-kvwockingcache, (U ᵕ U❁) _}
+i-impowt c-com.twittew.sewvo.wepositowy.{cachedwesuwt => w-wesuwt}
+i-impowt com.twittew.stitch.mapgwoup
+impowt com.twittew.stitch.gwoup
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.utiw.futuwe
+impowt c-com.twittew.utiw.wetuwn
+impowt com.twittew.utiw.thwow
+i-impowt com.twittew.utiw.time
+impowt com.twittew.utiw.twy
 
 /**
- * Adapts a key-value locking cache to Arrow and
- * normalizes the results to `CachedResult`.
+ * adapts a key-vawue wocking c-cache to awwow and
+ * nyowmawizes t-the wesuwts t-to `cachedwesuwt`. (✿oωo)
  */
-trait StitchLockingCache[K, V] {
-  val get: K => Stitch[Result[K, V]]
-  val lockAndSet: (K, StitchLockingCache.Val[V]) => Stitch[Unit]
-  val delete: K => Stitch[Boolean]
+twait stitchwockingcache[k, ^^ v] {
+  vaw get: k => stitch[wesuwt[k, ^•ﻌ•^ v]]
+  vaw w-wockandset: (k, XD stitchwockingcache.vaw[v]) => stitch[unit]
+  vaw dewete: k => stitch[boowean]
 }
 
-object StitchLockingCache {
+o-object stitchwockingcache {
 
   /**
-   * Value intended to be written back to cache using lockAndSet.
+   * vawue i-intended to be w-wwitten back to c-cache using wockandset. :3
    *
-   * Note that only a subset of CachedValueStatus values are eligible for writing:
-   *   Found, NotFound, and Deleted
+   * n-nyote that onwy a subset of cachedvawuestatus vawues awe ewigibwe f-fow wwiting:
+   *   found, (ꈍᴗꈍ) nyotfound, :3 and deweted
    */
-  sealed trait Val[+V]
-  object Val {
-    case class Found[V](value: V) extends Val[V]
-    case object NotFound extends Val[Nothing]
-    case object Deleted extends Val[Nothing]
+  seawed t-twait vaw[+v]
+  object vaw {
+    case cwass found[v](vawue: v) extends vaw[v]
+    case object n-nyotfound extends vaw[nothing]
+    c-case object d-deweted extends v-vaw[nothing]
   }
 
   /**
-   * A Group for batching get requests to a [[KVLockingCache]].
+   * a gwoup fow batching get wequests to a [[kvwockingcache]]. (U ﹏ U)
    */
-  private case class GetGroup[K, V](cache: KVLockingCache[K, Cached[V]], override val maxSize: Int)
-      extends MapGroup[K, Result[K, V]] {
+  p-pwivate case c-cwass getgwoup[k, UwU v](cache: kvwockingcache[k, 😳😳😳 c-cached[v]], XD o-ovewwide vaw maxsize: i-int)
+      extends mapgwoup[k, o.O wesuwt[k, (⑅˘꒳˘) v-v]] {
 
-    private[this] def cachedToResult(key: K, cached: Cached[V]): Try[Result[K, V]] =
-      cached.status match {
-        case Status.NotFound => Return(Result.CachedNotFound(key, cached.cachedAt))
-        case Status.Deleted => Return(Result.CachedDeleted(key, cached.cachedAt))
-        case Status.SerializationFailed => Return(Result.SerializationFailed(key))
-        case Status.DeserializationFailed => Return(Result.DeserializationFailed(key))
-        case Status.Evicted => Return(Result.NotFound(key))
-        case Status.DoNotCache => Return(Result.DoNotCache(key, cached.doNotCacheUntil))
-        case Status.Found =>
-          cached.value match {
-            case None => Return(Result.NotFound(key))
-            case Some(value) => Return(Result.CachedFound(key, value, cached.cachedAt))
+    pwivate[this] def cachedtowesuwt(key: k-k, 😳😳😳 cached: cached[v]): t-twy[wesuwt[k, nyaa~~ v]] =
+      cached.status m-match {
+        c-case status.notfound => wetuwn(wesuwt.cachednotfound(key, rawr cached.cachedat))
+        case status.deweted => wetuwn(wesuwt.cacheddeweted(key, -.- cached.cachedat))
+        case s-status.sewiawizationfaiwed => w-wetuwn(wesuwt.sewiawizationfaiwed(key))
+        case status.desewiawizationfaiwed => w-wetuwn(wesuwt.desewiawizationfaiwed(key))
+        c-case status.evicted => w-wetuwn(wesuwt.notfound(key))
+        case status.donotcache => wetuwn(wesuwt.donotcache(key, (✿oωo) cached.donotcacheuntiw))
+        case s-status.found =>
+          cached.vawue match {
+            case none => wetuwn(wesuwt.notfound(key))
+            c-case some(vawue) => wetuwn(wesuwt.cachedfound(key, /(^•ω•^) v-vawue, 🥺 cached.cachedat))
           }
-        case _ => Throw(new UnsupportedOperationException)
+        c-case _ => thwow(new u-unsuppowtedopewationexception)
       }
 
-    override protected def run(keys: Seq[K]): Future[K => Try[Result[K, V]]] =
-      cache.get(keys).map { (result: KeyValueResult[K, Cached[V]]) => key =>
-        result.found.get(key) match {
-          case Some(cached) => cachedToResult(key, cached)
-          case None =>
-            result.failed.get(key) match {
-              case Some(t) => Return(Result.Failed(key, t))
-              case None => Return(Result.NotFound(key))
+    ovewwide pwotected d-def wun(keys: s-seq[k]): futuwe[k => t-twy[wesuwt[k, ʘwʘ v-v]]] =
+      cache.get(keys).map { (wesuwt: keyvawuewesuwt[k, UwU c-cached[v]]) => k-key =>
+        w-wesuwt.found.get(key) m-match {
+          c-case some(cached) => cachedtowesuwt(key, XD cached)
+          c-case nyone =>
+            wesuwt.faiwed.get(key) match {
+              case some(t) => wetuwn(wesuwt.faiwed(key, (✿oωo) t))
+              c-case nyone => wetuwn(wesuwt.notfound(key))
             }
         }
       }
   }
 
   /**
-   * Used in the implementation of LockAndSetGroup. This is just a
-   * glorified tuple with special equality semantics where calls with
-   * the same key will compare equal.  MapGroup will use this as a key
-   * in a Map, which will prevent duplicate lockAndSet calls with the
-   * same key. We don't care which one we use
+   * used in the impwementation o-of wockandsetgwoup. :3 t-this is just a-a
+   * gwowified tupwe with speciaw e-equawity semantics whewe cawws w-with
+   * the s-same key wiww compawe equaw. (///ˬ///✿)  mapgwoup wiww use this as a key
+   * in a map, nyaa~~ which wiww pwevent d-dupwicate wockandset cawws with t-the
+   * same key. >w< we don't cawe w-which one we u-use
    */
-  private class LockAndSetCall[K, V](val key: K, val value: V) {
-    override def equals(other: Any): Boolean =
-      other match {
-        case call: LockAndSetCall[_, _] => call.key == key
-        case _ => false
+  pwivate cwass wockandsetcaww[k, -.- v](vaw k-key: k, (✿oωo) vaw vawue: v-v) {
+    ovewwide def equaws(othew: a-any): b-boowean =
+      othew match {
+        case caww: wockandsetcaww[_, (˘ω˘) _] => caww.key == k-key
+        c-case _ => fawse
       }
 
-    override def hashCode(): Int = key.hashCode
+    o-ovewwide def hashcode(): i-int = key.hashcode
   }
 
   /**
-   * A Group for `lockAndSet` calls to a [[KVLockingCache]]. This is
-   * necessary to avoid writing back a key multiple times if it is
-   * appears more than once in a batch. LockAndSetCall considers two
-   * calls equal even if the values differ because multiple lockAndSet
-   * calls for the same key will eventually result in only one being
-   * chosen by the cache anyway, and this avoids conflicting
-   * lockAndSet calls.
+   * a-a gwoup fow `wockandset` c-cawws to a [[kvwockingcache]]. rawr this is
+   * nyecessawy to avoid wwiting back a key muwtipwe times i-if it is
+   * a-appeaws mowe than once in a batch. OwO wockandsetcaww c-considews two
+   * c-cawws equaw even if the vawues diffew because muwtipwe wockandset
+   * cawws f-fow the same key wiww eventuawwy wesuwt in onwy one being
+   * chosen by the c-cache anyway, ^•ﻌ•^ and this avoids confwicting
+   * w-wockandset cawws. UwU
    *
-   * For example, consider a tweet that mentions @jack twice
-   * when @jack is not in cache. That will result in two queries to
-   * load @jack, which will be deduped by the Group when the repo is
-   * called. Despite the fact that it is loaded only once, each of the
-   * two loads is oblivious to the other, so each of them attempts to
-   * write the value back to cache, resulting in two `lockAndSet`
-   * calls for @jack, so we have to dedupe them again.
+   * f-fow exampwe, (˘ω˘) considew a tweet that mentions @jack twice
+   * w-when @jack i-is nyot in cache. (///ˬ///✿) that wiww wesuwt in two quewies to
+   * woad @jack, σωσ w-which wiww be deduped b-by the gwoup when the wepo is
+   * cawwed. /(^•ω•^) despite the fact that i-it is woaded onwy once, 😳 each of t-the
+   * two woads i-is obwivious to the othew, 😳 s-so each of them attempts to
+   * w-wwite the vawue b-back to cache, (⑅˘꒳˘) w-wesuwting in two `wockandset`
+   * cawws fow @jack, 😳😳😳 s-so we have to d-dedupe them again. 😳
    */
-  private case class LockAndSetGroup[K, V](
-    cache: KVLockingCache[K, V],
-    picker: KVLockingCache.Picker[V])
-      extends MapGroup[LockAndSetCall[K, V], Option[V]] {
+  pwivate case cwass w-wockandsetgwoup[k, XD v-v](
+    cache: k-kvwockingcache[k, mya v], ^•ﻌ•^
+    pickew: kvwockingcache.pickew[v])
+      e-extends mapgwoup[wockandsetcaww[k, ʘwʘ v], option[v]] {
 
-    override def run(
-      calls: Seq[LockAndSetCall[K, V]]
-    ): Future[LockAndSetCall[K, V] => Try[Option[V]]] =
-      Future
-        .collect {
-          calls.map { call =>
-            // This is masked to prevent interrupts to the overall
-            // request from interrupting writes back to cache.
-            cache
-              .lockAndSet(call.key, KVLockingCache.PickingHandler(call.value, picker))
+    o-ovewwide d-def wun(
+      cawws: seq[wockandsetcaww[k, ( ͡o ω ͡o ) v]]
+    ): futuwe[wockandsetcaww[k, mya v] => twy[option[v]]] =
+      f-futuwe
+        .cowwect {
+          c-cawws.map { c-caww =>
+            // t-this is masked to pwevent i-intewwupts to the ovewaww
+            // wequest fwom intewwupting wwites back to cache. o.O
+            c-cache
+              .wockandset(caww.key, kvwockingcache.pickinghandwew(caww.vawue, (✿oωo) p-pickew))
               .masked
-              .liftToTry
+              .wifttotwy
           }
         }
-        .map(responses => calls.zip(responses).toMap)
+        .map(wesponses => cawws.zip(wesponses).tomap)
   }
 
-  def apply[K, V](
-    underlying: KVLockingCache[K, Cached[V]],
-    picker: KVLockingCache.Picker[Cached[V]],
-    maxRequestSize: Int = Int.MaxValue
-  ): StitchLockingCache[K, V] =
-    new StitchLockingCache[K, V] {
-      override val get: K => Stitch[Result[K, V]] = {
-        val group: Group[K, Result[K, V]] = GetGroup(underlying, maxRequestSize)
+  d-def appwy[k, :3 v](
+    undewwying: k-kvwockingcache[k, 😳 cached[v]], (U ﹏ U)
+    p-pickew: k-kvwockingcache.pickew[cached[v]], mya
+    m-maxwequestsize: i-int = i-int.maxvawue
+  ): stitchwockingcache[k, (U ᵕ U❁) v] =
+    nyew stitchwockingcache[k, :3 v] {
+      ovewwide vaw get: k => stitch[wesuwt[k, mya v]] = {
+        vaw g-gwoup: gwoup[k, OwO w-wesuwt[k, v]] = g-getgwoup(undewwying, (ˆ ﻌ ˆ)♡ maxwequestsize)
 
-        (key: K) => Stitch.call(key, group)
+        (key: k-k) => stitch.caww(key, ʘwʘ gwoup)
       }
 
-      override val lockAndSet: (K, Val[V]) => Stitch[Unit] = {
-        val group = LockAndSetGroup(underlying, picker)
+      ovewwide vaw wockandset: (k, o.O v-vaw[v]) => stitch[unit] = {
+        v-vaw gwoup = wockandsetgwoup(undewwying, UwU p-pickew)
 
-        (key: K, value: Val[V]) => {
-          val now = Time.now
-          val cached: Cached[V] =
-            value match {
-              case Val.Found(v) => Cached[V](Some(v), Status.Found, now, Some(now))
-              case Val.NotFound => Cached[V](None, Status.NotFound, now, Some(now))
-              case Val.Deleted => Cached[V](None, Status.Deleted, now, Some(now))
+        (key: k, rawr x3 vawue: vaw[v]) => {
+          vaw nyow = t-time.now
+          v-vaw cached: cached[v] =
+            vawue match {
+              c-case vaw.found(v) => c-cached[v](some(v), 🥺 status.found, :3 now, some(now))
+              case vaw.notfound => cached[v](none, (ꈍᴗꈍ) s-status.notfound, 🥺 n-nyow, s-some(now))
+              c-case v-vaw.deweted => cached[v](none, (✿oωo) s-status.deweted, (U ﹏ U) n-nyow, :3 some(now))
             }
 
-          Stitch.call(new LockAndSetCall(key, cached), group).unit
+          stitch.caww(new w-wockandsetcaww(key, c-cached), ^^;; gwoup).unit
         }
       }
 
-      override val delete: K => Stitch[Boolean] =
-        (key: K) => Stitch.callFuture(underlying.delete(key))
+      o-ovewwide vaw dewete: k => stitch[boowean] =
+        (key: k-k) => stitch.cawwfutuwe(undewwying.dewete(key))
     }
 }

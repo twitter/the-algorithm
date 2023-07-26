@@ -1,30 +1,30 @@
-package com.twitter.search.earlybird.search.facets;
+package com.twittew.seawch.eawwybiwd.seawch.facets;
 
-import java.util.Iterator;
+impowt java.utiw.itewatow;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.facets.FacetCountState;
-import com.twitter.search.core.earlybird.facets.FacetCountState.FacetFieldResults;
-import com.twitter.search.earlybird.search.EarlybirdLuceneSearcher;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
+i-impowt com.twittew.seawch.common.schema.base.schema;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetcountstate;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetcountstate.facetfiewdwesuwts;
+i-impowt c-com.twittew.seawch.eawwybiwd.seawch.eawwybiwdwuceneseawchew;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftfacetfiewdwesuwts;
 
-public class SimpleCountRankingModule extends FacetRankingModule {
+p-pubwic cwass simpwecountwankingmoduwe extends facetwankingmoduwe {
 
-  @Override
-  public void prepareResults(
-      EarlybirdLuceneSearcher.FacetSearchResults hits,
-      FacetCountState<ThriftFacetFieldResults> facetCountState) {
-    Iterator<FacetFieldResults<ThriftFacetFieldResults>> fieldResultsIterator =
-            facetCountState.getFacetFieldResultsIterator();
-    while (fieldResultsIterator.hasNext()) {
-      FacetFieldResults<ThriftFacetFieldResults> state = fieldResultsIterator.next();
-      if (!state.isFinished()) {
-        Schema.FieldInfo facetField =
-                facetCountState.getSchema().getFacetFieldByFacetName(state.facetName);
-        state.results = hits.getFacetResults(
-                facetField.getFieldType().getFacetName(), state.numResultsRequested);
-        if (state.results != null) {
-          state.numResultsFound = state.results.getTopFacetsSize();
+  @ovewwide
+  pubwic void pwepawewesuwts(
+      e-eawwybiwdwuceneseawchew.facetseawchwesuwts hits, ( ͡o ω ͡o )
+      facetcountstate<thwiftfacetfiewdwesuwts> facetcountstate) {
+    i-itewatow<facetfiewdwesuwts<thwiftfacetfiewdwesuwts>> fiewdwesuwtsitewatow =
+            f-facetcountstate.getfacetfiewdwesuwtsitewatow();
+    whiwe (fiewdwesuwtsitewatow.hasnext()) {
+      facetfiewdwesuwts<thwiftfacetfiewdwesuwts> state = fiewdwesuwtsitewatow.next();
+      i-if (!state.isfinished()) {
+        schema.fiewdinfo f-facetfiewd =
+                facetcountstate.getschema().getfacetfiewdbyfacetname(state.facetname);
+        s-state.wesuwts = hits.getfacetwesuwts(
+                facetfiewd.getfiewdtype().getfacetname(), rawr x3 state.numwesuwtswequested);
+        if (state.wesuwts != n-nyuww) {
+          state.numwesuwtsfound = state.wesuwts.gettopfacetssize();
         }
       }
     }

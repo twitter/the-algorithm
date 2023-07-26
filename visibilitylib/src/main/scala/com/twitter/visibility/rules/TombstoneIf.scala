@@ -1,44 +1,44 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.IsFocalTweet
-import com.twitter.visibility.rules.Condition.Not
+impowt com.twittew.visibiwity.wuwes.condition.and
+i-impowt com.twittew.visibiwity.wuwes.condition.isfocawtweet
+i-impowt com.twittew.visibiwity.wuwes.condition.not
 
-object TombstoneIf {
+o-object tombstoneif {
 
-  object AuthorIsProtected
-      extends RuleWithConstantAction(
-        Tombstone(Epitaph.Protected),
-        And(
-          Condition.LoggedOutOrViewerNotFollowingAuthor,
-          Condition.ProtectedAuthor
+  o-object a-authowispwotected
+      e-extends w-wuwewithconstantaction(
+        t-tombstone(epitaph.pwotected), 😳😳😳
+        and(
+          condition.woggedoutowviewewnotfowwowingauthow, -.-
+          condition.pwotectedauthow
         )
       )
 
-  object ReplyIsModeratedByRootAuthor
-      extends RuleWithConstantAction(
-        Tombstone(Epitaph.Moderated),
-        And(
-          Not(IsFocalTweet),
-          Condition.Moderated
+  object wepwyismodewatedbywootauthow
+      e-extends wuwewithconstantaction(
+        tombstone(epitaph.modewated), ( ͡o ω ͡o )
+        a-and(
+          nyot(isfocawtweet),
+          c-condition.modewated
         )
       )
 
-  object ViewerIsBlockedByAuthor
-      extends OnlyWhenNotAuthorViewerRule(
-        Tombstone(Epitaph.BlockedBy),
-        Condition.AuthorBlocksViewer
+  object viewewisbwockedbyauthow
+      extends onwywhennotauthowviewewwuwe(
+        tombstone(epitaph.bwockedby), rawr x3
+        c-condition.authowbwocksviewew
       )
 
-  object AuthorIsDeactivated
-      extends RuleWithConstantAction(
-        Tombstone(Epitaph.Deactivated),
-        Condition.DeactivatedAuthor
+  object authowisdeactivated
+      e-extends wuwewithconstantaction(
+        t-tombstone(epitaph.deactivated), nyaa~~
+        condition.deactivatedauthow
       )
 
-  object AuthorIsSuspended
-      extends RuleWithConstantAction(
-        Tombstone(Epitaph.Suspended),
-        Condition.SuspendedAuthor
+  object authowissuspended
+      extends wuwewithconstantaction(
+        tombstone(epitaph.suspended), /(^•ω•^)
+        c-condition.suspendedauthow
       )
 }

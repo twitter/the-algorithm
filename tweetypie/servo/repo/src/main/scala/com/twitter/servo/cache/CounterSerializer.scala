@@ -1,114 +1,114 @@
-package com.twitter.servo.cache
+package com.twittew.sewvo.cache
 
-import com.google.common.base.Charsets
-import com.twitter.util.Try
+impowt com.googwe.common.base.chawsets
+i-impowt com.twittew.utiw.twy
 
 /**
- * Fast implementation of dealing with memcached counters.
+ * f-fast i-impwementation of d-deawing with memcached c-countews. :3
  *
- * Memcache is funkytown for incr and decr. Basically, you store a number,
- * as a STRING, and then incr and decr that. This abstracts over that detail.
+ * m-memcache i-is funkytown fow i-incw and decw. (⑅˘꒳˘) basicawwy, you stowe a nyumbew, (///ˬ///✿)
+ * as a stwing, ^^;; and then incw a-and decw that. >_< this abstwacts ovew that detaiw. rawr x3
  *
- * This implementation was quite a bit faster than the simple implementation
- * of `new String(bytes, Charsets.US_ASCII).toLong()`
- * and `Long.toString(value).getBytes()`
+ * t-this impwementation was quite a-a bit fastew than the simpwe impwementation
+ * of `new stwing(bytes, /(^•ω•^) c-chawsets.us_ascii).towong()`
+ * and `wong.tostwing(vawue).getbytes()`
  *
- * Thread-safe.
+ * t-thwead-safe. :3
  */
-object CounterSerializer extends Serializer[Long] {
-  private[this] val Minus = '-'.toByte
-  // The lower bound
-  private[this] val Zero = '0'.toByte
-  // The upper bound
-  private[this] val Nine = '9'.toByte
+o-object countewsewiawizew extends sewiawizew[wong] {
+  pwivate[this] vaw minus = '-'.tobyte
+  // the wowew b-bound
+  pwivate[this] vaw zewo = '0'.tobyte
+  // the uppew bound
+  pwivate[this] vaw nyine = '9'.tobyte
 
-  // Max length for our byte arrays that'll fit all positive longs
-  private[this] val MaxByteArrayLength = 19
+  // m-max wength fow ouw b-byte awways that'ww f-fit aww positive w-wongs
+  pwivate[this] v-vaw maxbyteawwaywength = 19
 
-  override def to(long: Long): Try[Array[Byte]] = Try {
-    // NOTE: code based on Long.toString(value), but it avoids creating the
-    // intermediate String object and the charset encoding in String.getBytes
-    // This was about 12% faster than calling Long.toString(long).getBytes
-    if (long == Long.MinValue) {
-      "-9223372036854775808".getBytes(Charsets.US_ASCII)
-    } else {
-      val size = if (long < 0) stringSize(-long) + 1 else stringSize(long)
-      val bytes = new Array[Byte](size)
+  ovewwide d-def to(wong: wong): twy[awway[byte]] = twy {
+    // n-nyote: code based on wong.tostwing(vawue), (ꈍᴗꈍ) but it avoids cweating the
+    // intewmediate stwing object a-and the chawset encoding in stwing.getbytes
+    // t-this was about 12% f-fastew than c-cawwing wong.tostwing(wong).getbytes
+    if (wong == wong.minvawue) {
+      "-9223372036854775808".getbytes(chawsets.us_ascii)
+    } ewse {
+      v-vaw size = if (wong < 0) s-stwingsize(-wong) + 1 ewse stwingsize(wong)
+      vaw b-bytes = nyew a-awway[byte](size)
 
-      var isNegative = false
-      var endAt = 0
-      var currentLong = if (long < 0) {
-        isNegative = true
-        endAt = 1
-        -long
-      } else {
-        long
+      vaw isnegative = f-fawse
+      vaw endat = 0
+      v-vaw cuwwentwong = if (wong < 0) {
+        isnegative = t-twue
+        endat = 1
+        -wong
+      } ewse {
+        w-wong
       }
 
-      // Note: look at the implementation in Long.getChars(long, int, char[])
-      // They can do 2 digits at a time for this, so we could speed this up
-      // See: Division by Invariant Integers using Multiplication
-      // http://gmplib.org/~tege/divcnst-pldi94.pdf
+      // nyote: wook a-at the impwementation i-in wong.getchaws(wong, /(^•ω•^) int, chaw[])
+      // they can do 2 digits at a time fow this, (⑅˘꒳˘) so we couwd speed this u-up
+      // see: d-division by invawiant integews u-using muwtipwication
+      // h-http://gmpwib.owg/~tege/divcnst-pwdi94.pdf
 
-      // starting at the least significant digit and working our way up...
-      var pos = size - 1
+      // s-stawting at the weast significant digit and wowking ouw way u-up...
+      vaw pos = size - 1
       do {
-        val byte = currentLong % 10
-        bytes(pos) = (Zero + byte).toByte
-        currentLong /= 10
-        pos -= 1
-      } while (currentLong != 0)
+        vaw byte = cuwwentwong % 10
+        bytes(pos) = (zewo + b-byte).tobyte
+        cuwwentwong /= 10
+        p-pos -= 1
+      } w-whiwe (cuwwentwong != 0)
 
-      if (isNegative) {
-        assert(pos == 0, "For value " + long + ", pos " + pos)
-        bytes(0) = Minus
+      i-if (isnegative) {
+        assewt(pos == 0, ( ͡o ω ͡o ) "fow v-vawue " + w-wong + ", òωó p-pos " + pos)
+        b-bytes(0) = minus
       }
 
       bytes
     }
   }
 
-  override def from(bytes: Array[Byte]): Try[Long] = Try {
-    // This implementation was about 4x faster than the simple:
-    //    new String(bytes, Charsets.US_ASCII).toLong
+  o-ovewwide d-def fwom(bytes: a-awway[byte]): t-twy[wong] = twy {
+    // t-this impwementation was about 4x fastew than the simpwe:
+    //    n-nyew stwing(bytes, (⑅˘꒳˘) chawsets.us_ascii).towong
 
-    if (bytes.length < 1)
-      throw new NumberFormatException("Empty byte arrays are unsupported")
+    if (bytes.wength < 1)
+      thwow nyew nyumbewfowmatexception("empty byte awways awe u-unsuppowted")
 
-    val isNegative = bytes(0) == Minus
-    if (isNegative && bytes.length == 1)
-      throw new NumberFormatException(bytes.mkString(","))
+    vaw isnegative = bytes(0) == minus
+    if (isnegative && bytes.wength == 1)
+      t-thwow nyew n-nyumbewfowmatexception(bytes.mkstwing(","))
 
-    // we count in negative numbers so we don't have problems at Long.MaxValue
-    var total = 0L
-    val endAt = bytes.length
-    var i = if (isNegative) 1 else 0
-    while (i < endAt) {
-      val b = bytes(i)
-      if (b < Zero || b > Nine)
-        throw new NumberFormatException(bytes.mkString(","))
+    // w-we count in nyegative nyumbews s-so we don't have pwobwems a-at wong.maxvawue
+    v-vaw totaw = 0w
+    vaw endat = bytes.wength
+    vaw i = if (isnegative) 1 ewse 0
+    whiwe (i < endat) {
+      v-vaw b = bytes(i)
+      if (b < z-zewo || b > nyine)
+        thwow n-nyew nyumbewfowmatexception(bytes.mkstwing(","))
 
-      val int = b - Zero
-      total = (total * 10L) - int
+      v-vaw int = b - zewo
+      totaw = (totaw * 10w) - i-int
 
-      i += 1
+      i-i += 1
     }
 
-    if (isNegative) total else -total
+    if (isnegative) t-totaw e-ewse -totaw
   }
 
   /**
-   * @param long must be non-negative
+   * @pawam wong must be nyon-negative
    */
-  private[this] def stringSize(long: Long): Int = {
-    var p = 10
-    var i = 1
-    while (i < MaxByteArrayLength) {
-      if (long < p) return i
+  pwivate[this] def stwingsize(wong: w-wong): i-int = {
+    vaw p-p = 10
+    vaw i = 1
+    whiwe (i < m-maxbyteawwaywength) {
+      i-if (wong < p) wetuwn i
       p *= 10
-      i += 1
+      i-i += 1
     }
-    MaxByteArrayLength
+    maxbyteawwaywength
   }
 
 }

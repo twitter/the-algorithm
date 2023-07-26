@@ -1,86 +1,86 @@
-package com.twitter.product_mixer.component_library.model.candidate.hubble
+package com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.hubbwe
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
 
 /**
- * Canonical AdUnitCandidate model which describes an "Ad" from the Ad Management perspective. It is
- * based on the AdUnit table in Ads DB, and provides a candidate for advertisers to manage and
- * report on their advertising configurations.Always prefer this version over all other variants.
+ * c-canonicaw adunitcandidate m-modew w-which descwibes a-an "ad" fwom t-the ad management p-pewspective. :3 i-it is
+ * based on the adunit tabwe in ads db, ( ͡o ω ͡o ) and pwovides a candidate fow advewtisews t-to manage and
+ * wepowt on theiw advewtising c-configuwations.awways pwefew t-this vewsion ovew aww othew vawiants. σωσ
  *
- * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]
- *       on the candidate's [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
- *       features come from the candidate source itself (as opposed to hydrated via a
- *       [[com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator]]),
- *       then [[com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
- *       can be used to extract features from the candidate source response.
+ * @note any additionaw fiewds shouwd b-be added as a [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwe]]
+ *       on the c-candidate's [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap]]. >w< if t-the
+ *       featuwes come fwom the candidate souwce itsewf (as opposed to hydwated v-via a
+ *       [[com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.candidatefeatuwehydwatow]]), 😳😳😳
+ *       then [[com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig.featuwesfwomcandidatesouwcetwansfowmews]]
+ *       can be used to extwact featuwes fwom the candidate s-souwce wesponse. OwO
  *
- * @note This class should always remain `final`. If for any reason the `final` modifier is removed,
- *       the equals() implementation must be updated in order to handle class inheritor equality
- *       (see note on the equals method below)
+ * @note t-this cwass s-shouwd awways wemain `finaw`. 😳 if f-fow any weason t-the `finaw` modifiew is wemoved, 😳😳😳
+ *       the equaws() i-impwementation must be updated in owdew t-to handwe cwass inhewitow equawity
+ *       (see nyote on the equaws method bewow)
  */
-final class AdUnitCandidate private (
-  // This is the adUnitId, but needs to be named ID to confirm to UniversalNoun
-  override val id: Long,
-  val adAccountId: Long)
-    extends UniversalNoun[Long] {
+finaw cwass adunitcandidate p-pwivate (
+  // this is the adunitid, (˘ω˘) b-but nyeeds t-to be nyamed i-id to confiwm to univewsawnoun
+  ovewwide vaw id: wong, ʘwʘ
+  vaw adaccountid: w-wong)
+    e-extends univewsawnoun[wong] {
 
   /**
-   * @inheritdoc
+   * @inhewitdoc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[AdUnitCandidate]
+  ovewwide def c-canequaw(that: any): b-boowean = that.isinstanceof[adunitcandidate]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * high p-pewfowmance impwementation of e-equaws method that wevewages:
+   *  - wefewentiaw e-equawity showt ciwcuit
+   *  - c-cached hashcode equawity showt c-ciwcuit
+   *  - f-fiewd vawues awe onwy checked if the hashcodes awe equaw to handwe the unwikewy case
+   *    of a hashcode cowwision
+   *  - w-wemovaw o-of check fow `that` being a-an equaws-compatibwe d-descendant s-since this cwass is finaw
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @note `candidate.canequaw(this)` is nyot nyecessawy because t-this cwass is finaw
+   * @see [[http://www.awtima.com/pins1ed/object-equawity.htmw pwogwamming in scawa, ( ͡o ω ͡o )
+   *      chaptew 28]] fow discussion and d-design. o.O
    */
-  override def equals(that: Any): Boolean =
-    that match {
-      case candidate: AdUnitCandidate =>
+  ovewwide def e-equaws(that: any): b-boowean =
+    t-that match {
+      case candidate: a-adunitcandidate =>
         (
-          (this eq candidate)
-            || ((hashCode == candidate.hashCode)
-              && (id == candidate.id && adAccountId == candidate.adAccountId))
+          (this e-eq candidate)
+            || ((hashcode == c-candidate.hashcode)
+              && (id == c-candidate.id && adaccountid == candidate.adaccountid))
         )
       case _ =>
-        false
+        f-fawse
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * w-wevewage d-domain-specific c-constwaints (see n-nyotes bewow) to safewy constwuct and cache the
+   * hashcode a-as a vaw, >w< such that it is instantiated once on object constwuction. 😳 this pwevents the
+   * nyeed t-to wecompute the hashcode on each hashcode() invocation, 🥺 which i-is the behaviow o-of the
+   * scawa c-compiwew case cwass-genewated h-hashcode() since it cannot make a-assumptions wegawding f-fiewd
+   * object mutabiwity and hashcode impwementations.
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated candidate
-   *       (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       data structure), assuming stable hashCode implementations for these objects
+   * @note caching the hashcode is onwy safe i-if aww of the fiewds used to c-constwuct the hashcode
+   *       awe immutabwe. rawr x3 t-this incwudes:
+   *       - i-inabiwity to mutate the object wefewence o-on fow an e-existing instantiated candidate
+   *       (i.e. o.O e-each fiewd is a-a vaw)
+   *       - inabiwity to mutate the fiewd object instance itsewf (i.e. rawr each f-fiewd is an i-immutabwe
+   *       - i-inabiwity to mutate the fiewd o-object instance i-itsewf (i.e. ʘwʘ each fiewd is a-an immutabwe
+   *       data stwuctuwe), 😳😳😳 assuming stabwe hashcode impwementations f-fow these objects
    *
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @note i-in owdew fow the hashcode to be consistent with o-object equawity, ^^;; `##` m-must be used fow
+   *       boxed nyumewic types and nyuww. o.O a-as such, (///ˬ///✿) awways pwefew `.##` ovew `.hashcode()`. σωσ
    */
-  override val hashCode: Int =
+  ovewwide vaw hashcode: int =
     31 * (
-      id.##
-    ) + adAccountId.##
+      i-id.##
+    ) + adaccountid.##
 }
 
-object AdUnitCandidate {
-  def apply(
-    id: Long,
-    adAccountId: Long
-  ): AdUnitCandidate =
-    new AdUnitCandidate(id, adAccountId)
+object a-adunitcandidate {
+  d-def appwy(
+    id: wong, nyaa~~
+    adaccountid: wong
+  ): adunitcandidate =
+    n-nyew adunitcandidate(id, ^^;; a-adaccountid)
 }

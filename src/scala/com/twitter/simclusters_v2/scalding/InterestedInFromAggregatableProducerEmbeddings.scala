@@ -1,332 +1,332 @@
-package com.twitter.simclusters_v2.scalding
+package com.twittew.simcwustews_v2.scawding
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.dal.client.dataset.SnapshotDALDataset
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite.WriteExtension
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import com.twitter.simclusters_v2.hdfs_sources.AggregatableProducerSimclustersEmbeddingsByLogFavScore2020ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2InterestedInFromAggregatableProducerEmbeddings20M145K2020ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2UserToInterestedInFromAggregatableProducerEmbeddings20M145K2020ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.UserAndNeighborsFixedPathSource
-import com.twitter.simclusters_v2.hdfs_sources.UserUserNormalizedGraphScalaDataset
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
-import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusterScores
-import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusters
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+impowt c-com.twittew.daw.cwient.dataset.keyvawdawdataset
+i-impowt com.twittew.daw.cwient.dataset.snapshotdawdataset
+i-impowt c-com.twittew.scawding._
+i-impowt c-com.twittew.scawding_intewnaw.dawv2.daw
+i-impowt c-com.twittew.scawding_intewnaw.dawv2.dawwwite.d
+impowt com.twittew.scawding_intewnaw.dawv2.dawwwite.wwiteextension
+impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.awwowcwosscwustewsamedc
+impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.awwowcwossdc
+impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.simcwustews_v2.common.cwustewid
+impowt com.twittew.simcwustews_v2.common.modewvewsions
+i-impowt com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.adhockeyvawsouwces
+impowt com.twittew.simcwustews_v2.hdfs_souwces.aggwegatabwepwoducewsimcwustewsembeddingsbywogfavscowe2020scawadataset
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.simcwustewsv2intewestedinfwomaggwegatabwepwoducewembeddings20m145k2020scawadataset
+impowt com.twittew.simcwustews_v2.hdfs_souwces.simcwustewsv2usewtointewestedinfwomaggwegatabwepwoducewembeddings20m145k2020scawadataset
+i-impowt c-com.twittew.simcwustews_v2.hdfs_souwces.usewandneighbowsfixedpathsouwce
+impowt com.twittew.simcwustews_v2.hdfs_souwces.usewusewnowmawizedgwaphscawadataset
+impowt com.twittew.simcwustews_v2.thwiftscawa.cwustewsusewisintewestedin
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+impowt com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
+impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembedding
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembeddingid
+impowt com.twittew.simcwustews_v2.thwiftscawa.usewandneighbows
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.usewtointewestedincwustewscowes
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.usewtointewestedincwustews
+i-impowt com.twittew.wtf.scawding.jobs.common.adhocexecutionapp
+i-impowt com.twittew.wtf.scawding.jobs.common.scheduwedexecutionapp
+impowt java.utiw.timezone
 
 /**
- * Production job for computing interestedIn data set from the aggregatable producer embeddings for the model version 20M145K2020.
- * It writes the data set in KeyVal format to produce a MH DAL data set.
+ * pwoduction j-job fow computing intewestedin data set fwom t-the aggwegatabwe pwoducew embeddings fow the modew vewsion 20m145k2020. rawr x3
+ * it wwites the data s-set in keyvaw fowmat to pwoduce a-a mh daw data set. OwO
  *
- * A high level description of this job:
- * - Read the APE dataset
- * - Apply log1p to the scores from the above dataset as the scores for producers is high
- * - Normalize the scores for each producer (offline benchmarking has shown better results from this step.)
- * - Truncate the number of clusters for each producer from the APE dataset to reduce noise
- * - Compute interestedIn
+ * a-a high w-wevew descwiption of this job:
+ * - wead the ape dataset
+ * - appwy w-wog1p to the s-scowes fwom the above dataset as t-the scowes fow p-pwoducews is high
+ * - nyowmawize t-the scowes fow each pwoducew (offwine b-benchmawking has shown bettew wesuwts fwom t-this step.)
+ * - twuncate the n-nyumbew of cwustews fow each pwoducew f-fwom the a-ape dataset to weduce nyoise
+ * - compute intewestedin
  *
- * To deploy the job:
+ * to depwoy the job:
  *
- * capesospy-v2 update --build_locally --start_cron interested_in_from_ape_2020 \
- * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * capesospy-v2 update --buiwd_wocawwy --stawt_cwon i-intewested_in_fwom_ape_2020 \
+ * s-swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc.yamw
  */
-object InterestedInFromAPE2020BatchApp extends InterestedInFromAggregatableProducerEmbeddingsBase {
+object intewestedinfwomape2020batchapp e-extends intewestedinfwomaggwegatabwepwoducewembeddingsbase {
 
-  override val firstTime: RichDate = RichDate("2021-03-03")
+  o-ovewwide v-vaw fiwsttime: wichdate = wichdate("2021-03-03")
 
-  override val batchIncrement: Duration = Days(7)
+  ovewwide vaw batchincwement: d-duwation = days(7)
 
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145k2020
+  ovewwide def modewvewsion: modewvewsion = modewvewsion.modew20m145k2020
 
-  override def producerEmbeddingsInputKVDataset: KeyValDALDataset[
-    KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]
-  ] = AggregatableProducerSimclustersEmbeddingsByLogFavScore2020ScalaDataset
+  o-ovewwide def pwoducewembeddingsinputkvdataset: keyvawdawdataset[
+    k-keyvaw[simcwustewsembeddingid, ^•ﻌ•^ s-simcwustewsembedding]
+  ] = a-aggwegatabwepwoducewsimcwustewsembeddingsbywogfavscowe2020scawadataset
 
-  override def interestedInFromAPEOutputKVDataset: KeyValDALDataset[
-    KeyVal[UserId, ClustersUserIsInterestedIn]
-  ] = SimclustersV2InterestedInFromAggregatableProducerEmbeddings20M145K2020ScalaDataset
+  ovewwide d-def intewestedinfwomapeoutputkvdataset: k-keyvawdawdataset[
+    k-keyvaw[usewid, >_< c-cwustewsusewisintewestedin]
+  ] = simcwustewsv2intewestedinfwomaggwegatabwepwoducewembeddings20m145k2020scawadataset
 
-  override def interestedInFromAPEOutputThriftDatset: SnapshotDALDataset[
-    UserToInterestedInClusters
-  ] = SimclustersV2UserToInterestedInFromAggregatableProducerEmbeddings20M145K2020ScalaDataset
+  ovewwide d-def intewestedinfwomapeoutputthwiftdatset: s-snapshotdawdataset[
+    u-usewtointewestedincwustews
+  ] = s-simcwustewsv2usewtointewestedinfwomaggwegatabwepwoducewembeddings20m145k2020scawadataset
 }
 
-trait InterestedInFromAggregatableProducerEmbeddingsBase extends ScheduledExecutionApp {
-  def modelVersion: ModelVersion
+t-twait intewestedinfwomaggwegatabwepwoducewembeddingsbase extends scheduwedexecutionapp {
+  def m-modewvewsion: modewvewsion
 
-  def interestedInFromAPEOutputKVDataset: KeyValDALDataset[
-    KeyVal[UserId, ClustersUserIsInterestedIn]
+  def intewestedinfwomapeoutputkvdataset: keyvawdawdataset[
+    keyvaw[usewid, OwO cwustewsusewisintewestedin]
   ]
 
-  def producerEmbeddingsInputKVDataset: KeyValDALDataset[
-    KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]
+  d-def pwoducewembeddingsinputkvdataset: keyvawdawdataset[
+    keyvaw[simcwustewsembeddingid, >_< simcwustewsembedding]
   ]
 
-  def interestedInFromAPEOutputThriftDatset: SnapshotDALDataset[UserToInterestedInClusters]
+  d-def intewestedinfwomapeoutputthwiftdatset: s-snapshotdawdataset[usewtointewestedincwustews]
 
-  override def runOnDateRange(
-    args: Args
+  o-ovewwide def wunondatewange(
+    a-awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    //Input args for the run
-    val socialProofThreshold = args.int("socialProofThreshold", 2)
-    val maxClustersFromProducer = args.int("maxClustersPerProducer", 5)
-    val maxClustersPerUserFinalResult = args.int("maxInterestedInClustersPerUser", 200)
+    impwicit d-datewange: datewange, (ꈍᴗꈍ)
+    t-timezone: timezone, >w<
+    uniqueid: uniqueid
+  ): execution[unit] = {
+    //input awgs fow the wun
+    v-vaw sociawpwoofthweshowd = awgs.int("sociawpwoofthweshowd", (U ﹏ U) 2)
+    v-vaw maxcwustewsfwompwoducew = awgs.int("maxcwustewspewpwoducew", ^^ 5)
+    v-vaw m-maxcwustewspewusewfinawwesuwt = awgs.int("maxintewestedincwustewspewusew", (U ﹏ U) 200)
 
-    //Path variables
-    val interestedInFromProducersPath =
-      s"/user/cassowary/manhattan_sequence_files/interested_in_from_ape/" + modelVersion
+    //path vawiabwes
+    v-vaw intewestedinfwompwoducewspath =
+      s-s"/usew/cassowawy/manhattan_sequence_fiwes/intewested_in_fwom_ape/" + modewvewsion
 
-    val interestedInFromProducersThriftPath =
-      s"/user/cassowary/manhattan_sequence_files/interested_in_from_ape_thrift/" + modelVersion
+    v-vaw i-intewestedinfwompwoducewsthwiftpath =
+      s"/usew/cassowawy/manhattan_sequence_fiwes/intewested_in_fwom_ape_thwift/" + modewvewsion
 
-    val userUserGraph: TypedPipe[UserAndNeighbors] =
-      DAL
-        .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(30))
-        .withRemoteReadPolicy(AllowCrossDC)
-        .toTypedPipe
+    vaw usewusewgwaph: typedpipe[usewandneighbows] =
+      d-daw
+        .weadmostwecentsnapshotnoowdewthan(usewusewnowmawizedgwaphscawadataset, :3 d-days(30))
+        .withwemoteweadpowicy(awwowcwossdc)
+        .totypedpipe
 
-    val producerEmbeddings = DAL
-      .readMostRecentSnapshotNoOlderThan(
-        producerEmbeddingsInputKVDataset,
-        Days(30)).withRemoteReadPolicy(AllowCrossClusterSameDC).toTypedPipe.map {
-        case KeyVal(producer, embeddings) => (producer, embeddings)
+    v-vaw pwoducewembeddings = daw
+      .weadmostwecentsnapshotnoowdewthan(
+        p-pwoducewembeddingsinputkvdataset, (✿oωo)
+        d-days(30)).withwemoteweadpowicy(awwowcwosscwustewsamedc).totypedpipe.map {
+        case keyvaw(pwoducew, e-embeddings) => (pwoducew, XD embeddings)
       }
 
-    val result = InterestedInFromAggregatableProducerEmbeddingsBase.run(
-      userUserGraph,
-      producerEmbeddings,
-      maxClustersFromProducer,
-      socialProofThreshold,
-      maxClustersPerUserFinalResult,
-      modelVersion)
+    vaw wesuwt = intewestedinfwomaggwegatabwepwoducewembeddingsbase.wun(
+      usewusewgwaph, >w<
+      p-pwoducewembeddings, òωó
+      m-maxcwustewsfwompwoducew, (ꈍᴗꈍ)
+      sociawpwoofthweshowd, rawr x3
+      maxcwustewspewusewfinawwesuwt, rawr x3
+      m-modewvewsion)
 
-    val keyValExec =
-      result
-        .map { case (userId, clusters) => KeyVal(userId, clusters) }
-        .writeDALVersionedKeyValExecution(
-          interestedInFromAPEOutputKVDataset,
-          D.Suffix(interestedInFromProducersPath)
+    v-vaw keyvawexec =
+      wesuwt
+        .map { case (usewid, σωσ cwustews) => keyvaw(usewid, (ꈍᴗꈍ) cwustews) }
+        .wwitedawvewsionedkeyvawexecution(
+          i-intewestedinfwomapeoutputkvdataset, rawr
+          d.suffix(intewestedinfwompwoducewspath)
         )
-    val thriftExec =
-      result
+    vaw thwiftexec =
+      wesuwt
         .map {
-          case (userId, clusters) =>
-            UserToInterestedInClusters(
-              userId,
-              ModelVersions.toKnownForModelVersion(modelVersion),
-              clusters.clusterIdToScores)
+          case (usewid, ^^;; c-cwustews) =>
+            usewtointewestedincwustews(
+              usewid, rawr x3
+              m-modewvewsions.toknownfowmodewvewsion(modewvewsion), (ˆ ﻌ ˆ)♡
+              c-cwustews.cwustewidtoscowes)
         }
-        .writeDALSnapshotExecution(
-          interestedInFromAPEOutputThriftDatset,
-          D.Daily,
-          D.Suffix(interestedInFromProducersThriftPath),
-          D.EBLzo(),
-          dateRange.end
+        .wwitedawsnapshotexecution(
+          intewestedinfwomapeoutputthwiftdatset, σωσ
+          d.daiwy, (U ﹏ U)
+          d.suffix(intewestedinfwompwoducewsthwiftpath), >w<
+          d-d.ebwzo(), σωσ
+          d-datewange.end
         )
-    Execution.zip(keyValExec, thriftExec).unit
+    execution.zip(keyvawexec, nyaa~~ thwiftexec).unit
   }
 }
 
 /**
- * Adhoc job to generate the interestedIn from aggregatable producer embeddings for the model version 20M145K2020
+ * adhoc job to genewate t-the intewestedin fwom aggwegatabwe p-pwoducew embeddings fow the modew vewsion 20m145k2020
  *
- * scalding remote run \
- * --user cassowary \
- * --keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
- * --principal service_acoount@TWITTER.BIZ \
- * --cluster bluebird-qus1 \
- * --main-class com.twitter.simclusters_v2.scalding.InterestedInFromAPE2020AdhocApp \
- * --target src/scala/com/twitter/simclusters_v2/scalding:interested_in_from_ape_2020-adhoc \
- * --hadoop-properties "mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce.memory.mb=8192 mapreduce.reduce.java.opts='-Xmx7618M'" \
- * -- --outputDir /gcs/user/cassowary/adhoc/your_ldap/interested_in_from_ape_2020_keyval --date 2021-03-05
+ * scawding wemote w-wun \
+ * --usew cassowawy \
+ * --keytab /vaw/wib/tss/keys/fwoofy/keytabs/cwient/cassowawy.keytab \
+ * --pwincipaw s-sewvice_acoount@twittew.biz \
+ * --cwustew b-bwuebiwd-qus1 \
+ * --main-cwass com.twittew.simcwustews_v2.scawding.intewestedinfwomape2020adhocapp \
+ * --tawget s-swc/scawa/com/twittew/simcwustews_v2/scawding:intewested_in_fwom_ape_2020-adhoc \
+ * --hadoop-pwopewties "mapweduce.map.memowy.mb=8192 mapweduce.map.java.opts='-xmx7618m' m-mapweduce.weduce.memowy.mb=8192 m-mapweduce.weduce.java.opts='-xmx7618m'" \
+ * -- --outputdiw /gcs/usew/cassowawy/adhoc/youw_wdap/intewested_in_fwom_ape_2020_keyvaw --date 2021-03-05
  */
-object InterestedInFromAPE2020AdhocApp extends AdhocExecutionApp {
-  override def runOnDateRange(
-    args: Args
+o-object intewestedinfwomape2020adhocapp extends a-adhocexecutionapp {
+  o-ovewwide def wunondatewange(
+    awgs: a-awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val outputDir = args("outputDir")
-    val socialProofThreshold = args.int("socialProofThreshold", 2)
-    val maxClustersPerUserFinalResult = args.int("maxInterestedInClustersPerUser", 200)
-    val maxClustersFromProducer = args.int("maxClustersFromProducer", 5)
-    val inputGraph = args.optional("graphInputDir") match {
-      case Some(inputDir) => TypedPipe.from(UserAndNeighborsFixedPathSource(inputDir))
-      case None =>
-        DAL
-          .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(30))
-          .withRemoteReadPolicy(AllowCrossClusterSameDC)
-          .toTypedPipe
+    i-impwicit datewange: d-datewange, 🥺
+    timezone: timezone, rawr x3
+    uniqueid: u-uniqueid
+  ): execution[unit] = {
+    v-vaw o-outputdiw = awgs("outputdiw")
+    vaw sociawpwoofthweshowd = awgs.int("sociawpwoofthweshowd", σωσ 2)
+    vaw maxcwustewspewusewfinawwesuwt = a-awgs.int("maxintewestedincwustewspewusew", (///ˬ///✿) 200)
+    v-vaw m-maxcwustewsfwompwoducew = a-awgs.int("maxcwustewsfwompwoducew", (U ﹏ U) 5)
+    vaw inputgwaph = a-awgs.optionaw("gwaphinputdiw") match {
+      case some(inputdiw) => typedpipe.fwom(usewandneighbowsfixedpathsouwce(inputdiw))
+      case nyone =>
+        d-daw
+          .weadmostwecentsnapshotnoowdewthan(usewusewnowmawizedgwaphscawadataset, ^^;; days(30))
+          .withwemoteweadpowicy(awwowcwosscwustewsamedc)
+          .totypedpipe
     }
 
-    val producerEmbeddings = DAL
-      .readMostRecentSnapshotNoOlderThan(
-        AggregatableProducerSimclustersEmbeddingsByLogFavScore2020ScalaDataset,
-        Days(30)).withRemoteReadPolicy(AllowCrossClusterSameDC).toTypedPipe.map {
-        case KeyVal(producer, embeddings) => (producer, embeddings)
+    v-vaw pwoducewembeddings = d-daw
+      .weadmostwecentsnapshotnoowdewthan(
+        aggwegatabwepwoducewsimcwustewsembeddingsbywogfavscowe2020scawadataset, 🥺
+        d-days(30)).withwemoteweadpowicy(awwowcwosscwustewsamedc).totypedpipe.map {
+        case k-keyvaw(pwoducew, òωó e-embeddings) => (pwoducew, XD e-embeddings)
       }
 
-    val result = InterestedInFromAggregatableProducerEmbeddingsBase.run(
-      inputGraph,
-      producerEmbeddings,
-      maxClustersFromProducer,
-      socialProofThreshold,
-      maxClustersPerUserFinalResult,
-      ModelVersion.Model20m145k2020)
+    v-vaw wesuwt = i-intewestedinfwomaggwegatabwepwoducewembeddingsbase.wun(
+      inputgwaph, :3
+      pwoducewembeddings, (U ﹏ U)
+      maxcwustewsfwompwoducew, >w<
+      sociawpwoofthweshowd, /(^•ω•^)
+      maxcwustewspewusewfinawwesuwt, (⑅˘꒳˘)
+      modewvewsion.modew20m145k2020)
 
-    result
-      .writeExecution(AdhocKeyValSources.interestedInSource(outputDir))
+    w-wesuwt
+      .wwiteexecution(adhockeyvawsouwces.intewestedinsouwce(outputdiw))
   }
 }
 
 /**
- * Helper functions
+ * h-hewpew f-functions
  */
-object InterestedInFromAggregatableProducerEmbeddingsBase {
+object intewestedinfwomaggwegatabwepwoducewembeddingsbase {
 
   /**
-   * Helper function to prune the embeddings
-   * @param embeddingsWithScore embeddings
-   * @param maxClusters number of clusters to keep, per userId
-   * @param uniqueId for stats
-   * @return
+   * h-hewpew function to pwune the embeddings
+   * @pawam embeddingswithscowe embeddings
+   * @pawam m-maxcwustews n-nyumbew of cwustews to keep, ʘwʘ p-pew usewid
+   * @pawam uniqueid fow stats
+   * @wetuwn
    */
-  def getPrunedEmbeddings(
-    embeddingsWithScore: TypedPipe[(UserId, Seq[(ClusterId, Float)])],
-    maxClusters: Int
+  d-def getpwunedembeddings(
+    embeddingswithscowe: t-typedpipe[(usewid, rawr x3 seq[(cwustewid, (˘ω˘) f-fwoat)])], o.O
+    m-maxcwustews: int
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[(UserId, Array[(ClusterId, Float)])] = {
-    val numProducerMappings = Stat("num_producer_embeddings_total")
-    val numProducersWithLargeClusterMappings = Stat(
-      "num_producers_with_more_clusters_than_threshold")
-    val numProducersWithSmallClusterMappings = Stat(
-      "num_producers_with_clusters_less_than_threshold")
-    val totalClustersCoverageProducerEmbeddings = Stat("num_clusters_total_producer_embeddings")
-    embeddingsWithScore.map {
-      case (producerId, clusterArray) =>
-        numProducerMappings.inc()
-        val clusterSize = clusterArray.size
-        totalClustersCoverageProducerEmbeddings.incBy(clusterSize)
-        val prunedList = if (clusterSize > maxClusters) {
-          numProducersWithLargeClusterMappings.inc()
-          clusterArray
-            .sortBy {
-              case (_, knownForScore) => -knownForScore
-            }.take(maxClusters)
-        } else {
-          numProducersWithSmallClusterMappings.inc()
-          clusterArray
+    impwicit uniqueid: uniqueid
+  ): typedpipe[(usewid, 😳 a-awway[(cwustewid, o.O f-fwoat)])] = {
+    v-vaw nyumpwoducewmappings = s-stat("num_pwoducew_embeddings_totaw")
+    v-vaw nyumpwoducewswithwawgecwustewmappings = s-stat(
+      "num_pwoducews_with_mowe_cwustews_than_thweshowd")
+    v-vaw nyumpwoducewswithsmowcwustewmappings = s-stat(
+      "num_pwoducews_with_cwustews_wess_than_thweshowd")
+    v-vaw totawcwustewscovewagepwoducewembeddings = stat("num_cwustews_totaw_pwoducew_embeddings")
+    e-embeddingswithscowe.map {
+      case (pwoducewid, ^^;; cwustewawway) =>
+        n-nyumpwoducewmappings.inc()
+        vaw cwustewsize = c-cwustewawway.size
+        t-totawcwustewscovewagepwoducewembeddings.incby(cwustewsize)
+        vaw pwunedwist = i-if (cwustewsize > maxcwustews) {
+          nyumpwoducewswithwawgecwustewmappings.inc()
+          c-cwustewawway
+            .sowtby {
+              c-case (_, ( ͡o ω ͡o ) k-knownfowscowe) => -knownfowscowe
+            }.take(maxcwustews)
+        } ewse {
+          nyumpwoducewswithsmowcwustewmappings.inc()
+          cwustewawway
         }
-        (producerId, prunedList.toArray)
+        (pwoducewid, ^^;; pwunedwist.toawway)
     }
   }
 
   /**
-   * helper function to remove all scores except follow and logFav
-   * @param interestedInResult interestedIn clusters for a user
-   * @return
+   * h-hewpew function to wemove aww scowes e-except fowwow and w-wogfav
+   * @pawam intewestedinwesuwt i-intewestedin cwustews fow a-a usew
+   * @wetuwn
    */
-  def getInterestedInDiscardScores(
-    interestedInResult: TypedPipe[(UserId, List[(ClusterId, UserToInterestedInClusterScores)])]
-  ): TypedPipe[(UserId, List[(ClusterId, UserToInterestedInClusterScores)])] = {
-    interestedInResult.map {
-      case (srcId, fullClusterList) =>
-        val fullClusterListWithDiscardedScores = fullClusterList.map {
-          case (clusterId, clusterDetails) =>
-            val clusterDetailsWithoutSocial = UserToInterestedInClusterScores(
-              // We are not planning to use the other scores except for logFav and Follow.
-              // Hence, setting others as None for now, we can add them back when needed
-              followScore = clusterDetails.followScore,
-              logFavScore = clusterDetails.logFavScore,
-              logFavScoreClusterNormalizedOnly = clusterDetails.logFavScoreClusterNormalizedOnly
+  d-def getintewestedindiscawdscowes(
+    intewestedinwesuwt: t-typedpipe[(usewid, ^^;; wist[(cwustewid, XD usewtointewestedincwustewscowes)])]
+  ): t-typedpipe[(usewid, 🥺 w-wist[(cwustewid, (///ˬ///✿) usewtointewestedincwustewscowes)])] = {
+    i-intewestedinwesuwt.map {
+      case (swcid, (U ᵕ U❁) f-fuwwcwustewwist) =>
+        v-vaw f-fuwwcwustewwistwithdiscawdedscowes = fuwwcwustewwist.map {
+          case (cwustewid, ^^;; cwustewdetaiws) =>
+            vaw cwustewdetaiwswithoutsociaw = usewtointewestedincwustewscowes(
+              // we awe nyot pwanning to use the othew scowes except fow wogfav and fowwow. ^^;;
+              // hence, rawr setting othews as nyone f-fow nyow, (˘ω˘) we c-can add them back when nyeeded
+              fowwowscowe = cwustewdetaiws.fowwowscowe, 🥺
+              w-wogfavscowe = c-cwustewdetaiws.wogfavscowe, nyaa~~
+              wogfavscowecwustewnowmawizedonwy = c-cwustewdetaiws.wogfavscowecwustewnowmawizedonwy
             )
-            (clusterId, clusterDetailsWithoutSocial)
+            (cwustewid, cwustewdetaiwswithoutsociaw)
         }
-        (srcId, fullClusterListWithDiscardedScores)
+        (swcid, :3 fuwwcwustewwistwithdiscawdedscowes)
     }
   }
 
   /**
-   * Helper function to normalize the embeddings
-   * @param embeddings cluster embeddings
-   * @return
+   * h-hewpew function to nyowmawize t-the embeddings
+   * @pawam e-embeddings cwustew embeddings
+   * @wetuwn
    */
-  def getNormalizedEmbeddings(
-    embeddings: TypedPipe[(UserId, Seq[(ClusterId, Float)])]
-  ): TypedPipe[(UserId, Seq[(ClusterId, Float)])] = {
-    embeddings.map {
-      case (userId, clustersWithScores) =>
-        val l2norm = math.sqrt(clustersWithScores.map(_._2).map(score => score * score).sum)
+  d-def getnowmawizedembeddings(
+    embeddings: t-typedpipe[(usewid, /(^•ω•^) s-seq[(cwustewid, ^•ﻌ•^ fwoat)])]
+  ): typedpipe[(usewid, UwU s-seq[(cwustewid, 😳😳😳 f-fwoat)])] = {
+    e-embeddings.map {
+      c-case (usewid, OwO cwustewswithscowes) =>
+        v-vaw w-w2nowm = math.sqwt(cwustewswithscowes.map(_._2).map(scowe => s-scowe * s-scowe).sum)
         (
-          userId,
-          clustersWithScores.map {
-            case (clusterId, score) => (clusterId, (score / l2norm).toFloat)
+          u-usewid, ^•ﻌ•^
+          cwustewswithscowes.map {
+            c-case (cwustewid, (ꈍᴗꈍ) s-scowe) => (cwustewid, (⑅˘꒳˘) (scowe / w-w2nowm).tofwoat)
           })
     }
   }
 
-  def run(
-    userUserGraph: TypedPipe[UserAndNeighbors],
-    producerEmbeddings: TypedPipe[(SimClustersEmbeddingId, SimClustersEmbedding)],
-    maxClustersFromProducer: Int,
-    socialProofThreshold: Int,
-    maxClustersPerUserFinalResult: Int,
-    modelVersion: ModelVersion
+  def wun(
+    u-usewusewgwaph: typedpipe[usewandneighbows], (⑅˘꒳˘)
+    pwoducewembeddings: t-typedpipe[(simcwustewsembeddingid, (ˆ ﻌ ˆ)♡ simcwustewsembedding)], /(^•ω•^)
+    m-maxcwustewsfwompwoducew: i-int, òωó
+    sociawpwoofthweshowd: i-int, (⑅˘꒳˘)
+    maxcwustewspewusewfinawwesuwt: int, (U ᵕ U❁)
+    m-modewvewsion: modewvewsion
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
-    import InterestedInFromKnownFor._
+    impwicit uniqueid: u-uniqueid
+  ): typedpipe[(usewid, >w< c-cwustewsusewisintewestedin)] = {
+    impowt i-intewestedinfwomknownfow._
 
-    val producerEmbeddingsWithScore: TypedPipe[(UserId, Seq[(ClusterId, Float)])] =
-      producerEmbeddings.map {
+    vaw pwoducewembeddingswithscowe: typedpipe[(usewid, σωσ seq[(cwustewid, -.- fwoat)])] =
+      p-pwoducewembeddings.map {
         case (
-              SimClustersEmbeddingId(embeddingType, modelVersion, InternalId.UserId(producerId)),
-              simclusterEmbedding) =>
+              s-simcwustewsembeddingid(embeddingtype, o.O m-modewvewsion, ^^ intewnawid.usewid(pwoducewid)), >_<
+              simcwustewembedding) =>
           (
-            producerId,
-            simclusterEmbedding.embedding.map { simclusterWithScore =>
-              // APE dataset has very high producer scores, hence applying log to smoothen them out before
-              // computing interestedIn
-              (simclusterWithScore.clusterId, math.log(1.0 + simclusterWithScore.score).toFloat)
+            pwoducewid, >w<
+            s-simcwustewembedding.embedding.map { simcwustewwithscowe =>
+              // ape dataset h-has vewy high p-pwoducew scowes, >_< h-hence appwying wog to smoothen them out befowe
+              // c-computing intewestedin
+              (simcwustewwithscowe.cwustewid, >w< m-math.wog(1.0 + simcwustewwithscowe.scowe).tofwoat)
             })
       }
 
-    val result = keepOnlyTopClusters(
-      getInterestedInDiscardScores(
-        attachNormalizedScores(
-          userClusterPairsWithoutNormalization(
-            userUserGraph,
-            getPrunedEmbeddings(
-              getNormalizedEmbeddings(producerEmbeddingsWithScore),
-              maxClustersFromProducer),
-            socialProofThreshold,
-          ))),
-      maxClustersPerUserFinalResult,
-      ModelVersions.toKnownForModelVersion(modelVersion)
+    v-vaw wesuwt = keeponwytopcwustews(
+      getintewestedindiscawdscowes(
+        a-attachnowmawizedscowes(
+          usewcwustewpaiwswithoutnowmawization(
+            u-usewusewgwaph, rawr
+            g-getpwunedembeddings(
+              g-getnowmawizedembeddings(pwoducewembeddingswithscowe), rawr x3
+              maxcwustewsfwompwoducew), ( ͡o ω ͡o )
+            s-sociawpwoofthweshowd, (˘ω˘)
+          ))), 😳
+      m-maxcwustewspewusewfinawwesuwt, OwO
+      m-modewvewsions.toknownfowmodewvewsion(modewvewsion)
     )
-    result
+    w-wesuwt
   }
 }

@@ -1,225 +1,225 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.io.IOException;
-import java.util.Arrays;
+impowt j-java.io.ioexception;
+i-impowt java.utiw.awways;
 
-import com.google.common.annotations.VisibleForTesting;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
 
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
+i-impowt c-com.twittew.seawch.common.metwics.seawchwonggauge;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
 
-// Modeled after TwitterCharBlockPool, with a lot of simplification.
-public class IntBlockPool implements Flushable {
-  private static final SearchLongGauge INT_BLOCK_POOL_MAX_LENGTH =
-      SearchLongGauge.export("twitter_int_block_pool_max_size");
-  private static final String STAT_PREFIX = "twitter_int_block_pool_size_";
+// modewed a-aftew twittewchawbwockpoow, ^•ﻌ•^ with a wot of simpwification. UwU
+pubwic c-cwass intbwockpoow impwements f-fwushabwe {
+  pwivate static finaw seawchwonggauge int_bwock_poow_max_wength =
+      s-seawchwonggauge.expowt("twittew_int_bwock_poow_max_size");
+  pwivate static f-finaw stwing s-stat_pwefix = "twittew_int_bwock_poow_size_";
 
-  private static final int BLOCK_SHIFT = 14;
-  public static final int BLOCK_SIZE = 1 << BLOCK_SHIFT;
-  private static final int BLOCK_MASK = BLOCK_SIZE - 1;
+  pwivate static finaw int bwock_shift = 14;
+  pubwic static finaw i-int bwock_size = 1 << bwock_shift;
+  pwivate static finaw int bwock_mask = bwock_size - 1;
 
-  // We can address up to 2^31 elements with an int. We use 1 << 14 bits for the block offset,
-  // so we can use the remaining 17 bits for the blocks index. Therefore the maximum number of
-  // addressable blocks is 1 << 17 or maxInt >> 14.
-  private static final int MAX_NUM_BLOCKS = Integer.MAX_VALUE >> BLOCK_SHIFT;
+  // w-we can addwess up to 2^31 ewements w-with an int. (˘ω˘) w-we use 1 << 14 b-bits fow the bwock o-offset, (///ˬ///✿)
+  // so we can use the wemaining 17 b-bits fow the bwocks index. σωσ thewefowe the maximum n-nyumbew of
+  // addwessabwe bwocks is 1 << 17 ow maxint >> 14. /(^•ω•^)
+  pwivate static finaw int max_num_bwocks = i-integew.max_vawue >> bwock_shift;
 
-  // Initial value written into the blocks.
-  private final int initialValue;
+  // i-initiaw vawue w-wwitten into t-the bwocks.
+  pwivate finaw int initiawvawue;
 
-  // Extra object with final array is necessary to guarantee visibility
-  // to other threads without synchronization / volatiles.  See comment
-  // in TwitterCharBlockPool.
-  public static final class Pool {
-    public final int[][] blocks;
-    Pool(int[][] blocks) {
-      this.blocks = blocks;
+  // extwa object w-with finaw awway i-is nyecessawy to guawantee visibiwity
+  // t-to o-othew thweads without synchwonization / v-vowatiwes. 😳  see comment
+  // i-in twittewchawbwockpoow. 😳
+  pubwic static finaw cwass poow {
+    p-pubwic finaw int[][] bwocks;
+    p-poow(int[][] bwocks) {
+      t-this.bwocks = b-bwocks;
 
-      // Adjust max size if exceeded maximum value.
-      synchronized (INT_BLOCK_POOL_MAX_LENGTH) {
-        if (this.blocks != null) {
-          final long currentSize = (long) (this.blocks.length * BLOCK_SIZE);
-          if (currentSize > INT_BLOCK_POOL_MAX_LENGTH.get()) {
-            INT_BLOCK_POOL_MAX_LENGTH.set(currentSize);
+      // adjust max size if exceeded maximum vawue. (⑅˘꒳˘)
+      synchwonized (int_bwock_poow_max_wength) {
+        if (this.bwocks != nyuww) {
+          f-finaw w-wong cuwwentsize = (wong) (this.bwocks.wength * bwock_size);
+          i-if (cuwwentsize > i-int_bwock_poow_max_wength.get()) {
+            i-int_bwock_poow_max_wength.set(cuwwentsize);
           }
         }
       }
     }
   }
-  public Pool pool;
+  pubwic poow poow;
 
-  private int currBlockIndex;   // Index into blocks array.
-  private int[] currBlock = null;
-  private int currBlockOffset;  // Index into current block.
-  private final String poolName;
-  private final SearchLongGauge sizeGauge;
+  pwivate int cuwwbwockindex;   // i-index into bwocks awway. 😳😳😳
+  pwivate int[] cuwwbwock = nyuww;
+  pwivate int c-cuwwbwockoffset;  // index into c-cuwwent bwock. 😳
+  p-pwivate finaw s-stwing poowname;
+  pwivate finaw s-seawchwonggauge s-sizegauge;
 
-  public IntBlockPool(String poolName) {
-    this(0, poolName);
+  pubwic i-intbwockpoow(stwing p-poowname) {
+    this(0, XD poowname);
   }
 
-  public IntBlockPool(int initialValue, String poolName) {
-    // Start with room for 16 initial blocks (does not allocate these blocks).
-    this.pool = new Pool(new int[16][]);
-    this.initialValue = initialValue;
+  p-pubwic intbwockpoow(int i-initiawvawue, mya s-stwing p-poowname) {
+    // s-stawt with woom fow 16 initiaw bwocks (does nyot awwocate these b-bwocks). ^•ﻌ•^
+    this.poow = nyew poow(new int[16][]);
+    this.initiawvawue = initiawvawue;
 
-    // Start at the end of a previous, non-existent blocks.
-    this.currBlockIndex = -1;
-    this.currBlock = null;
-    this.currBlockOffset = BLOCK_SIZE;
-    this.poolName = poolName;
-    this.sizeGauge = createGauge(poolName, pool);
+    // stawt at the end of a pwevious, ʘwʘ n-non-existent bwocks. ( ͡o ω ͡o )
+    this.cuwwbwockindex = -1;
+    this.cuwwbwock = nyuww;
+    t-this.cuwwbwockoffset = bwock_size;
+    this.poowname = poowname;
+    t-this.sizegauge = c-cweategauge(poowname, mya poow);
   }
 
-  // Constructor for FlushHandler.
-  protected IntBlockPool(
-      int currBlockIndex,
-      int currBlockOffset,
-      int[][]blocks,
-      String poolName) {
-    this.initialValue = 0;
-    this.pool = new Pool(blocks);
-    this.currBlockIndex = currBlockIndex;
-    this.currBlockOffset = currBlockOffset;
-    if (currBlockIndex >= 0) {
-      this.currBlock = this.pool.blocks[currBlockIndex];
+  // c-constwuctow fow fwushhandwew. o.O
+  p-pwotected intbwockpoow(
+      i-int cuwwbwockindex, (✿oωo)
+      int cuwwbwockoffset,
+      int[][]bwocks, :3
+      stwing poowname) {
+    t-this.initiawvawue = 0;
+    this.poow = nyew p-poow(bwocks);
+    this.cuwwbwockindex = c-cuwwbwockindex;
+    t-this.cuwwbwockoffset = cuwwbwockoffset;
+    if (cuwwbwockindex >= 0) {
+      t-this.cuwwbwock = t-this.poow.bwocks[cuwwbwockindex];
     }
-    this.poolName = poolName;
-    this.sizeGauge = createGauge(poolName, pool);
+    this.poowname = p-poowname;
+    t-this.sizegauge = cweategauge(poowname, 😳 poow);
   }
 
-  private static SearchLongGauge createGauge(String suffix, Pool pool) {
-    SearchLongGauge gauge = SearchLongGauge.export(STAT_PREFIX + suffix);
-    if (pool.blocks != null) {
-      gauge.set(pool.blocks.length * BLOCK_SIZE);
+  pwivate static seawchwonggauge c-cweategauge(stwing s-suffix, (U ﹏ U) p-poow poow) {
+    seawchwonggauge g-gauge = seawchwonggauge.expowt(stat_pwefix + s-suffix);
+    if (poow.bwocks != nyuww) {
+      g-gauge.set(poow.bwocks.wength * bwock_size);
     }
-    return gauge;
+    wetuwn gauge;
   }
 
   /**
-   * Adds an int to the current block and returns it's overall index.
+   * adds an int to the cuwwent bwock and wetuwns i-it's ovewaww index. mya
    */
-  public int add(int value) {
-    if (currBlockOffset == BLOCK_SIZE) {
-      newBlock();
+  p-pubwic int add(int vawue) {
+    if (cuwwbwockoffset == b-bwock_size) {
+      n-newbwock();
     }
-    currBlock[currBlockOffset++] = value;
-    return (currBlockIndex << BLOCK_SHIFT) + currBlockOffset - 1;
+    cuwwbwock[cuwwbwockoffset++] = vawue;
+    wetuwn (cuwwbwockindex << b-bwock_shift) + cuwwbwockoffset - 1;
   }
 
-  // Returns number of ints in this blocks
-  public int length() {
-    return currBlockOffset + currBlockIndex * BLOCK_SIZE;
+  // wetuwns numbew of ints in this bwocks
+  pubwic int w-wength() {
+    wetuwn cuwwbwockoffset + cuwwbwockindex * b-bwock_size;
   }
 
-  // Gets an int from the specified index.
-  public final int get(int index) {
-    return getBlock(index)[getOffsetInBlock(index)];
+  // g-gets an int fwom the specified index. (U ᵕ U❁)
+  pubwic finaw int get(int i-index) {
+    w-wetuwn getbwock(index)[getoffsetinbwock(index)];
   }
 
-  public static int getBlockStart(int index) {
-    return (index >>> BLOCK_SHIFT) * BLOCK_SIZE;
+  pubwic static int getbwockstawt(int index) {
+    w-wetuwn (index >>> bwock_shift) * b-bwock_size;
   }
 
-  public static int getOffsetInBlock(int index) {
-    return index & BLOCK_MASK;
+  pubwic static int getoffsetinbwock(int index) {
+    w-wetuwn index & bwock_mask;
   }
 
-  public final int[] getBlock(int index) {
-    final int blockIndex = index >>> BLOCK_SHIFT;
-    return pool.blocks[blockIndex];
+  p-pubwic finaw i-int[] getbwock(int index) {
+    f-finaw int bwockindex = index >>> b-bwock_shift;
+    w-wetuwn poow.bwocks[bwockindex];
   }
 
-  // Sets an int value at the specified index.
-  public void set(int index, int value) {
-    final int blockIndex = index >>> BLOCK_SHIFT;
-    final int offset = index & BLOCK_MASK;
-    pool.blocks[blockIndex][offset] = value;
+  // s-sets an int vawue at t-the specified index. :3
+  p-pubwic void set(int index, mya int vawue) {
+    f-finaw int bwockindex = i-index >>> b-bwock_shift;
+    finaw int offset = index & b-bwock_mask;
+    poow.bwocks[bwockindex][offset] = v-vawue;
   }
 
   /**
-   * Evaluates whether two instances of IntBlockPool are equal by value. It is
-   * slow because it has to check every element in the pool.
+   * e-evawuates whethew two instances of intbwockpoow awe equaw b-by vawue. it i-is
+   * swow because i-it has to c-check evewy ewement in the poow. OwO
    */
-  @VisibleForTesting
-  public boolean verySlowEqualsForTests(IntBlockPool that) {
-    if (length() != that.length()) {
-      return false;
+  @visibwefowtesting
+  p-pubwic boowean vewyswowequawsfowtests(intbwockpoow that) {
+    if (wength() != that.wength()) {
+      wetuwn fawse;
     }
 
-    for (int i = 0; i < length(); i++) {
-      if (get(i) != that.get(i)) {
-        return false;
+    fow (int i-i = 0; i < wength(); i++) {
+      i-if (get(i) != that.get(i)) {
+        w-wetuwn fawse;
       }
     }
 
-    return true;
+    w-wetuwn twue;
   }
 
-  private void newBlock() {
-    final int newBlockIndex = 1 + currBlockIndex;
-    if (newBlockIndex >= MAX_NUM_BLOCKS) {
-      throw new RuntimeException(
-          "Too many blocks, would overflow int index for blocks " + poolName);
+  p-pwivate void nyewbwock() {
+    f-finaw int nyewbwockindex = 1 + c-cuwwbwockindex;
+    i-if (newbwockindex >= m-max_num_bwocks) {
+      thwow nyew wuntimeexception(
+          "too many bwocks, (ˆ ﻌ ˆ)♡ wouwd ovewfwow int index fow bwocks " + poowname);
     }
-    if (newBlockIndex == pool.blocks.length) {
-      // Blocks array is too small to add a new block.  Resize.
-      int[][] newBlocks = new int[pool.blocks.length * 2][];
-      System.arraycopy(pool.blocks, 0, newBlocks, 0, pool.blocks.length);
-      pool = new Pool(newBlocks);
+    i-if (newbwockindex == p-poow.bwocks.wength) {
+      // b-bwocks awway is too smow t-to add a nyew bwock. ʘwʘ  wesize. o.O
+      int[][] nyewbwocks = new i-int[poow.bwocks.wength * 2][];
+      s-system.awwaycopy(poow.bwocks, UwU 0, nyewbwocks, rawr x3 0, p-poow.bwocks.wength);
+      poow = nyew poow(newbwocks);
 
-      sizeGauge.set(pool.blocks.length * BLOCK_SIZE);
+      sizegauge.set(poow.bwocks.wength * b-bwock_size);
     }
 
-    currBlock = pool.blocks[newBlockIndex] = allocateBlock();
-    currBlockOffset = 0;
-    currBlockIndex = newBlockIndex;
+    c-cuwwbwock = poow.bwocks[newbwockindex] = awwocatebwock();
+    c-cuwwbwockoffset = 0;
+    c-cuwwbwockindex = nyewbwockindex;
   }
 
-  private int[] allocateBlock() {
-    int[] block = new int[BLOCK_SIZE];
-    Arrays.fill(block, initialValue);
-    return block;
+  pwivate int[] awwocatebwock() {
+    int[] bwock = nyew int[bwock_size];
+    a-awways.fiww(bwock, 🥺 i-initiawvawue);
+    w-wetuwn bwock;
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @suppwesswawnings("unchecked")
+  @ovewwide
+  p-pubwic fwushhandwew g-getfwushhandwew() {
+    wetuwn nyew fwushhandwew(this);
   }
 
-  public static final class FlushHandler extends Flushable.Handler<IntBlockPool> {
-    private static final String CURRENT_BLOCK_INDEX_PROP_NAME = "currentBlockIndex";
-    private static final String CURRENT_BLOCK_OFFSET_PROP_NAME = "currentBlockOffset";
-    private static final String POOL_NAME = "poolName";
+  p-pubwic static f-finaw cwass fwushhandwew extends f-fwushabwe.handwew<intbwockpoow> {
+    p-pwivate static finaw s-stwing cuwwent_bwock_index_pwop_name = "cuwwentbwockindex";
+    pwivate static finaw stwing cuwwent_bwock_offset_pwop_name = "cuwwentbwockoffset";
+    p-pwivate static finaw stwing p-poow_name = "poowname";
 
-    public FlushHandler() {
-      super();
+    p-pubwic fwushhandwew() {
+      supew();
     }
 
-    public FlushHandler(IntBlockPool objToFlush) {
-      super(objToFlush);
+    p-pubwic fwushhandwew(intbwockpoow objtofwush) {
+      supew(objtofwush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      IntBlockPool pool = getObjectToFlush();
-      flushInfo.addIntProperty(CURRENT_BLOCK_INDEX_PROP_NAME, pool.currBlockIndex);
-      flushInfo.addIntProperty(CURRENT_BLOCK_OFFSET_PROP_NAME, pool.currBlockOffset);
-      flushInfo.addStringProperty(POOL_NAME, pool.poolName);
-      out.writeIntArray2D(pool.pool.blocks, pool.currBlockIndex + 1);
+    @ovewwide
+    p-pwotected void d-dofwush(fwushinfo f-fwushinfo, :3 datasewiawizew out) thwows ioexception {
+      intbwockpoow p-poow = getobjecttofwush();
+      fwushinfo.addintpwopewty(cuwwent_bwock_index_pwop_name, (ꈍᴗꈍ) p-poow.cuwwbwockindex);
+      f-fwushinfo.addintpwopewty(cuwwent_bwock_offset_pwop_name, 🥺 poow.cuwwbwockoffset);
+      f-fwushinfo.addstwingpwopewty(poow_name, (✿oωo) poow.poowname);
+      o-out.wwiteintawway2d(poow.poow.bwocks, (U ﹏ U) p-poow.cuwwbwockindex + 1);
     }
 
-    @Override
-    protected IntBlockPool doLoad(FlushInfo flushInfo, DataDeserializer in) throws IOException {
-      String poolName = flushInfo.getStringProperty(POOL_NAME);
-      return new IntBlockPool(
-          flushInfo.getIntProperty(CURRENT_BLOCK_INDEX_PROP_NAME),
-          flushInfo.getIntProperty(CURRENT_BLOCK_OFFSET_PROP_NAME),
-          in.readIntArray2D(),
-          poolName);
+    @ovewwide
+    pwotected intbwockpoow d-dowoad(fwushinfo fwushinfo, :3 datadesewiawizew in) thwows ioexception {
+      stwing p-poowname = f-fwushinfo.getstwingpwopewty(poow_name);
+      wetuwn nyew intbwockpoow(
+          f-fwushinfo.getintpwopewty(cuwwent_bwock_index_pwop_name), ^^;;
+          fwushinfo.getintpwopewty(cuwwent_bwock_offset_pwop_name), rawr
+          i-in.weadintawway2d(), 😳😳😳
+          p-poowname);
     }
   }
 }

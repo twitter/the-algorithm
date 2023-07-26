@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.button
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.icon.HorizonIconMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.IconCtaButton
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.icon.howizoniconmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.uwwmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.button.iconctabutton
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class IconCtaButtonMarshaller @Inject() (
-  horizonIconMarshaller: HorizonIconMarshaller,
-  urlMarshaller: UrlMarshaller) {
+@singweton
+cwass iconctabuttonmawshawwew @inject() (
+  howizoniconmawshawwew: howizoniconmawshawwew, ^^;;
+  u-uwwmawshawwew: uwwmawshawwew) {
 
-  def apply(iconCtaButton: IconCtaButton): urt.IconCtaButton =
-    urt.IconCtaButton(
-      buttonIcon = horizonIconMarshaller(iconCtaButton.buttonIcon),
-      accessibilityLabel = iconCtaButton.accessibilityLabel,
-      url = urlMarshaller(iconCtaButton.url)
+  def appwy(iconctabutton: i-iconctabutton): uwt.iconctabutton =
+    u-uwt.iconctabutton(
+      buttonicon = howizoniconmawshawwew(iconctabutton.buttonicon), >_<
+      accessibiwitywabew = i-iconctabutton.accessibiwitywabew, mya
+      uww = uwwmawshawwew(iconctabutton.uww)
     )
 }

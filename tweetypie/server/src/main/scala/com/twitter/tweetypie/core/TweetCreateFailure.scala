@@ -1,39 +1,39 @@
-package com.twitter.tweetypie.core
+package com.twittew.tweetypie.cowe
 
-import com.twitter.bouncer.thriftscala.Bounce
-import com.twitter.tweetypie.TweetId
-import com.twitter.incentives.jiminy.thriftscala.TweetNudge
-import com.twitter.tweetypie.thriftscala.PostTweetResult
-import com.twitter.tweetypie.thriftscala.TweetCreateState
+impowt com.twittew.bouncew.thwiftscawa.bounce
+i-impowt com.twittew.tweetypie.tweetid
+i-impowt com.twittew.incentives.jiminy.thwiftscawa.tweetnudge
+i-impowt com.twittew.tweetypie.thwiftscawa.posttweetwesuwt
+i-impowt c-com.twittew.tweetypie.thwiftscawa.tweetcweatestate
 
-sealed abstract class TweetCreateFailure extends Exception {
-  def toPostTweetResult: PostTweetResult
+s-seawed abstwact c-cwass tweetcweatefaiwuwe extends e-exception {
+  def toposttweetwesuwt: posttweetwesuwt
 }
 
-object TweetCreateFailure {
-  case class Bounced(bounce: Bounce) extends TweetCreateFailure {
-    override def toPostTweetResult: PostTweetResult =
-      PostTweetResult(state = TweetCreateState.Bounce, bounce = Some(bounce))
+object tweetcweatefaiwuwe {
+  case c-cwass bounced(bounce: bounce) extends tweetcweatefaiwuwe {
+    o-ovewwide def toposttweetwesuwt: posttweetwesuwt =
+      p-posttweetwesuwt(state = tweetcweatestate.bounce, bounce = some(bounce))
   }
 
-  case class AlreadyRetweeted(retweetId: TweetId) extends TweetCreateFailure {
-    override def toPostTweetResult: PostTweetResult =
-      PostTweetResult(state = TweetCreateState.AlreadyRetweeted)
+  c-case cwass awweadywetweeted(wetweetid: tweetid) e-extends t-tweetcweatefaiwuwe {
+    ovewwide def toposttweetwesuwt: posttweetwesuwt =
+      posttweetwesuwt(state = t-tweetcweatestate.awweadywetweeted)
   }
 
-  case class Nudged(nudge: TweetNudge) extends TweetCreateFailure {
-    override def toPostTweetResult: PostTweetResult =
-      PostTweetResult(state = TweetCreateState.Nudge, nudge = Some(nudge))
+  case cwass nyudged(nudge: tweetnudge) extends tweetcweatefaiwuwe {
+    o-ovewwide def toposttweetwesuwt: p-posttweetwesuwt =
+      p-posttweetwesuwt(state = t-tweetcweatestate.nudge, (U ﹏ U) n-nyudge = some(nudge))
   }
 
-  case class State(state: TweetCreateState, reason: Option[String] = None)
-      extends TweetCreateFailure {
-    require(state != TweetCreateState.Bounce)
-    require(state != TweetCreateState.Ok)
-    require(state != TweetCreateState.Nudge)
+  case cwass state(state: tweetcweatestate, (⑅˘꒳˘) w-weason: option[stwing] = nyone)
+      extends t-tweetcweatefaiwuwe {
+    wequiwe(state != tweetcweatestate.bounce)
+    wequiwe(state != tweetcweatestate.ok)
+    wequiwe(state != tweetcweatestate.nudge)
 
-    override def toPostTweetResult: PostTweetResult =
-      PostTweetResult(state = state, failureReason = reason)
-    override def toString: String = s"TweetCreateFailure$$State($state, $reason)"
+    o-ovewwide def toposttweetwesuwt: p-posttweetwesuwt =
+      p-posttweetwesuwt(state = s-state, òωó faiwuweweason = weason)
+    ovewwide def tostwing: s-stwing = s"tweetcweatefaiwuwe$$state($state, ʘwʘ $weason)"
   }
 }

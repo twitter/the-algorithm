@@ -1,89 +1,89 @@
-package com.twitter.home_mixer.functional_component.filter
+package com.twittew.home_mixew.functionaw_component.fiwtew
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.FeedbackHistoryFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidFollowedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidLikedByUserIdsFeature
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.common.thriftscala.FeedbackEntity
-import com.twitter.timelineservice.model.FeedbackEntry
-import com.twitter.timelineservice.{thriftscala => tls}
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.feedbackhistowyfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.iswetweetfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.sgsvawidfowwowedbyusewidsfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.sgsvawidwikedbyusewidsfeatuwe
+i-impowt com.twittew.home_mixew.utiw.candidatesutiw
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.timewines.common.thwiftscawa.feedbackentity
+i-impowt com.twittew.timewinesewvice.modew.feedbackentwy
+impowt c-com.twittew.timewinesewvice.{thwiftscawa => tws}
 
-object FeedbackFatigueFilter
-    extends Filter[PipelineQuery, TweetCandidate]
-    with Filter.Conditionally[PipelineQuery, TweetCandidate] {
+object feedbackfatiguefiwtew
+    extends fiwtew[pipewinequewy, (U ﹏ U) tweetcandidate]
+    w-with fiwtew.conditionawwy[pipewinequewy, (///ˬ///✿) tweetcandidate] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("FeedbackFatigue")
+  ovewwide vaw identifiew: f-fiwtewidentifiew = fiwtewidentifiew("feedbackfatigue")
 
-  override def onlyIf(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Boolean =
-    query.features.exists(_.getOrElse(FeedbackHistoryFeature, Seq.empty).nonEmpty)
+  o-ovewwide d-def onwyif(
+    q-quewy: pipewinequewy, 😳
+    candidates: s-seq[candidatewithfeatuwes[tweetcandidate]]
+  ): boowean =
+    quewy.featuwes.exists(_.getowewse(feedbackhistowyfeatuwe, 😳 s-seq.empty).nonempty)
 
-  private val DurationForFiltering = 14.days
+  pwivate vaw duwationfowfiwtewing = 14.days
 
-  override def apply(
-    query: pipeline.PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
-    val feedbackEntriesByEngagementType =
-      query.features
-        .getOrElse(FeatureMap.empty).getOrElse(FeedbackHistoryFeature, Seq.empty)
-        .filter { entry =>
-          val timeSinceFeedback = query.queryTime.minus(entry.timestamp)
-          timeSinceFeedback < DurationForFiltering &&
-          entry.feedbackType == tls.FeedbackType.SeeFewer
-        }.groupBy(_.engagementType)
+  o-ovewwide def appwy(
+    quewy: pipewine.pipewinequewy, σωσ
+    candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): stitch[fiwtewwesuwt[tweetcandidate]] = {
+    v-vaw feedbackentwiesbyengagementtype =
+      q-quewy.featuwes
+        .getowewse(featuwemap.empty).getowewse(feedbackhistowyfeatuwe, rawr x3 seq.empty)
+        .fiwtew { e-entwy =>
+          vaw t-timesincefeedback = quewy.quewytime.minus(entwy.timestamp)
+          timesincefeedback < duwationfowfiwtewing &&
+          e-entwy.feedbacktype == t-tws.feedbacktype.seefewew
+        }.gwoupby(_.engagementtype)
 
-    val authorsToFilter =
-      getUserIds(
-        feedbackEntriesByEngagementType.getOrElse(tls.FeedbackEngagementType.Tweet, Seq.empty))
-    val likersToFilter =
-      getUserIds(
-        feedbackEntriesByEngagementType.getOrElse(tls.FeedbackEngagementType.Like, Seq.empty))
-    val followersToFilter =
-      getUserIds(
-        feedbackEntriesByEngagementType.getOrElse(tls.FeedbackEngagementType.Follow, Seq.empty))
-    val retweetersToFilter =
-      getUserIds(
-        feedbackEntriesByEngagementType.getOrElse(tls.FeedbackEngagementType.Retweet, Seq.empty))
+    vaw authowstofiwtew =
+      g-getusewids(
+        f-feedbackentwiesbyengagementtype.getowewse(tws.feedbackengagementtype.tweet, OwO seq.empty))
+    v-vaw wikewstofiwtew =
+      getusewids(
+        f-feedbackentwiesbyengagementtype.getowewse(tws.feedbackengagementtype.wike, /(^•ω•^) seq.empty))
+    vaw f-fowwowewstofiwtew =
+      getusewids(
+        feedbackentwiesbyengagementtype.getowewse(tws.feedbackengagementtype.fowwow, 😳😳😳 s-seq.empty))
+    vaw w-wetweetewstofiwtew =
+      g-getusewids(
+        feedbackentwiesbyengagementtype.getowewse(tws.feedbackengagementtype.wetweet, ( ͡o ω ͡o ) seq.empty))
 
-    val (removed, kept) = candidates.partition { candidate =>
-      val originalAuthorId = CandidatesUtil.getOriginalAuthorId(candidate.features)
-      val authorId = candidate.features.getOrElse(AuthorIdFeature, None)
+    vaw (wemoved, >_< kept) = candidates.pawtition { candidate =>
+      vaw o-owiginawauthowid = c-candidatesutiw.getowiginawauthowid(candidate.featuwes)
+      vaw authowid = c-candidate.featuwes.getowewse(authowidfeatuwe, >w< none)
 
-      val likers = candidate.features.getOrElse(SGSValidLikedByUserIdsFeature, Seq.empty)
-      val eligibleLikers = likers.filterNot(likersToFilter.contains)
+      v-vaw w-wikews = candidate.featuwes.getowewse(sgsvawidwikedbyusewidsfeatuwe, rawr seq.empty)
+      vaw ewigibwewikews = wikews.fiwtewnot(wikewstofiwtew.contains)
 
-      val followers = candidate.features.getOrElse(SGSValidFollowedByUserIdsFeature, Seq.empty)
-      val eligibleFollowers = followers.filterNot(followersToFilter.contains)
+      v-vaw fowwowews = candidate.featuwes.getowewse(sgsvawidfowwowedbyusewidsfeatuwe, 😳 seq.empty)
+      vaw ewigibwefowwowews = f-fowwowews.fiwtewnot(fowwowewstofiwtew.contains)
 
-      originalAuthorId.exists(authorsToFilter.contains) ||
-      (likers.nonEmpty && eligibleLikers.isEmpty) ||
-      (followers.nonEmpty && eligibleFollowers.isEmpty && likers.isEmpty) ||
-      (candidate.features.getOrElse(IsRetweetFeature, false) &&
-      authorId.exists(retweetersToFilter.contains))
+      owiginawauthowid.exists(authowstofiwtew.contains) ||
+      (wikews.nonempty && e-ewigibwewikews.isempty) ||
+      (fowwowews.nonempty && e-ewigibwefowwowews.isempty && wikews.isempty) ||
+      (candidate.featuwes.getowewse(iswetweetfeatuwe, >w< f-fawse) &&
+      authowid.exists(wetweetewstofiwtew.contains))
     }
 
-    Stitch.value(FilterResult(kept = kept.map(_.candidate), removed = removed.map(_.candidate)))
+    s-stitch.vawue(fiwtewwesuwt(kept = k-kept.map(_.candidate), (⑅˘꒳˘) w-wemoved = w-wemoved.map(_.candidate)))
   }
 
-  private def getUserIds(
-    feedbackEntries: Seq[FeedbackEntry],
-  ): Set[Long] =
-    feedbackEntries.collect {
-      case FeedbackEntry(_, _, FeedbackEntity.UserId(userId), _, _) => userId
-    }.toSet
+  pwivate def getusewids(
+    f-feedbackentwies: s-seq[feedbackentwy], OwO
+  ): s-set[wong] =
+    f-feedbackentwies.cowwect {
+      c-case feedbackentwy(_, (ꈍᴗꈍ) _, 😳 feedbackentity.usewid(usewid), 😳😳😳 _, _) => usewid
+    }.toset
 }

@@ -1,24 +1,24 @@
-package com.twitter.cr_mixer.config
+package com.twittew.cw_mixew.config
 
-import com.twitter.util.Duration
+impowt com.twittew.utiw.duwation
 
-case class TimeoutConfig(
-  /* Default timeouts for candidate generator */
-  serviceTimeout: Duration,
-  signalFetchTimeout: Duration,
-  similarityEngineTimeout: Duration,
-  annServiceClientTimeout: Duration,
-  /* For Uteg Candidate Generator */
-  utegSimilarityEngineTimeout: Duration,
-  /* For User State Store */
-  userStateUnderlyingStoreTimeout: Duration,
-  userStateStoreTimeout: Duration,
-  /* For FRS based tweets */
-  // Timeout passed to EarlyBird server
-  earlybirdServerTimeout: Duration,
-  // Timeout set on CrMixer side
-  earlybirdSimilarityEngineTimeout: Duration,
-  frsBasedTweetEndpointTimeout: Duration,
-  topicTweetEndpointTimeout: Duration,
-  // Timeout Settings for Navi gRPC Client
-  naviRequestTimeout: Duration)
+c-case cwass t-timeoutconfig(
+  /* d-defauwt timeouts f-fow candidate g-genewatow */
+  s-sewvicetimeout: d-duwation, OwO
+  signawfetchtimeout: d-duwation, (U ﹏ U)
+  simiwawityenginetimeout: duwation, >_<
+  annsewvicecwienttimeout: duwation, rawr x3
+  /* fow u-uteg candidate genewatow */
+  utegsimiwawityenginetimeout: duwation, mya
+  /* f-fow usew state stowe */
+  u-usewstateundewwyingstowetimeout: duwation, nyaa~~
+  usewstatestowetimeout: duwation, (⑅˘꒳˘)
+  /* f-fow fws based tweets */
+  // t-timeout passed t-to eawwybiwd sewvew
+  eawwybiwdsewvewtimeout: duwation, rawr x3
+  // timeout set on cwmixew side
+  eawwybiwdsimiwawityenginetimeout: d-duwation, (✿oωo)
+  fwsbasedtweetendpointtimeout: duwation, (ˆ ﻌ ˆ)♡
+  topictweetendpointtimeout: duwation, (˘ω˘)
+  // timeout settings f-fow nyavi gwpc cwient
+  nyaviwequesttimeout: d-duwation)

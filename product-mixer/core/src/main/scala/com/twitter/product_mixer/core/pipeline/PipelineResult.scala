@@ -1,59 +1,59 @@
-package com.twitter.product_mixer.core.pipeline
+package com.twittew.pwoduct_mixew.cowe.pipewine
 
-import com.twitter.product_mixer.component_library.model.candidate.CursorCandidate
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ExecutionFailed
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.cuwsowcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.itemcandidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.moduwecandidatewithdetaiws
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.executionfaiwed
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt com.twittew.utiw.wetuwn
+impowt com.twittew.utiw.thwow
+impowt c-com.twittew.utiw.twy
 
 /**
- * Pipelines return a PipelineResult.
+ * pipewines wetuwn a p-pipewinewesuwt. (˘ω˘)
  *
- * This allows us to return a single main result (optionally, incase the pipeline didn't execute successfully), but
- * still have a detailed response object to show how that result was produced.
+ * this awwows u-us to wetuwn a singwe main wesuwt (optionawwy, >_< incase the pipewine didn't exekawaii~ s-successfuwwy), -.- but
+ * stiww h-have a detaiwed w-wesponse object to show how that wesuwt was pwoduced. 🥺
  */
-trait PipelineResult[ResultType] {
-  val failure: Option[PipelineFailure]
-  val result: Option[ResultType]
+twait pipewinewesuwt[wesuwttype] {
+  v-vaw faiwuwe: option[pipewinefaiwuwe]
+  vaw wesuwt: option[wesuwttype]
 
-  def withFailure(failure: PipelineFailure): PipelineResult[ResultType]
-  def withResult(result: ResultType): PipelineResult[ResultType]
+  def withfaiwuwe(faiwuwe: pipewinefaiwuwe): p-pipewinewesuwt[wesuwttype]
+  def withwesuwt(wesuwt: w-wesuwttype): p-pipewinewesuwt[wesuwttype]
 
-  def resultSize(): Int
+  d-def wesuwtsize(): i-int
 
-  private[pipeline] def stopExecuting: Boolean = failure.isDefined || result.isDefined
+  pwivate[pipewine] def stopexecuting: boowean = faiwuwe.isdefined || w-wesuwt.isdefined
 
-  final def toTry: Try[this.type] = (result, failure) match {
-    case (_, Some(failure)) =>
-      Throw(failure)
-    case (_: Some[ResultType], _) =>
-      Return(this)
-    // Pipelines should always finish with either a result or a failure
-    case _ => Throw(PipelineFailure(ExecutionFailed, "Pipeline did not execute"))
+  finaw def totwy: twy[this.type] = (wesuwt, (U ﹏ U) f-faiwuwe) match {
+    case (_, >w< some(faiwuwe)) =>
+      thwow(faiwuwe)
+    case (_: some[wesuwttype], mya _) =>
+      wetuwn(this)
+    // p-pipewines shouwd awways finish w-with eithew a-a wesuwt ow a faiwuwe
+    c-case _ => thwow(pipewinefaiwuwe(executionfaiwed, >w< "pipewine did nyot exekawaii~"))
   }
 
-  final def toResultTry: Try[ResultType] = {
-    // `.get` is safe here because `toTry` guarantees a value in the `Return` case
-    toTry.map(_.result.get)
+  finaw def towesuwttwy: t-twy[wesuwttype] = {
+    // `.get` i-is safe hewe because `totwy` g-guawantees a-a vawue in the `wetuwn` case
+    t-totwy.map(_.wesuwt.get)
   }
 }
 
-object PipelineResult {
+object pipewinewesuwt {
 
   /**
-   * Track number of candidates returned by a Pipeline. Cursors are excluded from this
-   * count and modules are counted as the sum of their candidates.
+   * t-twack nyumbew of candidates wetuwned by a-a pipewine. nyaa~~ cuwsows awe excwuded f-fwom this
+   * count and moduwes a-awe counted as t-the sum of theiw candidates. (✿oωo)
    *
-   * @note this is a somewhat subjective measure of 'size' and it is spread across pipeline
-   *       definitions as well as selectors.
+   * @note this is a somenani subjective measuwe of 'size' and it is spwead acwoss p-pipewine
+   *       d-definitions as weww as s-sewectows. ʘwʘ
    */
-  def resultSize(results: Seq[CandidateWithDetails]): Int = results.map {
-    case module: ModuleCandidateWithDetails => resultSize(module.candidates)
-    case ItemCandidateWithDetails(_: CursorCandidate, _, _) => 0
+  d-def wesuwtsize(wesuwts: s-seq[candidatewithdetaiws]): int = wesuwts.map {
+    case moduwe: moduwecandidatewithdetaiws => wesuwtsize(moduwe.candidates)
+    c-case itemcandidatewithdetaiws(_: cuwsowcandidate, (ˆ ﻌ ˆ)♡ _, _) => 0
     case _ => 1
   }.sum
 }

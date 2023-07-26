@@ -1,17 +1,18 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finatra/inject/inject-core/src/main/scala/com/twitter/inject",
-        "onboarding/service/thrift/src/main/thrift:thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source",
-        "stitch/stitch-core",
+scawa_wibwawy(
+    souwces = ["*.scawa"], òωó
+    compiwew_option_sets = ["fataw_wawnings"], o.O
+    s-stwict_deps = t-twue, (U ᵕ U❁)
+    t-tags = ["bazew-compatibwe"], (⑅˘꒳˘)
+    d-dependencies = [
+        "3wdpawty/jvm/javax/inject:javax.inject",
+        "finatwa/inject/inject-cowe/swc/main/scawa/com/twittew/inject", ( ͡o ω ͡o )
+        "intewests-sewvice/thwift/swc/main/thwift:thwift-scawa", UwU
+        "intewests_discovewy/thwift/swc/main/thwift:sewvice-thwift-scawa", rawr x3
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/candidate_souwce", rawr
+        "stitch/stitch-cowe", σωσ
     ],
-    exports = [
-        "onboarding/service/thrift/src/main/thrift:thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source",
+    e-expowts = [
+        "intewests-sewvice/thwift/swc/main/thwift:thwift-scawa", σωσ
+        "intewests_discovewy/thwift/swc/main/thwift:sewvice-thwift-scawa", >_<
     ],
 )

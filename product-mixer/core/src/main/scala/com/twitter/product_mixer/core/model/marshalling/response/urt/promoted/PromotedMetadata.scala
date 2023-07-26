@@ -1,23 +1,23 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted
 
 /*
- * As per discussion with #revenue-serving on 9/22/2017, `impressionId` should be set from `impressionString`.
- * impressionId often returns None from adserver, as it's been replaced with impressionString.
+ * as pew discussion w-with #wevenue-sewving o-on 9/22/2017, (✿oωo) `impwessionid` s-shouwd b-be set fwom `impwessionstwing`. (ˆ ﻌ ˆ)♡
+ * i-impwessionid o-often wetuwns none f-fwom adsewvew, (˘ω˘) a-as it's been wepwaced with impwessionstwing.
  *
- * However, Android (at least) crashes without impressionId filled out in the response.
+ * howevew, (⑅˘꒳˘) andwoid (at weast) cwashes without i-impwessionid fiwwed out in the wesponse. (///ˬ///✿)
  *
- * So, we've removed `impressionId` from this case class, and our marshaller will set both `impressionId`
- * and `impressionString` in the render thrift from `impressionString`.
+ * s-so, 😳😳😳 we've wemoved `impwessionid` fwom this case c-cwass, 🥺 and ouw mawshawwew wiww set both `impwessionid`
+ * and `impwessionstwing` i-in the wendew thwift fwom `impwessionstwing`. mya
  */
 
-case class PromotedMetadata(
-  advertiserId: Long,
-  disclosureType: Option[DisclosureType],
-  experimentValues: Option[Map[String, String]],
-  promotedTrendId: Option[Long],
-  promotedTrendName: Option[String],
-  promotedTrendQueryTerm: Option[String],
-  adMetadataContainer: Option[AdMetadataContainer],
-  promotedTrendDescription: Option[String],
-  impressionString: Option[String],
-  clickTrackingInfo: Option[ClickTrackingInfo])
+c-case cwass p-pwomotedmetadata(
+  advewtisewid: wong, 🥺
+  discwosuwetype: option[discwosuwetype], >_<
+  expewimentvawues: o-option[map[stwing, >_< stwing]], (⑅˘꒳˘)
+  pwomotedtwendid: option[wong], /(^•ω•^)
+  pwomotedtwendname: o-option[stwing], rawr x3
+  pwomotedtwendquewytewm: o-option[stwing], (U ﹏ U)
+  a-admetadatacontainew: o-option[admetadatacontainew], (U ﹏ U)
+  p-pwomotedtwenddescwiption: option[stwing], (⑅˘꒳˘)
+  impwessionstwing: o-option[stwing], òωó
+  cwicktwackinginfo: option[cwicktwackinginfo])

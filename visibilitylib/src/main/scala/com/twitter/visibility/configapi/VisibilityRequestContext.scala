@@ -1,14 +1,14 @@
-package com.twitter.visibility.configapi
+package com.twittew.visibiwity.configapi
 
-import com.twitter.timelines.configapi._
+impowt c-com.twittew.timewines.configapi._
 
-case class VisibilityRequestContext(
-  userId: Option[Long],
-  guestId: Option[Long],
-  experimentContext: ExperimentContext = NullExperimentContext,
-  featureContext: FeatureContext = NullFeatureContext)
-    extends BaseRequestContext
-    with WithUserId
-    with WithGuestId
-    with WithExperimentContext
-    with WithFeatureContext
+c-case cwass visibiwitywequestcontext(
+  u-usewid: o-option[wong], -.-
+  g-guestid: option[wong], (ˆ ﻌ ˆ)♡
+  e-expewimentcontext: e-expewimentcontext = n-nyuwwexpewimentcontext, (⑅˘꒳˘)
+  featuwecontext: featuwecontext = nyuwwfeatuwecontext)
+    extends basewequestcontext
+    w-with withusewid
+    with withguestid
+    with w-withexpewimentcontext
+    with w-withfeatuwecontext

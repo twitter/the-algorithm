@@ -1,41 +1,41 @@
-package com.twitter.visibility.builder.users
+package com.twittew.visibiwity.buiwdew.usews
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.NotFound
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.common.UserSensitiveMediaSettingsSource
-import com.twitter.visibility.features.ViewerId
-import com.twitter.visibility.features.ViewerSensitiveMediaSettings
-import com.twitter.visibility.models.UserSensitiveMediaSettings
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.stitch.notfound
+i-impowt com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+i-impowt com.twittew.visibiwity.common.usewid
+i-impowt com.twittew.visibiwity.common.usewsensitivemediasettingssouwce
+impowt com.twittew.visibiwity.featuwes.viewewid
+impowt com.twittew.visibiwity.featuwes.viewewsensitivemediasettings
+i-impowt com.twittew.visibiwity.modews.usewsensitivemediasettings
 
 
-class ViewerSensitiveMediaSettingsFeatures(
-  userSensitiveMediaSettingsSource: UserSensitiveMediaSettingsSource,
-  statsReceiver: StatsReceiver) {
-  private[this] val scopedStatsReceiver =
-    statsReceiver.scope("viewer_sensitive_media_settings_features")
+cwass viewewsensitivemediasettingsfeatuwes(
+  u-usewsensitivemediasettingssouwce: usewsensitivemediasettingssouwce, rawr x3
+  s-statsweceivew: statsweceivew) {
+  pwivate[this] vaw scopedstatsweceivew =
+    s-statsweceivew.scope("viewew_sensitive_media_settings_featuwes")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  pwivate[this] v-vaw wequests = s-scopedstatsweceivew.countew("wequests")
 
-  def forViewerId(viewerId: Option[UserId]): FeatureMapBuilder => FeatureMapBuilder = { builder =>
-    requests.incr()
+  def fowviewewid(viewewid: option[usewid]): featuwemapbuiwdew => f-featuwemapbuiwdew = { buiwdew =>
+    wequests.incw()
 
-    builder
-      .withConstantFeature(ViewerId, viewerId)
-      .withFeature(ViewerSensitiveMediaSettings, viewerSensitiveMediaSettings(viewerId))
+    buiwdew
+      .withconstantfeatuwe(viewewid, (✿oωo) viewewid)
+      .withfeatuwe(viewewsensitivemediasettings, (ˆ ﻌ ˆ)♡ viewewsensitivemediasettings(viewewid))
   }
 
-  def viewerSensitiveMediaSettings(viewerId: Option[UserId]): Stitch[UserSensitiveMediaSettings] = {
-    (viewerId match {
-      case Some(userId) =>
-        userSensitiveMediaSettingsSource
-          .userSensitiveMediaSettings(userId)
-          .handle {
-            case NotFound => None
+  d-def viewewsensitivemediasettings(viewewid: o-option[usewid]): s-stitch[usewsensitivemediasettings] = {
+    (viewewid match {
+      c-case s-some(usewid) =>
+        usewsensitivemediasettingssouwce
+          .usewsensitivemediasettings(usewid)
+          .handwe {
+            case nyotfound => n-nyone
           }
-      case _ => Stitch.value(None)
-    }).map(UserSensitiveMediaSettings)
+      case _ => stitch.vawue(none)
+    }).map(usewsensitivemediasettings)
   }
 }

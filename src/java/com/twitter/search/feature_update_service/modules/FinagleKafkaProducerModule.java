@@ -1,62 +1,62 @@
-package com.twitter.search.feature_update_service.modules;
+package com.twittew.seawch.featuwe_update_sewvice.moduwes;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+impowt j-javax.inject.named;
+i-impowt javax.inject.singweton;
 
-import com.google.inject.Provides;
+i-impowt com.googwe.inject.pwovides;
 
-import com.twitter.app.Flaggable;
-import com.twitter.common.util.Clock;
-import com.twitter.finatra.kafka.producers.BlockingFinagleKafkaProducer;
-import com.twitter.inject.TwitterModule;
-import com.twitter.inject.annotations.Flag;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.util.io.kafka.CompactThriftSerializer;
-import com.twitter.search.common.util.io.kafka.FinagleKafkaClientUtils;
-import com.twitter.search.common.util.io.kafka.SearchPartitioner;
-import com.twitter.search.common.util.io.kafka.SearchPartitionerRealtimeCg;
+i-impowt c-com.twittew.app.fwaggabwe;
+i-impowt c-com.twittew.common.utiw.cwock;
+i-impowt com.twittew.finatwa.kafka.pwoducews.bwockingfinagwekafkapwoducew;
+impowt com.twittew.inject.twittewmoduwe;
+impowt com.twittew.inject.annotations.fwag;
+impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
+i-impowt com.twittew.seawch.common.utiw.io.kafka.compactthwiftsewiawizew;
+impowt com.twittew.seawch.common.utiw.io.kafka.finagwekafkacwientutiws;
+i-impowt com.twittew.seawch.common.utiw.io.kafka.seawchpawtitionew;
+i-impowt com.twittew.seawch.common.utiw.io.kafka.seawchpawtitionewweawtimecg;
 
-public class FinagleKafkaProducerModule extends TwitterModule {
-  public static final String KAFKA_DEST_FLAG = "kafka.dest";
-  public static final String KAFKA_TOPIC_NAME_UPDATE_EVENTS_FLAG =
+pubwic cwass finagwekafkapwoducewmoduwe e-extends twittewmoduwe {
+  pubwic s-static finaw s-stwing kafka_dest_fwag = "kafka.dest";
+  pubwic static finaw stwing kafka_topic_name_update_events_fwag =
       "kafka.topic.name.update_events";
-  public static final String KAFKA_TOPIC_NAME_UPDATE_EVENTS_FLAG_REALTIME_CG =
-          "kafka.topic.name.update_events_realtime_cg";
-  public static final String KAFKA_ENABLE_S2S_AUTH_FLAG = "kafka.enable_s2s_auth";
+  pubwic static f-finaw stwing kafka_topic_name_update_events_fwag_weawtime_cg =
+          "kafka.topic.name.update_events_weawtime_cg";
+  pubwic static finaw stwing kafka_enabwe_s2s_auth_fwag = "kafka.enabwe_s2s_auth";
 
-  public FinagleKafkaProducerModule() {
-    flag(KAFKA_DEST_FLAG, "Kafka cluster destination", "", Flaggable.ofString());
-    flag(KAFKA_TOPIC_NAME_UPDATE_EVENTS_FLAG, "",
-        "Topic name for update events", Flaggable.ofString());
-    flag(KAFKA_TOPIC_NAME_UPDATE_EVENTS_FLAG_REALTIME_CG, "",
-            "Topic name for update events", Flaggable.ofString());
-    flag(KAFKA_ENABLE_S2S_AUTH_FLAG, true, "enable s2s authentication configs",
-        Flaggable.ofBoolean());
+  p-pubwic finagwekafkapwoducewmoduwe() {
+    fwag(kafka_dest_fwag, "kafka c-cwustew destination", ^^ "", 😳😳😳 f-fwaggabwe.ofstwing());
+    f-fwag(kafka_topic_name_update_events_fwag, mya "",
+        "topic n-nyame fow update events", 😳 fwaggabwe.ofstwing());
+    f-fwag(kafka_topic_name_update_events_fwag_weawtime_cg, -.- "", 🥺
+            "topic nyame fow update events", o.O f-fwaggabwe.ofstwing());
+    fwag(kafka_enabwe_s2s_auth_fwag, /(^•ω•^) twue, nyaa~~ "enabwe s2s authentication configs", nyaa~~
+        fwaggabwe.ofboowean());
   }
 
-  @Provides
-  @Named("KafkaProducer")
-  public BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> kafkaProducer(
-      @Flag(KAFKA_DEST_FLAG) String kafkaDest,
-      @Flag(KAFKA_ENABLE_S2S_AUTH_FLAG) boolean enableKafkaAuth) {
-    return FinagleKafkaClientUtils.newFinagleKafkaProducer(
-        kafkaDest, enableKafkaAuth, new CompactThriftSerializer<ThriftVersionedEvents>(),
-        "search_cluster", SearchPartitioner.class);
+  @pwovides
+  @named("kafkapwoducew")
+  p-pubwic bwockingfinagwekafkapwoducew<wong, :3 t-thwiftvewsionedevents> k-kafkapwoducew(
+      @fwag(kafka_dest_fwag) s-stwing kafkadest, 😳😳😳
+      @fwag(kafka_enabwe_s2s_auth_fwag) boowean enabwekafkaauth) {
+    wetuwn finagwekafkacwientutiws.newfinagwekafkapwoducew(
+        kafkadest, (˘ω˘) enabwekafkaauth, ^^ n-nyew c-compactthwiftsewiawizew<thwiftvewsionedevents>(), :3
+        "seawch_cwustew", -.- seawchpawtitionew.cwass);
   }
 
-  @Provides
-  @Named("KafkaProducerRealtimeCg")
-  public BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> kafkaProducerRealtimeCg(
-          @Flag(KAFKA_DEST_FLAG) String kafkaDest,
-          @Flag(KAFKA_ENABLE_S2S_AUTH_FLAG) boolean enableKafkaAuth) {
-    return FinagleKafkaClientUtils.newFinagleKafkaProducer(
-            kafkaDest, enableKafkaAuth, new CompactThriftSerializer<ThriftVersionedEvents>(),
-            "search_cluster", SearchPartitionerRealtimeCg.class);
+  @pwovides
+  @named("kafkapwoducewweawtimecg")
+  p-pubwic b-bwockingfinagwekafkapwoducew<wong, 😳 thwiftvewsionedevents> k-kafkapwoducewweawtimecg(
+          @fwag(kafka_dest_fwag) stwing kafkadest, mya
+          @fwag(kafka_enabwe_s2s_auth_fwag) b-boowean enabwekafkaauth) {
+    wetuwn finagwekafkacwientutiws.newfinagwekafkapwoducew(
+            kafkadest, (˘ω˘) e-enabwekafkaauth, >_< nyew compactthwiftsewiawizew<thwiftvewsionedevents>(), -.-
+            "seawch_cwustew", 🥺 s-seawchpawtitionewweawtimecg.cwass);
   }
 
-  @Provides
-  @Singleton
-  public Clock clock() {
-    return Clock.SYSTEM_CLOCK;
+  @pwovides
+  @singweton
+  pubwic c-cwock cwock() {
+    w-wetuwn cwock.system_cwock;
   }
 }

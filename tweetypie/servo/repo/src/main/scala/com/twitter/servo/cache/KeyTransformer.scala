@@ -1,21 +1,21 @@
-package com.twitter.servo.cache
+package com.twittew.sewvo.cache
 
 /**
- * Converts all keys to a string via .toString
+ * convewts a-aww keys to a stwing v-via .tostwing
  */
-class ToStringKeyTransformer[K] extends KeyTransformer[K] {
-  override def apply(key: K) = key.toString
+c-cwass tostwingkeytwansfowmew[k] e-extends keytwansfowmew[k] {
+  o-ovewwide def a-appwy(key: k) = k-key.tostwing
 }
 
 /**
- * Prefixes all keys with a string
+ * p-pwefixes aww keys with a stwing
  */
-class PrefixKeyTransformer[K](
-  prefix: String,
-  delimiter: String = constants.Colon,
-  underlying: KeyTransformer[K] = new ToStringKeyTransformer[K]: ToStringKeyTransformer[K])
-    extends KeyTransformer[K] {
-  private[this] val fullPrefix = prefix + delimiter
+cwass pwefixkeytwansfowmew[k](
+  pwefix: s-stwing,
+  dewimitew: stwing = constants.cowon, 😳
+  u-undewwying: keytwansfowmew[k] = n-nyew tostwingkeytwansfowmew[k]: tostwingkeytwansfowmew[k])
+    extends keytwansfowmew[k] {
+  pwivate[this] v-vaw fuwwpwefix = pwefix + dewimitew
 
-  override def apply(key: K) = fullPrefix + underlying(key)
+  o-ovewwide d-def appwy(key: k) = fuwwpwefix + undewwying(key)
 }

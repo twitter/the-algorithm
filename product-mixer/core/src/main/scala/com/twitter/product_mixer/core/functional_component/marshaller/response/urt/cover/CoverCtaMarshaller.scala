@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.covew
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button.ButtonStyleMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.icon.HorizonIconMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.CallbackMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventInfoMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverCta
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.button.buttonstywemawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.icon.howizoniconmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.cawwbackmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.cwienteventinfomawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.covewcta
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => uwt}
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class CoverCtaMarshaller @Inject() (
-  coverCtaBehaviorMarshaller: CoverCtaBehaviorMarshaller,
-  callbackMarshaller: CallbackMarshaller,
-  clientEventInfoMarshaller: ClientEventInfoMarshaller,
-  horizonIconMarshaller: HorizonIconMarshaller,
-  buttonStyleMarshaller: ButtonStyleMarshaller) {
+@singweton
+cwass covewctamawshawwew @inject() (
+  c-covewctabehaviowmawshawwew: covewctabehaviowmawshawwew,
+  cawwbackmawshawwew: c-cawwbackmawshawwew, /(^•ω•^)
+  cwienteventinfomawshawwew: c-cwienteventinfomawshawwew, rawr
+  howizoniconmawshawwew: howizoniconmawshawwew, OwO
+  buttonstywemawshawwew: b-buttonstywemawshawwew) {
 
-  def apply(coverCta: CoverCta): urt.CoverCta = urt.CoverCta(
-    text = coverCta.text,
-    ctaBehavior = coverCtaBehaviorMarshaller(coverCta.ctaBehavior),
-    callbacks = coverCta.callbacks.map(_.map(callbackMarshaller(_))),
-    clientEventInfo = coverCta.clientEventInfo.map(clientEventInfoMarshaller(_)),
-    icon = coverCta.icon.map(horizonIconMarshaller(_)),
-    buttonStyle = coverCta.buttonStyle.map(buttonStyleMarshaller(_))
+  def appwy(covewcta: c-covewcta): u-uwt.covewcta = uwt.covewcta(
+    text = covewcta.text, (U ﹏ U)
+    ctabehaviow = covewctabehaviowmawshawwew(covewcta.ctabehaviow), >_<
+    cawwbacks = covewcta.cawwbacks.map(_.map(cawwbackmawshawwew(_))), rawr x3
+    c-cwienteventinfo = covewcta.cwienteventinfo.map(cwienteventinfomawshawwew(_)), mya
+    icon = covewcta.icon.map(howizoniconmawshawwew(_)), nyaa~~
+    buttonstywe = c-covewcta.buttonstywe.map(buttonstywemawshawwew(_))
   )
 }

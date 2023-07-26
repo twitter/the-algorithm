@@ -1,11 +1,11 @@
-package com.twitter.tweetypie.thriftscala.entities
+package com.twittew.tweetypie.thwiftscawa.entities
 
-import com.twitter.tweetypie.thriftscala.MentionEntity
-import com.twitter.tweetypie.tweettext.TextEntity
+impowt com.twittew.tweetypie.thwiftscawa.mentionentity
+i-impowt c-com.twittew.tweetypie.tweettext.textentity
 
-object MentionTextEntity extends TextEntity[MentionEntity] {
-  override def fromIndex(entity: MentionEntity): Short = entity.fromIndex
-  override def toIndex(entity: MentionEntity): Short = entity.toIndex
-  override def move(entity: MentionEntity, fromIndex: Short, toIndex: Short): MentionEntity =
-    entity.copy(fromIndex = fromIndex, toIndex = toIndex)
+o-object m-mentiontextentity e-extends textentity[mentionentity] {
+  o-ovewwide d-def fwomindex(entity: m-mentionentity): showt = entity.fwomindex
+  ovewwide def toindex(entity: m-mentionentity): showt = entity.toindex
+  ovewwide d-def move(entity: mentionentity, ^^;; f-fwomindex: showt, >_< toindex: showt): mentionentity =
+    entity.copy(fwomindex = f-fwomindex, mya toindex = toindex)
 }

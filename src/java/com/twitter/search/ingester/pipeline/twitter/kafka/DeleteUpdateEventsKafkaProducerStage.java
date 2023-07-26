@@ -1,65 +1,65 @@
-package com.twitter.search.ingester.pipeline.twitter.kafka;
+package com.twittew.seawch.ingestew.pipewine.twittew.kafka;
 
-import javax.naming.NamingException;
+impowt j-javax.naming.namingexception;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
+i-impowt owg.apache.commons.pipewine.stageexception;
+i-impowt owg.apache.commons.pipewine.vawidation.consumedtypes;
 
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.twitter.ThriftVersionedEventsConverter;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
+i-impowt com.twittew.seawch.ingestew.modew.ingestewtwittewmessage;
+i-impowt com.twittew.seawch.ingestew.pipewine.twittew.thwiftvewsionedeventsconvewtew;
+i-impowt com.twittew.seawch.ingestew.pipewine.utiw.pipewinestageexception;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-public class DeleteUpdateEventsKafkaProducerStage extends KafkaProducerStage
-    <IngesterTwitterMessage> {
-  private ThriftVersionedEventsConverter converter;
+@consumedtypes(ingestewtwittewmessage.cwass)
+p-pubwic cwass deweteupdateeventskafkapwoducewstage extends kafkapwoducewstage
+    <ingestewtwittewmessage> {
+  pwivate thwiftvewsionedeventsconvewtew c-convewtew;
 
-  public DeleteUpdateEventsKafkaProducerStage() {
-    super();
+  pubwic deweteupdateeventskafkapwoducewstage() {
+    supew();
   }
 
-  public DeleteUpdateEventsKafkaProducerStage(String topicName, String clientId,
-                                              String clusterPath) {
-    super(topicName, clientId, clusterPath);
+  p-pubwic deweteupdateeventskafkapwoducewstage(stwing topicname, ʘwʘ s-stwing cwientid, /(^•ω•^)
+                                              stwing cwustewpath) {
+    supew(topicname, ʘwʘ cwientid, c-cwustewpath);
   }
 
-  @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
-    super.innerSetup();
-    commonInnerSetup();
+  @ovewwide
+  pwotected v-void innewsetup() t-thwows pipewinestageexception, σωσ nyamingexception {
+    supew.innewsetup();
+    commoninnewsetup();
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    super.doInnerPreprocess();
-    commonInnerSetup();
+  @ovewwide
+  pwotected v-void doinnewpwepwocess() thwows stageexception, nyamingexception {
+    supew.doinnewpwepwocess();
+    c-commoninnewsetup();
   }
 
-  private void commonInnerSetup() throws NamingException {
-    converter = new ThriftVersionedEventsConverter(wireModule.getPenguinVersions());
+  pwivate void c-commoninnewsetup() t-thwows nyamingexception {
+    c-convewtew = nyew t-thwiftvewsionedeventsconvewtew(wiwemoduwe.getpenguinvewsions());
 
   }
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not an IngesterTwitterMessage: " + obj);
+  @ovewwide
+  pubwic void innewpwocess(object o-obj) thwows stageexception {
+    if (!(obj i-instanceof ingestewtwittewmessage)) {
+      thwow new stageexception(this, OwO "object is nyot an ingestewtwittewmessage: " + obj);
     }
 
-    IngesterTwitterMessage message = (IngesterTwitterMessage) obj;
-    innerRunFinalStageOfBranchV2(message);
+    ingestewtwittewmessage m-message = (ingestewtwittewmessage) obj;
+    innewwunfinawstageofbwanchv2(message);
   }
 
-  @Override
-  protected void innerRunFinalStageOfBranchV2(IngesterTwitterMessage message) {
-    converter.updatePenguinVersions(wireModule.getCurrentlyEnabledPenguinVersions());
+  @ovewwide
+  p-pwotected v-void innewwunfinawstageofbwanchv2(ingestewtwittewmessage m-message) {
+    convewtew.updatepenguinvewsions(wiwemoduwe.getcuwwentwyenabwedpenguinvewsions());
 
-    Preconditions.checkArgument(message.getFromUserTwitterId().isPresent(),
-        "Missing user ID.");
+    pweconditions.checkawgument(message.getfwomusewtwittewid().ispwesent(), 😳😳😳
+        "missing usew i-id.");
 
-    super.tryToSendEventsToKafka(converter.toDelete(
-        message.getTweetId(), message.getUserId(), message.getDebugEvents()));
+    supew.twytosendeventstokafka(convewtew.todewete(
+        m-message.gettweetid(), 😳😳😳 message.getusewid(), o.O m-message.getdebugevents()));
   }
 
 

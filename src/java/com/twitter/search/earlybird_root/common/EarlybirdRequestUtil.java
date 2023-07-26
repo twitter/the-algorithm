@@ -1,107 +1,107 @@
-package com.twitter.search.earlybird_root.common;
+package com.twittew.seawch.eawwybiwd_woot.common;
 
-import com.google.common.base.Optional;
+impowt com.googwe.common.base.optionaw;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.util.IdTimeRanges;
+i-impowt com.twittew.seawch.common.pawtitioning.snowfwakepawsew.snowfwakeidpawsew;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.quewypawsew.quewy.quewy;
+i-impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
+i-impowt com.twittew.seawch.quewypawsew.utiw.idtimewanges;
 
-public final class EarlybirdRequestUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdRequestUtil.class);
+pubwic finaw cwass eawwybiwdwequestutiw {
+  pwivate static finaw w-woggew wog = woggewfactowy.getwoggew(eawwybiwdwequestutiw.cwass);
 
-  private EarlybirdRequestUtil() {
+  pwivate e-eawwybiwdwequestutiw() {
   }
 
   /**
-   * Returns the max ID specified in the query. The max ID is determined based on the max_id
-   * operator, and the returned value is an inclusive max ID (that is, the returned response is
-   * allowed to have a tweet with this ID).
+   * wetuwns t-the max id specified in the quewy. >_< the max id is detewmined based o-on the max_id
+   * opewatow, rawr x3 a-and the wetuwned v-vawue is an incwusive max id (that is, /(^•ω•^) the wetuwned wesponse is
+   * awwowed to h-have a tweet with this id). :3
    *
-   * If the query is null, could not be parsed or does not have a max_id operator, Optional.absent()
-   * is returned.
+   * if the quewy is nyuww, (ꈍᴗꈍ) couwd nyot be pawsed o-ow does nyot have a max_id opewatow, /(^•ω•^) o-optionaw.absent()
+   * is w-wetuwned.
    *
-   * @param query The query.
-   * @return The max ID specified in the given query (based on the max_id operator).
+   * @pawam q-quewy t-the quewy. (⑅˘꒳˘)
+   * @wetuwn the max id specified i-in the given quewy (based on the max_id opewatow). ( ͡o ω ͡o )
    */
-  public static Optional<Long> getRequestMaxId(Query query) {
-    if (query == null) {
-      return Optional.absent();
+  p-pubwic static optionaw<wong> getwequestmaxid(quewy quewy) {
+    if (quewy == nyuww) {
+      w-wetuwn optionaw.absent();
     }
 
-    IdTimeRanges idTimeRanges = null;
-    try {
-      idTimeRanges = IdTimeRanges.fromQuery(query);
-    } catch (QueryParserException e) {
-      LOG.warn("Exception while getting max_id/until_time from query: " + query, e);
+    idtimewanges i-idtimewanges = n-nyuww;
+    t-twy {
+      idtimewanges = idtimewanges.fwomquewy(quewy);
+    } catch (quewypawsewexception e) {
+      wog.wawn("exception w-whiwe g-getting max_id/untiw_time fwom q-quewy: " + quewy, òωó e-e);
     }
 
-    if (idTimeRanges == null) {
-      // An exception was thrown or the query doesn't accept the boundary operators.
-      return Optional.absent();
+    if (idtimewanges == n-nyuww) {
+      // an exception w-was thwown ow the quewy doesn't accept the b-boundawy opewatows. (⑅˘꒳˘)
+      wetuwn o-optionaw.absent();
     }
 
-    return idTimeRanges.getMaxIDInclusive();
+    wetuwn idtimewanges.getmaxidincwusive();
   }
 
   /**
-   * Returns the max ID specified in the query, based on the until_time operator. The returned ID
-   * is inclusive (that is, the returned response is allowed to have a tweet with this ID).
+   * w-wetuwns t-the max id specified in the quewy, XD based on the untiw_time opewatow. -.- the wetuwned id
+   * is incwusive (that is, :3 the wetuwned w-wesponse is awwowed t-to have a tweet with this id). nyaa~~
    *
-   * If the query is null, could not be parsed or does not have an until_time operator,
-   * Optional.absent() is returned.
+   * i-if t-the quewy is nyuww, 😳 c-couwd nyot be pawsed ow does nyot have an untiw_time opewatow, (⑅˘꒳˘)
+   * o-optionaw.absent() is wetuwned. nyaa~~
    *
-   * @param query The query.
-   * @return The max ID specified in the given query (based on the until_time operator).
+   * @pawam quewy the quewy. OwO
+   * @wetuwn the max id s-specified in the given quewy (based o-on the untiw_time o-opewatow). rawr x3
    */
-  public static Optional<Long> getRequestMaxIdFromUntilTime(Query query) {
-    if (query == null) {
-      return Optional.absent();
+  p-pubwic static optionaw<wong> g-getwequestmaxidfwomuntiwtime(quewy q-quewy) {
+    i-if (quewy == n-nyuww) {
+      wetuwn optionaw.absent();
     }
 
-    IdTimeRanges idTimeRanges = null;
-    try {
-      idTimeRanges = IdTimeRanges.fromQuery(query);
-    } catch (QueryParserException e) {
-      LOG.warn("Exception while getting max_id/until_time from query: " + query, e);
+    idtimewanges i-idtimewanges = n-nyuww;
+    twy {
+      i-idtimewanges = i-idtimewanges.fwomquewy(quewy);
+    } catch (quewypawsewexception e-e) {
+      wog.wawn("exception whiwe getting max_id/untiw_time f-fwom quewy: " + quewy, XD e);
     }
 
-    if (idTimeRanges == null) {
-      // An exception was thrown or the query doesn't accept the boundary operators.
-      return Optional.absent();
+    if (idtimewanges == nyuww) {
+      // an exception w-was thwown ow the quewy doesn't accept the boundawy opewatows. σωσ
+      w-wetuwn optionaw.absent();
     }
 
-    Optional<Integer> queryUntilTimeExclusive = idTimeRanges.getUntilTimeExclusive();
-    Optional<Long> maxId = Optional.absent();
-    if (queryUntilTimeExclusive.isPresent()) {
-      long timestampMillis = queryUntilTimeExclusive.get() * 1000L;
-      if (SnowflakeIdParser.isUsableSnowflakeTimestamp(timestampMillis)) {
-        // Convert timestampMillis to an ID, and subtract 1, because the until_time operator is
-        // exclusive, and we need to return an inclusive max ID.
-        maxId = Optional.of(SnowflakeIdParser.generateValidStatusId(timestampMillis, 0) - 1);
+    o-optionaw<integew> quewyuntiwtimeexcwusive = i-idtimewanges.getuntiwtimeexcwusive();
+    optionaw<wong> m-maxid = optionaw.absent();
+    if (quewyuntiwtimeexcwusive.ispwesent()) {
+      w-wong timestampmiwwis = q-quewyuntiwtimeexcwusive.get() * 1000w;
+      if (snowfwakeidpawsew.isusabwesnowfwaketimestamp(timestampmiwwis)) {
+        // convewt timestampmiwwis to an id, (U ᵕ U❁) and subtwact 1, (U ﹏ U) because t-the untiw_time opewatow is
+        // e-excwusive, :3 and we nyeed to w-wetuwn an incwusive m-max id. ( ͡o ω ͡o )
+        maxid = optionaw.of(snowfwakeidpawsew.genewatevawidstatusid(timestampmiwwis, σωσ 0) - 1);
       }
     }
-    return maxId;
+    wetuwn m-maxid;
   }
 
   /**
-   * Creates a copy of the given EarlybirdRequest and unsets all fields that are used
-   * only by the SuperRoot.
+   * c-cweates a copy of the g-given eawwybiwdwequest a-and unsets aww fiewds that awe used
+   * onwy by the supewwoot. >w<
    */
-  public static EarlybirdRequest unsetSuperRootFields(
-      EarlybirdRequest request, boolean unsetFollowedUserIds) {
-    EarlybirdRequest newRequest = request.deepCopy();
-    newRequest.unsetGetOlderResults();
-    newRequest.unsetGetProtectedTweetsOnly();
-    if (unsetFollowedUserIds) {
-      newRequest.unsetFollowedUserIds();
+  pubwic static eawwybiwdwequest unsetsupewwootfiewds(
+      e-eawwybiwdwequest w-wequest, 😳😳😳 b-boowean unsetfowwowedusewids) {
+    eawwybiwdwequest n-nyewwequest = w-wequest.deepcopy();
+    nyewwequest.unsetgetowdewwesuwts();
+    n-nyewwequest.unsetgetpwotectedtweetsonwy();
+    if (unsetfowwowedusewids) {
+      nyewwequest.unsetfowwowedusewids();
     }
-    newRequest.unsetAdjustedProtectedRequestParams();
-    newRequest.unsetAdjustedFullArchiveRequestParams();
-    return newRequest;
+    nyewwequest.unsetadjustedpwotectedwequestpawams();
+    nyewwequest.unsetadjustedfuwwawchivewequestpawams();
+    w-wetuwn nyewwequest;
   }
 }

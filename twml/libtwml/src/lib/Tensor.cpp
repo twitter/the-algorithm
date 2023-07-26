@@ -1,191 +1,191 @@
-#include "internal/error.h"
-#include <twml/Tensor.h>
-#include <twml/Type.h>
-#include <type_traits>
-#include <algorithm>
-#include <numeric>
+#incwude "intewnaw/ewwow.h"
+#incwude <twmw/tensow.h>
+#incwude <twmw/type.h>
+#incwude <type_twaits>
+#incwude <awgowithm>
+#incwude <numewic>
 
-namespace twml {
+nyamespace twmw {
 
-using std::vector;
+using s-std::vectow;
 
-Tensor::Tensor(void *data, int ndims, const uint64_t *dims, const uint64_t *strides, twml_type type) :
-    m_type(type), m_data(data),
-    m_dims(dims, dims + ndims),
-    m_strides(strides, strides + ndims) {
+t-tensow::tensow(void *data, nyaa~~ i-int n-nydims, /(^•ω•^) const uint64_t *dims, (U ﹏ U) const u-uint64_t *stwides, 😳😳😳 t-twmw_type t-type) :
+    m_type(type), >w< m-m_data(data), XD
+    m_dims(dims, o.O dims + nydims), mya
+    m_stwides(stwides, 🥺 stwides + nydims) {
 }
 
-Tensor::Tensor(void *data,
-               const vector<uint64_t> &dims,
-               const vector<uint64_t> &strides,
-               twml_type type) :
-    m_type(type), m_data(data),
-    m_dims(dims.begin(), dims.end()),
-    m_strides(strides.begin(), strides.end()) {
-  if (dims.size() != strides.size()) {
-    throw twml::Error(TWML_ERR_SIZE, "The number size of dims and strides don't match");
+t-tensow::tensow(void *data, ^^;;
+               const vectow<uint64_t> &dims, :3
+               const vectow<uint64_t> &stwides, (U ﹏ U)
+               t-twmw_type type) :
+    m_type(type), OwO m-m_data(data), 😳😳😳
+    m_dims(dims.begin(), (ˆ ﻌ ˆ)♡ dims.end()),
+    m_stwides(stwides.begin(), XD s-stwides.end()) {
+  if (dims.size() != s-stwides.size()) {
+    t-thwow twmw::ewwow(twmw_eww_size, "the nyumbew size of dims and stwides don't match");
   }
 }
 
-int Tensor::getNumDims() const {
-  return static_cast<int>(m_dims.size());
+i-int tensow::getnumdims() const {
+  wetuwn static_cast<int>(m_dims.size());
 }
 
-uint64_t Tensor::getDim(int id) const {
-  if (id >= this->getNumDims()) {
-    throw twml::Error(TWML_ERR_SIZE, "Requested dimension exceeds tensor dimension");
+uint64_t tensow::getdim(int i-id) const {
+  if (id >= t-this->getnumdims()) {
+    t-thwow t-twmw::ewwow(twmw_eww_size, (ˆ ﻌ ˆ)♡ "wequested d-dimension exceeds tensow dimension");
   }
-  return m_dims[id];
+  w-wetuwn m_dims[id];
 }
 
-uint64_t Tensor::getStride(int id) const {
-  if (id >= this->getNumDims()) {
-    throw twml::Error(TWML_ERR_SIZE, "Requested dimension exceeds tensor dimension");
+uint64_t tensow::getstwide(int i-id) const {
+  if (id >= this->getnumdims()) {
+    thwow twmw::ewwow(twmw_eww_size, ( ͡o ω ͡o ) "wequested dimension e-exceeds tensow dimension");
   }
-  return m_strides[id];
+  w-wetuwn m_stwides[id];
 }
 
-uint64_t Tensor::getNumElements() const {
-  return std::accumulate(m_dims.begin(), m_dims.end(), 1, std::multiplies<int>());
+u-uint64_t t-tensow::getnumewements() const {
+  wetuwn std::accumuwate(m_dims.begin(), rawr x3 m_dims.end(), nyaa~~ 1, std::muwtipwies<int>());
 }
 
-twml_type Tensor::getType() const {
-  return m_type;
+t-twmw_type t-tensow::gettype() const {
+  w-wetuwn m_type;
 }
 
-twml_tensor Tensor::getHandle() {
-  return reinterpret_cast<twml_tensor>(this);
+t-twmw_tensow tensow::gethandwe() {
+  w-wetuwn weintewpwet_cast<twmw_tensow>(this);
 }
 
-const twml_tensor Tensor::getHandle() const {
-  return reinterpret_cast<const twml_tensor>(const_cast<Tensor *>(this));
+const twmw_tensow t-tensow::gethandwe() const {
+  wetuwn weintewpwet_cast<const t-twmw_tensow>(const_cast<tensow *>(this));
 }
 
-const Tensor *getConstTensor(const twml_tensor t) {
-  return reinterpret_cast<const Tensor *>(t);
+const tensow *getconsttensow(const t-twmw_tensow t) {
+  wetuwn weintewpwet_cast<const t-tensow *>(t);
 }
 
-Tensor *getTensor(twml_tensor t) {
-  return reinterpret_cast<Tensor *>(t);
+t-tensow *gettensow(twmw_tensow t) {
+  wetuwn weintewpwet_cast<tensow *>(t);
 }
 
-#define INSTANTIATE(T)                                  \
-  template<> TWMLAPI T *Tensor::getData() {             \
-    if ((twml_type)Type<T>::type != m_type) {           \
-      throw twml::Error(TWML_ERR_TYPE,                  \
-                        "Requested invalid type");      \
+#define instantiate(t)                                  \
+  tempwate<> twmwapi t *tensow::getdata() {             \
+    if ((twmw_type)type<t>::type != m-m_type) {           \
+      t-thwow twmw::ewwow(twmw_eww_type, >_<                  \
+                        "wequested invawid type");      \
     }                                                   \
-    return reinterpret_cast<T *>(m_data);               \
+    w-wetuwn weintewpwet_cast<t *>(m_data);               \
   }                                                     \
-  template<> TWMLAPI const T *Tensor::getData() const { \
-    if ((twml_type)Type<T>::type != m_type) {           \
-      throw twml::Error(TWML_ERR_TYPE,                  \
-                        "Requested invalid type");      \
+  t-tempwate<> t-twmwapi const t *tensow::getdata() const { \
+    if ((twmw_type)type<t>::type != m-m_type) {           \
+      thwow twmw::ewwow(twmw_eww_type, ^^;;                  \
+                        "wequested invawid type");      \
     }                                                   \
-    return (const T *)m_data;                           \
+    wetuwn (const t *)m_data;                           \
   }                                                     \
 
-INSTANTIATE(int32_t)
-INSTANTIATE(int64_t)
-INSTANTIATE(int8_t)
-INSTANTIATE(uint8_t)
-INSTANTIATE(float)
-INSTANTIATE(double)
-INSTANTIATE(bool)
-INSTANTIATE(std::string)
+i-instantiate(int32_t)
+instantiate(int64_t)
+i-instantiate(int8_t)
+i-instantiate(uint8_t)
+instantiate(fwoat)
+i-instantiate(doubwe)
+instantiate(boow)
+i-instantiate(std::stwing)
 
-// This is used for the C api. No checks needed for void.
-template<> TWMLAPI void *Tensor::getData() {
-  return m_data;
+// t-this is used f-fow the c api. (ˆ ﻌ ˆ)♡ n-nyo checks nyeeded fow void. ^^;;
+tempwate<> twmwapi v-void *tensow::getdata() {
+  w-wetuwn m-m_data;
 }
-template<> TWMLAPI const void *Tensor::getData() const {
-  return (const void *)m_data;
+tempwate<> t-twmwapi c-const void *tensow::getdata() const {
+  wetuwn (const void *)m_data;
 }
 
-std::string getTypeName(twml_type type) {
+std::stwing g-gettypename(twmw_type type) {
   switch (type) {
-    case TWML_TYPE_FLOAT32 : return "float32";
-    case TWML_TYPE_FLOAT64 : return "float64";
-    case TWML_TYPE_INT32   : return "int32";
-    case TWML_TYPE_INT64   : return "int64";
-    case TWML_TYPE_INT8    : return "int8";
-    case TWML_TYPE_UINT8   : return "uint8";
-    case TWML_TYPE_BOOL    : return "bool";
-    case TWML_TYPE_STRING  : return "string";
-    case TWML_TYPE_UNKNOWN : return "Unknown type";
+    case twmw_type_fwoat32 : wetuwn "fwoat32";
+    case twmw_type_fwoat64 : w-wetuwn "fwoat64";
+    case twmw_type_int32   : wetuwn "int32";
+    case twmw_type_int64   : w-wetuwn "int64";
+    c-case twmw_type_int8    : w-wetuwn "int8";
+    case t-twmw_type_uint8   : wetuwn "uint8";
+    c-case twmw_type_boow    : w-wetuwn "boow";
+    case twmw_type_stwing  : wetuwn "stwing";
+    case twmw_type_unknown : wetuwn "unknown type";
   }
-  throw twml::Error(TWML_ERR_TYPE, "Uknown type");
+  thwow t-twmw::ewwow(twmw_eww_type, (⑅˘꒳˘) "uknown type");
 }
 
-uint64_t getSizeOf(twml_type dtype) {
-  switch (dtype) {
-    case TWML_TYPE_FLOAT  : return 4;
-    case TWML_TYPE_DOUBLE : return 8;
-    case TWML_TYPE_INT64  : return 8;
-    case TWML_TYPE_INT32  : return 4;
-    case TWML_TYPE_UINT8  : return 1;
-    case TWML_TYPE_BOOL   : return 1;
-    case TWML_TYPE_INT8   : return 1;
-    case TWML_TYPE_STRING :
-      throw twml::Error(TWML_ERR_THRIFT, "getSizeOf not supported for strings");
-    case TWML_TYPE_UNKNOWN:
-      throw twml::Error(TWML_ERR_THRIFT, "Can't get size of unknown types");
+uint64_t g-getsizeof(twmw_type dtype) {
+  s-switch (dtype) {
+    c-case twmw_type_fwoat  : wetuwn 4;
+    c-case twmw_type_doubwe : w-wetuwn 8;
+    case twmw_type_int64  : wetuwn 8;
+    c-case t-twmw_type_int32  : wetuwn 4;
+    case twmw_type_uint8  : wetuwn 1;
+    case twmw_type_boow   : w-wetuwn 1;
+    case t-twmw_type_int8   : w-wetuwn 1;
+    case twmw_type_stwing :
+      t-thwow twmw::ewwow(twmw_eww_thwift, rawr x3 "getsizeof n-nyot suppowted fow stwings");
+    c-case twmw_type_unknown:
+      thwow twmw::ewwow(twmw_eww_thwift, (///ˬ///✿) "can't get size of unknown types");
   }
-  throw twml::Error(TWML_ERR_THRIFT, "Invalid twml_type");
+  thwow t-twmw::ewwow(twmw_eww_thwift, 🥺 "invawid t-twmw_type");
 }
 
-}  // namespace twml
+}  // nyamespace twmw
 
-twml_err twml_tensor_create(twml_tensor *t, void *data, int ndims, uint64_t *dims,
-              uint64_t *strides, twml_type type) {
-  HANDLE_EXCEPTIONS(
-    twml::Tensor *res =  new twml::Tensor(data, ndims, dims, strides, type);
-    *t = reinterpret_cast<twml_tensor>(res););
-  return TWML_ERR_NONE;
+twmw_eww twmw_tensow_cweate(twmw_tensow *t, >_< v-void *data, UwU i-int nydims, >_< uint64_t *dims, -.-
+              uint64_t *stwides, mya twmw_type t-type) {
+  handwe_exceptions(
+    twmw::tensow *wes =  nyew twmw::tensow(data, >w< nydims, dims, stwides, (U ﹏ U) t-type);
+    *t = weintewpwet_cast<twmw_tensow>(wes););
+  wetuwn t-twmw_eww_none;
 }
 
-twml_err twml_tensor_delete(const twml_tensor t) {
-  HANDLE_EXCEPTIONS(
-    delete twml::getConstTensor(t););
-  return TWML_ERR_NONE;
+t-twmw_eww twmw_tensow_dewete(const twmw_tensow t) {
+  handwe_exceptions(
+    dewete twmw::getconsttensow(t););
+  w-wetuwn twmw_eww_none;
 }
 
-twml_err twml_tensor_get_type(twml_type *type, const twml_tensor t) {
-  HANDLE_EXCEPTIONS(
-    *type = twml::getConstTensor(t)->getType(););
-  return TWML_ERR_NONE;
+twmw_eww t-twmw_tensow_get_type(twmw_type *type, 😳😳😳 const twmw_tensow t) {
+  handwe_exceptions(
+    *type = t-twmw::getconsttensow(t)->gettype(););
+  wetuwn t-twmw_eww_none;
 }
 
-twml_err twml_tensor_get_data(void **data, const twml_tensor t) {
-  HANDLE_EXCEPTIONS(
-    *data = twml::getTensor(t)->getData<void>(););
-  return TWML_ERR_NONE;
+twmw_eww twmw_tensow_get_data(void **data, o.O const twmw_tensow t-t) {
+  handwe_exceptions(
+    *data = twmw::gettensow(t)->getdata<void>(););
+  w-wetuwn twmw_eww_none;
 }
 
-twml_err twml_tensor_get_dim(uint64_t *dim, const twml_tensor t, int id) {
-  HANDLE_EXCEPTIONS(
-    const twml::Tensor *tensor = twml::getConstTensor(t);
-    *dim = tensor->getDim(id););
-  return TWML_ERR_NONE;
+t-twmw_eww twmw_tensow_get_dim(uint64_t *dim, c-const twmw_tensow t, òωó int i-id) {
+  handwe_exceptions(
+    c-const twmw::tensow *tensow = t-twmw::getconsttensow(t);
+    *dim = tensow->getdim(id););
+  w-wetuwn t-twmw_eww_none;
 }
 
-twml_err twml_tensor_get_stride(uint64_t *stride, const twml_tensor t, int id) {
-  HANDLE_EXCEPTIONS(
-    const twml::Tensor *tensor = twml::getConstTensor(t);
-    *stride = tensor->getStride(id););
-  return TWML_ERR_NONE;
+twmw_eww twmw_tensow_get_stwide(uint64_t *stwide, 😳😳😳 const twmw_tensow t-t, σωσ int id) {
+  h-handwe_exceptions(
+    c-const twmw::tensow *tensow = twmw::getconsttensow(t);
+    *stwide = t-tensow->getstwide(id););
+  wetuwn t-twmw_eww_none;
 }
 
-twml_err twml_tensor_get_num_dims(int *ndim, const twml_tensor t) {
-  HANDLE_EXCEPTIONS(
-    const twml::Tensor *tensor = twml::getConstTensor(t);
-    *ndim = tensor->getNumDims(););
-  return TWML_ERR_NONE;
+t-twmw_eww twmw_tensow_get_num_dims(int *ndim, (⑅˘꒳˘) const twmw_tensow t) {
+  handwe_exceptions(
+    const twmw::tensow *tensow = t-twmw::getconsttensow(t);
+    *ndim = t-tensow->getnumdims(););
+  w-wetuwn t-twmw_eww_none;
 }
 
-twml_err twml_tensor_get_num_elements(uint64_t *nelements, const twml_tensor t) {
-  HANDLE_EXCEPTIONS(
-    const twml::Tensor *tensor = twml::getConstTensor(t);
-    *nelements = tensor->getNumElements(););
-  return TWML_ERR_NONE;
+twmw_eww twmw_tensow_get_num_ewements(uint64_t *newements, (///ˬ///✿) c-const twmw_tensow t) {
+  handwe_exceptions(
+    const twmw::tensow *tensow = twmw::getconsttensow(t);
+    *newements = tensow->getnumewements(););
+  wetuwn twmw_eww_none;
 }

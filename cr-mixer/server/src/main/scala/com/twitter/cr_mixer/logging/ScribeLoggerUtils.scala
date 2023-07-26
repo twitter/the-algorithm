@@ -1,41 +1,41 @@
-package com.twitter.cr_mixer.logging
+package com.twittew.cw_mixew.wogging
 
-import com.twitter.cr_mixer.featureswitch.CrMixerImpressedBuckets
-import com.twitter.cr_mixer.thriftscala.ImpressesedBucketInfo
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.logging.Logger
-import com.twitter.scrooge.BinaryThriftStructSerializer
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.scrooge.ThriftStructCodec
+impowt com.twittew.cw_mixew.featuweswitch.cwmixewimpwessedbuckets
+i-impowt com.twittew.cw_mixew.thwiftscawa.impwessesedbucketinfo
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.utiw.statsutiw
+i-impowt com.twittew.wogging.woggew
+i-impowt com.twittew.scwooge.binawythwiftstwuctsewiawizew
+impowt c-com.twittew.scwooge.thwiftstwuct
+i-impowt com.twittew.scwooge.thwiftstwuctcodec
 
-object ScribeLoggerUtils {
+o-object scwibewoggewutiws {
 
   /**
-   * Handles base64-encoding, serialization, and publish.
+   * handwes base64-encoding, rawr x3 sewiawization, mya and pubwish. nyaa~~
    */
-  private[logging] def publish[T <: ThriftStruct](
-    logger: Logger,
-    codec: ThriftStructCodec[T],
-    message: T
-  ): Unit = {
-    logger.info(BinaryThriftStructSerializer(codec).toString(message))
+  p-pwivate[wogging] def pubwish[t <: thwiftstwuct](
+    w-woggew: woggew, (⑅˘꒳˘)
+    c-codec: thwiftstwuctcodec[t], rawr x3
+    message: t
+  ): unit = {
+    woggew.info(binawythwiftstwuctsewiawizew(codec).tostwing(message))
   }
 
-  private[logging] def getImpressedBuckets(
-    scopedStats: StatsReceiver
-  ): Option[List[ImpressesedBucketInfo]] = {
-    StatsUtil.trackNonFutureBlockStats(scopedStats.scope("getImpressedBuckets")) {
-      CrMixerImpressedBuckets.getAllImpressedBuckets.map { listBuckets =>
-        val listBucketsSet = listBuckets.toSet
-        scopedStats.stat("impressed_buckets").add(listBucketsSet.size)
-        listBucketsSet.map { bucket =>
-          ImpressesedBucketInfo(
-            experimentId = bucket.experiment.settings.experimentId.getOrElse(-1L),
-            bucketName = bucket.name,
-            version = bucket.experiment.settings.version,
+  p-pwivate[wogging] def getimpwessedbuckets(
+    s-scopedstats: s-statsweceivew
+  ): option[wist[impwessesedbucketinfo]] = {
+    statsutiw.twacknonfutuwebwockstats(scopedstats.scope("getimpwessedbuckets")) {
+      cwmixewimpwessedbuckets.getawwimpwessedbuckets.map { wistbuckets =>
+        v-vaw wistbucketsset = wistbuckets.toset
+        scopedstats.stat("impwessed_buckets").add(wistbucketsset.size)
+        wistbucketsset.map { bucket =>
+          i-impwessesedbucketinfo(
+            expewimentid = b-bucket.expewiment.settings.expewimentid.getowewse(-1w),
+            b-bucketname = b-bucket.name, (✿oωo)
+            v-vewsion = bucket.expewiment.settings.vewsion, (ˆ ﻌ ˆ)♡
           )
-        }.toList
+        }.towist
       }
     }
   }

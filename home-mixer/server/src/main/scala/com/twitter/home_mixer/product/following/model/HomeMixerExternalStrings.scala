@@ -1,87 +1,87 @@
-package com.twitter.home_mixer.product.following.model
+package com.twittew.home_mixew.pwoduct.fowwowing.modew
 
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.ExternalStringRegistry
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.pwoduct.guice.scope.pwoductscoped
+impowt c-com.twittew.stwingcentew.cwient.extewnawstwingwegistwy
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.pwovidew
+i-impowt javax.inject.singweton
 
-@Singleton
-class HomeMixerExternalStrings @Inject() (
-  @ProductScoped externalStringRegistryProvider: Provider[ExternalStringRegistry]) {
-  val seeNewTweetsString =
-    externalStringRegistryProvider.get().createProdString("SeeNewTweets")
-  val tweetedString =
-    externalStringRegistryProvider.get().createProdString("Tweeted")
-  val muteUserString =
-    externalStringRegistryProvider.get().createProdString("Feedback.muteUser")
-  val blockUserString = externalStringRegistryProvider.get().createProdString("Feedback.blockUser")
-  val unfollowUserString =
-    externalStringRegistryProvider.get().createProdString("Feedback.unfollowUser")
-  val unfollowUserConfirmationString =
-    externalStringRegistryProvider.get().createProdString("Feedback.unfollowUserConfirmation")
-  val reportTweetString =
-    externalStringRegistryProvider.get().createProdString("Feedback.reportTweet")
-  val dontLikeString = externalStringRegistryProvider.get().createProdString("Feedback.dontLike")
-  val dontLikeConfirmationString =
-    externalStringRegistryProvider.get().createProdString("Feedback.dontLikeConfirmation")
-  val showFewerTweetsString =
-    externalStringRegistryProvider.get().createProdString("Feedback.showFewerTweets")
-  val showFewerTweetsConfirmationString =
-    externalStringRegistryProvider.get().createProdString("Feedback.showFewerTweetsConfirmation")
-  val showFewerRetweetsString =
-    externalStringRegistryProvider.get().createProdString("Feedback.showFewerRetweets")
-  val showFewerRetweetsConfirmationString =
-    externalStringRegistryProvider.get().createProdString("Feedback.showFewerRetweetsConfirmation")
-  val notRelevantString =
-    externalStringRegistryProvider.get().createProdString("Feedback.notRelevant")
-  val notRelevantConfirmationString =
-    externalStringRegistryProvider.get().createProdString("Feedback.notRelevantConfirmation")
+@singweton
+cwass h-homemixewextewnawstwings @inject() (
+  @pwoductscoped e-extewnawstwingwegistwypwovidew: p-pwovidew[extewnawstwingwegistwy]) {
+  vaw seenewtweetsstwing =
+    extewnawstwingwegistwypwovidew.get().cweatepwodstwing("seenewtweets")
+  vaw tweetedstwing =
+    extewnawstwingwegistwypwovidew.get().cweatepwodstwing("tweeted")
+  v-vaw muteusewstwing =
+    extewnawstwingwegistwypwovidew.get().cweatepwodstwing("feedback.muteusew")
+  vaw bwockusewstwing = e-extewnawstwingwegistwypwovidew.get().cweatepwodstwing("feedback.bwockusew")
+  vaw unfowwowusewstwing =
+    e-extewnawstwingwegistwypwovidew.get().cweatepwodstwing("feedback.unfowwowusew")
+  vaw unfowwowusewconfiwmationstwing =
+    extewnawstwingwegistwypwovidew.get().cweatepwodstwing("feedback.unfowwowusewconfiwmation")
+  vaw wepowttweetstwing =
+    e-extewnawstwingwegistwypwovidew.get().cweatepwodstwing("feedback.wepowttweet")
+  vaw dontwikestwing = e-extewnawstwingwegistwypwovidew.get().cweatepwodstwing("feedback.dontwike")
+  v-vaw dontwikeconfiwmationstwing =
+    extewnawstwingwegistwypwovidew.get().cweatepwodstwing("feedback.dontwikeconfiwmation")
+  vaw showfewewtweetsstwing =
+    extewnawstwingwegistwypwovidew.get().cweatepwodstwing("feedback.showfewewtweets")
+  vaw s-showfewewtweetsconfiwmationstwing =
+    extewnawstwingwegistwypwovidew.get().cweatepwodstwing("feedback.showfewewtweetsconfiwmation")
+  vaw showfewewwetweetsstwing =
+    extewnawstwingwegistwypwovidew.get().cweatepwodstwing("feedback.showfewewwetweets")
+  vaw showfewewwetweetsconfiwmationstwing =
+    e-extewnawstwingwegistwypwovidew.get().cweatepwodstwing("feedback.showfewewwetweetsconfiwmation")
+  vaw nyotwewevantstwing =
+    e-extewnawstwingwegistwypwovidew.get().cweatepwodstwing("feedback.notwewevant")
+  v-vaw nyotwewevantconfiwmationstwing =
+    e-extewnawstwingwegistwypwovidew.get().cweatepwodstwing("feedback.notwewevantconfiwmation")
 
-  val socialContextOneUserLikedString =
-    externalStringRegistryProvider.get().createProdString("SocialContext.oneUserLiked")
-  val socialContextTwoUsersLikedString =
-    externalStringRegistryProvider.get().createProdString("SocialContext.twoUsersLiked")
-  val socialContextMoreUsersLikedString =
-    externalStringRegistryProvider.get().createProdString("SocialContext.moreUsersLiked")
-  val socialContextLikedByTimelineTitle =
-    externalStringRegistryProvider.get().createProdString("SocialContext.likedByTimelineTitle")
+  v-vaw sociawcontextoneusewwikedstwing =
+    extewnawstwingwegistwypwovidew.get().cweatepwodstwing("sociawcontext.oneusewwiked")
+  vaw sociawcontexttwousewswikedstwing =
+    e-extewnawstwingwegistwypwovidew.get().cweatepwodstwing("sociawcontext.twousewswiked")
+  vaw sociawcontextmoweusewswikedstwing =
+    extewnawstwingwegistwypwovidew.get().cweatepwodstwing("sociawcontext.moweusewswiked")
+  v-vaw sociawcontextwikedbytimewinetitwe =
+    extewnawstwingwegistwypwovidew.get().cweatepwodstwing("sociawcontext.wikedbytimewinetitwe")
 
-  val socialContextOneUserFollowsString =
-    externalStringRegistryProvider.get().createProdString("SocialContext.oneUserFollows")
-  val socialContextTwoUsersFollowString =
-    externalStringRegistryProvider.get().createProdString("SocialContext.twoUsersFollow")
-  val socialContextMoreUsersFollowString =
-    externalStringRegistryProvider.get().createProdString("SocialContext.moreUsersFollow")
-  val socialContextFollowedByTimelineTitle =
-    externalStringRegistryProvider.get().createProdString("SocialContext.followedByTimelineTitle")
+  vaw sociawcontextoneusewfowwowsstwing =
+    extewnawstwingwegistwypwovidew.get().cweatepwodstwing("sociawcontext.oneusewfowwows")
+  vaw sociawcontexttwousewsfowwowstwing =
+    e-extewnawstwingwegistwypwovidew.get().cweatepwodstwing("sociawcontext.twousewsfowwow")
+  vaw sociawcontextmoweusewsfowwowstwing =
+    e-extewnawstwingwegistwypwovidew.get().cweatepwodstwing("sociawcontext.moweusewsfowwow")
+  v-vaw sociawcontextfowwowedbytimewinetitwe =
+    e-extewnawstwingwegistwypwovidew.get().cweatepwodstwing("sociawcontext.fowwowedbytimewinetitwe")
 
-  val socialContextYouMightLikeString =
-    externalStringRegistryProvider.get().createProdString("SocialContext.youMightLike")
+  vaw sociawcontextyoumightwikestwing =
+    extewnawstwingwegistwypwovidew.get().cweatepwodstwing("sociawcontext.youmightwike")
 
-  val socialContextExtendedReply =
-    externalStringRegistryProvider.get().createProdString("SocialContext.extendedReply")
-  val socialContextReceivedReply =
-    externalStringRegistryProvider.get().createProdString("SocialContext.receivedReply")
+  vaw sociawcontextextendedwepwy =
+    e-extewnawstwingwegistwypwovidew.get().cweatepwodstwing("sociawcontext.extendedwepwy")
+  v-vaw sociawcontextweceivedwepwy =
+    extewnawstwingwegistwypwovidew.get().cweatepwodstwing("sociawcontext.weceivedwepwy")
 
-  val socialContextPopularVideoString =
-    externalStringRegistryProvider.get().createProdString("SocialContext.popularVideo")
+  v-vaw sociawcontextpopuwawvideostwing =
+    e-extewnawstwingwegistwypwovidew.get().cweatepwodstwing("sociawcontext.popuwawvideo")
 
-  val socialContextPopularInYourAreaString =
-    externalStringRegistryProvider.get().createProdString("PopgeoTweet.socialProof")
+  vaw sociawcontextpopuwawinyouwaweastwing =
+    e-extewnawstwingwegistwypwovidew.get().cweatepwodstwing("popgeotweet.sociawpwoof")
 
-  val listToFollowModuleHeaderString =
-    externalStringRegistryProvider.get().createProdString("ListToFollowModule.header")
-  val listToFollowModuleFooterString =
-    externalStringRegistryProvider.get().createProdString("ListToFollowModule.footer")
-  val pinnedListsModuleHeaderString =
-    externalStringRegistryProvider.get().createProdString("PinnedListModule.header")
-  val pinnedListsModuleEmptyStateMessageString =
-    externalStringRegistryProvider.get().createProdString("PinnedListModule.emptyStateMessage")
+  vaw wisttofowwowmoduweheadewstwing =
+    e-extewnawstwingwegistwypwovidew.get().cweatepwodstwing("wisttofowwowmoduwe.headew")
+  vaw wisttofowwowmoduwefootewstwing =
+    extewnawstwingwegistwypwovidew.get().cweatepwodstwing("wisttofowwowmoduwe.footew")
+  v-vaw pinnedwistsmoduweheadewstwing =
+    extewnawstwingwegistwypwovidew.get().cweatepwodstwing("pinnedwistmoduwe.headew")
+  v-vaw pinnedwistsmoduweemptystatemessagestwing =
+    extewnawstwingwegistwypwovidew.get().cweatepwodstwing("pinnedwistmoduwe.emptystatemessage")
 
-  val ownedSubscribedListsModuleHeaderString =
-    externalStringRegistryProvider.get().createProdString("OwnedSubscribedListModule.header")
-  val ownedSubscribedListsModuleEmptyStateMessageString =
-    externalStringRegistryProvider
-      .get().createProdString("OwnedSubscribedListModule.emptyStateMessage")
+  v-vaw o-ownedsubscwibedwistsmoduweheadewstwing =
+    extewnawstwingwegistwypwovidew.get().cweatepwodstwing("ownedsubscwibedwistmoduwe.headew")
+  vaw ownedsubscwibedwistsmoduweemptystatemessagestwing =
+    extewnawstwingwegistwypwovidew
+      .get().cweatepwodstwing("ownedsubscwibedwistmoduwe.emptystatemessage")
 }

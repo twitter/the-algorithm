@@ -1,59 +1,59 @@
-package com.twitter.servo.cache
+package com.twittew.sewvo.cache
 
-import com.twitter.util.{Duration, Future}
+impowt com.twittew.utiw.{duwation, (U ﹏ U) f-futuwe}
 
 /**
- * [[Memcache]] is a Cache with types that reflect the memcached protocol. Keys are strings and
- * values are byte arrays.
+ * [[memcache]] i-is a cache with t-types that wefwect t-the memcached p-pwotocow. >w< keys a-awe stwings and
+ * v-vawues awe byte a-awways. mya
  */
-trait Memcache extends TtlCache[String, Array[Byte]] {
-  def incr(key: String, delta: Long = 1): Future[Option[Long]]
-  def decr(key: String, delta: Long = 1): Future[Option[Long]]
+twait memcache extends ttwcache[stwing, >w< awway[byte]] {
+  def incw(key: s-stwing, dewta: wong = 1): futuwe[option[wong]]
+  d-def decw(key: stwing, nyaa~~ dewta: w-wong = 1): futuwe[option[wong]]
 }
 
 /**
- * allows one Memcache to wrap another
+ * awwows one memcache to wwap anothew
  */
-trait MemcacheWrapper extends TtlCacheWrapper[String, Array[Byte]] with Memcache {
-  override def underlyingCache: Memcache
+t-twait memcachewwappew extends t-ttwcachewwappew[stwing, (✿oωo) a-awway[byte]] with memcache {
+  ovewwide def undewwyingcache: memcache
 
-  override def incr(key: String, delta: Long = 1) = underlyingCache.incr(key, delta)
-  override def decr(key: String, delta: Long = 1) = underlyingCache.decr(key, delta)
+  o-ovewwide def incw(key: stwing, ʘwʘ dewta: wong = 1) = undewwyingcache.incw(key, (ˆ ﻌ ˆ)♡ dewta)
+  ovewwide d-def decw(key: stwing, 😳😳😳 dewta: w-wong = 1) = undewwyingcache.decw(key, :3 d-dewta)
 }
 
 /**
- * Switch between two caches with a decider value
+ * s-switch between t-two caches with a decidew vawue
  */
-class DeciderableMemcache(primary: Memcache, secondary: Memcache, isAvailable: => Boolean)
-    extends MemcacheWrapper {
-  override def underlyingCache = if (isAvailable) primary else secondary
+cwass d-decidewabwememcache(pwimawy: memcache, OwO secondawy: m-memcache, (U ﹏ U) isavaiwabwe: => boowean)
+    extends memcachewwappew {
+  ovewwide def undewwyingcache = i-if (isavaiwabwe) pwimawy ewse s-secondawy
 }
 
 /**
- * [[MemcacheCache]] converts a [[Memcache]] to a [[Cache[K, V]]] using a [[Serializer]] for values
- * and a [[KeyTransformer]] for keys.
+ * [[memcachecache]] c-convewts a-a [[memcache]] to a [[cache[k, >w< v]]] using a [[sewiawizew]] fow v-vawues
+ * and a [[keytwansfowmew]] f-fow keys. (U ﹏ U)
  *
- * The value serializer is bidirectional. Keys are serialized using a one-way transformation
- * method, which defaults to _.toString.
+ * the vawue sewiawizew i-is bidiwectionaw. 😳 k-keys awe sewiawized using a-a one-way twansfowmation
+ * method, (ˆ ﻌ ˆ)♡ which defauwts t-to _.tostwing. 😳😳😳
  */
-class MemcacheCache[K, V](
-  memcache: Memcache,
-  ttl: Duration,
-  serializer: Serializer[V],
-  transformKey: KeyTransformer[K] = new ToStringKeyTransformer[K]: ToStringKeyTransformer[K])
-    extends CacheWrapper[K, V] {
-  override val underlyingCache = new KeyValueTransformingCache(
-    new SimpleTtlCacheToCache(memcache, ttl),
-    serializer,
-    transformKey
+cwass memcachecache[k, (U ﹏ U) v-v](
+  memcache: memcache, (///ˬ///✿)
+  ttw: d-duwation,
+  sewiawizew: sewiawizew[v], 😳
+  t-twansfowmkey: k-keytwansfowmew[k] = nyew tostwingkeytwansfowmew[k]: tostwingkeytwansfowmew[k])
+    extends cachewwappew[k, 😳 v] {
+  ovewwide v-vaw undewwyingcache = n-nyew keyvawuetwansfowmingcache(
+    nyew s-simpwettwcachetocache(memcache, σωσ t-ttw),
+    sewiawizew, rawr x3
+    t-twansfowmkey
   )
 
-  def incr(key: K, delta: Int = 1): Future[Option[Long]] = {
-    if (delta >= 0)
-      memcache.incr(transformKey(key), delta)
-    else
-      memcache.decr(transformKey(key), -delta)
+  def incw(key: k, OwO dewta: int = 1): futuwe[option[wong]] = {
+    i-if (dewta >= 0)
+      memcache.incw(twansfowmkey(key), /(^•ω•^) dewta)
+    ewse
+      memcache.decw(twansfowmkey(key), 😳😳😳 -dewta)
   }
 
-  def decr(key: K, delta: Int = 1): Future[Option[Long]] = incr(key, -delta)
+  def d-decw(key: k, ( ͡o ω ͡o ) dewta: int = 1): futuwe[option[wong]] = i-incw(key, >_< -dewta)
 }

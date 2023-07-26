@@ -1,57 +1,57 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twittew.simcwustews_v2.summingbiwd.common
 
-import com.twitter.algebird.DecayedValue
-import com.twitter.algebird.DecayedValueMonoid
-import com.twitter.algebird.Monoid
-import com.twitter.algebird_internal.injection.DecayedValueImplicits
-import com.twitter.algebird_internal.thriftscala.{DecayedValue => ThriftDecayedValue}
+impowt com.twittew.awgebiwd.decayedvawue
+impowt c-com.twittew.awgebiwd.decayedvawuemonoid
+i-impowt c-com.twittew.awgebiwd.monoid
+i-impowt com.twittew.awgebiwd_intewnaw.injection.decayedvawueimpwicits
+i-impowt com.twittew.awgebiwd_intewnaw.thwiftscawa.{decayedvawue => t-thwiftdecayedvawue}
 
 /**
- * Monoid for ThriftDecayedValue
+ * m-monoid fow thwiftdecayedvawue
  */
-class ThriftDecayedValueMonoid(halfLifeInMs: Long)(implicit decayedValueMonoid: DecayedValueMonoid)
-    extends Monoid[ThriftDecayedValue] {
+c-cwass thwiftdecayedvawuemonoid(hawfwifeinms: wong)(impwicit decayedvawuemonoid: decayedvawuemonoid)
+    extends m-monoid[thwiftdecayedvawue] {
 
-  override val zero: ThriftDecayedValue = DecayedValueImplicits.toThrift(decayedValueMonoid.zero)
+  ovewwide vaw zewo: thwiftdecayedvawue = d-decayedvawueimpwicits.tothwift(decayedvawuemonoid.zewo)
 
-  override def plus(x: ThriftDecayedValue, y: ThriftDecayedValue): ThriftDecayedValue = {
-    DecayedValueImplicits.toThrift(
-      decayedValueMonoid
-        .plus(DecayedValueImplicits.toThrift.invert(x), DecayedValueImplicits.toThrift.invert(y))
+  ovewwide d-def pwus(x: thwiftdecayedvawue, o.O y: thwiftdecayedvawue): thwiftdecayedvawue = {
+    decayedvawueimpwicits.tothwift(
+      d-decayedvawuemonoid
+        .pwus(decayedvawueimpwicits.tothwift.invewt(x), ( ͡o ω ͡o ) decayedvawueimpwicits.tothwift.invewt(y))
     )
   }
 
-  def build(value: Double, timeInMs: Double): ThriftDecayedValue = {
-    DecayedValueImplicits.toThrift(
-      DecayedValue.build(value, timeInMs, halfLifeInMs)
+  d-def b-buiwd(vawue: doubwe, (U ﹏ U) timeinms: doubwe): thwiftdecayedvawue = {
+    decayedvawueimpwicits.tothwift(
+      decayedvawue.buiwd(vawue, t-timeinms, (///ˬ///✿) hawfwifeinms)
     )
   }
 
   /**
-   * decay to a timestamp; note that timestamp should be in Ms, and do not use scaledTime!
+   * decay to a timestamp; nyote that timestamp shouwd be in ms, >w< and d-do nyot use scawedtime! rawr
    */
-  def decayToTimestamp(
-    thriftDecayedValue: ThriftDecayedValue,
-    timestampInMs: Double
-  ): ThriftDecayedValue = {
-    this.plus(thriftDecayedValue, this.build(0.0, timestampInMs))
+  def decaytotimestamp(
+    t-thwiftdecayedvawue: t-thwiftdecayedvawue, mya
+    t-timestampinms: d-doubwe
+  ): thwiftdecayedvawue = {
+    this.pwus(thwiftdecayedvawue, ^^ t-this.buiwd(0.0, 😳😳😳 timestampinms))
   }
 }
 
-object ThriftDecayedValueMonoid {
-  // add the implicit class so that a decayed value can direct call .plus, .decayedValueOfTime and
-  // so on.
-  implicit class EnrichedThriftDecayedValue(
-    thriftDecayedValue: ThriftDecayedValue
+object thwiftdecayedvawuemonoid {
+  // a-add the impwicit cwass so that a decayed vawue can diwect caww .pwus, mya .decayedvawueoftime and
+  // so o-on. 😳
+  impwicit cwass enwichedthwiftdecayedvawue(
+    t-thwiftdecayedvawue: t-thwiftdecayedvawue
   )(
-    implicit thriftDecayedValueMonoid: ThriftDecayedValueMonoid) {
-    def plus(other: ThriftDecayedValue): ThriftDecayedValue = {
-      thriftDecayedValueMonoid.plus(thriftDecayedValue, other)
+    i-impwicit thwiftdecayedvawuemonoid: thwiftdecayedvawuemonoid) {
+    def pwus(othew: thwiftdecayedvawue): t-thwiftdecayedvawue = {
+      t-thwiftdecayedvawuemonoid.pwus(thwiftdecayedvawue, -.- othew)
     }
 
-    // decay to a timestamp; note that timestamp should be in Ms
-    def decayToTimestamp(timeInMs: Double): ThriftDecayedValue = {
-      thriftDecayedValueMonoid.decayToTimestamp(thriftDecayedValue, timeInMs)
+    // d-decay to a timestamp; n-nyote that timestamp shouwd b-be in ms
+    def decaytotimestamp(timeinms: doubwe): t-thwiftdecayedvawue = {
+      thwiftdecayedvawuemonoid.decaytotimestamp(thwiftdecayedvawue, 🥺 timeinms)
     }
   }
 }

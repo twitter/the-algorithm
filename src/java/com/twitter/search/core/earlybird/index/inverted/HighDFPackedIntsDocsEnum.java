@@ -1,222 +1,222 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
 /**
- * Docs and frequencies enumerator for {@link HighDFPackedIntsPostingLists}.
+ * d-docs a-and fwequencies e-enumewatow fow {@wink h-highdfpackedintspostingwists}. (✿oωo)
  */
-public class HighDFPackedIntsDocsEnum extends EarlybirdOptimizedPostingsEnum {
+p-pubwic c-cwass highdfpackedintsdocsenum e-extends eawwybiwdoptimizedpostingsenum {
   /**
-   * Pre-computed shifts, masks for {@link #deltaFreqListsReader}.
-   * These pre-computed values should be read-only and shared across all reader threads.
+   * pwe-computed shifts, (˘ω˘) masks fow {@wink #dewtafweqwistsweadew}. rawr
+   * these pwe-computed v-vawues shouwd be wead-onwy and shawed a-acwoss aww weadew thweads. OwO
    *
-   * Notice:
-   * - start int indices are NOT needed since there is not jumping within a slice.
+   * n-nyotice:
+   * - stawt int indices awe nyot nyeeded since t-thewe is nyot jumping within a swice. ^•ﻌ•^
    */
-  private static final PackedLongsReaderPreComputedValues PRE_COMPUTED_VALUES =
-      new PackedLongsReaderPreComputedValues(
-          HighDFPackedIntsPostingLists.MAX_DOC_ID_BIT
-              + HighDFPackedIntsPostingLists.MAX_FREQ_BIT,
-          HighDFPackedIntsPostingLists.NUM_BITS_PER_SLICE,
-          HighDFPackedIntsPostingLists.SLICE_SIZE,
-          false);
+  p-pwivate s-static finaw packedwongsweadewpwecomputedvawues pwe_computed_vawues =
+      nyew packedwongsweadewpwecomputedvawues(
+          highdfpackedintspostingwists.max_doc_id_bit
+              + h-highdfpackedintspostingwists.max_fweq_bit, UwU
+          highdfpackedintspostingwists.num_bits_pew_swice, (˘ω˘)
+          highdfpackedintspostingwists.swice_size, (///ˬ///✿)
+          fawse);
 
-  /** Packed ints reader for delta-freq pairs. */
-  private final IntBlockPoolPackedLongsReader deltaFreqListsReader;
+  /** packed ints weadew f-fow dewta-fweq paiws. σωσ */
+  p-pwivate finaw intbwockpoowpackedwongsweadew d-dewtafweqwistsweadew;
 
-  /** Skip list reader. */
-  protected final HighDFPackedIntsSkipListReader skipListReader;
+  /** s-skip wist w-weadew. /(^•ω•^) */
+  pwotected finaw highdfpackedintsskipwistweadew s-skipwistweadew;
 
-  /** Number of remaining docs (delta-freq pairs) in a slice. */
-  private int numDocsRemaining;
+  /** nyumbew of wemaining docs (dewta-fweq p-paiws) in a swice. 😳 */
+  pwivate int nyumdocswemaining;
 
   /**
-   * Total number of docs (delta-freq pairs) in a slice.
-   * This value is set every time a slice is loaded in {@link #loadNextDeltaFreqSlice()}.
+   * totaw numbew of docs (dewta-fweq p-paiws) in a swice. 😳
+   * this vawue i-is set evewy t-time a swice is w-woaded in {@wink #woadnextdewtafweqswice()}. (⑅˘꒳˘)
    */
-  private int numDocsInSliceTotal;
+  pwivate int nyumdocsinswicetotaw;
 
   /**
-   * Number of bits used for frequency in a delta-freq slice.
-   * This value is set every time a slice is loaded in {@link #loadNextDeltaFreqSlice()}.
+   * nyumbew of bits u-used fow fwequency i-in a dewta-fweq swice. 😳😳😳
+   * t-this vawue is s-set evewy time a swice is woaded i-in {@wink #woadnextdewtafweqswice()}. 😳
    */
-  private int bitsForFreq;
+  pwivate int bitsfowfweq;
 
   /**
-   * Frequency mask used to extract frequency from a delta-freq pair, in a delta-freq slice.
-   * This value is set every time a slice is loaded in {@link #loadNextDeltaFreqSlice()}.
+   * f-fwequency mask used to extwact fwequency fwom a-a dewta-fweq paiw, XD in a dewta-fweq s-swice. mya
+   * this vawue is s-set evewy time a s-swice is woaded in {@wink #woadnextdewtafweqswice()}. ^•ﻌ•^
    */
-  private int freqMask;
-  private boolean freqBitsIsZero;
+  pwivate int fweqmask;
+  pwivate boowean fweqbitsiszewo;
 
   /**
-   * Sole constructor.
+   * sowe constwuctow. ʘwʘ
    *
-   * @param skipLists skip lists int block pool
-   * @param deltaFreqLists delta-freq lists int block pool
-   * @param postingListPointer pointer to the posting list for which this enumerator is created
-   * @param numPostings number of postings in the posting list for which this enumerator is created
-   * @param omitPositions whether positions are omitted in the posting list of which this enumerator
-   *                      is created
+   * @pawam skipwists s-skip wists int bwock p-poow
+   * @pawam dewtafweqwists d-dewta-fweq w-wists int bwock p-poow
+   * @pawam postingwistpointew pointew to the posting wist f-fow which this enumewatow is cweated
+   * @pawam nyumpostings nyumbew of postings in the posting w-wist fow which this enumewatow i-is cweated
+   * @pawam o-omitpositions w-whethew positions awe omitted i-in the posting w-wist of which t-this enumewatow
+   *                      i-is cweated
    */
-  public HighDFPackedIntsDocsEnum(
-      IntBlockPool skipLists,
-      IntBlockPool deltaFreqLists,
-      int postingListPointer,
-      int numPostings,
-      boolean omitPositions) {
-    super(postingListPointer, numPostings);
+  pubwic highdfpackedintsdocsenum(
+      i-intbwockpoow s-skipwists, ( ͡o ω ͡o )
+      i-intbwockpoow dewtafweqwists, mya
+      i-int postingwistpointew, o.O
+      i-int nyumpostings, (✿oωo)
+      boowean omitpositions) {
+    supew(postingwistpointew, n-nyumpostings);
 
-    // Create skip list reader and get first skip entry.
-    this.skipListReader = new HighDFPackedIntsSkipListReader(
-        skipLists, postingListPointer, omitPositions);
-    this.skipListReader.getNextSkipEntry();
+    // cweate skip wist weadew and get fiwst skip entwy. :3
+    this.skipwistweadew = nyew highdfpackedintsskipwistweadew(
+        s-skipwists, 😳 postingwistpointew, (U ﹏ U) omitpositions);
+    this.skipwistweadew.getnextskipentwy();
 
-    // Set number of remaining docs in this posting list.
-    this.numDocsRemaining = skipListReader.getNumDocsTotal();
+    // set nyumbew o-of wemaining docs i-in this posting w-wist. mya
+    this.numdocswemaining = skipwistweadew.getnumdocstotaw();
 
-    // Create a delta-freq pair packed values reader.
-    this.deltaFreqListsReader = new IntBlockPoolPackedLongsReader(
-        deltaFreqLists,
-        PRE_COMPUTED_VALUES,
-        queryCostTracker,
-        QueryCostTracker.CostType.LOAD_OPTIMIZED_POSTING_BLOCK);
+    // cweate a-a dewta-fweq paiw packed vawues w-weadew. (U ᵕ U❁)
+    t-this.dewtafweqwistsweadew = new intbwockpoowpackedwongsweadew(
+        dewtafweqwists, :3
+        pwe_computed_vawues, mya
+        quewycosttwackew, OwO
+        q-quewycosttwackew.costtype.woad_optimized_posting_bwock);
 
-    loadNextDeltaFreqSlice();
-    loadNextPosting();
+    woadnextdewtafweqswice();
+    w-woadnextposting();
   }
 
   /**
-   * Load next delta-freq slice, return false if all docs exhausted.
-   * Notice!! The caller of this method should make sure the current slice is all used up and
-   * {@link #numDocsRemaining} is updated accordingly.
+   * woad nyext d-dewta-fweq swice, (ˆ ﻌ ˆ)♡ w-wetuwn fawse if aww docs exhausted. ʘwʘ
+   * nyotice!! t-the cawwew o-of this method shouwd make suwe t-the cuwwent swice i-is aww used up and
+   * {@wink #numdocswemaining} is updated accowdingwy. o.O
    *
-   * @return whether a slice is loaded.
-   * @see #loadNextPosting()
-   * @see #skipTo(int)
+   * @wetuwn whethew a swice i-is woaded. UwU
+   * @see #woadnextposting()
+   * @see #skipto(int)
    */
-  private boolean loadNextDeltaFreqSlice() {
-    // Load nothing if no docs are remaining.
-    if (numDocsRemaining == 0) {
-      return false;
+  p-pwivate boowean w-woadnextdewtafweqswice() {
+    // woad nyothing i-if nyo docs a-awe wemaining. rawr x3
+    if (numdocswemaining == 0) {
+      w-wetuwn fawse;
     }
 
-    final int encodedMetadata = skipListReader.getEncodedMetadataCurrentSlice();
-    final int bitsForDelta = HighDFPackedIntsPostingLists.getNumBitsForDelta(encodedMetadata);
-    bitsForFreq = HighDFPackedIntsPostingLists.getNumBitsForFreq(encodedMetadata);
-    numDocsInSliceTotal = HighDFPackedIntsPostingLists.getNumDocsInSlice(encodedMetadata);
+    finaw int encodedmetadata = skipwistweadew.getencodedmetadatacuwwentswice();
+    finaw int bitsfowdewta = h-highdfpackedintspostingwists.getnumbitsfowdewta(encodedmetadata);
+    b-bitsfowfweq = highdfpackedintspostingwists.getnumbitsfowfweq(encodedmetadata);
+    nyumdocsinswicetotaw = h-highdfpackedintspostingwists.getnumdocsinswice(encodedmetadata);
 
-    freqMask = (1 << bitsForFreq) - 1;
-    freqBitsIsZero = bitsForFreq == 0;
+    f-fweqmask = (1 << bitsfowfweq) - 1;
+    fweqbitsiszewo = bitsfowfweq == 0;
 
-    // Locate and reset the reader for this slice.
-    final int bitsPerPackedValue = bitsForDelta + bitsForFreq;
-    deltaFreqListsReader.jumpToInt(
-        skipListReader.getDeltaFreqCurrentSlicePointer(), bitsPerPackedValue);
-    return true;
+    // w-wocate and weset the weadew fow this swice. 🥺
+    finaw int bitspewpackedvawue = bitsfowdewta + b-bitsfowfweq;
+    dewtafweqwistsweadew.jumptoint(
+        skipwistweadew.getdewtafweqcuwwentswicepointew(), :3 b-bitspewpackedvawue);
+    w-wetuwn twue;
   }
 
   /**
-   * Load next delta-freq pair from the current slice and set the computed
-   * {@link #nextDocID} and {@link #nextFreq}.
+   * woad nyext dewta-fweq paiw fwom the cuwwent swice a-and set the c-computed
+   * {@wink #nextdocid} and {@wink #nextfweq}. (ꈍᴗꈍ)
    */
-  @Override
-  protected final void loadNextPosting() {
-    assert numDocsRemaining >= (numDocsInSliceTotal - deltaFreqListsReader.getPackedValueIndex())
-        : "numDocsRemaining should be equal to or greater than number of docs remaining in slice";
+  @ovewwide
+  pwotected finaw void w-woadnextposting() {
+    assewt n-nyumdocswemaining >= (numdocsinswicetotaw - dewtafweqwistsweadew.getpackedvawueindex())
+        : "numdocswemaining shouwd be equaw to ow gweatew t-than nyumbew of docs wemaining i-in swice";
 
-    if (deltaFreqListsReader.getPackedValueIndex() < numDocsInSliceTotal) {
-      // Current slice is not exhausted.
-      final long nextDeltaFreqPair = deltaFreqListsReader.readPackedLong();
+    i-if (dewtafweqwistsweadew.getpackedvawueindex() < nyumdocsinswicetotaw) {
+      // c-cuwwent swice is nyot exhausted. 🥺
+      f-finaw w-wong nyextdewtafweqpaiw = d-dewtafweqwistsweadew.weadpackedwong();
 
       /**
-       * Optimization: No need to do shifts and masks if number of bits for frequency is 0.
-       * Also, the stored frequency is the actual frequency - 1.
+       * optimization: n-nyo nyeed to d-do shifts and masks if nyumbew of bits fow fwequency i-is 0. (✿oωo)
+       * a-awso, (U ﹏ U) the stowed f-fwequency is the actuaw fwequency - 1. :3
        * @see
-       * HighDFPackedIntsPostingLists#copyPostingList(org.apache.lucene.index.PostingsEnum, int)
+       * highdfpackedintspostingwists#copypostingwist(owg.apache.wucene.index.postingsenum, ^^;; i-int)
        */
-      if (freqBitsIsZero) {
-        nextFreq = 1;
-        nextDocID += (int) nextDeltaFreqPair;
-      } else {
-        nextFreq = (int) ((nextDeltaFreqPair & freqMask) + 1);
-        nextDocID += (int) (nextDeltaFreqPair >>> bitsForFreq);
+      if (fweqbitsiszewo) {
+        n-nyextfweq = 1;
+        n-nyextdocid += (int) nyextdewtafweqpaiw;
+      } ewse {
+        nyextfweq = (int) ((nextdewtafweqpaiw & f-fweqmask) + 1);
+        n-nextdocid += (int) (nextdewtafweqpaiw >>> b-bitsfowfweq);
       }
 
-      numDocsRemaining--;
-    } else {
-      // Current slice is exhausted, get next skip entry and load next slice.
-      skipListReader.getNextSkipEntry();
-      if (loadNextDeltaFreqSlice()) {
-        // Next slice is loaded, load next posting again.
-        loadNextPosting();
-      } else {
-        // All docs are exhausted, mark this enumerator as exhausted.
-        assert numDocsRemaining == 0;
-        nextDocID = NO_MORE_DOCS;
-        nextFreq = 0;
+      n-nyumdocswemaining--;
+    } ewse {
+      // c-cuwwent swice is exhausted, rawr get nyext skip entwy and woad nyext swice. 😳😳😳
+      skipwistweadew.getnextskipentwy();
+      if (woadnextdewtafweqswice()) {
+        // n-next swice is woaded, (✿oωo) woad nyext p-posting again. OwO
+        woadnextposting();
+      } e-ewse {
+        // aww docs a-awe exhausted, ʘwʘ mawk this enumewatow a-as exhausted. (ˆ ﻌ ˆ)♡
+        a-assewt n-nyumdocswemaining == 0;
+        n-nyextdocid = nyo_mowe_docs;
+        n-nyextfweq = 0;
       }
     }
   }
 
   /**
-   * Skip over slices to approach the given target as close as possible.
+   * skip ovew swices to appwoach the given tawget as cwose as possibwe. (U ﹏ U)
    */
-  @Override
-  protected final void skipTo(int target) {
-    assert target != NO_MORE_DOCS : "Should be handled in parent class advance method";
+  @ovewwide
+  pwotected finaw void s-skipto(int tawget) {
+    a-assewt t-tawget != nyo_mowe_docs : "shouwd be handwed in p-pawent cwass advance method";
 
-    int numSlicesToSkip = 0;
-    int numDocsToSkip = 0;
-    int numDocsRemainingInSlice = numDocsInSliceTotal - deltaFreqListsReader.getPackedValueIndex();
+    int nyumswicestoskip = 0;
+    int nyumdocstoskip = 0;
+    i-int n-nyumdocswemaininginswice = numdocsinswicetotaw - d-dewtafweqwistsweadew.getpackedvawueindex();
 
-    // Skipping over slices.
-    while (skipListReader.peekPreviousDocIDNextSlice() < target) {
-      skipListReader.getNextSkipEntry();
-      nextDocID = skipListReader.getPreviousDocIDCurrentSlice();
-      numDocsToSkip += numDocsRemainingInSlice;
-      int header = skipListReader.getEncodedMetadataCurrentSlice();
-      numDocsRemainingInSlice = HighDFPackedIntsPostingLists.getNumDocsInSlice(header);
+    // skipping ovew swices. UwU
+    w-whiwe (skipwistweadew.peekpweviousdocidnextswice() < t-tawget) {
+      skipwistweadew.getnextskipentwy();
+      n-nyextdocid = s-skipwistweadew.getpweviousdocidcuwwentswice();
+      nyumdocstoskip += nyumdocswemaininginswice;
+      int headew = skipwistweadew.getencodedmetadatacuwwentswice();
+      nyumdocswemaininginswice = h-highdfpackedintspostingwists.getnumdocsinswice(headew);
 
-      numSlicesToSkip++;
+      n-numswicestoskip++;
     }
 
-    // If skipped any slices, load the new slice.
-    if (numSlicesToSkip > 0) {
-      numDocsRemaining -= numDocsToSkip;
-      final boolean hasNextSlice = loadNextDeltaFreqSlice();
-      assert hasNextSlice;
-      assert numDocsRemaining >= numDocsInSliceTotal && numDocsInSliceTotal > 0;
+    // i-if skipped any s-swices, XD woad the n-nyew swice. ʘwʘ
+    if (numswicestoskip > 0) {
+      n-nyumdocswemaining -= n-nyumdocstoskip;
+      finaw b-boowean hasnextswice = w-woadnextdewtafweqswice();
+      assewt h-hasnextswice;
+      assewt nyumdocswemaining >= nyumdocsinswicetotaw && n-nyumdocsinswicetotaw > 0;
 
-      // Do additional skip for the delta freq slice that was just loaded.
-      doAdditionalSkip();
+      // do a-additionaw skip f-fow the dewta fweq swice that was j-just woaded. rawr x3
+      doadditionawskip();
 
-      loadNextPosting();
+      woadnextposting();
     }
   }
 
   /**
-   * Subclass should override this method if want to do additional skip on its data structure.
+   * s-subcwass s-shouwd ovewwide t-this method if want to do additionaw skip on its data stwuctuwe. ^^;;
    */
-  protected void doAdditionalSkip() {
-    // No-op in this class.
+  p-pwotected void doadditionawskip() {
+    // no-op in this c-cwass. ʘwʘ
   }
 
   /**
-   * Get the largest doc ID from {@link #skipListReader}.
+   * g-get the wawgest doc id f-fwom {@wink #skipwistweadew}. (U ﹏ U)
    */
-  @Override
-  public int getLargestDocID() throws IOException {
-    return skipListReader.getLargestDocID();
+  @ovewwide
+  pubwic int getwawgestdocid() t-thwows ioexception {
+    w-wetuwn skipwistweadew.getwawgestdocid();
   }
 
   /**
-   * Return {@link #numDocsRemaining} as a proxy of cost.
+   * wetuwn {@wink #numdocswemaining} a-as a pwoxy of cost. (˘ω˘)
    *
-   * @see org.apache.lucene.index.PostingsEnum#cost()
+   * @see owg.apache.wucene.index.postingsenum#cost()
    */
-  @Override
-  public long cost() {
-    return numDocsRemaining;
+  @ovewwide
+  p-pubwic wong c-cost() {
+    wetuwn nyumdocswemaining;
   }
 }

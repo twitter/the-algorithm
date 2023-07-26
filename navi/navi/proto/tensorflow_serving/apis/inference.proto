@@ -1,59 +1,59 @@
-// This file contains messages for various machine learning inferences
-// such as regression and classification.
+// this fiwe contains messages fow v-vawious machine w-weawning infewences
+// s-such as w-wegwession and c-cwassification. 🥺
 //
-// In many applications more than one type of inference is desired for a single
-// input.  For example, given meteorologic data an application may want to
-// perform a classification to determine if we should expect rain, snow or sun
-// and also perform a regression to predict the temperature.
-// Sharing the single input data between two inference tasks can be accomplished
-// using MultiInferenceRequest and MultiInferenceResponse.
+// i-in many appwications m-mowe t-than one type of infewence is desiwed fow a singwe
+// input. (U ﹏ U)  fow exampwe, >w< given m-meteowowogic data an appwication may want to
+// p-pewfowm a cwassification to detewmine i-if we shouwd expect wain, mya snow ow sun
+// and awso pewfowm a-a wegwession to pwedict the tempewatuwe. >w<
+// s-shawing t-the singwe input data between two infewence tasks can be accompwished
+// using m-muwtiinfewencewequest and muwtiinfewencewesponse. nyaa~~
 
-syntax = "proto3";
+syntax = "pwoto3";
 
-option cc_enable_arenas = true;
+option cc_enabwe_awenas = t-twue;
 
-import "tensorflow_serving/apis/classification.proto";
-import "tensorflow_serving/apis/input.proto";
-import "tensorflow_serving/apis/model.proto";
-import "tensorflow_serving/apis/regression.proto";
+impowt "tensowfwow_sewving/apis/cwassification.pwoto";
+impowt "tensowfwow_sewving/apis/input.pwoto";
+i-impowt "tensowfwow_sewving/apis/modew.pwoto";
+impowt "tensowfwow_sewving/apis/wegwession.pwoto";
 
-package tensorflow.serving;
+p-package tensowfwow.sewving;
 
-// Inference request such as classification, regression, etc...
-message InferenceTask {
-  // Model Specification. If version is not specified, will use the latest
-  // (numerical) version.
-  // All ModelSpecs in a MultiInferenceRequest must access the same model name.
-  ModelSpec model_spec = 1;
+// i-infewence wequest s-such as cwassification, (✿oωo) wegwession, ʘwʘ etc...
+m-message infewencetask {
+  // modew specification. (ˆ ﻌ ˆ)♡ i-if vewsion is nyot specified, 😳😳😳 wiww use the watest
+  // (numewicaw) vewsion. :3
+  // aww modewspecs in a muwtiinfewencewequest m-must access the same m-modew nyame. OwO
+  m-modewspec modew_spec = 1;
 
-  // Signature's method_name. Should be one of the method names defined in
-  // third_party/tensorflow/python/saved_model/signature_constants.py.
-  // e.g. "tensorflow/serving/classify".
-  string method_name = 2;
+  // s-signatuwe's method_name. (U ﹏ U) shouwd be one of the method nyames defined i-in
+  // thiwd_pawty/tensowfwow/python/saved_modew/signatuwe_constants.py. >w<
+  // e-e.g. (U ﹏ U) "tensowfwow/sewving/cwassify".
+  stwing m-method_name = 2;
 }
 
-// Inference result, matches the type of request or is an error.
-message InferenceResult {
-  ModelSpec model_spec = 1;
+// i-infewence wesuwt, 😳 matches t-the type of wequest ow is an ewwow. (ˆ ﻌ ˆ)♡
+m-message infewencewesuwt {
+  modewspec modew_spec = 1;
 
-  oneof result {
-    ClassificationResult classification_result = 2;
-    RegressionResult regression_result = 3;
+  oneof wesuwt {
+    c-cwassificationwesuwt cwassification_wesuwt = 2;
+    w-wegwessionwesuwt wegwession_wesuwt = 3;
   }
 }
 
-// Inference request containing one or more requests.
-message MultiInferenceRequest {
-  // Inference tasks.
-  repeated InferenceTask tasks = 1;
+// i-infewence w-wequest containing one ow mowe wequests. 😳😳😳
+message muwtiinfewencewequest {
+  // infewence tasks. (U ﹏ U)
+  wepeated infewencetask tasks = 1;
 
-  // Input data.
-  Input input = 2;
+  // i-input d-data. (///ˬ///✿)
+  input input = 2;
 }
 
-// Inference request containing one or more responses.
-message MultiInferenceResponse {
-  // List of results; one for each InferenceTask in the request, returned in the
-  // same order as the request.
-  repeated InferenceResult results = 1;
+// infewence wequest c-containing one o-ow mowe wesponses. 😳
+m-message muwtiinfewencewesponse {
+  // wist of wesuwts; one fow each infewencetask i-in the wequest, 😳 wetuwned in the
+  // same owdew as the wequest. σωσ
+  wepeated i-infewencewesuwt wesuwts = 1;
 }

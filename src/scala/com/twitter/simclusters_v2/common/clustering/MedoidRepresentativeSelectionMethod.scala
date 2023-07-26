@@ -1,28 +1,28 @@
-package com.twitter.simclusters_v2.common.clustering
+package com.twittew.simcwustews_v2.common.cwustewing
 
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.NeighborWithWeights
+impowt com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.neighbowwithweights
 
-class MedoidRepresentativeSelectionMethod[T](
-  producerProducerSimilarityFn: (T, T) => Double)
-    extends ClusterRepresentativeSelectionMethod[T] {
+c-cwass medoidwepwesentativesewectionmethod[t](
+  p-pwoducewpwoducewsimiwawityfn: (t, t-t) => d-doubwe)
+    extends c-cwustewwepwesentativesewectionmethod[t] {
 
   /**
-   * Identify the medoid of a cluster and return it.
+   * i-identify t-the medoid of a cwustew and wetuwn it. rawr x3
    *
-   * @param cluster A set of NeighborWithWeights.
-   * @param embeddings A map of producer ID -> embedding.
+   * @pawam cwustew a set of nyeighbowwithweights. nyaa~~
+   * @pawam e-embeddings a map of pwoducew id -> e-embedding.
    */
-  def selectClusterRepresentative(
-    cluster: Set[NeighborWithWeights],
-    embeddings: Map[UserId, T],
-  ): UserId = {
-    val key = cluster.maxBy {
-      id1 => // maxBy because we use similarity, which gets larger as we get closer.
-        val v = embeddings(id1.neighborId)
-        cluster
-          .map(id2 => producerProducerSimilarityFn(v, embeddings(id2.neighborId))).sum
+  def sewectcwustewwepwesentative(
+    c-cwustew: set[neighbowwithweights], /(^•ω•^)
+    embeddings: map[usewid, rawr t], OwO
+  ): u-usewid = {
+    vaw key = cwustew.maxby {
+      i-id1 => // maxby b-because we use simiwawity, (U ﹏ U) which gets wawgew as we get cwosew. >_<
+        vaw v = embeddings(id1.neighbowid)
+        c-cwustew
+          .map(id2 => pwoducewpwoducewsimiwawityfn(v, rawr x3 embeddings(id2.neighbowid))).sum
     }
-    key.neighborId
+    key.neighbowid
   }
 }

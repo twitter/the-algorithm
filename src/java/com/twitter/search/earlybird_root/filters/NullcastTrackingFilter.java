@@ -1,81 +1,81 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.HashSet;
-import java.util.Set;
+impowt java.utiw.hashset;
+i-impowt j-java.utiw.set;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableSet;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt c-com.googwe.common.cowwect.immutabweset;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
-import com.twitter.search.queryparser.visitors.DetectPositiveOperatorVisitor;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.utiw.eawwybiwd.eawwybiwdwesponseutiw;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt c-com.twittew.seawch.quewypawsew.quewy.seawch.seawchopewatowconstants;
+impowt com.twittew.seawch.quewypawsew.visitows.detectpositiveopewatowvisitow;
 
 /**
- * Filter that is tracking the unexpected nullcast results from Earlybirds.
+ * f-fiwtew that is twacking the unexpected nyuwwcast wesuwts f-fwom eawwybiwds. :3
  */
-public class NullcastTrackingFilter extends SensitiveResultsTrackingFilter {
-  public NullcastTrackingFilter() {
-    super("unexpected nullcast tweets", true);
+pubwic c-cwass nyuwwcasttwackingfiwtew e-extends sensitivewesuwtstwackingfiwtew {
+  pubwic nyuwwcasttwackingfiwtew() {
+    supew("unexpected n-nuwwcast tweets", -.- twue);
   }
 
-  private static final Logger LOG = LoggerFactory.getLogger(NullcastTrackingFilter.class);
+  pwivate static finaw woggew wog = woggewfactowy.getwoggew(nuwwcasttwackingfiwtew.cwass);
 
-  @VisibleForTesting
-  static final SearchCounter BAD_NULLCAST_QUERY_COUNT =
-      SearchCounter.export("unexpected_nullcast_query_count");
+  @visibwefowtesting
+  s-static finaw seawchcountew bad_nuwwcast_quewy_count =
+      seawchcountew.expowt("unexpected_nuwwcast_quewy_count");
 
-  @VisibleForTesting
-  static final SearchCounter BAD_NULLCAST_RESULT_COUNT =
-      SearchCounter.export("unexpected_nullcast_result_count");
+  @visibwefowtesting
+  s-static finaw seawchcountew b-bad_nuwwcast_wesuwt_count =
+      s-seawchcountew.expowt("unexpected_nuwwcast_wesuwt_count");
 
-  @Override
-  protected Logger getLogger() {
-    return LOG;
+  @ovewwide
+  p-pwotected woggew getwoggew() {
+    wetuwn w-wog;
   }
 
-  @Override
-  protected SearchCounter getSensitiveQueryCounter() {
-    return BAD_NULLCAST_QUERY_COUNT;
+  @ovewwide
+  pwotected seawchcountew g-getsensitivequewycountew() {
+    wetuwn bad_nuwwcast_quewy_count;
   }
 
-  @Override
-  protected SearchCounter getSensitiveResultsCounter() {
-    return BAD_NULLCAST_RESULT_COUNT;
+  @ovewwide
+  pwotected seawchcountew getsensitivewesuwtscountew() {
+    wetuwn bad_nuwwcast_wesuwt_count;
   }
 
-  @Override
-  protected Set<Long> getSensitiveResults(EarlybirdRequestContext requestContext,
-                                          EarlybirdResponse earlybirdResponse) throws Exception {
-    if (!requestContext.getParsedQuery().accept(
-        new DetectPositiveOperatorVisitor(SearchOperatorConstants.NULLCAST))) {
-      return EarlybirdResponseUtil.findUnexpectedNullcastStatusIds(
-          earlybirdResponse.getSearchResults(), requestContext.getRequest());
-    } else {
-      return new HashSet<>();
+  @ovewwide
+  pwotected set<wong> g-getsensitivewesuwts(eawwybiwdwequestcontext wequestcontext, 😳
+                                          eawwybiwdwesponse e-eawwybiwdwesponse) t-thwows exception {
+    i-if (!wequestcontext.getpawsedquewy().accept(
+        nyew detectpositiveopewatowvisitow(seawchopewatowconstants.nuwwcast))) {
+      wetuwn eawwybiwdwesponseutiw.findunexpectednuwwcaststatusids(
+          eawwybiwdwesponse.getseawchwesuwts(), mya w-wequestcontext.getwequest());
+    } e-ewse {
+      wetuwn nyew hashset<>();
     }
   }
 
   /**
-   * Some Earlybird requests are not searches, instead, they are scoring requests.
-   * These requests supply a list of IDs to be scored.
-   * It is OK to return nullcast tweet result if the ID is supplied in the request.
-   * This extracts the scoring request tweet IDs.
+   * s-some e-eawwybiwd wequests awe nyot seawches, (˘ω˘) i-instead, they awe scowing w-wequests. >_<
+   * these wequests suppwy a wist of i-ids to be scowed. -.-
+   * it is ok t-to wetuwn nyuwwcast tweet wesuwt i-if the id is suppwied i-in the wequest.
+   * this extwacts the scowing wequest tweet ids. 🥺
    */
-  @Override
-  protected Set<Long> getExceptedResults(EarlybirdRequestContext requestContext) {
-    EarlybirdRequest request = requestContext.getRequest();
-    if (request == null
-        || !request.isSetSearchQuery()
-        || request.getSearchQuery().getSearchStatusIdsSize() == 0) {
-      return ImmutableSet.of();
+  @ovewwide
+  pwotected set<wong> g-getexceptedwesuwts(eawwybiwdwequestcontext w-wequestcontext) {
+    eawwybiwdwequest w-wequest = wequestcontext.getwequest();
+    if (wequest == n-nyuww
+        || !wequest.issetseawchquewy()
+        || w-wequest.getseawchquewy().getseawchstatusidssize() == 0) {
+      wetuwn immutabweset.of();
     }
-    return request.getSearchQuery().getSearchStatusIds();
+    wetuwn wequest.getseawchquewy().getseawchstatusids();
   }
 }

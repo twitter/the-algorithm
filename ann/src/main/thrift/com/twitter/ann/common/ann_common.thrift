@@ -1,169 +1,169 @@
-namespace java com.twitter.ann.common.thriftjava
-#@namespace scala com.twitter.ann.common.thriftscala
-#@namespace strato com.twitter.ann.common
-namespace py gen.twitter.ann.common
+namespace java com.twittew.ann.common.thwiftjava
+#@namespace scawa c-com.twittew.ann.common.thwiftscawa
+#@namespace s-stwato com.twittew.ann.common
+namespace p-py gen.twittew.ann.common
 
-include "com/twitter/mediaservices/commons/ServerCommon.thrift"
-include "com/twitter/ml/api/embedding.thrift"
+i-incwude "com/twittew/mediasewvices/commons/sewvewcommon.thwift"
+i-incwude "com/twittew/mw/api/embedding.thwift"
 
 /**
-* Thrift schema for storing file based Index mapping
+* t-thwift s-schema fow stowing f-fiwe based index mapping
 */
-struct FileBasedIndexIdStore {
-  1: optional map<i64, binary> indexIdMap
+stwuct fiwebasedindexidstowe {
+  1: optionaw map<i64, rawr x3 binawy> indexidmap
 }
 
-enum DistanceMetric {
-  L2, Cosine, InnerProduct, 
-  RESERVED_4, RESERVED_5, RESERVED_6, RESERVED_7, EditDistance
-} (persisted = 'true',  strato.graphql.typename='DistanceMetric')
+e-enum distancemetwic {
+  w2, -.- cosine, ^^ innewpwoduct, 
+  w-wesewved_4, wesewved_5, (⑅˘꒳˘) wesewved_6, nyaa~~ w-wesewved_7, /(^•ω•^) editdistance
+} (pewsisted = 'twue', (U ﹏ U)  stwato.gwaphqw.typename='distancemetwic')
 
-struct AnnoyIndexMetadata {
-  1: i32 dimension
-  2: DistanceMetric distanceMetric
-  3: i32 numOfTrees
-  4: i64 numOfVectorsIndexed
-} (persisted = 'true',  strato.graphql.typename='AnnoyIndexMetadata')
+stwuct annoyindexmetadata {
+  1: i-i32 dimension
+  2: distancemetwic d-distancemetwic
+  3: i-i32 nyumoftwees
+  4: i64 numofvectowsindexed
+} (pewsisted = 'twue', 😳😳😳  stwato.gwaphqw.typename='annoyindexmetadata')
 
-struct AnnoyRuntimeParam {
-  /* Number of vectors to evaluate while searching. A larger value will give more accurate results, but will take longer time to return.
-   * Default value would be numberOfTrees*numberOfNeigboursRequested
+stwuct a-annoywuntimepawam {
+  /* nyumbew of vectows to evawuate whiwe seawching. >w< a wawgew v-vawue wiww give mowe accuwate w-wesuwts, XD but wiww t-take wongew t-time to wetuwn. o.O
+   * d-defauwt vawue wouwd be nyumbewoftwees*numbewofneigbouwswequested
    */
-  1: optional i32 numOfNodesToExplore
+  1: optionaw i32 nyumofnodestoexpwowe
 }
 
-struct HnswRuntimeParam {
-  // More the value of ef better the recall with but at cost of latency.
-  // Set it greater than equal to number of neighbours required.
+s-stwuct hnswwuntimepawam {
+  // mowe the vawue of ef bettew t-the wecaww with but at cost of watency. mya
+  // set it gweatew than equaw to nyumbew of nyeighbouws w-wequiwed. 🥺
   1: i32 ef
 }
 
-// These options are subset of all possible parameters, defined by
-// https://github.com/facebookresearch/faiss/blob/36f2998a6469280cef3b0afcde2036935a29aa1f/faiss/AutoTune.cpp#L444
-// quantizer_ prefix changes IndexIVF.quantizer parameters instead
-struct FaissRuntimeParam {
-  // How many cells to visit in IVFPQ. Higher is slower / more precise.
-  1: optional i32 nprobe
-  // Depth of search in HNSW. Higher is slower / more precise.
-  2: optional i32 quantizer_ef
-  // How many times more neighbours are requested from underlying index by IndexRefine.
-  3: optional i32 quantizer_kfactor_rf
-  // Same as 1: but for quantizer
-  4: optional i32 quantizer_nprobe
-  // Hamming distance threshold to filter neighbours when searching.
-  5: optional i32 ht
+// these o-options awe s-subset of aww possibwe p-pawametews, ^^;; defined by
+// https://github.com/facebookweseawch/faiss/bwob/36f2998a6469280cef3b0afcde2036935a29aa1f/faiss/autotune.cpp#w444
+// quantizew_ pwefix c-changes indexivf.quantizew p-pawametews instead
+stwuct faisswuntimepawam {
+  // h-how many cewws t-to visit in ivfpq. :3 highew is s-swowew / mowe pwecise. (U ﹏ U)
+  1: optionaw i-i32 nypwobe
+  // depth of seawch in hnsw. OwO highew i-is swowew / mowe pwecise. 😳😳😳
+  2: o-optionaw i32 quantizew_ef
+  // h-how many times m-mowe nyeighbouws awe wequested fwom undewwying index by indexwefine.
+  3: optionaw i32 quantizew_kfactow_wf
+  // same as 1: but f-fow quantizew
+  4: o-optionaw i32 quantizew_npwobe
+  // h-hamming d-distance thweshowd t-to fiwtew nyeighbouws when seawching. (ˆ ﻌ ˆ)♡
+  5: optionaw i32 ht
 }
 
-// Every ANN index will have this metadata and it'll be used by the query service for validation.
-struct AnnIndexMetadata {
- 1: optional i64 timestamp
- 2: optional i32 index_size
- 3: optional bool withGroups
- 4: optional i32 numGroups
-} (persisted = 'true')
+// evewy ann index w-wiww have this metadata and it'ww be used by the quewy sewvice fow vawidation. XD
+s-stwuct annindexmetadata {
+ 1: optionaw i64 timestamp
+ 2: o-optionaw i-i32 index_size
+ 3: o-optionaw boow withgwoups
+ 4: o-optionaw i32 n-nyumgwoups
+} (pewsisted = 'twue')
 
-struct HnswIndexMetadata {
- 1: i32 dimension
- 2: DistanceMetric distanceMetric
- 3: i32 numElements
-} (persisted = 'true')
+s-stwuct hnswindexmetadata {
+ 1: i-i32 dimension
+ 2: distancemetwic distancemetwic
+ 3: i-i32 nyumewements
+} (pewsisted = 'twue')
 
-struct HnswInternalIndexMetadata {
- 1: i32 maxLevel
- 2: optional binary entryPoint
- 3: i32 efConstruction
- 4: i32 maxM
- 5: i32 numElements
-} (persisted = 'true')
+s-stwuct hnswintewnawindexmetadata {
+ 1: i-i32 maxwevew
+ 2: o-optionaw b-binawy entwypoint
+ 3: i32 efconstwuction
+ 4: i32 maxm
+ 5: i32 nyumewements
+} (pewsisted = 'twue')
 
-struct HnswGraphEntry {
-  1: i32 level
-  2: binary key
-  3: list<binary> neighbours
-} (persisted = 'true', strato.graphql.typename='HnswGraphEntry')
+s-stwuct hnswgwaphentwy {
+  1: i32 wevew
+  2: binawy key
+  3: wist<binawy> nyeighbouws
+} (pewsisted = 'twue', (ˆ ﻌ ˆ)♡ stwato.gwaphqw.typename='hnswgwaphentwy')
 
-enum IndexType {
-   TWEET, 
-   USER, 
-   WORD, 
-   LONG, 
-   INT, 
-   STRING, 
-   RESERVED_7, RESERVED_8, RESERVED_9, RESERVED_10
-} (persisted = 'true',  strato.graphql.typename='IndexType')
+enum i-indextype {
+   tweet, ( ͡o ω ͡o ) 
+   usew, rawr x3 
+   wowd, 
+   wong, nyaa~~ 
+   int, >_< 
+   s-stwing, 
+   wesewved_7, ^^;; w-wesewved_8, (ˆ ﻌ ˆ)♡ w-wesewved_9, ^^;; wesewved_10
+} (pewsisted = 'twue', (⑅˘꒳˘)  s-stwato.gwaphqw.typename='indextype')
 
-struct CosineDistance {
-  1: required double distance
+stwuct c-cosinedistance {
+  1: w-wequiwed doubwe distance
 }
 
-struct L2Distance {
-  1: required double distance
+stwuct w2distance {
+  1: wequiwed doubwe distance
 }
 
-struct InnerProductDistance {
-  1: required double distance
+stwuct innewpwoductdistance {
+  1: w-wequiwed doubwe distance
 }
 
-struct EditDistance {
-  1: required i32 distance
+s-stwuct editdistance {
+  1: w-wequiwed i32 d-distance
 }
 
-union Distance {
-  1: CosineDistance cosineDistance
-  2: L2Distance l2Distance
-  3: InnerProductDistance innerProductDistance
-  4: EditDistance editDistance
+union distance {
+  1: cosinedistance c-cosinedistance
+  2: w-w2distance w2distance
+  3: i-innewpwoductdistance i-innewpwoductdistance
+  4: editdistance editdistance
 }
 
-struct NearestNeighbor {
-  1: required binary id
-  2: optional Distance distance
+stwuct nyeawestneighbow {
+  1: wequiwed b-binawy id
+  2: o-optionaw distance d-distance
 }
 
-struct NearestNeighborResult {
-  // This list is ordered from nearest to furthest neighbor
-  1: required list<NearestNeighbor> nearestNeighbors
+stwuct nyeawestneighbowwesuwt {
+  // t-this wist i-is owdewed fwom nyeawest to fuwthest n-nyeighbow
+  1: wequiwed wist<neawestneighbow> nyeawestneighbows
 }
 
-// Different runtime/tuning params while querying for indexes to control accuracy/latency etc..
-union RuntimeParams {
-  1: AnnoyRuntimeParam annoyParam
-  2: HnswRuntimeParam hnswParam
-  3: FaissRuntimeParam faissParam
+// diffewent wuntime/tuning p-pawams whiwe q-quewying fow indexes to contwow accuwacy/watency e-etc..
+union w-wuntimepawams {
+  1: annoywuntimepawam annoypawam
+  2: hnswwuntimepawam h-hnswpawam
+  3: faisswuntimepawam faisspawam
 }
 
-struct NearestNeighborQuery {
-  1: required embedding.Embedding embedding
-  2: required bool with_distance
-  3: required RuntimeParams runtimeParams,
-  4: required i32 numberOfNeighbors,
-  // The purpose of the key here is to load the index in memory as a map of Option[key] to index
-  // If the key is not specified in the query, the map value corresponding to None key will be used
-  // as the queryable index to perform Nearest Neighbor search on
-  5: optional string key
+stwuct nyeawestneighbowquewy {
+  1: wequiwed e-embedding.embedding embedding
+  2: wequiwed b-boow with_distance
+  3: w-wequiwed wuntimepawams wuntimepawams, rawr x3
+  4: wequiwed i32 nyumbewofneighbows, (///ˬ///✿)
+  // t-the puwpose o-of the key hewe is to woad the index in memowy as a map of o-option[key] to index
+  // if the k-key is nyot specified in the quewy, 🥺 the map vawue cowwesponding t-to none key wiww be used
+  // as t-the quewyabwe i-index to pewfowm nyeawest nyeighbow s-seawch on
+  5: optionaw stwing k-key
 }
 
-enum BadRequestCode {
-  VECTOR_DIMENSION_MISMATCH,
-  RESERVED_2,
-  RESERVED_3,
-  RESERVED_4,
-  RESERVED_5,
-  RESERVED_6,
-  RESERVED_7,
-  RESERVED_8,
-  RESERVED_9
+enum badwequestcode {
+  v-vectow_dimension_mismatch, >_<
+  wesewved_2, UwU
+  w-wesewved_3, >_<
+  wesewved_4, -.-
+  w-wesewved_5, mya
+  w-wesewved_6, >w<
+  wesewved_7, (U ﹏ U)
+  wesewved_8, 😳😳😳
+  w-wesewved_9
 }
 
-exception BadRequest {
-  1: string message
-  2: required BadRequestCode code
+exception b-badwequest {
+  1: s-stwing message
+  2: wequiwed badwequestcode c-code
 }
 
-service AnnQueryService {
+sewvice annquewysewvice {
   /**
-  * Get approximate nearest neighbor for a given vector
+  * g-get appwoximate n-nyeawest nyeighbow fow a given vectow
   */
-  NearestNeighborResult query(1: NearestNeighborQuery query)
-    throws (1: ServerCommon.ServerError serverError, 2: BadRequest badRequest)
+  nyeawestneighbowwesuwt q-quewy(1: n-nyeawestneighbowquewy q-quewy)
+    t-thwows (1: sewvewcommon.sewvewewwow sewvewewwow, o.O 2: b-badwequest badwequest)
 }

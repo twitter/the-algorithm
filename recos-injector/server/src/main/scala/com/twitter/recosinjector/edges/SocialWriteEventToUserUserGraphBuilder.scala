@@ -1,73 +1,73 @@
-package com.twitter.recosinjector.edges
+package com.twittew.wecosinjectow.edges
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.util.Action
-import com.twitter.socialgraph.thriftscala.{
-  Action => SocialGraphAction,
-  FollowGraphEvent,
-  FollowType,
-  WriteEvent
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.wecos.utiw.action
+i-impowt c-com.twittew.sociawgwaph.thwiftscawa.{
+  a-action => s-sociawgwaphaction, :3
+  f-fowwowgwaphevent, 😳😳😳
+  f-fowwowtype, (˘ω˘)
+  w-wwiteevent
 }
-import com.twitter.util.Future
+impowt com.twittew.utiw.futuwe
 
 /**
- * Converts a WriteEvent to UserUserGraph's messages, including Mention and Mediatag messages
+ * convewts a wwiteevent to usewusewgwaph's m-messages, ^^ incwuding mention and mediatag m-messages
  */
-class SocialWriteEventToUserUserGraphBuilder()(override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[WriteEvent, UserUserEdge] {
-  private val followOrFrictionlessFollowCounter =
-    statsReceiver.counter("num_follow_or_frictionless")
-  private val notFollowOrFrictionlessFollowCounter =
-    statsReceiver.counter("num_not_follow_or_frictionless")
-  private val followEdgeCounter = statsReceiver.counter("num_follow_edge")
+cwass sociawwwiteeventtousewusewgwaphbuiwdew()(ovewwide i-impwicit vaw statsweceivew: statsweceivew)
+    extends eventtomessagebuiwdew[wwiteevent, :3 u-usewusewedge] {
+  pwivate vaw fowwowowfwictionwessfowwowcountew =
+    s-statsweceivew.countew("num_fowwow_ow_fwictionwess")
+  p-pwivate vaw nyotfowwowowfwictionwessfowwowcountew =
+    statsweceivew.countew("num_not_fowwow_ow_fwictionwess")
+  pwivate vaw fowwowedgecountew = s-statsweceivew.countew("num_fowwow_edge")
 
   /**
-   * For now, we are only interested in Follow events
+   * fow nyow, -.- we awe onwy intewested in fowwow events
    */
-  override def shouldProcessEvent(event: WriteEvent): Future[Boolean] = {
-    event.action match {
-      case SocialGraphAction.Follow | SocialGraphAction.FrictionlessFollow =>
-        followOrFrictionlessFollowCounter.incr()
-        Future(true)
+  ovewwide d-def shouwdpwocessevent(event: wwiteevent): f-futuwe[boowean] = {
+    e-event.action m-match {
+      c-case sociawgwaphaction.fowwow | sociawgwaphaction.fwictionwessfowwow =>
+        fowwowowfwictionwessfowwowcountew.incw()
+        f-futuwe(twue)
       case _ =>
-        notFollowOrFrictionlessFollowCounter.incr()
-        Future(false)
+        nyotfowwowowfwictionwessfowwowcountew.incw()
+        futuwe(fawse)
     }
   }
 
   /**
-   * Determine whether a Follow event is valid/error free.
+   * d-detewmine whethew a fowwow event is vawid/ewwow fwee. 😳
    */
-  private def isValidFollowEvent(followEvent: FollowGraphEvent): Boolean = {
-    followEvent.followType match {
-      case Some(FollowType.NormalFollow) | Some(FollowType.FrictionlessFollow) =>
-        followEvent.result.validationError.isEmpty
+  pwivate def isvawidfowwowevent(fowwowevent: fowwowgwaphevent): b-boowean = {
+    fowwowevent.fowwowtype m-match {
+      c-case some(fowwowtype.nowmawfowwow) | s-some(fowwowtype.fwictionwessfowwow) =>
+        fowwowevent.wesuwt.vawidationewwow.isempty
       case _ =>
-        false
+        fawse
     }
   }
 
-  override def buildEdges(event: WriteEvent): Future[Seq[UserUserEdge]] = {
-    val userUserEdges = event.follow
-      .map(_.collect {
-        case followEvent if isValidFollowEvent(followEvent) =>
-          val sourceUserId = followEvent.result.request.source
-          val targetUserId = followEvent.result.request.target
-          followEdgeCounter.incr()
-          UserUserEdge(
-            sourceUserId,
-            targetUserId,
-            Action.Follow,
-            Some(System.currentTimeMillis())
+  ovewwide d-def buiwdedges(event: w-wwiteevent): futuwe[seq[usewusewedge]] = {
+    v-vaw u-usewusewedges = event.fowwow
+      .map(_.cowwect {
+        c-case fowwowevent if i-isvawidfowwowevent(fowwowevent) =>
+          vaw souwceusewid = f-fowwowevent.wesuwt.wequest.souwce
+          vaw t-tawgetusewid = fowwowevent.wesuwt.wequest.tawget
+          f-fowwowedgecountew.incw()
+          usewusewedge(
+            s-souwceusewid, mya
+            tawgetusewid, (˘ω˘)
+            action.fowwow, >_<
+            some(system.cuwwenttimemiwwis())
           )
-      }).getOrElse(Nil)
-    Future(userUserEdges)
+      }).getowewse(niw)
+    futuwe(usewusewedges)
   }
 
-  override def filterEdges(
-    event: WriteEvent,
-    edges: Seq[UserUserEdge]
-  ): Future[Seq[UserUserEdge]] = {
-    Future(edges)
+  ovewwide def fiwtewedges(
+    e-event: w-wwiteevent, -.-
+    edges: seq[usewusewedge]
+  ): f-futuwe[seq[usewusewedge]] = {
+    f-futuwe(edges)
   }
 }

@@ -1,124 +1,124 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.mediaservices.commons.thriftscala.MediaKey
-import com.twitter.mediaservices.media_util.GenericMediaKey
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.ValueState
-import com.twitter.tweetypie.thriftscala.MediaEntity
-import com.twitter.tweetypie.thriftscala.UrlEntity
-import com.twitter.tweetypie.media.thriftscala.MediaRef
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.repository.TweetRepository
-import com.twitter.tweetypie.thriftscala.FieldByPath
+impowt c-com.twittew.mediasewvices.commons.thwiftscawa.mediakey
+i-impowt c-com.twittew.mediasewvices.media_utiw.genewicmediakey
+i-impowt c-com.twittew.spam.wtf.thwiftscawa.safetywevew
+i-impowt c-com.twittew.stitch.stitch
+impowt com.twittew.tweetypie.cowe.vawuestate
+impowt com.twittew.tweetypie.thwiftscawa.mediaentity
+i-impowt com.twittew.tweetypie.thwiftscawa.uwwentity
+impowt com.twittew.tweetypie.media.thwiftscawa.mediawef
+impowt c-com.twittew.tweetypie.wepositowy.tweetquewy
+impowt c-com.twittew.tweetypie.wepositowy.tweetwepositowy
+impowt com.twittew.tweetypie.thwiftscawa.fiewdbypath
 
 /**
- * MediaRefsHydrator hydrates the Tweet.mediaRefs field based on stored media keys
- * and pasted media. Media keys are available in three ways:
+ * mediawefshydwatow hydwates the t-tweet.mediawefs fiewd based on s-stowed media keys
+ * a-and pasted media. :3 media keys awe avaiwabwe in thwee ways:
  *
- * 1. (For old Tweets): in the stored MediaEntity
- * 2. (For 2016+ Tweets): in the mediaKeys field
- * 3. From other Tweets using pasted media
+ * 1. ( ͡o ω ͡o ) (fow owd t-tweets): in the stowed mediaentity
+ * 2. σωσ (fow 2016+ tweets): in the mediakeys fiewd
+ * 3. >w< fwom o-othew tweets using pasted media
  *
- * This hydrator combines these three sources into a single field, providing the
- * media key and source Tweet information for pasted media.
+ * t-this hydwatow c-combines these t-thwee souwces i-into a singwe fiewd, 😳😳😳 pwoviding the
+ * media key a-and souwce tweet infowmation fow pasted media. OwO
  *
- * Long-term we will move this logic to the write path and backfill the field for old Tweets.
+ * w-wong-tewm we wiww move this wogic to the wwite path and backfiww the fiewd fow owd tweets. 😳
  */
-object MediaRefsHydrator {
-  type Type = ValueHydrator[Option[Seq[MediaRef]], Ctx]
+o-object mediawefshydwatow {
+  type type = vawuehydwatow[option[seq[mediawef]], 😳😳😳 c-ctx]
 
-  case class Ctx(
-    media: Seq[MediaEntity],
-    mediaKeys: Seq[MediaKey],
-    urlEntities: Seq[UrlEntity],
-    underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy {
-    def includePastedMedia: Boolean = opts.include.pastedMedia
+  case c-cwass ctx(
+    m-media: seq[mediaentity], (˘ω˘)
+    mediakeys: seq[mediakey], ʘwʘ
+    uwwentities: s-seq[uwwentity], ( ͡o ω ͡o )
+    u-undewwyingtweetctx: tweetctx)
+      e-extends tweetctx.pwoxy {
+    d-def incwudepastedmedia: b-boowean = opts.incwude.pastedmedia
   }
 
-  val hydratedField: FieldByPath = fieldByPath(Tweet.MediaRefsField)
+  vaw hydwatedfiewd: f-fiewdbypath = fiewdbypath(tweet.mediawefsfiewd)
 
-  def mediaKeyToMediaRef(mediaKey: MediaKey): MediaRef =
-    MediaRef(
-      genericMediaKey = GenericMediaKey(mediaKey).toStringKey()
+  def mediakeytomediawef(mediakey: m-mediakey): mediawef =
+    m-mediawef(
+      genewicmediakey = g-genewicmediakey(mediakey).tostwingkey()
     )
 
-  // Convert a pasted Tweet into a Seq of MediaRef from that Tweet with the correct sourceTweetId and sourceUserId
-  def pastedTweetToMediaRefs(
-    tweet: Tweet
-  ): Seq[MediaRef] =
-    tweet.mediaRefs.toSeq.flatMap { mediaRefs =>
-      mediaRefs.map(
+  // c-convewt a pasted tweet into a seq of mediawef fwom that tweet with the cowwect souwcetweetid and souwceusewid
+  d-def pastedtweettomediawefs(
+    t-tweet: tweet
+  ): seq[mediawef] =
+    t-tweet.mediawefs.toseq.fwatmap { m-mediawefs =>
+      mediawefs.map(
         _.copy(
-          sourceTweetId = Some(tweet.id),
-          sourceUserId = Some(getUserId(tweet))
+          s-souwcetweetid = some(tweet.id), o.O
+          souwceusewid = some(getusewid(tweet))
         ))
     }
 
-  // Fetch MediaRefs from pasted media Tweet URLs in the Tweet text
-  def getPastedMediaRefs(
-    repo: TweetRepository.Optional,
-    ctx: Ctx,
-    includePastedMedia: Gate[Unit]
-  ): Stitch[Seq[MediaRef]] = {
-    if (includePastedMedia() && ctx.includePastedMedia) {
+  // fetch m-mediawefs fwom pasted media tweet uwws in the tweet text
+  def getpastedmediawefs(
+    w-wepo: tweetwepositowy.optionaw, >w<
+    c-ctx: ctx, 😳
+    incwudepastedmedia: g-gate[unit]
+  ): s-stitch[seq[mediawef]] = {
+    if (incwudepastedmedia() && c-ctx.incwudepastedmedia) {
 
-      // Extract Tweet ids from pasted media permalinks in the Tweet text
-      val pastedMediaTweetIds: Seq[TweetId] =
-        PastedMediaHydrator.pastedIdsAndEntities(ctx.tweetId, ctx.urlEntities).map(_._1)
+      // e-extwact tweet ids f-fwom pasted media p-pewmawinks in the tweet text
+      vaw pastedmediatweetids: s-seq[tweetid] =
+        p-pastedmediahydwatow.pastedidsandentities(ctx.tweetid, 🥺 c-ctx.uwwentities).map(_._1)
 
-      val opts = TweetQuery.Options(
-        include = TweetQuery.Include(
-          tweetFields = Set(Tweet.CoreDataField.id, Tweet.MediaRefsField.id),
-          pastedMedia = false // don't recursively load pasted media refs
+      vaw o-opts = tweetquewy.options(
+        i-incwude = tweetquewy.incwude(
+          tweetfiewds = set(tweet.cowedatafiewd.id, rawr x3 t-tweet.mediawefsfiewd.id), o.O
+          pastedmedia = fawse // don't wecuwsivewy woad pasted media wefs
         ))
 
-      // Load a Seq of Tweets with pasted media, ignoring any returned with NotFound or a FilteredState
-      val pastedTweets: Stitch[Seq[Tweet]] = Stitch
-        .traverse(pastedMediaTweetIds) { id =>
-          repo(id, opts)
-        }.map(_.flatten)
+      // w-woad a seq of tweets with pasted media, rawr ignowing any wetuwned with n-nyotfound ow a-a fiwtewedstate
+      v-vaw pastedtweets: stitch[seq[tweet]] = s-stitch
+        .twavewse(pastedmediatweetids) { id =>
+          w-wepo(id, ʘwʘ o-opts)
+        }.map(_.fwatten)
 
-      pastedTweets.map(_.flatMap(pastedTweetToMediaRefs))
-    } else {
-      Stitch.Nil
+      pastedtweets.map(_.fwatmap(pastedtweettomediawefs))
+    } ewse {
+      stitch.niw
     }
   }
 
-  // Make empty Seq None and non-empty Seq Some(Seq(...)) to comply with the thrift field type
-  def optionalizeSeq(mediaRefs: Seq[MediaRef]): Option[Seq[MediaRef]] =
-    Some(mediaRefs).filterNot(_.isEmpty)
+  // make empty seq nyone and nyon-empty s-seq some(seq(...)) to compwy w-with the thwift fiewd type
+  def o-optionawizeseq(mediawefs: s-seq[mediawef]): option[seq[mediawef]] =
+    some(mediawefs).fiwtewnot(_.isempty)
 
-  def apply(
-    repo: TweetRepository.Optional,
-    includePastedMedia: Gate[Unit]
-  ): Type = {
-    ValueHydrator[Option[Seq[MediaRef]], Ctx] { (curr, ctx) =>
-      // Fetch mediaRefs from Tweet media
-      val storedMediaRefs: Seq[MediaRef] = ctx.media.map { mediaEntity =>
-        // Use MediaKeyHydrator.infer to determine the media key from the media entity
-        val mediaKey = MediaKeyHydrator.infer(Some(ctx.mediaKeys), mediaEntity)
-        mediaKeyToMediaRef(mediaKey)
+  def a-appwy(
+    wepo: t-tweetwepositowy.optionaw, 😳😳😳
+    incwudepastedmedia: g-gate[unit]
+  ): t-type = {
+    vawuehydwatow[option[seq[mediawef]], ^^;; ctx] { (cuww, o.O ctx) =>
+      // fetch mediawefs f-fwom tweet m-media
+      vaw s-stowedmediawefs: seq[mediawef] = c-ctx.media.map { m-mediaentity =>
+        // use m-mediakeyhydwatow.infew to detewmine the media key fwom the media entity
+        v-vaw mediakey = m-mediakeyhydwatow.infew(some(ctx.mediakeys), (///ˬ///✿) mediaentity)
+        mediakeytomediawef(mediakey)
       }
 
-      // Fetch mediaRefs from pasted media
-      getPastedMediaRefs(repo, ctx, includePastedMedia).liftToTry.map {
-        case Return(pastedMediaRefs) =>
-          // Combine the refs from the Tweet's own media and those from pasted media, then limit
-          // to MaxMediaEntitiesPerTweet.
-          val limitedRefs =
-            (storedMediaRefs ++ pastedMediaRefs).take(PastedMediaHydrator.MaxMediaEntitiesPerTweet)
+      // f-fetch mediawefs f-fwom pasted media
+      getpastedmediawefs(wepo, σωσ ctx, incwudepastedmedia).wifttotwy.map {
+        case wetuwn(pastedmediawefs) =>
+          // combine t-the wefs fwom the tweet's own media and those fwom pasted media, nyaa~~ then wimit
+          // t-to maxmediaentitiespewtweet. ^^;;
+          vaw wimitedwefs =
+            (stowedmediawefs ++ pastedmediawefs).take(pastedmediahydwatow.maxmediaentitiespewtweet)
 
-          ValueState.delta(curr, optionalizeSeq(limitedRefs))
-        case Throw(_) =>
-          ValueState.partial(optionalizeSeq(storedMediaRefs), hydratedField)
+          v-vawuestate.dewta(cuww, ^•ﻌ•^ optionawizeseq(wimitedwefs))
+        c-case thwow(_) =>
+          vawuestate.pawtiaw(optionawizeseq(stowedmediawefs), σωσ hydwatedfiewd)
       }
 
-    }.onlyIf { (_, ctx) =>
-      ctx.tweetFieldRequested(Tweet.MediaRefsField) ||
-      ctx.opts.safetyLevel != SafetyLevel.FilterNone
+    }.onwyif { (_, -.- ctx) =>
+      ctx.tweetfiewdwequested(tweet.mediawefsfiewd) ||
+      c-ctx.opts.safetywevew != s-safetywevew.fiwtewnone
     }
   }
 }

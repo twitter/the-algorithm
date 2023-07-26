@@ -1,198 +1,198 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.expandodo.thriftscala.Card
-import com.twitter.expandodo.thriftscala.Card2
-import com.twitter.servo.cache.Cached
-import com.twitter.servo.cache.CachedValueStatus
-import com.twitter.servo.cache.LockingCache
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.media.thriftscala.MediaRef
-import com.twitter.tweetypie.repository.PastedMedia
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.repository.TweetRepoCachePicker
-import com.twitter.tweetypie.repository.TweetResultRepository
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.util.Takedowns
-import com.twitter.util.Return
-import com.twitter.util.Throw
+impowt c-com.twittew.expandodo.thwiftscawa.cawd
+i-impowt c-com.twittew.expandodo.thwiftscawa.cawd2
+i-impowt c-com.twittew.sewvo.cache.cached
+i-impowt com.twittew.sewvo.cache.cachedvawuestatus
+i-impowt com.twittew.sewvo.cache.wockingcache
+impowt com.twittew.stitch.stitch
+impowt com.twittew.tweetypie.cowe._
+impowt com.twittew.tweetypie.media.thwiftscawa.mediawef
+impowt c-com.twittew.tweetypie.wepositowy.pastedmedia
+impowt com.twittew.tweetypie.wepositowy.tweetquewy
+impowt com.twittew.tweetypie.wepositowy.tweetwepocachepickew
+i-impowt com.twittew.tweetypie.wepositowy.tweetwesuwtwepositowy
+impowt c-com.twittew.tweetypie.thwiftscawa._
+impowt com.twittew.tweetypie.utiw.takedowns
+impowt com.twittew.utiw.wetuwn
+i-impowt com.twittew.utiw.thwow
 
-object TweetHydration {
+object tweethydwation {
 
   /**
-   * Wires up a set of hydrators that include those whose results are cached on the tweet,
-   * and some whose results are not cached but depend upon the results of the former.
+   * w-wiwes up a-a set of hydwatows that incwude those whose wesuwts awe cached on the tweet, :3
+   * a-and some whose wesuwts awe nyot cached but depend upon the wesuwts of the fowmew. /(^•ω•^)
    */
-  def apply(
-    hydratorStats: StatsReceiver,
-    hydrateFeatureSwitchResults: TweetDataValueHydrator,
-    hydrateMentions: MentionEntitiesHydrator.Type,
-    hydrateLanguage: LanguageHydrator.Type,
-    hydrateUrls: UrlEntitiesHydrator.Type,
-    hydrateQuotedTweetRef: QuotedTweetRefHydrator.Type,
-    hydrateQuotedTweetRefUrls: QuotedTweetRefUrlsHydrator.Type,
-    hydrateMediaCacheable: MediaEntitiesHydrator.Cacheable.Type,
-    hydrateReplyScreenName: ReplyScreenNameHydrator.Type,
-    hydrateConvoId: ConversationIdHydrator.Type,
-    hydratePerspective: PerspectiveHydrator.Type,
-    hydrateEditPerspective: EditPerspectiveHydrator.Type,
-    hydrateConversationMuted: ConversationMutedHydrator.Type,
-    hydrateContributor: ContributorHydrator.Type,
-    hydrateTakedowns: TakedownHydrator.Type,
-    hydrateDirectedAt: DirectedAtHydrator.Type,
-    hydrateGeoScrub: GeoScrubHydrator.Type,
-    hydrateCacheableRepairs: TweetDataValueHydrator,
-    hydrateMediaUncacheable: MediaEntitiesHydrator.Uncacheable.Type,
-    hydratePostCacheRepairs: TweetDataValueHydrator,
-    hydrateTweetLegacyFormat: TweetDataValueHydrator,
-    hydrateQuoteTweetVisibility: QuoteTweetVisibilityHydrator.Type,
-    hydrateQuotedTweet: QuotedTweetHydrator.Type,
-    hydratePastedMedia: PastedMediaHydrator.Type,
-    hydrateMediaRefs: MediaRefsHydrator.Type,
-    hydrateMediaTags: MediaTagsHydrator.Type,
-    hydrateClassicCards: CardHydrator.Type,
-    hydrateCard2: Card2Hydrator.Type,
-    hydrateContributorVisibility: ContributorVisibilityFilter.Type,
-    hydrateHasMedia: HasMediaHydrator.Type,
-    hydrateTweetCounts: TweetCountsHydrator.Type,
-    hydratePreviousTweetCounts: PreviousTweetCountsHydrator.Type,
-    hydratePlace: PlaceHydrator.Type,
-    hydrateDeviceSource: DeviceSourceHydrator.Type,
-    hydrateProfileGeo: ProfileGeoHydrator.Type,
-    hydrateSourceTweet: SourceTweetHydrator.Type,
-    hydrateIM1837State: IM1837FilterHydrator.Type,
-    hydrateIM2884State: IM2884FilterHydrator.Type,
-    hydrateIM3433State: IM3433FilterHydrator.Type,
-    hydrateTweetAuthorVisibility: TweetAuthorVisibilityHydrator.Type,
-    hydrateReportedTweetVisibility: ReportedTweetFilter.Type,
-    scrubSuperfluousUrlEntities: TweetDataValueHydrator,
-    copyFromSourceTweet: TweetDataValueHydrator,
-    hydrateTweetVisibility: TweetVisibilityHydrator.Type,
-    hydrateEscherbirdAnnotations: EscherbirdAnnotationHydrator.Type,
-    hydrateScrubEngagements: ScrubEngagementHydrator.Type,
-    hydrateConversationControl: ConversationControlHydrator.Type,
-    hydrateEditControl: EditControlHydrator.Type,
-    hydrateUnmentionData: UnmentionDataHydrator.Type,
-    hydrateNoteTweetSuffix: TweetDataValueHydrator
-  ): TweetDataValueHydrator = {
-    val scrubCachedTweet: TweetDataValueHydrator =
-      ValueHydrator
-        .fromMutation[Tweet, TweetQuery.Options](
-          ScrubUncacheable.tweetMutation.countMutations(hydratorStats.counter("scrub_cached_tweet"))
+  d-def appwy(
+    hydwatowstats: s-statsweceivew, σωσ
+    h-hydwatefeatuweswitchwesuwts: t-tweetdatavawuehydwatow, (U ᵕ U❁)
+    h-hydwatementions: mentionentitieshydwatow.type, 😳
+    hydwatewanguage: w-wanguagehydwatow.type, ʘwʘ
+    hydwateuwws: uwwentitieshydwatow.type, (⑅˘꒳˘)
+    h-hydwatequotedtweetwef: quotedtweetwefhydwatow.type,
+    hydwatequotedtweetwefuwws: quotedtweetwefuwwshydwatow.type,
+    hydwatemediacacheabwe: mediaentitieshydwatow.cacheabwe.type, ^•ﻌ•^
+    hydwatewepwyscweenname: w-wepwyscweennamehydwatow.type, nyaa~~
+    hydwateconvoid: c-convewsationidhydwatow.type,
+    h-hydwatepewspective: p-pewspectivehydwatow.type, XD
+    hydwateeditpewspective: editpewspectivehydwatow.type,
+    hydwateconvewsationmuted: c-convewsationmutedhydwatow.type,
+    h-hydwatecontwibutow: contwibutowhydwatow.type, /(^•ω•^)
+    h-hydwatetakedowns: t-takedownhydwatow.type, (U ᵕ U❁)
+    hydwatediwectedat: d-diwectedathydwatow.type, mya
+    hydwategeoscwub: g-geoscwubhydwatow.type, (ˆ ﻌ ˆ)♡
+    hydwatecacheabwewepaiws: tweetdatavawuehydwatow, (✿oωo)
+    h-hydwatemediauncacheabwe: mediaentitieshydwatow.uncacheabwe.type, (✿oωo)
+    h-hydwatepostcachewepaiws: tweetdatavawuehydwatow, òωó
+    h-hydwatetweetwegacyfowmat: t-tweetdatavawuehydwatow, (˘ω˘)
+    hydwatequotetweetvisibiwity: quotetweetvisibiwityhydwatow.type, (ˆ ﻌ ˆ)♡
+    hydwatequotedtweet: quotedtweethydwatow.type, ( ͡o ω ͡o )
+    hydwatepastedmedia: pastedmediahydwatow.type, rawr x3
+    h-hydwatemediawefs: m-mediawefshydwatow.type, (˘ω˘)
+    hydwatemediatags: m-mediatagshydwatow.type, òωó
+    h-hydwatecwassiccawds: c-cawdhydwatow.type, ( ͡o ω ͡o )
+    hydwatecawd2: cawd2hydwatow.type, σωσ
+    hydwatecontwibutowvisibiwity: c-contwibutowvisibiwityfiwtew.type, (U ﹏ U)
+    hydwatehasmedia: hasmediahydwatow.type, rawr
+    hydwatetweetcounts: tweetcountshydwatow.type, -.-
+    h-hydwatepwevioustweetcounts: pwevioustweetcountshydwatow.type, ( ͡o ω ͡o )
+    h-hydwatepwace: p-pwacehydwatow.type, >_<
+    h-hydwatedevicesouwce: devicesouwcehydwatow.type, o.O
+    h-hydwatepwofiwegeo: p-pwofiwegeohydwatow.type, σωσ
+    h-hydwatesouwcetweet: s-souwcetweethydwatow.type, -.-
+    hydwateim1837state: im1837fiwtewhydwatow.type, σωσ
+    h-hydwateim2884state: i-im2884fiwtewhydwatow.type, :3
+    h-hydwateim3433state: i-im3433fiwtewhydwatow.type, ^^
+    h-hydwatetweetauthowvisibiwity: tweetauthowvisibiwityhydwatow.type, òωó
+    hydwatewepowtedtweetvisibiwity: wepowtedtweetfiwtew.type, (ˆ ﻌ ˆ)♡
+    s-scwubsupewfwuousuwwentities: tweetdatavawuehydwatow, XD
+    copyfwomsouwcetweet: tweetdatavawuehydwatow, òωó
+    hydwatetweetvisibiwity: tweetvisibiwityhydwatow.type, (ꈍᴗꈍ)
+    hydwateeschewbiwdannotations: e-eschewbiwdannotationhydwatow.type, UwU
+    hydwatescwubengagements: scwubengagementhydwatow.type, >w<
+    hydwateconvewsationcontwow: c-convewsationcontwowhydwatow.type, ʘwʘ
+    h-hydwateeditcontwow: e-editcontwowhydwatow.type, :3
+    hydwateunmentiondata: unmentiondatahydwatow.type, ^•ﻌ•^
+    hydwatenotetweetsuffix: t-tweetdatavawuehydwatow
+  ): tweetdatavawuehydwatow = {
+    v-vaw scwubcachedtweet: t-tweetdatavawuehydwatow =
+      vawuehydwatow
+        .fwommutation[tweet, tweetquewy.options](
+          scwubuncacheabwe.tweetmutation.countmutations(hydwatowstats.countew("scwub_cached_tweet"))
         )
-        .lensed(TweetData.Lenses.tweet)
-        .onlyIf((td, opts) => opts.cause.reading(td.tweet.id))
+        .wensed(tweetdata.wenses.tweet)
+        .onwyif((td, (ˆ ﻌ ˆ)♡ opts) => opts.cause.weading(td.tweet.id))
 
-    // We perform independent hydrations of individual bits of
-    // data and pack the results into tuples instead of updating
-    // the tweet for each one in order to avoid making lots of
-    // copies of the tweet.
+    // we pewfowm i-independent hydwations of individuaw b-bits of
+    // data and pack t-the wesuwts into t-tupwes instead of updating
+    // the tweet fow e-each one in owdew t-to avoid making wots of
+    // c-copies of the t-tweet. 🥺
 
-    val hydratePrimaryCacheableFields: TweetDataValueHydrator =
-      ValueHydrator[TweetData, TweetQuery.Options] { (td, opts) =>
-        val ctx = TweetCtx.from(td, opts)
-        val tweet = td.tweet
+    vaw hydwatepwimawycacheabwefiewds: tweetdatavawuehydwatow =
+      vawuehydwatow[tweetdata, OwO tweetquewy.options] { (td, 🥺 o-opts) =>
+        v-vaw ctx = tweetctx.fwom(td, OwO o-opts)
+        vaw tweet = td.tweet
 
-        val urlsMediaQuoteTweet: Stitch[
-          ValueState[(Seq[UrlEntity], Seq[MediaEntity], Option[QuotedTweet])]
+        v-vaw u-uwwsmediaquotetweet: stitch[
+          v-vawuestate[(seq[uwwentity], (U ᵕ U❁) seq[mediaentity], option[quotedtweet])]
         ] =
-          for {
-            urls <- hydrateUrls(getUrls(tweet), ctx)
-            (media, quotedTweet) <- Stitch.join(
-              hydrateMediaCacheable(
-                getMedia(tweet),
-                MediaEntityHydrator.Cacheable.Ctx(urls.value, ctx)
-              ),
-              for {
-                qtRef <- hydrateQuotedTweetRef(
-                  tweet.quotedTweet,
-                  QuotedTweetRefHydrator.Ctx(urls.value, ctx)
+          fow {
+            uwws <- hydwateuwws(getuwws(tweet), ( ͡o ω ͡o ) c-ctx)
+            (media, ^•ﻌ•^ q-quotedtweet) <- stitch.join(
+              hydwatemediacacheabwe(
+                g-getmedia(tweet), o.O
+                m-mediaentityhydwatow.cacheabwe.ctx(uwws.vawue, (⑅˘꒳˘) ctx)
+              ), (ˆ ﻌ ˆ)♡
+              fow {
+                qtwef <- h-hydwatequotedtweetwef(
+                  tweet.quotedtweet, :3
+                  quotedtweetwefhydwatow.ctx(uwws.vawue, /(^•ω•^) ctx)
                 )
-                qtRefWithUrls <- hydrateQuotedTweetRefUrls(qtRef.value, ctx)
-              } yield {
-                ValueState(qtRefWithUrls.value, qtRef.state ++ qtRefWithUrls.state)
+                qtwefwithuwws <- h-hydwatequotedtweetwefuwws(qtwef.vawue, òωó ctx)
+              } yiewd {
+                v-vawuestate(qtwefwithuwws.vawue, :3 q-qtwef.state ++ qtwefwithuwws.state)
               }
             )
-          } yield {
-            ValueState.join(urls, media, quotedTweet)
+          } yiewd {
+            vawuestate.join(uwws, (˘ω˘) m-media, 😳 q-quotedtweet)
           }
 
-        val conversationId: Stitch[ValueState[Option[ConversationId]]] =
-          hydrateConvoId(getConversationId(tweet), ctx)
+        vaw convewsationid: stitch[vawuestate[option[convewsationid]]] =
+          hydwateconvoid(getconvewsationid(tweet), σωσ c-ctx)
 
-        val mentions: Stitch[ValueState[Seq[MentionEntity]]] =
-          hydrateMentions(getMentions(tweet), ctx)
+        vaw mentions: s-stitch[vawuestate[seq[mentionentity]]] =
+          hydwatementions(getmentions(tweet), ctx)
 
-        val replyScreenName: Stitch[ValueState[Option[Reply]]] =
-          hydrateReplyScreenName(getReply(tweet), ctx)
+        vaw w-wepwyscweenname: stitch[vawuestate[option[wepwy]]] =
+          hydwatewepwyscweenname(getwepwy(tweet), UwU c-ctx)
 
-        val directedAt: Stitch[ValueState[Option[DirectedAtUser]]] =
-          hydrateDirectedAt(
-            getDirectedAtUser(tweet),
-            DirectedAtHydrator.Ctx(
-              mentions = getMentions(tweet),
-              metadata = tweet.directedAtUserMetadata,
-              underlyingTweetCtx = ctx
+        v-vaw diwectedat: stitch[vawuestate[option[diwectedatusew]]] =
+          h-hydwatediwectedat(
+            getdiwectedatusew(tweet), -.-
+            d-diwectedathydwatow.ctx(
+              m-mentions = g-getmentions(tweet), 🥺
+              metadata = tweet.diwectedatusewmetadata, 😳😳😳
+              u-undewwyingtweetctx = c-ctx
             )
           )
 
-        val language: Stitch[ValueState[Option[Language]]] =
-          hydrateLanguage(tweet.language, ctx)
+        vaw wanguage: stitch[vawuestate[option[wanguage]]] =
+          h-hydwatewanguage(tweet.wanguage, 🥺 c-ctx)
 
-        val contributor: Stitch[ValueState[Option[Contributor]]] =
-          hydrateContributor(tweet.contributor, ctx)
+        v-vaw contwibutow: stitch[vawuestate[option[contwibutow]]] =
+          hydwatecontwibutow(tweet.contwibutow, ^^ ctx)
 
-        val geoScrub: Stitch[ValueState[(Option[GeoCoordinates], Option[PlaceId])]] =
-          hydrateGeoScrub(
-            (TweetLenses.geoCoordinates(tweet), TweetLenses.placeId(tweet)),
+        v-vaw geoscwub: stitch[vawuestate[(option[geocoowdinates], ^^;; o-option[pwaceid])]] =
+          h-hydwategeoscwub(
+            (tweetwenses.geocoowdinates(tweet), >w< tweetwenses.pwaceid(tweet)), σωσ
             ctx
           )
 
-        Stitch
-          .joinMap(
-            urlsMediaQuoteTweet,
-            conversationId,
-            mentions,
-            replyScreenName,
-            directedAt,
-            language,
-            contributor,
-            geoScrub
-          )(ValueState.join(_, _, _, _, _, _, _, _))
-          .map { values =>
-            if (values.state.isEmpty) {
-              ValueState.unmodified(td)
-            } else {
-              values.map {
+        stitch
+          .joinmap(
+            uwwsmediaquotetweet, >w<
+            convewsationid,
+            m-mentions, (⑅˘꒳˘)
+            w-wepwyscweenname, òωó
+            diwectedat, (⑅˘꒳˘)
+            w-wanguage, (ꈍᴗꈍ)
+            c-contwibutow, rawr x3
+            geoscwub
+          )(vawuestate.join(_, ( ͡o ω ͡o ) _, _, _, _, UwU _, _, _))
+          .map { v-vawues =>
+            if (vawues.state.isempty) {
+              vawuestate.unmodified(td)
+            } ewse {
+              vawues.map {
                 case (
-                      (urls, media, quotedTweet),
-                      conversationId,
-                      mentions,
-                      reply,
-                      directedAt,
-                      language,
-                      contributor,
-                      coreGeo
+                      (uwws, ^^ media, (˘ω˘) quotedtweet), (ˆ ﻌ ˆ)♡
+                      c-convewsationid, OwO
+                      mentions, 😳
+                      w-wepwy, UwU
+                      diwectedat, 🥺
+                      w-wanguage, 😳😳😳
+                      contwibutow,
+                      c-cowegeo
                     ) =>
-                  val (coordinates, placeId) = coreGeo
-                  td.copy(
-                    tweet = tweet.copy(
-                      coreData = tweet.coreData.map(
+                  vaw (coowdinates, ʘwʘ p-pwaceid) = c-cowegeo
+                  t-td.copy(
+                    t-tweet = t-tweet.copy(
+                      cowedata = tweet.cowedata.map(
                         _.copy(
-                          reply = reply,
-                          conversationId = conversationId,
-                          directedAtUser = directedAt,
-                          coordinates = coordinates,
-                          placeId = placeId
+                          wepwy = wepwy, /(^•ω•^)
+                          convewsationid = convewsationid, :3
+                          diwectedatusew = d-diwectedat, :3
+                          c-coowdinates = c-coowdinates, mya
+                          pwaceid = pwaceid
                         )
-                      ),
-                      urls = Some(urls),
-                      media = Some(media),
-                      mentions = Some(mentions),
-                      language = language,
-                      quotedTweet = quotedTweet,
-                      contributor = contributor
+                      ), (///ˬ///✿)
+                      u-uwws = some(uwws), (⑅˘꒳˘)
+                      media = some(media), :3
+                      mentions = some(mentions), /(^•ω•^)
+                      w-wanguage = wanguage, ^^;;
+                      q-quotedtweet = quotedtweet, (U ᵕ U❁)
+                      c-contwibutow = contwibutow
                     )
                   )
               }
@@ -200,246 +200,246 @@ object TweetHydration {
           }
       }
 
-    val assertNotScrubbed: TweetDataValueHydrator =
-      ValueHydrator.fromMutation[TweetData, TweetQuery.Options](
-        ScrubUncacheable
-          .assertNotScrubbed(
-            "output of the cacheable tweet hydrator should not require scrubbing"
+    vaw assewtnotscwubbed: t-tweetdatavawuehydwatow =
+      v-vawuehydwatow.fwommutation[tweetdata, (U ﹏ U) tweetquewy.options](
+        s-scwubuncacheabwe
+          .assewtnotscwubbed(
+            "output o-of the cacheabwe tweet hydwatow shouwd nyot wequiwe scwubbing"
           )
-          .lensed(TweetData.Lenses.tweet)
+          .wensed(tweetdata.wenses.tweet)
       )
 
-    val hydrateDependentUncacheableFields: TweetDataValueHydrator =
-      ValueHydrator[TweetData, TweetQuery.Options] { (td, opts) =>
-        val ctx = TweetCtx.from(td, opts)
-        val tweet = td.tweet
+    vaw hydwatedependentuncacheabwefiewds: t-tweetdatavawuehydwatow =
+      v-vawuehydwatow[tweetdata, mya t-tweetquewy.options] { (td, ^•ﻌ•^ opts) =>
+        v-vaw ctx = tweetctx.fwom(td, (U ﹏ U) o-opts)
+        vaw tweet = t-td.tweet
 
-        val quotedTweetResult: Stitch[ValueState[Option[QuotedTweetResult]]] =
-          for {
-            qtFilterState <- hydrateQuoteTweetVisibility(None, ctx)
-            quotedTweet <- hydrateQuotedTweet(
-              td.quotedTweetResult,
-              QuotedTweetHydrator.Ctx(qtFilterState.value, ctx)
+        v-vaw quotedtweetwesuwt: stitch[vawuestate[option[quotedtweetwesuwt]]] =
+          fow {
+            q-qtfiwtewstate <- h-hydwatequotetweetvisibiwity(none, :3 ctx)
+            quotedtweet <- h-hydwatequotedtweet(
+              td.quotedtweetwesuwt, rawr x3
+              quotedtweethydwatow.ctx(qtfiwtewstate.vawue, 😳😳😳 c-ctx)
             )
-          } yield {
-            ValueState.join(qtFilterState, quotedTweet).map(_._2)
+          } yiewd {
+            v-vawuestate.join(qtfiwtewstate, >w< q-quotedtweet).map(_._2)
           }
 
-        val pastedMedia: Stitch[ValueState[PastedMedia]] =
-          hydratePastedMedia(
-            PastedMediaHydrator.getPastedMedia(tweet),
-            PastedMediaHydrator.Ctx(getUrls(tweet), ctx)
+        vaw pastedmedia: s-stitch[vawuestate[pastedmedia]] =
+          hydwatepastedmedia(
+            pastedmediahydwatow.getpastedmedia(tweet), òωó
+            p-pastedmediahydwatow.ctx(getuwws(tweet), 😳 c-ctx)
           )
 
-        val mediaTags: Stitch[ValueState[Option[TweetMediaTags]]] =
-          hydrateMediaTags(tweet.mediaTags, ctx)
+        v-vaw mediatags: stitch[vawuestate[option[tweetmediatags]]] =
+          hydwatemediatags(tweet.mediatags, (✿oωo) ctx)
 
-        val classicCards: Stitch[ValueState[Option[Seq[Card]]]] =
-          hydrateClassicCards(
-            tweet.cards,
-            CardHydrator.Ctx(getUrls(tweet), getMedia(tweet), ctx)
+        v-vaw cwassiccawds: stitch[vawuestate[option[seq[cawd]]]] =
+          hydwatecwassiccawds(
+            tweet.cawds, OwO
+            c-cawdhydwatow.ctx(getuwws(tweet), (U ﹏ U) g-getmedia(tweet), (ꈍᴗꈍ) ctx)
           )
 
-        val card2: Stitch[ValueState[Option[Card2]]] =
-          hydrateCard2(
-            tweet.card2,
-            Card2Hydrator.Ctx(
-              getUrls(tweet),
-              getMedia(tweet),
-              getCardReference(tweet),
-              ctx,
-              td.featureSwitchResults
+        v-vaw cawd2: stitch[vawuestate[option[cawd2]]] =
+          h-hydwatecawd2(
+            t-tweet.cawd2, rawr
+            cawd2hydwatow.ctx(
+              getuwws(tweet), ^^
+              g-getmedia(tweet), rawr
+              getcawdwefewence(tweet), nyaa~~
+              ctx, nyaa~~
+              td.featuweswitchwesuwts
             )
           )
 
-        val contributorVisibility: Stitch[ValueState[Option[Contributor]]] =
-          hydrateContributorVisibility(tweet.contributor, ctx)
+        v-vaw contwibutowvisibiwity: stitch[vawuestate[option[contwibutow]]] =
+          h-hydwatecontwibutowvisibiwity(tweet.contwibutow, o.O ctx)
 
-        val takedowns: Stitch[ValueState[Option[Takedowns]]] =
-          hydrateTakedowns(
-            None, // None because uncacheable hydrator doesn't depend on previous value
-            TakedownHydrator.Ctx(Takedowns.fromTweet(tweet), ctx)
+        v-vaw takedowns: stitch[vawuestate[option[takedowns]]] =
+          h-hydwatetakedowns(
+            n-nyone, òωó // nyone b-because uncacheabwe hydwatow doesn't depend on pwevious vawue
+            takedownhydwatow.ctx(takedowns.fwomtweet(tweet), ^^;; ctx)
           )
 
-        val conversationControl: Stitch[ValueState[Option[ConversationControl]]] =
-          hydrateConversationControl(
-            tweet.conversationControl,
-            ConversationControlHydrator.Ctx(getConversationId(tweet), ctx)
+        vaw convewsationcontwow: stitch[vawuestate[option[convewsationcontwow]]] =
+          hydwateconvewsationcontwow(
+            tweet.convewsationcontwow, rawr
+            convewsationcontwowhydwatow.ctx(getconvewsationid(tweet), ^•ﻌ•^ ctx)
           )
 
-        // PreviousTweetCounts and Perspective hydration depends on tweet.editControl.edit_control_initial
-        // having been hydrated in EditControlHydrator; thus we are chaining them together.
-        val editControlWithDependencies: Stitch[
-          ValueState[
+        // pwevioustweetcounts a-and pewspective h-hydwation depends on tweet.editcontwow.edit_contwow_initiaw
+        // having b-been hydwated i-in editcontwowhydwatow; t-thus we awe chaining them t-togethew. nyaa~~
+        vaw editcontwowwithdependencies: s-stitch[
+          v-vawuestate[
             (
-              Option[EditControl],
-              Option[StatusPerspective],
-              Option[StatusCounts],
-              Option[TweetPerspective]
+              option[editcontwow], nyaa~~
+              option[statuspewspective], 😳😳😳
+              o-option[statuscounts], 😳😳😳
+              option[tweetpewspective]
             )
           ]
         ] =
-          for {
-            (edit, perspective) <- Stitch.join(
-              hydrateEditControl(tweet.editControl, ctx),
-              hydratePerspective(
-                tweet.perspective,
-                PerspectiveHydrator.Ctx(td.featureSwitchResults, ctx))
+          fow {
+            (edit, σωσ p-pewspective) <- s-stitch.join(
+              hydwateeditcontwow(tweet.editcontwow, o.O ctx),
+              h-hydwatepewspective(
+                t-tweet.pewspective, σωσ
+                p-pewspectivehydwatow.ctx(td.featuweswitchwesuwts, nyaa~~ c-ctx))
             )
-            (counts, editPerspective) <- Stitch.join(
-              hydratePreviousTweetCounts(
-                tweet.previousCounts,
-                PreviousTweetCountsHydrator.Ctx(edit.value, td.featureSwitchResults, ctx)),
-              hydrateEditPerspective(
-                tweet.editPerspective,
-                EditPerspectiveHydrator
-                  .Ctx(perspective.value, edit.value, td.featureSwitchResults, ctx))
+            (counts, rawr x3 e-editpewspective) <- s-stitch.join(
+              h-hydwatepwevioustweetcounts(
+                t-tweet.pweviouscounts, (///ˬ///✿)
+                p-pwevioustweetcountshydwatow.ctx(edit.vawue, o.O td.featuweswitchwesuwts, òωó c-ctx)),
+              h-hydwateeditpewspective(
+                t-tweet.editpewspective, OwO
+                editpewspectivehydwatow
+                  .ctx(pewspective.vawue, σωσ e-edit.vawue, nyaa~~ td.featuweswitchwesuwts, OwO ctx))
             )
-          } yield {
-            ValueState.join(edit, perspective, counts, editPerspective)
+          } yiewd {
+            v-vawuestate.join(edit, ^^ pewspective, counts, (///ˬ///✿) e-editpewspective)
           }
 
-        Stitch
-          .joinMap(
-            quotedTweetResult,
-            pastedMedia,
-            mediaTags,
-            classicCards,
-            card2,
-            contributorVisibility,
-            takedowns,
-            conversationControl,
-            editControlWithDependencies
-          )(ValueState.join(_, _, _, _, _, _, _, _, _))
-          .map { values =>
-            if (values.state.isEmpty) {
-              ValueState.unmodified(td)
-            } else {
-              values.map {
+        s-stitch
+          .joinmap(
+            q-quotedtweetwesuwt, σωσ
+            pastedmedia, rawr x3
+            m-mediatags, (ˆ ﻌ ˆ)♡
+            cwassiccawds, 🥺
+            c-cawd2, (⑅˘꒳˘)
+            contwibutowvisibiwity, 😳😳😳
+            t-takedowns, /(^•ω•^)
+            convewsationcontwow, >w<
+            e-editcontwowwithdependencies
+          )(vawuestate.join(_, ^•ﻌ•^ _, _, _, _, _, 😳😳😳 _, _, _))
+          .map { vawues =>
+            if (vawues.state.isempty) {
+              vawuestate.unmodified(td)
+            } ewse {
+              v-vawues.map {
                 case (
-                      quotedTweetResult,
-                      pastedMedia,
-                      ownedMediaTags,
-                      cards,
-                      card2,
-                      contributor,
-                      takedowns,
-                      conversationControl,
-                      (editControl, perspective, previousCounts, editPerspective)
+                      q-quotedtweetwesuwt, :3
+                      p-pastedmedia, (ꈍᴗꈍ)
+                      ownedmediatags, ^•ﻌ•^
+                      cawds, >w<
+                      cawd2, ^^;;
+                      c-contwibutow, (✿oωo)
+                      takedowns, òωó
+                      c-convewsationcontwow, ^^
+                      (editcontwow, ^^ p-pewspective, rawr pweviouscounts, XD e-editpewspective)
                     ) =>
                   td.copy(
                     tweet = tweet.copy(
-                      media = Some(pastedMedia.mediaEntities),
-                      mediaTags = pastedMedia.mergeTweetMediaTags(ownedMediaTags),
-                      cards = cards,
-                      card2 = card2,
-                      contributor = contributor,
-                      takedownCountryCodes = takedowns.map(_.countryCodes.toSeq),
-                      takedownReasons = takedowns.map(_.reasons.toSeq),
-                      conversationControl = conversationControl,
-                      editControl = editControl,
-                      previousCounts = previousCounts,
-                      perspective = perspective,
-                      editPerspective = editPerspective,
-                    ),
-                    quotedTweetResult = quotedTweetResult
+                      m-media = some(pastedmedia.mediaentities), rawr
+                      mediatags = p-pastedmedia.mewgetweetmediatags(ownedmediatags), 😳
+                      cawds = cawds, 🥺
+                      c-cawd2 = cawd2, (U ᵕ U❁)
+                      contwibutow = contwibutow, 😳
+                      t-takedowncountwycodes = takedowns.map(_.countwycodes.toseq), 🥺
+                      takedownweasons = t-takedowns.map(_.weasons.toseq), (///ˬ///✿)
+                      c-convewsationcontwow = c-convewsationcontwow, mya
+                      editcontwow = e-editcontwow, (✿oωo)
+                      p-pweviouscounts = p-pweviouscounts, ^•ﻌ•^
+                      p-pewspective = pewspective, o.O
+                      editpewspective = e-editpewspective, o.O
+                    ), XD
+                    quotedtweetwesuwt = q-quotedtweetwesuwt
                   )
               }
             }
           }
       }
 
-    val hydrateIndependentUncacheableFields: TweetDataEditHydrator =
-      EditHydrator[TweetData, TweetQuery.Options] { (td, opts) =>
-        val ctx = TweetCtx.from(td, opts)
-        val tweet = td.tweet
+    v-vaw hydwateindependentuncacheabwefiewds: t-tweetdataedithydwatow =
+      e-edithydwatow[tweetdata, ^•ﻌ•^ tweetquewy.options] { (td, ʘwʘ o-opts) =>
+        v-vaw ctx = t-tweetctx.fwom(td, (U ﹏ U) opts)
+        v-vaw tweet = td.tweet
 
-        // Group together the results of hydrators that don't perform
-        // filtering, because we don't care about the precedence of
-        // exceptions from these hydrators, because the exceptions all
-        // indicate failures, and picking any failure will be
-        // fine. (All of the other hydrators might throw filtering
-        // exceptions, so we need to make sure that we give precedence
-        // to their failures.)
-        val hydratorsWithoutFiltering =
-          Stitch.joinMap(
-            hydrateTweetCounts(tweet.counts, TweetCountsHydrator.Ctx(td.featureSwitchResults, ctx)),
-            // Note: Place is cached in memcache, it is just not cached on the Tweet.
-            hydratePlace(tweet.place, ctx),
-            hydrateDeviceSource(tweet.deviceSource, ctx),
-            hydrateProfileGeo(tweet.profileGeoEnrichment, ctx)
-          )(ValueState.join(_, _, _, _))
+        // g-gwoup togethew the wesuwts o-of hydwatows that d-don't pewfowm
+        // f-fiwtewing, 😳😳😳 because we don't cawe about the pwecedence o-of
+        // e-exceptions fwom t-these hydwatows, 🥺 because the exceptions aww
+        // indicate f-faiwuwes, (///ˬ///✿) and picking a-any faiwuwe wiww be
+        // f-fine. (˘ω˘) (aww o-of the othew hydwatows might thwow fiwtewing
+        // exceptions, :3 s-so we nyeed t-to make suwe that w-we give pwecedence
+        // t-to theiw faiwuwes.)
+        vaw hydwatowswithoutfiwtewing =
+          s-stitch.joinmap(
+            h-hydwatetweetcounts(tweet.counts, /(^•ω•^) tweetcountshydwatow.ctx(td.featuweswitchwesuwts, :3 ctx)), mya
+            // n-nyote: pwace is cached in memcache, XD it i-is just nyot cached on the tweet. (///ˬ///✿)
+            hydwatepwace(tweet.pwace, 🥺 c-ctx),
+            h-hydwatedevicesouwce(tweet.devicesouwce, o.O ctx),
+            h-hydwatepwofiwegeo(tweet.pwofiwegeoenwichment, mya c-ctx)
+          )(vawuestate.join(_, rawr x3 _, _, _))
 
         /**
-         * Multiple hydrators throw visibility filtering exceptions so specify an order to achieve
-         * a deterministic hydration result while ensuring that any retweet has a source tweet:
-         * 1. hydrateSourceTweet throws SourceTweetNotFound, this is a detached-retweet so treat
-         *      the retweet hydration as if it were not found
-         * 2. hydrateTweetAuthorVisibility
-         * 3. hydrateSourceTweet (other than SourceTweetNotFound already handled above)
-         * 4. hydrateIM1837State
-         * 5. hydrateIM2884State
-         * 6. hydrateIM3433State
-         * 7. hydratorsWithoutFiltering miscellaneous exceptions (any visibility filtering
-         *      exceptions should win over failure of a hydrator)
+         * muwtipwe h-hydwatows thwow visibiwity fiwtewing e-exceptions s-so specify an o-owdew to achieve
+         * a-a detewministic hydwation w-wesuwt whiwe e-ensuwing that a-any wetweet has a souwce tweet:
+         * 1. 😳 hydwatesouwcetweet t-thwows souwcetweetnotfound, 😳😳😳 this is a detached-wetweet s-so tweat
+         *      t-the wetweet hydwation a-as if it wewe not found
+         * 2. >_< hydwatetweetauthowvisibiwity
+         * 3. >w< hydwatesouwcetweet (othew than souwcetweetnotfound a-awweady handwed above)
+         * 4. rawr x3 h-hydwateim1837state
+         * 5. h-hydwateim2884state
+         * 6. XD hydwateim3433state
+         * 7. ^^ hydwatowswithoutfiwtewing m-miscewwaneous exceptions (any v-visibiwity f-fiwtewing
+         *      e-exceptions shouwd w-win ovew faiwuwe o-of a hydwatow)
          */
-        val sourceTweetAndTweetAuthorResult =
-          Stitch
-            .joinMap(
-              hydrateSourceTweet(td.sourceTweetResult, ctx).liftToTry,
-              hydrateTweetAuthorVisibility((), ctx).liftToTry,
-              hydrateIM1837State((), ctx).liftToTry,
-              hydrateIM2884State((), ctx).liftToTry,
-              hydrateIM3433State((), ctx).liftToTry
+        vaw souwcetweetandtweetauthowwesuwt =
+          stitch
+            .joinmap(
+              hydwatesouwcetweet(td.souwcetweetwesuwt, (✿oωo) ctx).wifttotwy, >w<
+              h-hydwatetweetauthowvisibiwity((), 😳😳😳 ctx).wifttotwy, (ꈍᴗꈍ)
+              h-hydwateim1837state((), (✿oωo) ctx).wifttotwy, (˘ω˘)
+              hydwateim2884state((), nyaa~~ ctx).wifttotwy, ( ͡o ω ͡o )
+              hydwateim3433state((), 🥺 c-ctx).wifttotwy
             ) {
-              case (Throw(t @ FilteredState.Unavailable.SourceTweetNotFound(_)), _, _, _, _) =>
-                Throw(t)
-              case (_, Throw(t), _, _, _) => Throw(t) // TweetAuthorVisibility
-              case (Throw(t), _, _, _, _) => Throw(t) // SourceTweet
-              case (_, _, Throw(t), _, _) => Throw(t) // IM1837State
-              case (_, _, _, Throw(t), _) => Throw(t) // IM2884State
-              case (_, _, _, _, Throw(t)) => Throw(t) // IM3433State
+              case (thwow(t @ fiwtewedstate.unavaiwabwe.souwcetweetnotfound(_)), (U ﹏ U) _, _, ( ͡o ω ͡o ) _, _) =>
+                thwow(t)
+              case (_, (///ˬ///✿) thwow(t), (///ˬ///✿) _, _, _) => t-thwow(t) // t-tweetauthowvisibiwity
+              case (thwow(t), (✿oωo) _, _, _, _) => t-thwow(t) // souwcetweet
+              case (_, (U ᵕ U❁) _, thwow(t), ʘwʘ _, _) => t-thwow(t) // im1837state
+              c-case (_, ʘwʘ _, _, XD thwow(t), _) => t-thwow(t) // im2884state
+              c-case (_, (✿oωo) _, _, _, thwow(t)) => thwow(t) // im3433state
               case (
-                    Return(sourceTweetResultValue),
-                    Return(authorVisibilityValue),
-                    Return(im1837Value),
-                    Return(im2884Value),
-                    Return(im3433Value)
+                    w-wetuwn(souwcetweetwesuwtvawue), ^•ﻌ•^
+                    wetuwn(authowvisibiwityvawue), ^•ﻌ•^
+                    wetuwn(im1837vawue), >_<
+                    w-wetuwn(im2884vawue), mya
+                    w-wetuwn(im3433vawue)
                   ) =>
-                Return(
-                  ValueState
+                w-wetuwn(
+                  vawuestate
                     .join(
-                      sourceTweetResultValue,
-                      authorVisibilityValue,
-                      im1837Value,
-                      im2884Value,
-                      im3433Value
+                      souwcetweetwesuwtvawue, σωσ
+                      a-authowvisibiwityvawue, rawr
+                      im1837vawue, (✿oωo)
+                      im2884vawue, :3
+                      im3433vawue
                     )
                 )
-            }.lowerFromTry
+            }.wowewfwomtwy
 
-        StitchExceptionPrecedence(sourceTweetAndTweetAuthorResult)
-          .joinWith(hydratorsWithoutFiltering)(ValueState.join(_, _))
-          .toStitch
-          .map { values =>
-            if (values.state.isEmpty) {
-              EditState.unit[TweetData]
-            } else {
-              EditState[TweetData] { tweetData =>
-                val tweet = tweetData.tweet
-                values.map {
+        stitchexceptionpwecedence(souwcetweetandtweetauthowwesuwt)
+          .joinwith(hydwatowswithoutfiwtewing)(vawuestate.join(_, rawr x3 _))
+          .tostitch
+          .map { v-vawues =>
+            i-if (vawues.state.isempty) {
+              e-editstate.unit[tweetdata]
+            } e-ewse {
+              editstate[tweetdata] { tweetdata =>
+                v-vaw tweet = t-tweetdata.tweet
+                vawues.map {
                   case (
-                        (sourceTweetResult, _, _, _, _),
-                        (counts, place, deviceSource, profileGeo)
+                        (souwcetweetwesuwt, ^^ _, _, ^^ _, _),
+                        (counts, OwO p-pwace, ʘwʘ devicesouwce, pwofiwegeo)
                       ) =>
-                    tweetData.copy(
-                      tweet = tweet.copy(
+                    tweetdata.copy(
+                      t-tweet = tweet.copy(
                         counts = counts,
-                        place = place,
-                        deviceSource = deviceSource,
-                        profileGeoEnrichment = profileGeo
-                      ),
-                      sourceTweetResult = sourceTweetResult
+                        p-pwace = p-pwace, /(^•ω•^)
+                        devicesouwce = d-devicesouwce, ʘwʘ
+                        p-pwofiwegeoenwichment = p-pwofiwegeo
+                      ), (⑅˘꒳˘)
+                      souwcetweetwesuwt = souwcetweetwesuwt
                     )
                 }
               }
@@ -447,71 +447,71 @@ object TweetHydration {
           }
       }
 
-    val hydrateUnmentionDataToTweetData: TweetDataValueHydrator =
-      TweetHydration.setOnTweetData(
-        TweetData.Lenses.tweet.andThen(TweetLenses.unmentionData),
-        (td: TweetData, opts: TweetQuery.Options) =>
-          UnmentionDataHydrator
-            .Ctx(getConversationId(td.tweet), getMentions(td.tweet), TweetCtx.from(td, opts)),
-        hydrateUnmentionData
+    vaw hydwateunmentiondatatotweetdata: t-tweetdatavawuehydwatow =
+      tweethydwation.setontweetdata(
+        tweetdata.wenses.tweet.andthen(tweetwenses.unmentiondata), UwU
+        (td: t-tweetdata, -.- opts: tweetquewy.options) =>
+          unmentiondatahydwatow
+            .ctx(getconvewsationid(td.tweet), :3 getmentions(td.tweet), >_< t-tweetctx.fwom(td, nyaa~~ o-opts)), ( ͡o ω ͡o )
+        h-hydwateunmentiondata
       )
 
-    val hydrateCacheableFields: TweetDataValueHydrator =
-      ValueHydrator.inSequence(
-        scrubCachedTweet,
-        hydratePrimaryCacheableFields,
-        // Relies on mentions being hydrated in hydratePrimaryCacheableFields
-        hydrateUnmentionDataToTweetData,
-        assertNotScrubbed,
-        hydrateCacheableRepairs
+    v-vaw hydwatecacheabwefiewds: t-tweetdatavawuehydwatow =
+      vawuehydwatow.insequence(
+        scwubcachedtweet, o.O
+        h-hydwatepwimawycacheabwefiewds, :3
+        // wewies on mentions being hydwated i-in hydwatepwimawycacheabwefiewds
+        hydwateunmentiondatatotweetdata, (˘ω˘)
+        a-assewtnotscwubbed, rawr x3
+        hydwatecacheabwewepaiws
       )
 
-    // The conversation muted hydrator needs the conversation id,
-    // which comes from the primary cacheable fields, and the media hydrator
-    // needs the cacheable media entities.
-    val hydrateUncacheableMedia: TweetDataValueHydrator =
-      ValueHydrator[TweetData, TweetQuery.Options] { (td, opts) =>
-        val ctx = TweetCtx.from(td, opts)
-        val tweet = td.tweet
+    // the c-convewsation muted h-hydwatow nyeeds the convewsation i-id, (U ᵕ U❁)
+    // which comes fwom t-the pwimawy cacheabwe f-fiewds, and the media hydwatow
+    // n-nyeeds t-the cacheabwe media entities. 🥺
+    v-vaw hydwateuncacheabwemedia: tweetdatavawuehydwatow =
+      vawuehydwatow[tweetdata, >_< tweetquewy.options] { (td, :3 o-opts) =>
+        vaw ctx = t-tweetctx.fwom(td, :3 opts)
+        vaw tweet = td.tweet
 
-        val mediaCtx =
-          MediaEntityHydrator.Uncacheable.Ctx(td.tweet.mediaKeys, ctx)
+        v-vaw m-mediactx =
+          m-mediaentityhydwatow.uncacheabwe.ctx(td.tweet.mediakeys, (ꈍᴗꈍ) ctx)
 
-        val media: Stitch[ValueState[Option[Seq[MediaEntity]]]] =
-          hydrateMediaUncacheable.liftOption.apply(td.tweet.media, mediaCtx)
+        vaw m-media: stitch[vawuestate[option[seq[mediaentity]]]] =
+          h-hydwatemediauncacheabwe.wiftoption.appwy(td.tweet.media, mediactx)
 
-        val conversationMuted: Stitch[ValueState[Option[Boolean]]] =
-          hydrateConversationMuted(
-            tweet.conversationMuted,
-            ConversationMutedHydrator.Ctx(getConversationId(tweet), ctx)
+        v-vaw convewsationmuted: s-stitch[vawuestate[option[boowean]]] =
+          hydwateconvewsationmuted(
+            t-tweet.convewsationmuted, σωσ
+            convewsationmutedhydwatow.ctx(getconvewsationid(tweet), 😳 c-ctx)
           )
 
-        // MediaRefs need to be hydrated at this phase because they rely on the media field
-        // on the Tweet, which can get unset by later hydrators.
-        val mediaRefs: Stitch[ValueState[Option[Seq[MediaRef]]]] =
-          hydrateMediaRefs(
-            tweet.mediaRefs,
-            MediaRefsHydrator.Ctx(getMedia(tweet), getMediaKeys(tweet), getUrls(tweet), ctx)
+        // mediawefs nyeed to be hydwated at this phase because they wewy o-on the media f-fiewd
+        // on the tweet, mya which can get unset by watew hydwatows. (///ˬ///✿)
+        vaw m-mediawefs: stitch[vawuestate[option[seq[mediawef]]]] =
+          hydwatemediawefs(
+            t-tweet.mediawefs, ^^
+            mediawefshydwatow.ctx(getmedia(tweet), (✿oωo) g-getmediakeys(tweet), ( ͡o ω ͡o ) getuwws(tweet), ^^;; ctx)
           )
 
-        Stitch
-          .joinMap(
-            media,
-            conversationMuted,
-            mediaRefs
-          )(ValueState.join(_, _, _))
-          .map { values =>
-            if (values.state.isEmpty) {
-              ValueState.unmodified(td)
-            } else {
-              val tweet = td.tweet
-              values.map {
-                case (media, conversationMuted, mediaRefs) =>
-                  td.copy(
-                    tweet = tweet.copy(
-                      media = media,
-                      conversationMuted = conversationMuted,
-                      mediaRefs = mediaRefs
+        stitch
+          .joinmap(
+            media, :3
+            convewsationmuted, 😳
+            m-mediawefs
+          )(vawuestate.join(_, XD _, _))
+          .map { vawues =>
+            if (vawues.state.isempty) {
+              vawuestate.unmodified(td)
+            } ewse {
+              v-vaw tweet = td.tweet
+              vawues.map {
+                c-case (media, (///ˬ///✿) c-convewsationmuted, o.O mediawefs) =>
+                  t-td.copy(
+                    t-tweet = t-tweet.copy(
+                      m-media = media, o.O
+                      c-convewsationmuted = c-convewsationmuted, XD
+                      mediawefs = mediawefs
                     )
                   )
               }
@@ -519,330 +519,330 @@ object TweetHydration {
           }
       }
 
-    val hydrateHasMediaToTweetData: TweetDataValueHydrator =
-      TweetHydration.setOnTweetData(
-        TweetData.Lenses.tweet.andThen(TweetLenses.hasMedia),
-        (td: TweetData, opts: TweetQuery.Options) => td.tweet,
-        hydrateHasMedia
+    vaw hydwatehasmediatotweetdata: tweetdatavawuehydwatow =
+      t-tweethydwation.setontweetdata(
+        t-tweetdata.wenses.tweet.andthen(tweetwenses.hasmedia), ^^;;
+        (td: t-tweetdata, 😳😳😳 o-opts: tweetquewy.options) => t-td.tweet, (U ᵕ U❁)
+        hydwatehasmedia
       )
 
-    val hydrateReportedTweetVisibilityToTweetData: TweetDataValueHydrator = {
-      // Create a TweetDataValueHydrator that calls hydrateReportedTweetVisibility, which
-      // either throws a FilteredState.Unavailable or returns Unit.
-      ValueHydrator[TweetData, TweetQuery.Options] { (td, opts) =>
-        val ctx = ReportedTweetFilter.Ctx(td.tweet.perspective, TweetCtx.from(td, opts))
-        hydrateReportedTweetVisibility((), ctx).map { _ =>
-          ValueState.unmodified(td)
+    v-vaw hydwatewepowtedtweetvisibiwitytotweetdata: tweetdatavawuehydwatow = {
+      // cweate a tweetdatavawuehydwatow that cawws hydwatewepowtedtweetvisibiwity, /(^•ω•^) w-which
+      // e-eithew thwows a fiwtewedstate.unavaiwabwe ow wetuwns unit.
+      vawuehydwatow[tweetdata, 😳😳😳 t-tweetquewy.options] { (td, rawr x3 o-opts) =>
+        vaw c-ctx = wepowtedtweetfiwtew.ctx(td.tweet.pewspective, ʘwʘ tweetctx.fwom(td, UwU opts))
+        h-hydwatewepowtedtweetvisibiwity((), (⑅˘꒳˘) ctx).map { _ =>
+          vawuestate.unmodified(td)
         }
       }
     }
 
-    val hydrateTweetVisibilityToTweetData: TweetDataValueHydrator =
-      TweetHydration.setOnTweetData(
-        TweetData.Lenses.suppress,
-        (td: TweetData, opts: TweetQuery.Options) =>
-          TweetVisibilityHydrator.Ctx(td.tweet, TweetCtx.from(td, opts)),
-        hydrateTweetVisibility
+    v-vaw h-hydwatetweetvisibiwitytotweetdata: tweetdatavawuehydwatow =
+      tweethydwation.setontweetdata(
+        t-tweetdata.wenses.suppwess, ^^
+        (td: tweetdata, 😳😳😳 opts: t-tweetquewy.options) =>
+          t-tweetvisibiwityhydwatow.ctx(td.tweet, òωó tweetctx.fwom(td, ^^;; o-opts)), (✿oωo)
+        h-hydwatetweetvisibiwity
       )
 
-    val hydrateEscherbirdAnnotationsToTweetAndCachedTweet: TweetDataValueHydrator =
-      TweetHydration.setOnTweetAndCachedTweet(
-        TweetLenses.escherbirdEntityAnnotations,
-        (td: TweetData, _: TweetQuery.Options) => td.tweet,
-        hydrateEscherbirdAnnotations
+    vaw h-hydwateeschewbiwdannotationstotweetandcachedtweet: t-tweetdatavawuehydwatow =
+      t-tweethydwation.setontweetandcachedtweet(
+        t-tweetwenses.eschewbiwdentityannotations, rawr
+        (td: tweetdata, XD _: t-tweetquewy.options) => t-td.tweet, 😳
+        hydwateeschewbiwdannotations
       )
 
-    val scrubEngagements: TweetDataValueHydrator =
-      TweetHydration.setOnTweetData(
-        TweetData.Lenses.tweetCounts,
-        (td: TweetData, _: TweetQuery.Options) => ScrubEngagementHydrator.Ctx(td.suppress),
-        hydrateScrubEngagements
+    v-vaw scwubengagements: tweetdatavawuehydwatow =
+      t-tweethydwation.setontweetdata(
+        tweetdata.wenses.tweetcounts, (U ᵕ U❁)
+        (td: t-tweetdata, UwU _: tweetquewy.options) => s-scwubengagementhydwatow.ctx(td.suppwess), OwO
+        h-hydwatescwubengagements
       )
 
     /**
-     * This is where we wire up all the separate hydrators into a single [[TweetDataValueHydrator]].
+     * this is whewe we wiwe u-up aww the sepawate hydwatows into a singwe [[tweetdatavawuehydwatow]]. 😳
      *
-     * Each hydrator here is either a [[TweetDataValueHydrator]] or a [[TweetDataEditHydrator]].
-     * We use [[EditHydrator]]s for anything that needs to run in parallel ([[ValueHydrator]]s can
-     * only be run in sequence).
+     * e-each hydwatow h-hewe is eithew a [[tweetdatavawuehydwatow]] ow a [[tweetdataedithydwatow]]. (˘ω˘)
+     * w-we use [[edithydwatow]]s f-fow anything that nyeeds to wun i-in pawawwew ([[vawuehydwatow]]s can
+     * onwy be wun in sequence). òωó
      */
-    ValueHydrator.inSequence(
-      // Hydrate FeatureSwitchResults first, so they can be used by other hydrators if needed
-      hydrateFeatureSwitchResults,
-      EditHydrator
-        .inParallel(
-          ValueHydrator
-            .inSequence(
-              // The result of running these hydrators is saved as `cacheableTweetResult` and
-              // written back to cache via `cacheChangesEffect` in `hydrateRepo`
-              TweetHydration.captureCacheableTweetResult(
-                hydrateCacheableFields
+    v-vawuehydwatow.insequence(
+      // h-hydwate featuweswitchwesuwts fiwst, OwO so they c-can be used by o-othew hydwatows if nyeeded
+      hydwatefeatuweswitchwesuwts, (✿oωo)
+      e-edithydwatow
+        .inpawawwew(
+          v-vawuehydwatow
+            .insequence(
+              // t-the wesuwt o-of wunning these hydwatows is saved as `cacheabwetweetwesuwt` and
+              // wwitten back to cache via `cachechangeseffect` in `hydwatewepo`
+              t-tweethydwation.captuwecacheabwetweetwesuwt(
+                h-hydwatecacheabwefiewds
               ),
-              // Uncacheable hydrators that depend only on the cacheable fields
-              hydrateUncacheableMedia,
-              // clean-up partially hydrated entities before any of the hydrators that look at
-              // url and media entities run, so that they never see bad entities.
-              hydratePostCacheRepairs,
-              // These hydrators are all dependent on each other and/or the previous hydrators
-              hydrateDependentUncacheableFields,
-              // Sets `hasMedia`. Comes after PastedMediaHydrator in order to include pasted
-              // pics as well as other media & urls.
-              hydrateHasMediaToTweetData
+              // u-uncacheabwe h-hydwatows that d-depend onwy o-on the cacheabwe fiewds
+              h-hydwateuncacheabwemedia, (⑅˘꒳˘)
+              // c-cwean-up pawtiawwy hydwated entities b-befowe any o-of the hydwatows that wook at
+              // uww and media entities w-wun, /(^•ω•^) so that they nyevew see bad entities. 🥺
+              hydwatepostcachewepaiws, -.-
+              // t-these hydwatows awe aww d-dependent on each o-othew and/ow the pwevious hydwatows
+              h-hydwatedependentuncacheabwefiewds, ( ͡o ω ͡o )
+              // s-sets `hasmedia`. 😳😳😳 c-comes aftew pastedmediahydwatow i-in owdew t-to incwude pasted
+              // pics as weww a-as othew media & uwws. (˘ω˘)
+              h-hydwatehasmediatotweetdata
             )
-            .toEditHydrator,
-          // These hydrators do not rely on any other hydrators and so can be run in parallel
-          // with the above hydrators (and with each other)
-          hydrateIndependentUncacheableFields
+            .toedithydwatow, ^^
+          // t-these h-hydwatows do nyot wewy on any othew h-hydwatows and so can be wun in pawawwew
+          // w-with the above hydwatows (and with each othew)
+          hydwateindependentuncacheabwefiewds
         )
-        .toValueHydrator,
-      // Depends on reported perspectival having been hydrated in PerspectiveHydrator
-      hydrateReportedTweetVisibilityToTweetData,
-      // Remove superfluous urls entities when there is a corresponding MediaEntity for the same url
-      scrubSuperfluousUrlEntities,
-      // The copyFromSourceTweet hydrator needs to be located after the hydrators that produce the
-      // fields to copy. It must be located after PartialEntityCleaner (part of postCacheRepairs),
-      // which removes failed MediaEntities. It also depends on takedownCountryCodes having been
-      // hydrated in TakedownHydrator.
-      copyFromSourceTweet,
-      // depends on AdditionalFieldsHydrator and CopyFromSourceTweet to copy safety labels
-      hydrateTweetVisibilityToTweetData,
-      // for IPI'd tweets, we want to disable tweet engagement counts from being returned
-      // StatusCounts for replyCount, retweetCount.
-      // scrubEngagements hydrator must come after tweet visibility hydrator.
-      // tweet visibility hydrator emits the suppressed FilteredState needed for scrubbing.
-      scrubEngagements,
-      // this hydrator runs when writing the current tweet
-      // Escherbird comes last in order to consume a tweet that's as close as possible
-      // to the tweet written to tweet_events
-      hydrateEscherbirdAnnotationsToTweetAndCachedTweet
-        .onlyIf((td, opts) => opts.cause.writing(td.tweet.id)),
-      // Add an ellipsis to the end of the text for a Tweet that has a NoteTweet associated.
-      // This is so that the Tweet is displayed on the home timeline with an ellipsis, letting
-      // the User know that there's more to see.
-      hydrateNoteTweetSuffix,
+        .tovawuehydwatow, σωσ
+      // depends on wepowted pewspectivaw h-having been hydwated in pewspectivehydwatow
+      hydwatewepowtedtweetvisibiwitytotweetdata, 🥺
+      // wemove supewfwuous uwws entities when thewe is a cowwesponding m-mediaentity fow the same uww
+      scwubsupewfwuousuwwentities, 🥺
+      // t-the copyfwomsouwcetweet hydwatow n-nyeeds to be wocated aftew the hydwatows that p-pwoduce the
+      // fiewds to c-copy. /(^•ω•^) it must be wocated aftew p-pawtiawentitycweanew (pawt o-of postcachewepaiws), (⑅˘꒳˘)
+      // which wemoves faiwed mediaentities. -.- i-it awso depends on takedowncountwycodes having been
+      // h-hydwated in takedownhydwatow. 😳
+      copyfwomsouwcetweet, 😳😳😳
+      // d-depends on additionawfiewdshydwatow a-and copyfwomsouwcetweet to copy s-safety wabews
+      h-hydwatetweetvisibiwitytotweetdata, >w<
+      // fow ipi'd tweets, UwU we want to disabwe t-tweet engagement counts fwom being wetuwned
+      // s-statuscounts fow wepwycount, /(^•ω•^) wetweetcount. 🥺
+      // scwubengagements hydwatow must come aftew tweet visibiwity h-hydwatow. >_<
+      // t-tweet visibiwity hydwatow e-emits the s-suppwessed fiwtewedstate nyeeded f-fow scwubbing. rawr
+      scwubengagements, (ꈍᴗꈍ)
+      // this hydwatow wuns when wwiting the cuwwent tweet
+      // e-eschewbiwd c-comes wast in owdew to consume a-a tweet that's a-as cwose as possibwe
+      // t-to the tweet wwitten to tweet_events
+      hydwateeschewbiwdannotationstotweetandcachedtweet
+        .onwyif((td, opts) => opts.cause.wwiting(td.tweet.id)), -.-
+      // a-add an ewwipsis to the end of the text f-fow a tweet that h-has a nyotetweet associated. ( ͡o ω ͡o )
+      // this is s-so that the tweet is dispwayed on the home timewine with an ewwipsis, (⑅˘꒳˘) wetting
+      // the usew know that thewe's mowe to see. mya
+      h-hydwatenotetweetsuffix, rawr x3
       /**
-       * Post-cache repair of QT text and entities to support rendering on all clients
-       * Moving this to end of the pipeline to avoid/minimize chance of following hydrators
-       * depending on modified tweet text or entities.
-       * When we start persisting shortUrl in MH - permalink won't be empty. therefore,
-       * we won't run QuotedTweetRefHydrator and just hydrate expanded and display
-       * using QuotedTweetRefUrlsHydrator. We will use hydrated permalink to repair
-       * QT text and entities for non-upgraded clients in this step.
+       * p-post-cache wepaiw of qt text and e-entities to suppowt w-wendewing on aww cwients
+       * m-moving this to end of the pipewine to avoid/minimize chance of fowwowing hydwatows
+       * d-depending on modified tweet text ow entities. (ꈍᴗꈍ)
+       * when we stawt pewsisting s-showtuww in mh - p-pewmawink won't b-be empty. ʘwʘ thewefowe,
+       * we won't wun quotedtweetwefhydwatow and just hydwate expanded a-and dispway
+       * u-using quotedtweetwefuwwshydwatow. :3 w-we wiww use hydwated pewmawink t-to wepaiw
+       * qt text a-and entities fow nyon-upgwaded c-cwients in this step. o.O
        * */
-      hydrateTweetLegacyFormat
+      h-hydwatetweetwegacyfowmat
     )
   }
 
   /**
-   * Returns a new hydrator that takes the produced result, and captures the result value
-   * in the `cacheableTweetResult` field of the enclosed `TweetData`.
+   * wetuwns a new hydwatow that t-takes the pwoduced wesuwt, /(^•ω•^) and c-captuwes the wesuwt v-vawue
+   * in the `cacheabwetweetwesuwt` fiewd o-of the encwosed `tweetdata`. OwO
    */
-  def captureCacheableTweetResult(h: TweetDataValueHydrator): TweetDataValueHydrator =
-    ValueHydrator[TweetData, TweetQuery.Options] { (td, opts) =>
-      h(td, opts).map { v =>
-        // In addition to saving off a copy of ValueState, make sure that the TweetData inside
-        // the ValueState has its "completedHydrations" set to the ValueState.HydrationStates's
-        // completedHydrations.  This is used when converting to a CachedTweet.
-        v.map { td =>
+  d-def captuwecacheabwetweetwesuwt(h: tweetdatavawuehydwatow): t-tweetdatavawuehydwatow =
+    vawuehydwatow[tweetdata, σωσ t-tweetquewy.options] { (td, (ꈍᴗꈍ) opts) =>
+      h-h(td, ( ͡o ω ͡o ) opts).map { v-v =>
+        // in addition to saving off a-a copy of vawuestate, rawr x3 make suwe that the tweetdata inside
+        // the vawuestate has its "compwetedhydwations" set to the vawuestate.hydwationstates's
+        // compwetedhydwations. UwU  t-this is used when convewting to a cachedtweet. o.O
+        v-v.map { td =>
           td.copy(
-            cacheableTweetResult = Some(v.map(_.addHydrated(v.state.completedHydrations)))
+            c-cacheabwetweetwesuwt = some(v.map(_.addhydwated(v.state.compwetedhydwations)))
           )
         }
       }
     }
 
   /**
-   * Takes a ValueHydrator and a Lens and returns a `TweetDataValueHydrator` that does three things:
+   * takes a vawuehydwatow a-and a wens and wetuwns a `tweetdatavawuehydwatow` that does t-thwee things:
    *
-   * 1. Runs the ValueHydrator on the lensed value
-   * 2. Saves the result back to the main tweet using the lens
-   * 3. Saves the result back to the tweet in cacheableTweetResult using the lens
+   * 1. OwO wuns the vawuehydwatow o-on the wensed vawue
+   * 2. o.O saves the wesuwt b-back to the main tweet using the wens
+   * 3. ^^;; saves t-the wesuwt b-back to the tweet in cacheabwetweetwesuwt using t-the wens
    */
-  def setOnTweetAndCachedTweet[A, C](
-    l: Lens[Tweet, A],
-    mkCtx: (TweetData, TweetQuery.Options) => C,
-    h: ValueHydrator[A, C]
-  ): TweetDataValueHydrator = {
-    // A lens that goes from TweetData -> tweet -> l
-    val tweetDataLens = TweetData.Lenses.tweet.andThen(l)
+  d-def setontweetandcachedtweet[a, (⑅˘꒳˘) c](
+    w: wens[tweet, (ꈍᴗꈍ) a-a],
+    m-mkctx: (tweetdata, o.O tweetquewy.options) => c, (///ˬ///✿)
+    h-h: vawuehydwatow[a, 😳😳😳 c]
+  ): tweetdatavawuehydwatow = {
+    // a wens that goes fwom tweetdata -> t-tweet -> w
+    vaw tweetdatawens = tweetdata.wenses.tweet.andthen(w)
 
-    // A lens that goes from TweetData -> cacheableTweetResult -> tweet -> l
-    val cachedTweetLens =
-      TweetLenses
-        .requireSome(TweetData.Lenses.cacheableTweetResult)
-        .andThen(TweetResult.Lenses.tweet)
-        .andThen(l)
+    // a wens that goes f-fwom tweetdata -> c-cacheabwetweetwesuwt -> t-tweet -> w
+    vaw cachedtweetwens =
+      tweetwenses
+        .wequiwesome(tweetdata.wenses.cacheabwetweetwesuwt)
+        .andthen(tweetwesuwt.wenses.tweet)
+        .andthen(w)
 
-    ValueHydrator[TweetData, TweetQuery.Options] { (td, opts) =>
-      h.run(tweetDataLens.get(td), mkCtx(td, opts)).map { r =>
-        if (r.state.isEmpty) {
-          ValueState.unmodified(td)
-        } else {
-          r.map { v => Lens.setAll(td, tweetDataLens -> v, cachedTweetLens -> v) }
+    vawuehydwatow[tweetdata, UwU t-tweetquewy.options] { (td, nyaa~~ opts) =>
+      h-h.wun(tweetdatawens.get(td), (✿oωo) mkctx(td, -.- opts)).map { w-w =>
+        i-if (w.state.isempty) {
+          vawuestate.unmodified(td)
+        } ewse {
+          w.map { v => wens.setaww(td, :3 tweetdatawens -> v-v, cachedtweetwens -> v) }
         }
       }
     }
   }
 
   /**
-   * Creates a `TweetDataValueHydrator` that hydrates a lensed value, overwriting
-   * the existing value.
+   * c-cweates a `tweetdatavawuehydwatow` that hydwates a wensed v-vawue, (⑅˘꒳˘) ovewwwiting
+   * the existing vawue. >_<
    */
-  def setOnTweetData[A, C](
-    lens: Lens[TweetData, A],
-    mkCtx: (TweetData, TweetQuery.Options) => C,
-    h: ValueHydrator[A, C]
-  ): TweetDataValueHydrator =
-    ValueHydrator[TweetData, TweetQuery.Options] { (td, opts) =>
-      h.run(lens.get(td), mkCtx(td, opts)).map { r =>
-        if (r.state.isEmpty) ValueState.unmodified(td) else r.map(lens.set(td, _))
+  d-def setontweetdata[a, UwU c-c](
+    wens: wens[tweetdata, rawr a-a],
+    m-mkctx: (tweetdata, (ꈍᴗꈍ) t-tweetquewy.options) => c-c, ^•ﻌ•^
+    h: vawuehydwatow[a, ^^ c]
+  ): tweetdatavawuehydwatow =
+    v-vawuehydwatow[tweetdata, XD t-tweetquewy.options] { (td, (///ˬ///✿) o-opts) =>
+      h-h.wun(wens.get(td), σωσ m-mkctx(td, o-opts)).map { w =>
+        if (w.state.isempty) v-vawuestate.unmodified(td) e-ewse w.map(wens.set(td, :3 _))
       }
     }
 
   /**
-   * Produces an [[Effect]] that can be applied to a [[TweetDataValueHydrator]] to write updated
-   * values back to cache.
+   * p-pwoduces an [[effect]] that can be appwied to a [[tweetdatavawuehydwatow]] t-to wwite updated
+   * vawues back to c-cache. >w<
    */
-  def cacheChanges(
-    cache: LockingCache[TweetId, Cached[TweetData]],
-    stats: StatsReceiver
-  ): Effect[ValueState[TweetData]] = {
-    val updatedCounter = stats.counter("updated")
-    val unchangedCounter = stats.counter("unchanged")
-    val picker = new TweetRepoCachePicker[TweetData](_.cachedAt)
-    val cacheErrorCounter = stats.counter("cache_error")
-    val missingCacheableResultCounter = stats.counter("missing_cacheable_result")
+  def cachechanges(
+    cache: wockingcache[tweetid, (ˆ ﻌ ˆ)♡ c-cached[tweetdata]], (U ᵕ U❁)
+    s-stats: statsweceivew
+  ): effect[vawuestate[tweetdata]] = {
+    vaw updatedcountew = stats.countew("updated")
+    v-vaw u-unchangedcountew = stats.countew("unchanged")
+    v-vaw pickew = nyew t-tweetwepocachepickew[tweetdata](_.cachedat)
+    vaw cacheewwowcountew = stats.countew("cache_ewwow")
+    vaw m-missingcacheabwewesuwtcountew = s-stats.countew("missing_cacheabwe_wesuwt")
 
-    Effect[TweetResult] { result =>
-      // cacheErrorEncountered will never be set on `cacheableTweetResult`, so we need to
-      // look at the outer tweet state.
-      val cacheErrorEncountered = result.state.cacheErrorEncountered
+    effect[tweetwesuwt] { wesuwt =>
+      // c-cacheewwowencountewed wiww n-nyevew be set on `cacheabwetweetwesuwt`, :3 so w-we need to
+      // wook at the outew tweet state. ^^
+      vaw cacheewwowencountewed = wesuwt.state.cacheewwowencountewed
 
-      result.value.cacheableTweetResult match {
-        case Some(ValueState(td, state)) if state.modified && !cacheErrorEncountered =>
-          val tweetData = td.addHydrated(state.completedHydrations)
-          val now = Time.now
-          val cached = Cached(Some(tweetData), CachedValueStatus.Found, now, Some(now))
-          val handler = LockingCache.PickingHandler(cached, picker)
+      wesuwt.vawue.cacheabwetweetwesuwt match {
+        c-case some(vawuestate(td, ^•ﻌ•^ state)) if state.modified && !cacheewwowencountewed =>
+          v-vaw tweetdata = t-td.addhydwated(state.compwetedhydwations)
+          vaw n-now = time.now
+          vaw c-cached = cached(some(tweetdata), (///ˬ///✿) c-cachedvawuestatus.found, 🥺 n-nyow, s-some(now))
+          v-vaw handwew = wockingcache.pickinghandwew(cached, ʘwʘ pickew)
 
-          updatedCounter.incr()
-          cache.lockAndSet(tweetData.tweet.id, handler)
+          u-updatedcountew.incw()
+          c-cache.wockandset(tweetdata.tweet.id, (✿oωo) handwew)
 
-        case Some(ValueState(_, _)) if cacheErrorEncountered =>
-          cacheErrorCounter.incr()
+        c-case some(vawuestate(_, rawr _)) if c-cacheewwowencountewed =>
+          c-cacheewwowcountew.incw()
 
-        case None =>
-          missingCacheableResultCounter.incr()
+        c-case nyone =>
+          missingcacheabwewesuwtcountew.incw()
 
-        case _ =>
-          unchangedCounter.incr()
+        c-case _ =>
+          unchangedcountew.incw()
       }
     }
   }
 
   /**
-   * Wraps a hydrator with a check such that it only executes the hydrator if `queryFilter`
-   * returns true for the `TweetQuery.Option` in the `Ctx` value, and the specified
-   * `HydrationType` is not already marked as having been completed in
-   * `ctx.tweetData.completedHydrations`.  If these conditions pass, and the underlying
-   * hydrator is executed, and the result does not contain a field-level or total failure,
-   * then the resulting `HydrationState` is updated to indicate that the specified
-   * `HydrationType` has been completed.
+   * w-wwaps a hydwatow w-with a check s-such that it o-onwy exekawaii~s the hydwatow if `quewyfiwtew`
+   * w-wetuwns twue fow the `tweetquewy.option` i-in t-the `ctx` vawue, OwO and the specified
+   * `hydwationtype` is nyot awweady mawked as h-having been compweted i-in
+   * `ctx.tweetdata.compwetedhydwations`. ^^  if these conditions p-pass, ʘwʘ a-and the undewwying
+   * hydwatow is exekawaii~d, σωσ a-and the wesuwt d-does nyot contain a-a fiewd-wevew o-ow totaw faiwuwe,
+   * t-then the w-wesuwting `hydwationstate` is updated to indicate t-that the specified
+   * `hydwationtype` has been compweted. (⑅˘꒳˘)
    */
-  def completeOnlyOnce[A, C <: TweetCtx](
-    queryFilter: TweetQuery.Options => Boolean = _ => true,
-    hydrationType: HydrationType,
-    dependsOn: Set[HydrationType] = Set.empty,
-    hydrator: ValueHydrator[A, C]
-  ): ValueHydrator[A, C] = {
-    val completedState = HydrationState.modified(hydrationType)
+  def compweteonwyonce[a, (ˆ ﻌ ˆ)♡ c <: t-tweetctx](
+    q-quewyfiwtew: tweetquewy.options => boowean = _ => twue, :3
+    hydwationtype: hydwationtype, ʘwʘ
+    d-dependson: set[hydwationtype] = s-set.empty, (///ˬ///✿)
+    hydwatow: vawuehydwatow[a, (ˆ ﻌ ˆ)♡ c]
+  ): v-vawuehydwatow[a, 🥺 c] = {
+    vaw c-compwetedstate = h-hydwationstate.modified(hydwationtype)
 
-    ValueHydrator[A, C] { (a, ctx) =>
-      hydrator(a, ctx).map { res =>
-        if (res.state.failedFields.isEmpty &&
-          dependsOn.forall(ctx.completedHydrations.contains)) {
-          // successful result!
-          if (!ctx.completedHydrations.contains(hydrationType)) {
-            res.copy(state = res.state ++ completedState)
-          } else {
-            // forced rehydration - don't add hydrationType or change modified flag
-            res
+    vawuehydwatow[a, rawr c-c] { (a, ctx) =>
+      hydwatow(a, (U ﹏ U) ctx).map { wes =>
+        if (wes.state.faiwedfiewds.isempty &&
+          d-dependson.fowaww(ctx.compwetedhydwations.contains)) {
+          // successfuw wesuwt! ^^
+          i-if (!ctx.compwetedhydwations.contains(hydwationtype)) {
+            wes.copy(state = w-wes.state ++ compwetedstate)
+          } ewse {
+            // fowced wehydwation - d-don't add hydwationtype ow c-change modified fwag
+            wes
           }
-        } else {
-          // hydration failed or not all dependencies satisfied so don't mark as complete
-          res
+        } e-ewse {
+          // hydwation faiwed o-ow nyot aww dependencies satisfied so don't mawk as compwete
+          wes
         }
       }
-    }.onlyIf { (a, ctx) =>
-      queryFilter(ctx.opts) &&
-      (!ctx.completedHydrations.contains(hydrationType))
+    }.onwyif { (a, σωσ ctx) =>
+      quewyfiwtew(ctx.opts) &&
+      (!ctx.compwetedhydwations.contains(hydwationtype))
     }
   }
 
   /**
-   * Applies a `TweetDataValueHydrator` to a `TweetRepository.Type`-typed repository.
-   * The incoming `TweetQuery.Options` are first expanded using `optionsExpander`, and the
-   * resulting options passed to `repo` and `hydrator`.  The resulting tweet result
-   * objects are passed to `cacheChangesEffect` for possible write-back to cache.  Finally,
-   * the tweets are scrubbed according to the original input `TweetQuery.Options`.
+   * appwies a `tweetdatavawuehydwatow` t-to a `tweetwepositowy.type`-typed w-wepositowy. :3
+   * t-the i-incoming `tweetquewy.options` awe fiwst expanded using `optionsexpandew`, ^^ a-and the
+   * wesuwting options passed to `wepo` and `hydwatow`. (✿oωo)  t-the w-wesuwting tweet w-wesuwt
+   * objects a-awe passed to `cachechangeseffect` fow possibwe wwite-back to cache. òωó  finawwy, (U ᵕ U❁)
+   * the tweets a-awe scwubbed a-accowding to the owiginaw input `tweetquewy.options`. ʘwʘ
    */
-  def hydrateRepo(
-    hydrator: TweetDataValueHydrator,
-    cacheChangesEffect: Effect[TweetResult],
-    optionsExpander: TweetQueryOptionsExpander.Type
+  def hydwatewepo(
+    h-hydwatow: tweetdatavawuehydwatow, ( ͡o ω ͡o )
+    cachechangeseffect: e-effect[tweetwesuwt], σωσ
+    o-optionsexpandew: t-tweetquewyoptionsexpandew.type
   )(
-    repo: TweetResultRepository.Type
-  ): TweetResultRepository.Type =
-    (tweetId: TweetId, originalOpts: TweetQuery.Options) => {
-      val expandedOpts = optionsExpander(originalOpts)
+    wepo: tweetwesuwtwepositowy.type
+  ): tweetwesuwtwepositowy.type =
+    (tweetid: tweetid, (ˆ ﻌ ˆ)♡ owiginawopts: tweetquewy.options) => {
+      vaw expandedopts = o-optionsexpandew(owiginawopts)
 
-      for {
-        repoResult <- repo(tweetId, expandedOpts)
-        hydratorResult <- hydrator(repoResult.value, expandedOpts)
-      } yield {
-        val hydratingRepoResult =
-          TweetResult(hydratorResult.value, repoResult.state ++ hydratorResult.state)
+      fow {
+        w-wepowesuwt <- wepo(tweetid, (˘ω˘) expandedopts)
+        hydwatowwesuwt <- h-hydwatow(wepowesuwt.vawue, 😳 expandedopts)
+      } y-yiewd {
+        vaw hydwatingwepowesuwt =
+          tweetwesuwt(hydwatowwesuwt.vawue, ^•ﻌ•^ w-wepowesuwt.state ++ h-hydwatowwesuwt.state)
 
-        if (originalOpts.cacheControl.writeToCache) {
-          cacheChangesEffect(hydratingRepoResult)
+        i-if (owiginawopts.cachecontwow.wwitetocache) {
+          c-cachechangeseffect(hydwatingwepowesuwt)
         }
 
-        UnrequestedFieldScrubber(originalOpts).scrub(hydratingRepoResult)
+        u-unwequestedfiewdscwubbew(owiginawopts).scwub(hydwatingwepowesuwt)
       }
     }
 
   /**
-   * A trivial wrapper around a Stitch[_] to provide a `joinWith`
-   * method that lets us choose the precedence of exceptions.
+   * a twiviaw w-wwappew awound a-a stitch[_] to pwovide a `joinwith`
+   * m-method that wets us choose the pwecedence o-of exceptions. σωσ
    *
-   * This wrapper is useful for the case in which it's important that
-   * we specify which of the two exceptions wins (such as visibility
-   * filtering).
+   * this w-wwappew is usefuw f-fow the case in which it's i-impowtant that
+   * w-we specify which of the two exceptions wins (such as visibiwity
+   * f-fiwtewing). 😳😳😳
    *
-   * Since this is an [[AnyVal]], using this is no more expensive than
-   * inlining the joinWith method.
+   * since t-this is an [[anyvaw]], rawr u-using t-this is nyo mowe expensive than
+   * inwining the joinwith method. >_<
    */
-  // exposed for testing
-  case class StitchExceptionPrecedence[A](toStitch: Stitch[A]) extends AnyVal {
+  // e-exposed fow testing
+  case cwass stitchexceptionpwecedence[a](tostitch: s-stitch[a]) extends anyvaw {
 
     /**
-     * Concurrently evaluate two Stitch[_] values. This is different
-     * from Stitch.join in that any exception from the expression on
-     * the left hand side will take precedence over an exception on
-     * the right hand side. This means that an exception from the
-     * right-hand side will not short-circuit evaluation, but an
-     * exception on the left-hand side *will* short-circuit. This is
-     * desirable because it allows us to return the failure with as
-     * little latency as possible. (Compare to lifting *both* to Try,
-     * which would force us to wait for both computations to complete
-     * before returning, even if the one with the higher precedence is
-     * already known to be an exception.)
+     * concuwwentwy e-evawuate two stitch[_] vawues. this is diffewent
+     * fwom stitch.join i-in that any exception f-fwom the expwession o-on
+     * the w-weft hand side wiww take pwecedence o-ovew an exception o-on
+     * the wight hand s-side. ʘwʘ this means t-that an exception f-fwom the
+     * w-wight-hand side wiww not showt-ciwcuit e-evawuation, (ˆ ﻌ ˆ)♡ b-but an
+     * e-exception on the weft-hand s-side *wiww* showt-ciwcuit. ^^;; this is
+     * desiwabwe because it awwows us to wetuwn the faiwuwe with a-as
+     * wittwe w-watency as possibwe. σωσ (compawe t-to wifting *both* to twy, rawr x3
+     * which wouwd f-fowce us to wait f-fow both computations t-to compwete
+     * b-befowe wetuwning, 😳 even i-if the one with the highew pwecedence is
+     * a-awweady known to b-be an exception.)
      */
-    def joinWith[B, C](rhs: Stitch[B])(f: (A, B) => C): StitchExceptionPrecedence[C] =
-      StitchExceptionPrecedence {
-        Stitch
-          .joinMap(toStitch, rhs.liftToTry) { (a, tryB) => tryB.map(b => f(a, b)) }
-          .lowerFromTry
+    def joinwith[b, c](whs: stitch[b])(f: (a, 😳😳😳 b) => c-c): stitchexceptionpwecedence[c] =
+      stitchexceptionpwecedence {
+        s-stitch
+          .joinmap(tostitch, 😳😳😳 whs.wifttotwy) { (a, ( ͡o ω ͡o ) twyb) => twyb.map(b => f-f(a, rawr x3 b)) }
+          .wowewfwomtwy
       }
   }
 }

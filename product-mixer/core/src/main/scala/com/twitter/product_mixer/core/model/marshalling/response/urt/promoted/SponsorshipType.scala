@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted
 
-sealed trait SponsorshipType
+seawed twait sponsowshiptype
 
-case object DirectSponsorshipType extends SponsorshipType
-case object IndirectSponsorshipType extends SponsorshipType
-case object NoSponsorshipSponsorshipType extends SponsorshipType
+c-case o-object diwectsponsowshiptype extends s-sponsowshiptype
+c-case object i-indiwectsponsowshiptype e-extends s-sponsowshiptype
+c-case object nosponsowshipsponsowshiptype extends sponsowshiptype

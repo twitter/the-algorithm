@@ -1,161 +1,161 @@
-package com.twitter.search.earlybird_root.quota;
+package com.twittew.seawch.eawwybiwd_woot.quota;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.atomic.AtomicReference;
+impowt java.io.ioexception;
+i-impowt j-java.io.inputstweam;
+i-impowt j-java.nio.chawset.standawdchawsets;
+i-impowt java.utiw.itewatow;
+i-impowt j-java.utiw.map;
+i-impowt java.utiw.optionaw;
+impowt java.utiw.concuwwent.scheduwedexecutowsewvice;
+impowt java.utiw.concuwwent.atomic.atomicwefewence;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.cowwect.immutabwemap;
+impowt com.googwe.common.cowwect.maps;
 
-import org.apache.commons.io.IOUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
+impowt o-owg.apache.commons.io.ioutiws;
+impowt owg.json.jsonexception;
+i-impowt owg.json.jsonobject;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.util.io.periodic.PeriodicFileLoader;
-import com.twitter.search.common.util.json.JSONParsingUtil;
+impowt com.twittew.common.utiw.cwock;
+i-impowt com.twittew.seawch.common.metwics.seawchwonggauge;
+impowt c-com.twittew.seawch.common.utiw.io.pewiodic.pewiodicfiwewoadew;
+i-impowt com.twittew.seawch.common.utiw.json.jsonpawsingutiw;
 
 /**
- * Periodically loads a json serialized map that contains the quota information indexed by
- * client id.
+ * pewiodicawwy woads a json sewiawized map that contains the q-quota infowmation indexed by
+ * cwient id. ( ͡o ω ͡o )
  *
- * Each json object from the map is required to have an int property that represents a client's quota.
- * The key for the quota property is passed to this class.
+ * each json object fwom the map is w-wequiwed to have an int pwopewty t-that wepwesents a-a cwient's quota. rawr x3
+ * t-the key f-fow the quota pwopewty is passed to this cwass. nyaa~~
  *
- * Optionally it can have a <b>should_enforce</b> property of type boolean
+ * o-optionawwy it can have a <b>shouwd_enfowce</b> pwopewty of t-type boowean
  *
- * If this two properties are not present an exception will be thrown.
+ * if this two pwopewties awe not pwesent an exception wiww be thwown. >_<
  */
-public class ConfigBasedQuotaConfig extends PeriodicFileLoader {
-  private static final String UNSET_EMAIL = "unset";
+pubwic c-cwass configbasedquotaconfig extends pewiodicfiwewoadew {
+  pwivate s-static finaw s-stwing unset_emaiw = "unset";
 
-  private static final String PER_CLIENT_QUOTA_GAUGE_NAME_PATTERN =
-      "config_based_quota_for_client_id_%s";
-  private static final String PER_EMAIL_QUOTA_GAUGE_NAME_PATTERN =
-      "config_based_quota_for_email_%s";
+  p-pwivate static finaw stwing pew_cwient_quota_gauge_name_pattewn =
+      "config_based_quota_fow_cwient_id_%s";
+  pwivate static f-finaw stwing p-pew_emaiw_quota_gauge_name_pattewn =
+      "config_based_quota_fow_emaiw_%s";
 
-  @VisibleForTesting
-  static final SearchLongGauge TOTAL_QUOTA =
-     SearchLongGauge.export("total_config_based_quota");
+  @visibwefowtesting
+  static finaw s-seawchwonggauge t-totaw_quota =
+     seawchwonggauge.expowt("totaw_config_based_quota");
 
-  @VisibleForTesting
-  static final SearchLongGauge ENTRIES_COUNT =
-      SearchLongGauge.export("config_repo_quota_config_entries_count");
+  @visibwefowtesting
+  s-static finaw seawchwonggauge e-entwies_count =
+      seawchwonggauge.expowt("config_wepo_quota_config_entwies_count");
 
-  private final AtomicReference<ImmutableMap<String, QuotaInfo>> clientQuotas =
-    new AtomicReference<>();
+  pwivate f-finaw atomicwefewence<immutabwemap<stwing, ^^;; quotainfo>> cwientquotas =
+    n-nyew atomicwefewence<>();
 
-  private String clientQuotaKey;
-  private boolean requireQuotaConfigForClients;
+  p-pwivate s-stwing cwientquotakey;
+  pwivate boowean wequiwequotaconfigfowcwients;
 
   /**
-   * Creates the object that manages loads the config from: quotaConfigPath. It periodically
-   * reloads the config file using the given executor service.
+   * cweates the object that manages woads the config fwom: quotaconfigpath. (ˆ ﻌ ˆ)♡ i-it p-pewiodicawwy
+   * wewoads the config f-fiwe using t-the given executow s-sewvice. ^^;;
    *
-   * @param quotaConfigPath Path to configuration file.
-   * @param executorService ScheduledExecutorService to be used for periodically reloading the file.
-   * @param clientQuotaKey The key that will be used to extract client quotas.
-   * @param requireQuotaConfigForClients Determines whether a client can be skipped
-   * if the associated object is missing the quota key
-   * (ie a client that is a SuperRoot client but the current service is Archive)
+   * @pawam quotaconfigpath path to configuwation f-fiwe. (⑅˘꒳˘)
+   * @pawam executowsewvice scheduwedexecutowsewvice to be used fow pewiodicawwy wewoading t-the fiwe. rawr x3
+   * @pawam cwientquotakey t-the key t-that wiww be used t-to extwact cwient quotas. (///ˬ///✿)
+   * @pawam w-wequiwequotaconfigfowcwients d-detewmines w-whethew a cwient c-can be skipped
+   * if the associated object i-is missing the quota k-key
+   * (ie a-a cwient that i-is a supewwoot cwient b-but the cuwwent sewvice is awchive)
    */
-  public static ConfigBasedQuotaConfig newConfigBasedQuotaConfig(
-      String quotaConfigPath,
-      String clientQuotaKey,
-      boolean requireQuotaConfigForClients,
-      ScheduledExecutorService executorService,
-      Clock clock
-  ) throws Exception {
-    ConfigBasedQuotaConfig configLoader = new ConfigBasedQuotaConfig(
-        quotaConfigPath,
-        clientQuotaKey,
-        requireQuotaConfigForClients,
-        executorService,
-        clock
+  pubwic static c-configbasedquotaconfig nyewconfigbasedquotaconfig(
+      stwing quotaconfigpath, 🥺
+      stwing cwientquotakey, >_<
+      boowean wequiwequotaconfigfowcwients, UwU
+      s-scheduwedexecutowsewvice executowsewvice, >_<
+      cwock cwock
+  ) thwows exception {
+    c-configbasedquotaconfig c-configwoadew = n-nyew configbasedquotaconfig(
+        q-quotaconfigpath, -.-
+        cwientquotakey, mya
+        w-wequiwequotaconfigfowcwients, >w<
+        e-executowsewvice, (U ﹏ U)
+        cwock
     );
-    configLoader.init();
-    return configLoader;
+    configwoadew.init();
+    wetuwn configwoadew;
   }
 
-  public ConfigBasedQuotaConfig(
-      String quotaConfigPath,
-      String clientQuotaKey,
-      boolean requireQuotaConfigForClients,
-      ScheduledExecutorService executorService,
-      Clock clock
-  ) throws Exception {
-    super("quotaConfig", quotaConfigPath, executorService, clock);
-    this.clientQuotaKey = clientQuotaKey;
-    this.requireQuotaConfigForClients = requireQuotaConfigForClients;
-  }
-
-  /**
-   * Returns the quota information for a specific client id.
-   */
-  public Optional<QuotaInfo> getQuotaForClient(String clientId) {
-    return Optional.ofNullable(clientQuotas.get().get(clientId));
+  pubwic configbasedquotaconfig(
+      s-stwing quotaconfigpath, 😳😳😳
+      s-stwing cwientquotakey, o.O
+      b-boowean w-wequiwequotaconfigfowcwients, òωó
+      scheduwedexecutowsewvice executowsewvice, 😳😳😳
+      c-cwock cwock
+  ) t-thwows exception {
+    supew("quotaconfig", σωσ q-quotaconfigpath, (⑅˘꒳˘) e-executowsewvice, cwock);
+    this.cwientquotakey = cwientquotakey;
+    this.wequiwequotaconfigfowcwients = wequiwequotaconfigfowcwients;
   }
 
   /**
-   * Load the json format and store it in a map.
+   * w-wetuwns t-the quota infowmation f-fow a specific cwient id. (///ˬ///✿)
    */
-  @Override
-  protected void accept(InputStream fileStream) throws JSONException, IOException {
-    String fileContents = IOUtils.toString(fileStream, StandardCharsets.UTF_8);
-    JSONObject quotaConfig = new JSONObject(JSONParsingUtil.stripComments(fileContents));
+  p-pubwic o-optionaw<quotainfo> getquotafowcwient(stwing c-cwientid) {
+    wetuwn optionaw.ofnuwwabwe(cwientquotas.get().get(cwientid));
+  }
 
-    Map<String, Integer> perEmailQuotas = Maps.newHashMap();
-    ImmutableMap.Builder<String, QuotaInfo> quotasBuilder = new ImmutableMap.Builder<>();
-    Iterator<String> clientIds = quotaConfig.keys();
+  /**
+   * woad the json fowmat a-and stowe it in a-a map. 🥺
+   */
+  @ovewwide
+  pwotected void accept(inputstweam f-fiwestweam) t-thwows jsonexception, OwO ioexception {
+    stwing fiwecontents = i-ioutiws.tostwing(fiwestweam, >w< standawdchawsets.utf_8);
+    jsonobject quotaconfig = nyew jsonobject(jsonpawsingutiw.stwipcomments(fiwecontents));
 
-    long totalQuota = 0;
-    while (clientIds.hasNext()) {
-      String clientId = clientIds.next();
-      JSONObject clientQuota = quotaConfig.getJSONObject(clientId);
+    m-map<stwing, integew> pewemaiwquotas = m-maps.newhashmap();
+    i-immutabwemap.buiwdew<stwing, 🥺 quotainfo> quotasbuiwdew = new immutabwemap.buiwdew<>();
+    i-itewatow<stwing> c-cwientids = quotaconfig.keys();
 
-      // Skip clients that don't send requests to this service.
-      // (ie some SuperRoot clients are not Archive clients)
-      if (!requireQuotaConfigForClients && !clientQuota.has(clientQuotaKey)) {
-        continue;
+    wong totawquota = 0;
+    w-whiwe (cwientids.hasnext()) {
+      stwing cwientid = c-cwientids.next();
+      jsonobject cwientquota = quotaconfig.getjsonobject(cwientid);
+
+      // skip cwients t-that don't send wequests t-to this sewvice. nyaa~~
+      // (ie s-some supewwoot cwients a-awe nyot awchive cwients)
+      i-if (!wequiwequotaconfigfowcwients && !cwientquota.has(cwientquotakey)) {
+        c-continue;
       }
 
-      int quotaValue = clientQuota.getInt(clientQuotaKey);
-      boolean shouldEnforce = clientQuota.optBoolean("should_enforce", false);
-      String tierValue = clientQuota.optString("tier", QuotaInfo.DEFAULT_TIER_VALUE);
-      boolean archiveAccess = clientQuota.optBoolean("archive_access",
-          QuotaInfo.DEFAULT_ARCHIVE_ACCESS_VALUE);
-      String email = clientQuota.optString("email", UNSET_EMAIL);
+      int q-quotavawue = cwientquota.getint(cwientquotakey);
+      b-boowean s-shouwdenfowce = cwientquota.optboowean("shouwd_enfowce", ^^ fawse);
+      s-stwing t-tiewvawue = cwientquota.optstwing("tiew", >w< q-quotainfo.defauwt_tiew_vawue);
+      boowean awchiveaccess = cwientquota.optboowean("awchive_access", OwO
+          q-quotainfo.defauwt_awchive_access_vawue);
+      stwing e-emaiw = cwientquota.optstwing("emaiw", XD u-unset_emaiw);
 
-      quotasBuilder.put(
-          clientId,
-          new QuotaInfo(clientId, email, quotaValue, shouldEnforce, tierValue, archiveAccess));
+      quotasbuiwdew.put(
+          cwientid, ^^;;
+          nyew q-quotainfo(cwientid, 🥺 e-emaiw, XD quotavawue, s-shouwdenfowce, (U ᵕ U❁) t-tiewvawue, :3 awchiveaccess));
 
-      SearchLongGauge perClientQuota = SearchLongGauge.export(
-          String.format(PER_CLIENT_QUOTA_GAUGE_NAME_PATTERN, clientId));
-      perClientQuota.set(quotaValue);
-      totalQuota += quotaValue;
+      s-seawchwonggauge pewcwientquota = seawchwonggauge.expowt(
+          stwing.fowmat(pew_cwient_quota_gauge_name_pattewn, ( ͡o ω ͡o ) cwientid));
+      pewcwientquota.set(quotavawue);
+      t-totawquota += quotavawue;
 
-      Integer emailQuota = perEmailQuotas.get(email);
-      if (emailQuota == null) {
-        emailQuota = 0;
+      i-integew emaiwquota = pewemaiwquotas.get(emaiw);
+      i-if (emaiwquota == nyuww) {
+        e-emaiwquota = 0;
       }
-      perEmailQuotas.put(email, emailQuota + quotaValue);
+      pewemaiwquotas.put(emaiw, òωó e-emaiwquota + q-quotavawue);
     }
 
-    clientQuotas.set(quotasBuilder.build());
-    TOTAL_QUOTA.set(totalQuota);
-    ENTRIES_COUNT.set(clientQuotas.get().size());
+    c-cwientquotas.set(quotasbuiwdew.buiwd());
+    t-totaw_quota.set(totawquota);
+    e-entwies_count.set(cwientquotas.get().size());
 
-    for (String email : perEmailQuotas.keySet()) {
-      SearchLongGauge.export(String.format(PER_EMAIL_QUOTA_GAUGE_NAME_PATTERN, email)).set(
-          perEmailQuotas.get(email));
+    fow (stwing emaiw : pewemaiwquotas.keyset()) {
+      seawchwonggauge.expowt(stwing.fowmat(pew_emaiw_quota_gauge_name_pattewn, σωσ emaiw)).set(
+          pewemaiwquotas.get(emaiw));
     }
   }
 }

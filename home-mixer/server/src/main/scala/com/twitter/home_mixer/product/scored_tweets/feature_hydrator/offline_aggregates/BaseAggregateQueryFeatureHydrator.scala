@@ -1,76 +1,76 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.offwine_aggwegates
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.repository.Repository
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.aggregate_interactions.thriftjava.UserAggregateInteractions
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateType.AggregateType
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.StoreConfig
-import com.twitter.timelines.suggests.common.dense_data_record.thriftscala.DenseFeatureMetadata
-import com.twitter.user_session_store.thriftjava.UserSession
-import com.twitter.util.Future
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt c-com.twittew.sewvo.wepositowy.wepositowy
+impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.aggwegate_intewactions.thwiftjava.usewaggwegateintewactions
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.aggwegatetype.aggwegatetype
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.stoweconfig
+i-impowt com.twittew.timewines.suggests.common.dense_data_wecowd.thwiftscawa.densefeatuwemetadata
+impowt com.twittew.usew_session_stowe.thwiftjava.usewsession
+i-impowt com.twittew.utiw.futuwe
 
-abstract class BaseAggregateQueryFeatureHydrator(
-  featureRepository: Repository[Long, Option[UserSession]],
-  metadataRepository: Repository[Int, Option[DenseFeatureMetadata]],
-  feature: Feature[PipelineQuery, Option[AggregateFeaturesToDecodeWithMetadata]])
-    extends QueryFeatureHydrator[PipelineQuery] {
+abstwact cwass baseaggwegatequewyfeatuwehydwatow(
+  featuwewepositowy: wepositowy[wong, -.- o-option[usewsession]], 🥺
+  metadatawepositowy: w-wepositowy[int, o.O o-option[densefeatuwemetadata]], /(^•ω•^)
+  featuwe: featuwe[pipewinequewy, nyaa~~ option[aggwegatefeatuwestodecodewithmetadata]])
+    extends quewyfeatuwehydwatow[pipewinequewy] {
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    val viewerId = query.getRequiredUserId
+  o-ovewwide def hydwate(quewy: pipewinequewy): stitch[featuwemap] = {
+    vaw viewewid = q-quewy.getwequiwedusewid
 
-    Stitch.callFuture(
-      featureRepository(viewerId)
-        .flatMap { userSession: Option[UserSession] =>
-          val featuresWithMetadata: Option[Future[AggregateFeaturesToDecodeWithMetadata]] =
-            userSession
-              .flatMap(decodeUserSession(_))
+    stitch.cawwfutuwe(
+      f-featuwewepositowy(viewewid)
+        .fwatmap { u-usewsession: o-option[usewsession] =>
+          v-vaw featuweswithmetadata: option[futuwe[aggwegatefeatuwestodecodewithmetadata]] =
+            usewsession
+              .fwatmap(decodeusewsession(_))
 
-          featuresWithMetadata
-            .map { fu: Future[AggregateFeaturesToDecodeWithMetadata] => fu.map(Some(_)) }
-            .getOrElse(Future.None)
-            .map { value =>
-              FeatureMapBuilder()
-                .add(feature, value)
-                .build()
+          f-featuweswithmetadata
+            .map { fu: futuwe[aggwegatefeatuwestodecodewithmetadata] => f-fu.map(some(_)) }
+            .getowewse(futuwe.none)
+            .map { vawue =>
+              featuwemapbuiwdew()
+                .add(featuwe, vawue)
+                .buiwd()
             }
         }
     )
   }
 
-  private def decodeUserSession(
-    session: UserSession
-  ): Option[Future[AggregateFeaturesToDecodeWithMetadata]] = {
-    Option(session.user_aggregate_interactions).flatMap { aggregates =>
-      aggregates.getSetField match {
-        case UserAggregateInteractions._Fields.V17 =>
-          Some(
-            getAggregateFeaturesWithMetadata(
-              aggregates.getV17.user_aggregates.versionId,
-              UserAggregateInteractions.v17(aggregates.getV17))
+  pwivate def decodeusewsession(
+    s-session: usewsession
+  ): o-option[futuwe[aggwegatefeatuwestodecodewithmetadata]] = {
+    o-option(session.usew_aggwegate_intewactions).fwatmap { a-aggwegates =>
+      aggwegates.getsetfiewd match {
+        case usewaggwegateintewactions._fiewds.v17 =>
+          s-some(
+            getaggwegatefeatuweswithmetadata(
+              aggwegates.getv17.usew_aggwegates.vewsionid, nyaa~~
+              u-usewaggwegateintewactions.v17(aggwegates.getv17))
           )
         case _ =>
-          None
+          n-nyone
       }
     }
   }
 
-  private def getAggregateFeaturesWithMetadata(
-    versionId: Int,
-    userAggregateInteractions: UserAggregateInteractions,
-  ): Future[AggregateFeaturesToDecodeWithMetadata] = {
-    metadataRepository(versionId)
-      .map(AggregateFeaturesToDecodeWithMetadata(_, userAggregateInteractions))
+  pwivate d-def getaggwegatefeatuweswithmetadata(
+    vewsionid: int, :3
+    u-usewaggwegateintewactions: usewaggwegateintewactions, 😳😳😳
+  ): f-futuwe[aggwegatefeatuwestodecodewithmetadata] = {
+    metadatawepositowy(vewsionid)
+      .map(aggwegatefeatuwestodecodewithmetadata(_, (˘ω˘) usewaggwegateintewactions))
   }
 }
 
-trait BaseAggregateRootFeature
-    extends Feature[PipelineQuery, Option[AggregateFeaturesToDecodeWithMetadata]] {
-  def aggregateStores: Set[StoreConfig[_]]
+t-twait baseaggwegatewootfeatuwe
+    e-extends featuwe[pipewinequewy, ^^ o-option[aggwegatefeatuwestodecodewithmetadata]] {
+  d-def aggwegatestowes: set[stoweconfig[_]]
 
-  lazy val aggregateTypes: Set[AggregateType] = aggregateStores.map(_.aggregateType)
+  wazy vaw aggwegatetypes: set[aggwegatetype] = aggwegatestowes.map(_.aggwegatetype)
 }

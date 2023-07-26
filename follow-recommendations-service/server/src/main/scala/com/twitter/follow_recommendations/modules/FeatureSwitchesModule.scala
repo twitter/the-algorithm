@@ -1,85 +1,85 @@
-package com.twitter.follow_recommendations.modules
+package com.twittew.fowwow_wecommendations.moduwes
 
-import com.google.inject.Provides
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.featureswitches.v2.Feature
-import com.twitter.featureswitches.v2.FeatureFilter
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.featureswitches.v2.builder.FeatureSwitchesBuilder
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants.PRODUCER_SIDE_FEATURE_SWITCHES
-import com.twitter.inject.TwitterModule
-import javax.inject.Named
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.abdecidew.woggingabdecidew
+i-impowt com.twittew.featuweswitches.v2.featuwe
+i-impowt com.twittew.featuweswitches.v2.featuwefiwtew
+i-impowt com.twittew.featuweswitches.v2.featuweswitches
+i-impowt c-com.twittew.featuweswitches.v2.buiwdew.featuweswitchesbuiwdew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.fowwow_wecommendations.common.constants.guicenamedconstants.pwoducew_side_featuwe_switches
+impowt com.twittew.inject.twittewmoduwe
+impowt javax.inject.named
+impowt javax.inject.singweton
 
-object FeaturesSwitchesModule extends TwitterModule {
-  private val DefaultConfigRepoPath = "/usr/local/config"
-  private val FeaturesPath = "/features/onboarding/follow-recommendations-service/main"
-  val isLocal = flag("configrepo.local", false, "Is the server running locally or in a DC")
-  val localConfigRepoPath = flag(
-    "local.configrepo",
-    System.getProperty("user.home") + "/workspace/config",
-    "Path to your local config repo"
+o-object featuwesswitchesmoduwe extends t-twittewmoduwe {
+  pwivate vaw d-defauwtconfigwepopath = "/usw/wocaw/config"
+  pwivate vaw featuwespath = "/featuwes/onboawding/fowwow-wecommendations-sewvice/main"
+  vaw iswocaw = fwag("configwepo.wocaw", -.- fawse, "is t-the sewvew wunning wocawwy o-ow in a dc")
+  v-vaw wocawconfigwepopath = fwag(
+    "wocaw.configwepo", 😳
+    system.getpwopewty("usew.home") + "/wowkspace/config", mya
+    "path to youw wocaw config wepo"
   )
 
-  @Provides
-  @Singleton
-  def providesFeatureSwitches(
-    abDecider: LoggingABDecider,
-    statsReceiver: StatsReceiver
-  ): FeatureSwitches = {
-    val configRepoPath = if (isLocal()) {
-      localConfigRepoPath()
-    } else {
-      DefaultConfigRepoPath
+  @pwovides
+  @singweton
+  d-def pwovidesfeatuweswitches(
+    abdecidew: woggingabdecidew, (˘ω˘)
+    statsweceivew: s-statsweceivew
+  ): featuweswitches = {
+    v-vaw configwepopath = i-if (iswocaw()) {
+      w-wocawconfigwepopath()
+    } e-ewse {
+      defauwtconfigwepopath
     }
 
-    FeatureSwitchesBuilder
-      .createDefault(FeaturesPath, abDecider, Some(statsReceiver))
-      .configRepoAbsPath(configRepoPath)
-      .serviceDetailsFromAurora()
-      .build()
+    featuweswitchesbuiwdew
+      .cweatedefauwt(featuwespath, abdecidew, >_< s-some(statsweceivew))
+      .configwepoabspath(configwepopath)
+      .sewvicedetaiwsfwomauwowa()
+      .buiwd()
   }
 
-  @Provides
-  @Singleton
-  @Named(PRODUCER_SIDE_FEATURE_SWITCHES)
-  def providesProducerFeatureSwitches(
-    abDecider: LoggingABDecider,
-    statsReceiver: StatsReceiver
-  ): FeatureSwitches = {
-    val configRepoPath = if (isLocal()) {
-      localConfigRepoPath()
-    } else {
-      DefaultConfigRepoPath
+  @pwovides
+  @singweton
+  @named(pwoducew_side_featuwe_switches)
+  def pwovidespwoducewfeatuweswitches(
+    abdecidew: woggingabdecidew, -.-
+    s-statsweceivew: statsweceivew
+  ): featuweswitches = {
+    vaw configwepopath = if (iswocaw()) {
+      wocawconfigwepopath()
+    } e-ewse {
+      defauwtconfigwepopath
     }
 
     /**
-     * Feature Switches evaluate all tied FS Keys on Params construction time, which is very inefficient
-     * for producer/candidate side holdbacks because we have 100s of candidates, and 100s of FS which result
-     * in 10,000 FS evaluations when we want 1 per candidate (100 total), so we create a new FS Client
-     * which has a [[ProducerFeatureFilter]] set for feature filter to reduce the FS Keys we evaluate.
+     * f-featuwe switches e-evawuate aww tied f-fs keys on pawams constwuction time, 🥺 which is vewy inefficient
+     * f-fow pwoducew/candidate s-side howdbacks because we have 100s o-of candidates, (U ﹏ U) a-and 100s of fs which wesuwt
+     * i-in 10,000 fs evawuations when w-we want 1 pew candidate (100 totaw), >w< so we cweate a-a nyew fs cwient
+     * which h-has a [[pwoducewfeatuwefiwtew]] set fow featuwe f-fiwtew to weduce t-the fs keys we evawuate. mya
      */
-    FeatureSwitchesBuilder
-      .createDefault(FeaturesPath, abDecider, Some(statsReceiver.scope("producer_side_fs")))
-      .configRepoAbsPath(configRepoPath)
-      .serviceDetailsFromAurora()
-      .addFeatureFilter(ProducerFeatureFilter)
-      .build()
+    featuweswitchesbuiwdew
+      .cweatedefauwt(featuwespath, >w< abdecidew, nyaa~~ some(statsweceivew.scope("pwoducew_side_fs")))
+      .configwepoabspath(configwepopath)
+      .sewvicedetaiwsfwomauwowa()
+      .addfeatuwefiwtew(pwoducewfeatuwefiwtew)
+      .buiwd()
   }
 }
 
-case object ProducerFeatureFilter extends FeatureFilter {
-  private val AllowedKeys = Set(
-    "post_nux_ml_flow_candidate_user_scorer_id",
-    "frs_receiver_holdback_keep_social_user_candidate",
-    "frs_receiver_holdback_keep_user_candidate")
+case object pwoducewfeatuwefiwtew extends featuwefiwtew {
+  p-pwivate v-vaw awwowedkeys = set(
+    "post_nux_mw_fwow_candidate_usew_scowew_id", (✿oωo)
+    "fws_weceivew_howdback_keep_sociaw_usew_candidate", ʘwʘ
+    "fws_weceivew_howdback_keep_usew_candidate")
 
-  override def filter(feature: Feature): Option[Feature] = {
-    if (AllowedKeys.exists(feature.parameters.contains)) {
-      Some(feature)
-    } else {
-      None
+  o-ovewwide def f-fiwtew(featuwe: f-featuwe): option[featuwe] = {
+    if (awwowedkeys.exists(featuwe.pawametews.contains)) {
+      some(featuwe)
+    } ewse {
+      n-nyone
     }
   }
 }

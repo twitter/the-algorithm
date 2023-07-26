@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urp
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.uww
 
-case class TopicPageHeaderFacepile(
-  userIds: Seq[Long],
-  facepileUrl: Option[Url] = None)
+c-case cwass t-topicpageheadewfacepiwe(
+  usewids: s-seq[wong], o.O
+  f-facepiweuww: o-option[uww] = n-nyone)

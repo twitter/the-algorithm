@@ -1,79 +1,79 @@
-package com.twitter.product_mixer.component_library.module.http
+package com.twittew.pwoduct_mixew.component_wibwawy.moduwe.http
 
-import com.google.inject.Provides
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.httpclient.HttpClient
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientAcquisitionTimeout
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientConnectTimeout
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientRequestTimeout
-import com.twitter.product_mixer.shared_library.http_client.FinagleHttpClientBuilder.buildFinagleHttpClientMutualTls
-import com.twitter.product_mixer.shared_library.http_client.HttpHostPort
-import com.twitter.util.Duration
-import com.twitter.util.jackson.ScalaObjectMapper
-import javax.inject.Named
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.finatwa.httpcwient.httpcwient
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt c-com.twittew.inject.annotations.fwag
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.http.finagwehttpcwientmoduwe.httpcwientacquisitiontimeout
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.http.finagwehttpcwientmoduwe.httpcwientconnecttimeout
+impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.http.finagwehttpcwientmoduwe.httpcwientwequesttimeout
+impowt c-com.twittew.pwoduct_mixew.shawed_wibwawy.http_cwient.finagwehttpcwientbuiwdew.buiwdfinagwehttpcwientmutuawtws
+impowt com.twittew.pwoduct_mixew.shawed_wibwawy.http_cwient.httphostpowt
+impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.jackson.scawaobjectmappew
+i-impowt javax.inject.named
+impowt javax.inject.singweton
 
-object FinatraHttpClientModule extends TwitterModule {
+object finatwahttpcwientmoduwe e-extends twittewmoduwe {
 
-  final val HttpClientHost = "http_client.host"
-  final val HttpClientPort = "http_client.port"
+  finaw v-vaw httpcwienthost = "http_cwient.host"
+  f-finaw vaw httpcwientpowt = "http_cwient.powt"
 
-  flag[String](HttpClientHost, "Host that the client will connect to")
+  fwag[stwing](httpcwienthost, >_< "host that the cwient wiww connect to")
 
-  flag[Int](HttpClientPort, 443, "Port that the client will connect to")
+  fwag[int](httpcwientpowt, >w< 443, rawr "powt t-that the cwient wiww connect to")
 
-  final val FinatraHttpClient = "FinatraHttpClient"
+  finaw vaw finatwahttpcwient = "finatwahttpcwient"
 
   /**
-   * Build a Finatra HTTP client for a host. The Finatra HTTP client can be helpful (as opposed to
-   * the base Finagle HTTP Client), as it provides built-in JSON response parsing and other
-   * convenience methods
+   * buiwd a finatwa http c-cwient fow a host. 😳 the finatwa h-http cwient can b-be hewpfuw (as o-opposed to
+   * t-the base finagwe http cwient), >w< as it pwovides b-buiwt-in json wesponse pawsing and othew
+   * convenience m-methods
    *
-   * Note that the timeouts configured in this module are meant to be a reasonable starting point
-   * only. To further tuning the settings, either override the flags or create local copy of the module.
+   * nyote that the timeouts configuwed in this moduwe awe meant to be a w-weasonabwe stawting point
+   * onwy. (⑅˘꒳˘) t-to fuwthew t-tuning the settings, OwO e-eithew ovewwide the fwags ow cweate wocaw copy of the moduwe. (ꈍᴗꈍ)
    *
-   * @param requestTimeout     HTTP client request timeout
-   * @param connectTimeout     HTTP client transport connect timeout
-   * @param acquisitionTimeout HTTP client session acquisition timeout
-   * @param host               Host to build Finatra client
-   * @param port               Port to build Finatra client
-   * @param scalaObjectMapper  Object mapper used by the built-in JSON response parsing
-   * @param serviceIdentifier  Service ID used to S2S Auth
-   * @param statsReceiver      Stats
+   * @pawam w-wequesttimeout     h-http cwient wequest timeout
+   * @pawam connecttimeout     h-http cwient twanspowt c-connect timeout
+   * @pawam a-acquisitiontimeout http cwient s-session acquisition timeout
+   * @pawam host               h-host to buiwd finatwa c-cwient
+   * @pawam powt               p-powt to b-buiwd finatwa cwient
+   * @pawam scawaobjectmappew  object mappew used by the buiwt-in json wesponse pawsing
+   * @pawam s-sewviceidentifiew  s-sewvice id used to s-s2s auth
+   * @pawam s-statsweceivew      s-stats
    *
-   * @return Finatra HTTP client
+   * @wetuwn finatwa http cwient
    */
-  @Provides
-  @Singleton
-  @Named(FinatraHttpClient)
-  def providesFinatraHttpClient(
-    @Flag(HttpClientRequestTimeout) requestTimeout: Duration,
-    @Flag(HttpClientConnectTimeout) connectTimeout: Duration,
-    @Flag(HttpClientAcquisitionTimeout) acquisitionTimeout: Duration,
-    @Flag(HttpClientHost) host: String,
-    @Flag(HttpClientPort) port: Int,
-    scalaObjectMapper: ScalaObjectMapper,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): HttpClient = {
-    val finagleHttpClient = buildFinagleHttpClientMutualTls(
-      requestTimeout = requestTimeout,
-      connectTimeout = connectTimeout,
-      acquisitionTimeout = acquisitionTimeout,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+  @pwovides
+  @singweton
+  @named(finatwahttpcwient)
+  def pwovidesfinatwahttpcwient(
+    @fwag(httpcwientwequesttimeout) wequesttimeout: d-duwation, 😳
+    @fwag(httpcwientconnecttimeout) connecttimeout: duwation, 😳😳😳
+    @fwag(httpcwientacquisitiontimeout) acquisitiontimeout: duwation, mya
+    @fwag(httpcwienthost) h-host: stwing, mya
+    @fwag(httpcwientpowt) p-powt: int, (⑅˘꒳˘)
+    s-scawaobjectmappew: s-scawaobjectmappew, (U ﹏ U)
+    sewviceidentifiew: s-sewviceidentifiew, mya
+    s-statsweceivew: s-statsweceivew
+  ): h-httpcwient = {
+    vaw finagwehttpcwient = b-buiwdfinagwehttpcwientmutuawtws(
+      w-wequesttimeout = w-wequesttimeout, ʘwʘ
+      c-connecttimeout = c-connecttimeout, (˘ω˘)
+      acquisitiontimeout = acquisitiontimeout, (U ﹏ U)
+      sewviceidentifiew = sewviceidentifiew, ^•ﻌ•^
+      s-statsweceivew = statsweceivew
     )
 
-    val hostPort = HttpHostPort(host, port)
-    val finagleHttpService = finagleHttpClient.newService(hostPort.toString)
+    vaw hostpowt = httphostpowt(host, (˘ω˘) powt)
+    vaw finagwehttpsewvice = finagwehttpcwient.newsewvice(hostpowt.tostwing)
 
-    new HttpClient(
-      hostname = hostPort.host,
-      httpService = finagleHttpService,
-      mapper = scalaObjectMapper
+    nyew httpcwient(
+      h-hostname = hostpowt.host, :3
+      httpsewvice = finagwehttpsewvice, ^^;;
+      mappew = scawaobjectmappew
     )
   }
 }

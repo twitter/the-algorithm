@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewinescwibeconfig
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case class StaticTimelineScribeConfigBuilder(
-  timelineScribeConfig: TimelineScribeConfig)
-    extends TimelineScribeConfigBuilder[PipelineQuery] {
+c-case cwass s-statictimewinescwibeconfigbuiwdew(
+  t-timewinescwibeconfig: timewinescwibeconfig)
+    e-extends timewinescwibeconfigbuiwdew[pipewinequewy] {
 
-  def build(
-    query: PipelineQuery,
-    entries: Seq[TimelineEntry]
-  ): Option[TimelineScribeConfig] = Some(timelineScribeConfig)
+  def buiwd(
+    quewy: pipewinequewy, >_<
+    entwies: s-seq[timewineentwy]
+  ): option[timewinescwibeconfig] = some(timewinescwibeconfig)
 }

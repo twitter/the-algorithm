@@ -1,82 +1,82 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.ads.entities.db.{thriftscala => ae}
-import com.twitter.gizmoduck.{thriftscala => gt}
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsBlueVerifiedFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsProtectedFeature
-import com.twitter.home_mixer.model.HomeFeatures.FromInNetworkSourceFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsSupportAccountReplyFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.snowflake.id.SnowflakeId
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.ads.entities.db.{thwiftscawa => a-ae}
+impowt c-com.twittew.gizmoduck.{thwiftscawa => g-gt}
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.authowisbwuevewifiedfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.authowispwotectedfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.fwominnetwowksouwcefeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.inwepwytotweetidfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.iswetweetfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.issuppowtaccountwepwyfeatuwe
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.utiw.offwoadfutuwepoows
+impowt com.twittew.stitch.stitch
+impowt com.twittew.snowfwake.id.snowfwakeid
+impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
-@Singleton
-class GizmoduckAuthorFeatureHydrator @Inject() (gizmoduck: gt.UserService.MethodPerEndpoint)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@singweton
+cwass gizmoduckauthowfeatuwehydwatow @inject() (gizmoduck: gt.usewsewvice.methodpewendpoint)
+    extends buwkcandidatefeatuwehydwatow[pipewinequewy, (///ˬ///✿) tweetcandidate] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("GizmoduckAuthor")
+  o-ovewwide vaw identifiew: featuwehydwatowidentifiew =
+    f-featuwehydwatowidentifiew("gizmoduckauthow")
 
-  override val features: Set[Feature[_, _]] =
-    Set(AuthorIsBlueVerifiedFeature, AuthorIsProtectedFeature, IsSupportAccountReplyFeature)
+  o-ovewwide v-vaw featuwes: s-set[featuwe[_, 😳 _]] =
+    set(authowisbwuevewifiedfeatuwe, 😳 authowispwotectedfeatuwe, σωσ i-issuppowtaccountwepwyfeatuwe)
 
-  private val queryFields: Set[gt.QueryFields] =
-    Set(gt.QueryFields.AdvertiserAccount, gt.QueryFields.Profile, gt.QueryFields.Safety)
+  pwivate vaw quewyfiewds: set[gt.quewyfiewds] =
+    s-set(gt.quewyfiewds.advewtisewaccount, rawr x3 gt.quewyfiewds.pwofiwe, OwO gt.quewyfiewds.safety)
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
-    val authorIds = candidates.flatMap(_.features.getOrElse(AuthorIdFeature, None))
+  ovewwide def appwy(
+    quewy: pipewinequewy, /(^•ω•^)
+    candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): s-stitch[seq[featuwemap]] = offwoadfutuwepoows.offwoadfutuwe {
+    vaw a-authowids = candidates.fwatmap(_.featuwes.getowewse(authowidfeatuwe, 😳😳😳 n-nyone))
 
-    val response = gizmoduck.get(
-      userIds = authorIds.distinct,
-      queryFields = queryFields,
-      context = gt.LookupContext()
+    v-vaw wesponse = gizmoduck.get(
+      usewids = authowids.distinct, ( ͡o ω ͡o )
+      q-quewyfiewds = q-quewyfiewds,
+      context = g-gt.wookupcontext()
     )
 
-    response.map { hydratedAuthors =>
-      val userMetadataMap = hydratedAuthors
-        .collect {
-          case userResult if userResult.user.isDefined =>
-            val user = userResult.user.get
-            val blueVerified = user.safety.flatMap(_.isBlueVerified).getOrElse(false)
-            val isProtected = user.safety.exists(_.isProtected)
-            (user.id, (blueVerified, isProtected))
-        }.toMap.withDefaultValue((false, false))
+    w-wesponse.map { hydwatedauthows =>
+      v-vaw usewmetadatamap = h-hydwatedauthows
+        .cowwect {
+          case usewwesuwt if usewwesuwt.usew.isdefined =>
+            v-vaw usew = usewwesuwt.usew.get
+            v-vaw bwuevewified = usew.safety.fwatmap(_.isbwuevewified).getowewse(fawse)
+            v-vaw i-ispwotected = usew.safety.exists(_.ispwotected)
+            (usew.id, (bwuevewified, >_< ispwotected))
+        }.tomap.withdefauwtvawue((fawse, >w< fawse))
 
       candidates.map { candidate =>
-        val authorId = candidate.features.get(AuthorIdFeature).get
-        val (isBlueVerified, isProtected) = userMetadataMap(authorId)
+        vaw authowid = c-candidate.featuwes.get(authowidfeatuwe).get
+        v-vaw (isbwuevewified, rawr ispwotected) = u-usewmetadatamap(authowid)
 
-        // Some accounts run promotions on Twitter and send replies automatically.
-        // We assume that a reply that took more than one minute is not an auto-reply.
-        // If time difference doesn't exist, this means that one of the tweets was
-        // not snowflake and therefore much older, and therefore OK as an extended reply.
-        val timeDifference = candidate.features.getOrElse(InReplyToTweetIdFeature, None).map {
-          SnowflakeId.timeFromId(candidate.candidate.id) - SnowflakeId.timeFromId(_)
+        // s-some accounts wun p-pwomotions on twittew and send wepwies automaticawwy. 😳
+        // we assume that a-a wepwy that took mowe than one minute is nyot an auto-wepwy. >w<
+        // if time d-diffewence doesn't exist, (⑅˘꒳˘) this m-means that one o-of the tweets was
+        // n-nyot snowfwake and t-thewefowe much o-owdew, OwO and thewefowe o-ok as an extended w-wepwy. (ꈍᴗꈍ)
+        vaw timediffewence = candidate.featuwes.getowewse(inwepwytotweetidfeatuwe, 😳 n-nyone).map {
+          s-snowfwakeid.timefwomid(candidate.candidate.id) - s-snowfwakeid.timefwomid(_)
         }
-        val isAutoReply = timeDifference.exists(_ < 1.minute)
+        v-vaw isautowepwy = t-timediffewence.exists(_ < 1.minute)
 
-        FeatureMapBuilder()
-          .add(AuthorIsBlueVerifiedFeature, isBlueVerified)
-          .add(AuthorIsProtectedFeature, isProtected)
-          .add(IsSupportAccountReplyFeature, isAutoReply)
-          .build()
+        featuwemapbuiwdew()
+          .add(authowisbwuevewifiedfeatuwe, 😳😳😳 isbwuevewified)
+          .add(authowispwotectedfeatuwe, mya ispwotected)
+          .add(issuppowtaccountwepwyfeatuwe, mya i-isautowepwy)
+          .buiwd()
       }
     }
   }

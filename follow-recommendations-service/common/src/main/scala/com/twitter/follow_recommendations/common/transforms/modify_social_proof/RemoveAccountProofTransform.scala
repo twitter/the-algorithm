@@ -1,27 +1,27 @@
-package com.twitter.follow_recommendations.common.transforms.modify_social_proof
+package com.twittew.fowwow_wecommendations.common.twansfowms.modify_sociaw_pwoof
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.GatedTransform
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.base.gatedtwansfowm
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.timewines.configapi.haspawams
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class RemoveAccountProofTransform @Inject() (statsReceiver: StatsReceiver)
-    extends GatedTransform[HasClientContext with HasParams, CandidateUser] {
+@singweton
+c-cwass wemoveaccountpwooftwansfowm @inject() (statsweceivew: statsweceivew)
+    extends gatedtwansfowm[hascwientcontext with haspawams, rawr x3 c-candidateusew] {
 
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val removedProofsCounter = stats.counter("num_removed_proofs")
+  pwivate v-vaw stats = statsweceivew.scope(this.getcwass.getsimpwename)
+  pwivate vaw wemovedpwoofscountew = s-stats.countew("num_wemoved_pwoofs")
 
-  override def transform(
-    target: HasClientContext with HasParams,
-    items: Seq[CandidateUser]
-  ): Stitch[Seq[CandidateUser]] =
-    Stitch.value(items.map { candidate =>
-      removedProofsCounter.incr()
-      candidate.copy(reason = None)
+  ovewwide def twansfowm(
+    t-tawget: h-hascwientcontext with haspawams,
+    items: seq[candidateusew]
+  ): stitch[seq[candidateusew]] =
+    stitch.vawue(items.map { c-candidate =>
+      wemovedpwoofscountew.incw()
+      candidate.copy(weason = nyone)
     })
 }

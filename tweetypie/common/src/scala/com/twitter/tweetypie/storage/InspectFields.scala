@@ -1,228 +1,228 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.google.common.base.CaseFormat
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.scrooge.TFieldBlob
-import com.twitter.scrooge.ThriftStructFieldInfo
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.kv._
-import com.twitter.tweetypie.additionalfields.AdditionalFields
-import com.twitter.tweetypie.storage.ManhattanOperations.Read
-import com.twitter.tweetypie.storage.TweetUtils._
-import com.twitter.tweetypie.storage_internal.thriftscala.StoredTweet
-import com.twitter.tweetypie.thriftscala.{Tweet => TweetypieTweet}
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import diffshow.Container
-import diffshow.DiffShow
-import diffshow.Expr
-import org.apache.commons.codec.binary.Base64
-import scala.util.Try
-import shapeless.Cached
-import shapeless.Strict
+impowt com.googwe.common.base.casefowmat
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt c-com.twittew.scwooge.tfiewdbwob
+i-impowt com.twittew.scwooge.thwiftstwuctfiewdinfo
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stowage.cwient.manhattan.kv._
+impowt com.twittew.tweetypie.additionawfiewds.additionawfiewds
+impowt com.twittew.tweetypie.stowage.manhattanopewations.wead
+impowt com.twittew.tweetypie.stowage.tweetutiws._
+impowt com.twittew.tweetypie.stowage_intewnaw.thwiftscawa.stowedtweet
+i-impowt com.twittew.tweetypie.thwiftscawa.{tweet => tweetypietweet}
+i-impowt com.twittew.utiw.duwation
+impowt c-com.twittew.utiw.futuwe
+impowt com.twittew.utiw.wetuwn
+impowt c-com.twittew.utiw.thwow
+impowt d-diffshow.containew
+i-impowt diffshow.diffshow
+impowt diffshow.expw
+impowt owg.apache.commons.codec.binawy.base64
+impowt scawa.utiw.twy
+i-impowt shapewess.cached
+impowt shapewess.stwict
 
-// This class is used by the Tweetypie Console to inspect tweet field content in Manhattan
-class InspectFields(svcIdentifier: ServiceIdentifier) {
-  val mhApplicationId = "tbird_mh"
-  val mhDatasetName = "tbird_mh"
-  val mhDestinationName = "/s/manhattan/cylon.native-thrift"
-  val mhTimeout: Duration = 5000.milliseconds
+// this cwass is used by the tweetypie consowe t-to inspect tweet fiewd content i-in manhattan
+c-cwass inspectfiewds(svcidentifiew: s-sewviceidentifiew) {
+  v-vaw mhappwicationid = "tbiwd_mh"
+  vaw mhdatasetname = "tbiwd_mh"
+  v-vaw mhdestinationname = "/s/manhattan/cywon.native-thwift"
+  vaw mhtimeout: duwation = 5000.miwwiseconds
 
-  val localMhEndpoint: ManhattanKVEndpoint =
-    ManhattanKVEndpointBuilder(
-      ManhattanKVClient(
-        mhApplicationId,
-        mhDestinationName,
-        ManhattanKVClientMtlsParams(svcIdentifier)))
-      .defaultGuarantee(Guarantee.SoftDcReadMyWrites)
-      .defaultMaxTimeout(mhTimeout)
-      .build()
+  v-vaw wocawmhendpoint: manhattankvendpoint =
+    manhattankvendpointbuiwdew(
+      manhattankvcwient(
+        mhappwicationid, σωσ
+        m-mhdestinationname, (⑅˘꒳˘)
+        manhattankvcwientmtwspawams(svcidentifiew)))
+      .defauwtguawantee(guawantee.softdcweadmywwites)
+      .defauwtmaxtimeout(mhtimeout)
+      .buiwd()
 
-  val readOperation: Read = (new ManhattanOperations(mhDatasetName, localMhEndpoint)).read
+  v-vaw weadopewation: w-wead = (new m-manhattanopewations(mhdatasetname, (///ˬ///✿) wocawmhendpoint)).wead
 
-  def lookup(tweetId: Long): Future[String] = {
-    val result = readOperation(tweetId).liftToTry.map {
-      case Return(mhRecords) =>
-        prettyPrintManhattanRecords(tweetId, TweetKey.padTweetIdStr(tweetId), mhRecords)
-      case Throw(e) => e.toString
+  def wookup(tweetid: wong): futuwe[stwing] = {
+    v-vaw wesuwt = w-weadopewation(tweetid).wifttotwy.map {
+      case w-wetuwn(mhwecowds) =>
+        p-pwettypwintmanhattanwecowds(tweetid, 🥺 tweetkey.padtweetidstw(tweetid), OwO m-mhwecowds)
+      case thwow(e) => e-e.tostwing
     }
 
-    Stitch.run(result)
+    stitch.wun(wesuwt)
   }
 
-  def storedTweet(tweetId: Long): Future[StoredTweet] = {
-    val result = readOperation(tweetId).liftToTry.map {
-      case Return(mhRecords) =>
-        buildStoredTweet(tweetId, mhRecords)
-      case Throw(e) =>
-        throw e
+  def stowedtweet(tweetid: w-wong): futuwe[stowedtweet] = {
+    vaw wesuwt = w-weadopewation(tweetid).wifttotwy.map {
+      case w-wetuwn(mhwecowds) =>
+        b-buiwdstowedtweet(tweetid, >w< mhwecowds)
+      case thwow(e) =>
+        thwow e
     }
 
-    Stitch.run(result)
+    stitch.wun(wesuwt)
   }
 
-  private[this] def prettyPrintManhattanRecords(
-    tweetId: Long,
-    pkey: String,
-    mhRecords: Seq[TweetManhattanRecord]
-  ): String = {
-    if (mhRecords.isEmpty) {
-      "Not Found"
-    } else {
-      val formattedRecords = getFormattedManhattanRecords(tweetId, mhRecords)
-      val keyFieldWidth = formattedRecords.map(_.key.length).max + 2
-      val fieldNameFieldWidth = formattedRecords.map(_.fieldName.length).max + 2
+  pwivate[this] def p-pwettypwintmanhattanwecowds(
+    t-tweetid: wong, 🥺
+    pkey: stwing, nyaa~~
+    m-mhwecowds: s-seq[tweetmanhattanwecowd]
+  ): s-stwing = {
+    if (mhwecowds.isempty) {
+      "not found"
+    } ewse {
+      v-vaw fowmattedwecowds = getfowmattedmanhattanwecowds(tweetid, ^^ mhwecowds)
+      vaw keyfiewdwidth = f-fowmattedwecowds.map(_.key.wength).max + 2
+      vaw fiewdnamefiewdwidth = f-fowmattedwecowds.map(_.fiewdname.wength).max + 2
 
-      val formatString = s"    %-${keyFieldWidth}s %-${fieldNameFieldWidth}s %s"
+      v-vaw fowmatstwing = s-s"    %-${keyfiewdwidth}s %-${fiewdnamefiewdwidth}s %s"
 
-      val recordsString =
-        formattedRecords
-          .map { record =>
-            val content = record.content.replaceAll("\n", "\n" + formatString.format("", "", ""))
-            formatString.format(record.key, record.fieldName, content)
+      vaw wecowdsstwing =
+        f-fowmattedwecowds
+          .map { w-wecowd =>
+            v-vaw content = w-wecowd.content.wepwaceaww("\n", >w< "\n" + fowmatstwing.fowmat("", OwO "", ""))
+            fowmatstwing.fowmat(wecowd.key, XD w-wecowd.fiewdname, ^^;; content)
           }
-          .mkString("\n")
+          .mkstwing("\n")
 
-      "/tbird_mh/" + pkey + "/" + "\n" + recordsString
+      "/tbiwd_mh/" + p-pkey + "/" + "\n" + w-wecowdsstwing
     }
   }
 
-  private[this] def getFormattedManhattanRecords(
-    tweetId: Long,
-    mhRecords: Seq[TweetManhattanRecord]
-  ): Seq[FormattedManhattanRecord] = {
-    val storedTweet = buildStoredTweet(tweetId, mhRecords).copy(updatedAt = None)
-    val tweetypieTweet: Option[TweetypieTweet] =
-      Try(StorageConversions.fromStoredTweet(storedTweet)).toOption
+  p-pwivate[this] d-def getfowmattedmanhattanwecowds(
+    tweetid: wong, 🥺
+    mhwecowds: seq[tweetmanhattanwecowd]
+  ): s-seq[fowmattedmanhattanwecowd] = {
+    vaw stowedtweet = buiwdstowedtweet(tweetid, XD mhwecowds).copy(updatedat = nyone)
+    vaw tweetypietweet: o-option[tweetypietweet] =
+      twy(stowageconvewsions.fwomstowedtweet(stowedtweet)).tooption
 
-    val blobMap: Map[String, TFieldBlob] = getStoredTweetBlobs(mhRecords).map { blob =>
-      getFieldName(blob.field.id) -> blob
-    }.toMap
+    vaw bwobmap: map[stwing, (U ᵕ U❁) tfiewdbwob] = g-getstowedtweetbwobs(mhwecowds).map { bwob =>
+      g-getfiewdname(bwob.fiewd.id) -> b-bwob
+    }.tomap
 
-    mhRecords
+    mhwecowds
       .map {
-        case TweetManhattanRecord(fullKey, mhValue) =>
-          FormattedManhattanRecord(
-            key = fullKey.lKey.toString,
-            fieldName = getFieldName(fullKey.lKey),
-            content = prettyPrintManhattanValue(
-              fullKey.lKey,
-              mhValue,
-              storedTweet,
-              tweetypieTweet,
-              tweetId,
-              blobMap
+        c-case tweetmanhattanwecowd(fuwwkey, :3 mhvawue) =>
+          f-fowmattedmanhattanwecowd(
+            k-key = fuwwkey.wkey.tostwing, ( ͡o ω ͡o )
+            fiewdname = getfiewdname(fuwwkey.wkey), òωó
+            content = pwettypwintmanhattanvawue(
+              fuwwkey.wkey, σωσ
+              m-mhvawue, (U ᵕ U❁)
+              stowedtweet,
+              t-tweetypietweet,
+              tweetid, (✿oωo)
+              b-bwobmap
             )
           )
       }
-      .sortBy(_.key.replace("external", "xternal")) // sort by key, with internal first
+      .sowtby(_.key.wepwace("extewnaw", ^^ "xtewnaw")) // s-sowt by key, ^•ﻌ•^ with intewnaw fiwst
   }
 
-  private[this] def getFieldNameFromThrift(
-    fieldId: Short,
-    fieldInfos: List[ThriftStructFieldInfo]
-  ): String =
-    fieldInfos
-      .find(info => info.tfield.id == fieldId)
-      .map(_.tfield.name)
-      .getOrElse("<UNKNOWN FIELD>")
+  pwivate[this] d-def getfiewdnamefwomthwift(
+    f-fiewdid: showt, XD
+    fiewdinfos: w-wist[thwiftstwuctfiewdinfo]
+  ): s-stwing =
+    fiewdinfos
+      .find(info => info.tfiewd.id == fiewdid)
+      .map(_.tfiewd.name)
+      .getowewse("<unknown fiewd>")
 
-  private[this] def isLkeyScrubbedField(lkey: String): Boolean =
-    lkey.split("/")(1) == "scrubbed_fields"
+  p-pwivate[this] d-def iswkeyscwubbedfiewd(wkey: stwing): b-boowean =
+    wkey.spwit("/")(1) == "scwubbed_fiewds"
 
-  private[this] def getFieldName(lkey: TweetKey.LKey): String =
-    lkey match {
-      case fieldKey: TweetKey.LKey.FieldKey => getFieldName(fieldKey.fieldId)
+  p-pwivate[this] def g-getfiewdname(wkey: tweetkey.wkey): s-stwing =
+    wkey match {
+      case fiewdkey: tweetkey.wkey.fiewdkey => getfiewdname(fiewdkey.fiewdid)
       case _ => ""
     }
 
-  private[this] def getFieldName(fieldId: Short): String =
-    if (fieldId == 1) {
-      "core_fields"
-    } else if (AdditionalFields.isAdditionalFieldId(fieldId)) {
-      getFieldNameFromThrift(fieldId, TweetypieTweet.fieldInfos)
-    } else {
-      getFieldNameFromThrift(fieldId, StoredTweet.fieldInfos)
+  p-pwivate[this] d-def getfiewdname(fiewdid: showt): stwing =
+    if (fiewdid == 1) {
+      "cowe_fiewds"
+    } e-ewse if (additionawfiewds.isadditionawfiewdid(fiewdid)) {
+      g-getfiewdnamefwomthwift(fiewdid, :3 tweetypietweet.fiewdinfos)
+    } ewse {
+      getfiewdnamefwomthwift(fiewdid, (ꈍᴗꈍ) s-stowedtweet.fiewdinfos)
     }
 
-  private[this] def prettyPrintManhattanValue(
-    lkey: TweetKey.LKey,
-    mhValue: TweetManhattanValue,
-    storedTweet: StoredTweet,
-    tweetypieTweet: Option[TweetypieTweet],
-    tweetId: Long,
-    tfieldBlobs: Map[String, TFieldBlob]
-  ): String = {
-    val decoded = lkey match {
-      case _: TweetKey.LKey.MetadataKey =>
-        decodeMetadata(mhValue)
+  pwivate[this] def pwettypwintmanhattanvawue(
+    wkey: tweetkey.wkey, :3
+    mhvawue: t-tweetmanhattanvawue, (U ﹏ U)
+    stowedtweet: stowedtweet,
+    tweetypietweet: o-option[tweetypietweet], UwU
+    t-tweetid: wong, 😳😳😳
+    tfiewdbwobs: map[stwing, tfiewdbwob]
+  ): s-stwing = {
+    v-vaw decoded = wkey match {
+      case _: tweetkey.wkey.metadatakey =>
+        decodemetadata(mhvawue)
 
-      case fieldKey: TweetKey.LKey.FieldKey =>
-        tfieldBlobs
-          .get(getFieldName(fieldKey.fieldId))
-          .map(blob => decodeField(tweetId, blob, storedTweet, tweetypieTweet))
+      c-case fiewdkey: tweetkey.wkey.fiewdkey =>
+        t-tfiewdbwobs
+          .get(getfiewdname(fiewdkey.fiewdid))
+          .map(bwob => decodefiewd(tweetid, XD bwob, o.O stowedtweet, tweetypietweet))
 
-      case _ =>
-        None
+      c-case _ =>
+        nyone
     }
 
-    decoded.getOrElse { // If all else fails, encode the data as a base64 string
-      val contents = mhValue.contents.array
-      if (contents.isEmpty) {
-        "<NO DATA>"
-      } else {
-        Base64.encodeBase64String(contents)
+    d-decoded.getowewse { // i-if aww ewse faiws, (⑅˘꒳˘) encode the data a-as a base64 stwing
+      vaw c-contents = mhvawue.contents.awway
+      i-if (contents.isempty) {
+        "<no d-data>"
+      } ewse {
+        b-base64.encodebase64stwing(contents)
       }
     }
   }
 
-  private[this] def decodeMetadata(mhValue: TweetManhattanValue): Option[String] = {
-    val byteArray = ByteArrayCodec.fromByteBuffer(mhValue.contents)
-    Try(Json.decode(byteArray).toString).toOption
+  p-pwivate[this] def decodemetadata(mhvawue: tweetmanhattanvawue): o-option[stwing] = {
+    v-vaw byteawway = b-byteawwaycodec.fwombytebuffew(mhvawue.contents)
+    twy(json.decode(byteawway).tostwing).tooption
   }
 
-  private[this] def decodeField(
-    tweetId: Long,
-    blob: TFieldBlob,
-    storedTweet: StoredTweet,
-    tweetypieTweet: Option[TweetypieTweet]
-  ): String = {
-    val fieldId = blob.field.id
+  pwivate[this] def decodefiewd(
+    t-tweetid: wong, 😳😳😳
+    bwob: t-tfiewdbwob, nyaa~~
+    s-stowedtweet: stowedtweet, rawr
+    tweetypietweet: option[tweetypietweet]
+  ): stwing = {
+    v-vaw fiewdid = b-bwob.fiewd.id
 
-    if (fieldId == 1) {
-      coreFields(storedTweet)
-    } else if (AdditionalFields.isAdditionalFieldId(fieldId)) {
-      decodeTweetWithOneField(TweetypieTweet(tweetId).setField(blob))
-    } else {
-      decodeTweetWithOneField(StoredTweet(tweetId).setField(blob))
+    i-if (fiewdid == 1) {
+      c-cowefiewds(stowedtweet)
+    } ewse if (additionawfiewds.isadditionawfiewdid(fiewdid)) {
+      d-decodetweetwithonefiewd(tweetypietweet(tweetid).setfiewd(bwob))
+    } ewse {
+      decodetweetwithonefiewd(stowedtweet(tweetid).setfiewd(bwob))
     }
   }
 
-  // Takes a Tweet or StoredTweet with a single field set and returns the value of that field
-  private[this] def decodeTweetWithOneField[T](
-    tweetWithOneField: T
+  // takes a tweet ow stowedtweet with a singwe fiewd s-set and wetuwns the vawue of t-that fiewd
+  pwivate[this] def decodetweetwithonefiewd[t](
+    tweetwithonefiewd: t-t
   )(
-    implicit ev: Cached[Strict[DiffShow[T]]]
-  ): String = {
-    val config = diffshow.Config(hideFieldWithEmptyVal = true)
-    val tree: Expr = config.transform(DiffShow.show(tweetWithOneField))
+    impwicit ev: cached[stwict[diffshow[t]]]
+  ): s-stwing = {
+    vaw config = d-diffshow.config(hidefiewdwithemptyvaw = twue)
+    v-vaw twee: e-expw = config.twansfowm(diffshow.show(tweetwithonefiewd))
 
-    // matches a Tweet or StoredTweet with two values, the first being the id
-    val value = tree.transform {
-      case Container(_, List(diffshow.Field("id", _), diffshow.Field(_, value))) => value
+    // m-matches a tweet o-ow stowedtweet with two vawues, -.- the fiwst being the id
+    vaw vawue = twee.twansfowm {
+      case containew(_, (✿oωo) wist(diffshow.fiewd("id", /(^•ω•^) _), d-diffshow.fiewd(_, 🥺 v-vawue))) => v-vawue
     }
 
-    config.exprPrinter.apply(value, width = 80).render
+    config.expwpwintew.appwy(vawue, ʘwʘ w-width = 80).wendew
   }
 
-  private[this] def coreFields(storedTweet: StoredTweet): String =
-    diffshow.show(CoreFieldsCodec.fromTweet(storedTweet), hideFieldWithEmptyVal = true)
+  pwivate[this] def cowefiewds(stowedtweet: stowedtweet): s-stwing =
+    d-diffshow.show(cowefiewdscodec.fwomtweet(stowedtweet), UwU hidefiewdwithemptyvaw = twue)
 
-  private[this] def toCamelCase(s: String): String =
-    CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, s)
+  p-pwivate[this] def tocamewcase(s: stwing): s-stwing =
+    casefowmat.wowew_undewscowe.to(casefowmat.wowew_camew, XD s-s)
 }
 
-case class FormattedManhattanRecord(key: String, fieldName: String, content: String)
+case cwass fowmattedmanhattanwecowd(key: s-stwing, (✿oωo) fiewdname: s-stwing, :3 content: stwing)

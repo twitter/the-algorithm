@@ -1,20 +1,20 @@
-create_thrift_libraries(
-    base_name = "thrift",
-    sources = [
-        "com/twitter/representationscorer/service.thrift",
+cweate_thwift_wibwawies(
+    base_name = "thwift", o.O
+    souwces = [
+        "com/twittew/wepwesentationscowew/sewvice.thwift", (U ᵕ U❁)
+    ], (⑅˘꒳˘)
+    p-pwatfowm = "java8", ( ͡o ω ͡o )
+    t-tags = [
+        "bazew-compatibwe", UwU
     ],
-    platform = "java8",
-    tags = [
-        "bazel-compatible",
+    d-dependency_woots = [
+        "swc/thwift/com/twittew/simcwustews_v2:simcwustews_v2-thwift", rawr x3
     ],
-    dependency_roots = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift",
+    g-genewate_wanguages = [
+        "java", rawr
+        "scawa", σωσ
+        "stwato", σωσ
     ],
-    generate_languages = [
-        "java",
-        "scala",
-        "strato",
-    ],
-    provides_java_name = "representationscorer-service-thrift-java",
-    provides_scala_name = "representationscorer-service-thrift-scala",
+    p-pwovides_java_name = "wepwesentationscowew-sewvice-thwift-java", >_<
+    p-pwovides_scawa_name = "wepwesentationscowew-sewvice-thwift-scawa",
 )

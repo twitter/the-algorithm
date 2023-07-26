@@ -1,8 +1,8 @@
-package com.twitter.home_mixer.model.request
+package com.twittew.home_mixew.modew.wequest
 
 /**
- * [[HasListId]] enables shared components to access the list id shared by all list timeline products.
+ * [[haswistid]] enabwes shawed c-components to access t-the wist id s-shawed by aww w-wist timewine pwoducts.
  */
-trait HasListId {
-  def listId: Long
+t-twait h-haswistid {
+  d-def wistid: wong
 }

@@ -1,300 +1,300 @@
-package com.twitter.simclusters_v2.scio.common
+package com.twittew.simcwustews_v2.scio.common
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.io.dal.DAL
-import com.twitter.common.util.Clock
-import com.twitter.common_header.thriftscala.CommonHeader
-import com.twitter.common_header.thriftscala.IdType
-import com.twitter.common_header.thriftscala.VersionedCommonHeader
-import com.twitter.frigate.data_pipeline.magicrecs.magicrecs_notifications_lite.thriftscala.MagicRecsNotificationLite
-import com.twitter.frigate.data_pipeline.scalding.magicrecs.magicrecs_notification_lite.MagicrecsNotificationLite1DayLagScalaDataset
-import com.twitter.iesource.thriftscala.InteractionEvent
-import com.twitter.iesource.thriftscala.InteractionTargetType
-import com.twitter.interests_ds.jobs.interests_service.UserTopicRelationSnapshotScalaDataset
-import com.twitter.interests.thriftscala.InterestRelationType
-import com.twitter.interests.thriftscala.UserInterestsRelationSnapshot
-import com.twitter.penguin.scalding.datasets.PenguinUserLanguagesScalaDataset
-import com.twitter.search.adaptive.scribing.thriftscala.AdaptiveSearchScribeLog
-import com.twitter.simclusters_v2.hdfs_sources.UserUserFavGraphScalaDataset
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources.ValidFlockEdgeStateId
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources.getStandardLanguageCode
-import com.twitter.twadoop.user.gen.thriftscala.CombinedUser
-import flockdb_tools.datasets.flock.FlockBlocksEdgesScalaDataset
-import flockdb_tools.datasets.flock.FlockFollowsEdgesScalaDataset
-import flockdb_tools.datasets.flock.FlockReportAsAbuseEdgesScalaDataset
-import flockdb_tools.datasets.flock.FlockReportAsSpamEdgesScalaDataset
-import org.joda.time.Interval
-import com.twitter.simclusters_v2.thriftscala.EdgeWithDecayedWeights
-import com.twitter.usersource.snapshot.combined.UsersourceScalaDataset
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import com.twitter.util.Duration
-import twadoop_config.configuration.log_categories.group.search.AdaptiveSearchScalaDataset
+impowt com.spotify.scio.sciocontext
+i-impowt com.spotify.scio.vawues.scowwection
+i-impowt c-com.twittew.beam.io.daw.daw
+i-impowt com.twittew.common.utiw.cwock
+i-impowt com.twittew.common_headew.thwiftscawa.commonheadew
+i-impowt com.twittew.common_headew.thwiftscawa.idtype
+i-impowt com.twittew.common_headew.thwiftscawa.vewsionedcommonheadew
+i-impowt com.twittew.fwigate.data_pipewine.magicwecs.magicwecs_notifications_wite.thwiftscawa.magicwecsnotificationwite
+impowt com.twittew.fwigate.data_pipewine.scawding.magicwecs.magicwecs_notification_wite.magicwecsnotificationwite1daywagscawadataset
+impowt com.twittew.iesouwce.thwiftscawa.intewactionevent
+impowt c-com.twittew.iesouwce.thwiftscawa.intewactiontawgettype
+impowt com.twittew.intewests_ds.jobs.intewests_sewvice.usewtopicwewationsnapshotscawadataset
+i-impowt com.twittew.intewests.thwiftscawa.intewestwewationtype
+impowt com.twittew.intewests.thwiftscawa.usewintewestswewationsnapshot
+i-impowt com.twittew.penguin.scawding.datasets.penguinusewwanguagesscawadataset
+impowt com.twittew.seawch.adaptive.scwibing.thwiftscawa.adaptiveseawchscwibewog
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.usewusewfavgwaphscawadataset
+i-impowt com.twittew.simcwustews_v2.scawding.embedding.common.extewnawdatasouwces.vawidfwockedgestateid
+i-impowt com.twittew.simcwustews_v2.scawding.embedding.common.extewnawdatasouwces.getstandawdwanguagecode
+impowt com.twittew.twadoop.usew.gen.thwiftscawa.combinedusew
+impowt fwockdb_toows.datasets.fwock.fwockbwocksedgesscawadataset
+impowt fwockdb_toows.datasets.fwock.fwockfowwowsedgesscawadataset
+i-impowt fwockdb_toows.datasets.fwock.fwockwepowtasabuseedgesscawadataset
+impowt fwockdb_toows.datasets.fwock.fwockwepowtasspamedgesscawadataset
+impowt owg.joda.time.intewvaw
+impowt com.twittew.simcwustews_v2.thwiftscawa.edgewithdecayedweights
+i-impowt com.twittew.usewsouwce.snapshot.combined.usewsouwcescawadataset
+impowt c-com.twittew.usewsouwce.snapshot.fwat.usewsouwcefwatscawadataset
+i-impowt com.twittew.utiw.duwation
+i-impowt twadoop_config.configuwation.wog_categowies.gwoup.seawch.adaptiveseawchscawadataset
 
-object ExternalDataSources {
-  def userSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+o-object extewnawdatasouwces {
+  def usewsouwce(
+    nyoowdewthan: d-duwation = duwation.fwomdays(7)
   )(
-    implicit sc: ScioContext
-  ): SCollection[CombinedUser] = {
-    sc.customInput(
-      "ReadUserSource",
-      DAL
-        .readMostRecentSnapshotNoOlderThan(
-          UsersourceScalaDataset,
-          noOlderThan,
-          Clock.SYSTEM_CLOCK,
-          DAL.Environment.Prod
+    impwicit sc: sciocontext
+  ): s-scowwection[combinedusew] = {
+    sc.custominput(
+      "weadusewsouwce", ( ͡o ω ͡o )
+      daw
+        .weadmostwecentsnapshotnoowdewthan(
+          usewsouwcescawadataset, òωó
+          nyoowdewthan, σωσ
+          cwock.system_cwock, (U ᵕ U❁)
+          d-daw.enviwonment.pwod
         )
     )
   }
 
-  def userCountrySource(
-    noOlderThan: Duration = Duration.fromDays(7)
+  def usewcountwysouwce(
+    n-noowdewthan: duwation = d-duwation.fwomdays(7)
   )(
-    implicit sc: ScioContext
-  ): SCollection[(Long, String)] = {
-    sc.customInput(
-        "ReadUserCountrySource",
-        DAL
-          .readMostRecentSnapshotNoOlderThan(
-            UsersourceFlatScalaDataset,
-            noOlderThan,
-            Clock.SYSTEM_CLOCK,
-            DAL.Environment.Prod,
+    i-impwicit sc: sciocontext
+  ): scowwection[(wong, (✿oωo) stwing)] = {
+    s-sc.custominput(
+        "weadusewcountwysouwce",
+        d-daw
+          .weadmostwecentsnapshotnoowdewthan(
+            usewsouwcefwatscawadataset, ^^
+            n-nyoowdewthan,
+            c-cwock.system_cwock, ^•ﻌ•^
+            daw.enviwonment.pwod, XD
           )
-      ).flatMap { flatUser =>
-        for {
-          userId <- flatUser.id
-          country <- flatUser.accountCountryCode
-        } yield {
-          (userId, country.toUpperCase)
+      ).fwatmap { f-fwatusew =>
+        fow {
+          u-usewid <- fwatusew.id
+          countwy <- f-fwatusew.accountcountwycode
+        } yiewd {
+          (usewid, :3 c-countwy.touppewcase)
         }
       }.distinct
   }
 
-  def userUserFavSource(
-    noOlderThan: Duration = Duration.fromDays(14)
+  def u-usewusewfavsouwce(
+    n-nyoowdewthan: duwation = duwation.fwomdays(14)
   )(
-    implicit sc: ScioContext
-  ): SCollection[EdgeWithDecayedWeights] = {
-    sc.customInput(
-      "ReadUserUserFavSource",
-      DAL
-        .readMostRecentSnapshotNoOlderThan(
-          UserUserFavGraphScalaDataset,
-          noOlderThan,
-          Clock.SYSTEM_CLOCK,
-          DAL.Environment.Prod
+    impwicit sc: sciocontext
+  ): scowwection[edgewithdecayedweights] = {
+    sc.custominput(
+      "weadusewusewfavsouwce", (ꈍᴗꈍ)
+      daw
+        .weadmostwecentsnapshotnoowdewthan(
+          usewusewfavgwaphscawadataset, :3
+          n-nyoowdewthan, (U ﹏ U)
+          c-cwock.system_cwock, UwU
+          daw.enviwonment.pwod
         )
     )
   }
 
-  def inferredUserConsumedLanguageSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+  d-def infewwedusewconsumedwanguagesouwce(
+    nyoowdewthan: d-duwation = d-duwation.fwomdays(7)
   )(
-    implicit sc: ScioContext
-  ): SCollection[(Long, Seq[(String, Double)])] = {
-    sc.customInput(
-        "ReadInferredUserConsumedLanguageSource",
-        DAL
-          .readMostRecentSnapshotNoOlderThan(
-            PenguinUserLanguagesScalaDataset,
-            noOlderThan,
-            Clock.SYSTEM_CLOCK,
-            DAL.Environment.Prod
+    impwicit sc: sciocontext
+  ): scowwection[(wong, 😳😳😳 s-seq[(stwing, XD doubwe)])] = {
+    sc.custominput(
+        "weadinfewwedusewconsumedwanguagesouwce", o.O
+        daw
+          .weadmostwecentsnapshotnoowdewthan(
+            penguinusewwanguagesscawadataset, (⑅˘꒳˘)
+            nyoowdewthan, 😳😳😳
+            c-cwock.system_cwock, nyaa~~
+            daw.enviwonment.pwod
           )
-      ).map { kv =>
-        val consumed = kv.value.consumed
-          .collect {
-            case scoredString if scoredString.weight > 0.001 => //throw away 5% outliers
-              (getStandardLanguageCode(scoredString.item), scoredString.weight)
-          }.collect {
-            case (Some(language), score) => (language, score)
+      ).map { k-kv =>
+        v-vaw consumed = k-kv.vawue.consumed
+          .cowwect {
+            case scowedstwing i-if scowedstwing.weight > 0.001 => //thwow a-away 5% outwiews
+              (getstandawdwanguagecode(scowedstwing.item), rawr s-scowedstwing.weight)
+          }.cowwect {
+            c-case (some(wanguage), -.- scowe) => (wanguage, (✿oωo) scowe)
           }
-        (kv.key, consumed)
+        (kv.key, /(^•ω•^) c-consumed)
       }
   }
 
-  def flockBlockSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+  d-def f-fwockbwocksouwce(
+    n-nyoowdewthan: d-duwation = duwation.fwomdays(7)
   )(
-    implicit sc: ScioContext
-  ): SCollection[(Long, Long)] = {
-    sc.customInput(
-        "ReadFlockBlock",
-        DAL.readMostRecentSnapshotNoOlderThan(
-          FlockBlocksEdgesScalaDataset,
-          noOlderThan,
-          Clock.SYSTEM_CLOCK,
-          DAL.Environment.Prod))
-      .collect {
-        case edge if edge.state == ValidFlockEdgeStateId =>
-          (edge.sourceId, edge.destinationId)
+    impwicit sc: sciocontext
+  ): s-scowwection[(wong, 🥺 wong)] = {
+    sc.custominput(
+        "weadfwockbwock", ʘwʘ
+        daw.weadmostwecentsnapshotnoowdewthan(
+          fwockbwocksedgesscawadataset, UwU
+          nyoowdewthan, XD
+          cwock.system_cwock, (✿oωo)
+          daw.enviwonment.pwod))
+      .cowwect {
+        case e-edge if edge.state == vawidfwockedgestateid =>
+          (edge.souwceid, :3 edge.destinationid)
       }
   }
 
-  def flockFollowSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+  def fwockfowwowsouwce(
+    n-nyoowdewthan: d-duwation = d-duwation.fwomdays(7)
   )(
-    implicit sc: ScioContext
-  ): SCollection[(Long, Long)] = {
-    sc.customInput(
-        "ReadFlockFollow",
-        DAL
-          .readMostRecentSnapshotNoOlderThan(
-            FlockFollowsEdgesScalaDataset,
-            noOlderThan,
-            Clock.SYSTEM_CLOCK,
-            DAL.Environment.Prod))
-      .collect {
-        case edge if edge.state == ValidFlockEdgeStateId =>
-          (edge.sourceId, edge.destinationId)
+    impwicit sc: sciocontext
+  ): s-scowwection[(wong, (///ˬ///✿) wong)] = {
+    s-sc.custominput(
+        "weadfwockfowwow", nyaa~~
+        d-daw
+          .weadmostwecentsnapshotnoowdewthan(
+            fwockfowwowsedgesscawadataset,
+            nyoowdewthan, >w<
+            cwock.system_cwock, -.-
+            daw.enviwonment.pwod))
+      .cowwect {
+        case edge i-if edge.state == vawidfwockedgestateid =>
+          (edge.souwceid, (✿oωo) e-edge.destinationid)
       }
   }
 
-  def flockReportAsAbuseSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+  def fwockwepowtasabusesouwce(
+    n-nyoowdewthan: d-duwation = duwation.fwomdays(7)
   )(
-    implicit sc: ScioContext
-  ): SCollection[(Long, Long)] = {
-    sc.customInput(
-        "ReadFlockReportAsAbuseJava",
-        DAL
-          .readMostRecentSnapshotNoOlderThan(
-            FlockReportAsAbuseEdgesScalaDataset,
-            noOlderThan,
-            Clock.SYSTEM_CLOCK,
-            DAL.Environment.Prod)
+    impwicit sc: sciocontext
+  ): s-scowwection[(wong, (˘ω˘) w-wong)] = {
+    sc.custominput(
+        "weadfwockwepowtasabusejava", rawr
+        d-daw
+          .weadmostwecentsnapshotnoowdewthan(
+            f-fwockwepowtasabuseedgesscawadataset, OwO
+            nyoowdewthan, ^•ﻌ•^
+            cwock.system_cwock, UwU
+            daw.enviwonment.pwod)
       )
-      .collect {
-        case edge if edge.state == ValidFlockEdgeStateId =>
-          (edge.sourceId, edge.destinationId)
+      .cowwect {
+        case edge if edge.state == vawidfwockedgestateid =>
+          (edge.souwceid, (˘ω˘) e-edge.destinationid)
       }
   }
 
-  def flockReportAsSpamSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+  d-def fwockwepowtasspamsouwce(
+    n-nyoowdewthan: duwation = duwation.fwomdays(7)
   )(
-    implicit sc: ScioContext
-  ): SCollection[(Long, Long)] = {
-    sc.customInput(
-        "ReadFlockReportAsSpam",
-        DAL
-          .readMostRecentSnapshotNoOlderThan(
-            FlockReportAsSpamEdgesScalaDataset,
-            noOlderThan,
-            Clock.SYSTEM_CLOCK,
-            DAL.Environment.Prod))
-      .collect {
-        case edge if edge.state == ValidFlockEdgeStateId =>
-          (edge.sourceId, edge.destinationId)
+    i-impwicit s-sc: sciocontext
+  ): scowwection[(wong, (///ˬ///✿) w-wong)] = {
+    sc.custominput(
+        "weadfwockwepowtasspam", σωσ
+        daw
+          .weadmostwecentsnapshotnoowdewthan(
+            fwockwepowtasspamedgesscawadataset, /(^•ω•^)
+            nyoowdewthan, 😳
+            c-cwock.system_cwock, 😳
+            d-daw.enviwonment.pwod))
+      .cowwect {
+        case edge if edge.state == v-vawidfwockedgestateid =>
+          (edge.souwceid, (⑅˘꒳˘) e-edge.destinationid)
       }
   }
 
-  def ieSourceTweetEngagementsSource(
-    interval: Interval
+  def iesouwcetweetengagementssouwce(
+    intewvaw: intewvaw
   )(
-    implicit sc: ScioContext
-  ): SCollection[InteractionEvent] = {
-    sc.customInput(
-        "ReadIeSourceTweetEngagementsSource",
-        DAL
-          .read(
-            com.twitter.iesource.processing.events.batch.ServerEngagementsScalaDataset,
-            interval,
-            DAL.Environment.Prod,
+    impwicit sc: sciocontext
+  ): s-scowwection[intewactionevent] = {
+    sc.custominput(
+        "weadiesouwcetweetengagementssouwce", 😳😳😳
+        daw
+          .wead(
+            com.twittew.iesouwce.pwocessing.events.batch.sewvewengagementsscawadataset, 😳
+            intewvaw,
+            d-daw.enviwonment.pwod, XD
           )
-      ).filter { event =>
-        // filter out logged out users because their favorites are less reliable
-        event.engagingUserId > 0L && event.targetType == InteractionTargetType.Tweet
+      ).fiwtew { event =>
+        // fiwtew out wogged o-out usews because t-theiw favowites awe wess wewiabwe
+        event.engagingusewid > 0w && event.tawgettype == i-intewactiontawgettype.tweet
       }
   }
 
-  def topicFollowGraphSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+  d-def topicfowwowgwaphsouwce(
+    nyoowdewthan: duwation = duwation.fwomdays(7)
   )(
-    implicit sc: ScioContext
-  ): SCollection[(Long, Long)] = {
-    // The implementation here is slightly different than the topicFollowGraphSource function in
-    // src/scala/com/twitter/simclusters_v2/scalding/embedding/common/ExternalDataSources.scala
-    // We don't do an additional hashJoin on uttFollowableEntitiesSource.
-    sc.customInput(
-        "ReadTopicFollowGraphSource",
-        DAL
-          .readMostRecentSnapshotNoOlderThan(
-            UserTopicRelationSnapshotScalaDataset,
-            noOlderThan,
-            Clock.SYSTEM_CLOCK,
-            DAL.Environment.Prod
+    i-impwicit sc: sciocontext
+  ): scowwection[(wong, mya w-wong)] = {
+    // the impwementation hewe is swightwy diffewent t-than the topicfowwowgwaphsouwce function in
+    // s-swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/common/extewnawdatasouwces.scawa
+    // w-we don't do an additionaw hashjoin o-on uttfowwowabweentitiessouwce. ^•ﻌ•^
+    sc.custominput(
+        "weadtopicfowwowgwaphsouwce", ʘwʘ
+        d-daw
+          .weadmostwecentsnapshotnoowdewthan(
+            u-usewtopicwewationsnapshotscawadataset, ( ͡o ω ͡o )
+            n-nyoowdewthan, mya
+            cwock.system_cwock, o.O
+            d-daw.enviwonment.pwod
           )
-      ).collect {
-        case userInterestsRelationSnapshot: UserInterestsRelationSnapshot
-            if userInterestsRelationSnapshot.interestType == "UTT" &&
-              userInterestsRelationSnapshot.relation == InterestRelationType.Followed =>
-          (userInterestsRelationSnapshot.interestId, userInterestsRelationSnapshot.userId)
+      ).cowwect {
+        case u-usewintewestswewationsnapshot: usewintewestswewationsnapshot
+            if u-usewintewestswewationsnapshot.intewesttype == "utt" &&
+              u-usewintewestswewationsnapshot.wewation == intewestwewationtype.fowwowed =>
+          (usewintewestswewationsnapshot.intewestid, (✿oωo) u-usewintewestswewationsnapshot.usewid)
       }
   }
 
-  def magicRecsNotficationOpenOrClickEventsSource(
-    interval: Interval
+  def magicwecsnotficationopenowcwickeventssouwce(
+    intewvaw: intewvaw
   )(
-    implicit sc: ScioContext
-  ): SCollection[MagicRecsNotificationLite] = {
-    sc.customInput(
-        "ReadMagicRecsNotficationOpenOrClickEventsSource",
-        DAL
-          .read(MagicrecsNotificationLite1DayLagScalaDataset, interval, DAL.Environment.Prod))
-      .filter { entry =>
-        // keep entries with a valid userId and tweetId, opened or clicked timestamp defined
-        val userIdExists = entry.targetUserId.isDefined
-        val tweetIdExists = entry.tweetId.isDefined
-        val openOrClickExists =
-          entry.openTimestampMs.isDefined || entry.ntabClickTimestampMs.isDefined
-        userIdExists && tweetIdExists && openOrClickExists
+    i-impwicit sc: sciocontext
+  ): s-scowwection[magicwecsnotificationwite] = {
+    s-sc.custominput(
+        "weadmagicwecsnotficationopenowcwickeventssouwce", :3
+        daw
+          .wead(magicwecsnotificationwite1daywagscawadataset, 😳 intewvaw, (U ﹏ U) daw.enviwonment.pwod))
+      .fiwtew { e-entwy =>
+        // k-keep entwies with a-a vawid usewid a-and tweetid, mya opened ow cwicked t-timestamp defined
+        vaw usewidexists = entwy.tawgetusewid.isdefined
+        vaw tweetidexists = entwy.tweetid.isdefined
+        vaw openowcwickexists =
+          e-entwy.opentimestampms.isdefined || entwy.ntabcwicktimestampms.isdefined
+        u-usewidexists && tweetidexists && o-openowcwickexists
       }
   }
 
-  def adaptiveSearchScribeLogsSource(
-    interval: Interval
+  def a-adaptiveseawchscwibewogssouwce(
+    intewvaw: intewvaw
   )(
-    implicit sc: ScioContext
-  ): SCollection[(Long, String)] = {
-    sc.customInput(
-        "ReadAdaptiveSearchScribeLogsSource",
-        DAL
-          .read(AdaptiveSearchScalaDataset, interval, DAL.Environment.Prod))
-      .flatMap({ scribeLog: AdaptiveSearchScribeLog =>
-        for {
-          userId <- userIdFromBlenderAdaptiveScribeLog(scribeLog)
-          // filter out logged out search queries
-          if userId != 0
-          queryString <- scribeLog.requestLog.flatMap(_.request).flatMap(_.rawQuery)
-        } yield {
-          (userId, Set(queryString))
+    i-impwicit sc: sciocontext
+  ): s-scowwection[(wong, (U ᵕ U❁) s-stwing)] = {
+    s-sc.custominput(
+        "weadadaptiveseawchscwibewogssouwce", :3
+        d-daw
+          .wead(adaptiveseawchscawadataset, mya intewvaw, daw.enviwonment.pwod))
+      .fwatmap({ scwibewog: adaptiveseawchscwibewog =>
+        fow {
+          usewid <- u-usewidfwombwendewadaptivescwibewog(scwibewog)
+          // f-fiwtew o-out wogged out seawch quewies
+          i-if usewid != 0
+          quewystwing <- scwibewog.wequestwog.fwatmap(_.wequest).fwatmap(_.wawquewy)
+        } yiewd {
+          (usewid, OwO s-set(quewystwing))
         }
       })
-      // if a user searches for the same query multiple times, there could be duplicates.
-      // De-dup them to get the distinct queries searched by a user
-      .sumByKey
-      .flatMap {
-        case (userId, distinctQuerySet) =>
-          distinctQuerySet.map { query =>
-            (userId, query)
+      // i-if a usew seawches fow the same q-quewy muwtipwe times, (ˆ ﻌ ˆ)♡ thewe couwd be dupwicates. ʘwʘ
+      // d-de-dup t-them to get the distinct quewies s-seawched by a-a usew
+      .sumbykey
+      .fwatmap {
+        case (usewid, o.O distinctquewyset) =>
+          distinctquewyset.map { quewy =>
+            (usewid, UwU quewy)
           }
       }
   }
 
-  private def userIdFromBlenderAdaptiveScribeLog(
-    blenderAdaptiveLog: AdaptiveSearchScribeLog
-  ): Option[Long] = {
-    blenderAdaptiveLog.versionedCommonHeader match {
-      case VersionedCommonHeader.CommonHeader(CommonHeader.ServerHeader(serverHeader)) =>
-        serverHeader.requestInfo match {
-          case Some(requestInfo) => requestInfo.ids.get(IdType.UserId).map(_.toLong)
-          case _ => None
+  p-pwivate def u-usewidfwombwendewadaptivescwibewog(
+    b-bwendewadaptivewog: a-adaptiveseawchscwibewog
+  ): o-option[wong] = {
+    bwendewadaptivewog.vewsionedcommonheadew match {
+      c-case vewsionedcommonheadew.commonheadew(commonheadew.sewvewheadew(sewvewheadew)) =>
+        s-sewvewheadew.wequestinfo match {
+          c-case s-some(wequestinfo) => wequestinfo.ids.get(idtype.usewid).map(_.towong)
+          c-case _ => nyone
         }
-      case _ => None
+      case _ => nyone
     }
   }
 

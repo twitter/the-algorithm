@@ -1,204 +1,204 @@
-package com.twitter.search.earlybird;
+package com.twittew.seawch.eawwybiwd;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
+impowt java.text.simpwedatefowmat;
+i-impowt j-java.utiw.date;
+i-impowt java.utiw.wist;
+i-impowt java.utiw.optionaw;
+i-impowt java.utiw.concuwwent.timeunit;
+i-impowt java.utiw.concuwwent.atomic.atomicboowean;
 
-import com.google.common.collect.Lists;
+i-impowt c-com.googwe.common.cowwect.wists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.util.BuildInfo;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
-import com.twitter.util.Duration;
+impowt c-com.twittew.common.utiw.buiwdinfo;
+impowt com.twittew.seawch.eawwybiwd.pawtition.seawchindexingmetwicset;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdstatuscode;
+impowt c-com.twittew.utiw.duwation;
 
 /**
- * High level status of an Earlybird server. SEARCH-28016
+ * high wevew s-status of an eawwybiwd sewvew. 🥺 seawch-28016
  */
-public final class EarlybirdStatus {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdStatus.class);
+pubwic finaw c-cwass eawwybiwdstatus {
+  pwivate s-static finaw w-woggew wog = woggewfactowy.getwoggew(eawwybiwdstatus.cwass);
 
-  private static final String BUILD_SHA = getBuildShaFromVars();
+  pwivate static finaw stwing buiwd_sha = getbuiwdshafwomvaws();
 
-  protected static long startTime;
-  protected static EarlybirdStatusCode statusCode;
-  protected static String statusMessage;
-  protected static final AtomicBoolean THRIFT_PORT_OPEN = new AtomicBoolean(false);
-  protected static final AtomicBoolean WARMUP_THRIFT_PORT_OPEN = new AtomicBoolean(false);
-  protected static final AtomicBoolean THRIFT_SERVICE_STARTED = new AtomicBoolean(false);
+  pwotected static w-wong stawttime;
+  pwotected static eawwybiwdstatuscode statuscode;
+  pwotected s-static stwing statusmessage;
+  p-pwotected static f-finaw atomicboowean t-thwift_powt_open = n-nyew atomicboowean(fawse);
+  pwotected static finaw atomicboowean w-wawmup_thwift_powt_open = nyew atomicboowean(fawse);
+  pwotected static f-finaw atomicboowean thwift_sewvice_stawted = nyew atomicboowean(fawse);
 
-  private static final List<EarlybirdEvent> EARLYBIRD_SERVER_EVENTS = Lists.newArrayList();
-  private static class EarlybirdEvent {
-    private final String eventName;
-    private final long timestampMillis;
-    private final long timeSinceServerStartMillis;
-    private final long durationMillis;
+  pwivate static finaw wist<eawwybiwdevent> e-eawwybiwd_sewvew_events = wists.newawwaywist();
+  p-pwivate s-static cwass eawwybiwdevent {
+    p-pwivate finaw stwing eventname;
+    pwivate finaw wong timestampmiwwis;
+    p-pwivate finaw wong t-timesincesewvewstawtmiwwis;
+    pwivate finaw w-wong duwationmiwwis;
 
-    public EarlybirdEvent(String eventName, long timestampMillis) {
-      this(eventName, timestampMillis, -1);
+    p-pubwic eawwybiwdevent(stwing e-eventname, nyaa~~ wong timestampmiwwis) {
+      t-this(eventname, ^^ timestampmiwwis, >w< -1);
     }
 
-    public EarlybirdEvent(
-        String eventName,
-        long timestampMillis,
-        long eventDurationMillis) {
-      this.eventName = eventName;
-      this.timestampMillis = timestampMillis;
-      this.timeSinceServerStartMillis = timestampMillis - startTime;
-      this.durationMillis = eventDurationMillis;
+    pubwic eawwybiwdevent(
+        s-stwing eventname, OwO
+        wong t-timestampmiwwis, XD
+        wong eventduwationmiwwis) {
+      t-this.eventname = e-eventname;
+      this.timestampmiwwis = timestampmiwwis;
+      this.timesincesewvewstawtmiwwis = timestampmiwwis - stawttime;
+      this.duwationmiwwis = eventduwationmiwwis;
     }
 
-    public String getEventLogString() {
-      String result = String.format(
+    p-pubwic stwing g-geteventwogstwing() {
+      stwing wesuwt = s-stwing.fowmat(
           "%s %s",
-          new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date(timestampMillis)),
-          eventName);
+          n-nyew s-simpwedatefowmat("yyyy-mm-dd hh:mm:ss.sss").fowmat(new date(timestampmiwwis)), ^^;;
+          eventname);
 
-      if (durationMillis > 0) {
-        result += String.format(
-            ", took: %s", Duration.apply(durationMillis, TimeUnit.MILLISECONDS).toString());
+      i-if (duwationmiwwis > 0) {
+        wesuwt += stwing.fowmat(
+            ", 🥺 took: %s", XD duwation.appwy(duwationmiwwis, (U ᵕ U❁) timeunit.miwwiseconds).tostwing());
       }
 
-      result += String.format(
-          ", time since server start: %s",
-          Duration.apply(timeSinceServerStartMillis, TimeUnit.MILLISECONDS).toString()
+      w-wesuwt += stwing.fowmat(
+          ", time since s-sewvew stawt: %s",
+          d-duwation.appwy(timesincesewvewstawtmiwwis, :3 t-timeunit.miwwiseconds).tostwing()
       );
 
-      return result;
+      wetuwn wesuwt;
     }
   }
 
-  private EarlybirdStatus() {
+  p-pwivate e-eawwybiwdstatus() {
   }
 
-  public static synchronized void setStartTime(long time) {
-    startTime = time;
-    LOG.info("startTime set to " + time);
+  p-pubwic s-static synchwonized void setstawttime(wong time) {
+    stawttime = t-time;
+    w-wog.info("stawttime s-set to " + t-time);
   }
 
-  public static synchronized void setStatus(EarlybirdStatusCode code) {
-    setStatus(code, null);
+  pubwic s-static synchwonized void setstatus(eawwybiwdstatuscode code) {
+    setstatus(code, ( ͡o ω ͡o ) n-nyuww);
   }
 
-  public static synchronized void setStatus(EarlybirdStatusCode code, String message) {
-    statusCode = code;
-    statusMessage = message;
-    LOG.info("status set to " + code + (message != null ? " with message " + message : ""));
+  pubwic static synchwonized void setstatus(eawwybiwdstatuscode code, òωó stwing message) {
+    s-statuscode = code;
+    statusmessage = message;
+    wog.info("status s-set to " + c-code + (message != n-nyuww ? " with message " + m-message : ""));
   }
 
-  public static synchronized long getStartTime() {
-    return startTime;
+  pubwic static s-synchwonized w-wong getstawttime() {
+    wetuwn stawttime;
   }
 
-  public static synchronized boolean isStarting() {
-    return statusCode == EarlybirdStatusCode.STARTING;
+  pubwic static synchwonized boowean isstawting() {
+    w-wetuwn statuscode == e-eawwybiwdstatuscode.stawting;
   }
 
-  public static synchronized boolean hasStarted() {
-    return statusCode == EarlybirdStatusCode.CURRENT;
+  pubwic static s-synchwonized b-boowean hasstawted() {
+    wetuwn statuscode == e-eawwybiwdstatuscode.cuwwent;
   }
 
-  public static boolean isThriftServiceStarted() {
-    return THRIFT_SERVICE_STARTED.get();
+  p-pubwic static boowean isthwiftsewvicestawted() {
+    w-wetuwn t-thwift_sewvice_stawted.get();
   }
 
-  public static synchronized EarlybirdStatusCode getStatusCode() {
-    return statusCode;
+  pubwic static synchwonized eawwybiwdstatuscode getstatuscode() {
+    w-wetuwn s-statuscode;
   }
 
-  public static synchronized String getStatusMessage() {
-    return (statusMessage == null ? "" : statusMessage + ", ")
-        + "warmup thrift port is " + (WARMUP_THRIFT_PORT_OPEN.get() ? "OPEN" : "CLOSED")
-        + ", production thrift port is " + (THRIFT_PORT_OPEN.get() ? "OPEN" : "CLOSED");
+  p-pubwic static synchwonized stwing g-getstatusmessage() {
+    wetuwn (statusmessage == n-nyuww ? "" : statusmessage + ", ")
+        + "wawmup t-thwift powt is " + (wawmup_thwift_powt_open.get() ? "open" : "cwosed")
+        + ", σωσ pwoduction thwift powt is " + (thwift_powt_open.get() ? "open" : "cwosed");
   }
 
-  public static synchronized void recordEarlybirdEvent(String eventName) {
-    long timeMillis = System.currentTimeMillis();
-    EARLYBIRD_SERVER_EVENTS.add(new EarlybirdEvent(eventName, timeMillis));
+  pubwic static s-synchwonized void w-wecowdeawwybiwdevent(stwing eventname) {
+    wong timemiwwis = s-system.cuwwenttimemiwwis();
+    e-eawwybiwd_sewvew_events.add(new eawwybiwdevent(eventname, (U ᵕ U❁) timemiwwis));
   }
 
-  private static String getBeginEventMessage(String eventName) {
-    return "[Begin Event] " + eventName;
+  pwivate static s-stwing getbegineventmessage(stwing eventname) {
+    wetuwn "[begin event] " + eventname;
   }
 
-  private static String getEndEventMessage(String eventName) {
-    return "[ End Event ] " + eventName;
+  pwivate static s-stwing getendeventmessage(stwing eventname) {
+    wetuwn "[ end e-event ] " + eventname;
   }
 
   /**
-   * Records the beginning of the given event.
+   * w-wecowds the beginning of the given event. (✿oωo)
    *
-   * @param eventName The event name.
-   * @param startupMetric The metric that will be used to keep track of the time for this event.
+   * @pawam eventname the e-event name. ^^
+   * @pawam s-stawtupmetwic the metwic that wiww be used to keep twack o-of the time fow this event. ^•ﻌ•^
    */
-  public static synchronized void beginEvent(String eventName,
-                                             SearchIndexingMetricSet.StartupMetric startupMetric) {
-    long timeMillis = System.currentTimeMillis();
-    String eventMessage = getBeginEventMessage(eventName);
-    LOG.info(eventMessage);
-    EARLYBIRD_SERVER_EVENTS.add(new EarlybirdEvent(eventMessage, timeMillis));
+  p-pubwic static synchwonized void beginevent(stwing eventname, XD
+                                             seawchindexingmetwicset.stawtupmetwic s-stawtupmetwic) {
+    wong timemiwwis = s-system.cuwwenttimemiwwis();
+    s-stwing eventmessage = g-getbegineventmessage(eventname);
+    wog.info(eventmessage);
+    e-eawwybiwd_sewvew_events.add(new e-eawwybiwdevent(eventmessage, :3 t-timemiwwis));
 
-    startupMetric.begin();
+    stawtupmetwic.begin();
   }
 
   /**
-   * Records the end of the given event.
+   * w-wecowds t-the end of the given event. (ꈍᴗꈍ)
    *
-   * @param eventName The event name.
-   * @param startupMetric The metric used to keep track of the time for this event.
+   * @pawam eventname the event n-nyame.
+   * @pawam s-stawtupmetwic t-the metwic used to keep twack of the time fow t-this event. :3
    */
-  public static synchronized void endEvent(String eventName,
-                                           SearchIndexingMetricSet.StartupMetric startupMetric) {
-    long timeMillis = System.currentTimeMillis();
+  pubwic static s-synchwonized v-void endevent(stwing eventname, (U ﹏ U)
+                                           seawchindexingmetwicset.stawtupmetwic stawtupmetwic) {
+    w-wong timemiwwis = s-system.cuwwenttimemiwwis();
 
-    String beginEventMessage = getBeginEventMessage(eventName);
-    Optional<EarlybirdEvent> beginEventOpt = EARLYBIRD_SERVER_EVENTS.stream()
-        .filter(event -> event.eventName.equals(beginEventMessage))
-        .findFirst();
+    s-stwing b-begineventmessage = getbegineventmessage(eventname);
+    o-optionaw<eawwybiwdevent> begineventopt = eawwybiwd_sewvew_events.stweam()
+        .fiwtew(event -> event.eventname.equaws(begineventmessage))
+        .findfiwst();
 
-    String eventMessage = getEndEventMessage(eventName);
-    LOG.info(eventMessage);
-    EarlybirdEvent endEvent = new EarlybirdEvent(
-        eventMessage,
-        timeMillis,
-        beginEventOpt.map(e -> timeMillis - e.timestampMillis).orElse(-1L));
+    stwing eventmessage = getendeventmessage(eventname);
+    w-wog.info(eventmessage);
+    eawwybiwdevent e-endevent = nyew eawwybiwdevent(
+        eventmessage, UwU
+        t-timemiwwis, 😳😳😳
+        begineventopt.map(e -> t-timemiwwis - e.timestampmiwwis).owewse(-1w));
 
-    EARLYBIRD_SERVER_EVENTS.add(endEvent);
+    eawwybiwd_sewvew_events.add(endevent);
 
-    startupMetric.end(endEvent.durationMillis);
+    stawtupmetwic.end(endevent.duwationmiwwis);
   }
 
-  public static synchronized void clearAllEvents() {
-    EARLYBIRD_SERVER_EVENTS.clear();
+  p-pubwic static s-synchwonized void c-cweawawwevents() {
+    e-eawwybiwd_sewvew_events.cweaw();
   }
 
-  public static String getBuildSha() {
-    return BUILD_SHA;
+  p-pubwic static stwing getbuiwdsha() {
+    wetuwn buiwd_sha;
   }
 
   /**
-   * Returns the list of all earlybird events that happened since the server started.
+   * wetuwns the wist of aww eawwybiwd events t-that happened s-since the sewvew s-stawted. XD
    */
-  public static synchronized Iterable<String> getEarlybirdEvents() {
-    List<String> eventLog = Lists.newArrayListWithCapacity(EARLYBIRD_SERVER_EVENTS.size());
-    for (EarlybirdEvent event : EARLYBIRD_SERVER_EVENTS) {
-      eventLog.add(event.getEventLogString());
+  pubwic static s-synchwonized itewabwe<stwing> geteawwybiwdevents() {
+    wist<stwing> e-eventwog = w-wists.newawwaywistwithcapacity(eawwybiwd_sewvew_events.size());
+    fow (eawwybiwdevent e-event : eawwybiwd_sewvew_events) {
+      eventwog.add(event.geteventwogstwing());
     }
-    return eventLog;
+    w-wetuwn eventwog;
   }
 
-  private static String getBuildShaFromVars() {
-    BuildInfo buildInfo = new BuildInfo();
-    String buildSha = buildInfo.getProperties().getProperty(BuildInfo.Key.GIT_REVISION.value);
-    if (buildSha != null) {
-      return buildSha;
-    } else {
-      return "UNKNOWN";
+  p-pwivate static stwing getbuiwdshafwomvaws() {
+    b-buiwdinfo buiwdinfo = n-new buiwdinfo();
+    stwing buiwdsha = buiwdinfo.getpwopewties().getpwopewty(buiwdinfo.key.git_wevision.vawue);
+    if (buiwdsha != nyuww) {
+      w-wetuwn b-buiwdsha;
+    } e-ewse {
+      wetuwn "unknown";
     }
   }
 }

@@ -1,152 +1,152 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow.error;
+package tensowfwow.ewwow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "ErrorCodesProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option c-cc_enabwe_awenas = t-twue;
+option j-java_outew_cwassname = "ewwowcodespwotos";
+o-option java_muwtipwe_fiwes = t-twue;
+o-option java_package = "owg.tensowfwow.fwamewowk";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// The canonical error codes for TensorFlow APIs.
+// t-the canonicaw ewwow codes fow tensowfwow apis. 🥺
 //
-// Warnings:
+// wawnings:
 //
-// -   Do not change any numeric assignments.
-// -   Changes to this list should only be made if there is a compelling
-//     need that can't be satisfied in another way.  Such changes
-//     must be approved by at least two OWNERS.
-// -   These error codes must match gRPC and protobuf error codes (except for
-//     DO_NOT_USE_RESERVED_FOR_FUTURE_EXPANSION_USE_DEFAULT_IN_SWITCH_INSTEAD_).
+// -   do nyot change any n-nyumewic assignments. :3
+// -   changes to this wist shouwd onwy b-be made if thewe is a compewwing
+//     n-nyeed that can't be satisfied in anothew way. (ꈍᴗꈍ)  such changes
+//     m-must be appwoved by at w-weast two ownews. 🥺
+// -   t-these ewwow codes must match gwpc and pwotobuf ewwow codes (except fow
+//     d-do_not_use_wesewved_fow_futuwe_expansion_use_defauwt_in_switch_instead_). (✿oωo)
 //
-// Sometimes multiple error codes may apply.  Services should return
-// the most specific error code that applies.  For example, prefer
-// OUT_OF_RANGE over FAILED_PRECONDITION if both codes apply.
-// Similarly prefer NOT_FOUND or ALREADY_EXISTS over FAILED_PRECONDITION.
-enum Code {
-  // Not an error; returned on success
-  OK = 0;
+// sometimes muwtipwe ewwow codes may appwy. (U ﹏ U)  sewvices shouwd w-wetuwn
+// the most specific e-ewwow code that a-appwies. :3  fow exampwe, ^^;; p-pwefew
+// o-out_of_wange ovew faiwed_pwecondition if both codes a-appwy. rawr
+// simiwawwy pwefew nyot_found ow awweady_exists o-ovew faiwed_pwecondition. 😳😳😳
+enum code {
+  // nyot an ewwow; wetuwned on success
+  ok = 0;
 
-  // The operation was cancelled (typically by the caller).
-  CANCELLED = 1;
+  // t-the opewation was cancewwed (typicawwy b-by the cawwew). (✿oωo)
+  c-cancewwed = 1;
 
-  // Unknown error.  An example of where this error may be returned is
-  // if a Status value received from another address space belongs to
-  // an error-space that is not known in this address space.  Also
-  // errors raised by APIs that do not return enough error information
-  // may be converted to this error.
-  UNKNOWN = 2;
+  // u-unknown ewwow. OwO  an exampwe of whewe this ewwow may be wetuwned i-is
+  // i-if a status vawue weceived fwom a-anothew addwess s-space bewongs to
+  // an ewwow-space t-that is nyot known in this a-addwess space. ʘwʘ  awso
+  // ewwows waised by apis t-that do nyot wetuwn enough ewwow i-infowmation
+  // may be convewted t-to this ewwow. (ˆ ﻌ ˆ)♡
+  u-unknown = 2;
 
-  // Client specified an invalid argument.  Note that this differs
-  // from FAILED_PRECONDITION.  INVALID_ARGUMENT indicates arguments
-  // that are problematic regardless of the state of the system
-  // (e.g., a malformed file name).
-  INVALID_ARGUMENT = 3;
+  // cwient specified an invawid awgument. (U ﹏ U)  nyote that this diffews
+  // fwom faiwed_pwecondition. UwU  i-invawid_awgument i-indicates awguments
+  // t-that awe pwobwematic w-wegawdwess o-of the state of the system
+  // (e.g., a mawfowmed fiwe nyame). XD
+  i-invawid_awgument = 3;
 
-  // Deadline expired before operation could complete.  For operations
-  // that change the state of the system, this error may be returned
-  // even if the operation has completed successfully.  For example, a
-  // successful response from a server could have been delayed long
-  // enough for the deadline to expire.
-  DEADLINE_EXCEEDED = 4;
+  // deadwine expiwed befowe opewation couwd compwete. ʘwʘ  f-fow opewations
+  // that change t-the state of the s-system, rawr x3 this ewwow m-may be wetuwned
+  // even if t-the opewation h-has compweted successfuwwy. ^^;;  f-fow e-exampwe, ʘwʘ a
+  // successfuw wesponse fwom a sewvew c-couwd have been d-dewayed wong
+  // e-enough fow t-the deadwine to e-expiwe. (U ﹏ U)
+  deadwine_exceeded = 4;
 
-  // Some requested entity (e.g., file or directory) was not found.
-  // For privacy reasons, this code *may* be returned when the client
-  // does not have the access right to the entity.
-  NOT_FOUND = 5;
+  // some wequested entity (e.g., fiwe ow diwectowy) w-was nyot found. (˘ω˘)
+  // fow pwivacy weasons, (ꈍᴗꈍ) this code *may* be wetuwned when the cwient
+  // d-does nyot have the access wight to the entity. /(^•ω•^)
+  nyot_found = 5;
 
-  // Some entity that we attempted to create (e.g., file or directory)
-  // already exists.
-  ALREADY_EXISTS = 6;
+  // s-some entity t-that we attempted t-to cweate (e.g., fiwe ow d-diwectowy)
+  // awweady exists. >_<
+  a-awweady_exists = 6;
 
-  // The caller does not have permission to execute the specified
-  // operation.  PERMISSION_DENIED must not be used for rejections
-  // caused by exhausting some resource (use RESOURCE_EXHAUSTED
-  // instead for those errors).  PERMISSION_DENIED must not be
-  // used if the caller can not be identified (use UNAUTHENTICATED
-  // instead for those errors).
-  PERMISSION_DENIED = 7;
+  // t-the cawwew does nyot have pewmission to exekawaii~ the specified
+  // opewation. σωσ  pewmission_denied m-must nyot be used fow wejections
+  // c-caused by exhausting some w-wesouwce (use wesouwce_exhausted
+  // i-instead fow those ewwows). ^^;;  pewmission_denied m-must nyot be
+  // u-used if the cawwew can nyot b-be identified (use u-unauthenticated
+  // instead fow those ewwows). 😳
+  pewmission_denied = 7;
 
-  // The request does not have valid authentication credentials for the
-  // operation.
-  UNAUTHENTICATED = 16;
+  // the wequest d-does nyot have vawid a-authentication c-cwedentiaws fow the
+  // opewation. >_<
+  u-unauthenticated = 16;
 
-  // Some resource has been exhausted, perhaps a per-user quota, or
-  // perhaps the entire file system is out of space.
-  RESOURCE_EXHAUSTED = 8;
+  // s-some wesouwce has been exhausted, p-pewhaps a pew-usew quota, -.- ow
+  // pewhaps the entiwe fiwe system is out o-of space. UwU
+  wesouwce_exhausted = 8;
 
-  // Operation was rejected because the system is not in a state
-  // required for the operation's execution.  For example, directory
-  // to be deleted may be non-empty, an rmdir operation is applied to
-  // a non-directory, etc.
+  // o-opewation was wejected because the system i-is nyot in a s-state
+  // wequiwed fow the opewation's execution. :3  fow exampwe, σωσ d-diwectowy
+  // to be deweted may be nyon-empty, >w< an wmdiw opewation is appwied t-to
+  // a nyon-diwectowy, etc. (ˆ ﻌ ˆ)♡
   //
-  // A litmus test that may help a service implementor in deciding
-  // between FAILED_PRECONDITION, ABORTED, and UNAVAILABLE:
-  //  (a) Use UNAVAILABLE if the client can retry just the failing call.
-  //  (b) Use ABORTED if the client should retry at a higher-level
-  //      (e.g., restarting a read-modify-write sequence).
-  //  (c) Use FAILED_PRECONDITION if the client should not retry until
-  //      the system state has been explicitly fixed.  E.g., if an "rmdir"
-  //      fails because the directory is non-empty, FAILED_PRECONDITION
-  //      should be returned since the client should not retry unless
-  //      they have first fixed up the directory by deleting files from it.
-  //  (d) Use FAILED_PRECONDITION if the client performs conditional
-  //      REST Get/Update/Delete on a resource and the resource on the
-  //      server does not match the condition. E.g., conflicting
-  //      read-modify-write on the same resource.
-  FAILED_PRECONDITION = 9;
+  // a witmus t-test that may h-hewp a sewvice impwementow in deciding
+  // between faiwed_pwecondition, ʘwʘ a-abowted, a-and unavaiwabwe:
+  //  (a) use unavaiwabwe if the cwient can wetwy j-just the faiwing caww. :3
+  //  (b) u-use abowted if the cwient shouwd wetwy at a highew-wevew
+  //      (e.g., w-westawting a wead-modify-wwite sequence). (˘ω˘)
+  //  (c) use faiwed_pwecondition i-if the c-cwient shouwd nyot wetwy untiw
+  //      t-the system state has b-been expwicitwy f-fixed. 😳😳😳  e.g., if a-an "wmdiw"
+  //      faiws because t-the diwectowy i-is nyon-empty, rawr x3 faiwed_pwecondition
+  //      shouwd be wetuwned s-since the cwient s-shouwd nyot w-wetwy unwess
+  //      they have fiwst fixed up t-the diwectowy by deweting fiwes f-fwom it. (✿oωo)
+  //  (d) u-use faiwed_pwecondition if the cwient pewfowms conditionaw
+  //      w-west get/update/dewete on a-a wesouwce and t-the wesouwce on t-the
+  //      sewvew does nyot m-match the condition. (ˆ ﻌ ˆ)♡ e.g., confwicting
+  //      wead-modify-wwite on the same wesouwce. :3
+  faiwed_pwecondition = 9;
 
-  // The operation was aborted, typically due to a concurrency issue
-  // like sequencer check failures, transaction aborts, etc.
+  // the opewation w-was abowted, (U ᵕ U❁) typicawwy due t-to a concuwwency issue
+  // wike s-sequencew check faiwuwes, ^^;; twansaction a-abowts, mya etc.
   //
-  // See litmus test above for deciding between FAILED_PRECONDITION,
-  // ABORTED, and UNAVAILABLE.
-  ABORTED = 10;
+  // s-see witmus test a-above fow deciding b-between faiwed_pwecondition, 😳😳😳
+  // a-abowted, OwO and u-unavaiwabwe. rawr
+  abowted = 10;
 
-  // Operation tried to iterate past the valid input range.  E.g., seeking or
-  // reading past end of file.
+  // opewation twied to itewate past the vawid input wange. XD  e.g., seeking ow
+  // w-weading past e-end of fiwe. (U ﹏ U)
   //
-  // Unlike INVALID_ARGUMENT, this error indicates a problem that may
-  // be fixed if the system state changes. For example, a 32-bit file
-  // system will generate INVALID_ARGUMENT if asked to read at an
-  // offset that is not in the range [0,2^32-1], but it will generate
-  // OUT_OF_RANGE if asked to read from an offset past the current
-  // file size.
+  // u-unwike invawid_awgument, (˘ω˘) this ewwow indicates a-a pwobwem that may
+  // be fixed if the system state changes. UwU f-fow exampwe, >_< a-a 32-bit fiwe
+  // system wiww g-genewate invawid_awgument if asked to wead at an
+  // o-offset that i-is nyot in the wange [0,2^32-1], σωσ b-but it wiww genewate
+  // o-out_of_wange if asked to wead fwom an offset past the cuwwent
+  // f-fiwe size. 🥺
   //
-  // There is a fair bit of overlap between FAILED_PRECONDITION and
-  // OUT_OF_RANGE.  We recommend using OUT_OF_RANGE (the more specific
-  // error) when it applies so that callers who are iterating through
-  // a space can easily look for an OUT_OF_RANGE error to detect when
-  // they are done.
-  OUT_OF_RANGE = 11;
+  // t-thewe is a f-faiw bit of ovewwap b-between faiwed_pwecondition a-and
+  // out_of_wange. 🥺  we wecommend u-using out_of_wange (the m-mowe specific
+  // e-ewwow) when it appwies s-so that cawwews who awe itewating t-thwough
+  // a space can easiwy wook fow a-an out_of_wange ewwow to detect w-when
+  // they a-awe done. ʘwʘ
+  out_of_wange = 11;
 
-  // Operation is not implemented or not supported/enabled in this service.
-  UNIMPLEMENTED = 12;
+  // opewation i-is nyot impwemented ow nyot suppowted/enabwed in t-this sewvice. :3
+  u-unimpwemented = 12;
 
-  // Internal errors.  Means some invariant expected by the underlying
-  // system has been broken.  If you see one of these errors,
-  // something is very broken.
-  INTERNAL = 13;
+  // i-intewnaw ewwows.  means some invawiant expected by the u-undewwying
+  // system has been bwoken.  if you s-see one of these e-ewwows, (U ﹏ U)
+  // something is vewy b-bwoken. (U ﹏ U)
+  intewnaw = 13;
 
-  // The service is currently unavailable.  This is a most likely a
-  // transient condition and may be corrected by retrying with
-  // a backoff.
+  // the sewvice is c-cuwwentwy unavaiwabwe. ʘwʘ  t-this is a most wikewy a
+  // twansient condition a-and may be cowwected by wetwying with
+  // a-a backoff. >w<
   //
-  // See litmus test above for deciding between FAILED_PRECONDITION,
-  // ABORTED, and UNAVAILABLE.
-  UNAVAILABLE = 14;
+  // s-see witmus test above fow d-deciding between faiwed_pwecondition, rawr x3
+  // a-abowted, OwO a-and unavaiwabwe. ^•ﻌ•^
+  u-unavaiwabwe = 14;
 
-  // Unrecoverable data loss or corruption.
-  DATA_LOSS = 15;
+  // unwecovewabwe data woss ow cowwuption. >_<
+  data_woss = 15;
 
-  // An extra enum entry to prevent people from writing code that
-  // fails to compile when a new code is added.
+  // an extwa enum entwy to pwevent peopwe fwom wwiting code that
+  // faiws to compiwe when a nyew code is added. OwO
   //
-  // Nobody should ever reference this enumeration entry. In particular,
-  // if you write C++ code that switches on this enumeration, add a default:
-  // case instead of a case that mentions this enumeration entry.
+  // nyobody shouwd evew wefewence t-this enumewation e-entwy. >_< in pawticuwaw,
+  // if you wwite c-c++ code that switches o-on this enumewation, (ꈍᴗꈍ) a-add a defauwt:
+  // c-case instead of a case that mentions t-this enumewation e-entwy. >w<
   //
-  // Nobody should rely on the value (currently 20) listed here.  It
-  // may change in the future.
-  DO_NOT_USE_RESERVED_FOR_FUTURE_EXPANSION_USE_DEFAULT_IN_SWITCH_INSTEAD_ = 20;
+  // nyobody shouwd w-wewy on the vawue (cuwwentwy 20) w-wisted hewe. (U ﹏ U)  i-it
+  // may change in the futuwe. ^^
+  do_not_use_wesewved_fow_futuwe_expansion_use_defauwt_in_switch_instead_ = 20;
 }

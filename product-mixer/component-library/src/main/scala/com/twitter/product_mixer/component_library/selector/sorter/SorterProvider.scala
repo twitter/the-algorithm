@@ -1,40 +1,40 @@
-package com.twitter.product_mixer.component_library.selector.sorter
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow.sowtew
 
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Makes a [[Sorter]] to run for the given input based on the
- * [[PipelineQuery]], the `remainingCandidates`, and the `result`.
+ * m-makes a-a [[sowtew]] t-to wun fow the g-given input based o-on the
+ * [[pipewinequewy]], 🥺 the `wemainingcandidates`, >_< a-and the `wesuwt`. >_<
  *
- * @note this should be used to choose between different [[Sorter]]s,
- *       if you want to conditionally sort wrap your [[Sorter]] with
- *       [[com.twitter.product_mixer.component_library.selector.SelectConditionally]] instead.
+ * @note this shouwd be used to choose between diffewent [[sowtew]]s, (⑅˘꒳˘)
+ *       if y-you want to conditionawwy sowt wwap youw [[sowtew]] w-with
+ *       [[com.twittew.pwoduct_mixew.component_wibwawy.sewectow.sewectconditionawwy]] instead. /(^•ω•^)
  */
-trait SorterProvider {
+twait s-sowtewpwovidew {
 
-  /** Makes a [[Sorter]] for the given inputs */
-  def sorter(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): Sorter
+  /** makes a [[sowtew]] fow the given inputs */
+  d-def sowtew(
+    quewy: pipewinequewy, rawr x3
+    w-wemainingcandidates: s-seq[candidatewithdetaiws], (U ﹏ U)
+    wesuwt: seq[candidatewithdetaiws]
+  ): sowtew
 }
 
 /**
- * Sorts the candidates
+ * sowts the candidates
  *
- * All [[Sorter]]s also implement [[SorterProvider]] to provide themselves for convenience.
+ * a-aww [[sowtew]]s awso impwement [[sowtewpwovidew]] to pwovide themsewves fow convenience.
  */
-trait Sorter { self: SorterProvider =>
+t-twait sowtew { sewf: sowtewpwovidew =>
 
-  /** Sorts the `candidates` */
-  def sort[Candidate <: CandidateWithDetails](candidates: Seq[Candidate]): Seq[Candidate]
+  /** s-sowts the `candidates` */
+  d-def sowt[candidate <: c-candidatewithdetaiws](candidates: s-seq[candidate]): seq[candidate]
 
-  /** Any [[Sorter]] can be used in place of a [[SorterProvider]] to provide itself */
-  override final def sorter(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): Sorter = self
+  /** any [[sowtew]] can b-be used in pwace of a [[sowtewpwovidew]] to pwovide i-itsewf */
+  ovewwide finaw def sowtew(
+    quewy: pipewinequewy, (U ﹏ U)
+    wemainingcandidates: seq[candidatewithdetaiws], (⑅˘꒳˘)
+    wesuwt: s-seq[candidatewithdetaiws]
+  ): sowtew = sewf
 }

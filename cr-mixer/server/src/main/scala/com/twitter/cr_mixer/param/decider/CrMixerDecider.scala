@@ -1,39 +1,39 @@
-package com.twitter.cr_mixer.param.decider
+package com.twittew.cw_mixew.pawam.decidew
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.decider.Recipient
-import com.twitter.decider.SimpleRecipient
-import com.twitter.simclusters_v2.common.DeciderGateBuilderWithIdHashing
-import javax.inject.Inject
+impowt c-com.twittew.decidew.decidew
+i-impowt c-com.twittew.decidew.wandomwecipient
+i-impowt c-com.twittew.decidew.wecipient
+i-impowt c-com.twittew.decidew.simpwewecipient
+i-impowt com.twittew.simcwustews_v2.common.decidewgatebuiwdewwithidhashing
+impowt javax.inject.inject
 
-case class CrMixerDecider @Inject() (decider: Decider) {
+case cwass cwmixewdecidew @inject() (decidew: d-decidew) {
 
-  def isAvailable(feature: String, recipient: Option[Recipient]): Boolean = {
-    decider.isAvailable(feature, recipient)
+  def isavaiwabwe(featuwe: stwing, 😳😳😳 wecipient: o-option[wecipient]): boowean = {
+    d-decidew.isavaiwabwe(featuwe, 😳😳😳 wecipient)
   }
 
-  lazy val deciderGateBuilder = new DeciderGateBuilderWithIdHashing(decider)
+  wazy vaw decidewgatebuiwdew = n-nyew decidewgatebuiwdewwithidhashing(decidew)
 
   /**
-   * When useRandomRecipient is set to false, the decider is either completely on or off.
-   * When useRandomRecipient is set to true, the decider is on for the specified % of traffic.
+   * when usewandomwecipient i-is set t-to fawse, o.O the decidew is eithew compwetewy on ow off. ( ͡o ω ͡o )
+   * when usewandomwecipient i-is set to twue, (U ﹏ U) the decidew is on fow the specified % of twaffic. (///ˬ///✿)
    */
-  def isAvailable(feature: String, useRandomRecipient: Boolean = true): Boolean = {
-    if (useRandomRecipient) isAvailable(feature, Some(RandomRecipient))
-    else isAvailable(feature, None)
+  def i-isavaiwabwe(featuwe: stwing, >w< usewandomwecipient: b-boowean = twue): b-boowean = {
+    i-if (usewandomwecipient) i-isavaiwabwe(featuwe, rawr some(wandomwecipient))
+    ewse i-isavaiwabwe(featuwe, mya nyone)
   }
 
   /***
-   * Decide whether the decider is available for a specific id using SimpleRecipient(id).
+   * decide w-whethew the decidew is avaiwabwe fow a specific id using simpwewecipient(id). ^^
    */
-  def isAvailableForId(
-    id: Long,
-    deciderConstants: String
-  ): Boolean = {
-    // Note: SimpleRecipient does expose a `val isUser = true` field which is not correct if the Id is not a user Id.
-    // However this field does not appear to be used anywhere in source.
-    decider.isAvailable(deciderConstants, Some(SimpleRecipient(id)))
+  def isavaiwabwefowid(
+    id: wong, 😳😳😳
+    d-decidewconstants: stwing
+  ): b-boowean = {
+    // n-nyote: simpwewecipient d-does expose a `vaw isusew = twue` fiewd which is nyot c-cowwect if the id i-is nyot a usew id. mya
+    // howevew t-this fiewd does n-not appeaw to be used anywhewe i-in souwce. 😳
+    decidew.isavaiwabwe(decidewconstants, -.- s-some(simpwewecipient(id)))
   }
 
 }

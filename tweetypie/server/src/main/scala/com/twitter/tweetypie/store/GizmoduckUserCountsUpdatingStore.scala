@@ -1,48 +1,48 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.gizmoduck.thriftscala.{CountsUpdateField => Field}
-import com.twitter.tweetypie.backends.Gizmoduck
+impowt c-com.twittew.gizmoduck.thwiftscawa.{countsupdatefiewd => f-fiewd}
+i-impowt com.twittew.tweetypie.backends.gizmoduck
 
-trait GizmoduckUserCountsUpdatingStore
-    extends TweetStoreBase[GizmoduckUserCountsUpdatingStore]
-    with InsertTweet.Store
-    with DeleteTweet.Store {
-  def wrap(w: TweetStore.Wrap): GizmoduckUserCountsUpdatingStore =
-    new TweetStoreWrapper(w, this)
-      with GizmoduckUserCountsUpdatingStore
-      with InsertTweet.StoreWrapper
-      with DeleteTweet.StoreWrapper
+t-twait gizmoduckusewcountsupdatingstowe
+    e-extends t-tweetstowebase[gizmoduckusewcountsupdatingstowe]
+    w-with insewttweet.stowe
+    with dewetetweet.stowe {
+  def wwap(w: tweetstowe.wwap): gizmoduckusewcountsupdatingstowe =
+    nyew tweetstowewwappew(w, t-this)
+      with gizmoduckusewcountsupdatingstowe
+      with insewttweet.stowewwappew
+      w-with dewetetweet.stowewwappew
 }
 
 /**
- * A TweetStore implementation that sends user-specific count updates to Gizmoduck.
+ * a-a tweetstowe impwementation that sends usew-specific count updates t-to gizmoduck. /(^•ω•^)
  */
-object GizmoduckUserCountsUpdatingStore {
-  def isUserTweet(tweet: Tweet): Boolean =
-    !TweetLenses.nullcast.get(tweet) && TweetLenses.narrowcast.get(tweet).isEmpty
+object g-gizmoduckusewcountsupdatingstowe {
+  d-def isusewtweet(tweet: tweet): boowean =
+    !tweetwenses.nuwwcast.get(tweet) && tweetwenses.nawwowcast.get(tweet).isempty
 
-  def apply(
-    incr: Gizmoduck.IncrCount,
-    hasMedia: Tweet => Boolean
-  ): GizmoduckUserCountsUpdatingStore = {
-    def incrField(field: Field, amt: Int): FutureEffect[Tweet] =
-      FutureEffect[Tweet](tweet => incr((getUserId(tweet), field, amt)))
+  def appwy(
+    i-incw: gizmoduck.incwcount, rawr x3
+    hasmedia: tweet => boowean
+  ): gizmoduckusewcountsupdatingstowe = {
+    def incwfiewd(fiewd: fiewd, (U ﹏ U) a-amt: int): futuweeffect[tweet] =
+      f-futuweeffect[tweet](tweet => i-incw((getusewid(tweet), (U ﹏ U) f-fiewd, amt)))
 
-    def incrAll(amt: Int): FutureEffect[Tweet] =
-      FutureEffect.inParallel(
-        incrField(Field.Tweets, amt).onlyIf(isUserTweet),
-        incrField(Field.MediaTweets, amt).onlyIf(t => isUserTweet(t) && hasMedia(t))
+    d-def incwaww(amt: int): futuweeffect[tweet] =
+      futuweeffect.inpawawwew(
+        i-incwfiewd(fiewd.tweets, (⑅˘꒳˘) amt).onwyif(isusewtweet), òωó
+        incwfiewd(fiewd.mediatweets, ʘwʘ a-amt).onwyif(t => isusewtweet(t) && hasmedia(t))
       )
 
-    new GizmoduckUserCountsUpdatingStore {
-      override val insertTweet: FutureEffect[InsertTweet.Event] =
-        incrAll(1).contramap[InsertTweet.Event](_.tweet)
+    nyew gizmoduckusewcountsupdatingstowe {
+      ovewwide v-vaw insewttweet: futuweeffect[insewttweet.event] =
+        incwaww(1).contwamap[insewttweet.event](_.tweet)
 
-      override val deleteTweet: FutureEffect[DeleteTweet.Event] =
-        incrAll(-1)
-          .contramap[DeleteTweet.Event](_.tweet)
-          .onlyIf(!_.isUserErasure)
+      o-ovewwide v-vaw dewetetweet: f-futuweeffect[dewetetweet.event] =
+        incwaww(-1)
+          .contwamap[dewetetweet.event](_.tweet)
+          .onwyif(!_.isusewewasuwe)
     }
   }
 }

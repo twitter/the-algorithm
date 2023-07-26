@@ -1,114 +1,114 @@
-package com.twitter.frigate.pushservice.controller
+package com.twittew.fwigate.pushsewvice.contwowwew
 
-import com.google.inject.Inject
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finatra.thrift.Controller
-import com.twitter.frigate.pushservice.exception.DisplayLocationNotSupportedException
-import com.twitter.frigate.pushservice.refresh_handler.RefreshForPushHandler
-import com.twitter.frigate.pushservice.send_handler.SendHandler
-import com.twitter.frigate.pushservice.refresh_handler.LoggedOutRefreshForPushHandler
-import com.twitter.frigate.pushservice.thriftscala.PushService.Loggedout
-import com.twitter.frigate.pushservice.thriftscala.PushService.Refresh
-import com.twitter.frigate.pushservice.thriftscala.PushService.Send
-import com.twitter.frigate.pushservice.{thriftscala => t}
-import com.twitter.frigate.thriftscala.NotificationDisplayLocation
-import com.twitter.util.logging.Logging
-import com.twitter.util.Future
+impowt com.googwe.inject.inject
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.finagwe.thwift.cwientid
+i-impowt c-com.twittew.finatwa.thwift.contwowwew
+i-impowt c-com.twittew.fwigate.pushsewvice.exception.dispwaywocationnotsuppowtedexception
+i-impowt com.twittew.fwigate.pushsewvice.wefwesh_handwew.wefweshfowpushhandwew
+i-impowt com.twittew.fwigate.pushsewvice.send_handwew.sendhandwew
+impowt com.twittew.fwigate.pushsewvice.wefwesh_handwew.woggedoutwefweshfowpushhandwew
+impowt com.twittew.fwigate.pushsewvice.thwiftscawa.pushsewvice.woggedout
+i-impowt com.twittew.fwigate.pushsewvice.thwiftscawa.pushsewvice.wefwesh
+impowt com.twittew.fwigate.pushsewvice.thwiftscawa.pushsewvice.send
+i-impowt com.twittew.fwigate.pushsewvice.{thwiftscawa => t}
+i-impowt com.twittew.fwigate.thwiftscawa.notificationdispwaywocation
+impowt com.twittew.utiw.wogging.wogging
+impowt com.twittew.utiw.futuwe
 
-class PushServiceController @Inject() (
-  sendHandler: SendHandler,
-  refreshForPushHandler: RefreshForPushHandler,
-  loggedOutRefreshForPushHandler: LoggedOutRefreshForPushHandler,
-  statsReceiver: StatsReceiver)
-    extends Controller(t.PushService)
-    with Logging {
+c-cwass pushsewvicecontwowwew @inject() (
+  s-sendhandwew: s-sendhandwew, >w<
+  wefweshfowpushhandwew: wefweshfowpushhandwew, rawr
+  woggedoutwefweshfowpushhandwew: woggedoutwefweshfowpushhandwew, 😳
+  s-statsweceivew: statsweceivew)
+    extends contwowwew(t.pushsewvice)
+    with wogging {
 
-  private val stats: StatsReceiver = statsReceiver.scope(s"${this.getClass.getSimpleName}")
-  private val failureCount = stats.counter("failures")
-  private val failureStatsScope = stats.scope("failures")
-  private val uncaughtErrorCount = failureStatsScope.counter("uncaught")
-  private val uncaughtErrorScope = failureStatsScope.scope("uncaught")
-  private val clientIdScope = stats.scope("client_id")
+  pwivate v-vaw stats: statsweceivew = s-statsweceivew.scope(s"${this.getcwass.getsimpwename}")
+  p-pwivate v-vaw faiwuwecount = s-stats.countew("faiwuwes")
+  pwivate vaw faiwuwestatsscope = stats.scope("faiwuwes")
+  p-pwivate vaw uncaughtewwowcount = faiwuwestatsscope.countew("uncaught")
+  p-pwivate vaw uncaughtewwowscope = faiwuwestatsscope.scope("uncaught")
+  pwivate vaw cwientidscope = stats.scope("cwient_id")
 
-  handle(t.PushService.Send) { request: Send.Args =>
-    send(request)
+  h-handwe(t.pushsewvice.send) { wequest: send.awgs =>
+    s-send(wequest)
   }
 
-  handle(t.PushService.Refresh) { args: Refresh.Args =>
-    refresh(args)
+  handwe(t.pushsewvice.wefwesh) { awgs: w-wefwesh.awgs =>
+    w-wefwesh(awgs)
   }
 
-  handle(t.PushService.Loggedout) { request: Loggedout.Args =>
-    loggedOutRefresh(request)
+  handwe(t.pushsewvice.woggedout) { wequest: woggedout.awgs =>
+    woggedoutwefwesh(wequest)
   }
 
-  private def loggedOutRefresh(
-    request: t.PushService.Loggedout.Args
-  ): Future[t.PushService.Loggedout.SuccessType] = {
-    val fut = request.request.notificationDisplayLocation match {
-      case NotificationDisplayLocation.PushToMobileDevice =>
-        loggedOutRefreshForPushHandler.refreshAndSend(request.request)
-      case _ =>
-        Future.exception(
-          new DisplayLocationNotSupportedException(
-            "Specified notification display location is not supported"))
+  pwivate def woggedoutwefwesh(
+    w-wequest: t.pushsewvice.woggedout.awgs
+  ): f-futuwe[t.pushsewvice.woggedout.successtype] = {
+    vaw fut = wequest.wequest.notificationdispwaywocation m-match {
+      c-case nyotificationdispwaywocation.pushtomobiwedevice =>
+        woggedoutwefweshfowpushhandwew.wefweshandsend(wequest.wequest)
+      c-case _ =>
+        futuwe.exception(
+          n-nyew dispwaywocationnotsuppowtedexception(
+            "specified nyotification dispway w-wocation is nyot suppowted"))
     }
-    fut.onFailure { ex =>
-      logger.error(
-        s"Failure in push service for logged out refresh request: $request - ${ex.getMessage} - ${ex.getStackTrace
-          .mkString(", \n\t")}",
+    f-fut.onfaiwuwe { ex =>
+      w-woggew.ewwow(
+        s-s"faiwuwe in push sewvice fow wogged out wefwesh wequest: $wequest - ${ex.getmessage} - ${ex.getstacktwace
+          .mkstwing(", >w< \n\t")}",
         ex)
-      failureCount.incr()
-      uncaughtErrorCount.incr()
-      uncaughtErrorScope.counter(ex.getClass.getCanonicalName).incr()
+      faiwuwecount.incw()
+      uncaughtewwowcount.incw()
+      u-uncaughtewwowscope.countew(ex.getcwass.getcanonicawname).incw()
     }
   }
 
-  private def refresh(
-    request: t.PushService.Refresh.Args
-  ): Future[t.PushService.Refresh.SuccessType] = {
+  pwivate d-def wefwesh(
+    wequest: t-t.pushsewvice.wefwesh.awgs
+  ): f-futuwe[t.pushsewvice.wefwesh.successtype] = {
 
-    val fut = request.request.notificationDisplayLocation match {
-      case NotificationDisplayLocation.PushToMobileDevice =>
-        val clientId: String =
-          ClientId.current
-            .flatMap { cid => Option(cid.name) }
-            .getOrElse("none")
-        clientIdScope.counter(clientId).incr()
-        refreshForPushHandler.refreshAndSend(request.request)
-      case _ =>
-        Future.exception(
-          new DisplayLocationNotSupportedException(
-            "Specified notification display location is not supported"))
+    v-vaw fut = wequest.wequest.notificationdispwaywocation match {
+      case nyotificationdispwaywocation.pushtomobiwedevice =>
+        vaw cwientid: s-stwing =
+          cwientid.cuwwent
+            .fwatmap { cid => option(cid.name) }
+            .getowewse("none")
+        cwientidscope.countew(cwientid).incw()
+        wefweshfowpushhandwew.wefweshandsend(wequest.wequest)
+      c-case _ =>
+        futuwe.exception(
+          nyew d-dispwaywocationnotsuppowtedexception(
+            "specified n-nyotification d-dispway wocation is nyot s-suppowted"))
     }
-    fut.onFailure { ex =>
-      logger.error(
-        s"Failure in push service for refresh request: $request - ${ex.getMessage} - ${ex.getStackTrace
-          .mkString(", \n\t")}",
-        ex
+    f-fut.onfaiwuwe { e-ex =>
+      w-woggew.ewwow(
+        s"faiwuwe in push sewvice f-fow wefwesh w-wequest: $wequest - ${ex.getmessage} - ${ex.getstacktwace
+          .mkstwing(", (⑅˘꒳˘) \n\t")}", OwO
+        e-ex
       )
 
-      failureCount.incr()
-      uncaughtErrorCount.incr()
-      uncaughtErrorScope.counter(ex.getClass.getCanonicalName).incr()
+      f-faiwuwecount.incw()
+      u-uncaughtewwowcount.incw()
+      uncaughtewwowscope.countew(ex.getcwass.getcanonicawname).incw()
     }
 
   }
 
-  private def send(
-    request: t.PushService.Send.Args
-  ): Future[t.PushService.Send.SuccessType] = {
-    sendHandler(request.request).onFailure { ex =>
-      logger.error(
-        s"Failure in push service for send request: $request - ${ex.getMessage} - ${ex.getStackTrace
-          .mkString(", \n\t")}",
+  pwivate def send(
+    wequest: t.pushsewvice.send.awgs
+  ): f-futuwe[t.pushsewvice.send.successtype] = {
+    sendhandwew(wequest.wequest).onfaiwuwe { ex =>
+      woggew.ewwow(
+        s"faiwuwe in push sewvice f-fow send wequest: $wequest - ${ex.getmessage} - ${ex.getstacktwace
+          .mkstwing(", (ꈍᴗꈍ) \n\t")}", 😳
         ex
       )
 
-      failureCount.incr()
-      uncaughtErrorCount.incr()
-      uncaughtErrorScope.counter(ex.getClass.getCanonicalName).incr()
+      faiwuwecount.incw()
+      uncaughtewwowcount.incw()
+      u-uncaughtewwowscope.countew(ex.getcwass.getcanonicawname).incw()
     }
   }
 }

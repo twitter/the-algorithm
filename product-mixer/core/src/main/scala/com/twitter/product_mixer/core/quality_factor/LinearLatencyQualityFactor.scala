@@ -1,34 +1,34 @@
-package com.twitter.product_mixer.core.quality_factor
+package com.twittew.pwoduct_mixew.cowe.quawity_factow
 
-import com.twitter.util.Duration
-import com.twitter.util.Stopwatch
+impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.stopwatch
 
-case class LinearLatencyQualityFactor(
-  override val config: LinearLatencyQualityFactorConfig)
-    extends QualityFactor[Duration] {
+c-case cwass w-wineawwatencyquawityfactow(
+  o-ovewwide vaw c-config: wineawwatencyquawityfactowconfig)
+    e-extends q-quawityfactow[duwation] {
 
-  private val delayedUntilInMillis = Stopwatch.timeMillis() + config.initialDelay.inMillis
+  p-pwivate vaw dewayeduntiwinmiwwis = stopwatch.timemiwwis() + config.initiawdeway.inmiwwis
 
-  private var state: Double = config.qualityFactorBounds.default
+  pwivate vaw state: doubwe = config.quawityfactowbounds.defauwt
 
-  override def currentValue: Double = state
+  ovewwide def cuwwentvawue: d-doubwe = state
 
-  override def update(latency: Duration): Unit = {
-    if (Stopwatch.timeMillis() >= delayedUntilInMillis) {
-      if (latency > config.targetLatency) {
-        adjustState(getNegativeDelta)
-      } else {
-        adjustState(config.delta)
+  ovewwide def update(watency: d-duwation): unit = {
+    i-if (stopwatch.timemiwwis() >= dewayeduntiwinmiwwis) {
+      if (watency > config.tawgetwatency) {
+        adjuststate(getnegativedewta)
+      } e-ewse {
+        adjuststate(config.dewta)
       }
     }
   }
 
-  override def buildObserver(): QualityFactorObserver = LinearLatencyQualityFactorObserver(this)
+  o-ovewwide def buiwdobsewvew(): quawityfactowobsewvew = w-wineawwatencyquawityfactowobsewvew(this)
 
-  private def getNegativeDelta: Double =
-    -config.delta * config.targetLatencyPercentile / (100.0 - config.targetLatencyPercentile)
+  pwivate def getnegativedewta: doubwe =
+    -config.dewta * config.tawgetwatencypewcentiwe / (100.0 - config.tawgetwatencypewcentiwe)
 
-  private def adjustState(delta: Double): Unit = {
-    state = config.qualityFactorBounds.bounds(state + delta)
+  p-pwivate def adjuststate(dewta: doubwe): unit = {
+    state = config.quawityfactowbounds.bounds(state + d-dewta)
   }
 }

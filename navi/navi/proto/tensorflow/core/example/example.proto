@@ -1,306 +1,306 @@
-// Protocol messages for describing input data Examples for machine learning
-// model training or inference.
-syntax = "proto3";
+// pwotocow messages fow descwibing i-input data exampwes f-fow machine w-weawning
+// modew t-twaining ow i-infewence. UwU
+syntax = "pwoto3";
 
-package tensorflow;
+p-package tensowfwow;
 
-import "tensorflow/core/example/feature.proto";
+i-impowt "tensowfwow/cowe/exampwe/featuwe.pwoto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "ExampleProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.example";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/example";
+o-option cc_enabwe_awenas = twue;
+option java_outew_cwassname = "exampwepwotos";
+option java_muwtipwe_fiwes = twue;
+option java_package = "owg.tensowfwow.exampwe";
+option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/exampwe";
 
-// LINT.IfChange
-// An Example is a mostly-normalized data format for storing data for
-// training and inference.  It contains a key-value store (features); where
-// each key (string) maps to a Feature message (which is oneof packed BytesList,
-// FloatList, or Int64List).  This flexible and compact format allows the
-// storage of large amounts of typed data, but requires that the data shape
-// and use be determined by the configuration files and parsers that are used to
-// read and write this format.  That is, the Example is mostly *not* a
-// self-describing format.  In TensorFlow, Examples are read in row-major
-// format, so any configuration that describes data with rank-2 or above
-// should keep this in mind.  For example, to store an M x N matrix of Bytes,
-// the BytesList must contain M*N bytes, with M rows of N contiguous values
-// each.  That is, the BytesList value must store the matrix as:
-//     .... row 0 .... .... row 1 .... // ...........  // ... row M-1 ....
+// wint.ifchange
+// a-an exampwe is a mostwy-nowmawized data fowmat fow s-stowing data fow
+// twaining and i-infewence. /(^•ω•^)  it contains a key-vawue stowe (featuwes); whewe
+// e-each key (stwing) maps to a featuwe m-message (which i-is oneof packed byteswist, (ꈍᴗꈍ)
+// fwoatwist, 😳 ow int64wist). mya  this fwexibwe and c-compact fowmat awwows the
+// stowage of wawge amounts of typed data, mya but wequiwes t-that the data shape
+// and use b-be detewmined by t-the configuwation f-fiwes and pawsews t-that awe used to
+// wead and wwite this fowmat. /(^•ω•^)  t-that is, ^^;; the exampwe is mostwy *not* a
+// s-sewf-descwibing fowmat. 🥺  in tensowfwow, ^^ exampwes awe wead in wow-majow
+// fowmat, ^•ﻌ•^ so any configuwation t-that descwibes data with w-wank-2 ow above
+// s-shouwd keep t-this in mind. /(^•ω•^)  fow exampwe, to stowe an m x ny matwix of bytes, ^^
+// t-the byteswist m-must contain m*n bytes, 🥺 with m w-wows of ny contiguous v-vawues
+// each. (U ᵕ U❁)  that is, t-the byteswist vawue must stowe the m-matwix as:
+//     .... wow 0 .... .... wow 1 .... // ...........  // ... w-wow m-1 ....
 //
-// An Example for a movie recommendation application:
-//   features {
-//     feature {
+// an e-exampwe fow a movie wecommendation a-appwication:
+//   f-featuwes {
+//     featuwe {
 //       key: "age"
-//       value { float_list {
-//         value: 29.0
+//       vawue { fwoat_wist {
+//         vawue: 29.0
 //       }}
 //     }
-//     feature {
+//     featuwe {
 //       key: "movie"
-//       value { bytes_list {
-//         value: "The Shawshank Redemption"
-//         value: "Fight Club"
+//       v-vawue { bytes_wist {
+//         v-vawue: "the shawshank wedemption"
+//         v-vawue: "fight c-cwub"
 //       }}
 //     }
-//     feature {
-//       key: "movie_ratings"
-//       value { float_list {
-//         value: 9.0
-//         value: 9.7
+//     f-featuwe {
+//       key: "movie_watings"
+//       vawue { fwoat_wist {
+//         vawue: 9.0
+//         vawue: 9.7
 //       }}
 //     }
-//     feature {
+//     f-featuwe {
 //       key: "suggestion"
-//       value { bytes_list {
-//         value: "Inception"
+//       vawue { bytes_wist {
+//         vawue: "inception"
 //       }}
 //     }
-//     # Note that this feature exists to be used as a label in training.
-//     # E.g., if training a logistic regression model to predict purchase
-//     # probability in our learning tool we would set the label feature to
-//     # "suggestion_purchased".
-//     feature {
-//       key: "suggestion_purchased"
-//       value { float_list {
-//         value: 1.0
+//     # nyote t-that this featuwe exists to be u-used as a wabew i-in twaining. 😳😳😳
+//     # e-e.g., if twaining a wogistic w-wegwession modew t-to pwedict puwchase
+//     # p-pwobabiwity in o-ouw weawning toow we wouwd set the wabew featuwe t-to
+//     # "suggestion_puwchased". nyaa~~
+//     f-featuwe {
+//       key: "suggestion_puwchased"
+//       v-vawue { fwoat_wist {
+//         v-vawue: 1.0
 //       }}
 //     }
-//     # Similar to "suggestion_purchased" above this feature exists to be used
-//     # as a label in training.
-//     # E.g., if training a linear regression model to predict purchase
-//     # price in our learning tool we would set the label feature to
-//     # "purchase_price".
-//     feature {
-//       key: "purchase_price"
-//       value { float_list {
-//         value: 9.99
+//     # s-simiwaw to "suggestion_puwchased" above this featuwe exists to be used
+//     # a-as a wabew in twaining. (˘ω˘)
+//     # e.g., if twaining a wineaw wegwession modew to pwedict p-puwchase
+//     # pwice in ouw weawning toow we wouwd set the w-wabew featuwe t-to
+//     # "puwchase_pwice". >_<
+//     f-featuwe {
+//       key: "puwchase_pwice"
+//       v-vawue { fwoat_wist {
+//         v-vawue: 9.99
 //       }}
 //     }
 //  }
 //
-// A conformant Example data set obeys the following conventions:
-//   - If a Feature K exists in one example with data type T, it must be of
-//       type T in all other examples when present. It may be omitted.
-//   - The number of instances of Feature K list data may vary across examples,
-//       depending on the requirements of the model.
-//   - If a Feature K doesn't exist in an example, a K-specific default will be
-//       used, if configured.
-//   - If a Feature K exists in an example but contains no items, the intent
-//       is considered to be an empty tensor and no default will be used.
+// a-a confowmant exampwe data set obeys the fowwowing conventions:
+//   - if a featuwe k exists i-in one exampwe with data type t, XD i-it must be of
+//       type t i-in aww othew exampwes w-when pwesent. rawr x3 it may be omitted. ( ͡o ω ͡o )
+//   - the n-numbew of instances o-of featuwe k wist data may v-vawy acwoss exampwes, :3
+//       d-depending on the wequiwements of the modew. mya
+//   - if a featuwe k doesn't exist i-in an exampwe, σωσ a k-k-specific defauwt w-wiww be
+//       used, (ꈍᴗꈍ) if configuwed. OwO
+//   - i-if a featuwe k e-exists in an exampwe but contains n-no items, o.O the intent
+//       is considewed to be an empty tensow and nyo defauwt w-wiww be used. 😳😳😳
 
-message Example {
-  Features features = 1;
+m-message exampwe {
+  featuwes featuwes = 1;
 }
 
-// A SequenceExample is an Example representing one or more sequences, and
-// some context.  The context contains features which apply to the entire
-// example. The feature_lists contain a key, value map where each key is
-// associated with a repeated set of Features (a FeatureList).
-// A FeatureList thus represents the values of a feature identified by its key
-// over time / frames.
+// a-a sequenceexampwe i-is an exampwe wepwesenting one ow mowe sequences, /(^•ω•^) and
+// some c-context. OwO  the context contains featuwes which appwy to the entiwe
+// exampwe. ^^ t-the featuwe_wists contain a key, (///ˬ///✿) vawue map whewe e-each key is
+// a-associated with a wepeated set of featuwes (a featuwewist). (///ˬ///✿)
+// a-a featuwewist thus w-wepwesents the vawues of a featuwe identified by its key
+// o-ovew time / fwames. (///ˬ///✿)
 //
-// Below is a SequenceExample for a movie recommendation application recording a
-// sequence of ratings by a user. The time-independent features ("locale",
-// "age", "favorites") describing the user are part of the context. The sequence
-// of movies the user rated are part of the feature_lists. For each movie in the
-// sequence we have information on its name and actors and the user's rating.
-// This information is recorded in three separate feature_list(s).
-// In the example below there are only two movies. All three feature_list(s),
-// namely "movie_ratings", "movie_names", and "actors" have a feature value for
-// both movies. Note, that "actors" is itself a bytes_list with multiple
-// strings per movie.
+// bewow i-is a sequenceexampwe fow a movie wecommendation appwication wecowding a-a
+// sequence of watings by a-a usew. the time-independent featuwes ("wocawe", ʘwʘ
+// "age", ^•ﻌ•^ "favowites") d-descwibing the usew awe p-pawt of the context. OwO the sequence
+// o-of movies t-the usew wated a-awe pawt of the featuwe_wists. (U ﹏ U) fow e-each movie in t-the
+// sequence we have infowmation on its nyame a-and actows and t-the usew's wating. (ˆ ﻌ ˆ)♡
+// t-this infowmation is wecowded in thwee sepawate f-featuwe_wist(s). (⑅˘꒳˘)
+// in the e-exampwe bewow thewe a-awe onwy two movies. (U ﹏ U) aww thwee featuwe_wist(s), o.O
+// nyamewy "movie_watings", mya "movie_names", a-and "actows" have a-a featuwe vawue f-fow
+// both movies. XD n-nyote, òωó that "actows" is itsewf a-a bytes_wist with muwtipwe
+// stwings pew movie.
 //
 // context: {
-//   feature: {
-//     key  : "locale"
-//     value: {
-//       bytes_list: {
-//         value: [ "pt_BR" ]
+//   featuwe: {
+//     key  : "wocawe"
+//     v-vawue: {
+//       bytes_wist: {
+//         v-vawue: [ "pt_bw" ]
 //       }
 //     }
 //   }
-//   feature: {
-//     key  : "age"
-//     value: {
-//       float_list: {
-//         value: [ 19.0 ]
+//   featuwe: {
+//     k-key  : "age"
+//     vawue: {
+//       f-fwoat_wist: {
+//         vawue: [ 19.0 ]
 //       }
 //     }
 //   }
-//   feature: {
-//     key  : "favorites"
-//     value: {
-//       bytes_list: {
-//         value: [ "Majesty Rose", "Savannah Outen", "One Direction" ]
+//   f-featuwe: {
+//     k-key  : "favowites"
+//     v-vawue: {
+//       b-bytes_wist: {
+//         v-vawue: [ "majesty wose", "savannah outen", (˘ω˘) "one diwection" ]
 //       }
 //     }
 //   }
 // }
-// feature_lists: {
-//   feature_list: {
-//     key  : "movie_ratings"
-//     value: {
-//       feature: {
-//         float_list: {
-//           value: [ 4.5 ]
+// featuwe_wists: {
+//   featuwe_wist: {
+//     key  : "movie_watings"
+//     v-vawue: {
+//       f-featuwe: {
+//         f-fwoat_wist: {
+//           vawue: [ 4.5 ]
 //         }
 //       }
-//       feature: {
-//         float_list: {
-//           value: [ 5.0 ]
+//       f-featuwe: {
+//         fwoat_wist: {
+//           vawue: [ 5.0 ]
 //         }
 //       }
 //     }
 //   }
-//   feature_list: {
+//   featuwe_wist: {
 //     key  : "movie_names"
-//     value: {
-//       feature: {
-//         bytes_list: {
-//           value: [ "The Shawshank Redemption" ]
+//     v-vawue: {
+//       f-featuwe: {
+//         bytes_wist: {
+//           v-vawue: [ "the shawshank wedemption" ]
 //         }
 //       }
-//       feature: {
-//         bytes_list: {
-//           value: [ "Fight Club" ]
+//       f-featuwe: {
+//         b-bytes_wist: {
+//           vawue: [ "fight c-cwub" ]
 //         }
 //       }
 //     }
 //   }
-//   feature_list: {
-//     key  : "actors"
-//     value: {
-//       feature: {
-//         bytes_list: {
-//           value: [ "Tim Robbins", "Morgan Freeman" ]
+//   f-featuwe_wist: {
+//     key  : "actows"
+//     vawue: {
+//       featuwe: {
+//         bytes_wist: {
+//           vawue: [ "tim w-wobbins", :3 "mowgan f-fweeman" ]
 //         }
 //       }
-//       feature: {
-//         bytes_list: {
-//           value: [ "Brad Pitt", "Edward Norton", "Helena Bonham Carter" ]
+//       f-featuwe: {
+//         b-bytes_wist: {
+//           v-vawue: [ "bwad pitt", OwO "edwawd n-nyowton", mya "hewena b-bonham cawtew" ]
 //         }
 //       }
 //     }
 //   }
 // }
 //
-// A conformant SequenceExample data set obeys the following conventions:
+// a confowmant s-sequenceexampwe d-data set obeys the fowwowing c-conventions:
 //
-// Context:
-//   - All conformant context features K must obey the same conventions as
-//     a conformant Example's features (see above).
-// Feature lists:
-//   - A FeatureList L may be missing in an example; it is up to the
-//     parser configuration to determine if this is allowed or considered
-//     an empty list (zero length).
-//   - If a FeatureList L exists, it may be empty (zero length).
-//   - If a FeatureList L is non-empty, all features within the FeatureList
-//     must have the same data type T. Even across SequenceExamples, the type T
-//     of the FeatureList identified by the same key must be the same. An entry
-//     without any values may serve as an empty feature.
-//   - If a FeatureList L is non-empty, it is up to the parser configuration
-//     to determine if all features within the FeatureList must
-//     have the same size.  The same holds for this FeatureList across multiple
-//     examples.
-//   - For sequence modeling, e.g.:
-//        http://colah.github.io/posts/2015-08-Understanding-LSTMs/
-//        https://github.com/tensorflow/nmt
-//     the feature lists represent a sequence of frames.
-//     In this scenario, all FeatureLists in a SequenceExample have the same
-//     number of Feature messages, so that the ith element in each FeatureList
-//     is part of the ith frame (or time step).
-// Examples of conformant and non-conformant examples' FeatureLists:
+// context:
+//   - aww confowmant c-context featuwes k must obey t-the same conventions a-as
+//     a confowmant e-exampwe's featuwes (see above). (˘ω˘)
+// featuwe wists:
+//   - a-a featuwewist w-w may be m-missing in an exampwe; it is up to the
+//     pawsew configuwation t-to detewmine if this is awwowed ow considewed
+//     a-an empty w-wist (zewo wength). o.O
+//   - if a f-featuwewist w exists, (✿oωo) it may be e-empty (zewo wength). (ˆ ﻌ ˆ)♡
+//   - i-if a featuwewist w is nyon-empty, ^^;; aww f-featuwes within the featuwewist
+//     must have t-the same data t-type t. even acwoss sequenceexampwes, OwO t-the type t
+//     of the f-featuwewist identified b-by the same k-key must be the same. 🥺 an entwy
+//     without any vawues may sewve as an empty featuwe. mya
+//   - if a featuwewist w is nyon-empty, 😳 it is up to the pawsew configuwation
+//     to detewmine if aww featuwes within the featuwewist m-must
+//     h-have the same size. òωó  the same howds fow this featuwewist a-acwoss m-muwtipwe
+//     e-exampwes. /(^•ω•^)
+//   - fow sequence modewing, -.- e-e.g.:
+//        http://cowah.github.io/posts/2015-08-undewstanding-wstms/
+//        h-https://github.com/tensowfwow/nmt
+//     t-the featuwe wists wepwesent a-a sequence of fwames. òωó
+//     in t-this scenawio, /(^•ω•^) a-aww featuwewists in a sequenceexampwe have the s-same
+//     nyumbew o-of featuwe messages, /(^•ω•^) s-so that t-the ith ewement i-in each featuwewist
+//     i-is pawt o-of the ith fwame (ow t-time step). 😳
+// e-exampwes of confowmant and n-nyon-confowmant e-exampwes' featuwewists:
 //
-// Conformant FeatureLists:
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { float_list: { value: [ 5.0 ] } } }
+// c-confowmant featuwewists:
+//    featuwe_wists: { f-featuwe_wist: {
+//      key: "movie_watings"
+//      vawue: { featuwe: { f-fwoat_wist: { vawue: [ 4.5 ] } }
+//               f-featuwe: { f-fwoat_wist: { v-vawue: [ 5.0 ] } } }
 //    } }
 //
-// Non-conformant FeatureLists (mismatched types):
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { int64_list: { value: [ 5 ] } } }
+// nyon-confowmant f-featuwewists (mismatched types):
+//    f-featuwe_wists: { featuwe_wist: {
+//      k-key: "movie_watings"
+//      vawue: { f-featuwe: { fwoat_wist: { vawue: [ 4.5 ] } }
+//               featuwe: { int64_wist: { vawue: [ 5 ] } } }
 //    } }
 //
-// Conditionally conformant FeatureLists, the parser configuration determines
-// if the feature sizes must match:
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { float_list: { value: [ 5.0, 6.0 ] } } }
+// c-conditionawwy confowmant f-featuwewists, :3 t-the pawsew configuwation detewmines
+// if the featuwe sizes must m-match:
+//    featuwe_wists: { featuwe_wist: {
+//      key: "movie_watings"
+//      v-vawue: { featuwe: { f-fwoat_wist: { v-vawue: [ 4.5 ] } }
+//               featuwe: { fwoat_wist: { v-vawue: [ 5.0, (U ᵕ U❁) 6.0 ] } } }
 //    } }
 //
-// Conformant pair of SequenceExample
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { float_list: { value: [ 5.0 ] } } }
+// c-confowmant paiw of s-sequenceexampwe
+//    featuwe_wists: { featuwe_wist: {
+//      key: "movie_watings"
+//      v-vawue: { featuwe: { f-fwoat_wist: { vawue: [ 4.5 ] } }
+//               f-featuwe: { fwoat_wist: { v-vawue: [ 5.0 ] } } }
 //    } }
 // and:
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { float_list: { value: [ 5.0 ] } }
-//               feature: { float_list: { value: [ 2.0 ] } } }
+//    f-featuwe_wists: { f-featuwe_wist: {
+//      k-key: "movie_watings"
+//      v-vawue: { featuwe: { f-fwoat_wist: { v-vawue: [ 4.5 ] } }
+//               f-featuwe: { fwoat_wist: { v-vawue: [ 5.0 ] } }
+//               f-featuwe: { fwoat_wist: { v-vawue: [ 2.0 ] } } }
 //    } }
 //
-// Conformant pair of SequenceExample
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { float_list: { value: [ 5.0 ] } } }
+// confowmant p-paiw of s-sequenceexampwe
+//    featuwe_wists: { f-featuwe_wist: {
+//      key: "movie_watings"
+//      v-vawue: { featuwe: { f-fwoat_wist: { v-vawue: [ 4.5 ] } }
+//               f-featuwe: { fwoat_wist: { vawue: [ 5.0 ] } } }
 //    } }
 // and:
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { }
+//    featuwe_wists: { featuwe_wist: {
+//      k-key: "movie_watings"
+//      v-vawue: { }
 //    } }
 //
-// Conditionally conformant pair of SequenceExample, the parser configuration
-// determines if the second feature_lists is consistent (zero-length) or
-// invalid (missing "movie_ratings"):
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { float_list: { value: [ 5.0 ] } } }
+// c-conditionawwy confowmant paiw of sequenceexampwe, ʘwʘ the p-pawsew configuwation
+// d-detewmines if the second f-featuwe_wists i-is consistent (zewo-wength) ow
+// invawid (missing "movie_watings"):
+//    featuwe_wists: { f-featuwe_wist: {
+//      k-key: "movie_watings"
+//      v-vawue: { featuwe: { f-fwoat_wist: { vawue: [ 4.5 ] } }
+//               featuwe: { f-fwoat_wist: { v-vawue: [ 5.0 ] } } }
 //    } }
 // and:
-//    feature_lists: { }
+//    featuwe_wists: { }
 //
-// Non-conformant pair of SequenceExample (mismatched types)
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { float_list: { value: [ 5.0 ] } } }
+// nyon-confowmant p-paiw of sequenceexampwe (mismatched types)
+//    featuwe_wists: { f-featuwe_wist: {
+//      key: "movie_watings"
+//      v-vawue: { f-featuwe: { fwoat_wist: { vawue: [ 4.5 ] } }
+//               f-featuwe: { fwoat_wist: { v-vawue: [ 5.0 ] } } }
 //    } }
 // and:
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { int64_list: { value: [ 4 ] } }
-//               feature: { int64_list: { value: [ 5 ] } }
-//               feature: { int64_list: { value: [ 2 ] } } }
+//    f-featuwe_wists: { featuwe_wist: {
+//      k-key: "movie_watings"
+//      vawue: { f-featuwe: { i-int64_wist: { v-vawue: [ 4 ] } }
+//               featuwe: { int64_wist: { v-vawue: [ 5 ] } }
+//               f-featuwe: { i-int64_wist: { vawue: [ 2 ] } } }
 //    } }
 //
-// Conditionally conformant pair of SequenceExample; the parser configuration
-// determines if the feature sizes must match:
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { float_list: { value: [ 5.0 ] } } }
+// c-conditionawwy confowmant paiw of sequenceexampwe; t-the p-pawsew configuwation
+// d-detewmines if the featuwe sizes must match:
+//    featuwe_wists: { featuwe_wist: {
+//      k-key: "movie_watings"
+//      vawue: { featuwe: { f-fwoat_wist: { v-vawue: [ 4.5 ] } }
+//               featuwe: { fwoat_wist: { vawue: [ 5.0 ] } } }
 //    } }
-// and:
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.0 ] } }
-//               feature: { float_list: { value: [ 5.0, 3.0 ] } }
+// a-and:
+//    featuwe_wists: { featuwe_wist: {
+//      k-key: "movie_watings"
+//      v-vawue: { featuwe: { f-fwoat_wist: { v-vawue: [ 4.0 ] } }
+//               f-featuwe: { fwoat_wist: { vawue: [ 5.0, o.O 3.0 ] } }
 //    } }
 
-message SequenceExample {
-  Features context = 1;
-  FeatureLists feature_lists = 2;
+message sequenceexampwe {
+  featuwes context = 1;
+  f-featuwewists featuwe_wists = 2;
 }
-// LINT.ThenChange(
-//     https://www.tensorflow.org/code/tensorflow/python/training/training.py)
+// w-wint.thenchange(
+//     https://www.tensowfwow.owg/code/tensowfwow/python/twaining/twaining.py)

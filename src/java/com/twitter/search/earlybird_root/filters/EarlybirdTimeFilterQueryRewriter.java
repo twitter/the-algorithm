@@ -1,133 +1,133 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+impowt java.utiw.cowwections;
+i-impowt java.utiw.wist;
+i-impowt java.utiw.map;
 
-import javax.annotation.Nullable;
+impowt j-javax.annotation.nuwwabwe;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt c-com.googwe.common.cowwect.wists;
+i-impowt com.googwe.common.cowwect.maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.config.ServingRange;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.search.SearchOperator;
+impowt com.twittew.seawch.common.decidew.seawchdecidew;
+impowt c-com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.eawwybiwd.config.sewvingwange;
+impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequesttype;
+i-impowt com.twittew.seawch.quewypawsew.quewy.conjunction;
+impowt com.twittew.seawch.quewypawsew.quewy.quewy;
+impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
+i-impowt com.twittew.seawch.quewypawsew.quewy.seawch.seawchopewatow;
 
 /**
- * Adds query filters that filter out tweets outside a tier's serving range. Two tiers might load
- * the same timeslice, so if the filtering is not done, the two tiers might return duplicates. The
- * mergers should know how to handle the duplicates, but this might decrease the number or the
- * quality of the returned results.
+ * a-adds quewy f-fiwtews that fiwtew out tweets outside a tiew's sewving wange. :3 two tiews might woad
+ * t-the same timeswice, nyaa~~ so if the fiwtewing is nyot done, 😳 the two tiews might w-wetuwn dupwicates. (⑅˘꒳˘) the
+ * mewgews s-shouwd know how t-to handwe the d-dupwicates, nyaa~~ but t-this might decwease the nyumbew ow the
+ * quawity o-of the wetuwned wesuwts. OwO
  */
-public class EarlybirdTimeFilterQueryRewriter {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(EarlybirdTimeFilterQueryRewriter.class);
+pubwic cwass eawwybiwdtimefiwtewquewywewwitew {
+  p-pwivate static finaw woggew wog =
+      woggewfactowy.getwoggew(eawwybiwdtimefiwtewquewywewwitew.cwass);
 
-  private static final Map<EarlybirdRequestType, SearchCounter> NO_QUERY_COUNTS;
-  static {
-    final Map<EarlybirdRequestType, SearchCounter> tempMap =
-      Maps.newEnumMap(EarlybirdRequestType.class);
-    for (EarlybirdRequestType requestType : EarlybirdRequestType.values()) {
-      tempMap.put(requestType, SearchCounter.export(
-          "time_filter_query_rewriter_" + requestType.getNormalizedName() + "_no_query_count"));
+  pwivate static finaw map<eawwybiwdwequesttype, rawr x3 s-seawchcountew> nyo_quewy_counts;
+  s-static {
+    finaw m-map<eawwybiwdwequesttype, XD s-seawchcountew> tempmap =
+      maps.newenummap(eawwybiwdwequesttype.cwass);
+    fow (eawwybiwdwequesttype w-wequesttype : e-eawwybiwdwequesttype.vawues()) {
+      tempmap.put(wequesttype, σωσ s-seawchcountew.expowt(
+          "time_fiwtew_quewy_wewwitew_" + w-wequesttype.getnowmawizedname() + "_no_quewy_count"));
     }
-    NO_QUERY_COUNTS = Collections.unmodifiableMap(tempMap);
+    nyo_quewy_counts = c-cowwections.unmodifiabwemap(tempmap);
   }
 
-  @VisibleForTesting
-  static final Map<EarlybirdRequestType, String> ADD_SINCE_ID_MAX_ID_DECIDER_KEY_MAP;
+  @visibwefowtesting
+  static f-finaw map<eawwybiwdwequesttype, (U ᵕ U❁) stwing> add_since_id_max_id_decidew_key_map;
   static {
-    final String ADD_SINCE_ID_MAX_ID_DECIDER_KEY_TEMPLATE =
-      "add_since_id_max_id_operators_to_%s_query";
-    final Map<EarlybirdRequestType, String> tempMap = Maps.newEnumMap(EarlybirdRequestType.class);
-    for (EarlybirdRequestType requestType : EarlybirdRequestType.values()) {
-      tempMap.put(
-          requestType,
-          String.format(ADD_SINCE_ID_MAX_ID_DECIDER_KEY_TEMPLATE, requestType.getNormalizedName()));
+    finaw s-stwing add_since_id_max_id_decidew_key_tempwate =
+      "add_since_id_max_id_opewatows_to_%s_quewy";
+    finaw m-map<eawwybiwdwequesttype, (U ﹏ U) stwing> t-tempmap = maps.newenummap(eawwybiwdwequesttype.cwass);
+    f-fow (eawwybiwdwequesttype wequesttype : eawwybiwdwequesttype.vawues()) {
+      tempmap.put(
+          wequesttype, :3
+          stwing.fowmat(add_since_id_max_id_decidew_key_tempwate, ( ͡o ω ͡o ) wequesttype.getnowmawizedname()));
     }
-    ADD_SINCE_ID_MAX_ID_DECIDER_KEY_MAP = Collections.unmodifiableMap(tempMap);
+    add_since_id_max_id_decidew_key_map = c-cowwections.unmodifiabwemap(tempmap);
   }
 
-  @VisibleForTesting
-  static final String ADD_SINCE_ID_MAX_ID_TO_NULL_SERIALIZED_QUERIES_DECIDER_KEY =
-      "add_since_id_max_id_operators_to_null_serialized_queries";
+  @visibwefowtesting
+  s-static finaw stwing add_since_id_max_id_to_nuww_sewiawized_quewies_decidew_key =
+      "add_since_id_max_id_opewatows_to_nuww_sewiawized_quewies";
 
-  private final SearchDecider decider;
-  private final ServingRangeProvider servingRangeProvider;
+  p-pwivate finaw seawchdecidew d-decidew;
+  p-pwivate finaw sewvingwangepwovidew sewvingwangepwovidew;
 
-  EarlybirdTimeFilterQueryRewriter(
-      ServingRangeProvider servingRangeProvider,
-      SearchDecider decider) {
+  eawwybiwdtimefiwtewquewywewwitew(
+      s-sewvingwangepwovidew sewvingwangepwovidew, σωσ
+      seawchdecidew decidew) {
 
-    this.servingRangeProvider = servingRangeProvider;
-    this.decider = decider;
+    this.sewvingwangepwovidew = s-sewvingwangepwovidew;
+    this.decidew = decidew;
   }
 
   /**
-   * Add maxId and sinceId fields to the serialized query.
+   * a-add maxid a-and sinceid fiewds t-to the sewiawized quewy. >w<
    *
-   * This must be done after calculating the IdTimeRanges to prevent interfering with calculating
-   * IdTimeRanges
+   * t-this must b-be done aftew c-cawcuwating the i-idtimewanges to pwevent intewfewing with cawcuwating
+   * i-idtimewanges
    */
-  public EarlybirdRequestContext rewriteRequest(EarlybirdRequestContext requestContext)
-      throws QueryParserException {
-    Query q = requestContext.getParsedQuery();
-    if (q == null) {
-      if (requestContext.getEarlybirdRequestType() != EarlybirdRequestType.TERM_STATS) {
-        LOG.warn("Received request without a parsed query: " + requestContext.getRequest());
-        NO_QUERY_COUNTS.get(requestContext.getEarlybirdRequestType()).increment();
+  pubwic e-eawwybiwdwequestcontext w-wewwitewequest(eawwybiwdwequestcontext w-wequestcontext)
+      t-thwows quewypawsewexception {
+    quewy q = wequestcontext.getpawsedquewy();
+    i-if (q == nyuww) {
+      if (wequestcontext.geteawwybiwdwequesttype() != eawwybiwdwequesttype.tewm_stats) {
+        wog.wawn("weceived wequest without a pawsed quewy: " + w-wequestcontext.getwequest());
+        nyo_quewy_counts.get(wequestcontext.geteawwybiwdwequesttype()).incwement();
       }
 
-      if (!decider.isAvailable(ADD_SINCE_ID_MAX_ID_TO_NULL_SERIALIZED_QUERIES_DECIDER_KEY)) {
-        return requestContext;
+      if (!decidew.isavaiwabwe(add_since_id_max_id_to_nuww_sewiawized_quewies_decidew_key)) {
+        wetuwn wequestcontext;
       }
     }
 
-    return addOperators(requestContext, q);
+    w-wetuwn addopewatows(wequestcontext, 😳😳😳 q-q);
   }
 
-  private EarlybirdRequestContext addOperators(
-      EarlybirdRequestContext requestContext,
-      @Nullable Query query) throws QueryParserException {
+  p-pwivate eawwybiwdwequestcontext addopewatows(
+      e-eawwybiwdwequestcontext wequestcontext, OwO
+      @nuwwabwe q-quewy q-quewy) thwows quewypawsewexception {
 
-    // Add the SINCE_ID and MAX_ID operators only if the decider is enabled.
-    if (!decider.isAvailable(
-        ADD_SINCE_ID_MAX_ID_DECIDER_KEY_MAP.get(requestContext.getEarlybirdRequestType()))) {
-      return requestContext;
+    // add the since_id and max_id opewatows onwy if the decidew is enabwed. 😳
+    i-if (!decidew.isavaiwabwe(
+        add_since_id_max_id_decidew_key_map.get(wequestcontext.geteawwybiwdwequesttype()))) {
+      w-wetuwn wequestcontext;
     }
 
-    // Note: can't recompute the search operators because the serving range changes in real time
-    // for the most recent tier.
-    ServingRange servingRange = servingRangeProvider.getServingRange(
-        requestContext, requestContext.useOverrideTierConfig());
+    // nyote: c-can't wecompute t-the seawch opewatows because the sewving wange c-changes in weaw t-time
+    // fow the most wecent t-tiew. 😳😳😳
+    sewvingwange s-sewvingwange = sewvingwangepwovidew.getsewvingwange(
+        wequestcontext, (˘ω˘) wequestcontext.useovewwidetiewconfig());
 
-    long tierSinceId = servingRange.getServingRangeSinceId();
-    SearchOperator sinceId = new SearchOperator(SearchOperator.Type.SINCE_ID,
-                                                Long.toString(tierSinceId));
+    wong tiewsinceid = s-sewvingwange.getsewvingwangesinceid();
+    s-seawchopewatow s-sinceid = nyew seawchopewatow(seawchopewatow.type.since_id, ʘwʘ
+                                                w-wong.tostwing(tiewsinceid));
 
-    long tierMaxId = servingRange.getServingRangeMaxId();
-    SearchOperator maxId = new SearchOperator(SearchOperator.Type.MAX_ID,
-                                              Long.toString(tierMaxId));
+    wong t-tiewmaxid = sewvingwange.getsewvingwangemaxid();
+    s-seawchopewatow maxid = nyew seawchopewatow(seawchopewatow.type.max_id, ( ͡o ω ͡o )
+                                              wong.tostwing(tiewmaxid));
 
-    List<Query> conjunctionChildren = (query == null)
-        ? Lists.<Query>newArrayList(sinceId, maxId)
-        : Lists.newArrayList(query, sinceId, maxId);
+    wist<quewy> c-conjunctionchiwdwen = (quewy == n-nyuww)
+        ? wists.<quewy>newawwaywist(sinceid, o.O maxid)
+        : wists.newawwaywist(quewy, >w< s-sinceid, 😳 m-maxid);
 
-    Query restrictedQuery = new Conjunction(conjunctionChildren).simplify();
+    quewy westwictedquewy = nyew conjunction(conjunctionchiwdwen).simpwify();
 
-    EarlybirdRequestContext copiedRequestContext =
-        EarlybirdRequestContext.copyRequestContext(requestContext, restrictedQuery);
+    eawwybiwdwequestcontext c-copiedwequestcontext =
+        eawwybiwdwequestcontext.copywequestcontext(wequestcontext, 🥺 westwictedquewy);
 
-    return copiedRequestContext;
+    wetuwn copiedwequestcontext;
   }
 }

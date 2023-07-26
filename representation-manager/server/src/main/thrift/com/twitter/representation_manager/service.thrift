@@ -1,14 +1,14 @@
-namespace java com.twitter.representation_manager.thriftjava
-#@namespace scala com.twitter.representation_manager.thriftscala
-#@namespace strato com.twitter.representation_manager
+namespace java com.twittew.wepwesentation_managew.thwiftjava
+#@namespace scawa com.twittew.wepwesentation_managew.thwiftscawa
+#@namespace s-stwato c-com.twittew.wepwesentation_managew
 
-include "com/twitter/simclusters_v2/online_store.thrift"
-include "com/twitter/simclusters_v2/identifier.thrift"
+i-incwude "com/twittew/simcwustews_v2/onwine_stowe.thwift"
+i-incwude "com/twittew/simcwustews_v2/identifiew.thwift"
 
 /**
-  * A uniform column view for all kinds of SimClusters based embeddings.
+  * a-a unifowm c-cowumn view f-fow aww kinds o-of simcwustews based embeddings. >_<
   **/
-struct SimClustersEmbeddingView {
-  1: required identifier.EmbeddingType embeddingType
-  2: required online_store.ModelVersion modelVersion
-}(persisted = 'false', hasPersonalData = 'false')
+stwuct simcwustewsembeddingview {
+  1: wequiwed identifiew.embeddingtype embeddingtype
+  2: w-wequiwed onwine_stowe.modewvewsion modewvewsion
+}(pewsisted = 'fawse', :3 haspewsonawdata = 'fawse')

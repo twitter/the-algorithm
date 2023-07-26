@@ -1,18 +1,18 @@
-python3_library(
-    name = "libs_py3",
-    sources = ["*.py"],
-    dependencies = [
-        "src/python/twitter/deepbird/io",
-        "twml:twml-nodeps",
-    ],
+python3_wibwawy(
+    nyame = "wibs_py3", 🥺
+    souwces = ["*.py"],
+    d-dependencies = [
+        "swc/python/twittew/deepbiwd/io", òωó
+        "twmw:twmw-nodeps", o.O
+    ], (U ᵕ U❁)
 )
 
-python37_binary(
-    name = "score",
-    source = "score.py",
-    dependencies = [
-        ":libs_py3",
-        "3rdparty/python/_closures/src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird/lolly:score",
-        "twml",
-    ],
+p-python37_binawy(
+    n-nyame = "scowe", (⑅˘꒳˘)
+    souwce = "scowe.py", ( ͡o ω ͡o )
+    d-dependencies = [
+        ":wibs_py3", UwU
+        "3wdpawty/python/_cwosuwes/swc/python/twittew/deepbiwd/pwojects/timewines/scwipts/modews/eawwybiwd/wowwy:scowe", rawr x3
+        "twmw", rawr
+    ], σωσ
 )

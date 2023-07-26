@@ -1,250 +1,250 @@
-package com.twitter.frigate.pushservice.send_handler
+package com.twittew.fwigate.pushsewvice.send_handwew
 
-import com.twitter.finagle.stats.BroadcastStatsReceiver
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.common.base.CandidateFilteringOnlyFlow
-import com.twitter.frigate.common.base.CandidateResult
-import com.twitter.frigate.common.base.FeatureMap
-import com.twitter.frigate.common.base.OK
-import com.twitter.frigate.common.base.Response
-import com.twitter.frigate.common.base.Result
-import com.twitter.frigate.common.base.Stats.track
-import com.twitter.frigate.common.config.CommonConstants
-import com.twitter.frigate.common.logger.MRLogger
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.common.util.InvalidRequestException
-import com.twitter.frigate.common.util.MrNtabCopyObjects
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.ml.HydrationContextBuilder
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams.EnableMagicFanoutNewsForYouNtabCopy
-import com.twitter.frigate.pushservice.scriber.MrRequestScribeHandler
-import com.twitter.frigate.pushservice.send_handler.generator.PushRequestToCandidate
-import com.twitter.frigate.pushservice.take.SendHandlerNotifier
-import com.twitter.frigate.pushservice.take.candidate_validator.SendHandlerPostCandidateValidator
-import com.twitter.frigate.pushservice.take.candidate_validator.SendHandlerPreCandidateValidator
-import com.twitter.frigate.pushservice.target.PushTargetUserBuilder
-import com.twitter.frigate.pushservice.util.ResponseStatsTrackUtils.trackStatsForResponseToRequest
-import com.twitter.frigate.pushservice.util.SendHandlerPredicateUtil
-import com.twitter.frigate.pushservice.thriftscala.PushRequest
-import com.twitter.frigate.pushservice.thriftscala.PushRequestScribe
-import com.twitter.frigate.pushservice.thriftscala.PushResponse
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.nrel.heavyranker.FeatureHydrator
-import com.twitter.util._
+impowt com.twittew.finagwe.stats.bwoadcaststatsweceivew
+i-impowt c-com.twittew.finagwe.stats.stat
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.base.candidatedetaiws
+i-impowt c-com.twittew.fwigate.common.base.candidatefiwtewingonwyfwow
+i-impowt c-com.twittew.fwigate.common.base.candidatewesuwt
+impowt com.twittew.fwigate.common.base.featuwemap
+impowt com.twittew.fwigate.common.base.ok
+impowt com.twittew.fwigate.common.base.wesponse
+impowt com.twittew.fwigate.common.base.wesuwt
+i-impowt com.twittew.fwigate.common.base.stats.twack
+impowt com.twittew.fwigate.common.config.commonconstants
+i-impowt com.twittew.fwigate.common.woggew.mwwoggew
+i-impowt com.twittew.fwigate.common.wec_types.wectypes
+impowt com.twittew.fwigate.common.utiw.invawidwequestexception
+impowt com.twittew.fwigate.common.utiw.mwntabcopyobjects
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+impowt com.twittew.fwigate.pushsewvice.config.config
+impowt com.twittew.fwigate.pushsewvice.mw.hydwationcontextbuiwdew
+impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams.enabwemagicfanoutnewsfowyountabcopy
+impowt com.twittew.fwigate.pushsewvice.scwibew.mwwequestscwibehandwew
+i-impowt com.twittew.fwigate.pushsewvice.send_handwew.genewatow.pushwequesttocandidate
+impowt com.twittew.fwigate.pushsewvice.take.sendhandwewnotifiew
+impowt com.twittew.fwigate.pushsewvice.take.candidate_vawidatow.sendhandwewpostcandidatevawidatow
+i-impowt com.twittew.fwigate.pushsewvice.take.candidate_vawidatow.sendhandwewpwecandidatevawidatow
+i-impowt c-com.twittew.fwigate.pushsewvice.tawget.pushtawgetusewbuiwdew
+i-impowt com.twittew.fwigate.pushsewvice.utiw.wesponsestatstwackutiws.twackstatsfowwesponsetowequest
+i-impowt com.twittew.fwigate.pushsewvice.utiw.sendhandwewpwedicateutiw
+impowt com.twittew.fwigate.pushsewvice.thwiftscawa.pushwequest
+i-impowt com.twittew.fwigate.pushsewvice.thwiftscawa.pushwequestscwibe
+impowt c-com.twittew.fwigate.pushsewvice.thwiftscawa.pushwesponse
+impowt com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+impowt com.twittew.nwew.heavywankew.featuwehydwatow
+impowt com.twittew.utiw._
 
 /**
- * A handler for sending PushRequests
+ * a-a handwew fow sending pushwequests
  */
-class SendHandler(
-  pushTargetUserBuilder: PushTargetUserBuilder,
-  preCandidateValidator: SendHandlerPreCandidateValidator,
-  postCandidateValidator: SendHandlerPostCandidateValidator,
-  sendHandlerNotifier: SendHandlerNotifier,
-  candidateHydrator: SendHandlerPushCandidateHydrator,
-  featureHydrator: FeatureHydrator,
-  sendHandlerPredicateUtil: SendHandlerPredicateUtil,
-  mrRequestScriberNode: String
+c-cwass s-sendhandwew(
+  p-pushtawgetusewbuiwdew: pushtawgetusewbuiwdew, XD
+  pwecandidatevawidatow: sendhandwewpwecandidatevawidatow, (U ᵕ U❁)
+  p-postcandidatevawidatow: s-sendhandwewpostcandidatevawidatow, :3
+  sendhandwewnotifiew: s-sendhandwewnotifiew, ( ͡o ω ͡o )
+  c-candidatehydwatow: sendhandwewpushcandidatehydwatow, òωó
+  f-featuwehydwatow: featuwehydwatow, σωσ
+  sendhandwewpwedicateutiw: s-sendhandwewpwedicateutiw, (U ᵕ U❁)
+  mwwequestscwibewnode: stwing
 )(
-  implicit val statsReceiver: StatsReceiver,
-  implicit val config: Config)
-    extends CandidateFilteringOnlyFlow[Target, RawCandidate, PushCandidate] {
+  i-impwicit vaw statsweceivew: s-statsweceivew, (✿oωo)
+  impwicit vaw c-config: config)
+    e-extends candidatefiwtewingonwyfwow[tawget, ^^ wawcandidate, ^•ﻌ•^ pushcandidate] {
 
-  implicit private val timer: Timer = new JavaTimer(true)
-  val stats = statsReceiver.scope("SendHandler")
-  val log = MRLogger("SendHandler")
+  impwicit pwivate vaw timew: timew = nyew javatimew(twue)
+  vaw stats = statsweceivew.scope("sendhandwew")
+  v-vaw w-wog = mwwoggew("sendhandwew")
 
-  private val buildTargetStats = stats.scope("build_target")
+  pwivate vaw buiwdtawgetstats = s-stats.scope("buiwd_tawget")
 
-  private val candidateHydrationLatency: Stat =
-    stats.stat("candidateHydrationLatency")
+  p-pwivate vaw candidatehydwationwatency: s-stat =
+    stats.stat("candidatehydwationwatency")
 
-  private val candidatePreValidatorLatency: Stat =
-    stats.stat("candidatePreValidatorLatency")
+  pwivate vaw candidatepwevawidatowwatency: s-stat =
+    stats.stat("candidatepwevawidatowwatency")
 
-  private val candidatePostValidatorLatency: Stat =
-    stats.stat("candidatePostValidatorLatency")
+  pwivate vaw candidatepostvawidatowwatency: stat =
+    stats.stat("candidatepostvawidatowwatency")
 
-  private val featureHydrationLatency: StatsReceiver =
-    stats.scope("featureHydrationLatency")
+  p-pwivate vaw featuwehydwationwatency: s-statsweceivew =
+    stats.scope("featuwehydwationwatency")
 
-  private val mrRequestScribeHandler =
-    new MrRequestScribeHandler(mrRequestScriberNode, stats.scope("mr_request_scribe"))
+  p-pwivate v-vaw mwwequestscwibehandwew =
+    nyew mwwequestscwibehandwew(mwwequestscwibewnode, s-stats.scope("mw_wequest_scwibe"))
 
-  def apply(request: PushRequest): Future[PushResponse] = {
-    val receivers = Seq(
-      stats,
-      stats.scope(request.notification.commonRecommendationType.toString)
+  d-def appwy(wequest: p-pushwequest): f-futuwe[pushwesponse] = {
+    vaw weceivews = seq(
+      s-stats, XD
+      stats.scope(wequest.notification.commonwecommendationtype.tostwing)
     )
-    val bStats = BroadcastStatsReceiver(receivers)
-    bStats.counter("requests").incr()
-    Stat
-      .timeFuture(bStats.stat("latency"))(
-        process(request).raiseWithin(CommonConstants.maxPushRequestDuration))
-      .onSuccess {
-        case (pushResp, rawCandidate) =>
-          trackStatsForResponseToRequest(
-            rawCandidate.commonRecType,
-            rawCandidate.target,
-            pushResp,
-            receivers)(statsReceiver)
-          if (!request.context.exists(_.darkWrite.contains(true))) {
-            config.requestScribe(PushRequestScribe(request, pushResp))
+    v-vaw b-bstats = bwoadcaststatsweceivew(weceivews)
+    b-bstats.countew("wequests").incw()
+    s-stat
+      .timefutuwe(bstats.stat("watency"))(
+        pwocess(wequest).waisewithin(commonconstants.maxpushwequestduwation))
+      .onsuccess {
+        case (pushwesp, :3 wawcandidate) =>
+          twackstatsfowwesponsetowequest(
+            wawcandidate.commonwectype,
+            w-wawcandidate.tawget, (ꈍᴗꈍ)
+            pushwesp, :3
+            weceivews)(statsweceivew)
+          if (!wequest.context.exists(_.dawkwwite.contains(twue))) {
+            config.wequestscwibe(pushwequestscwibe(wequest, pushwesp))
           }
       }
-      .onFailure { ex =>
-        bStats.counter("failures").incr()
-        bStats.scope("failures").counter(ex.getClass.getCanonicalName).incr()
+      .onfaiwuwe { ex =>
+        b-bstats.countew("faiwuwes").incw()
+        bstats.scope("faiwuwes").countew(ex.getcwass.getcanonicawname).incw()
       }
       .map {
-        case (pushResp, _) => pushResp
+        case (pushwesp, (U ﹏ U) _) => pushwesp
       }
   }
 
-  private def process(request: PushRequest): Future[(PushResponse, RawCandidate)] = {
-    val recType = request.notification.commonRecommendationType
+  p-pwivate d-def pwocess(wequest: p-pushwequest): futuwe[(pushwesponse, UwU w-wawcandidate)] = {
+    vaw wectype = w-wequest.notification.commonwecommendationtype
 
-    track(buildTargetStats)(
-      pushTargetUserBuilder
-        .buildTarget(
-          request.userId,
-          request.context
+    t-twack(buiwdtawgetstats)(
+      pushtawgetusewbuiwdew
+        .buiwdtawget(
+          wequest.usewid, 😳😳😳
+          wequest.context
         )
-    ).flatMap { targetUser =>
-      val responseWithScribedInfo = request.context.exists { context =>
-        context.responseWithScribedInfo.contains(true)
+    ).fwatmap { tawgetusew =>
+      vaw wesponsewithscwibedinfo = wequest.context.exists { c-context =>
+        context.wesponsewithscwibedinfo.contains(twue)
       }
-      val newRequest =
-        if (request.notification.commonRecommendationType == CommonRecommendationType.MagicFanoutNewsEvent &&
-          targetUser.params(EnableMagicFanoutNewsForYouNtabCopy)) {
-          val newNotification = request.notification.copy(ntabCopyId =
-            Some(MrNtabCopyObjects.MagicFanoutNewsForYouCopy.copyId))
-          request.copy(notification = newNotification)
-        } else request
+      v-vaw nyewwequest =
+        if (wequest.notification.commonwecommendationtype == c-commonwecommendationtype.magicfanoutnewsevent &&
+          t-tawgetusew.pawams(enabwemagicfanoutnewsfowyountabcopy)) {
+          vaw nyewnotification = wequest.notification.copy(ntabcopyid =
+            s-some(mwntabcopyobjects.magicfanoutnewsfowyoucopy.copyid))
+          w-wequest.copy(notification = nyewnotification)
+        } e-ewse w-wequest
 
-      if (RecTypes.isSendHandlerType(recType) || newRequest.context.exists(
-          _.allowCRT.contains(true))) {
+      if (wectypes.issendhandwewtype(wectype) || nyewwequest.context.exists(
+          _.awwowcwt.contains(twue))) {
 
-        val rawCandidateFut = PushRequestToCandidate.generatePushCandidate(
-          newRequest.notification,
-          targetUser
+        vaw wawcandidatefut = pushwequesttocandidate.genewatepushcandidate(
+          n-nyewwequest.notification,
+          t-tawgetusew
         )
 
-        rawCandidateFut.flatMap { rawCandidate =>
-          val pushResponse = process(targetUser, Seq(rawCandidate)).flatMap {
-            sendHandlerNotifier.checkResponseAndNotify(_, responseWithScribedInfo)
+        w-wawcandidatefut.fwatmap { wawcandidate =>
+          v-vaw p-pushwesponse = pwocess(tawgetusew, XD seq(wawcandidate)).fwatmap {
+            s-sendhandwewnotifiew.checkwesponseandnotify(_, o.O wesponsewithscwibedinfo)
           }
 
-          pushResponse.map { pushResponse =>
-            (pushResponse, rawCandidate)
+          pushwesponse.map { pushwesponse =>
+            (pushwesponse, (⑅˘꒳˘) wawcandidate)
           }
         }
-      } else {
-        Future.exception(InvalidRequestException(s"${recType.name} not supported in SendHandler"))
+      } e-ewse {
+        f-futuwe.exception(invawidwequestexception(s"${wectype.name} nyot suppowted in s-sendhandwew"))
       }
     }
   }
 
-  private def hydrateFeatures(
-    candidateDetails: Seq[CandidateDetails[PushCandidate]],
-    target: Target,
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
+  p-pwivate def hydwatefeatuwes(
+    candidatedetaiws: seq[candidatedetaiws[pushcandidate]], 😳😳😳
+    t-tawget: tawget, nyaa~~
+  ): futuwe[seq[candidatedetaiws[pushcandidate]]] = {
 
-    candidateDetails.headOption match {
-      case Some(candidateDetail)
-          if RecTypes.notEligibleForModelScoreTracking(candidateDetail.candidate.commonRecType) =>
-        Future.value(candidateDetails)
+    candidatedetaiws.headoption match {
+      case some(candidatedetaiw)
+          i-if wectypes.notewigibwefowmodewscowetwacking(candidatedetaiw.candidate.commonwectype) =>
+        futuwe.vawue(candidatedetaiws)
 
-      case Some(candidateDetail) =>
-        val hydrationContextFut = HydrationContextBuilder.build(candidateDetail.candidate)
-        hydrationContextFut.flatMap { hc =>
-          featureHydrator
-            .hydrateCandidate(Seq(hc), target.mrRequestContextForFeatureStore)
-            .map { hydrationResult =>
-              val features = hydrationResult.getOrElse(hc, FeatureMap())
-              candidateDetail.candidate.mergeFeatures(features)
-              candidateDetails
+      case some(candidatedetaiw) =>
+        v-vaw hydwationcontextfut = h-hydwationcontextbuiwdew.buiwd(candidatedetaiw.candidate)
+        hydwationcontextfut.fwatmap { hc =>
+          featuwehydwatow
+            .hydwatecandidate(seq(hc), rawr t-tawget.mwwequestcontextfowfeatuwestowe)
+            .map { h-hydwationwesuwt =>
+              vaw featuwes = hydwationwesuwt.getowewse(hc, -.- featuwemap())
+              c-candidatedetaiw.candidate.mewgefeatuwes(featuwes)
+              candidatedetaiws
             }
         }
-      case _ => Future.Nil
+      c-case _ => futuwe.niw
     }
   }
 
-  override def process(
-    target: Target,
-    externalCandidates: Seq[RawCandidate]
-  ): Future[Response[PushCandidate, Result]] = {
-    val candidate = externalCandidates.map(CandidateDetails(_, "realtime"))
+  ovewwide def pwocess(
+    t-tawget: tawget, (✿oωo)
+    extewnawcandidates: s-seq[wawcandidate]
+  ): f-futuwe[wesponse[pushcandidate, /(^•ω•^) wesuwt]] = {
+    v-vaw candidate = extewnawcandidates.map(candidatedetaiws(_, 🥺 "weawtime"))
 
-    for {
-      hydratedCandidatesWithCopy <- hydrateCandidates(candidate)
+    f-fow {
+      h-hydwatedcandidateswithcopy <- h-hydwatecandidates(candidate)
 
-      (candidates, preHydrationFilteredCandidates) <- track(filterStats)(
-        filter(target, hydratedCandidatesWithCopy)
+      (candidates, ʘwʘ pwehydwationfiwtewedcandidates) <- twack(fiwtewstats)(
+        f-fiwtew(tawget, UwU h-hydwatedcandidateswithcopy)
       )
 
-      featureHydratedCandidates <-
-        track(featureHydrationLatency)(hydrateFeatures(candidates, target))
+      featuwehydwatedcandidates <-
+        twack(featuwehydwationwatency)(hydwatefeatuwes(candidates, XD t-tawget))
 
-      allTakeCandidateResults <- track(takeStats)(
-        take(target, featureHydratedCandidates, desiredCandidateCount(target))
+      a-awwtakecandidatewesuwts <- t-twack(takestats)(
+        take(tawget, (✿oωo) featuwehydwatedcandidates, :3 d-desiwedcandidatecount(tawget))
       )
 
-      _ <- mrRequestScribeHandler.scribeForCandidateFiltering(
-        target = target,
-        hydratedCandidates = hydratedCandidatesWithCopy,
-        preRankingFilteredCandidates = preHydrationFilteredCandidates,
-        rankedCandidates = featureHydratedCandidates,
-        rerankedCandidates = Seq.empty,
-        restrictFilteredCandidates = Seq.empty, // no restrict step
-        allTakeCandidateResults = allTakeCandidateResults
+      _ <- mwwequestscwibehandwew.scwibefowcandidatefiwtewing(
+        t-tawget = tawget, (///ˬ///✿)
+        h-hydwatedcandidates = hydwatedcandidateswithcopy, nyaa~~
+        pwewankingfiwtewedcandidates = pwehydwationfiwtewedcandidates, >w<
+        w-wankedcandidates = f-featuwehydwatedcandidates, -.-
+        w-wewankedcandidates = s-seq.empty, (✿oωo)
+        westwictfiwtewedcandidates = s-seq.empty, (˘ω˘) // nyo westwict step
+        awwtakecandidatewesuwts = awwtakecandidatewesuwts
       )
-    } yield {
+    } yiewd {
 
       /**
-       * We combine the results for all filtering steps and pass on in sequence to next step
+       * w-we combine the wesuwts f-fow aww fiwtewing steps and pass o-on in sequence to nyext step
        *
-       * This is done to ensure the filtering reason for the candidate from multiple levels of
-       * filtering is carried all the way until [[PushResponse]] is built and returned from
-       * frigate-pushservice-send
+       * t-this is done to ensuwe the fiwtewing w-weason fow t-the candidate f-fwom muwtipwe wevews o-of
+       * f-fiwtewing is cawwied aww the way untiw [[pushwesponse]] is buiwt and wetuwned fwom
+       * fwigate-pushsewvice-send
        */
-      Response(OK, allTakeCandidateResults ++ preHydrationFilteredCandidates)
+      wesponse(ok, a-awwtakecandidatewesuwts ++ pwehydwationfiwtewedcandidates)
     }
   }
 
-  override def hydrateCandidates(
-    candidates: Seq[CandidateDetails[RawCandidate]]
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
-    Stat.timeFuture(candidateHydrationLatency)(candidateHydrator(candidates))
+  o-ovewwide d-def hydwatecandidates(
+    candidates: seq[candidatedetaiws[wawcandidate]]
+  ): f-futuwe[seq[candidatedetaiws[pushcandidate]]] = {
+    stat.timefutuwe(candidatehydwationwatency)(candidatehydwatow(candidates))
   }
 
-  // Filter Step - pre-predicates and app specific predicates
-  override def filter(
-    target: Target,
-    hydratedCandidatesDetails: Seq[CandidateDetails[PushCandidate]]
-  ): Future[
-    (Seq[CandidateDetails[PushCandidate]], Seq[CandidateResult[PushCandidate, Result]])
+  // fiwtew step - pwe-pwedicates a-and app s-specific pwedicates
+  ovewwide d-def fiwtew(
+    tawget: tawget, rawr
+    hydwatedcandidatesdetaiws: s-seq[candidatedetaiws[pushcandidate]]
+  ): f-futuwe[
+    (seq[candidatedetaiws[pushcandidate]], OwO seq[candidatewesuwt[pushcandidate, ^•ﻌ•^ w-wesuwt]])
   ] = {
-    Stat.timeFuture(candidatePreValidatorLatency)(
-      sendHandlerPredicateUtil.preValidationForCandidate(
-        hydratedCandidatesDetails,
-        preCandidateValidator
+    s-stat.timefutuwe(candidatepwevawidatowwatency)(
+      sendhandwewpwedicateutiw.pwevawidationfowcandidate(
+        hydwatedcandidatesdetaiws, UwU
+        pwecandidatevawidatow
       ))
   }
 
-  // Post Validation - Take step
-  override def validCandidates(
-    target: Target,
-    candidates: Seq[PushCandidate]
-  ): Future[Seq[Result]] = {
-    Stat.timeFuture(candidatePostValidatorLatency)(Future.collect(candidates.map { candidate =>
-      sendHandlerPredicateUtil
-        .postValidationForCandidate(candidate, postCandidateValidator)
-        .map(res => res.result)
+  // post vawidation - t-take step
+  o-ovewwide def vawidcandidates(
+    t-tawget: tawget, (˘ω˘)
+    c-candidates: s-seq[pushcandidate]
+  ): futuwe[seq[wesuwt]] = {
+    s-stat.timefutuwe(candidatepostvawidatowwatency)(futuwe.cowwect(candidates.map { c-candidate =>
+      sendhandwewpwedicateutiw
+        .postvawidationfowcandidate(candidate, (///ˬ///✿) p-postcandidatevawidatow)
+        .map(wes => w-wes.wesuwt)
     }))
   }
 }

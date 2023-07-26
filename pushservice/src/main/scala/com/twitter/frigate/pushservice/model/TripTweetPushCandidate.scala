@@ -1,60 +1,60 @@
-package com.twitter.frigate.pushservice.model
+package com.twittew.fwigate.pushsewvice.modew
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.OutOfNetworkTweetCandidate
-import com.twitter.frigate.common.base.TopicCandidate
-import com.twitter.frigate.common.base.TripCandidate
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.model.ibis.OutOfNetworkTweetIbis2HydratorForCandidate
-import com.twitter.frigate.pushservice.model.ntab.OutOfNetworkTweetNTabRequestHydrator
-import com.twitter.frigate.pushservice.take.predicates.OutOfNetworkTweetPredicates
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.stitch.tweetypie.TweetyPie
-import com.twitter.topiclisting.utt.LocalizedEntity
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripDomain
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.outofnetwowktweetcandidate
+impowt c-com.twittew.fwigate.common.base.topiccandidate
+i-impowt com.twittew.fwigate.common.base.twipcandidate
+i-impowt c-com.twittew.fwigate.common.base.tweetauthowdetaiws
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+impowt com.twittew.fwigate.pushsewvice.config.config
+i-impowt com.twittew.fwigate.pushsewvice.mw.pushmwmodewscowew
+impowt com.twittew.fwigate.pushsewvice.modew.candidate.copyids
+i-impowt com.twittew.fwigate.pushsewvice.modew.ibis.outofnetwowktweetibis2hydwatowfowcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.ntab.outofnetwowktweetntabwequesthydwatow
+impowt com.twittew.fwigate.pushsewvice.take.pwedicates.outofnetwowktweetpwedicates
+impowt com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+i-impowt com.twittew.gizmoduck.thwiftscawa.usew
+impowt com.twittew.stitch.tweetypie.tweetypie
+i-impowt com.twittew.topicwisting.utt.wocawizedentity
+i-impowt com.twittew.twends.twip_v1.twip_tweets.thwiftscawa.twipdomain
+impowt com.twittew.utiw.futuwe
 
-class TripTweetPushCandidate(
-  candidate: RawCandidate with OutOfNetworkTweetCandidate with TripCandidate,
-  author: Future[Option[User]],
-  copyIds: CopyIds
+cwass twiptweetpushcandidate(
+  candidate: w-wawcandidate with outofnetwowktweetcandidate with twipcandidate, >w<
+  authow: futuwe[option[usew]], mya
+  copyids: c-copyids
 )(
-  implicit stats: StatsReceiver,
-  pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
-    with TripCandidate
-    with TopicCandidate
-    with OutOfNetworkTweetCandidate
-    with TweetAuthorDetails
-    with OutOfNetworkTweetNTabRequestHydrator
-    with OutOfNetworkTweetIbis2HydratorForCandidate {
-  override val statsReceiver: StatsReceiver = stats
-  override val weightedOpenOrNtabClickModelScorer: PushMLModelScorer = pushModelScorer
-  override val tweetId: Long = candidate.tweetId
-  override lazy val tweetyPieResult: Option[TweetyPie.TweetyPieResult] =
-    candidate.tweetyPieResult
-  override lazy val tweetAuthor: Future[Option[User]] = author
-  override val target: PushTypes.Target = candidate.target
-  override lazy val commonRecType: CommonRecommendationType =
-    candidate.commonRecType
-  override val pushCopyId: Option[Int] = copyIds.pushCopyId
-  override val ntabCopyId: Option[Int] = copyIds.ntabCopyId
-  override val copyAggregationId: Option[String] = copyIds.aggregationId
-  override lazy val semanticCoreEntityId: Option[Long] = None
-  override lazy val localizedUttEntity: Option[LocalizedEntity] = None
-  override lazy val algorithmCR: Option[String] = None
-  override val tripDomain: Option[collection.Set[TripDomain]] = candidate.tripDomain
+  impwicit stats: statsweceivew, >w<
+  p-pushmodewscowew: pushmwmodewscowew)
+    e-extends pushcandidate
+    w-with twipcandidate
+    w-with topiccandidate
+    with outofnetwowktweetcandidate
+    with tweetauthowdetaiws
+    with o-outofnetwowktweetntabwequesthydwatow
+    with outofnetwowktweetibis2hydwatowfowcandidate {
+  o-ovewwide vaw statsweceivew: statsweceivew = stats
+  ovewwide vaw weightedopenowntabcwickmodewscowew: pushmwmodewscowew = p-pushmodewscowew
+  ovewwide v-vaw tweetid: w-wong = candidate.tweetid
+  o-ovewwide wazy vaw tweetypiewesuwt: option[tweetypie.tweetypiewesuwt] =
+    candidate.tweetypiewesuwt
+  o-ovewwide wazy v-vaw tweetauthow: futuwe[option[usew]] = a-authow
+  o-ovewwide vaw tawget: pushtypes.tawget = c-candidate.tawget
+  ovewwide w-wazy vaw commonwectype: commonwecommendationtype =
+    candidate.commonwectype
+  o-ovewwide vaw pushcopyid: o-option[int] = copyids.pushcopyid
+  ovewwide vaw n-nytabcopyid: option[int] = c-copyids.ntabcopyid
+  ovewwide vaw copyaggwegationid: option[stwing] = copyids.aggwegationid
+  ovewwide wazy vaw semanticcoweentityid: option[wong] = n-nyone
+  ovewwide w-wazy vaw wocawizeduttentity: option[wocawizedentity] = nyone
+  o-ovewwide wazy vaw a-awgowithmcw: o-option[stwing] = nyone
+  ovewwide vaw twipdomain: option[cowwection.set[twipdomain]] = c-candidate.twipdomain
 }
 
-case class TripTweetCandidatePredicates(override val config: Config)
-    extends OutOfNetworkTweetPredicates[TripTweetPushCandidate] {
+case cwass twiptweetcandidatepwedicates(ovewwide vaw config: config)
+    extends outofnetwowktweetpwedicates[twiptweetpushcandidate] {
 
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+  i-impwicit vaw statsweceivew: s-statsweceivew = c-config.statsweceivew.scope(getcwass.getsimpwename)
 
 }

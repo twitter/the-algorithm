@@ -1,68 +1,68 @@
-package com.twitter.search.earlybird.util;
+package com.twittew.seawch.eawwybiwd.utiw;
 
-import java.io.IOException;
-import java.io.Writer;
+impowt j-java.io.ioexception;
+i-impowt java.io.wwitew;
 
-import com.google.gson.stream.JsonWriter;
+impowt c-com.googwe.gson.stweam.jsonwwitew;
 
 /**
- * Wrapper class for JsonWriter that implements the
- * ViewerWriter interface.
+ * w-wwappew cwass fow j-jsonwwitew that i-impwements the
+ * v-viewewwwitew i-intewface. ʘwʘ
  */
-public class JsonViewerWriter implements ViewerWriter {
+pubwic cwass jsonviewewwwitew impwements viewewwwitew {
 
-  private final JsonWriter writer;
-  private final Writer out;
+  pwivate finaw jsonwwitew w-wwitew;
+  pwivate finaw wwitew out;
 
-  public JsonViewerWriter(Writer out) {
-    this.out = out;
-    this.writer = new JsonWriter(out);
+  pubwic j-jsonviewewwwitew(wwitew out) {
+    t-this.out = out;
+    this.wwitew = nyew jsonwwitew(out);
   }
 
 
-  @Override
-  public ViewerWriter beginArray() throws IOException {
-    writer.beginArray();
-    return this;
+  @ovewwide
+  pubwic viewewwwitew b-beginawway() thwows ioexception {
+    w-wwitew.beginawway();
+    w-wetuwn this;
   }
 
-  @Override
-  public ViewerWriter beginObject() throws IOException {
-    writer.beginObject();
-    return this;
+  @ovewwide
+  pubwic viewewwwitew beginobject() thwows ioexception {
+    wwitew.beginobject();
+    w-wetuwn this;
   }
 
-  @Override
-  public ViewerWriter endArray() throws IOException {
-    writer.endArray();
-    return this;
+  @ovewwide
+  pubwic viewewwwitew endawway() thwows i-ioexception {
+    wwitew.endawway();
+    w-wetuwn t-this;
   }
 
-  @Override
-  public ViewerWriter endObject() throws IOException {
-    writer.endObject();
-    return this;
+  @ovewwide
+  p-pubwic v-viewewwwitew endobject() thwows ioexception {
+    w-wwitew.endobject();
+    wetuwn this;
   }
 
-  @Override
-  public ViewerWriter name(String field) throws IOException {
-    writer.name(field);
-    return this;
+  @ovewwide
+  p-pubwic viewewwwitew nyame(stwing fiewd) thwows ioexception {
+    wwitew.name(fiewd);
+    wetuwn this;
   }
 
-  @Override
-  public ViewerWriter value(String s) throws IOException {
-    writer.value(s);
-    return this;
+  @ovewwide
+  p-pubwic viewewwwitew vawue(stwing s-s) thwows ioexception {
+    w-wwitew.vawue(s);
+    w-wetuwn this;
   }
 
-  @Override
-  public ViewerWriter newline() throws IOException {
-    out.append('\n');
-    return this;
+  @ovewwide
+  pubwic viewewwwitew nyewwine() thwows ioexception {
+    o-out.append('\n');
+    w-wetuwn this;
   }
 
-  public void flush() throws IOException {
-    out.flush();
+  pubwic void f-fwush() thwows i-ioexception {
+    out.fwush();
   }
 }

@@ -1,102 +1,102 @@
-package com.twitter.follow_recommendations.common.candidate_sources.socialgraph
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.sociawgwaph
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.base.TwoHopExpansionCandidateSource
-import com.twitter.follow_recommendations.common.clients.socialgraph.RecentEdgesQuery
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.hermit.model.Algorithm
-import com.twitter.inject.Logging
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.base.twohopexpansioncandidatesouwce
+i-impowt com.twittew.fowwow_wecommendations.common.cwients.sociawgwaph.wecentedgesquewy
+i-impowt c-com.twittew.fowwow_wecommendations.common.cwients.sociawgwaph.sociawgwaphcwient
+i-impowt com.twittew.fowwow_wecommendations.common.modews.accountpwoof
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.fowwowpwoof
+impowt com.twittew.fowwow_wecommendations.common.modews.haswecentfowwowedusewids
+impowt com.twittew.fowwow_wecommendations.common.modews.weason
+impowt com.twittew.hewmit.modew.awgowithm
+impowt c-com.twittew.inject.wogging
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.sociawgwaph.thwiftscawa.wewationshiptype
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.timewines.configapi.haspawams
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
 /**
- * This candidate source is a two hop expansion over the follow graph. The candidates returned from this source is the users that get followed by the target user's recent followings. It will call SocialGraph `n` + 1 times where `n` is the number of recent followings of the target user to be considered.
+ * this candidate s-souwce is a two hop expansion o-ovew the fowwow g-gwaph. 😳 the candidates wetuwned fwom this souwce is the usews that get fowwowed b-by the tawget usew's wecent fowwowings. >w< it wiww caww sociawgwaph `n` + 1 times w-whewe `n` is the nyumbew of wecent f-fowwowings of t-the tawget usew t-to be considewed. (⑅˘꒳˘)
  */
-@Singleton
-class RecentFollowingRecentFollowingExpansionSource @Inject() (
-  socialGraphClient: SocialGraphClient,
-  statsReceiver: StatsReceiver)
-    extends TwoHopExpansionCandidateSource[
-      HasParams with HasRecentFollowedUserIds,
-      Long,
-      Long,
-      CandidateUser
+@singweton
+c-cwass wecentfowwowingwecentfowwowingexpansionsouwce @inject() (
+  sociawgwaphcwient: sociawgwaphcwient, OwO
+  s-statsweceivew: statsweceivew)
+    extends t-twohopexpansioncandidatesouwce[
+      haspawams with haswecentfowwowedusewids, (ꈍᴗꈍ)
+      wong,
+      wong, 😳
+      candidateusew
     ]
-    with Logging {
+    w-with wogging {
 
-  override val identifier: CandidateSourceIdentifier =
-    RecentFollowingRecentFollowingExpansionSource.Identifier
+  ovewwide v-vaw identifiew: c-candidatesouwceidentifiew =
+    w-wecentfowwowingwecentfowwowingexpansionsouwce.identifiew
 
-  val stats = statsReceiver.scope(identifier.name)
+  vaw stats = statsweceivew.scope(identifiew.name)
 
-  override def firstDegreeNodes(
-    target: HasParams with HasRecentFollowedUserIds
-  ): Stitch[Seq[Long]] = Stitch.value(
-    target.recentFollowedUserIds
-      .getOrElse(Nil).take(
-        RecentFollowingRecentFollowingExpansionSource.NumFirstDegreeNodesToRetrieve)
+  ovewwide def fiwstdegweenodes(
+    t-tawget: h-haspawams with haswecentfowwowedusewids
+  ): s-stitch[seq[wong]] = s-stitch.vawue(
+    tawget.wecentfowwowedusewids
+      .getowewse(niw).take(
+        w-wecentfowwowingwecentfowwowingexpansionsouwce.numfiwstdegweenodestowetwieve)
   )
 
-  override def secondaryDegreeNodes(
-    target: HasParams with HasRecentFollowedUserIds,
-    node: Long
-  ): Stitch[Seq[Long]] = socialGraphClient
-    .getRecentEdgesCached(
-      RecentEdgesQuery(
-        node,
-        Seq(RelationshipType.Following),
-        Some(RecentFollowingRecentFollowingExpansionSource.NumSecondDegreeNodesToRetrieve)),
-      useCachedStratoColumn =
-        target.params(RecentFollowingRecentFollowingExpansionSourceParams.CallSgsCachedColumn)
+  ovewwide d-def secondawydegweenodes(
+    tawget: haspawams with haswecentfowwowedusewids, 😳😳😳
+    n-nyode: wong
+  ): stitch[seq[wong]] = s-sociawgwaphcwient
+    .getwecentedgescached(
+      wecentedgesquewy(
+        n-nyode, mya
+        s-seq(wewationshiptype.fowwowing), mya
+        some(wecentfowwowingwecentfowwowingexpansionsouwce.numseconddegweenodestowetwieve)), (⑅˘꒳˘)
+      usecachedstwatocowumn =
+        tawget.pawams(wecentfowwowingwecentfowwowingexpansionsouwcepawams.cawwsgscachedcowumn)
     ).map(
-      _.take(RecentFollowingRecentFollowingExpansionSource.NumSecondDegreeNodesToRetrieve)).rescue {
-      case exception: Exception =>
-        logger.warn(
-          s"${this.getClass} fails to retrieve second degree nodes for first degree node $node",
-          exception)
-        stats.counter("second_degree_expansion_error").incr()
-        Stitch.Nil
+      _.take(wecentfowwowingwecentfowwowingexpansionsouwce.numseconddegweenodestowetwieve)).wescue {
+      case exception: exception =>
+        woggew.wawn(
+          s"${this.getcwass} f-faiws to wetwieve s-second degwee nyodes fow f-fiwst degwee nyode $node", (U ﹏ U)
+          e-exception)
+        s-stats.countew("second_degwee_expansion_ewwow").incw()
+        stitch.niw
     }
 
-  override def aggregateAndScore(
-    target: HasParams with HasRecentFollowedUserIds,
-    firstDegreeToSecondDegreeNodesMap: Map[Long, Seq[Long]]
-  ): Stitch[Seq[CandidateUser]] = {
-    val zipped = firstDegreeToSecondDegreeNodesMap.toSeq.flatMap {
-      case (firstDegreeId, secondDegreeIds) =>
-        secondDegreeIds.map(secondDegreeId => firstDegreeId -> secondDegreeId)
+  ovewwide def aggwegateandscowe(
+    tawget: h-haspawams with haswecentfowwowedusewids, mya
+    fiwstdegweetoseconddegweenodesmap: map[wong, ʘwʘ seq[wong]]
+  ): s-stitch[seq[candidateusew]] = {
+    vaw zipped = f-fiwstdegweetoseconddegweenodesmap.toseq.fwatmap {
+      c-case (fiwstdegweeid, (˘ω˘) s-seconddegweeids) =>
+        seconddegweeids.map(seconddegweeid => f-fiwstdegweeid -> s-seconddegweeid)
     }
-    val candidateAndConnections = zipped
-      .groupBy { case (_, secondDegreeId) => secondDegreeId }
-      .mapValues { v => v.map { case (firstDegreeId, _) => firstDegreeId } }
-      .toSeq
-      .sortBy { case (_, connections) => -connections.size }
+    v-vaw candidateandconnections = z-zipped
+      .gwoupby { case (_, (U ﹏ U) seconddegweeid) => seconddegweeid }
+      .mapvawues { v-v => v.map { case (fiwstdegweeid, ^•ﻌ•^ _) => f-fiwstdegweeid } }
+      .toseq
+      .sowtby { c-case (_, (˘ω˘) c-connections) => -connections.size }
       .map {
-        case (candidateId, connections) =>
-          CandidateUser(
-            id = candidateId,
-            score = Some(CandidateUser.DefaultCandidateScore),
-            reason = Some(
-              Reason(
-                Some(AccountProof(followProof = Some(FollowProof(connections, connections.size))))))
-          ).withCandidateSource(identifier)
+        c-case (candidateid, :3 connections) =>
+          candidateusew(
+            id = candidateid, ^^;;
+            s-scowe = some(candidateusew.defauwtcandidatescowe), 🥺
+            weason = some(
+              weason(
+                some(accountpwoof(fowwowpwoof = some(fowwowpwoof(connections, (⑅˘꒳˘) connections.size))))))
+          ).withcandidatesouwce(identifiew)
       }
-    Stitch.value(candidateAndConnections)
+    s-stitch.vawue(candidateandconnections)
   }
 }
 
-object RecentFollowingRecentFollowingExpansionSource {
-  val Identifier = CandidateSourceIdentifier(Algorithm.NewFollowingNewFollowingExpansion.toString)
+object wecentfowwowingwecentfowwowingexpansionsouwce {
+  vaw identifiew = c-candidatesouwceidentifiew(awgowithm.newfowwowingnewfowwowingexpansion.tostwing)
 
-  val NumFirstDegreeNodesToRetrieve = 5
-  val NumSecondDegreeNodesToRetrieve = 20
+  v-vaw nyumfiwstdegweenodestowetwieve = 5
+  v-vaw nyumseconddegweenodestowetwieve = 20
 }

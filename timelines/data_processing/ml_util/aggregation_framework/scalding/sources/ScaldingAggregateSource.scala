@@ -1,77 +1,77 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.scalding.sources
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.scawding.souwces
 
-import com.twitter.ml.api.DailySuffixFeatureSource
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FixedPathFeatureSource
-import com.twitter.ml.api.HourlySuffixFeatureSource
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.statebird.v2.thriftscala.Environment
-import com.twitter.summingbird._
-import com.twitter.summingbird.scalding.Scalding.pipeFactoryExact
-import com.twitter.summingbird.scalding._
-import com.twitter.summingbird_internal.sources.SourceFactory
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.OfflineAggregateSource
-import java.lang.{Long => JLong}
+impowt c-com.twittew.mw.api.daiwysuffixfeatuwesouwce
+i-impowt com.twittew.mw.api.datawecowd
+i-impowt com.twittew.mw.api.fixedpathfeatuwesouwce
+i-impowt com.twittew.mw.api.houwwysuffixfeatuwesouwce
+i-impowt c-com.twittew.mw.api.utiw.swichdatawecowd
+i-impowt c-com.twittew.scawding._
+impowt com.twittew.scawding_intewnaw.dawv2.daw
+impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.awwowcwosscwustewsamedc
+impowt com.twittew.statebiwd.v2.thwiftscawa.enviwonment
+impowt com.twittew.summingbiwd._
+i-impowt com.twittew.summingbiwd.scawding.scawding.pipefactowyexact
+impowt com.twittew.summingbiwd.scawding._
+impowt c-com.twittew.summingbiwd_intewnaw.souwces.souwcefactowy
+impowt c-com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.offwineaggwegatesouwce
+impowt java.wang.{wong => jwong}
 
 /*
- * Summingbird offline HDFS source that reads from data records on HDFS.
+ * s-summingbiwd offwine hdfs souwce t-that weads fwom d-data wecowds on hdfs. (U ﹏ U)
  *
- * @param offlineSource Underlying offline source that contains
- *   all the config info to build this platform-specific (scalding) source.
+ * @pawam offwinesouwce undewwying offwine souwce that c-contains
+ *   aww the config info to buiwd this pwatfowm-specific (scawding) souwce. 😳
  */
-case class ScaldingAggregateSource(offlineSource: OfflineAggregateSource)
-    extends SourceFactory[Scalding, DataRecord] {
+case c-cwass scawdingaggwegatesouwce(offwinesouwce: offwineaggwegatesouwce)
+    extends s-souwcefactowy[scawding, (ˆ ﻌ ˆ)♡ d-datawecowd] {
 
-  val hdfsPath: String = offlineSource.scaldingHdfsPath.getOrElse("")
-  val suffixType: String = offlineSource.scaldingSuffixType.getOrElse("daily")
-  val withValidation: Boolean = offlineSource.withValidation
-  def name: String = offlineSource.name
-  def description: String =
-    "Summingbird offline source that reads from data records at: " + hdfsPath
+  v-vaw h-hdfspath: stwing = offwinesouwce.scawdinghdfspath.getowewse("")
+  vaw suffixtype: s-stwing = offwinesouwce.scawdingsuffixtype.getowewse("daiwy")
+  vaw withvawidation: boowean = offwinesouwce.withvawidation
+  d-def nyame: stwing = offwinesouwce.name
+  def descwiption: stwing =
+    "summingbiwd offwine souwce t-that weads fwom data wecowds at: " + h-hdfspath
 
-  implicit val timeExtractor: TimeExtractor[DataRecord] = TimeExtractor((record: DataRecord) =>
-    SRichDataRecord(record).getFeatureValue[JLong, JLong](offlineSource.timestampFeature))
+  i-impwicit vaw timeextwactow: t-timeextwactow[datawecowd] = timeextwactow((wecowd: datawecowd) =>
+    swichdatawecowd(wecowd).getfeatuwevawue[jwong, 😳😳😳 j-jwong](offwinesouwce.timestampfeatuwe))
 
-  def getSourceForDateRange(dateRange: DateRange) = {
-    suffixType match {
-      case "daily" => DailySuffixFeatureSource(hdfsPath)(dateRange).source
-      case "hourly" => HourlySuffixFeatureSource(hdfsPath)(dateRange).source
-      case "fixed_path" => FixedPathFeatureSource(hdfsPath).source
-      case "dal" =>
-        offlineSource.dalDataSet match {
-          case Some(dataset) =>
-            DAL
-              .read(dataset, dateRange)
-              .withRemoteReadPolicy(AllowCrossClusterSameDC)
-              .withEnvironment(Environment.Prod)
-              .toTypedSource
+  d-def getsouwcefowdatewange(datewange: d-datewange) = {
+    s-suffixtype match {
+      case "daiwy" => daiwysuffixfeatuwesouwce(hdfspath)(datewange).souwce
+      c-case "houwwy" => houwwysuffixfeatuwesouwce(hdfspath)(datewange).souwce
+      c-case "fixed_path" => fixedpathfeatuwesouwce(hdfspath).souwce
+      case "daw" =>
+        o-offwinesouwce.dawdataset match {
+          c-case some(dataset) =>
+            d-daw
+              .wead(dataset, (U ﹏ U) d-datewange)
+              .withwemoteweadpowicy(awwowcwosscwustewsamedc)
+              .withenviwonment(enviwonment.pwod)
+              .totypedsouwce
           case _ =>
-            throw new IllegalArgumentException(
-              "cannot provide an empty dataset when defining DAL as the suffix type"
+            thwow nyew iwwegawawgumentexception(
+              "cannot pwovide an empty dataset when defining daw as the suffix type"
             )
         }
     }
   }
 
   /**
-   * This method is similar to [[Scalding.sourceFromMappable]] except that this uses [[pipeFactoryExact]]
-   * instead of [[pipeFactory]]. [[pipeFactoryExact]] also invokes [[FileSource.validateTaps]] on the source.
-   * The validation ensures the presence of _SUCCESS file before processing. For more details, please refer to
-   * https://jira.twitter.biz/browse/TQ-10618
+   * t-this m-method is simiwaw to [[scawding.souwcefwommappabwe]] e-except that t-this uses [[pipefactowyexact]]
+   * i-instead of [[pipefactowy]]. (///ˬ///✿) [[pipefactowyexact]] awso invokes [[fiwesouwce.vawidatetaps]] on the souwce. 😳
+   * the vawidation e-ensuwes the pwesence of _success fiwe befowe pwocessing. fow mowe detaiws, 😳 pwease w-wefew to
+   * https://jiwa.twittew.biz/bwowse/tq-10618
    */
-  def sourceFromMappableWithValidation[T: TimeExtractor: Manifest](
-    factory: (DateRange) => Mappable[T]
-  ): Producer[Scalding, T] = {
-    Producer.source[Scalding, T](pipeFactoryExact(factory))
+  d-def souwcefwommappabwewithvawidation[t: t-timeextwactow: m-manifest](
+    factowy: (datewange) => m-mappabwe[t]
+  ): p-pwoducew[scawding, σωσ t-t] = {
+    p-pwoducew.souwce[scawding, rawr x3 t](pipefactowyexact(factowy))
   }
 
-  def source: Producer[Scalding, DataRecord] = {
-    if (withValidation)
-      sourceFromMappableWithValidation(getSourceForDateRange)
-    else
-      Scalding.sourceFromMappable(getSourceForDateRange)
+  def souwce: pwoducew[scawding, OwO datawecowd] = {
+    i-if (withvawidation)
+      s-souwcefwommappabwewithvawidation(getsouwcefowdatewange)
+    e-ewse
+      s-scawding.souwcefwommappabwe(getsouwcefowdatewange)
   }
 }

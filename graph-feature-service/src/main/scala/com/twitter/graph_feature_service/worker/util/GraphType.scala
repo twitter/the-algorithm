@@ -1,16 +1,16 @@
-package com.twitter.graph_feature_service.worker.util
+package com.twittew.gwaph_featuwe_sewvice.wowkew.utiw
 
-//These classes are to help the GraphContainer choose the right data structure to answer queries
-sealed trait GraphType
+//these cwasses a-awe to hewp t-the gwaphcontainew c-choose the w-wight data stwuctuwe t-to answew quewies
+s-seawed twait g-gwaphtype
 
-object FollowGraph extends GraphType
+object f-fowwowgwaph extends gwaphtype
 
-object FavoriteGraph extends GraphType
+object favowitegwaph extends gwaphtype
 
-object RetweetGraph extends GraphType
+object w-wetweetgwaph extends gwaphtype
 
-object ReplyGraph extends GraphType
+object wepwygwaph e-extends gwaphtype
 
-object MentionGraph extends GraphType
+object m-mentiongwaph extends gwaphtype
 
-object MutualFollowGraph extends GraphType
+object mutuawfowwowgwaph extends g-gwaphtype

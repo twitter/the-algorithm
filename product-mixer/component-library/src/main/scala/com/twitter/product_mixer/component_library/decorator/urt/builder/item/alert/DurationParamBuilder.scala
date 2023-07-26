@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.awewt
 
-import com.twitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert.BaseDurationBuilder
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.showawewtcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.item.awewt.baseduwationbuiwdew
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt c-com.twittew.timewines.configapi.pawam
+i-impowt c-com.twittew.utiw.duwation
 
-case class DurationParamBuilder(
-  durationParam: Param[Duration])
-    extends BaseDurationBuilder[PipelineQuery] {
+case cwass duwationpawambuiwdew(
+  duwationpawam: pawam[duwation])
+    e-extends baseduwationbuiwdew[pipewinequewy] {
 
-  def apply(
-    query: PipelineQuery,
-    candidate: ShowAlertCandidate,
-    features: FeatureMap
-  ): Option[Duration] =
-    Some(query.params(durationParam))
+  def appwy(
+    quewy: pipewinequewy, (⑅˘꒳˘)
+    c-candidate: showawewtcandidate, (U ᵕ U❁)
+    f-featuwes: featuwemap
+  ): option[duwation] =
+    some(quewy.pawams(duwationpawam))
 }

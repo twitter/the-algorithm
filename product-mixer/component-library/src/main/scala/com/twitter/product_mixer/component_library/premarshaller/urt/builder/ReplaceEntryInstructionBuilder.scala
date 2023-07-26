@@ -1,63 +1,63 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ReplaceEntryTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wepwaceentwytimewineinstwuction
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.cuwsowopewation
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.cuwsowtype
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Selects one or more [[TimelineEntry]] instance from the input timeline entries.
+ * s-sewects one o-ow mowe [[timewineentwy]] i-instance fwom the input timewine entwies. (˘ω˘)
  *
- * @tparam Query The domain model for the [[PipelineQuery]] used as input.
+ * @tpawam quewy the domain modew fow the [[pipewinequewy]] u-used as input. >_<
  */
-trait EntriesToReplace[-Query <: PipelineQuery] {
-  def apply(query: Query, entries: Seq[TimelineEntry]): Seq[TimelineEntry]
+twait entwiestowepwace[-quewy <: pipewinequewy] {
+  d-def appwy(quewy: quewy, -.- e-entwies: seq[timewineentwy]): seq[timewineentwy]
 }
 
 /**
- * Selects all entries with a non-empty valid entryIdToReplace.
+ * sewects aww entwies w-with a nyon-empty vawid entwyidtowepwace. 🥺
  *
- * @note this will result in multiple [[ReplaceEntryTimelineInstruction]]s
+ * @note t-this wiww w-wesuwt in muwtipwe [[wepwaceentwytimewineinstwuction]]s
  */
-case object ReplaceAllEntries extends EntriesToReplace[PipelineQuery] {
-  def apply(query: PipelineQuery, entries: Seq[TimelineEntry]): Seq[TimelineEntry] =
-    entries.filter(_.entryIdToReplace.isDefined)
+case object wepwaceawwentwies extends entwiestowepwace[pipewinequewy] {
+  d-def appwy(quewy: pipewinequewy, (U ﹏ U) entwies: seq[timewineentwy]): seq[timewineentwy] =
+    e-entwies.fiwtew(_.entwyidtowepwace.isdefined)
 }
 
 /**
- * Selects a replaceable URT [[CursorOperation]] from the timeline entries, that matches the
- * input cursorType.
+ * sewects a wepwaceabwe u-uwt [[cuwsowopewation]] f-fwom the timewine e-entwies, >w< that m-matches the
+ * input cuwsowtype. mya
  */
-case class ReplaceUrtCursor(cursorType: CursorType) extends EntriesToReplace[PipelineQuery] {
-  override def apply(query: PipelineQuery, entries: Seq[TimelineEntry]): Seq[TimelineEntry] =
-    entries.collectFirst {
-      case cursorOperation: CursorOperation
-          if cursorOperation.cursorType == cursorType && cursorOperation.entryIdToReplace.isDefined =>
-        cursorOperation
-    }.toSeq
+case cwass w-wepwaceuwtcuwsow(cuwsowtype: cuwsowtype) extends entwiestowepwace[pipewinequewy] {
+  o-ovewwide def appwy(quewy: pipewinequewy, >w< entwies: seq[timewineentwy]): seq[timewineentwy] =
+    entwies.cowwectfiwst {
+      case cuwsowopewation: c-cuwsowopewation
+          if cuwsowopewation.cuwsowtype == c-cuwsowtype && c-cuwsowopewation.entwyidtowepwace.isdefined =>
+        c-cuwsowopewation
+    }.toseq
 }
 
 /**
- * Create a ReplaceEntry instruction
+ * cweate a wepwaceentwy instwuction
  *
- * @param entriesToReplace   each replace instruction can contain only one entry. Users specify which
- *                           entry to replace using [[EntriesToReplace]]. If multiple entries are
- *                           specified, multiple [[ReplaceEntryTimelineInstruction]]s will be created.
- * @param includeInstruction whether the instruction should be included in the response
+ * @pawam entwiestowepwace   each wepwace instwuction c-can contain o-onwy one entwy. nyaa~~ usews specify w-which
+ *                           e-entwy to wepwace using [[entwiestowepwace]]. (✿oωo) i-if muwtipwe entwies awe
+ *                           s-specified, ʘwʘ muwtipwe [[wepwaceentwytimewineinstwuction]]s wiww be cweated. (ˆ ﻌ ˆ)♡
+ * @pawam i-incwudeinstwuction whethew the instwuction s-shouwd be incwuded in the w-wesponse
  */
-case class ReplaceEntryInstructionBuilder[Query <: PipelineQuery](
-  entriesToReplace: EntriesToReplace[Query],
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, ReplaceEntryTimelineInstruction] {
+c-case cwass wepwaceentwyinstwuctionbuiwdew[quewy <: pipewinequewy](
+  entwiestowepwace: entwiestowepwace[quewy], 😳😳😳
+  ovewwide vaw incwudeinstwuction: incwudeinstwuction[quewy] = awwaysincwude)
+    extends uwtinstwuctionbuiwdew[quewy, :3 w-wepwaceentwytimewineinstwuction] {
 
-  override def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[ReplaceEntryTimelineInstruction] = {
-    if (includeInstruction(query, entries))
-      entriesToReplace(query, entries).map(ReplaceEntryTimelineInstruction)
-    else
-      Seq.empty
+  o-ovewwide def buiwd(
+    q-quewy: quewy, OwO
+    e-entwies: s-seq[timewineentwy]
+  ): seq[wepwaceentwytimewineinstwuction] = {
+    if (incwudeinstwuction(quewy, (U ﹏ U) entwies))
+      e-entwiestowepwace(quewy, >w< entwies).map(wepwaceentwytimewineinstwuction)
+    ewse
+      seq.empty
   }
 }

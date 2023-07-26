@@ -1,44 +1,44 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.twittew.seawch.eawwybiwd_woot.mewgews;
 
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
 
 
-public final class PartitionResponseAccumulator extends ResponseAccumulator {
-  private static final String TARGET_TYPE_PARTITION = "partition";
+p-pubwic finaw c-cwass pawtitionwesponseaccumuwatow e-extends wesponseaccumuwatow {
+  p-pwivate static f-finaw stwing t-tawget_type_pawtition = "pawtition";
 
-  @Override
-  public String getNameForLogging(int responseIndex, int numTotalResponses) {
-    return TARGET_TYPE_PARTITION + responseIndex;
+  @ovewwide
+  p-pubwic stwing getnamefowwogging(int wesponseindex, (ˆ ﻌ ˆ)♡ int nyumtotawwesponses) {
+    wetuwn tawget_type_pawtition + w-wesponseindex;
   }
 
-  @Override
-  public String getNameForEarlybirdResponseCodeStats(int responseIndex, int numTotalResponses) {
-    // We do not need to differentiate between partitions: we just want to get the number of
-    // responses returned by Earlybirds, for each EarlybirdResponseCode.
-    return TARGET_TYPE_PARTITION;
+  @ovewwide
+  pubwic stwing getnamefoweawwybiwdwesponsecodestats(int w-wesponseindex, (˘ω˘) int n-nyumtotawwesponses) {
+    // we do nyot nyeed to diffewentiate b-between pawtitions: we just want t-to get the nyumbew o-of
+    // wesponses wetuwned by eawwybiwds, (⑅˘꒳˘) fow each eawwybiwdwesponsecode. (///ˬ///✿)
+    wetuwn tawget_type_pawtition;
   }
 
-  @Override
-  boolean shouldEarlyTerminateMerge(EarlyTerminateTierMergePredicate merger) {
-    return false;
+  @ovewwide
+  b-boowean shouwdeawwytewminatemewge(eawwytewminatetiewmewgepwedicate mewgew) {
+    wetuwn fawse;
   }
 
-  @Override
-  public void handleSkippedResponse(EarlybirdResponseCode responseCode) { }
+  @ovewwide
+  pubwic void handweskippedwesponse(eawwybiwdwesponsecode wesponsecode) { }
 
-  @Override
-  public void handleErrorResponse(EarlybirdResponse response) {
+  @ovewwide
+  p-pubwic void handweewwowwesponse(eawwybiwdwesponse wesponse) {
   }
 
-  @Override
-  public AccumulatedResponses.PartitionCounts getPartitionCounts() {
-    return new AccumulatedResponses.PartitionCounts(getNumResponses(),
-        getSuccessResponses().size() + getSuccessfulEmptyResponseCount(), null);
+  @ovewwide
+  p-pubwic accumuwatedwesponses.pawtitioncounts g-getpawtitioncounts() {
+    w-wetuwn nyew a-accumuwatedwesponses.pawtitioncounts(getnumwesponses(), 😳😳😳
+        getsuccesswesponses().size() + getsuccessfuwemptywesponsecount(), 🥺 n-nyuww);
   }
 
-  @Override
-  protected boolean isMergingAcrossTiers() {
-    return false;
+  @ovewwide
+  pwotected boowean ismewgingacwosstiews() {
+    w-wetuwn fawse;
   }
 }

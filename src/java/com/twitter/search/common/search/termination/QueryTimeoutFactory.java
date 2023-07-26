@@ -1,34 +1,34 @@
-package com.twitter.search.common.search.termination;
+package com.twittew.seawch.common.seawch.tewmination;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
+impowt com.twittew.common.utiw.cwock;
+i-impowt c-com.twittew.seawch.common.seawch.tewminationtwackew;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
 
-public class QueryTimeoutFactory {
+p-pubwic cwass q-quewytimeoutfactowy {
   /**
-   * Creates a QueryTimeout instance for a given EarlybirdRequest and TerminationTracker, if the
-   * required conditions for leaf-level timeout checking are met. Returns null otherwise.
+   * c-cweates a quewytimeout i-instance f-fow a given eawwybiwdwequest and tewminationtwackew, (⑅˘꒳˘) if the
+   * wequiwed conditions f-fow weaf-wevew timeout checking awe met. rawr x3 w-wetuwns nyuww othewwise. (✿oωo)
    *
-   * The conditions are:
-   *   1) CollectorTerminationParams.isEnforceQueryTimeout()
-   *   2) CollectorTerminationParams.isSetTimeoutMs()
+   * t-the conditions awe:
+   *   1) cowwectowtewminationpawams.isenfowcequewytimeout()
+   *   2) cowwectowtewminationpawams.issettimeoutms()
    */
-  public QueryTimeout createQueryTimeout(
-      EarlybirdRequest request,
-      TerminationTracker tracker,
-      Clock clock) {
-    if (tracker != null
-        && request != null
-        && request.isSetSearchQuery()
-        && request.getSearchQuery().isSetCollectorParams()
-        && request.getSearchQuery().getCollectorParams().isSetTerminationParams()
-        && request.getSearchQuery().getCollectorParams().getTerminationParams()
-            .isEnforceQueryTimeout()
-        && request.getSearchQuery().getCollectorParams().getTerminationParams()
-            .isSetTimeoutMs()) {
-      return new QueryTimeoutImpl(request.getClientId(), tracker, clock);
-    } else {
-      return null;
+  p-pubwic quewytimeout cweatequewytimeout(
+      e-eawwybiwdwequest w-wequest, (ˆ ﻌ ˆ)♡
+      tewminationtwackew twackew, (˘ω˘)
+      cwock cwock) {
+    if (twackew != n-nyuww
+        && wequest != nyuww
+        && wequest.issetseawchquewy()
+        && wequest.getseawchquewy().issetcowwectowpawams()
+        && w-wequest.getseawchquewy().getcowwectowpawams().issettewminationpawams()
+        && wequest.getseawchquewy().getcowwectowpawams().gettewminationpawams()
+            .isenfowcequewytimeout()
+        && w-wequest.getseawchquewy().getcowwectowpawams().gettewminationpawams()
+            .issettimeoutms()) {
+      w-wetuwn nyew q-quewytimeoutimpw(wequest.getcwientid(), (⑅˘꒳˘) t-twackew, cwock);
+    } ewse {
+      wetuwn n-nyuww;
     }
   }
 }

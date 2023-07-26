@@ -1,18 +1,18 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finagle/finagle-memcached/src/main/scala",
-        "finatra-internal/mtls-http/src/main/scala",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "servo/repo/src/main/scala",
+scawa_wibwawy(
+    souwces = ["*.scawa"], òωó
+    compiwew_option_sets = ["fataw_wawnings"], o.O
+    s-stwict_deps = t-twue, (U ᵕ U❁)
+    t-tags = ["bazew-compatibwe"], (⑅˘꒳˘)
+    d-dependencies = [
+        "finagwe/finagwe-memcached/swc/main/scawa", ( ͡o ω ͡o )
+        "finatwa-intewnaw/mtws-http/swc/main/scawa", UwU
+        "finatwa-intewnaw/mtws-thwiftmux/swc/main/scawa", rawr x3
+        "sewvo/wepo/swc/main/scawa", rawr
     ],
-    exports = [
-        "finagle/finagle-memcached/src/main/scala",
-        "finatra-internal/mtls-http/src/main/scala",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "servo/repo/src/main/scala",
+    e-expowts = [
+        "finagwe/finagwe-memcached/swc/main/scawa", σωσ
+        "finatwa-intewnaw/mtws-http/swc/main/scawa", σωσ
+        "finatwa-intewnaw/mtws-thwiftmux/swc/main/scawa", >_<
+        "sewvo/wepo/swc/main/scawa", :3
     ],
 )

@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.pipeline.state
+package com.twittew.pwoduct_mixew.cowe.pipewine.state
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
 
-trait HasCandidates[Candidate <: UniversalNoun[Any], T] {
-  def candidates: Seq[Candidate]
-  def updateCandidates(newCandidates: Seq[Candidate]): T
+t-twait hascandidates[candidate <: u-univewsawnoun[any], (⑅˘꒳˘) t-t] {
+  d-def candidates: s-seq[candidate]
+  d-def updatecandidates(newcandidates: s-seq[candidate]): t-t
 }

@@ -1,102 +1,102 @@
-package com.twitter.home_mixer.product.list_recommended_users
+package com.twittew.home_mixew.pwoduct.wist_wecommended_usews
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.marshaller.timelines.RecommendedUsersCursorUnmarshaller
-import com.twitter.home_mixer.model.request.HomeMixerRequest
-import com.twitter.home_mixer.model.request.ListRecommendedUsersProduct
-import com.twitter.home_mixer.model.request.ListRecommendedUsersProductContext
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersQuery
-import com.twitter.home_mixer.product.list_recommended_users.param.ListRecommendedUsersParam.ServerMaxResultsParam
-import com.twitter.home_mixer.product.list_recommended_users.param.ListRecommendedUsersParamConfig
-import com.twitter.home_mixer.service.HomeMixerAccessPolicy.DefaultHomeMixerAccessPolicy
-import com.twitter.home_mixer.service.HomeMixerAlertConfig.DefaultNotificationGroup
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfBelow
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfLatencyAbove
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.common.alert.LatencyAlert
-import com.twitter.product_mixer.core.functional_component.common.alert.P99
-import com.twitter.product_mixer.core.functional_component.common.alert.SuccessRateAlert
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request
-import com.twitter.product_mixer.core.pipeline.PipelineConfig
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineConfig
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.timelines.configapi.Params
-import com.twitter.timelines.render.{thriftscala => urt}
-import com.twitter.timelines.util.RequestCursorSerializer
-import com.twitter.util.Try
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.home_mixew.mawshawwew.timewines.wecommendedusewscuwsowunmawshawwew
+i-impowt com.twittew.home_mixew.modew.wequest.homemixewwequest
+i-impowt c-com.twittew.home_mixew.modew.wequest.wistwecommendedusewspwoduct
+i-impowt com.twittew.home_mixew.modew.wequest.wistwecommendedusewspwoductcontext
+i-impowt com.twittew.home_mixew.pwoduct.wist_wecommended_usews.modew.wistwecommendedusewsquewy
+impowt com.twittew.home_mixew.pwoduct.wist_wecommended_usews.pawam.wistwecommendedusewspawam.sewvewmaxwesuwtspawam
+impowt com.twittew.home_mixew.pwoduct.wist_wecommended_usews.pawam.wistwecommendedusewspawamconfig
+impowt com.twittew.home_mixew.sewvice.homemixewaccesspowicy.defauwthomemixewaccesspowicy
+impowt com.twittew.home_mixew.sewvice.homemixewawewtconfig.defauwtnotificationgwoup
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.cuwsow.uwtcuwsowsewiawizew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.access_powicy.accesspowicy
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.pwedicate.twiggewifbewow
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.pwedicate.twiggewifwatencyabove
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.awewt
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.watencyawewt
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.p99
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.successwateawewt
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pwoductpipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewineconfig
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.badwequest
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct.pwoductpipewineconfig
+impowt com.twittew.pwoduct_mixew.cowe.pwoduct.pwoductpawamconfig
+impowt com.twittew.timewines.configapi.pawams
+impowt c-com.twittew.timewines.wendew.{thwiftscawa => uwt}
+impowt com.twittew.timewines.utiw.wequestcuwsowsewiawizew
+i-impowt com.twittew.utiw.twy
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class ListRecommendedUsersProductPipelineConfig @Inject() (
-  listRecommendedUsersMixerPipelineConfig: ListRecommendedUsersMixerPipelineConfig,
-  listRecommendedUsersParamConfig: ListRecommendedUsersParamConfig)
-    extends ProductPipelineConfig[
-      HomeMixerRequest,
-      ListRecommendedUsersQuery,
-      urt.TimelineResponse
+@singweton
+cwass wistwecommendedusewspwoductpipewineconfig @inject() (
+  w-wistwecommendedusewsmixewpipewineconfig: wistwecommendedusewsmixewpipewineconfig, 😳
+  wistwecommendedusewspawamconfig: w-wistwecommendedusewspawamconfig)
+    extends pwoductpipewineconfig[
+      homemixewwequest, 😳😳😳
+      wistwecommendedusewsquewy, mya
+      uwt.timewinewesponse
     ] {
 
-  override val identifier: ProductPipelineIdentifier =
-    ProductPipelineIdentifier("ListRecommendedUsers")
-  override val product: request.Product = ListRecommendedUsersProduct
-  override val paramConfig: ProductParamConfig = listRecommendedUsersParamConfig
+  o-ovewwide vaw identifiew: p-pwoductpipewineidentifiew =
+    p-pwoductpipewineidentifiew("wistwecommendedusews")
+  o-ovewwide vaw pwoduct: wequest.pwoduct = wistwecommendedusewspwoduct
+  ovewwide v-vaw pawamconfig: p-pwoductpawamconfig = wistwecommendedusewspawamconfig
 
-  override def pipelineQueryTransformer(
-    request: HomeMixerRequest,
-    params: Params
-  ): ListRecommendedUsersQuery = {
-    val context = request.productContext match {
-      case Some(context: ListRecommendedUsersProductContext) => context
-      case _ => throw PipelineFailure(BadRequest, "ListRecommendedUsersProductContext not found")
+  o-ovewwide d-def pipewinequewytwansfowmew(
+    wequest: h-homemixewwequest, mya
+    pawams: p-pawams
+  ): wistwecommendedusewsquewy = {
+    vaw context = wequest.pwoductcontext m-match {
+      case some(context: w-wistwecommendedusewspwoductcontext) => context
+      c-case _ => t-thwow pipewinefaiwuwe(badwequest, (⑅˘꒳˘) "wistwecommendedusewspwoductcontext nyot found")
     }
 
-    val debugOptions = request.debugParams.flatMap(_.debugOptions)
+    vaw debugoptions = wequest.debugpawams.fwatmap(_.debugoptions)
 
-    val pipelineCursor = request.serializedRequestCursor.flatMap { cursor =>
-      Try(UrtCursorSerializer.deserializeUnorderedExcludeIdsCursor(cursor))
-        .getOrElse(RecommendedUsersCursorUnmarshaller(RequestCursorSerializer.deserialize(cursor)))
+    vaw pipewinecuwsow = wequest.sewiawizedwequestcuwsow.fwatmap { cuwsow =>
+      t-twy(uwtcuwsowsewiawizew.desewiawizeunowdewedexcwudeidscuwsow(cuwsow))
+        .getowewse(wecommendedusewscuwsowunmawshawwew(wequestcuwsowsewiawizew.desewiawize(cuwsow)))
     }
 
-    ListRecommendedUsersQuery(
-      listId = context.listId,
-      params = params,
-      clientContext = request.clientContext,
-      features = None,
-      pipelineCursor = pipelineCursor,
-      requestedMaxResults = Some(params(ServerMaxResultsParam)),
-      debugOptions = debugOptions,
-      selectedUserIds = context.selectedUserIds,
-      excludedUserIds = context.excludedUserIds,
-      listName = context.listName
+    w-wistwecommendedusewsquewy(
+      wistid = c-context.wistid, (U ﹏ U)
+      p-pawams = p-pawams, mya
+      cwientcontext = wequest.cwientcontext, ʘwʘ
+      featuwes = n-nyone, (˘ω˘)
+      pipewinecuwsow = pipewinecuwsow, (U ﹏ U)
+      wequestedmaxwesuwts = some(pawams(sewvewmaxwesuwtspawam)), ^•ﻌ•^
+      d-debugoptions = debugoptions,
+      s-sewectedusewids = c-context.sewectedusewids, (˘ω˘)
+      e-excwudedusewids = context.excwudedusewids, :3
+      w-wistname = context.wistname
     )
   }
 
-  override def pipelines: Seq[PipelineConfig] = Seq(listRecommendedUsersMixerPipelineConfig)
+  o-ovewwide d-def pipewines: s-seq[pipewineconfig] = seq(wistwecommendedusewsmixewpipewineconfig)
 
-  override def pipelineSelector(query: ListRecommendedUsersQuery): ComponentIdentifier =
-    listRecommendedUsersMixerPipelineConfig.identifier
+  ovewwide d-def pipewinesewectow(quewy: w-wistwecommendedusewsquewy): c-componentidentifiew =
+    w-wistwecommendedusewsmixewpipewineconfig.identifiew
 
-  override val alerts: Seq[Alert] = Seq(
-    SuccessRateAlert(
-      notificationGroup = DefaultNotificationGroup,
-      warnPredicate = TriggerIfBelow(99.9, 20, 30),
-      criticalPredicate = TriggerIfBelow(99.9, 30, 30),
+  o-ovewwide vaw awewts: seq[awewt] = seq(
+    successwateawewt(
+      n-nyotificationgwoup = defauwtnotificationgwoup, ^^;;
+      wawnpwedicate = twiggewifbewow(99.9, 🥺 20, 30),
+      cwiticawpwedicate = twiggewifbewow(99.9, (⑅˘꒳˘) 30, nyaa~~ 30),
     ),
-    LatencyAlert(
-      notificationGroup = DefaultNotificationGroup,
-      percentile = P99,
-      warnPredicate = TriggerIfLatencyAbove(1000.millis, 15, 30),
-      criticalPredicate = TriggerIfLatencyAbove(1500.millis, 15, 30)
+    w-watencyawewt(
+      nyotificationgwoup = defauwtnotificationgwoup, :3
+      pewcentiwe = p-p99, ( ͡o ω ͡o )
+      w-wawnpwedicate = t-twiggewifwatencyabove(1000.miwwis, mya 15, (///ˬ///✿) 30),
+      cwiticawpwedicate = t-twiggewifwatencyabove(1500.miwwis, (˘ω˘) 15, 30)
     )
   )
 
-  override val debugAccessPolicies: Set[AccessPolicy] = DefaultHomeMixerAccessPolicy
+  ovewwide vaw debugaccesspowicies: s-set[accesspowicy] = d-defauwthomemixewaccesspowicy
 }

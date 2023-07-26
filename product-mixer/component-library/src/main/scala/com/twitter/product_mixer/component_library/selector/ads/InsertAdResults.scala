@@ -1,94 +1,94 @@
-package com.twitter.product_mixer.component_library.selector.ads
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow.ads
 
-import com.twitter.goldfinch.api.AdsInjectionSurfaceAreas.SurfaceAreaName
-import com.twitter.goldfinch.api.AdsInjectorAdditionalRequestParams
-import com.twitter.goldfinch.api.AdsInjectorOutput
-import com.twitter.goldfinch.api.{AdsInjector => GoldfinchAdsInjector}
-import com.twitter.product_mixer.component_library.model.query.ads._
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import CandidateScope.PartitionedCandidates
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.gowdfinch.api.adsinjectionsuwfaceaweas.suwfaceaweaname
+i-impowt c-com.twittew.gowdfinch.api.adsinjectowadditionawwequestpawams
+impowt c-com.twittew.gowdfinch.api.adsinjectowoutput
+i-impowt com.twittew.gowdfinch.api.{adsinjectow => g-gowdfinchadsinjectow}
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.quewy.ads._
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+impowt candidatescope.pawtitionedcandidates
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.specificpipewine
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Injects the sequence of AdCandidates in the `result` in the
- * sequence of the Other Candidates(which are not ads).
+ * injects the sequence o-of adcandidates in the `wesuwt` i-in the
+ * s-sequence of the othew candidates(which awe nyot ads). rawr x3
  *
- * Every SurfaceArea or DisplayLocation runs their own desired set of adjusters(set in pipeline)
- * to inject ads and reposition the ads in the sequence of other candidates of `result` :
- * which are fetched by AdsInjectionSurfaceAreaAdjustersMap
- * Note: The original sequence of non_promoted entries(non-ads) is retained and the ads
- * are inserted in the sequence using `goldfinch` library based on the 'insertion-position'
- * hydrated in AdsCandidate by Adserver/Admixer.
+ * evewy suwfaceawea ow d-dispwaywocation wuns theiw own desiwed set of adjustews(set in pipewine)
+ * to i-inject ads and weposition the ads i-in the sequence o-of othew candidates o-of `wesuwt` :
+ * w-which awe fetched by adsinjectionsuwfaceaweaadjustewsmap
+ * nyote: the owiginaw s-sequence of nyon_pwomoted entwies(non-ads) i-is wetained and the ads
+ * awe insewted in the sequence using `gowdfinch` wibwawy based on the 'insewtion-position'
+ * h-hydwated in adscandidate b-by adsewvew/admixew. XD
  *
- * ***** Goldfinch recommends to run this selector as close to the marshalling of candidates to have
- * more realistic view of served-timeline in Goldfinch-BQ-Logs and avoid any further updates on the
- * timeline(sequence of entries) created. ****
+ * ***** g-gowdfinch wecommends t-to wun this sewectow as cwose to the mawshawwing of candidates t-to have
+ * m-mowe weawistic view of sewved-timewine i-in gowdfinch-bq-wogs and a-avoid any fuwthew updates on t-the
+ * timewine(sequence of entwies) c-cweated. σωσ ****
  *
- * Any surface area like `search_tweets(surface_area)` can call
- * InsertAdResults(surfaceArea = "TweetSearch", candidatePipeline = adsCandidatePipeline.identifier,
- * ProductMixerAdsInjector = productMixerAdsInjector)
- * where the pipeline config can call
- * productMixerAdsInjector.forSurfaceArea("TweetSearch") to get AdsInjector Object
+ * any suwface awea wike `seawch_tweets(suwface_awea)` c-can caww
+ * insewtadwesuwts(suwfaceawea = "tweetseawch", (U ᵕ U❁) c-candidatepipewine = adscandidatepipewine.identifiew, (U ﹏ U)
+ * p-pwoductmixewadsinjectow = p-pwoductmixewadsinjectow)
+ * whewe the pipewine config can caww
+ * pwoductmixewadsinjectow.fowsuwfaceawea("tweetseawch") to get adsinjectow object
  *
- * @example
- * `Seq(source1NonAd_Id1, source1NonAd_Id2, source2NonAd_Id1, source2NonAd_Id2,source1NonAd_Id3, source3NonAd_Id3,source3Ad_Id1_InsertionPos1, source3Ad_Id2_InsertionPos4)`
- * then the output result can be
- * `Seq(source1NonAd_Id1, source3Ad_Id1_InsertionPos1, source1NonAd_Id2, source2NonAd_Id1, source3Ad_Id2_InsertionPos4,source2NonAd_Id2, source1NonAd_Id3, source3NonAd_Id3)`
- * depending on the insertion position of Ads and other adjusters shifting the ads
+ * @exampwe
+ * `seq(souwce1nonad_id1, :3 souwce1nonad_id2, ( ͡o ω ͡o ) s-souwce2nonad_id1, σωσ s-souwce2nonad_id2,souwce1nonad_id3, >w< souwce3nonad_id3,souwce3ad_id1_insewtionpos1, 😳😳😳 s-souwce3ad_id2_insewtionpos4)`
+ * t-then the o-output wesuwt can be
+ * `seq(souwce1nonad_id1, OwO souwce3ad_id1_insewtionpos1, souwce1nonad_id2, 😳 s-souwce2nonad_id1, 😳😳😳 souwce3ad_id2_insewtionpos4,souwce2nonad_id2, (˘ω˘) souwce1nonad_id3, ʘwʘ souwce3nonad_id3)`
+ * depending o-on the insewtion position of ads a-and othew adjustews s-shifting t-the ads
  */
-case class InsertAdResults(
-  surfaceAreaName: SurfaceAreaName,
-  adsInjector: GoldfinchAdsInjector[
-    PipelineQuery with AdsQuery,
-    CandidateWithDetails,
-    CandidateWithDetails
-  ],
-  adsCandidatePipeline: CandidatePipelineIdentifier)
-    extends Selector[PipelineQuery with AdsQuery] {
+case cwass insewtadwesuwts(
+  s-suwfaceaweaname: s-suwfaceaweaname, ( ͡o ω ͡o )
+  a-adsinjectow: g-gowdfinchadsinjectow[
+    pipewinequewy with adsquewy, o.O
+    c-candidatewithdetaiws, >w<
+    c-candidatewithdetaiws
+  ], 😳
+  a-adscandidatepipewine: c-candidatepipewineidentifiew)
+    e-extends sewectow[pipewinequewy with adsquewy] {
 
-  override val pipelineScope: CandidateScope = SpecificPipeline(adsCandidatePipeline)
+  ovewwide vaw pipewinescope: c-candidatescope = specificpipewine(adscandidatepipewine)
 
-  override def apply(
-    query: PipelineQuery with AdsQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    // Read into ads and non-ads candidates.
-    val PartitionedCandidates(adCandidates, otherRemainingCandidates) =
-      pipelineScope.partition(remainingCandidates)
+  ovewwide def appwy(
+    quewy: pipewinequewy with adsquewy, 🥺
+    w-wemainingcandidates: seq[candidatewithdetaiws], rawr x3
+    wesuwt: seq[candidatewithdetaiws]
+  ): sewectowwesuwt = {
+    // w-wead into ads a-and nyon-ads candidates. o.O
+    v-vaw pawtitionedcandidates(adcandidates, rawr o-othewwemainingcandidates) =
+      pipewinescope.pawtition(wemainingcandidates)
 
-    // Create this param from Query/AdsCandidate based on surface_area, if required.
-    val adsInjectorAdditionalRequestParams =
-      AdsInjectorAdditionalRequestParams(budgetAwareExperimentId = None)
+    // c-cweate t-this pawam fwom quewy/adscandidate based on suwface_awea, ʘwʘ if wequiwed. 😳😳😳
+    vaw adsinjectowadditionawwequestpawams =
+      a-adsinjectowadditionawwequestpawams(budgetawaweexpewimentid = nyone)
 
-    val adsInjectorOutput: AdsInjectorOutput[CandidateWithDetails, CandidateWithDetails] =
-      adsInjector.applyForAllEntries(
-        query = query,
-        nonPromotedEntries = result,
-        promotedEntries = adCandidates,
-        adsInjectorAdditionalRequestParams = adsInjectorAdditionalRequestParams)
+    v-vaw adsinjectowoutput: adsinjectowoutput[candidatewithdetaiws, ^^;; c-candidatewithdetaiws] =
+      a-adsinjectow.appwyfowawwentwies(
+        quewy = quewy,
+        n-nyonpwomotedentwies = w-wesuwt, o.O
+        pwomotedentwies = a-adcandidates, (///ˬ///✿)
+        a-adsinjectowadditionawwequestpawams = adsinjectowadditionawwequestpawams)
 
-    val updatedRemainingCandidates = otherRemainingCandidates ++
-      GoldfinchResults(adsInjectorOutput.unusedEntries).adapt
-    val mergedResults = GoldfinchResults(adsInjectorOutput.mergedEntries).adapt
-    SelectorResult(remainingCandidates = updatedRemainingCandidates, result = mergedResults)
+    vaw updatedwemainingcandidates = othewwemainingcandidates ++
+      gowdfinchwesuwts(adsinjectowoutput.unusedentwies).adapt
+    v-vaw m-mewgedwesuwts = g-gowdfinchwesuwts(adsinjectowoutput.mewgedentwies).adapt
+    sewectowwesuwt(wemainingcandidates = u-updatedwemainingcandidates, σωσ w-wesuwt = mewgedwesuwts)
   }
 
   /**
-   * Goldfinch separates NonPromotedEntryType and PromotedEntryType models, while in ProMix both
-   * non-promoted and promoted entries are CandidateWithDetails. As such, we need to flatten the
-   * result back into a single Seq of CandidateWithDetails. See [[AdsInjectorOutput]]
+   * g-gowdfinch sepawates nyonpwomotedentwytype and pwomotedentwytype modews, nyaa~~ whiwe in pwomix both
+   * n-nyon-pwomoted a-and pwomoted entwies awe candidatewithdetaiws. ^^;; as such, we n-nyeed to fwatten t-the
+   * wesuwt back into a singwe seq of candidatewithdetaiws. ^•ﻌ•^ see [[adsinjectowoutput]]
    */
-  case class GoldfinchResults(results: Seq[Either[CandidateWithDetails, CandidateWithDetails]]) {
-    def adapt: Seq[CandidateWithDetails] = {
-      results.collect {
-        case Right(value) => value
-        case Left(value) => value
+  c-case cwass gowdfinchwesuwts(wesuwts: seq[eithew[candidatewithdetaiws, σωσ candidatewithdetaiws]]) {
+    def adapt: seq[candidatewithdetaiws] = {
+      w-wesuwts.cowwect {
+        case wight(vawue) => vawue
+        c-case weft(vawue) => v-vawue
       }
     }
   }

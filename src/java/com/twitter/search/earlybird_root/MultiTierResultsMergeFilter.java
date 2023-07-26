@@ -1,55 +1,55 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import java.util.List;
+impowt j-java.utiw.wist;
 
-import javax.inject.Inject;
+i-impowt javax.inject.inject;
 
-import com.twitter.finagle.Filter;
-import com.twitter.finagle.Service;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.mergers.EarlybirdResponseMerger;
-import com.twitter.search.earlybird_root.mergers.TierResponseAccumulator;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+i-impowt com.twittew.finagwe.fiwtew;
+i-impowt com.twittew.finagwe.sewvice;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdfeatuweschemamewgew;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt com.twittew.seawch.eawwybiwd_woot.mewgews.eawwybiwdwesponsemewgew;
+impowt c-com.twittew.seawch.eawwybiwd_woot.mewgews.tiewwesponseaccumuwatow;
+impowt com.twittew.utiw.function;
+impowt com.twittew.utiw.futuwe;
 
 /**
- * Filter used to merge results from multiple tiers
+ * f-fiwtew used to mewge w-wesuwts fwom muwtipwe tiews
  */
-public class MultiTierResultsMergeFilter extends
-    Filter<EarlybirdRequestContext, EarlybirdResponse,
-        EarlybirdRequestContext, List<Future<EarlybirdResponse>>> {
+pubwic cwass muwtitiewwesuwtsmewgefiwtew e-extends
+    fiwtew<eawwybiwdwequestcontext, e-eawwybiwdwesponse, >w<
+        e-eawwybiwdwequestcontext, rawr wist<futuwe<eawwybiwdwesponse>>> {
 
-  private final EarlybirdFeatureSchemaMerger featureSchemaMerger;
+  pwivate finaw eawwybiwdfeatuweschemamewgew featuweschemamewgew;
 
-  @Inject
-  public MultiTierResultsMergeFilter(EarlybirdFeatureSchemaMerger featureSchemaMerger) {
-    this.featureSchemaMerger = featureSchemaMerger;
+  @inject
+  pubwic m-muwtitiewwesuwtsmewgefiwtew(eawwybiwdfeatuweschemamewgew featuweschemamewgew) {
+    this.featuweschemamewgew = featuweschemamewgew;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      final EarlybirdRequestContext request,
-      Service<EarlybirdRequestContext, List<Future<EarlybirdResponse>>> service) {
-    return service.apply(request).flatMap(Function.func(responses -> merge(request, responses)));
+  @ovewwide
+  pubwic futuwe<eawwybiwdwesponse> a-appwy(
+      finaw e-eawwybiwdwequestcontext w-wequest, mya
+      s-sewvice<eawwybiwdwequestcontext, ^^ w-wist<futuwe<eawwybiwdwesponse>>> sewvice) {
+    wetuwn s-sewvice.appwy(wequest).fwatmap(function.func(wesponses -> mewge(wequest, 😳😳😳 wesponses)));
   }
 
-  private Future<EarlybirdResponse> merge(
-      EarlybirdRequestContext requestContext,
-      List<Future<EarlybirdResponse>> responses) {
+  p-pwivate futuwe<eawwybiwdwesponse> mewge(
+      eawwybiwdwequestcontext wequestcontext, mya
+      wist<futuwe<eawwybiwdwesponse>> wesponses) {
 
-    // For multi-tier response merging, the number of partitions do not have meaning because
-    // the response is not uniformly partitioned anymore.  We pass Integer.MAX_VALUE for stats
-    // counting purpose.
-    EarlybirdResponseMerger merger = EarlybirdResponseMerger.getResponseMerger(
-        requestContext,
-        responses,
-        new TierResponseAccumulator(),
-        EarlybirdCluster.FULL_ARCHIVE,
-        featureSchemaMerger,
-        Integer.MAX_VALUE);
-    return merger.merge();
+    // f-fow muwti-tiew wesponse mewging, 😳 t-the nyumbew of p-pawtitions do nyot h-have meaning because
+    // the wesponse is nyot unifowmwy pawtitioned a-anymowe. -.-  w-we pass integew.max_vawue fow s-stats
+    // counting p-puwpose. 🥺
+    eawwybiwdwesponsemewgew m-mewgew = eawwybiwdwesponsemewgew.getwesponsemewgew(
+        w-wequestcontext, o.O
+        wesponses, /(^•ω•^)
+        nyew tiewwesponseaccumuwatow(), nyaa~~
+        e-eawwybiwdcwustew.fuww_awchive, nyaa~~
+        featuweschemamewgew, :3
+        i-integew.max_vawue);
+    wetuwn mewgew.mewge();
   }
 }

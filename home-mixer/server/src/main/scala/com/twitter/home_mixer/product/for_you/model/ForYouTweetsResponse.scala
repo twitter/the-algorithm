@@ -1,5 +1,5 @@
-package com.twitter.home_mixer.product.for_you.model
+package com.twittew.home_mixew.pwoduct.fow_you.modew
 
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.hasmawshawwing
 
-case class ForYouTweetsResponse(tweetCandidates: Seq[Long]) extends HasMarshalling
+c-case c-cwass fowyoutweetswesponse(tweetcandidates: s-seq[wong]) e-extends h-hasmawshawwing

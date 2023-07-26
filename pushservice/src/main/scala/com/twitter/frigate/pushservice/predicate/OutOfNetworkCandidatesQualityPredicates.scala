@@ -1,221 +1,221 @@
-package com.twitter.frigate.pushservice.predicate
+package com.twittew.fwigate.pushsewvice.pwedicate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.candidate.TargetABDecider
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.data_pipeline.features_common.MrRequestContextForFeatureStore
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.ml.featurestore.lib.dynamic.DynamicFeatureStoreClient
-import com.twitter.util.Future
-import com.twitter.frigate.pushservice.predicate.PostRankingPredicateHelper._
-import com.twitter.frigate.pushservice.util.CandidateUtil
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.base._
+i-impowt c-com.twittew.fwigate.common.candidate.tawgetabdecidew
+i-impowt com.twittew.fwigate.common.wec_types.wectypes
+i-impowt c-com.twittew.fwigate.data_pipewine.featuwes_common.mwwequestcontextfowfeatuwestowe
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+impowt com.twittew.hewmit.pwedicate.namedpwedicate
+impowt com.twittew.hewmit.pwedicate.pwedicate
+impowt com.twittew.mw.featuwestowe.wib.dynamic.dynamicfeatuwestowecwient
+i-impowt com.twittew.utiw.futuwe
+impowt com.twittew.fwigate.pushsewvice.pwedicate.postwankingpwedicatehewpew._
+i-impowt com.twittew.fwigate.pushsewvice.utiw.candidateutiw
 
-object OutOfNetworkCandidatesQualityPredicates {
+object outofnetwowkcandidatesquawitypwedicates {
 
-  def getTweetCharLengthThreshold(
-    target: TargetUser with TargetABDecider,
-    language: String,
-    useMediaThresholds: Boolean
-  ): Double = {
-    lazy val sautOonWithMediaTweetLengthThreshold =
-      target.params(PushFeatureSwitchParams.SautOonWithMediaTweetLengthThresholdParam)
-    lazy val nonSautOonWithMediaTweetLengthThreshold =
-      target.params(PushFeatureSwitchParams.NonSautOonWithMediaTweetLengthThresholdParam)
-    lazy val sautOonWithoutMediaTweetLengthThreshold =
-      target.params(PushFeatureSwitchParams.SautOonWithoutMediaTweetLengthThresholdParam)
-    lazy val nonSautOonWithoutMediaTweetLengthThreshold =
-      target.params(PushFeatureSwitchParams.NonSautOonWithoutMediaTweetLengthThresholdParam)
-    val moreStrictForUndefinedLanguages =
-      target.params(PushFeatureSwitchParams.OonTweetLengthPredicateMoreStrictForUndefinedLanguages)
-    val isSautLanguage = if (moreStrictForUndefinedLanguages) {
-      isTweetLanguageInSautOrUndefined(language)
-    } else isTweetLanguageInSaut(language)
+  d-def gettweetchawwengththweshowd(
+    tawget: tawgetusew with tawgetabdecidew, (ˆ ﻌ ˆ)♡
+    w-wanguage: stwing, XD
+    usemediathweshowds: b-boowean
+  ): doubwe = {
+    w-wazy vaw sautoonwithmediatweetwengththweshowd =
+      tawget.pawams(pushfeatuweswitchpawams.sautoonwithmediatweetwengththweshowdpawam)
+    wazy vaw nyonsautoonwithmediatweetwengththweshowd =
+      t-tawget.pawams(pushfeatuweswitchpawams.nonsautoonwithmediatweetwengththweshowdpawam)
+    wazy vaw sautoonwithoutmediatweetwengththweshowd =
+      tawget.pawams(pushfeatuweswitchpawams.sautoonwithoutmediatweetwengththweshowdpawam)
+    wazy v-vaw nyonsautoonwithoutmediatweetwengththweshowd =
+      tawget.pawams(pushfeatuweswitchpawams.nonsautoonwithoutmediatweetwengththweshowdpawam)
+    v-vaw mowestwictfowundefinedwanguages =
+      tawget.pawams(pushfeatuweswitchpawams.oontweetwengthpwedicatemowestwictfowundefinedwanguages)
+    v-vaw issautwanguage = i-if (mowestwictfowundefinedwanguages) {
+      i-istweetwanguageinsautowundefined(wanguage)
+    } ewse istweetwanguageinsaut(wanguage)
 
-    (useMediaThresholds, isSautLanguage) match {
-      case (true, true) =>
-        sautOonWithMediaTweetLengthThreshold
-      case (true, false) =>
-        nonSautOonWithMediaTweetLengthThreshold
-      case (false, true) =>
-        sautOonWithoutMediaTweetLengthThreshold
-      case (false, false) =>
-        nonSautOonWithoutMediaTweetLengthThreshold
-      case _ => -1
+    (usemediathweshowds, (ˆ ﻌ ˆ)♡ issautwanguage) m-match {
+      case (twue, ( ͡o ω ͡o ) twue) =>
+        sautoonwithmediatweetwengththweshowd
+      c-case (twue, rawr x3 fawse) =>
+        nyonsautoonwithmediatweetwengththweshowd
+      case (fawse, nyaa~~ twue) =>
+        sautoonwithoutmediatweetwengththweshowd
+      c-case (fawse, >_< fawse) =>
+        nyonsautoonwithoutmediatweetwengththweshowd
+      c-case _ => -1
     }
   }
 
-  def getTweetWordLengthThreshold(
-    target: TargetUser with TargetABDecider,
-    language: String,
-    useMediaThresholds: Boolean
-  ): Double = {
-    lazy val argfOonWithMediaTweetWordLengthThresholdParam =
-      target.params(PushFeatureSwitchParams.ArgfOonWithMediaTweetWordLengthThresholdParam)
-    lazy val esfthOonWithMediaTweetWordLengthThresholdParam =
-      target.params(PushFeatureSwitchParams.EsfthOonWithMediaTweetWordLengthThresholdParam)
+  d-def g-gettweetwowdwengththweshowd(
+    tawget: tawgetusew with tawgetabdecidew, ^^;;
+    wanguage: stwing, (ˆ ﻌ ˆ)♡
+    u-usemediathweshowds: b-boowean
+  ): doubwe = {
+    w-wazy vaw awgfoonwithmediatweetwowdwengththweshowdpawam =
+      t-tawget.pawams(pushfeatuweswitchpawams.awgfoonwithmediatweetwowdwengththweshowdpawam)
+    wazy v-vaw esfthoonwithmediatweetwowdwengththweshowdpawam =
+      tawget.pawams(pushfeatuweswitchpawams.esfthoonwithmediatweetwowdwengththweshowdpawam)
 
-    lazy val argfOonCandidatesWithMediaCondition =
-      isTweetLanguageInArgf(language) && useMediaThresholds
-    lazy val esfthOonCandidatesWithMediaCondition =
-      isTweetLanguageInEsfth(language) && useMediaThresholds
-    lazy val afirfOonCandidatesWithoutMediaCondition =
-      isTweetLanguageInAfirf(language) && !useMediaThresholds
+    w-wazy vaw awgfooncandidateswithmediacondition =
+      istweetwanguageinawgf(wanguage) && u-usemediathweshowds
+    wazy vaw e-esfthooncandidateswithmediacondition =
+      istweetwanguageinesfth(wanguage) && u-usemediathweshowds
+    w-wazy vaw afiwfooncandidateswithoutmediacondition =
+      istweetwanguageinafiwf(wanguage) && !usemediathweshowds
 
-    val afirfOonCandidatesWithoutMediaTweetWordLengthThreshold = 5
-    if (argfOonCandidatesWithMediaCondition) {
-      argfOonWithMediaTweetWordLengthThresholdParam
-    } else if (esfthOonCandidatesWithMediaCondition) {
-      esfthOonWithMediaTweetWordLengthThresholdParam
-    } else if (afirfOonCandidatesWithoutMediaCondition) {
-      afirfOonCandidatesWithoutMediaTweetWordLengthThreshold
-    } else -1
+    vaw afiwfooncandidateswithoutmediatweetwowdwengththweshowd = 5
+    if (awgfooncandidateswithmediacondition) {
+      awgfoonwithmediatweetwowdwengththweshowdpawam
+    } e-ewse if (esfthooncandidateswithmediacondition) {
+      e-esfthoonwithmediatweetwowdwengththweshowdpawam
+    } ewse if (afiwfooncandidateswithoutmediacondition) {
+      a-afiwfooncandidateswithoutmediatweetwowdwengththweshowd
+    } e-ewse -1
   }
 
-  def oonTweetLengthBasedPrerankingPredicate(
-    characterBased: Boolean
+  d-def oontweetwengthbasedpwewankingpwedicate(
+    chawactewbased: boowean
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[OutOfNetworkTweetCandidate with TargetInfo[
-    TargetUser with TargetABDecider
+    impwicit s-stats: statsweceivew
+  ): nyamedpwedicate[outofnetwowktweetcandidate with tawgetinfo[
+    tawgetusew with tawgetabdecidew
   ]] = {
-    val name = "oon_tweet_length_based_preranking_predicate"
-    val scopedStats = stats.scope(s"${name}_charBased_$characterBased")
+    v-vaw nyame = "oon_tweet_wength_based_pwewanking_pwedicate"
+    vaw scopedstats = s-stats.scope(s"${name}_chawbased_$chawactewbased")
 
-    Predicate
-      .fromAsync {
-        cand: OutOfNetworkTweetCandidate with TargetInfo[TargetUser with TargetABDecider] =>
-          cand match {
-            case candidate: TweetAuthorDetails =>
-              val target = candidate.target
-              val crt = candidate.commonRecType
+    p-pwedicate
+      .fwomasync {
+        c-cand: outofnetwowktweetcandidate with tawgetinfo[tawgetusew w-with tawgetabdecidew] =>
+          c-cand match {
+            c-case c-candidate: tweetauthowdetaiws =>
+              vaw tawget = candidate.tawget
+              vaw c-cwt = candidate.commonwectype
 
-              val updatedMediaLogic =
-                target.params(PushFeatureSwitchParams.OonTweetLengthPredicateUpdatedMediaLogic)
-              val updatedQuoteTweetLogic =
-                target.params(PushFeatureSwitchParams.OonTweetLengthPredicateUpdatedQuoteTweetLogic)
-              val useMediaThresholds = if (updatedMediaLogic || updatedQuoteTweetLogic) {
-                val hasMedia = updatedMediaLogic && (candidate.hasPhoto || candidate.hasVideo)
-                val hasQuoteTweet = updatedQuoteTweetLogic && candidate.quotedTweet.nonEmpty
-                hasMedia || hasQuoteTweet
-              } else RecTypes.isMediaType(crt)
-              val enableFilter =
-                target.params(PushFeatureSwitchParams.EnablePrerankingTweetLengthPredicate)
+              v-vaw u-updatedmediawogic =
+                t-tawget.pawams(pushfeatuweswitchpawams.oontweetwengthpwedicateupdatedmediawogic)
+              v-vaw updatedquotetweetwogic =
+                tawget.pawams(pushfeatuweswitchpawams.oontweetwengthpwedicateupdatedquotetweetwogic)
+              vaw usemediathweshowds = if (updatedmediawogic || u-updatedquotetweetwogic) {
+                vaw hasmedia = updatedmediawogic && (candidate.hasphoto || candidate.hasvideo)
+                vaw hasquotetweet = updatedquotetweetwogic && candidate.quotedtweet.nonempty
+                h-hasmedia || hasquotetweet
+              } ewse wectypes.ismediatype(cwt)
+              vaw enabwefiwtew =
+                t-tawget.pawams(pushfeatuweswitchpawams.enabwepwewankingtweetwengthpwedicate)
 
-              val language = candidate.tweet.flatMap(_.language.map(_.language)).getOrElse("")
-              val tweetTextOpt = candidate.tweet.flatMap(_.coreData.map(_.text))
+              v-vaw wanguage = c-candidate.tweet.fwatmap(_.wanguage.map(_.wanguage)).getowewse("")
+              vaw tweettextopt = c-candidate.tweet.fwatmap(_.cowedata.map(_.text))
 
-              val (length: Double, threshold: Double) = if (characterBased) {
+              vaw (wength: doubwe, ^^;; t-thweshowd: d-doubwe) = if (chawactewbased) {
                 (
-                  tweetTextOpt.map(_.size.toDouble).getOrElse(9999.0),
-                  getTweetCharLengthThreshold(target, language, useMediaThresholds))
-              } else {
+                  tweettextopt.map(_.size.todoubwe).getowewse(9999.0), (⑅˘꒳˘)
+                  gettweetchawwengththweshowd(tawget, rawr x3 wanguage, (///ˬ///✿) usemediathweshowds))
+              } ewse {
                 (
-                  tweetTextOpt.map(getTweetWordLength).getOrElse(999.0),
-                  getTweetWordLengthThreshold(target, language, useMediaThresholds))
+                  tweettextopt.map(gettweetwowdwength).getowewse(999.0),
+                  g-gettweetwowdwengththweshowd(tawget, 🥺 wanguage, >_< u-usemediathweshowds))
               }
-              scopedStats.counter("threshold_" + threshold.toString).incr()
+              scopedstats.countew("thweshowd_" + t-thweshowd.tostwing).incw()
 
-              CandidateUtil.shouldApplyHealthQualityFiltersForPrerankingPredicates(candidate).map {
-                case true if enableFilter =>
-                  length > threshold
-                case _ => true
+              c-candidateutiw.shouwdappwyheawthquawityfiwtewsfowpwewankingpwedicates(candidate).map {
+                case twue if enabwefiwtew =>
+                  w-wength > t-thweshowd
+                case _ => t-twue
               }
-            case _ =>
-              scopedStats.counter("author_is_not_hydrated").incr()
-              Future.True
+            c-case _ =>
+              scopedstats.countew("authow_is_not_hydwated").incw()
+              futuwe.twue
           }
-      }.withStats(scopedStats)
-      .withName(name)
+      }.withstats(scopedstats)
+      .withname(name)
   }
 
-  private def isTweetLanguageInAfirf(candidateLanguage: String): Boolean = {
-    val setAFIRF: Set[String] = Set("")
-    setAFIRF.contains(candidateLanguage)
+  pwivate def istweetwanguageinafiwf(candidatewanguage: s-stwing): b-boowean = {
+    v-vaw setafiwf: set[stwing] = set("")
+    s-setafiwf.contains(candidatewanguage)
   }
-  private def isTweetLanguageInEsfth(candidateLanguage: String): Boolean = {
-    val setESFTH: Set[String] = Set("")
-    setESFTH.contains(candidateLanguage)
+  p-pwivate def istweetwanguageinesfth(candidatewanguage: s-stwing): boowean = {
+    vaw setesfth: set[stwing] = set("")
+    setesfth.contains(candidatewanguage)
   }
-  private def isTweetLanguageInArgf(candidateLanguage: String): Boolean = {
-    val setARGF: Set[String] = Set("")
-    setARGF.contains(candidateLanguage)
-  }
-
-  private def isTweetLanguageInSaut(candidateLanguage: String): Boolean = {
-    val setSAUT = Set("")
-    setSAUT.contains(candidateLanguage)
+  p-pwivate d-def istweetwanguageinawgf(candidatewanguage: stwing): boowean = {
+    v-vaw setawgf: s-set[stwing] = set("")
+    setawgf.contains(candidatewanguage)
   }
 
-  private def isTweetLanguageInSautOrUndefined(candidateLanguage: String): Boolean = {
-    val setSautOrUndefined = Set("")
-    setSautOrUndefined.contains(candidateLanguage)
+  pwivate def istweetwanguageinsaut(candidatewanguage: s-stwing): boowean = {
+    vaw setsaut = set("")
+    setsaut.contains(candidatewanguage)
   }
 
-  def containTargetNegativeKeywords(text: String, denylist: Seq[String]): Boolean = {
-    if (denylist.isEmpty)
-      false
-    else {
-      denylist
-        .map { negativeKeyword =>
-          text.toLowerCase().contains(negativeKeyword)
-        }.reduce(_ || _)
+  p-pwivate def istweetwanguageinsautowundefined(candidatewanguage: stwing): b-boowean = {
+    v-vaw setsautowundefined = set("")
+    setsautowundefined.contains(candidatewanguage)
+  }
+
+  def containtawgetnegativekeywowds(text: s-stwing, UwU denywist: s-seq[stwing]): boowean = {
+    if (denywist.isempty)
+      fawse
+    ewse {
+      d-denywist
+        .map { nyegativekeywowd =>
+          t-text.towowewcase().contains(negativekeywowd)
+        }.weduce(_ || _)
     }
   }
 
-  def NegativeKeywordsPredicate(
-    postRankingFeatureStoreClient: DynamicFeatureStoreClient[MrRequestContextForFeatureStore]
+  def nyegativekeywowdspwedicate(
+    postwankingfeatuwestowecwient: dynamicfeatuwestowecwient[mwwequestcontextfowfeatuwestowe]
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[
-    PushCandidate with TweetCandidate with RecommendationType
+    i-impwicit stats: statsweceivew
+  ): n-nyamedpwedicate[
+    p-pushcandidate with tweetcandidate w-with wecommendationtype
   ] = {
 
-    val name = "negative_keywords_predicate"
-    val scopedStatsReceiver = stats.scope(name)
-    val allOonCandidatesCounter = scopedStatsReceiver.counter("all_oon_candidates")
-    val filteredOonCandidatesCounter = scopedStatsReceiver.counter("filtered_oon_candidates")
-    val tweetLanguageFeature = "RecTweet.TweetyPieResult.Language"
+    vaw nyame = "negative_keywowds_pwedicate"
+    v-vaw scopedstatsweceivew = s-stats.scope(name)
+    v-vaw awwooncandidatescountew = scopedstatsweceivew.countew("aww_oon_candidates")
+    v-vaw fiwtewedooncandidatescountew = s-scopedstatsweceivew.countew("fiwtewed_oon_candidates")
+    vaw tweetwanguagefeatuwe = "wectweet.tweetypiewesuwt.wanguage"
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetCandidate with RecommendationType =>
-        val target = candidate.target
-        val crt = candidate.commonRecType
-        val isTwistlyCandidate = RecTypes.twistlyTweets.contains(crt)
+    pwedicate
+      .fwomasync { c-candidate: p-pushcandidate w-with tweetcandidate with wecommendationtype =>
+        vaw tawget = c-candidate.tawget
+        vaw cwt = candidate.commonwectype
+        v-vaw istwistwycandidate = w-wectypes.twistwytweets.contains(cwt)
 
-        lazy val enableNegativeKeywordsPredicateParam =
-          target.params(PushFeatureSwitchParams.EnableNegativeKeywordsPredicateParam)
-        lazy val negativeKeywordsPredicateDenylist =
-          target.params(PushFeatureSwitchParams.NegativeKeywordsPredicateDenylist)
-        lazy val candidateLanguage =
-          candidate.categoricalFeatures.getOrElse(tweetLanguageFeature, "")
+        wazy vaw enabwenegativekeywowdspwedicatepawam =
+          tawget.pawams(pushfeatuweswitchpawams.enabwenegativekeywowdspwedicatepawam)
+        wazy vaw nyegativekeywowdspwedicatedenywist =
+          t-tawget.pawams(pushfeatuweswitchpawams.negativekeywowdspwedicatedenywist)
+        w-wazy vaw c-candidatewanguage =
+          candidate.categowicawfeatuwes.getowewse(tweetwanguagefeatuwe, >_< "")
 
-        if (CandidateUtil.shouldApplyHealthQualityFilters(candidate) && candidateLanguage.equals(
-            "en") && isTwistlyCandidate && enableNegativeKeywordsPredicateParam) {
-          allOonCandidatesCounter.incr()
+        i-if (candidateutiw.shouwdappwyheawthquawityfiwtews(candidate) && candidatewanguage.equaws(
+            "en") && i-istwistwycandidate && enabwenegativekeywowdspwedicatepawam) {
+          awwooncandidatescountew.incw()
 
-          val tweetTextFuture: Future[String] =
-            getTweetText(candidate, postRankingFeatureStoreClient)
+          vaw tweettextfutuwe: futuwe[stwing] =
+            gettweettext(candidate, -.- postwankingfeatuwestowecwient)
 
-          tweetTextFuture.map { tweetText =>
-            val containsNegativeWords =
-              containTargetNegativeKeywords(tweetText, negativeKeywordsPredicateDenylist)
-            candidate.cachePredicateInfo(
-              name,
-              if (containsNegativeWords) 1.0 else 0.0,
-              0.0,
-              containsNegativeWords)
-            if (containsNegativeWords) {
-              filteredOonCandidatesCounter.incr()
-              false
-            } else true
+          tweettextfutuwe.map { t-tweettext =>
+            vaw c-containsnegativewowds =
+              containtawgetnegativekeywowds(tweettext, mya n-nyegativekeywowdspwedicatedenywist)
+            candidate.cachepwedicateinfo(
+              n-nyame, >w<
+              if (containsnegativewowds) 1.0 e-ewse 0.0, (U ﹏ U)
+              0.0, 😳😳😳
+              c-containsnegativewowds)
+            if (containsnegativewowds) {
+              f-fiwtewedooncandidatescountew.incw()
+              f-fawse
+            } e-ewse twue
           }
-        } else Future.True
+        } ewse futuwe.twue
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .withstats(stats.scope(name))
+      .withname(name)
   }
 }

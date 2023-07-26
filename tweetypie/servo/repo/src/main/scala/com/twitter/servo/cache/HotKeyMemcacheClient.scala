@@ -1,109 +1,109 @@
-package com.twitter.servo.cache
+package com.twittew.sewvo.cache
 
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.memcached.protocol.Value
-import com.twitter.finagle.memcached.GetResult
-import com.twitter.finagle.memcached.ProxyClient
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.Trace
-import com.twitter.io.Buf
-import com.twitter.logging.Logger
-import com.twitter.util.Future
-import scala.collection.breakOut
+impowt com.twittew.finagwe.memcached.cwient
+i-impowt c-com.twittew.finagwe.memcached.pwotocow.vawue
+i-impowt com.twittew.finagwe.memcached.getwesuwt
+impowt c-com.twittew.finagwe.memcached.pwoxycwient
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.finagwe.twacing.twace
+i-impowt com.twittew.io.buf
+i-impowt com.twittew.wogging.woggew
+impowt com.twittew.utiw.futuwe
+impowt scawa.cowwection.bweakout
 
-object HotKeyCachingCache {
-  private[cache] val logger = Logger.get(getClass)
+object hotkeycachingcache {
+  pwivate[cache] v-vaw woggew = woggew.get(getcwass)
 }
 
 /**
- * Wrapper for a [[com.twitter.finagle.Memcached.Client]] that handles in-process caching for
- * values flagged for promotion ("hot keys") by a twemcache backend.
+ * wwappew fow a [[com.twittew.finagwe.memcached.cwient]] t-that handwes in-pwocess caching f-fow
+ * vawues fwagged fow pwomotion ("hot keys") by a twemcache backend. (U ﹏ U)
  *
- * This is similar conceptually to
- * [[com.twitter.servo.repository.HotKeyCachingKeyValueRepository]] but differs because
- *  HotKeyCachingKeyValueRepository detects hot keys in the client, which requires tuning and
- *  becomes less effective as the number of instances in the cluster grows. [[HotKeyMemcacheClient]]
- *  uses detection in the memcache server, which is centralized and has a better view of frequently
- *  accessed keys. This is a custom feature in twemcache, Twitter's memcache fork, that is not
- *  enabled by default. Consult with the cache team if you want to use it.
+ * t-this is simiwaw conceptuawwy t-to
+ * [[com.twittew.sewvo.wepositowy.hotkeycachingkeyvawuewepositowy]] b-but diffews because
+ *  hotkeycachingkeyvawuewepositowy detects hot keys in the cwient, :3 w-which wequiwes tuning and
+ *  becomes wess effective as the nyumbew of instances i-in the cwustew gwows. ( ͡o ω ͡o ) [[hotkeymemcachecwient]]
+ *  u-uses detection i-in the memcache s-sewvew, σωσ which i-is centwawized and has a bettew view of fwequentwy
+ *  a-accessed keys. >w< this is a custom featuwe i-in twemcache, 😳😳😳 twittew's memcache fowk, OwO that is nyot
+ *  enabwed by defauwt. 😳 consuwt with the cache t-team if you want to use it. 😳😳😳
  *
- *  Usage:
+ *  u-usage:
  *  {{{
- *    new HotKeyMemcacheClient(
- *      underlyingCache = Memcached.client. ... .newRichClient(destination),
- *      inProcessCache = ExpiringLruInProcessCache(ttl = 10.seconds, maximumSize = 100),
- *      statsReceiver = statsReceiver.scope("inprocess")
+ *    n-nyew h-hotkeymemcachecwient(
+ *      undewwyingcache = memcached.cwient. (˘ω˘) ... .newwichcwient(destination), ʘwʘ
+ *      inpwocesscache = e-expiwingwwuinpwocesscache(ttw = 10.seconds, ( ͡o ω ͡o ) m-maximumsize = 100), o.O
+ *      statsweceivew = s-statsweceivew.scope("inpwocess")
  *    )
  *  }}}
  */
-class HotKeyMemcacheClient(
-  override val proxyClient: Client,
-  inProcessCache: InProcessCache[String, Value],
-  statsReceiver: StatsReceiver,
-  label: Option[String] = None)
-    extends ProxyClient {
-  import HotKeyCachingCache._
+c-cwass hotkeymemcachecwient(
+  ovewwide v-vaw pwoxycwient: cwient, >w<
+  inpwocesscache: i-inpwocesscache[stwing, 😳 vawue],
+  statsweceivew: statsweceivew, 🥺
+  w-wabew: option[stwing] = n-nyone)
+    extends pwoxycwient {
+  i-impowt hotkeycachingcache._
 
-  private val promotions = statsReceiver.counter("promotions")
-  private val hits = statsReceiver.counter("hits")
-  private val misses = statsReceiver.counter("misses")
+  p-pwivate vaw pwomotions = statsweceivew.countew("pwomotions")
+  pwivate vaw hits = statsweceivew.countew("hits")
+  pwivate vaw misses = statsweceivew.countew("misses")
 
-  private def cacheIfPromoted(key: String, value: Value): Unit = {
-    if (value.flags.exists(MemcacheFlags.shouldPromote)) {
-      logger.debug(s"Promoting hot-key $key flagged by memcached backend to in-process cache.")
-      Trace.recordBinary("hot_key_cache.hot_key_promoted", s"${label.getOrElse("")},$key")
-      promotions.incr()
-      inProcessCache.set(key, value)
+  pwivate def cacheifpwomoted(key: s-stwing, rawr x3 vawue: v-vawue): unit = {
+    if (vawue.fwags.exists(memcachefwags.shouwdpwomote)) {
+      w-woggew.debug(s"pwomoting h-hot-key $key f-fwagged by memcached backend to in-pwocess cache.")
+      t-twace.wecowdbinawy("hot_key_cache.hot_key_pwomoted", o.O s"${wabew.getowewse("")},$key")
+      pwomotions.incw()
+      inpwocesscache.set(key, rawr vawue)
     }
   }
 
-  override def getResult(keys: Iterable[String]): Future[GetResult] = {
-    val resultsFromInProcessCache: Map[String, Value] =
-      keys.flatMap(k => inProcessCache.get(k).map(v => (k, v)))(breakOut)
-    val foundInProcess = resultsFromInProcessCache.keySet
-    val newKeys = keys.filterNot(foundInProcess.contains)
+  o-ovewwide def getwesuwt(keys: itewabwe[stwing]): f-futuwe[getwesuwt] = {
+    v-vaw wesuwtsfwominpwocesscache: m-map[stwing, ʘwʘ vawue] =
+      k-keys.fwatmap(k => i-inpwocesscache.get(k).map(v => (k, 😳😳😳 v-v)))(bweakout)
+    v-vaw foundinpwocess = wesuwtsfwominpwocesscache.keyset
+    v-vaw nyewkeys = k-keys.fiwtewnot(foundinpwocess.contains)
 
-    hits.incr(foundInProcess.size)
-    misses.incr(newKeys.size)
+    h-hits.incw(foundinpwocess.size)
+    m-misses.incw(newkeys.size)
 
-    if (foundInProcess.nonEmpty) {
-      // If there are hot keys found in the cache, record a trace annotation with the format:
-      // hot key cache client label;the number of hits;number of misses;and the set of hot keys found in the cache.
-      Trace.recordBinary(
-        "hot_key_cache",
-        s"${label.getOrElse("")};${foundInProcess.size};${newKeys.size};${foundInProcess.mkString(",")}"
+    i-if (foundinpwocess.nonempty) {
+      // if thewe awe hot keys found in the c-cache, ^^;; wecowd a twace annotation with the fowmat:
+      // hot key cache cwient wabew;the nyumbew o-of hits;numbew of misses;and the set of hot keys found in the c-cache. o.O
+      twace.wecowdbinawy(
+        "hot_key_cache", (///ˬ///✿)
+        s-s"${wabew.getowewse("")};${foundinpwocess.size};${newkeys.size};${foundinpwocess.mkstwing(",")}"
       )
     }
 
-    proxyClient.getResult(newKeys).map { result =>
-      result.hits.foreach { case (k, v) => cacheIfPromoted(k, v) }
-      result.copy(hits = result.hits ++ resultsFromInProcessCache)
+    p-pwoxycwient.getwesuwt(newkeys).map { wesuwt =>
+      w-wesuwt.hits.foweach { case (k, σωσ v) => c-cacheifpwomoted(k, nyaa~~ v-v) }
+      wesuwt.copy(hits = wesuwt.hits ++ wesuwtsfwominpwocesscache)
     }
   }
 
   /**
-   * Exposes whether or not a key was promoted to the in-process hot key cache. In most cases, users
-   * of [[HotKeyMemcacheClient]] should not need to know this. However, they may if hot key caching
-   * conflicts with other layers of caching they are using.
+   * exposes whethew ow nyot a key was pwomoted to the i-in-pwocess hot key cache. ^^;; in m-most cases, ^•ﻌ•^ usews
+   * of [[hotkeymemcachecwient]] s-shouwd nyot nyeed t-to know this. σωσ howevew, -.- they may if hot key c-caching
+   * confwicts w-with othew wayews of caching t-they awe using.
    */
-  def isHotKey(key: String): Boolean = inProcessCache.get(key).isDefined
+  d-def ishotkey(key: stwing): boowean = inpwocesscache.get(key).isdefined
 }
 
-// TOOD: May want to turn flags into a value class in com.twitter.finagle.memcached
-// with methods for these operations
-object MemcacheFlags {
-  val FrequencyBasedPromotion: Int = 1
-  val BandwidthBasedPromotion: Int = 1 << 1
-  val Promotable: Int = FrequencyBasedPromotion | BandwidthBasedPromotion
+// tood: may w-want to tuwn f-fwags into a vawue c-cwass in com.twittew.finagwe.memcached
+// with m-methods fow these o-opewations
+object memcachefwags {
+  v-vaw fwequencybasedpwomotion: int = 1
+  vaw bandwidthbasedpwomotion: int = 1 << 1
+  vaw pwomotabwe: i-int = f-fwequencybasedpwomotion | bandwidthbasedpwomotion
 
   /**
-   * Memcache flags are returned as an unsigned integer, represented as a decimal string.
+   * memcache fwags awe w-wetuwned as an u-unsigned integew, ^^;; wepwesented as a decimaw stwing. XD
    *
-   * Check whether the bit in position 0 ([[FrequencyBasedPromotion]]) or the bit in position 1
-   * ([[BandwidthBasedPromotion]]) is set to 1 (zero-index from least-significant bit).
+   * check w-whethew the bit in position 0 ([[fwequencybasedpwomotion]]) ow the bit in position 1
+   * ([[bandwidthbasedpwomotion]]) is set to 1 (zewo-index f-fwom weast-significant bit). 🥺
    */
-  def shouldPromote(flagsBuf: Buf): Boolean = {
-    val flags = flagsBuf match { case Buf.Utf8(s) => s.toInt }
-    (flags & Promotable) != 0
+  def shouwdpwomote(fwagsbuf: b-buf): boowean = {
+    v-vaw fwags = fwagsbuf match { case buf.utf8(s) => s.toint }
+    (fwags & p-pwomotabwe) != 0
   }
 }

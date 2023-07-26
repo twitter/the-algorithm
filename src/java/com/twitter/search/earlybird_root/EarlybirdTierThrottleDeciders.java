@@ -1,49 +1,49 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+impowt j-javax.inject.inject;
+i-impowt javax.inject.singweton;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.decider.SearchDecider;
+i-impowt com.twittew.seawch.common.decidew.seawchdecidew;
 
 /**
- * Controls fractions of requests that are sent out to each tier.
+ * c-contwows fwactions o-of wequests t-that awe sent out to each tiew.
  */
-@Singleton
-public class EarlybirdTierThrottleDeciders {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(EarlybirdTierThrottleDeciders.class);
-  private static final String TIER_THROTTLE_DECIDER_KEY_FORMAT =
-      "percentage_to_hit_cluster_%s_tier_%s";
-  private final SearchDecider decider;
+@singweton
+pubwic cwass eawwybiwdtiewthwottwedecidews {
+  pwivate static finaw w-woggew wog =
+      woggewfactowy.getwoggew(eawwybiwdtiewthwottwedecidews.cwass);
+  pwivate static f-finaw stwing tiew_thwottwe_decidew_key_fowmat =
+      "pewcentage_to_hit_cwustew_%s_tiew_%s";
+  p-pwivate finaw seawchdecidew decidew;
 
   /**
-   * Construct a decider using the singleton decider object injected by Guice for the
-   * specified tier.
-   * See {@link com.twitter.search.common.root.SearchRootModule#provideDecider()}
+   * constwuct a-a decidew using the singweton decidew o-object injected b-by guice fow the
+   * specified tiew. (⑅˘꒳˘)
+   * see {@wink com.twittew.seawch.common.woot.seawchwootmoduwe#pwovidedecidew()}
    */
-  @Inject
-  public EarlybirdTierThrottleDeciders(SearchDecider decider) {
-    this.decider = decider;
+  @inject
+  pubwic eawwybiwdtiewthwottwedecidews(seawchdecidew d-decidew) {
+    this.decidew = decidew;
   }
 
   /**
-   * Return the throttle decider key for the specified tier.
+   * wetuwn the thwottwe decidew k-key fow the specified tiew. òωó
    */
-  public String getTierThrottleDeciderKey(String clusterName, String tierName) {
-    String deciderKey = String.format(TIER_THROTTLE_DECIDER_KEY_FORMAT, clusterName, tierName);
-    if (!decider.getDecider().feature(deciderKey).exists()) {
-      LOG.warn("Decider key {} not found. Will always return unavailable.", deciderKey);
+  p-pubwic s-stwing gettiewthwottwedecidewkey(stwing c-cwustewname, ʘwʘ s-stwing tiewname) {
+    stwing decidewkey = s-stwing.fowmat(tiew_thwottwe_decidew_key_fowmat, /(^•ω•^) cwustewname, ʘwʘ tiewname);
+    if (!decidew.getdecidew().featuwe(decidewkey).exists()) {
+      w-wog.wawn("decidew key {} nyot found. σωσ wiww awways wetuwn unavaiwabwe.", decidewkey);
     }
-    return deciderKey;
+    wetuwn d-decidewkey;
   }
 
   /**
-   * Check whether a request should be sent to the specified tier.
+   * check w-whethew a wequest s-shouwd be s-sent to the specified tiew.
    */
-  public Boolean shouldSendRequestToTier(final String tierDarkReadDeciderKey) {
-    return decider.isAvailable(tierDarkReadDeciderKey);
+  pubwic boowean shouwdsendwequesttotiew(finaw s-stwing tiewdawkweaddecidewkey) {
+    w-wetuwn decidew.isavaiwabwe(tiewdawkweaddecidewkey);
   }
 }

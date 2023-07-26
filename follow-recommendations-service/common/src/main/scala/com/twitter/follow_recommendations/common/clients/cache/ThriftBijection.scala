@@ -1,81 +1,81 @@
-package com.twitter.follow_recommendations.common.clients.cache
+package com.twittew.fowwow_wecommendations.common.cwients.cache
 
-import com.twitter.bijection.Bijection
-import com.twitter.io.Buf
-import com.twitter.scrooge.CompactThriftSerializer
-import com.twitter.scrooge.ThriftEnum
-import com.twitter.scrooge.ThriftStruct
-import java.nio.ByteBuffer
+impowt com.twittew.bijection.bijection
+i-impowt com.twittew.io.buf
+i-impowt com.twittew.scwooge.compactthwiftsewiawizew
+i-impowt com.twittew.scwooge.thwiftenum
+i-impowt c-com.twittew.scwooge.thwiftstwuct
+i-impowt java.nio.bytebuffew
 
-abstract class ThriftBijection[T <: ThriftStruct] extends Bijection[Buf, T] {
-  val serializer: CompactThriftSerializer[T]
+a-abstwact c-cwass thwiftbijection[t <: thwiftstwuct] extends bijection[buf, >_< t] {
+  vaw sewiawizew: compactthwiftsewiawizew[t]
 
-  override def apply(b: Buf): T = {
-    val byteArray = Buf.ByteArray.Owned.extract(b)
-    serializer.fromBytes(byteArray)
+  o-ovewwide def appwy(b: buf): t = {
+    v-vaw byteawway = buf.byteawway.owned.extwact(b)
+    s-sewiawizew.fwombytes(byteawway)
   }
 
-  override def invert(a: T): Buf = {
-    val byteArray = serializer.toBytes(a)
-    Buf.ByteArray.Owned(byteArray)
-  }
-}
-
-abstract class ThriftOptionBijection[T <: ThriftStruct] extends Bijection[Buf, Option[T]] {
-  val serializer: CompactThriftSerializer[T]
-
-  override def apply(b: Buf): Option[T] = {
-    if (b.isEmpty) {
-      None
-    } else {
-      val byteArray = Buf.ByteArray.Owned.extract(b)
-      Some(serializer.fromBytes(byteArray))
-    }
-  }
-
-  override def invert(a: Option[T]): Buf = {
-    a match {
-      case Some(t) =>
-        val byteArray = serializer.toBytes(t)
-        Buf.ByteArray.Owned(byteArray)
-      case None => Buf.Empty
-    }
+  ovewwide def invewt(a: t): buf = {
+    v-vaw byteawway = sewiawizew.tobytes(a)
+    b-buf.byteawway.owned(byteawway)
   }
 }
 
-class ThriftEnumBijection[T <: ThriftEnum](constructor: Int => T) extends Bijection[Buf, T] {
-  override def apply(b: Buf): T = {    
-    val byteArray = Buf.ByteArray.Owned.extract(b)
-    val byteBuffer = ByteBuffer.wrap(byteArray)
-    constructor(byteBuffer.getInt())
-  }
+a-abstwact cwass thwiftoptionbijection[t <: thwiftstwuct] extends bijection[buf, -.- o-option[t]] {
+  vaw sewiawizew: compactthwiftsewiawizew[t]
 
-  override def invert(a: T): Buf = {      
-    val byteBuffer: ByteBuffer = ByteBuffer.allocate(4)
-    byteBuffer.putInt(a.getValue)
-    Buf.ByteArray.Owned(byteBuffer.array())
-  }
-}
-
-class ThriftEnumOptionBijection[T <: ThriftEnum](constructor: Int => T) extends Bijection[Buf, Option[T]] {
-  override def apply(b: Buf): Option[T] = {      
-    if (b.isEmpty) {
-      None
-    } else {
-      val byteArray = Buf.ByteArray.Owned.extract(b)
-      val byteBuffer = ByteBuffer.wrap(byteArray)
-      Some(constructor(byteBuffer.getInt()))
+  ovewwide def appwy(b: buf): option[t] = {
+    i-if (b.isempty) {
+      nyone
+    } e-ewse {
+      vaw b-byteawway = buf.byteawway.owned.extwact(b)
+      s-some(sewiawizew.fwombytes(byteawway))
     }
   }
 
-  override def invert(a: Option[T]): Buf = {
-    a match {
-      case Some(obj) => {
-        val byteBuffer: ByteBuffer = ByteBuffer.allocate(4)
-        byteBuffer.putInt(obj.getValue)
-        Buf.ByteArray.Owned(byteBuffer.array())
+  o-ovewwide def invewt(a: option[t]): buf = {
+    a-a match {
+      case some(t) =>
+        vaw b-byteawway = sewiawizew.tobytes(t)
+        buf.byteawway.owned(byteawway)
+      case nyone => buf.empty
+    }
+  }
+}
+
+cwass thwiftenumbijection[t <: thwiftenum](constwuctow: int => t-t) extends bijection[buf, 🥺 t] {
+  o-ovewwide def a-appwy(b: buf): t-t = {    
+    vaw byteawway = buf.byteawway.owned.extwact(b)
+    vaw bytebuffew = bytebuffew.wwap(byteawway)
+    c-constwuctow(bytebuffew.getint())
+  }
+
+  o-ovewwide def invewt(a: t-t): buf = {      
+    v-vaw bytebuffew: bytebuffew = b-bytebuffew.awwocate(4)
+    bytebuffew.putint(a.getvawue)
+    b-buf.byteawway.owned(bytebuffew.awway())
+  }
+}
+
+cwass thwiftenumoptionbijection[t <: thwiftenum](constwuctow: i-int => t) extends bijection[buf, o-option[t]] {
+  ovewwide d-def appwy(b: b-buf): option[t] = {      
+    if (b.isempty) {
+      nyone
+    } ewse {
+      vaw byteawway = buf.byteawway.owned.extwact(b)
+      vaw bytebuffew = b-bytebuffew.wwap(byteawway)
+      s-some(constwuctow(bytebuffew.getint()))
+    }
+  }
+
+  ovewwide d-def invewt(a: o-option[t]): buf = {
+    a-a match {
+      case some(obj) => {
+        vaw bytebuffew: b-bytebuffew = bytebuffew.awwocate(4)
+        bytebuffew.putint(obj.getvawue)
+        buf.byteawway.owned(bytebuffew.awway())
       }
-      case None => Buf.Empty
+      case nyone => buf.empty
     }
   }
 }

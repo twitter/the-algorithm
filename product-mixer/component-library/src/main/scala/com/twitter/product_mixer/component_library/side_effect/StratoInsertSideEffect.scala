@@ -1,70 +1,70 @@
-package com.twitter.product_mixer.component_library.side_effect
+package com.twittew.pwoduct_mixew.component_wibwawy.side_effect
 
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Inserter
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.side_effect.pipewinewesuwtsideeffect
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.hasmawshawwing
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.stwato.cwient.insewtew
 
 /**
- * Side effect that writes to Strato column's Insert Op. Create an implementation of this trait by
- * defining the `buildEvents` method and providing a Strato Column inserter of type
- * (StratoKeyarg, StratoValue) -> Any.
- * See https://docbird.twitter.biz/strato/ColumnCatalog.html#insert for information about
- * the Insert operation in Strato.
+ * side effect that wwites to stwato cowumn's insewt op. ʘwʘ c-cweate an impwementation of this twait by
+ * defining t-the `buiwdevents` method a-and pwoviding a stwato cowumn insewtew of type
+ * (stwatokeyawg, (˘ω˘) stwatovawue) -> a-any. (U ﹏ U)
+ * see https://docbiwd.twittew.biz/stwato/cowumncatawog.htmw#insewt fow infowmation a-about
+ * t-the insewt opewation in stwato.
  *
- * @tparam StratoKeyarg Argument used as a key for Strato column. Could be Unit for common use-cases.
- * @tparam StratoValue Value that is inserted at the Strato column.
- * @tparam Query PipelineQuery
- * @tparam DomainResponseType Timeline response that is marshalled to domain model (e.g. URT, Slice etc).
+ * @tpawam stwatokeyawg awgument used as a key fow stwato c-cowumn. ^•ﻌ•^ couwd be unit fow common use-cases. (˘ω˘)
+ * @tpawam stwatovawue vawue that is i-insewted at the stwato cowumn. :3
+ * @tpawam q-quewy p-pipewinequewy
+ * @tpawam d-domainwesponsetype t-timewine wesponse that is mawshawwed t-to domain modew (e.g. ^^;; uwt, swice etc). 🥺
  */
-trait StratoInsertSideEffect[
-  StratoKeyarg,
-  StratoValue,
-  Query <: PipelineQuery,
-  DomainResponseType <: HasMarshalling]
-    extends PipelineResultSideEffect[Query, DomainResponseType] {
+twait s-stwatoinsewtsideeffect[
+  stwatokeyawg, (⑅˘꒳˘)
+  stwatovawue, nyaa~~
+  quewy <: pipewinequewy, :3
+  domainwesponsetype <: h-hasmawshawwing]
+    extends pipewinewesuwtsideeffect[quewy, ( ͡o ω ͡o ) d-domainwesponsetype] {
 
   /**
-   * Inserter for the InsertOp on a StratoColumn. In Strato, the InsertOp is represented as
-   * (Keyarg, Value) => Key, where Key represents the result returned by the Insert operation.
-   * For the side-effect behavior, we do not need the return value and use Any instead.
+   * i-insewtew f-fow the insewtop on a stwatocowumn. mya in stwato, (///ˬ///✿) the insewtop i-is wepwesented as
+   * (keyawg, (˘ω˘) v-vawue) => key, ^^;; whewe key wepwesents t-the wesuwt wetuwned b-by the insewt opewation. (✿oωo)
+   * f-fow the side-effect behaviow, (U ﹏ U) w-we do nyot nyeed the wetuwn vawue and use any i-instead. -.-
    */
-  val stratoInserter: Inserter[StratoKeyarg, StratoValue, Any]
+  vaw stwatoinsewtew: i-insewtew[stwatokeyawg, ^•ﻌ•^ stwatovawue, a-any]
 
   /**
-   * Builds the events that are inserted to the Strato column. This method supports generating
-   * multiple events for a single side-effect invocation.
+   * b-buiwds the events that awe insewted to the stwato cowumn. rawr this method suppowts genewating
+   * muwtipwe e-events fow a s-singwe side-effect invocation. (˘ω˘)
    *
-   * @param query PipelineQuery
-   * @param selectedCandidates Result after Selectors are executed
-   * @param remainingCandidates Candidates which were not selected
-   * @param droppedCandidates Candidates dropped during selection
-   * @param response Timeline response that is marshalled to domain model (e.g. URT, Slice etc).
-   * @return Tuples of (StratoKeyArg, StratoValue) that are used to call the stratoInserter.
+   * @pawam q-quewy pipewinequewy
+   * @pawam s-sewectedcandidates w-wesuwt aftew sewectows awe exekawaii~d
+   * @pawam wemainingcandidates candidates w-which wewe not sewected
+   * @pawam dwoppedcandidates candidates dwopped duwing s-sewection
+   * @pawam wesponse t-timewine wesponse t-that is mawshawwed t-to domain modew (e.g. nyaa~~ u-uwt, UwU swice etc).
+   * @wetuwn t-tupwes o-of (stwatokeyawg, :3 s-stwatovawue) that awe used to caww the stwatoinsewtew. (⑅˘꒳˘)
    */
-  def buildEvents(
-    query: Query,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: DomainResponseType
-  ): Seq[(StratoKeyarg, StratoValue)]
+  d-def buiwdevents(
+    q-quewy: q-quewy, (///ˬ///✿)
+    sewectedcandidates: s-seq[candidatewithdetaiws], ^^;;
+    w-wemainingcandidates: seq[candidatewithdetaiws], >_<
+    dwoppedcandidates: seq[candidatewithdetaiws],
+    w-wesponse: domainwesponsetype
+  ): seq[(stwatokeyawg, rawr x3 stwatovawue)]
 
-  final override def apply(
-    inputs: PipelineResultSideEffect.Inputs[Query, DomainResponseType]
-  ): Stitch[Unit] = {
-    val events = buildEvents(
-      query = inputs.query,
-      selectedCandidates = inputs.selectedCandidates,
-      remainingCandidates = inputs.remainingCandidates,
-      droppedCandidates = inputs.droppedCandidates,
-      response = inputs.response
+  finaw ovewwide def appwy(
+    i-inputs: pipewinewesuwtsideeffect.inputs[quewy, /(^•ω•^) domainwesponsetype]
+  ): stitch[unit] = {
+    v-vaw events = b-buiwdevents(
+      q-quewy = inputs.quewy, :3
+      sewectedcandidates = i-inputs.sewectedcandidates, (ꈍᴗꈍ)
+      wemainingcandidates = inputs.wemainingcandidates, /(^•ω•^)
+      d-dwoppedcandidates = i-inputs.dwoppedcandidates, (⑅˘꒳˘)
+      wesponse = inputs.wesponse
     )
 
-    Stitch
-      .traverse(events) { case (keyarg, value) => stratoInserter.insert(keyarg, value) }
+    stitch
+      .twavewse(events) { case (keyawg, ( ͡o ω ͡o ) vawue) => s-stwatoinsewtew.insewt(keyawg, òωó vawue) }
       .unit
   }
 }

@@ -1,14 +1,14 @@
-package com.twitter.timelineranker.parameters.monitoring
+package com.twittew.timewinewankew.pawametews.monitowing
 
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelineranker.parameters.monitoring.MonitoringParams.DebugAuthorsAllowListParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
+impowt c-com.twittew.timewines.configapi.baseconfigbuiwdew
+i-impowt com.twittew.timewinewankew.pawametews.monitowing.monitowingpawams.debugauthowsawwowwistpawam
+i-impowt com.twittew.timewines.configapi.featuweswitchovewwideutiw
 
-object MonitoringProduction {
-  private val longSeqOverrides =
-    FeatureSwitchOverrideUtil.getLongSeqFSOverrides(DebugAuthorsAllowListParam)
+o-object monitowingpwoduction {
+  p-pwivate v-vaw wongseqovewwides =
+    f-featuweswitchovewwideutiw.getwongseqfsovewwides(debugauthowsawwowwistpawam)
 
-  val config = BaseConfigBuilder()
-    .set(longSeqOverrides: _*)
-    .build()
+  v-vaw config = baseconfigbuiwdew()
+    .set(wongseqovewwides: _*)
+    .buiwd()
 }

@@ -1,60 +1,60 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.twittew.home_mixew.functionaw_component.decowatow.uwt.buiwdew
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ChildFeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SeeFewer
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.stringcenter.client.core.ExternalString
-import com.twitter.timelines.common.{thriftscala => tlc}
-import com.twitter.timelines.service.{thriftscala => t}
-import com.twitter.timelineservice.model.FeedbackInfo
-import com.twitter.timelineservice.model.FeedbackMetadata
-import com.twitter.timelineservice.suggests.{thriftscala => st}
-import com.twitter.timelineservice.{thriftscala => tlst}
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.chiwdfeedbackaction
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.seefewew
+i-impowt com.twittew.stwingcentew.cwient.stwingcentew
+i-impowt com.twittew.stwingcentew.cwient.cowe.extewnawstwing
+impowt c-com.twittew.timewines.common.{thwiftscawa => t-twc}
+impowt com.twittew.timewines.sewvice.{thwiftscawa => t}
+impowt com.twittew.timewinesewvice.modew.feedbackinfo
+impowt com.twittew.timewinesewvice.modew.feedbackmetadata
+impowt com.twittew.timewinesewvice.suggests.{thwiftscawa => s-st}
+impowt com.twittew.timewinesewvice.{thwiftscawa => twst}
 
-object FeedbackUtil {
+object f-feedbackutiw {
 
-  val FeedbackTtl = 30.days
+  vaw feedbackttw = 30.days
 
-  def buildUserSeeFewerChildFeedbackAction(
-    userId: Long,
-    namesByUserId: Map[Long, String],
-    promptExternalString: ExternalString,
-    confirmationExternalString: ExternalString,
-    engagementType: t.FeedbackEngagementType,
-    stringCenter: StringCenter,
-    injectionType: Option[st.SuggestType]
-  ): Option[ChildFeedbackAction] = {
-    namesByUserId.get(userId).map { userScreenName =>
-      val prompt = stringCenter.prepare(
-        promptExternalString,
-        Map("user" -> userScreenName)
+  d-def buiwdusewseefewewchiwdfeedbackaction(
+    usewid: wong, (///ˬ///✿)
+    nyamesbyusewid: m-map[wong, >w< stwing],
+    pwomptextewnawstwing: e-extewnawstwing, rawr
+    c-confiwmationextewnawstwing: extewnawstwing, mya
+    engagementtype: t.feedbackengagementtype, ^^
+    stwingcentew: stwingcentew, 😳😳😳
+    injectiontype: o-option[st.suggesttype]
+  ): option[chiwdfeedbackaction] = {
+    nyamesbyusewid.get(usewid).map { usewscweenname =>
+      vaw pwompt = stwingcentew.pwepawe(
+        p-pwomptextewnawstwing, mya
+        map("usew" -> usewscweenname)
       )
-      val confirmation = stringCenter.prepare(
-        confirmationExternalString,
-        Map("user" -> userScreenName)
+      v-vaw c-confiwmation = stwingcentew.pwepawe(
+        c-confiwmationextewnawstwing, 😳
+        m-map("usew" -> usewscweenname)
       )
-      val feedbackMetadata = FeedbackMetadata(
-        engagementType = Some(engagementType),
-        entityIds = Seq(tlc.FeedbackEntity.UserId(userId)),
-        ttl = Some(FeedbackTtl))
-      val feedbackUrl = FeedbackInfo.feedbackUrl(
-        feedbackType = tlst.FeedbackType.SeeFewer,
-        feedbackMetadata = feedbackMetadata,
-        injectionType = injectionType
+      vaw feedbackmetadata = f-feedbackmetadata(
+        engagementtype = some(engagementtype), -.-
+        entityids = s-seq(twc.feedbackentity.usewid(usewid)), 🥺
+        ttw = some(feedbackttw))
+      vaw feedbackuww = feedbackinfo.feedbackuww(
+        feedbacktype = twst.feedbacktype.seefewew, o.O
+        feedbackmetadata = f-feedbackmetadata, /(^•ω•^)
+        injectiontype = i-injectiontype
       )
 
-      ChildFeedbackAction(
-        feedbackType = SeeFewer,
-        prompt = Some(prompt),
-        confirmation = Some(confirmation),
-        feedbackUrl = Some(feedbackUrl),
-        hasUndoAction = Some(true),
-        confirmationDisplayType = None,
-        clientEventInfo = None,
-        icon = None,
-        richBehavior = None,
-        subprompt = None
+      c-chiwdfeedbackaction(
+        f-feedbacktype = seefewew, nyaa~~
+        pwompt = some(pwompt), nyaa~~
+        c-confiwmation = s-some(confiwmation), :3
+        feedbackuww = some(feedbackuww), 😳😳😳
+        h-hasundoaction = s-some(twue), (˘ω˘)
+        confiwmationdispwaytype = n-nyone, ^^
+        cwienteventinfo = n-nyone,
+        icon = nyone, :3
+        wichbehaviow = n-nyone, -.-
+        subpwompt = n-nyone
       )
     }
   }

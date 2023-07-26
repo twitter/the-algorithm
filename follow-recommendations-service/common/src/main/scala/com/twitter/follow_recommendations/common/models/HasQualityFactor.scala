@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-trait HasQualityFactor {
-  def qualityFactor: Option[Double]
+twait hasquawityfactow {
+  d-def quawityfactow: o-option[doubwe]
 }

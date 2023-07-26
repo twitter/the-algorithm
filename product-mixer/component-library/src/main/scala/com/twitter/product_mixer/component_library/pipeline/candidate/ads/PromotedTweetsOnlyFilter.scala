@@ -1,39 +1,39 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+package com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.ads
 
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsTweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.ads.adscandidate
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.ads.adstweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
 
-case class PromotedTweetsOnlyFilter[Query <: PipelineQuery](
-  underlyingFilter: Filter[Query, AdsTweetCandidate])
-    extends Filter[Query, AdsCandidate] {
+case cwass pwomotedtweetsonwyfiwtew[quewy <: pipewinequewy](
+  u-undewwyingfiwtew: fiwtew[quewy, (⑅˘꒳˘) adstweetcandidate])
+    e-extends fiwtew[quewy, rawr x3 a-adscandidate] {
 
-  override val identifier: FilterIdentifier =
-    FilterIdentifier(s"PromotedTweets${underlyingFilter.identifier.name}")
+  ovewwide vaw identifiew: fiwtewidentifiew =
+    f-fiwtewidentifiew(s"pwomotedtweets${undewwyingfiwtew.identifiew.name}")
 
-  override def apply(
-    query: Query,
-    candidatesWithFeatures: Seq[CandidateWithFeatures[AdsCandidate]]
-  ): Stitch[FilterResult[AdsCandidate]] = {
+  ovewwide def appwy(
+    q-quewy: q-quewy, (✿oωo)
+    candidateswithfeatuwes: seq[candidatewithfeatuwes[adscandidate]]
+  ): stitch[fiwtewwesuwt[adscandidate]] = {
 
-    val adsTweetCandidates: Seq[CandidateWithFeatures[AdsTweetCandidate]] =
-      candidatesWithFeatures.flatMap {
-        case tweetCandidateWithFeatures @ CandidateWithFeatures(_: AdsTweetCandidate, _) =>
-          Some(tweetCandidateWithFeatures.asInstanceOf[CandidateWithFeatures[AdsTweetCandidate]])
-        case _ => None
+    vaw adstweetcandidates: s-seq[candidatewithfeatuwes[adstweetcandidate]] =
+      candidateswithfeatuwes.fwatmap {
+        case tweetcandidatewithfeatuwes @ candidatewithfeatuwes(_: adstweetcandidate, _) =>
+          some(tweetcandidatewithfeatuwes.asinstanceof[candidatewithfeatuwes[adstweetcandidate]])
+        c-case _ => nyone
       }
 
-    underlyingFilter
-      .apply(query, adsTweetCandidates)
-      .map { filterResult =>
-        val removedSet = filterResult.removed.toSet[AdsCandidate]
-        val (removed, kept) = candidatesWithFeatures.map(_.candidate).partition(removedSet.contains)
-        FilterResult(kept, removed)
+    undewwyingfiwtew
+      .appwy(quewy, (ˆ ﻌ ˆ)♡ adstweetcandidates)
+      .map { f-fiwtewwesuwt =>
+        v-vaw w-wemovedset = fiwtewwesuwt.wemoved.toset[adscandidate]
+        vaw (wemoved, (˘ω˘) k-kept) = candidateswithfeatuwes.map(_.candidate).pawtition(wemovedset.contains)
+        fiwtewwesuwt(kept, (⑅˘꒳˘) w-wemoved)
       }
   }
 }

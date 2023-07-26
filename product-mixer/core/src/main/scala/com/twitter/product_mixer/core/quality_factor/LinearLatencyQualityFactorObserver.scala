@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.quality_factor
+package com.twittew.pwoduct_mixew.cowe.quawity_factow
 
-import com.twitter.util.Duration
-import com.twitter.util.Try
+impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.twy
 
-case class LinearLatencyQualityFactorObserver(
-  override val qualityFactor: LinearLatencyQualityFactor)
-    extends QualityFactorObserver {
+c-case cwass wineawwatencyquawityfactowobsewvew(
+  o-ovewwide vaw q-quawityfactow: w-wineawwatencyquawityfactow)
+    e-extends quawityfactowobsewvew {
 
-  override def apply(result: Try[_], latency: Duration): Unit = {
-    result
-      .onSuccess(_ => qualityFactor.update(latency))
-      .onFailure {
-        case t if qualityFactor.config.ignorableFailures.isDefinedAt(t) => ()
-        case _ => qualityFactor.update(Duration.Top)
+  o-ovewwide def a-appwy(wesuwt: twy[_], >_< watency: duwation): unit = {
+    wesuwt
+      .onsuccess(_ => quawityfactow.update(watency))
+      .onfaiwuwe {
+        case t-t if quawityfactow.config.ignowabwefaiwuwes.isdefinedat(t) => ()
+        case _ => quawityfactow.update(duwation.top)
       }
   }
 }

@@ -1,97 +1,97 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.query.async
+package com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.quewy.async
 
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featurestorev1.BaseFeatureStoreV1QueryFeature
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.AsyncHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1.FeatureStoreV1DynamicClientBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1.FeatureStoreV1QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt com.twittew.mw.featuwestowe.wib.entityid
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1.basefeatuwestowev1quewyfeatuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.awewt
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.asynchydwatow
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.featuwestowev1.featuwestowev1dynamiccwientbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.featuwestowev1.featuwestowev1quewyfeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pipewinestepidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.stitch
 
 /**
- * A [[QueryFeatureHydrator]] with [[AsyncQueryFeatureHydrator]] that hydrated asynchronously for features
- * to be before the step identified in [[hydrateBefore]]
+ * a [[quewyfeatuwehydwatow]] with [[asyncquewyfeatuwehydwatow]] t-that hydwated asynchwonouswy fow featuwes
+ * to be b-befowe the step identified in [[hydwatebefowe]]
  *
- * @param hydrateBefore        the [[PipelineStepIdentifier]] step to make sure this feature is hydrated before.
- * @param queryFeatureHydrator the underlying [[QueryFeatureHydrator]] to run asynchronously
- * @tparam Query The domain model for the query or request
+ * @pawam h-hydwatebefowe        t-the [[pipewinestepidentifiew]] step to make suwe this featuwe is hydwated befowe.
+ * @pawam quewyfeatuwehydwatow t-the undewwying [[quewyfeatuwehydwatow]] to wun asynchwonouswy
+ * @tpawam quewy the domain modew f-fow the quewy ow wequest
  */
-case class AsyncQueryFeatureHydrator[-Query <: PipelineQuery] private[async] (
-  override val hydrateBefore: PipelineStepIdentifier,
-  queryFeatureHydrator: QueryFeatureHydrator[Query])
-    extends QueryFeatureHydrator[Query]
-    with AsyncHydrator {
+c-case cwass asyncquewyfeatuwehydwatow[-quewy <: pipewinequewy] p-pwivate[async] (
+  o-ovewwide vaw hydwatebefowe: p-pipewinestepidentifiew, (⑅˘꒳˘)
+  quewyfeatuwehydwatow: quewyfeatuwehydwatow[quewy])
+    e-extends quewyfeatuwehydwatow[quewy]
+    with asynchydwatow {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    "Async" + queryFeatureHydrator.identifier.name)
-  override val alerts: Seq[Alert] = queryFeatureHydrator.alerts
-  override val features: Set[Feature[_, _]] = queryFeatureHydrator.features
+  o-ovewwide vaw identifiew: featuwehydwatowidentifiew = featuwehydwatowidentifiew(
+    "async" + quewyfeatuwehydwatow.identifiew.name)
+  ovewwide vaw a-awewts: seq[awewt] = quewyfeatuwehydwatow.awewts
+  o-ovewwide vaw f-featuwes: set[featuwe[_, nyaa~~ _]] = q-quewyfeatuwehydwatow.featuwes
 
-  override def hydrate(query: Query): Stitch[FeatureMap] = queryFeatureHydrator.hydrate(query)
+  ovewwide def hydwate(quewy: quewy): stitch[featuwemap] = q-quewyfeatuwehydwatow.hydwate(quewy)
 }
 
 /**
- * A [[FeatureStoreV1QueryFeatureHydrator]] with [[AsyncHydrator]] that hydrated asynchronously for features
- * to be before the step identified in [[hydrateBefore]]. We need a standalone class for feature store,
- * different from the above as FStore hydrators are exempt from validations at run time.
+ * a-a [[featuwestowev1quewyfeatuwehydwatow]] with [[asynchydwatow]] t-that hydwated a-asynchwonouswy fow featuwes
+ * t-to be befowe the step identified i-in [[hydwatebefowe]]. OwO we need a standawone c-cwass fow featuwe stowe, rawr x3
+ * diffewent f-fwom the above as fstowe h-hydwatows awe exempt f-fwom vawidations at wun time. XD
  *
- * @param hydrateBefore        the [[PipelineStepIdentifier]] step to make sure this feature is hydrated before.
- * @param queryFeatureHydrator the underlying [[QueryFeatureHydrator]] to run asynchronously
- * @tparam Query The domain model for the query or request
+ * @pawam hydwatebefowe        the [[pipewinestepidentifiew]] step to make suwe this featuwe is hydwated befowe. σωσ
+ * @pawam q-quewyfeatuwehydwatow t-the undewwying [[quewyfeatuwehydwatow]] to w-wun asynchwonouswy
+ * @tpawam quewy t-the domain m-modew fow the quewy ow wequest
  */
-case class AsyncFeatureStoreV1QueryFeatureHydrator[Query <: PipelineQuery] private[async] (
-  override val hydrateBefore: PipelineStepIdentifier,
-  featureStoreV1QueryFeatureHydrator: FeatureStoreV1QueryFeatureHydrator[Query])
-    extends FeatureStoreV1QueryFeatureHydrator[
-      Query
+case cwass asyncfeatuwestowev1quewyfeatuwehydwatow[quewy <: pipewinequewy] pwivate[async] (
+  o-ovewwide vaw hydwatebefowe: pipewinestepidentifiew, (U ᵕ U❁)
+  featuwestowev1quewyfeatuwehydwatow: featuwestowev1quewyfeatuwehydwatow[quewy])
+    extends f-featuwestowev1quewyfeatuwehydwatow[
+      quewy
     ]
-    with AsyncHydrator {
+    w-with a-asynchydwatow {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    "Async" + featureStoreV1QueryFeatureHydrator.identifier.name)
-  override val alerts: Seq[Alert] = featureStoreV1QueryFeatureHydrator.alerts
+  o-ovewwide vaw identifiew: featuwehydwatowidentifiew = f-featuwehydwatowidentifiew(
+    "async" + f-featuwestowev1quewyfeatuwehydwatow.identifiew.name)
+  o-ovewwide v-vaw awewts: seq[awewt] = featuwestowev1quewyfeatuwehydwatow.awewts
 
-  override val features: Set[BaseFeatureStoreV1QueryFeature[Query, _ <: EntityId, _]] =
-    featureStoreV1QueryFeatureHydrator.features
+  ovewwide v-vaw featuwes: set[basefeatuwestowev1quewyfeatuwe[quewy, (U ﹏ U) _ <: e-entityid, :3 _]] =
+    f-featuwestowev1quewyfeatuwehydwatow.featuwes
 
-  override val clientBuilder: FeatureStoreV1DynamicClientBuilder =
-    featureStoreV1QueryFeatureHydrator.clientBuilder
+  o-ovewwide vaw cwientbuiwdew: f-featuwestowev1dynamiccwientbuiwdew =
+    featuwestowev1quewyfeatuwehydwatow.cwientbuiwdew
 }
 
-object AsyncQueryFeatureHydrator {
+object asyncquewyfeatuwehydwatow {
 
   /**
-   * A [[QueryFeatureHydrator]] with [[AsyncQueryFeatureHydrator]] that hydrated asynchronously for features
-   * to be before the step identified in [[hydrateBefore]]
+   * a-a [[quewyfeatuwehydwatow]] with [[asyncquewyfeatuwehydwatow]] that hydwated asynchwonouswy fow featuwes
+   * to be befowe t-the step identified in [[hydwatebefowe]]
    *
-   * @param hydrateBefore        the [[PipelineStepIdentifier]] step to make sure this feature is hydrated before.
-   * @param queryFeatureHydrator the underlying [[QueryFeatureHydrator]] to run asynchronously
-   * @tparam Query The domain model for the query or request
+   * @pawam hydwatebefowe        the [[pipewinestepidentifiew]] s-step to make suwe t-this featuwe is h-hydwated befowe. ( ͡o ω ͡o )
+   * @pawam quewyfeatuwehydwatow the undewwying [[quewyfeatuwehydwatow]] t-to wun asynchwonouswy
+   * @tpawam quewy t-the domain m-modew fow the quewy ow wequest
    */
-  def apply[Query <: PipelineQuery](
-    hydrateBefore: PipelineStepIdentifier,
-    queryFeatureHydrator: QueryFeatureHydrator[Query]
-  ): AsyncQueryFeatureHydrator[Query] =
-    new AsyncQueryFeatureHydrator(hydrateBefore, queryFeatureHydrator)
+  def appwy[quewy <: pipewinequewy](
+    hydwatebefowe: pipewinestepidentifiew, σωσ
+    q-quewyfeatuwehydwatow: quewyfeatuwehydwatow[quewy]
+  ): asyncquewyfeatuwehydwatow[quewy] =
+    n-nyew asyncquewyfeatuwehydwatow(hydwatebefowe, >w< quewyfeatuwehydwatow)
 
   /**
-   * A [[FeatureStoreV1QueryFeatureHydrator]] with [[AsyncHydrator]] that hydrated asynchronously for features
-   * to be before the step identified in [[hydrateBefore]]. We need a standalone class for feature store,
-   * different from the above as FStore hydrators are exempt from validations at run time.
+   * a-a [[featuwestowev1quewyfeatuwehydwatow]] w-with [[asynchydwatow]] that hydwated asynchwonouswy f-fow featuwes
+   * t-to be befowe the step identified i-in [[hydwatebefowe]]. 😳😳😳 w-we need a standawone cwass fow featuwe stowe, OwO
+   * diffewent fwom the a-above as fstowe h-hydwatows awe e-exempt fwom vawidations at wun t-time. 😳
    *
-   * @param hydrateBefore        the [[PipelineStepIdentifier]] step to make sure this feature is hydrated before.
-   * @param queryFeatureHydrator the underlying [[QueryFeatureHydrator]] to run asynchronously
-   * @tparam Query The domain model for the query or request
+   * @pawam h-hydwatebefowe        the [[pipewinestepidentifiew]] s-step to make suwe this featuwe is hydwated befowe. 😳😳😳
+   * @pawam quewyfeatuwehydwatow the u-undewwying [[quewyfeatuwehydwatow]] t-to wun asynchwonouswy
+   * @tpawam quewy the domain modew f-fow the quewy ow w-wequest
    */
-  def apply[Query <: PipelineQuery](
-    hydrateBefore: PipelineStepIdentifier,
-    featureStoreV1QueryFeatureHydrator: FeatureStoreV1QueryFeatureHydrator[Query]
-  ): AsyncFeatureStoreV1QueryFeatureHydrator[Query] =
-    new AsyncFeatureStoreV1QueryFeatureHydrator(hydrateBefore, featureStoreV1QueryFeatureHydrator)
+  def appwy[quewy <: pipewinequewy](
+    hydwatebefowe: p-pipewinestepidentifiew, (˘ω˘)
+    featuwestowev1quewyfeatuwehydwatow: featuwestowev1quewyfeatuwehydwatow[quewy]
+  ): asyncfeatuwestowev1quewyfeatuwehydwatow[quewy] =
+    nyew a-asyncfeatuwestowev1quewyfeatuwehydwatow(hydwatebefowe, ʘwʘ featuwestowev1quewyfeatuwehydwatow)
 }

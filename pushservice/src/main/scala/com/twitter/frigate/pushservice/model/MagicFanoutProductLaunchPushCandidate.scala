@@ -1,95 +1,95 @@
-package com.twitter.frigate.pushservice.model
+package com.twittew.fwigate.pushsewvice.modew
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.MagicFanoutProductLaunchCandidate
-import com.twitter.frigate.common.util.{FeatureSwitchParams => FS}
-import com.twitter.frigate.magic_events.thriftscala.MagicEventsReason
-import com.twitter.frigate.magic_events.thriftscala.ProductType
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.predicate.magic_fanout.MagicFanoutPredicatesUtil
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.model.ibis.MagicFanoutProductLaunchIbis2Hydrator
-import com.twitter.frigate.pushservice.model.ntab.MagicFanoutProductLaunchNtabRequestHydrator
-import com.twitter.frigate.pushservice.predicate.PredicatesForCandidate
-import com.twitter.frigate.pushservice.predicate.magic_fanout.MagicFanoutPredicatesForCandidate
-import com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue.MagicFanoutNtabCaretFatiguePredicate
-import com.twitter.frigate.pushservice.take.predicates.BasicSendHandlerPredicates
-import com.twitter.frigate.thriftscala.FrigateNotification
-import com.twitter.hermit.predicate.NamedPredicate
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.magicfanoutpwoductwaunchcandidate
+i-impowt com.twittew.fwigate.common.utiw.{featuweswitchpawams => f-fs}
+impowt c-com.twittew.fwigate.magic_events.thwiftscawa.magiceventsweason
+impowt c-com.twittew.fwigate.magic_events.thwiftscawa.pwoducttype
+impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+impowt com.twittew.fwigate.pushsewvice.pwedicate.magic_fanout.magicfanoutpwedicatesutiw
+impowt c-com.twittew.fwigate.pushsewvice.config.config
+impowt com.twittew.fwigate.pushsewvice.mw.pushmwmodewscowew
+impowt com.twittew.fwigate.pushsewvice.modew.candidate.copyids
+i-impowt com.twittew.fwigate.pushsewvice.modew.ibis.magicfanoutpwoductwaunchibis2hydwatow
+i-impowt com.twittew.fwigate.pushsewvice.modew.ntab.magicfanoutpwoductwaunchntabwequesthydwatow
+impowt com.twittew.fwigate.pushsewvice.pwedicate.pwedicatesfowcandidate
+impowt com.twittew.fwigate.pushsewvice.pwedicate.magic_fanout.magicfanoutpwedicatesfowcandidate
+i-impowt com.twittew.fwigate.pushsewvice.pwedicate.ntab_cawet_fatigue.magicfanoutntabcawetfatiguepwedicate
+i-impowt com.twittew.fwigate.pushsewvice.take.pwedicates.basicsendhandwewpwedicates
+i-impowt com.twittew.fwigate.thwiftscawa.fwigatenotification
+impowt com.twittew.hewmit.pwedicate.namedpwedicate
 
-class MagicFanoutProductLaunchPushCandidate(
-  candidate: RawCandidate with MagicFanoutProductLaunchCandidate,
-  copyIds: CopyIds
+cwass magicfanoutpwoductwaunchpushcandidate(
+  candidate: wawcandidate with m-magicfanoutpwoductwaunchcandidate, (ˆ ﻌ ˆ)♡
+  copyids: copyids
 )(
-  implicit val statsScoped: StatsReceiver,
-  pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
-    with MagicFanoutProductLaunchCandidate
-    with MagicFanoutProductLaunchIbis2Hydrator
-    with MagicFanoutProductLaunchNtabRequestHydrator {
+  impwicit vaw statsscoped: statsweceivew, 😳😳😳
+  p-pushmodewscowew: pushmwmodewscowew)
+    e-extends pushcandidate
+    w-with magicfanoutpwoductwaunchcandidate
+    w-with magicfanoutpwoductwaunchibis2hydwatow
+    w-with magicfanoutpwoductwaunchntabwequesthydwatow {
 
-  override val frigateNotification: FrigateNotification = candidate.frigateNotification
+  ovewwide vaw fwigatenotification: f-fwigatenotification = candidate.fwigatenotification
 
-  override val pushCopyId: Option[Int] = copyIds.pushCopyId
+  ovewwide vaw p-pushcopyid: option[int] = copyids.pushcopyid
 
-  override val ntabCopyId: Option[Int] = copyIds.ntabCopyId
+  ovewwide vaw nytabcopyid: option[int] = copyids.ntabcopyid
 
-  override val pushId: Long = candidate.pushId
+  ovewwide v-vaw pushid: wong = candidate.pushid
 
-  override val productLaunchType: ProductType = candidate.productLaunchType
+  o-ovewwide v-vaw pwoductwaunchtype: p-pwoducttype = candidate.pwoductwaunchtype
 
-  override val candidateMagicEventsReasons: Seq[MagicEventsReason] =
-    candidate.candidateMagicEventsReasons
+  ovewwide vaw candidatemagiceventsweasons: s-seq[magiceventsweason] =
+    c-candidate.candidatemagiceventsweasons
 
-  override val copyAggregationId: Option[String] = copyIds.aggregationId
+  ovewwide v-vaw copyaggwegationid: o-option[stwing] = copyids.aggwegationid
 
-  override val target: Target = candidate.target
+  o-ovewwide vaw tawget: tawget = c-candidate.tawget
 
-  override val weightedOpenOrNtabClickModelScorer: PushMLModelScorer = pushModelScorer
+  ovewwide vaw weightedopenowntabcwickmodewscowew: p-pushmwmodewscowew = pushmodewscowew
 
-  override val statsReceiver: StatsReceiver =
-    statsScoped.scope("MagicFanoutProductLaunchPushCandidate")
+  ovewwide v-vaw statsweceivew: statsweceivew =
+    statsscoped.scope("magicfanoutpwoductwaunchpushcandidate")
 }
 
-case class MagicFanoutProductLaunchPushCandidatePredicates(config: Config)
-    extends BasicSendHandlerPredicates[MagicFanoutProductLaunchPushCandidate] {
+c-case c-cwass magicfanoutpwoductwaunchpushcandidatepwedicates(config: config)
+    extends basicsendhandwewpwedicates[magicfanoutpwoductwaunchpushcandidate] {
 
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+  impwicit vaw statsweceivew: statsweceivew = config.statsweceivew.scope(getcwass.getsimpwename)
 
-  override val preCandidateSpecificPredicates: List[
-    NamedPredicate[MagicFanoutProductLaunchPushCandidate]
+  o-ovewwide v-vaw pwecandidatespecificpwedicates: wist[
+    n-nyamedpwedicate[magicfanoutpwoductwaunchpushcandidate]
   ] =
-    List(
-      PredicatesForCandidate.isDeviceEligibleForCreatorPush,
-      PredicatesForCandidate.exceptedPredicate(
-        "excepted_is_target_blue_verified",
-        MagicFanoutPredicatesUtil.shouldSkipBlueVerifiedCheckForCandidate,
-        PredicatesForCandidate.isTargetBlueVerified.flip
-      ), // no need to send if target is already Blue Verified
-      PredicatesForCandidate.exceptedPredicate(
-        "excepted_is_target_legacy_verified",
-        MagicFanoutPredicatesUtil.shouldSkipLegacyVerifiedCheckForCandidate,
-        PredicatesForCandidate.isTargetLegacyVerified.flip
-      ), // no need to send if target is already Legacy Verified
-      PredicatesForCandidate.exceptedPredicate(
-        "excepted_is_target_super_follow_creator",
-        MagicFanoutPredicatesUtil.shouldSkipSuperFollowCreatorCheckForCandidate,
-        PredicatesForCandidate.isTargetSuperFollowCreator.flip
-      ), // no need to send if target is already Super Follow Creator
-      PredicatesForCandidate.paramPredicate(
-        FS.EnableMagicFanoutProductLaunch
-      ),
-      MagicFanoutPredicatesForCandidate.magicFanoutProductLaunchFatigue(),
+    w-wist(
+      p-pwedicatesfowcandidate.isdeviceewigibwefowcweatowpush, (U ﹏ U)
+      pwedicatesfowcandidate.exceptedpwedicate(
+        "excepted_is_tawget_bwue_vewified", (///ˬ///✿)
+        magicfanoutpwedicatesutiw.shouwdskipbwuevewifiedcheckfowcandidate, 😳
+        pwedicatesfowcandidate.istawgetbwuevewified.fwip
+      ), 😳 // n-nyo nyeed to send if tawget is awweady bwue vewified
+      pwedicatesfowcandidate.exceptedpwedicate(
+        "excepted_is_tawget_wegacy_vewified", σωσ
+        magicfanoutpwedicatesutiw.shouwdskipwegacyvewifiedcheckfowcandidate, rawr x3
+        pwedicatesfowcandidate.istawgetwegacyvewified.fwip
+      ), OwO // n-nyo nyeed to send if t-tawget is awweady w-wegacy vewified
+      p-pwedicatesfowcandidate.exceptedpwedicate(
+        "excepted_is_tawget_supew_fowwow_cweatow", /(^•ω•^)
+        magicfanoutpwedicatesutiw.shouwdskipsupewfowwowcweatowcheckfowcandidate, 😳😳😳
+        p-pwedicatesfowcandidate.istawgetsupewfowwowcweatow.fwip
+      ), ( ͡o ω ͡o ) // n-nyo nyeed to send i-if tawget is a-awweady supew fowwow cweatow
+      pwedicatesfowcandidate.pawampwedicate(
+        f-fs.enabwemagicfanoutpwoductwaunch
+      ), >_<
+      m-magicfanoutpwedicatesfowcandidate.magicfanoutpwoductwaunchfatigue(),
     )
 
-  override val postCandidateSpecificPredicates: List[
-    NamedPredicate[MagicFanoutProductLaunchPushCandidate]
+  o-ovewwide vaw postcandidatespecificpwedicates: wist[
+    n-nyamedpwedicate[magicfanoutpwoductwaunchpushcandidate]
   ] =
-    List(
-      MagicFanoutNtabCaretFatiguePredicate(),
+    w-wist(
+      magicfanoutntabcawetfatiguepwedicate(), >w<
     )
 }

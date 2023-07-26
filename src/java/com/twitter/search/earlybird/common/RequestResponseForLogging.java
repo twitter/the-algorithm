@@ -1,54 +1,54 @@
-package com.twitter.search.earlybird.common;
+package com.twittew.seawch.eawwybiwd.common;
 
 
-import org.apache.thrift.TException;
-import org.apache.thrift.TSerializer;
-import org.apache.thrift.protocol.TSimpleJSONProtocol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt o-owg.apache.thwift.texception;
+i-impowt owg.apache.thwift.tsewiawizew;
+i-impowt o-owg.apache.thwift.pwotocow.tsimpwejsonpwotocow;
+i-impowt owg.swf4j.woggew;
+i-impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
 
-public class RequestResponseForLogging {
-  private static final Logger LOG = LoggerFactory.getLogger(
-      RequestResponseForLogging.class);
+pubwic cwass wequestwesponsefowwogging {
+  p-pwivate static finaw woggew wog = woggewfactowy.getwoggew(
+      w-wequestwesponsefowwogging.cwass);
 
-  private static final Logger FAILED_REQUEST_LOG = LoggerFactory.getLogger(
-      RequestResponseForLogging.class.getName() + ".FailedRequests");
+  pwivate static f-finaw woggew faiwed_wequest_wog = woggewfactowy.getwoggew(
+      wequestwesponsefowwogging.cwass.getname() + ".faiwedwequests");
 
-  private final EarlybirdRequest request;
-  private final EarlybirdResponse response;
+  p-pwivate finaw eawwybiwdwequest w-wequest;
+  p-pwivate finaw eawwybiwdwesponse wesponse;
 
-  public RequestResponseForLogging(EarlybirdRequest request,
-                                   EarlybirdResponse response) {
-    this.request = request;
-    this.response = response;
+  pubwic wequestwesponsefowwogging(eawwybiwdwequest wequest, 😳😳😳
+                                   eawwybiwdwesponse w-wesponse) {
+    this.wequest = wequest;
+    this.wesponse = wesponse;
   }
 
-  private String serialize(EarlybirdRequest clearedRequest, EarlybirdResponse theResponse) {
-    TSerializer serializer = new TSerializer(new TSimpleJSONProtocol.Factory());
-    try {
-      String requestJson = serializer.toString(clearedRequest);
-      String responseJson = serializer.toString(theResponse);
-      return "{\"request\":" + requestJson + ", \"response\":" + responseJson + "}";
-    } catch (TException e) {
-      LOG.error("Failed to serialize request/response for logging.", e);
-      return "";
+  pwivate s-stwing sewiawize(eawwybiwdwequest cweawedwequest, mya e-eawwybiwdwesponse t-thewesponse) {
+    t-tsewiawizew s-sewiawizew = nyew tsewiawizew(new tsimpwejsonpwotocow.factowy());
+    twy {
+      s-stwing wequestjson = sewiawizew.tostwing(cweawedwequest);
+      s-stwing wesponsejson = sewiawizew.tostwing(thewesponse);
+      wetuwn "{\"wequest\":" + wequestjson + ", 😳 \"wesponse\":" + wesponsejson + "}";
+    } c-catch (texception e) {
+      wog.ewwow("faiwed t-to s-sewiawize wequest/wesponse f-fow wogging.", -.- e);
+      wetuwn "";
     }
   }
 
   /**
-   * Logs the request and response stored in this instance to the failure log file.
+   * wogs the wequest a-and wesponse s-stowed in this instance to the f-faiwuwe wog fiwe. 🥺
    */
-  public void logFailedRequest() {
-    // Do the serializing/concatting this way so it happens on the background thread for
-    // async logging
-    FAILED_REQUEST_LOG.info("{}", new Object() {
-      @Override
-      public String toString() {
-        return serialize(
-            EarlybirdRequestUtil.copyAndClearUnnecessaryValuesForLogging(request), response);
+  p-pubwic void wogfaiwedwequest() {
+    // d-do the sewiawizing/concatting this way so it h-happens on the backgwound thwead fow
+    // async w-wogging
+    faiwed_wequest_wog.info("{}", o.O nyew o-object() {
+      @ovewwide
+      pubwic stwing t-tostwing() {
+        w-wetuwn sewiawize(
+            eawwybiwdwequestutiw.copyandcweawunnecessawyvawuesfowwogging(wequest), /(^•ω•^) wesponse);
       }
     });
   }

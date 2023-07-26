@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted
 
-sealed trait DisclaimerType
+seawed twait discwaimewtype
 
-object DisclaimerPolitical extends DisclaimerType
-object DisclaimerIssue extends DisclaimerType
+o-object d-discwaimewpowiticaw e-extends discwaimewtype
+o-object d-discwaimewissue e-extends discwaimewtype

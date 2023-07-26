@@ -1,47 +1,47 @@
-package com.twitter.product_mixer.core.pipeline.candidate
+package com.twittew.pwoduct_mixew.cowe.pipewine.candidate
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.PassthroughCandidateSource
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateExtractor
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.passthwoughcandidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidateextwactow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.candidatedecowatow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinewesuwtstwansfowmew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object PassthroughCandidatePipelineConfig {
+object p-passthwoughcandidatepipewineconfig {
 
   /**
-   * Build a [[PassthroughCandidatePipelineConfig]] with a [[PassthroughCandidateSource]] built from
-   * a [[CandidateExtractor]]
+   * buiwd a [[passthwoughcandidatepipewineconfig]] with a [[passthwoughcandidatesouwce]] b-buiwt fwom
+   * a [[candidateextwactow]]
    */
-  def apply[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    identifier: CandidatePipelineIdentifier,
-    extractor: CandidateExtractor[Query, Candidate],
-    decorator: Option[CandidateDecorator[Query, Candidate]] = None
-  ): PassthroughCandidatePipelineConfig[Query, Candidate] = {
+  d-def appwy[quewy <: pipewinequewy, 😳😳😳 candidate <: univewsawnoun[any]](
+    i-identifiew: candidatepipewineidentifiew, o.O
+    extwactow: candidateextwactow[quewy, ( ͡o ω ͡o ) c-candidate], (U ﹏ U)
+    d-decowatow: option[candidatedecowatow[quewy, (///ˬ///✿) candidate]] = none
+  ): passthwoughcandidatepipewineconfig[quewy, >w< candidate] = {
 
-    // Renaming variables to keep the interface clean, but avoid naming collisions when creating
-    // the anonymous class.
-    val _identifier = identifier
-    val _extractor = extractor
-    val _decorator = decorator
+    // w-wenaming vawiabwes to keep the intewface cwean, rawr but avoid nyaming cowwisions w-when cweating
+    // the a-anonymous cwass. mya
+    v-vaw _identifiew = i-identifiew
+    v-vaw _extwactow = extwactow
+    vaw _decowatow = d-decowatow
 
-    new PassthroughCandidatePipelineConfig[Query, Candidate] {
-      override val identifier = _identifier
-      override val candidateSource =
-        PassthroughCandidateSource(CandidateSourceIdentifier(_identifier.name), _extractor)
-      override val decorator = _decorator
+    nyew passthwoughcandidatepipewineconfig[quewy, ^^ candidate] {
+      o-ovewwide vaw identifiew = _identifiew
+      ovewwide vaw candidatesouwce =
+        passthwoughcandidatesouwce(candidatesouwceidentifiew(_identifiew.name), 😳😳😳 _extwactow)
+      ovewwide vaw d-decowatow = _decowatow
     }
   }
 }
 
-trait PassthroughCandidatePipelineConfig[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]]
-    extends CandidatePipelineConfig[Query, Query, Candidate, Candidate] {
+twait passthwoughcandidatepipewineconfig[quewy <: p-pipewinequewy, mya c-candidate <: u-univewsawnoun[any]]
+    extends candidatepipewineconfig[quewy, 😳 quewy, candidate, -.- c-candidate] {
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[Query, Query] = identity
+  o-ovewwide vaw quewytwansfowmew: c-candidatepipewinequewytwansfowmew[quewy, 🥺 q-quewy] = identity
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[Candidate, Candidate] =
+  o-ovewwide vaw wesuwttwansfowmew: candidatepipewinewesuwtstwansfowmew[candidate, o.O c-candidate] =
     identity
 }

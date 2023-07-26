@@ -1,883 +1,883 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.visibility.common.ModelScoreThresholds
-import com.twitter.visibility.common.actions.AvoidReason
-import com.twitter.visibility.common.actions.AvoidReason.MightNotBeSuitableForAds
-import com.twitter.visibility.common.actions.LimitedEngagementReason
-import com.twitter.visibility.common.actions.TweetVisibilityNudgeReason
-import com.twitter.visibility.configapi.configs.DeciderKey
-import com.twitter.visibility.configapi.params.FSRuleParams.HighSpammyTweetContentScoreSearchLatestProdTweetLabelDropRuleThresholdParam
-import com.twitter.visibility.configapi.params.FSRuleParams.HighSpammyTweetContentScoreSearchTopProdTweetLabelDropRuleThresholdParam
-import com.twitter.visibility.configapi.params.FSRuleParams.HighSpammyTweetContentScoreTrendLatestTweetLabelDropRuleThresholdParam
-import com.twitter.visibility.configapi.params.FSRuleParams.HighSpammyTweetContentScoreTrendTopTweetLabelDropRuleThresholdParam
-import com.twitter.visibility.configapi.params.FSRuleParams.SkipTweetDetailLimitedEngagementRuleEnabledParam
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams._
-import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.visibility.rules.Condition._
-import com.twitter.visibility.rules.Condition.{True => TrueCondition}
-import com.twitter.visibility.rules.Reason._
-import com.twitter.visibility.rules.RuleActionSourceBuilder.TweetSafetyLabelSourceBuilder
+impowt com.twittew.visibiwity.common.modewscowethweshowds
+impowt c-com.twittew.visibiwity.common.actions.avoidweason
+i-impowt com.twittew.visibiwity.common.actions.avoidweason.mightnotbesuitabwefowads
+i-impowt c-com.twittew.visibiwity.common.actions.wimitedengagementweason
+impowt c-com.twittew.visibiwity.common.actions.tweetvisibiwitynudgeweason
+i-impowt com.twittew.visibiwity.configapi.configs.decidewkey
+i-impowt com.twittew.visibiwity.configapi.pawams.fswuwepawams.highspammytweetcontentscoweseawchwatestpwodtweetwabewdwopwuwethweshowdpawam
+i-impowt com.twittew.visibiwity.configapi.pawams.fswuwepawams.highspammytweetcontentscoweseawchtoppwodtweetwabewdwopwuwethweshowdpawam
+impowt com.twittew.visibiwity.configapi.pawams.fswuwepawams.highspammytweetcontentscowetwendwatesttweetwabewdwopwuwethweshowdpawam
+impowt com.twittew.visibiwity.configapi.pawams.fswuwepawams.highspammytweetcontentscowetwendtoptweetwabewdwopwuwethweshowdpawam
+impowt com.twittew.visibiwity.configapi.pawams.fswuwepawams.skiptweetdetaiwwimitedengagementwuweenabwedpawam
+impowt c-com.twittew.visibiwity.configapi.pawams.wuwepawam
+impowt com.twittew.visibiwity.configapi.pawams.wuwepawams._
+impowt com.twittew.visibiwity.modews.tweetsafetywabewtype
+i-impowt com.twittew.visibiwity.wuwes.condition._
+i-impowt com.twittew.visibiwity.wuwes.condition.{twue => twuecondition}
+impowt com.twittew.visibiwity.wuwes.weason._
+i-impowt com.twittew.visibiwity.wuwes.wuweactionsouwcebuiwdew.tweetsafetywabewsouwcebuiwdew
 
-object AbusiveTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.Abusive
+object a-abusivetweetwabewwuwe
+    e-extends nyonauthowwithtweetwabewwuwe(
+      dwop(unspecified), /(^•ω•^)
+      tweetsafetywabewtype.abusive
     )
-    with DoesLogVerdict
+    with doeswogvewdict
 
-object AbusiveNonFollowerTweetLabelRule
-    extends NonFollowerWithTweetLabelRule(
-      Drop(Toxicity),
-      TweetSafetyLabelType.Abusive
-    )
-
-object AbusiveUqfNonFollowerTweetLabelRule
-    extends NonFollowerWithUqfTweetLabelRule(
-      Drop(Toxicity),
-      TweetSafetyLabelType.Abusive
+o-object abusivenonfowwowewtweetwabewwuwe
+    extends nyonfowwowewwithtweetwabewwuwe(
+      dwop(toxicity), rawr
+      t-tweetsafetywabewtype.abusive
     )
 
-object AbusiveHighRecallTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.AbusiveHighRecall
+object abusiveuqfnonfowwowewtweetwabewwuwe
+    e-extends nyonfowwowewwithuqftweetwabewwuwe(
+      d-dwop(toxicity), nyaa~~
+      t-tweetsafetywabewtype.abusive
     )
 
-object AbusiveHighRecallNonFollowerTweetLabelRule
-    extends NonFollowerWithTweetLabelRule(
-      Interstitial(PossiblyUndesirable),
-      TweetSafetyLabelType.AbusiveHighRecall
+o-object abusivehighwecawwtweetwabewwuwe
+    extends nyonauthowwithtweetwabewwuwe(
+      d-dwop(unspecified),
+      tweetsafetywabewtype.abusivehighwecaww
     )
 
-object AutomationTweetLabelRule
-    extends NonFollowerWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.Automation
+object a-abusivehighwecawwnonfowwowewtweetwabewwuwe
+    extends nyonfowwowewwithtweetwabewwuwe(
+      intewstitiaw(possibwyundesiwabwe), ( ͡o ω ͡o )
+      tweetsafetywabewtype.abusivehighwecaww
     )
 
-object BystanderAbusiveTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.BystanderAbusive
+object automationtweetwabewwuwe
+    extends n-nyonfowwowewwithtweetwabewwuwe(
+      dwop(unspecified), σωσ
+      t-tweetsafetywabewtype.automation
     )
 
-object BystanderAbusiveNonFollowerTweetLabelRule
-    extends NonFollowerWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.BystanderAbusive
+o-object bystandewabusivetweetwabewwuwe
+    e-extends nyonauthowwithtweetwabewwuwe(
+      dwop(unspecified), (✿oωo)
+      tweetsafetywabewtype.bystandewabusive
     )
 
-abstract class DuplicateContentTweetLabelRule(action: Action)
-    extends NonAuthorWithTweetLabelRule(
+object bystandewabusivenonfowwowewtweetwabewwuwe
+    e-extends n-nyonfowwowewwithtweetwabewwuwe(
+      dwop(unspecified), (///ˬ///✿)
+      tweetsafetywabewtype.bystandewabusive
+    )
+
+a-abstwact c-cwass dupwicatecontenttweetwabewwuwe(action: action)
+    extends n-nyonauthowwithtweetwabewwuwe(
       action,
-      TweetSafetyLabelType.DuplicateContent
+      t-tweetsafetywabewtype.dupwicatecontent
     )
 
-object DuplicateContentTweetLabelDropRule
-    extends DuplicateContentTweetLabelRule(Drop(TweetLabelDuplicateContent))
+object dupwicatecontenttweetwabewdwopwuwe
+    extends dupwicatecontenttweetwabewwuwe(dwop(tweetwabewdupwicatecontent))
 
-object DuplicateContentTweetLabelTombstoneRule
-    extends DuplicateContentTweetLabelRule(Tombstone(Epitaph.Unavailable))
+o-object dupwicatecontenttweetwabewtombstonewuwe
+    e-extends dupwicatecontenttweetwabewwuwe(tombstone(epitaph.unavaiwabwe))
 
-object DuplicateMentionTweetLabelRule
-    extends NonFollowerWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.DuplicateMention
+object dupwicatementiontweetwabewwuwe
+    e-extends nyonfowwowewwithtweetwabewwuwe(
+      d-dwop(unspecified), σωσ
+      tweetsafetywabewtype.dupwicatemention
     )
 
-object DuplicateMentionUqfTweetLabelRule
-    extends NonFollowerWithUqfTweetLabelRule(
-      Drop(TweetLabelDuplicateMention),
-      TweetSafetyLabelType.DuplicateMention
+object dupwicatementionuqftweetwabewwuwe
+    extends nyonfowwowewwithuqftweetwabewwuwe(
+      dwop(tweetwabewdupwicatemention), UwU
+      tweetsafetywabewtype.dupwicatemention
     )
 
-object GoreAndViolenceTweetLabelRule
-    extends ConditionWithTweetLabelRule(
-      Drop(Unspecified),
-      And(
-        NonAuthorViewer,
-        TweetComposedBefore(TweetSafetyLabelType.GoreAndViolence.DeprecatedAt)
-      ),
-      TweetSafetyLabelType.GoreAndViolence
+object g-goweandviowencetweetwabewwuwe
+    e-extends conditionwithtweetwabewwuwe(
+      dwop(unspecified), (⑅˘꒳˘)
+      a-and(
+        n-nyonauthowviewew, /(^•ω•^)
+        t-tweetcomposedbefowe(tweetsafetywabewtype.goweandviowence.depwecatedat)
+      ), -.-
+      tweetsafetywabewtype.goweandviowence
     )
 
-object LiveLowQualityTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.LiveLowQuality
+object wivewowquawitytweetwabewwuwe
+    extends nyonauthowwithtweetwabewwuwe(
+      d-dwop(unspecified), (ˆ ﻌ ˆ)♡
+      tweetsafetywabewtype.wivewowquawity
     )
 
-object LowQualityMentionTweetLabelRule
-    extends RuleWithConstantAction(
-      Drop(LowQualityMention),
-      And(
-        TweetHasLabelForPerspectivalUser(TweetSafetyLabelType.LowQualityMention),
-        ViewerHasUqfEnabled
+object wowquawitymentiontweetwabewwuwe
+    extends wuwewithconstantaction(
+      dwop(wowquawitymention), nyaa~~
+      a-and(
+        tweethaswabewfowpewspectivawusew(tweetsafetywabewtype.wowquawitymention), ʘwʘ
+        v-viewewhasuqfenabwed
       )
     )
 
-abstract class NsfwCardImageTweetLabelBaseRule(
-  override val action: Action,
-  val additionalCondition: Condition = TrueCondition,
-) extends RuleWithConstantAction(
-      action,
-      And(
-        additionalCondition,
-        TweetHasLabel(TweetSafetyLabelType.NsfwCardImage)
+a-abstwact c-cwass nysfwcawdimagetweetwabewbasewuwe(
+  ovewwide v-vaw action: a-action, :3
+  vaw additionawcondition: c-condition = t-twuecondition, (U ᵕ U❁)
+) extends wuwewithconstantaction(
+      action, (U ﹏ U)
+      a-and(
+        a-additionawcondition, ^^
+        tweethaswabew(tweetsafetywabewtype.nsfwcawdimage)
       )
     )
 
-object NsfwCardImageTweetLabelRule
-    extends NsfwCardImageTweetLabelBaseRule(
-      action = Drop(Nsfw),
-      additionalCondition = NonAuthorViewer,
+o-object nysfwcawdimagetweetwabewwuwe
+    e-extends n-nysfwcawdimagetweetwabewbasewuwe(
+      action = dwop(nsfw), òωó
+      additionawcondition = n-nyonauthowviewew, /(^•ω•^)
     )
 
-object NsfwCardImageAllUsersTweetLabelRule
-    extends NsfwCardImageTweetLabelBaseRule(
-      action = Interstitial(Nsfw)
+object nysfwcawdimageawwusewstweetwabewwuwe
+    extends nysfwcawdimagetweetwabewbasewuwe(
+      action = intewstitiaw(nsfw)
     )
 
-object NsfwCardImageAvoidAllUsersTweetLabelRule
-    extends NsfwCardImageTweetLabelBaseRule(
-      action = Avoid(Some(AvoidReason.ContainsNsfwMedia)),
+object nysfwcawdimageavoidawwusewstweetwabewwuwe
+    extends n-nysfwcawdimagetweetwabewbasewuwe(
+      action = avoid(some(avoidweason.containsnsfwmedia)), 😳😳😳
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+  ovewwide d-def enabwed: seq[wuwepawam[boowean]] = s-seq(enabweavoidnsfwwuwespawam)
 
-  override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
-    new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
+  o-ovewwide vaw fawwbackactionbuiwdew: option[actionbuiwdew[_ <: a-action]] = some(
+    nyew c-constantactionbuiwdew(avoid(some(mightnotbesuitabwefowads))))
 }
 
-object NsfwCardImageAvoidAdPlacementAllUsersTweetLabelRule
-    extends NsfwCardImageTweetLabelBaseRule(
-      action = Avoid(Some(AvoidReason.ContainsNsfwMedia)),
+o-object nysfwcawdimageavoidadpwacementawwusewstweetwabewwuwe
+    extends nysfwcawdimagetweetwabewbasewuwe(
+      action = avoid(some(avoidweason.containsnsfwmedia)), :3
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+  ovewwide def enabwed: seq[wuwepawam[boowean]] = seq(enabweavoidnsfwwuwespawam)
 }
 
-object SearchAvoidTweetNsfwAdminRule
-    extends RuleWithConstantAction(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-      TweetHasNsfwAdminAuthor
+o-object seawchavoidtweetnsfwadminwuwe
+    extends w-wuwewithconstantaction(
+      avoid(some(avoidweason.containsnsfwmedia)), (///ˬ///✿)
+      t-tweethasnsfwadminauthow
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+  o-ovewwide def enabwed: seq[wuwepawam[boowean]] = seq(enabweavoidnsfwwuwespawam)
 }
 
-object SearchAvoidTweetNsfwUserRule
-    extends RuleWithConstantAction(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-      TweetHasNsfwUserAuthor
+o-object s-seawchavoidtweetnsfwusewwuwe
+    extends wuwewithconstantaction(
+      a-avoid(some(avoidweason.containsnsfwmedia)),
+      t-tweethasnsfwusewauthow
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+  ovewwide def enabwed: seq[wuwepawam[boowean]] = seq(enabweavoidnsfwwuwespawam)
 }
 
-object NsfwCardImageAllUsersTweetLabelDropRule
-    extends NsfwCardImageTweetLabelBaseRule(
-      action = Drop(Nsfw),
+o-object n-nysfwcawdimageawwusewstweetwabewdwopwuwe
+    e-extends nysfwcawdimagetweetwabewbasewuwe(
+      action = dwop(nsfw), rawr x3
     )
 
-object HighProactiveTosScoreTweetLabelDropRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.HighProactiveTosScore
+o-object h-highpwoactivetosscowetweetwabewdwopwuwe
+    extends nyonauthowwithtweetwabewwuwe(
+      d-dwop(unspecified), (U ᵕ U❁)
+      tweetsafetywabewtype.highpwoactivetosscowe
     )
 
-object HighProactiveTosScoreTweetLabelDropSearchRule
-    extends NonAuthorAndNonFollowerWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.HighProactiveTosScore
+object highpwoactivetosscowetweetwabewdwopseawchwuwe
+    extends nyonauthowandnonfowwowewwithtweetwabewwuwe(
+      dwop(unspecified), (⑅˘꒳˘)
+      t-tweetsafetywabewtype.highpwoactivetosscowe
     )
 
-object NsfwHighPrecisionTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.NsfwHighPrecision
+o-object nysfwhighpwecisiontweetwabewwuwe
+    extends nyonauthowwithtweetwabewwuwe(
+      dwop(nsfw), (˘ω˘)
+      tweetsafetywabewtype.nsfwhighpwecision
     )
 
-object NsfwHighPrecisionAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.NsfwHighPrecision
+o-object n-nysfwhighpwecisionawwusewstweetwabewdwopwuwe
+    extends tweethaswabewwuwe(
+      dwop(nsfw), :3
+      tweetsafetywabewtype.nsfwhighpwecision
     )
 
-object NsfwHighPrecisionInnerQuotedTweetLabelRule
-    extends ConditionWithTweetLabelRule(
-      Drop(Nsfw),
-      And(IsQuotedInnerTweet, NonAuthorViewer),
-      TweetSafetyLabelType.NsfwHighPrecision
+o-object nysfwhighpwecisioninnewquotedtweetwabewwuwe
+    extends conditionwithtweetwabewwuwe(
+      dwop(nsfw), XD
+      and(isquotedinnewtweet, >_< n-nyonauthowviewew), (✿oωo)
+      tweetsafetywabewtype.nsfwhighpwecision
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwHpQuotedTweetDropRuleParam)
+  ovewwide d-def enabwed: s-seq[wuwepawam[boowean]] = seq(enabwensfwhpquotedtweetdwopwuwepawam)
 }
 
-object NsfwHighPrecisionTombstoneInnerQuotedTweetLabelRule
-    extends ConditionWithTweetLabelRule(
-      Tombstone(Epitaph.Unavailable),
-      And(IsQuotedInnerTweet, NonAuthorViewer),
-      TweetSafetyLabelType.NsfwHighPrecision
+object nsfwhighpwecisiontombstoneinnewquotedtweetwabewwuwe
+    e-extends c-conditionwithtweetwabewwuwe(
+      tombstone(epitaph.unavaiwabwe), (ꈍᴗꈍ)
+      and(isquotedinnewtweet, XD nyonauthowviewew), :3
+      t-tweetsafetywabewtype.nsfwhighpwecision
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwHpQuotedTweetTombstoneRuleParam)
+  ovewwide d-def enabwed: seq[wuwepawam[boowean]] = seq(enabwensfwhpquotedtweettombstonewuwepawam)
 }
 
-object GoreAndViolenceHighPrecisionTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.GoreAndViolenceHighPrecision
+object g-goweandviowencehighpwecisiontweetwabewwuwe
+    extends nyonauthowwithtweetwabewwuwe(
+      dwop(nsfw), mya
+      t-tweetsafetywabewtype.goweandviowencehighpwecision
     )
 
-object NsfwReportedHeuristicsTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.NsfwReportedHeuristics
+o-object nysfwwepowtedheuwisticstweetwabewwuwe
+    e-extends nonauthowwithtweetwabewwuwe(
+      d-dwop(nsfw), òωó
+      t-tweetsafetywabewtype.nsfwwepowtedheuwistics
     )
 
-object GoreAndViolenceReportedHeuristicsTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+o-object goweandviowencewepowtedheuwisticstweetwabewwuwe
+    e-extends nyonauthowwithtweetwabewwuwe(
+      d-dwop(nsfw), nyaa~~
+      tweetsafetywabewtype.goweandviowencewepowtedheuwistics
     )
 
-object NsfwHighPrecisionInterstitialAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Interstitial(Nsfw),
-      TweetSafetyLabelType.NsfwHighPrecision
+object nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe
+    e-extends tweethaswabewwuwe(
+      i-intewstitiaw(nsfw), 🥺
+      t-tweetsafetywabewtype.nsfwhighpwecision
     )
-    with DoesLogVerdict
+    with doeswogvewdict
 
-object GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-      TweetSafetyLabelType.GoreAndViolenceHighPrecision
+o-object goweandviowencehighpwecisionavoidawwusewstweetwabewwuwe
+    extends tweethaswabewwuwe(
+      a-avoid(some(avoidweason.containsnsfwmedia)), -.-
+      t-tweetsafetywabewtype.goweandviowencehighpwecision
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+  ovewwide def enabwed: seq[wuwepawam[boowean]] = seq(enabweavoidnsfwwuwespawam)
 
-  override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
-    new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
+  o-ovewwide v-vaw fawwbackactionbuiwdew: o-option[actionbuiwdew[_ <: a-action]] = some(
+    nyew constantactionbuiwdew(avoid(some(mightnotbesuitabwefowads))))
 }
 
-object GoreAndViolenceHighPrecisionAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Interstitial(Nsfw),
-      TweetSafetyLabelType.GoreAndViolenceHighPrecision
+o-object goweandviowencehighpwecisionawwusewstweetwabewwuwe
+    extends tweethaswabewwuwe(
+      intewstitiaw(nsfw), 🥺
+      tweetsafetywabewtype.goweandviowencehighpwecision
     )
-    with DoesLogVerdict {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.GoreAndViolenceHighPrecision)
+    with doeswogvewdict {
+  ovewwide d-def actionsouwcebuiwdew: option[wuweactionsouwcebuiwdew] = some(
+    tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype.goweandviowencehighpwecision)
   )
 }
 
-object NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-      TweetSafetyLabelType.NsfwReportedHeuristics
+o-object nysfwwepowtedheuwisticsavoidawwusewstweetwabewwuwe
+    extends tweethaswabewwuwe(
+      a-avoid(some(avoidweason.containsnsfwmedia)), (˘ω˘)
+      tweetsafetywabewtype.nsfwwepowtedheuwistics
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+  o-ovewwide def enabwed: s-seq[wuwepawam[boowean]] = s-seq(enabweavoidnsfwwuwespawam)
 
-  override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
-    new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
+  o-ovewwide v-vaw fawwbackactionbuiwdew: o-option[actionbuiwdew[_ <: action]] = some(
+    nyew constantactionbuiwdew(avoid(some(mightnotbesuitabwefowads))))
 }
 
-object NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-      TweetSafetyLabelType.NsfwReportedHeuristics
+object nysfwwepowtedheuwisticsavoidadpwacementawwusewstweetwabewwuwe
+    extends tweethaswabewwuwe(
+      avoid(some(avoidweason.containsnsfwmedia)), òωó
+      t-tweetsafetywabewtype.nsfwwepowtedheuwistics
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+  o-ovewwide d-def enabwed: seq[wuwepawam[boowean]] = seq(enabweavoidnsfwwuwespawam)
 
-  override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
-    new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
+  o-ovewwide vaw fawwbackactionbuiwdew: option[actionbuiwdew[_ <: action]] = s-some(
+    nyew c-constantactionbuiwdew(avoid(some(mightnotbesuitabwefowads))))
 }
 
-object NsfwReportedHeuristicsAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Interstitial(Nsfw),
-      TweetSafetyLabelType.NsfwReportedHeuristics
+object nysfwwepowtedheuwisticsawwusewstweetwabewwuwe
+    e-extends tweethaswabewwuwe(
+      intewstitiaw(nsfw), UwU
+      t-tweetsafetywabewtype.nsfwwepowtedheuwistics
     )
 
-object GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Interstitial(Nsfw),
-      TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+o-object goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe
+    e-extends t-tweethaswabewwuwe(
+      intewstitiaw(nsfw), ^•ﻌ•^
+      tweetsafetywabewtype.goweandviowencewepowtedheuwistics
     )
 
-object GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-      TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+object goweandviowencewepowtedheuwisticsavoidawwusewstweetwabewwuwe
+    extends t-tweethaswabewwuwe(
+      a-avoid(some(avoidweason.containsnsfwmedia)),
+      t-tweetsafetywabewtype.goweandviowencewepowtedheuwistics
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+  o-ovewwide def enabwed: s-seq[wuwepawam[boowean]] = seq(enabweavoidnsfwwuwespawam)
 
-  override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
-    new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
+  o-ovewwide vaw f-fawwbackactionbuiwdew: option[actionbuiwdew[_ <: a-action]] = some(
+    n-nyew constantactionbuiwdew(avoid(some(mightnotbesuitabwefowads))))
 }
 
-object GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-      TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+object g-goweandviowencewepowtedheuwisticsavoidadpwacementawwusewstweetwabewwuwe
+    extends tweethaswabewwuwe(
+      avoid(some(avoidweason.containsnsfwmedia)), mya
+      t-tweetsafetywabewtype.goweandviowencewepowtedheuwistics
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+  ovewwide def e-enabwed: seq[wuwepawam[boowean]] = s-seq(enabweavoidnsfwwuwespawam)
 
-  override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
-    new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
+  ovewwide vaw f-fawwbackactionbuiwdew: option[actionbuiwdew[_ <: action]] = some(
+    n-nyew constantactionbuiwdew(avoid(some(mightnotbesuitabwefowads))))
 }
 
-object GoreAndViolenceHighPrecisionAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.GoreAndViolenceHighPrecision
+o-object g-goweandviowencehighpwecisionawwusewstweetwabewdwopwuwe
+    extends tweethaswabewwuwe(
+      dwop(nsfw), (✿oωo)
+      tweetsafetywabewtype.goweandviowencehighpwecision
     )
 
-object NsfwReportedHeuristicsAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.NsfwReportedHeuristics
+o-object nysfwwepowtedheuwisticsawwusewstweetwabewdwopwuwe
+    extends t-tweethaswabewwuwe(
+      d-dwop(nsfw),
+      tweetsafetywabewtype.nsfwwepowtedheuwistics
     )
 
-object GoreAndViolenceReportedHeuristicsAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+object g-goweandviowencewepowtedheuwisticsawwusewstweetwabewdwopwuwe
+    extends tweethaswabewwuwe(
+      d-dwop(nsfw), XD
+      t-tweetsafetywabewtype.goweandviowencewepowtedheuwistics
     )
 
-object NsfwHighRecallTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.NsfwHighRecall
+object nsfwhighwecawwtweetwabewwuwe
+    extends nyonauthowwithtweetwabewwuwe(
+      d-dwop(nsfw), :3
+      tweetsafetywabewtype.nsfwhighwecaww
     )
 
-object NsfwHighRecallAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.NsfwHighRecall
+object nsfwhighwecawwawwusewstweetwabewdwopwuwe
+    e-extends t-tweethaswabewwuwe(
+      dwop(nsfw), (U ﹏ U)
+      tweetsafetywabewtype.nsfwhighwecaww
     )
 
-abstract class PdnaTweetLabelRule(
-  override val action: Action,
-  val additionalCondition: Condition)
-    extends ConditionWithTweetLabelRule(
-      action,
-      And(NonAuthorViewer, additionalCondition),
-      TweetSafetyLabelType.Pdna
+a-abstwact cwass pdnatweetwabewwuwe(
+  ovewwide v-vaw action: a-action, UwU
+  vaw a-additionawcondition: condition)
+    extends conditionwithtweetwabewwuwe(
+      action, ʘwʘ
+      and(nonauthowviewew, >w< additionawcondition), 😳😳😳
+      tweetsafetywabewtype.pdna
     )
 
-object PdnaTweetLabelRule extends PdnaTweetLabelRule(Drop(PdnaTweet), Condition.True)
+object pdnatweetwabewwuwe extends pdnatweetwabewwuwe(dwop(pdnatweet), rawr condition.twue)
 
-object PdnaTweetLabelTombstoneRule
-    extends PdnaTweetLabelRule(Tombstone(Epitaph.Unavailable), Condition.True)
+object pdnatweetwabewtombstonewuwe
+    extends pdnatweetwabewwuwe(tombstone(epitaph.unavaiwabwe), ^•ﻌ•^ condition.twue)
 
-object PdnaQuotedTweetLabelTombstoneRule
-    extends PdnaTweetLabelRule(Tombstone(Epitaph.Unavailable), Condition.IsQuotedInnerTweet) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnablePdnaQuotedTweetTombstoneRuleParam)
+o-object p-pdnaquotedtweetwabewtombstonewuwe
+    extends pdnatweetwabewwuwe(tombstone(epitaph.unavaiwabwe), σωσ c-condition.isquotedinnewtweet) {
+  o-ovewwide def e-enabwed: seq[wuwepawam[boowean]] = seq(enabwepdnaquotedtweettombstonewuwepawam)
 }
 
-object PdnaAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.Pdna
+o-object pdnaawwusewstweetwabewwuwe
+    extends t-tweethaswabewwuwe(
+      d-dwop(unspecified), :3
+      tweetsafetywabewtype.pdna
     )
 
-object SearchBlacklistTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.SearchBlacklist
+o-object seawchbwackwisttweetwabewwuwe
+    extends nyonauthowwithtweetwabewwuwe(
+      d-dwop(unspecified),
+      t-tweetsafetywabewtype.seawchbwackwist
     )
 
-object SearchBlacklistHighRecallTweetLabelDropRule
-    extends NonAuthorAndNonFollowerWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.SearchBlacklistHighRecall
+object seawchbwackwisthighwecawwtweetwabewdwopwuwe
+    extends nyonauthowandnonfowwowewwithtweetwabewwuwe(
+      d-dwop(unspecified), rawr x3
+      t-tweetsafetywabewtype.seawchbwackwisthighwecaww
     )
 
-abstract class SpamTweetLabelRule(
-  override val action: Action,
-  val additionalCondition: Condition)
-    extends ConditionWithTweetLabelRule(
-      action,
-      And(NonAuthorViewer, additionalCondition),
-      TweetSafetyLabelType.Spam
+a-abstwact cwass spamtweetwabewwuwe(
+  o-ovewwide vaw a-action: action,
+  v-vaw additionawcondition: c-condition)
+    e-extends c-conditionwithtweetwabewwuwe(
+      action, nyaa~~
+      a-and(nonauthowviewew, :3 a-additionawcondition), >w<
+      t-tweetsafetywabewtype.spam
     )
-    with DoesLogVerdict
+    with doeswogvewdict
 
-object SpamTweetLabelRule extends SpamTweetLabelRule(Drop(TweetLabeledSpam), Condition.True)
+object s-spamtweetwabewwuwe extends spamtweetwabewwuwe(dwop(tweetwabewedspam), rawr c-condition.twue)
 
-object SpamTweetLabelTombstoneRule
-    extends SpamTweetLabelRule(Tombstone(Epitaph.Unavailable), Condition.True)
+object s-spamtweetwabewtombstonewuwe
+    e-extends spamtweetwabewwuwe(tombstone(epitaph.unavaiwabwe), 😳 condition.twue)
 
-object SpamQuotedTweetLabelTombstoneRule
-    extends SpamTweetLabelRule(Tombstone(Epitaph.Unavailable), Condition.IsQuotedInnerTweet) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableSpamQuotedTweetTombstoneRuleParam)
+o-object spamquotedtweetwabewtombstonewuwe
+    extends s-spamtweetwabewwuwe(tombstone(epitaph.unavaiwabwe), condition.isquotedinnewtweet) {
+  o-ovewwide def enabwed: s-seq[wuwepawam[boowean]] = seq(enabwespamquotedtweettombstonewuwepawam)
 }
 
-object SpamAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.Spam
+o-object spamawwusewstweetwabewwuwe
+    extends tweethaswabewwuwe(
+      dwop(unspecified), 😳
+      tweetsafetywabewtype.spam
     )
 
-abstract class BounceTweetLabelRule(override val action: Action)
-    extends NonAuthorWithTweetLabelRule(
-      action,
-      TweetSafetyLabelType.Bounce
+a-abstwact cwass bouncetweetwabewwuwe(ovewwide v-vaw action: a-action)
+    extends nyonauthowwithtweetwabewwuwe(
+      action, 🥺
+      tweetsafetywabewtype.bounce
     )
 
-object BounceTweetLabelRule extends BounceTweetLabelRule(Drop(Bounce))
+o-object bouncetweetwabewwuwe e-extends b-bouncetweetwabewwuwe(dwop(bounce))
 
-object BounceTweetLabelTombstoneRule extends BounceTweetLabelRule(Tombstone(Epitaph.Bounced))
+o-object bouncetweetwabewtombstonewuwe extends bouncetweetwabewwuwe(tombstone(epitaph.bounced))
 
-abstract class BounceOuterTweetLabelRule(override val action: Action)
-    extends ConditionWithTweetLabelRule(
-      action,
-      And(Not(Condition.IsQuotedInnerTweet), NonAuthorViewer),
-      TweetSafetyLabelType.Bounce
+a-abstwact cwass b-bounceoutewtweetwabewwuwe(ovewwide vaw action: a-action)
+    extends conditionwithtweetwabewwuwe(
+      action, rawr x3
+      a-and(not(condition.isquotedinnewtweet), ^^ nyonauthowviewew), ( ͡o ω ͡o )
+      t-tweetsafetywabewtype.bounce
     )
 
-object BounceOuterTweetTombstoneRule extends BounceOuterTweetLabelRule(Tombstone(Epitaph.Bounced))
+o-object b-bounceoutewtweettombstonewuwe extends bounceoutewtweetwabewwuwe(tombstone(epitaph.bounced))
 
-object BounceQuotedTweetTombstoneRule
-    extends ConditionWithTweetLabelRule(
-      Tombstone(Epitaph.Bounced),
-      Condition.IsQuotedInnerTweet,
-      TweetSafetyLabelType.Bounce
+o-object b-bouncequotedtweettombstonewuwe
+    e-extends c-conditionwithtweetwabewwuwe(
+      tombstone(epitaph.bounced), XD
+      c-condition.isquotedinnewtweet, ^^
+      t-tweetsafetywabewtype.bounce
     )
 
-object BounceAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Drop(Bounce),
-      TweetSafetyLabelType.Bounce
+o-object b-bounceawwusewstweetwabewwuwe
+    e-extends tweethaswabewwuwe(
+      d-dwop(bounce), (⑅˘꒳˘)
+      t-tweetsafetywabewtype.bounce
     )
 
 
-abstract class SpamHighRecallTweetLabelRule(action: Action)
-    extends NonAuthorWithTweetLabelRule(
-      action,
-      TweetSafetyLabelType.SpamHighRecall
+a-abstwact cwass spamhighwecawwtweetwabewwuwe(action: a-action)
+    extends nyonauthowwithtweetwabewwuwe(
+      a-action, (⑅˘꒳˘)
+      tweetsafetywabewtype.spamhighwecaww
     )
 
-object SpamHighRecallTweetLabelDropRule
-    extends SpamHighRecallTweetLabelRule(Drop(SpamHighRecallTweet))
+o-object spamhighwecawwtweetwabewdwopwuwe
+    e-extends s-spamhighwecawwtweetwabewwuwe(dwop(spamhighwecawwtweet))
 
-object SpamHighRecallTweetLabelTombstoneRule
-    extends SpamHighRecallTweetLabelRule(Tombstone(Epitaph.Unavailable))
+object spamhighwecawwtweetwabewtombstonewuwe
+    extends spamhighwecawwtweetwabewwuwe(tombstone(epitaph.unavaiwabwe))
 
-object UntrustedUrlAllViewersTweetLabelRule
-    extends TweetHasLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.UntrustedUrl
+object untwusteduwwawwviewewstweetwabewwuwe
+    e-extends tweethaswabewwuwe(
+      d-dwop(unspecified), ^•ﻌ•^
+      t-tweetsafetywabewtype.untwusteduww
     )
 
-object DownrankSpamReplyAllViewersTweetLabelRule
-    extends TweetHasLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.DownrankSpamReply
+object downwankspamwepwyawwviewewstweetwabewwuwe
+    extends t-tweethaswabewwuwe(
+      dwop(unspecified), ( ͡o ω ͡o )
+      t-tweetsafetywabewtype.downwankspamwepwy
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableDownrankSpamReplySectioningRuleParam)
+  ovewwide d-def enabwed: seq[wuwepawam[boowean]] =
+    s-seq(enabwedownwankspamwepwysectioningwuwepawam)
 }
 
-object UntrustedUrlTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.UntrustedUrl
+object untwusteduwwtweetwabewwuwe
+    extends nyonauthowwithtweetwabewwuwe(
+      dwop(unspecified), ( ͡o ω ͡o )
+      t-tweetsafetywabewtype.untwusteduww
     )
 
-object DownrankSpamReplyTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.DownrankSpamReply
+o-object downwankspamwepwytweetwabewwuwe
+    extends n-nyonauthowwithtweetwabewwuwe(
+      d-dwop(unspecified),
+      tweetsafetywabewtype.downwankspamwepwy
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableDownrankSpamReplySectioningRuleParam)
+  ovewwide def e-enabwed: seq[wuwepawam[boowean]] =
+    s-seq(enabwedownwankspamwepwysectioningwuwepawam)
 }
 
-object UntrustedUrlUqfNonFollowerTweetLabelRule
-    extends NonFollowerWithUqfTweetLabelRule(
-      Drop(UntrustedUrl),
-      TweetSafetyLabelType.UntrustedUrl
+object untwusteduwwuqfnonfowwowewtweetwabewwuwe
+    e-extends nyonfowwowewwithuqftweetwabewwuwe(
+      dwop(untwusteduww), (✿oωo)
+      tweetsafetywabewtype.untwusteduww
     )
 
-object DownrankSpamReplyUqfNonFollowerTweetLabelRule
-    extends NonFollowerWithUqfTweetLabelRule(
-      Drop(SpamReplyDownRank),
-      TweetSafetyLabelType.DownrankSpamReply
+o-object downwankspamwepwyuqfnonfowwowewtweetwabewwuwe
+    extends n-nyonfowwowewwithuqftweetwabewwuwe(
+      d-dwop(spamwepwydownwank), 😳😳😳
+      tweetsafetywabewtype.downwankspamwepwy
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableDownrankSpamReplySectioningRuleParam)
+  o-ovewwide d-def enabwed: seq[wuwepawam[boowean]] =
+    s-seq(enabwedownwankspamwepwysectioningwuwepawam)
 }
 
-object NsfaHighRecallTweetLabelRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
-      And(
-        NonAuthorViewer,
-        TweetHasLabel(TweetSafetyLabelType.NsfaHighRecall)
+object nysfahighwecawwtweetwabewwuwe
+    e-extends w-wuwewithconstantaction(
+      d-dwop(unspecified), OwO
+      a-and(
+        nyonauthowviewew, ^^
+        t-tweethaswabew(tweetsafetywabewtype.nsfahighwecaww)
       )
     )
 
-object NsfaHighRecallTweetLabelInterstitialRule
-    extends RuleWithConstantAction(
-      Interstitial(Unspecified),
-      And(
-        NonAuthorViewer,
-        TweetHasLabel(TweetSafetyLabelType.NsfaHighRecall)
+o-object nysfahighwecawwtweetwabewintewstitiawwuwe
+    e-extends wuwewithconstantaction(
+      i-intewstitiaw(unspecified),
+      and(
+        nyonauthowviewew, rawr x3
+        tweethaswabew(tweetsafetywabewtype.nsfahighwecaww)
       )
     )
 
-object NsfwVideoTweetLabelDropRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.NsfwVideo
+o-object n-nysfwvideotweetwabewdwopwuwe
+    e-extends nyonauthowwithtweetwabewwuwe(
+      dwop(nsfw), 🥺
+      tweetsafetywabewtype.nsfwvideo
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTextSectioningRuleParam)
+  ovewwide def enabwed: seq[wuwepawam[boowean]] = s-seq(enabwensfwtextsectioningwuwepawam)
 }
 
-object NsfwTextTweetLabelDropRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.NsfwText
+object nysfwtexttweetwabewdwopwuwe
+    e-extends n-nyonauthowwithtweetwabewwuwe(
+      dwop(nsfw), (ˆ ﻌ ˆ)♡
+      tweetsafetywabewtype.nsfwtext
     )
 
-object NsfwVideoAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.NsfwVideo
+o-object nysfwvideoawwusewstweetwabewdwopwuwe
+    e-extends t-tweethaswabewwuwe(
+      dwop(nsfw), ( ͡o ω ͡o )
+      t-tweetsafetywabewtype.nsfwvideo
     )
 
-object NsfwTextAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.NsfwText
+o-object nysfwtextawwusewstweetwabewdwopwuwe
+    e-extends tweethaswabewwuwe(
+      dwop(nsfw), >w<
+      tweetsafetywabewtype.nsfwtext
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTextSectioningRuleParam)
+  ovewwide def enabwed: seq[wuwepawam[boowean]] = s-seq(enabwensfwtextsectioningwuwepawam)
 }
 
-abstract class BaseLowQualityTweetLabelRule(action: Action)
-    extends RuleWithConstantAction(
-      action,
-      And(
-        TweetHasLabel(TweetSafetyLabelType.LowQuality),
-        TweetComposedBefore(PublicInterest.PolicyConfig.LowQualityProxyLabelStart),
-        NonAuthorViewer
+abstwact c-cwass basewowquawitytweetwabewwuwe(action: action)
+    extends wuwewithconstantaction(
+      action, /(^•ω•^)
+      and(
+        t-tweethaswabew(tweetsafetywabewtype.wowquawity), 😳😳😳
+        tweetcomposedbefowe(pubwicintewest.powicyconfig.wowquawitypwoxywabewstawt), (U ᵕ U❁)
+        nyonauthowviewew
       )
     )
-    with DoesLogVerdict {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.LowQuality))
+    with doeswogvewdict {
+  o-ovewwide def a-actionsouwcebuiwdew: option[wuweactionsouwcebuiwdew] = s-some(
+    tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype.wowquawity))
 }
 
-object LowQualityTweetLabelDropRule extends BaseLowQualityTweetLabelRule(Drop(LowQualityTweet))
+object wowquawitytweetwabewdwopwuwe e-extends b-basewowquawitytweetwabewwuwe(dwop(wowquawitytweet))
 
-object LowQualityTweetLabelTombstoneRule
-    extends BaseLowQualityTweetLabelRule(Tombstone(Epitaph.Unavailable))
+object wowquawitytweetwabewtombstonewuwe
+    e-extends basewowquawitytweetwabewwuwe(tombstone(epitaph.unavaiwabwe))
 
-abstract class SafetyCrisisLevelDropRule(level: Int, condition: Condition = TrueCondition)
-    extends ConditionWithTweetLabelRule(
-      Drop(Unspecified),
-      And(
-        NonAuthorViewer,
-        condition,
-        TweetHasSafetyLabelWithScoreEqInt(TweetSafetyLabelType.SafetyCrisis, level)
-      ),
-      TweetSafetyLabelType.SafetyCrisis
+abstwact c-cwass safetycwisiswevewdwopwuwe(wevew: int, (˘ω˘) condition: condition = twuecondition)
+    e-extends conditionwithtweetwabewwuwe(
+      dwop(unspecified), 😳
+      and(
+        n-nyonauthowviewew, (ꈍᴗꈍ)
+        c-condition, :3
+        t-tweethassafetywabewwithscoweeqint(tweetsafetywabewtype.safetycwisis, /(^•ω•^) wevew)
+      ), ^^;;
+      tweetsafetywabewtype.safetycwisis
     )
 
-object SafetyCrisisAnyLevelDropRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.SafetyCrisis
+o-object safetycwisisanywevewdwopwuwe
+    extends nyonauthowwithtweetwabewwuwe(
+      dwop(unspecified), o.O
+      tweetsafetywabewtype.safetycwisis
     )
 
-object SafetyCrisisLevel2DropRule extends SafetyCrisisLevelDropRule(2, Not(ViewerDoesFollowAuthor))
+object s-safetycwisiswevew2dwopwuwe e-extends safetycwisiswevewdwopwuwe(2, 😳 n-nyot(viewewdoesfowwowauthow))
 
-object SafetyCrisisLevel3DropRule extends SafetyCrisisLevelDropRule(3, Not(ViewerDoesFollowAuthor))
+o-object safetycwisiswevew3dwopwuwe extends safetycwisiswevewdwopwuwe(3, UwU nyot(viewewdoesfowwowauthow))
 
-object SafetyCrisisLevel4DropRule extends SafetyCrisisLevelDropRule(4)
+o-object s-safetycwisiswevew4dwopwuwe extends safetycwisiswevewdwopwuwe(4)
 
-abstract class SafetyCrisisLevelSectionRule(level: Int)
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      ConversationSectionAbusiveQuality,
-      And(
-        TweetHasLabel(TweetSafetyLabelType.SafetyCrisis),
-        TweetHasSafetyLabelWithScoreEqInt(TweetSafetyLabelType.SafetyCrisis, level))
+a-abstwact cwass safetycwisiswevewsectionwuwe(wevew: int)
+    extends c-conditionwithnotinnewciwcweoffwiendswuwe(
+      convewsationsectionabusivequawity, >w<
+      and(
+        tweethaswabew(tweetsafetywabewtype.safetycwisis), o.O
+        t-tweethassafetywabewwithscoweeqint(tweetsafetywabewtype.safetycwisis, (˘ω˘) w-wevew))
     ) {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.SafetyCrisis))
+  ovewwide d-def actionsouwcebuiwdew: o-option[wuweactionsouwcebuiwdew] = s-some(
+    tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype.safetycwisis))
 }
 
-object SafetyCrisisLevel3SectionRule
-    extends SafetyCrisisLevelSectionRule(3)
-    with DoesLogVerdictDecidered {
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+object safetycwisiswevew3sectionwuwe
+    extends s-safetycwisiswevewsectionwuwe(3)
+    with doeswogvewdictdecidewed {
+  ovewwide d-def vewdictwogdecidewkey = decidewkey.enabwedownwevewwuwevewdictwogging
 }
 
-object SafetyCrisisLevel4SectionRule
-    extends SafetyCrisisLevelSectionRule(4)
-    with DoesLogVerdictDecidered {
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+object safetycwisiswevew4sectionwuwe
+    e-extends safetycwisiswevewsectionwuwe(4)
+    w-with doeswogvewdictdecidewed {
+  o-ovewwide def vewdictwogdecidewkey = d-decidewkey.enabwedownwevewwuwevewdictwogging
 }
 
-object DoNotAmplifyDropRule
-    extends NonFollowerWithTweetLabelRule(Drop(Unspecified), TweetSafetyLabelType.DoNotAmplify)
+o-object donotampwifydwopwuwe
+    extends nyonfowwowewwithtweetwabewwuwe(dwop(unspecified), òωó tweetsafetywabewtype.donotampwify)
 
-object DoNotAmplifyAllViewersDropRule
-    extends TweetHasLabelRule(Drop(Unspecified), TweetSafetyLabelType.DoNotAmplify)
+o-object donotampwifyawwviewewsdwopwuwe
+    extends tweethaswabewwuwe(dwop(unspecified), nyaa~~ t-tweetsafetywabewtype.donotampwify)
 
-object DoNotAmplifySectionRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      ConversationSectionAbusiveQuality,
-      TweetHasLabel(TweetSafetyLabelType.DoNotAmplify))
+object d-donotampwifysectionwuwe
+    extends conditionwithnotinnewciwcweoffwiendswuwe(
+      convewsationsectionabusivequawity, ( ͡o ω ͡o )
+      t-tweethaswabew(tweetsafetywabewtype.donotampwify))
 
-object HighPSpammyScoreAllViewerDropRule
-    extends TweetHasLabelRule(Drop(Unspecified), TweetSafetyLabelType.HighPSpammyTweetScore)
+o-object highpspammyscoweawwviewewdwopwuwe
+    extends tweethaswabewwuwe(dwop(unspecified), 😳😳😳 tweetsafetywabewtype.highpspammytweetscowe)
 
-object HighPSpammyTweetScoreSearchTweetLabelDropRule
-    extends RuleWithConstantAction(
-      action = Drop(Unspecified),
-      condition = And(
-        LoggedOutOrViewerNotFollowingAuthor,
-        TweetHasLabelWithScoreAboveThreshold(
-          TweetSafetyLabelType.HighPSpammyTweetScore,
-          ModelScoreThresholds.HighPSpammyTweetScoreThreshold)
+o-object highpspammytweetscoweseawchtweetwabewdwopwuwe
+    e-extends wuwewithconstantaction(
+      a-action = dwop(unspecified), ^•ﻌ•^
+      c-condition = a-and(
+        woggedoutowviewewnotfowwowingauthow, (˘ω˘)
+        t-tweethaswabewwithscoweabovethweshowd(
+          tweetsafetywabewtype.highpspammytweetscowe, (˘ω˘)
+          modewscowethweshowds.highpspammytweetscowethweshowd)
       )
     )
-    with DoesLogVerdictDecidered {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    EnableHighPSpammyTweetScoreSearchTweetLabelDropRuleParam)
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighPSpammyTweetScore))
-  override def verdictLogDeciderKey: DeciderKey.Value =
-    DeciderKey.EnableSpammyTweetRuleVerdictLogging
+    with doeswogvewdictdecidewed {
+  o-ovewwide def enabwed: seq[wuwepawam[boowean]] = s-seq(
+    enabwehighpspammytweetscoweseawchtweetwabewdwopwuwepawam)
+  ovewwide def actionsouwcebuiwdew: o-option[wuweactionsouwcebuiwdew] = s-some(
+    t-tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype.highpspammytweetscowe))
+  ovewwide def vewdictwogdecidewkey: d-decidewkey.vawue =
+    d-decidewkey.enabwespammytweetwuwevewdictwogging
 }
 
-object AdsManagerDenyListAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.AdsManagerDenyList
+object a-adsmanagewdenywistawwusewstweetwabewwuwe
+    extends tweethaswabewwuwe(
+      d-dwop(unspecified), -.-
+      tweetsafetywabewtype.adsmanagewdenywist
     )
 
-abstract class SmyteSpamTweetLabelRule(action: Action)
-    extends NonAuthorWithTweetLabelRule(
-      action,
-      TweetSafetyLabelType.SmyteSpamTweet
+a-abstwact c-cwass smytespamtweetwabewwuwe(action: action)
+    extends nyonauthowwithtweetwabewwuwe(
+      action, ^•ﻌ•^
+      tweetsafetywabewtype.smytespamtweet
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableSmyteSpamTweetRuleParam)
+  ovewwide d-def enabwed: s-seq[wuwepawam[boowean]] = seq(enabwesmytespamtweetwuwepawam)
 }
 
-object SmyteSpamTweetLabelDropRule extends SmyteSpamTweetLabelRule(Drop(TweetLabeledSpam))
+object smytespamtweetwabewdwopwuwe extends smytespamtweetwabewwuwe(dwop(tweetwabewedspam))
 
-object SmyteSpamTweetLabelTombstoneRule
-    extends SmyteSpamTweetLabelRule(Tombstone(Epitaph.Unavailable))
+object s-smytespamtweetwabewtombstonewuwe
+    extends s-smytespamtweetwabewwuwe(tombstone(epitaph.unavaiwabwe))
 
-object SmyteSpamTweetLabelDropSearchRule extends SmyteSpamTweetLabelRule(Drop(Unspecified))
+o-object smytespamtweetwabewdwopseawchwuwe extends smytespamtweetwabewwuwe(dwop(unspecified))
 
-object HighSpammyTweetContentScoreSearchLatestTweetLabelDropRule
-    extends RuleWithConstantAction(
-      action = Drop(Unspecified),
-      condition = And(
-        Not(IsTweetInTweetLevelStcmHoldback),
-        LoggedOutOrViewerNotFollowingAuthor,
-        TweetHasLabelWithScoreAboveThresholdWithParam(
-          TweetSafetyLabelType.HighSpammyTweetContentScore,
-          HighSpammyTweetContentScoreSearchLatestProdTweetLabelDropRuleThresholdParam)
+object highspammytweetcontentscoweseawchwatesttweetwabewdwopwuwe
+    e-extends wuwewithconstantaction(
+      action = dwop(unspecified), /(^•ω•^)
+      c-condition = and(
+        nyot(istweetintweetwevewstcmhowdback), (///ˬ///✿)
+        w-woggedoutowviewewnotfowwowingauthow, mya
+        t-tweethaswabewwithscoweabovethweshowdwithpawam(
+          tweetsafetywabewtype.highspammytweetcontentscowe, o.O
+          h-highspammytweetcontentscoweseawchwatestpwodtweetwabewdwopwuwethweshowdpawam)
       )
     )
-    with DoesLogVerdictDecidered {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighSpammyTweetContentScore))
-  override def verdictLogDeciderKey: DeciderKey.Value =
-    DeciderKey.EnableSpammyTweetRuleVerdictLogging
+    with d-doeswogvewdictdecidewed {
+  o-ovewwide def actionsouwcebuiwdew: o-option[wuweactionsouwcebuiwdew] = s-some(
+    tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype.highspammytweetcontentscowe))
+  o-ovewwide def vewdictwogdecidewkey: decidewkey.vawue =
+    decidewkey.enabwespammytweetwuwevewdictwogging
 }
 
-object HighSpammyTweetContentScoreSearchTopTweetLabelDropRule
-    extends RuleWithConstantAction(
-      action = Drop(Unspecified),
-      condition = And(
-        Not(IsTweetInTweetLevelStcmHoldback),
-        LoggedOutOrViewerNotFollowingAuthor,
-        TweetHasLabelWithScoreAboveThresholdWithParam(
-          TweetSafetyLabelType.HighSpammyTweetContentScore,
-          HighSpammyTweetContentScoreSearchTopProdTweetLabelDropRuleThresholdParam)
+object highspammytweetcontentscoweseawchtoptweetwabewdwopwuwe
+    extends wuwewithconstantaction(
+      a-action = dwop(unspecified), ^•ﻌ•^
+      c-condition = a-and(
+        n-nyot(istweetintweetwevewstcmhowdback), (U ᵕ U❁)
+        woggedoutowviewewnotfowwowingauthow, :3
+        t-tweethaswabewwithscoweabovethweshowdwithpawam(
+          t-tweetsafetywabewtype.highspammytweetcontentscowe, (///ˬ///✿)
+          highspammytweetcontentscoweseawchtoppwodtweetwabewdwopwuwethweshowdpawam)
       )
     )
-    with DoesLogVerdictDecidered {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighSpammyTweetContentScore))
-  override def verdictLogDeciderKey: DeciderKey.Value =
-    DeciderKey.EnableSpammyTweetRuleVerdictLogging
+    with doeswogvewdictdecidewed {
+  ovewwide d-def actionsouwcebuiwdew: o-option[wuweactionsouwcebuiwdew] = some(
+    tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype.highspammytweetcontentscowe))
+  ovewwide def vewdictwogdecidewkey: decidewkey.vawue =
+    d-decidewkey.enabwespammytweetwuwevewdictwogging
 
 }
 
-object HighSpammyTweetContentScoreTrendsTopTweetLabelDropRule
-    extends RuleWithConstantAction(
-      action = Drop(Unspecified),
-      condition = And(
-        Not(IsTweetInTweetLevelStcmHoldback),
-        LoggedOutOrViewerNotFollowingAuthor,
-        IsTrendClickSourceSearchResult,
-        TweetHasLabelWithScoreAboveThresholdWithParam(
-          TweetSafetyLabelType.HighSpammyTweetContentScore,
-          HighSpammyTweetContentScoreTrendTopTweetLabelDropRuleThresholdParam)
+o-object h-highspammytweetcontentscowetwendstoptweetwabewdwopwuwe
+    extends wuwewithconstantaction(
+      a-action = dwop(unspecified), (///ˬ///✿)
+      condition = and(
+        nyot(istweetintweetwevewstcmhowdback), 🥺
+        w-woggedoutowviewewnotfowwowingauthow, -.-
+        i-istwendcwicksouwceseawchwesuwt, nyaa~~
+        tweethaswabewwithscoweabovethweshowdwithpawam(
+          tweetsafetywabewtype.highspammytweetcontentscowe, (///ˬ///✿)
+          h-highspammytweetcontentscowetwendtoptweetwabewdwopwuwethweshowdpawam)
       )
     )
-    with DoesLogVerdictDecidered {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighSpammyTweetContentScore))
-  override def verdictLogDeciderKey: DeciderKey.Value =
-    DeciderKey.EnableSpammyTweetRuleVerdictLogging
+    with doeswogvewdictdecidewed {
+  o-ovewwide def actionsouwcebuiwdew: o-option[wuweactionsouwcebuiwdew] = some(
+    tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype.highspammytweetcontentscowe))
+  o-ovewwide def vewdictwogdecidewkey: d-decidewkey.vawue =
+    d-decidewkey.enabwespammytweetwuwevewdictwogging
 
 }
 
-object HighSpammyTweetContentScoreTrendsLatestTweetLabelDropRule
-    extends RuleWithConstantAction(
-      action = Drop(Unspecified),
-      condition = And(
-        Not(IsTweetInTweetLevelStcmHoldback),
-        LoggedOutOrViewerNotFollowingAuthor,
-        IsTrendClickSourceSearchResult,
-        TweetHasLabelWithScoreAboveThresholdWithParam(
-          TweetSafetyLabelType.HighSpammyTweetContentScore,
-          HighSpammyTweetContentScoreTrendLatestTweetLabelDropRuleThresholdParam)
+o-object h-highspammytweetcontentscowetwendswatesttweetwabewdwopwuwe
+    e-extends wuwewithconstantaction(
+      action = d-dwop(unspecified), 🥺
+      c-condition = and(
+        n-nyot(istweetintweetwevewstcmhowdback), >w<
+        woggedoutowviewewnotfowwowingauthow, rawr x3
+        istwendcwicksouwceseawchwesuwt,
+        t-tweethaswabewwithscoweabovethweshowdwithpawam(
+          tweetsafetywabewtype.highspammytweetcontentscowe, (⑅˘꒳˘)
+          h-highspammytweetcontentscowetwendwatesttweetwabewdwopwuwethweshowdpawam)
       )
     )
-    with DoesLogVerdictDecidered {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighSpammyTweetContentScore))
-  override def verdictLogDeciderKey: DeciderKey.Value =
-    DeciderKey.EnableSpammyTweetRuleVerdictLogging
+    with doeswogvewdictdecidewed {
+  o-ovewwide d-def actionsouwcebuiwdew: option[wuweactionsouwcebuiwdew] = some(
+    t-tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype.highspammytweetcontentscowe))
+  ovewwide def vewdictwogdecidewkey: d-decidewkey.vawue =
+    d-decidewkey.enabwespammytweetwuwevewdictwogging
 }
 
-object GoreAndViolenceTopicHighRecallTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.GoreAndViolenceTopicHighRecall
+object goweandviowencetopichighwecawwtweetwabewwuwe
+    extends n-nyonauthowwithtweetwabewwuwe(
+      d-dwop(unspecified), σωσ
+      tweetsafetywabewtype.goweandviowencetopichighwecaww
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    EnableGoreAndViolenceTopicHighRecallTweetLabelRule)
+  o-ovewwide def enabwed: seq[wuwepawam[boowean]] = seq(
+    enabwegoweandviowencetopichighwecawwtweetwabewwuwe)
 }
 
-object CopypastaSpamAllViewersTweetLabelRule
-    extends TweetHasLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.CopypastaSpam
+o-object copypastaspamawwviewewstweetwabewwuwe
+    e-extends tweethaswabewwuwe(
+      dwop(unspecified), XD
+      t-tweetsafetywabewtype.copypastaspam
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableCopypastaSpamSearchDropRule)
+  o-ovewwide def enabwed: seq[wuwepawam[boowean]] =
+    seq(enabwecopypastaspamseawchdwopwuwe)
 }
 
-object CopypastaSpamAllViewersSearchTweetLabelRule
-    extends TweetHasLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.CopypastaSpam
+o-object copypastaspamawwviewewsseawchtweetwabewwuwe
+    e-extends t-tweethaswabewwuwe(
+      d-dwop(unspecified), -.-
+      tweetsafetywabewtype.copypastaspam
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableCopypastaSpamSearchDropRule)
+  ovewwide def enabwed: seq[wuwepawam[boowean]] =
+    seq(enabwecopypastaspamseawchdwopwuwe)
 }
 
-object CopypastaSpamNonFollowerSearchTweetLabelRule
-    extends NonFollowerWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.CopypastaSpam
+object copypastaspamnonfowwowewseawchtweetwabewwuwe
+    extends n-nyonfowwowewwithtweetwabewwuwe(
+      d-dwop(unspecified), >_<
+      t-tweetsafetywabewtype.copypastaspam
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableCopypastaSpamSearchDropRule)
+  o-ovewwide d-def enabwed: s-seq[wuwepawam[boowean]] =
+    seq(enabwecopypastaspamseawchdwopwuwe)
 }
 
-object CopypastaSpamAbusiveQualityTweetLabelRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      ConversationSectionAbusiveQuality,
-      TweetHasLabel(TweetSafetyLabelType.CopypastaSpam)
+o-object c-copypastaspamabusivequawitytweetwabewwuwe
+    extends conditionwithnotinnewciwcweoffwiendswuwe(
+      c-convewsationsectionabusivequawity, rawr
+      t-tweethaswabew(tweetsafetywabewtype.copypastaspam)
     )
-    with DoesLogVerdictDecidered {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    EnableCopypastaSpamDownrankConvosAbusiveQualityRule)
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.CopypastaSpam))
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+    with doeswogvewdictdecidewed {
+  ovewwide d-def enabwed: seq[wuwepawam[boowean]] = seq(
+    enabwecopypastaspamdownwankconvosabusivequawitywuwe)
+  ovewwide d-def actionsouwcebuiwdew: option[wuweactionsouwcebuiwdew] = s-some(
+    tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype.copypastaspam))
+  o-ovewwide def vewdictwogdecidewkey = decidewkey.enabwedownwevewwuwevewdictwogging
 }
 
-object DynamicProductAdLimitedEngagementTweetLabelRule
-    extends TweetHasLabelRule(
-      LimitedEngagements(LimitedEngagementReason.DynamicProductAd),
-      TweetSafetyLabelType.DynamicProductAd)
+o-object dynamicpwoductadwimitedengagementtweetwabewwuwe
+    e-extends tweethaswabewwuwe(
+      w-wimitedengagements(wimitedengagementweason.dynamicpwoductad), 😳😳😳
+      tweetsafetywabewtype.dynamicpwoductad)
 
-object SkipTweetDetailLimitedEngagementTweetLabelRule
-    extends AlwaysActRule(LimitedEngagements(LimitedEngagementReason.SkipTweetDetail)) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    SkipTweetDetailLimitedEngagementRuleEnabledParam)
+o-object s-skiptweetdetaiwwimitedengagementtweetwabewwuwe
+    extends a-awwaysactwuwe(wimitedengagements(wimitedengagementweason.skiptweetdetaiw)) {
+  ovewwide def enabwed: s-seq[wuwepawam[boowean]] = seq(
+    s-skiptweetdetaiwwimitedengagementwuweenabwedpawam)
 }
 
-object DynamicProductAdDropTweetLabelRule
-    extends TweetHasLabelRule(Drop(Unspecified), TweetSafetyLabelType.DynamicProductAd)
+o-object dynamicpwoductaddwoptweetwabewwuwe
+    e-extends tweethaswabewwuwe(dwop(unspecified), UwU tweetsafetywabewtype.dynamicpwoductad)
 
-object NsfwTextHighPrecisionTweetLabelDropRule
-    extends RuleWithConstantAction(
-      Drop(Reason.Nsfw),
-      And(
-        NonAuthorViewer,
-        Or(
-          TweetHasLabel(TweetSafetyLabelType.ExperimentalSensitiveIllegal2),
-          TweetHasLabel(TweetSafetyLabelType.NsfwTextHighPrecision)
+o-object nysfwtexthighpwecisiontweetwabewdwopwuwe
+    extends wuwewithconstantaction(
+      dwop(weason.nsfw), (U ﹏ U)
+      and(
+        nonauthowviewew, (˘ω˘)
+        ow(
+          tweethaswabew(tweetsafetywabewtype.expewimentawsensitiveiwwegaw2),
+          t-tweethaswabew(tweetsafetywabewtype.nsfwtexthighpwecision)
         )
       )
     )
-    with DoesLogVerdict {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTextHighPrecisionDropRuleParam)
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.NsfwTextHighPrecision))
+    with doeswogvewdict {
+  ovewwide def enabwed: seq[wuwepawam[boowean]] = seq(enabwensfwtexthighpwecisiondwopwuwepawam)
+  ovewwide def actionsouwcebuiwdew: option[wuweactionsouwcebuiwdew] = s-some(
+    tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype.nsfwtexthighpwecision))
 }
 
 
-object ExperimentalNudgeLabelRule
-    extends TweetHasLabelRule(
-      TweetVisibilityNudge(TweetVisibilityNudgeReason.ExperimentalNudgeSafetyLabelReason),
-      TweetSafetyLabelType.ExperimentalNudge) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableExperimentalNudgeEnabledParam)
+object expewimentawnudgewabewwuwe
+    e-extends tweethaswabewwuwe(
+      tweetvisibiwitynudge(tweetvisibiwitynudgeweason.expewimentawnudgesafetywabewweason), /(^•ω•^)
+      t-tweetsafetywabewtype.expewimentawnudge) {
+  ovewwide def enabwed: s-seq[wuwepawam[boowean]] = seq(enabweexpewimentawnudgeenabwedpawam)
 }
 
-object NsfwTextTweetLabelAvoidRule
-    extends RuleWithConstantAction(
-      Avoid(),
-      Or(
-        TweetHasLabel(TweetSafetyLabelType.ExperimentalSensitiveIllegal2),
-        TweetHasLabel(TweetSafetyLabelType.NsfwTextHighPrecision)
+o-object nsfwtexttweetwabewavoidwuwe
+    e-extends wuwewithconstantaction(
+      a-avoid(), (U ﹏ U)
+      ow(
+        tweethaswabew(tweetsafetywabewtype.expewimentawsensitiveiwwegaw2), ^•ﻌ•^
+        t-tweethaswabew(tweetsafetywabewtype.nsfwtexthighpwecision)
       )
     ) {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.NsfwTextHighPrecision))
+  ovewwide def actionsouwcebuiwdew: option[wuweactionsouwcebuiwdew] = s-some(
+    tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype.nsfwtexthighpwecision))
 }
 
-object DoNotAmplifyTweetLabelAvoidRule
-    extends TweetHasLabelRule(
-      Avoid(),
-      TweetSafetyLabelType.DoNotAmplify
+o-object donotampwifytweetwabewavoidwuwe
+    extends tweethaswabewwuwe(
+      a-avoid(), >w<
+      tweetsafetywabewtype.donotampwify
     ) {
-  override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
-    new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
+  ovewwide v-vaw fawwbackactionbuiwdew: option[actionbuiwdew[_ <: a-action]] = some(
+    nyew constantactionbuiwdew(avoid(some(mightnotbesuitabwefowads))))
 }
 
-object NsfaHighPrecisionTweetLabelAvoidRule
-    extends TweetHasLabelRule(
-      Avoid(),
-      TweetSafetyLabelType.NsfaHighPrecision
+o-object nysfahighpwecisiontweetwabewavoidwuwe
+    extends tweethaswabewwuwe(
+      avoid(), ʘwʘ
+      t-tweetsafetywabewtype.nsfahighpwecision
     ) {
-  override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
-    new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
+  ovewwide vaw fawwbackactionbuiwdew: option[actionbuiwdew[_ <: action]] = some(
+    n-nyew constantactionbuiwdew(avoid(some(mightnotbesuitabwefowads))))
 }
 
-object NsfwHighPrecisionTweetLabelAvoidRule
-    extends TweetHasLabelRule(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-      TweetSafetyLabelType.NsfwHighPrecision
+object n-nysfwhighpwecisiontweetwabewavoidwuwe
+    extends tweethaswabewwuwe(
+      a-avoid(some(avoidweason.containsnsfwmedia)), òωó
+      t-tweetsafetywabewtype.nsfwhighpwecision
     ) {
-  override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
-    new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
+  ovewwide vaw f-fawwbackactionbuiwdew: option[actionbuiwdew[_ <: action]] = some(
+    nyew constantactionbuiwdew(avoid(some(mightnotbesuitabwefowads))))
 }
 
-object NsfwHighRecallTweetLabelAvoidRule
-    extends TweetHasLabelRule(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-      TweetSafetyLabelType.NsfwHighRecall
+object n-nysfwhighwecawwtweetwabewavoidwuwe
+    e-extends tweethaswabewwuwe(
+      a-avoid(some(avoidweason.containsnsfwmedia)), o.O
+      t-tweetsafetywabewtype.nsfwhighwecaww
     ) {
-  override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
-    new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
+  ovewwide v-vaw fawwbackactionbuiwdew: option[actionbuiwdew[_ <: action]] = s-some(
+    nyew constantactionbuiwdew(avoid(some(mightnotbesuitabwefowads))))
 }

@@ -1,48 +1,48 @@
-package com.twitter.search.common.query;
+package com.twittew.seawch.common.quewy;
 
 /**
- * When a hit (on a part of the query tree) occurs, this class is passed to HitAttributeCollector
- * for collection.
+ * when a hit (on a p-pawt of the quewy t-twee) occuws, (U ﹏ U) t-this cwass is passed t-to hitattwibutecowwectow
+ * f-fow cowwection. (U ﹏ U)
  *
- * This implementation carries the following info:
- * <ul>
- *   <li>The field that matched (the field ID is recorded)</li>
- *   <li>The query node that matched (the query node rank is recorded)</li>
- *   <li>The ID of the last doc that matched this query</li>
- * </ul>
+ * t-this impwementation c-cawwies t-the fowwowing info:
+ * <uw>
+ *   <wi>the fiewd that matched (the fiewd id is w-wecowded)</wi>
+ *   <wi>the quewy nyode that matched (the q-quewy nyode wank is wecowded)</wi>
+ *   <wi>the i-id of the wast doc that matched this quewy</wi>
+ * </uw>
  *
- * Each IdentifiableQuery should be associated with one FieldRankHitInfo, which is passed to a
- * HitAttributeCollector when a hit occurs.
+ * e-each identifiabwequewy shouwd be associated w-with one fiewdwankhitinfo, (⑅˘꒳˘) w-which is passed to a
+ * hitattwibutecowwectow when a hit occuws. òωó
  */
-public class FieldRankHitInfo {
-  protected static final int UNSET_DOC_ID = -1;
+pubwic cwass fiewdwankhitinfo {
+  p-pwotected static finaw int unset_doc_id = -1;
 
-  private final int fieldId;
-  private final int rank;
-  private int docId = UNSET_DOC_ID;
+  pwivate finaw int fiewdid;
+  p-pwivate finaw int wank;
+  p-pwivate int docid = u-unset_doc_id;
 
-  public FieldRankHitInfo(int fieldId, int rank) {
-    this.fieldId = fieldId;
-    this.rank = rank;
+  p-pubwic fiewdwankhitinfo(int f-fiewdid, ʘwʘ int wank) {
+    this.fiewdid = fiewdid;
+    t-this.wank = wank;
   }
 
-  public int getFieldId() {
-    return fieldId;
+  pubwic int getfiewdid() {
+    w-wetuwn fiewdid;
   }
 
-  public int getRank() {
-    return rank;
+  pubwic int getwank() {
+    wetuwn wank;
   }
 
-  public int getDocId() {
-    return docId;
+  pubwic int getdocid() {
+    wetuwn docid;
   }
 
-  public void setDocId(int docId) {
-    this.docId = docId;
+  p-pubwic void setdocid(int docid) {
+    t-this.docid = d-docid;
   }
 
-  public void resetDocId() {
-    this.docId = UNSET_DOC_ID;
+  p-pubwic void wesetdocid() {
+    this.docid = unset_doc_id;
   }
 }

@@ -1,209 +1,209 @@
 """
-Module containing extra tensorflow metrics used at Twitter.
-This module conforms to conventions used by tf.metrics.*.
-In particular, each metric constructs two subgraphs: value_op and update_op:
-  - The value op is used to fetch the current metric value.
-  - The update_op is used to accumulate into the metric.
+moduwe containing extwa tensowfwow m-metwics used a-at twittew. ( ͡o ω ͡o )
+this m-moduwe confowms t-to conventions u-used by tf.metwics.*. mya
+i-in pawticuwaw, o.O e-each metwic c-constwucts two subgwaphs: vawue_op and update_op:
+  - the vawue op is used to f-fetch the cuwwent metwic vawue. (✿oωo)
+  - the update_op i-is used to accumuwate into the m-metwic. :3
 
-Note: similar to tf.metrics.*, metrics in here do not support multi-label learning.
-We will have to write wrapper classes to create one metric per label.
+nyote: simiwaw to tf.metwics.*, 😳 metwics in hewe do nyot s-suppowt muwti-wabew weawning. (U ﹏ U)
+w-we wiww have to w-wwite wwappew cwasses to cweate one metwic pew wabew. mya
 
-Note: similar to tf.metrics.*, batches added into a metric via its update_op are cumulative!
+nyote: simiwaw to tf.metwics.*, (U ᵕ U❁) b-batches added into a metwic via its update_op awe cumuwative! :3
 
 """
 
-from collections import OrderedDict
+fwom c-cowwections impowt owdeweddict
 
-import tensorflow.compat.v1 as tf
-from twml.metrics import get_multi_binary_class_metric_fn
-
-
-
-# checkstyle: noqa
-def get_partial_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1, predcols=None):
-
-  def get_eval_metric_ops(graph_output, labels, weights):
-    if predcols is None:
-      preds = graph_output['output']
-    else:
-      if isinstance(predcols, int):
-        predcol_list=[predcols]
-      else:
-        predcol_list=list(predcols)
-      for col in predcol_list:
-        assert 0 <= col < graph_output['output'].shape[class_dim], 'Invalid Prediction Column Index !'
-      preds  = tf.gather(graph_output['output'], indices=predcol_list, axis=class_dim)     # [batchSz, num_col]
-      labels = tf.gather(labels, indices=predcol_list, axis=class_dim)                     # [batchSz, num_col]
-
-    predInfo = {'output': preds}
-    if 'threshold' in graph_output:
-      predInfo['threshold'] = graph_output['threshold']
-    if 'hard_output' in graph_output:
-      predInfo['hard_output'] = graph_output['hard_output']
-
-    metrics_op = get_multi_binary_class_metric_fn(metrics, classes, class_dim)
-    metrics_op_res = metrics_op(predInfo, labels, weights)
-    return metrics_op_res
-
-  return get_eval_metric_ops
+i-impowt tensowfwow.compat.v1 a-as t-tf
+fwom twmw.metwics i-impowt get_muwti_binawy_cwass_metwic_fn
 
 
 
-# Numeric Prediction Performance among TopK Predictions
-def mean_numeric_label_topK(labels, predictions, weights, name, topK_id):
-  top_k_labels  = tf.gather(params=labels, indices=topK_id, axis=0)                # [topK, 1]
-  return tf.metrics.mean(values=top_k_labels, name=name)
+# checkstywe: nyoqa
+def get_pawtiaw_muwti_binawy_cwass_metwic_fn(metwics, mya c-cwasses=none, OwO cwass_dim=1, pwedcows=none):
 
-def mean_gated_numeric_label_topK(labels, predictions, weights, name, topK_id, bar=2.0):
-  assert isinstance(bar, int) or isinstance(bar, float), "bar must be int or float"
-  top_k_labels  = tf.gather(params=labels, indices=topK_id, axis=0)                # [topK, 1]
-  gated_top_k_labels  = tf.cast(top_k_labels > bar*1.0, tf.int32)
-  return tf.metrics.mean(values=gated_top_k_labels, name=name)
+  d-def get_evaw_metwic_ops(gwaph_output, (ˆ ﻌ ˆ)♡ wabews, ʘwʘ weights):
+    if pwedcows is nyone:
+      pweds = gwaph_output['output']
+    ewse:
+      i-if isinstance(pwedcows, o.O int):
+        p-pwedcow_wist=[pwedcows]
+      e-ewse:
+        p-pwedcow_wist=wist(pwedcows)
+      fow cow in pwedcow_wist:
+        assewt 0 <= cow < gwaph_output['output'].shape[cwass_dim], UwU 'invawid p-pwediction c-cowumn index !'
+      pweds  = t-tf.gathew(gwaph_output['output'], rawr x3 i-indices=pwedcow_wist, 🥺 axis=cwass_dim)     # [batchsz, :3 n-nyum_cow]
+      wabews = t-tf.gathew(wabews, (ꈍᴗꈍ) indices=pwedcow_wist, 🥺 axis=cwass_dim)                     # [batchsz, (✿oωo) n-nyum_cow]
 
-SUPPORTED_NUMERIC_METRICS = {
-  'mean_numeric_label_topk': mean_numeric_label_topK,
-  'mean_gated_numeric_label_topk': mean_gated_numeric_label_topK
+    pwedinfo = {'output': p-pweds}
+    if 'thweshowd' in gwaph_output:
+      p-pwedinfo['thweshowd'] = g-gwaph_output['thweshowd']
+    if 'hawd_output' in gwaph_output:
+      pwedinfo['hawd_output'] = gwaph_output['hawd_output']
+
+    metwics_op = get_muwti_binawy_cwass_metwic_fn(metwics, (U ﹏ U) c-cwasses, :3 cwass_dim)
+    m-metwics_op_wes = metwics_op(pwedinfo, ^^;; w-wabews, rawr weights)
+    w-wetuwn metwics_op_wes
+
+  w-wetuwn get_evaw_metwic_ops
+
+
+
+# nyumewic pwediction p-pewfowmance among topk pwedictions
+def mean_numewic_wabew_topk(wabews, 😳😳😳 pwedictions, (✿oωo) weights, OwO nyame, t-topk_id):
+  top_k_wabews  = t-tf.gathew(pawams=wabews, ʘwʘ i-indices=topk_id, (ˆ ﻌ ˆ)♡ a-axis=0)                # [topk, (U ﹏ U) 1]
+  wetuwn tf.metwics.mean(vawues=top_k_wabews, UwU n-nyame=name)
+
+d-def mean_gated_numewic_wabew_topk(wabews, XD p-pwedictions, ʘwʘ w-weights, nyame, rawr x3 topk_id, baw=2.0):
+  assewt isinstance(baw, ^^;; i-int) o-ow isinstance(baw, ʘwʘ f-fwoat), (U ﹏ U) "baw m-must be int ow f-fwoat"
+  top_k_wabews  = tf.gathew(pawams=wabews, (˘ω˘) indices=topk_id, (ꈍᴗꈍ) axis=0)                # [topk, /(^•ω•^) 1]
+  g-gated_top_k_wabews  = tf.cast(top_k_wabews > baw*1.0, >_< tf.int32)
+  wetuwn tf.metwics.mean(vawues=gated_top_k_wabews, σωσ nyame=name)
+
+suppowted_numewic_metwics = {
+  'mean_numewic_wabew_topk': m-mean_numewic_wabew_topk,
+  'mean_gated_numewic_wabew_topk': mean_gated_numewic_wabew_topk
 }
-DEFAULT_NUMERIC_METRICS = ['mean_numeric_label_topk', 'mean_gated_numeric_label_topk']
+defauwt_numewic_metwics = ['mean_numewic_wabew_topk', ^^;; 'mean_gated_numewic_wabew_topk']
 
 
 
-def get_metric_topK_fn_helper(targetMetrics, supportedMetrics_op, metrics=None, topK=(5,5,5), predcol=None, labelcol=None):
+def get_metwic_topk_fn_hewpew(tawgetmetwics, 😳 s-suppowtedmetwics_op, >_< m-metwics=none, -.- t-topk=(5,5,5), UwU pwedcow=none, w-wabewcow=none):
   """
-  :param targetMetrics:        Target Metric List
-  :param supportedMetrics_op:  Supported Metric Operators             Dict
-  :param metrics:              Metric Set to evaluate
-  :param topK:                 (topK_min, topK_max, topK_delta)       Tuple
-  :param predcol:              Prediction Column Index
-  :param labelcol:             Label Column Index
-  :return:
+  :pawam tawgetmetwics:        t-tawget m-metwic wist
+  :pawam suppowtedmetwics_op:  suppowted metwic opewatows             dict
+  :pawam metwics:              m-metwic set to evawuate
+  :pawam t-topk:                 (topk_min, :3 topk_max, σωσ t-topk_dewta)       t-tupwe
+  :pawam pwedcow:              pwediction c-cowumn index
+  :pawam w-wabewcow:             wabew cowumn index
+  :wetuwn:
   """
-  # pylint: disable=dict-keys-not-iterating
-  if targetMetrics is None or supportedMetrics_op is None:
-    raise ValueError("Invalid Target Metric List/op !")
+  # p-pywint: d-disabwe=dict-keys-not-itewating
+  if tawgetmetwics is nyone ow suppowtedmetwics_op is nyone:
+    w-waise vawueewwow("invawid t-tawget m-metwic wist/op !")
 
-  targetMetrics = set([m.lower() for m in targetMetrics])
-  if metrics is None:
-    metrics = list(targetMetrics)
-  else:
-    metrics = [m.lower() for m in metrics if m.lower() in targetMetrics]
+  tawgetmetwics = s-set([m.wowew() f-fow m in tawgetmetwics])
+  i-if metwics is nyone:
+    metwics = wist(tawgetmetwics)
+  ewse:
+    metwics = [m.wowew() f-fow m-m in metwics if m.wowew() in tawgetmetwics]
 
-  num_k     = int((topK[1]-topK[0])/topK[2]+1)
-  topK_list = [topK[0]+d*topK[2] for d in range(num_k)]
-  if 1 not in topK_list:
-    topK_list = [1] + topK_list
+  nyum_k     = int((topk[1]-topk[0])/topk[2]+1)
+  topk_wist = [topk[0]+d*topk[2] f-fow d-d in wange(num_k)]
+  if 1 nyot in topk_wist:
+    topk_wist = [1] + t-topk_wist
 
 
-  def get_eval_metric_ops(graph_output, labels, weights):
+  def get_evaw_metwic_ops(gwaph_output, >w< wabews, (ˆ ﻌ ˆ)♡ weights):
     """
-    graph_output:
-      dict that is returned by build_graph given input features.
-    labels:
-      target labels associated to batch.
+    gwaph_output:
+      d-dict that is wetuwned by buiwd_gwaph g-given input featuwes. ʘwʘ
+    w-wabews:
+      tawget wabews associated to batch. :3
     weights:
-      weights of the samples..
+      w-weights o-of the sampwes..
     """
-    eval_metric_ops = OrderedDict()
+    evaw_metwic_ops = owdeweddict()
 
-    if predcol is None:
-      pred = graph_output['output']
-    else:
-      assert 0 <= predcol < graph_output['output'].shape[1], 'Invalid Prediction Column Index !'
-      assert labelcol is not None
-      pred   = tf.reshape(graph_output['output'][:, predcol], shape=[-1, 1])
-      labels = tf.reshape(labels[:, labelcol], shape=[-1, 1])
-    numOut = graph_output['output'].shape[1]
-    pred_score = tf.reshape(graph_output['output'][:, numOut-1], shape=[-1, 1])
+    if pwedcow i-is nyone:
+      pwed = gwaph_output['output']
+    e-ewse:
+      assewt 0 <= pwedcow < gwaph_output['output'].shape[1], (˘ω˘) 'invawid pwediction cowumn i-index !'
+      assewt wabewcow i-is nyot nyone
+      p-pwed   = tf.weshape(gwaph_output['output'][:, 😳😳😳 pwedcow], rawr x3 shape=[-1, (✿oωo) 1])
+      w-wabews = tf.weshape(wabews[:, (ˆ ﻌ ˆ)♡ wabewcow], :3 shape=[-1, (U ᵕ U❁) 1])
+    nyumout = g-gwaph_output['output'].shape[1]
+    p-pwed_scowe = t-tf.weshape(gwaph_output['output'][:, ^^;; nyumout-1], mya shape=[-1, 😳😳😳 1])
 
-    # add metrics to eval_metric_ops dict
-    for metric_name in metrics:
-      metric_name = metric_name.lower()  # metric name are case insensitive.
+    # a-add metwics to e-evaw_metwic_ops dict
+    fow metwic_name in metwics:
+      m-metwic_name = m-metwic_name.wowew()  # m-metwic nyame awe case insensitive. OwO
 
-      if metric_name in supportedMetrics_op:
-        metric_factory = supportedMetrics_op.get(metric_name)
+      if metwic_name i-in suppowtedmetwics_op:
+        metwic_factowy = s-suppowtedmetwics_op.get(metwic_name)
 
-        if 'topk' not in metric_name:
-          value_op, update_op = metric_factory(
-            labels=labels,
-            predictions=pred,
-            weights=weights,
-            name=metric_name)
-          eval_metric_ops[metric_name] = (value_op, update_op)
-        else:
-          for K in topK_list:
-            K_min = tf.minimum(K, tf.shape(pred_score)[0])
-            topK_id = tf.nn.top_k(tf.reshape(pred_score, shape=[-1]), k=K_min)[1]           # [topK]
-            value_op, update_op = metric_factory(
-              labels=labels,
-              predictions=pred,
-              weights=weights,
-              name=metric_name+'__k_'+str(K),
-              topK_id=topK_id)
-            eval_metric_ops[metric_name+'__k_'+str(K)] = (value_op, update_op)
+        i-if 'topk' nyot in metwic_name:
+          vawue_op, rawr update_op = metwic_factowy(
+            w-wabews=wabews, XD
+            p-pwedictions=pwed, (U ﹏ U)
+            w-weights=weights, (˘ω˘)
+            n-nyame=metwic_name)
+          evaw_metwic_ops[metwic_name] = (vawue_op, UwU u-update_op)
+        ewse:
+          fow k in topk_wist:
+            k_min = tf.minimum(k, >_< tf.shape(pwed_scowe)[0])
+            topk_id = t-tf.nn.top_k(tf.weshape(pwed_scowe, σωσ shape=[-1]), 🥺 k-k=k_min)[1]           # [topk]
+            vawue_op, 🥺 update_op = m-metwic_factowy(
+              wabews=wabews, ʘwʘ
+              p-pwedictions=pwed, :3
+              weights=weights, (U ﹏ U)
+              n-nyame=metwic_name+'__k_'+stw(k), (U ﹏ U)
+              t-topk_id=topk_id)
+            evaw_metwic_ops[metwic_name+'__k_'+stw(k)] = (vawue_op, ʘwʘ u-update_op)
 
-      else:
-        raise ValueError('Cannot find the metric named ' + metric_name)
+      e-ewse:
+        w-waise vawueewwow('cannot find the metwic nyamed ' + metwic_name)
 
-    return eval_metric_ops
+    wetuwn evaw_metwic_ops
 
-  return get_eval_metric_ops
-
-
-
-def get_numeric_metric_fn(metrics=None, topK=(5,5,5), predcol=None, labelcol=None):
-  if metrics is None:
-    metrics = list(DEFAULT_NUMERIC_METRICS)
-  metrics   = list(set(metrics))
-
-  metric_op = get_metric_topK_fn_helper(targetMetrics=list(DEFAULT_NUMERIC_METRICS),
-                                        supportedMetrics_op=SUPPORTED_NUMERIC_METRICS,
-                                        metrics=metrics, topK=topK, predcol=predcol, labelcol=labelcol)
-  return metric_op
+  wetuwn get_evaw_metwic_ops
 
 
 
-def get_single_binary_task_metric_fn(metrics, classnames, topK=(5,5,5), use_topK=False):
+def get_numewic_metwic_fn(metwics=none, >w< t-topk=(5,5,5), rawr x3 p-pwedcow=none, OwO w-wabewcow=none):
+  if metwics i-is nyone:
+    metwics = wist(defauwt_numewic_metwics)
+  metwics   = wist(set(metwics))
+
+  m-metwic_op = get_metwic_topk_fn_hewpew(tawgetmetwics=wist(defauwt_numewic_metwics), ^•ﻌ•^
+                                        s-suppowtedmetwics_op=suppowted_numewic_metwics, >_<
+                                        metwics=metwics, OwO t-topk=topk, >_< pwedcow=pwedcow, (ꈍᴗꈍ) wabewcow=wabewcow)
+  wetuwn metwic_op
+
+
+
+def get_singwe_binawy_task_metwic_fn(metwics, c-cwassnames, >w< t-topk=(5,5,5), (U ﹏ U) use_topk=fawse):
   """
-  graph_output['output']:        [BatchSz, 1]        [pred_Task1]
-  labels:                        [BatchSz, 2]        [Task1, NumericLabel]
+  g-gwaph_output['output']:        [batchsz, ^^ 1]        [pwed_task1]
+  w-wabews:                        [batchsz, (U ﹏ U) 2]        [task1, :3 nyumewicwabew]
   """
-  def get_eval_metric_ops(graph_output, labels, weights):
-    metric_op_base = get_partial_multi_binary_class_metric_fn(metrics, predcols=0, classes=classnames)
-    classnames_unw = ['unweighted_'+cs for cs in classnames]
-    metric_op_unw = get_partial_multi_binary_class_metric_fn(metrics, predcols=0, classes=classnames_unw)
+  def get_evaw_metwic_ops(gwaph_output, (✿oωo) wabews, weights):
+    m-metwic_op_base = g-get_pawtiaw_muwti_binawy_cwass_metwic_fn(metwics, XD p-pwedcows=0, c-cwasses=cwassnames)
+    c-cwassnames_unw = ['unweighted_'+cs fow cs in cwassnames]
+    m-metwic_op_unw = g-get_pawtiaw_muwti_binawy_cwass_metwic_fn(metwics, >w< pwedcows=0, òωó cwasses=cwassnames_unw)
 
-    metrics_base_res = metric_op_base(graph_output, labels, weights)
-    metrics_unw_res = metric_op_unw(graph_output, labels, None)
-    metrics_base_res.update(metrics_unw_res)
+    m-metwics_base_wes = m-metwic_op_base(gwaph_output, (ꈍᴗꈍ) wabews, rawr x3 w-weights)
+    metwics_unw_wes = metwic_op_unw(gwaph_output, rawr x3 wabews, nyone)
+    metwics_base_wes.update(metwics_unw_wes)
 
-    if use_topK:
-      metric_op_numeric = get_numeric_metric_fn(metrics=None, topK=topK, predcol=0, labelcol=1)
-      metrics_numeric_res = metric_op_numeric(graph_output, labels, weights)
-      metrics_base_res.update(metrics_numeric_res)
-    return metrics_base_res
+    i-if use_topk:
+      metwic_op_numewic = get_numewic_metwic_fn(metwics=none, σωσ t-topk=topk, (ꈍᴗꈍ) p-pwedcow=0, rawr wabewcow=1)
+      metwics_numewic_wes = metwic_op_numewic(gwaph_output, ^^;; w-wabews, weights)
+      metwics_base_wes.update(metwics_numewic_wes)
+    wetuwn m-metwics_base_wes
 
-  return get_eval_metric_ops
+  w-wetuwn get_evaw_metwic_ops
 
 
-def get_dual_binary_tasks_metric_fn(metrics, classnames, topK=(5,5,5), use_topK=False):
+d-def get_duaw_binawy_tasks_metwic_fn(metwics, rawr x3 cwassnames, (ˆ ﻌ ˆ)♡ topk=(5,5,5), use_topk=fawse):
   """
-  graph_output['output']:        [BatchSz, 3]        [pred_Task1, pred_Task2, Score]
-  labels:                        [BatchSz, 3]        [Task1, Task2, NumericLabel]
+  gwaph_output['output']:        [batchsz, σωσ 3]        [pwed_task1, (U ﹏ U) p-pwed_task2, >w< scowe]
+  wabews:                        [batchsz, σωσ 3]        [task1, nyaa~~ task2, 🥺 nyumewicwabew]
   """
-  def get_eval_metric_ops(graph_output, labels, weights):
+  d-def get_evaw_metwic_ops(gwaph_output, rawr x3 w-wabews, weights):
 
-    metric_op_base = get_partial_multi_binary_class_metric_fn(metrics, predcols=[0, 1], classes=classnames)
-    classnames_unw = ['unweighted_'+cs for cs in classnames]
-    metric_op_unw = get_partial_multi_binary_class_metric_fn(metrics, predcols=[0, 1], classes=classnames_unw)
+    m-metwic_op_base = get_pawtiaw_muwti_binawy_cwass_metwic_fn(metwics, σωσ p-pwedcows=[0, (///ˬ///✿) 1], (U ﹏ U) c-cwasses=cwassnames)
+    cwassnames_unw = ['unweighted_'+cs fow cs in cwassnames]
+    m-metwic_op_unw = get_pawtiaw_muwti_binawy_cwass_metwic_fn(metwics, ^^;; pwedcows=[0, 🥺 1], c-cwasses=cwassnames_unw)
 
-    metrics_base_res = metric_op_base(graph_output, labels, weights)
-    metrics_unw_res = metric_op_unw(graph_output, labels, None)
-    metrics_base_res.update(metrics_unw_res)
+    m-metwics_base_wes = metwic_op_base(gwaph_output, òωó w-wabews, XD weights)
+    metwics_unw_wes = m-metwic_op_unw(gwaph_output, :3 w-wabews, n-nyone)
+    metwics_base_wes.update(metwics_unw_wes)
 
-    if use_topK:
-      metric_op_numeric = get_numeric_metric_fn(metrics=None, topK=topK, predcol=2, labelcol=2)
-      metrics_numeric_res = metric_op_numeric(graph_output, labels, weights)
-      metrics_base_res.update(metrics_numeric_res)
-    return metrics_base_res
+    if use_topk:
+      metwic_op_numewic = get_numewic_metwic_fn(metwics=none, (U ﹏ U) topk=topk, >w< pwedcow=2, wabewcow=2)
+      metwics_numewic_wes = metwic_op_numewic(gwaph_output, /(^•ω•^) wabews, weights)
+      metwics_base_wes.update(metwics_numewic_wes)
+    wetuwn metwics_base_wes
 
-  return get_eval_metric_ops
+  w-wetuwn g-get_evaw_metwic_ops

@@ -1,27 +1,27 @@
-package com.twitter.follow_recommendations.common.rankers.common
+package com.twittew.fowwow_wecommendations.common.wankews.common
 
-object RankerId extends Enumeration {
-  type RankerId = Value
+object wankewid e-extends enumewation {
+  t-type wankewid = v-vawue
 
-  val RandomRanker: RankerId = Value("random")
-  // The production PostNUX ML warm-start auto-retraining model ranker
-  val PostNuxProdRanker: RankerId = Value("postnux_prod")
-  val None: RankerId = Value("none")
+  v-vaw wandomwankew: w-wankewid = vawue("wandom")
+  // t-the pwoduction p-postnux mw wawm-stawt a-auto-wetwaining modew wankew
+  vaw postnuxpwodwankew: wankewid = vawue("postnux_pwod")
+  vaw nyone: wankewid = v-vawue("none")
 
-  // Sampling from the Placket-Luce distribution. Applied after ranker step. Its ranker id is mainly used for logging.
-  val PlacketLuceSamplingTransformer: RankerId = Value("placket_luce_sampling_transformer")
+  // sampwing fwom the pwacket-wuce d-distwibution. OwO appwied a-aftew wankew step. (U ﹏ U) its wankew id is mainwy used fow wogging. >_<
+  v-vaw pwacketwucesampwingtwansfowmew: wankewid = vawue("pwacket_wuce_sampwing_twansfowmew")
 
-  def getRankerByName(name: String): Option[RankerId] =
-    RankerId.values.toSeq.find(_.equals(Value(name)))
+  d-def g-getwankewbyname(name: stwing): option[wankewid] =
+    wankewid.vawues.toseq.find(_.equaws(vawue(name)))
 
 }
 
 /**
- * ML model based heavy ranker ids.
+ * mw modew based h-heavy wankew ids. rawr x3
  */
-object ModelBasedHeavyRankerId {
-  import RankerId._
-  val HeavyRankerIds: Set[String] = Set(
-    PostNuxProdRanker.toString,
+object modewbasedheavywankewid {
+  impowt wankewid._
+  v-vaw heavywankewids: set[stwing] = s-set(
+    postnuxpwodwankew.tostwing, mya
   )
 }

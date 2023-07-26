@@ -1,20 +1,20 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
 /**
- * Each candidate source algorithm could be based on one, or more, of the 4 general type of
- * information we have on a user:
- *   1. Social: the user's connections in Twitter's social graph.
- *   2. Geo: the user's geographical information.
- *   3. Interest: information on the user's chosen interests.
- *   4. Activity: information on the user's past activity.
+ * each candidate souwce a-awgowithm c-couwd be based on o-one, rawr x3 ow mowe, mya o-of the 4 genewaw t-type of
+ * infowmation w-we have o-on a usew:
+ *   1. nyaa~~ s-sociaw: the usew's connections in twittew's sociaw gwaph. (⑅˘꒳˘)
+ *   2. rawr x3 geo: the usew's g-geogwaphicaw infowmation. (✿oωo)
+ *   3. intewest: i-infowmation on the usew's chosen i-intewests. (ˆ ﻌ ˆ)♡
+ *   4. activity: infowmation on the usew's past activity. (˘ω˘)
  *
- * Note that an algorithm can fall under more than one of these categories.
+ * n-nyote that an awgowithm c-can faww undew m-mowe than one of these categowies. (⑅˘꒳˘)
  */
-object AlgorithmType extends Enumeration {
-  type AlgorithmType = Value
+object awgowithmtype extends enumewation {
+  t-type awgowithmtype = vawue
 
-  val Social: Value = Value("social")
-  val Geo: Value = Value("geo")
-  val Activity: Value = Value("activity")
-  val Interest: Value = Value("interest")
+  vaw sociaw: vawue = vawue("sociaw")
+  vaw g-geo: vawue = vawue("geo")
+  vaw a-activity: vawue = v-vawue("activity")
+  v-vaw intewest: v-vawue = vawue("intewest")
 }

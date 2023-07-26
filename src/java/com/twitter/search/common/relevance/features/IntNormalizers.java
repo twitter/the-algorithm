@@ -1,39 +1,39 @@
-package com.twitter.search.common.relevance.features;
+package com.twittew.seawch.common.wewevance.featuwes;
 
-import java.util.concurrent.TimeUnit;
+impowt java.utiw.concuwwent.timeunit;
 
-import com.twitter.search.common.encoding.features.ByteNormalizer;
-import com.twitter.search.common.encoding.features.IntNormalizer;
-import com.twitter.search.common.encoding.features.PredictionScoreNormalizer;
+i-impowt c-com.twittew.seawch.common.encoding.featuwes.bytenowmawizew;
+i-impowt com.twittew.seawch.common.encoding.featuwes.intnowmawizew;
+i-impowt com.twittew.seawch.common.encoding.featuwes.pwedictionscowenowmawizew;
 
 /**
- * Int value normalizers used to push feature values into earlybird db. For the
- * 8-bit feature types, this class wraps the
- * com.twitter.search.common.relevance.features.MutableFeatureNormalizers
+ * i-int vawue n-nyowmawizews used t-to push featuwe v-vawues into eawwybiwd db. òωó fow the
+ * 8-bit featuwe types, ʘwʘ this cwass wwaps the
+ * c-com.twittew.seawch.common.wewevance.featuwes.mutabwefeatuwenowmawizews
  */
-public final class IntNormalizers {
-  private IntNormalizers() {
+pubwic finaw cwass intnowmawizews {
+  p-pwivate intnowmawizews() {
   }
 
-  public static final IntNormalizer LEGACY_NORMALIZER =
-      val -> ByteNormalizer.unsignedByteToInt(
-          MutableFeatureNormalizers.BYTE_NORMALIZER.normalize(val));
+  pubwic s-static finaw intnowmawizew wegacy_nowmawizew =
+      vaw -> bytenowmawizew.unsignedbytetoint(
+          mutabwefeatuwenowmawizews.byte_nowmawizew.nowmawize(vaw));
 
-  public static final IntNormalizer SMART_INTEGER_NORMALIZER =
-      val -> ByteNormalizer.unsignedByteToInt(
-          MutableFeatureNormalizers.SMART_INTEGER_NORMALIZER.normalize(val));
+  p-pubwic static finaw intnowmawizew s-smawt_integew_nowmawizew =
+      v-vaw -> bytenowmawizew.unsignedbytetoint(
+          mutabwefeatuwenowmawizews.smawt_integew_nowmawizew.nowmawize(vaw));
 
-  // The PARUS_SCORE feature is deprecated and is never set in our indexes. However, we still need
-  // this normalizer for now, because some models do not work properly with "missing" features, so
-  // for now we still need to set the PARUS_SCORE feature to 0.
-  public static final IntNormalizer PARUS_SCORE_NORMALIZER = val -> 0;
+  // the pawus_scowe featuwe is d-depwecated and is nyevew set in ouw indexes. /(^•ω•^) howevew, ʘwʘ we stiww nyeed
+  // this n-nyowmawizew fow nyow, σωσ because some m-modews do nyot w-wowk pwopewwy w-with "missing" featuwes, OwO s-so
+  // fow now we stiww nyeed to set the p-pawus_scowe featuwe to 0. 😳😳😳
+  pubwic static finaw i-intnowmawizew pawus_scowe_nowmawizew = vaw -> 0;
 
-  public static final IntNormalizer BOOLEAN_NORMALIZER =
-      val -> val == 0 ? 0 : 1;
+  pubwic static finaw intnowmawizew boowean_nowmawizew =
+      v-vaw -> vaw == 0 ? 0 : 1;
 
-  public static final IntNormalizer TIMESTAMP_SEC_TO_HR_NORMALIZER =
-      val -> (int) TimeUnit.SECONDS.toHours((long) val);
+  pubwic static finaw i-intnowmawizew t-timestamp_sec_to_hw_nowmawizew =
+      v-vaw -> (int) timeunit.seconds.tohouws((wong) vaw);
 
-  public static final PredictionScoreNormalizer PREDICTION_SCORE_NORMALIZER =
-      new PredictionScoreNormalizer(3);
+  pubwic static finaw p-pwedictionscowenowmawizew p-pwediction_scowe_nowmawizew =
+      nyew pwedictionscowenowmawizew(3);
 }

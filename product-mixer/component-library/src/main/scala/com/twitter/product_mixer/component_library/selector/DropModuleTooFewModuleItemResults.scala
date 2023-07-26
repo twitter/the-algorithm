@@ -1,46 +1,46 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.component_library.model.candidate.CursorCandidate
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.cuwsowcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.specificpipewines
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.moduwecandidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.timewines.configapi.pawam
 
 /**
- * Drop the module from the `result` if it doesn't contain enough item candidates.
+ * dwop the moduwe f-fwom the `wesuwt` if it doesn't contain enough i-item candidates. ʘwʘ
  *
- * For example, for a given module, if minResultsParam is 3, and the results contain 2 items,
- * then that module will be entirely dropped from the results.
+ * fow exampwe, σωσ f-fow a given moduwe, OwO if minwesuwtspawam is 3, 😳😳😳 and the wesuwts c-contain 2 items, 😳😳😳
+ * then that moduwe w-wiww be entiwewy d-dwopped fwom the wesuwts. o.O
  */
-case class DropModuleTooFewModuleItemResults(
-  candidatePipeline: CandidatePipelineIdentifier,
-  minModuleItemsParam: Param[Int])
-    extends Selector[PipelineQuery] {
+case cwass dwopmoduwetoofewmoduweitemwesuwts(
+  candidatepipewine: c-candidatepipewineidentifiew, ( ͡o ω ͡o )
+  minmoduweitemspawam: pawam[int])
+    extends sewectow[pipewinequewy] {
 
-  override val pipelineScope: CandidateScope = SpecificPipelines(candidatePipeline)
+  o-ovewwide vaw pipewinescope: candidatescope = s-specificpipewines(candidatepipewine)
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val minModuleItemSelections = query.params(minModuleItemsParam)
-    assert(minModuleItemSelections > 0, "Min results must be greater than zero")
+  o-ovewwide def a-appwy(
+    quewy: p-pipewinequewy, (U ﹏ U)
+    wemainingcandidates: seq[candidatewithdetaiws],
+    w-wesuwt: seq[candidatewithdetaiws]
+  ): sewectowwesuwt = {
+    v-vaw minmoduweitemsewections = quewy.pawams(minmoduweitemspawam)
+    assewt(minmoduweitemsewections > 0, (///ˬ///✿) "min wesuwts must be gweatew than zewo")
 
-    val updatedResults = result.filter {
-      case module: ModuleCandidateWithDetails
-          if pipelineScope.contains(module) && module.candidates.count { candidateWithDetails =>
-            !candidateWithDetails.candidate.isInstanceOf[CursorCandidate]
-          } < minModuleItemSelections =>
-        false
-      case _ => true
+    v-vaw updatedwesuwts = wesuwt.fiwtew {
+      c-case m-moduwe: moduwecandidatewithdetaiws
+          i-if pipewinescope.contains(moduwe) && moduwe.candidates.count { candidatewithdetaiws =>
+            !candidatewithdetaiws.candidate.isinstanceof[cuwsowcandidate]
+          } < m-minmoduweitemsewections =>
+        fawse
+      c-case _ => twue
     }
 
-    SelectorResult(remainingCandidates = remainingCandidates, result = updatedResults)
+    s-sewectowwesuwt(wemainingcandidates = w-wemainingcandidates, >w< wesuwt = updatedwesuwts)
   }
 }

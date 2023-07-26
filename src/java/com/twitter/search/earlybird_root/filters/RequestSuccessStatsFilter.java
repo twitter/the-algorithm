@@ -1,77 +1,77 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.concurrent.TimeUnit;
-import javax.inject.Inject;
+impowt java.utiw.concuwwent.timeunit;
+i-impowt j-javax.inject.inject;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.root.RequestSuccessStats;
-import com.twitter.search.common.util.FinagleUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.util.Future;
-import com.twitter.util.FutureEventListener;
+i-impowt com.twittew.finagwe.sewvice;
+i-impowt c-com.twittew.finagwe.simpwefiwtew;
+i-impowt com.twittew.seawch.common.woot.wequestsuccessstats;
+i-impowt c-com.twittew.seawch.common.utiw.finagweutiw;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+impowt com.twittew.utiw.futuwe;
+i-impowt com.twittew.utiw.futuweeventwistenew;
 
-import static com.twitter.search.common.util.earlybird.EarlybirdResponseUtil.responseConsideredFailed;
+i-impowt static com.twittew.seawch.common.utiw.eawwybiwd.eawwybiwdwesponseutiw.wesponseconsidewedfaiwed;
 
 
 /**
- * Records cancellations, timeouts, and failures for requests that do not go through
- * ScatterGatherService (which also updates these stats, but for different requests).
+ * wecowds cancewwations, 😳 t-timeouts, mya and faiwuwes fow wequests t-that do not g-go thwough
+ * scattewgathewsewvice (which awso updates these stats, (˘ω˘) but fow diffewent w-wequests). >_<
  */
-public class RequestSuccessStatsFilter
-    extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
+pubwic cwass wequestsuccessstatsfiwtew
+    extends simpwefiwtew<eawwybiwdwequest, -.- eawwybiwdwesponse> {
 
-  private final RequestSuccessStats stats;
+  p-pwivate finaw wequestsuccessstats s-stats;
 
-  @Inject
-  RequestSuccessStatsFilter(RequestSuccessStats stats) {
-    this.stats = stats;
+  @inject
+  w-wequestsuccessstatsfiwtew(wequestsuccessstats s-stats) {
+    t-this.stats = stats;
   }
 
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequest request,
-      Service<EarlybirdRequest, EarlybirdResponse> service) {
+  @ovewwide
+  pubwic f-futuwe<eawwybiwdwesponse> appwy(
+      eawwybiwdwequest w-wequest, 🥺
+      sewvice<eawwybiwdwequest, (U ﹏ U) eawwybiwdwesponse> sewvice) {
 
-    final long startTime = System.nanoTime();
+    finaw wong stawttime = system.nanotime();
 
-    return service.apply(request).addEventListener(
-        new FutureEventListener<EarlybirdResponse>() {
-          @Override
-          public void onSuccess(EarlybirdResponse response) {
-            boolean success = true;
+    w-wetuwn sewvice.appwy(wequest).addeventwistenew(
+        nyew f-futuweeventwistenew<eawwybiwdwesponse>() {
+          @ovewwide
+          p-pubwic v-void onsuccess(eawwybiwdwesponse wesponse) {
+            boowean success = twue;
 
-            if (response.getResponseCode() == EarlybirdResponseCode.CLIENT_CANCEL_ERROR) {
-              success = false;
-              stats.getCancelledRequestCount().increment();
-            } else if (response.getResponseCode() == EarlybirdResponseCode.SERVER_TIMEOUT_ERROR) {
-              success = false;
-              stats.getTimedoutRequestCount().increment();
-            } else if (responseConsideredFailed(response.getResponseCode())) {
-              success = false;
-              stats.getErroredRequestCount().increment();
+            i-if (wesponse.getwesponsecode() == e-eawwybiwdwesponsecode.cwient_cancew_ewwow) {
+              success = f-fawse;
+              s-stats.getcancewwedwequestcount().incwement();
+            } ewse if (wesponse.getwesponsecode() == eawwybiwdwesponsecode.sewvew_timeout_ewwow) {
+              s-success = fawse;
+              s-stats.gettimedoutwequestcount().incwement();
+            } ewse if (wesponseconsidewedfaiwed(wesponse.getwesponsecode())) {
+              success = fawse;
+              s-stats.getewwowedwequestcount().incwement();
             }
 
-            long latencyNanos = System.nanoTime() - startTime;
-            stats.getRequestLatencyStats().requestComplete(
-                TimeUnit.NANOSECONDS.toMillis(latencyNanos), 0, success);
+            wong watencynanos = s-system.nanotime() - stawttime;
+            s-stats.getwequestwatencystats().wequestcompwete(
+                t-timeunit.nanoseconds.tomiwwis(watencynanos), >w< 0, mya success);
           }
 
-          @Override
-          public void onFailure(Throwable cause) {
-            long latencyNanos = System.nanoTime() - startTime;
-            stats.getRequestLatencyStats().requestComplete(
-                TimeUnit.NANOSECONDS.toMillis(latencyNanos), 0, false);
+          @ovewwide
+          pubwic void onfaiwuwe(thwowabwe cause) {
+            wong watencynanos = system.nanotime() - s-stawttime;
+            s-stats.getwequestwatencystats().wequestcompwete(
+                timeunit.nanoseconds.tomiwwis(watencynanos), >w< 0, f-fawse);
 
-            if (FinagleUtil.isCancelException(cause)) {
-              stats.getCancelledRequestCount().increment();
-            } else if (FinagleUtil.isTimeoutException(cause)) {
-              stats.getTimedoutRequestCount().increment();
-            } else {
-              stats.getErroredRequestCount().increment();
+            i-if (finagweutiw.iscancewexception(cause)) {
+              s-stats.getcancewwedwequestcount().incwement();
+            } ewse if (finagweutiw.istimeoutexception(cause)) {
+              stats.gettimedoutwequestcount().incwement();
+            } e-ewse {
+              stats.getewwowedwequestcount().incwement();
             }
           }
         });

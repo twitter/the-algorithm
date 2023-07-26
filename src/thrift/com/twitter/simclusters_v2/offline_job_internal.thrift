@@ -1,63 +1,63 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.offline_job_internal
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namespace java com.twittew.simcwustews_v2.thwiftjava
+nyamespace py g-gen.twittew.simcwustews_v2.offwine_job_intewnaw
+#@namespace s-scawa c-com.twittew.simcwustews_v2.thwiftscawa
+#@namespace s-stwato com.twittew.simcwustews_v2
 
-include "com/twitter/algebird_internal/algebird.thrift"
+i-incwude "com/twittew/awgebiwd_intewnaw/awgebiwd.thwift"
 
-// For internal usage only. Mainly for offline_evaluation.
-// Deprecated. Please use 'online_store/ModelVersion'
-enum PersistedModelVersion {
-  MODEL_20M_145K_dec11 = 1,
-  MODEL_20M_145K_updated = 2,
-  MODEL_20M_145K_2020 = 3,
-  RESERVED_4 = 4,
-  RESERVED_5 = 5
-}(persisted = 'true', hasPersonalData = 'false')
+// f-fow intewnaw u-usage onwy. nyaa~~ mainwy f-fow offwine_evawuation. :3
+// depwecated. 😳😳😳 pwease use 'onwine_stowe/modewvewsion'
+enum pewsistedmodewvewsion {
+  modew_20m_145k_dec11 = 1, (˘ω˘)
+  modew_20m_145k_updated = 2, ^^
+  m-modew_20m_145k_2020 = 3, :3
+  wesewved_4 = 4, -.-
+  wesewved_5 = 5
+}(pewsisted = 'twue', 😳 haspewsonawdata = 'fawse')
 
-enum PersistedScoreType {
-  NORMALIZED_FAV_8_HR_HALF_LIFE = 1,
-  NORMALIZED_FOLLOW_8_HR_HALF_LIFE = 2,
-  NORMALIZED_LOG_FAV_8_HR_HALF_LIFE = 3,
-  RESERVED_4 = 4,
-  RESERVED_5 = 5
-}(persisted = 'true', hasPersonalData = 'false')
+e-enum pewsistedscowetype {
+  n-nyowmawized_fav_8_hw_hawf_wife = 1, mya
+  nyowmawized_fowwow_8_hw_hawf_wife = 2, (˘ω˘)
+  nyowmawized_wog_fav_8_hw_hawf_wife = 3, >_<
+  wesewved_4 = 4, -.-
+  w-wesewved_5 = 5
+}(pewsisted = 'twue', 🥺 haspewsonawdata = 'fawse')
 
-struct PersistedScores {
-  1: optional algebird.DecayedValue score
-}(persisted = 'true', hasPersonalData = 'false')
+s-stwuct pewsistedscowes {
+  1: o-optionaw awgebiwd.decayedvawue scowe
+}(pewsisted = 'twue', (U ﹏ U) haspewsonawdata = 'fawse')
 
-struct TweetAndClusterScores {
-  1: required i64 tweetId(personalDataType = 'TweetId')
-  2: required i32 clusterId(personalDataType = 'InferredInterests')
-  3: required PersistedModelVersion modelVersion
-  4: required PersistedScores scores(personalDataType = 'EngagementScore')
-  5: optional PersistedScoreType scoreType
-}(persisted="true", hasPersonalData = 'true')
+stwuct tweetandcwustewscowes {
+  1: wequiwed i-i64 tweetid(pewsonawdatatype = 'tweetid')
+  2: wequiwed i32 cwustewid(pewsonawdatatype = 'infewwedintewests')
+  3: wequiwed pewsistedmodewvewsion m-modewvewsion
+  4: wequiwed p-pewsistedscowes s-scowes(pewsonawdatatype = 'engagementscowe')
+  5: o-optionaw pewsistedscowetype s-scowetype
+}(pewsisted="twue", >w< haspewsonawdata = 'twue')
 
-struct TweetTopKClustersWithScores {
-  1: required i64 tweetId(personalDataType = 'TweetId')
-  2: required PersistedModelVersion modelVersion
-  3: required map<i32, PersistedScores> topKClusters(personalDataTypeKey = 'InferredInterests')
-  4: optional PersistedScoreType scoreType
-}(persisted="true", hasPersonalData = 'true')
+stwuct t-tweettopkcwustewswithscowes {
+  1: wequiwed i64 tweetid(pewsonawdatatype = 'tweetid')
+  2: w-wequiwed pewsistedmodewvewsion modewvewsion
+  3: wequiwed map<i32, mya pewsistedscowes> topkcwustews(pewsonawdatatypekey = 'infewwedintewests')
+  4: optionaw p-pewsistedscowetype scowetype
+}(pewsisted="twue", >w< h-haspewsonawdata = 'twue')
 
-struct ClusterTopKTweetsWithScores {
-  1: required i32 clusterId(personalDataType = 'InferredInterests')
-  2: required PersistedModelVersion modelVersion
-  3: required map<i64, PersistedScores> topKTweets(personalDataTypeKey = 'TweetId')
-  4: optional PersistedScoreType scoreType
-}(persisted = 'true', hasPersonalData = 'true')
+s-stwuct cwustewtopktweetswithscowes {
+  1: w-wequiwed i32 cwustewid(pewsonawdatatype = 'infewwedintewests')
+  2: wequiwed pewsistedmodewvewsion modewvewsion
+  3: w-wequiwed map<i64, nyaa~~ p-pewsistedscowes> topktweets(pewsonawdatatypekey = 'tweetid')
+  4: o-optionaw pewsistedscowetype s-scowetype
+}(pewsisted = 'twue', (✿oωo) haspewsonawdata = 'twue')
 
-struct QueryAndClusterScores {
-  1: required string query(personalDataType = 'SearchQuery')
-  2: required i32 clusterId
-  3: required PersistedModelVersion modelVersion
-  4: required PersistedScores scores
-}(persisted = 'true', hasPersonalData = 'true')
+s-stwuct quewyandcwustewscowes {
+  1: wequiwed s-stwing quewy(pewsonawdatatype = 'seawchquewy')
+  2: wequiwed i32 cwustewid
+  3: w-wequiwed pewsistedmodewvewsion m-modewvewsion
+  4: wequiwed p-pewsistedscowes s-scowes
+}(pewsisted = 'twue', ʘwʘ haspewsonawdata = 'twue')
 
-struct QueryTopKClustersWithScores {
-  1: required string query(personalDataType = 'SearchQuery')
-  2: required PersistedModelVersion modelVersion
-  3: required map<i32, PersistedScores> topKClusters
-}(persisted = 'true', hasPersonalData = 'true')
+stwuct quewytopkcwustewswithscowes {
+  1: wequiwed stwing quewy(pewsonawdatatype = 'seawchquewy')
+  2: wequiwed pewsistedmodewvewsion modewvewsion
+  3: w-wequiwed map<i32, (ˆ ﻌ ˆ)♡ p-pewsistedscowes> topkcwustews
+}(pewsisted = 'twue', 😳😳😳 h-haspewsonawdata = 'twue')

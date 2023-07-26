@@ -1,45 +1,45 @@
-#pragma once
-#include <twml/defines.h>
+#pwagma once
+#incwude <twmw/defines.h>
 
-#ifdef __cplusplus
-#include <stddef.h>
-#include <stdexcept>
-#include <stdint.h>
-#include <string>
+#ifdef __cpwuspwus
+#incwude <stddef.h>
+#incwude <stdexcept>
+#incwude <stdint.h>
+#incwude <stwing>
 
-namespace twml {
+nyamespace t-twmw {
 
-class Error : public std::runtime_error {
- private:
-  twml_err m_err;
- public:
-  Error(twml_err  err, const std::string &msg) :
-      std::runtime_error(msg), m_err(err)
+cwass e-ewwow : pubwic s-std::wuntime_ewwow {
+ p-pwivate:
+  t-twmw_eww m_eww;
+ p-pubwic:
+  ewwow(twmw_eww  e-eww, mya c-const std::stwing &msg) :
+      std::wuntime_ewwow(msg), nyaa~~ m_eww(eww)
   {
   }
 
-  twml_err err() const
+  twmw_eww eww() const
   {
-    return m_err;
-  }
-};
-
-class ThriftInvalidField: public twml::Error {
- public:
-  ThriftInvalidField(int16_t field_id, const std::string& func) :
-      Error(TWML_ERR_THRIFT,
-            "Found invalid field (" + std::to_string(field_id)
-            + ") while reading thrift [" + func + "]")
-  {
+    wetuwn m-m_eww;
   }
 };
 
-class ThriftInvalidType: public twml::Error {
- public:
-  ThriftInvalidType(uint8_t type_id, const std::string& func, const std::string type) :
-      Error(TWML_ERR_THRIFT,
-            "Found invalid type (" + std::to_string(type_id) +
-            ") while reading thrift [" + func + "::" + type + "]")
+cwass thwiftinvawidfiewd: pubwic twmw::ewwow {
+ p-pubwic:
+  thwiftinvawidfiewd(int16_t fiewd_id, (⑅˘꒳˘) c-const std::stwing& func) :
+      ewwow(twmw_eww_thwift, rawr x3
+            "found invawid fiewd (" + s-std::to_stwing(fiewd_id)
+            + ") whiwe w-weading thwift [" + f-func + "]")
+  {
+  }
+};
+
+cwass thwiftinvawidtype: pubwic twmw::ewwow {
+ pubwic:
+  t-thwiftinvawidtype(uint8_t type_id, (✿oωo) const std::stwing& func, (ˆ ﻌ ˆ)♡ const std::stwing type) :
+      e-ewwow(twmw_eww_thwift, (˘ω˘)
+            "found invawid t-type (" + std::to_stwing(type_id) +
+            ") w-whiwe weading t-thwift [" + f-func + "::" + type + "]")
   {
   }
 };

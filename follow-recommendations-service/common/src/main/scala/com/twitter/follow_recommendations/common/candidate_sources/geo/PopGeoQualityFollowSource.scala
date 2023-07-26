@@ -1,99 +1,99 @@
-package com.twitter.follow_recommendations.common.candidate_sources.geo
-import com.google.inject.Singleton
-import com.twitter.escherbird.util.stitchcache.StitchCache
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.PopularInGeoProof
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.hermit.model.Algorithm
-import com.twitter.hermit.pop_geo.thriftscala.PopUsersInPlace
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.UniquePopQualityFollowUsersInPlaceClientColumn
-import com.twitter.util.Duration
-import javax.inject.Inject
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.geo
+impowt com.googwe.inject.singweton
+i-impowt c-com.twittew.eschewbiwd.utiw.stitchcache.stitchcache
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.accountpwoof
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+impowt c-com.twittew.fowwow_wecommendations.common.modews.popuwawingeopwoof
+i-impowt com.twittew.fowwow_wecommendations.common.modews.weason
+impowt com.twittew.hewmit.modew.awgowithm
+impowt com.twittew.hewmit.pop_geo.thwiftscawa.popusewsinpwace
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.genewated.cwient.onboawding.usewwecs.uniquepopquawityfowwowusewsinpwacecwientcowumn
+impowt com.twittew.utiw.duwation
+i-impowt javax.inject.inject
 
-@Singleton
-class PopGeohashQualityFollowSource @Inject() (
-  popGeoSource: PopGeoQualityFollowSource,
-  statsReceiver: StatsReceiver)
-    extends BasePopGeohashSource(
-      popGeoSource = popGeoSource,
-      statsReceiver = statsReceiver.scope("PopGeohashQualityFollowSource"),
+@singweton
+cwass popgeohashquawityfowwowsouwce @inject() (
+  popgeosouwce: p-popgeoquawityfowwowsouwce, (U ﹏ U)
+  statsweceivew: s-statsweceivew)
+    e-extends basepopgeohashsouwce(
+      popgeosouwce = popgeosouwce, >w<
+      statsweceivew = s-statsweceivew.scope("popgeohashquawityfowwowsouwce"), (U ﹏ U)
     ) {
-  override val identifier: CandidateSourceIdentifier = PopGeohashQualityFollowSource.Identifier
-  override def maxResults(target: Target): Int = {
-    target.params(PopGeoQualityFollowSourceParams.PopGeoSourceMaxResultsPerPrecision)
+  ovewwide vaw identifiew: candidatesouwceidentifiew = popgeohashquawityfowwowsouwce.identifiew
+  ovewwide def maxwesuwts(tawget: t-tawget): int = {
+    tawget.pawams(popgeoquawityfowwowsouwcepawams.popgeosouwcemaxwesuwtspewpwecision)
   }
-  override def minGeohashLength(target: Target): Int = {
-    target.params(PopGeoQualityFollowSourceParams.PopGeoSourceGeoHashMinPrecision)
+  o-ovewwide d-def mingeohashwength(tawget: t-tawget): int = {
+    t-tawget.pawams(popgeoquawityfowwowsouwcepawams.popgeosouwcegeohashminpwecision)
   }
-  override def maxGeohashLength(target: Target): Int = {
-    target.params(PopGeoQualityFollowSourceParams.PopGeoSourceGeoHashMaxPrecision)
+  ovewwide def maxgeohashwength(tawget: t-tawget): int = {
+    tawget.pawams(popgeoquawityfowwowsouwcepawams.popgeosouwcegeohashmaxpwecision)
   }
-  override def returnResultFromAllPrecision(target: Target): Boolean = {
-    target.params(PopGeoQualityFollowSourceParams.PopGeoSourceReturnFromAllPrecisions)
+  ovewwide d-def wetuwnwesuwtfwomawwpwecision(tawget: tawget): boowean = {
+    tawget.pawams(popgeoquawityfowwowsouwcepawams.popgeosouwcewetuwnfwomawwpwecisions)
   }
-  override def candidateSourceEnabled(target: Target): Boolean = {
-    target.params(PopGeoQualityFollowSourceParams.CandidateSourceEnabled)
+  ovewwide def candidatesouwceenabwed(tawget: tawget): boowean = {
+    t-tawget.pawams(popgeoquawityfowwowsouwcepawams.candidatesouwceenabwed)
   }
 }
 
-object PopGeohashQualityFollowSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.PopGeohashQualityFollow.toString)
+object popgeohashquawityfowwowsouwce {
+  v-vaw i-identifiew: candidatesouwceidentifiew = c-candidatesouwceidentifiew(
+    awgowithm.popgeohashquawityfowwow.tostwing)
 }
 
-object PopGeoQualityFollowSource {
-  val MaxCacheSize = 20000
-  val CacheTTL: Duration = Duration.fromHours(24)
-  val MaxResults = 200
+object popgeoquawityfowwowsouwce {
+  vaw m-maxcachesize = 20000
+  v-vaw cachettw: duwation = d-duwation.fwomhouws(24)
+  v-vaw maxwesuwts = 200
 }
 
-@Singleton
-class PopGeoQualityFollowSource @Inject() (
-  popGeoQualityFollowClientColumn: UniquePopQualityFollowUsersInPlaceClientColumn,
-  statsReceiver: StatsReceiver,
-) extends CandidateSource[String, CandidateUser] {
+@singweton
+cwass p-popgeoquawityfowwowsouwce @inject() (
+  popgeoquawityfowwowcwientcowumn: u-uniquepopquawityfowwowusewsinpwacecwientcowumn, 😳
+  statsweceivew: statsweceivew, (ˆ ﻌ ˆ)♡
+) e-extends candidatesouwce[stwing, 😳😳😳 c-candidateusew] {
 
-  /** @see [[CandidateSourceIdentifier]] */
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    "PopGeoQualityFollowSource")
+  /** @see [[candidatesouwceidentifiew]] */
+  ovewwide v-vaw identifiew: c-candidatesouwceidentifiew = candidatesouwceidentifiew(
+    "popgeoquawityfowwowsouwce")
 
-  private val cache = StitchCache[String, Option[PopUsersInPlace]](
-    maxCacheSize = PopGeoQualityFollowSource.MaxCacheSize,
-    ttl = PopGeoQualityFollowSource.CacheTTL,
-    statsReceiver = statsReceiver.scope(identifier.name, "cache"),
-    underlyingCall = (k: String) => {
-      popGeoQualityFollowClientColumn.fetcher
+  pwivate vaw cache = stitchcache[stwing, (U ﹏ U) option[popusewsinpwace]](
+    maxcachesize = popgeoquawityfowwowsouwce.maxcachesize, (///ˬ///✿)
+    t-ttw = popgeoquawityfowwowsouwce.cachettw, 😳
+    s-statsweceivew = statsweceivew.scope(identifiew.name, 😳 "cache"),
+    u-undewwyingcaww = (k: s-stwing) => {
+      p-popgeoquawityfowwowcwientcowumn.fetchew
         .fetch(k)
-        .map { result => result.v }
+        .map { wesuwt => wesuwt.v }
     }
   )
 
-  override def apply(target: String): Stitch[Seq[CandidateUser]] = {
-    val result: Stitch[Option[PopUsersInPlace]] = cache.readThrough(target)
-    result.map { pu =>
+  ovewwide def appwy(tawget: s-stwing): stitch[seq[candidateusew]] = {
+    vaw wesuwt: stitch[option[popusewsinpwace]] = cache.weadthwough(tawget)
+    wesuwt.map { p-pu =>
       pu.map { candidates =>
-          candidates.popUsers.sortBy(-_.score).take(PopGeoQualityFollowSource.MaxResults).map {
-            candidate =>
-              CandidateUser(
-                id = candidate.userId,
-                score = Some(candidate.score),
-                reason = Some(
-                  Reason(
-                    Some(
-                      AccountProof(
-                        popularInGeoProof = Some(PopularInGeoProof(location = candidates.place))
+          c-candidates.popusews.sowtby(-_.scowe).take(popgeoquawityfowwowsouwce.maxwesuwts).map {
+            c-candidate =>
+              c-candidateusew(
+                id = candidate.usewid, σωσ
+                s-scowe = some(candidate.scowe), rawr x3
+                w-weason = some(
+                  w-weason(
+                    s-some(
+                      accountpwoof(
+                        popuwawingeopwoof = s-some(popuwawingeopwoof(wocation = c-candidates.pwace))
                       )
                     )
                   )
                 )
               )
           }
-        }.getOrElse(Nil)
+        }.getowewse(niw)
     }
   }
 }

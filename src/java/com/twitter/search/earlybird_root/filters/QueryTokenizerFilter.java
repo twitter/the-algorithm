@@ -1,92 +1,92 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.concurrent.TimeUnit;
-import javax.inject.Inject;
+impowt java.utiw.concuwwent.timeunit;
+i-impowt j-javax.inject.inject;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.common_internal.text.version.PenguinVersionConfig;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.finagle.tracing.Trace;
-import com.twitter.finagle.tracing.Tracing;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.QueryParsingUtils;
-import com.twitter.search.queryparser.parser.SerializedQueryParser;
-import com.twitter.search.queryparser.parser.SerializedQueryParser.TokenizationOption;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.util.Duration;
-import com.twitter.util.Future;
+i-impowt com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+i-impowt com.twittew.common_intewnaw.text.vewsion.penguinvewsionconfig;
+i-impowt c-com.twittew.finagwe.sewvice;
+i-impowt com.twittew.finagwe.simpwefiwtew;
+i-impowt com.twittew.finagwe.twacing.twace;
+impowt com.twittew.finagwe.twacing.twacing;
+impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt c-com.twittew.seawch.common.metwics.seawchtimew;
+impowt com.twittew.seawch.common.metwics.seawchtimewstats;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt com.twittew.seawch.eawwybiwd_woot.common.quewypawsingutiws;
+impowt com.twittew.seawch.quewypawsew.pawsew.sewiawizedquewypawsew;
+impowt c-com.twittew.seawch.quewypawsew.pawsew.sewiawizedquewypawsew.tokenizationoption;
+impowt com.twittew.seawch.quewypawsew.quewy.quewy;
+i-impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
+i-impowt com.twittew.utiw.duwation;
+impowt com.twittew.utiw.futuwe;
 
-public class QueryTokenizerFilter extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
-  private static final String PREFIX = "query_tokenizer_";
-  private static final SearchRateCounter SUCCESS_COUNTER =
-      SearchRateCounter.export(PREFIX + "success");
-  private static final SearchRateCounter FAILURE_COUNTER =
-      SearchRateCounter.export(PREFIX + "error");
-  private static final SearchRateCounter SKIPPED_COUNTER =
-      SearchRateCounter.export(PREFIX + "skipped");
-  private static final SearchTimerStats QUERY_TOKENIZER_TIME =
-      SearchTimerStats.export(PREFIX + "time", TimeUnit.MILLISECONDS, false);
+pubwic cwass quewytokenizewfiwtew extends s-simpwefiwtew<eawwybiwdwequestcontext, >w< eawwybiwdwesponse> {
+  pwivate static finaw stwing pwefix = "quewy_tokenizew_";
+  pwivate s-static finaw seawchwatecountew s-success_countew =
+      s-seawchwatecountew.expowt(pwefix + "success");
+  p-pwivate s-static finaw seawchwatecountew faiwuwe_countew =
+      seawchwatecountew.expowt(pwefix + "ewwow");
+  p-pwivate static finaw seawchwatecountew skipped_countew =
+      s-seawchwatecountew.expowt(pwefix + "skipped");
+  pwivate static finaw seawchtimewstats quewy_tokenizew_time =
+      seawchtimewstats.expowt(pwefix + "time", rawr timeunit.miwwiseconds, 😳 f-fawse);
 
-  private final TokenizationOption tokenizationOption;
+  pwivate finaw t-tokenizationoption t-tokenizationoption;
 
-  @Inject
-  public QueryTokenizerFilter(PenguinVersionConfig penguinversions) {
-    PenguinVersion[] supportedVersions = penguinversions
-        .getSupportedVersions().toArray(new PenguinVersion[0]);
-    tokenizationOption = new TokenizationOption(true, supportedVersions);
+  @inject
+  p-pubwic quewytokenizewfiwtew(penguinvewsionconfig penguinvewsions) {
+    penguinvewsion[] suppowtedvewsions = penguinvewsions
+        .getsuppowtedvewsions().toawway(new penguinvewsion[0]);
+    t-tokenizationoption = n-nyew tokenizationoption(twue, >w< s-suppowtedvewsions);
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+  @ovewwide
+  p-pubwic futuwe<eawwybiwdwesponse> appwy(
+      eawwybiwdwequestcontext w-wequestcontext, (⑅˘꒳˘)
+      sewvice<eawwybiwdwequestcontext, OwO e-eawwybiwdwesponse> sewvice) {
 
-    if (!requestContext.getRequest().isRetokenizeSerializedQuery()
-        || !requestContext.getRequest().isSetSearchQuery()
-        || !requestContext.getRequest().getSearchQuery().isSetSerializedQuery()) {
-      SKIPPED_COUNTER.increment();
-      return service.apply(requestContext);
+    if (!wequestcontext.getwequest().iswetokenizesewiawizedquewy()
+        || !wequestcontext.getwequest().issetseawchquewy()
+        || !wequestcontext.getwequest().getseawchquewy().issetsewiawizedquewy()) {
+      s-skipped_countew.incwement();
+      wetuwn sewvice.appwy(wequestcontext);
     }
 
-    SearchTimer timer = QUERY_TOKENIZER_TIME.startNewTimer();
-    try {
-      String serializedQuery = requestContext.getRequest().getSearchQuery().getSerializedQuery();
-      Query parsedQuery = reparseQuery(serializedQuery);
-      SUCCESS_COUNTER.increment();
-      return service.apply(EarlybirdRequestContext.copyRequestContext(requestContext, parsedQuery));
-    } catch (QueryParserException e) {
-      FAILURE_COUNTER.increment();
-      return QueryParsingUtils.newClientErrorResponse(requestContext.getRequest(), e);
-    } finally {
-      long elapsed = timer.stop();
-      QUERY_TOKENIZER_TIME.timerIncrement(elapsed);
-      Tracing trace = Trace.apply();
-      if (trace.isActivelyTracing()) {
-        trace.record(PREFIX + "time", Duration.fromMilliseconds(elapsed));
+    s-seawchtimew timew = quewy_tokenizew_time.stawtnewtimew();
+    t-twy {
+      s-stwing sewiawizedquewy = wequestcontext.getwequest().getseawchquewy().getsewiawizedquewy();
+      quewy pawsedquewy = wepawsequewy(sewiawizedquewy);
+      success_countew.incwement();
+      wetuwn sewvice.appwy(eawwybiwdwequestcontext.copywequestcontext(wequestcontext, (ꈍᴗꈍ) pawsedquewy));
+    } c-catch (quewypawsewexception e-e) {
+      faiwuwe_countew.incwement();
+      wetuwn quewypawsingutiws.newcwientewwowwesponse(wequestcontext.getwequest(), 😳 e-e);
+    } f-finawwy {
+      w-wong ewapsed = timew.stop();
+      quewy_tokenizew_time.timewincwement(ewapsed);
+      twacing t-twace = twace.appwy();
+      if (twace.isactivewytwacing()) {
+        twace.wecowd(pwefix + "time", 😳😳😳 duwation.fwommiwwiseconds(ewapsed));
       }
     }
   }
 
-  public Query reparseQuery(String serializedQuery) throws QueryParserException {
-    SerializedQueryParser parser = new SerializedQueryParser(tokenizationOption);
-    return parser.parse(serializedQuery);
+  pubwic quewy w-wepawsequewy(stwing sewiawizedquewy) t-thwows quewypawsewexception {
+    s-sewiawizedquewypawsew p-pawsew = nyew sewiawizedquewypawsew(tokenizationoption);
+    w-wetuwn p-pawsew.pawse(sewiawizedquewy);
   }
 
   /**
-   * Initializing the query parser can take many seconds. We initialize it at warmup so that
-   * requests don't time out after we join the serverset. SEARCH-28801
+   * i-initiawizing the q-quewy pawsew can take many seconds. mya we initiawize i-it at wawmup s-so that
+   * wequests d-don't time o-out aftew we join t-the sewvewset. seawch-28801
    */
-  public void performExpensiveInitialization() throws QueryParserException {
-    SerializedQueryParser queryParser = new SerializedQueryParser(tokenizationOption);
+  pubwic void pewfowmexpensiveinitiawization() t-thwows quewypawsewexception {
+    sewiawizedquewypawsew quewypawsew = nyew sewiawizedquewypawsew(tokenizationoption);
 
-    // The Korean query parser takes a few seconds on it's own to initialize.
-    String koreanQuery = "스포츠";
-    queryParser.parse(koreanQuery);
+    // the kowean quewy pawsew takes a-a few seconds on it's own to initiawize. mya
+    stwing koweanquewy = "스포츠";
+    q-quewypawsew.pawse(koweanquewy);
   }
 }

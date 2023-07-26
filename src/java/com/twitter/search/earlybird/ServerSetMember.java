@@ -1,55 +1,55 @@
-package com.twitter.search.earlybird;
+package com.twittew.seawch.eawwybiwd;
 
-import org.apache.zookeeper.KeeperException;
+impowt owg.apache.zookeepew.keepewexception;
 
-import com.twitter.common.zookeeper.ServerSet;
-import com.twitter.common.zookeeper.ZooKeeperClient;
+i-impowt com.twittew.common.zookeepew.sewvewset;
+i-impowt com.twittew.common.zookeepew.zookeepewcwient;
 
 /**
- * Represents a server that can add and remove itself from a server set.
+ * w-wepwesents a sewvew t-that can add a-and wemove itsewf f-fwom a sewvew s-set. rawr
  */
-public interface ServerSetMember {
+pubwic i-intewface sewvewsetmembew {
   /**
-   * Makes this server join its server set.
+   * makes this sewvew join its sewvew set. mya
    *
-   * @throws ServerSet.UpdateException
-   * @param requestSource
+   * @thwows sewvewset.updateexception
+   * @pawam w-wequestsouwce
    */
-  void joinServerSet(String requestSource) throws ServerSet.UpdateException;
+  void joinsewvewset(stwing w-wequestsouwce) thwows sewvewset.updateexception;
 
   /**
-   * Makes this server leave its server set.
+   * m-makes this sewvew weave its sewvew set. ^^
    *
-   * @throws ServerSet.UpdateException
-   * @param requestSource
+   * @thwows sewvewset.updateexception
+   * @pawam w-wequestsouwce
    */
-  void leaveServerSet(String requestSource) throws ServerSet.UpdateException;
+  void weavesewvewset(stwing w-wequestsouwce) t-thwows sewvewset.updateexception;
 
   /**
-   * Gets and returns the current number of members in this server's server set.
+   * gets and wetuwns the cuwwent numbew of membews in this sewvew's s-sewvew set. 😳😳😳
    *
-   * @return number of members currently in this host's server set.
-   * @throws InterruptedException
-   * @throws ZooKeeperClient.ZooKeeperConnectionException
-   * @throws KeeperException
+   * @wetuwn nyumbew of membews cuwwentwy in this host's sewvew set. mya
+   * @thwows i-intewwuptedexception
+   * @thwows zookeepewcwient.zookeepewconnectionexception
+   * @thwows k-keepewexception
    */
-  int getNumberOfServerSetMembers() throws InterruptedException,
-      ZooKeeperClient.ZooKeeperConnectionException, KeeperException;
+  i-int getnumbewofsewvewsetmembews() t-thwows i-intewwuptedexception,
+      zookeepewcwient.zookeepewconnectionexception, 😳 keepewexception;
 
   /**
-   * Checks if this earlybird is in the server set.
+   * c-checks if this eawwybiwd is in the sewvew s-set. -.-
    *
-   * @return true if it is, false otherwise.
+   * @wetuwn twue if it is, 🥺 fawse othewwise. o.O
    */
-  boolean isInServerSet();
+  boowean isinsewvewset();
 
   /**
-   * Should only be called for Archive Earlybirds.
+   * shouwd onwy be cawwed fow a-awchive eawwybiwds. /(^•ω•^)
    *
-   * Join ServerSet for ServiceProxy with a named admin port and with a zookeeper path that Service
-   * Proxy can translate to a domain name label that is less than 64 characters (due to the size
-   * limit for domain name labels described here: https://tools.ietf.org/html/rfc1035)
-   * This will allow us to access Earlybirds that are not on mesos via ServiceProxy.
+   * join sewvewset fow s-sewvicepwoxy with a-a nyamed admin p-powt and with a zookeepew path that sewvice
+   * pwoxy can twanswate t-to a domain n-nyame wabew that is wess than 64 c-chawactews (due t-to the size
+   * wimit fow d-domain nyame wabews descwibed hewe: h-https://toows.ietf.owg/htmw/wfc1035)
+   * this wiww awwow us t-to access eawwybiwds that awe nyot o-on mesos via sewvicepwoxy. nyaa~~
    */
-  void joinServerSetForServiceProxy();
+  v-void joinsewvewsetfowsewvicepwoxy();
 }

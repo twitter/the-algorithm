@@ -1,973 +1,973 @@
-package com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue
+package com.twittew.fwigate.pushsewvice.pwedicate.ntab_cawet_fatigue
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.notificationservice.thriftscala.GenericType
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.notificationservice.genericfeedbackstore.FeedbackPromptValue
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.frigate.common.base.Candidate
-import com.twitter.frigate.common.base.RecommendationType
-import com.twitter.frigate.common.base.TargetInfo
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.frigate.thriftscala.SeeLessOftenType
-import com.twitter.frigate.common.history.History
-import com.twitter.frigate.common.predicate.FrigateHistoryFatiguePredicate.TimeSeries
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.common.predicate.ntab_caret_fatigue.NtabCaretClickFatiguePredicateHelper
-import com.twitter.frigate.pushservice.predicate.CaretFeedbackHistoryFilter
-import com.twitter.notificationservice.thriftscala.CaretFeedbackDetails
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.frigate.common.predicate.FatiguePredicate
-import com.twitter.frigate.pushservice.util.PushCapUtil
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.util.PushDeviceUtil
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.notificationsewvice.thwiftscawa.genewictype
+i-impowt com.twittew.hewmit.pwedicate.namedpwedicate
+i-impowt com.twittew.notificationsewvice.genewicfeedbackstowe.feedbackpwomptvawue
+i-impowt com.twittew.hewmit.pwedicate.pwedicate
+i-impowt com.twittew.fwigate.common.base.candidate
+i-impowt com.twittew.fwigate.common.base.wecommendationtype
+impowt c-com.twittew.fwigate.common.base.tawgetinfo
+i-impowt com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+impowt com.twittew.fwigate.thwiftscawa.seewessoftentype
+impowt com.twittew.fwigate.common.histowy.histowy
+impowt c-com.twittew.fwigate.common.pwedicate.fwigatehistowyfatiguepwedicate.timesewies
+impowt com.twittew.fwigate.common.wec_types.wectypes
+impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.fwigate.common.pwedicate.ntab_cawet_fatigue.ntabcawetcwickfatiguepwedicatehewpew
+i-impowt com.twittew.fwigate.pushsewvice.pwedicate.cawetfeedbackhistowyfiwtew
+impowt com.twittew.notificationsewvice.thwiftscawa.cawetfeedbackdetaiws
+impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.futuwe
+impowt com.twittew.fwigate.common.pwedicate.fatiguepwedicate
+i-impowt com.twittew.fwigate.pushsewvice.utiw.pushcaputiw
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+impowt com.twittew.fwigate.pushsewvice.utiw.pushdeviceutiw
 
-object CRTBasedNtabCaretClickFatiguePredicates {
+object cwtbasedntabcawetcwickfatiguepwedicates {
 
-  private val MagicRecsCategory = "MagicRecs"
+  pwivate vaw m-magicwecscategowy = "magicwecs"
 
-  private val HighQualityRefreshableTypes: Set[Option[String]] = Set(
-    Some("MagicRecHighQualityTweet"),
+  pwivate vaw highquawitywefweshabwetypes: set[option[stwing]] = set(
+    some("magicwechighquawitytweet"), σωσ
   )
 
-  private def getUserStateWeight(target: Target): Future[Double] = {
-    PushDeviceUtil.isNtabOnlyEligible.map {
-      case true =>
-        target.params(PushFeatureSwitchParams.SeeLessOftenNtabOnlyNotifUserPushCapWeight)
+  pwivate def g-getusewstateweight(tawget: tawget): f-futuwe[doubwe] = {
+    p-pushdeviceutiw.isntabonwyewigibwe.map {
+      c-case t-twue =>
+        tawget.pawams(pushfeatuweswitchpawams.seewessoftenntabonwynotifusewpushcapweight)
       case _ => 1.0
     }
   }
 
-  def crtToSeeLessOftenType(
-    crt: CommonRecommendationType,
-    candidate: Candidate
-      with RecommendationType
-      with TargetInfo[
-        Target
-      ],
-  ): SeeLessOftenType = {
-    val crtToSeeLessOftenTypeMap: Map[CommonRecommendationType, SeeLessOftenType] = {
-      RecTypes.f1FirstDegreeTypes.map((_, SeeLessOftenType.F1Type)).toMap
+  d-def cwttoseewessoftentype(
+    cwt: commonwecommendationtype, :3
+    candidate: c-candidate
+      with wecommendationtype
+      with tawgetinfo[
+        tawget
+      ], rawr x3
+  ): seewessoftentype = {
+    vaw cwttoseewessoftentypemap: m-map[commonwecommendationtype, seewessoftentype] = {
+      w-wectypes.f1fiwstdegweetypes.map((_, nyaa~~ s-seewessoftentype.f1type)).tomap
     }
 
-    crtToSeeLessOftenTypeMap.getOrElse(crt, SeeLessOftenType.OtherTypes)
+    c-cwttoseewessoftentypemap.getowewse(cwt, :3 seewessoftentype.othewtypes)
   }
 
-  def genericTypeToSeeLessOftenType(
-    genericType: GenericType,
-    candidate: Candidate
-      with RecommendationType
-      with TargetInfo[
-        Target
+  def genewictypetoseewessoftentype(
+    genewictype: genewictype, >w<
+    c-candidate: c-candidate
+      with wecommendationtype
+      w-with tawgetinfo[
+        t-tawget
       ]
-  ): SeeLessOftenType = {
-    val genericTypeToSeeLessOftenTypeMap: Map[GenericType, SeeLessOftenType] = {
-      Map(GenericType.MagicRecFirstDegreeTweetRecent -> SeeLessOftenType.F1Type)
+  ): seewessoftentype = {
+    v-vaw genewictypetoseewessoftentypemap: m-map[genewictype, rawr seewessoftentype] = {
+      map(genewictype.magicwecfiwstdegweetweetwecent -> s-seewessoftentype.f1type)
     }
 
-    genericTypeToSeeLessOftenTypeMap.getOrElse(genericType, SeeLessOftenType.OtherTypes)
+    genewictypetoseewessoftentypemap.getowewse(genewictype, s-seewessoftentype.othewtypes)
   }
 
-  def getWeightForCaretFeedback(
-    dislikedType: SeeLessOftenType,
-    candidate: Candidate
-      with RecommendationType
-      with TargetInfo[
-        Target
+  def getweightfowcawetfeedback(
+    d-diswikedtype: s-seewessoftentype, 😳
+    candidate: candidate
+      with wecommendationtype
+      with tawgetinfo[
+        tawget
       ]
-  ): Double = {
-    def getWeightFromDislikedAndCurrentType(
-      dislikedType: SeeLessOftenType,
-      currentType: SeeLessOftenType
-    ): Double = {
-      val weightMap: Map[(SeeLessOftenType, SeeLessOftenType), Double] = {
+  ): doubwe = {
+    def g-getweightfwomdiswikedandcuwwenttype(
+      d-diswikedtype: seewessoftentype, 😳
+      c-cuwwenttype: s-seewessoftentype
+    ): d-doubwe = {
+      vaw weightmap: map[(seewessoftentype, 🥺 seewessoftentype), rawr x3 doubwe] = {
 
-        Map(
-          (SeeLessOftenType.F1Type, SeeLessOftenType.F1Type) -> candidate.target.params(
-            PushFeatureSwitchParams.SeeLessOftenF1TriggerF1PushCapWeight),
-          (SeeLessOftenType.OtherTypes, SeeLessOftenType.OtherTypes) -> candidate.target.params(
-            PushFeatureSwitchParams.SeeLessOftenNonF1TriggerNonF1PushCapWeight),
-          (SeeLessOftenType.F1Type, SeeLessOftenType.OtherTypes) -> candidate.target.params(
-            PushFeatureSwitchParams.SeeLessOftenF1TriggerNonF1PushCapWeight),
-          (SeeLessOftenType.OtherTypes, SeeLessOftenType.F1Type) -> candidate.target.params(
-            PushFeatureSwitchParams.SeeLessOftenNonF1TriggerF1PushCapWeight)
+        m-map(
+          (seewessoftentype.f1type, ^^ seewessoftentype.f1type) -> candidate.tawget.pawams(
+            pushfeatuweswitchpawams.seewessoftenf1twiggewf1pushcapweight), ( ͡o ω ͡o )
+          (seewessoftentype.othewtypes, XD seewessoftentype.othewtypes) -> c-candidate.tawget.pawams(
+            pushfeatuweswitchpawams.seewessoftennonf1twiggewnonf1pushcapweight), ^^
+          (seewessoftentype.f1type, (⑅˘꒳˘) s-seewessoftentype.othewtypes) -> c-candidate.tawget.pawams(
+            p-pushfeatuweswitchpawams.seewessoftenf1twiggewnonf1pushcapweight), (⑅˘꒳˘)
+          (seewessoftentype.othewtypes, ^•ﻌ•^ seewessoftentype.f1type) -> c-candidate.tawget.pawams(
+            p-pushfeatuweswitchpawams.seewessoftennonf1twiggewf1pushcapweight)
         )
       }
 
-      weightMap
-        .getOrElse(
-          (dislikedType, currentType),
-          candidate.target.params(PushFeatureSwitchParams.SeeLessOftenDefaultPushCapWeight))
+      w-weightmap
+        .getowewse(
+          (diswikedtype, ( ͡o ω ͡o ) c-cuwwenttype), ( ͡o ω ͡o )
+          candidate.tawget.pawams(pushfeatuweswitchpawams.seewessoftendefauwtpushcapweight))
     }
 
-    getWeightFromDislikedAndCurrentType(
-      dislikedType,
-      crtToSeeLessOftenType(candidate.commonRecType, candidate))
+    getweightfwomdiswikedandcuwwenttype(
+      diswikedtype, (✿oωo)
+      c-cwttoseewessoftentype(candidate.commonwectype, 😳😳😳 c-candidate))
   }
 
-  private def isOutsideCrtBasedNtabCaretClickFatiguePeriodContFn(
-    candidate: Candidate
-      with RecommendationType
-      with TargetInfo[
-        Target
-      ],
-    history: History,
-    feedbackDetails: Seq[CaretFeedbackDetails],
-    filterHistory: TimeSeries => TimeSeries =
-      FatiguePredicate.recTypesOnlyFilter(RecTypes.sharedNTabCaretFatigueTypes),
-    filterCaretFeedbackHistory: Target => Seq[
-      CaretFeedbackDetails
-    ] => Seq[CaretFeedbackDetails] =
-      CaretFeedbackHistoryFilter.caretFeedbackHistoryFilter(Seq(MagicRecsCategory)),
-    knobs: Seq[Double],
-    pushCapKnobs: Seq[Double],
-    powerKnobs: Seq[Double],
-    f1Weight: Double,
-    nonF1Weight: Double,
-    defaultPushCap: Int,
-    stats: StatsReceiver,
-    tripHqTweetWeight: Double = 0.0,
-  ): Boolean = {
-    val filteredFeedbackDetails = filterCaretFeedbackHistory(candidate.target)(feedbackDetails)
-    val weight = {
-      if (RecTypes.HighQualityTweetTypes.contains(
-          candidate.commonRecType) && (tripHqTweetWeight != 0)) {
-        tripHqTweetWeight
-      } else if (RecTypes.isF1Type(candidate.commonRecType)) {
-        f1Weight
-      } else {
-        nonF1Weight
+  p-pwivate d-def isoutsidecwtbasedntabcawetcwickfatiguepewiodcontfn(
+    c-candidate: candidate
+      with wecommendationtype
+      with t-tawgetinfo[
+        tawget
+      ], OwO
+    histowy: histowy, ^^
+    feedbackdetaiws: seq[cawetfeedbackdetaiws], rawr x3
+    fiwtewhistowy: timesewies => t-timesewies =
+      fatiguepwedicate.wectypesonwyfiwtew(wectypes.shawedntabcawetfatiguetypes), 🥺
+    fiwtewcawetfeedbackhistowy: tawget => s-seq[
+      cawetfeedbackdetaiws
+    ] => s-seq[cawetfeedbackdetaiws] =
+      c-cawetfeedbackhistowyfiwtew.cawetfeedbackhistowyfiwtew(seq(magicwecscategowy)), (ˆ ﻌ ˆ)♡
+    knobs: seq[doubwe], ( ͡o ω ͡o )
+    p-pushcapknobs: seq[doubwe], >w<
+    p-powewknobs: s-seq[doubwe], /(^•ω•^)
+    f1weight: doubwe, 😳😳😳
+    nyonf1weight: doubwe, (U ᵕ U❁)
+    defauwtpushcap: int, (˘ω˘)
+    stats: s-statsweceivew, 😳
+    twiphqtweetweight: d-doubwe = 0.0, (ꈍᴗꈍ)
+  ): boowean = {
+    v-vaw f-fiwtewedfeedbackdetaiws = fiwtewcawetfeedbackhistowy(candidate.tawget)(feedbackdetaiws)
+    vaw w-weight = {
+      i-if (wectypes.highquawitytweettypes.contains(
+          candidate.commonwectype) && (twiphqtweetweight != 0)) {
+        t-twiphqtweetweight
+      } e-ewse if (wectypes.isf1type(candidate.commonwectype)) {
+        f1weight
+      } ewse {
+        nyonf1weight
       }
     }
-    val filteredHistory = History(filterHistory(history.history.toSeq).toMap)
-    isOutsideFatiguePeriod(
-      filteredHistory,
-      filteredFeedbackDetails,
-      Seq(),
-      ContinuousFunctionParam(
-        knobs,
-        pushCapKnobs,
-        powerKnobs,
-        weight,
-        defaultPushCap
-      ),
+    vaw fiwtewedhistowy = h-histowy(fiwtewhistowy(histowy.histowy.toseq).tomap)
+    i-isoutsidefatiguepewiod(
+      f-fiwtewedhistowy, :3
+      fiwtewedfeedbackdetaiws, /(^•ω•^)
+      s-seq(), ^^;;
+      c-continuousfunctionpawam(
+        knobs, o.O
+        p-pushcapknobs, 😳
+        powewknobs, UwU
+        weight, >w<
+        defauwtpushcap
+      ), o.O
       stats.scope(
-        if (RecTypes.isF1Type(candidate.commonRecType)) "mr_ntab_dislike_f1_candidate_fn"
-        else if (RecTypes.HighQualityTweetTypes.contains(candidate.commonRecType))
-          "mr_ntab_dislike_high_quality_candidate_fn"
-        else "mr_ntab_dislike_nonf1_candidate_fn")
+        i-if (wectypes.isf1type(candidate.commonwectype)) "mw_ntab_diswike_f1_candidate_fn"
+        e-ewse if (wectypes.highquawitytweettypes.contains(candidate.commonwectype))
+          "mw_ntab_diswike_high_quawity_candidate_fn"
+        ewse "mw_ntab_diswike_nonf1_candidate_fn")
     )
   }
 
-  private def isOutsideFatiguePeriod(
-    history: History,
-    feedbackDetails: Seq[CaretFeedbackDetails],
-    feedbacks: Seq[FeedbackModel],
-    param: ContinuousFunctionParam,
-    stats: StatsReceiver
-  ): Boolean = {
-    val fatiguePeriod: Duration =
-      NtabCaretClickFatigueUtils.durationToFilterForFeedback(
-        feedbackDetails,
-        feedbacks,
-        param,
-        param.defaultValue,
-        stats
+  pwivate d-def isoutsidefatiguepewiod(
+    h-histowy: histowy, (˘ω˘)
+    feedbackdetaiws: seq[cawetfeedbackdetaiws], òωó
+    feedbacks: s-seq[feedbackmodew], nyaa~~
+    pawam: continuousfunctionpawam, ( ͡o ω ͡o )
+    stats: statsweceivew
+  ): b-boowean = {
+    vaw fatiguepewiod: duwation =
+      n-nytabcawetcwickfatigueutiws.duwationtofiwtewfowfeedback(
+        f-feedbackdetaiws, 😳😳😳
+        feedbacks, ^•ﻌ•^
+        pawam, (˘ω˘)
+        pawam.defauwtvawue, (˘ω˘)
+        s-stats
       )
 
-    val hasRecentSent =
-      NtabCaretClickFatiguePredicateHelper.hasRecentSend(history, fatiguePeriod)
-    !hasRecentSent
+    v-vaw haswecentsent =
+      nytabcawetcwickfatiguepwedicatehewpew.haswecentsend(histowy, -.- fatiguepewiod)
+    !haswecentsent
 
   }
 
-  def genericCRTBasedNtabCaretClickFnFatiguePredicate[
-    Cand <: Candidate with RecommendationType with TargetInfo[
-      Target
+  def genewiccwtbasedntabcawetcwickfnfatiguepwedicate[
+    c-cand <: candidate with wecommendationtype w-with tawgetinfo[
+      tawget
     ]
   ](
-    filterHistory: TimeSeries => TimeSeries =
-      FatiguePredicate.recTypesOnlyFilter(RecTypes.sharedNTabCaretFatigueTypes),
-    filterCaretFeedbackHistory: Target => Seq[
-      CaretFeedbackDetails
-    ] => Seq[CaretFeedbackDetails] = CaretFeedbackHistoryFilter
-      .caretFeedbackHistoryFilter(Seq(MagicRecsCategory)),
-    filterInlineFeedbackHistory: Seq[FeedbackModel] => Seq[FeedbackModel] =
-      NtabCaretClickFatigueUtils.feedbackModelFilterByCRT(RecTypes.sharedNTabCaretFatigueTypes)
+    fiwtewhistowy: t-timesewies => timesewies =
+      f-fatiguepwedicate.wectypesonwyfiwtew(wectypes.shawedntabcawetfatiguetypes), ^•ﻌ•^
+    f-fiwtewcawetfeedbackhistowy: tawget => seq[
+      c-cawetfeedbackdetaiws
+    ] => seq[cawetfeedbackdetaiws] = c-cawetfeedbackhistowyfiwtew
+      .cawetfeedbackhistowyfiwtew(seq(magicwecscategowy)), /(^•ω•^)
+    f-fiwtewinwinefeedbackhistowy: s-seq[feedbackmodew] => seq[feedbackmodew] =
+      nytabcawetcwickfatigueutiws.feedbackmodewfiwtewbycwt(wectypes.shawedntabcawetfatiguetypes)
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[Cand] = {
-    val predicateName = "generic_crt_based_ntab_dislike_fatigue_fn"
-    Predicate
-      .fromAsync[Cand] { cand: Cand =>
+    i-impwicit s-stats: statsweceivew
+  ): nyamedpwedicate[cand] = {
+    vaw pwedicatename = "genewic_cwt_based_ntab_diswike_fatigue_fn"
+    p-pwedicate
+      .fwomasync[cand] { c-cand: cand =>
         {
-          if (!cand.target.params(PushFeatureSwitchParams.EnableGenericCRTBasedFatiguePredicate)) {
-            Future.True
-          } else {
-            val scopedStats = stats.scope(predicateName)
-            val totalRequests = scopedStats.counter("mr_ntab_dislike_total")
-            val total90Day =
-              scopedStats.counter("mr_ntab_dislike_90day_dislike")
-            val totalDisabled =
-              scopedStats.counter("mr_ntab_dislike_not_90day_dislike")
-            val totalSuccess = scopedStats.counter("mr_ntab_dislike_success")
-            val totalFiltered = scopedStats.counter("mr_ntab_dislike_filtered")
-            val totalWithHistory =
-              scopedStats.counter("mr_ntab_dislike_with_history")
-            val totalWithoutHistory =
-              scopedStats.counter("mr_ntab_dislike_without_history")
-            totalRequests.incr()
+          i-if (!cand.tawget.pawams(pushfeatuweswitchpawams.enabwegenewiccwtbasedfatiguepwedicate)) {
+            futuwe.twue
+          } ewse {
+            v-vaw scopedstats = stats.scope(pwedicatename)
+            v-vaw totawwequests = s-scopedstats.countew("mw_ntab_diswike_totaw")
+            vaw totaw90day =
+              scopedstats.countew("mw_ntab_diswike_90day_diswike")
+            vaw totawdisabwed =
+              s-scopedstats.countew("mw_ntab_diswike_not_90day_diswike")
+            v-vaw totawsuccess = s-scopedstats.countew("mw_ntab_diswike_success")
+            v-vaw totawfiwtewed = scopedstats.countew("mw_ntab_diswike_fiwtewed")
+            v-vaw totawwithhistowy =
+              scopedstats.countew("mw_ntab_diswike_with_histowy")
+            vaw totawwithouthistowy =
+              scopedstats.countew("mw_ntab_diswike_without_histowy")
+            totawwequests.incw()
 
-            Future
+            futuwe
               .join(
-                cand.target.history,
-                cand.target.caretFeedbacks,
-                cand.target.dynamicPushcap,
-                cand.target.optoutAdjustedPushcap,
-                PushCapUtil.getDefaultPushCap(cand.target),
-                getUserStateWeight(cand.target)
+                c-cand.tawget.histowy, (///ˬ///✿)
+                cand.tawget.cawetfeedbacks, mya
+                c-cand.tawget.dynamicpushcap, o.O
+                cand.tawget.optoutadjustedpushcap,
+                pushcaputiw.getdefauwtpushcap(cand.tawget), ^•ﻌ•^
+                g-getusewstateweight(cand.tawget)
               ).map {
                 case (
-                      history,
-                      Some(feedbackDetails),
-                      dynamicPushcapOpt,
-                      optoutAdjustedPushcapOpt,
-                      defaultPushCap,
-                      userStateWeight) => {
-                  totalWithHistory.incr()
+                      h-histowy, (U ᵕ U❁)
+                      some(feedbackdetaiws), :3
+                      d-dynamicpushcapopt, (///ˬ///✿)
+                      o-optoutadjustedpushcapopt, (///ˬ///✿)
+                      d-defauwtpushcap, 🥺
+                      u-usewstateweight) => {
+                  t-totawwithhistowy.incw()
 
-                  val feedbackDetailsDeduped =
-                    NtabCaretClickFatiguePredicateHelper.dedupFeedbackDetails(
-                      filterCaretFeedbackHistory(cand.target)(feedbackDetails),
+                  vaw feedbackdetaiwsdeduped =
+                    nytabcawetcwickfatiguepwedicatehewpew.dedupfeedbackdetaiws(
+                      fiwtewcawetfeedbackhistowy(cand.tawget)(feedbackdetaiws), -.-
                       stats
                     )
 
-                  val pushCap: Int = (dynamicPushcapOpt, optoutAdjustedPushcapOpt) match {
-                    case (_, Some(optoutAdjustedPushcap)) => optoutAdjustedPushcap
-                    case (Some(pushcapInfo), _) => pushcapInfo.pushcap
-                    case _ => defaultPushCap
+                  vaw pushcap: int = (dynamicpushcapopt, nyaa~~ optoutadjustedpushcapopt) m-match {
+                    c-case (_, (///ˬ///✿) s-some(optoutadjustedpushcap)) => optoutadjustedpushcap
+                    c-case (some(pushcapinfo), 🥺 _) => pushcapinfo.pushcap
+                    case _ => defauwtpushcap
                   }
-                  val filteredHistory = History(filterHistory(history.history.toSeq).toMap)
+                  v-vaw fiwtewedhistowy = h-histowy(fiwtewhistowy(histowy.histowy.toseq).tomap)
 
-                  val hasUserDislikeInLast90Days =
-                    NtabCaretClickFatigueUtils.hasUserDislikeInLast90Days(feedbackDetailsDeduped)
-                  val isF1TriggerFatigueEnabled = cand.target
-                    .params(PushFeatureSwitchParams.EnableContFnF1TriggerSeeLessOftenFatigue)
-                  val isNonF1TriggerFatigueEnabled = cand.target.params(
-                    PushFeatureSwitchParams.EnableContFnNonF1TriggerSeeLessOftenFatigue)
+                  vaw hasusewdiswikeinwast90days =
+                    n-nytabcawetcwickfatigueutiws.hasusewdiswikeinwast90days(feedbackdetaiwsdeduped)
+                  vaw isf1twiggewfatigueenabwed = cand.tawget
+                    .pawams(pushfeatuweswitchpawams.enabwecontfnf1twiggewseewessoftenfatigue)
+                  v-vaw isnonf1twiggewfatigueenabwed = c-cand.tawget.pawams(
+                    pushfeatuweswitchpawams.enabwecontfnnonf1twiggewseewessoftenfatigue)
 
-                  val isOutisdeSeeLessOftenFatigue =
-                    if (hasUserDislikeInLast90Days && (isF1TriggerFatigueEnabled || isNonF1TriggerFatigueEnabled)) {
-                      total90Day.incr()
+                  v-vaw isoutisdeseewessoftenfatigue =
+                    i-if (hasusewdiswikeinwast90days && (isf1twiggewfatigueenabwed || isnonf1twiggewfatigueenabwed)) {
+                      totaw90day.incw()
 
-                      val feedbackDetailsGroupedBySeeLessOftenType: Map[Option[
-                        SeeLessOftenType
-                      ], Seq[
-                        CaretFeedbackDetails
-                      ]] = feedbackDetails.groupBy(feedbackDetail =>
-                        feedbackDetail.genericNotificationMetadata.map(x =>
-                          genericTypeToSeeLessOftenType(x.genericType, cand)))
+                      vaw feedbackdetaiwsgwoupedbyseewessoftentype: map[option[
+                        s-seewessoftentype
+                      ], s-seq[
+                        c-cawetfeedbackdetaiws
+                      ]] = f-feedbackdetaiws.gwoupby(feedbackdetaiw =>
+                        f-feedbackdetaiw.genewicnotificationmetadata.map(x =>
+                          genewictypetoseewessoftentype(x.genewictype, >w< c-cand)))
 
-                      val isOutsideFatiguePeriodSeq =
-                        for (elem <- feedbackDetailsGroupedBySeeLessOftenType if elem._1.isDefined)
-                          yield {
-                            val dislikedSeeLessOftenType: SeeLessOftenType = elem._1.get
-                            val seqCaretFeedbackDetails: Seq[CaretFeedbackDetails] = elem._2
+                      v-vaw isoutsidefatiguepewiodseq =
+                        fow (ewem <- f-feedbackdetaiwsgwoupedbyseewessoftentype i-if ewem._1.isdefined)
+                          yiewd {
+                            v-vaw diswikedseewessoftentype: seewessoftentype = ewem._1.get
+                            v-vaw seqcawetfeedbackdetaiws: seq[cawetfeedbackdetaiws] = e-ewem._2
 
-                            val weight = getWeightForCaretFeedback(
-                              dislikedSeeLessOftenType,
-                              cand) * userStateWeight
+                            v-vaw weight = getweightfowcawetfeedback(
+                              d-diswikedseewessoftentype, rawr x3
+                              cand) * usewstateweight
 
-                            if (isOutsideFatiguePeriod(
-                                history = filteredHistory,
-                                feedbackDetails = seqCaretFeedbackDetails,
-                                feedbacks = Seq(),
-                                param = ContinuousFunctionParam(
-                                  knobs = cand.target
-                                    .params(PushFeatureSwitchParams.SeeLessOftenListOfDayKnobs),
-                                  knobValues = cand.target
-                                    .params(
-                                      PushFeatureSwitchParams.SeeLessOftenListOfPushCapWeightKnobs).map(
-                                      _ * pushCap),
-                                  powers = cand.target
-                                    .params(PushFeatureSwitchParams.SeeLessOftenListOfPowerKnobs),
-                                  weight = weight,
-                                  defaultValue = pushCap
-                                ),
-                                scopedStats
+                            i-if (isoutsidefatiguepewiod(
+                                h-histowy = f-fiwtewedhistowy, (⑅˘꒳˘)
+                                feedbackdetaiws = seqcawetfeedbackdetaiws, σωσ
+                                feedbacks = seq(), XD
+                                p-pawam = continuousfunctionpawam(
+                                  knobs = cand.tawget
+                                    .pawams(pushfeatuweswitchpawams.seewessoftenwistofdayknobs), -.-
+                                  k-knobvawues = cand.tawget
+                                    .pawams(
+                                      p-pushfeatuweswitchpawams.seewessoftenwistofpushcapweightknobs).map(
+                                      _ * pushcap), >_<
+                                  p-powews = cand.tawget
+                                    .pawams(pushfeatuweswitchpawams.seewessoftenwistofpowewknobs), rawr
+                                  weight = weight, 😳😳😳
+                                  d-defauwtvawue = p-pushcap
+                                ), UwU
+                                scopedstats
                               )) {
-                              true
-                            } else {
-                              false
+                              twue
+                            } e-ewse {
+                              fawse
                             }
                           }
 
-                      isOutsideFatiguePeriodSeq.forall(identity)
-                    } else {
-                      totalDisabled.incr()
-                      true
+                      isoutsidefatiguepewiodseq.fowaww(identity)
+                    } e-ewse {
+                      t-totawdisabwed.incw()
+                      twue
                     }
 
-                  if (isOutisdeSeeLessOftenFatigue) {
-                    totalSuccess.incr()
-                  } else totalFiltered.incr()
+                  if (isoutisdeseewessoftenfatigue) {
+                    t-totawsuccess.incw()
+                  } ewse totawfiwtewed.incw()
 
-                  isOutisdeSeeLessOftenFatigue
+                  i-isoutisdeseewessoftenfatigue
                 }
 
-                case _ =>
-                  totalSuccess.incr()
-                  totalWithoutHistory.incr()
-                  true
+                c-case _ =>
+                  t-totawsuccess.incw()
+                  totawwithouthistowy.incw()
+                  twue
               }
           }
         }
-      }.withStats(stats.scope(predicateName))
-      .withName(predicateName)
+      }.withstats(stats.scope(pwedicatename))
+      .withname(pwedicatename)
   }
 
-  def f1TriggeredCRTBasedNtabCaretClickFnFatiguePredicate[
-    Cand <: Candidate with RecommendationType with TargetInfo[
-      Target
+  def f1twiggewedcwtbasedntabcawetcwickfnfatiguepwedicate[
+    cand <: candidate with wecommendationtype with tawgetinfo[
+      tawget
     ]
   ](
-    filterHistory: TimeSeries => TimeSeries =
-      FatiguePredicate.recTypesOnlyFilter(RecTypes.sharedNTabCaretFatigueTypes),
-    filterCaretFeedbackHistory: Target => Seq[
-      CaretFeedbackDetails
-    ] => Seq[CaretFeedbackDetails] = CaretFeedbackHistoryFilter
-      .caretFeedbackHistoryFilter(Seq(MagicRecsCategory)),
-    filterInlineFeedbackHistory: Seq[FeedbackModel] => Seq[FeedbackModel] =
-      NtabCaretClickFatigueUtils.feedbackModelFilterByCRT(RecTypes.sharedNTabCaretFatigueTypes)
+    fiwtewhistowy: timesewies => timesewies =
+      fatiguepwedicate.wectypesonwyfiwtew(wectypes.shawedntabcawetfatiguetypes), (U ﹏ U)
+    fiwtewcawetfeedbackhistowy: t-tawget => s-seq[
+      cawetfeedbackdetaiws
+    ] => seq[cawetfeedbackdetaiws] = cawetfeedbackhistowyfiwtew
+      .cawetfeedbackhistowyfiwtew(seq(magicwecscategowy)),
+    f-fiwtewinwinefeedbackhistowy: seq[feedbackmodew] => s-seq[feedbackmodew] =
+      n-nytabcawetcwickfatigueutiws.feedbackmodewfiwtewbycwt(wectypes.shawedntabcawetfatiguetypes)
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[Cand] = {
-    val predicateName = "f1_triggered_crt_based_ntab_dislike_fatigue_fn"
-    Predicate
-      .fromAsync[Cand] { cand: Cand =>
+    impwicit stats: s-statsweceivew
+  ): nyamedpwedicate[cand] = {
+    v-vaw pwedicatename = "f1_twiggewed_cwt_based_ntab_diswike_fatigue_fn"
+    p-pwedicate
+      .fwomasync[cand] { cand: cand =>
         {
-          val scopedStats = stats.scope(predicateName)
-          val totalRequests = scopedStats.counter("mr_ntab_dislike_total")
-          val total90Day =
-            scopedStats.counter("mr_ntab_dislike_90day_dislike")
-          val totalDisabled =
-            scopedStats.counter("mr_ntab_dislike_not_90day_dislike")
-          val totalSuccess = scopedStats.counter("mr_ntab_dislike_success")
-          val totalFiltered = scopedStats.counter("mr_ntab_dislike_filtered")
-          val totalWithHistory =
-            scopedStats.counter("mr_ntab_dislike_with_history")
-          val totalWithoutHistory =
-            scopedStats.counter("mr_ntab_dislike_without_history")
-          totalRequests.incr()
+          v-vaw scopedstats = stats.scope(pwedicatename)
+          v-vaw totawwequests = s-scopedstats.countew("mw_ntab_diswike_totaw")
+          vaw totaw90day =
+            scopedstats.countew("mw_ntab_diswike_90day_diswike")
+          v-vaw totawdisabwed =
+            s-scopedstats.countew("mw_ntab_diswike_not_90day_diswike")
+          v-vaw totawsuccess = s-scopedstats.countew("mw_ntab_diswike_success")
+          v-vaw totawfiwtewed = s-scopedstats.countew("mw_ntab_diswike_fiwtewed")
+          v-vaw t-totawwithhistowy =
+            s-scopedstats.countew("mw_ntab_diswike_with_histowy")
+          vaw totawwithouthistowy =
+            s-scopedstats.countew("mw_ntab_diswike_without_histowy")
+          t-totawwequests.incw()
 
-          Future
+          f-futuwe
             .join(
-              cand.target.history,
-              cand.target.caretFeedbacks,
-              cand.target.dynamicPushcap,
-              cand.target.optoutAdjustedPushcap,
-              cand.target.notificationFeedbacks,
-              PushCapUtil.getDefaultPushCap(cand.target),
-              getUserStateWeight(cand.target)
+              cand.tawget.histowy, (˘ω˘)
+              c-cand.tawget.cawetfeedbacks, /(^•ω•^)
+              cand.tawget.dynamicpushcap, (U ﹏ U)
+              cand.tawget.optoutadjustedpushcap, ^•ﻌ•^
+              c-cand.tawget.notificationfeedbacks, >w<
+              pushcaputiw.getdefauwtpushcap(cand.tawget), ʘwʘ
+              g-getusewstateweight(cand.tawget)
             ).map {
-              case (
-                    history,
-                    Some(feedbackDetails),
-                    dynamicPushcapOpt,
-                    optoutAdjustedPushcapOpt,
-                    Some(feedbacks),
-                    defaultPushCap,
-                    userStateWeight) =>
-                totalWithHistory.incr()
+              c-case (
+                    h-histowy, òωó
+                    some(feedbackdetaiws), o.O
+                    d-dynamicpushcapopt, ( ͡o ω ͡o )
+                    optoutadjustedpushcapopt, mya
+                    s-some(feedbacks), >_<
+                    defauwtpushcap, rawr
+                    u-usewstateweight) =>
+                totawwithhistowy.incw()
 
-                val feedbackDetailsDeduped =
-                  NtabCaretClickFatiguePredicateHelper.dedupFeedbackDetails(
-                    filterCaretFeedbackHistory(cand.target)(feedbackDetails),
+                v-vaw feedbackdetaiwsdeduped =
+                  nytabcawetcwickfatiguepwedicatehewpew.dedupfeedbackdetaiws(
+                    fiwtewcawetfeedbackhistowy(cand.tawget)(feedbackdetaiws), >_<
                     stats
                   )
 
-                val pushCap: Int = (dynamicPushcapOpt, optoutAdjustedPushcapOpt) match {
-                  case (_, Some(optoutAdjustedPushcap)) => optoutAdjustedPushcap
-                  case (Some(pushcapInfo), _) => pushcapInfo.pushcap
-                  case _ => defaultPushCap
+                vaw pushcap: i-int = (dynamicpushcapopt, optoutadjustedpushcapopt) m-match {
+                  c-case (_, (U ﹏ U) some(optoutadjustedpushcap)) => optoutadjustedpushcap
+                  case (some(pushcapinfo), rawr _) => pushcapinfo.pushcap
+                  c-case _ => defauwtpushcap
                 }
-                val filteredHistory = History(filterHistory(history.history.toSeq).toMap)
+                v-vaw fiwtewedhistowy = h-histowy(fiwtewhistowy(histowy.histowy.toseq).tomap)
 
-                val isOutsideInlineDislikeFatigue =
-                  if (cand.target
-                      .params(PushFeatureSwitchParams.EnableContFnF1TriggerInlineFeedbackFatigue)) {
-                    val weight =
-                      if (RecTypes.isF1Type(cand.commonRecType)) {
-                        cand.target
-                          .params(PushFeatureSwitchParams.InlineFeedbackF1TriggerF1PushCapWeight)
-                      } else {
-                        cand.target
-                          .params(PushFeatureSwitchParams.InlineFeedbackF1TriggerNonF1PushCapWeight)
+                v-vaw isoutsideinwinediswikefatigue =
+                  if (cand.tawget
+                      .pawams(pushfeatuweswitchpawams.enabwecontfnf1twiggewinwinefeedbackfatigue)) {
+                    vaw weight =
+                      i-if (wectypes.isf1type(cand.commonwectype)) {
+                        c-cand.tawget
+                          .pawams(pushfeatuweswitchpawams.inwinefeedbackf1twiggewf1pushcapweight)
+                      } ewse {
+                        c-cand.tawget
+                          .pawams(pushfeatuweswitchpawams.inwinefeedbackf1twiggewnonf1pushcapweight)
                       }
 
-                    val inlineFeedbackFatigueParam = ContinuousFunctionParam(
-                      cand.target
-                        .params(PushFeatureSwitchParams.InlineFeedbackListOfDayKnobs),
-                      cand.target
-                        .params(PushFeatureSwitchParams.InlineFeedbackListOfPushCapWeightKnobs)
-                        .map(_ * pushCap),
-                      cand.target
-                        .params(PushFeatureSwitchParams.InlineFeedbackListOfPowerKnobs),
-                      weight,
-                      pushCap
+                    vaw inwinefeedbackfatiguepawam = continuousfunctionpawam(
+                      c-cand.tawget
+                        .pawams(pushfeatuweswitchpawams.inwinefeedbackwistofdayknobs), (U ᵕ U❁)
+                      cand.tawget
+                        .pawams(pushfeatuweswitchpawams.inwinefeedbackwistofpushcapweightknobs)
+                        .map(_ * p-pushcap),
+                      c-cand.tawget
+                        .pawams(pushfeatuweswitchpawams.inwinefeedbackwistofpowewknobs), (ˆ ﻌ ˆ)♡
+                      w-weight, >_<
+                      pushcap
                     )
 
-                    isInlineDislikeOutsideFatiguePeriod(
-                      cand,
-                      feedbacks
-                        .collect {
-                          case feedbackPromptValue: FeedbackPromptValue =>
-                            InlineFeedbackModel(feedbackPromptValue, None)
-                        },
-                      filteredHistory,
-                      Seq(
-                        filterInlineFeedbackHistory,
-                        NtabCaretClickFatigueUtils.feedbackModelFilterByCRT(
-                          RecTypes.f1FirstDegreeTypes)),
-                      inlineFeedbackFatigueParam,
-                      scopedStats
+                    i-isinwinediswikeoutsidefatiguepewiod(
+                      c-cand, ^^;;
+                      f-feedbacks
+                        .cowwect {
+                          c-case feedbackpwomptvawue: feedbackpwomptvawue =>
+                            i-inwinefeedbackmodew(feedbackpwomptvawue, ʘwʘ n-nyone)
+                        }, 😳😳😳
+                      f-fiwtewedhistowy, UwU
+                      seq(
+                        f-fiwtewinwinefeedbackhistowy, OwO
+                        n-nytabcawetcwickfatigueutiws.feedbackmodewfiwtewbycwt(
+                          w-wectypes.f1fiwstdegweetypes)), :3
+                      i-inwinefeedbackfatiguepawam, -.-
+                      s-scopedstats
                     )
-                  } else true
+                  } ewse t-twue
 
-                lazy val isOutsidePromptDislikeFatigue =
-                  if (cand.target
-                      .params(PushFeatureSwitchParams.EnableContFnF1TriggerPromptFeedbackFatigue)) {
-                    val weight =
-                      if (RecTypes.isF1Type(cand.commonRecType)) {
-                        cand.target
-                          .params(PushFeatureSwitchParams.PromptFeedbackF1TriggerF1PushCapWeight)
-                      } else {
-                        cand.target
-                          .params(PushFeatureSwitchParams.PromptFeedbackF1TriggerNonF1PushCapWeight)
+                wazy vaw i-isoutsidepwomptdiswikefatigue =
+                  if (cand.tawget
+                      .pawams(pushfeatuweswitchpawams.enabwecontfnf1twiggewpwomptfeedbackfatigue)) {
+                    v-vaw w-weight =
+                      i-if (wectypes.isf1type(cand.commonwectype)) {
+                        cand.tawget
+                          .pawams(pushfeatuweswitchpawams.pwomptfeedbackf1twiggewf1pushcapweight)
+                      } ewse {
+                        cand.tawget
+                          .pawams(pushfeatuweswitchpawams.pwomptfeedbackf1twiggewnonf1pushcapweight)
                       }
 
-                    val promptFeedbackFatigueParam = ContinuousFunctionParam(
-                      cand.target
-                        .params(PushFeatureSwitchParams.PromptFeedbackListOfDayKnobs),
-                      cand.target
-                        .params(PushFeatureSwitchParams.PromptFeedbackListOfPushCapWeightKnobs)
-                        .map(_ * pushCap),
-                      cand.target
-                        .params(PushFeatureSwitchParams.PromptFeedbackListOfPowerKnobs),
-                      weight,
-                      pushCap
+                    v-vaw pwomptfeedbackfatiguepawam = c-continuousfunctionpawam(
+                      c-cand.tawget
+                        .pawams(pushfeatuweswitchpawams.pwomptfeedbackwistofdayknobs), 🥺
+                      cand.tawget
+                        .pawams(pushfeatuweswitchpawams.pwomptfeedbackwistofpushcapweightknobs)
+                        .map(_ * pushcap), -.-
+                      cand.tawget
+                        .pawams(pushfeatuweswitchpawams.pwomptfeedbackwistofpowewknobs), -.-
+                      w-weight, (U ﹏ U)
+                      p-pushcap
                     )
 
-                    isPromptDislikeOutsideFatiguePeriod(
-                      feedbacks
-                        .collect {
-                          case feedbackPromptValue: FeedbackPromptValue =>
-                            PromptFeedbackModel(feedbackPromptValue, None)
+                    ispwomptdiswikeoutsidefatiguepewiod(
+                      f-feedbacks
+                        .cowwect {
+                          c-case feedbackpwomptvawue: feedbackpwomptvawue =>
+                            pwomptfeedbackmodew(feedbackpwomptvawue, rawr n-nyone)
                         },
-                      filteredHistory,
-                      Seq(
-                        filterInlineFeedbackHistory,
-                        NtabCaretClickFatigueUtils.feedbackModelFilterByCRT(
-                          RecTypes.f1FirstDegreeTypes)),
-                      promptFeedbackFatigueParam,
-                      scopedStats
+                      f-fiwtewedhistowy, mya
+                      s-seq(
+                        f-fiwtewinwinefeedbackhistowy, ( ͡o ω ͡o )
+                        nytabcawetcwickfatigueutiws.feedbackmodewfiwtewbycwt(
+                          wectypes.f1fiwstdegweetypes)), /(^•ω•^)
+                      p-pwomptfeedbackfatiguepawam, >_<
+                      s-scopedstats
                     )
-                  } else true
+                  } ewse twue
 
-                isOutsideInlineDislikeFatigue && isOutsidePromptDislikeFatigue
+                isoutsideinwinediswikefatigue && i-isoutsidepwomptdiswikefatigue
 
               case _ =>
-                totalSuccess.incr()
-                totalWithoutHistory.incr()
-                true
+                totawsuccess.incw()
+                t-totawwithouthistowy.incw()
+                twue
             }
         }
-      }.withStats(stats.scope(predicateName))
-      .withName(predicateName)
+      }.withstats(stats.scope(pwedicatename))
+      .withname(pwedicatename)
   }
 
-  def nonF1TriggeredCRTBasedNtabCaretClickFnFatiguePredicate[
-    Cand <: Candidate with RecommendationType with TargetInfo[
-      Target
+  d-def nyonf1twiggewedcwtbasedntabcawetcwickfnfatiguepwedicate[
+    c-cand <: candidate with wecommendationtype w-with t-tawgetinfo[
+      tawget
     ]
   ](
-    filterHistory: TimeSeries => TimeSeries =
-      FatiguePredicate.recTypesOnlyFilter(RecTypes.sharedNTabCaretFatigueTypes),
-    filterCaretFeedbackHistory: Target => Seq[
-      CaretFeedbackDetails
-    ] => Seq[CaretFeedbackDetails] = CaretFeedbackHistoryFilter
-      .caretFeedbackHistoryFilter(Seq(MagicRecsCategory)),
-    filterInlineFeedbackHistory: Seq[FeedbackModel] => Seq[FeedbackModel] =
-      NtabCaretClickFatigueUtils.feedbackModelFilterByCRT(RecTypes.sharedNTabCaretFatigueTypes)
+    f-fiwtewhistowy: timesewies => t-timesewies =
+      f-fatiguepwedicate.wectypesonwyfiwtew(wectypes.shawedntabcawetfatiguetypes), (✿oωo)
+    f-fiwtewcawetfeedbackhistowy: t-tawget => seq[
+      cawetfeedbackdetaiws
+    ] => s-seq[cawetfeedbackdetaiws] = c-cawetfeedbackhistowyfiwtew
+      .cawetfeedbackhistowyfiwtew(seq(magicwecscategowy)), 😳😳😳
+    fiwtewinwinefeedbackhistowy: s-seq[feedbackmodew] => seq[feedbackmodew] =
+      n-nytabcawetcwickfatigueutiws.feedbackmodewfiwtewbycwt(wectypes.shawedntabcawetfatiguetypes)
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[Cand] = {
-    val predicateName = "non_f1_triggered_crt_based_ntab_dislike_fatigue_fn"
-    Predicate
-      .fromAsync[Cand] { cand: Cand =>
+    impwicit stats: statsweceivew
+  ): n-nyamedpwedicate[cand] = {
+    v-vaw pwedicatename = "non_f1_twiggewed_cwt_based_ntab_diswike_fatigue_fn"
+    pwedicate
+      .fwomasync[cand] { c-cand: cand =>
         {
-          val scopedStats = stats.scope(predicateName)
-          val totalRequests = scopedStats.counter("mr_ntab_dislike_total")
-          val total90Day =
-            scopedStats.counter("mr_ntab_dislike_90day_dislike")
-          val totalDisabled =
-            scopedStats.counter("mr_ntab_dislike_not_90day_dislike")
-          val totalSuccess = scopedStats.counter("mr_ntab_dislike_success")
-          val totalFiltered = scopedStats.counter("mr_ntab_dislike_filtered")
-          val totalWithHistory =
-            scopedStats.counter("mr_ntab_dislike_with_history")
-          val totalWithoutHistory =
-            scopedStats.counter("mr_ntab_dislike_without_history")
-          val totalFeedbackSuccess = scopedStats.counter("mr_total_feedback_success")
-          totalRequests.incr()
+          vaw scopedstats = stats.scope(pwedicatename)
+          vaw totawwequests = scopedstats.countew("mw_ntab_diswike_totaw")
+          vaw totaw90day =
+            s-scopedstats.countew("mw_ntab_diswike_90day_diswike")
+          vaw totawdisabwed =
+            s-scopedstats.countew("mw_ntab_diswike_not_90day_diswike")
+          v-vaw totawsuccess = scopedstats.countew("mw_ntab_diswike_success")
+          vaw totawfiwtewed = s-scopedstats.countew("mw_ntab_diswike_fiwtewed")
+          vaw totawwithhistowy =
+            s-scopedstats.countew("mw_ntab_diswike_with_histowy")
+          v-vaw totawwithouthistowy =
+            s-scopedstats.countew("mw_ntab_diswike_without_histowy")
+          v-vaw totawfeedbacksuccess = s-scopedstats.countew("mw_totaw_feedback_success")
+          totawwequests.incw()
 
-          Future
+          futuwe
             .join(
-              cand.target.history,
-              cand.target.caretFeedbacks,
-              cand.target.dynamicPushcap,
-              cand.target.optoutAdjustedPushcap,
-              cand.target.notificationFeedbacks,
-              PushCapUtil.getDefaultPushCap(cand.target),
-              getUserStateWeight(cand.target),
+              cand.tawget.histowy, (ꈍᴗꈍ)
+              cand.tawget.cawetfeedbacks,
+              c-cand.tawget.dynamicpushcap, 🥺
+              cand.tawget.optoutadjustedpushcap, mya
+              c-cand.tawget.notificationfeedbacks,
+              pushcaputiw.getdefauwtpushcap(cand.tawget), (ˆ ﻌ ˆ)♡
+              getusewstateweight(cand.tawget), (⑅˘꒳˘)
             ).map {
               case (
-                    history,
-                    Some(feedbackDetails),
-                    dynamicPushcapOpt,
-                    optoutAdjustedPushcapOpt,
-                    Some(feedbacks),
-                    defaultPushCap,
-                    userStateWeight) =>
-                totalWithHistory.incr()
+                    h-histowy, òωó
+                    some(feedbackdetaiws), o.O
+                    dynamicpushcapopt, XD
+                    optoutadjustedpushcapopt, (˘ω˘)
+                    some(feedbacks), (ꈍᴗꈍ)
+                    d-defauwtpushcap, >w<
+                    u-usewstateweight) =>
+                totawwithhistowy.incw()
 
-                val filteredfeedbackDetails =
-                  if (cand.target.params(
-                      PushFeatureSwitchParams.AdjustTripHqTweetTriggeredNtabCaretClickFatigue)) {
-                    val refreshableTypeFilter = CaretFeedbackHistoryFilter
-                      .caretFeedbackHistoryFilterByRefreshableTypeDenyList(
-                        HighQualityRefreshableTypes)
-                    refreshableTypeFilter(cand.target)(feedbackDetails)
-                  } else {
-                    feedbackDetails
+                v-vaw fiwtewedfeedbackdetaiws =
+                  if (cand.tawget.pawams(
+                      pushfeatuweswitchpawams.adjusttwiphqtweettwiggewedntabcawetcwickfatigue)) {
+                    v-vaw wefweshabwetypefiwtew = c-cawetfeedbackhistowyfiwtew
+                      .cawetfeedbackhistowyfiwtewbywefweshabwetypedenywist(
+                        highquawitywefweshabwetypes)
+                    w-wefweshabwetypefiwtew(cand.tawget)(feedbackdetaiws)
+                  } ewse {
+                    f-feedbackdetaiws
                   }
 
-                val feedbackDetailsDeduped =
-                  NtabCaretClickFatiguePredicateHelper.dedupFeedbackDetails(
-                    filterCaretFeedbackHistory(cand.target)(filteredfeedbackDetails),
-                    stats
+                vaw feedbackdetaiwsdeduped =
+                  nytabcawetcwickfatiguepwedicatehewpew.dedupfeedbackdetaiws(
+                    fiwtewcawetfeedbackhistowy(cand.tawget)(fiwtewedfeedbackdetaiws), XD
+                    s-stats
                   )
 
-                val pushCap: Int = (dynamicPushcapOpt, optoutAdjustedPushcapOpt) match {
-                  case (_, Some(optoutAdjustedPushcap)) => optoutAdjustedPushcap
-                  case (Some(pushcapInfo), _) => pushcapInfo.pushcap
-                  case _ => defaultPushCap
+                vaw pushcap: int = (dynamicpushcapopt, -.- o-optoutadjustedpushcapopt) m-match {
+                  c-case (_, ^^;; some(optoutadjustedpushcap)) => optoutadjustedpushcap
+                  case (some(pushcapinfo), XD _) => pushcapinfo.pushcap
+                  c-case _ => defauwtpushcap
                 }
-                val filteredHistory = History(filterHistory(history.history.toSeq).toMap)
+                vaw fiwtewedhistowy = histowy(fiwtewhistowy(histowy.histowy.toseq).tomap)
 
-                val isOutsideInlineDislikeFatigue =
-                  if (cand.target
-                      .params(
-                        PushFeatureSwitchParams.EnableContFnNonF1TriggerInlineFeedbackFatigue)) {
-                    val weight =
-                      if (RecTypes.isF1Type(cand.commonRecType))
-                        cand.target
-                          .params(PushFeatureSwitchParams.InlineFeedbackNonF1TriggerF1PushCapWeight)
-                      else
-                        cand.target
-                          .params(
-                            PushFeatureSwitchParams.InlineFeedbackNonF1TriggerNonF1PushCapWeight)
+                vaw isoutsideinwinediswikefatigue =
+                  i-if (cand.tawget
+                      .pawams(
+                        pushfeatuweswitchpawams.enabwecontfnnonf1twiggewinwinefeedbackfatigue)) {
+                    v-vaw w-weight =
+                      i-if (wectypes.isf1type(cand.commonwectype))
+                        cand.tawget
+                          .pawams(pushfeatuweswitchpawams.inwinefeedbacknonf1twiggewf1pushcapweight)
+                      ewse
+                        c-cand.tawget
+                          .pawams(
+                            p-pushfeatuweswitchpawams.inwinefeedbacknonf1twiggewnonf1pushcapweight)
 
-                    val inlineFeedbackFatigueParam = ContinuousFunctionParam(
-                      cand.target
-                        .params(PushFeatureSwitchParams.InlineFeedbackListOfDayKnobs),
-                      cand.target
-                        .params(PushFeatureSwitchParams.InlineFeedbackListOfPushCapWeightKnobs)
-                        .map(_ * pushCap),
-                      cand.target
-                        .params(PushFeatureSwitchParams.InlineFeedbackListOfPowerKnobs),
+                    vaw inwinefeedbackfatiguepawam = c-continuousfunctionpawam(
+                      cand.tawget
+                        .pawams(pushfeatuweswitchpawams.inwinefeedbackwistofdayknobs), :3
+                      cand.tawget
+                        .pawams(pushfeatuweswitchpawams.inwinefeedbackwistofpushcapweightknobs)
+                        .map(_ * p-pushcap), σωσ
+                      cand.tawget
+                        .pawams(pushfeatuweswitchpawams.inwinefeedbackwistofpowewknobs), XD
                       weight,
-                      pushCap
+                      p-pushcap
                     )
 
-                    val excludedCRTs: Set[CommonRecommendationType] =
-                      if (cand.target.params(
-                          PushFeatureSwitchParams.AdjustTripHqTweetTriggeredNtabCaretClickFatigue)) {
-                        RecTypes.f1FirstDegreeTypes ++ RecTypes.HighQualityTweetTypes
-                      } else {
-                        RecTypes.f1FirstDegreeTypes
+                    vaw e-excwudedcwts: set[commonwecommendationtype] =
+                      i-if (cand.tawget.pawams(
+                          p-pushfeatuweswitchpawams.adjusttwiphqtweettwiggewedntabcawetcwickfatigue)) {
+                        w-wectypes.f1fiwstdegweetypes ++ wectypes.highquawitytweettypes
+                      } ewse {
+                        w-wectypes.f1fiwstdegweetypes
                       }
 
-                    isInlineDislikeOutsideFatiguePeriod(
-                      cand,
+                    isinwinediswikeoutsidefatiguepewiod(
+                      cand, :3
+                      f-feedbacks
+                        .cowwect {
+                          case feedbackpwomptvawue: feedbackpwomptvawue =>
+                            inwinefeedbackmodew(feedbackpwomptvawue, rawr nyone)
+                        }, 😳
+                      f-fiwtewedhistowy, 😳😳😳
+                      s-seq(
+                        f-fiwtewinwinefeedbackhistowy, (ꈍᴗꈍ)
+                        n-nytabcawetcwickfatigueutiws.feedbackmodewexcwudecwt(excwudedcwts)), 🥺
+                      i-inwinefeedbackfatiguepawam, ^•ﻌ•^
+                      scopedstats
+                    )
+                  } e-ewse twue
+
+                wazy vaw isoutsidepwomptdiswikefatigue =
+                  i-if (cand.tawget
+                      .pawams(
+                        pushfeatuweswitchpawams.enabwecontfnnonf1twiggewpwomptfeedbackfatigue)) {
+                    vaw w-weight =
+                      if (wectypes.isf1type(cand.commonwectype))
+                        cand.tawget
+                          .pawams(pushfeatuweswitchpawams.pwomptfeedbacknonf1twiggewf1pushcapweight)
+                      e-ewse
+                        c-cand.tawget
+                          .pawams(
+                            pushfeatuweswitchpawams.pwomptfeedbacknonf1twiggewnonf1pushcapweight)
+
+                    v-vaw pwomptfeedbackfatiguepawam = c-continuousfunctionpawam(
+                      c-cand.tawget
+                        .pawams(pushfeatuweswitchpawams.pwomptfeedbackwistofdayknobs), XD
+                      cand.tawget
+                        .pawams(pushfeatuweswitchpawams.pwomptfeedbackwistofpushcapweightknobs)
+                        .map(_ * p-pushcap), ^•ﻌ•^
+                      c-cand.tawget
+                        .pawams(pushfeatuweswitchpawams.pwomptfeedbackwistofpowewknobs), ^^;;
+                      weight, ʘwʘ
+                      p-pushcap
+                    )
+
+                    ispwomptdiswikeoutsidefatiguepewiod(
                       feedbacks
-                        .collect {
-                          case feedbackPromptValue: FeedbackPromptValue =>
-                            InlineFeedbackModel(feedbackPromptValue, None)
-                        },
-                      filteredHistory,
-                      Seq(
-                        filterInlineFeedbackHistory,
-                        NtabCaretClickFatigueUtils.feedbackModelExcludeCRT(excludedCRTs)),
-                      inlineFeedbackFatigueParam,
-                      scopedStats
+                        .cowwect {
+                          case feedbackpwomptvawue: feedbackpwomptvawue =>
+                            p-pwomptfeedbackmodew(feedbackpwomptvawue, OwO nyone)
+                        }, 🥺
+                      fiwtewedhistowy, (⑅˘꒳˘)
+                      s-seq(
+                        fiwtewinwinefeedbackhistowy, (///ˬ///✿)
+                        nytabcawetcwickfatigueutiws.feedbackmodewexcwudecwt(
+                          w-wectypes.f1fiwstdegweetypes)), (✿oωo)
+                      p-pwomptfeedbackfatiguepawam, nyaa~~
+                      s-scopedstats
                     )
-                  } else true
+                  } ewse twue
 
-                lazy val isOutsidePromptDislikeFatigue =
-                  if (cand.target
-                      .params(
-                        PushFeatureSwitchParams.EnableContFnNonF1TriggerPromptFeedbackFatigue)) {
-                    val weight =
-                      if (RecTypes.isF1Type(cand.commonRecType))
-                        cand.target
-                          .params(PushFeatureSwitchParams.PromptFeedbackNonF1TriggerF1PushCapWeight)
-                      else
-                        cand.target
-                          .params(
-                            PushFeatureSwitchParams.PromptFeedbackNonF1TriggerNonF1PushCapWeight)
-
-                    val promptFeedbackFatigueParam = ContinuousFunctionParam(
-                      cand.target
-                        .params(PushFeatureSwitchParams.PromptFeedbackListOfDayKnobs),
-                      cand.target
-                        .params(PushFeatureSwitchParams.PromptFeedbackListOfPushCapWeightKnobs)
-                        .map(_ * pushCap),
-                      cand.target
-                        .params(PushFeatureSwitchParams.PromptFeedbackListOfPowerKnobs),
-                      weight,
-                      pushCap
-                    )
-
-                    isPromptDislikeOutsideFatiguePeriod(
-                      feedbacks
-                        .collect {
-                          case feedbackPromptValue: FeedbackPromptValue =>
-                            PromptFeedbackModel(feedbackPromptValue, None)
-                        },
-                      filteredHistory,
-                      Seq(
-                        filterInlineFeedbackHistory,
-                        NtabCaretClickFatigueUtils.feedbackModelExcludeCRT(
-                          RecTypes.f1FirstDegreeTypes)),
-                      promptFeedbackFatigueParam,
-                      scopedStats
-                    )
-                  } else true
-
-                isOutsideInlineDislikeFatigue && isOutsidePromptDislikeFatigue
-              case _ =>
-                totalFeedbackSuccess.incr()
-                totalWithoutHistory.incr()
-                true
+                isoutsideinwinediswikefatigue && i-isoutsidepwomptdiswikefatigue
+              c-case _ =>
+                totawfeedbacksuccess.incw()
+                t-totawwithouthistowy.incw()
+                twue
             }
         }
-      }.withStats(stats.scope(predicateName))
-      .withName(predicateName)
+      }.withstats(stats.scope(pwedicatename))
+      .withname(pwedicatename)
   }
 
-  def tripHqTweetTriggeredCRTBasedNtabCaretClickFnFatiguePredicate[
-    Cand <: Candidate with RecommendationType with TargetInfo[
-      Target
+  d-def twiphqtweettwiggewedcwtbasedntabcawetcwickfnfatiguepwedicate[
+    c-cand <: candidate w-with wecommendationtype with tawgetinfo[
+      tawget
     ]
   ](
-    filterHistory: TimeSeries => TimeSeries =
-      FatiguePredicate.recTypesOnlyFilter(RecTypes.sharedNTabCaretFatigueTypes),
-    filterCaretFeedbackHistory: Target => Seq[
-      CaretFeedbackDetails
-    ] => Seq[CaretFeedbackDetails] = CaretFeedbackHistoryFilter
-      .caretFeedbackHistoryFilter(Seq(MagicRecsCategory)),
-    filterInlineFeedbackHistory: Seq[FeedbackModel] => Seq[FeedbackModel] =
-      NtabCaretClickFatigueUtils.feedbackModelFilterByCRT(RecTypes.sharedNTabCaretFatigueTypes)
+    fiwtewhistowy: t-timesewies => t-timesewies =
+      fatiguepwedicate.wectypesonwyfiwtew(wectypes.shawedntabcawetfatiguetypes), >w<
+    fiwtewcawetfeedbackhistowy: tawget => s-seq[
+      cawetfeedbackdetaiws
+    ] => seq[cawetfeedbackdetaiws] = c-cawetfeedbackhistowyfiwtew
+      .cawetfeedbackhistowyfiwtew(seq(magicwecscategowy)), (///ˬ///✿)
+    fiwtewinwinefeedbackhistowy: s-seq[feedbackmodew] => seq[feedbackmodew] =
+      nytabcawetcwickfatigueutiws.feedbackmodewfiwtewbycwt(wectypes.shawedntabcawetfatiguetypes)
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[Cand] = {
-    val predicateName = "trip_hq_tweet_triggered_crt_based_ntab_dislike_fatigue_fn"
-    Predicate
-      .fromAsync[Cand] { cand: Cand =>
+    impwicit stats: statsweceivew
+  ): n-nyamedpwedicate[cand] = {
+    vaw pwedicatename = "twip_hq_tweet_twiggewed_cwt_based_ntab_diswike_fatigue_fn"
+    pwedicate
+      .fwomasync[cand] { c-cand: cand =>
         {
-          val scopedStats = stats.scope(predicateName)
-          val totalRequests = scopedStats.counter("mr_ntab_dislike_total")
-          val total90Day =
-            scopedStats.counter("mr_ntab_dislike_90day_dislike")
-          val totalDisabled =
-            scopedStats.counter("mr_ntab_dislike_not_90day_dislike")
-          val totalSuccess = scopedStats.counter("mr_ntab_dislike_success")
-          val totalFiltered = scopedStats.counter("mr_ntab_dislike_filtered")
-          val totalWithHistory =
-            scopedStats.counter("mr_ntab_dislike_with_history")
-          val totalWithoutHistory =
-            scopedStats.counter("mr_ntab_dislike_without_history")
-          val totalFeedbackSuccess = scopedStats.counter("mr_total_feedback_success")
-          totalRequests.incr()
+          vaw scopedstats = s-stats.scope(pwedicatename)
+          v-vaw totawwequests = scopedstats.countew("mw_ntab_diswike_totaw")
+          v-vaw t-totaw90day =
+            s-scopedstats.countew("mw_ntab_diswike_90day_diswike")
+          v-vaw totawdisabwed =
+            s-scopedstats.countew("mw_ntab_diswike_not_90day_diswike")
+          v-vaw totawsuccess = scopedstats.countew("mw_ntab_diswike_success")
+          vaw totawfiwtewed = scopedstats.countew("mw_ntab_diswike_fiwtewed")
+          vaw totawwithhistowy =
+            scopedstats.countew("mw_ntab_diswike_with_histowy")
+          v-vaw totawwithouthistowy =
+            s-scopedstats.countew("mw_ntab_diswike_without_histowy")
+          v-vaw t-totawfeedbacksuccess = s-scopedstats.countew("mw_totaw_feedback_success")
+          t-totawwequests.incw()
 
-          Future
+          futuwe
             .join(
-              cand.target.history,
-              cand.target.caretFeedbacks,
-              cand.target.dynamicPushcap,
-              cand.target.optoutAdjustedPushcap,
-              cand.target.notificationFeedbacks,
-              PushCapUtil.getDefaultPushCap(cand.target),
-              getUserStateWeight(cand.target),
+              cand.tawget.histowy, rawr
+              cand.tawget.cawetfeedbacks, (U ﹏ U)
+              cand.tawget.dynamicpushcap, ^•ﻌ•^
+              cand.tawget.optoutadjustedpushcap, (///ˬ///✿)
+              c-cand.tawget.notificationfeedbacks, o.O
+              p-pushcaputiw.getdefauwtpushcap(cand.tawget), >w<
+              getusewstateweight(cand.tawget), nyaa~~
             ).map {
               case (
-                    history,
-                    Some(feedbackDetails),
-                    dynamicPushcapOpt,
-                    optoutAdjustedPushcapOpt,
-                    Some(feedbacks),
-                    defaultPushCap,
-                    userStateWeight) =>
-                totalWithHistory.incr()
-                if (cand.target.params(
-                    PushFeatureSwitchParams.AdjustTripHqTweetTriggeredNtabCaretClickFatigue)) {
+                    histowy, òωó
+                    some(feedbackdetaiws), (U ᵕ U❁)
+                    d-dynamicpushcapopt, (///ˬ///✿)
+                    o-optoutadjustedpushcapopt, (✿oωo)
+                    s-some(feedbacks), 😳😳😳
+                    defauwtpushcap, (✿oωo)
+                    usewstateweight) =>
+                totawwithhistowy.incw()
+                if (cand.tawget.pawams(
+                    p-pushfeatuweswitchpawams.adjusttwiphqtweettwiggewedntabcawetcwickfatigue)) {
 
-                  val refreshableTypeFilter = CaretFeedbackHistoryFilter
-                    .caretFeedbackHistoryFilterByRefreshableType(HighQualityRefreshableTypes)
-                  val filteredfeedbackDetails = refreshableTypeFilter(cand.target)(feedbackDetails)
+                  vaw wefweshabwetypefiwtew = cawetfeedbackhistowyfiwtew
+                    .cawetfeedbackhistowyfiwtewbywefweshabwetype(highquawitywefweshabwetypes)
+                  v-vaw fiwtewedfeedbackdetaiws = wefweshabwetypefiwtew(cand.tawget)(feedbackdetaiws)
 
-                  val feedbackDetailsDeduped =
-                    NtabCaretClickFatiguePredicateHelper.dedupFeedbackDetails(
-                      filterCaretFeedbackHistory(cand.target)(filteredfeedbackDetails),
-                      stats
+                  v-vaw feedbackdetaiwsdeduped =
+                    nytabcawetcwickfatiguepwedicatehewpew.dedupfeedbackdetaiws(
+                      fiwtewcawetfeedbackhistowy(cand.tawget)(fiwtewedfeedbackdetaiws), (U ﹏ U)
+                      s-stats
                     )
 
-                  val pushCap: Int = (dynamicPushcapOpt, optoutAdjustedPushcapOpt) match {
-                    case (_, Some(optoutAdjustedPushcap)) => optoutAdjustedPushcap
-                    case (Some(pushcapInfo), _) => pushcapInfo.pushcap
-                    case _ => defaultPushCap
+                  vaw pushcap: int = (dynamicpushcapopt, (˘ω˘) o-optoutadjustedpushcapopt) m-match {
+                    case (_, 😳😳😳 s-some(optoutadjustedpushcap)) => o-optoutadjustedpushcap
+                    c-case (some(pushcapinfo), (///ˬ///✿) _) => pushcapinfo.pushcap
+                    c-case _ => d-defauwtpushcap
                   }
-                  val filteredHistory = History(filterHistory(history.history.toSeq).toMap)
+                  v-vaw fiwtewedhistowy = histowy(fiwtewhistowy(histowy.histowy.toseq).tomap)
 
-                  val isOutsideInlineDislikeFatigue =
-                    if (cand.target
-                        .params(
-                          PushFeatureSwitchParams.EnableContFnNonF1TriggerInlineFeedbackFatigue)) {
-                      val weight = {
-                        if (RecTypes.HighQualityTweetTypes.contains(cand.commonRecType)) {
-                          cand.target
-                            .params(
-                              PushFeatureSwitchParams.InlineFeedbackNonF1TriggerNonF1PushCapWeight)
-                        } else {
-                          cand.target
-                            .params(
-                              PushFeatureSwitchParams.InlineFeedbackNonF1TriggerF1PushCapWeight)
+                  v-vaw isoutsideinwinediswikefatigue =
+                    i-if (cand.tawget
+                        .pawams(
+                          pushfeatuweswitchpawams.enabwecontfnnonf1twiggewinwinefeedbackfatigue)) {
+                      v-vaw weight = {
+                        if (wectypes.highquawitytweettypes.contains(cand.commonwectype)) {
+                          cand.tawget
+                            .pawams(
+                              p-pushfeatuweswitchpawams.inwinefeedbacknonf1twiggewnonf1pushcapweight)
+                        } ewse {
+                          c-cand.tawget
+                            .pawams(
+                              pushfeatuweswitchpawams.inwinefeedbacknonf1twiggewf1pushcapweight)
                         }
                       }
 
-                      val inlineFeedbackFatigueParam = ContinuousFunctionParam(
-                        cand.target
-                          .params(PushFeatureSwitchParams.InlineFeedbackListOfDayKnobs),
-                        cand.target
-                          .params(PushFeatureSwitchParams.InlineFeedbackListOfPushCapWeightKnobs)
-                          .map(_ * pushCap),
-                        cand.target
-                          .params(PushFeatureSwitchParams.InlineFeedbackListOfPowerKnobs),
-                        weight,
-                        pushCap
+                      v-vaw inwinefeedbackfatiguepawam = c-continuousfunctionpawam(
+                        cand.tawget
+                          .pawams(pushfeatuweswitchpawams.inwinefeedbackwistofdayknobs), (U ᵕ U❁)
+                        cand.tawget
+                          .pawams(pushfeatuweswitchpawams.inwinefeedbackwistofpushcapweightknobs)
+                          .map(_ * p-pushcap), >_<
+                        cand.tawget
+                          .pawams(pushfeatuweswitchpawams.inwinefeedbackwistofpowewknobs), (///ˬ///✿)
+                        weight, (U ᵕ U❁)
+                        p-pushcap
                       )
 
-                      val includedCRTs: Set[CommonRecommendationType] =
-                        RecTypes.HighQualityTweetTypes
+                      v-vaw incwudedcwts: set[commonwecommendationtype] =
+                        wectypes.highquawitytweettypes
 
-                      isInlineDislikeOutsideFatiguePeriod(
-                        cand,
+                      i-isinwinediswikeoutsidefatiguepewiod(
+                        c-cand, >w<
                         feedbacks
-                          .collect {
-                            case feedbackPromptValue: FeedbackPromptValue =>
-                              InlineFeedbackModel(feedbackPromptValue, None)
-                          },
-                        filteredHistory,
-                        Seq(
-                          filterInlineFeedbackHistory,
-                          NtabCaretClickFatigueUtils.feedbackModelFilterByCRT(includedCRTs)),
-                        inlineFeedbackFatigueParam,
-                        scopedStats
+                          .cowwect {
+                            c-case feedbackpwomptvawue: feedbackpwomptvawue =>
+                              inwinefeedbackmodew(feedbackpwomptvawue, 😳😳😳 n-nyone)
+                          }, (ˆ ﻌ ˆ)♡
+                        f-fiwtewedhistowy,
+                        seq(
+                          fiwtewinwinefeedbackhistowy, (ꈍᴗꈍ)
+                          n-nytabcawetcwickfatigueutiws.feedbackmodewfiwtewbycwt(incwudedcwts)), 🥺
+                        i-inwinefeedbackfatiguepawam, >_<
+                        scopedstats
                       )
-                    } else true
+                    } ewse twue
 
-                  lazy val isOutsidePromptDislikeFatigue =
-                    if (cand.target
-                        .params(
-                          PushFeatureSwitchParams.EnableContFnNonF1TriggerPromptFeedbackFatigue)) {
-                      val weight =
-                        if (RecTypes.isF1Type(cand.commonRecType))
-                          cand.target
-                            .params(
-                              PushFeatureSwitchParams.PromptFeedbackNonF1TriggerF1PushCapWeight)
-                        else
-                          cand.target
-                            .params(
-                              PushFeatureSwitchParams.PromptFeedbackNonF1TriggerNonF1PushCapWeight)
+                  w-wazy v-vaw isoutsidepwomptdiswikefatigue =
+                    i-if (cand.tawget
+                        .pawams(
+                          p-pushfeatuweswitchpawams.enabwecontfnnonf1twiggewpwomptfeedbackfatigue)) {
+                      vaw weight =
+                        if (wectypes.isf1type(cand.commonwectype))
+                          cand.tawget
+                            .pawams(
+                              pushfeatuweswitchpawams.pwomptfeedbacknonf1twiggewf1pushcapweight)
+                        ewse
+                          cand.tawget
+                            .pawams(
+                              pushfeatuweswitchpawams.pwomptfeedbacknonf1twiggewnonf1pushcapweight)
 
-                      val promptFeedbackFatigueParam = ContinuousFunctionParam(
-                        cand.target
-                          .params(PushFeatureSwitchParams.PromptFeedbackListOfDayKnobs),
-                        cand.target
-                          .params(PushFeatureSwitchParams.PromptFeedbackListOfPushCapWeightKnobs)
-                          .map(_ * pushCap),
-                        cand.target
-                          .params(PushFeatureSwitchParams.PromptFeedbackListOfPowerKnobs),
-                        weight,
-                        pushCap
+                      v-vaw pwomptfeedbackfatiguepawam = c-continuousfunctionpawam(
+                        c-cand.tawget
+                          .pawams(pushfeatuweswitchpawams.pwomptfeedbackwistofdayknobs), OwO
+                        c-cand.tawget
+                          .pawams(pushfeatuweswitchpawams.pwomptfeedbackwistofpushcapweightknobs)
+                          .map(_ * p-pushcap), ^^;;
+                        c-cand.tawget
+                          .pawams(pushfeatuweswitchpawams.pwomptfeedbackwistofpowewknobs), (✿oωo)
+                        weight, UwU
+                        p-pushcap
                       )
 
-                      isPromptDislikeOutsideFatiguePeriod(
+                      i-ispwomptdiswikeoutsidefatiguepewiod(
                         feedbacks
-                          .collect {
-                            case feedbackPromptValue: FeedbackPromptValue =>
-                              PromptFeedbackModel(feedbackPromptValue, None)
-                          },
-                        filteredHistory,
-                        Seq(
-                          filterInlineFeedbackHistory,
-                          NtabCaretClickFatigueUtils.feedbackModelExcludeCRT(
-                            RecTypes.f1FirstDegreeTypes)),
-                        promptFeedbackFatigueParam,
-                        scopedStats
+                          .cowwect {
+                            c-case feedbackpwomptvawue: feedbackpwomptvawue =>
+                              p-pwomptfeedbackmodew(feedbackpwomptvawue, ( ͡o ω ͡o ) nyone)
+                          }, (✿oωo)
+                        fiwtewedhistowy, mya
+                        s-seq(
+                          fiwtewinwinefeedbackhistowy, ( ͡o ω ͡o )
+                          nytabcawetcwickfatigueutiws.feedbackmodewexcwudecwt(
+                            w-wectypes.f1fiwstdegweetypes)), :3
+                        pwomptfeedbackfatiguepawam, 😳
+                        s-scopedstats
                       )
-                    } else true
+                    } e-ewse twue
 
-                  isOutsideInlineDislikeFatigue && isOutsidePromptDislikeFatigue
-                } else {
-                  true
+                  i-isoutsideinwinediswikefatigue && i-isoutsidepwomptdiswikefatigue
+                } e-ewse {
+                  twue
                 }
-              case _ =>
-                totalFeedbackSuccess.incr()
-                totalWithoutHistory.incr()
-                true
+              c-case _ =>
+                t-totawfeedbacksuccess.incw()
+                totawwithouthistowy.incw()
+                t-twue
             }
         }
-      }.withStats(stats.scope(predicateName))
-      .withName(predicateName)
+      }.withstats(stats.scope(pwedicatename))
+      .withname(pwedicatename)
   }
 
-  private def getDedupedInlineFeedbackByType(
-    inlineFeedbacks: Seq[FeedbackModel],
-    feedbackType: FeedbackTypeEnum.Value,
-    revertedFeedbackType: FeedbackTypeEnum.Value
-  ): Seq[FeedbackModel] = {
-    inlineFeedbacks
-      .filter(feedback =>
-        feedback.feedbackTypeEnum == feedbackType ||
-          feedback.feedbackTypeEnum == revertedFeedbackType)
-      .groupBy(feedback => feedback.notificationImpressionId.getOrElse(""))
-      .toSeq
-      .collect {
-        case (impressionId, feedbacks: Seq[FeedbackModel]) if (feedbacks.nonEmpty) =>
-          val latestFeedback = feedbacks.maxBy(feedback => feedback.timestampMs)
-          if (latestFeedback.feedbackTypeEnum == feedbackType)
-            Some(latestFeedback)
-          else None
-        case _ => None
+  pwivate d-def getdedupedinwinefeedbackbytype(
+    i-inwinefeedbacks: s-seq[feedbackmodew], (U ﹏ U)
+    feedbacktype: f-feedbacktypeenum.vawue, >w<
+    wevewtedfeedbacktype: feedbacktypeenum.vawue
+  ): seq[feedbackmodew] = {
+    i-inwinefeedbacks
+      .fiwtew(feedback =>
+        feedback.feedbacktypeenum == feedbacktype ||
+          feedback.feedbacktypeenum == wevewtedfeedbacktype)
+      .gwoupby(feedback => feedback.notificationimpwessionid.getowewse(""))
+      .toseq
+      .cowwect {
+        case (impwessionid, UwU f-feedbacks: seq[feedbackmodew]) if (feedbacks.nonempty) =>
+          vaw watestfeedback = feedbacks.maxby(feedback => feedback.timestampms)
+          if (watestfeedback.feedbacktypeenum == f-feedbacktype)
+            some(watestfeedback)
+          ewse nyone
+        c-case _ => nyone
       }
-      .flatten
+      .fwatten
   }
 
-  private def getDedupedInlineFeedback(
-    inlineFeedbacks: Seq[FeedbackModel],
-    target: Target
-  ): Seq[FeedbackModel] = {
-    val inlineDislikeFeedback =
-      if (target.params(PushFeatureSwitchParams.UseInlineDislikeForFatigue)) {
-        getDedupedInlineFeedbackByType(
-          inlineFeedbacks,
-          FeedbackTypeEnum.InlineDislike,
-          FeedbackTypeEnum.InlineRevertedDislike)
-      } else Seq()
-    val inlineDismissFeedback =
-      if (target.params(PushFeatureSwitchParams.UseInlineDismissForFatigue)) {
-        getDedupedInlineFeedbackByType(
-          inlineFeedbacks,
-          FeedbackTypeEnum.InlineDismiss,
-          FeedbackTypeEnum.InlineRevertedDismiss)
-      } else Seq()
-    val inlineSeeLessFeedback =
-      if (target.params(PushFeatureSwitchParams.UseInlineSeeLessForFatigue)) {
-        getDedupedInlineFeedbackByType(
-          inlineFeedbacks,
-          FeedbackTypeEnum.InlineSeeLess,
-          FeedbackTypeEnum.InlineRevertedSeeLess)
-      } else Seq()
-    val inlineNotRelevantFeedback =
-      if (target.params(PushFeatureSwitchParams.UseInlineNotRelevantForFatigue)) {
-        getDedupedInlineFeedbackByType(
-          inlineFeedbacks,
-          FeedbackTypeEnum.InlineNotRelevant,
-          FeedbackTypeEnum.InlineRevertedNotRelevant)
-      } else Seq()
+  p-pwivate def getdedupedinwinefeedback(
+    inwinefeedbacks: seq[feedbackmodew], 😳
+    t-tawget: tawget
+  ): seq[feedbackmodew] = {
+    v-vaw inwinediswikefeedback =
+      if (tawget.pawams(pushfeatuweswitchpawams.useinwinediswikefowfatigue)) {
+        g-getdedupedinwinefeedbackbytype(
+          i-inwinefeedbacks, XD
+          feedbacktypeenum.inwinediswike, (✿oωo)
+          feedbacktypeenum.inwinewevewteddiswike)
+      } e-ewse seq()
+    vaw inwinedismissfeedback =
+      if (tawget.pawams(pushfeatuweswitchpawams.useinwinedismissfowfatigue)) {
+        getdedupedinwinefeedbackbytype(
+          i-inwinefeedbacks, ^•ﻌ•^
+          feedbacktypeenum.inwinedismiss, mya
+          feedbacktypeenum.inwinewevewteddismiss)
+      } e-ewse seq()
+    vaw inwineseewessfeedback =
+      i-if (tawget.pawams(pushfeatuweswitchpawams.useinwineseewessfowfatigue)) {
+        getdedupedinwinefeedbackbytype(
+          i-inwinefeedbacks, (˘ω˘)
+          f-feedbacktypeenum.inwineseewess, nyaa~~
+          feedbacktypeenum.inwinewevewtedseewess)
+      } ewse seq()
+    v-vaw inwinenotwewevantfeedback =
+      if (tawget.pawams(pushfeatuweswitchpawams.useinwinenotwewevantfowfatigue)) {
+        getdedupedinwinefeedbackbytype(
+          inwinefeedbacks, :3
+          f-feedbacktypeenum.inwinenotwewevant, (✿oωo)
+          feedbacktypeenum.inwinewevewtednotwewevant)
+      } ewse seq()
 
-    inlineDislikeFeedback ++ inlineDismissFeedback ++ inlineSeeLessFeedback ++ inlineNotRelevantFeedback
+    inwinediswikefeedback ++ inwinedismissfeedback ++ i-inwineseewessfeedback ++ i-inwinenotwewevantfeedback
   }
 
-  private def isInlineDislikeOutsideFatiguePeriod(
-    candidate: Candidate
-      with RecommendationType
-      with TargetInfo[
-        Target
-      ],
-    inlineFeedbacks: Seq[FeedbackModel],
-    filteredHistory: History,
-    feedbackFilters: Seq[Seq[FeedbackModel] => Seq[FeedbackModel]],
-    inlineFeedbackFatigueParam: ContinuousFunctionParam,
-    stats: StatsReceiver
-  ): Boolean = {
-    val scopedStats = stats.scope("inline_dislike_fatigue")
+  pwivate def i-isinwinediswikeoutsidefatiguepewiod(
+    c-candidate: candidate
+      w-with wecommendationtype
+      with tawgetinfo[
+        tawget
+      ], (U ﹏ U)
+    inwinefeedbacks: seq[feedbackmodew], (ꈍᴗꈍ)
+    f-fiwtewedhistowy: h-histowy, (˘ω˘)
+    feedbackfiwtews: s-seq[seq[feedbackmodew] => s-seq[feedbackmodew]], ^^
+    inwinefeedbackfatiguepawam: c-continuousfunctionpawam, (⑅˘꒳˘)
+    stats: statsweceivew
+  ): boowean = {
+    v-vaw scopedstats = stats.scope("inwine_diswike_fatigue")
 
-    val inlineNegativeFeedback =
-      getDedupedInlineFeedback(inlineFeedbacks, candidate.target)
+    vaw i-inwinenegativefeedback =
+      g-getdedupedinwinefeedback(inwinefeedbacks, rawr candidate.tawget)
 
-    val hydratedInlineNegativeFeedback = FeedbackModelHydrator.HydrateNotification(
-      inlineNegativeFeedback,
-      filteredHistory.history.toSeq.map(_._2))
+    vaw hydwatedinwinenegativefeedback = f-feedbackmodewhydwatow.hydwatenotification(
+      inwinenegativefeedback, :3
+      fiwtewedhistowy.histowy.toseq.map(_._2))
 
-    if (isOutsideFatiguePeriod(
-        filteredHistory,
-        Seq(),
-        feedbackFilters.foldLeft(hydratedInlineNegativeFeedback)((feedbacks, feedbackFilter) =>
-          feedbackFilter(feedbacks)),
-        inlineFeedbackFatigueParam,
-        scopedStats
+    if (isoutsidefatiguepewiod(
+        fiwtewedhistowy, OwO
+        seq(), (ˆ ﻌ ˆ)♡
+        feedbackfiwtews.fowdweft(hydwatedinwinenegativefeedback)((feedbacks, :3 feedbackfiwtew) =>
+          feedbackfiwtew(feedbacks)), -.-
+        i-inwinefeedbackfatiguepawam, -.-
+        s-scopedstats
       )) {
-      scopedStats.counter("feedback_inline_dislike_success").incr()
-      true
-    } else {
-      scopedStats.counter("feedback_inline_dislike_filtered").incr()
-      false
+      scopedstats.countew("feedback_inwine_diswike_success").incw()
+      t-twue
+    } e-ewse {
+      scopedstats.countew("feedback_inwine_diswike_fiwtewed").incw()
+      f-fawse
     }
   }
 
-  private def isPromptDislikeOutsideFatiguePeriod(
-    feedbacks: Seq[FeedbackModel],
-    filteredHistory: History,
-    feedbackFilters: Seq[Seq[FeedbackModel] => Seq[FeedbackModel]],
-    inlineFeedbackFatigueParam: ContinuousFunctionParam,
-    stats: StatsReceiver
-  ): Boolean = {
-    val scopedStats = stats.scope("prompt_dislike_fatigue")
+  pwivate def ispwomptdiswikeoutsidefatiguepewiod(
+    feedbacks: seq[feedbackmodew], òωó
+    fiwtewedhistowy: histowy, 😳
+    f-feedbackfiwtews: seq[seq[feedbackmodew] => seq[feedbackmodew]], nyaa~~
+    inwinefeedbackfatiguepawam: continuousfunctionpawam, (⑅˘꒳˘)
+    s-stats: s-statsweceivew
+  ): b-boowean = {
+    vaw scopedstats = stats.scope("pwompt_diswike_fatigue")
 
-    val promptDislikeFeedback = feedbacks
-      .filter(feedback => feedback.feedbackTypeEnum == FeedbackTypeEnum.PromptIrrelevant)
-    val hydratedPromptDislikeFeedback = FeedbackModelHydrator.HydrateNotification(
-      promptDislikeFeedback,
-      filteredHistory.history.toSeq.map(_._2))
+    vaw pwomptdiswikefeedback = f-feedbacks
+      .fiwtew(feedback => f-feedback.feedbacktypeenum == f-feedbacktypeenum.pwomptiwwewevant)
+    vaw hydwatedpwomptdiswikefeedback = f-feedbackmodewhydwatow.hydwatenotification(
+      pwomptdiswikefeedback,
+      f-fiwtewedhistowy.histowy.toseq.map(_._2))
 
-    if (isOutsideFatiguePeriod(
-        filteredHistory,
-        Seq(),
-        feedbackFilters.foldLeft(hydratedPromptDislikeFeedback)((feedbacks, feedbackFilter) =>
-          feedbackFilter(feedbacks)),
-        inlineFeedbackFatigueParam,
-        scopedStats
+    if (isoutsidefatiguepewiod(
+        f-fiwtewedhistowy, 😳
+        seq(), (U ﹏ U)
+        f-feedbackfiwtews.fowdweft(hydwatedpwomptdiswikefeedback)((feedbacks, /(^•ω•^) feedbackfiwtew) =>
+          feedbackfiwtew(feedbacks)), OwO
+        i-inwinefeedbackfatiguepawam, ( ͡o ω ͡o )
+        scopedstats
       )) {
-      scopedStats.counter("feedback_prompt_dislike_success").incr()
-      true
-    } else {
-      scopedStats.counter("feedback_prompt_dislike_filtered").incr()
-      false
+      s-scopedstats.countew("feedback_pwompt_diswike_success").incw()
+      t-twue
+    } ewse {
+      s-scopedstats.countew("feedback_pwompt_diswike_fiwtewed").incw()
+      f-fawse
     }
   }
 }

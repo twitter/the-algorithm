@@ -1,104 +1,104 @@
-with vars as (
-    SELECT
-    UNIX_MILLIS("{QUERY_DATE}") AS currentTs,
-    TIMESTAMP("{START_TIME}") AS startTime,
-    TIMESTAMP("{END_TIME}") AS endTime,
-    {MIN_SCORE_THRESHOLD} AS tweetEmbeddingsMinClusterScore,
-    {HALF_LIFE} AS halfLife,
-    TIMESTAMP("{NO_OLDER_TWEETS_THAN_DATE}") AS noOlderTweetsThanDate
-),
+with vaws as (
+    sewect
+    unix_miwwis("{quewy_date}") a-as cuwwentts, XD
+    t-timestamp("{stawt_time}") a-as stawttime, -.-
+    t-timestamp("{end_time}") as e-endtime, :3
+    {min_scowe_thweshowd} a-as tweetembeddingsmincwustewscowe, nyaa~~
+    {hawf_wife} a-as hawfwife, 😳
+    t-timestamp("{no_owdew_tweets_than_date}") as nyoowdewtweetsthandate
+), (⑅˘꒳˘)
 
--- Get raw fav events
-raw_favs AS (
-    SELECT event.favorite.user_id AS userId, event.favorite.tweet_id AS tweetId, event.favorite.event_time_ms AS tsMillis, 1 AS favOrUnfav
-    FROM `twttr-bql-timeline-prod.timeline_service_favorites.timeline_service_favorites`, vars
-    WHERE (DATE(_PARTITIONTIME) = DATE(vars.startTime) OR DATE(_PARTITIONTIME) = DATE(vars.endTime)) AND
-        TIMESTAMP_MILLIS(event.favorite.event_time_ms) >= vars.startTime
-        AND TIMESTAMP_MILLIS(event.favorite.event_time_ms) <= vars.endTime
-        AND event.favorite IS NOT NULL
-),
+-- get waw fav events
+waw_favs as (
+    sewect event.favowite.usew_id a-as usewid, nyaa~~ event.favowite.tweet_id as tweetid, OwO e-event.favowite.event_time_ms as tsmiwwis, rawr x3 1 a-as favowunfav
+    fwom `twttw-bqw-timewine-pwod.timewine_sewvice_favowites.timewine_sewvice_favowites`, XD vaws
+    whewe (date(_pawtitiontime) = d-date(vaws.stawttime) ow date(_pawtitiontime) = date(vaws.endtime)) a-and
+        timestamp_miwwis(event.favowite.event_time_ms) >= v-vaws.stawttime
+        and timestamp_miwwis(event.favowite.event_time_ms) <= vaws.endtime
+        and event.favowite is nyot nyuww
+), σωσ
 
--- Get raw unfav events
-raw_unfavs AS (
-    SELECT event.unfavorite.user_id AS userId, event.unfavorite.tweet_id AS tweetId, event.unfavorite.event_time_ms AS tsMillis, -1 AS favOrUnfav
-    FROM `twttr-bql-timeline-prod.timeline_service_favorites.timeline_service_favorites`, vars
-    WHERE (DATE(_PARTITIONTIME) = DATE(vars.startTime) OR DATE(_PARTITIONTIME) = DATE(vars.endTime)) AND
-        TIMESTAMP_MILLIS(event.favorite.event_time_ms) >= vars.startTime
-        AND TIMESTAMP_MILLIS(event.favorite.event_time_ms) <= vars.endTime
-        AND event.unfavorite IS NOT NULL
-),
+-- g-get waw unfav events
+waw_unfavs as (
+    sewect event.unfavowite.usew_id as usewid, (U ᵕ U❁) event.unfavowite.tweet_id a-as tweetid, (U ﹏ U) event.unfavowite.event_time_ms a-as tsmiwwis, :3 -1 a-as favowunfav
+    f-fwom `twttw-bqw-timewine-pwod.timewine_sewvice_favowites.timewine_sewvice_favowites`, ( ͡o ω ͡o ) v-vaws
+    whewe (date(_pawtitiontime) = date(vaws.stawttime) o-ow date(_pawtitiontime) = date(vaws.endtime)) and
+        t-timestamp_miwwis(event.favowite.event_time_ms) >= vaws.stawttime
+        and timestamp_miwwis(event.favowite.event_time_ms) <= vaws.endtime
+        and event.unfavowite is nyot n-nuww
+), σωσ
 
--- Union fav and unfav events
-favs_unioned AS (
-    SELECT * FROM raw_favs
-    UNION ALL
-    SELECT * FROM raw_unfavs
-),
+-- union fav and unfav e-events
+favs_unioned a-as (
+    s-sewect * fwom waw_favs
+    union aww
+    sewect * fwom waw_unfavs
+), >w<
 
--- Group by user and tweetId
-user_tweet_fav_pairs AS (
-    SELECT userId, tweetId, ARRAY_AGG(STRUCT(favOrUnfav, tsMillis) ORDER BY tsMillis DESC LIMIT 1) as details, count(*) as cnt
-    FROM favs_unioned
-    GROUP BY userId, tweetId
-),
+-- g-gwoup by u-usew and tweetid
+usew_tweet_fav_paiws a-as (
+    s-sewect usewid, 😳😳😳 tweetid, OwO awway_agg(stwuct(favowunfav, 😳 t-tsmiwwis) owdew by tsmiwwis d-desc wimit 1) as detaiws, 😳😳😳 count(*) as cnt
+    f-fwom favs_unioned
+    gwoup by usewid, (˘ω˘) t-tweetid
+), ʘwʘ
 
--- Remove unfav events
-tweet_raw_favs_table AS (
-    SELECT userId, tweetId, CAST(dt.tsMillis  AS FLOAT64) AS tsMillis
-    FROM user_tweet_fav_pairs CROSS JOIN UNNEST(details) as dt
-    WHERE cnt < 3 AND dt.favOrUnfav = 1 -- cnt < 3 to remove crazy fav/unfav users
-),
+-- wemove unfav e-events
+tweet_waw_favs_tabwe as (
+    s-sewect usewid, ( ͡o ω ͡o ) tweetid, o.O cast(dt.tsmiwwis  as fwoat64) as tsmiwwis
+    fwom usew_tweet_fav_paiws cwoss join u-unnest(detaiws) a-as dt
+    whewe cnt < 3 and dt.favowunfav = 1 -- c-cnt < 3 to wemove c-cwazy fav/unfav u-usews
+), >w<
 
--- Get tweetIds that are eligible for tweet embeddings
-tweet_favs_table AS (
-    SELECT userId, tweet_raw_favs_table.tweetId, tsMillis
-    FROM tweet_raw_favs_table, vars
-    JOIN (
-        SELECT tweetId, COUNT(DISTINCT(userId)) AS favCount
-        FROM tweet_raw_favs_table
-        GROUP BY tweetId
-        HAVING favCount >= 8 --we only generate tweet embeddings for tweets with >= 8 favs
-    ) eligible_tweets USING(tweetId)
-     -- Apply tweet age filter here
-    WHERE timestamp_millis((1288834974657 + ((tweet_raw_favs_table.tweetId  & 9223372036850581504) >> 22))) >= vars.noOlderTweetsThanDate
-),
+-- get tweetids that awe ewigibwe fow tweet embeddings
+t-tweet_favs_tabwe as (
+    sewect usewid, 😳 tweet_waw_favs_tabwe.tweetid, 🥺 tsmiwwis
+    f-fwom tweet_waw_favs_tabwe, rawr x3 v-vaws
+    join (
+        s-sewect t-tweetid, o.O count(distinct(usewid)) as favcount
+        f-fwom tweet_waw_favs_tabwe
+        g-gwoup b-by tweetid
+        h-having favcount >= 8 --we onwy genewate tweet embeddings fow t-tweets with >= 8 f-favs
+    ) ewigibwe_tweets u-using(tweetid)
+     -- a-appwy tweet a-age fiwtew hewe
+    whewe timestamp_miwwis((1288834974657 + ((tweet_waw_favs_tabwe.tweetid  & 9223372036850581504) >> 22))) >= vaws.noowdewtweetsthandate
+), rawr
 
--- Read consumer embeddings
-consumer_embeddings AS (
-  {CONSUMER_EMBEDDINGS_SQL}
-),
+-- wead consumew e-embeddings
+consumew_embeddings as (
+  {consumew_embeddings_sqw}
+), ʘwʘ
 
--- Update tweet cluster scores based on fav events
-tweet_cluster_scores AS (
-    SELECT tweetId,
-        STRUCT(
-            clusterId,
-            CASE vars.halfLife
-              -- halfLife = -1 means there is no half life/decay and we directly take the sum as the score
-              WHEN -1 THEN SUM(clusterNormalizedLogFavScore)
-              ELSE SUM(clusterNormalizedLogFavScore * POW(0.5, (currentTs - tsMillis) / vars.halfLife))
-              END AS clusterNormalizedLogFavScore,
-            COUNT(*) AS favCount)
-        AS clusterIdToScores
-    FROM tweet_favs_table, vars
-    JOIN consumer_embeddings USING(userId)
-    GROUP BY tweetId, clusterId, vars.halfLife
-),
+-- update tweet cwustew scowes based on fav events
+tweet_cwustew_scowes as (
+    s-sewect tweetid, 😳😳😳
+        stwuct(
+            cwustewid, ^^;;
+            case vaws.hawfwife
+              -- h-hawfwife = -1 m-means t-thewe is nyo hawf wife/decay and w-we diwectwy take the sum as the s-scowe
+              w-when -1 then sum(cwustewnowmawizedwogfavscowe)
+              ewse sum(cwustewnowmawizedwogfavscowe * pow(0.5, o.O (cuwwentts - tsmiwwis) / vaws.hawfwife))
+              end as c-cwustewnowmawizedwogfavscowe, (///ˬ///✿)
+            count(*) a-as favcount)
+        as cwustewidtoscowes
+    f-fwom tweet_favs_tabwe, σωσ v-vaws
+    join consumew_embeddings using(usewid)
+    g-gwoup b-by tweetid, nyaa~~ cwustewid, ^^;; vaws.hawfwife
+), ^•ﻌ•^
 
--- Generate tweet embeddings
-tweet_embeddings_with_top_clusters AS (
-    SELECT tweetId, ARRAY_AGG(
-        clusterIdToScores
-        ORDER BY clusterIdToScores.clusterNormalizedLogFavScore DESC
-        LIMIT {TWEET_EMBEDDING_LENGTH}
-    ) AS clusterIdToScores
-    FROM tweet_cluster_scores
-    GROUP BY tweetId
+-- genewate t-tweet embeddings
+t-tweet_embeddings_with_top_cwustews as (
+    sewect tweetid, σωσ awway_agg(
+        cwustewidtoscowes
+        o-owdew by cwustewidtoscowes.cwustewnowmawizedwogfavscowe d-desc
+        w-wimit {tweet_embedding_wength}
+    ) as cwustewidtoscowes
+    f-fwom tweet_cwustew_scowes
+    g-gwoup by tweetid
 )
 
--- Return (tweetId, clusterId, tweetScore) pairs where tweetScore > tweetEmbeddingsMinClusterScore
-SELECT tweetId,
-    clusterId,
-    clusterNormalizedLogFavScore AS tweetScore, clusterIdToScores
-FROM tweet_embeddings_with_top_clusters, UNNEST(clusterIdToScores) AS clusterIdToScores, vars
-WHERE clusterIdToScores.clusterNormalizedLogFavScore > vars.tweetEmbeddingsMinClusterScore
+-- wetuwn (tweetid, -.- c-cwustewid, tweetscowe) paiws whewe tweetscowe > tweetembeddingsmincwustewscowe
+sewect t-tweetid, ^^;;
+    cwustewid, XD
+    c-cwustewnowmawizedwogfavscowe as tweetscowe, 🥺 cwustewidtoscowes
+f-fwom t-tweet_embeddings_with_top_cwustews, òωó unnest(cwustewidtoscowes) as cwustewidtoscowes, (ˆ ﻌ ˆ)♡ v-vaws
+whewe cwustewidtoscowes.cwustewnowmawizedwogfavscowe > vaws.tweetembeddingsmincwustewscowe

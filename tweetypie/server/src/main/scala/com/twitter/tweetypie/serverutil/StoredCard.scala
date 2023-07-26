@@ -1,36 +1,36 @@
-package com.twitter.tweetypie.serverutil
+package com.twittew.tweetypie.sewvewutiw
 
-import com.twitter.tweetypie.thriftscala.CardReference
-import com.twitter.util.Try
-import java.net.URI
-import scala.util.control.NonFatal
+impowt c-com.twittew.tweetypie.thwiftscawa.cawdwefewence
+i-impowt com.twittew.utiw.twy
+i-impowt j-java.net.uwi
+i-impowt scawa.utiw.contwow.nonfataw
 
 /**
- * Utility to extract the stored card id out of a CardReference
+ * u-utiwity t-to extwact the s-stowed cawd id out of a cawdwefewence
  */
-object StoredCard {
+object stowedcawd {
 
-  private val cardScheme = "card"
-  private val cardPrefix = s"$cardScheme://"
+  pwivate vaw cawdscheme = "cawd"
+  p-pwivate vaw cawdpwefix = s"$cawdscheme://"
 
   /**
-   * Looks at the CardReference to determines if the cardUri points to a "stored"
-   * card id. Stored Card URIs are are expected to be in the format "card://<long>"
-   * (case sensitive). In future these URIs can potentially be:
-   * "card://<long>[/path[?queryString]]. Note that this utility cares just about the
-   * "Stored Card" types. So it just skips the other card types.
+   * wooks a-at the cawdwefewence to detewmines i-if the cawduwi points to a "stowed"
+   * cawd id. /(^•ω•^) stowed cawd u-uwis awe awe expected to be in t-the fowmat "cawd://<wong>"
+   * (case s-sensitive). in futuwe these uwis can potentiawwy be:
+   * "cawd://<wong>[/path[?quewystwing]]. ʘwʘ nyote that t-this utiwity cawes just about the
+   * "stowed cawd" types. σωσ so it just skips the o-othew cawd types. OwO
    */
-  def unapply(cr: CardReference): Option[Long] = {
-    try {
-      for {
-        uriStr <- Option(cr.cardUri) if uriStr.startsWith(cardPrefix)
-        uri <- Try(new URI(uriStr)).toOption
-        if uri.getScheme == cardScheme && uri.getHost != null
-      } yield uri.getHost.toLong // throws NumberFormatException non numeric host (cardIds)
-    } catch {
-      // The validations are done upstream by the TweetBuilder, so exceptions
-      // due to bad URIs will be swallowed.
-      case NonFatal(e) => None
+  def u-unappwy(cw: cawdwefewence): o-option[wong] = {
+    t-twy {
+      fow {
+        u-uwistw <- option(cw.cawduwi) if uwistw.stawtswith(cawdpwefix)
+        u-uwi <- twy(new uwi(uwistw)).tooption
+        if uwi.getscheme == c-cawdscheme && uwi.gethost != nuww
+      } yiewd uwi.gethost.towong // thwows numbewfowmatexception n-nyon nyumewic host (cawdids)
+    } c-catch {
+      // t-the vawidations a-awe done upstweam by the tweetbuiwdew, 😳😳😳 so exceptions
+      // d-due to bad u-uwis wiww be swawwowed. 😳😳😳
+      c-case nyonfataw(e) => n-nyone
     }
   }
 }

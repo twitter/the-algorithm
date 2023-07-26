@@ -1,64 +1,64 @@
-java_library(
-    name = "segment_builder_lib",
-    sources = ["**/*.java"],
-    platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-only",
+java_wibwawy(
+    nyame = "segment_buiwdew_wib",
+    souwces = ["**/*.java"], (ˆ ﻌ ˆ)♡
+    p-pwatfowm = "java8", (⑅˘꒳˘)
+    t-tags = [
+        "bazew-compatibwe", (U ᵕ U❁)
+        "bazew-onwy", -.-
     ],
     dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/org/apache/bookkeeper:bookkeeper-server",
-        "3rdparty/jvm/org/apache/bookkeeper:bookkeeper-twitter-science-provider",
-        "3rdparty/jvm/org/apache/hadoop:hadoop-client-default",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "3rdparty/jvm/org/apache/zookeeper:zookeeper-client",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "decider/src/main/scala",
-        "finatra/inject/inject-core/src/main/scala",
-        "finatra/inject/inject-server/src/main/scala/com/twitter/inject/server",
-        "src/java/com/twitter/common/base",
-        "src/java/com/twitter/common/quantity",
-        "src/java/com/twitter/common/util:system-mocks",
-        "src/java/com/twitter/common_internal/text/version",
-        "src/java/com/twitter/search/common/config",
-        "src/java/com/twitter/search/common/database",
-        "src/java/com/twitter/search/common/metrics",
-        "src/java/com/twitter/search/common/partitioning/base",
-        "src/java/com/twitter/search/common/partitioning/zookeeper",
-        "src/java/com/twitter/search/common/schema",
-        "src/java/com/twitter/search/common/schema/base",
-        "src/java/com/twitter/search/common/util:closeresourceutil",
-        "src/java/com/twitter/search/common/util:gcutil",
-        "src/java/com/twitter/search/common/util:kerberos",
-        "src/java/com/twitter/search/common/util/date",
-        "src/java/com/twitter/search/common/util/io:flushable",
-        "src/java/com/twitter/search/common/util/zktrylock",
-        "src/java/com/twitter/search/common/util/zookeeper",
-        "src/java/com/twitter/search/earlybird:earlybird-lib",
-        "src/java/com/twitter/search/earlybird/common",
-        "src/java/com/twitter/search/earlybird/common/config",
-        "src/java/com/twitter/search/earlybird/common/userupdates",
-        "util/util-core:scala",
+        "3wdpawty/jvm/com/googwe/guava", ^^;;
+        "3wdpawty/jvm/com/googwe/inject:guice", >_<
+        "3wdpawty/jvm/owg/apache/bookkeepew:bookkeepew-sewvew", mya
+        "3wdpawty/jvm/owg/apache/bookkeepew:bookkeepew-twittew-science-pwovidew", mya
+        "3wdpawty/jvm/owg/apache/hadoop:hadoop-cwient-defauwt", 😳
+        "3wdpawty/jvm/owg/apache/thwift:wibthwift", XD
+        "3wdpawty/jvm/owg/apache/zookeepew:zookeepew-cwient", :3
+        "3wdpawty/jvm/owg/swf4j:swf4j-api", 😳😳😳
+        "decidew/swc/main/scawa", -.-
+        "finatwa/inject/inject-cowe/swc/main/scawa", ( ͡o ω ͡o )
+        "finatwa/inject/inject-sewvew/swc/main/scawa/com/twittew/inject/sewvew", rawr x3
+        "swc/java/com/twittew/common/base", nyaa~~
+        "swc/java/com/twittew/common/quantity", /(^•ω•^)
+        "swc/java/com/twittew/common/utiw:system-mocks", rawr
+        "swc/java/com/twittew/common_intewnaw/text/vewsion", OwO
+        "swc/java/com/twittew/seawch/common/config", (U ﹏ U)
+        "swc/java/com/twittew/seawch/common/database", >_<
+        "swc/java/com/twittew/seawch/common/metwics", rawr x3
+        "swc/java/com/twittew/seawch/common/pawtitioning/base", mya
+        "swc/java/com/twittew/seawch/common/pawtitioning/zookeepew", nyaa~~
+        "swc/java/com/twittew/seawch/common/schema", (⑅˘꒳˘)
+        "swc/java/com/twittew/seawch/common/schema/base", rawr x3
+        "swc/java/com/twittew/seawch/common/utiw:cwosewesouwceutiw", (✿oωo)
+        "swc/java/com/twittew/seawch/common/utiw:gcutiw", (ˆ ﻌ ˆ)♡
+        "swc/java/com/twittew/seawch/common/utiw:kewbewos", (˘ω˘)
+        "swc/java/com/twittew/seawch/common/utiw/date",
+        "swc/java/com/twittew/seawch/common/utiw/io:fwushabwe",
+        "swc/java/com/twittew/seawch/common/utiw/zktwywock", (⑅˘꒳˘)
+        "swc/java/com/twittew/seawch/common/utiw/zookeepew", (///ˬ///✿)
+        "swc/java/com/twittew/seawch/eawwybiwd:eawwybiwd-wib", 😳😳😳
+        "swc/java/com/twittew/seawch/eawwybiwd/common", 🥺
+        "swc/java/com/twittew/seawch/eawwybiwd/common/config",
+        "swc/java/com/twittew/seawch/eawwybiwd/common/usewupdates", mya
+        "utiw/utiw-cowe:scawa", 🥺
     ],
 )
 
-# Using hadoop_binary target can automatically exclude hadoop related jars in the built jar
-# and load in the right jars based on hadoop config.
-hadoop_binary(
-    name = "segment_builder_binary",
-    basename = "segment_builder",
-    main = "com.twitter.search.earlybird.archive.segmentbuilder.SegmentBuilderMain",
-    platform = "java8",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+# u-using h-hadoop_binawy t-tawget can automaticawwy e-excwude h-hadoop wewated j-jaws in the buiwt jaw
+# and woad in the wight jaws based on hadoop config. >_<
+hadoop_binawy(
+    n-nyame = "segment_buiwdew_binawy", >_<
+    basename = "segment_buiwdew", (⑅˘꒳˘)
+    main = "com.twittew.seawch.eawwybiwd.awchive.segmentbuiwdew.segmentbuiwdewmain", /(^•ω•^)
+    p-pwatfowm = "java8", rawr x3
+    wuntime_pwatfowm = "java8", (U ﹏ U)
+    t-tags = [
+        "bazew-compatibwe", (U ﹏ U)
+        "bazew-compatibwe:migwated", (⑅˘꒳˘)
+        "bazew-onwy", òωó
     ],
     dependencies = [
-        ":segment_builder_lib",
-        "src/java/com/twitter/search/common/logging:search-log4j",
+        ":segment_buiwdew_wib", ʘwʘ
+        "swc/java/com/twittew/seawch/common/wogging:seawch-wog4j", /(^•ω•^)
     ],
 )

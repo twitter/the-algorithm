@@ -1,38 +1,38 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.tweetypie.thwiftscawa._
 
-object ScrubUncacheable {
+o-object s-scwubuncacheabwe {
 
-  // A mutation to use for scrubbing tweets for cache
-  val tweetMutation: Mutation[Tweet] =
-    Mutation { tweet =>
-      if (tweet.place != None ||
-        tweet.counts != None ||
-        tweet.deviceSource != None ||
-        tweet.perspective != None ||
-        tweet.cards != None ||
-        tweet.card2 != None ||
-        tweet.spamLabels != None ||
-        tweet.conversationMuted != None)
-        Some(
-          tweet.copy(
-            place = None,
-            counts = None,
-            deviceSource = None,
-            perspective = None,
-            cards = None,
-            card2 = None,
-            spamLabels = None,
-            conversationMuted = None
+  // a-a mutation t-to use fow s-scwubbing tweets f-fow cache
+  vaw tweetmutation: mutation[tweet] =
+    mutation { tweet =>
+      i-if (tweet.pwace != nyone ||
+        tweet.counts != n-nyone ||
+        tweet.devicesouwce != n-nyone ||
+        tweet.pewspective != none ||
+        tweet.cawds != n-nyone ||
+        tweet.cawd2 != n-nyone ||
+        t-tweet.spamwabews != nyone ||
+        tweet.convewsationmuted != nyone)
+        some(
+          t-tweet.copy(
+            pwace = nyone, (⑅˘꒳˘)
+            counts = nyone, /(^•ω•^)
+            devicesouwce = nyone, rawr x3
+            p-pewspective = nyone, (U ﹏ U)
+            c-cawds = nyone, (U ﹏ U)
+            c-cawd2 = n-nyone, (⑅˘꒳˘)
+            s-spamwabews = nyone, òωó
+            convewsationmuted = n-none
           )
         )
-      else
-        None
+      ewse
+        nyone
     }
 
-  // throws an AssertionError if a tweet when a tweet is scrubbed
-  def assertNotScrubbed(message: String): Mutation[Tweet] =
-    tweetMutation.withEffect(Effect(update => assert(update.isEmpty, message)))
+  // t-thwows an assewtionewwow if a tweet when a tweet is scwubbed
+  def assewtnotscwubbed(message: s-stwing): mutation[tweet] =
+    t-tweetmutation.witheffect(effect(update => a-assewt(update.isempty, ʘwʘ m-message)))
 }

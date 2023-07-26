@@ -1,245 +1,245 @@
-package com.twitter.search.feature_update_service;
+package com.twittew.seawch.featuwe_update_sewvice;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import javax.inject.Inject;
-import javax.inject.Named;
+impowt java.utiw.awways;
+i-impowt j-java.utiw.cowwections;
+i-impowt j-java.utiw.wist;
+i-impowt javax.inject.inject;
+i-impowt j-javax.inject.named;
 
-import scala.runtime.BoxedUnit;
+i-impowt scawa.wuntime.boxedunit;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
+impowt com.googwe.common.cowwect.immutabwemap;
+impowt c-com.googwe.common.cowwect.wists;
 
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.kafka.cwients.pwoducew.pwoducewwecowd;
+impowt o-owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.util.Clock;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.decider.Decider;
-import com.twitter.finagle.mux.ClientDiscardedRequestException;
-import com.twitter.finagle.thrift.ClientId;
-import com.twitter.finatra.kafka.producers.BlockingFinagleKafkaProducer;
-import com.twitter.inject.annotations.Flag;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEventType;
-import com.twitter.search.feature_update_service.modules.EarlybirdUtilModule;
-import com.twitter.search.feature_update_service.modules.FinagleKafkaProducerModule;
-import com.twitter.search.feature_update_service.stats.FeatureUpdateStats;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateRequest;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponse;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponseCode;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateService;
-import com.twitter.search.feature_update_service.util.FeatureUpdateValidator;
-import com.twitter.search.ingester.model.IngesterThriftVersionedEvents;
-import com.twitter.tweetypie.thriftjava.GetTweetFieldsOptions;
-import com.twitter.tweetypie.thriftjava.GetTweetFieldsRequest;
-import com.twitter.tweetypie.thriftjava.TweetInclude;
-import com.twitter.tweetypie.thriftjava.TweetService;
-import com.twitter.tweetypie.thriftjava.TweetVisibilityPolicy;
-import com.twitter.util.ExecutorServiceFuturePool;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
-import com.twitter.util.Futures;
+i-impowt com.twittew.common.utiw.cwock;
+impowt com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+impowt c-com.twittew.decidew.decidew;
+impowt com.twittew.finagwe.mux.cwientdiscawdedwequestexception;
+impowt c-com.twittew.finagwe.thwift.cwientid;
+i-impowt com.twittew.finatwa.kafka.pwoducews.bwockingfinagwekafkapwoducew;
+impowt com.twittew.inject.annotations.fwag;
+impowt com.twittew.seawch.common.decidew.decidewutiw;
+impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingevent;
+impowt c-com.twittew.seawch.common.schema.thwiftjava.thwiftindexingeventtype;
+impowt c-com.twittew.seawch.featuwe_update_sewvice.moduwes.eawwybiwdutiwmoduwe;
+i-impowt com.twittew.seawch.featuwe_update_sewvice.moduwes.finagwekafkapwoducewmoduwe;
+i-impowt c-com.twittew.seawch.featuwe_update_sewvice.stats.featuweupdatestats;
+impowt com.twittew.seawch.featuwe_update_sewvice.thwiftjava.featuweupdatewequest;
+impowt c-com.twittew.seawch.featuwe_update_sewvice.thwiftjava.featuweupdatewesponse;
+impowt com.twittew.seawch.featuwe_update_sewvice.thwiftjava.featuweupdatewesponsecode;
+i-impowt com.twittew.seawch.featuwe_update_sewvice.thwiftjava.featuweupdatesewvice;
+impowt com.twittew.seawch.featuwe_update_sewvice.utiw.featuweupdatevawidatow;
+impowt com.twittew.seawch.ingestew.modew.ingestewthwiftvewsionedevents;
+impowt com.twittew.tweetypie.thwiftjava.gettweetfiewdsoptions;
+impowt c-com.twittew.tweetypie.thwiftjava.gettweetfiewdswequest;
+impowt c-com.twittew.tweetypie.thwiftjava.tweetincwude;
+i-impowt com.twittew.tweetypie.thwiftjava.tweetsewvice;
+i-impowt com.twittew.tweetypie.thwiftjava.tweetvisibiwitypowicy;
+impowt com.twittew.utiw.executowsewvicefutuwepoow;
+impowt com.twittew.utiw.function;
+impowt c-com.twittew.utiw.futuwe;
+i-impowt com.twittew.utiw.futuwes;
 
-import static com.twitter.tweetypie.thriftjava.Tweet._Fields.CORE_DATA;
+i-impowt s-static com.twittew.tweetypie.thwiftjava.tweet._fiewds.cowe_data;
 
-public class FeatureUpdateController implements FeatureUpdateService.ServiceIface {
-  private static final Logger LOG = LoggerFactory.getLogger(FeatureUpdateController.class);
-  private static final Logger REQUEST_LOG =
-      LoggerFactory.getLogger("feature_update_service_requests");
-  private static final String KAFKA_SEND_COUNT_FORMAT = "kafka_%s_partition_%d_send_count";
-  private static final String WRITE_TO_KAFKA_DECIDER_KEY = "write_events_to_kafka_update_events";
-  private static final String WRITE_TO_KAFKA_DECIDER_KEY_REALTIME_CG =
-          "write_events_to_kafka_update_events_realtime_cg";
+pubwic cwass f-featuweupdatecontwowwew impwements f-featuweupdatesewvice.sewviceiface {
+  pwivate static finaw w-woggew wog = woggewfactowy.getwoggew(featuweupdatecontwowwew.cwass);
+  pwivate static f-finaw woggew wequest_wog =
+      w-woggewfactowy.getwoggew("featuwe_update_sewvice_wequests");
+  p-pwivate static finaw stwing kafka_send_count_fowmat = "kafka_%s_pawtition_%d_send_count";
+  pwivate static finaw stwing wwite_to_kafka_decidew_key = "wwite_events_to_kafka_update_events";
+  pwivate static finaw stwing wwite_to_kafka_decidew_key_weawtime_cg =
+          "wwite_events_to_kafka_update_events_weawtime_cg";
 
-  private final SearchRateCounter droppedKafkaUpdateEvents =
-      SearchRateCounter.export("dropped_kafka_update_events");
+  p-pwivate f-finaw seawchwatecountew dwoppedkafkaupdateevents =
+      s-seawchwatecountew.expowt("dwopped_kafka_update_events");
 
-  private final SearchRateCounter droppedKafkaUpdateEventsRealtimeCg =
-          SearchRateCounter.export("dropped_kafka_update_events_realtime_cg");
-  private final Clock clock;
-  private final Decider decider;
-  private final BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> kafkaProducer;
-  private final BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> kafkaProducerRealtimeCg;
+  p-pwivate finaw s-seawchwatecountew dwoppedkafkaupdateeventsweawtimecg =
+          seawchwatecountew.expowt("dwopped_kafka_update_events_weawtime_cg");
+  pwivate f-finaw cwock cwock;
+  pwivate finaw decidew decidew;
+  pwivate finaw bwockingfinagwekafkapwoducew<wong, ^^;; t-thwiftvewsionedevents> kafkapwoducew;
+  p-pwivate finaw b-bwockingfinagwekafkapwoducew<wong, rawr t-thwiftvewsionedevents> kafkapwoducewweawtimecg;
 
-  private final List<PenguinVersion> penguinVersions;
-  private final FeatureUpdateStats stats;
-  private final String kafkaUpdateEventsTopicName;
-  private final String kafkaUpdateEventsTopicNameRealtimeCg;
-  private final ExecutorServiceFuturePool futurePool;
-  private final TweetService.ServiceIface tweetService;
+  p-pwivate finaw w-wist<penguinvewsion> p-penguinvewsions;
+  p-pwivate finaw featuweupdatestats stats;
+  p-pwivate finaw s-stwing kafkaupdateeventstopicname;
+  p-pwivate f-finaw stwing kafkaupdateeventstopicnameweawtimecg;
+  p-pwivate finaw executowsewvicefutuwepoow futuwepoow;
+  pwivate f-finaw tweetsewvice.sewviceiface tweetsewvice;
 
-  @Inject
-  public FeatureUpdateController(
-      Clock clock,
-      Decider decider,
-      @Named("KafkaProducer")
-      BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> kafkaProducer,
-      @Named("KafkaProducerRealtimeCg")
-      BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> kafkaProducerRealtimeCg,
-      @Flag(EarlybirdUtilModule.PENGUIN_VERSIONS_FLAG) String penguinVersions,
-      FeatureUpdateStats stats,
-      @Flag(FinagleKafkaProducerModule.KAFKA_TOPIC_NAME_UPDATE_EVENTS_FLAG)
-      String kafkaUpdateEventsTopicName,
-      @Flag(FinagleKafkaProducerModule.KAFKA_TOPIC_NAME_UPDATE_EVENTS_FLAG_REALTIME_CG)
-      String kafkaUpdateEventsTopicNameRealtimeCg,
-      ExecutorServiceFuturePool futurePool,
-      TweetService.ServiceIface tweetService
+  @inject
+  pubwic featuweupdatecontwowwew(
+      cwock cwock, 😳😳😳
+      decidew decidew, (✿oωo)
+      @named("kafkapwoducew")
+      b-bwockingfinagwekafkapwoducew<wong, OwO thwiftvewsionedevents> kafkapwoducew, ʘwʘ
+      @named("kafkapwoducewweawtimecg")
+      bwockingfinagwekafkapwoducew<wong, (ˆ ﻌ ˆ)♡ t-thwiftvewsionedevents> k-kafkapwoducewweawtimecg, (U ﹏ U)
+      @fwag(eawwybiwdutiwmoduwe.penguin_vewsions_fwag) s-stwing penguinvewsions, UwU
+      f-featuweupdatestats stats,
+      @fwag(finagwekafkapwoducewmoduwe.kafka_topic_name_update_events_fwag)
+      stwing kafkaupdateeventstopicname, XD
+      @fwag(finagwekafkapwoducewmoduwe.kafka_topic_name_update_events_fwag_weawtime_cg)
+      s-stwing k-kafkaupdateeventstopicnameweawtimecg, ʘwʘ
+      executowsewvicefutuwepoow futuwepoow,
+      tweetsewvice.sewviceiface tweetsewvice
   ) {
-    this.clock = clock;
-    this.decider = decider;
-    this.kafkaProducer = kafkaProducer;
-    this.kafkaProducerRealtimeCg = kafkaProducerRealtimeCg;
-    this.penguinVersions = getPenguinVersions(penguinVersions);
-    this.stats = stats;
-    this.kafkaUpdateEventsTopicName = kafkaUpdateEventsTopicName;
-    this.kafkaUpdateEventsTopicNameRealtimeCg = kafkaUpdateEventsTopicNameRealtimeCg;
-    this.futurePool = futurePool;
-    this.tweetService = tweetService;
+    this.cwock = c-cwock;
+    this.decidew = d-decidew;
+    this.kafkapwoducew = kafkapwoducew;
+    t-this.kafkapwoducewweawtimecg = k-kafkapwoducewweawtimecg;
+    this.penguinvewsions = getpenguinvewsions(penguinvewsions);
+    t-this.stats = stats;
+    t-this.kafkaupdateeventstopicname = kafkaupdateeventstopicname;
+    t-this.kafkaupdateeventstopicnameweawtimecg = k-kafkaupdateeventstopicnameweawtimecg;
+    this.futuwepoow = futuwepoow;
+    this.tweetsewvice = tweetsewvice;
   }
 
-  @Override
-  public Future<FeatureUpdateResponse> process(FeatureUpdateRequest featureUpdate) {
-    long requestStartTimeMillis = clock.nowMillis();
+  @ovewwide
+  p-pubwic futuwe<featuweupdatewesponse> p-pwocess(featuweupdatewequest f-featuweupdate) {
+    wong wequeststawttimemiwwis = c-cwock.nowmiwwis();
 
-    // Export overall and per-client request rate stats
-    final String requestClientId;
-    if (featureUpdate.getRequestClientId() != null
-        && !featureUpdate.getRequestClientId().isEmpty()) {
-      requestClientId = featureUpdate.getRequestClientId();
-    } else if (ClientId.current().nonEmpty()) {
-      requestClientId =  ClientId.current().get().name();
-    } else {
-      requestClientId = "unknown";
+    // e-expowt ovewaww and pew-cwient w-wequest wate stats
+    finaw stwing wequestcwientid;
+    if (featuweupdate.getwequestcwientid() != nyuww
+        && !featuweupdate.getwequestcwientid().isempty()) {
+      wequestcwientid = f-featuweupdate.getwequestcwientid();
+    } e-ewse if (cwientid.cuwwent().nonempty()) {
+      wequestcwientid =  c-cwientid.cuwwent().get().name();
+    } e-ewse {
+      wequestcwientid = "unknown";
     }
-    stats.clientRequest(requestClientId);
-    REQUEST_LOG.info("{} {}", requestClientId, featureUpdate);
+    stats.cwientwequest(wequestcwientid);
+    wequest_wog.info("{} {}", rawr x3 wequestcwientid, ^^;; f-featuweupdate);
 
-    FeatureUpdateResponse errorResponse = FeatureUpdateValidator.validate(featureUpdate);
-    if (errorResponse != null) {
-      stats.clientResponse(requestClientId, errorResponse.getResponseCode());
-      LOG.warn("client error: clientID {} - reason: {}",
-          requestClientId, errorResponse.getDetailMessage());
-      return Future.value(errorResponse);
+    featuweupdatewesponse ewwowwesponse = featuweupdatevawidatow.vawidate(featuweupdate);
+    if (ewwowwesponse != nyuww) {
+      s-stats.cwientwesponse(wequestcwientid, ʘwʘ ewwowwesponse.getwesponsecode());
+      wog.wawn("cwient e-ewwow: cwientid {} - w-weason: {}", (U ﹏ U)
+          wequestcwientid, (˘ω˘) ewwowwesponse.getdetaiwmessage());
+      wetuwn futuwe.vawue(ewwowwesponse);
     }
 
-    ThriftIndexingEvent event = featureUpdate.getEvent();
-    return writeToKafka(event, requestStartTimeMillis)
-        .map(responsesList -> {
-          stats.clientResponse(requestClientId, FeatureUpdateResponseCode.SUCCESS);
-          // only when both Realtime & RealtimeCG succeed, then it will return a success flag
-          return new FeatureUpdateResponse(FeatureUpdateResponseCode.SUCCESS);
+    thwiftindexingevent e-event = f-featuweupdate.getevent();
+    wetuwn wwitetokafka(event, (ꈍᴗꈍ) wequeststawttimemiwwis)
+        .map(wesponseswist -> {
+          stats.cwientwesponse(wequestcwientid, /(^•ω•^) f-featuweupdatewesponsecode.success);
+          // onwy when both w-weawtime & weawtimecg succeed, >_< then it wiww wetuwn a success f-fwag
+          wetuwn nyew featuweupdatewesponse(featuweupdatewesponsecode.success);
         })
-        .handle(Function.func(throwable -> {
-          FeatureUpdateResponseCode responseCode;
-          // if either Realtime or RealtimeCG throws an exception, it will return a failure
-          if (throwable instanceof ClientDiscardedRequestException) {
-            responseCode = FeatureUpdateResponseCode.CLIENT_CANCEL_ERROR;
-            LOG.info("ClientDiscardedRequestException received from client: " + requestClientId,
-                throwable);
-          } else {
-            responseCode = FeatureUpdateResponseCode.TRANSIENT_ERROR;
-            LOG.error("Error occurred while writing to output stream: "
-                + kafkaUpdateEventsTopicName + ", "
-                + kafkaUpdateEventsTopicNameRealtimeCg, throwable);
+        .handwe(function.func(thwowabwe -> {
+          f-featuweupdatewesponsecode w-wesponsecode;
+          // if e-eithew weawtime ow weawtimecg thwows a-an exception, σωσ i-it wiww wetuwn a-a faiwuwe
+          if (thwowabwe i-instanceof cwientdiscawdedwequestexception) {
+            w-wesponsecode = featuweupdatewesponsecode.cwient_cancew_ewwow;
+            wog.info("cwientdiscawdedwequestexception w-weceived fwom c-cwient: " + wequestcwientid, ^^;;
+                t-thwowabwe);
+          } ewse {
+            wesponsecode = f-featuweupdatewesponsecode.twansient_ewwow;
+            wog.ewwow("ewwow occuwwed w-whiwe wwiting t-to output stweam: "
+                + kafkaupdateeventstopicname + ", 😳 "
+                + kafkaupdateeventstopicnameweawtimecg, >_< t-thwowabwe);
           }
-          stats.clientResponse(requestClientId, responseCode);
-          return new FeatureUpdateResponse(responseCode)
-              .setDetailMessage(throwable.getMessage());
+          s-stats.cwientwesponse(wequestcwientid, -.- w-wesponsecode);
+          w-wetuwn nyew featuweupdatewesponse(wesponsecode)
+              .setdetaiwmessage(thwowabwe.getmessage());
         }));
   }
 
   /**
-   * In writeToKafka(), we use Futures.collect() to aggregate results for two RPC calls
-   * Futures.collect() means that if either one of the Future fails then it will return an Exception
-   * only when both Realtime & RealtimeCG succeed, then it will return a success flag
-   * The FeatureUpdateResponse is more like an ACK message, and the upstream (feature update ingester)
-   * will not be affected much even if it failed (as long as the kafka message is written)
+   * i-in wwitetokafka(), UwU we use futuwes.cowwect() to aggwegate wesuwts fow two wpc cawws
+   * f-futuwes.cowwect() means that i-if eithew one of the futuwe faiws t-then it wiww wetuwn an exception
+   * o-onwy when both weawtime & w-weawtimecg succeed, :3 t-then it w-wiww wetuwn a success f-fwag
+   * t-the featuweupdatewesponse is mowe wike an ack message, σωσ and the upstweam (featuwe update ingestew)
+   * wiww nyot be affected much e-even if it faiwed (as w-wong as t-the kafka message is wwitten)
    */
-  private Future<List<BoxedUnit>> writeToKafka(ThriftIndexingEvent event,
-                                               long requestStartTimeMillis) {
-    return Futures.collect(Lists.newArrayList(
-        writeToKafkaInternal(event, WRITE_TO_KAFKA_DECIDER_KEY, droppedKafkaUpdateEvents,
-            kafkaUpdateEventsTopicName, -1, kafkaProducer),
-        Futures.flatten(getUserId(event.getUid()).map(
-            userId -> writeToKafkaInternal(event, WRITE_TO_KAFKA_DECIDER_KEY_REALTIME_CG,
-            droppedKafkaUpdateEventsRealtimeCg,
-            kafkaUpdateEventsTopicNameRealtimeCg, userId, kafkaProducerRealtimeCg)))));
+  p-pwivate futuwe<wist<boxedunit>> wwitetokafka(thwiftindexingevent event, >w<
+                                               wong w-wequeststawttimemiwwis) {
+    w-wetuwn futuwes.cowwect(wists.newawwaywist(
+        wwitetokafkaintewnaw(event, (ˆ ﻌ ˆ)♡ wwite_to_kafka_decidew_key, ʘwʘ d-dwoppedkafkaupdateevents, :3
+            kafkaupdateeventstopicname, (˘ω˘) -1, kafkapwoducew), 😳😳😳
+        f-futuwes.fwatten(getusewid(event.getuid()).map(
+            u-usewid -> wwitetokafkaintewnaw(event, rawr x3 wwite_to_kafka_decidew_key_weawtime_cg,
+            d-dwoppedkafkaupdateeventsweawtimecg, (✿oωo)
+            k-kafkaupdateeventstopicnameweawtimecg, (ˆ ﻌ ˆ)♡ usewid, kafkapwoducewweawtimecg)))));
 
   }
 
-  private Future<BoxedUnit> writeToKafkaInternal(ThriftIndexingEvent event, String deciderKey,
-     SearchRateCounter droppedStats, String topicName, long userId,
-     BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> producer) {
-    if (!DeciderUtil.isAvailableForRandomRecipient(decider, deciderKey)) {
-      droppedStats.increment();
-      return Future.Unit();
+  pwivate futuwe<boxedunit> wwitetokafkaintewnaw(thwiftindexingevent event, :3 stwing d-decidewkey, (U ᵕ U❁)
+     s-seawchwatecountew d-dwoppedstats, ^^;; s-stwing topicname, w-wong usewid, mya
+     bwockingfinagwekafkapwoducew<wong, 😳😳😳 t-thwiftvewsionedevents> p-pwoducew) {
+    if (!decidewutiw.isavaiwabwefowwandomwecipient(decidew, OwO d-decidewkey)) {
+      dwoppedstats.incwement();
+      wetuwn f-futuwe.unit();
     }
 
-    ProducerRecord<Long, ThriftVersionedEvents> producerRecord = new ProducerRecord<>(
-            topicName,
-            convertToThriftVersionedEvents(userId, event));
+    pwoducewwecowd<wong, rawr t-thwiftvewsionedevents> pwoducewwecowd = nyew p-pwoducewwecowd<>(
+            topicname, XD
+            c-convewttothwiftvewsionedevents(usewid, (U ﹏ U) e-event));
 
-    try {
-      return Futures.flatten(futurePool.apply(() ->
-              producer.send(producerRecord)
-                      .map(record -> {
-                        SearchCounter.export(String.format(
-                          KAFKA_SEND_COUNT_FORMAT, record.topic(), record.partition())).increment();
-                        return BoxedUnit.UNIT;
+    twy {
+      w-wetuwn futuwes.fwatten(futuwepoow.appwy(() ->
+              pwoducew.send(pwoducewwecowd)
+                      .map(wecowd -> {
+                        seawchcountew.expowt(stwing.fowmat(
+                          kafka_send_count_fowmat, (˘ω˘) w-wecowd.topic(), UwU w-wecowd.pawtition())).incwement();
+                        w-wetuwn boxedunit.unit;
                       })));
-    } catch (Exception e) {
-      return Future.exception(e);
+    } catch (exception e) {
+      wetuwn futuwe.exception(e);
     }
   }
 
-  private List<PenguinVersion> getPenguinVersions(String penguinVersionsStr) {
-    String[] tokens = penguinVersionsStr.split("\\s*,\\s*");
-    List<PenguinVersion> listOfPenguinVersions = Lists.newArrayListWithCapacity(tokens.length);
-    for (String token : tokens) {
-      listOfPenguinVersions.add(PenguinVersion.valueOf(token.toUpperCase()));
+  p-pwivate wist<penguinvewsion> getpenguinvewsions(stwing penguinvewsionsstw) {
+    s-stwing[] tokens = p-penguinvewsionsstw.spwit("\\s*,\\s*");
+    wist<penguinvewsion> w-wistofpenguinvewsions = wists.newawwaywistwithcapacity(tokens.wength);
+    f-fow (stwing t-token : tokens) {
+      wistofpenguinvewsions.add(penguinvewsion.vawueof(token.touppewcase()));
     }
-    LOG.info(String.format("Using Penguin Versions: %s", listOfPenguinVersions));
-    return listOfPenguinVersions;
+    w-wog.info(stwing.fowmat("using penguin vewsions: %s", >_< wistofpenguinvewsions));
+    w-wetuwn wistofpenguinvewsions;
   }
 
-  private Future<Long> getUserId(long tweetId) {
-    TweetInclude tweetInclude = new TweetInclude();
-    tweetInclude.setTweetFieldId(CORE_DATA.getThriftFieldId());
-    GetTweetFieldsOptions getTweetFieldsOptions = new GetTweetFieldsOptions().setTweet_includes(
-        Collections.singleton(tweetInclude)).setVisibilityPolicy(
-        TweetVisibilityPolicy.NO_FILTERING);
-    GetTweetFieldsRequest getTweetFieldsRequest = new GetTweetFieldsRequest().setTweetIds(
-        Arrays.asList(tweetId)).setOptions(getTweetFieldsOptions);
-    try {
-      return tweetService.get_tweet_fields(getTweetFieldsRequest).map(
-          tweetFieldsResults -> tweetFieldsResults.get(
-              0).tweetResult.getFound().tweet.core_data.user_id);
-    } catch (Exception e) {
-      return Future.exception(e);
+  p-pwivate futuwe<wong> g-getusewid(wong tweetid) {
+    tweetincwude t-tweetincwude = n-nyew tweetincwude();
+    t-tweetincwude.settweetfiewdid(cowe_data.getthwiftfiewdid());
+    gettweetfiewdsoptions gettweetfiewdsoptions = nyew gettweetfiewdsoptions().settweet_incwudes(
+        cowwections.singweton(tweetincwude)).setvisibiwitypowicy(
+        tweetvisibiwitypowicy.no_fiwtewing);
+    gettweetfiewdswequest gettweetfiewdswequest = nyew gettweetfiewdswequest().settweetids(
+        awways.aswist(tweetid)).setoptions(gettweetfiewdsoptions);
+    twy {
+      wetuwn tweetsewvice.get_tweet_fiewds(gettweetfiewdswequest).map(
+          tweetfiewdswesuwts -> t-tweetfiewdswesuwts.get(
+              0).tweetwesuwt.getfound().tweet.cowe_data.usew_id);
+    } c-catch (exception e) {
+      wetuwn futuwe.exception(e);
     }
   }
 
-  private ThriftVersionedEvents convertToThriftVersionedEvents(
-      long userId, ThriftIndexingEvent event) {
-    ThriftIndexingEvent thriftIndexingEvent = event.deepCopy()
-        .setEventType(ThriftIndexingEventType.PARTIAL_UPDATE);
+  p-pwivate thwiftvewsionedevents c-convewttothwiftvewsionedevents(
+      w-wong usewid, σωσ thwiftindexingevent e-event) {
+    thwiftindexingevent t-thwiftindexingevent = e-event.deepcopy()
+        .seteventtype(thwiftindexingeventtype.pawtiaw_update);
 
-    ImmutableMap.Builder<Byte, ThriftIndexingEvent> versionedEventsBuilder =
-        new ImmutableMap.Builder<>();
-    for (PenguinVersion penguinVersion : penguinVersions) {
-      versionedEventsBuilder.put(penguinVersion.getByteValue(), thriftIndexingEvent);
+    immutabwemap.buiwdew<byte, 🥺 t-thwiftindexingevent> vewsionedeventsbuiwdew =
+        n-nyew immutabwemap.buiwdew<>();
+    f-fow (penguinvewsion penguinvewsion : penguinvewsions) {
+      vewsionedeventsbuiwdew.put(penguinvewsion.getbytevawue(), 🥺 t-thwiftindexingevent);
     }
 
-    IngesterThriftVersionedEvents thriftVersionedEvents =
-        new IngesterThriftVersionedEvents(userId, versionedEventsBuilder.build());
-    thriftVersionedEvents.setId(thriftIndexingEvent.getUid());
-    return thriftVersionedEvents;
+    i-ingestewthwiftvewsionedevents t-thwiftvewsionedevents =
+        n-nyew ingestewthwiftvewsionedevents(usewid, ʘwʘ v-vewsionedeventsbuiwdew.buiwd());
+    t-thwiftvewsionedevents.setid(thwiftindexingevent.getuid());
+    w-wetuwn thwiftvewsionedevents;
   }
 }

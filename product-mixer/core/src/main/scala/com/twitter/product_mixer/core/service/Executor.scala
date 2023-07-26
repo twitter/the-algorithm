@@ -1,700 +1,700 @@
-package com.twitter.product_mixer.core.service
+package com.twittew.pwoduct_mixew.cowe.sewvice
 
-import com.twitter.finagle.stats.BroadcastStatsReceiver
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.DefaultStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.Annotation
-import com.twitter.finagle.tracing.Record
-import com.twitter.finagle.tracing.Trace
-import com.twitter.finagle.tracing.TraceId
-import com.twitter.finagle.tracing.TraceServiceName
-import com.twitter.finagle.tracing.Tracing.LocalBeginAnnotation
-import com.twitter.finagle.tracing.Tracing.LocalEndAnnotation
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.FailOpenPolicy
-import com.twitter.product_mixer.core.pipeline.PipelineResult
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.FeatureHydrationFailed
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.MisconfiguredFeatureMapFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureClassifier
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.UncategorizedServerFailure
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.product_mixer.core.service.Executor.AlwaysFailOpenIncludingProgrammerErrors
-import com.twitter.product_mixer.core.service.Executor.Context
-import com.twitter.product_mixer.core.service.Executor.TracingConfig
-import com.twitter.product_mixer.core.service.Executor.toPipelineFailureWithComponentIdentifierStack
-import com.twitter.servo.util.CancelledExceptionExtractor
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.Stitch.Letter
-import com.twitter.util.Duration
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Time
-import com.twitter.util.Try
+impowt com.twittew.finagwe.stats.bwoadcaststatsweceivew
+i-impowt com.twittew.finagwe.stats.countew
+i-impowt com.twittew.finagwe.stats.defauwtstatsweceivew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.finagwe.twacing.annotation
+i-impowt com.twittew.finagwe.twacing.wecowd
+i-impowt c-com.twittew.finagwe.twacing.twace
+i-impowt com.twittew.finagwe.twacing.twaceid
+impowt com.twittew.finagwe.twacing.twacesewvicename
+impowt com.twittew.finagwe.twacing.twacing.wocawbeginannotation
+impowt com.twittew.finagwe.twacing.twacing.wocawendannotation
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiewstack
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pwoductpipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pipewinestepidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.faiwopenpowicy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinewesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.featuwehydwationfaiwed
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.misconfiguwedfeatuwemapfaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwecwassifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.uncategowizedsewvewfaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.quawityfactowobsewvew
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow.awwaysfaiwopenincwudingpwogwammewewwows
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow.context
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow.twacingconfig
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.executow.topipewinefaiwuwewithcomponentidentifiewstack
+i-impowt com.twittew.sewvo.utiw.cancewwedexceptionextwactow
+i-impowt c-com.twittew.stitch.awwow
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stitch.stitch.wettew
+impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.wetuwn
+impowt com.twittew.utiw.thwow
+impowt com.twittew.utiw.time
+impowt com.twittew.utiw.twy
 
 /**
- * Base trait that all executors implement
+ * base twait that a-aww executows impwement
  *
- * All executors should:
- *   - implement a `def arrow` or `def apply` with the relevant types for their use case
- *     and take in an implicit [[PipelineFailureClassifier]] and [[ComponentIdentifierStack]].
- *   - add a `@singleton` annotation to the class and `@inject` annotation to the argument list
- *   - take in a [[StatsReceiver]]
+ * a-aww executows shouwd:
+ *   - i-impwement a-a `def awwow` ow `def appwy` with the wewevant types fow t-theiw use case
+ *     a-and take in an impwicit [[pipewinefaiwuwecwassifiew]] a-and [[componentidentifiewstack]]. OwO
+ *   - a-add a `@singweton` annotation t-to the cwass and `@inject` annotation t-to the awgument wist
+ *   - take in a [[statsweceivew]]
  *
- * @example {{{
- *   @Singleton class MyExecutor @Inject() (
- *     override val statsReceiver: StatsReceiver
- *   ) extends Executor {
- *     def arrow(
- *       arg: MyArg,
+ * @exampwe {{{
+ *   @singweton c-cwass myexecutow @inject() (
+ *     ovewwide v-vaw statsweceivew: statsweceivew
+ *   ) e-extends e-executow {
+ *     def awwow(
+ *       awg: myawg, 🥺
  *       ...,
- *       context: Context
- *     ): Arrow[In,Out] = ???
+ *       context: context
+ *     ): awwow[in,out] = ???
  *   }
  * }}}
  */
-private[core] trait Executor {
-  val statsReceiver: StatsReceiver
+pwivate[cowe] t-twait executow {
+  v-vaw statsweceivew: statsweceivew
 
   /**
-   * Applies the `pipelineFailureClassifier` to the output of the `arrow`
-   * and adds the `componentStack` to the [[PipelineFailure]]
+   * a-appwies t-the `pipewinefaiwuwecwassifiew` t-to the output of the `awwow`
+   * and adds the `componentstack` to the [[pipewinefaiwuwe]]
    */
-  def wrapWithErrorHandling[In, Out](
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier
+  d-def wwapwithewwowhandwing[in, (⑅˘꒳˘) out](
+    context: context, (///ˬ///✿)
+    cuwwentcomponentidentifiew: componentidentifiew
   )(
-    arrow: Arrow[In, Out]
-  ): Arrow[In, Out] = {
-    arrow.mapFailure(
-      toPipelineFailureWithComponentIdentifierStack(context, currentComponentIdentifier))
+    a-awwow: awwow[in, (✿oωo) out]
+  ): a-awwow[in, nyaa~~ o-out] = {
+    awwow.mapfaiwuwe(
+      t-topipewinefaiwuwewithcomponentidentifiewstack(context, >w< cuwwentcomponentidentifiew))
   }
 
   /**
-   * Chain a `Seq` of [[Arrow.Iso]], only passing successful results to the next [[Arrow.Iso]]
+   * c-chain a `seq` o-of [[awwow.iso]], (///ˬ///✿) o-onwy passing s-successfuw wesuwts to the nyext [[awwow.iso]]
    *
-   * @note the resulting [[Arrow]] runs the passed in [[Arrow]]s one after the other,
-   *       as an ordered execution, this means that each [[Arrow]] is dependent
-   *       on all previous [[Arrow]]s in the `Seq` so no `Stitch` batching can occur
+   * @note t-the wesuwting [[awwow]] w-wuns t-the passed in [[awwow]]s o-one aftew t-the othew, rawr
+   *       as an owdewed execution, (U ﹏ U) this means that e-each [[awwow]] is dependent
+   *       on aww pwevious [[awwow]]s in the `seq` so nyo `stitch` b-batching can occuw
    *       between them.
    */
-  def isoArrowsSequentially[T](arrows: Seq[Arrow.Iso[T]]): Arrow.Iso[T] = {
-    // avoid excess Arrow complexity when there is only a single Arrow
-    arrows match {
-      case Seq() => Arrow.identity
-      case Seq(onlyOneArrow) => onlyOneArrow
-      case Seq(head, tail @ _*) =>
-        tail.foldLeft(head) {
-          case (combinedArrow, nextArrow) => combinedArrow.flatMapArrow(nextArrow)
+  def isoawwowssequentiawwy[t](awwows: seq[awwow.iso[t]]): awwow.iso[t] = {
+    // a-avoid excess a-awwow compwexity w-when thewe is onwy a singwe a-awwow
+    awwows match {
+      c-case seq() => awwow.identity
+      c-case seq(onwyoneawwow) => onwyoneawwow
+      case seq(head, ^•ﻌ•^ taiw @ _*) =>
+        taiw.fowdweft(head) {
+          case (combinedawwow, (///ˬ///✿) nyextawwow) => c-combinedawwow.fwatmapawwow(nextawwow)
         }
     }
   }
 
   /**
-   * Start running the [[Arrow]] in the background returning a [[Stitch.Ref]] which will complete
-   * when the background task is finished
+   * stawt wunning the [[awwow]] i-in the backgwound wetuwning a-a [[stitch.wef]] w-which wiww compwete
+   * when the backgwound t-task is finished
    */
-  def startArrowAsync[In, Out](arrow: Arrow[In, Out]): Arrow[In, Stitch[Out]] = {
-    Arrow
-      .map { arg: In =>
-        // wrap in a `ref` so we only compute it's value once
-        Stitch.ref(arrow(arg))
+  d-def stawtawwowasync[in, o-out](awwow: a-awwow[in, o.O out]): awwow[in, >w< stitch[out]] = {
+    awwow
+      .map { awg: in =>
+        // wwap i-in a `wef` so we o-onwy compute it's v-vawue once
+        stitch.wef(awwow(awg))
       }
-      .andThen(
-        Arrow.zipWithArg(
-          // satisfy the `ref` async
-          Arrow.async(Arrow.flatMap[Stitch[Out], Out](identity))))
-      .map { case (ref, _) => ref }
+      .andthen(
+        a-awwow.zipwithawg(
+          // s-satisfy the `wef` async
+          a-awwow.async(awwow.fwatmap[stitch[out], nyaa~~ out](identity))))
+      .map { case (wef, òωó _) => wef }
   }
 
   /**
-   * for [[com.twitter.product_mixer.core.model.common.Component]]s which
-   * are executed per-candidate or which we don't want to record stats for.
-   * This performs Tracing but does not record Stats
+   * fow [[com.twittew.pwoduct_mixew.cowe.modew.common.component]]s w-which
+   * a-awe exekawaii~d pew-candidate ow which we don't w-want to wecowd s-stats fow. (U ᵕ U❁)
+   * this pewfowms twacing but does nyot wecowd stats
    *
-   * @note This should be used around the computation that includes the execution of the
-   *       underlying Component over all the Candidates, not around each execution
-   *        of the component around each candidate for per-candidate Components.
+   * @note t-this shouwd be used awound the computation that incwudes the execution of the
+   *       u-undewwying component ovew aww the c-candidates, (///ˬ///✿) nyot a-awound each execution
+   *        of the component awound each candidate fow pew-candidate c-components. (✿oωo)
    *
-   * @note when using this you should only use [[wrapPerCandidateComponentWithExecutorBookkeepingWithoutTracing]]
-   *       for handling Stats.
+   * @note w-when using this you shouwd onwy use [[wwappewcandidatecomponentwithexecutowbookkeepingwithouttwacing]]
+   *       fow handwing s-stats. 😳😳😳
    */
-  def wrapComponentsWithTracingOnly[In, Out](
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier
+  def wwapcomponentswithtwacingonwy[in, (✿oωo) o-out](
+    context: context, (U ﹏ U)
+    cuwwentcomponentidentifiew: componentidentifiew
   )(
-    arrow: Arrow[In, Out]
-  ): Arrow[In, Out] = {
-    Executor.wrapArrowWithLocalTracingSpan(
-      Arrow
-        .time(arrow)
+    a-awwow: awwow[in, (˘ω˘) out]
+  ): a-awwow[in, out] = {
+    e-executow.wwapawwowwithwocawtwacingspan(
+      awwow
+        .time(awwow)
         .map {
-          case (result, latency) =>
-            Executor.recordTraceData(
-              componentStack = context.componentStack,
-              componentIdentifier = currentComponentIdentifier,
-              result = result,
-              latency = latency,
-              size = None)
-            result
-        }.lowerFromTry)
+          c-case (wesuwt, 😳😳😳 watency) =>
+            executow.wecowdtwacedata(
+              c-componentstack = c-context.componentstack, (///ˬ///✿)
+              c-componentidentifiew = cuwwentcomponentidentifiew,
+              w-wesuwt = w-wesuwt, (U ᵕ U❁)
+              watency = watency, >_<
+              s-size = n-nyone)
+            w-wesuwt
+        }.wowewfwomtwy)
   }
 
   /**
-   * for [[com.twitter.product_mixer.core.model.common.Component]]s which
-   * are executed per-candidate. Records Stats but does not do Tracing.
+   * fow [[com.twittew.pwoduct_mixew.cowe.modew.common.component]]s which
+   * a-awe exekawaii~d pew-candidate. (///ˬ///✿) w-wecowds stats but d-does nyot do twacing. (U ᵕ U❁)
    *
-   * @note when using this you should only use [[wrapPerCandidateComponentsWithTracingOnly]]
-   *       for handling Tracing
+   * @note when using this you shouwd onwy use [[wwappewcandidatecomponentswithtwacingonwy]]
+   *       f-fow handwing t-twacing
    */
-  def wrapPerCandidateComponentWithExecutorBookkeepingWithoutTracing[In, Out](
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier
+  d-def wwappewcandidatecomponentwithexecutowbookkeepingwithouttwacing[in, >w< o-out](
+    context: context, 😳😳😳
+    c-cuwwentcomponentidentifiew: componentidentifiew
   )(
-    arrow: Arrow[In, Out]
-  ): Arrow[In, Out] = {
-    val observerSideEffect =
-      ExecutorObserver.executorObserver[Out](context, currentComponentIdentifier, statsReceiver)
+    awwow: awwow[in, (ˆ ﻌ ˆ)♡ out]
+  ): awwow[in, (ꈍᴗꈍ) out] = {
+    vaw obsewvewsideeffect =
+      e-executowobsewvew.executowobsewvew[out](context, 🥺 cuwwentcomponentidentifiew, >_< statsweceivew)
 
-    Executor.wrapWithExecutorBookkeeping[In, Out, Out](
+    e-executow.wwapwithexecutowbookkeeping[in, OwO out, o-out](
       context = context,
-      currentComponentIdentifier = currentComponentIdentifier,
-      executorResultSideEffect = observerSideEffect,
-      transformer = Return(_),
-      tracingConfig = TracingConfig.NoTracing
-    )(arrow)
+      c-cuwwentcomponentidentifiew = cuwwentcomponentidentifiew, ^^;;
+      e-executowwesuwtsideeffect = o-obsewvewsideeffect, (✿oωo)
+      t-twansfowmew = w-wetuwn(_), UwU
+      t-twacingconfig = twacingconfig.notwacing
+    )(awwow)
   }
 
-  /** for [[com.twitter.product_mixer.core.model.common.Component]]s */
-  def wrapComponentWithExecutorBookkeeping[In, Out](
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier
+  /** fow [[com.twittew.pwoduct_mixew.cowe.modew.common.component]]s */
+  def wwapcomponentwithexecutowbookkeeping[in, ( ͡o ω ͡o ) out](
+    context: context, (✿oωo)
+    c-cuwwentcomponentidentifiew: c-componentidentifiew
   )(
-    arrow: Arrow[In, Out]
-  ): Arrow[In, Out] = {
-    val observerSideEffect =
-      ExecutorObserver.executorObserver[Out](context, currentComponentIdentifier, statsReceiver)
+    a-awwow: awwow[in, mya out]
+  ): awwow[in, ( ͡o ω ͡o ) o-out] = {
+    vaw obsewvewsideeffect =
+      executowobsewvew.executowobsewvew[out](context, :3 cuwwentcomponentidentifiew, 😳 s-statsweceivew)
 
-    Executor.wrapWithExecutorBookkeeping[In, Out, Out](
-      context = context,
-      currentComponentIdentifier = currentComponentIdentifier,
-      executorResultSideEffect = observerSideEffect,
-      transformer = Return(_)
-    )(arrow)
+    e-executow.wwapwithexecutowbookkeeping[in, (U ﹏ U) out, o-out](
+      context = context, >w<
+      cuwwentcomponentidentifiew = c-cuwwentcomponentidentifiew, UwU
+      e-executowwesuwtsideeffect = obsewvewsideeffect, 😳
+      t-twansfowmew = w-wetuwn(_)
+    )(awwow)
   }
 
   /**
-   * for [[com.twitter.product_mixer.core.model.common.Component]]s which an `onSuccess`
-   * to add custom stats or logging of results
+   * fow [[com.twittew.pwoduct_mixew.cowe.modew.common.component]]s which an `onsuccess`
+   * to add custom stats ow w-wogging of wesuwts
    */
-  def wrapComponentWithExecutorBookkeeping[In, Out](
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier,
-    onSuccess: Out => Unit
+  d-def wwapcomponentwithexecutowbookkeeping[in, XD o-out](
+    c-context: context, (✿oωo)
+    c-cuwwentcomponentidentifiew: componentidentifiew, ^•ﻌ•^
+    o-onsuccess: o-out => unit
   )(
-    arrow: Arrow[In, Out]
-  ): Arrow[In, Out] = {
-    val observerSideEffect =
-      ExecutorObserver.executorObserver[Out](context, currentComponentIdentifier, statsReceiver)
+    awwow: a-awwow[in, out]
+  ): a-awwow[in, mya out] = {
+    vaw o-obsewvewsideeffect =
+      executowobsewvew.executowobsewvew[out](context, (˘ω˘) cuwwentcomponentidentifiew, s-statsweceivew)
 
-    Executor.wrapWithExecutorBookkeeping[In, Out, Out](
-      context = context,
-      currentComponentIdentifier = currentComponentIdentifier,
-      executorResultSideEffect = observerSideEffect,
-      transformer = Return(_),
-      onComplete = (transformed: Try[Out]) => transformed.onSuccess(onSuccess)
-    )(arrow)
+    executow.wwapwithexecutowbookkeeping[in, nyaa~~ o-out, :3 out](
+      c-context = context, (✿oωo)
+      c-cuwwentcomponentidentifiew = cuwwentcomponentidentifiew, (U ﹏ U)
+      executowwesuwtsideeffect = o-obsewvewsideeffect, (ꈍᴗꈍ)
+      t-twansfowmew = w-wetuwn(_), (˘ω˘)
+      oncompwete = (twansfowmed: twy[out]) => twansfowmed.onsuccess(onsuccess)
+    )(awwow)
   }
 
-  /** for [[com.twitter.product_mixer.core.pipeline.Pipeline]]s */
-  def wrapPipelineWithExecutorBookkeeping[In, Out <: PipelineResult[_]](
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier,
-    qualityFactorObserver: Option[QualityFactorObserver],
-    failOpenPolicy: FailOpenPolicy = FailOpenPolicy.Never
+  /** fow [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewine]]s */
+  d-def wwappipewinewithexecutowbookkeeping[in, ^^ out <: pipewinewesuwt[_]](
+    context: context, (⑅˘꒳˘)
+    c-cuwwentcomponentidentifiew: c-componentidentifiew,
+    quawityfactowobsewvew: o-option[quawityfactowobsewvew], rawr
+    faiwopenpowicy: f-faiwopenpowicy = f-faiwopenpowicy.nevew
   )(
-    arrow: Arrow[In, Out]
-  ): Arrow[In, Out] = {
-    val observerSideEffect =
-      ExecutorObserver
-        .pipelineExecutorObserver[Out](context, currentComponentIdentifier, statsReceiver)
+    awwow: awwow[in, :3 out]
+  ): awwow[in, OwO o-out] = {
+    vaw obsewvewsideeffect =
+      executowobsewvew
+        .pipewineexecutowobsewvew[out](context, (ˆ ﻌ ˆ)♡ c-cuwwentcomponentidentifiew, :3 s-statsweceivew)
 
-    Executor.wrapWithExecutorBookkeeping[In, Out, Out](
-      context = context,
-      currentComponentIdentifier = currentComponentIdentifier,
-      executorResultSideEffect = observerSideEffect,
-      transformer = (result: Out) => result.toTry,
-      size = Some(_.resultSize()),
-      failOpenPolicy = failOpenPolicy,
-      qualityFactorObserver = qualityFactorObserver
-    )(arrow)
+    executow.wwapwithexecutowbookkeeping[in, -.- o-out, out](
+      context = c-context, -.-
+      c-cuwwentcomponentidentifiew = c-cuwwentcomponentidentifiew, òωó
+      executowwesuwtsideeffect = obsewvewsideeffect, 😳
+      twansfowmew = (wesuwt: out) => wesuwt.totwy, nyaa~~
+      size = some(_.wesuwtsize()), (⑅˘꒳˘)
+      faiwopenpowicy = faiwopenpowicy, 😳
+      quawityfactowobsewvew = quawityfactowobsewvew
+    )(awwow)
   }
 
-  /** for [[com.twitter.product_mixer.core.pipeline.product.ProductPipeline]]s */
-  def wrapProductPipelineWithExecutorBookkeeping[In, Out <: PipelineResult[_]](
-    context: Context,
-    currentComponentIdentifier: ProductPipelineIdentifier
+  /** fow [[com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct.pwoductpipewine]]s */
+  def wwappwoductpipewinewithexecutowbookkeeping[in, (U ﹏ U) out <: pipewinewesuwt[_]](
+    context: c-context, /(^•ω•^)
+    c-cuwwentcomponentidentifiew: pwoductpipewineidentifiew
   )(
-    arrow: Arrow[In, Out]
-  ): Arrow[In, Out] = {
+    awwow: awwow[in, OwO o-out]
+  ): awwow[in, ( ͡o ω ͡o ) o-out] = {
 
-    val observerSideEffect =
-      ExecutorObserver
-        .productPipelineExecutorObserver[Out](currentComponentIdentifier, statsReceiver)
+    v-vaw obsewvewsideeffect =
+      executowobsewvew
+        .pwoductpipewineexecutowobsewvew[out](cuwwentcomponentidentifiew, XD s-statsweceivew)
 
-    Executor.wrapWithExecutorBookkeeping[In, Out, Out](
+    executow.wwapwithexecutowbookkeeping[in, /(^•ω•^) o-out, o-out](
       context = context,
-      currentComponentIdentifier = currentComponentIdentifier,
-      executorResultSideEffect = observerSideEffect,
-      transformer = _.toTry,
-      size = Some(_.resultSize()),
-      failOpenPolicy =
-        // always save Failures in the Result object instead of failing the request
-        AlwaysFailOpenIncludingProgrammerErrors
-    )(arrow)
+      c-cuwwentcomponentidentifiew = cuwwentcomponentidentifiew, /(^•ω•^)
+      e-executowwesuwtsideeffect = o-obsewvewsideeffect, 😳😳😳
+      twansfowmew = _.totwy, (ˆ ﻌ ˆ)♡
+      size = s-some(_.wesuwtsize()), :3
+      f-faiwopenpowicy =
+        // a-awways save f-faiwuwes in t-the wesuwt object i-instead of faiwing t-the wequest
+        a-awwaysfaiwopenincwudingpwogwammewewwows
+    )(awwow)
   }
 
-  /** for [[com.twitter.product_mixer.core.model.common.Component]]s which need a result size stat */
-  def wrapComponentWithExecutorBookkeepingWithSize[In, Out](
-    context: Context,
-    currentComponentIdentifier: CandidateSourceIdentifier,
-    size: Out => Int
+  /** f-fow [[com.twittew.pwoduct_mixew.cowe.modew.common.component]]s which nyeed a-a wesuwt size s-stat */
+  def w-wwapcomponentwithexecutowbookkeepingwithsize[in, òωó out](
+    context: c-context, 🥺
+    cuwwentcomponentidentifiew: candidatesouwceidentifiew, (U ﹏ U)
+    s-size: out => int
   )(
-    arrow: Arrow[In, Out]
-  ): Arrow[In, Out] = {
-    val observerSideEffect =
-      ExecutorObserver.executorObserverWithSize(context, currentComponentIdentifier, statsReceiver)
+    a-awwow: awwow[in, XD o-out]
+  ): a-awwow[in, ^^ out] = {
+    vaw obsewvewsideeffect =
+      e-executowobsewvew.executowobsewvewwithsize(context, o.O cuwwentcomponentidentifiew, 😳😳😳 s-statsweceivew)
 
-    Executor.wrapWithExecutorBookkeeping[In, Out, Int](
-      context = context,
-      currentComponentIdentifier = currentComponentIdentifier,
-      executorResultSideEffect = observerSideEffect,
-      transformer = (out: Out) => Try(size(out)),
-      size = Some(identity)
-    )(arrow)
+    executow.wwapwithexecutowbookkeeping[in, /(^•ω•^) o-out, 😳😳😳 int](
+      context = context, ^•ﻌ•^
+      c-cuwwentcomponentidentifiew = cuwwentcomponentidentifiew, 🥺
+      executowwesuwtsideeffect = obsewvewsideeffect, o.O
+      twansfowmew = (out: o-out) => twy(size(out)), (U ᵕ U❁)
+      size = some(identity)
+    )(awwow)
   }
 
-  /** for [[com.twitter.product_mixer.core.pipeline.PipelineBuilder.Step]]s */
-  def wrapStepWithExecutorBookkeeping[In, Out](
-    context: Context,
-    identifier: PipelineStepIdentifier,
-    arrow: Arrow[In, Out],
-    transformer: Out => Try[Unit]
-  ): Arrow[In, Out] = {
-    val observerSideEffect =
-      ExecutorObserver.stepExecutorObserver(context, identifier, statsReceiver)
+  /** f-fow [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewinebuiwdew.step]]s */
+  d-def wwapstepwithexecutowbookkeeping[in, ^^ out](
+    context: context, (⑅˘꒳˘)
+    i-identifiew: pipewinestepidentifiew, :3
+    a-awwow: a-awwow[in, (///ˬ///✿) out],
+    t-twansfowmew: out => twy[unit]
+  ): awwow[in, o-out] = {
+    v-vaw obsewvewsideeffect =
+      executowobsewvew.stepexecutowobsewvew(context, :3 identifiew, 🥺 s-statsweceivew)
 
-    Executor.wrapWithExecutorBookkeeping[In, Out, Unit](
-      context = context,
-      currentComponentIdentifier = identifier,
-      executorResultSideEffect = observerSideEffect,
-      transformer = transformer,
-      failOpenPolicy = AlwaysFailOpenIncludingProgrammerErrors
-    )(arrow)
+    executow.wwapwithexecutowbookkeeping[in, mya out, unit](
+      context = c-context, XD
+      cuwwentcomponentidentifiew = i-identifiew, -.-
+      e-executowwesuwtsideeffect = o-obsewvewsideeffect, o.O
+      twansfowmew = t-twansfowmew, (˘ω˘)
+      f-faiwopenpowicy = a-awwaysfaiwopenincwudingpwogwammewewwows
+    )(awwow)
   }
 }
 
-private[core] object Executor {
+p-pwivate[cowe] object executow {
 
-  private[service] object TracingConfig {
+  p-pwivate[sewvice] o-object t-twacingconfig {
 
-    /** Used to specify whether a wrapped Arrow should be Traced in [[wrapWithExecutorBookkeeping]] */
-    sealed trait TracingConfig
-    case object NoTracing extends TracingConfig
-    case object WrapWithSpanAndTracingData extends TracingConfig
+    /** u-used to s-specify whethew a-a wwapped awwow s-shouwd be twaced i-in [[wwapwithexecutowbookkeeping]] */
+    seawed t-twait twacingconfig
+    case o-object notwacing extends twacingconfig
+    c-case o-object wwapwithspanandtwacingdata e-extends twacingconfig
   }
 
   /**
-   * Always fail-open and return the [[com.twitter.product_mixer.core.pipeline.product.ProductPipelineResult]]
-   * containing the exception, this differs from [[FailOpenPolicy.Always]] in that this will still
-   * fail-open and return the overall result object even if the underlying failure is the result
-   * of programmer error.
+   * awways faiw-open and wetuwn the [[com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct.pwoductpipewinewesuwt]]
+   * c-containing t-the exception, (U ᵕ U❁) t-this diffews fwom [[faiwopenpowicy.awways]] in that this wiww stiww
+   * faiw-open a-and wetuwn the o-ovewaww wesuwt object even if t-the undewwying f-faiwuwe is the wesuwt
+   * of pwogwammew ewwow. rawr
    */
-  private val AlwaysFailOpenIncludingProgrammerErrors: FailOpenPolicy = _ => true
+  pwivate v-vaw awwaysfaiwopenincwudingpwogwammewewwows: f-faiwopenpowicy = _ => t-twue
 
   /**
-   * Wraps an [[Arrow]] so that bookkeeping around the execution occurs uniformly.
+   * w-wwaps an [[awwow]] so that bookkeeping awound t-the execution o-occuws unifowmwy. 🥺
    *
-   * @note should __never__ be called directly!
+   * @note shouwd __nevew__ be cawwed diwectwy! rawr x3
    *
-   *   - For successful results, apply the `transformer`
-   *   - convert any exceptions to PipelineFailures
-   *   - record stats and update [[QualityFactorObserver]]
-   *   - wraps the execution in a Trace span and record Trace data (can be turned off by [[TracingConfig]])
-   *   - applies a trace span and records metadata to the provided `arrow`
-   *   - determine whether to fail-open based on `result.flatMap(transformer)`
-   *     - if failing-open, always return the original result
-   *     - if failing-closed and successful, return the original result
-   *     - otherwise, return the failure (from `result.flatMap(transformer)`)
+   *   - f-fow successfuw wesuwts, ( ͡o ω ͡o ) appwy the `twansfowmew`
+   *   - c-convewt any exceptions t-to pipewinefaiwuwes
+   *   - w-wecowd stats and update [[quawityfactowobsewvew]]
+   *   - w-wwaps t-the execution in a twace span a-and wecowd twace data (can be tuwned o-off by [[twacingconfig]])
+   *   - a-appwies a-a twace span and w-wecowds metadata to the pwovided `awwow`
+   *   - d-detewmine whethew t-to faiw-open b-based on `wesuwt.fwatmap(twansfowmew)`
+   *     - if faiwing-open, σωσ a-awways wetuwn the owiginaw wesuwt
+   *     - i-if faiwing-cwosed a-and successfuw, rawr x3 w-wetuwn the owiginaw wesuwt
+   *     - othewwise, wetuwn the faiwuwe (fwom `wesuwt.fwatmap(twansfowmew)`)
    *
-   * @param context                    the [[Executor.Context]]
-   * @param currentComponentIdentifier the current component's [[ComponentIdentifier]]
-   * @param executorResultSideEffect   the [[ExecutorObserver]] used to record stats
-   * @param transformer                function to convert a successful result into possibly a failed result
-   * @param failOpenPolicy             [[FailOpenPolicy]] to apply to the results of `result.flatMap(transformer)`
-   * @param qualityFactorObserver      [[QualityFactorObserver]] to update based on the results of `result.flatMap(transformer)`
-   * @param tracingConfig              indicates whether the [[Arrow]] should be wrapped with Tracing
-   * @param onComplete                 runs the function for its side effects with the result of `result.flatMap(transformer)`
-   * @param arrow                      an input [[Arrow]] to wrap so that after it's execution, we perform all these operations
+   * @pawam context                    t-the [[executow.context]]
+   * @pawam cuwwentcomponentidentifiew the cuwwent c-component's [[componentidentifiew]]
+   * @pawam e-executowwesuwtsideeffect   the [[executowobsewvew]] used to w-wecowd stats
+   * @pawam twansfowmew                f-function to c-convewt a successfuw w-wesuwt into p-possibwy a faiwed w-wesuwt
+   * @pawam faiwopenpowicy             [[faiwopenpowicy]] to appwy to the wesuwts of `wesuwt.fwatmap(twansfowmew)`
+   * @pawam quawityfactowobsewvew      [[quawityfactowobsewvew]] t-to update based on the wesuwts of `wesuwt.fwatmap(twansfowmew)`
+   * @pawam t-twacingconfig              indicates whethew the [[awwow]] shouwd be w-wwapped with twacing
+   * @pawam oncompwete                 wuns the function fow its side effects w-with the wesuwt o-of `wesuwt.fwatmap(twansfowmew)`
+   * @pawam awwow                      a-an input [[awwow]] to wwap so that aftew it's execution, (ˆ ﻌ ˆ)♡ w-we pewfowm a-aww these opewations
    *
-   * @return the wrapped [[Arrow]]
+   * @wetuwn the wwapped [[awwow]]
    */
-  private[service] def wrapWithExecutorBookkeeping[In, Out, Transformed](
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier,
-    executorResultSideEffect: ExecutorObserver[Transformed],
-    transformer: Out => Try[Transformed],
-    size: Option[Transformed => Int] = None,
-    failOpenPolicy: FailOpenPolicy = FailOpenPolicy.Never,
-    qualityFactorObserver: Option[QualityFactorObserver] = None,
-    tracingConfig: TracingConfig.TracingConfig = TracingConfig.WrapWithSpanAndTracingData,
-    onComplete: Try[Transformed] => Unit = { _: Try[Transformed] => () }
+  p-pwivate[sewvice] def wwapwithexecutowbookkeeping[in, rawr o-out, twansfowmed](
+    context: context, :3
+    cuwwentcomponentidentifiew: componentidentifiew, rawr
+    e-executowwesuwtsideeffect: executowobsewvew[twansfowmed], (˘ω˘)
+    twansfowmew: o-out => twy[twansfowmed], (ˆ ﻌ ˆ)♡
+    s-size: option[twansfowmed => int] = n-nyone, mya
+    faiwopenpowicy: faiwopenpowicy = f-faiwopenpowicy.nevew, (U ᵕ U❁)
+    quawityfactowobsewvew: option[quawityfactowobsewvew] = nyone, mya
+    twacingconfig: twacingconfig.twacingconfig = t-twacingconfig.wwapwithspanandtwacingdata, ʘwʘ
+    o-oncompwete: t-twy[twansfowmed] => u-unit = { _: twy[twansfowmed] => () }
   )(
-    arrow: Arrow[In, Out]
-  ): Arrow[In, Out] = {
+    awwow: awwow[in, (˘ω˘) o-out]
+  ): a-awwow[in, 😳 out] = {
 
-    val failureClassifier =
-      toPipelineFailureWithComponentIdentifierStack(context, currentComponentIdentifier)
+    vaw faiwuwecwassifiew =
+      topipewinefaiwuwewithcomponentidentifiewstack(context, òωó cuwwentcomponentidentifiew)
 
-    /** transform the results, mapping all exceptions to [[PipelineFailure]]s, and tuple with original result */
-    val transformResultAndClassifyFailures: Arrow[Out, (Out, Try[Transformed])] =
-      Arrow.join(
-        Arrow.mapFailure(failureClassifier),
-        Arrow
-          .transformTry[Out, Transformed](result =>
-            result
-              .flatMap(transformer)
-              .rescue { case t => Throw(failureClassifier(t)) })
-          .liftToTry
+    /** t-twansfowm the wesuwts, nyaa~~ mapping aww exceptions t-to [[pipewinefaiwuwe]]s, o.O and tupwe with owiginaw w-wesuwt */
+    v-vaw twansfowmwesuwtandcwassifyfaiwuwes: awwow[out, nyaa~~ (out, t-twy[twansfowmed])] =
+      a-awwow.join(
+        a-awwow.mapfaiwuwe(faiwuwecwassifiew), (U ᵕ U❁)
+        awwow
+          .twansfowmtwy[out, 😳😳😳 twansfowmed](wesuwt =>
+            w-wesuwt
+              .fwatmap(twansfowmew)
+              .wescue { case t => thwow(faiwuwecwassifiew(t)) })
+          .wifttotwy
       )
 
-    /** Only record tracing data if [[TracingConfig.WrapWithSpanAndTracingData]] */
-    val maybeRecordTracingData: (Try[Transformed], Duration) => Unit = tracingConfig match {
-      case TracingConfig.NoTracing => (_, _) => ()
-      case TracingConfig.WrapWithSpanAndTracingData =>
-        (transformedAndClassifiedResult, latency) =>
-          recordTraceData(
-            context.componentStack,
-            currentComponentIdentifier,
-            transformedAndClassifiedResult,
-            latency,
-            transformedAndClassifiedResult.toOption.flatMap(result => size.map(_.apply(result)))
+    /** onwy w-wecowd twacing data if [[twacingconfig.wwapwithspanandtwacingdata]] */
+    vaw maybewecowdtwacingdata: (twy[twansfowmed], (U ﹏ U) d-duwation) => u-unit = t-twacingconfig match {
+      c-case t-twacingconfig.notwacing => (_, ^•ﻌ•^ _) => ()
+      case twacingconfig.wwapwithspanandtwacingdata =>
+        (twansfowmedandcwassifiedwesuwt, (⑅˘꒳˘) w-watency) =>
+          wecowdtwacedata(
+            context.componentstack, >_<
+            c-cuwwentcomponentidentifiew, (⑅˘꒳˘)
+            twansfowmedandcwassifiedwesuwt, σωσ
+            w-watency, 🥺
+            twansfowmedandcwassifiedwesuwt.tooption.fwatmap(wesuwt => size.map(_.appwy(wesuwt)))
           )
     }
 
-    /** Will never be in a failed state so we can do a simple [[Arrow.map]] */
-    val recordStatsAndUpdateQualityFactor =
-      Arrow
-        .map[(Try[(Out, Try[Transformed])], Duration), Unit] {
-          case (tryResultAndTryTransformed, latency) =>
-            val transformedAndClassifiedResult = tryResultAndTryTransformed.flatMap {
-              case (_, transformed) => transformed
+    /** w-wiww nyevew b-be in a faiwed state so we c-can do a simpwe [[awwow.map]] */
+    vaw wecowdstatsandupdatequawityfactow =
+      a-awwow
+        .map[(twy[(out, :3 t-twy[twansfowmed])], (ꈍᴗꈍ) duwation), ^•ﻌ•^ u-unit] {
+          c-case (twywesuwtandtwytwansfowmed, (˘ω˘) watency) =>
+            v-vaw twansfowmedandcwassifiedwesuwt = twywesuwtandtwytwansfowmed.fwatmap {
+              case (_, 🥺 twansfowmed) => t-twansfowmed
             }
-            executorResultSideEffect(transformedAndClassifiedResult, latency)
-            qualityFactorObserver.foreach(_.apply(transformedAndClassifiedResult, latency))
-            onComplete(transformedAndClassifiedResult)
-            maybeRecordTracingData(transformedAndClassifiedResult, latency)
+            executowwesuwtsideeffect(twansfowmedandcwassifiedwesuwt, (✿oωo) w-watency)
+            quawityfactowobsewvew.foweach(_.appwy(twansfowmedandcwassifiedwesuwt, XD watency))
+            o-oncompwete(twansfowmedandcwassifiedwesuwt)
+            m-maybewecowdtwacingdata(twansfowmedandcwassifiedwesuwt, (///ˬ///✿) w-watency)
         }.unit
 
     /**
-     * Applies the provided [[FailOpenPolicy]] based on the [[transformer]]'s results,
-     * returning the original result or an exception
+     * appwies the p-pwovided [[faiwopenpowicy]] b-based on the [[twansfowmew]]'s w-wesuwts, ( ͡o ω ͡o )
+     * wetuwning t-the owiginaw wesuwt ow an exception
      */
-    val applyFailOpenPolicyBasedOnTransformedResult: Arrow[
-      (Try[(Out, Try[Transformed])], Duration),
-      Out
+    v-vaw appwyfaiwopenpowicybasedontwansfowmedwesuwt: a-awwow[
+      (twy[(out, ʘwʘ twy[twansfowmed])], duwation), rawr
+      out
     ] =
-      Arrow
-        .map[(Try[(Out, Try[Transformed])], Duration), Try[(Out, Try[Transformed])]] {
-          case (tryResultAndTryTransformed, _) => tryResultAndTryTransformed
+      awwow
+        .map[(twy[(out, o.O t-twy[twansfowmed])], ^•ﻌ•^ d-duwation), (///ˬ///✿) twy[(out, twy[twansfowmed])]] {
+          case (twywesuwtandtwytwansfowmed, _) => twywesuwtandtwytwansfowmed
         }
-        .lowerFromTry
+        .wowewfwomtwy
         .map {
-          case (result, Throw(pipelineFailure: PipelineFailure))
-              if failOpenPolicy(pipelineFailure.category) =>
-            Return(result)
-          case (_, t: Throw[_]) => t.asInstanceOf[Throw[Out]]
-          case (result, _) => Return(result)
-        }.lowerFromTry
+          c-case (wesuwt, (ˆ ﻌ ˆ)♡ thwow(pipewinefaiwuwe: p-pipewinefaiwuwe))
+              i-if faiwopenpowicy(pipewinefaiwuwe.categowy) =>
+            wetuwn(wesuwt)
+          case (_, XD t: thwow[_]) => t.asinstanceof[thwow[out]]
+          case (wesuwt, (✿oωo) _) => w-wetuwn(wesuwt)
+        }.wowewfwomtwy
 
-    /** The complete Arrow minus a Local span wrapping */
-    val arrowWithTimingExecutorSideEffects = Arrow
-      .time(arrow.andThen(transformResultAndClassifyFailures))
-      .applyEffect(recordStatsAndUpdateQualityFactor)
-      .andThen(applyFailOpenPolicyBasedOnTransformedResult)
+    /** the compwete awwow minus a wocaw s-span wwapping */
+    vaw awwowwithtimingexecutowsideeffects = a-awwow
+      .time(awwow.andthen(twansfowmwesuwtandcwassifyfaiwuwes))
+      .appwyeffect(wecowdstatsandupdatequawityfactow)
+      .andthen(appwyfaiwopenpowicybasedontwansfowmedwesuwt)
 
-    /** Dont wrap with a span if we are not tracing */
-    tracingConfig match {
-      case TracingConfig.WrapWithSpanAndTracingData =>
-        wrapArrowWithLocalTracingSpan(arrowWithTimingExecutorSideEffects)
-      case TracingConfig.NoTracing =>
-        arrowWithTimingExecutorSideEffects
+    /** d-dont wwap with a span if we awe n-nyot twacing */
+    t-twacingconfig m-match {
+      c-case twacingconfig.wwapwithspanandtwacingdata =>
+        w-wwapawwowwithwocawtwacingspan(awwowwithtimingexecutowsideeffects)
+      c-case twacingconfig.notwacing =>
+        awwowwithtimingexecutowsideeffects
     }
   }
 
-  /** Let-scopes a [[TraceId]] around a computation */
-  private[this] object TracingLetter extends Letter[TraceId] {
-    override def let[S](traceId: TraceId)(s: => S): S = Trace.letId(traceId)(s)
+  /** wet-scopes a [[twaceid]] awound a computation */
+  p-pwivate[this] object t-twacingwettew e-extends wettew[twaceid] {
+    o-ovewwide def wet[s](twaceid: twaceid)(s: => s-s): s-s = twace.wetid(twaceid)(s)
   }
 
   /**
-   * Wraps the Arrow's execution in a new trace span as a child of the current parent span
+   * wwaps the awwow's execution in a nyew twace span as a-a chiwd of the c-cuwwent pawent span
    *
-   * @note Should __never__ be called directly!
+   * @note shouwd __nevew__ be cawwed d-diwectwy! -.-
    *
-   * It's expected that the contained `arrow` will invoke [[recordTraceData]] exactly ONCE
-   * during it's execution.
+   * i-it's expected t-that the contained `awwow` wiww invoke [[wecowdtwacedata]] e-exactwy once
+   * duwing it's execution. XD
    *
-   * @note this does not record any data about the trace, it only sets the [[Trace]] Span
-   *       for the execution of `arrow`
+   * @note t-this does n-nyot wecowd any data about the twace, (✿oωo) it onwy sets t-the [[twace]] span
+   *       f-fow the execution o-of `awwow`
    */
-  private[service] def wrapArrowWithLocalTracingSpan[In, Out](
-    arrow: Arrow[In, Out]
-  ): Arrow[In, Out] =
-    Arrow.ifelse(
-      _ => Trace.isActivelyTracing,
-      Arrow.let(TracingLetter)(Trace.nextId)(arrow),
-      arrow
+  pwivate[sewvice] d-def wwapawwowwithwocawtwacingspan[in, (˘ω˘) o-out](
+    a-awwow: awwow[in, (ˆ ﻌ ˆ)♡ o-out]
+  ): a-awwow[in, >_< out] =
+    a-awwow.ifewse(
+      _ => twace.isactivewytwacing, -.-
+      awwow.wet(twacingwettew)(twace.nextid)(awwow), (///ˬ///✿)
+      a-awwow
     )
 
-  private[this] object Tracing {
+  p-pwivate[this] object twacing {
 
     /**
-     * Duplicate of [[com.twitter.finagle.tracing.Tracing]]'s `localSpans` which
-     * uses an un-scoped [[StatsReceiver]]
+     * d-dupwicate of [[com.twittew.finagwe.twacing.twacing]]'s `wocawspans` which
+     * uses an un-scoped [[statsweceivew]]
      *
-     * Since we needed to roll-our-own latency measurement we are unable to increment the
-     * `local_spans` metric automatically, this is important in the event a service is
-     * unexpectedly not recording spans or unexpectedly recording too many, so we manually
-     * increment it
+     * s-since we nyeeded to woww-ouw-own w-watency measuwement we awe u-unabwe to incwement t-the
+     * `wocaw_spans` metwic automaticawwy, XD t-this is impowtant in the event a sewvice is
+     * u-unexpectedwy n-nyot wecowding spans ow unexpectedwy wecowding t-too many, ^^;; so w-we manuawwy
+     * incwement it
      */
-    val localSpans: Counter = DefaultStatsReceiver.counter("tracing", "local_spans")
+    v-vaw wocawspans: countew = defauwtstatsweceivew.countew("twacing", rawr x3 "wocaw_spans")
 
-    /** Local Component field of a span in the UI */
-    val localComponentTag = "lc"
-    val sizeTag = "product_mixer.result.size"
-    val successTag = "product_mixer.result.success"
-    val successValue = "success"
-    val cancelledTag = "product_mixer.result.cancelled"
-    val failureTag = "product_mixer.result.failure"
+    /** w-wocaw component f-fiewd of a span in the ui */
+    v-vaw wocawcomponenttag = "wc"
+    v-vaw sizetag = "pwoduct_mixew.wesuwt.size"
+    vaw successtag = "pwoduct_mixew.wesuwt.success"
+    vaw successvawue = "success"
+    v-vaw cancewwedtag = "pwoduct_mixew.wesuwt.cancewwed"
+    v-vaw faiwuwetag = "pwoduct_mixew.wesuwt.faiwuwe"
   }
 
   /**
-   * Records metadata onto the current [[Trace]] Span
+   * w-wecowds metadata o-onto the cuwwent [[twace]] span
    *
-   * @note Should __never__ be called directly!
+   * @note shouwd __nevew__ be cawwed diwectwy! OwO
    *
-   * This should be called exactly ONCE in the Arrow passed into [[wrapArrowWithLocalTracingSpan]]
-   * to record data for the Span.
+   * this shouwd be cawwed exactwy once in the awwow passed into [[wwapawwowwithwocawtwacingspan]]
+   * t-to wecowd d-data fow the span. ʘwʘ
    */
-  private[service] def recordTraceData[T](
-    componentStack: ComponentIdentifierStack,
-    componentIdentifier: ComponentIdentifier,
-    result: Try[T],
-    latency: Duration,
-    size: Option[Int] = None
-  ): Unit = {
-    if (Trace.isActivelyTracing) {
-      Tracing.localSpans.incr()
-      val traceId = Trace.id
-      val endTime = Time.nowNanoPrecision
+  p-pwivate[sewvice] d-def w-wecowdtwacedata[t](
+    c-componentstack: componentidentifiewstack, rawr
+    c-componentidentifiew: c-componentidentifiew, UwU
+    wesuwt: twy[t], (ꈍᴗꈍ)
+    w-watency: d-duwation, (✿oωo)
+    size: option[int] = nyone
+  ): unit = {
+    i-if (twace.isactivewytwacing) {
+      twacing.wocawspans.incw()
+      vaw twaceid = twace.id
+      v-vaw endtime = time.nownanopwecision
 
-      // These annotations are needed for the Zipkin UI to display the span properly
-      TraceServiceName().foreach(Trace.recordServiceName)
-      Trace.recordRpc(componentIdentifier.snakeCase) // name of the span in the UI
-      Trace.recordBinary(
-        Tracing.localComponentTag,
-        componentStack.peek.toString + "/" + componentIdentifier.toString)
-      Trace.record(Record(traceId, endTime - latency, Annotation.Message(LocalBeginAnnotation)))
-      Trace.record(Record(traceId, endTime, Annotation.Message(LocalEndAnnotation)))
+      // t-these a-annotations awe nyeeded fow the z-zipkin ui to dispway t-the span pwopewwy
+      t-twacesewvicename().foweach(twace.wecowdsewvicename)
+      twace.wecowdwpc(componentidentifiew.snakecase) // n-nyame o-of the span in the ui
+      twace.wecowdbinawy(
+        t-twacing.wocawcomponenttag, (⑅˘꒳˘)
+        componentstack.peek.tostwing + "/" + c-componentidentifiew.tostwing)
+      t-twace.wecowd(wecowd(twaceid, OwO e-endtime - watency, 🥺 annotation.message(wocawbeginannotation)))
+      t-twace.wecowd(wecowd(twaceid, >_< endtime, annotation.message(wocawendannotation)))
 
-      // product mixer specific zipkin data
-      size.foreach(size => Trace.recordBinary(Tracing.sizeTag, size))
-      result match {
-        case Return(_) =>
-          Trace.recordBinary(Tracing.successTag, Tracing.successValue)
-        case Throw(CancelledExceptionExtractor(e)) =>
-          Trace.recordBinary(Tracing.cancelledTag, e)
-        case Throw(e) =>
-          Trace.recordBinary(Tracing.failureTag, e)
+      // pwoduct m-mixew specific zipkin data
+      size.foweach(size => twace.wecowdbinawy(twacing.sizetag, (ꈍᴗꈍ) size))
+      wesuwt match {
+        case wetuwn(_) =>
+          t-twace.wecowdbinawy(twacing.successtag, 😳 twacing.successvawue)
+        case thwow(cancewwedexceptionextwactow(e)) =>
+          twace.wecowdbinawy(twacing.cancewwedtag, 🥺 e)
+        case thwow(e) =>
+          twace.wecowdbinawy(twacing.faiwuwetag, nyaa~~ e-e)
       }
     }
   }
 
   /**
-   * Returns a tuple of the stats scopes for the current component and the relative scope for
-   * the parent component and the current component together
+   * wetuwns a tupwe of the stats s-scopes fow the cuwwent component a-and the wewative scope fow
+   * the pawent component a-and the cuwwent component t-togethew
    *
-   * This is useful when recording stats for a component by itself as well as stats for calls to that component from it's parent.
+   * this is usefuw w-when wecowding s-stats fow a component by itsewf as weww as stats f-fow cawws to that component fwom it's pawent. ^•ﻌ•^
    *
-   * @example if the current component has a scope of "currentComponent" and the parent component has a scope of "parentComponent"
-   *          then this will return `(Seq("currentComponent"), Seq("parentComponent", "currentComponent"))`
+   * @exampwe if the cuwwent c-component has a scope of "cuwwentcomponent" and t-the pawent component has a scope o-of "pawentcomponent"
+   *          then this w-wiww wetuwn `(seq("cuwwentcomponent"), (ˆ ﻌ ˆ)♡ s-seq("pawentcomponent", (U ᵕ U❁) "cuwwentcomponent"))`
    */
-  def buildScopes(
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier
-  ): Executor.Scopes = {
-    val parentScopes = context.componentStack.peek.toScopes
-    val componentScopes = currentComponentIdentifier.toScopes
-    val relativeScopes = parentScopes ++ componentScopes
-    Executor.Scopes(componentScopes, relativeScopes)
+  def buiwdscopes(
+    c-context: context, mya
+    cuwwentcomponentidentifiew: componentidentifiew
+  ): e-executow.scopes = {
+    vaw pawentscopes = context.componentstack.peek.toscopes
+    vaw componentscopes = cuwwentcomponentidentifiew.toscopes
+    vaw w-wewativescopes = p-pawentscopes ++ componentscopes
+    e-executow.scopes(componentscopes, 😳 w-wewativescopes)
   }
 
   /**
-   * Makes a [[BroadcastStatsReceiver]] that will broadcast stats to the correct
-   * current component's scope and to the scope relative to the parent.
+   * makes a [[bwoadcaststatsweceivew]] t-that wiww bwoadcast stats to the cowwect
+   * cuwwent component's scope a-and to the scope w-wewative to the pawent. σωσ
    */
-  def broadcastStatsReceiver(
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier,
-    statsReceiver: StatsReceiver
-  ): StatsReceiver = {
-    val Executor.Scopes(componentScopes, relativeScopes) =
-      Executor.buildScopes(context, currentComponentIdentifier)
+  d-def bwoadcaststatsweceivew(
+    c-context: context, ( ͡o ω ͡o )
+    cuwwentcomponentidentifiew: c-componentidentifiew, XD
+    statsweceivew: statsweceivew
+  ): statsweceivew = {
+    v-vaw executow.scopes(componentscopes, :3 wewativescopes) =
+      executow.buiwdscopes(context, :3 c-cuwwentcomponentidentifiew)
 
-    BroadcastStatsReceiver(
-      Seq(statsReceiver.scope(relativeScopes: _*), statsReceiver.scope(componentScopes: _*)))
+    b-bwoadcaststatsweceivew(
+      seq(statsweceivew.scope(wewativescopes: _*), (⑅˘꒳˘) statsweceivew.scope(componentscopes: _*)))
   }
 
   /**
-   * Returns a feature map containing all the [[com.twitter.product_mixer.core.feature.Feature]]s
-   * stored as failures using the exception provided with as the reason wrapped in a PipelineFailure.
-   * e.g, for features A & B that threw an ExampleException b, this will return:
-   * { A -> Throw(PipelineFailure(...)), B -> Throw(PipelineFailure(...)) }
+   * wetuwns a-a featuwe map containing aww the [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwe]]s
+   * stowed as faiwuwes using the exception pwovided with as the weason wwapped in a pipewinefaiwuwe. òωó
+   * e-e.g, mya fow featuwes a-a & b that thwew an exampweexception b-b, 😳😳😳 this w-wiww wetuwn:
+   * { a -> thwow(pipewinefaiwuwe(...)), :3 b-b -> thwow(pipewinefaiwuwe(...)) }
    */
-  def featureMapWithFailuresForFeatures(
-    features: Set[Feature[_, _]],
-    error: Throwable,
-    context: Executor.Context
-  ): FeatureMap = {
-    val builder = FeatureMapBuilder()
-    features.foreach { feature =>
-      val pipelineFailure = PipelineFailure(
-        FeatureHydrationFailed,
-        s"Feature hydration failed for ${feature.toString}",
-        Some(error),
-        Some(context.componentStack))
-      builder.addFailure(feature, pipelineFailure)
+  def featuwemapwithfaiwuwesfowfeatuwes(
+    featuwes: set[featuwe[_, >_< _]],
+    ewwow: thwowabwe, 🥺
+    context: executow.context
+  ): f-featuwemap = {
+    vaw buiwdew = featuwemapbuiwdew()
+    featuwes.foweach { featuwe =>
+      v-vaw pipewinefaiwuwe = p-pipewinefaiwuwe(
+        f-featuwehydwationfaiwed, (ꈍᴗꈍ)
+        s"featuwe hydwation faiwed fow ${featuwe.tostwing}", rawr x3
+        some(ewwow), (U ﹏ U)
+        s-some(context.componentstack))
+      b-buiwdew.addfaiwuwe(featuwe, ( ͡o ω ͡o ) p-pipewinefaiwuwe)
     }
-    builder.build()
+    buiwdew.buiwd()
   }
 
   /**
-   * Validates and returns back the passed feature map if it passes validation. A feature map
-   * is considered valid if it contains only the passed `registeredFeatures` features in it,
-   * nothing else and nothing missing.
+   * v-vawidates and wetuwns b-back the passed featuwe map if i-it passes vawidation. 😳😳😳 a featuwe m-map
+   * is considewed vawid if it contains onwy t-the passed `wegistewedfeatuwes` featuwes in it, 🥺
+   * n-nyothing e-ewse and nyothing missing. òωó
    */
-  @throws(classOf[PipelineFailure])
-  def validateFeatureMap(
-    registeredFeatures: Set[Feature[_, _]],
-    featureMap: FeatureMap,
-    context: Executor.Context
-  ): FeatureMap = {
-    val hydratedFeatures = featureMap.getFeatures
-    if (hydratedFeatures == registeredFeatures) {
-      featureMap
-    } else {
-      val missingFeatures = registeredFeatures -- hydratedFeatures
-      val unregisteredFeatures = hydratedFeatures -- registeredFeatures
-      throw PipelineFailure(
-        MisconfiguredFeatureMapFailure,
-        s"Unregistered features $unregisteredFeatures and missing features $missingFeatures",
-        None,
-        Some(context.componentStack)
+  @thwows(cwassof[pipewinefaiwuwe])
+  d-def vawidatefeatuwemap(
+    w-wegistewedfeatuwes: set[featuwe[_, XD _]],
+    f-featuwemap: featuwemap, XD
+    context: e-executow.context
+  ): featuwemap = {
+    v-vaw h-hydwatedfeatuwes = featuwemap.getfeatuwes
+    if (hydwatedfeatuwes == w-wegistewedfeatuwes) {
+      featuwemap
+    } ewse {
+      vaw missingfeatuwes = wegistewedfeatuwes -- hydwatedfeatuwes
+      vaw unwegistewedfeatuwes = hydwatedfeatuwes -- w-wegistewedfeatuwes
+      thwow pipewinefaiwuwe(
+        m-misconfiguwedfeatuwemapfaiwuwe, ( ͡o ω ͡o )
+        s"unwegistewed f-featuwes $unwegistewedfeatuwes and missing featuwes $missingfeatuwes", >w<
+        nyone, mya
+        s-some(context.componentstack)
       )
     }
   }
 
-  object NotAMisconfiguredFeatureMapFailure {
+  object nyotamisconfiguwedfeatuwemapfaiwuwe {
 
     /**
-     * Will return any exception that isn't a [[MisconfiguredFeatureMapFailure]] [[PipelineFailure]]
-     * Allows for easy [[Arrow.handle]]ing all exceptions that aren't [[MisconfiguredFeatureMapFailure]]s
+     * wiww wetuwn any e-exception that isn't a [[misconfiguwedfeatuwemapfaiwuwe]] [[pipewinefaiwuwe]]
+     * awwows fow e-easy [[awwow.handwe]]ing aww exceptions that awen't [[misconfiguwedfeatuwemapfaiwuwe]]s
      */
-    def unapply(e: Throwable): Option[Throwable] = e match {
-      case pipelineFailure: PipelineFailure
-          if pipelineFailure.category == MisconfiguredFeatureMapFailure =>
-        None
-      case e => Some(e)
+    d-def unappwy(e: thwowabwe): option[thwowabwe] = e match {
+      c-case pipewinefaiwuwe: p-pipewinefaiwuwe
+          if pipewinefaiwuwe.categowy == misconfiguwedfeatuwemapfaiwuwe =>
+        n-nyone
+      c-case e => some(e)
     }
   }
 
   /**
-   * contains the scopes for recording metrics for the component by itself and
-   * the relative scope of that component within it's parent component scope
+   * c-contains the scopes f-fow wecowding metwics fow the component by itsewf a-and
+   * the wewative scope of that component within it's p-pawent component scope
    *
-   * @see [[Executor.buildScopes]]
+   * @see [[executow.buiwdscopes]]
    */
-  case class Scopes(componentScopes: Seq[String], relativeScope: Seq[String])
+  case cwass scopes(componentscopes: s-seq[stwing], (ꈍᴗꈍ) w-wewativescope: s-seq[stwing])
 
   /**
-   * Wrap the [[Throwable]] in a [[UncategorizedServerFailure]] [[PipelineFailure]] with the original
-   * [[Throwable]] as the cause, even if it's already a [[PipelineFailure]].
+   * wwap the [[thwowabwe]] in a [[uncategowizedsewvewfaiwuwe]] [[pipewinefaiwuwe]] with t-the owiginaw
+   * [[thwowabwe]] as the cause, -.- e-even if it's awweady a [[pipewinefaiwuwe]]. (⑅˘꒳˘)
    *
-   * This ensures that any access to the stored feature will result in a meaningful [[UncategorizedServerFailure]]
-   * [[com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureCategory]] in stats which is more useful
-   * for customers components which access a failed [[Feature]] than the original [[com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureCategory]].
+   * t-this ensuwes t-that any access to the stowed featuwe wiww wesuwt in a meaningfuw [[uncategowizedsewvewfaiwuwe]]
+   * [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwecategowy]] in stats which is mowe usefuw
+   * f-fow customews c-components which access a faiwed [[featuwe]] than t-the owiginaw [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwecategowy]]. (U ﹏ U)
    */
-  def uncategorizedServerFailure(
-    componentStack: ComponentIdentifierStack,
-    throwable: Throwable
-  ): PipelineFailure = {
-    PipelineFailure(
-      UncategorizedServerFailure,
-      reason = "Unclassified Failure in Pipeline",
-      Some(throwable),
-      Some(componentStack)
+  def uncategowizedsewvewfaiwuwe(
+    c-componentstack: c-componentidentifiewstack, σωσ
+    thwowabwe: t-thwowabwe
+  ): p-pipewinefaiwuwe = {
+    p-pipewinefaiwuwe(
+      u-uncategowizedsewvewfaiwuwe, :3
+      weason = "uncwassified faiwuwe in pipewine", /(^•ω•^)
+      s-some(thwowabwe), σωσ
+      s-some(componentstack)
     )
   }
 
   /**
-   * [[PartialFunction]] that converts any [[Throwable]] into a
-   * [[PipelineFailure]] based on the provided `failureClassifier`
+   * [[pawtiawfunction]] t-that convewts a-any [[thwowabwe]] i-into a
+   * [[pipewinefaiwuwe]] b-based on the pwovided `faiwuwecwassifiew`
    */
-  def toPipelineFailureWithComponentIdentifierStack(
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier
-  ): PipelineFailureClassifier = {
-    // if given a `currentComponentIdentifier` then ensure we correctly handle `BasedOnParentComponent` identifier types
-    val contextWithCurrentComponentIdentifier =
-      context.pushToComponentStack(currentComponentIdentifier)
-    PipelineFailureClassifier(
-      contextWithCurrentComponentIdentifier.pipelineFailureClassifier
-        .orElse[Throwable, PipelineFailure] {
-          case CancelledExceptionExtractor(throwable) => throw throwable
-          case pipelineFailure: PipelineFailure => pipelineFailure
-          case throwable =>
-            uncategorizedServerFailure(
-              contextWithCurrentComponentIdentifier.componentStack,
-              throwable)
-        }.andThen { pipelineFailure =>
-          pipelineFailure.componentStack match {
-            case _: Some[_] => pipelineFailure
-            case None =>
-              pipelineFailure.copy(componentStack =
-                Some(contextWithCurrentComponentIdentifier.componentStack))
+  d-def topipewinefaiwuwewithcomponentidentifiewstack(
+    c-context: c-context, (U ᵕ U❁)
+    cuwwentcomponentidentifiew: componentidentifiew
+  ): p-pipewinefaiwuwecwassifiew = {
+    // if given a `cuwwentcomponentidentifiew` t-then ensuwe we cowwectwy handwe `basedonpawentcomponent` identifiew t-types
+    v-vaw contextwithcuwwentcomponentidentifiew =
+      context.pushtocomponentstack(cuwwentcomponentidentifiew)
+    pipewinefaiwuwecwassifiew(
+      contextwithcuwwentcomponentidentifiew.pipewinefaiwuwecwassifiew
+        .owewse[thwowabwe, 😳 p-pipewinefaiwuwe] {
+          c-case cancewwedexceptionextwactow(thwowabwe) => thwow thwowabwe
+          c-case pipewinefaiwuwe: p-pipewinefaiwuwe => pipewinefaiwuwe
+          case thwowabwe =>
+            uncategowizedsewvewfaiwuwe(
+              c-contextwithcuwwentcomponentidentifiew.componentstack, ʘwʘ
+              t-thwowabwe)
+        }.andthen { pipewinefaiwuwe =>
+          pipewinefaiwuwe.componentstack m-match {
+            c-case _: some[_] => pipewinefaiwuwe
+            case nyone =>
+              p-pipewinefaiwuwe.copy(componentstack =
+                some(contextwithcuwwentcomponentidentifiew.componentstack))
           }
         }
     )
   }
 
   /**
-   * information used by an [[Executor]] that provides context around execution
+   * infowmation used by an [[executow]] that pwovides context a-awound execution
    */
-  case class Context(
-    pipelineFailureClassifier: PipelineFailureClassifier,
-    componentStack: ComponentIdentifierStack) {
+  case cwass context(
+    p-pipewinefaiwuwecwassifiew: p-pipewinefaiwuwecwassifiew, (⑅˘꒳˘)
+    componentstack: componentidentifiewstack) {
 
-    def pushToComponentStack(newComponentIdentifier: ComponentIdentifier): Context =
-      copy(componentStack = componentStack.push(newComponentIdentifier))
+    d-def pushtocomponentstack(newcomponentidentifiew: componentidentifiew): c-context =
+      c-copy(componentstack = c-componentstack.push(newcomponentidentifiew))
   }
 }

@@ -1,128 +1,128 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.ml.api.DataRecord
-import com.twitter.scalding.DateParser
-import com.twitter.scalding.RichDate
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.storehaus_internal.manhattan._
-import com.twitter.storehaus_internal.util.ApplicationID
-import com.twitter.storehaus_internal.util.DatasetName
-import com.twitter.storehaus_internal.util.HDFSPath
-import com.twitter.summingbird.batch.BatchID
-import com.twitter.summingbird.batch.Batcher
-import com.twitter.summingbird_internal.runner.store_config._
-import java.util.TimeZone
-import com.twitter.summingbird.batch.MillisecondBatcher
+impowt c-com.twittew.daw.cwient.dataset.keyvawdawdataset
+i-impowt com.twittew.mw.api.datawecowd
+i-impowt com.twittew.scawding.datepawsew
+impowt c-com.twittew.scawding.wichdate
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+i-impowt c-com.twittew.stowehaus_intewnaw.manhattan._
+i-impowt com.twittew.stowehaus_intewnaw.utiw.appwicationid
+impowt com.twittew.stowehaus_intewnaw.utiw.datasetname
+impowt com.twittew.stowehaus_intewnaw.utiw.hdfspath
+i-impowt com.twittew.summingbiwd.batch.batchid
+impowt com.twittew.summingbiwd.batch.batchew
+i-impowt com.twittew.summingbiwd_intewnaw.wunnew.stowe_config._
+i-impowt java.utiw.timezone
+impowt com.twittew.summingbiwd.batch.miwwisecondbatchew
 
 /*
- * Configuration common to all offline aggregate stores
+ * configuwation common to aww offwine a-aggwegate stowes
  *
- * @param outputHdfsPathPrefix HDFS prefix to store all output aggregate types offline
- * @param dummyAppId Dummy manhattan app id required by summingbird (unused)
- * @param dummyDatasetPrefix Dummy manhattan dataset prefix required by summingbird (unused)
- * @param startDate Start date for summingbird job to begin computing aggregates
+ * @pawam outputhdfspathpwefix h-hdfs pwefix t-to stowe aww output aggwegate types offwine
+ * @pawam dummyappid dummy manhattan a-app id wequiwed by summingbiwd (unused)
+ * @pawam dummydatasetpwefix dummy manhattan dataset p-pwefix wequiwed by summingbiwd (unused)
+ * @pawam s-stawtdate stawt d-date fow summingbiwd j-job to b-begin computing aggwegates
  */
-case class OfflineAggregateStoreCommonConfig(
-  outputHdfsPathPrefix: String,
-  dummyAppId: String,
-  dummyDatasetPrefix: String,
-  startDate: String)
+case cwass offwineaggwegatestowecommonconfig(
+  outputhdfspathpwefix: s-stwing, o.O
+  dummyappid: stwing, mya
+  dummydatasetpwefix: s-stwing, 🥺
+  stawtdate: stwing)
 
 /**
- * A trait inherited by any object that defines
- * a HDFS prefix to write output data to. E.g. timelines has its own
- * output prefix to write aggregates_v2 results, your team can create
- * its own.
+ * a twait inhewited by any object that defines
+ * a h-hdfs pwefix to wwite output data t-to. ^^;; e.g. timewines h-has its own
+ * o-output pwefix to wwite aggwegates_v2 wesuwts, :3 youw team can cweate
+ * i-its own. (U ﹏ U)
  */
-trait OfflineStoreCommonConfig extends Serializable {
+t-twait offwinestowecommonconfig extends sewiawizabwe {
   /*
-   * @param startDate Date to create config for
-   * @return OfflineAggregateStoreCommonConfig object with all config details for output populated
+   * @pawam s-stawtdate d-date to cweate config fow
+   * @wetuwn o-offwineaggwegatestowecommonconfig object with aww c-config detaiws fow output popuwated
    */
-  def apply(startDate: String): OfflineAggregateStoreCommonConfig
+  def a-appwy(stawtdate: stwing): offwineaggwegatestowecommonconfig
 }
 
 /**
- * @param name Uniquely identifiable human-readable name for this output store
- * @param startDate Start date for this output store from which aggregates should be computed
- * @param commonConfig Provider of other common configuration details
- * @param batchesToKeep Retention policy on output (number of batches to keep)
+ * @pawam n-nyame uniquewy identifiabwe h-human-weadabwe n-nyame fow this output stowe
+ * @pawam stawtdate stawt date fow this output stowe fwom which aggwegates shouwd b-be computed
+ * @pawam c-commonconfig pwovidew o-of othew common c-configuwation d-detaiws
+ * @pawam batchestokeep wetention powicy on output (numbew o-of batches to keep)
  */
-abstract class OfflineAggregateStoreBase
-    extends OfflineStoreOnlyConfig[ManhattanROConfig]
-    with AggregateStore {
+abstwact cwass offwineaggwegatestowebase
+    extends offwinestoweonwyconfig[manhattanwoconfig]
+    w-with aggwegatestowe {
 
-  override def name: String
-  def startDate: String
-  def commonConfig: OfflineStoreCommonConfig
-  def batchesToKeep: Int
-  def maxKvSourceFailures: Int
+  o-ovewwide d-def nyame: stwing
+  d-def stawtdate: stwing
+  def c-commonconfig: offwinestowecommonconfig
+  d-def batchestokeep: i-int
+  d-def maxkvsouwcefaiwuwes: int
 
-  val datedCommonConfig: OfflineAggregateStoreCommonConfig = commonConfig.apply(startDate)
-  val manhattan: ManhattanROConfig = ManhattanROConfig(
-    /* This is a sample config, will be replaced with production config later */
-    HDFSPath(s"${datedCommonConfig.outputHdfsPathPrefix}/${name}"),
-    ApplicationID(datedCommonConfig.dummyAppId),
-    DatasetName(s"${datedCommonConfig.dummyDatasetPrefix}_${name}_1"),
-    com.twitter.storehaus_internal.manhattan.Adama
+  vaw datedcommonconfig: o-offwineaggwegatestowecommonconfig = c-commonconfig.appwy(stawtdate)
+  v-vaw m-manhattan: manhattanwoconfig = m-manhattanwoconfig(
+    /* this is a sampwe config, OwO wiww be wepwaced w-with pwoduction config watew */
+    hdfspath(s"${datedcommonconfig.outputhdfspathpwefix}/${name}"), 😳😳😳
+    appwicationid(datedcommonconfig.dummyappid), (ˆ ﻌ ˆ)♡
+    datasetname(s"${datedcommonconfig.dummydatasetpwefix}_${name}_1"),
+    com.twittew.stowehaus_intewnaw.manhattan.adama
   )
 
-  val batcherSize = 24
-  val batcher: MillisecondBatcher = Batcher.ofHours(batcherSize)
+  v-vaw batchewsize = 24
+  vaw batchew: miwwisecondbatchew = batchew.ofhouws(batchewsize)
 
-  val startTime: RichDate =
-    RichDate(datedCommonConfig.startDate)(TimeZone.getTimeZone("UTC"), DateParser.default)
+  vaw stawttime: w-wichdate =
+    w-wichdate(datedcommonconfig.stawtdate)(timezone.gettimezone("utc"), XD d-datepawsew.defauwt)
 
-  val offline: ManhattanROConfig = manhattan
+  vaw offwine: m-manhattanwoconfig = manhattan
 }
 
 /**
- * Defines an aggregates store which is composed of DataRecords
- * @param name Uniquely identifiable human-readable name for this output store
- * @param startDate Start date for this output store from which aggregates should be computed
- * @param commonConfig Provider of other common configuration details
- * @param batchesToKeep Retention policy on output (number of batches to keep)
+ * d-defines an aggwegates s-stowe which is composed of datawecowds
+ * @pawam nyame uniquewy identifiabwe human-weadabwe n-nyame fow this output stowe
+ * @pawam s-stawtdate stawt date fow t-this output stowe f-fwom which aggwegates shouwd be computed
+ * @pawam c-commonconfig p-pwovidew of othew common configuwation d-detaiws
+ * @pawam b-batchestokeep wetention powicy on output (numbew of batches to keep)
  */
-case class OfflineAggregateDataRecordStore(
-  override val name: String,
-  override val startDate: String,
-  override val commonConfig: OfflineStoreCommonConfig,
-  override val batchesToKeep: Int = 7,
-  override val maxKvSourceFailures: Int = 0)
-    extends OfflineAggregateStoreBase {
+c-case cwass o-offwineaggwegatedatawecowdstowe(
+  o-ovewwide vaw nyame: stwing, (ˆ ﻌ ˆ)♡
+  o-ovewwide vaw stawtdate: s-stwing, ( ͡o ω ͡o )
+  ovewwide vaw c-commonconfig: offwinestowecommonconfig, rawr x3
+  ovewwide vaw batchestokeep: int = 7, nyaa~~
+  ovewwide vaw maxkvsouwcefaiwuwes: i-int = 0)
+    e-extends offwineaggwegatestowebase {
 
-  def toOfflineAggregateDataRecordStoreWithDAL(
-    dalDataset: KeyValDALDataset[KeyVal[AggregationKey, (BatchID, DataRecord)]]
-  ): OfflineAggregateDataRecordStoreWithDAL =
-    OfflineAggregateDataRecordStoreWithDAL(
-      name = name,
-      startDate = startDate,
-      commonConfig = commonConfig,
-      dalDataset = dalDataset,
-      maxKvSourceFailures = maxKvSourceFailures
+  def tooffwineaggwegatedatawecowdstowewithdaw(
+    dawdataset: k-keyvawdawdataset[keyvaw[aggwegationkey, >_< (batchid, ^^;; d-datawecowd)]]
+  ): offwineaggwegatedatawecowdstowewithdaw =
+    offwineaggwegatedatawecowdstowewithdaw(
+      name = nyame, (ˆ ﻌ ˆ)♡
+      s-stawtdate = stawtdate, ^^;;
+      commonconfig = commonconfig, (⑅˘꒳˘)
+      dawdataset = d-dawdataset, rawr x3
+      maxkvsouwcefaiwuwes = maxkvsouwcefaiwuwes
     )
 }
 
-trait withDALDataset {
-  def dalDataset: KeyValDALDataset[KeyVal[AggregationKey, (BatchID, DataRecord)]]
+t-twait w-withdawdataset {
+  def dawdataset: keyvawdawdataset[keyvaw[aggwegationkey, (///ˬ///✿) (batchid, datawecowd)]]
 }
 
 /**
- * Defines an aggregates store which is composed of DataRecords and writes using DAL.
- * @param name Uniquely identifiable human-readable name for this output store
- * @param startDate Start date for this output store from which aggregates should be computed
- * @param commonConfig Provider of other common configuration details
- * @param dalDataset The KeyValDALDataset for this output store
- * @param batchesToKeep Unused, kept for interface compatibility. You must define a separate Oxpecker
- *                      retention policy to maintain the desired number of versions.
+ * d-defines a-an aggwegates stowe which is composed of datawecowds and wwites u-using daw. 🥺
+ * @pawam nyame u-uniquewy identifiabwe human-weadabwe nyame fow this output stowe
+ * @pawam s-stawtdate stawt date f-fow this output s-stowe fwom which aggwegates shouwd b-be computed
+ * @pawam commonconfig p-pwovidew o-of othew common c-configuwation detaiws
+ * @pawam dawdataset the keyvawdawdataset f-fow this output s-stowe
+ * @pawam batchestokeep unused, >_< kept fow intewface c-compatibiwity. UwU y-you must d-define a sepawate oxpeckew
+ *                      wetention powicy t-to maintain the desiwed nyumbew o-of vewsions.
  */
-case class OfflineAggregateDataRecordStoreWithDAL(
-  override val name: String,
-  override val startDate: String,
-  override val commonConfig: OfflineStoreCommonConfig,
-  override val dalDataset: KeyValDALDataset[KeyVal[AggregationKey, (BatchID, DataRecord)]],
-  override val batchesToKeep: Int = -1,
-  override val maxKvSourceFailures: Int = 0)
-    extends OfflineAggregateStoreBase
-    with withDALDataset
+c-case cwass offwineaggwegatedatawecowdstowewithdaw(
+  ovewwide vaw nyame: stwing, >_<
+  o-ovewwide v-vaw stawtdate: s-stwing, -.-
+  ovewwide v-vaw commonconfig: offwinestowecommonconfig, mya
+  o-ovewwide vaw dawdataset: keyvawdawdataset[keyvaw[aggwegationkey, >w< (batchid, (U ﹏ U) datawecowd)]], 😳😳😳
+  ovewwide vaw batchestokeep: int = -1, o.O
+  o-ovewwide vaw maxkvsouwcefaiwuwes: i-int = 0)
+    extends offwineaggwegatestowebase
+    w-with withdawdataset

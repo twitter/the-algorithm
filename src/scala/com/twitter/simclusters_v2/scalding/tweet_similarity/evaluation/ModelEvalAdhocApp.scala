@@ -1,91 +1,91 @@
-package com.twitter.simclusters_v2.scalding.tweet_similarity.evaluation
+package com.twittew.simcwustews_v2.scawding.tweet_simiwawity.evawuation
 
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.DailySuffixFeatureSource
-import com.twitter.ml.api.DataSetPipe
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.scalding._
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.tweet_similarity.TweetSimilarityFeatures
-import com.twitter.twml.runtime.scalding.TensorflowBatchPredictor
-import java.util.TimeZone
+impowt com.twittew.mw.api.featuwe.continuous
+i-impowt com.twittew.mw.api.daiwysuffixfeatuwesouwce
+i-impowt com.twittew.mw.api.datasetpipe
+i-impowt c-com.twittew.mw.api.wichdatawecowd
+i-impowt com.twittew.scawding._
+i-impowt com.twittew.scawding.typed.typedpipe
+i-impowt com.twittew.scawding_intewnaw.job.twittewexecutionapp
+i-impowt com.twittew.simcwustews_v2.tweet_simiwawity.tweetsimiwawityfeatuwes
+impowt com.twittew.twmw.wuntime.scawding.tensowfwowbatchpwedictow
+impowt j-java.utiw.timezone
 
 /**
- * Scalding execution app for scoring a Dataset against an exported Tensorflow model.
+ * scawding execution a-app fow scowing a dataset against a-an expowted tensowfwow modew. (ꈍᴗꈍ)
 
-** Arguments:
- * dataset_path - Path for the dataset on hdfs
- * date - Date for the dataset paths, required if Daily dataset.
- * model_source - Path of the exported model on HDFS. Must start with hdfs:// scheme.
- * output_path - Path of the output result file
+** awguments:
+ * dataset_path - p-path fow the dataset on hdfs
+ * d-date - date fow t-the dataset paths, wequiwed if daiwy dataset. 😳
+ * modew_souwce - path of the expowted m-modew on hdfs. 😳😳😳 must stawt with hdfs:// scheme. mya
+ * output_path - path of the o-output wesuwt fiwe
 
-scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/tweet_similarity:model_eval-adhoc \
---user cassowary \
---submitter hadoopnest2.atla.twitter.com \
---main-class com.twitter.simclusters_v2.scalding.tweet_similarity.ModelEvalAdhocApp -- \
+scawding wemote w-wun --tawget s-swc/scawa/com/twittew/simcwustews_v2/scawding/tweet_simiwawity:modew_evaw-adhoc \
+--usew c-cassowawy \
+--submittew h-hadoopnest2.atwa.twittew.com \
+--main-cwass com.twittew.simcwustews_v2.scawding.tweet_simiwawity.modewevawadhocapp -- \
 --date 2020-02-19 \
---dataset_path /user/cassowary/adhoc/training_data/2020-02-19_class_balanced/test \
---model_path hdfs:///user/cassowary/tweet_similarity/2020-02-07-15-20-15/exported_models/1581253926 \
---output_path /user/cassowary/adhoc/training_data/2020-02-19_class_balanced/test/prediction_v1
+--dataset_path /usew/cassowawy/adhoc/twaining_data/2020-02-19_cwass_bawanced/test \
+--modew_path hdfs:///usew/cassowawy/tweet_simiwawity/2020-02-07-15-20-15/expowted_modews/1581253926 \
+--output_path /usew/cassowawy/adhoc/twaining_data/2020-02-19_cwass_bawanced/test/pwediction_v1
  **/
-object ModelEvalAdhocApp extends TwitterExecutionApp {
-  implicit val timeZone: TimeZone = DateOps.UTC
-  implicit val dateParser: DateParser = DateParser.default
+o-object modewevawadhocapp extends twittewexecutionapp {
+  i-impwicit vaw timezone: timezone = dateops.utc
+  impwicit vaw datepawsew: datepawsew = datepawsew.defauwt
 
   /**
-   * Get predictor for the given model path
-   * @param modelName name of the model
-   * @param modelSource path of the exported model on HDFS. Must start with hdfs:// scheme.
-   * @return
+   * g-get pwedictow fow the g-given modew path
+   * @pawam modewname n-nyame of t-the modew
+   * @pawam modewsouwce path of the expowted modew on h-hdfs. mya must stawt w-with hdfs:// scheme.
+   * @wetuwn
    */
-  def getPredictor(modelName: String, modelSource: String): TensorflowBatchPredictor = {
-    val defaultInputNode = "request:0"
-    val defaultOutputNode = "response:0"
-    TensorflowBatchPredictor(modelName, modelSource, defaultInputNode, defaultOutputNode)
+  d-def g-getpwedictow(modewname: stwing, (⑅˘꒳˘) m-modewsouwce: stwing): tensowfwowbatchpwedictow = {
+    v-vaw defauwtinputnode = "wequest:0"
+    vaw defauwtoutputnode = "wesponse:0"
+    tensowfwowbatchpwedictow(modewname, (U ﹏ U) m-modewsouwce, mya defauwtinputnode, ʘwʘ d-defauwtoutputnode)
   }
 
   /**
-   * Given input pipe and predictor, return the predictions in TypedPipe
-   * @param dataset dataset for prediction
-   * @param batchPredictor predictor
-   * @return
+   * given i-input pipe and p-pwedictow, (˘ω˘) wetuwn the pwedictions in typedpipe
+   * @pawam dataset dataset fow pwediction
+   * @pawam batchpwedictow p-pwedictow
+   * @wetuwn
    */
-  def getPrediction(
-    dataset: DataSetPipe,
-    batchPredictor: TensorflowBatchPredictor
-  ): TypedPipe[(Long, Long, Boolean, Double, Double)] = {
-    val featureContext = dataset.featureContext
-    val predictionFeature = new Continuous("output")
+  d-def getpwediction(
+    dataset: d-datasetpipe, (U ﹏ U)
+    b-batchpwedictow: t-tensowfwowbatchpwedictow
+  ): typedpipe[(wong, ^•ﻌ•^ wong, boowean, (˘ω˘) doubwe, doubwe)] = {
+    vaw f-featuwecontext = dataset.featuwecontext
+    vaw pwedictionfeatuwe = nyew continuous("output")
 
-    batchPredictor
-      .predict(dataset.records)
+    batchpwedictow
+      .pwedict(dataset.wecowds)
       .map {
-        case (originalDataRecord, predictedDataRecord) =>
-          val prediction = new RichDataRecord(predictedDataRecord, featureContext)
-            .getFeatureValue(predictionFeature).toDouble
-          val richDataRecord = new RichDataRecord(originalDataRecord, featureContext)
+        c-case (owiginawdatawecowd, :3 pwedicteddatawecowd) =>
+          v-vaw pwediction = n-nyew wichdatawecowd(pwedicteddatawecowd, ^^;; f-featuwecontext)
+            .getfeatuwevawue(pwedictionfeatuwe).todoubwe
+          vaw wichdatawecowd = n-nyew wichdatawecowd(owiginawdatawecowd, 🥺 f-featuwecontext)
           (
-            richDataRecord.getFeatureValue(TweetSimilarityFeatures.QueryTweetId).toLong,
-            richDataRecord.getFeatureValue(TweetSimilarityFeatures.CandidateTweetId).toLong,
-            richDataRecord.getFeatureValue(TweetSimilarityFeatures.Label).booleanValue,
-            richDataRecord.getFeatureValue(TweetSimilarityFeatures.CosineSimilarity).toDouble,
-            prediction
+            w-wichdatawecowd.getfeatuwevawue(tweetsimiwawityfeatuwes.quewytweetid).towong, (⑅˘꒳˘)
+            w-wichdatawecowd.getfeatuwevawue(tweetsimiwawityfeatuwes.candidatetweetid).towong, nyaa~~
+            wichdatawecowd.getfeatuwevawue(tweetsimiwawityfeatuwes.wabew).booweanvawue, :3
+            wichdatawecowd.getfeatuwevawue(tweetsimiwawityfeatuwes.cosinesimiwawity).todoubwe, ( ͡o ω ͡o )
+            p-pwediction
           )
       }
   }
 
-  override def job: Execution[Unit] =
-    Execution.withId { implicit uniqueId =>
-      Execution.withArgs { args: Args =>
-        implicit val dateRange: DateRange = DateRange.parse(args.list("date"))
-        val outputPath: String = args("output_path")
-        val dataset: DataSetPipe = DailySuffixFeatureSource(args("dataset_path")).read
-        val modelSource: String = args("model_path")
-        val modelName: String = "tweet_similarity"
+  o-ovewwide d-def job: execution[unit] =
+    e-execution.withid { i-impwicit uniqueid =>
+      execution.withawgs { awgs: awgs =>
+        impwicit v-vaw datewange: datewange = datewange.pawse(awgs.wist("date"))
+        vaw outputpath: stwing = awgs("output_path")
+        v-vaw dataset: datasetpipe = daiwysuffixfeatuwesouwce(awgs("dataset_path")).wead
+        vaw modewsouwce: stwing = a-awgs("modew_path")
+        v-vaw m-modewname: stwing = "tweet_simiwawity"
 
-        getPrediction(dataset, getPredictor(modelName, modelSource))
-          .writeExecution(TypedTsv[(Long, Long, Boolean, Double, Double)](outputPath))
+        getpwediction(dataset, mya g-getpwedictow(modewname, (///ˬ///✿) modewsouwce))
+          .wwiteexecution(typedtsv[(wong, (˘ω˘) wong, boowean, d-doubwe, ^^;; doubwe)](outputpath))
       }
     }
 }

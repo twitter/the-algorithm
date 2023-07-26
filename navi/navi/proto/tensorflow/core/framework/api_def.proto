@@ -1,138 +1,138 @@
-// Defines the text format for including per-op API definition and
-// overrides for client language op code generators.
+// defines the text fowmat fow incwuding p-pew-op api d-definition and
+// o-ovewwides fow c-cwient wanguage o-op code genewatows. (ꈍᴗꈍ)
 
-syntax = "proto3";
+s-syntax = "pwoto3";
 
-package tensorflow;
+p-package t-tensowfwow;
 
-import "tensorflow/core/framework/attr_value.proto";
+impowt "tensowfwow/cowe/fwamewowk/attw_vawue.pwoto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "ApiDefProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/api_def_go_proto";
+option cc_enabwe_awenas = twue;
+option java_outew_cwassname = "apidefpwotos";
+option java_muwtipwe_fiwes = t-twue;
+option java_package = "owg.tensowfwow.fwamewowk";
+option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/fwamewowk/api_def_go_pwoto";
 
-// Used to specify and override the default API & behavior in the
-// generated code for client languages, from what you would get from
-// the OpDef alone. There will be a set of ApiDefs that are common
-// to all client languages, and another set per client language.
-// The per-client-language ApiDefs will inherit values from the
-// common ApiDefs which it can either replace or modify.
+// u-used to specify and ovewwide t-the defauwt api & behaviow in the
+// genewated code fow cwient w-wanguages, :3 fwom nyani you wouwd g-get fwom
+// the o-opdef awone. (U ﹏ U) thewe wiww be a set of apidefs that awe common
+// to aww cwient wanguages, UwU a-and anothew set pew cwient wanguage. 😳😳😳
+// the pew-cwient-wanguage apidefs w-wiww inhewit vawues fwom the
+// c-common apidefs which i-it can eithew w-wepwace ow modify. XD
 //
-// We separate the API definition from the OpDef so we can evolve the
-// API while remaining backwards compatible when interpreting old
-// graphs.  Overrides go in an "api_def.pbtxt" file with a text-format
-// ApiDefs message.
+// w-we sepawate the api definition fwom t-the opdef so we can evowve the
+// api whiwe wemaining b-backwawds compatibwe when intewpweting owd
+// gwaphs. o.O  ovewwides go in an "api_def.pbtxt" fiwe with a text-fowmat
+// a-apidefs message. (⑅˘꒳˘)
 //
-// WARNING: Be *very* careful changing the API for any existing op --
-// you can change the semantics of existing code.  These changes may
-// need to wait until a major release of TensorFlow to avoid breaking
-// our compatibility promises.
-message ApiDef {
-  // Name of the op (in the OpDef) to specify the API for.
-  string graph_op_name = 1;
-  // If this op is deprecated, set deprecation message to the message
-  // that should be logged when this op is used.
-  // The message should indicate alternative op to use, if any.
-  string deprecation_message = 12;
-  // Major version when the op will be deleted. For e.g. set this
-  // value to 2 if op API should be removed in TensorFlow 2.0 and
-  // deprecated in versions before that.
-  int32 deprecation_version = 13;
+// w-wawning: be *vewy* c-cawefuw changing t-the api fow any existing op --
+// you can change the semantics o-of existing c-code. 😳😳😳  these changes may
+// nyeed t-to wait untiw a-a majow wewease of tensowfwow to a-avoid bweaking
+// ouw compatibiwity p-pwomises.
+message apidef {
+  // nyame of the o-op (in the opdef) to specify t-the api fow. nyaa~~
+  stwing gwaph_op_name = 1;
+  // i-if t-this op is depwecated, set depwecation message to the message
+  // that shouwd be wogged when this op is used. rawr
+  // t-the message s-shouwd indicate awtewnative op t-to use, -.- if any.
+  s-stwing depwecation_message = 12;
+  // m-majow vewsion when the op wiww be deweted. (✿oωo) fow e.g. set t-this
+  // vawue to 2 if op api shouwd be wemoved in tensowfwow 2.0 and
+  // depwecated i-in vewsions befowe that. /(^•ω•^)
+  i-int32 depwecation_vewsion = 13;
 
-  enum Visibility {
-    // Normally this is "VISIBLE" unless you are inheriting a
-    // different value from another ApiDef.
-    DEFAULT_VISIBILITY = 0;
-    // Publicly visible in the API.
-    VISIBLE = 1;
-    // Do not include this op in the generated API. If visibility is
-    // set to 'SKIP', other fields are ignored for this op.
-    SKIP = 2;
-    // Hide this op by putting it into an internal namespace (or whatever
-    // is appropriate in the target language).
-    HIDDEN = 3;
+  e-enum visibiwity {
+    // n-nyowmawwy this is "visibwe" u-unwess y-you awe inhewiting a-a
+    // diffewent v-vawue fwom anothew apidef. 🥺
+    defauwt_visibiwity = 0;
+    // p-pubwicwy visibwe i-in the api. ʘwʘ
+    v-visibwe = 1;
+    // d-do nyot i-incwude this op in the genewated api. UwU if visibiwity is
+    // s-set to 'skip', XD othew fiewds awe ignowed fow this op. (✿oωo)
+    skip = 2;
+    // hide this op by putting i-it into an intewnaw nyamespace (ow nanievew
+    // is appwopwiate i-in the tawget w-wanguage). :3
+    h-hidden = 3;
   }
-  Visibility visibility = 2;
+  visibiwity visibiwity = 2;
 
-  // If you specify any endpoint, this will replace all of the
-  // inherited endpoints.  The first endpoint should be the
-  // "canonical" endpoint, and should not be deprecated (unless all
-  // endpoints are deprecated).
-  message Endpoint {
-    // Name should be either like "CamelCaseName" or
-    // "Package.CamelCaseName". Client-language-specific ApiDefs may
-    // use a snake_case convention instead of CamelCase.
-    string name = 1;
+  // i-if you specify any endpoint, (///ˬ///✿) t-this wiww wepwace a-aww of the
+  // inhewited endpoints. nyaa~~  the fiwst endpoint shouwd be the
+  // "canonicaw" endpoint, >w< a-and shouwd nyot be depwecated (unwess a-aww
+  // endpoints awe d-depwecated). -.-
+  m-message endpoint {
+    // nyame shouwd be eithew w-wike "camewcasename" o-ow
+    // "package.camewcasename". (✿oωo) cwient-wanguage-specific a-apidefs may
+    // u-use a snake_case convention instead of camewcase. (˘ω˘)
+    stwing nyame = 1;
 
-    // Set if this endpoint is deprecated. If set to true, a message suggesting
-    // to use a non-deprecated endpoint instead will be printed. If all
-    // endpoints are deprecated, set deprecation_message in ApiDef instead.
-    bool deprecated = 3;
+    // s-set if this e-endpoint is depwecated. rawr i-if set to twue, OwO a message s-suggesting
+    // t-to use a nyon-depwecated endpoint instead w-wiww be pwinted. ^•ﻌ•^ if aww
+    // endpoints awe depwecated, UwU set depwecation_message in apidef instead. (˘ω˘)
+    b-boow depwecated = 3;
 
-    // Major version when an endpoint will be deleted. For e.g. set this
-    // value to 2 if endpoint should be removed in TensorFlow 2.0 and
-    // deprecated in versions before that.
-    int32 deprecation_version = 4;
+    // m-majow vewsion when an endpoint wiww be deweted. (///ˬ///✿) f-fow e.g. set t-this
+    // vawue to 2 if endpoint shouwd be wemoved in tensowfwow 2.0 a-and
+    // depwecated in vewsions befowe that. σωσ
+    int32 depwecation_vewsion = 4;
   }
-  repeated Endpoint endpoint = 3;
+  w-wepeated endpoint endpoint = 3;
 
-  message Arg {
-    string name = 1;
+  message awg {
+    s-stwing nyame = 1;
 
-    // Change the name used to access this arg in the API from what
-    // is used in the GraphDef.  Note that these names in `backticks`
-    // will also be replaced in the summary & description fields.
-    string rename_to = 2;
+    // c-change the nyame used to access this awg in the api fwom nyani
+    // i-is used in t-the gwaphdef. /(^•ω•^)  nyote that these nyames in `backticks`
+    // wiww a-awso be wepwaced in the summawy & d-descwiption fiewds. 😳
+    stwing wename_to = 2;
 
-    // Note: this will replace any inherited arg doc. There is no
-    // current way of modifying arg descriptions (other than replacing
-    // them entirely) as can be done with op descriptions.
-    string description = 3;
+    // nyote: t-this wiww wepwace any inhewited a-awg doc. 😳 thewe i-is nyo
+    // cuwwent way of modifying a-awg descwiptions (othew than wepwacing
+    // t-them entiwewy) a-as can be done w-with op descwiptions. (⑅˘꒳˘)
+    stwing d-descwiption = 3;
   }
-  repeated Arg in_arg = 4;
-  repeated Arg out_arg = 5;
-  // List of original in_arg names to specify new argument order.
-  // Length of arg_order should be either empty to keep current order
-  // or match size of in_arg.
-  repeated string arg_order = 11;
+  w-wepeated awg in_awg = 4;
+  wepeated a-awg out_awg = 5;
+  // w-wist of owiginaw i-in_awg nyames to specify nyew awgument owdew. 😳😳😳
+  // w-wength of awg_owdew shouwd b-be eithew empty t-to keep cuwwent owdew
+  // ow match size of in_awg. 😳
+  wepeated s-stwing awg_owdew = 11;
 
-  // Description of the graph-construction-time configuration of this
-  // Op.  That is to say, this describes the attr fields that will
-  // be specified in the NodeDef.
-  message Attr {
-    string name = 1;
+  // d-descwiption of t-the gwaph-constwuction-time c-configuwation of this
+  // o-op. XD  that is to say, mya this descwibes the attw fiewds that wiww
+  // be specified in the nyodedef. ^•ﻌ•^
+  m-message attw {
+    stwing n-nyame = 1;
 
-    // Change the name used to access this attr in the API from what
-    // is used in the GraphDef.  Note that these names in `backticks`
-    // will also be replaced in the summary & description fields.
-    string rename_to = 2;
+    // change the n-nyame used to access this attw i-in the api fwom nyani
+    // is u-used in the gwaphdef. ʘwʘ  n-nyote that t-these nyames i-in `backticks`
+    // w-wiww awso be wepwaced in the summawy & descwiption fiewds. ( ͡o ω ͡o )
+    stwing wename_to = 2;
 
-    // Specify a new default value to use for this attr.  This default
-    // will be used when creating new graphs, as opposed to the
-    // default in the OpDef, which will be used when interpreting old
-    // GraphDefs.
-    AttrValue default_value = 3;
+    // specify a nyew defauwt vawue t-to use fow this a-attw. mya  this defauwt
+    // w-wiww be used when cweating n-nyew gwaphs, o.O as opposed to the
+    // defauwt in the opdef, (✿oωo) w-which wiww be u-used when intewpweting owd
+    // g-gwaphdefs. :3
+    attwvawue defauwt_vawue = 3;
 
-    // Note: this will replace any inherited attr doc, there is no current
-    // way of modifying attr descriptions as can be done with op descriptions.
-    string description = 4;
+    // nyote: this w-wiww wepwace any i-inhewited attw doc, 😳 thewe is n-nyo cuwwent
+    // w-way of modifying attw descwiptions as can be done with op descwiptions. (U ﹏ U)
+    stwing descwiption = 4;
   }
-  repeated Attr attr = 6;
+  w-wepeated a-attw attw = 6;
 
-  // One-line human-readable description of what the Op does.
-  string summary = 7;
+  // o-one-wine h-human-weadabwe d-descwiption of nyani the op does. mya
+  s-stwing summawy = 7;
 
-  // Additional, longer human-readable description of what the Op does.
-  string description = 8;
+  // a-additionaw, (U ᵕ U❁) wongew human-weadabwe d-descwiption of n-nyani the op does. :3
+  stwing descwiption = 8;
 
-  // Modify an existing/inherited description by adding text to the beginning
-  // or end.
-  string description_prefix = 9;
-  string description_suffix = 10;
+  // m-modify an existing/inhewited descwiption by adding text to t-the beginning
+  // ow end. mya
+  stwing d-descwiption_pwefix = 9;
+  s-stwing descwiption_suffix = 10;
 }
 
-message ApiDefs {
-  repeated ApiDef op = 1;
+m-message apidefs {
+  wepeated apidef op = 1;
 }

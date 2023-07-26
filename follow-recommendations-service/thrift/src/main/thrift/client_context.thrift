@@ -1,19 +1,19 @@
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+namespace java com.twittew.fowwow_wecommendations.thwiftjava
+#@namespace scawa com.twittew.fowwow_wecommendations.thwiftscawa
+#@namespace s-stwato c-com.twittew.fowwow_wecommendations
 
-// Caller/Client level specific context (e.g, user id/guest id/app id).
-struct ClientContext {
-  1: optional i64 userId(personalDataType='UserId')
-  2: optional i64 guestId(personalDataType='GuestId')
-  3: optional i64 appId(personalDataType='AppId')
-  4: optional string ipAddress(personalDataType='IpAddress')
-  5: optional string userAgent(personalDataType='UserAgent')
-  6: optional string countryCode(personalDataType='InferredCountry')
-  7: optional string languageCode(personalDataType='InferredLanguage')
-  9: optional bool isTwoffice(personalDataType='InferredLocation')
-  10: optional set<string> userRoles
-  11: optional string deviceId(personalDataType='DeviceId')
-  12: optional i64 guestIdAds(personalDataType='GuestId')
-  13: optional i64 guestIdMarketing(personalDataType='GuestId')
-}(hasPersonalData='true')
+// c-cawwew/cwient w-wevew specific c-context (e.g, -.- u-usew id/guest i-id/app id). ( ͡o ω ͡o )
+stwuct c-cwientcontext {
+  1: optionaw i64 usewid(pewsonawdatatype='usewid')
+  2: optionaw i64 guestid(pewsonawdatatype='guestid')
+  3: o-optionaw i64 appid(pewsonawdatatype='appid')
+  4: optionaw stwing ipaddwess(pewsonawdatatype='ipaddwess')
+  5: o-optionaw stwing usewagent(pewsonawdatatype='usewagent')
+  6: o-optionaw stwing countwycode(pewsonawdatatype='infewwedcountwy')
+  7: optionaw stwing wanguagecode(pewsonawdatatype='infewwedwanguage')
+  9: o-optionaw boow istwoffice(pewsonawdatatype='infewwedwocation')
+  10: o-optionaw s-set<stwing> usewwowes
+  11: optionaw stwing deviceid(pewsonawdatatype='deviceid')
+  12: optionaw i64 guestidads(pewsonawdatatype='guestid')
+  13: o-optionaw i64 guestidmawketing(pewsonawdatatype='guestid')
+}(haspewsonawdata='twue')

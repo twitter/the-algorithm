@@ -1,194 +1,194 @@
-package com.twitter.ann.scalding.offline.indexbuilderfrombq
+package com.twittew.ann.scawding.offwine.indexbuiwdewfwombq
 
-import com.google.auth.oauth2.ServiceAccountCredentials
-import com.google.cloud.bigquery.BigQueryOptions
-import com.google.cloud.bigquery.QueryJobConfiguration
-import com.twitter.ann.annoy.TypedAnnoyIndex
-import com.twitter.ann.brute_force.SerializableBruteForceIndex
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.Metric
-import com.twitter.ann.common.ReadWriteFuturePool
-import com.twitter.ann.hnsw.TypedHnswIndex
-import com.twitter.ann.serialization.PersistedEmbeddingInjection
-import com.twitter.ann.serialization.ThriftIteratorIO
-import com.twitter.ann.serialization.thriftscala.PersistedEmbedding
-import com.twitter.cortex.ml.embeddings.common._
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.ml.featurestore.lib._
-import com.twitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
-import com.twitter.scalding.Args
-import com.twitter.scalding.Execution
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.bigquery.BigQueryConfig
-import com.twitter.scalding_internal.bigquery.BigQuerySource
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.search.common.file.FileUtils
-import com.twitter.util.FuturePool
-import java.io.FileInputStream
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.util.concurrent.Executors
-import org.apache.avro.generic.GenericRecord
-import scala.collection.JavaConverters._
+impowt c-com.googwe.auth.oauth2.sewviceaccountcwedentiaws
+i-impowt com.googwe.cwoud.bigquewy.bigquewyoptions
+i-impowt com.googwe.cwoud.bigquewy.quewyjobconfiguwation
+i-impowt c-com.twittew.ann.annoy.typedannoyindex
+i-impowt c-com.twittew.ann.bwute_fowce.sewiawizabwebwutefowceindex
+i-impowt com.twittew.ann.common.distance
+impowt com.twittew.ann.common.metwic
+impowt com.twittew.ann.common.weadwwitefutuwepoow
+impowt com.twittew.ann.hnsw.typedhnswindex
+impowt com.twittew.ann.sewiawization.pewsistedembeddinginjection
+i-impowt com.twittew.ann.sewiawization.thwiftitewatowio
+impowt com.twittew.ann.sewiawization.thwiftscawa.pewsistedembedding
+impowt c-com.twittew.cowtex.mw.embeddings.common._
+impowt c-com.twittew.mw.api.embedding.embedding
+impowt com.twittew.mw.featuwestowe.wib._
+impowt com.twittew.mw.featuwestowe.wib.embedding.embeddingwithentity
+i-impowt com.twittew.scawding.awgs
+i-impowt c-com.twittew.scawding.execution
+impowt com.twittew.scawding.typed.typedpipe
+impowt com.twittew.scawding_intewnaw.bigquewy.bigquewyconfig
+impowt c-com.twittew.scawding_intewnaw.bigquewy.bigquewysouwce
+impowt com.twittew.scawding_intewnaw.job.twittewexecutionapp
+impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.seawch.common.fiwe.fiweutiws
+i-impowt com.twittew.utiw.futuwepoow
+i-impowt j-java.io.fiweinputstweam
+i-impowt j-java.time.wocawdatetime
+impowt java.time.zoneoffset
+i-impowt java.utiw.concuwwent.executows
+impowt owg.apache.avwo.genewic.genewicwecowd
+i-impowt scawa.cowwection.javaconvewtews._
 
 /**
- * Scalding execution app for building ANN index from embeddings present in BigQuery table.
- * The output index is written to a GCS file.
+ * scawding execution app fow buiwding ann index fwom embeddings p-pwesent in bigquewy tabwe. ^^;;
+ * t-the output i-index is wwitten t-to a gcs fiwe. :3
  *
- * Note:
- * - Assumes input data has the fields entityId
- * - Assumes input data has the fields embedding
+ * nyote:
+ * - assumes input data has the fiewds e-entityid
+ * - a-assumes input data has the fiewds e-embedding
  *
- * Command for running the app (from source repo root):
- * scalding remote run \
- *   --target ann/src/main/scala/com/twitter/ann/scalding/offline/indexbuilderfrombq:ann-index-builder-binary
+ * c-command fow wunning the app (fwom s-souwce wepo woot):
+ * scawding w-wemote wun \
+ *   --tawget ann/swc/main/scawa/com/twittew/ann/scawding/offwine/indexbuiwdewfwombq:ann-index-buiwdew-binawy
  */
-trait IndexBuilderFromBQExecutable {
-  // This method is used to cast the entityKind and the metric to have parameters.
-  def indexBuilderExecution[T <: EntityId, D <: Distance[D]](
-    args: Args
-  ): Execution[Unit] = {
-    // parse the arguments for this job
-    val uncastEntityKind = EntityKind.getEntityKind(args("entity_kind"))
-    val uncastMetric = Metric.fromString(args("metric"))
-    val entityKind = uncastEntityKind.asInstanceOf[EntityKind[T]]
-    val metric = uncastMetric.asInstanceOf[Metric[D]]
-    val injection = entityKind.byteInjection
-    val numDimensions = args.int("num_dimensions")
-    val embeddingLimit = args.optional("embedding_limit").map(_.toInt)
-    val concurrencyLevel = args.int("concurrency_level")
+twait indexbuiwdewfwombqexecutabwe {
+  // this m-method is used to cast the entitykind a-and the metwic to have p-pawametews. (U ﹏ U)
+  def i-indexbuiwdewexecution[t <: entityid, d <: distance[d]](
+    awgs: awgs
+  ): execution[unit] = {
+    // pawse the awguments fow this job
+    vaw u-uncastentitykind = e-entitykind.getentitykind(awgs("entity_kind"))
+    vaw uncastmetwic = m-metwic.fwomstwing(awgs("metwic"))
+    v-vaw entitykind = u-uncastentitykind.asinstanceof[entitykind[t]]
+    vaw metwic = uncastmetwic.asinstanceof[metwic[d]]
+    vaw injection = e-entitykind.byteinjection
+    vaw nyumdimensions = awgs.int("num_dimensions")
+    vaw embeddingwimit = awgs.optionaw("embedding_wimit").map(_.toint)
+    vaw concuwwencywevew = a-awgs.int("concuwwency_wevew")
 
-    val bigQuery =
-      BigQueryOptions
-        .newBuilder().setProjectId(args.required("bq_gcp_job_project")).setCredentials(
-          ServiceAccountCredentials.fromStream(
-            new FileInputStream(args.required("gcp_service_account_key_json")))).build().getService
+    vaw bigquewy =
+      b-bigquewyoptions
+        .newbuiwdew().setpwojectid(awgs.wequiwed("bq_gcp_job_pwoject")).setcwedentiaws(
+          s-sewviceaccountcwedentiaws.fwomstweam(
+            n-nyew fiweinputstweam(awgs.wequiwed("gcp_sewvice_account_key_json")))).buiwd().getsewvice
 
-    // Query to get the latest partition of the BigQuery table.
-    val query =
-      s"SELECT MAX(ts) AS RecentPartition FROM ${args.required("bq_gcp_table_project")}.${args
-        .required("bq_dataset")}.${args.required("bq_table")}"
-    val queryConfig = QueryJobConfiguration
-      .newBuilder(query)
-      .setUseLegacySql(false)
-      .build
-    val recentPartition =
-      bigQuery
-        .query(queryConfig).iterateAll().asScala.map(field => {
-          field.get(0).getStringValue
-        }).toArray.apply(0)
+    // quewy to get t-the watest pawtition o-of the bigquewy t-tabwe.
+    v-vaw quewy =
+      s"sewect max(ts) as wecentpawtition f-fwom ${awgs.wequiwed("bq_gcp_tabwe_pwoject")}.${awgs
+        .wequiwed("bq_dataset")}.${awgs.wequiwed("bq_tabwe")}"
+    v-vaw quewyconfig = q-quewyjobconfiguwation
+      .newbuiwdew(quewy)
+      .setusewegacysqw(fawse)
+      .buiwd
+    v-vaw wecentpawtition =
+      b-bigquewy
+        .quewy(quewyconfig).itewateaww().asscawa.map(fiewd => {
+          fiewd.get(0).getstwingvawue
+        }).toawway.appwy(0)
 
-    // Query to extract the embeddings from the latest partition of the BigQuery table
-    val bigQueryConfig = BigQueryConfig(
-      args.required("bq_gcp_table_project"),
-      args
-        .required("bq_dataset"),
-      args.required("bq_table"))
-      .withServiceAccountKey(args.required("gcp_service_account_key_json"))
+    // quewy to extwact the embeddings fwom the watest pawtition o-of the bigquewy tabwe
+    vaw bigquewyconfig = bigquewyconfig(
+      awgs.wequiwed("bq_gcp_tabwe_pwoject"), OwO
+      awgs
+        .wequiwed("bq_dataset"), 😳😳😳
+      a-awgs.wequiwed("bq_tabwe"))
+      .withsewviceaccountkey(awgs.wequiwed("gcp_sewvice_account_key_json"))
 
-    val bqFilter = Some(
-      s"ts >= '${recentPartition}' AND DATE(TIMESTAMP_MILLIS(createdAt)) >= DATE_SUB(DATE('${recentPartition}'), INTERVAL 1 DAY) AND DATE(TIMESTAMP_MILLIS(createdAt)) <= DATE('${recentPartition}')")
-    val withFilterBigQueryConfig = bqFilter
-      .map { filter: String =>
-        bigQueryConfig.withFilter(filter)
-      }.getOrElse(bigQueryConfig)
-    val source = new BigQuerySource(withFilterBigQueryConfig)
-      .andThen(avroMapper)
+    vaw bqfiwtew = some(
+      s"ts >= '${wecentpawtition}' and date(timestamp_miwwis(cweatedat)) >= d-date_sub(date('${wecentpawtition}'), (ˆ ﻌ ˆ)♡ i-intewvaw 1 d-day) and date(timestamp_miwwis(cweatedat)) <= date('${wecentpawtition}')")
+    v-vaw withfiwtewbigquewyconfig = bqfiwtew
+      .map { f-fiwtew: s-stwing =>
+        bigquewyconfig.withfiwtew(fiwtew)
+      }.getowewse(bigquewyconfig)
+    vaw souwce = nyew bigquewysouwce(withfiwtewbigquewyconfig)
+      .andthen(avwomappew)
 
-    val sourcePipe = TypedPipe
-      .from(source)
-      .map(transform[T](entityKind))
+    vaw souwcepipe = typedpipe
+      .fwom(souwce)
+      .map(twansfowm[t](entitykind))
 
-    println(s"Job args: ${args.toString}")
-    val threadPool = Executors.newFixedThreadPool(concurrencyLevel)
+    p-pwintwn(s"job awgs: ${awgs.tostwing}")
+    v-vaw thweadpoow = executows.newfixedthweadpoow(concuwwencywevew)
 
-    val serialization = args("algo") match {
-      case "brute_force" =>
-        val PersistedEmbeddingIO = new ThriftIteratorIO[PersistedEmbedding](PersistedEmbedding)
-        SerializableBruteForceIndex[T, D](
-          metric,
-          FuturePool.apply(threadPool),
-          new PersistedEmbeddingInjection[T](injection),
-          PersistedEmbeddingIO
+    v-vaw s-sewiawization = awgs("awgo") match {
+      case "bwute_fowce" =>
+        v-vaw pewsistedembeddingio = n-nyew thwiftitewatowio[pewsistedembedding](pewsistedembedding)
+        sewiawizabwebwutefowceindex[t, XD d-d](
+          m-metwic, (ˆ ﻌ ˆ)♡
+          futuwepoow.appwy(thweadpoow), ( ͡o ω ͡o )
+          nyew pewsistedembeddinginjection[t](injection), rawr x3
+          pewsistedembeddingio
         )
       case "annoy" =>
-        TypedAnnoyIndex.indexBuilder[T, D](
-          numDimensions,
-          args.int("annoy_num_trees"),
-          metric,
-          injection,
-          FuturePool.apply(threadPool)
+        t-typedannoyindex.indexbuiwdew[t, nyaa~~ d-d](
+          n-nyumdimensions, >_<
+          awgs.int("annoy_num_twees"), ^^;;
+          m-metwic, (ˆ ﻌ ˆ)♡
+          i-injection, ^^;;
+          futuwepoow.appwy(thweadpoow)
         )
-      case "hnsw" =>
-        val efConstruction = args.int("ef_construction")
-        val maxM = args.int("max_m")
-        val expectedElements = args.int("expected_elements")
-        TypedHnswIndex.serializableIndex[T, D](
-          numDimensions,
-          metric,
-          efConstruction,
-          maxM,
-          expectedElements,
+      c-case "hnsw" =>
+        vaw efconstwuction = awgs.int("ef_constwuction")
+        vaw maxm = awgs.int("max_m")
+        v-vaw expectedewements = a-awgs.int("expected_ewements")
+        typedhnswindex.sewiawizabweindex[t, (⑅˘꒳˘) d](
+          nyumdimensions, rawr x3
+          m-metwic, (///ˬ///✿)
+          e-efconstwuction, 🥺
+          maxm, >_<
+          expectedewements, UwU
           injection,
-          ReadWriteFuturePool(FuturePool.apply(threadPool))
+          w-weadwwitefutuwepoow(futuwepoow.appwy(thweadpoow))
         )
     }
 
-    // Output directory for the ANN index. We place the index under a timestamped directory which
-    // will be used by the ANN service to read the latest index
-    val timestamp = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
-    val outputDirectory = FileUtils.getFileHandle(args("output_dir") + "/" + timestamp)
-    IndexBuilder
-      .run(
-        sourcePipe,
-        embeddingLimit,
-        serialization,
-        concurrencyLevel,
-        outputDirectory,
-        numDimensions
-      ).onComplete { _ =>
-        threadPool.shutdown()
-        Unit
+    // output diwectowy fow the ann index. >_< we pwace the index undew a t-timestamped diwectowy which
+    // wiww be used b-by the ann sewvice t-to wead the watest index
+    vaw timestamp = wocawdatetime.now().toepochsecond(zoneoffset.utc)
+    v-vaw outputdiwectowy = f-fiweutiws.getfiwehandwe(awgs("output_diw") + "/" + timestamp)
+    indexbuiwdew
+      .wun(
+        souwcepipe, -.-
+        embeddingwimit, mya
+        s-sewiawization, >w<
+        concuwwencywevew, (U ﹏ U)
+        o-outputdiwectowy,
+        nyumdimensions
+      ).oncompwete { _ =>
+        thweadpoow.shutdown()
+        unit
       }
 
   }
 
-  def avroMapper(row: GenericRecord): KeyVal[Long, java.util.List[Double]] = {
-    val entityId = row.get("entityId")
-    val embedding = row.get("embedding")
+  d-def avwomappew(wow: genewicwecowd): k-keyvaw[wong, 😳😳😳 j-java.utiw.wist[doubwe]] = {
+    vaw entityid = w-wow.get("entityid")
+    vaw embedding = w-wow.get("embedding")
 
-    KeyVal(
-      entityId.toString.toLong,
-      embedding.asInstanceOf[java.util.List[Double]]
+    k-keyvaw(
+      e-entityid.tostwing.towong, o.O
+      embedding.asinstanceof[java.utiw.wist[doubwe]]
     )
   }
 
-  def transform[T <: EntityId](
-    entityKind: EntityKind[T]
+  d-def twansfowm[t <: e-entityid](
+    entitykind: entitykind[t]
   )(
-    bqRecord: KeyVal[Long, java.util.List[Double]]
-  ): EmbeddingWithEntity[T] = {
-    val embeddingArray = bqRecord.value.asScala.map(_.floatValue()).toArray
-    val entity_id = entityKind match {
-      case UserKind => UserId(bqRecord.key).toThrift
-      case TweetKind => TweetId(bqRecord.key).toThrift
-      case TfwKind => TfwId(bqRecord.key).toThrift
-      case SemanticCoreKind => SemanticCoreId(bqRecord.key).toThrift
-      case _ => throw new IllegalArgumentException(s"Unsupported embedding kind: $entityKind")
+    b-bqwecowd: k-keyvaw[wong, òωó j-java.utiw.wist[doubwe]]
+  ): embeddingwithentity[t] = {
+    vaw embeddingawway = b-bqwecowd.vawue.asscawa.map(_.fwoatvawue()).toawway
+    vaw entity_id = e-entitykind m-match {
+      case usewkind => usewid(bqwecowd.key).tothwift
+      case tweetkind => t-tweetid(bqwecowd.key).tothwift
+      case t-tfwkind => tfwid(bqwecowd.key).tothwift
+      c-case semanticcowekind => s-semanticcoweid(bqwecowd.key).tothwift
+      case _ => t-thwow nyew iwwegawawgumentexception(s"unsuppowted embedding kind: $entitykind")
     }
-    EmbeddingWithEntity[T](
-      EntityId.fromThrift(entity_id).asInstanceOf[T],
-      Embedding(embeddingArray))
+    embeddingwithentity[t](
+      entityid.fwomthwift(entity_id).asinstanceof[t], 😳😳😳
+      embedding(embeddingawway))
   }
 }
 
 /*
-scalding remote run \
---target ann/src/main/scala/com/twitter/ann/scalding/offline/indexbuilderfrombq:ann-index-builder-binary
+scawding wemote wun \
+--tawget a-ann/swc/main/scawa/com/twittew/ann/scawding/offwine/indexbuiwdewfwombq:ann-index-buiwdew-binawy
  */
-object IndexBuilderFromBQApp extends TwitterExecutionApp with IndexBuilderFromBQExecutable {
-  override def job: Execution[Unit] = Execution.getArgs.flatMap { args: Args =>
-    indexBuilderExecution(args)
+object indexbuiwdewfwombqapp e-extends twittewexecutionapp with indexbuiwdewfwombqexecutabwe {
+  o-ovewwide def job: execution[unit] = e-execution.getawgs.fwatmap { awgs: awgs =>
+    i-indexbuiwdewexecution(awgs)
   }
 }

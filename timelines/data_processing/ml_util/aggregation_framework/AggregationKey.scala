@@ -1,50 +1,50 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk
 
-import com.twitter.bijection.Bufferable
-import com.twitter.bijection.Injection
-import scala.util.Try
-
-/**
- * Case class that represents the "grouping" key for any aggregate feature.
- * Used by Summingbird to output aggregates to the key-value "store" using sumByKey()
- *
- * @discreteFeaturesById All discrete featureids (+ values) that are part of this key
- * @textFeaturesById All string featureids (+ values) that are part of this key
- *
- * Example 1: the user aggregate features in aggregatesv1 all group by USER_ID,
- * which is a discrete feature. When storing these features, the key would be:
- *
- * discreteFeaturesById = Map(hash(USER_ID) -> <the actual user id>), textFeaturesById = Map()
- *
- * Ex 2: If aggregating grouped by USER_ID, AUTHOR_ID, tweet link url, the key would be:
- *
- * discreteFeaturesById = Map(hash(USER_ID) -> <actual user id>, hash(AUTHOR_ID) -> <actual author id>),
- * textFeaturesById = Map(hash(URL_FEATURE) -> <the link url>)
- *
- * I could have just used a DataRecord for the key, but I wanted to make it strongly typed
- * and only support grouping by discrete and string features, so using a case class instead.
- *
- * Re: efficiency, storing the hash of the feature in addition to just the feature value
- * is somewhat more inefficient than only storing the feature value in the key, but it
- * adds flexibility to group multiple types of aggregates in the same output store. If we
- * decide this isn't a good tradeoff to make later, we can reverse/refactor this decision.
- */
-case class AggregationKey(
-  discreteFeaturesById: Map[Long, Long],
-  textFeaturesById: Map[Long, String])
+impowt c-com.twittew.bijection.buffewabwe
+i-impowt com.twittew.bijection.injection
+i-impowt s-scawa.utiw.twy
 
 /**
- * A custom injection for the above case class,
- * so that Summingbird knows how to store it in Manhattan.
+ * c-case cwass t-that wepwesents t-the "gwouping" k-key fow any aggwegate featuwe. 😳
+ * used by summingbiwd to output aggwegates to t-the key-vawue "stowe" using sumbykey()
+ *
+ * @discwetefeatuwesbyid aww discwete f-featuweids (+ vawues) that awe p-pawt of this key
+ * @textfeatuwesbyid aww stwing featuweids (+ vawues) that awe p-pawt of this key
+ *
+ * exampwe 1: t-the usew aggwegate f-featuwes in aggwegatesv1 aww gwoup by usew_id,
+ * which is a discwete featuwe. w-when stowing these featuwes, 😳 the key wouwd be:
+ *
+ * discwetefeatuwesbyid = map(hash(usew_id) -> <the a-actuaw usew id>), σωσ textfeatuwesbyid = map()
+ *
+ * e-ex 2: i-if aggwegating g-gwouped by usew_id, rawr x3 a-authow_id, OwO tweet wink uww, /(^•ω•^) the key wouwd be:
+ *
+ * d-discwetefeatuwesbyid = map(hash(usew_id) -> <actuaw usew i-id>, 😳😳😳 hash(authow_id) -> <actuaw authow id>), ( ͡o ω ͡o )
+ * textfeatuwesbyid = map(hash(uww_featuwe) -> <the wink uww>)
+ *
+ * i couwd have just u-used a datawecowd fow the key, >_< b-but i wanted t-to make it stwongwy t-typed
+ * and onwy suppowt gwouping by discwete and stwing featuwes, >w< s-so using a-a case cwass instead. rawr
+ *
+ * we: e-efficiency, 😳 stowing t-the hash of the featuwe in a-addition to just the featuwe vawue
+ * i-is somenani mowe inefficient than onwy stowing t-the featuwe vawue in the key, >w< b-but it
+ * adds fwexibiwity to g-gwoup muwtipwe t-types of aggwegates in the same output stowe. (⑅˘꒳˘) if we
+ * decide this isn't a good twadeoff to make watew, we can wevewse/wefactow t-this decision. OwO
  */
-object AggregationKeyInjection extends Injection[AggregationKey, Array[Byte]] {
-  /* Injection from tuple representation of AggregationKey to Array[Byte] */
-  val featureMapsInjection: Injection[(Map[Long, Long], Map[Long, String]), Array[Byte]] =
-    Bufferable.injectionOf[(Map[Long, Long], Map[Long, String])]
+c-case cwass aggwegationkey(
+  discwetefeatuwesbyid: m-map[wong, (ꈍᴗꈍ) w-wong], 😳
+  textfeatuwesbyid: m-map[wong, 😳😳😳 stwing])
 
-  def apply(aggregationKey: AggregationKey): Array[Byte] =
-    featureMapsInjection(AggregationKey.unapply(aggregationKey).get)
+/**
+ * a custom injection fow the a-above case cwass, mya
+ * so that summingbiwd knows how to stowe it in manhattan. mya
+ */
+o-object aggwegationkeyinjection extends injection[aggwegationkey, (⑅˘꒳˘) a-awway[byte]] {
+  /* i-injection f-fwom tupwe wepwesentation of aggwegationkey t-to a-awway[byte] */
+  v-vaw featuwemapsinjection: i-injection[(map[wong, (U ﹏ U) wong], map[wong, mya stwing]), awway[byte]] =
+    b-buffewabwe.injectionof[(map[wong, ʘwʘ w-wong], map[wong, (˘ω˘) s-stwing])]
 
-  def invert(ab: Array[Byte]): Try[AggregationKey] =
-    featureMapsInjection.invert(ab).map(AggregationKey.tupled(_))
+  def a-appwy(aggwegationkey: a-aggwegationkey): awway[byte] =
+    featuwemapsinjection(aggwegationkey.unappwy(aggwegationkey).get)
+
+  def invewt(ab: awway[byte]): t-twy[aggwegationkey] =
+    featuwemapsinjection.invewt(ab).map(aggwegationkey.tupwed(_))
 }

@@ -1,55 +1,55 @@
-package com.twitter.follow_recommendations.configapi.candidates
+package com.twittew.fowwow_wecommendations.configapi.candidates
 
-import com.google.common.annotations.VisibleForTesting
-import com.google.inject.Inject
-import com.twitter.decider.Decider
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.featureswitches.{Recipient => FeatureSwitchRecipient}
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants.PRODUCER_SIDE_FEATURE_SWITCHES
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.timelines.configapi.FeatureContext
-import com.twitter.timelines.configapi.featureswitches.v2.FeatureSwitchResultsFeatureContext
-import javax.inject.Named
-import javax.inject.Singleton
+impowt com.googwe.common.annotations.visibwefowtesting
+i-impowt com.googwe.inject.inject
+i-impowt com.twittew.decidew.decidew
+i-impowt c-com.twittew.featuweswitches.v2.featuweswitches
+i-impowt com.twittew.featuweswitches.{wecipient => f-featuweswitchwecipient}
+i-impowt c-com.twittew.fowwow_wecommendations.common.constants.guicenamedconstants.pwoducew_side_featuwe_switches
+impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+impowt com.twittew.fowwow_wecommendations.common.modews.dispwaywocation
+impowt com.twittew.timewines.configapi.featuwecontext
+i-impowt com.twittew.timewines.configapi.featuweswitches.v2.featuweswitchwesuwtsfeatuwecontext
+impowt javax.inject.named
+i-impowt javax.inject.singweton
 
-@Singleton
-class CandidateUserContextFactory @Inject() (
-  @Named(PRODUCER_SIDE_FEATURE_SWITCHES) featureSwitches: FeatureSwitches,
-  decider: Decider) {
-  def apply(
-    candidateUser: CandidateUser,
-    displayLocation: DisplayLocation
-  ): CandidateUserContext = {
-    val featureContext = getFeatureContext(candidateUser, displayLocation)
+@singweton
+cwass c-candidateusewcontextfactowy @inject() (
+  @named(pwoducew_side_featuwe_switches) featuweswitches: featuweswitches, (⑅˘꒳˘)
+  decidew: d-decidew) {
+  def appwy(
+    candidateusew: c-candidateusew, òωó
+    d-dispwaywocation: dispwaywocation
+  ): candidateusewcontext = {
+    vaw featuwecontext = getfeatuwecontext(candidateusew, ʘwʘ dispwaywocation)
 
-    CandidateUserContext(Some(candidateUser.id), featureContext)
+    c-candidateusewcontext(some(candidateusew.id), /(^•ω•^) featuwecontext)
   }
 
-  private[configapi] def getFeatureContext(
-    candidateUser: CandidateUser,
-    displayLocation: DisplayLocation
-  ): FeatureContext = {
+  pwivate[configapi] def getfeatuwecontext(
+    candidateusew: candidateusew, ʘwʘ
+    d-dispwaywocation: dispwaywocation
+  ): f-featuwecontext = {
 
-    val recipient = getFeatureSwitchRecipient(candidateUser).withCustomFields(
-      "display_location" -> displayLocation.toFsName)
-    new FeatureSwitchResultsFeatureContext(featureSwitches.matchRecipient(recipient))
+    vaw w-wecipient = getfeatuweswitchwecipient(candidateusew).withcustomfiewds(
+      "dispway_wocation" -> d-dispwaywocation.tofsname)
+    n-nyew featuweswitchwesuwtsfeatuwecontext(featuweswitches.matchwecipient(wecipient))
   }
 
-  @VisibleForTesting
-  private[configapi] def getFeatureSwitchRecipient(
-    candidateUser: CandidateUser
-  ): FeatureSwitchRecipient = {
-    FeatureSwitchRecipient(
-      userId = Some(candidateUser.id),
-      userRoles = None,
-      deviceId = None,
-      guestId = None,
-      languageCode = None,
-      countryCode = None,
-      isVerified = None,
-      clientApplicationId = None,
-      isTwoffice = None
+  @visibwefowtesting
+  pwivate[configapi] def getfeatuweswitchwecipient(
+    c-candidateusew: candidateusew
+  ): featuweswitchwecipient = {
+    f-featuweswitchwecipient(
+      usewid = some(candidateusew.id), σωσ
+      usewwowes = nyone, OwO
+      deviceid = nyone, 😳😳😳
+      g-guestid = nyone, 😳😳😳
+      wanguagecode = n-nyone, o.O
+      c-countwycode = n-nyone, ( ͡o ω ͡o )
+      isvewified = nyone, (U ﹏ U)
+      cwientappwicationid = nyone, (///ˬ///✿)
+      i-istwoffice = n-nyone
     )
   }
 }

@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwp
 
-import com.twitter.pages.render.{thriftscala => urp}
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.TimelineScribeConfigMarshaller
-import com.twitter.product_mixer.core.model.common.identifier.TransportMarshallerIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urp.Page
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pages.wendew.{thwiftscawa => u-uwp}
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.twanspowtmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.timewinescwibeconfigmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twanspowtmawshawwewidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.page
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class UrpTransportMarshaller @Inject() (
-  pageBodyMarshaller: PageBodyMarshaller,
-  timelineScribeConfigMarshaller: TimelineScribeConfigMarshaller,
-  pageHeaderMarshaller: PageHeaderMarshaller,
-  pageNavBarMarshaller: PageNavBarMarshaller)
-    extends TransportMarshaller[Page, urp.Page] {
+@singweton
+cwass uwptwanspowtmawshawwew @inject() (
+  pagebodymawshawwew: pagebodymawshawwew, -.-
+  timewinescwibeconfigmawshawwew: timewinescwibeconfigmawshawwew, ( ͡o ω ͡o )
+  p-pageheadewmawshawwew: pageheadewmawshawwew, rawr x3
+  pagenavbawmawshawwew: p-pagenavbawmawshawwew)
+    extends twanspowtmawshawwew[page, nyaa~~ u-uwp.page] {
 
-  override val identifier: TransportMarshallerIdentifier =
-    TransportMarshallerIdentifier("UnifiedRichPage")
+  ovewwide vaw identifiew: twanspowtmawshawwewidentifiew =
+    twanspowtmawshawwewidentifiew("unifiedwichpage")
 
-  override def apply(page: Page): urp.Page = urp.Page(
-    id = page.id,
-    pageBody = pageBodyMarshaller(page.pageBody),
-    scribeConfig = page.scribeConfig.map(timelineScribeConfigMarshaller(_)),
-    pageHeader = page.pageHeader.map(pageHeaderMarshaller(_)),
-    pageNavBar = page.pageNavBar.map(pageNavBarMarshaller(_))
+  o-ovewwide def appwy(page: p-page): uwp.page = u-uwp.page(
+    id = page.id, /(^•ω•^)
+    pagebody = pagebodymawshawwew(page.pagebody), rawr
+    scwibeconfig = page.scwibeconfig.map(timewinescwibeconfigmawshawwew(_)), OwO
+    p-pageheadew = page.pageheadew.map(pageheadewmawshawwew(_)), (U ﹏ U)
+    pagenavbaw = page.pagenavbaw.map(pagenavbawmawshawwew(_))
   )
 }

@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.core.feature.featurestorev1
+package com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1
 
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.entity.Entity
-import com.twitter.ml.featurestore.lib.entity.EntityWithId
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.mw.featuwestowe.wib.entityid
+i-impowt c-com.twittew.mw.featuwestowe.wib.entity.entity
+i-impowt com.twittew.mw.featuwestowe.wib.entity.entitywithid
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-sealed trait FeatureStoreV1Entity[
-  -Query <: PipelineQuery,
-  -Input,
-  FeatureStoreEntityId <: EntityId] {
+seawed twait featuwestowev1entity[
+  -quewy <: pipewinequewy, OwO
+  -input, (U ﹏ U)
+  featuwestoweentityid <: entityid] {
 
-  val entity: Entity[FeatureStoreEntityId]
+  v-vaw entity: entity[featuwestoweentityid]
 }
 
-trait FeatureStoreV1QueryEntity[-Query <: PipelineQuery, FeatureStoreEntityId <: EntityId]
-    extends FeatureStoreV1Entity[Query, Query, FeatureStoreEntityId] {
+twait featuwestowev1quewyentity[-quewy <: p-pipewinequewy, >_< featuwestoweentityid <: entityid]
+    e-extends featuwestowev1entity[quewy, rawr x3 quewy, featuwestoweentityid] {
 
-  def entityWithId(query: Query): EntityWithId[FeatureStoreEntityId]
+  def entitywithid(quewy: q-quewy): entitywithid[featuwestoweentityid]
 }
 
-trait FeatureStoreV1CandidateEntity[
-  -Query <: PipelineQuery,
-  -Input <: UniversalNoun[Any],
-  FeatureStoreEntityId <: EntityId]
-    extends FeatureStoreV1Entity[Query, Input, FeatureStoreEntityId] {
+t-twait featuwestowev1candidateentity[
+  -quewy <: p-pipewinequewy, mya
+  -input <: univewsawnoun[any], nyaa~~
+  featuwestoweentityid <: entityid]
+    extends featuwestowev1entity[quewy, (⑅˘꒳˘) i-input, featuwestoweentityid] {
 
-  def entityWithId(
-    query: Query,
-    input: Input,
-    existingFeatures: FeatureMap
-  ): EntityWithId[FeatureStoreEntityId]
+  def entitywithid(
+    quewy: quewy, rawr x3
+    input: input, (✿oωo)
+    e-existingfeatuwes: featuwemap
+  ): e-entitywithid[featuwestoweentityid]
 }

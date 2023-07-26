@@ -1,34 +1,34 @@
-package com.twitter.product_mixer.component_library.module
+package com.twittew.pwoduct_mixew.component_wibwawy.moduwe
 
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.util.Duration
+impowt c-com.twittew.fowwow_wecommendations.thwiftscawa.fowwowwecommendationsthwiftsewvice
+i-impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.convewsions.pewcentops._
+i-impowt c-com.twittew.finagwe.thwiftmux.methodbuiwdew
+i-impowt com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwscwient
+i-impowt c-com.twittew.inject.injectow
+impowt com.twittew.inject.thwift.moduwes.thwiftmethodbuiwdewcwientmoduwe
+impowt com.twittew.utiw.duwation
 
-object FollowRecommenderServiceModule
-    extends ThriftMethodBuilderClientModule[
-      FollowRecommendationsThriftService.ServicePerEndpoint,
-      FollowRecommendationsThriftService.MethodPerEndpoint
+object f-fowwowwecommendewsewvicemoduwe
+    extends thwiftmethodbuiwdewcwientmoduwe[
+      fowwowwecommendationsthwiftsewvice.sewvicepewendpoint, ( ͡o ω ͡o )
+      f-fowwowwecommendationsthwiftsewvice.methodpewendpoint
     ]
-    with MtlsClient {
+    with mtwscwient {
 
-  override val label: String = "follow-recommendations-service"
+  o-ovewwide vaw wabew: stwing = "fowwow-wecommendations-sewvice"
 
-  override val dest: String = "/s/follow-recommendations/follow-recos-service"
+  ovewwide vaw dest: stwing = "/s/fowwow-wecommendations/fowwow-wecos-sewvice"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    methodBuilder
-      .withTimeoutPerRequest(400.millis)
-      .withTimeoutTotal(800.millis)
-      .idempotent(5.percent)
+  o-ovewwide pwotected def configuwemethodbuiwdew(
+    i-injectow: i-injectow, rawr x3
+    methodbuiwdew: methodbuiwdew
+  ): methodbuiwdew = {
+    methodbuiwdew
+      .withtimeoutpewwequest(400.miwwis)
+      .withtimeouttotaw(800.miwwis)
+      .idempotent(5.pewcent)
   }
 
-  override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+  o-ovewwide pwotected def sessionacquisitiontimeout: duwation = 500.miwwiseconds
 }

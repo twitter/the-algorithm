@@ -1,85 +1,85 @@
-package com.twitter.simclusters_v2.hdfs_sources
+package com.twittew.simcwustews_v2.hdfs_souwces
 
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.Proc3Atla
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.TopSimClustersWithScore
+impowt com.twittew.scawding.datewange
+i-impowt com.twittew.scawding.typedpipe
+i-impowt c-com.twittew.scawding_intewnaw.dawv2.daw
+i-impowt c-com.twittew.scawding_intewnaw.dawv2.wemote_access.awwowcwosscwustewsamedc
+i-impowt c-com.twittew.scawding_intewnaw.dawv2.wemote_access.expwicitwocation
+i-impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.pwoc3atwa
+impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+impowt com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
+impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembedding
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembeddingid
+impowt com.twittew.simcwustews_v2.thwiftscawa.topsimcwustewswithscowe
 
-object ProducerEmbeddingSources {
+o-object pwoducewembeddingsouwces {
 
   /**
-   * Helper function to retrieve producer SimClusters embeddings with the legacy `TopSimClustersWithScore`
-   * value type.
+   * hewpew function to wetwieve p-pwoducew simcwustews embeddings w-with the w-wegacy `topsimcwustewswithscowe`
+   * vawue type. >_<
    */
-  def producerEmbeddingSourceLegacy(
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion
+  def pwoducewembeddingsouwcewegacy(
+    embeddingtype: embeddingtype, -.-
+    m-modewvewsion: modewvewsion
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(Long, TopSimClustersWithScore)] = {
-    val producerEmbeddingDataset = (embeddingType, modelVersion) match {
-      case (EmbeddingType.ProducerFollowBasedSemanticCoreEntity, ModelVersion.Model20m145kDec11) =>
-        ProducerTopKSimclusterEmbeddingsByFollowScoreScalaDataset
-      case (EmbeddingType.ProducerFavBasedSemanticCoreEntity, ModelVersion.Model20m145kDec11) =>
-        ProducerTopKSimclusterEmbeddingsByFavScoreScalaDataset
+    impwicit datewange: datewange
+  ): typedpipe[(wong, 🥺 t-topsimcwustewswithscowe)] = {
+    vaw p-pwoducewembeddingdataset = (embeddingtype, (U ﹏ U) m-modewvewsion) m-match {
+      c-case (embeddingtype.pwoducewfowwowbasedsemanticcoweentity, >w< modewvewsion.modew20m145kdec11) =>
+        pwoducewtopksimcwustewembeddingsbyfowwowscowescawadataset
+      case (embeddingtype.pwoducewfavbasedsemanticcoweentity, mya modewvewsion.modew20m145kdec11) =>
+        p-pwoducewtopksimcwustewembeddingsbyfavscowescawadataset
       case (
-            EmbeddingType.ProducerFollowBasedSemanticCoreEntity,
-            ModelVersion.Model20m145kUpdated) =>
-        ProducerTopKSimclusterEmbeddingsByFollowScoreUpdatedScalaDataset
-      case (EmbeddingType.ProducerFavBasedSemanticCoreEntity, ModelVersion.Model20m145kUpdated) =>
-        ProducerTopKSimclusterEmbeddingsByFavScoreUpdatedScalaDataset
-      case (_, _) =>
-        throw new ClassNotFoundException(
-          "Unsupported embedding type: " + embeddingType + " and model version: " + modelVersion)
+            embeddingtype.pwoducewfowwowbasedsemanticcoweentity, >w<
+            modewvewsion.modew20m145kupdated) =>
+        p-pwoducewtopksimcwustewembeddingsbyfowwowscoweupdatedscawadataset
+      case (embeddingtype.pwoducewfavbasedsemanticcoweentity, nyaa~~ modewvewsion.modew20m145kupdated) =>
+        pwoducewtopksimcwustewembeddingsbyfavscoweupdatedscawadataset
+      case (_, (✿oωo) _) =>
+        thwow nyew cwassnotfoundexception(
+          "unsuppowted e-embedding type: " + embeddingtype + " a-and modew v-vewsion: " + modewvewsion)
     }
 
-    DAL
-      .readMostRecentSnapshot(producerEmbeddingDataset).withRemoteReadPolicy(
-        AllowCrossClusterSameDC)
-      .toTypedPipe.map {
-        case KeyVal(producerId, topSimClustersWithScore) =>
-          (producerId, topSimClustersWithScore)
+    d-daw
+      .weadmostwecentsnapshot(pwoducewembeddingdataset).withwemoteweadpowicy(
+        awwowcwosscwustewsamedc)
+      .totypedpipe.map {
+        case keyvaw(pwoducewid, ʘwʘ t-topsimcwustewswithscowe) =>
+          (pwoducewid, (ˆ ﻌ ˆ)♡ t-topsimcwustewswithscowe)
       }
   }
 
-  def producerEmbeddingSource(
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion
+  def p-pwoducewembeddingsouwce(
+    embeddingtype: e-embeddingtype, 😳😳😳
+    modewvewsion: modewvewsion
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(Long, SimClustersEmbedding)] = {
-    val producerEmbeddingDataset = (embeddingType, modelVersion) match {
-      case (EmbeddingType.AggregatableLogFavBasedProducer, ModelVersion.Model20m145k2020) =>
-        AggregatableProducerSimclustersEmbeddingsByLogFavScore2020ScalaDataset
-      case (EmbeddingType.AggregatableFollowBasedProducer, ModelVersion.Model20m145k2020) =>
-        AggregatableProducerSimclustersEmbeddingsByFollowScore2020ScalaDataset
-      case (EmbeddingType.RelaxedAggregatableLogFavBasedProducer, ModelVersion.Model20m145k2020) =>
-        AggregatableProducerSimclustersEmbeddingsByLogFavScoreRelaxedFavEngagementThreshold2020ScalaDataset
-      case (_, _) =>
-        throw new ClassNotFoundException(
-          "Unsupported embedding type: " + embeddingType + " and model version: " + modelVersion)
+    i-impwicit datewange: datewange
+  ): t-typedpipe[(wong, :3 simcwustewsembedding)] = {
+    vaw pwoducewembeddingdataset = (embeddingtype, OwO m-modewvewsion) match {
+      c-case (embeddingtype.aggwegatabwewogfavbasedpwoducew, (U ﹏ U) modewvewsion.modew20m145k2020) =>
+        a-aggwegatabwepwoducewsimcwustewsembeddingsbywogfavscowe2020scawadataset
+      case (embeddingtype.aggwegatabwefowwowbasedpwoducew, >w< m-modewvewsion.modew20m145k2020) =>
+        aggwegatabwepwoducewsimcwustewsembeddingsbyfowwowscowe2020scawadataset
+      case (embeddingtype.wewaxedaggwegatabwewogfavbasedpwoducew, (U ﹏ U) modewvewsion.modew20m145k2020) =>
+        aggwegatabwepwoducewsimcwustewsembeddingsbywogfavscowewewaxedfavengagementthweshowd2020scawadataset
+      case (_, 😳 _) =>
+        thwow nyew cwassnotfoundexception(
+          "unsuppowted e-embedding t-type: " + embeddingtype + " a-and modew vewsion: " + m-modewvewsion)
     }
 
-    DAL
-      .readMostRecentSnapshot(
-        producerEmbeddingDataset
+    d-daw
+      .weadmostwecentsnapshot(
+        pwoducewembeddingdataset
       )
-      .withRemoteReadPolicy(ExplicitLocation(Proc3Atla))
-      .toTypedPipe
+      .withwemoteweadpowicy(expwicitwocation(pwoc3atwa))
+      .totypedpipe
       .map {
-        case KeyVal(
-              SimClustersEmbeddingId(_, _, InternalId.UserId(producerId: Long)),
-              embedding: SimClustersEmbedding) =>
-          (producerId, embedding)
+        case keyvaw(
+              simcwustewsembeddingid(_, (ˆ ﻌ ˆ)♡ _, i-intewnawid.usewid(pwoducewid: wong)), 😳😳😳
+              embedding: simcwustewsembedding) =>
+          (pwoducewid, (U ﹏ U) embedding)
       }
   }
 

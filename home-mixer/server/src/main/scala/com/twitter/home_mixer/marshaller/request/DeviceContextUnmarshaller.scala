@@ -1,19 +1,19 @@
-package com.twitter.home_mixer.marshaller.request
+package com.twittew.home_mixew.mawshawwew.wequest
 
-import com.twitter.home_mixer.model.request.DeviceContext
-import com.twitter.home_mixer.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.modew.wequest.devicecontext
+i-impowt c-com.twittew.home_mixew.{thwiftscawa => t-t}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class DeviceContextUnmarshaller @Inject() () {
+@singweton
+c-cwass devicecontextunmawshawwew @inject() () {
 
-  def apply(deviceContext: t.DeviceContext): DeviceContext = {
-    DeviceContext(
-      isPolling = deviceContext.isPolling,
-      requestContext = deviceContext.requestContext,
-      latestControlAvailable = deviceContext.latestControlAvailable,
-      autoplayEnabled = deviceContext.autoplayEnabled
+  d-def appwy(devicecontext: t-t.devicecontext): devicecontext = {
+    devicecontext(
+      ispowwing = devicecontext.ispowwing, :3
+      wequestcontext = d-devicecontext.wequestcontext, (U ﹏ U)
+      watestcontwowavaiwabwe = devicecontext.watestcontwowavaiwabwe, -.-
+      autopwayenabwed = d-devicecontext.autopwayenabwed
     )
   }
 }

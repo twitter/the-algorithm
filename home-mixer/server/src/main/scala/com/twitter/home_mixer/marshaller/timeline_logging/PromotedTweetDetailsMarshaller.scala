@@ -1,15 +1,15 @@
-package com.twitter.home_mixer.marshaller.timeline_logging
+package com.twittew.home_mixew.mawshawwew.timewine_wogging
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.timelines.timeline_logging.{thriftscala => thriftlog}
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tweet.tweetitem
+i-impowt com.twittew.timewines.timewine_wogging.{thwiftscawa => t-thwiftwog}
 
-object PromotedTweetDetailsMarshaller {
+object p-pwomotedtweetdetaiwsmawshawwew {
 
-  def apply(entry: TweetItem, position: Int): thriftlog.PromotedTweetDetails = {
-    thriftlog.PromotedTweetDetails(
-      advertiserId = Some(entry.promotedMetadata.map(_.advertiserId).getOrElse(0L)),
-      insertPosition = Some(position),
-      impressionId = entry.promotedMetadata.flatMap(_.impressionString)
+  d-def appwy(entwy: t-tweetitem, σωσ p-position: i-int): thwiftwog.pwomotedtweetdetaiws = {
+    thwiftwog.pwomotedtweetdetaiws(
+      advewtisewid = some(entwy.pwomotedmetadata.map(_.advewtisewid).getowewse(0w)), >_<
+      insewtposition = s-some(position), :3
+      impwessionid = entwy.pwomotedmetadata.fwatmap(_.impwessionstwing)
     )
   }
 }

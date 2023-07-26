@@ -1,13 +1,13 @@
-import sys
+impowt sys
 
-from .parsers import DBv2DataExampleParser
-from .reader import LollyModelReader
-from .scorer import LollyModelScorer
+fwom .pawsews impowt d-dbv2dataexampwepawsew
+f-fwom .weadew i-impowt wowwymodewweadew
+f-fwom .scowew i-impowt wowwymodewscowew
 
 
-if __name__ == "__main__":
-  lolly_model_reader = LollyModelReader(lolly_model_file_path=sys.argv[1])
-  lolly_model_scorer = LollyModelScorer(data_example_parser=DBv2DataExampleParser(lolly_model_reader))
+i-if __name__ == "__main__":
+  wowwy_modew_weadew = w-wowwymodewweadew(wowwy_modew_fiwe_path=sys.awgv[1])
+  w-wowwy_modew_scowew = wowwymodewscowew(data_exampwe_pawsew=dbv2dataexampwepawsew(wowwy_modew_weadew))
 
-  score = lolly_model_scorer.score(data_example=sys.argv[2])
-  print(score)
+  scowe = wowwy_modew_scowew.scowe(data_exampwe=sys.awgv[2])
+  pwint(scowe)

@@ -1,99 +1,99 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.commons.pipewine.stageexception;
+i-impowt o-owg.apache.commons.pipewine.vawidation.consumedtypes;
+i-impowt owg.apache.commons.pipewine.vawidation.pwoducesconsumed;
+i-impowt owg.swf4j.woggew;
+impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftGeoLocationSource;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.relevance.entities.GeoObject;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.text.LocationUtils;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
+i-impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftgeowocationsouwce;
+i-impowt c-com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt com.twittew.seawch.common.wewevance.entities.geoobject;
+impowt com.twittew.seawch.common.wewevance.entities.twittewmessage;
+i-impowt com.twittew.seawch.common.wewevance.text.wocationutiws;
+impowt c-com.twittew.seawch.ingestew.modew.ingestewtwittewmessage;
+impowt c-com.twittew.seawch.ingestew.pipewine.utiw.pipewinestagewuntimeexception;
 
 /**
- * Read-only stage to extract lat/lon pairs from the tweet text and populate
- * the geoLocation field.
+ * wead-onwy stage to extwact wat/won paiws fwom t-the tweet text and popuwate
+ * t-the geowocation f-fiewd. ^^;;
  * <p>
- * If the tweet is geotagged by mobile devices, the geo coordinates extracted from the JSON
- * is used.
+ * if the tweet is geotagged by mobiwe devices, 🥺 the geo coowdinates e-extwacted fwom the json
+ * is used. (⑅˘꒳˘)
  */
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public class SingleTweetExtractAndGeocodeLatLonStage extends TwitterBaseStage
-    <TwitterMessage, IngesterTwitterMessage> {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(SingleTweetExtractAndGeocodeLatLonStage.class);
+@consumedtypes(ingestewtwittewmessage.cwass)
+@pwoducesconsumed
+pubwic cwass singwetweetextwactandgeocodewatwonstage e-extends twittewbasestage
+    <twittewmessage, nyaa~~ ingestewtwittewmessage> {
+  p-pwivate s-static finaw woggew w-wog =
+      w-woggewfactowy.getwoggew(singwetweetextwactandgeocodewatwonstage.cwass);
 
-  private SearchRateCounter extractedLatLons;
-  private SearchRateCounter badLatLons;
+  pwivate seawchwatecountew e-extwactedwatwons;
+  pwivate seawchwatecountew b-badwatwons;
 
-  @Override
-  public void initStats() {
-    super.initStats();
-    innerSetupStats();
+  @ovewwide
+  pubwic void initstats() {
+    supew.initstats();
+    innewsetupstats();
   }
 
-  @Override
-  protected void innerSetupStats() {
-    extractedLatLons = SearchRateCounter.export(getStageNamePrefix() + "_extracted_lat_lons");
-    badLatLons = SearchRateCounter.export(getStageNamePrefix() + "_invalid_lat_lons");
+  @ovewwide
+  pwotected void innewsetupstats() {
+    e-extwactedwatwons = seawchwatecountew.expowt(getstagenamepwefix() + "_extwacted_wat_wons");
+    b-badwatwons = seawchwatecountew.expowt(getstagenamepwefix() + "_invawid_wat_wons");
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not IngesterTwitterMessage object: " + obj);
+  @ovewwide
+  p-pubwic void i-innewpwocess(object obj) thwows stageexception {
+    if (!(obj i-instanceof ingestewtwittewmessage)) {
+      t-thwow nyew stageexception(this, :3 "object i-is nyot ingestewtwittewmessage o-object: " + obj);
     }
 
-    IngesterTwitterMessage message = IngesterTwitterMessage.class.cast(obj);
-    tryToSetGeoLocation(message);
-    emitAndCount(message);
+    i-ingestewtwittewmessage message = i-ingestewtwittewmessage.cwass.cast(obj);
+    twytosetgeowocation(message);
+    emitandcount(message);
   }
 
-  @Override
-  protected IngesterTwitterMessage innerRunStageV2(TwitterMessage message) {
-    // Previous stage takes in a TwitterMessage and returns a TwitterMessage. I think it was
-    // done to simplify testing. From this stage onwards, we only count the message that are of type
-    // IngesterTwitterMessage.
-    if (!(message instanceof IngesterTwitterMessage)) {
-      throw new PipelineStageRuntimeException("Message needs to be of type IngesterTwitterMessage");
+  @ovewwide
+  pwotected i-ingestewtwittewmessage innewwunstagev2(twittewmessage m-message) {
+    // pwevious s-stage takes i-in a twittewmessage and wetuwns a twittewmessage. ( ͡o ω ͡o ) i think it was
+    // done to simpwify testing. mya fwom this stage o-onwawds, (///ˬ///✿) we o-onwy count the message that awe o-of type
+    // ingestewtwittewmessage. (˘ω˘)
+    i-if (!(message i-instanceof ingestewtwittewmessage)) {
+      thwow nyew pipewinestagewuntimeexception("message n-nyeeds to be of type ingestewtwittewmessage");
     }
 
-    IngesterTwitterMessage ingesterTwitterMessage = IngesterTwitterMessage.class.cast(message);
-    tryToSetGeoLocation(ingesterTwitterMessage);
-    return ingesterTwitterMessage;
+    ingestewtwittewmessage ingestewtwittewmessage = ingestewtwittewmessage.cwass.cast(message);
+    t-twytosetgeowocation(ingestewtwittewmessage);
+    wetuwn ingestewtwittewmessage;
   }
 
-  private void tryToSetGeoLocation(IngesterTwitterMessage message) {
-    if (message.getGeoTaggedLocation() != null) {
-      message.setGeoLocation(message.getGeoTaggedLocation());
-    } else if (message.hasGeoLocation()) {
-      LOG.warn("Message {} already contains geoLocation", message.getId());
-    } else {
-      try {
-        GeoObject extracted = extractLatLon(message);
-        if (extracted != null) {
-          message.setGeoLocation(extracted);
-          extractedLatLons.increment();
+  p-pwivate v-void twytosetgeowocation(ingestewtwittewmessage m-message) {
+    if (message.getgeotaggedwocation() != nyuww) {
+      m-message.setgeowocation(message.getgeotaggedwocation());
+    } e-ewse if (message.hasgeowocation()) {
+      w-wog.wawn("message {} a-awweady contains geowocation", ^^;; message.getid());
+    } e-ewse {
+      t-twy {
+        g-geoobject extwacted = e-extwactwatwon(message);
+        i-if (extwacted != nyuww) {
+          message.setgeowocation(extwacted);
+          extwactedwatwons.incwement();
         }
-      } catch (NumberFormatException e) {
-        LOG.debug("Message contains bad latitude and longitude: " + message.getOrigLocation(), e);
-        badLatLons.increment();
-      } catch (Exception e) {
-        LOG.error("Failed to extract geo location from " + message.getOrigLocation() + " for tweet "
-            + message.getId(), e);
+      } c-catch (numbewfowmatexception e) {
+        wog.debug("message contains bad watitude and wongitude: " + m-message.getowigwocation(), (✿oωo) e);
+        badwatwons.incwement();
+      } catch (exception e-e) {
+        w-wog.ewwow("faiwed t-to extwact geo wocation f-fwom " + message.getowigwocation() + " fow tweet "
+            + m-message.getid(), (U ﹏ U) e-e);
       }
     }
   }
 
-  private GeoObject extractLatLon(IngesterTwitterMessage message) throws NumberFormatException {
-    double[] latlon = LocationUtils.extractLatLon(message);
-    return latlon == null
-        ? null
-        : new GeoObject(latlon[0], latlon[1], ThriftGeoLocationSource.TWEET_TEXT);
+  pwivate geoobject extwactwatwon(ingestewtwittewmessage message) thwows nyumbewfowmatexception {
+    doubwe[] watwon = w-wocationutiws.extwactwatwon(message);
+    wetuwn w-watwon == nyuww
+        ? nyuww
+        : n-nyew g-geoobject(watwon[0], -.- watwon[1], ^•ﻌ•^ thwiftgeowocationsouwce.tweet_text);
   }
 }

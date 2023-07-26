@@ -1,15 +1,15 @@
-scala_library(
-    sources = ["DeciderGates.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "decider",
-        "finagle/finagle-toggle/src/main/scala/com/twitter/finagle/server",
-        "tweetypie/servo/decider",
-        "tweetypie/servo/util/src/main/scala",
-        "util/util-core:scala",
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], 🥺
+    stwict_deps = twue, òωó
+    t-tags = ["bazew-compatibwe"], o.O
+    d-dependencies = [
+        "finagwe/finagwe-memcached/swc/main/scawa", (U ᵕ U❁)
+        "scwooge/scwooge-sewiawizew", (⑅˘꒳˘)
+        "stitch/stitch-cowe", ( ͡o ω ͡o )
+        "utiw/utiw-cowe", UwU
+        "utiw/utiw-wogging", rawr x3
+        # c-cachedvawue s-stwuct
+        "tweetypie/sewvo/wepo/swc/main/thwift:thwift-scawa", rawr
+        "utiw/utiw-swf4j-api/swc/main/scawa/com/twittew/utiw/wogging", σωσ
     ],
 )

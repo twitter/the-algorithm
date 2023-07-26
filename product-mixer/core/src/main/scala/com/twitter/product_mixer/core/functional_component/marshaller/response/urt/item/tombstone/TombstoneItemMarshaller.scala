@@ -1,23 +1,23 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tombstone
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tombstone
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet.TweetItemMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.TombstoneItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tweet.tweetitemmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tombstone.tombstoneitem
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class TombstoneItemMarshaller @Inject() (
-  displayTypeMarshaller: TombstoneDisplayTypeMarshaller,
-  tombstoneInfoMarshaller: TombstoneInfoMarshaller,
-  tweetItemMarshaller: TweetItemMarshaller) {
+@singweton
+c-cwass tombstoneitemmawshawwew @inject() (
+  d-dispwaytypemawshawwew: tombstonedispwaytypemawshawwew, mya
+  tombstoneinfomawshawwew: tombstoneinfomawshawwew, mya
+  tweetitemmawshawwew: t-tweetitemmawshawwew) {
 
-  def apply(tombstoneItem: TombstoneItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.Tombstone(
-      urt.Tombstone(
-        displayType = displayTypeMarshaller(tombstoneItem.tombstoneDisplayType),
-        tombstoneInfo = tombstoneItem.tombstoneInfo.map(tombstoneInfoMarshaller(_)),
-        tweet = tombstoneItem.tweet.map(tweetItemMarshaller(_).tweet)
+  def appwy(tombstoneitem: t-tombstoneitem): uwt.timewineitemcontent =
+    u-uwt.timewineitemcontent.tombstone(
+      uwt.tombstone(
+        dispwaytype = dispwaytypemawshawwew(tombstoneitem.tombstonedispwaytype), 😳
+        t-tombstoneinfo = tombstoneitem.tombstoneinfo.map(tombstoneinfomawshawwew(_)), XD
+        t-tweet = t-tombstoneitem.tweet.map(tweetitemmawshawwew(_).tweet)
       )
     )
 }

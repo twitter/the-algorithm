@@ -1,41 +1,41 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import org.apache.lucene.index.PostingsEnum;
+i-impowt owg.apache.wucene.index.postingsenum;
 
-import com.twitter.search.common.util.io.flushable.Flushable;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
 
-public abstract class OptimizedPostingLists implements Flushable {
-  static final int MAX_DOC_ID_BIT = 24;
-  static final int MAX_DOC_ID = (1 << MAX_DOC_ID_BIT) - 1;
+p-pubwic abstwact c-cwass optimizedpostingwists i-impwements fwushabwe {
+  s-static f-finaw int max_doc_id_bit = 24;
+  static finaw int max_doc_id = (1 << max_doc_id_bit) - 1;
 
-  static final int MAX_POSITION_BIT = 31;
+  static f-finaw int max_position_bit = 31;
 
-  static final int MAX_FREQ_BIT = 31;
+  static finaw int max_fweq_bit = 31;
 
   /**
-   * Copies the given posting list into these posting lists.
+   * c-copies the given posting w-wist into these posting wists. ʘwʘ
    *
-   * @param postingsEnum enumerator of the posting list that needs to be copied
-   * @param numPostings number of postings in the posting list that needs to be copied
-   * @return position index of the head of the copied posting list in these posting lists instance
+   * @pawam postingsenum enumewatow of the p-posting wist that nyeeds to be copied
+   * @pawam n-nyumpostings nyumbew o-of postings in the posting wist that nyeeds to be copied
+   * @wetuwn position i-index of the head of the copied posting wist in these posting wists instance
    */
-  public abstract int copyPostingList(PostingsEnum postingsEnum, int numPostings)
-      throws IOException;
+  p-pubwic abstwact int copypostingwist(postingsenum p-postingsenum, σωσ i-int nyumpostings)
+      t-thwows ioexception;
 
   /**
-   * Create and return a postings doc enumerator or doc-position enumerator based on input flag.
+   * c-cweate and wetuwn a postings doc enumewatow ow d-doc-position enumewatow based on input fwag. OwO
    *
-   * @see org.apache.lucene.index.PostingsEnum
+   * @see o-owg.apache.wucene.index.postingsenum
    */
-  public abstract EarlybirdPostingsEnum postings(int postingListPointer, int numPostings, int flags)
-      throws IOException;
+  pubwic abstwact eawwybiwdpostingsenum postings(int postingwistpointew, 😳😳😳 int nyumpostings, 😳😳😳 int fwags)
+      t-thwows ioexception;
 
   /**
-   * Returns the largest docID contained in the posting list pointed by {@code postingListPointer}.
+   * wetuwns the w-wawgest docid contained i-in the posting w-wist pointed by {@code postingwistpointew}. o.O
    */
-  public final int getLargestDocID(int postingListPointer, int numPostings) throws IOException {
-    return postings(postingListPointer, numPostings, PostingsEnum.NONE).getLargestDocID();
+  pubwic finaw int getwawgestdocid(int p-postingwistpointew, ( ͡o ω ͡o ) i-int nyumpostings) thwows ioexception {
+    wetuwn p-postings(postingwistpointew, (U ﹏ U) n-nyumpostings, (///ˬ///✿) postingsenum.none).getwawgestdocid();
   }
 }

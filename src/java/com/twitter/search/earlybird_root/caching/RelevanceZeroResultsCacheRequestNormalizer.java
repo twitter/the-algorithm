@@ -1,31 +1,31 @@
-package com.twitter.search.earlybird_root.caching;
+package com.twittew.seawch.eawwybiwd_woot.caching;
 
-import com.google.common.base.Optional;
+impowt com.googwe.common.base.optionaw;
 
-import com.twitter.search.common.caching.CacheUtil;
-import com.twitter.search.common.caching.SearchQueryNormalizer;
-import com.twitter.search.common.caching.filter.CacheRequestNormalizer;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+i-impowt c-com.twittew.seawch.common.caching.cacheutiw;
+i-impowt com.twittew.seawch.common.caching.seawchquewynowmawizew;
+i-impowt com.twittew.seawch.common.caching.fiwtew.cachewequestnowmawizew;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
 
-public class RelevanceZeroResultsCacheRequestNormalizer
-    extends CacheRequestNormalizer<EarlybirdRequestContext, EarlybirdRequest> {
-  @Override
-  public Optional<EarlybirdRequest> normalizeRequest(EarlybirdRequestContext requestContext) {
-    // If the query is not personalized, it means that:
-    //   - RelevanceCacheRequestNormalizer has already normalized it into a cacheable query.
-    //   - RelevanceCacheFilter could not find a response for this query in the cache.
+pubwic c-cwass wewevancezewowesuwtscachewequestnowmawizew
+    e-extends cachewequestnowmawizew<eawwybiwdwequestcontext, /(^•ω•^) eawwybiwdwequest> {
+  @ovewwide
+  pubwic optionaw<eawwybiwdwequest> nyowmawizewequest(eawwybiwdwequestcontext w-wequestcontext) {
+    // if the quewy is nyot pewsonawized, rawr x3 i-it means that:
+    //   - w-wewevancecachewequestnowmawizew has awweady nyowmawized it into a cacheabwe q-quewy. (U ﹏ U)
+    //   - wewevancecachefiwtew c-couwd n-nyot find a wesponse fow this quewy in the cache. (U ﹏ U)
     //
-    // So if we try to normalize it here again, we will succeed, but then
-    // RelevanceZeroResultsCacheFilter will do the same look up in the cache, which will again
-    // result in a cache miss. There is no need to do this look up twice, so if the query is not
-    // personalized, return Optional.absent().
+    // so if we twy to nyowmawize it hewe a-again, (⑅˘꒳˘) we wiww succeed, òωó but then
+    // wewevancezewowesuwtscachefiwtew wiww do the same wook u-up in the cache, ʘwʘ which wiww again
+    // w-wesuwt i-in a cache miss. /(^•ω•^) t-thewe is nyo nyeed t-to do this wook up twice, ʘwʘ so if the quewy is n-nyot
+    // pewsonawized, σωσ wetuwn optionaw.absent().
     //
-    // If the query is personalized, strip all personalization fields and normalize the request.
-    if (!SearchQueryNormalizer.queryIsPersonalized(requestContext.getRequest().getSearchQuery())) {
-      return Optional.absent();
+    // i-if the quewy is pewsonawized, OwO stwip aww pewsonawization fiewds and nowmawize the wequest. 😳😳😳
+    i-if (!seawchquewynowmawizew.quewyispewsonawized(wequestcontext.getwequest().getseawchquewy())) {
+      wetuwn optionaw.absent();
     }
-    return Optional.fromNullable(
-        CacheUtil.normalizeRequestForCache(requestContext.getRequest(), true));
+    w-wetuwn o-optionaw.fwomnuwwabwe(
+        c-cacheutiw.nowmawizewequestfowcache(wequestcontext.getwequest(), 😳😳😳 twue));
   }
 }

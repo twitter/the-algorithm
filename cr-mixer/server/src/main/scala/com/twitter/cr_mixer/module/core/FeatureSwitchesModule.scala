@@ -1,74 +1,74 @@
-package com.twitter.cr_mixer.module.core
+package com.twittew.cw_mixew.moduwe.cowe
 
-import com.google.inject.Provides
-import com.twitter.cr_mixer.featureswitch.CrMixerLoggingABDecider
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.featureswitches.v2.builder.FeatureSwitchesBuilder
-import com.twitter.featureswitches.v2.experimentation.NullBucketImpressor
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.util.Duration
-import javax.inject.Singleton
+impowt c-com.googwe.inject.pwovides
+i-impowt c-com.twittew.cw_mixew.featuweswitch.cwmixewwoggingabdecidew
+i-impowt c-com.twittew.featuweswitches.v2.featuweswitches
+i-impowt com.twittew.featuweswitches.v2.buiwdew.featuweswitchesbuiwdew
+i-impowt com.twittew.featuweswitches.v2.expewimentation.nuwwbucketimpwessow
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.inject.twittewmoduwe
+impowt com.twittew.inject.annotations.fwag
+impowt com.twittew.utiw.duwation
+i-impowt javax.inject.singweton
 
-object FeatureSwitchesModule extends TwitterModule {
+object featuweswitchesmoduwe extends twittewmoduwe {
 
-  flag(
-    name = "featureswitches.path",
-    default = "/features/cr-mixer/main",
-    help = "path to the featureswitch configuration directory"
+  f-fwag(
+    nyame = "featuweswitches.path", ( ͡o ω ͡o )
+    d-defauwt = "/featuwes/cw-mixew/main", (U ﹏ U)
+    hewp = "path to the featuweswitch configuwation d-diwectowy"
   )
-  flag(
-    "use_config_repo_mirror.bool",
-    false,
-    "If true, read config from a different directory, to facilitate testing.")
+  fwag(
+    "use_config_wepo_miwwow.boow", (///ˬ///✿)
+    f-fawse, >w<
+    "if t-twue, rawr wead config fwom a diffewent diwectowy, mya to faciwitate testing.")
 
-  val DefaultFastRefresh: Boolean = false
-  val AddServiceDetailsFromAurora: Boolean = true
-  val ImpressExperiments: Boolean = true
+  vaw defauwtfastwefwesh: b-boowean = fawse
+  vaw addsewvicedetaiwsfwomauwowa: boowean = twue
+  vaw impwessexpewiments: boowean = t-twue
 
-  @Provides
-  @Singleton
-  def providesFeatureSwitches(
-    @Flag("featureswitches.path") featureSwitchDirectory: String,
-    @Flag("use_config_repo_mirror.bool") useConfigRepoMirrorFlag: Boolean,
-    abDecider: CrMixerLoggingABDecider,
-    statsReceiver: StatsReceiver
-  ): FeatureSwitches = {
-    val configRepoAbsPath =
-      getConfigRepoAbsPath(useConfigRepoMirrorFlag)
-    val fastRefresh =
-      shouldFastRefresh(useConfigRepoMirrorFlag)
+  @pwovides
+  @singweton
+  def pwovidesfeatuweswitches(
+    @fwag("featuweswitches.path") f-featuweswitchdiwectowy: s-stwing, ^^
+    @fwag("use_config_wepo_miwwow.boow") u-useconfigwepomiwwowfwag: b-boowean, 😳😳😳
+    abdecidew: cwmixewwoggingabdecidew, mya
+    statsweceivew: s-statsweceivew
+  ): featuweswitches = {
+    vaw configwepoabspath =
+      g-getconfigwepoabspath(useconfigwepomiwwowfwag)
+    vaw fastwefwesh =
+      shouwdfastwefwesh(useconfigwepomiwwowfwag)
 
-    val featureSwitches = FeatureSwitchesBuilder()
-      .abDecider(abDecider)
-      .statsReceiver(statsReceiver.scope("featureswitches-v2"))
-      .configRepoAbsPath(configRepoAbsPath)
-      .featuresDirectory(featureSwitchDirectory)
-      .limitToReferencedExperiments(shouldLimit = true)
-      .experimentImpressionStatsEnabled(true)
+    vaw featuweswitches = featuweswitchesbuiwdew()
+      .abdecidew(abdecidew)
+      .statsweceivew(statsweceivew.scope("featuweswitches-v2"))
+      .configwepoabspath(configwepoabspath)
+      .featuwesdiwectowy(featuweswitchdiwectowy)
+      .wimittowefewencedexpewiments(shouwdwimit = twue)
+      .expewimentimpwessionstatsenabwed(twue)
 
-    if (!ImpressExperiments) featureSwitches.experimentBucketImpressor(NullBucketImpressor)
-    if (AddServiceDetailsFromAurora) featureSwitches.serviceDetailsFromAurora()
-    if (fastRefresh) featureSwitches.refreshPeriod(Duration.fromSeconds(10))
+    i-if (!impwessexpewiments) featuweswitches.expewimentbucketimpwessow(nuwwbucketimpwessow)
+    i-if (addsewvicedetaiwsfwomauwowa) f-featuweswitches.sewvicedetaiwsfwomauwowa()
+    i-if (fastwefwesh) featuweswitches.wefweshpewiod(duwation.fwomseconds(10))
 
-    featureSwitches.build()
+    featuweswitches.buiwd()
   }
 
-  private def getConfigRepoAbsPath(
-    useConfigRepoMirrorFlag: Boolean
-  ): String = {
-    if (useConfigRepoMirrorFlag)
-      "config_repo_mirror/"
-    else "/usr/local/config"
+  pwivate d-def getconfigwepoabspath(
+    u-useconfigwepomiwwowfwag: boowean
+  ): s-stwing = {
+    i-if (useconfigwepomiwwowfwag)
+      "config_wepo_miwwow/"
+    ewse "/usw/wocaw/config"
   }
 
-  private def shouldFastRefresh(
-    useConfigRepoMirrorFlag: Boolean
-  ): Boolean = {
-    if (useConfigRepoMirrorFlag)
-      true
-    else DefaultFastRefresh
+  p-pwivate def shouwdfastwefwesh(
+    u-useconfigwepomiwwowfwag: boowean
+  ): boowean = {
+    if (useconfigwepomiwwowfwag)
+      t-twue
+    ewse defauwtfastwefwesh
   }
 
 }

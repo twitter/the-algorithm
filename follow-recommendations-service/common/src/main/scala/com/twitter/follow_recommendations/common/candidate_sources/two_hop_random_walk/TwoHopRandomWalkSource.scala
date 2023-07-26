@@ -1,40 +1,40 @@
-package com.twitter.follow_recommendations.common.candidate_sources.two_hop_random_walk
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.two_hop_wandom_wawk
 
-import com.twitter.follow_recommendations.common.candidate_sources.base.StratoFetcherWithUnitViewSource
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.wtf.candidate.thriftscala.{CandidateSeq => TCandidateSeq}
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.base.stwatofetchewwithunitviewsouwce
+i-impowt com.twittew.fowwow_wecommendations.common.constants.guicenamedconstants
+impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.hewmit.modew.awgowithm
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.stwato.cwient.fetchew
+i-impowt com.twittew.wtf.candidate.thwiftscawa.{candidateseq => t-tcandidateseq}
+i-impowt javax.inject.inject
+impowt javax.inject.named
+impowt javax.inject.singweton
 
-@Singleton
-class TwoHopRandomWalkSource @Inject() (
-  @Named(GuiceNamedConstants.TWO_HOP_RANDOM_WALK_FETCHER) fetcher: Fetcher[
-    Long,
-    Unit,
-    TCandidateSeq
-  ]) extends StratoFetcherWithUnitViewSource[Long, TCandidateSeq](
-      fetcher,
-      TwoHopRandomWalkSource.Identifier) {
+@singweton
+cwass t-twohopwandomwawksouwce @inject() (
+  @named(guicenamedconstants.two_hop_wandom_wawk_fetchew) fetchew: fetchew[
+    wong, >_<
+    unit, rawr x3
+    t-tcandidateseq
+  ]) extends s-stwatofetchewwithunitviewsouwce[wong, tcandidateseq](
+      fetchew, mya
+      twohopwandomwawksouwce.identifiew) {
 
-  override def map(targetUserId: Long, tCandidateSeq: TCandidateSeq): Seq[CandidateUser] =
-    TwoHopRandomWalkSource.map(targetUserId, tCandidateSeq)
+  ovewwide d-def map(tawgetusewid: wong, nyaa~~ tcandidateseq: t-tcandidateseq): s-seq[candidateusew] =
+    twohopwandomwawksouwce.map(tawgetusewid, (⑅˘꒳˘) tcandidateseq)
 
 }
 
-object TwoHopRandomWalkSource {
-  def map(targetUserId: Long, tCandidateSeq: TCandidateSeq): Seq[CandidateUser] = {
-    tCandidateSeq.candidates
-      .sortBy(-_.score)
-      .map { tCandidate =>
-        CandidateUser(id = tCandidate.userId, score = Some(tCandidate.score))
+object twohopwandomwawksouwce {
+  def map(tawgetusewid: w-wong, rawr x3 tcandidateseq: tcandidateseq): seq[candidateusew] = {
+    tcandidateseq.candidates
+      .sowtby(-_.scowe)
+      .map { tcandidate =>
+        c-candidateusew(id = tcandidate.usewid, (✿oωo) scowe = some(tcandidate.scowe))
       }
   }
 
-  val Identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier(Algorithm.TwoHopRandomWalk.toString)
+  v-vaw identifiew: c-candidatesouwceidentifiew =
+    c-candidatesouwceidentifiew(awgowithm.twohopwandomwawk.tostwing)
 }

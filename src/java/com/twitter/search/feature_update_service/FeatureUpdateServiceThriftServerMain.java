@@ -1,12 +1,12 @@
-package com.twitter.search.feature_update_service;
+package com.twittew.seawch.featuwe_update_sewvice;
 
-final class FeatureUpdateServiceThriftServerMain {
-  private FeatureUpdateServiceThriftServerMain() {
-    // Private constructor to satisfy checkstyle error:
-    // "Utility classes should not have a public or default constructor)."
+finaw cwass featuweupdatesewvicethwiftsewvewmain {
+  p-pwivate f-featuweupdatesewvicethwiftsewvewmain() {
+    // p-pwivate constwuctow t-to satisfy checkstywe e-ewwow:
+    // "utiwity c-cwasses shouwd n-nyot have a pubwic o-ow defauwt constwuctow)."
   }
 
-  public static void main(String[] args) {
-    new FeatureUpdateServiceThriftServer(args).main(args);
+  pubwic static void main(stwing[] awgs) {
+    nyew featuweupdatesewvicethwiftsewvew(awgs).main(awgs);
   }
 }

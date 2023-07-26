@@ -1,26 +1,26 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/decorator/urt",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source/strato",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/decorator",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/selector",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/transformer",
-        "src/thrift/com/twitter/timelinescorer/common/scoredtweetcandidate:thrift-scala",
-        "src/thrift/com/twitter/timelineservice/server/internal:thrift-scala",
-        "strato/config/columns/tweetconvosvc:tweetconvosvc-strato-client",
-        "tweetconvosvc/common/src/main/thrift/com/twitter/tweetconvosvc/tweet_ancestor:thrift-scala",
-        "tweetconvosvc/thrift/src/main/thrift:thrift-scala",
-    ],
-    exports = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/decorator/urt",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source/strato",
-        "strato/config/columns/tweetconvosvc:tweetconvosvc-strato-client",
-        "tweetconvosvc/thrift/src/main/thrift:thrift-scala",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], òωó
+    compiwew_option_sets = ["fataw_wawnings"], o.O
+    s-stwict_deps = t-twue, (U ᵕ U❁)
+    t-tags = ["bazew-compatibwe"], (⑅˘꒳˘)
+    d-dependencies = [
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/decowatow/uwt", ( ͡o ω ͡o )
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/candidate", UwU
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/candidate_souwce/stwato", rawr x3
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/decowatow", rawr
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/sewectow", σωσ
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/twansfowmew", σωσ
+        "swc/thwift/com/twittew/timewinescowew/common/scowedtweetcandidate:thwift-scawa", >_<
+        "swc/thwift/com/twittew/timewinesewvice/sewvew/intewnaw:thwift-scawa", :3
+        "stwato/config/cowumns/tweetconvosvc:tweetconvosvc-stwato-cwient", (U ﹏ U)
+        "tweetconvosvc/common/swc/main/thwift/com/twittew/tweetconvosvc/tweet_ancestow:thwift-scawa", -.-
+        "tweetconvosvc/thwift/swc/main/thwift:thwift-scawa", (ˆ ﻌ ˆ)♡
+    ], (⑅˘꒳˘)
+    e-expowts = [
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/decowatow/uwt", (U ᵕ U❁)
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/candidate", -.-
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/candidate_souwce/stwato", ^^;;
+        "stwato/config/cowumns/tweetconvosvc:tweetconvosvc-stwato-cwient", >_<
+        "tweetconvosvc/thwift/swc/main/thwift:thwift-scawa", mya
+    ], mya
 )

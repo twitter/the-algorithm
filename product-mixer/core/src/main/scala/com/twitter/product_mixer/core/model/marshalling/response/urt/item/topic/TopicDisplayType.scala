@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic
 
-sealed trait TopicDisplayType
+seawed twait topicdispwaytype
 
-case object BasicTopicDisplayType extends TopicDisplayType
-case object PillTopicDisplayType extends TopicDisplayType
-case object NoIconTopicDisplayType extends TopicDisplayType
-case object PillWithoutActionIconDisplayType extends TopicDisplayType
+c-case object basictopicdispwaytype e-extends topicdispwaytype
+c-case o-object piwwtopicdispwaytype e-extends t-topicdispwaytype
+c-case object n-nyoicontopicdispwaytype extends topicdispwaytype
+case object piwwwithoutactionicondispwaytype extends topicdispwaytype

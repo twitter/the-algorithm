@@ -1,22 +1,22 @@
-package com.twitter.unified_user_actions.adapter.social_graph_event
+package com.twittew.unified_usew_actions.adaptew.sociaw_gwaph_event
 
-import com.twitter.socialgraph.thriftscala.Action
-import com.twitter.socialgraph.thriftscala.SrcTargetRequest
-import com.twitter.unified_user_actions.thriftscala.Item
-import com.twitter.unified_user_actions.thriftscala.ProfileActionInfo
-import com.twitter.unified_user_actions.thriftscala.ProfileInfo
-import com.twitter.unified_user_actions.thriftscala.ServerProfileReport
+impowt com.twittew.sociawgwaph.thwiftscawa.action
+i-impowt com.twittew.sociawgwaph.thwiftscawa.swctawgetwequest
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.item
+i-impowt c-com.twittew.unified_usew_actions.thwiftscawa.pwofiweactioninfo
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.pwofiweinfo
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.sewvewpwofiwewepowt
 
-abstract class BaseReportSocialGraphWriteEvent[T] extends BaseSocialGraphWriteEvent[T] {
-  def socialGraphAction: Action
+a-abstwact c-cwass basewepowtsociawgwaphwwiteevent[t] extends basesociawgwaphwwiteevent[t] {
+  def sociawgwaphaction: action
 
-  override def getSocialGraphItem(socialGraphSrcTargetRequest: SrcTargetRequest): Item = {
-    Item.ProfileInfo(
-      ProfileInfo(
-        actionProfileId = socialGraphSrcTargetRequest.target,
-        profileActionInfo = Some(
-          ProfileActionInfo.ServerProfileReport(
-            ServerProfileReport(reportType = socialGraphAction)
+  o-ovewwide def getsociawgwaphitem(sociawgwaphswctawgetwequest: swctawgetwequest): i-item = {
+    item.pwofiweinfo(
+      p-pwofiweinfo(
+        actionpwofiweid = sociawgwaphswctawgetwequest.tawget, mya
+        pwofiweactioninfo = s-some(
+          pwofiweactioninfo.sewvewpwofiwewepowt(
+            s-sewvewpwofiwewepowt(wepowttype = s-sociawgwaphaction)
           ))
       )
     )

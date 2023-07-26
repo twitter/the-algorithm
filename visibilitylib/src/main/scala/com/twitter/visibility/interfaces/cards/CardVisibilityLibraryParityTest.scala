@@ -1,35 +1,35 @@
-package com.twitter.visibility.interfaces.cards
+package com.twittew.visibiwity.intewfaces.cawds
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.VisibilityResult
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.stitch.stitch
+i-impowt com.twittew.visibiwity.buiwdew.visibiwitywesuwt
 
-class CardVisibilityLibraryParityTest(statsReceiver: StatsReceiver) {
-  private val parityTestScope = statsReceiver.scope("card_visibility_library_parity")
-  private val requests = parityTestScope.counter("requests")
-  private val equal = parityTestScope.counter("equal")
-  private val incorrect = parityTestScope.counter("incorrect")
-  private val failures = parityTestScope.counter("failures")
+c-cwass cawdvisibiwitywibwawypawitytest(statsweceivew: s-statsweceivew) {
+  p-pwivate vaw pawitytestscope = s-statsweceivew.scope("cawd_visibiwity_wibwawy_pawity")
+  p-pwivate vaw w-wequests = pawitytestscope.countew("wequests")
+  pwivate vaw equaw = pawitytestscope.countew("equaw")
+  pwivate vaw incowwect = p-pawitytestscope.countew("incowwect")
+  pwivate vaw faiwuwes = p-pawitytestscope.countew("faiwuwes")
 
-  def runParityTest(
-    preHydratedFeatureVisibilityResult: Stitch[VisibilityResult],
-    resp: VisibilityResult
-  ): Stitch[Unit] = {
-    requests.incr()
+  def wunpawitytest(
+    p-pwehydwatedfeatuwevisibiwitywesuwt: stitch[visibiwitywesuwt], nyaa~~
+    wesp: visibiwitywesuwt
+  ): stitch[unit] = {
+    w-wequests.incw()
 
-    preHydratedFeatureVisibilityResult
-      .flatMap { parityResponse =>
-        if (parityResponse.verdict == resp.verdict) {
-          equal.incr()
-        } else {
-          incorrect.incr()
+    pwehydwatedfeatuwevisibiwitywesuwt
+      .fwatmap { p-pawitywesponse =>
+        i-if (pawitywesponse.vewdict == wesp.vewdict) {
+          equaw.incw()
+        } ewse {
+          incowwect.incw()
         }
 
-        Stitch.Done
-      }.rescue {
-        case t: Throwable =>
-          failures.incr()
-          Stitch.Done
+        s-stitch.done
+      }.wescue {
+        case t: thwowabwe =>
+          faiwuwes.incw()
+          stitch.done
       }.unit
   }
 }

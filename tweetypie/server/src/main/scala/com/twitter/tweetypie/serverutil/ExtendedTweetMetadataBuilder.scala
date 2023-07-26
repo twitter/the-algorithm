@@ -1,52 +1,52 @@
-package com.twitter.tweetypie.serverutil
+package com.twittew.tweetypie.sewvewutiw
 
-import com.twitter.tweetypie.getCashtags
-import com.twitter.tweetypie.getHashtags
-import com.twitter.tweetypie.getMedia
-import com.twitter.tweetypie.getMentions
-import com.twitter.tweetypie.getText
-import com.twitter.tweetypie.getUrls
-import com.twitter.tweetypie.thriftscala.ExtendedTweetMetadata
-import com.twitter.tweetypie.thriftscala.ShortenedUrl
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.tweetypie.tweettext.Offset
-import com.twitter.tweetypie.tweettext.TextEntity
-import com.twitter.tweetypie.tweettext.Truncator
-import com.twitter.tweetypie.tweettext.TweetText
-import com.twitter.tweetypie.thriftscala.entities.Implicits._
+impowt c-com.twittew.tweetypie.getcashtags
+i-impowt com.twittew.tweetypie.gethashtags
+i-impowt c-com.twittew.tweetypie.getmedia
+i-impowt com.twittew.tweetypie.getmentions
+i-impowt c-com.twittew.tweetypie.gettext
+impowt c-com.twittew.tweetypie.getuwws
+impowt com.twittew.tweetypie.thwiftscawa.extendedtweetmetadata
+impowt com.twittew.tweetypie.thwiftscawa.showteneduww
+impowt com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt com.twittew.tweetypie.tweettext.offset
+impowt com.twittew.tweetypie.tweettext.textentity
+impowt com.twittew.tweetypie.tweettext.twuncatow
+i-impowt com.twittew.tweetypie.tweettext.tweettext
+i-impowt com.twittew.tweetypie.thwiftscawa.entities.impwicits._
 
 /**
- * Computes the appropriate truncation index to support rendering on legacy clients.
+ * computes the appwopwiate twuncation i-index to suppowt wendewing on w-wegacy cwients. (U ﹏ U)
  */
-object ExtendedTweetMetadataBuilder {
-  import TweetText._
+o-object extendedtweetmetadatabuiwdew {
+  impowt tweettext._
 
-  def apply(tweet: Tweet, selfPermalink: ShortenedUrl): ExtendedTweetMetadata = {
+  def appwy(tweet: tweet, (⑅˘꒳˘) sewfpewmawink: s-showteneduww): extendedtweetmetadata = {
 
-    def entityRanges[T: TextEntity](entities: Seq[T]): Seq[(Int, Int)] =
-      entities.map(e => (TextEntity.fromIndex(e).toInt, TextEntity.toIndex(e).toInt))
+    def entitywanges[t: textentity](entities: seq[t]): seq[(int, òωó i-int)] =
+      entities.map(e => (textentity.fwomindex(e).toint, ʘwʘ t-textentity.toindex(e).toint))
 
-    val allEntityRanges =
-      Offset.Ranges.fromCodePointPairs(
-        entityRanges(getUrls(tweet)) ++
-          entityRanges(getMentions(tweet)) ++
-          entityRanges(getMedia(tweet)) ++
-          entityRanges(getHashtags(tweet)) ++
-          entityRanges(getCashtags(tweet))
+    v-vaw awwentitywanges =
+      o-offset.wanges.fwomcodepointpaiws(
+        entitywanges(getuwws(tweet)) ++
+          e-entitywanges(getmentions(tweet)) ++
+          entitywanges(getmedia(tweet)) ++
+          entitywanges(gethashtags(tweet)) ++
+          e-entitywanges(getcashtags(tweet))
       )
 
-    val text = getText(tweet)
+    vaw text = gettext(tweet)
 
-    val apiCompatibleTruncationIndex =
-      // need to leave enough space for ellipsis, space, and self-permalink
-      Truncator.truncationPoint(
-        text = text,
-        maxDisplayLength = OriginalMaxDisplayLength - selfPermalink.shortUrl.length - 2,
-        atomicUnits = allEntityRanges
+    v-vaw apicompatibwetwuncationindex =
+      // nyeed to weave enough space fow ewwipsis, /(^•ω•^) space, ʘwʘ and sewf-pewmawink
+      t-twuncatow.twuncationpoint(
+        text = text, σωσ
+        m-maxdispwaywength = o-owiginawmaxdispwaywength - s-sewfpewmawink.showtuww.wength - 2,
+        atomicunits = awwentitywanges
       )
 
-    ExtendedTweetMetadata(
-      apiCompatibleTruncationIndex = apiCompatibleTruncationIndex.codePointOffset.toInt
+    extendedtweetmetadata(
+      apicompatibwetwuncationindex = a-apicompatibwetwuncationindex.codepointoffset.toint
     )
   }
 }

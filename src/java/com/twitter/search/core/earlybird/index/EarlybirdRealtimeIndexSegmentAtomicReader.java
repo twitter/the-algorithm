@@ -1,175 +1,175 @@
-package com.twitter.search.core.earlybird.index;
+package com.twittew.seawch.cowe.eawwybiwd.index;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import org.apache.lucene.index.BinaryDocValues;
-import org.apache.lucene.index.Fields;
-import org.apache.lucene.index.LeafMetaData;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.PointValues;
-import org.apache.lucene.index.SortedDocValues;
-import org.apache.lucene.index.SortedNumericDocValues;
-import org.apache.lucene.index.SortedSetDocValues;
-import org.apache.lucene.index.StoredFieldVisitor;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.util.Bits;
-import org.apache.lucene.util.Version;
+i-impowt o-owg.apache.wucene.index.binawydocvawues;
+i-impowt o-owg.apache.wucene.index.fiewds;
+i-impowt owg.apache.wucene.index.weafmetadata;
+i-impowt owg.apache.wucene.index.numewicdocvawues;
+i-impowt owg.apache.wucene.index.pointvawues;
+impowt o-owg.apache.wucene.index.sowteddocvawues;
+impowt owg.apache.wucene.index.sowtednumewicdocvawues;
+impowt owg.apache.wucene.index.sowtedsetdocvawues;
+impowt owg.apache.wucene.index.stowedfiewdvisitow;
+i-impowt owg.apache.wucene.index.tewm;
+impowt owg.apache.wucene.index.tewms;
+i-impowt owg.apache.wucene.seawch.sowt;
+impowt o-owg.apache.wucene.utiw.bits;
+impowt owg.apache.wucene.utiw.vewsion;
 
-import com.twitter.search.core.earlybird.facets.EarlybirdFacetDocValueSet;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldDocValues;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldIndex;
-import com.twitter.search.core.earlybird.index.inverted.InMemoryFields;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.eawwybiwdfacetdocvawueset;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.cowumn.cowumnstwidefiewddocvawues;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.cowumn.cowumnstwidefiewdindex;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.inmemowyfiewds;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.invewtedindex;
 
-public final class EarlybirdRealtimeIndexSegmentAtomicReader
-    extends EarlybirdIndexSegmentAtomicReader {
-  private final Fields fields;
-  private final int maxDocId;
-  private final int numDocs;
+pubwic finaw cwass eawwybiwdweawtimeindexsegmentatomicweadew
+    extends eawwybiwdindexsegmentatomicweadew {
+  p-pwivate finaw fiewds fiewds;
+  pwivate finaw int maxdocid;
+  pwivate finaw int n-nyumdocs;
 
   /**
-   * Creates a new real-time reader for the given segment. Do not add public constructors to this
-   * class. EarlybirdRealtimeIndexSegmentAtomicReader instances should be created only by calling
-   * EarlybirdRealtimeIndexSegmentData.createAtomicReader(), to make sure everything is set up
-   * properly (such as CSF readers).
+   * cweates a-a nyew weaw-time w-weadew fow the g-given segment. (ˆ ﻌ ˆ)♡ do n-nyot add pubwic constwuctows to this
+   * cwass. -.- e-eawwybiwdweawtimeindexsegmentatomicweadew instances shouwd be c-cweated onwy by cawwing
+   * eawwybiwdweawtimeindexsegmentdata.cweateatomicweadew(), :3 to make suwe evewything is set up
+   * pwopewwy (such as csf w-weadews). ʘwʘ
    */
-  EarlybirdRealtimeIndexSegmentAtomicReader(EarlybirdRealtimeIndexSegmentData segmentData) {
-    super(segmentData);
+  eawwybiwdweawtimeindexsegmentatomicweadew(eawwybiwdweawtimeindexsegmentdata s-segmentdata) {
+    s-supew(segmentdata);
 
-    this.fields = new InMemoryFields(segmentData.getPerFieldMap(), syncData.getIndexPointers());
+    t-this.fiewds = nyew inmemowyfiewds(segmentdata.getpewfiewdmap(), 🥺 syncdata.getindexpointews());
 
-    // We cache the highest doc ID and the number of docs, because the reader must return the same
-    // values for its entire lifetime, and the segment will get more tweets over time.
-    // These values could be slightly out of sync with 'fields', because we don't update these
-    // values atomically with the fields.
-    this.maxDocId = segmentData.getDocIDToTweetIDMapper().getPreviousDocID(Integer.MAX_VALUE);
-    this.numDocs = segmentData.getDocIDToTweetIDMapper().getNumDocs();
+    // w-we cache the h-highest doc id and the nyumbew of d-docs, >_< because t-the weadew must wetuwn the same
+    // v-vawues fow its entiwe wifetime, ʘwʘ a-and the segment wiww get mowe tweets ovew t-time. (˘ω˘)
+    // these vawues couwd b-be swightwy out of sync with 'fiewds', (✿oωo) b-because w-we don't update these
+    // vawues atomicawwy with the fiewds. (///ˬ///✿)
+    this.maxdocid = segmentdata.getdocidtotweetidmappew().getpweviousdocid(integew.max_vawue);
+    this.numdocs = s-segmentdata.getdocidtotweetidmappew().getnumdocs();
   }
 
-  @Override
-  public int maxDoc() {
-    return maxDocId + 1;
+  @ovewwide
+  p-pubwic int maxdoc() {
+    w-wetuwn maxdocid + 1;
   }
 
-  @Override
-  public int numDocs() {
-    return numDocs;
+  @ovewwide
+  p-pubwic i-int nyumdocs() {
+    wetuwn nyumdocs;
   }
 
-  @Override
-  protected void doClose() {
-    // nothing to do
+  @ovewwide
+  pwotected void docwose() {
+    // n-nyothing to do
   }
 
-  @Override
-  public void document(int docID, StoredFieldVisitor visitor) {
-    // not supported
+  @ovewwide
+  pubwic void document(int docid, rawr x3 stowedfiewdvisitow visitow) {
+    // n-nyot suppowted
   }
 
-  @Override
-  public int getOldestDocID(Term t) throws IOException {
-    InvertedIndex perField = getSegmentData().getPerFieldMap().get(t.field());
-    if (perField == null) {
-      return TERM_NOT_FOUND;
+  @ovewwide
+  pubwic int g-getowdestdocid(tewm t-t) thwows ioexception {
+    i-invewtedindex pewfiewd = getsegmentdata().getpewfiewdmap().get(t.fiewd());
+    i-if (pewfiewd == n-nyuww) {
+      wetuwn t-tewm_not_found;
     }
-    return perField.getLargestDocIDForTerm(t.bytes());
+    w-wetuwn pewfiewd.getwawgestdocidfowtewm(t.bytes());
   }
 
-  @Override
-  public int getTermID(Term t) throws IOException {
-    InvertedIndex perField = getSegmentData().getPerFieldMap().get(t.field());
-    if (perField == null) {
-      return TERM_NOT_FOUND;
+  @ovewwide
+  pubwic int gettewmid(tewm t-t) thwows ioexception {
+    i-invewtedindex p-pewfiewd = g-getsegmentdata().getpewfiewdmap().get(t.fiewd());
+    i-if (pewfiewd == nyuww) {
+      wetuwn tewm_not_found;
     }
-    return perField.lookupTerm(t.bytes());
+    w-wetuwn pewfiewd.wookuptewm(t.bytes());
   }
 
-  @Override
-  public Bits getLiveDocs() {
-    // liveDocs contains inverted (decreasing) docIDs.
-    return getDeletesView().getLiveDocs();
+  @ovewwide
+  pubwic bits getwivedocs() {
+    // wivedocs contains invewted (decweasing) d-docids. -.-
+    wetuwn getdewetesview().getwivedocs();
   }
 
-  @Override
-  public boolean hasDeletions() {
-    return getDeletesView().hasDeletions();
+  @ovewwide
+  pubwic boowean hasdewetions() {
+    w-wetuwn g-getdewetesview().hasdewetions();
   }
 
-  @Override
-  public Terms terms(String field) throws IOException {
-    return fields.terms(field);
+  @ovewwide
+  p-pubwic tewms tewms(stwing fiewd) t-thwows ioexception {
+    wetuwn fiewds.tewms(fiewd);
   }
 
-  @Override
-  public NumericDocValues getNumericDocValues(String field) throws IOException {
-    ColumnStrideFieldIndex csf =
-        getSegmentData().getDocValuesManager().getColumnStrideFieldIndex(field);
-    return csf != null ? new ColumnStrideFieldDocValues(csf, this) : null;
+  @ovewwide
+  p-pubwic n-nyumewicdocvawues getnumewicdocvawues(stwing fiewd) thwows ioexception {
+    cowumnstwidefiewdindex csf =
+        g-getsegmentdata().getdocvawuesmanagew().getcowumnstwidefiewdindex(fiewd);
+    wetuwn csf != n-nyuww ? nyew cowumnstwidefiewddocvawues(csf, ^^ this) : nyuww;
   }
 
-  @Override
-  public boolean hasDocs() {
-    // smallestDocID is the smallest document ID that was available when this reader was created.
-    // So we need to check its value in order to decide if this reader can see any documents,
-    // because in the meantime other documents might've been added to the tweet ID mapper.
-    return getSmallestDocID() != Integer.MAX_VALUE;
+  @ovewwide
+  p-pubwic boowean h-hasdocs() {
+    // smowestdocid is the smowest document i-id that w-was avaiwabwe when this weadew was c-cweated. (⑅˘꒳˘)
+    // s-so we nyeed to check its vawue in owdew to decide if this weadew can see any d-documents, nyaa~~
+    // b-because in the m-meantime othew documents might've b-been added to t-the tweet id mappew. /(^•ω•^)
+    wetuwn g-getsmowestdocid() != integew.max_vawue;
   }
 
-  @Override
-  public BinaryDocValues getBinaryDocValues(String field) {
-    return null;
+  @ovewwide
+  pubwic binawydocvawues getbinawydocvawues(stwing f-fiewd) {
+    w-wetuwn nyuww;
   }
 
-  @Override
-  public SortedDocValues getSortedDocValues(String field) {
-    return null;
+  @ovewwide
+  pubwic s-sowteddocvawues g-getsowteddocvawues(stwing fiewd) {
+    wetuwn nuww;
   }
 
-  @Override
-  public SortedSetDocValues getSortedSetDocValues(String field) {
-    // special handling for facet field
-    if (EarlybirdFacetDocValueSet.FIELD_NAME.equals(field)) {
-      return ((EarlybirdRealtimeIndexSegmentData) getSegmentData()).getFacetDocValueSet();
+  @ovewwide
+  p-pubwic sowtedsetdocvawues getsowtedsetdocvawues(stwing fiewd) {
+    // speciaw handwing f-fow facet fiewd
+    if (eawwybiwdfacetdocvawueset.fiewd_name.equaws(fiewd)) {
+      wetuwn ((eawwybiwdweawtimeindexsegmentdata) g-getsegmentdata()).getfacetdocvawueset();
     }
 
-    return null;
+    w-wetuwn nyuww;
   }
 
-  @Override
-  public NumericDocValues getNormValues(String field) throws IOException {
-    ColumnStrideFieldIndex csf = getSegmentData().getNormIndex(field);
-    return csf != null ? new ColumnStrideFieldDocValues(csf, this) : null;
+  @ovewwide
+  pubwic nyumewicdocvawues getnowmvawues(stwing fiewd) thwows ioexception {
+    c-cowumnstwidefiewdindex c-csf = getsegmentdata().getnowmindex(fiewd);
+    wetuwn csf != nyuww ? n-nyew cowumnstwidefiewddocvawues(csf, (U ﹏ U) this) : nyuww;
   }
 
-  @Override
-  public SortedNumericDocValues getSortedNumericDocValues(String field) {
-    return null;
+  @ovewwide
+  p-pubwic sowtednumewicdocvawues getsowtednumewicdocvawues(stwing fiewd) {
+    wetuwn nyuww;
   }
 
-  @Override
-  public void checkIntegrity() {
-    // nothing to do
+  @ovewwide
+  p-pubwic void checkintegwity() {
+    // n-nyothing t-to do
   }
 
-  @Override
-  public PointValues getPointValues(String field) {
-    return null;
+  @ovewwide
+  pubwic p-pointvawues getpointvawues(stwing f-fiewd) {
+    w-wetuwn nyuww;
   }
 
-  @Override
-  public LeafMetaData getMetaData() {
-    return new LeafMetaData(Version.LATEST.major, Version.LATEST, Sort.RELEVANCE);
+  @ovewwide
+  p-pubwic weafmetadata getmetadata() {
+    w-wetuwn n-nyew weafmetadata(vewsion.watest.majow, 😳😳😳 vewsion.watest, >w< sowt.wewevance);
   }
 
-  @Override
-  public CacheHelper getCoreCacheHelper() {
-    return null;
+  @ovewwide
+  pubwic c-cachehewpew g-getcowecachehewpew() {
+    w-wetuwn nyuww;
   }
 
-  @Override
-  public CacheHelper getReaderCacheHelper() {
-    return null;
+  @ovewwide
+  pubwic c-cachehewpew getweadewcachehewpew() {
+    w-wetuwn n-nyuww;
   }
 }

@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.card
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.cawd
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.card._
-import com.twitter.timelines.render.{thriftscala => urt}
+impowt j-javax.inject.inject
+i-impowt j-javax.inject.singweton
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.cawd._
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
 
-@Singleton
-class CardDisplayTypeMarshaller @Inject() () {
+@singweton
+c-cwass c-cawddispwaytypemawshawwew @inject() () {
 
-  def apply(cardDisplayType: CardDisplayType): urt.CardDisplayType = cardDisplayType match {
-    case HeroDisplayType => urt.CardDisplayType.Hero
-    case CellDisplayType => urt.CardDisplayType.Cell
-    case TweetCardDisplayType => urt.CardDisplayType.TweetCard
+  def appwy(cawddispwaytype: cawddispwaytype): uwt.cawddispwaytype = cawddispwaytype m-match {
+    case hewodispwaytype => uwt.cawddispwaytype.hewo
+    c-case cewwdispwaytype => uwt.cawddispwaytype.ceww
+    c-case tweetcawddispwaytype => uwt.cawddispwaytype.tweetcawd
   }
 }

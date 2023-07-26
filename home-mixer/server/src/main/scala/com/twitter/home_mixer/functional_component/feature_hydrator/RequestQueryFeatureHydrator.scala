@@ -1,121 +1,121 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.twittew.home_mixew.functionaw_component.featuwe_hydwatow
 
-import com.twitter.finagle.tracing.Annotation.BinaryAnnotation
-import com.twitter.finagle.tracing.ForwardAnnotation
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.home_mixer.model.request.DeviceContext.RequestContext
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.joinkey.context.RequestJoinKeyContext
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.search.common.util.lang.ThriftLanguageUtil
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.prediction.adapters.request_context.RequestContextAdapter.dowFromTimestamp
-import com.twitter.timelines.prediction.adapters.request_context.RequestContextAdapter.hourFromTimestamp
-import java.util.UUID
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.twacing.annotation.binawyannotation
+i-impowt com.twittew.finagwe.twacing.fowwawdannotation
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes._
+i-impowt c-com.twittew.home_mixew.modew.wequest.devicecontext.wequestcontext
+i-impowt com.twittew.home_mixew.modew.wequest.hasdevicecontext
+i-impowt com.twittew.joinkey.context.wequestjoinkeycontext
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.uwtowdewedcuwsow
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.bottomcuwsow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.gapcuwsow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.topcuwsow
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.haspipewinecuwsow
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.badwequest
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt com.twittew.seawch.common.utiw.wang.thwiftwanguageutiw
+impowt com.twittew.snowfwake.id.snowfwakeid
+impowt com.twittew.stitch.stitch
+impowt c-com.twittew.timewines.pwediction.adaptews.wequest_context.wequestcontextadaptew.dowfwomtimestamp
+impowt com.twittew.timewines.pwediction.adaptews.wequest_context.wequestcontextadaptew.houwfwomtimestamp
+impowt java.utiw.uuid
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class RequestQueryFeatureHydrator[
-  Query <: PipelineQuery with HasPipelineCursor[UrtOrderedCursor] with HasDeviceContext] @Inject() (
-) extends QueryFeatureHydrator[Query] {
+@singweton
+c-cwass wequestquewyfeatuwehydwatow[
+  q-quewy <: p-pipewinequewy w-with haspipewinecuwsow[uwtowdewedcuwsow] with hasdevicecontext] @inject() (
+) e-extends quewyfeatuwehydwatow[quewy] {
 
-  override val features: Set[Feature[_, _]] = Set(
-    AccountAgeFeature,
-    ClientIdFeature,
-    DeviceLanguageFeature,
-    GetInitialFeature,
-    GetMiddleFeature,
-    GetNewerFeature,
-    GetOlderFeature,
-    GuestIdFeature,
-    HasDarkRequestFeature,
-    IsForegroundRequestFeature,
-    IsLaunchRequestFeature,
-    PollingFeature,
-    PullToRefreshFeature,
-    RequestJoinIdFeature,
-    ServedRequestIdFeature,
-    TimestampFeature,
-    TimestampGMTDowFeature,
-    TimestampGMTHourFeature,
-    ViewerIdFeature
+  ovewwide vaw featuwes: s-set[featuwe[_, >w< _]] = set(
+    accountagefeatuwe, (⑅˘꒳˘)
+    cwientidfeatuwe, OwO
+    devicewanguagefeatuwe, (ꈍᴗꈍ)
+    getinitiawfeatuwe, 😳
+    g-getmiddwefeatuwe, 😳😳😳
+    getnewewfeatuwe, mya
+    g-getowdewfeatuwe, mya
+    g-guestidfeatuwe,
+    h-hasdawkwequestfeatuwe, (⑅˘꒳˘)
+    isfowegwoundwequestfeatuwe, (U ﹏ U)
+    iswaunchwequestfeatuwe, mya
+    powwingfeatuwe, ʘwʘ
+    p-puwwtowefweshfeatuwe, (˘ω˘)
+    w-wequestjoinidfeatuwe, (U ﹏ U)
+    sewvedwequestidfeatuwe, ^•ﻌ•^
+    t-timestampfeatuwe, (˘ω˘)
+    t-timestampgmtdowfeatuwe, :3
+    timestampgmthouwfeatuwe, ^^;;
+    viewewidfeatuwe
   )
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("Request")
+  o-ovewwide vaw identifiew: featuwehydwatowidentifiew = f-featuwehydwatowidentifiew("wequest")
 
-  private val DarkRequestAnnotation = "clnt/has_dark_request"
+  pwivate vaw dawkwequestannotation = "cwnt/has_dawk_wequest"
 
-  // Convert Language code to ISO 639-3 format
-  private def getLanguageISOFormatByCode(languageCode: String): String =
-    ThriftLanguageUtil.getLanguageCodeOf(ThriftLanguageUtil.getThriftLanguageOf(languageCode))
+  // convewt wanguage c-code to iso 639-3 fowmat
+  pwivate d-def getwanguageisofowmatbycode(wanguagecode: stwing): stwing =
+    t-thwiftwanguageutiw.getwanguagecodeof(thwiftwanguageutiw.getthwiftwanguageof(wanguagecode))
 
-  private def getRequestJoinId(servedRequestId: Long): Option[Long] =
-    Some(RequestJoinKeyContext.current.flatMap(_.requestJoinId).getOrElse(servedRequestId))
+  p-pwivate def getwequestjoinid(sewvedwequestid: wong): option[wong] =
+    some(wequestjoinkeycontext.cuwwent.fwatmap(_.wequestjoinid).getowewse(sewvedwequestid))
 
-  private def hasDarkRequest: Option[Boolean] = ForwardAnnotation.current
-    .getOrElse(Seq[BinaryAnnotation]())
-    .find(_.key == DarkRequestAnnotation)
-    .map(_.value.asInstanceOf[Boolean])
+  pwivate def hasdawkwequest: option[boowean] = fowwawdannotation.cuwwent
+    .getowewse(seq[binawyannotation]())
+    .find(_.key == d-dawkwequestannotation)
+    .map(_.vawue.asinstanceof[boowean])
 
-  override def hydrate(query: Query): Stitch[FeatureMap] = {
-    val requestContext = query.deviceContext.flatMap(_.requestContextValue)
-    val servedRequestId = UUID.randomUUID.getMostSignificantBits
-    val timestamp = query.queryTime.inMilliseconds
+  ovewwide d-def hydwate(quewy: quewy): s-stitch[featuwemap] = {
+    v-vaw w-wequestcontext = quewy.devicecontext.fwatmap(_.wequestcontextvawue)
+    vaw sewvedwequestid = uuid.wandomuuid.getmostsignificantbits
+    v-vaw timestamp = quewy.quewytime.inmiwwiseconds
 
-    val featureMap = FeatureMapBuilder()
-      .add(AccountAgeFeature, query.getOptionalUserId.flatMap(SnowflakeId.timeFromIdOpt))
-      .add(ClientIdFeature, query.clientContext.appId)
-      .add(DeviceLanguageFeature, query.getLanguageCode.map(getLanguageISOFormatByCode))
+    vaw featuwemap = featuwemapbuiwdew()
+      .add(accountagefeatuwe, 🥺 quewy.getoptionawusewid.fwatmap(snowfwakeid.timefwomidopt))
+      .add(cwientidfeatuwe, (⑅˘꒳˘) q-quewy.cwientcontext.appid)
+      .add(devicewanguagefeatuwe, nyaa~~ quewy.getwanguagecode.map(getwanguageisofowmatbycode))
       .add(
-        GetInitialFeature,
-        query.pipelineCursor.forall(cursor => cursor.id.isEmpty && cursor.gapBoundaryId.isEmpty))
+        g-getinitiawfeatuwe, :3
+        q-quewy.pipewinecuwsow.fowaww(cuwsow => c-cuwsow.id.isempty && cuwsow.gapboundawyid.isempty))
       .add(
-        GetMiddleFeature,
-        query.pipelineCursor.exists(cursor =>
-          cursor.id.isDefined && cursor.gapBoundaryId.isDefined &&
-            cursor.cursorType.contains(GapCursor)))
+        g-getmiddwefeatuwe, ( ͡o ω ͡o )
+        q-quewy.pipewinecuwsow.exists(cuwsow =>
+          c-cuwsow.id.isdefined && c-cuwsow.gapboundawyid.isdefined &&
+            cuwsow.cuwsowtype.contains(gapcuwsow)))
       .add(
-        GetNewerFeature,
-        query.pipelineCursor.exists(cursor =>
-          cursor.id.isDefined && cursor.gapBoundaryId.isEmpty &&
-            cursor.cursorType.contains(TopCursor)))
+        getnewewfeatuwe, mya
+        quewy.pipewinecuwsow.exists(cuwsow =>
+          cuwsow.id.isdefined && c-cuwsow.gapboundawyid.isempty &&
+            c-cuwsow.cuwsowtype.contains(topcuwsow)))
       .add(
-        GetOlderFeature,
-        query.pipelineCursor.exists(cursor =>
-          cursor.id.isDefined && cursor.gapBoundaryId.isEmpty &&
-            cursor.cursorType.contains(BottomCursor)))
-      .add(GuestIdFeature, query.clientContext.guestId)
-      .add(IsForegroundRequestFeature, requestContext.contains(RequestContext.Foreground))
-      .add(IsLaunchRequestFeature, requestContext.contains(RequestContext.Launch))
-      .add(PollingFeature, query.deviceContext.exists(_.isPolling.contains(true)))
-      .add(PullToRefreshFeature, requestContext.contains(RequestContext.PullToRefresh))
-      .add(ServedRequestIdFeature, Some(servedRequestId))
-      .add(RequestJoinIdFeature, getRequestJoinId(servedRequestId))
-      .add(TimestampFeature, timestamp)
-      .add(TimestampGMTDowFeature, dowFromTimestamp(timestamp))
-      .add(TimestampGMTHourFeature, hourFromTimestamp(timestamp))
-      .add(HasDarkRequestFeature, hasDarkRequest)
+        g-getowdewfeatuwe, (///ˬ///✿)
+        q-quewy.pipewinecuwsow.exists(cuwsow =>
+          c-cuwsow.id.isdefined && cuwsow.gapboundawyid.isempty &&
+            cuwsow.cuwsowtype.contains(bottomcuwsow)))
+      .add(guestidfeatuwe, (˘ω˘) quewy.cwientcontext.guestid)
+      .add(isfowegwoundwequestfeatuwe, ^^;; w-wequestcontext.contains(wequestcontext.fowegwound))
+      .add(iswaunchwequestfeatuwe, (✿oωo) wequestcontext.contains(wequestcontext.waunch))
+      .add(powwingfeatuwe, (U ﹏ U) quewy.devicecontext.exists(_.ispowwing.contains(twue)))
+      .add(puwwtowefweshfeatuwe, -.- wequestcontext.contains(wequestcontext.puwwtowefwesh))
+      .add(sewvedwequestidfeatuwe, ^•ﻌ•^ some(sewvedwequestid))
+      .add(wequestjoinidfeatuwe, rawr getwequestjoinid(sewvedwequestid))
+      .add(timestampfeatuwe, (˘ω˘) timestamp)
+      .add(timestampgmtdowfeatuwe, nyaa~~ dowfwomtimestamp(timestamp))
+      .add(timestampgmthouwfeatuwe, h-houwfwomtimestamp(timestamp))
+      .add(hasdawkwequestfeatuwe, UwU hasdawkwequest)
       .add(
-        ViewerIdFeature,
-        query.getOptionalUserId
-          .orElse(query.getGuestId).getOrElse(
-            throw PipelineFailure(BadRequest, "Missing viewer id")))
-      .build()
+        viewewidfeatuwe, :3
+        quewy.getoptionawusewid
+          .owewse(quewy.getguestid).getowewse(
+            t-thwow pipewinefaiwuwe(badwequest, (⑅˘꒳˘) "missing v-viewew i-id")))
+      .buiwd()
 
-    Stitch.value(featureMap)
+    stitch.vawue(featuwemap)
   }
 }

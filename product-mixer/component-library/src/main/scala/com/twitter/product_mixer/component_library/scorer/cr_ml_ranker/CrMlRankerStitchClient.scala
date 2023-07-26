@@ -1,75 +1,75 @@
-package com.twitter.product_mixer.component_library.scorer.cr_ml_ranker
+package com.twittew.pwoduct_mixew.component_wibwawy.scowew.cw_mw_wankew
 
-import com.twitter.cr_ml_ranker.{thriftscala => t}
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Try
+impowt com.twittew.cw_mw_wankew.{thwiftscawa => t-t}
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetweetcandidate
+i-impowt com.twittew.stitch.seqgwoup
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.wetuwn
+i-impowt com.twittew.utiw.twy
 
-case class CrMlRankerResult(
-  tweetId: Long,
-  score: Double)
+c-case cwass cwmwwankewwesuwt(
+  tweetid: wong, ^^
+  scowe: doubwe)
 
-class CrMlRankerScoreStitchClient(
-  crMLRanker: t.CrMLRanker.MethodPerEndpoint,
-  maxBatchSize: Int) {
+cwass cwmwwankewscowestitchcwient(
+  cwmwwankew: t-t.cwmwwankew.methodpewendpoint, 😳😳😳
+  maxbatchsize: int) {
 
-  def getScore(
-    userId: Long,
-    tweetCandidate: BaseTweetCandidate,
-    rankingConfig: t.RankingConfig,
-    commonFeatures: t.CommonFeatures
-  ): Stitch[CrMlRankerResult] = {
-    Stitch.call(
-      tweetCandidate,
-      CrMlRankerGroup(
-        userId = userId,
-        rankingConfig = rankingConfig,
-        commonFeatures = commonFeatures
+  def getscowe(
+    u-usewid: wong, mya
+    tweetcandidate: basetweetcandidate, 😳
+    w-wankingconfig: t.wankingconfig, -.-
+    commonfeatuwes: t.commonfeatuwes
+  ): s-stitch[cwmwwankewwesuwt] = {
+    stitch.caww(
+      t-tweetcandidate, 🥺
+      c-cwmwwankewgwoup(
+        usewid = usewid, o.O
+        wankingconfig = wankingconfig, /(^•ω•^)
+        commonfeatuwes = c-commonfeatuwes
       )
     )
   }
 
-  private case class CrMlRankerGroup(
-    userId: Long,
-    rankingConfig: t.RankingConfig,
-    commonFeatures: t.CommonFeatures)
-      extends SeqGroup[BaseTweetCandidate, CrMlRankerResult] {
+  pwivate case cwass cwmwwankewgwoup(
+    usewid: wong, nyaa~~
+    wankingconfig: t-t.wankingconfig, nyaa~~
+    commonfeatuwes: t-t.commonfeatuwes)
+      extends s-seqgwoup[basetweetcandidate, :3 c-cwmwwankewwesuwt] {
 
-    override val maxSize: Int = maxBatchSize
+    o-ovewwide vaw maxsize: int = maxbatchsize
 
-    override protected def run(
-      tweetCandidates: Seq[BaseTweetCandidate]
-    ): Future[Seq[Try[CrMlRankerResult]]] = {
-      val crMlRankerCandidates =
-        tweetCandidates.map { tweetCandidate =>
-          t.RankingCandidate(
-            tweetId = tweetCandidate.id,
-            hydrationContext = Some(
-              t.FeatureHydrationContext.HomeHydrationContext(t
-                .HomeFeatureHydrationContext(tweetAuthor = None)))
+    o-ovewwide pwotected def wun(
+      tweetcandidates: s-seq[basetweetcandidate]
+    ): futuwe[seq[twy[cwmwwankewwesuwt]]] = {
+      vaw cwmwwankewcandidates =
+        tweetcandidates.map { tweetcandidate =>
+          t.wankingcandidate(
+            tweetid = tweetcandidate.id, 😳😳😳
+            h-hydwationcontext = some(
+              t.featuwehydwationcontext.homehydwationcontext(t
+                .homefeatuwehydwationcontext(tweetauthow = n-nyone)))
           )
         }
 
-      val thriftResults = crMLRanker.getRankedResults(
-        t.RankingRequest(
-          requestContext = t.RankingRequestContext(
-            userId = userId,
-            config = rankingConfig
-          ),
-          candidates = crMlRankerCandidates,
-          commonFeatures = commonFeatures.commonFeatures
+      v-vaw thwiftwesuwts = c-cwmwwankew.getwankedwesuwts(
+        t.wankingwequest(
+          wequestcontext = t.wankingwequestcontext(
+            u-usewid = u-usewid, (˘ω˘)
+            config = w-wankingconfig
+          ), ^^
+          c-candidates = cwmwwankewcandidates, :3
+          c-commonfeatuwes = commonfeatuwes.commonfeatuwes
         )
       )
 
-      thriftResults.map { response =>
-        response.scoredTweets.map { scoredTweet =>
-          Return(
-            CrMlRankerResult(
-              tweetId = scoredTweet.tweetId,
-              score = scoredTweet.score
+      t-thwiftwesuwts.map { wesponse =>
+        wesponse.scowedtweets.map { s-scowedtweet =>
+          wetuwn(
+            c-cwmwwankewwesuwt(
+              tweetid = s-scowedtweet.tweetid, -.-
+              s-scowe = scowedtweet.scowe
             )
           )
         }

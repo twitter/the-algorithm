@@ -1,80 +1,80 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.mediaservices.commons.tweetmedia.thriftscala._
-import com.twitter.tweetypie.media._
-import com.twitter.tweetypie.thriftscala._
-import scala.collection.Set
+impowt c-com.twittew.mediasewvices.commons.tweetmedia.thwiftscawa._
+i-impowt com.twittew.tweetypie.media._
+i-impowt com.twittew.tweetypie.thwiftscawa._
+i-impowt scawa.cowwection.set
 
 /**
- * Removes partial Url, Media, and Mention entities that were not
- * fully hydrated. Rather than returning no value or a value with
- * incomplete entities on an entity hydration failure, we gracefully
- * degrade to just omitting those entities. This step needs to be
- * applied in the post-cache filter, so that we don't cache the value
- * with missing entities.
+ * w-wemoves pawtiaw u-uww, 😳 media, a-and mention entities that wewe nyot
+ * fuwwy hydwated. 😳 wathew than wetuwning nyo v-vawue ow a vawue with
+ * incompwete entities on a-an entity hydwation faiwuwe, σωσ we g-gwacefuwwy
+ * degwade to just omitting those entities. rawr x3 this step n-nyeeds to be
+ * appwied in the p-post-cache fiwtew, OwO s-so that we don't cache the vawue
+ * with missing entities. /(^•ω•^)
  *
- * A MediaEntity will first be converted back to a UrlEntity if it is only
- * partially hydrated.  If the resulting UrlEntity is itself then only partially
- * hydrated, it will get dropped also.
+ * a mediaentity w-wiww fiwst be convewted back to a uwwentity if it is onwy
+ * pawtiawwy hydwated. 😳😳😳  i-if the wesuwting uwwentity i-is itsewf then o-onwy pawtiawwy
+ * h-hydwated, ( ͡o ω ͡o ) it wiww g-get dwopped awso. >_<
  */
-object PartialEntityCleaner {
-  def apply(stats: StatsReceiver): Mutation[Tweet] = {
-    val scopedStats = stats.scope("partial_entity_cleaner")
-    Mutation
-      .all(
-        Seq(
-          TweetLenses.urls.mutation(urls.countMutations(scopedStats.counter("urls"))),
-          TweetLenses.media.mutation(media.countMutations(scopedStats.counter("media"))),
-          TweetLenses.mentions.mutation(mentions.countMutations(scopedStats.counter("mentions")))
+object pawtiawentitycweanew {
+  d-def appwy(stats: statsweceivew): mutation[tweet] = {
+    v-vaw scopedstats = stats.scope("pawtiaw_entity_cweanew")
+    mutation
+      .aww(
+        seq(
+          tweetwenses.uwws.mutation(uwws.countmutations(scopedstats.countew("uwws"))), >w<
+          tweetwenses.media.mutation(media.countmutations(scopedstats.countew("media"))), rawr
+          tweetwenses.mentions.mutation(mentions.countmutations(scopedstats.countew("mentions")))
         )
       )
-      .onlyIf(!isRetweet(_))
+      .onwyif(!iswetweet(_))
   }
 
-  private[this] def clean[E](isPartial: E => Boolean) =
-    Mutation[Seq[E]] { items =>
-      items.partition(isPartial) match {
-        case (Nil, nonPartial) => None
-        case (partial, nonPartial) => Some(nonPartial)
+  p-pwivate[this] def cwean[e](ispawtiaw: e-e => boowean) =
+    m-mutation[seq[e]] { i-items =>
+      items.pawtition(ispawtiaw) match {
+        case (niw, nyonpawtiaw) => n-nyone
+        c-case (pawtiaw, 😳 nyonpawtiaw) => s-some(nonpawtiaw)
       }
     }
 
-  private[this] val mentions =
-    clean[MentionEntity](e => e.userId.isEmpty || e.name.isEmpty)
+  p-pwivate[this] vaw mentions =
+    c-cwean[mentionentity](e => e.usewid.isempty || e-e.name.isempty)
 
-  private[this] val urls =
-    clean[UrlEntity](e =>
-      isNullOrEmpty(e.url) || isNullOrEmpty(e.expanded) || isNullOrEmpty(e.display))
+  pwivate[this] vaw uwws =
+    c-cwean[uwwentity](e =>
+      isnuwwowempty(e.uww) || i-isnuwwowempty(e.expanded) || isnuwwowempty(e.dispway))
 
-  private[this] val media =
-    Mutation[Seq[MediaEntity]] { mediaEntities =>
-      mediaEntities.partition(isPartialMedia) match {
-        case (Nil, nonPartial) => None
-        case (partial, nonPartial) => Some(nonPartial)
+  p-pwivate[this] v-vaw media =
+    mutation[seq[mediaentity]] { mediaentities =>
+      mediaentities.pawtition(ispawtiawmedia) match {
+        case (niw, >w< nyonpawtiaw) => nyone
+        c-case (pawtiaw, (⑅˘꒳˘) n-nyonpawtiaw) => some(nonpawtiaw)
       }
     }
 
-  def isPartialMedia(e: MediaEntity): Boolean =
-    e.fromIndex < 0 ||
-      e.toIndex <= 0 ||
-      isNullOrEmpty(e.url) ||
-      isNullOrEmpty(e.displayUrl) ||
-      isNullOrEmpty(e.mediaUrl) ||
-      isNullOrEmpty(e.mediaUrlHttps) ||
-      isNullOrEmpty(e.expandedUrl) ||
-      e.mediaInfo.isEmpty ||
-      e.mediaKey.isEmpty ||
-      (MediaKeyClassifier.isImage(MediaKeyUtil.get(e)) && containsInvalidSizeVariant(e.sizes))
+  d-def i-ispawtiawmedia(e: m-mediaentity): boowean =
+    e.fwomindex < 0 ||
+      e.toindex <= 0 ||
+      isnuwwowempty(e.uww) ||
+      isnuwwowempty(e.dispwayuww) ||
+      i-isnuwwowempty(e.mediauww) ||
+      isnuwwowempty(e.mediauwwhttps) ||
+      isnuwwowempty(e.expandeduww) ||
+      e.mediainfo.isempty ||
+      e.mediakey.isempty ||
+      (mediakeycwassifiew.isimage(mediakeyutiw.get(e)) && c-containsinvawidsizevawiant(e.sizes))
 
-  private[this] val userMentions =
-    clean[UserMention](e => e.screenName.isEmpty || e.name.isEmpty)
+  pwivate[this] v-vaw usewmentions =
+    c-cwean[usewmention](e => e-e.scweenname.isempty || e.name.isempty)
 
-  def isNullOrEmpty(optString: Option[String]): Boolean =
-    optString.isEmpty || optString.exists(isNullOrEmpty(_))
+  d-def isnuwwowempty(optstwing: o-option[stwing]): b-boowean =
+    o-optstwing.isempty || optstwing.exists(isnuwwowempty(_))
 
-  def isNullOrEmpty(str: String): Boolean = str == null || str.isEmpty
+  def isnuwwowempty(stw: s-stwing): b-boowean = s-stw == nuww || s-stw.isempty
 
-  def containsInvalidSizeVariant(sizes: Set[MediaSize]): Boolean =
-    sizes.exists(size => size.height == 0 || size.width == 0)
+  def c-containsinvawidsizevawiant(sizes: set[mediasize]): boowean =
+    sizes.exists(size => s-size.height == 0 || size.width == 0)
 }

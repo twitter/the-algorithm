@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.message
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message
 
-sealed trait UserFacepileDisplayType
+seawed twait u-usewfacepiwedispwaytype
 
-case object LargeUserFacepileDisplayType extends UserFacepileDisplayType
-case object CompactUserFacepileDisplayType extends UserFacepileDisplayType
+c-case object w-wawgeusewfacepiwedispwaytype e-extends usewfacepiwedispwaytype
+c-case object compactusewfacepiwedispwaytype e-extends u-usewfacepiwedispwaytype

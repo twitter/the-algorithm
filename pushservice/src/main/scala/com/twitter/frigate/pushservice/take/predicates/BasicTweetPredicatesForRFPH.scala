@@ -1,41 +1,41 @@
-package com.twitter.frigate.pushservice.take.predicates
+package com.twittew.fwigate.pushsewvice.take.pwedicates
 
-import com.twitter.frigate.common.base.TweetCandidate
-import com.twitter.frigate.common.base.TweetDetails
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.hermit.predicate.NamedPredicate
+impowt com.twittew.fwigate.common.base.tweetcandidate
+i-impowt c-com.twittew.fwigate.common.base.tweetdetaiws
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.hewmit.pwedicate.namedpwedicate
 
-trait BasicTweetPredicatesForRFPH[C <: PushCandidate with TweetCandidate with TweetDetails]
-    extends BasicTweetPredicates
-    with BasicRFPHPredicates[C] {
+t-twait b-basictweetpwedicatesfowwfph[c <: p-pushcandidate w-with tweetcandidate with tweetdetaiws]
+    extends basictweetpwedicates
+    with b-basicwfphpwedicates[c] {
 
-  // specific predicates per candidate type before basic tweet predicates
-  def preCandidateSpecificPredicates: List[NamedPredicate[C]] = List.empty
+  // specific pwedicates pew candidate t-type befowe basic tweet pwedicates
+  d-def pwecandidatespecificpwedicates: wist[namedpwedicate[c]] = wist.empty
 
-  // specific predicates per candidate type after basic tweet predicates
-  def postCandidateSpecificPredicates: List[NamedPredicate[C]] = List.empty
+  // specific pwedicates p-pew candidate type aftew b-basic tweet pwedicates
+  d-def postcandidatespecificpwedicates: wist[namedpwedicate[c]] = wist.empty
 
-  override lazy val predicates: List[NamedPredicate[C]] =
-    preCandidateSpecificPredicates ++ basicTweetPredicates ++ postCandidateSpecificPredicates
+  ovewwide w-wazy vaw pwedicates: wist[namedpwedicate[c]] =
+    pwecandidatespecificpwedicates ++ basictweetpwedicates ++ postcandidatespecificpwedicates
 }
 
 /**
- * This trait is a new version of BasicTweetPredicatesForRFPH
- * Difference from old version is that basicTweetPredicates are different
- * basicTweetPredicates here don't include Social Graph Service related predicates
+ * this twait i-is a nyew vewsion of basictweetpwedicatesfowwfph
+ * d-diffewence f-fwom owd vewsion i-is that basictweetpwedicates a-awe diffewent
+ * basictweetpwedicates hewe don't i-incwude sociaw gwaph sewvice wewated pwedicates
  */
-trait BasicTweetPredicatesForRFPHWithoutSGSPredicates[
-  C <: PushCandidate with TweetCandidate with TweetDetails]
-    extends BasicTweetPredicatesWithoutSGSPredicates
-    with BasicRFPHPredicates[C] {
+t-twait basictweetpwedicatesfowwfphwithoutsgspwedicates[
+  c <: pushcandidate with tweetcandidate with tweetdetaiws]
+    extends basictweetpwedicateswithoutsgspwedicates
+    w-with basicwfphpwedicates[c] {
 
-  // specific predicates per candidate type before basic tweet predicates
-  def preCandidateSpecificPredicates: List[NamedPredicate[C]] = List.empty
+  // specific pwedicates p-pew candidate t-type befowe b-basic tweet pwedicates
+  def pwecandidatespecificpwedicates: wist[namedpwedicate[c]] = w-wist.empty
 
-  // specific predicates per candidate type after basic tweet predicates
-  def postCandidateSpecificPredicates: List[NamedPredicate[C]] = List.empty
+  // s-specific pwedicates p-pew candidate type a-aftew basic tweet pwedicates
+  d-def postcandidatespecificpwedicates: wist[namedpwedicate[c]] = w-wist.empty
 
-  override lazy val predicates: List[NamedPredicate[C]] =
-    preCandidateSpecificPredicates ++ basicTweetPredicates ++ postCandidateSpecificPredicates
+  ovewwide wazy vaw pwedicates: wist[namedpwedicate[c]] =
+    p-pwecandidatespecificpwedicates ++ basictweetpwedicates ++ p-postcandidatespecificpwedicates
 
 }

@@ -1,98 +1,98 @@
-package com.twitter.tweetypie
-package backends
+package com.twittew.tweetypie
+package b-backends
 
-import com.twitter.finagle.Backoff
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.flockdb.client.{thriftscala => flockdb, _}
-import com.twitter.servo
-import com.twitter.servo.util.RetryHandler
-import com.twitter.tweetypie.core.OverCapacity
-import com.twitter.tweetypie.util.RetryPolicyBuilder
-import com.twitter.util.Future
-import com.twitter.util.TimeoutException
+impowt c-com.twittew.finagwe.backoff
+i-impowt com.twittew.finagwe.sewvice.wetwypowicy
+i-impowt com.twittew.fwockdb.cwient.{thwiftscawa => f-fwockdb, mya _}
+impowt c-com.twittew.sewvo
+i-impowt com.twittew.sewvo.utiw.wetwyhandwew
+i-impowt com.twittew.tweetypie.cowe.ovewcapacity
+impowt com.twittew.tweetypie.utiw.wetwypowicybuiwdew
+impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.timeoutexception
 
-object TFlock {
-  val log = Logger(this.getClass)
+object tfwock {
+  v-vaw wog = woggew(this.getcwass)
 
-  case class Config(
-    requestTimeout: Duration,
-    timeoutBackoffs: Stream[Duration],
-    flockExceptionBackoffs: Stream[Duration],
-    overCapacityBackoffs: Stream[Duration],
-    defaultPageSize: Int = 1000) {
-    def apply(svc: flockdb.FlockDB.MethodPerEndpoint, ctx: Backend.Context): TFlockClient = {
-      val retryHandler =
-        RetryHandler[Any](
-          retryPolicy(timeoutBackoffs, flockExceptionBackoffs, overCapacityBackoffs),
-          ctx.timer,
-          ctx.stats
+  case cwass config(
+    wequesttimeout: d-duwation, mya
+    timeoutbackoffs: s-stweam[duwation], (⑅˘꒳˘)
+    fwockexceptionbackoffs: stweam[duwation], (U ﹏ U)
+    ovewcapacitybackoffs: stweam[duwation], mya
+    d-defauwtpagesize: int = 1000) {
+    d-def a-appwy(svc: fwockdb.fwockdb.methodpewendpoint, ʘwʘ ctx: backend.context): tfwockcwient = {
+      vaw wetwyhandwew =
+        w-wetwyhandwew[any](
+          wetwypowicy(timeoutbackoffs, (˘ω˘) fwockexceptionbackoffs, (U ﹏ U) ovewcapacitybackoffs),
+          ctx.timew, ^•ﻌ•^
+          c-ctx.stats
         )
-      val rescueHandler = translateExceptions.andThen(Future.exception)
-      val exceptionCounter = new servo.util.ExceptionCounter(ctx.stats, "failures")
-      val timeoutException = new TimeoutException(s"tflock: $requestTimeout")
-      val wrapper =
-        new WrappingFunction {
-          def apply[T](f: => Future[T]): Future[T] =
-            retryHandler {
-              exceptionCounter {
-                f.raiseWithin(ctx.timer, requestTimeout, timeoutException)
-                  .onFailure(logFlockExceptions)
-                  .rescue(rescueHandler)
+      vaw wescuehandwew = twanswateexceptions.andthen(futuwe.exception)
+      v-vaw exceptioncountew = n-nyew sewvo.utiw.exceptioncountew(ctx.stats, (˘ω˘) "faiwuwes")
+      v-vaw timeoutexception = nyew t-timeoutexception(s"tfwock: $wequesttimeout")
+      vaw wwappew =
+        nyew w-wwappingfunction {
+          def appwy[t](f: => futuwe[t]): futuwe[t] =
+            w-wetwyhandwew {
+              exceptioncountew {
+                f.waisewithin(ctx.timew, :3 wequesttimeout, ^^;; timeoutexception)
+                  .onfaiwuwe(wogfwockexceptions)
+                  .wescue(wescuehandwew)
               }
             }
         }
 
-      val wrappedClient = new WrappingFlockClient(svc, wrapper, wrapper)
-      val statsClient = new StatsCollectingFlockService(wrappedClient, ctx.stats)
-      new TFlockClient(statsClient, defaultPageSize)
+      vaw wwappedcwient = nyew wwappingfwockcwient(svc, 🥺 w-wwappew, (⑅˘꒳˘) wwappew)
+      v-vaw statscwient = n-nyew statscowwectingfwocksewvice(wwappedcwient, nyaa~~ c-ctx.stats)
+      nyew tfwockcwient(statscwient, :3 defauwtpagesize)
     }
   }
 
-  def isOverCapacity(ex: flockdb.FlockException): Boolean =
-    ex.errorCode match {
-      case Some(flockdb.Constants.READ_OVERCAPACITY_ERROR) => true
-      case Some(flockdb.Constants.WRITE_OVERCAPACITY_ERROR) => true
-      case _ => false
+  def isovewcapacity(ex: f-fwockdb.fwockexception): b-boowean =
+    ex.ewwowcode match {
+      c-case s-some(fwockdb.constants.wead_ovewcapacity_ewwow) => twue
+      c-case some(fwockdb.constants.wwite_ovewcapacity_ewwow) => twue
+      c-case _ => fawse
     }
 
   /**
-   * Builds a RetryPolicy for tflock operations that will retry timeouts with the specified
-   * timeout backoffs, and will retry non-overcapacity FlockExceptions with the
-   * specified flockExceptionBackoffs backoffs, and will retry over-capacity exceptions with
-   * the specified overCapacityBackoffs.
+   * buiwds a wetwypowicy fow tfwock o-opewations that wiww wetwy t-timeouts with the specified
+   * t-timeout backoffs, ( ͡o ω ͡o ) a-and wiww wetwy nyon-ovewcapacity fwockexceptions with the
+   * specified fwockexceptionbackoffs backoffs, mya and wiww wetwy ovew-capacity e-exceptions w-with
+   * the specified ovewcapacitybackoffs.
    */
-  def retryPolicy(
-    timeoutBackoffs: Stream[Duration],
-    flockExceptionBackoffs: Stream[Duration],
-    overCapacityBackoffs: Stream[Duration]
-  ): RetryPolicy[Try[Any]] =
-    RetryPolicy.combine[Try[Any]](
-      RetryPolicyBuilder.timeouts[Any](timeoutBackoffs),
-      RetryPolicy.backoff(Backoff.fromStream(flockExceptionBackoffs)) {
-        case Throw(ex: flockdb.FlockException) if !isOverCapacity(ex) => true
-        case Throw(_: flockdb.FlockQuotaException) => false
-      },
-      RetryPolicy.backoff(Backoff.fromStream(overCapacityBackoffs)) {
-        case Throw(ex: flockdb.FlockException) if isOverCapacity(ex) => true
-        case Throw(_: flockdb.FlockQuotaException) => true
-        case Throw(_: OverCapacity) => true
+  d-def w-wetwypowicy(
+    t-timeoutbackoffs: stweam[duwation], (///ˬ///✿)
+    fwockexceptionbackoffs: stweam[duwation], (˘ω˘)
+    o-ovewcapacitybackoffs: stweam[duwation]
+  ): wetwypowicy[twy[any]] =
+    wetwypowicy.combine[twy[any]](
+      wetwypowicybuiwdew.timeouts[any](timeoutbackoffs), ^^;;
+      w-wetwypowicy.backoff(backoff.fwomstweam(fwockexceptionbackoffs)) {
+        case thwow(ex: f-fwockdb.fwockexception) i-if !isovewcapacity(ex) => t-twue
+        case thwow(_: f-fwockdb.fwockquotaexception) => f-fawse
+      }, (✿oωo)
+      w-wetwypowicy.backoff(backoff.fwomstweam(ovewcapacitybackoffs)) {
+        case t-thwow(ex: fwockdb.fwockexception) if isovewcapacity(ex) => twue
+        case t-thwow(_: fwockdb.fwockquotaexception) => t-twue
+        c-case thwow(_: o-ovewcapacity) => t-twue
       }
     )
 
-  val logFlockExceptions: Throwable => Unit = {
-    case t: flockdb.FlockException => {
-      log.info("FlockException from TFlock", t)
+  vaw wogfwockexceptions: thwowabwe => u-unit = {
+    case t: fwockdb.fwockexception => {
+      wog.info("fwockexception fwom tfwock", (U ﹏ U) t)
     }
     case _ =>
   }
 
   /**
-   * Converts FlockExceptions with overcapacity codes into tweetypie's OverCapacity.
+   * convewts fwockexceptions with o-ovewcapacity codes into tweetypie's ovewcapacity. -.-
    */
-  val translateExceptions: PartialFunction[Throwable, Throwable] = {
-    case t: flockdb.FlockQuotaException =>
-      OverCapacity(s"tflock: throttled ${t.description}")
-    case t: flockdb.FlockException if isOverCapacity(t) =>
-      OverCapacity(s"tflock: ${t.description}")
+  vaw t-twanswateexceptions: p-pawtiawfunction[thwowabwe, ^•ﻌ•^ t-thwowabwe] = {
+    case t: fwockdb.fwockquotaexception =>
+      o-ovewcapacity(s"tfwock: thwottwed ${t.descwiption}")
+    c-case t: f-fwockdb.fwockexception if isovewcapacity(t) =>
+      ovewcapacity(s"tfwock: ${t.descwiption}")
   }
 }

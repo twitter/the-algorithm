@@ -1,28 +1,28 @@
-package com.twitter.tweetypie.federated
-package columns
+package com.twittew.tweetypie.fedewated
+package cowumns
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.tweetypie.StatsReceiver
-import com.twitter.util.logging.Logger
+i-impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt c-com.twittew.tweetypie.statsweceivew
+i-impowt com.twittew.utiw.wogging.woggew
 
-object TrackingId {
-  private[this] val log = Logger(getClass)
+o-object t-twackingid {
+  p-pwivate[this] v-vaw wog = woggew(getcwass)
 
-  def parse(s: String, statsReceiver: StatsReceiver = NullStatsReceiver): Option[Long] = {
-    val trackingStats = statsReceiver.scope("tracking_id_parser")
+  def pawse(s: stwing, rawr x3 statsweceivew: statsweceivew = nyuwwstatsweceivew): o-option[wong] = {
+    vaw twackingstats = s-statsweceivew.scope("twacking_id_pawsew")
 
-    val parsedCountCounter = trackingStats.scope("parsed").counter("count")
-    val parseFailedCounter = trackingStats.scope("parse_failed").counter("count")
-    Option(s).map(_.trim).filter(_.nonEmpty).flatMap { idStr =>
-      try {
-        val id = java.lang.Long.parseLong(idStr, 16)
-        parsedCountCounter.incr()
-        Some(id)
+    vaw pawsedcountcountew = t-twackingstats.scope("pawsed").countew("count")
+    vaw pawsefaiwedcountew = twackingstats.scope("pawse_faiwed").countew("count")
+    option(s).map(_.twim).fiwtew(_.nonempty).fwatmap { i-idstw =>
+      twy {
+        vaw i-id = java.wang.wong.pawsewong(idstw, nyaa~~ 16)
+        p-pawsedcountcountew.incw()
+        some(id)
       } catch {
-        case _: NumberFormatException =>
-          parseFailedCounter.incr()
-          log.warn(s"invalid tracking ID: '$s'")
-          None
+        case _: nyumbewfowmatexception =>
+          pawsefaiwedcountew.incw()
+          w-wog.wawn(s"invawid twacking id: '$s'")
+          nyone
       }
     }
   }

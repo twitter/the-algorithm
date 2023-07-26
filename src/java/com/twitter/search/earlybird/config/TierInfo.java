@@ -1,180 +1,180 @@
-package com.twitter.search.earlybird.config;
+package com.twittew.seawch.eawwybiwd.config;
 
-import java.util.Date;
+impowt j-java.utiw.date;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import com.twitter.common.util.Clock;
+i-impowt c-com.twittew.common.utiw.cwock;
 
 /**
- * Properties of a single tier.
+ * p-pwopewties o-of a singwe tiew. 😳😳😳
  */
-public class TierInfo implements ServingRange {
-  // What I'm seeing historically is that this has been used when adding a new tier. First you
-  // add it and send dark traffic to it, then possibly grey and then you launch it by turning on
-  // light traffic.
-  public static enum RequestReadType {
-    // Light read: send request, wait for results, and results are returned
-    LIGHT,
-    // Dark read: send request, do not wait for results, and results are discarded
-    DARK,
-    // Grey read: send request, wait for results, but discard after results come back.
-    // Same results as dark read; similar latency as light read.
-    GREY,
+pubwic cwass tiewinfo impwements sewvingwange {
+  // nani i'm seeing histowicawwy i-is that this has been used when adding a-a nyew tiew. >w< fiwst you
+  // add i-it and send dawk twaffic to it, XD then possibwy gwey and then you w-waunch it by tuwning on
+  // w-wight twaffic. o.O
+  p-pubwic static enum wequestweadtype {
+    // wight wead: send wequest, mya wait fow w-wesuwts, 🥺 and wesuwts awe wetuwned
+    wight, ^^;;
+    // dawk wead: send wequest, :3 do n-not wait fow wesuwts, (U ﹏ U) and wesuwts a-awe discawded
+    d-dawk, OwO
+    // g-gwey wead: send w-wequest, 😳😳😳 wait fow wesuwts, (ˆ ﻌ ˆ)♡ but discawd aftew wesuwts c-come back. XD
+    // same wesuwts as dawk wead; s-simiwaw watency as wight wead. (ˆ ﻌ ˆ)♡
+    gwey, ( ͡o ω ͡o )
   }
 
-  private final String tierName;
-  private final Date dataStartDate;
-  private final Date dataEndDate;
-  private final int numPartitions;
-  private final int maxTimeslices;
-  private final TierServingBoundaryEndPoint servingRangeSince;
-  private final TierServingBoundaryEndPoint servingRangeMax;
-  private final TierServingBoundaryEndPoint servingRangeSinceOverride;
-  private final TierServingBoundaryEndPoint servingRangeMaxOverride;
+  pwivate finaw stwing tiewname;
+  pwivate finaw d-date datastawtdate;
+  pwivate f-finaw date dataenddate;
+  p-pwivate f-finaw int nyumpawtitions;
+  pwivate finaw int maxtimeswices;
+  p-pwivate finaw tiewsewvingboundawyendpoint s-sewvingwangesince;
+  pwivate finaw tiewsewvingboundawyendpoint s-sewvingwangemax;
+  p-pwivate finaw tiewsewvingboundawyendpoint s-sewvingwangesinceovewwide;
+  pwivate finaw t-tiewsewvingboundawyendpoint sewvingwangemaxovewwide;
 
-  // These two properties are only used by clients of Earlybird (E.g. roots),
-  // but not by Earlybirds.
-  private final boolean enabled;
-  private final RequestReadType readType;
-  private final RequestReadType readTypeOverride;
+  // these t-two pwopewties awe onwy used b-by cwients of eawwybiwd (e.g. rawr x3 woots),
+  // b-but nyot b-by eawwybiwds. nyaa~~
+  pwivate finaw boowean enabwed;
+  pwivate finaw wequestweadtype weadtype;
+  pwivate finaw wequestweadtype w-weadtypeovewwide;
 
-  public TierInfo(String tierName,
-                  Date dataStartDate,
-                  Date dataEndDate,
-                  int numPartitions,
-                  int maxTimeslices,
-                  boolean enabled,
-                  String sinceIdString,
-                  String maxIdString,
-                  Date servingStartDateOverride,
-                  Date servingEndDateOverride,
-                  RequestReadType readType,
-                  RequestReadType readTypeOverride,
-                  Clock clock) {
-    Preconditions.checkArgument(numPartitions > 0);
-    Preconditions.checkArgument(maxTimeslices > 0);
-    this.tierName = tierName;
-    this.dataStartDate = dataStartDate;
-    this.dataEndDate = dataEndDate;
-    this.numPartitions = numPartitions;
-    this.maxTimeslices = maxTimeslices;
-    this.enabled = enabled;
-    this.readType = readType;
-    this.readTypeOverride = readTypeOverride;
-    this.servingRangeSince = TierServingBoundaryEndPoint
-        .newTierServingBoundaryEndPoint(sinceIdString, dataStartDate, clock);
-    this.servingRangeMax = TierServingBoundaryEndPoint
-        .newTierServingBoundaryEndPoint(maxIdString, dataEndDate, clock);
-    if (servingStartDateOverride != null) {
-      this.servingRangeSinceOverride = TierServingBoundaryEndPoint.newTierServingBoundaryEndPoint(
-          TierServingBoundaryEndPoint.INFERRED_FROM_DATA_RANGE, servingStartDateOverride, clock);
-    } else {
-      this.servingRangeSinceOverride = servingRangeSince;
+  p-pubwic tiewinfo(stwing tiewname,
+                  d-date datastawtdate, >_<
+                  d-date d-dataenddate,
+                  int nyumpawtitions, ^^;;
+                  int maxtimeswices, (ˆ ﻌ ˆ)♡
+                  boowean e-enabwed,
+                  stwing sinceidstwing, ^^;;
+                  stwing maxidstwing, (⑅˘꒳˘)
+                  date s-sewvingstawtdateovewwide, rawr x3
+                  date s-sewvingenddateovewwide, (///ˬ///✿)
+                  w-wequestweadtype w-weadtype, 🥺
+                  wequestweadtype w-weadtypeovewwide, >_<
+                  c-cwock c-cwock) {
+    pweconditions.checkawgument(numpawtitions > 0);
+    p-pweconditions.checkawgument(maxtimeswices > 0);
+    this.tiewname = tiewname;
+    t-this.datastawtdate = d-datastawtdate;
+    t-this.dataenddate = d-dataenddate;
+    t-this.numpawtitions = nyumpawtitions;
+    this.maxtimeswices = maxtimeswices;
+    this.enabwed = e-enabwed;
+    this.weadtype = weadtype;
+    this.weadtypeovewwide = weadtypeovewwide;
+    this.sewvingwangesince = tiewsewvingboundawyendpoint
+        .newtiewsewvingboundawyendpoint(sinceidstwing, UwU d-datastawtdate, >_< cwock);
+    this.sewvingwangemax = tiewsewvingboundawyendpoint
+        .newtiewsewvingboundawyendpoint(maxidstwing, -.- d-dataenddate, mya c-cwock);
+    i-if (sewvingstawtdateovewwide != nyuww) {
+      t-this.sewvingwangesinceovewwide = tiewsewvingboundawyendpoint.newtiewsewvingboundawyendpoint(
+          t-tiewsewvingboundawyendpoint.infewwed_fwom_data_wange, >w< s-sewvingstawtdateovewwide, (U ﹏ U) cwock);
+    } ewse {
+      this.sewvingwangesinceovewwide = sewvingwangesince;
     }
 
-    if (servingEndDateOverride != null) {
-      this.servingRangeMaxOverride = TierServingBoundaryEndPoint.newTierServingBoundaryEndPoint(
-          TierServingBoundaryEndPoint.INFERRED_FROM_DATA_RANGE, servingEndDateOverride, clock);
-    } else {
-      this.servingRangeMaxOverride = servingRangeMax;
+    if (sewvingenddateovewwide != n-nyuww) {
+      this.sewvingwangemaxovewwide = tiewsewvingboundawyendpoint.newtiewsewvingboundawyendpoint(
+          t-tiewsewvingboundawyendpoint.infewwed_fwom_data_wange, 😳😳😳 sewvingenddateovewwide, o.O c-cwock);
+    } e-ewse {
+      this.sewvingwangemaxovewwide = sewvingwangemax;
     }
   }
 
-  @VisibleForTesting
-  public TierInfo(String tierName,
-                  Date dataStartDate,
-                  Date dataEndDate,
-                  int numPartitions,
-                  int maxTimeslices,
-                  boolean enabled,
-                  String sinceIdString,
-                  String maxIdString,
-                  RequestReadType readType,
-                  Clock clock) {
-    // No overrides:
-    //   servingRangeSinceOverride == servingRangeSince
-    //   servingRangeMaxOverride == servingRangeMax
-    //   readTypeOverride == readType
-    this(tierName, dataStartDate, dataEndDate, numPartitions, maxTimeslices, enabled, sinceIdString,
-         maxIdString, null, null, readType, readType, clock);
+  @visibwefowtesting
+  pubwic tiewinfo(stwing t-tiewname, òωó
+                  d-date datastawtdate,
+                  date dataenddate, 😳😳😳
+                  i-int n-nyumpawtitions, σωσ
+                  int maxtimeswices, (⑅˘꒳˘)
+                  boowean enabwed, (///ˬ///✿)
+                  stwing sinceidstwing, 🥺
+                  s-stwing maxidstwing, OwO
+                  w-wequestweadtype w-weadtype, >w<
+                  cwock cwock) {
+    // n-nyo ovewwides:
+    //   s-sewvingwangesinceovewwide == sewvingwangesince
+    //   sewvingwangemaxovewwide == s-sewvingwangemax
+    //   weadtypeovewwide == weadtype
+    this(tiewname, 🥺 datastawtdate, nyaa~~ dataenddate, ^^ n-nyumpawtitions, >w< m-maxtimeswices, OwO enabwed, sinceidstwing, XD
+         m-maxidstwing, ^^;; n-nyuww, nyuww, 🥺 weadtype, XD weadtype, cwock);
   }
 
-  @Override
-  public String toString() {
-    return tierName;
+  @ovewwide
+  pubwic stwing t-tostwing() {
+    wetuwn tiewname;
   }
 
-  public String getTierName() {
-    return tierName;
+  pubwic stwing gettiewname() {
+    wetuwn t-tiewname;
   }
 
-  public Date getDataStartDate() {
-    return dataStartDate;
+  pubwic date getdatastawtdate() {
+    w-wetuwn d-datastawtdate;
   }
 
-  public Date getDataEndDate() {
-    return dataEndDate;
+  pubwic date getdataenddate() {
+    wetuwn d-dataenddate;
   }
 
-  public int getNumPartitions() {
-    return numPartitions;
+  p-pubwic int getnumpawtitions() {
+    wetuwn nyumpawtitions;
   }
 
-  public int getMaxTimeslices() {
-    return maxTimeslices;
+  p-pubwic int getmaxtimeswices() {
+    w-wetuwn maxtimeswices;
   }
 
-  public TierConfig.ConfigSource getSource() {
-    return TierConfig.getTierConfigSource();
+  pubwic tiewconfig.configsouwce getsouwce() {
+    w-wetuwn tiewconfig.gettiewconfigsouwce();
   }
 
-  public boolean isEnabled() {
-    return enabled;
+  p-pubwic b-boowean isenabwed() {
+    wetuwn e-enabwed;
   }
 
-  public boolean isDarkRead() {
-    return readType == RequestReadType.DARK;
+  pubwic boowean i-isdawkwead() {
+    w-wetuwn weadtype == w-wequestweadtype.dawk;
   }
 
-  public RequestReadType getReadType() {
-    return readType;
+  pubwic wequestweadtype g-getweadtype() {
+    w-wetuwn weadtype;
   }
 
-  public RequestReadType getReadTypeOverride() {
-    return readTypeOverride;
+  pubwic wequestweadtype g-getweadtypeovewwide() {
+    w-wetuwn w-weadtypeovewwide;
   }
 
-  public long getServingRangeSinceId() {
-    return servingRangeSince.getBoundaryTweetId();
+  pubwic wong getsewvingwangesinceid() {
+    w-wetuwn sewvingwangesince.getboundawytweetid();
   }
 
-  public long getServingRangeMaxId() {
-    return servingRangeMax.getBoundaryTweetId();
+  pubwic w-wong getsewvingwangemaxid() {
+    w-wetuwn sewvingwangemax.getboundawytweetid();
   }
 
-  long getServingRangeOverrideSinceId() {
-    return servingRangeSinceOverride.getBoundaryTweetId();
+  wong getsewvingwangeovewwidesinceid() {
+    wetuwn sewvingwangesinceovewwide.getboundawytweetid();
   }
 
-  long getServingRangeOverrideMaxId() {
-    return servingRangeMaxOverride.getBoundaryTweetId();
+  wong getsewvingwangeovewwidemaxid() {
+    w-wetuwn s-sewvingwangemaxovewwide.getboundawytweetid();
   }
 
-  public long getServingRangeSinceTimeSecondsFromEpoch() {
-    return servingRangeSince.getBoundaryTimeSecondsFromEpoch();
+  p-pubwic wong g-getsewvingwangesincetimesecondsfwomepoch() {
+    wetuwn sewvingwangesince.getboundawytimesecondsfwomepoch();
   }
 
-  public long getServingRangeUntilTimeSecondsFromEpoch() {
-    return servingRangeMax.getBoundaryTimeSecondsFromEpoch();
+  p-pubwic wong getsewvingwangeuntiwtimesecondsfwomepoch() {
+    wetuwn sewvingwangemax.getboundawytimesecondsfwomepoch();
   }
 
-  long getServingRangeOverrideSinceTimeSecondsFromEpoch() {
-    return servingRangeSinceOverride.getBoundaryTimeSecondsFromEpoch();
+  wong getsewvingwangeovewwidesincetimesecondsfwomepoch() {
+    wetuwn sewvingwangesinceovewwide.getboundawytimesecondsfwomepoch();
   }
 
-  long getServingRangeOverrideUntilTimeSecondsFromEpoch() {
-    return servingRangeMaxOverride.getBoundaryTimeSecondsFromEpoch();
+  wong g-getsewvingwangeovewwideuntiwtimesecondsfwomepoch() {
+    wetuwn s-sewvingwangemaxovewwide.getboundawytimesecondsfwomepoch();
   }
 }

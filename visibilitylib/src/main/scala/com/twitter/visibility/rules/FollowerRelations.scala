@@ -1,20 +1,20 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.visibility.features.AuthorMutesViewer
-import com.twitter.visibility.rules.Condition.BooleanFeatureCondition
-import com.twitter.visibility.rules.Condition.ProtectedViewer
-import com.twitter.visibility.rules.Reason.Unspecified
+impowt com.twittew.visibiwity.featuwes.authowmutesviewew
+i-impowt c-com.twittew.visibiwity.wuwes.condition.booweanfeatuwecondition
+i-impowt com.twittew.visibiwity.wuwes.condition.pwotectedviewew
+i-impowt com.twittew.visibiwity.wuwes.weason.unspecified
 
-object FollowerRelations {
+o-object f-fowwowewwewations {
 
-  case object AuthorMutesViewerFeature extends BooleanFeatureCondition(AuthorMutesViewer)
+  c-case object a-authowmutesviewewfeatuwe extends booweanfeatuwecondition(authowmutesviewew)
 
-  object AuthorMutesViewerRule
-      extends OnlyWhenNotAuthorViewerRule(
-        action = Drop(Unspecified),
-        condition = AuthorMutesViewerFeature)
+  object authowmutesviewewwuwe
+      extends onwywhennotauthowviewewwuwe(
+        a-action = dwop(unspecified), (ˆ ﻌ ˆ)♡
+        condition = authowmutesviewewfeatuwe)
 
-  object ProtectedViewerRule
-      extends OnlyWhenNotAuthorViewerRule(action = Drop(Unspecified), condition = ProtectedViewer)
+  o-object pwotectedviewewwuwe
+      extends onwywhennotauthowviewewwuwe(action = d-dwop(unspecified), (⑅˘꒳˘) condition = pwotectedviewew)
 
 }

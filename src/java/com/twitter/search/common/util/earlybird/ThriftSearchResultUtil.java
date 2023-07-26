@@ -1,209 +1,209 @@
-package com.twitter.search.common.util.earlybird;
+package com.twittew.seawch.common.utiw.eawwybiwd;
 
-import java.util.List;
-import java.util.Map;
-import javax.annotation.Nullable;
+impowt java.utiw.wist;
+i-impowt j-java.utiw.map;
+impowt j-javax.annotation.nuwwabwe;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.base.function;
+i-impowt c-com.googwe.common.base.pwedicate;
+i-impowt com.googwe.common.base.pwedicates;
+i-impowt com.googwe.common.cowwect.itewabwes;
+impowt com.googwe.common.cowwect.wists;
+impowt com.googwe.common.cowwect.maps;
 
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.relevance.ranking.ActionChain;
-import com.twitter.search.common.relevance.ranking.filters.ExactDuplicateFilter;
-import com.twitter.search.common.relevance.text.VisibleTokenRatioNormalizer;
-import com.twitter.search.common.runtime.ActionChainDebugManager;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
-import com.twitter.search.earlybird.thrift.ThriftFacetResults;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftTweetSource;
+i-impowt com.twittew.seawch.common.constants.thwiftjava.thwiftwanguage;
+impowt com.twittew.seawch.common.wewevance.wanking.actionchain;
+impowt c-com.twittew.seawch.common.wewevance.wanking.fiwtews.exactdupwicatefiwtew;
+impowt com.twittew.seawch.common.wewevance.text.visibwetokenwationowmawizew;
+i-impowt com.twittew.seawch.common.wuntime.actionchaindebugmanagew;
+impowt com.twittew.seawch.common.schema.base.schema;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetfiewdwesuwts;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetwesuwts;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwt;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtmetadata;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwttype;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwts;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwifttweetsouwce;
 
 /**
- * ThriftSearchResultUtil contains some simple static methods for constructing
- * ThriftSearchResult objects.
+ * thwiftseawchwesuwtutiw c-contains some simpwe static methods fow constwucting
+ * thwiftseawchwesuwt o-objects. >_<
  */
-public final class ThriftSearchResultUtil {
-  private ThriftSearchResultUtil() { }
+pubwic finaw c-cwass thwiftseawchwesuwtutiw {
+  p-pwivate thwiftseawchwesuwtutiw() { }
 
-  private static final VisibleTokenRatioNormalizer NORMALIZER =
-      VisibleTokenRatioNormalizer.createInstance();
+  p-pwivate s-static finaw visibwetokenwationowmawizew nyowmawizew =
+      v-visibwetokenwationowmawizew.cweateinstance();
 
-  public static final Function<ThriftSearchResults, Map<ThriftLanguage, Integer>> LANG_MAP_GETTER =
-      searchResults -> searchResults.getLanguageHistogram();
-  public static final Function<ThriftSearchResults, Map<Long, Integer>> HIT_COUNTS_MAP_GETTER =
-      searchResults -> searchResults.getHitCounts();
+  pubwic static finaw function<thwiftseawchwesuwts, -.- m-map<thwiftwanguage, mya integew>> wang_map_gettew =
+      seawchwesuwts -> seawchwesuwts.getwanguagehistogwam();
+  pubwic static f-finaw function<thwiftseawchwesuwts, >w< map<wong, integew>> h-hit_counts_map_gettew =
+      s-seawchwesuwts -> s-seawchwesuwts.gethitcounts();
 
-  // Some useful Predicates
-  public static final Predicate<ThriftSearchResult> IS_OFFENSIVE_TWEET =
-      result -> {
-        if (result != null && result.isSetMetadata()) {
-          ThriftSearchResultMetadata metadata = result.getMetadata();
-          return metadata.isIsOffensive();
-        } else {
-          return false;
+  // some usefuw pwedicates
+  pubwic static f-finaw pwedicate<thwiftseawchwesuwt> i-is_offensive_tweet =
+      wesuwt -> {
+        i-if (wesuwt != n-nyuww && wesuwt.issetmetadata()) {
+          thwiftseawchwesuwtmetadata m-metadata = wesuwt.getmetadata();
+          w-wetuwn metadata.isisoffensive();
+        } ewse {
+          wetuwn fawse;
         }
       };
 
-  public static final Predicate<ThriftSearchResult> IS_TOP_TWEET =
-      result -> result != null
-             && result.isSetMetadata()
-             && result.getMetadata().isSetResultType()
-             && result.getMetadata().getResultType() == ThriftSearchResultType.POPULAR;
+  p-pubwic static finaw pwedicate<thwiftseawchwesuwt> i-is_top_tweet =
+      wesuwt -> w-wesuwt != n-nuww
+             && wesuwt.issetmetadata()
+             && wesuwt.getmetadata().issetwesuwttype()
+             && wesuwt.getmetadata().getwesuwttype() == thwiftseawchwesuwttype.popuwaw;
 
-  public static final Predicate<ThriftSearchResult> FROM_FULL_ARCHIVE =
-      result -> result != null
-             && result.isSetTweetSource()
-             && result.getTweetSource() == ThriftTweetSource.FULL_ARCHIVE_CLUSTER;
+  pubwic static finaw pwedicate<thwiftseawchwesuwt> f-fwom_fuww_awchive =
+      w-wesuwt -> wesuwt != nyuww
+             && w-wesuwt.issettweetsouwce()
+             && wesuwt.gettweetsouwce() == t-thwifttweetsouwce.fuww_awchive_cwustew;
 
-  public static final Predicate<ThriftSearchResult> IS_FULL_ARCHIVE_TOP_TWEET =
-      Predicates.and(FROM_FULL_ARCHIVE, IS_TOP_TWEET);
+  p-pubwic static finaw pwedicate<thwiftseawchwesuwt> is_fuww_awchive_top_tweet =
+      pwedicates.and(fwom_fuww_awchive, (U ﹏ U) i-is_top_tweet);
 
-  public static final Predicate<ThriftSearchResult> IS_NSFW_BY_ANY_MEANS_TWEET =
-          result -> {
-            if (result != null && result.isSetMetadata()) {
-              ThriftSearchResultMetadata metadata = result.getMetadata();
-              return metadata.isIsUserNSFW()
-                      || metadata.isIsOffensive()
-                      || metadata.getExtraMetadata().isIsSensitiveContent();
-            } else {
-              return false;
+  pubwic static finaw pwedicate<thwiftseawchwesuwt> is_nsfw_by_any_means_tweet =
+          wesuwt -> {
+            i-if (wesuwt != nyuww && w-wesuwt.issetmetadata()) {
+              t-thwiftseawchwesuwtmetadata m-metadata = wesuwt.getmetadata();
+              w-wetuwn metadata.isisusewnsfw()
+                      || metadata.isisoffensive()
+                      || m-metadata.getextwametadata().isissensitivecontent();
+            } e-ewse {
+              w-wetuwn fawse;
             }
           };
 
   /**
-   * Returns the number of underlying ThriftSearchResult results.
+   * wetuwns the nyumbew o-of undewwying thwiftseawchwesuwt w-wesuwts. 😳😳😳
    */
-  public static int numResults(ThriftSearchResults results) {
-    if (results == null || !results.isSetResults()) {
-      return 0;
-    } else {
-      return results.getResultsSize();
+  p-pubwic static i-int nyumwesuwts(thwiftseawchwesuwts w-wesuwts) {
+    if (wesuwts == nyuww || !wesuwts.issetwesuwts()) {
+      wetuwn 0;
+    } e-ewse {
+      wetuwn wesuwts.getwesuwtssize();
     }
   }
 
   /**
-   * Returns the list of tweet IDs in ThriftSearchResults.
-   * Returns null if there's no results.
+   * wetuwns the wist of tweet ids in thwiftseawchwesuwts. o.O
+   * w-wetuwns nyuww if thewe's nyo wesuwts. òωó
    */
-  @Nullable
-  public static List<Long> getTweetIds(ThriftSearchResults results) {
-    if (numResults(results) > 0) {
-      return getTweetIds(results.getResults());
-    } else {
-      return null;
+  @nuwwabwe
+  pubwic static w-wist<wong> gettweetids(thwiftseawchwesuwts wesuwts) {
+    i-if (numwesuwts(wesuwts) > 0) {
+      w-wetuwn gettweetids(wesuwts.getwesuwts());
+    } ewse {
+      w-wetuwn nyuww;
     }
   }
 
   /**
-   * Returns the list of tweet IDs in a list of ThriftSearchResult.
-   * Returns null if there's no results.
+   * wetuwns the w-wist of tweet ids i-in a wist of thwiftseawchwesuwt. 😳😳😳
+   * wetuwns nyuww if thewe's nyo wesuwts. σωσ
    */
-  public static List<Long> getTweetIds(@Nullable List<ThriftSearchResult> results) {
-    if (results != null && results.size() > 0) {
-      return Lists.newArrayList(Iterables.transform(
-          results,
-          searchResult -> searchResult.getId()
+  pubwic static wist<wong> gettweetids(@nuwwabwe w-wist<thwiftseawchwesuwt> wesuwts) {
+    i-if (wesuwts != nyuww && w-wesuwts.size() > 0) {
+      w-wetuwn wists.newawwaywist(itewabwes.twansfowm(
+          wesuwts, (⑅˘꒳˘)
+          seawchwesuwt -> s-seawchwesuwt.getid()
       ));
     }
-    return null;
+    w-wetuwn nyuww;
   }
 
   /**
-   * Given ThriftSearchResults, build a map from tweet ID to the tweets metadata.
+   * given thwiftseawchwesuwts, (///ˬ///✿) buiwd a-a map fwom t-tweet id to the tweets metadata. 🥺
    */
-  public static Map<Long, ThriftSearchResultMetadata> getTweetMetadataMap(
-      Schema schema, ThriftSearchResults results) {
-    Map<Long, ThriftSearchResultMetadata> resultMap = Maps.newHashMap();
-    if (results == null || results.getResultsSize() == 0) {
-      return resultMap;
+  pubwic static map<wong, OwO thwiftseawchwesuwtmetadata> g-gettweetmetadatamap(
+      s-schema schema, >w< t-thwiftseawchwesuwts wesuwts) {
+    m-map<wong, 🥺 t-thwiftseawchwesuwtmetadata> wesuwtmap = maps.newhashmap();
+    i-if (wesuwts == nyuww || wesuwts.getwesuwtssize() == 0) {
+      wetuwn wesuwtmap;
     }
-    for (ThriftSearchResult searchResult : results.getResults()) {
-      resultMap.put(searchResult.getId(), searchResult.getMetadata());
+    fow (thwiftseawchwesuwt seawchwesuwt : w-wesuwts.getwesuwts()) {
+      w-wesuwtmap.put(seawchwesuwt.getid(), nyaa~~ seawchwesuwt.getmetadata());
     }
-    return resultMap;
+    wetuwn w-wesuwtmap;
   }
 
   /**
-   * Return the total number of facet results in ThriftFacetResults, by summing up the number
-   * of facet results in each field.
+   * w-wetuwn the totaw nyumbew of facet wesuwts in thwiftfacetwesuwts, ^^ by summing up the n-nyumbew
+   * of facet wesuwts in each fiewd. >w<
    */
-  public static int numFacetResults(ThriftFacetResults results) {
-    if (results == null || !results.isSetFacetFields()) {
-      return 0;
-    } else {
-      int numResults = 0;
-      for (ThriftFacetFieldResults field : results.getFacetFields().values()) {
-        if (field.isSetTopFacets()) {
-          numResults += field.topFacets.size();
+  pubwic static int nyumfacetwesuwts(thwiftfacetwesuwts w-wesuwts) {
+    if (wesuwts == nyuww || !wesuwts.issetfacetfiewds()) {
+      w-wetuwn 0;
+    } e-ewse {
+      int nyumwesuwts = 0;
+      fow (thwiftfacetfiewdwesuwts fiewd : wesuwts.getfacetfiewds().vawues()) {
+        i-if (fiewd.issettopfacets()) {
+          n-nyumwesuwts += fiewd.topfacets.size();
         }
       }
-      return numResults;
+      wetuwn nyumwesuwts;
     }
   }
 
   /**
-   * Updates the search statistics on base, by adding the corresponding stats from delta.
+   * u-updates the seawch statistics o-on base, OwO by adding the cowwesponding stats fwom dewta. XD
    */
-  public static void incrementCounts(ThriftSearchResults base,
-                                     ThriftSearchResults delta) {
-    if (delta.isSetNumHitsProcessed()) {
-      base.setNumHitsProcessed(base.getNumHitsProcessed() + delta.getNumHitsProcessed());
+  p-pubwic static void incwementcounts(thwiftseawchwesuwts b-base, ^^;;
+                                     t-thwiftseawchwesuwts dewta) {
+    i-if (dewta.issetnumhitspwocessed()) {
+      base.setnumhitspwocessed(base.getnumhitspwocessed() + d-dewta.getnumhitspwocessed());
     }
-    if (delta.isSetNumPartitionsEarlyTerminated() && delta.getNumPartitionsEarlyTerminated() > 0) {
-      // This currently used for merging results on a single earlybird, so we don't sum up all the
-      // counts, just set it to 1 if we see one that was early terminated.
-      base.setNumPartitionsEarlyTerminated(1);
+    i-if (dewta.issetnumpawtitionseawwytewminated() && dewta.getnumpawtitionseawwytewminated() > 0) {
+      // t-this cuwwentwy used fow mewging w-wesuwts on a-a singwe eawwybiwd, 🥺 so we don't sum up aww the
+      // c-counts, XD j-just set it to 1 i-if we see one that was eawwy tewminated. (U ᵕ U❁)
+      b-base.setnumpawtitionseawwytewminated(1);
     }
-    if (delta.isSetMaxSearchedStatusID()) {
-      long deltaMax = delta.getMaxSearchedStatusID();
-      if (!base.isSetMaxSearchedStatusID() || deltaMax > base.getMaxSearchedStatusID()) {
-        base.setMaxSearchedStatusID(deltaMax);
+    if (dewta.issetmaxseawchedstatusid()) {
+      w-wong dewtamax = d-dewta.getmaxseawchedstatusid();
+      if (!base.issetmaxseawchedstatusid() || dewtamax > base.getmaxseawchedstatusid()) {
+        base.setmaxseawchedstatusid(dewtamax);
       }
     }
-    if (delta.isSetMinSearchedStatusID()) {
-      long deltaMin = delta.getMinSearchedStatusID();
-      if (!base.isSetMinSearchedStatusID() || deltaMin < base.getMinSearchedStatusID()) {
-        base.setMinSearchedStatusID(deltaMin);
+    i-if (dewta.issetminseawchedstatusid()) {
+      w-wong d-dewtamin = dewta.getminseawchedstatusid();
+      i-if (!base.issetminseawchedstatusid() || dewtamin < b-base.getminseawchedstatusid()) {
+        base.setminseawchedstatusid(dewtamin);
       }
     }
-    if (delta.isSetScore()) {
-      if (base.isSetScore()) {
-        base.setScore(base.getScore() + delta.getScore());
-      } else {
-        base.setScore(delta.getScore());
+    if (dewta.issetscowe()) {
+      if (base.issetscowe()) {
+        base.setscowe(base.getscowe() + dewta.getscowe());
+      } e-ewse {
+        base.setscowe(dewta.getscowe());
       }
     }
   }
 
   /**
-   * Removes the duplicates from the given list of results.
+   * w-wemoves the dupwicates fwom the g-given wist of wesuwts. :3
    *
-   * @param results The list of ThriftSearchResults.
-   * @return The given list with duplicates removed.
+   * @pawam wesuwts t-the wist of thwiftseawchwesuwts. ( ͡o ω ͡o )
+   * @wetuwn the given wist with d-dupwicates wemoved. òωó
    */
-  public static List<ThriftSearchResult> removeDuplicates(List<ThriftSearchResult> results) {
-    ActionChain<ThriftSearchResult> filterChain =
-      ActionChainDebugManager
-        .<ThriftSearchResult>createActionChainBuilder("RemoveDuplicatesFilters")
-        .appendActions(new ExactDuplicateFilter())
-        .build();
-    return filterChain.apply(results);
+  pubwic s-static wist<thwiftseawchwesuwt> w-wemovedupwicates(wist<thwiftseawchwesuwt> w-wesuwts) {
+    actionchain<thwiftseawchwesuwt> fiwtewchain =
+      a-actionchaindebugmanagew
+        .<thwiftseawchwesuwt>cweateactionchainbuiwdew("wemovedupwicatesfiwtews")
+        .appendactions(new exactdupwicatefiwtew())
+        .buiwd();
+    wetuwn fiwtewchain.appwy(wesuwts);
   }
 
   /**
-   * Returns ranking score from Earlybird shard-based ranking models if any, and 0 otherwise.
+   * wetuwns wanking scowe fwom eawwybiwd shawd-based wanking m-modews if any, σωσ a-and 0 othewwise. (U ᵕ U❁)
    */
-  public static double getTweetScore(@Nullable ThriftSearchResult result) {
-    if (result == null || !result.isSetMetadata() || !result.getMetadata().isSetScore()) {
-      return 0.0;
+  p-pubwic static doubwe gettweetscowe(@nuwwabwe t-thwiftseawchwesuwt wesuwt) {
+    if (wesuwt == nuww || !wesuwt.issetmetadata() || !wesuwt.getmetadata().issetscowe()) {
+      w-wetuwn 0.0;
     }
-    return result.getMetadata().getScore();
+    w-wetuwn wesuwt.getmetadata().getscowe();
   }
 }

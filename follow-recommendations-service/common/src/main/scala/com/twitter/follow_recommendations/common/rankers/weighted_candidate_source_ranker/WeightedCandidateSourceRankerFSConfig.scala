@@ -1,13 +1,13 @@
-package com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker
+package com.twittew.fowwow_wecommendations.common.wankews.weighted_candidate_souwce_wankew
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSParam
+impowt c-com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+i-impowt c-com.twittew.timewines.configapi.fspawam
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class WeightedCandidateSourceRankerFSConfig @Inject() extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[FSParam[Boolean]] =
-    Seq(WeightedCandidateSourceRankerParams.ScribeRankingInfoInWeightedRanker)
+@singweton
+cwass w-weightedcandidatesouwcewankewfsconfig @inject() e-extends featuweswitchconfig {
+  ovewwide vaw booweanfspawams: seq[fspawam[boowean]] =
+    seq(weightedcandidatesouwcewankewpawams.scwibewankinginfoinweightedwankew)
 }

@@ -1,72 +1,72 @@
-package com.twitter.timelineranker.util
+package com.twittew.timewinewankew.utiw
 
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.model.tweet.HydratedTweet
+impowt com.twittew.timewines.modew.tweetid
+i-impowt com.twittew.timewines.modew.usewid
+i-impowt c-com.twittew.timewines.modew.tweet.hydwatedtweet
 
-object ExtendedRepliesFilter {
-  private[util] def isExtendedReply(tweet: HydratedTweet, followedUserIds: Seq[UserId]): Boolean = {
-    tweet.hasReply &&
-    tweet.directedAtUser.exists(!followedUserIds.contains(_)) &&
-    followedUserIds.contains(tweet.userId)
+o-object extendedwepwiesfiwtew {
+  p-pwivate[utiw] d-def isextendedwepwy(tweet: hydwatedtweet, 😳😳😳 f-fowwowedusewids: seq[usewid]): b-boowean = {
+    tweet.haswepwy &&
+    tweet.diwectedatusew.exists(!fowwowedusewids.contains(_)) &&
+    fowwowedusewids.contains(tweet.usewid)
   }
 
-  private[util] def isNotQualifiedExtendedReply(
-    tweet: HydratedTweet,
-    userId: UserId,
-    followedUserIds: Seq[UserId],
-    mutedUserIds: Set[UserId],
-    sourceTweetsById: Map[TweetId, HydratedTweet]
-  ): Boolean = {
-    val currentUserId = userId
-    isExtendedReply(tweet, followedUserIds) &&
+  pwivate[utiw] d-def isnotquawifiedextendedwepwy(
+    tweet: hydwatedtweet, (U ﹏ U)
+    usewid: usewid, (///ˬ///✿)
+    f-fowwowedusewids: seq[usewid], 😳
+    m-mutedusewids: set[usewid], 😳
+    souwcetweetsbyid: map[tweetid, σωσ h-hydwatedtweet]
+  ): boowean = {
+    v-vaw cuwwentusewid = u-usewid
+    isextendedwepwy(tweet, rawr x3 fowwowedusewids) &&
     !(
-      !tweet.isRetweet &&
-        // and the extended reply must be directed at someone other than the current user
-        tweet.directedAtUser.exists(_ != currentUserId) &&
-        // There must be a source tweet
-        tweet.inReplyToTweetId
-          .flatMap(sourceTweetsById.get)
-          .filter { c =>
-            // and the author of the source tweet must be non zero
-            (c.userId != 0) &&
-            (c.userId != currentUserId) && // and not by the current user
-            (!c.hasReply) && // and a root tweet, i.e. not a reply
-            (!c.isRetweet) && // and not a retweet
-            (c.userId != tweet.userId) // and not a by the same user
+      !tweet.iswetweet &&
+        // and the extended wepwy m-must be diwected at someone othew than the cuwwent usew
+        tweet.diwectedatusew.exists(_ != c-cuwwentusewid) &&
+        // thewe must be a-a souwce tweet
+        t-tweet.inwepwytotweetid
+          .fwatmap(souwcetweetsbyid.get)
+          .fiwtew { c-c =>
+            // and t-the authow of the souwce tweet must be nyon zewo
+            (c.usewid != 0) &&
+            (c.usewid != c-cuwwentusewid) && // and nyot by the cuwwent usew
+            (!c.haswepwy) && // a-and a woot tweet, OwO i.e. /(^•ω•^) nyot a wepwy
+            (!c.iswetweet) && // and nyot a wetweet
+            (c.usewid != tweet.usewid) // and nyot a by the same usew
           }
-          // and not by a muted user
-          .exists(sourceTweet => !mutedUserIds.contains(sourceTweet.userId))
+          // a-and nyot by a muted usew
+          .exists(souwcetweet => !mutedusewids.contains(souwcetweet.usewid))
     )
   }
 
-  private[util] def isNotValidExpandedExtendedReply(
-    tweet: HydratedTweet,
-    viewingUserId: UserId,
-    followedUserIds: Seq[UserId],
-    mutedUserIds: Set[UserId],
-    sourceTweetsById: Map[TweetId, HydratedTweet]
-  ): Boolean = {
-    // An extended reply is valid if we hydrated the in-reply to tweet
-    val isValidExtendedReply =
-      !tweet.isRetweet && // extended replies must be source tweets
-        tweet.directedAtUser.exists(
-          _ != viewingUserId) && // the extended reply must be directed at someone other than the viewing user
-        tweet.inReplyToTweetId
-          .flatMap(
-            sourceTweetsById.get
-          ) // there must be an in-reply-to tweet matching the following properities
-          .exists { inReplyToTweet =>
-            (inReplyToTweet.userId > 0) && // and the in-reply to author is valid
-            (inReplyToTweet.userId != viewingUserId) && // the reply can not be in reply to the viewing user's tweet
-            !inReplyToTweet.isRetweet && // and the in-reply-to tweet is not a retweet (this should always be true?)
-            !mutedUserIds.contains(
-              inReplyToTweet.userId) && // and the in-reply-to user is not muted
-            inReplyToTweet.inReplyToUserId.forall(r =>
-              !mutedUserIds
-                .contains(r)) // if there is an in-reply-to-in-reply-to user they are not muted
+  p-pwivate[utiw] d-def isnotvawidexpandedextendedwepwy(
+    tweet: h-hydwatedtweet, 😳😳😳
+    viewingusewid: usewid, ( ͡o ω ͡o )
+    fowwowedusewids: s-seq[usewid], >_<
+    m-mutedusewids: set[usewid], >w<
+    s-souwcetweetsbyid: m-map[tweetid, hydwatedtweet]
+  ): b-boowean = {
+    // an extended w-wepwy is vawid if we hydwated the in-wepwy t-to tweet
+    vaw isvawidextendedwepwy =
+      !tweet.iswetweet && // e-extended wepwies must be s-souwce tweets
+        t-tweet.diwectedatusew.exists(
+          _ != viewingusewid) && // the extended wepwy must be diwected at someone othew than the viewing usew
+        t-tweet.inwepwytotweetid
+          .fwatmap(
+            s-souwcetweetsbyid.get
+          ) // thewe must b-be an in-wepwy-to t-tweet matching t-the fowwowing pwopewities
+          .exists { inwepwytotweet =>
+            (inwepwytotweet.usewid > 0) && // and the in-wepwy to authow is vawid
+            (inwepwytotweet.usewid != viewingusewid) && // t-the wepwy can nyot be in wepwy to the viewing usew's tweet
+            !inwepwytotweet.iswetweet && // a-and the in-wepwy-to tweet is n-nyot a wetweet (this s-shouwd awways b-be twue?)
+            !mutedusewids.contains(
+              inwepwytotweet.usewid) && // a-and t-the in-wepwy-to u-usew is nyot muted
+            i-inwepwytotweet.inwepwytousewid.fowaww(w =>
+              !mutedusewids
+                .contains(w)) // if thewe is an in-wepwy-to-in-wepwy-to u-usew they awe nyot m-muted
           }
-    // filter any invalid extended reply
-    isExtendedReply(tweet, followedUserIds) && !isValidExtendedReply
+    // f-fiwtew a-any invawid extended w-wepwy
+    isextendedwepwy(tweet, rawr fowwowedusewids) && !isvawidextendedwepwy
   }
 }

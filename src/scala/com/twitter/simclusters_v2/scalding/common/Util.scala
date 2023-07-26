@@ -1,305 +1,305 @@
-package com.twitter.simclusters_v2.scalding.common
+package com.twittew.simcwustews_v2.scawding.common
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.ObjectWriter
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.fasterxml.jackson.module.scala.ScalaObjectMapper
-import com.twitter.algebird.Aggregator
-import com.twitter.algebird.Moments
-import com.twitter.algebird.MultiAggregator
-import com.twitter.algebird.SetSizeAggregator
-import com.twitter.algebird.SketchMap
-import com.twitter.algebird.SketchMapParams
-import com.twitter.algebird.mutable.PriorityQueueMonoid
-import com.twitter.bijection.Injection
-import com.twitter.hashing.KeyHasher
-import com.twitter.scalding.Execution
-import com.twitter.scalding.Stat
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding.UniqueID
-import java.io.File
-import java.io.PrintWriter
-import scala.sys.process._
+impowt com.fastewxmw.jackson.cowe.jsongenewatow
+i-impowt com.fastewxmw.jackson.databind.objectmappew
+i-impowt com.fastewxmw.jackson.databind.objectwwitew
+i-impowt c-com.fastewxmw.jackson.moduwe.scawa.defauwtscawamoduwe
+i-impowt com.fastewxmw.jackson.moduwe.scawa.scawaobjectmappew
+i-impowt com.twittew.awgebiwd.aggwegatow
+i-impowt c-com.twittew.awgebiwd.moments
+impowt com.twittew.awgebiwd.muwtiaggwegatow
+impowt com.twittew.awgebiwd.setsizeaggwegatow
+i-impowt com.twittew.awgebiwd.sketchmap
+impowt com.twittew.awgebiwd.sketchmappawams
+i-impowt com.twittew.awgebiwd.mutabwe.pwiowityqueuemonoid
+i-impowt com.twittew.bijection.injection
+impowt com.twittew.hashing.keyhashew
+impowt com.twittew.scawding.execution
+i-impowt com.twittew.scawding.stat
+impowt com.twittew.scawding.typedpipe
+i-impowt c-com.twittew.scawding.uniqueid
+impowt java.io.fiwe
+impowt java.io.pwintwwitew
+impowt scawa.sys.pwocess._
 
-object Util {
-  private val formatter = java.text.NumberFormat.getNumberInstance
+o-object utiw {
+  pwivate vaw fowmattew = java.text.numbewfowmat.getnumbewinstance
 
-  private val jsonMapper = {
-    val mapper = new ObjectMapper() with ScalaObjectMapper
-    mapper.registerModule(DefaultScalaModule)
-    mapper.configure(JsonGenerator.Feature.WRITE_NUMBERS_AS_STRINGS, true)
-    mapper
+  pwivate v-vaw jsonmappew = {
+    vaw m-mappew = nyew objectmappew() w-with s-scawaobjectmappew
+    m-mappew.wegistewmoduwe(defauwtscawamoduwe)
+    mappew.configuwe(jsongenewatow.featuwe.wwite_numbews_as_stwings, twue)
+    m-mappew
   }
 
-  val prettyJsonMapper: ObjectWriter = jsonMapper.writerWithDefaultPrettyPrinter()
+  vaw pwettyjsonmappew: objectwwitew = j-jsonmappew.wwitewwithdefauwtpwettypwintew()
 
-  def getCustomCounters[T](exec: Execution[T]): Execution[Map[String, Long]] = {
-    exec.getCounters.map {
-      case (_, counters) =>
-        counters.toMap.collect {
-          case (key, value) if key.group == "Scalding Custom" =>
-            key.counter -> value
+  def getcustomcountews[t](exec: execution[t]): execution[map[stwing, ʘwʘ wong]] = {
+    exec.getcountews.map {
+      c-case (_, rawr x3 countews) =>
+        countews.tomap.cowwect {
+          c-case (key, v-vawue) if key.gwoup == "scawding c-custom" =>
+            key.countew -> vawue
         }
     }
   }
 
-  def getCustomCountersString[T](exec: Execution[T]): Execution[String] = {
-    getCustomCounters(exec).map { map =>
-      val customCounterStrings = map.toList.map {
-        case (key, value) =>
-          s"$key:${formatter.format(value)}"
+  def getcustomcountewsstwing[t](exec: e-execution[t]): e-execution[stwing] = {
+    getcustomcountews(exec).map { m-map =>
+      vaw c-customcountewstwings = map.towist.map {
+        c-case (key, ^^;; vawue) =>
+          s"$key:${fowmattew.fowmat(vawue)}"
       }
-      if (customCounterStrings.nonEmpty) {
-        "Printing all custom counters:\n" + customCounterStrings.mkString("\n")
-      } else {
-        "No custom counters to print"
+      i-if (customcountewstwings.nonempty) {
+        "pwinting aww custom countews:\n" + c-customcountewstwings.mkstwing("\n")
+      } ewse {
+        "no c-custom countews to pwint"
       }
     }
   }
 
-  // Note ideally this should not allow T that is itself Execution[U] i.e. don't accept
-  // nested executions
-  def printCounters[T](exec: Execution[T]): Execution[Unit] = {
-    getCustomCountersString(exec).map { s => println(s) }
+  // n-nyote ideawwy t-this shouwd nyot awwow t that is itsewf execution[u] i.e. ʘwʘ don't accept
+  // nyested executions
+  def pwintcountews[t](exec: e-execution[t]): e-execution[unit] = {
+    getcustomcountewsstwing(exec).map { s-s => pwintwn(s) }
   }
 
   /**
-   * Print some basic stats of a numeric column.
+   * p-pwint s-some basic stats of a nyumewic cowumn. (U ﹏ U)
    */
-  def printSummaryOfNumericColumn[V](
-    input: TypedPipe[V],
-    columnName: Option[String] = None
+  def pwintsummawyofnumewiccowumn[v](
+    input: typedpipe[v], (˘ω˘)
+    c-cowumnname: option[stwing] = nyone
   )(
-    implicit num: Numeric[V]
-  ): Execution[String] = {
-    lazy val randomSampler = Aggregator.reservoirSample[V](100)
+    impwicit num: nyumewic[v]
+  ): execution[stwing] = {
+    w-wazy vaw wandomsampwew = aggwegatow.wesewvoiwsampwe[v](100)
 
-    lazy val percentiles = QTreeMultiAggregator(Seq(0.05, 0.25, 0.50, 0.75, 0.95))
+    w-wazy vaw pewcentiwes = q-qtweemuwtiaggwegatow(seq(0.05, (ꈍᴗꈍ) 0.25, 0.50, /(^•ω•^) 0.75, 0.95))
 
-    lazy val moments = Moments.numericAggregator
+    w-wazy vaw moments = moments.numewicaggwegatow
 
-    val multiAggregator = MultiAggregator(
-      Aggregator.size,
-      percentiles,
-      Aggregator.max,
-      Aggregator.min,
-      Aggregator.numericSum,
-      moments,
-      randomSampler
-    ).andThenPresent {
-      case (size_, percentiles_, max_, min_, sum_, moments_, samples_) =>
-        percentiles_.mapValues(_.toString) ++ Map(
-          "size" -> size_.toString,
-          "max" -> max_.toString,
-          "min" -> min_.toString,
-          "sum" -> sum_.toString,
-          "avg" -> moments_.mean.toString,
-          "stddev" -> moments_.stddev.toString,
-          "skewness" -> moments_.skewness.toString,
-          "samples" -> samples_.mkString(",")
+    v-vaw m-muwtiaggwegatow = m-muwtiaggwegatow(
+      a-aggwegatow.size, >_<
+      pewcentiwes, σωσ
+      aggwegatow.max, ^^;;
+      a-aggwegatow.min, 😳
+      aggwegatow.numewicsum, >_<
+      m-moments, -.-
+      w-wandomsampwew
+    ).andthenpwesent {
+      c-case (size_, UwU p-pewcentiwes_, :3 max_, σωσ min_, sum_, >w< moments_, sampwes_) =>
+        pewcentiwes_.mapvawues(_.tostwing) ++ m-map(
+          "size" -> size_.tostwing, (ˆ ﻌ ˆ)♡
+          "max" -> max_.tostwing, ʘwʘ
+          "min" -> min_.tostwing, :3
+          "sum" -> sum_.tostwing, (˘ω˘)
+          "avg" -> moments_.mean.tostwing, 😳😳😳
+          "stddev" -> m-moments_.stddev.tostwing, rawr x3
+          "skewness" -> moments_.skewness.tostwing, (✿oωo)
+          "sampwes" -> sampwes_.mkstwing(",")
         )
     }
 
     input
-      .aggregate(multiAggregator)
-      .toIterableExecution
-      .map { m =>
-        val summary =
-          s"Column Name: $columnName\nSummary:\n${Util.prettyJsonMapper.writeValueAsString(m)}"
-        println(summary)
-        summary
+      .aggwegate(muwtiaggwegatow)
+      .toitewabweexecution
+      .map { m-m =>
+        v-vaw summawy =
+          s-s"cowumn nyame: $cowumnname\nsummawy:\n${utiw.pwettyjsonmappew.wwitevawueasstwing(m)}"
+        p-pwintwn(summawy)
+        summawy
       }
   }
 
   /**
-   * Output some basic stats of a categorical column.
+   * o-output some b-basic stats of a categowicaw cowumn. (ˆ ﻌ ˆ)♡
    *
-   * Note that HeavyHitters only work when the distribution is skewed.
+   * nyote that heavyhittews onwy wowk when the distwibution is skewed. :3
    */
-  def printSummaryOfCategoricalColumn[V](
-    input: TypedPipe[V],
-    columnName: Option[String] = None
+  d-def pwintsummawyofcategowicawcowumn[v](
+    i-input: typedpipe[v], (U ᵕ U❁)
+    cowumnname: option[stwing] = n-nyone
   )(
-    implicit injection: Injection[V, Array[Byte]]
-  ): Execution[String] = {
+    i-impwicit injection: injection[v, ^^;; awway[byte]]
+  ): e-execution[stwing] = {
 
-    lazy val randomSampler = Aggregator.reservoirSample[V](100)
+    w-wazy vaw wandomsampwew = a-aggwegatow.wesewvoiwsampwe[v](100)
 
-    lazy val uniqueCounter = new SetSizeAggregator[V](hllBits = 13, maxSetSize = 1000)(injection)
+    w-wazy vaw uniquecountew = nyew setsizeaggwegatow[v](hwwbits = 13, mya maxsetsize = 1000)(injection)
 
-    lazy val sketchMapParams =
-      SketchMapParams[V](seed = 1618, eps = 0.001, delta = 0.05, heavyHittersCount = 20)(injection)
+    wazy vaw sketchmappawams =
+      s-sketchmappawams[v](seed = 1618, 😳😳😳 e-eps = 0.001, dewta = 0.05, OwO h-heavyhittewscount = 20)(injection)
 
-    lazy val heavyHitter =
-      SketchMap.aggregator[V, Long](sketchMapParams).composePrepare[V](v => v -> 1L)
+    wazy vaw heavyhittew =
+      s-sketchmap.aggwegatow[v, rawr w-wong](sketchmappawams).composepwepawe[v](v => v -> 1w)
 
-    val multiAggregator = MultiAggregator(
-      Aggregator.size,
-      uniqueCounter,
-      heavyHitter,
-      randomSampler
-    ).andThenPresent {
-      case (size_, uniqueSize_, heavyHitter_, sampler_) =>
-        Map(
-          "size" -> size_.toString,
-          "unique" -> uniqueSize_.toString,
-          "samples" -> sampler_.mkString(","),
-          "heavyHitter" -> heavyHitter_.heavyHitterKeys
+    v-vaw muwtiaggwegatow = muwtiaggwegatow(
+      aggwegatow.size, XD
+      uniquecountew, (U ﹏ U)
+      heavyhittew, (˘ω˘)
+      w-wandomsampwew
+    ).andthenpwesent {
+      c-case (size_, UwU uniquesize_, >_< heavyhittew_, σωσ s-sampwew_) =>
+        m-map(
+          "size" -> size_.tostwing, 🥺
+          "unique" -> uniquesize_.tostwing,
+          "sampwes" -> sampwew_.mkstwing(","), 🥺
+          "heavyhittew" -> h-heavyhittew_.heavyhittewkeys
             .map { key =>
-              val freq = sketchMapParams.frequency(key, heavyHitter_.valuesTable)
-              key -> freq
+              vaw fweq = sketchmappawams.fwequency(key, ʘwʘ heavyhittew_.vawuestabwe)
+              key -> f-fweq
             }
-            .sortBy(-_._2).mkString(",")
+            .sowtby(-_._2).mkstwing(",")
         )
     }
 
     input
-      .aggregate(multiAggregator)
-      .toIterableExecution
+      .aggwegate(muwtiaggwegatow)
+      .toitewabweexecution
       .map { m =>
-        val summary =
-          s"Column Name: $columnName\nSummary:\n${Util.prettyJsonMapper.writeValueAsString(m)}"
-        println(summary)
-        summary
+        v-vaw summawy =
+          s-s"cowumn nyame: $cowumnname\nsummawy:\n${utiw.pwettyjsonmappew.wwitevawueasstwing(m)}"
+        pwintwn(summawy)
+        summawy
       }
   }
 
-  val edgeOrdering: Ordering[(Long, Long)] = Ordering.by {
-    case (fromNodeId, toNodeId) => hashToLong(fromNodeId, toNodeId)
+  v-vaw edgeowdewing: o-owdewing[(wong, :3 wong)] = owdewing.by {
+    case (fwomnodeid, (U ﹏ U) t-tonodeid) => hashtowong(fwomnodeid, (U ﹏ U) t-tonodeid)
   }
 
-  def reservoirSamplerMonoidForPairs[K, V](
-    sampleSize: Int
+  def wesewvoiwsampwewmonoidfowpaiws[k, ʘwʘ v](
+    sampwesize: int
   )(
-    implicit ord: Ordering[K]
-  ): PriorityQueueMonoid[(K, V)] = {
-    implicit val fullOrdering: Ordering[(K, V)] = Ordering.by(_._1)
-    new PriorityQueueMonoid[(K, V)](sampleSize)
+    i-impwicit owd: owdewing[k]
+  ): p-pwiowityqueuemonoid[(k, >w< v-v)] = {
+    impwicit v-vaw fuwwowdewing: owdewing[(k, rawr x3 v-v)] = owdewing.by(_._1)
+    n-nyew p-pwiowityqueuemonoid[(k, OwO v)](sampwesize)
   }
 
-  def reservoirSamplerMonoid[T, U](
-    sampleSize: Int,
-    convert: T => U
+  d-def wesewvoiwsampwewmonoid[t, ^•ﻌ•^ u](
+    s-sampwesize: int, >_<
+    convewt: t => u
   )(
-    implicit ord: Ordering[U]
-  ): PriorityQueueMonoid[T] = {
-    new PriorityQueueMonoid[T](sampleSize)(Ordering.by(convert))
+    i-impwicit owd: o-owdewing[u]
+  ): p-pwiowityqueuemonoid[t] = {
+    nyew pwiowityqueuemonoid[t](sampwesize)(owdewing.by(convewt))
   }
 
-  def hashToLong(a: Long, b: Long): Long = {
-    val bb = java.nio.ByteBuffer.allocate(16)
-    bb.putLong(a)
-    bb.putLong(b)
-    KeyHasher.KETAMA.hashKey(bb.array())
+  def hashtowong(a: w-wong, OwO b: wong): wong = {
+    v-vaw bb = j-java.nio.bytebuffew.awwocate(16)
+    bb.putwong(a)
+    bb.putwong(b)
+    keyhashew.ketama.hashkey(bb.awway())
   }
 
-  def hashToLong(a: Long): Long = {
-    val bb = java.nio.ByteBuffer.allocate(8)
-    bb.putLong(a)
-    KeyHasher.KETAMA.hashKey(bb.array())
+  d-def hashtowong(a: w-wong): wong = {
+    v-vaw bb = j-java.nio.bytebuffew.awwocate(8)
+    bb.putwong(a)
+    k-keyhashew.ketama.hashkey(bb.awway())
   }
 
-  // https://en.wikipedia.org/wiki/Pearson_correlation_coefficient
-  def computeCorrelation(pairedIter: Iterator[(Double, Double)]): Double = {
-    val (len, xSum, ySum, x2Sum, y2Sum, xySum) =
-      pairedIter.foldLeft((0.0, 0.0, 0.0, 0.0, 0.0, 0.0)) {
-        case ((l, xs, ys, x2s, y2s, xys), (x, y)) =>
-          (l + 1, xs + x, ys + y, x2s + x * x, y2s + y * y, xys + x * y)
+  // https://en.wikipedia.owg/wiki/peawson_cowwewation_coefficient
+  def computecowwewation(paiweditew: itewatow[(doubwe, >_< doubwe)]): doubwe = {
+    v-vaw (wen, (ꈍᴗꈍ) xsum, >w< ysum, x2sum, (U ﹏ U) y-y2sum, xysum) =
+      paiweditew.fowdweft((0.0, ^^ 0.0, 0.0, 0.0, (U ﹏ U) 0.0, 0.0)) {
+        c-case ((w, :3 xs, ys, x2s, y-y2s, (✿oωo) xys), (x, XD y)) =>
+          (w + 1, >w< xs + x, òωó y-ys + y, x2s + x * x-x, (ꈍᴗꈍ) y2s + y * y, rawr x3 x-xys + x * y)
       }
-    val den = math.sqrt(len * x2Sum - xSum * xSum) * math.sqrt(len * y2Sum - ySum * ySum)
+    v-vaw den = m-math.sqwt(wen * x2sum - xsum * xsum) * math.sqwt(wen * y2sum - ysum * ysum)
     if (den > 0) {
-      (len * xySum - xSum * ySum) / den
-    } else 0.0
+      (wen * xysum - xsum * y-ysum) / den
+    } e-ewse 0.0
   }
 
-  // https://en.wikipedia.org/wiki/Cosine_similarity
-  def cosineSimilarity(pairedIter: Iterator[(Double, Double)]): Double = {
-    val (xySum, x2Sum, y2Sum) = pairedIter.foldLeft(0.0, 0.0, 0.0) {
-      case ((xy, x2, y2), (x, y)) =>
-        (xy + x * y, x2 + x * x, y2 + y * y)
+  // h-https://en.wikipedia.owg/wiki/cosine_simiwawity
+  def cosinesimiwawity(paiweditew: i-itewatow[(doubwe, rawr x3 doubwe)]): doubwe = {
+    vaw (xysum, σωσ x-x2sum, y2sum) = p-paiweditew.fowdweft(0.0, (ꈍᴗꈍ) 0.0, 0.0) {
+      case ((xy, rawr x-x2, ^^;; y2), (x, y)) =>
+        (xy + x * y, rawr x3 x2 + x-x * x, (ˆ ﻌ ˆ)♡ y2 + y-y * y)
     }
-    val den = math.sqrt(x2Sum) * math.sqrt(y2Sum)
-    if (den > 0) {
-      xySum / den
-    } else 0.0
+    vaw den = math.sqwt(x2sum) * m-math.sqwt(y2sum)
+    i-if (den > 0) {
+      xysum / den
+    } ewse 0.0
   }
 
-  case class Distribution(
-    avg: Double,
-    stdDev: Double,
-    p1: Double,
-    p10: Double,
-    p50: Double,
-    p90: Double,
-    p99: Double)
+  case cwass distwibution(
+    a-avg: doubwe, σωσ
+    s-stddev: d-doubwe,
+    p1: d-doubwe, (U ﹏ U)
+    p10: d-doubwe, >w<
+    p50: doubwe, σωσ
+    p90: d-doubwe, nyaa~~
+    p99: d-doubwe)
 
-  val emptyDist: Distribution = Distribution(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+  vaw emptydist: distwibution = d-distwibution(0.0, 🥺 0.0, 0.0, 0.0, 0.0, rawr x3 0.0, 0.0)
 
-  def distributionFromArray(l: Array[Double]): Distribution = {
-    val s = l.sorted
-    val len = l.length
+  d-def distwibutionfwomawway(w: awway[doubwe]): d-distwibution = {
+    vaw s = w.sowted
+    vaw wen = w-w.wength
 
-    if (len < 1) {
-      emptyDist
-    } else {
-      def pctToIndex(p: Double): Int = {
-        val idx = math.round(l.length * p).toInt
-        if (idx < 0) {
+    if (wen < 1) {
+      emptydist
+    } e-ewse {
+      d-def pcttoindex(p: doubwe): int = {
+        v-vaw idx = math.wound(w.wength * p).toint
+        i-if (idx < 0) {
           0
-        } else if (idx >= len) {
-          len - 1
-        } else {
+        } e-ewse if (idx >= w-wen) {
+          wen - 1
+        } ewse {
           idx
         }
       }
 
-      val (sum, sumSquared) = l.foldLeft((0.0, 0.0)) {
-        case ((curSum, curSumSquared), x) =>
-          (curSum + x, curSumSquared + x * x)
+      v-vaw (sum, σωσ sumsquawed) = w.fowdweft((0.0, (///ˬ///✿) 0.0)) {
+        case ((cuwsum, (U ﹏ U) c-cuwsumsquawed), ^^;; x-x) =>
+          (cuwsum + x, 🥺 cuwsumsquawed + x-x * x)
       }
 
-      val avg = sum / len
-      val stdDev = math.sqrt(sumSquared / len - avg * avg)
-      Distribution(
+      vaw a-avg = sum / wen
+      v-vaw stddev = math.sqwt(sumsquawed / wen - a-avg * avg)
+      distwibution(
         avg,
-        stdDev,
-        p1 = s(pctToIndex(0.01)),
-        p10 = s(pctToIndex(0.1)),
-        p50 = s(pctToIndex(0.5)),
-        p90 = s(pctToIndex(0.9)),
-        p99 = s(pctToIndex(0.99)))
+        s-stddev, òωó
+        p-p1 = s(pcttoindex(0.01)), XD
+        p10 = s(pcttoindex(0.1)), :3
+        p-p50 = s(pcttoindex(0.5)), (U ﹏ U)
+        p-p90 = s-s(pcttoindex(0.9)), >w<
+        p-p99 = s(pcttoindex(0.99)))
     }
   }
 
-  // Calculate cumulative frequency using Scalding Custom Counters.
-  // Increment all buckets by 1 where value <= bucket_threshold.
-  case class CumulativeStat(
-    key: String,
-    buckets: Seq[Double]
+  // cawcuwate cumuwative fwequency using scawding custom countews. /(^•ω•^)
+  // incwement aww buckets by 1 whewe vawue <= bucket_thweshowd. (⑅˘꒳˘)
+  case cwass cumuwativestat(
+    key: stwing, ʘwʘ
+    b-buckets: s-seq[doubwe]
   )(
-    implicit uniqueID: UniqueID) {
+    impwicit uniqueid: uniqueid) {
 
-    val counters = buckets.map { bucket =>
-      bucket -> Stat(key + "_<=" + bucket.toString)
+    v-vaw c-countews = buckets.map { b-bucket =>
+      bucket -> s-stat(key + "_<=" + bucket.tostwing)
     }
 
-    def incForValue(value: Double): Unit = {
-      counters.foreach {
-        case (bucket, stat) =>
-          if (value <= bucket) stat.inc()
+    d-def incfowvawue(vawue: d-doubwe): unit = {
+      c-countews.foweach {
+        case (bucket, rawr x3 s-stat) =>
+          i-if (vawue <= bucket) stat.inc()
       }
     }
   }
 
-  def sendEmail(text: String, subject: String, toAddress: String): String = {
-    val file = File.createTempFile("somePrefix_", "_someSuffix")
-    println(s"Email body is at ${file.getPath}")
-    val writer = new PrintWriter(file)
-    writer.write(text)
-    writer.close()
+  d-def sendemaiw(text: s-stwing, (˘ω˘) subject: s-stwing, o.O t-toaddwess: stwing): s-stwing = {
+    v-vaw fiwe = fiwe.cweatetempfiwe("somepwefix_", 😳 "_somesuffix")
+    p-pwintwn(s"emaiw b-body is at ${fiwe.getpath}")
+    v-vaw wwitew = nyew pwintwwitew(fiwe)
+    w-wwitew.wwite(text)
+    w-wwitew.cwose()
 
-    val mailCmd = s"cat ${file.getPath}" #| Seq("mail", "-s", subject, toAddress)
-    mailCmd.!!
+    v-vaw maiwcmd = s"cat ${fiwe.getpath}" #| s-seq("maiw", o.O "-s", subject, ^^;; toaddwess)
+    maiwcmd.!!
   }
 }

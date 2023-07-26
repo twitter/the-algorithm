@@ -1,49 +1,49 @@
-package com.twitter.simclusters_v2.summingbird.stores
+package com.twittew.simcwustews_v2.summingbiwd.stowes
 
-import com.twitter.frigate.common.store.strato.StratoStore
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.ModelVersions._
-import com.twitter.simclusters_v2.thriftscala.{
-  EmbeddingType,
-  InternalId,
-  LocaleEntityId,
-  SimClustersEmbeddingId,
-  SimClustersEmbedding => ThriftSimClustersEmbedding
+impowt com.twittew.fwigate.common.stowe.stwato.stwatostowe
+i-impowt com.twittew.simcwustews_v2.common.modewvewsions
+i-impowt com.twittew.simcwustews_v2.common.modewvewsions._
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.{
+  e-embeddingtype, rawr x3
+  i-intewnawid, (✿oωo)
+  w-wocaweentityid, (ˆ ﻌ ˆ)♡
+  s-simcwustewsembeddingid, (˘ω˘)
+  s-simcwustewsembedding => thwiftsimcwustewsembedding
 }
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.Client
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.stwato.cwient.cwient
+i-impowt com.twittew.stwato.thwift.scwoogeconvimpwicits._
+impowt com.twittew.simcwustews_v2.common.simcwustewsembedding
 
 /**
- * entity -> List< cluster >
+ * e-entity -> wist< cwustew >
  */
-object SemanticCoreEntityEmbeddingStore {
+o-object semanticcoweentityembeddingstowe {
 
-  private val column =
-    "recommendations/simclusters_v2/embeddings/semanticCoreEntityPerLanguageEmbeddings20M145KUpdated"
+  pwivate vaw cowumn =
+    "wecommendations/simcwustews_v2/embeddings/semanticcoweentitypewwanguageembeddings20m145kupdated"
 
   /**
-   * Default store, wrapped in generic data types. Use this if you know the underlying key struct.
+   * defauwt stowe, (⑅˘꒳˘) wwapped in g-genewic data types. (///ˬ///✿) use this if y-you know the undewwying k-key stwuct.
    */
-  private def getDefaultStore(
-    stratoClient: Client
-  ): ReadableStore[SimClustersEmbeddingId, ThriftSimClustersEmbedding] = {
-    StratoStore
-      .withUnitView[SimClustersEmbeddingId, ThriftSimClustersEmbedding](stratoClient, column)
+  pwivate def getdefauwtstowe(
+    stwatocwient: cwient
+  ): w-weadabwestowe[simcwustewsembeddingid, 😳😳😳 thwiftsimcwustewsembedding] = {
+    stwatostowe
+      .withunitview[simcwustewsembeddingid, 🥺 thwiftsimcwustewsembedding](stwatocwient, mya cowumn)
   }
 
-  def getFavBasedLocaleEntityEmbeddingStore(
-    stratoClient: Client
-  ): ReadableStore[LocaleEntityId, SimClustersEmbedding] = {
-    getDefaultStore(stratoClient)
-      .composeKeyMapping[LocaleEntityId] { entityId =>
-        SimClustersEmbeddingId(
-          EmbeddingType.FavBasedSematicCoreEntity,
-          ModelVersions.Model20M145KUpdated,
-          InternalId.LocaleEntityId(entityId)
+  d-def getfavbasedwocaweentityembeddingstowe(
+    stwatocwient: cwient
+  ): w-weadabwestowe[wocaweentityid, 🥺 s-simcwustewsembedding] = {
+    g-getdefauwtstowe(stwatocwient)
+      .composekeymapping[wocaweentityid] { e-entityid =>
+        simcwustewsembeddingid(
+          embeddingtype.favbasedsematiccoweentity, >_<
+          m-modewvewsions.modew20m145kupdated, >_<
+          intewnawid.wocaweentityid(entityid)
         )
       }
-      .mapValues(SimClustersEmbedding(_))
+      .mapvawues(simcwustewsembedding(_))
   }
 }

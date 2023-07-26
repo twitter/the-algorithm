@@ -1,109 +1,109 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.twittew.fwigate.pushsewvice.modew.ntab
 
-import com.twitter.frigate.magic_events.thriftscala.CreatorFanoutType
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.MagicFanoutCreatorEventPushCandidate
-import com.twitter.frigate.pushservice.take.NotificationServiceSender
-import com.twitter.notificationservice.thriftscala.CreateGenericNotificationRequest
-import com.twitter.notificationservice.thriftscala.DisplayText
-import com.twitter.notificationservice.thriftscala.DisplayTextEntity
-import com.twitter.notificationservice.thriftscala.GenericType
-import com.twitter.notificationservice.thriftscala.InlineCard
-import com.twitter.notificationservice.thriftscala.StoryContext
-import com.twitter.notificationservice.thriftscala.TextValue
-import com.twitter.notificationservice.thriftscala.TapThroughAction
-import com.twitter.util.Future
-import com.twitter.util.Time
+impowt com.twittew.fwigate.magic_events.thwiftscawa.cweatowfanouttype
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.magicfanoutcweatoweventpushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.take.notificationsewvicesendew
+i-impowt com.twittew.notificationsewvice.thwiftscawa.cweategenewicnotificationwequest
+i-impowt c-com.twittew.notificationsewvice.thwiftscawa.dispwaytext
+impowt com.twittew.notificationsewvice.thwiftscawa.dispwaytextentity
+impowt com.twittew.notificationsewvice.thwiftscawa.genewictype
+i-impowt com.twittew.notificationsewvice.thwiftscawa.inwinecawd
+impowt c-com.twittew.notificationsewvice.thwiftscawa.stowycontext
+impowt c-com.twittew.notificationsewvice.thwiftscawa.textvawue
+impowt com.twittew.notificationsewvice.thwiftscawa.tapthwoughaction
+impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.time
 
-trait MagicFanoutCreatorEventNtabRequestHydrator extends NTabRequestHydrator {
-  self: PushCandidate with MagicFanoutCreatorEventPushCandidate =>
+t-twait magicfanoutcweatoweventntabwequesthydwatow e-extends nytabwequesthydwatow {
+  sewf: pushcandidate with magicfanoutcweatoweventpushcandidate =>
 
-  override val senderIdFut: Future[Long] = Future.value(creatorId)
+  ovewwide v-vaw sendewidfut: futuwe[wong] = futuwe.vawue(cweatowid)
 
-  override lazy val tapThroughFut: Future[String] =
-    Future.value(s"/${userProfile.screenName}/superfollows/subscribe")
+  ovewwide wazy vaw tapthwoughfut: f-futuwe[stwing] =
+    futuwe.vawue(s"/${usewpwofiwe.scweenname}/supewfowwows/subscwibe")
 
-  lazy val optionalTweetCountEntityFut: Future[Option[DisplayTextEntity]] = {
-    creatorFanoutType match {
-      case CreatorFanoutType.UserSubscription =>
-        numberOfTweetsFut.map {
-          _.flatMap {
-            case numberOfTweets if numberOfTweets >= 10 =>
-              Some(
-                DisplayTextEntity(
-                  name = "tweet_count",
-                  emphasis = true,
-                  value = TextValue.Text(numberOfTweets.toString)))
-            case _ => None
+  wazy v-vaw optionawtweetcountentityfut: f-futuwe[option[dispwaytextentity]] = {
+    cweatowfanouttype m-match {
+      case c-cweatowfanouttype.usewsubscwiption =>
+        nyumbewoftweetsfut.map {
+          _.fwatmap {
+            case n-nyumbewoftweets if nyumbewoftweets >= 10 =>
+              some(
+                d-dispwaytextentity(
+                  nyame = "tweet_count", mya
+                  emphasis = twue, mya
+                  vawue = textvawue.text(numbewoftweets.tostwing)))
+            case _ => nyone
           }
         }
-      case _ => Future.None
+      case _ => f-futuwe.none
     }
   }
 
-  override lazy val displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] =
-    optionalTweetCountEntityFut
-      .map { tweetCountOpt =>
-        Seq(
-          NotificationServiceSender
-            .getDisplayTextEntityFromUser(hydratedCreator, "display_name", isBold = true),
-          tweetCountOpt).flatten
+  ovewwide wazy vaw d-dispwaytextentitiesfut: f-futuwe[seq[dispwaytextentity]] =
+    optionawtweetcountentityfut
+      .map { t-tweetcountopt =>
+        seq(
+          nyotificationsewvicesendew
+            .getdispwaytextentityfwomusew(hydwatedcweatow, (⑅˘꒳˘) "dispway_name", (U ﹏ U) isbowd = twue), mya
+          t-tweetcountopt).fwatten
       }
 
-  override lazy val facepileUsersFut: Future[Seq[Long]] = Future.value(Seq(creatorId))
+  o-ovewwide wazy vaw facepiweusewsfut: f-futuwe[seq[wong]] = f-futuwe.vawue(seq(cweatowid))
 
-  override val storyContext: Option[StoryContext] = None
+  ovewwide v-vaw stowycontext: option[stowycontext] = n-nyone
 
-  override val inlineCard: Option[InlineCard] = None
+  ovewwide vaw inwinecawd: option[inwinecawd] = n-nyone
 
-  lazy val refreshableTypeFut = {
-    creatorFanoutType match {
-      case CreatorFanoutType.UserSubscription =>
-        numberOfTweetsFut.map {
-          _.flatMap {
-            case numberOfTweets if numberOfTweets >= 10 =>
-              Some("MagicFanoutCreatorSubscriptionWithTweets")
-            case _ => super.refreshableType
+  wazy vaw wefweshabwetypefut = {
+    c-cweatowfanouttype match {
+      c-case cweatowfanouttype.usewsubscwiption =>
+        n-nyumbewoftweetsfut.map {
+          _.fwatmap {
+            case nyumbewoftweets if nyumbewoftweets >= 10 =>
+              some("magicfanoutcweatowsubscwiptionwithtweets")
+            case _ => supew.wefweshabwetype
           }
         }
-      case _ => Future.value(super.refreshableType)
+      c-case _ => f-futuwe.vawue(supew.wefweshabwetype)
     }
   }
 
-  override lazy val socialProofDisplayText: Option[DisplayText] = {
-    creatorFanoutType match {
-      case CreatorFanoutType.UserSubscription =>
-        Some(
-          DisplayText(values = Seq(
-            DisplayTextEntity(name = "handle", value = TextValue.Text(userProfile.screenName)))))
-      case CreatorFanoutType.NewCreator => None
-      case _ => None
+  ovewwide wazy vaw s-sociawpwoofdispwaytext: o-option[dispwaytext] = {
+    c-cweatowfanouttype match {
+      case cweatowfanouttype.usewsubscwiption =>
+        some(
+          d-dispwaytext(vawues = seq(
+            dispwaytextentity(name = "handwe", ʘwʘ vawue = textvawue.text(usewpwofiwe.scweenname)))))
+      case cweatowfanouttype.newcweatow => n-nyone
+      case _ => nyone
     }
   }
 
-  override lazy val ntabRequest = {
-    Future
+  o-ovewwide w-wazy vaw nytabwequest = {
+    f-futuwe
       .join(
-        senderIdFut,
-        displayTextEntitiesFut,
-        facepileUsersFut,
-        tapThroughFut,
-        refreshableTypeFut).map {
-        case (senderId, displayTextEntities, facepileUsers, tapThrough, refreshableTypeOpt) =>
-          Some(
-            CreateGenericNotificationRequest(
-              userId = target.targetId,
-              senderId = senderId,
-              genericType = GenericType.RefreshableNotification,
-              displayText = DisplayText(values = displayTextEntities),
-              facepileUsers = facepileUsers,
-              timestampMillis = Time.now.inMillis,
-              tapThroughAction = Some(TapThroughAction(Some(tapThrough))),
-              impressionId = Some(impressionId),
-              socialProofText = socialProofDisplayText,
-              context = storyContext,
-              inlineCard = inlineCard,
-              refreshableType = refreshableTypeOpt
+        sendewidfut, (˘ω˘)
+        d-dispwaytextentitiesfut, (U ﹏ U)
+        f-facepiweusewsfut, ^•ﻌ•^
+        t-tapthwoughfut, (˘ω˘)
+        w-wefweshabwetypefut).map {
+        case (sendewid, :3 dispwaytextentities, ^^;; f-facepiweusews, 🥺 t-tapthwough, (⑅˘꒳˘) w-wefweshabwetypeopt) =>
+          s-some(
+            c-cweategenewicnotificationwequest(
+              usewid = tawget.tawgetid,
+              sendewid = sendewid, nyaa~~
+              g-genewictype = genewictype.wefweshabwenotification, :3
+              dispwaytext = dispwaytext(vawues = dispwaytextentities), ( ͡o ω ͡o )
+              facepiweusews = f-facepiweusews, mya
+              timestampmiwwis = time.now.inmiwwis, (///ˬ///✿)
+              tapthwoughaction = s-some(tapthwoughaction(some(tapthwough))), (˘ω˘)
+              i-impwessionid = s-some(impwessionid), ^^;;
+              sociawpwooftext = s-sociawpwoofdispwaytext, (✿oωo)
+              context = stowycontext, (U ﹏ U)
+              i-inwinecawd = i-inwinecawd, -.-
+              wefweshabwetype = wefweshabwetypeopt
             ))
       }
   }

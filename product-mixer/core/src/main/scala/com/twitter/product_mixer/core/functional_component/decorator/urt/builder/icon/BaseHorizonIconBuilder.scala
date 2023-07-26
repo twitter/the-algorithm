@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.icon
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.icon
 
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.HorizonIcon
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.icon.howizonicon
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-trait BaseHorizonIconBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]] {
+t-twait basehowizoniconbuiwdew[-quewy <: p-pipewinequewy, UwU -candidate <: u-univewsawnoun[any]] {
 
-  def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Option[HorizonIcon]
+  d-def appwy(
+    q-quewy: quewy, rawr x3
+    candidates: seq[candidatewithfeatuwes[candidate]]
+  ): option[howizonicon]
 }

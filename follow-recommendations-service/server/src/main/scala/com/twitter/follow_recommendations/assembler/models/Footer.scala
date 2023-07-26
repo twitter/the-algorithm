@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.assembler.models
+package com.twittew.fowwow_wecommendations.assembwew.modews
 
-import com.twitter.follow_recommendations.{thriftscala => t}
+impowt c-com.twittew.fowwow_wecommendations.{thwiftscawa => t-t}
 
-case class Footer(action: Option[Action]) {
-  lazy val toThrift: t.Footer = {
-    t.Footer(action.map(_.toThrift))
+case cwass f-footew(action: o-option[action]) {
+  w-wazy vaw t-tothwift: t.footew = {
+    t-t.footew(action.map(_.tothwift))
   }
 }

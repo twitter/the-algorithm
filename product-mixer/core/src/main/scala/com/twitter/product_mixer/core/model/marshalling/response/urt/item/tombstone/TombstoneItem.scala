@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tombstone
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tweet.tweetitem
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.entwynamespace
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineitem
 
-object TombstoneItem {
-  val TombstoneEntryNamespace = EntryNamespace("tombstone")
+o-object tombstoneitem {
+  vaw tombstoneentwynamespace = entwynamespace("tombstone")
 }
 
-case class TombstoneItem(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  tombstoneDisplayType: TombstoneDisplayType,
-  tombstoneInfo: Option[TombstoneInfo],
-  tweet: Option[TweetItem])
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace = TombstoneItem.TombstoneEntryNamespace
+case cwass tombstoneitem(
+  ovewwide v-vaw id: wong, OwO
+  ovewwide vaw sowtindex: option[wong], (U ﹏ U)
+  o-ovewwide vaw cwienteventinfo: o-option[cwienteventinfo], >_<
+  ovewwide vaw feedbackactioninfo: option[feedbackactioninfo], rawr x3
+  t-tombstonedispwaytype: tombstonedispwaytype, mya
+  t-tombstoneinfo: o-option[tombstoneinfo], nyaa~~
+  tweet: option[tweetitem])
+    extends timewineitem {
+  ovewwide vaw entwynamespace: e-entwynamespace = tombstoneitem.tombstoneentwynamespace
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  ovewwide def withsowtindex(sowtindex: wong): t-timewineentwy = copy(sowtindex = s-some(sowtindex))
 }

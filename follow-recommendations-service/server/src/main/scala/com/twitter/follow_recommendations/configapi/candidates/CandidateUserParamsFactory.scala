@@ -1,35 +1,35 @@
-package com.twitter.follow_recommendations.configapi.candidates
+package com.twittew.fowwow_wecommendations.configapi.candidates
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.configapi.params.GlobalParams
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.timelines.configapi.Config
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.hasdispwaywocation
+i-impowt com.twittew.fowwow_wecommendations.configapi.pawams.gwobawpawams
+i-impowt com.twittew.sewvo.utiw.memoizingstatsweceivew
+i-impowt c-com.twittew.timewines.configapi.config
+i-impowt c-com.twittew.timewines.configapi.haspawams
+impowt com.twittew.timewines.configapi.pawams
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
 /**
- * CandidateParamsFactory is primarily used for "producer side" experiments, don't use it on consumer side experiments
+ * candidatepawamsfactowy is pwimawiwy used f-fow "pwoducew side" expewiments, rawr x3 d-don't use it on consumew side expewiments
  */
-@Singleton
-class CandidateUserParamsFactory[T <: HasParams with HasDisplayLocation] @Inject() (
-  config: Config,
-  candidateContextFactory: CandidateUserContextFactory,
-  statsReceiver: StatsReceiver) {
-  private val stats = new MemoizingStatsReceiver(statsReceiver.scope("configapi_candidate_params"))
-  def apply(candidateContext: CandidateUser, request: T): CandidateUser = {
-    if (candidateContext.params == Params.Invalid) {
-      if (request.params(GlobalParams.EnableCandidateParamHydrations)) {
-        candidateContext.copy(params =
-          config(candidateContextFactory(candidateContext, request.displayLocation), stats))
-      } else {
-        candidateContext.copy(params = Params.Empty)
+@singweton
+cwass c-candidateusewpawamsfactowy[t <: haspawams with h-hasdispwaywocation] @inject() (
+  c-config: config, (✿oωo)
+  candidatecontextfactowy: candidateusewcontextfactowy, (ˆ ﻌ ˆ)♡
+  statsweceivew: statsweceivew) {
+  pwivate vaw stats = n-nyew memoizingstatsweceivew(statsweceivew.scope("configapi_candidate_pawams"))
+  def appwy(candidatecontext: candidateusew, (˘ω˘) wequest: t): candidateusew = {
+    if (candidatecontext.pawams == p-pawams.invawid) {
+      if (wequest.pawams(gwobawpawams.enabwecandidatepawamhydwations)) {
+        c-candidatecontext.copy(pawams =
+          config(candidatecontextfactowy(candidatecontext, (⑅˘꒳˘) w-wequest.dispwaywocation), (///ˬ///✿) s-stats))
+      } e-ewse {
+        candidatecontext.copy(pawams = pawams.empty)
       }
-    } else {
-      candidateContext
+    } e-ewse {
+      candidatecontext
     }
   }
 }

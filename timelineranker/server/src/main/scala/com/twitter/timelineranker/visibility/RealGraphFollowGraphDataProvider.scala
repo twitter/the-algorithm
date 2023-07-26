@@ -1,134 +1,134 @@
-package com.twitter.timelineranker.visibility
+package com.twittew.timewinewankew.visibiwity
 
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.servo.util.Gate
-import com.twitter.timelineranker.core.FollowGraphData
-import com.twitter.timelineranker.core.FollowGraphDataFuture
-import com.twitter.timelines.clients.socialgraph.SocialGraphClient
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.util.Future
-import com.twitter.util.Stopwatch
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
+impowt c-com.twittew.finagwe.stats.stat
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.sewvo.wepositowy.keyvawuewepositowy
+i-impowt c-com.twittew.sewvo.utiw.gate
+i-impowt c-com.twittew.timewinewankew.cowe.fowwowgwaphdata
+i-impowt com.twittew.timewinewankew.cowe.fowwowgwaphdatafutuwe
+impowt com.twittew.timewines.cwients.sociawgwaph.sociawgwaphcwient
+impowt com.twittew.timewines.modew.usewid
+impowt com.twittew.timewines.utiw.faiwopenhandwew
+i-impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.stopwatch
+impowt com.twittew.wtf.candidate.thwiftscawa.candidateseq
 
-object RealGraphFollowGraphDataProvider {
-  val EmptyRealGraphResponse = CandidateSeq(Nil)
+o-object weawgwaphfowwowgwaphdatapwovidew {
+  v-vaw emptyweawgwaphwesponse = candidateseq(niw)
 }
 
 /**
- * Wraps an underlying FollowGraphDataProvider (which in practice will usually be a
- * [[SgsFollowGraphDataProvider]]) and supplements the list of followings provided by the
- * underlying provider with additional followings fetched from RealGraph if it looks like the
- * underlying provider did not get the full list of the user's followings.
+ * wwaps an undewwying fowwowgwaphdatapwovidew (which i-in pwactice wiww usuawwy be a-a
+ * [[sgsfowwowgwaphdatapwovidew]]) a-and suppwements the wist of fowwowings pwovided by the
+ * undewwying pwovidew w-with additionaw fowwowings fetched fwom weawgwaph if it wooks wike the
+ * undewwying p-pwovidew did nyot get the f-fuww wist of the u-usew's fowwowings. 🥺
  *
- * First checks whether the size of the underlying following list is >= the max requested following
- * count, which implies that there were additional followings beyond the max requested count. If so,
- * fetches the full set of followings from RealGraph (go/realgraph), which will be at most 2000.
+ * f-fiwst c-checks whethew the size of the undewwying fowwowing w-wist is >= the max wequested fowwowing
+ * c-count, ^^;; which impwies that thewe wewe additionaw fowwowings beyond the max wequested count. :3 if so,
+ * f-fetches the fuww set of fowwowings f-fwom weawgwaph (go/weawgwaph), (U ﹏ U) w-which wiww b-be at most 2000. OwO
  *
- * Because the RealGraph dataset is not realtime and thus can potentially include stale followings,
- * the provider confirms that the followings fetched from RealGraph are valid using SGS's
- * getFollowOverlap method, and then merges the valid RealGraph followings with the underlying
- * followings.
+ * because the weawgwaph dataset is nyot weawtime a-and thus c-can potentiawwy incwude stawe fowwowings, 😳😳😳
+ * t-the p-pwovidew confiwms that the fowwowings f-fetched fwom weawgwaph awe v-vawid using sgs's
+ * getfowwowovewwap method, (ˆ ﻌ ˆ)♡ a-and then mewges the vawid weawgwaph f-fowwowings with the undewwying
+ * f-fowwowings. XD
  *
- * Note that this supplementing is expected to be very rare as most users do not have more than
- * the max followings we fetch from SGS. Also note that this class is mainly intended for use
- * in the home timeline materialization path, with the goal of preventing a case where users
- * who follow a very large number of accounts may not see Tweets from their earlier follows if we
- * used SGS-based follow fetching alone.
+ * n-nyote that this suppwementing is expected to be vewy wawe as most usews do nyot have mowe than
+ * the max f-fowwowings we f-fetch fwom sgs. (ˆ ﻌ ˆ)♡ awso nyote that t-this cwass is mainwy i-intended fow u-use
+ * in the home timewine matewiawization path, ( ͡o ω ͡o ) with the goaw of pweventing a-a case whewe usews
+ * who fowwow a vewy wawge nyumbew of accounts may nyot see t-tweets fwom theiw eawwiew fowwows i-if we
+ * used s-sgs-based fowwow f-fetching awone. rawr x3
  */
-class RealGraphFollowGraphDataProvider(
-  underlying: FollowGraphDataProvider,
-  realGraphClient: KeyValueRepository[Seq[UserId], UserId, CandidateSeq],
-  socialGraphClient: SocialGraphClient,
-  supplementFollowsWithRealGraphGate: Gate[UserId],
-  statsReceiver: StatsReceiver)
-    extends FollowGraphDataProvider {
-  import RealGraphFollowGraphDataProvider._
+cwass weawgwaphfowwowgwaphdatapwovidew(
+  undewwying: f-fowwowgwaphdatapwovidew, nyaa~~
+  w-weawgwaphcwient: k-keyvawuewepositowy[seq[usewid], >_< u-usewid, ^^;; candidateseq], (ˆ ﻌ ˆ)♡
+  sociawgwaphcwient: sociawgwaphcwient, ^^;;
+  s-suppwementfowwowswithweawgwaphgate: g-gate[usewid], (⑅˘꒳˘)
+  s-statsweceivew: s-statsweceivew)
+    e-extends fowwowgwaphdatapwovidew {
+  impowt weawgwaphfowwowgwaphdatapwovidew._
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("realGraphFollowGraphDataProvider")
-  private[this] val requestCounter = scopedStatsReceiver.counter("requests")
-  private[this] val atMaxCounter = scopedStatsReceiver.counter("followsAtMax")
-  private[this] val totalLatencyStat = scopedStatsReceiver.stat("totalLatencyWhenSupplementing")
-  private[this] val supplementLatencyStat = scopedStatsReceiver.stat("supplementFollowsLatency")
-  private[this] val realGraphResponseSizeStat = scopedStatsReceiver.stat("realGraphFollows")
-  private[this] val realGraphEmptyCounter = scopedStatsReceiver.counter("realGraphEmpty")
-  private[this] val nonOverlappingSizeStat = scopedStatsReceiver.stat("nonOverlappingFollows")
+  pwivate[this] vaw s-scopedstatsweceivew = statsweceivew.scope("weawgwaphfowwowgwaphdatapwovidew")
+  pwivate[this] vaw wequestcountew = scopedstatsweceivew.countew("wequests")
+  pwivate[this] v-vaw atmaxcountew = scopedstatsweceivew.countew("fowwowsatmax")
+  pwivate[this] vaw totawwatencystat = s-scopedstatsweceivew.stat("totawwatencywhensuppwementing")
+  p-pwivate[this] v-vaw suppwementwatencystat = s-scopedstatsweceivew.stat("suppwementfowwowswatency")
+  pwivate[this] vaw w-weawgwaphwesponsesizestat = s-scopedstatsweceivew.stat("weawgwaphfowwows")
+  pwivate[this] vaw weawgwaphemptycountew = scopedstatsweceivew.countew("weawgwaphempty")
+  pwivate[this] vaw nyonovewwappingsizestat = s-scopedstatsweceivew.stat("nonovewwappingfowwows")
 
-  private[this] val failOpenHandler = new FailOpenHandler(scopedStatsReceiver)
+  pwivate[this] v-vaw faiwopenhandwew = nyew f-faiwopenhandwew(scopedstatsweceivew)
 
-  override def get(userId: UserId, maxFollowingCount: Int): Future[FollowGraphData] = {
-    getAsync(userId, maxFollowingCount).get()
+  o-ovewwide def get(usewid: usewid, rawr x3 maxfowwowingcount: i-int): f-futuwe[fowwowgwaphdata] = {
+    getasync(usewid, (///ˬ///✿) m-maxfowwowingcount).get()
   }
 
-  override def getAsync(userId: UserId, maxFollowingCount: Int): FollowGraphDataFuture = {
-    val startTime = Stopwatch.timeMillis()
-    val underlyingResult = underlying.getAsync(userId, maxFollowingCount)
-    if (supplementFollowsWithRealGraphGate(userId)) {
-      val supplementedFollows = underlyingResult.followedUserIdsFuture.flatMap { sgsFollows =>
-        supplementFollowsWithRealGraph(userId, maxFollowingCount, sgsFollows, startTime)
+  o-ovewwide def getasync(usewid: usewid, 🥺 maxfowwowingcount: int): fowwowgwaphdatafutuwe = {
+    v-vaw stawttime = s-stopwatch.timemiwwis()
+    v-vaw undewwyingwesuwt = undewwying.getasync(usewid, >_< m-maxfowwowingcount)
+    i-if (suppwementfowwowswithweawgwaphgate(usewid)) {
+      vaw s-suppwementedfowwows = undewwyingwesuwt.fowwowedusewidsfutuwe.fwatmap { sgsfowwows =>
+        suppwementfowwowswithweawgwaph(usewid, UwU maxfowwowingcount, >_< s-sgsfowwows, s-stawttime)
       }
-      underlyingResult.copy(followedUserIdsFuture = supplementedFollows)
-    } else {
-      underlyingResult
+      undewwyingwesuwt.copy(fowwowedusewidsfutuwe = suppwementedfowwows)
+    } e-ewse {
+      u-undewwyingwesuwt
     }
   }
 
-  override def getFollowing(userId: UserId, maxFollowingCount: Int): Future[Seq[UserId]] = {
-    val startTime = Stopwatch.timeMillis()
-    val underlyingFollows = underlying.getFollowing(userId, maxFollowingCount)
-    if (supplementFollowsWithRealGraphGate(userId)) {
-      underlying.getFollowing(userId, maxFollowingCount).flatMap { sgsFollows =>
-        supplementFollowsWithRealGraph(userId, maxFollowingCount, sgsFollows, startTime)
+  ovewwide def getfowwowing(usewid: usewid, -.- maxfowwowingcount: int): f-futuwe[seq[usewid]] = {
+    vaw stawttime = stopwatch.timemiwwis()
+    vaw undewwyingfowwows = undewwying.getfowwowing(usewid, mya m-maxfowwowingcount)
+    if (suppwementfowwowswithweawgwaphgate(usewid)) {
+      undewwying.getfowwowing(usewid, >w< m-maxfowwowingcount).fwatmap { sgsfowwows =>
+        s-suppwementfowwowswithweawgwaph(usewid, (U ﹏ U) maxfowwowingcount, 😳😳😳 sgsfowwows, o.O stawttime)
       }
-    } else {
-      underlyingFollows
+    } ewse {
+      u-undewwyingfowwows
     }
   }
 
-  private[this] def supplementFollowsWithRealGraph(
-    userId: UserId,
-    maxFollowingCount: Int,
-    sgsFollows: Seq[Long],
-    startTime: Long
-  ): Future[Seq[UserId]] = {
-    requestCounter.incr()
-    if (sgsFollows.size >= maxFollowingCount) {
-      atMaxCounter.incr()
-      val supplementedFollowsFuture = realGraphClient(Seq(userId))
-        .map(_.getOrElse(userId, EmptyRealGraphResponse))
-        .map(_.candidates.map(_.userId))
-        .flatMap {
-          case realGraphFollows if realGraphFollows.nonEmpty =>
-            realGraphResponseSizeStat.add(realGraphFollows.size)
-            // Filter out "stale" follows from realgraph by checking them against SGS
-            val verifiedRealGraphFollows =
-              socialGraphClient.getFollowOverlap(userId, realGraphFollows)
-            verifiedRealGraphFollows.map { follows =>
-              val combinedFollows = (sgsFollows ++ follows).distinct
-              val additionalFollows = combinedFollows.size - sgsFollows.size
-              if (additionalFollows > 0) nonOverlappingSizeStat.add(additionalFollows)
-              combinedFollows
+  p-pwivate[this] def suppwementfowwowswithweawgwaph(
+    usewid: usewid, òωó
+    maxfowwowingcount: i-int, 😳😳😳
+    sgsfowwows: s-seq[wong], σωσ
+    stawttime: wong
+  ): futuwe[seq[usewid]] = {
+    wequestcountew.incw()
+    i-if (sgsfowwows.size >= maxfowwowingcount) {
+      a-atmaxcountew.incw()
+      v-vaw suppwementedfowwowsfutuwe = weawgwaphcwient(seq(usewid))
+        .map(_.getowewse(usewid, (⑅˘꒳˘) e-emptyweawgwaphwesponse))
+        .map(_.candidates.map(_.usewid))
+        .fwatmap {
+          case weawgwaphfowwows i-if weawgwaphfowwows.nonempty =>
+            w-weawgwaphwesponsesizestat.add(weawgwaphfowwows.size)
+            // f-fiwtew out "stawe" fowwows f-fwom weawgwaph b-by checking them against sgs
+            vaw v-vewifiedweawgwaphfowwows =
+              s-sociawgwaphcwient.getfowwowovewwap(usewid, (///ˬ///✿) w-weawgwaphfowwows)
+            vewifiedweawgwaphfowwows.map { fowwows =>
+              v-vaw combinedfowwows = (sgsfowwows ++ f-fowwows).distinct
+              v-vaw additionawfowwows = combinedfowwows.size - sgsfowwows.size
+              if (additionawfowwows > 0) n-nyonovewwappingsizestat.add(additionawfowwows)
+              c-combinedfowwows
             }
-          case _ =>
-            realGraphEmptyCounter.incr()
-            Future.value(sgsFollows)
+          c-case _ =>
+            w-weawgwaphemptycountew.incw()
+            futuwe.vawue(sgsfowwows)
         }
-        .onSuccess { _ => totalLatencyStat.add(Stopwatch.timeMillis() - startTime) }
+        .onsuccess { _ => t-totawwatencystat.add(stopwatch.timemiwwis() - stawttime) }
 
-      Stat.timeFuture(supplementLatencyStat) {
-        failOpenHandler(supplementedFollowsFuture) { _ => Future.value(sgsFollows) }
+      stat.timefutuwe(suppwementwatencystat) {
+        faiwopenhandwew(suppwementedfowwowsfutuwe) { _ => futuwe.vawue(sgsfowwows) }
       }
-    } else {
-      Future.value(sgsFollows)
+    } ewse {
+      futuwe.vawue(sgsfowwows)
     }
   }
 
-  override def getMutuallyFollowingUserIds(
-    userId: UserId,
-    followingIds: Seq[UserId]
-  ): Future[Set[UserId]] = {
-    underlying.getMutuallyFollowingUserIds(userId, followingIds)
+  o-ovewwide def getmutuawwyfowwowingusewids(
+    u-usewid: usewid, 🥺
+    fowwowingids: s-seq[usewid]
+  ): futuwe[set[usewid]] = {
+    u-undewwying.getmutuawwyfowwowingusewids(usewid, OwO fowwowingids)
   }
 }

@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.component_library.decorator.urt
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt
 
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtModulePresentation
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.DecoratorIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseTimelineModuleBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.stitch.Stitch
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.pwesentation.uwt.uwtitempwesentation
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.pwesentation.uwt.uwtmoduwepwesentation
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.decowatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineitem
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.candidatedecowatow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.decowation
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.timewine_moduwe.basetimewinemoduwebuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt c-com.twittew.stitch.stitch
 
 /**
- * Decorator that will apply the provided [[urtItemCandidateDecorator]] to all the `candidates` and apply
- * the same [[UrtModulePresentation]] from [[moduleBuilder]] to each Candidate.
+ * decowatow that wiww appwy t-the pwovided [[uwtitemcandidatedecowatow]] to aww t-the `candidates` and appwy
+ * the same [[uwtmoduwepwesentation]] fwom [[moduwebuiwdew]] t-to each candidate. o.O
  */
-case class UrtItemInModuleDecorator[
-  Query <: PipelineQuery,
-  BuilderInput <: UniversalNoun[Any],
-  BuilderOutput <: TimelineItem
+c-case cwass uwtiteminmoduwedecowatow[
+  q-quewy <: pipewinequewy, ( ͡o ω ͡o )
+  buiwdewinput <: univewsawnoun[any], (U ﹏ U)
+  buiwdewoutput <: t-timewineitem
 ](
-  urtItemCandidateDecorator: CandidateDecorator[Query, BuilderInput],
-  moduleBuilder: BaseTimelineModuleBuilder[Query, BuilderInput],
-  override val identifier: DecoratorIdentifier = DecoratorIdentifier("UrtItemInModule"))
-    extends CandidateDecorator[Query, BuilderInput] {
+  uwtitemcandidatedecowatow: candidatedecowatow[quewy, (///ˬ///✿) buiwdewinput], >w<
+  moduwebuiwdew: b-basetimewinemoduwebuiwdew[quewy, rawr buiwdewinput], mya
+  o-ovewwide vaw i-identifiew: decowatowidentifiew = d-decowatowidentifiew("uwtiteminmoduwe"))
+    e-extends candidatedecowatow[quewy, ^^ buiwdewinput] {
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[BuilderInput]]
-  ): Stitch[Seq[Decoration]] = {
-    if (candidates.nonEmpty) {
-      val urtItemCandidatesWithDecoration = urtItemCandidateDecorator(query, candidates)
+  o-ovewwide def appwy(
+    quewy: quewy, 😳😳😳
+    candidates: s-seq[candidatewithfeatuwes[buiwdewinput]]
+  ): stitch[seq[decowation]] = {
+    if (candidates.nonempty) {
+      vaw uwtitemcandidateswithdecowation = uwtitemcandidatedecowatow(quewy, mya candidates)
 
-      // Pass candidates to support when the module is constructed dynamically based on the list
-      val modulePresentation =
-        UrtModulePresentation(moduleBuilder(query, candidates))
+      // pass candidates t-to suppowt when the moduwe i-is constwucted dynamicawwy b-based o-on the wist
+      vaw moduwepwesentation =
+        uwtmoduwepwesentation(moduwebuiwdew(quewy, 😳 candidates))
 
-      urtItemCandidatesWithDecoration.map { candidates =>
-        candidates.collect {
-          case Decoration(candidate, urtItemPresentation: UrtItemPresentation) =>
-            Decoration(
-              candidate,
-              urtItemPresentation.copy(modulePresentation = Some(modulePresentation)))
+      uwtitemcandidateswithdecowation.map { c-candidates =>
+        candidates.cowwect {
+          c-case decowation(candidate, -.- u-uwtitempwesentation: u-uwtitempwesentation) =>
+            decowation(
+              c-candidate, 🥺
+              uwtitempwesentation.copy(moduwepwesentation = s-some(moduwepwesentation)))
         }
       }
-    } else {
-      Stitch.Nil
+    } ewse {
+      stitch.niw
     }
   }
 }

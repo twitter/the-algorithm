@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.core.pipeline.scoring
+package com.twittew.pwoduct_mixew.cowe.pipewine.scowing
 
-import com.twitter.product_mixer.core.functional_component.scorer.ScoredCandidateResult
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ScoringPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Arrow
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.scowew.scowedcandidatewesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.scowingpipewineidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.itemcandidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.awwow
 
 /**
- * A Scoring Pipeline
+ * a scowing pipewine
  *
- * This is an abstract class, as we only construct these via the [[ScoringPipelineBuilder]].
+ * this is an abstwact cwass, rawr x3 as we onwy constwuct t-these via the [[scowingpipewinebuiwdew]]. (U ﹏ U)
  *
- * A [[ScoringPipeline]] is capable of pre-filtering candidates for scoring, performing the scoring
- * then running selection heuristics (ranking, dropping, etc) based off of the score.
- * @tparam Query the domain model for the query or request
- * @tparam Candidate the domain model for the candidate being scored
+ * a [[scowingpipewine]] i-is capabwe of pwe-fiwtewing c-candidates fow scowing, (U ﹏ U) pewfowming the scowing
+ * then w-wunning sewection heuwistics (wanking, d-dwopping, (⑅˘꒳˘) e-etc) based off of the scowe. òωó
+ * @tpawam quewy the domain modew fow the quewy ow w-wequest
+ * @tpawam candidate the domain modew fow the candidate being scowed
  */
-abstract class ScoringPipeline[-Query <: PipelineQuery, Candidate <: UniversalNoun[Any]]
-    extends Pipeline[ScoringPipeline.Inputs[Query], Seq[ScoredCandidateResult[Candidate]]] {
-  override private[core] val config: ScoringPipelineConfig[Query, Candidate]
-  override val arrow: Arrow[ScoringPipeline.Inputs[Query], ScoringPipelineResult[Candidate]]
-  override val identifier: ScoringPipelineIdentifier
+a-abstwact cwass scowingpipewine[-quewy <: p-pipewinequewy, ʘwʘ c-candidate <: u-univewsawnoun[any]]
+    e-extends pipewine[scowingpipewine.inputs[quewy], /(^•ω•^) seq[scowedcandidatewesuwt[candidate]]] {
+  ovewwide p-pwivate[cowe] vaw config: scowingpipewineconfig[quewy, ʘwʘ candidate]
+  o-ovewwide vaw awwow: awwow[scowingpipewine.inputs[quewy], σωσ scowingpipewinewesuwt[candidate]]
+  ovewwide vaw identifiew: scowingpipewineidentifiew
 }
 
-object ScoringPipeline {
-  case class Inputs[+Query <: PipelineQuery](
-    query: Query,
-    candidates: Seq[ItemCandidateWithDetails])
+object s-scowingpipewine {
+  case cwass i-inputs[+quewy <: p-pipewinequewy](
+    q-quewy: quewy, OwO
+    candidates: seq[itemcandidatewithdetaiws])
 }

@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.component_library.selector.sorter
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow.sowtew
 
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
 
-object SorterFromOrdering {
-  def apply(ordering: Ordering[CandidateWithDetails], sortOrder: SortOrder): SorterFromOrdering =
-    SorterFromOrdering(if (sortOrder == Descending) ordering.reverse else ordering)
+o-object s-sowtewfwomowdewing {
+  d-def appwy(owdewing: o-owdewing[candidatewithdetaiws], mya s-sowtowdew: s-sowtowdew): s-sowtewfwomowdewing =
+    s-sowtewfwomowdewing(if (sowtowdew == descending) owdewing.wevewse ewse owdewing)
 }
 
 /**
- * Sorts candidates based on the provided [[ordering]]
+ * sowts candidates b-based on the pwovided [[owdewing]]
  *
- * @note the [[Ordering]] must be transitive, so if `A < B` and `B < C` then `A < C`.
- * @note sorting randomly via `Ordering.by[CandidateWithDetails, Double](_ => Random.nextDouble())`
- *       is not safe and can fail at runtime since TimSort depends on stable sort values for
- *       pivoting. To sort randomly, use [[RandomShuffleSorter]] instead.
+ * @note the [[owdewing]] m-must be twansitive, nyaa~~ so if `a < b-b` and `b < c` then `a < c`. (⑅˘꒳˘)
+ * @note sowting wandomwy via `owdewing.by[candidatewithdetaiws, rawr x3 d-doubwe](_ => wandom.nextdoubwe())`
+ *       i-is nyot safe and c-can faiw at wuntime since timsowt depends on stabwe sowt vawues fow
+ *       pivoting. (✿oωo) t-to sowt wandomwy, (ˆ ﻌ ˆ)♡ use [[wandomshuffwesowtew]] instead. (˘ω˘)
  */
-case class SorterFromOrdering(
-  ordering: Ordering[CandidateWithDetails])
-    extends SorterProvider
-    with Sorter {
+case cwass sowtewfwomowdewing(
+  owdewing: owdewing[candidatewithdetaiws])
+    e-extends sowtewpwovidew
+    with s-sowtew {
 
-  override def sort[Candidate <: CandidateWithDetails](candidates: Seq[Candidate]): Seq[Candidate] =
-    candidates.sorted(ordering)
+  ovewwide d-def sowt[candidate <: c-candidatewithdetaiws](candidates: seq[candidate]): s-seq[candidate] =
+    candidates.sowted(owdewing)
 }

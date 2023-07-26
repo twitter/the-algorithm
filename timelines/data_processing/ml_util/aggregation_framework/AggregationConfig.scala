@@ -1,5 +1,5 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk
 
-trait AggregationConfig {
-  def aggregatesToCompute: Set[TypedAggregateGroup[_]]
+twait a-aggwegationconfig {
+  d-def aggwegatestocompute: s-set[typedaggwegategwoup[_]]
 }

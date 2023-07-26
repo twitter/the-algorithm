@@ -1,155 +1,155 @@
-package com.twitter.search.earlybird.ml;
+package com.twittew.seawch.eawwybiwd.mw;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Optional;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt c-com.googwe.common.base.optionaw;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.file.AbstractFile;
-import com.twitter.search.common.file.FileUtils;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.schema.DynamicSchema;
-import com.twitter.search.common.util.ml.prediction_engine.CompositeFeatureContext;
-import com.twitter.search.common.util.ml.prediction_engine.LightweightLinearModel;
-import com.twitter.search.common.util.ml.prediction_engine.ModelLoader;
+i-impowt com.twittew.seawch.common.fiwe.abstwactfiwe;
+i-impowt com.twittew.seawch.common.fiwe.fiweutiws;
+impowt com.twittew.seawch.common.metwics.seawchstatsweceivew;
+impowt com.twittew.seawch.common.schema.dynamicschema;
+impowt com.twittew.seawch.common.utiw.mw.pwediction_engine.compositefeatuwecontext;
+impowt c-com.twittew.seawch.common.utiw.mw.pwediction_engine.wightweightwineawmodew;
+impowt com.twittew.seawch.common.utiw.mw.pwediction_engine.modewwoadew;
 
-import static com.twitter.search.modeling.tweet_ranking.TweetScoringFeatures.CONTEXT;
-import static com.twitter.search.modeling.tweet_ranking.TweetScoringFeatures.FeatureContextVersion.CURRENT_VERSION;
+impowt s-static com.twittew.seawch.modewing.tweet_wanking.tweetscowingfeatuwes.context;
+impowt static com.twittew.seawch.modewing.tweet_wanking.tweetscowingfeatuwes.featuwecontextvewsion.cuwwent_vewsion;
 
 /**
- * Loads the scoring models for tweets and provides access to them.
+ * w-woads the scowing modews fow tweets and pwovides access t-to them. (U ﹏ U)
  *
- * This class relies on a list of ModelLoader objects to retrieve the objects from them. It will
- * return the first model found according to the order in the list.
+ * this cwass wewies o-on a wist o-of modewwoadew objects to wetwieve the objects fwom them. 😳😳😳 it wiww
+ * wetuwn the f-fiwst modew found accowding to the owdew in the wist. >w<
  *
- * For production, we load models from 2 sources: classpath and HDFS. If a model is available
- * from HDFS, we return it, otherwise we use the model from the classpath.
+ * fow pwoduction, XD we woad m-modews fwom 2 souwces: cwasspath a-and hdfs. o.O if a-a modew is avaiwabwe
+ * f-fwom hdfs, mya w-we wetuwn it, 🥺 othewwise we use the modew fwom t-the cwasspath. ^^;;
  *
- * The models used for default requests (i.e. not experiments) MUST be present in the
- * classpath, this allows us to avoid errors if they can't be loaded from HDFS.
- * Models for experiments can live only in HDFS, so we don't need to redeploy Earlybird if we
- * want to test them.
+ * the modews used fow defauwt w-wequests (i.e. :3 nyot expewiments) must be pwesent in the
+ * cwasspath, (U ﹏ U) this awwows us to avoid e-ewwows if they can't be woaded f-fwom hdfs. OwO
+ * modews f-fow expewiments c-can wive onwy in hdfs, 😳😳😳 so we don't nyeed to wedepwoy eawwybiwd i-if we
+ * want t-to test them. (ˆ ﻌ ˆ)♡
  */
-public class ScoringModelsManager {
+pubwic cwass s-scowingmodewsmanagew {
 
-  private static final Logger LOG = LoggerFactory.getLogger(ScoringModelsManager.class);
+  p-pwivate static finaw w-woggew wog = woggewfactowy.getwoggew(scowingmodewsmanagew.cwass);
 
   /**
-   * Used when
-   * 1. Testing
-   * 2. The scoring models are disabled in the config
-   * 3. Exceptions thrown during loading the scoring models
+   * used when
+   * 1. XD t-testing
+   * 2. (ˆ ﻌ ˆ)♡ the scowing modews awe disabwed i-in the config
+   * 3. ( ͡o ω ͡o ) exceptions t-thwown duwing woading the scowing m-modews
    */
-  public static final ScoringModelsManager NO_OP_MANAGER = new ScoringModelsManager() {
-    @Override
-    public boolean isEnabled() {
-      return false;
+  p-pubwic static finaw scowingmodewsmanagew nyo_op_managew = nyew scowingmodewsmanagew() {
+    @ovewwide
+    pubwic boowean isenabwed() {
+      w-wetuwn fawse;
     }
   };
 
-  private final ModelLoader[] loaders;
-  private final DynamicSchema dynamicSchema;
+  p-pwivate finaw modewwoadew[] w-woadews;
+  p-pwivate finaw d-dynamicschema dynamicschema;
 
-  public ScoringModelsManager(ModelLoader... loaders) {
-    this.loaders = loaders;
-    this.dynamicSchema = null;
+  pubwic scowingmodewsmanagew(modewwoadew... woadews) {
+    this.woadews = w-woadews;
+    this.dynamicschema = nyuww;
   }
 
-  public ScoringModelsManager(DynamicSchema dynamicSchema, ModelLoader... loaders) {
-    this.loaders = loaders;
-    this.dynamicSchema = dynamicSchema;
+  pubwic scowingmodewsmanagew(dynamicschema d-dynamicschema, rawr x3 modewwoadew... w-woadews) {
+    t-this.woadews = w-woadews;
+    this.dynamicschema = dynamicschema;
   }
 
   /**
-   * Indicates that the scoring models were enabled in the config and were loaded successfully
+   * i-indicates that t-the scowing modews w-wewe enabwed i-in the config and wewe woaded successfuwwy
    */
-  public boolean isEnabled() {
-    return true;
+  pubwic boowean i-isenabwed() {
+    w-wetuwn twue;
   }
 
-  public void reload() {
-    for (ModelLoader loader : loaders) {
-      loader.run();
+  p-pubwic void w-wewoad() {
+    f-fow (modewwoadew woadew : woadews) {
+      woadew.wun();
     }
   }
 
   /**
-   * Loads and returns the model with the given name, if one exists.
+   * woads and wetuwns t-the modew with the given nyame, nyaa~~ if one exists. >_<
    */
-  public Optional<LightweightLinearModel> getModel(String modelName) {
-    for (ModelLoader loader : loaders) {
-      Optional<LightweightLinearModel> model = loader.getModel(modelName);
-      if (model.isPresent()) {
-        return model;
+  pubwic optionaw<wightweightwineawmodew> getmodew(stwing m-modewname) {
+    fow (modewwoadew woadew : woadews) {
+      optionaw<wightweightwineawmodew> modew = woadew.getmodew(modewname);
+      i-if (modew.ispwesent()) {
+        w-wetuwn m-modew;
       }
     }
-    return Optional.absent();
+    wetuwn o-optionaw.absent();
   }
 
   /**
-   * Creates an instance that loads models first from HDFS and the classpath resources.
+   * cweates an i-instance that woads m-modews fiwst fwom hdfs and the cwasspath wesouwces. ^^;;
    *
-   * If the models are not found in HDFS, it uses the models from the classpath as fallback.
+   * if the modews awe nyot found in hdfs, (ˆ ﻌ ˆ)♡ it uses t-the modews fwom the cwasspath as f-fawwback. ^^;;
    */
-  public static ScoringModelsManager create(
-      SearchStatsReceiver serverStats,
-      String hdfsNameNode,
-      String hdfsBasedPath,
-      DynamicSchema dynamicSchema) throws IOException {
-    // Create a composite feature context so we can load both legacy and schema-based models
-    CompositeFeatureContext featureContext = new CompositeFeatureContext(
-        CONTEXT, dynamicSchema::getSearchFeatureSchema);
-    ModelLoader hdfsLoader = createHdfsLoader(
-        serverStats, hdfsNameNode, hdfsBasedPath, featureContext);
-    ModelLoader classpathLoader = createClasspathLoader(
-        serverStats, featureContext);
+  pubwic static s-scowingmodewsmanagew c-cweate(
+      seawchstatsweceivew sewvewstats, (⑅˘꒳˘)
+      s-stwing h-hdfsnamenode, rawr x3
+      stwing hdfsbasedpath, (///ˬ///✿)
+      d-dynamicschema d-dynamicschema) thwows ioexception {
+    // cweate a composite featuwe context so w-we can woad both w-wegacy and schema-based m-modews
+    compositefeatuwecontext f-featuwecontext = n-nyew compositefeatuwecontext(
+        c-context, 🥺 dynamicschema::getseawchfeatuweschema);
+    modewwoadew hdfswoadew = cweatehdfswoadew(
+        sewvewstats, >_< h-hdfsnamenode, UwU h-hdfsbasedpath, >_< featuwecontext);
+    modewwoadew c-cwasspathwoadew = c-cweatecwasspathwoadew(
+        sewvewstats, -.- featuwecontext);
 
-    // Explicitly load the models from the classpath
-    classpathLoader.run();
+    // expwicitwy w-woad the modews fwom the cwasspath
+    cwasspathwoadew.wun();
 
-    ScoringModelsManager manager = new ScoringModelsManager(hdfsLoader, classpathLoader);
-    LOG.info("Initialized ScoringModelsManager for loading models from HDFS and the classpath");
-    return manager;
+    scowingmodewsmanagew m-managew = nyew scowingmodewsmanagew(hdfswoadew, mya cwasspathwoadew);
+    w-wog.info("initiawized s-scowingmodewsmanagew fow woading modews fwom hdfs and the cwasspath");
+    w-wetuwn managew;
   }
 
-  protected static ModelLoader createHdfsLoader(
-      SearchStatsReceiver serverStats,
-      String hdfsNameNode,
-      String hdfsBasedPath,
-      CompositeFeatureContext featureContext) {
-    String hdfsVersionedPath = hdfsBasedPath + "/" + CURRENT_VERSION.getVersionDirectory();
-    LOG.info("Starting to load scoring models from HDFS: {}:{}",
-        hdfsNameNode, hdfsVersionedPath);
-    return ModelLoader.forHdfsDirectory(
-        hdfsNameNode,
-        hdfsVersionedPath,
-        featureContext,
-        "scoring_models_hdfs_",
-        serverStats);
+  pwotected s-static modewwoadew cweatehdfswoadew(
+      seawchstatsweceivew sewvewstats, >w<
+      s-stwing hdfsnamenode,
+      s-stwing hdfsbasedpath, (U ﹏ U)
+      compositefeatuwecontext featuwecontext) {
+    stwing hdfsvewsionedpath = h-hdfsbasedpath + "/" + cuwwent_vewsion.getvewsiondiwectowy();
+    w-wog.info("stawting to w-woad scowing modews fwom hdfs: {}:{}", 😳😳😳
+        h-hdfsnamenode, o.O hdfsvewsionedpath);
+    wetuwn modewwoadew.fowhdfsdiwectowy(
+        h-hdfsnamenode, òωó
+        h-hdfsvewsionedpath, 😳😳😳
+        f-featuwecontext, σωσ
+        "scowing_modews_hdfs_", (⑅˘꒳˘)
+        sewvewstats);
   }
 
   /**
-   * Creates a loader that loads models from a default location in the classpath.
+   * c-cweates a-a woadew that woads modews fwom a defauwt wocation i-in the cwasspath. (///ˬ///✿)
    */
-  @VisibleForTesting
-  public static ModelLoader createClasspathLoader(
-      SearchStatsReceiver serverStats, CompositeFeatureContext featureContext)
-      throws IOException {
-    AbstractFile defaultModelsBaseDir = FileUtils.getTmpDirHandle(
-        ScoringModelsManager.class,
-        "/com/twitter/search/earlybird/ml/default_models");
-    AbstractFile defaultModelsDir = defaultModelsBaseDir.getChild(
-        CURRENT_VERSION.getVersionDirectory());
+  @visibwefowtesting
+  p-pubwic static m-modewwoadew cweatecwasspathwoadew(
+      seawchstatsweceivew sewvewstats, 🥺 compositefeatuwecontext f-featuwecontext)
+      thwows i-ioexception {
+    a-abstwactfiwe defauwtmodewsbasediw = fiweutiws.gettmpdiwhandwe(
+        scowingmodewsmanagew.cwass, OwO
+        "/com/twittew/seawch/eawwybiwd/mw/defauwt_modews");
+    a-abstwactfiwe d-defauwtmodewsdiw = d-defauwtmodewsbasediw.getchiwd(
+        c-cuwwent_vewsion.getvewsiondiwectowy());
 
-    LOG.info("Starting to load scoring models from the classpath: {}",
-        defaultModelsDir.getPath());
-    return ModelLoader.forDirectory(
-        defaultModelsDir,
-        featureContext,
-        "scoring_models_classpath_",
-        serverStats);
+    wog.info("stawting t-to woad scowing modews fwom the cwasspath: {}", >w<
+        defauwtmodewsdiw.getpath());
+    wetuwn modewwoadew.fowdiwectowy(
+        defauwtmodewsdiw, 🥺
+        f-featuwecontext, nyaa~~
+        "scowing_modews_cwasspath_", ^^
+        sewvewstats);
   }
 }

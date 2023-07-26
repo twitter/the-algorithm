@@ -1,31 +1,31 @@
-package com.twitter.timelineranker.model
+package com.twittew.timewinewankew.modew
 
-import com.twitter.timelineranker.{thriftscala => thrift}
+impowt c-com.twittew.timewinewankew.{thwiftscawa => t-thwift}
 
-object ReverseChronTimelineQueryOptions {
-  val Default: ReverseChronTimelineQueryOptions = ReverseChronTimelineQueryOptions()
+o-object wevewsechwontimewinequewyoptions {
+  v-vaw defauwt: wevewsechwontimewinequewyoptions = w-wevewsechwontimewinequewyoptions()
 
-  def fromThrift(
-    options: thrift.ReverseChronTimelineQueryOptions
-  ): ReverseChronTimelineQueryOptions = {
-    ReverseChronTimelineQueryOptions(
-      getTweetsFromArchiveIndex = options.getTweetsFromArchiveIndex
+  d-def fwomthwift(
+    o-options: t-thwift.wevewsechwontimewinequewyoptions
+  ): wevewsechwontimewinequewyoptions = {
+    wevewsechwontimewinequewyoptions(
+      gettweetsfwomawchiveindex = options.gettweetsfwomawchiveindex
     )
   }
 }
 
-case class ReverseChronTimelineQueryOptions(getTweetsFromArchiveIndex: Boolean = true)
-    extends TimelineQueryOptions {
+c-case cwass wevewsechwontimewinequewyoptions(gettweetsfwomawchiveindex: boowean = twue)
+    e-extends timewinequewyoptions {
 
-  throwIfInvalid()
+  thwowifinvawid()
 
-  def toThrift: thrift.ReverseChronTimelineQueryOptions = {
-    thrift.ReverseChronTimelineQueryOptions(getTweetsFromArchiveIndex = getTweetsFromArchiveIndex)
+  d-def tothwift: thwift.wevewsechwontimewinequewyoptions = {
+    thwift.wevewsechwontimewinequewyoptions(gettweetsfwomawchiveindex = gettweetsfwomawchiveindex)
   }
 
-  def toTimelineQueryOptionsThrift: thrift.TimelineQueryOptions = {
-    thrift.TimelineQueryOptions.ReverseChronTimelineQueryOptions(toThrift)
+  def totimewinequewyoptionsthwift: t-thwift.timewinequewyoptions = {
+    thwift.timewinequewyoptions.wevewsechwontimewinequewyoptions(tothwift)
   }
 
-  def throwIfInvalid(): Unit = {}
+  d-def thwowifinvawid(): u-unit = {}
 }

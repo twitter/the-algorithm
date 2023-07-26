@@ -1,45 +1,45 @@
-package com.twitter.timelineranker.parameters.revchron
+package com.twittew.timewinewankew.pawametews.wevchwon
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt c-com.twittew.timewines.configapi.fspawam
 
-object ReverseChronParams {
-  import ReverseChronTimelineQueryContext._
-
-  /**
-   * Controls limit on the number of followed users fetched from SGS when materializing home timelines.
-   */
-  object MaxFollowedUsersParam
-      extends FSBoundedParam(
-        "reverse_chron_max_followed_users",
-        default = MaxFollowedUsers.default,
-        min = MaxFollowedUsers.bounds.minInclusive,
-        max = MaxFollowedUsers.bounds.maxInclusive
-      )
-
-  object ReturnEmptyWhenOverMaxFollowsParam
-      extends FSParam(
-        name = "reverse_chron_return_empty_when_over_max_follows",
-        default = true
-      )
+o-object w-wevewsechwonpawams {
+  i-impowt w-wevewsechwontimewinequewycontext._
 
   /**
-   * When true, search requests for the reverse chron timeline will include an additional operator
-   * so that search will not return tweets that are directed at non-followed users.
+   * c-contwows wimit o-on the nyumbew of fowwowed usews fetched fwom sgs when matewiawizing home timewines. >_<
    */
-  object DirectedAtNarrowcastingViaSearchParam
-      extends FSParam(
-        name = "reverse_chron_directed_at_narrowcasting_via_search",
-        default = false
+  o-object maxfowwowedusewspawam
+      extends fsboundedpawam(
+        "wevewse_chwon_max_fowwowed_usews", (⑅˘꒳˘)
+        d-defauwt = maxfowwowedusews.defauwt, /(^•ω•^)
+        m-min = maxfowwowedusews.bounds.minincwusive, rawr x3
+        max = maxfowwowedusews.bounds.maxincwusive
+      )
+
+  object wetuwnemptywhenovewmaxfowwowspawam
+      e-extends fspawam(
+        nyame = "wevewse_chwon_wetuwn_empty_when_ovew_max_fowwows", (U ﹏ U)
+        defauwt = t-twue
       )
 
   /**
-   * When true, search requests for the reverse chron timeline will request additional metadata
-   * from search and use this metadata for post filtering.
+   * w-when twue, (U ﹏ U) seawch wequests fow the wevewse chwon timewine wiww incwude an additionaw o-opewatow
+   * so that seawch wiww nyot wetuwn tweets that awe diwected at n-nyon-fowwowed usews. (⑅˘꒳˘)
    */
-  object PostFilteringBasedOnSearchMetadataEnabledParam
-      extends FSParam(
-        name = "reverse_chron_post_filtering_based_on_search_metadata_enabled",
-        default = true
+  object d-diwectedatnawwowcastingviaseawchpawam
+      e-extends fspawam(
+        n-nyame = "wevewse_chwon_diwected_at_nawwowcasting_via_seawch", òωó
+        d-defauwt = fawse
+      )
+
+  /**
+   * when twue, ʘwʘ seawch wequests fow t-the wevewse chwon timewine wiww wequest additionaw m-metadata
+   * fwom seawch and use this metadata fow post fiwtewing. /(^•ω•^)
+   */
+  object postfiwtewingbasedonseawchmetadataenabwedpawam
+      extends f-fspawam(
+        nyame = "wevewse_chwon_post_fiwtewing_based_on_seawch_metadata_enabwed", ʘwʘ
+        d-defauwt = t-twue
       )
 }

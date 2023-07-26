@@ -1,178 +1,178 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+package com.twittew.seawch.common.utiw.mw.pwediction_engine;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+impowt j-java.io.ioexception;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.map;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.base.optionaw;
+impowt c-com.googwe.common.base.suppwiew;
+i-impowt com.googwe.common.base.suppwiews;
+i-impowt com.googwe.common.cowwect.wists;
+impowt com.googwe.common.cowwect.maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.file.AbstractFile;
-import com.twitter.search.common.file.FileUtils;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
+i-impowt com.twittew.seawch.common.fiwe.abstwactfiwe;
+impowt c-com.twittew.seawch.common.fiwe.fiweutiws;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.metwics.seawchwonggauge;
+impowt com.twittew.seawch.common.metwics.seawchstatsweceivew;
 
 /**
- * Loads LightweightLinearModel objects from a directory and provides an interface for reloading
- * them periodically.
+ * woads wightweightwineawmodew objects fwom a-a diwectowy and pwovides an intewface f-fow wewoading
+ * t-them pewiodicawwy. 🥺
  *
- * All the models must support the same features (defined by a FeatureContext) and they are
- * identified by the name of the subdirectory. This is the required directory structure:
+ * aww the modews must suppowt the same featuwes (defined by a featuwecontext) a-and they awe
+ * identified by the name of the subdiwectowy. XD this is t-the wequiwed diwectowy stwuctuwe:
  *
- *  /path/to/base-directory
- *      one-model/model.tsv
- *      another-model/model.tsv
- *      experimental-model/model.tsv
+ *  /path/to/base-diwectowy
+ *      o-one-modew/modew.tsv
+ *      a-anothew-modew/modew.tsv
+ *      e-expewimentaw-modew/modew.tsv
  *
- * Each subdirectory must contain a file named 'model.tsv' in the format required by
- * LightweightLinearModel.
+ * e-each subdiwectowy must contain a fiwe named 'modew.tsv' i-in the fowmat wequiwed by
+ * wightweightwineawmodew.
  */
-public class ModelLoader implements Runnable {
+pubwic c-cwass modewwoadew impwements wunnabwe {
 
-  private static final Logger LOG = LoggerFactory.getLogger(ModelLoader.class);
-  private static final String MODEL_FILE_NAME = "model.tsv";
+  pwivate static finaw woggew wog = woggewfactowy.getwoggew(modewwoadew.cwass);
+  pwivate s-static finaw stwing modew_fiwe_name = "modew.tsv";
 
-  private final CompositeFeatureContext featureContext;
-  private final Supplier<AbstractFile> directorySupplier;
+  p-pwivate f-finaw compositefeatuwecontext f-featuwecontext;
+  pwivate finaw suppwiew<abstwactfiwe> diwectowysuppwiew;
 
-  private final Map<String, LightweightLinearModel> models;
-  private final Map<String, Long> lastModifiedMsByModel;
+  p-pwivate f-finaw map<stwing, (U ᵕ U❁) wightweightwineawmodew> modews;
+  p-pwivate f-finaw map<stwing, :3 wong> wastmodifiedmsbymodew;
 
-  private final SearchLongGauge lastModelLoadedAtMs;
-  private final SearchLongGauge numModels;
-  private final SearchCounter numLoads;
-  private final SearchCounter numErrors;
-
-  /**
-   * Creates a new instance for a feature context and a base directory.
-   *
-   * It exports 4 counters:
-   *
-   *   ${counterPrefix}_last_loaded:
-   *      Timestamp (in ms) when the last model was loaded.
-   *   ${counterPrefix}_num_models:
-   *      Number of models currently loaded.
-   *   ${counterPrefix}_num_loads:
-   *      Number of succesful model loads.
-   *   ${counterPrefix}_num_errors:
-   *      Number of errors occurred while loading the models.
-   */
-  protected ModelLoader(
-      CompositeFeatureContext featureContext,
-      Supplier<AbstractFile> directorySupplier,
-      String counterPrefix,
-      SearchStatsReceiver statsReceiver) {
-    this.featureContext = featureContext;
-
-    // This function returns the base directory every time we call 'run'. We use a function instead
-    // of using directly an AbstractFile instance, in case that we can't obtain an instance at
-    // initialization time (e.g. if there's an issue with HDFS).
-    this.directorySupplier = directorySupplier;
-    this.models = Maps.newConcurrentMap();
-    this.lastModifiedMsByModel = Maps.newConcurrentMap();
-
-    this.lastModelLoadedAtMs = statsReceiver.getLongGauge(counterPrefix + "last_loaded");
-    this.numModels = statsReceiver.getLongGauge(counterPrefix + "num_models");
-    this.numLoads = statsReceiver.getCounter(counterPrefix + "num_loads");
-    this.numErrors = statsReceiver.getCounter(counterPrefix + "num_errors");
-  }
-
-  public Optional<LightweightLinearModel> getModel(String name) {
-    return Optional.fromNullable(models.get(name));
-  }
+  p-pwivate finaw seawchwonggauge w-wastmodewwoadedatms;
+  pwivate finaw seawchwonggauge n-nyummodews;
+  pwivate finaw s-seawchcountew numwoads;
+  pwivate f-finaw seawchcountew n-nyumewwows;
 
   /**
-   * Loads the models from the base directory.
+   * cweates a nyew instance fow a featuwe context and a base diwectowy. ( ͡o ω ͡o )
    *
-   * It doesn't load a model if its file has not been modified since the last time it was loaded.
+   * it expowts 4 countews:
    *
-   * This method doesn't delete previously loaded models if their directories are not available.
+   *   ${countewpwefix}_wast_woaded:
+   *      t-timestamp (in m-ms) when the wast modew was w-woaded. òωó
+   *   ${countewpwefix}_num_modews:
+   *      n-nyumbew o-of modews cuwwentwy woaded. σωσ
+   *   ${countewpwefix}_num_woads:
+   *      nyumbew of succesfuw modew w-woads.
+   *   ${countewpwefix}_num_ewwows:
+   *      nyumbew of ewwows occuwwed whiwe woading the modews. (U ᵕ U❁)
    */
-  @Override
-  public void run() {
-    try {
-      AbstractFile baseDirectory = directorySupplier.get();
-      List<AbstractFile> modelDirectories =
-          Lists.newArrayList(baseDirectory.listFiles(IS_MODEL_DIR));
-      for (AbstractFile directory : modelDirectories) {
-        try {
-          // Note that the modelName is the directory name, if it ends with ".schema_based", the
-          // model will be loaded as a schema-based model.
-          String modelName = directory.getName();
-          AbstractFile modelFile = directory.getChild(MODEL_FILE_NAME);
-          long currentLastModified = modelFile.getLastModified();
-          Long lastModified = lastModifiedMsByModel.get(modelName);
-          if (lastModified == null || lastModified < currentLastModified) {
-            LightweightLinearModel model =
-                LightweightLinearModel.load(modelName, featureContext, modelFile);
-            if (!models.containsKey(modelName)) {
-              LOG.info("Loading model {}.", modelName);
+  p-pwotected modewwoadew(
+      c-compositefeatuwecontext f-featuwecontext, (✿oωo)
+      s-suppwiew<abstwactfiwe> diwectowysuppwiew, ^^
+      s-stwing countewpwefix, ^•ﻌ•^
+      s-seawchstatsweceivew s-statsweceivew) {
+    t-this.featuwecontext = featuwecontext;
+
+    // this function w-wetuwns the base d-diwectowy evewy t-time we caww 'wun'. XD w-we use a f-function instead
+    // of using diwectwy an abstwactfiwe instance, :3 i-in case that we can't obtain an instance at
+    // initiawization time (e.g. (ꈍᴗꈍ) if thewe's an i-issue with hdfs). :3
+    this.diwectowysuppwiew = diwectowysuppwiew;
+    this.modews = maps.newconcuwwentmap();
+    t-this.wastmodifiedmsbymodew = m-maps.newconcuwwentmap();
+
+    t-this.wastmodewwoadedatms = statsweceivew.getwonggauge(countewpwefix + "wast_woaded");
+    t-this.nummodews = statsweceivew.getwonggauge(countewpwefix + "num_modews");
+    t-this.numwoads = s-statsweceivew.getcountew(countewpwefix + "num_woads");
+    this.numewwows = statsweceivew.getcountew(countewpwefix + "num_ewwows");
+  }
+
+  pubwic optionaw<wightweightwineawmodew> getmodew(stwing nyame) {
+    w-wetuwn optionaw.fwomnuwwabwe(modews.get(name));
+  }
+
+  /**
+   * woads the modews f-fwom the base diwectowy. (U ﹏ U)
+   *
+   * i-it doesn't w-woad a modew if its fiwe has nyot been modified s-since the wast t-time it was woaded. UwU
+   *
+   * this method doesn't d-dewete pweviouswy w-woaded modews if theiw diwectowies awe nyot avaiwabwe. 😳😳😳
+   */
+  @ovewwide
+  pubwic void wun() {
+    t-twy {
+      a-abstwactfiwe b-basediwectowy = diwectowysuppwiew.get();
+      w-wist<abstwactfiwe> m-modewdiwectowies =
+          wists.newawwaywist(basediwectowy.wistfiwes(is_modew_diw));
+      f-fow (abstwactfiwe diwectowy : modewdiwectowies) {
+        twy {
+          // nyote that the modewname i-is the d-diwectowy nyame, XD if it ends with ".schema_based", the
+          // m-modew wiww be w-woaded as a schema-based modew. o.O
+          stwing modewname = diwectowy.getname();
+          a-abstwactfiwe modewfiwe = diwectowy.getchiwd(modew_fiwe_name);
+          wong cuwwentwastmodified = modewfiwe.getwastmodified();
+          w-wong wastmodified = wastmodifiedmsbymodew.get(modewname);
+          if (wastmodified == nyuww || w-wastmodified < c-cuwwentwastmodified) {
+            wightweightwineawmodew modew =
+                wightweightwineawmodew.woad(modewname, (⑅˘꒳˘) f-featuwecontext, 😳😳😳 m-modewfiwe);
+            if (!modews.containskey(modewname)) {
+              wog.info("woading modew {}.", nyaa~~ m-modewname);
             }
-            models.put(modelName, model);
-            lastModifiedMsByModel.put(modelName, currentLastModified);
-            lastModelLoadedAtMs.set(System.currentTimeMillis());
-            numLoads.increment();
-            LOG.debug("Model: {}", model);
-          } else {
-            LOG.debug("Directory for model {} has not changed.", modelName);
+            modews.put(modewname, rawr m-modew);
+            wastmodifiedmsbymodew.put(modewname, -.- cuwwentwastmodified);
+            wastmodewwoadedatms.set(system.cuwwenttimemiwwis());
+            nyumwoads.incwement();
+            w-wog.debug("modew: {}", modew);
+          } e-ewse {
+            w-wog.debug("diwectowy fow modew {} h-has nyot changed.", (✿oωo) modewname);
           }
-        } catch (Exception e) {
-          LOG.error("Error loading model from directory: " + directory.getPath(), e);
-          this.numErrors.increment();
+        } c-catch (exception e-e) {
+          w-wog.ewwow("ewwow woading m-modew fwom diwectowy: " + d-diwectowy.getpath(), /(^•ω•^) e);
+          this.numewwows.incwement();
         }
       }
-      if (numModels.get() != models.size()) {
-        LOG.info("Finished loading models. Model names: {}", models.keySet());
+      i-if (nummodews.get() != m-modews.size()) {
+        w-wog.info("finished woading modews. 🥺 modew nyames: {}", ʘwʘ m-modews.keyset());
       }
-      this.numModels.set(models.size());
-    } catch (IOException e) {
-      LOG.error("Error loading models", e);
-      this.numErrors.increment();
+      this.nummodews.set(modews.size());
+    } c-catch (ioexception e-e) {
+      wog.ewwow("ewwow woading modews", UwU e);
+      this.numewwows.incwement();
     }
   }
 
   /**
-   * Creates an instance that loads models from a directory (local or from HDFS).
+   * c-cweates an instance t-that woads modews f-fwom a diwectowy (wocaw o-ow fwom hdfs). XD
    */
-  public static ModelLoader forDirectory(
-      final AbstractFile directory,
-      CompositeFeatureContext featureContext,
-      String counterPrefix,
-      SearchStatsReceiver statsReceiver) {
-    Supplier<AbstractFile> directorySupplier = Suppliers.ofInstance(directory);
-    return new ModelLoader(featureContext, directorySupplier, counterPrefix, statsReceiver);
+  p-pubwic static modewwoadew fowdiwectowy(
+      finaw abstwactfiwe diwectowy, (✿oωo)
+      compositefeatuwecontext featuwecontext, :3
+      stwing countewpwefix, (///ˬ///✿)
+      s-seawchstatsweceivew statsweceivew) {
+    s-suppwiew<abstwactfiwe> diwectowysuppwiew = s-suppwiews.ofinstance(diwectowy);
+    wetuwn n-nyew modewwoadew(featuwecontext, nyaa~~ diwectowysuppwiew, >w< c-countewpwefix, -.- s-statsweceivew);
   }
 
   /**
-   * Creates an instance that loads models from HDFS.
+   * c-cweates an instance t-that woads m-modews fwom hdfs. (✿oωo)
    */
-  public static ModelLoader forHdfsDirectory(
-      final String nameNode,
-      final String directory,
-      CompositeFeatureContext featureContext,
-      String counterPrefix,
-      SearchStatsReceiver statsReceiver) {
-    Supplier<AbstractFile> directorySupplier =
-        () -> FileUtils.getHdfsFileHandle(directory, nameNode);
-    return new ModelLoader(featureContext, directorySupplier, counterPrefix, statsReceiver);
+  pubwic static modewwoadew fowhdfsdiwectowy(
+      finaw stwing nyamenode, (˘ω˘)
+      finaw stwing diwectowy, rawr
+      c-compositefeatuwecontext f-featuwecontext, OwO
+      s-stwing countewpwefix, ^•ﻌ•^
+      s-seawchstatsweceivew statsweceivew) {
+    suppwiew<abstwactfiwe> diwectowysuppwiew =
+        () -> f-fiweutiws.gethdfsfiwehandwe(diwectowy, UwU n-nyamenode);
+    wetuwn n-nyew modewwoadew(featuwecontext, diwectowysuppwiew, (˘ω˘) countewpwefix, (///ˬ///✿) s-statsweceivew);
   }
 
-  private static final AbstractFile.Filter IS_MODEL_DIR = file -> {
-    try {
-      if (file.isDirectory()) {
-        AbstractFile modelFile = file.getChild(MODEL_FILE_NAME);
-        return (modelFile != null) && modelFile.canRead();
+  pwivate s-static finaw abstwactfiwe.fiwtew i-is_modew_diw = f-fiwe -> {
+    twy {
+      if (fiwe.isdiwectowy()) {
+        abstwactfiwe modewfiwe = fiwe.getchiwd(modew_fiwe_name);
+        w-wetuwn (modewfiwe != n-nyuww) && m-modewfiwe.canwead();
       }
-    } catch (IOException e) {
-      LOG.error("Error reading file: " + file, e);
+    } c-catch (ioexception e-e) {
+      wog.ewwow("ewwow w-weading fiwe: " + f-fiwe, σωσ e);
     }
-    return false;
+    wetuwn f-fawse;
   };
 }

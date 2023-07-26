@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.service.component_registry
+package com.twittew.pwoduct_mixew.cowe.sewvice.component_wegistwy
 
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.component
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
 
-object RegisteredComponent {
-  // Sort by ComponentIdentifier which has its own implicit ordering defined
-  implicit val ordering: Ordering[RegisteredComponent] =
-    Ordering.by[RegisteredComponent, ComponentIdentifier](_.component.identifier)
+o-object wegistewedcomponent {
+  // s-sowt by componentidentifiew w-which has its own i-impwicit owdewing d-defined
+  impwicit v-vaw owdewing: o-owdewing[wegistewedcomponent] =
+    owdewing.by[wegistewedcomponent, (U ﹏ U) componentidentifiew](_.component.identifiew)
 }
 
-case class RegisteredComponent(
-  identifier: ComponentIdentifier,
-  component: Component,
-  sourceFile: String)
+case cwass wegistewedcomponent(
+  i-identifiew: componentidentifiew, -.-
+  component: component, (ˆ ﻌ ˆ)♡
+  s-souwcefiwe: stwing)

@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.topic
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.item.topic
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicDisplayType
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.topicdispwaytype
 
-trait BaseTopicDisplayTypeBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]] {
+t-twait basetopicdispwaytypebuiwdew[-quewy <: p-pipewinequewy, :3 -candidate <: univewsawnoun[any]] {
 
-  def apply(
-    query: PipelineQuery,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): Option[TopicDisplayType]
+  def appwy(
+    quewy: pipewinequewy, (U ﹏ U)
+    candidate: c-candidate, -.-
+    candidatefeatuwes: featuwemap
+  ): o-option[topicdispwaytype]
 }

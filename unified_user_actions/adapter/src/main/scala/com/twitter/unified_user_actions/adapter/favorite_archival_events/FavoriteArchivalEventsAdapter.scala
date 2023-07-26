@@ -1,52 +1,52 @@
-package com.twitter.unified_user_actions.adapter.favorite_archival_events
+package com.twittew.unified_usew_actions.adaptew.favowite_awchivaw_events
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.timelineservice.fanout.thriftscala.FavoriteArchivalEvent
-import com.twitter.unified_user_actions.adapter.AbstractAdapter
-import com.twitter.unified_user_actions.adapter.common.AdapterUtils
-import com.twitter.unified_user_actions.thriftscala._
+impowt c-com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.finatwa.kafka.sewde.unkeyed
+i-impowt c-com.twittew.timewinesewvice.fanout.thwiftscawa.favowiteawchivawevent
+i-impowt com.twittew.unified_usew_actions.adaptew.abstwactadaptew
+impowt com.twittew.unified_usew_actions.adaptew.common.adaptewutiws
+impowt com.twittew.unified_usew_actions.thwiftscawa._
 
-class FavoriteArchivalEventsAdapter
-    extends AbstractAdapter[FavoriteArchivalEvent, UnKeyed, UnifiedUserAction] {
+cwass favowiteawchivaweventsadaptew
+    e-extends abstwactadaptew[favowiteawchivawevent, o.O unkeyed, ( ͡o ω ͡o ) u-unifiedusewaction] {
 
-  import FavoriteArchivalEventsAdapter._
-  override def adaptOneToKeyedMany(
-    input: FavoriteArchivalEvent,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Seq[(UnKeyed, UnifiedUserAction)] =
-    adaptEvent(input).map { e => (UnKeyed, e) }
+  impowt f-favowiteawchivaweventsadaptew._
+  ovewwide def adaptonetokeyedmany(
+    input: f-favowiteawchivawevent, (U ﹏ U)
+    statsweceivew: s-statsweceivew = n-nyuwwstatsweceivew
+  ): seq[(unkeyed, (///ˬ///✿) unifiedusewaction)] =
+    adaptevent(input).map { e => (unkeyed, >w< e-e) }
 }
 
-object FavoriteArchivalEventsAdapter {
+object favowiteawchivaweventsadaptew {
 
-  def adaptEvent(e: FavoriteArchivalEvent): Seq[UnifiedUserAction] =
-    Option(e).map { e =>
-      UnifiedUserAction(
-        userIdentifier = UserIdentifier(userId = Some(e.favoriterId)),
-        item = getItem(e),
-        actionType =
-          if (e.isArchivingAction.getOrElse(true)) ActionType.ServerTweetArchiveFavorite
-          else ActionType.ServerTweetUnarchiveFavorite,
-        eventMetadata = getEventMetadata(e)
+  def adaptevent(e: favowiteawchivawevent): seq[unifiedusewaction] =
+    o-option(e).map { e =>
+      u-unifiedusewaction(
+        u-usewidentifiew = u-usewidentifiew(usewid = s-some(e.favowitewid)), rawr
+        item = getitem(e), mya
+        actiontype =
+          i-if (e.isawchivingaction.getowewse(twue)) actiontype.sewvewtweetawchivefavowite
+          ewse actiontype.sewvewtweetunawchivefavowite, ^^
+        e-eventmetadata = geteventmetadata(e)
       )
-    }.toSeq
+    }.toseq
 
-  def getItem(e: FavoriteArchivalEvent): Item =
-    Item.TweetInfo(
-      TweetInfo(
-        // Please note that here we always use TweetId (not sourceTweetId)!!!
-        actionTweetId = e.tweetId,
-        actionTweetAuthorInfo = Some(AuthorInfo(authorId = e.tweetUserId)),
-        retweetedTweetId = e.sourceTweetId
+  def getitem(e: favowiteawchivawevent): item =
+    item.tweetinfo(
+      t-tweetinfo(
+        // pwease nyote that h-hewe we awways u-use tweetid (not s-souwcetweetid)!!!
+        actiontweetid = e.tweetid, 😳😳😳
+        actiontweetauthowinfo = s-some(authowinfo(authowid = e-e.tweetusewid)), mya
+        wetweetedtweetid = e.souwcetweetid
       )
     )
 
-  def getEventMetadata(e: FavoriteArchivalEvent): EventMetadata =
-    EventMetadata(
-      sourceTimestampMs = e.timestampMs,
-      receivedTimestampMs = AdapterUtils.currentTimestampMs,
-      sourceLineage = SourceLineage.ServerFavoriteArchivalEvents,
+  d-def geteventmetadata(e: f-favowiteawchivawevent): eventmetadata =
+    e-eventmetadata(
+      souwcetimestampms = e-e.timestampms, 😳
+      weceivedtimestampms = adaptewutiws.cuwwenttimestampms, -.-
+      souwcewineage = souwcewineage.sewvewfavowiteawchivawevents, 🥺
     )
 }

@@ -1,75 +1,75 @@
-package com.twitter.product_mixer.component_library.module.http
+package com.twittew.pwoduct_mixew.component_wibwawy.moduwe.http
 
-import com.google.inject.Provides
-import com.twitter.finagle.Http
-import com.twitter.finagle.http.ProxyCredentials
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientAcquisitionTimeout
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientConnectTimeout
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientRequestTimeout
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyRemoteHost
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyRemotePort
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyTwitterHost
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyTwitterPort
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
-import com.twitter.product_mixer.shared_library.http_client.FinagleHttpClientWithProxyBuilder.buildFinagleHttpClientWithCredentialProxy
-import com.twitter.product_mixer.shared_library.http_client.HttpHostPort
-import com.twitter.util.Duration
-import javax.inject.Named
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.finagwe.http
+i-impowt com.twittew.finagwe.http.pwoxycwedentiaws
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt c-com.twittew.inject.annotations.fwag
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.http.finagwehttpcwientmoduwe.httpcwientacquisitiontimeout
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.http.finagwehttpcwientmoduwe.httpcwientconnecttimeout
+impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.http.finagwehttpcwientmoduwe.httpcwientwequesttimeout
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.moduwe.http.finagwehttpcwientwithpwoxymoduwe.httpcwientwithpwoxywemotehost
+impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.http.finagwehttpcwientwithpwoxymoduwe.httpcwientwithpwoxywemotepowt
+impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.http.finagwehttpcwientwithpwoxymoduwe.httpcwientwithpwoxytwittewhost
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.http.finagwehttpcwientwithpwoxymoduwe.httpcwientwithpwoxytwittewpowt
+impowt com.twittew.pwoduct_mixew.cowe.moduwe.pwoduct_mixew_fwags.pwoductmixewfwagmoduwe.sewvicewocaw
+i-impowt com.twittew.pwoduct_mixew.shawed_wibwawy.http_cwient.finagwehttpcwientwithpwoxybuiwdew.buiwdfinagwehttpcwientwithcwedentiawpwoxy
+impowt com.twittew.pwoduct_mixew.shawed_wibwawy.http_cwient.httphostpowt
+impowt com.twittew.utiw.duwation
+i-impowt javax.inject.named
+i-impowt javax.inject.singweton
 
-object FinagleHttpClientWithCredentialProxyModule extends TwitterModule {
+o-object finagwehttpcwientwithcwedentiawpwoxymoduwe extends twittewmoduwe {
 
-  final val FinagleHttpClientWithCredentialProxy = "FinagleHttpClientWithCredentialProxy"
+  finaw vaw finagwehttpcwientwithcwedentiawpwoxy = "finagwehttpcwientwithcwedentiawpwoxy"
 
   /**
-   * Provide a Finagle HTTP client with Egress Proxy support using Credentials
+   * pwovide a finagwe http cwient w-with egwess pwoxy suppowt using cwedentiaws
    *
-   * Note that the timeouts configured in this module are meant to be a reasonable starting point
-   * only. To further tuning the settings, either override the flags or create local copy of the module.
+   * nyote that the timeouts c-configuwed in this moduwe awe meant t-to be a weasonabwe s-stawting p-point
+   * onwy. OwO t-to fuwthew tuning the settings, /(^•ω•^) eithew ovewwide t-the fwags ow cweate wocaw copy of the moduwe. 😳😳😳
    *
-   * @param proxyTwitterHost       Twitter egress proxy host
-   * @param proxyTwitterPort       Twitter egress proxy port
-   * @param proxyRemoteHost        Remote proxy host
-   * @param proxyRemotePort        Remote proxy port
-   * @param requestTimeout         HTTP client request timeout
-   * @param connectTimeout         HTTP client transport connect timeout
-   * @param acquisitionTimeout     HTTP client session acquisition timeout
-   * @param isServiceLocal         If this is a Local deployment for testing
-   * @param proxyCredentials       Proxy credentials
-   * @param statsReceiver          Stats
+   * @pawam p-pwoxytwittewhost       twittew egwess pwoxy host
+   * @pawam pwoxytwittewpowt       twittew egwess pwoxy powt
+   * @pawam p-pwoxywemotehost        wemote pwoxy host
+   * @pawam pwoxywemotepowt        w-wemote pwoxy p-powt
+   * @pawam w-wequesttimeout         http cwient wequest timeout
+   * @pawam connecttimeout         h-http cwient t-twanspowt connect timeout
+   * @pawam a-acquisitiontimeout     h-http cwient session acquisition t-timeout
+   * @pawam issewvicewocaw         i-if this is a wocaw depwoyment fow t-testing
+   * @pawam pwoxycwedentiaws       p-pwoxy cwedentiaws
+   * @pawam s-statsweceivew          s-stats
    *
-   * @return Finagle HTTP client with Egress Proxy support using Credentials
+   * @wetuwn finagwe http cwient with egwess pwoxy suppowt using cwedentiaws
    */
-  @Provides
-  @Singleton
-  @Named(FinagleHttpClientWithCredentialProxy)
-  def providesFinagleHttpClientWithCredentialProxy(
-    @Flag(HttpClientWithProxyTwitterHost) proxyTwitterHost: String,
-    @Flag(HttpClientWithProxyTwitterPort) proxyTwitterPort: Int,
-    @Flag(HttpClientWithProxyRemoteHost) proxyRemoteHost: String,
-    @Flag(HttpClientWithProxyRemotePort) proxyRemotePort: Int,
-    @Flag(HttpClientRequestTimeout) requestTimeout: Duration,
-    @Flag(HttpClientConnectTimeout) connectTimeout: Duration,
-    @Flag(HttpClientAcquisitionTimeout) acquisitionTimeout: Duration,
-    @Flag(ServiceLocal) isServiceLocal: Boolean,
-    proxyCredentials: ProxyCredentials,
-    statsReceiver: StatsReceiver
-  ): Http.Client = {
+  @pwovides
+  @singweton
+  @named(finagwehttpcwientwithcwedentiawpwoxy)
+  def pwovidesfinagwehttpcwientwithcwedentiawpwoxy(
+    @fwag(httpcwientwithpwoxytwittewhost) pwoxytwittewhost: s-stwing, ( ͡o ω ͡o )
+    @fwag(httpcwientwithpwoxytwittewpowt) p-pwoxytwittewpowt: int, >_<
+    @fwag(httpcwientwithpwoxywemotehost) p-pwoxywemotehost: s-stwing, >w<
+    @fwag(httpcwientwithpwoxywemotepowt) p-pwoxywemotepowt: int, rawr
+    @fwag(httpcwientwequesttimeout) wequesttimeout: duwation,
+    @fwag(httpcwientconnecttimeout) c-connecttimeout: duwation,
+    @fwag(httpcwientacquisitiontimeout) acquisitiontimeout: duwation, 😳
+    @fwag(sewvicewocaw) issewvicewocaw: b-boowean, >w<
+    pwoxycwedentiaws: p-pwoxycwedentiaws, (⑅˘꒳˘)
+    statsweceivew: s-statsweceivew
+  ): h-http.cwient = {
 
-    val twitterProxyHostPort = HttpHostPort(proxyTwitterHost, proxyTwitterPort)
-    val remoteProxyHostPort = HttpHostPort(proxyRemoteHost, proxyRemotePort)
+    vaw twittewpwoxyhostpowt = h-httphostpowt(pwoxytwittewhost, OwO p-pwoxytwittewpowt)
+    v-vaw wemotepwoxyhostpowt = h-httphostpowt(pwoxywemotehost, (ꈍᴗꈍ) pwoxywemotepowt)
 
-    buildFinagleHttpClientWithCredentialProxy(
-      twitterProxyHostPort = twitterProxyHostPort,
-      remoteProxyHostPort = remoteProxyHostPort,
-      requestTimeout = requestTimeout,
-      connectTimeout = connectTimeout,
-      acquisitionTimeout = acquisitionTimeout,
-      proxyCredentials = proxyCredentials,
-      statsReceiver = statsReceiver
+    buiwdfinagwehttpcwientwithcwedentiawpwoxy(
+      t-twittewpwoxyhostpowt = t-twittewpwoxyhostpowt, 😳
+      w-wemotepwoxyhostpowt = w-wemotepwoxyhostpowt, 😳😳😳
+      w-wequesttimeout = wequesttimeout, mya
+      connecttimeout = connecttimeout, mya
+      a-acquisitiontimeout = acquisitiontimeout,
+      pwoxycwedentiaws = pwoxycwedentiaws, (⑅˘꒳˘)
+      statsweceivew = statsweceivew
     )
   }
 }

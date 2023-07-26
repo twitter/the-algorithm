@@ -1,196 +1,196 @@
-package com.twitter.visibility.builder.dms
+package com.twittew.visibiwity.buiwdew.dms
 
-import com.twitter.convosvc.thriftscala.ConversationQuery
-import com.twitter.convosvc.thriftscala.ConversationQueryOptions
-import com.twitter.convosvc.thriftscala.ConversationType
-import com.twitter.convosvc.thriftscala.TimelineLookupState
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.common.DmConversationId
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.common.dm_sources.DmConversationSource
-import com.twitter.visibility.features._
+impowt c-com.twittew.convosvc.thwiftscawa.convewsationquewy
+i-impowt com.twittew.convosvc.thwiftscawa.convewsationquewyoptions
+i-impowt com.twittew.convosvc.thwiftscawa.convewsationtype
+impowt c-com.twittew.convosvc.thwiftscawa.timewinewookupstate
+i-impowt c-com.twittew.stitch.notfound
+i-impowt c-com.twittew.stitch.stitch
+impowt com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+impowt com.twittew.visibiwity.buiwdew.usews.authowfeatuwes
+impowt com.twittew.visibiwity.common.dmconvewsationid
+impowt com.twittew.visibiwity.common.usewid
+i-impowt com.twittew.visibiwity.common.dm_souwces.dmconvewsationsouwce
+impowt com.twittew.visibiwity.featuwes._
 
-case class InvalidDmConversationFeatureException(message: String) extends Exception(message)
+c-case cwass invawiddmconvewsationfeatuweexception(message: stwing) e-extends exception(message)
 
-class DmConversationFeatures(
-  dmConversationSource: DmConversationSource,
-  authorFeatures: AuthorFeatures) {
+cwass dmconvewsationfeatuwes(
+  dmconvewsationsouwce: dmconvewsationsouwce, ^^;;
+  authowfeatuwes: authowfeatuwes) {
 
-  def forDmConversationId(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): FeatureMapBuilder => FeatureMapBuilder =
-    _.withFeature(
-      DmConversationIsOneToOneConversation,
-      dmConversationIsOneToOneConversation(dmConversationId, viewerIdOpt))
-      .withFeature(
-        DmConversationHasEmptyTimeline,
-        dmConversationHasEmptyTimeline(dmConversationId, viewerIdOpt))
-      .withFeature(
-        DmConversationHasValidLastReadableEventId,
-        dmConversationHasValidLastReadableEventId(dmConversationId, viewerIdOpt))
-      .withFeature(
-        DmConversationInfoExists,
-        dmConversationInfoExists(dmConversationId, viewerIdOpt))
-      .withFeature(
-        DmConversationTimelineExists,
-        dmConversationTimelineExists(dmConversationId, viewerIdOpt))
-      .withFeature(
-        AuthorIsSuspended,
-        dmConversationHasSuspendedParticipant(dmConversationId, viewerIdOpt))
-      .withFeature(
-        AuthorIsDeactivated,
-        dmConversationHasDeactivatedParticipant(dmConversationId, viewerIdOpt))
-      .withFeature(
-        AuthorIsErased,
-        dmConversationHasErasedParticipant(dmConversationId, viewerIdOpt))
-      .withFeature(
-        ViewerIsDmConversationParticipant,
-        viewerIsDmConversationParticipant(dmConversationId, viewerIdOpt))
+  d-def fowdmconvewsationid(
+    dmconvewsationid: d-dmconvewsationid, XD
+    v-viewewidopt: option[usewid]
+  ): featuwemapbuiwdew => featuwemapbuiwdew =
+    _.withfeatuwe(
+      dmconvewsationisonetooneconvewsation, 🥺
+      dmconvewsationisonetooneconvewsation(dmconvewsationid, òωó viewewidopt))
+      .withfeatuwe(
+        d-dmconvewsationhasemptytimewine, (ˆ ﻌ ˆ)♡
+        dmconvewsationhasemptytimewine(dmconvewsationid, viewewidopt))
+      .withfeatuwe(
+        dmconvewsationhasvawidwastweadabweeventid, -.-
+        dmconvewsationhasvawidwastweadabweeventid(dmconvewsationid, :3 viewewidopt))
+      .withfeatuwe(
+        d-dmconvewsationinfoexists, ʘwʘ
+        dmconvewsationinfoexists(dmconvewsationid, 🥺 v-viewewidopt))
+      .withfeatuwe(
+        d-dmconvewsationtimewineexists, >_<
+        d-dmconvewsationtimewineexists(dmconvewsationid, ʘwʘ v-viewewidopt))
+      .withfeatuwe(
+        authowissuspended, (˘ω˘)
+        dmconvewsationhassuspendedpawticipant(dmconvewsationid, (✿oωo) v-viewewidopt))
+      .withfeatuwe(
+        authowisdeactivated, (///ˬ///✿)
+        dmconvewsationhasdeactivatedpawticipant(dmconvewsationid, rawr x3 viewewidopt))
+      .withfeatuwe(
+        a-authowisewased, -.-
+        dmconvewsationhasewasedpawticipant(dmconvewsationid, ^^ viewewidopt))
+      .withfeatuwe(
+        viewewisdmconvewsationpawticipant, (⑅˘꒳˘)
+        viewewisdmconvewsationpawticipant(dmconvewsationid, nyaa~~ viewewidopt))
 
-  def dmConversationIsOneToOneConversation(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    viewerIdOpt match {
-      case Some(viewerId) =>
-        dmConversationSource.getConversationType(dmConversationId, viewerId).flatMap {
-          case Some(ConversationType.OneToOneDm | ConversationType.SecretOneToOneDm) =>
-            Stitch.True
-          case None =>
-            Stitch.exception(InvalidDmConversationFeatureException("Conversation type not found"))
-          case _ => Stitch.False
+  def dmconvewsationisonetooneconvewsation(
+    d-dmconvewsationid: dmconvewsationid,
+    v-viewewidopt: o-option[usewid]
+  ): s-stitch[boowean] =
+    viewewidopt match {
+      case some(viewewid) =>
+        d-dmconvewsationsouwce.getconvewsationtype(dmconvewsationid, /(^•ω•^) v-viewewid).fwatmap {
+          case some(convewsationtype.onetoonedm | c-convewsationtype.secwetonetoonedm) =>
+            s-stitch.twue
+          case nyone =>
+            s-stitch.exception(invawiddmconvewsationfeatuweexception("convewsation type n-nyot found"))
+          case _ => stitch.fawse
         }
-      case _ => Stitch.exception(InvalidDmConversationFeatureException("Viewer id missing"))
+      c-case _ => stitch.exception(invawiddmconvewsationfeatuweexception("viewew id missing"))
     }
 
-  private[dms] def dmConversationHasEmptyTimeline(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    dmConversationSource
-      .getConversationTimelineEntries(
-        dmConversationId,
-        ConversationQuery(
-          conversationId = Some(dmConversationId),
-          options = Some(
-            ConversationQueryOptions(
-              perspectivalUserId = viewerIdOpt,
-              hydrateEvents = Some(false),
-              supportsReactions = Some(true)
+  p-pwivate[dms] def dmconvewsationhasemptytimewine(
+    d-dmconvewsationid: d-dmconvewsationid, (U ﹏ U)
+    viewewidopt: option[usewid]
+  ): stitch[boowean] =
+    dmconvewsationsouwce
+      .getconvewsationtimewineentwies(
+        dmconvewsationid, 😳😳😳
+        convewsationquewy(
+          convewsationid = s-some(dmconvewsationid), >w<
+          o-options = some(
+            convewsationquewyoptions(
+              p-pewspectivawusewid = v-viewewidopt, XD
+              h-hydwateevents = some(fawse), o.O
+              suppowtsweactions = some(twue)
             )
-          ),
-          maxCount = 10
+          ), mya
+          m-maxcount = 10
         )
-      ).map(_.forall(entries => entries.isEmpty))
+      ).map(_.fowaww(entwies => entwies.isempty))
 
-  private[dms] def dmConversationHasValidLastReadableEventId(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    viewerIdOpt match {
-      case Some(viewerId) =>
-        dmConversationSource
-          .getConversationLastReadableEventId(dmConversationId, viewerId).map(_.exists(id =>
-            id > 0L))
-      case _ => Stitch.exception(InvalidDmConversationFeatureException("Viewer id missing"))
+  pwivate[dms] def dmconvewsationhasvawidwastweadabweeventid(
+    dmconvewsationid: dmconvewsationid, 🥺
+    v-viewewidopt: option[usewid]
+  ): s-stitch[boowean] =
+    v-viewewidopt match {
+      c-case some(viewewid) =>
+        d-dmconvewsationsouwce
+          .getconvewsationwastweadabweeventid(dmconvewsationid, ^^;; v-viewewid).map(_.exists(id =>
+            i-id > 0w))
+      c-case _ => stitch.exception(invawiddmconvewsationfeatuweexception("viewew id missing"))
     }
 
-  private[dms] def dmConversationInfoExists(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    viewerIdOpt match {
-      case Some(viewerId) =>
-        dmConversationSource
-          .getDmConversationInfo(dmConversationId, viewerId).map(_.isDefined)
-      case _ => Stitch.exception(InvalidDmConversationFeatureException("Viewer id missing"))
+  p-pwivate[dms] d-def dmconvewsationinfoexists(
+    d-dmconvewsationid: d-dmconvewsationid, :3
+    v-viewewidopt: option[usewid]
+  ): stitch[boowean] =
+    viewewidopt match {
+      c-case some(viewewid) =>
+        dmconvewsationsouwce
+          .getdmconvewsationinfo(dmconvewsationid, (U ﹏ U) viewewid).map(_.isdefined)
+      case _ => stitch.exception(invawiddmconvewsationfeatuweexception("viewew id missing"))
     }
 
-  private[dms] def dmConversationTimelineExists(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    dmConversationSource
-      .getConversationTimelineState(
-        dmConversationId,
-        ConversationQuery(
-          conversationId = Some(dmConversationId),
-          options = Some(
-            ConversationQueryOptions(
-              perspectivalUserId = viewerIdOpt,
-              hydrateEvents = Some(false),
-              supportsReactions = Some(true)
+  p-pwivate[dms] def dmconvewsationtimewineexists(
+    dmconvewsationid: dmconvewsationid, OwO
+    viewewidopt: o-option[usewid]
+  ): s-stitch[boowean] =
+    d-dmconvewsationsouwce
+      .getconvewsationtimewinestate(
+        dmconvewsationid, 😳😳😳
+        c-convewsationquewy(
+          convewsationid = s-some(dmconvewsationid), (ˆ ﻌ ˆ)♡
+          o-options = some(
+            convewsationquewyoptions(
+              pewspectivawusewid = viewewidopt, XD
+              hydwateevents = s-some(fawse), (ˆ ﻌ ˆ)♡
+              suppowtsweactions = s-some(twue)
             )
-          ),
-          maxCount = 1
+          ), ( ͡o ω ͡o )
+          maxcount = 1
         )
       ).map {
-        case Some(TimelineLookupState.NotFound) | None => false
-        case _ => true
+        c-case some(timewinewookupstate.notfound) | n-nyone => fawse
+        case _ => twue
       }
 
-  private[dms] def anyConversationParticipantMatchesCondition(
-    condition: UserId => Stitch[Boolean],
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    viewerIdOpt match {
-      case Some(viewerId) =>
-        dmConversationSource
-          .getConversationParticipantIds(dmConversationId, viewerId).flatMap {
-            case Some(participants) =>
-              Stitch
-                .collect(participants.map(condition)).map(_.contains(true)).rescue {
-                  case NotFound =>
-                    Stitch.exception(InvalidDmConversationFeatureException("User not found"))
+  p-pwivate[dms] d-def anyconvewsationpawticipantmatchescondition(
+    condition: usewid => s-stitch[boowean], rawr x3
+    d-dmconvewsationid: dmconvewsationid,
+    viewewidopt: option[usewid]
+  ): stitch[boowean] =
+    v-viewewidopt m-match {
+      c-case some(viewewid) =>
+        dmconvewsationsouwce
+          .getconvewsationpawticipantids(dmconvewsationid, nyaa~~ v-viewewid).fwatmap {
+            c-case some(pawticipants) =>
+              stitch
+                .cowwect(pawticipants.map(condition)).map(_.contains(twue)).wescue {
+                  case n-notfound =>
+                    stitch.exception(invawiddmconvewsationfeatuweexception("usew nyot found"))
                 }
-            case _ => Stitch.False
+            case _ => stitch.fawse
           }
-      case _ => Stitch.exception(InvalidDmConversationFeatureException("Viewer id missing"))
+      c-case _ => stitch.exception(invawiddmconvewsationfeatuweexception("viewew i-id missing"))
     }
 
-  def dmConversationHasSuspendedParticipant(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    anyConversationParticipantMatchesCondition(
-      participant => authorFeatures.authorIsSuspended(participant),
-      dmConversationId,
-      viewerIdOpt)
+  def dmconvewsationhassuspendedpawticipant(
+    d-dmconvewsationid: d-dmconvewsationid, >_<
+    viewewidopt: option[usewid]
+  ): stitch[boowean] =
+    a-anyconvewsationpawticipantmatchescondition(
+      pawticipant => authowfeatuwes.authowissuspended(pawticipant), ^^;;
+      dmconvewsationid, (ˆ ﻌ ˆ)♡
+      viewewidopt)
 
-  def dmConversationHasDeactivatedParticipant(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    anyConversationParticipantMatchesCondition(
-      participant => authorFeatures.authorIsDeactivated(participant),
-      dmConversationId,
-      viewerIdOpt)
+  d-def dmconvewsationhasdeactivatedpawticipant(
+    dmconvewsationid: dmconvewsationid, ^^;;
+    v-viewewidopt: o-option[usewid]
+  ): stitch[boowean] =
+    anyconvewsationpawticipantmatchescondition(
+      pawticipant => a-authowfeatuwes.authowisdeactivated(pawticipant), (⑅˘꒳˘)
+      d-dmconvewsationid, rawr x3
+      viewewidopt)
 
-  def dmConversationHasErasedParticipant(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    anyConversationParticipantMatchesCondition(
-      participant => authorFeatures.authorIsErased(participant),
-      dmConversationId,
-      viewerIdOpt)
+  def dmconvewsationhasewasedpawticipant(
+    dmconvewsationid: d-dmconvewsationid,
+    viewewidopt: o-option[usewid]
+  ): stitch[boowean] =
+    anyconvewsationpawticipantmatchescondition(
+      pawticipant => a-authowfeatuwes.authowisewased(pawticipant), (///ˬ///✿)
+      dmconvewsationid, 🥺
+      v-viewewidopt)
 
-  def viewerIsDmConversationParticipant(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    viewerIdOpt match {
-      case Some(viewerId) =>
-        dmConversationSource
-          .getConversationParticipantIds(dmConversationId, viewerId).map {
-            case Some(participants) => participants.contains(viewerId)
-            case _ => false
+  d-def viewewisdmconvewsationpawticipant(
+    dmconvewsationid: d-dmconvewsationid, >_<
+    viewewidopt: o-option[usewid]
+  ): s-stitch[boowean] =
+    v-viewewidopt match {
+      case some(viewewid) =>
+        d-dmconvewsationsouwce
+          .getconvewsationpawticipantids(dmconvewsationid, UwU v-viewewid).map {
+            case some(pawticipants) => pawticipants.contains(viewewid)
+            c-case _ => f-fawse
           }
-      case _ => Stitch.exception(InvalidDmConversationFeatureException("Viewer id missing"))
+      c-case _ => stitch.exception(invawiddmconvewsationfeatuweexception("viewew id missing"))
     }
 }

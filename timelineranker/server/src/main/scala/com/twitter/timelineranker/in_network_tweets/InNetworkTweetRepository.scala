@@ -1,31 +1,31 @@
-package com.twitter.timelineranker.in_network_tweets
+package com.twittew.timewinewankew.in_netwowk_tweets
 
-import com.twitter.timelineranker.model.CandidateTweetsResult
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.parameters.in_network_tweets.InNetworkTweetParams
-import com.twitter.util.Future
+impowt com.twittew.timewinewankew.modew.candidatetweetswesuwt
+i-impowt com.twittew.timewinewankew.modew.wecapquewy
+i-impowt com.twittew.timewinewankew.modew.wecapquewy.dependencypwovidew
+i-impowt c-com.twittew.timewinewankew.pawametews.in_netwowk_tweets.innetwowktweetpawams
+i-impowt com.twittew.utiw.futuwe
 
 /**
- * A repository of in-network tweet candidates.
- * For now, it does not cache any results therefore forwards all calls to the underlying source.
+ * a-a wepositowy o-of in-netwowk t-tweet candidates. rawr x3
+ * fow nyow, nyaa~~ it does nyot cache any wesuwts thewefowe fowwawds a-aww cawws to the undewwying souwce. /(^•ω•^)
  */
-class InNetworkTweetRepository(
-  source: InNetworkTweetSource,
-  realtimeCGSource: InNetworkTweetSource) {
+cwass i-innetwowktweetwepositowy(
+  souwce: i-innetwowktweetsouwce, rawr
+  weawtimecgsouwce: innetwowktweetsouwce) {
 
-  private[this] val enableRealtimeCGProvider =
-    DependencyProvider.from(InNetworkTweetParams.EnableEarlybirdRealtimeCgMigrationParam)
+  pwivate[this] vaw enabweweawtimecgpwovidew =
+    d-dependencypwovidew.fwom(innetwowktweetpawams.enabweeawwybiwdweawtimecgmigwationpawam)
 
-  def get(query: RecapQuery): Future[CandidateTweetsResult] = {
-    if (enableRealtimeCGProvider(query)) {
-      realtimeCGSource.get(query)
-    } else {
-      source.get(query)
+  def get(quewy: w-wecapquewy): f-futuwe[candidatetweetswesuwt] = {
+    if (enabweweawtimecgpwovidew(quewy)) {
+      weawtimecgsouwce.get(quewy)
+    } ewse {
+      souwce.get(quewy)
     }
   }
 
-  def get(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
-    Future.collect(queries.map(query => get(query)))
+  d-def get(quewies: seq[wecapquewy]): futuwe[seq[candidatetweetswesuwt]] = {
+    futuwe.cowwect(quewies.map(quewy => get(quewy)))
   }
 }

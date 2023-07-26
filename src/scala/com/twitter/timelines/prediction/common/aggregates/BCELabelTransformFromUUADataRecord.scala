@@ -1,68 +1,68 @@
-package com.twitter.timelines.prediction.common.aggregates
+package com.twittew.timewines.pwediction.common.aggwegates
 
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.ITransform
-import com.twitter.ml.api.constant.SharedFeatures
-import java.lang.{Double => JDouble}
+impowt c-com.twittew.mw.api.featuwe
+i-impowt c-com.twittew.mw.api.featuwecontext
+i-impowt com.twittew.mw.api.itwansfowm
+i-impowt c-com.twittew.mw.api.constant.shawedfeatuwes
+i-impowt j-java.wang.{doubwe => jdoubwe}
 
-import com.twitter.timelines.prediction.common.adapters.AdapterConsumer
-import com.twitter.timelines.prediction.common.adapters.EngagementLabelFeaturesDataRecordUtils
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.timelines.suggests.common.engagement.thriftscala.EngagementType
-import com.twitter.timelines.suggests.common.engagement.thriftscala.Engagement
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import com.twitter.timelines.prediction.features.common.CombinedFeatures
+impowt com.twittew.timewines.pwediction.common.adaptews.adaptewconsumew
+impowt com.twittew.timewines.pwediction.common.adaptews.engagementwabewfeatuwesdatawecowdutiws
+i-impowt com.twittew.mw.api.datawecowd
+impowt com.twittew.mw.api.wichdatawecowd
+i-impowt com.twittew.timewines.suggests.common.engagement.thwiftscawa.engagementtype
+impowt c-com.twittew.timewines.suggests.common.engagement.thwiftscawa.engagement
+impowt com.twittew.timewines.pwediction.featuwes.common.timewinesshawedfeatuwes
+impowt c-com.twittew.timewines.pwediction.featuwes.common.combinedfeatuwes
 
 /**
- * To transfrom BCE events UUA data records that contain only continuous dwell time to datarecords that contain corresponding binary label features
- * The UUA datarecords inputted would have USER_ID, SOURCE_TWEET_ID,TIMESTAMP and
- * 0 or one of (TWEET_DETAIL_DWELL_TIME_MS, PROFILE_DWELL_TIME_MS, FULLSCREEN_VIDEO_DWELL_TIME_MS) features.
- * We will use the different engagement TIME_MS to differentiate different engagements,
- * and then re-use the function in EngagementTypeConverte to add the binary label to the datarecord.
+ * to twansfwom b-bce events u-uua data wecowds that contain onwy continuous dweww time to datawecowds that c-contain cowwesponding binawy wabew featuwes
+ * the uua datawecowds inputted wouwd h-have usew_id, souwce_tweet_id,timestamp a-and
+ * 0 o-ow one of (tweet_detaiw_dweww_time_ms, (U ﹏ U) p-pwofiwe_dweww_time_ms, >w< f-fuwwscween_video_dweww_time_ms) featuwes. (U ﹏ U)
+ * we wiww use the diffewent e-engagement time_ms to diffewentiate diffewent e-engagements, 😳
+ * and then we-use the function in engagementtypeconvewte to add the binawy wabew t-to the datawecowd. (ˆ ﻌ ˆ)♡
  **/
 
-object BCELabelTransformFromUUADataRecord extends ITransform {
+object b-bcewabewtwansfowmfwomuuadatawecowd e-extends i-itwansfowm {
 
-  val dwellTimeFeatureToEngagementMap = Map(
-    TimelinesSharedFeatures.TWEET_DETAIL_DWELL_TIME_MS -> EngagementType.TweetDetailDwell,
-    TimelinesSharedFeatures.PROFILE_DWELL_TIME_MS -> EngagementType.ProfileDwell,
-    TimelinesSharedFeatures.FULLSCREEN_VIDEO_DWELL_TIME_MS -> EngagementType.FullscreenVideoDwell
+  vaw dwewwtimefeatuwetoengagementmap = map(
+    timewinesshawedfeatuwes.tweet_detaiw_dweww_time_ms -> engagementtype.tweetdetaiwdweww, 😳😳😳
+    t-timewinesshawedfeatuwes.pwofiwe_dweww_time_ms -> e-engagementtype.pwofiwedweww,
+    timewinesshawedfeatuwes.fuwwscween_video_dweww_time_ms -> e-engagementtype.fuwwscweenvideodweww
   )
 
-  def dwellFeatureToEngagement(
-    rdr: RichDataRecord,
-    dwellTimeFeature: Feature[JDouble],
-    engagementType: EngagementType
-  ): Option[Engagement] = {
-    if (rdr.hasFeature(dwellTimeFeature)) {
-      Some(
-        Engagement(
-          engagementType = engagementType,
-          timestampMs = rdr.getFeatureValue(SharedFeatures.TIMESTAMP),
-          weight = Some(rdr.getFeatureValue(dwellTimeFeature))
+  d-def dwewwfeatuwetoengagement(
+    wdw: wichdatawecowd, (U ﹏ U)
+    d-dwewwtimefeatuwe: featuwe[jdoubwe], (///ˬ///✿)
+    e-engagementtype: engagementtype
+  ): option[engagement] = {
+    i-if (wdw.hasfeatuwe(dwewwtimefeatuwe)) {
+      some(
+        engagement(
+          e-engagementtype = engagementtype, 😳
+          t-timestampms = wdw.getfeatuwevawue(shawedfeatuwes.timestamp), 😳
+          w-weight = some(wdw.getfeatuwevawue(dwewwtimefeatuwe))
         ))
-    } else {
-      None
+    } ewse {
+      nyone
     }
   }
-  override def transformContext(featureContext: FeatureContext): FeatureContext = {
-    featureContext.addFeatures(
-      (CombinedFeatures.TweetDetailDwellEngagements ++ CombinedFeatures.ProfileDwellEngagements ++ CombinedFeatures.FullscreenVideoDwellEngagements).toSeq: _*)
+  ovewwide def twansfowmcontext(featuwecontext: featuwecontext): f-featuwecontext = {
+    f-featuwecontext.addfeatuwes(
+      (combinedfeatuwes.tweetdetaiwdwewwengagements ++ combinedfeatuwes.pwofiwedwewwengagements ++ c-combinedfeatuwes.fuwwscweenvideodwewwengagements).toseq: _*)
   }
-  override def transform(record: DataRecord): Unit = {
-    val rdr = new RichDataRecord(record)
-    val engagements = dwellTimeFeatureToEngagementMap
+  o-ovewwide def t-twansfowm(wecowd: datawecowd): unit = {
+    vaw wdw = nyew wichdatawecowd(wecowd)
+    v-vaw engagements = dwewwtimefeatuwetoengagementmap
       .map {
-        case (dwellTimeFeature, engagementType) =>
-          dwellFeatureToEngagement(rdr, dwellTimeFeature, engagementType)
-      }.flatten.toSeq
+        case (dwewwtimefeatuwe, σωσ engagementtype) =>
+          dwewwfeatuwetoengagement(wdw, rawr x3 d-dwewwtimefeatuwe, OwO engagementtype)
+      }.fwatten.toseq
 
-    // Re-use BCE( behavior client events) label conversion in EngagementTypeConverter to align with BCE labels generation for offline training data
-    EngagementLabelFeaturesDataRecordUtils.setDwellTimeFeatures(
-      rdr,
-      Some(engagements),
-      AdapterConsumer.Combined)
+    // w-we-use bce( behaviow c-cwient events) w-wabew convewsion in engagementtypeconvewtew t-to awign with bce w-wabews genewation f-fow offwine t-twaining data
+    engagementwabewfeatuwesdatawecowdutiws.setdwewwtimefeatuwes(
+      wdw, /(^•ω•^)
+      s-some(engagements), 😳😳😳
+      a-adaptewconsumew.combined)
   }
 }

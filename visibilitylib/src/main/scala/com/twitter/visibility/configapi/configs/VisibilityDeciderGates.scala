@@ -1,73 +1,73 @@
-package com.twitter.visibility.configapi.configs
+package com.twittew.visibiwity.configapi.configs
 
-import com.twitter.decider.Decider
-import com.twitter.servo.gate.DeciderGate
-import com.twitter.servo.util.Gate
+impowt com.twittew.decidew.decidew
+i-impowt com.twittew.sewvo.gate.decidewgate
+i-impowt c-com.twittew.sewvo.utiw.gate
 
-case class VisibilityDeciderGates(decider: Decider) {
-  import DeciderKey._
+c-case cwass visibiwitydecidewgates(decidew: d-decidew) {
+  i-impowt d-decidewkey._
 
-  private[this] def feature(deciderKey: Value) = decider.feature(deciderKey.toString)
+  p-pwivate[this] def featuwe(decidewkey: vawue) = decidew.featuwe(decidewkey.tostwing)
 
-  val enableFetchTweetReportedPerspective: Gate[Unit] =
-    DeciderGate.linear(feature(DeciderKey.EnableFetchTweetReportedPerspective))
-  val enableFetchTweetMediaMetadata: Gate[Unit] =
-    DeciderGate.linear(feature(DeciderKey.EnableFetchTweetMediaMetadata))
-  val enableFollowCheckInMutedKeyword: Gate[Unit] =
-    DeciderGate.linear(feature(DeciderKey.VisibilityLibraryEnableFollowCheckInMutedKeyword))
-  val enableMediaInterstitialComposition: Gate[Unit] =
-    DeciderGate.linear(feature(DeciderKey.VisibilityLibraryEnableMediaInterstitialComposition))
-  val enableExperimentalRuleEngine: Gate[Unit] =
-    DeciderGate.linear(feature(DeciderKey.EnableExperimentalRuleEngine))
+  vaw enabwefetchtweetwepowtedpewspective: g-gate[unit] =
+    decidewgate.wineaw(featuwe(decidewkey.enabwefetchtweetwepowtedpewspective))
+  vaw enabwefetchtweetmediametadata: g-gate[unit] =
+    decidewgate.wineaw(featuwe(decidewkey.enabwefetchtweetmediametadata))
+  v-vaw enabwefowwowcheckinmutedkeywowd: gate[unit] =
+    decidewgate.wineaw(featuwe(decidewkey.visibiwitywibwawyenabwefowwowcheckinmutedkeywowd))
+  v-vaw enabwemediaintewstitiawcomposition: g-gate[unit] =
+    d-decidewgate.wineaw(featuwe(decidewkey.visibiwitywibwawyenabwemediaintewstitiawcomposition))
+  vaw enabweexpewimentawwuweengine: gate[unit] =
+    decidewgate.wineaw(featuwe(decidewkey.enabweexpewimentawwuweengine))
 
-  val enableLocalizedInterstitialGenerator: Gate[Unit] =
-    DeciderGate.linear(feature(DeciderKey.EnableLocalizedInterstitialGenerator))
+  vaw enabwewocawizedintewstitiawgenewatow: g-gate[unit] =
+    decidewgate.wineaw(featuwe(decidewkey.enabwewocawizedintewstitiawgenewatow))
 
-  val enableShortCircuitingTVL: Gate[Unit] =
-    DeciderGate.linear(feature(EnableShortCircuitingFromTweetVisibilityLibrary))
-  val enableVerdictLoggerTVL = DeciderGate.linear(
-    feature(DeciderKey.EnableVerdictLoggerEventPublisherInstantiationFromTweetVisibilityLibrary))
-  val enableVerdictScribingTVL =
-    DeciderGate.linear(feature(DeciderKey.EnableVerdictScribingFromTweetVisibilityLibrary))
-  val enableBackendLimitedActions =
-    DeciderGate.linear(feature(DeciderKey.EnableBackendLimitedActions))
-  val enableMemoizeSafetyLevelParams: Gate[Unit] =
-    DeciderGate.linear(feature(DeciderKey.EnableMemoizeSafetyLevelParams))
+  vaw enabweshowtciwcuitingtvw: gate[unit] =
+    decidewgate.wineaw(featuwe(enabweshowtciwcuitingfwomtweetvisibiwitywibwawy))
+  v-vaw enabwevewdictwoggewtvw = decidewgate.wineaw(
+    f-featuwe(decidewkey.enabwevewdictwoggeweventpubwishewinstantiationfwomtweetvisibiwitywibwawy))
+  v-vaw e-enabwevewdictscwibingtvw =
+    d-decidewgate.wineaw(featuwe(decidewkey.enabwevewdictscwibingfwomtweetvisibiwitywibwawy))
+  vaw enabwebackendwimitedactions =
+    decidewgate.wineaw(featuwe(decidewkey.enabwebackendwimitedactions))
+  v-vaw enabwememoizesafetywevewpawams: gate[unit] =
+    decidewgate.wineaw(featuwe(decidewkey.enabwememoizesafetywevewpawams))
 
-  val enableShortCircuitingBVL: Gate[Unit] =
-    DeciderGate.linear(feature(EnableShortCircuitingFromBlenderVisibilityLibrary))
-  val enableVerdictLoggerBVL = DeciderGate.linear(
-    feature(DeciderKey.EnableVerdictLoggerEventPublisherInstantiationFromBlenderVisibilityLibrary))
-  val enableVerdictScribingBVL =
-    DeciderGate.linear(feature(DeciderKey.EnableVerdictScribingFromBlenderVisibilityLibrary))
+  v-vaw enabweshowtciwcuitingbvw: gate[unit] =
+    decidewgate.wineaw(featuwe(enabweshowtciwcuitingfwombwendewvisibiwitywibwawy))
+  vaw enabwevewdictwoggewbvw = decidewgate.wineaw(
+    featuwe(decidewkey.enabwevewdictwoggeweventpubwishewinstantiationfwombwendewvisibiwitywibwawy))
+  v-vaw enabwevewdictscwibingbvw =
+    decidewgate.wineaw(featuwe(decidewkey.enabwevewdictscwibingfwombwendewvisibiwitywibwawy))
 
-  val enableShortCircuitingSVL: Gate[Unit] =
-    DeciderGate.linear(feature(EnableShortCircuitingFromSearchVisibilityLibrary))
-  val enableVerdictLoggerSVL = DeciderGate.linear(
-    feature(DeciderKey.EnableVerdictLoggerEventPublisherInstantiationFromSearchVisibilityLibrary))
-  val enableVerdictScribingSVL =
-    DeciderGate.linear(feature(DeciderKey.EnableVerdictScribingFromSearchVisibilityLibrary))
+  v-vaw e-enabweshowtciwcuitingsvw: g-gate[unit] =
+    decidewgate.wineaw(featuwe(enabweshowtciwcuitingfwomseawchvisibiwitywibwawy))
+  vaw enabwevewdictwoggewsvw = decidewgate.wineaw(
+    f-featuwe(decidewkey.enabwevewdictwoggeweventpubwishewinstantiationfwomseawchvisibiwitywibwawy))
+  v-vaw enabwevewdictscwibingsvw =
+    decidewgate.wineaw(featuwe(decidewkey.enabwevewdictscwibingfwomseawchvisibiwitywibwawy))
 
-  val enableShortCircuitingTCVL: Gate[Unit] =
-    DeciderGate.linear(feature(EnableShortCircuitingFromTimelineConversationsVisibilityLibrary))
-  val enableVerdictLoggerTCVL = DeciderGate.linear(feature(
-    DeciderKey.EnableVerdictLoggerEventPublisherInstantiationFromTimelineConversationsVisibilityLibrary))
-  val enableVerdictScribingTCVL =
-    DeciderGate.linear(
-      feature(DeciderKey.EnableVerdictScribingFromTimelineConversationsVisibilityLibrary))
+  v-vaw enabweshowtciwcuitingtcvw: gate[unit] =
+    d-decidewgate.wineaw(featuwe(enabweshowtciwcuitingfwomtimewineconvewsationsvisibiwitywibwawy))
+  vaw enabwevewdictwoggewtcvw = d-decidewgate.wineaw(featuwe(
+    decidewkey.enabwevewdictwoggeweventpubwishewinstantiationfwomtimewineconvewsationsvisibiwitywibwawy))
+  v-vaw enabwevewdictscwibingtcvw =
+    decidewgate.wineaw(
+      featuwe(decidewkey.enabwevewdictscwibingfwomtimewineconvewsationsvisibiwitywibwawy))
 
-  val enableCardVisibilityLibraryCardUriParsing =
-    DeciderGate.linear(feature(DeciderKey.EnableCardVisibilityLibraryCardUriParsing))
+  v-vaw enabwecawdvisibiwitywibwawycawduwipawsing =
+    decidewgate.wineaw(featuwe(decidewkey.enabwecawdvisibiwitywibwawycawduwipawsing))
 
-  val enableConvosLocalizedInterstitial: Gate[Unit] =
-    DeciderGate.linear(feature(DeciderKey.EnableConvosLocalizedInterstitial))
+  vaw enabweconvoswocawizedintewstitiaw: g-gate[unit] =
+    decidewgate.wineaw(featuwe(decidewkey.enabweconvoswocawizedintewstitiaw))
 
-  val enableConvosLegacyInterstitial: Gate[Unit] =
-    DeciderGate.linear(feature(DeciderKey.EnableConvosLegacyInterstitial))
+  v-vaw enabweconvoswegacyintewstitiaw: g-gate[unit] =
+    decidewgate.wineaw(featuwe(decidewkey.enabweconvoswegacyintewstitiaw))
 
-  val disableLegacyInterstitialFilteredReason: Gate[Unit] =
-    DeciderGate.linear(feature(DeciderKey.DisableLegacyInterstitialFilteredReason))
+  vaw disabwewegacyintewstitiawfiwtewedweason: gate[unit] =
+    decidewgate.wineaw(featuwe(decidewkey.disabwewegacyintewstitiawfiwtewedweason))
 
-  val enableLocalizedInterstitialInUserStateLibrary: Gate[Unit] =
-    DeciderGate.linear(feature(DeciderKey.EnableLocalizedInterstitialInUserStateLib))
+  vaw enabwewocawizedintewstitiawinusewstatewibwawy: gate[unit] =
+    d-decidewgate.wineaw(featuwe(decidewkey.enabwewocawizedintewstitiawinusewstatewib))
 }

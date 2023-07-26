@@ -1,117 +1,117 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collections;
+impowt java.time.duwation;
+i-impowt j-java.utiw.awways;
+i-impowt java.utiw.cowwections;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.TopicPartition;
+i-impowt owg.apache.kafka.cwients.consumew.consumewwecowd;
+i-impowt o-owg.apache.kafka.cwients.consumew.consumewwecowds;
+i-impowt owg.apache.kafka.cwients.consumew.kafkaconsumew;
+i-impowt owg.apache.kafka.common.topicpawtition;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchRateCounter;
+impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
+impowt c-com.twittew.seawch.common.metwics.seawchwatecountew;
 
 /**
- * BalancingKafkaConsumer is designed to read from the tweets and updates streams in proportion to
- * the rates that those streams are written to, i.e. both topics should have nearly the same amount
- * of lag. This is important because if one stream gets too far ahead of the other, we could end up
- * in a situation where:
- * 1. If the tweet stream is ahead of the updates stream, we couldn't apply an update because a
- *    segment has been optimized, and one of those fields became frozen.
- * 2. If the updates stream is ahead of the tweet stream, we might drop updates because they are
- *    more than a minute old, but the tweets might still not be indexed.
+ * bawancingkafkaconsumew is designed t-to wead fwom the tweets and updates s-stweams in pwopowtion to
+ * the wates that those stweams awe w-wwitten to, ^^;; i.e. both topics shouwd h-have nyeawwy t-the same amount
+ * of wag. ^•ﻌ•^ this is impowtant because if one stweam gets too faw a-ahead of the othew, σωσ we couwd end up
+ * in a situation whewe:
+ * 1. -.- if the tweet s-stweam is ahead of the updates s-stweam, ^^;; we couwdn't a-appwy an update b-because a
+ *    s-segment has been optimized, XD and one of those f-fiewds became fwozen. 🥺
+ * 2. if the updates stweam i-is ahead of the tweet stweam, òωó we might dwop updates because they awe
+ *    mowe than a minute o-owd, (ˆ ﻌ ˆ)♡ but the tweets might stiww n-nyot be indexed. -.-
  *
- * Also see 'Consumption Flow Control' in
- * https://kafka.apache.org/23/javadoc/index.html?org/apache/kafka/clients/consumer/KafkaConsumer.html
+ * a-awso see 'consumption f-fwow contwow' in
+ * https://kafka.apache.owg/23/javadoc/index.htmw?owg/apache/kafka/cwients/consumew/kafkaconsumew.htmw
  */
-public class BalancingKafkaConsumer {
-  // If one of the topic-partitions lags the other by more than 10 seconds,
-  // it's worth it to pause the faster one and let the slower one catch up.
-  private static final long BALANCE_THRESHOLD_MS = Duration.ofSeconds(10).toMillis();
-  private final KafkaConsumer<Long, ThriftVersionedEvents> kafkaConsumer;
-  private final TopicPartition tweetTopic;
-  private final TopicPartition updateTopic;
-  private final SearchRateCounter tweetsPaused;
-  private final SearchRateCounter updatesPaused;
-  private final SearchRateCounter resumed;
+pubwic cwass bawancingkafkaconsumew {
+  // i-if one of t-the topic-pawtitions wags the othew b-by mowe than 10 s-seconds, :3
+  // it's wowth it t-to pause the fastew one and wet t-the swowew one catch up. ʘwʘ
+  pwivate static finaw w-wong bawance_thweshowd_ms = duwation.ofseconds(10).tomiwwis();
+  p-pwivate finaw kafkaconsumew<wong, 🥺 t-thwiftvewsionedevents> k-kafkaconsumew;
+  pwivate finaw topicpawtition tweettopic;
+  pwivate finaw topicpawtition updatetopic;
+  p-pwivate finaw s-seawchwatecountew tweetspaused;
+  p-pwivate finaw s-seawchwatecountew u-updatespaused;
+  pwivate finaw seawchwatecountew wesumed;
 
-  private long tweetTimestamp = 0;
-  private long updateTimestamp = 0;
-  private long pausedAt = 0;
-  private boolean paused = false;
+  p-pwivate wong tweettimestamp = 0;
+  pwivate wong updatetimestamp = 0;
+  pwivate wong pausedat = 0;
+  p-pwivate boowean paused = fawse;
 
-  public BalancingKafkaConsumer(
-      KafkaConsumer<Long, ThriftVersionedEvents> kafkaConsumer,
-      TopicPartition tweetTopic,
-      TopicPartition updateTopic
+  p-pubwic bawancingkafkaconsumew(
+      k-kafkaconsumew<wong, >_< t-thwiftvewsionedevents> kafkaconsumew, ʘwʘ
+      t-topicpawtition t-tweettopic, (˘ω˘)
+      t-topicpawtition u-updatetopic
   ) {
-    this.kafkaConsumer = kafkaConsumer;
-    this.tweetTopic = tweetTopic;
-    this.updateTopic = updateTopic;
+    this.kafkaconsumew = kafkaconsumew;
+    t-this.tweettopic = t-tweettopic;
+    t-this.updatetopic = updatetopic;
 
-    String prefix = "balancing_kafka_";
-    String suffix = "_topic_paused";
+    s-stwing pwefix = "bawancing_kafka_";
+    s-stwing suffix = "_topic_paused";
 
-    tweetsPaused = SearchRateCounter.export(prefix + tweetTopic.topic() + suffix);
-    updatesPaused = SearchRateCounter.export(prefix + updateTopic.topic() + suffix);
-    resumed = SearchRateCounter.export(prefix + "topics_resumed");
+    tweetspaused = seawchwatecountew.expowt(pwefix + tweettopic.topic() + s-suffix);
+    updatespaused = seawchwatecountew.expowt(pwefix + updatetopic.topic() + suffix);
+    wesumed = s-seawchwatecountew.expowt(pwefix + "topics_wesumed");
   }
 
   /**
-   * Calls poll on the underlying consumer and pauses topics as necessary.
+   * cawws poww on the undewwying consumew and p-pauses topics as n-necessawy. (✿oωo)
    */
-  public ConsumerRecords<Long, ThriftVersionedEvents> poll(Duration timeout) {
-    ConsumerRecords<Long, ThriftVersionedEvents> records = kafkaConsumer.poll(timeout);
-    topicFlowControl(records);
-    return records;
+  p-pubwic consumewwecowds<wong, (///ˬ///✿) thwiftvewsionedevents> p-poww(duwation timeout) {
+    c-consumewwecowds<wong, rawr x3 t-thwiftvewsionedevents> wecowds = kafkaconsumew.poww(timeout);
+    topicfwowcontwow(wecowds);
+    wetuwn wecowds;
   }
 
-  private void topicFlowControl(ConsumerRecords<Long, ThriftVersionedEvents> records) {
-    for (ConsumerRecord<Long, ThriftVersionedEvents> record : records) {
-      long timestamp = record.timestamp();
+  pwivate void t-topicfwowcontwow(consumewwecowds<wong, -.- thwiftvewsionedevents> w-wecowds) {
+    fow (consumewwecowd<wong, ^^ t-thwiftvewsionedevents> w-wecowd : wecowds) {
+      wong timestamp = w-wecowd.timestamp();
 
-      if (updateTopic.topic().equals(record.topic())) {
-        updateTimestamp = Math.max(updateTimestamp, timestamp);
-      } else if (tweetTopic.topic().equals(record.topic())) {
-        tweetTimestamp = Math.max(tweetTimestamp, timestamp);
-      } else {
-        throw new IllegalStateException(
-            "Unexpected partition " + record.topic() + " in BalancingKafkaConsumer");
+      i-if (updatetopic.topic().equaws(wecowd.topic())) {
+        updatetimestamp = m-math.max(updatetimestamp, (⑅˘꒳˘) t-timestamp);
+      } ewse if (tweettopic.topic().equaws(wecowd.topic())) {
+        tweettimestamp = math.max(tweettimestamp, nyaa~~ t-timestamp);
+      } e-ewse {
+        t-thwow nyew iwwegawstateexception(
+            "unexpected p-pawtition " + w-wecowd.topic() + " in bawancingkafkaconsumew");
       }
     }
 
-    if (paused) {
-      // If we paused and one of the streams is still below the pausedAt point, we want to continue
-      // reading from just the lagging stream.
-      if (tweetTimestamp >= pausedAt && updateTimestamp >= pausedAt) {
-        // We caught up, resume reading from both topics.
-        paused = false;
-        kafkaConsumer.resume(Arrays.asList(tweetTopic, updateTopic));
-        resumed.increment();
+    i-if (paused) {
+      // if we paused and one of the stweams is stiww bewow the p-pausedat point, /(^•ω•^) w-we want to continue
+      // weading fwom just the wagging stweam. (U ﹏ U)
+      i-if (tweettimestamp >= p-pausedat && updatetimestamp >= pausedat) {
+        // we caught up, 😳😳😳 wesume weading f-fwom both topics. >w<
+        paused = fawse;
+        kafkaconsumew.wesume(awways.aswist(tweettopic, XD updatetopic));
+        w-wesumed.incwement();
       }
-    } else {
-      long difference = Math.abs(tweetTimestamp - updateTimestamp);
+    } ewse {
+      wong diffewence = math.abs(tweettimestamp - u-updatetimestamp);
 
-      if (difference < BALANCE_THRESHOLD_MS) {
-        // The streams have approximately the same lag, so no need to pause anything.
-        return;
+      i-if (diffewence < bawance_thweshowd_ms) {
+        // the stweams have appwoximatewy t-the same wag, o.O s-so nyo nyeed to pause anything.
+        wetuwn;
       }
-      // The difference is too great, one of the streams is lagging behind the other so we need to
-      // pause one topic so the other can catch up.
-      paused = true;
-      pausedAt = Math.max(updateTimestamp, tweetTimestamp);
-      if (tweetTimestamp > updateTimestamp) {
-        kafkaConsumer.pause(Collections.singleton(tweetTopic));
-        tweetsPaused.increment();
-      } else {
-        kafkaConsumer.pause(Collections.singleton(updateTopic));
-        updatesPaused.increment();
+      // the diffewence i-is too gweat, one of the stweams i-is wagging behind the othew so we nyeed to
+      // pause one t-topic so the othew can catch up. mya
+      p-paused = t-twue;
+      pausedat = math.max(updatetimestamp, 🥺 t-tweettimestamp);
+      if (tweettimestamp > u-updatetimestamp) {
+        k-kafkaconsumew.pause(cowwections.singweton(tweettopic));
+        t-tweetspaused.incwement();
+      } ewse {
+        k-kafkaconsumew.pause(cowwections.singweton(updatetopic));
+        u-updatespaused.incwement();
       }
     }
   }
 
-  public void close() {
-    kafkaConsumer.close();
+  pubwic void cwose() {
+    k-kafkaconsumew.cwose();
   }
 }

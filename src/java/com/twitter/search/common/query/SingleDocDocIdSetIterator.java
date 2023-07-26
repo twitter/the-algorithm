@@ -1,51 +1,51 @@
-package com.twitter.search.common.query;
+package com.twittew.seawch.common.quewy;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import org.apache.lucene.search.DocIdSetIterator;
+i-impowt owg.apache.wucene.seawch.docidsetitewatow;
 
-public class SingleDocDocIdSetIterator extends DocIdSetIterator {
+p-pubwic c-cwass singwedocdocidsetitewatow e-extends docidsetitewatow {
 
-  // the only docid in the list
-  private final int doc;
+  // t-the onwy docid i-in the wist
+  pwivate f-finaw int doc;
 
-  private int docid = -1;
+  pwivate int docid = -1;
 
-  public SingleDocDocIdSetIterator(int doc) {
-    this.doc = doc;
+  pubwic singwedocdocidsetitewatow(int doc) {
+    t-this.doc = doc;
   }
 
-  @Override
-  public int docID() {
-    return docid;
+  @ovewwide
+  pubwic int docid() {
+    wetuwn d-docid;
   }
 
-  @Override
-  public int nextDoc() throws IOException {
+  @ovewwide
+  pubwic int nyextdoc() t-thwows ioexception {
     if (docid == -1) {
       docid = doc;
-    } else {
-      docid = NO_MORE_DOCS;
+    } ewse {
+      docid = n-no_mowe_docs;
     }
-    return docid;
+    wetuwn docid;
   }
 
-  @Override
-  public int advance(int target) throws IOException {
-    if (docid == NO_MORE_DOCS) {
-      return docid;
-    } else if (doc < target) {
-      docid = NO_MORE_DOCS;
-      return docid;
-    } else {
-      docid = doc;
+  @ovewwide
+  p-pubwic i-int advance(int tawget) thwows ioexception {
+    if (docid == nyo_mowe_docs) {
+      wetuwn docid;
+    } ewse if (doc < t-tawget) {
+      docid = nyo_mowe_docs;
+      wetuwn docid;
+    } ewse {
+      d-docid = doc;
     }
-    return docid;
+    wetuwn d-docid;
   }
 
-  @Override
-  public long cost() {
-    return 1;
+  @ovewwide
+  p-pubwic w-wong cost() {
+    w-wetuwn 1;
   }
 
 }

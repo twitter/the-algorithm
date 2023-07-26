@@ -1,24 +1,24 @@
-package com.twitter.interaction_graph.scio.agg_flock
+package com.twittew.intewaction_gwaph.scio.agg_fwock
 
-import com.twitter.beam.io.dal.DALOptions
-import com.twitter.beam.job.DateRangeOptions
-import org.apache.beam.sdk.options.Default
-import org.apache.beam.sdk.options.Description
-import org.apache.beam.sdk.options.Validation.Required
+impowt com.twittew.beam.io.daw.dawoptions
+impowt c-com.twittew.beam.job.datewangeoptions
+i-impowt o-owg.apache.beam.sdk.options.defauwt
+i-impowt owg.apache.beam.sdk.options.descwiption
+i-impowt owg.apache.beam.sdk.options.vawidation.wequiwed
 
-trait InteractionGraphAggFlockOption extends DALOptions with DateRangeOptions {
-  @Required
-  @Description("Output path for storing the final dataset")
-  def getOutputPath: String
-  def setOutputPath(value: String): Unit
+t-twait i-intewactiongwaphaggfwockoption e-extends dawoptions with datewangeoptions {
+  @wequiwed
+  @descwiption("output path fow stowing the finaw dataset")
+  def getoutputpath: s-stwing
+  def setoutputpath(vawue: stwing): u-unit
 
-  @Description("Indicates DAL write environment. Can be set to dev/stg during local validation")
-  @Default.String("PROD")
-  def getDALWriteEnvironment: String
-  def setDALWriteEnvironment(value: String): Unit
+  @descwiption("indicates daw wwite e-enviwonment. rawr x3 can be set to dev/stg duwing wocaw vawidation")
+  @defauwt.stwing("pwod")
+  d-def getdawwwiteenviwonment: stwing
+  def s-setdawwwiteenviwonment(vawue: s-stwing): unit
 
-  @Description("Number of shards/partitions for saving the final dataset.")
-  @Default.Integer(16)
-  def getNumberOfShards: Integer
-  def setNumberOfShards(value: Integer): Unit
+  @descwiption("numbew of shawds/pawtitions fow saving the finaw dataset.")
+  @defauwt.integew(16)
+  d-def getnumbewofshawds: integew
+  def setnumbewofshawds(vawue: integew): unit
 }

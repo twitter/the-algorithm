@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwp
 
-import com.twitter.pages.render.{thriftscala => urp}
-import com.twitter.product_mixer.core.model.marshalling.response.urp.SegmentedTimelinesPageBody
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pages.wendew.{thwiftscawa => u-uwp}
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.segmentedtimewinespagebody
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class SegmentedTimelinesMarshaller @Inject() (
-  segmentedTimelineMarshaller: SegmentedTimelineMarshaller) {
+@singweton
+c-cwass s-segmentedtimewinesmawshawwew @inject() (
+  segmentedtimewinemawshawwew: s-segmentedtimewinemawshawwew) {
 
-  def apply(segmentedTimelinesPageBody: SegmentedTimelinesPageBody): urp.SegmentedTimelines =
-    urp.SegmentedTimelines(
-      initialTimeline = segmentedTimelineMarshaller(segmentedTimelinesPageBody.initialTimeline),
-      timelines = segmentedTimelinesPageBody.timelines.map(segmentedTimelineMarshaller(_))
+  def appwy(segmentedtimewinespagebody: segmentedtimewinespagebody): uwp.segmentedtimewines =
+    u-uwp.segmentedtimewines(
+      initiawtimewine = segmentedtimewinemawshawwew(segmentedtimewinespagebody.initiawtimewine), (U ﹏ U)
+      t-timewines = segmentedtimewinespagebody.timewines.map(segmentedtimewinemawshawwew(_))
     )
 }

@@ -1,10 +1,10 @@
-#@namespace scala com.twitter.ann.serialization.thriftscala
+#@namespace scawa com.twittew.ann.sewiawization.thwiftscawa
 
-include "com/twitter/ml/api/embedding.thrift"
+i-incwude "com/twittew/mw/api/embedding.thwift"
 /**
-* Thrift schema for storing embeddings in a file
+* t-thwift schema fow s-stowing embeddings i-in a fiwe
 */
-struct PersistedEmbedding {
-  1: required binary id
-  2: required embedding.Embedding embedding
-}(persisted = 'true')
+s-stwuct pewsistedembedding {
+  1: w-wequiwed binawy i-id
+  2: wequiwed e-embedding.embedding embedding
+}(pewsisted = 'twue')

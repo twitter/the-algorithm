@@ -1,8 +1,8 @@
-# Topic Social Proof Service (TSPS)
+# topic sociaw pwoof sewvice (tsps)
 =================
 
-**Topic Social Proof Service** (TSPS) serves as a centralized source for verifying topics related to Timelines and Notifications. By analyzing user's topic preferences, such as following or unfollowing, and employing semantic annotations and tweet embeddings from SimClusters, or other machine learning models, TSPS delivers highly relevant topics tailored to each user's interests.
+**topic s-sociaw p-pwoof sewvice** (tsps) s-sewves a-as a centwawized s-souwce fow vewifying t-topics w-wewated to timewines a-and nyotifications. >_< by anawyzing usew's topic pwefewences, such as fowwowing o-ow unfowwowing, (⑅˘꒳˘) and empwoying semantic annotations a-and tweet embeddings fwom simcwustews, o-ow othew machine weawning modews, /(^•ω•^) tsps dewivews highwy w-wewevant topics taiwowed to each u-usew's intewests.
 
-For instance, when a tweet discusses Stephen Curry, the service determines if the content falls under topics like "NBA" and/or "Golden State Warriors" while also providing relevance scores based on SimClusters Embedding. Additionally, TSPS evaluates user-specific topic preferences to offer a comprehensive list of available topics, only those the user is currently following, or new topics they have not followed but may find interesting if recommended on specific product surfaces.
+f-fow instance, rawr x3 when a tweet discusses stephen cuwwy, (U ﹏ U) the sewvice detewmines i-if the content fawws undew topics wike "nba" and/ow "gowden state wawwiows" whiwe a-awso pwoviding wewevance scowes b-based on simcwustews e-embedding. (U ﹏ U) a-additionawwy, (⑅˘꒳˘) t-tsps evawuates usew-specific topic pwefewences t-to offew a compwehensive wist of avaiwabwe topics, òωó o-onwy those the usew is cuwwentwy fowwowing, ʘwʘ ow nyew topics they have nyot fowwowed but may find i-intewesting if wecommended on s-specific pwoduct s-suwfaces. /(^•ω•^)
 
 

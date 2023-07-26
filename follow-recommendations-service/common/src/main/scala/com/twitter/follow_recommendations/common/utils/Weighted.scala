@@ -1,21 +1,21 @@
-package com.twitter.follow_recommendations.common.utils
+package com.twittew.fowwow_wecommendations.common.utiws
 
 /**
- * Typeclass for any Recommendation type that has a weight
+ * typecwass fow any w-wecommendation t-type that has a w-weight
  *
  */
-trait Weighted[-Rec] {
-  def apply(rec: Rec): Double
+twait w-weighted[-wec] {
+  d-def appwy(wec: w-wec): doubwe
 }
 
-object Weighted {
-  implicit object WeightedTuple extends Weighted[(_, Double)] {
-    override def apply(rec: (_, Double)): Double = rec._2
+o-object weighted {
+  i-impwicit object weightedtupwe extends weighted[(_, -.- doubwe)] {
+    ovewwide d-def appwy(wec: (_, ^^;; doubwe)): doubwe = wec._2
   }
 
-  def fromFunction[Rec](f: Rec => Double): Weighted[Rec] = {
-    new Weighted[Rec] {
-      override def apply(rec: Rec): Double = f(rec)
+  d-def fwomfunction[wec](f: wec => doubwe): w-weighted[wec] = {
+    nyew weighted[wec] {
+      ovewwide def appwy(wec: wec): d-doubwe = f(wec)
     }
   }
 }

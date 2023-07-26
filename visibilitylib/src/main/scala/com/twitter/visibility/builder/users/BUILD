@@ -1,22 +1,22 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/scala/com/twitter/search/blender/services/strato",
-        "src/thrift/com/twitter/content-health/sensitivemediasettings:sensitivemediasettings-scala",
-        "src/thrift/com/twitter/gizmoduck:user-thrift-scala",
-        "stitch/stitch-core",
-        "visibility/common/src/main/scala/com/twitter/visibility/common",
-        "visibility/common/src/main/scala/com/twitter/visibility/common/user_result",
-        "visibility/common/src/main/thrift/com/twitter/visibility:action-scala",
-        "visibility/lib/src/main/resources/config",
-        "visibility/lib/src/main/scala/com/twitter/visibility",
-        "visibility/lib/src/main/scala/com/twitter/visibility/features",
-        "visibility/lib/src/main/scala/com/twitter/visibility/interfaces/common/blender",
-        "visibility/lib/src/main/scala/com/twitter/visibility/interfaces/common/search",
-        "visibility/lib/src/main/thrift/com/twitter/visibility/context:vf-context-scala",
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    p-pwatfowm = "java8", o.O
+    s-stwict_deps = t-twue, (U ᵕ U❁)
+    tags = ["bazew-compatibwe"], (⑅˘꒳˘)
+    d-dependencies = [
+        "swc/scawa/com/twittew/seawch/bwendew/sewvices/stwato", ( ͡o ω ͡o )
+        "swc/thwift/com/twittew/content-heawth/sensitivemediasettings:sensitivemediasettings-scawa", UwU
+        "swc/thwift/com/twittew/gizmoduck:usew-thwift-scawa", rawr x3
+        "stitch/stitch-cowe", rawr
+        "visibiwity/common/swc/main/scawa/com/twittew/visibiwity/common", σωσ
+        "visibiwity/common/swc/main/scawa/com/twittew/visibiwity/common/usew_wesuwt", σωσ
+        "visibiwity/common/swc/main/thwift/com/twittew/visibiwity:action-scawa", >_<
+        "visibiwity/wib/swc/main/wesouwces/config", :3
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity", (U ﹏ U)
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity/featuwes", -.-
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity/intewfaces/common/bwendew", (ˆ ﻌ ˆ)♡
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity/intewfaces/common/seawch", (⑅˘꒳˘)
+        "visibiwity/wib/swc/main/thwift/com/twittew/visibiwity/context:vf-context-scawa", (U ᵕ U❁)
     ],
 )

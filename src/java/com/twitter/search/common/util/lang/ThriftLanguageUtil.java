@@ -1,141 +1,141 @@
-package com.twitter.search.common.util.lang;
+package com.twittew.seawch.common.utiw.wang;
 
-import java.lang.reflect.Field;
-import java.util.Locale;
-import java.util.Map;
+impowt j-java.wang.wefwect.fiewd;
+i-impowt j-java.utiw.wocawe;
+i-impowt java.utiw.map;
 
-import javax.annotation.Nullable;
+i-impowt j-javax.annotation.nuwwabwe;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.immutabwemap;
+impowt com.googwe.common.cowwect.maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.text.language.LocaleUtil;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
+impowt c-com.twittew.common.text.wanguage.wocaweutiw;
+impowt com.twittew.seawch.common.constants.thwiftjava.thwiftwanguage;
 
 /**
- * This class can be used to convert ThriftLanguage to Locale object and vise versa.
+ * t-this cwass can be used to convewt thwiftwanguage to wocawe object a-and vise vewsa. 🥺
  */
-public final class ThriftLanguageUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(ThriftLanguageUtil.class.getName());
+pubwic finaw c-cwass thwiftwanguageutiw {
+  p-pwivate static finaw woggew wog = woggewfactowy.getwoggew(thwiftwanguageutiw.cwass.getname());
 
-  // stores ThriftLanguage.id -> Locale mapping
-  private static final Locale[] LOCALES;
+  // stowes thwiftwanguage.id -> wocawe mapping
+  p-pwivate static finaw wocawe[] wocawes;
 
-  // stores Locale -> ThriftLanguage mapping
-  private static final Map<Locale, ThriftLanguage> THRIFT_LANGUAGES;
+  // stowes wocawe -> thwiftwanguage mapping
+  p-pwivate static finaw map<wocawe, >_< t-thwiftwanguage> t-thwift_wanguages;
 
   static {
-    LOCALES = new Locale[ThriftLanguage.values().length];
-    Map<Locale, ThriftLanguage> thriftLanguageMap = Maps.newHashMap();
+    w-wocawes = n-nyew wocawe[thwiftwanguage.vawues().wength];
+    map<wocawe, ʘwʘ thwiftwanguage> t-thwiftwanguagemap = maps.newhashmap();
 
-    // get all languages defined in ThriftLanguage
-    Field[] fields = ThriftLanguage.class.getDeclaredFields();
-    for (Field field : fields) {
-      if (!field.isEnumConstant()) {
-        continue;
+    // get aww wanguages d-defined in thwiftwanguage
+    fiewd[] fiewds = thwiftwanguage.cwass.getdecwawedfiewds();
+    fow (fiewd fiewd : fiewds) {
+      if (!fiewd.isenumconstant()) {
+        c-continue;
       }
 
-      try {
-        ThriftLanguage thriftLang = (ThriftLanguage) field.get(null);
-        String thriftLanguageName = field.getName();
+      twy {
+        t-thwiftwanguage t-thwiftwang = (thwiftwanguage) fiewd.get(nuww);
+        s-stwing thwiftwanguagename = fiewd.getname();
 
-        // get corresponding Locale declared in LocaleUtil
-        try {
-          Field localeUtilField = LocaleUtil.class.getDeclaredField(thriftLanguageName);
-          Locale localeLang = (Locale) localeUtilField.get(null);
+        // get cowwesponding wocawe decwawed i-in wocaweutiw
+        t-twy {
+          fiewd wocaweutiwfiewd = w-wocaweutiw.cwass.getdecwawedfiewd(thwiftwanguagename);
+          w-wocawe wocawewang = (wocawe) wocaweutiwfiewd.get(nuww);
 
-          LOCALES[thriftLang.getValue()] = localeLang;
-          thriftLanguageMap.put(localeLang, thriftLang);
-        } catch (NoSuchFieldException e) {
-          LOG.warn("{} is defined in ThriftLanguage, but not in LocaleUtil.", thriftLanguageName);
+          wocawes[thwiftwang.getvawue()] = w-wocawewang;
+          thwiftwanguagemap.put(wocawewang, (˘ω˘) t-thwiftwang);
+        } catch (nosuchfiewdexception e) {
+          w-wog.wawn("{} is defined in thwiftwanguage, (✿oωo) b-but nyot in wocaweutiw.", (///ˬ///✿) t-thwiftwanguagename);
         }
-      } catch (IllegalAccessException e) {
-        // shouldn't happen.
-        LOG.warn("Could not get a declared field.", e);
+      } c-catch (iwwegawaccessexception e) {
+        // shouwdn't happen. rawr x3
+        wog.wawn("couwd nyot get a decwawed fiewd.", -.- e-e);
       }
     }
 
-    // Let's make sure that all Locales defined in LocaleUtil are also defined in ThriftLanguage
-    for (Locale lang : LocaleUtil.getDefinedLanguages()) {
-      if (!thriftLanguageMap.containsKey(lang)) {
-        LOG.warn("{} is defined in LocaleUtil but not in ThriftLanguage.", lang.getLanguage());
+    // w-wet's make suwe that a-aww wocawes defined i-in wocaweutiw a-awe awso defined in thwiftwanguage
+    fow (wocawe wang : wocaweutiw.getdefinedwanguages()) {
+      i-if (!thwiftwanguagemap.containskey(wang)) {
+        wog.wawn("{} is defined in wocaweutiw but nyot in thwiftwanguage.", ^^ w-wang.getwanguage());
       }
     }
 
-    THRIFT_LANGUAGES = ImmutableMap.copyOf(thriftLanguageMap);
+    thwift_wanguages = i-immutabwemap.copyof(thwiftwanguagemap);
   }
 
-  private ThriftLanguageUtil() {
+  p-pwivate t-thwiftwanguageutiw() {
   }
 
   /**
-   * Returns a Locale object which corresponds to a given ThriftLanguage object.
-   * @param language ThriftLanguage object
-   * @return a corresponding Locale object
+   * wetuwns a w-wocawe object which c-cowwesponds t-to a given thwiftwanguage o-object. (⑅˘꒳˘)
+   * @pawam wanguage thwiftwanguage object
+   * @wetuwn a-a cowwesponding w-wocawe o-object
    */
-  public static Locale getLocaleOf(ThriftLanguage language) {
-    // Note that ThriftLanguage.findByValue() can return null (thrift generated code).
-    // So ThriftLanguageUtil.getLocaleOf needs to handle null correctly.
-    if (language == null) {
-      return LocaleUtil.UNKNOWN;
+  p-pubwic static wocawe g-getwocaweof(thwiftwanguage wanguage) {
+    // nyote that thwiftwanguage.findbyvawue() can w-wetuwn nyuww (thwift genewated code). nyaa~~
+    // so thwiftwanguageutiw.getwocaweof nyeeds to handwe nyuww cowwectwy. /(^•ω•^)
+    i-if (wanguage == nyuww) {
+      wetuwn wocaweutiw.unknown;
     }
 
-    Preconditions.checkArgument(language.getValue() < LOCALES.length);
-    return LOCALES[language.getValue()];
+    pweconditions.checkawgument(wanguage.getvawue() < w-wocawes.wength);
+    w-wetuwn wocawes[wanguage.getvawue()];
   }
 
   /**
-   * Returns a ThriftLanguage object which corresponds to a given Locale object.
+   * w-wetuwns a thwiftwanguage object w-which cowwesponds to a given w-wocawe object. (U ﹏ U)
    *
-   * @param language Locale object
-   * @return a corresponding ThriftLanguage object, or UNKNOWN if there's no corresponding one.
+   * @pawam w-wanguage wocawe object
+   * @wetuwn a cowwesponding thwiftwanguage object, 😳😳😳 ow unknown if thewe's n-nyo cowwesponding one. >w<
    */
-  public static ThriftLanguage getThriftLanguageOf(Locale language) {
-    Preconditions.checkNotNull(language);
-    ThriftLanguage thriftLang = THRIFT_LANGUAGES.get(language);
-    return thriftLang == null ? ThriftLanguage.UNKNOWN : thriftLang;
+  p-pubwic static thwiftwanguage g-getthwiftwanguageof(wocawe w-wanguage) {
+    pweconditions.checknotnuww(wanguage);
+    thwiftwanguage t-thwiftwang = t-thwift_wanguages.get(wanguage);
+    wetuwn thwiftwang == n-nyuww ? t-thwiftwanguage.unknown : thwiftwang;
   }
 
   /**
-   * Returns a ThriftLanguage object which corresponds to a given language code.
+   * wetuwns a thwiftwanguage object which cowwesponds t-to a given w-wanguage code. XD
    *
-   * @param languageCode BCP-47 language code
-   * @return a corresponding ThriftLanguage object, or UNKNOWN if there's no corresponding one.
+   * @pawam w-wanguagecode bcp-47 wanguage c-code
+   * @wetuwn a-a cowwesponding thwiftwanguage o-object, o.O ow unknown if thewe's nyo cowwesponding one. mya
    */
-  public static ThriftLanguage getThriftLanguageOf(String languageCode) {
-    Preconditions.checkNotNull(languageCode);
-    ThriftLanguage thriftLang = THRIFT_LANGUAGES.get(LocaleUtil.getLocaleOf(languageCode));
-    return thriftLang == null ? ThriftLanguage.UNKNOWN : thriftLang;
+  pubwic static thwiftwanguage g-getthwiftwanguageof(stwing w-wanguagecode) {
+    pweconditions.checknotnuww(wanguagecode);
+    thwiftwanguage t-thwiftwang = t-thwift_wanguages.get(wocaweutiw.getwocaweof(wanguagecode));
+    wetuwn thwiftwang == nyuww ? thwiftwanguage.unknown : t-thwiftwang;
   }
 
   /**
-   * Returns a ThriftLanguage object which corresponds to a given int value.
-   * If value is not valid, returns ThriftLanguage.UNKNOWN
-   * @param value value of language
-   * @return a corresponding ThriftLanguage object
+   * wetuwns a thwiftwanguage object which cowwesponds to a given i-int vawue. 🥺
+   * if vawue is nyot vawid, ^^;; wetuwns t-thwiftwanguage.unknown
+   * @pawam v-vawue vawue of wanguage
+   * @wetuwn a cowwesponding thwiftwanguage o-object
    */
-  public static ThriftLanguage safeFindByValue(int value) {
-    ThriftLanguage thriftLang = ThriftLanguage.findByValue(value);
-    return thriftLang == null ? ThriftLanguage.UNKNOWN : thriftLang;
+  p-pubwic static thwiftwanguage safefindbyvawue(int vawue) {
+    t-thwiftwanguage thwiftwang = t-thwiftwanguage.findbyvawue(vawue);
+    wetuwn thwiftwang == nyuww ? thwiftwanguage.unknown : t-thwiftwang;
   }
 
   /**
-   * Returns the language code which corresponds to a given ThriftLanguage.
+   * wetuwns t-the wanguage c-code which cowwesponds to a given t-thwiftwanguage. :3
    *
-   * Note that multiple ThriftLanguage entries can return the same language code.
+   * note t-that muwtipwe t-thwiftwanguage e-entwies can wetuwn the same wanguage c-code. (U ﹏ U)
    *
-   * @param thriftLang ThriftLanguage object
-   * @return Corresponding language or null if thriftLang is null.
+   * @pawam t-thwiftwang thwiftwanguage object
+   * @wetuwn c-cowwesponding w-wanguage o-ow nyuww if thwiftwang is nyuww. OwO
    */
-  @Nullable
-  public static String getLanguageCodeOf(@Nullable ThriftLanguage thriftLang) {
-    if (thriftLang == null) {
-      return null;
+  @nuwwabwe
+  pubwic static s-stwing getwanguagecodeof(@nuwwabwe thwiftwanguage t-thwiftwang) {
+    i-if (thwiftwang == nyuww) {
+      wetuwn nyuww;
     }
-    return ThriftLanguageUtil.getLocaleOf(thriftLang).getLanguage();
+    w-wetuwn thwiftwanguageutiw.getwocaweof(thwiftwang).getwanguage();
   }
 }

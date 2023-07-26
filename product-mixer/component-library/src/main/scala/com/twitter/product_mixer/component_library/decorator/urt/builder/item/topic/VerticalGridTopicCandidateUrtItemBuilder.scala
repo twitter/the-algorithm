@@ -1,46 +1,46 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.topic
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.topic
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.topic.TopicCandidateUrtItemBuilder.TopicClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.TopicCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseUrlBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.VerticalGridItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.VerticalGridItemTileStyle
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.VerticalGridItemTopicFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.VerticalGridItemTopicTile
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.topic.topiccandidateuwtitembuiwdew.topiccwienteventinfoewement
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.topiccandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.candidateuwtentwybuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventinfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.baseuwwbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.vewticaw_gwid_item.vewticawgwiditem
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.vewticaw_gwid_item.vewticawgwiditemtiwestywe
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.vewticaw_gwid_item.vewticawgwiditemtopicfunctionawitytype
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.vewticaw_gwid_item.vewticawgwiditemtopictiwe
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case class VerticalGridTopicCandidateUrtItemBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, TopicCandidate],
-  verticalGridItemTopicFunctionalityType: VerticalGridItemTopicFunctionalityType,
-  verticalGridItemTileStyle: VerticalGridItemTileStyle,
-  urlBuilder: Option[BaseUrlBuilder[Query, TopicCandidate]] = None,
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, TopicCandidate]
-  ] = None)
-    extends CandidateUrtEntryBuilder[Query, TopicCandidate, VerticalGridItem] {
+c-case cwass vewticawgwidtopiccandidateuwtitembuiwdew[-quewy <: pipewinequewy](
+  c-cwienteventinfobuiwdew: basecwienteventinfobuiwdew[quewy, /(^•ω•^) t-topiccandidate], ʘwʘ
+  vewticawgwiditemtopicfunctionawitytype: vewticawgwiditemtopicfunctionawitytype, σωσ
+  vewticawgwiditemtiwestywe: v-vewticawgwiditemtiwestywe, OwO
+  uwwbuiwdew: o-option[baseuwwbuiwdew[quewy, t-topiccandidate]] = nyone, 😳😳😳
+  feedbackactioninfobuiwdew: option[
+    basefeedbackactioninfobuiwdew[quewy, 😳😳😳 t-topiccandidate]
+  ] = nyone)
+    extends candidateuwtentwybuiwdew[quewy, o.O topiccandidate, ( ͡o ω ͡o ) vewticawgwiditem] {
 
-  override def apply(
-    query: Query,
-    topicCandidate: TopicCandidate,
-    candidateFeatures: FeatureMap
-  ): VerticalGridItem = {
-    VerticalGridItemTopicTile(
-      id = topicCandidate.id,
-      sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-      clientEventInfo = clientEventInfoBuilder(
-        query,
-        topicCandidate,
-        candidateFeatures,
-        Some(TopicClientEventInfoElement)),
-      feedbackActionInfo =
-        feedbackActionInfoBuilder.flatMap(_.apply(query, topicCandidate, candidateFeatures)),
-      style = Some(verticalGridItemTileStyle),
-      functionalityType = Some(verticalGridItemTopicFunctionalityType),
-      url = urlBuilder.map(_.apply(query, topicCandidate, candidateFeatures))
+  o-ovewwide def appwy(
+    q-quewy: quewy, (U ﹏ U)
+    t-topiccandidate: t-topiccandidate, (///ˬ///✿)
+    c-candidatefeatuwes: featuwemap
+  ): vewticawgwiditem = {
+    vewticawgwiditemtopictiwe(
+      id = topiccandidate.id, >w<
+      s-sowtindex = nyone, rawr // sowt indexes awe automaticawwy s-set in the domain mawshawwew phase
+      cwienteventinfo = cwienteventinfobuiwdew(
+        quewy, mya
+        t-topiccandidate, ^^
+        candidatefeatuwes, 😳😳😳
+        s-some(topiccwienteventinfoewement)), mya
+      f-feedbackactioninfo =
+        f-feedbackactioninfobuiwdew.fwatmap(_.appwy(quewy, 😳 topiccandidate, -.- candidatefeatuwes)), 🥺
+      stywe = s-some(vewticawgwiditemtiwestywe), o.O
+      f-functionawitytype = some(vewticawgwiditemtopicfunctionawitytype), /(^•ω•^)
+      uww = uwwbuiwdew.map(_.appwy(quewy, nyaa~~ t-topiccandidate, nyaa~~ c-candidatefeatuwes))
     )
   }
 }

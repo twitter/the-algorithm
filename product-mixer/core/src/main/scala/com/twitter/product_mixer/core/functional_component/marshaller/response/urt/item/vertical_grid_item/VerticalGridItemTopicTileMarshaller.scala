@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.vewticaw_gwid_item
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.VerticalGridItemTopicTile
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.uwwmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.vewticaw_gwid_item.vewticawgwiditemtopictiwe
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class VerticalGridItemTopicTileMarshaller @Inject() (
-  styleMarshaller: VerticalGridItemTileStyleMarshaller,
-  functionalityTypeMarshaller: VerticalGridItemTopicFunctionalityTypeMarshaller,
-  urlMarshaller: UrlMarshaller) {
+@singweton
+c-cwass v-vewticawgwiditemtopictiwemawshawwew @inject() (
+  stywemawshawwew: vewticawgwiditemtiwestywemawshawwew, >_<
+  functionawitytypemawshawwew: vewticawgwiditemtopicfunctionawitytypemawshawwew, mya
+  u-uwwmawshawwew: uwwmawshawwew) {
 
-  def apply(verticalGridItemTopicTile: VerticalGridItemTopicTile): urt.VerticalGridItemContent =
-    urt.VerticalGridItemContent.TopicTile(
-      urt.VerticalGridItemTopicTile(
-        topicId = verticalGridItemTopicTile.id.toString,
-        style = verticalGridItemTopicTile.style
-          .map(styleMarshaller(_)).getOrElse(urt.VerticalGridItemTileStyle.SingleStateDefault),
-        functionalityType = verticalGridItemTopicTile.functionalityType
-          .map(functionalityTypeMarshaller(_)).getOrElse(
-            urt.VerticalGridItemTopicFunctionalityType.Pivot),
-        url = verticalGridItemTopicTile.url.map(urlMarshaller(_))
+  def appwy(vewticawgwiditemtopictiwe: v-vewticawgwiditemtopictiwe): uwt.vewticawgwiditemcontent =
+    u-uwt.vewticawgwiditemcontent.topictiwe(
+      uwt.vewticawgwiditemtopictiwe(
+        topicid = vewticawgwiditemtopictiwe.id.tostwing, mya
+        stywe = vewticawgwiditemtopictiwe.stywe
+          .map(stywemawshawwew(_)).getowewse(uwt.vewticawgwiditemtiwestywe.singwestatedefauwt), 😳
+        functionawitytype = v-vewticawgwiditemtopictiwe.functionawitytype
+          .map(functionawitytypemawshawwew(_)).getowewse(
+            uwt.vewticawgwiditemtopicfunctionawitytype.pivot),
+        u-uww = vewticawgwiditemtopictiwe.uww.map(uwwmawshawwew(_))
       )
     )
 

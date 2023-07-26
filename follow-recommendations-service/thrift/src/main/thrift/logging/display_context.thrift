@@ -1,66 +1,66 @@
-include "logging/flows.thrift"
-include "logging/recently_engaged_user_id.thrift"
+incwude "wogging/fwows.thwift"
+incwude "wogging/wecentwy_engaged_usew_id.thwift"
 
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+nyamespace java c-com.twittew.fowwow_wecommendations.wogging.thwiftjava
+#@namespace s-scawa com.twittew.fowwow_wecommendations.wogging.thwiftscawa
+#@namespace s-stwato c-com.twittew.fowwow_wecommendations.wogging
 
-// Offline equal of Profile DisplayContext
-struct OfflineProfile {
-    1: required i64 profileId(personalDataType='UserId')
-}(persisted='true', hasPersonalData='true')
+// o-offwine equaw o-of pwofiwe dispwaycontext
+s-stwuct o-offwinepwofiwe {
+    1: wequiwed i64 pwofiweid(pewsonawdatatype='usewid')
+}(pewsisted='twue', 😳 haspewsonawdata='twue')
 
-// Offline equal of Search DisplayContext
-struct OfflineSearch {
-    1: required string searchQuery(personalDataType='SearchQuery')
-}(persisted='true', hasPersonalData='true')
+// offwine equaw of seawch d-dispwaycontext
+stwuct offwineseawch {
+    1: wequiwed stwing s-seawchquewy(pewsonawdatatype='seawchquewy')
+}(pewsisted='twue', mya haspewsonawdata='twue')
 
-// Offline equal of Rux Landing Page DisplayContext
-struct OfflineRux {
-  1: required i64 focalAuthorId(personalDataType="UserId")
-}(persisted='true', hasPersonalData='true')
+// o-offwine equaw of wux wanding page dispwaycontext
+stwuct o-offwinewux {
+  1: wequiwed i64 f-focawauthowid(pewsonawdatatype="usewid")
+}(pewsisted='twue', (˘ω˘) h-haspewsonawdata='twue')
 
-// Offline equal of Topic DisplayContext
-struct OfflineTopic {
-  1: required i64 topicId(personalDataType = 'TopicFollow')
-}(persisted='true', hasPersonalData='true')
+// offwine equaw of topic dispwaycontext
+stwuct offwinetopic {
+  1: w-wequiwed i64 topicid(pewsonawdatatype = 'topicfowwow')
+}(pewsisted='twue', >_< haspewsonawdata='twue')
 
-struct OfflineReactiveFollow {
-    1: required list<i64> followedUserIds(personalDataType='UserId')
-}(persisted='true', hasPersonalData='true')
+stwuct offwineweactivefowwow {
+    1: wequiwed w-wist<i64> fowwowedusewids(pewsonawdatatype='usewid')
+}(pewsisted='twue', -.- haspewsonawdata='twue')
 
-struct OfflineNuxInterests {
-    1: optional flows.OfflineFlowContext flowContext // set for recommendation inside an interactive flow
-}(persisted='true', hasPersonalData='true')
+s-stwuct offwinenuxintewests {
+    1: o-optionaw fwows.offwinefwowcontext f-fwowcontext // s-set fow wecommendation inside an intewactive f-fwow
+}(pewsisted='twue', 🥺 haspewsonawdata='twue')
 
-struct OfflineAdCampaignTarget {
-    1: required list<i64> similarToUserIds(personalDataType='UserId')
-}(persisted='true', hasPersonalData='true')
+stwuct offwineadcampaigntawget {
+    1: w-wequiwed wist<i64> simiwawtousewids(pewsonawdatatype='usewid')
+}(pewsisted='twue', (U ﹏ U) haspewsonawdata='twue')
 
-struct OfflineConnectTab {
-    1: required list<i64> byfSeedUserIds(personalDataType='UserId')
-    2: required list<i64> similarToUserIds(personalDataType='UserId')
-    3: required list<recently_engaged_user_id.RecentlyEngagedUserId> recentlyEngagedUserIds
-}(persisted='true', hasPersonalData='true')
+stwuct offwineconnecttab {
+    1: w-wequiwed wist<i64> byfseedusewids(pewsonawdatatype='usewid')
+    2: w-wequiwed wist<i64> s-simiwawtousewids(pewsonawdatatype='usewid')
+    3: w-wequiwed wist<wecentwy_engaged_usew_id.wecentwyengagedusewid> wecentwyengagedusewids
+}(pewsisted='twue', >w< haspewsonawdata='twue')
 
-struct OfflineSimilarToUser {
-    1: required i64 similarToUserId(personalDataType='UserId')
-}(persisted='true', hasPersonalData='true')
+stwuct offwinesimiwawtousew {
+    1: wequiwed i-i64 simiwawtousewid(pewsonawdatatype='usewid')
+}(pewsisted='twue', mya h-haspewsonawdata='twue')
 
-struct OfflinePostNuxFollowTask {
-    1: optional flows.OfflineFlowContext flowContext // set for recommendation inside an interactive flow
-}(persisted='true', hasPersonalData='true')
+stwuct offwinepostnuxfowwowtask {
+    1: o-optionaw f-fwows.offwinefwowcontext fwowcontext // s-set fow wecommendation i-inside an intewactive fwow
+}(pewsisted='twue', >w< haspewsonawdata='twue')
 
-// Offline equal of DisplayContext
-union OfflineDisplayContext {
-    1: OfflineProfile profile
-    2: OfflineSearch search
-    3: OfflineRux rux
-    4: OfflineTopic topic
-    5: OfflineReactiveFollow reactiveFollow
-    6: OfflineNuxInterests nuxInterests
-    7: OfflineAdCampaignTarget adCampaignTarget
-    8: OfflineConnectTab connectTab
-    9: OfflineSimilarToUser similarToUser
-    10: OfflinePostNuxFollowTask postNuxFollowTask
-}(persisted='true', hasPersonalData='true')
+// o-offwine equaw of dispwaycontext
+u-union offwinedispwaycontext {
+    1: o-offwinepwofiwe p-pwofiwe
+    2: offwineseawch seawch
+    3: offwinewux wux
+    4: offwinetopic topic
+    5: offwineweactivefowwow weactivefowwow
+    6: o-offwinenuxintewests n-nyuxintewests
+    7: offwineadcampaigntawget a-adcampaigntawget
+    8: o-offwineconnecttab c-connecttab
+    9: offwinesimiwawtousew simiwawtousew
+    10: offwinepostnuxfowwowtask p-postnuxfowwowtask
+}(pewsisted='twue', nyaa~~ haspewsonawdata='twue')

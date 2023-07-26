@@ -1,48 +1,48 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import java.util.Arrays;
-import java.util.Collection;
+impowt j-java.utiw.awways;
+i-impowt java.utiw.cowwection;
 
-import com.google.inject.Module;
+i-impowt com.googwe.inject.moduwe;
 
-import com.twitter.search.common.root.SearchRootAppMain;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird_root.routers.FacetsRequestRouterModule;
-import com.twitter.search.earlybird_root.routers.RecencyRequestRouterModule;
-import com.twitter.search.earlybird_root.routers.RelevanceRequestRouterModule;
-import com.twitter.search.earlybird_root.routers.TermStatsRequestRouterModule;
-import com.twitter.search.earlybird_root.routers.TopTweetsRequestRouterModule;
+i-impowt com.twittew.seawch.common.woot.seawchwootappmain;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdsewvice;
+i-impowt c-com.twittew.seawch.eawwybiwd_woot.woutews.facetswequestwoutewmoduwe;
+impowt com.twittew.seawch.eawwybiwd_woot.woutews.wecencywequestwoutewmoduwe;
+impowt com.twittew.seawch.eawwybiwd_woot.woutews.wewevancewequestwoutewmoduwe;
+impowt com.twittew.seawch.eawwybiwd_woot.woutews.tewmstatswequestwoutewmoduwe;
+impowt com.twittew.seawch.eawwybiwd_woot.woutews.toptweetswequestwoutewmoduwe;
 
-public class SuperRootAppMain extends SearchRootAppMain<SuperRootServer> {
+p-pubwic cwass supewwootappmain extends seawchwootappmain<supewwootsewvew> {
   /**
-   * Boilerplate for the Java-friendly AbstractTwitterServer
+   * boiwewpwate f-fow the java-fwiendwy abstwacttwittewsewvew
    */
-  public static class Main {
-    public static void main(String[] args) {
-      new SuperRootAppMain().main(args);
+  p-pubwic static cwass main {
+    pubwic static void main(stwing[] a-awgs) {
+      nyew supewwootappmain().main(awgs);
     }
   }
 
-  @Override
-  protected Collection<? extends Module> getAdditionalModules() {
-    return Arrays.asList(
-        new EarlybirdCommonModule(),
-        new SuperRootAppModule(),
-        new TermStatsRequestRouterModule(),
-        new RecencyRequestRouterModule(),
-        new RelevanceRequestRouterModule(),
-        new TopTweetsRequestRouterModule(),
-        new FacetsRequestRouterModule(),
-        new QuotaModule());
+  @ovewwide
+  p-pwotected cowwection<? e-extends moduwe> getadditionawmoduwes() {
+    wetuwn awways.aswist(
+        nyew eawwybiwdcommonmoduwe(), nyaa~~
+        nyew supewwootappmoduwe(), (⑅˘꒳˘)
+        n-nyew tewmstatswequestwoutewmoduwe(),
+        nyew wecencywequestwoutewmoduwe(), rawr x3
+        nyew wewevancewequestwoutewmoduwe(), (✿oωo)
+        nyew toptweetswequestwoutewmoduwe(), (ˆ ﻌ ˆ)♡
+        nyew f-facetswequestwoutewmoduwe(), (˘ω˘)
+        nyew quotamoduwe());
   }
 
-  @Override
-  protected Class<SuperRootServer> getSearchRootServerClass() {
-    return SuperRootServer.class;
+  @ovewwide
+  p-pwotected cwass<supewwootsewvew> g-getseawchwootsewvewcwass() {
+    w-wetuwn supewwootsewvew.cwass;
   }
 
-  @Override
-  protected Class<?> getServiceIfaceClass() {
-    return EarlybirdService.ServiceIface.class;
+  @ovewwide
+  p-pwotected cwass<?> getsewviceifacecwass() {
+    wetuwn eawwybiwdsewvice.sewviceiface.cwass;
   }
 }

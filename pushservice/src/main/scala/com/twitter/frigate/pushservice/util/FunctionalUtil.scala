@@ -1,12 +1,12 @@
-package com.twitter.frigate.pushservice.util
+package com.twittew.fwigate.pushsewvice.utiw
 
-import com.twitter.finagle.stats.Counter
+impowt c-com.twittew.finagwe.stats.countew
 
-object FunctionalUtil {
-  def incr[T](counter: Counter): T => T = { x =>
+o-object functionawutiw {
+  d-def incw[t](countew: c-countew): t-t => t = { x =>
     {
-      counter.incr()
-      x
+      c-countew.incw()
+      x-x
     }
   }
 }

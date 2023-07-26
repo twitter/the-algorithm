@@ -1,58 +1,58 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "DeviceAttributesProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/device_attributes_go_proto";
+option cc_enabwe_awenas = t-twue;
+option java_outew_cwassname = "deviceattwibutespwotos";
+o-option java_muwtipwe_fiwes = t-twue;
+o-option java_package = "owg.tensowfwow.fwamewowk";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/fwamewowk/device_attwibutes_go_pwoto";
 
-message InterconnectLink {
-  int32 device_id = 1;
-  string type = 2;
-  int32 strength = 3;
+m-message intewconnectwink {
+  i-int32 device_id = 1;
+  s-stwing type = 2;
+  int32 stwength = 3;
 }
 
-message LocalLinks {
-  repeated InterconnectLink link = 1;
+message wocawwinks {
+  wepeated i-intewconnectwink wink = 1;
 }
 
-message DeviceLocality {
-  // Optional bus locality of device.  Default value of 0 means
-  // no specific locality.  Specific localities are indexed from 1.
-  int32 bus_id = 1;
+message devicewocawity {
+  // o-optionaw bus wocawity of device. -.-  d-defauwt vawue of 0 means
+  // nyo specific wocawity. 🥺  specific w-wocawities awe indexed fwom 1. o.O
+  i-int32 bus_id = 1;
 
-  // Optional NUMA locality of device.
-  int32 numa_node = 2;
+  // o-optionaw nyuma wocawity of device. /(^•ω•^)
+  int32 nyuma_node = 2;
 
-  // Optional local interconnect links to other devices.
-  LocalLinks links = 3;
+  // optionaw w-wocaw intewconnect winks to othew devices. nyaa~~
+  wocawwinks winks = 3;
 }
 
-message DeviceAttributes {
-  // Fully specified name of the device within a cluster.
-  string name = 1;
+message d-deviceattwibutes {
+  // fuwwy s-specified nyame o-of the device within a-a cwustew. nyaa~~
+  s-stwing nyame = 1;
 
-  // String representation of device_type.
-  string device_type = 2;
+  // stwing wepwesentation o-of device_type. :3
+  stwing device_type = 2;
 
-  // Memory capacity of device in bytes.
-  int64 memory_limit = 4;
+  // memowy capacity o-of device in bytes.
+  int64 memowy_wimit = 4;
 
-  // Platform-specific data about device that may be useful
-  // for supporting efficient data transfers.
-  DeviceLocality locality = 5;
+  // pwatfowm-specific data about device that may be usefuw
+  // f-fow suppowting efficient data twansfews. 😳😳😳
+  d-devicewocawity w-wocawity = 5;
 
-  // A device is assigned a global unique number each time it is
-  // initialized. "incarnation" should never be 0.
-  fixed64 incarnation = 6;
+  // a-a device is assigned a gwobaw unique nyumbew each t-time it is
+  // i-initiawized. (˘ω˘) "incawnation" shouwd n-nyevew be 0. ^^
+  f-fixed64 incawnation = 6;
 
-  // String representation of the physical device that this device maps to.
-  string physical_device_desc = 7;
+  // stwing wepwesentation o-of the physicaw device that t-this device maps to. :3
+  stwing physicaw_device_desc = 7;
 
-  // A physical device ID for use in XLA DeviceAssignments, unique across
-  // clients in a multi-client setup. Set to -1 if unavailable, non-negative
-  // otherwise.
-  int64 xla_global_id = 8;
+  // a-a physicaw device id fow use in x-xwa deviceassignments, -.- unique acwoss
+  // c-cwients i-in a muwti-cwient setup. 😳 set to -1 if unavaiwabwe, mya nyon-negative
+  // othewwise. (˘ω˘)
+  int64 xwa_gwobaw_id = 8;
 }

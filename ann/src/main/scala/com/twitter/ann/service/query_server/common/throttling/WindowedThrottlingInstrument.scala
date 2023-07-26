@@ -1,50 +1,50 @@
-package com.twitter.ann.service.query_server.common.throttling
+package com.twittew.ann.sewvice.quewy_sewvew.common.thwottwing
 
-import com.twitter.util.Duration
+impowt com.twittew.utiw.duwation
 
-trait ThrottlingInstrument {
-  def sample(): Unit
-  def percentageOfTimeSpentThrottling(): Double
-  def disabled: Boolean
+t-twait thwottwinginstwument {
+  d-def sampwe(): unit
+  d-def pewcentageoftimespentthwottwing(): d-doubwe
+  d-def disabwed: b-boowean
 }
 
-class WindowedThrottlingInstrument(
-  stepFrequency: Duration,
-  windowLengthInFrequencySteps: Int,
-  reader: AuroraCPUStatsReader)
-    extends ThrottlingInstrument {
-  private[this] val throttlingChangeHistory: WindowedStats = new WindowedStats(
-    windowLengthInFrequencySteps)
+cwass w-windowedthwottwinginstwument(
+  s-stepfwequency: duwation, o.O
+  windowwengthinfwequencysteps: int, ( ͡o ω ͡o )
+  weadew: auwowacpustatsweadew)
+    extends thwottwinginstwument {
+  p-pwivate[this] vaw thwottwingchangehistowy: windowedstats = n-nyew windowedstats(
+    windowwengthinfwequencysteps)
 
-  private[this] val cpuQuota: Double = reader.cpuQuota
+  p-pwivate[this] vaw cpuquota: doubwe = weadew.cpuquota
 
-  // The total number of allotted CPU time per step (in nanos).
-  private[this] val assignedCpu: Duration = stepFrequency * cpuQuota
-  private[this] val assignedCpuNs: Long = assignedCpu.inNanoseconds
+  // t-the totaw numbew of awwotted c-cpu time pew s-step (in nyanos). (U ﹏ U)
+  pwivate[this] vaw assignedcpu: duwation = stepfwequency * cpuquota
+  p-pwivate[this] vaw assignedcpuns: wong = assignedcpu.innanoseconds
 
-  @volatile private[this] var previousThrottledTimeNs: Long = 0
+  @vowatiwe pwivate[this] v-vaw pweviousthwottwedtimens: wong = 0
 
   /**
-   * If there isn't a limit on how much cpu the container can use, aurora
-   * throttling will never kick in.
+   * i-if thewe i-isn't a wimit on h-how much cpu the c-containew can use, (///ˬ///✿) auwowa
+   * thwottwing wiww n-nyevew kick in. >w<
    */
-  final def disabled: Boolean = cpuQuota <= 0
+  finaw def disabwed: boowean = c-cpuquota <= 0
 
-  def sample(): Unit = sampleThrottling() match {
-    case Some(load) =>
-      throttlingChangeHistory.add(load)
-    case None => ()
+  def sampwe(): unit = sampwethwottwing() match {
+    case some(woad) =>
+      thwottwingchangehistowy.add(woad)
+    c-case nyone => ()
   }
 
-  private[this] def sampleThrottling(): Option[Long] = reader.throttledTimeNanos().map {
-    throttledTimeNs =>
-      val throttlingChange = throttledTimeNs - previousThrottledTimeNs
-      previousThrottledTimeNs = throttledTimeNs
-      throttlingChange
+  p-pwivate[this] d-def sampwethwottwing(): o-option[wong] = weadew.thwottwedtimenanos().map {
+    thwottwedtimens =>
+      vaw thwottwingchange = thwottwedtimens - pweviousthwottwedtimens
+      pweviousthwottwedtimens = t-thwottwedtimens
+      thwottwingchange
   }
 
-  // Time spent throttling over windowLength, normalized by number of CPUs
-  def percentageOfTimeSpentThrottling(): Double = {
-    math.min(1, throttlingChangeHistory.sum.toDouble / assignedCpuNs)
+  // t-time spent thwottwing o-ovew windowwength, rawr n-nowmawized by nyumbew of cpus
+  d-def pewcentageoftimespentthwottwing(): doubwe = {
+    m-math.min(1, mya thwottwingchangehistowy.sum.todoubwe / assignedcpuns)
   }
 }

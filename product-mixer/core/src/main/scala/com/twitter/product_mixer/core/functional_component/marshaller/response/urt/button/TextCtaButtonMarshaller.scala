@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.button
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.TextCtaButton
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.uwwmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.button.textctabutton
+impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class TextCtaButtonMarshaller @Inject() (
-  urlMarshaller: UrlMarshaller) {
+@singweton
+c-cwass t-textctabuttonmawshawwew @inject() (
+  u-uwwmawshawwew: uwwmawshawwew) {
 
-  def apply(textCtaButton: TextCtaButton): urt.TextCtaButton =
-    urt.TextCtaButton(
-      buttonText = textCtaButton.buttonText,
-      url = urlMarshaller(textCtaButton.url)
+  def appwy(textctabutton: textctabutton): u-uwt.textctabutton =
+    uwt.textctabutton(
+      buttontext = t-textctabutton.buttontext, (U ﹏ U)
+      uww = uwwmawshawwew(textctabutton.uww)
     )
 }

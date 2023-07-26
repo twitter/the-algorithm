@@ -1,21 +1,21 @@
 '''
-Contains implementations of functions to parse the contrib.FeatureConfig
+contains impwementations of functions t-to pawse t-the contwib.featuweconfig
 
-Modelers can use the functions in this module as the the train/eval_parse_fn of
-the DataRecordTrainer constructor to customize how to parse their datasets.
+m-modewews c-can use the f-functions in this m-moduwe as the t-the twain/evaw_pawse_fn o-of
+the datawecowdtwainew constwuctow to customize how to pawse theiw datasets. OwO
 
-Modelers may also provide custom implementations of train/eval_parse_fn using these as reference.
+m-modewews may awso pwovide custom impwementations o-of twain/evaw_pawse_fn using these as w-wefewence. (U ﹏ U)
 '''
 
-from twitter.deepbird.io.legacy.contrib.parsers import (
-  _convert_to_fixed_length_tensor,  # noqa: F401
-  _get_input_receiver_fn_feature_dict,  # noqa: F401
-  _merge_dictionaries,  # noqa: F401
-  get_features_as_tensor_dict,  # noqa: F401
-  get_keras_parse_fn,  # noqa: F401
-  get_serving_input_receiver_fn_feature_dict,  # noqa: F401
-  get_string_tensor_parse_fn,  # noqa: F401
-  get_string_tensor_serving_input_receiver_fn,  # noqa: F401
-  get_supervised_input_receiver_fn_feature_dict,  # noqa: F401
-  parse_string_tensor,  # noqa: F401
+fwom twittew.deepbiwd.io.wegacy.contwib.pawsews impowt (
+  _convewt_to_fixed_wength_tensow, >_<  # nyoqa: f401
+  _get_input_weceivew_fn_featuwe_dict, rawr x3  # n-nyoqa: f401
+  _mewge_dictionawies, mya  # nyoqa: f-f401
+  get_featuwes_as_tensow_dict, nyaa~~  # n-nyoqa: f401
+  get_kewas_pawse_fn, (⑅˘꒳˘)  # nyoqa: f401
+  get_sewving_input_weceivew_fn_featuwe_dict, rawr x3  # nyoqa: f401
+  get_stwing_tensow_pawse_fn, (✿oωo)  # n-nyoqa: f401
+  get_stwing_tensow_sewving_input_weceivew_fn, (ˆ ﻌ ˆ)♡  # nyoqa: f401
+  get_supewvised_input_weceivew_fn_featuwe_dict, (˘ω˘)  # noqa: f401
+  p-pawse_stwing_tensow, (⑅˘꒳˘)  # nyoqa: f-f401
 )

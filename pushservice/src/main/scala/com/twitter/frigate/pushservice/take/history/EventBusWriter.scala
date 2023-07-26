@@ -1,37 +1,37 @@
-package com.twitter.frigate.pushservice.take.history
+package com.twittew.fwigate.pushsewvice.take.histowy
 
-import com.twitter.eventbus.client.EventBusPublisher
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.NotificationScribeUtil
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.scribe.thriftscala.NotificationScribe
-import com.twitter.frigate.thriftscala.FrigateNotification
+impowt com.twittew.eventbus.cwient.eventbuspubwishew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.utiw.notificationscwibeutiw
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushpawams
+impowt com.twittew.fwigate.scwibe.thwiftscawa.notificationscwibe
+impowt com.twittew.fwigate.thwiftscawa.fwigatenotification
 
-class EventBusWriter(
-  eventBusPublisher: EventBusPublisher[NotificationScribe],
-  stats: StatsReceiver) {
-  private def writeSendEventToEventBus(
-    target: PushTypes.Target,
-    notificationScribe: NotificationScribe
-  ): Unit = {
-    if (target.params(PushParams.EnablePushSendEventBus)) {
-      val result = eventBusPublisher.publish(notificationScribe)
-      result.onFailure { _ => stats.counter("push_send_eventbus_failure").incr() }
+c-cwass eventbuswwitew(
+  eventbuspubwishew: eventbuspubwishew[notificationscwibe], rawr x3
+  s-stats: statsweceivew) {
+  p-pwivate def wwitesendeventtoeventbus(
+    tawget: pushtypes.tawget, (✿oωo)
+    notificationscwibe: nyotificationscwibe
+  ): u-unit = {
+    if (tawget.pawams(pushpawams.enabwepushsendeventbus)) {
+      v-vaw wesuwt = e-eventbuspubwishew.pubwish(notificationscwibe)
+      wesuwt.onfaiwuwe { _ => stats.countew("push_send_eventbus_faiwuwe").incw() }
     }
   }
 
-  def writeToEventBus(
-    candidate: PushCandidate,
-    frigateNotificationForPersistence: FrigateNotification
-  ): Unit = {
-    val notificationScribe = NotificationScribeUtil.getNotificationScribe(
-      targetId = candidate.target.targetId,
-      impressionId = candidate.impressionId,
-      frigateNotification = frigateNotificationForPersistence,
-      createdAt = candidate.createdAt
+  def wwitetoeventbus(
+    candidate: p-pushcandidate, (ˆ ﻌ ˆ)♡
+    fwigatenotificationfowpewsistence: fwigatenotification
+  ): unit = {
+    vaw nyotificationscwibe = n-nyotificationscwibeutiw.getnotificationscwibe(
+      tawgetid = candidate.tawget.tawgetid, (˘ω˘)
+      i-impwessionid = c-candidate.impwessionid, (⑅˘꒳˘)
+      f-fwigatenotification = f-fwigatenotificationfowpewsistence, (///ˬ///✿)
+      cweatedat = candidate.cweatedat
     )
-    writeSendEventToEventBus(candidate.target, notificationScribe)
+    w-wwitesendeventtoeventbus(candidate.tawget, 😳😳😳 nyotificationscwibe)
   }
 }

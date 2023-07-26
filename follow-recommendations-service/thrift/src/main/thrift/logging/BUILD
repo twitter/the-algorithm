@@ -1,18 +1,18 @@
-create_thrift_libraries(
-    base_name = "thrift",
-    sources = ["*.thrift"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependency_roots = [
-        "src/thrift/com/twitter/ads/adserver:adserver_common",
-        "src/thrift/com/twitter/ml/api:data",
-        "src/thrift/com/twitter/suggests/controller_data",
+cweate_thwift_wibwawies(
+    base_name = "thwift", o.O
+    souwces = ["*.thwift"], (U ᵕ U❁)
+    p-pwatfowm = "java8", (⑅˘꒳˘)
+    t-tags = ["bazew-compatibwe"], ( ͡o ω ͡o )
+    d-dependency_woots = [
+        "swc/thwift/com/twittew/ads/adsewvew:adsewvew_common", UwU
+        "swc/thwift/com/twittew/mw/api:data", rawr x3
+        "swc/thwift/com/twittew/suggests/contwowwew_data", rawr
+    ], σωσ
+    g-genewate_wanguages = [
+        "java", σωσ
+        "scawa", >_<
+        "stwato", :3
     ],
-    generate_languages = [
-        "java",
-        "scala",
-        "strato",
-    ],
-    provides_java_name = "follow-recommendations-logging-java",
-    provides_scala_name = "follow-recommendations-logging-scala",
+    p-pwovides_java_name = "fowwow-wecommendations-wogging-java", (U ﹏ U)
+    p-pwovides_scawa_name = "fowwow-wecommendations-wogging-scawa", -.-
 )

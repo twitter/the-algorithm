@@ -1,43 +1,43 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.Not
+impowt com.twittew.visibiwity.wuwes.condition.and
+i-impowt com.twittew.visibiwity.wuwes.condition.not
 
-object InterstitialIf {
+o-object i-intewstitiawif {
 
-  object ViewerMutedKeyword
-      extends RuleWithConstantAction(
-        Interstitial(Reason.MutedKeyword),
-        And(
-          Not(Condition.IsFocalTweet),
-          Condition.ViewerHasMatchingKeywordForTweetReplies,
+  o-object viewewmutedkeywowd
+      e-extends wuwewithconstantaction(
+        i-intewstitiaw(weason.mutedkeywowd), 😳😳😳
+        a-and(
+          n-nyot(condition.isfocawtweet), -.-
+          condition.viewewhasmatchingkeywowdfowtweetwepwies, ( ͡o ω ͡o )
         )
       )
 
-  object ViewerBlockedAuthor
-      extends RuleWithConstantAction(
-        Interstitial(Reason.ViewerBlocksAuthor),
-        And(
-          Not(Condition.IsFocalTweet),
-          Condition.ViewerBlocksAuthor
+  object viewewbwockedauthow
+      extends wuwewithconstantaction(
+        intewstitiaw(weason.viewewbwocksauthow), rawr x3
+        a-and(
+          not(condition.isfocawtweet), nyaa~~
+          condition.viewewbwocksauthow
         )
       )
 
-  object ViewerHardMutedAuthor
-      extends RuleWithConstantAction(
-        Interstitial(Reason.ViewerHardMutedAuthor),
-        And(
-          Not(Condition.IsFocalTweet),
-          Condition.ViewerMutesAuthor,
-          Not(
-            Condition.ViewerDoesFollowAuthor
+  o-object viewewhawdmutedauthow
+      e-extends wuwewithconstantaction(
+        intewstitiaw(weason.viewewhawdmutedauthow), /(^•ω•^)
+        and(
+          n-nyot(condition.isfocawtweet), rawr
+          condition.viewewmutesauthow, OwO
+          nyot(
+            c-condition.viewewdoesfowwowauthow
           )
         )
       )
 
-  object ViewerReportedAuthor
-      extends RuleWithConstantAction(
-        Interstitial(Reason.ViewerReportedAuthor),
-        Condition.ViewerReportsAuthor
+  o-object viewewwepowtedauthow
+      extends wuwewithconstantaction(
+        intewstitiaw(weason.viewewwepowtedauthow), (U ﹏ U)
+        c-condition.viewewwepowtsauthow
       )
 }

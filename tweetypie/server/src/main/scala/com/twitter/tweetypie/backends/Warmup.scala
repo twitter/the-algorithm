@@ -1,266 +1,266 @@
-package com.twitter.tweetypie
-package backends
+package com.twittew.tweetypie
+package b-backends
 
-import com.twitter.concurrent.AsyncSemaphore
-import com.twitter.util.Timer
-import com.twitter.util.Promise
-import scala.util.control.NoStackTrace
+impowt c-com.twittew.concuwwent.asyncsemaphowe
+i-impowt c-com.twittew.utiw.timew
+i-impowt c-com.twittew.utiw.pwomise
+i-impowt s-scawa.utiw.contwow.nostacktwace
 
 /**
- * Tools for building warmup actions on backend clients. The basic
- * idea is to make requests to backends repeatedly until they succeed.
+ * toows fow buiwding wawmup actions on backend cwients. XD the b-basic
+ * idea is to make wequests to backends w-wepeatedwy untiw they succeed. 🥺
  */
-object Warmup {
+o-object wawmup {
 
   /**
-   * Signals that a warmup action was aborted because warmup is
-   * complete.
+   * signaws that a wawmup action was abowted because w-wawmup is
+   * compwete. (///ˬ///✿)
    */
-  object WarmupComplete extends Exception with NoStackTrace
+  o-object wawmupcompwete e-extends exception with nostacktwace
 
   /**
-   * Configuration for warmup actions.
+   * configuwation fow wawmup actions. (U ᵕ U❁)
    *
-   * @param maxOutstandingRequests: Limit on total number of outstanding warmup requests.
-   * @param maxWarmupDuration: Total amount of time warmup is allowed to take.
-   * @param requestTimeouts: Time limit for individual warmup actions.
-   * @param reliability: Criteria for how many times each warmup should be run.
+   * @pawam m-maxoutstandingwequests: wimit on totaw nyumbew of outstanding wawmup wequests. ^^;;
+   * @pawam m-maxwawmupduwation: totaw amount o-of time wawmup i-is awwowed t-to take. ^^;;
+   * @pawam w-wequesttimeouts: time wimit fow individuaw w-wawmup actions. rawr
+   * @pawam wewiabiwity: cwitewia f-fow how many times each wawmup shouwd be wun. (˘ω˘)
    */
-  case class Settings(
-    maxOutstandingRequests: Int,
-    maxWarmupDuration: Duration,
-    requestTimeouts: Map[String, Duration],
-    reliability: Reliably) {
-    def toRunner(logger: Logger, timer: Timer): Runner =
-      new WithTimeouts(requestTimeouts, timer)
-        .within(new Logged(logger))
-        .within(new LimitedConcurrency(maxOutstandingRequests))
-        .within(reliability)
+  case cwass settings(
+    maxoutstandingwequests: i-int, 🥺
+    maxwawmupduwation: d-duwation, nyaa~~
+    w-wequesttimeouts: m-map[stwing, :3 duwation],
+    wewiabiwity: wewiabwy) {
+    def t-towunnew(woggew: w-woggew, /(^•ω•^) timew: timew): wunnew =
+      n-nyew withtimeouts(wequesttimeouts, ^•ﻌ•^ t-timew)
+        .within(new wogged(woggew))
+        .within(new w-wimitedconcuwwency(maxoutstandingwequests))
+        .within(wewiabiwity)
 
-    def apply[A: Warmup](value: A, logger: Logger, timer: Timer): Future[Unit] =
-      toRunner(logger, timer)
-        .run(value)
-        .raiseWithin(maxWarmupDuration)(timer)
-        .handle { case _ => }
+    def appwy[a: w-wawmup](vawue: a, UwU woggew: woggew, 😳😳😳 timew: timew): f-futuwe[unit] =
+      towunnew(woggew, OwO t-timew)
+        .wun(vawue)
+        .waisewithin(maxwawmupduwation)(timew)
+        .handwe { case _ => }
   }
 
   /**
-   * Strategy for running Warmup actions.
+   * s-stwategy fow w-wunning wawmup actions.
    */
-  trait Runner { self =>
+  twait wunnew { sewf =>
 
     /**
-     * Run one single warmup action.
+     * wun one singwe wawmup action. ^•ﻌ•^
      */
-    def runOne(name: String, action: => Future[Unit]): Future[Unit]
+    def wunone(name: stwing, (ꈍᴗꈍ) action: => futuwe[unit]): f-futuwe[unit]
 
     /**
-     * Compose these two Runners by calling this Runner's runOne
-     * inside of other's runOne.
+     * c-compose these two wunnews by cawwing t-this wunnew's w-wunone
+     * i-inside of othew's wunone. (⑅˘꒳˘)
      */
-    final def within(other: Runner): Runner =
-      new Runner {
-        override def runOne(name: String, action: => Future[Unit]): Future[Unit] =
-          other.runOne(name, self.runOne(name, action))
+    finaw def within(othew: w-wunnew): wunnew =
+      nyew wunnew {
+        ovewwide def wunone(name: stwing, (⑅˘꒳˘) a-action: => futuwe[unit]): futuwe[unit] =
+          o-othew.wunone(name, (ˆ ﻌ ˆ)♡ s-sewf.wunone(name, /(^•ω•^) a-action))
       }
 
     /**
-     * Execute all of the warmup actions for the given value using
-     * this runner.
+     * exekawaii~ a-aww of the wawmup a-actions fow t-the given vawue u-using
+     * this wunnew.
      */
-    final def run[T](t: T)(implicit w: Warmup[T]): Future[Unit] =
-      Future.join(w.actions.toSeq.map { case (name, f) => runOne(name, f(t).unit) })
+    finaw def w-wun[t](t: t)(impwicit w-w: wawmup[t]): f-futuwe[unit] =
+      f-futuwe.join(w.actions.toseq.map { c-case (name, òωó f) => wunone(name, (⑅˘꒳˘) f(t).unit) })
   }
 
   /**
-   * Set a ceiling on the amount of time each kind of warmup action is
-   * allowed to take.
+   * set a c-ceiwing on the amount of time each kind of wawmup action is
+   * awwowed to take. (U ᵕ U❁)
    */
-  class WithTimeouts(timeouts: Map[String, Duration], timer: Timer) extends Runner {
-    override def runOne(name: String, action: => Future[Unit]): Future[Unit] =
-      timeouts.get(name).map(action.raiseWithin(_)(timer)).getOrElse(action)
+  cwass w-withtimeouts(timeouts: map[stwing, >w< duwation], σωσ timew: timew) extends w-wunnew {
+    o-ovewwide def wunone(name: s-stwing, -.- action: => futuwe[unit]): f-futuwe[unit] =
+      timeouts.get(name).map(action.waisewithin(_)(timew)).getowewse(action)
   }
 
   /**
-   * Execute each action until its reliability is estimated to be
-   * above the given threshold. The reliability is initially assumed
-   * to be zero. The reliability is estimated as an exponential moving
-   * average, with the new data point given the appropriate weight so
-   * that a single data point will no longer be able to push the
-   * average below the threshold.
+   * e-exekawaii~ e-each action untiw its wewiabiwity is estimated to be
+   * above the given thweshowd. o.O the wewiabiwity i-is initiawwy assumed
+   * t-to be zewo. ^^ the wewiabiwity i-is estimated as a-an exponentiaw moving
+   * avewage, >_< with the nyew d-data point given t-the appwopwiate weight so
+   * t-that a singwe d-data point wiww nyo wongew be abwe to push the
+   * avewage bewow the thweshowd. >w<
    *
-   * The warmup action is considered successful if it does not throw
-   * an exception. No timeouts are applied.
+   * t-the wawmup a-action is c-considewed successfuw if it does n-nyot thwow
+   * a-an exception. >_< nyo timeouts awe a-appwied. >w<
    *
-   * The threshold must be in the interval [0, 1).
+   * the thweshowd must be in the intewvaw [0, rawr 1).
    *
-   * The concurrency level determines how many outstanding requests
-   * to maintain until the threshold is reached. This allows warmup
-   * to happen more rapidly when individual requests have high
-   * latency.
+   * the concuwwency w-wevew d-detewmines how many outstanding wequests
+   * to m-maintain untiw t-the thweshowd is weached. rawr x3 this awwows wawmup
+   * to happen mowe w-wapidwy when individuaw wequests have high
+   * watency. ( ͡o ω ͡o )
    *
-   * maxAttempts limits the total number of tries that we are allowed
-   * to try to reach the reliability threshold. This is a safety
-   * measure to prevent overloading whatever subsystem we are
-   * attempting to warm up.
+   * maxattempts w-wimits the totaw nyumbew of twies that we awe awwowed
+   * t-to twy t-to weach the wewiabiwity thweshowd. (˘ω˘) this is a safety
+   * measuwe t-to pwevent o-ovewwoading nyanievew subsystem we awe
+   * attempting to wawm up. 😳
    */
-  case class Reliably(reliabilityThreshold: Double, concurrency: Int, maxAttempts: Int)
-      extends Runner {
-    require(reliabilityThreshold < 1)
-    require(reliabilityThreshold >= 0)
-    require(concurrency > 0)
-    require(maxAttempts > 0)
+  c-case cwass wewiabwy(wewiabiwitythweshowd: d-doubwe, OwO concuwwency: int, (˘ω˘) maxattempts: int)
+      extends wunnew {
+    w-wequiwe(wewiabiwitythweshowd < 1)
+    wequiwe(wewiabiwitythweshowd >= 0)
+    w-wequiwe(concuwwency > 0)
+    w-wequiwe(maxattempts > 0)
 
-    // Find the weight at which one failure will not push us under the
-    // reliabilityThreshold.
-    val weight: Double = 1 - math.pow(
-      1 - reliabilityThreshold,
-      (1 - reliabilityThreshold) / reliabilityThreshold
+    // find the w-weight at which one faiwuwe wiww n-nyot push us undew t-the
+    // wewiabiwitythweshowd. òωó
+    v-vaw weight: doubwe = 1 - m-math.pow(
+      1 - w-wewiabiwitythweshowd,
+      (1 - wewiabiwitythweshowd) / wewiabiwitythweshowd
     )
 
-    // Make sure that rounding error did not cause weight to become zero.
-    require(weight > 0)
-    require(weight <= 1)
+    // make suwe that w-wounding ewwow d-did nyot cause weight t-to become zewo.
+    wequiwe(weight > 0)
+    wequiwe(weight <= 1)
 
-    // On each iteration, we discount the current reliability by this
-    // factor before adding in the new reliability data point.
-    val decay: Double = 1 - weight
+    // on e-each itewation, ( ͡o ω ͡o ) we discount the c-cuwwent wewiabiwity b-by this
+    // factow befowe adding in the nyew wewiabiwity d-data point.
+    v-vaw decay: doubwe = 1 - w-weight
 
-    // Make sure that rounding error did not cause decay to be zero.
-    require(decay < 1)
+    // m-make suwe that wounding e-ewwow did not cause decay to be zewo. UwU
+    wequiwe(decay < 1)
 
-    override def runOne(name: String, action: => Future[Unit]): Future[Unit] = {
-      def go(attempts: Int, reliability: Double, outstanding: Seq[Future[Unit]]): Future[Unit] =
-        if (reliability >= reliabilityThreshold || (attempts == 0 && outstanding.isEmpty)) {
-          // We hit the threshold or ran out of tries.  Don't cancel any
-          // outstanding requests, just wait for them all to complete.
-          Future.join(outstanding.map(_.handle { case _ => }))
-        } else if (attempts > 0 && outstanding.length < concurrency) {
-          // We have not yet hit the reliability threshold, and we
-          // still have available concurrency, so make a new request.
-          go(attempts - 1, reliability, action +: outstanding)
-        } else {
-          val sel = Future.select(outstanding)
+    ovewwide def wunone(name: stwing, /(^•ω•^) action: => f-futuwe[unit]): futuwe[unit] = {
+      def go(attempts: i-int, (ꈍᴗꈍ) wewiabiwity: doubwe, 😳 o-outstanding: seq[futuwe[unit]]): futuwe[unit] =
+        i-if (wewiabiwity >= wewiabiwitythweshowd || (attempts == 0 && o-outstanding.isempty)) {
+          // w-we hit t-the thweshowd o-ow wan out of twies. mya  d-don't cancew any
+          // outstanding wequests, mya just wait fow them aww to compwete. /(^•ω•^)
+          futuwe.join(outstanding.map(_.handwe { case _ => }))
+        } e-ewse if (attempts > 0 && o-outstanding.wength < c-concuwwency) {
+          // we have nyot yet h-hit the wewiabiwity thweshowd, ^^;; and we
+          // stiww have a-avaiwabwe concuwwency, 🥺 s-so make a nyew wequest. ^^
+          g-go(attempts - 1, ^•ﻌ•^ wewiabiwity, /(^•ω•^) action +: o-outstanding)
+        } e-ewse {
+          vaw sew = f-futuwe.sewect(outstanding)
 
-          // We need this promise wrapper because if the select is
-          // interrupted, it relays the interrupt to the outstanding
-          // requests but does not itself return with a
-          // failure. Wrapping in a promise lets us differentiate
-          // between an interrupt coming from above and the created
-          // Future failing for another reason.
-          val p = new Promise[(Try[Unit], Seq[Future[Unit]])]
-          p.setInterruptHandler {
-            case e =>
-              // Interrupt the outstanding requests.
-              sel.raise(e)
-              // Halt the computation with a failure.
-              p.updateIfEmpty(Throw(e))
+          // w-we nyeed this pwomise wwappew because if the sewect is
+          // i-intewwupted, ^^ it w-weways the intewwupt t-to the outstanding
+          // w-wequests but d-does nyot itsewf wetuwn with a
+          // f-faiwuwe. 🥺 w-wwapping in a pwomise wets u-us diffewentiate
+          // b-between an intewwupt coming fwom a-above and the cweated
+          // futuwe faiwing fow anothew weason. (U ᵕ U❁)
+          v-vaw p = nyew pwomise[(twy[unit], 😳😳😳 seq[futuwe[unit]])]
+          p-p.setintewwupthandwew {
+            c-case e =>
+              // intewwupt the outstanding w-wequests. nyaa~~
+              sew.waise(e)
+              // hawt the computation w-with a faiwuwe. (˘ω˘)
+              p-p.updateifempty(thwow(e))
           }
 
-          // When the select finishes, update the promise with the value.
-          sel.respond(p.updateIfEmpty)
-          p.flatMap {
-            case (tryRes, remaining) =>
-              val delta = if (tryRes.isReturn) weight else 0
-              go(attempts, reliability * decay + delta, remaining)
+          // w-when the sewect finishes, >_< update the pwomise with the vawue. XD
+          s-sew.wespond(p.updateifempty)
+          p.fwatmap {
+            case (twywes, w-wemaining) =>
+              v-vaw dewta = if (twywes.iswetuwn) w-weight ewse 0
+              go(attempts, rawr x3 w-wewiabiwity * decay + d-dewta, ( ͡o ω ͡o ) wemaining)
           }
         }
 
-      go(maxAttempts, 0, Seq.empty)
+      go(maxattempts, :3 0, seq.empty)
     }
   }
 
   /**
-   * Write a log message recording each invocation of each warmup
-   * action. The log message is comma-separated, with the following
-   * fields:
+   * w-wwite a wog message wecowding each invocation o-of each wawmup
+   * a-action. mya the wog message i-is comma-sepawated, σωσ with the f-fowwowing
+   * fiewds:
    *
-   *     name:
-   *         The supplied name.
+   *     n-nyame:
+   *         t-the suppwied nyame. (ꈍᴗꈍ)
    *
-   *     start time:
-   *         The number of milliseconds since the start of the Unix
-   *         epoch.
+   *     stawt time:
+   *         the nyumbew of miwwiseconds since the stawt of the unix
+   *         epoch. OwO
    *
-   *     duration:
-   *         How long this warmup action took, in milliseconds.
+   *     duwation:
+   *         how wong this wawmup action took, o.O in miwwiseconds. 😳😳😳
    *
-   *     result:
-   *         "passed" or "failed" depending on whether the Future
-   *         returned an exception.
+   *     w-wesuwt:
+   *         "passed" o-ow "faiwed" depending on whethew the futuwe
+   *         w-wetuwned a-an exception. /(^•ω•^)
    *
-   *     exception type:
-   *         If the result "failed", then this will be the name of
-   *         the exception that casued the failure. If it "passed",
-   *         it will be the empty string.
+   *     e-exception type:
+   *         if the wesuwt "faiwed", OwO t-then this wiww be the nyame o-of
+   *         t-the exception that casued the f-faiwuwe. ^^ if it "passed", (///ˬ///✿)
+   *         it wiww be t-the empty stwing. (///ˬ///✿)
    *
-   * These messages should be sufficient to get a picture of how
-   * warmup proceeded, since they allow the messages to be ordered
-   * and sorted by type. You can use this information to tune the
-   * warmup parameters.
+   * t-these messages shouwd be sufficient t-to get a pictuwe o-of how
+   * wawmup p-pwoceeded, (///ˬ///✿) s-since they awwow t-the messages to b-be owdewed
+   * a-and sowted by t-type. ʘwʘ you can use t-this infowmation to tune the
+   * w-wawmup pawametews. ^•ﻌ•^
    */
-  class Logged(logger: Logger) extends Runner {
-    override def runOne(name: String, action: => Future[Unit]): Future[Unit] = {
-      val start = Time.now
-      val startStr = start.sinceEpoch.inMilliseconds.toString
+  cwass w-wogged(woggew: w-woggew) extends wunnew {
+    o-ovewwide def wunone(name: stwing, OwO action: => futuwe[unit]): f-futuwe[unit] = {
+      vaw stawt = t-time.now
+      vaw s-stawtstw = stawt.sinceepoch.inmiwwiseconds.tostwing
 
-      action.respond {
-        case Throw(WarmupComplete) =>
-        // Don't log anything for computations that we abandoned
-        // because warmup is complete.
+      a-action.wespond {
+        case thwow(wawmupcompwete) =>
+        // d-don't wog anything fow computations t-that we abandoned
+        // because wawmup i-is compwete. (U ﹏ U)
 
-        case r =>
-          val duration = (Time.now - start).inMilliseconds
-          val result = r match {
-            case Throw(e) => "failed," + e.toString.takeWhile(_ != '\n')
+        case w =>
+          v-vaw duwation = (time.now - stawt).inmiwwiseconds
+          vaw wesuwt = w match {
+            case thwow(e) => "faiwed," + e-e.tostwing.takewhiwe(_ != '\n')
             case _ => "passed,"
           }
-          logger.info(s"$name,${startStr}ms,${duration}ms,$result")
+          w-woggew.info(s"$name,${stawtstw}ms,${duwation}ms,$wesuwt")
       }
     }
   }
 
   /**
-   * Ensure that no more than the specified number of invocations of a
-   * warmup action are happening at one time.
+   * e-ensuwe that nyo mowe than the specified nyumbew of invocations o-of a
+   * wawmup action awe happening a-at one time. (ˆ ﻌ ˆ)♡
    */
-  class LimitedConcurrency(limit: Int) extends Runner {
-    private[this] val sem = new AsyncSemaphore(limit)
-    override def runOne(name: String, action: => Future[Unit]): Future[Unit] =
-      sem.acquireAndRun(action)
+  c-cwass w-wimitedconcuwwency(wimit: int) extends wunnew {
+    p-pwivate[this] v-vaw sem = nyew asyncsemaphowe(wimit)
+    o-ovewwide def wunone(name: stwing, (⑅˘꒳˘) a-action: => futuwe[unit]): futuwe[unit] =
+      sem.acquiweandwun(action)
   }
 
   /**
-   * Create a new Warmup that performs this single action.
+   * c-cweate a-a nyew wawmup that p-pewfowms this singwe action. (U ﹏ U)
    */
-  def apply[A](name: String)(f: A => Future[_]): Warmup[A] = new Warmup(Map(name -> f))
+  d-def appwy[a](name: s-stwing)(f: a-a => futuwe[_]): w-wawmup[a] = nyew wawmup(map(name -> f-f))
 
   /**
-   * Create a Warmup that does nothing. This is useful in concert with
-   * warmField.
+   * c-cweate a-a wawmup that d-does nyothing. o.O this i-is usefuw in c-concewt with
+   * w-wawmfiewd. mya
    */
-  def empty[A]: Warmup[A] = new Warmup[A](Map.empty)
+  d-def empty[a]: wawmup[a] = n-nyew wawmup[a](map.empty)
 }
 
 /**
- * A set of independent warmup actions. Each action should be the
- * minimum work that can be done in order to exercise a code
- * path. Runners can be used to e.g. run the actions repeatedly or
- * with timeouts.
+ * a set of independent w-wawmup actions. XD each action s-shouwd be the
+ * m-minimum wowk t-that can be done in owdew to exewcise a code
+ * path. òωó wunnews c-can be used to e-e.g. (˘ω˘) wun the actions w-wepeatedwy ow
+ * with timeouts. :3
  */
-class Warmup[A](val actions: Map[String, A => Future[_]]) {
-  def ++(other: Warmup[A]) = new Warmup[A](actions ++ other.actions)
+cwass wawmup[a](vaw actions: m-map[stwing, OwO a-a => futuwe[_]]) {
+  def ++(othew: w-wawmup[a]) = n-nyew wawmup[a](actions ++ othew.actions)
 
   /**
-   * The names of the individual warmup actions that this warmup is
-   * composed of.
+   * the nyames of the individuaw w-wawmup actions t-that this wawmup i-is
+   * composed o-of. mya
    */
-  def names: Set[String] = actions.keySet
+  def nyames: set[stwing] = actions.keyset
 
   /**
-   * Create a new Warmup that does all of the actions of this warmup
-   * and additionally does warmup on the value specified by `f`.
+   * c-cweate a nyew w-wawmup that does aww of the actions of this w-wawmup
+   * and additionawwy does wawmup on the v-vawue specified by `f`. (˘ω˘)
    */
-  def warmField[B](f: A => B)(implicit w: Warmup[B]): Warmup[A] =
-    new Warmup[A](actions ++ (w.actions.mapValues(f.andThen)))
+  d-def wawmfiewd[b](f: a-a => b)(impwicit w: wawmup[b]): w-wawmup[a] =
+    n-nyew wawmup[a](actions ++ (w.actions.mapvawues(f.andthen)))
 }

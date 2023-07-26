@@ -1,30 +1,30 @@
-scala_library(
-    sources = [
-        "*.scala",
+scawa_wibwawy(
+    souwces = [
+        "*.scawa", òωó
     ],
-    compiler_option_sets = ["fatal_warnings"],
-    scalac_plugins = ["no-roomba"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
-        "ads-injection/lib/src/main/scala/com/twitter/goldfinch/adaptors/ads/productmixer",
-        "ads-injection/lib/src/main/scala/com/twitter/goldfinch/adaptors/ads/productmixer/util",
-        "ads-injection/lib/src/main/scala/com/twitter/goldfinch/adaptors/productmixer",
-        "ads-injection/lib/src/main/scala/com/twitter/goldfinch/api",
-        "ads-injection/lib/src/main/scala/com/twitter/goldfinch/impl/core",
-        "ads-injection/lib/src/main/scala/com/twitter/goldfinch/impl/injector",
-        "ads-injection/lib/src/main/scala/com/twitter/goldfinch/impl/injector/product_mixer",
-        "finatra/inject/inject-slf4j/src/main/scala/com/twitter/inject",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate/ads",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/query/ads",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/configapi",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/selector",
-    ],
-    exports = [
-        "ads-injection/lib/src/main/scala/com/twitter/goldfinch/impl/injector",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/selector",
+    compiwew_option_sets = ["fataw_wawnings"], o.O
+    s-scawac_pwugins = ["no-woomba"], (U ᵕ U❁)
+    stwict_deps = t-twue, (⑅˘꒳˘)
+    t-tags = ["bazew-compatibwe"], ( ͡o ω ͡o )
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/inject:guice", UwU
+        "ads-injection/wib/swc/main/scawa/com/twittew/gowdfinch/adaptows/ads/pwoductmixew", rawr x3
+        "ads-injection/wib/swc/main/scawa/com/twittew/gowdfinch/adaptows/ads/pwoductmixew/utiw", rawr
+        "ads-injection/wib/swc/main/scawa/com/twittew/gowdfinch/adaptows/pwoductmixew", σωσ
+        "ads-injection/wib/swc/main/scawa/com/twittew/gowdfinch/api", σωσ
+        "ads-injection/wib/swc/main/scawa/com/twittew/gowdfinch/impw/cowe", >_<
+        "ads-injection/wib/swc/main/scawa/com/twittew/gowdfinch/impw/injectow", :3
+        "ads-injection/wib/swc/main/scawa/com/twittew/gowdfinch/impw/injectow/pwoduct_mixew", (U ﹏ U)
+        "finatwa/inject/inject-swf4j/swc/main/scawa/com/twittew/inject", -.-
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/candidate", (ˆ ﻌ ˆ)♡
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/candidate/ads", (⑅˘꒳˘)
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/quewy/ads", (U ᵕ U❁)
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/configapi",
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/sewectow", -.-
+    ], ^^;;
+    e-expowts = [
+        "ads-injection/wib/swc/main/scawa/com/twittew/gowdfinch/impw/injectow", >_<
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/candidate", mya
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/sewectow", mya
     ],
 )

@@ -1,17 +1,17 @@
-target(
-    name = "adapter",
-    dependencies = ["timelineranker/common/src/main/scala/com/twitter/timelineranker/adapter"],
+tawget(
+    nyame = "adaptew", 🥺
+    dependencies = ["timewinewankew/common/swc/main/scawa/com/twittew/timewinewankew/adaptew"], òωó
 )
 
-target(
-    name = "model",
-    dependencies = ["timelineranker/common/src/main/scala/com/twitter/timelineranker/model"],
+t-tawget(
+    nyame = "modew",
+    d-dependencies = ["timewinewankew/common/swc/main/scawa/com/twittew/timewinewankew/modew"],
 )
 
-target(
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":adapter",
-        ":model",
-    ],
+tawget(
+    t-tags = ["bazew-compatibwe"], o.O
+    d-dependencies = [
+        ":adaptew", (U ᵕ U❁)
+        ":modew", (⑅˘꒳˘)
+    ], ( ͡o ω ͡o )
 )

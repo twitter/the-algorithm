@@ -1,118 +1,118 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.twittew.home_mixew.functionaw_component.featuwe_hydwatow
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.common_internal.analytics.twitter_client_user_agent_parser.UserAgent
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.model.HomeFeatures.PersistenceEntriesFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedTweetIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedTweetPreviewIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.WhoToFollowExcludedUserIdsFeature
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseBatchesClient
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseV3
-import com.twitter.timelines.util.client_info.ClientPlatform
-import com.twitter.timelineservice.model.TimelineQuery
-import com.twitter.timelineservice.model.core.TimelineKind
-import com.twitter.timelineservice.model.rich.EntityIdType
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.common_intewnaw.anawytics.twittew_cwient_usew_agent_pawsew.usewagent
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.pewsistenceentwiesfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.sewvedtweetidsfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.sewvedtweetpweviewidsfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.whotofowwowexcwudedusewidsfeatuwe
+impowt com.twittew.home_mixew.modew.wequest.fowwowingpwoduct
+i-impowt com.twittew.home_mixew.modew.wequest.fowyoupwoduct
+impowt com.twittew.home_mixew.sewvice.homemixewawewtconfig
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt c-com.twittew.stitch.stitch
+impowt com.twittew.timewinemixew.cwients.pewsistence.timewinewesponsebatchescwient
+impowt com.twittew.timewinemixew.cwients.pewsistence.timewinewesponsev3
+i-impowt com.twittew.timewines.utiw.cwient_info.cwientpwatfowm
+impowt com.twittew.timewinesewvice.modew.timewinequewy
+impowt com.twittew.timewinesewvice.modew.cowe.timewinekind
+impowt com.twittew.timewinesewvice.modew.wich.entityidtype
+impowt c-com.twittew.utiw.time
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-case class PersistenceStoreQueryFeatureHydrator @Inject() (
-  timelineResponseBatchesClient: TimelineResponseBatchesClient[TimelineResponseV3],
-  statsReceiver: StatsReceiver)
-    extends QueryFeatureHydrator[PipelineQuery] {
+@singweton
+c-case cwass pewsistencestowequewyfeatuwehydwatow @inject() (
+  timewinewesponsebatchescwient: t-timewinewesponsebatchescwient[timewinewesponsev3], (ꈍᴗꈍ)
+  statsweceivew: statsweceivew)
+    e-extends quewyfeatuwehydwatow[pipewinequewy] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("PersistenceStore")
+  ovewwide vaw identifiew: featuwehydwatowidentifiew = f-featuwehydwatowidentifiew("pewsistencestowe")
 
-  private val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
-  private val servedTweetIdsSizeStat = scopedStatsReceiver.stat("ServedTweetIdsSize")
+  pwivate vaw scopedstatsweceivew = statsweceivew.scope(getcwass.getsimpwename)
+  pwivate vaw sewvedtweetidssizestat = s-scopedstatsweceivew.stat("sewvedtweetidssize")
 
-  private val WhoToFollowExcludedUserIdsLimit = 1000
-  private val ServedTweetIdsDuration = 10.minutes
-  private val ServedTweetIdsLimit = 100
-  private val ServedTweetPreviewIdsDuration = 10.hours
-  private val ServedTweetPreviewIdsLimit = 10
+  pwivate vaw whotofowwowexcwudedusewidswimit = 1000
+  p-pwivate v-vaw sewvedtweetidsduwation = 10.minutes
+  p-pwivate vaw sewvedtweetidswimit = 100
+  pwivate vaw sewvedtweetpweviewidsduwation = 10.houws
+  pwivate v-vaw sewvedtweetpweviewidswimit = 10
 
-  override val features: Set[Feature[_, _]] =
-    Set(
-      ServedTweetIdsFeature,
-      ServedTweetPreviewIdsFeature,
-      PersistenceEntriesFeature,
-      WhoToFollowExcludedUserIdsFeature)
+  o-ovewwide vaw featuwes: set[featuwe[_, 😳 _]] =
+    s-set(
+      s-sewvedtweetidsfeatuwe, 😳😳😳
+      sewvedtweetpweviewidsfeatuwe, mya
+      p-pewsistenceentwiesfeatuwe, mya
+      whotofowwowexcwudedusewidsfeatuwe)
 
-  private val supportedClients = Seq(
-    ClientPlatform.IPhone,
-    ClientPlatform.IPad,
-    ClientPlatform.Mac,
-    ClientPlatform.Android,
-    ClientPlatform.Web,
-    ClientPlatform.RWeb,
-    ClientPlatform.TweetDeckGryphon
+  p-pwivate vaw suppowtedcwients = seq(
+    c-cwientpwatfowm.iphone, (⑅˘꒳˘)
+    cwientpwatfowm.ipad, (U ﹏ U)
+    c-cwientpwatfowm.mac, mya
+    cwientpwatfowm.andwoid, ʘwʘ
+    cwientpwatfowm.web, (˘ω˘)
+    c-cwientpwatfowm.wweb, (U ﹏ U)
+    c-cwientpwatfowm.tweetdeckgwyphon
   )
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    val timelineKind = query.product match {
-      case FollowingProduct => TimelineKind.homeLatest
-      case ForYouProduct => TimelineKind.home
-      case other => throw new UnsupportedOperationException(s"Unknown product: $other")
+  ovewwide def hydwate(quewy: pipewinequewy): stitch[featuwemap] = {
+    vaw timewinekind = quewy.pwoduct match {
+      case fowwowingpwoduct => t-timewinekind.homewatest
+      c-case fowyoupwoduct => timewinekind.home
+      c-case o-othew => thwow n-nyew unsuppowtedopewationexception(s"unknown pwoduct: $othew")
     }
-    val timelineQuery = TimelineQuery(id = query.getRequiredUserId, kind = timelineKind)
+    vaw timewinequewy = timewinequewy(id = quewy.getwequiwedusewid, ^•ﻌ•^ kind = t-timewinekind)
 
-    Stitch.callFuture {
-      timelineResponseBatchesClient
-        .get(query = timelineQuery, clientPlatforms = supportedClients)
-        .map { timelineResponses =>
-          // Note that the WTF entries are not being scoped by ClientPlatform
-          val whoToFollowUserIds = timelineResponses
-            .flatMap { timelineResponse =>
-              timelineResponse.entries
-                .filter(_.entityIdType == EntityIdType.WhoToFollow)
-                .flatMap(_.itemIds.toSeq.flatMap(_.flatMap(_.userId)))
-            }.take(WhoToFollowExcludedUserIdsLimit)
+    stitch.cawwfutuwe {
+      timewinewesponsebatchescwient
+        .get(quewy = timewinequewy, (˘ω˘) cwientpwatfowms = suppowtedcwients)
+        .map { t-timewinewesponses =>
+          // nyote that t-the wtf entwies a-awe nyot being s-scoped by cwientpwatfowm
+          vaw whotofowwowusewids = t-timewinewesponses
+            .fwatmap { t-timewinewesponse =>
+              t-timewinewesponse.entwies
+                .fiwtew(_.entityidtype == e-entityidtype.whotofowwow)
+                .fwatmap(_.itemids.toseq.fwatmap(_.fwatmap(_.usewid)))
+            }.take(whotofowwowexcwudedusewidswimit)
 
-          val clientPlatform = ClientPlatform.fromQueryOptions(
-            clientAppId = query.clientContext.appId,
-            userAgent = query.clientContext.userAgent.flatMap(UserAgent.fromString))
+          vaw cwientpwatfowm = cwientpwatfowm.fwomquewyoptions(
+            cwientappid = q-quewy.cwientcontext.appid, :3
+            u-usewagent = quewy.cwientcontext.usewagent.fwatmap(usewagent.fwomstwing))
 
-          val servedTweetIds = timelineResponses
-            .filter(_.clientPlatform == clientPlatform)
-            .filter(_.servedTime >= Time.now - ServedTweetIdsDuration)
-            .sortBy(-_.servedTime.inMilliseconds)
-            .flatMap(
-              _.entries.flatMap(_.tweetIds(includeSourceTweets = true)).take(ServedTweetIdsLimit))
+          v-vaw sewvedtweetids = t-timewinewesponses
+            .fiwtew(_.cwientpwatfowm == c-cwientpwatfowm)
+            .fiwtew(_.sewvedtime >= time.now - sewvedtweetidsduwation)
+            .sowtby(-_.sewvedtime.inmiwwiseconds)
+            .fwatmap(
+              _.entwies.fwatmap(_.tweetids(incwudesouwcetweets = twue)).take(sewvedtweetidswimit))
 
-          servedTweetIdsSizeStat.add(servedTweetIds.size)
+          s-sewvedtweetidssizestat.add(sewvedtweetids.size)
 
-          val servedTweetPreviewIds = timelineResponses
-            .filter(_.clientPlatform == clientPlatform)
-            .filter(_.servedTime >= Time.now - ServedTweetPreviewIdsDuration)
-            .sortBy(-_.servedTime.inMilliseconds)
-            .flatMap(_.entries
-              .filter(_.entityIdType == EntityIdType.TweetPreview)
-              .flatMap(_.tweetIds(includeSourceTweets = true)).take(ServedTweetPreviewIdsLimit))
+          vaw sewvedtweetpweviewids = timewinewesponses
+            .fiwtew(_.cwientpwatfowm == cwientpwatfowm)
+            .fiwtew(_.sewvedtime >= time.now - s-sewvedtweetpweviewidsduwation)
+            .sowtby(-_.sewvedtime.inmiwwiseconds)
+            .fwatmap(_.entwies
+              .fiwtew(_.entityidtype == entityidtype.tweetpweview)
+              .fwatmap(_.tweetids(incwudesouwcetweets = twue)).take(sewvedtweetpweviewidswimit))
 
-          FeatureMapBuilder()
-            .add(ServedTweetIdsFeature, servedTweetIds)
-            .add(ServedTweetPreviewIdsFeature, servedTweetPreviewIds)
-            .add(PersistenceEntriesFeature, timelineResponses)
-            .add(WhoToFollowExcludedUserIdsFeature, whoToFollowUserIds)
-            .build()
+          featuwemapbuiwdew()
+            .add(sewvedtweetidsfeatuwe, ^^;; s-sewvedtweetids)
+            .add(sewvedtweetpweviewidsfeatuwe, 🥺 s-sewvedtweetpweviewids)
+            .add(pewsistenceentwiesfeatuwe, (⑅˘꒳˘) t-timewinewesponses)
+            .add(whotofowwowexcwudedusewidsfeatuwe, nyaa~~ whotofowwowusewids)
+            .buiwd()
         }
     }
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.7, 50, 60, 60)
+  o-ovewwide vaw awewts = seq(
+    h-homemixewawewtconfig.businesshouws.defauwtsuccesswateawewt(99.7, :3 50, 60, 60)
   )
 }

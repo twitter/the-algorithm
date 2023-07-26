@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.component_library.selector
-import com.twitter.product_mixer.component_library.model.candidate.RelevancePromptCandidate
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.wewevancepwomptcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.itemcandidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Compute a position for inserting a specific candidate into the result sequence originally provided to the Selector.
- * If a `None` is returned, the Selector using this would not insert that candidate into the result.
+ * c-compute a-a position fow i-insewting a specific candidate into the wesuwt sequence owiginawwy pwovided to t-the sewectow. >_<
+ * if a `none` is wetuwned, (⑅˘꒳˘) the sewectow u-using this wouwd nyot insewt t-that candidate into the wesuwt. /(^•ω•^)
  */
-trait CandidatePositionInResults[-Query <: PipelineQuery] {
-  def apply(
-    query: Query,
-    candidate: CandidateWithDetails,
-    result: Seq[CandidateWithDetails]
-  ): Option[Int]
+twait candidatepositioninwesuwts[-quewy <: pipewinequewy] {
+  d-def appwy(
+    quewy: quewy, rawr x3
+    c-candidate: c-candidatewithdetaiws, (U ﹏ U)
+    wesuwt: seq[candidatewithdetaiws]
+  ): option[int]
 }
 
-object PromptCandidatePositionInResults extends CandidatePositionInResults[PipelineQuery] {
-  override def apply(
-    query: PipelineQuery,
-    candidate: CandidateWithDetails,
-    result: Seq[CandidateWithDetails]
-  ): Option[Int] = candidate match {
-    case ItemCandidateWithDetails(candidate, _, _) =>
+object pwomptcandidatepositioninwesuwts e-extends candidatepositioninwesuwts[pipewinequewy] {
+  ovewwide def appwy(
+    quewy: pipewinequewy, (U ﹏ U)
+    c-candidate: candidatewithdetaiws, (⑅˘꒳˘)
+    wesuwt: s-seq[candidatewithdetaiws]
+  ): option[int] = c-candidate m-match {
+    c-case itemcandidatewithdetaiws(candidate, òωó _, _) =>
       candidate match {
-        case relevancePromptCandidate: RelevancePromptCandidate => relevancePromptCandidate.position
-        case _ => None
+        c-case wewevancepwomptcandidate: wewevancepwomptcandidate => wewevancepwomptcandidate.position
+        c-case _ => nyone
       }
-    // not supporting ModuleCandidateWithDetails right now as RelevancePromptCandidate shouldn't be in a module
-    case _ => None
+    // nyot suppowting moduwecandidatewithdetaiws wight nyow as wewevancepwomptcandidate s-shouwdn't be in a moduwe
+    c-case _ => n-nyone
   }
 }

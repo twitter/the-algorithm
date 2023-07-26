@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tweet
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TimelinesScoreInfo
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tweet.timewinesscoweinfo
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class TimelinesScoreInfoMarshaller @Inject() () {
+@singweton
+c-cwass timewinesscoweinfomawshawwew @inject() () {
 
-  def apply(timelinesScoreInfo: TimelinesScoreInfo): urt.TimelinesScoreInfo =
-    urt.TimelinesScoreInfo(score = timelinesScoreInfo.score)
+  d-def appwy(timewinesscoweinfo: t-timewinesscoweinfo): u-uwt.timewinesscoweinfo =
+    uwt.timewinesscoweinfo(scowe = timewinesscoweinfo.scowe)
 }

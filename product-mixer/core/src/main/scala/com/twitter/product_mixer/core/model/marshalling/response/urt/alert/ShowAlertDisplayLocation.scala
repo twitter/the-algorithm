@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.alert
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.awewt
 
-sealed trait ShowAlertDisplayLocation
-case object Top extends ShowAlertDisplayLocation
-case object Bottom extends ShowAlertDisplayLocation
+seawed t-twait showawewtdispwaywocation
+c-case object top e-extends showawewtdispwaywocation
+c-case object bottom e-extends showawewtdispwaywocation

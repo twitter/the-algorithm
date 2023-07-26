@@ -1,93 +1,93 @@
-package com.twitter.product_mixer.core.pipeline.candidate
+package com.twittew.pwoduct_mixew.cowe.pipewine.candidate
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineResult
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutorResults
-import com.twitter.product_mixer.core.service.candidate_decorator_executor.CandidateDecoratorExecutorResult
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutorResult
-import com.twitter.product_mixer.core.service.candidate_source_executor.CandidateSourceExecutorResult
-import com.twitter.product_mixer.core.service.filter_executor.FilterExecutorResult
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutorResult
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.asyncfeatuwemap.asyncfeatuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinewesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.async_featuwe_map_executow.asyncfeatuwemapexecutowwesuwts
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_decowatow_executow.candidatedecowatowexecutowwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_featuwe_hydwatow_executow.candidatefeatuwehydwatowexecutowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_souwce_executow.candidatesouwceexecutowwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.fiwtew_executow.fiwtewexecutowwesuwt
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow.gateexecutowwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.quewy_featuwe_hydwatow_executow.quewyfeatuwehydwatowexecutow
 
-case class CandidatePipelineResult(
-  candidateSourceIdentifier: CandidateSourceIdentifier,
-  gateResult: Option[GateExecutorResult],
-  queryFeatures: Option[QueryFeatureHydratorExecutor.Result],
-  queryFeaturesPhase2: Option[QueryFeatureHydratorExecutor.Result],
-  mergedAsyncQueryFeatures: Option[AsyncFeatureMap],
-  candidateSourceResult: Option[CandidateSourceExecutorResult[UniversalNoun[Any]]],
-  preFilterHydrationResult: Option[CandidateFeatureHydratorExecutorResult[UniversalNoun[Any]]],
-  preFilterHydrationResultPhase2: Option[
-    CandidateFeatureHydratorExecutorResult[UniversalNoun[Any]]
-  ],
-  filterResult: Option[FilterExecutorResult[UniversalNoun[Any]]],
-  postFilterHydrationResult: Option[CandidateFeatureHydratorExecutorResult[UniversalNoun[Any]]],
-  candidateDecoratorResult: Option[CandidateDecoratorExecutorResult],
-  scorersResult: Option[CandidateFeatureHydratorExecutorResult[UniversalNoun[Any]]],
-  asyncFeatureHydrationResults: Option[AsyncFeatureMapExecutorResults],
-  failure: Option[PipelineFailure],
-  result: Option[Seq[CandidateWithDetails]])
-    extends PipelineResult[Seq[CandidateWithDetails]] {
+c-case cwass candidatepipewinewesuwt(
+  candidatesouwceidentifiew: candidatesouwceidentifiew, /(^•ω•^)
+  gatewesuwt: option[gateexecutowwesuwt],
+  q-quewyfeatuwes: option[quewyfeatuwehydwatowexecutow.wesuwt],
+  q-quewyfeatuwesphase2: option[quewyfeatuwehydwatowexecutow.wesuwt], 😳😳😳
+  m-mewgedasyncquewyfeatuwes: option[asyncfeatuwemap], ( ͡o ω ͡o )
+  candidatesouwcewesuwt: option[candidatesouwceexecutowwesuwt[univewsawnoun[any]]], >_<
+  pwefiwtewhydwationwesuwt: o-option[candidatefeatuwehydwatowexecutowwesuwt[univewsawnoun[any]]], >w<
+  pwefiwtewhydwationwesuwtphase2: option[
+    candidatefeatuwehydwatowexecutowwesuwt[univewsawnoun[any]]
+  ], rawr
+  fiwtewwesuwt: o-option[fiwtewexecutowwesuwt[univewsawnoun[any]]], 😳
+  postfiwtewhydwationwesuwt: o-option[candidatefeatuwehydwatowexecutowwesuwt[univewsawnoun[any]]], >w<
+  c-candidatedecowatowwesuwt: o-option[candidatedecowatowexecutowwesuwt], (⑅˘꒳˘)
+  s-scowewswesuwt: option[candidatefeatuwehydwatowexecutowwesuwt[univewsawnoun[any]]], OwO
+  asyncfeatuwehydwationwesuwts: o-option[asyncfeatuwemapexecutowwesuwts], (ꈍᴗꈍ)
+  faiwuwe: option[pipewinefaiwuwe], 😳
+  wesuwt: o-option[seq[candidatewithdetaiws]])
+    extends pipewinewesuwt[seq[candidatewithdetaiws]] {
 
-  override def withFailure(failure: PipelineFailure): CandidatePipelineResult =
-    copy(failure = Some(failure))
+  ovewwide def withfaiwuwe(faiwuwe: pipewinefaiwuwe): c-candidatepipewinewesuwt =
+    copy(faiwuwe = s-some(faiwuwe))
 
-  override def withResult(
-    result: Seq[CandidateWithDetails]
-  ): CandidatePipelineResult = copy(result = Some(result))
+  o-ovewwide d-def withwesuwt(
+    wesuwt: seq[candidatewithdetaiws]
+  ): candidatepipewinewesuwt = copy(wesuwt = s-some(wesuwt))
 
-  override val resultSize: Int = result.map(PipelineResult.resultSize).getOrElse(0)
+  o-ovewwide vaw wesuwtsize: int = w-wesuwt.map(pipewinewesuwt.wesuwtsize).getowewse(0)
 }
 
-private[candidate] object IntermediateCandidatePipelineResult {
-  def empty[Candidate <: UniversalNoun[Any]](
-    candidateSourceIdentifier: CandidateSourceIdentifier
-  ): IntermediateCandidatePipelineResult[Candidate] = {
-    IntermediateCandidatePipelineResult(
-      CandidatePipelineResult(
-        candidateSourceIdentifier = candidateSourceIdentifier,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None
-      ),
-      None
+p-pwivate[candidate] object i-intewmediatecandidatepipewinewesuwt {
+  def e-empty[candidate <: univewsawnoun[any]](
+    candidatesouwceidentifiew: c-candidatesouwceidentifiew
+  ): intewmediatecandidatepipewinewesuwt[candidate] = {
+    i-intewmediatecandidatepipewinewesuwt(
+      candidatepipewinewesuwt(
+        c-candidatesouwceidentifiew = c-candidatesouwceidentifiew, 😳😳😳
+        nyone, mya
+        nyone, mya
+        nyone, (⑅˘꒳˘)
+        nyone, (U ﹏ U)
+        nyone, mya
+        nyone, ʘwʘ
+        n-nyone, (˘ω˘)
+        n-nyone, (U ﹏ U)
+        nyone, ^•ﻌ•^
+        nyone, (˘ω˘)
+        n-nyone, :3
+        n-nyone, ^^;;
+        n-nyone, 🥺
+        nyone
+      ), (⑅˘꒳˘)
+      nyone
     )
   }
 }
 
-private[candidate] case class IntermediateCandidatePipelineResult[Candidate <: UniversalNoun[Any]](
-  underlyingResult: CandidatePipelineResult,
-  featureMaps: Option[Map[Candidate, FeatureMap]])
-    extends PipelineResult[Seq[CandidateWithDetails]] {
-  override val failure: Option[PipelineFailure] = underlyingResult.failure
-  override val result: Option[Seq[CandidateWithDetails]] = underlyingResult.result
+pwivate[candidate] c-case cwass intewmediatecandidatepipewinewesuwt[candidate <: univewsawnoun[any]](
+  undewwyingwesuwt: candidatepipewinewesuwt, nyaa~~
+  f-featuwemaps: option[map[candidate, :3 f-featuwemap]])
+    e-extends p-pipewinewesuwt[seq[candidatewithdetaiws]] {
+  ovewwide vaw faiwuwe: o-option[pipewinefaiwuwe] = u-undewwyingwesuwt.faiwuwe
+  o-ovewwide v-vaw wesuwt: option[seq[candidatewithdetaiws]] = undewwyingwesuwt.wesuwt
 
-  override def withFailure(
-    failure: PipelineFailure
-  ): IntermediateCandidatePipelineResult[Candidate] =
-    copy(underlyingResult = underlyingResult.withFailure(failure))
+  o-ovewwide def withfaiwuwe(
+    f-faiwuwe: p-pipewinefaiwuwe
+  ): i-intewmediatecandidatepipewinewesuwt[candidate] =
+    c-copy(undewwyingwesuwt = undewwyingwesuwt.withfaiwuwe(faiwuwe))
 
-  override def withResult(
-    result: Seq[CandidateWithDetails]
-  ): IntermediateCandidatePipelineResult[Candidate] =
-    copy(underlyingResult = underlyingResult.withResult(result))
+  ovewwide def withwesuwt(
+    w-wesuwt: seq[candidatewithdetaiws]
+  ): intewmediatecandidatepipewinewesuwt[candidate] =
+    copy(undewwyingwesuwt = undewwyingwesuwt.withwesuwt(wesuwt))
 
-  override def resultSize(): Int = underlyingResult.resultSize
+  ovewwide def wesuwtsize(): i-int = undewwyingwesuwt.wesuwtsize
 }

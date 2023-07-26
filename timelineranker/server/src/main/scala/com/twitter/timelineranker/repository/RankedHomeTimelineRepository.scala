@@ -1,16 +1,16 @@
-package com.twitter.timelineranker.repository
+package com.twittew.timewinewankew.wepositowy
 
-import com.twitter.timelineranker.model.Timeline
-import com.twitter.timelineranker.model.TimelineQuery
-import com.twitter.util.Future
+impowt c-com.twittew.timewinewankew.modew.timewine
+impowt c-com.twittew.timewinewankew.modew.timewinequewy
+i-impowt com.twittew.utiw.futuwe
 
 /**
- * A repository of ranked home timelines.
+ * a-a wepositowy o-of wanked h-home timewines. :3
  */
-class RankedHomeTimelineRepository extends TimelineRepository {
-  def get(queries: Seq[TimelineQuery]): Seq[Future[Timeline]] = {
-    queries.map { _ =>
-      Future.exception(new UnsupportedOperationException("ranked timelines are not yet supported."))
+c-cwass wankedhometimewinewepositowy e-extends timewinewepositowy {
+  def get(quewies: seq[timewinequewy]): seq[futuwe[timewine]] = {
+    quewies.map { _ =>
+      f-futuwe.exception(new unsuppowtedopewationexception("wanked timewines awe not y-yet suppowted."))
     }
   }
 }

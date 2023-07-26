@@ -1,41 +1,41 @@
-package com.twitter.follow_recommendations.controllers
+package com.twittew.fowwow_wecommendations.contwowwews
 
-import com.twitter.finatra.thrift.Controller
-import com.twitter.follow_recommendations.configapi.ParamsFactory
-import com.twitter.follow_recommendations.services.ProductPipelineSelector
-import com.twitter.follow_recommendations.services.UserScoringService
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService._
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
+impowt com.twittew.finatwa.thwift.contwowwew
+i-impowt com.twittew.fowwow_wecommendations.configapi.pawamsfactowy
+i-impowt com.twittew.fowwow_wecommendations.sewvices.pwoductpipewinesewectow
+i-impowt com.twittew.fowwow_wecommendations.sewvices.usewscowingsewvice
+i-impowt com.twittew.fowwow_wecommendations.thwiftscawa.fowwowwecommendationsthwiftsewvice
+i-impowt com.twittew.fowwow_wecommendations.thwiftscawa.fowwowwecommendationsthwiftsewvice._
+i-impowt c-com.twittew.stitch.stitch
+i-impowt javax.inject.inject
 
-class ThriftController @Inject() (
-  userScoringService: UserScoringService,
-  recommendationRequestBuilder: RecommendationRequestBuilder,
-  scoringUserRequestBuilder: ScoringUserRequestBuilder,
-  productPipelineSelector: ProductPipelineSelector,
-  paramsFactory: ParamsFactory)
-    extends Controller(FollowRecommendationsThriftService) {
+cwass thwiftcontwowwew @inject() (
+  usewscowingsewvice: usewscowingsewvice, nyaa~~
+  w-wecommendationwequestbuiwdew: wecommendationwequestbuiwdew, (⑅˘꒳˘)
+  scowingusewwequestbuiwdew: s-scowingusewwequestbuiwdew, rawr x3
+  pwoductpipewinesewectow: p-pwoductpipewinesewectow, (✿oωo)
+  pawamsfactowy: pawamsfactowy)
+    extends contwowwew(fowwowwecommendationsthwiftsewvice) {
 
-  handle(GetRecommendations) { args: GetRecommendations.Args =>
-    val stitch = recommendationRequestBuilder.fromThrift(args.request).flatMap { request =>
-      val params = paramsFactory(
-        request.clientContext,
-        request.displayLocation,
-        request.debugParams.flatMap(_.featureOverrides).getOrElse(Map.empty))
-      productPipelineSelector.selectPipeline(request, params).map(_.toThrift)
+  handwe(getwecommendations) { a-awgs: getwecommendations.awgs =>
+    v-vaw stitch = wecommendationwequestbuiwdew.fwomthwift(awgs.wequest).fwatmap { w-wequest =>
+      vaw pawams = pawamsfactowy(
+        wequest.cwientcontext, (ˆ ﻌ ˆ)♡
+        wequest.dispwaywocation, (˘ω˘)
+        wequest.debugpawams.fwatmap(_.featuweovewwides).getowewse(map.empty))
+      pwoductpipewinesewectow.sewectpipewine(wequest, (⑅˘꒳˘) pawams).map(_.tothwift)
     }
-    Stitch.run(stitch)
+    s-stitch.wun(stitch)
   }
 
-  handle(ScoreUserCandidates) { args: ScoreUserCandidates.Args =>
-    val stitch = scoringUserRequestBuilder.fromThrift(args.request).flatMap { request =>
-      val params = paramsFactory(
-        request.clientContext,
-        request.displayLocation,
-        request.debugParams.flatMap(_.featureOverrides).getOrElse(Map.empty))
-      userScoringService.get(request.copy(params = params)).map(_.toThrift)
+  handwe(scoweusewcandidates) { awgs: scoweusewcandidates.awgs =>
+    vaw stitch = scowingusewwequestbuiwdew.fwomthwift(awgs.wequest).fwatmap { wequest =>
+      v-vaw pawams = pawamsfactowy(
+        w-wequest.cwientcontext, (///ˬ///✿)
+        w-wequest.dispwaywocation, 😳😳😳
+        w-wequest.debugpawams.fwatmap(_.featuweovewwides).getowewse(map.empty))
+      u-usewscowingsewvice.get(wequest.copy(pawams = pawams)).map(_.tothwift)
     }
-    Stitch.run(stitch)
+    stitch.wun(stitch)
   }
 }

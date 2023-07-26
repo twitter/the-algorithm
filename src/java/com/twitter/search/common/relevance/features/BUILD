@@ -1,24 +1,24 @@
-# Java library for tweet features and utilities.
-java_library(
-    sources = ["*.java"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/com/twitter/elephantbird:core",
-        "3rdparty/jvm/org/apache/hadoop:hadoop-client-default",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "src/java/com/twitter/common/base",
-        "src/java/com/twitter/common/text/token",
-        "src/java/com/twitter/search/common/encoding/features",
-        "src/java/com/twitter/search/common/features",
-        "src/java/com/twitter/search/common/metrics",
-        "src/java/com/twitter/search/common/schema/base",
-        "src/java/com/twitter/search/common/schema/earlybird",
-        "src/java/com/twitter/search/common/util/lang",
-        "src/thrift/com/twitter/search/common:constants-java",
-        "src/thrift/com/twitter/search/common:features-java",
-        "src/thrift/com/twitter/search/common:schema-java",
-    ],
+# java wibwawy fow tweet featuwes a-and utiwities. o.O
+j-java_wibwawy(
+    s-souwces = ["*.java"], (U ᵕ U❁)
+    p-pwatfowm = "java8", (⑅˘꒳˘)
+    t-tags = ["bazew-compatibwe"], ( ͡o ω ͡o )
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/guava", UwU
+        "3wdpawty/jvm/com/googwe/inject:guice", rawr x3
+        "3wdpawty/jvm/com/twittew/ewephantbiwd:cowe", rawr
+        "3wdpawty/jvm/owg/apache/hadoop:hadoop-cwient-defauwt", σωσ
+        "3wdpawty/jvm/owg/apache/thwift:wibthwift", σωσ
+        "swc/java/com/twittew/common/base", >_<
+        "swc/java/com/twittew/common/text/token", :3
+        "swc/java/com/twittew/seawch/common/encoding/featuwes", (U ﹏ U)
+        "swc/java/com/twittew/seawch/common/featuwes", -.-
+        "swc/java/com/twittew/seawch/common/metwics",
+        "swc/java/com/twittew/seawch/common/schema/base", (ˆ ﻌ ˆ)♡
+        "swc/java/com/twittew/seawch/common/schema/eawwybiwd", (⑅˘꒳˘)
+        "swc/java/com/twittew/seawch/common/utiw/wang", (U ᵕ U❁)
+        "swc/thwift/com/twittew/seawch/common:constants-java",
+        "swc/thwift/com/twittew/seawch/common:featuwes-java", -.-
+        "swc/thwift/com/twittew/seawch/common:schema-java", ^^;;
+    ], >_<
 )

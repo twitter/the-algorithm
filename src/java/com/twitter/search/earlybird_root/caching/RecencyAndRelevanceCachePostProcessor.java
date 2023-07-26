@@ -1,66 +1,66 @@
-package com.twitter.search.earlybird_root.caching;
+package com.twittew.seawch.eawwybiwd_woot.caching;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+impowt com.googwe.common.base.optionaw;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.caching.CacheUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.util.IdTimeRanges;
+i-impowt com.twittew.seawch.common.caching.cacheutiw;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt com.twittew.seawch.quewypawsew.quewy.quewy;
+impowt c-com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
+impowt com.twittew.seawch.quewypawsew.utiw.idtimewanges;
 
-public class RecencyAndRelevanceCachePostProcessor extends EarlybirdCachePostProcessor {
+pubwic c-cwass wecencyandwewevancecachepostpwocessow extends e-eawwybiwdcachepostpwocessow {
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(RecencyAndRelevanceCachePostProcessor.class);
+  pwivate static finaw woggew wog =
+      woggewfactowy.getwoggew(wecencyandwewevancecachepostpwocessow.cwass);
 
-  protected Optional<EarlybirdResponse> postProcessCacheResponse(
-      EarlybirdRequest earlybirdRequest,
-      EarlybirdResponse earlybirdResponse, long sinceID, long maxID) {
-    return CacheUtil.postProcessCacheResult(
-        earlybirdRequest, earlybirdResponse, sinceID, maxID);
+  p-pwotected optionaw<eawwybiwdwesponse> p-postpwocesscachewesponse(
+      e-eawwybiwdwequest eawwybiwdwequest, mya
+      eawwybiwdwesponse eawwybiwdwesponse, 😳 wong s-sinceid, -.- wong maxid) {
+    wetuwn cacheutiw.postpwocesscachewesuwt(
+        eawwybiwdwequest, 🥺 eawwybiwdwesponse, o.O s-sinceid, /(^•ω•^) maxid);
   }
 
-  @Override
-  public final Optional<EarlybirdResponse> processCacheResponse(
-      EarlybirdRequestContext requestContext,
-      EarlybirdResponse cacheResponse) {
-    EarlybirdRequest originalRequest = requestContext.getRequest();
-    Preconditions.checkArgument(originalRequest.isSetSearchQuery());
+  @ovewwide
+  pubwic finaw o-optionaw<eawwybiwdwesponse> p-pwocesscachewesponse(
+      e-eawwybiwdwequestcontext w-wequestcontext, nyaa~~
+      eawwybiwdwesponse cachewesponse) {
+    eawwybiwdwequest o-owiginawwequest = wequestcontext.getwequest();
+    pweconditions.checkawgument(owiginawwequest.issetseawchquewy());
 
-    IdTimeRanges ranges;
-    Query query = requestContext.getParsedQuery();
-    if (query != null) {
-      try {
-        ranges = IdTimeRanges.fromQuery(query);
-      } catch (QueryParserException e) {
-        LOG.error(
-            "Exception when parsing since and max IDs. Request: {} Response: {}",
-            originalRequest,
-            cacheResponse,
+    i-idtimewanges wanges;
+    quewy quewy = wequestcontext.getpawsedquewy();
+    if (quewy != nyuww) {
+      t-twy {
+        wanges = idtimewanges.fwomquewy(quewy);
+      } catch (quewypawsewexception e-e) {
+        w-wog.ewwow(
+            "exception w-when pawsing since and max ids. nyaa~~ wequest: {} wesponse: {}", :3
+            o-owiginawwequest, 😳😳😳
+            c-cachewesponse, (˘ω˘)
             e);
-        return Optional.absent();
+        w-wetuwn optionaw.absent();
       }
-    } else {
-      ranges = null;
+    } e-ewse {
+      wanges = n-nyuww;
     }
 
-    Optional<Long> sinceID;
-    Optional<Long> maxID;
-    if (ranges != null) {
-      sinceID = ranges.getSinceIDExclusive();
-      maxID = ranges.getMaxIDInclusive();
-    } else {
-      sinceID = Optional.absent();
-      maxID = Optional.absent();
+    optionaw<wong> s-sinceid;
+    optionaw<wong> maxid;
+    if (wanges != n-nyuww) {
+      sinceid = w-wanges.getsinceidexcwusive();
+      maxid = wanges.getmaxidincwusive();
+    } e-ewse {
+      sinceid = o-optionaw.absent();
+      maxid = optionaw.absent();
     }
 
-    return postProcessCacheResponse(
-        originalRequest, cacheResponse, sinceID.or(0L), maxID.or(Long.MAX_VALUE));
+    wetuwn postpwocesscachewesponse(
+        owiginawwequest, ^^ cachewesponse, :3 sinceid.ow(0w), -.- maxid.ow(wong.max_vawue));
   }
 }

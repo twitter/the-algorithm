@@ -1,14 +1,14 @@
-package com.twitter.search.earlybird.segment;
+package com.twittew.seawch.eawwybiwd.segment;
 
 /**
- * SegmentDataProvider provides information about available segments for indexing. This interface
- * abstracts away the actual source of the segment data. It might be a MySQL database, a mock
- * object, or a directory of flat files. It also provides access to the segmentInfoMap itself, which
- * contains information about the indexing state of Segments.
+ * segmentdatapwovidew p-pwovides i-infowmation about a-avaiwabwe segments f-fow indexing. 😳😳😳 t-this intewface
+ * a-abstwacts a-away the actuaw s-souwce of the segment data. -.- it might be a mysqw database, ( ͡o ω ͡o ) a mock
+ * object, rawr x3 ow a-a diwectowy of fwat fiwes. nyaa~~ it awso pwovides access t-to the segmentinfomap itsewf, /(^•ω•^) w-which
+ * contains infowmation about the indexing state of segments. rawr
  */
-public interface SegmentDataProvider extends SegmentProvider {
+p-pubwic intewface segmentdatapwovidew e-extends s-segmentpwovidew {
   /**
-   * Returns the set of segment data record readers.
+   * wetuwns the set of segment data wecowd weadews. OwO
    */
-  SegmentDataReaderSet getSegmentDataReaderSet();
+  segmentdataweadewset g-getsegmentdataweadewset();
 }

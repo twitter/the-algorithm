@@ -1,122 +1,122 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures.FollowingLastNonPollingTimeFeature
-import com.twitter.home_mixer.model.HomeFeatures.LastNonPollingTimeFeature
-import com.twitter.home_mixer.model.HomeFeatures.NonPollingTimesFeature
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.prediction.features.time_features.AccountAgeInterval
-import com.twitter.timelines.prediction.features.time_features.TimeDataRecordFeatures.ACCOUNT_AGE_INTERVAL
-import com.twitter.timelines.prediction.features.time_features.TimeDataRecordFeatures.IS_12_MONTH_NEW_USER
-import com.twitter.timelines.prediction.features.time_features.TimeDataRecordFeatures.IS_30_DAY_NEW_USER
-import com.twitter.timelines.prediction.features.time_features.TimeDataRecordFeatures.TIME_BETWEEN_NON_POLLING_REQUESTS_AVG
-import com.twitter.timelines.prediction.features.time_features.TimeDataRecordFeatures.TIME_SINCE_LAST_NON_POLLING_REQUEST
-import com.twitter.timelines.prediction.features.time_features.TimeDataRecordFeatures.TIME_SINCE_VIEWER_ACCOUNT_CREATION_SECS
-import com.twitter.timelines.prediction.features.time_features.TimeDataRecordFeatures.USER_ID_IS_SNOWFLAKE_ID
-import com.twitter.user_session_store.ReadRequest
-import com.twitter.user_session_store.ReadWriteUserSessionStore
-import com.twitter.user_session_store.UserSessionDataset
-import com.twitter.user_session_store.UserSessionDataset.UserSessionDataset
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.fowwowingwastnonpowwingtimefeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.wastnonpowwingtimefeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.nonpowwingtimesfeatuwe
+i-impowt c-com.twittew.mw.api.datawecowd
+impowt c-com.twittew.mw.api.utiw.fdsw._
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.datawecowdinafeatuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.snowfwake.id.snowfwakeid
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.pwediction.featuwes.time_featuwes.accountageintewvaw
+impowt com.twittew.timewines.pwediction.featuwes.time_featuwes.timedatawecowdfeatuwes.account_age_intewvaw
+impowt com.twittew.timewines.pwediction.featuwes.time_featuwes.timedatawecowdfeatuwes.is_12_month_new_usew
+i-impowt com.twittew.timewines.pwediction.featuwes.time_featuwes.timedatawecowdfeatuwes.is_30_day_new_usew
+i-impowt com.twittew.timewines.pwediction.featuwes.time_featuwes.timedatawecowdfeatuwes.time_between_non_powwing_wequests_avg
+i-impowt com.twittew.timewines.pwediction.featuwes.time_featuwes.timedatawecowdfeatuwes.time_since_wast_non_powwing_wequest
+impowt com.twittew.timewines.pwediction.featuwes.time_featuwes.timedatawecowdfeatuwes.time_since_viewew_account_cweation_secs
+impowt com.twittew.timewines.pwediction.featuwes.time_featuwes.timedatawecowdfeatuwes.usew_id_is_snowfwake_id
+i-impowt com.twittew.usew_session_stowe.weadwequest
+impowt com.twittew.usew_session_stowe.weadwwiteusewsessionstowe
+impowt com.twittew.usew_session_stowe.usewsessiondataset
+i-impowt com.twittew.usew_session_stowe.usewsessiondataset.usewsessiondataset
+impowt com.twittew.utiw.time
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-object RequestTimeDataRecordFeature
-    extends DataRecordInAFeature[PipelineQuery]
-    with FeatureWithDefaultOnFailure[PipelineQuery, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+o-object wequesttimedatawecowdfeatuwe
+    extends datawecowdinafeatuwe[pipewinequewy]
+    w-with featuwewithdefauwtonfaiwuwe[pipewinequewy, σωσ datawecowd] {
+  o-ovewwide def defauwtvawue: datawecowd = nyew datawecowd()
 }
 
-@Singleton
-case class RequestTimeQueryFeatureHydrator @Inject() (
-  userSessionStore: ReadWriteUserSessionStore)
-    extends QueryFeatureHydrator[PipelineQuery] {
+@singweton
+case cwass wequesttimequewyfeatuwehydwatow @inject() (
+  usewsessionstowe: w-weadwwiteusewsessionstowe)
+    extends quewyfeatuwehydwatow[pipewinequewy] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("RequestTime")
+  o-ovewwide vaw identifiew: f-featuwehydwatowidentifiew = f-featuwehydwatowidentifiew("wequesttime")
 
-  override val features: Set[Feature[_, _]] = Set(
-    FollowingLastNonPollingTimeFeature,
-    LastNonPollingTimeFeature,
-    NonPollingTimesFeature,
-    RequestTimeDataRecordFeature
+  ovewwide vaw featuwes: set[featuwe[_, rawr x3 _]] = set(
+    f-fowwowingwastnonpowwingtimefeatuwe, OwO
+    wastnonpowwingtimefeatuwe,
+    n-nyonpowwingtimesfeatuwe, /(^•ω•^)
+    wequesttimedatawecowdfeatuwe
   )
 
-  private val datasets: Set[UserSessionDataset] = Set(UserSessionDataset.NonPollingTimes)
+  pwivate v-vaw datasets: s-set[usewsessiondataset] = set(usewsessiondataset.nonpowwingtimes)
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    userSessionStore
-      .read(ReadRequest(query.getRequiredUserId, datasets))
-      .map { userSession =>
-        val nonPollingTimestamps = userSession.flatMap(_.nonPollingTimestamps)
+  ovewwide d-def hydwate(quewy: pipewinequewy): s-stitch[featuwemap] = {
+    usewsessionstowe
+      .wead(weadwequest(quewy.getwequiwedusewid, 😳😳😳 datasets))
+      .map { u-usewsession =>
+        vaw nyonpowwingtimestamps = u-usewsession.fwatmap(_.nonpowwingtimestamps)
 
-        val lastNonPollingTime = nonPollingTimestamps
-          .flatMap(_.nonPollingTimestampsMs.headOption)
-          .map(Time.fromMilliseconds)
+        vaw wastnonpowwingtime = n-nyonpowwingtimestamps
+          .fwatmap(_.nonpowwingtimestampsms.headoption)
+          .map(time.fwommiwwiseconds)
 
-        val followingLastNonPollingTime = nonPollingTimestamps
-          .flatMap(_.mostRecentHomeLatestNonPollingTimestampMs)
-          .map(Time.fromMilliseconds)
+        v-vaw fowwowingwastnonpowwingtime = nyonpowwingtimestamps
+          .fwatmap(_.mostwecenthomewatestnonpowwingtimestampms)
+          .map(time.fwommiwwiseconds)
 
-        val nonPollingTimes = nonPollingTimestamps
-          .map(_.nonPollingTimestampsMs)
-          .getOrElse(Seq.empty)
+        vaw nonpowwingtimes = nyonpowwingtimestamps
+          .map(_.nonpowwingtimestampsms)
+          .getowewse(seq.empty)
 
-        val requestTimeDataRecord = getRequestTimeDataRecord(query, nonPollingTimes)
+        vaw wequesttimedatawecowd = getwequesttimedatawecowd(quewy, ( ͡o ω ͡o ) n-nyonpowwingtimes)
 
-        FeatureMapBuilder()
-          .add(FollowingLastNonPollingTimeFeature, followingLastNonPollingTime)
-          .add(LastNonPollingTimeFeature, lastNonPollingTime)
-          .add(NonPollingTimesFeature, nonPollingTimes)
-          .add(RequestTimeDataRecordFeature, requestTimeDataRecord)
-          .build()
+        f-featuwemapbuiwdew()
+          .add(fowwowingwastnonpowwingtimefeatuwe, >_< fowwowingwastnonpowwingtime)
+          .add(wastnonpowwingtimefeatuwe, >w< w-wastnonpowwingtime)
+          .add(nonpowwingtimesfeatuwe, rawr n-nyonpowwingtimes)
+          .add(wequesttimedatawecowdfeatuwe, 😳 w-wequesttimedatawecowd)
+          .buiwd()
       }
   }
 
-  def getRequestTimeDataRecord(query: PipelineQuery, nonPollingTimes: Seq[Long]): DataRecord = {
-    val requestTimeMs = query.queryTime.inMillis
-    val accountAge = SnowflakeId.timeFromIdOpt(query.getRequiredUserId)
-    val timeSinceAccountCreation = accountAge.map(query.queryTime.since)
-    val timeSinceEarliestNonPollingRequest =
-      nonPollingTimes.lastOption.map(requestTimeMs - _)
-    val timeSinceLastNonPollingRequest =
-      nonPollingTimes.headOption.map(requestTimeMs - _)
+  def getwequesttimedatawecowd(quewy: pipewinequewy, >w< nyonpowwingtimes: s-seq[wong]): datawecowd = {
+    vaw wequesttimems = quewy.quewytime.inmiwwis
+    vaw accountage = s-snowfwakeid.timefwomidopt(quewy.getwequiwedusewid)
+    vaw timesinceaccountcweation = a-accountage.map(quewy.quewytime.since)
+    v-vaw t-timesinceeawwiestnonpowwingwequest =
+      nyonpowwingtimes.wastoption.map(wequesttimems - _)
+    v-vaw timesincewastnonpowwingwequest =
+      n-nyonpowwingtimes.headoption.map(wequesttimems - _)
 
-    new DataRecord()
-      .setFeatureValue(USER_ID_IS_SNOWFLAKE_ID, accountAge.isDefined)
-      .setFeatureValue(
-        IS_30_DAY_NEW_USER,
-        timeSinceAccountCreation.map(_ < 30.days).getOrElse(false)
+    n-nyew datawecowd()
+      .setfeatuwevawue(usew_id_is_snowfwake_id, (⑅˘꒳˘) a-accountage.isdefined)
+      .setfeatuwevawue(
+        is_30_day_new_usew, OwO
+        timesinceaccountcweation.map(_ < 30.days).getowewse(fawse)
       )
-      .setFeatureValue(
-        IS_12_MONTH_NEW_USER,
-        timeSinceAccountCreation.map(_ < 365.days).getOrElse(false)
+      .setfeatuwevawue(
+        i-is_12_month_new_usew, (ꈍᴗꈍ)
+        t-timesinceaccountcweation.map(_ < 365.days).getowewse(fawse)
       )
-      .setFeatureValueFromOption(
-        ACCOUNT_AGE_INTERVAL,
-        timeSinceAccountCreation.flatMap(AccountAgeInterval.fromDuration).map(_.id.toLong)
+      .setfeatuwevawuefwomoption(
+        a-account_age_intewvaw, 😳
+        t-timesinceaccountcweation.fwatmap(accountageintewvaw.fwomduwation).map(_.id.towong)
       )
-      .setFeatureValueFromOption(
-        TIME_SINCE_VIEWER_ACCOUNT_CREATION_SECS,
-        timeSinceAccountCreation.map(_.inSeconds.toDouble)
+      .setfeatuwevawuefwomoption(
+        t-time_since_viewew_account_cweation_secs, 😳😳😳
+        timesinceaccountcweation.map(_.inseconds.todoubwe)
       )
-      .setFeatureValueFromOption(
-        TIME_BETWEEN_NON_POLLING_REQUESTS_AVG,
-        timeSinceEarliestNonPollingRequest.map(_.toDouble / math.max(1.0, nonPollingTimes.size))
+      .setfeatuwevawuefwomoption(
+        time_between_non_powwing_wequests_avg, mya
+        timesinceeawwiestnonpowwingwequest.map(_.todoubwe / m-math.max(1.0, mya nyonpowwingtimes.size))
       )
-      .setFeatureValueFromOption(
-        TIME_SINCE_LAST_NON_POLLING_REQUEST,
-        timeSinceLastNonPollingRequest.map(_.toDouble)
+      .setfeatuwevawuefwomoption(
+        time_since_wast_non_powwing_wequest, (⑅˘꒳˘)
+        timesincewastnonpowwingwequest.map(_.todoubwe)
       )
   }
 }

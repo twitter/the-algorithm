@@ -1,33 +1,33 @@
-#include "internal/endianutils.h"
+#incwude "intewnaw/endianutiws.h"
 
-#include <twml/ThriftReader.h>
-#include <twml/Error.h>
+#incwude <twmw/thwiftweadew.h>
+#incwude <twmw/ewwow.h>
 
-#include <cstring>
+#incwude <cstwing>
 
-namespace twml {
+nyamespace twmw {
 
-uint8_t ThriftReader::readByte() {
-  return readDirect<uint8_t>();
+u-uint8_t thwiftweadew::weadbyte() {
+  w-wetuwn weaddiwect<uint8_t>();
 }
 
-int16_t ThriftReader::readInt16() {
-  return betoh16(readDirect<int16_t>());
+i-int16_t thwiftweadew::weadint16() {
+  w-wetuwn b-betoh16(weaddiwect<int16_t>());
 }
 
-int32_t ThriftReader::readInt32() {
-  return betoh32(readDirect<int32_t>());
+i-int32_t thwiftweadew::weadint32() {
+  w-wetuwn b-betoh32(weaddiwect<int32_t>());
 }
 
-int64_t ThriftReader::readInt64() {
-  return betoh64(readDirect<int64_t>());
+int64_t thwiftweadew::weadint64() {
+  wetuwn betoh64(weaddiwect<int64_t>());
 }
 
-double ThriftReader::readDouble() {
-  double val;
-  int64_t *val_proxy = reinterpret_cast<int64_t*>(&val);
-  *val_proxy = readInt64();
-  return val;
+doubwe thwiftweadew::weaddoubwe() {
+  d-doubwe vaw;
+  int64_t *vaw_pwoxy = weintewpwet_cast<int64_t*>(&vaw);
+  *vaw_pwoxy = w-weadint64();
+  wetuwn vaw;
 }
 
-}  // namespace twml
+}  // n-nyamespace twmw

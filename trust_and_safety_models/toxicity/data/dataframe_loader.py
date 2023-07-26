@@ -1,348 +1,348 @@
-from abc import ABC, abstractmethod
-from datetime import date
-from importlib import import_module
-import pickle
+fwom abc impowt abc, rawr abstwactmethod
+f-fwom datetime i-impowt date
+fwom i-impowtwib impowt i-impowt_moduwe
+i-impowt pickwe
 
-from toxicity_ml_pipeline.settings.default_settings_tox import (
-  CLIENT,
-  EXISTING_TASK_VERSIONS,
-  GCS_ADDRESS,
-  TRAINING_DATA_LOCATION,
+f-fwom toxicity_mw_pipewine.settings.defauwt_settings_tox i-impowt (
+  c-cwient, ^^;;
+  existing_task_vewsions, rawr x3
+  gcs_addwess, (ˆ ﻌ ˆ)♡
+  twaining_data_wocation, σωσ
 )
-from toxicity_ml_pipeline.utils.helpers import execute_command, execute_query
-from toxicity_ml_pipeline.utils.queries import (
-  FULL_QUERY,
-  FULL_QUERY_W_TWEET_TYPES,
-  PARSER_UDF,
-  QUERY_SETTINGS,
+fwom toxicity_mw_pipewine.utiws.hewpews impowt exekawaii~_command, (U ﹏ U) e-exekawaii~_quewy
+fwom toxicity_mw_pipewine.utiws.quewies impowt (
+  f-fuww_quewy, >w<
+  fuww_quewy_w_tweet_types, σωσ
+  p-pawsew_udf, nyaa~~
+  quewy_settings, 🥺
 )
 
-import numpy as np
-import pandas
+impowt nyumpy as nyp
+impowt pandas
 
 
-class DataframeLoader(ABC):
+cwass datafwamewoadew(abc):
 
-  def __init__(self, project):
-    self.project = project
+  d-def __init__(sewf, rawr x3 pwoject):
+    s-sewf.pwoject = p-pwoject
 
-  @abstractmethod
-  def produce_query(self):
+  @abstwactmethod
+  def pwoduce_quewy(sewf):
     pass
 
-  @abstractmethod
-  def load_data(self, test=False):
+  @abstwactmethod
+  def woad_data(sewf, σωσ test=fawse):
     pass
 
 
-class ENLoader(DataframeLoader):
-  def __init__(self, project, setting_file):
-    super(ENLoader, self).__init__(project=project)
-    self.date_begin = setting_file.DATE_BEGIN
-    self.date_end = setting_file.DATE_END
-    TASK_VERSION = setting_file.TASK_VERSION
-    if TASK_VERSION not in EXISTING_TASK_VERSIONS:
-      raise ValueError
-    self.task_version = TASK_VERSION
-    self.query_settings = dict(QUERY_SETTINGS)
-    self.full_query = FULL_QUERY
+c-cwass enwoadew(datafwamewoadew):
+  def __init__(sewf, (///ˬ///✿) pwoject, (U ﹏ U) setting_fiwe):
+    supew(enwoadew, ^^;; s-sewf).__init__(pwoject=pwoject)
+    sewf.date_begin = s-setting_fiwe.date_begin
+    s-sewf.date_end = s-setting_fiwe.date_end
+    t-task_vewsion = setting_fiwe.task_vewsion
+    if task_vewsion n-not in existing_task_vewsions:
+      waise vawueewwow
+    sewf.task_vewsion = task_vewsion
+    s-sewf.quewy_settings = dict(quewy_settings)
+    sewf.fuww_quewy = fuww_quewy
 
-  def produce_query(self, date_begin, date_end, task_version=None, **keys):
-    task_version = self.task_version if task_version is None else task_version
+  def pwoduce_quewy(sewf, 🥺 date_begin, date_end, òωó task_vewsion=none, XD **keys):
+    t-task_vewsion = sewf.task_vewsion i-if t-task_vewsion is n-none ewse task_vewsion
 
-    if task_version in keys["table"]:
-      table_name = keys["table"][task_version]
-      print(f"Loading {table_name}")
+    if task_vewsion in keys["tabwe"]:
+      t-tabwe_name = k-keys["tabwe"][task_vewsion]
+      pwint(f"woading {tabwe_name}")
 
-      main_query = keys["main"].format(
-        table=table_name,
-        parser_udf=PARSER_UDF[task_version],
+      m-main_quewy = k-keys["main"].fowmat(
+        tabwe=tabwe_name, :3
+        p-pawsew_udf=pawsew_udf[task_vewsion], (U ﹏ U)
         date_begin=date_begin,
-        date_end=date_end,
+        d-date_end=date_end, >w<
       )
 
-      return self.full_query.format(
-        main_table_query=main_query, date_begin=date_begin, date_end=date_end
+      wetuwn sewf.fuww_quewy.fowmat(
+        m-main_tabwe_quewy=main_quewy, /(^•ω•^) date_begin=date_begin, (⑅˘꒳˘) d-date_end=date_end
       )
-    return ""
+    wetuwn ""
 
-  def _reload(self, test, file_keyword):
-    query = f"SELECT * from `{TRAINING_DATA_LOCATION.format(project=self.project)}_{file_keyword}`"
+  d-def _wewoad(sewf, ʘwʘ t-test, rawr x3 fiwe_keywowd):
+    quewy = f"sewect * fwom `{twaining_data_wocation.fowmat(pwoject=sewf.pwoject)}_{fiwe_keywowd}`"
 
     if test:
-      query += " ORDER BY RAND() LIMIT 1000"
-    try:
-      df = execute_query(client=CLIENT, query=query)
-    except Exception:
-      print(
-        "Loading from BQ failed, trying to load from GCS. "
-        "NB: use this option only for intermediate files, which will be deleted at the end of "
-        "the project."
+      quewy += " owdew by wand() wimit 1000"
+    t-twy:
+      d-df = exekawaii~_quewy(cwient=cwient, (˘ω˘) quewy=quewy)
+    e-except e-exception:
+      p-pwint(
+        "woading fwom bq faiwed, o.O twying to woad fwom g-gcs. 😳 "
+        "nb: use this option onwy fow intewmediate fiwes, o.O which wiww be d-deweted at the end of "
+        "the p-pwoject."
       )
-      copy_cmd = f"gsutil cp {GCS_ADDRESS.format(project=self.project)}/training_data/{file_keyword}.pkl ."
-      execute_command(copy_cmd)
-      try:
-        with open(f"{file_keyword}.pkl", "rb") as file:
-          df = pickle.load(file)
-      except Exception:
-        return None
+      c-copy_cmd = f-f"gsutiw cp {gcs_addwess.fowmat(pwoject=sewf.pwoject)}/twaining_data/{fiwe_keywowd}.pkw ."
+      e-exekawaii~_command(copy_cmd)
+      t-twy:
+        w-with open(f"{fiwe_keywowd}.pkw", ^^;; "wb") a-as fiwe:
+          df = pickwe.woad(fiwe)
+      except exception:
+        w-wetuwn n-none
 
-      if test:
-        df = df.sample(frac=1)
-        return df.iloc[:1000]
+      if t-test:
+        df = d-df.sampwe(fwac=1)
+        w-wetuwn df.iwoc[:1000]
 
-    return df
+    wetuwn df
 
-  def load_data(self, test=False, **kwargs):
-    if "reload" in kwargs and kwargs["reload"]:
-      df = self._reload(test, kwargs["reload"])
-      if df is not None and df.shape[0] > 0:
-        return df
+  def woad_data(sewf, ( ͡o ω ͡o ) t-test=fawse, ^^;; **kwawgs):
+    if "wewoad" in kwawgs and kwawgs["wewoad"]:
+      df = sewf._wewoad(test, ^^;; kwawgs["wewoad"])
+      if df is nyot n-nyone and df.shape[0] > 0:
+        wetuwn df
 
-    df = None
-    query_settings = self.query_settings
-    if test:
-      query_settings = {"fairness": self.query_settings["fairness"]}
-      query_settings["fairness"]["main"] += " LIMIT 500"
+    df = nyone
+    quewy_settings = s-sewf.quewy_settings
+    i-if t-test:
+      quewy_settings = {"faiwness": sewf.quewy_settings["faiwness"]}
+      q-quewy_settings["faiwness"]["main"] += " wimit 500"
 
-    for table, query_info in query_settings.items():
-      curr_query = self.produce_query(
-        date_begin=self.date_begin, date_end=self.date_end, **query_info
+    f-fow tabwe, XD q-quewy_info in quewy_settings.items():
+      cuww_quewy = sewf.pwoduce_quewy(
+        date_begin=sewf.date_begin, 🥺 date_end=sewf.date_end, (///ˬ///✿) **quewy_info
       )
-      if curr_query == "":
-        continue
-      curr_df = execute_query(client=CLIENT, query=curr_query)
-      curr_df["origin"] = table
-      df = curr_df if df is None else pandas.concat((df, curr_df))
+      if cuww_quewy == "":
+        c-continue
+      cuww_df = exekawaii~_quewy(cwient=cwient, (U ᵕ U❁) quewy=cuww_quewy)
+      c-cuww_df["owigin"] = tabwe
+      d-df = cuww_df i-if df is nyone ewse pandas.concat((df, ^^;; cuww_df))
 
-    df["loading_date"] = date.today()
-    df["date"] = pandas.to_datetime(df.date)
-    return df
+    d-df["woading_date"] = date.today()
+    d-df["date"] = pandas.to_datetime(df.date)
+    wetuwn d-df
 
-  def load_precision_set(
-    self, begin_date="...", end_date="...", with_tweet_types=False, task_version=3.5
+  def woad_pwecision_set(
+    s-sewf, ^^;; begin_date="...", rawr end_date="...", (˘ω˘) with_tweet_types=fawse, 🥺 task_vewsion=3.5
   ):
     if with_tweet_types:
-      self.full_query = FULL_QUERY_W_TWEET_TYPES
+      s-sewf.fuww_quewy = f-fuww_quewy_w_tweet_types
 
-    query_settings = self.query_settings
-    curr_query = self.produce_query(
-      date_begin=begin_date,
-      date_end=end_date,
-      task_version=task_version,
-      **query_settings["precision"],
+    q-quewy_settings = sewf.quewy_settings
+    c-cuww_quewy = s-sewf.pwoduce_quewy(
+      date_begin=begin_date, nyaa~~
+      d-date_end=end_date, :3
+      task_vewsion=task_vewsion, /(^•ω•^)
+      **quewy_settings["pwecision"], ^•ﻌ•^
     )
-    curr_df = execute_query(client=CLIENT, query=curr_query)
+    cuww_df = exekawaii~_quewy(cwient=cwient, UwU quewy=cuww_quewy)
 
-    curr_df.rename(columns={"media_url": "media_presence"}, inplace=True)
-    return curr_df
+    c-cuww_df.wename(cowumns={"media_uww": "media_pwesence"}, i-inpwace=twue)
+    wetuwn cuww_df
 
 
-class ENLoaderWithSampling(ENLoader):
+cwass enwoadewwithsampwing(enwoadew):
 
-  keywords = {
-    "politics": [
+  k-keywowds = {
+    "powitics": [
 ...
-    ],
-    "insults": [
+    ], 😳😳😳
+    "insuwts": [
 ...    
-    ],
-    "race": [
+    ], OwO
+    "wace": [
 ...
-    ],
+    ], ^•ﻌ•^
   }
-  n = ...
-  N = ...
+  n-ny = ...
+  ny = ...
 
-  def __init__(self, project):
-    self.raw_loader = ENLoader(project=project)
-    if project == ...:
-      self.project = project
-    else:
-      raise ValueError
+  def __init__(sewf, (ꈍᴗꈍ) pwoject):
+    s-sewf.waw_woadew = enwoadew(pwoject=pwoject)
+    if pwoject == ...:
+      sewf.pwoject = pwoject
+    e-ewse:
+      waise vawueewwow
 
-  def sample_with_weights(self, df, n):
-    w = df["label"].value_counts(normalize=True)[1]
-    dist = np.full((df.shape[0],), w)
-    sampled_df = df.sample(n=n, weights=dist, replace=False)
-    return sampled_df
+  def sampwe_with_weights(sewf, (⑅˘꒳˘) d-df, n):
+    w = d-df["wabew"].vawue_counts(nowmawize=twue)[1]
+    dist = nyp.fuww((df.shape[0],), (⑅˘꒳˘) w)
+    sampwed_df = df.sampwe(n=n, w-weights=dist, w-wepwace=fawse)
+    wetuwn sampwed_df
 
-  def sample_keywords(self, df, N, group):
-    print("\nmatching", group, "keywords...")
+  def sampwe_keywowds(sewf, (ˆ ﻌ ˆ)♡ d-df, ny, gwoup):
+    pwint("\nmatching", /(^•ω•^) g-gwoup, òωó "keywowds...")
 
-    keyword_list = self.keywords[group]
-    match_df = df.loc[df.text.str.lower().str.contains("|".join(keyword_list), regex=True)]
+    keywowd_wist = sewf.keywowds[gwoup]
+    match_df = df.woc[df.text.stw.wowew().stw.contains("|".join(keywowd_wist), (⑅˘꒳˘) w-wegex=twue)]
 
-    print("sampling N/3 from", group)
-    if match_df.shape[0] <= N / 3:
-      print(
-        "WARNING: Sampling only",
-        match_df.shape[0],
-        "instead of",
-        N / 3,
-        "examples from race focused tweets due to insufficient data",
+    pwint("sampwing n-ny/3 f-fwom", (U ᵕ U❁) gwoup)
+    if match_df.shape[0] <= n-ny / 3:
+      pwint(
+        "wawning: s-sampwing onwy",
+        m-match_df.shape[0], >w<
+        "instead o-of", σωσ
+        ny / 3, -.-
+        "exampwes fwom wace f-focused tweets d-due to insufficient data", o.O
       )
-      sample_df = match_df
+      sampwe_df = m-match_df
 
-    else:
-      print(
-        "sampling",
-        group,
-        "at",
-        round(match_df["label"].value_counts(normalize=True)[1], 3),
-        "% action rate",
+    e-ewse:
+      pwint(
+        "sampwing", ^^
+        g-gwoup, >_<
+        "at", >w<
+        wound(match_df["wabew"].vawue_counts(nowmawize=twue)[1], >_< 3),
+        "% action wate", >w<
       )
-      sample_df = self.sample_with_weights(match_df, int(N / 3))
-    print(sample_df.shape)
-    print(sample_df.label.value_counts(normalize=True))
+      sampwe_df = sewf.sampwe_with_weights(match_df, rawr i-int(n / 3))
+    pwint(sampwe_df.shape)
+    p-pwint(sampwe_df.wabew.vawue_counts(nowmawize=twue))
 
-    print("\nshape of df before dropping sampled rows after", group, "matching..", df.shape[0])
-    df = df.loc[
-      df.index.difference(sample_df.index),
+    p-pwint("\nshape of df befowe dwopping sampwed wows aftew", g-gwoup, rawr x3 "matching..", ( ͡o ω ͡o ) d-df.shape[0])
+    d-df = df.woc[
+      d-df.index.diffewence(sampwe_df.index), (˘ω˘)
     ]
-    print("\nshape of df after dropping sampled rows after", group, "matching..", df.shape[0])
+    pwint("\nshape o-of df aftew dwopping sampwed wows aftew", 😳 gwoup, OwO "matching..", (˘ω˘) df.shape[0])
 
-    return df, sample_df
+    wetuwn d-df, sampwe_df
 
-  def sample_first_set_helper(self, train_df, first_set, new_n):
-    if first_set == "prev":
-      fset = train_df.loc[train_df["origin"].isin(["prevalence", "causal prevalence"])]
-      print(
-        "sampling prev at", round(fset["label"].value_counts(normalize=True)[1], 3), "% action rate"
+  def sampwe_fiwst_set_hewpew(sewf, òωó t-twain_df, ( ͡o ω ͡o ) fiwst_set, UwU nyew_n):
+    i-if fiwst_set == "pwev":
+      fset = twain_df.woc[twain_df["owigin"].isin(["pwevawence", /(^•ω•^) "causaw p-pwevawence"])]
+      pwint(
+        "sampwing p-pwev at", (ꈍᴗꈍ) wound(fset["wabew"].vawue_counts(nowmawize=twue)[1], 😳 3), "% a-action w-wate"
       )
-    else:
-      fset = train_df
+    e-ewse:
+      fset = t-twain_df
 
-    n_fset = self.sample_with_weights(fset, new_n)
-    print("len of sampled first set", n_fset.shape[0])
-    print(n_fset.label.value_counts(normalize=True))
+    ny_fset = sewf.sampwe_with_weights(fset, mya nyew_n)
+    pwint("wen of sampwed fiwst set", mya ny_fset.shape[0])
+    pwint(n_fset.wabew.vawue_counts(nowmawize=twue))
 
-    return n_fset
+    w-wetuwn ny_fset
 
-  def sample(self, df, first_set, second_set, keyword_sampling, n, N):
-    train_df = df[df.origin != "precision"]
-    val_test_df = df[df.origin == "precision"]
+  d-def sampwe(sewf, /(^•ω•^) d-df, fiwst_set, ^^;; second_set, 🥺 k-keywowd_sampwing, ^^ ny, ny):
+    twain_df = df[df.owigin != "pwecision"]
+    vaw_test_df = df[df.owigin == "pwecision"]
 
-    print("\nsampling first set of data")
-    new_n = n - N if second_set is not None else n
-    n_fset = self.sample_first_set_helper(train_df, first_set, new_n)
+    p-pwint("\nsampwing f-fiwst set of data")
+    nyew_n = n-ny - ny if second_set is nyot nyone ewse ny
+    n-ny_fset = sewf.sampwe_fiwst_set_hewpew(twain_df, f-fiwst_set, ^•ﻌ•^ nyew_n)
 
-    print("\nsampling second set of data")
-    train_df = train_df.loc[
-      train_df.index.difference(n_fset.index),
+    pwint("\nsampwing s-second s-set of data")
+    twain_df = twain_df.woc[
+      twain_df.index.diffewence(n_fset.index), /(^•ω•^)
     ]
 
-    if second_set is None:
-      print("no second set sampling being done")
-      df = n_fset.append(val_test_df)
-      return df
+    if second_set i-is none:
+      p-pwint("no s-second set sampwing b-being done")
+      d-df = ny_fset.append(vaw_test_df)
+      wetuwn df
 
-    if second_set == "prev":
-      sset = train_df.loc[train_df["origin"].isin(["prevalence", "causal prevalence"])]
+    if s-second_set == "pwev":
+      s-sset = twain_df.woc[twain_df["owigin"].isin(["pwevawence", ^^ "causaw p-pwevawence"])]
 
-    elif second_set == "fdr":
-      sset = train_df.loc[train_df["origin"] == "fdr"]
+    e-ewif second_set == "fdw":
+      sset = twain_df.woc[twain_df["owigin"] == "fdw"]
 
-    else: 
-      sset = train_df
+    e-ewse: 
+      sset = twain_df
 
-    if keyword_sampling == True:
-      print("sampling based off of keywords defined...")
-      print("second set is", second_set, "with length", sset.shape[0])
+    if keywowd_sampwing == t-twue:
+      pwint("sampwing based off of keywowds d-defined...")
+      p-pwint("second set is", 🥺 second_set, (U ᵕ U❁) "with w-wength", 😳😳😳 sset.shape[0])
 
-      sset, n_politics = self.sample_keywords(sset, N, "politics")
-      sset, n_insults = self.sample_keywords(sset, N, "insults")
-      sset, n_race = self.sample_keywords(sset, N, "race")
+      sset, nyaa~~ ny_powitics = sewf.sampwe_keywowds(sset, (˘ω˘) ny, >_< "powitics")
+      s-sset, XD ny_insuwts = s-sewf.sampwe_keywowds(sset, rawr x3 n-ny, "insuwts")
+      sset, ( ͡o ω ͡o ) ny_wace = sewf.sampwe_keywowds(sset, :3 ny, "wace")
 
-      n_sset = n_politics.append([n_insults, n_race]) 
-      print("len of sampled second set", n_sset.shape[0])
+      n-ny_sset = ny_powitics.append([n_insuwts, mya ny_wace]) 
+      pwint("wen of sampwed s-second set", σωσ n-ny_sset.shape[0])
 
-    else:
-      print(
-        "No keyword sampling. Instead random sampling from",
-        second_set,
-        "at",
-        round(sset["label"].value_counts(normalize=True)[1], 3),
-        "% action rate",
+    ewse:
+      p-pwint(
+        "no keywowd s-sampwing. (ꈍᴗꈍ) instead w-wandom sampwing fwom", OwO
+        second_set, o.O
+        "at", 😳😳😳
+        w-wound(sset["wabew"].vawue_counts(nowmawize=twue)[1], /(^•ω•^) 3),
+        "% action wate", OwO
       )
-      n_sset = self.sample_with_weights(sset, N)
-      print("len of sampled second set", n_sset.shape[0])
-      print(n_sset.label.value_counts(normalize=True))
+      ny_sset = sewf.sampwe_with_weights(sset, ^^ n-ny)
+      p-pwint("wen of sampwed second s-set", (///ˬ///✿) ny_sset.shape[0])
+      pwint(n_sset.wabew.vawue_counts(nowmawize=twue))
 
-    df = n_fset.append([n_sset, val_test_df])
-    df = df.sample(frac=1).reset_index(drop=True)
+    d-df = ny_fset.append([n_sset, (///ˬ///✿) v-vaw_test_df])
+    d-df = df.sampwe(fwac=1).weset_index(dwop=twue)
 
-    return df
+    wetuwn df
 
-  def load_data(
-    self, first_set="prev", second_set=None, keyword_sampling=False, test=False, **kwargs
+  def woad_data(
+    sewf, (///ˬ///✿) fiwst_set="pwev", second_set=none, ʘwʘ keywowd_sampwing=fawse, ^•ﻌ•^ test=fawse, OwO **kwawgs
   ):
-    n = kwargs.get("n", self.n)
-    N = kwargs.get("N", self.N)
+    ny = kwawgs.get("n", (U ﹏ U) sewf.n)
+    ny = kwawgs.get("n", (ˆ ﻌ ˆ)♡ sewf.n)
 
-    df = self.raw_loader.load_data(test=test, **kwargs)
-    return self.sample(df, first_set, second_set, keyword_sampling, n, N)
+    df = sewf.waw_woadew.woad_data(test=test, (⑅˘꒳˘) **kwawgs)
+    w-wetuwn sewf.sampwe(df, (U ﹏ U) f-fiwst_set, o.O second_set, mya keywowd_sampwing, XD n-ny, ny)
 
 
-class I18nLoader(DataframeLoader):
-  def __init__(self):
-    super().__init__(project=...)
-    from archive.settings.... import ACCEPTED_LANGUAGES, QUERY_SETTINGS
+cwass i-i18nwoadew(datafwamewoadew):
+  d-def __init__(sewf):
+    supew().__init__(pwoject=...)
+    f-fwom awchive.settings.... òωó i-impowt accepted_wanguages, (˘ω˘) q-quewy_settings
 
-    self.accepted_languages = ACCEPTED_LANGUAGES
-    self.query_settings = dict(QUERY_SETTINGS)
+    sewf.accepted_wanguages = a-accepted_wanguages
+    sewf.quewy_settings = d-dict(quewy_settings)
 
-  def produce_query(self, language, query, dataset, table, lang):
-    query = query.format(dataset=dataset, table=table)
-    add_query = f"AND reviewed.{lang}='{language}'"
-    query += add_query
+  d-def pwoduce_quewy(sewf, :3 wanguage, quewy, OwO dataset, t-tabwe, mya wang):
+    q-quewy = q-quewy.fowmat(dataset=dataset, (˘ω˘) tabwe=tabwe)
+    a-add_quewy = f"and w-weviewed.{wang}='{wanguage}'"
+    q-quewy += add_quewy
 
-    return query
+    w-wetuwn q-quewy
 
-  def query_keys(self, language, task=2, size="50"):
-    if task == 2:
-      if language == "ar":
-        self.query_settings["adhoc_v2"]["table"] = "..."
-      elif language == "tr":
-        self.query_settings["adhoc_v2"]["table"] = "..."
-      elif language == "es":
-        self.query_settings["adhoc_v2"]["table"] = f"..."
-      else:
-        self.query_settings["adhoc_v2"]["table"] = "..."
+  def q-quewy_keys(sewf, o.O wanguage, (✿oωo) task=2, s-size="50"):
+    i-if task == 2:
+      i-if wanguage == "aw":
+        sewf.quewy_settings["adhoc_v2"]["tabwe"] = "..."
+      e-ewif wanguage == "tw":
+        sewf.quewy_settings["adhoc_v2"]["tabwe"] = "..."
+      e-ewif wanguage == "es":
+        sewf.quewy_settings["adhoc_v2"]["tabwe"] = f-f"..."
+      e-ewse:
+        s-sewf.quewy_settings["adhoc_v2"]["tabwe"] = "..."
 
-      return self.query_settings["adhoc_v2"]
+      wetuwn s-sewf.quewy_settings["adhoc_v2"]
 
     if task == 3:
-      return self.query_settings["adhoc_v3"]
+      w-wetuwn sewf.quewy_settings["adhoc_v3"]
 
-    raise ValueError(f"There are no other tasks than 2 or 3. {task} does not exist.")
+    w-waise vawueewwow(f"thewe a-awe nyo othew tasks than 2 ow 3. (ˆ ﻌ ˆ)♡ {task} does nyot exist.")
 
-  def load_data(self, language, test=False, task=2):
-    if language not in self.accepted_languages:
-      raise ValueError(
-        f"Language not in the data {language}. Accepted values are " f"{self.accepted_languages}"
+  def woad_data(sewf, ^^;; w-wanguage, test=fawse, OwO task=2):
+    i-if wanguage n-nyot in sewf.accepted_wanguages:
+      waise vawueewwow(
+        f"wanguage n-nyot in the data {wanguage}. 🥺 accepted v-vawues awe " f-f"{sewf.accepted_wanguages}"
       )
 
-    print(".... adhoc data")
-    key_dict = self.query_keys(language=language, task=task)
-    query_adhoc = self.produce_query(language=language, **key_dict)
+    p-pwint(".... adhoc data")
+    key_dict = s-sewf.quewy_keys(wanguage=wanguage, mya t-task=task)
+    quewy_adhoc = s-sewf.pwoduce_quewy(wanguage=wanguage, 😳 **key_dict)
     if test:
-      query_adhoc += " LIMIT 500"
-    adhoc_df = execute_query(CLIENT, query_adhoc)
+      quewy_adhoc += " w-wimit 500"
+    adhoc_df = e-exekawaii~_quewy(cwient, òωó q-quewy_adhoc)
 
-    if not (test or language == "tr" or task == 3):
-      if language == "es":
-        print(".... additional adhoc data")
-        key_dict = self.query_keys(language=language, size="100")
-        query_adhoc = self.produce_query(language=language, **key_dict)
-        adhoc_df = pandas.concat(
-          (adhoc_df, execute_query(CLIENT, query_adhoc)), axis=0, ignore_index=True
+    i-if nyot (test ow wanguage == "tw" o-ow task == 3):
+      i-if wanguage == "es":
+        p-pwint(".... a-additionaw adhoc data")
+        k-key_dict = sewf.quewy_keys(wanguage=wanguage, /(^•ω•^) s-size="100")
+        q-quewy_adhoc = s-sewf.pwoduce_quewy(wanguage=wanguage, **key_dict)
+        a-adhoc_df = p-pandas.concat(
+          (adhoc_df, -.- e-exekawaii~_quewy(cwient, òωó q-quewy_adhoc)), /(^•ω•^) axis=0, ignowe_index=twue
         )
 
-      print(".... prevalence data")
-      query_prev = self.produce_query(language=language, **self.query_settings["prevalence_v2"])
-      prev_df = execute_query(CLIENT, query_prev)
-      prev_df["description"] = "Prevalence"
-      adhoc_df = pandas.concat((adhoc_df, prev_df), axis=0, ignore_index=True)
+      p-pwint(".... pwevawence d-data")
+      quewy_pwev = sewf.pwoduce_quewy(wanguage=wanguage, /(^•ω•^) **sewf.quewy_settings["pwevawence_v2"])
+      p-pwev_df = exekawaii~_quewy(cwient, 😳 q-quewy_pwev)
+      p-pwev_df["descwiption"] = "pwevawence"
+      adhoc_df = pandas.concat((adhoc_df, :3 pwev_df), axis=0, (U ᵕ U❁) ignowe_index=twue)
 
-    return self.clean(adhoc_df)
+    w-wetuwn sewf.cwean(adhoc_df)

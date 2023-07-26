@@ -1,57 +1,57 @@
-package com.twitter.visibility.generators
+package com.twittew.visibiwity.genewatows
 
-import com.ibm.icu.util.ULocale
-import com.twitter.config.yaml.YamlMap
-import com.twitter.finagle.stats.StatsReceiver
+impowt c-com.ibm.icu.utiw.uwocawe
+i-impowt c-com.twittew.config.yamw.yamwmap
+i-impowt com.twittew.finagwe.stats.statsweceivew
 
-object CountryNameGenerator {
+o-object countwynamegenewatow {
 
-  private val AuroraFilesystemPath = "/usr/local/twitter-config/twitter/config/"
+  p-pwivate vaw auwowafiwesystempath = "/usw/wocaw/twittew-config/twittew/config/"
 
-  private val ContentBlockingSupportedCountryList = "takedown_countries.yml"
+  p-pwivate vaw c-contentbwockingsuppowtedcountwywist = "takedown_countwies.ymw"
 
-  def providesFromConfigBus(statsReceiver: StatsReceiver): CountryNameGenerator = {
-    fromFile(AuroraFilesystemPath + ContentBlockingSupportedCountryList, statsReceiver)
+  def pwovidesfwomconfigbus(statsweceivew: statsweceivew): countwynamegenewatow = {
+    fwomfiwe(auwowafiwesystempath + c-contentbwockingsuppowtedcountwywist, (U ﹏ U) statsweceivew)
   }
 
-  def providesWithCustomMap(countryCodeMap: Map[String, String], statsReceiver: StatsReceiver) = {
-    new CountryNameGenerator(countryCodeMap, statsReceiver)
+  def pwovideswithcustommap(countwycodemap: m-map[stwing, (///ˬ///✿) stwing], >w< s-statsweceivew: statsweceivew) = {
+    nyew countwynamegenewatow(countwycodemap, rawr statsweceivew)
   }
 
-  private def fromFile(fileName: String, statsReceiver: StatsReceiver) = {
-    val yamlConfig = YamlMap.load(fileName)
-    val countryCodeMap: Map[String, String] = yamlConfig.keySet.map { countryCode: String =>
-      val normalizedCode = countryCode.toUpperCase
-      val countryName: Option[String] =
-        yamlConfig.get(Seq(countryCode, "name")).asInstanceOf[Option[String]]
-      (normalizedCode, countryName.getOrElse(normalizedCode))
-    }.toMap
-    new CountryNameGenerator(countryCodeMap, statsReceiver)
+  p-pwivate def fwomfiwe(fiwename: s-stwing, mya statsweceivew: s-statsweceivew) = {
+    vaw yamwconfig = yamwmap.woad(fiwename)
+    vaw countwycodemap: map[stwing, ^^ s-stwing] = yamwconfig.keyset.map { countwycode: stwing =>
+      vaw nyowmawizedcode = countwycode.touppewcase
+      v-vaw countwyname: option[stwing] =
+        y-yamwconfig.get(seq(countwycode, "name")).asinstanceof[option[stwing]]
+      (nowmawizedcode, 😳😳😳 c-countwyname.getowewse(nowmawizedcode))
+    }.tomap
+    n-nyew countwynamegenewatow(countwycodemap, mya s-statsweceivew)
   }
 }
 
-class CountryNameGenerator(countryCodeMap: Map[String, String], statsReceiver: StatsReceiver) {
+cwass countwynamegenewatow(countwycodemap: map[stwing, 😳 s-stwing], statsweceivew: statsweceivew) {
 
-  private val scopedStatsReceiver = statsReceiver.scope("country_name_generator")
-  private val foundCountryReceiver = scopedStatsReceiver.counter("found")
-  private val missingCountryReceiver = scopedStatsReceiver.counter("missing")
+  p-pwivate vaw scopedstatsweceivew = statsweceivew.scope("countwy_name_genewatow")
+  pwivate vaw foundcountwyweceivew = scopedstatsweceivew.countew("found")
+  p-pwivate vaw missingcountwyweceivew = scopedstatsweceivew.countew("missing")
 
-  def getCountryName(code: String): String = {
-    val normalizedCode = code.toUpperCase
-    countryCodeMap.get(normalizedCode) match {
-      case Some(retrievedName) => {
-        foundCountryReceiver.incr()
-        retrievedName
+  d-def getcountwyname(code: s-stwing): s-stwing = {
+    vaw nyowmawizedcode = code.touppewcase
+    countwycodemap.get(nowmawizedcode) match {
+      c-case s-some(wetwievedname) => {
+        foundcountwyweceivew.incw()
+        w-wetwievedname
       }
-      case _ => {
-        missingCountryReceiver.incr()
-        val fallbackName =
-          new ULocale("", normalizedCode).getDisplayCountry(ULocale.forLanguageTag("en"))
+      c-case _ => {
+        missingcountwyweceivew.incw()
+        v-vaw fawwbackname =
+          n-nyew uwocawe("", -.- nyowmawizedcode).getdispwaycountwy(uwocawe.fowwanguagetag("en"))
 
-        if (fallbackName == "")
-          normalizedCode
-        else
-          fallbackName
+        if (fawwbackname == "")
+          n-nyowmawizedcode
+        ewse
+          fawwbackname
       }
     }
   }

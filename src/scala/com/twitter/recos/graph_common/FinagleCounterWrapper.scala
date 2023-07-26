@@ -1,15 +1,15 @@
-package com.twitter.recos.graph_common
+package com.twittew.wecos.gwaph_common
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.graphjet.stats.{Counter => GraphCounter}
+impowt com.twittew.finagwe.stats.countew
+i-impowt com.twittew.gwaphjet.stats.{countew => g-gwaphcountew}
 
 /**
- * FinagleCounterWrapper wraps Twitter's Finagle Counter.
+ * f-finagwecountewwwappew w-wwaps t-twittew's finagwe c-countew. -.-
  *
- * This is because GraphJet is an openly available library which does not
- * depend on Finagle, but tracks stats using a similar interface.
+ * t-this is because g-gwaphjet is an openwy avaiwabwe wibwawy which does nyot
+ * depend on finagwe, ^^;; but t-twacks stats using a simiwaw intewface. >_<
  */
-class FinagleCounterWrapper(counter: Counter) extends GraphCounter {
-  def incr() = counter.incr()
-  def incr(delta: Int) = counter.incr(delta)
+cwass f-finagwecountewwwappew(countew: countew) extends g-gwaphcountew {
+  def incw() = countew.incw()
+  def incw(dewta: i-int) = countew.incw(dewta)
 }

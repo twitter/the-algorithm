@@ -1,6 +1,6 @@
-test_value:
-  comment: Test Value
-  default_availability: 10000
-dark_traffic_percent:
-  comment: Percentage of traffic to send to dark traffic destination
-  default_availability: 0
+test_vawue:
+  comment: test vawue
+  d-defauwt_avaiwabiwity: 10000
+dawk_twaffic_pewcent:
+  c-comment: p-pewcentage of twaffic t-to send to d-dawk twaffic destination
+  d-defauwt_avaiwabiwity: 0

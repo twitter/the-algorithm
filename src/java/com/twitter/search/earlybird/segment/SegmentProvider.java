@@ -1,13 +1,13 @@
-package com.twitter.search.earlybird.segment;
+package com.twittew.seawch.eawwybiwd.segment;
 
-import java.io.IOException;
-import java.util.List;
+impowt j-java.io.ioexception;
+i-impowt j-java.utiw.wist;
 
-import com.twitter.search.common.partitioning.base.Segment;
+i-impowt com.twittew.seawch.common.pawtitioning.base.segment;
 
-public interface SegmentProvider {
+pubwic i-intewface s-segmentpwovidew {
   /**
-   * Returns a *new* sorted list of all available segments on disk / db / hdfs / etc.
+   * w-wetuwns a-a *new* sowted wist of aww avaiwabwe segments on disk / db / hdfs / etc. >_<
    */
-  List<Segment> newSegmentList() throws IOException;
+  w-wist<segment> nyewsegmentwist() thwows ioexception;
 }

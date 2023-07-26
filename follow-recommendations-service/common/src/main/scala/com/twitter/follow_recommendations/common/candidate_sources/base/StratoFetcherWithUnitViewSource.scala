@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.base
 
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.stwato.cwient.fetchew
 
-abstract class StratoFetcherWithUnitViewSource[K, V](
-  fetcher: Fetcher[K, Unit, V],
-  override val identifier: CandidateSourceIdentifier)
-    extends StratoFetcherSource[K, Unit, V](fetcher, Unit, identifier)
+a-abstwact c-cwass stwatofetchewwithunitviewsouwce[k, σωσ v-v](
+  f-fetchew: fetchew[k, >_< u-unit, v],
+  o-ovewwide vaw identifiew: candidatesouwceidentifiew)
+    extends stwatofetchewsouwce[k, :3 unit, v-v](fetchew, (U ﹏ U) unit, -.- identifiew)

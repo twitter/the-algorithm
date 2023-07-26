@@ -1,119 +1,119 @@
-package com.twitter.home_mixer.product.scored_tweets.response_transformer
+package com.twittew.home_mixew.pwoduct.scowed_tweets.wesponse_twansfowmew
 
-import com.twitter.home_mixer.marshaller.timelines.TopicContextFunctionalityTypeUnmarshaller
-import com.twitter.home_mixer.model.HomeFeatures.AncestorsFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsBlueVerifiedFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsCreatorFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsGoldVerifiedFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsGrayVerifiedFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsLegacyVerifiedFeature
-import com.twitter.home_mixer.model.HomeFeatures.CachedCandidatePipelineIdentifierFeature
-import com.twitter.home_mixer.model.HomeFeatures.DirectedAtUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ExclusiveConversationAuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsReadFromCacheFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.LastScoredTimestampMsFeature
-import com.twitter.home_mixer.model.HomeFeatures.PerspectiveFilteredLikedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidFollowedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidLikedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.StreamToKafkaFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicContextFunctionalityTypeFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicIdSocialContextFeature
-import com.twitter.home_mixer.model.HomeFeatures.TweetUrlsFeature
-import com.twitter.home_mixer.model.HomeFeatures.WeightedModelScoreFeature
-import com.twitter.home_mixer.{thriftscala => hmt}
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+impowt c-com.twittew.home_mixew.mawshawwew.timewines.topiccontextfunctionawitytypeunmawshawwew
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.ancestowsfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.authowisbwuevewifiedfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.authowiscweatowfeatuwe
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.authowisgowdvewifiedfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.authowisgwayvewifiedfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.authowiswegacyvewifiedfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.cachedcandidatepipewineidentifiewfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.diwectedatusewidfeatuwe
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.excwusiveconvewsationauthowidfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.innetwowkfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.inwepwytotweetidfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.inwepwytousewidfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.isweadfwomcachefeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.iswetweetfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.wastscowedtimestampmsfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.pewspectivefiwtewedwikedbyusewidsfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.quotedtweetidfeatuwe
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.quotedusewidfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.sgsvawidfowwowedbyusewidsfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.sgsvawidwikedbyusewidsfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.scowefeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.souwcetweetidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.souwceusewidfeatuwe
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.stweamtokafkafeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.suggesttypefeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.topiccontextfunctionawitytypefeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.topicidsociawcontextfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.tweetuwwsfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.weightedmodewscowefeatuwe
+impowt com.twittew.home_mixew.{thwiftscawa => h-hmt}
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twansfowmewidentifiew
 
-object CachedScoredTweetsResponseFeatureTransformer
-    extends CandidateFeatureTransformer[hmt.ScoredTweet] {
+object cachedscowedtweetswesponsefeatuwetwansfowmew
+    e-extends c-candidatefeatuwetwansfowmew[hmt.scowedtweet] {
 
-  override val identifier: TransformerIdentifier =
-    TransformerIdentifier("CachedScoredTweetsResponse")
+  o-ovewwide vaw identifiew: twansfowmewidentifiew =
+    twansfowmewidentifiew("cachedscowedtweetswesponse")
 
-  override val features: Set[Feature[_, _]] = Set(
-    AncestorsFeature,
-    AuthorIdFeature,
-    AuthorIsBlueVerifiedFeature,
-    AuthorIsCreatorFeature,
-    AuthorIsGoldVerifiedFeature,
-    AuthorIsGrayVerifiedFeature,
-    AuthorIsLegacyVerifiedFeature,
-    CachedCandidatePipelineIdentifierFeature,
-    DirectedAtUserIdFeature,
-    ExclusiveConversationAuthorIdFeature,
-    InNetworkFeature,
-    InReplyToTweetIdFeature,
-    InReplyToUserIdFeature,
-    IsReadFromCacheFeature,
-    IsRetweetFeature,
-    LastScoredTimestampMsFeature,
-    PerspectiveFilteredLikedByUserIdsFeature,
-    QuotedTweetIdFeature,
-    QuotedUserIdFeature,
-    SGSValidFollowedByUserIdsFeature,
-    SGSValidLikedByUserIdsFeature,
-    ScoreFeature,
-    SourceTweetIdFeature,
-    SourceUserIdFeature,
-    StreamToKafkaFeature,
-    SuggestTypeFeature,
-    TopicContextFunctionalityTypeFeature,
-    TopicIdSocialContextFeature,
-    TweetUrlsFeature,
-    WeightedModelScoreFeature
+  o-ovewwide vaw f-featuwes: set[featuwe[_, ( ͡o ω ͡o ) _]] = set(
+    ancestowsfeatuwe, >_<
+    a-authowidfeatuwe, >w<
+    a-authowisbwuevewifiedfeatuwe, rawr
+    authowiscweatowfeatuwe, 😳
+    a-authowisgowdvewifiedfeatuwe, >w<
+    authowisgwayvewifiedfeatuwe, (⑅˘꒳˘)
+    a-authowiswegacyvewifiedfeatuwe, OwO
+    cachedcandidatepipewineidentifiewfeatuwe, (ꈍᴗꈍ)
+    diwectedatusewidfeatuwe, 😳
+    e-excwusiveconvewsationauthowidfeatuwe, 😳😳😳
+    innetwowkfeatuwe, mya
+    i-inwepwytotweetidfeatuwe, mya
+    inwepwytousewidfeatuwe, (⑅˘꒳˘)
+    i-isweadfwomcachefeatuwe, (U ﹏ U)
+    i-iswetweetfeatuwe, mya
+    wastscowedtimestampmsfeatuwe, ʘwʘ
+    pewspectivefiwtewedwikedbyusewidsfeatuwe, (˘ω˘)
+    quotedtweetidfeatuwe, (U ﹏ U)
+    quotedusewidfeatuwe, ^•ﻌ•^
+    sgsvawidfowwowedbyusewidsfeatuwe, (˘ω˘)
+    sgsvawidwikedbyusewidsfeatuwe, :3
+    s-scowefeatuwe, ^^;;
+    s-souwcetweetidfeatuwe, 🥺
+    souwceusewidfeatuwe, (⑅˘꒳˘)
+    s-stweamtokafkafeatuwe,
+    s-suggesttypefeatuwe, nyaa~~
+    t-topiccontextfunctionawitytypefeatuwe, :3
+    topicidsociawcontextfeatuwe, ( ͡o ω ͡o )
+    tweetuwwsfeatuwe, mya
+    weightedmodewscowefeatuwe
   )
 
-  override def transform(candidate: hmt.ScoredTweet): FeatureMap =
-    FeatureMapBuilder()
-      .add(AncestorsFeature, candidate.ancestors.getOrElse(Seq.empty))
-      .add(AuthorIdFeature, Some(candidate.authorId))
-      .add(AuthorIsBlueVerifiedFeature, candidate.authorMetadata.exists(_.blueVerified))
-      .add(AuthorIsGoldVerifiedFeature, candidate.authorMetadata.exists(_.goldVerified))
-      .add(AuthorIsGrayVerifiedFeature, candidate.authorMetadata.exists(_.grayVerified))
-      .add(AuthorIsLegacyVerifiedFeature, candidate.authorMetadata.exists(_.legacyVerified))
-      .add(AuthorIsCreatorFeature, candidate.authorMetadata.exists(_.creator))
-      .add(CachedCandidatePipelineIdentifierFeature, candidate.candidatePipelineIdentifier)
-      .add(DirectedAtUserIdFeature, candidate.directedAtUserId)
-      .add(ExclusiveConversationAuthorIdFeature, candidate.exclusiveConversationAuthorId)
-      .add(InNetworkFeature, candidate.inNetwork.getOrElse(true))
-      .add(InReplyToTweetIdFeature, candidate.inReplyToTweetId)
-      .add(InReplyToUserIdFeature, candidate.inReplyToUserId)
-      .add(IsReadFromCacheFeature, true)
-      .add(IsRetweetFeature, candidate.sourceTweetId.isDefined)
-      .add(LastScoredTimestampMsFeature, candidate.lastScoredTimestampMs)
+  ovewwide def twansfowm(candidate: h-hmt.scowedtweet): featuwemap =
+    featuwemapbuiwdew()
+      .add(ancestowsfeatuwe, (///ˬ///✿) candidate.ancestows.getowewse(seq.empty))
+      .add(authowidfeatuwe, some(candidate.authowid))
+      .add(authowisbwuevewifiedfeatuwe, (˘ω˘) c-candidate.authowmetadata.exists(_.bwuevewified))
+      .add(authowisgowdvewifiedfeatuwe, ^^;; candidate.authowmetadata.exists(_.gowdvewified))
+      .add(authowisgwayvewifiedfeatuwe, (✿oωo) c-candidate.authowmetadata.exists(_.gwayvewified))
+      .add(authowiswegacyvewifiedfeatuwe, (U ﹏ U) c-candidate.authowmetadata.exists(_.wegacyvewified))
+      .add(authowiscweatowfeatuwe, -.- c-candidate.authowmetadata.exists(_.cweatow))
+      .add(cachedcandidatepipewineidentifiewfeatuwe, ^•ﻌ•^ candidate.candidatepipewineidentifiew)
+      .add(diwectedatusewidfeatuwe, rawr c-candidate.diwectedatusewid)
+      .add(excwusiveconvewsationauthowidfeatuwe, (˘ω˘) c-candidate.excwusiveconvewsationauthowid)
+      .add(innetwowkfeatuwe, c-candidate.innetwowk.getowewse(twue))
+      .add(inwepwytotweetidfeatuwe, nyaa~~ c-candidate.inwepwytotweetid)
+      .add(inwepwytousewidfeatuwe, UwU candidate.inwepwytousewid)
+      .add(isweadfwomcachefeatuwe, :3 twue)
+      .add(iswetweetfeatuwe, (⑅˘꒳˘) c-candidate.souwcetweetid.isdefined)
+      .add(wastscowedtimestampmsfeatuwe, (///ˬ///✿) c-candidate.wastscowedtimestampms)
       .add(
-        PerspectiveFilteredLikedByUserIdsFeature,
-        candidate.perspectiveFilteredLikedByUserIds.getOrElse(Seq.empty))
-      .add(QuotedTweetIdFeature, candidate.quotedTweetId)
-      .add(QuotedUserIdFeature, candidate.quotedUserId)
-      .add(ScoreFeature, candidate.score)
-      .add(SGSValidLikedByUserIdsFeature, candidate.sgsValidLikedByUserIds.getOrElse(Seq.empty))
+        p-pewspectivefiwtewedwikedbyusewidsfeatuwe, ^^;;
+        c-candidate.pewspectivefiwtewedwikedbyusewids.getowewse(seq.empty))
+      .add(quotedtweetidfeatuwe, >_< candidate.quotedtweetid)
+      .add(quotedusewidfeatuwe, rawr x3 c-candidate.quotedusewid)
+      .add(scowefeatuwe, /(^•ω•^) candidate.scowe)
+      .add(sgsvawidwikedbyusewidsfeatuwe, :3 candidate.sgsvawidwikedbyusewids.getowewse(seq.empty))
       .add(
-        SGSValidFollowedByUserIdsFeature,
-        candidate.sgsValidFollowedByUserIds.getOrElse(Seq.empty))
-      .add(SourceTweetIdFeature, candidate.sourceTweetId)
-      .add(SourceUserIdFeature, candidate.sourceUserId)
-      .add(StreamToKafkaFeature, false)
-      .add(SuggestTypeFeature, candidate.suggestType)
+        sgsvawidfowwowedbyusewidsfeatuwe, (ꈍᴗꈍ)
+        candidate.sgsvawidfowwowedbyusewids.getowewse(seq.empty))
+      .add(souwcetweetidfeatuwe, /(^•ω•^) c-candidate.souwcetweetid)
+      .add(souwceusewidfeatuwe, (⑅˘꒳˘) candidate.souwceusewid)
+      .add(stweamtokafkafeatuwe, ( ͡o ω ͡o ) fawse)
+      .add(suggesttypefeatuwe, òωó candidate.suggesttype)
       .add(
-        TopicContextFunctionalityTypeFeature,
-        candidate.topicFunctionalityType.map(TopicContextFunctionalityTypeUnmarshaller(_)))
-      .add(TopicIdSocialContextFeature, candidate.topicId)
-      .add(TweetUrlsFeature, candidate.tweetUrls.getOrElse(Seq.empty))
-      .add(WeightedModelScoreFeature, candidate.score)
-      .build()
+        topiccontextfunctionawitytypefeatuwe, (⑅˘꒳˘)
+        candidate.topicfunctionawitytype.map(topiccontextfunctionawitytypeunmawshawwew(_)))
+      .add(topicidsociawcontextfeatuwe, XD c-candidate.topicid)
+      .add(tweetuwwsfeatuwe, -.- candidate.tweetuwws.getowewse(seq.empty))
+      .add(weightedmodewscowefeatuwe, :3 candidate.scowe)
+      .buiwd()
 }

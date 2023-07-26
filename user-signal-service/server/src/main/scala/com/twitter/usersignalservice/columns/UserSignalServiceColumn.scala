@@ -1,49 +1,49 @@
-package com.twitter.usersignalservice.columns
+package com.twittew.usewsignawsewvice.cowumns
 
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.catalog.Ops
-import com.twitter.strato.config.Policy
-import com.twitter.strato.config.ReadWritePolicy
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description
-import com.twitter.strato.data.Lifecycle
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.usersignalservice.service.UserSignalService
-import com.twitter.usersignalservice.thriftscala.BatchSignalRequest
-import com.twitter.usersignalservice.thriftscala.BatchSignalResponse
-import javax.inject.Inject
+impowt c-com.twittew.stitch.notfound
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.catawog.opmetadata
+impowt c-com.twittew.stwato.catawog.ops
+i-impowt com.twittew.stwato.config.powicy
+i-impowt c-com.twittew.stwato.config.weadwwitepowicy
+i-impowt com.twittew.stwato.data.conv
+impowt com.twittew.stwato.data.descwiption
+impowt com.twittew.stwato.data.wifecycwe
+i-impowt com.twittew.stwato.fed.stwatofed
+impowt com.twittew.stwato.thwift.scwoogeconv
+i-impowt com.twittew.usewsignawsewvice.sewvice.usewsignawsewvice
+i-impowt com.twittew.usewsignawsewvice.thwiftscawa.batchsignawwequest
+impowt com.twittew.usewsignawsewvice.thwiftscawa.batchsignawwesponse
+i-impowt javax.inject.inject
 
-class UserSignalServiceColumn @Inject() (userSignalService: UserSignalService)
-    extends StratoFed.Column(UserSignalServiceColumn.Path)
-    with StratoFed.Fetch.Stitch {
+cwass usewsignawsewvicecowumn @inject() (usewsignawsewvice: u-usewsignawsewvice)
+    e-extends stwatofed.cowumn(usewsignawsewvicecowumn.path)
+    with stwatofed.fetch.stitch {
 
-  override val metadata: OpMetadata = OpMetadata(
-    lifecycle = Some(Lifecycle.Production),
-    description = Some(Description.PlainText("User Signal Service Federated Column")))
+  ovewwide vaw metadata: o-opmetadata = opmetadata(
+    wifecycwe = some(wifecycwe.pwoduction), /(^•ω•^)
+    descwiption = some(descwiption.pwaintext("usew s-signaw sewvice fedewated c-cowumn")))
 
-  override def ops: Ops = super.ops
+  o-ovewwide def o-ops: ops = supew.ops
 
-  override type Key = BatchSignalRequest
-  override type View = Unit
-  override type Value = BatchSignalResponse
+  o-ovewwide type key = batchsignawwequest
+  ovewwide type v-view = unit
+  ovewwide type vawue = batchsignawwesponse
 
-  override val keyConv: Conv[Key] = ScroogeConv.fromStruct[BatchSignalRequest]
-  override val viewConv: Conv[View] = Conv.ofType
-  override val valueConv: Conv[Value] = ScroogeConv.fromStruct[BatchSignalResponse]
+  o-ovewwide vaw keyconv: conv[key] = scwoogeconv.fwomstwuct[batchsignawwequest]
+  ovewwide vaw viewconv: conv[view] = conv.oftype
+  o-ovewwide vaw vawueconv: c-conv[vawue] = s-scwoogeconv.fwomstwuct[batchsignawwesponse]
 
-  override def fetch(key: Key, view: View): Stitch[Result[Value]] = {
-    userSignalService
-      .userSignalServiceHandlerStoreStitch(key)
-      .map(result => found(result))
-      .handle {
-        case NotFound => missing
+  o-ovewwide def fetch(key: key, ʘwʘ view: view): stitch[wesuwt[vawue]] = {
+    usewsignawsewvice
+      .usewsignawsewvicehandwewstowestitch(key)
+      .map(wesuwt => f-found(wesuwt))
+      .handwe {
+        c-case nyotfound => missing
       }
   }
 }
 
-object UserSignalServiceColumn {
-  val Path = "recommendations/user-signal-service/signals"
+o-object usewsignawsewvicecowumn {
+  v-vaw path = "wecommendations/usew-signaw-sewvice/signaws"
 }

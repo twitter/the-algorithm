@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.common.rankers.common
+package com.twittew.fowwow_wecommendations.common.wankews.common
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import scala.collection.mutable
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt scawa.cowwection.mutabwe
 
-object DedupCandidates {
-  def apply[C <: UniversalNoun[Long]](input: Seq[C]): Seq[C] = {
-    val seen = mutable.HashSet[Long]()
-    input.filter { candidate => seen.add(candidate.id) }
+o-object dedupcandidates {
+  d-def a-appwy[c <: univewsawnoun[wong]](input: s-seq[c]): s-seq[c] = {
+    v-vaw seen = mutabwe.hashset[wong]()
+    i-input.fiwtew { candidate => seen.add(candidate.id) }
   }
 }

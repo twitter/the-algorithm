@@ -1,196 +1,196 @@
-package com.twitter.ann.hnsw;
+package com.twittew.ann.hnsw;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.PriorityQueue;
+impowt j-java.utiw.awwaywist;
+i-impowt j-java.utiw.compawatow;
+i-impowt java.utiw.itewatow;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.pwiowityqueue;
 
 /**
- * Container for items with their distance.
+ * c-containew fow items with theiw distance. 🥺
  *
- * @param <U> Type of origin/reference element.
- * @param <T> Type of element that the queue will hold
+ * @pawam <u> type of owigin/wefewence e-ewement. >_<
+ * @pawam <t> type of ewement that t-the queue wiww howd
  */
-public class DistancedItemQueue<U, T> implements Iterable<DistancedItem<T>> {
-  private final U origin;
-  private final DistanceFunction<U, T> distFn;
-  private final PriorityQueue<DistancedItem<T>> queue;
-  private final boolean minQueue;
+pubwic cwass d-distanceditemqueue<u, ʘwʘ t> impwements itewabwe<distanceditem<t>> {
+  pwivate f-finaw u owigin;
+  pwivate finaw d-distancefunction<u, (˘ω˘) t-t> distfn;
+  pwivate finaw pwiowityqueue<distanceditem<t>> queue;
+  pwivate finaw boowean minqueue;
   /**
-   * Creates ontainer for items with their distances.
+   * cweates ontainew f-fow items with theiw distances. (✿oωo)
    *
-   * @param origin Origin (reference) point
-   * @param initial Initial list of elements to add in the structure
-   * @param minQueue True for min queue, False for max queue
-   * @param distFn Distance function
+   * @pawam owigin owigin (wefewence) point
+   * @pawam initiaw initiaw wist of ewements t-to add in the stwuctuwe
+   * @pawam m-minqueue twue f-fow min queue, (///ˬ///✿) f-fawse fow max q-queue
+   * @pawam distfn distance function
    */
-  public DistancedItemQueue(
-      U origin,
-      List<T> initial,
-      boolean minQueue,
-      DistanceFunction<U, T> distFn
+  p-pubwic distanceditemqueue(
+      u owigin, rawr x3
+      wist<t> initiaw,
+      b-boowean minqueue, -.-
+      distancefunction<u, ^^ t> distfn
   ) {
-    this.origin = origin;
-    this.distFn = distFn;
-    this.minQueue = minQueue;
-    final Comparator<DistancedItem<T>> cmp;
-    if (minQueue) {
-      cmp = (o1, o2) -> Float.compare(o1.getDistance(), o2.getDistance());
-    } else {
-      cmp = (o1, o2) -> Float.compare(o2.getDistance(), o1.getDistance());
+    this.owigin = owigin;
+    t-this.distfn = distfn;
+    t-this.minqueue = m-minqueue;
+    finaw c-compawatow<distanceditem<t>> cmp;
+    if (minqueue) {
+      cmp = (o1, (⑅˘꒳˘) o2) -> fwoat.compawe(o1.getdistance(), nyaa~~ o-o2.getdistance());
+    } e-ewse {
+      cmp = (o1, /(^•ω•^) o-o2) -> fwoat.compawe(o2.getdistance(), (U ﹏ U) o-o1.getdistance());
     }
-    this.queue = new PriorityQueue<>(cmp);
-    enqueueAll(initial);
-    new DistancedItemQueue<>(origin, distFn, queue, minQueue);
+    this.queue = n-nyew pwiowityqueue<>(cmp);
+    enqueueaww(initiaw);
+    n-nyew distanceditemqueue<>(owigin, 😳😳😳 distfn, >w< q-queue, minqueue);
   }
 
-  private DistancedItemQueue(
-      U origin,
-      DistanceFunction<U, T> distFn,
-      PriorityQueue<DistancedItem<T>> queue,
-      boolean minQueue
+  pwivate distanceditemqueue(
+      u-u owigin, XD
+      distancefunction<u, o.O t-t> distfn, mya
+      p-pwiowityqueue<distanceditem<t>> queue, 🥺
+      boowean minqueue
   ) {
-    this.origin = origin;
-    this.distFn = distFn;
-    this.queue = queue;
-    this.minQueue = minQueue;
+    this.owigin = owigin;
+    this.distfn = distfn;
+    t-this.queue = queue;
+    t-this.minqueue = minqueue;
   }
 
   /**
-   * Enqueues all the items into the queue.
+   * e-enqueues aww t-the items into t-the queue. ^^;;
    */
-  public void enqueueAll(List<T> list) {
-    for (T t : list) {
-      enqueue(t);
+  pubwic void enqueueaww(wist<t> wist) {
+    fow (t t : wist) {
+      e-enqueue(t);
     }
   }
 
   /**
-   * Return if queue is non empty or not
+   * wetuwn if queue is nyon empty ow nyot
    *
-   * @return true if queue is not empty else false
+   * @wetuwn twue if queue is n-nyot empty ewse fawse
    */
-  public boolean nonEmpty() {
-    return !queue.isEmpty();
+  p-pubwic boowean nyonempty() {
+    w-wetuwn !queue.isempty();
   }
 
   /**
-   * Return root of the queue
+   * w-wetuwn woot of the queue
    *
-   * @return root of the queue i.e min/max element depending upon min-max queue
+   * @wetuwn w-woot of the q-queue i.e min/max e-ewement depending u-upon min-max queue
    */
-  public DistancedItem<T> peek() {
-    return queue.peek();
+  pubwic distanceditem<t> p-peek() {
+    w-wetuwn queue.peek();
   }
 
   /**
-   * Dequeue root of the queue.
+   * d-dequeue w-woot of the queue. :3
    *
-   * @return remove and return root of the queue i.e min/max element depending upon min-max queue
+   * @wetuwn w-wemove and wetuwn woot of the queue i.e min/max ewement depending u-upon min-max queue
    */
-  public DistancedItem<T> dequeue() {
-    return queue.poll();
+  pubwic distanceditem<t> dequeue() {
+    wetuwn queue.poww();
   }
 
   /**
-   * Dequeue all the elements from queueu with ordering mantained
+   * d-dequeue aww the ewements fwom queueu with owdewing mantained
    *
-   * @return remove all the elements in the order of the queue i.e min/max queue.
+   * @wetuwn w-wemove aww the ewements i-in the owdew o-of the queue i.e min/max queue. (U ﹏ U)
    */
-  public List<DistancedItem<T>> dequeueAll() {
-    final List<DistancedItem<T>> list = new ArrayList<>(queue.size());
-    while (!queue.isEmpty()) {
-      list.add(queue.poll());
+  p-pubwic wist<distanceditem<t>> d-dequeueaww() {
+    f-finaw wist<distanceditem<t>> wist = nyew awwaywist<>(queue.size());
+    whiwe (!queue.isempty()) {
+      wist.add(queue.poww());
     }
 
-    return list;
+    w-wetuwn wist;
   }
 
   /**
-   * Convert queue to list
+   * c-convewt queue to wist
    *
-   * @return list of elements of queue with distance and without any specific ordering
+   * @wetuwn wist o-of ewements o-of queue with distance and without any specific o-owdewing
    */
-  public List<DistancedItem<T>> toList() {
-    return new ArrayList<>(queue);
+  p-pubwic wist<distanceditem<t>> towist() {
+    wetuwn n-nyew awwaywist<>(queue);
   }
 
   /**
-   * Convert queue to list
+   * c-convewt queue to wist
    *
-   * @return list of elements of queue without any specific ordering
+   * @wetuwn wist of ewements of queue without any specific o-owdewing
    */
-  List<T> toListWithItem() {
-    List<T> list = new ArrayList<>(queue.size());
-    Iterator<DistancedItem<T>> itr = iterator();
-    while (itr.hasNext()) {
-      list.add(itr.next().getItem());
+  w-wist<t> towistwithitem() {
+    w-wist<t> wist = nyew awwaywist<>(queue.size());
+    i-itewatow<distanceditem<t>> i-itw = itewatow();
+    whiwe (itw.hasnext()) {
+      w-wist.add(itw.next().getitem());
     }
-    return list;
+    wetuwn wist;
   }
 
   /**
-   * Enqueue an item into the queue
+   * enqueue an item into the queue
    */
-  public void enqueue(T item) {
-    queue.add(new DistancedItem<>(item, distFn.distance(origin, item)));
+  p-pubwic void e-enqueue(t item) {
+    queue.add(new distanceditem<>(item, OwO d-distfn.distance(owigin, 😳😳😳 i-item)));
   }
 
   /**
-   * Enqueue an item into the queue with its distance.
+   * enqueue an item into the queue with i-its distance. (ˆ ﻌ ˆ)♡
    */
-  public void enqueue(T item, float distance) {
-    queue.add(new DistancedItem<>(item, distance));
+  pubwic void enqueue(t item, XD fwoat distance) {
+    queue.add(new d-distanceditem<>(item, (ˆ ﻌ ˆ)♡ distance));
   }
 
   /**
-   * Size
+   * size
    *
-   * @return size of the queue
+   * @wetuwn size o-of the queue
    */
-  public int size() {
-    return queue.size();
+  p-pubwic int size() {
+    wetuwn queue.size();
   }
 
   /**
-   * Is Min queue
+   * is min queue
    *
-   * @return true if min queue else false
+   * @wetuwn t-twue if min q-queue ewse fawse
    */
-  public boolean isMinQueue() {
-    return minQueue;
+  pubwic boowean isminqueue() {
+    wetuwn m-minqueue;
   }
 
   /**
-   * Returns origin (base element) of the queue
+   * wetuwns o-owigin (base ewement) of the queue
    *
-   * @return origin of the queue
+   * @wetuwn owigin o-of the queue
    */
-  public U getOrigin() {
-    return origin;
+  pubwic u getowigin() {
+    w-wetuwn owigin;
   }
 
   /**
-   * Return a new queue with ordering reversed.
+   * w-wetuwn a nyew queue with owdewing w-wevewsed. ( ͡o ω ͡o )
    */
-  public DistancedItemQueue<U, T> reverse() {
-    final PriorityQueue<DistancedItem<T>> rqueue =
-        new PriorityQueue<>(queue.comparator().reversed());
-    if (queue.isEmpty()) {
-      return new DistancedItemQueue<>(origin, distFn, rqueue, !isMinQueue());
-    }
-
-    final Iterator<DistancedItem<T>> itr = iterator();
-    while (itr.hasNext()) {
-      rqueue.add(itr.next());
+  pubwic distanceditemqueue<u, rawr x3 t-t> wevewse() {
+    f-finaw pwiowityqueue<distanceditem<t>> w-wqueue =
+        nyew p-pwiowityqueue<>(queue.compawatow().wevewsed());
+    i-if (queue.isempty()) {
+      wetuwn nyew distanceditemqueue<>(owigin, nyaa~~ distfn, >_< w-wqueue, !isminqueue());
     }
 
-    return new DistancedItemQueue<>(origin, distFn, rqueue, !isMinQueue());
+    f-finaw itewatow<distanceditem<t>> i-itw = itewatow();
+    whiwe (itw.hasnext()) {
+      wqueue.add(itw.next());
+    }
+
+    w-wetuwn nyew distanceditemqueue<>(owigin, ^^;; d-distfn, wqueue, (ˆ ﻌ ˆ)♡ !isminqueue());
   }
 
-  @Override
-  public Iterator<DistancedItem<T>> iterator() {
-    return queue.iterator();
+  @ovewwide
+  p-pubwic itewatow<distanceditem<t>> itewatow() {
+    wetuwn q-queue.itewatow();
   }
 }

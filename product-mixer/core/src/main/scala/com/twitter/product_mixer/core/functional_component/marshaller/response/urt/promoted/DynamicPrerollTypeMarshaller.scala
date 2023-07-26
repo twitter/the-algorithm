@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Amplify
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DynamicPrerollType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.LiveTvEvent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Marketplace
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.ampwify
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.dynamicpwewowwtype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.wivetvevent
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.mawketpwace
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class DynamicPrerollTypeMarshaller @Inject() () {
+@singweton
+cwass dynamicpwewowwtypemawshawwew @inject() () {
 
-  def apply(dynamicPrerollType: DynamicPrerollType): urt.DynamicPrerollType =
-    dynamicPrerollType match {
-      case Amplify => urt.DynamicPrerollType.Amplify
-      case Marketplace => urt.DynamicPrerollType.Marketplace
-      case LiveTvEvent => urt.DynamicPrerollType.LiveTvEvent
+  def appwy(dynamicpwewowwtype: d-dynamicpwewowwtype): uwt.dynamicpwewowwtype =
+    dynamicpwewowwtype m-match {
+      case a-ampwify => uwt.dynamicpwewowwtype.ampwify
+      case mawketpwace => uwt.dynamicpwewowwtype.mawketpwace
+      case w-wivetvevent => uwt.dynamicpwewowwtype.wivetvevent
     }
 }

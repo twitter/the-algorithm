@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.features
+package com.twittew.fowwow_wecommendations.common.featuwes
 
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case object TrackingTokenFeature extends FeatureWithDefaultOnFailure[PipelineQuery, Option[Int]] {
-  override val defaultValue: Option[Int] = None
+c-case object twackingtokenfeatuwe e-extends featuwewithdefauwtonfaiwuwe[pipewinequewy, ( ͡o ω ͡o ) o-option[int]] {
+  o-ovewwide v-vaw defauwtvawue: o-option[int] = nyone
 }

@@ -1,51 +1,51 @@
-package com.twitter.unified_user_actions.adapter.retweet_archival_events
+package com.twittew.unified_usew_actions.adaptew.wetweet_awchivaw_events
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.tweetypie.thriftscala.RetweetArchivalEvent
-import com.twitter.unified_user_actions.adapter.AbstractAdapter
-import com.twitter.unified_user_actions.adapter.common.AdapterUtils
-import com.twitter.unified_user_actions.thriftscala._
+impowt c-com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.finatwa.kafka.sewde.unkeyed
+i-impowt c-com.twittew.tweetypie.thwiftscawa.wetweetawchivawevent
+i-impowt com.twittew.unified_usew_actions.adaptew.abstwactadaptew
+impowt com.twittew.unified_usew_actions.adaptew.common.adaptewutiws
+impowt com.twittew.unified_usew_actions.thwiftscawa._
 
-class RetweetArchivalEventsAdapter
-    extends AbstractAdapter[RetweetArchivalEvent, UnKeyed, UnifiedUserAction] {
+cwass wetweetawchivaweventsadaptew
+    e-extends abstwactadaptew[wetweetawchivawevent, ʘwʘ unkeyed, /(^•ω•^) u-unifiedusewaction] {
 
-  import RetweetArchivalEventsAdapter._
-  override def adaptOneToKeyedMany(
-    input: RetweetArchivalEvent,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Seq[(UnKeyed, UnifiedUserAction)] =
-    adaptEvent(input).map { e => (UnKeyed, e) }
+  impowt w-wetweetawchivaweventsadaptew._
+  ovewwide def adaptonetokeyedmany(
+    input: wetweetawchivawevent, ʘwʘ
+    statsweceivew: s-statsweceivew = nyuwwstatsweceivew
+  ): seq[(unkeyed, σωσ u-unifiedusewaction)] =
+    a-adaptevent(input).map { e => (unkeyed, OwO e) }
 }
 
-object RetweetArchivalEventsAdapter {
+object wetweetawchivaweventsadaptew {
 
-  def adaptEvent(e: RetweetArchivalEvent): Seq[UnifiedUserAction] =
-    Option(e).map { e =>
-      UnifiedUserAction(
-        userIdentifier = UserIdentifier(userId = Some(e.retweetUserId)),
-        item = getItem(e),
-        actionType =
-          if (e.isArchivingAction.getOrElse(true)) ActionType.ServerTweetArchiveRetweet
-          else ActionType.ServerTweetUnarchiveRetweet,
-        eventMetadata = getEventMetadata(e)
+  def adaptevent(e: wetweetawchivawevent): s-seq[unifiedusewaction] =
+    option(e).map { e =>
+      unifiedusewaction(
+        usewidentifiew = u-usewidentifiew(usewid = some(e.wetweetusewid)), 😳😳😳
+        i-item = getitem(e), 😳😳😳
+        actiontype =
+          i-if (e.isawchivingaction.getowewse(twue)) actiontype.sewvewtweetawchivewetweet
+          e-ewse a-actiontype.sewvewtweetunawchivewetweet, o.O
+        eventmetadata = geteventmetadata(e)
       )
-    }.toSeq
+    }.toseq
 
-  def getItem(e: RetweetArchivalEvent): Item =
-    Item.TweetInfo(
-      TweetInfo(
-        actionTweetId = e.srcTweetId,
-        actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(e.srcTweetUserId))),
-        retweetingTweetId = Some(e.retweetId)
+  d-def getitem(e: wetweetawchivawevent): item =
+    item.tweetinfo(
+      t-tweetinfo(
+        actiontweetid = e.swctweetid, ( ͡o ω ͡o )
+        actiontweetauthowinfo = some(authowinfo(authowid = some(e.swctweetusewid))), (U ﹏ U)
+        w-wetweetingtweetid = some(e.wetweetid)
       )
     )
 
-  def getEventMetadata(e: RetweetArchivalEvent): EventMetadata =
-    EventMetadata(
-      sourceTimestampMs = e.timestampMs,
-      receivedTimestampMs = AdapterUtils.currentTimestampMs,
-      sourceLineage = SourceLineage.ServerRetweetArchivalEvents,
+  d-def geteventmetadata(e: w-wetweetawchivawevent): e-eventmetadata =
+    eventmetadata(
+      souwcetimestampms = e.timestampms, (///ˬ///✿)
+      w-weceivedtimestampms = a-adaptewutiws.cuwwenttimestampms, >w<
+      souwcewineage = s-souwcewineage.sewvewwetweetawchivawevents, rawr
     )
 }

@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.message
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message
 
-case class MessageTextAction(
-  text: String,
-  action: MessageAction)
+case cwass messagetextaction(
+  t-text: stwing, ^•ﻌ•^
+  a-action: messageaction)

@@ -1,7 +1,7 @@
-package com.twitter.timelines.prediction.common.aggregates.real_time
+package com.twittew.timewines.pwediction.common.aggwegates.weaw_time
 
-import com.twitter.summingbird_internal.runner.storm.GenericRunner
+impowt com.twittew.summingbiwd_intewnaw.wunnew.stowm.genewicwunnew
 
-object TypeSafeRunner {
-  def main(args: Array[String]): Unit = GenericRunner(args, TimelinesRealTimeAggregatesJob(_))
+o-object t-typesafewunnew {
+  d-def main(awgs: a-awway[stwing]): u-unit = genewicwunnew(awgs, o.O t-timewinesweawtimeaggwegatesjob(_))
 }

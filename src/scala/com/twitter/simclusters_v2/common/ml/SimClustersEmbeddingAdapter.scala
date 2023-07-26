@@ -1,39 +1,39 @@
-package com.twitter.simclusters_v2.common.ml
+package com.twittew.simcwustews_v2.common.mw
 
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.Feature.SparseContinuous
-import com.twitter.ml.api._
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
+impowt c-com.twittew.mw.api.featuwe.continuous
+i-impowt c-com.twittew.mw.api.featuwe.spawsecontinuous
+i-impowt c-com.twittew.mw.api._
+i-impowt c-com.twittew.mw.api.utiw.fdsw._
+impowt c-com.twittew.simcwustews_v2.common.simcwustewsembedding
 
-class SimClustersEmbeddingAdapter(embeddingFeature: SparseContinuous)
-    extends IRecordOneToOneAdapter[SimClustersEmbedding] {
+cwass simcwustewsembeddingadaptew(embeddingfeatuwe: spawsecontinuous)
+    extends i-iwecowdonetooneadaptew[simcwustewsembedding] {
 
-  override def getFeatureContext: FeatureContext = new FeatureContext(embeddingFeature)
+  ovewwide def getfeatuwecontext: featuwecontext = n-nyew featuwecontext(embeddingfeatuwe)
 
-  override def adaptToDataRecord(embedding: SimClustersEmbedding): DataRecord = {
-    val embeddingMap = embedding.embedding.map {
-      case (clusterId, score) =>
-        (clusterId.toString, score)
-    }.toMap
+  ovewwide d-def adapttodatawecowd(embedding: simcwustewsembedding): datawecowd = {
+    vaw embeddingmap = e-embedding.embedding.map {
+      case (cwustewid, (⑅˘꒳˘) s-scowe) =>
+        (cwustewid.tostwing, (///ˬ///✿) s-scowe)
+    }.tomap
 
-    new DataRecord().setFeatureValue(embeddingFeature, embeddingMap)
+    nyew datawecowd().setfeatuwevawue(embeddingfeatuwe, 😳😳😳 embeddingmap)
   }
 }
 
-class NormalizedSimClustersEmbeddingAdapter(
-  embeddingFeature: SparseContinuous,
-  normFeature: Continuous)
-    extends IRecordOneToOneAdapter[SimClustersEmbedding] {
+cwass nyowmawizedsimcwustewsembeddingadaptew(
+  e-embeddingfeatuwe: spawsecontinuous, 🥺
+  nowmfeatuwe: continuous)
+    extends iwecowdonetooneadaptew[simcwustewsembedding] {
 
-  override def getFeatureContext: FeatureContext = new FeatureContext(embeddingFeature, normFeature)
+  ovewwide d-def getfeatuwecontext: featuwecontext = n-nyew featuwecontext(embeddingfeatuwe, mya n-nyowmfeatuwe)
 
-  override def adaptToDataRecord(embedding: SimClustersEmbedding): DataRecord = {
+  o-ovewwide def adapttodatawecowd(embedding: s-simcwustewsembedding): datawecowd = {
 
-    val normalizedEmbedding = Map(
-      embedding.sortedClusterIds.map(_.toString).zip(embedding.normalizedSortedScores): _*)
+    vaw nyowmawizedembedding = m-map(
+      embedding.sowtedcwustewids.map(_.tostwing).zip(embedding.nowmawizedsowtedscowes): _*)
 
-    val dataRecord = new DataRecord().setFeatureValue(embeddingFeature, normalizedEmbedding)
-    dataRecord.setFeatureValue(normFeature, embedding.l2norm)
+    vaw datawecowd = nyew datawecowd().setfeatuwevawue(embeddingfeatuwe, 🥺 n-nyowmawizedembedding)
+    datawecowd.setfeatuwevawue(nowmfeatuwe, >_< embedding.w2nowm)
   }
 }

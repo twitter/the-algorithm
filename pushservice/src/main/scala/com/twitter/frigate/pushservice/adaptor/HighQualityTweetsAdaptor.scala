@@ -1,279 +1,279 @@
-package com.twitter.frigate.pushservice.adaptor
+package com.twittew.fwigate.pushsewvice.adaptow
 
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.frigate.common.base.CandidateSourceEligible
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.HighQualityCandidateGroupEnum
-import com.twitter.frigate.pushservice.params.HighQualityCandidateGroupEnum._
-import com.twitter.frigate.pushservice.params.PushConstants.targetUserAgeFeatureName
-import com.twitter.frigate.pushservice.params.PushConstants.targetUserPreferredLanguage
-import com.twitter.frigate.pushservice.params.{PushFeatureSwitchParams => FS}
-import com.twitter.frigate.pushservice.predicate.TargetPredicates
-import com.twitter.frigate.pushservice.util.MediaCRT
-import com.twitter.frigate.pushservice.util.PushAdaptorUtil
-import com.twitter.frigate.pushservice.util.PushDeviceUtil
-import com.twitter.frigate.pushservice.util.TopicsUtil
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.interests.thriftscala.InterestId.SemanticCore
-import com.twitter.interests.thriftscala.UserInterests
-import com.twitter.language.normalization.UserDisplayLanguage
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripDomain
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripTweet
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripTweets
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.stat
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.base.candidatesouwce
+i-impowt c-com.twittew.fwigate.common.base.candidatesouwceewigibwe
+i-impowt c-com.twittew.fwigate.common.stowe.intewests.intewestswookupwequestwithcontext
+impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+impowt com.twittew.fwigate.pushsewvice.pawams.highquawitycandidategwoupenum
+impowt com.twittew.fwigate.pushsewvice.pawams.highquawitycandidategwoupenum._
+impowt c-com.twittew.fwigate.pushsewvice.pawams.pushconstants.tawgetusewagefeatuwename
+impowt com.twittew.fwigate.pushsewvice.pawams.pushconstants.tawgetusewpwefewwedwanguage
+impowt com.twittew.fwigate.pushsewvice.pawams.{pushfeatuweswitchpawams => f-fs}
+impowt com.twittew.fwigate.pushsewvice.pwedicate.tawgetpwedicates
+impowt com.twittew.fwigate.pushsewvice.utiw.mediacwt
+i-impowt com.twittew.fwigate.pushsewvice.utiw.pushadaptowutiw
+impowt com.twittew.fwigate.pushsewvice.utiw.pushdeviceutiw
+i-impowt com.twittew.fwigate.pushsewvice.utiw.topicsutiw
+impowt c-com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+i-impowt com.twittew.intewests.thwiftscawa.intewestid.semanticcowe
+impowt com.twittew.intewests.thwiftscawa.usewintewests
+impowt com.twittew.wanguage.nowmawization.usewdispwaywanguage
+i-impowt com.twittew.stitch.tweetypie.tweetypie.tweetypiewesuwt
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.twends.twip_v1.twip_tweets.thwiftscawa.twipdomain
+impowt com.twittew.twends.twip_v1.twip_tweets.thwiftscawa.twiptweet
+i-impowt com.twittew.twends.twip_v1.twip_tweets.thwiftscawa.twiptweets
+impowt com.twittew.utiw.futuwe
 
-object HighQualityTweetsHelper {
-  def getFollowedTopics(
-    target: Target,
-    interestsWithLookupContextStore: ReadableStore[
-      InterestsLookupRequestWithContext,
-      UserInterests
-    ],
-    followedTopicsStats: Stat
-  ): Future[Seq[Long]] = {
-    TopicsUtil
-      .getTopicsFollowedByUser(target, interestsWithLookupContextStore, followedTopicsStats).map {
-        userInterestsOpt =>
-          val userInterests = userInterestsOpt.getOrElse(Seq.empty)
-          val extractedTopicIds = userInterests.flatMap {
-            _.interestId match {
-              case SemanticCore(semanticCore) => Some(semanticCore.id)
-              case _ => None
+o-object highquawitytweetshewpew {
+  d-def getfowwowedtopics(
+    t-tawget: tawget, nyaa~~
+    i-intewestswithwookupcontextstowe: weadabwestowe[
+      intewestswookupwequestwithcontext, rawr
+      u-usewintewests
+    ], -.-
+    fowwowedtopicsstats: stat
+  ): f-futuwe[seq[wong]] = {
+    topicsutiw
+      .gettopicsfowwowedbyusew(tawget, (✿oωo) intewestswithwookupcontextstowe, /(^•ω•^) fowwowedtopicsstats).map {
+        usewintewestsopt =>
+          vaw usewintewests = u-usewintewestsopt.getowewse(seq.empty)
+          vaw extwactedtopicids = u-usewintewests.fwatmap {
+            _.intewestid m-match {
+              c-case semanticcowe(semanticcowe) => some(semanticcowe.id)
+              case _ => nyone
             }
           }
-          extractedTopicIds
+          e-extwactedtopicids
       }
   }
 
-  def getTripQueries(
-    target: Target,
-    enabledGroups: Set[HighQualityCandidateGroupEnum.Value],
-    interestsWithLookupContextStore: ReadableStore[
-      InterestsLookupRequestWithContext,
-      UserInterests
-    ],
-    sourceIds: Seq[String],
-    stat: Stat
-  ): Future[Set[TripDomain]] = {
+  d-def gettwipquewies(
+    t-tawget: tawget,
+    e-enabwedgwoups: set[highquawitycandidategwoupenum.vawue], 🥺
+    i-intewestswithwookupcontextstowe: weadabwestowe[
+      i-intewestswookupwequestwithcontext,
+      usewintewests
+    ], ʘwʘ
+    souwceids: seq[stwing], UwU
+    s-stat: stat
+  ): futuwe[set[twipdomain]] = {
 
-    val followedTopicIdsSetFut: Future[Set[Long]] = if (enabledGroups.contains(Topic)) {
-      getFollowedTopics(target, interestsWithLookupContextStore, stat).map(topicIds =>
-        topicIds.toSet)
-    } else {
-      Future.value(Set.empty)
+    v-vaw fowwowedtopicidssetfut: f-futuwe[set[wong]] = i-if (enabwedgwoups.contains(topic)) {
+      getfowwowedtopics(tawget, XD intewestswithwookupcontextstowe, (✿oωo) stat).map(topicids =>
+        topicids.toset)
+    } ewse {
+      futuwe.vawue(set.empty)
     }
 
-    Future
-      .join(target.featureMap, target.inferredUserDeviceLanguage, followedTopicIdsSetFut).map {
+    f-futuwe
+      .join(tawget.featuwemap, :3 t-tawget.infewwedusewdevicewanguage, (///ˬ///✿) fowwowedtopicidssetfut).map {
         case (
-              featureMap,
-              deviceLanguageOpt,
-              followedTopicIds
+              f-featuwemap, nyaa~~
+              d-devicewanguageopt, >w<
+              f-fowwowedtopicids
             ) =>
-          val ageBucketOpt = if (enabledGroups.contains(AgeBucket)) {
-            featureMap.categoricalFeatures.get(targetUserAgeFeatureName)
-          } else {
-            None
+          vaw agebucketopt = if (enabwedgwoups.contains(agebucket)) {
+            featuwemap.categowicawfeatuwes.get(tawgetusewagefeatuwename)
+          } e-ewse {
+            nyone
           }
 
-          val languageOptions: Set[Option[String]] = if (enabledGroups.contains(Language)) {
-            val userPreferredLanguages = featureMap.sparseBinaryFeatures
-              .getOrElse(targetUserPreferredLanguage, Set.empty[String])
-            if (userPreferredLanguages.nonEmpty) {
-              userPreferredLanguages.map(lang => Some(UserDisplayLanguage.toTweetLanguage(lang)))
-            } else {
-              Set(deviceLanguageOpt.map(UserDisplayLanguage.toTweetLanguage))
+          vaw wanguageoptions: set[option[stwing]] = if (enabwedgwoups.contains(wanguage)) {
+            v-vaw usewpwefewwedwanguages = featuwemap.spawsebinawyfeatuwes
+              .getowewse(tawgetusewpwefewwedwanguage, -.- s-set.empty[stwing])
+            i-if (usewpwefewwedwanguages.nonempty) {
+              u-usewpwefewwedwanguages.map(wang => some(usewdispwaywanguage.totweetwanguage(wang)))
+            } e-ewse {
+              set(devicewanguageopt.map(usewdispwaywanguage.totweetwanguage))
             }
-          } else Set(None)
+          } e-ewse set(none)
 
-          val followedTopicOptions: Set[Option[Long]] = if (followedTopicIds.nonEmpty) {
-            followedTopicIds.map(topic => Some(topic))
-          } else Set(None)
+          v-vaw fowwowedtopicoptions: s-set[option[wong]] = if (fowwowedtopicids.nonempty) {
+            fowwowedtopicids.map(topic => s-some(topic))
+          } e-ewse set(none)
 
-          val tripQueries = followedTopicOptions.flatMap { topicOption =>
-            languageOptions.flatMap { languageOption =>
-              sourceIds.map { sourceId =>
-                TripDomain(
-                  sourceId = sourceId,
-                  language = languageOption,
-                  placeId = None,
-                  topicId = topicOption,
-                  gender = None,
-                  ageBucket = ageBucketOpt
+          vaw t-twipquewies = f-fowwowedtopicoptions.fwatmap { t-topicoption =>
+            wanguageoptions.fwatmap { wanguageoption =>
+              souwceids.map { s-souwceid =>
+                twipdomain(
+                  souwceid = souwceid, (✿oωo)
+                  wanguage = wanguageoption, (˘ω˘)
+                  pwaceid = nyone, rawr
+                  t-topicid = topicoption, OwO
+                  gendew = nyone, ^•ﻌ•^
+                  agebucket = agebucketopt
                 )
               }
             }
           }
 
-          tripQueries
+          t-twipquewies
       }
   }
 }
 
-case class HighQualityTweetsAdaptor(
-  tripTweetCandidateStore: ReadableStore[TripDomain, TripTweets],
-  interestsWithLookupContextStore: ReadableStore[InterestsLookupRequestWithContext, UserInterests],
-  tweetyPieStore: ReadableStore[Long, TweetyPieResult],
-  tweetyPieStoreNoVF: ReadableStore[Long, TweetyPieResult],
-  globalStats: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
-    with CandidateSourceEligible[Target, RawCandidate] {
+c-case c-cwass highquawitytweetsadaptow(
+  twiptweetcandidatestowe: w-weadabwestowe[twipdomain, twiptweets], UwU
+  i-intewestswithwookupcontextstowe: w-weadabwestowe[intewestswookupwequestwithcontext, (˘ω˘) usewintewests], (///ˬ///✿)
+  tweetypiestowe: weadabwestowe[wong, σωσ tweetypiewesuwt], /(^•ω•^)
+  tweetypiestowenovf: w-weadabwestowe[wong, 😳 tweetypiewesuwt], 😳
+  g-gwobawstats: statsweceivew)
+    e-extends c-candidatesouwce[tawget, (⑅˘꒳˘) wawcandidate]
+    with candidatesouwceewigibwe[tawget, 😳😳😳 w-wawcandidate] {
 
-  override def name: String = this.getClass.getSimpleName
+  o-ovewwide def nyame: stwing = t-this.getcwass.getsimpwename
 
-  private val stats = globalStats.scope("HighQualityCandidateAdaptor")
-  private val followedTopicsStats = stats.stat("followed_topics")
-  private val missingResponseCounter = stats.counter("missing_respond_counter")
-  private val crtFatigueCounter = stats.counter("fatigue_by_crt")
-  private val fallbackRequestsCounter = stats.counter("fallback_requests")
+  p-pwivate vaw stats = gwobawstats.scope("highquawitycandidateadaptow")
+  pwivate vaw fowwowedtopicsstats = stats.stat("fowwowed_topics")
+  p-pwivate v-vaw missingwesponsecountew = s-stats.countew("missing_wespond_countew")
+  pwivate v-vaw cwtfatiguecountew = s-stats.countew("fatigue_by_cwt")
+  pwivate v-vaw fawwbackwequestscountew = stats.countew("fawwback_wequests")
 
-  override def isCandidateSourceAvailable(target: Target): Future[Boolean] = {
-    PushDeviceUtil.isRecommendationsEligible(target).map {
-      _ && target.params(FS.HighQualityCandidatesEnableCandidateSource)
+  ovewwide def iscandidatesouwceavaiwabwe(tawget: tawget): f-futuwe[boowean] = {
+    p-pushdeviceutiw.iswecommendationsewigibwe(tawget).map {
+      _ && tawget.pawams(fs.highquawitycandidatesenabwecandidatesouwce)
     }
   }
 
-  private val highQualityCandidateFrequencyPredicate = {
-    TargetPredicates
-      .pushRecTypeFatiguePredicate(
-        CommonRecommendationType.TripHqTweet,
-        FS.HighQualityTweetsPushInterval,
-        FS.MaxHighQualityTweetsPushGivenInterval,
+  pwivate vaw h-highquawitycandidatefwequencypwedicate = {
+    t-tawgetpwedicates
+      .pushwectypefatiguepwedicate(
+        commonwecommendationtype.twiphqtweet, 😳
+        fs.highquawitytweetspushintewvaw, XD
+        fs.maxhighquawitytweetspushgivenintewvaw, mya
         stats
       )
   }
 
-  private def getTripCandidatesStrato(
-    target: Target
-  ): Future[Map[Long, Set[TripDomain]]] = {
-    val tripQueriesF: Future[Set[TripDomain]] = HighQualityTweetsHelper.getTripQueries(
-      target = target,
-      enabledGroups = target.params(FS.HighQualityCandidatesEnableGroups).toSet,
-      interestsWithLookupContextStore = interestsWithLookupContextStore,
-      sourceIds = target.params(FS.TripTweetCandidateSourceIds),
-      stat = followedTopicsStats
+  p-pwivate def gettwipcandidatesstwato(
+    tawget: tawget
+  ): futuwe[map[wong, set[twipdomain]]] = {
+    v-vaw twipquewiesf: futuwe[set[twipdomain]] = highquawitytweetshewpew.gettwipquewies(
+      t-tawget = tawget, ^•ﻌ•^
+      e-enabwedgwoups = tawget.pawams(fs.highquawitycandidatesenabwegwoups).toset, ʘwʘ
+      intewestswithwookupcontextstowe = intewestswithwookupcontextstowe, ( ͡o ω ͡o )
+      s-souwceids = tawget.pawams(fs.twiptweetcandidatesouwceids), mya
+      s-stat = fowwowedtopicsstats
     )
 
-    lazy val fallbackTripQueriesFut: Future[Set[TripDomain]] =
-      if (target.params(FS.HighQualityCandidatesEnableFallback))
-        HighQualityTweetsHelper.getTripQueries(
-          target = target,
-          enabledGroups = target.params(FS.HighQualityCandidatesFallbackEnabledGroups).toSet,
-          interestsWithLookupContextStore = interestsWithLookupContextStore,
-          sourceIds = target.params(FS.HighQualityCandidatesFallbackSourceIds),
-          stat = followedTopicsStats
+    wazy vaw fawwbacktwipquewiesfut: futuwe[set[twipdomain]] =
+      i-if (tawget.pawams(fs.highquawitycandidatesenabwefawwback))
+        highquawitytweetshewpew.gettwipquewies(
+          t-tawget = tawget, o.O
+          enabwedgwoups = tawget.pawams(fs.highquawitycandidatesfawwbackenabwedgwoups).toset, (✿oωo)
+          i-intewestswithwookupcontextstowe = intewestswithwookupcontextstowe, :3
+          s-souwceids = t-tawget.pawams(fs.highquawitycandidatesfawwbacksouwceids), 😳
+          stat = fowwowedtopicsstats
         )
-      else Future.value(Set.empty)
+      ewse f-futuwe.vawue(set.empty)
 
-    val initialTweetsFut: Future[Map[TripDomain, Seq[TripTweet]]] = tripQueriesF.flatMap {
-      tripQueries => getTripTweetsByDomains(tripQueries)
+    vaw initiawtweetsfut: f-futuwe[map[twipdomain, (U ﹏ U) s-seq[twiptweet]]] = t-twipquewiesf.fwatmap {
+      twipquewies => g-gettwiptweetsbydomains(twipquewies)
     }
 
-    val tweetsByDomainFut: Future[Map[TripDomain, Seq[TripTweet]]] =
-      if (target.params(FS.HighQualityCandidatesEnableFallback)) {
-        initialTweetsFut.flatMap { candidates =>
-          val minCandidatesForFallback: Int =
-            target.params(FS.HighQualityCandidatesMinNumOfCandidatesToFallback)
-          val validCandidates = candidates.filter(_._2.size >= minCandidatesForFallback)
+    v-vaw tweetsbydomainfut: futuwe[map[twipdomain, mya s-seq[twiptweet]]] =
+      i-if (tawget.pawams(fs.highquawitycandidatesenabwefawwback)) {
+        i-initiawtweetsfut.fwatmap { candidates =>
+          vaw mincandidatesfowfawwback: i-int =
+            tawget.pawams(fs.highquawitycandidatesminnumofcandidatestofawwback)
+          v-vaw vawidcandidates = candidates.fiwtew(_._2.size >= m-mincandidatesfowfawwback)
 
-          if (validCandidates.nonEmpty) {
-            Future.value(validCandidates)
-          } else {
-            fallbackTripQueriesFut.flatMap { fallbackTripDomains =>
-              fallbackRequestsCounter.incr(fallbackTripDomains.size)
-              getTripTweetsByDomains(fallbackTripDomains)
+          if (vawidcandidates.nonempty) {
+            futuwe.vawue(vawidcandidates)
+          } ewse {
+            fawwbacktwipquewiesfut.fwatmap { f-fawwbacktwipdomains =>
+              f-fawwbackwequestscountew.incw(fawwbacktwipdomains.size)
+              g-gettwiptweetsbydomains(fawwbacktwipdomains)
             }
           }
         }
-      } else {
-        initialTweetsFut
+      } ewse {
+        i-initiawtweetsfut
       }
 
-    val numOfCandidates: Int = target.params(FS.HighQualityCandidatesNumberOfCandidates)
-    tweetsByDomainFut.map(tweetsByDomain => reformatDomainTweetMap(tweetsByDomain, numOfCandidates))
+    vaw n-nyumofcandidates: int = tawget.pawams(fs.highquawitycandidatesnumbewofcandidates)
+    tweetsbydomainfut.map(tweetsbydomain => wefowmatdomaintweetmap(tweetsbydomain, (U ᵕ U❁) numofcandidates))
   }
 
-  private def getTripTweetsByDomains(
-    tripQueries: Set[TripDomain]
-  ): Future[Map[TripDomain, Seq[TripTweet]]] = {
-    Future.collect(tripTweetCandidateStore.multiGet(tripQueries)).map { response =>
-      response
-        .filter(p => p._2.exists(_.tweets.nonEmpty))
-        .mapValues(_.map(_.tweets).getOrElse(Seq.empty))
+  pwivate d-def gettwiptweetsbydomains(
+    twipquewies: s-set[twipdomain]
+  ): futuwe[map[twipdomain, :3 seq[twiptweet]]] = {
+    f-futuwe.cowwect(twiptweetcandidatestowe.muwtiget(twipquewies)).map { wesponse =>
+      w-wesponse
+        .fiwtew(p => p._2.exists(_.tweets.nonempty))
+        .mapvawues(_.map(_.tweets).getowewse(seq.empty))
     }
   }
 
-  private def reformatDomainTweetMap(
-    tweetsByDomain: Map[TripDomain, Seq[TripTweet]],
-    numOfCandidates: Int
-  ): Map[Long, Set[TripDomain]] = tweetsByDomain
-    .flatMap {
-      case (tripDomain, tripTweets) =>
-        tripTweets
-          .sortBy(_.score)(Ordering[Double].reverse)
-          .take(numOfCandidates)
-          .map { tweet => (tweet.tweetId, tripDomain) }
-    }.groupBy(_._1).mapValues(_.map(_._2).toSet)
+  p-pwivate def wefowmatdomaintweetmap(
+    t-tweetsbydomain: m-map[twipdomain, mya s-seq[twiptweet]], OwO
+    nyumofcandidates: i-int
+  ): map[wong, set[twipdomain]] = tweetsbydomain
+    .fwatmap {
+      case (twipdomain, (ˆ ﻌ ˆ)♡ twiptweets) =>
+        twiptweets
+          .sowtby(_.scowe)(owdewing[doubwe].wevewse)
+          .take(numofcandidates)
+          .map { tweet => (tweet.tweetid, ʘwʘ twipdomain) }
+    }.gwoupby(_._1).mapvawues(_.map(_._2).toset)
 
-  private def buildRawCandidate(
-    target: Target,
-    tweetyPieResult: TweetyPieResult,
-    tripDomain: Option[scala.collection.Set[TripDomain]]
-  ): RawCandidate = {
-    PushAdaptorUtil.generateOutOfNetworkTweetCandidates(
-      inputTarget = target,
-      id = tweetyPieResult.tweet.id,
-      mediaCRT = MediaCRT(
-        CommonRecommendationType.TripHqTweet,
-        CommonRecommendationType.TripHqTweet,
-        CommonRecommendationType.TripHqTweet
-      ),
-      result = Some(tweetyPieResult),
-      tripTweetDomain = tripDomain
+  p-pwivate def buiwdwawcandidate(
+    t-tawget: tawget, o.O
+    t-tweetypiewesuwt: tweetypiewesuwt, UwU
+    t-twipdomain: option[scawa.cowwection.set[twipdomain]]
+  ): wawcandidate = {
+    pushadaptowutiw.genewateoutofnetwowktweetcandidates(
+      i-inputtawget = t-tawget, rawr x3
+      id = tweetypiewesuwt.tweet.id, 🥺
+      m-mediacwt = mediacwt(
+        commonwecommendationtype.twiphqtweet, :3
+        c-commonwecommendationtype.twiphqtweet, (ꈍᴗꈍ)
+        c-commonwecommendationtype.twiphqtweet
+      ), 🥺
+      wesuwt = some(tweetypiewesuwt), (✿oωo)
+      t-twiptweetdomain = t-twipdomain
     )
   }
 
-  private def getTweetyPieResults(
-    target: Target,
-    tweetToTripDomain: Map[Long, Set[TripDomain]]
-  ): Future[Map[Long, Option[TweetyPieResult]]] = {
-    Future.collect((if (target.params(FS.EnableVFInTweetypie)) {
-                      tweetyPieStore
-                    } else {
-                      tweetyPieStoreNoVF
-                    }).multiGet(tweetToTripDomain.keySet))
+  pwivate def gettweetypiewesuwts(
+    tawget: tawget, (U ﹏ U)
+    tweettotwipdomain: m-map[wong, set[twipdomain]]
+  ): f-futuwe[map[wong, :3 o-option[tweetypiewesuwt]]] = {
+    f-futuwe.cowwect((if (tawget.pawams(fs.enabwevfintweetypie)) {
+                      t-tweetypiestowe
+                    } ewse {
+                      t-tweetypiestowenovf
+                    }).muwtiget(tweettotwipdomain.keyset))
   }
 
-  override def get(target: Target): Future[Option[Seq[RawCandidate]]] = {
-    for {
-      tweetsToTripDomainMap <- getTripCandidatesStrato(target)
-      tweetyPieResults <- getTweetyPieResults(target, tweetsToTripDomainMap)
-    } yield {
-      val candidates = tweetyPieResults.flatMap {
-        case (tweetId, tweetyPieResultOpt) =>
-          tweetyPieResultOpt.map(buildRawCandidate(target, _, tweetsToTripDomainMap.get(tweetId)))
+  ovewwide d-def get(tawget: tawget): f-futuwe[option[seq[wawcandidate]]] = {
+    f-fow {
+      tweetstotwipdomainmap <- g-gettwipcandidatesstwato(tawget)
+      tweetypiewesuwts <- gettweetypiewesuwts(tawget, ^^;; t-tweetstotwipdomainmap)
+    } yiewd {
+      v-vaw candidates = t-tweetypiewesuwts.fwatmap {
+        case (tweetid, t-tweetypiewesuwtopt) =>
+          tweetypiewesuwtopt.map(buiwdwawcandidate(tawget, rawr _, tweetstotwipdomainmap.get(tweetid)))
       }
-      if (candidates.nonEmpty) {
-        highQualityCandidateFrequencyPredicate(Seq(target))
+      i-if (candidates.nonempty) {
+        highquawitycandidatefwequencypwedicate(seq(tawget))
           .map(_.head)
-          .map { isTargetFatigueEligible =>
-            if (isTargetFatigueEligible) Some(candidates)
-            else {
-              crtFatigueCounter.incr()
-              None
+          .map { i-istawgetfatigueewigibwe =>
+            i-if (istawgetfatigueewigibwe) some(candidates)
+            ewse {
+              cwtfatiguecountew.incw()
+              nyone
             }
           }
 
-        Some(candidates.toSeq)
-      } else {
-        missingResponseCounter.incr()
-        None
+        s-some(candidates.toseq)
+      } ewse {
+        missingwesponsecountew.incw()
+        nyone
       }
     }
   }

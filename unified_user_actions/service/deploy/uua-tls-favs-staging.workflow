@@ -1,39 +1,39 @@
 {
-  "role": "discode",
-  "name": "uua-tls-favs-staging",
-  "config-files": [
-    "uua-tls-favs.aurora"
-  ],
-  "build": {
-    "play": true,
+  "wowe": "discode", XD
+  "name": "uua-tws-favs-staging", >_<
+  "config-fiwes": [
+    "uua-tws-favs.auwowa"
+  ], (ꈍᴗꈍ)
+  "buiwd": {
+    "pway": twue, ^•ﻌ•^
     "dependencies": [
       {
-        "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "wowe": "packew", OwO
+        "name": "packew-cwient-no-pex", 🥺
+        "vewsion": "watest"
       }
-    ],
+    ], òωó
     "steps": [
       {
-        "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-tls-favs"
-      },
+        "type": "bazew-bundwe", o.O
+        "name": "bundwe", (U ᵕ U❁)
+        "tawget": "unified_usew_actions/sewvice/swc/main/scawa:uua-tws-favs"
+      }, (⑅˘꒳˘)
       {
-        "type": "packer",
-        "name": "uua-tls-favs-staging",
-        "artifact": "./dist/uua-tls-favs.zip"
+        "type": "packew", ( ͡o ω ͡o )
+        "name": "uua-tws-favs-staging", UwU
+        "awtifact": "./dist/uua-tws-favs.zip"
       }
     ]
-  },
-  "targets": [
+  }, rawr x3
+  "tawgets": [
     {
-      "type": "group",
-      "name": "staging",
-      "targets": [
+      "type": "gwoup", rawr
+      "name": "staging", σωσ
+      "tawgets": [
         {
-          "name": "uua-tls-favs-staging-pdxa",
-          "key": "pdxa/discode/staging/uua-tls-favs"
+          "name": "uua-tws-favs-staging-pdxa", σωσ
+          "key": "pdxa/discode/staging/uua-tws-favs"
         }
       ]
     }

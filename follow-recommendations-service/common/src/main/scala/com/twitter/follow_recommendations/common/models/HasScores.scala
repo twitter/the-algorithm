@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-trait HasScores {
-  def scores: Option[Scores]
+twait hasscowes {
+  d-def s-scowes: option[scowes]
 }

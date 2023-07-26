@@ -1,69 +1,69 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import com.google.common.base.Preconditions;
+impowt com.googwe.common.base.pweconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.metwics.seawchwonggauge;
 
 /**
- * Keeps track of an up-to-date PartitionConfig. The PartitionConfig may be periodically reloaded
- * from ZooKeeper. If you need a consistent view of the current partition configuration, make sure
- * to grab a reference to a single PartitionConfig using getCurrentPartitionConfig() and reuse that
- * object.
+ * k-keeps twack of a-an up-to-date pawtitionconfig. 🥺 t-the pawtitionconfig may be pewiodicawwy wewoaded
+ * fwom zookeepew. (U ﹏ U) if you nyeed a-a consistent view of the cuwwent pawtition configuwation, >w< m-make suwe
+ * to gwab a-a wefewence to a singwe pawtitionconfig using getcuwwentpawtitionconfig() and weuse t-that
+ * object. mya
  */
-public class DynamicPartitionConfig {
-  private static final Logger LOG = LoggerFactory.getLogger(DynamicPartitionConfig.class);
-  private static final SearchCounter FAILED_UPDATE_COUNTER_NAME =
-      SearchCounter.export("dynamic_partition_config_failed_update");
-  private static final SearchCounter SUCCESSFUL_UPDATE_COUNTER =
-      SearchCounter.export("dynamic_partition_config_successful_update");
-  // We assume that DynamicPartitionConfig is practically a singleton in Earlybird app.
-  private static final SearchLongGauge NUM_REPLICAS_IN_HASH_PARTITION =
-      SearchLongGauge.export("dynamic_partition_config_num_replicas_in_hash_partition");
+pubwic cwass d-dynamicpawtitionconfig {
+  p-pwivate static finaw woggew wog = woggewfactowy.getwoggew(dynamicpawtitionconfig.cwass);
+  pwivate static finaw s-seawchcountew faiwed_update_countew_name =
+      seawchcountew.expowt("dynamic_pawtition_config_faiwed_update");
+  pwivate static finaw seawchcountew successfuw_update_countew =
+      s-seawchcountew.expowt("dynamic_pawtition_config_successfuw_update");
+  // we assume that d-dynamicpawtitionconfig i-is pwacticawwy a-a singweton i-in eawwybiwd app. >w<
+  pwivate static finaw seawchwonggauge n-nyum_wepwicas_in_hash_pawtition =
+      seawchwonggauge.expowt("dynamic_pawtition_config_num_wepwicas_in_hash_pawtition");
 
-  private final PartitionConfig curPartitionConfig;
+  pwivate f-finaw pawtitionconfig cuwpawtitionconfig;
 
-  public DynamicPartitionConfig(PartitionConfig initialConfig) {
-    this.curPartitionConfig = initialConfig;
-    NUM_REPLICAS_IN_HASH_PARTITION.set(initialConfig.getNumReplicasInHashPartition());
+  pubwic dynamicpawtitionconfig(pawtitionconfig initiawconfig) {
+    this.cuwpawtitionconfig = i-initiawconfig;
+    nyum_wepwicas_in_hash_pawtition.set(initiawconfig.getnumwepwicasinhashpawtition());
   }
 
-  public PartitionConfig getCurrentPartitionConfig() {
-    return curPartitionConfig;
+  p-pubwic p-pawtitionconfig g-getcuwwentpawtitionconfig() {
+    wetuwn cuwpawtitionconfig;
   }
 
   /**
-   * Verifies that the new partition config is compatible with the old one, and if it is, updates
-   * the number of replicas per partition based on the new partition config.
+   * vewifies that the nyew p-pawtition config i-is compatibwe with the owd o-one, nyaa~~ and if it is, (✿oωo) u-updates
+   * the nyumbew of wepwicas p-pew pawtition based on the n-nyew pawtition config. ʘwʘ
    */
-  public void setCurrentPartitionConfig(PartitionConfig partitionConfig) {
-    Preconditions.checkNotNull(partitionConfig);
-    // For now, we only allow the number of replicas in this partition to be dynamically updated.
-    // Ensure that the only things that have changed between the previous
-    if (curPartitionConfig.getClusterName().equals(partitionConfig.getClusterName())
-        && (curPartitionConfig.getMaxEnabledLocalSegments()
-            == partitionConfig.getMaxEnabledLocalSegments())
-        && (curPartitionConfig.getNumPartitions() == partitionConfig.getNumPartitions())
-        && (curPartitionConfig.getTierStartDate().equals(partitionConfig.getTierStartDate()))
-        && (curPartitionConfig.getTierEndDate().equals(partitionConfig.getTierEndDate()))
-        && (curPartitionConfig.getTierName().equals(partitionConfig.getTierName()))) {
+  pubwic void setcuwwentpawtitionconfig(pawtitionconfig p-pawtitionconfig) {
+    pweconditions.checknotnuww(pawtitionconfig);
+    // fow nyow, (ˆ ﻌ ˆ)♡ we o-onwy awwow the nyumbew of wepwicas i-in this pawtition t-to be dynamicawwy updated. 😳😳😳
+    // ensuwe that the onwy things that have changed between the pwevious
+    if (cuwpawtitionconfig.getcwustewname().equaws(pawtitionconfig.getcwustewname())
+        && (cuwpawtitionconfig.getmaxenabwedwocawsegments()
+            == p-pawtitionconfig.getmaxenabwedwocawsegments())
+        && (cuwpawtitionconfig.getnumpawtitions() == p-pawtitionconfig.getnumpawtitions())
+        && (cuwpawtitionconfig.gettiewstawtdate().equaws(pawtitionconfig.gettiewstawtdate()))
+        && (cuwpawtitionconfig.gettiewenddate().equaws(pawtitionconfig.gettiewenddate()))
+        && (cuwpawtitionconfig.gettiewname().equaws(pawtitionconfig.gettiewname()))) {
 
-      if (curPartitionConfig.getNumReplicasInHashPartition()
-          != partitionConfig.getNumReplicasInHashPartition()) {
-        SUCCESSFUL_UPDATE_COUNTER.increment();
-        curPartitionConfig.setNumReplicasInHashPartition(
-            partitionConfig.getNumReplicasInHashPartition());
-        NUM_REPLICAS_IN_HASH_PARTITION.set(partitionConfig.getNumReplicasInHashPartition());
+      if (cuwpawtitionconfig.getnumwepwicasinhashpawtition()
+          != p-pawtitionconfig.getnumwepwicasinhashpawtition()) {
+        s-successfuw_update_countew.incwement();
+        c-cuwpawtitionconfig.setnumwepwicasinhashpawtition(
+            pawtitionconfig.getnumwepwicasinhashpawtition());
+        nyum_wepwicas_in_hash_pawtition.set(pawtitionconfig.getnumwepwicasinhashpawtition());
       }
-    } else {
-      FAILED_UPDATE_COUNTER_NAME.increment();
-      LOG.warn(
-          "Attempted to update partition config with inconsistent layout.\n"
-          + "Current: " + curPartitionConfig.getPartitionConfigDescription() + "\n"
-          + "New: " + partitionConfig.getPartitionConfigDescription());
+    } ewse {
+      faiwed_update_countew_name.incwement();
+      w-wog.wawn(
+          "attempted to update pawtition config with inconsistent wayout.\n"
+          + "cuwwent: " + c-cuwpawtitionconfig.getpawtitionconfigdescwiption() + "\n"
+          + "new: " + pawtitionconfig.getpawtitionconfigdescwiption());
     }
   }
 }

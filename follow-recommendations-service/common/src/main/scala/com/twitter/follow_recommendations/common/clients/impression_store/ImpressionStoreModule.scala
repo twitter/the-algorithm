@@ -1,31 +1,31 @@
-package com.twitter.follow_recommendations.common.clients.impression_store
+package com.twittew.fowwow_wecommendations.common.cwients.impwession_stowe
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.thriftscala.DisplayLocation
-import com.twitter.inject.TwitterModule
-import com.twitter.strato.catalog.Scan.Slice
-import com.twitter.strato.client.Client
-import com.twitter.strato.thrift.ScroogeConvImplicits._
+impowt c-com.googwe.inject.pwovides
+i-impowt c-com.googwe.inject.singweton
+i-impowt com.twittew.fowwow_wecommendations.thwiftscawa.dispwaywocation
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt c-com.twittew.stwato.catawog.scan.swice
+i-impowt com.twittew.stwato.cwient.cwient
+impowt com.twittew.stwato.thwift.scwoogeconvimpwicits._
 
-object ImpressionStoreModule extends TwitterModule {
+object impwessionstowemoduwe e-extends twittewmoduwe {
 
-  val columnPath: String = "onboarding/userrecs/wtfImpressionCountsStore"
+  vaw cowumnpath: s-stwing = "onboawding/usewwecs/wtfimpwessioncountsstowe"
 
-  type PKey = (Long, DisplayLocation)
-  type LKey = Long
-  type Value = (Long, Int)
+  type pkey = (wong, -.- d-dispwaywocation)
+  type wkey = wong
+  type vawue = (wong, ( ͡o ω ͡o ) int)
 
-  @Provides
-  @Singleton
-  def providesImpressionStore(stratoClient: Client): WtfImpressionStore = {
-    new WtfImpressionStore(
-      stratoClient.scanner[
-        (PKey, Slice[LKey]),
-        Unit,
-        (PKey, LKey),
-        Value
-      ](columnPath)
+  @pwovides
+  @singweton
+  d-def pwovidesimpwessionstowe(stwatocwient: c-cwient): w-wtfimpwessionstowe = {
+    nyew wtfimpwessionstowe(
+      stwatocwient.scannew[
+        (pkey, rawr x3 swice[wkey]), nyaa~~
+        unit, /(^•ω•^)
+        (pkey, rawr w-wkey),
+        vawue
+      ](cowumnpath)
     )
   }
 }

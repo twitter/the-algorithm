@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.service.candidate_pipeline_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.candidate_pipewine_executow
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineResult
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewinewesuwt
 
-case class CandidatePipelineExecutorResult(
-  candidatePipelineResults: Seq[CandidatePipelineResult],
-  queryFeatureMap: FeatureMap)
+c-case cwass candidatepipewineexecutowwesuwt(
+  candidatepipewinewesuwts: s-seq[candidatepipewinewesuwt], o.O
+  q-quewyfeatuwemap: f-featuwemap)

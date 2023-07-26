@@ -1,37 +1,37 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java11",
-    tags = [
-        "bazel-compatible",
-        "bazel-only",
+scawa_wibwawy(
+    souwces = ["*.scawa"], ( ͡o ω ͡o )
+    compiwew_option_sets = ["fataw_wawnings"], UwU
+    p-pwatfowm = "java11", rawr x3
+    t-tags = [
+        "bazew-compatibwe", rawr
+        "bazew-onwy", σωσ
     ],
-    dependencies = [
-        "3rdparty/src/jvm/com/twitter/scalding:args",
-        "3rdparty/src/jvm/com/twitter/scalding:core",
-        "ann/src/main/scala/com/twitter/ann/annoy",
-        "ann/src/main/scala/com/twitter/ann/brute_force",
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/scala/com/twitter/ann/faiss",
-        "ann/src/main/scala/com/twitter/ann/serialization",
-        "ann/src/main/scala/com/twitter/ann/util",
-        "src/scala/com/twitter/cortex/ml/embeddings/common:Helpers",
-        "src/scala/com/twitter/scalding_internal/job",
-    ],
+    d-dependencies = [
+        "3wdpawty/swc/jvm/com/twittew/scawding:awgs", σωσ
+        "3wdpawty/swc/jvm/com/twittew/scawding:cowe", >_<
+        "ann/swc/main/scawa/com/twittew/ann/annoy", :3
+        "ann/swc/main/scawa/com/twittew/ann/bwute_fowce", (U ﹏ U)
+        "ann/swc/main/scawa/com/twittew/ann/common", -.-
+        "ann/swc/main/scawa/com/twittew/ann/faiss", (ˆ ﻌ ˆ)♡
+        "ann/swc/main/scawa/com/twittew/ann/sewiawization", (⑅˘꒳˘)
+        "ann/swc/main/scawa/com/twittew/ann/utiw", (U ᵕ U❁)
+        "swc/scawa/com/twittew/cowtex/mw/embeddings/common:hewpews", -.-
+        "swc/scawa/com/twittew/scawding_intewnaw/job",
+    ], ^^;;
 )
 
-hadoop_binary(
-    name = "faissindexbuilder-deploy",
-    main = "com.twitter.ann.scalding.offline.faissindexbuilder.IndexBuilderApp",
-    platform = "java11",
-    runtime_platform = "java11",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
+h-hadoop_binawy(
+    n-nyame = "faissindexbuiwdew-depwoy", >_<
+    main = "com.twittew.ann.scawding.offwine.faissindexbuiwdew.indexbuiwdewapp", mya
+    p-pwatfowm = "java11", mya
+    w-wuntime_pwatfowm = "java11", 😳
+    t-tags = [
+        "bazew-compatibwe", XD
+        "bazew-compatibwe:migwated", :3
+        "bazew-onwy", 😳😳😳
+    ], -.-
     dependencies = [
-        ":faissindexbuilder",
-        "3rdparty/jvm/org/slf4j:slf4j-jdk14",
+        ":faissindexbuiwdew", ( ͡o ω ͡o )
+        "3wdpawty/jvm/owg/swf4j:swf4j-jdk14", rawr x3
     ],
 )

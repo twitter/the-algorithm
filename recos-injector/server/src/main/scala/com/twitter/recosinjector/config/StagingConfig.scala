@@ -1,33 +1,33 @@
-package com.twitter.recosinjector.config
+package com.twittew.wecosinjectow.config
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.logging.Logger
-import com.twitter.recosinjector.decider.RecosInjectorDecider
+impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.finagwe.thwift.cwientid
+i-impowt com.twittew.wogging.woggew
+i-impowt com.twittew.wecosinjectow.decidew.wecosinjectowdecidew
 
-case class StagingConfig(
-  override val serviceIdentifier: ServiceIdentifier
+c-case cwass stagingconfig(
+  ovewwide vaw sewviceidentifiew: sewviceidentifiew
 )(
-  implicit val statsReceiver: StatsReceiver)
+  impwicit v-vaw statsweceivew: statsweceivew)
     extends {
-  // Due to trait initialization logic in Scala, any abstract members declared in Config or
-  // DeployConfig should be declared in this block. Otherwise the abstract member might initialize
-  // to null if invoked before before object creation finishing.
+  // d-due to twait initiawization w-wogic in scawa, (ˆ ﻌ ˆ)♡ any abstwact membews decwawed in config ow
+  // d-depwoyconfig shouwd be decwawed i-in this bwock. (˘ω˘) o-othewwise the abstwact membew might initiawize
+  // to nyuww if invoked befowe b-befowe object cweation finishing.
 
-  val recosInjectorThriftClientId = ClientId("recos-injector.staging")
+  vaw wecosinjectowthwiftcwientid = cwientid("wecos-injectow.staging")
 
-  val outputKafkaTopicPrefix = "staging_recos_injector"
+  vaw o-outputkafkatopicpwefix = "staging_wecos_injectow"
 
-  val log = Logger("StagingConfig")
+  vaw wog = w-woggew("stagingconfig")
 
-  val recosInjectorCoreSvcsCacheDest = "/srv#/test/local/cache/twemcache_recos"
+  v-vaw wecosinjectowcowesvcscachedest = "/swv#/test/wocaw/cache/twemcache_wecos"
 
-  val recosInjectorDecider = RecosInjectorDecider(
-    isProd = false,
-    dataCenter = serviceIdentifier.zone
+  v-vaw w-wecosinjectowdecidew = wecosinjectowdecidew(
+    ispwod = fawse, (⑅˘꒳˘)
+    d-datacentew = sewviceidentifiew.zone
   )
 
-  val abDeciderLoggerNode = "staging_abdecider_scribe"
+  vaw abdecidewwoggewnode = "staging_abdecidew_scwibe"
 
-} with DeployConfig
+} w-with depwoyconfig

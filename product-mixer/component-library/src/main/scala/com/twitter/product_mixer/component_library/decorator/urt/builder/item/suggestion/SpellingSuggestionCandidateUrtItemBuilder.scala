@@ -1,41 +1,41 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.suggestion
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.suggestion
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.suggestion.SpellingSuggestionCandidateUrtItemBuilder.SpellingItemClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.suggestion.SpellingSuggestionCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.suggestion.SpellingItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.suggestion.spewwingsuggestioncandidateuwtitembuiwdew.spewwingitemcwienteventinfoewement
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.suggestion.spewwingsuggestioncandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.candidateuwtentwybuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventinfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.suggestion.spewwingitem
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object SpellingSuggestionCandidateUrtItemBuilder {
-  val SpellingItemClientEventInfoElement: String = "spelling"
+object spewwingsuggestioncandidateuwtitembuiwdew {
+  v-vaw spewwingitemcwienteventinfoewement: stwing = "spewwing"
 }
 
-case class SpellingSuggestionCandidateUrtItemBuilder[Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, SpellingSuggestionCandidate],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, SpellingSuggestionCandidate]
-  ] = None,
-) extends CandidateUrtEntryBuilder[Query, SpellingSuggestionCandidate, SpellingItem] {
+case cwass s-spewwingsuggestioncandidateuwtitembuiwdew[quewy <: pipewinequewy](
+  c-cwienteventinfobuiwdew: basecwienteventinfobuiwdew[quewy, (⑅˘꒳˘) spewwingsuggestioncandidate], /(^•ω•^)
+  feedbackactioninfobuiwdew: o-option[
+    basefeedbackactioninfobuiwdew[quewy, rawr x3 spewwingsuggestioncandidate]
+  ] = n-nyone, (U ﹏ U)
+) extends c-candidateuwtentwybuiwdew[quewy, (U ﹏ U) spewwingsuggestioncandidate, (⑅˘꒳˘) spewwingitem] {
 
-  override def apply(
-    query: Query,
-    candidate: SpellingSuggestionCandidate,
-    candidateFeatures: FeatureMap
-  ): SpellingItem = SpellingItem(
-    id = candidate.id,
-    sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-    clientEventInfo = clientEventInfoBuilder(
-      query,
-      candidate,
-      candidateFeatures,
-      Some(SpellingItemClientEventInfoElement)),
-    feedbackActionInfo =
-      feedbackActionInfoBuilder.flatMap(_.apply(query, candidate, candidateFeatures)),
-    textResult = candidate.textResult,
-    spellingActionType = candidate.spellingActionType,
-    originalQuery = candidate.originalQuery
+  ovewwide def appwy(
+    quewy: q-quewy, òωó
+    candidate: spewwingsuggestioncandidate, ʘwʘ
+    candidatefeatuwes: featuwemap
+  ): spewwingitem = s-spewwingitem(
+    id = c-candidate.id, /(^•ω•^)
+    s-sowtindex = n-none, ʘwʘ // sowt indexes a-awe automaticawwy set in the domain mawshawwew p-phase
+    cwienteventinfo = cwienteventinfobuiwdew(
+      quewy,
+      candidate, σωσ
+      c-candidatefeatuwes, OwO
+      some(spewwingitemcwienteventinfoewement)), 😳😳😳
+    feedbackactioninfo =
+      feedbackactioninfobuiwdew.fwatmap(_.appwy(quewy, 😳😳😳 candidate, o.O candidatefeatuwes)), ( ͡o ω ͡o )
+    textwesuwt = c-candidate.textwesuwt, (U ﹏ U)
+    spewwingactiontype = c-candidate.spewwingactiontype, (///ˬ///✿)
+    o-owiginawquewy = c-candidate.owiginawquewy
   )
 }

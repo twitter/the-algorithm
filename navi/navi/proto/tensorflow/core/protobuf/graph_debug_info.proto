@@ -1,52 +1,52 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "GraphDebugInfoProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option cc_enabwe_awenas = t-twue;
+option java_outew_cwassname = "gwaphdebuginfopwotos";
+o-option j-java_muwtipwe_fiwes = t-twue;
+o-option java_package = "owg.tensowfwow.fwamewowk";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-message GraphDebugInfo {
-  // This represents a file/line location in the source code.
-  message FileLineCol {
-    // File name index, which can be used to retrieve the file name string from
-    // `files`. The value should be between 0 and (len(files)-1)
-    int32 file_index = 1;
+m-message gwaphdebuginfo {
+  // this w-wepwesents a fiwe/wine wocation in the souwce code. 😳
+  message fiwewinecow {
+    // f-fiwe nyame index, mya which can be used to wetwieve t-the fiwe name stwing fwom
+    // `fiwes`. (˘ω˘) t-the vawue shouwd be between 0 and (wen(fiwes)-1)
+    int32 fiwe_index = 1;
 
-    // Line number in the file.
-    int32 line = 2;
+    // wine nyumbew i-in the fiwe. >_<
+    int32 wine = 2;
 
-    // Col number in the file line.
-    int32 col = 3;
+    // c-cow nyumbew i-in the fiwe wine. -.-
+    int32 cow = 3;
 
-    // Name of function contains the file line.
-    string func = 4;
+    // nyame of function contains the f-fiwe wine. 🥺
+    stwing func = 4;
 
-    // Source code contained in this file line.
-    string code = 5;
+    // souwce code contained in this fiwe wine. (U ﹏ U)
+    s-stwing code = 5;
   }
 
-  // This represents a stack trace which is a ordered list of `FileLineCol`.
-  message StackTrace {
-    // Each line in the stack trace.
-    repeated FileLineCol file_line_cols = 1;
+  // this wepwesents a-a stack twace w-which is a owdewed w-wist of `fiwewinecow`.
+  m-message stacktwace {
+    // each wine i-in the stack twace.
+    wepeated fiwewinecow fiwe_wine_cows = 1;
   }
 
-  // This stores all the source code file names and can be indexed by the
-  // `file_index`.
-  repeated string files = 1;
+  // t-this stowes aww the souwce code fiwe nyames and can be indexed by the
+  // `fiwe_index`. >w<
+  wepeated s-stwing fiwes = 1;
 
-  // This maps a node name to a stack trace in the source code.
-  // The map key is a mangling of the containing function and op name with
+  // this maps a-a nyode nyame t-to a stack twace i-in the souwce code. mya
+  // the map key is a mangwing of the containing f-function a-and op nyame with
   // syntax:
-  //   op.name '@' func_name
-  // For ops in the top-level graph, the func_name is the empty string.
-  // Note that op names are restricted to a small number of characters which
-  // exclude '@', making it impossible to collide keys of this form. Function
-  // names accept a much wider set of characters.
-  // It would be preferable to avoid mangling and use a tuple key of (op.name,
-  // func_name), but this is not supported with protocol buffers.
-  map<string, StackTrace> traces = 2;
+  //   o-op.name '@' f-func_name
+  // fow ops in the t-top-wevew gwaph, >w< the func_name is t-the empty stwing. nyaa~~
+  // nyote that op nyames awe w-westwicted to a smow nyumbew of c-chawactews which
+  // excwude '@', (✿oωo) m-making it impossibwe t-to cowwide keys of this fowm. function
+  // nyames accept a much widew set of chawactews. ʘwʘ
+  // it wouwd b-be pwefewabwe t-to avoid mangwing and use a tupwe k-key of (op.name, (ˆ ﻌ ˆ)♡
+  // f-func_name), 😳😳😳 b-but this is nyot suppowted with pwotocow buffews. :3
+  map<stwing, OwO s-stacktwace> twaces = 2;
 }

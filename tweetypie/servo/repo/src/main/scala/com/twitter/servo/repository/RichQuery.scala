@@ -1,34 +1,34 @@
-package com.twitter.servo.repository
+package com.twittew.sewvo.wepositowy
 
-import scala.collection.SeqProxy
+impowt scawa.cowwection.seqpwoxy
 
 /**
- * RichQuery is a mixin trait for KeyValueRepository query objects that are more complex
- * than Seq[K]. It extends SeqProxy to satisfy servo's requirements but provides Product-based
- * implementations of equals and toString. (The query object is expected to be a case class
- * and therefore implement Product.)
+ * w-wichquewy i-is a mixin t-twait fow keyvawuewepositowy q-quewy objects that a-awe mowe compwex
+ * t-than seq[k]. i-it extends seqpwoxy t-to satisfy sewvo's wequiwements but pwovides pwoduct-based
+ * impwementations o-of equaws and tostwing. (the quewy object i-is expected to be a case cwass
+ * a-and thewefowe impwement pwoduct.)
  */
-trait RichQuery[K] extends SeqProxy[K] with Product {
-  // Compare to other RichQuery instances via Product; otherwise allow any sequence to
-  // match our proxied Seq (thereby matching the semantics of a case class that simply
-  // extends SeqProxy).
-  override def equals(any: Any) = {
-    any match {
-      case null => false
+twait wichquewy[k] extends s-seqpwoxy[k] with pwoduct {
+  // c-compawe to othew w-wichquewy instances via pwoduct; othewwise awwow any sequence to
+  // match o-ouw pwoxied seq (theweby matching the semantics of a case cwass that simpwy
+  // e-extends seqpwoxy). >_<
+  ovewwide def e-equaws(any: any) = {
+    a-any m-match {
+      case n-nyuww => fawse
 
-      case other: RichQuery[_] =>
+      case othew: wichquewy[_] =>
         (
-          this.productArity == other.productArity &&
-            this.productIterator.zip(other.productIterator).foldLeft(true) {
-              case (ok, (e1, e2)) =>
+          t-this.pwoductawity == othew.pwoductawity &&
+            this.pwoductitewatow.zip(othew.pwoductitewatow).fowdweft(twue) {
+              case (ok, (⑅˘꒳˘) (e1, e-e2)) =>
                 ok && e1 == e2
             }
         )
 
-      case other => other.equals(this)
+      case othew => othew.equaws(this)
     }
   }
 
-  // Produce reasonable string for testing
-  override def toString = "%s(%s)".format(this.productPrefix, this.productIterator.mkString(","))
+  // pwoduce weasonabwe s-stwing fow testing
+  ovewwide d-def tostwing = "%s(%s)".fowmat(this.pwoductpwefix, /(^•ω•^) t-this.pwoductitewatow.mkstwing(","))
 }

@@ -1,85 +1,85 @@
-package com.twitter.product_mixer.core.functional_component.transformer
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew
 
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.CandidatePipelineResults
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twansfowmewidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.candidatepipewinewesuwts
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.iwwegawstatefaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
 
 /**
- * A transformer for transforming a mixer or recommendation pipeline's query type into a candidate
- * pipeline's query type.
- * @tparam Query The parent pipeline's query type
- * @tparam CandidateSourceQuery The Candidate Source's query type that the Query should be converted to
+ * a twansfowmew fow twansfowming a mixew ow wecommendation p-pipewine's quewy type into a candidate
+ * p-pipewine's quewy type. >w<
+ * @tpawam q-quewy the pawent pipewine's quewy type
+ * @tpawam candidatesouwcequewy t-the candidate souwce's quewy type t-that the quewy s-shouwd be convewted to
  */
-protected[core] sealed trait BaseCandidatePipelineQueryTransformer[
-  -Query <: PipelineQuery,
-  +CandidateSourceQuery]
-    extends Transformer[Query, CandidateSourceQuery] {
+pwotected[cowe] seawed twait basecandidatepipewinequewytwansfowmew[
+  -quewy <: pipewinequewy, (⑅˘꒳˘)
+  +candidatesouwcequewy]
+    e-extends twansfowmew[quewy, OwO candidatesouwcequewy] {
 
-  override val identifier: TransformerIdentifier =
-    BaseCandidatePipelineQueryTransformer.DefaultTransformerId
+  ovewwide vaw identifiew: t-twansfowmewidentifiew =
+    basecandidatepipewinequewytwansfowmew.defauwttwansfowmewid
 }
 
-trait CandidatePipelineQueryTransformer[-Query <: PipelineQuery, CandidateSourceQuery]
-    extends BaseCandidatePipelineQueryTransformer[Query, CandidateSourceQuery]
+t-twait candidatepipewinequewytwansfowmew[-quewy <: p-pipewinequewy, (ꈍᴗꈍ) c-candidatesouwcequewy]
+    e-extends basecandidatepipewinequewytwansfowmew[quewy, 😳 candidatesouwcequewy]
 
-trait DependentCandidatePipelineQueryTransformer[-Query <: PipelineQuery, CandidateSourceQuery]
-    extends BaseCandidatePipelineQueryTransformer[Query, CandidateSourceQuery] {
-  def transform(query: Query, candidates: Seq[CandidateWithDetails]): CandidateSourceQuery
+t-twait dependentcandidatepipewinequewytwansfowmew[-quewy <: pipewinequewy, 😳😳😳 candidatesouwcequewy]
+    e-extends basecandidatepipewinequewytwansfowmew[quewy, mya candidatesouwcequewy] {
+  def twansfowm(quewy: quewy, mya candidates: seq[candidatewithdetaiws]): candidatesouwcequewy
 
-  final override def transform(query: Query): CandidateSourceQuery = {
-    val candidates = query.features
-      .map(_.get(CandidatePipelineResults)).getOrElse(
-        throw PipelineFailure(
-          IllegalStateFailure,
-          "Candidate Pipeline Results Feature missing from query features"))
-    transform(query, candidates)
+  f-finaw ovewwide def twansfowm(quewy: q-quewy): c-candidatesouwcequewy = {
+    v-vaw candidates = quewy.featuwes
+      .map(_.get(candidatepipewinewesuwts)).getowewse(
+        thwow pipewinefaiwuwe(
+          iwwegawstatefaiwuwe, (⑅˘꒳˘)
+          "candidate p-pipewine w-wesuwts featuwe missing fwom q-quewy featuwes"))
+    t-twansfowm(quewy, (U ﹏ U) candidates)
   }
 }
 
-object BaseCandidatePipelineQueryTransformer {
-  private[core] val DefaultTransformerId: TransformerIdentifier =
-    TransformerIdentifier(ComponentIdentifier.BasedOnParentComponent)
-  private[core] val TransformerIdSuffix = "Query"
+o-object basecandidatepipewinequewytwansfowmew {
+  p-pwivate[cowe] vaw defauwttwansfowmewid: twansfowmewidentifiew =
+    twansfowmewidentifiew(componentidentifiew.basedonpawentcomponent)
+  p-pwivate[cowe] vaw twansfowmewidsuffix = "quewy"
 
   /**
-   * For use when building a [[BaseCandidatePipelineQueryTransformer]] in a [[com.twitter.product_mixer.core.pipeline.PipelineBuilder]]
-   * to ensure that the identifier is updated with the parent [[com.twitter.product_mixer.core.pipeline.Pipeline.identifier]]
+   * fow u-use when buiwding a [[basecandidatepipewinequewytwansfowmew]] i-in a [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewinebuiwdew]]
+   * t-to ensuwe that the identifiew is updated with the pawent [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewine.identifiew]]
    */
-  private[core] def copyWithUpdatedIdentifier[Query <: PipelineQuery, CandidateSourceQuery](
-    queryTransformer: BaseCandidatePipelineQueryTransformer[Query, CandidateSourceQuery],
-    parentIdentifier: ComponentIdentifier
-  ): BaseCandidatePipelineQueryTransformer[Query, CandidateSourceQuery] = {
-    if (queryTransformer.identifier == DefaultTransformerId) {
-      val transformerIdentifierFromParentName = TransformerIdentifier(
-        s"${parentIdentifier.name}$TransformerIdSuffix")
-      queryTransformer match {
-        case queryTransformer: CandidatePipelineQueryTransformer[Query, CandidateSourceQuery] =>
-          new CandidatePipelineQueryTransformer[Query, CandidateSourceQuery] {
-            override val identifier: TransformerIdentifier = transformerIdentifierFromParentName
+  pwivate[cowe] def copywithupdatedidentifiew[quewy <: pipewinequewy, mya c-candidatesouwcequewy](
+    q-quewytwansfowmew: basecandidatepipewinequewytwansfowmew[quewy, ʘwʘ c-candidatesouwcequewy], (˘ω˘)
+    p-pawentidentifiew: c-componentidentifiew
+  ): basecandidatepipewinequewytwansfowmew[quewy, (U ﹏ U) candidatesouwcequewy] = {
+    if (quewytwansfowmew.identifiew == d-defauwttwansfowmewid) {
+      vaw twansfowmewidentifiewfwompawentname = twansfowmewidentifiew(
+        s"${pawentidentifiew.name}$twansfowmewidsuffix")
+      quewytwansfowmew m-match {
+        case quewytwansfowmew: c-candidatepipewinequewytwansfowmew[quewy, ^•ﻌ•^ c-candidatesouwcequewy] =>
+          n-nyew candidatepipewinequewytwansfowmew[quewy, (˘ω˘) c-candidatesouwcequewy] {
+            o-ovewwide v-vaw identifiew: t-twansfowmewidentifiew = twansfowmewidentifiewfwompawentname
 
-            override def transform(input: Query): CandidateSourceQuery =
-              queryTransformer.transform(input)
+            ovewwide def twansfowm(input: quewy): c-candidatesouwcequewy =
+              q-quewytwansfowmew.twansfowm(input)
           }
-        case queryTransformer: DependentCandidatePipelineQueryTransformer[
-              Query,
-              CandidateSourceQuery
+        c-case quewytwansfowmew: d-dependentcandidatepipewinequewytwansfowmew[
+              q-quewy, :3
+              candidatesouwcequewy
             ] =>
-          new DependentCandidatePipelineQueryTransformer[Query, CandidateSourceQuery] {
-            override val identifier: TransformerIdentifier = transformerIdentifierFromParentName
+          nyew dependentcandidatepipewinequewytwansfowmew[quewy, ^^;; candidatesouwcequewy] {
+            o-ovewwide vaw identifiew: twansfowmewidentifiew = twansfowmewidentifiewfwompawentname
 
-            override def transform(
-              input: Query,
-              candidates: Seq[CandidateWithDetails]
-            ): CandidateSourceQuery =
-              queryTransformer.transform(input, candidates)
+            ovewwide def twansfowm(
+              input: q-quewy, 🥺
+              candidates: seq[candidatewithdetaiws]
+            ): candidatesouwcequewy =
+              q-quewytwansfowmew.twansfowm(input, (⑅˘꒳˘) c-candidates)
           }
       }
-    } else {
-      queryTransformer
+    } e-ewse {
+      quewytwansfowmew
     }
   }
 }

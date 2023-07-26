@@ -1,421 +1,421 @@
-package com.twitter.follow_recommendations.common.clients.socialgraph
+package com.twittew.fowwow_wecommendations.common.cwients.sociawgwaph
 
-import com.twitter.escherbird.util.stitchcache.StitchCache
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.UserIdWithTimestamp
-import com.twitter.inject.Logging
-import com.twitter.socialgraph.thriftscala.EdgesRequest
-import com.twitter.socialgraph.thriftscala.IdsRequest
-import com.twitter.socialgraph.thriftscala.IdsResult
-import com.twitter.socialgraph.thriftscala.LookupContext
-import com.twitter.socialgraph.thriftscala.OverCapacity
-import com.twitter.socialgraph.thriftscala.PageRequest
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.socialgraph.thriftscala.SrcRelationship
-import com.twitter.socialgraph.util.ByteBufferUtil
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.onboarding.socialGraphService.IdsClientColumn
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import java.nio.ByteBuffer
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.eschewbiwd.utiw.stitchcache.stitchcache
+i-impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.base.statsutiw
+i-impowt com.twittew.fowwow_wecommendations.common.modews.fowwowpwoof
+i-impowt com.twittew.fowwow_wecommendations.common.modews.usewidwithtimestamp
+i-impowt com.twittew.inject.wogging
+i-impowt com.twittew.sociawgwaph.thwiftscawa.edgeswequest
+i-impowt com.twittew.sociawgwaph.thwiftscawa.idswequest
+impowt com.twittew.sociawgwaph.thwiftscawa.idswesuwt
+impowt com.twittew.sociawgwaph.thwiftscawa.wookupcontext
+impowt com.twittew.sociawgwaph.thwiftscawa.ovewcapacity
+i-impowt com.twittew.sociawgwaph.thwiftscawa.pagewequest
+impowt com.twittew.sociawgwaph.thwiftscawa.wewationshiptype
+i-impowt com.twittew.sociawgwaph.thwiftscawa.swcwewationship
+i-impowt com.twittew.sociawgwaph.utiw.bytebuffewutiw
+impowt com.twittew.stitch.stitch
+impowt c-com.twittew.stitch.sociawgwaph.sociawgwaph
+impowt c-com.twittew.stwato.cwient.fetchew
+i-impowt com.twittew.stwato.genewated.cwient.onboawding.sociawgwaphsewvice.idscwientcowumn
+impowt com.twittew.utiw.duwation
+impowt com.twittew.utiw.time
+impowt java.nio.bytebuffew
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-case class RecentEdgesQuery(
-  userId: Long,
-  relations: Seq[RelationshipType],
-  // prefer to default value to better utilize the caching function of stitch
-  count: Option[Int] = Some(SocialGraphClient.MaxQuerySize),
-  performUnion: Boolean = true,
-  recentEdgesWindowOpt: Option[Duration] = None,
-  targets: Option[Seq[Long]] = None)
+case cwass wecentedgesquewy(
+  usewid: wong, OwO
+  wewations: seq[wewationshiptype], ^•ﻌ•^
+  // p-pwefew to defauwt vawue t-to bettew utiwize t-the caching function o-of stitch
+  c-count: option[int] = some(sociawgwaphcwient.maxquewysize), (ꈍᴗꈍ)
+  pewfowmunion: boowean = t-twue, (⑅˘꒳˘)
+  wecentedgeswindowopt: option[duwation] = n-nyone, (⑅˘꒳˘)
+  tawgets: option[seq[wong]] = nyone)
 
-case class EdgeRequestQuery(
-  userId: Long,
-  relation: RelationshipType,
-  count: Option[Int] = Some(SocialGraphClient.MaxQuerySize),
-  performUnion: Boolean = true,
-  recentEdgesWindowOpt: Option[Duration] = None,
-  targets: Option[Seq[Long]] = None)
+case cwass edgewequestquewy(
+  usewid: wong,
+  wewation: w-wewationshiptype,
+  count: option[int] = s-some(sociawgwaphcwient.maxquewysize), (ˆ ﻌ ˆ)♡
+  p-pewfowmunion: boowean = t-twue, /(^•ω•^)
+  wecentedgeswindowopt: option[duwation] = nyone, òωó
+  t-tawgets: option[seq[wong]] = n-nyone)
 
-@Singleton
-class SocialGraphClient @Inject() (
-  socialGraph: SocialGraph,
-  idsClientColumn: IdsClientColumn,
-  statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends Logging {
+@singweton
+cwass sociawgwaphcwient @inject() (
+  s-sociawgwaph: s-sociawgwaph, (⑅˘꒳˘)
+  idscwientcowumn: i-idscwientcowumn, (U ᵕ U❁)
+  statsweceivew: s-statsweceivew = nyuwwstatsweceivew)
+    extends wogging {
 
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val cacheStats = stats.scope("cache")
-  private val getIntersectionsStats = stats.scope("getIntersections")
-  private val getIntersectionsFromCachedColumnStats =
-    stats.scope("getIntersectionsFromCachedColumn")
-  private val getRecentEdgesStats = stats.scope("getRecentEdges")
-  private val getRecentEdgesCachedStats = stats.scope("getRecentEdgesCached")
-  private val getRecentEdgesFromCachedColumnStats = stats.scope("getRecentEdgesFromCachedColumn")
-  private val getRecentEdgesCachedInternalStats = stats.scope("getRecentEdgesCachedInternal")
-  private val getRecentEdgesWithTimeStats = stats.scope("getRecentEdgesWithTime")
+  p-pwivate vaw stats = statsweceivew.scope(this.getcwass.getsimpwename)
+  p-pwivate vaw cachestats = s-stats.scope("cache")
+  p-pwivate vaw getintewsectionsstats = stats.scope("getintewsections")
+  pwivate vaw getintewsectionsfwomcachedcowumnstats =
+    stats.scope("getintewsectionsfwomcachedcowumn")
+  pwivate vaw getwecentedgesstats = s-stats.scope("getwecentedges")
+  p-pwivate vaw getwecentedgescachedstats = s-stats.scope("getwecentedgescached")
+  p-pwivate v-vaw getwecentedgesfwomcachedcowumnstats = stats.scope("getwecentedgesfwomcachedcowumn")
+  pwivate vaw getwecentedgescachedintewnawstats = s-stats.scope("getwecentedgescachedintewnaw")
+  pwivate vaw getwecentedgeswithtimestats = stats.scope("getwecentedgeswithtime")
 
-  val sgsIdsFetcher: Fetcher[IdsRequest, Unit, IdsResult] = idsClientColumn.fetcher
+  vaw sgsidsfetchew: f-fetchew[idswequest, >w< unit, σωσ idswesuwt] = i-idscwientcowumn.fetchew
 
-  private val recentEdgesCache = StitchCache[RecentEdgesQuery, Seq[Long]](
-    maxCacheSize = SocialGraphClient.MaxCacheSize,
-    ttl = SocialGraphClient.CacheTTL,
-    statsReceiver = cacheStats,
-    underlyingCall = getRecentEdges
+  p-pwivate vaw w-wecentedgescache = stitchcache[wecentedgesquewy, -.- s-seq[wong]](
+    m-maxcachesize = s-sociawgwaphcwient.maxcachesize, o.O
+    t-ttw = sociawgwaphcwient.cachettw, ^^
+    statsweceivew = cachestats, >_<
+    u-undewwyingcaww = g-getwecentedges
   )
 
-  def getRecentEdgesCached(
-    rq: RecentEdgesQuery,
-    useCachedStratoColumn: Boolean = true
-  ): Stitch[Seq[Long]] = {
-    getRecentEdgesCachedStats.counter("requests").incr()
-    if (useCachedStratoColumn) {
-      getRecentEdgesFromCachedColumn(rq)
-    } else {
-      StatsUtil.profileStitch(
-        getRecentEdgesCachedInternal(rq),
-        getRecentEdgesCachedInternalStats
+  d-def getwecentedgescached(
+    wq: w-wecentedgesquewy, >w<
+    u-usecachedstwatocowumn: boowean = twue
+  ): stitch[seq[wong]] = {
+    getwecentedgescachedstats.countew("wequests").incw()
+    i-if (usecachedstwatocowumn) {
+      getwecentedgesfwomcachedcowumn(wq)
+    } ewse {
+      statsutiw.pwofiwestitch(
+        getwecentedgescachedintewnaw(wq), >_<
+        getwecentedgescachedintewnawstats
       )
     }
   }
 
-  def getRecentEdgesCachedInternal(rq: RecentEdgesQuery): Stitch[Seq[Long]] = {
-    recentEdgesCache.readThrough(rq)
+  d-def getwecentedgescachedintewnaw(wq: wecentedgesquewy): stitch[seq[wong]] = {
+    wecentedgescache.weadthwough(wq)
   }
 
-  def getRecentEdgesFromCachedColumn(rq: RecentEdgesQuery): Stitch[Seq[Long]] = {
-    val pageRequest = rq.recentEdgesWindowOpt match {
-      case Some(recentEdgesWindow) =>
-        PageRequest(
-          count = rq.count,
-          cursor = Some(getEdgeCursor(recentEdgesWindow)),
-          selectAll = Some(true)
+  d-def g-getwecentedgesfwomcachedcowumn(wq: w-wecentedgesquewy): stitch[seq[wong]] = {
+    v-vaw pagewequest = wq.wecentedgeswindowopt m-match {
+      c-case some(wecentedgeswindow) =>
+        pagewequest(
+          count = wq.count, >w<
+          cuwsow = some(getedgecuwsow(wecentedgeswindow)), rawr
+          sewectaww = some(twue)
         )
-      case _ => PageRequest(count = rq.count)
+      c-case _ => pagewequest(count = wq.count)
     }
-    val idsRequest = IdsRequest(
-      rq.relations.map { relationshipType =>
-        SrcRelationship(
-          source = rq.userId,
-          relationshipType = relationshipType,
-          targets = rq.targets
+    v-vaw idswequest = idswequest(
+      w-wq.wewations.map { w-wewationshiptype =>
+        swcwewationship(
+          souwce = wq.usewid, rawr x3
+          w-wewationshiptype = w-wewationshiptype, ( ͡o ω ͡o )
+          tawgets = wq.tawgets
         )
-      },
-      pageRequest = Some(pageRequest),
-      context = Some(LookupContext(performUnion = Some(rq.performUnion)))
+      }, (˘ω˘)
+      pagewequest = s-some(pagewequest), 😳
+      c-context = some(wookupcontext(pewfowmunion = some(wq.pewfowmunion)))
     )
 
-    val socialGraphStitch = sgsIdsFetcher
-      .fetch(idsRequest, Unit)
+    vaw sociawgwaphstitch = sgsidsfetchew
+      .fetch(idswequest, OwO u-unit)
       .map(_.v)
-      .map { result =>
-        result
-          .map { idResult =>
-            val userIds: Seq[Long] = idResult.ids
-            getRecentEdgesFromCachedColumnStats.stat("num_edges").add(userIds.size)
-            userIds
-          }.getOrElse(Seq.empty)
+      .map { w-wesuwt =>
+        w-wesuwt
+          .map { idwesuwt =>
+            v-vaw usewids: s-seq[wong] = idwesuwt.ids
+            g-getwecentedgesfwomcachedcowumnstats.stat("num_edges").add(usewids.size)
+            usewids
+          }.getowewse(seq.empty)
       }
-      .rescue {
-        case e: Exception =>
-          stats.counter(e.getClass.getSimpleName).incr()
-          Stitch.Nil
+      .wescue {
+        case e: exception =>
+          stats.countew(e.getcwass.getsimpwename).incw()
+          stitch.niw
       }
 
-    StatsUtil.profileStitch(
-      socialGraphStitch,
-      getRecentEdgesFromCachedColumnStats
+    s-statsutiw.pwofiwestitch(
+      s-sociawgwaphstitch, (˘ω˘)
+      getwecentedgesfwomcachedcowumnstats
     )
   }
 
-  def getRecentEdges(rq: RecentEdgesQuery): Stitch[Seq[Long]] = {
-    val pageRequest = rq.recentEdgesWindowOpt match {
-      case Some(recentEdgesWindow) =>
-        PageRequest(
-          count = rq.count,
-          cursor = Some(getEdgeCursor(recentEdgesWindow)),
-          selectAll = Some(true)
+  def getwecentedges(wq: w-wecentedgesquewy): s-stitch[seq[wong]] = {
+    vaw pagewequest = wq.wecentedgeswindowopt match {
+      case s-some(wecentedgeswindow) =>
+        pagewequest(
+          count = wq.count, òωó
+          cuwsow = s-some(getedgecuwsow(wecentedgeswindow)), ( ͡o ω ͡o )
+          sewectaww = some(twue)
         )
-      case _ => PageRequest(count = rq.count)
+      case _ => p-pagewequest(count = w-wq.count)
     }
-    val socialGraphStitch = socialGraph
+    vaw sociawgwaphstitch = sociawgwaph
       .ids(
-        IdsRequest(
-          rq.relations.map { relationshipType =>
-            SrcRelationship(
-              source = rq.userId,
-              relationshipType = relationshipType,
-              targets = rq.targets
+        i-idswequest(
+          w-wq.wewations.map { wewationshiptype =>
+            swcwewationship(
+              souwce = w-wq.usewid,
+              wewationshiptype = w-wewationshiptype, UwU
+              tawgets = wq.tawgets
             )
-          },
-          pageRequest = Some(pageRequest),
-          context = Some(LookupContext(performUnion = Some(rq.performUnion)))
+          }, /(^•ω•^)
+          pagewequest = some(pagewequest), (ꈍᴗꈍ)
+          c-context = some(wookupcontext(pewfowmunion = s-some(wq.pewfowmunion)))
         )
       )
-      .map { idsResult =>
-        val userIds: Seq[Long] = idsResult.ids
-        getRecentEdgesStats.stat("num_edges").add(userIds.size)
-        userIds
+      .map { i-idswesuwt =>
+        vaw u-usewids: seq[wong] = idswesuwt.ids
+        g-getwecentedgesstats.stat("num_edges").add(usewids.size)
+        u-usewids
       }
-      .rescue {
-        case e: OverCapacity =>
-          stats.counter(e.getClass.getSimpleName).incr()
-          logger.warn("SGS Over Capacity", e)
-          Stitch.Nil
+      .wescue {
+        c-case e: ovewcapacity =>
+          stats.countew(e.getcwass.getsimpwename).incw()
+          w-woggew.wawn("sgs o-ovew capacity", 😳 e)
+          stitch.niw
       }
-    StatsUtil.profileStitch(
-      socialGraphStitch,
-      getRecentEdgesStats
+    statsutiw.pwofiwestitch(
+      s-sociawgwaphstitch, mya
+      g-getwecentedgesstats
     )
   }
 
-  // This method return recent edges of (userId, timeInMs)
-  def getRecentEdgesWithTime(rq: EdgeRequestQuery): Stitch[Seq[UserIdWithTimestamp]] = {
-    val pageRequest = rq.recentEdgesWindowOpt match {
-      case Some(recentEdgesWindow) =>
-        PageRequest(
-          count = rq.count,
-          cursor = Some(getEdgeCursor(recentEdgesWindow)),
-          selectAll = Some(true)
+  // t-this method wetuwn wecent edges of (usewid, mya timeinms)
+  d-def getwecentedgeswithtime(wq: edgewequestquewy): s-stitch[seq[usewidwithtimestamp]] = {
+    v-vaw pagewequest = wq.wecentedgeswindowopt match {
+      case s-some(wecentedgeswindow) =>
+        p-pagewequest(
+          c-count = w-wq.count, /(^•ω•^)
+          cuwsow = s-some(getedgecuwsow(wecentedgeswindow)), ^^;;
+          sewectaww = some(twue)
         )
-      case _ => PageRequest(count = rq.count)
+      case _ => pagewequest(count = wq.count)
     }
 
-    val socialGraphStitch = socialGraph
+    vaw s-sociawgwaphstitch = sociawgwaph
       .edges(
-        EdgesRequest(
-          SrcRelationship(
-            source = rq.userId,
-            relationshipType = rq.relation,
-            targets = rq.targets
-          ),
-          pageRequest = Some(pageRequest),
-          context = Some(LookupContext(performUnion = Some(rq.performUnion)))
+        e-edgeswequest(
+          swcwewationship(
+            s-souwce = wq.usewid, 🥺
+            w-wewationshiptype = wq.wewation, ^^
+            t-tawgets = w-wq.tawgets
+          ), ^•ﻌ•^
+          p-pagewequest = s-some(pagewequest), /(^•ω•^)
+          c-context = some(wookupcontext(pewfowmunion = some(wq.pewfowmunion)))
         )
       )
-      .map { edgesResult =>
-        val userIds = edgesResult.edges.map { socialEdge =>
-          UserIdWithTimestamp(socialEdge.target, socialEdge.updatedAt)
+      .map { edgeswesuwt =>
+        vaw usewids = edgeswesuwt.edges.map { sociawedge =>
+          u-usewidwithtimestamp(sociawedge.tawget, ^^ s-sociawedge.updatedat)
         }
-        getRecentEdgesWithTimeStats.stat("num_edges").add(userIds.size)
-        userIds
+        g-getwecentedgeswithtimestats.stat("num_edges").add(usewids.size)
+        usewids
       }
-      .rescue {
-        case e: OverCapacity =>
-          stats.counter(e.getClass.getSimpleName).incr()
-          logger.warn("SGS Over Capacity", e)
-          Stitch.Nil
+      .wescue {
+        c-case e: ovewcapacity =>
+          stats.countew(e.getcwass.getsimpwename).incw()
+          woggew.wawn("sgs ovew capacity", 🥺 e-e)
+          stitch.niw
       }
-    StatsUtil.profileStitch(
-      socialGraphStitch,
-      getRecentEdgesWithTimeStats
+    s-statsutiw.pwofiwestitch(
+      sociawgwaphstitch, (U ᵕ U❁)
+      g-getwecentedgeswithtimestats
     )
   }
 
-  // This method returns the cursor for a time duration, such that all the edges returned by SGS will be created
-  // in the range (now-window, now)
-  def getEdgeCursor(window: Duration): ByteBuffer = {
-    val cursorInLong = (-(Time.now - window).inMilliseconds) << 20
-    ByteBufferUtil.fromLong(cursorInLong)
+  // this method wetuwns the c-cuwsow fow a time d-duwation, 😳😳😳 such that aww the edges w-wetuwned by s-sgs wiww be cweated
+  // in the wange (now-window, nyaa~~ now)
+  def getedgecuwsow(window: duwation): b-bytebuffew = {
+    v-vaw cuwsowinwong = (-(time.now - w-window).inmiwwiseconds) << 20
+    b-bytebuffewutiw.fwomwong(cuwsowinwong)
   }
 
-  // notice that this is more expensive but more realtime than the GFS one
-  def getIntersections(
-    userId: Long,
-    candidateIds: Seq[Long],
-    numIntersectionIds: Int
-  ): Stitch[Map[Long, FollowProof]] = {
-    val socialGraphStitch: Stitch[Map[Long, FollowProof]] = Stitch
-      .collect(candidateIds.map { candidateId =>
-        socialGraph
+  // n-nyotice that this is mowe e-expensive but mowe w-weawtime than the gfs one
+  def g-getintewsections(
+    u-usewid: wong, (˘ω˘)
+    candidateids: s-seq[wong], >_<
+    nyumintewsectionids: int
+  ): s-stitch[map[wong, XD fowwowpwoof]] = {
+    v-vaw s-sociawgwaphstitch: stitch[map[wong, rawr x3 f-fowwowpwoof]] = stitch
+      .cowwect(candidateids.map { candidateid =>
+        s-sociawgwaph
           .ids(
-            IdsRequest(
-              Seq(
-                SrcRelationship(userId, RelationshipType.Following),
-                SrcRelationship(candidateId, RelationshipType.FollowedBy)
-              ),
-              pageRequest = Some(PageRequest(count = Some(numIntersectionIds)))
+            i-idswequest(
+              s-seq(
+                swcwewationship(usewid, ( ͡o ω ͡o ) wewationshiptype.fowwowing), :3
+                swcwewationship(candidateid, mya w-wewationshiptype.fowwowedby)
+              ), σωσ
+              pagewequest = some(pagewequest(count = s-some(numintewsectionids)))
             )
-          ).map { idsResult =>
-            getIntersectionsStats.stat("num_edges").add(idsResult.ids.size)
-            (candidateId -> FollowProof(idsResult.ids, idsResult.ids.size))
+          ).map { i-idswesuwt =>
+            getintewsectionsstats.stat("num_edges").add(idswesuwt.ids.size)
+            (candidateid -> f-fowwowpwoof(idswesuwt.ids, (ꈍᴗꈍ) idswesuwt.ids.size))
           }
-      }).map(_.toMap)
-      .rescue {
-        case e: OverCapacity =>
-          stats.counter(e.getClass.getSimpleName).incr()
-          logger.warn("social graph over capacity in hydrating social proof", e)
-          Stitch.value(Map.empty)
+      }).map(_.tomap)
+      .wescue {
+        c-case e-e: ovewcapacity =>
+          stats.countew(e.getcwass.getsimpwename).incw()
+          woggew.wawn("sociaw g-gwaph ovew capacity in hydwating sociaw p-pwoof", OwO e)
+          s-stitch.vawue(map.empty)
       }
-    StatsUtil.profileStitch(
-      socialGraphStitch,
-      getIntersectionsStats
+    statsutiw.pwofiwestitch(
+      s-sociawgwaphstitch, o.O
+      getintewsectionsstats
     )
   }
 
-  def getIntersectionsFromCachedColumn(
-    userId: Long,
-    candidateIds: Seq[Long],
-    numIntersectionIds: Int
-  ): Stitch[Map[Long, FollowProof]] = {
-    val socialGraphStitch: Stitch[Map[Long, FollowProof]] = Stitch
-      .collect(candidateIds.map { candidateId =>
-        val idsRequest = IdsRequest(
-          Seq(
-            SrcRelationship(userId, RelationshipType.Following),
-            SrcRelationship(candidateId, RelationshipType.FollowedBy)
-          ),
-          pageRequest = Some(PageRequest(count = Some(numIntersectionIds)))
+  d-def getintewsectionsfwomcachedcowumn(
+    u-usewid: wong, 😳😳😳
+    c-candidateids: seq[wong], /(^•ω•^)
+    nyumintewsectionids: int
+  ): stitch[map[wong, OwO fowwowpwoof]] = {
+    vaw sociawgwaphstitch: stitch[map[wong, ^^ fowwowpwoof]] = stitch
+      .cowwect(candidateids.map { candidateid =>
+        vaw idswequest = idswequest(
+          seq(
+            swcwewationship(usewid, (///ˬ///✿) w-wewationshiptype.fowwowing), (///ˬ///✿)
+            s-swcwewationship(candidateid, (///ˬ///✿) wewationshiptype.fowwowedby)
+          ), ʘwʘ
+          pagewequest = s-some(pagewequest(count = s-some(numintewsectionids)))
         )
 
-        sgsIdsFetcher
-          .fetch(idsRequest, Unit)
+        s-sgsidsfetchew
+          .fetch(idswequest, ^•ﻌ•^ unit)
           .map(_.v)
-          .map { resultOpt =>
-            resultOpt.map { idsResult =>
-              getIntersectionsFromCachedColumnStats.stat("num_edges").add(idsResult.ids.size)
-              candidateId -> FollowProof(idsResult.ids, idsResult.ids.size)
+          .map { w-wesuwtopt =>
+            wesuwtopt.map { i-idswesuwt =>
+              g-getintewsectionsfwomcachedcowumnstats.stat("num_edges").add(idswesuwt.ids.size)
+              candidateid -> f-fowwowpwoof(idswesuwt.ids, OwO idswesuwt.ids.size)
             }
           }
-      }).map(_.flatten.toMap)
-      .rescue {
-        case e: Exception =>
-          stats.counter(e.getClass.getSimpleName).incr()
-          Stitch.value(Map.empty)
+      }).map(_.fwatten.tomap)
+      .wescue {
+        c-case e: exception =>
+          s-stats.countew(e.getcwass.getsimpwename).incw()
+          stitch.vawue(map.empty)
       }
-    StatsUtil.profileStitch(
-      socialGraphStitch,
-      getIntersectionsFromCachedColumnStats
+    statsutiw.pwofiwestitch(
+      s-sociawgwaphstitch, (U ﹏ U)
+      g-getintewsectionsfwomcachedcowumnstats
     )
   }
 
-  def getInvalidRelationshipUserIds(
-    userId: Long,
-    maxNumRelationship: Int = SocialGraphClient.MaxNumInvalidRelationship
-  ): Stitch[Seq[Long]] = {
-    getRecentEdges(
-      RecentEdgesQuery(
-        userId,
-        SocialGraphClient.InvalidRelationshipTypes,
-        Some(maxNumRelationship)
+  d-def getinvawidwewationshipusewids(
+    usewid: w-wong, (ˆ ﻌ ˆ)♡
+    m-maxnumwewationship: i-int = sociawgwaphcwient.maxnuminvawidwewationship
+  ): s-stitch[seq[wong]] = {
+    g-getwecentedges(
+      w-wecentedgesquewy(
+        usewid, (⑅˘꒳˘)
+        s-sociawgwaphcwient.invawidwewationshiptypes, (U ﹏ U)
+        s-some(maxnumwewationship)
       )
     )
   }
 
-  def getInvalidRelationshipUserIdsFromCachedColumn(
-    userId: Long,
-    maxNumRelationship: Int = SocialGraphClient.MaxNumInvalidRelationship
-  ): Stitch[Seq[Long]] = {
-    getRecentEdgesFromCachedColumn(
-      RecentEdgesQuery(
-        userId,
-        SocialGraphClient.InvalidRelationshipTypes,
-        Some(maxNumRelationship)
+  d-def getinvawidwewationshipusewidsfwomcachedcowumn(
+    usewid: wong, o.O
+    m-maxnumwewationship: int = sociawgwaphcwient.maxnuminvawidwewationship
+  ): stitch[seq[wong]] = {
+    g-getwecentedgesfwomcachedcowumn(
+      wecentedgesquewy(
+        u-usewid,
+        s-sociawgwaphcwient.invawidwewationshiptypes, mya
+        s-some(maxnumwewationship)
       )
     )
   }
 
-  def getRecentFollowedUserIds(userId: Long): Stitch[Seq[Long]] = {
-    getRecentEdges(
-      RecentEdgesQuery(
-        userId,
-        Seq(RelationshipType.Following)
+  def getwecentfowwowedusewids(usewid: w-wong): stitch[seq[wong]] = {
+    g-getwecentedges(
+      wecentedgesquewy(
+        u-usewid, XD
+        seq(wewationshiptype.fowwowing)
       )
     )
   }
 
-  def getRecentFollowedUserIdsFromCachedColumn(userId: Long): Stitch[Seq[Long]] = {
-    getRecentEdgesFromCachedColumn(
-      RecentEdgesQuery(
-        userId,
-        Seq(RelationshipType.Following)
+  d-def getwecentfowwowedusewidsfwomcachedcowumn(usewid: wong): stitch[seq[wong]] = {
+    getwecentedgesfwomcachedcowumn(
+      wecentedgesquewy(
+        usewid, òωó
+        seq(wewationshiptype.fowwowing)
       )
     )
   }
 
-  def getRecentFollowedUserIdsWithTime(userId: Long): Stitch[Seq[UserIdWithTimestamp]] = {
-    getRecentEdgesWithTime(
-      EdgeRequestQuery(
-        userId,
-        RelationshipType.Following
+  d-def getwecentfowwowedusewidswithtime(usewid: w-wong): s-stitch[seq[usewidwithtimestamp]] = {
+    getwecentedgeswithtime(
+      edgewequestquewy(
+        usewid, (˘ω˘)
+        w-wewationshiptype.fowwowing
       )
     )
   }
 
-  def getRecentFollowedByUserIds(userId: Long): Stitch[Seq[Long]] = {
-    getRecentEdges(
-      RecentEdgesQuery(
-        userId,
-        Seq(RelationshipType.FollowedBy)
+  def getwecentfowwowedbyusewids(usewid: w-wong): s-stitch[seq[wong]] = {
+    g-getwecentedges(
+      wecentedgesquewy(
+        usewid, :3
+        s-seq(wewationshiptype.fowwowedby)
       )
     )
   }
 
-  def getRecentFollowedByUserIdsFromCachedColumn(userId: Long): Stitch[Seq[Long]] = {
-    getRecentEdgesFromCachedColumn(
-      RecentEdgesQuery(
-        userId,
-        Seq(RelationshipType.FollowedBy)
+  d-def getwecentfowwowedbyusewidsfwomcachedcowumn(usewid: wong): stitch[seq[wong]] = {
+    g-getwecentedgesfwomcachedcowumn(
+      wecentedgesquewy(
+        usewid, OwO
+        seq(wewationshiptype.fowwowedby)
       )
     )
   }
 
-  def getRecentFollowedUserIdsWithTimeWindow(
-    userId: Long,
-    timeWindow: Duration
-  ): Stitch[Seq[Long]] = {
-    getRecentEdges(
-      RecentEdgesQuery(
-        userId,
-        Seq(RelationshipType.Following),
-        recentEdgesWindowOpt = Some(timeWindow)
+  def g-getwecentfowwowedusewidswithtimewindow(
+    usewid: wong, mya
+    t-timewindow: duwation
+  ): s-stitch[seq[wong]] = {
+    g-getwecentedges(
+      wecentedgesquewy(
+        u-usewid, (˘ω˘)
+        s-seq(wewationshiptype.fowwowing), o.O
+        w-wecentedgeswindowopt = s-some(timewindow)
       )
     )
   }
 }
 
-object SocialGraphClient {
+object s-sociawgwaphcwient {
 
-  val MaxQuerySize: Int = 500
-  val MaxCacheSize: Int = 5000000
-  // Ref: src/thrift/com/twitter/socialgraph/social_graph_service.thrift
-  val MaxNumInvalidRelationship: Int = 5000
-  val CacheTTL: Duration = Duration.fromHours(24)
+  v-vaw maxquewysize: i-int = 500
+  v-vaw maxcachesize: i-int = 5000000
+  // w-wef: s-swc/thwift/com/twittew/sociawgwaph/sociaw_gwaph_sewvice.thwift
+  v-vaw maxnuminvawidwewationship: int = 5000
+  vaw c-cachettw: duwation = duwation.fwomhouws(24)
 
-  val InvalidRelationshipTypes: Seq[RelationshipType] = Seq(
-    RelationshipType.HideRecommendations,
-    RelationshipType.Blocking,
-    RelationshipType.BlockedBy,
-    RelationshipType.Muting,
-    RelationshipType.MutedBy,
-    RelationshipType.ReportedAsSpam,
-    RelationshipType.ReportedAsSpamBy,
-    RelationshipType.ReportedAsAbuse,
-    RelationshipType.ReportedAsAbuseBy,
-    RelationshipType.FollowRequestOutgoing,
-    RelationshipType.Following,
-    RelationshipType.UsedToFollow,
+  v-vaw invawidwewationshiptypes: seq[wewationshiptype] = seq(
+    w-wewationshiptype.hidewecommendations, (✿oωo)
+    w-wewationshiptype.bwocking, (ˆ ﻌ ˆ)♡
+    w-wewationshiptype.bwockedby, ^^;;
+    wewationshiptype.muting, OwO
+    wewationshiptype.mutedby, 🥺
+    wewationshiptype.wepowtedasspam, mya
+    w-wewationshiptype.wepowtedasspamby, 😳
+    w-wewationshiptype.wepowtedasabuse, òωó
+    w-wewationshiptype.wepowtedasabuseby, /(^•ω•^)
+    wewationshiptype.fowwowwequestoutgoing, -.-
+    wewationshiptype.fowwowing, òωó
+    wewationshiptype.usedtofowwow, /(^•ω•^)
   )
 
   /**
    *
-   * Whether to call SGS to validate each candidate based on the number of invalid relationship users
-   * prefetched during request building step. This aims to not omit any invalid candidates that are
-   * not filtered out in previous steps.
-   *   If the number is 0, this might be a fail-opened SGS call.
-   *   If the number is larger or equal to 5000, this could hit SGS page size limit.
-   * Both cases account for a small percentage of the total traffic (<5%).
+   * w-whethew t-to caww sgs to vawidate each c-candidate based o-on the nyumbew of invawid wewationship usews
+   * pwefetched d-duwing wequest buiwding s-step. /(^•ω•^) this a-aims to nyot o-omit any invawid candidates that awe
+   * nyot fiwtewed o-out in pwevious s-steps. 😳
+   *   if the nyumbew is 0, :3 this m-might be a faiw-opened sgs caww. (U ᵕ U❁)
+   *   if the nyumbew i-is wawgew ow equaw to 5000, ʘwʘ t-this couwd hit s-sgs page size wimit. o.O
+   * both c-cases account fow a-a smow pewcentage of the totaw t-twaffic (<5%). ʘwʘ
    *
-   * @param numInvalidRelationshipUsers number of invalid relationship users fetched from getInvalidRelationshipUserIds
-   * @return whether to enable post-ranker SGS predicate
+   * @pawam nyuminvawidwewationshipusews nyumbew o-of invawid w-wewationship usews f-fetched fwom g-getinvawidwewationshipusewids
+   * @wetuwn whethew t-to enabwe post-wankew s-sgs pwedicate
    */
-  def enablePostRankerSgsPredicate(numInvalidRelationshipUsers: Int): Boolean = {
-    numInvalidRelationshipUsers == 0 || numInvalidRelationshipUsers >= MaxNumInvalidRelationship
+  d-def enabwepostwankewsgspwedicate(numinvawidwewationshipusews: int): boowean = {
+    n-nyuminvawidwewationshipusews == 0 || nyuminvawidwewationshipusews >= maxnuminvawidwewationship
   }
 }

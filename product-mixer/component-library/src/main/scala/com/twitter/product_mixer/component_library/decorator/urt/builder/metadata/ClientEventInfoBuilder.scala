@@ -1,48 +1,48 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.metadata
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventDetailsBuilder
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventinfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventdetaiwsbuiwdew
 
 /**
- * Sets the [[ClientEventInfo]] with the `component` field set to [[component]]
- * @see  [[http://go/client-events]]
+ * s-sets the [[cwienteventinfo]] w-with the `component` f-fiewd set to [[component]]
+ * @see  [[http://go/cwient-events]]
  */
-case class ClientEventInfoBuilder[-Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-  component: String,
-  detailsBuilder: Option[BaseClientEventDetailsBuilder[Query, Candidate]] = None)
-    extends BaseClientEventInfoBuilder[Query, Candidate] {
+case cwass cwienteventinfobuiwdew[-quewy <: pipewinequewy, 😳😳😳 c-candidate <: univewsawnoun[any]](
+  component: s-stwing, 😳😳😳
+  detaiwsbuiwdew: o-option[basecwienteventdetaiwsbuiwdew[quewy, o.O candidate]] = nyone)
+    extends basecwienteventinfobuiwdew[quewy, ( ͡o ω ͡o ) c-candidate] {
 
-  override def apply(
-    query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap,
-    element: Option[String]
-  ): Option[ClientEventInfo] =
-    Some(
-      ClientEventInfo(
-        component = Some(component),
-        element = element,
-        details = detailsBuilder.flatMap(_.apply(query, candidate, candidateFeatures)),
-        action = None,
-        entityToken = None)
+  ovewwide def appwy(
+    q-quewy: q-quewy, (U ﹏ U)
+    candidate: candidate, (///ˬ///✿)
+    candidatefeatuwes: featuwemap,
+    ewement: o-option[stwing]
+  ): option[cwienteventinfo] =
+    some(
+      cwienteventinfo(
+        component = some(component), >w<
+        e-ewement = ewement,
+        d-detaiws = d-detaiwsbuiwdew.fwatmap(_.appwy(quewy, rawr c-candidate, mya c-candidatefeatuwes)),
+        action = nyone, ^^
+        entitytoken = n-nyone)
     )
 }
 
 /**
- * In rare cases you might not want to send client event info. For
- * example, this might be set already on the client for some legacy
- * timelines.
+ * in wawe cases you might n-nyot want to send cwient event info. 😳😳😳 fow
+ * exampwe, mya this might be set awweady on the cwient f-fow some wegacy
+ * timewines. 😳
  */
-object EmptyClientEventInfoBuilder
-    extends BaseClientEventInfoBuilder[PipelineQuery, UniversalNoun[Any]] {
-  override def apply(
-    query: PipelineQuery,
-    candidate: UniversalNoun[Any],
-    candidateFeatures: FeatureMap,
-    element: Option[String]
-  ): Option[ClientEventInfo] = None
+o-object emptycwienteventinfobuiwdew
+    e-extends b-basecwienteventinfobuiwdew[pipewinequewy, -.- univewsawnoun[any]] {
+  ovewwide def appwy(
+    quewy: p-pipewinequewy, 🥺
+    c-candidate: univewsawnoun[any], o.O
+    c-candidatefeatuwes: f-featuwemap, /(^•ω•^)
+    ewement: o-option[stwing]
+  ): option[cwienteventinfo] = n-nyone
 }

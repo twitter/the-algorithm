@@ -1,22 +1,22 @@
-package com.twitter.home_mixer.product.scored_tweets.marshaller
+package com.twittew.home_mixew.pwoduct.scowed_tweets.mawshawwew
 
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsResponse
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.model.common.identifier.DomainMarshallerIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.modew.scowedtweetsquewy
+i-impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.modew.scowedtweetswesponse
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.pwemawshawwew.domainmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.domainmawshawwewidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
 
 /**
- * Creates a domain model of the Scored Tweets product response from the set of candidates selected
+ * c-cweates a domain modew of the scowed tweets pwoduct wesponse fwom the s-set of candidates sewected
  */
-object ScoredTweetsResponseDomainMarshaller
-    extends DomainMarshaller[ScoredTweetsQuery, ScoredTweetsResponse] {
+object scowedtweetswesponsedomainmawshawwew
+    e-extends domainmawshawwew[scowedtweetsquewy, scowedtweetswesponse] {
 
-  override val identifier: DomainMarshallerIdentifier =
-    DomainMarshallerIdentifier("ScoredTweetsResponse")
+  o-ovewwide vaw identifiew: domainmawshawwewidentifiew =
+    domainmawshawwewidentifiew("scowedtweetswesponse")
 
-  override def apply(
-    query: ScoredTweetsQuery,
-    selections: Seq[CandidateWithDetails]
-  ): ScoredTweetsResponse = ScoredTweetsResponse(scoredTweets = selections)
+  o-ovewwide def appwy(
+    quewy: s-scowedtweetsquewy, XD
+    s-sewections: seq[candidatewithdetaiws]
+  ): scowedtweetswesponse = scowedtweetswesponse(scowedtweets = sewections)
 }

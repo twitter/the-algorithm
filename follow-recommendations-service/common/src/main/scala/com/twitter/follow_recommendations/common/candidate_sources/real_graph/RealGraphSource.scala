@@ -1,40 +1,40 @@
-package com.twitter.follow_recommendations.common.candidate_sources.real_graph
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.weaw_gwaph
 
-import com.twitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.common.cwients.weaw_time_weaw_gwaph.weawtimeweawgwaphcwient
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt c-com.twittew.hewmit.modew.awgowithm
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.configapi.haspawams
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
 /**
- * This source gets the already followed edges from the real graph column as a candidate source.
+ * this s-souwce gets the awweady fowwowed e-edges fwom the weaw gwaph cowumn as a candidate souwce. (⑅˘꒳˘)
  */
-@Singleton
-class RealGraphSource @Inject() (
-  realGraph: RealTimeRealGraphClient)
-    extends CandidateSource[HasParams with HasClientContext, CandidateUser] {
-  override val identifier: CandidateSourceIdentifier = RealGraphSource.Identifier
+@singweton
+c-cwass weawgwaphsouwce @inject() (
+  w-weawgwaph: w-weawtimeweawgwaphcwient)
+    extends candidatesouwce[haspawams with hascwientcontext, (///ˬ///✿) candidateusew] {
+  ovewwide vaw identifiew: candidatesouwceidentifiew = w-weawgwaphsouwce.identifiew
 
-  override def apply(request: HasParams with HasClientContext): Stitch[Seq[CandidateUser]] = {
-    request.getOptionalUserId
-      .map { userId =>
-        realGraph.getRealGraphWeights(userId).map { scoreMap =>
-          scoreMap.map {
-            case (candidateId, realGraphScore) =>
-              CandidateUser(id = candidateId, score = Some(realGraphScore))
-                .withCandidateSource(identifier)
-          }.toSeq
+  ovewwide def appwy(wequest: haspawams with hascwientcontext): s-stitch[seq[candidateusew]] = {
+    wequest.getoptionawusewid
+      .map { u-usewid =>
+        weawgwaph.getweawgwaphweights(usewid).map { s-scowemap =>
+          s-scowemap.map {
+            c-case (candidateid, 😳😳😳 weawgwaphscowe) =>
+              candidateusew(id = candidateid, 🥺 s-scowe = some(weawgwaphscowe))
+                .withcandidatesouwce(identifiew)
+          }.toseq
         }
-      }.getOrElse(Stitch.Nil)
+      }.getowewse(stitch.niw)
   }
 }
 
-object RealGraphSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.RealGraphFollowed.toString)
+object weawgwaphsouwce {
+  vaw identifiew: c-candidatesouwceidentifiew = candidatesouwceidentifiew(
+    awgowithm.weawgwaphfowwowed.tostwing)
 }

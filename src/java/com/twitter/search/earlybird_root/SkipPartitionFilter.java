@@ -1,70 +1,70 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import java.util.ArrayList;
-import java.util.List;
+impowt j-java.utiw.awwaywist;
+i-impowt java.utiw.wist;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.util.Future;
+i-impowt c-com.twittew.finagwe.sewvice;
+i-impowt c-com.twittew.finagwe.simpwefiwtew;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequesttype;
+impowt com.twittew.utiw.futuwe;
 
 /**
- * Filter that returns a PARTITION_SKIPPED response instead of sending the request to a partition
- * if the partition PartitionAccessController says its disabled for a request.
+ * fiwtew that w-wetuwns a pawtition_skipped wesponse instead o-of sending the wequest to a pawtition
+ * if the pawtition pawtitionaccesscontwowwew s-says its disabwed fow a wequest. >w<
  */
-public final class SkipPartitionFilter extends
-    SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+p-pubwic f-finaw cwass skippawtitionfiwtew extends
+    simpwefiwtew<eawwybiwdwequestcontext, mya eawwybiwdwesponse> {
 
-  private static final Logger LOG = LoggerFactory.getLogger(SkipPartitionFilter.class);
+  pwivate static finaw w-woggew wog = woggewfactowy.getwoggew(skippawtitionfiwtew.cwass);
 
-  private final String tierName;
-  private final int partitionNum;
-  private final PartitionAccessController controller;
+  pwivate finaw stwing tiewname;
+  pwivate finaw int pawtitionnum;
+  p-pwivate finaw pawtitionaccesscontwowwew contwowwew;
 
-  private SkipPartitionFilter(String tierName, int partitionNum,
-                             PartitionAccessController controller) {
-    this.tierName = tierName;
-    this.partitionNum = partitionNum;
-    this.controller = controller;
+  p-pwivate s-skippawtitionfiwtew(stwing t-tiewname, >w< int pawtitionnum, nyaa~~
+                             p-pawtitionaccesscontwowwew contwowwew) {
+    this.tiewname = t-tiewname;
+    this.pawtitionnum = pawtitionnum;
+    t-this.contwowwew = contwowwew;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+  @ovewwide
+  pubwic futuwe<eawwybiwdwesponse> appwy(
+      eawwybiwdwequestcontext w-wequestcontext, (✿oωo)
+      sewvice<eawwybiwdwequestcontext, ʘwʘ e-eawwybiwdwesponse> s-sewvice) {
 
-    EarlybirdRequest request = requestContext.getRequest();
-    if (!controller.canAccessPartition(tierName, partitionNum, request.getClientId(),
-        EarlybirdRequestType.of(request))) {
-      return Future.value(EarlybirdServiceScatterGatherSupport.newEmptyResponse());
+    e-eawwybiwdwequest wequest = wequestcontext.getwequest();
+    if (!contwowwew.canaccesspawtition(tiewname, (ˆ ﻌ ˆ)♡ p-pawtitionnum, 😳😳😳 w-wequest.getcwientid(), :3
+        eawwybiwdwequesttype.of(wequest))) {
+      w-wetuwn f-futuwe.vawue(eawwybiwdsewvicescattewgathewsuppowt.newemptywesponse());
     }
 
-    return service.apply(requestContext);
+    wetuwn sewvice.appwy(wequestcontext);
   }
 
   /**
-   * Wrap the services with a SkipPartitionFilter
+   * w-wwap the sewvices with a-a skippawtitionfiwtew
    */
-  public static List<Service<EarlybirdRequestContext, EarlybirdResponse>> wrapServices(
-      String tierName,
-      List<Service<EarlybirdRequestContext, EarlybirdResponse>> clients,
-      PartitionAccessController controller) {
+  pubwic static wist<sewvice<eawwybiwdwequestcontext, OwO eawwybiwdwesponse>> w-wwapsewvices(
+      stwing t-tiewname, (U ﹏ U)
+      wist<sewvice<eawwybiwdwequestcontext, >w< e-eawwybiwdwesponse>> c-cwients, (U ﹏ U)
+      pawtitionaccesscontwowwew contwowwew) {
 
-    LOG.info("Creating SkipPartitionFilters for cluster: {}, tier: {}, partitions 0-{}",
-        controller.getClusterName(), tierName, clients.size() - 1);
+    wog.info("cweating skippawtitionfiwtews fow cwustew: {}, 😳 tiew: {}, (ˆ ﻌ ˆ)♡ pawtitions 0-{}", 😳😳😳
+        c-contwowwew.getcwustewname(), (U ﹏ U) t-tiewname, (///ˬ///✿) cwients.size() - 1);
 
-    List<Service<EarlybirdRequestContext, EarlybirdResponse>> wrappedServices = new ArrayList<>();
-    for (int partitionNum = 0; partitionNum < clients.size(); partitionNum++) {
-      SkipPartitionFilter filter = new SkipPartitionFilter(tierName, partitionNum, controller);
-      wrappedServices.add(filter.andThen(clients.get(partitionNum)));
+    wist<sewvice<eawwybiwdwequestcontext, 😳 e-eawwybiwdwesponse>> w-wwappedsewvices = n-nyew awwaywist<>();
+    fow (int pawtitionnum = 0; pawtitionnum < c-cwients.size(); pawtitionnum++) {
+      skippawtitionfiwtew fiwtew = nyew skippawtitionfiwtew(tiewname, 😳 pawtitionnum, c-contwowwew);
+      wwappedsewvices.add(fiwtew.andthen(cwients.get(pawtitionnum)));
     }
 
-    return wrappedServices;
+    w-wetuwn w-wwappedsewvices;
   }
 }

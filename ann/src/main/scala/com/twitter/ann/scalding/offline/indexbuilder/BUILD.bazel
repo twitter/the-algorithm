@@ -1,37 +1,37 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-only",
+scawa_wibwawy(
+    souwces = ["*.scawa"], UwU
+    compiwew_option_sets = ["fataw_wawnings"], rawr x3
+    p-pwatfowm = "java8", rawr
+    t-tags = [
+        "bazew-compatibwe", σωσ
+        "bazew-onwy", σωσ
     ],
-    dependencies = [
-        "3rdparty/src/jvm/com/twitter/scalding:args",
-        "3rdparty/src/jvm/com/twitter/scalding:core",
-        "ann/src/main/scala/com/twitter/ann/annoy",
-        "ann/src/main/scala/com/twitter/ann/brute_force",
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/scala/com/twitter/ann/hnsw",
-        "ann/src/main/scala/com/twitter/ann/serialization",
-        "ann/src/main/scala/com/twitter/ann/util",
-        "src/scala/com/twitter/cortex/ml/embeddings/common:Helpers",
-        "src/scala/com/twitter/scalding_internal/job",
-    ],
+    d-dependencies = [
+        "3wdpawty/swc/jvm/com/twittew/scawding:awgs", >_<
+        "3wdpawty/swc/jvm/com/twittew/scawding:cowe", :3
+        "ann/swc/main/scawa/com/twittew/ann/annoy", (U ﹏ U)
+        "ann/swc/main/scawa/com/twittew/ann/bwute_fowce", -.-
+        "ann/swc/main/scawa/com/twittew/ann/common",
+        "ann/swc/main/scawa/com/twittew/ann/hnsw", (ˆ ﻌ ˆ)♡
+        "ann/swc/main/scawa/com/twittew/ann/sewiawization", (⑅˘꒳˘)
+        "ann/swc/main/scawa/com/twittew/ann/utiw", (U ᵕ U❁)
+        "swc/scawa/com/twittew/cowtex/mw/embeddings/common:hewpews", -.-
+        "swc/scawa/com/twittew/scawding_intewnaw/job", ^^;;
+    ], >_<
 )
 
-hadoop_binary(
-    name = "indexbuilder-deploy",
-    main = "com.twitter.ann.scalding.offline.indexbuilder.IndexBuilderApp",
-    platform = "java8",
-    runtime_platform = "java8",
+h-hadoop_binawy(
+    n-nyame = "indexbuiwdew-depwoy", mya
+    m-main = "com.twittew.ann.scawding.offwine.indexbuiwdew.indexbuiwdewapp", mya
+    p-pwatfowm = "java8", 😳
+    w-wuntime_pwatfowm = "java8", XD
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
+        "bazew-compatibwe", :3
+        "bazew-compatibwe:migwated", 😳😳😳
+        "bazew-onwy", -.-
+    ], ( ͡o ω ͡o )
     dependencies = [
-        ":indexbuilder",
-        "3rdparty/jvm/org/slf4j:slf4j-jdk14",
-    ],
+        ":indexbuiwdew", rawr x3
+        "3wdpawty/jvm/owg/swf4j:swf4j-jdk14", nyaa~~
+    ], /(^•ω•^)
 )

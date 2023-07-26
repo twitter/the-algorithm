@@ -1,41 +1,41 @@
-package com.twitter.search.earlybird.search.facets;
+package com.twittew.seawch.eawwybiwd.seawch.facets;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.facets.CSFFacetCountIterator;
-import com.twitter.search.core.earlybird.facets.FacetCountIterator;
-import com.twitter.search.core.earlybird.facets.FacetCountIteratorFactory;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+impowt c-com.twittew.seawch.common.schema.base.schema;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.csffacetcountitewatow;
+i-impowt c-com.twittew.seawch.cowe.eawwybiwd.facets.facetcountitewatow;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetcountitewatowfactowy;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
 
 /**
- * Factory of {@link FacetCountIterator} instances for tweet search.
- * It provides a special iterator for the retweets facet.
+ * factowy of {@wink facetcountitewatow} instances f-fow tweet seawch. (⑅˘꒳˘)
+ * it pwovides a speciaw i-itewatow fow the wetweets facet. (///ˬ///✿)
  */
-public final class TweetSearchFacetCountIteratorFactory extends FacetCountIteratorFactory {
-  public static final TweetSearchFacetCountIteratorFactory FACTORY =
-      new TweetSearchFacetCountIteratorFactory();
+p-pubwic finaw cwass tweetseawchfacetcountitewatowfactowy extends facetcountitewatowfactowy {
+  p-pubwic static finaw tweetseawchfacetcountitewatowfactowy f-factowy =
+      n-nyew tweetseawchfacetcountitewatowfactowy();
 
-  private TweetSearchFacetCountIteratorFactory() {
+  pwivate tweetseawchfacetcountitewatowfactowy() {
   }
 
-  @Override
-  public FacetCountIterator getFacetCountIterator(
-      EarlybirdIndexSegmentAtomicReader reader,
-      Schema.FieldInfo fieldInfo) throws IOException {
-    Preconditions.checkNotNull(reader);
-    Preconditions.checkNotNull(fieldInfo);
-    Preconditions.checkArgument(fieldInfo.getFieldType().isUseCSFForFacetCounting());
+  @ovewwide
+  pubwic facetcountitewatow g-getfacetcountitewatow(
+      eawwybiwdindexsegmentatomicweadew weadew,
+      schema.fiewdinfo fiewdinfo) t-thwows ioexception {
+    pweconditions.checknotnuww(weadew);
+    p-pweconditions.checknotnuww(fiewdinfo);
+    p-pweconditions.checkawgument(fiewdinfo.getfiewdtype().isusecsffowfacetcounting());
 
-    String facetName = fieldInfo.getFieldType().getFacetName();
+    s-stwing facetname = f-fiewdinfo.getfiewdtype().getfacetname();
 
-    if (EarlybirdFieldConstant.RETWEETS_FACET.equals(facetName)) {
-      return new RetweetFacetCountIterator(reader, fieldInfo);
-    } else {
-      return new CSFFacetCountIterator(reader, fieldInfo);
+    if (eawwybiwdfiewdconstant.wetweets_facet.equaws(facetname)) {
+      wetuwn n-nyew wetweetfacetcountitewatow(weadew, 😳😳😳 fiewdinfo);
+    } ewse {
+      w-wetuwn new csffacetcountitewatow(weadew, 🥺 fiewdinfo);
     }
   }
 }

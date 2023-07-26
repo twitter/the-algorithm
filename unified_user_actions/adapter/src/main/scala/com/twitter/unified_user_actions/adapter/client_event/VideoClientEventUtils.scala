@@ -1,41 +1,41 @@
-package com.twitter.unified_user_actions.adapter.client_event
+package com.twittew.unified_usew_actions.adaptew.cwient_event
 
-import com.twitter.clientapp.thriftscala.AmplifyDetails
-import com.twitter.clientapp.thriftscala.MediaDetails
-import com.twitter.unified_user_actions.thriftscala.TweetVideoWatch
-import com.twitter.unified_user_actions.thriftscala.TweetActionInfo
-import com.twitter.video.analytics.thriftscala.MediaIdentifier
+impowt c-com.twittew.cwientapp.thwiftscawa.ampwifydetaiws
+i-impowt com.twittew.cwientapp.thwiftscawa.mediadetaiws
+i-impowt c-com.twittew.unified_usew_actions.thwiftscawa.tweetvideowatch
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.tweetactioninfo
+i-impowt com.twittew.video.anawytics.thwiftscawa.mediaidentifiew
 
-object VideoClientEventUtils {
+o-object videocwienteventutiws {
 
   /**
-   * For Tweets with multiple videos, find the id of the video that generated the client-event
+   * fow t-tweets with muwtipwe videos, find the id of the video that genewated the cwient-event
    */
-  def videoIdFromMediaIdentifier(mediaIdentifier: MediaIdentifier): Option[String] =
-    mediaIdentifier match {
-      case MediaIdentifier.MediaPlatformIdentifier(mediaPlatformIdentifier) =>
-        mediaPlatformIdentifier.mediaId.map(_.toString)
-      case _ => None
+  d-def videoidfwommediaidentifiew(mediaidentifiew: mediaidentifiew): option[stwing] =
+    m-mediaidentifiew match {
+      c-case mediaidentifiew.mediapwatfowmidentifiew(mediapwatfowmidentifiew) =>
+        mediapwatfowmidentifiew.mediaid.map(_.tostwing)
+      case _ => nyone
     }
 
   /**
-   * Given:
-   * 1. the id of the video (`mediaId`)
-   * 2. details about all the media items in the Tweet (`mediaItems`),
-   * iterate over the `mediaItems` to lookup the metadata about the video with id `mediaId`.
+   * given:
+   * 1. (///ˬ///✿) t-the id of the video (`mediaid`)
+   * 2. 😳😳😳 d-detaiws about a-aww the media items in the tweet (`mediaitems`), 🥺
+   * itewate ovew the `mediaitems` to wookup t-the metadata about the video with id `mediaid`.
    */
-  def getVideoMetadata(
-    mediaId: String,
-    mediaItems: Seq[MediaDetails],
-    amplifyDetails: Option[AmplifyDetails]
-  ): Option[TweetActionInfo] = {
-    mediaItems.collectFirst {
-      case media if media.contentId.contains(mediaId) =>
-        TweetActionInfo.TweetVideoWatch(
-          TweetVideoWatch(
-            mediaType = media.mediaType,
-            isMonetizable = media.dynamicAds,
-            videoType = amplifyDetails.flatMap(_.videoType)
+  def getvideometadata(
+    mediaid: stwing, mya
+    m-mediaitems: seq[mediadetaiws], 🥺
+    a-ampwifydetaiws: o-option[ampwifydetaiws]
+  ): o-option[tweetactioninfo] = {
+    m-mediaitems.cowwectfiwst {
+      case media if media.contentid.contains(mediaid) =>
+        t-tweetactioninfo.tweetvideowatch(
+          tweetvideowatch(
+            mediatype = m-media.mediatype, >_<
+            ismonetizabwe = media.dynamicads, >_<
+            videotype = ampwifydetaiws.fwatmap(_.videotype)
           ))
     }
   }

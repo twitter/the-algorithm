@@ -1,24 +1,24 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
+i-impowt c-com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
 
-public interface ISegmentWriter {
-  enum Result {
-    SUCCESS,
-    FAILURE_RETRYABLE,
-    FAILURE_NOT_RETRYABLE,
+p-pubwic i-intewface isegmentwwitew {
+  e-enum w-wesuwt {
+    s-success, >_<
+    faiwuwe_wetwyabwe, mya
+    f-faiwuwe_not_wetwyabwe, mya
   }
 
   /**
-   * Indexes the given ThriftVersionedEvents instance (adds it to the segment associated with this
-   * SegmentWriter instance).
+   * indexes the given thwiftvewsionedevents instance (adds it to the segment a-associated with this
+   * segmentwwitew instance). 😳
    */
-  Result indexThriftVersionedEvents(ThriftVersionedEvents tve) throws IOException;
+  wesuwt i-indexthwiftvewsionedevents(thwiftvewsionedevents tve) thwows i-ioexception;
 
   /**
-   * Returns the segment info for this segment writer.
+   * wetuwns the segment info fow this segment w-wwitew. XD
    */
-  SegmentInfo getSegmentInfo();
+  segmentinfo g-getsegmentinfo();
 }

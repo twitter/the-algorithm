@@ -1,19 +1,19 @@
-package com.twitter.follow_recommendations.common.transforms.weighted_sampling
+package com.twittew.fowwow_wecommendations.common.twansfowms.weighted_sampwing
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+impowt com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+i-impowt c-com.twittew.timewines.configapi.fsboundedpawam
+i-impowt com.twittew.timewines.configapi.fspawam
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
-@Singleton
-class SamplingTransformFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val intFSParams: Seq[FSBoundedParam[Int]] = Seq(SamplingTransformParams.TopKFixed)
+@singweton
+c-cwass sampwingtwansfowmfsconfig @inject() () e-extends featuweswitchconfig {
+  o-ovewwide vaw intfspawams: seq[fsboundedpawam[int]] = seq(sampwingtwansfowmpawams.topkfixed)
 
-  override val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
-    SamplingTransformParams.MultiplicativeFactor)
+  ovewwide vaw d-doubwefspawams: seq[fsboundedpawam[doubwe]] = seq(
+    sampwingtwansfowmpawams.muwtipwicativefactow)
 
-  override val booleanFSParams: Seq[FSParam[Boolean]] = Seq(
-    SamplingTransformParams.ScribeRankingInfoInSamplingTransform)
+  o-ovewwide vaw booweanfspawams: s-seq[fspawam[boowean]] = seq(
+    sampwingtwansfowmpawams.scwibewankinginfoinsampwingtwansfowm)
 }

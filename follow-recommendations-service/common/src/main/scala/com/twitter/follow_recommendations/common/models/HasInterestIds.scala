@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-trait HasCustomInterests {
-  def customInterests: Option[Seq[String]]
+twait hascustomintewests {
+  d-def customintewests: o-option[seq[stwing]]
 }
 
-trait HasUttInterests {
-  def uttInterestIds: Option[Seq[Long]]
+t-twait hasuttintewests {
+  d-def u-uttintewestids: o-option[seq[wong]]
 }
 
-trait HasInterestIds extends HasCustomInterests with HasUttInterests {}
+t-twait hasintewestids e-extends hascustomintewests with hasuttintewests {}

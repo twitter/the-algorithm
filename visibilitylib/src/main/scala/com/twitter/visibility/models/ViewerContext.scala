@@ -1,53 +1,53 @@
-package com.twitter.visibility.models
+package com.twittew.visibiwity.modews
 
-import com.twitter.context.TwitterContext
-import com.twitter.context.thriftscala.Viewer
-import com.twitter.featureswitches.{UserAgent => FSUserAgent}
-import com.twitter.finatra.request.util.AddressUtils
+impowt com.twittew.context.twittewcontext
+i-impowt com.twittew.context.thwiftscawa.viewew
+i-impowt c-com.twittew.featuweswitches.{usewagent => fsusewagent}
+i-impowt c-com.twittew.finatwa.wequest.utiw.addwessutiws
 
-case class ViewerContext(
-  userId: Option[Long] = None,
-  guestId: Option[Long] = None,
-  userAgentStr: Option[String] = None,
-  clientApplicationId: Option[Long] = None,
-  auditIp: String = "0.0.0.0",
-  requestCountryCode: Option[String] = None,
-  requestLanguageCode: Option[String] = None,
-  deviceId: Option[String] = None,
-  ipTags: Set[String] = Set.empty,
-  isVerifiedCrawler: Boolean = false,
-  userRoles: Option[Set[String]] = None) {
-  val fsUserAgent: Option[FSUserAgent] = userAgentStr.flatMap(ua => FSUserAgent(userAgent = ua))
+c-case cwass viewewcontext(
+  u-usewid: o-option[wong] = nyone, 😳😳😳
+  guestid: option[wong] = nyone, mya
+  usewagentstw: option[stwing] = n-nyone, 😳
+  cwientappwicationid: option[wong] = n-nyone, -.-
+  auditip: stwing = "0.0.0.0", 🥺
+  w-wequestcountwycode: option[stwing] = nyone, o.O
+  wequestwanguagecode: o-option[stwing] = nyone, /(^•ω•^)
+  d-deviceid: option[stwing] = n-nyone, nyaa~~
+  iptags: set[stwing] = set.empty, nyaa~~
+  isvewifiedcwawwew: boowean = f-fawse, :3
+  usewwowes: option[set[stwing]] = nyone) {
+  vaw fsusewagent: option[fsusewagent] = u-usewagentstw.fwatmap(ua => fsusewagent(usewagent = u-ua))
 
-  val isTwOffice: Boolean = ipTags.contains(AddressUtils.TwofficeIpTag)
+  vaw istwoffice: b-boowean = i-iptags.contains(addwessutiws.twofficeiptag)
 }
 
-object ViewerContext {
-  def fromContext: ViewerContext = viewerContext.getOrElse(ViewerContext())
+o-object viewewcontext {
+  def fwomcontext: viewewcontext = v-viewewcontext.getowewse(viewewcontext())
 
-  def fromContextWithViewerIdFallback(viewerId: Option[Long]): ViewerContext =
-    viewerContext
-      .map { viewer =>
-        if (viewer.userId.isEmpty) {
-          viewer.copy(userId = viewerId)
-        } else {
-          viewer
+  def fwomcontextwithviewewidfawwback(viewewid: option[wong]): v-viewewcontext =
+    viewewcontext
+      .map { viewew =>
+        if (viewew.usewid.isempty) {
+          viewew.copy(usewid = viewewid)
+        } ewse {
+          v-viewew
         }
-      }.getOrElse(ViewerContext(viewerId))
+      }.getowewse(viewewcontext(viewewid))
 
-  private def viewerContext: Option[ViewerContext] =
-    TwitterContext(TwitterContextPermit)().map(apply)
+  pwivate d-def viewewcontext: o-option[viewewcontext] =
+    twittewcontext(twittewcontextpewmit)().map(appwy)
 
-  def apply(viewer: Viewer): ViewerContext = new ViewerContext(
-    userId = viewer.userId,
-    guestId = viewer.guestId,
-    userAgentStr = viewer.userAgent,
-    clientApplicationId = viewer.clientApplicationId,
-    auditIp = viewer.auditIp.getOrElse("0.0.0.0"),
-    requestCountryCode = viewer.requestCountryCode collect { case value => value.toLowerCase },
-    requestLanguageCode = viewer.requestLanguageCode collect { case value => value.toLowerCase },
-    deviceId = viewer.deviceId,
-    ipTags = viewer.ipTags.toSet,
-    isVerifiedCrawler = viewer.isVerifiedCrawler.getOrElse(false)
+  d-def appwy(viewew: viewew): viewewcontext = nyew viewewcontext(
+    usewid = v-viewew.usewid, 😳😳😳
+    g-guestid = viewew.guestid, (˘ω˘)
+    usewagentstw = v-viewew.usewagent, ^^
+    c-cwientappwicationid = viewew.cwientappwicationid, :3
+    a-auditip = viewew.auditip.getowewse("0.0.0.0"), -.-
+    wequestcountwycode = v-viewew.wequestcountwycode cowwect { case vawue => v-vawue.towowewcase }, 😳
+    wequestwanguagecode = viewew.wequestwanguagecode c-cowwect { case vawue => vawue.towowewcase }, mya
+    d-deviceid = viewew.deviceid, (˘ω˘)
+    i-iptags = viewew.iptags.toset, >_<
+    isvewifiedcwawwew = viewew.isvewifiedcwawwew.getowewse(fawse)
   )
 }

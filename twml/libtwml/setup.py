@@ -1,12 +1,12 @@
 """
-libtwml setup.py module
+wibtwmw setup.py moduwe
 """
-from setuptools import setup, find_packages
+fwom s-setuptoows impowt s-setup, ( ͡o ω ͡o ) find_packages
 
-setup(
-  name='libtwml',
-  version='2.0',
-  description="Tensorflow C++ ops for twml",
-  packages=find_packages(),
-  data_files=[('', ['libtwml_tf.so'])],
+s-setup(
+  n-nyame='wibtwmw', UwU
+  v-vewsion='2.0', rawr x3
+  d-descwiption="tensowfwow c-c++ ops fow twmw", rawr
+  p-packages=find_packages(),
+  data_fiwes=[('', σωσ ['wibtwmw_tf.so'])], σωσ
 )

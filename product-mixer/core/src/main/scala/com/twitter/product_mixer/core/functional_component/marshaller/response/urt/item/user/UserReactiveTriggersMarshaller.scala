@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.user
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.usew
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.reaction.TimelineReactionMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserReactiveTriggers
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.weaction.timewineweactionmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.usew.usewweactivetwiggews
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class UserReactiveTriggersMarshaller @Inject() (
-  timelineReactionMarshaller: TimelineReactionMarshaller) {
+@singweton
+cwass usewweactivetwiggewsmawshawwew @inject() (
+  timewineweactionmawshawwew: timewineweactionmawshawwew) {
 
-  def apply(userReactiveTriggers: UserReactiveTriggers): urt.UserReactiveTriggers = {
-    urt.UserReactiveTriggers(
-      onFollow = userReactiveTriggers.onFollow.map(timelineReactionMarshaller(_)))
+  def appwy(usewweactivetwiggews: u-usewweactivetwiggews): uwt.usewweactivetwiggews = {
+    uwt.usewweactivetwiggews(
+      onfowwow = usewweactivetwiggews.onfowwow.map(timewineweactionmawshawwew(_)))
   }
 }

@@ -1,37 +1,37 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer
+package com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.fwexibwe_injection_pipewine.twansfowmew
 
-import com.twitter.onboarding.injections.{thriftscala => onboardingthrift}
-import com.twitter.product_mixer.component_library.candidate_source.flexible_injection_pipeline.IntermediatePrompt
-import com.twitter.product_mixer.component_library.model.candidate.BasePromptCandidate
-import com.twitter.product_mixer.component_library.model.candidate.PromptCarouselTileCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+impowt com.twittew.onboawding.injections.{thwiftscawa => o-onboawdingthwift}
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.fwexibwe_injection_pipewine.intewmediatepwompt
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basepwomptcandidate
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.pwomptcawousewtiwecandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twansfowmewidentifiew
 
-case object FlipPromptCarouselTileFeature
-    extends Feature[PromptCarouselTileCandidate, Option[onboardingthrift.Tile]]
+case object fwippwomptcawousewtiwefeatuwe
+    e-extends featuwe[pwomptcawousewtiwecandidate, rawr x3 o-option[onboawdingthwift.tiwe]]
 
-case object FlipPromptInjectionsFeature
-    extends Feature[BasePromptCandidate[String], onboardingthrift.Injection]
+case object fwippwomptinjectionsfeatuwe
+    extends featuwe[basepwomptcandidate[stwing], (✿oωo) o-onboawdingthwift.injection]
 
-case object FlipPromptOffsetInModuleFeature
-    extends Feature[PromptCarouselTileCandidate, Option[Int]]
+case object fwippwomptoffsetinmoduwefeatuwe
+    e-extends featuwe[pwomptcawousewtiwecandidate, (ˆ ﻌ ˆ)♡ o-option[int]]
 
-object FlipCandidateFeatureTransformer extends CandidateFeatureTransformer[IntermediatePrompt] {
+object fwipcandidatefeatuwetwansfowmew extends candidatefeatuwetwansfowmew[intewmediatepwompt] {
 
-  override val identifier: TransformerIdentifier = TransformerIdentifier("FlipCandidateFeature")
+  ovewwide vaw identifiew: t-twansfowmewidentifiew = twansfowmewidentifiew("fwipcandidatefeatuwe")
 
-  override val features: Set[Feature[_, _]] =
-    Set(FlipPromptInjectionsFeature, FlipPromptOffsetInModuleFeature, FlipPromptCarouselTileFeature)
+  ovewwide vaw featuwes: set[featuwe[_, (˘ω˘) _]] =
+    set(fwippwomptinjectionsfeatuwe, (⑅˘꒳˘) f-fwippwomptoffsetinmoduwefeatuwe, (///ˬ///✿) fwippwomptcawousewtiwefeatuwe)
 
-  /** Hydrates a [[FeatureMap]] for a given [[Inputs]] */
-  override def transform(input: IntermediatePrompt): FeatureMap = {
-    FeatureMapBuilder()
-      .add(FlipPromptInjectionsFeature, input.injection)
-      .add(FlipPromptOffsetInModuleFeature, input.offsetInModule)
-      .add(FlipPromptCarouselTileFeature, input.carouselTile)
-      .build()
+  /** h-hydwates a-a [[featuwemap]] f-fow a given [[inputs]] */
+  o-ovewwide def twansfowm(input: intewmediatepwompt): featuwemap = {
+    f-featuwemapbuiwdew()
+      .add(fwippwomptinjectionsfeatuwe, 😳😳😳 input.injection)
+      .add(fwippwomptoffsetinmoduwefeatuwe, 🥺 input.offsetinmoduwe)
+      .add(fwippwomptcawousewtiwefeatuwe, mya input.cawousewtiwe)
+      .buiwd()
   }
 }

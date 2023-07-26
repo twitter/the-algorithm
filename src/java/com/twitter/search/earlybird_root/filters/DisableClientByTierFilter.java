@@ -1,64 +1,64 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.Optional;
+impowt java.utiw.optionaw;
 
-import javax.inject.Inject;
+impowt j-javax.inject.inject;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+i-impowt c-com.googwe.common.base.pweconditions;
+i-impowt c-com.googwe.common.cowwect.wists;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.quota.ClientIdQuotaManager;
-import com.twitter.search.earlybird_root.quota.QuotaInfo;
-import com.twitter.util.Future;
+i-impowt com.twittew.finagwe.sewvice;
+i-impowt com.twittew.finagwe.simpwefiwtew;
+impowt c-com.twittew.seawch.common.decidew.seawchdecidew;
+impowt com.twittew.seawch.eawwybiwd.common.cwientidutiw;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwt;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwts;
+impowt com.twittew.seawch.eawwybiwd_woot.quota.cwientidquotamanagew;
+impowt com.twittew.seawch.eawwybiwd_woot.quota.quotainfo;
+i-impowt com.twittew.utiw.futuwe;
 
-public class DisableClientByTierFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private static final String CLIENT_BLOCKED_RESPONSE_PATTERN =
-      "Requests of client %s are blocked due to %s disable";
+p-pubwic c-cwass disabwecwientbytiewfiwtew extends simpwefiwtew<eawwybiwdwequest, 😳😳😳 eawwybiwdwesponse> {
+  pwivate static finaw stwing cwient_bwocked_wesponse_pattewn =
+      "wequests of c-cwient %s awe bwocked due to %s disabwe";
 
-  private final SearchDecider decider;
-  private final ClientIdQuotaManager quotaManager;
+  pwivate finaw seawchdecidew decidew;
+  p-pwivate finaw cwientidquotamanagew q-quotamanagew;
 
   /**
-   * Construct the filter by using ClientIdQuotaManager
+   * c-constwuct the f-fiwtew by using c-cwientidquotamanagew
    */
-  @Inject
-  public DisableClientByTierFilter(ClientIdQuotaManager quotaManager, SearchDecider decider) {
-    this.quotaManager = Preconditions.checkNotNull(quotaManager);
-    this.decider = decider;
+  @inject
+  pubwic disabwecwientbytiewfiwtew(cwientidquotamanagew quotamanagew, (˘ω˘) s-seawchdecidew decidew) {
+    this.quotamanagew = p-pweconditions.checknotnuww(quotamanagew);
+    this.decidew = decidew;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    String clientId = ClientIdUtil.getClientIdFromRequest(request);
-    Optional<QuotaInfo> quotaInfoOptional = quotaManager.getQuotaForClient(clientId);
-    QuotaInfo quotaInfo = quotaInfoOptional.orElseGet(quotaManager::getCommonPoolQuota);
-    // Tier value should exist: if client's tier value not in config file, it will be
-    // set to "no_tier" by default in ConfigBasedQuotaConfig
-    String tier = quotaInfo.getClientTier();
+  @ovewwide
+  pubwic futuwe<eawwybiwdwesponse> appwy(eawwybiwdwequest wequest, ^^
+                                         s-sewvice<eawwybiwdwequest, :3 eawwybiwdwesponse> s-sewvice) {
+    s-stwing c-cwientid = cwientidutiw.getcwientidfwomwequest(wequest);
+    optionaw<quotainfo> quotainfooptionaw = quotamanagew.getquotafowcwient(cwientid);
+    q-quotainfo q-quotainfo = quotainfooptionaw.owewseget(quotamanagew::getcommonpoowquota);
+    // tiew vawue shouwd e-exist: if cwient's t-tiew vawue nyot in config f-fiwe, -.- it wiww be
+    // set to "no_tiew" b-by defauwt in configbasedquotaconfig
+    stwing tiew = q-quotainfo.getcwienttiew();
 
-    Preconditions.checkNotNull(tier);
+    pweconditions.checknotnuww(tiew);
 
-    if (decider.isAvailable("superroot_unavailable_for_" + tier + "_clients")) {
-      return Future.value(getClientBlockedResponse(clientId, tier));
-    } else {
-      return service.apply(request);
+    i-if (decidew.isavaiwabwe("supewwoot_unavaiwabwe_fow_" + tiew + "_cwients")) {
+      wetuwn f-futuwe.vawue(getcwientbwockedwesponse(cwientid, 😳 t-tiew));
+    } ewse {
+      wetuwn sewvice.appwy(wequest);
     }
   }
 
-  private static EarlybirdResponse getClientBlockedResponse(String clientId, String tier) {
-    return new EarlybirdResponse(EarlybirdResponseCode.CLIENT_BLOCKED_BY_TIER_ERROR, 0)
-        .setSearchResults(new ThriftSearchResults()
-            .setResults(Lists.<ThriftSearchResult>newArrayList()))
-        .setDebugString(String.format(CLIENT_BLOCKED_RESPONSE_PATTERN, clientId, tier));
+  pwivate static eawwybiwdwesponse getcwientbwockedwesponse(stwing cwientid, mya s-stwing tiew) {
+    w-wetuwn nyew eawwybiwdwesponse(eawwybiwdwesponsecode.cwient_bwocked_by_tiew_ewwow, (˘ω˘) 0)
+        .setseawchwesuwts(new t-thwiftseawchwesuwts()
+            .setwesuwts(wists.<thwiftseawchwesuwt>newawwaywist()))
+        .setdebugstwing(stwing.fowmat(cwient_bwocked_wesponse_pattewn, >_< c-cwientid, -.- t-tiew));
   }
 }

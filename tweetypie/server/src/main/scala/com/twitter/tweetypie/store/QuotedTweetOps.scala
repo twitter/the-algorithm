@@ -1,33 +1,33 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
 /**
- * Mixin that implements public quoted tweet and public quoted user
- * filtering for tweet events that have quoted tweets and users.
+ * m-mixin that impwements p-pubwic q-quoted tweet and p-pubwic quoted usew
+ * f-fiwtewing f-fow tweet events t-that have quoted tweets and usews. (⑅˘꒳˘)
  */
-trait QuotedTweetOps {
-  def quotedTweet: Option[Tweet]
-  def quotedUser: Option[User]
+twait quotedtweetops {
+  def quotedtweet: option[tweet]
+  d-def quotedusew: option[usew]
 
   /**
-   * Do we have evidence that the quoted user is unprotected?
+   * do we h-have evidence that the quoted u-usew is unpwotected?
    */
-  def quotedUserIsPublic: Boolean =
-    // The quoted user should include the `safety` struct, but if it
-    // doesn't for any reason then the quoted tweet and quoted user
-    // should not be included in the events. This is a safety measure to
-    // avoid leaking private information.
-    quotedUser.exists(_.safety.exists(!_.isProtected))
+  def quotedusewispubwic: boowean =
+    // t-the quoted usew shouwd incwude t-the `safety` s-stwuct, /(^•ω•^) but if it
+    // doesn't fow any weason then the quoted tweet and quoted u-usew
+    // shouwd nyot be incwuded in the events. rawr x3 this is a safety measuwe to
+    // a-avoid weaking pwivate infowmation. (U ﹏ U)
+    q-quotedusew.exists(_.safety.exists(!_.ispwotected))
 
   /**
-   * The quoted tweet, filtered as it should appear through public APIs.
+   * the q-quoted tweet, (U ﹏ U) f-fiwtewed as it s-shouwd appeaw thwough pubwic apis. (⑅˘꒳˘)
    */
-  def publicQuotedTweet: Option[Tweet] =
-    if (quotedUserIsPublic) quotedTweet else None
+  def pubwicquotedtweet: o-option[tweet] =
+    if (quotedusewispubwic) quotedtweet e-ewse nyone
 
   /**
-   * The quoted user, filtered as it should appear through public APIs.
+   * the quoted usew, òωó fiwtewed as it shouwd appeaw thwough pubwic apis.
    */
-  def publicQuotedUser: Option[User] =
-    if (quotedUserIsPublic) quotedUser else None
+  def p-pubwicquotedusew: option[usew] =
+    i-if (quotedusewispubwic) q-quotedusew e-ewse nyone
 }

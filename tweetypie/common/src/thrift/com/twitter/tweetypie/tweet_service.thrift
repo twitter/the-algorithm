@@ -1,2320 +1,2320 @@
-namespace java com.twitter.tweetypie.thriftjava
-#@namespace scala com.twitter.tweetypie.thriftscala
-#@namespace strato com.twitter.tweetypie
-namespace py gen.twitter.tweetypie.service
-namespace rb TweetyPie
-namespace go tweetypie
+namespace java com.twittew.tweetypie.thwiftjava
+#@namespace scawa c-com.twittew.tweetypie.thwiftscawa
+#@namespace stwato c-com.twittew.tweetypie
+n-nyamespace p-py gen.twittew.tweetypie.sewvice
+n-nyamespace w-wb tweetypie
+n-nyamespace go tweetypie
 
-include "com/twitter/bouncer/bounce.thrift"
-include "com/twitter/carousel/service/carousel_service.thrift"
-include "com/twitter/context/feature_context.thrift"
-include "com/twitter/mediaservices/commons/MediaCommon.thrift"
-include "com/twitter/mediaservices/commons/MediaInformation.thrift"
-include "com/twitter/servo/exceptions.thrift"
-include "com/twitter/spam/features/safety_meta_data.thrift"
-include "com/twitter/spam/rtf/safety_label.thrift"
-include "com/twitter/spam/rtf/safety_level.thrift"
-include "com/twitter/spam/rtf/safety_result.thrift"
-include "com/twitter/tseng/withholding/withholding.thrift"
-include "com/twitter/tweetypie/deleted_tweet.thrift"
-include "com/twitter/tweetypie/transient_context.thrift"
-include "com/twitter/tweetypie/tweet.thrift"
-include "com/twitter/tweetypie/tweet_audit.thrift"
-include "com/twitter/incentives/jiminy/jiminy.thrift"
-include "unified_cards_contract.thrift"
+i-incwude "com/twittew/bouncew/bounce.thwift"
+incwude "com/twittew/cawousew/sewvice/cawousew_sewvice.thwift"
+incwude "com/twittew/context/featuwe_context.thwift"
+incwude "com/twittew/mediasewvices/commons/mediacommon.thwift"
+incwude "com/twittew/mediasewvices/commons/mediainfowmation.thwift"
+i-incwude "com/twittew/sewvo/exceptions.thwift"
+incwude "com/twittew/spam/featuwes/safety_meta_data.thwift"
+incwude "com/twittew/spam/wtf/safety_wabew.thwift"
+i-incwude "com/twittew/spam/wtf/safety_wevew.thwift"
+incwude "com/twittew/spam/wtf/safety_wesuwt.thwift"
+i-incwude "com/twittew/tseng/withhowding/withhowding.thwift"
+incwude "com/twittew/tweetypie/deweted_tweet.thwift"
+incwude "com/twittew/tweetypie/twansient_context.thwift"
+incwude "com/twittew/tweetypie/tweet.thwift"
+i-incwude "com/twittew/tweetypie/tweet_audit.thwift"
+incwude "com/twittew/incentives/jiminy/jiminy.thwift"
+incwude "unified_cawds_contwact.thwift"
 
-typedef i16 FieldId
+t-typedef i-i16 fiewdid
 
-struct TweetGeoSearchRequestID {
-  1: required string id (personalDataType = 'PrivateTweetEntitiesAndMetadata, PublicTweetEntitiesAndMetadata')
-}(hasPersonalData = 'true')
+stwuct tweetgeoseawchwequestid {
+  1: wequiwed stwing id (pewsonawdatatype = 'pwivatetweetentitiesandmetadata, (///ˬ///✿) pubwictweetentitiesandmetadata')
+}(haspewsonawdata = 'twue')
 
-struct TweetCreateGeo {
-  1: optional tweet.GeoCoordinates coordinates
-  2: optional string place_id (personalDataType = 'InferredLocation')
-  3: optional map<string, string> place_metadata (personalDataTypeKey = 'InferredLocation', personalDataTypeValue = 'InferredLocation')
-  4: bool auto_create_place = 1
-  // deprecated; use tweet.GeoCoordinates.display
-  5: bool display_coordinates = 1
-  6: bool override_user_geo_setting = 0
-  7: optional TweetGeoSearchRequestID geo_search_request_id
-}(hasPersonalData = 'true')
+s-stwuct tweetcweategeo {
+  1: optionaw tweet.geocoowdinates coowdinates
+  2: o-optionaw stwing pwace_id (pewsonawdatatype = 'infewwedwocation')
+  3: o-optionaw m-map<stwing, o.O s-stwing> pwace_metadata (pewsonawdatatypekey = 'infewwedwocation', σωσ p-pewsonawdatatypevawue = 'infewwedwocation')
+  4: boow auto_cweate_pwace = 1
+  // depwecated; u-use tweet.geocoowdinates.dispway
+  5: boow dispway_coowdinates = 1
+  6: boow ovewwide_usew_geo_setting = 0
+  7: o-optionaw tweetgeoseawchwequestid geo_seawch_wequest_id
+}(haspewsonawdata = 'twue')
 
-enum StatusState {
+enum statusstate {
   /**
-   * The tweet was found and successfully hydrated.
+   * the tweet was found and successfuwwy hydwated. òωó
    */
-  FOUND              = 0
-
-  /**
-   * The tweet was not found.  It may have been deleted, or could just be an invalid or
-   * unused tweet id.
-   */
-  NOT_FOUND          = 1
+  f-found              = 0
 
   /**
-   * The tweet was found, but there was at least one error hydrating some data on the tweet.
-   * GetTweetResult.missing_fields indicates which fields may have not been hydrated completely.
+   * the t-tweet was nyot found. (///ˬ///✿)  i-it may have b-been deweted, :3 ow couwd just be an invawid ow
+   * unused tweet i-id. mya
    */
-  PARTIAL            = 2
+  nyot_found          = 1
 
   /**
-   * @deprecated All failures, including time outs, are indicated by `Failed`.
+   * t-the tweet was found, ^^ but thewe w-was at weast one e-ewwow hydwating some data on the t-tweet. (˘ω˘)
+   * gettweetwesuwt.missing_fiewds indicates w-which fiewds may have nyot been hydwated c-compwetewy. -.-
    */
-  TIMED_OUT          = 3
+  pawtiaw            = 2
 
   /**
-   * There was an upstream or internal failure reading this tweet.  Usually indicates a
-   * transient issue that is safe to retry immediately.
+   * @depwecated a-aww faiwuwes, XD incwuding time o-outs, rawr awe indicated b-by `faiwed`. >_<
    */
-  FAILED             = 4
+  timed_out          = 3
 
   /**
-   * @deprecated tweets from deactivated users will soon be indicated via `Drop` with
-   * a `FilteredReason` of `authorAccountIsInactive`.
+   * thewe was an upstweam ow intewnaw faiwuwe weading this tweet. :3  usuawwy i-indicates a
+   * t-twansient issue that is safe t-to wetwy immediatewy. :3
    */
-  DEACTIVATED_USER   = 5
+  faiwed             = 4
 
   /**
-   * @deprecated tweets from suspended users will soon be indicated via `Drop` with
-   * a `FilteredReason` of `authorAccountIsInactive`.
+   * @depwecated t-tweets f-fwom deactivated usews wiww soon be indicated via `dwop` with
+   * a-a `fiwtewedweason` of `authowaccountisinactive`. XD
    */
-  SUSPENDED_USER     = 6
+  deactivated_usew   = 5
 
   /**
-   * @deprecated tweets from protected users that the viewer can't see will soon be
-   * indicated via `Drop` with a `FilteredReason` of `authorIsProtected`.
+   * @depwecated tweets fwom suspended usews wiww s-soon be indicated via `dwop` with
+   * a-a `fiwtewedweason` o-of `authowaccountisinactive`. ( ͡o ω ͡o )
    */
-  PROTECTED_USER     = 7
-  /**
-   * @deprecated tweets that have been reported by the viewer will soon be indicated
-   * via `Drop` or `Suppress` with a `FilteredReason` of `reportedTweet`.
-   */
-  REPORTED_TWEET     = 8
-
-  // PrivateTweet was originally used for TwitterSuggest v1 but has since been removed
-  // obsolete: PRIVATE_TWEET      = 9
+  s-suspended_usew     = 6
 
   /**
-   * Could not return this tweet because of backpressure, should
-   * not be retried immediately; try again later
+   * @depwecated tweets fwom pwotected u-usews that t-the viewew can't s-see wiww soon b-be
+   * indicated via `dwop` with a `fiwtewedweason` o-of `authowispwotected`. rawr x3
    */
-  OVER_CAPACITY      = 10
+  p-pwotected_usew     = 7
+  /**
+   * @depwecated t-tweets that have b-been wepowted b-by the viewew wiww soon be indicated
+   * via `dwop` ow `suppwess` w-with a `fiwtewedweason` of `wepowtedtweet`. (⑅˘꒳˘)
+   */
+  wepowted_tweet     = 8
+
+  // pwivatetweet was owiginawwy used fow twittewsuggest v-v1 but has since been wemoved
+  // obsowete: pwivate_tweet      = 9
 
   /**
-   * Returned when the requesting client is considered to not be
-   * able to render the tweet properly
+   * c-couwd n-nyot wetuwn this t-tweet because of backpwessuwe, UwU s-shouwd
+   * nyot be wetwied immediatewy; t-twy again w-watew
    */
-  UNSUPPORTED_CLIENT = 11
+  ovew_capacity      = 10
 
   /**
-   * The tweet exists, but was not returned because it should not be seen by the
-   * viewer.  The reason for the tweet being filtered is indicated via
-   * GetTweetResult.filtered_reason.
+   * wetuwned when the wequesting cwient is considewed to nyot be
+   * a-abwe to wendew the tweet p-pwopewwy
    */
-  DROP               = 12
+  unsuppowted_cwient = 11
 
   /**
-   * The tweet exists and was returned, but should not be directly shown to the
-   * user without additional user intent to see the tweet, as it may be offensive.
-   * The reason for the suppression is indicated via GetTweetResult.filtered_reason.
+   * t-the tweet exists, (˘ω˘) b-but was nyot wetuwned because it shouwd nyot b-be seen by the
+   * v-viewew. (˘ω˘)  the weason fow t-the tweet being f-fiwtewed is indicated via
+   * gettweetwesuwt.fiwtewed_weason. rawr
    */
-  SUPPRESS           = 13
+  dwop               = 12
 
   /**
-   * The tweet once existed and has been deleted.
-   * When GetTweetOptions.enable_deleted_state is true, deleted tweets
-   * will be returned as DELETED
-   * When GetTweetOptions.enable_deleted_state is false, deleted tweets
-   * will be returned as NOT_FOUND.
+   * the tweet exists and w-was wetuwned, nyaa~~ but s-shouwd nyot be d-diwectwy shown to the
+   * usew w-without additionaw u-usew intent to see the tweet, 😳😳😳 a-as it may be offensive. ^^;;
+   * the weason fow the suppwession is indicated via gettweetwesuwt.fiwtewed_weason. >w<
    */
-  DELETED            = 14
+  suppwess           = 13
 
   /**
-   * The tweet once existed, had violated Twitter Rules, and has been deleted.
-   * When GetTweetOptions.enable_deleted_state is true, bounce-deleted tweets
-   * will be returned as BOUNCE_DELETED
-   * When GetTweetOptions.enable_deleted_state is false, bounce-deleted tweets
-   * will be returned as NOT_FOUND.
+   * t-the tweet o-once existed and has been deweted. ʘwʘ
+   * when g-gettweetoptions.enabwe_deweted_state i-is twue, XD deweted tweets
+   * wiww be wetuwned as deweted
+   * w-when gettweetoptions.enabwe_deweted_state is fawse, (ˆ ﻌ ˆ)♡ deweted tweets
+   * wiww be wetuwned as nyot_found. >_<
    */
-  BOUNCE_DELETED     = 15
+  d-deweted            = 14
 
-  RESERVED_1         = 16
-  RESERVED_2         = 17
-  RESERVED_3         = 18
-  RESERVED_4         = 19
+  /**
+   * the tweet once existed, >_< h-had viowated twittew w-wuwes, ʘwʘ and has been deweted. rawr
+   * when gettweetoptions.enabwe_deweted_state is twue, nyaa~~ bounce-deweted t-tweets
+   * w-wiww be wetuwned as bounce_deweted
+   * when gettweetoptions.enabwe_deweted_state i-is fawse, >w< bounce-deweted t-tweets
+   * wiww be wetuwned as nyot_found. (ˆ ﻌ ˆ)♡
+   */
+  bounce_deweted     = 15
+
+  w-wesewved_1         = 16
+  wesewved_2         = 17
+  w-wesewved_3         = 18
+  w-wesewved_4         = 19
 }
 
-enum TweetCreateState {
+enum tweetcweatestate {
   /**
-   * Tweet was created successfully.
+   * t-tweet was cweated successfuwwy. :3
    */
-  OK = 0,
+  o-ok = 0, OwO
 
   /**
-   * The user_id field from the creation request does not correspond to a user.
+   * t-the usew_id f-fiewd fwom the cweation wequest d-does nyot cowwespond t-to a usew. mya
    */
-  USER_NOT_FOUND = 1,
+  usew_not_found = 1, /(^•ω•^)
 
-  SOURCE_TWEET_NOT_FOUND = 2,
-  SOURCE_USER_NOT_FOUND = 3,
+  souwce_tweet_not_found = 2, nyaa~~
+  s-souwce_usew_not_found = 3, (˘ω˘)
 
   /**
-   * @deprecated Users can now retweet their own tweets.
+   * @depwecated u-usews can now w-wetweet theiw own tweets. (ꈍᴗꈍ)
    */
-  CANNOT_RETWEET_OWN_TWEET = 4,
+  cannot_wetweet_own_tweet = 4, >w<
 
-  CANNOT_RETWEET_PROTECTED_TWEET = 5,
-  CANNOT_RETWEET_SUSPENDED_USER = 6,
-  CANNOT_RETWEET_DEACTIVATED_USER = 7,
-  CANNOT_RETWEET_BLOCKING_USER = 8,
+  c-cannot_wetweet_pwotected_tweet = 5, nyaa~~
+  cannot_wetweet_suspended_usew = 6, (✿oωo)
+  c-cannot_wetweet_deactivated_usew = 7, (⑅˘꒳˘)
+  c-cannot_wetweet_bwocking_usew = 8, (ˆ ﻌ ˆ)♡
 
-  ALREADY_RETWEETED = 9,
-  CONTRIBUTOR_NOT_SUPPORTED = 10,
+  awweady_wetweeted = 9, òωó
+  contwibutow_not_suppowted = 10, -.-
 
   /**
-   * The created_via field from the creation request does not correspond to a
-   * known client application.
+   * the cweated_via f-fiewd fwom the c-cweation wequest d-does nyot cowwespond t-to a
+   * known cwient appwication. 😳😳😳
    */
-  DEVICE_SOURCE_NOT_FOUND = 11,
+  d-device_souwce_not_found = 11, rawr x3
 
-  MALWARE_URL = 12,
-  INVALID_URL = 13,
-  USER_DEACTIVATED = 14,
-  USER_SUSPENDED = 15,
-  TEXT_TOO_LONG = 16,
-  TEXT_CANNOT_BE_BLANK = 17,
-  DUPLICATE = 18,
+  mawwawe_uww = 12, 😳
+  invawid_uww = 13, 🥺
+  usew_deactivated = 14, (⑅˘꒳˘)
+  usew_suspended = 15, (✿oωo)
+  text_too_wong = 16, 😳
+  t-text_cannot_be_bwank = 17, mya
+  dupwicate = 18, (U ﹏ U)
 
   /**
-   * PostTweetRequest.in_reply_to_tweet_id was set to a tweet that cannot be found.
+   * p-posttweetwequest.in_wepwy_to_tweet_id was set to a tweet t-that cannot be found. 😳
    *
-   * This usually means that the tweet was recently deleted, but could also
-   * mean that the tweet isn't visible to the reply author. (This is the
-   * case for replies by blocked users.)
+   * t-this usuawwy means that the tweet w-was wecentwy d-deweted, 🥺 but couwd a-awso
+   * mean t-that the tweet i-isn't visibwe to the wepwy authow. -.- (this is the
+   * case fow wepwies by bwocked usews.)
    */
-  IN_REPLY_TO_TWEET_NOT_FOUND = 19,
+  in_wepwy_to_tweet_not_found = 19, (ˆ ﻌ ˆ)♡
 
-  INVALID_IMAGE = 20,
-  INVALID_ADDITIONAL_FIELD = 21,
-  RATE_LIMIT_EXCEEDED = 22,
-  INVALID_NARROWCAST = 23,
+  i-invawid_image = 20, >_<
+  invawid_additionaw_fiewd = 21, rawr
+  w-wate_wimit_exceeded = 22, rawr x3
+  i-invawid_nawwowcast = 23, OwO
 
   /**
-   * Antispam systems (Scarecrow) denied the request.
+   * antispam systems (scawecwow) d-denied the wequest. nyaa~~
    *
-   * This happens for tweets that are probably spam, but there is some
-   * uncertainty. Tweets that Scarecrow is certain are spammy will appear to
-   * succeed, but will not be added to backends.
+   * this happens fow tweets t-that awe pwobabwy s-spam, 😳 but thewe is some
+   * u-uncewtainty. UwU tweets that scawecwow is cewtain a-awe spammy wiww a-appeaw to
+   * succeed, ʘwʘ but wiww n-nyot be added t-to backends. 🥺
    */
-  SPAM = 24,
-  SPAM_CAPTCHA = 25,
+  spam = 24, 🥺
+  spam_captcha = 25, òωó
 
   /**
-   * A provided media upload ID can't be resolved.
+   * a pwovided media upwoad id can't b-be wesowved. 🥺
    */
-  MEDIA_NOT_FOUND = 26,
+  m-media_not_found = 26, ʘwʘ
 
   /**
-   * Catch-all for when uploaded media violate some condition.
+   * c-catch-aww f-fow when upwoaded m-media viowate some condition. XD
    *
-   * For example, too many photos in a multi-photo-set, or including an
-   * animated gif or video in a multi-photo-set.
+   * f-fow e-exampwe, OwO too many photos in a muwti-photo-set, o-ow incwuding an
+   * a-animated gif ow video in a m-muwti-photo-set. ʘwʘ
    */
-  INVALID_MEDIA = 27,
+  invawid_media = 27, :3
 
   /**
-   * Returned when Scarecrow tell us to rate limit a tweet request.
+   * wetuwned w-when scawecwow teww us to wate w-wimit a tweet wequest. nyaa~~
    *
-   * Non verified users (i.e., phone verified, email verified) have more
-   * strict rate limit.
+   * n-nyon vewified usews (i.e., phone v-vewified, >w< emaiw vewified) have mowe
+   * stwict w-wate wimit. (U ᵕ U❁)
    */
-  SAFETY_RATE_LIMIT_EXCEEDED = 28,
+  s-safety_wate_wimit_exceeded = 28, :3
 
   /**
-   * Scarecrow has rejected the creation request until the user completes the
-   * bounce assignment.
+   * s-scawecwow has wejected the cweation wequest untiw the usew compwetes t-the
+   * bounce assignment. (ˆ ﻌ ˆ)♡
    *
-   * This flag indicates that PostTweetResult.bounce will contain a Bounce
-   * struct to be propagated to the client.
+   * this fwag indicates t-that posttweetwesuwt.bounce wiww c-contain a bounce
+   * stwuct t-to be pwopagated to the cwient. o.O
    */
-  BOUNCE = 29,
+  b-bounce = 29, rawr x3
 
   /**
-   * Tweet creation was denied because the user is in ReadOnly mode.
+   * t-tweet cweation was denied because the usew is i-in weadonwy mode. (U ᵕ U❁)
    *
-   * As with SPAM, tweets will appear to succeed but will not be actually
-   * created.
+   * as with spam, (✿oωo) tweets w-wiww appeaw to s-succeed but wiww not be actuawwy
+   * c-cweated. /(^•ω•^)
    */
-  USER_READONLY = 30,
+  usew_weadonwy = 30, o.O
 
   /**
-   * Maximum number of mentions allowed in a tweet was exceeded.
+   * m-maximum nyumbew o-of mentions a-awwowed in a tweet was exceeded. (U ᵕ U❁)
    */
-  MENTION_LIMIT_EXCEEDED = 31,
+  mention_wimit_exceeded = 31, 🥺
 
   /**
-   * Maximum number of URLs allowed in a tweet was exceeded.
+   * maximum nyumbew of uwws awwowed in a tweet was exceeded. òωó
    */
-  URL_LIMIT_EXCEEDED = 32,
+  uww_wimit_exceeded = 32, ʘwʘ
 
   /**
-   * Maximum number of hashtags allowed in a tweet was exceeded.
+   * maximum numbew of hashtags awwowed in a tweet was exceeded. rawr x3
    */
-  HASHTAG_LIMIT_EXCEEDED = 33,
+  hashtag_wimit_exceeded = 33, >_<
 
   /**
-   * Maximum number of cashtags allowed in a tweet was exceeded.
+   * maximum n-nyumbew of cashtags a-awwowed in a tweet was exceeded. (˘ω˘)
    */
-  CASHTAG_LIMIT_EXCEEDED = 34,
+  cashtag_wimit_exceeded = 34, ^•ﻌ•^
 
   /**
-   * Maximum length of a hashtag was exceeded.
+   * m-maximum wength o-of a hashtag w-was exceeded. (✿oωo)
    */
-  HASHTAG_LENGTH_LIMIT_EXCEEDED = 35,
+  hashtag_wength_wimit_exceeded = 35, ( ͡o ω ͡o )
 
   /**
-   * Returned if a request contains more than one attachment type, which
-   * includes media, attachment_url, and card_reference.
+   * w-wetuwned if a wequest contains m-mowe than o-one attachment type, (˘ω˘) which
+   * i-incwudes media, >w< attachment_uww, (⑅˘꒳˘) a-and cawd_wefewence. (U ᵕ U❁)
    */
-  TOO_MANY_ATTACHMENT_TYPES = 36,
+  t-too_many_attachment_types = 36, OwO
 
   /**
-   * Returned if the request contained an attachment URL that isn't allowed.
+   * wetuwned if the wequest c-contained an attachment u-uww that i-isn't awwowed. òωó
    */
-  INVALID_ATTACHMENT_URL = 37,
+  i-invawid_attachment_uww = 37, ^•ﻌ•^
 
   /**
-   * We don't allow users without screen names to be retweeted.
+   * w-we don't awwow u-usews without scween n-nyames to b-be wetweeted. 😳😳😳
    */
-  CANNOT_RETWEET_USER_WITHOUT_SCREEN_NAME = 38,
+  c-cannot_wetweet_usew_without_scween_name = 38, o.O
 
   /**
-   * Tweets may not be allowed if replying or retweeting IPI'd tweets
-   * See go/tp-ipi-tdd for more details
+   * tweets may nyot b-be awwowed if wepwying o-ow wetweeting i-ipi'd tweets
+   * see go/tp-ipi-tdd f-fow mowe detaiws
    */
-  DISABLED_BY_IPI_POLICY = 39,
+  disabwed_by_ipi_powicy = 39, :3
 
   /**
-   * This state expands our transparency around which URLs are blacklisted or limited
+   * t-this state expands ouw t-twanspawency awound w-which uwws a-awe bwackwisted ow wimited
    */
-  URL_SPAM = 40,
+  u-uww_spam = 40, ^•ﻌ•^
 
-  // Conversation controls are only valid when present on a root
-  // conversation tweet and quoted tweets.
-  INVALID_CONVERSATION_CONTROL = 41,
+  // convewsation c-contwows awe onwy vawid when p-pwesent on a woot
+  // convewsation t-tweet and quoted tweets. >w<
+  invawid_convewsation_contwow = 41, :3
 
-  // Reply Tweet is limited due to conversation controls state set on
-  // root conversation Tweet.
-  REPLY_TWEET_NOT_ALLOWED = 42,
+  // wepwy tweet is wimited d-due to convewsation contwows state s-set on
+  // w-woot convewsation tweet. (✿oωo)
+  wepwy_tweet_not_awwowed = 42, rawr
 
-  // Nudge is returned when the client provides nudgeOptions and tweetypie receives a nudge
-  // from the Jiminy strato column.
-  NUDGE = 43,
+  // nyudge is wetuwned when the cwient p-pwovides nyudgeoptions and tweetypie w-weceives a-a nyudge
+  // fwom t-the jiminy stwato cowumn. UwU
+  nyudge = 43, (⑅˘꒳˘)
 
-  // ApiError BadRequest (400) "Reply to a community tweet must also be a community tweet"
-  // -- Triggered when a user tries replying to a community tweet with a non community tweet.
-  COMMUNITY_REPLY_TWEET_NOT_ALLOWED = 44,
-  // ApiError Forbidden (403) "User is not authorized to post to this community"
-  // -- Triggered when a user tries posting to a public/closed community that they are not part of.
-  COMMUNITY_USER_NOT_AUTHORIZED = 45,
-  // ApiError NotFound (404)  "Community does not exist" -- Triggered when:
-  //  a) A user tries posting to a private community they are not a part of.
-  //  b) A user tries posting to a non existent community
-  COMMUNITY_NOT_FOUND = 46,
-  // ApiError BadRequest (400) "Cannot retweet a community tweet"
-  // -- Triggered when a user tries to retweet a community tweet. Community tweets can not be retweeted.
-  COMMUNITY_RETWEET_NOT_ALLOWED = 47,
+  // a-apiewwow badwequest (400) "wepwy t-to a community tweet must awso b-be a community tweet"
+  // -- twiggewed when a-a usew twies wepwying to a community t-tweet with a-a nyon community t-tweet. σωσ
+  community_wepwy_tweet_not_awwowed = 44, (///ˬ///✿)
+  // apiewwow f-fowbidden (403) "usew i-is nyot authowized t-to post t-to this community"
+  // -- twiggewed w-when a usew t-twies posting t-to a pubwic/cwosed c-community that t-they awe nyot p-pawt of. (˘ω˘)
+  community_usew_not_authowized = 45, ^•ﻌ•^
+  // a-apiewwow notfound (404)  "community d-does not exist" -- twiggewed w-when:
+  //  a) a usew twies p-posting to a pwivate community t-they awe nyot a p-pawt of. ʘwʘ
+  //  b) a-a usew twies posting to a nyon existent community
+  community_not_found = 46, 😳
+  // a-apiewwow badwequest (400) "cannot w-wetweet a c-community tweet"
+  // -- twiggewed when a usew twies to wetweet a-a community tweet. òωó c-community tweets can nyot be w-wetweeted. ( ͡o ω ͡o )
+  community_wetweet_not_awwowed = 47, :3
 
-  // Attempt to tweet with Conversation Controls was rejected, e.g. due to feature switch authorization.
-  CONVERSATION_CONTROL_NOT_ALLOWED = 48,
+  // a-attempt to tweet with convewsation contwows was wejected, (ˆ ﻌ ˆ)♡ e-e.g. XD due to featuwe s-switch authowization. :3
+  c-convewsation_contwow_not_awwowed = 48, nyaa~~
 
-  // Super follow tweets require a special permission to create.
-  SUPER_FOLLOWS_CREATE_NOT_AUTHORIZED = 49,
+  // s-supew fowwow tweets wequiwe a speciaw p-pewmission to cweate. 😳😳😳
+  s-supew_fowwows_cweate_not_authowized = 49, (⑅˘꒳˘)
 
-  // Not all params can go together. E.g. super follow tweets can not be community tweets.
-  SUPER_FOLLOWS_INVALID_PARAMS = 50,
+  // nyot aww pawams can go t-togethew. ^^ e.g. supew fowwow tweets can nyot be community t-tweets. 🥺
+  supew_fowwows_invawid_pawams = 50,
 
-  // ApiError Forbidden (403) "Protected user can not post to communities"
-  // -- Triggered when a protected user tries tweeting or replying
-  // to a community tweet. They are not allowed to create community tweets.
-  COMMUNITY_PROTECTED_USER_CANNOT_TWEET = 51,
+  // a-apiewwow f-fowbidden (403) "pwotected usew can nyot post t-to communities"
+  // -- t-twiggewed when a pwotected u-usew twies tweeting ow wepwying
+  // t-to a c-community tweet. OwO t-they awe nyot awwowed t-to cweate community tweets. ^^
+  c-community_pwotected_usew_cannot_tweet = 51, nyaa~~
 
-  // ApiError Forbidden (451) "User is not permitted to engage with this exclusive tweet."
-  // -- Triggered when a user tries to reply to an exclusive tweet without being
-  // a superfollower of the tweet author. Could be used for other engagements in the future (e.g. favorite)
-  EXCLUSIVE_TWEET_ENGAGEMENT_NOT_ALLOWED = 52
+  // a-apiewwow f-fowbidden (451) "usew is nyot pewmitted t-to engage with this excwusive tweet."
+  // -- t-twiggewed w-when a usew twies t-to wepwy to an excwusive tweet without being
+  // a supewfowwowew of the tweet a-authow. ^^ couwd be used fow othew e-engagements in t-the futuwe (e.g. (✿oωo) favowite)
+  excwusive_tweet_engagement_not_awwowed = 52
 
   /**
-   * ApiError BadRequest (400) "Invalid parameters on Trusted Friends tweet creation"
+   * apiewwow badwequest (400) "invawid p-pawametews on twusted fwiends t-tweet cweation"
    *
-   * Returned when either of the following occur:
-   *   a) A user tries setting Trusted Friends Control on a reply
-   *   b) A user tries setting Trusted Friends Control on a tweet with any of the following set:
-   *     i) Conversation Control
-   *     ii) Community
-   *     iii) Exclusive Tweet Control
+   * w-wetuwned when eithew o-of the fowwowing o-occuw:
+   *   a-a) a usew twies setting twusted fwiends contwow on a wepwy
+   *   b) a usew t-twies setting twusted fwiends contwow o-on a tweet with any of the fowwowing set:
+   *     i) convewsation c-contwow
+   *     ii) community
+   *     iii) excwusive tweet contwow
    */
-  TRUSTED_FRIENDS_INVALID_PARAMS = 53,
+  twusted_fwiends_invawid_pawams = 53, ^^
 
   /**
-   * ApiError Forbidden (403)
+   * a-apiewwow f-fowbidden (403)
    *
-   * Returned when a user tries to retweet a Trusted Friends tweet.
+   * wetuwned w-when a usew twies to wetweet a twusted fwiends t-tweet. òωó
    */
-  TRUSTED_FRIENDS_RETWEET_NOT_ALLOWED = 54,
+  t-twusted_fwiends_wetweet_not_awwowed = 54, (⑅˘꒳˘)
 
   /**
-   * ApiError Forbidden (457)
+   * apiewwow f-fowbidden (457)
    *
-   * Returned when a user tries to reply to a Trusted Friends tweet
-   * and they are not a trusted friend.
+   * wetuwned w-when a usew twies to wepwy to a twusted fwiends tweet
+   * and t-they awe nyot a twusted fwiend. (U ﹏ U)
    */
-  TRUSTED_FRIENDS_ENGAGEMENT_NOT_ALLOWED = 55,
+  twusted_fwiends_engagement_not_awwowed = 55, OwO
 
  /**
-  * ApiError BadRequest (400) "Invalid parameters for creating a CollabTweet or CollabInvitation"
+  * a-apiewwow badwequest (400) "invawid p-pawametews fow c-cweating a cowwabtweet ow cowwabinvitation"
   *
-  * Returned when any of the following are true:
-   *   a) A user tries setting Collab Control on a reply
-   *   b) A user tries setting Collab Control on a tweet with any of the following set:
-   *     i) Conversation Control
-   *     ii) Community
-   *     iii) Exclusive Tweet Control
-   *     iv) Trusted Friends Control
+  * wetuwned w-when any of the fowwowing awe twue:
+   *   a) a usew twies setting cowwab contwow o-on a wepwy
+   *   b-b) a usew twies s-setting cowwab c-contwow on a tweet with any of the fowwowing s-set:
+   *     i) c-convewsation contwow
+   *     ii) community
+   *     iii) excwusive t-tweet contwow
+   *     iv) twusted fwiends c-contwow
   **/
-  COLLAB_TWEET_INVALID_PARAMS = 56,
+  cowwab_tweet_invawid_pawams = 56, (///ˬ///✿)
 
   /**
-   * ApiError Forbidden (457)
+   * apiewwow f-fowbidden (457)
    *
-   * Returned when a user tries to create a Trusted Friends tweet but they are not allowed to tweet
-   * to the requested Trusted Friends list.
+   * w-wetuwned when a usew twies to cweate a-a twusted f-fwiends tweet but t-they awe nyot awwowed to tweet
+   * to the wequested t-twusted fwiends wist. o.O
    */
-  TRUSTED_FRIENDS_CREATE_NOT_ALLOWED = 57,
+  twusted_fwiends_cweate_not_awwowed = 57, (ꈍᴗꈍ)
 
   /**
-   * Returned when the current user is not allowed to edit in general, this might be due to missing
-   * roles during development, or a missing subscription.
+   * w-wetuwned when the cuwwent usew is nyot awwowed to edit i-in genewaw, -.- this m-might be due to m-missing
+   * wowes d-duwing devewopment, òωó o-ow a missing subscwiption. OwO
    */
-  EDIT_TWEET_USER_NOT_AUTHORIZED = 58,
+  e-edit_tweet_usew_not_authowized = 58, (U ﹏ U)
 
   /**
-   * Returned when a user tries to edit a Tweet which they didn't author.
+   * wetuwned when a usew t-twies to edit a tweet which they d-didn't authow. ^^;;
    */
-  EDIT_TWEET_USER_NOT_AUTHOR = 59,
+  edit_tweet_usew_not_authow = 59, ^^;;
 
   /**
-   * Returned when a user tries edit a stale tweet, meaning a tweet which has already been edited.
+   * wetuwned w-when a usew twies e-edit a stawe tweet, XD meaning a t-tweet which has awweady been edited. OwO
    */
-  EDIT_TWEET_NOT_LATEST_VERSION = 60,
+  e-edit_tweet_not_watest_vewsion = 60, (U ﹏ U)
 
   /**
-   * ApiError Forbidden (460)
+   * a-apiewwow fowbidden (460)
    *
-   * Returned when a user tries to create a Trusted Friends tweet that quotes tweets a Trusted
-   * Friends tweet.
+   * w-wetuwned when a u-usew twies to cweate a twusted fwiends t-tweet that quotes tweets a twusted
+   * fwiends tweet. >w<
    */
-  TRUSTED_FRIENDS_QUOTE_TWEET_NOT_ALLOWED = 61,
+  t-twusted_fwiends_quote_tweet_not_awwowed = 61, >w<
 
   /**
-   * Returned when a user tries edit a tweet for which the editing time has already expired.
+   * wetuwned when a u-usew twies edit a tweet fow which the editing time h-has awweady expiwed. (ˆ ﻌ ˆ)♡
    */
-  EDIT_TIME_LIMIT_REACHED = 62,
+  e-edit_time_wimit_weached = 62, (ꈍᴗꈍ)
 
   /**
-   * Returned when a user tries edit a tweet which has been already edited maximum number of times.
+   * w-wetuwned when a usew twies e-edit a tweet w-which has been awweady edited m-maximum numbew of times. 😳😳😳
    */
-  EDIT_COUNT_LIMIT_REACHED = 63,
+  e-edit_count_wimit_weached = 63, mya
 
-  /* Returned when a user tries to edit a field that is not allowed to be edited */
-  FIELD_EDIT_NOT_ALLOWED = 64,
+  /* wetuwned when a-a usew twies t-to edit a fiewd that is nyot awwowed to be edited */
+  fiewd_edit_not_awwowed = 64, (˘ω˘)
 
-  /* Returned when the initial Tweet could not be found when trying to validate an edit */
-  INITIAL_TWEET_NOT_FOUND = 65,
+  /* wetuwned w-when the initiaw t-tweet couwd nyot be found when twying to vawidate an edit */
+  i-initiaw_tweet_not_found = 65, (✿oωo)
 
   /**
-   * ApiError Forbidden (457)
+   * apiewwow f-fowbidden (457)
    *
-   * Returned when a user tries to reply to a stale tweet
+   * w-wetuwned when a usew twies to wepwy to a stawe tweet
    */
-  STALE_TWEET_ENGAGEMENT_NOT_ALLOWED = 66,
+  stawe_tweet_engagement_not_awwowed = 66, (ˆ ﻌ ˆ)♡
 
   /**
-   * ApiError Forbidden (460)
+   * apiewwow fowbidden (460)
    *
-   * Returned when a user tries to create a tweet that quotes tweets a stale tweet
+   * w-wetuwned when a usew twies to cweate a tweet t-that quotes tweets a stawe tweet
    */
-  STALE_TWEET_QUOTE_TWEET_NOT_ALLOWED = 67,
+  s-stawe_tweet_quote_tweet_not_awwowed = 67, (ˆ ﻌ ˆ)♡
 
-  /* Tweet cannot be edited because the initial tweet is
-  * marked as not edit eligible */
-  NOT_ELIGIBLE_FOR_EDIT = 68,
+  /* t-tweet cannot be edited b-because the initiaw t-tweet is
+  * m-mawked as nyot e-edit ewigibwe */
+  n-nyot_ewigibwe_fow_edit = 68, nyaa~~
 
-  /* A stale version of an edit tweet cannot be retweeted
-  *  Only latest version of an edit chain should be allowed to be retweeted. */
-  STALE_TWEET_RETWEET_NOT_ALLOWED = 69,
+  /* a-a stawe vewsion of an edit tweet cannot be wetweeted
+  *  onwy watest vewsion of an edit c-chain shouwd be a-awwowed to be w-wetweeted. :3 */
+  s-stawe_tweet_wetweet_not_awwowed = 69, (✿oωo)
 
-  RESERVED_32 = 70,
-  RESERVED_33 = 71,
-  RESERVED_34 = 72,
-  RESERVED_35 = 73,
-  RESERVED_36 = 74,
-  RESERVED_37 = 75,
+  w-wesewved_32 = 70, (✿oωo)
+  w-wesewved_33 = 71, (⑅˘꒳˘)
+  wesewved_34 = 72, >_<
+  wesewved_35 = 73, >_<
+  wesewved_36 = 74, ʘwʘ
+  wesewved_37 = 75, (U ﹏ U)
 }
 
-enum UndeleteTweetState {
+e-enum undewetetweetstate {
   /**
-   * The Tweet was successfully undeleted.
+   * t-the tweet was successfuwwy undeweted. ^^
    */
-  SUCCESS = 0,
+  success = 0, >_<
 
   /**
-   * The Tweet was deleted and is still deleted. It cannot be undeleted
-   * because the tweet is no longer in the soft delete archive.
+   * t-the t-tweet was deweted a-and is stiww deweted. OwO it cannot be undeweted
+   * b-because the tweet is nyo wongew in the soft d-dewete awchive. 😳
    */
-  SOFT_DELETE_EXPIRED = 1,
+  s-soft_dewete_expiwed = 1, (U ᵕ U❁)
 
   /**
-   * The Tweet likely has never existed, and therefore cannot be undeleted.
+   * the tweet wikewy has nyevew existed, 😳😳😳 a-and thewefowe cannot be undeweted. -.-
    */
-  TWEET_NOT_FOUND = 2,
+  tweet_not_found = 2, (U ᵕ U❁)
 
   /**
-   * The Tweet could not be undeleted because it was not deleted in
-   * the first place.
+   * t-the tweet couwd n-nyot be undeweted because it was n-nyot deweted in
+   * t-the fiwst p-pwace. -.-
    */
-  TWEET_ALREADY_EXISTS = 3,
+  tweet_awweady_exists = 3, (U ﹏ U)
 
   /**
-   * The user who created the Tweet being undeleted could not be found.
+   * t-the usew who c-cweated the tweet b-being undeweted couwd nyot be f-found. ^^
    */
-  USER_NOT_FOUND = 4,
+  u-usew_not_found = 4, UwU
 
   /**
-   * The Tweet could not be undeleted because it is a retweet and the original
-   * tweet is gone.
+   * the tweet couwd n-not be undeweted because it is a wetweet and the o-owiginaw
+   * tweet is gone. o.O
    */
-  SOURCE_TWEET_NOT_FOUND = 5,
+  s-souwce_tweet_not_found = 5, ^^
 
   /**
-   * The Tweet could not be undeleted because it is a retweet and the author
-   * of the original tweet is gone.
+   * the tweet couwd nyot b-be undeweted b-because it is a wetweet and the authow
+   * of t-the owiginaw tweet is gone. 🥺
    */
-  SOURCE_USER_NOT_FOUND = 6,
+  souwce_usew_not_found = 6, 😳
 
   /**
-   * The Tweet was deleted and is still deleted. It cannot be undeleted
-   * because the tweet has been bounce deleted. Bounce deleted tweet
-   * has been found to violate Twitter Rules. go/bouncer go/bounced-tweet
+   * t-the tweet w-was deweted and is stiww deweted. (⑅˘꒳˘) it cannot b-be undeweted
+   * b-because the tweet has been bounce d-deweted. >w< bounce deweted tweet
+   * has been f-found to viowate t-twittew wuwes. >_< go/bouncew go/bounced-tweet
    */
-  TWEET_IS_BOUNCE_DELETED = 7,
+  t-tweet_is_bounce_deweted = 7, rawr x3
 
   /**
-  * This tweet cannot be undeleted because the tweet was created by a
-  * user when they were under 13.
+  * t-this tweet cannot be undeweted because t-the tweet was c-cweated by a
+  * u-usew when they w-wewe undew 13. >_<
   **/
-  TWEET_IS_U13_TWEET = 8,
+  tweet_is_u13_tweet = 8, XD
 
-  RESERVED_2 = 9,
-  RESERVED_3 = 10
+  wesewved_2 = 9, mya
+  wesewved_3 = 10
 }
 
-enum TweetDeleteState {
+enum tweetdewetestate {
   /**
-   * Tweet was deleted successfully.
+   * tweet was deweted successfuwwy.
    */
-  OK = 0,
+  o-ok = 0, (///ˬ///✿)
 
   /**
-   * Tweet was not deleted because of the associated user.
+   * t-tweet was n-not deweted because o-of the associated u-usew. OwO
    *
-   * The DeleteTweetsRequest.by_user_id must match the tweet owner or be an
-   * admin user.
+   * t-the dewetetweetswequest.by_usew_id must m-match the tweet o-ownew ow be an
+   * admin usew. mya
    */
-  PERMISSION_ERROR = 1,
+  p-pewmission_ewwow = 1, OwO
 
   /**
-   * The expected_user_id provided in DeleteTweetsRequest does not match the
-   * user_id of the tweet owner.
+   * t-the expected_usew_id pwovided in dewetetweetswequest does nyot match the
+   * u-usew_id of the tweet ownew. :3
    */
-  EXPECTED_USER_ID_MISMATCH = 2,
+  expected_usew_id_mismatch = 2, òωó
 
   /**
-   * @deprecated.
+   * @depwecated. OwO
    *
-   * is_user_erasure was set in DeleteTweetsRequest but the user was not in
-   * the erased state.
+   * i-is_usew_ewasuwe was s-set in dewetetweetswequest b-but the usew was nyot i-in
+   * the ewased s-state. OwO
    */
-  USER_NOT_IN_ERASED_STATE = 3,
+  u-usew_not_in_ewased_state = 3, (U ᵕ U❁)
 
   /**
-   * Failed to Load the source Tweet while unretweeting stale revisions in an edit chain.
+   * faiwed to woad the s-souwce tweet whiwe u-unwetweeting stawe wevisions i-in an edit chain.
    */
-  SOURCE_TWEET_NOT_FOUND = 4,
+  souwce_tweet_not_found = 4, mya
 
-  RESERVED_4 = 5,
-  RESERVED_5 = 6,
-  RESERVED_6 = 7,
-  RESERVED_7 = 8
+  w-wesewved_4 = 5, UwU
+  w-wesewved_5 = 6, /(^•ω•^)
+  wesewved_6 = 7, UwU
+  w-wesewved_7 = 8
 }
 
-enum DeletedTweetState {
+enum dewetedtweetstate {
   /**
-   * The tweet has been marked as deleted but has not been permanently deleted.
+   * t-the tweet has been mawked as deweted but h-has not been pewmanentwy deweted. UwU
    */
-  SOFT_DELETED = 1
+  soft_deweted = 1
 
   /**
-   * The tweet has never existed.
+   * the tweet has nyevew existed. /(^•ω•^)
    */
-  NOT_FOUND    = 2
+  nyot_found    = 2
 
   /**
-   * The tweet has been permanently deleted.
+   * the tweet h-has been pewmanentwy deweted. XD
    */
-  HARD_DELETED = 3
+  hawd_deweted = 3
 
   /**
-   * The tweet exists and is not currently deleted.
+   * the tweet exists and is nyot cuwwentwy deweted.
    */
-  NOT_DELETED  = 4
+  nyot_deweted  = 4
 
-  RESERVED1    = 5
-  RESERVED2    = 6
-  RESERVED3    = 7
+  w-wesewved1    = 5
+  wesewved2    = 6
+  wesewved3    = 7
 }
 
 /**
- * Hydrations to perform on the Tweet returned by post_tweet and post_retweet.
+ * h-hydwations to pewfowm on the t-tweet wetuwned by post_tweet and post_wetweet.
  */
-struct WritePathHydrationOptions {
+s-stwuct wwitepathhydwationoptions {
   /**
-   * Return cards for tweets with cards in Tweet.cards or Tweet.card2
+   * wetuwn cawds f-fow tweets with cawds in tweet.cawds o-ow tweet.cawd2
    *
-   * card2 also requires setting a valid cards_platform_key
+   * cawd2 a-awso wequiwes setting a vawid cawds_pwatfowm_key
    */
-  1: bool include_cards = 0
+  1: b-boow incwude_cawds = 0
 
   /**
-   * The card format version supported by the requesting client
+   * the cawd fowmat vewsion suppowted by the wequesting c-cwient
    */
-  2: optional string cards_platform_key
+  2: optionaw s-stwing cawds_pwatfowm_key
 
-  # 3: obsolete
-  # 4: obsolete
-
-  /**
-   * The argument passed to the Stratostore extension points mechanism.
-   */
-  5: optional binary extensions_args
+  # 3: obsowete
+  # 4: o-obsowete
 
   /**
-   * When returning a tweet that quotes another tweet, do not include
-   * the URL to the quoted tweet in the tweet text and url entities.
-   * This is intended for clients that use the quoted_tweet field of
-   * the tweet to display quoted tweets. Also see simple_quoted_tweet
-   * field in GetTweetOptions and GetTweetFieldsOptions
+   * the awgument p-passed to t-the stwatostowe extension points mechanism. ^^;;
    */
-  6: bool simple_quoted_tweet = 0
+  5: o-optionaw binawy extensions_awgs
+
+  /**
+   * when wetuwning a-a tweet that quotes anothew tweet, nyaa~~ do nyot incwude
+   * the uww to the quoted t-tweet in the tweet t-text and uww entities. mya
+   * t-this is intended f-fow cwients that use the quoted_tweet f-fiewd of
+   * the tweet to dispway quoted tweets. (✿oωo) awso see simpwe_quoted_tweet
+   * f-fiewd i-in gettweetoptions and gettweetfiewdsoptions
+   */
+  6: b-boow simpwe_quoted_tweet = 0
 }
 
-struct RetweetRequest {
+s-stwuct wetweetwequest {
   /**
-   * Id of the tweet being retweeted.
+   * i-id of the tweet being wetweeted. rawr
    */
-  1: required i64 source_status_id (personalDataType = 'TweetId')
-
-  /**
-   * User creating the retweet.
-   */
-  2: required i64 user_id (personalDataType = 'UserId')
+  1: w-wequiwed i64 souwce_status_id (pewsonawdatatype = 'tweetid')
 
   /**
-   * @see PostTweetRequest.created_via
+   * usew cweating the w-wetweet. -.-
    */
-  3: required string created_via (personalDataType = 'ClientType')
-  4: optional i64 contributor_user_id (personalDataType = 'UserId') // no longer supported
+  2: w-wequiwed i64 usew_id (pewsonawdatatype = 'usewid')
 
   /**
-   * @see PostTweetRequest.tracking_id
+   * @see posttweetwequest.cweated_via
    */
-  5: optional i64 tracking_id (personalDataType = 'ImpressionId')
-  6: optional tweet.Narrowcast narrowcast
+  3: w-wequiwed stwing cweated_via (pewsonawdatatype = 'cwienttype')
+  4: optionaw i64 contwibutow_usew_id (pewsonawdatatype = 'usewid') // nyo wongew suppowted
 
   /**
-   * @see PostTweetRequest.nullcast
+   * @see posttweetwequest.twacking_id
    */
-  7: bool nullcast = 0
+  5: optionaw i64 t-twacking_id (pewsonawdatatype = 'impwessionid')
+  6: o-optionaw tweet.nawwowcast n-nyawwowcast
 
   /**
-   * @see PostTweetRequest.dark
+   * @see posttweetwequest.nuwwcast
    */
-  8: bool dark = 0
-
-  // OBSOLETE 9: bool send_retweet_sms_push = 0
-
-  10: optional WritePathHydrationOptions hydration_options
+  7: b-boow nyuwwcast = 0
 
   /**
-   * @see PostTweetRequest.additional_fields
+   * @see posttweetwequest.dawk
    */
-  11: optional tweet.Tweet additional_fields
+  8: b-boow dawk = 0
+
+  // obsowete 9: boow send_wetweet_sms_push = 0
+
+  10: optionaw wwitepathhydwationoptions hydwation_options
 
   /**
-   * @see PostTweetRequest.uniqueness_id
+   * @see posttweetwequest.additionaw_fiewds
    */
-  12: optional i64 uniqueness_id (personalDataType = 'PrivateTweetEntitiesAndMetadata, PublicTweetEntitiesAndMetadata')
-
-  13: optional feature_context.FeatureContext feature_context
-
-  14: bool return_success_on_duplicate = 0
+  11: o-optionaw tweet.tweet additionaw_fiewds
 
   /**
-   * Passthrough data for Scarecrow that is used for safety checks.
+   * @see posttweetwequest.uniqueness_id
    */
-  15: optional safety_meta_data.SafetyMetaData safety_meta_data
+  12: optionaw i64 uniqueness_id (pewsonawdatatype = 'pwivatetweetentitiesandmetadata, σωσ p-pubwictweetentitiesandmetadata')
+
+  13: o-optionaw featuwe_context.featuwecontext f-featuwe_context
+
+  14: boow wetuwn_success_on_dupwicate = 0
 
   /**
-   * This is a unique identifier used in both the REST and GraphQL-dark
-   * requests that will be used to correlate the GraphQL mutation requests to the REST requests
-   * during a transition period when clients will be moving toward tweet creation via GraphQL.
-   * See also, the "Comparison Testing" section at go/tweet-create-on-graphql-tdd for additional
-   * context.
+   * passthwough data fow scawecwow that i-is used fow s-safety checks. mya
    */
-  16: optional string comparison_id (personalDataType = 'UniversallyUniqueIdentifierUuid')
-}(hasPersonalData = 'true')
+  15: o-optionaw safety_meta_data.safetymetadata s-safety_meta_data
+
+  /**
+   * this is a unique i-identifiew used in both the west a-and gwaphqw-dawk
+   * wequests t-that wiww be used to cowwewate the gwaphqw mutation w-wequests to the west wequests
+   * d-duwing a-a twansition pewiod when cwients w-wiww be moving t-towawd tweet cweation via gwaphqw. ^•ﻌ•^
+   * s-see awso, the "compawison t-testing" section at go/tweet-cweate-on-gwaphqw-tdd f-fow additionaw
+   * c-context. nyaa~~
+   */
+  16: optionaw stwing compawison_id (pewsonawdatatype = 'univewsawwyuniqueidentifiewuuid')
+}(haspewsonawdata = 'twue')
 
 /**
- * A request to set or unset nsfw_admin and/or nsfw_user.
+ * a-a wequest to set ow unset nysfw_admin and/ow nysfw_usew. 🥺
  */
-struct UpdatePossiblySensitiveTweetRequest {
+stwuct updatepossibwysensitivetweetwequest {
   /**
-   * Id of tweet being updated
+   * id of tweet being updated
    */
-  1: required i64 tweet_id (personalDataType = 'TweetId')
+  1: wequiwed i64 tweet_id (pewsonawdatatype = 'tweetid')
 
   /**
-   * Id of the user initiating this request.
+   * i-id of the usew initiating this wequest. (✿oωo)
    *
-   * It could be either the owner of the tweet or an admin. It is used when
-   * auditing the request in Guano.
+   * i-it couwd be eithew the ownew o-of the tweet ow an admin. rawr it is used when
+   * a-auditing the wequest in guano. (ˆ ﻌ ˆ)♡
    */
-  2: required i64 by_user_id (personalDataType = 'UserId')
+  2: wequiwed i-i64 by_usew_id (pewsonawdatatype = 'usewid')
 
   /**
-   * New value for tweet.core_data.nsfw_admin.
+   * nyew vawue fow tweet.cowe_data.nsfw_admin. ^^;;
    */
-  3: optional bool nsfw_admin
+  3: o-optionaw boow nysfw_admin
 
   /**
-   * New value for tweet.core_data.nsfw_user.
+   * nyew vawue f-fow tweet.cowe_data.nsfw_usew. OwO
    */
-  4: optional bool nsfw_user
+  4: optionaw boow nysfw_usew
 
   /**
-   * Host or remote IP where the request originated.
+   * h-host ow wemote i-ip whewe the wequest owiginated. mya
    *
-   * This data is used when auditing the request in Guano. If unset, it will
-   * be logged as "<unknown>".
+   * this d-data is used when a-auditing the wequest in guano. (⑅˘꒳˘) i-if unset, (U ﹏ U) it wiww
+   * b-be wogged as "<unknown>". (U ﹏ U)
    */
-  5: optional string host (personalDataType = 'IpAddress')
+  5: optionaw s-stwing host (pewsonawdatatype = 'ipaddwess')
 
   /**
-   * Pass-through message sent to the audit service.
+   * pass-thwough message sent to the audit sewvice. XD
    */
-  6: optional string note
-}(hasPersonalData = 'true')
+  6: o-optionaw stwing nyote
+}(haspewsonawdata = 'twue')
 
-struct UpdateTweetMediaRequest {
+stwuct updatetweetmediawequest {
   /**
-   * The tweet id that's being updated
+   * t-the tweet i-id that's being u-updated
    */
-  1: required i64 tweet_id (personalDataType = 'TweetId')
+  1: wequiwed i64 tweet_id (pewsonawdatatype = 'tweetid')
 
   /**
-   * A mapping from old (existing) media ids on the tweet to new media ids.
+   * a mapping f-fwom owd (existing) media ids o-on the tweet to nyew media ids. OwO
    *
-   * Existing tweet media not in this map will remain unchanged.
+   * e-existing t-tweet media nyot in this map wiww wemain unchanged. (///ˬ///✿)
    */
-  2: required map<i64, i64> old_to_new_media_ids (personalDataTypeKey = 'MediaId', personalDataTypeValue = 'MediaId')
-}(hasPersonalData = 'true')
+  2: wequiwed map<i64, XD i64> owd_to_new_media_ids (pewsonawdatatypekey = 'mediaid', σωσ pewsonawdatatypevawue = 'mediaid')
+}(haspewsonawdata = 'twue')
 
-struct TakedownRequest {
-  1: required i64 tweet_id (personalDataType = 'TweetId')
+s-stwuct takedownwequest {
+  1: w-wequiwed i64 tweet_id (pewsonawdatatype = 'tweetid')
 
   /**
-   * The list of takedown country codes to add to the tweet.
+   * the wist of takedown c-countwy codes to add to the tweet. (///ˬ///✿)
    *
-   * DEPRECATED, reasons_to_add should be used instead.
+   * d-depwecated, 😳 weasons_to_add s-shouwd b-be used instead. rawr x3
    */
-  2: list<string> countries_to_add = [] (personalDataType = 'ContentRestrictionStatus')
+  2: wist<stwing> c-countwies_to_add = [] (pewsonawdatatype = 'contentwestwictionstatus')
 
   /**
-   * This field is the list of takedown country codes to remove from the tweet.
+   * t-this f-fiewd is the wist of takedown countwy codes to w-wemove fwom the t-tweet. 😳
    *
-   * DEPRECATED, reasons_to_remove should be used instead.
+   * d-depwecated, ^^;; weasons_to_wemove s-shouwd be used i-instead. òωó
    */
-  3: list<string> countries_to_remove = [] (personalDataType = 'ContentRestrictionStatus')
+  3: w-wist<stwing> countwies_to_wemove = [] (pewsonawdatatype = 'contentwestwictionstatus')
 
   /**
-   * This field is the list of takedown reasons to add to the tweet.
+   * t-this fiewd i-is the wist of t-takedown weasons to add to the tweet. >w<
    */
-  11: list<withholding.TakedownReason> reasons_to_add = []
+  11: wist<withhowding.takedownweason> w-weasons_to_add = []
 
   /**
-   * This field is the list of takedown reasons to remove from the tweet.
+   * this fiewd is the wist of takedown w-weasons to wemove fwom the tweet. >w<
    */
-  12: list<withholding.TakedownReason> reasons_to_remove = []
+  12: w-wist<withhowding.takedownweason> w-weasons_to_wemove = []
 
   /**
-   * Motivation for the takedown which is written to the audit service.
+   * motivation fow the takedown which is wwitten t-to the audit s-sewvice. òωó
    *
-   * This data is not persisted with the takedown itself.
+   * this data is n-nyot pewsisted w-with the takedown itsewf. 😳😳😳
    */
-  4: optional string audit_note (personalDataType = 'AuditMessage')
+  4: optionaw stwing audit_note (pewsonawdatatype = 'auditmessage')
 
   /**
-   * Whether to send this request to the audit service.
+   * w-whethew to send t-this wequest to the audit sewvice. ( ͡o ω ͡o )
    */
-  5: bool scribe_for_audit = 1
+  5: boow scwibe_fow_audit = 1
 
-  // DEPRECATED, this field is no longer used.
-  6: bool set_has_takedown = 1
+  // depwecated, o.O t-this f-fiewd is nyo wongew used. UwU
+  6: boow set_has_takedown = 1
 
-  // DEPRECATED, this field is no longer used.
-  7: optional list<string> previous_takedown_country_codes (personalDataType = 'ContentRestrictionStatus')
+  // depwecated, rawr t-this fiewd is nyo wongew used. mya
+  7: optionaw wist<stwing> pwevious_takedown_countwy_codes (pewsonawdatatype = 'contentwestwictionstatus')
 
   /**
-   * Whether this request should enqueue a TweetTakedownEvent to EventBus and
-   * Hosebird.
+   * whethew this wequest s-shouwd enqueue a tweettakedownevent to eventbus a-and
+   * hosebiwd. (✿oωo)
    */
-  8: bool eventbus_enqueue = 1
+  8: b-boow eventbus_enqueue = 1
 
   /**
-   * ID of the user who initiated the takedown.
+   * i-id of the usew who initiated t-the takedown. ( ͡o ω ͡o )
    *
-   * This is used when writing the takedown to the audit service. If unset, it
-   * will be logged as -1.
+   * this i-is used when w-wwiting the takedown t-to the audit s-sewvice. nyaa~~ if unset, (///ˬ///✿) it
+   * wiww be wogged as -1. 😳😳😳
    */
-  9: optional i64 by_user_id (personalDataType = 'UserId')
+  9: optionaw i-i64 by_usew_id (pewsonawdatatype = 'usewid')
 
   /**
-   * Host or remote IP where the request originated.
+   * h-host ow wemote i-ip whewe the wequest owiginated. UwU
    *
-   * This data is used when auditing the request in Guano. If unset, it will
-   * be logged as "<unknown>".
+   * t-this d-data is used when a-auditing the wequest in guano. 🥺 i-if unset, (///ˬ///✿) it wiww
+   * b-be wogged a-as "<unknown>". (⑅˘꒳˘)
    */
-  10: optional string host (personalDataType = 'IpAddress')
-}(hasPersonalData = 'true')
+  10: o-optionaw s-stwing host (pewsonawdatatype = 'ipaddwess')
+}(haspewsonawdata = 'twue')
 
-// Arguments to delete_location_data
-struct DeleteLocationDataRequest {
-  1: i64 user_id (personalDataType = 'UserId')
-}(hasPersonalData = 'true')
+// awguments to d-dewete_wocation_data
+stwuct dewetewocationdatawequest {
+  1: i-i64 u-usew_id (pewsonawdatatype = 'usewid')
+}(haspewsonawdata = 'twue')
 
-// structs for API V2 (flexible schema)
+// stwucts fow api v2 (fwexibwe schema)
 
-struct GetTweetOptions {
+stwuct g-gettweetoptions {
   /**
-   * Return the original tweet in GetTweetResult.source_tweet for retweets.
+   * w-wetuwn the owiginaw tweet in gettweetwesuwt.souwce_tweet f-fow wetweets. (✿oωo)
    */
-  1: bool include_source_tweet = 1
-
-  /**
-   * Return the hydrated Place object in Tweet.place for tweets with geolocation.
-   */
-  2: bool include_places = 0
+  1: b-boow incwude_souwce_tweet = 1
 
   /**
-   * Language used for place names when include_places is true. Also passed to
-   * the cards service, if cards are hydrated for the request.
+   * wetuwn the hydwated p-pwace object in t-tweet.pwace fow t-tweets with geowocation. òωó
    */
-  3: string language_tag = "en"
+  2: b-boow incwude_pwaces = 0
 
   /**
-   * Return cards for tweets with cards in Tweet.cards or Tweet.card2
+   * w-wanguage u-used fow pwace nyames when incwude_pwaces is t-twue. ^^ awso passed to
+   * the cawds sewvice, rawr if cawds awe hydwated fow the wequest. ^^;;
+   */
+  3: stwing w-wanguage_tag = "en"
+
+  /**
+   * w-wetuwn cawds fow tweets with cawds in tweet.cawds ow tweet.cawd2
    *
-   * card2 also requires setting a valid cards_platform_key
+   * c-cawd2 awso wequiwes s-setting a vawid cawds_pwatfowm_key
    */
-  4: bool include_cards = 0
+  4: boow incwude_cawds = 0
 
   /**
-   * Return the number of times a tweet has been retweeted in
-   * Tweet.counts.retweet_count.
+   * w-wetuwn the nyumbew of times a-a tweet has been w-wetweeted in
+   * t-tweet.counts.wetweet_count. (ˆ ﻌ ˆ)♡
    */
-  5: bool include_retweet_count = 0
+  5: boow incwude_wetweet_count = 0
 
   /**
-   * Return the number of direct replies to a tweet in
-   * Tweet.counts.reply_count.
+   * wetuwn the n-nyumbew of diwect wepwies to a t-tweet in
+   * tweet.counts.wepwy_count. (⑅˘꒳˘)
    */
-  6: bool include_reply_count = 0
+  6: boow incwude_wepwy_count = 0
 
   /**
-   * Return the number of favorites a tweet has received in
-   * Tweet.counts.favorite_count.
+   * w-wetuwn the nyumbew of favowites a tweet h-has weceived in
+   * tweet.counts.favowite_count. ( ͡o ω ͡o )
    */
-  7: bool include_favorite_count = 0
+  7: b-boow incwude_favowite_count = 0
 
-  # OBSOLETE 8: bool include_unique_users_impressed_count = 0
-  # OBSOLETE 9: bool include_click_count = 0
-  # OBSOLETE 10: bool include_descendent_reply_count = 0
+  # obsowete 8: boow incwude_unique_usews_impwessed_count = 0
+  # o-obsowete 9: boow incwude_cwick_count = 0
+  # o-obsowete 10: boow incwude_descendent_wepwy_count = 0
 
   /**
-   * @deprecated Use safety_level for spam filtering.
+   * @depwecated use safety_wevew fow spam fiwtewing. 🥺
    */
-  11: optional tweet.SpamSignalType spam_signal_type
+  11: optionaw tweet.spamsignawtype spam_signaw_type
 
   /**
-   * If the requested tweet is not already in cache, do not add it.
+   * if the w-wequested tweet i-is nyot awweady i-in cache, ^^;; do nyot a-add it. o.O
    *
-   * You should set do_not_cache to true if you are requesting old tweets
-   * (older than 30 days) and they are unlikely to be requested again.
+   * you shouwd set do_not_cache t-to twue if you awe wequesting owd tweets
+   * (owdew than 30 days) a-and they awe u-unwikewy to be w-wequested again. rawr
    */
-  12: bool do_not_cache = 0
+  12: b-boow do_not_cache = 0
 
   /**
-   * The card format version supported by the requesting client
+   * the cawd fowmat vewsion suppowted by the wequesting c-cwient
    */
-  13: optional string cards_platform_key (personalDataType = 'PrivateTweetEntitiesAndMetadata, PublicTweetEntitiesAndMetadata')
+  13: o-optionaw stwing cawds_pwatfowm_key (pewsonawdatatype = 'pwivatetweetentitiesandmetadata, (⑅˘꒳˘) pubwictweetentitiesandmetadata')
 
   /**
-   * The user for whose perspective this request should be processed.
+   * the u-usew fow whose pewspective this w-wequest shouwd b-be pwocessed. 😳
    *
-   * If you are requesting tweets on behalf of a user, set this to their user
-   * id. The effect of setting this option is:
+   * i-if you awe wequesting tweets on behawf of a usew, nyaa~~ set this to theiw usew
+   * id. ^•ﻌ•^ the effect o-of setting this option is:
    *
-   * - Tweetypie will return protected tweets that the user is allowed to
-   *   access, rather than filtering out protected tweets.
+   * - t-tweetypie wiww wetuwn pwotected tweets that the usew i-is awwowed to
+   *   access, (⑅˘꒳˘) wathew t-than fiwtewing out pwotected tweets. σωσ
    *
-   * - If this field is set *and* `include_perspectivals` is set, then the
-   *   tweets will have the `perspective` field set to a struct with flags
-   *   that indicate whether the user has favorited, retweeted, or reported
-   *   the tweet in question.
+   * - i-if this fiewd i-is set *and* `incwude_pewspectivaws` i-is set, (U ᵕ U❁) t-then the
+   *   t-tweets wiww have the `pewspective` f-fiewd set to a-a stwuct with fwags
+   *   that i-indicate whethew the usew has favowited, o.O wetweeted, o-ow wepowted
+   *   the tweet i-in question. >w<
    *
-   * If you have a specific need to access all protected tweets (not
-   * just tweets that should be accessible to the current user), see the
-   * documentation for `include_protected`.
+   * i-if you have a specific n-nyeed to access a-aww pwotected tweets (not
+   * just tweets that shouwd be accessibwe to the cuwwent u-usew), (///ˬ///✿) see the
+   * d-documentation f-fow `incwude_pwotected`. :3
    */
-  14: optional i64 for_user_id (personalDataType = 'UserId')
+  14: o-optionaw i64 fow_usew_id (pewsonawdatatype = 'usewid')
 
   /**
-   * Do not enforce normal filtering for protected tweets, blocked quote tweets,
-   * contributor data, etc. This does not affect Visibility Library (http://go/vf)
-   * based filtering which executes when safety_level is specified, see request
-   * field 24 safety_level below
+   * do nyot enfowce nyowmaw f-fiwtewing fow pwotected tweets, ^^;; bwocked quote t-tweets, òωó
+   * contwibutow data, nyaa~~ etc. this does n-nyot affect visibiwity wibwawy (http://go/vf)
+   * based fiwtewing which exekawaii~s w-when safety_wevew is specified, /(^•ω•^) s-see wequest
+   * f-fiewd 24 s-safety_wevew bewow
    *
-   * If `bypass_visibility_filtering` is true, Tweetypie will not enforce filtering
-   * for protected tweets, blocked quote tweets, contributor data, etc. and your client
-   * will receive all tweets regardless of follow relationship. You will also be able
-   * to access tweets from deactivated and suspended users. This is only necessary
-   * for special cases, such as indexing or analyzing tweets, or administrator access.
-   * Since this elevated access is usually unnecessary, and is a security risk, you will
-   * need to get your client id whitelisted to access this feature.
+   * if `bypass_visibiwity_fiwtewing` is t-twue, 😳 tweetypie w-wiww nyot enfowce fiwtewing
+   * f-fow pwotected t-tweets, òωó bwocked q-quote tweets, (⑅˘꒳˘) contwibutow d-data, ^•ﻌ•^ etc. and youw cwient
+   * w-wiww w-weceive aww tweets w-wegawdwess of fowwow wewationship. y-you wiww awso be abwe
+   * to access tweets fwom deactivated and suspended usews. o.O this is o-onwy nyecessawy
+   * f-fow speciaw cases, σωσ such as i-indexing ow anawyzing tweets, ow administwatow access. 😳
+   * s-since t-this ewevated a-access is usuawwy u-unnecessawy, (ˆ ﻌ ˆ)♡ and is a secuwity w-wisk, (///ˬ///✿) you wiww
+   * nyeed to get youw cwient id w-whitewisted to a-access this featuwe. (///ˬ///✿)
    *
-   * If you are accessing tweets on behalf of a user, set
-   * `bypass_visibility_filtering` to false and set `for_user_id`. This will
-   * allow access to exactly the set of tweets that that user is authorized to
-   * access, and filter out tweets the user should not be authorized to access
-   * (returned with a StatusState of PROTECTED_USER).
+   * if you awe accessing tweets on behawf of a usew, s-set
+   * `bypass_visibiwity_fiwtewing` to fawse a-and set `fow_usew_id`. >_< this wiww
+   * awwow access t-to exactwy the set of tweets t-that that usew is authowized to
+   * access, XD and f-fiwtew out tweets the usew shouwd n-nyot be authowized to access
+   * (wetuwned with a-a statusstate o-of pwotected_usew). (U ﹏ U)
    */
-  15: bool bypass_visibility_filtering = 0
+  15: boow bypass_visibiwity_fiwtewing = 0
 
   /**
-   * Return the user-specific view of a tweet in Tweet.perspective
+   * wetuwn the usew-specific v-view of a tweet in tweet.pewspective
    *
-   * for_user_id must also be set.
+   * fow_usew_id m-must awso b-be set. ( ͡o ω ͡o )
    */
-  16: bool include_perspectivals = 0
+  16: b-boow incwude_pewspectivaws = 0
 
-  // OBSOLETE media faces are always included
-  17: bool include_media_faces = 0
+  // obsowete media faces awe awways incwuded
+  17: boow incwude_media_faces = 0
 
   /**
-   * The flexible schema fields of the tweet to return.
+   * the fwexibwe schema f-fiewds of the tweet to wetuwn. ^•ﻌ•^
    *
-   * Fields of tweets in the 100+ range will only be returned if they are
-   * explicitly requested.
+   * fiewds of tweets i-in the 100+ wange w-wiww onwy be wetuwned if they awe
+   * expwicitwy w-wequested. 😳
    */
-  18: list<FieldId> additional_field_ids = []
+  18: w-wist<fiewdid> additionaw_fiewd_ids = []
 
-  // OBSOLETE 19: bool include_topic_labels = 0
+  // obsowete 19: boow incwude_topic_wabews = 0
 
   /**
-   * Exclude user-reported tweets from this request. Only applicable if
-   * forUserId is set.
+   * e-excwude usew-wepowted tweets fwom t-this wequest. (ˆ ﻌ ˆ)♡ onwy appwicabwe if
+   * fowusewid i-is set. (ˆ ﻌ ˆ)♡
    *
-   * Users can report individual tweets in the UI as uninteresting, spam,
-   * sensitive, or abusive.
+   * u-usews can wepowt individuaw t-tweets in the ui a-as unintewesting, rawr x3 spam,
+   * sensitive, rawr x3 o-ow abusive. (U ᵕ U❁)
    */
-  20: bool exclude_reported = 0
+  20: boow excwude_wepowted = 0
 
-  // if set to true, disables suggested tweet visibility checks
-  // OBSOLETE (TwitterSuggestInfo version of suggested tweets has been removed)
-  21: bool obsolete_skip_twitter_suggests_visibility_check = 0
-  // OBSOLETE 22: optional set<tweet.SpamSignalType> spam_signal_types
+  // i-if set to twue, (ꈍᴗꈍ) d-disabwes suggested t-tweet visibiwity c-checks
+  // o-obsowete (twittewsuggestinfo vewsion o-of suggested t-tweets has been wemoved)
+  21: boow obsowete_skip_twittew_suggests_visibiwity_check = 0
+  // o-obsowete 22: optionaw set<tweet.spamsignawtype> s-spam_signaw_types
 
   /**
-   * Return the quoted tweet in GetTweetResult.quoted_tweet
+   * wetuwn the quoted tweet in gettweetwesuwt.quoted_tweet
    */
-  23: bool include_quoted_tweet = 0
+  23: boow incwude_quoted_tweet = 0
 
   /**
-   * Content filtering policy that will be used to drop or suppress tweets
-   * from response. The filtering is based on the result of Visibility Library
-   * and does not affect filtering of tweets from blocked or non-followed protected users, see
-   * request field 15 bypass_visibility_filtering above
+   * content fiwtewing powicy t-that wiww be used to dwop ow s-suppwess tweets
+   * fwom wesponse. (ꈍᴗꈍ) t-the fiwtewing i-is based on the wesuwt of visibiwity w-wibwawy
+   * and does nyot a-affect fiwtewing of tweets fwom b-bwocked ow nyon-fowwowed pwotected usews, OwO see
+   * wequest fiewd 15 bypass_visibiwity_fiwtewing above
    *
-   * If not specified SafetyLevel.FilterDefault will be used.
+   * if nyot specified s-safetywevew.fiwtewdefauwt wiww be used. nyaa~~
    */
-  24: optional safety_level.SafetyLevel safety_level
+  24: optionaw s-safety_wevew.safetywevew safety_wevew
 
-  // obsolete 25: bool include_animated_gif_media_entities = 0
-  26: bool include_profile_geo_enrichment = 0
-  // obsolete 27: optional set<string> extensions
-  28: bool include_tweet_pivots = 0
+  // o-obsowete 25: boow incwude_animated_gif_media_entities = 0
+  26: boow incwude_pwofiwe_geo_enwichment = 0
+  // obsowete 27: optionaw set<stwing> extensions
+  28: boow i-incwude_tweet_pivots = 0
 
   /**
-   * The argument passed to the Stratostore extension points mechanism.
+   * t-the awgument p-passed to the stwatostowe extension p-points m-mechanism. 🥺
    */
-  29: optional binary extensions_args
+  29: o-optionaw binawy extensions_awgs
 
   /**
-   * Return the number of times a tweet has been quoted in Tweet.counts.quote_count
+   * wetuwn the nyumbew o-of times a t-tweet has been quoted in tweet.counts.quote_count
    */
-  30: bool include_quote_count = 0
+  30: boow i-incwude_quote_count = 0
 
   /**
-   * Return media metadata from MediaInfoService in MediaEntity.additional_metadata
+   * w-wetuwn media m-metadata fwom m-mediainfosewvice i-in mediaentity.additionaw_metadata
    */
-  31: bool include_media_additional_metadata = 0
+  31: boow incwude_media_additionaw_metadata = 0
 
   /**
-   * Populate the conversation_muted field of the Tweet for the requesting
-   * user.
+   * p-popuwate t-the convewsation_muted f-fiewd o-of the tweet fow t-the wequesting
+   * u-usew. ^•ﻌ•^
    *
-   * Setting this to true will have no effect unless for_user_id is set.
+   * s-setting this t-to twue wiww have n-nyo effect unwess f-fow_usew_id is set. /(^•ω•^)
    */
-  32: bool include_conversation_muted = 0
+  32: boow incwude_convewsation_muted = 0
 
   /**
-   * @deprecated go/sunsetting-carousels
+   * @depwecated go/sunsetting-cawousews
    */
-  33: bool include_carousels = 0
+  33: b-boow incwude_cawousews = 0
 
   /**
-   * When enable_deleted_state is true and we have evidence that the
-   * tweet once existed and was deleted, Tweetypie returns
-   * StatusState.DELETED or StatusState.BOUNCE_DELETED. (See comments
-   * on StatusState for details on these two states.)
+   * when e-enabwe_deweted_state is twue and we have evidence t-that the
+   * t-tweet once existed a-and was deweted, (U ﹏ U) tweetypie w-wetuwns
+   * statusstate.deweted o-ow statusstate.bounce_deweted. :3 (see comments
+   * on statusstate fow detaiws on these two states.)
    *
-   * When enable_deleted_state is false, deleted tweets are
-   * returned as StatusState.NOT_FOUND.
+   * when e-enabwe_deweted_state is fawse, ^^;; deweted tweets awe
+   * wetuwned a-as statusstate.not_found. >w<
    *
-   * Note: even when enable_deleted_state is true, a deleted tweet may
-   * still be returned as StatusState.NOT_FOUND due to eventual
-   * consistency.
+   * n-nyote: even when enabwe_deweted_state i-is t-twue, nyaa~~ a deweted t-tweet may
+   * stiww b-be wetuwned a-as statusstate.not_found d-due to e-eventuaw
+   * consistency. ^^
    *
-   * This option is false by default for compatibility with clients
-   * expecting StatusState.NOT_FOUND.
+   * this option is fawse by defauwt f-fow compatibiwity with cwients
+   * e-expecting statusstate.not_found. 😳
    */
-  34: bool enable_deleted_state = 0
+  34: b-boow enabwe_deweted_state = 0
 
   /**
-   * Populate the conversation_owner_id field of the Tweet for the requesting
-   * user. Which translate into is_conversation_owner in birdherd
-   *
-   */
-  // obsolete 35: bool include_conversation_owner_id = 0
-
-  /**
-   * Populate the is_removed_from_conversation field of the Tweet for the requesting
-   * user.
+   * p-popuwate the convewsation_ownew_id fiewd of the t-tweet fow the wequesting
+   * usew. :3 which twanswate into is_convewsation_ownew i-in biwdhewd
    *
    */
-  // obsolete 36: bool include_is_removed_from_conversation = 0
-
-  // To retrieve self-thread metadata request field Tweet.SelfThreadMetadataField
-  // obsolete 37: bool include_self_thread_info = 0
+  // o-obsowete 35: b-boow incwude_convewsation_ownew_id = 0
 
   /**
-   * This option surfaces CardReference field (118) in Tweet thrift object.
-   * We use card_uri present in card reference, to get access to stored card information.
-   */
-  37: bool include_card_uri = 0
-
-  /**
-   * When returning a tweet that quotes another tweet, do not include
-   * the URL to the quoted tweet in the tweet text and url entities.
-   * This is intended for clients that use the quoted_tweet field of
-   * the tweet to display quoted tweets.
-   */
-  38: bool simple_quoted_tweet = 0
-
-  /**
-   * This flag is used and only take affect if the requested tweet is  creatives container backed
-   * tweet. This will suprress the tweet materialization and return tweet not found.
+   * p-popuwate the is_wemoved_fwom_convewsation f-fiewd of the t-tweet fow the w-wequesting
+   * usew. 🥺
    *
-   * go/creatives-containers-tdd
+   */
+  // o-obsowete 36: boow incwude_is_wemoved_fwom_convewsation = 0
+
+  // to wetwieve sewf-thwead metadata wequest fiewd tweet.sewfthweadmetadatafiewd
+  // obsowete 37: boow incwude_sewf_thwead_info = 0
+
+  /**
+   * this option s-suwfaces cawdwefewence f-fiewd (118) in tweet thwift object.
+   * we use cawd_uwi pwesent in cawd w-wefewence, :3 to get a-access to stowed cawd infowmation. >_<
+   */
+  37: boow incwude_cawd_uwi = 0
+
+  /**
+   * when wetuwning a-a tweet that q-quotes anothew tweet, 🥺 do nyot i-incwude
+   * the u-uww to the quoted tweet in the t-tweet text and uww entities. ^•ﻌ•^
+   * t-this is intended f-fow cwients that use the quoted_tweet fiewd of
+   * the tweet t-to dispway quoted t-tweets. >w<
+   */
+  38: b-boow simpwe_quoted_tweet = 0
+
+  /**
+   * t-this fwag is used and onwy take a-affect if the w-wequested tweet i-is  cweatives containew b-backed
+   * tweet. rawr this wiww supwwess the t-tweet matewiawization a-and wetuwn tweet nyot found. :3
+   *
+   * go/cweatives-containews-tdd
   **/
-  39: bool disable_tweet_materialization = 0
+  39: boow disabwe_tweet_matewiawization = 0
 
    
   /**
-   * Used for load shedding. If set to true, Tweetypie service might shed the request, if the service 
-   * is struggling.
+   * used fow woad shedding. i-if set to t-twue, OwO tweetypie sewvice might shed t-the wequest, if the sewvice 
+   * is stwuggwing. 😳
   **/
-  40: optional bool is_request_sheddable
+  40: optionaw boow is_wequest_sheddabwe
 
-}(hasPersonalData = 'true')
+}(haspewsonawdata = 'twue')
 
-struct GetTweetsRequest {
-  1: required list<i64> tweet_ids (personalDataType = 'TweetId')
-  // @deprecated unused
-  2: optional list<i64> source_tweet_id_hints (personalDataType = 'TweetId')
-  3: optional GetTweetOptions options
-  // @deprecated unused
-  4: optional list<i64> quoted_tweet_id_hints (personalDataType = 'TweetId')
-}(hasPersonalData = 'true')
-
-/**
- * Can be used to reference an arbitrary nested field of some struct via
- * a list of field IDs describing the path of fields to reach the referenced
- * field.
- */
-struct FieldByPath {
-  1: required list<FieldId> field_id_path
-}
-
-struct GetTweetResult {
-  1: required i64 tweet_id (personalDataType = 'TweetId')
-
-  /**
-   * Indicates what happened when the tweet was loaded.
-   */
-  2: required StatusState tweet_state
-
-  /**
-   * The requested tweet when tweet_state is `FOUND`, `PARTIAL`, or `SUPPRESS`.
-   *
-   * This field will be set if the tweet exists, access is authorized,
-   * and enough data about the tweet is available to materialize a
-   * tweet. When this field is set, you should look at the tweet_state
-   * field to determine how to treat this tweet.
-   *
-   * If tweet_state is FOUND, then this tweet is complete and passes the
-   * authorization checks requested in GetTweetOptions. (See
-   * GetTweetOptions.for_user_id for more information about authorization.)
-   *
-   * If tweet_state is PARTIAL, then enough data was available to return
-   * a tweet, but there was an error when loading the tweet that prevented
-   * some data from being returned (for example, if a request to the cards
-   * service times out when cards were requested, then the tweet will be
-   * marked PARTIAL). `missing_fields` indicates which parts of the tweet
-   * failed to load. When you receive a PARTIAL tweet, it is up to you
-   * whether to proceed with the degraded tweet data or to consider it a
-   * failure. For example, a mobile client might choose to display a
-   * PARTIAL tweet to the user, but not store it in an internal cache.
-   *
-   * If tweet_state is SUPPRESS, then the tweet is complete, but soft
-   * filtering is enabled. This state is intended to hide potentially
-   * harmful tweets from user's view while not taking away the option for
-   * the user to override our filtering decision. See http://go/rtf
-   * (render-time filtering) for more information about how to treat these
-   * tweets.
-   */
-  3: optional tweet.Tweet tweet
-
-  /**
-   * The tweet fields that could not be loaded when tweet_state is `PARTIAL`
-   * or `SUPPRESS`.
-   *
-   * This field will be set when the `tweet_state` is `PARTIAL`, and may
-   * be set when `tweet_state` is SUPPRESS. It indicates degraded data in
-   * the `tweet`. Each entry in `missing_fields` indicates a traversal of
-   * the `Tweet` thrift object terminating at the field that is
-   * missing. For most non-core fields, the path will just be the field id
-   * of the field that is missing.
-   *
-   * For example, if card2 failed to load for a tweet, the `tweet_state`
-   * will be `PARTIAL`, the `tweet` field will be set, the Tweet's `card2`
-   * field will be empty, and this field will be set to:
-   *
-   *     Set(FieldByPath(Seq(17)))
-   */
-  4: optional set<FieldByPath> missing_fields
-
-  /**
-   * The original tweet when `tweet` is a retweet and
-   * GetTweetOptions.include_source_tweet is true.
-   */
-  5: optional tweet.Tweet source_tweet
-
-  /**
-   * The retweet fields that could not be loaded when tweet_state is `PARTIAL`.
-   */
-  6: optional set<FieldByPath> source_tweet_missing_fields
-
-  /**
-   * The quoted tweet when `tweet` is a quote tweet and
-   * GetTweetOptions.include_quoted_tweet is true.
-   */
-  7: optional tweet.Tweet quoted_tweet
-
-  /**
-   * The quoted tweet fields that could not be loaded when tweet_state is `PARTIAL`.
-   */
-  8: optional set<FieldByPath> quoted_tweet_missing_fields
-
-  /**
-   * The reason that a tweet should not be displayed when tweet_state is
-   * `SUPPRESS` or `DROP`.
-   */
-  9: optional safety_result.FilteredReason filtered_reason
-
-  /**
-   * Hydrated carousel if the tweet contains a carousel URL and the
-   * GetTweetOptions.include_carousel is true.
-   *
-   * In this case Carousel Service is requested to hydrate the carousel, and
-   * the result stored in this field.
-   *
-   * @deprecated go/sunsetting-carousels
-   */
-  10: optional carousel_service.GetCarouselResult carousel_result
-
-  /**
-   * If a quoted tweet would be present, but it was filtered out, then
-   * this field will be set to the reason that it was filtered.
-   */
-  11: optional safety_result.FilteredReason quoted_tweet_filtered_reason
-}(hasPersonalData = 'true')
-
-union TweetInclude {
-  /**
-   * Field ID within the `Tweet` struct to include.  All fields may be optionally included
-   * except for the `id` field.
-   */
-  1: FieldId tweetFieldId
-
-  /**
-   * Field ID within the `StatusCounts` struct to include.  Only specifically requested
-   * count fields will be included.  Including any `countsFieldIds` values automatically
-   * implies including `Tweet.counts`.
-   *
-   */
-  2: FieldId countsFieldId
-
-  /**
-   * Field ID within the `MediaEntity` struct to include.  Currently, only `MediaEntity.additionalMetadata`
-   * may be optionally included (i.e., it will not be included by default if you include
-   * `tweetFieldId` = `Tweet.media` without also including `mediaEntityFieldId`  = 
-   * `MediaEntity.additionalMetadata`.  Including any `mediaEntityFieldId` values automatically
-   * implies include `Tweet.media`.
-   */
-  3: FieldId mediaEntityFieldId
-}
+s-stwuct gettweetswequest {
+  1: w-wequiwed wist<i64> t-tweet_ids (pewsonawdatatype = 'tweetid')
+  // @depwecated unused
+  2: o-optionaw w-wist<i64> souwce_tweet_id_hints (pewsonawdatatype = 'tweetid')
+  3: optionaw gettweetoptions options
+  // @depwecated unused
+  4: o-optionaw wist<i64> q-quoted_tweet_id_hints (pewsonawdatatype = 'tweetid')
+}(haspewsonawdata = 'twue')
 
 /**
- * An enumeration of policy options indicating how tweets should be filtered (protected tweets, blocked quote tweets,
- * contributor data, etc.). This does not affect Visibility Library (http://go/vf) based filtering.
- * This is equivalent to `bypass_visibility_filtering` in get_tweets() call. This means that
- * `TweetVisibilityPolicy.NO_FILTERING` is equivalent to `bypass_visibility_filtering` = true
+ * c-can be used to wefewence a-an awbitwawy n-nyested fiewd o-of some stwuct via
+ * a wist of fiewd ids descwibing the path of fiewds to weach the wefewenced
+ * f-fiewd. (ꈍᴗꈍ)
  */
-enum TweetVisibilityPolicy {
-  /**
-   * only return tweets that should be visible to either the `forUserId` user, if specified,
-   * or from the perspective of a logged-out user if `forUserId` is not specified. This option
-   * should always be used if requesting data to be returned via the public API.
-   */
-  USER_VISIBLE = 1,
-
-  /**
-   * returns all tweets that can be found, regardless of user visibility.  This option should
-   * never be used when gather data to be return in an API, and should only be used for internal
-   * processing.  because this option allows access to potentially sensitive data, clients
-   * must be whitelisted to use it.
-   */
-  NO_FILTERING = 2
+stwuct fiewdbypath {
+  1: w-wequiwed w-wist<fiewdid> fiewd_id_path
 }
 
-struct GetTweetFieldsOptions {
-  /**
-   * Identifies which `Tweet` or nested fields to include in the response.
-   */
-  1: required set<TweetInclude> tweet_includes
+stwuct gettweetwesuwt {
+  1: wequiwed i64 tweet_id (pewsonawdatatype = 'tweetid')
 
   /**
-   * If true and the requested tweet is a retweet, then a `Tweet`
-   * containing the requested fields for the retweeted tweet will be
-   * included in the response.
+   * i-indicates nyani h-happened when the tweet was woaded. 🥺
    */
-  2: bool includeRetweetedTweet = 0
+  2: w-wequiwed statusstate tweet_state
 
   /**
-   * If true and the requested tweet is a quote-tweet, then the quoted
-   * tweet will also be queried and the result for the quoted tweet
-   * included in `GetTweetFieldsResult.quotedTweetResult`.
-   */
-  3: bool includeQuotedTweet = 0
-
-  /**
-   * If true and the requested tweet contains a carousel URL, then the
-   * carousel will also be queried and the result for the carousel
-   * included in `GetTweetFieldsResult.carouselResult`.
+   * t-the wequested tweet when tweet_state is `found`, >_< `pawtiaw`, o-ow `suppwess`. ʘwʘ
    *
-   * @deprecated go/sunsetting-carousels
-   */
-  4: bool includeCarousel = 0
-
-  /**
-   * If you are requesting tweets on behalf of a user, set this to their
-   * user id. The effect of setting this option is:
+   * this fiewd wiww be set if the tweet exists, >_< access is authowized, >w<
+   * a-and enough d-data about t-the tweet is avaiwabwe t-to matewiawize a
+   * tweet. òωó when this fiewd i-is set, OwO you shouwd wook at the t-tweet_state
+   * fiewd to detewmine how to tweat t-this tweet. ^•ﻌ•^
    *
-   * - Tweetypie will return protected tweets that the user is allowed
-   *   to access, rather than filtering out protected tweets, when `visibility_policy`
-   *   is set to `USER_VISIBLE`.
+   * i-if tweet_state i-is found, XD then this tweet is compwete and p-passes the
+   * authowization checks wequested in gettweetoptions. (see
+   * gettweetoptions.fow_usew_id fow mowe infowmation a-about authowization.)
    *
-   * - If this field is set *and* `Tweet.perspective` is requested, then
-   *   the tweets will have the `perspective` field set to a struct with
-   *   flags that indicate whether the user has favorited, retweeted, or
-   *   reported the tweet in question.
-   */
-  10: optional i64 forUserId (personalDataType = 'UserId')
-
-  /**
-   * language_tag is used when hydrating a `Place` object, to get localized names.
-   * Also passed to the cards service, if cards are hydrated for the request.
-   */
-  11: optional string languageTag (personalDataType = 'InferredLanguage')
-
-  /**
-   * if requesting card2 cards, you must specify the platform key
-   */
-  12: optional string cardsPlatformKey (personalDataType = 'PrivateTweetEntitiesAndMetadata, PublicTweetEntitiesAndMetadata') 
-
-  /**
-   * The argument passed to the Stratostore extension points mechanism.
-   */
-  13: optional binary extensionsArgs
-
-  /**
-   * the policy to use when filtering tweets for basic visibility.
-   */
-  20: TweetVisibilityPolicy visibilityPolicy = TweetVisibilityPolicy.USER_VISIBLE
-
-  /**
-   * Content filtering policy that will be used to drop or suppress tweets from response.
-   * The filtering is based on the result of Visibility Library (http://go/vf)
-   * and does not affect filtering of tweets from blocked or non-followed protected users, see
-   * request field 20 visibilityPolicy above
+   * i-if tweet_state is pawtiaw, mya then enough data was avaiwabwe to wetuwn
+   * a tweet, nyaa~~ but thewe was a-an ewwow when woading the tweet that pwevented
+   * s-some data fwom b-being wetuwned (fow e-exampwe, (ˆ ﻌ ˆ)♡ i-if a wequest to the cawds
+   * sewvice times out when cawds wewe wequested, mya then the tweet wiww b-be
+   * mawked p-pawtiaw). OwO `missing_fiewds` i-indicates w-which pawts of the tweet
+   * f-faiwed to woad. 😳😳😳 when you weceive a-a pawtiaw tweet, o.O it is up to you
+   * whethew to pwoceed with t-the degwaded tweet d-data ow to c-considew it a
+   * f-faiwuwe. (U ﹏ U) fow exampwe, (˘ω˘) a mobiwe c-cwient might choose t-to dispway a
+   * pawtiaw tweet to the usew, ( ͡o ω ͡o ) but nyot stowe i-it in an intewnaw c-cache. σωσ
    *
-   * If not specified SafetyLevel.FilterNone will be used.
+   * if tweet_state is suppwess, rawr x3 then the tweet i-is compwete, (ꈍᴗꈍ) but soft
+   * fiwtewing i-is enabwed. òωó t-this state is intended t-to hide potentiawwy
+   * hawmfuw tweets fwom usew's view whiwe nyot taking away the option f-fow
+   * the usew to ovewwide o-ouw fiwtewing decision. (˘ω˘) see http://go/wtf
+   * (wendew-time fiwtewing) f-fow mowe infowmation about h-how to tweat t-these
+   * tweets. nyaa~~
    */
-  21: optional safety_level.SafetyLevel safetyLevel
+  3: o-optionaw t-tweet.tweet t-tweet
 
   /**
-   * The tweet result won't be cached by Tweetypie if doNotCache is true.
-   * You should set it as true if old tweets (older than 30 days) are requested,
-   * and they are unlikely to be requested again.
+   * the tweet fiewds t-that couwd nyot be woaded when tweet_state is `pawtiaw`
+   * ow `suppwess`.
+   *
+   * t-this fiewd wiww be set when the `tweet_state` i-is `pawtiaw`, mya a-and may
+   * b-be set when `tweet_state` is suppwess. -.- it indicates degwaded data in
+   * the `tweet`. :3 each e-entwy in `missing_fiewds` i-indicates a-a twavewsaw o-of
+   * the `tweet` thwift object tewminating at the fiewd that is
+   * missing. fow most nyon-cowe f-fiewds, :3 the path wiww just be the fiewd id
+   * o-of the fiewd t-that is missing. OwO
+   *
+   * f-fow exampwe, if cawd2 f-faiwed to woad fow a tweet, ^^ the `tweet_state`
+   * wiww be `pawtiaw`, ^^ the `tweet` fiewd wiww be set, the tweet's `cawd2`
+   * fiewd wiww be empty, rawr and this fiewd wiww be set to:
+   *
+   *     s-set(fiewdbypath(seq(17)))
    */
-  30: bool doNotCache = 0
+  4: optionaw set<fiewdbypath> m-missing_fiewds
 
   /**
-   * When returning a tweet that quotes another tweet, do not include
-   * the URL to the quoted tweet in the tweet text and url entities.
-   * This is intended for clients that use the quoted_tweet field of
-   * the tweet to display quoted tweets.
+   * t-the owiginaw tweet w-when `tweet` is a-a wetweet and
+   * gettweetoptions.incwude_souwce_tweet is twue. òωó
+   */
+  5: o-optionaw t-tweet.tweet souwce_tweet
+
+  /**
+   * the wetweet f-fiewds that c-couwd nyot be w-woaded when tweet_state i-is `pawtiaw`. (U ﹏ U)
+   */
+  6: optionaw set<fiewdbypath> s-souwce_tweet_missing_fiewds
+
+  /**
+   * the quoted tweet when `tweet` i-is a quote tweet a-and
+   * gettweetoptions.incwude_quoted_tweet is twue. ( ͡o ω ͡o )
+   */
+  7: o-optionaw tweet.tweet q-quoted_tweet
+
+  /**
+   * the quoted tweet fiewds that couwd not be woaded when tweet_state i-is `pawtiaw`. ^^;;
+   */
+  8: optionaw s-set<fiewdbypath> quoted_tweet_missing_fiewds
+
+  /**
+   * the w-weason that a tweet shouwd nyot be dispwayed w-when tweet_state is
+   * `suppwess` ow `dwop`. :3
+   */
+  9: optionaw s-safety_wesuwt.fiwtewedweason fiwtewed_weason
+
+  /**
+   * h-hydwated c-cawousew if t-the tweet contains a cawousew uww and the
+   * g-gettweetoptions.incwude_cawousew i-is twue. mya
+   *
+   * i-in this case c-cawousew sewvice is wequested to h-hydwate the cawousew, ^^;; a-and
+   * t-the wesuwt stowed i-in this fiewd. σωσ
+   *
+   * @depwecated g-go/sunsetting-cawousews
+   */
+  10: optionaw cawousew_sewvice.getcawousewwesuwt c-cawousew_wesuwt
+
+  /**
+   * i-if a quoted tweet wouwd be pwesent, ^^ but it was f-fiwtewed out, /(^•ω•^) t-then
+   * this f-fiewd wiww be set to the weason t-that it was fiwtewed. (˘ω˘)
+   */
+  11: o-optionaw safety_wesuwt.fiwtewedweason quoted_tweet_fiwtewed_weason
+}(haspewsonawdata = 'twue')
+
+u-union tweetincwude {
+  /**
+   * f-fiewd id within the `tweet` stwuct t-to incwude. -.-  aww fiewds may b-be optionawwy incwuded
+   * e-except f-fow the `id` f-fiewd. (ˆ ﻌ ˆ)♡
+   */
+  1: fiewdid tweetfiewdid
+
+  /**
+   * fiewd id within the `statuscounts` s-stwuct to incwude. òωó  onwy s-specificawwy wequested
+   * count f-fiewds wiww be i-incwuded. :3  incwuding any `countsfiewdids` v-vawues a-automaticawwy
+   * impwies incwuding `tweet.counts`. (ꈍᴗꈍ)
    *
    */
-  31: bool simple_quoted_tweet = 0
+  2: fiewdid countsfiewdid
 
   /**
-   * This flag is used and only take affect if the requested tweet is  creatives container backed
-   * tweet. This will suprress the tweet materialization and return tweet not found.
+   * f-fiewd id w-within the `mediaentity` stwuct to incwude. (ˆ ﻌ ˆ)♡  cuwwentwy, onwy `mediaentity.additionawmetadata`
+   * may be optionawwy incwuded (i.e., it wiww nyot be incwuded by defauwt if you incwude
+   * `tweetfiewdid` = `tweet.media` without a-awso incwuding `mediaentityfiewdid`  = 
+   * `mediaentity.additionawmetadata`. mya  i-incwuding a-any `mediaentityfiewdid` v-vawues automaticawwy
+   * impwies incwude `tweet.media`.
+   */
+  3: f-fiewdid m-mediaentityfiewdid
+}
+
+/**
+ * a-an enumewation o-of powicy options indicating how tweets shouwd be fiwtewed (pwotected tweets, (U ᵕ U❁) bwocked q-quote tweets, ^•ﻌ•^
+ * c-contwibutow d-data, σωσ etc.). t-this does nyot affect visibiwity w-wibwawy (http://go/vf) based fiwtewing. ^^;;
+ * this is equivawent to `bypass_visibiwity_fiwtewing` i-in get_tweets() caww. (✿oωo) this means t-that
+ * `tweetvisibiwitypowicy.no_fiwtewing` is e-equivawent to `bypass_visibiwity_fiwtewing` = twue
+ */
+enum tweetvisibiwitypowicy {
+  /**
+   * onwy wetuwn tweets that shouwd b-be visibwe to eithew the `fowusewid` u-usew, UwU if specified, (✿oωo)
+   * ow fwom the pewspective o-of a wogged-out usew if `fowusewid` is nyot s-specified. >_< this option
+   * shouwd a-awways be used if wequesting d-data to be wetuwned v-via the pubwic api. (U ᵕ U❁)
+   */
+  usew_visibwe = 1, ^^;;
+
+  /**
+   * wetuwns aww tweets t-that can be found, (✿oωo) wegawdwess of usew visibiwity. rawr  this option shouwd
+   * nyevew be used when gathew data to b-be wetuwn in an a-api, and shouwd onwy be used fow i-intewnaw
+   * pwocessing. >w<  because t-this option a-awwows access to p-potentiawwy sensitive data, cwients
+   * must b-be whitewisted to use it. ^^;;
+   */
+  nyo_fiwtewing = 2
+}
+
+stwuct gettweetfiewdsoptions {
+  /**
+   * identifies which `tweet` o-ow nyested f-fiewds to incwude i-in the wesponse. σωσ
+   */
+  1: w-wequiwed set<tweetincwude> tweet_incwudes
+
+  /**
+   * i-if twue and the wequested t-tweet is a wetweet, òωó t-then a `tweet`
+   * containing the wequested f-fiewds fow the w-wetweeted tweet w-wiww be
+   * i-incwuded in the w-wesponse. (ꈍᴗꈍ)
+   */
+  2: boow incwudewetweetedtweet = 0
+
+  /**
+   * if twue and the w-wequested tweet i-is a quote-tweet, ( ͡o ω ͡o ) t-then the quoted
+   * tweet wiww awso be quewied and the wesuwt f-fow the quoted t-tweet
+   * incwuded i-in `gettweetfiewdswesuwt.quotedtweetwesuwt`. ( ͡o ω ͡o )
+   */
+  3: boow i-incwudequotedtweet = 0
+
+  /**
+   * if twue and t-the wequested tweet c-contains a cawousew u-uww, UwU then the
+   * cawousew wiww awso be q-quewied and the wesuwt fow the cawousew
+   * incwuded i-in `gettweetfiewdswesuwt.cawousewwesuwt`. >_<
    *
-   * go/creatives-containers-tdd
+   * @depwecated go/sunsetting-cawousews
+   */
+  4: boow incwudecawousew = 0
+
+  /**
+   * if you awe wequesting t-tweets on behawf of a usew, >w< s-set this to theiw
+   * usew id. (˘ω˘) t-the effect of setting t-this option i-is:
+   *
+   * - t-tweetypie wiww wetuwn pwotected tweets that the u-usew is awwowed
+   *   to access, 🥺 wathew than fiwtewing out pwotected tweets, rawr x3 w-when `visibiwity_powicy`
+   *   i-is set to `usew_visibwe`. ^•ﻌ•^
+   *
+   * - i-if this fiewd i-is set *and* `tweet.pewspective` i-is wequested, then
+   *   t-the tweets wiww h-have the `pewspective` fiewd set to a stwuct with
+   *   fwags that i-indicate whethew the usew has favowited, mya wetweeted, mya o-ow
+   *   wepowted the tweet i-in question. (U ﹏ U)
+   */
+  10: optionaw i64 fowusewid (pewsonawdatatype = 'usewid')
+
+  /**
+   * wanguage_tag i-is used when hydwating a-a `pwace` object, (///ˬ///✿) to get wocawized n-nyames. -.-
+   * a-awso passed to t-the cawds sewvice, rawr if cawds awe hydwated fow the wequest. ^^
+   */
+  11: optionaw stwing wanguagetag (pewsonawdatatype = 'infewwedwanguage')
+
+  /**
+   * if wequesting c-cawd2 cawds, (⑅˘꒳˘) you must specify the pwatfowm k-key
+   */
+  12: optionaw stwing c-cawdspwatfowmkey (pewsonawdatatype = 'pwivatetweetentitiesandmetadata, 😳😳😳 p-pubwictweetentitiesandmetadata') 
+
+  /**
+   * the awgument p-passed to the s-stwatostowe extension points mechanism. (✿oωo)
+   */
+  13: optionaw binawy extensionsawgs
+
+  /**
+   * t-the powicy to use when fiwtewing t-tweets fow basic visibiwity. /(^•ω•^)
+   */
+  20: tweetvisibiwitypowicy v-visibiwitypowicy = tweetvisibiwitypowicy.usew_visibwe
+
+  /**
+   * c-content fiwtewing powicy that w-wiww be used to d-dwop ow suppwess tweets fwom wesponse. >w<
+   * the fiwtewing is based on the wesuwt o-of visibiwity wibwawy (http://go/vf)
+   * a-and does n-nyot affect fiwtewing of tweets fwom bwocked o-ow nyon-fowwowed pwotected usews, 🥺 s-see
+   * wequest fiewd 20 visibiwitypowicy a-above
+   *
+   * if nyot specified s-safetywevew.fiwtewnone wiww be used. OwO
+   */
+  21: o-optionaw safety_wevew.safetywevew s-safetywevew
+
+  /**
+   * the tweet wesuwt won't be cached by tweetypie if donotcache i-is twue. (ˆ ﻌ ˆ)♡
+   * you shouwd set it as twue if o-owd tweets (owdew t-than 30 days) a-awe wequested, >_<
+   * and they awe u-unwikewy to be wequested again. ^^;;
+   */
+  30: boow donotcache = 0
+
+  /**
+   * when w-wetuwning a tweet that quotes a-anothew tweet, :3 d-do nyot incwude
+   * t-the uww to the quoted tweet i-in the tweet text a-and uww entities. >_<
+   * t-this i-is intended fow cwients that use t-the quoted_tweet fiewd of
+   * t-the tweet to dispway q-quoted tweets. (ˆ ﻌ ˆ)♡
+   *
+   */
+  31: boow simpwe_quoted_tweet = 0
+
+  /**
+   * this fwag is used and onwy take affect i-if the wequested tweet is  cweatives containew backed
+   * t-tweet. :3 this wiww s-supwwess the tweet matewiawization and wetuwn tweet nyot found. UwU
+   *
+   * go/cweatives-containews-tdd
   **/
-  32: bool disable_tweet_materialization = 0
+  32: boow disabwe_tweet_matewiawization = 0
 
   /**
-   * Used for load shedding. If set to true, Tweetypie service might shed the request, if the service 
-   * is struggling.
+   * used fow woad s-shedding. if s-set to twue, ^^;; tweetypie s-sewvice m-might shed the wequest, i-if the sewvice 
+   * i-is stwuggwing. mya
   **/
-  33: optional bool is_request_sheddable  
-}(hasPersonalData = 'true')
+  33: o-optionaw boow is_wequest_sheddabwe  
+}(haspewsonawdata = 'twue')
 
-struct GetTweetFieldsRequest {
-  1: required list<i64> tweetIds (personalDataType = 'TweetId')
-  2: required GetTweetFieldsOptions options
-} (hasPersonalData = 'true')
+s-stwuct gettweetfiewdswequest {
+  1: w-wequiwed wist<i64> t-tweetids (pewsonawdatatype = 'tweetid')
+  2: w-wequiwed g-gettweetfiewdsoptions o-options
+} (haspewsonawdata = 'twue')
 
 /**
- * Used in `TweetFieldsResultState` when the requested tweet is found.
+ * u-used in `tweetfiewdswesuwtstate` when the wequested tweet i-is found. 😳
  */
-struct TweetFieldsResultFound {
-  1: required tweet.Tweet tweet
+stwuct tweetfiewdswesuwtfound {
+  1: wequiwed tweet.tweet tweet
 
   /**
-   * If `tweet` is a retweet, `retweetedTweet` will be the retweeted tweet.
-   * Just like with the requested tweet, only the requested fields will be
-   * hydrated and set on the retweeted tweet.
+   * i-if `tweet` is a wetweet, (///ˬ///✿) `wetweetedtweet` wiww be t-the wetweeted tweet. XD
+   * j-just wike with the wequested t-tweet, òωó onwy the wequested f-fiewds wiww be
+   * h-hydwated and set on the wetweeted t-tweet. (ˆ ﻌ ˆ)♡
    */
-  2: optional tweet.Tweet retweetedTweet
+  2: optionaw t-tweet.tweet wetweetedtweet
 
   /**
-   * If specified, then the tweet should be soft filtered.
+   * i-if specified, o.O then the t-tweet shouwd be soft fiwtewed. (U ﹏ U)
    */
-  3: optional safety_result.FilteredReason suppressReason
+  3: optionaw safety_wesuwt.fiwtewedweason s-suppwessweason
 }
 
 /**
- * Used in `TweetFieldsResultState` when the requested tweet is not found.
+ * used in `tweetfiewdswesuwtstate` w-when the wequested tweet is nyot found. 🥺
  */
-struct TweetFieldsResultNotFound {
-  // If this field is true, then we know that the tweet once existed and
-  // has since been deleted.
-  1: bool deleted = 0
+s-stwuct tweetfiewdswesuwtnotfound {
+  // if t-this fiewd is twue, UwU then we know t-that the tweet once existed and
+  // h-has since been deweted. XD
+  1: b-boow deweted = 0
 
-  // This tweet is deleted after being bounced for violating the Twitter
-  // Rules and should never be rendered or undeleted. see go/bounced-tweet
-  // In certain timelines we render a tombstone in its place.
-  2: bool bounceDeleted = 0
+  // this tweet is deweted a-aftew being bounced f-fow viowating t-the twittew
+  // w-wuwes and shouwd n-nyevew be wendewed o-ow undeweted. ʘwʘ see go/bounced-tweet
+  // i-in cewtain timewines w-we wendew a t-tombstone in its pwace. (///ˬ///✿)
+  2: boow b-bouncedeweted = 0
 
-  // The reason that a tweet should not be displayed. See go/vf-tombstones-in-tweetypie
-  // Tweets that are not found do not going through Visibility Filtering rule evaluation and thus
-  // are not `TweetFieldsResultFiltered`, but may still have a filtered_reason that distinguishes
-  // whether the unavailable tweet should be tombstoned or hard-filtered based on the Safety Level.
-  3: optional safety_result.FilteredReason filtered_reason
+  // the weason that a tweet s-shouwd nyot be d-dispwayed. 🥺 see go/vf-tombstones-in-tweetypie
+  // tweets that a-awe nyot found do n-nyot going thwough visibiwity f-fiwtewing wuwe evawuation a-and thus
+  // a-awe nyot `tweetfiewdswesuwtfiwtewed`, b-but may stiww have a fiwtewed_weason that distinguishes
+  // whethew the unavaiwabwe tweet shouwd b-be tombstoned ow hawd-fiwtewed based o-on the safety wevew. o.O
+  3: optionaw s-safety_wesuwt.fiwtewedweason fiwtewed_weason
 }
 
-struct TweetFieldsPartial {
-  1: required TweetFieldsResultFound found
+s-stwuct tweetfiewdspawtiaw {
+  1: w-wequiwed tweetfiewdswesuwtfound f-found
 
   /**
-    * The tweet fields that could not be loaded when hydration fails
-    * and a backend fails with an exception. This field is populated
-    * when a tweet is "partially" hydrated, i.e. some fields were
-    * successfully fetched while others were not.
+    * t-the tweet fiewds that couwd not be woaded w-when hydwation faiws
+    * and a backend faiws w-with an exception. /(^•ω•^) this fiewd i-is popuwated
+    * w-when a tweet i-is "pawtiawwy" hydwated, (U ﹏ U) i.e. s-some fiewds wewe
+    * successfuwwy fetched whiwe othews wewe nyot. (U ﹏ U)
     *
-    * It indicates degraded data in the `tweet`. Each entry in `missing_fields`
-    * indicates a traversal of the `Tweet` thrift object terminating at
-    * the field that is missing. For most non-core fields, the path will
-    * just be the field id of the field that is missing.
+    * i-it indicates degwaded data in the `tweet`. (✿oωo) each entwy in `missing_fiewds`
+    * indicates a twavewsaw of the `tweet` thwift object tewminating a-at
+    * the fiewd t-that is missing. rawr fow most nyon-cowe f-fiewds, ^^ the p-path wiww
+    * just be the fiewd id of the fiewd that is missing. ^^
     *
-    * For example, if card2 failed to load for a tweet, the tweet is marked "partial",
-    * the `tweet` field will be set, the Tweet's `card2`
-    * field will be empty, and this field will be set to:
+    * f-fow exampwe, (✿oωo) if c-cawd2 faiwed to woad fow a tweet, t-the tweet is m-mawked "pawtiaw", (˘ω˘)
+    * t-the `tweet` f-fiewd wiww be set, /(^•ω•^) the tweet's `cawd2`
+    * fiewd wiww be e-empty, o.O and this fiewd wiww be set to:
     *
-    *     Set(FieldByPath(Seq(17)))
+    *     set(fiewdbypath(seq(17)))
     */
-  2: required set<FieldByPath> missingFields
+  2: w-wequiwed set<fiewdbypath> missingfiewds
 
   /**
-    * Same as `missing_fields` but for the source tweet in case the requested tweet
-    * was a retweet.
+    * same as `missing_fiewds` but fow the souwce tweet i-in case the wequested tweet
+    * was a wetweet. o.O
     */
-  3: required set<FieldByPath> sourceTweetMissingFields
+  3: wequiwed set<fiewdbypath> s-souwcetweetmissingfiewds
 }
 /**
- * Used in `TweetFieldsResultState` when there was a failure loading the requested tweet.
+ * u-used i-in `tweetfiewdswesuwtstate` when thewe was a faiwuwe w-woading the w-wequested tweet. ^^;;
  */
-struct TweetFieldsResultFailed {
+s-stwuct tweetfiewdswesuwtfaiwed {
   /**
-   * If true, the failure was the result of backpressure, which means the request
-   * should not be immediately retried.  It is safe to retry again later.
+   * if twue, ( ͡o ω ͡o ) the faiwuwe was the w-wesuwt of backpwessuwe, which means t-the wequest
+   * shouwd nyot be immediatewy wetwied. >w<  it is s-safe to wetwy again watew. /(^•ω•^)
    *
-   * If false, the failure is probably transient and safe to retry immediately.
+   * i-if fawse, 😳 the faiwuwe is pwobabwy t-twansient a-and safe to wetwy immediatewy. rawr x3
    */
-  1: required bool overCapacity
+  1: w-wequiwed boow ovewcapacity
 
   /**
-   * An optional message about the cause of the failure.
+   * an optionaw message a-about the cause of the faiwuwe. OwO
    */
-  2: optional string message
+  2: optionaw stwing message
 
   /**
-   * This field is populated when some tweet fields fail to load and the
-   * tweet is marked "partial" in tweetypie. It contains the tweet/RT
-   * information along with the set of tweet fields that failed to
-   * get populated.
+   * t-this fiewd is popuwated when some tweet fiewds f-faiw to woad and the
+   * tweet i-is mawked "pawtiaw" i-in tweetypie. ^•ﻌ•^ it contains t-the tweet/wt
+   * infowmation a-awong with the set of tweet fiewds that faiwed to
+   * g-get popuwated. (U ﹏ U)
    */
-  3: optional TweetFieldsPartial partial
+  3: o-optionaw tweetfiewdspawtiaw pawtiaw
 }
 
 /**
- * Used in `TweetFieldsResultState` when the requested tweet has been filtered out.
+ * used i-in `tweetfiewdswesuwtstate` w-when the wequested tweet has been f-fiwtewed out. OwO
  */
-struct TweetFieldsResultFiltered {
-  1: required safety_result.FilteredReason reason
+stwuct tweetfiewdswesuwtfiwtewed {
+  1: wequiwed safety_wesuwt.fiwtewedweason weason
 }
 
 /**
- * A union of the different possible outcomes of a fetching a single tweet.
+ * a union of the d-diffewent possibwe outcomes of a fetching a singwe tweet. (ˆ ﻌ ˆ)♡
  */
-union TweetFieldsResultState {
-  1: TweetFieldsResultFound found
-  2: TweetFieldsResultNotFound notFound
-  3: TweetFieldsResultFailed failed
-  4: TweetFieldsResultFiltered filtered
+u-union tweetfiewdswesuwtstate {
+  1: t-tweetfiewdswesuwtfound f-found
+  2: tweetfiewdswesuwtnotfound n-nyotfound
+  3: tweetfiewdswesuwtfaiwed f-faiwed
+  4: tweetfiewdswesuwtfiwtewed f-fiwtewed
 }
 
 /**
- * The response to get_tweet_fields will include a TweetFieldsResultRow for each
- * requested tweet id.
+ * the wesponse to g-get_tweet_fiewds w-wiww incwude a tweetfiewdswesuwtwow fow each
+ * wequested tweet i-id. >_<
  */
-struct GetTweetFieldsResult {
+stwuct g-gettweetfiewdswesuwt {
   /**
-   * The id of the requested tweet.
+   * the id of the wequested tweet. rawr
    */
-  1: required i64 tweetId (personalDataType = 'TweetId')
+  1: w-wequiwed i64 tweetid (pewsonawdatatype = 'tweetid')
 
   /**
-   * the result for the requested tweet
+   * t-the w-wesuwt fow the wequested t-tweet
    */
-  2: required TweetFieldsResultState tweetResult
+  2: w-wequiwed tweetfiewdswesuwtstate t-tweetwesuwt
 
   /**
-   * If quoted-tweets were requested and the primary tweet was found,
-   * this field will contain the result state for the quoted tweeted.
+   * if quoted-tweets w-wewe wequested and the pwimawy tweet was found, >_<
+   * this fiewd w-wiww contain t-the wesuwt state f-fow the quoted t-tweeted. -.-
    */
-  3: optional TweetFieldsResultState quotedTweetResult
+  3: o-optionaw tweetfiewdswesuwtstate q-quotedtweetwesuwt
 
   /**
-   * If the primary tweet was found, carousels were requested and there
-   * was a carousel URL in the primary tweet, this field will contain the
-   * result for the carousel.
+   * i-if the pwimawy tweet was found, cawousews wewe w-wequested and thewe
+   * was a cawousew uww in t-the pwimawy tweet, (⑅˘꒳˘) this fiewd wiww c-contain the
+   * wesuwt fow the cawousew. o.O
    *
-   * @deprecated
+   * @depwecated
    */
-  4: optional carousel_service.GetCarouselResult carouselResult
+  4: optionaw cawousew_sewvice.getcawousewwesuwt c-cawousewwesuwt
 }
 
-struct TweetCreateConversationControlByInvitation {
-  1: optional bool invite_via_mention
+s-stwuct t-tweetcweateconvewsationcontwowbyinvitation {
+  1: optionaw boow invite_via_mention
 }
 
-struct TweetCreateConversationControlCommunity {
-  1: optional bool invite_via_mention
+stwuct t-tweetcweateconvewsationcontwowcommunity {
+  1: optionaw b-boow invite_via_mention
 }
 
-struct TweetCreateConversationControlFollowers {
-  1: optional bool invite_via_mention
+s-stwuct tweetcweateconvewsationcontwowfowwowews {
+  1: o-optionaw boow invite_via_mention
 }
 
 /**
- * Specify limits on user participation in a conversation.
+ * specify wimits on usew pawticipation in a convewsation. (˘ω˘)
  *
- * This is a union rather than a struct to support adding conversation
- * controls that require carrying metadata along with them, such as a list id.
+ * this is a union w-wathew than a s-stwuct to suppowt a-adding convewsation
+ * contwows that wequiwe cawwying m-metadata awong with them, (ˆ ﻌ ˆ)♡ such as a wist i-id. UwU
  *
- * See also:
- *   Tweet.conversation_control
- *   PostTweetRequest.conversation_control
+ * see awso:
+ *   tweet.convewsation_contwow
+ *   p-posttweetwequest.convewsation_contwow
  */
-union TweetCreateConversationControl {
-  1: TweetCreateConversationControlCommunity community
-  2: TweetCreateConversationControlByInvitation byInvitation
-  3: TweetCreateConversationControlFollowers followers
+union tweetcweateconvewsationcontwow {
+  1: tweetcweateconvewsationcontwowcommunity community
+  2: t-tweetcweateconvewsationcontwowbyinvitation byinvitation
+  3: t-tweetcweateconvewsationcontwowfowwowews fowwowews
 }
 
 /*
- * Specifies the exclusivity of a tweet
- * This limits the audience of the tweet to the author
- * and the author's super followers
- * While empty now, we are expecting to add additional fields in v1+
+ * specifies the excwusivity of a tweet
+ * t-this wimits the audience of the tweet to t-the authow
+ * and the authow's supew f-fowwowews
+ * w-whiwe empty nyow, (✿oωo) we awe expecting to add additionaw fiewds in v1+
  */
-struct ExclusiveTweetControlOptions {}
+stwuct e-excwusivetweetcontwowoptions {}
 
-struct TrustedFriendsControlOptions {
-  1: i64 trusted_friends_list_id = 0 (personalDataType = 'TrustedFriendsListMetadata')
-}(hasPersonalData = 'true')
+stwuct twustedfwiendscontwowoptions {
+  1: i64 twusted_fwiends_wist_id = 0 (pewsonawdatatype = 'twustedfwiendswistmetadata')
+}(haspewsonawdata = 'twue')
 
-struct CollabInvitationOptions {
-  1: required list<i64> collaborator_user_ids (personalDataType = 'UserId')
-  // Note: status not sent here, will be added in TweetBuilder to set all but author as PENDING
+stwuct cowwabinvitationoptions {
+  1: wequiwed wist<i64> c-cowwabowatow_usew_ids (pewsonawdatatype = 'usewid')
+  // n-note: status nyot sent hewe, (ˆ ﻌ ˆ)♡ wiww be a-added in tweetbuiwdew to set aww b-but authow as p-pending
 }
 
-struct CollabTweetOptions {
-  1: required list<i64> collaborator_user_ids (personalDataType = 'UserId')
+stwuct c-cowwabtweetoptions {
+  1: wequiwed wist<i64> cowwabowatow_usew_ids (pewsonawdatatype = 'usewid')
 }
 
-union CollabControlOptions {
-  1: CollabInvitationOptions collabInvitation
-  2: CollabTweetOptions collabTweet
+u-union cowwabcontwowoptions {
+  1: c-cowwabinvitationoptions c-cowwabinvitation
+  2: c-cowwabtweetoptions cowwabtweet
 }
 
 /**
- * When this struct is supplied, this PostTweetRequest is interpreted as
- * an edit of the Tweet whose latest version is represented by previous_tweet_id.
- * If this is the first edit of a Tweet, this will be the same as the initial_tweet_id.
+ * when this stwuct is suppwied, -.- this p-posttweetwequest i-is intewpweted as
+ * an edit of the tweet whose watest vewsion is wepwesented by pwevious_tweet_id. UwU
+ * i-if this is the fiwst edit of a tweet, /(^•ω•^) this wiww be the s-same as the initiaw_tweet_id. rawr x3
  **/
-struct EditOptions {
+s-stwuct editoptions {
   /**
-   * The ID of the previous latest version of the Tweet that is being edited.
-   * If this is the first edit, this will be the same as the initial_tweet_id.
+   * t-the id of the p-pwevious watest vewsion of the tweet that is being edited. XD
+   * if this is the fiwst edit, UwU this w-wiww be the same as the initiaw_tweet_id. ^^
    **/
-  1: required i64 previous_tweet_id (personalDataType = 'TweetId')
+  1: w-wequiwed i64 pwevious_tweet_id (pewsonawdatatype = 'tweetid')
 }
 
-struct NoteTweetOptions {
+s-stwuct n-nyotetweetoptions {
   /**
-   * The ID of the NoteTweet to be associated with this Tweet.
+   * the id of the nyotetweet to be associated with this tweet. (U ﹏ U)
    **/
-  1: required i64 note_tweet_id (personalDataType = 'TwitterArticleID')
-  // Deprecated
-  2: optional list<string> mentioned_screen_names (personalDataType = 'Username')
+  1: w-wequiwed i64 nyote_tweet_id (pewsonawdatatype = 'twittewawticweid')
+  // d-depwecated
+  2: o-optionaw wist<stwing> m-mentioned_scween_names (pewsonawdatatype = 'usewname')
   /**
-  * The user IDs of the mentioned users
+  * t-the usew ids of the mentioned u-usews
   **/
-  3: optional list<i64> mentioned_user_ids (personalDataType = 'UserId')
+  3: optionaw wist<i64> mentioned_usew_ids (pewsonawdatatype = 'usewid')
   /**
-  * Specifies if the Tweet can be expanded into the NoteTweet, or if they have the same text
+  * s-specifies if t-the tweet can be e-expanded into the nyotetweet, òωó ow if they have t-the same text
   **/
-  4: optional bool is_expandable
+  4: optionaw b-boow is_expandabwe
 }
 
-struct PostTweetRequest {
+s-stwuct posttweetwequest {
   /**
-   * Id of the user creating the tweet.
+   * i-id o-of the usew cweating the tweet. ( ͡o ω ͡o )
    */
-  1: required i64 user_id (personalDataType = 'UserId')
+  1: wequiwed i64 usew_id (pewsonawdatatype = 'usewid')
 
   /**
-   * The user-supplied text of the tweet.
+   * t-the usew-suppwied text of the tweet. (ˆ ﻌ ˆ)♡
    */
-  2: required string text (personalDataType = 'PrivateTweets, PublicTweets')
+  2: wequiwed stwing text (pewsonawdatatype = 'pwivatetweets, 😳😳😳 p-pubwictweets')
 
   /**
-   * The OAuth client application from which the creation request originated.
+   * t-the oauth cwient appwication fwom w-which the cweation w-wequest owiginated. ʘwʘ
    *
-   * This must be in the format "oauth:<client application id>". For requests
-   * from a user this is the application id of their client; for internal
-   * services this is the id of an associated application registered at
-   * https://apps.twitter.com.
+   * t-this must be in t-the fowmat "oauth:<cwient appwication id>". 😳😳😳 fow w-wequests
+   * fwom a usew this is the appwication i-id of theiw cwient; fow intewnaw
+   * s-sewvices t-this is the id o-of an associated a-appwication wegistewed a-at
+   * h-https://apps.twittew.com. >w<
    */
-  3: required string created_via (personalDataType = 'ClientType')
+  3: wequiwed stwing cweated_via (pewsonawdatatype = 'cwienttype')
 
-  4: optional i64 in_reply_to_tweet_id (personalDataType = 'TweetId')
-  5: optional TweetCreateGeo geo
-  6: optional list<i64> media_upload_ids (personalDataType = 'MediaId')
-  7: optional tweet.Narrowcast narrowcast
-
-  /**
-   * Do not deliver this tweet to a user's followers.
-   *
-   * When true this tweet will not be fanned out, appear in the user's
-   * timeline, or appear in search results. It will be distributed via the
-   * firehose and available in the public API.
-   *
-   * This is primarily used to create tweets that can be used as ads without
-   * broadcasting them to an advertiser's followers.
-   *
-   */
-  8: bool nullcast = 0
+  4: o-optionaw i64 in_wepwy_to_tweet_id (pewsonawdatatype = 'tweetid')
+  5: o-optionaw tweetcweategeo geo
+  6: o-optionaw wist<i64> m-media_upwoad_ids (pewsonawdatatype = 'mediaid')
+  7: o-optionaw t-tweet.nawwowcast n-nyawwowcast
 
   /**
-   * The impression id of the ad from which this tweet was created.
+   * do nyot dewivew this tweet to a usew's fowwowews. nyaa~~
    *
-   * This is set when a user retweets or replies to a promoted tweet. It is
-   * used to attribute the "earned" exposure of an advertisement.
-   */
-  9: optional i64 tracking_id (personalDataType = 'ImpressionId')
-
-  /**
-   * @deprecated.
-   * TOO clients don't actively use this input param, and the v2 API does not plan
-   * to expose this parameter. The value associated with this field that's
-   * stored with a tweet is obtained from the user's account preferences stored in
-   * `User.safety.nsfw_user`. (See go/user.thrift for more details on this field)
+   * when twue t-this tweet wiww n-nyot be fanned out, :3 appeaw in the u-usew's
+   * timewine, mya o-ow appeaw in seawch wesuwts. 😳😳😳 i-it wiww be distwibuted via the
+   * fiwehose and avaiwabwe i-in the pubwic api. ^^
    *
-   * Field indicates whether a individual tweet may contain objectionable content.
-   *
-   * If specified, tweet.core_data.nsfw_user will equal this value (otherwise,
-   * tweet.core_data.nsfw_user will be set to user.nsfw_user).
-   */
-  10: optional bool possibly_sensitive
-
-  /**
-   * Do not save, index, fanout, or otherwise persist this tweet.
-   *
-   * When true, the tweet is validated, created, and returned but is not
-   * persisted. This can be used for dark testing or pre-validating a tweet
-   * scheduled for later creation.
-   */
-  11: bool dark = 0
-
-  /**
-   * IP address of the user making the request.
-   *
-   * This is used for logging certain kinds of actions, like attempting to
-   * tweet malware urls.
-   */
-  12: optional string remote_host (personalDataType = 'IpAddress')
-
-  /**
-   * Additional fields to write with this tweet.
-   *
-   * This Tweet object should contain only additional fields to write with
-   * this tweet. Additional fields are tweet fields with id > 100. Set
-   * tweet.id to be 0; the id will be generated by Tweetypie. Any other non-
-   * additional fields set on this tweet will be considered an invalid
-   * request.
+   * this i-is pwimawiwy u-used to cweate tweets that can be u-used as ads without
+   * b-bwoadcasting t-them to a-an advewtisew's f-fowwowews. rawr
    *
    */
-  14: optional tweet.Tweet additional_fields
-
-  15: optional WritePathHydrationOptions hydration_options
-
-  // OBSOLETE 16: optional bool bypass_rate_limit_for_xfactor
+  8: boow n-nyuwwcast = 0
 
   /**
-   * ID to explicitly identify a creation request for the purpose of rejecting
-   * duplicates.
+   * t-the impwession id of the ad fwom which t-this tweet was cweated. (ꈍᴗꈍ)
    *
-   * If two requests are received with the same uniqueness_id, then they will
-   * be considered duplicates of each other. This only applies for tweets
-   * created within the same datacenter. This id should be a snowflake id so
-   * that it's globally unique.
+   * this is set when a-a usew wetweets ow wepwies to a pwomoted tweet. ^•ﻌ•^ it is
+   * used t-to attwibute t-the "eawned" exposuwe o-of an advewtisement. UwU
    */
-  17: optional i64 uniqueness_id (personalDataType = 'PrivateTweetEntitiesAndMetadata, PublicTweetEntitiesAndMetadata')
-
-  18: optional feature_context.FeatureContext feature_context
+  9: o-optionaw i64 twacking_id (pewsonawdatatype = 'impwessionid')
 
   /**
-   * Passthrough data for Scarecrow that is used for safety checks.
-   */
-  19: optional safety_meta_data.SafetyMetaData safety_meta_data
-
-  // OBSOLETE 20: bool community_narrowcast = 0
-
-  /**
-   * Toggle narrowcasting behavior for leading @mentions.
+   * @depwecated. (U ﹏ U)
+   * too cwients don't a-activewy use t-this input pawam, (ꈍᴗꈍ) and the v2 api does nyot pwan
+   * t-to expose t-this pawametew. t-the vawue associated with this fiewd t-that's
+   * s-stowed with a tweet is obtained fwom the usew's account pwefewences stowed in
+   * `usew.safety.nsfw_usew`. o.O (see go/usew.thwift fow mowe detaiws o-on this fiewd)
    *
-   * If in_reply_to_tweet_id is not set:
-   *   - When this flag is true and the tweet text starts with a leading mention then the tweet
-   *     will be narrowcasted.
+   * fiewd indicates whethew a individuaw tweet may contain objectionabwe content. nyaa~~
    *
-   * If in_reply_to_tweet_id is set:
-   *   - If auto_populate_reply_metadata is true
-   *       - Setting this flag to true will use the default narrowcast determination logic where
-   *         most replies will be narrowcast but some special-cases of self-replies will not.
-   *       - Setting this flag to false will disable narrowcasting and the tweet will be fanned out
-   *         to all the author's followers.  Previously users prefixed their reply text with "." to
-   *         achieve this effect.
-   *   - If auto_populate_reply_metadata is false, this flag will control whether a leading
-   *     mention in the tweet text will be narrowcast (true) or broadcast (false).
+   * i-if specified, ^•ﻌ•^ t-tweet.cowe_data.nsfw_usew wiww equaw this vawue (othewwise, 🥺
+   * tweet.cowe_data.nsfw_usew w-wiww be set to usew.nsfw_usew). rawr
    */
-  21: bool enable_tweet_to_narrowcasting = 1
+  10: optionaw boow possibwy_sensitive
 
   /**
-   * Automatically populate replies with leading mentions from tweet text.
-   */
-  22: bool auto_populate_reply_metadata = 0
-
-  /**
-   * Metadata at the tweet-asset relationship level.
-   */
-  23: optional map<MediaCommon.MediaId, MediaInformation.UserDefinedProductMetadata> media_metadata
-
-  /**
-   * An optional URL that identifies a resource that is treated as an attachment of the
-   * the tweet, such as a quote-tweet permalink.
+   * d-do nyot save, ^•ﻌ•^ i-index, fanout, 😳 o-ow othewwise pewsist this tweet. ^^;;
    *
-   * When provided, it is appended to the end of the tweet text, but is not
-   * included in the visible_text_range.
+   * w-when twue, (ꈍᴗꈍ) the tweet i-is vawidated, σωσ cweated, (⑅˘꒳˘) and wetuwned b-but is nyot
+   * p-pewsisted. OwO t-this can be used f-fow dawk testing ow pwe-vawidating a-a tweet
+   * s-scheduwed fow watew cweation. 😳
    */
-  24: optional string attachment_url (personalDataType = 'CardId, ShortUrl')
+  11: boow dawk = 0
 
   /**
-   * Pass-through information to be published in `TweetCreateEvent`.
+   * i-ip addwess o-of the usew making the wequest. (ˆ ﻌ ˆ)♡
    *
-   * This data is not persisted by Tweetypie.
-   *
-   * @deprecated prefer transient_context (see field 27) over this.
+   * this is used fow wogging cewtain kinds o-of actions, UwU wike a-attempting to
+   * tweet mawwawe u-uwws. rawr x3
    */
-  25: optional map<tweet.TweetCreateContextKey, string> additional_context
+  12: optionaw s-stwing wemote_host (pewsonawdatatype = 'ipaddwess')
 
   /**
-   * Users to exclude from the automatic reply population behavior.
+   * additionaw fiewds to wwite with this tweet. σωσ
    *
-   * When auto_populate_reply_metadata is true, screen names appearing in the
-   * mention prefix can be excluded by specifying a corresponding user id in
-   * exclude_reply_user_ids.  Because the mention prefix must always include
-   * the leading mention to preserve directed-at addressing for the in-reply-
-   * to tweet author, attempting to exclude that user id will have no effect.
-   * Specifying a user id not in the prefix will be silently ignored.
+   * t-this tweet object shouwd contain onwy additionaw f-fiewds to wwite with
+   * this tweet. UwU additionaw f-fiewds awe t-tweet fiewds with id > 100. rawr x3 set
+   * tweet.id to be 0; the id wiww be genewated b-by tweetypie. /(^•ω•^) a-any othew nyon-
+   * a-additionaw f-fiewds set on this tweet wiww be considewed an i-invawid
+   * wequest. OwO
+   *
    */
-  26: optional list<i64> exclude_reply_user_ids (personalDataType = 'UserId')
+  14: o-optionaw t-tweet.tweet additionaw_fiewds
+
+  15: o-optionaw wwitepathhydwationoptions h-hydwation_options
+
+  // obsowete 16: optionaw boow bypass_wate_wimit_fow_xfactow
 
   /**
-   * Used to pass structured data to Tweetypie and tweet_events eventbus
-   * stream consumers. This data is not persisted by Tweetypie.
+   * id to expwicitwy identify a cweation wequest f-fow the puwpose of wejecting
+   * d-dupwicates. 😳😳😳
    *
-   * If adding a new passthrough field, prefer this over additional_context,
-   * as this is structured data, while additional_context is text data.
+   * i-if two w-wequests awe weceived w-with the s-same uniqueness_id, UwU then they wiww
+   * be considewed dupwicates of each othew. nyaa~~ t-this onwy appwies fow tweets
+   * cweated within t-the same datacentew. t-this id shouwd be a snowfwake i-id so
+   * that it's gwobawwy unique. -.-
    */
-  27: optional transient_context.TransientCreateContext transient_context
+  17: optionaw i64 u-uniqueness_id (pewsonawdatatype = 'pwivatetweetentitiesandmetadata, (˘ω˘) p-pubwictweetentitiesandmetadata')
+
+  18: optionaw f-featuwe_context.featuwecontext featuwe_context
 
   /**
-   * Composer flow used to create this tweet. Unless using the News Camera (go/newscamera)
-   * flow, this should be `STANDARD`.
-   *
-   * When set to `CAMERA`, clients are expected to display the tweet with a different UI
-   * to emphasize attached media.
+   * passthwough data f-fow scawecwow t-that is used fow s-safety checks. >_<
    */
-  28: optional tweet.ComposerSource composer_source
+  19: optionaw safety_meta_data.safetymetadata s-safety_meta_data
+
+  // o-obsowete 20: b-boow c-community_nawwowcast = 0
 
   /**
-  * present if we want to restrict replies to this tweet (go/dont-at-me-api)
-  * - This gets converted to Tweet.conversation_control and changes type
-  * - This is only valid for conversation root tweets
-  * - This applies to all replies to this tweet
+   * t-toggwe nyawwowcasting b-behaviow fow weading @mentions. (///ˬ///✿)
+   *
+   * i-if in_wepwy_to_tweet_id i-is nyot set:
+   *   - w-when this fwag is twue and the tweet text stawts w-with a weading m-mention then t-the tweet
+   *     w-wiww be nyawwowcasted. 😳
+   *
+   * i-if in_wepwy_to_tweet_id i-is set:
+   *   - if auto_popuwate_wepwy_metadata i-is t-twue
+   *       - s-setting this fwag t-to twue wiww u-use the defauwt nyawwowcast detewmination w-wogic w-whewe
+   *         most wepwies w-wiww be nyawwowcast but some speciaw-cases of sewf-wepwies w-wiww n-nyot. >_<
+   *       - setting this f-fwag to fawse wiww d-disabwe nyawwowcasting and the tweet wiww be fanned out
+   *         to aww t-the authow's fowwowews. >w<  p-pweviouswy u-usews pwefixed theiw wepwy text w-with "." to
+   *         achieve this effect. (U ᵕ U❁)
+   *   - if auto_popuwate_wepwy_metadata is fawse, σωσ t-this fwag wiww contwow whethew a weading
+   *     mention in the tweet text wiww be nyawwowcast (twue) o-ow bwoadcast (fawse). (˘ω˘)
+   */
+  21: b-boow e-enabwe_tweet_to_nawwowcasting = 1
+
+  /**
+   * automaticawwy popuwate wepwies with weading mentions fwom tweet text. ^•ﻌ•^
+   */
+  22: boow auto_popuwate_wepwy_metadata = 0
+
+  /**
+   * m-metadata at the tweet-asset wewationship wevew. 😳
+   */
+  23: o-optionaw map<mediacommon.mediaid, :3 mediainfowmation.usewdefinedpwoductmetadata> media_metadata
+
+  /**
+   * an optionaw u-uww that identifies a wesouwce that is tweated a-as an attachment of the
+   * the tweet, ^^ such as a quote-tweet p-pewmawink. (U ᵕ U❁)
+   *
+   * when pwovided, ʘwʘ it is appended t-to the end of the tweet text, /(^•ω•^) b-but is nyot
+   * incwuded in the visibwe_text_wange. :3
+   */
+  24: optionaw stwing attachment_uww (pewsonawdatatype = 'cawdid, s-showtuww')
+
+  /**
+   * p-pass-thwough i-infowmation t-to be pubwished i-in `tweetcweateevent`. >w<
+   *
+   * this data is n-nyot pewsisted by tweetypie. rawr
+   *
+   * @depwecated pwefew twansient_context (see fiewd 27) ovew this.
+   */
+  25: optionaw map<tweet.tweetcweatecontextkey, (⑅˘꒳˘) stwing> additionaw_context
+
+  /**
+   * usews to excwude f-fwom the automatic wepwy popuwation behaviow. ^^
+   *
+   * w-when auto_popuwate_wepwy_metadata i-is t-twue, ^•ﻌ•^ scween nyames appeawing in t-the
+   * mention pwefix can be e-excwuded by specifying a-a cowwesponding u-usew id in
+   * excwude_wepwy_usew_ids. (ˆ ﻌ ˆ)♡  b-because the mention p-pwefix must a-awways incwude
+   * the weading mention to pwesewve diwected-at addwessing fow t-the in-wepwy-
+   * t-to tweet authow, :3 attempting to e-excwude that usew i-id wiww have nyo effect. UwU
+   * s-specifying a usew i-id nyot in the p-pwefix wiww be siwentwy ignowed. ^^
+   */
+  26: optionaw wist<i64> excwude_wepwy_usew_ids (pewsonawdatatype = 'usewid')
+
+  /**
+   * u-used to pass stwuctuwed data t-to tweetypie and tweet_events eventbus
+   * stweam consumews. ( ͡o ω ͡o ) this d-data is nyot pewsisted by tweetypie. rawr
+   *
+   * i-if adding a nyew passthwough fiewd, UwU pwefew this ovew additionaw_context, òωó
+   * as this is stwuctuwed data, ʘwʘ whiwe additionaw_context is text data. ^^
+   */
+  27: o-optionaw twansient_context.twansientcweatecontext twansient_context
+
+  /**
+   * composew fwow used t-to cweate this t-tweet. ^•ﻌ•^ unwess u-using the nyews camewa (go/newscamewa)
+   * f-fwow, (⑅˘꒳˘) this shouwd be `standawd`. (✿oωo)
+   *
+   * w-when set t-to `camewa`, >w< cwients a-awe expected t-to dispway the t-tweet with a diffewent ui
+   * t-to emphasize attached m-media. mya
+   */
+  28: o-optionaw t-tweet.composewsouwce composew_souwce
+
+  /**
+  * pwesent if we want to westwict w-wepwies to this t-tweet (go/dont-at-me-api)
+  * - t-this gets convewted to tweet.convewsation_contwow a-and changes type
+  * - this is o-onwy vawid fow convewsation woot tweets
+  * - this appwies to a-aww wepwies to this t-tweet
   */
-  29: optional TweetCreateConversationControl conversation_control
+  29: o-optionaw tweetcweateconvewsationcontwow c-convewsation_contwow
 
-  // OBSOLETE 30: optional jiminy.CreateNudgeOptions nudge_options
+  // o-obsowete 30: o-optionaw jiminy.cweatenudgeoptions n-nyudge_options
 
   /**
-  * Provided if the client wants to have the tweet create evaluated for a nudge (e.g. to notify
-  * the user that they are about to create a toxic tweet). Reference: go/docbird/jiminy
+  * pwovided if the c-cwient wants to have the tweet cweate evawuated fow a nyudge (e.g. o.O t-to nyotify
+  * t-the usew that they awe about to cweate a toxic t-tweet). ^^;; wefewence: go/docbiwd/jiminy
   */
-  31: optional jiminy.CreateTweetNudgeOptions nudge_options
+  31: optionaw jiminy.cweatetweetnudgeoptions nyudge_options
 
   /**
-   * Provided for correlating requests originating from REST endpoints and GraphQL endpoints.
-   * Its presence or absence does not affect Tweet mutation. It used for validation
-   * and debugging. The expected format is a 36 ASCII UUIDv4.
-   * Please see API specification at go/graphql-tweet-mutations for more information.
+   * pwovided fow c-cowwewating wequests o-owiginating f-fwom west endpoints a-and gwaphqw e-endpoints. ( ͡o ω ͡o )
+   * its pwesence ow absence does n-nyot affect tweet m-mutation. (ˆ ﻌ ˆ)♡ it used fow vawidation
+   * a-and debugging. mya t-the expected f-fowmat is a 36 ascii uuidv4. :3
+   * p-pwease see a-api specification at go/gwaphqw-tweet-mutations fow mowe infowmation. (ˆ ﻌ ˆ)♡
    */
-  32: optional string comparison_id (personalDataType = 'UniversallyUniqueIdentifierUuid')
+  32: optionaw stwing compawison_id (pewsonawdatatype = 'univewsawwyuniqueidentifiewuuid')
 
   /**
-   * Options that determine the shape of an exclusive tweet's restrictions.
-   * The existence of this object indicates that the tweet is intended to be an exclusive tweet
-   * While this is an empty structure for now, it will have fields added to it later in later versions.
+   * o-options that detewmine the shape of an excwusive tweet's westwictions. (U ﹏ U)
+   * t-the existence of t-this object indicates that the t-tweet is intended to be an excwusive t-tweet
+   * w-whiwe this is an e-empty stwuctuwe f-fow nyow, òωó it wiww h-have fiewds a-added to it watew in watew vewsions. (U ﹏ U)
    */
-  33: optional ExclusiveTweetControlOptions exclusiveTweetControlOptions
+  33: o-optionaw excwusivetweetcontwowoptions e-excwusivetweetcontwowoptions
 
-  34: optional TrustedFriendsControlOptions trustedFriendsControlOptions
+  34: o-optionaw twustedfwiendscontwowoptions twustedfwiendscontwowoptions
 
   /**
-   * Provided if tweet data is backed up by a creative container, that at tweet hydration
-   * time, tweetypie would delegate to creative container service.
+   * p-pwovided if tweet data i-is backed up by a cweative containew, (///ˬ///✿) that at tweet hydwation
+   * time, /(^•ω•^) tweetypie wouwd dewegate to cweative containew sewvice. (U ᵕ U❁)
    *
-   * go/creatives-containers-tdd
-   * Please note that this id is never publically shared with clients, its only used for
-   * internal purposes.
+   * go/cweatives-containews-tdd
+   * p-pwease n-nyote that this id is nyevew pubwicawwy shawed w-with cwients, (U ﹏ U) its onwy used fow
+   * intewnaw puwposes. (✿oωo)
    */
-  35: optional i64 underlying_creatives_container_id (personalDataType = 'TweetId')
+  35: optionaw i-i64 undewwying_cweatives_containew_id (pewsonawdatatype = 'tweetid')
 
   /**
-   * Provided if tweet is a CollabTweet or a CollabInvitation, along with a list of Collaborators
-   * which includes the original author.
+   * p-pwovided if tweet i-is a cowwabtweet ow a cowwabinvitation, ^^ a-awong w-with a wist of cowwabowatows
+   * which incwudes the owiginaw authow. :3
    *
-   * go/collab-tweets
+   * g-go/cowwab-tweets
    **/
-  36: optional CollabControlOptions collabControlOptions
+  36: optionaw cowwabcontwowoptions cowwabcontwowoptions
 
    /**
-    * When supplied, this PostTweetRequest is an edit. See [[EditOptions]] for more details.
+    * when suppwied, nyaa~~ this p-posttweetwequest i-is an edit. OwO see [[editoptions]] fow mowe detaiws. :3
     **/
-  37: optional EditOptions editOptions
+  37: optionaw editoptions editoptions
 
   /**
-   * When supplied, the NoteTweet specified is associated with the created Tweet.
+   * w-when suppwied, nyaa~~ t-the nyotetweet specified is associated w-with the c-cweated tweet. (///ˬ///✿)
    **/
-  38: optional NoteTweetOptions noteTweetOptions
-} (hasPersonalData = 'true')
+  38: optionaw nyotetweetoptions nyotetweetoptions
+} (haspewsonawdata = 'twue')
 
-struct SetAdditionalFieldsRequest {
-  1: required tweet.Tweet additional_fields
+s-stwuct setadditionawfiewdswequest {
+  1: wequiwed tweet.tweet additionaw_fiewds
 }
 
-struct DeleteAdditionalFieldsRequest {
-  1: required list<i64> tweet_ids (personalDataType = 'TweetId')
-  2: required list<FieldId> field_ids
-}(hasPersonalData = 'true')
+s-stwuct deweteadditionawfiewdswequest {
+  1: w-wequiwed w-wist<i64> tweet_ids (pewsonawdatatype = 'tweetid')
+  2: w-wequiwed w-wist<fiewdid> fiewd_ids
+}(haspewsonawdata = 'twue')
 
-struct DeleteTweetsRequest {
-  1: required list<i64> tweet_ids (personalDataType = 'TweetId')
-  // DEPRECATED and moved to tweetypie_internal.thrift's CascadedDeleteTweetsRequest
-  2: optional i64 cascaded_from_tweet_id (personalDataType = 'TweetId')
-  3: optional tweet_audit.AuditDeleteTweet audit_passthrough
+s-stwuct dewetetweetswequest {
+  1: w-wequiwed w-wist<i64> tweet_ids (pewsonawdatatype = 'tweetid')
+  // depwecated and moved to t-tweetypie_intewnaw.thwift's c-cascadeddewetetweetswequest
+  2: optionaw i64 cascaded_fwom_tweet_id (pewsonawdatatype = 'tweetid')
+  3: o-optionaw tweet_audit.auditdewetetweet a-audit_passthwough
 
   /**
-   * The id of the user initiating this request.
+   * t-the id o-of the usew initiating this wequest. (✿oωo)
    *
-   * It could be either the owner of the tweet or an admin. If not specified
-   * we will use TwitterContext.userId.
+   * i-it couwd be eithew t-the ownew of the tweet ow an admin. 🥺 if nyot specified
+   * w-we w-wiww use twittewcontext.usewid. ʘwʘ
    */
-  4: optional i64 by_user_id (personalDataType = 'UserId')
+  4: optionaw i-i64 by_usew_id (pewsonawdatatype = 'usewid')
 
 
   /**
-   * Where these tweets are being deleted as part of a user erasure, the process
-   * of deleting tweets belonging to deactivated accounts.
+   * whewe these tweets awe being deweted a-as pawt of a u-usew ewasuwe, :3 the p-pwocess
+   * o-of deweting tweets b-bewonging to deactivated accounts. UwU
    *
-   * This lets backends optimize processing of mass deletes of tweets from the
-   * same user. Talk to the Tweetypie team before setting this flag.
+   * t-this wets backends optimize pwocessing of mass dewetes o-of tweets fwom the
+   * same usew. :3 tawk to the tweetypie team befowe setting this fwag. XD
    */
-  5: bool is_user_erasure = 0
+  5: b-boow is_usew_ewasuwe = 0
 
   /**
-   * Id to compare with the user id of the tweets being deleted.
+   * id t-to compawe with t-the usew id of t-the tweets being deweted. 😳😳😳
    *
-   * This provides extra protection against accidental deletion of tweets.
-   * This is required when is_user_erasure is true. If any of the tweets
-   * specified in tweet_ids do not match expected_user_id a
-   * EXPECTED_USER_ID_MISMATCH state will be returned.
+   * t-this pwovides extwa pwotection a-against accidentaw dewetion o-of tweets. (˘ω˘)
+   * this is wequiwed w-when is_usew_ewasuwe i-is twue. (⑅˘꒳˘) if any of the tweets
+   * specified i-in tweet_ids d-do nyot match expected_usew_id a
+   * e-expected_usew_id_mismatch s-state wiww be wetuwned. ( ͡o ω ͡o )
    */
-  6: optional i64 expected_user_id (personalDataType = 'UserId')
+  6: o-optionaw i64 expected_usew_id (pewsonawdatatype = 'usewid')
 
   /**
-   * A bounced tweet is a tweet that has been found to violate Twitter Rules.
-   * This is represented as a tweet with its bounce_label field set.
+   * a bounced t-tweet is a tweet that has been found to viowate twittew wuwes. (⑅˘꒳˘)
+   * this is w-wepwesented as a-a tweet with its b-bounce_wabew fiewd set. (U ﹏ U)
    *
-   * When the Tweet owner deletes their offending bounced tweet in the Bounced workflow, Bouncer
-   * will submit a delete request with `is_bounce_delete` set to true. If the tweet(s) being deleted
-   * have a bounce_label set, this request results in the tweet transitioning into the
-   * BounceDeleted state which means the tweet is partially deleted.
+   * w-when the tweet o-ownew dewetes t-theiw offending b-bounced tweet in the bounced wowkfwow, ʘwʘ bouncew
+   * wiww submit a dewete wequest w-with `is_bounce_dewete` set to twue. if the tweet(s) b-being deweted
+   * have a bounce_wabew set, (ˆ ﻌ ˆ)♡ this wequest wesuwts i-in the tweet t-twansitioning into the
+   * bouncedeweted state which means t-the tweet is pawtiawwy deweted. XD
    *
-   * Most of the normal tweet deletion side-effects occur but the tweet remains in a
-   * few tflock graphs, tweet cache, and a Manhattan marker is added. Other than timelines services,
-   * bounce deleted tweets are considered deleted and will return a StatusState.BounceDelete.
+   * m-most of the nyowmaw tweet d-dewetion side-effects occuw b-but the tweet wemains in a
+   * f-few tfwock gwaphs, (⑅˘꒳˘) tweet cache, (ꈍᴗꈍ) a-and a manhattan mawkew is added. (✿oωo) o-othew than timewines sewvices, ( ͡o ω ͡o )
+   * bounce deweted t-tweets awe considewed deweted and wiww wetuwn a statusstate.bouncedewete. >w<
    *
-   * After a defined grace period, tweets in this state will be fully deleted.
+   * aftew a defined gwace pewiod, ^^ tweets in this state wiww b-be fuwwy deweted. 🥺
    *
-   * If the tweet(s) being deleted do not have the bounce_label set, they will be deleted as usual.
+   * i-if the t-tweet(s) being deweted do nyot have the bounce_wabew set, (ꈍᴗꈍ) they wiww be deweted a-as usuaw. ʘwʘ
    *
-   * Other than Bouncer, no service should use `is_bounce_delete` flag.
+   * othew than b-bouncew, mya nyo sewvice s-shouwd use `is_bounce_dewete` f-fwag. ^^
    */
-  7: bool is_bounce_delete = 0
+  7: boow is_bounce_dewete = 0
 
   /**
-    * This is a unique identifier used in both the REST and GraphQL-dark
-    * requests that will be used to correlate the GraphQL mutation requests to the REST requests
-    * during a transition period when clients will be moving toward tweet creation via GraphQL.
-    * See also, the "Comparison Testing" section at go/tweet-create-on-graphql-tdd for additional
-    * context.
+    * t-this is a unique identifiew used in b-both the west and g-gwaphqw-dawk
+    * w-wequests that wiww be used to cowwewate the gwaphqw mutation w-wequests to the west wequests
+    * duwing a twansition p-pewiod w-when cwients wiww b-be moving towawd t-tweet cweation via gwaphqw.
+    * see awso, the "compawison t-testing" section at go/tweet-cweate-on-gwaphqw-tdd fow additionaw
+    * context. (ꈍᴗꈍ)
     */
-  8: optional string comparison_id (personalDataType = 'UniversallyUniqueIdentifierUuid')
+  8: optionaw stwing compawison_id (pewsonawdatatype = 'univewsawwyuniqueidentifiewuuid')
 
   /**
-    * When an edited tweet is deleted via daemons, we take a different action
-    * than if it was deleted normally. If deleted normally, we delete the
-    * initial tweet in the chain. When deleted via daemons, we delete the actual tweet.
+    * when an edited tweet is deweted via d-daemons, we take a-a diffewent action
+    * than if it was deweted n-nyowmawwy. (ꈍᴗꈍ) if d-deweted nyowmawwy, (ꈍᴗꈍ) w-we dewete the
+    * i-initiaw tweet in the chain. :3 w-when deweted via daemons, ^^ we d-dewete the actuaw tweet. (///ˬ///✿)
     */
-  9: optional bool cascaded_edited_tweet_deletion 
-}(hasPersonalData = 'true')
+  9: o-optionaw b-boow cascaded_edited_tweet_dewetion 
+}(haspewsonawdata = 'twue')
 
-struct DeleteTweetResult {
-  1: required i64 tweet_id (personalDataType = 'TweetId')
-  2: required TweetDeleteState state
-}(hasPersonalData = 'true')
+stwuct dewetetweetwesuwt {
+  1: wequiwed i64 tweet_id (pewsonawdatatype = 'tweetid')
+  2: w-wequiwed t-tweetdewetestate state
+}(haspewsonawdata = 'twue')
 
-struct UnretweetResult {
+stwuct unwetweetwesuwt {
   /**
-   * Id of the retweet that was deleted if a retweet could be found.
+   * id o-of the wetweet that was deweted if a wetweet couwd be found. :3
    */
-  1: optional i64 tweet_id (personalDataType = 'TweetId')
+  1: o-optionaw i64 tweet_id (pewsonawdatatype = 'tweetid')
 
-  2: required TweetDeleteState state
-}(hasPersonalData = 'true')
+  2: w-wequiwed tweetdewetestate state
+}(haspewsonawdata = 'twue')
 
-struct PostTweetResult {
-  1: required TweetCreateState state
+s-stwuct posttweetwesuwt {
+  1: w-wequiwed t-tweetcweatestate state
 
   /**
-   * The created tweet when state is OK.
+   * the cweated t-tweet when state is ok. >w<
    */
-  2: optional tweet.Tweet tweet
+  2: optionaw t-tweet.tweet tweet
 
   /**
-   * The original tweet when state is OK and tweet is a retweet.
+   * the owiginaw tweet w-when state is ok and tweet is a-a wetweet. :3
    */
-  3: optional tweet.Tweet source_tweet
+  3: o-optionaw t-tweet.tweet souwce_tweet
 
   /**
-   * The quoted tweet when state is OK and tweet is a quote tweet.
+   * t-the quoted tweet when state is ok and tweet i-is a quote tweet. >_<
    */
-  4: optional tweet.Tweet quoted_tweet
+  4: o-optionaw t-tweet.tweet quoted_tweet
 
   /**
-   * The required user remediation from Scarecrow when state is BOUNCE.
+   * the wequiwed usew wemediation fwom scawecwow w-when state is bounce. :3
    */
-  5: optional bounce.Bounce bounce
+  5: o-optionaw b-bounce.bounce b-bounce
 
   /**
-   * Additional information when TweetCreateState is not OK.
+   * additionaw infowmation when tweetcweatestate i-is nyot ok. òωó
    *
-   * Not all failures provide a reason.
+   * nyot aww faiwuwes pwovide a-a weason. ^^
    */
-  6: optional string failure_reason
+  6: optionaw stwing f-faiwuwe_weason
 
-  // OBSOLETE 7: optional jiminy.Nudge nudge
+  // o-obsowete 7: optionaw jiminy.nudge nyudge
 
   /**
-  * Returned when the state is NUDGE to indicate that the tweet has not been created, and that
-  * the client should instead display the nudge to the user. Reference: go/docbird/jiminy
+  * wetuwned when the s-state is nyudge t-to indicate that the tweet has n-not been cweated, mya a-and that
+  * the c-cwient shouwd i-instead dispway the nyudge to the usew. (˘ω˘) wefewence: go/docbiwd/jiminy
   */
-  8: optional jiminy.TweetNudge nudge
-} (persisted = "true", hasPersonalData = "true")
+  8: o-optionaw jiminy.tweetnudge nyudge
+} (pewsisted = "twue", (U ᵕ U❁) h-haspewsonawdata = "twue")
 
 /**
- * Specifies the cause of an AccessDenied error.
+ * s-specifies the cause of an accessdenied ewwow. ^^
  */
-enum AccessDeniedCause {
-  // obsolete: INVALID_CLIENT_ID = 0,
-  // obsolete: DEPRECATED = 1,
-  USER_DEACTIVATED = 2,
-  USER_SUSPENDED = 3,
+enum accessdeniedcause {
+  // o-obsowete: invawid_cwient_id = 0, mya
+  // obsowete: depwecated = 1, XD
+  u-usew_deactivated = 2, rawr
+  usew_suspended = 3, (ˆ ﻌ ˆ)♡
 
-  RESERVED_4 = 4,
-  RESERVED_5 = 5,
-  RESERVED_6 = 6
+  w-wesewved_4 = 4, (˘ω˘)
+  wesewved_5 = 5,
+  wesewved_6 = 6
 }
 
 /**
- * AccessDenied error is returned by delete_tweets endpoint when
- * by_user_id is suspended or deactivated.
+ * a-accessdenied ewwow is wetuwned b-by dewete_tweets endpoint w-when
+ * by_usew_id i-is suspended o-ow deactivated. nyaa~~
  */
-exception AccessDenied {
-  1: required string message
-  2: optional AccessDeniedCause errorCause
+exception a-accessdenied {
+  1: w-wequiwed stwing m-message
+  2: o-optionaw accessdeniedcause ewwowcause
 }
 
-struct UndeleteTweetRequest {
-  1: required i64 tweet_id (personalDataType = 'TweetId')
-  2: optional WritePathHydrationOptions hydration_options
+stwuct undewetetweetwequest {
+  1: w-wequiwed i-i64 tweet_id (pewsonawdatatype = 'tweetid')
+  2: o-optionaw wwitepathhydwationoptions hydwation_options
 
   /**
-   * Perform the side effects of undeletion even if the tweet is not deleted.
+   * pewfowm the side e-effects of undewetion e-even if t-the tweet is nyot d-deweted. o.O
    *
-   * This flag is useful if you know that the tweet is present in Manhattan
-   * but is not undeleted with respect to other services.
+   * t-this fwag i-is usefuw if you k-know that the tweet i-is pwesent in manhattan
+   * but is nyot undeweted with wespect to othew sewvices. mya
    */
-  3: optional bool force
-}(hasPersonalData = 'true')
+  3: o-optionaw boow fowce
+}(haspewsonawdata = 'twue')
 
-struct UndeleteTweetResponse {
-  1: required UndeleteTweetState state
-  2: optional tweet.Tweet tweet
+stwuct undewetetweetwesponse {
+  1: w-wequiwed undewetetweetstate s-state
+  2: optionaw tweet.tweet tweet
 }
 
-struct EraseUserTweetsRequest {
-  1: required i64 user_id (personalDataType = 'UserId')
-}(hasPersonalData = 'true')
+stwuct ewaseusewtweetswequest {
+  1: w-wequiwed i64 usew_id (pewsonawdatatype = 'usewid')
+}(haspewsonawdata = 'twue')
 
-struct UnretweetRequest {
+stwuct unwetweetwequest {
   /**
-   * The id of the user who owns the retweet.
+   * t-the id of t-the usew who owns the wetweet. XD
    */
-  1: required i64 user_id (personalDataType = 'UserId')
+  1: wequiwed i64 usew_id (pewsonawdatatype = 'usewid')
 
   /**
-   * The source tweet that should be unretweeted.
+   * the souwce t-tweet that shouwd be unwetweeted. òωó
    */
-  2: required i64 source_tweet_id (personalDataType = 'TweetId')
+  2: wequiwed i64 souwce_tweet_id (pewsonawdatatype = 'tweetid')
 
   /**
-    * This is a unique identifier used in both the REST and GraphQL-dark
-    * requests that will be used to correlate the GraphQL mutation requests to the REST requests
-    * during a transition period when clients will be moving toward tweet creation via GraphQL.
-    * See also, the "Comparison Testing" section at go/tweet-create-on-graphql-tdd for additional
-    * context.
+    * this is a unique identifiew u-used in both the west and g-gwaphqw-dawk
+    * w-wequests that w-wiww be used to c-cowwewate the gwaphqw mutation wequests to the w-west wequests
+    * duwing a twansition pewiod w-when cwients wiww be moving towawd tweet cweation via gwaphqw. (˘ω˘)
+    * see awso, :3 the "compawison testing" section a-at go/tweet-cweate-on-gwaphqw-tdd fow additionaw
+    * c-context.
     */
-  3: optional string comparison_id (personalDataType = 'UniversallyUniqueIdentifierUuid')
-}(hasPersonalData = 'true')
+  3: o-optionaw s-stwing compawison_id (pewsonawdatatype = 'univewsawwyuniqueidentifiewuuid')
+}(haspewsonawdata = 'twue')
 
-struct GetDeletedTweetsRequest {
-  1: required list<i64> tweetIds (personalDataType = 'TweetId')
-}(hasPersonalData = 'true')
+stwuct getdewetedtweetswequest {
+  1: wequiwed wist<i64> t-tweetids (pewsonawdatatype = 'tweetid')
+}(haspewsonawdata = 'twue')
 
-struct GetDeletedTweetResult {
-  1: required i64 tweetId (personalDataType = 'TweetId')
-  2: required DeletedTweetState state
-  4: optional deleted_tweet.DeletedTweet tweet
-}(hasPersonalData = 'true')
+s-stwuct getdewetedtweetwesuwt {
+  1: w-wequiwed i64 tweetid (pewsonawdatatype = 'tweetid')
+  2: w-wequiwed dewetedtweetstate s-state
+  4: optionaw deweted_tweet.dewetedtweet t-tweet
+}(haspewsonawdata = 'twue')
 
 /**
- * Flushes tweets and/or their counts from cache.
+ * fwushes tweets and/ow t-theiw counts fwom cache. OwO
  *
- * Typically will be used manually for testing or when a particular problem is
- * found that needs to be fixed by hand. Defaults to flushing both tweet
- * struct and associated counts.
+ * t-typicawwy wiww be used manuawwy f-fow testing ow w-when a pawticuwaw pwobwem is
+ * found that nyeeds to be fixed by hand. defauwts to fwushing both tweet
+ * stwuct a-and associated c-counts. mya
  */
-struct FlushRequest {
-  1: required list<i64> tweet_ids (personalDataType = 'TweetId')
-  2: bool flushTweets = 1
-  3: bool flushCounts = 1
-}(hasPersonalData = 'true')
+stwuct fwushwequest {
+  1: w-wequiwed w-wist<i64> tweet_ids (pewsonawdatatype = 'tweetid')
+  2: b-boow fwushtweets = 1
+  3: boow fwushcounts = 1
+}(haspewsonawdata = 'twue')
 
 /**
- * A request to retrieve counts for one or more tweets.
+ * a wequest to wetwieve c-counts fow one ow mowe tweets. (˘ω˘)
  */
-struct GetTweetCountsRequest {
-  1: required list<i64> tweet_ids (personalDataType = 'TweetId')
-  2: bool include_retweet_count = 0
-  3: bool include_reply_count = 0
-  4: bool include_favorite_count = 0
-  5: bool include_quote_count = 0
-  6: bool include_bookmark_count = 0
-}(hasPersonalData = 'true')
+stwuct gettweetcountswequest {
+  1: wequiwed wist<i64> tweet_ids (pewsonawdatatype = 'tweetid')
+  2: b-boow incwude_wetweet_count = 0
+  3: boow i-incwude_wepwy_count = 0
+  4: b-boow incwude_favowite_count = 0
+  5: b-boow incwude_quote_count = 0
+  6: boow incwude_bookmawk_count = 0
+}(haspewsonawdata = 'twue')
 
 /**
- * A response optionally indicating one or more counts for a tweet.
+ * a-a wesponse o-optionawwy i-indicating one o-ow mowe counts fow a tweet.
  */
-struct GetTweetCountsResult {
-  1: required i64 tweet_id (personalDataType = 'TweetId')
-  2: optional i64 retweet_count (personalDataType = 'CountOfPrivateRetweets, CountOfPublicRetweets')
-  3: optional i64 reply_count (personalDataType = 'CountOfPrivateReplies, CountOfPublicReplies')
-  4: optional i64 favorite_count (personalDataType = 'CountOfPrivateLikes, CountOfPublicLikes')
-  5: optional i64 quote_count (personalDataType = 'CountOfPrivateRetweets, CountOfPublicRetweets')
-  6: optional i64 bookmark_count (personalDataType = 'CountOfPrivateLikes')
-}(hasPersonalData = 'true')
+stwuct gettweetcountswesuwt {
+  1: w-wequiwed i64 t-tweet_id (pewsonawdatatype = 'tweetid')
+  2: o-optionaw i-i64 wetweet_count (pewsonawdatatype = 'countofpwivatewetweets, o.O c-countofpubwicwetweets')
+  3: optionaw i64 wepwy_count (pewsonawdatatype = 'countofpwivatewepwies, (✿oωo) countofpubwicwepwies')
+  4: optionaw i64 f-favowite_count (pewsonawdatatype = 'countofpwivatewikes, (ˆ ﻌ ˆ)♡ countofpubwicwikes')
+  5: optionaw i64 quote_count (pewsonawdatatype = 'countofpwivatewetweets, ^^;; countofpubwicwetweets')
+  6: optionaw i64 b-bookmawk_count (pewsonawdatatype = 'countofpwivatewikes')
+}(haspewsonawdata = 'twue')
 
 /**
- * A request to increment the cached favorites count for a tweet.
+ * a wequest to incwement the cached favowites count f-fow a tweet. OwO
  *
- * Negative values decrement the count. This request is automatically
- * replicated to other data centers.
+ * n-nyegative v-vawues decwement the count. 🥺 this w-wequest is automaticawwy
+ * wepwicated t-to othew d-data centews. mya
  */
-struct IncrTweetFavCountRequest {
-  1: required i64 tweet_id (personalDataType = 'TweetId')
-  2: required i32 delta (personalDataType = 'CountOfPrivateLikes, CountOfPublicLikes')
-}(hasPersonalData = 'true')
+stwuct incwtweetfavcountwequest {
+  1: wequiwed i64 tweet_id (pewsonawdatatype = 'tweetid')
+  2: wequiwed i32 dewta (pewsonawdatatype = 'countofpwivatewikes, 😳 c-countofpubwicwikes')
+}(haspewsonawdata = 'twue')
 
 /**
- * A request to increment the cached bookmarks count for a tweet.
+ * a wequest t-to incwement the cached bookmawks c-count fow a-a tweet. òωó
  *
- * Negative values decrement the count. This request is automatically
- * replicated to other data centers.
+ * nyegative vawues decwement the count. /(^•ω•^) t-this wequest i-is automaticawwy
+ * wepwicated t-to othew data centews. -.-
  */
-struct IncrTweetBookmarkCountRequest {
-  1: required i64 tweet_id (personalDataType = 'TweetId')
-  2: required i32 delta (personalDataType = 'CountOfPrivateLikes')
-}(hasPersonalData = 'true')
+s-stwuct incwtweetbookmawkcountwequest {
+  1: wequiwed i64 tweet_id (pewsonawdatatype = 'tweetid')
+  2: wequiwed i32 dewta (pewsonawdatatype = 'countofpwivatewikes')
+}(haspewsonawdata = 'twue')
 
 /**
- * Request to scrub geolocation from 1 or more tweets, and replicates to other
- * data centers.
+ * w-wequest to scwub g-geowocation f-fwom 1 ow mowe tweets, òωó and wepwicates t-to othew
+ * d-data centews. /(^•ω•^)
  */
-struct GeoScrub {
-  1: required list<i64> status_ids (personalDataType = 'TweetId')
-  // OBSOLETE 2: bool write_through = 1
-  3: bool hosebird_enqueue = 0
-  4: i64 user_id = 0 (personalDataType = 'UserId') // should always be set for hosebird enqueue
-}(hasPersonalData = 'true')
+stwuct geoscwub {
+  1: w-wequiwed wist<i64> status_ids (pewsonawdatatype = 'tweetid')
+  // obsowete 2: boow wwite_thwough = 1
+  3: boow hosebiwd_enqueue = 0
+  4: i-i64 usew_id = 0 (pewsonawdatatype = 'usewid') // s-shouwd awways be set fow hosebiwd enqueue
+}(haspewsonawdata = 'twue')
 
 /**
- * Contains different indicators of a tweets "nsfw" status.
+ * c-contains diffewent i-indicatows of a tweets "nsfw" status. /(^•ω•^)
  */
-struct NsfwState {
-  1: required bool nsfw_user
-  2: required bool nsfw_admin
-  3: optional safety_label.SafetyLabel nsfw_high_precision_label
-  4: optional safety_label.SafetyLabel nsfw_high_recall_label
+stwuct nysfwstate {
+  1: w-wequiwed boow nysfw_usew
+  2: wequiwed boow nsfw_admin
+  3: optionaw safety_wabew.safetywabew n-nysfw_high_pwecision_wabew
+  4: optionaw safety_wabew.safetywabew n-nysfw_high_wecaww_wabew
 }
 
 /**
- * Interface to Tweetypie
+ * i-intewface to tweetypie
  */
-service TweetService {
+sewvice tweetsewvice {
   /**
-   * Performs a multi-get of tweets.  This endpoint is geared towards fetching
-   * tweets for the API, with many fields returned by default.
+   * pewfowms a-a muwti-get of t-tweets. 😳  this endpoint is geawed towawds fetching
+   * tweets fow t-the api, :3 with many fiewds wetuwned b-by defauwt. (U ᵕ U❁)
    *
-   * The response list is ordered the same as the requested ids list.
+   * the wesponse wist is owdewed the same a-as the wequested ids wist. ʘwʘ
    */
-  list<GetTweetResult> get_tweets(1: GetTweetsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  w-wist<gettweetwesuwt> g-get_tweets(1: gettweetswequest w-wequest) thwows (
+    1: e-exceptions.cwientewwow c-cwient_ewwow, o.O
+    2: e-exceptions.sewvewewwow sewvew_ewwow)
 
   /**
-   * Performs a multi-get of tweets.  This endpoint is geared towards internal
-   * processing that needs only specific subsets of the data.
+   * pewfowms a-a muwti-get o-of tweets. ʘwʘ  this endpoint is geawed towawds i-intewnaw
+   * pwocessing t-that nyeeds o-onwy specific subsets of the data. ^^
    *
-   * The response list is ordered the same as the requested ids list.
+   * t-the wesponse wist is owdewed the s-same as the wequested i-ids wist. ^•ﻌ•^
    */
-  list<GetTweetFieldsResult> get_tweet_fields(1: GetTweetFieldsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  wist<gettweetfiewdswesuwt> get_tweet_fiewds(1: gettweetfiewdswequest w-wequest) thwows (
+    1: e-exceptions.cwientewwow c-cwient_ewwow, mya
+    2: e-exceptions.sewvewewwow sewvew_ewwow)
 
   /**
-   * Execute a {@link GetTweetCountsRequest} and return one or more {@link GetTweetCountsResult}
+   * e-exekawaii~ a {@wink gettweetcountswequest} and wetuwn one ow mowe {@wink gettweetcountswesuwt}
    */
-  list<GetTweetCountsResult> get_tweet_counts(1: GetTweetCountsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  wist<gettweetcountswesuwt> get_tweet_counts(1: g-gettweetcountswequest wequest) thwows (
+    1: e-exceptions.cwientewwow cwient_ewwow, UwU
+    2: e-exceptions.sewvewewwow sewvew_ewwow)
 
   /**
-   * Set/Update additional fields on an existing tweet
+   * s-set/update additionaw fiewds o-on an existing t-tweet
    */
-  void set_additional_fields(1: SetAdditionalFieldsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  v-void set_additionaw_fiewds(1: s-setadditionawfiewdswequest w-wequest) thwows (
+    1: exceptions.cwientewwow cwient_ewwow, >_<
+    2: exceptions.sewvewewwow sewvew_ewwow)
 
   /**
-   * Delete additional fields on a tweet
+   * dewete additionaw f-fiewds on a tweet
    */
-  void delete_additional_fields(1: DeleteAdditionalFieldsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  v-void d-dewete_additionaw_fiewds(1: deweteadditionawfiewdswequest w-wequest) thwows (
+    1: exceptions.cwientewwow cwient_ewwow, /(^•ω•^)
+    2: e-exceptions.sewvewewwow s-sewvew_ewwow)
 
   /**
-   * Creates and saves a tweet.
+   * cweates and saves a-a tweet. òωó
    *
-   * URLs contained in the text will be shortened via Talon. Validations that are
-   * handled by this endpoint include:
+   * uwws contained in the text w-wiww be showtened v-via tawon. σωσ vawidations that a-awe
+   * handwed b-by this endpoint incwude:
    *
-   *   - tweet length not greater than 140 display characters, after URL shortening;
-   *   - tweet is not a duplicate of a recently created tweet by the same user;
-   *   - user is not suspended or deactivated;
-   *   - text does not contain malware urls, as determined by talon;
+   *   - tweet wength nyot gweatew than 140 dispway c-chawactews, ( ͡o ω ͡o ) a-aftew uww showtening;
+   *   - tweet i-is nyot a dupwicate o-of a wecentwy c-cweated tweet by the same u-usew;
+   *   - u-usew is nyot suspended ow deactivated;
+   *   - t-text does nyot contain m-mawwawe uwws, nyaa~~ as detewmined b-by tawon;
    *
-   * Checks that are not handled here that should be handled by the web API:
+   * checks that awe nyot handwed h-hewe that shouwd be handwed b-by the web api:
+   *   - o-oauth authentication;
+   *   - cwient appwication h-has nyawwowcasting/nuwwcasting pwiviweges;
+   */
+  posttweetwesuwt p-post_tweet(1: p-posttweetwequest w-wequest) thwows (
+    1: exceptions.cwientewwow cwient_ewwow, :3
+    2: e-exceptions.sewvewewwow sewvew_ewwow)
+
+  /**
+   * cweates and saves a-a wetweet. UwU
+   *
+   * v-vawidations that awe handwed b-by this endpoint incwude:
+   *
+   *   - souwce t-tweet exists;
+   *   - s-souwce-tweet usew exists and is nyot s-suspended ow deactivated;
+   *   - souwce-tweet usew is nyot bwocking w-wetweetew;
+   *   - u-usew has nyot awweady w-wetweeted the souwce tweet;
+   *
+   * c-checks that a-awe nyot handwed h-hewe that shouwd be handwed by the web api:
    *   - oauth authentication;
-   *   - client application has narrowcasting/nullcasting privileges;
+   *   - cwient appwication has nyawwowcasting/nuwwcasting pwiviweges;
    */
-  PostTweetResult post_tweet(1: PostTweetRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  posttweetwesuwt post_wetweet(1: wetweetwequest wequest) thwows (
+    1: exceptions.cwientewwow cwient_ewwow, o.O
+    2: e-exceptions.sewvewewwow s-sewvew_ewwow)
 
   /**
-   * Creates and saves a retweet.
+   * wemove tweets. (ˆ ﻌ ˆ)♡ it wemoves aww a-associated fiewds o-of the tweets i-in
+   * cache and the pewsistent s-stowage. ^^;;
+   */
+  wist<dewetetweetwesuwt> d-dewete_tweets(1: d-dewetetweetswequest wequest) thwows (
+    1: e-exceptions.cwientewwow cwient_ewwow, ʘwʘ
+    2: e-exceptions.sewvewewwow s-sewvew_ewwow, σωσ
+    3: accessdenied access_denied)
+
+  /**
+   * westowe a-a deweted tweet. ^^;;
    *
-   * Validations that are handled by this endpoint include:
-   *
-   *   - source tweet exists;
-   *   - source-tweet user exists and is not suspended or deactivated;
-   *   - source-tweet user is not blocking retweeter;
-   *   - user has not already retweeted the source tweet;
-   *
-   * Checks that are not handled here that should be handled by the web API:
-   *   - oauth authentication;
-   *   - client application has narrowcasting/nullcasting privileges;
+   * t-tweets e-exist in a soft-deweted s-state f-fow ny days duwing w-which they c-can be
+   * westowed b-by suppowt a-agents fowwowing the intewnaw westowation g-guidewines. ʘwʘ
+   * i-if the u-undewete succeeds, ^^ the tweet is g-given simiwaw tweatment to a nyew
+   * tweet e.g i-insewted into cache, nyaa~~ sent to t-the timewine sewvice, (///ˬ///✿) w-weindexed b-by
+   * tfwock etc. XD
    */
-  PostTweetResult post_retweet(1: RetweetRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  undewetetweetwesponse u-undewete_tweet(1: undewetetweetwequest w-wequest) thwows (
+    1: e-exceptions.cwientewwow cwient_ewwow, :3
+    2: e-exceptions.sewvewewwow sewvew_ewwow)
 
   /**
-   * Remove tweets. It removes all associated fields of the tweets in
-   * cache and the persistent storage.
+   * add ow wemove takedown countwies associated with a-a tweet. òωó
    */
-  list<DeleteTweetResult> delete_tweets(1: DeleteTweetsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error,
-    3: AccessDenied access_denied)
+  void takedown(1: t-takedownwequest w-wequest) thwows (
+    1: exceptions.cwientewwow cwient_ewwow, ^^
+    2: exceptions.sewvewewwow s-sewvew_ewwow)
 
   /**
-   * Restore a deleted Tweet.
-   *
-   * Tweets exist in a soft-deleted state for N days during which they can be
-   * restored by support agents following the internal restoration guidelines.
-   * If the undelete succeeds, the Tweet is given similar treatment to a new
-   * tweet e.g inserted into cache, sent to the timeline service, reindexed by
-   * TFlock etc.
-   */
-  UndeleteTweetResponse undelete_tweet(1: UndeleteTweetRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
-
-  /**
-   * Add or remove takedown countries associated with a Tweet.
-   */
-  void takedown(1: TakedownRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
-
-  /**
-   * Set or unset the nsfw_admin and/or nsfw_user bit of tweet.core_data.
+   * set ow unset t-the nysfw_admin a-and/ow nysfw_usew b-bit of tweet.cowe_data. ^•ﻌ•^
    **/
-  void update_possibly_sensitive_tweet(1: UpdatePossiblySensitiveTweetRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error
+  void update_possibwy_sensitive_tweet(1: updatepossibwysensitivetweetwequest w-wequest) thwows (
+    1: e-exceptions.cwientewwow cwient_ewwow, σωσ
+    2: e-exceptions.sewvewewwow sewvew_ewwow
   )
 
   /**
-   * Delete all tweets for a given user. Currently only called by Test User Service, but we
-   * can also use it ad-hoc.
+   * dewete a-aww tweets fow a given usew. (ˆ ﻌ ˆ)♡ c-cuwwentwy onwy c-cawwed by test usew s-sewvice, nyaa~~ but we
+   * can awso u-use it ad-hoc. ʘwʘ
    *
-   * Note: regular user erasure is handled by the EraseUserTweets daemon.
+   * n-nyote: w-weguwaw usew ewasuwe i-is handwed by the ewaseusewtweets d-daemon. ^•ﻌ•^
    */
-  void erase_user_tweets(1: EraseUserTweetsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  v-void ewase_usew_tweets(1: e-ewaseusewtweetswequest w-wequest) t-thwows (
+    1: e-exceptions.cwientewwow c-cwient_ewwow, rawr x3
+    2: exceptions.sewvewewwow s-sewvew_ewwow)
 
   /**
-   * Unretweet a given tweet.
+   * unwetweet a given t-tweet. 🥺
    *
-   * There are two ways to unretweet:
-   *  - call deleteTweets() with the retweetId
-   *  - call unretweet() with the retweeter userId and sourceTweetId
+   * thewe awe two w-ways to unwetweet:
+   *  - caww d-dewetetweets() w-with the wetweetid
+   *  - c-caww unwetweet() with the wetweetew usewid and souwcetweetid
    *
-   * This is useful if you want to be able to undo a retweet without having to
-   * keep track of a retweetId.
+   * t-this is usefuw i-if you want to b-be abwe to undo a wetweet without having to
+   * keep twack of a w-wetweetid.
    */
-  UnretweetResult unretweet(1: UnretweetRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  u-unwetweetwesuwt unwetweet(1: u-unwetweetwequest w-wequest) thwows (
+    1: exceptions.cwientewwow cwient_ewwow, ʘwʘ
+    2: exceptions.sewvewewwow s-sewvew_ewwow)
 
   /**
-   * Get tweet content and deletion times for soft-deleted tweets.
+   * g-get tweet c-content and dewetion t-times fow soft-deweted tweets. (˘ω˘)
    *
-   * The response list is ordered the same as the requested ids list.
+   * the wesponse wist i-is owdewed the s-same as the wequested ids wist. o.O
    */
-  list<GetDeletedTweetResult> get_deleted_tweets(1: GetDeletedTweetsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  wist<getdewetedtweetwesuwt> g-get_deweted_tweets(1: getdewetedtweetswequest wequest) thwows (
+    1: e-exceptions.cwientewwow cwient_ewwow, σωσ
+    2: e-exceptions.sewvewewwow sewvew_ewwow)
 
   /**
-   * Execute a {@link FlushRequest}
+   * e-exekawaii~ a {@wink fwushwequest}
    */
-  void flush(1: FlushRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  v-void fwush(1: f-fwushwequest wequest) thwows (
+    1: e-exceptions.cwientewwow cwient_ewwow,
+    2: e-exceptions.sewvewewwow s-sewvew_ewwow)
 
   /**
-   * Execute an {@link IncrTweetFavCountRequest}
+   * e-exekawaii~ an {@wink i-incwtweetfavcountwequest}
    */
-  void incr_tweet_fav_count(1: IncrTweetFavCountRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  void i-incw_tweet_fav_count(1: i-incwtweetfavcountwequest w-wequest) thwows (
+    1: exceptions.cwientewwow c-cwient_ewwow, (ꈍᴗꈍ)
+    2: exceptions.sewvewewwow sewvew_ewwow)
 
   /**
-   * Execute an {@link IncrTweetBookmarkCountRequest}
+   * e-exekawaii~ a-an {@wink incwtweetbookmawkcountwequest}
    */
-  void incr_tweet_bookmark_count(1: IncrTweetBookmarkCountRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  v-void incw_tweet_bookmawk_count(1: incwtweetbookmawkcountwequest wequest) thwows (
+    1: exceptions.cwientewwow cwient_ewwow, (ˆ ﻌ ˆ)♡
+    2: e-exceptions.sewvewewwow sewvew_ewwow)
 
   /**
-   * Delete location data from all of a user's tweets.
+   * dewete w-wocation data fwom a-aww of a usew's tweets. o.O
    *
-   * This endpoint initiates the process of deleting the user's location data
-   * from all of their tweets, as well as clearing the has_geotagged_statuses
-   * flag of the user. This method returns as soon as the event is enqueued,
-   * but the location data won't be scrubbed until the event is processed.
-   * Usually the latency for the whole process to complete is small, but it
-   * could take up to a couple of minutes if the user has a very large number
-   * of tweets, or if the request gets backed up behind other requests that
-   * need to scrub a large number of tweets.
+   * this endpoint i-initiates the pwocess of deweting t-the usew's w-wocation data
+   * f-fwom aww of theiw t-tweets, :3 as w-weww as cweawing the has_geotagged_statuses
+   * fwag of the usew. -.- this method wetuwns as soon as t-the event is enqueued, ( ͡o ω ͡o )
+   * but t-the wocation data won't be scwubbed untiw the event is pwocessed. /(^•ω•^)
+   * u-usuawwy the watency fow the whowe pwocess to compwete is smow, (⑅˘꒳˘) but it
+   * c-couwd take up t-to a coupwe of minutes if the u-usew has a vewy wawge nyumbew
+   * of tweets, òωó ow i-if the wequest g-gets backed up behind othew wequests t-that
+   * nyeed to scwub a w-wawge nyumbew of tweets. 🥺
    *
-   * The event is processed by the Tweetypie geoscrub daemon.
+   * the event is pwocessed by the t-tweetypie geoscwub daemon. (ˆ ﻌ ˆ)♡
    *
    */
-  void delete_location_data(1: DeleteLocationDataRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  void dewete_wocation_data(1: d-dewetewocationdatawequest w-wequest) thwows (
+    1: e-exceptions.cwientewwow cwient_ewwow, -.-
+    2: exceptions.sewvewewwow s-sewvew_ewwow)
 
   /**
-   * Execute a {@link GeoScrub} request.
+   * exekawaii~ a {@wink geoscwub} wequest. σωσ
    *
    */
-  void scrub_geo(1: GeoScrub geo_scrub) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  void scwub_geo(1: g-geoscwub g-geo_scwub) t-thwows (
+    1: e-exceptions.cwientewwow cwient_ewwow, >_<
+    2: exceptions.sewvewewwow s-sewvew_ewwow)
 }

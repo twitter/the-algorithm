@@ -1,70 +1,70 @@
-package com.twitter.visibility.interfaces.des
+package com.twittew.visibiwity.intewfaces.des
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.tweets.StratoTweetLabelMaps
-import com.twitter.visibility.builder.tweets.TweetFeatures
-import com.twitter.visibility.common.SafetyLabelMapSource
-import com.twitter.visibility.features.AuthorId
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.interfaces.common.tweets.SafetyLabelMapFetcherType
-import com.twitter.visibility.models.ContentId.TweetId
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+impowt c-com.twittew.stitch.stitch
+impowt c-com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt c-com.twittew.visibiwity.visibiwitywibwawy
+i-impowt c-com.twittew.visibiwity.buiwdew.visibiwitywesuwt
+i-impowt com.twittew.visibiwity.buiwdew.tweets.stwatotweetwabewmaps
+i-impowt com.twittew.visibiwity.buiwdew.tweets.tweetfeatuwes
+impowt com.twittew.visibiwity.common.safetywabewmapsouwce
+impowt com.twittew.visibiwity.featuwes.authowid
+impowt c-com.twittew.visibiwity.featuwes.featuwemap
+impowt com.twittew.visibiwity.intewfaces.common.tweets.safetywabewmapfetchewtype
+impowt c-com.twittew.visibiwity.modews.contentid.tweetid
+impowt com.twittew.visibiwity.modews.safetywevew
+i-impowt com.twittew.visibiwity.modews.viewewcontext
 
-case class DESVisibilityRequest(
-  tweet: Tweet,
-  visibilitySurface: SafetyLevel,
-  viewerContext: ViewerContext)
+case cwass desvisibiwitywequest(
+  tweet: t-tweet, (///ˬ///✿)
+  visibiwitysuwface: safetywevew, >w<
+  v-viewewcontext: viewewcontext)
 
-object DESVisibilityLibrary {
-  type Type = DESVisibilityRequest => Stitch[VisibilityResult]
+object d-desvisibiwitywibwawy {
+  type type = desvisibiwitywequest => stitch[visibiwitywesuwt]
 
-  def apply(
-    visibilityLibrary: VisibilityLibrary,
-    getLabelMap: SafetyLabelMapFetcherType,
-    enableShimFeatureHydration: Any => Boolean = _ => false
-  ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
+  def appwy(
+    visibiwitywibwawy: visibiwitywibwawy,
+    g-getwabewmap: safetywabewmapfetchewtype, rawr
+    enabweshimfeatuwehydwation: any => boowean = _ => fawse
+  ): t-type = {
+    vaw wibwawystatsweceivew = v-visibiwitywibwawy.statsweceivew
+    v-vaw v-vfenginecountew = w-wibwawystatsweceivew.countew("vf_engine_wequests")
 
-    val tweetLabelMap = new StratoTweetLabelMaps(
-      SafetyLabelMapSource.fromSafetyLabelMapFetcher(getLabelMap))
-    val tweetFeatures = new TweetFeatures(tweetLabelMap, libraryStatsReceiver)
+    vaw tweetwabewmap = new stwatotweetwabewmaps(
+      safetywabewmapsouwce.fwomsafetywabewmapfetchew(getwabewmap))
+    v-vaw tweetfeatuwes = nyew tweetfeatuwes(tweetwabewmap, wibwawystatsweceivew)
 
-    { request: DESVisibilityRequest =>
-      vfEngineCounter.incr()
+    { w-wequest: desvisibiwitywequest =>
+      vfenginecountew.incw()
 
-      val contentId = TweetId(request.tweet.id)
-      val authorId = coreData.userId
+      vaw contentid = tweetid(wequest.tweet.id)
+      vaw authowid = cowedata.usewid
 
-      val featureMap =
-        visibilityLibrary.featureMapBuilder(
-          Seq(
-            tweetFeatures.forTweet(request.tweet),
-            _.withConstantFeature(AuthorId, Set(authorId))
+      v-vaw featuwemap =
+        v-visibiwitywibwawy.featuwemapbuiwdew(
+          s-seq(
+            t-tweetfeatuwes.fowtweet(wequest.tweet), mya
+            _.withconstantfeatuwe(authowid, ^^ set(authowid))
           )
         )
 
-      val isShimFeatureHydrationEnabled = enableShimFeatureHydration()
+      vaw isshimfeatuwehydwationenabwed = enabweshimfeatuwehydwation()
 
-      if (isShimFeatureHydrationEnabled) {
-        FeatureMap.resolve(featureMap, libraryStatsReceiver).flatMap { resolvedFeatureMap =>
-          visibilityLibrary.runRuleEngine(
-            contentId,
-            resolvedFeatureMap,
-            request.viewerContext,
-            request.visibilitySurface
+      i-if (isshimfeatuwehydwationenabwed) {
+        f-featuwemap.wesowve(featuwemap, 😳😳😳 wibwawystatsweceivew).fwatmap { w-wesowvedfeatuwemap =>
+          v-visibiwitywibwawy.wunwuweengine(
+            contentid, mya
+            w-wesowvedfeatuwemap,
+            wequest.viewewcontext, 😳
+            w-wequest.visibiwitysuwface
           )
         }
-      } else {
-        visibilityLibrary.runRuleEngine(
-          contentId,
-          featureMap,
-          request.viewerContext,
-          request.visibilitySurface
+      } ewse {
+        visibiwitywibwawy.wunwuweengine(
+          c-contentid,
+          featuwemap, -.-
+          w-wequest.viewewcontext, 🥺
+          wequest.visibiwitysuwface
         )
       }
     }

@@ -1,20 +1,20 @@
-package com.twitter.search.earlybird_root.caching;
+package com.twittew.seawch.eawwybiwd_woot.caching;
 
-import com.google.common.base.Optional;
+impowt com.googwe.common.base.optionaw;
 
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
 
-public class RelevanceZeroResultsCachePostProcessor extends RecencyAndRelevanceCachePostProcessor {
-  @Override
-  protected Optional<EarlybirdResponse> postProcessCacheResponse(
-      EarlybirdRequest request, EarlybirdResponse response, long sinceId, long maxId) {
-    // If a query (from a logged in or logged out user) returns 0 results, then the same query will
-    // always return 0 results, for all users. So we can cache that result.
-    if (CacheCommonUtil.hasResults(response)) {
-      return Optional.absent();
+p-pubwic cwass w-wewevancezewowesuwtscachepostpwocessow e-extends w-wecencyandwewevancecachepostpwocessow {
+  @ovewwide
+  pwotected optionaw<eawwybiwdwesponse> postpwocesscachewesponse(
+      eawwybiwdwequest w-wequest, -.- eawwybiwdwesponse wesponse, ( ͡o ω ͡o ) wong sinceid, rawr x3 w-wong maxid) {
+    // if a quewy (fwom a-a wogged in ow wogged out usew) wetuwns 0 wesuwts, nyaa~~ then t-the same quewy wiww
+    // awways w-wetuwn 0 wesuwts, f-fow aww usews. /(^•ω•^) so we can cache that wesuwt. rawr
+    if (cachecommonutiw.haswesuwts(wesponse)) {
+      wetuwn optionaw.absent();
     }
 
-    return Optional.of(response);
+    w-wetuwn optionaw.of(wesponse);
   }
 }

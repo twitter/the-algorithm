@@ -1,5 +1,5 @@
-package com.twitter.servo
+package com.twittew.sewvo
 
-package object decider {
-  type DeciderKeyName = DeciderKeyEnum#Value
+package o-object decidew {
+  t-type decidewkeyname = d-decidewkeyenum#vawue
 }

@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.products.home_timeline_tweet_recs.configapi
+package com.twittew.fowwow_wecommendations.pwoducts.home_timewine_tweet_wecs.configapi
 
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.timewines.configapi.pawam
 
-object HomeTimelineTweetRecsParams {
-  object EnableProduct extends Param[Boolean](false)
+o-object hometimewinetweetwecspawams {
+  o-object e-enabwepwoduct e-extends pawam[boowean](fawse)
 }

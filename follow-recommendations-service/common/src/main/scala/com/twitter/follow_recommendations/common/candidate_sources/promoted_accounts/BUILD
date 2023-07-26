@@ -1,11 +1,11 @@
-scala_library(
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/base",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/adserver",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/socialgraph",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
-        "src/thrift/com/twitter/socialgraph:thrift-scala",
+scawa_wibwawy(
+    pwatfowm = "java8", (ꈍᴗꈍ)
+    tags = ["bazew-compatibwe"], ^•ﻌ•^
+    d-dependencies = [
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/base", OwO
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/cwients/adsewvew", 🥺
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/cwients/sociawgwaph", òωó
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/modews", o.O
+        "swc/thwift/com/twittew/sociawgwaph:thwift-scawa", (U ᵕ U❁)
     ],
 )

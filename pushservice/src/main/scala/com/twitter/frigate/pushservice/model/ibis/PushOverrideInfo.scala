@@ -1,246 +1,246 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.twittew.fwigate.pushsewvice.modew.ibis
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.history.History
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.frigate.thriftscala.FrigateNotification
-import com.twitter.frigate.thriftscala.OverrideInfo
-import com.twitter.util.Duration
-import com.twitter.util.Time
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.histowy.histowy
+i-impowt com.twittew.fwigate.common.wec_types.wectypes
+i-impowt c-com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+i-impowt c-com.twittew.fwigate.thwiftscawa.fwigatenotification
+i-impowt com.twittew.fwigate.thwiftscawa.ovewwideinfo
+i-impowt com.twittew.utiw.duwation
+impowt com.twittew.utiw.time
 
-object PushOverrideInfo {
+object pushovewwideinfo {
 
-  private val name: String = this.getClass.getSimpleName
+  pwivate vaw n-nyame: stwing = this.getcwass.getsimpwename
 
   /**
-   * Gets all eligible time + override push notification pairs from a target's History
+   * gets aww e-ewigibwe time + ovewwide push nyotification p-paiws fwom a tawget's histowy
    *
-   * @param history: history of push notifications
-   * @param lookbackDuration: duration to look back up in history for overriding notifications
-   * @return: list of notifications with send timestamps which are eligible for overriding
+   * @pawam histowy: h-histowy of push nyotifications
+   * @pawam w-wookbackduwation: d-duwation to wook back up in histowy fow ovewwiding nyotifications
+   * @wetuwn: wist of nyotifications w-with send timestamps which awe ewigibwe fow ovewwiding
    */
-  def getOverrideEligibleHistory(
-    history: History,
-    lookbackDuration: Duration,
-  ): Seq[(Time, FrigateNotification)] = {
-    history.sortedHistory
-      .takeWhile { case (notifTimestamp, _) => lookbackDuration.ago < notifTimestamp }
-      .filter {
-        case (_, notification) => notification.overrideInfo.isDefined
+  def getovewwideewigibwehistowy(
+    h-histowy: histowy, ʘwʘ
+    w-wookbackduwation: d-duwation, rawr x3
+  ): s-seq[(time, ^^;; fwigatenotification)] = {
+    h-histowy.sowtedhistowy
+      .takewhiwe { case (notiftimestamp, ʘwʘ _) => wookbackduwation.ago < n-nyotiftimestamp }
+      .fiwtew {
+        case (_, (U ﹏ U) nyotification) => nyotification.ovewwideinfo.isdefined
       }
   }
 
   /**
-   * Gets all eligible override push notifications from a target's History
+   * g-gets aww ewigibwe ovewwide push nyotifications fwom a tawget's histowy
    *
-   * @param history           Target's History
-   * @param lookbackDuration  Duration in which we would like to obtain the eligible push notifications
-   * @param stats             StatsReceiver to track stats for this function
-   * @return                  Returns a list of FrigateNotification
+   * @pawam histowy           t-tawget's histowy
+   * @pawam wookbackduwation  d-duwation in which w-we wouwd wike t-to obtain the ewigibwe push nyotifications
+   * @pawam stats             statsweceivew t-to twack s-stats fow this function
+   * @wetuwn                  w-wetuwns a-a wist of fwigatenotification
    */
-  def getOverrideEligiblePushNotifications(
-    history: History,
-    lookbackDuration: Duration,
-    stats: StatsReceiver,
-  ): Seq[FrigateNotification] = {
-    val eligibleNotificationsDistribution =
-      stats.scope(name).stat("eligible_notifications_size_distribution")
-    val eligibleNotificationsSeq =
-      getOverrideEligibleHistory(history, lookbackDuration)
-        .collect {
-          case (_, notification) => notification
+  def getovewwideewigibwepushnotifications(
+    h-histowy: histowy, (˘ω˘)
+    wookbackduwation: d-duwation, (ꈍᴗꈍ)
+    stats: statsweceivew, /(^•ω•^)
+  ): s-seq[fwigatenotification] = {
+    vaw ewigibwenotificationsdistwibution =
+      s-stats.scope(name).stat("ewigibwe_notifications_size_distwibution")
+    vaw e-ewigibwenotificationsseq =
+      g-getovewwideewigibwehistowy(histowy, >_< wookbackduwation)
+        .cowwect {
+          case (_, σωσ nyotification) => nyotification
         }
 
-    eligibleNotificationsDistribution.add(eligibleNotificationsSeq.size)
-    eligibleNotificationsSeq
+    ewigibwenotificationsdistwibution.add(ewigibwenotificationsseq.size)
+    ewigibwenotificationsseq
   }
 
   /**
-   * Gets the OverrideInfo for the last eligible Override Notification FrigateNotification, if it exists
-   * @param history           Target's History
-   * @param lookbackDuration  Duration in which we would like to obtain the last override notification
-   * @param stats             StatsReceiver to track stats for this function
-   * @return                  Returns OverrideInfo of the last MR push, else None
+   * gets the ovewwideinfo f-fow the wast e-ewigibwe ovewwide nyotification f-fwigatenotification, ^^;; i-if it exists
+   * @pawam histowy           t-tawget's histowy
+   * @pawam wookbackduwation  duwation in which we wouwd wike t-to obtain the wast ovewwide notification
+   * @pawam stats             statsweceivew to twack stats f-fow this function
+   * @wetuwn                  wetuwns ovewwideinfo o-of the w-wast mw push, 😳 ewse n-nyone
    */
-  def getOverrideInfoOfLastEligiblePushNotif(
-    history: History,
-    lookbackDuration: Duration,
-    stats: StatsReceiver
-  ): Option[OverrideInfo] = {
-    val overrideInfoEmptyOfLastPush = stats.scope(name).counter("override_info_empty_of_last_push")
-    val overrideInfoExistsForLastPush =
-      stats.scope(name).counter("override_info_exists_for_last_push")
-    val overrideHistory =
-      getOverrideEligiblePushNotifications(history, lookbackDuration, stats)
-    if (overrideHistory.isEmpty) {
-      overrideInfoEmptyOfLastPush.incr()
-      None
-    } else {
-      overrideInfoExistsForLastPush.incr()
-      overrideHistory.head.overrideInfo
+  def getovewwideinfoofwastewigibwepushnotif(
+    h-histowy: histowy, >_<
+    w-wookbackduwation: d-duwation, -.-
+    s-stats: statsweceivew
+  ): option[ovewwideinfo] = {
+    vaw o-ovewwideinfoemptyofwastpush = s-stats.scope(name).countew("ovewwide_info_empty_of_wast_push")
+    v-vaw ovewwideinfoexistsfowwastpush =
+      s-stats.scope(name).countew("ovewwide_info_exists_fow_wast_push")
+    v-vaw ovewwidehistowy =
+      getovewwideewigibwepushnotifications(histowy, UwU wookbackduwation, :3 stats)
+    i-if (ovewwidehistowy.isempty) {
+      ovewwideinfoemptyofwastpush.incw()
+      nyone
+    } ewse {
+      ovewwideinfoexistsfowwastpush.incw()
+      ovewwidehistowy.head.ovewwideinfo
     }
   }
 
   /**
-   * Gets all the MR Push Notifications in the specified override chain
-   * @param history           Target's History
-   * @param overrideChainId   Override Chain Identifier
-   * @param stats             StatsReceiver to track stats for this function
-   * @return                  Returns a sequence of FrigateNotification that exist in the override chain
+   * gets aww the mw p-push nyotifications in the specified ovewwide chain
+   * @pawam histowy           t-tawget's histowy
+   * @pawam o-ovewwidechainid   o-ovewwide chain identifiew
+   * @pawam s-stats             statsweceivew t-to twack s-stats fow this function
+   * @wetuwn                  wetuwns a sequence of fwigatenotification that exist in the ovewwide chain
    */
-  def getMrPushNotificationsInOverrideChain(
-    history: History,
-    overrideChainId: String,
-    stats: StatsReceiver
-  ): Seq[FrigateNotification] = {
-    val notificationInOverrideChain = stats.scope(name).counter("notification_in_override_chain")
-    val notificationNotInOverrideChain =
-      stats.scope(name).counter("notification_not_in_override_chain")
-    history.sortedHistory.flatMap {
-      case (_, notification)
-          if isNotificationInOverrideChain(notification, overrideChainId, stats) =>
-        notificationInOverrideChain.incr()
-        Some(notification)
-      case _ =>
-        notificationNotInOverrideChain.incr()
-        None
+  d-def getmwpushnotificationsinovewwidechain(
+    histowy: h-histowy, σωσ
+    ovewwidechainid: stwing, >w<
+    stats: s-statsweceivew
+  ): s-seq[fwigatenotification] = {
+    vaw nyotificationinovewwidechain = stats.scope(name).countew("notification_in_ovewwide_chain")
+    v-vaw nyotificationnotinovewwidechain =
+      s-stats.scope(name).countew("notification_not_in_ovewwide_chain")
+    histowy.sowtedhistowy.fwatmap {
+      c-case (_, (ˆ ﻌ ˆ)♡ nyotification)
+          i-if isnotificationinovewwidechain(notification, ʘwʘ ovewwidechainid, stats) =>
+        nyotificationinovewwidechain.incw()
+        some(notification)
+      c-case _ =>
+        n-nyotificationnotinovewwidechain.incw()
+        n-nyone
     }
   }
 
   /**
-   * Gets the timestamp (in milliseconds) for the specified FrigateNotification
-   * @param notification      The FrigateNotification that we would like the timestamp for
-   * @param history           Target's History
-   * @param stats             StatsReceiver to track stats for this function
-   * @return                  Returns the timestamp in milliseconds for the specified notification
-   *                          if it exists History, else None
+   * gets the timestamp (in m-miwwiseconds) f-fow the specified fwigatenotification
+   * @pawam n-nyotification      the fwigatenotification that we wouwd wike the timestamp fow
+   * @pawam h-histowy           t-tawget's histowy
+   * @pawam stats             s-statsweceivew t-to twack stats fow this function
+   * @wetuwn                  wetuwns the t-timestamp in miwwiseconds fow the specified nyotification
+   *                          if it exists histowy, :3 e-ewse nyone
    */
-  def getTimestampInMillisForFrigateNotification(
-    notification: FrigateNotification,
-    history: History,
-    stats: StatsReceiver
-  ): Option[Long] = {
-    val foundTimestampOfNotificationInHistory =
-      stats.scope(name).counter("found_timestamp_of_notification_in_history")
-    history.sortedHistory
-      .find(_._2.equals(notification)).map {
-        case (time, _) =>
-          foundTimestampOfNotificationInHistory.incr()
-          time.inMilliseconds
+  def gettimestampinmiwwisfowfwigatenotification(
+    notification: f-fwigatenotification, (˘ω˘)
+    histowy: h-histowy, 😳😳😳
+    stats: statsweceivew
+  ): option[wong] = {
+    vaw foundtimestampofnotificationinhistowy =
+      stats.scope(name).countew("found_timestamp_of_notification_in_histowy")
+    h-histowy.sowtedhistowy
+      .find(_._2.equaws(notification)).map {
+        c-case (time, rawr x3 _) =>
+          foundtimestampofnotificationinhistowy.incw()
+          time.inmiwwiseconds
       }
   }
 
   /**
-   * Gets the oldest frigate notification based on the user's NTab last read position
-   * @param overrideCandidatesMap     All the NTab Notifications in the override chain
-   * @return                          Returns the oldest frigate notification in the chain
+   * gets t-the owdest fwigate nyotification b-based on the usew's nytab wast wead position
+   * @pawam ovewwidecandidatesmap     a-aww the nytab nyotifications i-in the ovewwide c-chain
+   * @wetuwn                          wetuwns t-the owdest fwigate nyotification i-in the chain
    */
-  def getOldestFrigateNotification(
-    overrideCandidatesMap: Map[Long, FrigateNotification],
-  ): FrigateNotification = {
-    overrideCandidatesMap.minBy(_._1)._2
+  d-def g-getowdestfwigatenotification(
+    ovewwidecandidatesmap: m-map[wong, (✿oωo) f-fwigatenotification], (ˆ ﻌ ˆ)♡
+  ): fwigatenotification = {
+    ovewwidecandidatesmap.minby(_._1)._2
   }
 
   /**
-   * Gets the impression ids of previous eligible push notification.
-   * @param history           Target's History
-   * @param lookbackDuration  Duration in which we would like to obtain previous impression ids
-   * @param stats             StatsReceiver to track stats for this function
-   * @return                  Returns the impression identifier for the last eligible push notif.
-   *                          if it exists in the target's History, else None.
+   * gets t-the impwession i-ids of pwevious e-ewigibwe push nyotification. :3
+   * @pawam histowy           t-tawget's histowy
+   * @pawam w-wookbackduwation  d-duwation in which we wouwd wike to obtain pwevious i-impwession ids
+   * @pawam s-stats             s-statsweceivew t-to twack stats fow this f-function
+   * @wetuwn                  wetuwns the impwession identifiew fow the wast ewigibwe push nyotif. (U ᵕ U❁)
+   *                          i-if it exists in the t-tawget's histowy, ^^;; ewse nyone.
    */
-  def getImpressionIdsOfPrevEligiblePushNotif(
-    history: History,
-    lookbackDuration: Duration,
-    stats: StatsReceiver
-  ): Seq[String] = {
-    val foundImpressionIdOfLastEligiblePushNotif =
-      stats.scope(name).counter("found_impression_id_of_last_eligible_push_notif")
-    val overrideHistoryEmptyWhenFetchingImpressionId =
-      stats.scope(name).counter("override_history_empty_when_fetching_impression_id")
-    val overrideHistory = getOverrideEligiblePushNotifications(history, lookbackDuration, stats)
-      .filter(frigateNotification =>
-        // Exclude notifications of nonGenericOverrideTypes from being overridden
-        !RecTypes.nonGenericOverrideTypes.contains(frigateNotification.commonRecommendationType))
+  d-def getimpwessionidsofpwevewigibwepushnotif(
+    histowy: h-histowy, mya
+    wookbackduwation: duwation, 😳😳😳
+    stats: s-statsweceivew
+  ): s-seq[stwing] = {
+    v-vaw f-foundimpwessionidofwastewigibwepushnotif =
+      s-stats.scope(name).countew("found_impwession_id_of_wast_ewigibwe_push_notif")
+    vaw ovewwidehistowyemptywhenfetchingimpwessionid =
+      stats.scope(name).countew("ovewwide_histowy_empty_when_fetching_impwession_id")
+    vaw ovewwidehistowy = getovewwideewigibwepushnotifications(histowy, OwO wookbackduwation, rawr stats)
+      .fiwtew(fwigatenotification =>
+        // e-excwude n-nyotifications o-of nyongenewicovewwidetypes fwom being ovewwidden
+        !wectypes.nongenewicovewwidetypes.contains(fwigatenotification.commonwecommendationtype))
 
-    if (overrideHistory.isEmpty) {
-      overrideHistoryEmptyWhenFetchingImpressionId.incr()
-      Seq.empty
-    } else {
-      foundImpressionIdOfLastEligiblePushNotif.incr()
-      overrideHistory.flatMap(_.impressionId)
+    i-if (ovewwidehistowy.isempty) {
+      ovewwidehistowyemptywhenfetchingimpwessionid.incw()
+      seq.empty
+    } ewse {
+      f-foundimpwessionidofwastewigibwepushnotif.incw()
+      o-ovewwidehistowy.fwatmap(_.impwessionid)
     }
   }
 
   /**
-   * Gets the impressions ids by eventId, for MagicFanoutEvent candidates.
+   * gets t-the impwessions ids by eventid, XD fow magicfanoutevent c-candidates. (U ﹏ U)
    *
-   * @param history           Target's History
-   * @param lookbackDuration  Duration in which we would like to obtain previous impression ids
-   * @param stats             StatsReceiver to track stats for this function
-   * @param overridableType   Specific MagicFanoutEvent CRT
-   * @param eventId           Event identifier for MagicFanoutEventCandidate.
-   * @return                  Returns the impression identifiers for the last eligible, eventId-matching
-   *                          MagicFanoutEvent push notifications if they exist in the target's history, else None.
+   * @pawam h-histowy           tawget's histowy
+   * @pawam w-wookbackduwation  d-duwation in which we wouwd wike to obtain pwevious impwession ids
+   * @pawam s-stats             s-statsweceivew t-to twack stats f-fow this function
+   * @pawam ovewwidabwetype   s-specific magicfanoutevent cwt
+   * @pawam e-eventid           e-event identifiew fow m-magicfanouteventcandidate. (˘ω˘)
+   * @wetuwn                  w-wetuwns the impwession i-identifiews fow the wast ewigibwe, UwU eventid-matching
+   *                          m-magicfanoutevent push nyotifications i-if they e-exist in the tawget's histowy, >_< e-ewse nyone. σωσ
    */
-  def getImpressionIdsForPrevEligibleMagicFanoutEventCandidates(
-    history: History,
-    lookbackDuration: Duration,
-    stats: StatsReceiver,
-    overridableType: CommonRecommendationType,
-    eventId: Long
-  ): Seq[String] = {
-    val foundImpressionIdOfMagicFanoutEventNotif =
-      stats.scope(name).counter("found_impression_id_of_magic_fanout_event_notif")
-    val overrideHistoryEmptyWhenFetchingImpressionId =
+  def getimpwessionidsfowpwevewigibwemagicfanouteventcandidates(
+    histowy: h-histowy, 🥺
+    wookbackduwation: duwation, 🥺
+    s-stats: s-statsweceivew, ʘwʘ
+    ovewwidabwetype: commonwecommendationtype, :3
+    eventid: wong
+  ): s-seq[stwing] = {
+    vaw foundimpwessionidofmagicfanouteventnotif =
+      s-stats.scope(name).countew("found_impwession_id_of_magic_fanout_event_notif")
+    v-vaw ovewwidehistowyemptywhenfetchingimpwessionid =
       stats
-        .scope(name).counter(
-          "override_history_empty_when_fetching_impression_id_for_magic_fanout_event_notif")
+        .scope(name).countew(
+          "ovewwide_histowy_empty_when_fetching_impwession_id_fow_magic_fanout_event_notif")
 
-    val overrideHistory =
-      getOverrideEligiblePushNotifications(history, lookbackDuration, stats)
-        .filter(frigateNotification =>
-          // Only override notifications with same CRT and eventId
-          frigateNotification.commonRecommendationType == overridableType &&
-            frigateNotification.magicFanoutEventNotification.exists(_.eventId == eventId))
+    v-vaw ovewwidehistowy =
+      getovewwideewigibwepushnotifications(histowy, (U ﹏ U) w-wookbackduwation, (U ﹏ U) s-stats)
+        .fiwtew(fwigatenotification =>
+          // onwy ovewwide nyotifications w-with same cwt and eventid
+          fwigatenotification.commonwecommendationtype == o-ovewwidabwetype &&
+            f-fwigatenotification.magicfanouteventnotification.exists(_.eventid == eventid))
 
-    if (overrideHistory.isEmpty) {
-      overrideHistoryEmptyWhenFetchingImpressionId.incr()
-      Seq.empty
-    } else {
-      foundImpressionIdOfMagicFanoutEventNotif.incr()
-      overrideHistory.flatMap(_.impressionId)
+    i-if (ovewwidehistowy.isempty) {
+      ovewwidehistowyemptywhenfetchingimpwessionid.incw()
+      s-seq.empty
+    } e-ewse {
+      f-foundimpwessionidofmagicfanouteventnotif.incw()
+      ovewwidehistowy.fwatmap(_.impwessionid)
     }
   }
 
   /**
-   * Determines if the provided notification is part of the specified override chain
-   * @param notification      FrigateNotification that we're trying to identify as within the override chain
-   * @param overrideChainId   Override Chain Identifier
-   * @param stats             StatsReceiver to track stats for this function
-   * @return                  Returns true if the provided FrigateNotification is within the override chain, else false
+   * detewmines if the pwovided nyotification is pawt of the specified ovewwide chain
+   * @pawam nyotification      fwigatenotification that we'we twying to identify as within the ovewwide chain
+   * @pawam o-ovewwidechainid   o-ovewwide chain identifiew
+   * @pawam stats             s-statsweceivew t-to twack stats fow t-this function
+   * @wetuwn                  wetuwns twue if the p-pwovided fwigatenotification is within the ovewwide c-chain, ʘwʘ ewse f-fawse
    */
-  private def isNotificationInOverrideChain(
-    notification: FrigateNotification,
-    overrideChainId: String,
-    stats: StatsReceiver
-  ): Boolean = {
-    val notifIsInOverrideChain = stats.scope(name).counter("notif_is_in_override_chain")
-    val notifNotInOverrideChain = stats.scope(name).counter("notif_not_in_override_chain")
-    notification.overrideInfo match {
-      case Some(overrideInfo) =>
-        val isNotifInOverrideChain = overrideInfo.collapseInfo.overrideChainId == overrideChainId
-        if (isNotifInOverrideChain) {
-          notifIsInOverrideChain.incr()
-          true
-        } else {
-          notifNotInOverrideChain.incr()
-          false
+  pwivate def isnotificationinovewwidechain(
+    n-nyotification: fwigatenotification, >w<
+    ovewwidechainid: s-stwing, rawr x3
+    s-stats: statsweceivew
+  ): boowean = {
+    vaw nyotifisinovewwidechain = stats.scope(name).countew("notif_is_in_ovewwide_chain")
+    v-vaw nyotifnotinovewwidechain = s-stats.scope(name).countew("notif_not_in_ovewwide_chain")
+    n-nyotification.ovewwideinfo m-match {
+      case s-some(ovewwideinfo) =>
+        v-vaw isnotifinovewwidechain = o-ovewwideinfo.cowwapseinfo.ovewwidechainid == o-ovewwidechainid
+        i-if (isnotifinovewwidechain) {
+          notifisinovewwidechain.incw()
+          t-twue
+        } e-ewse {
+          n-nyotifnotinovewwidechain.incw()
+          fawse
         }
-      case _ =>
-        notifNotInOverrideChain.incr()
-        false
+      c-case _ =>
+        nyotifnotinovewwidechain.incw()
+        fawse
     }
   }
 }

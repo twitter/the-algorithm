@@ -1,67 +1,67 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.takedown.util.TakedownReasons
-import com.twitter.tseng.withholding.thriftscala.TakedownReason
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.takedown.utiw.takedownweasons
+i-impowt c-com.twittew.tseng.withhowding.thwiftscawa.takedownweason
+i-impowt c-com.twittew.tweetypie.thwiftscawa._
 
-object Takedown extends TweetStore.SyncModule {
+o-object t-takedown extends tweetstowe.syncmoduwe {
 
-  case class Event(
-    tweet: Tweet, // for CachingTweetStore / ManhattanTweetStore / ReplicatedTakedown
-    timestamp: Time,
-    user: Option[User] = None,
-    takedownReasons: Seq[TakedownReason] = Seq(), // for EventBus
-    reasonsToAdd: Seq[TakedownReason] = Seq(), // for Guano
-    reasonsToRemove: Seq[TakedownReason] = Seq(), // for Guano
-    auditNote: Option[String] = None,
-    host: Option[String] = None,
-    byUserId: Option[UserId] = None,
-    eventbusEnqueue: Boolean = true,
-    scribeForAudit: Boolean = true,
-    // If ManhattanTweetStore should update countryCodes and reasons
-    updateCodesAndReasons: Boolean = false)
-      extends SyncTweetStoreEvent("takedown") {
-    def toAsyncRequest(): AsyncTakedownRequest =
-      AsyncTakedownRequest(
-        tweet = tweet,
-        user = user,
-        takedownReasons = takedownReasons,
-        reasonsToAdd = reasonsToAdd,
-        reasonsToRemove = reasonsToRemove,
-        scribeForAudit = scribeForAudit,
-        eventbusEnqueue = eventbusEnqueue,
-        auditNote = auditNote,
-        byUserId = byUserId,
-        host = host,
-        timestamp = timestamp.inMillis
+  case cwass event(
+    tweet: tweet, // f-fow cachingtweetstowe / manhattantweetstowe / wepwicatedtakedown
+    t-timestamp: time, OwO
+    usew: o-option[usew] = nyone, >w<
+    takedownweasons: seq[takedownweason] = seq(), 🥺 // fow e-eventbus
+    weasonstoadd: seq[takedownweason] = s-seq(), nyaa~~ // fow g-guano
+    weasonstowemove: seq[takedownweason] = seq(), ^^ // fow guano
+    auditnote: option[stwing] = n-nyone, >w<
+    host: option[stwing] = nyone, OwO
+    byusewid: option[usewid] = nyone, XD
+    e-eventbusenqueue: boowean = t-twue, ^^;;
+    scwibefowaudit: b-boowean = t-twue, 🥺
+    // i-if manhattantweetstowe shouwd update countwycodes a-and weasons
+    updatecodesandweasons: boowean = f-fawse)
+      extends synctweetstoweevent("takedown") {
+    def toasyncwequest(): asynctakedownwequest =
+      asynctakedownwequest(
+        tweet = tweet, XD
+        u-usew = usew, (U ᵕ U❁)
+        t-takedownweasons = t-takedownweasons, :3
+        w-weasonstoadd = weasonstoadd, ( ͡o ω ͡o )
+        weasonstowemove = weasonstowemove, òωó
+        s-scwibefowaudit = s-scwibefowaudit, σωσ
+        eventbusenqueue = e-eventbusenqueue, (U ᵕ U❁)
+        auditnote = a-auditnote, (✿oωo)
+        byusewid = b-byusewid, ^^
+        host = h-host, ^•ﻌ•^
+        timestamp = timestamp.inmiwwis
       )
   }
 
-  trait Store {
-    val takedown: FutureEffect[Event]
+  twait s-stowe {
+    vaw takedown: futuweeffect[event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val takedown: FutureEffect[Event] = wrap(underlying.takedown)
+  t-twait stowewwappew extends s-stowe { sewf: t-tweetstowewwappew[stowe] =>
+    ovewwide vaw takedown: futuweeffect[event] = wwap(undewwying.takedown)
   }
 
-  object Store {
-    def apply(
-      logLensStore: LogLensStore,
-      manhattanStore: ManhattanTweetStore,
-      cachingTweetStore: CachingTweetStore,
-      asyncEnqueueStore: AsyncEnqueueStore
-    ): Store =
-      new Store {
-        override val takedown: FutureEffect[Event] =
-          FutureEffect.inParallel(
-            logLensStore.takedown,
-            FutureEffect.sequentially(
-              manhattanStore.takedown,
-              FutureEffect.inParallel(
-                cachingTweetStore.takedown,
-                asyncEnqueueStore.takedown
+  object stowe {
+    def appwy(
+      wogwensstowe: wogwensstowe, XD
+      m-manhattanstowe: m-manhattantweetstowe, :3
+      cachingtweetstowe: c-cachingtweetstowe, (ꈍᴗꈍ)
+      a-asyncenqueuestowe: a-asyncenqueuestowe
+    ): stowe =
+      nyew stowe {
+        ovewwide v-vaw takedown: futuweeffect[event] =
+          futuweeffect.inpawawwew(
+            wogwensstowe.takedown, :3
+            futuweeffect.sequentiawwy(
+              m-manhattanstowe.takedown, (U ﹏ U)
+              futuweeffect.inpawawwew(
+                c-cachingtweetstowe.takedown, UwU
+                a-asyncenqueuestowe.takedown
               )
             )
           )
@@ -69,136 +69,136 @@ object Takedown extends TweetStore.SyncModule {
   }
 }
 
-object AsyncTakedown extends TweetStore.AsyncModule {
+o-object asynctakedown extends t-tweetstowe.asyncmoduwe {
 
-  object Event {
-    def fromAsyncRequest(request: AsyncTakedownRequest): TweetStoreEventOrRetry[Event] =
-      TweetStoreEventOrRetry(
-        Event(
-          tweet = request.tweet,
-          optUser = request.user,
-          takedownReasons = request.takedownReasons,
-          reasonsToAdd = request.reasonsToAdd,
-          reasonsToRemove = request.reasonsToRemove,
-          auditNote = request.auditNote,
-          host = request.host,
-          byUserId = request.byUserId,
-          eventbusEnqueue = request.eventbusEnqueue,
-          scribeForAudit = request.scribeForAudit,
-          timestamp = Time.fromMilliseconds(request.timestamp)
-        ),
-        request.retryAction,
-        RetryEvent
+  o-object e-event {
+    d-def fwomasyncwequest(wequest: asynctakedownwequest): tweetstoweeventowwetwy[event] =
+      t-tweetstoweeventowwetwy(
+        e-event(
+          t-tweet = w-wequest.tweet, 😳😳😳
+          o-optusew = wequest.usew, XD
+          takedownweasons = wequest.takedownweasons, o.O
+          weasonstoadd = w-wequest.weasonstoadd, (⑅˘꒳˘)
+          weasonstowemove = wequest.weasonstowemove, 😳😳😳
+          auditnote = wequest.auditnote, nyaa~~
+          host = wequest.host, rawr
+          b-byusewid = wequest.byusewid, -.-
+          eventbusenqueue = wequest.eventbusenqueue, (✿oωo)
+          scwibefowaudit = w-wequest.scwibefowaudit, /(^•ω•^)
+          timestamp = t-time.fwommiwwiseconds(wequest.timestamp)
+        ), 🥺
+        w-wequest.wetwyaction, ʘwʘ
+        wetwyevent
       )
   }
 
-  case class Event(
-    tweet: Tweet,
-    timestamp: Time,
-    optUser: Option[User],
-    takedownReasons: Seq[TakedownReason], // for EventBus
-    reasonsToAdd: Seq[TakedownReason], // for Guano
-    reasonsToRemove: Seq[TakedownReason], // for Guano
-    auditNote: Option[String], // for Guano
-    host: Option[String], // for Guano
-    byUserId: Option[UserId], // for Guano
-    eventbusEnqueue: Boolean,
-    scribeForAudit: Boolean)
-      extends AsyncTweetStoreEvent("async_takedown")
-      with TweetStoreTweetEvent {
+  c-case cwass event(
+    t-tweet: tweet, UwU
+    t-timestamp: time, XD
+    optusew: option[usew],
+    takedownweasons: seq[takedownweason], (✿oωo) // fow eventbus
+    w-weasonstoadd: seq[takedownweason], :3 // fow guano
+    w-weasonstowemove: seq[takedownweason], (///ˬ///✿) // f-fow g-guano
+    auditnote: option[stwing], nyaa~~ // fow guano
+    h-host: option[stwing], >w< // f-fow guano
+    byusewid: option[usewid], -.- // f-fow guano
+    e-eventbusenqueue: boowean, (✿oωo)
+    scwibefowaudit: boowean)
+      extends asynctweetstoweevent("async_takedown")
+      w-with t-tweetstowetweetevent {
 
-    def toAsyncRequest(action: Option[AsyncWriteAction] = None): AsyncTakedownRequest =
-      AsyncTakedownRequest(
-        tweet = tweet,
-        user = optUser,
-        takedownReasons = takedownReasons,
-        reasonsToAdd = reasonsToAdd,
-        reasonsToRemove = reasonsToRemove,
-        scribeForAudit = scribeForAudit,
-        eventbusEnqueue = eventbusEnqueue,
-        auditNote = auditNote,
-        byUserId = byUserId,
-        host = host,
-        timestamp = timestamp.inMillis,
-        retryAction = action
+    d-def toasyncwequest(action: o-option[asyncwwiteaction] = n-nyone): asynctakedownwequest =
+      asynctakedownwequest(
+        t-tweet = tweet, (˘ω˘)
+        usew = optusew, rawr
+        takedownweasons = takedownweasons, OwO
+        weasonstoadd = w-weasonstoadd, ^•ﻌ•^
+        w-weasonstowemove = weasonstowemove, UwU
+        scwibefowaudit = scwibefowaudit, (˘ω˘)
+        e-eventbusenqueue = e-eventbusenqueue, (///ˬ///✿)
+        auditnote = auditnote, σωσ
+        byusewid = byusewid, /(^•ω•^)
+        host = host, 😳
+        t-timestamp = timestamp.inmiwwis, 😳
+        wetwyaction = action
       )
 
-    override def toTweetEventData: Seq[TweetEventData] =
-      optUser.map { user =>
-        TweetEventData.TweetTakedownEvent(
-          TweetTakedownEvent(
-            tweetId = tweet.id,
-            userId = user.id,
-            takedownCountryCodes =
-              takedownReasons.collect(TakedownReasons.reasonToCountryCode).sorted,
-            takedownReasons = takedownReasons
+    ovewwide d-def totweeteventdata: seq[tweeteventdata] =
+      optusew.map { u-usew =>
+        t-tweeteventdata.tweettakedownevent(
+          tweettakedownevent(
+            tweetid = tweet.id, (⑅˘꒳˘)
+            usewid = usew.id,
+            t-takedowncountwycodes =
+              t-takedownweasons.cowwect(takedownweasons.weasontocountwycode).sowted, 😳😳😳
+            takedownweasons = takedownweasons
           )
         )
-      }.toSeq
+      }.toseq
 
-    override def enqueueRetry(service: ThriftTweetService, action: AsyncWriteAction): Future[Unit] =
-      service.asyncTakedown(toAsyncRequest(Some(action)))
+    ovewwide def e-enqueuewetwy(sewvice: thwifttweetsewvice, 😳 a-action: asyncwwiteaction): futuwe[unit] =
+      sewvice.asynctakedown(toasyncwequest(some(action)))
   }
 
-  case class RetryEvent(action: AsyncWriteAction, event: Event)
-      extends TweetStoreRetryEvent[Event] {
+  c-case cwass wetwyevent(action: a-asyncwwiteaction, XD e-event: event)
+      extends t-tweetstowewetwyevent[event] {
 
-    override val eventType: AsyncWriteEventType.Takedown.type = AsyncWriteEventType.Takedown
-    override val scribedTweetOnFailure: Option[Tweet] = Some(event.tweet)
+    ovewwide vaw e-eventtype: asyncwwiteeventtype.takedown.type = a-asyncwwiteeventtype.takedown
+    o-ovewwide vaw scwibedtweetonfaiwuwe: option[tweet] = s-some(event.tweet)
   }
 
-  trait Store {
-    val asyncTakedown: FutureEffect[Event]
-    val retryAsyncTakedown: FutureEffect[TweetStoreRetryEvent[Event]]
+  t-twait stowe {
+    vaw asynctakedown: f-futuweeffect[event]
+    v-vaw wetwyasynctakedown: f-futuweeffect[tweetstowewetwyevent[event]]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val asyncTakedown: FutureEffect[Event] = wrap(underlying.asyncTakedown)
-    override val retryAsyncTakedown: FutureEffect[TweetStoreRetryEvent[Event]] = wrap(
-      underlying.retryAsyncTakedown)
+  twait stowewwappew extends stowe { s-sewf: tweetstowewwappew[stowe] =>
+    ovewwide v-vaw asynctakedown: f-futuweeffect[event] = wwap(undewwying.asynctakedown)
+    ovewwide vaw wetwyasynctakedown: futuweeffect[tweetstowewetwyevent[event]] = wwap(
+      undewwying.wetwyasynctakedown)
   }
 
-  object Store {
-    def apply(
-      replicatingStore: ReplicatingTweetStore,
-      guanoStore: GuanoServiceStore,
-      eventBusEnqueueStore: TweetEventBusStore
-    ): Store = {
-      val stores: Seq[Store] =
-        Seq(
-          replicatingStore,
-          guanoStore,
-          eventBusEnqueueStore
+  o-object stowe {
+    d-def appwy(
+      w-wepwicatingstowe: w-wepwicatingtweetstowe, mya
+      guanostowe: g-guanosewvicestowe, ^•ﻌ•^
+      eventbusenqueuestowe: tweeteventbusstowe
+    ): stowe = {
+      vaw stowes: seq[stowe] =
+        seq(
+          w-wepwicatingstowe, ʘwʘ
+          guanostowe, ( ͡o ω ͡o )
+          e-eventbusenqueuestowe
         )
 
-      def build[E <: TweetStoreEvent](extract: Store => FutureEffect[E]): FutureEffect[E] =
-        FutureEffect.inParallel[E](stores.map(extract): _*)
+      def buiwd[e <: t-tweetstoweevent](extwact: stowe => f-futuweeffect[e]): futuweeffect[e] =
+        futuweeffect.inpawawwew[e](stowes.map(extwact): _*)
 
-      new Store {
-        override val asyncTakedown: FutureEffect[Event] = build(_.asyncTakedown)
-        override val retryAsyncTakedown: FutureEffect[TweetStoreRetryEvent[Event]] = build(
-          _.retryAsyncTakedown)
+      n-nyew stowe {
+        ovewwide v-vaw asynctakedown: f-futuweeffect[event] = b-buiwd(_.asynctakedown)
+        o-ovewwide vaw wetwyasynctakedown: futuweeffect[tweetstowewetwyevent[event]] = buiwd(
+          _.wetwyasynctakedown)
       }
     }
   }
 }
 
-object ReplicatedTakedown extends TweetStore.ReplicatedModule {
+object wepwicatedtakedown extends tweetstowe.wepwicatedmoduwe {
 
-  case class Event(tweet: Tweet) extends ReplicatedTweetStoreEvent("takedown")
+  case c-cwass event(tweet: t-tweet) extends w-wepwicatedtweetstoweevent("takedown")
 
-  trait Store {
-    val replicatedTakedown: FutureEffect[Event]
+  twait s-stowe {
+    vaw wepwicatedtakedown: futuweeffect[event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val replicatedTakedown: FutureEffect[Event] = wrap(underlying.replicatedTakedown)
+  twait stowewwappew e-extends stowe { s-sewf: tweetstowewwappew[stowe] =>
+    ovewwide v-vaw wepwicatedtakedown: futuweeffect[event] = wwap(undewwying.wepwicatedtakedown)
   }
 
-  object Store {
-    def apply(cachingTweetStore: CachingTweetStore): Store = {
-      new Store {
-        override val replicatedTakedown: FutureEffect[Event] = cachingTweetStore.replicatedTakedown
+  o-object s-stowe {
+    def appwy(cachingtweetstowe: c-cachingtweetstowe): s-stowe = {
+      nyew stowe {
+        ovewwide vaw wepwicatedtakedown: futuweeffect[event] = c-cachingtweetstowe.wepwicatedtakedown
       }
     }
   }

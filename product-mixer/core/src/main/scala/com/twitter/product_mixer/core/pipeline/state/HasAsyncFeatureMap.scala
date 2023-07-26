@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.pipeline.state
+package com.twittew.pwoduct_mixew.cowe.pipewine.state
 
-import com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.asyncfeatuwemap.asyncfeatuwemap
 
-trait HasAsyncFeatureMap[State] {
-  def asyncFeatureMap: AsyncFeatureMap
+t-twait hasasyncfeatuwemap[state] {
+  d-def asyncfeatuwemap: a-asyncfeatuwemap
 
-  private[core] def addAsyncFeatureMap(newFeatureMap: AsyncFeatureMap): State
+  p-pwivate[cowe] d-def addasyncfeatuwemap(newfeatuwemap: a-asyncfeatuwemap): s-state
 }

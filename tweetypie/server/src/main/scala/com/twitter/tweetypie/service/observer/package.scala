@@ -1,13 +1,13 @@
-package com.twitter.tweetypie
-package service
+package com.twittew.tweetypie
+package s-sewvice
 
-import com.twitter.util.Try
+impowt c-com.twittew.utiw.twy
 
-package object observer {
+p-package o-object obsewvew {
 
   /**
-   * Generic Request/Result observer container for making observations on both requests/results.
+   * g-genewic wequest/wesuwt o-obsewvew c-containew fow making o-obsewvations on both wequests/wesuwts. rawr x3
    */
-  type ObserveExchange[Req, Res] = (Req, Try[Res])
+  type obsewveexchange[weq, rawr wes] = (weq, σωσ twy[wes])
 
 }

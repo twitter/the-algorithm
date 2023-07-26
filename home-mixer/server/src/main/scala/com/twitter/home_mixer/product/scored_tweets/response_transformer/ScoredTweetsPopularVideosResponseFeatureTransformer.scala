@@ -1,46 +1,46 @@
-package com.twitter.home_mixer.product.scored_tweets.response_transformer
+package com.twittew.home_mixew.pwoduct.scowed_tweets.wesponse_twansfowmew
 
-import com.twitter.explore_ranker.{thriftscala => ert}
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.FromInNetworkSourceFeature
-import com.twitter.home_mixer.model.HomeFeatures.HasVideoFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRandomTweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.StreamToKafkaFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.timelineservice.suggests.logging.candidate_tweet_source_id.{thriftscala => cts}
-import com.twitter.timelineservice.suggests.{thriftscala => st}
+impowt c-com.twittew.expwowe_wankew.{thwiftscawa => e-ewt}
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.candidatesouwceidfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.fwominnetwowksouwcefeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.hasvideofeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.iswandomtweetfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.stweamtokafkafeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.suggesttypefeatuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twansfowmewidentifiew
+impowt com.twittew.timewinesewvice.suggests.wogging.candidate_tweet_souwce_id.{thwiftscawa => cts}
+impowt com.twittew.timewinesewvice.suggests.{thwiftscawa => st}
 
-object ScoredTweetsPopularVideosResponseFeatureTransformer
-    extends CandidateFeatureTransformer[ert.ExploreTweetRecommendation] {
+object s-scowedtweetspopuwawvideoswesponsefeatuwetwansfowmew
+    extends c-candidatefeatuwetwansfowmew[ewt.expwowetweetwecommendation] {
 
-  override val identifier: TransformerIdentifier =
-    TransformerIdentifier("ScoredTweetsPopularVideosResponse")
+  o-ovewwide vaw identifiew: twansfowmewidentifiew =
+    twansfowmewidentifiew("scowedtweetspopuwawvideoswesponse")
 
-  override val features: Set[Feature[_, _]] = Set(
-    AuthorIdFeature,
-    CandidateSourceIdFeature,
-    FromInNetworkSourceFeature,
-    HasVideoFeature,
-    IsRandomTweetFeature,
-    StreamToKafkaFeature,
-    SuggestTypeFeature
+  ovewwide vaw featuwes: set[featuwe[_, (˘ω˘) _]] = s-set(
+    authowidfeatuwe, (⑅˘꒳˘)
+    candidatesouwceidfeatuwe, (///ˬ///✿)
+    fwominnetwowksouwcefeatuwe, 😳😳😳
+    hasvideofeatuwe, 🥺
+    iswandomtweetfeatuwe, mya
+    s-stweamtokafkafeatuwe, 🥺
+    suggesttypefeatuwe
   )
 
-  override def transform(candidate: ert.ExploreTweetRecommendation): FeatureMap = {
-    FeatureMapBuilder()
-      .add(AuthorIdFeature, candidate.authorId)
-      .add(CandidateSourceIdFeature, Some(cts.CandidateTweetSourceId.MediaTweet))
-      .add(FromInNetworkSourceFeature, false)
-      .add(HasVideoFeature, candidate.mediaType.contains(ert.MediaType.Video))
-      .add(IsRandomTweetFeature, false)
-      .add(StreamToKafkaFeature, true)
-      .add(SuggestTypeFeature, Some(st.SuggestType.MediaTweet))
-      .build()
+  ovewwide d-def twansfowm(candidate: e-ewt.expwowetweetwecommendation): f-featuwemap = {
+    f-featuwemapbuiwdew()
+      .add(authowidfeatuwe, >_< candidate.authowid)
+      .add(candidatesouwceidfeatuwe, >_< some(cts.candidatetweetsouwceid.mediatweet))
+      .add(fwominnetwowksouwcefeatuwe, (⑅˘꒳˘) f-fawse)
+      .add(hasvideofeatuwe, /(^•ω•^) candidate.mediatype.contains(ewt.mediatype.video))
+      .add(iswandomtweetfeatuwe, rawr x3 fawse)
+      .add(stweamtokafkafeatuwe, (U ﹏ U) t-twue)
+      .add(suggesttypefeatuwe, (U ﹏ U) some(st.suggesttype.mediatweet))
+      .buiwd()
   }
 }

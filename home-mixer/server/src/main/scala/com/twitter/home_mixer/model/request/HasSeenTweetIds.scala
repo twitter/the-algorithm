@@ -1,9 +1,9 @@
-package com.twitter.home_mixer.model.request
+package com.twittew.home_mixew.modew.wequest
 
 /**
- * [[HasSeenTweetIds]] enables shared components to access the list of impressed tweet IDs
- * sent by clients across different Home Mixer query types (e.g. FollowingQuery, ForYouQuery)
+ * [[hasseentweetids]] enabwes s-shawed components t-to access the w-wist of impwessed t-tweet ids
+ * sent b-by cwients acwoss d-diffewent h-home mixew quewy t-types (e.g. σωσ fowwowingquewy, σωσ fowyouquewy)
  */
-trait HasSeenTweetIds {
-  def seenTweetIds: Option[Seq[Long]]
+twait hasseentweetids {
+  def seentweetids: o-option[seq[wong]]
 }

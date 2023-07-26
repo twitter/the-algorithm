@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.pipeline.state
+package com.twittew.pwoduct_mixew.cowe.pipewine.state
 
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
 
-trait HasCandidatesWithFeatures[Candidate <: UniversalNoun[Any], T] {
-  def candidatesWithFeatures: Seq[CandidateWithFeatures[Candidate]]
-  def updateCandidatesWithFeatures(newCandidates: Seq[CandidateWithFeatures[Candidate]]): T
+t-twait hascandidateswithfeatuwes[candidate <: u-univewsawnoun[any], ( ͡o ω ͡o ) t-t] {
+  def candidateswithfeatuwes: s-seq[candidatewithfeatuwes[candidate]]
+  d-def u-updatecandidateswithfeatuwes(newcandidates: s-seq[candidatewithfeatuwes[candidate]]): t
 }

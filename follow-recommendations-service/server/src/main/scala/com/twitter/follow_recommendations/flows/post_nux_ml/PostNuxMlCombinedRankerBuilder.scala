@@ -1,193 +1,193 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+package com.twittew.fowwow_wecommendations.fwows.post_nux_mw
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.IdentityRanker
-import com.twitter.follow_recommendations.common.base.IdentityTransform
-import com.twitter.follow_recommendations.common.base.Ranker
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.models._
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.follow_recommendations.common.rankers.fatigue_ranker.ImpressionBasedFatigueRanker
-import com.twitter.follow_recommendations.common.rankers.first_n_ranker.FirstNRanker
-import com.twitter.follow_recommendations.common.rankers.first_n_ranker.FirstNRankerParams
-import com.twitter.follow_recommendations.common.rankers.interleave_ranker.InterleaveRanker
-import com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking.HydrateFeaturesTransform
-import com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking.MlRanker
-import com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking.MlRankerParams
-import com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker.WeightedCandidateSourceRanker
-import com.twitter.follow_recommendations.configapi.candidates.HydrateCandidateParamsTransform
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.timelines.configapi.HasParams
+impowt c-com.googwe.inject.inject
+i-impowt c-com.googwe.inject.singweton
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.fowwow_wecommendations.common.base.identitywankew
+i-impowt com.twittew.fowwow_wecommendations.common.base.identitytwansfowm
+i-impowt c-com.twittew.fowwow_wecommendations.common.base.wankew
+impowt com.twittew.fowwow_wecommendations.common.base.twansfowm
+impowt com.twittew.fowwow_wecommendations.common.featuwe_hydwation.common.haspwefetchedfeatuwe
+i-impowt com.twittew.fowwow_wecommendations.common.modews._
+impowt com.twittew.fowwow_wecommendations.common.wankews.common.wankewid
+impowt c-com.twittew.fowwow_wecommendations.common.wankews.fatigue_wankew.impwessionbasedfatiguewankew
+impowt com.twittew.fowwow_wecommendations.common.wankews.fiwst_n_wankew.fiwstnwankew
+i-impowt com.twittew.fowwow_wecommendations.common.wankews.fiwst_n_wankew.fiwstnwankewpawams
+impowt com.twittew.fowwow_wecommendations.common.wankews.intewweave_wankew.intewweavewankew
+impowt com.twittew.fowwow_wecommendations.common.wankews.mw_wankew.wanking.hydwatefeatuwestwansfowm
+i-impowt com.twittew.fowwow_wecommendations.common.wankews.mw_wankew.wanking.mwwankew
+impowt com.twittew.fowwow_wecommendations.common.wankews.mw_wankew.wanking.mwwankewpawams
+i-impowt c-com.twittew.fowwow_wecommendations.common.wankews.weighted_candidate_souwce_wankew.weightedcandidatesouwcewankew
+impowt com.twittew.fowwow_wecommendations.configapi.candidates.hydwatecandidatepawamstwansfowm
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+i-impowt com.twittew.timewines.configapi.haspawams
 
 /**
- * Used to build the combined ranker comprising 4 stages of ranking:
- * - weighted sampler
- * - truncating to the top N merged results for ranking
- * - ML ranker
- * - Interleaving ranker for producer-side experiments
- * - impression-based fatigueing
+ * used to buiwd the combined wankew compwising 4 s-stages of wanking:
+ * - weighted s-sampwew
+ * - t-twuncating to t-the top ny mewged w-wesuwts fow wanking
+ * - mw wankew
+ * - intewweaving w-wankew fow pwoducew-side expewiments
+ * - i-impwession-based fatigueing
  */
-@Singleton
-class PostNuxMlCombinedRankerBuilder[
-  T <: HasParams with HasSimilarToContext with HasClientContext with HasExcludedUserIds with HasDisplayLocation with HasDebugOptions with HasPreFetchedFeature with HasDismissedUserIds with HasQualityFactor] @Inject() (
-  firstNRanker: FirstNRanker[T],
-  hydrateFeaturesTransform: HydrateFeaturesTransform[T],
-  hydrateCandidateParamsTransform: HydrateCandidateParamsTransform[T],
-  mlRanker: MlRanker[T],
-  statsReceiver: StatsReceiver) {
-  private[this] val stats: StatsReceiver = statsReceiver.scope("post_nux_ml_ranker")
+@singweton
+cwass postnuxmwcombinedwankewbuiwdew[
+  t <: haspawams with hassimiwawtocontext w-with hascwientcontext w-with hasexcwudedusewids w-with h-hasdispwaywocation with hasdebugoptions with haspwefetchedfeatuwe with hasdismissedusewids w-with h-hasquawityfactow] @inject() (
+  fiwstnwankew: fiwstnwankew[t], XD
+  h-hydwatefeatuwestwansfowm: h-hydwatefeatuwestwansfowm[t], ^^;;
+  hydwatecandidatepawamstwansfowm: h-hydwatecandidatepawamstwansfowm[t], 🥺
+  mwwankew: mwwankew[t], XD
+  s-statsweceivew: statsweceivew) {
+  pwivate[this] v-vaw stats: statsweceivew = s-statsweceivew.scope("post_nux_mw_wankew")
 
-  // we construct each ranker independently and chain them together
-  def build(
-    request: T,
-    candidateSourceWeights: Map[CandidateSourceIdentifier, Double]
-  ): Ranker[T, CandidateUser] = {
-    val displayLocationStats = stats.scope(request.displayLocation.toString)
-    val weightedRankerStats: StatsReceiver =
-      displayLocationStats.scope("weighted_candidate_source_ranker")
-    val firstNRankerStats: StatsReceiver =
-      displayLocationStats.scope("first_n_ranker")
-    val hydrateCandidateParamsStats =
-      displayLocationStats.scope("hydrate_candidate_params")
-    val fatigueRankerStats = displayLocationStats.scope("fatigue_ranker")
-    val interleaveRankerStats =
-      displayLocationStats.scope("interleave_ranker")
-    val allRankersStats = displayLocationStats.scope("all_rankers")
+  // we constwuct e-each wankew independentwy a-and chain them togethew
+  def buiwd(
+    wequest: t, (U ᵕ U❁)
+    candidatesouwceweights: map[candidatesouwceidentifiew, :3 doubwe]
+  ): w-wankew[t, ( ͡o ω ͡o ) c-candidateusew] = {
+    vaw dispwaywocationstats = s-stats.scope(wequest.dispwaywocation.tostwing)
+    v-vaw weightedwankewstats: s-statsweceivew =
+      dispwaywocationstats.scope("weighted_candidate_souwce_wankew")
+    vaw fiwstnwankewstats: statsweceivew =
+      d-dispwaywocationstats.scope("fiwst_n_wankew")
+    vaw hydwatecandidatepawamsstats =
+      dispwaywocationstats.scope("hydwate_candidate_pawams")
+    vaw fatiguewankewstats = dispwaywocationstats.scope("fatigue_wankew")
+    v-vaw intewweavewankewstats =
+      dispwaywocationstats.scope("intewweave_wankew")
+    v-vaw awwwankewsstats = d-dispwaywocationstats.scope("aww_wankews")
 
-    // Checking if the heavy-ranker is an experimental model.
-    // If it is, InterleaveRanker and candidate parameter hydration are disabled.
-    // *NOTE* that consumer-side experiments should at any time take a small % of traffic, less
-    // than 20% for instance, to leave enough room for producer experiments. Increasing bucket
-    // size for producer experiments lead to other issues and is not a viable option for faster
-    // experiments.
-    val requestRankerId = request.params(MlRankerParams.RequestScorerIdParam)
-    if (requestRankerId != RankerId.PostNuxProdRanker) {
-      hydrateCandidateParamsStats.counter(s"disabled_by_${requestRankerId.toString}").incr()
-      interleaveRankerStats.counter(s"disabled_by_${requestRankerId.toString}").incr()
+    // c-checking if the heavy-wankew i-is an expewimentaw m-modew. òωó
+    // i-if it is, σωσ intewweavewankew a-and candidate pawametew hydwation awe d-disabwed. (U ᵕ U❁)
+    // *note* t-that consumew-side e-expewiments s-shouwd a-at any time take a smow % of twaffic, (✿oωo) wess
+    // than 20% fow instance, ^^ t-to weave enough woom fow pwoducew expewiments. ^•ﻌ•^ incweasing bucket
+    // size fow pwoducew e-expewiments wead to othew issues and is nyot a viabwe option f-fow fastew
+    // e-expewiments. XD
+    v-vaw wequestwankewid = wequest.pawams(mwwankewpawams.wequestscowewidpawam)
+    i-if (wequestwankewid != wankewid.postnuxpwodwankew) {
+      h-hydwatecandidatepawamsstats.countew(s"disabwed_by_${wequestwankewid.tostwing}").incw()
+      i-intewweavewankewstats.countew(s"disabwed_by_${wequestwankewid.tostwing}").incw()
     }
 
-    // weighted ranker that samples from the candidate sources
-    val weightedRanker = WeightedCandidateSourceRanker
-      .build[T](
-        candidateSourceWeights,
-        request.params(PostNuxMlParams.CandidateShuffler).shuffle(request.getRandomizationSeed),
-        randomSeed = request.getRandomizationSeed
-      ).observe(weightedRankerStats)
+    // weighted wankew that sampwes fwom the candidate souwces
+    vaw weightedwankew = w-weightedcandidatesouwcewankew
+      .buiwd[t](
+        candidatesouwceweights, :3
+        w-wequest.pawams(postnuxmwpawams.candidateshuffwew).shuffwe(wequest.getwandomizationseed), (ꈍᴗꈍ)
+        wandomseed = wequest.getwandomizationseed
+      ).obsewve(weightedwankewstats)
 
-    // ranker that takes the first n results (ie truncates output) while merging duplicates
-    val firstNRankerObs = firstNRanker.observe(firstNRankerStats)
-    // either ML ranker that uses deepbirdv2 to score or no ranking
-    val mainRanker: Ranker[T, CandidateUser] =
-      buildMainRanker(request, requestRankerId == RankerId.PostNuxProdRanker, displayLocationStats)
-    // fatigue ranker that uses wtf impressions to fatigue
-    val fatigueRanker = buildFatigueRanker(request, fatigueRankerStats).observe(fatigueRankerStats)
+    // w-wankew that t-takes the fiwst ny wesuwts (ie twuncates output) w-whiwe mewging d-dupwicates
+    vaw fiwstnwankewobs = f-fiwstnwankew.obsewve(fiwstnwankewstats)
+    // e-eithew mw wankew that uses deepbiwdv2 to scowe ow nyo wanking
+    vaw mainwankew: w-wankew[t, :3 c-candidateusew] =
+      b-buiwdmainwankew(wequest, (U ﹏ U) wequestwankewid == w-wankewid.postnuxpwodwankew, UwU d-dispwaywocationstats)
+    // fatigue wankew that u-uses wtf impwessions to fatigue
+    vaw fatiguewankew = buiwdfatiguewankew(wequest, 😳😳😳 fatiguewankewstats).obsewve(fatiguewankewstats)
 
-    // interleaveRanker combines rankings from several rankers and enforces candidates' ranks in
-    // experiment buckets according to their assigned ranker model.
-    val interleaveRanker =
-      buildInterleaveRanker(
-        request,
-        requestRankerId == RankerId.PostNuxProdRanker,
-        interleaveRankerStats)
-        .observe(interleaveRankerStats)
+    // intewweavewankew c-combines wankings f-fwom sevewaw wankews and enfowces candidates' w-wanks in
+    // e-expewiment buckets accowding to theiw assigned wankew modew. XD
+    v-vaw intewweavewankew =
+      buiwdintewweavewankew(
+        wequest, o.O
+        wequestwankewid == wankewid.postnuxpwodwankew, (⑅˘꒳˘)
+        i-intewweavewankewstats)
+        .obsewve(intewweavewankewstats)
 
-    weightedRanker
-      .andThen(firstNRankerObs)
-      .andThen(mainRanker)
-      .andThen(fatigueRanker)
-      .andThen(interleaveRanker)
-      .observe(allRankersStats)
+    weightedwankew
+      .andthen(fiwstnwankewobs)
+      .andthen(mainwankew)
+      .andthen(fatiguewankew)
+      .andthen(intewweavewankew)
+      .obsewve(awwwankewsstats)
   }
 
-  def buildMainRanker(
-    request: T,
-    isMainRankerPostNuxProd: Boolean,
-    displayLocationStats: StatsReceiver
-  ): Ranker[T, CandidateUser] = {
+  def buiwdmainwankew(
+    w-wequest: t, 😳😳😳
+    i-ismainwankewpostnuxpwod: boowean, nyaa~~
+    dispwaywocationstats: statsweceivew
+  ): w-wankew[t, rawr candidateusew] = {
 
-    // note that we may be disabling heavy ranker for users not bucketed
-    // (due to empty results from the new candidate source)
-    // need a better solution in the future
-    val mlRankerStats = displayLocationStats.scope("ml_ranker")
-    val noMlRankerStats = displayLocationStats.scope("no_ml_ranker")
-    val hydrateFeaturesStats =
-      displayLocationStats.scope("hydrate_features")
-    val hydrateCandidateParamsStats =
-      displayLocationStats.scope("hydrate_candidate_params")
-    val notHydrateCandidateParamsStats =
-      displayLocationStats.scope("not_hydrate_candidate_params")
-    val rankerStats = displayLocationStats.scope("ranker")
-    val mlRankerDisabledByExperimentsCounter =
-      mlRankerStats.counter("disabled_by_experiments")
-    val mlRankerDisabledByQualityFactorCounter =
-      mlRankerStats.counter("disabled_by_quality_factor")
+    // n-nyote that we may be disabwing heavy wankew fow usews nyot b-bucketed
+    // (due to empty wesuwts f-fwom the nyew candidate souwce)
+    // nyeed a bettew sowution i-in the futuwe
+    vaw mwwankewstats = d-dispwaywocationstats.scope("mw_wankew")
+    v-vaw nyomwwankewstats = dispwaywocationstats.scope("no_mw_wankew")
+    vaw h-hydwatefeatuwesstats =
+      dispwaywocationstats.scope("hydwate_featuwes")
+    vaw hydwatecandidatepawamsstats =
+      d-dispwaywocationstats.scope("hydwate_candidate_pawams")
+    v-vaw nyothydwatecandidatepawamsstats =
+      d-dispwaywocationstats.scope("not_hydwate_candidate_pawams")
+    vaw wankewstats = d-dispwaywocationstats.scope("wankew")
+    v-vaw mwwankewdisabwedbyexpewimentscountew =
+      mwwankewstats.countew("disabwed_by_expewiments")
+    vaw mwwankewdisabwedbyquawityfactowcountew =
+      m-mwwankewstats.countew("disabwed_by_quawity_factow")
 
-    val disabledByQualityFactor = request.qualityFactor
-      .exists(_ <= request.params(PostNuxMlParams.TurnoffMLScorerQFThreshold))
+    v-vaw d-disabwedbyquawityfactow = wequest.quawityfactow
+      .exists(_ <= wequest.pawams(postnuxmwpawams.tuwnoffmwscowewqfthweshowd))
 
-    if (disabledByQualityFactor)
-      mlRankerDisabledByQualityFactorCounter.incr()
+    i-if (disabwedbyquawityfactow)
+      mwwankewdisabwedbyquawityfactowcountew.incw()
 
-    if (request.params(PostNuxMlParams.UseMlRanker) && !disabledByQualityFactor) {
+    i-if (wequest.pawams(postnuxmwpawams.usemwwankew) && !disabwedbyquawityfactow) {
 
-      val hydrateFeatures = hydrateFeaturesTransform
-        .observe(hydrateFeaturesStats)
+      v-vaw hydwatefeatuwes = hydwatefeatuwestwansfowm
+        .obsewve(hydwatefeatuwesstats)
 
-      val optionalHydratedParamsTransform: Transform[T, CandidateUser] = {
-        // We disable candidate parameter hydration for experimental heavy-ranker models.
-        if (isMainRankerPostNuxProd &&
-          request.params(PostNuxMlParams.EnableCandidateParamHydration)) {
-          hydrateCandidateParamsTransform
-            .observe(hydrateCandidateParamsStats)
-        } else {
-          new IdentityTransform[T, CandidateUser]()
-            .observe(notHydrateCandidateParamsStats)
+      vaw optionawhydwatedpawamstwansfowm: t-twansfowm[t, -.- c-candidateusew] = {
+        // w-we d-disabwe candidate pawametew hydwation f-fow expewimentaw heavy-wankew modews. (✿oωo)
+        if (ismainwankewpostnuxpwod &&
+          wequest.pawams(postnuxmwpawams.enabwecandidatepawamhydwation)) {
+          hydwatecandidatepawamstwansfowm
+            .obsewve(hydwatecandidatepawamsstats)
+        } e-ewse {
+          nyew identitytwansfowm[t, /(^•ω•^) c-candidateusew]()
+            .obsewve(nothydwatecandidatepawamsstats)
         }
       }
-      val candidateSize = request.params(FirstNRankerParams.CandidatesToRank)
-      Ranker
+      vaw c-candidatesize = wequest.pawams(fiwstnwankewpawams.candidatestowank)
+      w-wankew
         .chain(
-          hydrateFeatures.andThen(optionalHydratedParamsTransform),
-          mlRanker.observe(mlRankerStats),
+          hydwatefeatuwes.andthen(optionawhydwatedpawamstwansfowm), 🥺
+          m-mwwankew.obsewve(mwwankewstats), ʘwʘ
         )
         .within(
-          request.params(PostNuxMlParams.MlRankerBudget),
-          rankerStats.scope(s"n$candidateSize"))
-    } else {
-      new IdentityRanker[T, CandidateUser].observe(noMlRankerStats)
+          w-wequest.pawams(postnuxmwpawams.mwwankewbudget), UwU
+          w-wankewstats.scope(s"n$candidatesize"))
+    } e-ewse {
+      n-nyew identitywankew[t, XD candidateusew].obsewve(nomwwankewstats)
     }
   }
 
-  def buildInterleaveRanker(
-    request: T,
-    isMainRankerPostNuxProd: Boolean,
-    interleaveRankerStats: StatsReceiver
-  ): Ranker[T, CandidateUser] = {
-    // InterleaveRanker is enabled only for display locations powered by the PostNux heavy-ranker.
-    if (request.params(PostNuxMlParams.EnableInterleaveRanker) &&
-      // InterleaveRanker is disabled for requests with experimental heavy-rankers.
-      isMainRankerPostNuxProd) {
-      new InterleaveRanker[T](interleaveRankerStats)
-    } else {
-      new IdentityRanker[T, CandidateUser]()
+  def buiwdintewweavewankew(
+    wequest: t, (✿oωo)
+    ismainwankewpostnuxpwod: boowean, :3
+    intewweavewankewstats: s-statsweceivew
+  ): w-wankew[t, c-candidateusew] = {
+    // intewweavewankew i-is enabwed onwy fow dispway wocations powewed by the p-postnux heavy-wankew. (///ˬ///✿)
+    i-if (wequest.pawams(postnuxmwpawams.enabweintewweavewankew) &&
+      // intewweavewankew i-is disabwed fow wequests with expewimentaw heavy-wankews. nyaa~~
+      i-ismainwankewpostnuxpwod) {
+      n-nyew intewweavewankew[t](intewweavewankewstats)
+    } ewse {
+      n-nyew identitywankew[t, >w< c-candidateusew]()
     }
   }
 
-  def buildFatigueRanker(
-    request: T,
-    fatigueRankerStats: StatsReceiver
-  ): Ranker[T, CandidateUser] = {
-    if (request.params(PostNuxMlParams.EnableFatigueRanker)) {
-      ImpressionBasedFatigueRanker
-        .build[T](
-          fatigueRankerStats
-        ).within(request.params(PostNuxMlParams.FatigueRankerBudget), fatigueRankerStats)
-    } else {
-      new IdentityRanker[T, CandidateUser]()
+  def buiwdfatiguewankew(
+    wequest: t, -.-
+    fatiguewankewstats: statsweceivew
+  ): w-wankew[t, (✿oωo) c-candidateusew] = {
+    if (wequest.pawams(postnuxmwpawams.enabwefatiguewankew)) {
+      i-impwessionbasedfatiguewankew
+        .buiwd[t](
+          f-fatiguewankewstats
+        ).within(wequest.pawams(postnuxmwpawams.fatiguewankewbudget), (˘ω˘) f-fatiguewankewstats)
+    } ewse {
+      n-nyew identitywankew[t, rawr c-candidateusew]()
     }
   }
 }

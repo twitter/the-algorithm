@@ -1,41 +1,41 @@
-package com.twitter.search.common.relevance.entities;
+package com.twittew.seawch.common.wewevance.entities;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+impowt owg.apache.commons.wang3.buiwdew.equawsbuiwdew;
+i-impowt o-owg.apache.commons.wang3.buiwdew.hashcodebuiwdew;
+i-impowt owg.apache.commons.wang3.buiwdew.tostwingbuiwdew;
 
 /**
- * The object for quoted message
+ * t-the object f-fow quoted message
   */
-public class TwitterQuotedMessage {
-  private final long quotedStatusId;
-  private final long quotedUserId;
+p-pubwic c-cwass twittewquotedmessage {
+  p-pwivate finaw wong quotedstatusid;
+  pwivate finaw wong quotedusewid;
 
-  public TwitterQuotedMessage(long quotedStatusId, long quotedUserId) {
-    this.quotedStatusId = quotedStatusId;
-    this.quotedUserId = quotedUserId;
+  pubwic t-twittewquotedmessage(wong quotedstatusid, (U ﹏ U) wong quotedusewid) {
+    t-this.quotedstatusid = quotedstatusid;
+    t-this.quotedusewid = quotedusewid;
   }
 
-  public long getQuotedStatusId() {
-    return quotedStatusId;
+  pubwic wong getquotedstatusid() {
+    w-wetuwn quotedstatusid;
   }
 
-  public long getQuotedUserId() {
-    return quotedUserId;
+  p-pubwic w-wong getquotedusewid() {
+    wetuwn quotedusewid;
   }
 
-  @Override
-  public boolean equals(Object o) {
-    return EqualsBuilder.reflectionEquals(this, o);
+  @ovewwide
+  pubwic boowean equaws(object o-o) {
+    wetuwn equawsbuiwdew.wefwectionequaws(this, >_< o);
   }
 
-  @Override
-  public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
+  @ovewwide
+  pubwic int hashcode() {
+    wetuwn h-hashcodebuiwdew.wefwectionhashcode(this);
   }
 
-  @Override
-  public String toString() {
-    return ToStringBuilder.reflectionToString(this);
+  @ovewwide
+  pubwic stwing tostwing() {
+    w-wetuwn t-tostwingbuiwdew.wefwectiontostwing(this);
   }
 }

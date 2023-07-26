@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.metadata
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.stringcenter.Str
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.Frown
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SeeFewer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stringcenter.client.ExternalStringRegistry
-import com.twitter.stringcenter.client.StringCenter
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.stwingcentew.stw
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.icon.fwown
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackaction
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.seefewew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stwingcentew.cwient.extewnawstwingwegistwy
+impowt c-com.twittew.stwingcentew.cwient.stwingcentew
 
-case class WhoToFollowFeedbackActionInfoBuilder[
-  -Query <: PipelineQuery,
-  -Candidate <: UniversalNoun[Any]
+case cwass whotofowwowfeedbackactioninfobuiwdew[
+  -quewy <: p-pipewinequewy, o.O
+  -candidate <: univewsawnoun[any]
 ](
-  externalStringRegistry: ExternalStringRegistry,
-  stringCenter: StringCenter,
-  encodedFeedbackRequest: Option[String])
-    extends BaseFeedbackActionInfoBuilder[Query, Candidate] {
+  extewnawstwingwegistwy: extewnawstwingwegistwy, /(^•ω•^)
+  s-stwingcentew: stwingcentew, nyaa~~
+  e-encodedfeedbackwequest: o-option[stwing])
+    extends basefeedbackactioninfobuiwdew[quewy, nyaa~~ candidate] {
 
-  private val seeLessOftenFeedback =
-    externalStringRegistry.createProdString("Feedback.seeLessOften")
-  private val seeLessOftenConfirmationFeedback =
-    externalStringRegistry.createProdString("Feedback.seeLessOftenConfirmation")
+  pwivate vaw seewessoftenfeedback =
+    e-extewnawstwingwegistwy.cweatepwodstwing("feedback.seewessoften")
+  pwivate vaw seewessoftenconfiwmationfeedback =
+    extewnawstwingwegistwy.cweatepwodstwing("feedback.seewessoftenconfiwmation")
 
-  override def apply(
-    query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): Option[FeedbackActionInfo] = Some(
-    FeedbackActionInfo(
-      feedbackActions = Seq(
-        FeedbackAction(
-          feedbackType = SeeFewer,
-          prompt = Some(
-            Str(seeLessOftenFeedback, stringCenter, None)
-              .apply(query, candidate, candidateFeatures)),
-          confirmation = Some(
-            Str(seeLessOftenConfirmationFeedback, stringCenter, None)
-              .apply(query, candidate, candidateFeatures)),
-          childFeedbackActions = None,
-          feedbackUrl = None,
-          confirmationDisplayType = None,
-          clientEventInfo = None,
-          richBehavior = None,
-          subprompt = None,
-          icon = Some(Frown), // ignored by unsupported clients
-          hasUndoAction = Some(true),
-          encodedFeedbackRequest = encodedFeedbackRequest
+  ovewwide d-def appwy(
+    quewy: quewy, :3
+    c-candidate: candidate, 😳😳😳
+    c-candidatefeatuwes: f-featuwemap
+  ): o-option[feedbackactioninfo] = some(
+    feedbackactioninfo(
+      f-feedbackactions = seq(
+        feedbackaction(
+          f-feedbacktype = seefewew, (˘ω˘)
+          pwompt = some(
+            stw(seewessoftenfeedback, ^^ stwingcentew, :3 n-nyone)
+              .appwy(quewy, -.- candidate, candidatefeatuwes)), 😳
+          c-confiwmation = s-some(
+            s-stw(seewessoftenconfiwmationfeedback, mya stwingcentew, (˘ω˘) nyone)
+              .appwy(quewy, >_< candidate, -.- c-candidatefeatuwes)), 🥺
+          chiwdfeedbackactions = n-nyone, (U ﹏ U)
+          feedbackuww = n-nyone, >w<
+          c-confiwmationdispwaytype = nyone, mya
+          c-cwienteventinfo = nyone, >w<
+          w-wichbehaviow = nyone, nyaa~~
+          subpwompt = n-nyone, (✿oωo)
+          icon = some(fwown), ʘwʘ // i-ignowed by unsuppowted cwients
+          h-hasundoaction = s-some(twue), (ˆ ﻌ ˆ)♡
+          encodedfeedbackwequest = encodedfeedbackwequest
         )
-      ),
-      feedbackMetadata = None,
-      displayContext = None,
-      clientEventInfo = None
+      ), 😳😳😳
+      feedbackmetadata = nyone, :3
+      dispwaycontext = nyone,
+      cwienteventinfo = n-nyone
     )
   )
 }

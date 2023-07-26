@@ -1,9 +1,9 @@
 '''
-Includes functions to filter features dict build from
-data records.
+incwudes functions to fiwtew f-featuwes dict buiwd f-fwom
+data wecowds. ( ͡o ω ͡o )
 '''
 
-from twitter.deepbird.io.legacy.filters import (
-  balance_binary_class_samples,  # noqa: F401
-  sparse_keep_feature_if,  # noqa: F401
-  sparse_keep_sample_if)  # noqa: F401
+f-fwom t-twittew.deepbiwd.io.wegacy.fiwtews i-impowt (
+  bawance_binawy_cwass_sampwes, UwU  # n-nyoqa: f401
+  spawse_keep_featuwe_if, rawr x3  # n-nyoqa: f-f401
+  spawse_keep_sampwe_if)  # noqa: f401

@@ -1,10 +1,10 @@
-package com.twitter.simclusters_v2.hdfs_sources.presto_hdfs_sources
+package com.twittew.simcwustews_v2.hdfs_souwces.pwesto_hdfs_souwces
 
-object EntityEmbeddingsPrestoSources {
+object entityembeddingspwestosouwces {
 
-  final val SemanticCorePerLanguageSimClustersEmbeddingsDataset =
-    SemanticCorePerLanguageSimclustersEmbeddingsPrestoScalaDataset
+  f-finaw v-vaw semanticcowepewwanguagesimcwustewsembeddingsdataset =
+    s-semanticcowepewwanguagesimcwustewsembeddingspwestoscawadataset
 
-  final val ReverseIndexSemanticCorePerLanguageSimClustersEmbeddingsDataset =
-    ReverseIndexSemanticCorePerLanguageSimclustersEmbeddingsPrestoScalaDataset
+  f-finaw vaw wevewseindexsemanticcowepewwanguagesimcwustewsembeddingsdataset =
+    w-wevewseindexsemanticcowepewwanguagesimcwustewsembeddingspwestoscawadataset
 }

@@ -1,61 +1,61 @@
-package com.twitter.product_mixer.component_library.scorer.deepbird
+package com.twittew.pwoduct_mixew.component_wibwawy.scowew.deepbiwd
 
-import com.twitter.ml.prediction.core.PredictionEngine
-import com.twitter.ml.prediction_service.PredictionRequest
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.datarecord.BaseDataRecordFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.DataRecordConverter
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.DataRecordExtractor
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.FeaturesScope
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt com.twittew.mw.pwediction.cowe.pwedictionengine
+i-impowt c-com.twittew.mw.pwediction_sewvice.pwedictionwequest
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.basedatawecowdfeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.datawecowd.datawecowdconvewtew
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.datawecowd.datawecowdextwactow
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.datawecowd.featuwesscope
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.scowew.scowew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.scowewidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
 
 /**
- * Scorer that locally loads a Deepbird model.
- * @param identifier Unique identifier for the scorer
- * @param predictionEngine Prediction Engine hosting the Deepbird model.
- * @param candidateFeatures The Candidate Features to convert and pass to the deepbird model.
- * @param resultFeatures The Candidate features returned by the model.
- * @tparam Query Type of pipeline query.
- * @tparam Candidate Type of candidates to score.
- * @tparam QueryFeatures type of the query level features consumed by the scorer.
- * @tparam CandidateFeatures type of the candidate level features consumed by the scorer.
- * @tparam ResultFeatures type of the candidate level features returned by the scorer.
+ * s-scowew that wocawwy woads a deepbiwd modew. 😳😳😳
+ * @pawam identifiew unique i-identifiew fow the scowew
+ * @pawam p-pwedictionengine p-pwediction engine hosting the deepbiwd modew.
+ * @pawam candidatefeatuwes the candidate featuwes t-to convewt and pass to the deepbiwd modew.
+ * @pawam wesuwtfeatuwes the candidate f-featuwes wetuwned by the m-modew. :3
+ * @tpawam q-quewy type of p-pipewine quewy. OwO
+ * @tpawam c-candidate type of candidates to scowe. (U ﹏ U)
+ * @tpawam quewyfeatuwes t-type of the quewy wevew featuwes consumed b-by the scowew. >w<
+ * @tpawam candidatefeatuwes type of the candidate wevew featuwes consumed by the scowew. (U ﹏ U)
+ * @tpawam w-wesuwtfeatuwes type of t-the candidate w-wevew featuwes wetuwned b-by the scowew. 😳
  */
-class LollyPredictionEngineScorer[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
-  QueryFeatures <: BaseDataRecordFeature[Query, _],
-  CandidateFeatures <: BaseDataRecordFeature[Candidate, _],
-  ResultFeatures <: BaseDataRecordFeature[Candidate, _]
+cwass wowwypwedictionenginescowew[
+  quewy <: pipewinequewy, (ˆ ﻌ ˆ)♡
+  c-candidate <: u-univewsawnoun[any], 😳😳😳
+  quewyfeatuwes <: b-basedatawecowdfeatuwe[quewy, (U ﹏ U) _],
+  c-candidatefeatuwes <: basedatawecowdfeatuwe[candidate, (///ˬ///✿) _],
+  w-wesuwtfeatuwes <: basedatawecowdfeatuwe[candidate, 😳 _]
 ](
-  override val identifier: ScorerIdentifier,
-  predictionEngine: PredictionEngine,
-  candidateFeatures: FeaturesScope[CandidateFeatures],
-  resultFeatures: Set[ResultFeatures])
-    extends Scorer[Query, Candidate] {
+  ovewwide v-vaw identifiew: scowewidentifiew, 😳
+  pwedictionengine: p-pwedictionengine, σωσ
+  candidatefeatuwes: f-featuwesscope[candidatefeatuwes], rawr x3
+  wesuwtfeatuwes: s-set[wesuwtfeatuwes])
+    e-extends scowew[quewy, OwO candidate] {
 
-  private val dataRecordAdapter = new DataRecordConverter(candidateFeatures)
+  pwivate vaw datawecowdadaptew = nyew datawecowdconvewtew(candidatefeatuwes)
 
-  require(resultFeatures.nonEmpty, "Result features cannot be empty")
-  override val features: Set[Feature[_, _]] = resultFeatures.asInstanceOf[Set[Feature[_, _]]]
+  wequiwe(wesuwtfeatuwes.nonempty, /(^•ω•^) "wesuwt featuwes c-cannot be empty")
+  o-ovewwide vaw featuwes: set[featuwe[_, 😳😳😳 _]] = w-wesuwtfeatuwes.asinstanceof[set[featuwe[_, ( ͡o ω ͡o ) _]]]
 
-  private val resultsDataRecordExtractor = new DataRecordExtractor(resultFeatures)
+  p-pwivate vaw w-wesuwtsdatawecowdextwactow = nyew datawecowdextwactow(wesuwtfeatuwes)
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val featureMaps = candidates.map { candidateWithFeatures =>
-      val dataRecord = dataRecordAdapter.toDataRecord(candidateWithFeatures.features)
-      val predictionResponse = predictionEngine.apply(new PredictionRequest(dataRecord), true)
-      resultsDataRecordExtractor.fromDataRecord(predictionResponse.getPrediction)
+  ovewwide d-def appwy(
+    quewy: quewy, >_<
+    candidates: seq[candidatewithfeatuwes[candidate]]
+  ): stitch[seq[featuwemap]] = {
+    v-vaw featuwemaps = candidates.map { c-candidatewithfeatuwes =>
+      v-vaw d-datawecowd = datawecowdadaptew.todatawecowd(candidatewithfeatuwes.featuwes)
+      vaw pwedictionwesponse = p-pwedictionengine.appwy(new p-pwedictionwequest(datawecowd), >w< t-twue)
+      w-wesuwtsdatawecowdextwactow.fwomdatawecowd(pwedictionwesponse.getpwediction)
     }
-    Stitch.value(featureMaps)
+    stitch.vawue(featuwemaps)
   }
 }

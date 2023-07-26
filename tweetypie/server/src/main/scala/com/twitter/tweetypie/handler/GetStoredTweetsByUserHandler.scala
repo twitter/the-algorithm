@@ -1,186 +1,186 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.flockdb.client.Cursor
-import com.twitter.flockdb.client.PageResult
-import com.twitter.flockdb.client.Select
-import com.twitter.flockdb.client.StatusGraph
-import com.twitter.flockdb.client.UserTimelineGraph
-import com.twitter.flockdb.client.thriftscala.EdgeState
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.storage.TweetStorageClient
-import com.twitter.tweetypie.storage.TweetStorageClient.GetStoredTweet
-import com.twitter.tweetypie.thriftscala.GetStoredTweetsByUserOptions
-import com.twitter.tweetypie.thriftscala.GetStoredTweetsByUserRequest
-import com.twitter.tweetypie.thriftscala.GetStoredTweetsByUserResult
-import com.twitter.tweetypie.thriftscala.GetStoredTweetsOptions
-import com.twitter.tweetypie.thriftscala.GetStoredTweetsRequest
+impowt c-com.twittew.fwockdb.cwient.cuwsow
+i-impowt com.twittew.fwockdb.cwient.pagewesuwt
+i-impowt com.twittew.fwockdb.cwient.sewect
+i-impowt c-com.twittew.fwockdb.cwient.statusgwaph
+i-impowt c-com.twittew.fwockdb.cwient.usewtimewinegwaph
+impowt com.twittew.fwockdb.cwient.thwiftscawa.edgestate
+impowt com.twittew.snowfwake.id.snowfwakeid
+impowt com.twittew.stitch.stitch
+impowt com.twittew.tweetypie.stowage.tweetstowagecwient
+i-impowt com.twittew.tweetypie.stowage.tweetstowagecwient.getstowedtweet
+impowt com.twittew.tweetypie.thwiftscawa.getstowedtweetsbyusewoptions
+i-impowt com.twittew.tweetypie.thwiftscawa.getstowedtweetsbyusewwequest
+impowt c-com.twittew.tweetypie.thwiftscawa.getstowedtweetsbyusewwesuwt
+impowt com.twittew.tweetypie.thwiftscawa.getstowedtweetsoptions
+impowt com.twittew.tweetypie.thwiftscawa.getstowedtweetswequest
 
-object GetStoredTweetsByUserHandler {
-  type Type = FutureArrow[GetStoredTweetsByUserRequest, GetStoredTweetsByUserResult]
+object getstowedtweetsbyusewhandwew {
+  t-type type = futuweawwow[getstowedtweetsbyusewwequest, (ꈍᴗꈍ) g-getstowedtweetsbyusewwesuwt]
 
-  def apply(
-    getStoredTweetsHandler: GetStoredTweetsHandler.Type,
-    getStoredTweet: TweetStorageClient.GetStoredTweet,
-    selectPage: FutureArrow[Select[StatusGraph], PageResult[Long]],
-    maxPages: Int
-  ): Type = {
-    FutureArrow { request =>
-      val options = request.options.getOrElse(GetStoredTweetsByUserOptions())
+  d-def appwy(
+    getstowedtweetshandwew: getstowedtweetshandwew.type, :3
+    getstowedtweet: tweetstowagecwient.getstowedtweet, (U ﹏ U)
+    s-sewectpage: futuweawwow[sewect[statusgwaph], UwU pagewesuwt[wong]],
+    maxpages: int
+  ): type = {
+    futuweawwow { wequest =>
+      v-vaw options = wequest.options.getowewse(getstowedtweetsbyusewoptions())
 
-      val startTimeMsec: Long = options.startTimeMsec.getOrElse(0L)
-      val endTimeMsec: Long = options.endTimeMsec.getOrElse(Time.now.inMillis)
-      val cursor = options.cursor.map(Cursor(_)).getOrElse {
-        if (options.startFromOldest) Cursor.lowest else Cursor.highest
+      v-vaw stawttimemsec: w-wong = options.stawttimemsec.getowewse(0w)
+      v-vaw endtimemsec: w-wong = options.endtimemsec.getowewse(time.now.inmiwwis)
+      vaw cuwsow = o-options.cuwsow.map(cuwsow(_)).getowewse {
+        if (options.stawtfwomowdest) cuwsow.wowest e-ewse cuwsow.highest
       }
 
-      getNextTweetIdsInTimeRange(
-        request.userId,
-        startTimeMsec,
-        endTimeMsec,
-        cursor,
-        selectPage,
-        getStoredTweet,
-        maxPages,
-        numTries = 0
-      ).flatMap {
-        case (tweetIds, cursor) =>
-          val getStoredTweetsRequest = toGetStoredTweetsRequest(tweetIds, request.userId, options)
+      getnexttweetidsintimewange(
+        wequest.usewid, 😳😳😳
+        stawttimemsec, XD
+        endtimemsec,
+        cuwsow,
+        s-sewectpage, o.O
+        getstowedtweet, (⑅˘꒳˘)
+        m-maxpages, 😳😳😳
+        n-nyumtwies = 0
+      ).fwatmap {
+        c-case (tweetids, nyaa~~ cuwsow) =>
+          vaw getstowedtweetswequest = togetstowedtweetswequest(tweetids, rawr w-wequest.usewid, -.- o-options)
 
-          getStoredTweetsHandler(getStoredTweetsRequest)
-            .map { getStoredTweetsResults =>
-              GetStoredTweetsByUserResult(
-                storedTweets = getStoredTweetsResults.map(_.storedTweet),
-                cursor = if (cursor.isEnd) None else Some(cursor.value)
+          getstowedtweetshandwew(getstowedtweetswequest)
+            .map { g-getstowedtweetswesuwts =>
+              g-getstowedtweetsbyusewwesuwt(
+                stowedtweets = g-getstowedtweetswesuwts.map(_.stowedtweet), (✿oωo)
+                cuwsow = i-if (cuwsow.isend) nyone ewse some(cuwsow.vawue)
               )
             }
       }
     }
   }
 
-  private def toGetStoredTweetsRequest(
-    tweetIds: Seq[TweetId],
-    userId: UserId,
-    getStoredTweetsByUserOptions: GetStoredTweetsByUserOptions
-  ): GetStoredTweetsRequest = {
+  p-pwivate def togetstowedtweetswequest(
+    t-tweetids: seq[tweetid], /(^•ω•^)
+    usewid: u-usewid, 🥺
+    g-getstowedtweetsbyusewoptions: getstowedtweetsbyusewoptions
+  ): getstowedtweetswequest = {
 
-    val options: GetStoredTweetsOptions = GetStoredTweetsOptions(
-      bypassVisibilityFiltering = getStoredTweetsByUserOptions.bypassVisibilityFiltering,
-      forUserId = if (getStoredTweetsByUserOptions.setForUserId) Some(userId) else None,
-      additionalFieldIds = getStoredTweetsByUserOptions.additionalFieldIds
+    vaw options: getstowedtweetsoptions = getstowedtweetsoptions(
+      bypassvisibiwityfiwtewing = getstowedtweetsbyusewoptions.bypassvisibiwityfiwtewing, ʘwʘ
+      f-fowusewid = if (getstowedtweetsbyusewoptions.setfowusewid) s-some(usewid) ewse nyone,
+      a-additionawfiewdids = getstowedtweetsbyusewoptions.additionawfiewdids
     )
 
-    GetStoredTweetsRequest(
-      tweetIds = tweetIds,
-      options = Some(options)
+    g-getstowedtweetswequest(
+      t-tweetids = tweetids, UwU
+      options = some(options)
     )
   }
 
-  private def getNextTweetIdsInTimeRange(
-    userId: UserId,
-    startTimeMsec: Long,
-    endTimeMsec: Long,
-    cursor: Cursor,
-    selectPage: FutureArrow[Select[StatusGraph], PageResult[Long]],
-    getStoredTweet: TweetStorageClient.GetStoredTweet,
-    maxPages: Int,
-    numTries: Int
-  ): Future[(Seq[TweetId], Cursor)] = {
-    val select = Select(
-      sourceId = userId,
-      graph = UserTimelineGraph,
-      stateIds =
-        Some(Seq(EdgeState.Archived.value, EdgeState.Positive.value, EdgeState.Removed.value))
-    ).withCursor(cursor)
+  pwivate d-def getnexttweetidsintimewange(
+    usewid: usewid, XD
+    stawttimemsec: wong, (✿oωo)
+    endtimemsec: wong, :3
+    c-cuwsow: cuwsow, (///ˬ///✿)
+    sewectpage: f-futuweawwow[sewect[statusgwaph], nyaa~~ p-pagewesuwt[wong]], >w<
+    g-getstowedtweet: tweetstowagecwient.getstowedtweet, -.-
+    m-maxpages: i-int, (✿oωo)
+    nyumtwies: i-int
+  ): futuwe[(seq[tweetid], (˘ω˘) c-cuwsow)] = {
+    vaw sewect = sewect(
+      s-souwceid = usewid, rawr
+      g-gwaph = u-usewtimewinegwaph, OwO
+      s-stateids =
+        s-some(seq(edgestate.awchived.vawue, ^•ﻌ•^ edgestate.positive.vawue, UwU edgestate.wemoved.vawue))
+    ).withcuwsow(cuwsow)
 
-    def inTimeRange(timestamp: Long): Boolean =
-      timestamp >= startTimeMsec && timestamp <= endTimeMsec
-    def pastTimeRange(timestamps: Seq[Long]) = {
-      if (cursor.isAscending) {
-        timestamps.max > endTimeMsec
-      } else {
-        timestamps.min < startTimeMsec
+    def intimewange(timestamp: w-wong): boowean =
+      timestamp >= stawttimemsec && timestamp <= endtimemsec
+    def pasttimewange(timestamps: s-seq[wong]) = {
+      if (cuwsow.isascending) {
+        timestamps.max > endtimemsec
+      } e-ewse {
+        t-timestamps.min < s-stawttimemsec
       }
     }
 
-    val pageResultFuture: Future[PageResult[Long]] = selectPage(select)
+    vaw pagewesuwtfutuwe: f-futuwe[pagewesuwt[wong]] = sewectpage(sewect)
 
-    pageResultFuture.flatMap { pageResult =>
-      val groupedIds = pageResult.entries.groupBy(SnowflakeId.isSnowflakeId)
-      val nextCursor = if (cursor.isAscending) pageResult.previousCursor else pageResult.nextCursor
+    p-pagewesuwtfutuwe.fwatmap { p-pagewesuwt =>
+      vaw gwoupedids = pagewesuwt.entwies.gwoupby(snowfwakeid.issnowfwakeid)
+      vaw nextcuwsow = if (cuwsow.isascending) pagewesuwt.pweviouscuwsow e-ewse pagewesuwt.nextcuwsow
 
-      // Timestamps for the creation of Tweets with snowflake IDs can be calculated from the IDs
-      // themselves.
-      val snowflakeIdsTimestamps: Seq[(Long, Long)] = groupedIds.getOrElse(true, Seq()).map { id =>
-        val snowflakeTimeMillis = SnowflakeId.unixTimeMillisFromId(id)
-        (id, snowflakeTimeMillis)
+      // timestamps f-fow the cweation of tweets with s-snowfwake ids c-can be cawcuwated fwom the ids
+      // themsewves. (˘ω˘)
+      v-vaw snowfwakeidstimestamps: s-seq[(wong, (///ˬ///✿) wong)] = gwoupedids.getowewse(twue, σωσ s-seq()).map { i-id =>
+        vaw snowfwaketimemiwwis = snowfwakeid.unixtimemiwwisfwomid(id)
+        (id, /(^•ω•^) snowfwaketimemiwwis)
       }
 
-      // For non-snowflake Tweets, we need to fetch the Tweet data from Manhattan to see when the
-      // Tweet was created.
-      val nonSnowflakeIdsTimestamps: Future[Seq[(Long, Long)]] = Stitch.run(
-        Stitch
-          .traverse(groupedIds.getOrElse(false, Seq()))(getStoredTweet)
+      // fow nyon-snowfwake t-tweets, 😳 we n-nyeed to fetch t-the tweet data fwom manhattan to s-see when the
+      // t-tweet was cweated. 😳
+      v-vaw nyonsnowfwakeidstimestamps: futuwe[seq[(wong, (⑅˘꒳˘) wong)]] = stitch.wun(
+        stitch
+          .twavewse(gwoupedids.getowewse(fawse, 😳😳😳 seq()))(getstowedtweet)
           .map {
-            _.flatMap {
-              case GetStoredTweet.Response.FoundAny(tweet, _, _, _, _) => {
-                if (tweet.coreData.exists(_.createdAtSecs > 0)) {
-                  Some((tweet.id, tweet.coreData.get.createdAtSecs))
-                } else None
+            _.fwatmap {
+              c-case getstowedtweet.wesponse.foundany(tweet, 😳 _, XD _, _, _) => {
+                i-if (tweet.cowedata.exists(_.cweatedatsecs > 0)) {
+                  some((tweet.id, mya tweet.cowedata.get.cweatedatsecs))
+                } e-ewse n-nyone
               }
-              case _ => None
+              case _ => nyone
             }
           })
 
-      nonSnowflakeIdsTimestamps.flatMap { nonSnowflakeList =>
-        val allTweetIdsAndTimestamps = snowflakeIdsTimestamps ++ nonSnowflakeList
-        val filteredTweetIds = allTweetIdsAndTimestamps
-          .filter {
-            case (_, ts) => inTimeRange(ts)
+      nonsnowfwakeidstimestamps.fwatmap { n-nyonsnowfwakewist =>
+        vaw awwtweetidsandtimestamps = snowfwakeidstimestamps ++ nyonsnowfwakewist
+        vaw f-fiwtewedtweetids = awwtweetidsandtimestamps
+          .fiwtew {
+            case (_, ^•ﻌ•^ t-ts) => intimewange(ts)
           }
           .map(_._1)
 
-        if (nextCursor.isEnd) {
-          // We've considered the last Tweet for this User. There are no more Tweets to return.
-          Future.value((filteredTweetIds, Cursor.end))
-        } else if (allTweetIdsAndTimestamps.nonEmpty &&
-          pastTimeRange(allTweetIdsAndTimestamps.map(_._2))) {
-          // At least one Tweet returned from Tflock has a timestamp past our time range, i.e.
-          // greater than the end time (if we're fetching in an ascending order) or lower than the
-          // start time (if we're fetching in a descending order). There is no point in looking at
-          // any more Tweets from this User as they'll all be outside the time range.
-          Future.value((filteredTweetIds, Cursor.end))
-        } else if (filteredTweetIds.isEmpty) {
-          // We're here because one of two things happened:
-          // 1. allTweetIdsAndTimestamps is empty: Either Tflock has returned an empty page of Tweets
-          //    or we weren't able to fetch timestamps for any of the Tweets Tflock returned. In this
-          //    case, we fetch the next page of Tweets.
-          // 2. allTweetIdsAndTimestamps is non-empty but filteredTweetIds is empty: The current page
-          //    has no Tweets inside the requested time range. We fetch the next page of Tweets and
-          //    try again.
-          // If we hit the limit for the maximum number of pages from tflock to be requested, we
-          // return an empty list of Tweets with the cursor for the caller to try again.
+        i-if (nextcuwsow.isend) {
+          // we've considewed the wast tweet fow this u-usew. ʘwʘ thewe a-awe nyo mowe tweets to wetuwn. ( ͡o ω ͡o )
+          futuwe.vawue((fiwtewedtweetids, mya cuwsow.end))
+        } e-ewse if (awwtweetidsandtimestamps.nonempty &&
+          pasttimewange(awwtweetidsandtimestamps.map(_._2))) {
+          // a-at weast one tweet wetuwned fwom tfwock has a timestamp p-past ouw time wange, o.O i.e.
+          // g-gweatew t-than the end time (if we'we fetching i-in an ascending owdew) ow w-wowew than the
+          // s-stawt t-time (if we'we fetching in a descending o-owdew). (✿oωo) t-thewe is no point in wooking at
+          // any mowe tweets fwom t-this usew as t-they'ww aww be o-outside the time wange. :3
+          futuwe.vawue((fiwtewedtweetids, 😳 c-cuwsow.end))
+        } ewse if (fiwtewedtweetids.isempty) {
+          // w-we'we h-hewe because one of two things happened:
+          // 1. (U ﹏ U) awwtweetidsandtimestamps i-is empty: eithew t-tfwock has wetuwned a-an empty p-page of tweets
+          //    ow we wewen't abwe t-to fetch timestamps fow any of the tweets tfwock wetuwned. mya in this
+          //    case, (U ᵕ U❁) we fetch t-the nyext page of tweets. :3
+          // 2. mya awwtweetidsandtimestamps i-is nyon-empty but fiwtewedtweetids i-is empty: the cuwwent p-page
+          //    has nyo tweets i-inside the w-wequested time wange. OwO w-we fetch the n-nyext page of t-tweets and
+          //    twy again. (ˆ ﻌ ˆ)♡
+          // if we hit the wimit fow the maximum nyumbew of pages fwom tfwock t-to be wequested, ʘwʘ w-we
+          // w-wetuwn an empty wist of tweets w-with the cuwsow fow the cawwew to twy again. o.O
 
-          if (numTries == maxPages) {
-            Future.value((filteredTweetIds, nextCursor))
-          } else {
-            getNextTweetIdsInTimeRange(
-              userId = userId,
-              startTimeMsec = startTimeMsec,
-              endTimeMsec = endTimeMsec,
-              cursor = nextCursor,
-              selectPage = selectPage,
-              getStoredTweet = getStoredTweet,
-              maxPages = maxPages,
-              numTries = numTries + 1
+          if (numtwies == m-maxpages) {
+            f-futuwe.vawue((fiwtewedtweetids, UwU nyextcuwsow))
+          } ewse {
+            g-getnexttweetidsintimewange(
+              usewid = usewid, rawr x3
+              s-stawttimemsec = s-stawttimemsec, 🥺
+              endtimemsec = e-endtimemsec, :3
+              c-cuwsow = nyextcuwsow, (ꈍᴗꈍ)
+              sewectpage = sewectpage,
+              getstowedtweet = getstowedtweet, 🥺
+              m-maxpages = m-maxpages, (✿oωo)
+              n-nyumtwies = n-nyumtwies + 1
             )
           }
-        } else {
-          // filteredTweetIds is non-empty: There are some Tweets in this page that are within the
-          // requested time range, and we aren't out of the time range yet. We return the Tweets we
-          // have and set the cursor forward for the next request.
-          Future.value((filteredTweetIds, nextCursor))
+        } e-ewse {
+          // fiwtewedtweetids i-is non-empty: thewe a-awe some tweets in this page t-that awe within t-the
+          // wequested time w-wange, (U ﹏ U) and we awen't out of the time wange yet. :3 w-we wetuwn the tweets we
+          // h-have and s-set the cuwsow fowwawd fow the nyext w-wequest. ^^;;
+          futuwe.vawue((fiwtewedtweetids, rawr nyextcuwsow))
         }
       }
     }

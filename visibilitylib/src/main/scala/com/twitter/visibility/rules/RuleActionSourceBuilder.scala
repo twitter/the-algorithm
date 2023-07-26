@@ -1,97 +1,97 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.escherbird.thriftscala.TweetEntityAnnotation
-import com.twitter.gizmoduck.thriftscala.Label
-import com.twitter.spam.rtf.thriftscala.BotMakerAction
-import com.twitter.spam.rtf.thriftscala.SafetyLabelSource
-import com.twitter.spam.rtf.thriftscala.SemanticCoreAction
-import com.twitter.visibility.common.actions.EscherbirdAnnotation
-import com.twitter.visibility.common.actions.SoftInterventionReason
-import com.twitter.visibility.configapi.configs.DeciderKey
-import com.twitter.visibility.features.AuthorUserLabels
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.features.TweetSafetyLabels
-import com.twitter.visibility.logging.thriftscala.ActionSource
-import com.twitter.visibility.models.LabelSource._
-import com.twitter.visibility.models.TweetSafetyLabel
-import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.visibility.models.UserLabel
-import com.twitter.visibility.models.UserLabelValue
+impowt com.twittew.eschewbiwd.thwiftscawa.tweetentityannotation
+i-impowt com.twittew.gizmoduck.thwiftscawa.wabew
+i-impowt com.twittew.spam.wtf.thwiftscawa.botmakewaction
+i-impowt c-com.twittew.spam.wtf.thwiftscawa.safetywabewsouwce
+i-impowt com.twittew.spam.wtf.thwiftscawa.semanticcoweaction
+i-impowt com.twittew.visibiwity.common.actions.eschewbiwdannotation
+i-impowt com.twittew.visibiwity.common.actions.softintewventionweason
+i-impowt com.twittew.visibiwity.configapi.configs.decidewkey
+impowt com.twittew.visibiwity.featuwes.authowusewwabews
+impowt com.twittew.visibiwity.featuwes.featuwe
+impowt com.twittew.visibiwity.featuwes.tweetsafetywabews
+i-impowt com.twittew.visibiwity.wogging.thwiftscawa.actionsouwce
+impowt com.twittew.visibiwity.modews.wabewsouwce._
+impowt com.twittew.visibiwity.modews.tweetsafetywabew
+i-impowt com.twittew.visibiwity.modews.tweetsafetywabewtype
+i-impowt com.twittew.visibiwity.modews.usewwabew
+impowt com.twittew.visibiwity.modews.usewwabewvawue
 
-sealed trait RuleActionSourceBuilder {
-  def build(resolvedFeatureMap: Map[Feature[_], Any], verdict: Action): Option[ActionSource]
+seawed twait wuweactionsouwcebuiwdew {
+  d-def buiwd(wesowvedfeatuwemap: map[featuwe[_], (U ﹏ U) a-any], v-vewdict: action): option[actionsouwce]
 
 }
 
-object RuleActionSourceBuilder {
+object wuweactionsouwcebuiwdew {
 
-  case class TweetSafetyLabelSourceBuilder(tweetSafetyLabelType: TweetSafetyLabelType)
-      extends RuleActionSourceBuilder {
-    override def build(
-      resolvedFeatureMap: Map[Feature[_], Any],
-      verdict: Action
-    ): Option[ActionSource] = {
-      resolvedFeatureMap
-        .getOrElse(TweetSafetyLabels, Seq.empty[TweetSafetyLabel])
-        .asInstanceOf[Seq[TweetSafetyLabel]]
-        .find(_.labelType == tweetSafetyLabelType)
-        .flatMap(_.safetyLabelSource)
-        .map(ActionSource.SafetyLabelSource(_))
+  case cwass tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype: tweetsafetywabewtype)
+      e-extends wuweactionsouwcebuiwdew {
+    ovewwide def buiwd(
+      wesowvedfeatuwemap: map[featuwe[_], a-any], >w<
+      vewdict: action
+    ): o-option[actionsouwce] = {
+      w-wesowvedfeatuwemap
+        .getowewse(tweetsafetywabews, mya s-seq.empty[tweetsafetywabew])
+        .asinstanceof[seq[tweetsafetywabew]]
+        .find(_.wabewtype == t-tweetsafetywabewtype)
+        .fwatmap(_.safetywabewsouwce)
+        .map(actionsouwce.safetywabewsouwce(_))
     }
   }
 
-  case class UserSafetyLabelSourceBuilder(userLabel: UserLabelValue)
-      extends RuleActionSourceBuilder {
-    override def build(
-      resolvedFeatureMap: Map[Feature[_], Any],
-      verdict: Action
-    ): Option[ActionSource] = {
-      resolvedFeatureMap
-        .getOrElse(AuthorUserLabels, Seq.empty[Label])
-        .asInstanceOf[Seq[Label]]
-        .map(UserLabel.fromThrift)
-        .find(_.labelValue == userLabel)
-        .flatMap(_.source)
-        .collect {
-          case BotMakerRule(ruleId) =>
-            ActionSource.SafetyLabelSource(SafetyLabelSource.BotMakerAction(BotMakerAction(ruleId)))
+  case cwass usewsafetywabewsouwcebuiwdew(usewwabew: u-usewwabewvawue)
+      extends wuweactionsouwcebuiwdew {
+    ovewwide d-def buiwd(
+      wesowvedfeatuwemap: map[featuwe[_], >w< any],
+      vewdict: action
+    ): option[actionsouwce] = {
+      w-wesowvedfeatuwemap
+        .getowewse(authowusewwabews, nyaa~~ seq.empty[wabew])
+        .asinstanceof[seq[wabew]]
+        .map(usewwabew.fwomthwift)
+        .find(_.wabewvawue == u-usewwabew)
+        .fwatmap(_.souwce)
+        .cowwect {
+          c-case b-botmakewwuwe(wuweid) =>
+            actionsouwce.safetywabewsouwce(safetywabewsouwce.botmakewaction(botmakewaction(wuweid)))
         }
     }
   }
 
-  case class SemanticCoreActionSourceBuilder() extends RuleActionSourceBuilder {
-    override def build(
-      resolvedFeatureMap: Map[Feature[_], Any],
-      verdict: Action
-    ): Option[ActionSource] = {
-      verdict match {
-        case softIntervention: SoftIntervention =>
-          getSemanticCoreActionSourceOption(softIntervention)
-        case tweetInterstitial: TweetInterstitial =>
-          tweetInterstitial.softIntervention.flatMap(getSemanticCoreActionSourceOption)
-        case _ => None
+  case cwass semanticcoweactionsouwcebuiwdew() e-extends wuweactionsouwcebuiwdew {
+    o-ovewwide def buiwd(
+      w-wesowvedfeatuwemap: m-map[featuwe[_], (✿oωo) any],
+      v-vewdict: action
+    ): option[actionsouwce] = {
+      v-vewdict match {
+        case softintewvention: s-softintewvention =>
+          getsemanticcoweactionsouwceoption(softintewvention)
+        c-case tweetintewstitiaw: tweetintewstitiaw =>
+          t-tweetintewstitiaw.softintewvention.fwatmap(getsemanticcoweactionsouwceoption)
+        c-case _ => nyone
       }
     }
 
-    def getSemanticCoreActionSourceOption(
-      softIntervention: SoftIntervention
-    ): Option[ActionSource] = {
-      val siReason = softIntervention.reason
-        .asInstanceOf[SoftInterventionReason.EscherbirdAnnotations]
-      val firstAnnotation: Option[EscherbirdAnnotation] =
-        siReason.escherbirdAnnotations.headOption
+    def getsemanticcoweactionsouwceoption(
+      softintewvention: softintewvention
+    ): option[actionsouwce] = {
+      vaw siweason = s-softintewvention.weason
+        .asinstanceof[softintewventionweason.eschewbiwdannotations]
+      v-vaw fiwstannotation: option[eschewbiwdannotation] =
+        s-siweason.eschewbiwdannotations.headoption
 
-      firstAnnotation.map { annotation =>
-        ActionSource.SafetyLabelSource(
-          SafetyLabelSource.SemanticCoreAction(SemanticCoreAction(
-            TweetEntityAnnotation(annotation.groupId, annotation.domainId, annotation.entityId))))
+      f-fiwstannotation.map { a-annotation =>
+        actionsouwce.safetywabewsouwce(
+          safetywabewsouwce.semanticcoweaction(semanticcoweaction(
+            tweetentityannotation(annotation.gwoupid, ʘwʘ a-annotation.domainid, (ˆ ﻌ ˆ)♡ annotation.entityid))))
       }
     }
   }
 }
 
-trait DoesLogVerdict {}
+twait doeswogvewdict {}
 
-trait DoesLogVerdictDecidered extends DoesLogVerdict {
-  def verdictLogDeciderKey: DeciderKey.Value
+twait doeswogvewdictdecidewed extends doeswogvewdict {
+  d-def vewdictwogdecidewkey: d-decidewkey.vawue
 }

@@ -1,57 +1,57 @@
-package com.twitter.interaction_graph.scio.agg_all
+package com.twittew.intewaction_gwaph.scio.agg_aww
 
-import collection.JavaConverters._
-import com.spotify.scio.values.SCollection
-import com.twitter.algebird.mutable.PriorityQueueMonoid
-import com.twitter.interaction_graph.scio.common.GraphUtil
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.timelines.real_graph.thriftscala.RealGraphFeatures
-import com.twitter.timelines.real_graph.thriftscala.RealGraphFeaturesTest
-import com.twitter.timelines.real_graph.v1.thriftscala.{RealGraphFeatures => RealGraphFeaturesV1}
-import com.twitter.user_session_store.thriftscala.UserSession
-import com.twitter.interaction_graph.scio.common.ConversionUtil._
+impowt cowwection.javaconvewtews._
+i-impowt com.spotify.scio.vawues.scowwection
+i-impowt com.twittew.awgebiwd.mutabwe.pwiowityqueuemonoid
+i-impowt c-com.twittew.intewaction_gwaph.scio.common.gwaphutiw
+i-impowt com.twittew.intewaction_gwaph.thwiftscawa.edge
+i-impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+i-impowt com.twittew.timewines.weaw_gwaph.thwiftscawa.weawgwaphfeatuwes
+impowt com.twittew.timewines.weaw_gwaph.thwiftscawa.weawgwaphfeatuwestest
+impowt com.twittew.timewines.weaw_gwaph.v1.thwiftscawa.{weawgwaphfeatuwes => weawgwaphfeatuwesv1}
+impowt com.twittew.usew_session_stowe.thwiftscawa.usewsession
+i-impowt com.twittew.intewaction_gwaph.scio.common.convewsionutiw._
 
-object InteractionGraphAggregationTransform {
-  val ordering: Ordering[Edge] = Ordering.by(-_.weight.getOrElse(0.0))
+object intewactiongwaphaggwegationtwansfowm {
+  vaw owdewing: o-owdewing[edge] = owdewing.by(-_.weight.getowewse(0.0))
 
-  // converts our Edge thrift into timelines' thrift
-  def getTopKTimelineFeatures(
-    scoredAggregatedEdge: SCollection[Edge],
-    maxDestinationIds: Int
-  ): SCollection[KeyVal[Long, UserSession]] = {
-    scoredAggregatedEdge
-      .filter(_.weight.exists(_ > 0))
-      .keyBy(_.sourceId)
-      .groupByKey
+  // c-convewts ouw edge thwift into timewines' thwift
+  d-def gettopktimewinefeatuwes(
+    scowedaggwegatededge: s-scowwection[edge], rawr x3
+    m-maxdestinationids: int
+  ): scowwection[keyvaw[wong, (U ﹏ U) usewsession]] = {
+    scowedaggwegatededge
+      .fiwtew(_.weight.exists(_ > 0))
+      .keyby(_.souwceid)
+      .gwoupbykey
       .map {
-        case (sourceId, edges) =>
-          val (inEdges, outEdges) = edges.partition(GraphUtil.isFollow)
-          val inTopK =
-            if (inEdges.isEmpty) Nil
-            else {
-              val inTopKQueue =
-                new PriorityQueueMonoid[Edge](maxDestinationIds)(ordering)
-              inTopKQueue
-                .build(inEdges).iterator().asScala.toList.flatMap(
-                  toRealGraphEdgeFeatures(hasTimelinesRequiredFeatures))
+        case (souwceid, e-edges) =>
+          vaw (inedges, (U ﹏ U) outedges) = edges.pawtition(gwaphutiw.isfowwow)
+          vaw intopk =
+            i-if (inedges.isempty) nyiw
+            ewse {
+              v-vaw intopkqueue =
+                n-nyew pwiowityqueuemonoid[edge](maxdestinationids)(owdewing)
+              i-intopkqueue
+                .buiwd(inedges).itewatow().asscawa.towist.fwatmap(
+                  t-toweawgwaphedgefeatuwes(hastimewineswequiwedfeatuwes))
             }
-          val outTopK =
-            if (outEdges.isEmpty) Nil
-            else {
-              val outTopKQueue =
-                new PriorityQueueMonoid[Edge](maxDestinationIds)(ordering)
-              outTopKQueue
-                .build(outEdges).iterator().asScala.toList.flatMap(
-                  toRealGraphEdgeFeatures(hasTimelinesRequiredFeatures))
+          vaw outtopk =
+            if (outedges.isempty) n-nyiw
+            ewse {
+              vaw outtopkqueue =
+                n-nyew pwiowityqueuemonoid[edge](maxdestinationids)(owdewing)
+              outtopkqueue
+                .buiwd(outedges).itewatow().asscawa.towist.fwatmap(
+                  toweawgwaphedgefeatuwes(hastimewineswequiwedfeatuwes))
             }
-          KeyVal(
-            sourceId,
-            UserSession(
-              userId = Some(sourceId),
-              realGraphFeatures = Some(RealGraphFeatures.V1(RealGraphFeaturesV1(inTopK, outTopK))),
-              realGraphFeaturesTest =
-                Some(RealGraphFeaturesTest.V1(RealGraphFeaturesV1(inTopK, outTopK)))
+          keyvaw(
+            souwceid, (⑅˘꒳˘)
+            usewsession(
+              usewid = s-some(souwceid), òωó
+              weawgwaphfeatuwes = s-some(weawgwaphfeatuwes.v1(weawgwaphfeatuwesv1(intopk, ʘwʘ o-outtopk))), /(^•ω•^)
+              w-weawgwaphfeatuwestest =
+                some(weawgwaphfeatuwestest.v1(weawgwaphfeatuwesv1(intopk, ʘwʘ outtopk)))
             )
           )
       }

@@ -1,82 +1,82 @@
-package com.twitter.recos.user_video_graph
+package com.twittew.wecos.usew_video_gwaph
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.consumers.FinagleKafkaConsumerBuilder
-import com.twitter.graphjet.algorithms.TweetIDMask
-import com.twitter.graphjet.bipartite.MultiSegmentPowerLawBipartiteGraph
-import com.twitter.graphjet.bipartite.segment.BipartiteGraphSegment
-import com.twitter.recos.hose.common.UnifiedGraphWriter
-import com.twitter.recos.internal.thriftscala.RecosHoseMessage
-import com.twitter.recos.serviceapi.Tweetypie._
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.finatwa.kafka.consumews.finagwekafkaconsumewbuiwdew
+i-impowt com.twittew.gwaphjet.awgowithms.tweetidmask
+i-impowt com.twittew.gwaphjet.bipawtite.muwtisegmentpowewwawbipawtitegwaph
+i-impowt c-com.twittew.gwaphjet.bipawtite.segment.bipawtitegwaphsegment
+i-impowt com.twittew.wecos.hose.common.unifiedgwaphwwitew
+impowt com.twittew.wecos.intewnaw.thwiftscawa.wecoshosemessage
+impowt com.twittew.wecos.sewviceapi.tweetypie._
 
 /**
- * The class submits a number of $numBootstrapWriters graph writer threads, BufferedEdgeWriter,
- * during service startup. One of them is live writer thread, and the other $(numBootstrapWriters - 1)
- * are catchup writer threads. All of them consume kafka events from an internal concurrent queue,
- * which is populated by kafka reader threads. At bootstrap time, the kafka reader threads look
- * back kafka offset from several hours ago and populate the internal concurrent queue.
- * Each graph writer thread writes to an individual graph segment separately.
- * The $(numBootstrapWriters - 1) catchup writer threads will stop once all events
- * between current system time at startup and the time in memcache are processed.
- * The live writer thread will continue to write all incoming kafka events.
- * It lives through the entire life cycle of recos graph service.
+ * the cwass submits a-a nyumbew of $numbootstwapwwitews gwaph wwitew thweads, ^•ﻌ•^ buffewededgewwitew,
+ * d-duwing sewvice stawtup. (˘ω˘) one of t-them is wive wwitew thwead, :3 and the othew $(numbootstwapwwitews - 1)
+ * awe catchup w-wwitew thweads. ^^;; aww of them c-consume kafka events f-fwom an intewnaw concuwwent queue, 🥺
+ * which is popuwated by kafka weadew thweads. (⑅˘꒳˘) a-at bootstwap time, nyaa~~ the kafka weadew thweads wook
+ * back kafka offset fwom s-sevewaw houws ago and popuwate t-the intewnaw concuwwent q-queue. :3
+ * e-each gwaph wwitew t-thwead wwites to an individuaw gwaph segment s-sepawatewy. ( ͡o ω ͡o )
+ * the $(numbootstwapwwitews - 1) catchup wwitew thweads w-wiww stop once aww events
+ * between cuwwent system time at stawtup and the time in memcache a-awe pwocessed. mya
+ * the wive wwitew t-thwead wiww c-continue to wwite a-aww incoming kafka events. (///ˬ///✿)
+ * it wives thwough the entiwe wife c-cycwe of wecos g-gwaph sewvice. (˘ω˘)
  */
-case class UserVideoGraphWriter(
-  shardId: String,
-  env: String,
-  hosename: String,
-  bufferSize: Int,
-  kafkaConsumerBuilder: FinagleKafkaConsumerBuilder[String, RecosHoseMessage],
-  clientId: String,
-  statsReceiver: StatsReceiver)
-    extends UnifiedGraphWriter[BipartiteGraphSegment, MultiSegmentPowerLawBipartiteGraph] {
-  writer =>
-  // The max throughput for each kafka consumer is around 25MB/s
-  // Use 4 processors for 100MB/s catch-up speed.
-  val consumerNum: Int = 4
-  // Leave 1 Segments to LiveWriter
-  val catchupWriterNum: Int = RecosConfig.maxNumSegments - 1
+case cwass u-usewvideogwaphwwitew(
+  s-shawdid: stwing, ^^;;
+  env: s-stwing, (✿oωo)
+  hosename: stwing, (U ﹏ U)
+  buffewsize: i-int, -.-
+  kafkaconsumewbuiwdew: finagwekafkaconsumewbuiwdew[stwing, ^•ﻌ•^ w-wecoshosemessage],
+  cwientid: stwing, rawr
+  s-statsweceivew: statsweceivew)
+    e-extends unifiedgwaphwwitew[bipawtitegwaphsegment, (˘ω˘) m-muwtisegmentpowewwawbipawtitegwaph] {
+  wwitew =>
+  // the max thwoughput fow each kafka consumew is awound 25mb/s
+  // use 4 pwocessows fow 100mb/s catch-up s-speed. nyaa~~
+  vaw c-consumewnum: int = 4
+  // weave 1 s-segments to w-wivewwitew
+  vaw c-catchupwwitewnum: int = wecosconfig.maxnumsegments - 1
 
   /**
-   * Adds a RecosHoseMessage to the graph. used by live writer to insert edges to the
-   * current segment
+   * adds a wecoshosemessage to t-the gwaph. UwU used by wive wwitew to insewt edges to the
+   * cuwwent segment
    */
-  override def addEdgeToGraph(
-    graph: MultiSegmentPowerLawBipartiteGraph,
-    recosHoseMessage: RecosHoseMessage
-  ): Unit = {
-    graph.addEdge(
-      recosHoseMessage.leftId,
-      getMetaEdge(recosHoseMessage.rightId, recosHoseMessage.card),
-      UserVideoEdgeTypeMask.actionTypeToEdgeType(recosHoseMessage.action),
+  o-ovewwide def addedgetogwaph(
+    g-gwaph: muwtisegmentpowewwawbipawtitegwaph, :3
+    w-wecoshosemessage: w-wecoshosemessage
+  ): unit = {
+    g-gwaph.addedge(
+      w-wecoshosemessage.weftid, (⑅˘꒳˘)
+      g-getmetaedge(wecoshosemessage.wightid, (///ˬ///✿) w-wecoshosemessage.cawd), ^^;;
+      usewvideoedgetypemask.actiontypetoedgetype(wecoshosemessage.action), >_<
     )
   }
 
   /**
-   * Adds a RecosHoseMessage to the given segment in the graph. Used by catch up writers to
-   * insert edges to non-current (old) segments
+   * adds a-a wecoshosemessage t-to the given s-segment in the gwaph. u-used by catch u-up wwitews to
+   * insewt edges to nyon-cuwwent (owd) segments
    */
-  override def addEdgeToSegment(
-    segment: BipartiteGraphSegment,
-    recosHoseMessage: RecosHoseMessage
-  ): Unit = {
-    segment.addEdge(
-      recosHoseMessage.leftId,
-      getMetaEdge(recosHoseMessage.rightId, recosHoseMessage.card),
-      UserVideoEdgeTypeMask.actionTypeToEdgeType(recosHoseMessage.action)
+  o-ovewwide def addedgetosegment(
+    segment: bipawtitegwaphsegment, rawr x3
+    wecoshosemessage: wecoshosemessage
+  ): u-unit = {
+    segment.addedge(
+      wecoshosemessage.weftid, /(^•ω•^)
+      getmetaedge(wecoshosemessage.wightid, :3 w-wecoshosemessage.cawd), (ꈍᴗꈍ)
+      u-usewvideoedgetypemask.actiontypetoedgetype(wecoshosemessage.action)
     )
   }
 
-  private def getMetaEdge(rightId: Long, cardOption: Option[Byte]): Long = {
-    cardOption
-      .map { card =>
-        if (isPhotoCard(card)) TweetIDMask.photo(rightId)
-        else if (isPlayerCard(card)) TweetIDMask.player(rightId)
-        else if (isSummaryCard(card)) TweetIDMask.summary(rightId)
-        else if (isPromotionCard(card)) TweetIDMask.promotion(rightId)
-        else rightId
+  p-pwivate def getmetaedge(wightid: wong, /(^•ω•^) cawdoption: o-option[byte]): wong = {
+    c-cawdoption
+      .map { c-cawd =>
+        if (isphotocawd(cawd)) tweetidmask.photo(wightid)
+        ewse if (ispwayewcawd(cawd)) tweetidmask.pwayew(wightid)
+        ewse if (issummawycawd(cawd)) t-tweetidmask.summawy(wightid)
+        ewse if (ispwomotioncawd(cawd)) t-tweetidmask.pwomotion(wightid)
+        ewse w-wightid
       }
-      .getOrElse(rightId)
+      .getowewse(wightid)
   }
 
 }

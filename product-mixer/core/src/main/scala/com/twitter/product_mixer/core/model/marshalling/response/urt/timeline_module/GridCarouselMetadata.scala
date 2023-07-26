@@ -1,3 +1,3 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe
 
-case class GridCarouselMetadata(numRows: Option[Int])
+case cwass g-gwidcawousewmetadata(numwows: option[int])

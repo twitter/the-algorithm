@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.ReferenceObject
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wefewenceobject
 
-sealed trait UrlType
-case object ExternalUrl extends UrlType
-case object DeepLink extends UrlType
-case object UrtEndpoint extends UrlType
+s-seawed t-twait uwwtype
+c-case object extewnawuww e-extends u-uwwtype
+case o-object deepwink e-extends uwwtype
+c-case object uwtendpoint extends uwwtype
 
-case class UrtEndpointOptions(
-  requestParams: Option[Map[String, String]],
-  title: Option[String],
-  cacheId: Option[String],
-  subtitle: Option[String])
+case cwass uwtendpointoptions(
+  wequestpawams: o-option[map[stwing, mya stwing]], mya
+  titwe: option[stwing], 😳
+  c-cacheid: option[stwing], XD
+  subtitwe: o-option[stwing])
 
-case class Url(urlType: UrlType, url: String, urtEndpointOptions: Option[UrtEndpointOptions] = None)
-    extends ReferenceObject
+case cwass uww(uwwtype: uwwtype, :3 uww: stwing, 😳😳😳 u-uwtendpointoptions: option[uwtendpointoptions] = n-nyone)
+    e-extends wefewenceobject

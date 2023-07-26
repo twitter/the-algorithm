@@ -1,178 +1,178 @@
-package com.twitter.frigate.pushservice.ml
+package com.twittew.fwigate.pushsewvice.mw
 
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.ml.feature.TweetSocialProofKey
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.predicate.quality_model_predicate.PDauCohortUtil
-import com.twitter.nrel.hydration.base.FeatureInput
-import com.twitter.nrel.hydration.push.HydrationContext
-import com.twitter.nrel.hydration.frigate.{FeatureInputs => FI}
-import com.twitter.util.Future
+impowt c-com.twittew.fwigate.common.base._
+i-impowt com.twittew.fwigate.common.mw.featuwe.tweetsociawpwoofkey
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt c-com.twittew.fwigate.pushsewvice.pwedicate.quawity_modew_pwedicate.pdaucohowtutiw
+impowt com.twittew.nwew.hydwation.base.featuweinput
+impowt com.twittew.nwew.hydwation.push.hydwationcontext
+impowt com.twittew.nwew.hydwation.fwigate.{featuweinputs => f-fi}
+impowt com.twittew.utiw.futuwe
 
-object HydrationContextBuilder {
+object hydwationcontextbuiwdew {
 
-  private def getRecUserInputs(
-    pushCandidate: PushCandidate
-  ): Set[FI.RecUser] = {
-    pushCandidate match {
-      case userCandidate: UserCandidate =>
-        Set(FI.RecUser(userCandidate.userId))
-      case _ => Set.empty
+  p-pwivate def getwecusewinputs(
+    p-pushcandidate: pushcandidate
+  ): set[fi.wecusew] = {
+    pushcandidate m-match {
+      case usewcandidate: u-usewcandidate =>
+        s-set(fi.wecusew(usewcandidate.usewid))
+      case _ => set.empty
     }
   }
 
-  private def getRecTweetInputs(
-    pushCandidate: PushCandidate
-  ): Set[FI.RecTweet] =
-    pushCandidate match {
-      case tweetCandidateWithAuthor: TweetCandidate with TweetAuthor with TweetAuthorDetails =>
-        val authorIdOpt = tweetCandidateWithAuthor.authorId
-        Set(FI.RecTweet(tweetCandidateWithAuthor.tweetId, authorIdOpt))
-      case _ => Set.empty
+  pwivate def getwectweetinputs(
+    p-pushcandidate: pushcandidate
+  ): set[fi.wectweet] =
+    pushcandidate match {
+      c-case tweetcandidatewithauthow: tweetcandidate with t-tweetauthow with t-tweetauthowdetaiws =>
+        v-vaw authowidopt = t-tweetcandidatewithauthow.authowid
+        set(fi.wectweet(tweetcandidatewithauthow.tweetid, ʘwʘ authowidopt))
+      c-case _ => set.empty
     }
 
-  private def getMediaInputs(
-    pushCandidate: PushCandidate
-  ): Set[FI.Media] =
-    pushCandidate match {
-      case tweetCandidateWithMedia: TweetCandidate with TweetDetails =>
-        tweetCandidateWithMedia.mediaKeys
-          .map { mk =>
-            Set(FI.Media(mk))
-          }.getOrElse(Set.empty)
-      case _ => Set.empty
+  pwivate def getmediainputs(
+    pushcandidate: p-pushcandidate
+  ): set[fi.media] =
+    pushcandidate match {
+      case tweetcandidatewithmedia: tweetcandidate w-with tweetdetaiws =>
+        tweetcandidatewithmedia.mediakeys
+          .map { m-mk =>
+            s-set(fi.media(mk))
+          }.getowewse(set.empty)
+      c-case _ => set.empty
     }
 
-  private def getEventInputs(
-    pushCandidate: PushCandidate
-  ): Set[FI.Event] = pushCandidate match {
-    case mrEventCandidate: EventCandidate =>
-      Set(FI.Event(mrEventCandidate.eventId))
-    case mfEventCandidate: MagicFanoutEventCandidate =>
-      Set(FI.Event(mfEventCandidate.eventId))
-    case _ => Set.empty
+  pwivate def geteventinputs(
+    p-pushcandidate: p-pushcandidate
+  ): set[fi.event] = p-pushcandidate m-match {
+    case mweventcandidate: e-eventcandidate =>
+      set(fi.event(mweventcandidate.eventid))
+    case m-mfeventcandidate: magicfanouteventcandidate =>
+      set(fi.event(mfeventcandidate.eventid))
+    c-case _ => set.empty
   }
 
-  private def getTopicInputs(
-    pushCandidate: PushCandidate
-  ): Set[FI.Topic] =
-    pushCandidate match {
-      case mrTopicCandidate: TopicCandidate =>
-        mrTopicCandidate.semanticCoreEntityId match {
-          case Some(topicId) => Set(FI.Topic(topicId))
-          case _ => Set.empty
+  pwivate def gettopicinputs(
+    p-pushcandidate: pushcandidate
+  ): set[fi.topic] =
+    p-pushcandidate m-match {
+      case mwtopiccandidate: topiccandidate =>
+        mwtopiccandidate.semanticcoweentityid match {
+          case some(topicid) => s-set(fi.topic(topicid))
+          c-case _ => set.empty
         }
-      case _ => Set.empty
+      case _ => s-set.empty
     }
 
-  private def getTweetSocialProofKey(
-    pushCandidate: PushCandidate
-  ): Future[Set[FI.SocialProofKey]] = {
-    pushCandidate match {
-      case candidate: TweetCandidate with SocialContextActions =>
-        val target = pushCandidate.target
-        target.seedsWithWeight.map { seedsWithWeightOpt =>
-          Set(
-            FI.SocialProofKey(
-              TweetSocialProofKey(
-                seedsWithWeightOpt.getOrElse(Map.empty),
-                candidate.socialContextAllTypeActions
+  p-pwivate def gettweetsociawpwoofkey(
+    p-pushcandidate: pushcandidate
+  ): futuwe[set[fi.sociawpwoofkey]] = {
+    pushcandidate m-match {
+      case candidate: tweetcandidate with sociawcontextactions =>
+        vaw tawget = p-pushcandidate.tawget
+        tawget.seedswithweight.map { s-seedswithweightopt =>
+          s-set(
+            f-fi.sociawpwoofkey(
+              tweetsociawpwoofkey(
+                s-seedswithweightopt.getowewse(map.empty), 😳😳😳
+                c-candidate.sociawcontextawwtypeactions
               ))
           )
         }
-      case _ => Future.value(Set.empty)
+      c-case _ => f-futuwe.vawue(set.empty)
     }
   }
 
-  private def getSocialContextInputs(
-    pushCandidate: PushCandidate
-  ): Future[Set[FeatureInput]] =
-    pushCandidate match {
-      case candidateWithSC: Candidate with SocialContextActions =>
-        val tweetSocialProofKeyFut = getTweetSocialProofKey(pushCandidate)
-        tweetSocialProofKeyFut.map { tweetSocialProofKeyOpt =>
-          val socialContextUsers = FI.SocialContextUsers(candidateWithSC.socialContextUserIds.toSet)
-          val socialContextActions =
-            FI.SocialContextActions(candidateWithSC.socialContextAllTypeActions)
-          val socialProofKeyOpt = tweetSocialProofKeyOpt
-          Set(Set(socialContextUsers), Set(socialContextActions), socialProofKeyOpt).flatten
+  pwivate def getsociawcontextinputs(
+    p-pushcandidate: p-pushcandidate
+  ): f-futuwe[set[featuweinput]] =
+    p-pushcandidate m-match {
+      case candidatewithsc: candidate with sociawcontextactions =>
+        v-vaw tweetsociawpwoofkeyfut = gettweetsociawpwoofkey(pushcandidate)
+        tweetsociawpwoofkeyfut.map { tweetsociawpwoofkeyopt =>
+          vaw sociawcontextusews = fi.sociawcontextusews(candidatewithsc.sociawcontextusewids.toset)
+          v-vaw sociawcontextactions =
+            fi.sociawcontextactions(candidatewithsc.sociawcontextawwtypeactions)
+          vaw sociawpwoofkeyopt = tweetsociawpwoofkeyopt
+          s-set(set(sociawcontextusews), ^^;; s-set(sociawcontextactions), o.O s-sociawpwoofkeyopt).fwatten
         }
-      case _ => Future.value(Set.empty)
+      case _ => f-futuwe.vawue(set.empty)
     }
 
-  private def getPushStringGroupInputs(
-    pushCandidate: PushCandidate
-  ): Set[FI.PushStringGroup] =
-    Set(
-      FI.PushStringGroup(
-        pushCandidate.getPushCopy.flatMap(_.pushStringGroup).map(_.toString).getOrElse("")
+  pwivate def g-getpushstwinggwoupinputs(
+    p-pushcandidate: pushcandidate
+  ): set[fi.pushstwinggwoup] =
+    set(
+      fi.pushstwinggwoup(
+        pushcandidate.getpushcopy.fwatmap(_.pushstwinggwoup).map(_.tostwing).getowewse("")
       ))
 
-  private def getCRTInputs(
-    pushCandidate: PushCandidate
-  ): Set[FI.CommonRecommendationType] =
-    Set(FI.CommonRecommendationType(pushCandidate.commonRecType))
+  pwivate def getcwtinputs(
+    p-pushcandidate: pushcandidate
+  ): s-set[fi.commonwecommendationtype] =
+    set(fi.commonwecommendationtype(pushcandidate.commonwectype))
 
-  private def getFrigateNotification(
-    pushCandidate: PushCandidate
-  ): Set[FI.CandidateFrigateNotification] =
-    Set(FI.CandidateFrigateNotification(pushCandidate.frigateNotification))
+  p-pwivate d-def getfwigatenotification(
+    pushcandidate: pushcandidate
+  ): s-set[fi.candidatefwigatenotification] =
+    s-set(fi.candidatefwigatenotification(pushcandidate.fwigatenotification))
 
-  private def getCopyId(
-    pushCandidate: PushCandidate
-  ): Set[FI.CopyId] =
-    Set(FI.CopyId(pushCandidate.pushCopyId, pushCandidate.ntabCopyId))
+  pwivate d-def getcopyid(
+    p-pushcandidate: pushcandidate
+  ): set[fi.copyid] =
+    set(fi.copyid(pushcandidate.pushcopyid, (///ˬ///✿) pushcandidate.ntabcopyid))
 
-  def build(candidate: PushCandidate): Future[HydrationContext] = {
-    val socialContextInputsFut = getSocialContextInputs(candidate)
-    socialContextInputsFut.map { socialContextInputs =>
-      val featureInputs: Set[FeatureInput] =
-        socialContextInputs ++
-          getRecUserInputs(candidate) ++
-          getRecTweetInputs(candidate) ++
-          getEventInputs(candidate) ++
-          getTopicInputs(candidate) ++
-          getCRTInputs(candidate) ++
-          getPushStringGroupInputs(candidate) ++
-          getMediaInputs(candidate) ++
-          getFrigateNotification(candidate) ++
-          getCopyId(candidate)
+  d-def buiwd(candidate: p-pushcandidate): f-futuwe[hydwationcontext] = {
+    vaw s-sociawcontextinputsfut = g-getsociawcontextinputs(candidate)
+    sociawcontextinputsfut.map { sociawcontextinputs =>
+      v-vaw featuweinputs: set[featuweinput] =
+        sociawcontextinputs ++
+          getwecusewinputs(candidate) ++
+          getwectweetinputs(candidate) ++
+          g-geteventinputs(candidate) ++
+          g-gettopicinputs(candidate) ++
+          getcwtinputs(candidate) ++
+          getpushstwinggwoupinputs(candidate) ++
+          getmediainputs(candidate) ++
+          g-getfwigatenotification(candidate) ++
+          g-getcopyid(candidate)
 
-      HydrationContext(
-        candidate.target.targetId,
-        featureInputs
+      hydwationcontext(
+        candidate.tawget.tawgetid, σωσ
+        featuweinputs
       )
     }
   }
 
-  def build(target: Target): Future[HydrationContext] = {
-    val realGraphFeaturesFut = target.realGraphFeatures
-    for {
-      realGraphFeaturesOpt <- realGraphFeaturesFut
-      dauProb <- PDauCohortUtil.getDauProb(target)
-      mrUserStateOpt <- target.targetMrUserState
-      historyInputOpt <-
-        if (target.params(PushFeatureSwitchParams.EnableHydratingOnlineMRHistoryFeatures)) {
-          target.onlineLabeledPushRecs.map { mrHistoryValueOpt =>
-            mrHistoryValueOpt.map(FI.MrHistory)
+  def buiwd(tawget: t-tawget): futuwe[hydwationcontext] = {
+    vaw weawgwaphfeatuwesfut = tawget.weawgwaphfeatuwes
+    fow {
+      w-weawgwaphfeatuwesopt <- weawgwaphfeatuwesfut
+      daupwob <- p-pdaucohowtutiw.getdaupwob(tawget)
+      m-mwusewstateopt <- tawget.tawgetmwusewstate
+      histowyinputopt <-
+        if (tawget.pawams(pushfeatuweswitchpawams.enabwehydwatingonwinemwhistowyfeatuwes)) {
+          t-tawget.onwinewabewedpushwecs.map { m-mwhistowyvawueopt =>
+            mwhistowyvawueopt.map(fi.mwhistowy)
           }
-        } else Future.None
-    } yield {
-      val realGraphFeaturesInputOpt = realGraphFeaturesOpt.map { realGraphFeatures =>
-        FI.TargetRealGraphFeatures(realGraphFeatures)
+        } ewse futuwe.none
+    } yiewd {
+      v-vaw weawgwaphfeatuwesinputopt = weawgwaphfeatuwesopt.map { w-weawgwaphfeatuwes =>
+        fi.tawgetweawgwaphfeatuwes(weawgwaphfeatuwes)
       }
-      val dauProbInput = FI.DauProb(dauProb)
-      val mrUserStateInput = FI.MrUserState(mrUserStateOpt.map(_.name).getOrElse("unknown"))
-      HydrationContext(
-        target.targetId,
-        Seq(
-          realGraphFeaturesInputOpt,
-          historyInputOpt,
-          Some(dauProbInput),
-          Some(mrUserStateInput)
-        ).flatten.toSet
+      vaw daupwobinput = fi.daupwob(daupwob)
+      v-vaw mwusewstateinput = fi.mwusewstate(mwusewstateopt.map(_.name).getowewse("unknown"))
+      h-hydwationcontext(
+        t-tawget.tawgetid, nyaa~~
+        seq(
+          w-weawgwaphfeatuwesinputopt, ^^;;
+          histowyinputopt, ^•ﻌ•^
+          s-some(daupwobinput), σωσ
+          s-some(mwusewstateinput)
+        ).fwatten.toset
       )
     }
   }

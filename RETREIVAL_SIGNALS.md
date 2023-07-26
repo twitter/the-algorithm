@@ -1,51 +1,51 @@
-# Signals for Candidate Sources
+# signaws fow candidate souwces
 
-## Overview
+## o-ovewview
 
-The candidate sourcing stage within the Twitter Recommendation algorithm serves to significantly narrow down the item size from approximately 1 billion to just a few thousand. This process utilizes Twitter user behavior as the primary input for the algorithm. This document comprehensively enumerates all the signals during the candidate sourcing phase.
+the c-candidate souwcing s-stage within t-the twittew wecommendation a-awgowithm s-sewves to s-significantwy nyawwow d-down the item size fwom appwoximatewy 1 biwwion to just a few thousand. (///ˬ///✿) this p-pwocess utiwizes twittew usew behaviow as the p-pwimawy input fow the awgowithm. 🥺 t-this document compwehensivewy enumewates aww the signaws duwing t-the candidate souwcing phase. >_<
 
-| Signals               |  Description                                                          |
+| s-signaws               |  d-descwiption                                                          |
 | :-------------------- | :-------------------------------------------------------------------- |
-| Author Follow         | The accounts which user explicit follows.                             |
-| Author Unfollow       | The accounts which user recently unfollows.                           |
-| Author Mute           | The accounts which user have muted.                                   |
-| Author Block          | The accounts which user have blocked                                  |
-| Tweet Favorite        | The tweets which user clicked the like botton.                        | 
-| Tweet Unfavorite      | The tweets which user clicked the unlike botton.                      |       
-| Retweet               | The tweets which user retweeted                                       |
-| Quote Tweet           | The tweets which user retweeted with comments.                        |
-| Tweet Reply           | The tweets which user replied.                                        |
-| Tweet Share           | The tweets which user clicked the share botton.                       |
-| Tweet Bookmark        | The tweets which user clicked the bookmark botton.                    |
-| Tweet Click           | The tweets which user clicked and viewed the tweet detail page.       |
-| Tweet Video Watch     | The video tweets which user watched certain seconds or percentage.    |
-| Tweet Don't like      | The tweets which user clicked "Not interested in this tweet" botton.  |
-| Tweet Report          | The tweets which user clicked "Report Tweet" botton.                  |
-| Notification Open     | The push notification tweets which user opened.                       |
-| Ntab click            | The tweets which user click on the Notifications page.                |               
-| User AddressBook      | The author accounts identifiers of the user's addressbook.            | 
+| authow fowwow         | the accounts which usew expwicit fowwows. UwU                             |
+| a-authow unfowwow       | the accounts which usew wecentwy unfowwows. >_<                           |
+| a-authow mute           | t-the accounts w-which usew have m-muted. -.-                                   |
+| a-authow bwock          | the accounts w-which usew have bwocked                                  |
+| tweet favowite        | t-the tweets which usew cwicked the wike botton. mya                        | 
+| tweet unfavowite      | the tweets which usew c-cwicked the unwike botton. >w<                      |       
+| w-wetweet               | t-the tweets which u-usew wetweeted                                       |
+| quote tweet           | the tweets w-which usew wetweeted w-with comments. (U ﹏ U)                        |
+| tweet wepwy           | t-the tweets w-which usew wepwied. 😳😳😳                                        |
+| tweet shawe           | t-the tweets which usew cwicked t-the shawe botton. o.O                       |
+| tweet bookmawk        | t-the tweets which usew c-cwicked the bookmawk botton. òωó                    |
+| t-tweet cwick           | t-the tweets which usew cwicked and viewed the tweet detaiw page. 😳😳😳       |
+| tweet video watch     | the v-video tweets w-which usew watched cewtain seconds o-ow pewcentage.    |
+| t-tweet don't w-wike      | the tweets which usew cwicked "not intewested in t-this tweet" botton. σωσ  |
+| tweet wepowt          | the tweets which usew cwicked "wepowt t-tweet" botton. (⑅˘꒳˘)                  |
+| n-nyotification o-open     | t-the push nyotification tweets w-which usew opened. (///ˬ///✿)                       |
+| n-nytab cwick            | t-the tweets w-which usew cwick on the nyotifications page. 🥺                |               
+| u-usew addwessbook      | t-the a-authow accounts i-identifiews of the u-usew's addwessbook. OwO            | 
 
-## Usage Details
+## usage detaiws
 
-Twitter uses these user signals as training labels and/or ML features in the each candidate sourcing algorithms. The following tables shows how they are used in the each components.
+twittew uses these usew s-signaws as twaining wabews and/ow mw featuwes in the each candidate souwcing awgowithms. >w< the fowwowing t-tabwes shows how they awe used in the each components.
 
-| Signals               | USS                | SimClusters        |  TwHin             |   UTEG             | FRS                |  Light Ranking     |
+| s-signaws               | u-uss                | s-simcwustews        |  twhin             |   u-uteg             | fws                |  w-wight wanking     |
 | :-------------------- | :----------------- | :----------------- | :----------------- | :----------------- | :----------------- | :----------------- | 
-| Author Follow         | Features           | Features / Labels  | Features / Labels  | Features           | Features / Labels  | N/A                |
-| Author Unfollow       | Features           | N/A                | N/A                | N/A                | N/A                | N/A                |
-| Author Mute           | Features           | N/A                | N/A                | N/A                | Features           | N/A                |
-| Author Block          | Features           | N/A                | N/A                | N/A                | Features           | N/A                |
-| Tweet Favorite        | Features           | Features           | Features / Labels  | Features           | Features / Labels  | Features / Labels  |
-| Tweet Unfavorite      | Features           | Features           | N/A                | N/A                | N/A                | N/A                |       
-| Retweet               | Features           | N/A                | Features / Labels  | Features           | Features / Labels  | Features / Labels  |
-| Quote Tweet           | Features           | N/A                | Features / Labels  | Features           | Features / Labels  | Features / Labels  |
-| Tweet Reply           | Features           | N/A                | Features           | Features           | Features / Labels  | Features           |
-| Tweet Share           | Features           | N/A                | N/A                | N/A                | Features           | N/A                |
-| Tweet Bookmark        | Features           | N/A                | N/A                | N/A                | N/A                | N/A                |
-| Tweet Click           | Features           | N/A                | N/A                | N/A                | Features           | Labels             |
-| Tweet Video Watch     | Features           | Features           | N/A                | N/A                | N/A                | Labels             |
-| Tweet Don't like      | Features           | N/A                | N/A                | N/A                | N/A                | N/A                |
-| Tweet Report          | Features           | N/A                | N/A                | N/A                | N/A                | N/A                |
-| Notification Open     | Features           | Features           | Features           | N/A                | Features           | N/A                |                       
-| Ntab click            | Features           | Features           | Features           | N/A                | Features           | N/A                |
-| User AddressBook      | N/A                | N/A                | N/A                | N/A                | Features           | N/A                |
+| a-authow fowwow         | featuwes           | featuwes / wabews  | featuwes / wabews  | featuwes           | featuwes / w-wabews  | ny/a                |
+| a-authow unfowwow       | f-featuwes           | n-ny/a                | ny/a                | ny/a                | n-ny/a                | n-ny/a                |
+| authow mute           | f-featuwes           | n-ny/a                | n/a                | ny/a                | featuwes           | ny/a                |
+| a-authow bwock          | f-featuwes           | n-ny/a                | ny/a                | n-ny/a                | f-featuwes           | ny/a                |
+| tweet f-favowite        | featuwes           | featuwes           | featuwes / wabews  | featuwes           | f-featuwes / w-wabews  | featuwes / wabews  |
+| tweet unfavowite      | featuwes           | f-featuwes           | n-ny/a                | ny/a                | ny/a                | ny/a                |       
+| wetweet               | f-featuwes           | ny/a                | featuwes / wabews  | featuwes           | f-featuwes / wabews  | featuwes / wabews  |
+| q-quote tweet           | f-featuwes           | ny/a                | featuwes / wabews  | featuwes           | f-featuwes / wabews  | f-featuwes / wabews  |
+| tweet wepwy           | featuwes           | n-ny/a                | featuwes           | featuwes           | f-featuwes / wabews  | featuwes           |
+| tweet shawe           | featuwes           | n-ny/a                | ny/a                | n-ny/a                | f-featuwes           | ny/a                |
+| t-tweet bookmawk        | featuwes           | n-ny/a                | n-ny/a                | n-ny/a                | ny/a                | n-ny/a                |
+| t-tweet cwick           | featuwes           | n-ny/a                | n-ny/a                | n-ny/a                | featuwes           | wabews             |
+| t-tweet video watch     | f-featuwes           | f-featuwes           | ny/a                | ny/a                | ny/a                | w-wabews             |
+| t-tweet don't w-wike      | featuwes           | n-ny/a                | ny/a                | n-ny/a                | ny/a                | ny/a                |
+| tweet wepowt          | featuwes           | ny/a                | n-ny/a                | ny/a                | n-ny/a                | ny/a                |
+| n-nyotification open     | f-featuwes           | featuwes           | f-featuwes           | n-ny/a                | f-featuwes           | n-ny/a                |                       
+| n-nytab cwick            | featuwes           | featuwes           | featuwes           | ny/a                | featuwes           | ny/a                |
+| u-usew a-addwessbook      | n-ny/a                | ny/a                | ny/a                | n-ny/a                | featuwes           | ny/a                |

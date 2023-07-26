@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.model.marshalling.request
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest
 
-import com.twitter.util.Time
+impowt com.twittew.utiw.time
 
-trait DebugOptions {
-  // Manually override the request time which is useful for writing deterministic Feature tests,
-  // since Feature tests do not support mocking Time. For example, URT sort indexes start with a
-  // Snowflake ID based on request time if no initialSortIndex is set on the request cursor, so to
-  // write a Feature test for this scenario, we can manually set the request time to use here.
-  def requestTimeOverride: Option[Time] = None
+twait d-debugoptions {
+  // m-manuawwy o-ovewwide the wequest t-time which i-is usefuw fow w-wwiting detewministic f-featuwe tests, ( ͡o ω ͡o )
+  // s-since featuwe tests do nyot suppowt mocking time. rawr x3 fow exampwe, nyaa~~ uwt sowt i-indexes stawt with a
+  // snowfwake id based on w-wequest time if nyo initiawsowtindex i-is set on the wequest cuwsow, /(^•ω•^) so to
+  // wwite a featuwe t-test fow this scenawio, we can manuawwy s-set the w-wequest time to use hewe. rawr
+  def wequesttimeovewwide: option[time] = nyone
 }
 
-trait HasDebugOptions {
-  def debugOptions: Option[DebugOptions]
+twait h-hasdebugoptions {
+  def debugoptions: option[debugoptions]
 }

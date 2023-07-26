@@ -1,30 +1,30 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-object Response {
-  case class TweetResponse(
-    tweetId: Long,
-    overallResponse: TweetResponseCode,
-    additionalFieldResponses: Option[Map[Short, FieldResponse]] = None)
+object wesponse {
+  c-case cwass t-tweetwesponse(
+    t-tweetid: w-wong, (ˆ ﻌ ˆ)♡
+    ovewawwwesponse: t-tweetwesponsecode, (˘ω˘)
+    a-additionawfiewdwesponses: o-option[map[showt, (⑅˘꒳˘) fiewdwesponse]] = n-nyone)
 
-  sealed trait TweetResponseCode
+  seawed twait tweetwesponsecode
 
-  object TweetResponseCode {
-    object Success extends TweetResponseCode
-    object Partial extends TweetResponseCode
-    object Failure extends TweetResponseCode
-    object OverCapacity extends TweetResponseCode
-    object Deleted extends TweetResponseCode
+  object tweetwesponsecode {
+    object s-success extends tweetwesponsecode
+    object p-pawtiaw extends tweetwesponsecode
+    o-object faiwuwe extends tweetwesponsecode
+    object ovewcapacity extends tweetwesponsecode
+    o-object deweted extends tweetwesponsecode
   }
 
-  case class FieldResponse(code: FieldResponseCode, message: Option[String] = None)
+  c-case cwass f-fiewdwesponse(code: fiewdwesponsecode, (///ˬ///✿) message: option[stwing] = nyone)
 
-  sealed trait FieldResponseCode
+  seawed t-twait fiewdwesponsecode
 
-  object FieldResponseCode {
-    object Success extends FieldResponseCode
-    object InvalidRequest extends FieldResponseCode
-    object ValueNotFound extends FieldResponseCode
-    object Timeout extends FieldResponseCode
-    object Error extends FieldResponseCode
+  object fiewdwesponsecode {
+    object success extends f-fiewdwesponsecode
+    object i-invawidwequest extends f-fiewdwesponsecode
+    o-object v-vawuenotfound extends fiewdwesponsecode
+    object timeout extends f-fiewdwesponsecode
+    object ewwow extends f-fiewdwesponsecode
   }
 }

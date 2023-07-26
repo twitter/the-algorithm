@@ -1,19 +1,19 @@
-package com.twitter.graph_feature_service.worker.util
+package com.twittew.gwaph_featuwe_sewvice.wowkew.utiw
 
-import com.twitter.graph_feature_service.thriftscala.EdgeType
-import com.twitter.util.Future
+impowt com.twittew.gwaph_featuwe_sewvice.thwiftscawa.edgetype
+i-impowt com.twittew.utiw.futuwe
 
-case class GraphContainer(
-  graphs: Map[GraphKey, AutoUpdatingGraph]) {
+c-case cwass gwaphcontainew(
+  g-gwaphs: map[gwaphkey, (U ﹏ U) a-autoupdatinggwaph]) {
 
-  final val toPartialMap: Map[EdgeType, AutoUpdatingGraph] =
-    graphs.collect {
-      case (partialValueGraph: PartialValueGraph, graph) =>
-        partialValueGraph.edgeType -> graph
+  f-finaw vaw topawtiawmap: m-map[edgetype, -.- a-autoupdatinggwaph] =
+    gwaphs.cowwect {
+      c-case (pawtiawvawuegwaph: pawtiawvawuegwaph, (ˆ ﻌ ˆ)♡ gwaph) =>
+        pawtiawvawuegwaph.edgetype -> gwaph
     }
 
-  // load all the graphs from constantDB format to memory
-  def warmup: Future[Unit] = {
-    Future.collect(graphs.mapValues(_.warmup())).unit
+  // woad aww the g-gwaphs fwom constantdb fowmat to memowy
+  def wawmup: f-futuwe[unit] = {
+    futuwe.cowwect(gwaphs.mapvawues(_.wawmup())).unit
   }
 }

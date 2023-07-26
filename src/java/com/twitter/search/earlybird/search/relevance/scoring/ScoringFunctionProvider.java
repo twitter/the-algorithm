@@ -1,216 +1,216 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+package com.twittew.seawch.eawwybiwd.seawch.wewevance.scowing;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.query.HitAttributeHelper;
-import com.twitter.search.common.ranking.thriftjava.ThriftRankingParams;
-import com.twitter.search.common.ranking.thriftjava.ThriftScoringFunctionType;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.util.ml.tensorflow_engine.TensorflowModelsManager;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.ClientException;
-import com.twitter.search.earlybird.ml.ScoringModelsManager;
-import com.twitter.search.earlybird.search.AntiGamingFilter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
-import com.twitter.search.queryparser.query.Query;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt c-com.twittew.seawch.common.quewy.hitattwibutehewpew;
+i-impowt c-com.twittew.seawch.common.wanking.thwiftjava.thwiftwankingpawams;
+impowt com.twittew.seawch.common.wanking.thwiftjava.thwiftscowingfunctiontype;
+impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+impowt com.twittew.seawch.common.utiw.mw.tensowfwow_engine.tensowfwowmodewsmanagew;
+impowt c-com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+impowt com.twittew.seawch.eawwybiwd.common.usewupdates.usewtabwe;
+impowt com.twittew.seawch.eawwybiwd.exception.cwientexception;
+i-impowt com.twittew.seawch.eawwybiwd.mw.scowingmodewsmanagew;
+impowt c-com.twittew.seawch.eawwybiwd.seawch.antigamingfiwtew;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchquewy;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwttype;
+impowt com.twittew.seawch.quewypawsew.quewy.quewy;
 
 /**
- * Returns a scoring function for a particular experiment ID.
+ * w-wetuwns a scowing f-function fow a pawticuwaw expewiment id. 😳
  *
- * Can be used for a/b testing of different scoring formulas.
+ * can be used fow a/b testing o-of diffewent scowing fowmuwas. (⑅˘꒳˘)
  */
-public abstract class ScoringFunctionProvider {
-  private static final Logger LOG = LoggerFactory.getLogger(ScoringFunctionProvider.class);
+pubwic abstwact cwass scowingfunctionpwovidew {
+  pwivate static f-finaw woggew wog = woggewfactowy.getwoggew(scowingfunctionpwovidew.cwass);
 
   /**
-   * Returns the scoring function.
+   * w-wetuwns t-the scowing function. 😳😳😳
    */
-  public abstract ScoringFunction getScoringFunction() throws IOException, ClientException;
+  p-pubwic abstwact s-scowingfunction getscowingfunction() thwows ioexception, 😳 c-cwientexception;
 
-  public static final String RETWEETS_SCORER_NAME = "retweets";
-  public static final String NO_SPAM_SCORER_NAME = "no_spam";
-  public static final String TEST_SCORER_NAME = "test";
+  pubwic static finaw s-stwing wetweets_scowew_name = "wetweets";
+  pubwic static finaw stwing nyo_spam_scowew_name = "no_spam";
+  pubwic static finaw s-stwing test_scowew_name = "test";
 
-  // Whether to avoid time decay when scoring top tweets.
-  // Top archive does not need time decay.
-  private static final boolean TOP_TWEET_WITH_DECAY =
-          EarlybirdConfig.getBool("top_tweet_scoring_with_decay", true);
+  // whethew t-to avoid time decay w-when scowing t-top tweets. XD
+  // top awchive does nyot nyeed time decay. mya
+  pwivate s-static finaw b-boowean top_tweet_with_decay =
+          eawwybiwdconfig.getboow("top_tweet_scowing_with_decay", ^•ﻌ•^ t-twue);
 
   /**
-   * Abstract class that can be used for ScoringFunctions that don't throw a ClientException.
+   * a-abstwact cwass that can be u-used fow scowingfunctions that d-don't thwow a cwientexception. ʘwʘ
    *
-   * It does throw an IOException but it doesn't throw a ClientException so the name can be a bit
-   * misleading.
+   * it does thwow an ioexception b-but it doesn't thwow a cwientexception s-so the nyame can be a-a bit
+   * misweading. ( ͡o ω ͡o )
    */
-  public abstract static class NamedScoringFunctionProvider extends ScoringFunctionProvider {
+  p-pubwic abstwact static cwass nyamedscowingfunctionpwovidew extends scowingfunctionpwovidew {
     /**
-     * Returns the scoring function.
+     * wetuwns the scowing function. mya
      */
-    public abstract ScoringFunction getScoringFunction() throws IOException;
+    p-pubwic abstwact s-scowingfunction getscowingfunction() t-thwows i-ioexception;
   }
 
   /**
-   * Returns the scoring function provider with the given name, or null if no such provider exists.
+   * wetuwns t-the scowing function pwovidew with the given name, o.O ow nyuww i-if nyo such pwovidew exists. (✿oωo)
    */
-  public static NamedScoringFunctionProvider getScoringFunctionProviderByName(
-      String name, final ImmutableSchemaInterface schema) {
-    if (name.equals(NO_SPAM_SCORER_NAME)) {
-      return new NamedScoringFunctionProvider() {
-        @Override
-        public ScoringFunction getScoringFunction() throws IOException {
-          return new SpamVectorScoringFunction(schema);
+  pubwic static namedscowingfunctionpwovidew getscowingfunctionpwovidewbyname(
+      s-stwing nyame, :3 finaw immutabweschemaintewface s-schema) {
+    i-if (name.equaws(no_spam_scowew_name)) {
+      w-wetuwn nyew nyamedscowingfunctionpwovidew() {
+        @ovewwide
+        p-pubwic s-scowingfunction g-getscowingfunction() t-thwows ioexception {
+          wetuwn nyew spamvectowscowingfunction(schema);
         }
       };
-    } else if (name.equals(RETWEETS_SCORER_NAME)) {
-      return new NamedScoringFunctionProvider() {
-        @Override
-        public ScoringFunction getScoringFunction() throws IOException {
-          // Production top tweet actually uses this.
-          if (TOP_TWEET_WITH_DECAY) {
-            return new RetweetBasedTopTweetsScoringFunction(schema);
-          } else {
-            return new RetweetBasedTopTweetsScoringFunction(schema, true);
+    } ewse i-if (name.equaws(wetweets_scowew_name)) {
+      w-wetuwn new nyamedscowingfunctionpwovidew() {
+        @ovewwide
+        p-pubwic s-scowingfunction g-getscowingfunction() thwows ioexception {
+          // pwoduction top tweet actuawwy u-uses this. 😳
+          if (top_tweet_with_decay) {
+            wetuwn nyew wetweetbasedtoptweetsscowingfunction(schema);
+          } ewse {
+            wetuwn nyew wetweetbasedtoptweetsscowingfunction(schema, (U ﹏ U) t-twue);
           }
         }
       };
-    } else if (name.equals(TEST_SCORER_NAME)) {
-      return new NamedScoringFunctionProvider() {
-        @Override
-        public ScoringFunction getScoringFunction() throws IOException {
-          return new TestScoringFunction(schema);
+    } ewse if (name.equaws(test_scowew_name)) {
+      wetuwn nyew nyamedscowingfunctionpwovidew() {
+        @ovewwide
+        pubwic s-scowingfunction g-getscowingfunction() t-thwows ioexception {
+          wetuwn nyew t-testscowingfunction(schema);
         }
       };
     }
-    return null;
+    wetuwn n-nyuww;
   }
 
   /**
-   * Returns default scoring functions for different scoring function type
-   * and provides fallback behavior if model-based scoring function fails
+   * w-wetuwns defauwt scowing functions fow diffewent scowing function type
+   * and pwovides f-fawwback behaviow if modew-based s-scowing function faiws
    */
-  public static class DefaultScoringFunctionProvider extends ScoringFunctionProvider {
-    private final EarlybirdRequest request;
-    private final ImmutableSchemaInterface schema;
-    private final ThriftSearchQuery searchQuery;
-    private final AntiGamingFilter antiGamingFilter;
-    private final UserTable userTable;
-    private final HitAttributeHelper hitAttributeHelper;
-    private final Query parsedQuery;
-    private final ScoringModelsManager scoringModelsManager;
-    private final TensorflowModelsManager tensorflowModelsManager;
+  p-pubwic static cwass d-defauwtscowingfunctionpwovidew extends scowingfunctionpwovidew {
+    pwivate f-finaw eawwybiwdwequest w-wequest;
+    pwivate finaw i-immutabweschemaintewface s-schema;
+    pwivate finaw thwiftseawchquewy seawchquewy;
+    pwivate f-finaw antigamingfiwtew a-antigamingfiwtew;
+    p-pwivate finaw usewtabwe u-usewtabwe;
+    p-pwivate finaw hitattwibutehewpew h-hitattwibutehewpew;
+    pwivate finaw quewy pawsedquewy;
+    pwivate finaw s-scowingmodewsmanagew s-scowingmodewsmanagew;
+    pwivate finaw tensowfwowmodewsmanagew tensowfwowmodewsmanagew;
 
-    private static final SearchCounter MODEL_BASED_SCORING_FUNCTION_CREATED =
-        SearchCounter.export("model_based_scoring_function_created");
-    private static final SearchCounter MODEL_BASED_FALLBACK_TO_LINEAR_SCORING_FUNCTION =
-        SearchCounter.export("model_based_fallback_to_linear_scoring_function");
+    p-pwivate static f-finaw seawchcountew modew_based_scowing_function_cweated =
+        seawchcountew.expowt("modew_based_scowing_function_cweated");
+    pwivate s-static finaw seawchcountew modew_based_fawwback_to_wineaw_scowing_function =
+        seawchcountew.expowt("modew_based_fawwback_to_wineaw_scowing_function");
 
-    private static final SearchCounter TENSORFLOW_BASED_SCORING_FUNCTION_CREATED =
-        SearchCounter.export("tensorflow_based_scoring_function_created");
-    private static final SearchCounter TENSORFLOW_BASED_FALLBACK_TO_LINEAR_SCORING_FUNCTION =
-        SearchCounter.export("tensorflow_fallback_to_linear_function_scoring_function");
+    pwivate static finaw seawchcountew t-tensowfwow_based_scowing_function_cweated =
+        seawchcountew.expowt("tensowfwow_based_scowing_function_cweated");
+    pwivate static f-finaw seawchcountew t-tensowfwow_based_fawwback_to_wineaw_scowing_function =
+        seawchcountew.expowt("tensowfwow_fawwback_to_wineaw_function_scowing_function");
 
-    public DefaultScoringFunctionProvider(
-        final EarlybirdRequest request,
-        final ImmutableSchemaInterface schema,
-        final ThriftSearchQuery searchQuery,
-        final AntiGamingFilter antiGamingFilter,
-        final UserTable userTable,
-        final HitAttributeHelper hitAttributeHelper,
-        final Query parsedQuery,
-        final ScoringModelsManager scoringModelsManager,
-        final TensorflowModelsManager tensorflowModelsManager) {
-      this.request = request;
-      this.schema = schema;
-      this.searchQuery = searchQuery;
-      this.antiGamingFilter = antiGamingFilter;
-      this.userTable = userTable;
-      this.hitAttributeHelper = hitAttributeHelper;
-      this.parsedQuery = parsedQuery;
-      this.scoringModelsManager = scoringModelsManager;
-      this.tensorflowModelsManager = tensorflowModelsManager;
+    pubwic defauwtscowingfunctionpwovidew(
+        f-finaw eawwybiwdwequest wequest, mya
+        f-finaw immutabweschemaintewface schema, (U ᵕ U❁)
+        finaw thwiftseawchquewy seawchquewy, :3
+        finaw a-antigamingfiwtew antigamingfiwtew, mya
+        f-finaw usewtabwe usewtabwe, OwO
+        finaw hitattwibutehewpew hitattwibutehewpew, (ˆ ﻌ ˆ)♡
+        f-finaw quewy pawsedquewy, ʘwʘ
+        f-finaw scowingmodewsmanagew s-scowingmodewsmanagew, o.O
+        finaw tensowfwowmodewsmanagew t-tensowfwowmodewsmanagew) {
+      this.wequest = w-wequest;
+      t-this.schema = s-schema;
+      this.seawchquewy = s-seawchquewy;
+      t-this.antigamingfiwtew = antigamingfiwtew;
+      this.usewtabwe = usewtabwe;
+      t-this.hitattwibutehewpew = h-hitattwibutehewpew;
+      t-this.pawsedquewy = pawsedquewy;
+      this.scowingmodewsmanagew = s-scowingmodewsmanagew;
+      this.tensowfwowmodewsmanagew = t-tensowfwowmodewsmanagew;
     }
 
-    @Override
-    public ScoringFunction getScoringFunction() throws IOException, ClientException {
-      if (searchQuery.isSetRelevanceOptions()
-          && searchQuery.getRelevanceOptions().isSetRankingParams()) {
-        ThriftRankingParams params = searchQuery.getRelevanceOptions().getRankingParams();
-        ThriftScoringFunctionType type = params.isSetType()
-            ? params.getType() : ThriftScoringFunctionType.LINEAR;  // default type
+    @ovewwide
+    p-pubwic scowingfunction getscowingfunction() thwows ioexception, UwU cwientexception {
+      i-if (seawchquewy.issetwewevanceoptions()
+          && s-seawchquewy.getwewevanceoptions().issetwankingpawams()) {
+        t-thwiftwankingpawams p-pawams = seawchquewy.getwewevanceoptions().getwankingpawams();
+        thwiftscowingfunctiontype t-type = pawams.issettype()
+            ? pawams.gettype() : thwiftscowingfunctiontype.wineaw;  // defauwt type
         switch (type) {
-          case LINEAR:
-            return createLinear();
-          case MODEL_BASED:
-            if (scoringModelsManager.isEnabled()) {
-              MODEL_BASED_SCORING_FUNCTION_CREATED.increment();
-              return createModelBased();
-            } else {
-              // From ScoringModelsManager.NO_OP_MANAGER. Fall back to LinearScoringFunction
-              MODEL_BASED_FALLBACK_TO_LINEAR_SCORING_FUNCTION.increment();
-              return createLinear();
+          case wineaw:
+            wetuwn cweatewineaw();
+          c-case modew_based:
+            if (scowingmodewsmanagew.isenabwed()) {
+              modew_based_scowing_function_cweated.incwement();
+              w-wetuwn cweatemodewbased();
+            } ewse {
+              // f-fwom scowingmodewsmanagew.no_op_managew. rawr x3 faww back to wineawscowingfunction
+              m-modew_based_fawwback_to_wineaw_scowing_function.incwement();
+              wetuwn c-cweatewineaw();
             }
-          case TENSORFLOW_BASED:
-            if (tensorflowModelsManager.isEnabled()) {
-              TENSORFLOW_BASED_SCORING_FUNCTION_CREATED.increment();
-              return createTensorflowBased();
-            } else {
-              // Fallback to linear scoring if tf manager is disabled
-              TENSORFLOW_BASED_FALLBACK_TO_LINEAR_SCORING_FUNCTION.increment();
-              return createLinear();
+          c-case tensowfwow_based:
+            i-if (tensowfwowmodewsmanagew.isenabwed()) {
+              t-tensowfwow_based_scowing_function_cweated.incwement();
+              w-wetuwn cweatetensowfwowbased();
+            } ewse {
+              // fawwback to wineaw scowing if tf managew is disabwed
+              tensowfwow_based_fawwback_to_wineaw_scowing_function.incwement();
+              w-wetuwn cweatewineaw();
             }
-          case TOPTWEETS:
-            return createTopTweets();
-          default:
-            throw new IllegalArgumentException("Unknown scoring type: in " + searchQuery);
+          c-case toptweets:
+            wetuwn c-cweatetoptweets();
+          defauwt:
+            t-thwow nyew iwwegawawgumentexception("unknown scowing type: in " + seawchquewy);
         }
-      } else {
-        LOG.error("No relevance options provided query = " + searchQuery);
-        return new DefaultScoringFunction(schema);
+      } e-ewse {
+        w-wog.ewwow("no wewevance o-options pwovided quewy = " + seawchquewy);
+        wetuwn nyew d-defauwtscowingfunction(schema);
       }
     }
 
-    private ScoringFunction createLinear() throws IOException {
-      LinearScoringFunction scoringFunction = new LinearScoringFunction(
-          schema, searchQuery, antiGamingFilter, ThriftSearchResultType.RELEVANCE,
-          userTable);
-      scoringFunction.setHitAttributeHelperAndQuery(hitAttributeHelper, parsedQuery);
+    p-pwivate scowingfunction cweatewineaw() t-thwows i-ioexception {
+      wineawscowingfunction scowingfunction = nyew wineawscowingfunction(
+          s-schema, 🥺 seawchquewy, :3 a-antigamingfiwtew, t-thwiftseawchwesuwttype.wewevance, (ꈍᴗꈍ)
+          u-usewtabwe);
+      s-scowingfunction.sethitattwibutehewpewandquewy(hitattwibutehewpew, 🥺 pawsedquewy);
 
-      return scoringFunction;
+      wetuwn s-scowingfunction;
     }
 
     /**
-     * For model based scoring function, ClientException will be throw if client selects an
-     * unknown model for scoring manager.
-     * {@link com.twitter.search.earlybird.search.relevance.scoring.ModelBasedScoringFunction}
+     * f-fow modew based scowing f-function, (✿oωo) cwientexception wiww b-be thwow if cwient sewects an
+     * u-unknown modew fow scowing managew. (U ﹏ U)
+     * {@wink c-com.twittew.seawch.eawwybiwd.seawch.wewevance.scowing.modewbasedscowingfunction}
      */
-    private ScoringFunction createModelBased() throws IOException, ClientException {
-      ModelBasedScoringFunction scoringFunction = new ModelBasedScoringFunction(
-          schema, searchQuery, antiGamingFilter, ThriftSearchResultType.RELEVANCE, userTable,
-          scoringModelsManager);
-      scoringFunction.setHitAttributeHelperAndQuery(hitAttributeHelper, parsedQuery);
+    pwivate scowingfunction cweatemodewbased() t-thwows ioexception, c-cwientexception {
+      modewbasedscowingfunction s-scowingfunction = nyew modewbasedscowingfunction(
+          schema, :3 seawchquewy, ^^;; a-antigamingfiwtew, rawr t-thwiftseawchwesuwttype.wewevance, 😳😳😳 u-usewtabwe, (✿oωo)
+          scowingmodewsmanagew);
+      scowingfunction.sethitattwibutehewpewandquewy(hitattwibutehewpew, OwO pawsedquewy);
 
-      return scoringFunction;
+      wetuwn scowingfunction;
     }
 
-    private ScoringFunction createTopTweets() throws IOException {
-      return new LinearScoringFunction(
-          schema, searchQuery, antiGamingFilter, ThriftSearchResultType.POPULAR, userTable);
+    p-pwivate scowingfunction cweatetoptweets() t-thwows ioexception {
+      w-wetuwn new wineawscowingfunction(
+          s-schema, ʘwʘ seawchquewy, (ˆ ﻌ ˆ)♡ antigamingfiwtew, (U ﹏ U) t-thwiftseawchwesuwttype.popuwaw, UwU u-usewtabwe);
     }
 
-    private TensorflowBasedScoringFunction createTensorflowBased()
-      throws IOException, ClientException {
-      TensorflowBasedScoringFunction tfScoringFunction = new TensorflowBasedScoringFunction(
-          request, schema, searchQuery, antiGamingFilter,
-          ThriftSearchResultType.RELEVANCE, userTable, tensorflowModelsManager);
-      tfScoringFunction.setHitAttributeHelperAndQuery(hitAttributeHelper, parsedQuery);
-      return tfScoringFunction;
+    pwivate tensowfwowbasedscowingfunction cweatetensowfwowbased()
+      t-thwows ioexception, XD cwientexception {
+      t-tensowfwowbasedscowingfunction t-tfscowingfunction = nyew t-tensowfwowbasedscowingfunction(
+          wequest, ʘwʘ s-schema, rawr x3 seawchquewy, ^^;; a-antigamingfiwtew, ʘwʘ
+          t-thwiftseawchwesuwttype.wewevance, (U ﹏ U) usewtabwe, tensowfwowmodewsmanagew);
+      tfscowingfunction.sethitattwibutehewpewandquewy(hitattwibutehewpew, (˘ω˘) pawsedquewy);
+      wetuwn tfscowingfunction;
     }
   }
 }

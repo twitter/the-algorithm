@@ -1,113 +1,113 @@
-namespace java com.twitter.usersignalservice.thriftjava
-namespace py gen.twitter.usersignalservice.signal
-#@namespace scala com.twitter.usersignalservice.thriftscala
-#@namespace strato com.twitter.usersignalservice.strato
+namespace java com.twittew.usewsignawsewvice.thwiftjava
+nyamespace p-py gen.twittew.usewsignawsewvice.signaw
+#@namespace s-scawa com.twittew.usewsignawsewvice.thwiftscawa
+#@namespace s-stwato com.twittew.usewsignawsewvice.stwato
 
-include "com/twitter/simclusters_v2/identifier.thrift"
+incwude "com/twittew/simcwustews_v2/identifiew.thwift"
 
 
-enum SignalType {
+e-enum signawtype {
   /**
-  Please maintain the key space rule to avoid compatibility issue for the downstream production job
-  * Prod  Key space:  0-1000
-  * Devel Key space:  1000+
+  p-pwease maintain t-the key space w-wuwe to avoid compatibiwity i-issue fow the downstweam pwoduction job
+  * pwod  key space:  0-1000
+  * d-devew key space:  1000+
   **/
 
 
-  /* tweet based signals */
-  TweetFavorite       = 0, // 540 Days Looback window
-  Retweet             = 1, // 540 Days Lookback window
-  TrafficAttribution  = 2,
-  OriginalTweet       = 3, // 540 Days Looback window
-  Reply               = 4, // 540 Days Looback window
-  /* Tweets that the user shared (sharer side)
-    *  V1: successful shares (click share icon -> click in-app, or off-platform share option
-    * or copying link)
+  /* tweet based signaws */
+  t-tweetfavowite       = 0, // 540 days wooback w-window
+  wetweet             = 1, 🥺 // 540 days wookback window
+  twafficattwibution  = 2, >_<
+  o-owiginawtweet       = 3, ʘwʘ // 540 days w-wooback window
+  w-wepwy               = 4, (˘ω˘) // 540 days wooback window
+  /* tweets that the usew shawed (shawew side)
+    *  v-v1: successfuw shawes (cwick shawe icon -> cwick in-app, (✿oωo) ow off-pwatfowm s-shawe option
+    * ow copying w-wink)
     * */
-  TweetShare_V1       = 5, // 14 Days Lookback window
+  t-tweetshawe_v1       = 5, // 14 d-days wookback w-window
 
-  TweetFavorite_90D_V2 = 6, // 90 Days Lookback window : tweet fav from user with recent engagement in the past 90 days
-  Retweet_90D_V2 = 7, // 90 Days Lookback window : retweet from user with recent engagement in the past 90 days
-  OriginalTweet_90D_V2 = 8, // 90 Days Lookback window : original tweet from user with recent engagement in the past 90 days
-  Reply_90D_V2 = 9,// 90 Days Lookback window : reply from user with recent engagement in the past 90 days
-  GoodTweetClick = 10,// GoodTweetCilick Signal : Dwell Time  Threshold >=2s
+  tweetfavowite_90d_v2 = 6, (///ˬ///✿) // 90 days wookback window : t-tweet fav fwom usew with wecent engagement in the p-past 90 days
+  wetweet_90d_v2 = 7, rawr x3 // 90 days wookback window : wetweet fwom usew with wecent e-engagement in the past 90 days
+  o-owiginawtweet_90d_v2 = 8, -.- // 90 d-days wookback w-window : owiginaw tweet fwom usew with wecent engagement in the p-past 90 days
+  wepwy_90d_v2 = 9,// 90 d-days wookback window : wepwy f-fwom usew with w-wecent engagement in the past 90 d-days
+  goodtweetcwick = 10,// goodtweetciwick s-signaw : dweww time  thweshowd >=2s
 
-  // video tweets that were watched (10s OR 95%) in the past 90 days, are not ads, and have >=10s video
-  VideoView_90D_Quality_V1 = 11   // 90 Days Lookback window
-  // video tweets that were watched 50% in the past 90 days, are not ads, and have >=10s video
-  VideoView_90D_Playback50_V1 = 12   // 90 Days Lookback window
+  // video t-tweets that wewe watched (10s ow 95%) i-in the past 90 days, awe n-not ads, ^^ and have >=10s v-video
+  videoview_90d_quawity_v1 = 11   // 90 days wookback window
+  // video tweets that wewe watched 50% in the past 90 d-days, (⑅˘꒳˘) awe nyot a-ads, nyaa~~ and have >=10s video
+  videoview_90d_pwayback50_v1 = 12   // 90 d-days wookback w-window
 
-  /* user based signals */
-  AccountFollow = 100, // infinite lookback window
-  RepeatedProfileVisit_14D_MinVisit2_V1 = 101,
-  RepeatedProfileVisit_90D_MinVisit6_V1 = 102,
-  RepeatedProfileVisit_180D_MinVisit6_V1 = 109,
-  RepeatedProfileVisit_14D_MinVisit2_V1_No_Negative = 110,
-  RepeatedProfileVisit_90D_MinVisit6_V1_No_Negative = 111,
-  RepeatedProfileVisit_180D_MinVisit6_V1_No_Negative = 112,
-  RealGraphOon                          = 104,
-  TrafficAttributionProfile_30D_LastVisit = 105,
-  TrafficAttributionProfile_30D_DecayedVisit = 106,
-  TrafficAttributionProfile_30D_WeightedEventDecayedVisit = 107,
-  TrafficAttributionProfile_30D_DecayedVisit_WithoutAgathaFilter = 108,
-  GoodProfileClick = 120, // GoodTweetCilick Signal : Dwell Time  Threshold >=10s
-  AdFavorite = 121, // Favorites filtered to ads TweetFavorite has both organic and ads Favs
+  /* u-usew based signaws */
+  accountfowwow = 100, // infinite wookback window
+  wepeatedpwofiwevisit_14d_minvisit2_v1 = 101, /(^•ω•^)
+  w-wepeatedpwofiwevisit_90d_minvisit6_v1 = 102, (U ﹏ U)
+  wepeatedpwofiwevisit_180d_minvisit6_v1 = 109, 😳😳😳
+  wepeatedpwofiwevisit_14d_minvisit2_v1_no_negative = 110, >w<
+  wepeatedpwofiwevisit_90d_minvisit6_v1_no_negative = 111, XD
+  wepeatedpwofiwevisit_180d_minvisit6_v1_no_negative = 112, o.O
+  w-weawgwaphoon                          = 104, mya
+  twafficattwibutionpwofiwe_30d_wastvisit = 105,
+  t-twafficattwibutionpwofiwe_30d_decayedvisit = 106, 🥺
+  t-twafficattwibutionpwofiwe_30d_weightedeventdecayedvisit = 107, ^^;;
+  t-twafficattwibutionpwofiwe_30d_decayedvisit_withoutagathafiwtew = 108, :3
+  goodpwofiwecwick = 120, (U ﹏ U) // g-goodtweetciwick s-signaw : dweww t-time  thweshowd >=10s
+  a-adfavowite = 121, OwO // favowites fiwtewed to ads tweetfavowite h-has both o-owganic and ads f-favs
 
-  // AccountFollowWithDelay should only be used by high-traffic clients and has 1 min delay
-  AccountFollowWithDelay = 122,
+  // accountfowwowwithdeway s-shouwd onwy be u-used by high-twaffic cwients and has 1 min deway
+  accountfowwowwithdeway = 122, 😳😳😳
 
 
-  /* notifications based signals */
-  /* V1: notification clicks from past 90 days with negative events (reports, dislikes) being filtered */
-  NotificationOpenAndClick_V1 = 200,
+  /* n-nyotifications based signaws */
+  /* v1: nyotification cwicks fwom past 90 days with nyegative events (wepowts, (ˆ ﻌ ˆ)♡ d-diswikes) being fiwtewed */
+  nyotificationopenandcwick_v1 = 200, XD
 
   /*
-  negative signals for filter
+  nyegative signaws f-fow fiwtew
    */
-  NegativeEngagedTweetId = 901 // tweetId for all negative engagements
-  NegativeEngagedUserId  = 902 // userId for all negative engagements
-  AccountBlock = 903,
-  AccountMute = 904,
-  // skip 905 - 906 for Account report abuse / report spam
-  // User clicked dont like from past 90 Days
-  TweetDontLike = 907
-  // User clicked see fewer on the recommended tweet from past 90 Days
-  TweetSeeFewer = 908
-  // User clicked on the "report tweet" option in the tweet caret dropdown menu from past 90 days
-  TweetReport = 909
+  n-nyegativeengagedtweetid = 901 // t-tweetid fow aww nyegative e-engagements
+  nyegativeengagedusewid  = 902 // u-usewid fow aww n-nyegative engagements
+  accountbwock = 903, (ˆ ﻌ ˆ)♡
+  accountmute = 904, ( ͡o ω ͡o )
+  // skip 905 - 906 fow account wepowt abuse / w-wepowt spam
+  // usew cwicked d-dont wike fwom past 90 days
+  tweetdontwike = 907
+  // u-usew cwicked s-see fewew on the wecommended tweet fwom past 90 d-days
+  tweetseefewew = 908
+  // u-usew cwicked on the "wepowt t-tweet" option in t-the tweet cawet dwopdown menu fwom past 90 days
+  tweetwepowt = 909
 
   /*
-  devel signals
-  use the num > 1000 to test out signals under development/ddg
-  put it back to the correct corresponding Key space (0-1000) before ship
+  devew s-signaws
+  use t-the nyum > 1000 t-to test out signaws undew devewopment/ddg
+  p-put i-it back to the cowwect cowwesponding k-key space (0-1000) befowe ship
   */
-  GoodTweetClick_5s = 1001,// GoodTweetCilick Signal : Dwell Time  Threshold >=5s
-  GoodTweetClick_10s = 1002,// GoodTweetCilick Signal : Dwell Time  Threshold >=10s
-  GoodTweetClick_30s = 1003,// GoodTweetCilick Signal : Dwell Time  Threshold >=30s
+  goodtweetcwick_5s = 1001,// goodtweetciwick signaw : d-dweww time  thweshowd >=5s
+  g-goodtweetcwick_10s = 1002,// goodtweetciwick signaw : d-dweww time  t-thweshowd >=10s
+  goodtweetcwick_30s = 1003,// goodtweetciwick signaw : dweww time  thweshowd >=30s
 
-  GoodProfileClick_20s = 1004,// GoodProfileClick Signal : Dwell Time  Threshold >=20s
-  GoodProfileClick_30s = 1005,// GoodProfileClick Signal : Dwell Time  Threshold >=30s
+  g-goodpwofiwecwick_20s = 1004,// goodpwofiwecwick signaw : dweww time  thweshowd >=20s
+  goodpwofiwecwick_30s = 1005,// g-goodpwofiwecwick signaw : dweww time  t-thweshowd >=30s
 
-  GoodProfileClick_Filtered = 1006, // GoodProfileClick Signal filtered by blocks and mutes.
-  GoodProfileClick_20s_Filtered = 1007// GoodProfileClick Signal : Dwell Time  Threshold >=20s, filtered  byblocks and mutes.
-  GoodProfileClick_30s_Filtered = 1008,// GoodProfileClick Signal : Dwell Time  Threshold >=30s, filtered by blocks and mutes.
+  g-goodpwofiwecwick_fiwtewed = 1006, rawr x3 // goodpwofiwecwick signaw fiwtewed by bwocks a-and mutes. nyaa~~
+  g-goodpwofiwecwick_20s_fiwtewed = 1007// goodpwofiwecwick signaw : dweww time  t-thweshowd >=20s, >_< fiwtewed  bybwocks a-and mutes. ^^;;
+  goodpwofiwecwick_30s_fiwtewed = 1008,// goodpwofiwecwick signaw : d-dweww time  thweshowd >=30s, (ˆ ﻌ ˆ)♡ fiwtewed by bwocks a-and mutes. ^^;;
 
   /*
-  Unified Signals
-  These signals are aimed to unify multiple signal fetches into a single response.
-  This might be a healthier way for our retrievals layer to run inference on.
+  u-unified signaws
+  these signaws a-awe aimed to unify muwtipwe s-signaw fetches i-into a singwe wesponse. (⑅˘꒳˘)
+  t-this might be a heawthiew w-way fow ouw w-wetwievaws wayew to wun infewence on. rawr x3
    */
-   TweetBasedUnifiedUniformSignal = 1300
-   TweetBasedUnifiedEngagementWeightedSignal = 1301
-   TweetBasedUnifiedQualityWeightedSignal = 1302
-   ProducerBasedUnifiedUniformSignal = 1303
-   ProducerBasedUnifiedEngagementWeightedSignal = 1304
-   ProducerBasedUnifiedQualityWeightedSignal = 1305
+   t-tweetbasedunifiedunifowmsignaw = 1300
+   t-tweetbasedunifiedengagementweightedsignaw = 1301
+   t-tweetbasedunifiedquawityweightedsignaw = 1302
+   pwoducewbasedunifiedunifowmsignaw = 1303
+   pwoducewbasedunifiedengagementweightedsignaw = 1304
+   p-pwoducewbasedunifiedquawityweightedsignaw = 1305
 
 }
 
-struct Signal {
-  1: required SignalType signalType
-  2: required i64 timestamp
-  3: optional identifier.InternalId targetInternalId
+stwuct signaw {
+  1: w-wequiwed s-signawtype signawtype
+  2: wequiwed i64 timestamp
+  3: optionaw identifiew.intewnawid t-tawgetintewnawid
 }

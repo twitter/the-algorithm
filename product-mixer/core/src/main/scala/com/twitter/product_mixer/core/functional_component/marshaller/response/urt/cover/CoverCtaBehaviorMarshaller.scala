@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.covew
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverCtaBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverBehaviorDismiss
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverBehaviorNavigate
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.uwwmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.covewctabehaviow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.covewbehaviowdismiss
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.covewbehaviownavigate
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.wichtext.wichtextmawshawwew
 
-@Singleton
-class CoverCtaBehaviorMarshaller @Inject() (
-  richTextMarshaller: RichTextMarshaller,
-  urlMarshaller: UrlMarshaller) {
+@singweton
+cwass covewctabehaviowmawshawwew @inject() (
+  wichtextmawshawwew: w-wichtextmawshawwew, 😳
+  uwwmawshawwew: uwwmawshawwew) {
 
-  def apply(coverCtaBehavior: CoverCtaBehavior): urt.CoverCtaBehavior =
-    coverCtaBehavior match {
-      case dismiss: CoverBehaviorDismiss =>
-        urt.CoverCtaBehavior.Dismiss(
-          urt.CoverBehaviorDismiss(dismiss.feedbackMessage.map(richTextMarshaller(_))))
-      case nav: CoverBehaviorNavigate =>
-        urt.CoverCtaBehavior.Navigate(urt.CoverBehaviorNavigate(urlMarshaller(nav.url)))
+  d-def appwy(covewctabehaviow: covewctabehaviow): u-uwt.covewctabehaviow =
+    covewctabehaviow match {
+      case dismiss: c-covewbehaviowdismiss =>
+        uwt.covewctabehaviow.dismiss(
+          u-uwt.covewbehaviowdismiss(dismiss.feedbackmessage.map(wichtextmawshawwew(_))))
+      c-case nyav: covewbehaviownavigate =>
+        uwt.covewctabehaviow.navigate(uwt.covewbehaviownavigate(uwwmawshawwew(nav.uww)))
     }
 }

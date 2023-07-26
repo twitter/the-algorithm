@@ -1,131 +1,131 @@
-package com.twitter.simclusters_v2.scalding
+package com.twittew.simcwustews_v2.scawding
 
-import com.twitter.scalding.{DateOps, DateParser, Execution, Stat, TypedPipe, TypedTsv, UniqueID}
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.common.{ClusterId, UserId}
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.common.Util.Distribution
+impowt c-com.twittew.scawding.{dateops, (⑅˘꒳˘) d-datepawsew, (///ˬ///✿) execution, s-stat, ^^;; typedpipe, t-typedtsv, >_< u-uniqueid}
+impowt c-com.twittew.scawding_intewnaw.job.twittewexecutionapp
+i-impowt c-com.twittew.simcwustews_v2.common.{cwustewid, usewid}
+impowt com.twittew.simcwustews_v2.scawding.common.utiw
+impowt com.twittew.simcwustews_v2.scawding.common.utiw.distwibution
 
-object CompareClusters {
-  def norm(a: Iterable[Float]): Float = {
+object compawecwustews {
+  def nyowm(a: itewabwe[fwoat]): f-fwoat = {
     math
-      .sqrt(a.map { x => x * x }.sum).toFloat
+      .sqwt(a.map { x => x * x }.sum).tofwoat
   }
 
-  def cosine(a: Map[Long, Float], b: Map[Long, Float]): Float = {
-    val intersect = a.toList.collect {
-      case (id, score) if b.contains(id) =>
-        score * b(id)
+  d-def cosine(a: map[wong, rawr x3 fwoat], b-b: map[wong, /(^•ω•^) fwoat]): fwoat = {
+    vaw intewsect = a.towist.cowwect {
+      c-case (id, :3 scowe) if b.contains(id) =>
+        s-scowe * b(id)
     }
-    val dot = if (intersect.nonEmpty) intersect.sum else 0
-    val aNorm = norm(a.values)
-    val bNorm = norm(b.values)
-    if (aNorm > 0 && bNorm > 0) {
-      dot / aNorm / bNorm
-    } else 0
+    v-vaw dot = if (intewsect.nonempty) intewsect.sum ewse 0
+    vaw anowm = n-nowm(a.vawues)
+    vaw bnowm = nyowm(b.vawues)
+    if (anowm > 0 && bnowm > 0) {
+      dot / anowm / b-bnowm
+    } ewse 0
   }
 
   /**
-   * Compare two known-for data set, and generate change in cluster assignment stats
+   * c-compawe t-two known-fow data s-set, (ꈍᴗꈍ) and genewate c-change in cwustew assignment stats
    */
-  def compareClusterAssignments(
-    newKnownFor: TypedPipe[(UserId, List[(ClusterId, Float)])],
-    oldKnownFor: TypedPipe[(UserId, List[(ClusterId, Float)])]
+  d-def compawecwustewassignments(
+    nyewknownfow: typedpipe[(usewid, /(^•ω•^) w-wist[(cwustewid, (⑅˘꒳˘) fwoat)])],
+    owdknownfow: typedpipe[(usewid, wist[(cwustewid, ( ͡o ω ͡o ) fwoat)])]
   )(
-    implicit uniqueID: UniqueID
-  ): Execution[String] = {
+    i-impwicit uniqueid: uniqueid
+  ): e-execution[stwing] = {
 
-    val emptyToSomething = Stat("no_assignment_to_some")
-    val somethingToEmpty = Stat("some_assignment_to_none")
-    val emptyToEmpty = Stat("empty_to_empty")
-    val sameCluster = Stat("same_cluster")
-    val diffCluster = Stat("diff_cluster")
+    v-vaw emptytosomething = s-stat("no_assignment_to_some")
+    vaw somethingtoempty = stat("some_assignment_to_none")
+    v-vaw emptytoempty = s-stat("empty_to_empty")
+    vaw samecwustew = s-stat("same_cwustew")
+    v-vaw diffcwustew = stat("diff_cwustew")
 
-    val calculateStatExec = newKnownFor
-      .outerJoin(oldKnownFor)
+    v-vaw cawcuwatestatexec = n-nyewknownfow
+      .outewjoin(owdknownfow)
       .map {
-        case (userId, (newKnownForListOpt, oldKnownForListOpt)) =>
-          val newKnownFor = newKnownForListOpt.getOrElse(Nil)
-          val oldKnownFor = oldKnownForListOpt.getOrElse(Nil)
+        case (usewid, òωó (newknownfowwistopt, (⑅˘꒳˘) owdknownfowwistopt)) =>
+          v-vaw nyewknownfow = nyewknownfowwistopt.getowewse(niw)
+          v-vaw owdknownfow = owdknownfowwistopt.getowewse(niw)
 
-          if (newKnownFor.nonEmpty && oldKnownFor.isEmpty) {
-            emptyToSomething.inc()
+          i-if (newknownfow.nonempty && o-owdknownfow.isempty) {
+            emptytosomething.inc()
           }
-          if (newKnownFor.isEmpty && oldKnownFor.nonEmpty) {
-            somethingToEmpty.inc()
+          if (newknownfow.isempty && owdknownfow.nonempty) {
+            somethingtoempty.inc()
           }
-          if (newKnownFor.isEmpty && oldKnownFor.isEmpty) {
-            emptyToEmpty.inc()
+          if (newknownfow.isempty && owdknownfow.isempty) {
+            emptytoempty.inc()
           }
 
-          if (newKnownFor.nonEmpty && oldKnownFor.nonEmpty) {
-            val newClusterId = newKnownFor.head._1
-            val oldClusterId = oldKnownFor.head._1
+          i-if (newknownfow.nonempty && o-owdknownfow.nonempty) {
+            vaw nyewcwustewid = n-nyewknownfow.head._1
+            v-vaw o-owdcwustewid = owdknownfow.head._1
 
-            if (newClusterId == oldClusterId) {
-              sameCluster.inc()
-            } else {
-              diffCluster.inc()
+            if (newcwustewid == owdcwustewid) {
+              s-samecwustew.inc()
+            } ewse {
+              diffcwustew.inc()
             }
           }
-          userId
+          usewid
       }
-      .toIterableExecution
+      .toitewabweexecution
 
-    Util.getCustomCountersString(calculateStatExec)
+    utiw.getcustomcountewsstwing(cawcuwatestatexec)
   }
 
   /**
-   * Compare two cluster assignments in terms of cosine similarity of corresponding clusters.
-   * Excludes clusters which are too small
-   * @param knownForA
-   * @param knownForB
-   * @param minSizeOfBiggerCluster Set to 10 or some such.
-   * @return
+   * compawe t-two cwustew assignments in t-tewms of cosine s-simiwawity of cowwesponding c-cwustews. XD
+   * excwudes c-cwustews which a-awe too smow
+   * @pawam k-knownfowa
+   * @pawam k-knownfowb
+   * @pawam minsizeofbiggewcwustew set to 10 ow some s-such. -.-
+   * @wetuwn
    */
-  def compare(
-    knownForA: TypedPipe[(Int, List[(Long, Float)])],
-    knownForB: TypedPipe[(Int, List[(Long, Float)])],
-    minSizeOfBiggerCluster: Int
-  ): TypedPipe[(Int, Float)] = {
-    knownForA
-      .outerJoin(knownForB)
-      .collect {
-        case (clusterId, (membersInAOpt, membersInBOpt))
-            if membersInAOpt.exists(_.size >= minSizeOfBiggerCluster) || membersInBOpt
-              .exists(_.size >= minSizeOfBiggerCluster) =>
-          val membersInA =
-            membersInAOpt.map(_.toMap).getOrElse(Map.empty[Long, Float])
-          val membersInB =
-            membersInBOpt.map(_.toMap).getOrElse(Map.empty[Long, Float])
-          (clusterId, cosine(membersInA, membersInB))
+  d-def c-compawe(
+    knownfowa: t-typedpipe[(int, :3 w-wist[(wong, nyaa~~ fwoat)])],
+    knownfowb: typedpipe[(int, 😳 wist[(wong, (⑅˘꒳˘) fwoat)])], nyaa~~
+    m-minsizeofbiggewcwustew: int
+  ): typedpipe[(int, OwO fwoat)] = {
+    knownfowa
+      .outewjoin(knownfowb)
+      .cowwect {
+        case (cwustewid, rawr x3 (membewsinaopt, XD membewsinbopt))
+            i-if membewsinaopt.exists(_.size >= minsizeofbiggewcwustew) || membewsinbopt
+              .exists(_.size >= minsizeofbiggewcwustew) =>
+          v-vaw membewsina =
+            m-membewsinaopt.map(_.tomap).getowewse(map.empty[wong, σωσ f-fwoat])
+          vaw membewsinb =
+            m-membewsinbopt.map(_.tomap).getowewse(map.empty[wong, (U ᵕ U❁) fwoat])
+          (cwustewid, (U ﹏ U) c-cosine(membewsina, :3 m-membewsinb))
       }
   }
 
-  def summarize(clusterToCosines: TypedPipe[(Int, Float)]): Execution[Option[Distribution]] = {
-    clusterToCosines.values.map(x => List(x)).sum.toOptionExecution.map { listOpt =>
-      listOpt.map { list => Util.distributionFromArray(list.map(_.toDouble).toArray) }
+  def summawize(cwustewtocosines: typedpipe[(int, ( ͡o ω ͡o ) fwoat)]): execution[option[distwibution]] = {
+    cwustewtocosines.vawues.map(x => w-wist(x)).sum.tooptionexecution.map { wistopt =>
+      w-wistopt.map { wist => utiw.distwibutionfwomawway(wist.map(_.todoubwe).toawway) }
     }
   }
 }
 
-object CompareClustersAdhoc extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  implicit val dp = DateParser.default
+o-object compawecwustewsadhoc e-extends twittewexecutionapp {
+  impwicit v-vaw tz: java.utiw.timezone = d-dateops.utc
+  impwicit vaw dp = d-datepawsew.defauwt
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
+  d-def job: execution[unit] =
+    execution.getconfigmode.fwatmap {
+      case (config, σωσ mode) =>
+        execution.withid { impwicit uniqueid =>
+          v-vaw awgs = config.getawgs
 
-          val knownForA = KnownForSources.transpose(KnownForSources.readKnownFor(args("knownForA")))
-          val knownForB = KnownForSources.transpose(KnownForSources.readKnownFor(args("knownForB")))
+          v-vaw knownfowa = k-knownfowsouwces.twanspose(knownfowsouwces.weadknownfow(awgs("knownfowa")))
+          vaw knownfowb = k-knownfowsouwces.twanspose(knownfowsouwces.weadknownfow(awgs("knownfowb")))
 
-          CompareClusters
-            .compare(knownForA, knownForB, minSizeOfBiggerCluster = 10)
-            .map { case (cId, cos) => "%d\t%.2f".format(cId, cos) }
-            .writeExecution(TypedTsv(args("outputDir")))
+          c-compawecwustews
+            .compawe(knownfowa, >w< knownfowb, 😳😳😳 minsizeofbiggewcwustew = 10)
+            .map { c-case (cid, OwO cos) => "%d\t%.2f".fowmat(cid, cos) }
+            .wwiteexecution(typedtsv(awgs("outputdiw")))
         }
     }
 }

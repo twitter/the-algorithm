@@ -1,60 +1,60 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import java.util.concurrent.TimeUnit;
+impowt j-java.utiw.concuwwent.timeunit;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.Timer;
-import com.twitter.search.common.root.LoggingSupport;
-import com.twitter.search.earlybird.common.EarlybirdRequestPostLogger;
-import com.twitter.search.earlybird.common.EarlybirdRequestPreLogger;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+i-impowt com.twittew.seawch.common.decidew.seawchdecidew;
+i-impowt com.twittew.seawch.common.metwics.timew;
+i-impowt com.twittew.seawch.common.woot.woggingsuppowt;
+i-impowt c-com.twittew.seawch.eawwybiwd.common.eawwybiwdwequestpostwoggew;
+i-impowt com.twittew.seawch.eawwybiwd.common.eawwybiwdwequestpwewoggew;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
 
-public class EarlybirdServiceLoggingSupport extends
-    LoggingSupport.DefaultLoggingSupport<EarlybirdRequest, EarlybirdResponse> {
-  private static final int LATENCY_WARN_THRESHOLD_MS = 100;
+pubwic cwass e-eawwybiwdsewvicewoggingsuppowt extends
+    woggingsuppowt.defauwtwoggingsuppowt<eawwybiwdwequest, (U ﹏ U) eawwybiwdwesponse> {
+  p-pwivate static finaw i-int watency_wawn_thweshowd_ms = 100;
 
-  private static final Timer DUMMY_TIMER;
+  pwivate static finaw timew dummy_timew;
 
-  private final EarlybirdRequestPreLogger requestPreLogger;
-  private final EarlybirdRequestPostLogger requestPostLogger;
+  p-pwivate finaw eawwybiwdwequestpwewoggew w-wequestpwewoggew;
+  p-pwivate finaw eawwybiwdwequestpostwoggew wequestpostwoggew;
 
 
   static {
-    DUMMY_TIMER = new Timer(TimeUnit.MILLISECONDS);
-    DUMMY_TIMER.stop();
+    dummy_timew = nyew timew(timeunit.miwwiseconds);
+    d-dummy_timew.stop();
   }
 
-  public EarlybirdServiceLoggingSupport(SearchDecider decider) {
-    requestPreLogger = EarlybirdRequestPreLogger.buildForRoot(decider.getDecider());
-    requestPostLogger = EarlybirdRequestPostLogger.buildForRoot(LATENCY_WARN_THRESHOLD_MS,
-                                                                decider.getDecider());
+  pubwic eawwybiwdsewvicewoggingsuppowt(seawchdecidew decidew) {
+    wequestpwewoggew = e-eawwybiwdwequestpwewoggew.buiwdfowwoot(decidew.getdecidew());
+    wequestpostwoggew = e-eawwybiwdwequestpostwoggew.buiwdfowwoot(watency_wawn_thweshowd_ms, (U ﹏ U)
+                                                                d-decidew.getdecidew());
   }
 
-  @Override
-  public void prelogRequest(EarlybirdRequest req) {
-    requestPreLogger.logRequest(req);
+  @ovewwide
+  p-pubwic void p-pwewogwequest(eawwybiwdwequest weq) {
+    wequestpwewoggew.wogwequest(weq);
   }
 
-  @Override
-  public void postLogRequest(
-      EarlybirdRequest request,
-      EarlybirdResponse response,
-      long latencyNanos) {
+  @ovewwide
+  pubwic void postwogwequest(
+      e-eawwybiwdwequest wequest, (⑅˘꒳˘)
+      eawwybiwdwesponse w-wesponse, òωó
+      wong watencynanos) {
 
-    Preconditions.checkNotNull(request);
-    Preconditions.checkNotNull(response);
+    pweconditions.checknotnuww(wequest);
+    pweconditions.checknotnuww(wesponse);
 
-    response.setResponseTimeMicros(TimeUnit.NANOSECONDS.toMicros(latencyNanos));
-    response.setResponseTime(TimeUnit.NANOSECONDS.toMillis(latencyNanos));
+    wesponse.setwesponsetimemicwos(timeunit.nanoseconds.tomicwos(watencynanos));
+    wesponse.setwesponsetime(timeunit.nanoseconds.tomiwwis(watencynanos));
 
-    requestPostLogger.logRequest(request, response, DUMMY_TIMER);
+    w-wequestpostwoggew.wogwequest(wequest, ʘwʘ wesponse, d-dummy_timew);
   }
 
-  @Override
-  public void logExceptions(EarlybirdRequest req, Throwable t) {
-    ExceptionHandler.logException(req, t);
+  @ovewwide
+  p-pubwic void wogexceptions(eawwybiwdwequest w-weq, /(^•ω•^) thwowabwe t) {
+    exceptionhandwew.wogexception(weq, ʘwʘ t);
   }
 }

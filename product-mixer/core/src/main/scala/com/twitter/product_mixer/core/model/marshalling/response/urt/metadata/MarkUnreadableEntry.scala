@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata
 
-// Track unread entries for the MarkUnread URT instruction.
-trait MarkUnreadableEntry {
-  def isMarkUnread: Option[Boolean] = None
+// twack unwead entwies f-fow the mawkunwead u-uwt instwuction. (U ᵕ U❁)
+t-twait m-mawkunweadabweentwy {
+  d-def ismawkunwead: o-option[boowean] = n-nyone
 }

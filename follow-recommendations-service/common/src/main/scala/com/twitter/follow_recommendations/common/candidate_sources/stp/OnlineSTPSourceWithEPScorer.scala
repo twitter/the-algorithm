@@ -1,58 +1,58 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.stp
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.stp.OnlineSTPSourceParams.SetPredictionDetails
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.onboarding.relevance.features.strongtie.{
-  StrongTieFeatures => StrongTieFeaturesWrapper
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.stp.onwinestpsouwcepawams.setpwedictiondetaiws
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.accountpwoof
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.fowwowpwoof
+i-impowt com.twittew.fowwow_wecommendations.common.modews.haswecentfowwowedusewids
+i-impowt com.twittew.fowwow_wecommendations.common.modews.weason
+impowt com.twittew.onboawding.wewevance.featuwes.stwongtie.{
+  stwongtiefeatuwes => stwongtiefeatuweswwappew
 }
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.logging.Logging
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.STPRecord
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+impowt com.twittew.stitch.stitch
+impowt c-com.twittew.timewines.configapi.haspawams
+impowt c-com.twittew.utiw.wogging.wogging
+impowt com.twittew.wtf.scawding.jobs.stwong_tie_pwediction.stpwecowd
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class OnlineSTPSourceWithEPScorer @Inject() (
-  epStpScorer: EpStpScorer,
-  stpGraphBuilder: STPGraphBuilder,
-  baseStatReceiver: StatsReceiver)
-    extends BaseOnlineSTPSource(stpGraphBuilder, baseStatReceiver)
-    with Logging {
-  private val epScorerUsedCounter = statsReceiver.counter("ep_scorer_used")
+@singweton
+c-cwass onwinestpsouwcewithepscowew @inject() (
+  e-epstpscowew: e-epstpscowew, ʘwʘ
+  stpgwaphbuiwdew: stpgwaphbuiwdew, /(^•ω•^)
+  basestatweceivew: statsweceivew)
+    e-extends baseonwinestpsouwce(stpgwaphbuiwdew, ʘwʘ basestatweceivew)
+    with wogging {
+  pwivate vaw epscowewusedcountew = s-statsweceivew.countew("ep_scowew_used")
 
-  override def getCandidates(
-    records: Seq[STPRecord],
-    request: HasClientContext with HasParams with HasRecentFollowedUserIds,
-  ): Stitch[Seq[CandidateUser]] = {
-    epScorerUsedCounter.incr()
+  ovewwide def getcandidates(
+    w-wecowds: seq[stpwecowd], σωσ
+    wequest: h-hascwientcontext w-with haspawams w-with haswecentfowwowedusewids, OwO
+  ): stitch[seq[candidateusew]] = {
+    epscowewusedcountew.incw()
 
-    val possibleCandidates: Seq[Stitch[Option[CandidateUser]]] = records.map { trainingRecord =>
-      val scoredResponse =
-        epStpScorer.getScoredResponse(trainingRecord.record, request.params(SetPredictionDetails))
-      scoredResponse.map(_.map { response: ScoredResponse =>
-        logger.debug(response)
-        CandidateUser(
-          id = trainingRecord.destinationId,
-          score = Some(response.score),
-          reason = Some(
-            Reason(
-              Some(
-                AccountProof(followProof =
-                  Some(FollowProof(trainingRecord.socialProof, trainingRecord.socialProof.size)))
+    vaw possibwecandidates: s-seq[stitch[option[candidateusew]]] = wecowds.map { twainingwecowd =>
+      v-vaw scowedwesponse =
+        epstpscowew.getscowedwesponse(twainingwecowd.wecowd, wequest.pawams(setpwedictiondetaiws))
+      scowedwesponse.map(_.map { wesponse: scowedwesponse =>
+        woggew.debug(wesponse)
+        candidateusew(
+          i-id = twainingwecowd.destinationid, 😳😳😳
+          scowe = some(wesponse.scowe),
+          w-weason = s-some(
+            w-weason(
+              some(
+                accountpwoof(fowwowpwoof =
+                  some(fowwowpwoof(twainingwecowd.sociawpwoof, 😳😳😳 t-twainingwecowd.sociawpwoof.size)))
               )))
-        ).withCandidateSourceAndFeatures(
-          identifier,
-          Seq(StrongTieFeaturesWrapper(trainingRecord.features)))
+        ).withcandidatesouwceandfeatuwes(
+          i-identifiew, o.O
+          seq(stwongtiefeatuweswwappew(twainingwecowd.featuwes)))
       })
     }
 
-    Stitch.collect(possibleCandidates).map { _.flatten.sortBy(-_.score.getOrElse(0.0)) }
+    s-stitch.cowwect(possibwecandidates).map { _.fwatten.sowtby(-_.scowe.getowewse(0.0)) }
   }
 }

@@ -1,232 +1,232 @@
-package com.twitter.timelines.prediction.features.real_graph
+package com.twittew.timewines.pwediction.featuwes.weaw_gwaph
 
-import com.twitter.ml.featurestore.catalog.entities.core.UserAuthor
-import com.twitter.ml.featurestore.catalog.features.timelines.RealGraph
-import com.twitter.ml.featurestore.lib.EdgeEntityId
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.lib.feature.BoundFeatureSet
-import com.twitter.ml.featurestore.lib.feature.Feature
-import com.twitter.ml.featurestore.lib.feature.FeatureSet
+impowt c-com.twittew.mw.featuwestowe.catawog.entities.cowe.usewauthow
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.timewines.weawgwaph
+i-impowt c-com.twittew.mw.featuwestowe.wib.edgeentityid
+i-impowt c-com.twittew.mw.featuwestowe.wib.usewid
+i-impowt c-com.twittew.mw.featuwestowe.wib.featuwe.boundfeatuweset
+impowt com.twittew.mw.featuwestowe.wib.featuwe.featuwe
+impowt com.twittew.mw.featuwestowe.wib.featuwe.featuweset
 
-object RealGraphDataRecordFeatureStoreFeatures {
-  val boundUserAuthorfeatureSet: BoundFeatureSet = FeatureSet(
-    RealGraph.DestId,
-    RealGraph.AddressBookEmail.DaysSinceLast,
-    RealGraph.AddressBookEmail.ElapsedDays,
-    RealGraph.AddressBookEmail.Ewma,
-    RealGraph.AddressBookEmail.IsMissing,
-    RealGraph.AddressBookEmail.Mean,
-    RealGraph.AddressBookEmail.NonZeroDays,
-    RealGraph.AddressBookEmail.Variance,
-    RealGraph.AddressBookInBoth.DaysSinceLast,
-    RealGraph.AddressBookInBoth.ElapsedDays,
-    RealGraph.AddressBookInBoth.Ewma,
-    RealGraph.AddressBookInBoth.IsMissing,
-    RealGraph.AddressBookInBoth.Mean,
-    RealGraph.AddressBookInBoth.NonZeroDays,
-    RealGraph.AddressBookInBoth.Variance,
-    RealGraph.AddressBookMutualEdgeEmail.DaysSinceLast,
-    RealGraph.AddressBookMutualEdgeEmail.ElapsedDays,
-    RealGraph.AddressBookMutualEdgeEmail.Ewma,
-    RealGraph.AddressBookMutualEdgeEmail.IsMissing,
-    RealGraph.AddressBookMutualEdgeEmail.Mean,
-    RealGraph.AddressBookMutualEdgeEmail.NonZeroDays,
-    RealGraph.AddressBookMutualEdgeEmail.Variance,
-    RealGraph.AddressBookMutualEdgeInBoth.DaysSinceLast,
-    RealGraph.AddressBookMutualEdgeInBoth.ElapsedDays,
-    RealGraph.AddressBookMutualEdgeInBoth.Ewma,
-    RealGraph.AddressBookMutualEdgeInBoth.IsMissing,
-    RealGraph.AddressBookMutualEdgeInBoth.Mean,
-    RealGraph.AddressBookMutualEdgeInBoth.NonZeroDays,
-    RealGraph.AddressBookMutualEdgeInBoth.Variance,
-    RealGraph.AddressBookMutualEdgePhone.DaysSinceLast,
-    RealGraph.AddressBookMutualEdgePhone.ElapsedDays,
-    RealGraph.AddressBookMutualEdgePhone.Ewma,
-    RealGraph.AddressBookMutualEdgePhone.IsMissing,
-    RealGraph.AddressBookMutualEdgePhone.Mean,
-    RealGraph.AddressBookMutualEdgePhone.NonZeroDays,
-    RealGraph.AddressBookMutualEdgePhone.Variance,
-    RealGraph.AddressBookPhone.DaysSinceLast,
-    RealGraph.AddressBookPhone.ElapsedDays,
-    RealGraph.AddressBookPhone.Ewma,
-    RealGraph.AddressBookPhone.IsMissing,
-    RealGraph.AddressBookPhone.Mean,
-    RealGraph.AddressBookPhone.NonZeroDays,
-    RealGraph.AddressBookPhone.Variance,
-    RealGraph.DirectMessages.DaysSinceLast,
-    RealGraph.DirectMessages.ElapsedDays,
-    RealGraph.DirectMessages.Ewma,
-    RealGraph.DirectMessages.IsMissing,
-    RealGraph.DirectMessages.Mean,
-    RealGraph.DirectMessages.NonZeroDays,
-    RealGraph.DirectMessages.Variance,
-    RealGraph.DwellTime.DaysSinceLast,
-    RealGraph.DwellTime.ElapsedDays,
-    RealGraph.DwellTime.Ewma,
-    RealGraph.DwellTime.IsMissing,
-    RealGraph.DwellTime.Mean,
-    RealGraph.DwellTime.NonZeroDays,
-    RealGraph.DwellTime.Variance,
-    RealGraph.Follow.DaysSinceLast,
-    RealGraph.Follow.ElapsedDays,
-    RealGraph.Follow.Ewma,
-    RealGraph.Follow.IsMissing,
-    RealGraph.Follow.Mean,
-    RealGraph.Follow.NonZeroDays,
-    RealGraph.Follow.Variance,
-    RealGraph.InspectedStatuses.DaysSinceLast,
-    RealGraph.InspectedStatuses.ElapsedDays,
-    RealGraph.InspectedStatuses.Ewma,
-    RealGraph.InspectedStatuses.IsMissing,
-    RealGraph.InspectedStatuses.Mean,
-    RealGraph.InspectedStatuses.NonZeroDays,
-    RealGraph.InspectedStatuses.Variance,
-    RealGraph.Likes.DaysSinceLast,
-    RealGraph.Likes.ElapsedDays,
-    RealGraph.Likes.Ewma,
-    RealGraph.Likes.IsMissing,
-    RealGraph.Likes.Mean,
-    RealGraph.Likes.NonZeroDays,
-    RealGraph.Likes.Variance,
-    RealGraph.LinkClicks.DaysSinceLast,
-    RealGraph.LinkClicks.ElapsedDays,
-    RealGraph.LinkClicks.Ewma,
-    RealGraph.LinkClicks.IsMissing,
-    RealGraph.LinkClicks.Mean,
-    RealGraph.LinkClicks.NonZeroDays,
-    RealGraph.LinkClicks.Variance,
-    RealGraph.Mentions.DaysSinceLast,
-    RealGraph.Mentions.ElapsedDays,
-    RealGraph.Mentions.Ewma,
-    RealGraph.Mentions.IsMissing,
-    RealGraph.Mentions.Mean,
-    RealGraph.Mentions.NonZeroDays,
-    RealGraph.Mentions.Variance,
-    RealGraph.MutualFollow.DaysSinceLast,
-    RealGraph.MutualFollow.ElapsedDays,
-    RealGraph.MutualFollow.Ewma,
-    RealGraph.MutualFollow.IsMissing,
-    RealGraph.MutualFollow.Mean,
-    RealGraph.MutualFollow.NonZeroDays,
-    RealGraph.MutualFollow.Variance,
-    RealGraph.NumTweetQuotes.DaysSinceLast,
-    RealGraph.NumTweetQuotes.ElapsedDays,
-    RealGraph.NumTweetQuotes.Ewma,
-    RealGraph.NumTweetQuotes.IsMissing,
-    RealGraph.NumTweetQuotes.Mean,
-    RealGraph.NumTweetQuotes.NonZeroDays,
-    RealGraph.NumTweetQuotes.Variance,
-    RealGraph.PhotoTags.DaysSinceLast,
-    RealGraph.PhotoTags.ElapsedDays,
-    RealGraph.PhotoTags.Ewma,
-    RealGraph.PhotoTags.IsMissing,
-    RealGraph.PhotoTags.Mean,
-    RealGraph.PhotoTags.NonZeroDays,
-    RealGraph.PhotoTags.Variance,
-    RealGraph.ProfileViews.DaysSinceLast,
-    RealGraph.ProfileViews.ElapsedDays,
-    RealGraph.ProfileViews.Ewma,
-    RealGraph.ProfileViews.IsMissing,
-    RealGraph.ProfileViews.Mean,
-    RealGraph.ProfileViews.NonZeroDays,
-    RealGraph.ProfileViews.Variance,
-    RealGraph.Retweets.DaysSinceLast,
-    RealGraph.Retweets.ElapsedDays,
-    RealGraph.Retweets.Ewma,
-    RealGraph.Retweets.IsMissing,
-    RealGraph.Retweets.Mean,
-    RealGraph.Retweets.NonZeroDays,
-    RealGraph.Retweets.Variance,
-    RealGraph.SmsFollow.DaysSinceLast,
-    RealGraph.SmsFollow.ElapsedDays,
-    RealGraph.SmsFollow.Ewma,
-    RealGraph.SmsFollow.IsMissing,
-    RealGraph.SmsFollow.Mean,
-    RealGraph.SmsFollow.NonZeroDays,
-    RealGraph.SmsFollow.Variance,
-    RealGraph.TweetClicks.DaysSinceLast,
-    RealGraph.TweetClicks.ElapsedDays,
-    RealGraph.TweetClicks.Ewma,
-    RealGraph.TweetClicks.IsMissing,
-    RealGraph.TweetClicks.Mean,
-    RealGraph.TweetClicks.NonZeroDays,
-    RealGraph.TweetClicks.Variance,
-    RealGraph.Weight
-  ).bind(UserAuthor)
+object w-weawgwaphdatawecowdfeatuwestowefeatuwes {
+  vaw boundusewauthowfeatuweset: boundfeatuweset = f-featuweset(
+    weawgwaph.destid, -.-
+    w-weawgwaph.addwessbookemaiw.dayssincewast, ^^
+    weawgwaph.addwessbookemaiw.ewapseddays, (⑅˘꒳˘)
+    weawgwaph.addwessbookemaiw.ewma, nyaa~~
+    weawgwaph.addwessbookemaiw.ismissing, /(^•ω•^)
+    weawgwaph.addwessbookemaiw.mean, (U ﹏ U)
+    w-weawgwaph.addwessbookemaiw.nonzewodays, 😳😳😳
+    weawgwaph.addwessbookemaiw.vawiance, >w<
+    w-weawgwaph.addwessbookinboth.dayssincewast, XD
+    w-weawgwaph.addwessbookinboth.ewapseddays, o.O
+    weawgwaph.addwessbookinboth.ewma, mya
+    weawgwaph.addwessbookinboth.ismissing, 🥺
+    weawgwaph.addwessbookinboth.mean, ^^;;
+    weawgwaph.addwessbookinboth.nonzewodays, :3
+    w-weawgwaph.addwessbookinboth.vawiance, (U ﹏ U)
+    weawgwaph.addwessbookmutuawedgeemaiw.dayssincewast, OwO
+    weawgwaph.addwessbookmutuawedgeemaiw.ewapseddays, 😳😳😳
+    weawgwaph.addwessbookmutuawedgeemaiw.ewma, (ˆ ﻌ ˆ)♡
+    weawgwaph.addwessbookmutuawedgeemaiw.ismissing, XD
+    w-weawgwaph.addwessbookmutuawedgeemaiw.mean, (ˆ ﻌ ˆ)♡
+    weawgwaph.addwessbookmutuawedgeemaiw.nonzewodays, ( ͡o ω ͡o )
+    w-weawgwaph.addwessbookmutuawedgeemaiw.vawiance, rawr x3
+    w-weawgwaph.addwessbookmutuawedgeinboth.dayssincewast, nyaa~~
+    w-weawgwaph.addwessbookmutuawedgeinboth.ewapseddays, >_<
+    w-weawgwaph.addwessbookmutuawedgeinboth.ewma,
+    weawgwaph.addwessbookmutuawedgeinboth.ismissing, ^^;;
+    weawgwaph.addwessbookmutuawedgeinboth.mean, (ˆ ﻌ ˆ)♡
+    w-weawgwaph.addwessbookmutuawedgeinboth.nonzewodays, ^^;;
+    weawgwaph.addwessbookmutuawedgeinboth.vawiance, (⑅˘꒳˘)
+    weawgwaph.addwessbookmutuawedgephone.dayssincewast, rawr x3
+    w-weawgwaph.addwessbookmutuawedgephone.ewapseddays, (///ˬ///✿)
+    weawgwaph.addwessbookmutuawedgephone.ewma, 🥺
+    weawgwaph.addwessbookmutuawedgephone.ismissing, >_<
+    weawgwaph.addwessbookmutuawedgephone.mean, UwU
+    weawgwaph.addwessbookmutuawedgephone.nonzewodays, >_<
+    weawgwaph.addwessbookmutuawedgephone.vawiance, -.-
+    w-weawgwaph.addwessbookphone.dayssincewast, mya
+    weawgwaph.addwessbookphone.ewapseddays, >w<
+    weawgwaph.addwessbookphone.ewma, (U ﹏ U)
+    w-weawgwaph.addwessbookphone.ismissing, 😳😳😳
+    w-weawgwaph.addwessbookphone.mean, o.O
+    w-weawgwaph.addwessbookphone.nonzewodays, òωó
+    weawgwaph.addwessbookphone.vawiance, 😳😳😳
+    weawgwaph.diwectmessages.dayssincewast, σωσ
+    weawgwaph.diwectmessages.ewapseddays, (⑅˘꒳˘)
+    weawgwaph.diwectmessages.ewma, (///ˬ///✿)
+    w-weawgwaph.diwectmessages.ismissing, 🥺
+    w-weawgwaph.diwectmessages.mean,
+    weawgwaph.diwectmessages.nonzewodays, OwO
+    w-weawgwaph.diwectmessages.vawiance, >w<
+    w-weawgwaph.dwewwtime.dayssincewast, 🥺
+    weawgwaph.dwewwtime.ewapseddays, nyaa~~
+    w-weawgwaph.dwewwtime.ewma, ^^
+    weawgwaph.dwewwtime.ismissing, >w<
+    w-weawgwaph.dwewwtime.mean, OwO
+    weawgwaph.dwewwtime.nonzewodays, XD
+    weawgwaph.dwewwtime.vawiance, ^^;;
+    weawgwaph.fowwow.dayssincewast, 🥺
+    w-weawgwaph.fowwow.ewapseddays, XD
+    weawgwaph.fowwow.ewma, (U ᵕ U❁)
+    w-weawgwaph.fowwow.ismissing,
+    weawgwaph.fowwow.mean, :3
+    w-weawgwaph.fowwow.nonzewodays, ( ͡o ω ͡o )
+    w-weawgwaph.fowwow.vawiance,
+    weawgwaph.inspectedstatuses.dayssincewast, òωó
+    weawgwaph.inspectedstatuses.ewapseddays, σωσ
+    weawgwaph.inspectedstatuses.ewma, (U ᵕ U❁)
+    weawgwaph.inspectedstatuses.ismissing, (✿oωo)
+    weawgwaph.inspectedstatuses.mean, ^^
+    weawgwaph.inspectedstatuses.nonzewodays,
+    weawgwaph.inspectedstatuses.vawiance, ^•ﻌ•^
+    w-weawgwaph.wikes.dayssincewast, XD
+    w-weawgwaph.wikes.ewapseddays, :3
+    weawgwaph.wikes.ewma, (ꈍᴗꈍ)
+    w-weawgwaph.wikes.ismissing, :3
+    w-weawgwaph.wikes.mean, (U ﹏ U)
+    w-weawgwaph.wikes.nonzewodays, UwU
+    weawgwaph.wikes.vawiance, 😳😳😳
+    weawgwaph.winkcwicks.dayssincewast, XD
+    weawgwaph.winkcwicks.ewapseddays, o.O
+    w-weawgwaph.winkcwicks.ewma, (⑅˘꒳˘)
+    weawgwaph.winkcwicks.ismissing, 😳😳😳
+    weawgwaph.winkcwicks.mean, nyaa~~
+    weawgwaph.winkcwicks.nonzewodays, rawr
+    weawgwaph.winkcwicks.vawiance, -.-
+    w-weawgwaph.mentions.dayssincewast, (✿oωo)
+    weawgwaph.mentions.ewapseddays, /(^•ω•^)
+    weawgwaph.mentions.ewma, 🥺
+    w-weawgwaph.mentions.ismissing, ʘwʘ
+    w-weawgwaph.mentions.mean, UwU
+    w-weawgwaph.mentions.nonzewodays, XD
+    weawgwaph.mentions.vawiance, (✿oωo)
+    weawgwaph.mutuawfowwow.dayssincewast, :3
+    w-weawgwaph.mutuawfowwow.ewapseddays, (///ˬ///✿)
+    w-weawgwaph.mutuawfowwow.ewma, nyaa~~
+    w-weawgwaph.mutuawfowwow.ismissing, >w<
+    w-weawgwaph.mutuawfowwow.mean, -.-
+    weawgwaph.mutuawfowwow.nonzewodays, (✿oωo)
+    weawgwaph.mutuawfowwow.vawiance, (˘ω˘)
+    w-weawgwaph.numtweetquotes.dayssincewast, rawr
+    w-weawgwaph.numtweetquotes.ewapseddays, OwO
+    w-weawgwaph.numtweetquotes.ewma, ^•ﻌ•^
+    w-weawgwaph.numtweetquotes.ismissing,
+    w-weawgwaph.numtweetquotes.mean, UwU
+    weawgwaph.numtweetquotes.nonzewodays, (˘ω˘)
+    weawgwaph.numtweetquotes.vawiance, (///ˬ///✿)
+    weawgwaph.phototags.dayssincewast, σωσ
+    w-weawgwaph.phototags.ewapseddays, /(^•ω•^)
+    weawgwaph.phototags.ewma, 😳
+    weawgwaph.phototags.ismissing, 😳
+    weawgwaph.phototags.mean, (⑅˘꒳˘)
+    weawgwaph.phototags.nonzewodays, 😳😳😳
+    weawgwaph.phototags.vawiance, 😳
+    w-weawgwaph.pwofiweviews.dayssincewast, XD
+    weawgwaph.pwofiweviews.ewapseddays, mya
+    weawgwaph.pwofiweviews.ewma, ^•ﻌ•^
+    weawgwaph.pwofiweviews.ismissing, ʘwʘ
+    w-weawgwaph.pwofiweviews.mean, ( ͡o ω ͡o )
+    w-weawgwaph.pwofiweviews.nonzewodays, mya
+    w-weawgwaph.pwofiweviews.vawiance, o.O
+    weawgwaph.wetweets.dayssincewast, (✿oωo)
+    w-weawgwaph.wetweets.ewapseddays, :3
+    weawgwaph.wetweets.ewma, 😳
+    weawgwaph.wetweets.ismissing, (U ﹏ U)
+    w-weawgwaph.wetweets.mean, mya
+    w-weawgwaph.wetweets.nonzewodays, (U ᵕ U❁)
+    weawgwaph.wetweets.vawiance, :3
+    weawgwaph.smsfowwow.dayssincewast, mya
+    weawgwaph.smsfowwow.ewapseddays, OwO
+    weawgwaph.smsfowwow.ewma, (ˆ ﻌ ˆ)♡
+    weawgwaph.smsfowwow.ismissing, ʘwʘ
+    weawgwaph.smsfowwow.mean, o.O
+    w-weawgwaph.smsfowwow.nonzewodays, UwU
+    weawgwaph.smsfowwow.vawiance, rawr x3
+    w-weawgwaph.tweetcwicks.dayssincewast, 🥺
+    weawgwaph.tweetcwicks.ewapseddays,
+    w-weawgwaph.tweetcwicks.ewma, :3
+    w-weawgwaph.tweetcwicks.ismissing, (ꈍᴗꈍ)
+    weawgwaph.tweetcwicks.mean, 🥺
+    weawgwaph.tweetcwicks.nonzewodays,
+    w-weawgwaph.tweetcwicks.vawiance, (✿oωo)
+    w-weawgwaph.weight
+  ).bind(usewauthow)
 
-  private[this] val edgeFeatures: Seq[RealGraph.EdgeFeature] = Seq(
-    RealGraph.AddressBookEmail,
-    RealGraph.AddressBookInBoth,
-    RealGraph.AddressBookMutualEdgeEmail,
-    RealGraph.AddressBookMutualEdgeInBoth,
-    RealGraph.AddressBookMutualEdgePhone,
-    RealGraph.AddressBookPhone,
-    RealGraph.DirectMessages,
-    RealGraph.DwellTime,
-    RealGraph.Follow,
-    RealGraph.InspectedStatuses,
-    RealGraph.Likes,
-    RealGraph.LinkClicks,
-    RealGraph.Mentions,
-    RealGraph.MutualFollow,
-    RealGraph.PhotoTags,
-    RealGraph.ProfileViews,
-    RealGraph.Retweets,
-    RealGraph.SmsFollow,
-    RealGraph.TweetClicks
+  pwivate[this] v-vaw edgefeatuwes: s-seq[weawgwaph.edgefeatuwe] = seq(
+    weawgwaph.addwessbookemaiw, (U ﹏ U)
+    weawgwaph.addwessbookinboth, :3
+    weawgwaph.addwessbookmutuawedgeemaiw, ^^;;
+    w-weawgwaph.addwessbookmutuawedgeinboth, rawr
+    w-weawgwaph.addwessbookmutuawedgephone, 😳😳😳
+    w-weawgwaph.addwessbookphone, (✿oωo)
+    weawgwaph.diwectmessages, OwO
+    weawgwaph.dwewwtime, ʘwʘ
+    w-weawgwaph.fowwow,
+    w-weawgwaph.inspectedstatuses, (ˆ ﻌ ˆ)♡
+    weawgwaph.wikes, (U ﹏ U)
+    weawgwaph.winkcwicks, UwU
+    w-weawgwaph.mentions, XD
+    weawgwaph.mutuawfowwow, ʘwʘ
+    weawgwaph.phototags, rawr x3
+    weawgwaph.pwofiweviews, ^^;;
+    weawgwaph.wetweets, ʘwʘ
+    weawgwaph.smsfowwow, (U ﹏ U)
+    w-weawgwaph.tweetcwicks
   )
 
-  val htlDoubleFeatures: Set[Feature[EdgeEntityId[UserId, UserId], Double]] = {
-    val features = edgeFeatures.flatMap { ef =>
-      Seq(ef.Ewma, ef.Mean, ef.Variance)
-    } ++ Seq(RealGraph.Weight)
-    features.toSet
+  v-vaw htwdoubwefeatuwes: set[featuwe[edgeentityid[usewid, (˘ω˘) usewid], (ꈍᴗꈍ) d-doubwe]] = {
+    v-vaw featuwes = edgefeatuwes.fwatmap { ef =>
+      seq(ef.ewma, /(^•ω•^) e-ef.mean, >_< ef.vawiance)
+    } ++ seq(weawgwaph.weight)
+    featuwes.toset
   }
 
-  val htlLongFeatures: Set[Feature[EdgeEntityId[UserId, UserId], Long]] = {
-    val features = edgeFeatures.flatMap { ef =>
-      Seq(ef.DaysSinceLast, ef.ElapsedDays, ef.NonZeroDays)
+  vaw htwwongfeatuwes: set[featuwe[edgeentityid[usewid, σωσ usewid], ^^;; w-wong]] = {
+    vaw featuwes = edgefeatuwes.fwatmap { e-ef =>
+      s-seq(ef.dayssincewast, 😳 ef.ewapseddays, >_< ef.nonzewodays)
     }
-    features.toSet
+    featuwes.toset
   }
 
-  private val edgeFeatureToLegacyName = Map(
-    RealGraph.AddressBookEmail -> "num_address_book_email",
-    RealGraph.AddressBookInBoth -> "num_address_book_in_both",
-    RealGraph.AddressBookMutualEdgeEmail -> "num_address_book_mutual_edge_email",
-    RealGraph.AddressBookMutualEdgeInBoth -> "num_address_book_mutual_edge_in_both",
-    RealGraph.AddressBookMutualEdgePhone -> "num_address_book_mutual_edge_phone",
-    RealGraph.AddressBookPhone -> "num_address_book_phone",
-    RealGraph.DirectMessages -> "direct_messages",
-    RealGraph.DwellTime -> "total_dwell_time",
-    RealGraph.Follow -> "num_follow",
-    RealGraph.InspectedStatuses -> "num_inspected_tweets",
-    RealGraph.Likes -> "num_favorites",
-    RealGraph.LinkClicks -> "num_link_clicks",
-    RealGraph.Mentions -> "num_mentions",
-    RealGraph.MutualFollow -> "num_mutual_follow",
-    RealGraph.PhotoTags -> "num_photo_tags",
-    RealGraph.ProfileViews -> "num_profile_views",
-    RealGraph.Retweets -> "num_retweets",
-    RealGraph.SmsFollow -> "num_sms_follow",
-    RealGraph.TweetClicks -> "num_tweet_clicks",
+  p-pwivate v-vaw edgefeatuwetowegacyname = map(
+    weawgwaph.addwessbookemaiw -> "num_addwess_book_emaiw",
+    weawgwaph.addwessbookinboth -> "num_addwess_book_in_both", -.-
+    weawgwaph.addwessbookmutuawedgeemaiw -> "num_addwess_book_mutuaw_edge_emaiw", UwU
+    w-weawgwaph.addwessbookmutuawedgeinboth -> "num_addwess_book_mutuaw_edge_in_both", :3
+    weawgwaph.addwessbookmutuawedgephone -> "num_addwess_book_mutuaw_edge_phone", σωσ
+    w-weawgwaph.addwessbookphone -> "num_addwess_book_phone", >w<
+    weawgwaph.diwectmessages -> "diwect_messages", (ˆ ﻌ ˆ)♡
+    weawgwaph.dwewwtime -> "totaw_dweww_time", ʘwʘ
+    weawgwaph.fowwow -> "num_fowwow",
+    w-weawgwaph.inspectedstatuses -> "num_inspected_tweets", :3
+    weawgwaph.wikes -> "num_favowites", (˘ω˘)
+    w-weawgwaph.winkcwicks -> "num_wink_cwicks", 😳😳😳
+    w-weawgwaph.mentions -> "num_mentions", rawr x3
+    weawgwaph.mutuawfowwow -> "num_mutuaw_fowwow", (✿oωo)
+    w-weawgwaph.phototags -> "num_photo_tags", (ˆ ﻌ ˆ)♡
+    weawgwaph.pwofiweviews -> "num_pwofiwe_views", :3
+    w-weawgwaph.wetweets -> "num_wetweets", (U ᵕ U❁)
+    w-weawgwaph.smsfowwow -> "num_sms_fowwow", ^^;;
+    w-weawgwaph.tweetcwicks -> "num_tweet_cwicks", mya
   )
 
-  def convertFeatureToLegacyName(
-    prefix: String,
-    variance: String = "variance"
-  ): Map[Feature[EdgeEntityId[UserId, UserId], _ >: Long with Double <: AnyVal], String] =
-    edgeFeatureToLegacyName.flatMap {
-      case (k, v) =>
-        Seq(
-          k.NonZeroDays -> s"${prefix}.${v}.non_zero_days",
-          k.DaysSinceLast -> s"${prefix}.${v}.days_since_last",
-          k.ElapsedDays -> s"${prefix}.${v}.elapsed_days",
-          k.Ewma -> s"${prefix}.${v}.ewma",
-          k.Mean -> s"${prefix}.${v}.mean",
-          k.Variance -> s"${prefix}.${v}.${variance}",
+  def c-convewtfeatuwetowegacyname(
+    p-pwefix: stwing, 😳😳😳
+    vawiance: stwing = "vawiance"
+  ): map[featuwe[edgeentityid[usewid, OwO u-usewid], rawr _ >: w-wong with d-doubwe <: anyvaw], XD stwing] =
+    edgefeatuwetowegacyname.fwatmap {
+      c-case (k, (U ﹏ U) v) =>
+        s-seq(
+          k.nonzewodays -> s-s"${pwefix}.${v}.non_zewo_days", (˘ω˘)
+          k.dayssincewast -> s"${pwefix}.${v}.days_since_wast", UwU
+          k.ewapseddays -> s-s"${pwefix}.${v}.ewapsed_days", >_<
+          k-k.ewma -> s-s"${pwefix}.${v}.ewma", σωσ
+          k-k.mean -> s"${pwefix}.${v}.mean", 🥺
+          k.vawiance -> s-s"${pwefix}.${v}.${vawiance}", 🥺
         )
-    } ++ Map(
-      RealGraph.Weight -> (prefix + ".weight")
+    } ++ map(
+      weawgwaph.weight -> (pwefix + ".weight")
     )
 }

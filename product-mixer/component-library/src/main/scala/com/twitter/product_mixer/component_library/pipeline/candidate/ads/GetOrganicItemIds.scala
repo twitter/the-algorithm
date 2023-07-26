@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+package com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.ads
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
 
 /**
- * Get organic item candidates from the set of previous candidates
+ * g-get owganic i-item candidates f-fwom the set o-of pwevious candidates
  */
-trait GetOrganicItemIds {
+t-twait getowganicitemids {
 
-  def apply(previousCandidates: Seq[CandidateWithDetails]): Option[Seq[Long]]
+  def appwy(pweviouscandidates: seq[candidatewithdetaiws]): option[seq[wong]]
 }
 
 /**
- * Get organic items from specified pipelines
+ * g-get owganic items fwom specified pipewines
  */
-case class PipelineScopedOrganicItemIds(pipelines: CandidateScope) extends GetOrganicItemIds {
+case c-cwass pipewinescopedowganicitemids(pipewines: candidatescope) e-extends getowganicitemids {
 
-  def apply(previousCandidates: Seq[CandidateWithDetails]): Option[Seq[Long]] =
-    Some(previousCandidates.filter(pipelines.contains).map(_.candidateIdLong))
+  def appwy(pweviouscandidates: seq[candidatewithdetaiws]): option[seq[wong]] =
+    some(pweviouscandidates.fiwtew(pipewines.contains).map(_.candidateidwong))
 }
 
 /**
- * Get an empty list of organic item candidates
+ * g-get an empty wist of owganic i-item candidates
  */
-case object EmptyOrganicItemIds extends GetOrganicItemIds {
+c-case object emptyowganicitemids extends getowganicitemids {
 
-  def apply(previousCandidates: Seq[CandidateWithDetails]): Option[Seq[Long]] = None
+  def appwy(pweviouscandidates: s-seq[candidatewithdetaiws]): option[seq[wong]] = nyone
 }

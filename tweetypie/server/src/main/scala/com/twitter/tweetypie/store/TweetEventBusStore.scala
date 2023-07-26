@@ -1,209 +1,209 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.tweetypie.thwiftscawa._
 
-trait TweetEventBusStore
-    extends TweetStoreBase[TweetEventBusStore]
-    with AsyncDeleteAdditionalFields.Store
-    with AsyncDeleteTweet.Store
-    with AsyncInsertTweet.Store
-    with AsyncSetAdditionalFields.Store
-    with AsyncTakedown.Store
-    with AsyncUndeleteTweet.Store
-    with AsyncUpdatePossiblySensitiveTweet.Store
-    with QuotedTweetDelete.Store
-    with QuotedTweetTakedown.Store
-    with ScrubGeoUpdateUserTimestamp.Store
-    with ScrubGeo.Store { self =>
-  def wrap(w: TweetStore.Wrap): TweetEventBusStore =
-    new TweetStoreWrapper(w, this)
-      with TweetEventBusStore
-      with AsyncDeleteAdditionalFields.StoreWrapper
-      with AsyncDeleteTweet.StoreWrapper
-      with AsyncInsertTweet.StoreWrapper
-      with AsyncSetAdditionalFields.StoreWrapper
-      with AsyncTakedown.StoreWrapper
-      with AsyncUndeleteTweet.StoreWrapper
-      with AsyncUpdatePossiblySensitiveTweet.StoreWrapper
-      with QuotedTweetDelete.StoreWrapper
-      with QuotedTweetTakedown.StoreWrapper
-      with ScrubGeo.StoreWrapper
-      with ScrubGeoUpdateUserTimestamp.StoreWrapper
+t-twait tweeteventbusstowe
+    e-extends tweetstowebase[tweeteventbusstowe]
+    w-with asyncdeweteadditionawfiewds.stowe
+    with a-asyncdewetetweet.stowe
+    with a-asyncinsewttweet.stowe
+    with a-asyncsetadditionawfiewds.stowe
+    with asynctakedown.stowe
+    with asyncundewetetweet.stowe
+    with asyncupdatepossibwysensitivetweet.stowe
+    with quotedtweetdewete.stowe
+    w-with quotedtweettakedown.stowe
+    with scwubgeoupdateusewtimestamp.stowe
+    w-with scwubgeo.stowe { sewf =>
+  d-def wwap(w: tweetstowe.wwap): tweeteventbusstowe =
+    nyew t-tweetstowewwappew(w, >_< this)
+      w-with tweeteventbusstowe
+      w-with asyncdeweteadditionawfiewds.stowewwappew
+      with asyncdewetetweet.stowewwappew
+      with asyncinsewttweet.stowewwappew
+      with asyncsetadditionawfiewds.stowewwappew
+      w-with asynctakedown.stowewwappew
+      with asyncundewetetweet.stowewwappew
+      with asyncupdatepossibwysensitivetweet.stowewwappew
+      with quotedtweetdewete.stowewwappew
+      w-with quotedtweettakedown.stowewwappew
+      w-with scwubgeo.stowewwappew
+      w-with scwubgeoupdateusewtimestamp.stowewwappew
 
-  def inParallel(that: TweetEventBusStore): TweetEventBusStore =
-    new TweetEventBusStore {
-      override val asyncInsertTweet: FutureEffect[AsyncInsertTweet.Event] =
-        self.asyncInsertTweet.inParallel(that.asyncInsertTweet)
-      override val asyncDeleteAdditionalFields: FutureEffect[AsyncDeleteAdditionalFields.Event] =
-        self.asyncDeleteAdditionalFields.inParallel(that.asyncDeleteAdditionalFields)
-      override val asyncDeleteTweet: FutureEffect[AsyncDeleteTweet.Event] =
-        self.asyncDeleteTweet.inParallel(that.asyncDeleteTweet)
-      override val asyncSetAdditionalFields: FutureEffect[AsyncSetAdditionalFields.Event] =
-        self.asyncSetAdditionalFields.inParallel(that.asyncSetAdditionalFields)
-      override val asyncTakedown: FutureEffect[AsyncTakedown.Event] =
-        self.asyncTakedown.inParallel(that.asyncTakedown)
-      override val asyncUndeleteTweet: FutureEffect[AsyncUndeleteTweet.Event] =
-        self.asyncUndeleteTweet.inParallel(that.asyncUndeleteTweet)
-      override val asyncUpdatePossiblySensitiveTweet: FutureEffect[
-        AsyncUpdatePossiblySensitiveTweet.Event
+  d-def inpawawwew(that: t-tweeteventbusstowe): tweeteventbusstowe =
+    nyew t-tweeteventbusstowe {
+      ovewwide vaw asyncinsewttweet: f-futuweeffect[asyncinsewttweet.event] =
+        sewf.asyncinsewttweet.inpawawwew(that.asyncinsewttweet)
+      ovewwide vaw asyncdeweteadditionawfiewds: futuweeffect[asyncdeweteadditionawfiewds.event] =
+        sewf.asyncdeweteadditionawfiewds.inpawawwew(that.asyncdeweteadditionawfiewds)
+      o-ovewwide vaw asyncdewetetweet: futuweeffect[asyncdewetetweet.event] =
+        s-sewf.asyncdewetetweet.inpawawwew(that.asyncdewetetweet)
+      o-ovewwide v-vaw asyncsetadditionawfiewds: futuweeffect[asyncsetadditionawfiewds.event] =
+        sewf.asyncsetadditionawfiewds.inpawawwew(that.asyncsetadditionawfiewds)
+      ovewwide v-vaw asynctakedown: f-futuweeffect[asynctakedown.event] =
+        sewf.asynctakedown.inpawawwew(that.asynctakedown)
+      o-ovewwide v-vaw asyncundewetetweet: futuweeffect[asyncundewetetweet.event] =
+        s-sewf.asyncundewetetweet.inpawawwew(that.asyncundewetetweet)
+      ovewwide v-vaw asyncupdatepossibwysensitivetweet: futuweeffect[
+        asyncupdatepossibwysensitivetweet.event
       ] =
-        self.asyncUpdatePossiblySensitiveTweet.inParallel(that.asyncUpdatePossiblySensitiveTweet)
-      override val quotedTweetDelete: FutureEffect[QuotedTweetDelete.Event] =
-        self.quotedTweetDelete.inParallel(that.quotedTweetDelete)
-      override val quotedTweetTakedown: FutureEffect[QuotedTweetTakedown.Event] =
-        self.quotedTweetTakedown.inParallel(that.quotedTweetTakedown)
-      override val retryAsyncInsertTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncInsertTweet.Event]
+        s-sewf.asyncupdatepossibwysensitivetweet.inpawawwew(that.asyncupdatepossibwysensitivetweet)
+      ovewwide v-vaw quotedtweetdewete: futuweeffect[quotedtweetdewete.event] =
+        s-sewf.quotedtweetdewete.inpawawwew(that.quotedtweetdewete)
+      o-ovewwide vaw quotedtweettakedown: futuweeffect[quotedtweettakedown.event] =
+        sewf.quotedtweettakedown.inpawawwew(that.quotedtweettakedown)
+      ovewwide vaw wetwyasyncinsewttweet: futuweeffect[
+        t-tweetstowewetwyevent[asyncinsewttweet.event]
       ] =
-        self.retryAsyncInsertTweet.inParallel(that.retryAsyncInsertTweet)
-      override val retryAsyncDeleteAdditionalFields: FutureEffect[
-        TweetStoreRetryEvent[AsyncDeleteAdditionalFields.Event]
+        sewf.wetwyasyncinsewttweet.inpawawwew(that.wetwyasyncinsewttweet)
+      o-ovewwide vaw wetwyasyncdeweteadditionawfiewds: f-futuweeffect[
+        t-tweetstowewetwyevent[asyncdeweteadditionawfiewds.event]
       ] =
-        self.retryAsyncDeleteAdditionalFields.inParallel(that.retryAsyncDeleteAdditionalFields)
-      override val retryAsyncDeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncDeleteTweet.Event]
+        s-sewf.wetwyasyncdeweteadditionawfiewds.inpawawwew(that.wetwyasyncdeweteadditionawfiewds)
+      ovewwide vaw wetwyasyncdewetetweet: futuweeffect[
+        t-tweetstowewetwyevent[asyncdewetetweet.event]
       ] =
-        self.retryAsyncDeleteTweet.inParallel(that.retryAsyncDeleteTweet)
-      override val retryAsyncUndeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncUndeleteTweet.Event]
+        sewf.wetwyasyncdewetetweet.inpawawwew(that.wetwyasyncdewetetweet)
+      ovewwide vaw wetwyasyncundewetetweet: futuweeffect[
+        t-tweetstowewetwyevent[asyncundewetetweet.event]
       ] =
-        self.retryAsyncUndeleteTweet.inParallel(that.retryAsyncUndeleteTweet)
-      override val retryAsyncUpdatePossiblySensitiveTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncUpdatePossiblySensitiveTweet.Event]
+        sewf.wetwyasyncundewetetweet.inpawawwew(that.wetwyasyncundewetetweet)
+      o-ovewwide v-vaw wetwyasyncupdatepossibwysensitivetweet: f-futuweeffect[
+        tweetstowewetwyevent[asyncupdatepossibwysensitivetweet.event]
       ] =
-        self.retryAsyncUpdatePossiblySensitiveTweet.inParallel(
-          that.retryAsyncUpdatePossiblySensitiveTweet
+        s-sewf.wetwyasyncupdatepossibwysensitivetweet.inpawawwew(
+          t-that.wetwyasyncupdatepossibwysensitivetweet
         )
-      override val retryAsyncSetAdditionalFields: FutureEffect[
-        TweetStoreRetryEvent[AsyncSetAdditionalFields.Event]
+      o-ovewwide v-vaw wetwyasyncsetadditionawfiewds: futuweeffect[
+        tweetstowewetwyevent[asyncsetadditionawfiewds.event]
       ] =
-        self.retryAsyncSetAdditionalFields.inParallel(that.retryAsyncSetAdditionalFields)
-      override val retryAsyncTakedown: FutureEffect[TweetStoreRetryEvent[AsyncTakedown.Event]] =
-        self.retryAsyncTakedown.inParallel(that.retryAsyncTakedown)
-      override val scrubGeo: FutureEffect[ScrubGeo.Event] =
-        self.scrubGeo.inParallel(that.scrubGeo)
-      override val scrubGeoUpdateUserTimestamp: FutureEffect[ScrubGeoUpdateUserTimestamp.Event] =
-        self.scrubGeoUpdateUserTimestamp.inParallel(that.scrubGeoUpdateUserTimestamp)
+        s-sewf.wetwyasyncsetadditionawfiewds.inpawawwew(that.wetwyasyncsetadditionawfiewds)
+      o-ovewwide v-vaw wetwyasynctakedown: f-futuweeffect[tweetstowewetwyevent[asynctakedown.event]] =
+        s-sewf.wetwyasynctakedown.inpawawwew(that.wetwyasynctakedown)
+      ovewwide vaw scwubgeo: futuweeffect[scwubgeo.event] =
+        s-sewf.scwubgeo.inpawawwew(that.scwubgeo)
+      ovewwide vaw scwubgeoupdateusewtimestamp: futuweeffect[scwubgeoupdateusewtimestamp.event] =
+        sewf.scwubgeoupdateusewtimestamp.inpawawwew(that.scwubgeoupdateusewtimestamp)
     }
 }
 
-object TweetEventBusStore {
-  val Action: AsyncWriteAction = AsyncWriteAction.EventBusEnqueue
+object tweeteventbusstowe {
+  v-vaw action: asyncwwiteaction = asyncwwiteaction.eventbusenqueue
 
-  def safetyTypeForUser(user: User): Option[SafetyType] =
-    user.safety.map(userSafetyToSafetyType)
+  def safetytypefowusew(usew: usew): option[safetytype] =
+    u-usew.safety.map(usewsafetytosafetytype)
 
-  def userSafetyToSafetyType(safety: Safety): SafetyType =
-    if (safety.isProtected) {
-      SafetyType.Private
-    } else if (safety.suspended) {
-      SafetyType.Restricted
-    } else {
-      SafetyType.Public
+  d-def u-usewsafetytosafetytype(safety: safety): safetytype =
+    i-if (safety.ispwotected) {
+      safetytype.pwivate
+    } e-ewse if (safety.suspended) {
+      s-safetytype.westwicted
+    } ewse {
+      safetytype.pubwic
     }
 
-  def apply(
-    eventStore: FutureEffect[TweetEvent]
-  ): TweetEventBusStore = {
+  def appwy(
+    eventstowe: futuweeffect[tweetevent]
+  ): tweeteventbusstowe = {
 
-    def toTweetEvents(event: TweetStoreTweetEvent): Seq[TweetEvent] =
-      event.toTweetEventData.map { data =>
-        TweetEvent(
-          data,
-          TweetEventFlags(
-            timestampMs = event.timestamp.inMillis,
-            safetyType = event.optUser.flatMap(safetyTypeForUser)
+    d-def totweetevents(event: t-tweetstowetweetevent): seq[tweetevent] =
+      e-event.totweeteventdata.map { d-data =>
+        tweetevent(
+          data, ^^;;
+          t-tweeteventfwags(
+            t-timestampms = event.timestamp.inmiwwis, (ˆ ﻌ ˆ)♡
+            s-safetytype = e-event.optusew.fwatmap(safetytypefowusew)
           )
         )
       }
 
-    def enqueueEvents[E <: TweetStoreTweetEvent]: FutureEffect[E] =
-      eventStore.liftSeq.contramap[E](toTweetEvents)
+    def enqueueevents[e <: tweetstowetweetevent]: futuweeffect[e] =
+      eventstowe.wiftseq.contwamap[e](totweetevents)
 
-    new TweetEventBusStore {
-      override val asyncInsertTweet: FutureEffect[AsyncInsertTweet.Event] =
-        enqueueEvents[AsyncInsertTweet.Event]
+    n-nyew t-tweeteventbusstowe {
+      o-ovewwide vaw asyncinsewttweet: f-futuweeffect[asyncinsewttweet.event] =
+        e-enqueueevents[asyncinsewttweet.event]
 
-      override val asyncDeleteAdditionalFields: FutureEffect[AsyncDeleteAdditionalFields.Event] =
-        enqueueEvents[AsyncDeleteAdditionalFields.Event]
+      ovewwide v-vaw asyncdeweteadditionawfiewds: futuweeffect[asyncdeweteadditionawfiewds.event] =
+        enqueueevents[asyncdeweteadditionawfiewds.event]
 
-      override val asyncDeleteTweet: FutureEffect[AsyncDeleteTweet.Event] =
-        enqueueEvents[AsyncDeleteTweet.Event]
+      ovewwide vaw asyncdewetetweet: f-futuweeffect[asyncdewetetweet.event] =
+        e-enqueueevents[asyncdewetetweet.event]
 
-      override val asyncSetAdditionalFields: FutureEffect[AsyncSetAdditionalFields.Event] =
-        enqueueEvents[AsyncSetAdditionalFields.Event]
+      ovewwide vaw asyncsetadditionawfiewds: futuweeffect[asyncsetadditionawfiewds.event] =
+        e-enqueueevents[asyncsetadditionawfiewds.event]
 
-      override val asyncTakedown: FutureEffect[AsyncTakedown.Event] =
-        enqueueEvents[AsyncTakedown.Event]
-          .onlyIf(_.eventbusEnqueue)
+      o-ovewwide vaw asynctakedown: futuweeffect[asynctakedown.event] =
+        enqueueevents[asynctakedown.event]
+          .onwyif(_.eventbusenqueue)
 
-      override val asyncUndeleteTweet: FutureEffect[AsyncUndeleteTweet.Event] =
-        enqueueEvents[AsyncUndeleteTweet.Event]
+      ovewwide v-vaw asyncundewetetweet: futuweeffect[asyncundewetetweet.event] =
+        enqueueevents[asyncundewetetweet.event]
 
-      override val asyncUpdatePossiblySensitiveTweet: FutureEffect[
-        AsyncUpdatePossiblySensitiveTweet.Event
+      ovewwide vaw asyncupdatepossibwysensitivetweet: f-futuweeffect[
+        asyncupdatepossibwysensitivetweet.event
       ] =
-        enqueueEvents[AsyncUpdatePossiblySensitiveTweet.Event]
+        enqueueevents[asyncupdatepossibwysensitivetweet.event]
 
-      override val quotedTweetDelete: FutureEffect[QuotedTweetDelete.Event] =
-        enqueueEvents[QuotedTweetDelete.Event]
+      o-ovewwide v-vaw quotedtweetdewete: futuweeffect[quotedtweetdewete.event] =
+        enqueueevents[quotedtweetdewete.event]
 
-      override val quotedTweetTakedown: FutureEffect[QuotedTweetTakedown.Event] =
-        enqueueEvents[QuotedTweetTakedown.Event]
+      ovewwide vaw q-quotedtweettakedown: f-futuweeffect[quotedtweettakedown.event] =
+        enqueueevents[quotedtweettakedown.event]
 
-      override val retryAsyncInsertTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncInsertTweet.Event]
+      ovewwide vaw wetwyasyncinsewttweet: f-futuweeffect[
+        tweetstowewetwyevent[asyncinsewttweet.event]
       ] =
-        TweetStore.retry(Action, asyncInsertTweet)
+        t-tweetstowe.wetwy(action, ^^;; asyncinsewttweet)
 
-      override val retryAsyncDeleteAdditionalFields: FutureEffect[
-        TweetStoreRetryEvent[AsyncDeleteAdditionalFields.Event]
+      ovewwide vaw wetwyasyncdeweteadditionawfiewds: f-futuweeffect[
+        tweetstowewetwyevent[asyncdeweteadditionawfiewds.event]
       ] =
-        TweetStore.retry(Action, asyncDeleteAdditionalFields)
+        t-tweetstowe.wetwy(action, (⑅˘꒳˘) a-asyncdeweteadditionawfiewds)
 
-      override val retryAsyncDeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncDeleteTweet.Event]
+      ovewwide vaw wetwyasyncdewetetweet: f-futuweeffect[
+        tweetstowewetwyevent[asyncdewetetweet.event]
       ] =
-        TweetStore.retry(Action, asyncDeleteTweet)
+        t-tweetstowe.wetwy(action, rawr x3 a-asyncdewetetweet)
 
-      override val retryAsyncUndeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncUndeleteTweet.Event]
+      o-ovewwide vaw wetwyasyncundewetetweet: f-futuweeffect[
+        t-tweetstowewetwyevent[asyncundewetetweet.event]
       ] =
-        TweetStore.retry(Action, asyncUndeleteTweet)
+        tweetstowe.wetwy(action, (///ˬ///✿) asyncundewetetweet)
 
-      override val retryAsyncUpdatePossiblySensitiveTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncUpdatePossiblySensitiveTweet.Event]
+      o-ovewwide v-vaw wetwyasyncupdatepossibwysensitivetweet: f-futuweeffect[
+        tweetstowewetwyevent[asyncupdatepossibwysensitivetweet.event]
       ] =
-        TweetStore.retry(Action, asyncUpdatePossiblySensitiveTweet)
+        tweetstowe.wetwy(action, 🥺 a-asyncupdatepossibwysensitivetweet)
 
-      override val retryAsyncSetAdditionalFields: FutureEffect[
-        TweetStoreRetryEvent[AsyncSetAdditionalFields.Event]
+      ovewwide v-vaw wetwyasyncsetadditionawfiewds: f-futuweeffect[
+        tweetstowewetwyevent[asyncsetadditionawfiewds.event]
       ] =
-        TweetStore.retry(Action, asyncSetAdditionalFields)
+        tweetstowe.wetwy(action, >_< asyncsetadditionawfiewds)
 
-      override val retryAsyncTakedown: FutureEffect[TweetStoreRetryEvent[AsyncTakedown.Event]] =
-        TweetStore.retry(Action, asyncTakedown)
+      o-ovewwide v-vaw wetwyasynctakedown: futuweeffect[tweetstowewetwyevent[asynctakedown.event]] =
+        t-tweetstowe.wetwy(action, a-asynctakedown)
 
-      override val scrubGeo: FutureEffect[ScrubGeo.Event] =
-        enqueueEvents[ScrubGeo.Event]
+      ovewwide vaw scwubgeo: f-futuweeffect[scwubgeo.event] =
+        enqueueevents[scwubgeo.event]
 
-      override val scrubGeoUpdateUserTimestamp: FutureEffect[ScrubGeoUpdateUserTimestamp.Event] =
-        enqueueEvents[ScrubGeoUpdateUserTimestamp.Event]
+      ovewwide vaw scwubgeoupdateusewtimestamp: futuweeffect[scwubgeoupdateusewtimestamp.event] =
+        enqueueevents[scwubgeoupdateusewtimestamp.event]
     }
   }
 }
 
 /**
- * Scrubs inappropriate fields from tweet events before publishing.
+ * s-scwubs inappwopwiate f-fiewds fwom tweet events befowe p-pubwishing. UwU
  */
-object TweetEventDataScrubber {
-  def scrub(tweet: Tweet): Tweet =
-    tweet.copy(
-      cards = None,
-      card2 = None,
-      media = tweet.media.map(_.map { mediaEntity => mediaEntity.copy(extensionsReply = None) }),
-      previousCounts = None,
-      editPerspective = None
+object tweeteventdatascwubbew {
+  d-def scwub(tweet: tweet): tweet =
+    t-tweet.copy(
+      c-cawds = n-none,
+      cawd2 = n-nyone, >_<
+      m-media = tweet.media.map(_.map { mediaentity => mediaentity.copy(extensionswepwy = nyone) }), -.-
+      pweviouscounts = nyone, mya
+      editpewspective = n-nyone
     )
 }

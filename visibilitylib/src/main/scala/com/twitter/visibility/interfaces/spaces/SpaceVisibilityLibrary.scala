@@ -1,117 +1,117 @@
-package com.twitter.visibility.interfaces.spaces
+package com.twittew.visibiwity.intewfaces.spaces
 
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.common.MutedKeywordFeatures
-import com.twitter.visibility.builder.spaces.SpaceFeatures
-import com.twitter.visibility.builder.spaces.StratoSpaceLabelMaps
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.common._
-import com.twitter.visibility.common.stitch.StitchHelpers
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ContentId.SpaceId
-import com.twitter.visibility.models.ContentId.SpacePlusUserId
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
-import com.twitter.visibility.rules.utils.ShimUtils
+impowt com.twittew.sewvo.utiw.gate
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.cwient.{cwient => s-stwatocwient}
+impowt c-com.twittew.visibiwity.visibiwitywibwawy
+impowt c-com.twittew.visibiwity.buiwdew.visibiwitywesuwt
+i-impowt com.twittew.visibiwity.buiwdew.common.mutedkeywowdfeatuwes
+i-impowt com.twittew.visibiwity.buiwdew.spaces.spacefeatuwes
+i-impowt com.twittew.visibiwity.buiwdew.spaces.stwatospacewabewmaps
+impowt com.twittew.visibiwity.buiwdew.usews.authowfeatuwes
+impowt com.twittew.visibiwity.buiwdew.usews.wewationshipfeatuwes
+impowt com.twittew.visibiwity.buiwdew.usews.viewewfeatuwes
+impowt c-com.twittew.visibiwity.common._
+impowt com.twittew.visibiwity.common.stitch.stitchhewpews
+impowt c-com.twittew.visibiwity.featuwes.featuwemap
+impowt com.twittew.visibiwity.modews.contentid.spaceid
+i-impowt com.twittew.visibiwity.modews.contentid.spacepwususewid
+impowt com.twittew.visibiwity.wuwes.evawuationcontext
+impowt com.twittew.visibiwity.wuwes.pwovidews.pwovidedevawuationcontext
+i-impowt com.twittew.visibiwity.wuwes.utiws.shimutiws
 
-object SpaceVisibilityLibrary {
-  type Type = SpaceVisibilityRequest => Stitch[VisibilityResult]
+object spacevisibiwitywibwawy {
+  t-type type = s-spacevisibiwitywequest => stitch[visibiwitywesuwt]
 
-  def apply(
-    visibilityLibrary: VisibilityLibrary,
-    stratoClient: StratoClient,
-    userSource: UserSource,
-    userRelationshipSource: UserRelationshipSource,
-    enableVfFeatureHydrationSpaceShim: Gate[Unit] = Gate.False
-  ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val stratoClientStatsReceiver = visibilityLibrary.statsReceiver.scope("strato")
-    val vfLatencyStatsReceiver = visibilityLibrary.statsReceiver.scope("vf_latency")
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
+  def appwy(
+    visibiwitywibwawy: visibiwitywibwawy, (⑅˘꒳˘)
+    s-stwatocwient: stwatocwient, (U ﹏ U)
+    usewsouwce: usewsouwce, mya
+    usewwewationshipsouwce: u-usewwewationshipsouwce, ʘwʘ
+    enabwevffeatuwehydwationspaceshim: g-gate[unit] = g-gate.fawse
+  ): t-type = {
+    v-vaw wibwawystatsweceivew = visibiwitywibwawy.statsweceivew
+    vaw stwatocwientstatsweceivew = v-visibiwitywibwawy.statsweceivew.scope("stwato")
+    vaw vfwatencystatsweceivew = visibiwitywibwawy.statsweceivew.scope("vf_watency")
+    v-vaw vfenginecountew = wibwawystatsweceivew.countew("vf_engine_wequests")
 
-    val spaceLabelMaps = new StratoSpaceLabelMaps(
-      SpaceSafetyLabelMapSource.fromStrato(stratoClient, stratoClientStatsReceiver),
-      libraryStatsReceiver)
-    val audioSpaceSource = AudioSpaceSource.fromStrato(stratoClient, stratoClientStatsReceiver)
+    vaw spacewabewmaps = nyew stwatospacewabewmaps(
+      spacesafetywabewmapsouwce.fwomstwato(stwatocwient, (˘ω˘) s-stwatocwientstatsweceivew), (U ﹏ U)
+      wibwawystatsweceivew)
+    v-vaw a-audiospacesouwce = a-audiospacesouwce.fwomstwato(stwatocwient, ^•ﻌ•^ stwatocwientstatsweceivew)
 
-    val viewerFeatures = new ViewerFeatures(userSource, libraryStatsReceiver)
-    val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
-    val relationshipFeatures =
-      new RelationshipFeatures(userRelationshipSource, libraryStatsReceiver)
-    val mutedKeywordFeatures = new MutedKeywordFeatures(
-      userSource,
-      userRelationshipSource,
-      KeywordMatcher.matcher(libraryStatsReceiver),
-      libraryStatsReceiver,
-      Gate.False
+    vaw viewewfeatuwes = n-nyew viewewfeatuwes(usewsouwce, (˘ω˘) w-wibwawystatsweceivew)
+    vaw a-authowfeatuwes = n-nyew authowfeatuwes(usewsouwce, :3 wibwawystatsweceivew)
+    v-vaw wewationshipfeatuwes =
+      n-nyew wewationshipfeatuwes(usewwewationshipsouwce, ^^;; wibwawystatsweceivew)
+    vaw mutedkeywowdfeatuwes = n-nyew mutedkeywowdfeatuwes(
+      usewsouwce, 🥺
+      u-usewwewationshipsouwce, (⑅˘꒳˘)
+      keywowdmatchew.matchew(wibwawystatsweceivew), nyaa~~
+      w-wibwawystatsweceivew, :3
+      g-gate.fawse
     )
-    val spaceFeatures =
-      new SpaceFeatures(
-        spaceLabelMaps,
-        authorFeatures,
-        relationshipFeatures,
-        mutedKeywordFeatures,
-        audioSpaceSource)
+    vaw spacefeatuwes =
+      new spacefeatuwes(
+        spacewabewmaps, ( ͡o ω ͡o )
+        authowfeatuwes, mya
+        wewationshipfeatuwes, (///ˬ///✿)
+        mutedkeywowdfeatuwes, (˘ω˘)
+        audiospacesouwce)
 
-    { r: SpaceVisibilityRequest =>
-      vfEngineCounter.incr()
+    { w: spacevisibiwitywequest =>
+      v-vfenginecountew.incw()
 
-      val isVfFeatureHydrationEnabled = enableVfFeatureHydrationSpaceShim()
-      val viewerId = r.viewerContext.userId
-      val authorIds: Option[Seq[Long]] = r.spaceHostAndAdminUserIds
-      val contentId = {
-        (viewerId, authorIds) match {
-          case (Some(viewer), Some(authors)) if authors.contains(viewer) => SpaceId(r.spaceId)
-          case _ => SpacePlusUserId(r.spaceId)
+      v-vaw isvffeatuwehydwationenabwed = enabwevffeatuwehydwationspaceshim()
+      v-vaw viewewid = w-w.viewewcontext.usewid
+      v-vaw authowids: option[seq[wong]] = w.spacehostandadminusewids
+      vaw contentid = {
+        (viewewid, ^^;; a-authowids) match {
+          case (some(viewew), (✿oωo) some(authows)) if authows.contains(viewew) => s-spaceid(w.spaceid)
+          case _ => spacepwususewid(w.spaceid)
         }
       }
 
-      val featureMap =
-        visibilityLibrary.featureMapBuilder(
-          Seq(
-            spaceFeatures.forSpaceAndAuthorIds(r.spaceId, viewerId, authorIds),
-            viewerFeatures.forViewerContext(r.viewerContext),
+      v-vaw featuwemap =
+        v-visibiwitywibwawy.featuwemapbuiwdew(
+          s-seq(
+            spacefeatuwes.fowspaceandauthowids(w.spaceid, (U ﹏ U) v-viewewid, a-authowids), -.-
+            v-viewewfeatuwes.fowviewewcontext(w.viewewcontext), ^•ﻌ•^
           )
         )
 
-      val resp = if (isVfFeatureHydrationEnabled) {
-        val evaluationContext = ProvidedEvaluationContext.injectRuntimeRulesIntoEvaluationContext(
-          evaluationContext = EvaluationContext(
-            r.safetyLevel,
-            visibilityLibrary.getParams(r.viewerContext, r.safetyLevel),
-            visibilityLibrary.statsReceiver)
+      v-vaw wesp = if (isvffeatuwehydwationenabwed) {
+        vaw e-evawuationcontext = p-pwovidedevawuationcontext.injectwuntimewuwesintoevawuationcontext(
+          e-evawuationcontext = e-evawuationcontext(
+            w-w.safetywevew, rawr
+            visibiwitywibwawy.getpawams(w.viewewcontext, (˘ω˘) w.safetywevew), nyaa~~
+            visibiwitywibwawy.statsweceivew)
         )
 
-        val preFilteredFeatureMap =
-          ShimUtils.preFilterFeatureMap(featureMap, r.safetyLevel, contentId, evaluationContext)
+        v-vaw pwefiwtewedfeatuwemap =
+          shimutiws.pwefiwtewfeatuwemap(featuwemap, UwU w.safetywevew, :3 contentid, (⑅˘꒳˘) evawuationcontext)
 
-        FeatureMap
-          .resolve(preFilteredFeatureMap, libraryStatsReceiver).flatMap { resolvedFeatureMap =>
-            visibilityLibrary
-              .runRuleEngine(
-                contentId,
-                resolvedFeatureMap,
-                r.viewerContext,
-                r.safetyLevel
+        f-featuwemap
+          .wesowve(pwefiwtewedfeatuwemap, (///ˬ///✿) wibwawystatsweceivew).fwatmap { wesowvedfeatuwemap =>
+            visibiwitywibwawy
+              .wunwuweengine(
+                c-contentid, ^^;;
+                w-wesowvedfeatuwemap,
+                w-w.viewewcontext, >_<
+                w.safetywevew
               )
           }
-      } else {
-        visibilityLibrary
-          .runRuleEngine(
-            contentId,
-            featureMap,
-            r.viewerContext,
-            r.safetyLevel
+      } e-ewse {
+        visibiwitywibwawy
+          .wunwuweengine(
+            c-contentid, rawr x3
+            f-featuwemap, /(^•ω•^)
+            w.viewewcontext, :3
+            w.safetywevew
           )
       }
 
-      StitchHelpers.profileStitch(resp, Seq(vfLatencyStatsReceiver))
+      stitchhewpews.pwofiwestitch(wesp, (ꈍᴗꈍ) seq(vfwatencystatsweceivew))
     }
   }
 }

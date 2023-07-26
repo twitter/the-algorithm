@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-trait HasRecommendationFlowIdentifier {
-  def recommendationFlowIdentifier: Option[String]
+twait haswecommendationfwowidentifiew {
+  d-def wecommendationfwowidentifiew: o-option[stwing]
 }

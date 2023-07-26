@@ -1,76 +1,76 @@
 """
-Module containing ClemNet.
+moduwe containing cwemnet. 😳😳😳
 """
-from typing import Any
+f-fwom typing impowt a-any
 
-from .layers import ChannelWiseDense, KerasConv1D, ResidualLayer
-from .params import BlockParams, ClemNetParams
+fwom .wayews i-impowt channewwisedense, :3 k-kewasconv1d, OwO wesiduawwayew
+f-fwom .pawams i-impowt bwockpawams, (U ﹏ U) c-cwemnetpawams
 
-import tensorflow as tf
-import tensorflow.compat.v1 as tf1
+i-impowt tensowfwow as tf
+impowt tensowfwow.compat.v1 as tf1
 
 
-class Block2(tf.keras.layers.Layer):
+cwass bwock2(tf.kewas.wayews.wayew):
   """
-  Possible ClemNet block. Architecture is as follow:
-    Optional(DenseLayer + BN + Act)
-    Optional(ConvLayer + BN + Act)
-    Optional(Residual Layer)
+  possibwe cwemnet b-bwock. >w< awchitectuwe is as fowwow:
+    optionaw(densewayew + b-bn + act)
+    optionaw(convwayew + b-bn + act)
+    optionaw(wesiduaw wayew)
 
-  """
-
-  def __init__(self, params: BlockParams, **kwargs: Any):
-    super(Block2, self).__init__(**kwargs)
-    self.params = params
-
-  def build(self, input_shape: tf.TensorShape) -> None:
-    assert (
-      len(input_shape) == 3
-    ), f"Tensor shape must be of length 3. Passed tensor of shape {input_shape}."
-
-  def call(self, inputs: tf.Tensor, training: bool) -> tf.Tensor:
-    x = inputs
-    if self.params.dense:
-      x = ChannelWiseDense(**self.params.dense.dict())(inputs=x, training=training)
-      x = tf1.layers.batch_normalization(x, momentum=0.9999, training=training, axis=1)
-      x = tf.keras.layers.Activation(self.params.activation)(x)
-
-    if self.params.conv:
-      x = KerasConv1D(**self.params.conv.dict())(inputs=x, training=training)
-      x = tf1.layers.batch_normalization(x, momentum=0.9999, training=training, axis=1)
-      x = tf.keras.layers.Activation(self.params.activation)(x)
-
-    if self.params.residual:
-      x = ResidualLayer()(inputs=inputs, residual=x)
-
-    return x
-
-
-class ClemNet(tf.keras.layers.Layer):
-  """
-  A residual network stacking residual blocks composed of dense layers and convolutions.
   """
 
-  def __init__(self, params: ClemNetParams, **kwargs: Any):
-    super(ClemNet, self).__init__(**kwargs)
-    self.params = params
+  def __init__(sewf, (U ﹏ U) p-pawams: bwockpawams, 😳 **kwawgs: a-any):
+    s-supew(bwock2, (ˆ ﻌ ˆ)♡ sewf).__init__(**kwawgs)
+    sewf.pawams = pawams
 
-  def build(self, input_shape: tf.TensorShape) -> None:
-    assert len(input_shape) in (
+  def buiwd(sewf, 😳😳😳 i-input_shape: tf.tensowshape) -> nyone:
+    assewt (
+      wen(input_shape) == 3
+    ), (U ﹏ U) f"tensow s-shape must be of wength 3. p-passed tensow of s-shape {input_shape}."
+
+  d-def caww(sewf, (///ˬ///✿) i-inputs: tf.tensow, 😳 twaining: boow) -> tf.tensow:
+    x-x = inputs
+    if sewf.pawams.dense:
+      x-x = channewwisedense(**sewf.pawams.dense.dict())(inputs=x, twaining=twaining)
+      x = tf1.wayews.batch_nowmawization(x, 😳 momentum=0.9999, twaining=twaining, σωσ a-axis=1)
+      x = tf.kewas.wayews.activation(sewf.pawams.activation)(x)
+
+    i-if sewf.pawams.conv:
+      x = k-kewasconv1d(**sewf.pawams.conv.dict())(inputs=x, rawr x3 t-twaining=twaining)
+      x = tf1.wayews.batch_nowmawization(x, OwO momentum=0.9999, /(^•ω•^) t-twaining=twaining, 😳😳😳 a-axis=1)
+      x = tf.kewas.wayews.activation(sewf.pawams.activation)(x)
+
+    i-if sewf.pawams.wesiduaw:
+      x-x = wesiduawwayew()(inputs=inputs, ( ͡o ω ͡o ) wesiduaw=x)
+
+    w-wetuwn x
+
+
+cwass cwemnet(tf.kewas.wayews.wayew):
+  """
+  a-a wesiduaw nyetwowk stacking wesiduaw bwocks composed o-of dense wayews and convowutions. >_<
+  """
+
+  d-def __init__(sewf, >w< pawams: cwemnetpawams, rawr **kwawgs: a-any):
+    supew(cwemnet, 😳 s-sewf).__init__(**kwawgs)
+    sewf.pawams = pawams
+
+  def buiwd(sewf, >w< input_shape: tf.tensowshape) -> nyone:
+    assewt w-wen(input_shape) i-in (
       2,
-      3,
-    ), f"Tensor shape must be of length 3. Passed tensor of shape {input_shape}."
+      3, (⑅˘꒳˘)
+    ), f"tensow shape m-must be of wength 3. OwO p-passed tensow o-of shape {input_shape}."
 
-  def call(self, inputs: tf.Tensor, training: bool) -> tf.Tensor:
-    if len(inputs.shape) < 3:
-      inputs = tf.expand_dims(inputs, axis=-1)
+  def caww(sewf, (ꈍᴗꈍ) inputs: tf.tensow, 😳 twaining: boow) -> t-tf.tensow:
+    if wen(inputs.shape) < 3:
+      inputs = tf.expand_dims(inputs, 😳😳😳 axis=-1)
 
     x = inputs
-    for block_params in self.params.blocks:
-      x = Block2(block_params)(inputs=x, training=training)
+    f-fow bwock_pawams in sewf.pawams.bwocks:
+      x-x = bwock2(bwock_pawams)(inputs=x, mya t-twaining=twaining)
 
-    x = tf.keras.layers.Flatten(name="flattened")(x)
-    if self.params.top:
-      x = tf.keras.layers.Dense(units=self.params.top.n_labels, name="logits")(x)
+    x-x = tf.kewas.wayews.fwatten(name="fwattened")(x)
+    i-if sewf.pawams.top:
+      x-x = tf.kewas.wayews.dense(units=sewf.pawams.top.n_wabews, mya n-nyame="wogits")(x)
 
-    return x
+    w-wetuwn x

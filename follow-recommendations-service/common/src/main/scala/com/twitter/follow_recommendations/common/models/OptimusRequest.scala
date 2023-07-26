@@ -1,15 +1,15 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.timelines.configapi.HasParams
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+i-impowt c-com.twittew.timewines.configapi.haspawams
 
 /**
-Convenience trait to group together all traits needed for optimus ranking
+c-convenience twait t-to gwoup togethew a-aww twaits needed f-fow optimus w-wanking
  */
-trait OptimusRequest
-    extends HasParams
-    with HasClientContext
-    with HasDisplayLocation
-    with HasInterestIds
-    with HasDebugOptions
-    with HasPreviousRecommendationsContext {}
+twait optimuswequest
+    extends haspawams
+    with hascwientcontext
+    w-with hasdispwaywocation
+    with hasintewestids
+    with h-hasdebugoptions
+    with haspweviouswecommendationscontext {}

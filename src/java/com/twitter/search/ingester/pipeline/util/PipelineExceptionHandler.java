@@ -1,15 +1,15 @@
-package com.twitter.search.ingester.pipeline.util;
+package com.twittew.seawch.ingestew.pipewine.utiw;
 
-import com.twitter.util.Duration;
+impowt com.twittew.utiw.duwation;
 
-public interface PipelineExceptionHandler {
+p-pubwic intewface p-pipewineexceptionhandwew {
   /**
-   * Logs the given message and waits the given duration.
+   * w-wogs t-the given message a-and waits the g-given duwation. >_<
    */
-  void logAndWait(String msg, Duration waitTime) throws InterruptedException;
+  v-void wogandwait(stwing m-msg, :3 duwation waittime) thwows intewwuptedexception;
 
   /**
-   * Logs the given message and shutdowns the application.
+   * wogs the given message and shutdowns t-the appwication. (U ﹏ U)
    */
-  void logAndShutdown(String msg);
+  void wogandshutdown(stwing msg);
 }

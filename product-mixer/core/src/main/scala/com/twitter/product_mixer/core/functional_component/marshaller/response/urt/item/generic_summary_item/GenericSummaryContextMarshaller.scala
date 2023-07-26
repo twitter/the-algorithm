@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.generic_summary_item
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.genewic_summawy_item
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.icon.HorizonIconMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.GenericSummaryContext
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.icon.howizoniconmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.wichtext.wichtextmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.genewic_summawy.genewicsummawycontext
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => uwt}
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class GenericSummaryContextMarshaller @Inject() (
-  richTextMarshaller: RichTextMarshaller,
-  horizonIconMarshaller: HorizonIconMarshaller) {
+@singweton
+cwass genewicsummawycontextmawshawwew @inject() (
+  wichtextmawshawwew: wichtextmawshawwew, (⑅˘꒳˘)
+  h-howizoniconmawshawwew: howizoniconmawshawwew) {
 
-  def apply(genericSummaryItemContext: GenericSummaryContext): urt.GenericSummaryContext =
-    urt.GenericSummaryContext(
-      text = richTextMarshaller(genericSummaryItemContext.text),
-      icon = genericSummaryItemContext.icon.map(horizonIconMarshaller(_))
+  def appwy(genewicsummawyitemcontext: genewicsummawycontext): u-uwt.genewicsummawycontext =
+    uwt.genewicsummawycontext(
+      t-text = wichtextmawshawwew(genewicsummawyitemcontext.text), (U ᵕ U❁)
+      icon = genewicsummawyitemcontext.icon.map(howizoniconmawshawwew(_))
     )
 }

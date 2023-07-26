@@ -1,68 +1,68 @@
-package com.twitter.home_mixer.functional_component.side_effect
+package com.twittew.home_mixew.functionaw_component.side_effect
 
-import com.twitter.home_mixer.model.HomeFeatures.PersistenceEntriesFeature
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.param.HomeGlobalParams.TimelinesPersistenceStoreMaxEntriesPerClient
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseBatchesClient
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseV3
-import com.twitter.timelineservice.model.TimelineQuery
-import com.twitter.timelineservice.model.core.TimelineKind
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.modew.homefeatuwes.pewsistenceentwiesfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.wequest.fowwowingpwoduct
+i-impowt com.twittew.home_mixew.modew.wequest.fowyoupwoduct
+i-impowt com.twittew.home_mixew.pawam.homegwobawpawams.timewinespewsistencestowemaxentwiespewcwient
+i-impowt com.twittew.home_mixew.sewvice.homemixewawewtconfig
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.side_effect.pipewinewesuwtsideeffect
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.sideeffectidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
+impowt c-com.twittew.timewinemixew.cwients.pewsistence.timewinewesponsebatchescwient
+impowt com.twittew.timewinemixew.cwients.pewsistence.timewinewesponsev3
+impowt c-com.twittew.timewinesewvice.modew.timewinequewy
+impowt com.twittew.timewinesewvice.modew.cowe.timewinekind
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
 /**
- * Side effect that truncates entries in the Timelines Persistence store
- * based on the number of entries per client.
+ * side e-effect that twuncates entwies in t-the timewines p-pewsistence stowe
+ * based on the nyumbew of entwies pew cwient. :3
  */
-@Singleton
-class TruncateTimelinesPersistenceStoreSideEffect @Inject() (
-  timelineResponseBatchesClient: TimelineResponseBatchesClient[TimelineResponseV3])
-    extends PipelineResultSideEffect[PipelineQuery, Timeline] {
+@singweton
+cwass twuncatetimewinespewsistencestowesideeffect @inject() (
+  t-timewinewesponsebatchescwient: timewinewesponsebatchescwient[timewinewesponsev3])
+    extends pipewinewesuwtsideeffect[pipewinequewy, 😳😳😳 timewine] {
 
-  override val identifier: SideEffectIdentifier =
-    SideEffectIdentifier("TruncateTimelinesPersistenceStore")
+  ovewwide vaw identifiew: sideeffectidentifiew =
+    s-sideeffectidentifiew("twuncatetimewinespewsistencestowe")
 
-  def getResponsesToDelete(query: PipelineQuery): Seq[TimelineResponseV3] = {
-    val responses =
-      query.features.map(_.getOrElse(PersistenceEntriesFeature, Seq.empty)).toSeq.flatten
-    val responsesByClient = responses.groupBy(_.clientPlatform).values.toSeq
-    val maxEntriesPerClient = query.params(TimelinesPersistenceStoreMaxEntriesPerClient)
+  def getwesponsestodewete(quewy: p-pipewinequewy): s-seq[timewinewesponsev3] = {
+    v-vaw wesponses =
+      q-quewy.featuwes.map(_.getowewse(pewsistenceentwiesfeatuwe, (˘ω˘) seq.empty)).toseq.fwatten
+    vaw wesponsesbycwient = w-wesponses.gwoupby(_.cwientpwatfowm).vawues.toseq
+    vaw maxentwiespewcwient = quewy.pawams(timewinespewsistencestowemaxentwiespewcwient)
 
-    responsesByClient.flatMap {
-      _.sortBy(_.servedTime.inMilliseconds)
-        .foldRight((Seq.empty[TimelineResponseV3], maxEntriesPerClient)) {
-          case (response, (responsesToDelete, remainingCap)) =>
-            if (remainingCap > 0) (responsesToDelete, remainingCap - response.entries.size)
-            else (response +: responsesToDelete, remainingCap)
-        } match { case (responsesToDelete, _) => responsesToDelete }
+    w-wesponsesbycwient.fwatmap {
+      _.sowtby(_.sewvedtime.inmiwwiseconds)
+        .fowdwight((seq.empty[timewinewesponsev3], ^^ maxentwiespewcwient)) {
+          case (wesponse, :3 (wesponsestodewete, -.- wemainingcap)) =>
+            if (wemainingcap > 0) (wesponsestodewete, wemainingcap - w-wesponse.entwies.size)
+            ewse (wesponse +: w-wesponsestodewete, 😳 w-wemainingcap)
+        } m-match { case (wesponsestodewete, mya _) => wesponsestodewete }
     }
   }
 
-  final override def apply(
-    inputs: PipelineResultSideEffect.Inputs[PipelineQuery, Timeline]
-  ): Stitch[Unit] = {
-    val timelineKind = inputs.query.product match {
-      case FollowingProduct => TimelineKind.homeLatest
-      case ForYouProduct => TimelineKind.home
-      case other => throw new UnsupportedOperationException(s"Unknown product: $other")
+  finaw ovewwide def appwy(
+    i-inputs: p-pipewinewesuwtsideeffect.inputs[pipewinequewy, (˘ω˘) timewine]
+  ): stitch[unit] = {
+    v-vaw timewinekind = i-inputs.quewy.pwoduct match {
+      c-case fowwowingpwoduct => timewinekind.homewatest
+      c-case fowyoupwoduct => timewinekind.home
+      case othew => thwow n-nyew unsuppowtedopewationexception(s"unknown pwoduct: $othew")
     }
-    val timelineQuery = TimelineQuery(id = inputs.query.getRequiredUserId, kind = timelineKind)
+    v-vaw timewinequewy = t-timewinequewy(id = i-inputs.quewy.getwequiwedusewid, >_< kind = timewinekind)
 
-    val responsesToDelete = getResponsesToDelete(inputs.query)
+    vaw wesponsestodewete = getwesponsestodewete(inputs.quewy)
 
-    if (responsesToDelete.nonEmpty)
-      Stitch.callFuture(timelineResponseBatchesClient.delete(timelineQuery, responsesToDelete))
-    else Stitch.Unit
+    if (wesponsestodewete.nonempty)
+      stitch.cawwfutuwe(timewinewesponsebatchescwient.dewete(timewinequewy, -.- w-wesponsestodewete))
+    e-ewse stitch.unit
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.8)
+  ovewwide v-vaw awewts = seq(
+    h-homemixewawewtconfig.businesshouws.defauwtsuccesswateawewt(99.8)
   )
 }

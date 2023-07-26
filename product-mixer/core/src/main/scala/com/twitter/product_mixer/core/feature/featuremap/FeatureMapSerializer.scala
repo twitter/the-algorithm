@@ -1,63 +1,63 @@
-package com.twitter.product_mixer.core.feature.featuremap
+package com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
-import com.twitter.product_mixer.core.feature.featurestorev1.featurevalue.FeatureStoreV1Response
-import com.twitter.product_mixer.core.feature.featurestorev1.featurevalue.FeatureStoreV1ResponseFeature
-import com.twitter.util.Return
+impowt c-com.fastewxmw.jackson.cowe.jsongenewatow
+i-impowt c-com.fastewxmw.jackson.databind.jsonsewiawizew
+impowt c-com.fastewxmw.jackson.databind.sewiawizewpwovidew
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1.featuwevawue.featuwestowev1wesponse
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1.featuwevawue.featuwestowev1wesponsefeatuwe
+i-impowt com.twittew.utiw.wetuwn
 
 /**
- * Rendering feature maps is dangerous because we don't control all the data that's stored in them.
- * This can result failed requests, as we might try to render a recursive structure, very large
- * structure, etc. Create a simple map using toString, this mostly works and is better than failing
- * the request.
+ * wendewing featuwe maps is dangewous because we don't contwow a-aww the data that's stowed in them. (U ﹏ U)
+ * this c-can wesuwt faiwed wequests, >w< as w-we might twy to wendew a wecuwsive stwuctuwe, (U ﹏ U) vewy wawge
+ * stwuctuwe, 😳 e-etc. (ˆ ﻌ ˆ)♡ cweate a simpwe map u-using tostwing, 😳😳😳 t-this mostwy wowks and is bettew than faiwing
+ * the wequest. (U ﹏ U)
  *
- * @note changes to serialization logic can have serious performance implications given how hot the
- *       serialization path is. Consider benchmarking changes with [[com.twitter.product_mixer.core.benchmark.CandidatePipelineResultSerializationBenchmark]]
+ * @note changes t-to sewiawization wogic can have sewious pewfowmance impwications given how hot t-the
+ *       sewiawization path i-is. (///ˬ///✿) considew benchmawking c-changes w-with [[com.twittew.pwoduct_mixew.cowe.benchmawk.candidatepipewinewesuwtsewiawizationbenchmawk]]
  */
-private[featuremap] class FeatureMapSerializer() extends JsonSerializer[FeatureMap] {
-  override def serialize(
-    featureMap: FeatureMap,
-    gen: JsonGenerator,
-    serializers: SerializerProvider
-  ): Unit = {
-    gen.writeStartObject()
+p-pwivate[featuwemap] cwass featuwemapsewiawizew() e-extends jsonsewiawizew[featuwemap] {
+  ovewwide def sewiawize(
+    f-featuwemap: featuwemap, 😳
+    gen: jsongenewatow, 😳
+    sewiawizews: sewiawizewpwovidew
+  ): unit = {
+    g-gen.wwitestawtobject()
 
-    featureMap.underlyingMap.foreach {
-      case (FeatureStoreV1ResponseFeature, Return(value)) =>
-        // We know that value has to be [[FeatureStoreV1Response]] but its type has been erased,
-        // preventing us from pattern-matching.
-        val featureStoreResponse = value.asInstanceOf[FeatureStoreV1Response]
+    featuwemap.undewwyingmap.foweach {
+      c-case (featuwestowev1wesponsefeatuwe, σωσ w-wetuwn(vawue)) =>
+        // w-we know that vawue has to be [[featuwestowev1wesponse]] but its type has b-been ewased, rawr x3
+        // p-pweventing us fwom pattewn-matching. OwO
+        v-vaw featuwestowewesponse = v-vawue.asinstanceof[featuwestowev1wesponse]
 
-        val featuresIterator = featureStoreResponse.richDataRecord.allFeaturesIterator()
-        while (featuresIterator.moveNext()) {
-          gen.writeStringField(
-            featuresIterator.getFeature.getFeatureName,
-            s"${featuresIterator.getFeatureType.name}(${truncateString(
-              featuresIterator.getFeatureValue.toString)})")
+        vaw featuwesitewatow = f-featuwestowewesponse.wichdatawecowd.awwfeatuwesitewatow()
+        whiwe (featuwesitewatow.movenext()) {
+          g-gen.wwitestwingfiewd(
+            featuwesitewatow.getfeatuwe.getfeatuwename, /(^•ω•^)
+            s"${featuwesitewatow.getfeatuwetype.name}(${twuncatestwing(
+              featuwesitewatow.getfeatuwevawue.tostwing)})")
         }
 
-        featureStoreResponse.failedFeatures.foreach {
-          case (failedFeature, failureReasons) =>
-            gen.writeStringField(
-              failedFeature.toString,
-              s"Failed(${truncateString(failureReasons.toString)})")
+        f-featuwestowewesponse.faiwedfeatuwes.foweach {
+          case (faiwedfeatuwe, 😳😳😳 f-faiwuweweasons) =>
+            gen.wwitestwingfiewd(
+              faiwedfeatuwe.tostwing, ( ͡o ω ͡o )
+              s-s"faiwed(${twuncatestwing(faiwuweweasons.tostwing)})")
         }
-      case (name, Return(value)) =>
-        gen.writeStringField(name.toString, truncateString(value.toString))
-      case (name, error) =>
-        // Note: we don't match on Throw(error) because we want to keep it for the toString
-        gen.writeStringField(name.toString, truncateString(error.toString))
+      c-case (name, >_< wetuwn(vawue)) =>
+        gen.wwitestwingfiewd(name.tostwing, >w< twuncatestwing(vawue.tostwing))
+      case (name, rawr ewwow) =>
+        // nyote: we don't match on thwow(ewwow) because we w-want to keep it f-fow the tostwing
+        gen.wwitestwingfiewd(name.tostwing, 😳 twuncatestwing(ewwow.tostwing))
 
     }
 
-    gen.writeEndObject()
+    g-gen.wwiteendobject()
   }
 
-  // Some features can be very large when stringified, for example when a dependant candidate
-  // pipeline is used, the entire previous candidate pipeline result is serialized into a feature.
-  // This causes significant performance issues when the result is later sent over the wire.
-  private def truncateString(input: String): String =
-    if (input.length > 1000) input.take(1000) + "..." else input
+  // s-some featuwes c-can be vewy wawge when stwingified, >w< fow exampwe when a dependant c-candidate
+  // pipewine is used, (⑅˘꒳˘) the entiwe pwevious candidate pipewine w-wesuwt is sewiawized into a featuwe. OwO
+  // t-this c-causes significant p-pewfowmance issues when the wesuwt i-is watew sent o-ovew the wiwe. (ꈍᴗꈍ)
+  p-pwivate def t-twuncatestwing(input: stwing): stwing =
+    if (input.wength > 1000) i-input.take(1000) + "..." ewse i-input
 }

@@ -1,104 +1,104 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.service.talon.thriftscala._
-import com.twitter.servo.util.FutureArrow
-import com.twitter.tco_util.DisplayUrl
-import com.twitter.tco_util.TcoUrl
-import com.twitter.tweetypie.backends.Talon
-import com.twitter.tweetypie.core.OverCapacity
-import com.twitter.tweetypie.store.Guano
-import com.twitter.tweetypie.thriftscala.ShortenedUrl
-import scala.util.control.NoStackTrace
+impowt c-com.twittew.sewvice.tawon.thwiftscawa._
+i-impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.tco_utiw.dispwayuww
+i-impowt c-com.twittew.tco_utiw.tcouww
+i-impowt com.twittew.tweetypie.backends.tawon
+impowt com.twittew.tweetypie.cowe.ovewcapacity
+impowt com.twittew.tweetypie.stowe.guano
+i-impowt com.twittew.tweetypie.thwiftscawa.showteneduww
+impowt scawa.utiw.contwow.nostacktwace
 
-object UrlShortener {
-  type Type = FutureArrow[(String, Context), ShortenedUrl]
+o-object uwwshowtenew {
+  type t-type = futuweawwow[(stwing, (⑅˘꒳˘) context), showteneduww]
 
-  case class Context(
-    tweetId: TweetId,
-    userId: UserId,
-    createdAt: Time,
-    userProtected: Boolean,
-    clientAppId: Option[Long] = None,
-    remoteHost: Option[String] = None,
-    dark: Boolean = false)
+  case cwass c-context(
+    tweetid: tweetid, nyaa~~
+    u-usewid: usewid, :3
+    c-cweatedat: time, ( ͡o ω ͡o )
+    usewpwotected: boowean, mya
+    cwientappid: option[wong] = n-nyone, (///ˬ///✿)
+    wemotehost: option[stwing] = nyone, (˘ω˘)
+    dawk: boowean = fawse)
 
-  object MalwareUrlError extends Exception with NoStackTrace
-  object InvalidUrlError extends Exception with NoStackTrace
+  o-object mawwaweuwwewwow extends e-exception with n-nostacktwace
+  o-object invawiduwwewwow e-extends exception with nyostacktwace
 
   /**
-   * Returns a new UrlShortener that checks the response from the underlying shortner
-   * and, if the request is not dark but fails with a MalwareUrlError, scribes request
-   * info to guano.
+   * wetuwns a-a new uwwshowtenew that checks the wesponse fwom t-the undewwying showtnew
+   * and, ^^;; if the wequest is nyot dawk but faiws with a mawwaweuwwewwow, (✿oωo) s-scwibes wequest
+   * info to guano. (U ﹏ U)
    */
-  def scribeMalware(guano: Guano)(underlying: Type): Type =
-    FutureArrow {
-      case (longUrl, ctx) =>
-        underlying((longUrl, ctx)).onFailure {
-          case MalwareUrlError if !ctx.dark =>
-            guano.scribeMalwareAttempt(
-              Guano.MalwareAttempt(
-                longUrl,
-                ctx.userId,
-                ctx.clientAppId,
-                ctx.remoteHost
+  d-def s-scwibemawwawe(guano: g-guano)(undewwying: type): type =
+    futuweawwow {
+      case (wonguww, -.- ctx) =>
+        u-undewwying((wonguww, ^•ﻌ•^ c-ctx)).onfaiwuwe {
+          case mawwaweuwwewwow i-if !ctx.dawk =>
+            g-guano.scwibemawwaweattempt(
+              guano.mawwaweattempt(
+                w-wonguww, rawr
+                ctx.usewid, (˘ω˘)
+                c-ctx.cwientappid, nyaa~~
+                ctx.wemotehost
               )
             )
           case _ =>
         }
     }
 
-  def fromTalon(talonShorten: Talon.Shorten): Type = {
-    val log = Logger(getClass)
+  d-def fwomtawon(tawonshowten: tawon.showten): t-type = {
+    vaw wog = woggew(getcwass)
 
-    FutureArrow {
-      case (longUrl, ctx) =>
-        val request =
-          ShortenRequest(
-            userId = ctx.userId,
-            longUrl = longUrl,
-            auditMsg = "tweetypie",
-            directMessage = Some(false),
-            protectedAccount = Some(ctx.userProtected),
-            maxShortUrlLength = None,
-            tweetData = Some(TweetData(ctx.tweetId, ctx.createdAt.inMilliseconds)),
-            trafficType =
-              if (ctx.dark) ShortenTrafficType.Testing
-              else ShortenTrafficType.Production
+    f-futuweawwow {
+      c-case (wonguww, UwU ctx) =>
+        vaw wequest =
+          showtenwequest(
+            usewid = ctx.usewid, :3
+            wonguww = w-wonguww, (⑅˘꒳˘)
+            a-auditmsg = "tweetypie", (///ˬ///✿)
+            diwectmessage = s-some(fawse), ^^;;
+            p-pwotectedaccount = s-some(ctx.usewpwotected), >_<
+            maxshowtuwwwength = none, rawr x3
+            tweetdata = some(tweetdata(ctx.tweetid, /(^•ω•^) c-ctx.cweatedat.inmiwwiseconds)), :3
+            twaffictype =
+              if (ctx.dawk) showtentwaffictype.testing
+              ewse s-showtentwaffictype.pwoduction
           )
 
-        talonShorten(request).flatMap { res =>
-          res.responseCode match {
-            case ResponseCode.Ok =>
-              if (res.malwareStatus == MalwareStatus.UrlBlocked) {
-                Future.exception(MalwareUrlError)
-              } else {
-                val shortUrl =
-                  res.fullShortUrl.getOrElse {
-                    // fall back to fromSlug if talon response does not have the full short url
-                    // Could be replaced with an exception once the initial integration on production
+        tawonshowten(wequest).fwatmap { w-wes =>
+          w-wes.wesponsecode m-match {
+            case wesponsecode.ok =>
+              i-if (wes.mawwawestatus == m-mawwawestatus.uwwbwocked) {
+                f-futuwe.exception(mawwaweuwwewwow)
+              } e-ewse {
+                vaw showtuww =
+                  wes.fuwwshowtuww.getowewse {
+                    // f-faww back to f-fwomswug if tawon w-wesponse does n-nyot have the fuww s-showt uww
+                    // couwd be wepwaced with an exception once the i-initiaw integwation on pwoduction
                     // is done
-                    TcoUrl.fromSlug(res.shortUrl, TcoUrl.isHttps(res.longUrl))
+                    tcouww.fwomswug(wes.showtuww, (ꈍᴗꈍ) tcouww.ishttps(wes.wonguww))
                   }
 
-                Future.value(
-                  ShortenedUrl(
-                    shortUrl = shortUrl,
-                    longUrl = res.longUrl,
-                    displayText = DisplayUrl(shortUrl, Some(res.longUrl), true)
+                futuwe.vawue(
+                  s-showteneduww(
+                    showtuww = showtuww, /(^•ω•^)
+                    wonguww = wes.wonguww, (⑅˘꒳˘)
+                    d-dispwaytext = d-dispwayuww(showtuww, ( ͡o ω ͡o ) some(wes.wonguww), òωó t-twue)
                   )
                 )
               }
 
-            case ResponseCode.BadInput =>
-              log.warn(s"Talon rejected URL that Extractor thought was fine: $longUrl")
-              Future.exception(InvalidUrlError)
+            case w-wesponsecode.badinput =>
+              wog.wawn(s"tawon w-wejected u-uww that extwactow thought was fine: $wonguww")
+              futuwe.exception(invawiduwwewwow)
 
-            // we shouldn't see other ResponseCodes, because Talon.Shorten translates them to
-            // exceptions, but we have this catch-all just in case.
-            case resCode =>
-              log.warn(s"Unexpected response code $resCode for '$longUrl'")
-              Future.exception(OverCapacity("talon"))
+            // we shouwdn't see othew wesponsecodes, (⑅˘꒳˘) because tawon.showten t-twanswates them to
+            // exceptions, XD b-but we have this catch-aww j-just in case. -.-
+            c-case wescode =>
+              wog.wawn(s"unexpected wesponse code $wescode f-fow '$wonguww'")
+              f-futuwe.exception(ovewcapacity("tawon"))
           }
         }
     }

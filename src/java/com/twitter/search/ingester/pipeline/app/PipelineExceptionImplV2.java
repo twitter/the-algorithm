@@ -1,29 +1,29 @@
-package com.twitter.search.ingester.pipeline.app;
+package com.twittew.seawch.ingestew.pipewine.app;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.swf4j.woggew;
+i-impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.search.ingester.pipeline.util.PipelineExceptionHandler;
-import com.twitter.util.Duration;
+i-impowt c-com.twittew.seawch.ingestew.pipewine.utiw.pipewineexceptionhandwew;
+i-impowt com.twittew.utiw.duwation;
 
-public class PipelineExceptionImplV2 implements PipelineExceptionHandler  {
-  private static final Logger LOG = LoggerFactory.getLogger(PipelineExceptionImplV2.class);
-  private RealtimeIngesterPipelineV2 pipeline;
+p-pubwic c-cwass pipewineexceptionimpwv2 impwements p-pipewineexceptionhandwew  {
+  pwivate static finaw woggew wog = woggewfactowy.getwoggew(pipewineexceptionimpwv2.cwass);
+  pwivate weawtimeingestewpipewinev2 p-pipewine;
 
-  public PipelineExceptionImplV2(RealtimeIngesterPipelineV2 pipeline) {
-    this.pipeline = pipeline;
+  pubwic pipewineexceptionimpwv2(weawtimeingestewpipewinev2 pipewine) {
+    t-this.pipewine = pipewine;
   }
 
-  @Override
-  public void logAndWait(String msg, Duration waitTime) throws InterruptedException {
-    LOG.info(msg);
-    long waitTimeInMilliSecond = waitTime.inMilliseconds();
-    Thread.sleep(waitTimeInMilliSecond);
+  @ovewwide
+  p-pubwic void wogandwait(stwing msg, -.- duwation waittime) t-thwows intewwuptedexception {
+    wog.info(msg);
+    w-wong waittimeinmiwwisecond = w-waittime.inmiwwiseconds();
+    thwead.sweep(waittimeinmiwwisecond);
   }
 
-  @Override
-  public void logAndShutdown(String msg) {
-    LOG.info(msg);
-    pipeline.shutdown();
+  @ovewwide
+  pubwic void wogandshutdown(stwing msg) {
+    w-wog.info(msg);
+    pipewine.shutdown();
   }
 }

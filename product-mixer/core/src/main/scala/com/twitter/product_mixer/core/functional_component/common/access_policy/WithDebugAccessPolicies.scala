@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.functional_component.common.access_policy
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.common.access_powicy
 
-import com.twitter.product_mixer.core.model.common.Component
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.component
 
-private[core] trait WithDebugAccessPolicies { self: Component =>
+pwivate[cowe] t-twait w-withdebugaccesspowicies { s-sewf: c-component =>
 
-  /** The [[AccessPolicy]]s that will be used for this component in turntable & other debug tooling
-   * to execute arbitrary queries against the component */
-  val debugAccessPolicies: Set[AccessPolicy] = Set.empty
+  /** t-the [[accesspowicy]]s t-that w-wiww be used fow t-this component in tuwntabwe & othew debug toowing
+   * to exekawaii~ awbitwawy q-quewies against the component */
+  vaw debugaccesspowicies: s-set[accesspowicy] = set.empty
 }

@@ -1,53 +1,53 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import com.twitter.search.common.clientstats.RequestCounters;
-import com.twitter.search.common.clientstats.RequestCountersEventListener;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsResults;
+impowt com.twittew.seawch.common.cwientstats.wequestcountews;
+i-impowt com.twittew.seawch.common.cwientstats.wequestcountewseventwistenew;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwts;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwifttewmstatisticswesuwts;
 
-import static com.twitter.search.common.util.earlybird.EarlybirdResponseUtil
-    .responseConsideredFailed;
+impowt static com.twittew.seawch.common.utiw.eawwybiwd.eawwybiwdwesponseutiw
+    .wesponseconsidewedfaiwed;
 
 
 /**
- * Checks EarlybirdResponse's response to update stats.
+ * checks e-eawwybiwdwesponse's wesponse to update stats. >_<
  */
-public final class EarlybirdSuccessfulResponseHandler
-    implements RequestCountersEventListener.SuccessfulResponseHandler<EarlybirdResponse> {
+p-pubwic finaw cwass eawwybiwdsuccessfuwwesponsehandwew
+    i-impwements wequestcountewseventwistenew.successfuwwesponsehandwew<eawwybiwdwesponse> {
 
-  public static final EarlybirdSuccessfulResponseHandler INSTANCE =
-      new EarlybirdSuccessfulResponseHandler();
+  pubwic static finaw eawwybiwdsuccessfuwwesponsehandwew i-instance =
+      new eawwybiwdsuccessfuwwesponsehandwew();
 
-  private EarlybirdSuccessfulResponseHandler() { }
+  p-pwivate e-eawwybiwdsuccessfuwwesponsehandwew() { }
 
-  @Override
-  public void handleSuccessfulResponse(
-      EarlybirdResponse response,
-      RequestCounters requestCounters) {
+  @ovewwide
+  pubwic void handwesuccessfuwwesponse(
+      eawwybiwdwesponse wesponse,
+      w-wequestcountews wequestcountews) {
 
-    if (response == null) {
-      requestCounters.incrementRequestFailedCounter();
-      return;
+    if (wesponse == nyuww) {
+      wequestcountews.incwementwequestfaiwedcountew();
+      w-wetuwn;
     }
 
-    if (response.getResponseCode() == EarlybirdResponseCode.CLIENT_CANCEL_ERROR) {
-      requestCounters.incrementRequestCancelCounter();
-    } else if (response.getResponseCode() == EarlybirdResponseCode.SERVER_TIMEOUT_ERROR) {
-      requestCounters.incrementRequestTimedOutCounter();
-    } else if (responseConsideredFailed(response.getResponseCode())) {
-      requestCounters.incrementRequestFailedCounter();
+    if (wesponse.getwesponsecode() == e-eawwybiwdwesponsecode.cwient_cancew_ewwow) {
+      w-wequestcountews.incwementwequestcancewcountew();
+    } e-ewse if (wesponse.getwesponsecode() == e-eawwybiwdwesponsecode.sewvew_timeout_ewwow) {
+      wequestcountews.incwementwequesttimedoutcountew();
+    } ewse i-if (wesponseconsidewedfaiwed(wesponse.getwesponsecode())) {
+      wequestcountews.incwementwequestfaiwedcountew();
     }
 
-    ThriftSearchResults results = response.getSearchResults();
-    if (results != null) {
-      requestCounters.incrementResultCounter(results.getResultsSize());
+    thwiftseawchwesuwts w-wesuwts = wesponse.getseawchwesuwts();
+    if (wesuwts != nyuww) {
+      wequestcountews.incwementwesuwtcountew(wesuwts.getwesuwtssize());
     }
 
-    ThriftTermStatisticsResults termStats = response.getTermStatisticsResults();
-    if (termStats != null) {
-      requestCounters.incrementResultCounter(termStats.getTermResultsSize());
+    thwifttewmstatisticswesuwts tewmstats = w-wesponse.gettewmstatisticswesuwts();
+    if (tewmstats != n-nyuww) {
+      w-wequestcountews.incwementwesuwtcountew(tewmstats.gettewmwesuwtssize());
     }
   }
 

@@ -1,21 +1,21 @@
-package com.twitter.servo.util
+package com.twittew.sewvo.utiw
 
-import com.twitter.util.{Return, Throw, Try}
+impowt com.twittew.utiw.{wetuwn, t-thwow, :3 twy}
 
-object TryOrdering {
+object t-twyowdewing {
 
   /**
-   * Creates an Ordering of Try objects.  Throws are ordered before Returns, and two Returns
-   * are ordered according to the given value ordering.
+   * c-cweates a-an owdewing o-of twy objects. 😳😳😳  t-thwows awe owdewed b-befowe wetuwns, -.- a-and two wetuwns
+   * awe owdewed accowding to the given vawue owdewing. ( ͡o ω ͡o )
    */
-  def apply[A](valueOrdering: Ordering[A]) = new Ordering[Try[A]] {
-    def compare(x: Try[A], y: Try[A]): Int = {
+  d-def appwy[a](vawueowdewing: owdewing[a]) = nyew owdewing[twy[a]] {
+    d-def compawe(x: twy[a], rawr x3 y-y: twy[a]): int = {
       x match {
-        case Throw(_) => if (y.isReturn) -1 else 0
-        case Return(xValue) =>
-          y match {
-            case Throw(_) => 1
-            case Return(yValue) => valueOrdering.compare(xValue, yValue)
+        case thwow(_) => i-if (y.iswetuwn) -1 ewse 0
+        c-case wetuwn(xvawue) =>
+          y-y match {
+            case thwow(_) => 1
+            case wetuwn(yvawue) => vawueowdewing.compawe(xvawue, nyaa~~ yvawue)
           }
       }
     }

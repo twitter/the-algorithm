@@ -1,106 +1,106 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.HashMap;
-import java.util.Map;
+impowt java.utiw.hashmap;
+i-impowt j-java.utiw.map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+i-impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.FinagleUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird_root.common.ClientErrorException;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+i-impowt c-com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.utiw.finagweutiw;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.cwientewwowexception;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequesttype;
+i-impowt com.twittew.utiw.function;
+impowt com.twittew.utiw.futuwe;
 
-/** Converts exceptions into EarlybirdResponses with error codes. */
-public class EarlybirdResponseExceptionHandler {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(EarlybirdResponseExceptionHandler.class);
+/** c-convewts exceptions into eawwybiwdwesponses with ewwow c-codes. 😳 */
+pubwic cwass eawwybiwdwesponseexceptionhandwew {
+  p-pwivate s-static finaw woggew wog =
+      woggewfactowy.getwoggew(eawwybiwdwesponseexceptionhandwew.cwass);
 
-  private final Map<EarlybirdRequestType, SearchCounter> requestTypeToCancelledExceptions
-    = new HashMap<>();
-  private final Map<EarlybirdRequestType, SearchCounter> requestTypeToTimeoutExceptions
-    = new HashMap<>();
-  private final Map<EarlybirdRequestType, SearchCounter> requestTypeToPersistentErrors
-    = new HashMap<>();
-  private final SearchCounter cancelledExceptions;
-  private final SearchCounter timeoutExceptions;
-  private final SearchCounter persistentErrors;
+  pwivate finaw map<eawwybiwdwequesttype, >w< s-seawchcountew> wequesttypetocancewwedexceptions
+    = nyew hashmap<>();
+  pwivate finaw map<eawwybiwdwequesttype, (⑅˘꒳˘) s-seawchcountew> wequesttypetotimeoutexceptions
+    = n-nyew hashmap<>();
+  p-pwivate f-finaw map<eawwybiwdwequesttype, OwO s-seawchcountew> wequesttypetopewsistentewwows
+    = nyew hashmap<>();
+  p-pwivate finaw seawchcountew cancewwedexceptions;
+  p-pwivate finaw seawchcountew timeoutexceptions;
+  pwivate finaw seawchcountew pewsistentewwows;
 
   /**
-   * Creates a new top level filter for handling exceptions.
+   * cweates a-a nyew top wevew fiwtew fow handwing e-exceptions. (ꈍᴗꈍ)
    */
-  public EarlybirdResponseExceptionHandler(String statPrefix) {
-    this.cancelledExceptions = SearchCounter.export(
-        statPrefix + "_exception_handler_cancelled_exceptions");
-    this.timeoutExceptions = SearchCounter.export(
-        statPrefix + "_exception_handler_timeout_exceptions");
-    this.persistentErrors = SearchCounter.export(
-        statPrefix + "_exception_handler_persistent_errors");
+  p-pubwic e-eawwybiwdwesponseexceptionhandwew(stwing statpwefix) {
+    this.cancewwedexceptions = seawchcountew.expowt(
+        s-statpwefix + "_exception_handwew_cancewwed_exceptions");
+    t-this.timeoutexceptions = seawchcountew.expowt(
+        s-statpwefix + "_exception_handwew_timeout_exceptions");
+    t-this.pewsistentewwows = seawchcountew.expowt(
+        s-statpwefix + "_exception_handwew_pewsistent_ewwows");
 
-    for (EarlybirdRequestType requestType : EarlybirdRequestType.values()) {
-      String requestTypeNormalized = requestType.getNormalizedName();
-      requestTypeToCancelledExceptions.put(requestType,
-          SearchCounter.export(
-              statPrefix + "_exception_handler_cancelled_exceptions_"
-              + requestTypeNormalized));
-      requestTypeToTimeoutExceptions.put(requestType,
-          SearchCounter.export(
-              statPrefix + "_exception_handler_timeout_exceptions_"
-              + requestTypeNormalized));
-      requestTypeToPersistentErrors.put(requestType,
-          SearchCounter.export(
-              statPrefix + "_exception_handler_persistent_errors_"
-              + requestTypeNormalized));
+    fow (eawwybiwdwequesttype wequesttype : e-eawwybiwdwequesttype.vawues()) {
+      stwing wequesttypenowmawized = wequesttype.getnowmawizedname();
+      w-wequesttypetocancewwedexceptions.put(wequesttype, 😳
+          seawchcountew.expowt(
+              s-statpwefix + "_exception_handwew_cancewwed_exceptions_"
+              + wequesttypenowmawized));
+      w-wequesttypetotimeoutexceptions.put(wequesttype, 😳😳😳
+          s-seawchcountew.expowt(
+              statpwefix + "_exception_handwew_timeout_exceptions_"
+              + wequesttypenowmawized));
+      wequesttypetopewsistentewwows.put(wequesttype, mya
+          seawchcountew.expowt(
+              statpwefix + "_exception_handwew_pewsistent_ewwows_"
+              + wequesttypenowmawized));
     }
   }
 
   /**
-   * If {@code responseFuture} is wraps an exception, converts it to an EarlybirdResponse instance
-   * with an appropriate error code.
+   * if {@code wesponsefutuwe} is w-wwaps an exception, c-convewts it to an eawwybiwdwesponse i-instance
+   * w-with an a-appwopwiate ewwow code. mya
    *
-   * @param request The earlybird request.
-   * @param responseFuture The response future.
+   * @pawam wequest the eawwybiwd wequest. (⑅˘꒳˘)
+   * @pawam w-wesponsefutuwe the wesponse futuwe. (U ﹏ U)
    */
-  public Future<EarlybirdResponse> handleException(final EarlybirdRequest request,
-                                                   Future<EarlybirdResponse> responseFuture) {
-    return responseFuture.handle(
-        new Function<Throwable, EarlybirdResponse>() {
-          @Override
-          public EarlybirdResponse apply(Throwable t) {
-            if (t instanceof ClientErrorException) {
-              ClientErrorException clientExc = (ClientErrorException) t;
-              return new EarlybirdResponse()
-                  .setResponseCode(EarlybirdResponseCode.CLIENT_ERROR)
-                  .setDebugString(clientExc.getMessage());
-            } else if (FinagleUtil.isCancelException(t)) {
-              requestTypeToCancelledExceptions.get(EarlybirdRequestType.of(request))
-                  .increment();
-              cancelledExceptions.increment();
-              return new EarlybirdResponse()
-                  .setResponseCode(EarlybirdResponseCode.CLIENT_CANCEL_ERROR)
-                  .setDebugString(t.getMessage());
-            } else if (FinagleUtil.isTimeoutException(t)) {
-              requestTypeToTimeoutExceptions.get(EarlybirdRequestType.of(request))
-                  .increment();
-              timeoutExceptions.increment();
-              return new EarlybirdResponse()
-                  .setResponseCode(EarlybirdResponseCode.SERVER_TIMEOUT_ERROR)
-                  .setDebugString(t.getMessage());
-            } else {
-              // Unexpected exception: log it.
-              LOG.error("Caught unexpected exception.", t);
+  pubwic futuwe<eawwybiwdwesponse> handweexception(finaw e-eawwybiwdwequest wequest, mya
+                                                   f-futuwe<eawwybiwdwesponse> w-wesponsefutuwe) {
+    w-wetuwn wesponsefutuwe.handwe(
+        nyew function<thwowabwe, ʘwʘ e-eawwybiwdwesponse>() {
+          @ovewwide
+          p-pubwic eawwybiwdwesponse a-appwy(thwowabwe t-t) {
+            if (t instanceof cwientewwowexception) {
+              c-cwientewwowexception c-cwientexc = (cwientewwowexception) t-t;
+              w-wetuwn nyew eawwybiwdwesponse()
+                  .setwesponsecode(eawwybiwdwesponsecode.cwient_ewwow)
+                  .setdebugstwing(cwientexc.getmessage());
+            } e-ewse if (finagweutiw.iscancewexception(t)) {
+              wequesttypetocancewwedexceptions.get(eawwybiwdwequesttype.of(wequest))
+                  .incwement();
+              cancewwedexceptions.incwement();
+              wetuwn nyew eawwybiwdwesponse()
+                  .setwesponsecode(eawwybiwdwesponsecode.cwient_cancew_ewwow)
+                  .setdebugstwing(t.getmessage());
+            } e-ewse if (finagweutiw.istimeoutexception(t)) {
+              wequesttypetotimeoutexceptions.get(eawwybiwdwequesttype.of(wequest))
+                  .incwement();
+              timeoutexceptions.incwement();
+              wetuwn nyew eawwybiwdwesponse()
+                  .setwesponsecode(eawwybiwdwesponsecode.sewvew_timeout_ewwow)
+                  .setdebugstwing(t.getmessage());
+            } ewse {
+              // unexpected exception: w-wog it. (˘ω˘)
+              wog.ewwow("caught unexpected exception.", (U ﹏ U) t);
 
-              requestTypeToPersistentErrors.get(EarlybirdRequestType.of(request))
-                  .increment();
-              persistentErrors.increment();
-              return new EarlybirdResponse()
-                  .setResponseCode(EarlybirdResponseCode.PERSISTENT_ERROR)
-                  .setDebugString(t.getMessage());
+              w-wequesttypetopewsistentewwows.get(eawwybiwdwequesttype.of(wequest))
+                  .incwement();
+              pewsistentewwows.incwement();
+              w-wetuwn n-nyew eawwybiwdwesponse()
+                  .setwesponsecode(eawwybiwdwesponsecode.pewsistent_ewwow)
+                  .setdebugstwing(t.getmessage());
             }
           }
         });

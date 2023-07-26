@@ -1,13 +1,13 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.stitch.Stitch
+i-impowt com.twittew.stitch.stitch
 
-object ConversationMutedRepository {
+o-object convewsationmutedwepositowy {
 
   /**
-   * Same type as com.twitter.stitch.timelineservice.TimelineService.GetConversationMuted but
-   * without using Arrow.
+   * s-same type as c-com.twittew.stitch.timewinesewvice.timewinesewvice.getconvewsationmuted b-but
+   * w-without using a-awwow. rawr x3
    */
-  type Type = (UserId, TweetId) => Stitch[Boolean]
+  type type = (usewid, rawr tweetid) => stitch[boowean]
 }

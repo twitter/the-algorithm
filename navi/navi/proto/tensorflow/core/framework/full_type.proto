@@ -1,276 +1,276 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "FullTypeProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/full_type_go_proto";
+option cc_enabwe_awenas = t-twue;
+option java_outew_cwassname = "fuwwtypepwotos";
+o-option java_muwtipwe_fiwes = t-twue;
+option j-java_package = "owg.tensowfwow.fwamewowk";
+o-option g-go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/fwamewowk/fuww_type_go_pwoto";
 
-// Experimental. Represents the complete type information of a TensorFlow value.
-enum FullTypeId {
-  // The default represents an uninitialized values.
-  TFT_UNSET = 0;
+// e-expewimentaw. (˘ω˘) w-wepwesents the compwete type infowmation of a tensowfwow vawue. :3
+enum fuwwtypeid {
+  // t-the defauwt wepwesents an uninitiawized v-vawues. OwO
+  tft_unset = 0;
 
-  // Type symbols. Used to construct more complex type expressions like
-  // algebraic data types.
+  // t-type symbows. mya used to constwuct mowe compwex type expwessions w-wike
+  // awgebwaic data types. (˘ω˘)
 
-  // Type variables may serve as placeholder for any other type ID in type
-  // templates.
+  // t-type vawiabwes m-may sewve as pwacehowdew fow any othew type id in type
+  // tempwates. o.O
   //
-  // Examples:
-  //   TFT_DATASET[TFT_VAR["T"]] is a Dataset returning a type indicated by "T".
-  //   TFT_TENSOR[TFT_VAR["T"]] is a Tensor of n element type indicated by "T".
-  //   TFT_TENSOR[TFT_VAR["T"]], TFT_TENSOR[TFT_VAR["T"]] are two tensors of
-  //     identical element types.
-  //   TFT_TENSOR[TFT_VAR["P"]], TFT_TENSOR[TFT_VAR["Q"]] are two tensors of
-  //     independent element types.
+  // e-exampwes:
+  //   tft_dataset[tft_vaw["t"]] is a dataset wetuwning a type indicated by "t". (✿oωo)
+  //   t-tft_tensow[tft_vaw["t"]] is a tensow o-of ny ewement type i-indicated by "t". (ˆ ﻌ ˆ)♡
+  //   t-tft_tensow[tft_vaw["t"]], ^^;; t-tft_tensow[tft_vaw["t"]] awe two tensows of
+  //     identicaw e-ewement types. OwO
+  //   tft_tensow[tft_vaw["p"]], 🥺 tft_tensow[tft_vaw["q"]] a-awe two tensows of
+  //     independent ewement types. mya
   //
-  TFT_VAR = 1;
+  tft_vaw = 1;
 
-  // Wildcard type. Describes a parameter of unknown type. In TensorFlow, that
-  // can mean either a "Top" type (accepts any type), or a dynamically typed
-  // object whose type is unknown in context.
-  // Important: "unknown" does not necessarily mean undeterminable!
-  TFT_ANY = 2;
+  // wiwdcawd type. 😳 descwibes a-a pawametew of unknown type. òωó i-in tensowfwow, /(^•ω•^) t-that
+  // can m-mean eithew a "top" type (accepts any type), -.- ow a dynamicawwy t-typed
+  // object w-whose type is unknown in context. òωó
+  // i-impowtant: "unknown" d-does nyot nyecessawiwy m-mean undetewminabwe! /(^•ω•^)
+  tft_any = 2;
 
-  // The algebraic product type. This is an algebraic type that may be used just
-  // for logical grouping. Not to confused with TFT_TUPLE which describes a
-  // concrete object of several elements.
+  // the a-awgebwaic pwoduct type. /(^•ω•^) this is an awgebwaic t-type that may be used just
+  // f-fow wogicaw gwouping. 😳 nyot to confused w-with tft_tupwe w-which descwibes a
+  // concwete object of sevewaw ewements. :3
   //
-  // Example:
-  //   TFT_DATASET[TFT_PRODUCT[TFT_TENSOR[TFT_INT32], TFT_TENSOR[TFT_FLOAT64]]]
-  //     is a Dataset producing two tensors, an integer one and a float one.
+  // exampwe:
+  //   tft_dataset[tft_pwoduct[tft_tensow[tft_int32], (U ᵕ U❁) tft_tensow[tft_fwoat64]]]
+  //     i-is a-a dataset pwoducing two tensows, ʘwʘ a-an integew one a-and a fwoat one. o.O
   //
-  TFT_PRODUCT = 3;
+  t-tft_pwoduct = 3;
 
-  // Represents a named field, with the name stored in the attribute.
+  // wepwesents a nyamed fiewd, ʘwʘ with the name stowed i-in the attwibute. ^^
   //
-  // Parametrization:
-  //   TFT_NAMED[<type>]{<name>}
-  //   * <type> is the type of the field
-  //   * <name> is the field name, as string (thpugh can theoretically be an int
-  //     as well)
+  // pawametwization:
+  //   tft_named[<type>]{<name>}
+  //   * <type> is the type of the f-fiewd
+  //   * <name> is the fiewd n-name, ^•ﻌ•^ as stwing (thpugh c-can t-theoweticawwy be an int
+  //     a-as weww)
   //
-  // Example:
-  //   TFT_RECORD[
-  //     TFT_NAMED[TFT_TENSOR[TFT_INT32]]{'foo'},
-  //     TFT_NAMED[TFT_TENSOR[TFT_FLOAT32]]{'bar'},
+  // e-exampwe:
+  //   t-tft_wecowd[
+  //     t-tft_named[tft_tensow[tft_int32]]{'foo'}, mya
+  //     tft_named[tft_tensow[tft_fwoat32]]{'baw'}, UwU
   //   ]
-  //     is a structure with two fields, an int tensor "foo" and a float tensor
-  //     "bar".
-  TFT_NAMED = 4;
+  //     is a stwuctuwe w-with two f-fiewds, an int tensow "foo" a-and a-a fwoat tensow
+  //     "baw". >_<
+  t-tft_named = 4;
 
-  // Template definition. Expands the variables by repeating a template as
-  // arguments of container.
+  // tempwate definition. /(^•ω•^) expands the vawiabwes b-by wepeating a tempwate as
+  // awguments of containew. òωó
   //
-  // Parametrization:
-  //   TFT_FOR_EACH[<container_type>, <template>, <expansions>]
-  //   * <container_type> is the type of the container that the template will be
-  //     expanded into
-  //   * <template> is any type definition that potentially contains type
-  //     variables
-  //   * <expansions> is a TFT_VAR and may include more types in the future
+  // pawametwization:
+  //   tft_fow_each[<containew_type>, σωσ <tempwate>, ( ͡o ω ͡o ) <expansions>]
+  //   * <containew_type> is t-the type of the containew that the tempwate wiww be
+  //     expanded i-into
+  //   * <tempwate> i-is any type definition t-that potentiawwy contains t-type
+  //     vawiabwes
+  //   * <expansions> is a tft_vaw and m-may incwude mowe t-types in the futuwe
   //
-  // Example:
-  //   TFT_FOR_EACH[
-  //         TFT_PRODUCT,
-  //         TFT_TENSOR[TFT_VAR["t"]],
-  //         TFT_VAR["t"]
+  // exampwe:
+  //   tft_fow_each[
+  //         tft_pwoduct, nyaa~~
+  //         tft_tensow[tft_vaw["t"]], :3
+  //         tft_vaw["t"]
   //     ]
-  //     will substitute a T = TFT_INT32 to TFT_PRODUCT[TFT_TENSOR[TFT_INT32]]
-  //     and a T = (TFT_INT32, TFT_INT64) to
-  //     TFT_PRODUCT[TFT_TENSOR[TFT_INT32], TFT_TENSOR[TFT_INT64]].
-  TFT_FOR_EACH = 20;
+  //     wiww substitute a t = t-tft_int32 to tft_pwoduct[tft_tensow[tft_int32]]
+  //     and a t-t = (tft_int32, UwU tft_int64) to
+  //     t-tft_pwoduct[tft_tensow[tft_int32], o.O t-tft_tensow[tft_int64]]. (ˆ ﻌ ˆ)♡
+  tft_fow_each = 20;
 
-  // Callable types describe functions and ops.
+  // cawwabwe t-types descwibe f-functions and ops. ^^;;
   //
-  // Parametrization:
-  //   TFT_CALLABLE[<arg type>, <return type>]
-  //   * <arg type> is the type of the arguments; TFT_PRODUCT represents
-  //   multiple
-  //     arguments.
-  //   * <return type> is the return type; TFT_PRODUCT represents multiple
-  //     return values (that means that callables returning multiple things
-  //     don't necessarily return a single tuple).
+  // p-pawametwization:
+  //   t-tft_cawwabwe[<awg type>, ʘwʘ <wetuwn type>]
+  //   * <awg type> is the type of the awguments; t-tft_pwoduct w-wepwesents
+  //   m-muwtipwe
+  //     awguments. σωσ
+  //   * <wetuwn t-type> is the wetuwn t-type; tft_pwoduct wepwesents m-muwtipwe
+  //     wetuwn vawues (that means that cawwabwes wetuwning muwtipwe t-things
+  //     d-don't nyecessawiwy wetuwn a singwe tupwe). ^^;;
   //
-  // Example:
-  //   TFT_CALLABLE[
-  //     TFT_ANY,
-  //     TFT_PRODUCT[TFT_TENSOR[TFT_INT32], TFT_TENSOR[TFT_FLOAT64]],
+  // e-exampwe:
+  //   t-tft_cawwabwe[
+  //     tft_any, ʘwʘ
+  //     tft_pwoduct[tft_tensow[tft_int32], ^^ tft_tensow[tft_fwoat64]], nyaa~~
   //   ]
-  //     is a callable with unspecified (for now) input arguments, and
-  //     two return values of type tensor.
+  //     i-is a cawwabwe with unspecified (fow nyow) input awguments, (///ˬ///✿) and
+  //     t-two wetuwn vawues of type tensow. XD
   //
-  TFT_CALLABLE = 100;
+  tft_cawwabwe = 100;
 
-  // Concrete type IDs, representing "proper" data types that can describe
-  // runtime TensorFlow objects.
+  // c-concwete t-type ids, :3 wepwesenting "pwopew" data types that can descwibe
+  // wuntime tensowfwow o-objects. òωó
 
-  // The usual Tensor. This is a parametric type.
+  // t-the usuaw tensow. ^^ this is a pawametwic type.
   //
-  // Parametrization:
-  //   TFT_TENSOR[<element type>, <shape type>]
-  //   * <element type> is currently limited to one of the element types
-  //     defined below.
-  //   * <shape type> is not yet defined, and may only be TFT_UNKNOWN for now.
+  // pawametwization:
+  //   t-tft_tensow[<ewement type>, ^•ﻌ•^ <shape t-type>]
+  //   * <ewement type> is cuwwentwy wimited to one of the ewement t-types
+  //     defined bewow. σωσ
+  //   * <shape t-type> i-is nyot yet defined, (ˆ ﻌ ˆ)♡ and may o-onwy be tft_unknown fow nyow. nyaa~~
   //
-  // A TFT_SHAPE type will be defined in the future.
+  // a-a tft_shape t-type wiww be d-defined in the futuwe. ʘwʘ
   //
-  // Example:
-  //   TFT_TENSOR[TFT_INT32, TFT_UNKNOWN]
-  //     is a Tensor of int32 element type and unknown shape.
+  // e-exampwe:
+  //   t-tft_tensow[tft_int32, ^•ﻌ•^ tft_unknown]
+  //     is a tensow of int32 e-ewement type a-and unknown shape. rawr x3
   //
-  // TODO(mdan): Define TFT_SHAPE and add more examples.
-  TFT_TENSOR = 1000;
+  // t-todo(mdan): define tft_shape and add m-mowe exampwes. 🥺
+  tft_tensow = 1000;
 
-  // Array (or tensorflow::TensorList in the variant type registry).
-  // Note: this is not to be confused with the deprecated `TensorArray*` ops
-  // which are not supported by FullType.
-  // This type represents a random-access list whose elements can be
-  // described by a single type. Although immutable, Array is expected to
-  // support efficient mutation semantics (i.e. element update) in the
-  // user-facing API.
-  // The element type may be generic or even TFT_ANY for a heterogenous list.
+  // a-awway (ow t-tensowfwow::tensowwist in the vawiant type wegistwy). ʘwʘ
+  // n-nyote: this is n-nyot to be confused w-with the depwecated `tensowawway*` o-ops
+  // which awe nyot s-suppowted by fuwwtype. (˘ω˘)
+  // this type wepwesents a wandom-access wist whose ewements can be
+  // d-descwibed by a singwe type. o.O awthough i-immutabwe, σωσ awway is expected t-to
+  // suppowt efficient mutation s-semantics (i.e. (ꈍᴗꈍ) ewement update) i-in the
+  // u-usew-facing api. (ˆ ﻌ ˆ)♡
+  // t-the ewement t-type may be g-genewic ow even tft_any fow a hetewogenous wist. o.O
   //
-  // Parametrization:
-  //   TFT_ARRAY[<element type>]
-  //   * <element type> may be any concrete type.
+  // pawametwization:
+  //   tft_awway[<ewement type>]
+  //   * <ewement type> may be any c-concwete type. :3
   //
-  // Examples:
-  //   TFT_ARRAY[TFT_TENSOR[TFT_INT32]] is a TensorArray holding int32 Tensors
-  //     of any shape.
-  //   TFT_ARRAY[TFT_TENSOR[TFT_UNKNOWN]] is a TensorArray holding Tensors of
-  //     mixed element types.
-  //   TFT_ARRAY[TFT_UNKNOWN] is a TensorArray holding any element type.
-  //   TFT_ARRAY[] is equivalent to TFT_ARRAY[TFT_UNKNOWN].
-  //   TFT_ARRAY[TFT_ARRAY[]] is an array or arrays (of unknown types).
-  TFT_ARRAY = 1001;
+  // e-exampwes:
+  //   t-tft_awway[tft_tensow[tft_int32]] is a t-tensowawway howding int32 tensows
+  //     of any shape. -.-
+  //   t-tft_awway[tft_tensow[tft_unknown]] i-is a tensowawway howding tensows o-of
+  //     mixed ewement types. ( ͡o ω ͡o )
+  //   tft_awway[tft_unknown] i-is a tensowawway h-howding any ewement type. /(^•ω•^)
+  //   t-tft_awway[] i-is equivawent to tft_awway[tft_unknown]. (⑅˘꒳˘)
+  //   tft_awway[tft_awway[]] is an awway ow awways (of u-unknown types). òωó
+  t-tft_awway = 1001;
 
-  // Optional (or tensorflow::OptionalVariant in the variant type registry).
-  // This type represents a value that may either hold an element of a single
-  // specified type, or nothing at all.
+  // o-optionaw (ow t-tensowfwow::optionawvawiant i-in the vawiant type wegistwy).
+  // t-this type w-wepwesents a vawue that may eithew h-howd an ewement o-of a singwe
+  // specified t-type, 🥺 ow nyothing at aww. (ˆ ﻌ ˆ)♡
   //
-  // Parametrization:
-  //   TFT_OPTIONAL[<element type>]
-  //   * <element type> may be any concrete type.
+  // pawametwization:
+  //   t-tft_optionaw[<ewement type>]
+  //   * <ewement t-type> m-may be any concwete type. -.-
   //
-  // Examples:
-  //   TFT_OPTIONAL[TFT_TENSOR[TFT_INT32]] is an Optional holding an int32
-  //     Tensor of any shape.
-  TFT_OPTIONAL = 1002;
+  // e-exampwes:
+  //   tft_optionaw[tft_tensow[tft_int32]] is an o-optionaw howding a-an int32
+  //     t-tensow of any shape. σωσ
+  tft_optionaw = 1002;
 
-  // Literal types describe compile-time constant values.
-  // Literal types may also participate in dependent types.
+  // witewaw types descwibe compiwe-time c-constant vawues. >_<
+  // witewaw types may a-awso pawticipate i-in dependent types. :3
   //
-  // Parametrization:
-  //   TFT_LITERAL[<value type>]{<value>}
-  //   * <value type> may be any concrete type compatible that can hold <value>
-  //   * <value> is the type's attribute, and holds the actual literal value
+  // p-pawametwization:
+  //   tft_witewaw[<vawue t-type>]{<vawue>}
+  //   * <vawue t-type> may be any concwete type compatibwe t-that can howd <vawue>
+  //   * <vawue> is the type's attwibute, OwO a-and howds t-the actuaw witewaw vawue
   //
-  // Examples:
-  //   TFT_LITERAL[TFT_INT32]{1} is the compile-time constant 1.
-  TFT_LITERAL = 1003;
+  // e-exampwes:
+  //   tft_witewaw[tft_int32]{1} i-is t-the compiwe-time c-constant 1. rawr
+  tft_witewaw = 1003;
 
-  // Type attributes. These always appear in the parametrization of a type,
-  // never alone. For example, there is no such thing as a "bool" TensorFlow
-  // object (for now).
+  // type attwibutes. (///ˬ///✿) these awways appeaw in the pawametwization of a type, ^^
+  // nyevew awone. XD fow exampwe, thewe is nyo such thing as a "boow" tensowfwow
+  // object (fow n-nyow). UwU
 
-  // The bool element type.
-  // TODO(mdan): Quantized types, legacy representations (e.g. ref)
-  TFT_BOOL = 200;
-  // Integer element types.
-  TFT_UINT8 = 201;
-  TFT_UINT16 = 202;
-  TFT_UINT32 = 203;
-  TFT_UINT64 = 204;
-  TFT_INT8 = 205;
-  TFT_INT16 = 206;
-  TFT_INT32 = 207;
-  TFT_INT64 = 208;
-  // Floating-point element types.
-  TFT_HALF = 209;
-  TFT_FLOAT = 210;
-  TFT_DOUBLE = 211;
-  TFT_BFLOAT16 = 215;
-  // Complex element types.
-  // TODO(mdan): Represent as TFT_COMPLEX[TFT_DOUBLE] instead?
-  TFT_COMPLEX64 = 212;
-  TFT_COMPLEX128 = 213;
-  // The string element type.
-  TFT_STRING = 214;
+  // the b-boow ewement type. o.O
+  // todo(mdan): quantized t-types, 😳 wegacy wepwesentations (e.g. (˘ω˘) w-wef)
+  tft_boow = 200;
+  // i-integew ewement types. 🥺
+  tft_uint8 = 201;
+  t-tft_uint16 = 202;
+  tft_uint32 = 203;
+  t-tft_uint64 = 204;
+  t-tft_int8 = 205;
+  tft_int16 = 206;
+  t-tft_int32 = 207;
+  tft_int64 = 208;
+  // f-fwoating-point e-ewement types. ^^
+  tft_hawf = 209;
+  tft_fwoat = 210;
+  t-tft_doubwe = 211;
+  tft_bfwoat16 = 215;
+  // c-compwex e-ewement types. >w<
+  // t-todo(mdan): w-wepwesent as tft_compwex[tft_doubwe] i-instead?
+  t-tft_compwex64 = 212;
+  t-tft_compwex128 = 213;
+  // t-the stwing ewement type. ^^;;
+  tft_stwing = 214;
 
-  // Other types that we don't know yet whether they will become part of the
-  // core type system or be consisdered third-party (and consequently moved to
-  // user-defined type mechanisms). Presently, they are effectively in the core
-  // type system, because key compilation passes like Placer account for their
-  // existence.
+  // o-othew types t-that we don't know y-yet whethew they wiww become p-pawt of the
+  // cowe type system ow be consisdewed t-thiwd-pawty (and consequentwy m-moved to
+  // u-usew-defined type m-mechanisms). (˘ω˘) pwesentwy, OwO they a-awe effectivewy in the cowe
+  // t-type system, (ꈍᴗꈍ) because key compiwation p-passes wike pwacew account f-fow theiw
+  // existence. òωó
 
-  // Datasets created by tf.data ops and APIs. Datasets have generator/iterable
-  // semantics, that is, one can construct an iterator from them. Like
-  // Array, they are considered to return elements that can be described
-  // by a single type. Unlike Array, they do not support random access or
-  // mutation, and can potentially produce an infinite number of elements.
-  // A datasets can produce logical structures (e.g. multiple elements). This
-  // is expressed using TFT_PRODUCT.
+  // datasets cweated by tf.data ops and apis. ʘwʘ datasets h-have genewatow/itewabwe
+  // semantics, ʘwʘ that i-is, nyaa~~ one can constwuct a-an itewatow fwom them. UwU wike
+  // awway, (⑅˘꒳˘) they awe considewed t-to wetuwn ewements that can be d-descwibed
+  // b-by a singwe type. (˘ω˘) u-unwike awway, :3 they do nyot suppowt wandom access o-ow
+  // mutation, (˘ω˘) a-and can potentiawwy pwoduce a-an infinite nyumbew of ewements. nyaa~~
+  // a datasets c-can pwoduce wogicaw stwuctuwes (e.g. (U ﹏ U) m-muwtipwe e-ewements). nyaa~~ this
+  // i-is expwessed using tft_pwoduct.
   //
   //
-  // Parametrization: TFT_ARRAY[<element type>].
-  //   * <element type> may be a concrete type or a type symbol. It represents
-  //     the data type of the elements produced by the dataset.
+  // p-pawametwization: t-tft_awway[<ewement t-type>]. ^^;;
+  //   * <ewement t-type> may be a concwete type o-ow a type symbow. OwO i-it wepwesents
+  //     t-the data t-type of the ewements p-pwoduced b-by the dataset. nyaa~~
   //
-  // Examples:
-  //   TFT_DATSET[TFT_TENSOR[TFT_INT32]] is a Dataset producing single int32
-  //     Tensors of unknown shape.
-  //   TFT_DATSET[TFT_PRODUCT[TFT_TENSOR[TFT_INT32], TFT_TENSOR[TFT_FLOAT32]] is
-  //     a Dataset producing pairs of Tensors, one integer and one float.
-  // Note: The high ID number is to prepare for the eventuality that Datasets
-  // will be supported by user types in the future.
-  TFT_DATASET = 10102;
+  // e-exampwes:
+  //   t-tft_datset[tft_tensow[tft_int32]] is a-a dataset pwoducing singwe int32
+  //     t-tensows of unknown shape. UwU
+  //   t-tft_datset[tft_pwoduct[tft_tensow[tft_int32], 😳 t-tft_tensow[tft_fwoat32]] i-is
+  //     a dataset pwoducing paiws of tensows, one integew a-and one fwoat. 😳
+  // n-nyote: the high i-id nyumbew is to pwepawe fow the eventuawity that datasets
+  // w-wiww be suppowted b-by usew types in the futuwe. (ˆ ﻌ ˆ)♡
+  t-tft_dataset = 10102;
 
-  // A ragged tensor created by tf.ragged ops and APIs.
+  // a-a wagged tensow cweated by tf.wagged ops and apis. (✿oωo)
   //
-  // Parametrization: TFT_RAGGED[<element_type>].
-  TFT_RAGGED = 10103;
+  // pawametwization: t-tft_wagged[<ewement_type>]. nyaa~~
+  t-tft_wagged = 10103;
 
-  // A mutex lock tensor, produced by tf.raw_ops.MutexLock.
-  // Unlike strict execution models, where ownership of a lock is denoted by
-  // "running after the lock has been acquired", in non-strict mode, lock
-  // ownership is in the true sense: "the op argument representing the lock is
-  // available".
-  // Mutex locks are the dynamic counterpart of control dependencies.
-  // TODO(mdan): Properly document this thing.
+  // a-a mutex wock t-tensow, ^^ pwoduced by tf.waw_ops.mutexwock. (///ˬ///✿)
+  // unwike stwict e-execution modews, 😳 w-whewe ownewship of a wock is denoted by
+  // "wunning a-aftew the wock has been acquiwed", òωó in nyon-stwict m-mode, ^^;; wock
+  // ownewship i-is in the twue s-sense: "the op awgument wepwesenting t-the wock i-is
+  // avaiwabwe". rawr
+  // mutex w-wocks awe the dynamic countewpawt o-of contwow dependencies. (ˆ ﻌ ˆ)♡
+  // t-todo(mdan): pwopewwy d-document this t-thing. XD
   //
-  // Parametrization: TFT_MUTEX_LOCK[].
-  TFT_MUTEX_LOCK = 10202;
+  // pawametwization: t-tft_mutex_wock[]. >_<
+  t-tft_mutex_wock = 10202;
 
-  // The equivalent of a Tensor with DT_VARIANT dtype, kept here to simplify
-  // translation. This type should not normally appear after type inference.
-  // Note that LEGACY_VARIANT != ANY: TENSOR[INT32] is a subtype of ANY, but is
-  // not a subtype of LEGACY_VARIANT.
-  TFT_LEGACY_VARIANT = 10203;
+  // t-the equivawent of a tensow w-with dt_vawiant dtype, (˘ω˘) kept hewe to simpwify
+  // t-twanswation. 😳 t-this type shouwd n-nyot nyowmawwy appeaw aftew type infewence. o.O
+  // nyote that wegacy_vawiant != any: tensow[int32] i-is a subtype of any, (ꈍᴗꈍ) but is
+  // n-nyot a subtype o-of wegacy_vawiant. rawr x3
+  tft_wegacy_vawiant = 10203;
 }
 
-// Highly experimental and very likely to change.
-// This encoding uses tags instead of dedicated messages for regularity. In
-// particular the encoding imposes no restrictions on what the parameters of any
-// type should be, which in particular needs to be true for type symbols.
-message FullTypeDef {
-  // The principal type represented by this object. This may be a concrete type
-  // (Tensor, Dataset) a type variable (used for dependent types) a type
-  // symbol (Any, Union). See FullTypeId for details.
-  FullTypeId type_id = 1;
+// highwy e-expewimentaw and vewy wikewy to c-change. ^^
+// this e-encoding uses tags i-instead of dedicated m-messages f-fow weguwawity. OwO in
+// pawticuwaw the encoding imposes no westwictions on nyani t-the pawametews of any
+// type shouwd b-be, ^^ which in pawticuwaw nyeeds to be twue fow type symbows. :3
+m-message fuwwtypedef {
+  // the pwincipaw type wepwesented by this object. o.O this m-may be a concwete t-type
+  // (tensow, -.- dataset) a t-type vawiabwe (used fow dependent types) a type
+  // s-symbow (any, (U ﹏ U) u-union). o.O see fuwwtypeid fow detaiws. OwO
+  f-fuwwtypeid type_id = 1;
 
-  repeated FullTypeDef args = 2;
+  w-wepeated fuwwtypedef awgs = 2;
 
-  // Literal values of this type object, if the the type admits one.
-  // For example, a type variable admits a string attribute - its name.
-  // Shape-related types may admit int attributes - their static shape values.
-  // Fields for more data types to be added as needed.
-  oneof attr {
-    string s = 3;
+  // witewaw vawues of this t-type object, ^•ﻌ•^ if the the type admits one. ʘwʘ
+  // fow e-exampwe, :3 a type v-vawiabwe admits a-a stwing attwibute - its nyame. 😳
+  // shape-wewated t-types may admit int attwibutes - theiw static shape vawues. òωó
+  // fiewds fow m-mowe data types t-to be added as n-nyeeded. 🥺
+  oneof a-attw {
+    stwing s = 3;
     int64 i = 4;
-    // TODO(mdan): list/tensor, map? Need to reconcile with TFT_RECORD, etc.
+    // t-todo(mdan): wist/tensow, rawr x3 m-map? nyeed to weconciwe with tft_wecowd, ^•ﻌ•^ e-etc. :3
   }
 }

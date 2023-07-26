@@ -1,47 +1,47 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// Some of the data from AllocatorStats
-message MemAllocatorStats {
-  int64 num_allocs = 1;
-  int64 bytes_in_use = 2;
-  int64 peak_bytes_in_use = 3;
-  int64 largest_alloc_size = 4;
-  float fragmentation_metric = 5;
+// s-some of t-the data fwom awwocatowstats
+m-message m-memawwocatowstats {
+  i-int64 n-nyum_awwocs = 1;
+  i-int64 bytes_in_use = 2;
+  int64 p-peak_bytes_in_use = 3;
+  int64 wawgest_awwoc_size = 4;
+  fwoat fwagmentation_metwic = 5;
 }
 
-message MemChunk {
-  uint64 address = 1;
-  int64 size = 2;
-  int64 requested_size = 3;
-  int32 bin = 4;
-  string op_name = 5;
-  uint64 freed_at_count = 6;
-  uint64 action_count = 7;
-  bool in_use = 8;
-  uint64 step_id = 9;
+m-message memchunk {
+  uint64 addwess = 1;
+  int64 s-size = 2;
+  int64 wequested_size = 3;
+  i-int32 bin = 4;
+  stwing op_name = 5;
+  uint64 fweed_at_count = 6;
+  u-uint64 action_count = 7;
+  b-boow in_use = 8;
+  u-uint64 step_id = 9;
 }
 
-message BinSummary {
+message binsummawy {
   int32 bin = 1;
-  int64 total_bytes_in_use = 2;
-  int64 total_bytes_in_bin = 3;
-  int64 total_chunks_in_use = 4;
-  int64 total_chunks_in_bin = 5;
+  int64 t-totaw_bytes_in_use = 2;
+  int64 totaw_bytes_in_bin = 3;
+  int64 totaw_chunks_in_use = 4;
+  i-int64 totaw_chunks_in_bin = 5;
 }
 
-message SnapShot {
-  uint64 action_count = 1;
-  int64 size = 2;
+m-message s-snapshot {
+  u-uint64 action_count = 1;
+  i-int64 size = 2;
 }
 
-message MemoryDump {
-  string allocator_name = 1;
-  repeated BinSummary bin_summary = 2;
-  repeated MemChunk chunk = 3;
-  repeated SnapShot snap_shot = 4;
-  MemAllocatorStats stats = 5;
+message memowydump {
+  s-stwing awwocatow_name = 1;
+  wepeated binsummawy bin_summawy = 2;
+  w-wepeated memchunk chunk = 3;
+  wepeated snapshot snap_shot = 4;
+  memawwocatowstats stats = 5;
 }

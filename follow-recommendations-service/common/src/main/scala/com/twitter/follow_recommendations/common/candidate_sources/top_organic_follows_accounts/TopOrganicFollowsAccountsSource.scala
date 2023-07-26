@@ -1,110 +1,110 @@
-package com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.top_owganic_fowwows_accounts
 
-import com.twitter.escherbird.util.stitchcache.StitchCache
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts.TopOrganicFollowsAccountsParams.AccountsFilteringAndRankingLogics
-import com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts.TopOrganicFollowsAccountsParams.CandidateSourceEnabled
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasGeohashAndCountryCode
-import com.twitter.hermit.model.Algorithm
-import com.twitter.onboarding.relevance.organic_follows_accounts.thriftscala.OrganicFollowsAccounts
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.OrganicFollowsAccountsClientColumn
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Duration
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.eschewbiwd.utiw.stitchcache.stitchcache
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.top_owganic_fowwows_accounts.topowganicfowwowsaccountspawams.accountsfiwtewingandwankingwogics
+i-impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.top_owganic_fowwows_accounts.topowganicfowwowsaccountspawams.candidatesouwceenabwed
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.hasgeohashandcountwycode
+impowt com.twittew.hewmit.modew.awgowithm
+impowt com.twittew.onboawding.wewevance.owganic_fowwows_accounts.thwiftscawa.owganicfowwowsaccounts
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.stwato.genewated.cwient.onboawding.usewwecs.owganicfowwowsaccountscwientcowumn
+impowt com.twittew.timewines.configapi.haspawams
+i-impowt com.twittew.utiw.duwation
+impowt com.twittew.utiw.wogging.wogging
+i-impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-object AccountsFilteringAndRankingLogicId extends Enumeration {
-  type AccountsFilteringAndRankingLogicId = Value
+object accountsfiwtewingandwankingwogicid extends enumewation {
+  type accountsfiwtewingandwankingwogicid = v-vawue
 
-  val NewOrganicFollows: AccountsFilteringAndRankingLogicId = Value("new_organic_follows")
-  val NonNewOrganicFollows: AccountsFilteringAndRankingLogicId = Value("non_new_organic_follows")
-  val OrganicFollows: AccountsFilteringAndRankingLogicId = Value("organic_follows")
+  vaw nyewowganicfowwows: accountsfiwtewingandwankingwogicid = vawue("new_owganic_fowwows")
+  vaw nyonnewowganicfowwows: accountsfiwtewingandwankingwogicid = v-vawue("non_new_owganic_fowwows")
+  vaw owganicfowwows: a-accountsfiwtewingandwankingwogicid = v-vawue("owganic_fowwows")
 }
 
-object TopOrganicFollowsAccountsSource {
-  val MaxCacheSize = 500
-  val CacheTTL: Duration = Duration.fromHours(24)
+o-object t-topowganicfowwowsaccountssouwce {
+  vaw maxcachesize = 500
+  vaw cachettw: d-duwation = duwation.fwomhouws(24)
 
-  type Target = HasParams with HasClientContext with HasGeohashAndCountryCode
+  type tawget = haspawams with h-hascwientcontext with hasgeohashandcountwycode
 
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.OrganicFollowAccounts.toString)
+  vaw identifiew: candidatesouwceidentifiew = candidatesouwceidentifiew(
+    awgowithm.owganicfowwowaccounts.tostwing)
 }
 
-@Singleton
-class TopOrganicFollowsAccountsSource @Inject() (
-  organicFollowsAccountsClientColumn: OrganicFollowsAccountsClientColumn,
-  statsReceiver: StatsReceiver,
-) extends CandidateSource[TopOrganicFollowsAccountsSource.Target, CandidateUser]
-    with Logging {
+@singweton
+cwass topowganicfowwowsaccountssouwce @inject() (
+  o-owganicfowwowsaccountscwientcowumn: owganicfowwowsaccountscwientcowumn, rawr x3
+  statsweceivew: s-statsweceivew, OwO
+) e-extends candidatesouwce[topowganicfowwowsaccountssouwce.tawget, /(^•ω•^) c-candidateusew]
+    with wogging {
 
-  /** @see [[CandidateSourceIdentifier]] */
-  override val identifier: CandidateSourceIdentifier =
-    TopOrganicFollowsAccountsSource.Identifier
+  /** @see [[candidatesouwceidentifiew]] */
+  ovewwide vaw identifiew: candidatesouwceidentifiew =
+    topowganicfowwowsaccountssouwce.identifiew
 
-  private val stats = statsReceiver.scope(identifier.name)
-  private val requestsStats = stats.counter("requests")
-  private val noCountryCodeStats = stats.counter("no_country_code")
-  private val successStats = stats.counter("success")
-  private val errorStats = stats.counter("error")
+  p-pwivate v-vaw stats = statsweceivew.scope(identifiew.name)
+  p-pwivate v-vaw wequestsstats = stats.countew("wequests")
+  p-pwivate vaw nyocountwycodestats = stats.countew("no_countwy_code")
+  p-pwivate vaw successstats = stats.countew("success")
+  p-pwivate vaw ewwowstats = s-stats.countew("ewwow")
 
-  private val cache = StitchCache[String, Option[OrganicFollowsAccounts]](
-    maxCacheSize = TopOrganicFollowsAccountsSource.MaxCacheSize,
-    ttl = TopOrganicFollowsAccountsSource.CacheTTL,
-    statsReceiver = statsReceiver.scope(identifier.name, "cache"),
-    underlyingCall = (k: String) => {
-      organicFollowsAccountsClientColumn.fetcher
+  pwivate v-vaw cache = s-stitchcache[stwing, 😳😳😳 option[owganicfowwowsaccounts]](
+    maxcachesize = topowganicfowwowsaccountssouwce.maxcachesize,
+    ttw = topowganicfowwowsaccountssouwce.cachettw, ( ͡o ω ͡o )
+    statsweceivew = s-statsweceivew.scope(identifiew.name, >_< "cache"), >w<
+    u-undewwyingcaww = (k: stwing) => {
+      o-owganicfowwowsaccountscwientcowumn.fetchew
         .fetch(k)
-        .map { result => result.v }
+        .map { w-wesuwt => w-wesuwt.v }
     }
   )
 
-  /** returns a Seq of ''potential'' content */
-  override def apply(
-    target: TopOrganicFollowsAccountsSource.Target
-  ): Stitch[Seq[CandidateUser]] = {
-    if (!target.params(CandidateSourceEnabled)) {
-      return Stitch.value(Seq[CandidateUser]())
+  /** wetuwns a seq of ''potentiaw'' content */
+  o-ovewwide def appwy(
+    tawget: topowganicfowwowsaccountssouwce.tawget
+  ): stitch[seq[candidateusew]] = {
+    if (!tawget.pawams(candidatesouwceenabwed)) {
+      w-wetuwn stitch.vawue(seq[candidateusew]())
     }
-    requestsStats.incr()
-    target.getCountryCode
-      .orElse(target.geohashAndCountryCode.flatMap(_.countryCode)).map { countryCode =>
-        Stitch
-          .collect(target
-            .params(AccountsFilteringAndRankingLogics).map(logic =>
-              cache.readThrough(countryCode.toUpperCase() + "-" + logic)))
-          .onSuccess(_ => {
-            successStats.incr()
+    w-wequestsstats.incw()
+    t-tawget.getcountwycode
+      .owewse(tawget.geohashandcountwycode.fwatmap(_.countwycode)).map { c-countwycode =>
+        stitch
+          .cowwect(tawget
+            .pawams(accountsfiwtewingandwankingwogics).map(wogic =>
+              cache.weadthwough(countwycode.touppewcase() + "-" + w-wogic)))
+          .onsuccess(_ => {
+            s-successstats.incw()
           })
-          .onFailure(t => {
-            debug("candidate source failed identifier = %s".format(identifier), t)
-            errorStats.incr()
+          .onfaiwuwe(t => {
+            d-debug("candidate s-souwce faiwed identifiew = %s".fowmat(identifiew), rawr t)
+            ewwowstats.incw()
           })
-          .map(transformOrganicFollowAccountssToCandidateSource)
-      }.getOrElse {
-        noCountryCodeStats.incr()
-        Stitch.value(Seq[CandidateUser]())
+          .map(twansfowmowganicfowwowaccountsstocandidatesouwce)
+      }.getowewse {
+        nyocountwycodestats.incw()
+        s-stitch.vawue(seq[candidateusew]())
       }
   }
 
-  private def transformOrganicFollowAccountssToCandidateSource(
-    organicFollowsAccounts: Seq[Option[OrganicFollowsAccounts]]
-  ): Seq[CandidateUser] = {
-    organicFollowsAccounts
-      .flatMap(opt =>
+  p-pwivate def t-twansfowmowganicfowwowaccountsstocandidatesouwce(
+    o-owganicfowwowsaccounts: s-seq[option[owganicfowwowsaccounts]]
+  ): seq[candidateusew] = {
+    owganicfowwowsaccounts
+      .fwatmap(opt =>
         opt
           .map(accounts =>
-            accounts.accounts.map(account =>
-              CandidateUser(
-                id = account.accountId,
-                score = Some(account.followedCountScore),
-              ).withCandidateSource(identifier)))
-          .getOrElse(Seq[CandidateUser]()))
+            a-accounts.accounts.map(account =>
+              candidateusew(
+                id = account.accountid, 😳
+                scowe = some(account.fowwowedcountscowe), >w<
+              ).withcandidatesouwce(identifiew)))
+          .getowewse(seq[candidateusew]()))
   }
 }

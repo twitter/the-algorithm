@@ -1,46 +1,46 @@
-package com.twitter.cr_mixer.module.thrift_client
+package com.twittew.cw_mixew.moduwe.thwift_cwient
 
-import com.twitter.app.Flag
-import com.twitter.cr_mixer.module.core.TimeoutConfigModule.UserVideoGraphClientTimeoutFlagName
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.service.ReqRep
-import com.twitter.finagle.service.ResponseClass
-import com.twitter.finagle.service.RetryBudget
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.recos.user_video_graph.thriftscala.UserVideoGraph
-import com.twitter.util.Duration
-import com.twitter.util.Throw
+impowt com.twittew.app.fwag
+i-impowt c-com.twittew.cw_mixew.moduwe.cowe.timeoutconfigmoduwe.usewvideogwaphcwienttimeoutfwagname
+i-impowt c-com.twittew.finagwe.thwiftmux
+i-impowt com.twittew.finagwe.mux.cwientdiscawdedwequestexception
+i-impowt com.twittew.finagwe.sewvice.weqwep
+i-impowt c-com.twittew.finagwe.sewvice.wesponsecwass
+impowt com.twittew.finagwe.sewvice.wetwybudget
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwscwient
+impowt com.twittew.inject.injectow
+i-impowt com.twittew.inject.thwift.moduwes.thwiftmethodbuiwdewcwientmoduwe
+i-impowt com.twittew.wecos.usew_video_gwaph.thwiftscawa.usewvideogwaph
+impowt com.twittew.utiw.duwation
+impowt c-com.twittew.utiw.thwow
 
-object UserVideoGraphClientModule
-    extends ThriftMethodBuilderClientModule[
-      UserVideoGraph.ServicePerEndpoint,
-      UserVideoGraph.MethodPerEndpoint
+object u-usewvideogwaphcwientmoduwe
+    extends t-thwiftmethodbuiwdewcwientmoduwe[
+      usewvideogwaph.sewvicepewendpoint, /(^•ω•^)
+      usewvideogwaph.methodpewendpoint
     ]
-    with MtlsClient {
+    with mtwscwient {
 
-  override val label = "user-video-graph"
-  override val dest = "/s/user-tweet-graph/user-video-graph"
-  private val userVideoGraphClientTimeout: Flag[Duration] =
-    flag[Duration](
-      UserVideoGraphClientTimeoutFlagName,
-      "userVideoGraph client timeout"
+  ovewwide v-vaw wabew = "usew-video-gwaph"
+  ovewwide vaw dest = "/s/usew-tweet-gwaph/usew-video-gwaph"
+  pwivate vaw usewvideogwaphcwienttimeout: fwag[duwation] =
+    f-fwag[duwation](
+      usewvideogwaphcwienttimeoutfwagname, rawr x3
+      "usewvideogwaph c-cwient t-timeout"
     )
-  override def requestTimeout: Duration = userVideoGraphClientTimeout()
+  o-ovewwide def w-wequesttimeout: duwation = usewvideogwaphcwienttimeout()
 
-  override def retryBudget: RetryBudget = RetryBudget.Empty
+  ovewwide d-def wetwybudget: wetwybudget = wetwybudget.empty
 
-  override def configureThriftMuxClient(
-    injector: Injector,
-    client: ThriftMux.Client
-  ): ThriftMux.Client =
-    super
-      .configureThriftMuxClient(injector, client)
-      .withStatsReceiver(injector.instance[StatsReceiver].scope("clnt"))
-      .withResponseClassifier {
-        case ReqRep(_, Throw(_: ClientDiscardedRequestException)) => ResponseClass.Ignorable
+  o-ovewwide def configuwethwiftmuxcwient(
+    injectow: injectow, (U ﹏ U)
+    cwient: thwiftmux.cwient
+  ): thwiftmux.cwient =
+    s-supew
+      .configuwethwiftmuxcwient(injectow, (U ﹏ U) cwient)
+      .withstatsweceivew(injectow.instance[statsweceivew].scope("cwnt"))
+      .withwesponsecwassifiew {
+        c-case w-weqwep(_, (⑅˘꒳˘) thwow(_: c-cwientdiscawdedwequestexception)) => wesponsecwass.ignowabwe
       }
 }

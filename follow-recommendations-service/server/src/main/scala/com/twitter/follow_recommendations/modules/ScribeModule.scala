@@ -1,95 +1,95 @@
-package com.twitter.follow_recommendations.modules
+package com.twittew.fowwow_wecommendations.moduwes
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.google.inject.name.Named
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.inject.TwitterModule
-import com.twitter.logging.BareFormatter
-import com.twitter.logging.HandlerFactory
-import com.twitter.logging.Level
-import com.twitter.logging.LoggerFactory
-import com.twitter.logging.NullHandler
-import com.twitter.logging.QueueingHandler
-import com.twitter.logging.ScribeHandler
+impowt com.googwe.inject.pwovides
+i-impowt com.googwe.inject.singweton
+i-impowt com.googwe.inject.name.named
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fowwow_wecommendations.common.constants.guicenamedconstants
+i-impowt c-com.twittew.inject.twittewmoduwe
+impowt com.twittew.wogging.bawefowmattew
+impowt com.twittew.wogging.handwewfactowy
+impowt com.twittew.wogging.wevew
+i-impowt com.twittew.wogging.woggewfactowy
+impowt com.twittew.wogging.nuwwhandwew
+impowt com.twittew.wogging.queueinghandwew
+i-impowt com.twittew.wogging.scwibehandwew
 
-object ScribeModule extends TwitterModule {
-  val useProdLogger = flag(
-    name = "scribe.use_prod_loggers",
-    default = false,
-    help = "whether to use production logging for service"
+object s-scwibemoduwe extends twittewmoduwe {
+  vaw usepwodwoggew = fwag(
+    n-nyame = "scwibe.use_pwod_woggews", :3
+    defauwt = f-fawse, OwO
+    h-hewp = "whethew to use pwoduction wogging fow sewvice"
   )
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.CLIENT_EVENT_LOGGER)
-  def provideClientEventsLoggerFactory(stats: StatsReceiver): LoggerFactory = {
-    val loggerCategory = "client_event"
-    val clientEventsHandler: HandlerFactory = if (useProdLogger()) {
-      QueueingHandler(
-        maxQueueSize = 10000,
-        handler = ScribeHandler(
-          category = loggerCategory,
-          formatter = BareFormatter,
-          level = Some(Level.INFO),
-          statsReceiver = stats.scope("client_event_scribe")
+  @pwovides
+  @singweton
+  @named(guicenamedconstants.cwient_event_woggew)
+  def p-pwovidecwienteventswoggewfactowy(stats: statsweceivew): woggewfactowy = {
+    vaw woggewcategowy = "cwient_event"
+    v-vaw cwienteventshandwew: handwewfactowy = if (usepwodwoggew()) {
+      q-queueinghandwew(
+        m-maxqueuesize = 10000,
+        h-handwew = scwibehandwew(
+          c-categowy = woggewcategowy, (U ﹏ U)
+          fowmattew = b-bawefowmattew, >w<
+          wevew = some(wevew.info), (U ﹏ U)
+          statsweceivew = s-stats.scope("cwient_event_scwibe")
         )
       )
-    } else { () => NullHandler }
-    LoggerFactory(
-      node = "abdecider",
-      level = Some(Level.INFO),
-      useParents = false,
-      handlers = clientEventsHandler :: Nil
+    } ewse { () => nyuwwhandwew }
+    woggewfactowy(
+      nyode = "abdecidew", 😳
+      wevew = some(wevew.info), (ˆ ﻌ ˆ)♡
+      usepawents = fawse,
+      h-handwews = cwienteventshandwew :: n-nyiw
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.REQUEST_LOGGER)
-  def provideFollowRecommendationsLoggerFactory(stats: StatsReceiver): LoggerFactory = {
-    val loggerCategory = "follow_recommendations_logs"
-    val handlerFactory: HandlerFactory = if (useProdLogger()) {
-      QueueingHandler(
-        maxQueueSize = 10000,
-        handler = ScribeHandler(
-          category = loggerCategory,
-          formatter = BareFormatter,
-          level = Some(Level.INFO),
-          statsReceiver = stats.scope("follow_recommendations_logs_scribe")
+  @pwovides
+  @singweton
+  @named(guicenamedconstants.wequest_woggew)
+  d-def pwovidefowwowwecommendationswoggewfactowy(stats: s-statsweceivew): woggewfactowy = {
+    vaw woggewcategowy = "fowwow_wecommendations_wogs"
+    vaw handwewfactowy: h-handwewfactowy = i-if (usepwodwoggew()) {
+      queueinghandwew(
+        m-maxqueuesize = 10000, 😳😳😳
+        handwew = s-scwibehandwew(
+          categowy = woggewcategowy, (U ﹏ U)
+          f-fowmattew = bawefowmattew,
+          w-wevew = some(wevew.info), (///ˬ///✿)
+          statsweceivew = s-stats.scope("fowwow_wecommendations_wogs_scwibe")
         )
       )
-    } else { () => NullHandler }
-    LoggerFactory(
-      node = loggerCategory,
-      level = Some(Level.INFO),
-      useParents = false,
-      handlers = handlerFactory :: Nil
+    } ewse { () => n-nyuwwhandwew }
+    woggewfactowy(
+      nyode = w-woggewcategowy, 😳
+      w-wevew = some(wevew.info), 😳
+      usepawents = fawse, σωσ
+      handwews = handwewfactowy :: nyiw
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.FLOW_LOGGER)
-  def provideFrsRecommendationFlowLoggerFactory(stats: StatsReceiver): LoggerFactory = {
-    val loggerCategory = "frs_recommendation_flow_logs"
-    val handlerFactory: HandlerFactory = if (useProdLogger()) {
-      QueueingHandler(
-        maxQueueSize = 10000,
-        handler = ScribeHandler(
-          category = loggerCategory,
-          formatter = BareFormatter,
-          level = Some(Level.INFO),
-          statsReceiver = stats.scope("frs_recommendation_flow_logs_scribe")
+  @pwovides
+  @singweton
+  @named(guicenamedconstants.fwow_woggew)
+  d-def pwovidefwswecommendationfwowwoggewfactowy(stats: s-statsweceivew): woggewfactowy = {
+    v-vaw woggewcategowy = "fws_wecommendation_fwow_wogs"
+    v-vaw h-handwewfactowy: handwewfactowy = if (usepwodwoggew()) {
+      queueinghandwew(
+        m-maxqueuesize = 10000, rawr x3
+        handwew = scwibehandwew(
+          categowy = woggewcategowy, OwO
+          fowmattew = b-bawefowmattew, /(^•ω•^)
+          wevew = some(wevew.info), 😳😳😳
+          s-statsweceivew = s-stats.scope("fws_wecommendation_fwow_wogs_scwibe")
         )
       )
-    } else { () => NullHandler }
-    LoggerFactory(
-      node = loggerCategory,
-      level = Some(Level.INFO),
-      useParents = false,
-      handlers = handlerFactory :: Nil
+    } e-ewse { () => nyuwwhandwew }
+    woggewfactowy(
+      n-nyode = woggewcategowy, ( ͡o ω ͡o )
+      w-wevew = some(wevew.info), >_<
+      u-usepawents = f-fawse, >w<
+      handwews = handwewfactowy :: nyiw
     )
   }
 }

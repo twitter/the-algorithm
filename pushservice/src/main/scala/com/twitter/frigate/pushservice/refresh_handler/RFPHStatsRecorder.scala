@@ -1,77 +1,77 @@
-package com.twitter.frigate.pushservice.refresh_handler
+package com.twittew.fwigate.pushsewvice.wefwesh_handwew
 
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.thriftscala.CommonRecommendationType
+impowt com.twittew.finagwe.stats.stat
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.candidatedetaiws
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt c-com.twittew.fwigate.thwiftscawa.commonwecommendationtype
 
-class RFPHStatsRecorder(implicit statsReceiver: StatsReceiver) {
+c-cwass wfphstatswecowdew(impwicit statsweceivew: statsweceivew) {
 
-  private val selectedCandidateScoreStats: StatsReceiver =
-    statsReceiver.scope("score_of_sent_candidate_times_10000")
+  pwivate vaw sewectedcandidatescowestats: s-statsweceivew =
+    statsweceivew.scope("scowe_of_sent_candidate_times_10000")
 
-  private val emptyScoreStats: StatsReceiver =
-    statsReceiver.scope("score_of_sent_candidate_empty")
+  pwivate v-vaw emptyscowestats: statsweceivew =
+    s-statsweceivew.scope("scowe_of_sent_candidate_empty")
 
-  def trackPredictionScoreStats(candidate: PushCandidate): Unit = {
-    candidate.mrWeightedOpenOrNtabClickRankingProbability.foreach {
-      case Some(s) =>
-        selectedCandidateScoreStats
-          .stat("weighted_open_or_ntab_click_ranking")
-          .add((s * 10000).toFloat)
-      case None =>
-        emptyScoreStats.counter("weighted_open_or_ntab_click_ranking").incr()
+  def twackpwedictionscowestats(candidate: pushcandidate): unit = {
+    c-candidate.mwweightedopenowntabcwickwankingpwobabiwity.foweach {
+      case some(s) =>
+        s-sewectedcandidatescowestats
+          .stat("weighted_open_ow_ntab_cwick_wanking")
+          .add((s * 10000).tofwoat)
+      c-case nyone =>
+        emptyscowestats.countew("weighted_open_ow_ntab_cwick_wanking").incw()
     }
-    candidate.mrWeightedOpenOrNtabClickFilteringProbability.foreach {
-      case Some(s) =>
-        selectedCandidateScoreStats
-          .stat("weighted_open_or_ntab_click_filtering")
-          .add((s * 10000).toFloat)
-      case None =>
-        emptyScoreStats.counter("weighted_open_or_ntab_click_filtering").incr()
+    candidate.mwweightedopenowntabcwickfiwtewingpwobabiwity.foweach {
+      case some(s) =>
+        sewectedcandidatescowestats
+          .stat("weighted_open_ow_ntab_cwick_fiwtewing")
+          .add((s * 10000).tofwoat)
+      c-case nyone =>
+        emptyscowestats.countew("weighted_open_ow_ntab_cwick_fiwtewing").incw()
     }
-    candidate.mrWeightedOpenOrNtabClickRankingProbability.foreach {
-      case Some(s) =>
-        selectedCandidateScoreStats
-          .scope(candidate.commonRecType.toString)
-          .stat("weighted_open_or_ntab_click_ranking")
-          .add((s * 10000).toFloat)
-      case None =>
-        emptyScoreStats
-          .scope(candidate.commonRecType.toString)
-          .counter("weighted_open_or_ntab_click_ranking")
-          .incr()
+    candidate.mwweightedopenowntabcwickwankingpwobabiwity.foweach {
+      case some(s) =>
+        sewectedcandidatescowestats
+          .scope(candidate.commonwectype.tostwing)
+          .stat("weighted_open_ow_ntab_cwick_wanking")
+          .add((s * 10000).tofwoat)
+      case nyone =>
+        emptyscowestats
+          .scope(candidate.commonwectype.tostwing)
+          .countew("weighted_open_ow_ntab_cwick_wanking")
+          .incw()
     }
   }
 
-  def refreshRequestExceptionStats(
-    exception: Throwable,
-    bStats: StatsReceiver
-  ): Unit = {
-    bStats.counter("failures").incr()
-    bStats.scope("failures").counter(exception.getClass.getCanonicalName).incr()
+  d-def wefweshwequestexceptionstats(
+    exception: t-thwowabwe, (U ﹏ U)
+    b-bstats: statsweceivew
+  ): u-unit = {
+    b-bstats.countew("faiwuwes").incw()
+    bstats.scope("faiwuwes").countew(exception.getcwass.getcanonicawname).incw()
   }
 
-  def loggedOutRequestExceptionStats(
-    exception: Throwable,
-    bStats: StatsReceiver
-  ): Unit = {
-    bStats.counter("logged_out_failures").incr()
-    bStats.scope("failures").counter(exception.getClass.getCanonicalName).incr()
+  def woggedoutwequestexceptionstats(
+    exception: t-thwowabwe, (U ﹏ U)
+    bstats: statsweceivew
+  ): unit = {
+    bstats.countew("wogged_out_faiwuwes").incw()
+    b-bstats.scope("faiwuwes").countew(exception.getcwass.getcanonicawname).incw()
   }
 
-  def rankDistributionStats(
-    candidatesDetails: Seq[CandidateDetails[PushCandidate]],
-    numRecsPerTypeStat: (CommonRecommendationType => Stat)
-  ): Unit = {
-    candidatesDetails
-      .groupBy { c =>
-        c.candidate.commonRecType
+  def wankdistwibutionstats(
+    candidatesdetaiws: seq[candidatedetaiws[pushcandidate]], (⑅˘꒳˘)
+    nyumwecspewtypestat: (commonwecommendationtype => stat)
+  ): unit = {
+    c-candidatesdetaiws
+      .gwoupby { c =>
+        c-c.candidate.commonwectype
       }
-      .mapValues { s =>
-        s.size
+      .mapvawues { s-s =>
+        s-s.size
       }
-      .foreach { case (crt, numRecs) => numRecsPerTypeStat(crt).add(numRecs) }
+      .foweach { case (cwt, òωó nyumwecs) => nyumwecspewtypestat(cwt).add(numwecs) }
   }
 }

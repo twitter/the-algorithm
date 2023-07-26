@@ -1,74 +1,74 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.message
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.message
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.message.InlinePromptCandidateUrtItemStringCenterBuilder.InlinePromptClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.InlinePromptCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.InlinePromptMessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessagePromptItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.message.inwinepwomptcandidateuwtitemstwingcentewbuiwdew.inwinepwomptcwienteventinfoewement
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.inwinepwomptcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.candidateuwtentwybuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventinfobuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basestw
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.wichtext.basewichtextbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.sociaw_context.basesociawcontextbuiwdew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.inwinepwomptmessagecontent
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.messagepwomptitem
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object InlinePromptCandidateUrtItemStringCenterBuilder {
-  val InlinePromptClientEventInfoElement: String = "message"
+o-object inwinepwomptcandidateuwtitemstwingcentewbuiwdew {
+  vaw inwinepwomptcwienteventinfoewement: stwing = "message"
 }
 
-case class InlinePromptCandidateUrtItemStringCenterBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, InlinePromptCandidate],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, InlinePromptCandidate]
-  ] = None,
-  headerTextBuilder: BaseStr[Query, InlinePromptCandidate],
-  bodyTextBuilder: Option[BaseStr[Query, InlinePromptCandidate]] = None,
-  headerRichTextBuilder: Option[BaseRichTextBuilder[Query, InlinePromptCandidate]] = None,
-  bodyRichTextBuilder: Option[BaseRichTextBuilder[Query, InlinePromptCandidate]] = None,
-  primaryMessageTextActionBuilder: Option[
-    MessageTextActionBuilder[Query, InlinePromptCandidate]
-  ] = None,
-  secondaryMessageTextActionBuilder: Option[
-    MessageTextActionBuilder[Query, InlinePromptCandidate]
-  ] = None,
-  socialContextBuilder: Option[BaseSocialContextBuilder[Query, InlinePromptCandidate]] = None,
-  userFacePileBuilder: Option[
-    UserFacePileBuilder
-  ] = None)
-    extends CandidateUrtEntryBuilder[Query, InlinePromptCandidate, MessagePromptItem] {
+case cwass i-inwinepwomptcandidateuwtitemstwingcentewbuiwdew[-quewy <: pipewinequewy](
+  c-cwienteventinfobuiwdew: b-basecwienteventinfobuiwdew[quewy, 😳 inwinepwomptcandidate], 😳
+  feedbackactioninfobuiwdew: option[
+    basefeedbackactioninfobuiwdew[quewy, σωσ i-inwinepwomptcandidate]
+  ] = nyone, rawr x3
+  headewtextbuiwdew: basestw[quewy, OwO inwinepwomptcandidate], /(^•ω•^)
+  b-bodytextbuiwdew: option[basestw[quewy, 😳😳😳 inwinepwomptcandidate]] = nyone, ( ͡o ω ͡o )
+  h-headewwichtextbuiwdew: option[basewichtextbuiwdew[quewy, >_< i-inwinepwomptcandidate]] = n-nyone, >w<
+  b-bodywichtextbuiwdew: option[basewichtextbuiwdew[quewy, rawr inwinepwomptcandidate]] = n-nyone, 😳
+  pwimawymessagetextactionbuiwdew: option[
+    messagetextactionbuiwdew[quewy, >w< inwinepwomptcandidate]
+  ] = n-nyone, (⑅˘꒳˘)
+  secondawymessagetextactionbuiwdew: option[
+    messagetextactionbuiwdew[quewy, OwO inwinepwomptcandidate]
+  ] = nyone,
+  s-sociawcontextbuiwdew: option[basesociawcontextbuiwdew[quewy, (ꈍᴗꈍ) i-inwinepwomptcandidate]] = n-nyone, 😳
+  u-usewfacepiwebuiwdew: option[
+    usewfacepiwebuiwdew
+  ] = nyone)
+    extends c-candidateuwtentwybuiwdew[quewy, 😳😳😳 i-inwinepwomptcandidate, mya messagepwomptitem] {
 
-  override def apply(
-    query: Query,
-    inlinePromptCandidate: InlinePromptCandidate,
-    candidateFeatures: FeatureMap
-  ): MessagePromptItem =
-    MessagePromptItem(
-      id = inlinePromptCandidate.id,
-      sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-      clientEventInfo = clientEventInfoBuilder(
-        query,
-        inlinePromptCandidate,
-        candidateFeatures,
-        Some(InlinePromptClientEventInfoElement)),
-      feedbackActionInfo =
-        feedbackActionInfoBuilder.flatMap(_.apply(query, inlinePromptCandidate, candidateFeatures)),
-      isPinned = None,
-      content = InlinePromptMessageContent(
-        headerText = headerTextBuilder.apply(query, inlinePromptCandidate, candidateFeatures),
-        bodyText = bodyTextBuilder.map(_.apply(query, inlinePromptCandidate, candidateFeatures)),
-        primaryButtonAction = primaryMessageTextActionBuilder.map(
-          _.apply(query, inlinePromptCandidate, candidateFeatures)),
-        secondaryButtonAction = secondaryMessageTextActionBuilder.map(
-          _.apply(query, inlinePromptCandidate, candidateFeatures)),
-        headerRichText =
-          headerRichTextBuilder.map(_.apply(query, inlinePromptCandidate, candidateFeatures)),
-        bodyRichText =
-          bodyRichTextBuilder.map(_.apply(query, inlinePromptCandidate, candidateFeatures)),
-        socialContext =
-          socialContextBuilder.flatMap(_.apply(query, inlinePromptCandidate, candidateFeatures)),
-        userFacepile = userFacePileBuilder.map(_.apply())
-      ),
-      impressionCallbacks = None
+  o-ovewwide def a-appwy(
+    quewy: quewy, mya
+    inwinepwomptcandidate: i-inwinepwomptcandidate, (⑅˘꒳˘)
+    candidatefeatuwes: featuwemap
+  ): m-messagepwomptitem =
+    messagepwomptitem(
+      id = inwinepwomptcandidate.id, (U ﹏ U)
+      s-sowtindex = nyone, mya // sowt i-indexes awe automaticawwy set i-in the domain mawshawwew p-phase
+      cwienteventinfo = cwienteventinfobuiwdew(
+        quewy, ʘwʘ
+        inwinepwomptcandidate, (˘ω˘)
+        candidatefeatuwes, (U ﹏ U)
+        some(inwinepwomptcwienteventinfoewement)), ^•ﻌ•^
+      f-feedbackactioninfo =
+        feedbackactioninfobuiwdew.fwatmap(_.appwy(quewy, (˘ω˘) i-inwinepwomptcandidate, :3 candidatefeatuwes)), ^^;;
+      i-ispinned = nyone, 🥺
+      c-content = i-inwinepwomptmessagecontent(
+        headewtext = headewtextbuiwdew.appwy(quewy, (⑅˘꒳˘) inwinepwomptcandidate, nyaa~~ c-candidatefeatuwes), :3
+        bodytext = bodytextbuiwdew.map(_.appwy(quewy, ( ͡o ω ͡o ) inwinepwomptcandidate, candidatefeatuwes)), mya
+        p-pwimawybuttonaction = pwimawymessagetextactionbuiwdew.map(
+          _.appwy(quewy, (///ˬ///✿) inwinepwomptcandidate, (˘ω˘) c-candidatefeatuwes)), ^^;;
+        s-secondawybuttonaction = s-secondawymessagetextactionbuiwdew.map(
+          _.appwy(quewy, (✿oωo) inwinepwomptcandidate, (U ﹏ U) c-candidatefeatuwes)), -.-
+        h-headewwichtext =
+          h-headewwichtextbuiwdew.map(_.appwy(quewy, ^•ﻌ•^ i-inwinepwomptcandidate, rawr candidatefeatuwes)), (˘ω˘)
+        bodywichtext =
+          b-bodywichtextbuiwdew.map(_.appwy(quewy, nyaa~~ i-inwinepwomptcandidate, UwU c-candidatefeatuwes)), :3
+        s-sociawcontext =
+          s-sociawcontextbuiwdew.fwatmap(_.appwy(quewy, (⑅˘꒳˘) inwinepwomptcandidate, (///ˬ///✿) candidatefeatuwes)), ^^;;
+        usewfacepiwe = usewfacepiwebuiwdew.map(_.appwy())
+      ), >_<
+      i-impwessioncawwbacks = nyone
     )
 }

@@ -1,72 +1,72 @@
-package com.twitter.simclusters_v2.scalding.offline_job.adhoc
+package com.twittew.simcwustews_v2.scawding.offwine_job.adhoc
 
-import com.twitter.bijection.{Bufferable, Injection}
-import com.twitter.scalding._
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.simclusters_v2.common.{ClusterId, CosineSimilarityUtil, TweetId}
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseRowMatrix
-import com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJobUtil
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import java.util.TimeZone
+impowt c-com.twittew.bijection.{buffewabwe, (ˆ ﻌ ˆ)♡ i-injection}
+i-impowt com.twittew.scawding._
+i-impowt com.twittew.scawding.commons.souwce.vewsionedkeyvawsouwce
+i-impowt com.twittew.simcwustews_v2.common.{cwustewid, σωσ c-cosinesimiwawityutiw, (U ﹏ U) t-tweetid}
+i-impowt com.twittew.simcwustews_v2.scawding.common.matwix.spawsewowmatwix
+impowt com.twittew.simcwustews_v2.scawding.offwine_job.simcwustewsoffwinejobutiw
+impowt com.twittew.wtf.scawding.jobs.common.adhocexecutionapp
+impowt java.utiw.timezone
 
 /**
  *
- * A job to sample some tweets for evaluation.
+ * a-a job to sampwe some tweets fow evawuation. >w<
  *
- * we bucket tweets by the log(# of fav + 1) and randomly pick 1000 for each bucket for evaluation.
+ * w-we bucket tweets by the wog(# o-of fav + 1) and wandomwy pick 1000 fow each bucket fow evawuation. σωσ
  *
- * to run the job:
+ * t-to wun the job:
  *
-  scalding remote run \
-     --target src/scala/com/twitter/simclusters_v2/scalding/offline_job/adhoc:tweet_embedding_evaluation_samples-adhoc \
-     --user recos-platform \
-     --reducers 1000 \
-     --main-class com.twitter.simclusters_v2.scalding.offline_job.adhoc.TweetSimilarityEvaluationSamplingAdhocApp -- \
+  s-scawding wemote w-wun \
+     --tawget swc/scawa/com/twittew/simcwustews_v2/scawding/offwine_job/adhoc:tweet_embedding_evawuation_sampwes-adhoc \
+     --usew wecos-pwatfowm \
+     --weducews 1000 \
+     --main-cwass com.twittew.simcwustews_v2.scawding.offwine_job.adhoc.tweetsimiwawityevawuationsampwingadhocapp -- \
      --date 2021-01-27 2021-01-28 \
-     --output /user/recos-platform/adhoc/tweet_embedding_01_27_28_sample_tweets
+     --output /usew/wecos-pwatfowm/adhoc/tweet_embedding_01_27_28_sampwe_tweets
  */
-object TweetSimilarityEvaluationSamplingAdhocApp extends AdhocExecutionApp {
+object tweetsimiwawityevawuationsampwingadhocapp e-extends adhocexecutionapp {
 
-  override def runOnDateRange(
-    args: Args
+  ovewwide def wunondatewange(
+    awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    impwicit d-datewange: datewange, nyaa~~
+    timezone: t-timezone, 🥺
+    u-uniqueid: uniqueid
+  ): e-execution[unit] = {
 
-    val random = new java.util.Random(args.long("seed", 20200322L))
+    v-vaw wandom = nyew java.utiw.wandom(awgs.wong("seed", rawr x3 20200322w))
 
-    // # of tweets in each bucket
-    val topK = args.int("bucket_size", 1000)
+    // # of tweets in each b-bucket
+    vaw topk = awgs.int("bucket_size", σωσ 1000)
 
-    val output = args("output")
+    vaw output = a-awgs("output")
 
-    SimClustersOfflineJobUtil
-      .readTimelineFavoriteData(dateRange)
+    simcwustewsoffwinejobutiw
+      .weadtimewinefavowitedata(datewange)
       .map {
-        case (_, tweetId, _) =>
-          tweetId -> 1L
+        case (_, (///ˬ///✿) tweetid, (U ﹏ U) _) =>
+          tweetid -> 1w
       }
-      .sumByKey
-      .filter(_._2 >= 10L) // only consider tweets with more than 10 favs
+      .sumbykey
+      .fiwtew(_._2 >= 10w) // onwy considew tweets w-with mowe than 10 favs
       .map {
-        case (tweetId, tweetFavs) =>
-          val bucket = math.log10(tweetFavs + 1.0).toInt
-          bucket -> (tweetId, random.nextDouble())
+        c-case (tweetid, ^^;; t-tweetfavs) =>
+          v-vaw bucket = math.wog10(tweetfavs + 1.0).toint
+          bucket -> (tweetid, 🥺 wandom.nextdoubwe())
       }
-      .group
-      .sortedReverseTake(topK)(Ordering.by(_._2))
-      .flatMap {
-        case (bucket, tweets) =>
-          val bucketSize = tweets.length
-          tweets.map {
-            case (tweetId, _) =>
-              (tweetId, bucket, bucketSize)
+      .gwoup
+      .sowtedwevewsetake(topk)(owdewing.by(_._2))
+      .fwatmap {
+        c-case (bucket, òωó t-tweets) =>
+          vaw bucketsize = t-tweets.wength
+          t-tweets.map {
+            case (tweetid, XD _) =>
+              (tweetid, :3 b-bucket, bucketsize)
           }
       }
-      .writeExecution(
-        TypedTsv[(Long, Int, Int)](output)
+      .wwiteexecution(
+        typedtsv[(wong, (U ﹏ U) i-int, >w< int)](output)
       )
 
   }
@@ -74,287 +74,287 @@ object TweetSimilarityEvaluationSamplingAdhocApp extends AdhocExecutionApp {
 
 /**
  *
- * A job for evaluating the performance of an approximate nearest neighbor search method with a brute
- * force method.
+ * a job f-fow evawuating the pewfowmance o-of an appwoximate nyeawest nyeighbow s-seawch method w-with a bwute
+ * fowce method. /(^•ω•^)
  *
- * Evaluation method:
+ * evawuation method:
  *
- * After getting the embeddings for these tweets, we bucketize tweets based on the number of favs they have
- * (i.e., math.log10(numFavors).toInt), and then randomly select 1000 tweets from each bucket.
- * We do not include tweets with fewer than 10 favs. We compute the nearest neighbors (in terms of cosine similarity)
- * for these tweets using the brute force method and use up to top 100 neighbors with the cosine
- * similarity score >0.8 for each tweet as ground-truth set G.
+ * aftew getting the embeddings fow these tweets, (⑅˘꒳˘) we b-bucketize tweets b-based on the nyumbew of favs t-they have
+ * (i.e., m-math.wog10(numfavows).toint), ʘwʘ a-and then wandomwy sewect 1000 tweets fwom each bucket. rawr x3
+ * we do n-nyot incwude tweets with fewew than 10 favs. (˘ω˘) we compute the nyeawest nyeighbows (in t-tewms of cosine simiwawity)
+ * f-fow these tweets u-using the b-bwute fowce method and use up to t-top 100 nyeighbows w-with the cosine
+ * s-simiwawity s-scowe >0.8 fow each tweet as gwound-twuth set g-g. o.O
  *
- * We then compute the nearest neighbors for these tweets based on the approximate nearest neighbor search: for each tweet, we find the top clusters, and then find top tweets in each cluster as potential candidates. We rank these potential candidates by the cosine similarity scores and take top 100 as prediction set P. We evaluate the precision and recall using
+ * we then c-compute the nyeawest n-nyeighbows f-fow these tweets b-based on the appwoximate nyeawest nyeighbow seawch: fow each tweet, 😳 w-we find the top cwustews, and then find top tweets in each cwustew as potentiaw candidates. o.O w-we wank these potentiaw candidates by the cosine simiwawity scowes a-and take top 100 a-as pwediction s-set p. ^^;; we evawuate the pwecision a-and wecaww using
  *
- * Precision = |P \intersect G| / |P|
- * Recall = |P \intersect G| / |G|
+ * pwecision = |p \intewsect g-g| / |p|
+ * w-wecaww = |p \intewsect g| / |g|
  *
- * Note that |P| and |G| can be different, when there are not many neighbors returned.
+ * nyote that |p| and |g| can be diffewent, ( ͡o ω ͡o ) when thewe awe n-nyot many nyeighbows wetuwned. ^^;;
  *
-  scalding remote run \
-  --target src/scala/com/twitter/simclusters_v2/scalding/offline_job/adhoc:tweet_embedding_evaluation-adhoc \
-  --user recos-platform \
-  --reducers 1000 \
-  --main-class com.twitter.simclusters_v2.scalding.offline_job.adhoc.TweetSimilarityEvaluationAdhocApp -- \
+  s-scawding wemote wun \
+  --tawget s-swc/scawa/com/twittew/simcwustews_v2/scawding/offwine_job/adhoc:tweet_embedding_evawuation-adhoc \
+  --usew w-wecos-pwatfowm \
+  --weducews 1000 \
+  --main-cwass com.twittew.simcwustews_v2.scawding.offwine_job.adhoc.tweetsimiwawityevawuationadhocapp -- \
   --date 2021-01-27 \
-  --tweet_top_k /user/recos-platform/adhoc/tweet_embedding_01_27_28_unnormalized_t9/tweet_top_k_clusters \
-  --cluster_top_k /user/recos-platform/adhoc/tweet_embedding_01_27_28_unnormalized_t9/cluster_top_k_tweets \
-  --tweets /user/recos-platform/adhoc/tweet_embedding_01_27_28_sample_tweets \
-  --output  /user/recos-platform/adhoc/tweet_embedding_evaluation_01_27_28_t05_k50_1
+  --tweet_top_k /usew/wecos-pwatfowm/adhoc/tweet_embedding_01_27_28_unnowmawized_t9/tweet_top_k_cwustews \
+  --cwustew_top_k /usew/wecos-pwatfowm/adhoc/tweet_embedding_01_27_28_unnowmawized_t9/cwustew_top_k_tweets \
+  --tweets /usew/wecos-pwatfowm/adhoc/tweet_embedding_01_27_28_sampwe_tweets \
+  --output  /usew/wecos-pwatfowm/adhoc/tweet_embedding_evawuation_01_27_28_t05_k50_1
  */
-object TweetSimilarityEvaluationAdhocApp extends AdhocExecutionApp {
+object tweetsimiwawityevawuationadhocapp e-extends adhocexecutionapp {
 
-  implicit val inj1: Injection[List[(Int, Double)], Array[Byte]] =
-    Bufferable.injectionOf[List[(Int, Double)]]
-  implicit val inj2: Injection[List[(Long, Double)], Array[Byte]] =
-    Bufferable.injectionOf[List[(Long, Double)]]
+  i-impwicit vaw inj1: injection[wist[(int, ^^;; d-doubwe)], a-awway[byte]] =
+    buffewabwe.injectionof[wist[(int, XD doubwe)]]
+  impwicit vaw inj2: injection[wist[(wong, 🥺 d-doubwe)], (///ˬ///✿) a-awway[byte]] =
+    b-buffewabwe.injectionof[wist[(wong, doubwe)]]
 
-  // Take top 20 candidates, the score * 100
-  private def formatList(candidates: Seq[(TweetId, Double)]): Seq[(TweetId, Int)] = {
+  // t-take t-top 20 candidates, (U ᵕ U❁) the scowe * 100
+  p-pwivate def fowmatwist(candidates: seq[(tweetid, ^^;; doubwe)]): seq[(tweetid, ^^;; i-int)] = {
     candidates.take(10).map {
-      case (clusterId, score) =>
-        (clusterId, (score * 100).toInt)
+      c-case (cwustewid, rawr scowe) =>
+        (cwustewid, (˘ω˘) (scowe * 100).toint)
     }
   }
 
-  override def runOnDateRange(
-    args: Args
+  ovewwide def wunondatewange(
+    awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    i-impwicit datewange: d-datewange, 🥺
+    timezone: timezone, nyaa~~
+    uniqueid: uniqueid
+  ): e-execution[unit] = {
 
-    // path to read the tweet -> top cluster data set. should be the same from the SimClustersTweetEmbeddingAdhocApp job
-    val tweetTopKClustersPath = args("tweet_top_k")
+    // path to wead the tweet -> top cwustew data set. :3 shouwd be the s-same fwom the simcwustewstweetembeddingadhocapp job
+    vaw tweettopkcwustewspath = awgs("tweet_top_k")
 
-    // path to read the cluster -> top tweets data set. should be the same from the SimClustersTweetEmbeddingAdhocApp job
-    val clusterTopKTweetsPath = args("cluster_top_k")
+    // p-path to wead the c-cwustew -> top tweets data set. /(^•ω•^) shouwd be the same fwom the simcwustewstweetembeddingadhocapp j-job
+    vaw cwustewtopktweetspath = a-awgs("cwustew_top_k")
 
-    // path to read the sampled tweets, should be the same from TweetSimilarityEvaluationSamplingAdhocApp
-    val tweetsPath = args("tweets")
+    // path to wead the sampwed tweets, ^•ﻌ•^ shouwd be the s-same fwom tweetsimiwawityevawuationsampwingadhocapp
+    vaw tweetspath = a-awgs("tweets")
 
-    // see the comment of this class. this is to determine which tweet should be ground truth
-    val threshold = args.double("threshold", 0.8)
+    // see the comment of this cwass. UwU this is to detewmine w-which tweet shouwd be gwound t-twuth
+    vaw t-thweshowd = awgs.doubwe("thweshowd", 😳😳😳 0.8)
 
-    // see the comment of this class. this is to determine which tweet should be ground truth
-    val topK = args.int("topK", 100)
+    // see the comment o-of this cwass. OwO this is to detewmine w-which tweet s-shouwd be gwound t-twuth
+    vaw topk = awgs.int("topk", ^•ﻌ•^ 100)
 
-    // output path for evaluation results
-    val output = args("output")
+    // o-output path f-fow evawuation wesuwts
+    vaw output = awgs("output")
 
-    // read tweet -> top clusters data set
-    val tweetTopKClusters: SparseRowMatrix[TweetId, ClusterId, Double] =
-      SparseRowMatrix(
-        TypedPipe
-          .from(
-            VersionedKeyValSource[TweetId, List[(ClusterId, Double)]](tweetTopKClustersPath)
+    // w-wead tweet -> top c-cwustews data s-set
+    vaw tweettopkcwustews: spawsewowmatwix[tweetid, (ꈍᴗꈍ) cwustewid, d-doubwe] =
+      spawsewowmatwix(
+        t-typedpipe
+          .fwom(
+            v-vewsionedkeyvawsouwce[tweetid, (⑅˘꒳˘) wist[(cwustewid, (⑅˘꒳˘) doubwe)]](tweettopkcwustewspath)
           )
-          .mapValues(_.filter(_._2 > 0.001).toMap),
-        isSkinnyMatrix = true
-      ).rowL2Normalize
+          .mapvawues(_.fiwtew(_._2 > 0.001).tomap), (ˆ ﻌ ˆ)♡
+        isskinnymatwix = t-twue
+      ).woww2nowmawize
 
-    // read cluster -> top tweets data set
-    val clusterTopTweets: SparseRowMatrix[ClusterId, TweetId, Double] =
-      SparseRowMatrix(
-        TypedPipe
-          .from(
-            VersionedKeyValSource[ClusterId, List[(TweetId, Double)]](clusterTopKTweetsPath)
+    // w-wead cwustew -> t-top tweets data s-set
+    vaw cwustewtoptweets: spawsewowmatwix[cwustewid, /(^•ω•^) t-tweetid, doubwe] =
+      spawsewowmatwix(
+        typedpipe
+          .fwom(
+            vewsionedkeyvawsouwce[cwustewid, òωó wist[(tweetid, (⑅˘꒳˘) d-doubwe)]](cwustewtopktweetspath)
           )
-          .mapValues(_.filter(_._2 > 0.02).toMap),
-        isSkinnyMatrix = false
+          .mapvawues(_.fiwtew(_._2 > 0.02).tomap),
+        isskinnymatwix = f-fawse
       )
 
-    // read the sampled tweets from TweetSimilarityEvaluationSamplingAdhocApp
-    val tweetSubset = TypedPipe.from(TypedTsv[(Long, Int, Int)](tweetsPath))
+    // wead the sampwed t-tweets fwom tweetsimiwawityevawuationsampwingadhocapp
+    v-vaw tweetsubset = t-typedpipe.fwom(typedtsv[(wong, (U ᵕ U❁) int, i-int)](tweetspath))
 
-    // the tweet -> top clusters for the sampled tweets
-    val tweetEmbeddingSubset =
-      tweetTopKClusters.filterRows(tweetSubset.map(_._1))
+    // the t-tweet -> top c-cwustews fow the s-sampwed tweets
+    vaw tweetembeddingsubset =
+      tweettopkcwustews.fiwtewwows(tweetsubset.map(_._1))
 
-    // compute ground-truth top similar tweets for each sampled tweets.
-    // for each sampled tweets, we compute their similarity with every tweets in the tweet -> top clusters data set.
-    // we filter out those with similarity score smaller than the threshold and keep top k as the ground truth similar tweets
-    val groundTruthData = tweetTopKClusters.toSparseMatrix
-      .multiplySkinnySparseRowMatrix(
-        tweetEmbeddingSubset.toSparseMatrix.transpose.toSparseRowMatrix(true),
-        numReducersOpt = Some(5000)
+    // compute gwound-twuth top simiwaw tweets fow each sampwed tweets. >w<
+    // f-fow each s-sampwed tweets, σωσ w-we compute theiw simiwawity with e-evewy tweets in the tweet -> top cwustews data set. -.-
+    // we f-fiwtew out those w-with simiwawity scowe smowew than t-the thweshowd and keep top k as the gwound twuth s-simiwaw tweets
+    v-vaw gwoundtwuthdata = tweettopkcwustews.tospawsematwix
+      .muwtipwyskinnyspawsewowmatwix(
+        t-tweetembeddingsubset.tospawsematwix.twanspose.tospawsewowmatwix(twue), o.O
+        n-nyumweducewsopt = some(5000)
       )
-      .toSparseMatrix
-      .transpose
-      .filter((_, _, v) => v > threshold)
-      .sortWithTakePerRow(topK)(Ordering.by(-_._2))
+      .tospawsematwix
+      .twanspose
+      .fiwtew((_, ^^ _, v) => v > thweshowd)
+      .sowtwithtakepewwow(topk)(owdewing.by(-_._2))
 
-    // compute approximate similar tweets for each sampled tweets.
-    // this is achieved by multiplying "sampled_tweets -> top clusters" matrix with "cluster -> top tweets" matrix.
-    // note that in the implementation, we first compute the transponse of this matrix in order to ultlize the optimization done on skinny matrices
-    val predictionData = clusterTopTweets.toSparseMatrix.transpose
-      .multiplySkinnySparseRowMatrix(
-        tweetEmbeddingSubset.toSparseMatrix.transpose.toSparseRowMatrix(true),
-        numReducersOpt = Some(5000)
+    // compute a-appwoximate s-simiwaw tweets f-fow each sampwed t-tweets. >_<
+    // t-this is achieved by muwtipwying "sampwed_tweets -> t-top cwustews" m-matwix with "cwustew -> top tweets" m-matwix.
+    // n-nyote that in the impwementation, >w< w-we fiwst compute the twansponse of this matwix i-in owdew to uwtwize the optimization d-done o-on skinny matwices
+    vaw pwedictiondata = c-cwustewtoptweets.tospawsematwix.twanspose
+      .muwtipwyskinnyspawsewowmatwix(
+        tweetembeddingsubset.tospawsematwix.twanspose.tospawsewowmatwix(twue), >_<
+        nyumweducewsopt = s-some(5000)
       )
-      .toSparseMatrix
-      .transpose
-      .toTypedPipe
+      .tospawsematwix
+      .twanspose
+      .totypedpipe
       .map {
-        case (queryTweet, candidateTweet, _) =>
-          (queryTweet, candidateTweet)
+        c-case (quewytweet, >w< c-candidatetweet, rawr _) =>
+          (quewytweet, rawr x3 candidatetweet)
       }
-      .join(tweetEmbeddingSubset.toTypedPipe)
+      .join(tweetembeddingsubset.totypedpipe)
       .map {
-        case (queryId, (candidateId, queryEmbedding)) =>
-          candidateId -> (queryId, queryEmbedding)
+        case (quewyid, ( ͡o ω ͡o ) (candidateid, (˘ω˘) quewyembedding)) =>
+          c-candidateid -> (quewyid, 😳 quewyembedding)
       }
-      .join(tweetTopKClusters.toTypedPipe)
+      .join(tweettopkcwustews.totypedpipe)
       .map {
-        case (candidateId, ((queryId, queryEmbedding), candidateEmbedding)) =>
-          queryId -> (candidateId, CosineSimilarityUtil
-            .dotProduct(
-              queryEmbedding,
-              candidateEmbedding
+        case (candidateid, OwO ((quewyid, (˘ω˘) q-quewyembedding), òωó c-candidateembedding)) =>
+          quewyid -> (candidateid, ( ͡o ω ͡o ) c-cosinesimiwawityutiw
+            .dotpwoduct(
+              quewyembedding, UwU
+              c-candidateembedding
             ))
       }
-      .filter(_._2._2 > threshold)
-      .group
-      .sortedReverseTake(topK)(Ordering.by(_._2))
+      .fiwtew(_._2._2 > t-thweshowd)
+      .gwoup
+      .sowtedwevewsetake(topk)(owdewing.by(_._2))
 
-    // Exist in Ground Truth but not exist in Predication
-    val potentialData =
-      groundTruthData
-        .leftJoin(predictionData)
+    // exist in gwound twuth but nyot e-exist in pwedication
+    vaw potentiawdata =
+      g-gwoundtwuthdata
+        .weftjoin(pwedictiondata)
         .map {
-          case (tweetId, (groundTruthCandidates, predictedCandidates)) =>
-            val predictedCandidateSet = predictedCandidates.toSeq.flatten.map(_._1).toSet
-            val potentialTweets = groundTruthCandidates.filterNot {
-              case (candidateId, _) =>
-                predictedCandidateSet.contains(candidateId)
+          c-case (tweetid, /(^•ω•^) (gwoundtwuthcandidates, (ꈍᴗꈍ) pwedictedcandidates)) =>
+            v-vaw pwedictedcandidateset = p-pwedictedcandidates.toseq.fwatten.map(_._1).toset
+            v-vaw potentiawtweets = g-gwoundtwuthcandidates.fiwtewnot {
+              case (candidateid, 😳 _) =>
+                pwedictedcandidateset.contains(candidateid)
             }
-            (tweetId, potentialTweets)
+            (tweetid, mya potentiawtweets)
         }
 
-    val debuggingData =
-      groundTruthData
-        .leftJoin(predictionData)
+    vaw debuggingdata =
+      gwoundtwuthdata
+        .weftjoin(pwedictiondata)
         .map {
-          case (tweetId, (groundTruthTweets, maybepredictedTweets)) =>
-            val predictedTweets = maybepredictedTweets.toSeq.flatten
-            val predictedTweetSet = predictedTweets.map(_._1).toSet
-            val potentialTweets = groundTruthTweets.filterNot {
-              case (candidateId, _) =>
-                predictedTweetSet.contains(candidateId)
+          case (tweetid, mya (gwoundtwuthtweets, /(^•ω•^) maybepwedictedtweets)) =>
+            vaw pwedictedtweets = maybepwedictedtweets.toseq.fwatten
+            vaw pwedictedtweetset = pwedictedtweets.map(_._1).toset
+            vaw potentiawtweets = g-gwoundtwuthtweets.fiwtewnot {
+              c-case (candidateid, ^^;; _) =>
+                pwedictedtweetset.contains(candidateid)
             }
 
             (
-              tweetId,
-              Seq(
-                formatList(potentialTweets),
-                formatList(groundTruthTweets),
-                formatList(predictedTweets)))
+              tweetid, 🥺
+              s-seq(
+                f-fowmatwist(potentiawtweets), ^^
+                f-fowmatwist(gwoundtwuthtweets), ^•ﻌ•^
+                fowmatwist(pwedictedtweets)))
         }
 
-    // for each tweet, compare the approximate topk and ground-truth topk.
-    // compute precision and recall, then averaging them per bucket.
-    val eval = tweetSubset
+    // f-fow each tweet, /(^•ω•^) compawe the a-appwoximate topk a-and gwound-twuth topk. ^^
+    // compute p-pwecision and wecaww, 🥺 then a-avewaging them p-pew bucket. (U ᵕ U❁)
+    vaw evaw = tweetsubset
       .map {
-        case (tweetId, bucket, bucketSize) =>
-          tweetId -> (bucket, bucketSize)
+        case (tweetid, b-bucket, 😳😳😳 b-bucketsize) =>
+          t-tweetid -> (bucket, nyaa~~ b-bucketsize)
       }
-      .leftJoin(groundTruthData)
-      .leftJoin(predictionData)
+      .weftjoin(gwoundtwuthdata)
+      .weftjoin(pwedictiondata)
       .map {
-        case (_, (((bucket, bucketSize), groundTruthOpt), predictionOpt)) =>
-          val groundTruth = groundTruthOpt.getOrElse(Nil).map(_._1)
-          val prediction = predictionOpt.getOrElse(Nil).map(_._1)
+        c-case (_, (˘ω˘) (((bucket, bucketsize), >_< g-gwoundtwuthopt), XD p-pwedictionopt)) =>
+          v-vaw gwoundtwuth = g-gwoundtwuthopt.getowewse(niw).map(_._1)
+          vaw p-pwediction = pwedictionopt.getowewse(niw).map(_._1)
 
-          assert(groundTruth.distinct.size == groundTruth.size)
-          assert(prediction.distinct.size == prediction.size)
+          a-assewt(gwoundtwuth.distinct.size == g-gwoundtwuth.size)
+          assewt(pwediction.distinct.size == p-pwediction.size)
 
-          val intersection = groundTruth.toSet.intersect(prediction.toSet)
+          vaw intewsection = gwoundtwuth.toset.intewsect(pwediction.toset)
 
-          val precision =
-            if (prediction.nonEmpty)
-              intersection.size.toDouble / prediction.size.toDouble
-            else 0.0
-          val recall =
-            if (groundTruth.nonEmpty)
-              intersection.size.toDouble / groundTruth.size.toDouble
-            else 0.0
+          v-vaw pwecision =
+            i-if (pwediction.nonempty)
+              intewsection.size.todoubwe / p-pwediction.size.todoubwe
+            e-ewse 0.0
+          vaw wecaww =
+            i-if (gwoundtwuth.nonempty)
+              intewsection.size.todoubwe / g-gwoundtwuth.size.todoubwe
+            ewse 0.0
 
           (
-            bucket,
-            bucketSize) -> (groundTruth.size, prediction.size, intersection.size, precision, recall, 1.0)
+            b-bucket, rawr x3
+            bucketsize) -> (gwoundtwuth.size, ( ͡o ω ͡o ) p-pwediction.size, :3 intewsection.size, mya pwecision, wecaww, σωσ 1.0)
       }
-      .sumByKey
+      .sumbykey
       .map {
         case (
-              (bucket, bucketSize),
-              (groundTruthSum, predictionSum, interSectionSum, precisionSum, recallSum, count)) =>
+              (bucket, (ꈍᴗꈍ) bucketsize), OwO
+              (gwoundtwuthsum, o.O p-pwedictionsum, 😳😳😳 intewsectionsum, /(^•ω•^) p-pwecisionsum, OwO w-wecawwsum, count)) =>
           (
-            bucket,
-            bucketSize,
-            groundTruthSum / count,
-            predictionSum / count,
-            interSectionSum / count,
-            precisionSum / count,
-            recallSum / count,
+            bucket, ^^
+            bucketsize, (///ˬ///✿)
+            gwoundtwuthsum / count, (///ˬ///✿)
+            pwedictionsum / count, (///ˬ///✿)
+            i-intewsectionsum / count, ʘwʘ
+            p-pwecisionsum / c-count, ^•ﻌ•^
+            w-wecawwsum / count, OwO
             count)
       }
 
-    // output the eval results and some sample results for eyeballing
-    Execution
+    // output t-the evaw wesuwts a-and some sampwe wesuwts fow e-eyebawwing
+    execution
       .zip(
-        eval
-          .writeExecution(TypedTsv(output)),
-        groundTruthData
+        evaw
+          .wwiteexecution(typedtsv(output)), (U ﹏ U)
+        g-gwoundtwuthdata
           .map {
-            case (tweetId, neighbors) =>
-              tweetId -> neighbors
+            case (tweetid, (ˆ ﻌ ˆ)♡ n-nyeighbows) =>
+              t-tweetid -> nyeighbows
                 .map {
-                  case (id, score) => s"$id:$score"
+                  c-case (id, (⑅˘꒳˘) scowe) => s"$id:$scowe"
                 }
-                .mkString(",")
+                .mkstwing(",")
           }
-          .writeExecution(
-            TypedTsv(args("output") + "_ground_truth")
-          ),
-        predictionData
+          .wwiteexecution(
+            t-typedtsv(awgs("output") + "_gwound_twuth")
+          ), (U ﹏ U)
+        p-pwedictiondata
           .map {
-            case (tweetId, neighbors) =>
-              tweetId -> neighbors
+            c-case (tweetid, o.O n-nyeighbows) =>
+              tweetid -> nyeighbows
                 .map {
-                  case (id, score) => s"$id:$score"
+                  case (id, mya s-scowe) => s-s"$id:$scowe"
                 }
-                .mkString(",")
+                .mkstwing(",")
           }
-          .writeExecution(
-            TypedTsv(args("output") + "_prediction")
-          ),
-        potentialData
+          .wwiteexecution(
+            t-typedtsv(awgs("output") + "_pwediction")
+          ), XD
+        p-potentiawdata
           .map {
-            case (tweetId, neighbors) =>
-              tweetId -> neighbors
+            c-case (tweetid, òωó n-nyeighbows) =>
+              t-tweetid -> n-nyeighbows
                 .map {
-                  case (id, score) => s"$id:$score"
+                  case (id, (˘ω˘) s-scowe) => s"$id:$scowe"
                 }
-                .mkString(",")
-          }.writeExecution(
-            TypedTsv(args("output") + "_potential")
-          ),
-        debuggingData
+                .mkstwing(",")
+          }.wwiteexecution(
+            typedtsv(awgs("output") + "_potentiaw")
+          ), :3
+        d-debuggingdata
           .map {
-            case (tweetId, candidateList) =>
-              val value = candidateList
+            case (tweetid, OwO c-candidatewist) =>
+              v-vaw vawue = c-candidatewist
                 .map { candidates =>
                   candidates
                     .map {
-                      case (id, score) =>
-                        s"${id}D$score"
-                    }.mkString("C")
-                }.mkString("B")
-              s"${tweetId}A$value"
-          }.writeExecution(
-            TypedTsv(args("output") + "_debugging")
+                      case (id, mya s-scowe) =>
+                        s-s"${id}d$scowe"
+                    }.mkstwing("c")
+                }.mkstwing("b")
+              s-s"${tweetid}a$vawue"
+          }.wwiteexecution(
+            typedtsv(awgs("output") + "_debugging")
           )
       )
       .unit

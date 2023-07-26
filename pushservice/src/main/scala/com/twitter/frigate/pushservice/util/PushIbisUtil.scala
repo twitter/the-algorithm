@@ -1,36 +1,36 @@
-package com.twitter.frigate.pushservice.util
+package com.twittew.fwigate.pushsewvice.utiw
 
-import com.twitter.util.Future
+impowt c-com.twittew.utiw.futuwe
 
-object PushIbisUtil {
+o-object p-pushibisutiw {
 
-  def getSocialContextModelValues(socialContextUserIds: Seq[Long]): Map[String, String] = {
+  d-def getsociawcontextmodewvawues(sociawcontextusewids: s-seq[wong]): m-map[stwing, s-stwing] = {
 
-    val socialContextSize = socialContextUserIds.size
+    v-vaw sociawcontextsize = sociawcontextusewids.size
 
-    val (displaySocialContexts, otherCount) = {
-      if (socialContextSize < 3) (socialContextUserIds, 0)
-      else (socialContextUserIds.take(1), socialContextSize - 1)
+    vaw (dispwaysociawcontexts, rawr x3 othewcount) = {
+      if (sociawcontextsize < 3) (sociawcontextusewids, 0)
+      e-ewse (sociawcontextusewids.take(1), (✿oωo) sociawcontextsize - 1)
     }
 
-    val usersValue = displaySocialContexts.map(_.toString).mkString(",")
+    vaw usewsvawue = d-dispwaysociawcontexts.map(_.tostwing).mkstwing(",")
 
-    if (otherCount > 0) Map("social_users" -> s"$usersValue+$otherCount")
-    else Map("social_users" -> usersValue)
+    if (othewcount > 0) m-map("sociaw_usews" -> s"$usewsvawue+$othewcount")
+    ewse map("sociaw_usews" -> usewsvawue)
   }
 
-  def mergeFutModelValues(
-    mvFut1: Future[Map[String, String]],
-    mvFut2: Future[Map[String, String]]
-  ): Future[Map[String, String]] = {
-    Future.join(mvFut1, mvFut2).map {
-      case (mv1, mv2) => mv1 ++ mv2
+  d-def mewgefutmodewvawues(
+    mvfut1: f-futuwe[map[stwing, (ˆ ﻌ ˆ)♡ s-stwing]],
+    mvfut2: futuwe[map[stwing, (˘ω˘) stwing]]
+  ): futuwe[map[stwing, (⑅˘꒳˘) stwing]] = {
+    f-futuwe.join(mvfut1, (///ˬ///✿) mvfut2).map {
+      case (mv1, 😳😳😳 mv2) => mv1 ++ mv2
     }
   }
 
-  def mergeModelValues(
-    mvFut1: Future[Map[String, String]],
-    mv2: Map[String, String]
-  ): Future[Map[String, String]] =
-    mvFut1.map { mv1 => mv1 ++ mv2 }
+  d-def mewgemodewvawues(
+    mvfut1: futuwe[map[stwing, 🥺 s-stwing]], mya
+    m-mv2: map[stwing, 🥺 s-stwing]
+  ): f-futuwe[map[stwing, >_< stwing]] =
+    mvfut1.map { m-mv1 => mv1 ++ mv2 }
 }

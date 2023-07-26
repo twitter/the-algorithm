@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.service.pipeline_execution_logger
+package com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_execution_woggew
 
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-trait PipelineExecutionLogger {
-  def apply(pipelineQuery: PipelineQuery, message: Any): Unit
+t-twait pipewineexecutionwoggew {
+  d-def appwy(pipewinequewy: p-pipewinequewy, o.O m-message: any): u-unit
 }

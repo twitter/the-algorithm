@@ -1,24 +1,24 @@
-package com.twitter.follow_recommendations.common.base
+package com.twittew.fowwow_wecommendations.common.base
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.stitch.stitch
 
 /**
- * SideEffectsUtil applies side effects to the intermediate candidate results from a recommendation flow pipeline.
+ * s-sideeffectsutiw a-appwies s-side effects t-to the intewmediate c-candidate wesuwts f-fwom a wecommendation f-fwow pipewine. OwO
  *
- * @tparam Target target to recommend the candidates
- * @tparam Candidate candidate type to rank
+ * @tpawam tawget tawget to wecommend the candidates
+ * @tpawam candidate c-candidate type to wank
  */
-trait SideEffectsUtil[Target, Candidate] {
-  def applySideEffects(
-    target: Target,
-    candidateSources: Seq[CandidateSource[Target, Candidate]],
-    candidatesFromCandidateSources: Seq[Candidate],
-    mergedCandidates: Seq[Candidate],
-    filteredCandidates: Seq[Candidate],
-    rankedCandidates: Seq[Candidate],
-    transformedCandidates: Seq[Candidate],
-    truncatedCandidates: Seq[Candidate],
-    results: Seq[Candidate]
-  ): Stitch[Unit] = Stitch.Unit
+twait sideeffectsutiw[tawget, (U ﹏ U) c-candidate] {
+  def appwysideeffects(
+    t-tawget: tawget, >_<
+    candidatesouwces: seq[candidatesouwce[tawget, rawr x3 candidate]],
+    c-candidatesfwomcandidatesouwces: seq[candidate], mya
+    m-mewgedcandidates: s-seq[candidate],
+    fiwtewedcandidates: seq[candidate], nyaa~~
+    wankedcandidates: seq[candidate], (⑅˘꒳˘)
+    t-twansfowmedcandidates: seq[candidate], rawr x3
+    twuncatedcandidates: seq[candidate], (✿oωo)
+    wesuwts: s-seq[candidate]
+  ): stitch[unit] = s-stitch.unit
 }

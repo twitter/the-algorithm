@@ -1,87 +1,87 @@
-package com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue
+package com.twittew.fwigate.pushsewvice.pwedicate.ntab_cawet_fatigue
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.predicate.FatiguePredicate
-import com.twitter.frigate.pushservice.predicate.CaretFeedbackHistoryFilter
-import com.twitter.frigate.pushservice.predicate.{
-  TargetNtabCaretClickFatiguePredicate => CommonNtabCaretClickFatiguePredicate
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.pwedicate.fatiguepwedicate
+i-impowt com.twittew.fwigate.pushsewvice.pwedicate.cawetfeedbackhistowyfiwtew
+i-impowt c-com.twittew.fwigate.pushsewvice.pwedicate.{
+  t-tawgetntabcawetcwickfatiguepwedicate => c-commonntabcawetcwickfatiguepwedicate
 }
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.thriftscala.NotificationDisplayLocation
-import com.twitter.frigate.thriftscala.{CommonRecommendationType => CRT}
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.notificationservice.thriftscala.CaretFeedbackDetails
-import com.twitter.util.Duration
-import com.twitter.util.Future
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushpawams
+impowt com.twittew.fwigate.thwiftscawa.notificationdispwaywocation
+impowt com.twittew.fwigate.thwiftscawa.{commonwecommendationtype => cwt}
+impowt com.twittew.hewmit.pwedicate.namedpwedicate
+i-impowt com.twittew.hewmit.pwedicate.pwedicate
+impowt c-com.twittew.notificationsewvice.thwiftscawa.cawetfeedbackdetaiws
+impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.futuwe
 
-object RecTypeNtabCaretClickFatiguePredicate {
-  val defaultName = "RecTypeNtabCaretClickFatiguePredicateForCandidate"
+object wectypentabcawetcwickfatiguepwedicate {
+  vaw defauwtname = "wectypentabcawetcwickfatiguepwedicatefowcandidate"
 
-  private def candidateFatiguePredicate(
-    genericTypeCategories: Seq[String],
-    crts: Set[CRT]
+  pwivate def candidatefatiguepwedicate(
+    g-genewictypecategowies: seq[stwing], nyaa~~
+    c-cwts: set[cwt]
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[
-    PushCandidate
+    i-impwicit stats: statsweceivew
+  ): nyamedpwedicate[
+    pushcandidate
   ] = {
-    val name = "f1TriggeredCRTBasedFatiguePredciate"
-    val scopedStats = stats.scope(s"predicate_$name")
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        if (candidate.frigateNotification.notificationDisplayLocation == NotificationDisplayLocation.PushToMobileDevice) {
-          if (candidate.target.params(PushParams.EnableFatigueNtabCaretClickingParam)) {
-            NtabCaretClickContFnFatiguePredicate
-              .ntabCaretClickContFnFatiguePredicates(
-                filterHistory = FatiguePredicate.recTypesOnlyFilter(crts),
-                filterCaretFeedbackHistory =
-                  CaretFeedbackHistoryFilter.caretFeedbackHistoryFilter(genericTypeCategories),
-                filterInlineFeedbackHistory =
-                  NtabCaretClickFatigueUtils.feedbackModelFilterByCRT(crts)
-              ).apply(Seq(candidate))
-              .map(_.headOption.getOrElse(false))
-          } else Future.True
-        } else {
-          Future.True
+    vaw n-name = "f1twiggewedcwtbasedfatiguepwedciate"
+    vaw scopedstats = stats.scope(s"pwedicate_$name")
+    pwedicate
+      .fwomasync { candidate: pushcandidate =>
+        i-if (candidate.fwigatenotification.notificationdispwaywocation == nyotificationdispwaywocation.pushtomobiwedevice) {
+          i-if (candidate.tawget.pawams(pushpawams.enabwefatiguentabcawetcwickingpawam)) {
+            n-ntabcawetcwickcontfnfatiguepwedicate
+              .ntabcawetcwickcontfnfatiguepwedicates(
+                f-fiwtewhistowy = f-fatiguepwedicate.wectypesonwyfiwtew(cwts), nyaa~~
+                fiwtewcawetfeedbackhistowy =
+                  cawetfeedbackhistowyfiwtew.cawetfeedbackhistowyfiwtew(genewictypecategowies), :3
+                f-fiwtewinwinefeedbackhistowy =
+                  nytabcawetcwickfatigueutiws.feedbackmodewfiwtewbycwt(cwts)
+              ).appwy(seq(candidate))
+              .map(_.headoption.getowewse(fawse))
+          } ewse futuwe.twue
+        } e-ewse {
+          futuwe.twue
         }
-      }.withStats(scopedStats)
-      .withName(name)
+      }.withstats(scopedstats)
+      .withname(name)
   }
 
-  def apply(
-    genericTypeCategories: Seq[String],
-    crts: Set[CRT],
-    calculateFatiguePeriod: Seq[CaretFeedbackDetails] => Duration,
-    useMostRecentDislikeTime: Boolean,
-    name: String = defaultName
+  def appwy(
+    genewictypecategowies: seq[stwing],
+    cwts: set[cwt], 😳😳😳
+    cawcuwatefatiguepewiod: s-seq[cawetfeedbackdetaiws] => duwation, (˘ω˘)
+    usemostwecentdiswiketime: b-boowean, ^^
+    n-nyame: stwing = d-defauwtname
   )(
-    implicit globalStats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val scopedStats = globalStats.scope(name)
-    val commonNtabCaretClickFatiguePredicate = CommonNtabCaretClickFatiguePredicate(
-      filterCaretFeedbackHistory =
-        CaretFeedbackHistoryFilter.caretFeedbackHistoryFilter(genericTypeCategories),
-      filterHistory = FatiguePredicate.recTypesOnlyFilter(crts),
-      calculateFatiguePeriod = calculateFatiguePeriod,
-      useMostRecentDislikeTime = useMostRecentDislikeTime,
-      name = name
-    )(globalStats)
+    impwicit gwobawstats: statsweceivew
+  ): n-nyamedpwedicate[pushcandidate] = {
+    v-vaw scopedstats = gwobawstats.scope(name)
+    v-vaw commonntabcawetcwickfatiguepwedicate = c-commonntabcawetcwickfatiguepwedicate(
+      fiwtewcawetfeedbackhistowy =
+        c-cawetfeedbackhistowyfiwtew.cawetfeedbackhistowyfiwtew(genewictypecategowies), :3
+      fiwtewhistowy = f-fatiguepwedicate.wectypesonwyfiwtew(cwts), -.-
+      cawcuwatefatiguepewiod = cawcuwatefatiguepewiod, 😳
+      u-usemostwecentdiswiketime = usemostwecentdiswiketime, mya
+      n-nyame = nyame
+    )(gwobawstats)
 
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        if (candidate.frigateNotification.notificationDisplayLocation == NotificationDisplayLocation.PushToMobileDevice) {
-          if (candidate.target.params(PushParams.EnableFatigueNtabCaretClickingParam)) {
-            commonNtabCaretClickFatiguePredicate
-              .apply(Seq(candidate.target))
-              .map(_.headOption.getOrElse(false))
-          } else Future.True
-        } else {
-          Future.True
+    p-pwedicate
+      .fwomasync { candidate: p-pushcandidate =>
+        if (candidate.fwigatenotification.notificationdispwaywocation == nyotificationdispwaywocation.pushtomobiwedevice) {
+          if (candidate.tawget.pawams(pushpawams.enabwefatiguentabcawetcwickingpawam)) {
+            commonntabcawetcwickfatiguepwedicate
+              .appwy(seq(candidate.tawget))
+              .map(_.headoption.getowewse(fawse))
+          } ewse futuwe.twue
+        } e-ewse {
+          f-futuwe.twue
         }
-      }.andThen(candidateFatiguePredicate(genericTypeCategories, crts))
-      .withStats(scopedStats)
-      .withName(name)
+      }.andthen(candidatefatiguepwedicate(genewictypecategowies, (˘ω˘) cwts))
+      .withstats(scopedstats)
+      .withname(name)
   }
 }

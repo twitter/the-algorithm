@@ -1,33 +1,33 @@
-package com.twitter.timelineranker.common
+package com.twittew.timewinewankew.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.util.Future
+impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.timewinewankew.cowe.candidateenvewope
+i-impowt c-com.twittew.timewinewankew.cowe.hydwatedcandidatesandfeatuwesenvewope
+i-impowt c-com.twittew.timewinewankew.modew.wecapquewy
+i-impowt c-com.twittew.utiw.futuwe
 
 /**
- * Fetches all data required for feature hydration and generates the HydratedCandidatesAndFeaturesEnvelope
- * @param tweetHydrationAndFilteringPipeline Pipeline which fetches the candidate tweets, hydrates and filters them
- * @param languagesService Fetch user languages, required for feature hydration
- * @param userProfileInfoService Fetch user profile info, required for feature hydration
+ * fetches aww data wequiwed fow featuwe hydwation and genewates t-the hydwatedcandidatesandfeatuwesenvewope
+ * @pawam tweethydwationandfiwtewingpipewine pipewine w-which fetches the candidate tweets, 🥺 h-hydwates and fiwtews them
+ * @pawam wanguagessewvice fetch u-usew wanguages, >_< wequiwed fow featuwe h-hydwation
+ * @pawam u-usewpwofiweinfosewvice fetch usew pwofiwe info, >_< wequiwed fow featuwe hydwation
  */
-class FeatureHydrationDataTransform(
-  tweetHydrationAndFilteringPipeline: FutureArrow[RecapQuery, CandidateEnvelope],
-  languagesService: UserLanguagesTransform,
-  userProfileInfoService: UserProfileInfoTransform)
-    extends FutureArrow[RecapQuery, HydratedCandidatesAndFeaturesEnvelope] {
-  override def apply(request: RecapQuery): Future[HydratedCandidatesAndFeaturesEnvelope] = {
-    Future
+cwass f-featuwehydwationdatatwansfowm(
+  tweethydwationandfiwtewingpipewine: futuweawwow[wecapquewy, (⑅˘꒳˘) candidateenvewope], /(^•ω•^)
+  wanguagessewvice: u-usewwanguagestwansfowm,
+  usewpwofiweinfosewvice: u-usewpwofiweinfotwansfowm)
+    e-extends f-futuweawwow[wecapquewy, rawr x3 h-hydwatedcandidatesandfeatuwesenvewope] {
+  ovewwide def appwy(wequest: wecapquewy): f-futuwe[hydwatedcandidatesandfeatuwesenvewope] = {
+    futuwe
       .join(
-        languagesService(request),
-        userProfileInfoService(request),
-        tweetHydrationAndFilteringPipeline(request)).map {
-        case (languages, userProfileInfo, transformedCandidateEnvelope) =>
-          HydratedCandidatesAndFeaturesEnvelope(
-            transformedCandidateEnvelope,
-            languages,
-            userProfileInfo)
+        wanguagessewvice(wequest), (U ﹏ U)
+        u-usewpwofiweinfosewvice(wequest), (U ﹏ U)
+        tweethydwationandfiwtewingpipewine(wequest)).map {
+        case (wanguages, (⑅˘꒳˘) usewpwofiweinfo, òωó twansfowmedcandidateenvewope) =>
+          hydwatedcandidatesandfeatuwesenvewope(
+            t-twansfowmedcandidateenvewope, ʘwʘ
+            wanguages, /(^•ω•^)
+            usewpwofiweinfo)
       }
   }
 }

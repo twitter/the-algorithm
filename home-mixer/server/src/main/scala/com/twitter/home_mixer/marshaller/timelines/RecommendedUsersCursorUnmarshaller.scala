@@ -1,20 +1,20 @@
-package com.twitter.home_mixer.marshaller.timelines
+package com.twittew.home_mixew.mawshawwew.timewines
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedExcludeIdsCursor
-import com.twitter.timelines.service.{thriftscala => t}
-import com.twitter.util.Time
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.uwtunowdewedexcwudeidscuwsow
+i-impowt com.twittew.timewines.sewvice.{thwiftscawa => t-t}
+impowt c-com.twittew.utiw.time
 
-object RecommendedUsersCursorUnmarshaller {
+o-object wecommendedusewscuwsowunmawshawwew {
 
-  def apply(requestCursor: t.RequestCursor): Option[UrtUnorderedExcludeIdsCursor] = {
-    requestCursor match {
-      case t.RequestCursor.RecommendedUsersCursor(cursor) =>
-        Some(
-          UrtUnorderedExcludeIdsCursor(
-            initialSortIndex = cursor.minSortIndex.getOrElse(Time.now.inMilliseconds),
-            excludedIds = cursor.previouslyRecommendedUserIds
+  d-def appwy(wequestcuwsow: t.wequestcuwsow): o-option[uwtunowdewedexcwudeidscuwsow] = {
+    w-wequestcuwsow m-match {
+      case t.wequestcuwsow.wecommendedusewscuwsow(cuwsow) =>
+        some(
+          uwtunowdewedexcwudeidscuwsow(
+            initiawsowtindex = c-cuwsow.minsowtindex.getowewse(time.now.inmiwwiseconds),
+            excwudedids = cuwsow.pweviouswywecommendedusewids
           ))
-      case _ => None
+      case _ => n-nyone
     }
   }
 }

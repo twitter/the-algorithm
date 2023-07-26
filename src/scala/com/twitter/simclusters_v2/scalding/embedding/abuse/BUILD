@@ -1,74 +1,74 @@
-scala_library(
-    sources = [
-        "*.scala",
+scawa_wibwawy(
+    souwces = [
+        "*.scawa", (⑅˘꒳˘)
     ],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/algebird:core",
-        "graphstore/common:flock_blocks-java",
-        "src/java/com/twitter/search/common/features",
-        "src/scala/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/scalding_internal/dalv2",
-        "src/scala/com/twitter/scalding_internal/dalv2/dataset",
-        "src/scala/com/twitter/scalding_internal/source/lzo_scrooge",
-        "src/scala/com/twitter/search/tweet_ranking/scalding/datasets:tweet_engagement_raw_training_data_daily-java",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:adhoc_abuse_simcluster_features-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:adhoc_cross_simcluster_block_interaction_features-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:adhoc_cross_simcluster_fav_interaction_features-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:search_abuse_simcluster_features_manhattan-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:user_user_fav_graph-scala",
-        "src/scala/com/twitter/simclusters_v2/scalding/common",
-        "src/scala/com/twitter/simclusters_v2/scalding/common/matrix",
-        "src/scala/com/twitter/simclusters_v2/scalding/embedding",
-        "src/scala/com/twitter/wtf/entity_real_graph/common",
-        "src/scala/com/twitter/wtf/entity_real_graph/scalding/common",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:cassowary_job",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:execution_app",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:sources",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:stats_util",
-    ],
+    compiwew_option_sets = ["fataw_wawnings"], (U ᵕ U❁)
+    p-pwatfowm = "java8", -.-
+    t-tags = ["bazew-compatibwe"], ^^;;
+    d-dependencies = [
+        "3wdpawty/jvm/com/twittew/awgebiwd:cowe", >_<
+        "gwaphstowe/common:fwock_bwocks-java", mya
+        "swc/java/com/twittew/seawch/common/featuwes", mya
+        "swc/scawa/com/twittew/mw/api:api-base", 😳
+        "swc/scawa/com/twittew/scawding_intewnaw/dawv2", XD
+        "swc/scawa/com/twittew/scawding_intewnaw/dawv2/dataset", :3
+        "swc/scawa/com/twittew/scawding_intewnaw/souwce/wzo_scwooge", 😳😳😳
+        "swc/scawa/com/twittew/seawch/tweet_wanking/scawding/datasets:tweet_engagement_waw_twaining_data_daiwy-java", -.-
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces", ( ͡o ω ͡o )
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:adhoc_abuse_simcwustew_featuwes-scawa", rawr x3
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:adhoc_cwoss_simcwustew_bwock_intewaction_featuwes-scawa", nyaa~~
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:adhoc_cwoss_simcwustew_fav_intewaction_featuwes-scawa", /(^•ω•^)
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:seawch_abuse_simcwustew_featuwes_manhattan-scawa",
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:usew_usew_fav_gwaph-scawa", rawr
+        "swc/scawa/com/twittew/simcwustews_v2/scawding/common", OwO
+        "swc/scawa/com/twittew/simcwustews_v2/scawding/common/matwix", (U ﹏ U)
+        "swc/scawa/com/twittew/simcwustews_v2/scawding/embedding", >_<
+        "swc/scawa/com/twittew/wtf/entity_weaw_gwaph/common", rawr x3
+        "swc/scawa/com/twittew/wtf/entity_weaw_gwaph/scawding/common", mya
+        "swc/scawa/com/twittew/wtf/scawding/jobs/common:cassowawy_job", nyaa~~
+        "swc/scawa/com/twittew/wtf/scawding/jobs/common:execution_app", (⑅˘꒳˘)
+        "swc/scawa/com/twittew/wtf/scawding/jobs/common:souwces", rawr x3
+        "swc/scawa/com/twittew/wtf/scawding/jobs/common:stats_utiw", (✿oωo)
+    ], (ˆ ﻌ ˆ)♡
 )
 
-hadoop_binary(
-    name = "abuse-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.embedding.abuse.AdhocAbuseScaldingJob",
-    platform = "java8",
-    runtime_platform = "java8",
+h-hadoop_binawy(
+    n-nyame = "abuse-adhoc", (˘ω˘)
+    main = "com.twittew.simcwustews_v2.scawding.embedding.abuse.adhocabusescawdingjob", (⑅˘꒳˘)
+    p-pwatfowm = "java8", (///ˬ///✿)
+    wuntime_pwatfowm = "java8", 😳😳😳
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
+        "bazew-compatibwe",
+        "bazew-compatibwe:migwated", 🥺
+        "bazew-onwy", mya
+    ], 🥺
+    d-dependencies = [":abuse"], >_<
+)
+
+h-hadoop_binawy(
+    nyame = "abuse-pwod", >_<
+    main = "com.twittew.simcwustews_v2.scawding.embedding.abuse.seawchabusesimcwustewfeatuwesscawdingjob", (⑅˘꒳˘)
+    pwatfowm = "java8", /(^•ω•^)
+    wuntime_pwatfowm = "java8", rawr x3
+    t-tags = [
+        "bazew-compatibwe", (U ﹏ U)
+        "bazew-compatibwe:migwated", (U ﹏ U)
+        "bazew-onwy", (⑅˘꒳˘)
+    ], òωó
     dependencies = [":abuse"],
 )
 
-hadoop_binary(
-    name = "abuse-prod",
-    main = "com.twitter.simclusters_v2.scalding.embedding.abuse.SearchAbuseSimclusterFeaturesScaldingJob",
-    platform = "java8",
-    runtime_platform = "java8",
+hadoop_binawy(
+    n-nyame = "cwoss_simcwustew-adhoc", ʘwʘ
+    main = "com.twittew.simcwustews_v2.scawding.embedding.abuse.cwosssimcwustewfeatuwesscawdingjob", /(^•ω•^)
+    pwatfowm = "java8", ʘwʘ
+    w-wuntime_pwatfowm = "java8", σωσ
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [":abuse"],
-)
-
-hadoop_binary(
-    name = "cross_simcluster-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.embedding.abuse.CrossSimClusterFeaturesScaldingJob",
-    platform = "java8",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
+        "bazew-compatibwe", OwO
+        "bazew-compatibwe:migwated", 😳😳😳
+        "bazew-onwy", 😳😳😳
+    ], o.O
     dependencies = [
-        ":abuse",
-    ],
+        ":abuse", ( ͡o ω ͡o )
+    ], (U ﹏ U)
 )

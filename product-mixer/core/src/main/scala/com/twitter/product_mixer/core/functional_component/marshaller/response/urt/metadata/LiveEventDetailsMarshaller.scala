@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.LiveEventDetails
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wiveeventdetaiws
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class LiveEventDetailsMarshaller @Inject() () {
+@singweton
+c-cwass w-wiveeventdetaiwsmawshawwew @inject() () {
 
-  def apply(liveEventDetails: LiveEventDetails): urt.LiveEventDetails = urt.LiveEventDetails(
-    eventId = liveEventDetails.eventId
+  d-def appwy(wiveeventdetaiws: wiveeventdetaiws): uwt.wiveeventdetaiws = uwt.wiveeventdetaiws(
+    e-eventid = wiveeventdetaiws.eventid
   )
 }

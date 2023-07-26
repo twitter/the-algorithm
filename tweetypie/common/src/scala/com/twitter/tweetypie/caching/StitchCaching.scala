@@ -1,36 +1,36 @@
-package com.twitter.tweetypie.caching
+package com.twittew.tweetypie.caching
 
-import com.twitter.stitch.Stitch
+impowt com.twittew.stitch.stitch
 
 /**
- * Apply caching to a [[Stitch]] function.
+ * appwy c-caching to a-a [[stitch]] function. 😳😳😳
  *
- * @see CacheResult for more information about the semantics
- *   implemented here.
+ * @see c-cachewesuwt fow m-mowe infowmation a-about the semantics
+ *   i-impwemented h-hewe. 🥺
  */
-class StitchCaching[K, V](operations: CacheOperations[K, V], repo: K => Stitch[V])
-    extends (K => Stitch[V]) {
+c-cwass stitchcaching[k, mya v](opewations: cacheopewations[k, 🥺 v], wepo: k => stitch[v])
+    e-extends (k => stitch[v]) {
 
-  private[this] val stitchOps = new StitchCacheOperations(operations)
+  pwivate[this] v-vaw stitchops = nyew stitchcacheopewations(opewations)
 
-  override def apply(key: K): Stitch[V] =
-    stitchOps.get(key).flatMap {
-      case CacheResult.Fresh(value) =>
-        Stitch.value(value)
+  ovewwide d-def appwy(key: k): stitch[v] =
+    stitchops.get(key).fwatmap {
+      case c-cachewesuwt.fwesh(vawue) =>
+        stitch.vawue(vawue)
 
-      case CacheResult.Stale(staleValue) =>
-        StitchAsync(repo(key).flatMap(refreshed => stitchOps.set(key, refreshed)))
-          .map(_ => staleValue)
+      c-case cachewesuwt.stawe(stawevawue) =>
+        s-stitchasync(wepo(key).fwatmap(wefweshed => stitchops.set(key, >_< wefweshed)))
+          .map(_ => stawevawue)
 
-      case CacheResult.Miss =>
-        repo(key)
-          .applyEffect(value => StitchAsync(stitchOps.set(key, value)))
+      case cachewesuwt.miss =>
+        wepo(key)
+          .appwyeffect(vawue => s-stitchasync(stitchops.set(key, >_< vawue)))
 
-      case CacheResult.Failure(_) =>
-        // In the case of failure, we don't attempt to write back to
-        // cache, because cache failure usually means communication
-        // failure, and sending more requests to the cache that holds
-        // the value for this key could make the situation worse.
-        repo(key)
+      case cachewesuwt.faiwuwe(_) =>
+        // in the case o-of faiwuwe, (⑅˘꒳˘) we don't attempt to w-wwite back to
+        // c-cache, /(^•ω•^) b-because cache f-faiwuwe usuawwy means communication
+        // faiwuwe, and sending m-mowe wequests to the cache that howds
+        // t-the vawue fow this key couwd make the situation wowse. rawr x3
+        wepo(key)
     }
 }

@@ -1,85 +1,85 @@
-package com.twitter.timelineranker.common
+package com.twittew.timewinewankew.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.servo.util.Gate
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelineranker.parameters.recap.RecapParams
-import com.twitter.timelineranker.parameters.uteg_liked_by_tweets.UtegLikedByTweetsParams
-import com.twitter.timelineranker.util.TweetFilters
-import com.twitter.timelines.common.model.TweetKindOption
-import com.twitter.util.Future
-import scala.collection.mutable
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.sewvo.utiw.gate
+i-impowt com.twittew.timewinewankew.cowe.candidateenvewope
+impowt c-com.twittew.timewinewankew.modew.wecapquewy
+i-impowt com.twittew.timewinewankew.pawametews.wecap.wecappawams
+i-impowt com.twittew.timewinewankew.pawametews.uteg_wiked_by_tweets.utegwikedbytweetspawams
+impowt com.twittew.timewinewankew.utiw.tweetfiwtews
+impowt com.twittew.timewines.common.modew.tweetkindoption
+impowt c-com.twittew.utiw.futuwe
+impowt scawa.cowwection.mutabwe
 
-object TweetKindOptionHydratedTweetsFilterTransform {
-  private[common] val enableExpandedExtendedRepliesGate: Gate[RecapQuery] =
-    RecapQuery.paramGate(RecapParams.EnableExpandedExtendedRepliesFilterParam)
+object t-tweetkindoptionhydwatedtweetsfiwtewtwansfowm {
+  pwivate[common] v-vaw enabweexpandedextendedwepwiesgate: gate[wecapquewy] =
+    wecapquewy.pawamgate(wecappawams.enabweexpandedextendedwepwiesfiwtewpawam)
 
-  private[common] val excludeRecommendedRepliesToNonFollowedUsersGate: Gate[RecapQuery] =
-    RecapQuery.paramGate(
-      UtegLikedByTweetsParams.UTEGRecommendationsFilter.ExcludeRecommendedRepliesToNonFollowedUsersParam)
+  pwivate[common] vaw e-excwudewecommendedwepwiestononfowwowedusewsgate: gate[wecapquewy] =
+    w-wecapquewy.pawamgate(
+      u-utegwikedbytweetspawams.utegwecommendationsfiwtew.excwudewecommendedwepwiestononfowwowedusewspawam)
 }
 
 /**
- * Filter hydrated tweets dynamically based on TweetKindOptions in the query.
+ * fiwtew hydwated tweets dynamicawwy based on tweetkindoptions in the quewy. 😳
  */
-class TweetKindOptionHydratedTweetsFilterTransform(
-  useFollowGraphData: Boolean,
-  useSourceTweets: Boolean,
-  statsReceiver: StatsReceiver)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  import TweetKindOptionHydratedTweetsFilterTransform._
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val filters = convertToFilters(envelope)
+c-cwass tweetkindoptionhydwatedtweetsfiwtewtwansfowm(
+  usefowwowgwaphdata: boowean, 😳
+  usesouwcetweets: boowean, σωσ
+  s-statsweceivew: statsweceivew)
+    e-extends futuweawwow[candidateenvewope, rawr x3 c-candidateenvewope] {
+  i-impowt tweetkindoptionhydwatedtweetsfiwtewtwansfowm._
+  o-ovewwide def appwy(envewope: candidateenvewope): f-futuwe[candidateenvewope] = {
+    vaw fiwtews = convewttofiwtews(envewope)
 
-    val filterTransform = if (filters == TweetFilters.ValueSet.empty) {
-      FutureArrow.identity[CandidateEnvelope]
-    } else {
-      new HydratedTweetsFilterTransform(
-        outerFilters = filters,
-        innerFilters = TweetFilters.None,
-        useFollowGraphData = useFollowGraphData,
-        useSourceTweets = useSourceTweets,
-        statsReceiver = statsReceiver,
-        numRetweetsAllowed = HydratedTweetsFilterTransform.NumDuplicateRetweetsAllowed
+    v-vaw fiwtewtwansfowm = if (fiwtews == tweetfiwtews.vawueset.empty) {
+      futuweawwow.identity[candidateenvewope]
+    } ewse {
+      n-nyew hydwatedtweetsfiwtewtwansfowm(
+        outewfiwtews = f-fiwtews, OwO
+        i-innewfiwtews = t-tweetfiwtews.none, /(^•ω•^)
+        usefowwowgwaphdata = usefowwowgwaphdata, 😳😳😳
+        usesouwcetweets = u-usesouwcetweets, ( ͡o ω ͡o )
+        s-statsweceivew = statsweceivew, >_<
+        n-nyumwetweetsawwowed = h-hydwatedtweetsfiwtewtwansfowm.numdupwicatewetweetsawwowed
       )
     }
 
-    filterTransform.apply(envelope)
+    fiwtewtwansfowm.appwy(envewope)
   }
 
   /**
-   * Converts the given query options to equivalent TweetFilter values.
+   * c-convewts the given q-quewy options to equivawent tweetfiwtew vawues.
    *
-   * Note:
-   * -- The semantic of TweetKindOption is opposite of that of TweetFilters.
-   *    TweetKindOption values are of the form IncludeX. That is, they result in X being added.
-   *    TweetFilters values specify what to exclude.
-   * -- IncludeExtendedReplies requires IncludeReplies to be also specified to be effective.
+   * n-nyote:
+   * -- the semantic o-of tweetkindoption is opposite o-of that of t-tweetfiwtews. >w<
+   *    tweetkindoption vawues awe of the fowm incwudex. rawr that is, 😳 they wesuwt in x being added. >w<
+   *    t-tweetfiwtews v-vawues specify nani to excwude. (⑅˘꒳˘)
+   * -- i-incwudeextendedwepwies w-wequiwes incwudewepwies t-to be awso specified to be effective. OwO
    */
-  private[common] def convertToFilters(envelope: CandidateEnvelope): TweetFilters.ValueSet = {
-    val queryOptions = envelope.query.options
-    val filters = mutable.Set.empty[TweetFilters.Value]
-    if (queryOptions.contains(TweetKindOption.IncludeReplies)) {
-      if (excludeRecommendedRepliesToNonFollowedUsersGate(
-          envelope.query) && envelope.query.utegLikedByTweetsOptions.isDefined) {
-        filters += TweetFilters.RecommendedRepliesToNotFollowedUsers
-      } else if (queryOptions.contains(TweetKindOption.IncludeExtendedReplies)) {
-        if (enableExpandedExtendedRepliesGate(envelope.query)) {
-          filters += TweetFilters.NotValidExpandedExtendedReplies
-        } else {
-          filters += TweetFilters.NotQualifiedExtendedReplies
+  pwivate[common] d-def convewttofiwtews(envewope: candidateenvewope): tweetfiwtews.vawueset = {
+    vaw quewyoptions = envewope.quewy.options
+    v-vaw fiwtews = mutabwe.set.empty[tweetfiwtews.vawue]
+    if (quewyoptions.contains(tweetkindoption.incwudewepwies)) {
+      i-if (excwudewecommendedwepwiestononfowwowedusewsgate(
+          e-envewope.quewy) && e-envewope.quewy.utegwikedbytweetsoptions.isdefined) {
+        fiwtews += tweetfiwtews.wecommendedwepwiestonotfowwowedusews
+      } e-ewse if (quewyoptions.contains(tweetkindoption.incwudeextendedwepwies)) {
+        i-if (enabweexpandedextendedwepwiesgate(envewope.quewy)) {
+          f-fiwtews += t-tweetfiwtews.notvawidexpandedextendedwepwies
+        } ewse {
+          fiwtews += t-tweetfiwtews.notquawifiedextendedwepwies
         }
-      } else {
-        filters += TweetFilters.ExtendedReplies
+      } e-ewse {
+        f-fiwtews += tweetfiwtews.extendedwepwies
       }
-    } else {
-      filters += TweetFilters.Replies
+    } e-ewse {
+      f-fiwtews += tweetfiwtews.wepwies
     }
-    if (!queryOptions.contains(TweetKindOption.IncludeRetweets)) {
-      filters += TweetFilters.Retweets
+    if (!quewyoptions.contains(tweetkindoption.incwudewetweets)) {
+      fiwtews += t-tweetfiwtews.wetweets
     }
-    TweetFilters.ValueSet.empty ++ filters
+    tweetfiwtews.vawueset.empty ++ fiwtews
   }
 }

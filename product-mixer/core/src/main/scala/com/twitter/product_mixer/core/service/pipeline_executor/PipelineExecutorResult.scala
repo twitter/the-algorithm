@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.service.pipeline_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_executow
 
-import com.twitter.product_mixer.core.pipeline.PipelineResult
-import com.twitter.product_mixer.core.service.ExecutorResult
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinewesuwt
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.executowwesuwt
 
-case class PipelineExecutorResult[ResultType](
-  pipelineResult: PipelineResult[ResultType])
-    extends ExecutorResult
+c-case c-cwass pipewineexecutowwesuwt[wesuwttype](
+  p-pipewinewesuwt: p-pipewinewesuwt[wesuwttype])
+    e-extends e-executowwesuwt

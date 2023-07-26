@@ -1,49 +1,49 @@
-package com.twitter.timelineranker.parameters.util
+package com.twittew.timewinewankew.pawametews.utiw
 
-import com.twitter.servo.util.Gate
-import com.twitter.timelines.configapi.BaseRequestContext
-import com.twitter.timelines.configapi.WithExperimentContext
-import com.twitter.timelines.configapi.WithFeatureContext
-import com.twitter.timelines.configapi.WithUserId
-import com.twitter.timelines.model.UserId
-import com.twitter.timelineservice.DeviceContext
-import com.twitter.timelineservice.model.RequestContextFactory
-import com.twitter.util.Future
+impowt com.twittew.sewvo.utiw.gate
+i-impowt com.twittew.timewines.configapi.basewequestcontext
+i-impowt com.twittew.timewines.configapi.withexpewimentcontext
+i-impowt c-com.twittew.timewines.configapi.withfeatuwecontext
+i-impowt com.twittew.timewines.configapi.withusewid
+i-impowt c-com.twittew.timewines.modew.usewid
+i-impowt com.twittew.timewinesewvice.devicecontext
+impowt com.twittew.timewinesewvice.modew.wequestcontextfactowy
+impowt com.twittew.utiw.futuwe
 
-trait CommonRequestContext
-    extends BaseRequestContext
-    with WithExperimentContext
-    with WithUserId
-    with WithFeatureContext
+twait commonwequestcontext
+    extends basewequestcontext
+    w-with withexpewimentcontext
+    with withusewid
+    with withfeatuwecontext
 
-trait RequestContextBuilder {
-  def apply(
-    recipientUserId: Option[UserId],
-    deviceContext: Option[DeviceContext]
-  ): Future[CommonRequestContext]
+t-twait wequestcontextbuiwdew {
+  d-def appwy(
+    wecipientusewid: option[usewid], (⑅˘꒳˘)
+    devicecontext: o-option[devicecontext]
+  ): futuwe[commonwequestcontext]
 }
 
-class RequestContextBuilderImpl(requestContextFactory: RequestContextFactory)
-    extends RequestContextBuilder {
-  override def apply(
-    recipientUserId: Option[UserId],
-    deviceContextOpt: Option[DeviceContext]
-  ): Future[CommonRequestContext] = {
-    val requestContextFut = requestContextFactory(
-      contextualUserIdOpt = recipientUserId,
-      deviceContext = deviceContextOpt.getOrElse(DeviceContext.empty),
-      experimentConfigurationOpt = None,
-      requestLogOpt = None,
-      contextualUserContext = None,
-      useRolesCache = Gate.True,
-      timelineId = None
+c-cwass w-wequestcontextbuiwdewimpw(wequestcontextfactowy: wequestcontextfactowy)
+    extends wequestcontextbuiwdew {
+  ovewwide def appwy(
+    w-wecipientusewid: option[usewid], òωó
+    devicecontextopt: option[devicecontext]
+  ): futuwe[commonwequestcontext] = {
+    v-vaw wequestcontextfut = w-wequestcontextfactowy(
+      c-contextuawusewidopt = w-wecipientusewid,
+      d-devicecontext = devicecontextopt.getowewse(devicecontext.empty), ʘwʘ
+      expewimentconfiguwationopt = n-nyone, /(^•ω•^)
+      wequestwogopt = nyone, ʘwʘ
+      contextuawusewcontext = n-nyone, σωσ
+      usewowescache = gate.twue, OwO
+      timewineid = nyone
     )
 
-    requestContextFut.map { requestContext =>
-      new CommonRequestContext {
-        override val userId = recipientUserId
-        override val experimentContext = requestContext.experimentContext
-        override val featureContext = requestContext.featureContext
+    wequestcontextfut.map { w-wequestcontext =>
+      nyew commonwequestcontext {
+        o-ovewwide vaw u-usewid = wecipientusewid
+        o-ovewwide vaw expewimentcontext = wequestcontext.expewimentcontext
+        ovewwide v-vaw featuwecontext = w-wequestcontext.featuwecontext
       }
     }
   }

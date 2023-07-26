@@ -1,16 +1,16 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.twittew.fwigate.pushsewvice.modew.ibis
 
-import com.twitter.frigate.common.base.TrendTweetCandidate
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
+impowt com.twittew.fwigate.common.base.twendtweetcandidate
+i-impowt c-com.twittew.fwigate.common.base.tweetauthowdetaiws
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
 
-trait TrendTweetIbis2Hydrator extends TweetCandidateIbis2Hydrator {
-  self: PushCandidate with TrendTweetCandidate with TweetAuthorDetails =>
+t-twait t-twendtweetibis2hydwatow e-extends t-tweetcandidateibis2hydwatow {
+  s-sewf: pushcandidate with twendtweetcandidate with tweetauthowdetaiws =>
 
-  lazy val trendNameModelValue = Map("trend_name" -> trendName)
+  wazy vaw twendnamemodewvawue = map("twend_name" -> t-twendname)
 
-  override lazy val tweetModelValues = for {
-    tweetValues <- super.tweetModelValues
-    inlineActionValues <- tweetInlineActionModelValue
-  } yield tweetValues ++ inlineActionValues ++ trendNameModelValue
+  ovewwide wazy vaw tweetmodewvawues = f-fow {
+    tweetvawues <- supew.tweetmodewvawues
+    i-inwineactionvawues <- tweetinwineactionmodewvawue
+  } yiewd tweetvawues ++ inwineactionvawues ++ twendnamemodewvawue
 }

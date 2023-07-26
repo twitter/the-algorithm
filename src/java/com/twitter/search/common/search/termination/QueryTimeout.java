@@ -1,24 +1,24 @@
-package com.twitter.search.common.search.termination;
+package com.twittew.seawch.common.seawch.tewmination;
 
-import com.twitter.search.common.search.DocIdTracker;
+impowt com.twittew.seawch.common.seawch.docidtwackew;
 
 /**
- * QueryTimeout provides a method for early termination of queries.
+ * q-quewytimeout p-pwovides a method f-fow eawwy tewmination o-of quewies. >_<
  */
-public interface QueryTimeout {
+p-pubwic i-intewface quewytimeout {
   /**
-   * Returns true if query processing should terminate, otherwise false.
+   * w-wetuwns twue i-if quewy pwocessing shouwd tewminate, mya othewwise fawse. mya
    */
-  boolean shouldExit();
+  boowean shouwdexit();
 
   /**
-   * Register a DocIdTracker for the scope of the query, to determine the last fully-searched
-   * doc ID after early termination.
+   * w-wegistew a docidtwackew fow the scope of the quewy, 😳 t-to detewmine the wast fuwwy-seawched
+   * d-doc id aftew eawwy tewmination. XD
    */
-  void registerDocIdTracker(DocIdTracker docIdTracker);
+  void wegistewdocidtwackew(docidtwackew docidtwackew);
 
   /**
-   * Return client ID of query.
+   * wetuwn c-cwient id of quewy. :3
    */
-  String getClientId();
+  stwing g-getcwientid();
 }

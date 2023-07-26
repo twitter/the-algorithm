@@ -1,56 +1,56 @@
-package com.twitter.frigate.pushservice.util
+package com.twittew.fwigate.pushsewvice.utiw
 
-import com.twitter.frigate.common.store.deviceinfo.DeviceInfo
-import com.twitter.frigate.common.store.deviceinfo.MobileClientType
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.util.Future
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
+impowt c-com.twittew.fwigate.common.stowe.deviceinfo.deviceinfo
+i-impowt c-com.twittew.fwigate.common.stowe.deviceinfo.mobiwecwienttype
+impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+i-impowt c-com.twittew.utiw.futuwe
+i-impowt c-com.twittew.finagwe.stats.nuwwstatsweceivew
+impowt com.twittew.finagwe.stats.statsweceivew
 
-object PushDeviceUtil {
+object pushdeviceutiw {
 
-  def isPrimaryDeviceAndroid(deviceInfoOpt: Option[DeviceInfo]): Boolean = {
-    deviceInfoOpt.exists {
-      _.guessedPrimaryClient.exists { clientType =>
-        (clientType == MobileClientType.Android) || (clientType == MobileClientType.AndroidLite)
+  def ispwimawydeviceandwoid(deviceinfoopt: option[deviceinfo]): b-boowean = {
+    deviceinfoopt.exists {
+      _.guessedpwimawycwient.exists { cwienttype =>
+        (cwienttype == m-mobiwecwienttype.andwoid) || (cwienttype == mobiwecwienttype.andwoidwite)
       }
     }
   }
 
-  def isPrimaryDeviceIOS(deviceInfoOpt: Option[DeviceInfo]): Boolean = {
-    deviceInfoOpt.exists {
-      _.guessedPrimaryClient.exists { clientType =>
-        (clientType == MobileClientType.Iphone) || (clientType == MobileClientType.Ipad)
+  d-def ispwimawydeviceios(deviceinfoopt: option[deviceinfo]): boowean = {
+    deviceinfoopt.exists {
+      _.guessedpwimawycwient.exists { c-cwienttype =>
+        (cwienttype == mobiwecwienttype.iphone) || (cwienttype == m-mobiwecwienttype.ipad)
       }
     }
   }
 
-  def isPushRecommendationsEligible(target: Target): Future[Boolean] =
-    target.deviceInfo.map(_.exists(_.isRecommendationsEligible))
+  d-def ispushwecommendationsewigibwe(tawget: tawget): futuwe[boowean] =
+    tawget.deviceinfo.map(_.exists(_.iswecommendationsewigibwe))
 
-  def isTopicsEligible(
-    target: Target,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Future[Boolean] = {
-    val isTopicsSkipFatigue = Future.True
+  d-def istopicsewigibwe(
+    tawget: tawget, (U ﹏ U)
+    statsweceivew: statsweceivew = nyuwwstatsweceivew
+  ): f-futuwe[boowean] = {
+    vaw istopicsskipfatigue = f-futuwe.twue
 
-    Future.join(isTopicsSkipFatigue, target.deviceInfo.map(_.exists(_.isTopicsEligible))).map {
-      case (isTopicsNotFatigue, isTopicsEligibleSetting) =>
-        isTopicsNotFatigue && isTopicsEligibleSetting
+    futuwe.join(istopicsskipfatigue, (U ﹏ U) t-tawget.deviceinfo.map(_.exists(_.istopicsewigibwe))).map {
+      c-case (istopicsnotfatigue, (⑅˘꒳˘) i-istopicsewigibwesetting) =>
+        istopicsnotfatigue && istopicsewigibwesetting
     }
   }
 
-  def isSpacesEligible(target: Target): Future[Boolean] =
-    target.deviceInfo.map(_.exists(_.isSpacesEligible))
+  def isspacesewigibwe(tawget: t-tawget): futuwe[boowean] =
+    tawget.deviceinfo.map(_.exists(_.isspacesewigibwe))
 
-  def isNtabOnlyEligible: Future[Boolean] = {
-    Future.False
+  d-def isntabonwyewigibwe: futuwe[boowean] = {
+    futuwe.fawse
   }
 
-  def isRecommendationsEligible(target: Target): Future[Boolean] = {
-    Future.join(isPushRecommendationsEligible(target), isNtabOnlyEligible).map {
-      case (isPushRecommendation, isNtabOnly) => isPushRecommendation || isNtabOnly
-      case _ => false
+  def iswecommendationsewigibwe(tawget: tawget): f-futuwe[boowean] = {
+    futuwe.join(ispushwecommendationsewigibwe(tawget), òωó i-isntabonwyewigibwe).map {
+      c-case (ispushwecommendation, ʘwʘ i-isntabonwy) => ispushwecommendation || isntabonwy
+      case _ => fawse
     }
   }
 

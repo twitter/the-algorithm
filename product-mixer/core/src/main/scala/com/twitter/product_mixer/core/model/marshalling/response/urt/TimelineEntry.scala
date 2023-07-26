@@ -1,56 +1,56 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ContainsFeedbackActionInfos
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.HasClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.HasFeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.PinnableEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ReplaceableEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.MarkUnreadableEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleFooter
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleHeader
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleShowMoreBehavior
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.containsfeedbackactioninfos
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.hascwienteventinfo
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.hasfeedbackactioninfo
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.pinnabweentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wepwaceabweentwy
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.mawkunweadabweentwy
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.moduwedispwaytype
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.moduwefootew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.moduweheadew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.moduwemetadata
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.moduweshowmowebehaviow
 
-sealed trait TimelineEntry
-    extends HasEntryIdentifier
-    with HasSortIndex
-    with HasExpirationTime
-    with PinnableEntry
-    with ReplaceableEntry
-    with MarkUnreadableEntry
+s-seawed twait timewineentwy
+    e-extends hasentwyidentifiew
+    with hassowtindex
+    w-with hasexpiwationtime
+    with p-pinnabweentwy
+    w-with wepwaceabweentwy
+    with mawkunweadabweentwy
 
-trait TimelineItem extends TimelineEntry with HasClientEventInfo with HasFeedbackActionInfo
+twait timewineitem extends t-timewineentwy with hascwienteventinfo with hasfeedbackactioninfo
 
-case class ModuleItem(
-  item: TimelineItem,
-  dispensable: Option[Boolean],
-  treeDisplay: Option[ModuleItemTreeDisplay])
+case cwass moduweitem(
+  item: t-timewineitem, 🥺
+  dispensabwe: o-option[boowean], o.O
+  t-tweedispway: o-option[moduweitemtweedispway])
 
-case class TimelineModule(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val entryNamespace: EntryNamespace,
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  override val isPinned: Option[Boolean],
-  items: Seq[ModuleItem],
-  displayType: ModuleDisplayType,
-  header: Option[ModuleHeader],
-  footer: Option[ModuleFooter],
-  metadata: Option[ModuleMetadata],
-  showMoreBehavior: Option[ModuleShowMoreBehavior])
-    extends TimelineEntry
-    with HasClientEventInfo
-    with HasFeedbackActionInfo
-    with ContainsFeedbackActionInfos {
-  override def feedbackActionInfos: Seq[Option[FeedbackActionInfo]] = {
-    items.map(_.item.feedbackActionInfo) :+ feedbackActionInfo
+c-case cwass timewinemoduwe(
+  ovewwide vaw id: wong, /(^•ω•^)
+  o-ovewwide vaw sowtindex: option[wong], nyaa~~
+  ovewwide v-vaw entwynamespace: entwynamespace, nyaa~~
+  ovewwide vaw cwienteventinfo: option[cwienteventinfo],
+  ovewwide vaw f-feedbackactioninfo: option[feedbackactioninfo], :3
+  o-ovewwide vaw i-ispinned: option[boowean], 😳😳😳
+  items: s-seq[moduweitem], (˘ω˘)
+  dispwaytype: moduwedispwaytype, ^^
+  headew: o-option[moduweheadew], :3
+  f-footew: option[moduwefootew], -.-
+  m-metadata: o-option[moduwemetadata], 😳
+  showmowebehaviow: option[moduweshowmowebehaviow])
+    e-extends timewineentwy
+    with hascwienteventinfo
+    w-with hasfeedbackactioninfo
+    with containsfeedbackactioninfos {
+  ovewwide d-def feedbackactioninfos: seq[option[feedbackactioninfo]] = {
+    i-items.map(_.item.feedbackactioninfo) :+ feedbackactioninfo
   }
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  o-ovewwide d-def withsowtindex(sowtindex: wong): timewineentwy = copy(sowtindex = some(sowtindex))
 }
 
-trait TimelineOperation extends TimelineEntry
+twait timewineopewation extends timewineentwy

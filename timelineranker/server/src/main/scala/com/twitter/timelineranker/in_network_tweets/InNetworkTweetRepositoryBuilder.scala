@@ -1,109 +1,109 @@
-package com.twitter.timelineranker.in_network_tweets
+package com.twittew.timewinewankew.in_netwowk_tweets
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.timelineranker.config.RequestScopes
-import com.twitter.timelineranker.config.RuntimeConfiguration
-import com.twitter.timelineranker.parameters.ConfigBuilder
-import com.twitter.timelineranker.repository.CandidatesRepositoryBuilder
-import com.twitter.timelineranker.visibility.SgsFollowGraphDataFields
-import com.twitter.timelines.util.stats.RequestScope
-import com.twitter.timelines.visibility.model.CheckedUserActorType
-import com.twitter.timelines.visibility.model.ExclusionReason
-import com.twitter.timelines.visibility.model.VisibilityCheckStatus
-import com.twitter.timelines.visibility.model.VisibilityCheckUser
-import com.twitter.util.Duration
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.sewvice.wetwypowicy
+i-impowt com.twittew.seawch.eawwybiwd.thwiftscawa.eawwybiwdsewvice
+i-impowt com.twittew.timewinewankew.config.wequestscopes
+i-impowt c-com.twittew.timewinewankew.config.wuntimeconfiguwation
+i-impowt com.twittew.timewinewankew.pawametews.configbuiwdew
+i-impowt com.twittew.timewinewankew.wepositowy.candidateswepositowybuiwdew
+i-impowt com.twittew.timewinewankew.visibiwity.sgsfowwowgwaphdatafiewds
+impowt com.twittew.timewines.utiw.stats.wequestscope
+impowt com.twittew.timewines.visibiwity.modew.checkedusewactowtype
+impowt c-com.twittew.timewines.visibiwity.modew.excwusionweason
+impowt com.twittew.timewines.visibiwity.modew.visibiwitycheckstatus
+impowt c-com.twittew.timewines.visibiwity.modew.visibiwitycheckusew
+impowt c-com.twittew.utiw.duwation
 
-object InNetworkTweetRepositoryBuilder {
-  val VisibilityRuleExclusions: Set[ExclusionReason] = Set[ExclusionReason](
-    ExclusionReason(
-      CheckedUserActorType(Some(false), VisibilityCheckUser.SourceUser),
-      Set(VisibilityCheckStatus.Blocked)
+object innetwowktweetwepositowybuiwdew {
+  vaw visibiwitywuweexcwusions: set[excwusionweason] = set[excwusionweason](
+    e-excwusionweason(
+      checkedusewactowtype(some(fawse), mya v-visibiwitycheckusew.souwceusew), ʘwʘ
+      s-set(visibiwitycheckstatus.bwocked)
     )
   )
 
-  private val EarlybirdTimeout = 600.milliseconds
-  private val EarlybirdRequestTimeout = 600.milliseconds
+  pwivate vaw eawwybiwdtimeout = 600.miwwiseconds
+  pwivate vaw eawwybiwdwequesttimeout = 600.miwwiseconds
 
   /**
-   * The timeouts below are only used for the Earlybird Cluster Migration
+   * t-the timeouts bewow awe onwy used fow the eawwybiwd cwustew migwation
    */
-  private val EarlybirdRealtimeCGTimeout = 600.milliseconds
-  private val EarlybirdRealtimeCGRequestTimeout = 600.milliseconds
+  p-pwivate vaw eawwybiwdweawtimecgtimeout = 600.miwwiseconds
+  p-pwivate vaw e-eawwybiwdweawtimecgwequesttimeout = 600.miwwiseconds
 }
 
-class InNetworkTweetRepositoryBuilder(config: RuntimeConfiguration, configBuilder: ConfigBuilder)
-    extends CandidatesRepositoryBuilder(config) {
-  import InNetworkTweetRepositoryBuilder._
+c-cwass i-innetwowktweetwepositowybuiwdew(config: wuntimeconfiguwation, (˘ω˘) configbuiwdew: configbuiwdew)
+    e-extends candidateswepositowybuiwdew(config) {
+  impowt innetwowktweetwepositowybuiwdew._
 
-  override val clientSubId = "recycled_tweets"
-  override val requestScope: RequestScope = RequestScopes.InNetworkTweetSource
-  override val followGraphDataFieldsToFetch: SgsFollowGraphDataFields.ValueSet =
-    SgsFollowGraphDataFields.ValueSet(
-      SgsFollowGraphDataFields.FollowedUserIds,
-      SgsFollowGraphDataFields.MutuallyFollowingUserIds,
-      SgsFollowGraphDataFields.MutedUserIds,
-      SgsFollowGraphDataFields.RetweetsMutedUserIds
+  ovewwide v-vaw cwientsubid = "wecycwed_tweets"
+  ovewwide vaw wequestscope: wequestscope = wequestscopes.innetwowktweetsouwce
+  ovewwide v-vaw fowwowgwaphdatafiewdstofetch: sgsfowwowgwaphdatafiewds.vawueset =
+    s-sgsfowwowgwaphdatafiewds.vawueset(
+      s-sgsfowwowgwaphdatafiewds.fowwowedusewids, (U ﹏ U)
+      s-sgsfowwowgwaphdatafiewds.mutuawwyfowwowingusewids, ^•ﻌ•^
+      sgsfowwowgwaphdatafiewds.mutedusewids, (˘ω˘)
+      sgsfowwowgwaphdatafiewds.wetweetsmutedusewids
     )
-  override val searchProcessingTimeout: Duration = 200.milliseconds
+  ovewwide vaw s-seawchpwocessingtimeout: d-duwation = 200.miwwiseconds
 
-  override def earlybirdClient(scope: String): EarlybirdService.MethodPerEndpoint =
-    config.underlyingClients.createEarlybirdClient(
-      scope = scope,
-      requestTimeout = EarlybirdRequestTimeout,
-      timeout = EarlybirdTimeout,
-      retryPolicy = RetryPolicy.Never
-    )
-
-  private lazy val searchClientForSourceTweets =
-    newSearchClient(clientId = clientSubId + "_source_tweets")
-
-  /** The RealtimeCG clients below are only used for the Earlybird Cluster Migration */
-  private def earlybirdRealtimeCGClient(scope: String): EarlybirdService.MethodPerEndpoint =
-    config.underlyingClients.createEarlybirdRealtimeCgClient(
-      scope = scope,
-      requestTimeout = EarlybirdRealtimeCGRequestTimeout,
-      timeout = EarlybirdRealtimeCGTimeout,
-      retryPolicy = RetryPolicy.Never
-    )
-  private val realtimeCGClientSubId = "realtime_cg_recycled_tweets"
-  private lazy val searchRealtimeCGClient =
-    newSearchClient(earlybirdRealtimeCGClient, clientId = realtimeCGClientSubId)
-
-  def apply(): InNetworkTweetRepository = {
-    val inNetworkTweetSource = new InNetworkTweetSource(
-      gizmoduckClient,
-      searchClient,
-      searchClientForSourceTweets,
-      tweetyPieHighQoSClient,
-      userMetadataClient,
-      followGraphDataProvider,
-      config.underlyingClients.contentFeaturesCache,
-      clientFactories.visibilityEnforcerFactory.apply(
-        VisibilityRules,
-        RequestScopes.InNetworkTweetSource,
-        reasonsToExclude = InNetworkTweetRepositoryBuilder.VisibilityRuleExclusions
-      ),
-      config.statsReceiver
+  ovewwide d-def eawwybiwdcwient(scope: s-stwing): eawwybiwdsewvice.methodpewendpoint =
+    c-config.undewwyingcwients.cweateeawwybiwdcwient(
+      scope = scope, :3
+      w-wequesttimeout = eawwybiwdwequesttimeout, ^^;;
+      timeout = e-eawwybiwdtimeout, 🥺
+      wetwypowicy = w-wetwypowicy.nevew
     )
 
-    val inNetworkTweetRealtimeCGSource = new InNetworkTweetSource(
-      gizmoduckClient,
-      searchRealtimeCGClient,
-      searchClientForSourceTweets, // do not migrate source_tweets as they are sharded by TweetID
-      tweetyPieHighQoSClient,
-      userMetadataClient,
-      followGraphDataProvider,
-      config.underlyingClients.contentFeaturesCache,
-      clientFactories.visibilityEnforcerFactory.apply(
-        VisibilityRules,
-        RequestScopes.InNetworkTweetSource,
-        reasonsToExclude = InNetworkTweetRepositoryBuilder.VisibilityRuleExclusions
-      ),
-      config.statsReceiver.scope("replacementRealtimeCG")
+  pwivate wazy v-vaw seawchcwientfowsouwcetweets =
+    n-nyewseawchcwient(cwientid = cwientsubid + "_souwce_tweets")
+
+  /** the weawtimecg cwients bewow awe onwy used fow the eawwybiwd cwustew migwation */
+  p-pwivate d-def eawwybiwdweawtimecgcwient(scope: stwing): e-eawwybiwdsewvice.methodpewendpoint =
+    c-config.undewwyingcwients.cweateeawwybiwdweawtimecgcwient(
+      s-scope = scope, (⑅˘꒳˘)
+      wequesttimeout = eawwybiwdweawtimecgwequesttimeout, nyaa~~
+      t-timeout = eawwybiwdweawtimecgtimeout, :3
+      wetwypowicy = wetwypowicy.nevew
+    )
+  pwivate vaw weawtimecgcwientsubid = "weawtime_cg_wecycwed_tweets"
+  p-pwivate wazy vaw seawchweawtimecgcwient =
+    n-nyewseawchcwient(eawwybiwdweawtimecgcwient, ( ͡o ω ͡o ) c-cwientid = w-weawtimecgcwientsubid)
+
+  def appwy(): i-innetwowktweetwepositowy = {
+    v-vaw innetwowktweetsouwce = n-nyew i-innetwowktweetsouwce(
+      gizmoduckcwient, mya
+      seawchcwient, (///ˬ///✿)
+      s-seawchcwientfowsouwcetweets, (˘ω˘)
+      t-tweetypiehighqoscwient, ^^;;
+      u-usewmetadatacwient, (✿oωo)
+      f-fowwowgwaphdatapwovidew, (U ﹏ U)
+      c-config.undewwyingcwients.contentfeatuwescache, -.-
+      cwientfactowies.visibiwityenfowcewfactowy.appwy(
+        visibiwitywuwes, ^•ﻌ•^
+        wequestscopes.innetwowktweetsouwce, rawr
+        w-weasonstoexcwude = innetwowktweetwepositowybuiwdew.visibiwitywuweexcwusions
+      ), (˘ω˘)
+      config.statsweceivew
     )
 
-    new InNetworkTweetRepository(inNetworkTweetSource, inNetworkTweetRealtimeCGSource)
+    vaw innetwowktweetweawtimecgsouwce = nyew innetwowktweetsouwce(
+      gizmoduckcwient, nyaa~~
+      s-seawchweawtimecgcwient, UwU
+      seawchcwientfowsouwcetweets, :3 // do nyot migwate souwce_tweets a-as they a-awe shawded by t-tweetid
+      tweetypiehighqoscwient, (⑅˘꒳˘)
+      usewmetadatacwient, (///ˬ///✿)
+      f-fowwowgwaphdatapwovidew, ^^;;
+      config.undewwyingcwients.contentfeatuwescache, >_<
+      c-cwientfactowies.visibiwityenfowcewfactowy.appwy(
+        v-visibiwitywuwes, rawr x3
+        wequestscopes.innetwowktweetsouwce, /(^•ω•^)
+        weasonstoexcwude = innetwowktweetwepositowybuiwdew.visibiwitywuweexcwusions
+      ), :3
+      config.statsweceivew.scope("wepwacementweawtimecg")
+    )
+
+    nyew innetwowktweetwepositowy(innetwowktweetsouwce, (ꈍᴗꈍ) i-innetwowktweetweawtimecgsouwce)
   }
 }

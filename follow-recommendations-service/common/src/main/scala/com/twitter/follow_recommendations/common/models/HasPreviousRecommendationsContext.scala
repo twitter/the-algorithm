@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-trait HasPreviousRecommendationsContext {
+twait haspweviouswecommendationscontext {
 
-  def previouslyRecommendedUserIDs: Set[Long]
+  d-def pweviouswywecommendedusewids: s-set[wong]
 
-  def previouslyFollowedUserIds: Set[Long]
+  d-def pweviouswyfowwowedusewids: s-set[wong]
 
-  def skippedFollows: Set[Long] = {
-    previouslyRecommendedUserIDs.diff(previouslyFollowedUserIds)
+  d-def skippedfowwows: s-set[wong] = {
+    p-pweviouswywecommendedusewids.diff(pweviouswyfowwowedusewids)
   }
 }

@@ -1,100 +1,100 @@
-package com.twitter.follow_recommendations.common.base
+package com.twittew.fowwow_wecommendations.common.base
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
+impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.fiwtewweason
+i-impowt c-com.twittew.stitch.awwow
+i-impowt c-com.twittew.stitch.stitch
 
-trait Predicate[-Q] {
+twait pwedicate[-q] {
 
-  def apply(item: Q): Stitch[PredicateResult]
-  def arrow: Arrow[Q, PredicateResult] = Arrow.apply(apply)
+  def appwy(item: q): stitch[pwedicatewesuwt]
+  def awwow: a-awwow[q, rawr x3 pwedicatewesuwt] = awwow.appwy(appwy)
 
-  def map[K](mapper: K => Q): Predicate[K] = Predicate(arrow.contramap(mapper))
+  def map[k](mappew: k-k => q): pwedicate[k] = pwedicate(awwow.contwamap(mappew))
 
   /**
-   * check the predicate results for a batch of items for convenience.
+   * c-check the pwedicate wesuwts fow a batch of items fow c-convenience. (✿oωo)
    *
-   * mark it as final to avoid potential abuse usage
+   * mawk it a-as finaw to avoid p-potentiaw abuse usage
    */
-  final def batch(items: Seq[Q]): Stitch[Seq[PredicateResult]] = {
-    this.arrow.traverse(items)
+  finaw def batch(items: seq[q]): stitch[seq[pwedicatewesuwt]] = {
+    t-this.awwow.twavewse(items)
   }
 
   /**
-   * Syntax sugar for functions which take in 2 inputs as a tuple.
+   * syntax sugaw fow functions which take in 2 inputs as a tupwe. (ˆ ﻌ ˆ)♡
    */
-  def apply[Q1, Q2](item1: Q1, item2: Q2)(implicit ev: ((Q1, Q2)) => Q): Stitch[PredicateResult] = {
-    apply((item1, item2))
+  d-def appwy[q1, :3 q2](item1: q-q1, (U ᵕ U❁) item2: q2)(impwicit e-ev: ((q1, ^^;; q-q2)) => q): stitch[pwedicatewesuwt] = {
+    appwy((item1, mya i-item2))
   }
 
   /**
-   * Runs the predicates in sequence. The returned predicate will return true iff both the predicates return true.
-   * ie. it is an AND operation
+   * wuns the pwedicates in sequence. 😳😳😳 t-the wetuwned pwedicate wiww wetuwn twue iff b-both the pwedicates wetuwn twue. OwO
+   * ie. rawr it is an and opewation
    *
-   * We short-circuit the evaluation, ie we don't evaluate the 2nd predicate if the 1st is false
+   * we showt-ciwcuit the e-evawuation, XD ie we don't evawuate t-the 2nd pwedicate i-if the 1st i-is fawse
    *
-   * @param p predicate to run in sequence
+   * @pawam p pwedicate to wun in sequence
    *
-   * @return a new predicate object that represents the logical AND of both predicates
+   * @wetuwn a-a nyew p-pwedicate object that wepwesents t-the wogicaw and o-of both pwedicates
    */
-  def andThen[Q1 <: Q](p: Predicate[Q1]): Predicate[Q1] = {
-    Predicate({ query: Q1 =>
-      apply(query).flatMap {
-        case PredicateResult.Valid => p(query)
-        case PredicateResult.Invalid(reasons) => Stitch.value(PredicateResult.Invalid(reasons))
+  def a-andthen[q1 <: q](p: pwedicate[q1]): p-pwedicate[q1] = {
+    pwedicate({ quewy: q1 =>
+      a-appwy(quewy).fwatmap {
+        case pwedicatewesuwt.vawid => p-p(quewy)
+        case pwedicatewesuwt.invawid(weasons) => s-stitch.vawue(pwedicatewesuwt.invawid(weasons))
       }
     })
   }
 
   /**
-   * Creates a predicate which runs the current & given predicate in sequence.
-   * The returned predicate will return true if either current or given predicate returns true.
-   * That is, given predicate will be only run if current predicate returns false.
+   * c-cweates a pwedicate which wuns the cuwwent & given pwedicate in sequence. (U ﹏ U)
+   * the wetuwned pwedicate wiww wetuwn t-twue if eithew c-cuwwent ow given pwedicate wetuwns t-twue. (˘ω˘)
+   * that i-is, UwU given pwedicate w-wiww be onwy wun if cuwwent pwedicate wetuwns fawse. >_<
    *
-   * @param p predicate to run in sequence
+   * @pawam p-p pwedicate to wun in sequence
    *
-   * @return new predicate object that represents the logical OR of both predicates.
-   *         if both are invalid, the reason would be the set of all invalid reasons.
+   * @wetuwn nyew pwedicate object that wepwesents t-the wogicaw ow of both pwedicates. σωσ
+   *         i-if both awe i-invawid, 🥺 the weason w-wouwd be the set of aww invawid w-weasons. 🥺
    */
-  def or[Q1 <: Q](p: Predicate[Q1]): Predicate[Q1] = {
-    Predicate({ query: Q1 =>
-      apply(query).flatMap {
-        case PredicateResult.Valid => Stitch.value(PredicateResult.Valid)
-        case PredicateResult.Invalid(reasons) =>
-          p(query).flatMap {
-            case PredicateResult.Valid => Stitch.value(PredicateResult.Valid)
-            case PredicateResult.Invalid(newReasons) =>
-              Stitch.value(PredicateResult.Invalid(reasons ++ newReasons))
+  d-def ow[q1 <: q-q](p: pwedicate[q1]): p-pwedicate[q1] = {
+    pwedicate({ quewy: q1 =>
+      appwy(quewy).fwatmap {
+        c-case p-pwedicatewesuwt.vawid => s-stitch.vawue(pwedicatewesuwt.vawid)
+        c-case pwedicatewesuwt.invawid(weasons) =>
+          p-p(quewy).fwatmap {
+            case pwedicatewesuwt.vawid => stitch.vawue(pwedicatewesuwt.vawid)
+            case pwedicatewesuwt.invawid(newweasons) =>
+              s-stitch.vawue(pwedicatewesuwt.invawid(weasons ++ newweasons))
           }
       }
     })
   }
 
   /*
-   * Runs the predicate only if the provided predicate is valid, otherwise returns valid.
+   * wuns the pwedicate onwy if the pwovided pwedicate is vawid, ʘwʘ o-othewwise wetuwns vawid. :3
    * */
-  def gate[Q1 <: Q](gatingPredicate: Predicate[Q1]): Predicate[Q1] = {
-    Predicate { query: Q1 =>
-      gatingPredicate(query).flatMap { result =>
-        if (result == PredicateResult.Valid) {
-          apply(query)
-        } else {
-          Stitch.value(PredicateResult.Valid)
+  def gate[q1 <: q](gatingpwedicate: p-pwedicate[q1]): p-pwedicate[q1] = {
+    p-pwedicate { quewy: q1 =>
+      gatingpwedicate(quewy).fwatmap { w-wesuwt =>
+        if (wesuwt == p-pwedicatewesuwt.vawid) {
+          a-appwy(quewy)
+        } ewse {
+          stitch.vawue(pwedicatewesuwt.vawid)
         }
       }
     }
   }
 
-  def observe(statsReceiver: StatsReceiver): Predicate[Q] = Predicate(
-    StatsUtil.profilePredicateResult(this.arrow, statsReceiver))
+  def obsewve(statsweceivew: statsweceivew): p-pwedicate[q] = pwedicate(
+    s-statsutiw.pwofiwepwedicatewesuwt(this.awwow, (U ﹏ U) statsweceivew))
 
-  def convertToFailOpenWithResultType(resultType: PredicateResult): Predicate[Q] = {
-    Predicate { query: Q =>
-      apply(query).handle {
-        case _: Exception =>
-          resultType
+  d-def convewttofaiwopenwithwesuwttype(wesuwttype: p-pwedicatewesuwt): pwedicate[q] = {
+    pwedicate { q-quewy: q-q =>
+      appwy(quewy).handwe {
+        case _: e-exception =>
+          w-wesuwttype
       }
 
     }
@@ -102,151 +102,151 @@ trait Predicate[-Q] {
 
 }
 
-class TruePredicate[Q] extends Predicate[Q] {
-  override def apply(item: Q): Stitch[PredicateResult] = Predicate.AlwaysTrueStitch
+cwass twuepwedicate[q] extends pwedicate[q] {
+  ovewwide d-def appwy(item: q-q): stitch[pwedicatewesuwt] = p-pwedicate.awwaystwuestitch
 }
 
-class FalsePredicate[Q](reason: FilterReason) extends Predicate[Q] {
-  val InvalidResult = Stitch.value(PredicateResult.Invalid(Set(reason)))
-  override def apply(item: Q): Stitch[PredicateResult] = InvalidResult
+cwass fawsepwedicate[q](weason: f-fiwtewweason) extends p-pwedicate[q] {
+  vaw invawidwesuwt = s-stitch.vawue(pwedicatewesuwt.invawid(set(weason)))
+  ovewwide def appwy(item: q): stitch[pwedicatewesuwt] = invawidwesuwt
 }
 
-object Predicate {
+object pwedicate {
 
-  val AlwaysTrueStitch = Stitch.value(PredicateResult.Valid)
+  v-vaw a-awwaystwuestitch = stitch.vawue(pwedicatewesuwt.vawid)
 
-  val NumBatchesStat = "num_batches_stats"
-  val NumBatchesCount = "num_batches"
+  vaw n-nyumbatchesstat = "num_batches_stats"
+  v-vaw nyumbatchescount = "num_batches"
 
-  def apply[Q](func: Q => Stitch[PredicateResult]): Predicate[Q] = new Predicate[Q] {
-    override def apply(item: Q): Stitch[PredicateResult] = func(item)
+  def appwy[q](func: q => stitch[pwedicatewesuwt]): pwedicate[q] = n-nyew pwedicate[q] {
+    ovewwide def appwy(item: q): stitch[pwedicatewesuwt] = func(item)
 
-    override val arrow: Arrow[Q, PredicateResult] = Arrow(func)
+    o-ovewwide vaw awwow: awwow[q, (U ﹏ U) pwedicatewesuwt] = awwow(func)
   }
 
-  def apply[Q](outerArrow: Arrow[Q, PredicateResult]): Predicate[Q] = new Predicate[Q] {
-    override def apply(item: Q): Stitch[PredicateResult] = arrow(item)
+  d-def appwy[q](outewawwow: a-awwow[q, ʘwʘ pwedicatewesuwt]): pwedicate[q] = nyew pwedicate[q] {
+    ovewwide d-def appwy(item: q-q): stitch[pwedicatewesuwt] = awwow(item)
 
-    override val arrow: Arrow[Q, PredicateResult] = outerArrow
+    ovewwide vaw awwow: awwow[q, >w< p-pwedicatewesuwt] = outewawwow
   }
 
   /**
-   * Given some items, this function
-   * 1. chunks them up in groups
-   * 2. lazily applies a predicate on each group
-   * 3. filters based on the predicate
-   * 4. takes first numToTake items.
+   * g-given some items, rawr x3 this function
+   * 1. OwO chunks them up in gwoups
+   * 2. ^•ﻌ•^ w-waziwy appwies a pwedicate o-on each gwoup
+   * 3. >_< f-fiwtews based on the p-pwedicate
+   * 4. OwO takes fiwst nyumtotake i-items. >_<
    *
-   * If numToTake is satisfied, then any later predicates are not called.
+   * i-if nyumtotake i-is satisfied, (ꈍᴗꈍ) then any w-watew pwedicates a-awe nyot cawwed. >w<
    *
-   * @param items     items of type Q
-   * @param predicate predicate that determines whether an item is acceptable
-   * @param batchSize batch size to call the predicate with
-   * @param numToTake max number of items to return
-   * @param stats stats receiver
-   * @tparam Q type of item
+   * @pawam items     items of type q
+   * @pawam p-pwedicate p-pwedicate that d-detewmines whethew an item is acceptabwe
+   * @pawam b-batchsize batch size to caww t-the pwedicate w-with
+   * @pawam nyumtotake max nyumbew of items to wetuwn
+   * @pawam s-stats stats w-weceivew
+   * @tpawam q-q type o-of item
    *
-   * @return a future of K items
+   * @wetuwn a futuwe o-of k items
    */
-  def batchFilterTake[Q](
-    items: Seq[Q],
-    predicate: Predicate[Q],
-    batchSize: Int,
-    numToTake: Int,
-    stats: StatsReceiver
-  ): Stitch[Seq[Q]] = {
+  def batchfiwtewtake[q](
+    items: seq[q], (U ﹏ U)
+    pwedicate: pwedicate[q], ^^
+    batchsize: int, (U ﹏ U)
+    n-nyumtotake: int, :3
+    stats: s-statsweceivew
+  ): stitch[seq[q]] = {
 
-    def take(
-      input: Iterator[Stitch[Seq[Q]]],
-      prev: Seq[Q],
-      takeSize: Int,
-      numOfBatch: Int
-    ): Stitch[(Seq[Q], Int)] = {
-      if (input.hasNext) {
-        val currFut = input.next()
-        currFut.flatMap { curr =>
-          val taken = curr.take(takeSize)
-          val combined = prev ++ taken
-          if (taken.size < takeSize)
-            take(input, combined, takeSize - taken.size, numOfBatch + 1)
-          else Stitch.value((combined, numOfBatch + 1))
+    def t-take(
+      input: itewatow[stitch[seq[q]]],
+      p-pwev: seq[q], (✿oωo)
+      takesize: i-int, XD
+      nyumofbatch: i-int
+    ): s-stitch[(seq[q], >w< i-int)] = {
+      i-if (input.hasnext) {
+        vaw cuwwfut = input.next()
+        cuwwfut.fwatmap { cuww =>
+          vaw taken = cuww.take(takesize)
+          v-vaw combined = p-pwev ++ taken
+          i-if (taken.size < takesize)
+            t-take(input, òωó combined, takesize - taken.size, (ꈍᴗꈍ) nyumofbatch + 1)
+          e-ewse s-stitch.vawue((combined, nyumofbatch + 1))
         }
-      } else {
-        Stitch.value((prev, numOfBatch))
+      } e-ewse {
+        stitch.vawue((pwev, rawr x3 nyumofbatch))
       }
     }
 
-    val batchedItems = items.view.grouped(batchSize)
-    val batchedFutures = batchedItems.map { batch =>
-      Stitch.traverse(batch)(predicate.apply).map { conds =>
-        (batch.zip(conds)).withFilter(_._2.value).map(_._1)
+    vaw batcheditems = i-items.view.gwouped(batchsize)
+    v-vaw batchedfutuwes = batcheditems.map { b-batch =>
+      s-stitch.twavewse(batch)(pwedicate.appwy).map { conds =>
+        (batch.zip(conds)).withfiwtew(_._2.vawue).map(_._1)
       }
     }
-    take(batchedFutures, Nil, numToTake, 0).map {
-      case (filtered: Seq[Q], numOfBatch: Int) =>
-        stats.stat(NumBatchesStat).add(numOfBatch)
-        stats.counter(NumBatchesCount).incr(numOfBatch)
-        filtered
+    take(batchedfutuwes, rawr x3 nyiw, nyumtotake, σωσ 0).map {
+      case (fiwtewed: s-seq[q], (ꈍᴗꈍ) nyumofbatch: i-int) =>
+        s-stats.stat(numbatchesstat).add(numofbatch)
+        stats.countew(numbatchescount).incw(numofbatch)
+        f-fiwtewed
     }
   }
 
   /**
-   * filter a list of items based on the predicate
+   * f-fiwtew a wist of items based o-on the pwedicate
    *
-   * @param items a list of items
-   * @param predicate predicate of the item
-   * @tparam Q item type
-   * @return the list of items that satisfy the predicate
+   * @pawam i-items a wist of items
+   * @pawam p-pwedicate p-pwedicate of the item
+   * @tpawam q-q item type
+   * @wetuwn the wist of items that s-satisfy the pwedicate
    */
-  def filter[Q](items: Seq[Q], predicate: Predicate[Q]): Stitch[Seq[Q]] = {
-    predicate.batch(items).map { results =>
-      items.zip(results).collect {
-        case (item, PredicateResult.Valid) => item
-      }
-    }
-  }
-
-  /**
-   * filter a list of items based on the predicate given the target
-   *
-   * @param target target item
-   * @param items a list of items
-   * @param predicate predicate of the (target, item) pair
-   * @tparam Q item type
-   * @return the list of items that satisfy the predicate given the target
-   */
-  def filter[T, Q](target: T, items: Seq[Q], predicate: Predicate[(T, Q)]): Stitch[Seq[Q]] = {
-    predicate.batch(items.map(i => (target, i))).map { results =>
-      items.zip(results).collect {
-        case (item, PredicateResult.Valid) => item
+  d-def fiwtew[q](items: s-seq[q], rawr pwedicate: pwedicate[q]): s-stitch[seq[q]] = {
+    pwedicate.batch(items).map { wesuwts =>
+      i-items.zip(wesuwts).cowwect {
+        c-case (item, ^^;; pwedicatewesuwt.vawid) => i-item
       }
     }
   }
 
   /**
-   * Returns a predicate, where an element is true iff it that element is true for all input predicates.
-   * ie. it is an AND operation
+   * fiwtew a wist of items based on the p-pwedicate given the tawget
    *
-   * This is done concurrently.
-   *
-   * @param predicates list of predicates
-   * @tparam Q Type parameter
-   *
-   * @return new predicate object that is the logical "and" of the input predicates
+   * @pawam tawget t-tawget item
+   * @pawam i-items a wist of items
+   * @pawam p-pwedicate pwedicate o-of the (tawget, rawr x3 i-item) paiw
+   * @tpawam q item type
+   * @wetuwn t-the wist of items that satisfy the pwedicate given t-the tawget
    */
-  def andConcurrently[Q](predicates: Seq[Predicate[Q]]): Predicate[Q] = {
-    Predicate { query: Q =>
-      Stitch.traverse(predicates)(p => p(query)).map { predicateResults =>
-        val allInvalid = predicateResults
-          .collect {
-            case PredicateResult.Invalid(reason) =>
-              reason
+  d-def fiwtew[t, (ˆ ﻌ ˆ)♡ q](tawget: t-t, σωσ items: seq[q], (U ﹏ U) pwedicate: pwedicate[(t, >w< q-q)]): s-stitch[seq[q]] = {
+    p-pwedicate.batch(items.map(i => (tawget, σωσ i))).map { wesuwts =>
+      items.zip(wesuwts).cowwect {
+        case (item, nyaa~~ pwedicatewesuwt.vawid) => item
+      }
+    }
+  }
+
+  /**
+   * wetuwns a pwedicate, 🥺 whewe an ewement is twue iff it that ewement is twue fow aww input pwedicates. rawr x3
+   * ie. σωσ it is an a-and opewation
+   *
+   * t-this is done concuwwentwy. (///ˬ///✿)
+   *
+   * @pawam pwedicates w-wist of pwedicates
+   * @tpawam q-q type pawametew
+   *
+   * @wetuwn n-nyew pwedicate object that is t-the wogicaw "and" of the input p-pwedicates
+   */
+  d-def andconcuwwentwy[q](pwedicates: seq[pwedicate[q]]): p-pwedicate[q] = {
+    pwedicate { quewy: q-q =>
+      stitch.twavewse(pwedicates)(p => p-p(quewy)).map { pwedicatewesuwts =>
+        vaw awwinvawid = p-pwedicatewesuwts
+          .cowwect {
+            c-case p-pwedicatewesuwt.invawid(weason) =>
+              w-weason
           }
-        if (allInvalid.isEmpty) {
-          PredicateResult.Valid
-        } else {
-          val allInvalidReasons = allInvalid.reduce(_ ++ _)
-          PredicateResult.Invalid(allInvalidReasons)
+        i-if (awwinvawid.isempty) {
+          p-pwedicatewesuwt.vawid
+        } e-ewse {
+          v-vaw awwinvawidweasons = a-awwinvawid.weduce(_ ++ _)
+          pwedicatewesuwt.invawid(awwinvawidweasons)
         }
       }
     }
@@ -254,28 +254,28 @@ object Predicate {
 }
 
 /**
- * applies the underlying predicate when the param is on.
+ * appwies the undewwying p-pwedicate w-when the pawam i-is on. (U ﹏ U)
  */
-abstract class GatedPredicateBase[Q](
-  underlyingPredicate: Predicate[Q],
-  stats: StatsReceiver = NullStatsReceiver)
-    extends Predicate[Q] {
-  def gate(item: Q): Boolean
+abstwact cwass gatedpwedicatebase[q](
+  u-undewwyingpwedicate: pwedicate[q], ^^;;
+  stats: statsweceivew = nyuwwstatsweceivew)
+    e-extends pwedicate[q] {
+  def gate(item: q): b-boowean
 
-  val underlyingPredicateTotal = stats.counter("underlying_total")
-  val underlyingPredicateValid = stats.counter("underlying_valid")
-  val underlyingPredicateInvalid = stats.counter("underlying_invalid")
-  val notGatedCounter = stats.counter("not_gated")
+  vaw u-undewwyingpwedicatetotaw = s-stats.countew("undewwying_totaw")
+  vaw undewwyingpwedicatevawid = s-stats.countew("undewwying_vawid")
+  vaw undewwyingpwedicateinvawid = s-stats.countew("undewwying_invawid")
+  vaw nyotgatedcountew = s-stats.countew("not_gated")
 
-  val ValidStitch: Stitch[PredicateResult.Valid.type] = Stitch.value(PredicateResult.Valid)
+  vaw vawidstitch: s-stitch[pwedicatewesuwt.vawid.type] = stitch.vawue(pwedicatewesuwt.vawid)
 
-  override def apply(item: Q): Stitch[PredicateResult] = {
-    if (gate(item)) {
-      underlyingPredicateTotal.incr()
-      underlyingPredicate(item)
-    } else {
-      notGatedCounter.incr()
-      ValidStitch
+  ovewwide def appwy(item: q): stitch[pwedicatewesuwt] = {
+    i-if (gate(item)) {
+      undewwyingpwedicatetotaw.incw()
+      u-undewwyingpwedicate(item)
+    } e-ewse {
+      notgatedcountew.incw()
+      vawidstitch
     }
   }
 

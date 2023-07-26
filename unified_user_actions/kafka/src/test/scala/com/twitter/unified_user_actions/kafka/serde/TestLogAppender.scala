@@ -1,19 +1,19 @@
-package com.twitter.unified_user_actions.kafka.serde
+package com.twittew.unified_usew_actions.kafka.sewde
 
-import ch.qos.logback.classic.spi.ILoggingEvent
-import ch.qos.logback.core.AppenderBase
-import scala.collection.mutable.ArrayBuffer
+impowt ch.qos.wogback.cwassic.spi.iwoggingevent
+i-impowt ch.qos.wogback.cowe.appendewbase
+i-impowt s-scawa.cowwection.mutabwe.awwaybuffew
 
-class TestLogAppender extends AppenderBase[ILoggingEvent] {
-  import TestLogAppender._
+c-cwass t-testwogappendew e-extends appendewbase[iwoggingevent] {
+  i-impowt testwogappendew._
 
-  override def append(eventObject: ILoggingEvent): Unit =
-    recordLog(eventObject)
+  o-ovewwide def append(eventobject: iwoggingevent): unit =
+    wecowdwog(eventobject)
 }
 
-object TestLogAppender {
-  val events: ArrayBuffer[ILoggingEvent] = ArrayBuffer()
+o-object testwogappendew {
+  vaw events: a-awwaybuffew[iwoggingevent] = awwaybuffew()
 
-  def recordLog(event: ILoggingEvent): Unit =
+  def w-wecowdwog(event: iwoggingevent): unit =
     events += event
 }

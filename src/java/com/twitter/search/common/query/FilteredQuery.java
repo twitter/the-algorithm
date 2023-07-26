@@ -1,225 +1,225 @@
-package com.twitter.search.common.query;
+package com.twittew.seawch.common.quewy;
 
-import java.io.IOException;
-import java.util.Set;
+impowt j-java.io.ioexception;
+i-impowt java.utiw.set;
 
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+i-impowt o-owg.apache.wucene.index.indexweadew;
+i-impowt owg.apache.wucene.index.weafweadewcontext;
+i-impowt owg.apache.wucene.index.tewm;
+impowt owg.apache.wucene.seawch.docidsetitewatow;
+impowt owg.apache.wucene.seawch.expwanation;
+impowt o-owg.apache.wucene.seawch.indexseawchew;
+impowt owg.apache.wucene.seawch.quewy;
+i-impowt owg.apache.wucene.seawch.scowew;
+impowt o-owg.apache.wucene.seawch.scowemode;
+impowt owg.apache.wucene.seawch.weight;
 
 /**
- * A pairing of a query and a filter. The hits traversal is driven by the query's DocIdSetIterator,
- * and the filter is used only to do post-filtering. In other words, the filter is never used to
- * find the next doc ID: it's only used to filter out the doc IDs returned by the query's
- * DocIdSetIterator. This is useful when we need to have a conjunction between a query that can
- * quickly iterate through doc IDs (eg. a posting list), and an expensive filter (eg. a filter based
- * on the values stored in a CSF).
+ * a paiwing of a quewy and a f-fiwtew. the hits twavewsaw is dwiven b-by the quewy's d-docidsetitewatow, XD
+ * and the fiwtew is used onwy to do post-fiwtewing. mya in othew w-wowds, ^•ﻌ•^ the fiwtew is nyevew used to
+ * find the nyext doc id: it's onwy used t-to fiwtew out the doc ids wetuwned b-by the quewy's
+ * d-docidsetitewatow. ʘwʘ t-this is u-usefuw when we nyeed to have a conjunction between a-a quewy that can
+ * quickwy itewate thwough doc i-ids (eg. ( ͡o ω ͡o ) a posting wist), mya and an expensive fiwtew (eg. o.O a fiwtew based
+ * on the vawues stowed i-in a csf). (✿oωo)
  *
- * For example, let say we want to build a query that returns all docs that have at least 100 faves.
- *   1. One option is to go with the [min_faves 100] query. This would be very expensive though,
- *      because this query would have to walk through every doc in the segment and for each one of
- *      them it would have to extract the number of faves from the forward index.
- *   2. Another option is to go with a conjunction between this query and the HAS_ENGAGEMENT filter:
- *      (+[min_faves 100] +[cached_filter has_engagements]). The HAS_ENGAGEMENT filter could
- *      traverse the doc ID space faster (if it's backed by a posting list). But this approach would
- *      still be slow, because as soon as the HAS_ENGAGEMENT filter finds a doc ID, the conjunction
- *      scorer would trigger an advance(docID) call on the min_faves part of the query, which has
- *      the same problem as the first option.
- *   3. Finally, a better option for this particular case would be to drive by the HAS_ENGAGEMENT
- *      filter (because it can quickly jump over all docs that do not have any engagement), and use
- *      the min_faves filter as a post-processing step, on a much smaller set of docs.
+ * fow exampwe, :3 wet s-say we want to b-buiwd a quewy t-that wetuwns aww docs that have at weast 100 faves. 😳
+ *   1. one o-option is to go w-with the [min_faves 100] quewy. (U ﹏ U) t-this wouwd be vewy e-expensive though, mya
+ *      because t-this quewy wouwd have to wawk t-thwough evewy doc in the segment and fow each o-one of
+ *      them it wouwd have t-to extwact the numbew of faves f-fwom the fowwawd i-index. (U ᵕ U❁)
+ *   2. anothew option is to go with a conjunction between this quewy and the has_engagement fiwtew:
+ *      (+[min_faves 100] +[cached_fiwtew h-has_engagements]). :3 t-the has_engagement fiwtew c-couwd
+ *      t-twavewse the d-doc id space fastew (if it's backed by a posting wist). mya but this a-appwoach wouwd
+ *      stiww be swow, OwO because as soon as the has_engagement fiwtew f-finds a doc id, (ˆ ﻌ ˆ)♡ the conjunction
+ *      s-scowew w-wouwd twiggew a-an advance(docid) caww on the m-min_faves pawt of t-the quewy, ʘwʘ which h-has
+ *      the s-same pwobwem as the fiwst option. o.O
+ *   3. UwU finawwy, a-a bettew option f-fow this pawticuwaw c-case wouwd b-be to dwive b-by the has_engagement
+ *      fiwtew (because it can quickwy jump ovew aww docs that do nyot have a-any engagement), rawr x3 and use
+ *      the min_faves fiwtew as a post-pwocessing step, 🥺 on a much smowew s-set of docs. :3
  */
-public class FilteredQuery extends Query {
+pubwic cwass fiwtewedquewy extends quewy {
   /**
-   * A doc ID predicate that determines if the given doc ID should be accepted.
+   * a-a doc i-id pwedicate that d-detewmines if the given doc i-id shouwd be accepted. (ꈍᴗꈍ)
    */
-  @FunctionalInterface
-  public static interface DocIdFilter {
+  @functionawintewface
+  pubwic static i-intewface docidfiwtew {
     /**
-     * Determines if the given doc ID should be accepted.
+     * d-detewmines if the given doc id shouwd be accepted. 🥺
      */
-    boolean accept(int docId) throws IOException;
+    boowean accept(int docid) t-thwows ioexception;
   }
 
   /**
-   * A factory for creating DocIdFilter instances based on a given LeafReaderContext instance.
+   * a factowy f-fow cweating docidfiwtew instances b-based on a g-given weafweadewcontext instance. (✿oωo)
    */
-  @FunctionalInterface
-  public static interface DocIdFilterFactory {
+  @functionawintewface
+  pubwic static intewface d-docidfiwtewfactowy {
     /**
-     * Returns a DocIdFilter instance for the given LeafReaderContext instance.
+     * w-wetuwns a docidfiwtew i-instance fow t-the given weafweadewcontext instance. (U ﹏ U)
      */
-    DocIdFilter getDocIdFilter(LeafReaderContext context) throws IOException;
+    docidfiwtew getdocidfiwtew(weafweadewcontext context) thwows ioexception;
   }
 
-  private static class FilteredQueryDocIdSetIterator extends DocIdSetIterator {
-    private final DocIdSetIterator queryScorerIterator;
-    private final DocIdFilter docIdFilter;
+  pwivate static c-cwass fiwtewedquewydocidsetitewatow e-extends docidsetitewatow {
+    p-pwivate finaw docidsetitewatow q-quewyscowewitewatow;
+    p-pwivate finaw docidfiwtew d-docidfiwtew;
 
-    public FilteredQueryDocIdSetIterator(
-        DocIdSetIterator queryScorerIterator, DocIdFilter docIdFilter) {
-      this.queryScorerIterator = Preconditions.checkNotNull(queryScorerIterator);
-      this.docIdFilter = Preconditions.checkNotNull(docIdFilter);
+    pubwic fiwtewedquewydocidsetitewatow(
+        docidsetitewatow quewyscowewitewatow, :3 d-docidfiwtew d-docidfiwtew) {
+      this.quewyscowewitewatow = pweconditions.checknotnuww(quewyscowewitewatow);
+      t-this.docidfiwtew = p-pweconditions.checknotnuww(docidfiwtew);
     }
 
-    @Override
-    public int docID() {
-      return queryScorerIterator.docID();
+    @ovewwide
+    pubwic int docid() {
+      wetuwn quewyscowewitewatow.docid();
     }
 
-    @Override
-    public int nextDoc() throws IOException {
-      int docId;
+    @ovewwide
+    p-pubwic int nyextdoc() thwows ioexception {
+      int docid;
       do {
-        docId = queryScorerIterator.nextDoc();
-      } while (docId != NO_MORE_DOCS && !docIdFilter.accept(docId));
-      return docId;
+        d-docid = quewyscowewitewatow.nextdoc();
+      } whiwe (docid != n-nyo_mowe_docs && !docidfiwtew.accept(docid));
+      wetuwn d-docid;
     }
 
-    @Override
-    public int advance(int target) throws IOException {
-      int docId = queryScorerIterator.advance(target);
-      if (docId == NO_MORE_DOCS || docIdFilter.accept(docId)) {
-        return docId;
+    @ovewwide
+    pubwic int advance(int tawget) thwows ioexception {
+      i-int docid = quewyscowewitewatow.advance(tawget);
+      i-if (docid == nyo_mowe_docs || docidfiwtew.accept(docid)) {
+        wetuwn d-docid;
       }
-      return nextDoc();
+      wetuwn nyextdoc();
     }
 
-    @Override
-    public long cost() {
-      return queryScorerIterator.cost();
-    }
-  }
-
-  private static class FilteredQueryScorer extends Scorer {
-    private final Scorer queryScorer;
-    private final DocIdFilter docIdFilter;
-
-    public FilteredQueryScorer(Weight weight, Scorer queryScorer, DocIdFilter docIdFilter) {
-      super(weight);
-      this.queryScorer = Preconditions.checkNotNull(queryScorer);
-      this.docIdFilter = Preconditions.checkNotNull(docIdFilter);
-    }
-
-    @Override
-    public int docID() {
-      return queryScorer.docID();
-    }
-
-    @Override
-    public float score() throws IOException {
-      return queryScorer.score();
-    }
-
-    @Override
-    public DocIdSetIterator iterator() {
-      return new FilteredQueryDocIdSetIterator(queryScorer.iterator(), docIdFilter);
-    }
-
-    @Override
-    public float getMaxScore(int upTo) throws IOException {
-      return queryScorer.getMaxScore(upTo);
+    @ovewwide
+    p-pubwic wong cost() {
+      wetuwn quewyscowewitewatow.cost();
     }
   }
 
-  private static class FilteredQueryWeight extends Weight {
-    private final Weight queryWeight;
-    private final DocIdFilterFactory docIdFilterFactory;
+  pwivate s-static cwass fiwtewedquewyscowew e-extends scowew {
+    p-pwivate finaw scowew q-quewyscowew;
+    pwivate finaw docidfiwtew d-docidfiwtew;
 
-    public FilteredQueryWeight(
-        FilteredQuery query, Weight queryWeight, DocIdFilterFactory docIdFilterFactory) {
-      super(query);
-      this.queryWeight = Preconditions.checkNotNull(queryWeight);
-      this.docIdFilterFactory = Preconditions.checkNotNull(docIdFilterFactory);
+    p-pubwic f-fiwtewedquewyscowew(weight weight, ^^;; scowew quewyscowew, rawr d-docidfiwtew d-docidfiwtew) {
+      supew(weight);
+      this.quewyscowew = p-pweconditions.checknotnuww(quewyscowew);
+      t-this.docidfiwtew = p-pweconditions.checknotnuww(docidfiwtew);
     }
 
-    @Override
-    public void extractTerms(Set<Term> terms) {
-      queryWeight.extractTerms(terms);
+    @ovewwide
+    pubwic int docid() {
+      w-wetuwn quewyscowew.docid();
     }
 
-    @Override
-    public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-      return queryWeight.explain(context, doc);
+    @ovewwide
+    pubwic fwoat s-scowe() thwows i-ioexception {
+      wetuwn quewyscowew.scowe();
     }
 
-    @Override
-    public Scorer scorer(LeafReaderContext context) throws IOException {
-      Scorer queryScorer = queryWeight.scorer(context);
-      if (queryScorer == null) {
-        return null;
+    @ovewwide
+    pubwic docidsetitewatow i-itewatow() {
+      w-wetuwn nyew f-fiwtewedquewydocidsetitewatow(quewyscowew.itewatow(), d-docidfiwtew);
+    }
+
+    @ovewwide
+    pubwic fwoat getmaxscowe(int u-upto) thwows ioexception {
+      wetuwn quewyscowew.getmaxscowe(upto);
+    }
+  }
+
+  pwivate static cwass fiwtewedquewyweight extends w-weight {
+    pwivate finaw weight q-quewyweight;
+    pwivate finaw d-docidfiwtewfactowy docidfiwtewfactowy;
+
+    p-pubwic fiwtewedquewyweight(
+        fiwtewedquewy q-quewy, 😳😳😳 weight q-quewyweight, (✿oωo) docidfiwtewfactowy d-docidfiwtewfactowy) {
+      s-supew(quewy);
+      t-this.quewyweight = pweconditions.checknotnuww(quewyweight);
+      this.docidfiwtewfactowy = pweconditions.checknotnuww(docidfiwtewfactowy);
+    }
+
+    @ovewwide
+    pubwic void extwacttewms(set<tewm> tewms) {
+      q-quewyweight.extwacttewms(tewms);
+    }
+
+    @ovewwide
+    p-pubwic expwanation e-expwain(weafweadewcontext context, OwO i-int doc) thwows ioexception {
+      wetuwn quewyweight.expwain(context, ʘwʘ doc);
+    }
+
+    @ovewwide
+    p-pubwic s-scowew scowew(weafweadewcontext context) thwows i-ioexception {
+      scowew quewyscowew = quewyweight.scowew(context);
+      i-if (quewyscowew == n-nyuww) {
+        wetuwn nyuww;
       }
 
-      return new FilteredQueryScorer(this, queryScorer, docIdFilterFactory.getDocIdFilter(context));
+      w-wetuwn nyew fiwtewedquewyscowew(this, (ˆ ﻌ ˆ)♡ q-quewyscowew, (U ﹏ U) docidfiwtewfactowy.getdocidfiwtew(context));
     }
 
-    @Override
-    public boolean isCacheable(LeafReaderContext ctx) {
-      return queryWeight.isCacheable(ctx);
+    @ovewwide
+    pubwic boowean iscacheabwe(weafweadewcontext ctx) {
+      w-wetuwn quewyweight.iscacheabwe(ctx);
     }
   }
 
-  private final Query query;
-  private final DocIdFilterFactory docIdFilterFactory;
+  p-pwivate finaw q-quewy quewy;
+  p-pwivate finaw d-docidfiwtewfactowy docidfiwtewfactowy;
 
-  public FilteredQuery(Query query, DocIdFilterFactory docIdFilterFactory) {
-    this.query = Preconditions.checkNotNull(query);
-    this.docIdFilterFactory = Preconditions.checkNotNull(docIdFilterFactory);
+  p-pubwic f-fiwtewedquewy(quewy quewy, UwU docidfiwtewfactowy d-docidfiwtewfactowy) {
+    t-this.quewy = pweconditions.checknotnuww(quewy);
+    this.docidfiwtewfactowy = p-pweconditions.checknotnuww(docidfiwtewfactowy);
   }
 
-  public Query getQuery() {
-    return query;
+  pubwic quewy getquewy() {
+    wetuwn q-quewy;
   }
 
-  @Override
-  public Query rewrite(IndexReader reader) throws IOException {
-    Query rewrittenQuery = query.rewrite(reader);
-    if (rewrittenQuery != query) {
-      return new FilteredQuery(rewrittenQuery, docIdFilterFactory);
+  @ovewwide
+  pubwic quewy wewwite(indexweadew w-weadew) thwows ioexception {
+    q-quewy wewwittenquewy = quewy.wewwite(weadew);
+    i-if (wewwittenquewy != quewy) {
+      wetuwn nyew f-fiwtewedquewy(wewwittenquewy, XD d-docidfiwtewfactowy);
     }
-    return this;
+    w-wetuwn this;
   }
 
-  @Override
-  public int hashCode() {
-    return query.hashCode() * 13 + docIdFilterFactory.hashCode();
+  @ovewwide
+  pubwic int hashcode() {
+    wetuwn quewy.hashcode() * 13 + d-docidfiwtewfactowy.hashcode();
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof FilteredQuery)) {
-      return false;
+  @ovewwide
+  pubwic boowean equaws(object o-obj) {
+    i-if (!(obj instanceof fiwtewedquewy)) {
+      w-wetuwn fawse;
     }
 
-    FilteredQuery filteredQuery = FilteredQuery.class.cast(obj);
-    return query.equals(filteredQuery.query)
-        && docIdFilterFactory.equals(filteredQuery.docIdFilterFactory);
+    fiwtewedquewy f-fiwtewedquewy = f-fiwtewedquewy.cwass.cast(obj);
+    wetuwn quewy.equaws(fiwtewedquewy.quewy)
+        && d-docidfiwtewfactowy.equaws(fiwtewedquewy.docidfiwtewfactowy);
   }
 
-  @Override
-  public String toString(String field) {
-    StringBuilder sb = new StringBuilder();
-    sb.append("FilteredQuery(")
-        .append(query)
+  @ovewwide
+  pubwic stwing tostwing(stwing fiewd) {
+    stwingbuiwdew s-sb = nyew s-stwingbuiwdew();
+    sb.append("fiwtewedquewy(")
+        .append(quewy)
         .append(" -> ")
-        .append(docIdFilterFactory)
+        .append(docidfiwtewfactowy)
         .append(")");
-    return sb.toString();
+    w-wetuwn sb.tostwing();
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
-    Weight queryWeight = Preconditions.checkNotNull(query.createWeight(searcher, scoreMode, boost));
-    return new FilteredQueryWeight(this, queryWeight, docIdFilterFactory);
+  @ovewwide
+  pubwic w-weight cweateweight(indexseawchew s-seawchew, ʘwʘ scowemode s-scowemode, rawr x3 fwoat boost)
+      thwows ioexception {
+    weight quewyweight = pweconditions.checknotnuww(quewy.cweateweight(seawchew, ^^;; scowemode, ʘwʘ boost));
+    wetuwn nyew fiwtewedquewyweight(this, (U ﹏ U) quewyweight, (˘ω˘) docidfiwtewfactowy);
   }
 }

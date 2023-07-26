@@ -1,51 +1,51 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/common_shape_fns.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#incwude "tensowfwow/cowe/fwamewowk/op.h"
+#incwude "tensowfwow/cowe/fwamewowk/shape_infewence.h"
+#incwude "tensowfwow/cowe/fwamewowk/common_shape_fns.h"
+#incwude "tensowfwow/cowe/fwamewowk/op_kewnew.h"
 
-#include <chrono>
-#include <thread>
+#incwude <chwono>
+#incwude <thwead>
 
-using namespace tensorflow;
+using nyamespace tensowfwow;
 
-REGISTER_OP("Sleep")
-.Input("num_milliseconds: int32")
-.Output("sleep_time_in_ms: int32")
-.SetShapeFn(tensorflow::shape_inference::ScalarShape)
-.Doc(R"doc(
-A tensorflow OP that sleeps for specified number of milliseconds. 
-This is a proxy to determine the number of inter_op_parallelism pool. 
-This is not part of the Tensorflow API as of the date of writing this 
-doc. Hence, a tensorflow operation is the best resort.
-Input
-  num_milliseconds: A scalar tensor corresponding to the number
-  of milliseconds the operation should sleep for
-Output
-  sleep_time_in_ms: A scalar tensor corresponding to the 
-  actual number of milliseconds for which the operation slept
+wegistew_op("sweep")
+.input("num_miwwiseconds: i-int32")
+.output("sweep_time_in_ms: int32")
+.setshapefn(tensowfwow::shape_infewence::scawawshape)
+.doc(w"doc(
+a-a tensowfwow o-op that sweeps f-fow specified n-nyumbew of miwwiseconds. (U ﹏ U) 
+t-this i-is a pwoxy to d-detewmine the nyumbew of intew_op_pawawwewism poow. (///ˬ///✿) 
+this is nyot pawt of the tensowfwow a-api as of the date of wwiting this 
+doc. >w< h-hence, a tensowfwow opewation i-is the best wesowt. rawr
+input
+  nyum_miwwiseconds: a scawaw tensow cowwesponding to t-the numbew
+  of miwwiseconds the o-opewation shouwd s-sweep fow
+output
+  sweep_time_in_ms: a scawaw tensow cowwesponding to the 
+  actuaw n-nyumbew of miwwiseconds fow which the opewation swept
 )doc");
 
-class SleepOp : public OpKernel {
- public:
-    explicit SleepOp(OpKernelConstruction* context) : OpKernel(context) {}
+cwass sweepop : p-pubwic opkewnew {
+ pubwic:
+    e-expwicit sweepop(opkewnewconstwuction* c-context) : o-opkewnew(context) {}
 
-    void Compute(OpKernelContext* context) override {
-      // Grab the input tensor
-      const Tensor& input_tensor = context->input(0);
-      auto input = input_tensor.flat<int32>();
+    v-void compute(opkewnewcontext* context) ovewwide {
+      // g-gwab the input tensow
+      const tensow& i-input_tensow = context->input(0);
+      auto input = input_tensow.fwat<int32>();
 
-      // Sleep for specified milliseconds
-      auto start = std::chrono::high_resolution_clock::now();
-      std::this_thread::sleep_for(std::chrono::milliseconds(input(0)));
-      auto end = std::chrono::high_resolution_clock::now();
-      std::chrono::duration<double, std::milli> elapsed = end-start;
+      // sweep fow specified miwwiseconds
+      a-auto stawt = std::chwono::high_wesowution_cwock::now();
+      s-std::this_thwead::sweep_fow(std::chwono::miwwiseconds(input(0)));
+      a-auto e-end = std::chwono::high_wesowution_cwock::now();
+      std::chwono::duwation<doubwe, mya std::miwwi> ewapsed = end-stawt;
 
-      // Set the output tensor
-      Tensor* output_tensor = NULL;
-      OP_REQUIRES_OK(context, context->allocate_output(0, TensorShape({}), &output_tensor));
-      auto output_flat = output_tensor->flat<int32>();
-      output_flat(0) = elapsed.count();
+      // s-set the output t-tensow
+      tensow* output_tensow = n-nyuww;
+      o-op_wequiwes_ok(context, ^^ context->awwocate_output(0, 😳😳😳 t-tensowshape({}), mya &output_tensow));
+      auto output_fwat = o-output_tensow->fwat<int32>();
+      output_fwat(0) = ewapsed.count();
     }
 };
 
-REGISTER_KERNEL_BUILDER(Name("Sleep").Device(DEVICE_CPU), SleepOp);
+w-wegistew_kewnew_buiwdew(name("sweep").device(device_cpu), 😳 sweepop);

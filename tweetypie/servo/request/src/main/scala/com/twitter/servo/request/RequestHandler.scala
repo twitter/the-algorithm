@@ -1,23 +1,23 @@
-package com.twitter.servo.request
+package com.twittew.sewvo.wequest
 
 /**
- * A collection of RequestHandler factory functions.
+ * a cowwection o-of wequesthandwew f-factowy f-functions. 😳
  *
- * type RequestHandler[-A, +B] = FutureArrow[A, B]
+ * t-type wequesthandwew[-a, XD +b] = futuweawwow[a, :3 b-b]
  */
-object RequestHandler {
+o-object wequesthandwew {
 
   /**
-   * Terminate a RequestFilter with a RequestHandler, producing a new handler.
+   * t-tewminate a-a wequestfiwtew with a wequesthandwew, 😳😳😳 pwoducing a nyew handwew. -.-
    */
-  def apply[A, B <: A, C](
-    filter: RequestFilter[A],
-    handler: RequestHandler[B, C]
-  ): RequestHandler[B, C] =
-    new RequestHandler[B, C] {
-      override def apply(request: B) = {
-        filter(request: A) flatMap { filteredRequest =>
-          handler(filteredRequest.asInstanceOf[B])
+  def a-appwy[a, ( ͡o ω ͡o ) b <: a, rawr x3 c](
+    fiwtew: wequestfiwtew[a], nyaa~~
+    h-handwew: wequesthandwew[b, /(^•ω•^) c-c]
+  ): wequesthandwew[b, rawr c] =
+    nyew wequesthandwew[b, OwO c] {
+      o-ovewwide def appwy(wequest: b-b) = {
+        f-fiwtew(wequest: a) fwatmap { fiwtewedwequest =>
+          handwew(fiwtewedwequest.asinstanceof[b])
         }
       }
     }

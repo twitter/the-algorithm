@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.core.feature.featuremap.datarecord
+package com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.datawecowd
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.datarecord._
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import scala.collection.JavaConverters._
+impowt com.twittew.mw.api.datawecowd
+i-impowt c-com.twittew.mw.api.featuwecontext
+i-impowt com.twittew.mw.api.utiw.swichdatawecowd
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd._
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.iwwegawstatefaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+impowt scawa.cowwection.javaconvewtews._
 
 /**
- * Constructs a DataRecord from a FeatureMap, given a predefined set of features.
+ * constwucts a datawecowd fwom a-a featuwemap, 😳 given a pwedefined set of featuwes. mya
  *
- * @param features predefined set of BaseDataRecordFeatures that should be included in the output DataRecord.
+ * @pawam f-featuwes pwedefined set of basedatawecowdfeatuwes t-that shouwd be incwuded in the output datawecowd. (˘ω˘)
  */
-class DataRecordExtractor[DRFeature <: BaseDataRecordFeature[_, _]](
-  features: Set[DRFeature]) {
+cwass d-datawecowdextwactow[dwfeatuwe <: basedatawecowdfeatuwe[_, >_< _]](
+  f-featuwes: set[dwfeatuwe]) {
 
-  private val featureContext = new FeatureContext(features.collect {
-    case dataRecordCompatible: DataRecordCompatible[_] => dataRecordCompatible.mlFeature
-  }.asJava)
+  p-pwivate vaw featuwecontext = nyew featuwecontext(featuwes.cowwect {
+    case datawecowdcompatibwe: datawecowdcompatibwe[_] => datawecowdcompatibwe.mwfeatuwe
+  }.asjava)
 
-  def fromDataRecord(dataRecord: DataRecord): FeatureMap = {
-    val featureMapBuilder = FeatureMapBuilder()
-    val richDataRecord = SRichDataRecord(dataRecord, featureContext)
-    features.foreach {
-      // FeatureStoreDataRecordFeature is currently not supported
-      case _: FeatureStoreDataRecordFeature[_, _] =>
-        throw new UnsupportedOperationException(
-          "FeatureStoreDataRecordFeature cannot be extracted from a DataRecord")
-      case feature: DataRecordFeature[_, _] with DataRecordCompatible[_] =>
-        // Java API will return null, so use Option to convert it to Scala Option which is None when null.
-        richDataRecord.getFeatureValueOpt(feature.mlFeature)(
-          feature.fromDataRecordFeatureValue) match {
-          case Some(value) =>
-            featureMapBuilder.add(feature.asInstanceOf[Feature[_, feature.FeatureType]], value)
-          case None =>
-            featureMapBuilder.addFailure(
-              feature,
-              PipelineFailure(
-                IllegalStateFailure,
-                s"Required DataRecord feature is missing: ${feature.mlFeature.getFeatureName}")
+  d-def fwomdatawecowd(datawecowd: datawecowd): featuwemap = {
+    vaw f-featuwemapbuiwdew = featuwemapbuiwdew()
+    v-vaw w-wichdatawecowd = s-swichdatawecowd(datawecowd, -.- f-featuwecontext)
+    featuwes.foweach {
+      // featuwestowedatawecowdfeatuwe i-is cuwwentwy nyot suppowted
+      case _: f-featuwestowedatawecowdfeatuwe[_, 🥺 _] =>
+        thwow nyew unsuppowtedopewationexception(
+          "featuwestowedatawecowdfeatuwe cannot be extwacted fwom a datawecowd")
+      case featuwe: d-datawecowdfeatuwe[_, (U ﹏ U) _] with d-datawecowdcompatibwe[_] =>
+        // j-java api wiww w-wetuwn nyuww, >w< so use option to convewt it to scawa option which i-is nyone when n-nyuww. mya
+        wichdatawecowd.getfeatuwevawueopt(featuwe.mwfeatuwe)(
+          f-featuwe.fwomdatawecowdfeatuwevawue) m-match {
+          case some(vawue) =>
+            f-featuwemapbuiwdew.add(featuwe.asinstanceof[featuwe[_, >w< featuwe.featuwetype]], nyaa~~ v-vawue)
+          case nyone =>
+            featuwemapbuiwdew.addfaiwuwe(
+              featuwe, (✿oωo)
+              p-pipewinefaiwuwe(
+                iwwegawstatefaiwuwe, ʘwʘ
+                s-s"wequiwed datawecowd featuwe i-is missing: ${featuwe.mwfeatuwe.getfeatuwename}")
             )
         }
-      case feature: DataRecordOptionalFeature[_, _] with DataRecordCompatible[_] =>
-        val featureValue =
-          richDataRecord.getFeatureValueOpt(feature.mlFeature)(feature.fromDataRecordFeatureValue)
-        featureMapBuilder
-          .add(feature.asInstanceOf[Feature[_, Option[feature.FeatureType]]], featureValue)
-      // DataRecordInAFeature is currently not supported
-      case _: DataRecordInAFeature[_] =>
-        throw new UnsupportedOperationException(
-          "DataRecordInAFeature cannot be extracted from a DataRecord")
+      c-case featuwe: datawecowdoptionawfeatuwe[_, (ˆ ﻌ ˆ)♡ _] with datawecowdcompatibwe[_] =>
+        vaw featuwevawue =
+          wichdatawecowd.getfeatuwevawueopt(featuwe.mwfeatuwe)(featuwe.fwomdatawecowdfeatuwevawue)
+        featuwemapbuiwdew
+          .add(featuwe.asinstanceof[featuwe[_, 😳😳😳 o-option[featuwe.featuwetype]]], :3 f-featuwevawue)
+      // datawecowdinafeatuwe i-is cuwwentwy n-nyot suppowted
+      c-case _: datawecowdinafeatuwe[_] =>
+        thwow nyew unsuppowtedopewationexception(
+          "datawecowdinafeatuwe cannot b-be extwacted fwom a datawecowd")
     }
-    featureMapBuilder.build()
+    featuwemapbuiwdew.buiwd()
   }
 }

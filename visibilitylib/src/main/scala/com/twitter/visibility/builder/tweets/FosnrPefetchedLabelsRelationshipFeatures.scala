@@ -1,81 +1,81 @@
-package com.twitter.visibility.builder.tweets
+package com.twittew.visibiwity.buiwdew.tweets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.builder.users.ViewerVerbsAuthor
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.features._
-import com.twitter.visibility.models.TweetSafetyLabel
-import com.twitter.visibility.models.ViolationLevel
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+i-impowt com.twittew.visibiwity.buiwdew.usews.viewewvewbsauthow
+i-impowt com.twittew.visibiwity.common.usewid
+i-impowt com.twittew.visibiwity.common.usewwewationshipsouwce
+impowt com.twittew.visibiwity.featuwes._
+impowt com.twittew.visibiwity.modews.tweetsafetywabew
+impowt c-com.twittew.visibiwity.modews.viowationwevew
 
-class FosnrPefetchedLabelsRelationshipFeatures(
-  userRelationshipSource: UserRelationshipSource,
-  statsReceiver: StatsReceiver) {
+cwass fosnwpefetchedwabewswewationshipfeatuwes(
+  usewwewationshipsouwce: u-usewwewationshipsouwce, /(^•ω•^)
+  statsweceivew: s-statsweceivew) {
 
-  private[this] val scopedStatsReceiver =
-    statsReceiver.scope("fonsr_prefetched_relationship_features")
+  pwivate[this] vaw scopedstatsweceivew =
+    statsweceivew.scope("fonsw_pwefetched_wewationship_featuwes")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  p-pwivate[this] vaw wequests = s-scopedstatsweceivew.countew("wequests")
 
-  private[this] val viewerFollowsAuthorOfViolatingTweet =
-    scopedStatsReceiver.scope(ViewerFollowsAuthorOfViolatingTweet.name).counter("requests")
+  p-pwivate[this] vaw viewewfowwowsauthowofviowatingtweet =
+    scopedstatsweceivew.scope(viewewfowwowsauthowofviowatingtweet.name).countew("wequests")
 
-  private[this] val viewerDoesNotFollowAuthorOfViolatingTweet =
-    scopedStatsReceiver.scope(ViewerDoesNotFollowAuthorOfViolatingTweet.name).counter("requests")
+  pwivate[this] vaw viewewdoesnotfowwowauthowofviowatingtweet =
+    s-scopedstatsweceivew.scope(viewewdoesnotfowwowauthowofviowatingtweet.name).countew("wequests")
 
-  def forNonFosnr(): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    _.withConstantFeature(ViewerFollowsAuthorOfViolatingTweet, false)
-      .withConstantFeature(ViewerDoesNotFollowAuthorOfViolatingTweet, false)
+  def fownonfosnw(): featuwemapbuiwdew => featuwemapbuiwdew = {
+    wequests.incw()
+    _.withconstantfeatuwe(viewewfowwowsauthowofviowatingtweet, nyaa~~ f-fawse)
+      .withconstantfeatuwe(viewewdoesnotfowwowauthowofviowatingtweet, nyaa~~ fawse)
   }
-  def forTweetWithSafetyLabelsAndAuthorId(
-    safetyLabels: Seq[TweetSafetyLabel],
-    authorId: Long,
-    viewerId: Option[Long]
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    _.withFeature(
-      ViewerFollowsAuthorOfViolatingTweet,
-      viewerFollowsAuthorOfViolatingTweet(safetyLabels, authorId, viewerId))
-      .withFeature(
-        ViewerDoesNotFollowAuthorOfViolatingTweet,
-        viewerDoesNotFollowAuthorOfViolatingTweet(safetyLabels, authorId, viewerId))
+  d-def fowtweetwithsafetywabewsandauthowid(
+    s-safetywabews: s-seq[tweetsafetywabew], :3
+    a-authowid: wong, 😳😳😳
+    viewewid: option[wong]
+  ): f-featuwemapbuiwdew => featuwemapbuiwdew = {
+    wequests.incw()
+    _.withfeatuwe(
+      viewewfowwowsauthowofviowatingtweet, (˘ω˘)
+      v-viewewfowwowsauthowofviowatingtweet(safetywabews, ^^ authowid, :3 viewewid))
+      .withfeatuwe(
+        viewewdoesnotfowwowauthowofviowatingtweet, -.-
+        viewewdoesnotfowwowauthowofviowatingtweet(safetywabews, 😳 authowid, v-viewewid))
   }
-  def viewerFollowsAuthorOfViolatingTweet(
-    safetyLabels: Seq[TweetSafetyLabel],
-    authorId: UserId,
-    viewerId: Option[UserId]
-  ): Stitch[Boolean] = {
-    if (safetyLabels
-        .map(ViolationLevel.fromTweetSafetyLabelOpt).collect {
-          case Some(level) => level
-        }.isEmpty) {
-      return Stitch.False
+  def viewewfowwowsauthowofviowatingtweet(
+    s-safetywabews: seq[tweetsafetywabew], mya
+    a-authowid: u-usewid, (˘ω˘)
+    viewewid: option[usewid]
+  ): stitch[boowean] = {
+    if (safetywabews
+        .map(viowationwevew.fwomtweetsafetywabewopt).cowwect {
+          case s-some(wevew) => w-wevew
+        }.isempty) {
+      wetuwn stitch.fawse
     }
-    ViewerVerbsAuthor(
-      authorId,
-      viewerId,
-      userRelationshipSource.follows,
-      viewerFollowsAuthorOfViolatingTweet)
+    v-viewewvewbsauthow(
+      a-authowid, >_<
+      viewewid, -.-
+      u-usewwewationshipsouwce.fowwows, 🥺
+      viewewfowwowsauthowofviowatingtweet)
   }
-  def viewerDoesNotFollowAuthorOfViolatingTweet(
-    safetyLabels: Seq[TweetSafetyLabel],
-    authorId: UserId,
-    viewerId: Option[UserId]
-  ): Stitch[Boolean] = {
-    if (safetyLabels
-        .map(ViolationLevel.fromTweetSafetyLabelOpt).collect {
-          case Some(level) => level
-        }.isEmpty) {
-      return Stitch.False
+  d-def viewewdoesnotfowwowauthowofviowatingtweet(
+    safetywabews: seq[tweetsafetywabew], (U ﹏ U)
+    a-authowid: usewid, >w<
+    viewewid: o-option[usewid]
+  ): stitch[boowean] = {
+    i-if (safetywabews
+        .map(viowationwevew.fwomtweetsafetywabewopt).cowwect {
+          c-case some(wevew) => wevew
+        }.isempty) {
+      wetuwn stitch.fawse
     }
-    ViewerVerbsAuthor(
-      authorId,
-      viewerId,
-      userRelationshipSource.follows,
-      viewerDoesNotFollowAuthorOfViolatingTweet).map(following => !following)
+    viewewvewbsauthow(
+      authowid, mya
+      viewewid, >w<
+      u-usewwewationshipsouwce.fowwows, nyaa~~
+      v-viewewdoesnotfowwowauthowofviowatingtweet).map(fowwowing => !fowwowing)
   }
 
 }

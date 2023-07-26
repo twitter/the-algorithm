@@ -1,26 +1,26 @@
-package com.twitter.visibility.builder.users
+package com.twittew.visibiwity.buiwdew.usews
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.features._
-import com.twitter.visibility.context.thriftscala.SearchContext
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+i-impowt com.twittew.visibiwity.featuwes._
+i-impowt c-com.twittew.visibiwity.context.thwiftscawa.seawchcontext
 
-class SearchFeatures(statsReceiver: StatsReceiver) {
-  private[this] val scopedStatsReceiver = statsReceiver.scope("search_features")
-  private[this] val requests = scopedStatsReceiver.counter("requests")
-  private[this] val rawQueryCounter =
-    scopedStatsReceiver.scope(RawQuery.name).counter("requests")
+c-cwass s-seawchfeatuwes(statsweceivew: statsweceivew) {
+  pwivate[this] vaw scopedstatsweceivew = statsweceivew.scope("seawch_featuwes")
+  p-pwivate[this] vaw wequests = scopedstatsweceivew.countew("wequests")
+  p-pwivate[this] vaw wawquewycountew =
+    s-scopedstatsweceivew.scope(wawquewy.name).countew("wequests")
 
-  def forSearchContext(
-    searchContext: Option[SearchContext]
-  ): FeatureMapBuilder => FeatureMapBuilder = { builder =>
-    requests.incr()
-    searchContext match {
-      case Some(context: SearchContext) =>
-        rawQueryCounter.incr()
-        builder
-          .withConstantFeature(RawQuery, context.rawQuery)
-      case _ => builder
+  def fowseawchcontext(
+    seawchcontext: option[seawchcontext]
+  ): featuwemapbuiwdew => f-featuwemapbuiwdew = { buiwdew =>
+    w-wequests.incw()
+    s-seawchcontext match {
+      case some(context: seawchcontext) =>
+        wawquewycountew.incw()
+        buiwdew
+          .withconstantfeatuwe(wawquewy, ( ͡o ω ͡o ) c-context.wawquewy)
+      case _ => buiwdew
     }
   }
 }

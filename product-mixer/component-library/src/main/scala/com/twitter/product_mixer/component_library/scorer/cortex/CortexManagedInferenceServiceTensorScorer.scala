@@ -1,97 +1,97 @@
-package com.twitter.product_mixer.component_library.scorer.cortex
+package com.twittew.pwoduct_mixew.component_wibwawy.scowew.cowtex
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.component_library.scorer.common.MLModelInferenceClient
-import com.twitter.product_mixer.component_library.scorer.tensorbuilder.ModelInferRequestBuilder
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.stitch.Stitch
-import com.twitter.util.logging.Logging
-import inference.GrpcService.ModelInferRequest
-import inference.GrpcService.ModelInferResponse.InferOutputTensor
-import scala.collection.convert.ImplicitConversions.`collection AsScalaIterable`
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.scowew.common.mwmodewinfewencecwient
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.scowew.tensowbuiwdew.modewinfewwequestbuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.scowew.scowew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.scowewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.iwwegawstatefaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.utiw.wogging.wogging
+i-impowt infewence.gwpcsewvice.modewinfewwequest
+impowt infewence.gwpcsewvice.modewinfewwesponse.infewoutputtensow
+i-impowt scawa.cowwection.convewt.impwicitconvewsions.`cowwection a-asscawaitewabwe`
 
-private[scorer] class CortexManagedInferenceServiceTensorScorer[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any]
+p-pwivate[scowew] cwass cowtexmanagedinfewencesewvicetensowscowew[
+  quewy <: pipewinequewy, (˘ω˘)
+  candidate <: u-univewsawnoun[any]
 ](
-  override val identifier: ScorerIdentifier,
-  modelInferRequestBuilder: ModelInferRequestBuilder[
-    Query,
-    Candidate
-  ],
-  resultFeatureExtractors: Seq[FeatureWithExtractor[Query, Candidate, _]],
-  client: MLModelInferenceClient,
-  statsReceiver: StatsReceiver)
-    extends Scorer[Query, Candidate]
-    with Logging {
+  ovewwide vaw identifiew: scowewidentifiew, (U ﹏ U)
+  modewinfewwequestbuiwdew: modewinfewwequestbuiwdew[
+    q-quewy, ^•ﻌ•^
+    candidate
+  ], (˘ω˘)
+  w-wesuwtfeatuweextwactows: s-seq[featuwewithextwactow[quewy, :3 c-candidate, ^^;; _]],
+  c-cwient: mwmodewinfewencecwient, 🥺
+  statsweceivew: s-statsweceivew)
+    extends scowew[quewy, candidate]
+    w-with wogging {
 
-  require(resultFeatureExtractors.nonEmpty, "Result Extractors cannot be empty")
+  wequiwe(wesuwtfeatuweextwactows.nonempty, (⑅˘꒳˘) "wesuwt extwactows cannot be empty")
 
-  private val managedServiceRequestFailures = statsReceiver.counter("managedServiceRequestFailures")
-  override val features: Set[Feature[_, _]] =
-    resultFeatureExtractors.map(_.feature).toSet.asInstanceOf[Set[Feature[_, _]]]
+  pwivate vaw managedsewvicewequestfaiwuwes = s-statsweceivew.countew("managedsewvicewequestfaiwuwes")
+  ovewwide v-vaw featuwes: s-set[featuwe[_, nyaa~~ _]] =
+    w-wesuwtfeatuweextwactows.map(_.featuwe).toset.asinstanceof[set[featuwe[_, :3 _]]]
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val batchInferRequest: ModelInferRequest = modelInferRequestBuilder(query, candidates)
+  ovewwide def appwy(
+    quewy: quewy, ( ͡o ω ͡o )
+    candidates: s-seq[candidatewithfeatuwes[candidate]]
+  ): s-stitch[seq[featuwemap]] = {
+    vaw batchinfewwequest: m-modewinfewwequest = m-modewinfewwequestbuiwdew(quewy, mya candidates)
 
-    val managedServiceResponse: Stitch[Seq[InferOutputTensor]] =
-      client.score(batchInferRequest).map(_.getOutputsList.toSeq).onFailure { e =>
-        error(s"request to ML Managed Service Failed: $e")
-        managedServiceRequestFailures.incr()
+    v-vaw managedsewvicewesponse: s-stitch[seq[infewoutputtensow]] =
+      cwient.scowe(batchinfewwequest).map(_.getoutputswist.toseq).onfaiwuwe { e =>
+        ewwow(s"wequest t-to mw managed sewvice faiwed: $e")
+        managedsewvicewequestfaiwuwes.incw()
       }
 
-    managedServiceResponse.map { responses =>
-      extractResponse(query, candidates.map(_.candidate), responses)
+    m-managedsewvicewesponse.map { wesponses =>
+      e-extwactwesponse(quewy, (///ˬ///✿) c-candidates.map(_.candidate), (˘ω˘) wesponses)
     }
   }
 
-  def extractResponse(
-    query: Query,
-    candidates: Seq[Candidate],
-    tensorOutput: Seq[InferOutputTensor]
-  ): Seq[FeatureMap] = {
-    val featureMapBuilders = candidates.map { _ => FeatureMapBuilder.apply() }
-    // Extract the feature for each candidate from the tensor outputs
-    resultFeatureExtractors.foreach {
-      case FeatureWithExtractor(feature, extractor) =>
-        val extractedValues = extractor.apply(query, tensorOutput)
-        if (candidates.size != extractedValues.size) {
-          throw PipelineFailure(
-            IllegalStateFailure,
-            s"Managed Service returned a different number of $feature than the number of candidates." +
-              s"Returned ${extractedValues.size} scores but there were ${candidates.size} candidates."
+  def extwactwesponse(
+    quewy: quewy, ^^;;
+    candidates: seq[candidate], (✿oωo)
+    t-tensowoutput: s-seq[infewoutputtensow]
+  ): seq[featuwemap] = {
+    v-vaw featuwemapbuiwdews = c-candidates.map { _ => f-featuwemapbuiwdew.appwy() }
+    // extwact the featuwe fow each candidate f-fwom the tensow outputs
+    wesuwtfeatuweextwactows.foweach {
+      case featuwewithextwactow(featuwe, (U ﹏ U) extwactow) =>
+        vaw extwactedvawues = e-extwactow.appwy(quewy, -.- tensowoutput)
+        i-if (candidates.size != e-extwactedvawues.size) {
+          t-thwow pipewinefaiwuwe(
+            iwwegawstatefaiwuwe,
+            s-s"managed sewvice w-wetuwned a diffewent n-nyumbew of $featuwe t-than the nyumbew of candidates." +
+              s"wetuwned ${extwactedvawues.size} scowes b-but thewe w-wewe ${candidates.size} c-candidates."
           )
         }
-        // Go through the extracted features list one by one and update the feature map result for each candidate.
-        featureMapBuilders.zip(extractedValues).foreach {
-          case (builder, value) =>
-            builder.add(feature, Some(value))
+        // g-go thwough t-the extwacted featuwes wist one by one and update the featuwe map w-wesuwt fow each candidate. ^•ﻌ•^
+        featuwemapbuiwdews.zip(extwactedvawues).foweach {
+          case (buiwdew, rawr vawue) =>
+            buiwdew.add(featuwe, (˘ω˘) s-some(vawue))
         }
     }
 
-    featureMapBuilders.map(_.build())
+    featuwemapbuiwdews.map(_.buiwd())
   }
 }
 
-case class FeatureWithExtractor[
-  -Query <: PipelineQuery,
-  -Candidate <: UniversalNoun[Any],
-  ResultType
+case cwass featuwewithextwactow[
+  -quewy <: p-pipewinequewy, nyaa~~
+  -candidate <: u-univewsawnoun[any], UwU
+  w-wesuwttype
 ](
-  feature: Feature[Candidate, Option[ResultType]],
-  featureExtractor: ModelFeatureExtractor[Query, ResultType])
+  featuwe: f-featuwe[candidate, :3 option[wesuwttype]], (⑅˘꒳˘)
+  f-featuweextwactow: m-modewfeatuweextwactow[quewy, (///ˬ///✿) wesuwttype])
 
-class UnexpectedFeatureTypeException(feature: Feature[_, _])
-    extends UnsupportedOperationException(s"Unsupported Feature type passed in $feature")
+cwass unexpectedfeatuwetypeexception(featuwe: featuwe[_, _])
+    extends unsuppowtedopewationexception(s"unsuppowted f-featuwe type passed i-in $featuwe")

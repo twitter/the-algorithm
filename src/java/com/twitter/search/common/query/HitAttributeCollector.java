@@ -1,101 +1,101 @@
-package com.twitter.search.common.query;
+package com.twittew.seawch.common.quewy;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+impowt j-java.utiw.wist;
+i-impowt java.utiw.map;
+i-impowt java.utiw.function.bifunction;
+i-impowt j-java.utiw.function.function;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.cowwect.wists;
+i-impowt c-com.googwe.common.cowwect.maps;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.Query;
+impowt owg.apache.wucene.index.weafweadewcontext;
+impowt owg.apache.wucene.seawch.quewy;
 
 /**
- * Not threadsafe, but should be reused across different queries unless the size of the existing
- * one is too small for a new huge serialized query.
+ * nyot thweadsafe, >w< but shouwd be w-weused acwoss diffewent quewies unwess the size o-of the existing
+ * one is too smow f-fow a nyew huge sewiawized quewy. 😳😳😳
  */
-public class HitAttributeCollector {
-  private final List<FieldRankHitInfo> hitInfos = Lists.newArrayList();
-  private final BiFunction<Integer, Integer, FieldRankHitInfo> hitInfoSupplier;
+pubwic cwass hitattwibutecowwectow {
+  p-pwivate finaw wist<fiewdwankhitinfo> hitinfos = w-wists.newawwaywist();
+  p-pwivate finaw bifunction<integew, OwO integew, fiewdwankhitinfo> hitinfosuppwiew;
 
-  private int docBase = 0;
+  p-pwivate int docbase = 0;
 
-  public HitAttributeCollector() {
-    this.hitInfoSupplier = FieldRankHitInfo::new;
+  pubwic hitattwibutecowwectow() {
+    this.hitinfosuppwiew = fiewdwankhitinfo::new;
   }
 
   /**
-   * Constructs a new {@code HitAttributionCollector} with the specified {@code FieldRankHitInfo}
-   * supplier.
+   * c-constwucts a nyew {@code h-hitattwibutioncowwectow} w-with t-the specified {@code f-fiewdwankhitinfo}
+   * suppwiew. 😳
    *
-   * @param hitInfoSupplier function to supply a {@code FieldRankHitInfo} instance
+   * @pawam hitinfosuppwiew f-function to suppwy a {@code fiewdwankhitinfo} i-instance
    */
-  public HitAttributeCollector(BiFunction<Integer, Integer, FieldRankHitInfo> hitInfoSupplier) {
-    this.hitInfoSupplier = hitInfoSupplier;
+  pubwic hitattwibutecowwectow(bifunction<integew, 😳😳😳 integew, fiewdwankhitinfo> hitinfosuppwiew) {
+    this.hitinfosuppwiew = h-hitinfosuppwiew;
   }
 
   /**
-   * Creates a new IdentifiableQuery for the given query, fieldId and rank, and "registers"
-   * the fieldId and the rank with this collector.
+   * cweates a nyew i-identifiabwequewy f-fow the given q-quewy, (˘ω˘) fiewdid and wank, ʘwʘ and "wegistews"
+   * the fiewdid and the w-wank with this c-cowwectow. ( ͡o ω ͡o )
    *
-   * @param query the query to be wrapped.
-   * @param fieldId the ID of the field to be searched.
-   * @param rank The rank of this query.
-   * @return A new IdentifiableQuery instance for the given query, fieldId and rank.
+   * @pawam quewy t-the quewy to b-be wwapped. o.O
+   * @pawam fiewdid t-the id of the fiewd to be seawched. >w<
+   * @pawam w-wank the wank of this quewy. 😳
+   * @wetuwn a nyew i-identifiabwequewy instance fow t-the given quewy, 🥺 fiewdid and wank. rawr x3
    */
-  public IdentifiableQuery newIdentifiableQuery(Query query, int fieldId, int rank) {
-    FieldRankHitInfo fieldRankHitInfo = hitInfoSupplier.apply(fieldId, rank);
-    hitInfos.add(fieldRankHitInfo);
-    return new IdentifiableQuery(query, fieldRankHitInfo, this);
+  p-pubwic i-identifiabwequewy newidentifiabwequewy(quewy quewy, o.O int fiewdid, rawr int wank) {
+    fiewdwankhitinfo fiewdwankhitinfo = hitinfosuppwiew.appwy(fiewdid, ʘwʘ w-wank);
+    h-hitinfos.add(fiewdwankhitinfo);
+    wetuwn nyew i-identifiabwequewy(quewy, 😳😳😳 f-fiewdwankhitinfo, ^^;; t-this);
   }
 
-  public void clearHitAttributions(LeafReaderContext ctx, FieldRankHitInfo hitInfo) {
-    docBase = ctx.docBase;
-    hitInfo.resetDocId();
+  pubwic void cweawhitattwibutions(weafweadewcontext ctx, o.O f-fiewdwankhitinfo hitinfo) {
+    docbase = ctx.docbase;
+    hitinfo.wesetdocid();
   }
 
-  public void collectScorerAttribution(int docId, FieldRankHitInfo hitInfo) {
-    hitInfo.setDocId(docId + docBase);
+  pubwic v-void cowwectscowewattwibution(int docid, fiewdwankhitinfo h-hitinfo) {
+    h-hitinfo.setdocid(docid + d-docbase);
   }
 
   /**
-   * This method should be called when a global hit occurs.
-   * This method returns hit attribution summary for the whole query tree.
-   * This supports getting hit attribution for only the curDoc.
+   * this m-method shouwd b-be cawwed when a g-gwobaw hit occuws. (///ˬ///✿)
+   * t-this method wetuwns hit attwibution summawy f-fow the whowe q-quewy twee. σωσ
+   * t-this suppowts g-getting hit attwibution f-fow onwy the cuwdoc. nyaa~~
    *
-   * @param docId docId passed in for checking against curDoc.
-   * @return Returns a map from node rank to a set of matching field IDs. This map does not contain
-   *         entries for ranks that did not hit at all.
+   * @pawam docid docid passed in fow checking a-against cuwdoc. ^^;;
+   * @wetuwn wetuwns a map fwom nyode wank to a set of matching fiewd ids. ^•ﻌ•^ this map does nyot c-contain
+   *         entwies fow wanks that did nyot hit at aww. σωσ
    */
-  public Map<Integer, List<Integer>> getHitAttribution(int docId) {
-    return getHitAttribution(docId, (fieldId) -> fieldId);
+  p-pubwic m-map<integew, -.- wist<integew>> g-gethitattwibution(int docid) {
+    w-wetuwn gethitattwibution(docid, ^^;; (fiewdid) -> fiewdid);
   }
 
   /**
-   * This method should be called when a global hit occurs.
-   * This method returns hit attribution summary for the whole query tree.
-   * This supports getting hit attribution for only the curDoc.
+   * t-this method s-shouwd be cawwed when a gwobaw hit occuws. XD
+   * this method wetuwns hit attwibution summawy fow t-the whowe quewy twee. 🥺
+   * this s-suppowts getting hit attwibution f-fow onwy the c-cuwdoc. òωó
    *
-   * @param docId docId passed in for checking against curDoc.
-   * @param fieldIdFunc The mapping of field IDs to objects of type T.
-   * @return Returns a map from node rank to a set of matching objects (usually field IDs or names).
-   *         This map does not contain entries for ranks that did not hit at all.
+   * @pawam docid docid passed in f-fow checking against c-cuwdoc. (ˆ ﻌ ˆ)♡
+   * @pawam fiewdidfunc t-the mapping o-of fiewd ids to objects of type t. -.-
+   * @wetuwn wetuwns a map fwom nyode wank to a-a set of matching o-objects (usuawwy f-fiewd ids ow nyames). :3
+   *         t-this map d-does nyot contain entwies fow wanks t-that did nyot hit at aww. ʘwʘ
    */
-  public <T> Map<Integer, List<T>> getHitAttribution(int docId, Function<Integer, T> fieldIdFunc) {
-    int key = docId + docBase;
-    Map<Integer, List<T>> hitMap = Maps.newHashMap();
+  pubwic <t> map<integew, 🥺 wist<t>> gethitattwibution(int d-docid, >_< f-function<integew, ʘwʘ t> fiewdidfunc) {
+    int k-key = docid + docbase;
+    m-map<integew, (˘ω˘) wist<t>> hitmap = maps.newhashmap();
 
-    // Manually iterate through all hitInfos elements. It's slightly faster than using an Iterator.
-    for (FieldRankHitInfo hitInfo : hitInfos) {
-      if (hitInfo.getDocId() == key) {
-        int rank = hitInfo.getRank();
-        List<T> rankHits = hitMap.computeIfAbsent(rank, k -> Lists.newArrayList());
-        T fieldDescription = fieldIdFunc.apply(hitInfo.getFieldId());
-        rankHits.add(fieldDescription);
+    // manuawwy itewate t-thwough aww hitinfos ewements. (✿oωo) it's swightwy fastew than using an itewatow. (///ˬ///✿)
+    f-fow (fiewdwankhitinfo hitinfo : hitinfos) {
+      i-if (hitinfo.getdocid() == k-key) {
+        int wank = hitinfo.getwank();
+        wist<t> wankhits = hitmap.computeifabsent(wank, rawr x3 k-k -> wists.newawwaywist());
+        t-t fiewddescwiption = fiewdidfunc.appwy(hitinfo.getfiewdid());
+        wankhits.add(fiewddescwiption);
       }
     }
 
-    return hitMap;
+    wetuwn hitmap;
   }
 }

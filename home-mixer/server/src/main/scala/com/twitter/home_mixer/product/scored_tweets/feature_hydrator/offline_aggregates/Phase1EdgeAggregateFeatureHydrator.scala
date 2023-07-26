@@ -1,19 +1,19 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.offwine_aggwegates
 
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates.EdgeAggregateFeatures._
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.offwine_aggwegates.edgeaggwegatefeatuwes._
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class Phase1EdgeAggregateFeatureHydrator @Inject() extends BaseEdgeAggregateFeatureHydrator {
+@singweton
+c-cwass phase1edgeaggwegatefeatuwehydwatow @inject() e-extends baseedgeaggwegatefeatuwehydwatow {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("Phase1EdgeAggregate")
+  ovewwide vaw identifiew: featuwehydwatowidentifiew =
+    f-featuwehydwatowidentifiew("phase1edgeaggwegate")
 
-  override val aggregateFeatures: Set[BaseEdgeAggregateFeature] = Set(
-    UserAuthorAggregateFeature,
-    UserOriginalAuthorAggregateFeature,
-    UserMentionAggregateFeature
+  ovewwide vaw aggwegatefeatuwes: s-set[baseedgeaggwegatefeatuwe] = set(
+    usewauthowaggwegatefeatuwe, (ˆ ﻌ ˆ)♡
+    u-usewowiginawauthowaggwegatefeatuwe, (⑅˘꒳˘)
+    usewmentionaggwegatefeatuwe
   )
 }

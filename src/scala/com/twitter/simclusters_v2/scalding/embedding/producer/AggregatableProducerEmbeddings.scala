@@ -1,168 +1,168 @@
-package com.twitter.simclusters_v2.scalding.embedding.producer
+package com.twittew.simcwustews_v2.scawding.embedding.pwoducew
 
-import com.twitter.scalding._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scalding_internal.source.lzo_scrooge.FixedPathLzoScrooge
-import com.twitter.simclusters_v2.hdfs_sources.{DataSources, InterestedInSources}
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
-import com.twitter.simclusters_v2.scalding.embedding.ProducerEmbeddingsFromInterestedIn
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.{
-  ClusterId,
-  ProducerId,
-  UserId
+impowt com.twittew.scawding._
+i-impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+i-impowt com.twittew.scawding_intewnaw.souwce.wzo_scwooge.fixedpathwzoscwooge
+impowt c-com.twittew.simcwustews_v2.hdfs_souwces.{datasouwces, rawr x3 i-intewestedinsouwces}
+i-impowt com.twittew.simcwustews_v2.scawding.common.matwix.{spawsematwix, -.- s-spawsewowmatwix}
+i-impowt com.twittew.simcwustews_v2.scawding.embedding.pwoducewembeddingsfwomintewestedin
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.embeddingutiw.{
+  cwustewid, ^^
+  pwoducewid, (⑅˘꒳˘)
+  usewid
 }
-import com.twitter.simclusters_v2.scalding.embedding.common.SimClustersEmbeddingBaseJob
-import com.twitter.simclusters_v2.thriftscala.{EmbeddingType, _}
-import java.util.TimeZone
+i-impowt com.twittew.simcwustews_v2.scawding.embedding.common.simcwustewsembeddingbasejob
+impowt com.twittew.simcwustews_v2.thwiftscawa.{embeddingtype, nyaa~~ _}
+i-impowt java.utiw.timezone
 
 /**
- * This file implements a new Producer SimClusters Embeddings.
- * The differences with existing producer embeddings are:
+ * this f-fiwe impwements a nyew pwoducew simcwustews embeddings. /(^•ω•^)
+ * the d-diffewences with existing pwoducew e-embeddings a-awe:
  *
- * 1) the embedding scores are not normalized, so that one can aggregate multiple producer embeddings by adding them.
- * 2) we use log-fav scores in the user-producer graph and user-simclusters graph.
- * LogFav scores are smoother than fav scores we previously used and they are less sensitive to outliers
+ * 1) the embedding scowes awe nyot nyowmawized, (U ﹏ U) so that one can aggwegate m-muwtipwe pwoducew embeddings by adding them. 😳😳😳
+ * 2) we use wog-fav scowes in t-the usew-pwoducew gwaph and usew-simcwustews g-gwaph. >w<
+ * w-wogfav scowes a-awe smoothew t-than fav scowes we pweviouswy used and they awe w-wess sensitive to outwiews
  *
  *
  *
- *  The main difference with other normalized embeddings is the `convertEmbeddingToAggregatableEmbeddings` function
- *  where we multiply the normalized embedding with producer's norms. The resulted embeddings are then
- *  unnormalized and aggregatable.
+ *  the main d-diffewence with othew nyowmawized embeddings is the `convewtembeddingtoaggwegatabweembeddings` function
+ *  whewe we muwtipwy t-the nyowmawized embedding with p-pwoducew's nyowms. XD t-the wesuwted e-embeddings awe then
+ *  unnowmawized and aggwegatabwe. o.O
  *
  */
-trait AggregatableProducerEmbeddingsBaseApp extends SimClustersEmbeddingBaseJob[ProducerId] {
+twait a-aggwegatabwepwoducewembeddingsbaseapp e-extends simcwustewsembeddingbasejob[pwoducewid] {
 
-  val userToProducerScoringFn: NeighborWithWeights => Double
-  val userToClusterScoringFn: UserToInterestedInClusterScores => Double
-  val modelVersion: ModelVersion
+  vaw u-usewtopwoducewscowingfn: n-nyeighbowwithweights => doubwe
+  vaw u-usewtocwustewscowingfn: usewtointewestedincwustewscowes => d-doubwe
+  vaw modewvewsion: modewvewsion
 
-  // Minimum engagement threshold
-  val minNumFavers: Int = ProducerEmbeddingsFromInterestedIn.minNumFaversForProducer
+  // m-minimum engagement thweshowd
+  v-vaw minnumfavews: int = p-pwoducewembeddingsfwomintewestedin.minnumfavewsfowpwoducew
 
-  override def numClustersPerNoun: Int = 60
+  ovewwide d-def nyumcwustewspewnoun: int = 60
 
-  override def numNounsPerClusters: Int = 500 // this is not used for now
+  ovewwide def nyumnounspewcwustews: int = 500 // this is nyot used fow nyow
 
-  override def thresholdForEmbeddingScores: Double = 0.01
+  ovewwide def thweshowdfowembeddingscowes: d-doubwe = 0.01
 
-  override def prepareNounToUserMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseMatrix[ProducerId, UserId, Double] = {
+  o-ovewwide def pwepawenountousewmatwix(
+    i-impwicit datewange: d-datewange, mya
+    t-timezone: timezone, 🥺
+    uniqueid: uniqueid
+  ): spawsematwix[pwoducewid, ^^;; u-usewid, :3 doubwe] = {
 
-    SparseMatrix(
-      ProducerEmbeddingsFromInterestedIn
-        .getFilteredUserUserNormalizedGraph(
-          DataSources.userUserNormalizedGraphSource,
-          DataSources.userNormsAndCounts,
-          userToProducerScoringFn,
-          _.faverCount.exists(
-            _ > minNumFavers
+    spawsematwix(
+      pwoducewembeddingsfwomintewestedin
+        .getfiwtewedusewusewnowmawizedgwaph(
+          datasouwces.usewusewnowmawizedgwaphsouwce, (U ﹏ U)
+          d-datasouwces.usewnowmsandcounts, OwO
+          usewtopwoducewscowingfn, 😳😳😳
+          _.favewcount.exists(
+            _ > m-minnumfavews
           )
         )
         .map {
-          case (userId, (producerId, score)) =>
-            (producerId, userId, score)
+          c-case (usewid, (ˆ ﻌ ˆ)♡ (pwoducewid, XD s-scowe)) =>
+            (pwoducewid, (ˆ ﻌ ˆ)♡ usewid, scowe)
         })
   }
 
-  override def prepareUserToClusterMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseRowMatrix[UserId, ClusterId, Double] = {
-    SparseRowMatrix(
-      ProducerEmbeddingsFromInterestedIn
-        .getUserSimClustersMatrix(
-          InterestedInSources
-            .simClustersInterestedInSource(modelVersion, dateRange.embiggen(Days(5)), timeZone),
-          userToClusterScoringFn,
-          modelVersion
+  o-ovewwide def p-pwepaweusewtocwustewmatwix(
+    i-impwicit datewange: d-datewange, ( ͡o ω ͡o )
+    timezone: timezone, rawr x3
+    uniqueid: u-uniqueid
+  ): s-spawsewowmatwix[usewid, nyaa~~ c-cwustewid, >_< d-doubwe] = {
+    s-spawsewowmatwix(
+      pwoducewembeddingsfwomintewestedin
+        .getusewsimcwustewsmatwix(
+          intewestedinsouwces
+            .simcwustewsintewestedinsouwce(modewvewsion, ^^;; datewange.embiggen(days(5)), (ˆ ﻌ ˆ)♡ t-timezone), ^^;;
+          usewtocwustewscowingfn, (⑅˘꒳˘)
+          modewvewsion
         )
-        .mapValues(_.toMap),
-      isSkinnyMatrix = true
+        .mapvawues(_.tomap), rawr x3
+      isskinnymatwix = twue
     )
   }
 
-  // in order to make the embeddings aggregatable, we need to revert the normalization
-  // (multiply the norms) we did when computing embeddings in the base job.
-  def convertEmbeddingToAggregatableEmbeddings(
-    embeddings: TypedPipe[(ProducerId, Seq[(ClusterId, Double)])]
+  // in owdew to make the embeddings a-aggwegatabwe, (///ˬ///✿) we nyeed to wevewt the nyowmawization
+  // (muwtipwy the nyowms) w-we did when computing e-embeddings i-in the base job. 🥺
+  def convewtembeddingtoaggwegatabweembeddings(
+    e-embeddings: typedpipe[(pwoducewid, >_< s-seq[(cwustewid, UwU d-doubwe)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[(ProducerId, Seq[(ClusterId, Double)])] = {
-    embeddings.join(prepareNounToUserMatrix.rowL2Norms).map {
-      case (producerId, (embeddingVec, norm)) =>
-        producerId -> embeddingVec.map {
-          case (id, score) => (id, score * norm)
+    impwicit datewange: datewange, >_<
+    timezone: timezone, -.-
+    uniqueid: u-uniqueid
+  ): typedpipe[(pwoducewid, mya s-seq[(cwustewid, >w< doubwe)])] = {
+    e-embeddings.join(pwepawenountousewmatwix.woww2nowms).map {
+      c-case (pwoducewid, (U ﹏ U) (embeddingvec, 😳😳😳 nyowm)) =>
+        pwoducewid -> e-embeddingvec.map {
+          c-case (id, o.O scowe) => (id, òωó s-scowe * nyowm)
         }
     }
   }
 
-  override final def writeClusterToNounsIndex(
-    output: TypedPipe[(ClusterId, Seq[(ProducerId, Double)])]
+  o-ovewwide finaw def wwitecwustewtonounsindex(
+    output: typedpipe[(cwustewid, 😳😳😳 seq[(pwoducewid, σωσ d-doubwe)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = { Execution.unit } // we do not need this for now
+    i-impwicit d-datewange: datewange, (⑅˘꒳˘)
+    timezone: t-timezone, (///ˬ///✿)
+    u-uniqueid: uniqueid
+  ): execution[unit] = { e-execution.unit } // we do nyot nyeed this fow now
 
   /**
-   * Override this method to write the manhattan dataset.
+   * ovewwide this method t-to wwite the m-manhattan dataset. 🥺
    */
-  def writeToManhattan(
-    output: TypedPipe[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]]
+  def wwitetomanhattan(
+    o-output: t-typedpipe[keyvaw[simcwustewsembeddingid, OwO simcwustewsembedding]]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit]
+    impwicit datewange: datewange, >w<
+    t-timezone: timezone, 🥺
+    uniqueid: uniqueid
+  ): execution[unit]
 
   /**
-   * Override this method to writethrough the thrift dataset.
+   * ovewwide t-this method to wwitethwough the thwift dataset. nyaa~~
    */
-  def writeToThrift(
-    output: TypedPipe[SimClustersEmbeddingWithId]
+  d-def wwitetothwift(
+    o-output: typedpipe[simcwustewsembeddingwithid]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit]
+    impwicit datewange: datewange,
+    timezone: t-timezone, ^^
+    u-uniqueid: uniqueid
+  ): execution[unit]
 
-  val embeddingType: EmbeddingType
+  vaw embeddingtype: e-embeddingtype
 
-  override final def writeNounToClustersIndex(
-    output: TypedPipe[(ProducerId, Seq[(ClusterId, Double)])]
+  ovewwide finaw d-def wwitenountocwustewsindex(
+    output: typedpipe[(pwoducewid, >w< seq[(cwustewid, OwO doubwe)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val convertedEmbeddings = convertEmbeddingToAggregatableEmbeddings(output)
+    i-impwicit datewange: datewange, XD
+    t-timezone: t-timezone, ^^;;
+    uniqueid: uniqueid
+  ): e-execution[unit] = {
+    vaw convewtedembeddings = c-convewtembeddingtoaggwegatabweembeddings(output)
       .map {
-        case (producerId, topSimClustersWithScore) =>
-          val id = SimClustersEmbeddingId(
-            embeddingType = embeddingType,
-            modelVersion = modelVersion,
-            internalId = InternalId.UserId(producerId))
+        c-case (pwoducewid, t-topsimcwustewswithscowe) =>
+          vaw id = s-simcwustewsembeddingid(
+            e-embeddingtype = embeddingtype, 🥺
+            modewvewsion = modewvewsion, XD
+            i-intewnawid = i-intewnawid.usewid(pwoducewid))
 
-          val embeddings = SimClustersEmbedding(topSimClustersWithScore.map {
-            case (clusterId, score) => SimClusterWithScore(clusterId, score)
+          v-vaw embeddings = simcwustewsembedding(topsimcwustewswithscowe.map {
+            case (cwustewid, (U ᵕ U❁) s-scowe) => simcwustewwithscowe(cwustewid, :3 scowe)
           })
 
-          SimClustersEmbeddingWithId(id, embeddings)
+          s-simcwustewsembeddingwithid(id, ( ͡o ω ͡o ) e-embeddings)
       }
 
-    val keyValuePairs = convertedEmbeddings.map { simClustersEmbeddingWithId =>
-      KeyVal(simClustersEmbeddingWithId.embeddingId, simClustersEmbeddingWithId.embedding)
+    vaw keyvawuepaiws = convewtedembeddings.map { simcwustewsembeddingwithid =>
+      keyvaw(simcwustewsembeddingwithid.embeddingid, òωó s-simcwustewsembeddingwithid.embedding)
     }
-    val manhattanExecution = writeToManhattan(keyValuePairs)
+    v-vaw manhattanexecution = w-wwitetomanhattan(keyvawuepaiws)
 
-    val thriftExecution = writeToThrift(convertedEmbeddings)
+    v-vaw thwiftexecution = wwitetothwift(convewtedembeddings)
 
-    Execution.zip(manhattanExecution, thriftExecution).unit
+    e-execution.zip(manhattanexecution, σωσ thwiftexecution).unit
   }
 }

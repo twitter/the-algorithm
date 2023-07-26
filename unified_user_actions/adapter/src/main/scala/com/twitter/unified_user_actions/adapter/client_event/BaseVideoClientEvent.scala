@@ -1,34 +1,34 @@
-package com.twitter.unified_user_actions.adapter.client_event
+package com.twittew.unified_usew_actions.adaptew.cwient_event
 
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.clientapp.thriftscala.{Item => LogEventItem}
-import com.twitter.unified_user_actions.thriftscala._
+impowt c-com.twittew.cwientapp.thwiftscawa.wogevent
+i-impowt com.twittew.cwientapp.thwiftscawa.{item => w-wogeventitem}
+i-impowt com.twittew.unified_usew_actions.thwiftscawa._
 
-abstract class BaseVideoClientEvent(actionType: ActionType)
-    extends BaseClientEvent(actionType = actionType) {
+a-abstwact c-cwass basevideocwientevent(actiontype: a-actiontype)
+    e-extends basecwientevent(actiontype = actiontype) {
 
-  override def getUuaItem(
-    ceItem: LogEventItem,
-    logEvent: LogEvent
-  ): Option[Item] = for {
-    actionTweetId <- ceItem.id
-    clientMediaEvent <- ceItem.clientMediaEvent
-    sessionState <- clientMediaEvent.sessionState
-    mediaIdentifier <- sessionState.contentVideoIdentifier
-    mediaId <- VideoClientEventUtils.videoIdFromMediaIdentifier(mediaIdentifier)
-    mediaDetails <- ceItem.mediaDetailsV2
-    mediaItems <- mediaDetails.mediaItems
-    videoMetadata <- VideoClientEventUtils.getVideoMetadata(
-      mediaId,
-      mediaItems,
-      ceItem.cardDetails.flatMap(_.amplifyDetails))
-  } yield {
-    Item.TweetInfo(
-      ClientEventCommonUtils
-        .getBasicTweetInfo(
-          actionTweetId = actionTweetId,
-          ceItem = ceItem,
-          ceNamespaceOpt = logEvent.eventNamespace)
-        .copy(tweetActionInfo = Some(videoMetadata)))
+  ovewwide def getuuaitem(
+    ceitem: w-wogeventitem, (⑅˘꒳˘)
+    wogevent: wogevent
+  ): option[item] = f-fow {
+    actiontweetid <- c-ceitem.id
+    cwientmediaevent <- ceitem.cwientmediaevent
+    sessionstate <- c-cwientmediaevent.sessionstate
+    mediaidentifiew <- s-sessionstate.contentvideoidentifiew
+    m-mediaid <- videocwienteventutiws.videoidfwommediaidentifiew(mediaidentifiew)
+    mediadetaiws <- ceitem.mediadetaiwsv2
+    mediaitems <- mediadetaiws.mediaitems
+    v-videometadata <- videocwienteventutiws.getvideometadata(
+      mediaid, rawr x3
+      mediaitems, (✿oωo)
+      ceitem.cawddetaiws.fwatmap(_.ampwifydetaiws))
+  } y-yiewd {
+    item.tweetinfo(
+      c-cwienteventcommonutiws
+        .getbasictweetinfo(
+          a-actiontweetid = a-actiontweetid, (ˆ ﻌ ˆ)♡
+          c-ceitem = ceitem, (˘ω˘)
+          cenamespaceopt = wogevent.eventnamespace)
+        .copy(tweetactioninfo = s-some(videometadata)))
   }
 }

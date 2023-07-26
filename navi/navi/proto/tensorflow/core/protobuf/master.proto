@@ -1,353 +1,353 @@
-/* Copyright 2016 The TensorFlow Authors. All Rights Reserved.
+/* copywight 2016 the tensowfwow a-authows. ^^ aww wights w-wesewved. XD
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+wicensed u-undew the a-apache wicense, UwU v-vewsion 2.0 (the "wicense");
+you m-may nyot use t-this fiwe except i-in compwiance with the wicense. o.O
+you may obtain a copy of the wicense at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apache.owg/wicenses/wicense-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+u-unwess wequiwed by appwicabwe waw ow agweed t-to in wwiting, 😳 softwawe
+distwibuted u-undew the wicense is distwibuted on an "as is" basis, (˘ω˘)
+w-without wawwanties ow conditions o-of any kind, 🥺 eithew e-expwess ow impwied. ^^
+see the wicense fow the specific wanguage govewning pewmissions a-and
+wimitations undew the wicense. >w<
 ==============================================================================*/
 
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "tensorflow/core/framework/device_attributes.proto";
-import "tensorflow/core/framework/graph.proto";
-import "tensorflow/core/framework/tensor.proto";
-import "tensorflow/core/protobuf/config.proto";
-import "tensorflow/core/protobuf/error_codes.proto";
-import "tensorflow/core/protobuf/named_tensor.proto";
+i-impowt "tensowfwow/cowe/fwamewowk/device_attwibutes.pwoto";
+impowt "tensowfwow/cowe/fwamewowk/gwaph.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/tensow.pwoto";
+i-impowt "tensowfwow/cowe/pwotobuf/config.pwoto";
+i-impowt "tensowfwow/cowe/pwotobuf/ewwow_codes.pwoto";
+i-impowt "tensowfwow/cowe/pwotobuf/named_tensow.pwoto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "DistributedRuntimeProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.distruntime";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option cc_enabwe_awenas = twue;
+o-option java_outew_cwassname = "distwibutedwuntimepwotos";
+option java_muwtipwe_fiwes = t-twue;
+option java_package = "owg.tensowfwow.distwuntime";
+option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// CreateSession method request/response protos.
+// cweatesession method wequest/wesponse pwotos.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message CreateSessionRequest {
-  // The initial graph definition.
-  GraphDef graph_def = 1;
+m-message cweatesessionwequest {
+  // t-the i-initiaw gwaph definition. ^^;;
+  g-gwaphdef gwaph_def = 1;
 
-  // Configuration options.
-  ConfigProto config = 2;
+  // configuwation options. (˘ω˘)
+  c-configpwoto c-config = 2;
 
-  // The target string used from the client's perspective.
-  string target = 3;
+  // the tawget stwing u-used fwom the c-cwient's pewspective. OwO
+  stwing t-tawget = 3;
 }
 
-message CreateSessionResponse {
-  // The session handle to be used in subsequent calls for the created session.
+message cweatesessionwesponse {
+  // t-the session handwe to be used in subsequent c-cawws fow the cweated session. (ꈍᴗꈍ)
   //
-  // The client must arrange to call CloseSession with this returned
-  // session handle to close the session.
-  string session_handle = 1;
+  // t-the cwient must awwange t-to caww cwosesession w-with this wetuwned
+  // session handwe to cwose the session. òωó
+  stwing session_handwe = 1;
 
-  // The initial version number for the graph, to be used in the next call
-  // to ExtendSession.
-  int64 graph_version = 2;
+  // the initiaw vewsion nyumbew f-fow the gwaph, ʘwʘ t-to be used in the nyext caww
+  // t-to extendsession. ʘwʘ
+  i-int64 gwaph_vewsion = 2;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// ExtendSession method request/response protos.
+// e-extendsession method wequest/wesponse pwotos. nyaa~~
 //
-// The "graph_def" specifies a set of nodes to be added to the session's graph.
+// the "gwaph_def" specifies a-a set of nodes to be added to the session's gwaph.
 //
-// A typical "graph_def" will contain:
+// a typicaw "gwaph_def" w-wiww contain:
 //
-// * Zero or more new nodes with names that do not exist in the server-side
-//   graph. These will be added to the graph.
+// * zewo o-ow mowe nyew n-nyodes with nyames t-that do nyot exist in the sewvew-side
+//   g-gwaph. UwU t-these wiww b-be added to the g-gwaph. (⑅˘꒳˘)
 //
-// PRECONDITION: The server-side current version is req.current_version.
-//   None of the names in req.graph_def appeared in previous successful calls to
-//   CreateSession or ExtendSession with the same session_handle.
-// POSTCONDITION: The server-side current version is resp.new_version.
-//
-////////////////////////////////////////////////////////////////////////////////
-
-message ExtendSessionRequest {
-  // REQUIRED: session_handle must be returned by a CreateSession call
-  // to the same master service.
-  string session_handle = 1;
-
-  // REQUIRED: The nodes to be added to the session's graph. If any node has
-  // the same name as an existing node, the operation will fail with
-  // ILLEGAL_ARGUMENT.
-  GraphDef graph_def = 2;
-
-  // REQUIRED: The version number of the graph to be extended. This will be
-  // tested against the current server-side version number, and the operation
-  // will fail with FAILED_PRECONDITION if they do not match.
-  int64 current_graph_version = 3;
-}
-
-message ExtendSessionResponse {
-  // TODO(mrry): Return something about the operation?
-
-  // The new version number for the extended graph, to be used in the next call
-  // to ExtendSession.
-  int64 new_graph_version = 4;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-//
-// RunStep method request/response protos.
-//
-// The caller should provide the feeds needed by the graph and specify
-// what nodes should be fetched.
+// pwecondition: the sewvew-side cuwwent v-vewsion is weq.cuwwent_vewsion. (˘ω˘)
+//   n-nyone of t-the nyames in weq.gwaph_def a-appeawed i-in pwevious successfuw cawws to
+//   cweatesession ow extendsession w-with the same session_handwe. :3
+// postcondition: the sewvew-side cuwwent vewsion is wesp.new_vewsion. (˘ω˘)
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message RunStepRequest {
-  // REQUIRED: session_handle must be returned by a CreateSession call
-  // to the same master service.
-  string session_handle = 1;
+m-message extendsessionwequest {
+  // wequiwed: session_handwe must be wetuwned b-by a cweatesession c-caww
+  // to t-the same mastew sewvice. nyaa~~
+  stwing s-session_handwe = 1;
 
-  // Tensors to be fed in the step. Each feed is a named tensor.
-  repeated NamedTensorProto feed = 2;
+  // wequiwed: t-the nyodes t-to be added to the session's gwaph. (U ﹏ U) if any nyode has
+  // the same nyame as an existing node, nyaa~~ t-the opewation wiww faiw with
+  // i-iwwegaw_awgument. ^^;;
+  gwaphdef g-gwaph_def = 2;
 
-  // Fetches. A list of tensor names. The caller expects a tensor to
-  // be returned for each fetch[i] (see RunStepResponse.tensor). The
-  // order of specified fetches does not change the execution order.
-  repeated string fetch = 3;
-
-  // Target Nodes. A list of node names. The named nodes will be run
-  // to but their outputs will not be fetched.
-  repeated string target = 4;
-
-  // Options for the run call.
-  RunOptions options = 5;
-
-  // Partial run handle (optional). If specified, this will be a partial run
-  // execution, run up to the specified fetches.
-  string partial_run_handle = 6;
-
-  // If true then some errors, e.g., execution errors that have long
-  // error messages, may return an OK RunStepResponse with the actual
-  // error saved in the status_code/status_error_message fields of the
-  // response body. This is a workaround since the RPC subsystem may
-  // truncate long metadata messages.
-  bool store_errors_in_response_body = 7;
-
-  // Unique identifier for this request. Every RunStepRequest must
-  // have a unique request_id, and retried RunStepRequest must have
-  // the same request_id. If request_id is zero, retry detection is disabled.
-  int64 request_id = 8;
+  // w-wequiwed: the vewsion numbew of the gwaph to b-be extended. OwO this w-wiww be
+  // tested against t-the cuwwent sewvew-side v-vewsion nyumbew, nyaa~~ and the opewation
+  // wiww faiw with faiwed_pwecondition if they do nyot m-match. UwU
+  int64 c-cuwwent_gwaph_vewsion = 3;
 }
 
-message RunStepResponse {
-  // NOTE: The order of the returned tensors may or may not match
-  // the fetch order specified in RunStepRequest.
-  repeated NamedTensorProto tensor = 1;
+m-message extendsessionwesponse {
+  // todo(mwwy): w-wetuwn something a-about the opewation?
 
-  // Returned metadata if requested in the options.
-  RunMetadata metadata = 2;
-
-  // If store_errors_in_response_body is true in the request, then
-  // optionally the server may return an OK status for the RPC and
-  // fill the true status into the fields below, to allow for messages
-  // that are too long to fit in metadata.
-  error.Code status_code = 3;
-  string status_error_message = 4;
+  // the n-nyew vewsion numbew fow the extended gwaph, 😳 to be used in the nyext caww
+  // to e-extendsession. 😳
+  i-int64 nyew_gwaph_vewsion = 4;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// PartialRunSetup method request/response protos.
+// wunstep method wequest/wesponse p-pwotos. (ˆ ﻌ ˆ)♡
 //
-// The caller should provide the future partial run feeds, fetches, and targets.
-// Then the caller can use RunStepRequest with is_partial set to make partial
-// run calls.
-//
-////////////////////////////////////////////////////////////////////////////////
-
-message PartialRunSetupRequest {
-  // REQUIRED: session_handle must be returned by a CreateSession call
-  // to the same master service.
-  string session_handle = 1;
-
-  // Tensors to be fed in future steps.
-  repeated string feed = 2;
-
-  // Fetches. A list of tensor names. The caller expects a tensor to be returned
-  // for each fetch[i] (see RunStepResponse.tensor), for corresponding partial
-  // RunStepRequests. The order of specified fetches does not change the
-  // execution order.
-  repeated string fetch = 3;
-
-  // Target Nodes. A list of node names. The named nodes will be run in future
-  // steps, but their outputs will not be fetched.
-  repeated string target = 4;
-
-  // Unique identifier for this request. Every PartialRunSetupRequest must
-  // have a unique request_id, and retried PartialRunSetupRequest must have
-  // the same request_id. If request_id is zero, retry detection is disabled.
-  int64 request_id = 5;
-}
-
-message PartialRunSetupResponse {
-  // The unique handle corresponding to the ongoing partial run call setup by
-  // the invocation to PartialRunSetup. This handle may be passed to
-  // RunStepRequest to send and receive tensors for this partial run.
-  string partial_run_handle = 1;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-//
-// CloseSession method request/response protos.
+// t-the cawwew shouwd pwovide the feeds nyeeded by the gwaph a-and specify
+// nani nyodes shouwd be fetched. (✿oωo)
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message CloseSessionRequest {
-  // REQUIRED: session_handle must be returned by a CreateSession call
-  // to the same master service.
-  string session_handle = 1;
+message wunstepwequest {
+  // wequiwed: session_handwe m-must be wetuwned by a cweatesession c-caww
+  // to the s-same mastew sewvice.
+  stwing session_handwe = 1;
+
+  // tensows to be fed in the s-step. nyaa~~ each feed i-is a nyamed tensow. ^^
+  wepeated nyamedtensowpwoto feed = 2;
+
+  // f-fetches. (///ˬ///✿) a wist of tensow nyames. 😳 t-the cawwew expects a tensow to
+  // be wetuwned fow each fetch[i] (see w-wunstepwesponse.tensow). òωó the
+  // owdew o-of specified f-fetches does nyot change the execution o-owdew. ^^;;
+  wepeated stwing f-fetch = 3;
+
+  // t-tawget nyodes. rawr a-a wist of nyode nyames. (ˆ ﻌ ˆ)♡ the nyamed n-nyodes wiww b-be wun
+  // to but theiw outputs wiww nyot be fetched. XD
+  w-wepeated s-stwing tawget = 4;
+
+  // o-options fow the wun caww. >_<
+  wunoptions o-options = 5;
+
+  // pawtiaw wun h-handwe (optionaw). (˘ω˘) i-if specified, 😳 this wiww be a pawtiaw wun
+  // execution, o.O wun u-up to the specified f-fetches. (ꈍᴗꈍ)
+  s-stwing pawtiaw_wun_handwe = 6;
+
+  // i-if twue then some ewwows, rawr x3 e.g., e-execution ewwows that have wong
+  // ewwow messages, ^^ may wetuwn an ok wunstepwesponse with t-the actuaw
+  // ewwow saved in the s-status_code/status_ewwow_message fiewds of the
+  // w-wesponse body. OwO this is a w-wowkawound since the wpc subsystem m-may
+  // twuncate w-wong metadata m-messages. ^^
+  boow s-stowe_ewwows_in_wesponse_body = 7;
+
+  // u-unique identifiew fow this wequest. :3 evewy wunstepwequest must
+  // have a unique wequest_id, o.O and wetwied w-wunstepwequest m-must have
+  // t-the same wequest_id. -.- if wequest_id i-is zewo, (U ﹏ U) wetwy detection is disabwed. o.O
+  int64 wequest_id = 8;
 }
 
-message CloseSessionResponse {}
+m-message w-wunstepwesponse {
+  // nyote: the o-owdew of the wetuwned tensows may ow may nyot m-match
+  // the fetch o-owdew specified in wunstepwequest. OwO
+  w-wepeated n-nyamedtensowpwoto tensow = 1;
 
-// Reset() allows misbehaving or slow sessions to be aborted and closed, and
-// causes their resources eventually to be released.  Reset() does not wait
-// for the computations in old sessions to cease; it merely starts the
-// process of tearing them down.  However, if a new session is started after
-// a Reset(), the new session is isolated from changes that old sessions
-// (started prior to the Reset()) may continue to make to resources, provided
-// all those resources are in containers listed in "containers".
+  // wetuwned metadata if wequested in the options. ^•ﻌ•^
+  w-wunmetadata m-metadata = 2;
+
+  // i-if stowe_ewwows_in_wesponse_body i-is twue i-in the wequest, ʘwʘ then
+  // optionawwy t-the sewvew m-may wetuwn an ok status fow the w-wpc and
+  // fiww t-the twue status into the fiewds b-bewow, to awwow fow messages
+  // that awe too w-wong to fit in metadata. :3
+  ewwow.code s-status_code = 3;
+  s-stwing status_ewwow_message = 4;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 //
-// Old sessions may continue to have side-effects on resources not in
-// containers listed in "containers", and thus may affect future
-// sessions' results in ways that are hard to predict.  Thus, if well-defined
-// behavior is desired, is it recommended that all containers be listed in
-// "containers".  Similarly, if a device_filter is specified, results may be
-// hard to predict.
-message ResetRequest {
-  // A list of container names, which may be empty.
+// p-pawtiawwunsetup method wequest/wesponse pwotos. 😳
+//
+// t-the c-cawwew shouwd pwovide t-the futuwe pawtiaw wun feeds, òωó fetches, 🥺 and tawgets.
+// then t-the cawwew can use wunstepwequest with is_pawtiaw s-set to make p-pawtiaw
+// wun cawws.
+//
+////////////////////////////////////////////////////////////////////////////////
+
+message p-pawtiawwunsetupwequest {
+  // wequiwed: session_handwe m-must be w-wetuwned by a cweatesession caww
+  // to the same m-mastew sewvice. rawr x3
+  stwing session_handwe = 1;
+
+  // tensows to b-be fed in futuwe s-steps.
+  wepeated stwing feed = 2;
+
+  // f-fetches. ^•ﻌ•^ a wist of tensow n-nyames. :3 the c-cawwew expects a-a tensow to be wetuwned
+  // fow each fetch[i] (see wunstepwesponse.tensow), (ˆ ﻌ ˆ)♡ fow cowwesponding pawtiaw
+  // wunstepwequests. (U ᵕ U❁) the owdew of specified fetches does nyot change the
+  // execution owdew. :3
+  wepeated s-stwing fetch = 3;
+
+  // t-tawget nyodes. ^^;; a wist of nyode nyames. ( ͡o ω ͡o ) t-the nyamed nyodes w-wiww be wun i-in futuwe
+  // steps, o.O but theiw o-outputs wiww nyot be fetched. ^•ﻌ•^
+  w-wepeated stwing t-tawget = 4;
+
+  // unique identifiew f-fow this wequest. XD evewy pawtiawwunsetupwequest m-must
+  // have a-a unique wequest_id, ^^ and wetwied pawtiawwunsetupwequest m-must have
+  // t-the same w-wequest_id. o.O if w-wequest_id is zewo, ( ͡o ω ͡o ) w-wetwy detection i-is disabwed. /(^•ω•^)
+  i-int64 wequest_id = 5;
+}
+
+m-message p-pawtiawwunsetupwesponse {
+  // the unique handwe c-cowwesponding t-to the ongoing p-pawtiaw wun caww setup by
+  // t-the invocation to pawtiawwunsetup. 🥺 this handwe m-may be passed to
+  // wunstepwequest t-to send and w-weceive tensows f-fow this pawtiaw wun. nyaa~~
+  stwing p-pawtiaw_wun_handwe = 1;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// cwosesession m-method wequest/wesponse pwotos. mya
+//
+////////////////////////////////////////////////////////////////////////////////
+
+m-message cwosesessionwequest {
+  // wequiwed: s-session_handwe must be wetuwned by a cweatesession caww
+  // to the same mastew s-sewvice. XD
+  stwing session_handwe = 1;
+}
+
+m-message c-cwosesessionwesponse {}
+
+// weset() awwows misbehaving ow swow sessions to be a-abowted and cwosed, nyaa~~ and
+// causes t-theiw wesouwces e-eventuawwy to b-be weweased. ʘwʘ  weset() does nyot wait
+// fow the c-computations in o-owd sessions to cease; it mewewy s-stawts the
+// pwocess of teawing them down.  howevew, (⑅˘꒳˘) i-if a nyew session is stawted a-aftew
+// a w-weset(), :3 the nyew s-session is isowated fwom changes t-that owd sessions
+// (stawted p-pwiow to the weset()) m-may continue t-to make to wesouwces, -.- pwovided
+// a-aww those w-wesouwces awe in c-containews wisted i-in "containews". 😳😳😳
+//
+// o-owd sessions m-may continue t-to have side-effects o-on wesouwces nyot in
+// c-containews wisted in "containews", (U ﹏ U) a-and thus may affect futuwe
+// s-sessions' wesuwts i-in ways that a-awe hawd to pwedict. o.O  thus, if weww-defined
+// behaviow is desiwed, ( ͡o ω ͡o ) i-is it wecommended t-that aww c-containews be wisted in
+// "containews". òωó  simiwawwy, 🥺 if a device_fiwtew i-is specified, /(^•ω•^) w-wesuwts may be
+// hawd to p-pwedict. 😳😳😳
+message w-wesetwequest {
+  // a wist of containew nyames, ^•ﻌ•^ which may be empty. nyaa~~
   //
-  // If 'container' is not empty, releases resources in the given
-  // containers in all devices.
+  // if 'containew' i-is n-nyot empty, OwO weweases w-wesouwces i-in the given
+  // containews in aww devices. ^•ﻌ•^
   //
-  // If 'container' is empty, releases resources in the default
-  // container in all devices.
-  repeated string container = 1;
+  // i-if 'containew' i-is empty, σωσ weweases wesouwces in the defauwt
+  // c-containew in aww devices. -.-
+  wepeated stwing c-containew = 1;
 
-  // When any filters are present, only devices that match the filters
-  // will be reset. Each filter can be partially specified,
-  // e.g. "/job:ps" "/job:worker/replica:3", etc.
-  repeated string device_filters = 2;
+  // when any f-fiwtews awe pwesent, (˘ω˘) o-onwy devices that match the f-fiwtews
+  // wiww b-be weset. each fiwtew can be p-pawtiawwy specified, rawr x3
+  // e.g. rawr x3 "/job:ps" "/job:wowkew/wepwica:3", σωσ e-etc.
+  wepeated s-stwing device_fiwtews = 2;
 }
 
-message ResetResponse {}
+m-message wesetwesponse {}
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// ListDevices method request/response protos.
+// w-wistdevices method wequest/wesponse p-pwotos. nyaa~~
 //
-// Returns information about the TensorFlow devices that are available
-// to this master.
+// w-wetuwns infowmation a-about the tensowfwow devices t-that awe avaiwabwe
+// to this mastew. (ꈍᴗꈍ)
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message ListDevicesRequest {
-  // Optional: session_handle must be returned by a CreateSession call to the
-  // same master service.
+m-message wistdeviceswequest {
+  // o-optionaw: session_handwe m-must be wetuwned by a cweatesession caww to the
+  // same mastew sewvice. ^•ﻌ•^
   //
-  // When session_handle is empty, the ClusterSpec provided when the master was
-  // started is used to compute the available devices. If the session_handle is
-  // provided but not recognized, an error is returned. Finally, if a valid
-  // session_handle is provided, the cluster configuration for that session is
-  // used when computing the response.
-  string session_handle = 1;
+  // when s-session_handwe is empty, >_< the c-cwustewspec pwovided w-when the mastew was
+  // stawted is used to c-compute the avaiwabwe devices. ^^;; i-if the session_handwe i-is
+  // pwovided b-but nyot w-wecognized, ^^;; an e-ewwow is wetuwned. /(^•ω•^) finawwy, nyaa~~ if a vawid
+  // session_handwe is pwovided, (✿oωo) the cwustew c-configuwation fow that session i-is
+  // used when computing the wesponse. ( ͡o ω ͡o )
+  stwing session_handwe = 1;
 }
 
-message ListDevicesResponse {
-  repeated DeviceAttributes local_device = 1;
-  repeated DeviceAttributes remote_device = 2;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-//
-// MakeCallable method request/response protos.
-//
-////////////////////////////////////////////////////////////////////////////////
-
-message MakeCallableRequest {
-  // REQUIRED: session_handle must be returned by a CreateSession call
-  // to the same master service.
-  string session_handle = 1;
-
-  // Options that define the behavior of the created callable.
-  CallableOptions options = 2;
-
-  // Unique identifier for this request. Every MakeCallableRequest must
-  // have a unique request_id, and retried MakeCallableRequest must have
-  // the same request_id. If request_id is zero, retry detection is disabled.
-  int64 request_id = 3;
-}
-
-message MakeCallableResponse {
-  // A handle to the created callable.
-  int64 handle = 1;
+m-message wistdeviceswesponse {
+  wepeated deviceattwibutes wocaw_device = 1;
+  w-wepeated d-deviceattwibutes wemote_device = 2;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// RunCallable method request/response protos.
+// m-makecawwabwe method wequest/wesponse pwotos. (U ᵕ U❁)
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message RunCallableRequest {
-  // REQUIRED: session_handle must be returned by a CreateSession call
-  // to the same master service.
-  string session_handle = 1;
-  // REQUIRED: handle must be returned by a MakeCallable call to the same
-  // master service.
-  int64 handle = 2;
+m-message makecawwabwewequest {
+  // w-wequiwed: session_handwe m-must be wetuwned by a cweatesession c-caww
+  // to the same mastew sewvice. òωó
+  stwing session_handwe = 1;
 
-  // Values of the tensors passed as arguments to the callable, in the order
-  // defined in the CallableOptions.feed field passed to MakeCallable.
-  repeated TensorProto feed = 3;
+  // o-options that define the behaviow of t-the cweated cawwabwe. σωσ
+  c-cawwabweoptions o-options = 2;
 
-  // Unique identifier for this request. Every RunCallableRequest must
-  // have a unique request_id, and retried RunCallableRequest must have
-  // the same request_id. If request_id is zero, retry detection is disabled.
-  int64 request_id = 4;
+  // unique identifiew fow t-this wequest. :3 evewy makecawwabwewequest must
+  // have a unique wequest_id, OwO and w-wetwied makecawwabwewequest m-must h-have
+  // the s-same wequest_id. ^^ if wequest_id is zewo, (˘ω˘) wetwy detection i-is disabwed. OwO
+  i-int64 wequest_id = 3;
 }
 
-message RunCallableResponse {
-  // Values of the tensors returned by the callable, in the order defined in the
-  // CallableOptions.fetch field passed to MakeCallable.
-  repeated TensorProto fetch = 1;
-
-  // Returned metadata if requested in the options.
-  RunMetadata metadata = 2;
+message makecawwabwewesponse {
+  // a handwe to t-the cweated cawwabwe. UwU
+  int64 handwe = 1;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// ReleaseCallable method request/response protos.
+// wuncawwabwe m-method wequest/wesponse pwotos. ^•ﻌ•^
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message ReleaseCallableRequest {
-  // REQUIRED: session_handle must be returned by a CreateSession call
-  // to the same master service.
-  string session_handle = 1;
+message wuncawwabwewequest {
+  // w-wequiwed: s-session_handwe must be wetuwned b-by a cweatesession c-caww
+  // to t-the same mastew sewvice. (ꈍᴗꈍ)
+  stwing session_handwe = 1;
+  // w-wequiwed: handwe must be wetuwned by a-a makecawwabwe caww to the same
+  // mastew sewvice. /(^•ω•^)
+  int64 handwe = 2;
 
-  // REQUIRED: handle must be returned by a MakeCallable call to the same
-  // master service.
-  int64 handle = 2;
+  // v-vawues of the tensows p-passed as a-awguments to the c-cawwabwe, (U ᵕ U❁) in the o-owdew
+  // defined in the cawwabweoptions.feed f-fiewd passed to makecawwabwe. (✿oωo)
+  wepeated tensowpwoto f-feed = 3;
+
+  // unique identifiew f-fow this wequest. OwO evewy wuncawwabwewequest m-must
+  // have a-a unique wequest_id, :3 and wetwied w-wuncawwabwewequest must have
+  // t-the same wequest_id. nyaa~~ i-if wequest_id is zewo, ^•ﻌ•^ w-wetwy detection i-is disabwed. ( ͡o ω ͡o )
+  int64 wequest_id = 4;
 }
 
-message ReleaseCallableResponse {}
+m-message wuncawwabwewesponse {
+  // vawues of the tensows w-wetuwned by the cawwabwe, ^^;; in t-the owdew defined in the
+  // cawwabweoptions.fetch fiewd passed t-to makecawwabwe.
+  w-wepeated tensowpwoto f-fetch = 1;
+
+  // wetuwned m-metadata if wequested i-in the options. mya
+  wunmetadata m-metadata = 2;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// weweasecawwabwe method wequest/wesponse p-pwotos. (U ᵕ U❁)
+//
+////////////////////////////////////////////////////////////////////////////////
+
+message weweasecawwabwewequest {
+  // w-wequiwed: s-session_handwe must be wetuwned by a cweatesession caww
+  // to the same mastew s-sewvice. ^•ﻌ•^
+  stwing s-session_handwe = 1;
+
+  // wequiwed: handwe must be wetuwned by a makecawwabwe c-caww to the same
+  // mastew s-sewvice.
+  int64 h-handwe = 2;
+}
+
+message weweasecawwabwewesponse {}

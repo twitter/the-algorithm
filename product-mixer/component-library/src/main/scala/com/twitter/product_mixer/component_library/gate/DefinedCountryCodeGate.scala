@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.component_library.gate
+package com.twittew.pwoduct_mixew.component_wibwawy.gate
 
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.gateidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.stitch
 
-object DefinedCountryCodeGate extends Gate[PipelineQuery] {
-  override val identifier: GateIdentifier = GateIdentifier("DefinedCountryCode")
+o-object d-definedcountwycodegate extends gate[pipewinequewy] {
+  ovewwide vaw identifiew: g-gateidentifiew = gateidentifiew("definedcountwycode")
 
-  override def shouldContinue(query: PipelineQuery): Stitch[Boolean] =
-    Stitch.value(query.getCountryCode.isDefined)
+  ovewwide d-def shouwdcontinue(quewy: pipewinequewy): s-stitch[boowean] =
+    stitch.vawue(quewy.getcountwycode.isdefined)
 }

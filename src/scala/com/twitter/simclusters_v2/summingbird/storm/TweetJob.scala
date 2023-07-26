@@ -1,231 +1,231 @@
-package com.twitter.simclusters_v2.summingbird.storm
+package com.twittew.simcwustews_v2.summingbiwd.stowm
 
-import com.twitter.simclusters_v2.common.ModelVersions._
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.SimClustersTweetProfile
-import com.twitter.simclusters_v2.summingbird.common.Configs
-import com.twitter.simclusters_v2.summingbird.common.Implicits
-import com.twitter.simclusters_v2.summingbird.common.SimClustersHashUtil
-import com.twitter.simclusters_v2.summingbird.common.SimClustersInterestedInUtil
-import com.twitter.simclusters_v2.summingbird.common.StatsUtil
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.summingbird._
-import com.twitter.summingbird.option.JobId
-import com.twitter.timelineservice.thriftscala.Event
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelineservice.thriftscala.EventAliases.FavoriteAlias
+impowt com.twittew.simcwustews_v2.common.modewvewsions._
+i-impowt c-com.twittew.simcwustews_v2.summingbiwd.common.simcwustewspwofiwe.simcwustewstweetpwofiwe
+i-impowt c-com.twittew.simcwustews_v2.summingbiwd.common.configs
+i-impowt c-com.twittew.simcwustews_v2.summingbiwd.common.impwicits
+i-impowt c-com.twittew.simcwustews_v2.summingbiwd.common.simcwustewshashutiw
+impowt com.twittew.simcwustews_v2.summingbiwd.common.simcwustewsintewestedinutiw
+impowt com.twittew.simcwustews_v2.summingbiwd.common.statsutiw
+impowt com.twittew.simcwustews_v2.thwiftscawa._
+impowt com.twittew.snowfwake.id.snowfwakeid
+impowt c-com.twittew.summingbiwd._
+impowt com.twittew.summingbiwd.option.jobid
+impowt c-com.twittew.timewinesewvice.thwiftscawa.event
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.timewinesewvice.thwiftscawa.eventawiases.favowiteawias
 
-object TweetJob {
+object tweetjob {
 
-  import Implicits._
-  import StatsUtil._
+  impowt i-impwicits._
+  impowt statsutiw._
 
-  object NodeName {
-    final val TweetClusterScoreFlatMapNodeName: String = "TweetClusterScoreFlatMap"
-    final val TweetClusterUpdatedScoresFlatMapNodeName: String = "TweetClusterUpdatedScoreFlatMap"
-    final val TweetClusterScoreSummerNodeName: String = "TweetClusterScoreSummer"
-    final val TweetTopKNodeName: String = "TweetTopKSummer"
-    final val ClusterTopKTweetsNodeName: String = "ClusterTopKTweetsSummer"
-    final val ClusterTopKTweetsLightNodeName: String = "ClusterTopKTweetsLightSummer"
+  o-object n-nyodename {
+    finaw vaw tweetcwustewscowefwatmapnodename: stwing = "tweetcwustewscowefwatmap"
+    finaw vaw tweetcwustewupdatedscowesfwatmapnodename: stwing = "tweetcwustewupdatedscowefwatmap"
+    f-finaw vaw tweetcwustewscowesummewnodename: stwing = "tweetcwustewscowesummew"
+    finaw vaw tweettopknodename: s-stwing = "tweettopksummew"
+    finaw vaw cwustewtopktweetsnodename: s-stwing = "cwustewtopktweetssummew"
+    f-finaw vaw cwustewtopktweetswightnodename: s-stwing = "cwustewtopktweetswightsummew"
   }
 
-  def generate[P <: Platform[P]](
-    profile: SimClustersTweetProfile,
-    timelineEventSource: Producer[P, Event],
-    userInterestedInService: P#Service[Long, ClustersUserIsInterestedIn],
-    tweetClusterScoreStore: P#Store[(SimClusterEntity, FullClusterIdBucket), ClustersWithScores],
-    tweetTopKClustersStore: P#Store[EntityWithVersion, TopKClustersWithScores],
-    clusterTopKTweetsStore: P#Store[FullClusterId, TopKTweetsWithScores],
-    clusterTopKTweetsLightStore: Option[P#Store[FullClusterId, TopKTweetsWithScores]]
+  d-def genewate[p <: pwatfowm[p]](
+    pwofiwe: s-simcwustewstweetpwofiwe, (///ˬ///✿)
+    timewineeventsouwce: pwoducew[p, rawr x3 e-event], -.-
+    usewintewestedinsewvice: p#sewvice[wong, ^^ cwustewsusewisintewestedin], (⑅˘꒳˘)
+    tweetcwustewscowestowe: p#stowe[(simcwustewentity, nyaa~~ f-fuwwcwustewidbucket), /(^•ω•^) cwustewswithscowes], (U ﹏ U)
+    t-tweettopkcwustewsstowe: p-p#stowe[entitywithvewsion, 😳😳😳 t-topkcwustewswithscowes], >w<
+    cwustewtopktweetsstowe: p#stowe[fuwwcwustewid, topktweetswithscowes], XD
+    c-cwustewtopktweetswightstowe: o-option[p#stowe[fuwwcwustewid, o.O topktweetswithscowes]]
   )(
-    implicit jobId: JobId
-  ): TailProducer[P, Any] = {
+    i-impwicit jobid: j-jobid
+  ): taiwpwoducew[p, mya any] = {
 
-    val userInterestNonEmptyCount = Counter(Group(jobId.get), Name("num_user_interests_non_empty"))
-    val userInterestEmptyCount = Counter(Group(jobId.get), Name("num_user_interests_empty"))
+    v-vaw usewintewestnonemptycount = countew(gwoup(jobid.get), 🥺 n-nyame("num_usew_intewests_non_empty"))
+    vaw usewintewestemptycount = countew(gwoup(jobid.get), ^^;; n-nyame("num_usew_intewests_empty"))
 
-    val numClustersCount = Counter(Group(jobId.get), Name("num_clusters"))
+    vaw nyumcwustewscount = c-countew(gwoup(jobid.get), :3 nyame("num_cwustews"))
 
-    val entityClusterPairCount = Counter(Group(jobId.get), Name("num_entity_cluster_pairs_emitted"))
+    v-vaw e-entitycwustewpaiwcount = countew(gwoup(jobid.get), (U ﹏ U) name("num_entity_cwustew_paiws_emitted"))
 
-    // Fav QPS is around 6K
-    val qualifiedFavEvents = timelineEventSource
-      .collect {
-        case Event.Favorite(favEvent)
-            if favEvent.userId != favEvent.tweetUserId && !isTweetTooOld(favEvent) =>
-          (favEvent.userId, favEvent)
+    // fav qps is awound 6k
+    vaw quawifiedfavevents = timewineeventsouwce
+      .cowwect {
+        c-case event.favowite(favevent)
+            if f-favevent.usewid != favevent.tweetusewid && !istweettooowd(favevent) =>
+          (favevent.usewid, OwO f-favevent)
       }
-      .observe("num_qualified_favorite_events")
+      .obsewve("num_quawified_favowite_events")
 
-    val entityWithSimClustersProducer = qualifiedFavEvents
-      .leftJoin(userInterestedInService)
+    v-vaw e-entitywithsimcwustewspwoducew = quawifiedfavevents
+      .weftjoin(usewintewestedinsewvice)
       .map {
-        case (_, (favEvent, userInterestOpt)) =>
-          (favEvent.tweetId, (favEvent, userInterestOpt))
+        case (_, 😳😳😳 (favevent, (ˆ ﻌ ˆ)♡ usewintewestopt)) =>
+          (favevent.tweetid, XD (favevent, (ˆ ﻌ ˆ)♡ u-usewintewestopt))
       }
-      .flatMap {
-        case (_, (favEvent, Some(userInterests))) =>
-          userInterestNonEmptyCount.incr()
+      .fwatmap {
+        case (_, ( ͡o ω ͡o ) (favevent, some(usewintewests))) =>
+          usewintewestnonemptycount.incw()
 
-          val timestamp = favEvent.eventTimeMs
+          vaw timestamp = f-favevent.eventtimems
 
-          val clustersWithScores = SimClustersInterestedInUtil.topClustersWithScores(userInterests)
+          vaw cwustewswithscowes = s-simcwustewsintewestedinutiw.topcwustewswithscowes(usewintewests)
 
-          // clusters.size is around 25 in average
-          numClustersCount.incrBy(clustersWithScores.size)
+          // c-cwustews.size is a-awound 25 in avewage
+          nyumcwustewscount.incwby(cwustewswithscowes.size)
 
-          val simClusterScoresByHashBucket = clustersWithScores.groupBy {
-            case (clusterId, _) => SimClustersHashUtil.clusterIdToBucket(clusterId)
+          v-vaw s-simcwustewscowesbyhashbucket = c-cwustewswithscowes.gwoupby {
+            c-case (cwustewid, rawr x3 _) => simcwustewshashutiw.cwustewidtobucket(cwustewid)
           }
 
-          for {
-            (hashBucket, scores) <- simClusterScoresByHashBucket
-          } yield {
-            entityClusterPairCount.incr()
+          fow {
+            (hashbucket, nyaa~~ s-scowes) <- s-simcwustewscowesbyhashbucket
+          } y-yiewd {
+            entitycwustewpaiwcount.incw()
 
-            val clusterBucket = FullClusterIdBucket(userInterests.knownForModelVersion, hashBucket)
+            v-vaw cwustewbucket = f-fuwwcwustewidbucket(usewintewests.knownfowmodewvewsion, >_< hashbucket)
 
-            val tweetId: SimClusterEntity = SimClusterEntity.TweetId(favEvent.tweetId)
+            vaw tweetid: simcwustewentity = simcwustewentity.tweetid(favevent.tweetid)
 
-            (tweetId, clusterBucket) -> SimClustersInterestedInUtil
-              .buildClusterWithScores(
-                scores,
-                timestamp,
-                profile.favScoreThresholdForUserInterest
+            (tweetid, ^^;; cwustewbucket) -> s-simcwustewsintewestedinutiw
+              .buiwdcwustewwithscowes(
+                scowes, (ˆ ﻌ ˆ)♡
+                timestamp, ^^;;
+                pwofiwe.favscowethweshowdfowusewintewest
               )
           }
         case _ =>
-          userInterestEmptyCount.incr()
-          None
+          usewintewestemptycount.incw()
+          n-nyone
       }
-      .observe("entity_cluster_delta_scores")
-      .name(NodeName.TweetClusterScoreFlatMapNodeName)
-      .sumByKey(tweetClusterScoreStore)(clustersWithScoreMonoid)
-      .name(NodeName.TweetClusterScoreSummerNodeName)
+      .obsewve("entity_cwustew_dewta_scowes")
+      .name(nodename.tweetcwustewscowefwatmapnodename)
+      .sumbykey(tweetcwustewscowestowe)(cwustewswithscowemonoid)
+      .name(nodename.tweetcwustewscowesummewnodename)
       .map {
-        case ((simClusterEntity, clusterBucket), (oldValueOpt, deltaValue)) =>
-          val updatedClusterIds = deltaValue.clustersToScore.map(_.keySet).getOrElse(Set.empty[Int])
+        case ((simcwustewentity, (⑅˘꒳˘) cwustewbucket), rawr x3 (owdvawueopt, (///ˬ///✿) dewtavawue)) =>
+          v-vaw updatedcwustewids = d-dewtavawue.cwustewstoscowe.map(_.keyset).getowewse(set.empty[int])
 
-          (simClusterEntity, clusterBucket) -> clustersWithScoreMonoid.plus(
-            oldValueOpt
-              .map { oldValue =>
-                oldValue.copy(
-                  clustersToScore =
-                    oldValue.clustersToScore.map(_.filterKeys(updatedClusterIds.contains))
+          (simcwustewentity, 🥺 c-cwustewbucket) -> cwustewswithscowemonoid.pwus(
+            o-owdvawueopt
+              .map { owdvawue =>
+                o-owdvawue.copy(
+                  c-cwustewstoscowe =
+                    owdvawue.cwustewstoscowe.map(_.fiwtewkeys(updatedcwustewids.contains))
                 )
-              }.getOrElse(clustersWithScoreMonoid.zero),
-            deltaValue
+              }.getowewse(cwustewswithscowemonoid.zewo), >_<
+            dewtavawue
           )
       }
-      .observe("entity_cluster_updated_scores")
-      .name(NodeName.TweetClusterUpdatedScoresFlatMapNodeName)
+      .obsewve("entity_cwustew_updated_scowes")
+      .name(nodename.tweetcwustewupdatedscowesfwatmapnodename)
 
-    val tweetTopK = entityWithSimClustersProducer
-      .flatMap {
-        case ((simClusterEntity, FullClusterIdBucket(modelVersion, _)), clusterWithScores)
-            if simClusterEntity.isInstanceOf[SimClusterEntity.TweetId] =>
-          clusterWithScores.clustersToScore
-            .map { clustersToScores =>
-              val topClustersWithFavScores = clustersToScores.mapValues { scores: Scores =>
-                Scores(
-                  favClusterNormalized8HrHalfLifeScore =
-                    scores.favClusterNormalized8HrHalfLifeScore.filter(
-                      _.value >= Configs.scoreThresholdForTweetTopKClustersCache
+    vaw tweettopk = entitywithsimcwustewspwoducew
+      .fwatmap {
+        case ((simcwustewentity, UwU f-fuwwcwustewidbucket(modewvewsion, >_< _)), -.- cwustewwithscowes)
+            i-if simcwustewentity.isinstanceof[simcwustewentity.tweetid] =>
+          cwustewwithscowes.cwustewstoscowe
+            .map { cwustewstoscowes =>
+              v-vaw topcwustewswithfavscowes = c-cwustewstoscowes.mapvawues { scowes: scowes =>
+                scowes(
+                  f-favcwustewnowmawized8hwhawfwifescowe =
+                    s-scowes.favcwustewnowmawized8hwhawfwifescowe.fiwtew(
+                      _.vawue >= configs.scowethweshowdfowtweettopkcwustewscache
                     )
                 )
               }
 
               (
-                EntityWithVersion(simClusterEntity, modelVersion),
-                TopKClustersWithScores(Some(topClustersWithFavScores), None)
+                e-entitywithvewsion(simcwustewentity, mya m-modewvewsion), >w<
+                topkcwustewswithscowes(some(topcwustewswithfavscowes), (U ﹏ U) nyone)
               )
             }
         case _ =>
-          None
+          nyone
 
       }
-      .observe("tweet_topk_updates")
-      .sumByKey(tweetTopKClustersStore)(topKClustersWithScoresMonoid)
-      .name(NodeName.TweetTopKNodeName)
+      .obsewve("tweet_topk_updates")
+      .sumbykey(tweettopkcwustewsstowe)(topkcwustewswithscowesmonoid)
+      .name(nodename.tweettopknodename)
 
-    val clusterTopKTweets = entityWithSimClustersProducer
-      .flatMap {
-        case ((simClusterEntity, FullClusterIdBucket(modelVersion, _)), clusterWithScores) =>
-          simClusterEntity match {
-            case SimClusterEntity.TweetId(tweetId) =>
-              clusterWithScores.clustersToScore
-                .map { clustersToScores =>
-                  clustersToScores.toSeq.map {
-                    case (clusterId, scores) =>
-                      val topTweetsByFavScore = Map(
-                        tweetId -> Scores(favClusterNormalized8HrHalfLifeScore =
-                          scores.favClusterNormalized8HrHalfLifeScore.filter(_.value >=
-                            Configs.scoreThresholdForClusterTopKTweetsCache)))
+    v-vaw cwustewtopktweets = e-entitywithsimcwustewspwoducew
+      .fwatmap {
+        c-case ((simcwustewentity, fuwwcwustewidbucket(modewvewsion, 😳😳😳 _)), c-cwustewwithscowes) =>
+          s-simcwustewentity match {
+            c-case simcwustewentity.tweetid(tweetid) =>
+              cwustewwithscowes.cwustewstoscowe
+                .map { cwustewstoscowes =>
+                  cwustewstoscowes.toseq.map {
+                    case (cwustewid, o.O scowes) =>
+                      v-vaw toptweetsbyfavscowe = m-map(
+                        tweetid -> scowes(favcwustewnowmawized8hwhawfwifescowe =
+                          s-scowes.favcwustewnowmawized8hwhawfwifescowe.fiwtew(_.vawue >=
+                            c-configs.scowethweshowdfowcwustewtopktweetscache)))
 
                       (
-                        FullClusterId(modelVersion, clusterId),
-                        TopKTweetsWithScores(Some(topTweetsByFavScore), None)
+                        fuwwcwustewid(modewvewsion, òωó cwustewid), 😳😳😳
+                        topktweetswithscowes(some(toptweetsbyfavscowe), σωσ n-nyone)
                       )
                   }
-                }.getOrElse(Nil)
+                }.getowewse(niw)
             case _ =>
-              Nil
+              nyiw
           }
       }
-      .observe("cluster_topk_tweets_updates")
-      .sumByKey(clusterTopKTweetsStore)(topKTweetsWithScoresMonoid)
-      .name(NodeName.ClusterTopKTweetsNodeName)
+      .obsewve("cwustew_topk_tweets_updates")
+      .sumbykey(cwustewtopktweetsstowe)(topktweetswithscowesmonoid)
+      .name(nodename.cwustewtopktweetsnodename)
 
-    val clusterTopKTweetsLight = clusterTopKTweetsLightStore.map { lightStore =>
-      entityWithSimClustersProducer
-        .flatMap {
-          case ((simClusterEntity, FullClusterIdBucket(modelVersion, _)), clusterWithScores) =>
-            simClusterEntity match {
-              case SimClusterEntity.TweetId(tweetId) if isTweetTooOldForLight(tweetId) =>
-                clusterWithScores.clustersToScore
-                  .map { clustersToScores =>
-                    clustersToScores.toSeq.map {
-                      case (clusterId, scores) =>
-                        val topTweetsByFavScore = Map(
-                          tweetId -> Scores(favClusterNormalized8HrHalfLifeScore =
-                            scores.favClusterNormalized8HrHalfLifeScore.filter(_.value >=
-                              Configs.scoreThresholdForClusterTopKTweetsCache)))
+    vaw cwustewtopktweetswight = cwustewtopktweetswightstowe.map { wightstowe =>
+      e-entitywithsimcwustewspwoducew
+        .fwatmap {
+          case ((simcwustewentity, (⑅˘꒳˘) fuwwcwustewidbucket(modewvewsion, (///ˬ///✿) _)), c-cwustewwithscowes) =>
+            s-simcwustewentity match {
+              case simcwustewentity.tweetid(tweetid) if istweettooowdfowwight(tweetid) =>
+                c-cwustewwithscowes.cwustewstoscowe
+                  .map { c-cwustewstoscowes =>
+                    cwustewstoscowes.toseq.map {
+                      case (cwustewid, 🥺 scowes) =>
+                        vaw t-toptweetsbyfavscowe = map(
+                          t-tweetid -> scowes(favcwustewnowmawized8hwhawfwifescowe =
+                            scowes.favcwustewnowmawized8hwhawfwifescowe.fiwtew(_.vawue >=
+                              configs.scowethweshowdfowcwustewtopktweetscache)))
 
                         (
-                          FullClusterId(modelVersion, clusterId),
-                          TopKTweetsWithScores(Some(topTweetsByFavScore), None)
+                          f-fuwwcwustewid(modewvewsion, OwO cwustewid),
+                          t-topktweetswithscowes(some(toptweetsbyfavscowe), >w< n-nyone)
                         )
                     }
-                  }.getOrElse(Nil)
+                  }.getowewse(niw)
               case _ =>
-                Nil
+                n-nyiw
             }
         }
-        .observe("cluster_topk_tweets_updates")
-        .sumByKey(lightStore)(topKTweetsWithScoresLightMonoid)
-        .name(NodeName.ClusterTopKTweetsLightNodeName)
+        .obsewve("cwustew_topk_tweets_updates")
+        .sumbykey(wightstowe)(topktweetswithscoweswightmonoid)
+        .name(nodename.cwustewtopktweetswightnodename)
     }
 
-    clusterTopKTweetsLight match {
-      case Some(lightNode) =>
-        tweetTopK.also(clusterTopKTweets).also(lightNode)
-      case None =>
-        tweetTopK.also(clusterTopKTweets)
+    cwustewtopktweetswight m-match {
+      c-case some(wightnode) =>
+        t-tweettopk.awso(cwustewtopktweets).awso(wightnode)
+      case nyone =>
+        t-tweettopk.awso(cwustewtopktweets)
     }
   }
 
-  // Boolean check to see if the tweet is too old
-  private def isTweetTooOld(favEvent: FavoriteAlias): Boolean = {
-    favEvent.tweet.forall { tweet =>
-      SnowflakeId.unixTimeMillisOptFromId(tweet.id).exists { millis =>
-        System.currentTimeMillis() - millis >= Configs.OldestTweetFavEventTimeInMillis
+  // b-boowean check to see if the tweet is too o-owd
+  pwivate def i-istweettooowd(favevent: f-favowiteawias): boowean = {
+    favevent.tweet.fowaww { t-tweet =>
+      snowfwakeid.unixtimemiwwisoptfwomid(tweet.id).exists { m-miwwis =>
+        s-system.cuwwenttimemiwwis() - miwwis >= configs.owdesttweetfaveventtimeinmiwwis
       }
     }
   }
 
-  private def isTweetTooOldForLight(tweetId: Long): Boolean = {
-    SnowflakeId.unixTimeMillisOptFromId(tweetId).exists { millis =>
-      System.currentTimeMillis() - millis >= Configs.OldestTweetInLightIndexInMillis
+  pwivate def istweettooowdfowwight(tweetid: w-wong): b-boowean = {
+    s-snowfwakeid.unixtimemiwwisoptfwomid(tweetid).exists { m-miwwis =>
+      system.cuwwenttimemiwwis() - m-miwwis >= configs.owdesttweetinwightindexinmiwwis
     }
   }
 

@@ -1,131 +1,131 @@
-package com.twitter.search.earlybird.queryparser;
+package com.twittew.seawch.eawwybiwd.quewypawsew;
 
-import com.twitter.search.common.constants.QueryCacheConstants;
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Disjunction;
-import com.twitter.search.queryparser.query.Phrase;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.SpecialTerm;
-import com.twitter.search.queryparser.query.Term;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
-import com.twitter.search.queryparser.query.search.SearchQueryVisitor;
+impowt com.twittew.seawch.common.constants.quewycacheconstants;
+i-impowt com.twittew.seawch.quewypawsew.quewy.conjunction;
+i-impowt c-com.twittew.seawch.quewypawsew.quewy.disjunction;
+i-impowt com.twittew.seawch.quewypawsew.quewy.phwase;
+i-impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
+i-impowt c-com.twittew.seawch.quewypawsew.quewy.speciawtewm;
+i-impowt com.twittew.seawch.quewypawsew.quewy.tewm;
+impowt com.twittew.seawch.quewypawsew.quewy.seawch.seawchopewatow;
+impowt com.twittew.seawch.quewypawsew.quewy.seawch.seawchopewatowconstants;
+impowt com.twittew.seawch.quewypawsew.quewy.seawch.seawchquewyvisitow;
 
 /**
- * Visitor to detect presence of any antisocial / spam operator in a Query.
- * Visitor returns true if any operators it detects were found.
+ * visitow to detect p-pwesence of any antisociaw / spam opewatow i-in a quewy.
+ * visitow wetuwns twue i-if any opewatows it detects wewe found. ^^;;
  */
-public class DetectAntisocialVisitor extends SearchQueryVisitor<Boolean> {
-  // True if the query contains any operator to include antisocial tweets.
-  private boolean includeAntisocial = false;
+pubwic cwass detectantisociawvisitow e-extends seawchquewyvisitow<boowean> {
+  // twue if the quewy c-contains any opewatow t-to incwude antisociaw tweets. (✿oωo)
+  pwivate boowean incwudeantisociaw = fawse;
 
-  // True if the query contains any operator to exclude antisocial/spam tweets.
-  private boolean excludeAntisocial = false;
+  // t-twue if the quewy contains any opewatow to excwude antisociaw/spam tweets. (U ﹏ U)
+  p-pwivate boowean excwudeantisociaw = f-fawse;
 
-  // True if the query contains an antisocial tweets filter.
-  private boolean filterAntisocial = false;
+  // t-twue if the q-quewy contains a-an antisociaw tweets fiwtew. -.-
+  pwivate boowean f-fiwtewantisociaw = fawse;
 
-  public boolean hasIncludeAntisocial() {
-    return includeAntisocial;
+  pubwic boowean hasincwudeantisociaw() {
+    w-wetuwn incwudeantisociaw;
   }
 
-  public boolean hasExcludeAntisocial() {
-    return excludeAntisocial;
+  pubwic boowean hasexcwudeantisociaw() {
+    wetuwn excwudeantisociaw;
   }
 
-  public boolean hasFilterAntisocial() {
-    return filterAntisocial;
+  pubwic boowean h-hasfiwtewantisociaw() {
+    wetuwn fiwtewantisociaw;
   }
 
-  public boolean hasAnyAntisocialOperator() {
-    // Top tweets is considered an antisocial operator due to scoring also excluding
-    // spam tweets.
-    return hasIncludeAntisocial() || hasExcludeAntisocial() || hasFilterAntisocial();
+  p-pubwic boowean h-hasanyantisociawopewatow() {
+    // t-top tweets is considewed an antisociaw opewatow due to scowing a-awso excwuding
+    // s-spam tweets.
+    wetuwn h-hasincwudeantisociaw() || h-hasexcwudeantisociaw() || hasfiwtewantisociaw();
   }
 
-  @Override public Boolean visit(Disjunction disjunction) throws QueryParserException {
-    boolean found = false;
-    for (com.twitter.search.queryparser.query.Query node : disjunction.getChildren()) {
-      if (node.accept(this)) {
-        found = true;
+  @ovewwide pubwic b-boowean visit(disjunction disjunction) thwows q-quewypawsewexception {
+    boowean found = fawse;
+    fow (com.twittew.seawch.quewypawsew.quewy.quewy n-nyode : disjunction.getchiwdwen()) {
+      i-if (node.accept(this)) {
+        found = twue;
       }
     }
-    return found;
+    w-wetuwn found;
   }
 
-  @Override public Boolean visit(Conjunction conjunction) throws QueryParserException {
-    boolean found = false;
-    for (com.twitter.search.queryparser.query.Query node : conjunction.getChildren()) {
-      if (node.accept(this)) {
-        found = true;
+  @ovewwide p-pubwic boowean visit(conjunction conjunction) thwows quewypawsewexception {
+    boowean found = fawse;
+    fow (com.twittew.seawch.quewypawsew.quewy.quewy n-node : conjunction.getchiwdwen()) {
+      i-if (node.accept(this)) {
+        found = t-twue;
       }
     }
-    return found;
+    w-wetuwn f-found;
   }
 
-  @Override public Boolean visit(SearchOperator operator) throws QueryParserException {
-    boolean found = false;
-    switch (operator.getOperatorType()) {
-      case INCLUDE:
-        if (SearchOperatorConstants.ANTISOCIAL.equals(operator.getOperand())) {
-          if (operator.mustNotOccur()) {
-            excludeAntisocial = true;
-          } else {
-            includeAntisocial = true;
+  @ovewwide pubwic boowean visit(seawchopewatow opewatow) t-thwows quewypawsewexception {
+    boowean found = fawse;
+    switch (opewatow.getopewatowtype()) {
+      case incwude:
+        i-if (seawchopewatowconstants.antisociaw.equaws(opewatow.getopewand())) {
+          if (opewatow.mustnotoccuw()) {
+            e-excwudeantisociaw = t-twue;
+          } e-ewse {
+            incwudeantisociaw = t-twue;
           }
-          found = true;
+          f-found = t-twue;
         }
-        break;
-      case EXCLUDE:
-        if (SearchOperatorConstants.ANTISOCIAL.equals(operator.getOperand())) {
-          if (operator.mustNotOccur()) {
-            includeAntisocial = true;
-          } else {
-            excludeAntisocial = true;
+        b-bweak;
+      case excwude:
+        if (seawchopewatowconstants.antisociaw.equaws(opewatow.getopewand())) {
+          i-if (opewatow.mustnotoccuw()) {
+            i-incwudeantisociaw = t-twue;
+          } e-ewse {
+            e-excwudeantisociaw = twue;
           }
-          found = true;
+          found = twue;
         }
-        break;
-      case FILTER:
-        if (SearchOperatorConstants.ANTISOCIAL.equals(operator.getOperand())) {
-          if (operator.mustNotOccur()) {
-            excludeAntisocial = true;
-          } else {
-            filterAntisocial = true;
+        bweak;
+      c-case fiwtew:
+        if (seawchopewatowconstants.antisociaw.equaws(opewatow.getopewand())) {
+          if (opewatow.mustnotoccuw()) {
+            excwudeantisociaw = twue;
+          } ewse {
+            f-fiwtewantisociaw = twue;
           }
-          found = true;
+          found = twue;
         }
-        break;
-      case CACHED_FILTER:
-        if (QueryCacheConstants.EXCLUDE_SPAM.equals(operator.getOperand())
-            || QueryCacheConstants.EXCLUDE_SPAM_AND_NATIVERETWEETS.equals(operator.getOperand())
-            || QueryCacheConstants.EXCLUDE_ANTISOCIAL.equals(operator.getOperand())
-            || QueryCacheConstants.EXCLUDE_ANTISOCIAL_AND_NATIVERETWEETS
-                .equals(operator.getOperand())) {
+        b-bweak;
+      c-case cached_fiwtew:
+        i-if (quewycacheconstants.excwude_spam.equaws(opewatow.getopewand())
+            || quewycacheconstants.excwude_spam_and_nativewetweets.equaws(opewatow.getopewand())
+            || q-quewycacheconstants.excwude_antisociaw.equaws(opewatow.getopewand())
+            || quewycacheconstants.excwude_antisociaw_and_nativewetweets
+                .equaws(opewatow.getopewand())) {
 
-          excludeAntisocial = true;
-          found = true;
+          e-excwudeantisociaw = t-twue;
+          found = twue;
         }
-        break;
-      default:
-        break;
+        bweak;
+      defauwt:
+        bweak;
     }
 
-    return found;
+    w-wetuwn found;
   }
 
-  @Override
-  public Boolean visit(SpecialTerm special) throws QueryParserException {
-    return false;
+  @ovewwide
+  pubwic b-boowean visit(speciawtewm speciaw) t-thwows quewypawsewexception {
+    w-wetuwn fawse;
   }
 
-  @Override
-  public Boolean visit(Phrase phrase) throws QueryParserException {
-    return false;
+  @ovewwide
+  pubwic boowean visit(phwase p-phwase) thwows q-quewypawsewexception {
+    wetuwn f-fawse;
   }
 
-  @Override
-  public Boolean visit(Term term) throws QueryParserException {
-    return false;
+  @ovewwide
+  p-pubwic boowean visit(tewm tewm) thwows quewypawsewexception {
+    wetuwn fawse;
   }
 }

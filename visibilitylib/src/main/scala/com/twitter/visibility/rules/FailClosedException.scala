@@ -1,41 +1,41 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.rules.State.FeatureFailed
-import com.twitter.visibility.rules.State.MissingFeature
-import com.twitter.visibility.rules.State.RuleFailed
+impowt com.twittew.visibiwity.featuwes.featuwe
+i-impowt com.twittew.visibiwity.wuwes.state.featuwefaiwed
+i-impowt c-com.twittew.visibiwity.wuwes.state.missingfeatuwe
+i-impowt com.twittew.visibiwity.wuwes.state.wuwefaiwed
 
-abstract class FailClosedException(message: String, state: State, ruleName: String)
-    extends Exception(message) {
-  def getState: State = {
+a-abstwact c-cwass faiwcwosedexception(message: s-stwing, mya state: s-state, 🥺 wuwename: stwing)
+    extends exception(message) {
+  def getstate: state = {
     state
   }
 
-  def getRuleName: String = {
-    ruleName
+  d-def getwuwename: stwing = {
+    wuwename
   }
 }
 
-case class MissingFeaturesException(
-  ruleName: String,
-  missingFeatures: Set[Feature[_]])
-    extends FailClosedException(
-      s"A $ruleName rule evaluation has ${missingFeatures.size} missing features: ${missingFeatures
-        .map(_.name)}",
-      MissingFeature(missingFeatures),
-      ruleName) {}
+c-case cwass missingfeatuwesexception(
+  w-wuwename: stwing, >_<
+  missingfeatuwes: set[featuwe[_]])
+    extends f-faiwcwosedexception(
+      s"a $wuwename wuwe e-evawuation has ${missingfeatuwes.size} m-missing featuwes: ${missingfeatuwes
+        .map(_.name)}", >_<
+      missingfeatuwe(missingfeatuwes), (⑅˘꒳˘)
+      wuwename) {}
 
-case class FeaturesFailedException(
-  ruleName: String,
-  featureFailures: Map[Feature[_], Throwable])
-    extends FailClosedException(
-      s"A $ruleName rule evaluation has ${featureFailures.size} failed features: ${featureFailures.keys
-        .map(_.name)}, ${featureFailures.values}",
-      FeatureFailed(featureFailures),
-      ruleName) {}
+case cwass featuwesfaiwedexception(
+  w-wuwename: stwing, /(^•ω•^)
+  featuwefaiwuwes: map[featuwe[_], rawr x3 thwowabwe])
+    extends f-faiwcwosedexception(
+      s"a $wuwename w-wuwe e-evawuation has ${featuwefaiwuwes.size} f-faiwed featuwes: ${featuwefaiwuwes.keys
+        .map(_.name)}, (U ﹏ U) ${featuwefaiwuwes.vawues}", (U ﹏ U)
+      f-featuwefaiwed(featuwefaiwuwes), (⑅˘꒳˘)
+      wuwename) {}
 
-case class RuleFailedException(ruleName: String, exception: Throwable)
-    extends FailClosedException(
-      s"A $ruleName rule evaluation failed to execute",
-      RuleFailed(exception),
-      ruleName) {}
+case cwass wuwefaiwedexception(wuwename: s-stwing, òωó exception: thwowabwe)
+    extends f-faiwcwosedexception(
+      s"a $wuwename wuwe evawuation faiwed to exekawaii~", ʘwʘ
+      wuwefaiwed(exception), /(^•ω•^)
+      w-wuwename) {}

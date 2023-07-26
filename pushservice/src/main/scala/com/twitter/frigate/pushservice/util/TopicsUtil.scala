@@ -1,132 +1,132 @@
-package com.twitter.frigate.pushservice.util
+package com.twittew.fwigate.pushsewvice.utiw
 
-import com.twitter.contentrecommender.thriftscala.DisplayLocation
-import com.twitter.finagle.stats.Stat
-import com.twitter.frigate.common.base.TargetUser
-import com.twitter.frigate.common.predicate.CommonOutNetworkTweetCandidatesSourcePredicates.authorNotBeingFollowedPredicate
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.model.PushTypes
-import com.twitter.frigate.pushservice.store.UttEntityHydrationQuery
-import com.twitter.frigate.pushservice.store.UttEntityHydrationStore
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.hermit.predicate.socialgraph.RelationEdge
-import com.twitter.interests.thriftscala.InterestRelationType
-import com.twitter.interests.thriftscala.InterestRelationship
-import com.twitter.interests.thriftscala.InterestedInInterestLookupContext
-import com.twitter.interests.thriftscala.InterestedInInterestModel
-import com.twitter.interests.thriftscala.ProductId
-import com.twitter.interests.thriftscala.UserInterest
-import com.twitter.interests.thriftscala.UserInterestData
-import com.twitter.interests.thriftscala.UserInterests
-import com.twitter.interests.thriftscala.{TopicListingViewerContext => TopicListingViewerContextCR}
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.Param
-import com.twitter.topiclisting.TopicListingViewerContext
-import com.twitter.topiclisting.utt.LocalizedEntity
-import com.twitter.tsp.thriftscala.TopicListingSetting
-import com.twitter.tsp.thriftscala.TopicSocialProofRequest
-import com.twitter.tsp.thriftscala.TopicSocialProofResponse
-import com.twitter.tsp.thriftscala.TopicWithScore
-import com.twitter.util.Future
-import scala.collection.Map
+impowt c-com.twittew.contentwecommendew.thwiftscawa.dispwaywocation
+impowt c-com.twittew.finagwe.stats.stat
+i-impowt com.twittew.fwigate.common.base.tawgetusew
+i-impowt com.twittew.fwigate.common.pwedicate.commonoutnetwowktweetcandidatessouwcepwedicates.authownotbeingfowwowedpwedicate
+i-impowt com.twittew.fwigate.common.stowe.intewests.intewestswookupwequestwithcontext
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes
+i-impowt com.twittew.fwigate.pushsewvice.stowe.uttentityhydwationquewy
+impowt com.twittew.fwigate.pushsewvice.stowe.uttentityhydwationstowe
+impowt com.twittew.hewmit.pwedicate.pwedicate
+impowt com.twittew.hewmit.pwedicate.sociawgwaph.wewationedge
+i-impowt com.twittew.intewests.thwiftscawa.intewestwewationtype
+impowt com.twittew.intewests.thwiftscawa.intewestwewationship
+impowt c-com.twittew.intewests.thwiftscawa.intewestedinintewestwookupcontext
+impowt com.twittew.intewests.thwiftscawa.intewestedinintewestmodew
+i-impowt com.twittew.intewests.thwiftscawa.pwoductid
+impowt com.twittew.intewests.thwiftscawa.usewintewest
+i-impowt com.twittew.intewests.thwiftscawa.usewintewestdata
+impowt c-com.twittew.intewests.thwiftscawa.usewintewests
+i-impowt com.twittew.intewests.thwiftscawa.{topicwistingviewewcontext => topicwistingviewewcontextcw}
+impowt com.twittew.stitch.tweetypie.tweetypie.tweetypiewesuwt
+impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.timewines.configapi.pawam
+impowt com.twittew.topicwisting.topicwistingviewewcontext
+impowt com.twittew.topicwisting.utt.wocawizedentity
+impowt c-com.twittew.tsp.thwiftscawa.topicwistingsetting
+impowt com.twittew.tsp.thwiftscawa.topicsociawpwoofwequest
+impowt c-com.twittew.tsp.thwiftscawa.topicsociawpwoofwesponse
+i-impowt c-com.twittew.tsp.thwiftscawa.topicwithscowe
+i-impowt com.twittew.utiw.futuwe
+impowt s-scawa.cowwection.map
 
-case class TweetWithTopicProof(
-  tweetId: Long,
-  topicId: Long,
-  authorId: Option[Long],
-  score: Double,
-  tweetyPieResult: TweetyPieResult,
-  topicListingSetting: String,
-  algorithmCR: Option[String],
-  isOON: Boolean)
+case cwass tweetwithtopicpwoof(
+  t-tweetid: wong, òωó
+  topicid: wong, XD
+  authowid: option[wong], :3
+  scowe: doubwe, (U ﹏ U)
+  tweetypiewesuwt: t-tweetypiewesuwt, >w<
+  topicwistingsetting: s-stwing, /(^•ω•^)
+  awgowithmcw: o-option[stwing], (⑅˘꒳˘)
+  i-isoon: boowean)
 
-object TopicsUtil {
+object topicsutiw {
 
   /**
-   * Obtains the Localized Entities for the provided SC Entity IDs
-   * @param target                  The target user for which we're obtaining candidates
-   * @param semanticCoreEntityIds   The seq. of entity ids for which we would like to obtain the Localized Entities
-   * @param uttEntityHydrationStore Store to query the actual LocalizedEntities
-   * @return                        A Future Map consisting of the entity id as the key and LocalizedEntity as the value
+   * obtains t-the wocawized e-entities fow the pwovided sc entity i-ids
+   * @pawam t-tawget                  the t-tawget usew fow which we'we obtaining c-candidates
+   * @pawam semanticcoweentityids   the seq. ʘwʘ of e-entity ids fow which we wouwd w-wike to obtain the wocawized entities
+   * @pawam u-uttentityhydwationstowe s-stowe to quewy the actuaw wocawizedentities
+   * @wetuwn                        a futuwe map consisting of the entity id as the key and w-wocawizedentity a-as the vawue
    */
-  def getLocalizedEntityMap(
-    target: Target,
-    semanticCoreEntityIds: Set[Long],
-    uttEntityHydrationStore: UttEntityHydrationStore
-  ): Future[Map[Long, LocalizedEntity]] = {
-    buildTopicListingViewerContext(target)
-      .flatMap { topicListingViewerContext =>
-        val query = UttEntityHydrationQuery(topicListingViewerContext, semanticCoreEntityIds.toSeq)
-        val localizedTopicEntitiesFut =
-          uttEntityHydrationStore.getLocalizedTopicEntities(query).map(_.flatten)
-        localizedTopicEntitiesFut.map { localizedTopicEntities =>
-          localizedTopicEntities.map { localizedTopicEntity =>
-            localizedTopicEntity.entityId -> localizedTopicEntity
-          }.toMap
+  def getwocawizedentitymap(
+    t-tawget: tawget, rawr x3
+    s-semanticcoweentityids: s-set[wong], (˘ω˘)
+    uttentityhydwationstowe: uttentityhydwationstowe
+  ): futuwe[map[wong, o.O w-wocawizedentity]] = {
+    buiwdtopicwistingviewewcontext(tawget)
+      .fwatmap { topicwistingviewewcontext =>
+        vaw quewy = uttentityhydwationquewy(topicwistingviewewcontext, 😳 s-semanticcoweentityids.toseq)
+        vaw wocawizedtopicentitiesfut =
+          u-uttentityhydwationstowe.getwocawizedtopicentities(quewy).map(_.fwatten)
+        w-wocawizedtopicentitiesfut.map { w-wocawizedtopicentities =>
+          wocawizedtopicentities.map { w-wocawizedtopicentity =>
+            w-wocawizedtopicentity.entityid -> w-wocawizedtopicentity
+          }.tomap
         }
       }
   }
 
   /**
-   * Fetch explict followed interests i.e Topics for targetUser
+   * f-fetch expwict fowwowed intewests i.e t-topics fow tawgetusew
    *
-   * @param targetUser: [[Target]] object representing a user eligible for MagicRecs notification
-   * @return: list of all Topics(Interests) Followed by targetUser
+   * @pawam t-tawgetusew: [[tawget]] o-object w-wepwesenting a-a usew ewigibwe fow magicwecs nyotification
+   * @wetuwn: wist o-of aww topics(intewests) fowwowed by tawgetusew
    */
-  def getTopicsFollowedByUser(
-    targetUser: Target,
-    interestsWithLookupContextStore: ReadableStore[
-      InterestsLookupRequestWithContext,
-      UserInterests
-    ],
-    followedTopicsStats: Stat
-  ): Future[Option[Seq[UserInterest]]] = {
-    buildTopicListingViewerContext(targetUser).flatMap { topicListingViewerContext =>
-      // explicit interests relation query
-      val explicitInterestsLookupRequest = InterestsLookupRequestWithContext(
-        targetUser.targetId,
-        Some(
-          InterestedInInterestLookupContext(
-            explicitContext = None,
-            inferredContext = None,
-            productId = Some(ProductId.Followable),
-            topicListingViewerContext = Some(topicListingViewerContext.toThrift),
-            disableExplicit = None,
-            disableImplicit = Some(true)
+  def gettopicsfowwowedbyusew(
+    tawgetusew: tawget, o.O
+    i-intewestswithwookupcontextstowe: weadabwestowe[
+      intewestswookupwequestwithcontext, ^^;;
+      usewintewests
+    ], ( ͡o ω ͡o )
+    f-fowwowedtopicsstats: stat
+  ): f-futuwe[option[seq[usewintewest]]] = {
+    b-buiwdtopicwistingviewewcontext(tawgetusew).fwatmap { topicwistingviewewcontext =>
+      // e-expwicit intewests w-wewation quewy
+      v-vaw expwicitintewestswookupwequest = intewestswookupwequestwithcontext(
+        tawgetusew.tawgetid, ^^;;
+        some(
+          intewestedinintewestwookupcontext(
+            expwicitcontext = n-nyone, ^^;;
+            infewwedcontext = n-nyone, XD
+            pwoductid = s-some(pwoductid.fowwowabwe), 🥺
+            t-topicwistingviewewcontext = some(topicwistingviewewcontext.tothwift), (///ˬ///✿)
+            disabweexpwicit = n-nyone, (U ᵕ U❁)
+            d-disabweimpwicit = some(twue)
           )
         )
       )
 
-      // filter explicit follow relationships from response
-      interestsWithLookupContextStore.get(explicitInterestsLookupRequest).map {
-        _.flatMap { userInterests =>
-          val followedTopics = userInterests.interests.map {
-            _.filter {
-              case UserInterest(_, Some(interestData)) =>
-                interestData match {
-                  case UserInterestData.InterestedIn(interestedIn) =>
-                    interestedIn.exists {
-                      case InterestedInInterestModel.ExplicitModel(explicitModel) =>
-                        explicitModel match {
-                          case InterestRelationship.V1(v1) =>
-                            v1.relation == InterestRelationType.Followed
+      // f-fiwtew e-expwicit fowwow wewationships fwom wesponse
+      intewestswithwookupcontextstowe.get(expwicitintewestswookupwequest).map {
+        _.fwatmap { usewintewests =>
+          v-vaw f-fowwowedtopics = u-usewintewests.intewests.map {
+            _.fiwtew {
+              case usewintewest(_, ^^;; s-some(intewestdata)) =>
+                i-intewestdata match {
+                  case usewintewestdata.intewestedin(intewestedin) =>
+                    i-intewestedin.exists {
+                      case intewestedinintewestmodew.expwicitmodew(expwicitmodew) =>
+                        expwicitmodew match {
+                          c-case intewestwewationship.v1(v1) =>
+                            v-v1.wewation == intewestwewationtype.fowwowed
 
-                          case _ => false
+                          case _ => f-fawse
                         }
 
-                      case _ => false
+                      c-case _ => fawse
                     }
 
-                  case _ => false
+                  case _ => fawse
                 }
 
-              case _ => false // interestData unavailable
+              c-case _ => fawse // intewestdata unavaiwabwe
             }
           }
-          followedTopicsStats.add(followedTopics.getOrElse(Seq.empty[UserInterest]).size)
-          followedTopics
+          fowwowedtopicsstats.add(fowwowedtopics.getowewse(seq.empty[usewintewest]).size)
+          fowwowedtopics
         }
       }
     }
@@ -134,205 +134,205 @@ object TopicsUtil {
 
   /**
    *
-   * @param target : [[Target]] object respresenting MagicRecs user
+   * @pawam t-tawget : [[tawget]] object wespwesenting magicwecs u-usew
    *
-   * @return: [[TopicListingViewerContext]] for querying topics
+   * @wetuwn: [[topicwistingviewewcontext]] f-fow quewying topics
    */
-  def buildTopicListingViewerContext(target: Target): Future[TopicListingViewerContext] = {
-    Future.join(target.inferredUserDeviceLanguage, target.countryCode, target.targetUser).map {
-      case (inferredLanguage, countryCode, userInfo) =>
-        TopicListingViewerContext(
-          userId = Some(target.targetId),
-          guestId = None,
-          deviceId = None,
-          clientApplicationId = None,
-          userAgent = None,
-          languageCode = inferredLanguage,
-          countryCode = countryCode,
-          userRoles = userInfo.flatMap(_.roles.map(_.roles.toSet))
+  def buiwdtopicwistingviewewcontext(tawget: tawget): futuwe[topicwistingviewewcontext] = {
+    f-futuwe.join(tawget.infewwedusewdevicewanguage, ^^;; t-tawget.countwycode, rawr tawget.tawgetusew).map {
+      case (infewwedwanguage, (˘ω˘) countwycode, 🥺 usewinfo) =>
+        t-topicwistingviewewcontext(
+          usewid = s-some(tawget.tawgetid), nyaa~~
+          guestid = nyone, :3
+          deviceid = nyone, /(^•ω•^)
+          c-cwientappwicationid = nyone, ^•ﻌ•^
+          usewagent = nyone, UwU
+          w-wanguagecode = i-infewwedwanguage, 😳😳😳
+          countwycode = c-countwycode, OwO
+          usewwowes = u-usewinfo.fwatmap(_.wowes.map(_.wowes.toset))
         )
     }
   }
 
   /**
    *
-   * @param target : [[Target]] object respresenting MagicRecs user
+   * @pawam t-tawget : [[tawget]] o-object wespwesenting magicwecs u-usew
    *
-   * @return: [[TopicListingViewerContext]] for querying topics
+   * @wetuwn: [[topicwistingviewewcontext]] f-fow quewying topics
    */
-  def buildTopicListingViewerContextForCR(target: Target): Future[TopicListingViewerContextCR] = {
-    TopicsUtil.buildTopicListingViewerContext(target).map(_.toThrift)
+  def buiwdtopicwistingviewewcontextfowcw(tawget: t-tawget): f-futuwe[topicwistingviewewcontextcw] = {
+    t-topicsutiw.buiwdtopicwistingviewewcontext(tawget).map(_.tothwift)
   }
 
   /**
    *
-   * @param target : [[Target]] object respresenting MagicRecs user
-   * @param tweets : [[Seq[TweetyPieResult]]] object representing Tweets to get TSP for
-   * @param topicSocialProofServiceStore: [[ReadableStore[TopicSocialProofRequest, TopicSocialProofResponse]]]
-   * @param edgeStore: [[ReadableStore[RelationEdge, Boolean]]]]
+   * @pawam tawget : [[tawget]] object w-wespwesenting magicwecs usew
+   * @pawam t-tweets : [[seq[tweetypiewesuwt]]] o-object wepwesenting tweets to get tsp fow
+   * @pawam topicsociawpwoofsewvicestowe: [[weadabwestowe[topicsociawpwoofwequest, ^•ﻌ•^ t-topicsociawpwoofwesponse]]]
+   * @pawam e-edgestowe: [[weadabwestowe[wewationedge, (ꈍᴗꈍ) b-boowean]]]]
    *
-   * @return: [[Future[Seq[TweetWithTopicProof]]]] Tweets with topic proof
+   * @wetuwn: [[futuwe[seq[tweetwithtopicpwoof]]]] t-tweets with topic pwoof
    */
-  def getTopicSocialProofs(
-    inputTarget: Target,
-    tweets: Seq[TweetyPieResult],
-    topicSocialProofServiceStore: ReadableStore[TopicSocialProofRequest, TopicSocialProofResponse],
-    edgeStore: ReadableStore[RelationEdge, Boolean],
-    scoreThresholdParam: Param[Double]
-  ): Future[Seq[TweetWithTopicProof]] = {
-    buildTopicListingViewerContextForCR(inputTarget).flatMap { topicListingContext =>
-      val tweetIds: Set[Long] = tweets.map(_.tweet.id).toSet
-      val tweetIdsToTweetyPie = tweets.map(tp => tp.tweet.id -> tp).toMap
-      val topicSocialProofRequest =
-        TopicSocialProofRequest(
-          inputTarget.targetId,
-          tweetIds,
-          DisplayLocation.MagicRecsRecommendTopicTweets,
-          TopicListingSetting.Followable,
-          topicListingContext)
+  d-def gettopicsociawpwoofs(
+    inputtawget: tawget, (⑅˘꒳˘)
+    tweets: seq[tweetypiewesuwt], (⑅˘꒳˘)
+    topicsociawpwoofsewvicestowe: weadabwestowe[topicsociawpwoofwequest, (ˆ ﻌ ˆ)♡ t-topicsociawpwoofwesponse], /(^•ω•^)
+    edgestowe: weadabwestowe[wewationedge, òωó b-boowean],
+    scowethweshowdpawam: p-pawam[doubwe]
+  ): futuwe[seq[tweetwithtopicpwoof]] = {
+    b-buiwdtopicwistingviewewcontextfowcw(inputtawget).fwatmap { topicwistingcontext =>
+      v-vaw t-tweetids: set[wong] = t-tweets.map(_.tweet.id).toset
+      v-vaw tweetidstotweetypie = t-tweets.map(tp => tp.tweet.id -> tp).tomap
+      vaw topicsociawpwoofwequest =
+        topicsociawpwoofwequest(
+          inputtawget.tawgetid, (⑅˘꒳˘)
+          tweetids, (U ᵕ U❁)
+          d-dispwaywocation.magicwecswecommendtopictweets, >w<
+          t-topicwistingsetting.fowwowabwe, σωσ
+          t-topicwistingcontext)
 
-      topicSocialProofServiceStore
-        .get(topicSocialProofRequest).flatMap {
-          case Some(topicSocialProofResponse) =>
-            val topicProofCandidates = topicSocialProofResponse.socialProofs.collect {
-              case (tweetId, topicsWithScore)
-                  if topicsWithScore.nonEmpty && topicsWithScore
-                    .maxBy(_.score).score >= inputTarget
-                    .params(scoreThresholdParam) =>
-                // Get the topic with max score if there are any topics returned
-                val topicWithScore = topicsWithScore.maxBy(_.score)
-                TweetWithTopicProof(
-                  tweetId,
-                  topicWithScore.topicId,
-                  tweetIdsToTweetyPie(tweetId).tweet.coreData.map(_.userId),
-                  topicWithScore.score,
-                  tweetIdsToTweetyPie(tweetId),
-                  topicWithScore.topicFollowType.map(_.name).getOrElse(""),
-                  topicWithScore.algorithmType.map(_.name),
-                  isOON = true
+      topicsociawpwoofsewvicestowe
+        .get(topicsociawpwoofwequest).fwatmap {
+          c-case some(topicsociawpwoofwesponse) =>
+            vaw topicpwoofcandidates = topicsociawpwoofwesponse.sociawpwoofs.cowwect {
+              case (tweetid, -.- t-topicswithscowe)
+                  i-if topicswithscowe.nonempty && topicswithscowe
+                    .maxby(_.scowe).scowe >= i-inputtawget
+                    .pawams(scowethweshowdpawam) =>
+                // get the topic with max scowe i-if thewe awe any t-topics wetuwned
+                vaw topicwithscowe = t-topicswithscowe.maxby(_.scowe)
+                t-tweetwithtopicpwoof(
+                  tweetid, o.O
+                  topicwithscowe.topicid, ^^
+                  tweetidstotweetypie(tweetid).tweet.cowedata.map(_.usewid), >_<
+                  topicwithscowe.scowe, >w<
+                  tweetidstotweetypie(tweetid), >_<
+                  t-topicwithscowe.topicfowwowtype.map(_.name).getowewse(""), >w<
+                  t-topicwithscowe.awgowithmtype.map(_.name), rawr
+                  isoon = t-twue
                 )
-            }.toSeq
+            }.toseq
 
-            hydrateTopicProofCandidatesWithEdgeStore(inputTarget, topicProofCandidates, edgeStore)
-          case _ => Future.value(Seq.empty[TweetWithTopicProof])
+            hydwatetopicpwoofcandidateswithedgestowe(inputtawget, rawr x3 t-topicpwoofcandidates, ( ͡o ω ͡o ) e-edgestowe)
+          case _ => futuwe.vawue(seq.empty[tweetwithtopicpwoof])
         }
     }
   }
 
   /**
-   * Obtain TopicWithScores for provided tweet candidates and target
-   * @param target   target user
-   * @param Tweets   tweet candidates represented in a (tweetId, TweetyPieResult) map
-   * @param topicSocialProofServiceStore store to query topic social proof
-   * @param enableTopicAnnotation whether to enable topic annotation
-   * @param topicScoreThreshold  threshold for topic score
-   * @return a (tweetId, TopicWithScore) map where the topic with highest topic score (if exists) is chosen
+   * o-obtain topicwithscowes f-fow pwovided tweet c-candidates and t-tawget
+   * @pawam tawget   tawget u-usew
+   * @pawam tweets   tweet candidates wepwesented i-in a (tweetid, (˘ω˘) tweetypiewesuwt) m-map
+   * @pawam t-topicsociawpwoofsewvicestowe stowe to q-quewy topic sociaw pwoof
+   * @pawam enabwetopicannotation w-whethew t-to enabwe topic a-annotation
+   * @pawam topicscowethweshowd  thweshowd fow topic scowe
+   * @wetuwn a-a (tweetid, 😳 topicwithscowe) map whewe the t-topic with highest t-topic scowe (if exists) is chosen
    */
-  def getTopicsWithScoreMap(
-    target: PushTypes.Target,
-    Tweets: Map[Long, Option[TweetyPieResult]],
-    topicSocialProofServiceStore: ReadableStore[TopicSocialProofRequest, TopicSocialProofResponse],
-    enableTopicAnnotation: Boolean,
-    topicScoreThreshold: Double
-  ): Future[Option[Map[Long, TopicWithScore]]] = {
+  d-def gettopicswithscowemap(
+    t-tawget: p-pushtypes.tawget, OwO
+    tweets: map[wong, (˘ω˘) option[tweetypiewesuwt]], òωó
+    t-topicsociawpwoofsewvicestowe: weadabwestowe[topicsociawpwoofwequest, ( ͡o ω ͡o ) topicsociawpwoofwesponse], UwU
+    enabwetopicannotation: b-boowean, /(^•ω•^)
+    t-topicscowethweshowd: doubwe
+  ): f-futuwe[option[map[wong, (ꈍᴗꈍ) topicwithscowe]]] = {
 
-    if (enableTopicAnnotation) {
-      TopicsUtil
-        .buildTopicListingViewerContextForCR(target).flatMap { topicListingContext =>
-          val tweetIds = Tweets.keySet
-          val topicSocialProofRequest =
-            TopicSocialProofRequest(
-              target.targetId,
-              tweetIds,
-              DisplayLocation.MagicRecsRecommendTopicTweets,
-              TopicListingSetting.Followable,
-              topicListingContext)
+    i-if (enabwetopicannotation) {
+      t-topicsutiw
+        .buiwdtopicwistingviewewcontextfowcw(tawget).fwatmap { t-topicwistingcontext =>
+          vaw tweetids = tweets.keyset
+          vaw topicsociawpwoofwequest =
+            topicsociawpwoofwequest(
+              tawget.tawgetid, 😳
+              tweetids, mya
+              dispwaywocation.magicwecswecommendtopictweets,
+              topicwistingsetting.fowwowabwe, mya
+              topicwistingcontext)
 
-          topicSocialProofServiceStore
-            .get(topicSocialProofRequest).map {
-              _.map { topicSocialProofResponse =>
-                topicSocialProofResponse.socialProofs
-                  .collect {
-                    case (tweetId, topicsWithScore)
-                        if topicsWithScore.nonEmpty && Tweets(tweetId).nonEmpty
-                          && topicsWithScore.maxBy(_.score).score >= topicScoreThreshold =>
-                      tweetId -> topicsWithScore.maxBy(_.score)
+          topicsociawpwoofsewvicestowe
+            .get(topicsociawpwoofwequest).map {
+              _.map { topicsociawpwoofwesponse =>
+                topicsociawpwoofwesponse.sociawpwoofs
+                  .cowwect {
+                    c-case (tweetid, /(^•ω•^) t-topicswithscowe)
+                        if topicswithscowe.nonempty && tweets(tweetid).nonempty
+                          && t-topicswithscowe.maxby(_.scowe).scowe >= t-topicscowethweshowd =>
+                      t-tweetid -> topicswithscowe.maxby(_.scowe)
                   }
 
               }
             }
         }
-    } else {
-      Future.None
+    } e-ewse {
+      futuwe.none
     }
 
   }
 
   /**
-   * Obtain LocalizedEntities for provided tweet candidates and target
-   * @param target target user
-   * @param Tweets tweet candidates represented in a (tweetId, TweetyPieResult) map
-   * @param uttEntityHydrationStore store to query the actual LocalizedEntities
-   * @param topicSocialProofServiceStore store to query topic social proof
-   * @param enableTopicAnnotation whether to enable topic annotation
-   * @param topicScoreThreshold threshold for topic score
-   * @return a (tweetId, LocalizedEntity Option) Future map that stores Localized Entity (can be empty) for given tweetId
+   * o-obtain wocawizedentities f-fow pwovided tweet candidates a-and tawget
+   * @pawam tawget tawget usew
+   * @pawam t-tweets tweet candidates w-wepwesented in a (tweetid, ^^;; tweetypiewesuwt) m-map
+   * @pawam u-uttentityhydwationstowe s-stowe t-to quewy the actuaw w-wocawizedentities
+   * @pawam t-topicsociawpwoofsewvicestowe s-stowe to quewy t-topic sociaw pwoof
+   * @pawam enabwetopicannotation w-whethew to enabwe topic annotation
+   * @pawam t-topicscowethweshowd t-thweshowd f-fow topic scowe
+   * @wetuwn a (tweetid, 🥺 wocawizedentity o-option) futuwe map that stowes wocawized e-entity (can be empty) fow given t-tweetid
    */
-  def getTweetIdLocalizedEntityMap(
-    target: PushTypes.Target,
-    Tweets: Map[Long, Option[TweetyPieResult]],
-    uttEntityHydrationStore: UttEntityHydrationStore,
-    topicSocialProofServiceStore: ReadableStore[TopicSocialProofRequest, TopicSocialProofResponse],
-    enableTopicAnnotation: Boolean,
-    topicScoreThreshold: Double
-  ): Future[Map[Long, Option[LocalizedEntity]]] = {
+  d-def gettweetidwocawizedentitymap(
+    t-tawget: pushtypes.tawget, ^^
+    t-tweets: map[wong, ^•ﻌ•^ option[tweetypiewesuwt]], /(^•ω•^)
+    u-uttentityhydwationstowe: uttentityhydwationstowe, ^^
+    t-topicsociawpwoofsewvicestowe: weadabwestowe[topicsociawpwoofwequest, 🥺 t-topicsociawpwoofwesponse], (U ᵕ U❁)
+    enabwetopicannotation: boowean,
+    topicscowethweshowd: doubwe
+  ): f-futuwe[map[wong, 😳😳😳 option[wocawizedentity]]] = {
 
-    val topicWithScoreMap = getTopicsWithScoreMap(
-      target,
-      Tweets,
-      topicSocialProofServiceStore,
-      enableTopicAnnotation,
-      topicScoreThreshold)
+    v-vaw topicwithscowemap = g-gettopicswithscowemap(
+      tawget, nyaa~~
+      tweets, (˘ω˘)
+      topicsociawpwoofsewvicestowe, >_<
+      enabwetopicannotation, XD
+      t-topicscowethweshowd)
 
-    topicWithScoreMap.flatMap { topicWithScores =>
-      topicWithScores match {
-        case Some(topics) =>
-          val topicIds = topics.collect { case (_, topic) => topic.topicId }.toSet
-          val LocalizedEntityMapFut =
-            getLocalizedEntityMap(target, topicIds, uttEntityHydrationStore)
+    topicwithscowemap.fwatmap { t-topicwithscowes =>
+      t-topicwithscowes m-match {
+        case some(topics) =>
+          v-vaw topicids = t-topics.cowwect { case (_, rawr x3 t-topic) => topic.topicid }.toset
+          vaw wocawizedentitymapfut =
+            g-getwocawizedentitymap(tawget, ( ͡o ω ͡o ) topicids, :3 uttentityhydwationstowe)
 
-          LocalizedEntityMapFut.map { LocalizedEntityMap =>
-            topics.map {
-              case (tweetId, topic) =>
-                tweetId -> LocalizedEntityMap.get(topic.topicId)
+          w-wocawizedentitymapfut.map { w-wocawizedentitymap =>
+            t-topics.map {
+              case (tweetid, mya t-topic) =>
+                t-tweetid -> wocawizedentitymap.get(topic.topicid)
             }
           }
-        case _ => Future.value(Map[Long, Option[LocalizedEntity]]())
+        c-case _ => f-futuwe.vawue(map[wong, σωσ option[wocawizedentity]]())
       }
     }
 
   }
 
   /**
-   * Hydrate TweetWithTopicProof candidates with isOON field info,
-   * based on the following relationship between target user and candidate author in edgeStore
-   * @return TweetWithTopicProof candidates with isOON field populated
+   * h-hydwate tweetwithtopicpwoof candidates w-with isoon f-fiewd info, (ꈍᴗꈍ)
+   * b-based on the f-fowwowing wewationship b-between t-tawget usew and c-candidate authow in edgestowe
+   * @wetuwn t-tweetwithtopicpwoof candidates with i-isoon fiewd popuwated
    */
-  def hydrateTopicProofCandidatesWithEdgeStore(
-    inputTarget: TargetUser,
-    topicProofCandidates: Seq[TweetWithTopicProof],
-    edgeStore: ReadableStore[RelationEdge, Boolean],
-  ): Future[Seq[TweetWithTopicProof]] = {
-    // IDs of all authors of TopicProof candidates that are OON with respect to inputTarget
-    val validOONAuthorIdsFut =
-      Predicate.filter(
-        topicProofCandidates.flatMap(_.authorId).distinct,
-        authorNotBeingFollowedPredicate(inputTarget, edgeStore))
+  def hydwatetopicpwoofcandidateswithedgestowe(
+    i-inputtawget: tawgetusew, OwO
+    t-topicpwoofcandidates: s-seq[tweetwithtopicpwoof], o.O
+    edgestowe: weadabwestowe[wewationedge, 😳😳😳 boowean],
+  ): futuwe[seq[tweetwithtopicpwoof]] = {
+    // i-ids of aww authows o-of topicpwoof c-candidates that awe oon with wespect to inputtawget
+    vaw v-vawidoonauthowidsfut =
+      p-pwedicate.fiwtew(
+        topicpwoofcandidates.fwatmap(_.authowid).distinct, /(^•ω•^)
+        a-authownotbeingfowwowedpwedicate(inputtawget, OwO e-edgestowe))
 
-    validOONAuthorIdsFut.map { validOONAuthorIds =>
-      topicProofCandidates.map(candidate => {
-        candidate.copy(isOON =
-          candidate.authorId.isDefined && validOONAuthorIds.contains(candidate.authorId.get))
+    vawidoonauthowidsfut.map { vawidoonauthowids =>
+      topicpwoofcandidates.map(candidate => {
+        c-candidate.copy(isoon =
+          c-candidate.authowid.isdefined && v-vawidoonauthowids.contains(candidate.authowid.get))
       })
     }
   }

@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.uww
 
-case class ModuleFooter(
-  text: String,
-  landingUrl: Option[Url])
+c-case cwass m-moduwefootew(
+  t-text: stwing, òωó
+  w-wandinguww: o-option[uww])

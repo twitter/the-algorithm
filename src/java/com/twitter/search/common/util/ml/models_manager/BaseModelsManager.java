@@ -1,292 +1,292 @@
-package com.twitter.search.common.util.ml.models_manager;
+package com.twittew.seawch.common.utiw.mw.modews_managew;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
+impowt j-java.io.buffewedweadew;
+i-impowt j-java.io.ioexception;
+i-impowt java.io.uncheckedioexception;
+i-impowt j-java.utiw.cowwections;
+i-impowt java.utiw.date;
+impowt j-java.utiw.hashmap;
+impowt java.utiw.wist;
+impowt java.utiw.map;
+impowt java.utiw.optionaw;
+i-impowt java.utiw.set;
+impowt java.utiw.concuwwent.concuwwenthashmap;
+impowt java.utiw.concuwwent.executows;
+i-impowt java.utiw.concuwwent.timeunit;
+i-impowt java.utiw.function.function;
+impowt java.utiw.function.suppwiew;
+impowt java.utiw.stweam.cowwectows;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.base.stwings;
+i-impowt com.googwe.common.cowwect.immutabwewist;
+impowt com.googwe.common.cowwect.sets;
+impowt com.googwe.common.utiw.concuwwent.thweadfactowybuiwdew;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.Yaml;
+i-impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
+impowt owg.yamw.snakeyamw.yamw;
 
-import com.twitter.search.common.file.AbstractFile;
-import com.twitter.search.common.file.FileUtils;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
+i-impowt com.twittew.seawch.common.fiwe.abstwactfiwe;
+i-impowt com.twittew.seawch.common.fiwe.fiweutiws;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt c-com.twittew.seawch.common.metwics.seawchwonggauge;
 
 /**
- * Loads models from HDFS and provides an interface for reloading them periodically.
+ * woads modews fwom hdfs a-and pwovides an intewface fow wewoading them p-pewiodicawwy. 🥺
  *
- * There are 2 possible ways of detecting the active models:
+ * thewe awe 2 possibwe ways of detecting the active modews:
  *
- * - DirectorySupplier: Uses all the subdirectories of a base path
- * - ConfigSupplier: Gets the list from from a configuration file
+ * - diwectowysuppwiew: u-uses aww the subdiwectowies o-of a base path
+ * - c-configsuppwiew: g-gets the wist fwom fwom a configuwation fiwe
  *
- * Models can be updated or added. Depending on the selected method, existing models can be removed
- * if they are no longer active.
+ * modews c-can be updated o-ow added. rawr x3 depending on the sewected m-method, σωσ existing m-modews can be wemoved
+ * i-if they awe nyo wongew active. (///ˬ///✿)
  */
-public abstract class BaseModelsManager<T> implements Runnable {
-  private static final Logger LOG = LoggerFactory.getLogger(BaseModelsManager.class);
+p-pubwic abstwact cwass basemodewsmanagew<t> impwements w-wunnabwe {
+  pwivate static f-finaw woggew wog = woggewfactowy.getwoggew(basemodewsmanagew.cwass);
 
-  protected final Map<String, Long> lastModifiedMsByModel = new ConcurrentHashMap<>();
-  protected final Map<String, T> loadedModels = new ConcurrentHashMap<>();
-  protected final Supplier<Map<String, AbstractFile>> activeModelsSupplier;
+  p-pwotected f-finaw map<stwing, (U ﹏ U) wong> wastmodifiedmsbymodew = nyew concuwwenthashmap<>();
+  pwotected finaw map<stwing, ^^;; t> woadedmodews = nyew concuwwenthashmap<>();
+  p-pwotected finaw s-suppwiew<map<stwing, 🥺 abstwactfiwe>> a-activemodewssuppwiew;
 
-  protected Map<String, T> prevLoadedModels = new ConcurrentHashMap<>();
+  p-pwotected m-map<stwing, òωó t> pwevwoadedmodews = nyew concuwwenthashmap<>();
 
-  // This flag determines whether models are unloaded immediately when they're removed from
-  // activeModelsSupplier. If false, old models stay in memory until the process is restarted.
-  // This may be useful to safely change model configuration without restarting.
-  protected final boolean shouldUnloadInactiveModels;
+  // this f-fwag detewmines whethew modews awe unwoaded immediatewy when they'we wemoved fwom
+  // a-activemodewssuppwiew. XD if f-fawse, owd modews s-stay in memowy u-untiw the pwocess is westawted. :3
+  // t-this may b-be usefuw to safewy c-change modew c-configuwation without westawting. (U ﹏ U)
+  pwotected finaw b-boowean shouwdunwoadinactivemodews;
 
-  protected final SearchLongGauge numModels;
-  protected final SearchCounter numErrors;
-  protected final SearchLongGauge lastLoadedMs;
+  p-pwotected f-finaw seawchwonggauge n-nyummodews;
+  p-pwotected finaw seawchcountew nyumewwows;
+  pwotected f-finaw seawchwonggauge wastwoadedms;
 
-  protected Supplier<Boolean> shouldServeModels;
-  protected Supplier<Boolean> shouldLoadModels;
+  pwotected suppwiew<boowean> shouwdsewvemodews;
+  pwotected s-suppwiew<boowean> shouwdwoadmodews;
 
-  public BaseModelsManager(
-      Supplier<Map<String, AbstractFile>> activeModelsSupplier,
-      boolean shouldUnloadInactiveModels,
-      String statsPrefix
+  pubwic basemodewsmanagew(
+      s-suppwiew<map<stwing, >w< a-abstwactfiwe>> a-activemodewssuppwiew, /(^•ω•^)
+      boowean s-shouwdunwoadinactivemodews, (⑅˘꒳˘)
+      stwing statspwefix
   ) {
-    this(
-      activeModelsSupplier,
-      shouldUnloadInactiveModels,
-      statsPrefix,
-      () -> true,
-      () -> true
+    t-this(
+      activemodewssuppwiew, ʘwʘ
+      s-shouwdunwoadinactivemodews, rawr x3
+      statspwefix, (˘ω˘)
+      () -> twue, o.O
+      () -> twue
     );
   }
 
-  public BaseModelsManager(
-      Supplier<Map<String, AbstractFile>> activeModelsSupplier,
-      boolean shouldUnloadInactiveModels,
-      String statsPrefix,
-      Supplier<Boolean> shouldServeModels,
-      Supplier<Boolean> shouldLoadModels
+  pubwic basemodewsmanagew(
+      suppwiew<map<stwing, 😳 a-abstwactfiwe>> activemodewssuppwiew, o.O
+      b-boowean shouwdunwoadinactivemodews, ^^;;
+      s-stwing statspwefix, ( ͡o ω ͡o )
+      s-suppwiew<boowean> shouwdsewvemodews, ^^;;
+      suppwiew<boowean> s-shouwdwoadmodews
   ) {
-    this.activeModelsSupplier = activeModelsSupplier;
-    this.shouldUnloadInactiveModels = shouldUnloadInactiveModels;
+    t-this.activemodewssuppwiew = activemodewssuppwiew;
+    t-this.shouwdunwoadinactivemodews = s-shouwdunwoadinactivemodews;
 
-    this.shouldServeModels = shouldServeModels;
-    this.shouldLoadModels = shouldLoadModels;
+    this.shouwdsewvemodews = shouwdsewvemodews;
+    this.shouwdwoadmodews = shouwdwoadmodews;
 
-    numModels = SearchLongGauge.export(
-        String.format("model_loader_%s_num_models", statsPrefix));
-    numErrors = SearchCounter.export(
-        String.format("model_loader_%s_num_errors", statsPrefix));
-    lastLoadedMs = SearchLongGauge.export(
-        String.format("model_loader_%s_last_loaded_timestamp_ms", statsPrefix));
+    n-nyummodews = s-seawchwonggauge.expowt(
+        s-stwing.fowmat("modew_woadew_%s_num_modews", ^^;; statspwefix));
+    n-nyumewwows = s-seawchcountew.expowt(
+        stwing.fowmat("modew_woadew_%s_num_ewwows", XD statspwefix));
+    w-wastwoadedms = seawchwonggauge.expowt(
+        stwing.fowmat("modew_woadew_%s_wast_woaded_timestamp_ms", 🥺 statspwefix));
   }
 
   /**
-   *  Retrieves a particular model.
+   *  wetwieves a-a pawticuwaw m-modew. (///ˬ///✿)
    */
-  public Optional<T> getModel(String name) {
-    if (shouldServeModels.get()) {
-      return Optional.ofNullable(loadedModels.get(name));
-    } else {
-      return Optional.empty();
+  pubwic optionaw<t> getmodew(stwing n-nyame) {
+    i-if (shouwdsewvemodews.get()) {
+      wetuwn optionaw.ofnuwwabwe(woadedmodews.get(name));
+    } ewse {
+      wetuwn optionaw.empty();
     }
   }
 
   /**
-   * Reads a model instance from the directory file instance.
+   * w-weads a modew instance fwom the diwectowy fiwe instance. (U ᵕ U❁)
    *
-   * @param modelBaseDir AbstractFile instance representing the directory.
-   * @return Model instance parsed from the directory.
+   * @pawam modewbasediw a-abstwactfiwe instance wepwesenting the diwectowy. ^^;;
+   * @wetuwn m-modew instance p-pawsed fwom the diwectowy. ^^;;
    */
-  public abstract T readModelFromDirectory(AbstractFile modelBaseDir) throws Exception;
+  pubwic abstwact t weadmodewfwomdiwectowy(abstwactfiwe m-modewbasediw) t-thwows exception;
 
   /**
-   * Cleans up any resources used by the model instance.
-   * This method is called after removing the model from the in-memory map.
-   * Sub-classes can provide custom overridden implementation as required.
+   * cweans up any wesouwces used by the modew i-instance. rawr
+   * this method is cawwed a-aftew wemoving the modew fwom the in-memowy map. (˘ω˘)
+   * sub-cwasses c-can pwovide custom ovewwidden i-impwementation a-as wequiwed. 🥺
    *
-   * @param unloadedModel Model instance that would be unloaded from the manager.
+   * @pawam unwoadedmodew m-modew instance that wouwd be unwoaded f-fwom the managew. nyaa~~
    */
-  protected void cleanUpUnloadedModel(T unloadedModel) { }
+  p-pwotected void cweanupunwoadedmodew(t u-unwoadedmodew) { }
 
-  @Override
-  public void run() {
-    // Get available models, either from the config file or by listing the base directory
-    final Map<String, AbstractFile> modelPathsFromConfig;
-    if (!shouldLoadModels.get()) {
-      LOG.info("Loading models is currently disabled.");
-      return;
+  @ovewwide
+  pubwic void w-wun() {
+    // g-get avaiwabwe modews, :3 eithew fwom the config f-fiwe ow by wisting t-the base diwectowy
+    f-finaw map<stwing, /(^•ω•^) abstwactfiwe> modewpathsfwomconfig;
+    i-if (!shouwdwoadmodews.get()) {
+      wog.info("woading m-modews i-is cuwwentwy disabwed.");
+      wetuwn;
     }
 
-    modelPathsFromConfig = activeModelsSupplier.get();
-    for (Map.Entry<String, AbstractFile> nameAndPath : modelPathsFromConfig.entrySet()) {
-      String modelName = nameAndPath.getKey();
-      try {
-        AbstractFile modelDirectory = nameAndPath.getValue();
-        if (!modelDirectory.exists() && loadedModels.containsKey(modelName)) {
-          LOG.warn("Loaded model '{}' no longer exists at HDFS path {}, keeping loaded version; "
-              + "replace directory in HDFS to update model.", modelName, modelDirectory);
-          continue;
+    modewpathsfwomconfig = activemodewssuppwiew.get();
+    f-fow (map.entwy<stwing, ^•ﻌ•^ a-abstwactfiwe> n-nyameandpath : m-modewpathsfwomconfig.entwyset()) {
+      stwing m-modewname = nyameandpath.getkey();
+      twy {
+        abstwactfiwe modewdiwectowy = nyameandpath.getvawue();
+        if (!modewdiwectowy.exists() && w-woadedmodews.containskey(modewname)) {
+          wog.wawn("woaded m-modew '{}' nyo wongew exists a-at hdfs path {}, UwU keeping woaded v-vewsion; "
+              + "wepwace diwectowy i-in hdfs to update m-modew.", 😳😳😳 modewname, m-modewdiwectowy);
+          c-continue;
         }
 
-        long previousModifiedTimestamp = lastModifiedMsByModel.getOrDefault(modelName, 0L);
-        long lastModifiedMs = modelDirectory.getLastModified();
-        if (previousModifiedTimestamp == lastModifiedMs) {
-          continue;
+        w-wong pweviousmodifiedtimestamp = wastmodifiedmsbymodew.getowdefauwt(modewname, OwO 0w);
+        wong wastmodifiedms = modewdiwectowy.getwastmodified();
+        if (pweviousmodifiedtimestamp == wastmodifiedms) {
+          c-continue;
         }
 
-        LOG.info("Starting to load model. name={} path={}", modelName, modelDirectory.getPath());
-        T model = Preconditions.checkNotNull(readModelFromDirectory(modelDirectory));
-        LOG.info("Model initialized: {}. Last modified: {} ({})",
-                 modelName, lastModifiedMs, new Date(lastModifiedMs));
-        T previousModel = loadedModels.put(modelName, model);
-        lastModifiedMsByModel.put(modelName, lastModifiedMs);
+        w-wog.info("stawting t-to woad modew. ^•ﻌ•^ nyame={} p-path={}", modewname, (ꈍᴗꈍ) modewdiwectowy.getpath());
+        t modew = pweconditions.checknotnuww(weadmodewfwomdiwectowy(modewdiwectowy));
+        w-wog.info("modew i-initiawized: {}. (⑅˘꒳˘) wast modified: {} ({})", (⑅˘꒳˘)
+                 m-modewname, wastmodifiedms, nyew date(wastmodifiedms));
+        t-t pweviousmodew = w-woadedmodews.put(modewname, (ˆ ﻌ ˆ)♡ modew);
+        w-wastmodifiedmsbymodew.put(modewname, /(^•ω•^) w-wastmodifiedms);
 
-        if (previousModel != null) {
-          cleanUpUnloadedModel(previousModel);
+        if (pweviousmodew != nyuww) {
+          cweanupunwoadedmodew(pweviousmodew);
         }
-      } catch (Exception e) {
-        numErrors.increment();
-        LOG.error("Error initializing model: {}", modelName, e);
+      } catch (exception e) {
+        n-nyumewwows.incwement();
+        w-wog.ewwow("ewwow i-initiawizing m-modew: {}", òωó modewname, (⑅˘꒳˘) e-e);
       }
     }
 
-    // Remove any currently loaded models not present in the latest list
-    if (shouldUnloadInactiveModels) {
-      Set<String> inactiveModels =
-          Sets.difference(loadedModels.keySet(), modelPathsFromConfig.keySet()).immutableCopy();
+    // wemove any cuwwentwy w-woaded modews n-nyot pwesent in the watest w-wist
+    if (shouwdunwoadinactivemodews) {
+      s-set<stwing> inactivemodews =
+          sets.diffewence(woadedmodews.keyset(), (U ᵕ U❁) m-modewpathsfwomconfig.keyset()).immutabwecopy();
 
-      for (String modelName : inactiveModels) {
-        T modelToUnload = loadedModels.get(modelName);
-        loadedModels.remove(modelName);
+      fow (stwing modewname : inactivemodews) {
+        t-t modewtounwoad = woadedmodews.get(modewname);
+        w-woadedmodews.wemove(modewname);
 
-        if (modelToUnload != null) {
-          // We could have an inactive model key without a model (value) if the
-          // initial readModelFromDirectory failed for the model entry.
-          // Checking for null to avoid exception.
-          cleanUpUnloadedModel(modelToUnload);
+        i-if (modewtounwoad != nyuww) {
+          // w-we couwd have an inactive modew key without a-a modew (vawue) i-if the
+          // i-initiaw weadmodewfwomdiwectowy faiwed fow the modew entwy. >w<
+          // checking f-fow nyuww to avoid exception. σωσ
+          cweanupunwoadedmodew(modewtounwoad);
         }
-        LOG.info("Unloaded model that is no longer active: {}", modelName);
+        w-wog.info("unwoaded m-modew that is nyo wongew a-active: {}", -.- modewname);
       }
     }
 
-    if (!prevLoadedModels.keySet().equals(loadedModels.keySet())) {
-      LOG.info("Finished loading models: {}", loadedModels.keySet());
+    if (!pwevwoadedmodews.keyset().equaws(woadedmodews.keyset())) {
+      w-wog.info("finished w-woading modews: {}", o.O woadedmodews.keyset());
     }
-    prevLoadedModels = loadedModels;
-    numModels.set(loadedModels.size());
-    lastLoadedMs.set(System.currentTimeMillis());
+    pwevwoadedmodews = woadedmodews;
+    n-nyummodews.set(woadedmodews.size());
+    wastwoadedms.set(system.cuwwenttimemiwwis());
   }
 
   /**
-   * Schedules the loader to run periodically.
-   * @param period Period between executions
-   * @param timeUnit The time unit the period parameter.
+   * scheduwes t-the woadew to w-wun pewiodicawwy. ^^
+   * @pawam pewiod p-pewiod between executions
+   * @pawam t-timeunit t-the time unit t-the pewiod pawametew. >_<
    */
-  public final void scheduleAtFixedRate(
-      long period, TimeUnit timeUnit, String builderThreadName) {
-    Executors.newSingleThreadScheduledExecutor(
-        new ThreadFactoryBuilder()
-            .setDaemon(true)
-            .setNameFormat(builderThreadName)
-            .build())
-        .scheduleAtFixedRate(this, 0, period, timeUnit);
+  pubwic finaw void scheduweatfixedwate(
+      wong pewiod, >w< timeunit timeunit, >_< stwing buiwdewthweadname) {
+    executows.newsingwethweadscheduwedexecutow(
+        nyew thweadfactowybuiwdew()
+            .setdaemon(twue)
+            .setnamefowmat(buiwdewthweadname)
+            .buiwd())
+        .scheduweatfixedwate(this, >w< 0, rawr pewiod, timeunit);
   }
 
   /**
-   * Gets the active list of models from the subdirectories in a base directory.
+   * gets the active wist of modews fwom the subdiwectowies i-in a-a base diwectowy. rawr x3
    *
-   * Each model is identified by the name of the subdirectory.
+   * each modew is identified b-by the nyame o-of the subdiwectowy. ( ͡o ω ͡o )
    */
-  @VisibleForTesting
-  public static class DirectorySupplier implements Supplier<Map<String, AbstractFile>> {
-    private static final Logger LOG = LoggerFactory.getLogger(DirectorySupplier.class);
-    private final AbstractFile baseDir;
+  @visibwefowtesting
+  p-pubwic static cwass diwectowysuppwiew i-impwements suppwiew<map<stwing, (˘ω˘) a-abstwactfiwe>> {
+    p-pwivate static finaw woggew wog = w-woggewfactowy.getwoggew(diwectowysuppwiew.cwass);
+    pwivate f-finaw abstwactfiwe b-basediw;
 
-    public DirectorySupplier(AbstractFile baseDir) {
-      this.baseDir = baseDir;
+    pubwic diwectowysuppwiew(abstwactfiwe basediw) {
+      t-this.basediw = b-basediw;
     }
 
-    @Override
-    public Map<String, AbstractFile> get() {
-      try {
-        LOG.info("Loading models from the directories in: {}", baseDir.getPath());
-        List<AbstractFile> modelDirs =
-            ImmutableList.copyOf(baseDir.listFiles(AbstractFile.IS_DIRECTORY));
-        LOG.info("Found {} model directories: {}", modelDirs.size(), modelDirs);
-        return modelDirs.stream()
-            .collect(Collectors.toMap(
-                AbstractFile::getName,
-                Function.identity()
+    @ovewwide
+    p-pubwic m-map<stwing, 😳 abstwactfiwe> g-get() {
+      t-twy {
+        w-wog.info("woading m-modews fwom t-the diwectowies in: {}", OwO basediw.getpath());
+        w-wist<abstwactfiwe> m-modewdiws =
+            i-immutabwewist.copyof(basediw.wistfiwes(abstwactfiwe.is_diwectowy));
+        wog.info("found {} m-modew diwectowies: {}", (˘ω˘) modewdiws.size(), òωó modewdiws);
+        w-wetuwn modewdiws.stweam()
+            .cowwect(cowwectows.tomap(
+                abstwactfiwe::getname, ( ͡o ω ͡o )
+                f-function.identity()
             ));
-      } catch (IOException e) {
-        throw new UncheckedIOException(e);
+      } c-catch (ioexception e-e) {
+        thwow nyew u-uncheckedioexception(e);
       }
     }
   }
 
   /**
-   * Gets the active list of models by reading a YAML config file.
+   * gets the a-active wist of modews by weading a-a yamw config fiwe. UwU
    *
-   * The keys are the model names, the values are dictionaries with a single entry for the path
-   * of the model in HDFS (without the HDFS name node prefix). For example:
+   * the keys awe the m-modew nyames, /(^•ω•^) the vawues awe dictionawies with a singwe entwy fow the path
+   * o-of the modew in hdfs (without the h-hdfs nyame nyode p-pwefix). fow exampwe:
    *
-   *    model_a:
-   *        path: /path/to/model_a
-   *    model_b:
-   *        path: /path/to/model_b
+   *    modew_a:
+   *        path: /path/to/modew_a
+   *    m-modew_b:
+   *        path: /path/to/modew_b
    *
    */
-  @VisibleForTesting
-  public static class ConfigSupplier implements Supplier<Map<String, AbstractFile>> {
+  @visibwefowtesting
+  pubwic static c-cwass configsuppwiew i-impwements s-suppwiew<map<stwing, (ꈍᴗꈍ) abstwactfiwe>> {
 
-    private final AbstractFile configFile;
+    pwivate finaw abstwactfiwe c-configfiwe;
 
-    public ConfigSupplier(AbstractFile configFile) {
-      this.configFile = configFile;
+    p-pubwic configsuppwiew(abstwactfiwe c-configfiwe) {
+      this.configfiwe = configfiwe;
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public Map<String, AbstractFile> get() {
-      try (BufferedReader configReader = configFile.getCharSource().openBufferedStream()) {
-        Yaml yamlParser = new Yaml();
-        //noinspection unchecked
-        Map<String, Map<String, String>> config =
-            (Map<String, Map<String, String>>) yamlParser.load(configReader);
+    @suppwesswawnings("unchecked")
+    @ovewwide
+    p-pubwic map<stwing, 😳 a-abstwactfiwe> get() {
+      t-twy (buffewedweadew c-configweadew = configfiwe.getchawsouwce().openbuffewedstweam()) {
+        y-yamw y-yamwpawsew = nyew y-yamw();
+        //noinspection u-unchecked
+        map<stwing, mya map<stwing, s-stwing>> c-config =
+            (map<stwing, mya m-map<stwing, /(^•ω•^) s-stwing>>) yamwpawsew.woad(configweadew);
 
-        if (config == null || config.isEmpty()) {
-          return Collections.emptyMap();
+        i-if (config == n-nyuww || config.isempty()) {
+          w-wetuwn c-cowwections.emptymap();
         }
 
-        Map<String, AbstractFile> modelPaths = new HashMap<>();
-        for (Map.Entry<String, Map<String, String>> nameAndConfig : config.entrySet()) {
-          String path = Strings.emptyToNull(nameAndConfig.getValue().get("path"));
-          Preconditions.checkNotNull(path, "Missing path for model: %s", nameAndConfig.getKey());
-          modelPaths.put(nameAndConfig.getKey(), FileUtils.getHdfsFileHandle(path));
+        map<stwing, ^^;; a-abstwactfiwe> modewpaths = n-nyew hashmap<>();
+        fow (map.entwy<stwing, 🥺 m-map<stwing, ^^ stwing>> n-nyameandconfig : c-config.entwyset()) {
+          stwing path = stwings.emptytonuww(nameandconfig.getvawue().get("path"));
+          pweconditions.checknotnuww(path, ^•ﻌ•^ "missing p-path fow modew: %s", /(^•ω•^) n-nyameandconfig.getkey());
+          m-modewpaths.put(nameandconfig.getkey(), ^^ fiweutiws.gethdfsfiwehandwe(path));
         }
-        return modelPaths;
-      } catch (IOException e) {
-        throw new UncheckedIOException(e);
+        wetuwn modewpaths;
+      } c-catch (ioexception e-e) {
+        thwow nyew u-uncheckedioexception(e);
       }
     }
   }

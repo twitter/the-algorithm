@@ -1,477 +1,477 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twittew.simcwustews_v2.summingbiwd.common
 
-import com.twitter.algebird.DecayedValue
-import com.twitter.algebird.Monoid
-import com.twitter.algebird.OptionMonoid
-import com.twitter.algebird.ScMapMonoid
-import com.twitter.algebird_internal.thriftscala.{DecayedValue => ThriftDecayedValue}
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.ClustersWithScores
-import com.twitter.simclusters_v2.thriftscala.MultiModelClustersWithScores
-import com.twitter.simclusters_v2.thriftscala.MultiModelTopKTweetsWithScores
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.MultiModelPersistentSimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.PersistentSimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.Scores
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingMetadata
-import com.twitter.simclusters_v2.thriftscala.TopKClustersWithScores
-import com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
-import com.twitter.snowflake.id.SnowflakeId
-import scala.collection.mutable
+impowt com.twittew.awgebiwd.decayedvawue
+impowt c-com.twittew.awgebiwd.monoid
+i-impowt com.twittew.awgebiwd.optionmonoid
+i-impowt c-com.twittew.awgebiwd.scmapmonoid
+i-impowt com.twittew.awgebiwd_intewnaw.thwiftscawa.{decayedvawue => t-thwiftdecayedvawue}
+i-impowt c-com.twittew.simcwustews_v2.common.simcwustewsembedding
+impowt com.twittew.simcwustews_v2.thwiftscawa.cwustewswithscowes
+impowt com.twittew.simcwustews_v2.thwiftscawa.muwtimodewcwustewswithscowes
+impowt com.twittew.simcwustews_v2.thwiftscawa.muwtimodewtopktweetswithscowes
+impowt com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.muwtimodewpewsistentsimcwustewsembedding
+impowt com.twittew.simcwustews_v2.thwiftscawa.pewsistentsimcwustewsembedding
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.scowes
+impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembeddingmetadata
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.topkcwustewswithscowes
+impowt com.twittew.simcwustews_v2.thwiftscawa.topktweetswithscowes
+impowt com.twittew.simcwustews_v2.thwiftscawa.{simcwustewsembedding => thwiftsimcwustewsembedding}
+i-impowt com.twittew.snowfwake.id.snowfwakeid
+i-impowt scawa.cowwection.mutabwe
 
 /**
- * Contains various monoids used in the EntityJob
+ * c-contains vawious monoids used in the entityjob
  */
-object Monoids {
+object monoids {
 
-  class ScoresMonoid(implicit thriftDecayedValueMonoid: ThriftDecayedValueMonoid)
-      extends Monoid[Scores] {
+  c-cwass scowesmonoid(impwicit thwiftdecayedvawuemonoid: thwiftdecayedvawuemonoid)
+      extends monoid[scowes] {
 
-    private val optionalThriftDecayedValueMonoid =
-      new OptionMonoid[ThriftDecayedValue]()
+    p-pwivate vaw optionawthwiftdecayedvawuemonoid =
+      n-nyew o-optionmonoid[thwiftdecayedvawue]()
 
-    override val zero: Scores = Scores()
+    o-ovewwide v-vaw zewo: scowes = scowes()
 
-    override def plus(x: Scores, y: Scores): Scores = {
-      Scores(
-        optionalThriftDecayedValueMonoid.plus(
-          x.favClusterNormalized8HrHalfLifeScore,
-          y.favClusterNormalized8HrHalfLifeScore
+    ovewwide def p-pwus(x: scowes, ^•ﻌ•^ y: scowes): scowes = {
+      scowes(
+        optionawthwiftdecayedvawuemonoid.pwus(
+          x.favcwustewnowmawized8hwhawfwifescowe, mya
+          y-y.favcwustewnowmawized8hwhawfwifescowe
         ),
-        optionalThriftDecayedValueMonoid.plus(
-          x.followClusterNormalized8HrHalfLifeScore,
-          y.followClusterNormalized8HrHalfLifeScore
+        optionawthwiftdecayedvawuemonoid.pwus(
+          x.fowwowcwustewnowmawized8hwhawfwifescowe, UwU
+          y.fowwowcwustewnowmawized8hwhawfwifescowe
         )
       )
     }
   }
 
-  class ClustersWithScoresMonoid(implicit scoresMonoid: ScoresMonoid)
-      extends Monoid[ClustersWithScores] {
+  cwass cwustewswithscowesmonoid(impwicit s-scowesmonoid: scowesmonoid)
+      e-extends monoid[cwustewswithscowes] {
 
-    private val optionMapMonoid =
-      new OptionMonoid[collection.Map[Int, Scores]]()(new ScMapMonoid[Int, Scores]())
+    pwivate v-vaw optionmapmonoid =
+      n-nyew optionmonoid[cowwection.map[int, >_< scowes]]()(new scmapmonoid[int, /(^•ω•^) scowes]())
 
-    override val zero: ClustersWithScores = ClustersWithScores()
+    o-ovewwide v-vaw zewo: cwustewswithscowes = cwustewswithscowes()
 
-    override def plus(x: ClustersWithScores, y: ClustersWithScores): ClustersWithScores = {
-      ClustersWithScores(
-        optionMapMonoid.plus(x.clustersToScore, y.clustersToScore)
+    o-ovewwide d-def pwus(x: cwustewswithscowes, y-y: cwustewswithscowes): cwustewswithscowes = {
+      c-cwustewswithscowes(
+        optionmapmonoid.pwus(x.cwustewstoscowe, òωó y.cwustewstoscowe)
       )
     }
   }
 
-  class MultiModelClustersWithScoresMonoid(implicit scoresMonoid: ScoresMonoid)
-      extends Monoid[MultiModelClustersWithScores] {
+  c-cwass muwtimodewcwustewswithscowesmonoid(impwicit scowesmonoid: s-scowesmonoid)
+      extends m-monoid[muwtimodewcwustewswithscowes] {
 
-    override val zero: MultiModelClustersWithScores = MultiModelClustersWithScores()
+    o-ovewwide vaw zewo: muwtimodewcwustewswithscowes = muwtimodewcwustewswithscowes()
 
-    override def plus(
-      x: MultiModelClustersWithScores,
-      y: MultiModelClustersWithScores
-    ): MultiModelClustersWithScores = {
-      // We reuse the logic from the Monoid for the Value here
-      val clustersWithScoreMonoid = Implicits.clustersWithScoreMonoid
+    ovewwide def pwus(
+      x: muwtimodewcwustewswithscowes, σωσ
+      y: muwtimodewcwustewswithscowes
+    ): muwtimodewcwustewswithscowes = {
+      // w-we weuse the w-wogic fwom the monoid fow the vawue h-hewe
+      v-vaw cwustewswithscowemonoid = i-impwicits.cwustewswithscowemonoid
 
-      MultiModelClustersWithScores(
-        MultiModelUtils.mergeTwoMultiModelMaps(
-          x.multiModelClustersWithScores,
-          y.multiModelClustersWithScores,
-          clustersWithScoreMonoid))
+      muwtimodewcwustewswithscowes(
+        muwtimodewutiws.mewgetwomuwtimodewmaps(
+          x.muwtimodewcwustewswithscowes, ( ͡o ω ͡o )
+          y.muwtimodewcwustewswithscowes, nyaa~~
+          c-cwustewswithscowemonoid))
     }
   }
 
-  class TopKClustersWithScoresMonoid(
-    topK: Int,
-    threshold: Double
+  cwass topkcwustewswithscowesmonoid(
+    topk: int, :3
+    thweshowd: doubwe
   )(
-    implicit thriftDecayedValueMonoid: ThriftDecayedValueMonoid)
-      extends Monoid[TopKClustersWithScores] {
+    i-impwicit thwiftdecayedvawuemonoid: thwiftdecayedvawuemonoid)
+      extends m-monoid[topkcwustewswithscowes] {
 
-    override val zero: TopKClustersWithScores = TopKClustersWithScores()
+    o-ovewwide v-vaw zewo: topkcwustewswithscowes = t-topkcwustewswithscowes()
 
-    override def plus(
-      x: TopKClustersWithScores,
-      y: TopKClustersWithScores
-    ): TopKClustersWithScores = {
+    o-ovewwide d-def pwus(
+      x-x: topkcwustewswithscowes, UwU
+      y: topkcwustewswithscowes
+    ): topkcwustewswithscowes = {
 
-      val mergedFavMap = TopKScoresUtils
-        .mergeTwoTopKMapWithDecayedValues(
-          x.topClustersByFavClusterNormalizedScore
-            .map(_.mapValues(
-              _.favClusterNormalized8HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
-          y.topClustersByFavClusterNormalizedScore
-            .map(_.mapValues(
-              _.favClusterNormalized8HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
-          topK,
-          threshold
-        ).map(_.mapValues(decayedValue =>
-          Scores(favClusterNormalized8HrHalfLifeScore = Some(decayedValue))))
+      v-vaw mewgedfavmap = t-topkscowesutiws
+        .mewgetwotopkmapwithdecayedvawues(
+          x-x.topcwustewsbyfavcwustewnowmawizedscowe
+            .map(_.mapvawues(
+              _.favcwustewnowmawized8hwhawfwifescowe.getowewse(thwiftdecayedvawuemonoid.zewo))), o.O
+          y-y.topcwustewsbyfavcwustewnowmawizedscowe
+            .map(_.mapvawues(
+              _.favcwustewnowmawized8hwhawfwifescowe.getowewse(thwiftdecayedvawuemonoid.zewo))), (ˆ ﻌ ˆ)♡
+          t-topk, ^^;;
+          thweshowd
+        ).map(_.mapvawues(decayedvawue =>
+          scowes(favcwustewnowmawized8hwhawfwifescowe = some(decayedvawue))))
 
-      val mergedFollowMap = TopKScoresUtils
-        .mergeTwoTopKMapWithDecayedValues(
-          x.topClustersByFollowClusterNormalizedScore
-            .map(_.mapValues(
-              _.followClusterNormalized8HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
-          y.topClustersByFollowClusterNormalizedScore
-            .map(_.mapValues(
-              _.followClusterNormalized8HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
-          topK,
-          threshold
-        ).map(_.mapValues(decayedValue =>
-          Scores(followClusterNormalized8HrHalfLifeScore = Some(decayedValue))))
+      v-vaw mewgedfowwowmap = topkscowesutiws
+        .mewgetwotopkmapwithdecayedvawues(
+          x.topcwustewsbyfowwowcwustewnowmawizedscowe
+            .map(_.mapvawues(
+              _.fowwowcwustewnowmawized8hwhawfwifescowe.getowewse(thwiftdecayedvawuemonoid.zewo))), ʘwʘ
+          y.topcwustewsbyfowwowcwustewnowmawizedscowe
+            .map(_.mapvawues(
+              _.fowwowcwustewnowmawized8hwhawfwifescowe.getowewse(thwiftdecayedvawuemonoid.zewo))), σωσ
+          topk, ^^;;
+          thweshowd
+        ).map(_.mapvawues(decayedvawue =>
+          scowes(fowwowcwustewnowmawized8hwhawfwifescowe = s-some(decayedvawue))))
 
-      TopKClustersWithScores(
-        mergedFavMap,
-        mergedFollowMap
+      topkcwustewswithscowes(
+        mewgedfavmap,
+        mewgedfowwowmap
       )
     }
   }
-  class TopKTweetsWithScoresMonoid(
-    topK: Int,
-    threshold: Double,
-    tweetAgeThreshold: Long
+  c-cwass t-topktweetswithscowesmonoid(
+    t-topk: int, ʘwʘ
+    thweshowd: doubwe, ^^
+    t-tweetagethweshowd: wong
   )(
-    implicit thriftDecayedValueMonoid: ThriftDecayedValueMonoid)
-      extends Monoid[TopKTweetsWithScores] {
+    i-impwicit t-thwiftdecayedvawuemonoid: thwiftdecayedvawuemonoid)
+      extends monoid[topktweetswithscowes] {
 
-    override val zero: TopKTweetsWithScores = TopKTweetsWithScores()
+    ovewwide vaw zewo: topktweetswithscowes = t-topktweetswithscowes()
 
-    override def plus(x: TopKTweetsWithScores, y: TopKTweetsWithScores): TopKTweetsWithScores = {
-      val oldestTweetId = SnowflakeId.firstIdFor(System.currentTimeMillis() - tweetAgeThreshold)
+    ovewwide d-def pwus(x: topktweetswithscowes, nyaa~~ y-y: topktweetswithscowes): t-topktweetswithscowes = {
+      vaw owdesttweetid = snowfwakeid.fiwstidfow(system.cuwwenttimemiwwis() - t-tweetagethweshowd)
 
-      val mergedFavMap = TopKScoresUtils
-        .mergeTwoTopKMapWithDecayedValues(
-          x.topTweetsByFavClusterNormalizedScore
-            .map(_.mapValues(
-              _.favClusterNormalized8HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
-          y.topTweetsByFavClusterNormalizedScore
-            .map(_.mapValues(
-              _.favClusterNormalized8HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
-          topK,
-          threshold
-        ).map(_.filter(_._1 >= oldestTweetId).mapValues(decayedValue =>
-          Scores(favClusterNormalized8HrHalfLifeScore = Some(decayedValue))))
+      v-vaw mewgedfavmap = topkscowesutiws
+        .mewgetwotopkmapwithdecayedvawues(
+          x-x.toptweetsbyfavcwustewnowmawizedscowe
+            .map(_.mapvawues(
+              _.favcwustewnowmawized8hwhawfwifescowe.getowewse(thwiftdecayedvawuemonoid.zewo))), (///ˬ///✿)
+          y-y.toptweetsbyfavcwustewnowmawizedscowe
+            .map(_.mapvawues(
+              _.favcwustewnowmawized8hwhawfwifescowe.getowewse(thwiftdecayedvawuemonoid.zewo))), XD
+          topk, :3
+          thweshowd
+        ).map(_.fiwtew(_._1 >= owdesttweetid).mapvawues(decayedvawue =>
+          scowes(favcwustewnowmawized8hwhawfwifescowe = s-some(decayedvawue))))
 
-      TopKTweetsWithScores(mergedFavMap, None)
+      t-topktweetswithscowes(mewgedfavmap, òωó n-nyone)
     }
   }
 
-  class MultiModelTopKTweetsWithScoresMonoid(
+  cwass muwtimodewtopktweetswithscowesmonoid(
   )(
-    implicit thriftDecayedValueMonoid: ThriftDecayedValueMonoid)
-      extends Monoid[MultiModelTopKTweetsWithScores] {
-    override val zero: MultiModelTopKTweetsWithScores = MultiModelTopKTweetsWithScores()
+    i-impwicit t-thwiftdecayedvawuemonoid: thwiftdecayedvawuemonoid)
+      e-extends monoid[muwtimodewtopktweetswithscowes] {
+    ovewwide vaw zewo: muwtimodewtopktweetswithscowes = muwtimodewtopktweetswithscowes()
 
-    override def plus(
-      x: MultiModelTopKTweetsWithScores,
-      y: MultiModelTopKTweetsWithScores
-    ): MultiModelTopKTweetsWithScores = {
-      // We reuse the logic from the Monoid for the Value here
-      val topKTweetsWithScoresMonoid = Implicits.topKTweetsWithScoresMonoid
+    ovewwide def pwus(
+      x-x: muwtimodewtopktweetswithscowes, ^^
+      y-y: muwtimodewtopktweetswithscowes
+    ): muwtimodewtopktweetswithscowes = {
+      // we weuse the w-wogic fwom the m-monoid fow the vawue hewe
+      vaw topktweetswithscowesmonoid = impwicits.topktweetswithscowesmonoid
 
-      MultiModelTopKTweetsWithScores(
-        MultiModelUtils.mergeTwoMultiModelMaps(
-          x.multiModelTopKTweetsWithScores,
-          y.multiModelTopKTweetsWithScores,
-          topKTweetsWithScoresMonoid))
+      muwtimodewtopktweetswithscowes(
+        m-muwtimodewutiws.mewgetwomuwtimodewmaps(
+          x.muwtimodewtopktweetswithscowes, ^•ﻌ•^
+          y.muwtimodewtopktweetswithscowes, σωσ
+          topktweetswithscowesmonoid))
     }
 
   }
 
   /**
-   * Merge two PersistentSimClustersEmbedding. The latest embedding overwrite the old embedding.
-   * The new count equals to the sum of the count.
+   * mewge two pewsistentsimcwustewsembedding. (ˆ ﻌ ˆ)♡ the w-watest embedding ovewwwite the owd embedding. nyaa~~
+   * t-the nyew count e-equaws to the sum of the count. ʘwʘ
    */
-  class PersistentSimClustersEmbeddingMonoid extends Monoid[PersistentSimClustersEmbedding] {
+  cwass pewsistentsimcwustewsembeddingmonoid e-extends m-monoid[pewsistentsimcwustewsembedding] {
 
-    override val zero: PersistentSimClustersEmbedding = PersistentSimClustersEmbedding(
-      ThriftSimClustersEmbedding(),
-      SimClustersEmbeddingMetadata()
+    ovewwide vaw zewo: pewsistentsimcwustewsembedding = p-pewsistentsimcwustewsembedding(
+      thwiftsimcwustewsembedding(), ^•ﻌ•^
+      s-simcwustewsembeddingmetadata()
     )
 
-    private val optionLongMonoid = new OptionMonoid[Long]()
+    pwivate vaw optionwongmonoid = nyew optionmonoid[wong]()
 
-    override def plus(
-      x: PersistentSimClustersEmbedding,
-      y: PersistentSimClustersEmbedding
-    ): PersistentSimClustersEmbedding = {
-      val latest =
-        if (x.metadata.updatedAtMs.getOrElse(0L) > y.metadata.updatedAtMs.getOrElse(0L)) x else y
-      latest.copy(
-        metadata = latest.metadata.copy(
-          updatedCount = optionLongMonoid.plus(x.metadata.updatedCount, y.metadata.updatedCount)))
+    o-ovewwide def pwus(
+      x: p-pewsistentsimcwustewsembedding, rawr x3
+      y-y: pewsistentsimcwustewsembedding
+    ): pewsistentsimcwustewsembedding = {
+      vaw watest =
+        i-if (x.metadata.updatedatms.getowewse(0w) > y.metadata.updatedatms.getowewse(0w)) x-x e-ewse y
+      watest.copy(
+        m-metadata = watest.metadata.copy(
+          updatedcount = o-optionwongmonoid.pwus(x.metadata.updatedcount, 🥺 y-y.metadata.updatedcount)))
     }
   }
 
-  class MultiModelPersistentSimClustersEmbeddingMonoid
-      extends Monoid[MultiModelPersistentSimClustersEmbedding] {
+  cwass muwtimodewpewsistentsimcwustewsembeddingmonoid
+      extends m-monoid[muwtimodewpewsistentsimcwustewsembedding] {
 
-    override val zero: MultiModelPersistentSimClustersEmbedding =
-      MultiModelPersistentSimClustersEmbedding(Map[ModelVersion, PersistentSimClustersEmbedding]())
+    o-ovewwide v-vaw zewo: muwtimodewpewsistentsimcwustewsembedding =
+      muwtimodewpewsistentsimcwustewsembedding(map[modewvewsion, ʘwʘ p-pewsistentsimcwustewsembedding]())
 
-    override def plus(
-      x: MultiModelPersistentSimClustersEmbedding,
-      y: MultiModelPersistentSimClustersEmbedding
-    ): MultiModelPersistentSimClustersEmbedding = {
-      val monoid = Implicits.persistentSimClustersEmbeddingMonoid
+    ovewwide def p-pwus(
+      x: m-muwtimodewpewsistentsimcwustewsembedding, (˘ω˘)
+      y: muwtimodewpewsistentsimcwustewsembedding
+    ): muwtimodewpewsistentsimcwustewsembedding = {
+      vaw monoid = i-impwicits.pewsistentsimcwustewsembeddingmonoid
 
-      // PersistentSimClustersEmbeddings is the only required thrift object so we need to wrap it
-      // in Some
-      MultiModelUtils.mergeTwoMultiModelMaps(
-        Some(x.multiModelPersistentSimClustersEmbedding),
-        Some(y.multiModelPersistentSimClustersEmbedding),
+      // p-pewsistentsimcwustewsembeddings i-is t-the onwy wequiwed thwift object s-so we nyeed to wwap it
+      // in some
+      muwtimodewutiws.mewgetwomuwtimodewmaps(
+        some(x.muwtimodewpewsistentsimcwustewsembedding), o.O
+        some(y.muwtimodewpewsistentsimcwustewsembedding), σωσ
         monoid) match {
-        // clean up the empty embeddings
-        case Some(res) =>
-          MultiModelPersistentSimClustersEmbedding(res.flatMap {
-            // in some cases the list of SimClustersScore is empty, so we want to remove the
-            // modelVersion from the list of Models for the embedding
-            case (modelVersion, persistentSimClustersEmbedding) =>
-              persistentSimClustersEmbedding.embedding.embedding match {
-                case embedding if embedding.nonEmpty =>
-                  Map(modelVersion -> persistentSimClustersEmbedding)
+        // c-cwean up the empty e-embeddings
+        case some(wes) =>
+          muwtimodewpewsistentsimcwustewsembedding(wes.fwatmap {
+            // i-in some cases the wist of simcwustewsscowe i-is empty, (ꈍᴗꈍ) so we want to wemove the
+            // m-modewvewsion fwom t-the wist of m-modews fow the embedding
+            c-case (modewvewsion, (ˆ ﻌ ˆ)♡ p-pewsistentsimcwustewsembedding) =>
+              pewsistentsimcwustewsembedding.embedding.embedding match {
+                case embedding if embedding.nonempty =>
+                  map(modewvewsion -> pewsistentsimcwustewsembedding)
                 case _ =>
-                  None
+                  nyone
               }
           })
-        case _ => zero
+        c-case _ => z-zewo
       }
     }
   }
 
   /**
-   * Merge two PersistentSimClustersEmbeddings. The embedding with the longest l2 norm overwrites
-   * the other embedding. The new count equals to the sum of the count.
+   * m-mewge two pewsistentsimcwustewsembeddings. o.O t-the embedding with the wongest w2 nyowm ovewwwites
+   * the othew e-embedding. :3 the n-nyew count equaws to the sum o-of the count. -.-
    */
-  class PersistentSimClustersEmbeddingLongestL2NormMonoid
-      extends Monoid[PersistentSimClustersEmbedding] {
+  cwass pewsistentsimcwustewsembeddingwongestw2nowmmonoid
+      extends monoid[pewsistentsimcwustewsembedding] {
 
-    override val zero: PersistentSimClustersEmbedding = PersistentSimClustersEmbedding(
-      ThriftSimClustersEmbedding(),
-      SimClustersEmbeddingMetadata()
+    o-ovewwide v-vaw zewo: pewsistentsimcwustewsembedding = pewsistentsimcwustewsembedding(
+      t-thwiftsimcwustewsembedding(), ( ͡o ω ͡o )
+      s-simcwustewsembeddingmetadata()
     )
 
-    override def plus(
-      x: PersistentSimClustersEmbedding,
-      y: PersistentSimClustersEmbedding
-    ): PersistentSimClustersEmbedding = {
-      if (SimClustersEmbedding(x.embedding).l2norm >= SimClustersEmbedding(y.embedding).l2norm) x
-      else y
+    ovewwide def pwus(
+      x: pewsistentsimcwustewsembedding,
+      y: pewsistentsimcwustewsembedding
+    ): pewsistentsimcwustewsembedding = {
+      i-if (simcwustewsembedding(x.embedding).w2nowm >= s-simcwustewsembedding(y.embedding).w2nowm) x-x
+      ewse y
     }
   }
 
-  class MultiModelPersistentSimClustersEmbeddingLongestL2NormMonoid
-      extends Monoid[MultiModelPersistentSimClustersEmbedding] {
+  c-cwass m-muwtimodewpewsistentsimcwustewsembeddingwongestw2nowmmonoid
+      extends monoid[muwtimodewpewsistentsimcwustewsembedding] {
 
-    override val zero: MultiModelPersistentSimClustersEmbedding =
-      MultiModelPersistentSimClustersEmbedding(Map[ModelVersion, PersistentSimClustersEmbedding]())
+    o-ovewwide vaw z-zewo: muwtimodewpewsistentsimcwustewsembedding =
+      muwtimodewpewsistentsimcwustewsembedding(map[modewvewsion, /(^•ω•^) p-pewsistentsimcwustewsembedding]())
 
-    override def plus(
-      x: MultiModelPersistentSimClustersEmbedding,
-      y: MultiModelPersistentSimClustersEmbedding
-    ): MultiModelPersistentSimClustersEmbedding = {
-      val monoid = Implicits.persistentSimClustersEmbeddingLongestL2NormMonoid
+    o-ovewwide def pwus(
+      x-x: muwtimodewpewsistentsimcwustewsembedding, (⑅˘꒳˘)
+      y: muwtimodewpewsistentsimcwustewsembedding
+    ): muwtimodewpewsistentsimcwustewsembedding = {
+      v-vaw monoid = impwicits.pewsistentsimcwustewsembeddingwongestw2nowmmonoid
 
-      MultiModelUtils.mergeTwoMultiModelMaps(
-        Some(x.multiModelPersistentSimClustersEmbedding),
-        Some(y.multiModelPersistentSimClustersEmbedding),
-        monoid) match {
-        // clean up empty embeddings
-        case Some(res) =>
-          MultiModelPersistentSimClustersEmbedding(res.flatMap {
-            case (modelVersion, persistentSimClustersEmbedding) =>
-              // in some cases the list of SimClustersScore is empty, so we want to remove the
-              // modelVersion from the list of Models for the embedding
-              persistentSimClustersEmbedding.embedding.embedding match {
-                case embedding if embedding.nonEmpty =>
-                  Map(modelVersion -> persistentSimClustersEmbedding)
+      m-muwtimodewutiws.mewgetwomuwtimodewmaps(
+        s-some(x.muwtimodewpewsistentsimcwustewsembedding), òωó
+        some(y.muwtimodewpewsistentsimcwustewsembedding), 🥺
+        m-monoid) match {
+        // cwean up empty embeddings
+        c-case s-some(wes) =>
+          m-muwtimodewpewsistentsimcwustewsembedding(wes.fwatmap {
+            case (modewvewsion, (ˆ ﻌ ˆ)♡ pewsistentsimcwustewsembedding) =>
+              // in some cases t-the wist of simcwustewsscowe is empty, so we want to wemove the
+              // m-modewvewsion f-fwom the wist of modews fow the e-embedding
+              pewsistentsimcwustewsembedding.embedding.embedding m-match {
+                c-case embedding if embedding.nonempty =>
+                  map(modewvewsion -> p-pewsistentsimcwustewsembedding)
                 case _ =>
-                  None
+                  nyone
               }
           })
-        case _ => zero
+        c-case _ => z-zewo
       }
     }
   }
 
-  object TopKScoresUtils {
+  object t-topkscowesutiws {
 
     /**
-     * Function for merging TopK scores with decayed values.
+     * function fow m-mewging topk s-scowes with decayed v-vawues. -.-
      *
-     * This is for use with topk scores where all scores are updated at the same time (i.e. most
-     * time-decayed embedding aggregations). Rather than storing individual scores as algebird.DecayedValue
-     * and replicating time information for every key, we can store a single timestamp for the entire
-     * embedding and replicate the decay logic when processing each score.
+     * this is fow use with topk scowes whewe aww scowes awe updated at the same time (i.e. σωσ most
+     * time-decayed embedding aggwegations). >_< wathew than stowing individuaw scowes as awgebiwd.decayedvawue
+     * a-and wepwicating t-time infowmation fow evewy key, :3 we can stowe a-a singwe timestamp f-fow the entiwe
+     * e-embedding and wepwicate t-the decay wogic when pwocessing e-each scowe. OwO
      *
-     * This should replicate the behaviour of `mergeTwoTopKMapWithDecayedValues`
+     * this s-shouwd wepwicate the behaviouw o-of `mewgetwotopkmapwithdecayedvawues`
      *
-     * The logic is:
-     * - Determine the most recent update and build a DecayedValue for it (decayedValueForLatestTime)
-     * - For each (cluster, score), decay the score relative to the time of the most-recently updated embedding
-     *   - This is a no-op for scores from the most recently-updated embedding, and will scale scores
-     *     for the older embedding.
-     *     - Drop any (cluster, score) which are below the `threshold` score
-     *     - If both input embeddings contribute a score for the same cluster, keep the one with the largest score (after scaling)
-     *     - Sort (cluster, score) by score and keep the `topK`
+     * the wogic i-is:
+     * - detewmine t-the most wecent update and buiwd a decayedvawue f-fow it (decayedvawuefowwatesttime)
+     * - f-fow each (cwustew, rawr s-scowe), (///ˬ///✿) decay t-the scowe wewative t-to the time o-of the most-wecentwy u-updated e-embedding
+     *   - t-this is a nyo-op fow scowes f-fwom the most w-wecentwy-updated e-embedding, ^^ and wiww scawe scowes
+     *     f-fow the owdew embedding. XD
+     *     - dwop any (cwustew, UwU s-scowe) which awe bewow the `thweshowd` s-scowe
+     *     - i-if both input embeddings c-contwibute a scowe fow t-the same cwustew, o.O keep the one with t-the wawgest scowe (aftew scawing)
+     *     - s-sowt (cwustew, 😳 scowe) by scowe a-and keep the `topk`
      *
      */
-    def mergeClusterScoresWithUpdateTimes[Key](
-      x: Seq[(Key, Double)],
-      xUpdatedAtMs: Long,
-      y: Seq[(Key, Double)],
-      yUpdatedAtMs: Long,
-      halfLifeMs: Long,
-      topK: Int,
-      threshold: Double
-    ): Seq[(Key, Double)] = {
-      val latestUpdate = math.max(xUpdatedAtMs, yUpdatedAtMs)
-      val decayedValueForLatestTime = DecayedValue.build(0.0, latestUpdate, halfLifeMs)
+    def mewgecwustewscoweswithupdatetimes[key](
+      x: seq[(key, (˘ω˘) doubwe)],
+      xupdatedatms: w-wong, 🥺
+      y: seq[(key, ^^ doubwe)], >w<
+      yupdatedatms: w-wong, ^^;;
+      h-hawfwifems: wong, (˘ω˘)
+      topk: int,
+      thweshowd: doubwe
+    ): s-seq[(key, OwO doubwe)] = {
+      v-vaw watestupdate = m-math.max(xupdatedatms, (ꈍᴗꈍ) y-yupdatedatms)
+      vaw decayedvawuefowwatesttime = decayedvawue.buiwd(0.0, òωó w-watestupdate, ʘwʘ h-hawfwifems)
 
-      val merged = mutable.HashMap[Key, Double]()
+      vaw mewged = mutabwe.hashmap[key, ʘwʘ d-doubwe]()
 
-      x.foreach {
-        case (key, score) =>
-          val decayedScore = Implicits.decayedValueMonoid
-            .plus(
-              DecayedValue.build(score, xUpdatedAtMs, halfLifeMs),
-              decayedValueForLatestTime
-            ).value
-          if (decayedScore > threshold)
-            merged += key -> decayedScore
+      x.foweach {
+        case (key, nyaa~~ s-scowe) =>
+          vaw decayedscowe = i-impwicits.decayedvawuemonoid
+            .pwus(
+              d-decayedvawue.buiwd(scowe, UwU x-xupdatedatms, (⑅˘꒳˘) hawfwifems), (˘ω˘)
+              decayedvawuefowwatesttime
+            ).vawue
+          i-if (decayedscowe > t-thweshowd)
+            m-mewged += k-key -> decayedscowe
       }
 
-      y.foreach {
-        case (key, score) =>
-          val decayedScore = Implicits.decayedValueMonoid
-            .plus(
-              DecayedValue.build(score, yUpdatedAtMs, halfLifeMs),
-              decayedValueForLatestTime
-            ).value
-          if (decayedScore > threshold)
-            merged.get(key) match {
-              case Some(existingValue) =>
-                if (decayedScore > existingValue)
-                  merged += key -> decayedScore
-              case None =>
-                merged += key -> decayedScore
+      y.foweach {
+        c-case (key, :3 s-scowe) =>
+          v-vaw decayedscowe = i-impwicits.decayedvawuemonoid
+            .pwus(
+              d-decayedvawue.buiwd(scowe, (˘ω˘) y-yupdatedatms, nyaa~~ h-hawfwifems), (U ﹏ U)
+              decayedvawuefowwatesttime
+            ).vawue
+          i-if (decayedscowe > thweshowd)
+            m-mewged.get(key) match {
+              c-case some(existingvawue) =>
+                if (decayedscowe > e-existingvawue)
+                  m-mewged += k-key -> decayedscowe
+              case nyone =>
+                mewged += key -> decayedscowe
             }
       }
 
-      merged.toSeq
-        .sortBy(-_._2)
-        .take(topK)
+      m-mewged.toseq
+        .sowtby(-_._2)
+        .take(topk)
     }
 
     /**
-     * Function for merging to TopK map with decayed values.
+     * f-function f-fow mewging to topk map with decayed vawues. nyaa~~
      *
-     * First of all, all the values will be decayed to the latest scaled timestamp to be comparable.
+     * fiwst o-of aww, aww t-the vawues wiww be decayed to the w-watest scawed t-timestamp to be compawabwe. ^^;;
      *
-     * If the same key appears at both a and b, the one with larger scaled time (or larger value when
-     * their scaled times are same) will be taken. The values smaller than the threshold will be dropped.
+     * if the same key appeaws a-at both a and b-b, OwO the one with w-wawgew scawed time (ow w-wawgew vawue when
+     * theiw scawed times a-awe same) wiww b-be taken. nyaa~~ the vawues smowew than the thweshowd w-wiww be dwopped. UwU
      *
-     * After merging, if the size is larger than TopK, only scores with topK largest value will be kept.
+     * aftew mewging, 😳 if the size is wawgew t-than topk, 😳 onwy scowes with t-topk wawgest vawue w-wiww be kept.
      */
-    def mergeTwoTopKMapWithDecayedValues[T](
-      a: Option[collection.Map[T, ThriftDecayedValue]],
-      b: Option[collection.Map[T, ThriftDecayedValue]],
-      topK: Int,
-      threshold: Double
+    def m-mewgetwotopkmapwithdecayedvawues[t](
+      a-a: option[cowwection.map[t, (ˆ ﻌ ˆ)♡ t-thwiftdecayedvawue]], (✿oωo)
+      b: option[cowwection.map[t, nyaa~~ t-thwiftdecayedvawue]], ^^
+      t-topk: i-int, (///ˬ///✿)
+      thweshowd: d-doubwe
     )(
-      implicit thriftDecayedValueMonoid: ThriftDecayedValueMonoid
-    ): Option[collection.Map[T, ThriftDecayedValue]] = {
+      impwicit t-thwiftdecayedvawuemonoid: t-thwiftdecayedvawuemonoid
+    ): o-option[cowwection.map[t, 😳 thwiftdecayedvawue]] = {
 
-      if (a.isEmpty || a.exists(_.isEmpty)) {
-        return b
+      i-if (a.isempty || a.exists(_.isempty)) {
+        wetuwn b-b
       }
 
-      if (b.isEmpty || b.exists(_.isEmpty)) {
-        return a
+      i-if (b.isempty || b-b.exists(_.isempty)) {
+        wetuwn a
       }
 
-      val latestScaledTime = (a.get.view ++ b.get.view).map {
-        case (_, scores) =>
-          scores.scaledTime
+      vaw watestscawedtime = (a.get.view ++ b.get.view).map {
+        case (_, òωó scowes) =>
+          s-scowes.scawedtime
       }.max
 
-      val decayedValueWithLatestScaledTime = ThriftDecayedValue(0.0, latestScaledTime)
+      vaw d-decayedvawuewithwatestscawedtime = t-thwiftdecayedvawue(0.0, ^^;; watestscawedtime)
 
-      val merged = mutable.HashMap[T, ThriftDecayedValue]()
+      vaw mewged = m-mutabwe.hashmap[t, rawr thwiftdecayedvawue]()
 
-      a.foreach {
-        _.foreach {
-          case (k, v) =>
-            // decay the value to latest scaled time
-            val decayedScores = thriftDecayedValueMonoid
-              .plus(v, decayedValueWithLatestScaledTime)
+      a-a.foweach {
+        _.foweach {
+          c-case (k, (ˆ ﻌ ˆ)♡ v-v) =>
+            // d-decay the v-vawue to watest scawed time
+            vaw decayedscowes = thwiftdecayedvawuemonoid
+              .pwus(v, XD decayedvawuewithwatestscawedtime)
 
-            // only merge if the value is larger than the threshold
-            if (decayedScores.value > threshold) {
-              merged += k -> decayedScores
+            // onwy mewge if the vawue is wawgew t-than the thweshowd
+            if (decayedscowes.vawue > t-thweshowd) {
+              mewged += k -> decayedscowes
             }
         }
       }
 
-      b.foreach {
-        _.foreach {
-          case (k, v) =>
-            val decayedScores = thriftDecayedValueMonoid
-              .plus(v, decayedValueWithLatestScaledTime)
+      b.foweach {
+        _.foweach {
+          c-case (k, v) =>
+            vaw decayedscowes = thwiftdecayedvawuemonoid
+              .pwus(v, >_< decayedvawuewithwatestscawedtime)
 
-            // only merge if the value is larger than the threshold
-            if (decayedScores.value > threshold) {
-              if (!merged.contains(k)) {
-                merged += k -> decayedScores
-              } else {
-                // only update if the value is larger than the one already merged
-                if (decayedScores.value > merged(k).value) {
-                  merged.update(k, decayedScores)
+            // onwy mewge i-if the vawue is w-wawgew than the thweshowd
+            i-if (decayedscowes.vawue > thweshowd) {
+              if (!mewged.contains(k)) {
+                m-mewged += k-k -> decayedscowes
+              } ewse {
+                // o-onwy update if the v-vawue is wawgew than the one awweady mewged
+                if (decayedscowes.vawue > m-mewged(k).vawue) {
+                  mewged.update(k, (˘ω˘) decayedscowes)
                 }
               }
             }
         }
       }
 
-      // add some buffer size (~ 0.2 * topK) to avoid sorting and taking too frequently
-      if (merged.size > topK * 1.2) {
-        Some(
-          merged.toSeq
-            .sortBy { case (_, scores) => scores.value * -1 }
-            .take(topK)
-            .toMap
+      // a-add some b-buffew size (~ 0.2 * t-topk) to avoid sowting and taking too fwequentwy
+      i-if (mewged.size > topk * 1.2) {
+        some(
+          mewged.toseq
+            .sowtby { case (_, 😳 scowes) => scowes.vawue * -1 }
+            .take(topk)
+            .tomap
         )
-      } else {
-        Some(merged)
+      } e-ewse {
+        s-some(mewged)
       }
     }
   }
 
-  object MultiModelUtils {
+  o-object m-muwtimodewutiws {
 
     /**
-     * In order to reduce complexity we use the Monoid for the value to plus two MultiModel maps
+     * in owdew to weduce compwexity w-we use the m-monoid fow the vawue to pwus two muwtimodew maps
      */
-    def mergeTwoMultiModelMaps[T](
-      a: Option[collection.Map[ModelVersion, T]],
-      b: Option[collection.Map[ModelVersion, T]],
-      monoid: Monoid[T]
-    ): Option[collection.Map[ModelVersion, T]] = {
-      (a, b) match {
-        case (Some(_), None) => a
-        case (None, Some(_)) => b
-        case (Some(aa), Some(bb)) =>
-          val res = ModelVersionProfiles.ModelVersionProfiles.foldLeft(Map[ModelVersion, T]()) {
-            (map, model) =>
-              map + (model._1 -> monoid.plus(
-                aa.getOrElse(model._1, monoid.zero),
-                bb.getOrElse(model._1, monoid.zero)
+    d-def mewgetwomuwtimodewmaps[t](
+      a: option[cowwection.map[modewvewsion, o.O t-t]],
+      b: option[cowwection.map[modewvewsion, (ꈍᴗꈍ) t]],
+      m-monoid: monoid[t]
+    ): option[cowwection.map[modewvewsion, rawr x3 t-t]] = {
+      (a, ^^ b) match {
+        c-case (some(_), OwO n-nyone) => a-a
+        case (none, ^^ some(_)) => b
+        case (some(aa), :3 s-some(bb)) =>
+          vaw wes = modewvewsionpwofiwes.modewvewsionpwofiwes.fowdweft(map[modewvewsion, o.O t]()) {
+            (map, -.- m-modew) =>
+              map + (modew._1 -> monoid.pwus(
+                aa.getowewse(modew._1, (U ﹏ U) m-monoid.zewo), o.O
+                b-bb.getowewse(modew._1, OwO m-monoid.zewo)
               ))
           }
-          Some(res)
-        case _ => None
+          s-some(wes)
+        c-case _ => nyone
       }
     }
   }

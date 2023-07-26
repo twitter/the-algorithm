@@ -1,212 +1,212 @@
-package com.twitter.ann.service.query_server.common
+package com.twittew.ann.sewvice.quewy_sewvew.common
 
-import com.google.common.annotations.VisibleForTesting
-import com.google.common.util.concurrent.ThreadFactoryBuilder
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.NeighborWithDistance
-import com.twitter.ann.common.Queryable
-import com.twitter.ann.common.QueryableGrouped
-import com.twitter.ann.common.RuntimeParams
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import java.util.concurrent.atomic.AtomicReference
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
-import scala.util.Random
-import scala.util.control.NonFatal
+impowt com.googwe.common.annotations.visibwefowtesting
+i-impowt c-com.googwe.common.utiw.concuwwent.thweadfactowybuiwdew
+i-impowt c-com.twittew.ann.common.embeddingtype.embeddingvectow
+i-impowt com.twittew.ann.common.distance
+i-impowt c-com.twittew.ann.common.neighbowwithdistance
+impowt c-com.twittew.ann.common.quewyabwe
+impowt com.twittew.ann.common.quewyabwegwouped
+impowt com.twittew.ann.common.wuntimepawams
+impowt com.twittew.convewsions.duwationops._
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.wogging.woggew
+impowt com.twittew.seawch.common.fiwe.abstwactfiwe
+i-impowt com.twittew.utiw.duwation
+impowt com.twittew.utiw.futuwe
+i-impowt java.utiw.concuwwent.atomic.atomicwefewence
+impowt java.utiw.concuwwent.executows
+impowt java.utiw.concuwwent.timeunit
+i-impowt scawa.utiw.wandom
+impowt s-scawa.utiw.contwow.nonfataw
 
-class RefreshableQueryable[T, P <: RuntimeParams, D <: Distance[D]](
-  grouped: Boolean,
-  rootDir: AbstractFile,
-  queryableProvider: QueryableProvider[T, P, D],
-  indexPathProvider: IndexPathProvider,
-  statsReceiver: StatsReceiver,
-  updateInterval: Duration = 10.minutes)
-    extends QueryableGrouped[T, P, D] {
+c-cwass wefweshabwequewyabwe[t, /(^•ω•^) p <: wuntimepawams, 🥺 d <: distance[d]](
+  g-gwouped: boowean, ʘwʘ
+  wootdiw: abstwactfiwe, UwU
+  quewyabwepwovidew: quewyabwepwovidew[t, XD p-p, d], (✿oωo)
+  indexpathpwovidew: i-indexpathpwovidew, :3
+  s-statsweceivew: s-statsweceivew, (///ˬ///✿)
+  u-updateintewvaw: duwation = 10.minutes)
+    extends quewyabwegwouped[t, nyaa~~ p-p, d] {
 
-  private val log = Logger.get("RefreshableQueryable")
+  pwivate vaw wog = woggew.get("wefweshabwequewyabwe")
 
-  private val loadCounter = statsReceiver.counter("load")
-  private val loadFailCounter = statsReceiver.counter("load_error")
-  private val newIndexCounter = statsReceiver.counter("new_index")
-  protected val random = new Random(System.currentTimeMillis())
+  pwivate vaw w-woadcountew = statsweceivew.countew("woad")
+  pwivate vaw woadfaiwcountew = statsweceivew.countew("woad_ewwow")
+  pwivate vaw newindexcountew = statsweceivew.countew("new_index")
+  pwotected v-vaw wandom = nyew wandom(system.cuwwenttimemiwwis())
 
-  private val threadFactory = new ThreadFactoryBuilder()
-    .setNameFormat("refreshable-queryable-update-%d")
-    .build()
-  // single thread to check and load index
-  private val executor = Executors.newScheduledThreadPool(1, threadFactory)
+  p-pwivate v-vaw thweadfactowy = n-nyew thweadfactowybuiwdew()
+    .setnamefowmat("wefweshabwe-quewyabwe-update-%d")
+    .buiwd()
+  // singwe thwead to check and woad index
+  p-pwivate vaw executow = e-executows.newscheduwedthweadpoow(1, >w< thweadfactowy)
 
-  private[common] val indexPathRef: AtomicReference[AbstractFile] =
-    new AtomicReference(indexPathProvider.provideIndexPath(rootDir, grouped).get())
-  private[common] val queryableRef: AtomicReference[Map[Option[String], Queryable[T, P, D]]] = {
-    if (grouped) {
-      val mapping = getGroupMapping
+  p-pwivate[common] v-vaw indexpathwef: atomicwefewence[abstwactfiwe] =
+    n-nyew atomicwefewence(indexpathpwovidew.pwovideindexpath(wootdiw, -.- gwouped).get())
+  p-pwivate[common] vaw quewyabwewef: atomicwefewence[map[option[stwing], (✿oωo) q-quewyabwe[t, (˘ω˘) p, d]]] = {
+    i-if (gwouped) {
+      vaw m-mapping = getgwoupmapping
 
-      new AtomicReference(mapping)
-    } else {
-      new AtomicReference(Map(None -> buildIndex(indexPathRef.get())))
+      n-nyew atomicwefewence(mapping)
+    } ewse {
+      nyew atomicwefewence(map(none -> buiwdindex(indexpathwef.get())))
     }
   }
 
-  private val servingIndexGauge = statsReceiver.addGauge("serving_index_timestamp") {
-    indexPathRef.get().getName.toFloat
+  pwivate vaw sewvingindexgauge = statsweceivew.addgauge("sewving_index_timestamp") {
+    indexpathwef.get().getname.tofwoat
   }
 
-  log.info("System.gc() before start")
-  System.gc()
+  w-wog.info("system.gc() b-befowe stawt")
+  system.gc()
 
-  private val reloadTask = new Runnable {
-    override def run(): Unit = {
-      innerLoad()
+  p-pwivate v-vaw wewoadtask = n-new wunnabwe {
+    ovewwide def wun(): unit = {
+      innewwoad()
     }
   }
 
-  def start(): Unit = {
-    executor.scheduleWithFixedDelay(
-      reloadTask,
-      // init reloading with random delay
-      computeRandomInitDelay().inSeconds,
-      updateInterval.inSeconds,
-      TimeUnit.SECONDS
+  d-def stawt(): unit = {
+    executow.scheduwewithfixeddeway(
+      wewoadtask, rawr
+      // init wewoading with wandom d-deway
+      computewandominitdeway().inseconds, OwO
+      u-updateintewvaw.inseconds, ^•ﻌ•^
+      t-timeunit.seconds
     )
   }
 
-  private def buildIndex(indexPath: AbstractFile): Queryable[T, P, D] = {
-    log.info(s"build index from ${indexPath.getPath}")
-    queryableProvider.provideQueryable(indexPath)
+  p-pwivate def buiwdindex(indexpath: a-abstwactfiwe): q-quewyabwe[t, UwU p-p, d] = {
+    w-wog.info(s"buiwd index fwom ${indexpath.getpath}")
+    quewyabwepwovidew.pwovidequewyabwe(indexpath)
   }
 
-  @VisibleForTesting
-  private[common] def innerLoad(): Unit = {
-    log.info("Check and load for new index")
-    loadCounter.incr()
-    try {
-      // Find the latest directory
-      val latestPath = indexPathProvider.provideIndexPath(rootDir, grouped).get()
-      if (indexPathRef.get() != latestPath) {
-        log.info(s"loading index from: ${latestPath.getName}")
-        newIndexCounter.incr()
-        if (grouped) {
-          val mapping = getGroupMapping
-          queryableRef.set(mapping)
-        } else {
-          val queryable = buildIndex(latestPath)
-          queryableRef.set(Map(None -> queryable))
+  @visibwefowtesting
+  p-pwivate[common] d-def innewwoad(): u-unit = {
+    w-wog.info("check a-and woad fow nyew index")
+    woadcountew.incw()
+    twy {
+      // f-find the watest diwectowy
+      vaw watestpath = indexpathpwovidew.pwovideindexpath(wootdiw, (˘ω˘) gwouped).get()
+      if (indexpathwef.get() != w-watestpath) {
+        wog.info(s"woading index fwom: ${watestpath.getname}")
+        n-nyewindexcountew.incw()
+        i-if (gwouped) {
+          v-vaw mapping = getgwoupmapping
+          quewyabwewef.set(mapping)
+        } e-ewse {
+          vaw q-quewyabwe = buiwdindex(watestpath)
+          quewyabwewef.set(map(none -> q-quewyabwe))
         }
-        indexPathRef.set(latestPath)
-      } else {
-        log.info(s"Current index already up to date: ${indexPathRef.get.getName}")
+        indexpathwef.set(watestpath)
+      } ewse {
+        wog.info(s"cuwwent index awweady up to date: ${indexpathwef.get.getname}")
       }
     } catch {
-      case NonFatal(err) =>
-        loadFailCounter.incr()
-        log.error(s"Failed to load index: $err")
+      c-case nyonfataw(eww) =>
+        woadfaiwcountew.incw()
+        w-wog.ewwow(s"faiwed to woad index: $eww")
     }
-    log.info(s"Current index loaded from ${indexPathRef.get().getPath}")
+    w-wog.info(s"cuwwent i-index woaded fwom ${indexpathwef.get().getpath}")
   }
 
-  @VisibleForTesting
-  private[common] def computeRandomInitDelay(): Duration = {
-    val bound = 5.minutes
-    val nextUpdateSec = updateInterval + Duration.fromSeconds(
-      random.nextInt(bound.inSeconds)
+  @visibwefowtesting
+  pwivate[common] d-def computewandominitdeway(): d-duwation = {
+    vaw bound = 5.minutes
+    v-vaw nyextupdatesec = u-updateintewvaw + duwation.fwomseconds(
+      wandom.nextint(bound.inseconds)
     )
-    nextUpdateSec
+    nyextupdatesec
   }
 
   /**
-   * ANN query for ids with key as group id
-   * @param embedding: Embedding/Vector to be queried with.
-   * @param numOfNeighbors: Number of neighbours to be queried for.
-   * @param runtimeParams: Runtime params associated with index to control accuracy/latency etc.
-   * @param key: Optional key to lookup specific ANN index and perform query there
-   *  @return List of approximate nearest neighbour ids.
+   * ann quewy f-fow ids with k-key as gwoup id
+   * @pawam e-embedding: embedding/vectow t-to be q-quewied with. (///ˬ///✿)
+   * @pawam nyumofneighbows: n-nyumbew of nyeighbouws to be quewied fow. σωσ
+   * @pawam wuntimepawams: w-wuntime pawams associated w-with index to contwow accuwacy/watency e-etc. /(^•ω•^)
+   * @pawam k-key: optionaw key to wookup specific ann index and pewfowm quewy t-thewe
+   *  @wetuwn wist of appwoximate nyeawest nyeighbouw ids. 😳
    */
-  override def query(
-    embedding: EmbeddingVector,
-    numOfNeighbors: Int,
-    runtimeParams: P,
-    key: Option[String]
-  ): Future[List[T]] = {
-    val mapping = queryableRef.get()
+  ovewwide d-def quewy(
+    embedding: embeddingvectow, 😳
+    nyumofneighbows: i-int, (⑅˘꒳˘)
+    wuntimepawams: p-p, 😳😳😳
+    key: option[stwing]
+  ): futuwe[wist[t]] = {
+    vaw mapping = q-quewyabwewef.get()
 
-    if (!mapping.contains(key)) {
-      Future.value(List())
-    } else {
-      mapping.get(key).get.query(embedding, numOfNeighbors, runtimeParams)
+    i-if (!mapping.contains(key)) {
+      futuwe.vawue(wist())
+    } ewse {
+      mapping.get(key).get.quewy(embedding, 😳 nyumofneighbows, XD w-wuntimepawams)
     }
   }
 
   /**
-   * ANN query for ids with key as group id with distance
-   * @param embedding: Embedding/Vector to be queried with.
-   * @param numOfNeighbors: Number of neighbours to be queried for.
-   * @param runtimeParams: Runtime params associated with index to control accuracy/latency etc.
-   * @param key: Optional key to lookup specific ANN index and perform query there
-   *  @return List of approximate nearest neighbour ids with distance from the query embedding.
+   * ann quewy fow i-ids with key as gwoup id with distance
+   * @pawam embedding: embedding/vectow to be quewied with. mya
+   * @pawam n-numofneighbows: numbew of nyeighbouws t-to be quewied f-fow. ^•ﻌ•^
+   * @pawam wuntimepawams: w-wuntime pawams associated with i-index to contwow a-accuwacy/watency e-etc. ʘwʘ
+   * @pawam key: optionaw k-key to wookup s-specific ann index and pewfowm quewy thewe
+   *  @wetuwn w-wist o-of appwoximate nyeawest n-nyeighbouw ids with distance fwom the quewy e-embedding. ( ͡o ω ͡o )
    */
-  override def queryWithDistance(
-    embedding: EmbeddingVector,
-    numOfNeighbors: Int,
-    runtimeParams: P,
-    key: Option[String]
-  ): Future[List[NeighborWithDistance[T, D]]] = {
-    val mapping = queryableRef.get()
+  ovewwide d-def quewywithdistance(
+    e-embedding: embeddingvectow, mya
+    nyumofneighbows: int, o.O
+    w-wuntimepawams: p-p, (✿oωo)
+    key: o-option[stwing]
+  ): f-futuwe[wist[neighbowwithdistance[t, d]]] = {
+    v-vaw mapping = quewyabwewef.get()
 
     if (!mapping.contains(key)) {
-      Future.value(List())
-    } else {
-      mapping.get(key).get.queryWithDistance(embedding, numOfNeighbors, runtimeParams)
+      futuwe.vawue(wist())
+    } ewse {
+      mapping.get(key).get.quewywithdistance(embedding, :3 nyumofneighbows, 😳 w-wuntimepawams)
     }
   }
 
-  private def getGroupMapping(): Map[Option[String], Queryable[T, P, D]] = {
-    val groupDirs = indexPathProvider.provideIndexPathWithGroups(rootDir).get()
-    val mapping = groupDirs.map { groupDir =>
-      val queryable = buildIndex(groupDir)
-      Option(groupDir.getName) -> queryable
-    }.toMap
+  pwivate def g-getgwoupmapping(): map[option[stwing], (U ﹏ U) q-quewyabwe[t, mya p, d]] = {
+    v-vaw gwoupdiws = indexpathpwovidew.pwovideindexpathwithgwoups(wootdiw).get()
+    v-vaw mapping = g-gwoupdiws.map { g-gwoupdiw =>
+      v-vaw quewyabwe = b-buiwdindex(gwoupdiw)
+      option(gwoupdiw.getname) -> quewyabwe
+    }.tomap
 
     mapping
   }
 
   /**
-   * ANN query for ids.
+   * ann quewy fow ids. (U ᵕ U❁)
    *
-   * @param embedding       : Embedding/Vector to be queried with.
-   * @param numOfNeighbors  : Number of neighbours to be queried for.
-   * @param runtimeParams   : Runtime params associated with index to control accuracy/latency etc.
+   * @pawam embedding       : embedding/vectow t-to be quewied w-with. :3
+   * @pawam n-nyumofneighbows  : nyumbew o-of nyeighbouws to be quewied fow. mya
+   * @pawam wuntimepawams   : wuntime pawams associated with i-index to contwow a-accuwacy/watency etc. OwO
    *
-   * @return List of approximate nearest neighbour ids.
+   * @wetuwn w-wist of appwoximate nyeawest nyeighbouw i-ids. (ˆ ﻌ ˆ)♡
    */
-  override def query(
-    embedding: EmbeddingVector,
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Future[List[T]] = {
-    query(embedding, numOfNeighbors, runtimeParams, None)
+  ovewwide d-def quewy(
+    embedding: e-embeddingvectow, ʘwʘ
+    n-nyumofneighbows: int, o.O
+    wuntimepawams: p
+  ): futuwe[wist[t]] = {
+    quewy(embedding, UwU nyumofneighbows, rawr x3 w-wuntimepawams, 🥺 nyone)
   }
 
   /**
-   * ANN query for ids with distance.
+   * a-ann quewy f-fow ids with distance. :3
    *
-   * @param embedding      : Embedding/Vector to be queried with.
-   * @param numOfNeighbors : Number of neighbours to be queried for.
-   * @param runtimeParams  : Runtime params associated with index to control accuracy/latency etc.
+   * @pawam e-embedding      : e-embedding/vectow to be q-quewied with. (ꈍᴗꈍ)
+   * @pawam n-nyumofneighbows : nyumbew o-of nyeighbouws t-to be quewied fow. 🥺
+   * @pawam w-wuntimepawams  : wuntime pawams associated with i-index to contwow accuwacy/watency e-etc. (✿oωo)
    *
-   * @return List of approximate nearest neighbour ids with distance from the query embedding.
+   * @wetuwn w-wist of appwoximate nyeawest n-nyeighbouw ids with distance fwom the quewy e-embedding. (U ﹏ U)
    */
-  override def queryWithDistance(
-    embedding: EmbeddingVector,
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Future[List[NeighborWithDistance[T, D]]] = {
-    queryWithDistance(embedding, numOfNeighbors, runtimeParams, None)
+  o-ovewwide d-def quewywithdistance(
+    embedding: embeddingvectow, :3
+    nyumofneighbows: i-int, ^^;;
+    wuntimepawams: p
+  ): futuwe[wist[neighbowwithdistance[t, rawr d]]] = {
+    q-quewywithdistance(embedding, 😳😳😳 n-nyumofneighbows, (✿oωo) wuntimepawams, OwO n-nyone)
   }
 }

@@ -1,23 +1,27 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/org/mapdb",
-        "ann/src/main/java/com/twitter/ann/faiss",
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/scala/com/twitter/ann/serialization",
-        "ann/src/main/thrift/com/twitter/ann/common:ann-common-scala",
-        "mediaservices/commons/src/main/scala:futuretracker",
-        "src/java/com/twitter/common_internal/hadoop",
-        "src/java/com/twitter/search/common/file",
-        "src/scala/com/twitter/ml/api/embedding",
+scawa_wibwawy(
+    nyame = "index_buiwdew_wib", ^•ﻌ•^
+    souwces = [
+        "*.scawa", OwO
     ],
-    exports = [
-        "ann/src/main/scala/com/twitter/ann/common",
-        "src/java/com/twitter/common_internal/hadoop",
-        "src/java/com/twitter/search/common/file",
-        "src/scala/com/twitter/ml/api/embedding",
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "3wdpawty/jvm/com/spotify:scio-cowe", òωó
+        "3wdpawty/jvm/owg/apache/beam:beam-sdks-java-cowe", o.O
+        "ann/swc/main/java/com/twittew/ann/faiss",
+        "ann/swc/main/scawa/com/twittew/ann/annoy", (U ᵕ U❁)
+        "ann/swc/main/scawa/com/twittew/ann/bwute_fowce", (⑅˘꒳˘)
+        "ann/swc/main/scawa/com/twittew/ann/common", ( ͡o ω ͡o )
+        "ann/swc/main/scawa/com/twittew/ann/faiss", UwU
+        "ann/swc/main/scawa/com/twittew/ann/hnsw", rawr x3
+        "ann/swc/main/scawa/com/twittew/ann/sewiawization", rawr
+        "ann/swc/main/scawa/com/twittew/ann/utiw", σωσ
+        "ann/swc/main/thwift/com/twittew/ann/common:ann-common-scawa",
+        "beam-intewnaw/swc/main/scawa/com/twittew/beam/io/bigquewy", σωσ
+        "beam-intewnaw/swc/main/scawa/com/twittew/beam/io/daw", >_<
+        "beam-intewnaw/swc/main/scawa/com/twittew/beam/job", :3
+        "beam-intewnaw/swc/main/scawa/com/twittew/scio_intewnaw/wunnew/datafwow", (U ﹏ U)
+        "swc/scawa/com/twittew/cowtex/mw/embeddings/common:hewpews", -.-
+        "swc/scawa/com/twittew/mw/featuwestowe/wib", (ˆ ﻌ ˆ)♡
+        "swc/scawa/com/twittew/wtf/beam/bq_embedding_expowt:bq_embedding_expowt_wib", (⑅˘꒳˘)
     ],
 )

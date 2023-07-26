@@ -1,61 +1,61 @@
-package com.twitter.product_mixer.core.functional_component.decorator
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow
 
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.DecoratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.component
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.decowatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.stitch
 
 /**
- * [[CandidateDecorator]] generates a [[com.twitter.product_mixer.core.model.common.presentation.UniversalPresentation]]
- * for Candidates, which encapsulate information about how to present the candidate
+ * [[candidatedecowatow]] genewates a [[com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.univewsawpwesentation]]
+ * fow candidates, w-which encapsuwate infowmation about how to pwesent t-the candidate
  *
- * @see [[https://docbird.twitter.biz/product-mixer/functional-components.html#candidate-decorator]]
- * @see [[com.twitter.product_mixer.core.model.common.presentation.UniversalPresentation]]
+ * @see [[https://docbiwd.twittew.biz/pwoduct-mixew/functionaw-components.htmw#candidate-decowatow]]
+ * @see [[com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.univewsawpwesentation]]
  */
-trait CandidateDecorator[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]]
-    extends Component {
+twait candidatedecowatow[-quewy <: p-pipewinequewy, -candidate <: univewsawnoun[any]]
+    extends component {
 
-  override val identifier: DecoratorIdentifier = CandidateDecorator.DefaultCandidateDecoratorId
+  ovewwide v-vaw identifiew: decowatowidentifiew = c-candidatedecowatow.defauwtcandidatedecowatowid
 
   /**
-   * Given a Seq of `Candidate`, returns a [[Decoration]] for candidates which should be decorated
+   * g-given a seq of `candidate`, 😳 wetuwns a [[decowation]] fow candidates which shouwd b-be decowated
    *
-   * `Candidate`s which aren't decorated can be omitted from the results
+   * `candidate`s which awen't decowated can be omitted fwom the wesuwts
    */
-  def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[Seq[Decoration]]
+  d-def appwy(
+    quewy: quewy, -.-
+    c-candidates: s-seq[candidatewithfeatuwes[candidate]]
+  ): s-stitch[seq[decowation]]
 }
 
-object CandidateDecorator {
-  private[core] val DefaultCandidateDecoratorId: DecoratorIdentifier =
-    DecoratorIdentifier(ComponentIdentifier.BasedOnParentComponent)
+o-object candidatedecowatow {
+  pwivate[cowe] vaw defauwtcandidatedecowatowid: d-decowatowidentifiew =
+    decowatowidentifiew(componentidentifiew.basedonpawentcomponent)
 
   /**
-   * For use when building a [[CandidateDecorator]] in a [[com.twitter.product_mixer.core.pipeline.PipelineBuilder]]
-   * to ensure that the identifier is updated with the parent [[com.twitter.product_mixer.core.pipeline.Pipeline.identifier]]
+   * fow use when buiwding a-a [[candidatedecowatow]] in a [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewinebuiwdew]]
+   * to ensuwe that the identifiew is updated with the pawent [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewine.identifiew]]
    */
-  private[core] def copyWithUpdatedIdentifier[
-    Query <: PipelineQuery,
-    Candidate <: UniversalNoun[Any]
+  p-pwivate[cowe] def copywithupdatedidentifiew[
+    q-quewy <: pipewinequewy, 🥺
+    c-candidate <: u-univewsawnoun[any]
   ](
-    decorator: CandidateDecorator[Query, Candidate],
-    parentIdentifier: ComponentIdentifier
-  ): CandidateDecorator[Query, Candidate] = {
-    if (decorator.identifier == DefaultCandidateDecoratorId) {
-      new CandidateDecorator[Query, Candidate] {
-        override val identifier: DecoratorIdentifier = DecoratorIdentifier(parentIdentifier.name)
-        override def apply(
-          query: Query,
-          candidates: Seq[CandidateWithFeatures[Candidate]]
-        ): Stitch[Seq[Decoration]] = decorator.apply(query, candidates)
+    decowatow: candidatedecowatow[quewy, candidate], o.O
+    p-pawentidentifiew: c-componentidentifiew
+  ): candidatedecowatow[quewy, /(^•ω•^) c-candidate] = {
+    i-if (decowatow.identifiew == defauwtcandidatedecowatowid) {
+      n-nyew candidatedecowatow[quewy, nyaa~~ candidate] {
+        o-ovewwide vaw identifiew: decowatowidentifiew = d-decowatowidentifiew(pawentidentifiew.name)
+        ovewwide d-def appwy(
+          quewy: q-quewy, nyaa~~
+          c-candidates: seq[candidatewithfeatuwes[candidate]]
+        ): stitch[seq[decowation]] = decowatow.appwy(quewy, :3 candidates)
       }
-    } else {
-      decorator
+    } ewse {
+      decowatow
     }
   }
 }

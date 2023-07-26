@@ -1,82 +1,82 @@
-package com.twitter.unified_user_actions.enricher.partitioner
+package com.twittew.unified_usew_actions.enwichew.pawtitionew
 
-import com.twitter.inject.Test
-import com.twitter.unified_user_actions.enricher.EnricherFixture
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentEnvelop
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentIdType
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction.NotificationTweetEnrichment
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction.TweetEnrichment
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentKey
-import com.twitter.unified_user_actions.enricher.partitioner.DefaultPartitioner.NullKey
-import org.scalatest.prop.TableDrivenPropertyChecks
+impowt c-com.twittew.inject.test
+i-impowt c-com.twittew.unified_usew_actions.enwichew.enwichewfixtuwe
+i-impowt c-com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentenvewop
+i-impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentidtype
+i-impowt c-com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentinstwuction
+impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentinstwuction.notificationtweetenwichment
+impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentinstwuction.tweetenwichment
+impowt c-com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentkey
+impowt com.twittew.unified_usew_actions.enwichew.pawtitionew.defauwtpawtitionew.nuwwkey
+impowt o-owg.scawatest.pwop.tabwedwivenpwopewtychecks
 
-class DefaultPartitionerTest extends Test with TableDrivenPropertyChecks {
-  test("default partitioner should work") {
-    new EnricherFixture {
-      val partitioner = new DefaultPartitioner
+cwass d-defauwtpawtitionewtest extends test with tabwedwivenpwopewtychecks {
+  test("defauwt p-pawtitionew shouwd wowk") {
+    n-nyew enwichewfixtuwe {
+      v-vaw pawtitionew = nyew defauwtpawtitionew
 
-      val instructions = Table(
-        ("instruction", "envelop", "expected"),
-        // tweet info
+      vaw instwuctions = tabwe(
+        ("instwuction", -.- "envewop", "expected"), 🥺
+        // tweet i-info
         (
-          TweetEnrichment,
-          EnrichmentEnvelop(1L, mkUUATweetEvent(123L), tweetInfoEnrichmentPlan),
-          Some(EnrichmentKey(EnrichmentIdType.TweetId, 123L))),
-        // notification tweet info
+          tweetenwichment, (U ﹏ U)
+          enwichmentenvewop(1w, >w< mkuuatweetevent(123w), mya tweetinfoenwichmentpwan), >w<
+          s-some(enwichmentkey(enwichmentidtype.tweetid, nyaa~~ 123w))),
+        // nyotification t-tweet info
         (
-          NotificationTweetEnrichment,
-          EnrichmentEnvelop(2L, mkUUATweetNotificationEvent(234L), tweetNotificationEnrichmentPlan),
-          Some(EnrichmentKey(EnrichmentIdType.TweetId, 234L))),
-        // notification with multiple tweet info
+          n-nyotificationtweetenwichment, (✿oωo)
+          e-enwichmentenvewop(2w, ʘwʘ m-mkuuatweetnotificationevent(234w), (ˆ ﻌ ˆ)♡ tweetnotificationenwichmentpwan),
+          some(enwichmentkey(enwichmentidtype.tweetid, 😳😳😳 234w))),
+        // n-notification with muwtipwe tweet info
         (
-          NotificationTweetEnrichment,
-          EnrichmentEnvelop(
-            3L,
-            mkUUAMultiTweetNotificationEvent(22L, 33L),
-            tweetNotificationEnrichmentPlan),
-          Some(EnrichmentKey(EnrichmentIdType.TweetId, 22L))
-        ) // only the first tweet id is partitioned
+          n-nyotificationtweetenwichment, :3
+          enwichmentenvewop(
+            3w, OwO
+            mkuuamuwtitweetnotificationevent(22w, (U ﹏ U) 33w),
+            tweetnotificationenwichmentpwan), >w<
+          some(enwichmentkey(enwichmentidtype.tweetid, (U ﹏ U) 22w))
+        ) // onwy the f-fiwst tweet id is pawtitioned
       )
 
-      forEvery(instructions) {
+      f-fowevewy(instwuctions) {
         (
-          instruction: EnrichmentInstruction,
-          envelop: EnrichmentEnvelop,
-          expected: Some[EnrichmentKey]
+          i-instwuction: e-enwichmentinstwuction, 😳
+          envewop: enwichmentenvewop, (ˆ ﻌ ˆ)♡
+          expected: some[enwichmentkey]
         ) =>
-          val actual = partitioner.repartition(instruction, envelop)
-          assert(expected === actual)
+          v-vaw actuaw = p-pawtitionew.wepawtition(instwuction, 😳😳😳 envewop)
+          a-assewt(expected === a-actuaw)
       }
     }
   }
 
-  test("unsupported events shouldn't be partitioned") {
-    new EnricherFixture {
-      val partitioner = new DefaultPartitioner
+  test("unsuppowted e-events shouwdn't be p-pawtitioned") {
+    new enwichewfixtuwe {
+      vaw pawtitionew = n-nyew defauwtpawtitionew
 
-      val instructions = Table(
-        ("instruction", "envelop", "expected"),
-        // profile uua event
+      vaw instwuctions = t-tabwe(
+        ("instwuction", (U ﹏ U) "envewop", (///ˬ///✿) "expected"),
+        // pwofiwe uua e-event
         (
-          TweetEnrichment,
-          EnrichmentEnvelop(1L, mkUUAProfileEvent(111L), tweetInfoEnrichmentPlan),
-          NullKey),
-        // unknown notification (not a tweet)
+          t-tweetenwichment, 😳
+          enwichmentenvewop(1w, 😳 mkuuapwofiweevent(111w), σωσ tweetinfoenwichmentpwan), rawr x3
+          nyuwwkey), OwO
+        // unknown nyotification (not a tweet)
         (
-          NotificationTweetEnrichment,
-          EnrichmentEnvelop(1L, mkUUATweetNotificationUnknownEvent(), tweetInfoEnrichmentPlan),
-          NullKey),
+          n-nyotificationtweetenwichment,
+          e-enwichmentenvewop(1w, /(^•ω•^) mkuuatweetnotificationunknownevent(), 😳😳😳 t-tweetinfoenwichmentpwan), ( ͡o ω ͡o )
+          n-nyuwwkey), >_<
       )
 
-      forEvery(instructions) {
+      f-fowevewy(instwuctions) {
         (
-          instruction: EnrichmentInstruction,
-          envelop: EnrichmentEnvelop,
-          expected: Option[EnrichmentKey]
+          instwuction: enwichmentinstwuction, >w<
+          envewop: enwichmentenvewop, rawr
+          e-expected: option[enwichmentkey]
         ) =>
-          val actual = partitioner.repartition(instruction, envelop)
-          assert(expected === actual)
+          vaw actuaw = pawtitionew.wepawtition(instwuction, 😳 envewop)
+          assewt(expected === a-actuaw)
       }
     }
   }

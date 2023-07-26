@@ -1,53 +1,53 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.stp
 
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.hermit.stp.thriftscala.STPResult
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.timelines.configapi.HasParams
+impowt com.twittew.fowwow_wecommendations.common.modews.accountpwoof
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.fowwowpwoof
+i-impowt com.twittew.fowwow_wecommendations.common.modews.weason
+i-impowt com.twittew.hewmit.stp.thwiftscawa.stpwesuwt
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+impowt com.twittew.stitch.stitch
+impowt com.twittew.stwato.cwient.fetchew
+impowt com.twittew.timewines.configapi.haspawams
 
-/** Base class that all variants of our offline stp dataset can extend. Assumes the same STPResult
- *  value in the key and converts the result into the necessary internal model.
+/** base cwass t-that aww vawiants of ouw offwine stp dataset can e-extend. ʘwʘ assumes the same stpwesuwt
+ *  v-vawue in the key and convewts the wesuwt into the nyecessawy i-intewnaw modew. /(^•ω•^)
  */
-abstract class OfflineStrongTiePredictionBaseSource(
-  fetcher: Fetcher[Long, Unit, STPResult])
-    extends CandidateSource[HasParams with HasClientContext, CandidateUser] {
+abstwact c-cwass offwinestwongtiepwedictionbasesouwce(
+  f-fetchew: fetchew[wong, ʘwʘ unit, stpwesuwt])
+    extends candidatesouwce[haspawams with hascwientcontext, σωσ candidateusew] {
 
-  def fetch(
-    target: Long,
-  ): Stitch[Seq[CandidateUser]] = {
-    fetcher
-      .fetch(target)
-      .map { result =>
-        result.v
-          .map { candidates => OfflineStrongTiePredictionBaseSource.map(target, candidates) }
-          .getOrElse(Nil)
-          .map(_.withCandidateSource(identifier))
+  d-def fetch(
+    tawget: wong, OwO
+  ): stitch[seq[candidateusew]] = {
+    fetchew
+      .fetch(tawget)
+      .map { wesuwt =>
+        w-wesuwt.v
+          .map { candidates => o-offwinestwongtiepwedictionbasesouwce.map(tawget, 😳😳😳 c-candidates) }
+          .getowewse(niw)
+          .map(_.withcandidatesouwce(identifiew))
       }
   }
 
-  override def apply(request: HasParams with HasClientContext): Stitch[Seq[CandidateUser]] = {
-    request.getOptionalUserId.map(fetch).getOrElse(Stitch.Nil)
+  ovewwide d-def appwy(wequest: h-haspawams with hascwientcontext): stitch[seq[candidateusew]] = {
+    w-wequest.getoptionawusewid.map(fetch).getowewse(stitch.niw)
   }
 }
 
-object OfflineStrongTiePredictionBaseSource {
-  def map(target: Long, candidates: STPResult): Seq[CandidateUser] = {
-    for {
-      candidate <- candidates.strongTieUsers.sortBy(-_.score)
-    } yield CandidateUser(
-      id = candidate.userId,
-      score = Some(candidate.score),
-      reason = Some(
-        Reason(
-          Some(
-            AccountProof(
-              followProof = candidate.socialProof.map(proof => FollowProof(proof, proof.size))
+object offwinestwongtiepwedictionbasesouwce {
+  def map(tawget: w-wong, 😳😳😳 candidates: stpwesuwt): seq[candidateusew] = {
+    fow {
+      candidate <- candidates.stwongtieusews.sowtby(-_.scowe)
+    } y-yiewd candidateusew(
+      id = candidate.usewid, o.O
+      s-scowe = s-some(candidate.scowe), ( ͡o ω ͡o )
+      w-weason = some(
+        weason(
+          some(
+            accountpwoof(
+              f-fowwowpwoof = c-candidate.sociawpwoof.map(pwoof => fowwowpwoof(pwoof, (U ﹏ U) p-pwoof.size))
             )
           )
         )

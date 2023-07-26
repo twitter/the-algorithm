@@ -1,53 +1,53 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow
 
-import com.twitter.home_mixer.model.HomeFeatures.UserStateFeature
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.user_health.v1.{thriftscala => uhv1}
-import com.twitter.timelines.user_health.{thriftscala => uh}
-import com.twitter.user_session_store.ReadOnlyUserSessionStore
-import com.twitter.user_session_store.ReadRequest
-import com.twitter.user_session_store.UserSessionDataset
-import com.twitter.user_session_store.UserSessionDataset.UserSessionDataset
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.modew.homefeatuwes.usewstatefeatuwe
+i-impowt com.twittew.home_mixew.sewvice.homemixewawewtconfig
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
+impowt c-com.twittew.timewines.usew_heawth.v1.{thwiftscawa => uhv1}
+impowt com.twittew.timewines.usew_heawth.{thwiftscawa => u-uh}
+impowt com.twittew.usew_session_stowe.weadonwyusewsessionstowe
+i-impowt com.twittew.usew_session_stowe.weadwequest
+impowt com.twittew.usew_session_stowe.usewsessiondataset
+impowt com.twittew.usew_session_stowe.usewsessiondataset.usewsessiondataset
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-case class UserStateQueryFeatureHydrator @Inject() (
-  userSessionStore: ReadOnlyUserSessionStore)
-    extends QueryFeatureHydrator[PipelineQuery] {
+@singweton
+c-case cwass u-usewstatequewyfeatuwehydwatow @inject() (
+  usewsessionstowe: weadonwyusewsessionstowe)
+    extends quewyfeatuwehydwatow[pipewinequewy] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("UserState")
+  ovewwide vaw identifiew: f-featuwehydwatowidentifiew =
+    featuwehydwatowidentifiew("usewstate")
 
-  override val features: Set[Feature[_, _]] = Set(UserStateFeature)
+  ovewwide vaw featuwes: set[featuwe[_, >_< _]] = set(usewstatefeatuwe)
 
-  private val datasets: Set[UserSessionDataset] = Set(UserSessionDataset.UserHealth)
+  p-pwivate vaw datasets: set[usewsessiondataset] = s-set(usewsessiondataset.usewheawth)
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    userSessionStore
-      .read(ReadRequest(query.getRequiredUserId, datasets))
-      .map { userSession =>
-        val userState = userSession.flatMap {
-          _.userHealth match {
-            case Some(uh.UserHealth.V1(uhv1.UserHealth(userState))) => userState
-            case _ => None
+  ovewwide d-def hydwate(quewy: p-pipewinequewy): s-stitch[featuwemap] = {
+    usewsessionstowe
+      .wead(weadwequest(quewy.getwequiwedusewid, datasets))
+      .map { u-usewsession =>
+        vaw usewstate = usewsession.fwatmap {
+          _.usewheawth m-match {
+            case some(uh.usewheawth.v1(uhv1.usewheawth(usewstate))) => usewstate
+            case _ => nyone
           }
         }
 
-        FeatureMapBuilder()
-          .add(UserStateFeature, userState)
-          .build()
+        featuwemapbuiwdew()
+          .add(usewstatefeatuwe, (⑅˘꒳˘) u-usewstate)
+          .buiwd()
       }
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.9)
+  ovewwide v-vaw awewts = s-seq(
+    homemixewawewtconfig.businesshouws.defauwtsuccesswateawewt(99.9)
   )
 }

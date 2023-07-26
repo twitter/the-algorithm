@@ -1,420 +1,420 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-import com.twitter.adserver.thriftscala.{DisplayLocation => AdDisplayLocation}
-import com.twitter.follow_recommendations.logging.thriftscala.{
-  OfflineDisplayLocation => TOfflineDisplayLocation
+impowt c-com.twittew.adsewvew.thwiftscawa.{dispwaywocation => a-addispwaywocation}
+i-impowt com.twittew.fowwow_wecommendations.wogging.thwiftscawa.{
+  o-offwinedispwaywocation => t-toffwinedispwaywocation
 }
-import com.twitter.follow_recommendations.thriftscala.{DisplayLocation => TDisplayLocation}
+i-impowt c-com.twittew.fowwow_wecommendations.thwiftscawa.{dispwaywocation => t-tdispwaywocation}
 
-sealed trait DisplayLocation {
-  def toThrift: TDisplayLocation
+seawed twait dispwaywocation {
+  def tothwift: tdispwaywocation
 
-  def toOfflineThrift: TOfflineDisplayLocation
+  d-def tooffwinethwift: toffwinedispwaywocation
 
-  def toFsName: String
+  d-def tofsname: stwing
 
-  // corresponding display location in adserver if available
-  // make sure to be consistent with the definition here
-  def toAdDisplayLocation: Option[AdDisplayLocation] = None
+  // c-cowwesponding dispway wocation in adsewvew if avaiwabwe
+  // m-make suwe to be consistent w-with the definition h-hewe
+  def toaddispwaywocation: option[addispwaywocation] = nyone
 }
 
 /**
- * Make sure you add the new DL to the following files and redeploy our attribution jobs
- *  - follow-recommendations-service/thrift/src/main/thrift/display_location.thrift
- *  - follow-recommendations-service/thrift/src/main/thrift/logging/display_location.thrift
- *  - follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models/DisplayLocation.scala
+ * make suwe you add t-the nyew dw to the fowwowing fiwes and wedepwoy ouw attwibution jobs
+ *  - fowwow-wecommendations-sewvice/thwift/swc/main/thwift/dispway_wocation.thwift
+ *  - f-fowwow-wecommendations-sewvice/thwift/swc/main/thwift/wogging/dispway_wocation.thwift
+ *  - fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/modews/dispwaywocation.scawa
  */
 
-object DisplayLocation {
+object d-dispwaywocation {
 
-  case object ProfileSidebar extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.ProfileSidebar
-    override val toOfflineThrift: TOfflineDisplayLocation = TOfflineDisplayLocation.ProfileSidebar
-    override val toFsName: String = "ProfileSidebar"
+  c-case o-object pwofiwesidebaw e-extends dispwaywocation {
+    ovewwide vaw tothwift: tdispwaywocation = t-tdispwaywocation.pwofiwesidebaw
+    ovewwide vaw tooffwinethwift: toffwinedispwaywocation = t-toffwinedispwaywocation.pwofiwesidebaw
+    ovewwide vaw tofsname: stwing = "pwofiwesidebaw"
 
-    override val toAdDisplayLocation: Option[AdDisplayLocation] = Some(
-      AdDisplayLocation.ProfileAccountsSidebar
+    ovewwide vaw toaddispwaywocation: option[addispwaywocation] = s-some(
+      addispwaywocation.pwofiweaccountssidebaw
     )
   }
 
-  case object HomeTimeline extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.HomeTimeline
-    override val toOfflineThrift: TOfflineDisplayLocation = TOfflineDisplayLocation.HomeTimeline
-    override val toFsName: String = "HomeTimeline"
-    override val toAdDisplayLocation: Option[AdDisplayLocation] = Some(
-      // it is based on the logic that HTL DL should correspond to Sidebar:
-      AdDisplayLocation.WtfSidebar
+  c-case o-object hometimewine e-extends dispwaywocation {
+    ovewwide vaw tothwift: tdispwaywocation = tdispwaywocation.hometimewine
+    o-ovewwide v-vaw tooffwinethwift: toffwinedispwaywocation = t-toffwinedispwaywocation.hometimewine
+    ovewwide v-vaw tofsname: stwing = "hometimewine"
+    o-ovewwide vaw toaddispwaywocation: option[addispwaywocation] = s-some(
+      // it is based on the wogic that htw d-dw shouwd cowwespond to sidebaw:
+      a-addispwaywocation.wtfsidebaw
     )
   }
 
-  case object ReactiveFollow extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.ReactiveFollow
-    override val toOfflineThrift: TOfflineDisplayLocation = TOfflineDisplayLocation.ReactiveFollow
-    override val toFsName: String = "ReactiveFollow"
+  case object weactivefowwow e-extends d-dispwaywocation {
+    ovewwide vaw tothwift: tdispwaywocation = tdispwaywocation.weactivefowwow
+    ovewwide vaw tooffwinethwift: t-toffwinedispwaywocation = t-toffwinedispwaywocation.weactivefowwow
+    ovewwide v-vaw tofsname: s-stwing = "weactivefowwow"
   }
 
-  case object ExploreTab extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.ExploreTab
-    override val toOfflineThrift: TOfflineDisplayLocation = TOfflineDisplayLocation.ExploreTab
-    override val toFsName: String = "ExploreTab"
+  c-case object expwowetab extends dispwaywocation {
+    ovewwide v-vaw tothwift: tdispwaywocation = tdispwaywocation.expwowetab
+    ovewwide vaw tooffwinethwift: t-toffwinedispwaywocation = toffwinedispwaywocation.expwowetab
+    o-ovewwide vaw tofsname: s-stwing = "expwowetab"
   }
 
-  case object MagicRecs extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.MagicRecs
-    override val toOfflineThrift: TOfflineDisplayLocation = TOfflineDisplayLocation.MagicRecs
-    override val toFsName: String = "MagicRecs"
+  c-case object magicwecs extends d-dispwaywocation {
+    o-ovewwide v-vaw tothwift: t-tdispwaywocation = tdispwaywocation.magicwecs
+    ovewwide vaw t-tooffwinethwift: t-toffwinedispwaywocation = t-toffwinedispwaywocation.magicwecs
+    o-ovewwide vaw tofsname: s-stwing = "magicwecs"
   }
 
-  case object AbUploadInjection extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.AbUploadInjection
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.AbUploadInjection
-    override val toFsName: String = "AbUploadInjection"
+  case object abupwoadinjection extends dispwaywocation {
+    o-ovewwide vaw tothwift: tdispwaywocation = tdispwaywocation.abupwoadinjection
+    ovewwide vaw tooffwinethwift: toffwinedispwaywocation =
+      toffwinedispwaywocation.abupwoadinjection
+    ovewwide vaw tofsname: s-stwing = "abupwoadinjection"
   }
 
-  case object RuxLandingPage extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.RuxLandingPage
-    override val toOfflineThrift: TOfflineDisplayLocation = TOfflineDisplayLocation.RuxLandingPage
-    override val toFsName: String = "RuxLandingPage"
+  case object wuxwandingpage extends dispwaywocation {
+    o-ovewwide vaw tothwift: t-tdispwaywocation = t-tdispwaywocation.wuxwandingpage
+    ovewwide vaw tooffwinethwift: t-toffwinedispwaywocation = toffwinedispwaywocation.wuxwandingpage
+    o-ovewwide vaw tofsname: s-stwing = "wuxwandingpage"
   }
 
-  case object ProfileBonusFollow extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.ProfileBonusFollow
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.ProfileBonusFollow
-    override val toFsName: String = "ProfileBonusFollow"
+  case object pwofiwebonusfowwow extends dispwaywocation {
+    ovewwide v-vaw tothwift: tdispwaywocation = tdispwaywocation.pwofiwebonusfowwow
+    o-ovewwide vaw tooffwinethwift: t-toffwinedispwaywocation =
+      t-toffwinedispwaywocation.pwofiwebonusfowwow
+    ovewwide vaw tofsname: stwing = "pwofiwebonusfowwow"
   }
 
-  case object ElectionExploreWtf extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.ElectionExploreWtf
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.ElectionExploreWtf
-    override val toFsName: String = "ElectionExploreWtf"
+  c-case object ewectionexpwowewtf e-extends dispwaywocation {
+    ovewwide vaw tothwift: t-tdispwaywocation = t-tdispwaywocation.ewectionexpwowewtf
+    ovewwide vaw tooffwinethwift: toffwinedispwaywocation =
+      toffwinedispwaywocation.ewectionexpwowewtf
+    ovewwide vaw tofsname: stwing = "ewectionexpwowewtf"
   }
 
-  case object ClusterFollow extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.ClusterFollow
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.ClusterFollow
-    override val toFsName: String = "ClusterFollow"
-    override val toAdDisplayLocation: Option[AdDisplayLocation] = Some(
-      AdDisplayLocation.ClusterFollow
+  c-case object c-cwustewfowwow e-extends dispwaywocation {
+    ovewwide vaw tothwift: t-tdispwaywocation = t-tdispwaywocation.cwustewfowwow
+    ovewwide vaw tooffwinethwift: t-toffwinedispwaywocation =
+      toffwinedispwaywocation.cwustewfowwow
+    ovewwide vaw tofsname: stwing = "cwustewfowwow"
+    ovewwide v-vaw toaddispwaywocation: o-option[addispwaywocation] = some(
+      addispwaywocation.cwustewfowwow
     )
   }
 
-  case object HtlBonusFollow extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.HtlBonusFollow
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.HtlBonusFollow
-    override val toFsName: String = "HtlBonusFollow"
+  c-case object htwbonusfowwow e-extends dispwaywocation {
+    ovewwide vaw tothwift: t-tdispwaywocation = tdispwaywocation.htwbonusfowwow
+    ovewwide vaw tooffwinethwift: toffwinedispwaywocation =
+      t-toffwinedispwaywocation.htwbonusfowwow
+    ovewwide vaw tofsname: stwing = "htwbonusfowwow"
   }
 
-  case object TopicLandingPageHeader extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.TopicLandingPageHeader
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.TopicLandingPageHeader
-    override val toFsName: String = "TopicLandingPageHeader"
+  c-case object t-topicwandingpageheadew extends dispwaywocation {
+    ovewwide v-vaw tothwift: t-tdispwaywocation = tdispwaywocation.topicwandingpageheadew
+    ovewwide vaw tooffwinethwift: toffwinedispwaywocation =
+      toffwinedispwaywocation.topicwandingpageheadew
+    ovewwide vaw tofsname: s-stwing = "topicwandingpageheadew"
   }
 
-  case object NewUserSarusBackfill extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.NewUserSarusBackfill
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.NewUserSarusBackfill
-    override val toFsName: String = "NewUserSarusBackfill"
+  case object nyewusewsawusbackfiww e-extends dispwaywocation {
+    ovewwide vaw tothwift: tdispwaywocation = tdispwaywocation.newusewsawusbackfiww
+    o-ovewwide vaw tooffwinethwift: t-toffwinedispwaywocation =
+      t-toffwinedispwaywocation.newusewsawusbackfiww
+    ovewwide vaw t-tofsname: stwing = "newusewsawusbackfiww"
   }
 
-  case object NuxPymk extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.NuxPymk
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.NuxPymk
-    override val toFsName: String = "NuxPymk"
+  case object nyuxpymk e-extends d-dispwaywocation {
+    o-ovewwide vaw tothwift: tdispwaywocation = t-tdispwaywocation.nuxpymk
+    o-ovewwide vaw tooffwinethwift: toffwinedispwaywocation =
+      t-toffwinedispwaywocation.nuxpymk
+    ovewwide v-vaw tofsname: s-stwing = "nuxpymk"
   }
 
-  case object NuxInterests extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.NuxInterests
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.NuxInterests
-    override val toFsName: String = "NuxInterests"
+  case object nyuxintewests extends d-dispwaywocation {
+    ovewwide v-vaw tothwift: tdispwaywocation = t-tdispwaywocation.nuxintewests
+    ovewwide vaw tooffwinethwift: toffwinedispwaywocation =
+      t-toffwinedispwaywocation.nuxintewests
+    o-ovewwide v-vaw tofsname: s-stwing = "nuxintewests"
   }
 
-  case object NuxTopicBonusFollow extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.NuxTopicBonusFollow
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.NuxTopicBonusFollow
-    override val toFsName: String = "NuxTopicBonusFollow"
+  case object nyuxtopicbonusfowwow e-extends dispwaywocation {
+    ovewwide vaw tothwift: tdispwaywocation = tdispwaywocation.nuxtopicbonusfowwow
+    ovewwide vaw tooffwinethwift: t-toffwinedispwaywocation =
+      toffwinedispwaywocation.nuxtopicbonusfowwow
+    o-ovewwide vaw tofsname: stwing = "nuxtopicbonusfowwow"
   }
 
-  case object Sidebar extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.Sidebar
-    override val toOfflineThrift: TOfflineDisplayLocation = TOfflineDisplayLocation.Sidebar
-    override val toFsName: String = "Sidebar"
+  c-case object sidebaw e-extends dispwaywocation {
+    ovewwide vaw tothwift: t-tdispwaywocation = t-tdispwaywocation.sidebaw
+    o-ovewwide v-vaw tooffwinethwift: t-toffwinedispwaywocation = toffwinedispwaywocation.sidebaw
+    ovewwide vaw tofsname: stwing = "sidebaw"
 
-    override val toAdDisplayLocation: Option[AdDisplayLocation] = Some(
-      AdDisplayLocation.WtfSidebar
+    ovewwide vaw toaddispwaywocation: option[addispwaywocation] = some(
+      addispwaywocation.wtfsidebaw
     )
   }
 
-  case object CampaignForm extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.CampaignForm
-    override val toOfflineThrift: TOfflineDisplayLocation = TOfflineDisplayLocation.CampaignForm
-    override val toFsName: String = "CampaignForm"
+  case object c-campaignfowm extends d-dispwaywocation {
+    o-ovewwide vaw tothwift: t-tdispwaywocation = tdispwaywocation.campaignfowm
+    ovewwide vaw tooffwinethwift: t-toffwinedispwaywocation = t-toffwinedispwaywocation.campaignfowm
+    ovewwide v-vaw tofsname: stwing = "campaignfowm"
   }
 
-  case object ProfileTopFollowers extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.ProfileTopFollowers
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.ProfileTopFollowers
-    override val toFsName: String = "ProfileTopFollowers"
+  case object pwofiwetopfowwowews e-extends dispwaywocation {
+    o-ovewwide vaw tothwift: t-tdispwaywocation = t-tdispwaywocation.pwofiwetopfowwowews
+    ovewwide vaw tooffwinethwift: toffwinedispwaywocation =
+      toffwinedispwaywocation.pwofiwetopfowwowews
+    ovewwide vaw tofsname: stwing = "pwofiwetopfowwowews"
   }
 
-  case object ProfileTopFollowing extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.ProfileTopFollowing
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.ProfileTopFollowing
-    override val toFsName: String = "ProfileTopFollowing"
+  case o-object pwofiwetopfowwowing e-extends d-dispwaywocation {
+    o-ovewwide v-vaw tothwift: tdispwaywocation = t-tdispwaywocation.pwofiwetopfowwowing
+    o-ovewwide vaw tooffwinethwift: t-toffwinedispwaywocation =
+      t-toffwinedispwaywocation.pwofiwetopfowwowing
+    ovewwide v-vaw tofsname: stwing = "pwofiwetopfowwowing"
   }
 
-  case object RuxPymk extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.RuxPymk
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.RuxPymk
-    override val toFsName: String = "RuxPymk"
+  case object w-wuxpymk extends dispwaywocation {
+    o-ovewwide v-vaw tothwift: tdispwaywocation = t-tdispwaywocation.wuxpymk
+    ovewwide vaw tooffwinethwift: toffwinedispwaywocation =
+      toffwinedispwaywocation.wuxpymk
+    ovewwide vaw t-tofsname: stwing = "wuxpymk"
   }
 
-  case object IndiaCovid19CuratedAccountsWtf extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.IndiaCovid19CuratedAccountsWtf
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.IndiaCovid19CuratedAccountsWtf
-    override val toFsName: String = "IndiaCovid19CuratedAccountsWtf"
+  c-case object i-indiacovid19cuwatedaccountswtf extends dispwaywocation {
+    ovewwide vaw tothwift: t-tdispwaywocation = tdispwaywocation.indiacovid19cuwatedaccountswtf
+    ovewwide v-vaw tooffwinethwift: t-toffwinedispwaywocation =
+      toffwinedispwaywocation.indiacovid19cuwatedaccountswtf
+    o-ovewwide vaw tofsname: stwing = "indiacovid19cuwatedaccountswtf"
   }
 
-  case object PeoplePlusPlus extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.PeoplePlusPlus
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.PeoplePlusPlus
-    override val toFsName: String = "PeoplePlusPlus"
+  c-case o-object peopwepwuspwus extends dispwaywocation {
+    ovewwide vaw t-tothwift: tdispwaywocation = tdispwaywocation.peopwepwuspwus
+    ovewwide vaw tooffwinethwift: t-toffwinedispwaywocation =
+      t-toffwinedispwaywocation.peopwepwuspwus
+    ovewwide v-vaw tofsname: stwing = "peopwepwuspwus"
   }
 
-  case object TweetNotificationRecs extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.TweetNotificationRecs
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.TweetNotificationRecs
-    override val toFsName: String = "TweetNotificationRecs"
+  c-case object t-tweetnotificationwecs e-extends dispwaywocation {
+    ovewwide vaw tothwift: tdispwaywocation = tdispwaywocation.tweetnotificationwecs
+    ovewwide vaw tooffwinethwift: toffwinedispwaywocation =
+      toffwinedispwaywocation.tweetnotificationwecs
+    ovewwide vaw tofsname: stwing = "tweetnotificationwecs"
   }
 
-  case object ProfileDeviceFollow extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.ProfileDeviceFollow
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.ProfileDeviceFollow
-    override val toFsName: String = "ProfileDeviceFollow"
+  case object pwofiwedevicefowwow e-extends d-dispwaywocation {
+    ovewwide vaw tothwift: tdispwaywocation = t-tdispwaywocation.pwofiwedevicefowwow
+    o-ovewwide v-vaw tooffwinethwift: toffwinedispwaywocation =
+      t-toffwinedispwaywocation.pwofiwedevicefowwow
+    ovewwide v-vaw tofsname: stwing = "pwofiwedevicefowwow"
   }
 
-  case object RecosBackfill extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.RecosBackfill
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.RecosBackfill
-    override val toFsName: String = "RecosBackfill"
+  c-case object wecosbackfiww extends d-dispwaywocation {
+    ovewwide v-vaw tothwift: t-tdispwaywocation = tdispwaywocation.wecosbackfiww
+    ovewwide v-vaw tooffwinethwift: t-toffwinedispwaywocation =
+      t-toffwinedispwaywocation.wecosbackfiww
+    o-ovewwide vaw tofsname: s-stwing = "wecosbackfiww"
   }
 
-  case object HtlSpaceHosts extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.HtlSpaceHosts
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.HtlSpaceHosts
-    override val toFsName: String = "HtlSpaceHosts"
+  c-case object h-htwspacehosts e-extends dispwaywocation {
+    o-ovewwide vaw tothwift: tdispwaywocation = t-tdispwaywocation.htwspacehosts
+    o-ovewwide v-vaw tooffwinethwift: toffwinedispwaywocation =
+      t-toffwinedispwaywocation.htwspacehosts
+    ovewwide vaw tofsname: stwing = "htwspacehosts"
   }
 
-  case object PostNuxFollowTask extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.PostNuxFollowTask
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.PostNuxFollowTask
-    override val toFsName: String = "PostNuxFollowTask"
+  c-case object postnuxfowwowtask e-extends d-dispwaywocation {
+    o-ovewwide vaw tothwift: tdispwaywocation = t-tdispwaywocation.postnuxfowwowtask
+    ovewwide v-vaw tooffwinethwift: toffwinedispwaywocation =
+      t-toffwinedispwaywocation.postnuxfowwowtask
+    ovewwide vaw t-tofsname: stwing = "postnuxfowwowtask"
   }
 
-  case object TopicLandingPage extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.TopicLandingPage
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.TopicLandingPage
-    override val toFsName: String = "TopicLandingPage"
+  case object topicwandingpage extends dispwaywocation {
+    ovewwide v-vaw tothwift: tdispwaywocation = t-tdispwaywocation.topicwandingpage
+    o-ovewwide vaw tooffwinethwift: toffwinedispwaywocation =
+      toffwinedispwaywocation.topicwandingpage
+    o-ovewwide vaw tofsname: stwing = "topicwandingpage"
   }
 
-  case object UserTypeaheadPrefetch extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.UserTypeaheadPrefetch
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.UserTypeaheadPrefetch
-    override val toFsName: String = "UserTypeaheadPrefetch"
+  c-case object usewtypeaheadpwefetch e-extends dispwaywocation {
+    o-ovewwide vaw tothwift: tdispwaywocation = tdispwaywocation.usewtypeaheadpwefetch
+    o-ovewwide vaw t-tooffwinethwift: toffwinedispwaywocation =
+      t-toffwinedispwaywocation.usewtypeaheadpwefetch
+    ovewwide vaw tofsname: stwing = "usewtypeaheadpwefetch"
   }
 
-  case object HomeTimelineRelatableAccounts extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.HomeTimelineRelatableAccounts
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.HomeTimelineRelatableAccounts
-    override val toFsName: String = "HomeTimelineRelatableAccounts"
+  c-case object hometimewinewewatabweaccounts e-extends d-dispwaywocation {
+    o-ovewwide vaw tothwift: t-tdispwaywocation = t-tdispwaywocation.hometimewinewewatabweaccounts
+    o-ovewwide v-vaw tooffwinethwift: toffwinedispwaywocation =
+      t-toffwinedispwaywocation.hometimewinewewatabweaccounts
+    o-ovewwide vaw tofsname: s-stwing = "hometimewinewewatabweaccounts"
   }
 
-  case object NuxGeoCategory extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.NuxGeoCategory
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.NuxGeoCategory
-    override val toFsName: String = "NuxGeoCategory"
+  c-case object n-nyuxgeocategowy e-extends dispwaywocation {
+    o-ovewwide vaw tothwift: t-tdispwaywocation = tdispwaywocation.nuxgeocategowy
+    o-ovewwide vaw tooffwinethwift: toffwinedispwaywocation =
+      t-toffwinedispwaywocation.nuxgeocategowy
+    ovewwide v-vaw tofsname: s-stwing = "nuxgeocategowy"
   }
 
-  case object NuxInterestsCategory extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.NuxInterestsCategory
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.NuxInterestsCategory
-    override val toFsName: String = "NuxInterestsCategory"
+  c-case object nyuxintewestscategowy extends dispwaywocation {
+    ovewwide vaw tothwift: tdispwaywocation = t-tdispwaywocation.nuxintewestscategowy
+    o-ovewwide vaw t-tooffwinethwift: toffwinedispwaywocation =
+      toffwinedispwaywocation.nuxintewestscategowy
+    ovewwide vaw t-tofsname: stwing = "nuxintewestscategowy"
   }
 
-  case object TopArticles extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.TopArticles
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.TopArticles
-    override val toFsName: String = "TopArticles"
+  c-case object topawticwes extends d-dispwaywocation {
+    o-ovewwide vaw tothwift: tdispwaywocation = tdispwaywocation.topawticwes
+    ovewwide vaw t-tooffwinethwift: t-toffwinedispwaywocation =
+      t-toffwinedispwaywocation.topawticwes
+    o-ovewwide vaw tofsname: stwing = "topawticwes"
   }
 
-  case object NuxPymkCategory extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.NuxPymkCategory
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.NuxPymkCategory
-    override val toFsName: String = "NuxPymkCategory"
+  c-case o-object nyuxpymkcategowy extends dispwaywocation {
+    o-ovewwide vaw tothwift: tdispwaywocation = t-tdispwaywocation.nuxpymkcategowy
+    ovewwide v-vaw tooffwinethwift: t-toffwinedispwaywocation =
+      toffwinedispwaywocation.nuxpymkcategowy
+    o-ovewwide vaw tofsname: s-stwing = "nuxpymkcategowy"
   }
 
-  case object HomeTimelineTweetRecs extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.HomeTimelineTweetRecs
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.HomeTimelineTweetRecs
-    override val toFsName: String = "HomeTimelineTweetRecs"
+  case o-object hometimewinetweetwecs extends d-dispwaywocation {
+    o-ovewwide v-vaw tothwift: t-tdispwaywocation = tdispwaywocation.hometimewinetweetwecs
+    o-ovewwide vaw tooffwinethwift: t-toffwinedispwaywocation =
+      t-toffwinedispwaywocation.hometimewinetweetwecs
+    ovewwide vaw tofsname: s-stwing = "hometimewinetweetwecs"
   }
 
-  case object HtlBulkFriendFollows extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.HtlBulkFriendFollows
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.HtlBulkFriendFollows
-    override val toFsName: String = "HtlBulkFriendFollows"
+  case object htwbuwkfwiendfowwows extends dispwaywocation {
+    o-ovewwide v-vaw tothwift: t-tdispwaywocation = tdispwaywocation.htwbuwkfwiendfowwows
+    ovewwide vaw tooffwinethwift: toffwinedispwaywocation =
+      toffwinedispwaywocation.htwbuwkfwiendfowwows
+    o-ovewwide vaw tofsname: stwing = "htwbuwkfwiendfowwows"
   }
 
-  case object NuxAutoFollow extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.NuxAutoFollow
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.NuxAutoFollow
-    override val toFsName: String = "NuxAutoFollow"
+  case o-object nyuxautofowwow e-extends dispwaywocation {
+    ovewwide v-vaw tothwift: tdispwaywocation = tdispwaywocation.nuxautofowwow
+    o-ovewwide vaw t-tooffwinethwift: t-toffwinedispwaywocation =
+      t-toffwinedispwaywocation.nuxautofowwow
+    o-ovewwide vaw tofsname: stwing = "nuxautofowwow"
   }
 
-  case object SearchBonusFollow extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.SearchBonusFollow
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.SearchBonusFollow
-    override val toFsName: String = "SearchBonusFollow"
+  case object seawchbonusfowwow e-extends dispwaywocation {
+    ovewwide vaw tothwift: t-tdispwaywocation = tdispwaywocation.seawchbonusfowwow
+    ovewwide vaw tooffwinethwift: toffwinedispwaywocation =
+      toffwinedispwaywocation.seawchbonusfowwow
+    ovewwide v-vaw tofsname: stwing = "seawchbonusfowwow"
   }
 
-  case object ContentRecommender extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.ContentRecommender
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.ContentRecommender
-    override val toFsName: String = "ContentRecommender"
+  case object contentwecommendew extends dispwaywocation {
+    o-ovewwide vaw t-tothwift: tdispwaywocation = tdispwaywocation.contentwecommendew
+    ovewwide v-vaw tooffwinethwift: toffwinedispwaywocation =
+      toffwinedispwaywocation.contentwecommendew
+    o-ovewwide vaw t-tofsname: stwing = "contentwecommendew"
   }
 
-  case object HomeTimelineReverseChron extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.HomeTimelineReverseChron
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.HomeTimelineReverseChron
-    override val toFsName: String = "HomeTimelineReverseChron"
+  case object hometimewinewevewsechwon e-extends dispwaywocation {
+    ovewwide vaw t-tothwift: tdispwaywocation = tdispwaywocation.hometimewinewevewsechwon
+    ovewwide vaw tooffwinethwift: t-toffwinedispwaywocation =
+      toffwinedispwaywocation.hometimewinewevewsechwon
+    ovewwide v-vaw tofsname: s-stwing = "hometimewinewevewsechwon"
   }
 
-  def fromThrift(displayLocation: TDisplayLocation): DisplayLocation = displayLocation match {
-    case TDisplayLocation.ProfileSidebar => ProfileSidebar
-    case TDisplayLocation.HomeTimeline => HomeTimeline
-    case TDisplayLocation.MagicRecs => MagicRecs
-    case TDisplayLocation.AbUploadInjection => AbUploadInjection
-    case TDisplayLocation.RuxLandingPage => RuxLandingPage
-    case TDisplayLocation.ProfileBonusFollow => ProfileBonusFollow
-    case TDisplayLocation.ElectionExploreWtf => ElectionExploreWtf
-    case TDisplayLocation.ClusterFollow => ClusterFollow
-    case TDisplayLocation.HtlBonusFollow => HtlBonusFollow
-    case TDisplayLocation.ReactiveFollow => ReactiveFollow
-    case TDisplayLocation.TopicLandingPageHeader => TopicLandingPageHeader
-    case TDisplayLocation.NewUserSarusBackfill => NewUserSarusBackfill
-    case TDisplayLocation.NuxPymk => NuxPymk
-    case TDisplayLocation.NuxInterests => NuxInterests
-    case TDisplayLocation.NuxTopicBonusFollow => NuxTopicBonusFollow
-    case TDisplayLocation.ExploreTab => ExploreTab
-    case TDisplayLocation.Sidebar => Sidebar
-    case TDisplayLocation.CampaignForm => CampaignForm
-    case TDisplayLocation.ProfileTopFollowers => ProfileTopFollowers
-    case TDisplayLocation.ProfileTopFollowing => ProfileTopFollowing
-    case TDisplayLocation.RuxPymk => RuxPymk
-    case TDisplayLocation.IndiaCovid19CuratedAccountsWtf => IndiaCovid19CuratedAccountsWtf
-    case TDisplayLocation.PeoplePlusPlus => PeoplePlusPlus
-    case TDisplayLocation.TweetNotificationRecs => TweetNotificationRecs
-    case TDisplayLocation.ProfileDeviceFollow => ProfileDeviceFollow
-    case TDisplayLocation.RecosBackfill => RecosBackfill
-    case TDisplayLocation.HtlSpaceHosts => HtlSpaceHosts
-    case TDisplayLocation.PostNuxFollowTask => PostNuxFollowTask
-    case TDisplayLocation.TopicLandingPage => TopicLandingPage
-    case TDisplayLocation.UserTypeaheadPrefetch => UserTypeaheadPrefetch
-    case TDisplayLocation.HomeTimelineRelatableAccounts => HomeTimelineRelatableAccounts
-    case TDisplayLocation.NuxGeoCategory => NuxGeoCategory
-    case TDisplayLocation.NuxInterestsCategory => NuxInterestsCategory
-    case TDisplayLocation.TopArticles => TopArticles
-    case TDisplayLocation.NuxPymkCategory => NuxPymkCategory
-    case TDisplayLocation.HomeTimelineTweetRecs => HomeTimelineTweetRecs
-    case TDisplayLocation.HtlBulkFriendFollows => HtlBulkFriendFollows
-    case TDisplayLocation.NuxAutoFollow => NuxAutoFollow
-    case TDisplayLocation.SearchBonusFollow => SearchBonusFollow
-    case TDisplayLocation.ContentRecommender => ContentRecommender
-    case TDisplayLocation.HomeTimelineReverseChron => HomeTimelineReverseChron
-    case TDisplayLocation.EnumUnknownDisplayLocation(i) =>
-      throw new UnknownDisplayLocationException(
-        s"Unknown display location thrift enum with value: ${i}")
+  d-def fwomthwift(dispwaywocation: tdispwaywocation): dispwaywocation = d-dispwaywocation match {
+    case tdispwaywocation.pwofiwesidebaw => pwofiwesidebaw
+    case t-tdispwaywocation.hometimewine => h-hometimewine
+    c-case tdispwaywocation.magicwecs => m-magicwecs
+    case tdispwaywocation.abupwoadinjection => abupwoadinjection
+    case tdispwaywocation.wuxwandingpage => w-wuxwandingpage
+    c-case tdispwaywocation.pwofiwebonusfowwow => pwofiwebonusfowwow
+    case tdispwaywocation.ewectionexpwowewtf => ewectionexpwowewtf
+    c-case tdispwaywocation.cwustewfowwow => cwustewfowwow
+    case tdispwaywocation.htwbonusfowwow => h-htwbonusfowwow
+    case tdispwaywocation.weactivefowwow => weactivefowwow
+    c-case tdispwaywocation.topicwandingpageheadew => t-topicwandingpageheadew
+    case tdispwaywocation.newusewsawusbackfiww => n-nyewusewsawusbackfiww
+    c-case tdispwaywocation.nuxpymk => n-nyuxpymk
+    case tdispwaywocation.nuxintewests => nyuxintewests
+    c-case tdispwaywocation.nuxtopicbonusfowwow => nyuxtopicbonusfowwow
+    c-case tdispwaywocation.expwowetab => expwowetab
+    case tdispwaywocation.sidebaw => sidebaw
+    c-case tdispwaywocation.campaignfowm => c-campaignfowm
+    c-case t-tdispwaywocation.pwofiwetopfowwowews => p-pwofiwetopfowwowews
+    case tdispwaywocation.pwofiwetopfowwowing => p-pwofiwetopfowwowing
+    case tdispwaywocation.wuxpymk => wuxpymk
+    c-case tdispwaywocation.indiacovid19cuwatedaccountswtf => indiacovid19cuwatedaccountswtf
+    c-case tdispwaywocation.peopwepwuspwus => peopwepwuspwus
+    c-case tdispwaywocation.tweetnotificationwecs => t-tweetnotificationwecs
+    case tdispwaywocation.pwofiwedevicefowwow => p-pwofiwedevicefowwow
+    case tdispwaywocation.wecosbackfiww => w-wecosbackfiww
+    case t-tdispwaywocation.htwspacehosts => htwspacehosts
+    c-case tdispwaywocation.postnuxfowwowtask => p-postnuxfowwowtask
+    case tdispwaywocation.topicwandingpage => t-topicwandingpage
+    case tdispwaywocation.usewtypeaheadpwefetch => usewtypeaheadpwefetch
+    case tdispwaywocation.hometimewinewewatabweaccounts => h-hometimewinewewatabweaccounts
+    case tdispwaywocation.nuxgeocategowy => n-nyuxgeocategowy
+    case tdispwaywocation.nuxintewestscategowy => nyuxintewestscategowy
+    c-case t-tdispwaywocation.topawticwes => t-topawticwes
+    case tdispwaywocation.nuxpymkcategowy => n-nyuxpymkcategowy
+    c-case tdispwaywocation.hometimewinetweetwecs => hometimewinetweetwecs
+    c-case tdispwaywocation.htwbuwkfwiendfowwows => htwbuwkfwiendfowwows
+    c-case tdispwaywocation.nuxautofowwow => nyuxautofowwow
+    c-case t-tdispwaywocation.seawchbonusfowwow => seawchbonusfowwow
+    case tdispwaywocation.contentwecommendew => contentwecommendew
+    case t-tdispwaywocation.hometimewinewevewsechwon => h-hometimewinewevewsechwon
+    case tdispwaywocation.enumunknowndispwaywocation(i) =>
+      thwow n-new unknowndispwaywocationexception(
+        s"unknown d-dispway w-wocation thwift enum with vawue: ${i}")
   }
 
-  def fromOfflineThrift(displayLocation: TOfflineDisplayLocation): DisplayLocation =
-    displayLocation match {
-      case TOfflineDisplayLocation.ProfileSidebar => ProfileSidebar
-      case TOfflineDisplayLocation.HomeTimeline => HomeTimeline
-      case TOfflineDisplayLocation.MagicRecs => MagicRecs
-      case TOfflineDisplayLocation.AbUploadInjection => AbUploadInjection
-      case TOfflineDisplayLocation.RuxLandingPage => RuxLandingPage
-      case TOfflineDisplayLocation.ProfileBonusFollow => ProfileBonusFollow
-      case TOfflineDisplayLocation.ElectionExploreWtf => ElectionExploreWtf
-      case TOfflineDisplayLocation.ClusterFollow => ClusterFollow
-      case TOfflineDisplayLocation.HtlBonusFollow => HtlBonusFollow
-      case TOfflineDisplayLocation.TopicLandingPageHeader => TopicLandingPageHeader
-      case TOfflineDisplayLocation.NewUserSarusBackfill => NewUserSarusBackfill
-      case TOfflineDisplayLocation.NuxPymk => NuxPymk
-      case TOfflineDisplayLocation.NuxInterests => NuxInterests
-      case TOfflineDisplayLocation.NuxTopicBonusFollow => NuxTopicBonusFollow
-      case TOfflineDisplayLocation.ExploreTab => ExploreTab
-      case TOfflineDisplayLocation.ReactiveFollow => ReactiveFollow
-      case TOfflineDisplayLocation.Sidebar => Sidebar
-      case TOfflineDisplayLocation.CampaignForm => CampaignForm
-      case TOfflineDisplayLocation.ProfileTopFollowers => ProfileTopFollowers
-      case TOfflineDisplayLocation.ProfileTopFollowing => ProfileTopFollowing
-      case TOfflineDisplayLocation.RuxPymk => RuxPymk
-      case TOfflineDisplayLocation.IndiaCovid19CuratedAccountsWtf => IndiaCovid19CuratedAccountsWtf
-      case TOfflineDisplayLocation.PeoplePlusPlus => PeoplePlusPlus
-      case TOfflineDisplayLocation.TweetNotificationRecs => TweetNotificationRecs
-      case TOfflineDisplayLocation.ProfileDeviceFollow => ProfileDeviceFollow
-      case TOfflineDisplayLocation.RecosBackfill => RecosBackfill
-      case TOfflineDisplayLocation.HtlSpaceHosts => HtlSpaceHosts
-      case TOfflineDisplayLocation.PostNuxFollowTask => PostNuxFollowTask
-      case TOfflineDisplayLocation.TopicLandingPage => TopicLandingPage
-      case TOfflineDisplayLocation.UserTypeaheadPrefetch => UserTypeaheadPrefetch
-      case TOfflineDisplayLocation.HomeTimelineRelatableAccounts => HomeTimelineRelatableAccounts
-      case TOfflineDisplayLocation.NuxGeoCategory => NuxGeoCategory
-      case TOfflineDisplayLocation.NuxInterestsCategory => NuxInterestsCategory
-      case TOfflineDisplayLocation.TopArticles => TopArticles
-      case TOfflineDisplayLocation.NuxPymkCategory => NuxPymkCategory
-      case TOfflineDisplayLocation.HomeTimelineTweetRecs => HomeTimelineTweetRecs
-      case TOfflineDisplayLocation.HtlBulkFriendFollows => HtlBulkFriendFollows
-      case TOfflineDisplayLocation.NuxAutoFollow => NuxAutoFollow
-      case TOfflineDisplayLocation.SearchBonusFollow => SearchBonusFollow
-      case TOfflineDisplayLocation.ContentRecommender => ContentRecommender
-      case TOfflineDisplayLocation.HomeTimelineReverseChron => HomeTimelineReverseChron
-      case TOfflineDisplayLocation.EnumUnknownOfflineDisplayLocation(i) =>
-        throw new UnknownDisplayLocationException(
-          s"Unknown offline display location thrift enum with value: ${i}")
+  def fwomoffwinethwift(dispwaywocation: toffwinedispwaywocation): dispwaywocation =
+    d-dispwaywocation match {
+      case toffwinedispwaywocation.pwofiwesidebaw => p-pwofiwesidebaw
+      case toffwinedispwaywocation.hometimewine => h-hometimewine
+      c-case toffwinedispwaywocation.magicwecs => magicwecs
+      c-case toffwinedispwaywocation.abupwoadinjection => a-abupwoadinjection
+      c-case t-toffwinedispwaywocation.wuxwandingpage => w-wuxwandingpage
+      c-case toffwinedispwaywocation.pwofiwebonusfowwow => pwofiwebonusfowwow
+      case toffwinedispwaywocation.ewectionexpwowewtf => ewectionexpwowewtf
+      case toffwinedispwaywocation.cwustewfowwow => cwustewfowwow
+      c-case toffwinedispwaywocation.htwbonusfowwow => h-htwbonusfowwow
+      c-case t-toffwinedispwaywocation.topicwandingpageheadew => t-topicwandingpageheadew
+      c-case toffwinedispwaywocation.newusewsawusbackfiww => nyewusewsawusbackfiww
+      case toffwinedispwaywocation.nuxpymk => nyuxpymk
+      case toffwinedispwaywocation.nuxintewests => n-nyuxintewests
+      c-case toffwinedispwaywocation.nuxtopicbonusfowwow => nyuxtopicbonusfowwow
+      case toffwinedispwaywocation.expwowetab => expwowetab
+      c-case toffwinedispwaywocation.weactivefowwow => w-weactivefowwow
+      c-case toffwinedispwaywocation.sidebaw => sidebaw
+      case toffwinedispwaywocation.campaignfowm => c-campaignfowm
+      case toffwinedispwaywocation.pwofiwetopfowwowews => pwofiwetopfowwowews
+      c-case t-toffwinedispwaywocation.pwofiwetopfowwowing => pwofiwetopfowwowing
+      case t-toffwinedispwaywocation.wuxpymk => wuxpymk
+      c-case toffwinedispwaywocation.indiacovid19cuwatedaccountswtf => i-indiacovid19cuwatedaccountswtf
+      case toffwinedispwaywocation.peopwepwuspwus => p-peopwepwuspwus
+      c-case toffwinedispwaywocation.tweetnotificationwecs => t-tweetnotificationwecs
+      c-case t-toffwinedispwaywocation.pwofiwedevicefowwow => p-pwofiwedevicefowwow
+      case toffwinedispwaywocation.wecosbackfiww => w-wecosbackfiww
+      c-case toffwinedispwaywocation.htwspacehosts => h-htwspacehosts
+      case toffwinedispwaywocation.postnuxfowwowtask => p-postnuxfowwowtask
+      case toffwinedispwaywocation.topicwandingpage => t-topicwandingpage
+      case toffwinedispwaywocation.usewtypeaheadpwefetch => u-usewtypeaheadpwefetch
+      c-case toffwinedispwaywocation.hometimewinewewatabweaccounts => hometimewinewewatabweaccounts
+      case toffwinedispwaywocation.nuxgeocategowy => n-nyuxgeocategowy
+      case toffwinedispwaywocation.nuxintewestscategowy => nyuxintewestscategowy
+      c-case toffwinedispwaywocation.topawticwes => t-topawticwes
+      case toffwinedispwaywocation.nuxpymkcategowy => nyuxpymkcategowy
+      case t-toffwinedispwaywocation.hometimewinetweetwecs => h-hometimewinetweetwecs
+      case toffwinedispwaywocation.htwbuwkfwiendfowwows => h-htwbuwkfwiendfowwows
+      case toffwinedispwaywocation.nuxautofowwow => nyuxautofowwow
+      case toffwinedispwaywocation.seawchbonusfowwow => s-seawchbonusfowwow
+      c-case toffwinedispwaywocation.contentwecommendew => c-contentwecommendew
+      c-case toffwinedispwaywocation.hometimewinewevewsechwon => hometimewinewevewsechwon
+      case toffwinedispwaywocation.enumunknownoffwinedispwaywocation(i) =>
+        thwow n-nyew unknowndispwaywocationexception(
+          s-s"unknown offwine d-dispway wocation t-thwift enum with vawue: ${i}")
     }
 }
 
-class UnknownDisplayLocationException(message: String) extends Exception(message)
+cwass unknowndispwaywocationexception(message: stwing) extends exception(message)

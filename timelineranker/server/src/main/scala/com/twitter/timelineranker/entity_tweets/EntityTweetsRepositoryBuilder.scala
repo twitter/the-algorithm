@@ -1,60 +1,60 @@
-package com.twitter.timelineranker.entity_tweets
+package com.twittew.timewinewankew.entity_tweets
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelineranker.config.RequestScopes
-import com.twitter.timelineranker.config.RuntimeConfiguration
-import com.twitter.timelineranker.parameters.ConfigBuilder
-import com.twitter.timelineranker.repository.CandidatesRepositoryBuilder
-import com.twitter.timelineranker.visibility.SgsFollowGraphDataFields
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.timelines.util.stats.RequestScope
-import com.twitter.util.Duration
+impowt com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.timewinewankew.config.wequestscopes
+i-impowt com.twittew.timewinewankew.config.wuntimeconfiguwation
+i-impowt com.twittew.timewinewankew.pawametews.configbuiwdew
+i-impowt c-com.twittew.timewinewankew.wepositowy.candidateswepositowybuiwdew
+i-impowt com.twittew.timewinewankew.visibiwity.sgsfowwowgwaphdatafiewds
+i-impowt com.twittew.seawch.eawwybiwd.thwiftscawa.eawwybiwdsewvice
+impowt com.twittew.timewines.utiw.stats.wequestscope
+impowt com.twittew.utiw.duwation
 
-class EntityTweetsRepositoryBuilder(config: RuntimeConfiguration, configBuilder: ConfigBuilder)
-    extends CandidatesRepositoryBuilder(config) {
+c-cwass entitytweetswepositowybuiwdew(config: wuntimeconfiguwation, nyaa~~ configbuiwdew: c-configbuiwdew)
+    extends c-candidateswepositowybuiwdew(config) {
 
-  // Default client id for this repository if the upstream requests doesn't indicate one.
-  override val clientSubId = "community"
-  override val requestScope: RequestScope = RequestScopes.EntityTweetsSource
-  override val followGraphDataFieldsToFetch: SgsFollowGraphDataFields.ValueSet =
-    SgsFollowGraphDataFields.ValueSet(
-      SgsFollowGraphDataFields.FollowedUserIds,
-      SgsFollowGraphDataFields.MutuallyFollowingUserIds,
-      SgsFollowGraphDataFields.MutedUserIds
+  // defauwt cwient id fow this wepositowy i-if the upstweam wequests doesn't i-indicate one. nyaa~~
+  o-ovewwide vaw cwientsubid = "community"
+  ovewwide vaw wequestscope: wequestscope = w-wequestscopes.entitytweetssouwce
+  ovewwide vaw fowwowgwaphdatafiewdstofetch: sgsfowwowgwaphdatafiewds.vawueset =
+    sgsfowwowgwaphdatafiewds.vawueset(
+      s-sgsfowwowgwaphdatafiewds.fowwowedusewids,
+      sgsfowwowgwaphdatafiewds.mutuawwyfowwowingusewids, :3
+      sgsfowwowgwaphdatafiewds.mutedusewids
     )
 
   /**
-   * [1] timeout is derived from p9999 TLR <-> Earlybird latency and shall be less than
-   *     request timeout of timelineranker client within downstream timelinemixer, which is
-   *     1s now
+   * [1] t-timeout i-is dewived fwom p-p9999 tww <-> e-eawwybiwd watency and shaww be wess than
+   *     w-wequest timeout of timewinewankew cwient within d-downstweam timewinemixew, 😳😳😳 which is
+   *     1s nyow
    *
-   * [2] processing timeout is less than request timeout [1] with 100ms space for networking and
-   *     other times such as gc
+   * [2] pwocessing timeout is wess t-than wequest timeout [1] with 100ms s-space fow nyetwowking a-and
+   *     o-othew times such as gc
    */
-  override val searchProcessingTimeout: Duration = 550.milliseconds // [2]
-  override def earlybirdClient(scope: String): EarlybirdService.MethodPerEndpoint =
-    config.underlyingClients.createEarlybirdClient(
-      scope = scope,
-      requestTimeout = 650.milliseconds, // [1]
-      timeout = 900.milliseconds, // [1]
-      retryPolicy = config.underlyingClients.DefaultRetryPolicy
+  ovewwide vaw seawchpwocessingtimeout: d-duwation = 550.miwwiseconds // [2]
+  o-ovewwide def eawwybiwdcwient(scope: stwing): eawwybiwdsewvice.methodpewendpoint =
+    c-config.undewwyingcwients.cweateeawwybiwdcwient(
+      s-scope = scope, (˘ω˘)
+      w-wequesttimeout = 650.miwwiseconds, ^^ // [1]
+      timeout = 900.miwwiseconds, :3 // [1]
+      w-wetwypowicy = config.undewwyingcwients.defauwtwetwypowicy
     )
 
-  def apply(): EntityTweetsRepository = {
-    val entityTweetsSource = new EntityTweetsSource(
-      gizmoduckClient,
-      searchClient,
-      tweetyPieHighQoSClient,
-      userMetadataClient,
-      followGraphDataProvider,
-      clientFactories.visibilityEnforcerFactory.apply(
-        VisibilityRules,
-        RequestScopes.EntityTweetsSource
-      ),
-      config.underlyingClients.contentFeaturesCache,
-      config.statsReceiver
+  def a-appwy(): entitytweetswepositowy = {
+    vaw entitytweetssouwce = n-nyew entitytweetssouwce(
+      gizmoduckcwient, -.-
+      s-seawchcwient, 😳
+      t-tweetypiehighqoscwient, mya
+      usewmetadatacwient, (˘ω˘)
+      fowwowgwaphdatapwovidew, >_<
+      cwientfactowies.visibiwityenfowcewfactowy.appwy(
+        visibiwitywuwes, -.-
+        wequestscopes.entitytweetssouwce
+      ), 🥺
+      config.undewwyingcwients.contentfeatuwescache, (U ﹏ U)
+      c-config.statsweceivew
     )
 
-    new EntityTweetsRepository(entityTweetsSource)
+    n-nyew entitytweetswepositowy(entitytweetssouwce)
   }
 }

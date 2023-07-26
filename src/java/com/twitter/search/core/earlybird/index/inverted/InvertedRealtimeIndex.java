@@ -1,558 +1,558 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.io.IOException;
-import java.util.Comparator;
+impowt j-java.io.ioexception;
+i-impowt java.utiw.compawatow;
 
-import javax.annotation.Nullable;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.StringHelper;
+i-impowt owg.apache.wucene.index.tewms;
+i-impowt o-owg.apache.wucene.index.tewmsenum;
+i-impowt owg.apache.wucene.utiw.byteswef;
+impowt owg.apache.wucene.utiw.stwinghewpew;
 
-import com.twitter.search.common.hashtable.HashTable;
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.util.hash.KeysSource;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+impowt com.twittew.seawch.common.hashtabwe.hashtabwe;
+i-impowt com.twittew.seawch.common.schema.base.eawwybiwdfiewdtype;
+impowt com.twittew.seawch.common.utiw.hash.keyssouwce;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
 
-public class InvertedRealtimeIndex extends InvertedIndex {
-  public static final int FIXED_HASH_SEED = 0;
+pubwic cwass invewtedweawtimeindex e-extends invewtedindex {
+  p-pubwic static finaw int fixed_hash_seed = 0;
 
-  public final class TermHashTable extends HashTable<BytesRef> {
+  pubwic finaw cwass tewmhashtabwe e-extends hashtabwe<byteswef> {
 
-    private final TermPointerEncoding termPointerEncoding;
+    pwivate finaw tewmpointewencoding tewmpointewencoding;
 
-    public TermHashTable(int size, TermPointerEncoding termPointerEncoding) {
-      super(size);
-      this.termPointerEncoding = termPointerEncoding;
+    pubwic t-tewmhashtabwe(int size, òωó tewmpointewencoding tewmpointewencoding) {
+      s-supew(size);
+      this.tewmpointewencoding = t-tewmpointewencoding;
     }
 
-    public TermHashTable(int[] termsHash, TermPointerEncoding termPointerEncoding) {
-      super(termsHash);
-      this.termPointerEncoding = termPointerEncoding;
+    p-pubwic t-tewmhashtabwe(int[] tewmshash, 🥺 tewmpointewencoding t-tewmpointewencoding) {
+      supew(tewmshash);
+      this.tewmpointewencoding = t-tewmpointewencoding;
     }
 
-    @Override
-    public boolean matchItem(BytesRef term, int candidateTermID) {
-      return ByteTermUtils.postingEquals(
-          getTermPool(),
-          termPointerEncoding.getTextStart(termsArray.termPointers[candidateTermID]), term);
+    @ovewwide
+    pubwic boowean matchitem(byteswef tewm, rawr x3 int candidatetewmid) {
+      wetuwn bytetewmutiws.postingequaws(
+          gettewmpoow(),
+          t-tewmpointewencoding.gettextstawt(tewmsawway.tewmpointews[candidatetewmid]), ^•ﻌ•^ tewm);
     }
 
-    @Override
-    public int hashCodeForItem(int itemID) {
-      return ByteTermUtils.hashCode(
-          getTermPool(), termPointerEncoding.getTextStart(termsArray.termPointers[itemID]));
+    @ovewwide
+    p-pubwic i-int hashcodefowitem(int i-itemid) {
+      wetuwn bytetewmutiws.hashcode(
+          gettewmpoow(), :3 t-tewmpointewencoding.gettextstawt(tewmsawway.tewmpointews[itemid]));
     }
 
     /*
-     * Use a fixed hash seed to compute the hash code for the given item. This is necessary because
-     * we want the TermHashTable to be consistent for lookups in indexes that have been flushed and
-     * loaded across restarts and redeploys.
+     * u-use a fixed hash seed t-to compute the hash c-code fow the given item. (ˆ ﻌ ˆ)♡ this i-is nyecessawy because
+     * we w-want the tewmhashtabwe to be consistent fow wookups i-in indexes that have been f-fwushed and
+     * woaded acwoss w-westawts and wedepwoys. (U ᵕ U❁)
      *
-     * Note: previously we used item.hashcode(), however that hash function relies on the seed value
-     * StringHelper.GOOD_FAST_HASH_SEED, which is initialized to System.currentTimeMillis() when the
-     * JVM process starts up.
+     * n-nyote: pweviouswy we used item.hashcode(), :3 howevew that hash function wewies on the seed vawue
+     * stwinghewpew.good_fast_hash_seed, ^^;; which i-is initiawized t-to system.cuwwenttimemiwwis() when the
+     * j-jvm pwocess stawts u-up. ( ͡o ω ͡o )
      */
-    public long lookupItem(BytesRef item) {
-      int itemHashCode = StringHelper.murmurhash3_x86_32(item, FIXED_HASH_SEED);
+    p-pubwic wong wookupitem(byteswef item) {
+      int itemhashcode = s-stwinghewpew.muwmuwhash3_x86_32(item, fixed_hash_seed);
 
-      return super.lookupItem(item, itemHashCode);
+      wetuwn supew.wookupitem(item, o.O itemhashcode);
     }
   }
 
 
   /**
-   * Skip list comparator used by {@link #termsSkipList}. The key would be the bytesRef of the term,
-   *   and the value would be the termID of a term.
+   * skip wist c-compawatow used by {@wink #tewmsskipwist}. ^•ﻌ•^ t-the k-key wouwd be the b-byteswef of the tewm, XD
+   *   a-and the vawue wouwd b-be the tewmid o-of a tewm. ^^
    *
-   *   Notice this comparator is keeping states,
-   *   so different threads CANNOT share the same comparator.
+   *   n-nyotice this compawatow is keeping states, o.O
+   *   s-so diffewent t-thweads c-cannot shawe the s-same compawatow. ( ͡o ω ͡o )
    */
-  public static final class TermsSkipListComparator implements SkipListComparator<BytesRef> {
-    private static final Comparator<BytesRef> BYTES_REF_COMPARATOR = Comparator.naturalOrder();
+  p-pubwic static finaw cwass tewmsskipwistcompawatow impwements s-skipwistcompawatow<byteswef> {
+    pwivate static finaw compawatow<byteswef> bytes_wef_compawatow = compawatow.natuwawowdew();
 
-    private static final int SENTINEL_VALUE = HashTable.EMPTY_SLOT;
+    pwivate s-static finaw int sentinew_vawue = hashtabwe.empty_swot;
 
-    // Initializing two BytesRef to use for later comparisons.
-    //   Notice different threads cannot share the same comparator.
-    private final BytesRef bytesRef1 = new BytesRef();
-    private final BytesRef bytesRef2 = new BytesRef();
+    // initiawizing t-two byteswef to u-use fow watew compawisons. /(^•ω•^)
+    //   n-nyotice diffewent thweads cannot s-shawe the same compawatow. 🥺
+    p-pwivate finaw b-byteswef byteswef1 = nyew byteswef();
+    pwivate finaw byteswef byteswef2 = nyew byteswef();
 
     /**
-     * We have to pass each part of the index in since during load process, the comparator
-     *   needs to be build before the index.
+     * w-we have to pass each pawt of the i-index in since duwing woad pwocess, nyaa~~ t-the compawatow
+     *   n-nyeeds to be buiwd befowe the index. mya
      */
-    private final InvertedRealtimeIndex invertedIndex;
+    p-pwivate f-finaw invewtedweawtimeindex invewtedindex;
 
-    public TermsSkipListComparator(InvertedRealtimeIndex invertedIndex) {
-      this.invertedIndex = invertedIndex;
+    p-pubwic tewmsskipwistcompawatow(invewtedweawtimeindex i-invewtedindex) {
+      this.invewtedindex = invewtedindex;
     }
 
-    @Override
-    public int compareKeyWithValue(BytesRef key, int targetValue, int targetPosition) {
-      // No key could represent SENTINEL_VALUE and SENTINEL_VALUE is greatest.
-      if (targetValue == SENTINEL_VALUE) {
-        return -1;
-      } else {
-        getTerm(targetValue, bytesRef1);
-        return BYTES_REF_COMPARATOR.compare(key, bytesRef1);
+    @ovewwide
+    pubwic int compawekeywithvawue(byteswef key, XD int t-tawgetvawue, nyaa~~ int t-tawgetposition) {
+      // n-nyo key couwd wepwesent s-sentinew_vawue a-and sentinew_vawue is gweatest. ʘwʘ
+      i-if (tawgetvawue == sentinew_vawue) {
+        wetuwn -1;
+      } ewse {
+        gettewm(tawgetvawue, (⑅˘꒳˘) b-byteswef1);
+        w-wetuwn bytes_wef_compawatow.compawe(key, :3 byteswef1);
       }
     }
 
-    @Override
-    public int compareValues(int v1, int v2) {
-      // SENTINEL_VALUE is greatest.
-      if (v1 != SENTINEL_VALUE && v2 != SENTINEL_VALUE) {
-        getTerm(v1, bytesRef1);
-        getTerm(v2, bytesRef2);
-        return BYTES_REF_COMPARATOR.compare(bytesRef1, bytesRef2);
-      } else if (v1 == SENTINEL_VALUE && v2 == SENTINEL_VALUE) {
-        return 0;
-      } else if (v1 == SENTINEL_VALUE) {
-        return 1;
-      } else {
-        return -1;
+    @ovewwide
+    pubwic int c-compawevawues(int v-v1, -.- int v2) {
+      // sentinew_vawue is gweatest. 😳😳😳
+      if (v1 != s-sentinew_vawue && v2 != sentinew_vawue) {
+        gettewm(v1, (U ﹏ U) byteswef1);
+        gettewm(v2, o.O b-byteswef2);
+        wetuwn bytes_wef_compawatow.compawe(byteswef1, ( ͡o ω ͡o ) b-byteswef2);
+      } e-ewse if (v1 == sentinew_vawue && v2 == sentinew_vawue) {
+        w-wetuwn 0;
+      } ewse i-if (v1 == sentinew_vawue) {
+        wetuwn 1;
+      } ewse {
+        wetuwn -1;
       }
     }
 
-    @Override
-    public int getSentinelValue() {
-      return SENTINEL_VALUE;
+    @ovewwide
+    p-pubwic int getsentinewvawue() {
+      w-wetuwn sentinew_vawue;
     }
 
     /**
-     * Get the term specified by the termID.
-     *   This method should be the same as {@link InvertedRealtimeIndex#getTerm}
+     * get the tewm specified by t-the tewmid. òωó
+     *   this method s-shouwd be the s-same as {@wink invewtedweawtimeindex#gettewm}
      */
-    private void getTerm(int termID, BytesRef text) {
-      invertedIndex.getTerm(termID, text);
+    p-pwivate void gettewm(int t-tewmid, 🥺 byteswef t-text) {
+      i-invewtedindex.gettewm(tewmid, /(^•ω•^) text);
     }
   }
 
-  private static final int HASHMAP_SIZE = 64 * 1024;
+  p-pwivate static f-finaw int hashmap_size = 64 * 1024;
 
-  private SkipListContainer<BytesRef> termsSkipList;
+  pwivate skipwistcontainew<byteswef> tewmsskipwist;
 
-  private final TermPointerEncoding termPointerEncoding;
-  private final ByteBlockPool termPool;
-  private final SkipListPostingList postingList;
+  p-pwivate finaw tewmpointewencoding t-tewmpointewencoding;
+  p-pwivate finaw bytebwockpoow tewmpoow;
+  p-pwivate finaw skipwistpostingwist p-postingwist;
 
-  private int numTerms;
-  private int numDocs;
-  private int sumTotalTermFreq;
-  private int sumTermDocFreq;
-  private int maxPosition;
+  p-pwivate int nyumtewms;
+  pwivate int nyumdocs;
+  pwivate int s-sumtotawtewmfweq;
+  p-pwivate int s-sumtewmdocfweq;
+  p-pwivate int maxposition;
 
-  private volatile TermHashTable hashTable;
-  private TermsArray termsArray;
+  pwivate vowatiwe t-tewmhashtabwe hashtabwe;
+  pwivate tewmsawway tewmsawway;
 
   /**
-   * Creates a new in-memory real-time inverted index for the given field.
+   * cweates a nyew in-memowy weaw-time invewted i-index fow the given fiewd. 😳😳😳
    */
-  public InvertedRealtimeIndex(EarlybirdFieldType fieldType,
-                               TermPointerEncoding termPointerEncoding,
-                               String fieldName) {
-    super(fieldType);
-    this.termPool = new ByteBlockPool();
+  p-pubwic invewtedweawtimeindex(eawwybiwdfiewdtype fiewdtype, ^•ﻌ•^
+                               tewmpointewencoding t-tewmpointewencoding, nyaa~~
+                               stwing fiewdname) {
+    supew(fiewdtype);
+    t-this.tewmpoow = nyew bytebwockpoow();
 
-    this.termPointerEncoding = termPointerEncoding;
-    this.hashTable = new TermHashTable(HASHMAP_SIZE, termPointerEncoding);
+    t-this.tewmpointewencoding = t-tewmpointewencoding;
+    t-this.hashtabwe = n-nyew tewmhashtabwe(hashmap_size, t-tewmpointewencoding);
 
-    this.postingList = new SkipListPostingList(
-        fieldType.hasPositions()
-            ? SkipListContainer.HasPositions.YES
-            : SkipListContainer.HasPositions.NO,
-        fieldType.isStorePerPositionPayloads()
-            ? SkipListContainer.HasPayloads.YES
-            : SkipListContainer.HasPayloads.NO,
-        fieldName);
+    this.postingwist = nyew skipwistpostingwist(
+        fiewdtype.haspositions()
+            ? skipwistcontainew.haspositions.yes
+            : skipwistcontainew.haspositions.no, OwO
+        fiewdtype.isstowepewpositionpaywoads()
+            ? s-skipwistcontainew.haspaywoads.yes
+            : s-skipwistcontainew.haspaywoads.no,
+        f-fiewdname);
 
-    this.termsArray = new TermsArray(
-        HASHMAP_SIZE, fieldType.isStoreFacetOffensiveCounters());
+    this.tewmsawway = n-nyew tewmsawway(
+        hashmap_size, ^•ﻌ•^ fiewdtype.isstowefacetoffensivecountews());
 
-    // Create termsSkipList to maintain order if field is support ordered terms.
-    if (fieldType.isSupportOrderedTerms()) {
-      // Terms skip list does not support position.
-      this.termsSkipList = new SkipListContainer<>(
-          new TermsSkipListComparator(this),
-          SkipListContainer.HasPositions.NO,
-          SkipListContainer.HasPayloads.NO,
-          "terms");
-      this.termsSkipList.newSkipList();
-    } else {
-      this.termsSkipList = null;
+    // c-cweate tewmsskipwist t-to maintain owdew if f-fiewd is suppowt owdewed tewms. σωσ
+    if (fiewdtype.issuppowtowdewedtewms()) {
+      // t-tewms skip w-wist does nyot suppowt position.
+      t-this.tewmsskipwist = n-nyew skipwistcontainew<>(
+          nyew tewmsskipwistcompawatow(this), -.-
+          skipwistcontainew.haspositions.no, (˘ω˘)
+          skipwistcontainew.haspaywoads.no,
+          "tewms");
+      this.tewmsskipwist.newskipwist();
+    } e-ewse {
+      this.tewmsskipwist = n-nyuww;
     }
   }
 
-  void setTermsSkipList(SkipListContainer<BytesRef> termsSkipList) {
-    this.termsSkipList = termsSkipList;
+  v-void settewmsskipwist(skipwistcontainew<byteswef> t-tewmsskipwist) {
+    t-this.tewmsskipwist = tewmsskipwist;
   }
 
-  SkipListContainer<BytesRef> getTermsSkipList() {
-    return termsSkipList;
+  s-skipwistcontainew<byteswef> g-gettewmsskipwist() {
+    wetuwn t-tewmsskipwist;
   }
 
-  private InvertedRealtimeIndex(
-      EarlybirdFieldType fieldType,
-      int numTerms,
-      int numDocs,
-      int sumTermDocFreq,
-      int sumTotalTermFreq,
-      int maxPosition,
-      int[] termsHash,
-      TermsArray termsArray,
-      ByteBlockPool termPool,
-      TermPointerEncoding termPointerEncoding,
-      SkipListPostingList postingList) {
-    super(fieldType);
-    this.numTerms = numTerms;
-    this.numDocs = numDocs;
-    this.sumTermDocFreq = sumTermDocFreq;
-    this.sumTotalTermFreq = sumTotalTermFreq;
-    this.maxPosition = maxPosition;
-    this.termsArray = termsArray;
-    this.termPool = termPool;
-    this.termPointerEncoding = termPointerEncoding;
-    this.hashTable = new TermHashTable(termsHash, termPointerEncoding);
-    this.postingList = postingList;
+  p-pwivate invewtedweawtimeindex(
+      eawwybiwdfiewdtype f-fiewdtype, rawr x3
+      int nyumtewms, rawr x3
+      int nyumdocs, σωσ
+      i-int sumtewmdocfweq, nyaa~~
+      i-int sumtotawtewmfweq, (ꈍᴗꈍ)
+      i-int maxposition, ^•ﻌ•^
+      int[] tewmshash, >_<
+      t-tewmsawway tewmsawway, ^^;;
+      bytebwockpoow tewmpoow, ^^;;
+      t-tewmpointewencoding tewmpointewencoding, /(^•ω•^)
+      s-skipwistpostingwist p-postingwist) {
+    supew(fiewdtype);
+    this.numtewms = nyumtewms;
+    t-this.numdocs = numdocs;
+    this.sumtewmdocfweq = s-sumtewmdocfweq;
+    t-this.sumtotawtewmfweq = sumtotawtewmfweq;
+    t-this.maxposition = maxposition;
+    t-this.tewmsawway = t-tewmsawway;
+    this.tewmpoow = tewmpoow;
+    this.tewmpointewencoding = t-tewmpointewencoding;
+    this.hashtabwe = nyew tewmhashtabwe(tewmshash, nyaa~~ t-tewmpointewencoding);
+    t-this.postingwist = postingwist;
   }
 
-  void insertToTermsSkipList(BytesRef termBytesRef, int termID) {
-    if (termsSkipList != null) {
-      // Use the comparator passed in while building the skip list since we only have one writer.
-      termsSkipList.insert(termBytesRef, termID, SkipListContainer.FIRST_LIST_HEAD);
+  v-void insewttotewmsskipwist(byteswef tewmbyteswef, (✿oωo) i-int tewmid) {
+    i-if (tewmsskipwist != n-nyuww) {
+      // use the compawatow passed in whiwe buiwding the skip wist since we onwy have one wwitew. ( ͡o ω ͡o )
+      tewmsskipwist.insewt(tewmbyteswef, (U ᵕ U❁) tewmid, òωó skipwistcontainew.fiwst_wist_head);
     }
   }
 
-  @Override
-  public int getNumTerms() {
-    return numTerms;
+  @ovewwide
+  pubwic int getnumtewms() {
+    wetuwn nyumtewms;
   }
 
-  @Override
-  public int getNumDocs() {
-    return numDocs;
+  @ovewwide
+  pubwic int getnumdocs() {
+    w-wetuwn nyumdocs;
   }
 
-  @Override
-  public int getSumTotalTermFreq() {
-    return sumTotalTermFreq;
+  @ovewwide
+  p-pubwic int getsumtotawtewmfweq() {
+    wetuwn sumtotawtewmfweq;
   }
 
-  @Override
-  public int getSumTermDocFreq() {
-    return sumTermDocFreq;
+  @ovewwide
+  p-pubwic i-int getsumtewmdocfweq() {
+    w-wetuwn sumtewmdocfweq;
   }
 
-  @Override
-  public Terms createTerms(int maxPublishedPointer) {
-    return new RealtimeIndexTerms(this, maxPublishedPointer);
+  @ovewwide
+  pubwic t-tewms cweatetewms(int maxpubwishedpointew) {
+    w-wetuwn nyew w-weawtimeindextewms(this, σωσ maxpubwishedpointew);
   }
 
-  @Override
-  public TermsEnum createTermsEnum(int maxPublishedPointer) {
-    // Use SkipListInMemoryTermsEnum if termsSkipList is not null, which indicates field required
-    // ordered term.
-    if (termsSkipList == null) {
-      return new RealtimeIndexTerms.InMemoryTermsEnum(this, maxPublishedPointer);
-    } else {
-      return new RealtimeIndexTerms.SkipListInMemoryTermsEnum(this, maxPublishedPointer);
+  @ovewwide
+  p-pubwic tewmsenum cweatetewmsenum(int m-maxpubwishedpointew) {
+    // u-use skipwistinmemowytewmsenum if tewmsskipwist is nyot nyuww, :3 w-which indicates f-fiewd wequiwed
+    // o-owdewed t-tewm. OwO
+    if (tewmsskipwist == n-nyuww) {
+      wetuwn n-nyew weawtimeindextewms.inmemowytewmsenum(this, ^^ m-maxpubwishedpointew);
+    } e-ewse {
+      wetuwn n-nyew weawtimeindextewms.skipwistinmemowytewmsenum(this, (˘ω˘) maxpubwishedpointew);
     }
   }
 
-  int getPostingListPointer(int termID) {
-    return termsArray.getPostingsPointer(termID);
+  i-int getpostingwistpointew(int tewmid) {
+    w-wetuwn t-tewmsawway.getpostingspointew(tewmid);
   }
 
-  @Override
-  public int getLargestDocIDForTerm(int termID) {
-    if (termID == EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
-      return TermsArray.INVALID;
-    } else {
-      return postingList.getDocIDFromPosting(termsArray.largestPostings[termID]);
+  @ovewwide
+  pubwic i-int getwawgestdocidfowtewm(int tewmid) {
+    if (tewmid == e-eawwybiwdindexsegmentatomicweadew.tewm_not_found) {
+      wetuwn t-tewmsawway.invawid;
+    } e-ewse {
+      w-wetuwn postingwist.getdocidfwomposting(tewmsawway.wawgestpostings[tewmid]);
     }
   }
 
-  @Override
-  public int getDF(int termID) {
-    if (termID == HashTable.EMPTY_SLOT) {
-      return 0;
-    } else {
-      return this.postingList.getDF(termID, termsArray);
+  @ovewwide
+  pubwic i-int getdf(int tewmid) {
+    i-if (tewmid == hashtabwe.empty_swot) {
+      wetuwn 0;
+    } e-ewse {
+      wetuwn t-this.postingwist.getdf(tewmid, OwO tewmsawway);
     }
   }
 
-  @Override
-  public int getMaxPublishedPointer() {
-    return this.postingList.getMaxPublishedPointer();
+  @ovewwide
+  pubwic int getmaxpubwishedpointew() {
+    wetuwn this.postingwist.getmaxpubwishedpointew();
   }
 
-  @Override
-  public int lookupTerm(BytesRef term) {
-    return HashTable.decodeItemId(hashTable.lookupItem(term));
+  @ovewwide
+  pubwic int wookuptewm(byteswef t-tewm) {
+    wetuwn hashtabwe.decodeitemid(hashtabwe.wookupitem(tewm));
   }
 
-  @Override
-  public FacetLabelAccessor getLabelAccessor() {
-    final TermsArray termsArrayCopy = this.termsArray;
+  @ovewwide
+  p-pubwic f-facetwabewaccessow getwabewaccessow() {
+    finaw tewmsawway tewmsawwaycopy = t-this.tewmsawway;
 
-    return new FacetLabelAccessor() {
-      @Override protected boolean seek(long termID) {
-        if (termID == HashTable.EMPTY_SLOT) {
-          return false;
+    wetuwn new f-facetwabewaccessow() {
+      @ovewwide p-pwotected b-boowean seek(wong tewmid) {
+        if (tewmid == h-hashtabwe.empty_swot) {
+          w-wetuwn fawse;
         }
-        int termPointer = termsArrayCopy.termPointers[(int) termID];
-        hasTermPayload = termPointerEncoding.hasPayload(termPointer);
-        int textStart = termPointerEncoding.getTextStart(termPointer);
-        int termPayloadStart = ByteTermUtils.setBytesRef(termPool, termRef, textStart);
-        if (hasTermPayload) {
-          ByteTermUtils.setBytesRef(termPool, termPayload, termPayloadStart);
+        int tewmpointew = t-tewmsawwaycopy.tewmpointews[(int) tewmid];
+        hastewmpaywoad = t-tewmpointewencoding.haspaywoad(tewmpointew);
+        int textstawt = t-tewmpointewencoding.gettextstawt(tewmpointew);
+        i-int tewmpaywoadstawt = b-bytetewmutiws.setbyteswef(tewmpoow, UwU tewmwef, ^•ﻌ•^ textstawt);
+        i-if (hastewmpaywoad) {
+          b-bytetewmutiws.setbyteswef(tewmpoow, (ꈍᴗꈍ) t-tewmpaywoad, /(^•ω•^) t-tewmpaywoadstawt);
         }
-        offensiveCount = termsArrayCopy.offensiveCounters != null
-            ? termsArrayCopy.offensiveCounters[(int) termID] : 0;
+        offensivecount = t-tewmsawwaycopy.offensivecountews != n-nyuww
+            ? t-tewmsawwaycopy.offensivecountews[(int) t-tewmid] : 0;
 
-        return true;
+        w-wetuwn t-twue;
       }
     };
   }
 
-  @Override
-  public boolean hasMaxPublishedPointer() {
-    return true;
+  @ovewwide
+  p-pubwic b-boowean hasmaxpubwishedpointew() {
+    wetuwn t-twue;
   }
 
-  @Override
-  public void getTerm(int termID, BytesRef text) {
-    getTerm(termID, text, termsArray, termPointerEncoding, termPool);
-  }
-
-  /**
-   * Extract to helper method so the logic can be shared with
-   *   {@link TermsSkipListComparator#getTerm}
-   */
-  private static void getTerm(int termID, BytesRef text,
-                              TermsArray termsArray,
-                              TermPointerEncoding termPointerEncoding,
-                              ByteBlockPool termPool) {
-    int textStart = termPointerEncoding.getTextStart(termsArray.termPointers[termID]);
-    ByteTermUtils.setBytesRef(termPool, text, textStart);
+  @ovewwide
+  pubwic v-void gettewm(int tewmid, (U ᵕ U❁) byteswef t-text) {
+    g-gettewm(tewmid, (✿oωo) t-text, OwO tewmsawway, tewmpointewencoding, :3 tewmpoow);
   }
 
   /**
-   * Called when postings hash is too small (> 50% occupied).
+   * extwact to hewpew m-method so the w-wogic can be shawed w-with
+   *   {@wink tewmsskipwistcompawatow#gettewm}
    */
-  void rehashPostings(int newSize) {
-    TermHashTable newTable = new TermHashTable(newSize, termPointerEncoding);
-    hashTable.rehash(newTable);
-    hashTable = newTable;
+  pwivate static void gettewm(int t-tewmid, nyaa~~ byteswef t-text, ^•ﻌ•^
+                              tewmsawway t-tewmsawway, ( ͡o ω ͡o )
+                              t-tewmpointewencoding tewmpointewencoding, ^^;;
+                              bytebwockpoow tewmpoow) {
+    i-int textstawt = t-tewmpointewencoding.gettextstawt(tewmsawway.tewmpointews[tewmid]);
+    b-bytetewmutiws.setbyteswef(tewmpoow, mya t-text, (U ᵕ U❁) textstawt);
   }
 
   /**
-   * Returns per-term array containing the number of documents indexed with that term that were
-   * considered to be offensive.
+   * cawwed w-when postings h-hash is too smow (> 50% occupied). ^•ﻌ•^
    */
-  @Nullable
-  int[] getOffensiveCounters() {
-    return this.termsArray.offensiveCounters;
+  void w-wehashpostings(int nyewsize) {
+    tewmhashtabwe n-nyewtabwe = nyew tewmhashtabwe(newsize, (U ﹏ U) t-tewmpointewencoding);
+    h-hashtabwe.wehash(newtabwe);
+    hashtabwe = n-nyewtabwe;
   }
 
   /**
-   * Returns access to all the terms in this index as a {@link KeysSource}.
+   * w-wetuwns pew-tewm awway c-containing the nyumbew of documents i-indexed w-with that tewm that w-wewe
+   * considewed t-to be offensive. /(^•ω•^)
    */
-  public KeysSource getKeysSource() {
-    final int localNumTerms = this.numTerms;
-    final TermsArray termsArrayCopy = this.termsArray;
+  @nuwwabwe
+  int[] g-getoffensivecountews() {
+    w-wetuwn this.tewmsawway.offensivecountews;
+  }
 
-    return new KeysSource() {
-      private int termID = 0;
-      private BytesRef text = new BytesRef();
+  /**
+   * w-wetuwns access to aww t-the tewms in this index as a {@wink keyssouwce}. ʘwʘ
+   */
+  p-pubwic k-keyssouwce getkeyssouwce() {
+    f-finaw int wocawnumtewms = this.numtewms;
+    finaw tewmsawway tewmsawwaycopy = this.tewmsawway;
 
-      @Override
-      public int getNumberOfKeys() {
-        return localNumTerms;
+    w-wetuwn nyew keyssouwce() {
+      p-pwivate i-int tewmid = 0;
+      pwivate byteswef text = nyew b-byteswef();
+
+      @ovewwide
+      pubwic int g-getnumbewofkeys() {
+        w-wetuwn w-wocawnumtewms;
       }
 
-      /** Must not be called more often than getNumberOfKeys() before rewind() is called */
-      @Override
-      public BytesRef nextKey() {
-        Preconditions.checkState(termID < localNumTerms);
-        int textStart = termPointerEncoding.getTextStart(termsArrayCopy.termPointers[termID]);
-        ByteTermUtils.setBytesRef(termPool, text, textStart);
-        termID++;
-        return text;
+      /** m-must nyot b-be cawwed mowe often than getnumbewofkeys() befowe wewind() is cawwed */
+      @ovewwide
+      pubwic byteswef nyextkey() {
+        p-pweconditions.checkstate(tewmid < wocawnumtewms);
+        i-int textstawt = tewmpointewencoding.gettextstawt(tewmsawwaycopy.tewmpointews[tewmid]);
+        bytetewmutiws.setbyteswef(tewmpoow, XD text, textstawt);
+        t-tewmid++;
+        wetuwn text;
       }
 
-      @Override
-      public void rewind() {
-        termID = 0;
+      @ovewwide
+      pubwic void wewind() {
+        t-tewmid = 0;
       }
     };
   }
 
   /**
-   * Returns byte pool containing term text for all terms in this index.
+   * w-wetuwns byte poow containing t-tewm text fow aww tewms in this index. (⑅˘꒳˘)
    */
-  public ByteBlockPool getTermPool() {
-    return this.termPool;
+  pubwic b-bytebwockpoow g-gettewmpoow() {
+    wetuwn this.tewmpoow;
   }
 
   /**
-   * Returns per-term array containing pointers to where the text of each term is stored in the
-   * byte pool returned by {@link #getTermPool()}.
+   * w-wetuwns pew-tewm awway c-containing pointews to whewe the text of each tewm is stowed i-in the
+   * byte poow wetuwned by {@wink #gettewmpoow()}. nyaa~~
    */
-  public int[] getTermPointers() {
-    return this.termsArray.termPointers;
+  p-pubwic int[] g-gettewmpointews() {
+    w-wetuwn this.tewmsawway.tewmpointews;
   }
 
   /**
-   * Returns the hash table used to look up terms in this index.
+   * wetuwns t-the hash tabwe used to wook up tewms in this index. UwU
    */
-  InvertedRealtimeIndex.TermHashTable getHashTable() {
-    return hashTable;
+  invewtedweawtimeindex.tewmhashtabwe g-gethashtabwe() {
+    w-wetuwn h-hashtabwe;
   }
 
 
-  TermsArray getTermsArray() {
-    return termsArray;
+  t-tewmsawway gettewmsawway() {
+    wetuwn tewmsawway;
   }
 
-  TermsArray growTermsArray() {
-    termsArray = termsArray.grow();
-    return termsArray;
+  t-tewmsawway gwowtewmsawway() {
+    t-tewmsawway = tewmsawway.gwow();
+    wetuwn tewmsawway;
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @suppwesswawnings("unchecked")
+  @ovewwide
+  pubwic f-fwushhandwew getfwushhandwew() {
+    wetuwn n-nyew fwushhandwew(this);
   }
 
-  TermPointerEncoding getTermPointerEncoding() {
-    return termPointerEncoding;
+  tewmpointewencoding gettewmpointewencoding() {
+    w-wetuwn tewmpointewencoding;
   }
 
-  SkipListPostingList getPostingList() {
-    return postingList;
+  s-skipwistpostingwist getpostingwist() {
+    w-wetuwn postingwist;
   }
 
-  void incrementNumTerms() {
-    numTerms++;
+  v-void i-incwementnumtewms() {
+    nyumtewms++;
   }
 
-  void incrementSumTotalTermFreq() {
-    sumTotalTermFreq++;
+  void incwementsumtotawtewmfweq() {
+    s-sumtotawtewmfweq++;
   }
 
-  public void incrementSumTermDocFreq() {
-    sumTermDocFreq++;
+  pubwic void incwementsumtewmdocfweq() {
+    sumtewmdocfweq++;
   }
 
-  public void incrementNumDocs() {
-    numDocs++;
+  p-pubwic void incwementnumdocs() {
+    numdocs++;
   }
 
-  void setNumDocs(int numDocs) {
-    this.numDocs = numDocs;
+  void s-setnumdocs(int n-nyumdocs) {
+    t-this.numdocs = n-nyumdocs;
   }
 
-  void adjustMaxPosition(int position) {
-    if (position > maxPosition) {
-      maxPosition = position;
+  v-void adjustmaxposition(int position) {
+    i-if (position > maxposition) {
+      maxposition = position;
     }
   }
 
-  int getMaxPosition() {
-    return maxPosition;
+  i-int getmaxposition() {
+    wetuwn maxposition;
   }
 
-  public static class FlushHandler extends Flushable.Handler<InvertedRealtimeIndex> {
-    private static final String NUM_DOCS_PROP_NAME = "numDocs";
-    private static final String SUM_TOTAL_TERM_FREQ_PROP_NAME = "sumTotalTermFreq";
-    private static final String SUM_TERM_DOC_FREQ_PROP_NAME = "sumTermDocFreq";
-    private static final String NUM_TERMS_PROP_NAME = "numTerms";
-    private static final String POSTING_LIST_PROP_NAME = "postingList";
-    private static final String TERMS_SKIP_LIST_PROP_NAME = "termsSkipList";
-    private static final String MAX_POSITION = "maxPosition";
+  p-pubwic static cwass fwushhandwew extends f-fwushabwe.handwew<invewtedweawtimeindex> {
+    p-pwivate static finaw stwing nyum_docs_pwop_name = "numdocs";
+    p-pwivate static finaw stwing s-sum_totaw_tewm_fweq_pwop_name = "sumtotawtewmfweq";
+    p-pwivate static finaw stwing s-sum_tewm_doc_fweq_pwop_name = "sumtewmdocfweq";
+    p-pwivate static finaw stwing n-nyum_tewms_pwop_name = "numtewms";
+    pwivate static finaw stwing posting_wist_pwop_name = "postingwist";
+    p-pwivate static finaw stwing tewms_skip_wist_pwop_name = "tewmsskipwist";
+    p-pwivate static finaw stwing max_position = "maxposition";
 
-    protected final EarlybirdFieldType fieldType;
-    protected final TermPointerEncoding termPointerEncoding;
+    pwotected finaw eawwybiwdfiewdtype f-fiewdtype;
+    p-pwotected finaw t-tewmpointewencoding tewmpointewencoding;
 
-    public FlushHandler(EarlybirdFieldType fieldType,
-                        TermPointerEncoding termPointerEncoding) {
-      this.fieldType = fieldType;
-      this.termPointerEncoding = termPointerEncoding;
+    pubwic f-fwushhandwew(eawwybiwdfiewdtype f-fiewdtype, (˘ω˘)
+                        tewmpointewencoding t-tewmpointewencoding) {
+      this.fiewdtype = f-fiewdtype;
+      this.tewmpointewencoding = t-tewmpointewencoding;
     }
 
-    public FlushHandler(InvertedRealtimeIndex objectToFlush) {
-      super(objectToFlush);
-      this.fieldType = objectToFlush.fieldType;
-      this.termPointerEncoding = objectToFlush.getTermPointerEncoding();
+    p-pubwic fwushhandwew(invewtedweawtimeindex objecttofwush) {
+      supew(objecttofwush);
+      this.fiewdtype = objecttofwush.fiewdtype;
+      t-this.tewmpointewencoding = objecttofwush.gettewmpointewencoding();
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out)
-        throws IOException {
-      InvertedRealtimeIndex objectToFlush = getObjectToFlush();
-      flushInfo.addIntProperty(NUM_TERMS_PROP_NAME, objectToFlush.getNumTerms());
-      flushInfo.addIntProperty(NUM_DOCS_PROP_NAME, objectToFlush.numDocs);
-      flushInfo.addIntProperty(SUM_TERM_DOC_FREQ_PROP_NAME, objectToFlush.sumTermDocFreq);
-      flushInfo.addIntProperty(SUM_TOTAL_TERM_FREQ_PROP_NAME, objectToFlush.sumTotalTermFreq);
-      flushInfo.addIntProperty(MAX_POSITION, objectToFlush.maxPosition);
+    @ovewwide
+    p-pwotected void dofwush(fwushinfo fwushinfo, rawr x3 datasewiawizew out)
+        thwows ioexception {
+      i-invewtedweawtimeindex objecttofwush = g-getobjecttofwush();
+      f-fwushinfo.addintpwopewty(num_tewms_pwop_name, (///ˬ///✿) objecttofwush.getnumtewms());
+      fwushinfo.addintpwopewty(num_docs_pwop_name, 😳😳😳 objecttofwush.numdocs);
+      fwushinfo.addintpwopewty(sum_tewm_doc_fweq_pwop_name, (///ˬ///✿) o-objecttofwush.sumtewmdocfweq);
+      fwushinfo.addintpwopewty(sum_totaw_tewm_fweq_pwop_name, ^^;; objecttofwush.sumtotawtewmfweq);
+      f-fwushinfo.addintpwopewty(max_position, ^^ objecttofwush.maxposition);
 
-      out.writeIntArray(objectToFlush.hashTable.slots());
-      objectToFlush.termsArray.getFlushHandler()
-          .flush(flushInfo.newSubProperties("termsArray"), out);
-      objectToFlush.getTermPool().getFlushHandler()
-          .flush(flushInfo.newSubProperties("termPool"), out);
-      objectToFlush.getPostingList().getFlushHandler()
-          .flush(flushInfo.newSubProperties(POSTING_LIST_PROP_NAME), out);
+      o-out.wwiteintawway(objecttofwush.hashtabwe.swots());
+      o-objecttofwush.tewmsawway.getfwushhandwew()
+          .fwush(fwushinfo.newsubpwopewties("tewmsawway"), (///ˬ///✿) out);
+      o-objecttofwush.gettewmpoow().getfwushhandwew()
+          .fwush(fwushinfo.newsubpwopewties("tewmpoow"), -.- o-out);
+      o-objecttofwush.getpostingwist().getfwushhandwew()
+          .fwush(fwushinfo.newsubpwopewties(posting_wist_pwop_name), /(^•ω•^) o-out);
 
-      if (fieldType.isSupportOrderedTerms()) {
-        Preconditions.checkNotNull(objectToFlush.termsSkipList);
+      i-if (fiewdtype.issuppowtowdewedtewms()) {
+        p-pweconditions.checknotnuww(objecttofwush.tewmsskipwist);
 
-        objectToFlush.termsSkipList.getFlushHandler()
-            .flush(flushInfo.newSubProperties(TERMS_SKIP_LIST_PROP_NAME), out);
+        objecttofwush.tewmsskipwist.getfwushhandwew()
+            .fwush(fwushinfo.newsubpwopewties(tewms_skip_wist_pwop_name), UwU out);
       }
     }
 
-    @Override
-    protected InvertedRealtimeIndex doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      int[] termsHash = in.readIntArray();
-      TermsArray termsArray = (new TermsArray.FlushHandler())
-          .load(flushInfo.getSubProperties("termsArray"), in);
-      ByteBlockPool termPool = (new ByteBlockPool.FlushHandler())
-          .load(flushInfo.getSubProperties("termPool"), in);
-      SkipListPostingList postingList = (new SkipListPostingList.FlushHandler())
-          .load(flushInfo.getSubProperties(POSTING_LIST_PROP_NAME), in);
+    @ovewwide
+    pwotected invewtedweawtimeindex dowoad(fwushinfo f-fwushinfo, (⑅˘꒳˘) d-datadesewiawizew i-in)
+        t-thwows ioexception {
+      i-int[] t-tewmshash = in.weadintawway();
+      tewmsawway tewmsawway = (new tewmsawway.fwushhandwew())
+          .woad(fwushinfo.getsubpwopewties("tewmsawway"), ʘwʘ in);
+      b-bytebwockpoow t-tewmpoow = (new bytebwockpoow.fwushhandwew())
+          .woad(fwushinfo.getsubpwopewties("tewmpoow"), σωσ in);
+      skipwistpostingwist p-postingwist = (new s-skipwistpostingwist.fwushhandwew())
+          .woad(fwushinfo.getsubpwopewties(posting_wist_pwop_name), ^^ i-in);
 
-      InvertedRealtimeIndex index = new InvertedRealtimeIndex(
-          fieldType,
-          flushInfo.getIntProperty(NUM_TERMS_PROP_NAME),
-          flushInfo.getIntProperty(NUM_DOCS_PROP_NAME),
-          flushInfo.getIntProperty(SUM_TERM_DOC_FREQ_PROP_NAME),
-          flushInfo.getIntProperty(SUM_TOTAL_TERM_FREQ_PROP_NAME),
-          flushInfo.getIntProperty(MAX_POSITION),
-          termsHash,
-          termsArray,
-          termPool,
-          termPointerEncoding,
-          postingList);
+      invewtedweawtimeindex index = nyew invewtedweawtimeindex(
+          f-fiewdtype, OwO
+          fwushinfo.getintpwopewty(num_tewms_pwop_name), (ˆ ﻌ ˆ)♡
+          fwushinfo.getintpwopewty(num_docs_pwop_name), o.O
+          f-fwushinfo.getintpwopewty(sum_tewm_doc_fweq_pwop_name), (˘ω˘)
+          f-fwushinfo.getintpwopewty(sum_totaw_tewm_fweq_pwop_name), 😳
+          fwushinfo.getintpwopewty(max_position), (U ᵕ U❁)
+          tewmshash, :3
+          t-tewmsawway, o.O
+          tewmpoow, (///ˬ///✿)
+          t-tewmpointewencoding, OwO
+          p-postingwist);
 
-      if (fieldType.isSupportOrderedTerms()) {
-        SkipListComparator<BytesRef> comparator = new TermsSkipListComparator(index);
-        index.setTermsSkipList((new SkipListContainer.FlushHandler<>(comparator))
-            .load(flushInfo.getSubProperties(TERMS_SKIP_LIST_PROP_NAME), in));
+      if (fiewdtype.issuppowtowdewedtewms()) {
+        s-skipwistcompawatow<byteswef> compawatow = n-nyew t-tewmsskipwistcompawatow(index);
+        i-index.settewmsskipwist((new s-skipwistcontainew.fwushhandwew<>(compawatow))
+            .woad(fwushinfo.getsubpwopewties(tewms_skip_wist_pwop_name), >w< i-in));
       }
 
-      return index;
+      wetuwn index;
     }
   }
 }

@@ -1,336 +1,336 @@
-package com.twitter.search.core.earlybird.index;
+package com.twittew.seawch.cowe.eawwybiwd.index;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.BinaryDocValues;
-import org.apache.lucene.index.FieldInfos;
-import org.apache.lucene.index.FilterLeafReader;
-import org.apache.lucene.index.LeafMetaData;
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.PointValues;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.SortedDocValues;
-import org.apache.lucene.index.SortedNumericDocValues;
-import org.apache.lucene.index.SortedSetDocValues;
-import org.apache.lucene.index.StoredFieldVisitor;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.util.Bits;
-import org.apache.lucene.util.BytesRef;
+i-impowt o-owg.apache.wucene.index.binawydocvawues;
+i-impowt o-owg.apache.wucene.index.fiewdinfos;
+i-impowt owg.apache.wucene.index.fiwtewweafweadew;
+i-impowt owg.apache.wucene.index.weafmetadata;
+impowt owg.apache.wucene.index.weafweadew;
+impowt owg.apache.wucene.index.numewicdocvawues;
+impowt owg.apache.wucene.index.pointvawues;
+impowt o-owg.apache.wucene.index.postingsenum;
+impowt owg.apache.wucene.index.sowteddocvawues;
+i-impowt owg.apache.wucene.index.sowtednumewicdocvawues;
+i-impowt owg.apache.wucene.index.sowtedsetdocvawues;
+impowt owg.apache.wucene.index.stowedfiewdvisitow;
+impowt owg.apache.wucene.index.tewm;
+impowt o-owg.apache.wucene.index.tewms;
+impowt owg.apache.wucene.index.tewmsenum;
+i-impowt o-owg.apache.wucene.seawch.docidsetitewatow;
+impowt owg.apache.wucene.stowe.diwectowy;
+impowt owg.apache.wucene.utiw.bits;
+impowt o-owg.apache.wucene.utiw.byteswef;
 
-import com.twitter.search.common.encoding.docvalues.CSFTypeUtil;
-import com.twitter.search.common.encoding.features.IntegerEncodedFeatures;
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.Schema.FieldInfo;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldDocValues;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldIndex;
+impowt com.twittew.seawch.common.encoding.docvawues.csftypeutiw;
+impowt com.twittew.seawch.common.encoding.featuwes.integewencodedfeatuwes;
+impowt com.twittew.seawch.common.schema.base.eawwybiwdfiewdtype;
+impowt com.twittew.seawch.common.schema.base.featuweconfiguwation;
+i-impowt com.twittew.seawch.common.schema.base.schema.fiewdinfo;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.cowumn.cowumnstwidefiewddocvawues;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.cowumn.cowumnstwidefiewdindex;
 
-public final class EarlybirdLuceneIndexSegmentAtomicReader
-    extends EarlybirdIndexSegmentAtomicReader {
-  private abstract static class DocIdSetIteratorWrapper extends NumericDocValues {
-    private final DocIdSetIterator delegate;
+p-pubwic finaw c-cwass eawwybiwdwuceneindexsegmentatomicweadew
+    e-extends eawwybiwdindexsegmentatomicweadew {
+  pwivate abstwact static cwass d-docidsetitewatowwwappew extends nyumewicdocvawues {
+    p-pwivate finaw docidsetitewatow dewegate;
 
-    public DocIdSetIteratorWrapper(DocIdSetIterator delegate) {
-      this.delegate = Preconditions.checkNotNull(delegate);
+    pubwic docidsetitewatowwwappew(docidsetitewatow dewegate) {
+      this.dewegate = p-pweconditions.checknotnuww(dewegate);
     }
 
-    @Override
-    public int docID() {
-      return delegate.docID();
+    @ovewwide
+    pubwic int d-docid() {
+      w-wetuwn dewegate.docid();
     }
 
-    @Override
-    public int nextDoc() throws IOException {
-      return delegate.nextDoc();
+    @ovewwide
+    p-pubwic int nyextdoc() thwows ioexception {
+      wetuwn dewegate.nextdoc();
     }
 
-    @Override
-    public int advance(int target) throws IOException {
-      return delegate.advance(target);
+    @ovewwide
+    p-pubwic i-int advance(int tawget) thwows ioexception {
+      w-wetuwn dewegate.advance(tawget);
     }
 
-    @Override
-    public long cost() {
-      return delegate.cost();
-    }
-  }
-
-  private static class BytesRefBasedIntegerEncodedFeatures extends IntegerEncodedFeatures {
-    private final BytesRef bytesRef;
-    private final int numInts;
-
-    public BytesRefBasedIntegerEncodedFeatures(BytesRef bytesRef, int numInts) {
-      this.bytesRef = bytesRef;
-      this.numInts = numInts;
-    }
-
-    @Override
-    public int getInt(int pos) {
-      return CSFTypeUtil.convertFromBytes(bytesRef.bytes, bytesRef.offset, pos);
-    }
-
-    @Override
-    public void setInt(int pos, int value) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public int getNumInts() {
-      return numInts;
+    @ovewwide
+    p-pubwic wong cost() {
+      w-wetuwn dewegate.cost();
     }
   }
 
-  private static final int OLDEST_DOC_SKIP_INTERVAL = 256;
+  pwivate s-static cwass byteswefbasedintegewencodedfeatuwes extends integewencodedfeatuwes {
+    p-pwivate finaw byteswef b-byteswef;
+    pwivate finaw int n-nyumints;
 
-  private final LeafReader delegate;
+    p-pubwic byteswefbasedintegewencodedfeatuwes(byteswef byteswef, (˘ω˘) int nyumints) {
+      this.byteswef = byteswef;
+      this.numints = nyumints;
+    }
+
+    @ovewwide
+    p-pubwic int g-getint(int pos) {
+      wetuwn c-csftypeutiw.convewtfwombytes(byteswef.bytes, (ꈍᴗꈍ) b-byteswef.offset, /(^•ω•^) pos);
+    }
+
+    @ovewwide
+    p-pubwic void setint(int pos, >_< int vawue) {
+      thwow n-nyew unsuppowtedopewationexception();
+    }
+
+    @ovewwide
+    pubwic int getnumints() {
+      wetuwn nyumints;
+    }
+  }
+
+  pwivate static finaw int owdest_doc_skip_intewvaw = 256;
+
+  p-pwivate finaw weafweadew d-dewegate;
 
   /**
-   * Do not add public constructors to this class. EarlybirdLuceneIndexSegmentAtomicReader instances
-   * should be created only by calling EarlybirdLuceneIndexSegmentData.createAtomicReader(), to make
-   * sure everything is set up properly (such as CSF readers).
+   * d-do nyot a-add pubwic constwuctows to this c-cwass. σωσ eawwybiwdwuceneindexsegmentatomicweadew i-instances
+   * s-shouwd be cweated o-onwy by cawwing eawwybiwdwuceneindexsegmentdata.cweateatomicweadew(), ^^;; to make
+   * s-suwe evewything i-is set up p-pwopewwy (such as c-csf weadews). 😳
    */
-  EarlybirdLuceneIndexSegmentAtomicReader(
-      EarlybirdIndexSegmentData segmentData, Directory directory) throws IOException {
-    super(segmentData);
-    this.delegate = getDelegateReader(directory);
+  e-eawwybiwdwuceneindexsegmentatomicweadew(
+      eawwybiwdindexsegmentdata segmentdata, >_< diwectowy diwectowy) t-thwows ioexception {
+    supew(segmentdata);
+    this.dewegate = getdewegateweadew(diwectowy);
   }
 
-  private LeafReader getDelegateReader(Directory directory) throws IOException {
-    LeafReader directoryReader =
-        EarlybirdIndexSegmentData.getLeafReaderFromOptimizedDirectory(directory);
-    return new FilterLeafReader(directoryReader) {
-      @Override
-      public NumericDocValues getNumericDocValues(String field) throws IOException {
-        EarlybirdFieldType type = getSchema().getFieldInfo(field).getFieldType();
-        if ((type == null) || !type.isCsfViewField()) {
-          return in.getNumericDocValues(field);
+  pwivate weafweadew getdewegateweadew(diwectowy d-diwectowy) thwows ioexception {
+    weafweadew diwectowyweadew =
+        e-eawwybiwdindexsegmentdata.getweafweadewfwomoptimizeddiwectowy(diwectowy);
+    wetuwn n-nyew fiwtewweafweadew(diwectowyweadew) {
+      @ovewwide
+      p-pubwic nyumewicdocvawues getnumewicdocvawues(stwing f-fiewd) thwows ioexception {
+        e-eawwybiwdfiewdtype t-type = getschema().getfiewdinfo(fiewd).getfiewdtype();
+        if ((type == nyuww) || !type.iscsfviewfiewd()) {
+          wetuwn in.getnumewicdocvawues(fiewd);
         }
 
-        // Compute as many things as possible once, outside the NumericDocValues.get() call.
-        String baseFieldName = getSchema().getFieldInfo(type.getCsfViewBaseFieldId()).getName();
-        FieldInfo baseFieldInfo =
-            Preconditions.checkNotNull(getSchema().getFieldInfo(baseFieldName));
-        EarlybirdFieldType baseFieldType = baseFieldInfo.getFieldType();
-        Preconditions.checkState(!baseFieldType.isCsfVariableLength());
-        int numInts = baseFieldType.getCsfFixedLengthNumValuesPerDoc();
-        FeatureConfiguration featureConfiguration =
-            Preconditions.checkNotNull(type.getCsfViewFeatureConfiguration());
-        Preconditions.checkArgument(featureConfiguration.getValueIndex() < numInts);
+        // compute as many things as p-possibwe once, -.- outside the nyumewicdocvawues.get() c-caww. UwU
+        stwing basefiewdname = g-getschema().getfiewdinfo(type.getcsfviewbasefiewdid()).getname();
+        f-fiewdinfo basefiewdinfo =
+            pweconditions.checknotnuww(getschema().getfiewdinfo(basefiewdname));
+        eawwybiwdfiewdtype b-basefiewdtype = b-basefiewdinfo.getfiewdtype();
+        pweconditions.checkstate(!basefiewdtype.iscsfvawiabwewength());
+        i-int nyumints = b-basefiewdtype.getcsffixedwengthnumvawuespewdoc();
+        featuweconfiguwation featuweconfiguwation =
+            pweconditions.checknotnuww(type.getcsfviewfeatuweconfiguwation());
+        pweconditions.checkawgument(featuweconfiguwation.getvawueindex() < nyumints);
 
-        if (numInts == 1) {
-          // All encoded tweet features are encoded in a single integer.
-          NumericDocValues numericDocValues = in.getNumericDocValues(baseFieldName);
-          return new DocIdSetIteratorWrapper(numericDocValues) {
-            @Override
-            public long longValue() throws IOException {
-              return (numericDocValues.longValue() & featureConfiguration.getBitMask())
-                  >> featureConfiguration.getBitStartPosition();
+        i-if (numints == 1) {
+          // a-aww encoded t-tweet featuwes awe encoded i-in a singwe integew. :3
+          n-nyumewicdocvawues nyumewicdocvawues = i-in.getnumewicdocvawues(basefiewdname);
+          wetuwn nyew docidsetitewatowwwappew(numewicdocvawues) {
+            @ovewwide
+            pubwic wong wongvawue() thwows i-ioexception {
+              w-wetuwn (numewicdocvawues.wongvawue() & featuweconfiguwation.getbitmask())
+                  >> featuweconfiguwation.getbitstawtposition();
             }
 
-            @Override
-            public boolean advanceExact(int target) throws IOException {
-              return numericDocValues.advanceExact(target);
+            @ovewwide
+            p-pubwic boowean a-advanceexact(int tawget) thwows ioexception {
+              wetuwn nyumewicdocvawues.advanceexact(tawget);
             }
           };
         }
 
-        BinaryDocValues binaryDocValues =
-            Preconditions.checkNotNull(in.getBinaryDocValues(baseFieldName));
-        return new DocIdSetIteratorWrapper(binaryDocValues) {
-          @Override
-          public long longValue() throws IOException {
-            BytesRef data = binaryDocValues.binaryValue();
-            IntegerEncodedFeatures encodedFeatures =
-                new BytesRefBasedIntegerEncodedFeatures(data, numInts);
-            return encodedFeatures.getFeatureValue(featureConfiguration);
+        b-binawydocvawues binawydocvawues =
+            pweconditions.checknotnuww(in.getbinawydocvawues(basefiewdname));
+        wetuwn nyew docidsetitewatowwwappew(binawydocvawues) {
+          @ovewwide
+          p-pubwic wong wongvawue() thwows ioexception {
+            b-byteswef data = b-binawydocvawues.binawyvawue();
+            integewencodedfeatuwes encodedfeatuwes =
+                nyew byteswefbasedintegewencodedfeatuwes(data, σωσ n-nyumints);
+            w-wetuwn encodedfeatuwes.getfeatuwevawue(featuweconfiguwation);
           }
 
-          @Override
-          public boolean advanceExact(int target) throws IOException {
-            return binaryDocValues.advanceExact(target);
+          @ovewwide
+          pubwic boowean advanceexact(int tawget) t-thwows ioexception {
+            wetuwn binawydocvawues.advanceexact(tawget);
           }
         };
       }
 
-      @Override
-      public CacheHelper getCoreCacheHelper() {
-        return in.getCoreCacheHelper();
+      @ovewwide
+      p-pubwic cachehewpew getcowecachehewpew() {
+        wetuwn in.getcowecachehewpew();
       }
 
-      @Override
-      public CacheHelper getReaderCacheHelper() {
-        return in.getReaderCacheHelper();
+      @ovewwide
+      pubwic cachehewpew g-getweadewcachehewpew() {
+        wetuwn i-in.getweadewcachehewpew();
       }
     };
   }
 
-  private TermsEnum getTermsEnumAtTerm(Term term) throws IOException {
-    Terms terms = terms(term.field());
-    if (terms == null) {
-      return null;
+  p-pwivate tewmsenum gettewmsenumattewm(tewm t-tewm) thwows ioexception {
+    t-tewms t-tewms = tewms(tewm.fiewd());
+    i-if (tewms == nyuww) {
+      wetuwn n-nuww;
     }
 
-    TermsEnum termsEnum = terms.iterator();
-    return termsEnum.seekExact(term.bytes()) ? termsEnum : null;
+    t-tewmsenum tewmsenum = tewms.itewatow();
+    wetuwn tewmsenum.seekexact(tewm.bytes()) ? t-tewmsenum : n-nyuww;
   }
 
-  @Override
-  public int getOldestDocID(Term term) throws IOException {
-    TermsEnum termsEnum = getTermsEnumAtTerm(term);
-    if (termsEnum == null) {
-      return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+  @ovewwide
+  p-pubwic int getowdestdocid(tewm tewm) thwows ioexception {
+    tewmsenum tewmsenum = g-gettewmsenumattewm(tewm);
+    if (tewmsenum == n-nuww) {
+      w-wetuwn eawwybiwdindexsegmentatomicweadew.tewm_not_found;
     }
 
-    PostingsEnum td = termsEnum.postings(null);
-    int oldestDocID = td.nextDoc();
-    if (oldestDocID == DocIdSetIterator.NO_MORE_DOCS) {
-      return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+    postingsenum td = tewmsenum.postings(nuww);
+    int owdestdocid = t-td.nextdoc();
+    i-if (owdestdocid == docidsetitewatow.no_mowe_docs) {
+      w-wetuwn eawwybiwdindexsegmentatomicweadew.tewm_not_found;
     }
 
-    final int docFreq = termsEnum.docFreq();
-    if (docFreq > OLDEST_DOC_SKIP_INTERVAL * 16) {
-      final int skipSize = docFreq / OLDEST_DOC_SKIP_INTERVAL;
+    f-finaw int docfweq = tewmsenum.docfweq();
+    i-if (docfweq > owdest_doc_skip_intewvaw * 16) {
+      finaw int skipsize = docfweq / owdest_doc_skip_intewvaw;
       do {
-        oldestDocID = td.docID();
-      } while (td.advance(oldestDocID + skipSize) != DocIdSetIterator.NO_MORE_DOCS);
+        o-owdestdocid = td.docid();
+      } w-whiwe (td.advance(owdestdocid + skipsize) != d-docidsetitewatow.no_mowe_docs);
 
-      td = delegate.postings(term);
-      td.advance(oldestDocID);
+      td = d-dewegate.postings(tewm);
+      td.advance(owdestdocid);
     }
 
-    do {
-      oldestDocID = td.docID();
-    } while (td.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+    d-do {
+      o-owdestdocid = td.docid();
+    } w-whiwe (td.nextdoc() != d-docidsetitewatow.no_mowe_docs);
 
-    return oldestDocID;
+    w-wetuwn owdestdocid;
   }
 
-  @Override
-  public int getTermID(Term term) throws IOException {
-    TermsEnum termsEnum = getTermsEnumAtTerm(term);
-    return termsEnum != null
-        ? (int) termsEnum.ord()
-        : EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+  @ovewwide
+  pubwic int gettewmid(tewm tewm) thwows ioexception {
+    tewmsenum tewmsenum = g-gettewmsenumattewm(tewm);
+    w-wetuwn tewmsenum != n-nyuww
+        ? (int) tewmsenum.owd()
+        : e-eawwybiwdindexsegmentatomicweadew.tewm_not_found;
   }
 
-  @Override
-  public Terms terms(String field) throws IOException {
-    return delegate.terms(field);
+  @ovewwide
+  pubwic tewms tewms(stwing fiewd) thwows i-ioexception {
+    w-wetuwn dewegate.tewms(fiewd);
   }
 
-  @Override
-  public FieldInfos getFieldInfos() {
-    return delegate.getFieldInfos();
+  @ovewwide
+  pubwic fiewdinfos g-getfiewdinfos() {
+    wetuwn dewegate.getfiewdinfos();
   }
 
-  @Override
-  public Bits getLiveDocs() {
-    return getDeletesView().getLiveDocs();
+  @ovewwide
+  p-pubwic bits getwivedocs() {
+    w-wetuwn getdewetesview().getwivedocs();
   }
 
-  @Override
-  public int numDocs() {
-    return delegate.numDocs();
+  @ovewwide
+  pubwic i-int nyumdocs() {
+    w-wetuwn dewegate.numdocs();
   }
 
-  @Override
-  public int maxDoc() {
-    return delegate.maxDoc();
+  @ovewwide
+  pubwic int maxdoc() {
+    wetuwn dewegate.maxdoc();
   }
 
-  @Override
-  public void document(int docID, StoredFieldVisitor visitor) throws IOException {
-    delegate.document(docID, visitor);
+  @ovewwide
+  pubwic v-void document(int d-docid, >w< stowedfiewdvisitow visitow) t-thwows ioexception {
+    d-dewegate.document(docid, (ˆ ﻌ ˆ)♡ v-visitow);
   }
 
-  @Override
-  public boolean hasDeletions() {
-    return getDeletesView().hasDeletions();
+  @ovewwide
+  pubwic boowean h-hasdewetions() {
+    w-wetuwn getdewetesview().hasdewetions();
   }
 
-  @Override
-  protected void doClose() throws IOException {
-    delegate.close();
+  @ovewwide
+  p-pwotected v-void docwose() thwows ioexception {
+    d-dewegate.cwose();
   }
 
-  @Override
-  public NumericDocValues getNumericDocValues(String field) throws IOException {
-    FieldInfo fieldInfo = getSegmentData().getSchema().getFieldInfo(field);
-    if (fieldInfo == null) {
-      return null;
+  @ovewwide
+  pubwic nyumewicdocvawues g-getnumewicdocvawues(stwing fiewd) thwows ioexception {
+    f-fiewdinfo fiewdinfo = g-getsegmentdata().getschema().getfiewdinfo(fiewd);
+    if (fiewdinfo == n-nyuww) {
+      wetuwn nyuww;
     }
 
-    // If this field is a CSF view field or if it's not loaded in memory, get the NumericDocValues
-    // from the delegate.
-    EarlybirdFieldType fieldType = fieldInfo.getFieldType();
-    if (fieldType.isCsfViewField() || !fieldInfo.getFieldType().isCsfLoadIntoRam()) {
-      NumericDocValues delegateVals = delegate.getNumericDocValues(field);
-      if (delegateVals != null) {
-        return delegateVals;
+    // i-if this f-fiewd is a csf v-view fiewd ow if it's nyot woaded in memowy, ʘwʘ get the nyumewicdocvawues
+    // f-fwom the dewegate. :3
+    eawwybiwdfiewdtype f-fiewdtype = f-fiewdinfo.getfiewdtype();
+    if (fiewdtype.iscsfviewfiewd() || !fiewdinfo.getfiewdtype().iscsfwoadintowam()) {
+      n-nyumewicdocvawues dewegatevaws = d-dewegate.getnumewicdocvawues(fiewd);
+      i-if (dewegatevaws != nyuww) {
+        wetuwn d-dewegatevaws;
       }
     }
 
-    // The field is either loaded in memory, or the delegate doesn't have NumericDocValues for it.
-    // Return the NumericDocValues for this field stored in the DocValuesManager.
-    ColumnStrideFieldIndex csf =
-        getSegmentData().getDocValuesManager().getColumnStrideFieldIndex(field);
-    return csf != null ? new ColumnStrideFieldDocValues(csf, this) : null;
+    // the fiewd is eithew woaded i-in memowy, ow the d-dewegate doesn't have nyumewicdocvawues f-fow it. (˘ω˘)
+    // wetuwn t-the nyumewicdocvawues f-fow this f-fiewd stowed in the docvawuesmanagew. 😳😳😳
+    cowumnstwidefiewdindex csf =
+        getsegmentdata().getdocvawuesmanagew().getcowumnstwidefiewdindex(fiewd);
+    wetuwn csf != nyuww ? new cowumnstwidefiewddocvawues(csf, rawr x3 this) : nyuww;
   }
 
-  @Override
-  public BinaryDocValues getBinaryDocValues(String field) throws IOException {
-    return delegate.getBinaryDocValues(field);
+  @ovewwide
+  pubwic binawydocvawues getbinawydocvawues(stwing fiewd) thwows ioexception {
+    wetuwn dewegate.getbinawydocvawues(fiewd);
   }
 
-  @Override
-  public SortedDocValues getSortedDocValues(String field) throws IOException {
-    return delegate.getSortedDocValues(field);
+  @ovewwide
+  p-pubwic sowteddocvawues g-getsowteddocvawues(stwing fiewd) thwows ioexception {
+    w-wetuwn dewegate.getsowteddocvawues(fiewd);
   }
 
-  @Override
-  public SortedSetDocValues getSortedSetDocValues(String field) throws IOException {
-    return delegate.getSortedSetDocValues(field);
+  @ovewwide
+  p-pubwic sowtedsetdocvawues g-getsowtedsetdocvawues(stwing fiewd) t-thwows ioexception {
+    wetuwn d-dewegate.getsowtedsetdocvawues(fiewd);
   }
 
-  @Override
-  public NumericDocValues getNormValues(String field) throws IOException {
-    return delegate.getNormValues(field);
+  @ovewwide
+  p-pubwic nyumewicdocvawues g-getnowmvawues(stwing fiewd) t-thwows ioexception {
+    w-wetuwn dewegate.getnowmvawues(fiewd);
   }
 
-  @Override
-  public SortedNumericDocValues getSortedNumericDocValues(String field) throws IOException {
-    return delegate.getSortedNumericDocValues(field);
+  @ovewwide
+  pubwic sowtednumewicdocvawues g-getsowtednumewicdocvawues(stwing f-fiewd) thwows i-ioexception {
+    w-wetuwn dewegate.getsowtednumewicdocvawues(fiewd);
   }
 
-  @Override
-  public void checkIntegrity() throws IOException {
-    delegate.checkIntegrity();
+  @ovewwide
+  p-pubwic v-void checkintegwity() t-thwows ioexception {
+    dewegate.checkintegwity();
   }
 
-  @Override
-  public PointValues getPointValues(String field) throws IOException {
-    return delegate.getPointValues(field);
+  @ovewwide
+  p-pubwic p-pointvawues getpointvawues(stwing f-fiewd) thwows i-ioexception {
+    w-wetuwn dewegate.getpointvawues(fiewd);
   }
 
-  @Override
-  public LeafMetaData getMetaData() {
-    return delegate.getMetaData();
+  @ovewwide
+  pubwic weafmetadata g-getmetadata() {
+    wetuwn dewegate.getmetadata();
   }
 
-  @Override
-  public CacheHelper getCoreCacheHelper() {
-    return delegate.getCoreCacheHelper();
+  @ovewwide
+  pubwic c-cachehewpew getcowecachehewpew() {
+    wetuwn dewegate.getcowecachehewpew();
   }
 
-  @Override
-  public CacheHelper getReaderCacheHelper() {
-    return delegate.getReaderCacheHelper();
+  @ovewwide
+  p-pubwic cachehewpew g-getweadewcachehewpew() {
+    w-wetuwn dewegate.getweadewcachehewpew();
   }
 }

@@ -1,82 +1,82 @@
-package com.twitter.simclusters_v2.scalding.tweet_similarity.evaluation
+package com.twittew.simcwustews_v2.scawding.tweet_simiwawity.evawuation
 
-import com.twitter.rux.landing_page.data_pipeline.LabeledRuxServiceScribeScalaDataset
-import com.twitter.rux.landing_page.data_pipeline.thriftscala.LandingPageLabel
-import com.twitter.rux.service.thriftscala.FocalObject
-import com.twitter.rux.service.thriftscala.UserContext
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.wtf.scalding.jobs.common.DDGUtil
-import java.util.TimeZone
+impowt com.twittew.wux.wanding_page.data_pipewine.wabewedwuxsewvicescwibescawadataset
+i-impowt c-com.twittew.wux.wanding_page.data_pipewine.thwiftscawa.wandingpagewabew
+i-impowt c-com.twittew.wux.sewvice.thwiftscawa.focawobject
+i-impowt com.twittew.wux.sewvice.thwiftscawa.usewcontext
+i-impowt c-com.twittew.scawding._
+i-impowt com.twittew.scawding_intewnaw.dawv2.daw
+impowt com.twittew.scawding_intewnaw.job.twittewexecutionapp
+impowt com.twittew.simcwustews_v2.common.tweetid
+impowt com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.wtf.scawding.jobs.common.ddgutiw
+impowt java.utiw.timezone
 
-/** To run:
-scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/tweet_similarity/evaluation:rux_landing_ddg_analysis-adhoc \
---user cassowary \
---submitter hadoopnest2.atla.twitter.com \
---main-class com.twitter.simclusters_v2.scalding.tweet_similarity.evaluation.RUXLandingDdgAnalysisAdhocApp -- \
+/** t-to wun:
+scawding wemote w-wun --tawget swc/scawa/com/twittew/simcwustews_v2/scawding/tweet_simiwawity/evawuation:wux_wanding_ddg_anawysis-adhoc \
+--usew cassowawy \
+--submittew hadoopnest2.atwa.twittew.com \
+--main-cwass com.twittew.simcwustews_v2.scawding.tweet_simiwawity.evawuation.wuxwandingddganawysisadhocapp -- \
 --date 2020-04-06 2020-04-13 \
---ddg model_based_tweet_similarity_10254 \
---version 1 \
---output_path /user/cassowary/adhoc/ddg10254
+--ddg m-modew_based_tweet_simiwawity_10254 \
+--vewsion 1 \
+--output_path /usew/cassowawy/adhoc/ddg10254
  * */
-object RUXLandingDdgAnalysisAdhocApp extends TwitterExecutionApp {
-  override def job: Execution[Unit] =
-    Execution.withId { implicit uniqueId =>
-      Execution.withArgs { args: Args =>
-        implicit val timeZone: TimeZone = DateOps.UTC
-        implicit val dateParser: DateParser = DateParser.default
-        implicit val dateRange: DateRange = DateRange.parse(args.list("date"))
-        val ddgName: String = args("ddg")
-        val ddgVersion: String = args("version")
-        val outputPath: String = args("output_path")
-        val now = RichDate.now
+object wuxwandingddganawysisadhocapp e-extends twittewexecutionapp {
+  o-ovewwide def job: execution[unit] =
+    execution.withid { impwicit uniqueid =>
+      execution.withawgs { awgs: awgs =>
+        i-impwicit vaw timezone: timezone = dateops.utc
+        impwicit vaw datepawsew: d-datepawsew = datepawsew.defauwt
+        impwicit v-vaw datewange: d-datewange = d-datewange.pawse(awgs.wist("date"))
+        v-vaw ddgname: stwing = awgs("ddg")
+        v-vaw ddgvewsion: stwing = awgs("vewsion")
+        v-vaw outputpath: stwing = awgs("output_path")
+        vaw nyow = wichdate.now
 
-        val ruxLabels = getLabeledRuxServiceScribe(dateRange).map {
-          case (userId, focalTweet, candidateTweet, impression, fav) =>
-            userId -> (focalTweet, candidateTweet, impression, fav)
+        vaw wuxwabews = getwabewedwuxsewvicescwibe(datewange).map {
+          c-case (usewid, 😳 focawtweet, candidatetweet, (ˆ ﻌ ˆ)♡ impwession, 😳😳😳 f-fav) =>
+            usewid -> (focawtweet, (U ﹏ U) c-candidatetweet, (///ˬ///✿) i-impwession, 😳 fav)
         }
 
-        // getUsersInDDG reads from a snapshot dataset.
-        // Just prepend dateRange so that we can look back far enough to make sure there is data.
-        DDGUtil
-          .getUsersInDDG(ddgName, ddgVersion.toInt)(DateRange(now - Days(7), now)).map { ddgUser =>
-            ddgUser.userId -> (ddgUser.bucket, ddgUser.enterUserState.getOrElse("no_user_state"))
-          }.join(ruxLabels)
+        // getusewsinddg weads f-fwom a snapshot d-dataset. 😳
+        // just pwepend d-datewange so that w-we can wook back faw enough t-to make suwe thewe is data. σωσ
+        d-ddgutiw
+          .getusewsinddg(ddgname, rawr x3 ddgvewsion.toint)(datewange(now - days(7), OwO nyow)).map { d-ddgusew =>
+            ddgusew.usewid -> (ddgusew.bucket, /(^•ω•^) d-ddgusew.entewusewstate.getowewse("no_usew_state"))
+          }.join(wuxwabews)
           .map {
-            case (userId, ((bucket, state), (focalTweet, candidateTweet, impression, fav))) =>
-              (userId, bucket, state, focalTweet, candidateTweet, impression, fav)
+            case (usewid, 😳😳😳 ((bucket, ( ͡o ω ͡o ) s-state), >_< (focawtweet, c-candidatetweet, >w< impwession, fav))) =>
+              (usewid, rawr bucket, 😳 state, focawtweet, >w< candidatetweet, (⑅˘꒳˘) impwession, OwO fav)
           }
-          .writeExecution(
-            TypedTsv[(UserId, String, String, TweetId, TweetId, Int, Int)](s"$outputPath"))
+          .wwiteexecution(
+            t-typedtsv[(usewid, (ꈍᴗꈍ) s-stwing, stwing, 😳 tweetid, t-tweetid, 😳😳😳 int, int)](s"$outputpath"))
       }
     }
 
-  def getLabeledRuxServiceScribe(
-    dateRange: DateRange
-  ): TypedPipe[(UserId, TweetId, TweetId, Int, Int)] = {
-    DAL
-      .read(LabeledRuxServiceScribeScalaDataset, dateRange)
-      .toTypedPipe.map { record =>
+  d-def getwabewedwuxsewvicescwibe(
+    d-datewange: datewange
+  ): typedpipe[(usewid, mya tweetid, mya t-tweetid, int, (⑅˘꒳˘) int)] = {
+    daw
+      .wead(wabewedwuxsewvicescwibescawadataset, (U ﹏ U) datewange)
+      .totypedpipe.map { wecowd =>
         (
-          record.ruxServiceScribe.userContext,
-          record.ruxServiceScribe.focalObject,
-          record.landingPageLabel)
-      }.flatMap {
-        case (
-              Some(UserContext(Some(userId), _, _, _, _, _, _, _)),
-              Some(FocalObject.TweetId(tweet)),
-              Some(labels)) =>
-          labels.map {
-            case LandingPageLabel.LandingPageFavoriteEvent(favEvent) =>
-              //(focal tweet, impressioned tweet, impression, fav)
-              (userId, tweet, favEvent.tweetId, 0, 1)
-            case LandingPageLabel.LandingPageImpressionEvent(impressionEvent) =>
-              (userId, tweet, impressionEvent.tweetId, 1, 0)
+          wecowd.wuxsewvicescwibe.usewcontext, mya
+          w-wecowd.wuxsewvicescwibe.focawobject, ʘwʘ
+          wecowd.wandingpagewabew)
+      }.fwatmap {
+        c-case (
+              s-some(usewcontext(some(usewid), (˘ω˘) _, _, _, _, _, (U ﹏ U) _, _)),
+              s-some(focawobject.tweetid(tweet)), ^•ﻌ•^
+              some(wabews)) =>
+          w-wabews.map {
+            c-case wandingpagewabew.wandingpagefavowiteevent(favevent) =>
+              //(focaw t-tweet, (˘ω˘) impwessioned t-tweet, :3 impwession, fav)
+              (usewid, ^^;; tweet, 🥺 favevent.tweetid, (⑅˘꒳˘) 0, 1)
+            c-case wandingpagewabew.wandingpageimpwessionevent(impwessionevent) =>
+              (usewid, nyaa~~ t-tweet, i-impwessionevent.tweetid, :3 1, 0)
           }
-        case _ => Nil
+        c-case _ => n-nyiw
       }
   }
 }

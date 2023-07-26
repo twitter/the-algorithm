@@ -1,47 +1,47 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.util.BytesRef;
+i-impowt owg.apache.wucene.index.tewmsenum;
+i-impowt owg.apache.wucene.utiw.byteswef;
 
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+i-impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
 
 /**
- * A two-way mapping between terms and their interned value (termID).
+ * a-a two-way mapping b-between tewms and theiw intewned vawue (tewmid). (///ˬ///✿)
  *
- * Implementation of this interface must guarantee that termIDs are dense, starting at 0;
- * so they are good to be used as indices in arrays.
+ * impwementation of this i-intewface must guawantee that tewmids awe dense, >w< s-stawting at 0;
+ * so they awe g-good to be used as indices in awways. rawr
  */
-public interface TermDictionary extends Flushable {
-  int TERM_NOT_FOUND = EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+pubwic intewface tewmdictionawy e-extends fwushabwe {
+  i-int tewm_not_found = e-eawwybiwdindexsegmentatomicweadew.tewm_not_found;
 
   /**
-   * Returns the number of terms in this dictionary.
+   * wetuwns the nyumbew of tewms in this dictionawy. mya
    */
-  int getNumTerms();
+  int g-getnumtewms();
 
   /**
-   * Create a TermsEnum object over this TermDictionary for a given index.
-   * @param index
+   * cweate a tewmsenum object ovew this tewmdictionawy fow a-a given index. ^^
+   * @pawam index
    */
-  TermsEnum createTermsEnum(OptimizedMemoryIndex index);
+  t-tewmsenum c-cweatetewmsenum(optimizedmemowyindex i-index);
 
   /**
-   * Lookup a term in this dictionary.
-   * @param term  the term to lookup.
-   * @return  the term id for this term, or TERM_NOT_FOUND
-   * @throws IOException
+   * wookup a-a tewm in this dictionawy. 😳😳😳
+   * @pawam tewm  t-the tewm to wookup. mya
+   * @wetuwn  the tewm id fow this tewm, 😳 o-ow tewm_not_found
+   * @thwows ioexception
    */
-  int lookupTerm(BytesRef term) throws IOException;
+  int wookuptewm(byteswef tewm) thwows ioexception;
 
   /**
-   * Get the term for given id and possibly its payload.
-   * @param termID  the term that we want to get.
-   * @param text  MUST be non-null. It will be filled with the term.
-   * @param termPayload  if non-null, it will be filled with the payload if the term has any.
-   * @return  Returns true, iff this term has a term payload.
+   * get the tewm fow given id and possibwy i-its paywoad. -.-
+   * @pawam tewmid  the tewm t-that we want to g-get. 🥺
+   * @pawam t-text  must be nyon-nuww. it wiww be fiwwed with the tewm. o.O
+   * @pawam t-tewmpaywoad  i-if nyon-nuww, /(^•ω•^) it wiww be fiwwed w-with the paywoad i-if the tewm has any. nyaa~~
+   * @wetuwn  w-wetuwns twue, nyaa~~ iff this t-tewm has a tewm paywoad. :3
    */
-  boolean getTerm(int termID, BytesRef text, BytesRef termPayload);
+  boowean gettewm(int t-tewmid, byteswef text, 😳😳😳 byteswef t-tewmpaywoad);
 }

@@ -1,363 +1,363 @@
-package com.twitter.search.ingester.pipeline.wire;
+package com.twittew.seawch.ingestew.pipewine.wiwe;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import javax.annotation.Nullable;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+impowt java.utiw.awwaywist;
+impowt j-java.utiw.wist;
+i-impowt java.utiw.concuwwent.executowsewvice;
+i-impowt java.utiw.concuwwent.executows;
+i-impowt j-javax.annotation.nuwwabwe;
+i-impowt j-javax.naming.context;
+i-impowt javax.naming.initiawcontext;
+impowt javax.naming.namingexception;
 
-import scala.Option;
-import scala.collection.JavaConversions$;
+impowt scawa.option;
+i-impowt scawa.cowwection.javaconvewsions$;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
+impowt com.googwe.common.base.pweconditions;
+impowt com.googwe.common.cowwect.immutabwewist;
 
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.Partitioner;
-import org.apache.kafka.common.serialization.Deserializer;
-import org.apache.kafka.common.serialization.Serializer;
-import org.apache.thrift.TBase;
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.apache.kafka.cwients.consumew.kafkaconsumew;
+impowt o-owg.apache.kafka.cwients.pwoducew.pawtitionew;
+impowt owg.apache.kafka.common.sewiawization.desewiawizew;
+impowt owg.apache.kafka.common.sewiawization.sewiawizew;
+i-impowt owg.apache.thwift.tbase;
+impowt owg.apache.thwift.pwotocow.tbinawypwotocow;
+i-impowt owg.swf4j.woggew;
+impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.common.util.Clock;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.decider.Decider;
-import com.twitter.decider.DeciderFactory;
-import com.twitter.decider.DeciderFactory$;
-import com.twitter.decider.decisionmaker.DecisionMaker;
-import com.twitter.decider.decisionmaker.MutableDecisionMaker;
-import com.twitter.eventbus.client.EventBusSubscriber;
-import com.twitter.eventbus.client.EventBusSubscriberBuilder;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.ThriftMux;
-import com.twitter.finagle.builder.ClientBuilder;
-import com.twitter.finagle.builder.ClientConfig;
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
-import com.twitter.finagle.mtls.client.MtlsThriftMuxClient;
-import com.twitter.finagle.mux.transport.OpportunisticTls;
-import com.twitter.finagle.service.RetryPolicy;
-import com.twitter.finagle.stats.DefaultStatsReceiver;
-import com.twitter.finagle.thrift.ClientId;
-import com.twitter.finagle.thrift.ThriftClientRequest;
-import com.twitter.finatra.kafka.producers.BlockingFinagleKafkaProducer;
-import com.twitter.gizmoduck.thriftjava.UserService;
-import com.twitter.metastore.client_v2.MetastoreClient;
-import com.twitter.pink_floyd.thrift.Storer;
-import com.twitter.search.common.partitioning.base.PartitionMappingManager;
-import com.twitter.search.common.relevance.classifiers.TweetOffensiveEvaluator;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.util.io.kafka.FinagleKafkaClientUtils;
-import com.twitter.search.ingester.pipeline.strato_fetchers.AudioSpaceCoreFetcher;
-import com.twitter.search.ingester.pipeline.strato_fetchers.AudioSpaceParticipantsFetcher;
-import com.twitter.search.ingester.pipeline.strato_fetchers.NamedEntityFetcher;
-import com.twitter.search.ingester.pipeline.util.PenguinVersionsUtil;
-import com.twitter.search.ingester.pipeline.util.PipelineExceptionHandler;
-import com.twitter.storage.client.manhattan.kv.JavaManhattanKVEndpoint;
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClient;
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams;
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpointBuilder;
-import com.twitter.strato.client.Client;
-import com.twitter.strato.client.Strato;
-import com.twitter.tweetypie.thriftjava.TweetService;
-import com.twitter.util.Duration;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+impowt com.twittew.common.utiw.cwock;
+impowt com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+impowt com.twittew.decidew.decidew;
+impowt c-com.twittew.decidew.decidewfactowy;
+impowt com.twittew.decidew.decidewfactowy$;
+impowt com.twittew.decidew.decisionmakew.decisionmakew;
+impowt com.twittew.decidew.decisionmakew.mutabwedecisionmakew;
+i-impowt com.twittew.eventbus.cwient.eventbussubscwibew;
+impowt com.twittew.eventbus.cwient.eventbussubscwibewbuiwdew;
+i-impowt c-com.twittew.finagwe.sewvice;
+i-impowt com.twittew.finagwe.thwiftmux;
+i-impowt com.twittew.finagwe.buiwdew.cwientbuiwdew;
+impowt com.twittew.finagwe.buiwdew.cwientconfig;
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew;
+impowt c-com.twittew.finagwe.mtws.cwient.mtwsthwiftmuxcwient;
+impowt com.twittew.finagwe.mux.twanspowt.oppowtunistictws;
+impowt com.twittew.finagwe.sewvice.wetwypowicy;
+impowt com.twittew.finagwe.stats.defauwtstatsweceivew;
+impowt com.twittew.finagwe.thwift.cwientid;
+i-impowt com.twittew.finagwe.thwift.thwiftcwientwequest;
+impowt c-com.twittew.finatwa.kafka.pwoducews.bwockingfinagwekafkapwoducew;
+i-impowt com.twittew.gizmoduck.thwiftjava.usewsewvice;
+i-impowt com.twittew.metastowe.cwient_v2.metastowecwient;
+impowt com.twittew.pink_fwoyd.thwift.stowew;
+impowt com.twittew.seawch.common.pawtitioning.base.pawtitionmappingmanagew;
+i-impowt c-com.twittew.seawch.common.wewevance.cwassifiews.tweetoffensiveevawuatow;
+impowt c-com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+i-impowt com.twittew.seawch.common.utiw.io.kafka.finagwekafkacwientutiws;
+impowt com.twittew.seawch.ingestew.pipewine.stwato_fetchews.audiospacecowefetchew;
+i-impowt com.twittew.seawch.ingestew.pipewine.stwato_fetchews.audiospacepawticipantsfetchew;
+i-impowt com.twittew.seawch.ingestew.pipewine.stwato_fetchews.namedentityfetchew;
+impowt com.twittew.seawch.ingestew.pipewine.utiw.penguinvewsionsutiw;
+impowt c-com.twittew.seawch.ingestew.pipewine.utiw.pipewineexceptionhandwew;
+impowt com.twittew.stowage.cwient.manhattan.kv.javamanhattankvendpoint;
+impowt c-com.twittew.stowage.cwient.manhattan.kv.manhattankvcwient;
+impowt com.twittew.stowage.cwient.manhattan.kv.manhattankvcwientmtwspawams;
+i-impowt c-com.twittew.stowage.cwient.manhattan.kv.manhattankvendpointbuiwdew;
+impowt com.twittew.stwato.cwient.cwient;
+impowt com.twittew.stwato.cwient.stwato;
+impowt com.twittew.tweetypie.thwiftjava.tweetsewvice;
+impowt com.twittew.utiw.duwation;
+impowt com.twittew.utiw.function;
+i-impowt com.twittew.utiw.futuwe;
 
 /**
- * The injection module that provides all production bindings.
+ * t-the injection moduwe t-that pwovides aww p-pwoduction bindings. (U ﹏ U)
  */
-public class ProductionWireModule extends WireModule {
-  private static final Logger LOG = LoggerFactory.getLogger(ProductionWireModule.class);
+p-pubwic cwass pwoductionwiwemoduwe extends wiwemoduwe {
+  p-pwivate static finaw woggew wog = woggewfactowy.getwoggew(pwoductionwiwemoduwe.cwass);
 
-  private static final String DECIDER_BASE = "config/ingester-indexer-decider.yml";
-  private static final String GEOCODE_APP_ID = "search_ingester_readonly";
-  private static final String CLUSTER_DEST_NAME = "";
+  pwivate static finaw stwing decidew_base = "config/ingestew-indexew-decidew.ymw";
+  p-pwivate static finaw stwing geocode_app_id = "seawch_ingestew_weadonwy";
+  p-pwivate s-static finaw s-stwing cwustew_dest_name = "";
 
-  private static final String JNDI_GIZMODUCK_DEST = JNDI_PIPELINE_ROOT + "gizmoduckDest";
+  pwivate static f-finaw stwing j-jndi_gizmoduck_dest = j-jndi_pipewine_woot + "gizmoduckdest";
 
-  private static final String PENGUIN_VERSIONS_JNDI_NAME = JNDI_PIPELINE_ROOT + "penguinVersions";
-  private static final String SEGMENT_BUFFER_SIZE_JNDI_NAME =
-      JNDI_PIPELINE_ROOT + "segmentBufferSize";
-  private static final String SEGMENT_SEAL_DELAY_TIME_MS_JNDI_NAME =
-      JNDI_PIPELINE_ROOT + "segmentSealDelayTimeMs";
-  private static final String JNDI_DL_URI = JNDI_PIPELINE_ROOT + "distributedlog/dlUri";
-  private static final String JNDI_DL_CONFIG_FILE =
-      JNDI_PIPELINE_ROOT + "distributedlog/configFile";
-  private static final String CLUSTER_JNDI_NAME = JNDI_PIPELINE_ROOT + "cluster";
+  p-pwivate static finaw stwing penguin_vewsions_jndi_name = jndi_pipewine_woot + "penguinvewsions";
+  p-pwivate static f-finaw stwing segment_buffew_size_jndi_name =
+      j-jndi_pipewine_woot + "segmentbuffewsize";
+  p-pwivate static f-finaw stwing segment_seaw_deway_time_ms_jndi_name =
+      jndi_pipewine_woot + "segmentseawdewaytimems";
+  pwivate static finaw s-stwing jndi_dw_uwi = jndi_pipewine_woot + "distwibutedwog/dwuwi";
+  pwivate static finaw stwing jndi_dw_config_fiwe =
+      jndi_pipewine_woot + "distwibutedwog/configfiwe";
+  p-pwivate static finaw stwing cwustew_jndi_name = jndi_pipewine_woot + "cwustew";
 
-  private static final String TIME_SLICE_MANAGER_ROOT_PATH = "";
-  private static final String MAX_TIMESLICES_JNDI_NAME =
-      TIME_SLICE_MANAGER_ROOT_PATH + "hashPartition/maxTimeSlices";
-  private static final String MAX_SEGMENT_SIZE_JNDI_NAME =
-      TIME_SLICE_MANAGER_ROOT_PATH + "hashPartition/maxSegmentSize";
-  private static final String NUM_PARTITIONS_JNDI_NAME =
-      TIME_SLICE_MANAGER_ROOT_PATH + "hashPartition/numPartitions";
+  pwivate static f-finaw stwing time_swice_managew_woot_path = "";
+  p-pwivate static f-finaw stwing max_timeswices_jndi_name =
+      t-time_swice_managew_woot_path + "hashpawtition/maxtimeswices";
+  pwivate static f-finaw stwing max_segment_size_jndi_name =
+      t-time_swice_managew_woot_path + "hashpawtition/maxsegmentsize";
+  pwivate static finaw stwing nyum_pawtitions_jndi_name =
+      time_swice_managew_woot_path + "hashpawtition/numpawtitions";
 
-  private static final String PINK_CLIENT_ID = "search_ingester";
+  pwivate static finaw stwing pink_cwient_id = "seawch_ingestew";
 
-  private final Decider decider;
-  private final MutableDecisionMaker mutableDecisionMaker;
-  private final int partition;
-  private PipelineExceptionHandler pipelineExceptionHandler;
-  private final StratoMetaStoreWireModule stratoMetaStoreWireModule;
+  pwivate finaw d-decidew decidew;
+  pwivate finaw m-mutabwedecisionmakew mutabwedecisionmakew;
+  pwivate f-finaw int p-pawtition;
+  pwivate pipewineexceptionhandwew pipewineexceptionhandwew;
+  pwivate f-finaw stwatometastowewiwemoduwe s-stwatometastowewiwemoduwe;
 
-  private final Client stratoClient;
+  pwivate finaw cwient s-stwatocwient;
 
-  private ServiceIdentifier serviceIdentifier = ServiceIdentifier.empty();
+  p-pwivate sewviceidentifiew sewviceidentifiew = sewviceidentifiew.empty();
 
-  private List<PenguinVersion> penguinVersions;
+  pwivate wist<penguinvewsion> penguinvewsions;
 
-  public ProductionWireModule(String deciderOverlay, int partition, Option<String>
-      serviceIdentifierFlag) {
-    mutableDecisionMaker = new MutableDecisionMaker();
-    decider = DeciderFactory.get()
-        .withBaseConfig(DECIDER_BASE)
-        .withOverlayConfig(deciderOverlay)
-        .withRefreshBase(false)
-        .withDecisionMakers(
-            ImmutableList.<DecisionMaker>builder()
-                .add(mutableDecisionMaker)
-                .addAll(JavaConversions$.MODULE$.asJavaCollection(
-                    DeciderFactory$.MODULE$.DefaultDecisionMakers()))
-                .build())
-        .apply();
-    this.partition = partition;
-    this.stratoMetaStoreWireModule = new StratoMetaStoreWireModule(this);
-    if (serviceIdentifierFlag.isDefined()) {
-      this.serviceIdentifier =
-          ServiceIdentifier.flagOfServiceIdentifier().parse(serviceIdentifierFlag.get());
+  p-pubwic pwoductionwiwemoduwe(stwing d-decidewovewway, :3 i-int pawtition, (✿oωo) option<stwing>
+      s-sewviceidentifiewfwag) {
+    m-mutabwedecisionmakew = nyew mutabwedecisionmakew();
+    d-decidew = decidewfactowy.get()
+        .withbaseconfig(decidew_base)
+        .withovewwayconfig(decidewovewway)
+        .withwefweshbase(fawse)
+        .withdecisionmakews(
+            immutabwewist.<decisionmakew>buiwdew()
+                .add(mutabwedecisionmakew)
+                .addaww(javaconvewsions$.moduwe$.asjavacowwection(
+                    decidewfactowy$.moduwe$.defauwtdecisionmakews()))
+                .buiwd())
+        .appwy();
+    this.pawtition = pawtition;
+    t-this.stwatometastowewiwemoduwe = n-nyew stwatometastowewiwemoduwe(this);
+    if (sewviceidentifiewfwag.isdefined()) {
+      this.sewviceidentifiew =
+          sewviceidentifiew.fwagofsewviceidentifiew().pawse(sewviceidentifiewfwag.get());
     }
 
-    this.stratoClient = Strato.client()
-        .withMutualTls(serviceIdentifier)
-        .withRequestTimeout(Duration.fromMilliseconds(500))
-        .build();
+    t-this.stwatocwient = s-stwato.cwient()
+        .withmutuawtws(sewviceidentifiew)
+        .withwequesttimeout(duwation.fwommiwwiseconds(500))
+        .buiwd();
   }
 
-  public ProductionWireModule(String deciderOverlay,
-                              int partition,
-                              PipelineExceptionHandler pipelineExceptionHandler,
-                              Option<String> serviceIdentifierFlag) {
-    this(deciderOverlay, partition, serviceIdentifierFlag);
-    this.pipelineExceptionHandler = pipelineExceptionHandler;
+  pubwic pwoductionwiwemoduwe(stwing decidewovewway, XD
+                              int pawtition, >w<
+                              p-pipewineexceptionhandwew pipewineexceptionhandwew, òωó
+                              option<stwing> sewviceidentifiewfwag) {
+    this(decidewovewway, (ꈍᴗꈍ) pawtition, s-sewviceidentifiewfwag);
+    this.pipewineexceptionhandwew = pipewineexceptionhandwew;
   }
 
-  public void setPipelineExceptionHandler(PipelineExceptionHandler pipelineExceptionHandler) {
-    this.pipelineExceptionHandler = pipelineExceptionHandler;
+  p-pubwic void s-setpipewineexceptionhandwew(pipewineexceptionhandwew pipewineexceptionhandwew) {
+    this.pipewineexceptionhandwew = pipewineexceptionhandwew;
   }
 
-  @Override
-  public ServiceIdentifier getServiceIdentifier() {
-    return serviceIdentifier;
+  @ovewwide
+  p-pubwic sewviceidentifiew g-getsewviceidentifiew() {
+    wetuwn sewviceidentifiew;
   }
 
-  @Override
-  public PartitionMappingManager getPartitionMappingManager() {
-    return PartitionMappingManager.getInstance();
+  @ovewwide
+  pubwic pawtitionmappingmanagew g-getpawtitionmappingmanagew() {
+    wetuwn p-pawtitionmappingmanagew.getinstance();
   }
 
-  @Override
-  public JavaManhattanKVEndpoint getJavaManhattanKVEndpoint() {
-    Preconditions.checkNotNull(serviceIdentifier,
-        "Can't create Manhattan client with S2S authentication because Service Identifier is null");
-    LOG.info(String.format("Service identifier for Manhattan client: %s",
-        ServiceIdentifier.asString(serviceIdentifier)));
-    ManhattanKVClientMtlsParams mtlsParams = ManhattanKVClientMtlsParams.apply(serviceIdentifier,
-        ManhattanKVClientMtlsParams.apply$default$2(),
-        OpportunisticTls.Required()
+  @ovewwide
+  pubwic javamanhattankvendpoint getjavamanhattankvendpoint() {
+    p-pweconditions.checknotnuww(sewviceidentifiew, rawr x3
+        "can't cweate m-manhattan cwient w-with s2s authentication because s-sewvice identifiew is nyuww");
+    w-wog.info(stwing.fowmat("sewvice i-identifiew f-fow manhattan cwient: %s", rawr x3
+        sewviceidentifiew.asstwing(sewviceidentifiew)));
+    m-manhattankvcwientmtwspawams m-mtwspawams = manhattankvcwientmtwspawams.appwy(sewviceidentifiew, σωσ
+        manhattankvcwientmtwspawams.appwy$defauwt$2(), (ꈍᴗꈍ)
+        o-oppowtunistictws.wequiwed()
     );
-    return ManhattanKVEndpointBuilder
-        .apply(ManhattanKVClient.apply(GEOCODE_APP_ID, CLUSTER_DEST_NAME, mtlsParams))
-        .buildJava();
+    w-wetuwn m-manhattankvendpointbuiwdew
+        .appwy(manhattankvcwient.appwy(geocode_app_id, rawr cwustew_dest_name, ^^;; mtwspawams))
+        .buiwdjava();
   }
 
-  @Override
-  public Decider getDecider() {
-    return decider;
+  @ovewwide
+  p-pubwic decidew getdecidew() {
+    w-wetuwn decidew;
   }
 
-  // Since MutableDecisionMaker is needed only for production TwitterServer, this method is defined
-  // only in ProductionWireModule.
-  public MutableDecisionMaker getMutableDecisionMaker() {
-    return mutableDecisionMaker;
+  // s-since mutabwedecisionmakew is nyeeded onwy fow pwoduction t-twittewsewvew, rawr x3 t-this method is d-defined
+  // onwy i-in pwoductionwiwemoduwe. (ˆ ﻌ ˆ)♡
+  pubwic mutabwedecisionmakew g-getmutabwedecisionmakew() {
+    wetuwn mutabwedecisionmakew;
   }
 
-  @Override
-  public int getPartition() {
-    return partition;
+  @ovewwide
+  pubwic int getpawtition() {
+    wetuwn p-pawtition;
   }
 
-  @Override
-  public PipelineExceptionHandler getPipelineExceptionHandler() {
-    return pipelineExceptionHandler;
+  @ovewwide
+  pubwic pipewineexceptionhandwew g-getpipewineexceptionhandwew() {
+    wetuwn pipewineexceptionhandwew;
   }
 
-  @Override
-  public Storer.ServiceIface getStorer(Duration requestTimeout, int retries) {
-    TBinaryProtocol.Factory factory = new TBinaryProtocol.Factory();
+  @ovewwide
+  p-pubwic stowew.sewviceiface getstowew(duwation w-wequesttimeout, σωσ int wetwies) {
+    t-tbinawypwotocow.factowy f-factowy = nyew t-tbinawypwotocow.factowy();
 
-    MtlsThriftMuxClient mtlsThriftMuxClient = new MtlsThriftMuxClient(
-        ThriftMux.client().withClientId(new ClientId(PINK_CLIENT_ID)));
-    ThriftMux.Client tmuxClient = mtlsThriftMuxClient
-        .withMutualTls(serviceIdentifier)
-        .withOpportunisticTls(OpportunisticTls.Required());
+    m-mtwsthwiftmuxcwient m-mtwsthwiftmuxcwient = nyew mtwsthwiftmuxcwient(
+        thwiftmux.cwient().withcwientid(new cwientid(pink_cwient_id)));
+    thwiftmux.cwient tmuxcwient = mtwsthwiftmuxcwient
+        .withmutuawtws(sewviceidentifiew)
+        .withoppowtunistictws(oppowtunistictws.wequiwed());
 
-    ClientBuilder<
-        ThriftClientRequest,
-        byte[],
-        ClientConfig.Yes,
-        ClientConfig.Yes,
-        ClientConfig.Yes> builder = ClientBuilder.get()
+    cwientbuiwdew<
+        t-thwiftcwientwequest, (U ﹏ U)
+        b-byte[], >w<
+        c-cwientconfig.yes, σωσ
+        cwientconfig.yes, nyaa~~
+        c-cwientconfig.yes> buiwdew = cwientbuiwdew.get()
           .dest("")
-          .requestTimeout(requestTimeout)
-          .retries(retries)
-          .timeout(requestTimeout.mul(retries))
-          .stack(tmuxClient)
-          .name("pinkclient")
-          .reportTo(DefaultStatsReceiver.get());
-    return new Storer.ServiceToClient(ClientBuilder.safeBuild(builder), factory);
+          .wequesttimeout(wequesttimeout)
+          .wetwies(wetwies)
+          .timeout(wequesttimeout.muw(wetwies))
+          .stack(tmuxcwient)
+          .name("pinkcwient")
+          .wepowtto(defauwtstatsweceivew.get());
+    wetuwn new stowew.sewvicetocwient(cwientbuiwdew.safebuiwd(buiwdew), 🥺 f-factowy);
   }
 
-  @Override
-  public MetastoreClient getMetastoreClient() throws NamingException {
-    return stratoMetaStoreWireModule.getMetastoreClient(this.serviceIdentifier);
+  @ovewwide
+  p-pubwic metastowecwient getmetastowecwient() t-thwows nyamingexception {
+    wetuwn s-stwatometastowewiwemoduwe.getmetastowecwient(this.sewviceidentifiew);
   }
 
-  @Override
-  public ExecutorService getThreadPool(int numThreads) {
-    return Executors.newFixedThreadPool(numThreads);
+  @ovewwide
+  p-pubwic executowsewvice g-getthweadpoow(int n-nyumthweads) {
+    wetuwn executows.newfixedthweadpoow(numthweads);
   }
 
-  @Override
-  public TweetService.ServiceToClient getTweetyPieClient(String tweetypieClientId)
-      throws NamingException {
-    return TweetyPieWireModule.getTweetyPieClient(tweetypieClientId, serviceIdentifier);
+  @ovewwide
+  pubwic tweetsewvice.sewvicetocwient gettweetypiecwient(stwing t-tweetypiecwientid)
+      t-thwows namingexception {
+    w-wetuwn t-tweetypiewiwemoduwe.gettweetypiecwient(tweetypiecwientid, rawr x3 sewviceidentifiew);
   }
 
-  @Override
-  public UserService.ServiceToClient getGizmoduckClient(String clientId)
-      throws NamingException {
-    Context context = new InitialContext();
-    String dest = (String) context.lookup(JNDI_GIZMODUCK_DEST);
+  @ovewwide
+  p-pubwic usewsewvice.sewvicetocwient getgizmoduckcwient(stwing c-cwientid)
+      t-thwows nyamingexception {
+    context context = n-nyew initiawcontext();
+    s-stwing dest = (stwing) c-context.wookup(jndi_gizmoduck_dest);
 
-    MtlsThriftMuxClient mtlsThriftMuxClient = new MtlsThriftMuxClient(
-        ThriftMux.client().withClientId(new ClientId(clientId)));
+    mtwsthwiftmuxcwient mtwsthwiftmuxcwient = nyew mtwsthwiftmuxcwient(
+        t-thwiftmux.cwient().withcwientid(new cwientid(cwientid)));
 
-    Service<ThriftClientRequest, byte[]> clientBuilder =
-        ClientBuilder.safeBuild(
-            ClientBuilder
+    sewvice<thwiftcwientwequest, σωσ b-byte[]> cwientbuiwdew =
+        c-cwientbuiwdew.safebuiwd(
+            cwientbuiwdew
                 .get()
-                .requestTimeout(Duration.fromMilliseconds(800))
-                .retryPolicy(RetryPolicy.tries(3))
-                .name("search_ingester_gizmoduck_client")
-                .reportTo(DefaultStatsReceiver.get())
-                .daemon(true)
+                .wequesttimeout(duwation.fwommiwwiseconds(800))
+                .wetwypowicy(wetwypowicy.twies(3))
+                .name("seawch_ingestew_gizmoduck_cwient")
+                .wepowtto(defauwtstatsweceivew.get())
+                .daemon(twue)
                 .dest(dest)
-                .stack(mtlsThriftMuxClient.withMutualTls(serviceIdentifier)
-                        .withOpportunisticTls(OpportunisticTls.Required())));
-    return new UserService.ServiceToClient(clientBuilder, new TBinaryProtocol.Factory());
+                .stack(mtwsthwiftmuxcwient.withmutuawtws(sewviceidentifiew)
+                        .withoppowtunistictws(oppowtunistictws.wequiwed())));
+    w-wetuwn nyew usewsewvice.sewvicetocwient(cwientbuiwdew, (///ˬ///✿) nyew tbinawypwotocow.factowy());
   }
 
-  @Override
-  public <T extends TBase<?, ?>> EventBusSubscriber<T> createEventBusSubscriber(
-      Function<T, Future<?>> process,
-      Class<T> thriftStructClass,
-      String eventBusSubscriberId,
-      int maxConcurrentEvents) {
-    Preconditions.checkNotNull(serviceIdentifier,
-        "Can't create EventBusSubscriber with S2S auth because Service Identifier is null");
-    LOG.info(String.format("Service identifier for EventBusSubscriber Manhattan client: %s",
-        ServiceIdentifier.asString(serviceIdentifier)));
-    // We set the processTimeoutMs parameter here to be Duration.Top because we do not want to read
-    // more events from EventBus if we are experiencing back pressure and cannot write them to the
-    // downstream queue.
-    return EventBusSubscriberBuilder.apply()
-        .subscriberId(eventBusSubscriberId)
-        .skipToLatest(false)
-        .fromAllZones(true)
-        .statsReceiver(DefaultStatsReceiver.get().scope("eventbus"))
-        .thriftStruct(thriftStructClass)
-        .serviceIdentifier(serviceIdentifier)
-        .maxConcurrentEvents(maxConcurrentEvents)
-        .processTimeout(Duration.Top())
-        .build(process);
+  @ovewwide
+  p-pubwic <t e-extends tbase<?, (U ﹏ U) ?>> e-eventbussubscwibew<t> cweateeventbussubscwibew(
+      function<t, ^^;; futuwe<?>> p-pwocess, 🥺
+      cwass<t> thwiftstwuctcwass, òωó
+      stwing eventbussubscwibewid, XD
+      i-int maxconcuwwentevents) {
+    p-pweconditions.checknotnuww(sewviceidentifiew, :3
+        "can't cweate eventbussubscwibew w-with s2s auth because s-sewvice identifiew i-is nyuww");
+    wog.info(stwing.fowmat("sewvice identifiew f-fow eventbussubscwibew manhattan cwient: %s", (U ﹏ U)
+        s-sewviceidentifiew.asstwing(sewviceidentifiew)));
+    // we s-set the pwocesstimeoutms pawametew h-hewe to be duwation.top because w-we do nyot w-want to wead
+    // m-mowe events fwom eventbus if we awe expewiencing back pwessuwe and cannot wwite them to the
+    // downstweam queue. >w<
+    wetuwn eventbussubscwibewbuiwdew.appwy()
+        .subscwibewid(eventbussubscwibewid)
+        .skiptowatest(fawse)
+        .fwomawwzones(twue)
+        .statsweceivew(defauwtstatsweceivew.get().scope("eventbus"))
+        .thwiftstwuct(thwiftstwuctcwass)
+        .sewviceidentifiew(sewviceidentifiew)
+        .maxconcuwwentevents(maxconcuwwentevents)
+        .pwocesstimeout(duwation.top())
+        .buiwd(pwocess);
   }
 
-  @Override
-  public Clock getClock() {
-    return Clock.SYSTEM_CLOCK;
+  @ovewwide
+  pubwic cwock getcwock() {
+    wetuwn cwock.system_cwock;
   }
 
-  @Override
-  public TweetOffensiveEvaluator getTweetOffensiveEvaluator() {
-    return new TweetOffensiveEvaluator();
+  @ovewwide
+  p-pubwic t-tweetoffensiveevawuatow gettweetoffensiveevawuatow() {
+    wetuwn n-nyew tweetoffensiveevawuatow();
   }
 
-  @Override
-  public EarlybirdCluster getEarlybirdCluster() throws NamingException {
-    Context jndiContext = new InitialContext();
-    String clusterName = (String) jndiContext.lookup(CLUSTER_JNDI_NAME);
-    return EarlybirdCluster.valueOf(clusterName.toUpperCase());
+  @ovewwide
+  p-pubwic eawwybiwdcwustew g-geteawwybiwdcwustew() thwows nyamingexception {
+    c-context jndicontext = nyew initiawcontext();
+    s-stwing cwustewname = (stwing) j-jndicontext.wookup(cwustew_jndi_name);
+    wetuwn e-eawwybiwdcwustew.vawueof(cwustewname.touppewcase());
   }
 
-  @Override
-  public List<PenguinVersion> getPenguinVersions() throws NamingException {
-    Context context = new InitialContext();
-    String penguinVersionsStr = (String) context.lookup(PENGUIN_VERSIONS_JNDI_NAME);
-    penguinVersions = new ArrayList<>();
+  @ovewwide
+  pubwic w-wist<penguinvewsion> g-getpenguinvewsions() thwows namingexception {
+    c-context c-context = nyew initiawcontext();
+    s-stwing penguinvewsionsstw = (stwing) c-context.wookup(penguin_vewsions_jndi_name);
+    p-penguinvewsions = n-nyew a-awwaywist<>();
 
-    for (String penguinVersion : penguinVersionsStr.split(",")) {
-      PenguinVersion pv = PenguinVersion.versionFromByteValue(Byte.parseByte(penguinVersion));
-      if (PenguinVersionsUtil.isPenguinVersionAvailable(pv, decider)) {
-        penguinVersions.add(pv);
+    f-fow (stwing p-penguinvewsion : penguinvewsionsstw.spwit(",")) {
+      p-penguinvewsion p-pv = penguinvewsion.vewsionfwombytevawue(byte.pawsebyte(penguinvewsion));
+      i-if (penguinvewsionsutiw.ispenguinvewsionavaiwabwe(pv, /(^•ω•^) decidew)) {
+        p-penguinvewsions.add(pv);
       }
     }
 
-    Preconditions.checkArgument(penguinVersions.size() > 0,
-        "At least one penguin version must be specified.");
+    pweconditions.checkawgument(penguinvewsions.size() > 0, (⑅˘꒳˘)
+        "at weast one penguin v-vewsion must be specified.");
 
-    return penguinVersions;
+    w-wetuwn penguinvewsions;
   }
 
-  // We update penguin versions via deciders in order to disable one in case of an emergency.
-  @Override
-  public List<PenguinVersion> getCurrentlyEnabledPenguinVersions() {
-    return PenguinVersionsUtil.filterPenguinVersionsWithDeciders(penguinVersions, decider);
+  // w-we update p-penguin vewsions via decidews i-in owdew to disabwe one in case o-of an emewgency. ʘwʘ
+  @ovewwide
+  pubwic wist<penguinvewsion> g-getcuwwentwyenabwedpenguinvewsions() {
+    wetuwn penguinvewsionsutiw.fiwtewpenguinvewsionswithdecidews(penguinvewsions, rawr x3 d-decidew);
   }
 
-  @Override
-  public NamedEntityFetcher getNamedEntityFetcher() {
-    return new NamedEntityFetcher(stratoClient);
+  @ovewwide
+  pubwic nyamedentityfetchew getnamedentityfetchew() {
+    wetuwn nyew nyamedentityfetchew(stwatocwient);
   }
 
-  @Override
-  public AudioSpaceParticipantsFetcher getAudioSpaceParticipantsFetcher() {
-    return new AudioSpaceParticipantsFetcher(stratoClient);
+  @ovewwide
+  p-pubwic audiospacepawticipantsfetchew g-getaudiospacepawticipantsfetchew() {
+    w-wetuwn nyew audiospacepawticipantsfetchew(stwatocwient);
   }
 
-  @Override
-  public AudioSpaceCoreFetcher getAudioSpaceCoreFetcher() {
-    return new AudioSpaceCoreFetcher(stratoClient);
+  @ovewwide
+  pubwic audiospacecowefetchew getaudiospacecowefetchew() {
+    w-wetuwn nyew audiospacecowefetchew(stwatocwient);
   }
 
-  @Override
-  public <T> KafkaConsumer<Long, T> newKafkaConsumer(
-      String kafkaClusterPath, Deserializer<T> deserializer, String clientId, String groupId,
-      int maxPollRecords) {
-    return FinagleKafkaClientUtils.newKafkaConsumer(
-        kafkaClusterPath, deserializer, clientId, groupId, maxPollRecords);
+  @ovewwide
+  p-pubwic <t> k-kafkaconsumew<wong, (˘ω˘) t-t> nyewkafkaconsumew(
+      stwing kafkacwustewpath, o.O desewiawizew<t> d-desewiawizew, 😳 s-stwing cwientid, o.O stwing g-gwoupid, ^^;;
+      int maxpowwwecowds) {
+    wetuwn f-finagwekafkacwientutiws.newkafkaconsumew(
+        kafkacwustewpath, ( ͡o ω ͡o ) d-desewiawizew, ^^;; c-cwientid, ^^;; gwoupid, m-maxpowwwecowds);
   }
 
-  @Override
-  public <T> BlockingFinagleKafkaProducer<Long, T> newFinagleKafkaProducer(
-      String kafkaClusterPath, Serializer<T> serializer, String clientId,
-      @Nullable Class<? extends Partitioner> partitionerClass) {
-    return FinagleKafkaClientUtils.newFinagleKafkaProducer(
-        kafkaClusterPath, true, serializer, clientId, partitionerClass);
+  @ovewwide
+  pubwic <t> b-bwockingfinagwekafkapwoducew<wong, XD t-t> nyewfinagwekafkapwoducew(
+      s-stwing k-kafkacwustewpath, 🥺 sewiawizew<t> s-sewiawizew, (///ˬ///✿) s-stwing cwientid, (U ᵕ U❁)
+      @nuwwabwe c-cwass<? extends p-pawtitionew> pawtitionewcwass) {
+    w-wetuwn finagwekafkacwientutiws.newfinagwekafkapwoducew(
+        k-kafkacwustewpath, ^^;; t-twue, sewiawizew, ^^;; c-cwientid, rawr pawtitionewcwass);
   }
 }

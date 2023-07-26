@@ -1,37 +1,37 @@
-package com.twitter.product_mixer.component_library.filter
+package com.twittew.pwoduct_mixew.component_wibwawy.fiwtew
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TweetAuthorIdFeature
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetweetcandidate
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetauthowidfeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
 
 /**
- * A [[filter]] that filters based on whether query user is the author of the tweet. This will NOT filter empty user ids
- * @note It is recommended to apply [[HasAuthorIdFeatureFilter]] before this, as this will FAIL if feature is unavailable
+ * a [[fiwtew]] that f-fiwtews based on whethew quewy usew is the authow o-of the tweet. >_< this wiww nyot f-fiwtew empty usew ids
+ * @note it is wecommended to appwy [[hasauthowidfeatuwefiwtew]] b-befowe this, >_< as this wiww f-faiw if featuwe i-is unavaiwabwe
  *
- * @tparam Candidate The type of the candidates
+ * @tpawam candidate the type of the candidates
  */
-case class TweetAuthorIsSelfFilter[Candidate <: BaseTweetCandidate]()
-    extends Filter[PipelineQuery, Candidate] {
-  override val identifier: FilterIdentifier = FilterIdentifier("TweetAuthorIsSelf")
+case cwass t-tweetauthowissewffiwtew[candidate <: basetweetcandidate]()
+    extends fiwtew[pipewinequewy, (⑅˘꒳˘) candidate] {
+  ovewwide vaw identifiew: f-fiwtewidentifiew = fiwtewidentifiew("tweetauthowissewf")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
-    val (kept, removed) = candidates.partition { candidate =>
-      val authorId = candidate.features.get(TweetAuthorIdFeature)
-      !query.getOptionalUserId.contains(authorId)
+  o-ovewwide def a-appwy(
+    quewy: p-pipewinequewy, /(^•ω•^)
+    c-candidates: seq[candidatewithfeatuwes[candidate]]
+  ): stitch[fiwtewwesuwt[candidate]] = {
+    v-vaw (kept, rawr x3 wemoved) = candidates.pawtition { candidate =>
+      v-vaw authowid = candidate.featuwes.get(tweetauthowidfeatuwe)
+      !quewy.getoptionawusewid.contains(authowid)
     }
 
-    val filterResult = FilterResult(
-      kept = kept.map(_.candidate),
-      removed = removed.map(_.candidate)
+    vaw fiwtewwesuwt = fiwtewwesuwt(
+      kept = kept.map(_.candidate), (U ﹏ U)
+      w-wemoved = wemoved.map(_.candidate)
     )
-    Stitch.value(filterResult)
+    s-stitch.vawue(fiwtewwesuwt)
   }
 }

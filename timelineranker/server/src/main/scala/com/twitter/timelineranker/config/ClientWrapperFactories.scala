@@ -1,86 +1,86 @@
-package com.twitter.timelineranker.config
+package com.twittew.timewinewankew.config
 
-import com.twitter.servo.util.Gate
-import com.twitter.timelineranker.clients.ScopedCortexTweetQueryServiceClientFactory
-import com.twitter.timelines.clients.gizmoduck.ScopedGizmoduckClientFactory
-import com.twitter.timelines.clients.manhattan.ScopedUserMetadataClientFactory
-import com.twitter.timelines.clients.socialgraph.ScopedSocialGraphClientFactory
-import com.twitter.timelines.clients.strato.realgraph.ScopedRealGraphClientFactory
-import com.twitter.timelines.clients.tweetypie.AdditionalFieldConfig
-import com.twitter.timelines.clients.tweetypie.ScopedTweetyPieClientFactory
-import com.twitter.timelines.visibility.VisibilityEnforcerFactory
-import com.twitter.timelines.visibility.VisibilityProfileHydratorFactory
-import com.twitter.tweetypie.thriftscala.{Tweet => TTweet}
+impowt c-com.twittew.sewvo.utiw.gate
+i-impowt c-com.twittew.timewinewankew.cwients.scopedcowtextweetquewysewvicecwientfactowy
+i-impowt com.twittew.timewines.cwients.gizmoduck.scopedgizmoduckcwientfactowy
+i-impowt c-com.twittew.timewines.cwients.manhattan.scopedusewmetadatacwientfactowy
+i-impowt c-com.twittew.timewines.cwients.sociawgwaph.scopedsociawgwaphcwientfactowy
+impowt com.twittew.timewines.cwients.stwato.weawgwaph.scopedweawgwaphcwientfactowy
+impowt com.twittew.timewines.cwients.tweetypie.additionawfiewdconfig
+impowt com.twittew.timewines.cwients.tweetypie.scopedtweetypiecwientfactowy
+i-impowt com.twittew.timewines.visibiwity.visibiwityenfowcewfactowy
+impowt com.twittew.timewines.visibiwity.visibiwitypwofiwehydwatowfactowy
+impowt c-com.twittew.tweetypie.thwiftscawa.{tweet => ttweet}
 
-class ClientWrapperFactories(config: RuntimeConfiguration) {
-  private[this] val statsReceiver = config.statsReceiver
+cwass cwientwwappewfactowies(config: w-wuntimeconfiguwation) {
+  pwivate[this] vaw statsweceivew = config.statsweceivew
 
-  val cortexTweetQueryServiceClientFactory: ScopedCortexTweetQueryServiceClientFactory =
-    new ScopedCortexTweetQueryServiceClientFactory(
-      config.underlyingClients.cortexTweetQueryServiceClient,
-      statsReceiver = statsReceiver
+  v-vaw cowtextweetquewysewvicecwientfactowy: scopedcowtextweetquewysewvicecwientfactowy =
+    n-nyew s-scopedcowtextweetquewysewvicecwientfactowy(
+      config.undewwyingcwients.cowtextweetquewysewvicecwient, >w<
+      statsweceivew = statsweceivew
     )
 
-  val gizmoduckClientFactory: ScopedGizmoduckClientFactory = new ScopedGizmoduckClientFactory(
-    config.underlyingClients.gizmoduckClient,
-    statsReceiver = statsReceiver
+  vaw gizmoduckcwientfactowy: s-scopedgizmoduckcwientfactowy = nyew scopedgizmoduckcwientfactowy(
+    config.undewwyingcwients.gizmoduckcwient, mya
+    statsweceivew = statsweceivew
   )
 
-  val socialGraphClientFactory: ScopedSocialGraphClientFactory = new ScopedSocialGraphClientFactory(
-    config.underlyingClients.sgsClient,
-    statsReceiver
+  v-vaw sociawgwaphcwientfactowy: s-scopedsociawgwaphcwientfactowy = n-nyew s-scopedsociawgwaphcwientfactowy(
+    c-config.undewwyingcwients.sgscwient, >w<
+    statsweceivew
   )
 
-  val visibilityEnforcerFactory: VisibilityEnforcerFactory = new VisibilityEnforcerFactory(
-    gizmoduckClientFactory,
-    socialGraphClientFactory,
-    statsReceiver
+  vaw visibiwityenfowcewfactowy: v-visibiwityenfowcewfactowy = nyew visibiwityenfowcewfactowy(
+    g-gizmoduckcwientfactowy, nyaa~~
+    sociawgwaphcwientfactowy, (✿oωo)
+    statsweceivew
   )
 
-  val tweetyPieAdditionalFieldsToDisable: Seq[Short] = Seq(
-    TTweet.MediaTagsField.id,
-    TTweet.SchedulingInfoField.id,
-    TTweet.EscherbirdEntityAnnotationsField.id,
-    TTweet.CardReferenceField.id,
-    TTweet.SelfPermalinkField.id,
-    TTweet.ExtendedTweetMetadataField.id,
-    TTweet.CommunitiesField.id,
-    TTweet.VisibleTextRangeField.id
+  vaw tweetypieadditionawfiewdstodisabwe: seq[showt] = seq(
+    ttweet.mediatagsfiewd.id, ʘwʘ
+    t-ttweet.scheduwinginfofiewd.id, (ˆ ﻌ ˆ)♡
+    ttweet.eschewbiwdentityannotationsfiewd.id, 😳😳😳
+    ttweet.cawdwefewencefiewd.id, :3
+    ttweet.sewfpewmawinkfiewd.id, OwO
+    t-ttweet.extendedtweetmetadatafiewd.id, (U ﹏ U)
+    t-ttweet.communitiesfiewd.id, >w<
+    t-ttweet.visibwetextwangefiewd.id
   )
 
-  val tweetyPieHighQoSClientFactory: ScopedTweetyPieClientFactory =
-    new ScopedTweetyPieClientFactory(
-      tweetyPieClient = config.underlyingClients.tweetyPieHighQoSClient,
-      additionalFieldConfig = AdditionalFieldConfig(
-        fieldDisablingGates = tweetyPieAdditionalFieldsToDisable.map(_ -> Gate.False).toMap
-      ),
-      includePartialResults = Gate.False,
-      statsReceiver = statsReceiver
+  vaw tweetypiehighqoscwientfactowy: scopedtweetypiecwientfactowy =
+    nyew scopedtweetypiecwientfactowy(
+      t-tweetypiecwient = c-config.undewwyingcwients.tweetypiehighqoscwient, (U ﹏ U)
+      additionawfiewdconfig = a-additionawfiewdconfig(
+        f-fiewddisabwinggates = tweetypieadditionawfiewdstodisabwe.map(_ -> g-gate.fawse).tomap
+      ), 😳
+      incwudepawtiawwesuwts = g-gate.fawse, (ˆ ﻌ ˆ)♡
+      statsweceivew = statsweceivew
     )
 
-  val tweetyPieLowQoSClientFactory: ScopedTweetyPieClientFactory = new ScopedTweetyPieClientFactory(
-    tweetyPieClient = config.underlyingClients.tweetyPieLowQoSClient,
-    additionalFieldConfig = AdditionalFieldConfig(
-      fieldDisablingGates = tweetyPieAdditionalFieldsToDisable.map(_ -> Gate.False).toMap
-    ),
-    includePartialResults = Gate.False,
-    statsReceiver = statsReceiver
+  v-vaw tweetypiewowqoscwientfactowy: scopedtweetypiecwientfactowy = n-nyew scopedtweetypiecwientfactowy(
+    tweetypiecwient = config.undewwyingcwients.tweetypiewowqoscwient, 😳😳😳
+    a-additionawfiewdconfig = a-additionawfiewdconfig(
+      fiewddisabwinggates = tweetypieadditionawfiewdstodisabwe.map(_ -> gate.fawse).tomap
+    ), (U ﹏ U)
+    incwudepawtiawwesuwts = gate.fawse, (///ˬ///✿)
+    statsweceivew = s-statsweceivew
   )
 
-  val userMetadataClientFactory: ScopedUserMetadataClientFactory =
-    new ScopedUserMetadataClientFactory(
-      config.underlyingClients.manhattanStarbuckClient,
-      TimelineRankerConstants.ManhattanStarbuckAppId,
-      statsReceiver
+  v-vaw usewmetadatacwientfactowy: scopedusewmetadatacwientfactowy =
+    n-nyew s-scopedusewmetadatacwientfactowy(
+      c-config.undewwyingcwients.manhattanstawbuckcwient, 😳
+      timewinewankewconstants.manhattanstawbuckappid, 😳
+      statsweceivew
     )
 
-  val visibilityProfileHydratorFactory: VisibilityProfileHydratorFactory =
-    new VisibilityProfileHydratorFactory(
-      gizmoduckClientFactory,
-      socialGraphClientFactory,
-      statsReceiver
+  vaw visibiwitypwofiwehydwatowfactowy: v-visibiwitypwofiwehydwatowfactowy =
+    nyew visibiwitypwofiwehydwatowfactowy(
+      gizmoduckcwientfactowy, σωσ
+      sociawgwaphcwientfactowy, rawr x3
+      statsweceivew
     )
 
-  val realGraphClientFactory =
-    new ScopedRealGraphClientFactory(config.underlyingClients.stratoClient, statsReceiver)
+  v-vaw weawgwaphcwientfactowy =
+    nyew s-scopedweawgwaphcwientfactowy(config.undewwyingcwients.stwatocwient, OwO s-statsweceivew)
 }

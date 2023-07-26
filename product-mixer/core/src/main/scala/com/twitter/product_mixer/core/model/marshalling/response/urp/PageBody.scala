@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urp
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp
 
-sealed trait PageBody
+seawed twait p-pagebody
 
-case class TimelineKeyPageBody(timeline: TimelineKey) extends PageBody
+case c-cwass timewinekeypagebody(timewine: t-timewinekey) e-extends pagebody
 
-case class SegmentedTimelinesPageBody(
-  initialTimeline: SegmentedTimeline,
-  timelines: Seq[SegmentedTimeline])
-    extends PageBody
+c-case cwass s-segmentedtimewinespagebody(
+  i-initiawtimewine: segmentedtimewine,
+  t-timewines: seq[segmentedtimewine])
+    extends pagebody

@@ -1,21 +1,21 @@
-package com.twitter.follow_recommendations.configapi.candidates
+package com.twittew.fowwow_wecommendations.configapi.candidates
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.logging.Logging
+impowt com.googwe.inject.inject
+i-impowt com.googwe.inject.singweton
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.hasdispwaywocation
+i-impowt com.twittew.fowwow_wecommendations.common.base.twansfowm
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.timewines.configapi.haspawams
+i-impowt com.twittew.utiw.wogging.wogging
 
-@Singleton
-class HydrateCandidateParamsTransform[Target <: HasParams with HasDisplayLocation] @Inject() (
-  candidateParamsFactory: CandidateUserParamsFactory[Target])
-    extends Transform[Target, CandidateUser]
-    with Logging {
+@singweton
+cwass hydwatecandidatepawamstwansfowm[tawget <: haspawams with hasdispwaywocation] @inject() (
+  c-candidatepawamsfactowy: candidateusewpawamsfactowy[tawget])
+    extends t-twansfowm[tawget, >_< candidateusew]
+    w-with wogging {
 
-  def transform(target: Target, candidates: Seq[CandidateUser]): Stitch[Seq[CandidateUser]] = {
-    Stitch.value(candidates.map(candidateParamsFactory.apply(_, target)))
+  def twansfowm(tawget: tawget, mya candidates: seq[candidateusew]): s-stitch[seq[candidateusew]] = {
+    stitch.vawue(candidates.map(candidatepawamsfactowy.appwy(_, t-tawget)))
   }
 }

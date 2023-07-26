@@ -1,76 +1,76 @@
-# pylint: disable=no-member, invalid-name, attribute-defined-outside-init
+# pywint: disabwe=no-membew, σωσ invawid-name, rawr x3 a-attwibute-defined-outside-init
 """
-Contains the Isotonic Layer
+c-contains t-the isotonic w-wayew
 """
 
-from .layer import Layer
+fwom .wayew i-impowt w-wayew
 
-import libtwml
-import numpy as np
+impowt wibtwmw
+i-impowt nyumpy a-as nyp
 
 
-class Isotonic(Layer):
+cwass isotonic(wayew):
   """
-  This layer is created by the IsotonicCalibrator.
-  Typically it is used intead of sigmoid activation on the output unit.
+  this wayew is cweated by the isotoniccawibwatow. OwO
+  t-typicawwy it is used intead of sigmoid activation o-on the output unit. /(^•ω•^)
 
-  Arguments:
-    n_unit:
-      number of input units to the layer (same as number of output units).
-    n_bin:
-      number of bins used for isotonic calibration.
-      More bins means a more precise isotonic function.
-      Less bins means a more regularized isotonic function.
-    xs_input:
-      A tensor containing the boundaries of the bins.
+  awguments:
+    n-ny_unit:
+      nyumbew of input units to the wayew (same a-as nyumbew of output units). 😳😳😳
+    n-ny_bin:
+      n-nyumbew of bins used fow isotonic cawibwation. ( ͡o ω ͡o )
+      mowe bins means a mowe pwecise i-isotonic function. >_<
+      wess bins means a mowe weguwawized isotonic function. >w<
+    x-xs_input:
+      a tensow c-containing the boundawies o-of the b-bins. rawr
     ys_input:
-      A tensor containing calibrated values for the corresponding bins.
+      a-a tensow containing cawibwated vawues f-fow the cowwesponding bins. 😳
 
-  Output:
+  output:
       output:
-        A layer containing calibrated probabilities with same shape and size as input.
-  Expected Sizes:
-      xs_input, ys_input:
-        [n_unit, n_bin].
-  Expected Types:
-      xs_input, ys_input:
-        same as input.
+        a-a wayew containing cawibwated pwobabiwities with same shape and size as input. >w<
+  expected s-sizes:
+      xs_input, (⑅˘꒳˘) ys_input:
+        [n_unit, OwO n-ny_bin]. (ꈍᴗꈍ)
+  e-expected types:
+      x-xs_input, 😳 ys_input:
+        same as input. 😳😳😳
   """
 
-  def __init__(self, n_unit, n_bin, xs_input=None, ys_input=None, **kwargs):
-    super(Isotonic, self).__init__(**kwargs)
+  def __init__(sewf, mya ny_unit, ny_bin, mya x-xs_input=none, (⑅˘꒳˘) y-ys_input=none, (U ﹏ U) **kwawgs):
+    supew(isotonic, mya s-sewf).__init__(**kwawgs)
 
-    self._n_unit = n_unit
-    self._n_bin = n_bin
+    s-sewf._n_unit = ny_unit
+    s-sewf._n_bin = ny_bin
 
-    self.xs_input = np.empty([n_unit, n_bin], dtype=np.float32) if xs_input is None else xs_input
-    self.ys_input = np.empty([n_unit, n_bin], dtype=np.float32) if ys_input is None else ys_input
+    s-sewf.xs_input = nyp.empty([n_unit, ʘwʘ ny_bin], dtype=np.fwoat32) i-if xs_input is nyone ewse xs_input
+    s-sewf.ys_input = nyp.empty([n_unit, (˘ω˘) n-ny_bin], (U ﹏ U) d-dtype=np.fwoat32) if ys_input is nyone ewse ys_input
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  def compute_output_shape(sewf, ^•ﻌ•^ input_shape):
+    """computes the output s-shape of the w-wayew given the input shape. (˘ω˘)
 
-    Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+    a-awgs:
+      input_shape: a-a (possibwy n-nyested tupwe of) `tensowshape`. :3  it nyeed not
+        be f-fuwwy defined (e.g. ^^;; the batch size may be unknown). 🥺
 
-    Raises NotImplementedError.
+    waises nyotimpwementedewwow. (⑅˘꒳˘)
 
     """
-    raise NotImplementedError
+    w-waise nyotimpwementedewwow
 
-  def build(self, input_shape):  # pylint: disable=unused-argument
-    """Creates the variables of the layer."""
+  def buiwd(sewf, nyaa~~ i-input_shape):  # p-pywint: disabwe=unused-awgument
+    """cweates t-the vawiabwes of the wayew."""
 
-    self.built = True
+    s-sewf.buiwt = t-twue
 
-  def call(self, inputs, **kwargs):  # pylint: disable=unused-argument
-    """The logic of the layer lives here.
+  def c-caww(sewf, :3 inputs, ( ͡o ω ͡o ) **kwawgs):  # p-pywint: disabwe=unused-awgument
+    """the wogic of the wayew wives h-hewe. mya
 
-    Arguments:
-      inputs: input tensor(s).
+    a-awguments:
+      i-inputs: input tensow(s). (///ˬ///✿)
 
-    Returns:
-      The output from the layer
+    wetuwns:
+      t-the o-output fwom the wayew
     """
-    calibrate_op = libtwml.ops.isotonic_calibration(inputs, self.xs_input, self.ys_input)
-    return calibrate_op
+    cawibwate_op = wibtwmw.ops.isotonic_cawibwation(inputs, (˘ω˘) s-sewf.xs_input, ^^;; sewf.ys_input)
+    wetuwn cawibwate_op

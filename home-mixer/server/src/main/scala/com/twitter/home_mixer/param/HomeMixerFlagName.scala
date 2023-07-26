@@ -1,13 +1,13 @@
-package com.twitter.home_mixer.param
+package com.twittew.home_mixew.pawam
 
-object HomeMixerFlagName {
-  final val ScribeClientEventsFlag = "scribe.client_events"
-  final val ScribeServedCandidatesFlag = "scribe.served_candidates"
-  final val ScribeScoredCandidatesFlag = "scribe.scored_candidates"
-  final val ScribeServedCommonFeaturesAndCandidateFeaturesFlag =
-    "scribe.served_common_features_and_candidate_features"
-  final val DataRecordMetadataStoreConfigsYmlFlag = "data.record.metadata.store.configs.yml"
-  final val DarkTrafficFilterDeciderKey = "thrift.dark.traffic.filter.decider_key"
-  final val TargetFetchLatency = "target.fetch.latency"
-  final val TargetScoringLatency = "target.scoring.latency"
+object homemixewfwagname {
+  f-finaw vaw scwibecwienteventsfwag = "scwibe.cwient_events"
+  f-finaw v-vaw scwibesewvedcandidatesfwag = "scwibe.sewved_candidates"
+  f-finaw vaw scwibescowedcandidatesfwag = "scwibe.scowed_candidates"
+  f-finaw vaw s-scwibesewvedcommonfeatuwesandcandidatefeatuwesfwag =
+    "scwibe.sewved_common_featuwes_and_candidate_featuwes"
+  f-finaw vaw datawecowdmetadatastoweconfigsymwfwag = "data.wecowd.metadata.stowe.configs.ymw"
+  finaw v-vaw dawktwafficfiwtewdecidewkey = "thwift.dawk.twaffic.fiwtew.decidew_key"
+  finaw vaw tawgetfetchwatency = "tawget.fetch.watency"
+  finaw vaw tawgetscowingwatency = "tawget.scowing.watency"
 }

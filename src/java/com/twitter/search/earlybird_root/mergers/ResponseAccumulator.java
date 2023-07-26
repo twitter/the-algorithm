@@ -1,356 +1,356 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.twittew.seawch.eawwybiwd_woot.mewgews;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+impowt java.utiw.awwaywist;
+impowt j-java.utiw.enummap;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.map;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+impowt c-com.googwe.common.base.pweconditions;
+i-impowt c-com.googwe.common.cowwect.maps;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.earlybird.ResponseMergerUtils;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.utiw.eawwybiwd.wesponsemewgewutiws;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwts;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequesttype;
 
 /**
- * Accumulates EarlybirdResponse's and determines when to early terminate.
+ * accumuwates e-eawwybiwdwesponse's and d-detewmines when t-to eawwy tewminate.
  */
-public abstract class ResponseAccumulator {
+pubwic abstwact cwass wesponseaccumuwatow {
 
-  @VisibleForTesting
-  static class MinMaxSearchedIdStats {
-    /** How many results did we actually check */
-    private final SearchCounter checkedMaxMinSearchedStatusId;
-    private final SearchCounter unsetMaxSearchedStatusId;
-    private final SearchCounter unsetMinSearchedStatusId;
-    private final SearchCounter unsetMaxAndMinSearchedStatusId;
-    private final SearchCounter sameMinMaxSearchedIdWithoutResults;
-    private final SearchCounter sameMinMaxSearchedIdWithOneResult;
-    private final SearchCounter sameMinMaxSearchedIdWithResults;
-    private final SearchCounter flippedMinMaxSearchedId;
+  @visibwefowtesting
+  static cwass minmaxseawchedidstats {
+    /** h-how many wesuwts did we actuawwy check */
+    pwivate finaw seawchcountew c-checkedmaxminseawchedstatusid;
+    pwivate finaw s-seawchcountew u-unsetmaxseawchedstatusid;
+    p-pwivate finaw seawchcountew u-unsetminseawchedstatusid;
+    pwivate finaw seawchcountew u-unsetmaxandminseawchedstatusid;
+    pwivate finaw seawchcountew s-sameminmaxseawchedidwithoutwesuwts;
+    pwivate finaw seawchcountew sameminmaxseawchedidwithonewesuwt;
+    pwivate finaw seawchcountew sameminmaxseawchedidwithwesuwts;
+    p-pwivate finaw seawchcountew fwippedminmaxseawchedid;
 
-    MinMaxSearchedIdStats(EarlybirdRequestType requestType) {
-      String statPrefix = "merge_helper_" + requestType.getNormalizedName();
+    m-minmaxseawchedidstats(eawwybiwdwequesttype w-wequesttype) {
+      s-stwing statpwefix = "mewge_hewpew_" + wequesttype.getnowmawizedname();
 
-      checkedMaxMinSearchedStatusId = SearchCounter.export(statPrefix
-          + "_max_min_searched_id_checks");
-      unsetMaxSearchedStatusId = SearchCounter.export(statPrefix
-          + "_unset_max_searched_status_id");
-      unsetMinSearchedStatusId = SearchCounter.export(statPrefix
-          + "_unset_min_searched_status_id");
-      unsetMaxAndMinSearchedStatusId = SearchCounter.export(statPrefix
-          + "_unset_max_and_min_searched_status_id");
-      sameMinMaxSearchedIdWithoutResults = SearchCounter.export(statPrefix
-          + "_same_min_max_searched_id_without_results");
-      sameMinMaxSearchedIdWithOneResult = SearchCounter.export(statPrefix
-          + "_same_min_max_searched_id_with_one_results");
-      sameMinMaxSearchedIdWithResults = SearchCounter.export(statPrefix
-          + "_same_min_max_searched_id_with_results");
-      flippedMinMaxSearchedId = SearchCounter.export(statPrefix
-          + "_flipped_min_max_searched_id");
+      checkedmaxminseawchedstatusid = s-seawchcountew.expowt(statpwefix
+          + "_max_min_seawched_id_checks");
+      u-unsetmaxseawchedstatusid = seawchcountew.expowt(statpwefix
+          + "_unset_max_seawched_status_id");
+      u-unsetminseawchedstatusid = s-seawchcountew.expowt(statpwefix
+          + "_unset_min_seawched_status_id");
+      unsetmaxandminseawchedstatusid = s-seawchcountew.expowt(statpwefix
+          + "_unset_max_and_min_seawched_status_id");
+      sameminmaxseawchedidwithoutwesuwts = s-seawchcountew.expowt(statpwefix
+          + "_same_min_max_seawched_id_without_wesuwts");
+      sameminmaxseawchedidwithonewesuwt = seawchcountew.expowt(statpwefix
+          + "_same_min_max_seawched_id_with_one_wesuwts");
+      s-sameminmaxseawchedidwithwesuwts = seawchcountew.expowt(statpwefix
+          + "_same_min_max_seawched_id_with_wesuwts");
+      f-fwippedminmaxseawchedid = seawchcountew.expowt(statpwefix
+          + "_fwipped_min_max_seawched_id");
     }
 
-    @VisibleForTesting
-    SearchCounter getCheckedMaxMinSearchedStatusId() {
-      return checkedMaxMinSearchedStatusId;
+    @visibwefowtesting
+    s-seawchcountew g-getcheckedmaxminseawchedstatusid() {
+      wetuwn checkedmaxminseawchedstatusid;
     }
 
-    @VisibleForTesting
-    SearchCounter getFlippedMinMaxSearchedId() {
-      return flippedMinMaxSearchedId;
+    @visibwefowtesting
+    seawchcountew getfwippedminmaxseawchedid() {
+      wetuwn fwippedminmaxseawchedid;
     }
 
-    @VisibleForTesting
-    SearchCounter getUnsetMaxSearchedStatusId() {
-      return unsetMaxSearchedStatusId;
+    @visibwefowtesting
+    seawchcountew getunsetmaxseawchedstatusid() {
+      w-wetuwn unsetmaxseawchedstatusid;
     }
 
-    @VisibleForTesting
-    SearchCounter getUnsetMinSearchedStatusId() {
-      return unsetMinSearchedStatusId;
+    @visibwefowtesting
+    s-seawchcountew getunsetminseawchedstatusid() {
+      w-wetuwn u-unsetminseawchedstatusid;
     }
 
-    @VisibleForTesting
-    SearchCounter getUnsetMaxAndMinSearchedStatusId() {
-      return unsetMaxAndMinSearchedStatusId;
+    @visibwefowtesting
+    s-seawchcountew getunsetmaxandminseawchedstatusid() {
+      wetuwn unsetmaxandminseawchedstatusid;
     }
 
-    @VisibleForTesting
-    SearchCounter getSameMinMaxSearchedIdWithoutResults() {
-      return sameMinMaxSearchedIdWithoutResults;
+    @visibwefowtesting
+    seawchcountew getsameminmaxseawchedidwithoutwesuwts() {
+      w-wetuwn sameminmaxseawchedidwithoutwesuwts;
     }
 
-    @VisibleForTesting
-    SearchCounter getSameMinMaxSearchedIdWithOneResult() {
-      return sameMinMaxSearchedIdWithOneResult;
+    @visibwefowtesting
+    seawchcountew getsameminmaxseawchedidwithonewesuwt() {
+      wetuwn sameminmaxseawchedidwithonewesuwt;
     }
 
-    @VisibleForTesting
-    SearchCounter getSameMinMaxSearchedIdWithResults() {
-      return sameMinMaxSearchedIdWithResults;
+    @visibwefowtesting
+    s-seawchcountew getsameminmaxseawchedidwithwesuwts() {
+      wetuwn s-sameminmaxseawchedidwithwesuwts;
     }
   }
 
-  @VisibleForTesting
-  static final Map<EarlybirdRequestType, MinMaxSearchedIdStats> MIN_MAX_SEARCHED_ID_STATS_MAP;
-  static {
-    EnumMap<EarlybirdRequestType, MinMaxSearchedIdStats> statsMap
-        = Maps.newEnumMap(EarlybirdRequestType.class);
-    for (EarlybirdRequestType earlybirdRequestType : EarlybirdRequestType.values()) {
-      statsMap.put(earlybirdRequestType, new MinMaxSearchedIdStats(earlybirdRequestType));
+  @visibwefowtesting
+  s-static f-finaw map<eawwybiwdwequesttype, UwU minmaxseawchedidstats> m-min_max_seawched_id_stats_map;
+  s-static {
+    e-enummap<eawwybiwdwequesttype, 😳😳😳 m-minmaxseawchedidstats> statsmap
+        = maps.newenummap(eawwybiwdwequesttype.cwass);
+    f-fow (eawwybiwdwequesttype e-eawwybiwdwequesttype : eawwybiwdwequesttype.vawues()) {
+      s-statsmap.put(eawwybiwdwequesttype, OwO n-nyew minmaxseawchedidstats(eawwybiwdwequesttype));
     }
 
-    MIN_MAX_SEARCHED_ID_STATS_MAP = Maps.immutableEnumMap(statsMap);
+    m-min_max_seawched_id_stats_map = maps.immutabweenummap(statsmap);
   }
 
-  // Merge has encountered at least one early terminated response.
-  private boolean foundEarlyTermination = false;
-  // Empty but successful response counter (E.g. when a tier or partition is skipped)
-  private int successfulEmptyResponseCount = 0;
-  // The list of the successful responses from all earlybird futures. This does not include empty
-  // responses resulted from null requests.
-  private final List<EarlybirdResponse> successResponses = new ArrayList<>();
-  // The list of the error responses from all earlybird futures.
-  private final List<EarlybirdResponse> errorResponses = new ArrayList<>();
-  // the list of max statusIds seen in each earlybird.
-  private final List<Long> maxIds = new ArrayList<>();
-  // the list of min statusIds seen in each earlybird.
-  private final List<Long> minIds = new ArrayList<>();
+  // mewge has encountewed at weast o-one eawwy tewminated wesponse.
+  pwivate boowean foundeawwytewmination = fawse;
+  // empty but s-successfuw wesponse countew (e.g. ^•ﻌ•^ when a tiew ow pawtition is skipped)
+  p-pwivate i-int successfuwemptywesponsecount = 0;
+  // t-the wist of the successfuw w-wesponses fwom aww eawwybiwd f-futuwes. (ꈍᴗꈍ) this d-does nyot incwude empty
+  // wesponses wesuwted fwom nyuww wequests. (⑅˘꒳˘)
+  pwivate finaw wist<eawwybiwdwesponse> successwesponses = n-new awwaywist<>();
+  // the wist o-of the ewwow wesponses fwom aww e-eawwybiwd futuwes. (⑅˘꒳˘)
+  p-pwivate finaw wist<eawwybiwdwesponse> ewwowwesponses = nyew a-awwaywist<>();
+  // t-the wist of max statusids s-seen in each eawwybiwd. (ˆ ﻌ ˆ)♡
+  p-pwivate finaw wist<wong> maxids = nyew awwaywist<>();
+  // the wist o-of min statusids s-seen in each eawwybiwd. /(^•ω•^)
+  p-pwivate finaw wist<wong> m-minids = nyew a-awwaywist<>();
 
-  private int numResponses = 0;
+  pwivate int n-nyumwesponses = 0;
 
-  private int numResultsAccumulated = 0;
-  private int numSearchedSegments = 0;
+  pwivate int nyumwesuwtsaccumuwated = 0;
+  pwivate int nyumseawchedsegments = 0;
 
   /**
-   * Returns a string that can be used for logging to identify a single response out of all the
-   * responses that are being merged.
+   * wetuwns a stwing t-that can be used f-fow wogging to identify a singwe wesponse out o-of aww the
+   * w-wesponses that awe being mewged. òωó
    *
-   * @param responseIndex the index of a response's partition or tier, depending on the type of
-   *                      responses being accumulated.
-   * @param numTotalResponses the total number of partitions or tiers that are being merged.
+   * @pawam wesponseindex the index of a w-wesponse's pawtition ow tiew, (⑅˘꒳˘) depending on the type of
+   *                      wesponses being a-accumuwated. (U ᵕ U❁)
+   * @pawam nyumtotawwesponses the t-totaw nyumbew o-of pawtitions ow tiews that awe being mewged. >w<
    */
-  public abstract String getNameForLogging(int responseIndex, int numTotalResponses);
+  pubwic abstwact s-stwing getnamefowwogging(int w-wesponseindex, int nyumtotawwesponses);
 
   /**
-   * Returns a string that is used to export per-EarlybirdResponseCode stats for partitions and tiers.
+   * wetuwns a stwing that is u-used to expowt pew-eawwybiwdwesponsecode stats fow p-pawtitions and tiews. σωσ
    *
-   * @param responseIndex the index of of a response's partition or tier.
-   * @param numTotalResponses the total number of partitions or tiers that are being merged.
-   * @return a string that is used to export per-EarlybirdResponseCode stats for partitions and tiers.
+   * @pawam wesponseindex the index o-of of a wesponse's pawtition ow t-tiew. -.-
+   * @pawam n-nyumtotawwesponses the totaw n-nyumbew of pawtitions ow tiews t-that awe being mewged. o.O
+   * @wetuwn a-a stwing that i-is used to expowt pew-eawwybiwdwesponsecode s-stats f-fow pawtitions and tiews. ^^
    */
-  public abstract String getNameForEarlybirdResponseCodeStats(
-      int responseIndex, int numTotalResponses);
+  pubwic abstwact s-stwing getnamefoweawwybiwdwesponsecodestats(
+      i-int wesponseindex, >_< i-int nyumtotawwesponses);
 
-  abstract boolean shouldEarlyTerminateMerge(EarlyTerminateTierMergePredicate merger);
+  abstwact b-boowean shouwdeawwytewminatemewge(eawwytewminatetiewmewgepwedicate mewgew);
 
   /**
-   * Add a EarlybirdResponse
+   * a-add a eawwybiwdwesponse
    */
-  public void addResponse(EarlybirdResponseDebugMessageBuilder responseMessageBuilder,
-                          EarlybirdRequest request,
-                          EarlybirdResponse response) {
-    numResponses++;
-    numSearchedSegments += response.getNumSearchedSegments();
+  p-pubwic void addwesponse(eawwybiwdwesponsedebugmessagebuiwdew wesponsemessagebuiwdew, >w<
+                          eawwybiwdwequest w-wequest, >_<
+                          e-eawwybiwdwesponse w-wesponse) {
+    n-numwesponses++;
+    nyumseawchedsegments += w-wesponse.getnumseawchedsegments();
 
-    if (isSkippedResponse(response)) {
-      // This is an empty response, no processing is required, just need to update statistics.
-      successfulEmptyResponseCount++;
-      handleSkippedResponse(response.getResponseCode());
-    } else if (isErrorResponse(response)) {
-      errorResponses.add(response);
-      handleErrorResponse(response);
-    } else {
-      handleSuccessfulResponse(responseMessageBuilder, request, response);
+    if (isskippedwesponse(wesponse)) {
+      // this is an empty wesponse, >w< nyo pwocessing is wequiwed, rawr j-just nyeed to update statistics. rawr x3
+      s-successfuwemptywesponsecount++;
+      handweskippedwesponse(wesponse.getwesponsecode());
+    } e-ewse if (isewwowwesponse(wesponse)) {
+      e-ewwowwesponses.add(wesponse);
+      handweewwowwesponse(wesponse);
+    } e-ewse {
+      handwesuccessfuwwesponse(wesponsemessagebuiwdew, ( ͡o ω ͡o ) w-wequest, w-wesponse);
     }
   }
 
-  private boolean isErrorResponse(EarlybirdResponse response) {
-    return !response.isSetResponseCode()
-        || response.getResponseCode() != EarlybirdResponseCode.SUCCESS;
+  pwivate b-boowean isewwowwesponse(eawwybiwdwesponse w-wesponse) {
+    wetuwn !wesponse.issetwesponsecode()
+        || wesponse.getwesponsecode() != eawwybiwdwesponsecode.success;
   }
 
-  private boolean isSkippedResponse(EarlybirdResponse response) {
-    return response.isSetResponseCode()
-        && (response.getResponseCode() == EarlybirdResponseCode.PARTITION_SKIPPED
-        || response.getResponseCode() == EarlybirdResponseCode.TIER_SKIPPED);
+  pwivate boowean isskippedwesponse(eawwybiwdwesponse wesponse) {
+    wetuwn w-wesponse.issetwesponsecode()
+        && (wesponse.getwesponsecode() == e-eawwybiwdwesponsecode.pawtition_skipped
+        || w-wesponse.getwesponsecode() == eawwybiwdwesponsecode.tiew_skipped);
   }
 
   /**
-   * Record a response corresponding to a skipped partition or skipped tier.
+   * w-wecowd a wesponse cowwesponding to a skipped pawtition o-ow skipped tiew. (˘ω˘)
    */
-  protected abstract void handleSkippedResponse(EarlybirdResponseCode responseCode);
+  p-pwotected abstwact v-void handweskippedwesponse(eawwybiwdwesponsecode wesponsecode);
 
   /**
-   * Handle an error response
+   * handwe a-an ewwow wesponse
    */
-  protected abstract void handleErrorResponse(EarlybirdResponse response);
+  p-pwotected abstwact v-void handweewwowwesponse(eawwybiwdwesponse w-wesponse);
 
   /**
-   * Subclasses can override this to perform more successful response handling.
+   * subcwasses can ovewwide this to pewfowm mowe successfuw wesponse h-handwing. 😳
    */
-  protected void extraSuccessfulResponseHandler(EarlybirdResponse response) { }
+  p-pwotected void e-extwasuccessfuwwesponsehandwew(eawwybiwdwesponse w-wesponse) { }
 
  /**
-  * Whether the helper is for merging results from partitions within a single tier.
+  * w-whethew the hewpew i-is fow mewging wesuwts f-fwom pawtitions within a s-singwe tiew. OwO
   */
-  protected final boolean isMergingPartitionsWithinATier() {
-    return !isMergingAcrossTiers();
+  p-pwotected finaw boowean ismewgingpawtitionswithinatiew() {
+    w-wetuwn !ismewgingacwosstiews();
   }
 
   /**
-   * Whether the helper is for merging results across different tiers.
+   * whethew the hewpew is fow mewging w-wesuwts acwoss diffewent tiews. (˘ω˘)
    */
-  protected abstract boolean isMergingAcrossTiers();
+  p-pwotected a-abstwact boowean ismewgingacwosstiews();
 
 
   /**
-   * Record a successful response.
+   * w-wecowd a successfuw wesponse. òωó
    */
-  public final void handleSuccessfulResponse(
-      EarlybirdResponseDebugMessageBuilder responseMessageBuilder,
-      EarlybirdRequest request,
-      EarlybirdResponse response) {
-    successResponses.add(response);
-    if (response.isSetSearchResults()) {
-      ThriftSearchResults searchResults = response.getSearchResults();
-      numResultsAccumulated += searchResults.getResultsSize();
+  p-pubwic finaw v-void handwesuccessfuwwesponse(
+      e-eawwybiwdwesponsedebugmessagebuiwdew wesponsemessagebuiwdew, ( ͡o ω ͡o )
+      eawwybiwdwequest wequest, UwU
+      e-eawwybiwdwesponse wesponse) {
+    successwesponses.add(wesponse);
+    i-if (wesponse.issetseawchwesuwts()) {
+      t-thwiftseawchwesuwts seawchwesuwts = w-wesponse.getseawchwesuwts();
+      nyumwesuwtsaccumuwated += s-seawchwesuwts.getwesuwtssize();
 
-      recordMinMaxSearchedIdsAndUpdateStats(responseMessageBuilder, request, response,
-          searchResults);
+      w-wecowdminmaxseawchedidsandupdatestats(wesponsemessagebuiwdew, /(^•ω•^) wequest, (ꈍᴗꈍ) wesponse, 😳
+          seawchwesuwts);
     }
-    if (response.isSetEarlyTerminationInfo()
-        && response.getEarlyTerminationInfo().isEarlyTerminated()) {
-      foundEarlyTermination = true;
+    i-if (wesponse.isseteawwytewminationinfo()
+        && wesponse.geteawwytewminationinfo().iseawwytewminated()) {
+      foundeawwytewmination = t-twue;
     }
-    extraSuccessfulResponseHandler(response);
+    e-extwasuccessfuwwesponsehandwew(wesponse);
   }
 
-  private void recordMinMaxSearchedIdsAndUpdateStats(
-      EarlybirdResponseDebugMessageBuilder responseMessageBuidler,
-      EarlybirdRequest request,
-      EarlybirdResponse response,
-      ThriftSearchResults searchResults) {
+  pwivate void w-wecowdminmaxseawchedidsandupdatestats(
+      eawwybiwdwesponsedebugmessagebuiwdew w-wesponsemessagebuidwew, mya
+      e-eawwybiwdwequest w-wequest, mya
+      eawwybiwdwesponse wesponse, /(^•ω•^)
+      thwiftseawchwesuwts seawchwesuwts) {
 
-    boolean isMaxIdSet = searchResults.isSetMaxSearchedStatusID();
-    boolean isMinIdSet = searchResults.isSetMinSearchedStatusID();
+    boowean ismaxidset = seawchwesuwts.issetmaxseawchedstatusid();
+    boowean isminidset = seawchwesuwts.issetminseawchedstatusid();
 
-    if (isMaxIdSet) {
-      maxIds.add(searchResults.getMaxSearchedStatusID());
+    if (ismaxidset) {
+      maxids.add(seawchwesuwts.getmaxseawchedstatusid());
     }
-    if (isMinIdSet) {
-      minIds.add(searchResults.getMinSearchedStatusID());
+    if (isminidset) {
+      m-minids.add(seawchwesuwts.getminseawchedstatusid());
     }
 
-    updateMinMaxIdStats(responseMessageBuidler, request, response, searchResults, isMaxIdSet,
-        isMinIdSet);
+    u-updateminmaxidstats(wesponsemessagebuidwew, ^^;; wequest, 🥺 wesponse, ^^ seawchwesuwts, i-ismaxidset, ^•ﻌ•^
+        i-isminidset);
   }
 
-  private void updateMinMaxIdStats(
-      EarlybirdResponseDebugMessageBuilder responseMessageBuilder,
-      EarlybirdRequest request,
-      EarlybirdResponse response,
-      ThriftSearchResults searchResults,
-      boolean isMaxIdSet,
-      boolean isMinIdSet) {
-    // Now just track the stats.
-    EarlybirdRequestType requestType = EarlybirdRequestType.of(request);
-    MinMaxSearchedIdStats minMaxSearchedIdStats = MIN_MAX_SEARCHED_ID_STATS_MAP.get(requestType);
+  p-pwivate void updateminmaxidstats(
+      e-eawwybiwdwesponsedebugmessagebuiwdew wesponsemessagebuiwdew, /(^•ω•^)
+      e-eawwybiwdwequest w-wequest, ^^
+      eawwybiwdwesponse w-wesponse, 🥺
+      thwiftseawchwesuwts s-seawchwesuwts, (U ᵕ U❁)
+      b-boowean ismaxidset, 😳😳😳
+      boowean isminidset) {
+    // n-nyow just twack t-the stats. nyaa~~
+    e-eawwybiwdwequesttype w-wequesttype = e-eawwybiwdwequesttype.of(wequest);
+    m-minmaxseawchedidstats m-minmaxseawchedidstats = m-min_max_seawched_id_stats_map.get(wequesttype);
 
-    minMaxSearchedIdStats.checkedMaxMinSearchedStatusId.increment();
-    if (isMaxIdSet && isMinIdSet) {
-      if (searchResults.getMinSearchedStatusID() > searchResults.getMaxSearchedStatusID()) {
-        // We do not expect this case to happen in production.
-        minMaxSearchedIdStats.flippedMinMaxSearchedId.increment();
-      } else if (searchResults.getResultsSize() == 0
-          && searchResults.getMaxSearchedStatusID() == searchResults.getMinSearchedStatusID()) {
-        minMaxSearchedIdStats.sameMinMaxSearchedIdWithoutResults.increment();
-        responseMessageBuilder.debugVerbose(
-            "Got no results, and same min/max searched ids. Request: %s, Response: %s",
-            request, response);
-      } else if (searchResults.getResultsSize() == 1
-          && searchResults.getMaxSearchedStatusID() == searchResults.getMinSearchedStatusID()) {
-        minMaxSearchedIdStats.sameMinMaxSearchedIdWithOneResult.increment();
-        responseMessageBuilder.debugVerbose(
-            "Got one results, and same min/max searched ids. Request: %s, Response: %s",
-            request, response);
-      } else if (searchResults.getMaxSearchedStatusID()
-          == searchResults.getMinSearchedStatusID()) {
-        minMaxSearchedIdStats.sameMinMaxSearchedIdWithResults.increment();
-        responseMessageBuilder.debugVerbose(
-            "Got multiple results, and same min/max searched ids. Request: %s, Response: %s",
-            request, response);
+    m-minmaxseawchedidstats.checkedmaxminseawchedstatusid.incwement();
+    if (ismaxidset && i-isminidset) {
+      i-if (seawchwesuwts.getminseawchedstatusid() > s-seawchwesuwts.getmaxseawchedstatusid()) {
+        // we do n-nyot expect this case to happen in pwoduction. (˘ω˘)
+        m-minmaxseawchedidstats.fwippedminmaxseawchedid.incwement();
+      } ewse i-if (seawchwesuwts.getwesuwtssize() == 0
+          && s-seawchwesuwts.getmaxseawchedstatusid() == seawchwesuwts.getminseawchedstatusid()) {
+        m-minmaxseawchedidstats.sameminmaxseawchedidwithoutwesuwts.incwement();
+        wesponsemessagebuiwdew.debugvewbose(
+            "got nyo wesuwts, >_< a-and same min/max seawched ids. XD w-wequest: %s, rawr x3 wesponse: %s", ( ͡o ω ͡o )
+            wequest, :3 w-wesponse);
+      } ewse if (seawchwesuwts.getwesuwtssize() == 1
+          && seawchwesuwts.getmaxseawchedstatusid() == s-seawchwesuwts.getminseawchedstatusid()) {
+        minmaxseawchedidstats.sameminmaxseawchedidwithonewesuwt.incwement();
+        wesponsemessagebuiwdew.debugvewbose(
+            "got one wesuwts, mya and same m-min/max seawched ids. σωσ wequest: %s, (ꈍᴗꈍ) w-wesponse: %s", OwO
+            w-wequest, o.O wesponse);
+      } ewse if (seawchwesuwts.getmaxseawchedstatusid()
+          == seawchwesuwts.getminseawchedstatusid()) {
+        m-minmaxseawchedidstats.sameminmaxseawchedidwithwesuwts.incwement();
+        wesponsemessagebuiwdew.debugvewbose(
+            "got m-muwtipwe w-wesuwts, 😳😳😳 a-and same min/max seawched ids. /(^•ω•^) wequest: %s, OwO wesponse: %s", ^^
+            w-wequest, (///ˬ///✿) w-wesponse);
       }
-    } else if (!isMaxIdSet && isMinIdSet) {
-      // We do not expect this case to happen in production.
-      minMaxSearchedIdStats.unsetMaxSearchedStatusId.increment();
-      responseMessageBuilder.debugVerbose(
-          "Got unset maxSearchedStatusID. Request: %s, Response: %s", request, response);
-    } else if (isMaxIdSet && !isMinIdSet) {
-      // We do not expect this case to happen in production.
-      minMaxSearchedIdStats.unsetMinSearchedStatusId.increment();
-      responseMessageBuilder.debugVerbose(
-          "Got unset minSearchedStatusID. Request: %s, Response: %s", request, response);
-    } else {
-      Preconditions.checkState(!isMaxIdSet && !isMinIdSet);
-      minMaxSearchedIdStats.unsetMaxAndMinSearchedStatusId.increment();
-      responseMessageBuilder.debugVerbose(
-          "Got unset maxSearchedStatusID and minSearchedStatusID. Request: %s, Response: %s",
-          request, response);
+    } ewse if (!ismaxidset && i-isminidset) {
+      // we do nyot expect this case t-to happen in pwoduction. (///ˬ///✿)
+      m-minmaxseawchedidstats.unsetmaxseawchedstatusid.incwement();
+      w-wesponsemessagebuiwdew.debugvewbose(
+          "got u-unset maxseawchedstatusid. (///ˬ///✿) wequest: %s, ʘwʘ w-wesponse: %s", ^•ﻌ•^ w-wequest, OwO wesponse);
+    } e-ewse if (ismaxidset && !isminidset) {
+      // w-we do nyot expect this c-case to happen in p-pwoduction. (U ﹏ U)
+      m-minmaxseawchedidstats.unsetminseawchedstatusid.incwement();
+      w-wesponsemessagebuiwdew.debugvewbose(
+          "got u-unset m-minseawchedstatusid. (ˆ ﻌ ˆ)♡ w-wequest: %s, (⑅˘꒳˘) w-wesponse: %s", (U ﹏ U) wequest, wesponse);
+    } e-ewse {
+      pweconditions.checkstate(!ismaxidset && !isminidset);
+      m-minmaxseawchedidstats.unsetmaxandminseawchedstatusid.incwement();
+      wesponsemessagebuiwdew.debugvewbose(
+          "got u-unset maxseawchedstatusid a-and minseawchedstatusid. o.O w-wequest: %s, mya wesponse: %s", XD
+          wequest, òωó wesponse);
     }
   }
 
 
   /**
-   * Return partition counts with number of partitions, number of successful responses, and list of
-   * responses per tier.
+   * w-wetuwn pawtition c-counts with n-nyumbew of pawtitions, (˘ω˘) numbew of successfuw wesponses, :3 and wist o-of
+   * wesponses p-pew tiew. OwO
    */
-  public abstract AccumulatedResponses.PartitionCounts getPartitionCounts();
+  pubwic abstwact a-accumuwatedwesponses.pawtitioncounts g-getpawtitioncounts();
 
-  public final AccumulatedResponses getAccumulatedResults() {
-    return new AccumulatedResponses(successResponses,
-                                    errorResponses,
-                                    maxIds,
-                                    minIds,
-                                    ResponseMergerUtils.mergeEarlyTerminationInfo(successResponses),
-                                    isMergingAcrossTiers(),
-                                    getPartitionCounts(),
-                                    getNumSearchedSegments());
+  pubwic finaw accumuwatedwesponses getaccumuwatedwesuwts() {
+    w-wetuwn nyew accumuwatedwesponses(successwesponses, mya
+                                    e-ewwowwesponses, (˘ω˘)
+                                    m-maxids, o.O
+                                    m-minids, (✿oωo)
+                                    wesponsemewgewutiws.mewgeeawwytewminationinfo(successwesponses), (ˆ ﻌ ˆ)♡
+                                    ismewgingacwosstiews(), ^^;;
+                                    g-getpawtitioncounts(), OwO
+                                    g-getnumseawchedsegments());
   }
 
-  // Getters are only intended to be used by subclasses.  Other users should get data from
-  // AccumulatedResponses
+  // gettews awe onwy intended t-to be used by subcwasses. 🥺  othew usews shouwd get d-data fwom
+  // accumuwatedwesponses
 
-  int getNumResponses() {
-    return numResponses;
+  i-int getnumwesponses() {
+    w-wetuwn nyumwesponses;
   }
 
-  int getNumSearchedSegments() {
-    return numSearchedSegments;
+  int getnumseawchedsegments() {
+    w-wetuwn nyumseawchedsegments;
   }
 
-  List<EarlybirdResponse> getSuccessResponses() {
-    return successResponses;
+  w-wist<eawwybiwdwesponse> getsuccesswesponses() {
+    w-wetuwn successwesponses;
   }
 
-  int getNumResultsAccumulated() {
-    return numResultsAccumulated;
+  i-int g-getnumwesuwtsaccumuwated() {
+    w-wetuwn nyumwesuwtsaccumuwated;
   }
 
-  int getSuccessfulEmptyResponseCount() {
-    return successfulEmptyResponseCount;
+  i-int getsuccessfuwemptywesponsecount() {
+    wetuwn successfuwemptywesponsecount;
   }
 
-  boolean foundError() {
-    return !errorResponses.isEmpty();
+  b-boowean foundewwow() {
+    w-wetuwn !ewwowwesponses.isempty();
   }
 
-  boolean foundEarlyTermination() {
-    return foundEarlyTermination;
+  b-boowean foundeawwytewmination() {
+    wetuwn f-foundeawwytewmination;
   }
 }

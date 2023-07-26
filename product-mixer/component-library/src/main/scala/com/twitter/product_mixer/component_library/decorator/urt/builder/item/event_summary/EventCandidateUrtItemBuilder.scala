@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.event_summary
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.event_summawy
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.event_summary.EventCandidateUrtItemBuilder.EventClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.EventDisplayType
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.EventImage
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.EventTimeString
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.EventTitleFeature
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.EventUrl
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.UnifiedEventCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.EventSummaryItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.event_summawy.eventcandidateuwtitembuiwdew.eventcwienteventinfoewement
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twends_events.eventdispwaytype
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twends_events.eventimage
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twends_events.eventtimestwing
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twends_events.eventtitwefeatuwe
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twends_events.eventuww
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twends_events.unifiedeventcandidate
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.candidateuwtentwybuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventinfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineitem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.event.eventsummawyitem
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object EventCandidateUrtItemBuilder {
-  val EventClientEventInfoElement = "event"
+object eventcandidateuwtitembuiwdew {
+  v-vaw eventcwienteventinfoewement = "event"
 }
 
-case class EventCandidateUrtItemBuilder[Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, UnifiedEventCandidate],
-  feedbackActionInfoBuilder: Option[BaseFeedbackActionInfoBuilder[Query, UnifiedEventCandidate]] =
-    None)
-    extends CandidateUrtEntryBuilder[Query, UnifiedEventCandidate, TimelineItem] {
+case cwass eventcandidateuwtitembuiwdew[quewy <: pipewinequewy](
+  c-cwienteventinfobuiwdew: basecwienteventinfobuiwdew[quewy, 😳😳😳 u-unifiedeventcandidate], o.O
+  f-feedbackactioninfobuiwdew: option[basefeedbackactioninfobuiwdew[quewy, unifiedeventcandidate]] =
+    nyone)
+    extends candidateuwtentwybuiwdew[quewy, ( ͡o ω ͡o ) u-unifiedeventcandidate, (U ﹏ U) timewineitem] {
 
-  override def apply(
-    query: Query,
-    candidate: UnifiedEventCandidate,
-    candidateFeatures: FeatureMap
-  ): TimelineItem = {
-    EventSummaryItem(
-      id = candidate.id,
-      sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-      clientEventInfo = clientEventInfoBuilder(
-        query = query,
-        candidate = candidate,
-        candidateFeatures = candidateFeatures,
-        element = Some(EventClientEventInfoElement)
-      ),
-      feedbackActionInfo =
-        feedbackActionInfoBuilder.flatMap(_.apply(query, candidate, candidateFeatures)),
-      title = candidateFeatures.get(EventTitleFeature),
-      displayType = candidateFeatures.get(EventDisplayType),
-      url = candidateFeatures.get(EventUrl),
-      image = candidateFeatures.getOrElse(EventImage, None),
-      timeString = candidateFeatures.getOrElse(EventTimeString, None)
+  ovewwide def appwy(
+    quewy: quewy, (///ˬ///✿)
+    candidate: u-unifiedeventcandidate, >w<
+    candidatefeatuwes: featuwemap
+  ): t-timewineitem = {
+    e-eventsummawyitem(
+      id = c-candidate.id, rawr
+      s-sowtindex = nyone, mya // sowt indexes awe automaticawwy s-set in the domain mawshawwew phase
+      c-cwienteventinfo = cwienteventinfobuiwdew(
+        quewy = quewy, ^^
+        candidate = candidate, 😳😳😳
+        candidatefeatuwes = c-candidatefeatuwes, mya
+        ewement = s-some(eventcwienteventinfoewement)
+      ), 😳
+      f-feedbackactioninfo =
+        f-feedbackactioninfobuiwdew.fwatmap(_.appwy(quewy, -.- candidate, 🥺 candidatefeatuwes)), o.O
+      titwe = c-candidatefeatuwes.get(eventtitwefeatuwe), /(^•ω•^)
+      d-dispwaytype = candidatefeatuwes.get(eventdispwaytype), nyaa~~
+      u-uww = candidatefeatuwes.get(eventuww), nyaa~~
+      i-image = candidatefeatuwes.getowewse(eventimage, :3 n-nyone), 😳😳😳
+      timestwing = c-candidatefeatuwes.getowewse(eventtimestwing, (˘ω˘) nyone)
     )
   }
 }

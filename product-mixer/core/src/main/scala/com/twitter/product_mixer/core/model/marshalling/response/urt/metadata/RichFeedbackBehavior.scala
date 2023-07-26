@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata
 
-sealed trait RichFeedbackBehavior
+seawed twait wichfeedbackbehaviow
 
-case class RichFeedbackBehaviorReportList(listId: Long, userId: Long) extends RichFeedbackBehavior
-case class RichFeedbackBehaviorBlockUser(userId: Long) extends RichFeedbackBehavior
-case class RichFeedbackBehaviorToggleFollowTopic(topicId: Long) extends RichFeedbackBehavior
-case class RichFeedbackBehaviorToggleFollowTopicV2(topicId: String) extends RichFeedbackBehavior
-case class RichFeedbackBehaviorToggleMuteList(listId: Long) extends RichFeedbackBehavior
-case class RichFeedbackBehaviorMarkNotInterestedTopic(topicId: String) extends RichFeedbackBehavior
-case class RichFeedbackBehaviorReplyPinState(replyPinState: ReplyPinState)
-    extends RichFeedbackBehavior
-case class RichFeedbackBehaviorToggleMuteUser(userId: Long) extends RichFeedbackBehavior
-case class RichFeedbackBehaviorToggleFollowUser(userId: Long) extends RichFeedbackBehavior
-case class RichFeedbackBehaviorReportTweet(entryId: Long) extends RichFeedbackBehavior
+c-case cwass wichfeedbackbehaviowwepowtwist(wistid: w-wong, nyaa~~ usewid: w-wong) extends w-wichfeedbackbehaviow
+c-case cwass w-wichfeedbackbehaviowbwockusew(usewid: w-wong) extends w-wichfeedbackbehaviow
+case cwass wichfeedbackbehaviowtoggwefowwowtopic(topicid: wong) extends wichfeedbackbehaviow
+c-case cwass wichfeedbackbehaviowtoggwefowwowtopicv2(topicid: stwing) extends w-wichfeedbackbehaviow
+case cwass w-wichfeedbackbehaviowtoggwemutewist(wistid: wong) extends wichfeedbackbehaviow
+case cwass wichfeedbackbehaviowmawknotintewestedtopic(topicid: stwing) e-extends wichfeedbackbehaviow
+case cwass wichfeedbackbehaviowwepwypinstate(wepwypinstate: w-wepwypinstate)
+    e-extends wichfeedbackbehaviow
+case cwass wichfeedbackbehaviowtoggwemuteusew(usewid: wong) extends wichfeedbackbehaviow
+case cwass w-wichfeedbackbehaviowtoggwefowwowusew(usewid: wong) extends wichfeedbackbehaviow
+case cwass wichfeedbackbehaviowwepowttweet(entwyid: wong) extends wichfeedbackbehaviow

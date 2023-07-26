@@ -1,58 +1,58 @@
-package com.twitter.timelineranker.util
+package com.twittew.timewinewankew.utiw
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.util.Future
+impowt com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.timewinewankew.cowe.hydwatedcandidatesandfeatuwesenvewope
+impowt c-com.twittew.timewinewankew.wecap.modew.contentfeatuwes
+i-impowt c-com.twittew.timewines.modew.tweet.hydwatedtweet
+i-impowt com.twittew.utiw.futuwe
 
-object CopyContentFeaturesIntoHydratedTweetsTransform
-    extends FutureArrow[
-      HydratedCandidatesAndFeaturesEnvelope,
-      HydratedCandidatesAndFeaturesEnvelope
+o-object copycontentfeatuwesintohydwatedtweetstwansfowm
+    e-extends f-futuweawwow[
+      hydwatedcandidatesandfeatuwesenvewope,
+      hydwatedcandidatesandfeatuwesenvewope
     ] {
 
-  override def apply(
-    request: HydratedCandidatesAndFeaturesEnvelope
-  ): Future[HydratedCandidatesAndFeaturesEnvelope] = {
+  ovewwide def appwy(
+    wequest: h-hydwatedcandidatesandfeatuwesenvewope
+  ): futuwe[hydwatedcandidatesandfeatuwesenvewope] = {
 
-    request.contentFeaturesFuture.map { sourceTweetContentFeaturesMap =>
-      val updatedHyratedTweets = request.candidateEnvelope.hydratedTweets.outerTweets.map {
-        hydratedTweet =>
-          val contentFeaturesOpt = request.tweetSourceTweetMap
-            .get(hydratedTweet.tweetId)
-            .flatMap(sourceTweetContentFeaturesMap.get)
+    wequest.contentfeatuwesfutuwe.map { s-souwcetweetcontentfeatuwesmap =>
+      vaw updatedhywatedtweets = w-wequest.candidateenvewope.hydwatedtweets.outewtweets.map {
+        hydwatedtweet =>
+          vaw contentfeatuwesopt = w-wequest.tweetsouwcetweetmap
+            .get(hydwatedtweet.tweetid)
+            .fwatmap(souwcetweetcontentfeatuwesmap.get)
 
-          val updatedHyratedTweet = contentFeaturesOpt match {
-            case Some(contentFeatures: ContentFeatures) =>
-              copyContentFeaturesIntoHydratedTweets(
-                contentFeatures,
-                hydratedTweet
+          vaw u-updatedhywatedtweet = c-contentfeatuwesopt match {
+            case some(contentfeatuwes: contentfeatuwes) =>
+              copycontentfeatuwesintohydwatedtweets(
+                c-contentfeatuwes, mya
+                hydwatedtweet
               )
-            case _ => hydratedTweet
+            case _ => hydwatedtweet
           }
 
-          updatedHyratedTweet
+          updatedhywatedtweet
       }
 
-      request.copy(
-        candidateEnvelope = request.candidateEnvelope.copy(
-          hydratedTweets = request.candidateEnvelope.hydratedTweets.copy(
-            outerTweets = updatedHyratedTweets
+      w-wequest.copy(
+        candidateenvewope = w-wequest.candidateenvewope.copy(
+          h-hydwatedtweets = w-wequest.candidateenvewope.hydwatedtweets.copy(
+            o-outewtweets = updatedhywatedtweets
           )
         )
       )
     }
   }
 
-  def copyContentFeaturesIntoHydratedTweets(
-    contentFeatures: ContentFeatures,
-    hydratedTweet: HydratedTweet
-  ): HydratedTweet = {
-    HydratedTweet(
-      hydratedTweet.tweet.copy(
-        selfThreadMetadata = contentFeatures.selfThreadMetadata,
-        media = contentFeatures.media
+  def copycontentfeatuwesintohydwatedtweets(
+    c-contentfeatuwes: contentfeatuwes, 🥺
+    hydwatedtweet: h-hydwatedtweet
+  ): hydwatedtweet = {
+    hydwatedtweet(
+      hydwatedtweet.tweet.copy(
+        sewfthweadmetadata = contentfeatuwes.sewfthweadmetadata, >_<
+        m-media = contentfeatuwes.media
       )
     )
   }

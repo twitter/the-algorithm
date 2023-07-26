@@ -1,198 +1,198 @@
-package com.twitter.simclusters_v2.scalding.optout
+package com.twittew.simcwustews_v2.scawding.optout
 
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.Duration
-import com.twitter.scalding.Execution
-import com.twitter.scalding.RichDate
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding.TypedTsv
-import com.twitter.scalding.UniqueID
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.SemanticCoreEntityId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.thriftscala.ClusterType
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsKnownFor
-import com.twitter.simclusters_v2.thriftscala.SemanticCoreEntityWithScore
-import com.twitter.simclusters_v2.thriftscala.UserToKnownForClusters
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.inferred_entities.InferredEntities
+impowt com.twittew.scawding.awgs
+i-impowt com.twittew.scawding.datewange
+i-impowt c-com.twittew.scawding.days
+i-impowt c-com.twittew.scawding.duwation
+i-impowt com.twittew.scawding.execution
+i-impowt com.twittew.scawding.wichdate
+i-impowt com.twittew.scawding.typedpipe
+impowt com.twittew.scawding.typedtsv
+impowt com.twittew.scawding.uniqueid
+impowt c-com.twittew.simcwustews_v2.common.cwustewid
+impowt com.twittew.simcwustews_v2.common.semanticcoweentityid
+i-impowt com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.scawding_intewnaw.dawv2.daw
+impowt com.twittew.scawding_intewnaw.dawv2.dawwwite._
+i-impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.awwowcwosscwustewsamedc
+impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.expwicitwocation
+i-impowt c-com.twittew.scawding_intewnaw.dawv2.wemote_access.pwocatwa
+impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.simcwustews_v2.hdfs_souwces._
+impowt com.twittew.simcwustews_v2.thwiftscawa.cwustewtype
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.cwustewsusewisknownfow
+impowt com.twittew.simcwustews_v2.thwiftscawa.semanticcoweentitywithscowe
+impowt com.twittew.simcwustews_v2.thwiftscawa.usewtoknownfowcwustews
+impowt com.twittew.wtf.scawding.jobs.common.adhocexecutionapp
+i-impowt com.twittew.wtf.scawding.jobs.common.scheduwedexecutionapp
+impowt java.utiw.timezone
+i-impowt c-com.twittew.simcwustews_v2.scawding.common.typedwichpipe._
+impowt c-com.twittew.simcwustews_v2.scawding.common.utiw
+i-impowt com.twittew.simcwustews_v2.scawding.infewwed_entities.infewwedentities
 
 /**
- * Creates opt-out compliant KnownFor datasets based on plain user -> KnownFor data and users'
- * opt-out selections from YourTwitterData. In essence, we remove any cluster whose inferred
- * entities were opted out by the user.
- * The opted out KnownFor dataset should be the default dataset to be consumed, instead of the
- * plain KnownFor, which is not opt-out compliant.
+ * cweates opt-out compwiant k-knownfow datasets based on pwain usew -> knownfow d-data and usews'
+ * opt-out sewections fwom youwtwittewdata. in essence, ^•ﻌ•^ we wemove any cwustew w-whose infewwed
+ * entities w-wewe opted out b-by the usew. σωσ
+ * t-the opted out knownfow dataset shouwd be the defauwt dataset to b-be consumed, -.- instead o-of the
+ * pwain knownfow, ^^;; which i-is nyot opt-out c-compwiant. XD
  */
-object KnownForOptOut {
+object knownfowoptout {
 
-  def filterOptedOutKnownFor(
-    knownForPipe: TypedPipe[(UserId, ClustersUserIsKnownFor)],
-    optedOutEntities: TypedPipe[(UserId, Set[SemanticCoreEntityId])],
-    clusterToEntities: TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])]
-  ): TypedPipe[(UserId, ClustersUserIsKnownFor)] = {
+  def f-fiwtewoptedoutknownfow(
+    knownfowpipe: typedpipe[(usewid, 🥺 c-cwustewsusewisknownfow)], òωó
+    optedoutentities: typedpipe[(usewid, (ˆ ﻌ ˆ)♡ s-set[semanticcoweentityid])], -.-
+    cwustewtoentities: t-typedpipe[(cwustewid, :3 seq[semanticcoweentitywithscowe])]
+  ): t-typedpipe[(usewid, ʘwʘ c-cwustewsusewisknownfow)] = {
 
-    val validKnownFor = SimClustersOptOutUtil.filterOptedOutClusters(
-      userToClusters = knownForPipe.mapValues(_.clusterIdToScores.keySet.toSeq),
-      optedOutEntities = optedOutEntities,
-      legibleClusters = clusterToEntities
+    vaw vawidknownfow = simcwustewsoptoututiw.fiwtewoptedoutcwustews(
+      usewtocwustews = knownfowpipe.mapvawues(_.cwustewidtoscowes.keyset.toseq), 🥺
+      optedoutentities = optedoutentities,
+      w-wegibwecwustews = c-cwustewtoentities
     )
 
-    knownForPipe
-      .leftJoin(validKnownFor)
-      .mapValues {
-        case (originalKnownFors, validKnownForOpt) =>
-          val validKnownFor = validKnownForOpt.getOrElse(Seq()).toSet
+    knownfowpipe
+      .weftjoin(vawidknownfow)
+      .mapvawues {
+        c-case (owiginawknownfows, >_< v-vawidknownfowopt) =>
+          v-vaw vawidknownfow = vawidknownfowopt.getowewse(seq()).toset
 
-          originalKnownFors.copy(
-            clusterIdToScores = originalKnownFors.clusterIdToScores.filterKeys(validKnownFor)
+          owiginawknownfows.copy(
+            c-cwustewidtoscowes = owiginawknownfows.cwustewidtoscowes.fiwtewkeys(vawidknownfow)
           )
       }
-      .filter(_._2.clusterIdToScores.nonEmpty)
+      .fiwtew(_._2.cwustewidtoscowes.nonempty)
   }
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
-  --start_cron known_for_optout_daily \
-  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+capesospy-v2 update --buiwd_wocawwy --stawt_cwon \
+  --stawt_cwon known_fow_optout_daiwy \
+  s-swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc.yamw
  */
-object KnownForOptOutDailyBatchJob extends ScheduledExecutionApp {
-  override def firstTime: RichDate = RichDate("2021-03-29")
+object k-knownfowoptoutdaiwybatchjob e-extends s-scheduwedexecutionapp {
+  ovewwide def fiwsttime: w-wichdate = w-wichdate("2021-03-29")
 
-  override def batchIncrement: Duration = Days(1)
+  o-ovewwide d-def batchincwement: duwation = days(1)
 
-  override def runOnDateRange(
-    args: Args
+  o-ovewwide def wunondatewange(
+    a-awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    i-impwicit datewange: d-datewange,
+    t-timezone: timezone, ʘwʘ
+    uniqueid: uniqueid
+  ): execution[unit] = {
 
-    val optedOutEntitiesPipe = SimClustersOptOutUtil
-      .getP13nOptOutSources(dateRange.embiggen(Days(2)), ClusterType.KnownFor)
-      .forceToDisk
+    v-vaw optedoutentitiespipe = simcwustewsoptoututiw
+      .getp13noptoutsouwces(datewange.embiggen(days(2)), (˘ω˘) cwustewtype.knownfow)
+      .fowcetodisk
 
-    val clusterToEntitiesPipe = InferredEntities.getLegibleEntityEmbeddings(dateRange, timeZone)
+    vaw cwustewtoentitiespipe = infewwedentities.getwegibweentityembeddings(datewange, (✿oωo) timezone)
 
-    val knownFor2020 = DAL
-      .readMostRecentSnapshot(
-        SimclustersV2RawKnownFor20M145K2020ScalaDataset,
-        dateRange.embiggen(Days(10)))
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
-      .map { case KeyVal(k, v) => (k, v) }
-      .count("num_users_with_2020_knownfor")
+    v-vaw knownfow2020 = daw
+      .weadmostwecentsnapshot(
+        simcwustewsv2wawknownfow20m145k2020scawadataset, (///ˬ///✿)
+        datewange.embiggen(days(10)))
+      .withwemoteweadpowicy(awwowcwosscwustewsamedc)
+      .totypedpipe
+      .map { c-case keyvaw(k, rawr x3 v-v) => (k, -.- v) }
+      .count("num_usews_with_2020_knownfow")
 
-    val filtered2020KnownForExec = {
-      val filtered2020KnownForData = KnownForOptOut
-        .filterOptedOutKnownFor(
-          knownForPipe = knownFor2020,
-          optedOutEntities = optedOutEntitiesPipe,
-          clusterToEntities = clusterToEntitiesPipe
+    v-vaw fiwtewed2020knownfowexec = {
+      vaw f-fiwtewed2020knownfowdata = knownfowoptout
+        .fiwtewoptedoutknownfow(
+          k-knownfowpipe = k-knownfow2020,
+          optedoutentities = optedoutentitiespipe, ^^
+          cwustewtoentities = cwustewtoentitiespipe
         )
-        .count("num_users_with_compliant_2020_knownfor")
-        .forceToDisk
+        .count("num_usews_with_compwiant_2020_knownfow")
+        .fowcetodisk
 
-      Execution
+      execution
         .zip(
-          filtered2020KnownForData
-            .map { case (k, v) => KeyVal(k, v) }
-            .writeDALVersionedKeyValExecution(
-              SimclustersV2KnownFor20M145K2020ScalaDataset,
-              D.Suffix(DataPaths.KnownFor2020Path)
-            ),
-          filtered2020KnownForData
+          fiwtewed2020knownfowdata
+            .map { case (k, (⑅˘꒳˘) v) => k-keyvaw(k, nyaa~~ v) }
+            .wwitedawvewsionedkeyvawexecution(
+              simcwustewsv2knownfow20m145k2020scawadataset, /(^•ω•^)
+              d-d.suffix(datapaths.knownfow2020path)
+            ), (U ﹏ U)
+          fiwtewed2020knownfowdata
             .map {
-              case (userId, ClustersUserIsKnownFor(modelVersion, clusters)) =>
-                UserToKnownForClusters(userId, modelVersion, clusters)
+              c-case (usewid, 😳😳😳 c-cwustewsusewisknownfow(modewvewsion, >w< cwustews)) =>
+                usewtoknownfowcwustews(usewid, XD m-modewvewsion, o.O c-cwustews)
             }
-            .writeDALSnapshotExecution(
-              dataset = SimclustersV2KnownFor20M145K2020ThriftScalaDataset,
-              updateStep = D.Daily,
-              pathLayout = D.Suffix(DataPaths.KnownFor2020ThriftDatasetPath),
-              fmt = D.Parquet,
-              endDate = dateRange.end
+            .wwitedawsnapshotexecution(
+              dataset = simcwustewsv2knownfow20m145k2020thwiftscawadataset, mya
+              u-updatestep = d-d.daiwy, 🥺
+              pathwayout = d.suffix(datapaths.knownfow2020thwiftdatasetpath), ^^;;
+              fmt = d.pawquet, :3
+              enddate = datewange.end
             )
         ).unit
     }
 
-    Util.printCounters(filtered2020KnownForExec)
+    u-utiw.pwintcountews(fiwtewed2020knownfowexec)
 
   }
 }
 
 /**
- * For debugging only. Does a filtering run and prints the differences before/after the opt out
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/optout:knownfor_optout-adhoc && \
- oscar hdfs --user recos-platform --screen --tee your_ldap \
-  --bundle knownfor_optout-adhoc \
-  --tool com.twitter.simclusters_v2.scalding.optout.KnownForOptOutAdhocJob \
+ * f-fow debugging o-onwy. (U ﹏ U) does a fiwtewing wun a-and pwints the d-diffewences befowe/aftew the opt o-out
+./bazew bundwe swc/scawa/com/twittew/simcwustews_v2/scawding/optout:knownfow_optout-adhoc && \
+ oscaw hdfs --usew wecos-pwatfowm --scween --tee youw_wdap \
+  --bundwe k-knownfow_optout-adhoc \
+  --toow com.twittew.simcwustews_v2.scawding.optout.knownfowoptoutadhocjob \
  -- --date 2019-10-12
  */
-object KnownForOptOutAdhocJob extends AdhocExecutionApp {
-  override def runOnDateRange(
-    args: Args
+o-object knownfowoptoutadhocjob extends a-adhocexecutionapp {
+  o-ovewwide def wunondatewange(
+    awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val knownForPipe = DAL
-      .readMostRecentSnapshotNoOlderThan(SimclustersV2RawKnownFor20M145KDec11ScalaDataset, Days(30))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
-      .map { case KeyVal(k, v) => (k, v) }
-      .count("num_users_with_knownfor")
+    impwicit d-datewange: datewange, OwO
+    timezone: timezone, 😳😳😳
+    uniqueid: uniqueid
+  ): e-execution[unit] = {
+    vaw knownfowpipe = daw
+      .weadmostwecentsnapshotnoowdewthan(simcwustewsv2wawknownfow20m145kdec11scawadataset, (ˆ ﻌ ˆ)♡ d-days(30))
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe
+      .map { c-case keyvaw(k, XD v) => (k, v) }
+      .count("num_usews_with_knownfow")
 
-    val userOptoutEntities: TypedPipe[(UserId, Set[SemanticCoreEntityId])] =
-      SimClustersOptOutUtil
-        .getP13nOptOutSources(dateRange.embiggen(Days(4)), ClusterType.KnownFor)
-        .count("num_users_with_optouts")
+    vaw usewoptoutentities: t-typedpipe[(usewid, (ˆ ﻌ ˆ)♡ s-set[semanticcoweentityid])] =
+      simcwustewsoptoututiw
+        .getp13noptoutsouwces(datewange.embiggen(days(4)), ( ͡o ω ͡o ) cwustewtype.knownfow)
+        .count("num_usews_with_optouts")
 
-    val clusterToEntities = InferredEntities
-      .getLegibleEntityEmbeddings(dateRange, timeZone)
-      .count("num_cluster_to_entities")
+    vaw c-cwustewtoentities = infewwedentities
+      .getwegibweentityembeddings(datewange, rawr x3 t-timezone)
+      .count("num_cwustew_to_entities")
 
-    val filteredKnownForPipe = KnownForOptOut.filterOptedOutKnownFor(
-      knownForPipe,
-      userOptoutEntities,
-      clusterToEntities
+    vaw fiwtewedknownfowpipe = knownfowoptout.fiwtewoptedoutknownfow(
+      knownfowpipe, nyaa~~
+      u-usewoptoutentities, >_<
+      cwustewtoentities
     )
 
-    val output = knownForPipe
-      .join(filteredKnownForPipe)
-      .collect {
-        case (userId, (originalKnownFor, filtered))
-            if originalKnownFor.clusterIdToScores != filtered.clusterIdToScores =>
-          (userId, (originalKnownFor, filtered))
+    vaw o-output = knownfowpipe
+      .join(fiwtewedknownfowpipe)
+      .cowwect {
+        c-case (usewid, ^^;; (owiginawknownfow, (ˆ ﻌ ˆ)♡ fiwtewed))
+            i-if owiginawknownfow.cwustewidtoscowes != fiwtewed.cwustewidtoscowes =>
+          (usewid, ^^;; (owiginawknownfow, f-fiwtewed))
       }
-      .join(userOptoutEntities)
+      .join(usewoptoutentities)
       .map {
-        case (userId, ((originalKnownFor, filtered), optoutEntities)) =>
-          Seq(
-            "userId=" + userId,
-            "originalKnownFor=" + originalKnownFor,
-            "filteredKnownFor=" + filtered,
-            "optoutEntities=" + optoutEntities
-          ).mkString("\t")
+        c-case (usewid, (⑅˘꒳˘) ((owiginawknownfow, rawr x3 f-fiwtewed), (///ˬ///✿) optoutentities)) =>
+          seq(
+            "usewid=" + u-usewid,
+            "owiginawknownfow=" + o-owiginawknownfow, 🥺
+            "fiwtewedknownfow=" + fiwtewed, >_<
+            "optoutentities=" + optoutentities
+          ).mkstwing("\t")
       }
 
-    val outputPath = "/user/recos-platform/adhoc/knownfor_optout"
-    output.writeExecution(TypedTsv(outputPath))
+    v-vaw outputpath = "/usew/wecos-pwatfowm/adhoc/knownfow_optout"
+    o-output.wwiteexecution(typedtsv(outputpath))
   }
 }

@@ -1,40 +1,40 @@
-package com.twitter.home_mixer.product.list_recommended_users.candidate_source
+package com.twittew.home_mixew.pwoduct.wist_wecommended_usews.candidate_souwce
 
-import com.twitter.hermit.candidate.{thriftscala => t}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.recommendations.similarity.SimilarUsersBySimsOnUserClientColumn
+impowt com.twittew.hewmit.candidate.{thwiftscawa => t-t}
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.stwato.cwient.fetchew
+i-impowt com.twittew.stwato.genewated.cwient.wecommendations.simiwawity.simiwawusewsbysimsonusewcwientcowumn
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class SimilarityBasedUsersCandidateSource @Inject() (
-  similarUsersBySimsOnUserClientColumn: SimilarUsersBySimsOnUserClientColumn)
-    extends CandidateSource[Seq[Long], t.Candidate] {
+@singweton
+cwass simiwawitybasedusewscandidatesouwce @inject() (
+  simiwawusewsbysimsonusewcwientcowumn: s-simiwawusewsbysimsonusewcwientcowumn)
+    extends candidatesouwce[seq[wong], (U ﹏ U) t-t.candidate] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("SimilarityBasedUsers")
+  ovewwide vaw identifiew: c-candidatesouwceidentifiew =
+    candidatesouwceidentifiew("simiwawitybasedusews")
 
-  private val fetcher: Fetcher[Long, Unit, t.Candidates] =
-    similarUsersBySimsOnUserClientColumn.fetcher
+  pwivate vaw fetchew: fetchew[wong, >_< u-unit, rawr x3 t.candidates] =
+    simiwawusewsbysimsonusewcwientcowumn.fetchew
 
-  private val MaxCandidatesToKeep = 4000
+  p-pwivate v-vaw maxcandidatestokeep = 4000
 
-  override def apply(request: Seq[Long]): Stitch[Seq[t.Candidate]] = {
-    Stitch
-      .collect {
-        request.map { userId =>
-          fetcher
-            .fetch(userId, Unit).map { result =>
-              result.v.map(_.candidates).getOrElse(Seq.empty)
-            }.map { candidates =>
-              val sortedCandidates = candidates.sortBy(-_.score)
-              sortedCandidates.take(MaxCandidatesToKeep)
+  ovewwide def appwy(wequest: seq[wong]): stitch[seq[t.candidate]] = {
+    stitch
+      .cowwect {
+        w-wequest.map { usewid =>
+          fetchew
+            .fetch(usewid, mya unit).map { wesuwt =>
+              wesuwt.v.map(_.candidates).getowewse(seq.empty)
+            }.map { c-candidates =>
+              vaw sowtedcandidates = c-candidates.sowtby(-_.scowe)
+              s-sowtedcandidates.take(maxcandidatestokeep)
             }
         }
-      }.map(_.flatten)
+      }.map(_.fwatten)
   }
 }

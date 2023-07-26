@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.component_library.filter
+package com.twittew.pwoduct_mixew.component_wibwawy.fiwtew
 
-import com.twitter.product_mixer.component_library.model.candidate.TweetAuthorIdFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetauthowidfeatuwe
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
 
 /**
- * A filter that checks for presence of a successfully hydrated [[TweetAuthorIdFeature]]
+ * a fiwtew that checks f-fow pwesence of a successfuwwy hydwated [[tweetauthowidfeatuwe]]
  */
-case class HasAuthorIdFeatureFilter[Candidate <: TweetCandidate]()
-    extends Filter[PipelineQuery, Candidate] {
+case cwass h-hasauthowidfeatuwefiwtew[candidate <: tweetcandidate]()
+    e-extends fiwtew[pipewinequewy, candidate] {
 
-  override val identifier = FilterIdentifier("HasAuthorIdFeature")
+  ovewwide v-vaw identifiew = fiwtewidentifiew("hasauthowidfeatuwe")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
-    val (kept, removed) = candidates.partition(_.features.getTry(TweetAuthorIdFeature).isReturn)
-    Stitch.value(FilterResult(kept.map(_.candidate), removed.map(_.candidate)))
+  o-ovewwide d-def appwy(
+    quewy: pipewinequewy, ( ͡o ω ͡o )
+    candidates: seq[candidatewithfeatuwes[candidate]]
+  ): stitch[fiwtewwesuwt[candidate]] = {
+    vaw (kept, rawr x3 wemoved) = c-candidates.pawtition(_.featuwes.gettwy(tweetauthowidfeatuwe).iswetuwn)
+    stitch.vawue(fiwtewwesuwt(kept.map(_.candidate), nyaa~~ wemoved.map(_.candidate)))
   }
 }

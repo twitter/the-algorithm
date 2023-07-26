@@ -1,444 +1,444 @@
-package com.twitter.simclusters_v2.scalding
+package com.twittew.simcwustews_v2.scawding
 
-import com.twitter.algebird.DecayedValue
-import com.twitter.algebird.DecayedValueMonoid
-import com.twitter.algebird.Monoid
-import com.twitter.algebird.Semigroup
-import com.twitter.conversions.DurationOps._
-import com.twitter.logging.Logger
-import com.twitter.scalding._
-import com.twitter.scalding.typed.UnsortedGrouped
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch._
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.DecayedSums
-import com.twitter.simclusters_v2.thriftscala.EdgeWithDecayedWeights
-import com.twitter.timelineservice.thriftscala.ContextualizedFavoriteEvent
-import com.twitter.timelineservice.thriftscala.FavoriteEventUnion
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
-import com.twitter.util.Time
-import twadoop_config.configuration.log_categories.group.timeline.TimelineServiceFavoritesScalaDataset
+impowt c-com.twittew.awgebiwd.decayedvawue
+i-impowt com.twittew.awgebiwd.decayedvawuemonoid
+i-impowt com.twittew.awgebiwd.monoid
+i-impowt com.twittew.awgebiwd.semigwoup
+i-impowt c-com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.wogging.woggew
+impowt com.twittew.scawding._
+impowt com.twittew.scawding.typed.unsowtedgwouped
+i-impowt com.twittew.scawding_intewnaw.dawv2.daw
+impowt c-com.twittew.scawding_intewnaw.dawv2.dawwwite._
+impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.expwicitwocation
+i-impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.pwocatwa
+impowt com.twittew.scawding_intewnaw.job.twittewexecutionapp
+i-impowt com.twittew.scawding_intewnaw.job.anawytics_batch._
+i-impowt com.twittew.simcwustews_v2.common.tweetid
+i-impowt com.twittew.simcwustews_v2.common.usewid
+impowt com.twittew.simcwustews_v2.hdfs_souwces._
+impowt com.twittew.simcwustews_v2.scawding.common.utiw
+impowt com.twittew.simcwustews_v2.thwiftscawa.decayedsums
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.edgewithdecayedweights
+impowt com.twittew.timewinesewvice.thwiftscawa.contextuawizedfavowiteevent
+impowt com.twittew.timewinesewvice.thwiftscawa.favowiteeventunion
+impowt c-com.twittew.usewsouwce.snapshot.fwat.usewsouwcefwatscawadataset
+impowt com.twittew.usewsouwce.snapshot.fwat.thwiftscawa.fwatusew
+i-impowt com.twittew.utiw.time
+impowt t-twadoop_config.configuwation.wog_categowies.gwoup.timewine.timewinesewvicefavowitesscawadataset
 
-sealed trait FavState
+s-seawed twait f-favstate
 
-object Fav extends FavState
+object fav extends favstate
 
-object UnFavWithoutPriorFav extends FavState
+object u-unfavwithoutpwiowfav extends favstate
 
-object UnFavWithPriorFav extends FavState
+object u-unfavwithpwiowfav extends favstate
 
-case class TimestampedFavState(favOrUnfav: FavState, timestampMillis: Long)
+case cwass timestampedfavstate(favowunfav: favstate, 😳😳😳 timestampmiwwis: wong)
 
-object TimestampedFavStateSemigroup extends Semigroup[TimestampedFavState] {
-  override def plus(left: TimestampedFavState, right: TimestampedFavState): TimestampedFavState = {
+object timestampedfavstatesemigwoup e-extends semigwoup[timestampedfavstate] {
+  ovewwide def pwus(weft: t-timestampedfavstate, /(^•ω•^) w-wight: t-timestampedfavstate): timestampedfavstate = {
 
     /**
-     * Assigning to first, second ensures commutative property
+     * assigning to fiwst, OwO second ensuwes c-commutative p-pwopewty
      */
-    val (first, second) = if (left.timestampMillis < right.timestampMillis) {
-      (left, right)
-    } else {
-      (right, left)
+    vaw (fiwst, ^^ s-second) = if (weft.timestampmiwwis < w-wight.timestampmiwwis) {
+      (weft, (///ˬ///✿) wight)
+    } e-ewse {
+      (wight, (///ˬ///✿) weft)
     }
-    (first.favOrUnfav, second.favOrUnfav) match {
-      case (_, UnFavWithPriorFav) => second
-      case (UnFavWithPriorFav, UnFavWithoutPriorFav) =>
-        TimestampedFavState(UnFavWithPriorFav, second.timestampMillis)
-      case (Fav, UnFavWithoutPriorFav) =>
-        TimestampedFavState(UnFavWithPriorFav, second.timestampMillis)
-      case (UnFavWithoutPriorFav, UnFavWithoutPriorFav) => second
-      case (_, Fav) => second
+    (fiwst.favowunfav, second.favowunfav) m-match {
+      case (_, (///ˬ///✿) unfavwithpwiowfav) => second
+      case (unfavwithpwiowfav, ʘwʘ u-unfavwithoutpwiowfav) =>
+        timestampedfavstate(unfavwithpwiowfav, ^•ﻌ•^ s-second.timestampmiwwis)
+      case (fav, OwO u-unfavwithoutpwiowfav) =>
+        t-timestampedfavstate(unfavwithpwiowfav, (U ﹏ U) second.timestampmiwwis)
+      case (unfavwithoutpwiowfav, (ˆ ﻌ ˆ)♡ unfavwithoutpwiowfav) => second
+      case (_, (⑅˘꒳˘) fav) => second
     }
   }
 }
 
-object UserUserFavGraph {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  // setting the prune threshold in the monoid below to 0.0, since we want to do our own pruning
-  // outside the monoid, primarily to be able to count how many scores are pruned.
-  implicit val dvMonoid: Monoid[DecayedValue] = DecayedValueMonoid(0.0)
-  implicit val lfvSemigroup: Semigroup[TimestampedFavState] = TimestampedFavStateSemigroup
+object usewusewfavgwaph {
+  i-impwicit vaw tz: j-java.utiw.timezone = dateops.utc
+  // s-setting t-the pwune thweshowd i-in the monoid bewow to 0.0, (U ﹏ U) since we want to do ouw own pwuning
+  // o-outside the monoid, o.O pwimawiwy to be abwe to count how many scowes awe p-pwuned. mya
+  impwicit vaw dvmonoid: m-monoid[decayedvawue] = d-decayedvawuemonoid(0.0)
+  i-impwicit vaw wfvsemigwoup: semigwoup[timestampedfavstate] = t-timestampedfavstatesemigwoup
 
-  def getSummedFavGraph(
-    previousGraphOpt: Option[TypedPipe[EdgeWithDecayedWeights]],
-    newFavsDateRange: DateRange,
-    halfLivesInDays: List[Int],
-    minScoreToKeep: Double
+  d-def g-getsummedfavgwaph(
+    p-pweviousgwaphopt: option[typedpipe[edgewithdecayedweights]], XD
+    nyewfavsdatewange: d-datewange, òωó
+    h-hawfwivesindays: w-wist[int], (˘ω˘)
+    m-minscowetokeep: d-doubwe
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[EdgeWithDecayedWeights] = {
-    val newFavs = DAL.read(TimelineServiceFavoritesScalaDataset, newFavsDateRange).toTypedPipe
-    val endTime = Time.fromMilliseconds(newFavsDateRange.end.timestamp)
-    val userSource =
-      DAL.readMostRecentSnapshotNoOlderThan(UsersourceFlatScalaDataset, Days(7)).toTypedPipe
-    getSummedFavGraphWithValidUsers(
-      previousGraphOpt,
-      newFavs,
-      halfLivesInDays,
-      endTime,
-      minScoreToKeep,
-      userSource
+    impwicit uniqueid: uniqueid
+  ): typedpipe[edgewithdecayedweights] = {
+    v-vaw nyewfavs = daw.wead(timewinesewvicefavowitesscawadataset, :3 nyewfavsdatewange).totypedpipe
+    vaw endtime = time.fwommiwwiseconds(newfavsdatewange.end.timestamp)
+    vaw usewsouwce =
+      d-daw.weadmostwecentsnapshotnoowdewthan(usewsouwcefwatscawadataset, OwO days(7)).totypedpipe
+    getsummedfavgwaphwithvawidusews(
+      pweviousgwaphopt, mya
+      n-nyewfavs, (˘ω˘)
+      h-hawfwivesindays, o.O
+      e-endtime, (✿oωo)
+      minscowetokeep, (ˆ ﻌ ˆ)♡
+      u-usewsouwce
     )
   }
 
-  def getSummedFavGraphWithValidUsers(
-    previousGraphOpt: Option[TypedPipe[EdgeWithDecayedWeights]],
-    newFavs: TypedPipe[ContextualizedFavoriteEvent],
-    halfLivesInDays: List[Int],
-    endTime: Time,
-    minScoreToKeep: Double,
-    userSource: TypedPipe[FlatUser]
+  def getsummedfavgwaphwithvawidusews(
+    p-pweviousgwaphopt: o-option[typedpipe[edgewithdecayedweights]], ^^;;
+    nyewfavs: typedpipe[contextuawizedfavowiteevent], OwO
+    hawfwivesindays: wist[int], 🥺
+    endtime: time, mya
+    minscowetokeep: d-doubwe,
+    usewsouwce: t-typedpipe[fwatusew]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[EdgeWithDecayedWeights] = {
-    val fullGraph = getSummedFavGraph(
-      previousGraphOpt,
-      newFavs,
-      halfLivesInDays,
-      endTime,
-      minScoreToKeep
+    impwicit u-uniqueid: u-uniqueid
+  ): typedpipe[edgewithdecayedweights] = {
+    vaw fuwwgwaph = getsummedfavgwaph(
+      p-pweviousgwaphopt, 😳
+      n-nyewfavs, òωó
+      hawfwivesindays, /(^•ω•^)
+      e-endtime, -.-
+      minscowetokeep
     )
-    removeDeactivedOrSuspendedUsers(fullGraph, userSource)
+    w-wemovedeactivedowsuspendedusews(fuwwgwaph, òωó usewsouwce)
   }
 
-  def processRawFavEvents(
-    favsOrUnfavs: TypedPipe[ContextualizedFavoriteEvent]
+  def pwocesswawfavevents(
+    favsowunfavs: typedpipe[contextuawizedfavowiteevent]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[((UserId, TweetId, UserId), TimestampedFavState)] = {
-    val numFavsBeforeUniq = Stat("num_favs_before_uniq")
-    val numUnFavsBeforeUniq = Stat("num_unfavs_before_uniq")
-    val numFinalFavs = Stat("num_final_favs")
-    val numUnFavsWithPriorFavs = Stat("num_unfavs_with_prior_favs")
-    val numUnFavsWithoutPriorFavs = Stat("num_unfavs_without_prior_favs")
+    i-impwicit uniqueid: u-uniqueid
+  ): t-typedpipe[((usewid, /(^•ω•^) tweetid, /(^•ω•^) usewid), t-timestampedfavstate)] = {
+    v-vaw nyumfavsbefoweuniq = stat("num_favs_befowe_uniq")
+    vaw nyumunfavsbefoweuniq = s-stat("num_unfavs_befowe_uniq")
+    vaw nyumfinawfavs = stat("num_finaw_favs")
+    vaw n-nyumunfavswithpwiowfavs = s-stat("num_unfavs_with_pwiow_favs")
+    vaw nyumunfavswithoutpwiowfavs = stat("num_unfavs_without_pwiow_favs")
 
-    favsOrUnfavs
-      .flatMap { cfe: ContextualizedFavoriteEvent =>
+    f-favsowunfavs
+      .fwatmap { c-cfe: contextuawizedfavowiteevent =>
         cfe.event match {
-          case FavoriteEventUnion.Favorite(fav) =>
-            numFavsBeforeUniq.inc()
-            Some(
+          c-case favowiteeventunion.favowite(fav) =>
+            nyumfavsbefoweuniq.inc()
+            some(
               (
-                (fav.userId, fav.tweetId, fav.tweetUserId),
-                TimestampedFavState(Fav, fav.eventTimeMs)))
-          case FavoriteEventUnion.Unfavorite(unfav) =>
-            numUnFavsBeforeUniq.inc()
-            Some(
+                (fav.usewid, 😳 fav.tweetid, :3 fav.tweetusewid), (U ᵕ U❁)
+                timestampedfavstate(fav, ʘwʘ f-fav.eventtimems)))
+          case favowiteeventunion.unfavowite(unfav) =>
+            nyumunfavsbefoweuniq.inc()
+            some(
               (
-                (unfav.userId, unfav.tweetId, unfav.tweetUserId),
-                TimestampedFavState(UnFavWithoutPriorFav, unfav.eventTimeMs)))
-          case _ => None
+                (unfav.usewid, o.O u-unfav.tweetid, ʘwʘ u-unfav.tweetusewid), ^^
+                timestampedfavstate(unfavwithoutpwiowfav, ^•ﻌ•^ unfav.eventtimems)))
+          case _ => n-nyone
         }
       }
-      .sumByKey
-      .toTypedPipe
-      .flatMap {
-        case fav @ (_, TimestampedFavState(Fav, _)) =>
-          numFinalFavs.inc()
-          Some(fav)
-        case unfav @ (_, TimestampedFavState(UnFavWithoutPriorFav, _)) =>
-          numUnFavsWithoutPriorFavs.inc()
-          Some(unfav)
-        case (_, TimestampedFavState(UnFavWithPriorFav, _)) =>
-          numUnFavsWithPriorFavs.inc()
-          None
+      .sumbykey
+      .totypedpipe
+      .fwatmap {
+        c-case fav @ (_, mya timestampedfavstate(fav, UwU _)) =>
+          nyumfinawfavs.inc()
+          some(fav)
+        c-case unfav @ (_, >_< timestampedfavstate(unfavwithoutpwiowfav, /(^•ω•^) _)) =>
+          n-nyumunfavswithoutpwiowfavs.inc()
+          some(unfav)
+        case (_, òωó timestampedfavstate(unfavwithpwiowfav, σωσ _)) =>
+          n-nyumunfavswithpwiowfavs.inc()
+          nyone
       }
   }
 
-  private def getGraphFromNewFavsOnly(
-    newFavs: TypedPipe[ContextualizedFavoriteEvent],
-    halfLivesInDays: List[Int],
-    endTime: Time
+  p-pwivate def g-getgwaphfwomnewfavsonwy(
+    nyewfavs: typedpipe[contextuawizedfavowiteevent], ( ͡o ω ͡o )
+    h-hawfwivesindays: wist[int], nyaa~~
+    e-endtime: time
   )(
-    implicit uniqueID: UniqueID
-  ): UnsortedGrouped[(UserId, UserId), Map[Int, DecayedValue]] = {
+    i-impwicit u-uniqueid: uniqueid
+  ): unsowtedgwouped[(usewid, :3 u-usewid), UwU m-map[int, decayedvawue]] = {
 
-    val numEventsNewerThanEndTime = Stat("num_events_newer_than_endtime")
+    vaw nyumeventsnewewthanendtime = stat("num_events_newew_than_endtime")
 
-    processRawFavEvents(newFavs).map {
-      case ((userId, _, authorId), TimestampedFavState(favOrUnfav, timestampMillis)) =>
-        val halfLifeInDaysToScores = halfLivesInDays.map { halfLifeInDays =>
-          val givenTime = Time.fromMilliseconds(timestampMillis)
-          if (givenTime > endTime) {
-            // technically this should never happen, and even if it did happen,
-            // we shouldn't have to care, but I'm noticing that the weights aren't being computed
-            // correctly for events that spilled over the edge
-            numEventsNewerThanEndTime.inc()
+    p-pwocesswawfavevents(newfavs).map {
+      c-case ((usewid, o.O _, a-authowid), (ˆ ﻌ ˆ)♡ timestampedfavstate(favowunfav, ^^;; timestampmiwwis)) =>
+        v-vaw hawfwifeindaystoscowes = hawfwivesindays.map { h-hawfwifeindays =>
+          vaw g-giventime = time.fwommiwwiseconds(timestampmiwwis)
+          if (giventime > endtime) {
+            // technicawwy t-this shouwd n-nyevew happen, ʘwʘ a-and even if it d-did happen, σωσ
+            // we shouwdn't h-have to cawe, but i'm nyoticing that the weights awen't being computed
+            // cowwectwy f-fow events that spiwwed o-ovew the edge
+            nyumeventsnewewthanendtime.inc()
           }
-          val timeInSeconds = math.min(givenTime.inSeconds, endTime.inSeconds)
-          val value = favOrUnfav match {
-            case Fav => 1.0
-            case UnFavWithoutPriorFav => -1.0
-            case UnFavWithPriorFav => 0.0
+          v-vaw timeinseconds = math.min(giventime.inseconds, ^^;; e-endtime.inseconds)
+          vaw vawue = favowunfav m-match {
+            c-case f-fav => 1.0
+            c-case unfavwithoutpwiowfav => -1.0
+            c-case unfavwithpwiowfav => 0.0
           }
-          val decayedValue = DecayedValue.build(value, timeInSeconds, halfLifeInDays.days.inSeconds)
-          halfLifeInDays -> decayedValue
+          vaw decayedvawue = decayedvawue.buiwd(vawue, ʘwʘ timeinseconds, ^^ hawfwifeindays.days.inseconds)
+          hawfwifeindays -> decayedvawue
         }
-        ((userId, authorId), halfLifeInDaysToScores.toMap)
-    }.sumByKey
+        ((usewid, nyaa~~ a-authowid), (///ˬ///✿) h-hawfwifeindaystoscowes.tomap)
+    }.sumbykey
   }
 
-  def getSummedFavGraph(
-    previousGraphOpt: Option[TypedPipe[EdgeWithDecayedWeights]],
-    newFavs: TypedPipe[ContextualizedFavoriteEvent],
-    halfLivesInDays: List[Int],
-    endTime: Time,
-    minScoreToKeep: Double
+  d-def getsummedfavgwaph(
+    pweviousgwaphopt: o-option[typedpipe[edgewithdecayedweights]], XD
+    nyewfavs: typedpipe[contextuawizedfavowiteevent], :3
+    hawfwivesindays: wist[int], òωó
+    e-endtime: t-time, ^^
+    minscowetokeep: doubwe
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[EdgeWithDecayedWeights] = {
-    val prunedScoresCounter = Stat("num_pruned_scores")
-    val negativeScoresCounter = Stat("num_negative_scores")
-    val prunedEdgesCounter = Stat("num_pruned_edges")
-    val keptEdgesCounter = Stat("num_kept_edges")
-    val keptScoresCounter = Stat("num_kept_scores")
-    val numCommonEdges = Stat("num_common_edges")
-    val numNewEdges = Stat("num_new_edges")
-    val numOldEdges = Stat("num_old_edges")
+    i-impwicit uniqueid: uniqueid
+  ): typedpipe[edgewithdecayedweights] = {
+    v-vaw pwunedscowescountew = s-stat("num_pwuned_scowes")
+    vaw nyegativescowescountew = s-stat("num_negative_scowes")
+    v-vaw pwunededgescountew = stat("num_pwuned_edges")
+    vaw keptedgescountew = stat("num_kept_edges")
+    v-vaw keptscowescountew = s-stat("num_kept_scowes")
+    v-vaw nyumcommonedges = stat("num_common_edges")
+    v-vaw n-nyumnewedges = stat("num_new_edges")
+    vaw nyumowdedges = s-stat("num_owd_edges")
 
-    val unprunedOuterJoinedGraph = previousGraphOpt match {
-      case Some(previousGraph) =>
-        previousGraph
+    v-vaw unpwunedoutewjoinedgwaph = pweviousgwaphopt m-match {
+      c-case some(pweviousgwaph) =>
+        pweviousgwaph
           .map {
-            case EdgeWithDecayedWeights(srcId, destId, decayedSums) =>
-              val ts = decayedSums.lastUpdatedTimestamp.toDouble / 1000
-              val map = decayedSums.halfLifeInDaysToDecayedSums.map {
-                case (halfLifeInDays, value) =>
-                  halfLifeInDays -> DecayedValue.build(value, ts, halfLifeInDays.days.inSeconds)
-              }.toMap
-              ((srcId, destId), map)
+            c-case edgewithdecayedweights(swcid, ^•ﻌ•^ destid, σωσ decayedsums) =>
+              vaw t-ts = decayedsums.wastupdatedtimestamp.todoubwe / 1000
+              vaw map = decayedsums.hawfwifeindaystodecayedsums.map {
+                c-case (hawfwifeindays, (ˆ ﻌ ˆ)♡ v-vawue) =>
+                  hawfwifeindays -> decayedvawue.buiwd(vawue, nyaa~~ t-ts, hawfwifeindays.days.inseconds)
+              }.tomap
+              ((swcid, ʘwʘ destid), ^•ﻌ•^ map)
           }
-          .outerJoin(getGraphFromNewFavsOnly(newFavs, halfLivesInDays, endTime))
-          .toTypedPipe
-      case None =>
-        getGraphFromNewFavsOnly(newFavs, halfLivesInDays, endTime).toTypedPipe
+          .outewjoin(getgwaphfwomnewfavsonwy(newfavs, rawr x3 h-hawfwivesindays, 🥺 e-endtime))
+          .totypedpipe
+      c-case nyone =>
+        getgwaphfwomnewfavsonwy(newfavs, ʘwʘ hawfwivesindays, (˘ω˘) endtime).totypedpipe
           .map {
-            case ((srcId, destId), scoreMap) =>
-              ((srcId, destId), (None, Some(scoreMap)))
+            c-case ((swcid, o.O destid), scowemap) =>
+              ((swcid, σωσ d-destid), (ꈍᴗꈍ) (none, s-some(scowemap)))
           }
     }
 
-    unprunedOuterJoinedGraph
-      .flatMap {
-        case ((srcId, destId), (previousScoreMapOpt, newScoreMapOpt)) =>
-          val latestTimeDecayedValues = halfLivesInDays.map { hlInDays =>
-            hlInDays -> DecayedValue.build(0, endTime.inSeconds, hlInDays.days.inSeconds)
-          }.toMap
+    unpwunedoutewjoinedgwaph
+      .fwatmap {
+        c-case ((swcid, (ˆ ﻌ ˆ)♡ destid), o.O (pweviousscowemapopt, :3 nyewscowemapopt)) =>
+          v-vaw w-watesttimedecayedvawues = hawfwivesindays.map { hwindays =>
+            h-hwindays -> decayedvawue.buiwd(0, -.- endtime.inseconds, ( ͡o ω ͡o ) hwindays.days.inseconds)
+          }.tomap
 
-          val updatedDecayedValues =
-            Monoid.sum(
-              List(previousScoreMapOpt, newScoreMapOpt, Some(latestTimeDecayedValues)).flatten)
+          v-vaw updateddecayedvawues =
+            m-monoid.sum(
+              wist(pweviousscowemapopt, /(^•ω•^) n-nyewscowemapopt, (⑅˘꒳˘) some(watesttimedecayedvawues)).fwatten)
 
-          (previousScoreMapOpt, newScoreMapOpt) match {
-            case (Some(pm), None) => numOldEdges.inc()
-            case (None, Some(nm)) => numNewEdges.inc()
-            case (Some(pm), Some(nm)) => numCommonEdges.inc()
+          (pweviousscowemapopt, òωó n-nyewscowemapopt) m-match {
+            case (some(pm), 🥺 none) => n-nyumowdedges.inc()
+            case (none, (ˆ ﻌ ˆ)♡ some(nm)) => numnewedges.inc()
+            case (some(pm), -.- some(nm)) => nyumcommonedges.inc()
           }
 
-          val prunedMap = updatedDecayedValues.flatMap {
-            case (hlInDays, decayedValue) =>
-              if (decayedValue.value < minScoreToKeep) {
-                if (decayedValue.value < 0) {
-                  negativeScoresCounter.inc()
+          vaw pwunedmap = updateddecayedvawues.fwatmap {
+            case (hwindays, σωσ decayedvawue) =>
+              if (decayedvawue.vawue < minscowetokeep) {
+                i-if (decayedvawue.vawue < 0) {
+                  n-nyegativescowescountew.inc()
                 }
-                prunedScoresCounter.inc()
-                None
-              } else {
-                keptScoresCounter.inc()
-                Some((hlInDays, decayedValue.value))
+                pwunedscowescountew.inc()
+                nyone
+              } e-ewse {
+                k-keptscowescountew.inc()
+                s-some((hwindays, >_< decayedvawue.vawue))
               }
           }
 
-          if (prunedMap.nonEmpty) {
-            keptEdgesCounter.inc()
-            Some(EdgeWithDecayedWeights(srcId, destId, DecayedSums(endTime.inMillis, prunedMap)))
-          } else {
-            prunedEdgesCounter.inc()
-            None
+          i-if (pwunedmap.nonempty) {
+            keptedgescountew.inc()
+            s-some(edgewithdecayedweights(swcid, :3 d-destid, OwO decayedsums(endtime.inmiwwis, rawr pwunedmap)))
+          } e-ewse {
+            pwunededgescountew.inc()
+            n-nyone
           }
       }
   }
 
-  def removeDeactivedOrSuspendedUsers(
-    full: TypedPipe[EdgeWithDecayedWeights],
-    userSource: TypedPipe[FlatUser]
+  d-def wemovedeactivedowsuspendedusews(
+    fuww: typedpipe[edgewithdecayedweights], (///ˬ///✿)
+    usewsouwce: typedpipe[fwatusew]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[EdgeWithDecayedWeights] = {
-    val numValidUsers = Stat("num_valid_users")
-    val numInvalidUsers = Stat("num_invalid_users")
-    val numEdgesBeforeUsersourceJoin = Stat("num_edges_before_join_with_usersource")
-    val numEdgesWithValidSource = Stat("num_edges_with_valid_source")
-    val numEdgesWithValidSourceAndDest = Stat("num_edges_with_valid_source_and_dest")
+    i-impwicit u-uniqueid: uniqueid
+  ): t-typedpipe[edgewithdecayedweights] = {
+    v-vaw nyumvawidusews = s-stat("num_vawid_usews")
+    v-vaw nyuminvawidusews = s-stat("num_invawid_usews")
+    v-vaw nyumedgesbefoweusewsouwcejoin = stat("num_edges_befowe_join_with_usewsouwce")
+    v-vaw nyumedgeswithvawidsouwce = stat("num_edges_with_vawid_souwce")
+    v-vaw nyumedgeswithvawidsouwceanddest = s-stat("num_edges_with_vawid_souwce_and_dest")
 
-    val validUsers = userSource.flatMap {
-      case flatUser
-          if !flatUser.deactivated.contains(true) && !flatUser.suspended.contains(true)
-            && flatUser.id.nonEmpty =>
-        numValidUsers.inc()
-        flatUser.id
-      case _ =>
-        numInvalidUsers.inc()
-        None
-    }.forceToDisk // avoid reading in the whole of userSource for both of the joins below
+    v-vaw vawidusews = usewsouwce.fwatmap {
+      c-case fwatusew
+          if !fwatusew.deactivated.contains(twue) && !fwatusew.suspended.contains(twue)
+            && f-fwatusew.id.nonempty =>
+        nyumvawidusews.inc()
+        f-fwatusew.id
+      c-case _ =>
+        n-nyuminvawidusews.inc()
+        nyone
+    }.fowcetodisk // a-avoid weading in the w-whowe of usewsouwce fow both of t-the joins bewow
 
-    val toJoin = full.map { edge =>
-      numEdgesBeforeUsersourceJoin.inc()
-      (edge.sourceId, edge)
+    vaw tojoin = f-fuww.map { edge =>
+      numedgesbefoweusewsouwcejoin.inc()
+      (edge.souwceid, ^^ edge)
     }
 
-    toJoin
-      .join(validUsers.asKeys)
+    tojoin
+      .join(vawidusews.askeys)
       .map {
-        case (_, (edge, _)) =>
-          numEdgesWithValidSource.inc()
-          (edge.destinationId, edge)
+        case (_, XD (edge, _)) =>
+          n-nyumedgeswithvawidsouwce.inc()
+          (edge.destinationid, edge)
       }
-      .join(validUsers.asKeys)
+      .join(vawidusews.askeys)
       .map {
-        case (_, (edge, _)) =>
-          numEdgesWithValidSourceAndDest.inc()
+        c-case (_, UwU (edge, o.O _)) =>
+          n-nyumedgeswithvawidsouwceanddest.inc()
           edge
       }
   }
 }
 
 /**
- * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:fav_graph_adhoc && \
- * oscar hdfs --user frigate --host hadoopnest1.atla.twitter.com --bundle fav_graph_adhoc \
- * --tool com.twitter.simclusters_v2.scalding.UserUserFavGraphAdhoc --screen --screen-detached \
- * --tee logs/userUserFavGraphAdhoc_20170101 -- --date 2017-01-01 --halfLivesInDays 14 50 100 \
- * --outputDir /user/frigate/your_ldap/userUserFavGraphAdhoc_20170101_hl14_50_100
+ * ./bazew bundwe swc/scawa/com/twittew/simcwustews_v2/scawding:fav_gwaph_adhoc && \
+ * oscaw hdfs --usew f-fwigate --host hadoopnest1.atwa.twittew.com --bundwe f-fav_gwaph_adhoc \
+ * --toow c-com.twittew.simcwustews_v2.scawding.usewusewfavgwaphadhoc --scween --scween-detached \
+ * --tee w-wogs/usewusewfavgwaphadhoc_20170101 -- --date 2017-01-01 --hawfwivesindays 14 50 100 \
+ * --outputdiw /usew/fwigate/youw_wdap/usewusewfavgwaphadhoc_20170101_hw14_50_100
  *
- * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:fav_graph_adhoc && \
- * oscar hdfs --user frigate --host hadoopnest1.atla.twitter.com --bundle fav_graph_adhoc \
- * --tool com.twitter.simclusters_v2.scalding.UserUserFavGraphAdhoc --screen --screen-detached \
- * --tee logs/userUserFavGraphAdhoc_20170102_addPrevious20170101 -- --date 2017-01-02 \
- * --previousGraphDir /user/frigate/your_ldap/userUserFavGraphAdhoc_20170101_hl14_50_100 \
- * --halfLivesInDays 14 50 100 \
- * --outputDir /user/frigate/your_ldap/userUserFavGraphAdhoc_20170102_addPrevious20170101_hl14_50_100
+ * ./bazew bundwe swc/scawa/com/twittew/simcwustews_v2/scawding:fav_gwaph_adhoc && \
+ * o-oscaw h-hdfs --usew fwigate --host hadoopnest1.atwa.twittew.com --bundwe f-fav_gwaph_adhoc \
+ * --toow com.twittew.simcwustews_v2.scawding.usewusewfavgwaphadhoc --scween --scween-detached \
+ * --tee wogs/usewusewfavgwaphadhoc_20170102_addpwevious20170101 -- --date 2017-01-02 \
+ * --pweviousgwaphdiw /usew/fwigate/youw_wdap/usewusewfavgwaphadhoc_20170101_hw14_50_100 \
+ * --hawfwivesindays 14 50 100 \
+ * --outputdiw /usew/fwigate/youw_wdap/usewusewfavgwaphadhoc_20170102_addpwevious20170101_hw14_50_100
  */
-object UserUserFavGraphAdhoc extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  implicit val dp = DateParser.default
-  val log = Logger()
+o-object usewusewfavgwaphadhoc extends twittewexecutionapp {
+  impwicit v-vaw tz: j-java.utiw.timezone = d-dateops.utc
+  impwicit vaw d-dp = datepawsew.defauwt
+  v-vaw wog = w-woggew()
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          val previousGraphOpt = args.optional("previousGraphDir").map { dir =>
-            TypedPipe.from(EdgeWithDecayedWtsFixedPathSource(dir))
+  d-def job: execution[unit] =
+    execution.getconfigmode.fwatmap {
+      case (config, 😳 m-mode) =>
+        e-execution.withid { i-impwicit u-uniqueid =>
+          v-vaw awgs = c-config.getawgs
+          v-vaw p-pweviousgwaphopt = awgs.optionaw("pweviousgwaphdiw").map { d-diw =>
+            typedpipe.fwom(edgewithdecayedwtsfixedpathsouwce(diw))
           }
-          val favsDateRange = DateRange.parse(args.list("date"))
-          val halfLives = args.list("halfLivesInDays").map(_.toInt)
-          val minScoreToKeep = args.double("minScoreToKeep", 1e-5)
-          val outputDir = args("outputDir")
-          Util.printCounters(
-            UserUserFavGraph
-              .getSummedFavGraph(previousGraphOpt, favsDateRange, halfLives, minScoreToKeep)
-              .writeExecution(EdgeWithDecayedWtsFixedPathSource(outputDir))
+          v-vaw favsdatewange = datewange.pawse(awgs.wist("date"))
+          vaw h-hawfwives = awgs.wist("hawfwivesindays").map(_.toint)
+          v-vaw minscowetokeep = a-awgs.doubwe("minscowetokeep", (˘ω˘) 1e-5)
+          vaw outputdiw = awgs("outputdiw")
+          utiw.pwintcountews(
+            usewusewfavgwaph
+              .getsummedfavgwaph(pweviousgwaphopt, 🥺 favsdatewange, ^^ h-hawfwives, >w< minscowetokeep)
+              .wwiteexecution(edgewithdecayedwtsfixedpathsouwce(outputdiw))
           )
         }
     }
 }
 
 /**
- * $ capesospy-v2 update --start_cron fav_graph src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * $ c-capesospy-v2 update --stawt_cwon f-fav_gwaph swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc.yamw
  */
-object UserUserFavGraphBatch extends TwitterScheduledExecutionApp {
-  private val firstTime: String = "2017-01-01"
-  implicit val tz = DateOps.UTC
-  implicit val parser = DateParser.default
-  private val batchIncrement: Duration = Days(2)
-  private val firstStartDate = DateRange.parse(firstTime).start
+object usewusewfavgwaphbatch extends twittewscheduwedexecutionapp {
+  pwivate v-vaw fiwsttime: s-stwing = "2017-01-01"
+  impwicit v-vaw tz = dateops.utc
+  i-impwicit vaw pawsew = datepawsew.defauwt
+  pwivate vaw batchincwement: duwation = days(2)
+  p-pwivate vaw f-fiwststawtdate = d-datewange.pawse(fiwsttime).stawt
 
-  val outputPath: String = "/user/cassowary/processed/user_user_fav_graph"
-  val log = Logger()
+  v-vaw outputpath: stwing = "/usew/cassowawy/pwocessed/usew_usew_fav_gwaph"
+  vaw wog = woggew()
 
-  private val execArgs = AnalyticsBatchExecutionArgs(
-    batchDesc = BatchDescription(this.getClass.getName),
-    firstTime = BatchFirstTime(RichDate(firstTime)),
-    lastTime = None,
-    batchIncrement = BatchIncrement(batchIncrement)
+  p-pwivate vaw e-execawgs = anawyticsbatchexecutionawgs(
+    batchdesc = batchdescwiption(this.getcwass.getname), ^^;;
+    f-fiwsttime = batchfiwsttime(wichdate(fiwsttime)),
+    wasttime = n-nyone, (˘ω˘)
+    batchincwement = b-batchincwement(batchincwement)
   )
 
-  override def scheduledJob: Execution[Unit] = AnalyticsBatchExecution(execArgs) { dateRange =>
-    Execution.withId { implicit uniqueId =>
-      Execution.withArgs { args =>
-        val previousGraph = if (dateRange.start.timestamp == firstStartDate.timestamp) {
-          log.info("Looks like this is the first time, setting previousGraph to None")
-          None
-        } else {
-          Some(
-            DAL
-              .readMostRecentSnapshot(UserUserFavGraphScalaDataset, dateRange - batchIncrement)
-              .toTypedPipe
+  o-ovewwide def scheduwedjob: e-execution[unit] = a-anawyticsbatchexecution(execawgs) { datewange =>
+    e-execution.withid { impwicit u-uniqueid =>
+      e-execution.withawgs { a-awgs =>
+        v-vaw pweviousgwaph = i-if (datewange.stawt.timestamp == f-fiwststawtdate.timestamp) {
+          w-wog.info("wooks wike this i-is the fiwst time, OwO setting pweviousgwaph to none")
+          n-nyone
+        } e-ewse {
+          s-some(
+            daw
+              .weadmostwecentsnapshot(usewusewfavgwaphscawadataset, (ꈍᴗꈍ) datewange - batchincwement)
+              .totypedpipe
           )
         }
-        val halfLives = args.list("halfLivesInDays").map(_.toInt)
-        val minScoreToKeep = args.double("minScoreToKeep", 1e-5)
-        Util.printCounters(
-          UserUserFavGraph
-            .getSummedFavGraph(previousGraph, dateRange, halfLives, minScoreToKeep)
-            .writeDALSnapshotExecution(
-              UserUserFavGraphScalaDataset,
-              D.Daily,
-              D.Suffix(outputPath),
-              D.EBLzo(),
-              dateRange.end)
+        vaw hawfwives = a-awgs.wist("hawfwivesindays").map(_.toint)
+        vaw minscowetokeep = a-awgs.doubwe("minscowetokeep", òωó 1e-5)
+        u-utiw.pwintcountews(
+          usewusewfavgwaph
+            .getsummedfavgwaph(pweviousgwaph, datewange, ʘwʘ hawfwives, ʘwʘ m-minscowetokeep)
+            .wwitedawsnapshotexecution(
+              usewusewfavgwaphscawadataset, nyaa~~
+              d-d.daiwy, UwU
+              d.suffix(outputpath), (⑅˘꒳˘)
+              d-d.ebwzo(), (˘ω˘)
+              d-datewange.end)
         )
       }
     }
   }
 }
 
-object DumpFavGraphAdhoc extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
+o-object d-dumpfavgwaphadhoc extends twittewexecutionapp {
+  impwicit vaw tz: java.utiw.timezone = dateops.utc
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val favGraph = DAL
-            .readMostRecentSnapshotNoOlderThan(UserUserFavGraphScalaDataset, Days(10))
-            .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-            .toTypedPipe
-            .collect {
-              case edge if edge.weights.halfLifeInDaysToDecayedSums.contains(100) =>
-                (edge.sourceId, edge.destinationId, edge.weights.halfLifeInDaysToDecayedSums(100))
+  d-def job: execution[unit] =
+    e-execution.getconfigmode.fwatmap {
+      case (config, :3 mode) =>
+        execution.withid { impwicit uniqueid =>
+          v-vaw favgwaph = daw
+            .weadmostwecentsnapshotnoowdewthan(usewusewfavgwaphscawadataset, (˘ω˘) days(10))
+            .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+            .totypedpipe
+            .cowwect {
+              case edge if edge.weights.hawfwifeindaystodecayedsums.contains(100) =>
+                (edge.souwceid, nyaa~~ edge.destinationid, (U ﹏ U) e-edge.weights.hawfwifeindaystodecayedsums(100))
             }
 
-          Execution
+          e-execution
             .sequence(
-              Seq(
-                Util.printSummaryOfNumericColumn(
-                  favGraph.map(_._3),
-                  Some("Weight")
-                ),
-                Util.printSummaryOfNumericColumn(
-                  favGraph.map(c => math.log10(10.0 + c._3)),
-                  Some("Weight_Log_P10")
-                ),
-                Util.printSummaryOfNumericColumn(
-                  favGraph.map(c => math.log10(1.0 + c._3)),
-                  Some("Weight_Log_P1")
-                ),
-                Util.printSummaryOfCategoricalColumn(favGraph.map(_._1), Some("SourceId")),
-                Util.printSummaryOfCategoricalColumn(favGraph.map(_._2), Some("DestId"))
+              seq(
+                u-utiw.pwintsummawyofnumewiccowumn(
+                  favgwaph.map(_._3), nyaa~~
+                  some("weight")
+                ), ^^;;
+                u-utiw.pwintsummawyofnumewiccowumn(
+                  f-favgwaph.map(c => math.wog10(10.0 + c._3)), OwO
+                  s-some("weight_wog_p10")
+                ), nyaa~~
+                utiw.pwintsummawyofnumewiccowumn(
+                  f-favgwaph.map(c => math.wog10(1.0 + c._3)), UwU
+                  some("weight_wog_p1")
+                ), 😳
+                utiw.pwintsummawyofcategowicawcowumn(favgwaph.map(_._1), 😳 s-some("souwceid")), (ˆ ﻌ ˆ)♡
+                utiw.pwintsummawyofcategowicawcowumn(favgwaph.map(_._2), (✿oωo) some("destid"))
               )
-            ).flatMap { summarySeq =>
-              println(summarySeq.mkString("\n"))
-              Execution.unit
+            ).fwatmap { s-summawyseq =>
+              p-pwintwn(summawyseq.mkstwing("\n"))
+              e-execution.unit
             }
         }
     }

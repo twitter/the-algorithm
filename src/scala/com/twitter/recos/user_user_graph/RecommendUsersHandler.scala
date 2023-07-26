@@ -1,221 +1,221 @@
-package com.twitter.recos.user_user_graph
+package com.twittew.wecos.usew_usew_gwaph
 
-import java.util.Random
-import com.google.common.collect.Lists
-import com.twitter.concurrent.AsyncQueue
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountResponse
-import com.twitter.graphjet.algorithms.counting.user.TopSecondDegreeByCountForUser
-import com.twitter.graphjet.algorithms.counting.user.TopSecondDegreeByCountRequestForUser
-import com.twitter.graphjet.algorithms.counting.user.UserRecommendationInfo
-import com.twitter.graphjet.algorithms.ConnectingUsersWithMetadata
-import com.twitter.graphjet.algorithms.filters._
-import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph
-import com.twitter.logging.Logger
-import com.twitter.recos.decider.UserUserGraphDecider
-import com.twitter.recos.graph_common.FinagleStatsReceiverWrapper
-import com.twitter.recos.model.SalsaQueryRunner.SalsaRunnerConfig
-import com.twitter.recos.recos_common.thriftscala.UserSocialProofType
-import com.twitter.recos.user_user_graph.thriftscala._
-import com.twitter.recos.util.Stats._
-import com.twitter.servo.request.RequestHandler
-import com.twitter.util.Future
-import com.twitter.util.Try
-import it.unimi.dsi.fastutil.longs.Long2DoubleOpenHashMap
-import it.unimi.dsi.fastutil.longs.LongOpenHashSet
-import scala.collection.JavaConverters._
+impowt j-java.utiw.wandom
+i-impowt com.googwe.common.cowwect.wists
+i-impowt c-com.twittew.concuwwent.asyncqueue
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.gwaphjet.awgowithms.counting.topseconddegweebycountwesponse
+i-impowt com.twittew.gwaphjet.awgowithms.counting.usew.topseconddegweebycountfowusew
+i-impowt com.twittew.gwaphjet.awgowithms.counting.usew.topseconddegweebycountwequestfowusew
+impowt com.twittew.gwaphjet.awgowithms.counting.usew.usewwecommendationinfo
+impowt com.twittew.gwaphjet.awgowithms.connectingusewswithmetadata
+i-impowt com.twittew.gwaphjet.awgowithms.fiwtews._
+impowt c-com.twittew.gwaphjet.bipawtite.nodemetadataweftindexedpowewwawmuwtisegmentbipawtitegwaph
+impowt c-com.twittew.wogging.woggew
+impowt com.twittew.wecos.decidew.usewusewgwaphdecidew
+impowt com.twittew.wecos.gwaph_common.finagwestatsweceivewwwappew
+impowt com.twittew.wecos.modew.sawsaquewywunnew.sawsawunnewconfig
+i-impowt com.twittew.wecos.wecos_common.thwiftscawa.usewsociawpwooftype
+impowt c-com.twittew.wecos.usew_usew_gwaph.thwiftscawa._
+i-impowt com.twittew.wecos.utiw.stats._
+impowt com.twittew.sewvo.wequest.wequesthandwew
+impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.twy
+impowt it.unimi.dsi.fastutiw.wongs.wong2doubweopenhashmap
+impowt it.unimi.dsi.fastutiw.wongs.wongopenhashset
+impowt scawa.cowwection.javaconvewtews._
 
-trait RecommendUsersHandler extends RequestHandler[RecommendUserRequest, RecommendUserResponse]
+t-twait wecommendusewshandwew e-extends w-wequesthandwew[wecommendusewwequest, 🥺 w-wecommendusewwesponse]
 
 /**
- * Computes user recommendations based on a RecommendUserRequest by using
- * TopSecondDegree algorithm in GraphJet.
+ * c-computes usew wecommendations based on a wecommendusewwequest b-by using
+ * topseconddegwee awgowithm in gwaphjet. >_<
  */
-case class RecommendUsersHandlerImpl(
-  bipartiteGraph: NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph,
-  salsaRunnerConfig: SalsaRunnerConfig,
-  decider: UserUserGraphDecider,
-  statsReceiverWrapper: FinagleStatsReceiverWrapper)
-    extends RecommendUsersHandler {
+c-case cwass wecommendusewshandwewimpw(
+  bipawtitegwaph: nyodemetadataweftindexedpowewwawmuwtisegmentbipawtitegwaph, UwU
+  sawsawunnewconfig: sawsawunnewconfig, >_<
+  d-decidew: usewusewgwaphdecidew, -.-
+  s-statsweceivewwwappew: f-finagwestatsweceivewwwappew)
+    e-extends wecommendusewshandwew {
 
-  private val log: Logger = Logger(this.getClass.getSimpleName)
-  private val stats = statsReceiverWrapper.statsReceiver.scope(this.getClass.getSimpleName)
-  private val failureCounter = stats.counter("failure")
-  private val recsStat = stats.stat("recs_count")
-  private val emptyCounter = stats.counter("empty")
-  private val pollCounter = stats.counter("poll")
-  private val pollTimeoutCounter = stats.counter("pollTimeout")
-  private val offerCounter = stats.counter("offer")
-  private val pollLatencyStat = stats.stat("pollLatency")
-  private val graphJetQueue = new AsyncQueue[TopSecondDegreeByCountForUser]
-  (0 until salsaRunnerConfig.numSalsaRunners).foreach { _ =>
-    graphJetQueue.offer(
-      new TopSecondDegreeByCountForUser(
-        bipartiteGraph,
-        salsaRunnerConfig.expectedNodesToHitInSalsa,
-        statsReceiverWrapper.scope(this.getClass.getSimpleName)
+  pwivate vaw wog: woggew = woggew(this.getcwass.getsimpwename)
+  pwivate vaw s-stats = statsweceivewwwappew.statsweceivew.scope(this.getcwass.getsimpwename)
+  p-pwivate vaw faiwuwecountew = stats.countew("faiwuwe")
+  p-pwivate v-vaw wecsstat = stats.stat("wecs_count")
+  pwivate v-vaw emptycountew = stats.countew("empty")
+  p-pwivate vaw powwcountew = stats.countew("poww")
+  p-pwivate vaw powwtimeoutcountew = stats.countew("powwtimeout")
+  p-pwivate vaw offewcountew = stats.countew("offew")
+  p-pwivate vaw p-powwwatencystat = stats.stat("powwwatency")
+  pwivate vaw gwaphjetqueue = nyew asyncqueue[topseconddegweebycountfowusew]
+  (0 untiw sawsawunnewconfig.numsawsawunnews).foweach { _ =>
+    g-gwaphjetqueue.offew(
+      n-nyew topseconddegweebycountfowusew(
+        bipawtitegwaph, mya
+        s-sawsawunnewconfig.expectednodestohitinsawsa, >w<
+        s-statsweceivewwwappew.scope(this.getcwass.getsimpwename)
       )
     )
   }
 
   /**
-   * Given a user_user_graph request, make it conform to GraphJet's request format
+   * g-given a usew_usew_gwaph wequest, (U ﹏ U) make it confowm to gwaphjet's w-wequest fowmat
    */
-  private def convertRequestToJava(
-    request: RecommendUserRequest
-  ): TopSecondDegreeByCountRequestForUser = {
-    val queryNode = request.requesterId
-    val leftSeedNodesWithWeight = new Long2DoubleOpenHashMap(
-      request.seedsWithWeights.keys.toArray,
-      request.seedsWithWeights.values.toArray
+  pwivate def convewtwequesttojava(
+    wequest: wecommendusewwequest
+  ): topseconddegweebycountwequestfowusew = {
+    v-vaw quewynode = wequest.wequestewid
+    v-vaw weftseednodeswithweight = n-nyew wong2doubweopenhashmap(
+      w-wequest.seedswithweights.keys.toawway, 😳😳😳
+      wequest.seedswithweights.vawues.toawway
     )
-    val toBeFiltered = new LongOpenHashSet(request.excludedUserIds.getOrElse(Nil).toArray)
-    val maxNumResults = request.maxNumResults.getOrElse(DefaultRequestParams.MaxNumResults)
-    val maxNumSocialProofs =
-      request.maxNumSocialProofs.getOrElse(DefaultRequestParams.MaxNumSocialProofs)
-    val minUserPerSocialProof = convertMinUserPerSocialProofToJava(request.minUserPerSocialProof)
-    val socialProofTypes =
-      UserEdgeTypeMask.getUserUserGraphSocialProofTypes(request.socialProofTypes)
-    val maxRightNodeAgeInMillis = DefaultRequestParams.MaxRightNodeAgeThreshold
-    val maxEdgeEngagementAgeInMillis =
-      request.maxEdgeEngagementAgeInMillis.getOrElse(DefaultRequestParams.MaxEdgeAgeThreshold)
-    val resultFilterChain = new ResultFilterChain(
-      Lists.newArrayList(
-        new SocialProofTypesFilter(statsReceiverWrapper),
-        new RequestedSetFilter(statsReceiverWrapper)
+    v-vaw tobefiwtewed = n-nyew w-wongopenhashset(wequest.excwudedusewids.getowewse(niw).toawway)
+    v-vaw maxnumwesuwts = wequest.maxnumwesuwts.getowewse(defauwtwequestpawams.maxnumwesuwts)
+    vaw maxnumsociawpwoofs =
+      wequest.maxnumsociawpwoofs.getowewse(defauwtwequestpawams.maxnumsociawpwoofs)
+    v-vaw minusewpewsociawpwoof = c-convewtminusewpewsociawpwooftojava(wequest.minusewpewsociawpwoof)
+    v-vaw sociawpwooftypes =
+      u-usewedgetypemask.getusewusewgwaphsociawpwooftypes(wequest.sociawpwooftypes)
+    v-vaw maxwightnodeageinmiwwis = defauwtwequestpawams.maxwightnodeagethweshowd
+    vaw maxedgeengagementageinmiwwis =
+      wequest.maxedgeengagementageinmiwwis.getowewse(defauwtwequestpawams.maxedgeagethweshowd)
+    v-vaw wesuwtfiwtewchain = nyew wesuwtfiwtewchain(
+      wists.newawwaywist(
+        nyew sociawpwooftypesfiwtew(statsweceivewwwappew), o.O
+        nyew wequestedsetfiwtew(statsweceivewwwappew)
       )
     )
 
-    new TopSecondDegreeByCountRequestForUser(
-      queryNode,
-      leftSeedNodesWithWeight,
-      toBeFiltered,
-      maxNumResults,
-      maxNumSocialProofs,
-      UserEdgeTypeMask.SIZE.toInt,
-      minUserPerSocialProof,
-      socialProofTypes,
-      maxRightNodeAgeInMillis,
-      maxEdgeEngagementAgeInMillis,
-      resultFilterChain
+    n-nyew topseconddegweebycountwequestfowusew(
+      quewynode, òωó
+      weftseednodeswithweight, 😳😳😳
+      tobefiwtewed, σωσ
+      m-maxnumwesuwts, (⑅˘꒳˘)
+      m-maxnumsociawpwoofs, (///ˬ///✿)
+      u-usewedgetypemask.size.toint, 🥺
+      minusewpewsociawpwoof, OwO
+      s-sociawpwooftypes, >w<
+      maxwightnodeageinmiwwis, 🥺
+      maxedgeengagementageinmiwwis, nyaa~~
+      w-wesuwtfiwtewchain
     )
   }
 
   /**
-   * Converts the thrift scala type to the Java equivalent
+   * c-convewts the thwift scawa type to the java equivawent
    */
-  private def convertMinUserPerSocialProofToJava(
-    socialProofInScala: Option[scala.collection.Map[UserSocialProofType, Int]]
-  ): java.util.Map[java.lang.Byte, java.lang.Integer] = {
-    socialProofInScala
+  pwivate def convewtminusewpewsociawpwooftojava(
+    s-sociawpwoofinscawa: option[scawa.cowwection.map[usewsociawpwooftype, ^^ i-int]]
+  ): java.utiw.map[java.wang.byte, >w< java.wang.integew] = {
+    s-sociawpwoofinscawa
       .map {
         _.map {
-          case (key: UserSocialProofType, value: Int) =>
-            (new java.lang.Byte(key.getValue.toByte), new java.lang.Integer(value))
+          c-case (key: usewsociawpwooftype, OwO vawue: int) =>
+            (new java.wang.byte(key.getvawue.tobyte), XD n-nyew java.wang.integew(vawue))
         }
       }
-      .getOrElse(Map.empty[java.lang.Byte, java.lang.Integer])
-      .asJava
+      .getowewse(map.empty[java.wang.byte, ^^;; j-java.wang.integew])
+      .asjava
   }
 
   /**
-   * Converts a byte-array format of social proofs in Java to its Scala equivalent
+   * convewts a byte-awway f-fowmat o-of sociaw pwoofs in java to its scawa equivawent
    */
-  private def convertSocialProofsToScala(
-    socialProofs: java.util.Map[java.lang.Byte, ConnectingUsersWithMetadata]
-  ): scala.collection.mutable.Map[UserSocialProofType, scala.Seq[Long]] = {
-    socialProofs.asScala.map {
-      case (socialProofByte, socialProof) =>
-        val proofType = UserSocialProofType(socialProofByte.toByte)
-        val ids = socialProof.getConnectingUsers.asScala.map(_.toLong)
-        (proofType, ids)
+  pwivate def convewtsociawpwoofstoscawa(
+    s-sociawpwoofs: j-java.utiw.map[java.wang.byte, 🥺 c-connectingusewswithmetadata]
+  ): scawa.cowwection.mutabwe.map[usewsociawpwooftype, XD s-scawa.seq[wong]] = {
+    s-sociawpwoofs.asscawa.map {
+      case (sociawpwoofbyte, (U ᵕ U❁) sociawpwoof) =>
+        v-vaw pwooftype = usewsociawpwooftype(sociawpwoofbyte.tobyte)
+        vaw ids = sociawpwoof.getconnectingusews.asscawa.map(_.towong)
+        (pwooftype, :3 ids)
     }
   }
 
   /**
-   * Converts Java recommendation results to its Scala equivalent
+   * convewts java wecommendation w-wesuwts t-to its scawa equivawent
    */
-  private def convertResponseToScala(
-    responseOpt: Option[TopSecondDegreeByCountResponse]
-  ): RecommendUserResponse = {
-    responseOpt match {
-      case Some(rawResponse) =>
-        val userSeq = rawResponse.getRankedRecommendations.asScala.toSeq.flatMap {
-          case userRecs: UserRecommendationInfo =>
-            Some(
-              RecommendedUser(
-                userRecs.getRecommendation,
-                userRecs.getWeight,
-                convertSocialProofsToScala(userRecs.getSocialProof)
+  pwivate def c-convewtwesponsetoscawa(
+    w-wesponseopt: option[topseconddegweebycountwesponse]
+  ): wecommendusewwesponse = {
+    wesponseopt m-match {
+      case some(wawwesponse) =>
+        vaw usewseq = wawwesponse.getwankedwecommendations.asscawa.toseq.fwatmap {
+          case usewwecs: usewwecommendationinfo =>
+            s-some(
+              wecommendedusew(
+                usewwecs.getwecommendation, ( ͡o ω ͡o )
+                usewwecs.getweight, òωó
+                convewtsociawpwoofstoscawa(usewwecs.getsociawpwoof)
               )
             )
-          case _ =>
-            None
+          c-case _ =>
+            n-nyone
         }
-        recsStat.add(userSeq.size)
-        if (userSeq.isEmpty) {
-          emptyCounter.incr()
+        wecsstat.add(usewseq.size)
+        if (usewseq.isempty) {
+          emptycountew.incw()
         }
-        RecommendUserResponse(userSeq)
-      case None =>
-        emptyCounter.incr()
-        RecommendUserResponse(Nil)
+        w-wecommendusewwesponse(usewseq)
+      c-case nyone =>
+        emptycountew.incw()
+        wecommendusewwesponse(niw)
     }
   }
 
-  private def getGraphJetResponse(
-    graphJet: TopSecondDegreeByCountForUser,
-    request: TopSecondDegreeByCountRequestForUser,
-    random: Random
+  pwivate def getgwaphjetwesponse(
+    g-gwaphjet: topseconddegweebycountfowusew,
+    w-wequest: topseconddegweebycountwequestfowusew, σωσ
+    wandom: wandom
   )(
-    implicit statsReceiver: StatsReceiver
-  ): Option[TopSecondDegreeByCountResponse] = {
-    trackBlockStats(stats) {
-      // compute recs -- need to catch and print exceptions here otherwise they are swallowed
-      val recAttempt = Try(graphJet.computeRecommendations(request, random)).onFailure { e =>
-        failureCounter.incr()
-        log.error(e, "GraphJet computation failed")
+    impwicit statsweceivew: statsweceivew
+  ): o-option[topseconddegweebycountwesponse] = {
+    twackbwockstats(stats) {
+      // c-compute w-wecs -- need to catch and pwint e-exceptions hewe othewwise they a-awe swawwowed
+      v-vaw wecattempt = t-twy(gwaphjet.computewecommendations(wequest, (U ᵕ U❁) wandom)).onfaiwuwe { e-e =>
+        f-faiwuwecountew.incw()
+        wog.ewwow(e, (✿oωo) "gwaphjet computation f-faiwed")
       }
-      recAttempt.toOption
+      w-wecattempt.tooption
     }
   }
 
-  override def apply(request: RecommendUserRequest): Future[RecommendUserResponse] = {
-    val random = new Random()
-    val graphJetRequest = convertRequestToJava(request)
-    pollCounter.incr()
-    val t0 = System.currentTimeMillis
-    graphJetQueue.poll().map { graphJetRunner =>
-      val pollTime = System.currentTimeMillis - t0
-      pollLatencyStat.add(pollTime)
-      val response = Try {
-        if (pollTime < salsaRunnerConfig.timeoutSalsaRunner) {
-          convertResponseToScala(
-            getGraphJetResponse(
-              graphJetRunner,
-              graphJetRequest,
-              random
-            )(statsReceiverWrapper.statsReceiver)
+  ovewwide d-def appwy(wequest: wecommendusewwequest): futuwe[wecommendusewwesponse] = {
+    v-vaw wandom = nyew wandom()
+    v-vaw gwaphjetwequest = c-convewtwequesttojava(wequest)
+    powwcountew.incw()
+    vaw t0 = system.cuwwenttimemiwwis
+    gwaphjetqueue.poww().map { gwaphjetwunnew =>
+      vaw p-powwtime = system.cuwwenttimemiwwis - t-t0
+      p-powwwatencystat.add(powwtime)
+      v-vaw wesponse = twy {
+        i-if (powwtime < sawsawunnewconfig.timeoutsawsawunnew) {
+          convewtwesponsetoscawa(
+            getgwaphjetwesponse(
+              gwaphjetwunnew, ^^
+              gwaphjetwequest, ^•ﻌ•^
+              w-wandom
+            )(statsweceivewwwappew.statsweceivew)
           )
-        } else {
-          // if we did not get a runner in time, then fail fast here and immediately put it back
-          log.warning("GraphJet Queue polling timeout")
-          pollTimeoutCounter.incr()
-          throw new RuntimeException("GraphJet poll timeout")
-          RecommendUserResponse(Nil)
+        } ewse {
+          // i-if we did nyot get a w-wunnew in time, then faiw fast hewe a-and immediatewy put it back
+          w-wog.wawning("gwaphjet q-queue powwing timeout")
+          p-powwtimeoutcountew.incw()
+          t-thwow nyew w-wuntimeexception("gwaphjet poww timeout")
+          wecommendusewwesponse(niw)
         }
-      } ensure {
-        graphJetQueue.offer(graphJetRunner)
-        offerCounter.incr()
+      } ensuwe {
+        gwaphjetqueue.offew(gwaphjetwunnew)
+        offewcountew.incw()
       }
-      response.toOption.getOrElse(RecommendUserResponse(Nil))
+      wesponse.tooption.getowewse(wecommendusewwesponse(niw))
     }
   }
 
-  object DefaultRequestParams {
-    val MaxNumResults = 100
-    val MaxNumSocialProofs = 100
-    val MaxRightNodeAgeThreshold: Long = Long.MaxValue
-    val MaxEdgeAgeThreshold: Long = Long.MaxValue
+  o-object defauwtwequestpawams {
+    v-vaw maxnumwesuwts = 100
+    v-vaw maxnumsociawpwoofs = 100
+    vaw maxwightnodeagethweshowd: w-wong = wong.maxvawue
+    vaw maxedgeagethweshowd: wong = wong.maxvawue
   }
 }

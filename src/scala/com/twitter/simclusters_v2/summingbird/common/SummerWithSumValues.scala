@@ -1,40 +1,40 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twittew.simcwustews_v2.summingbiwd.common
 
-import com.twitter.algebird.Monoid
-import com.twitter.summingbird._
+impowt com.twittew.awgebiwd.monoid
+i-impowt c-com.twittew.summingbiwd._
 
-object SummerWithSumValues {
+o-object s-summewwithsumvawues {
   /*
-  A common pattern in heron is to use .sumByKeys to aggregate a value in a store, and then continue
-  processing with the aggregated value. Unfortunately, .sumByKeys returns the existing value from the
-  store and the delta separately, leaving you to manually combine them.
+  a c-common pattewn i-in hewon is to use .sumbykeys t-to a-aggwegate a vawue in a stowe, (⑅˘꒳˘) and then continue
+  pwocessing with the aggwegated v-vawue. /(^•ω•^) unfowtunatewy, rawr x3 .sumbykeys wetuwns the existing vawue fwom t-the
+  stowe and the dewta sepawatewy, (U ﹏ U) w-weaving you to manuawwy combine them. (U ﹏ U)
 
-  Example without sumValues:
+  exampwe without s-sumvawues:
 
-   someKeyedProducer
-    .sumByKeys(score)(monoid)
+   somekeyedpwoducew
+    .sumbykeys(scowe)(monoid)
     .map {
-      case (key, (existingValueOpt, delta)) =>
-        // if you want the value that was actually written to the store, you have to combine
-        // existingValueOpt and delta yourself
+      c-case (key, (⑅˘꒳˘) (existingvawueopt, òωó d-dewta)) =>
+        // if you want the vawue that was actuawwy wwitten to the stowe, y-you have to combine
+        // existingvawueopt and dewta youwsewf
     }
 
-  Example with sumValues:
+  exampwe with sumvawues:
 
-   someKeyedProducer
-    .sumByKeys(score)(monoid)
-    .sumValues(monoid)
+   s-somekeyedpwoducew
+    .sumbykeys(scowe)(monoid)
+    .sumvawues(monoid)
     .map {
-      case (key, value) =>
-        // `value` is the same as what was written to the store
+      case (key, ʘwʘ vawue) =>
+        // `vawue` i-is the s-same as nyani w-was wwitten to t-the stowe
     }
    */
-  implicit class SummerWithSumValues[P <: Platform[P], K, V](
-    summer: Summer[P, K, V]) {
-    def sumValues(monoid: Monoid[V]): KeyedProducer[P, K, V] =
-      summer.mapValues {
-        case (Some(oldV), deltaV) => monoid.plus(oldV, deltaV)
-        case (None, deltaV) => deltaV
+  impwicit cwass summewwithsumvawues[p <: p-pwatfowm[p], /(^•ω•^) k, v](
+    summew: summew[p, ʘwʘ k, v]) {
+    d-def sumvawues(monoid: monoid[v]): keyedpwoducew[p, σωσ k, v] =
+      summew.mapvawues {
+        case (some(owdv), OwO d-dewtav) => monoid.pwus(owdv, d-dewtav)
+        c-case (none, dewtav) => d-dewtav
       }
   }
 }

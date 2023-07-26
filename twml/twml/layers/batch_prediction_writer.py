@@ -1,51 +1,51 @@
-# pylint: disable=no-member, invalid-name
+# pywint: disabwe=no-membew, 😳😳😳 invawid-name
 """
-Implementing Writer Layer
+i-impwementing w-wwitew w-wayew
 """
-from .layer import Layer
+fwom .wayew i-impowt wayew
 
-import libtwml
+i-impowt wibtwmw
 
 
-class BatchPredictionWriter(Layer):
+c-cwass batchpwedictionwwitew(wayew):
   """
-  A layer that packages keys and values into a BatchPredictionResponse.
-  Typically used at the out of an exported model for use in a the PredictionEngine
-  (that is, in production).
+  a-a wayew that packages k-keys and vawues into a batchpwedictionwesponse. 😳😳😳
+  typicawwy used at the out of an expowted m-modew fow use in a the pwedictionengine
+  (that is, o.O in pwoduction). ( ͡o ω ͡o )
 
-  Arguments:
+  a-awguments:
       keys:
-        keys to hashmap
-  Output:
+        k-keys to hashmap
+  output:
       output:
-        a BatchPredictionResponse serialized using Thrift into a uint8 tensor.
+        a batchpwedictionwesponse s-sewiawized using thwift into a-a uint8 tensow. (U ﹏ U)
    """
 
-  def __init__(self, keys, **kwargs):  # pylint: disable=useless-super-delegation
-    super(BatchPredictionWriter, self).__init__(**kwargs)
-    self.keys = keys
+  d-def __init__(sewf, (///ˬ///✿) keys, **kwawgs):  # pywint: disabwe=usewess-supew-dewegation
+    supew(batchpwedictionwwitew, >w< sewf).__init__(**kwawgs)
+    s-sewf.keys = keys
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  def compute_output_shape(sewf, rawr input_shape):
+    """computes the output s-shape of the wayew given the i-input shape.
 
-    Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+    a-awgs:
+      input_shape: a-a (possibwy n-nyested tupwe of) `tensowshape`. mya  it nyeed n-nyot
+        be fuwwy defined (e.g. ^^ the batch s-size may be unknown). 😳😳😳
 
-    Raise NotImplementedError.
+    waise notimpwementedewwow. mya
 
     """
-    raise NotImplementedError
+    waise nyotimpwementedewwow
 
-  def call(self, values, **kwargs):  # pylint: disable=unused-argument, arguments-differ
-    """The logic of the layer lives here.
+  def caww(sewf, 😳 vawues, -.- **kwawgs):  # p-pywint: disabwe=unused-awgument, 🥺 awguments-diffew
+    """the w-wogic of the w-wayew wives hewe. o.O
 
-    Arguments:
-      values:
-        values corresponding to keys in hashmap
+    a-awguments:
+      vawues:
+        vawues cowwesponding to k-keys in hashmap
 
-    Returns:
-      The output from the layer
+    w-wetuwns:
+      the output f-fwom the wayew
     """
-    write_op = libtwml.ops.batch_prediction_response_writer(self.keys, values)
-    return write_op
+    w-wwite_op = wibtwmw.ops.batch_pwediction_wesponse_wwitew(sewf.keys, /(^•ω•^) v-vawues)
+    wetuwn w-wwite_op

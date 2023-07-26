@@ -1,27 +1,27 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.twittew.simcwustews_v2.hdfs_souwces.injections
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.{
-  Int2BigEndian,
-  Long2BigEndian,
-  ScalaCompactThrift
+impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection
+i-impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection.{
+  i-int2bigendian, -.-
+  w-wong2bigendian, ^^;;
+  s-scawacompactthwift
 }
-import com.twitter.simclusters_v2.thriftscala.SimClustersInferredEntities
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsinfewwedentities
 
-object InferredEntitiesInjections {
+o-object infewwedentitiesinjections {
 
-  final val InferredEntityInjection: KeyValInjection[Long, SimClustersInferredEntities] =
-    KeyValInjection(
-      Long2BigEndian,
-      ScalaCompactThrift(SimClustersInferredEntities)
+  finaw vaw infewwedentityinjection: keyvawinjection[wong, simcwustewsinfewwedentities] =
+    k-keyvawinjection(
+      wong2bigendian, >_<
+      scawacompactthwift(simcwustewsinfewwedentities)
     )
 
-  final val InferredEntityKeyedByClusterInjection: KeyValInjection[
-    Int,
-    SimClustersInferredEntities
+  f-finaw vaw infewwedentitykeyedbycwustewinjection: k-keyvawinjection[
+    int, mya
+    simcwustewsinfewwedentities
   ] =
-    KeyValInjection(
-      Int2BigEndian,
-      ScalaCompactThrift(SimClustersInferredEntities)
+    keyvawinjection(
+      int2bigendian, mya
+      s-scawacompactthwift(simcwustewsinfewwedentities)
     )
 }

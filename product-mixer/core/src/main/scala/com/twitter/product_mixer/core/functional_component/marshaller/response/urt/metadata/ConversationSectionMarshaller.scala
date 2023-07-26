@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.AbusiveQuality
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ConversationSection
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.HighQuality
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.LowQuality
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RelatedTweet
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.abusivequawity
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.convewsationsection
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.highquawity
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wowquawity
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wewatedtweet
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => uwt}
+impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
-@Singleton
-class ConversationSectionMarshaller @Inject() () {
+@singweton
+cwass convewsationsectionmawshawwew @inject() () {
 
-  def apply(section: ConversationSection): urt.ConversationSection = section match {
-    case HighQuality => urt.ConversationSection.HighQuality
-    case LowQuality => urt.ConversationSection.LowQuality
-    case AbusiveQuality => urt.ConversationSection.AbusiveQuality
-    case RelatedTweet => urt.ConversationSection.RelatedTweet
+  def a-appwy(section: convewsationsection): u-uwt.convewsationsection = section match {
+    case highquawity => uwt.convewsationsection.highquawity
+    c-case wowquawity => uwt.convewsationsection.wowquawity
+    c-case a-abusivequawity => uwt.convewsationsection.abusivequawity
+    case wewatedtweet => uwt.convewsationsection.wewatedtweet
   }
 }

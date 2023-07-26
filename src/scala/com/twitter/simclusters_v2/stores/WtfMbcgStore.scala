@@ -1,34 +1,34 @@
-package com.twitter.simclusters_v2.stores
+package com.twittew.simcwustews_v2.stowes
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.{
-  Long2BigEndian,
-  ScalaBinaryThrift
+impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection.{
+  w-wong2bigendian, rawr x3
+  scawabinawythwift
 }
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.{Apollo, ManhattanRO, ManhattanROConfig}
-import com.twitter.storehaus_internal.util.{ApplicationID, DatasetName, HDFSPath}
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
+i-impowt com.twittew.stowage.cwient.manhattan.kv.manhattankvcwientmtwspawams
+i-impowt c-com.twittew.stowehaus.weadabwestowe
+i-impowt c-com.twittew.stowehaus_intewnaw.manhattan.{apowwo, m-manhattanwo, nyaa~~ manhattanwoconfig}
+impowt com.twittew.stowehaus_intewnaw.utiw.{appwicationid, /(^•ω•^) datasetname, rawr hdfspath}
+impowt com.twittew.wtf.candidate.thwiftscawa.candidateseq
 
-object WtfMbcgStore {
+object w-wtfmbcgstowe {
 
-  val appId = "recos_platform_apollo"
+  vaw appid = "wecos_pwatfowm_apowwo"
 
-  implicit val keyInj = Long2BigEndian
-  implicit val valInj = ScalaBinaryThrift(CandidateSeq)
+  impwicit vaw keyinj = w-wong2bigendian
+  impwicit vaw v-vawinj = scawabinawythwift(candidateseq)
 
-  def getWtfMbcgStore(
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    datasetName: String
-  ): ReadableStore[Long, CandidateSeq] = {
-    ManhattanRO.getReadableStoreWithMtls[Long, CandidateSeq](
-      ManhattanROConfig(
-        HDFSPath(""),
-        ApplicationID(appId),
-        DatasetName(datasetName),
-        Apollo
-      ),
-      mhMtlsParams
+  def getwtfmbcgstowe(
+    mhmtwspawams: manhattankvcwientmtwspawams, OwO
+    d-datasetname: stwing
+  ): w-weadabwestowe[wong, (U ﹏ U) c-candidateseq] = {
+    manhattanwo.getweadabwestowewithmtws[wong, >_< candidateseq](
+      manhattanwoconfig(
+        hdfspath(""), rawr x3
+        a-appwicationid(appid), mya
+        datasetname(datasetname), nyaa~~
+        apowwo
+      ), (⑅˘꒳˘)
+      mhmtwspawams
     )
   }
 }

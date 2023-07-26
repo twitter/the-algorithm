@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ArticleDetails
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.awticwedetaiws
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class ArticleDetailsMarshaller @Inject() () {
+@singweton
+c-cwass awticwedetaiwsmawshawwew @inject() () {
 
-  def apply(articleDetails: ArticleDetails): urt.ArticleDetails = urt.ArticleDetails(
-    articlePosition = articleDetails.articlePosition,
-    shareCount = articleDetails.shareCount
+  def appwy(awticwedetaiws: awticwedetaiws): uwt.awticwedetaiws = uwt.awticwedetaiws(
+    a-awticweposition = awticwedetaiws.awticweposition, :3
+    shawecount = a-awticwedetaiws.shawecount
   )
 }

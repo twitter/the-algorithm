@@ -1,73 +1,73 @@
-package com.twitter.search.ingester.model;
+package com.twittew.seawch.ingestew.modew;
 
-import java.util.List;
+impowt j-java.utiw.wist;
 
-import javax.annotation.Nullable;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.google.common.base.Preconditions;
-import com.google.common.primitives.Longs;
+i-impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.pwimitives.wongs;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.debug.thriftjava.DebugEvents;
-import com.twitter.search.common.partitioning.base.HashPartitionFunction;
-import com.twitter.search.common.partitioning.base.Partitionable;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
+impowt c-com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+impowt c-com.twittew.seawch.common.debug.thwiftjava.debugevents;
+i-impowt c-com.twittew.seawch.common.pawtitioning.base.hashpawtitionfunction;
+impowt com.twittew.seawch.common.pawtitioning.base.pawtitionabwe;
+impowt com.twittew.seawch.common.wewevance.entities.twittewmessage;
 
 /**
- * A Twitter "status" object (e.g. a message)
+ * a twittew "status" o-object (e.g. rawr a message)
  *
  */
-public class IngesterTwitterMessage extends TwitterMessage
-    implements Comparable<IndexerStatus>, IndexerStatus, Partitionable {
-  private final DebugEvents debugEvents;
+pubwic cwass i-ingestewtwittewmessage extends t-twittewmessage
+    impwements compawabwe<indexewstatus>, mya indexewstatus, ^^ p-pawtitionabwe {
+  pwivate f-finaw debugevents d-debugevents;
 
-  public IngesterTwitterMessage(Long twitterId, List<PenguinVersion> supportedPenguinVersions) {
-    this(twitterId, supportedPenguinVersions, null);
+  pubwic ingestewtwittewmessage(wong twittewid, 😳😳😳 wist<penguinvewsion> suppowtedpenguinvewsions) {
+    t-this(twittewid, mya suppowtedpenguinvewsions, 😳 nyuww);
   }
 
-  public IngesterTwitterMessage(
-      Long twitterId,
-      List<PenguinVersion> penguinVersions,
-      @Nullable DebugEvents debugEvents) {
-    super(twitterId, penguinVersions);
-    this.debugEvents = debugEvents == null ? new DebugEvents() : debugEvents.deepCopy();
+  pubwic ingestewtwittewmessage(
+      wong twittewid, -.-
+      wist<penguinvewsion> p-penguinvewsions, 🥺
+      @nuwwabwe debugevents d-debugevents) {
+    s-supew(twittewid, o.O p-penguinvewsions);
+    t-this.debugevents = debugevents == nyuww ? n-nyew debugevents() : debugevents.deepcopy();
   }
 
-  @Override
-  public int compareTo(IndexerStatus o) {
-    return Longs.compare(getId(), o.getId());
+  @ovewwide
+  pubwic int c-compaweto(indexewstatus o) {
+    wetuwn wongs.compawe(getid(), /(^•ω•^) o.getid());
   }
 
-  @Override
-  public boolean equals(Object o) {
-    return (o instanceof IngesterTwitterMessage)
-        && compareTo((IngesterTwitterMessage) o) == 0;
+  @ovewwide
+  pubwic boowean equaws(object o) {
+    w-wetuwn (o instanceof ingestewtwittewmessage)
+        && c-compaweto((ingestewtwittewmessage) o) == 0;
   }
 
-  @Override
-  public int hashCode() {
-    return HashPartitionFunction.hashCode(getId());
+  @ovewwide
+  p-pubwic i-int hashcode() {
+    wetuwn hashpawtitionfunction.hashcode(getid());
   }
 
-  public boolean isIndexable(boolean indexProtectedTweets) {
-    return getFromUserScreenName().isPresent()
-        && getId() != INT_FIELD_NOT_PRESENT
-        && (indexProtectedTweets || !isUserProtected());
+  pubwic boowean isindexabwe(boowean i-indexpwotectedtweets) {
+    w-wetuwn getfwomusewscweenname().ispwesent()
+        && g-getid() != int_fiewd_not_pwesent
+        && (indexpwotectedtweets || !isusewpwotected());
   }
 
-  @Override
-  public long getTweetId() {
-    return this.getId();
+  @ovewwide
+  p-pubwic wong gettweetid() {
+    wetuwn this.getid();
   }
 
-  @Override
-  public long getUserId() {
-    Preconditions.checkState(getFromUserTwitterId().isPresent(), "The author user ID is missing");
-    return getFromUserTwitterId().get();
+  @ovewwide
+  p-pubwic wong getusewid() {
+    p-pweconditions.checkstate(getfwomusewtwittewid().ispwesent(), nyaa~~ "the authow usew id is missing");
+    w-wetuwn getfwomusewtwittewid().get();
   }
 
-  @Override
-  public DebugEvents getDebugEvents() {
-    return debugEvents;
+  @ovewwide
+  pubwic debugevents g-getdebugevents() {
+    wetuwn d-debugevents;
   }
 }

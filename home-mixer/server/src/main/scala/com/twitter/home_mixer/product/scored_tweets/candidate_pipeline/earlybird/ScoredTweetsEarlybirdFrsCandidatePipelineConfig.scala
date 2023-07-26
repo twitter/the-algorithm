@@ -1,69 +1,69 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.earlybird
+package com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_pipewine.eawwybiwd
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.home_mixer.functional_component.candidate_source.EarlybirdCandidateSource
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.FrsSeedUsersQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.gate.MinCachedTweetsGate
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CachedScoredTweets
-import com.twitter.home_mixer.product.scored_tweets.query_transformer.earlybird.EarlybirdFrsQueryTransformer
-import com.twitter.home_mixer.product.scored_tweets.response_transformer.earlybird.ScoredTweetsEarlybirdFrsResponseFeatureTransformer
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseQueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.search.earlybird.{thriftscala => eb}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.thwift.cwientid
+i-impowt c-com.twittew.home_mixew.functionaw_component.candidate_souwce.eawwybiwdcandidatesouwce
+i-impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.fwsseedusewsquewyfeatuwehydwatow
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.gate.mincachedtweetsgate
+i-impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.modew.scowedtweetsquewy
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawam.cachedscowedtweets
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.quewy_twansfowmew.eawwybiwd.eawwybiwdfwsquewytwansfowmew
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.wesponse_twansfowmew.eawwybiwd.scowedtweetseawwybiwdfwswesponsefeatuwetwansfowmew
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.basecandidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.basequewyfeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinewesuwtstwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig
+impowt com.twittew.seawch.eawwybiwd.{thwiftscawa => eb}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
 /**
- * Candidate Pipeline Config that fetches tweets from the earlybird FRS Candidate Source
+ * candidate pipewine config that fetches tweets fwom the e-eawwybiwd fws candidate souwce
  */
-@Singleton
-class ScoredTweetsEarlybirdFrsCandidatePipelineConfig @Inject() (
-  earlybirdCandidateSource: EarlybirdCandidateSource,
-  frsSeedUsersQueryFeatureHydrator: FrsSeedUsersQueryFeatureHydrator,
-  clientId: ClientId)
-    extends CandidatePipelineConfig[
-      ScoredTweetsQuery,
-      eb.EarlybirdRequest,
-      eb.ThriftSearchResult,
-      TweetCandidate
+@singweton
+c-cwass scowedtweetseawwybiwdfwscandidatepipewineconfig @inject() (
+  e-eawwybiwdcandidatesouwce: e-eawwybiwdcandidatesouwce, 😳😳😳
+  f-fwsseedusewsquewyfeatuwehydwatow: fwsseedusewsquewyfeatuwehydwatow, (˘ω˘)
+  cwientid: cwientid)
+    e-extends candidatepipewineconfig[
+      scowedtweetsquewy, ^^
+      eb.eawwybiwdwequest, :3
+      e-eb.thwiftseawchwesuwt, -.-
+      tweetcandidate
     ] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("ScoredTweetsEarlybirdFrs")
+  ovewwide vaw identifiew: candidatepipewineidentifiew =
+    candidatepipewineidentifiew("scowedtweetseawwybiwdfws")
 
-  override val gates: Seq[Gate[ScoredTweetsQuery]] = Seq(
-    MinCachedTweetsGate(identifier, CachedScoredTweets.MinCachedTweetsParam)
+  o-ovewwide vaw gates: seq[gate[scowedtweetsquewy]] = s-seq(
+    mincachedtweetsgate(identifiew, 😳 c-cachedscowedtweets.mincachedtweetspawam)
   )
 
-  override val queryFeatureHydration: Seq[
-    BaseQueryFeatureHydrator[ScoredTweetsQuery, _]
-  ] = Seq(frsSeedUsersQueryFeatureHydrator)
+  o-ovewwide vaw quewyfeatuwehydwation: seq[
+    basequewyfeatuwehydwatow[scowedtweetsquewy, mya _]
+  ] = seq(fwsseedusewsquewyfeatuwehydwatow)
 
-  override val candidateSource: BaseCandidateSource[eb.EarlybirdRequest, eb.ThriftSearchResult] =
-    earlybirdCandidateSource
+  o-ovewwide v-vaw candidatesouwce: basecandidatesouwce[eb.eawwybiwdwequest, (˘ω˘) e-eb.thwiftseawchwesuwt] =
+    e-eawwybiwdcandidatesouwce
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    ScoredTweetsQuery,
-    eb.EarlybirdRequest
-  ] = EarlybirdFrsQueryTransformer(identifier, clientId = Some(clientId.name))
+  ovewwide v-vaw quewytwansfowmew: candidatepipewinequewytwansfowmew[
+    s-scowedtweetsquewy,
+    eb.eawwybiwdwequest
+  ] = eawwybiwdfwsquewytwansfowmew(identifiew, >_< c-cwientid = some(cwientid.name))
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[eb.ThriftSearchResult]
-  ] = Seq(ScoredTweetsEarlybirdFrsResponseFeatureTransformer)
+  o-ovewwide vaw featuwesfwomcandidatesouwcetwansfowmews: s-seq[
+    candidatefeatuwetwansfowmew[eb.thwiftseawchwesuwt]
+  ] = s-seq(scowedtweetseawwybiwdfwswesponsefeatuwetwansfowmew)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    eb.ThriftSearchResult,
-    TweetCandidate
-  ] = { sourceResult => TweetCandidate(id = sourceResult.id) }
+  ovewwide vaw wesuwttwansfowmew: candidatepipewinewesuwtstwansfowmew[
+    eb.thwiftseawchwesuwt, -.-
+    tweetcandidate
+  ] = { souwcewesuwt => t-tweetcandidate(id = s-souwcewesuwt.id) }
 
-  override def filters: Seq[Filter[ScoredTweetsQuery, TweetCandidate]] = Seq.empty
+  ovewwide def fiwtews: s-seq[fiwtew[scowedtweetsquewy, 🥺 t-tweetcandidate]] = s-seq.empty
 }

@@ -1,61 +1,61 @@
-package com.twitter.follow_recommendations.common.clients.geoduck
+package com.twittew.fowwow_wecommendations.common.cwients.geoduck
 
-import com.twitter.follow_recommendations.common.models.GeohashAndCountryCode
-import com.twitter.geoduck.common.thriftscala.LocationSource
-import com.twitter.geoduck.common.thriftscala.PlaceQuery
-import com.twitter.geoduck.common.thriftscala.TransactionLocation
-import com.twitter.geoduck.common.thriftscala.UserLocationRequest
-import com.twitter.geoduck.thriftscala.LocationService
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.common.modews.geohashandcountwycode
+i-impowt com.twittew.geoduck.common.thwiftscawa.wocationsouwce
+i-impowt c-com.twittew.geoduck.common.thwiftscawa.pwacequewy
+i-impowt com.twittew.geoduck.common.thwiftscawa.twansactionwocation
+i-impowt com.twittew.geoduck.common.thwiftscawa.usewwocationwequest
+i-impowt c-com.twittew.geoduck.thwiftscawa.wocationsewvice
+i-impowt com.twittew.stitch.stitch
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class LocationServiceClient @Inject() (locationService: LocationService.MethodPerEndpoint) {
-  def getGeohashAndCountryCode(userId: Long): Stitch[GeohashAndCountryCode] = {
-    Stitch
-      .callFuture {
-        locationService
-          .userLocation(
-            UserLocationRequest(
-              Seq(userId),
-              Some(PlaceQuery(allPlaceTypes = Some(true))),
-              simpleReverseGeocode = true))
-          .map(_.found.get(userId)).map { transactionLocationOpt =>
-            val geohashOpt = transactionLocationOpt.flatMap(getGeohashFromTransactionLocation)
-            val countryCodeOpt =
-              transactionLocationOpt.flatMap(_.simpleRgcResult.flatMap(_.countryCodeAlpha2))
-            GeohashAndCountryCode(geohashOpt, countryCodeOpt)
+@singweton
+cwass wocationsewvicecwient @inject() (wocationsewvice: wocationsewvice.methodpewendpoint) {
+  d-def getgeohashandcountwycode(usewid: wong): stitch[geohashandcountwycode] = {
+    s-stitch
+      .cawwfutuwe {
+        wocationsewvice
+          .usewwocation(
+            u-usewwocationwequest(
+              seq(usewid), :3
+              some(pwacequewy(awwpwacetypes = some(twue))), -.-
+              s-simpwewevewsegeocode = twue))
+          .map(_.found.get(usewid)).map { t-twansactionwocationopt =>
+            v-vaw geohashopt = twansactionwocationopt.fwatmap(getgeohashfwomtwansactionwocation)
+            vaw countwycodeopt =
+              twansactionwocationopt.fwatmap(_.simpwewgcwesuwt.fwatmap(_.countwycodeawpha2))
+            geohashandcountwycode(geohashopt, 😳 c-countwycodeopt)
           }
       }
   }
 
-  private[this] def getGeohashFromTransactionLocation(
-    transactionLocation: TransactionLocation
-  ): Option[String] = {
-    transactionLocation.geohash.flatMap { geohash =>
-      val geohashPrefixLength = transactionLocation.locationSource match {
-        // if location source is logical, keep the first 4 chars in geohash
-        case Some(LocationSource.Logical) => Some(4)
-        // if location source is physical, keep the prefix according to accuracy
-        // accuracy is the accuracy of GPS readings in the unit of meter
-        case Some(LocationSource.Physical) =>
-          transactionLocation.coordinate.flatMap { coordinate =>
-            coordinate.accuracy match {
-              case Some(accuracy) if (accuracy < 50) => Some(7)
-              case Some(accuracy) if (accuracy < 200) => Some(6)
-              case Some(accuracy) if (accuracy < 1000) => Some(5)
-              case Some(accuracy) if (accuracy < 50000) => Some(4)
-              case Some(accuracy) if (accuracy < 100000) => Some(3)
-              case _ => None
+  pwivate[this] def getgeohashfwomtwansactionwocation(
+    twansactionwocation: twansactionwocation
+  ): o-option[stwing] = {
+    twansactionwocation.geohash.fwatmap { g-geohash =>
+      v-vaw geohashpwefixwength = t-twansactionwocation.wocationsouwce m-match {
+        // if wocation souwce is wogicaw, mya k-keep the fiwst 4 chaws in geohash
+        c-case some(wocationsouwce.wogicaw) => some(4)
+        // if wocation souwce is physicaw, (˘ω˘) keep the pwefix accowding t-to accuwacy
+        // accuwacy i-is the accuwacy o-of gps weadings i-in the unit of metew
+        case some(wocationsouwce.physicaw) =>
+          twansactionwocation.coowdinate.fwatmap { coowdinate =>
+            c-coowdinate.accuwacy m-match {
+              case s-some(accuwacy) i-if (accuwacy < 50) => some(7)
+              c-case some(accuwacy) i-if (accuwacy < 200) => some(6)
+              case s-some(accuwacy) if (accuwacy < 1000) => s-some(5)
+              case some(accuwacy) i-if (accuwacy < 50000) => s-some(4)
+              case some(accuwacy) if (accuwacy < 100000) => some(3)
+              case _ => nyone
             }
           }
-        case Some(LocationSource.Model) => Some(4)
-        case _ => None
+        case some(wocationsouwce.modew) => s-some(4)
+        c-case _ => nyone
       }
-      geohashPrefixLength match {
-        case Some(l: Int) => geohash.stringGeohash.map(_.take(l))
-        case _ => None
+      g-geohashpwefixwength m-match {
+        c-case some(w: int) => geohash.stwinggeohash.map(_.take(w))
+        case _ => nyone
       }
     }
   }

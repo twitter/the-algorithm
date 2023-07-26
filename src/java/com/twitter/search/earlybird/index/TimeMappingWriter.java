@@ -1,32 +1,32 @@
-package com.twitter.search.earlybird.index;
+package com.twittew.seawch.eawwybiwd.index;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import org.apache.lucene.util.AttributeSource;
+i-impowt o-owg.apache.wucene.utiw.attwibutesouwce;
 
-import com.twitter.search.common.util.analysis.IntTermAttribute;
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentWriter;
+i-impowt c-com.twittew.seawch.common.utiw.anawysis.inttewmattwibute;
+i-impowt c-com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdweawtimeindexsegmentwwitew;
 
-public class TimeMappingWriter implements EarlybirdRealtimeIndexSegmentWriter.InvertedDocConsumer {
-  private IntTermAttribute termAtt;
-  private final RealtimeTimeMapper mapper;
+pubwic c-cwass timemappingwwitew impwements eawwybiwdweawtimeindexsegmentwwitew.invewteddocconsumew {
+  pwivate inttewmattwibute tewmatt;
+  p-pwivate finaw weawtimetimemappew mappew;
 
-  public TimeMappingWriter(RealtimeTimeMapper mapper) {
-    this.mapper = mapper;
+  p-pubwic timemappingwwitew(weawtimetimemappew mappew) {
+    this.mappew = m-mappew;
   }
 
-  @Override
-  public final void start(AttributeSource attributeSource, boolean currentDocIsOffensive) {
-    termAtt = attributeSource.addAttribute(IntTermAttribute.class);
+  @ovewwide
+  pubwic finaw void stawt(attwibutesouwce attwibutesouwce, rawr x3 b-boowean cuwwentdocisoffensive) {
+    tewmatt = a-attwibutesouwce.addattwibute(inttewmattwibute.cwass);
   }
 
-  @Override
-  public final void add(int docId, int position) throws IOException {
-    final int timeSec = termAtt.getTerm();
-    mapper.addMapping(docId, timeSec);
+  @ovewwide
+  p-pubwic finaw void add(int docid, nyaa~~ int position) thwows ioexception {
+    finaw int timesec = t-tewmatt.gettewm();
+    mappew.addmapping(docid, /(^•ω•^) timesec);
   }
 
-  @Override
-  public void finish() {
+  @ovewwide
+  pubwic void finish() {
   }
 }

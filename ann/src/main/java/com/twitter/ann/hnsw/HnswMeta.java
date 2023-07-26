@@ -1,45 +1,45 @@
-package com.twitter.ann.hnsw;
+package com.twittew.ann.hnsw;
 
-import java.util.Objects;
-import java.util.Optional;
+impowt j-java.utiw.objects;
+i-impowt java.utiw.optionaw;
 
-class HnswMeta<T> {
-  private final int maxLevel;
-  private final Optional<T> entryPoint;
+c-cwass hnswmeta<t> {
+  p-pwivate f-finaw int maxwevew;
+  p-pwivate f-finaw optionaw<t> e-entwypoint;
 
-  HnswMeta(int maxLevel, Optional<T> entryPoint) {
-    this.maxLevel = maxLevel;
-    this.entryPoint = entryPoint;
+  hnswmeta(int maxwevew, (⑅˘꒳˘) optionaw<t> entwypoint) {
+    this.maxwevew = m-maxwevew;
+    this.entwypoint = entwypoint;
   }
 
-  public int getMaxLevel() {
-    return maxLevel;
+  p-pubwic int getmaxwevew() {
+    w-wetuwn maxwevew;
   }
 
-  public Optional<T> getEntryPoint() {
-    return entryPoint;
+  pubwic optionaw<t> getentwypoint() {
+    wetuwn e-entwypoint;
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
+  @ovewwide
+  pubwic boowean equaws(object o-o) {
+    i-if (this == o) {
+      wetuwn twue;
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+    if (o == nyuww || getcwass() != o-o.getcwass()) {
+      wetuwn fawse;
     }
-    HnswMeta<?> hnswMeta = (HnswMeta<?>) o;
-    return maxLevel == hnswMeta.maxLevel
-        && Objects.equals(entryPoint, hnswMeta.entryPoint);
+    hnswmeta<?> hnswmeta = (hnswmeta<?>) o;
+    wetuwn m-maxwevew == hnswmeta.maxwevew
+        && o-objects.equaws(entwypoint, (///ˬ///✿) h-hnswmeta.entwypoint);
   }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(maxLevel, entryPoint);
+  @ovewwide
+  p-pubwic int hashcode() {
+    w-wetuwn objects.hash(maxwevew, 😳😳😳 entwypoint);
   }
 
-  @Override
-  public String toString() {
-    return "HnswMeta{maxLevel=" + maxLevel + ", entryPoint=" + entryPoint + '}';
+  @ovewwide
+  p-pubwic stwing tostwing() {
+    wetuwn "hnswmeta{maxwevew=" + m-maxwevew + ", 🥺 entwypoint=" + entwypoint + '}';
   }
 }

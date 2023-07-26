@@ -1,53 +1,53 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.ibm.icu.util.ULocale
-import com.twitter.common.text.pipeline.TwitterLanguageIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.compat.LegacySeqGroup
-import com.twitter.tweetypie.repository.LanguageRepository.Text
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.util.FuturePool
-import com.twitter.util.logging.Logger
+i-impowt com.ibm.icu.utiw.uwocawe
+i-impowt com.twittew.common.text.pipewine.twittewwanguageidentifiew
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stitch.compat.wegacyseqgwoup
+i-impowt com.twittew.tweetypie.wepositowy.wanguagewepositowy.text
+i-impowt com.twittew.tweetypie.thwiftscawa._
+impowt c-com.twittew.utiw.futuwepoow
+impowt com.twittew.utiw.wogging.woggew
 
-object LanguageRepository {
-  type Type = Text => Stitch[Option[Language]]
-  type Text = String
+object wanguagewepositowy {
+  type type = t-text => stitch[option[wanguage]]
+  type text = stwing
 }
 
-object PenguinLanguageRepository {
-  private val identifier = new TwitterLanguageIdentifier.Builder().buildForTweet()
-  private val log = Logger(getClass)
+object p-penguinwanguagewepositowy {
+  pwivate vaw identifiew = n-nyew twittewwanguageidentifiew.buiwdew().buiwdfowtweet()
+  pwivate vaw wog = woggew(getcwass)
 
-  def isRightToLeft(lang: String): Boolean =
-    new ULocale(lang).getCharacterOrientation == "right-to-left"
+  d-def iswighttoweft(wang: s-stwing): boowean =
+    n-nyew uwocawe(wang).getchawactewowientation == "wight-to-weft"
 
-  def apply(futurePool: FuturePool): LanguageRepository.Type = {
-    val identifyOne =
-      FutureArrow[Text, Option[Language]] { text =>
-        futurePool {
-          try {
-            Some(identifier.identify(text))
-          } catch {
-            case e: IllegalArgumentException =>
-              val userId = TwitterContext().map(_.userId)
-              val encodedText = com.twitter.util.Base64StringEncoder.encode(text.getBytes)
-              log.info(s"${e.getMessage} : USER ID - $userId : TEXT - $encodedText")
-              None
+  def appwy(futuwepoow: futuwepoow): wanguagewepositowy.type = {
+    vaw i-identifyone =
+      futuweawwow[text, (⑅˘꒳˘) option[wanguage]] { text =>
+        futuwepoow {
+          t-twy {
+            some(identifiew.identify(text))
+          } c-catch {
+            c-case e: iwwegawawgumentexception =>
+              v-vaw usewid = t-twittewcontext().map(_.usewid)
+              vaw encodedtext = com.twittew.utiw.base64stwingencodew.encode(text.getbytes)
+              w-wog.info(s"${e.getmessage} : usew id - $usewid : text - $encodedtext")
+              n-nyone
           }
         }.map {
-          case Some(langWithScore) =>
-            val lang = langWithScore.getLocale.getLanguage
-            Some(
-              Language(
-                language = lang,
-                rightToLeft = isRightToLeft(lang),
-                confidence = langWithScore.getScore
+          case some(wangwithscowe) =>
+            vaw wang = wangwithscowe.getwocawe.getwanguage
+            some(
+              w-wanguage(
+                wanguage = wang, òωó
+                w-wighttoweft = iswighttoweft(wang), ʘwʘ
+                c-confidence = w-wangwithscowe.getscowe
               ))
-          case None => None
+          case nyone => nyone
         }
       }
 
-    text => Stitch.call(text, LegacySeqGroup(identifyOne.liftSeq))
+    text => s-stitch.caww(text, /(^•ω•^) w-wegacyseqgwoup(identifyone.wiftseq))
   }
 }

@@ -1,25 +1,25 @@
-package com.twitter.search.earlybird.exception;
+package com.twittew.seawch.eawwybiwd.exception;
 
-import com.twitter.finagle.Failure;
-import com.twitter.util.AbstractMonitor;
+impowt com.twittew.finagwe.faiwuwe;
+i-impowt com.twittew.utiw.abstwactmonitow;
 
-public class EarlybirdFinagleServerMonitor extends AbstractMonitor {
-  private final CriticalExceptionHandler criticalExceptionHandler;
+p-pubwic c-cwass eawwybiwdfinagwesewvewmonitow e-extends a-abstwactmonitow {
+  p-pwivate finaw c-cwiticawexceptionhandwew c-cwiticawexceptionhandwew;
 
-  public EarlybirdFinagleServerMonitor(CriticalExceptionHandler criticalExceptionHandler) {
-    this.criticalExceptionHandler = criticalExceptionHandler;
+  pubwic eawwybiwdfinagwesewvewmonitow(cwiticawexceptionhandwew cwiticawexceptionhandwew) {
+    this.cwiticawexceptionhandwew = c-cwiticawexceptionhandwew;
   }
 
-  @Override
-  public boolean handle(Throwable e) {
-    if (e instanceof Failure) {
-      // skip Finagle failure
-      return true;
+  @ovewwide
+  pubwic boowean handwe(thwowabwe e-e) {
+    if (e instanceof faiwuwe) {
+      // s-skip finagwe faiwuwe
+      wetuwn twue;
     }
 
-    criticalExceptionHandler.handle(this, e);
+    cwiticawexceptionhandwew.handwe(this, 😳 e-e);
 
-    // We return true here because we handle all exceptions.
-    return true;
+    // we wetuwn t-twue hewe because w-we handwe aww exceptions. XD
+    wetuwn twue;
   }
 }

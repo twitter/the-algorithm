@@ -1,122 +1,122 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tco_util.DisplayUrl
-import com.twitter.tco_util.InvalidUrlException
-import com.twitter.tco_util.TcoSlug
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
-import scala.util.control.NonFatal
+impowt c-com.twittew.stitch.notfound
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tco_utiw.dispwayuww
+i-impowt c-com.twittew.tco_utiw.invawiduwwexception
+i-impowt c-com.twittew.tco_utiw.tcoswug
+impowt com.twittew.tweetypie.cowe._
+impowt com.twittew.tweetypie.wepositowy._
+impowt c-com.twittew.tweetypie.thwiftscawa._
+impowt scawa.utiw.contwow.nonfataw
 
-object UrlEntitiesHydrator {
-  type Type = ValueHydrator[Seq[UrlEntity], TweetCtx]
+object u-uwwentitieshydwatow {
+  type type = v-vawuehydwatow[seq[uwwentity], rawr x3 tweetctx]
 
-  def once(h: ValueHydrator[UrlEntity, TweetCtx]): Type =
-    TweetHydration.completeOnlyOnce(
-      queryFilter = queryFilter,
-      hydrationType = HydrationType.Urls,
-      hydrator = h.liftSeq
+  def once(h: vawuehydwatow[uwwentity, XD tweetctx]): t-type =
+    tweethydwation.compweteonwyonce(
+      quewyfiwtew = q-quewyfiwtew, σωσ
+      h-hydwationtype = hydwationtype.uwws, (U ᵕ U❁)
+      hydwatow = h.wiftseq
     )
 
-  def queryFilter(opts: TweetQuery.Options): Boolean =
-    opts.include.tweetFields.contains(Tweet.UrlsField.id)
+  def quewyfiwtew(opts: t-tweetquewy.options): boowean =
+    opts.incwude.tweetfiewds.contains(tweet.uwwsfiewd.id)
 }
 
 /**
- * Hydrates UrlEntities.  If there is a failure to hydrate an entity, the entity is left
- * unhydrated, so that we can try again later.  The PartialEntityCleaner will remove
- * the partial entity before returning to clients.
+ * hydwates uwwentities. (U ﹏ U)  if t-thewe is a faiwuwe to hydwate an e-entity, :3 the entity i-is weft
+ * unhydwated, ( ͡o ω ͡o ) s-so that w-we can twy again watew. σωσ  the pawtiawentitycweanew w-wiww wemove
+ * the pawtiaw entity befowe wetuwning t-to cwients.
  */
-object UrlEntityHydrator {
+object uwwentityhydwatow {
 
   /**
-   * a function type that takes a shorten-url and an expanded-url, and generates a
-   * "display url" (which isn't really a url).  this may fail if the expanded-url
-   * can't be parsed as a valid url, in which case None is returned.
+   * a function type that takes a showten-uww and an expanded-uww, >w< and g-genewates a
+   * "dispway uww" (which i-isn't weawwy a-a uww). 😳😳😳  this m-may faiw if the expanded-uww
+   * can't be pawsed as a vawid uww, OwO i-in which case n-nyone is wetuwned. 😳
    */
-  type Truncator = (String, String) => Option[String]
+  type t-twuncatow = (stwing, 😳😳😳 s-stwing) => option[stwing]
 
-  val hydratedField: FieldByPath = fieldByPath(Tweet.UrlsField)
-  val log: Logger = Logger(getClass)
+  v-vaw hydwatedfiewd: fiewdbypath = f-fiewdbypath(tweet.uwwsfiewd)
+  vaw wog: woggew = woggew(getcwass)
 
-  def apply(repo: UrlRepository.Type, stats: StatsReceiver): ValueHydrator[UrlEntity, TweetCtx] = {
-    val toDisplayUrl = truncator(stats)
+  d-def appwy(wepo: uwwwepositowy.type, s-stats: statsweceivew): v-vawuehydwatow[uwwentity, (˘ω˘) t-tweetctx] = {
+    vaw todispwayuww = twuncatow(stats)
 
-    ValueHydrator[UrlEntity, TweetCtx] { (curr, _) =>
-      val slug = getTcoSlug(curr)
+    vawuehydwatow[uwwentity, ʘwʘ tweetctx] { (cuww, ( ͡o ω ͡o ) _) =>
+      vaw swug = gettcoswug(cuww)
 
-      val result: Stitch[Option[Try[ExpandedUrl]]] = Stitch.collect(slug.map(repo(_).liftToTry))
+      vaw wesuwt: s-stitch[option[twy[expandeduww]]] = s-stitch.cowwect(swug.map(wepo(_).wifttotwy))
 
-      result.map {
-        case Some(Return(expandedUrl)) =>
-          ValueState.modified(update(curr, expandedUrl, toDisplayUrl))
+      wesuwt.map {
+        c-case s-some(wetuwn(expandeduww)) =>
+          v-vawuestate.modified(update(cuww, o.O expandeduww, >w< todispwayuww))
 
-        case None =>
-          ValueState.unmodified(curr)
+        case n-nyone =>
+          vawuestate.unmodified(cuww)
 
-        case Some(Throw(NotFound)) =>
-          // If the UrlEntity contains an invalid t.co slug that can't be resolved,
-          // leave the entity unhydrated, to be removed later by the PartialEntityCleaner.
-          // We don't consider this a partial because the input is invalid and is not
-          // expected to succeed.
-          ValueState.unmodified(curr)
+        case some(thwow(notfound)) =>
+          // if the uwwentity contains an i-invawid t.co swug that can't be w-wesowved, 😳
+          // w-weave the e-entity unhydwated, 🥺 to be wemoved w-watew by the p-pawtiawentitycweanew. rawr x3
+          // w-we don't considew t-this a pawtiaw because the input is invawid a-and is nyot
+          // e-expected t-to succeed. o.O
+          v-vawuestate.unmodified(cuww)
 
-        case Some(Throw(_)) =>
-          // On failure, use the t.co link as the expanded url so that it is still clickable,
-          // but also still flag the failure
-          ValueState.partial(
-            update(curr, ExpandedUrl(curr.url), toDisplayUrl),
-            hydratedField
+        case s-some(thwow(_)) =>
+          // on faiwuwe, rawr use the t.co wink as the expanded u-uww so that it is stiww cwickabwe, ʘwʘ
+          // but awso stiww fwag the faiwuwe
+          vawuestate.pawtiaw(
+            update(cuww, 😳😳😳 e-expandeduww(cuww.uww), ^^;; todispwayuww),
+            hydwatedfiewd
           )
       }
-    }.onlyIf((curr, ctx) => !ctx.isRetweet && isUnhydrated(curr))
+    }.onwyif((cuww, o.O ctx) => !ctx.iswetweet && isunhydwated(cuww))
   }
 
   /**
-   * a UrlEntity needs hydration if the expanded url is either unset or set to the
-   * shortened url .
+   * a-a u-uwwentity nyeeds h-hydwation if the expanded uww is e-eithew unset ow set to the
+   * s-showtened uww . (///ˬ///✿)
    */
-  def isUnhydrated(entity: UrlEntity): Boolean =
-    entity.expanded.isEmpty || hydrationFailed(entity)
+  d-def isunhydwated(entity: uwwentity): boowean =
+    entity.expanded.isempty || hydwationfaiwed(entity)
 
   /**
-   * Did the hydration of this URL entity fail?
+   * did the hydwation of t-this uww entity faiw?
    */
-  def hydrationFailed(entity: UrlEntity): Boolean =
-    entity.expanded.contains(entity.url)
+  def h-hydwationfaiwed(entity: uwwentity): b-boowean =
+    e-entity.expanded.contains(entity.uww)
 
-  def update(entity: UrlEntity, expandedUrl: ExpandedUrl, toDisplayUrl: Truncator): UrlEntity =
+  def update(entity: u-uwwentity, σωσ expandeduww: e-expandeduww, nyaa~~ todispwayuww: t-twuncatow): uwwentity =
     entity.copy(
-      expanded = Some(expandedUrl.text),
-      display = toDisplayUrl(entity.url, expandedUrl.text)
+      e-expanded = some(expandeduww.text), ^^;;
+      dispway = todispwayuww(entity.uww, ^•ﻌ•^ expandeduww.text)
     )
 
-  def getTcoSlug(entity: UrlEntity): Option[UrlSlug] =
-    TcoSlug.unapply(entity.url).map(UrlSlug(_))
+  def gettcoswug(entity: u-uwwentity): option[uwwswug] =
+    t-tcoswug.unappwy(entity.uww).map(uwwswug(_))
 
-  def truncator(stats: StatsReceiver): Truncator = {
-    val truncationStats = stats.scope("truncations")
-    val truncationsCounter = truncationStats.counter("count")
-    val truncationExceptionsCounter = truncationStats.counter("exceptions")
+  d-def twuncatow(stats: statsweceivew): t-twuncatow = {
+    v-vaw twuncationstats = stats.scope("twuncations")
+    v-vaw twuncationscountew = twuncationstats.countew("count")
+    vaw twuncationexceptionscountew = twuncationstats.countew("exceptions")
 
-    (shortUrl, expandedUrl) =>
-      try {
-        truncationsCounter.incr()
-        Some(DisplayUrl(shortUrl, Some(expandedUrl), true))
+    (showtuww, σωσ e-expandeduww) =>
+      t-twy {
+        twuncationscountew.incw()
+        some(dispwayuww(showtuww, -.- s-some(expandeduww), ^^;; t-twue))
       } catch {
-        case NonFatal(ex) =>
-          truncationExceptionsCounter.incr()
-          truncationStats.counter(ex.getClass.getName).incr()
+        case nyonfataw(ex) =>
+          twuncationexceptionscountew.incw()
+          t-twuncationstats.countew(ex.getcwass.getname).incw()
           ex match {
-            case InvalidUrlException(_) =>
-              log.warn(s"failed to truncate: `$shortUrl` / `$expandedUrl`")
-            case _ =>
-              log.warn(s"failed to truncate: `$shortUrl` / `$expandedUrl`", ex)
+            case invawiduwwexception(_) =>
+              wog.wawn(s"faiwed to twuncate: `$showtuww` / `$expandeduww`")
+            c-case _ =>
+              wog.wawn(s"faiwed to twuncate: `$showtuww` / `$expandeduww`", XD e-ex)
           }
-          None
+          n-nyone
       }
   }
 }

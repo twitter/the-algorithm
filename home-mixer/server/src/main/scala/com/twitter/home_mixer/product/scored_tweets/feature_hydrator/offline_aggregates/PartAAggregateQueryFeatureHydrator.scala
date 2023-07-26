@@ -1,35 +1,35 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.offwine_aggwegates
 
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TimelineAggregateMetadataRepository
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TimelineAggregatePartARepository
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.servo.repository.Repository
-import com.twitter.timelines.data_processing.jobs.timeline_ranking_user_features.TimelinesPartAStoreRegister
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.StoreConfig
-import com.twitter.timelines.suggests.common.dense_data_record.thriftscala.DenseFeatureMetadata
-import com.twitter.user_session_store.thriftjava.UserSession
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+impowt c-com.twittew.home_mixew.pawam.homemixewinjectionnames.timewineaggwegatemetadatawepositowy
+i-impowt c-com.twittew.home_mixew.pawam.homemixewinjectionnames.timewineaggwegatepawtawepositowy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt c-com.twittew.sewvo.wepositowy.wepositowy
+i-impowt c-com.twittew.timewines.data_pwocessing.jobs.timewine_wanking_usew_featuwes.timewinespawtastowewegistew
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.stoweconfig
+impowt com.twittew.timewines.suggests.common.dense_data_wecowd.thwiftscawa.densefeatuwemetadata
+impowt com.twittew.usew_session_stowe.thwiftjava.usewsession
+i-impowt javax.inject.inject
+impowt j-javax.inject.named
+impowt javax.inject.singweton
 
-object PartAAggregateRootFeature extends BaseAggregateRootFeature {
-  override val aggregateStores: Set[StoreConfig[_]] = TimelinesPartAStoreRegister.allStores
+o-object pawtaaggwegatewootfeatuwe extends baseaggwegatewootfeatuwe {
+  ovewwide vaw aggwegatestowes: s-set[stoweconfig[_]] = timewinespawtastowewegistew.awwstowes
 }
 
-@Singleton
-class PartAAggregateQueryFeatureHydrator @Inject() (
-  @Named(TimelineAggregatePartARepository)
-  repository: Repository[Long, Option[UserSession]],
-  @Named(TimelineAggregateMetadataRepository)
-  metadataRepository: Repository[Int, Option[DenseFeatureMetadata]])
-    extends BaseAggregateQueryFeatureHydrator(
-      repository,
-      metadataRepository,
-      PartAAggregateRootFeature
+@singweton
+c-cwass pawtaaggwegatequewyfeatuwehydwatow @inject() (
+  @named(timewineaggwegatepawtawepositowy)
+  w-wepositowy: wepositowy[wong, >_< option[usewsession]], rawr x3
+  @named(timewineaggwegatemetadatawepositowy)
+  metadatawepositowy: wepositowy[int, mya option[densefeatuwemetadata]])
+    extends b-baseaggwegatequewyfeatuwehydwatow(
+      wepositowy, nyaa~~
+      metadatawepositowy, (⑅˘꒳˘)
+      pawtaaggwegatewootfeatuwe
     ) {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("PartAAggregateQuery")
+  ovewwide vaw identifiew: f-featuwehydwatowidentifiew =
+    featuwehydwatowidentifiew("pawtaaggwegatequewy")
 
-  override val features = Set(PartAAggregateRootFeature)
+  o-ovewwide v-vaw featuwes = s-set(pawtaaggwegatewootfeatuwe)
 }

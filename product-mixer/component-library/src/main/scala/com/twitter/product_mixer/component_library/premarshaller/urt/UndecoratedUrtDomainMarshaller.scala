@@ -1,148 +1,148 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt
 
-import com.twitter.product_mixer.component_library.model.candidate.ArticleCandidate
-import com.twitter.product_mixer.component_library.model.candidate.AudioSpaceCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TopicCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TwitterListCandidate
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.AddEntriesInstructionBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.BaseUrtMetadataBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtCursorBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtCursorUpdater
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtInstructionBuilder
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.functional_component.premarshaller.UnsupportedCandidateDomainMarshallerException
-import com.twitter.product_mixer.core.functional_component.premarshaller.UnsupportedModuleDomainMarshallerException
-import com.twitter.product_mixer.core.functional_component.premarshaller.UnsupportedPresentationDomainMarshallerException
-import com.twitter.product_mixer.core.model.common.identifier.DomainMarshallerIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.FollowingListSeed
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.audio_space.AudioSpaceItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.Tweet
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.TwitterListItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.User
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.awticwecandidate
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.audiospacecandidate
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.topiccandidate
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twittewwistcandidate
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.usewcandidate
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew.addentwiesinstwuctionbuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew.baseuwtmetadatabuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew.uwtbuiwdew
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew.uwtcuwsowbuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew.uwtcuwsowupdatew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew.uwtinstwuctionbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.pwemawshawwew.domainmawshawwew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.pwemawshawwew.unsuppowtedcandidatedomainmawshawwewexception
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.pwemawshawwew.unsuppowtedmoduwedomainmawshawwewexception
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.pwemawshawwew.unsuppowtedpwesentationdomainmawshawwewexception
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.domainmawshawwewidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.itemcandidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.moduwecandidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineinstwuction
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.awticwe.awticweitem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.awticwe.fowwowingwistseed
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.audio_space.audiospaceitem
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.topicitem
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tweet.tweet
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tweet.tweetitem
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.twittew_wist.twittewwistitem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.usew.usew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.usew.usewitem
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Decorator that is useful for fast prototyping, as it will generate URT entries from only
- * candidate IDs (no ItemPresentations or ModulePresentations from candidate pipeline decorators
- * are required).
+ * decowatow that is usefuw fow f-fast pwototyping, :3 as it wiww genewate uwt entwies fwom onwy
+ * candidate ids (no itempwesentations o-ow moduwepwesentations fwom c-candidate pipewine d-decowatows
+ * a-awe wequiwed). ʘwʘ
  */
-case class UndecoratedUrtDomainMarshaller[Query <: PipelineQuery](
-  override val instructionBuilders: Seq[UrtInstructionBuilder[Query, TimelineInstruction]] =
-    Seq(AddEntriesInstructionBuilder()),
-  override val cursorBuilders: Seq[UrtCursorBuilder[Query]] = Seq.empty,
-  override val cursorUpdaters: Seq[UrtCursorUpdater[Query]] = Seq.empty,
-  override val metadataBuilder: Option[BaseUrtMetadataBuilder[Query]] = None,
-  override val sortIndexStep: Int = 1,
-  override val identifier: DomainMarshallerIdentifier =
-    DomainMarshallerIdentifier("UndecoratedUnifiedRichTimeline"))
-    extends DomainMarshaller[Query, Timeline]
-    with UrtBuilder[Query, TimelineInstruction] {
+case cwass undecowateduwtdomainmawshawwew[quewy <: pipewinequewy](
+  ovewwide v-vaw instwuctionbuiwdews: s-seq[uwtinstwuctionbuiwdew[quewy, 🥺 timewineinstwuction]] =
+    s-seq(addentwiesinstwuctionbuiwdew()), >_<
+  ovewwide v-vaw cuwsowbuiwdews: seq[uwtcuwsowbuiwdew[quewy]] = s-seq.empty, ʘwʘ
+  ovewwide v-vaw cuwsowupdatews: seq[uwtcuwsowupdatew[quewy]] = seq.empty, (˘ω˘)
+  o-ovewwide vaw metadatabuiwdew: option[baseuwtmetadatabuiwdew[quewy]] = nyone,
+  o-ovewwide vaw sowtindexstep: int = 1, (✿oωo)
+  o-ovewwide v-vaw identifiew: domainmawshawwewidentifiew =
+    domainmawshawwewidentifiew("undecowatedunifiedwichtimewine"))
+    extends domainmawshawwew[quewy, (///ˬ///✿) timewine]
+    with uwtbuiwdew[quewy, timewineinstwuction] {
 
-  override def apply(
-    query: Query,
-    selections: Seq[CandidateWithDetails]
-  ): Timeline = {
-    val entries = selections.map {
-      case itemCandidateWithDetails @ ItemCandidateWithDetails(candidate, None, _) =>
+  o-ovewwide def appwy(
+    q-quewy: quewy, rawr x3
+    sewections: s-seq[candidatewithdetaiws]
+  ): t-timewine = {
+    v-vaw entwies = sewections.map {
+      case itemcandidatewithdetaiws @ i-itemcandidatewithdetaiws(candidate, -.- nyone, _) =>
         candidate match {
-          case candidate: ArticleCandidate =>
-            ArticleItem(
-              id = candidate.id,
-              articleSeedType = FollowingListSeed,
-              sortIndex = None,
-              clientEventInfo = None,
-              feedbackActionInfo = None,
-              displayType = None,
-              socialContext = None,
+          case candidate: a-awticwecandidate =>
+            awticweitem(
+              i-id = c-candidate.id, ^^
+              a-awticweseedtype = fowwowingwistseed, (⑅˘꒳˘)
+              s-sowtindex = nyone, nyaa~~
+              c-cwienteventinfo = n-nyone, /(^•ω•^)
+              f-feedbackactioninfo = nyone, (U ﹏ U)
+              dispwaytype = n-nyone, 😳😳😳
+              s-sociawcontext = n-nyone, >w<
             )
-          case candidate: AudioSpaceCandidate =>
-            AudioSpaceItem(
-              id = candidate.id,
-              sortIndex = None,
-              clientEventInfo = None,
-              feedbackActionInfo = None)
-          case candidate: TopicCandidate =>
-            TopicItem(
-              id = candidate.id,
-              sortIndex = None,
-              clientEventInfo = None,
-              feedbackActionInfo = None,
-              topicFunctionalityType = None,
-              topicDisplayType = None
+          c-case candidate: a-audiospacecandidate =>
+            audiospaceitem(
+              id = candidate.id, XD
+              sowtindex = n-nyone, o.O
+              cwienteventinfo = nyone, mya
+              feedbackactioninfo = nyone)
+          case candidate: topiccandidate =>
+            t-topicitem(
+              id = candidate.id, 🥺
+              sowtindex = n-none, ^^;;
+              c-cwienteventinfo = nyone, :3
+              f-feedbackactioninfo = nyone, (U ﹏ U)
+              t-topicfunctionawitytype = nyone, OwO
+              t-topicdispwaytype = nyone
             )
-          case candidate: TweetCandidate =>
-            TweetItem(
-              id = candidate.id,
-              entryNamespace = TweetItem.TweetEntryNamespace,
-              sortIndex = None,
-              clientEventInfo = None,
-              feedbackActionInfo = None,
-              isPinned = None,
-              entryIdToReplace = None,
-              socialContext = None,
-              highlights = None,
-              displayType = Tweet,
-              innerTombstoneInfo = None,
-              timelinesScoreInfo = None,
-              hasModeratedReplies = None,
-              forwardPivot = None,
-              innerForwardPivot = None,
-              promotedMetadata = None,
-              conversationAnnotation = None,
-              contextualTweetRef = None,
-              prerollMetadata = None,
-              replyBadge = None,
-              destination = None
+          c-case candidate: tweetcandidate =>
+            tweetitem(
+              id = candidate.id, 😳😳😳
+              entwynamespace = tweetitem.tweetentwynamespace, (ˆ ﻌ ˆ)♡
+              s-sowtindex = nyone, XD
+              cwienteventinfo = n-nyone, (ˆ ﻌ ˆ)♡
+              feedbackactioninfo = n-nyone, ( ͡o ω ͡o )
+              i-ispinned = none, rawr x3
+              entwyidtowepwace = n-nyone, nyaa~~
+              s-sociawcontext = nyone, >_<
+              h-highwights = nyone, ^^;;
+              d-dispwaytype = tweet, (ˆ ﻌ ˆ)♡
+              innewtombstoneinfo = nyone,
+              timewinesscoweinfo = n-nyone, ^^;;
+              h-hasmodewatedwepwies = n-nyone, (⑅˘꒳˘)
+              fowwawdpivot = n-nyone, rawr x3
+              i-innewfowwawdpivot = nyone, (///ˬ///✿)
+              p-pwomotedmetadata = nyone, 🥺
+              convewsationannotation = nyone, >_<
+              contextuawtweetwef = n-nyone,
+              p-pwewowwmetadata = nyone, UwU
+              wepwybadge = n-nyone, >_<
+              d-destination = nyone
             )
-          case candidate: TwitterListCandidate =>
-            TwitterListItem(
-              id = candidate.id,
-              sortIndex = None,
-              clientEventInfo = None,
-              feedbackActionInfo = None,
-              displayType = None
+          case candidate: twittewwistcandidate =>
+            t-twittewwistitem(
+              id = candidate.id, -.-
+              sowtindex = nyone, mya
+              cwienteventinfo = n-nyone, >w<
+              feedbackactioninfo = nyone, (U ﹏ U)
+              d-dispwaytype = n-nyone
             )
-          case candidate: UserCandidate =>
-            UserItem(
-              id = candidate.id,
-              sortIndex = None,
-              clientEventInfo = None,
-              feedbackActionInfo = None,
-              isMarkUnread = None,
-              displayType = User,
-              promotedMetadata = None,
-              socialContext = None,
-              reactiveTriggers = None,
-              enableReactiveBlending = None
+          case candidate: usewcandidate =>
+            usewitem(
+              i-id = c-candidate.id, 😳😳😳
+              sowtindex = nyone,
+              cwienteventinfo = nyone, o.O
+              f-feedbackactioninfo = nyone, òωó
+              i-ismawkunwead = nyone, 😳😳😳
+              dispwaytype = usew, σωσ
+              p-pwomotedmetadata = nyone, (⑅˘꒳˘)
+              sociawcontext = nyone, (///ˬ///✿)
+              w-weactivetwiggews = n-nyone, 🥺
+              enabweweactivebwending = n-nyone
             )
           case candidate =>
-            throw new UnsupportedCandidateDomainMarshallerException(
-              candidate,
-              itemCandidateWithDetails.source)
+            t-thwow nyew unsuppowtedcandidatedomainmawshawwewexception(
+              c-candidate, OwO
+              i-itemcandidatewithdetaiws.souwce)
         }
-      case itemCandidateWithDetails @ ItemCandidateWithDetails(candidate, Some(presentation), _) =>
-        throw new UnsupportedPresentationDomainMarshallerException(
-          candidate,
-          presentation,
-          itemCandidateWithDetails.source)
-      case moduleCandidateWithDetails @ ModuleCandidateWithDetails(_, presentation, _) =>
-        throw new UnsupportedModuleDomainMarshallerException(
-          presentation,
-          moduleCandidateWithDetails.source)
+      case itemcandidatewithdetaiws @ i-itemcandidatewithdetaiws(candidate, >w< s-some(pwesentation), 🥺 _) =>
+        thwow nyew unsuppowtedpwesentationdomainmawshawwewexception(
+          c-candidate, nyaa~~
+          p-pwesentation, ^^
+          i-itemcandidatewithdetaiws.souwce)
+      case moduwecandidatewithdetaiws @ moduwecandidatewithdetaiws(_, >w< p-pwesentation, OwO _) =>
+        thwow nyew unsuppowtedmoduwedomainmawshawwewexception(
+          p-pwesentation, XD
+          m-moduwecandidatewithdetaiws.souwce)
     }
 
-    buildTimeline(query, entries)
+    buiwdtimewine(quewy, ^^;; entwies)
   }
 }

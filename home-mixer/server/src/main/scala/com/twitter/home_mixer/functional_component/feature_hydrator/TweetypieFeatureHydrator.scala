@@ -1,179 +1,179 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.twittew.home_mixew.functionaw_component.featuwe_hydwatow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ExclusiveConversationAuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsHydratedFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsNsfwFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedTweetDroppedFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.TweetLanguageFeature
-import com.twitter.home_mixer.model.HomeFeatures.TweetTextFeature
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.model.request.ListTweetsProduct
-import com.twitter.home_mixer.model.request.ScoredTweetsProduct
-import com.twitter.home_mixer.model.request.SubscribedProduct
-import com.twitter.home_mixer.util.tweetypie.RequestFields
-import com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_is_nsfw.IsNsfw
-import com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_visibility_reason.VisibilityReason
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.spam.rtf.{thriftscala => rtf}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
-import com.twitter.tweetypie.{thriftscala => tp}
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.excwusiveconvewsationauthowidfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.innetwowkfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.inwepwytotweetidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.ishydwatedfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.isnsfwfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.iswetweetfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.quotedtweetdwoppedfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.quotedtweetidfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.quotedusewidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.souwcetweetidfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.souwceusewidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.tweetwanguagefeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.tweettextfeatuwe
+impowt com.twittew.home_mixew.modew.wequest.fowwowingpwoduct
+i-impowt com.twittew.home_mixew.modew.wequest.fowyoupwoduct
+impowt c-com.twittew.home_mixew.modew.wequest.wisttweetspwoduct
+i-impowt com.twittew.home_mixew.modew.wequest.scowedtweetspwoduct
+impowt com.twittew.home_mixew.modew.wequest.subscwibedpwoduct
+impowt com.twittew.home_mixew.utiw.tweetypie.wequestfiewds
+impowt com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.candidate.tweet_is_nsfw.isnsfw
+impowt com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.candidate.tweet_visibiwity_weason.visibiwityweason
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.candidatefeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt c-com.twittew.spam.wtf.{thwiftscawa => wtf}
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stitch.tweetypie.{tweetypie => tweetypiestitchcwient}
+i-impowt com.twittew.tweetypie.{thwiftscawa => tp}
+impowt com.twittew.utiw.wogging.wogging
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class TweetypieFeatureHydrator @Inject() (
-  tweetypieStitchClient: TweetypieStitchClient,
-  statsReceiver: StatsReceiver)
-    extends CandidateFeatureHydrator[PipelineQuery, TweetCandidate]
-    with Logging {
+@singweton
+cwass tweetypiefeatuwehydwatow @inject() (
+  t-tweetypiestitchcwient: tweetypiestitchcwient, (///ˬ///✿)
+  s-statsweceivew: s-statsweceivew)
+    e-extends candidatefeatuwehydwatow[pipewinequewy, rawr x3 tweetcandidate]
+    with wogging {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("Tweetypie")
+  ovewwide v-vaw identifiew: f-featuwehydwatowidentifiew = featuwehydwatowidentifiew("tweetypie")
 
-  override val features: Set[Feature[_, _]] = Set(
-    AuthorIdFeature,
-    ExclusiveConversationAuthorIdFeature,
-    InReplyToTweetIdFeature,
-    IsHydratedFeature,
-    IsNsfw,
-    IsNsfwFeature,
-    IsRetweetFeature,
-    QuotedTweetDroppedFeature,
-    QuotedTweetIdFeature,
-    QuotedUserIdFeature,
-    SourceTweetIdFeature,
-    SourceUserIdFeature,
-    TweetTextFeature,
-    TweetLanguageFeature,
-    VisibilityReason
+  ovewwide v-vaw featuwes: s-set[featuwe[_, -.- _]] = set(
+    authowidfeatuwe, ^^
+    e-excwusiveconvewsationauthowidfeatuwe, (⑅˘꒳˘)
+    inwepwytotweetidfeatuwe, nyaa~~
+    i-ishydwatedfeatuwe, /(^•ω•^)
+    isnsfw, (U ﹏ U)
+    isnsfwfeatuwe, 😳😳😳
+    iswetweetfeatuwe, >w<
+    q-quotedtweetdwoppedfeatuwe, XD
+    quotedtweetidfeatuwe, o.O
+    quotedusewidfeatuwe, mya
+    s-souwcetweetidfeatuwe, 🥺
+    souwceusewidfeatuwe, ^^;;
+    t-tweettextfeatuwe, :3
+    t-tweetwanguagefeatuwe, (U ﹏ U)
+    visibiwityweason
   )
 
-  private val DefaultFeatureMap = FeatureMapBuilder()
-    .add(IsHydratedFeature, false)
-    .add(IsNsfw, None)
-    .add(IsNsfwFeature, false)
-    .add(QuotedTweetDroppedFeature, false)
-    .add(TweetTextFeature, None)
-    .add(VisibilityReason, None)
-    .build()
+  pwivate vaw defauwtfeatuwemap = featuwemapbuiwdew()
+    .add(ishydwatedfeatuwe, OwO fawse)
+    .add(isnsfw, 😳😳😳 nyone)
+    .add(isnsfwfeatuwe, (ˆ ﻌ ˆ)♡ fawse)
+    .add(quotedtweetdwoppedfeatuwe, XD f-fawse)
+    .add(tweettextfeatuwe, (ˆ ﻌ ˆ)♡ n-nyone)
+    .add(visibiwityweason, ( ͡o ω ͡o ) nyone)
+    .buiwd()
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = {
-    val safetyLevel = query.product match {
-      case FollowingProduct => rtf.SafetyLevel.TimelineHomeLatest
-      case ForYouProduct =>
-        val inNetwork = existingFeatures.getOrElse(InNetworkFeature, true)
-        if (inNetwork) rtf.SafetyLevel.TimelineHome else rtf.SafetyLevel.TimelineHomeRecommendations
-      case ScoredTweetsProduct => rtf.SafetyLevel.TimelineHome
-      case ListTweetsProduct => rtf.SafetyLevel.TimelineLists
-      case SubscribedProduct => rtf.SafetyLevel.TimelineHomeSubscribed
-      case unknown => throw new UnsupportedOperationException(s"Unknown product: $unknown")
+  o-ovewwide def appwy(
+    q-quewy: pipewinequewy, rawr x3
+    c-candidate: tweetcandidate, nyaa~~
+    existingfeatuwes: featuwemap
+  ): stitch[featuwemap] = {
+    v-vaw safetywevew = quewy.pwoduct match {
+      case fowwowingpwoduct => w-wtf.safetywevew.timewinehomewatest
+      case f-fowyoupwoduct =>
+        v-vaw i-innetwowk = existingfeatuwes.getowewse(innetwowkfeatuwe, >_< twue)
+        i-if (innetwowk) w-wtf.safetywevew.timewinehome e-ewse wtf.safetywevew.timewinehomewecommendations
+      c-case scowedtweetspwoduct => wtf.safetywevew.timewinehome
+      case wisttweetspwoduct => w-wtf.safetywevew.timewinewists
+      c-case subscwibedpwoduct => w-wtf.safetywevew.timewinehomesubscwibed
+      c-case u-unknown => thwow nyew unsuppowtedopewationexception(s"unknown pwoduct: $unknown")
     }
 
-    val tweetFieldsOptions = tp.GetTweetFieldsOptions(
-      tweetIncludes = RequestFields.TweetTPHydrationFields,
-      includeRetweetedTweet = true,
-      includeQuotedTweet = true,
-      visibilityPolicy = tp.TweetVisibilityPolicy.UserVisible,
-      safetyLevel = Some(safetyLevel),
-      forUserId = query.getOptionalUserId
+    vaw tweetfiewdsoptions = t-tp.gettweetfiewdsoptions(
+      tweetincwudes = wequestfiewds.tweettphydwationfiewds, ^^;;
+      incwudewetweetedtweet = twue, (ˆ ﻌ ˆ)♡
+      incwudequotedtweet = t-twue, ^^;;
+      visibiwitypowicy = tp.tweetvisibiwitypowicy.usewvisibwe, (⑅˘꒳˘)
+      safetywevew = s-some(safetywevew), rawr x3
+      f-fowusewid = quewy.getoptionawusewid
     )
 
-    val exclusiveAuthorIdOpt =
-      existingFeatures.getOrElse(ExclusiveConversationAuthorIdFeature, None)
+    vaw e-excwusiveauthowidopt =
+      existingfeatuwes.getowewse(excwusiveconvewsationauthowidfeatuwe, (///ˬ///✿) n-nyone)
 
-    tweetypieStitchClient.getTweetFields(tweetId = candidate.id, options = tweetFieldsOptions).map {
-      case tp.GetTweetFieldsResult(_, tp.TweetFieldsResultState.Found(found), quoteOpt, _) =>
-        val coreData = found.tweet.coreData
-        val isNsfwAdmin = coreData.exists(_.nsfwAdmin)
-        val isNsfwUser = coreData.exists(_.nsfwUser)
+    tweetypiestitchcwient.gettweetfiewds(tweetid = candidate.id, 🥺 o-options = t-tweetfiewdsoptions).map {
+      case tp.gettweetfiewdswesuwt(_, >_< tp.tweetfiewdswesuwtstate.found(found), UwU quoteopt, >_< _) =>
+        vaw cowedata = found.tweet.cowedata
+        v-vaw isnsfwadmin = cowedata.exists(_.nsfwadmin)
+        v-vaw isnsfwusew = cowedata.exists(_.nsfwusew)
 
-        val quotedTweetDropped = quoteOpt.exists {
-          case _: tp.TweetFieldsResultState.Filtered => true
-          case _: tp.TweetFieldsResultState.NotFound => true
-          case _ => false
+        v-vaw q-quotedtweetdwopped = quoteopt.exists {
+          case _: tp.tweetfiewdswesuwtstate.fiwtewed => t-twue
+          case _: t-tp.tweetfiewdswesuwtstate.notfound => twue
+          c-case _ => f-fawse
         }
-        val quotedTweetIsNsfw = quoteOpt.exists {
-          case quoteTweet: tp.TweetFieldsResultState.Found =>
-            quoteTweet.found.tweet.coreData.exists(data => data.nsfwAdmin || data.nsfwUser)
-          case _ => false
-        }
-
-        val sourceTweetIsNsfw =
-          found.retweetedTweet.exists(_.coreData.exists(data => data.nsfwAdmin || data.nsfwUser))
-
-        val tweetText = coreData.map(_.text)
-        val tweetLanguage = found.tweet.language.map(_.language)
-
-        val tweetAuthorId = coreData.map(_.userId)
-        val inReplyToTweetId = coreData.flatMap(_.reply.flatMap(_.inReplyToStatusId))
-        val retweetedTweetId = found.retweetedTweet.map(_.id)
-        val quotedTweetId = quoteOpt.flatMap {
-          case quoteTweet: tp.TweetFieldsResultState.Found =>
-            Some(quoteTweet.found.tweet.id)
-          case _ => None
+        vaw quotedtweetisnsfw = quoteopt.exists {
+          case quotetweet: t-tp.tweetfiewdswesuwtstate.found =>
+            q-quotetweet.found.tweet.cowedata.exists(data => d-data.nsfwadmin || data.nsfwusew)
+          c-case _ => f-fawse
         }
 
-        val retweetedTweetUserId = found.retweetedTweet.flatMap(_.coreData).map(_.userId)
-        val quotedTweetUserId = quoteOpt.flatMap {
-          case quoteTweet: tp.TweetFieldsResultState.Found =>
-            quoteTweet.found.tweet.coreData.map(_.userId)
-          case _ => None
+        vaw souwcetweetisnsfw =
+          f-found.wetweetedtweet.exists(_.cowedata.exists(data => data.nsfwadmin || data.nsfwusew))
+
+        vaw tweettext = cowedata.map(_.text)
+        vaw t-tweetwanguage = f-found.tweet.wanguage.map(_.wanguage)
+
+        vaw tweetauthowid = cowedata.map(_.usewid)
+        v-vaw inwepwytotweetid = c-cowedata.fwatmap(_.wepwy.fwatmap(_.inwepwytostatusid))
+        vaw wetweetedtweetid = found.wetweetedtweet.map(_.id)
+        vaw quotedtweetid = q-quoteopt.fwatmap {
+          case quotetweet: tp.tweetfiewdswesuwtstate.found =>
+            some(quotetweet.found.tweet.id)
+          case _ => nyone
         }
 
-        val isNsfw = isNsfwAdmin || isNsfwUser || sourceTweetIsNsfw || quotedTweetIsNsfw
+        v-vaw wetweetedtweetusewid = found.wetweetedtweet.fwatmap(_.cowedata).map(_.usewid)
+        vaw quotedtweetusewid = q-quoteopt.fwatmap {
+          c-case quotetweet: tp.tweetfiewdswesuwtstate.found =>
+            quotetweet.found.tweet.cowedata.map(_.usewid)
+          case _ => n-nyone
+        }
 
-        FeatureMapBuilder()
-          .add(AuthorIdFeature, tweetAuthorId)
-          .add(ExclusiveConversationAuthorIdFeature, exclusiveAuthorIdOpt)
-          .add(InReplyToTweetIdFeature, inReplyToTweetId)
-          .add(IsHydratedFeature, true)
-          .add(IsNsfw, Some(isNsfw))
-          .add(IsNsfwFeature, isNsfw)
-          .add(IsRetweetFeature, retweetedTweetId.isDefined)
-          .add(QuotedTweetDroppedFeature, quotedTweetDropped)
-          .add(QuotedTweetIdFeature, quotedTweetId)
-          .add(QuotedUserIdFeature, quotedTweetUserId)
-          .add(SourceTweetIdFeature, retweetedTweetId)
-          .add(SourceUserIdFeature, retweetedTweetUserId)
-          .add(TweetLanguageFeature, tweetLanguage)
-          .add(TweetTextFeature, tweetText)
-          .add(VisibilityReason, found.suppressReason)
-          .build()
+        v-vaw isnsfw = isnsfwadmin || isnsfwusew || souwcetweetisnsfw || quotedtweetisnsfw
 
-      // If no tweet result found, return default and pre-existing features
+        featuwemapbuiwdew()
+          .add(authowidfeatuwe, -.- t-tweetauthowid)
+          .add(excwusiveconvewsationauthowidfeatuwe, mya excwusiveauthowidopt)
+          .add(inwepwytotweetidfeatuwe, i-inwepwytotweetid)
+          .add(ishydwatedfeatuwe, >w< twue)
+          .add(isnsfw, (U ﹏ U) some(isnsfw))
+          .add(isnsfwfeatuwe, 😳😳😳 isnsfw)
+          .add(iswetweetfeatuwe, o.O w-wetweetedtweetid.isdefined)
+          .add(quotedtweetdwoppedfeatuwe, quotedtweetdwopped)
+          .add(quotedtweetidfeatuwe, òωó q-quotedtweetid)
+          .add(quotedusewidfeatuwe, 😳😳😳 q-quotedtweetusewid)
+          .add(souwcetweetidfeatuwe, σωσ wetweetedtweetid)
+          .add(souwceusewidfeatuwe, (⑅˘꒳˘) w-wetweetedtweetusewid)
+          .add(tweetwanguagefeatuwe, (///ˬ///✿) tweetwanguage)
+          .add(tweettextfeatuwe, 🥺 t-tweettext)
+          .add(visibiwityweason, OwO f-found.suppwessweason)
+          .buiwd()
+
+      // i-if nyo tweet wesuwt found, >w< wetuwn d-defauwt and pwe-existing f-featuwes
       case _ =>
-        DefaultFeatureMap ++ FeatureMapBuilder()
-          .add(AuthorIdFeature, existingFeatures.getOrElse(AuthorIdFeature, None))
-          .add(ExclusiveConversationAuthorIdFeature, exclusiveAuthorIdOpt)
-          .add(InReplyToTweetIdFeature, existingFeatures.getOrElse(InReplyToTweetIdFeature, None))
-          .add(IsRetweetFeature, existingFeatures.getOrElse(IsRetweetFeature, false))
-          .add(QuotedTweetIdFeature, existingFeatures.getOrElse(QuotedTweetIdFeature, None))
-          .add(QuotedUserIdFeature, existingFeatures.getOrElse(QuotedUserIdFeature, None))
-          .add(SourceTweetIdFeature, existingFeatures.getOrElse(SourceTweetIdFeature, None))
-          .add(SourceUserIdFeature, existingFeatures.getOrElse(SourceUserIdFeature, None))
-          .add(TweetLanguageFeature, existingFeatures.getOrElse(TweetLanguageFeature, None))
-          .build()
+        defauwtfeatuwemap ++ f-featuwemapbuiwdew()
+          .add(authowidfeatuwe, 🥺 e-existingfeatuwes.getowewse(authowidfeatuwe, nyaa~~ n-nyone))
+          .add(excwusiveconvewsationauthowidfeatuwe, ^^ excwusiveauthowidopt)
+          .add(inwepwytotweetidfeatuwe, >w< existingfeatuwes.getowewse(inwepwytotweetidfeatuwe, OwO n-nyone))
+          .add(iswetweetfeatuwe, XD existingfeatuwes.getowewse(iswetweetfeatuwe, ^^;; f-fawse))
+          .add(quotedtweetidfeatuwe, 🥺 e-existingfeatuwes.getowewse(quotedtweetidfeatuwe, XD nyone))
+          .add(quotedusewidfeatuwe, existingfeatuwes.getowewse(quotedusewidfeatuwe, nyone))
+          .add(souwcetweetidfeatuwe, (U ᵕ U❁) e-existingfeatuwes.getowewse(souwcetweetidfeatuwe, n-nyone))
+          .add(souwceusewidfeatuwe, :3 e-existingfeatuwes.getowewse(souwceusewidfeatuwe, n-nyone))
+          .add(tweetwanguagefeatuwe, ( ͡o ω ͡o ) existingfeatuwes.getowewse(tweetwanguagefeatuwe, n-nyone))
+          .buiwd()
     }
   }
 }

@@ -1,26 +1,26 @@
-package com.twitter.unified_user_actions.service
+package com.twittew.unified_usew_actions.sewvice
 
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.inject.server.TwitterServer
-import com.twitter.kafka.client.processor.AtLeastOnceProcessor
-import com.twitter.unified_user_actions.service.module.KafkaProcessorRekeyUuaModule
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
+impowt com.twittew.finatwa.decidew.moduwes.decidewmoduwe
+i-impowt c-com.twittew.finatwa.kafka.sewde.unkeyed
+i-impowt c-com.twittew.inject.sewvew.twittewsewvew
+i-impowt com.twittew.kafka.cwient.pwocessow.atweastoncepwocessow
+i-impowt com.twittew.unified_usew_actions.sewvice.moduwe.kafkapwocessowwekeyuuamoduwe
+i-impowt c-com.twittew.unified_usew_actions.thwiftscawa.unifiedusewaction
 
-object RekeyUuaServiceMain extends RekeyUuaService
+object wekeyuuasewvicemain extends wekeyuuasewvice
 
-class RekeyUuaService extends TwitterServer {
+cwass wekeyuuasewvice e-extends twittewsewvew {
 
-  override val modules = Seq(
-    KafkaProcessorRekeyUuaModule,
-    DeciderModule
+  ovewwide v-vaw moduwes = seq(
+    kafkapwocessowwekeyuuamoduwe, :3
+    d-decidewmoduwe
   )
 
-  override protected def setup(): Unit = {}
+  ovewwide pwotected def setup(): unit = {}
 
-  override protected def start(): Unit = {
-    val processor = injector.instance[AtLeastOnceProcessor[UnKeyed, UnifiedUserAction]]
-    closeOnExit(processor)
-    processor.start()
+  o-ovewwide pwotected def s-stawt(): unit = {
+    v-vaw pwocessow = injectow.instance[atweastoncepwocessow[unkeyed, 😳😳😳 unifiedusewaction]]
+    cwoseonexit(pwocessow)
+    pwocessow.stawt()
   }
 }

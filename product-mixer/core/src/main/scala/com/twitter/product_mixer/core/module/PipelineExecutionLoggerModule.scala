@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.core.module
+package com.twittew.pwoduct_mixew.cowe.moduwe
 
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.core.service.pipeline_execution_logger.AllowListedPipelineExecutionLogger
-import com.twitter.product_mixer.core.service.pipeline_execution_logger.PipelineExecutionLogger
+impowt c-com.twittew.inject.twittewmoduwe
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_execution_woggew.awwowwistedpipewineexecutionwoggew
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_execution_woggew.pipewineexecutionwoggew
 
-object PipelineExecutionLoggerModule extends TwitterModule {
+o-object pipewineexecutionwoggewmoduwe e-extends twittewmoduwe {
 
-  override protected def configure(): Unit = {
-    bind[PipelineExecutionLogger].to[AllowListedPipelineExecutionLogger]
+  o-ovewwide pwotected d-def configuwe(): u-unit = {
+    bind[pipewineexecutionwoggew].to[awwowwistedpipewineexecutionwoggew]
   }
 }

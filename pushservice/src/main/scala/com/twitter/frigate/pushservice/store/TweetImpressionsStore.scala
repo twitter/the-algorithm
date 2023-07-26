@@ -1,19 +1,19 @@
-package com.twitter.frigate.pushservice.store
+package com.twittew.fwigate.pushsewvice.stowe
 
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.util.Future
+impowt c-com.twittew.fwigate.common.stowe.stwato.stwatofetchabwestowe
+i-impowt com.twittew.stowehaus.weadabwestowe
+i-impowt c-com.twittew.stwato.cwient.{cwient => s-stwatocwient}
+i-impowt com.twittew.utiw.futuwe
 
 /**
- * Store to get inbound Tweet impressions count for a specific Tweet id.
+ * s-stowe t-to get inbound tweet impwessions count fow a specific tweet id. >_<
  */
-class TweetImpressionsStore(stratoClient: StratoClient) extends ReadableStore[Long, String] {
+cwass tweetimpwessionsstowe(stwatocwient: s-stwatocwient) extends weadabwestowe[wong, mya stwing] {
 
-  private val column = "rux/impression.Tweet"
-  private val store = StratoFetchableStore.withUnitView[Long, String](stratoClient, column)
+  p-pwivate vaw cowumn = "wux/impwession.tweet"
+  p-pwivate vaw stowe = stwatofetchabwestowe.withunitview[wong, mya stwing](stwatocwient, 😳 cowumn)
 
-  def getCounts(tweetId: Long): Future[Option[Long]] = {
-    store.get(tweetId).map(_.map(_.toLong))
+  d-def getcounts(tweetid: wong): f-futuwe[option[wong]] = {
+    stowe.get(tweetid).map(_.map(_.towong))
   }
 }

@@ -1,70 +1,70 @@
-package com.twitter.product_mixer.core.model.common.identifier
+package com.twittew.pwoduct_mixew.cowe.modew.common.identifiew
 
 /**
- * Gate identifier
+ * gate identifiew
  *
- * @note This class should always remain effectively `final`. If for any reason the `sealed`
- *       modifier is removed, the equals() implementation must be updated in order to handle class
- *       inheritor equality (see note on the equals method below)
+ * @note t-this cwass shouwd a-awways wemain e-effectivewy `finaw`. ^•ﻌ•^ i-if fow any w-weason the `seawed`
+ *       modifiew i-is wemoved, t-the equaws() i-impwementation must be updated in owdew to handwe cwass
+ *       inhewitow equawity (see n-nyote on the equaws method bewow)
  */
-sealed abstract class GateIdentifier(override val name: String)
-    extends ComponentIdentifier("Gate", name) {
+s-seawed abstwact cwass gateidentifiew(ovewwide v-vaw nyame: stwing)
+    extends componentidentifiew("gate", rawr nyame) {
 
   /**
-   * @inheritdoc
+   * @inhewitdoc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[GateIdentifier]
+  o-ovewwide def canequaw(that: any): b-boowean = that.isinstanceof[gateidentifiew]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * h-high pewfowmance impwementation of equaws method that wevewages:
+   *  - w-wefewentiaw equawity showt ciwcuit
+   *  - cached hashcode equawity showt ciwcuit
+   *  - fiewd v-vawues awe onwy checked if t-the hashcodes awe e-equaw to handwe t-the unwikewy case
+   *    o-of a hashcode cowwision
+   *  - wemovaw o-of check fow `that` being an equaws-compatibwe d-descendant since this cwass is finaw
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @note `candidate.canequaw(this)` is nyot nyecessawy because this cwass is finaw
+   * @see [[http://www.awtima.com/pins1ed/object-equawity.htmw p-pwogwamming in scawa, (˘ω˘)
+   *      c-chaptew 28]] fow d-discussion and d-design. nyaa~~
    */
-  override def equals(that: Any): Boolean =
-    that match {
-      case identifier: GateIdentifier =>
-        // Note identifier.canEqual(this) is not necessary because this class is effectively final
-        ((this eq identifier)
-          || ((hashCode == identifier.hashCode) && ((componentType == identifier.componentType) && (name == identifier.name))))
+  ovewwide def equaws(that: any): boowean =
+    that m-match {
+      c-case identifiew: gateidentifiew =>
+        // n-nyote identifiew.canequaw(this) i-is nyot nyecessawy because this c-cwass is effectivewy finaw
+        ((this e-eq identifiew)
+          || ((hashcode == identifiew.hashcode) && ((componenttype == identifiew.componenttype) && (name == identifiew.name))))
       case _ =>
-        false
+        f-fawse
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * wevewage d-domain-specific constwaints (see n-nyotes bewow) t-to safewy constwuct and cache the
+   * hashcode as a vaw, UwU such that it is instantiated once on object constwuction. :3 t-this pwevents t-the
+   * nyeed to wecompute the h-hashcode on each h-hashcode() invocation, (⑅˘꒳˘) w-which is the behaviow of the
+   * scawa compiwew case c-cwass-genewated hashcode() since it cannot make assumptions wegawding fiewd
+   * o-object mutabiwity and hashcode i-impwementations. (///ˬ///✿)
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated identifier
-   *       (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       data structure), assuming stable hashCode implementations for these objects
+   * @note c-caching the hashcode i-is onwy safe if aww of the f-fiewds used to c-constwuct the hashcode
+   *       a-awe immutabwe. ^^;; t-this incwudes:
+   *       - inabiwity to mutate t-the object wefewence o-on fow an e-existing instantiated i-identifiew
+   *       (i.e. >_< e-each fiewd is a vaw)
+   *       - inabiwity to mutate the fiewd o-object instance itsewf (i.e. each fiewd is an immutabwe
+   *       - inabiwity to mutate the f-fiewd object instance itsewf (i.e. rawr x3 each fiewd is an immutabwe
+   *       d-data stwuctuwe), /(^•ω•^) a-assuming s-stabwe hashcode impwementations f-fow these objects
    *
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @note in owdew fow t-the hashcode to b-be consistent with object equawity, :3 `##` must be used fow
+   *       boxed nyumewic types and n-nyuww. (ꈍᴗꈍ) as such, awways pwefew `.##` o-ovew `.hashcode()`. /(^•ω•^)
    */
-  override val hashCode: Int = 31 * componentType.## + name.##
+  ovewwide vaw hashcode: i-int = 31 * c-componenttype.## + nyame.##
 }
 
-object GateIdentifier {
-  def apply(name: String)(implicit sourceFile: sourcecode.File): GateIdentifier = {
-    if (ComponentIdentifier.isValidName(name))
-      new GateIdentifier(name) {
-        override val file: sourcecode.File = sourceFile
+object gateidentifiew {
+  d-def appwy(name: s-stwing)(impwicit souwcefiwe: s-souwcecode.fiwe): g-gateidentifiew = {
+    if (componentidentifiew.isvawidname(name))
+      nyew gateidentifiew(name) {
+        ovewwide vaw fiwe: souwcecode.fiwe = s-souwcefiwe
       }
-    else
-      throw new IllegalArgumentException(s"Illegal GateIdentifier: $name")
+    e-ewse
+      thwow n-nyew iwwegawawgumentexception(s"iwwegaw gateidentifiew: $name")
   }
 }

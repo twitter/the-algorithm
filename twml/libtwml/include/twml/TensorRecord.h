@@ -1,46 +1,46 @@
-#pragma once
-#ifdef __cplusplus
+#pwagma once
+#ifdef __cpwuspwus
 
-#include <twml/defines.h>
-#include <twml/RawTensor.h>
+#incwude <twmw/defines.h>
+#incwude <twmw/wawtensow.h>
 
-#include <cstdint>
-#include <unordered_map>
+#incwude <cstdint>
+#incwude <unowdewed_map>
 
-namespace twml {
+nyamespace twmw {
 
-class TensorRecordReader;
+c-cwass tensowwecowdweadew;
 
-// A class containing the data from TensorRecord.
-// - This serves as the base class from which DataRecord and HashedDataRecord are inherited.
-class TWMLAPI TensorRecord {
-public:
-  typedef std::unordered_map<int64_t, const RawTensor> RawTensors;
-  typedef std::unordered_map<int64_t, const RawSparseTensor> RawSparseTensors;
+// a-a cwass containing t-the data f-fwom tensowwecowd. nyaa~~
+// - t-this sewves a-as the base c-cwass fwom which d-datawecowd and hasheddatawecowd awe inhewited. (⑅˘꒳˘)
+cwass twmwapi tensowwecowd {
+pubwic:
+  t-typedef std::unowdewed_map<int64_t, rawr x3 const w-wawtensow> wawtensows;
+  typedef s-std::unowdewed_map<int64_t, (✿oωo) const wawspawsetensow> wawspawsetensows;
 
-private:
-  RawTensors m_tensors;
-  RawSparseTensors m_sparse_tensors;
+pwivate:
+  w-wawtensows m_tensows;
+  wawspawsetensows m-m_spawse_tensows;
 
-public:
+p-pubwic:
 
-  const RawTensors &getRawTensors() {
-    return m_tensors;
+  const wawtensows &getwawtensows() {
+    wetuwn m_tensows;
   }
 
-  const RawTensor& getRawTensor(int64_t id) const {
-    return m_tensors.at(id);
+  const wawtensow& getwawtensow(int64_t i-id) const {
+    wetuwn m_tensows.at(id);
   }
 
-  const RawSparseTensor& getRawSparseTensor(int64_t id) const {
-    return m_sparse_tensors.at(id);
+  const wawspawsetensow& getwawspawsetensow(int64_t id) const {
+    w-wetuwn m_spawse_tensows.at(id);
   }
 
-  void addRawTensor(int64_t id, const RawTensor &tensor) {
-    m_tensors.emplace(id, tensor);
+  void a-addwawtensow(int64_t i-id, (ˆ ﻌ ˆ)♡ const wawtensow &tensow) {
+    m-m_tensows.empwace(id, (˘ω˘) t-tensow);
   }
 
-  friend class TensorRecordReader;
+  fwiend cwass tensowwecowdweadew;
 };
 
 }

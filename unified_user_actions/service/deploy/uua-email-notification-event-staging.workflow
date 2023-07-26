@@ -1,39 +1,39 @@
 {
-  "role": "discode",
-  "name": "uua-email-notification-event-staging",
-  "config-files": [
-    "uua-email-notification-event.aurora"
-  ],
-  "build": {
-    "play": true,
+  "wowe": "discode", XD
+  "name": "uua-emaiw-notification-event-staging", >_<
+  "config-fiwes": [
+    "uua-emaiw-notification-event.auwowa"
+  ], (ꈍᴗꈍ)
+  "buiwd": {
+    "pway": twue, ^•ﻌ•^
     "dependencies": [
       {
-        "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "wowe": "packew", OwO
+        "name": "packew-cwient-no-pex", 🥺
+        "vewsion": "watest"
       }
-    ],
+    ], òωó
     "steps": [
       {
-        "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-email-notification-event"
-      },
+        "type": "bazew-bundwe", o.O
+        "name": "bundwe", (U ᵕ U❁)
+        "tawget": "unified_usew_actions/sewvice/swc/main/scawa:uua-emaiw-notification-event"
+      }, (⑅˘꒳˘)
       {
-        "type": "packer",
-        "name": "uua-email-notification-event-staging",
-        "artifact": "./dist/uua-email-notification-event.zip"
+        "type": "packew", ( ͡o ω ͡o )
+        "name": "uua-emaiw-notification-event-staging", UwU
+        "awtifact": "./dist/uua-emaiw-notification-event.zip"
       }
     ]
-  },
-  "targets": [
+  }, rawr x3
+  "tawgets": [
     {
-      "type": "group",
-      "name": "staging",
-      "targets": [
+      "type": "gwoup", rawr
+      "name": "staging", σωσ
+      "tawgets": [
         {
-          "name": "uua-email-notification-event-staging-pdxa",
-          "key": "pdxa/discode/staging/uua-email-notification-event"
+          "name": "uua-emaiw-notification-event-staging-pdxa", σωσ
+          "key": "pdxa/discode/staging/uua-emaiw-notification-event"
         }
       ]
     }

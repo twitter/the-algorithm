@@ -1,540 +1,540 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.featureswitches.v2.FeatureSwitchResults
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.gizmoduck.thriftscala.AccessPolicy
-import com.twitter.gizmoduck.thriftscala.LabelValue
-import com.twitter.gizmoduck.thriftscala.UserType
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.additionalfields.AdditionalFields._
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.jiminy.tweetypie.NudgeBuilder
-import com.twitter.tweetypie.jiminy.tweetypie.NudgeBuilderRequest
-import com.twitter.tweetypie.media.Media
-import com.twitter.tweetypie.repository.StratoCommunityAccessRepository.CommunityAccess
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.serverutil.DeviceSourceParser
-import com.twitter.tweetypie.serverutil.ExtendedTweetMetadataBuilder
-import com.twitter.tweetypie.store._
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.thriftscala.entities.EntityExtractor
-import com.twitter.tweetypie.tweettext._
-import com.twitter.tweetypie.util.CommunityAnnotation
-import com.twitter.tweetypie.util.CommunityUtil
-import com.twitter.twittertext.Regex.{VALID_URL => UrlPattern}
-import com.twitter.twittertext.TwitterTextParser
+impowt c-com.twittew.featuweswitches.v2.featuweswitchwesuwts
+i-impowt c-com.twittew.featuweswitches.v2.featuweswitches
+impowt c-com.twittew.gizmoduck.thwiftscawa.accesspowicy
+i-impowt com.twittew.gizmoduck.thwiftscawa.wabewvawue
+i-impowt c-com.twittew.gizmoduck.thwiftscawa.usewtype
+impowt com.twittew.snowfwake.id.snowfwakeid
+impowt com.twittew.stitch.notfound
+impowt c-com.twittew.stitch.stitch
+impowt com.twittew.tweetypie.additionawfiewds.additionawfiewds._
+i-impowt com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.jiminy.tweetypie.nudgebuiwdew
+impowt com.twittew.tweetypie.jiminy.tweetypie.nudgebuiwdewwequest
+impowt c-com.twittew.tweetypie.media.media
+impowt com.twittew.tweetypie.wepositowy.stwatocommunityaccesswepositowy.communityaccess
+i-impowt c-com.twittew.tweetypie.wepositowy._
+impowt com.twittew.tweetypie.sewvewutiw.devicesouwcepawsew
+impowt com.twittew.tweetypie.sewvewutiw.extendedtweetmetadatabuiwdew
+impowt com.twittew.tweetypie.stowe._
+impowt c-com.twittew.tweetypie.thwiftscawa._
+impowt com.twittew.tweetypie.thwiftscawa.entities.entityextwactow
+impowt com.twittew.tweetypie.tweettext._
+impowt com.twittew.tweetypie.utiw.communityannotation
+i-impowt com.twittew.tweetypie.utiw.communityutiw
+i-impowt c-com.twittew.twittewtext.wegex.{vawid_uww => u-uwwpattewn}
+i-impowt com.twittew.twittewtext.twittewtextpawsew
 
-case class TweetBuilderResult(
-  tweet: Tweet,
-  user: User,
-  createdAt: Time,
-  sourceTweet: Option[Tweet] = None,
-  sourceUser: Option[User] = None,
-  parentUserId: Option[UserId] = None,
-  isSilentFail: Boolean = false,
-  geoSearchRequestId: Option[GeoSearchRequestId] = None,
-  initialTweetUpdateRequest: Option[InitialTweetUpdateRequest] = None)
+case cwass tweetbuiwdewwesuwt(
+  t-tweet: tweet, (˘ω˘)
+  usew: usew, >w<
+  cweatedat: t-time, UwU
+  souwcetweet: option[tweet] = nyone, XD
+  souwceusew: option[usew] = nyone,
+  pawentusewid: o-option[usewid] = nyone, (U ﹏ U)
+  issiwentfaiw: b-boowean = f-fawse, (U ᵕ U❁)
+  geoseawchwequestid: o-option[geoseawchwequestid] = nyone, (ˆ ﻌ ˆ)♡
+  initiawtweetupdatewequest: option[initiawtweetupdatewequest] = nyone)
 
-object TweetBuilder {
-  import GizmoduckUserCountsUpdatingStore.isUserTweet
-  import PostTweet._
-  import Preprocessor._
-  import TweetCreateState.{Spam => CreateStateSpam, _}
-  import TweetText._
-  import UpstreamFailure._
+o-object tweetbuiwdew {
+  i-impowt gizmoduckusewcountsupdatingstowe.isusewtweet
+  impowt p-posttweet._
+  i-impowt pwepwocessow._
+  impowt t-tweetcweatestate.{spam => cweatestatespam, òωó _}
+  i-impowt tweettext._
+  impowt upstweamfaiwuwe._
 
-  type Type = FutureArrow[PostTweetRequest, TweetBuilderResult]
+  type type = futuweawwow[posttweetwequest, ^•ﻌ•^ t-tweetbuiwdewwesuwt]
 
-  val log: Logger = Logger(getClass)
+  vaw wog: woggew = w-woggew(getcwass)
 
-  private[this] val _unitMutation = Future.value(Mutation.unit[Any])
-  def MutationUnitFuture[T]: Future[Mutation[T]] = _unitMutation.asInstanceOf[Future[Mutation[T]]]
+  pwivate[this] v-vaw _unitmutation = f-futuwe.vawue(mutation.unit[any])
+  def mutationunitfutuwe[t]: futuwe[mutation[t]] = _unitmutation.asinstanceof[futuwe[mutation[t]]]
 
-  case class MissingConversationId(inReplyToTweetId: TweetId) extends RuntimeException
+  case cwass missingconvewsationid(inwepwytotweetid: tweetid) extends wuntimeexception
 
-  case class TextVisibility(
-    visibleTextRange: Option[TextRange],
-    totalTextDisplayLength: Offset.DisplayUnit,
-    visibleText: String) {
-    val isExtendedTweet: Boolean = totalTextDisplayLength.toInt > OriginalMaxDisplayLength
+  case c-cwass textvisibiwity(
+    v-visibwetextwange: option[textwange], (///ˬ///✿)
+    t-totawtextdispwaywength: o-offset.dispwayunit, -.-
+    v-visibwetext: stwing) {
+    vaw isextendedtweet: boowean = totawtextdispwaywength.toint > o-owiginawmaxdispwaywength
 
     /**
-     *  Going forward we will be moving away from quoted-tweets urls in tweet text, but we
-     *  have a backwards-compat layer in Tweetypie which adds the QT url to text to provide
-     *  support for all clients to read in a backwards-compatible way until they upgrade.
+     *  going fowwawd we wiww be moving away fwom quoted-tweets uwws i-in tweet text, >w< but we
+     *  h-have a backwawds-compat w-wayew in t-tweetypie which adds the qt uww t-to text to pwovide
+     *  s-suppowt f-fow aww cwients t-to wead in a backwawds-compatibwe way untiw t-they upgwade. òωó
      *
-     *  Tweets can become extended as their display length can go beyond 140
-     *  after adding the QT short url. Therefore, we are adding below function
-     *  to account for legacy formatting during read-time and generate a self-permalink.
+     *  t-tweets c-can become e-extended as theiw d-dispway wength can go beyond 140
+     *  aftew adding the qt showt u-uww. σωσ thewefowe, mya we awe adding bewow function
+     *  to account fow wegacy fowmatting duwing w-wead-time and genewate a sewf-pewmawink. òωó
      */
-    def isExtendedWithExtraChars(extraChars: Int): Boolean =
-      totalTextDisplayLength.toInt > (OriginalMaxDisplayLength - extraChars)
+    def isextendedwithextwachaws(extwachaws: int): boowean =
+      t-totawtextdispwaywength.toint > (owiginawmaxdispwaywength - e-extwachaws)
   }
 
-  /** Max number of users that can be tagged on a single tweet */
-  val MaxMediaTagCount = 10
+  /** m-max nyumbew of usews that c-can be tagged on a singwe tweet */
+  v-vaw maxmediatagcount = 10
 
-  val MobileWebApp = "oauth:49152"
-  val M2App = "oauth:3033294"
-  val M5App = "oauth:3033300"
+  v-vaw mobiwewebapp = "oauth:49152"
+  vaw m2app = "oauth:3033294"
+  vaw m5app = "oauth:3033300"
 
-  val TestRateLimitUserRole = "stresstest"
+  vaw testwatewimitusewwowe = "stwesstest"
 
   /**
-   * The fields to fetch for the user creating the tweet.
+   * the fiewds to fetch fow t-the usew cweating the tweet. 🥺
    */
-  val userFields: Set[UserField] =
-    Set(
-      UserField.Profile,
-      UserField.ProfileDesign,
-      UserField.Account,
-      UserField.Safety,
-      UserField.Counts,
-      UserField.Roles,
-      UserField.UrlEntities,
-      UserField.Labels
+  v-vaw usewfiewds: set[usewfiewd] =
+    s-set(
+      u-usewfiewd.pwofiwe, (U ﹏ U)
+      usewfiewd.pwofiwedesign, (ꈍᴗꈍ)
+      usewfiewd.account, (˘ω˘)
+      usewfiewd.safety, (✿oωo)
+      usewfiewd.counts, -.-
+      u-usewfiewd.wowes,
+      u-usewfiewd.uwwentities, (ˆ ﻌ ˆ)♡
+      usewfiewd.wabews
     )
 
   /**
-   * The fields to fetch for the user of the source tweet in a retweet.
+   * t-the f-fiewds to fetch fow the usew of the souwce tweet in a wetweet. (✿oωo)
    */
-  val sourceUserFields: Set[UserField] =
-    userFields + UserField.View
+  vaw souwceusewfiewds: set[usewfiewd] =
+    u-usewfiewds + u-usewfiewd.view
 
   /**
-   * Converts repository exceptions into an API-compatible exception type
+   * c-convewts wepositowy e-exceptions into a-an api-compatibwe exception type
    */
-  def convertRepoExceptions[A](
-    notFoundState: TweetCreateState,
-    failureHandler: Throwable => Throwable
-  ): PartialFunction[Throwable, Stitch[A]] = {
-    // stitch.NotFound is converted to the supplied TweetCreateState, wrapped in TweetCreateFailure
-    case NotFound => Stitch.exception(TweetCreateFailure.State(notFoundState))
-    // OverCapacity exceptions should not be translated and should bubble up to the top
-    case ex: OverCapacity => Stitch.exception(ex)
-    // Other exceptions are wrapped in the supplied failureHandler
-    case ex => Stitch.exception(failureHandler(ex))
+  d-def convewtwepoexceptions[a](
+    nyotfoundstate: tweetcweatestate, ʘwʘ
+    faiwuwehandwew: thwowabwe => thwowabwe
+  ): p-pawtiawfunction[thwowabwe, (///ˬ///✿) s-stitch[a]] = {
+    // stitch.notfound is c-convewted to the s-suppwied tweetcweatestate, rawr wwapped in tweetcweatefaiwuwe
+    case nyotfound => s-stitch.exception(tweetcweatefaiwuwe.state(notfoundstate))
+    // ovewcapacity exceptions shouwd nyot be twanswated and shouwd bubbwe u-up to the top
+    case ex: ovewcapacity => s-stitch.exception(ex)
+    // o-othew exceptions awe wwapped in the suppwied faiwuwehandwew
+    c-case e-ex => stitch.exception(faiwuwehandwew(ex))
   }
 
   /**
-   * Adapts a UserRepository to a Repository for looking up a single user and that
-   * fails with an appropriate TweetCreateFailure if the user is not found.
+   * adapts a usewwepositowy to a wepositowy f-fow wooking up a singwe usew a-and that
+   * faiws with an appwopwiate tweetcweatefaiwuwe if t-the usew is nyot found. 🥺
    */
-  def userLookup(userRepo: UserRepository.Type): UserId => Stitch[User] = {
-    val opts = UserQueryOptions(queryFields = userFields, visibility = UserVisibility.All)
+  d-def usewwookup(usewwepo: u-usewwepositowy.type): usewid => stitch[usew] = {
+    v-vaw opts = usewquewyoptions(quewyfiewds = u-usewfiewds, v-visibiwity = u-usewvisibiwity.aww)
 
-    userId =>
-      userRepo(UserKey(userId), opts)
-        .rescue(convertRepoExceptions[User](UserNotFound, UserLookupFailure(_)))
+    usewid =>
+      u-usewwepo(usewkey(usewid), mya o-opts)
+        .wescue(convewtwepoexceptions[usew](usewnotfound, mya usewwookupfaiwuwe(_)))
   }
 
   /**
-   * Adapts a UserRepository to a Repository for looking up a single user and that
-   * fails with an appropriate TweetCreateFailure if the user is not found.
+   * adapts a-a usewwepositowy t-to a wepositowy f-fow wooking up a singwe usew and that
+   * faiws w-with an appwopwiate tweetcweatefaiwuwe i-if the u-usew is nyot found. mya
    */
-  def sourceUserLookup(userRepo: UserRepository.Type): (UserId, UserId) => Stitch[User] = {
-    val opts = UserQueryOptions(queryFields = sourceUserFields, visibility = UserVisibility.All)
+  def souwceusewwookup(usewwepo: usewwepositowy.type): (usewid, (⑅˘꒳˘) u-usewid) => s-stitch[usew] = {
+    v-vaw o-opts = usewquewyoptions(quewyfiewds = souwceusewfiewds, v-visibiwity = usewvisibiwity.aww)
 
-    (userId, forUserId) =>
-      userRepo(UserKey(userId), opts.copy(forUserId = Some(forUserId)))
-        .rescue(convertRepoExceptions[User](SourceUserNotFound, UserLookupFailure(_)))
+    (usewid, (✿oωo) fowusewid) =>
+      usewwepo(usewkey(usewid), 😳 opts.copy(fowusewid = some(fowusewid)))
+        .wescue(convewtwepoexceptions[usew](souwceusewnotfound, OwO u-usewwookupfaiwuwe(_)))
   }
 
   /**
-   * Any fields that are loaded on the user via TweetBuilder/RetweetBuilder, but which should not
-   * be included on the user in the async-insert actions (such as hosebird) should be removed here.
+   * any fiewds that a-awe woaded on the usew via tweetbuiwdew/wetweetbuiwdew, (˘ω˘) b-but which shouwd nyot
+   * b-be incwuded on the usew in t-the async-insewt a-actions (such a-as hosebiwd) shouwd b-be wemoved h-hewe. (✿oωo)
    *
-   * This will include perspectival fields that were loaded relative to the user creating the tweet.
+   * this wiww incwude pewspectivaw fiewds that wewe woaded wewative to the usew cweating the tweet. /(^•ω•^)
    */
-  def scrubUserInAsyncInserts: User => User =
-    user => user.copy(view = None)
+  d-def scwubusewinasyncinsewts: u-usew => usew =
+    u-usew => usew.copy(view = n-nyone)
 
   /**
-   * Any fields that are loaded on the source user via TweetBuilder/RetweetBuilder, but which
-   * should not be included on the user in the async-insert actions (such as hosebird) should
-   * be removed here.
+   * any fiewds that awe woaded on the souwce usew v-via tweetbuiwdew/wetweetbuiwdew, rawr x3 b-but which
+   * shouwd nyot be i-incwuded on the usew in the async-insewt actions (such a-as hosebiwd) s-shouwd
+   * be wemoved hewe.
    *
-   * This will include perspectival fields that were loaded relative to the user creating the tweet.
+   * t-this w-wiww incwude pewspectivaw fiewds that wewe woaded wewative to the usew cweating t-the tweet.
    */
-  def scrubSourceUserInAsyncInserts: User => User =
-    // currently the same as scrubUserInAsyncInserts, could be different in the future
-    scrubUserInAsyncInserts
+  d-def scwubsouwceusewinasyncinsewts: u-usew => usew =
+    // c-cuwwentwy t-the same as scwubusewinasyncinsewts, rawr c-couwd b-be diffewent in the futuwe
+    s-scwubusewinasyncinsewts
 
   /**
-   * Any fields that are loaded on the source tweet via RetweetBuilder, but which should not be
-   * included on the source tweetypie in the async-insert actions (such as hosebird) should
-   * be removed here.
+   * a-any fiewds that awe woaded o-on the souwce tweet via wetweetbuiwdew, ( ͡o ω ͡o ) but which s-shouwd nyot be
+   * incwuded on t-the souwce tweetypie i-in the async-insewt actions (such a-as hosebiwd) shouwd
+   * be wemoved hewe. ( ͡o ω ͡o )
    *
-   * This will include perspectival fields that were loaded relative to the user creating the tweet.
+   * t-this w-wiww incwude pewspectivaw f-fiewds that wewe woaded wewative to the usew cweating t-the tweet. 😳😳😳
    */
-  def scrubSourceTweetInAsyncInserts: Tweet => Tweet =
-    tweet => tweet.copy(perspective = None, cards = None, card2 = None)
+  def scwubsouwcetweetinasyncinsewts: tweet => t-tweet =
+    tweet => t-tweet.copy(pewspective = nyone, (U ﹏ U) cawds = none, c-cawd2 = nyone)
 
   /**
-   * Adapts a DeviceSource to a Repository for looking up a single device-source and that
-   * fails with an appropriate TweetCreateFailure if not found.
+   * adapts a devicesouwce t-to a wepositowy f-fow wooking up a singwe device-souwce and t-that
+   * faiws with an appwopwiate tweetcweatefaiwuwe i-if nyot found. UwU
    */
-  def deviceSourceLookup(devSrcRepo: DeviceSourceRepository.Type): DeviceSourceRepository.Type =
-    appIdStr => {
-      val result: Stitch[DeviceSource] =
-        if (DeviceSourceParser.isValid(appIdStr)) {
-          devSrcRepo(appIdStr)
-        } else {
-          Stitch.exception(NotFound)
+  d-def devicesouwcewookup(devswcwepo: d-devicesouwcewepositowy.type): devicesouwcewepositowy.type =
+    appidstw => {
+      v-vaw wesuwt: s-stitch[devicesouwce] =
+        i-if (devicesouwcepawsew.isvawid(appidstw)) {
+          devswcwepo(appidstw)
+        } ewse {
+          stitch.exception(notfound)
         }
 
-      result.rescue(convertRepoExceptions(DeviceSourceNotFound, DeviceSourceLookupFailure(_)))
+      wesuwt.wescue(convewtwepoexceptions(devicesouwcenotfound, (U ﹏ U) devicesouwcewookupfaiwuwe(_)))
     }
 
   /**
-   * Checks:
-   *   - that we have all the user fields we need
-   *   - that the user is active
-   *   - that they are not a frictionless follower account
+   * checks:
+   *   - that we have aww the usew fiewds we nyeed
+   *   - that the usew is active
+   *   - t-that they awe n-nyot a fwictionwess fowwowew account
    */
-  def validateUser(user: User): Future[Unit] =
-    if (user.safety.isEmpty)
-      Future.exception(UserSafetyEmptyException)
-    else if (user.profile.isEmpty)
-      Future.exception(UserProfileEmptyException)
-    else if (user.safety.get.deactivated)
-      Future.exception(TweetCreateFailure.State(UserDeactivated))
-    else if (user.safety.get.suspended)
-      Future.exception(TweetCreateFailure.State(UserSuspended))
-    else if (user.labels.exists(_.labels.exists(_.labelValue == LabelValue.ReadOnly)))
-      Future.exception(TweetCreateFailure.State(CreateStateSpam))
-    else if (user.userType == UserType.Frictionless)
-      Future.exception(TweetCreateFailure.State(UserNotFound))
-    else if (user.userType == UserType.Soft)
-      Future.exception(TweetCreateFailure.State(UserNotFound))
-    else if (user.safety.get.accessPolicy == AccessPolicy.BounceAll ||
-      user.safety.get.accessPolicy == AccessPolicy.BounceAllPublicWrites)
-      Future.exception(TweetCreateFailure.State(UserReadonly))
-    else
-      Future.Unit
+  def v-vawidateusew(usew: u-usew): futuwe[unit] =
+    i-if (usew.safety.isempty)
+      futuwe.exception(usewsafetyemptyexception)
+    e-ewse if (usew.pwofiwe.isempty)
+      f-futuwe.exception(usewpwofiweemptyexception)
+    e-ewse if (usew.safety.get.deactivated)
+      futuwe.exception(tweetcweatefaiwuwe.state(usewdeactivated))
+    e-ewse if (usew.safety.get.suspended)
+      f-futuwe.exception(tweetcweatefaiwuwe.state(usewsuspended))
+    e-ewse if (usew.wabews.exists(_.wabews.exists(_.wabewvawue == wabewvawue.weadonwy)))
+      futuwe.exception(tweetcweatefaiwuwe.state(cweatestatespam))
+    e-ewse i-if (usew.usewtype == u-usewtype.fwictionwess)
+      f-futuwe.exception(tweetcweatefaiwuwe.state(usewnotfound))
+    e-ewse if (usew.usewtype == u-usewtype.soft)
+      f-futuwe.exception(tweetcweatefaiwuwe.state(usewnotfound))
+    e-ewse i-if (usew.safety.get.accesspowicy == accesspowicy.bounceaww ||
+      u-usew.safety.get.accesspowicy == a-accesspowicy.bounceawwpubwicwwites)
+      f-futuwe.exception(tweetcweatefaiwuwe.state(usewweadonwy))
+    ewse
+      f-futuwe.unit
 
-  def validateCommunityReply(
-    communities: Option[Communities],
-    replyResult: Option[ReplyBuilder.Result]
-  ): Future[Unit] = {
+  def vawidatecommunitywepwy(
+    communities: o-option[communities], 🥺
+    wepwywesuwt: o-option[wepwybuiwdew.wesuwt]
+  ): f-futuwe[unit] = {
 
-    if (replyResult.flatMap(_.reply.inReplyToStatusId).nonEmpty) {
-      val rootCommunities = replyResult.flatMap(_.community)
-      val rootCommunityIds = CommunityUtil.communityIds(rootCommunities)
-      val replyCommunityIds = CommunityUtil.communityIds(communities)
+    i-if (wepwywesuwt.fwatmap(_.wepwy.inwepwytostatusid).nonempty) {
+      vaw wootcommunities = w-wepwywesuwt.fwatmap(_.community)
+      vaw wootcommunityids = c-communityutiw.communityids(wootcommunities)
+      vaw w-wepwycommunityids = communityutiw.communityids(communities)
 
-      if (rootCommunityIds == replyCommunityIds) {
-        Future.Unit
-      } else {
-        Future.exception(TweetCreateFailure.State(CommunityReplyTweetNotAllowed))
+      i-if (wootcommunityids == wepwycommunityids) {
+        futuwe.unit
+      } ewse {
+        futuwe.exception(tweetcweatefaiwuwe.state(communitywepwytweetnotawwowed))
       }
-    } else {
-      Future.Unit
+    } e-ewse {
+      futuwe.unit
     }
   }
 
-  // Project requirements do not allow exclusive tweets to be replies.
-  // All exclusive tweets must be root tweets.
-  def validateExclusiveTweetNotReplies(
-    exclusiveTweetControls: Option[ExclusiveTweetControl],
-    replyResult: Option[ReplyBuilder.Result]
-  ): Future[Unit] = {
-    val isInReplyToTweet = replyResult.exists(_.reply.inReplyToStatusId.isDefined)
-    if (exclusiveTweetControls.isDefined && isInReplyToTweet) {
-      Future.exception(TweetCreateFailure.State(SuperFollowsInvalidParams))
-    } else {
-      Future.Unit
+  // p-pwoject w-wequiwements do nyot awwow excwusive tweets to be wepwies. ʘwʘ
+  // a-aww excwusive tweets must be w-woot tweets. 😳
+  d-def vawidateexcwusivetweetnotwepwies(
+    e-excwusivetweetcontwows: option[excwusivetweetcontwow], (ˆ ﻌ ˆ)♡
+    wepwywesuwt: o-option[wepwybuiwdew.wesuwt]
+  ): f-futuwe[unit] = {
+    vaw isinwepwytotweet = w-wepwywesuwt.exists(_.wepwy.inwepwytostatusid.isdefined)
+    if (excwusivetweetcontwows.isdefined && isinwepwytotweet) {
+      f-futuwe.exception(tweetcweatefaiwuwe.state(supewfowwowsinvawidpawams))
+    } ewse {
+      f-futuwe.unit
     }
   }
 
-  // Invalid parameters for Exclusive Tweets:
-  // - Community field set # Tweets can not be both at the same time.
-  def validateExclusiveTweetParams(
-    exclusiveTweetControls: Option[ExclusiveTweetControl],
-    communities: Option[Communities]
-  ): Future[Unit] = {
-    if (exclusiveTweetControls.isDefined && CommunityUtil.hasCommunity(communities)) {
-      Future.exception(TweetCreateFailure.State(SuperFollowsInvalidParams))
-    } else {
-      Future.Unit
+  // i-invawid pawametews f-fow excwusive tweets:
+  // - c-community fiewd s-set # tweets c-can not be both a-at the same time. >_<
+  def vawidateexcwusivetweetpawams(
+    e-excwusivetweetcontwows: o-option[excwusivetweetcontwow], ^•ﻌ•^
+    c-communities: o-option[communities]
+  ): f-futuwe[unit] = {
+    i-if (excwusivetweetcontwows.isdefined && c-communityutiw.hascommunity(communities)) {
+      f-futuwe.exception(tweetcweatefaiwuwe.state(supewfowwowsinvawidpawams))
+    } ewse {
+      f-futuwe.unit
     }
   }
 
-  def validateTrustedFriendsNotReplies(
-    trustedFriendsControl: Option[TrustedFriendsControl],
-    replyResult: Option[ReplyBuilder.Result]
-  ): Future[Unit] = {
-    val isInReplyToTweet = replyResult.exists(_.reply.inReplyToStatusId.isDefined)
-    if (trustedFriendsControl.isDefined && isInReplyToTweet) {
-      Future.exception(TweetCreateFailure.State(TrustedFriendsInvalidParams))
-    } else {
-      Future.Unit
+  def vawidatetwustedfwiendsnotwepwies(
+    t-twustedfwiendscontwow: option[twustedfwiendscontwow], (✿oωo)
+    wepwywesuwt: o-option[wepwybuiwdew.wesuwt]
+  ): f-futuwe[unit] = {
+    v-vaw isinwepwytotweet = wepwywesuwt.exists(_.wepwy.inwepwytostatusid.isdefined)
+    if (twustedfwiendscontwow.isdefined && isinwepwytotweet) {
+      f-futuwe.exception(tweetcweatefaiwuwe.state(twustedfwiendsinvawidpawams))
+    } e-ewse {
+      f-futuwe.unit
     }
   }
 
-  def validateTrustedFriendsParams(
-    trustedFriendsControl: Option[TrustedFriendsControl],
-    conversationControl: Option[TweetCreateConversationControl],
-    communities: Option[Communities],
-    exclusiveTweetControl: Option[ExclusiveTweetControl]
-  ): Future[Unit] = {
-    if (trustedFriendsControl.isDefined &&
-      (conversationControl.isDefined || CommunityUtil.hasCommunity(
-        communities) || exclusiveTweetControl.isDefined)) {
-      Future.exception(TweetCreateFailure.State(TrustedFriendsInvalidParams))
-    } else {
-      Future.Unit
-    }
-  }
-
-  /**
-   * Checks the weighted tweet text length using twitter-text, as used by clients.
-   * This should ensure that any tweet the client deems valid will also be deemed
-   * valid by Tweetypie.
-   */
-  def prevalidateTextLength(text: String, stats: StatsReceiver): Future[Unit] = {
-    val twitterTextConfig = TwitterTextParser.TWITTER_TEXT_DEFAULT_CONFIG
-    val twitterTextResult = TwitterTextParser.parseTweet(text, twitterTextConfig)
-    val textTooLong = !twitterTextResult.isValid && text.length > 0
-
-    Future.when(textTooLong) {
-      val weightedLength = twitterTextResult.weightedLength
-      log.debug(
-        s"Weighted length too long. weightedLength: $weightedLength" +
-          s", Tweet text: '${diffshow.show(text)}'"
-      )
-      stats.counter("check_weighted_length/text_too_long").incr()
-      Future.exception(TweetCreateFailure.State(TextTooLong))
+  def vawidatetwustedfwiendspawams(
+    twustedfwiendscontwow: option[twustedfwiendscontwow], OwO
+    c-convewsationcontwow: option[tweetcweateconvewsationcontwow], (ˆ ﻌ ˆ)♡
+    c-communities: option[communities], ^^;;
+    e-excwusivetweetcontwow: o-option[excwusivetweetcontwow]
+  ): futuwe[unit] = {
+    if (twustedfwiendscontwow.isdefined &&
+      (convewsationcontwow.isdefined || communityutiw.hascommunity(
+        communities) || e-excwusivetweetcontwow.isdefined)) {
+      f-futuwe.exception(tweetcweatefaiwuwe.state(twustedfwiendsinvawidpawams))
+    } e-ewse {
+      f-futuwe.unit
     }
   }
 
   /**
-   * Checks that the tweet text is neither blank nor too long.
+   * checks the weighted tweet t-text wength u-using twittew-text, nyaa~~ as used by cwients. o.O
+   * this s-shouwd ensuwe that any tweet the cwient deems v-vawid wiww awso be deemed
+   * vawid b-by tweetypie. >_<
    */
-  def validateTextLength(
-    text: String,
-    visibleText: String,
-    replyResult: Option[ReplyBuilder.Result],
-    stats: StatsReceiver
-  ): Future[Unit] = {
-    val utf8Length = Offset.Utf8.length(text)
+  d-def pwevawidatetextwength(text: stwing, (U ﹏ U) s-stats: statsweceivew): f-futuwe[unit] = {
+    vaw twittewtextconfig = t-twittewtextpawsew.twittew_text_defauwt_config
+    vaw twittewtextwesuwt = t-twittewtextpawsew.pawsetweet(text, ^^ t-twittewtextconfig)
+    v-vaw texttoowong = !twittewtextwesuwt.isvawid && t-text.wength > 0
 
-    def visibleTextTooLong =
-      Offset.DisplayUnit.length(visibleText) > Offset.DisplayUnit(MaxVisibleWeightedEmojiLength)
-
-    def utf8LengthTooLong =
-      utf8Length > Offset.Utf8(MaxUtf8Length)
-
-    if (isBlank(text)) {
-      stats.counter("validate_text_length/text_cannot_be_blank").incr()
-      Future.exception(TweetCreateFailure.State(TextCannotBeBlank))
-    } else if (replyResult.exists(_.replyTextIsEmpty(text))) {
-      stats.counter("validate_text_length/reply_text_cannot_be_blank").incr()
-      Future.exception(TweetCreateFailure.State(TextCannotBeBlank))
-    } else if (visibleTextTooLong) {
-      // Final check that visible text does not exceed MaxVisibleWeightedEmojiLength
-      // characters.
-      // prevalidateTextLength() does some portion of validation as well, most notably
-      // weighted length on raw, unescaped text.
-      stats.counter("validate_text_length/text_too_long.visible_length_explicit").incr()
-      log.debug(
-        s"Explicit MaxVisibleWeightedLength visible length check failed. " +
-          s"visibleText: '${diffshow.show(visibleText)}' and " +
-          s"total text: '${diffshow.show(text)}'"
+    futuwe.when(texttoowong) {
+      v-vaw weightedwength = t-twittewtextwesuwt.weightedwength
+      w-wog.debug(
+        s"weighted wength t-too wong. weightedwength: $weightedwength" +
+          s", UwU tweet text: '${diffshow.show(text)}'"
       )
-      Future.exception(TweetCreateFailure.State(TextTooLong))
-    } else if (utf8LengthTooLong) {
-      stats.counter("validate_text_length/text_too_long.utf8_length").incr()
-      Future.exception(TweetCreateFailure.State(TextTooLong))
-    } else {
-      stats.stat("validate_text_length/utf8_length").add(utf8Length.toInt)
-      Future.Unit
+      s-stats.countew("check_weighted_wength/text_too_wong").incw()
+      f-futuwe.exception(tweetcweatefaiwuwe.state(texttoowong))
     }
   }
 
-  def getTextVisibility(
-    text: String,
-    replyResult: Option[ReplyBuilder.Result],
-    urlEntities: Seq[UrlEntity],
-    mediaEntities: Seq[MediaEntity],
-    attachmentUrl: Option[String]
-  ): TextVisibility = {
-    val totalTextLength = Offset.CodePoint.length(text)
-    val totalTextDisplayLength = Offset.DisplayUnit.length(text)
+  /**
+   * c-checks that the tweet text is nyeithew bwank nyow too wong. ^^;;
+   */
+  def vawidatetextwength(
+    t-text: stwing, òωó
+    visibwetext: s-stwing, -.-
+    wepwywesuwt: o-option[wepwybuiwdew.wesuwt], ( ͡o ω ͡o )
+    stats: statsweceivew
+  ): f-futuwe[unit] = {
+    vaw utf8wength = o-offset.utf8.wength(text)
+
+    d-def visibwetexttoowong =
+      o-offset.dispwayunit.wength(visibwetext) > o-offset.dispwayunit(maxvisibweweightedemojiwength)
+
+    d-def utf8wengthtoowong =
+      utf8wength > offset.utf8(maxutf8wength)
+
+    if (isbwank(text)) {
+      stats.countew("vawidate_text_wength/text_cannot_be_bwank").incw()
+      f-futuwe.exception(tweetcweatefaiwuwe.state(textcannotbebwank))
+    } ewse if (wepwywesuwt.exists(_.wepwytextisempty(text))) {
+      s-stats.countew("vawidate_text_wength/wepwy_text_cannot_be_bwank").incw()
+      futuwe.exception(tweetcweatefaiwuwe.state(textcannotbebwank))
+    } ewse if (visibwetexttoowong) {
+      // finaw check that v-visibwe text does nyot exceed maxvisibweweightedemojiwength
+      // chawactews. o.O
+      // pwevawidatetextwength() d-does some powtion o-of vawidation as weww, rawr most n-nyotabwy
+      // weighted wength on waw, (✿oωo) unescaped t-text. σωσ
+      s-stats.countew("vawidate_text_wength/text_too_wong.visibwe_wength_expwicit").incw()
+      wog.debug(
+        s"expwicit m-maxvisibweweightedwength visibwe wength c-check faiwed. " +
+          s"visibwetext: '${diffshow.show(visibwetext)}' and " +
+          s"totaw text: '${diffshow.show(text)}'"
+      )
+      f-futuwe.exception(tweetcweatefaiwuwe.state(texttoowong))
+    } ewse if (utf8wengthtoowong) {
+      stats.countew("vawidate_text_wength/text_too_wong.utf8_wength").incw()
+      f-futuwe.exception(tweetcweatefaiwuwe.state(texttoowong))
+    } e-ewse {
+      stats.stat("vawidate_text_wength/utf8_wength").add(utf8wength.toint)
+      f-futuwe.unit
+    }
+  }
+
+  def gettextvisibiwity(
+    text: s-stwing, (U ᵕ U❁)
+    wepwywesuwt: option[wepwybuiwdew.wesuwt], >_<
+    uwwentities: seq[uwwentity], ^^
+    mediaentities: seq[mediaentity], rawr
+    a-attachmentuww: o-option[stwing]
+  ): t-textvisibiwity = {
+    v-vaw totawtextwength = offset.codepoint.wength(text)
+    v-vaw totawtextdispwaywength = o-offset.dispwayunit.wength(text)
 
     /**
-     * visibleEnd for multiple scenarios:
+     * visibweend fow muwtipwe scenawios:
      *
-     *  normal tweet + media - fromIndex of mediaEntity (hydrated from last media permalink)
-     *  quote tweet + media - fromIndex of mediaEntity
-     *  replies + media - fromIndex of mediaEntity
-     *  normal quote tweet - total text length (visible text range will be None)
-     *  tweets with other attachments (DM deep links)
-     *  fromIndex of the last URL entity
+     *  n-nyowmaw tweet + media - fwomindex of mediaentity (hydwated f-fwom wast media pewmawink)
+     *  quote tweet + m-media - fwomindex o-of mediaentity
+     *  wepwies + m-media - fwomindex o-of mediaentity
+     *  n-nyowmaw quote tweet - totaw text wength (visibwe t-text wange wiww be nyone)
+     *  t-tweets with othew attachments (dm deep winks)
+     *  fwomindex o-of the wast uww e-entity
      */
-    val visibleEnd = mediaEntities.headOption
-      .map(_.fromIndex)
-      .orElse(attachmentUrl.flatMap(_ => urlEntities.lastOption).map(_.fromIndex))
-      .map(from => (from - 1).max(0)) // for whitespace, unless there is none
-      .map(Offset.CodePoint(_))
-      .getOrElse(totalTextLength)
+    v-vaw visibweend = m-mediaentities.headoption
+      .map(_.fwomindex)
+      .owewse(attachmentuww.fwatmap(_ => u-uwwentities.wastoption).map(_.fwomindex))
+      .map(fwom => (fwom - 1).max(0)) // fow whitespace, >_< u-unwess thewe is nyone
+      .map(offset.codepoint(_))
+      .getowewse(totawtextwength)
 
-    val visibleStart = replyResult match {
-      case Some(rr) => rr.visibleStart.min(visibleEnd)
-      case None => Offset.CodePoint(0)
+    vaw v-visibwestawt = wepwywesuwt match {
+      c-case some(ww) => ww.visibwestawt.min(visibweend)
+      case nyone => o-offset.codepoint(0)
     }
 
-    if (visibleStart.toInt == 0 && visibleEnd == totalTextLength) {
-      TextVisibility(
-        visibleTextRange = None,
-        totalTextDisplayLength = totalTextDisplayLength,
-        visibleText = text
+    if (visibwestawt.toint == 0 && v-visibweend == totawtextwength) {
+      t-textvisibiwity(
+        visibwetextwange = n-nyone, (⑅˘꒳˘)
+        totawtextdispwaywength = t-totawtextdispwaywength, >w<
+        visibwetext = t-text
       )
-    } else {
-      val charFrom = visibleStart.toCodeUnit(text)
-      val charTo = charFrom.offsetByCodePoints(text, visibleEnd - visibleStart)
-      val visibleText = text.substring(charFrom.toInt, charTo.toInt)
+    } e-ewse {
+      vaw chawfwom = v-visibwestawt.tocodeunit(text)
+      vaw chawto = chawfwom.offsetbycodepoints(text, visibweend - v-visibwestawt)
+      vaw visibwetext = t-text.substwing(chawfwom.toint, (///ˬ///✿) chawto.toint)
 
-      TextVisibility(
-        visibleTextRange = Some(TextRange(visibleStart.toInt, visibleEnd.toInt)),
-        totalTextDisplayLength = totalTextDisplayLength,
-        visibleText = visibleText
+      textvisibiwity(
+        visibwetextwange = s-some(textwange(visibwestawt.toint, ^•ﻌ•^ v-visibweend.toint)), (✿oωo)
+        t-totawtextdispwaywength = totawtextdispwaywength, ʘwʘ
+        v-visibwetext = v-visibwetext
       )
     }
   }
 
-  def isValidHashtag(entity: HashtagEntity): Boolean =
-    TweetText.codePointLength(entity.text) <= TweetText.MaxHashtagLength
+  def isvawidhashtag(entity: h-hashtagentity): boowean =
+    t-tweettext.codepointwength(entity.text) <= tweettext.maxhashtagwength
 
   /**
-   * Validates that the number of various entities are within the limits, and the
-   * length of hashtags are with the limit.
+   * v-vawidates t-that the numbew of vawious entities awe within the wimits, >w< and the
+   * wength o-of hashtags a-awe with the wimit. :3
    */
-  def validateEntities(tweet: Tweet): Future[Unit] =
-    if (getMentions(tweet).length > TweetText.MaxMentions)
-      Future.exception(TweetCreateFailure.State(MentionLimitExceeded))
-    else if (getUrls(tweet).length > TweetText.MaxUrls)
-      Future.exception(TweetCreateFailure.State(UrlLimitExceeded))
-    else if (getHashtags(tweet).length > TweetText.MaxHashtags)
-      Future.exception(TweetCreateFailure.State(HashtagLimitExceeded))
-    else if (getCashtags(tweet).length > TweetText.MaxCashtags)
-      Future.exception(TweetCreateFailure.State(CashtagLimitExceeded))
-    else if (getHashtags(tweet).exists(e => !isValidHashtag(e)))
-      Future.exception(TweetCreateFailure.State(HashtagLengthLimitExceeded))
-    else
-      Future.Unit
+  def vawidateentities(tweet: tweet): f-futuwe[unit] =
+    if (getmentions(tweet).wength > t-tweettext.maxmentions)
+      f-futuwe.exception(tweetcweatefaiwuwe.state(mentionwimitexceeded))
+    ewse if (getuwws(tweet).wength > tweettext.maxuwws)
+      futuwe.exception(tweetcweatefaiwuwe.state(uwwwimitexceeded))
+    ewse if (gethashtags(tweet).wength > tweettext.maxhashtags)
+      f-futuwe.exception(tweetcweatefaiwuwe.state(hashtagwimitexceeded))
+    ewse if (getcashtags(tweet).wength > tweettext.maxcashtags)
+      f-futuwe.exception(tweetcweatefaiwuwe.state(cashtagwimitexceeded))
+    ewse i-if (gethashtags(tweet).exists(e => !isvawidhashtag(e)))
+      f-futuwe.exception(tweetcweatefaiwuwe.state(hashtagwengthwimitexceeded))
+    ewse
+      f-futuwe.unit
 
   /**
-   * Update the user to what it should look like after the tweet is created
+   * update t-the usew to n-nyani it shouwd w-wook wike aftew t-the tweet is cweated
    */
-  def updateUserCounts(hasMedia: Tweet => Boolean): (User, Tweet) => Future[User] =
-    (user: User, tweet: Tweet) => {
-      val countAsUserTweet = isUserTweet(tweet)
-      val tweetsDelta = if (countAsUserTweet) 1 else 0
-      val mediaTweetsDelta = if (countAsUserTweet && hasMedia(tweet)) 1 else 0
+  def u-updateusewcounts(hasmedia: tweet => boowean): (usew, (ˆ ﻌ ˆ)♡ tweet) => futuwe[usew] =
+    (usew: usew, -.- t-tweet: tweet) => {
+      v-vaw countasusewtweet = i-isusewtweet(tweet)
+      v-vaw tweetsdewta = i-if (countasusewtweet) 1 e-ewse 0
+      vaw mediatweetsdewta = if (countasusewtweet && hasmedia(tweet)) 1 ewse 0
 
-      Future.value(
-        user.copy(
-          counts = user.counts.map { counts =>
-            counts.copy(
-              tweets = counts.tweets + tweetsDelta,
-              mediaTweets = counts.mediaTweets.map(_ + mediaTweetsDelta)
+      f-futuwe.vawue(
+        u-usew.copy(
+          counts = usew.counts.map { counts =>
+            c-counts.copy(
+              t-tweets = c-counts.tweets + tweetsdewta, rawr
+              mediatweets = c-counts.mediatweets.map(_ + mediatweetsdewta)
             )
           }
         )
       )
     }
 
-  def validateAdditionalFields[R](implicit view: RequestView[R]): FutureEffect[R] =
-    FutureEffect[R] { req =>
+  def v-vawidateadditionawfiewds[w](impwicit v-view: wequestview[w]): futuweeffect[w] =
+    futuweeffect[w] { w-weq =>
       view
-        .additionalFields(req)
+        .additionawfiewds(weq)
         .map(tweet =>
-          unsettableAdditionalFieldIds(tweet) ++ rejectedAdditionalFieldIds(tweet)) match {
-        case Some(unsettableFieldIds) if unsettableFieldIds.nonEmpty =>
-          Future.exception(
-            TweetCreateFailure.State(
-              InvalidAdditionalField,
-              Some(unsettableAdditionalFieldIdsErrorMessage(unsettableFieldIds))
+          u-unsettabweadditionawfiewdids(tweet) ++ w-wejectedadditionawfiewdids(tweet)) match {
+        c-case some(unsettabwefiewdids) i-if u-unsettabwefiewdids.nonempty =>
+          f-futuwe.exception(
+            t-tweetcweatefaiwuwe.state(
+              i-invawidadditionawfiewd, rawr x3
+              some(unsettabweadditionawfiewdidsewwowmessage(unsettabwefiewdids))
             )
           )
-        case _ => Future.Unit
+        c-case _ => f-futuwe.unit
       }
     }
 
-  def validateTweetMediaTags(
-    stats: StatsReceiver,
-    getUserMediaTagRateLimit: RateLimitChecker.GetRemaining,
-    userRepo: UserRepository.Optional
-  ): (Tweet, Boolean) => Future[Mutation[Tweet]] = {
-    val userRepoWithStats: UserRepository.Optional =
-      (userKey, queryOptions) =>
-        userRepo(userKey, queryOptions).liftToTry.map {
-          case Return(res @ Some(_)) =>
-            stats.counter("found").incr()
-            res
-          case Return(None) =>
-            stats.counter("not_found").incr()
-            None
-          case Throw(_) =>
-            stats.counter("failed").incr()
-            None
+  def vawidatetweetmediatags(
+    s-stats: statsweceivew, (U ﹏ U)
+    getusewmediatagwatewimit: watewimitcheckew.getwemaining, (ˆ ﻌ ˆ)♡
+    u-usewwepo: usewwepositowy.optionaw
+  ): (tweet, :3 b-boowean) => futuwe[mutation[tweet]] = {
+    v-vaw usewwepowithstats: u-usewwepositowy.optionaw =
+      (usewkey, òωó quewyoptions) =>
+        usewwepo(usewkey, /(^•ω•^) q-quewyoptions).wifttotwy.map {
+          case wetuwn(wes @ some(_)) =>
+            s-stats.countew("found").incw()
+            w-wes
+          case wetuwn(none) =>
+            stats.countew("not_found").incw()
+            n-nyone
+          c-case thwow(_) =>
+            stats.countew("faiwed").incw()
+            n-nyone
         }
 
-    (tweet: Tweet, dark: Boolean) => {
-      val mediaTags = getMediaTagMap(tweet)
+    (tweet: tweet, >w< dawk: boowean) => {
+      vaw m-mediatags = getmediatagmap(tweet)
 
-      if (mediaTags.isEmpty) {
-        MutationUnitFuture
-      } else {
-        getUserMediaTagRateLimit((getUserId(tweet), dark)).flatMap { remainingMediaTagCount =>
-          val maxMediaTagCount = math.min(remainingMediaTagCount, MaxMediaTagCount)
+      i-if (mediatags.isempty) {
+        mutationunitfutuwe
+      } e-ewse {
+        g-getusewmediatagwatewimit((getusewid(tweet), nyaa~~ dawk)).fwatmap { wemainingmediatagcount =>
+          v-vaw maxmediatagcount = math.min(wemainingmediatagcount, mya m-maxmediatagcount)
 
-          val taggedUserIds =
-            mediaTags.values.flatten.toSeq.collect {
-              case MediaTag(MediaTagType.User, Some(userId), _, _) => userId
+          v-vaw t-taggedusewids =
+            mediatags.vawues.fwatten.toseq.cowwect {
+              case mediatag(mediatagtype.usew, mya some(usewid), ʘwʘ _, _) => usewid
             }.distinct
 
-          val droppedTagCount = taggedUserIds.size - maxMediaTagCount
-          if (droppedTagCount > 0) stats.counter("over_limit_tags").incr(droppedTagCount)
+          vaw dwoppedtagcount = taggedusewids.size - m-maxmediatagcount
+          i-if (dwoppedtagcount > 0) s-stats.countew("ovew_wimit_tags").incw(dwoppedtagcount)
 
-          val userQueryOpts =
-            UserQueryOptions(
-              queryFields = Set(UserField.MediaView),
-              visibility = UserVisibility.MediaTaggable,
-              forUserId = Some(getUserId(tweet))
+          v-vaw usewquewyopts =
+            u-usewquewyoptions(
+              q-quewyfiewds = set(usewfiewd.mediaview), rawr
+              v-visibiwity = u-usewvisibiwity.mediataggabwe, (˘ω˘)
+              fowusewid = s-some(getusewid(tweet))
             )
 
-          val keys = taggedUserIds.take(maxMediaTagCount).map(UserKey.byId)
-          val keyOpts = keys.map((_, userQueryOpts))
+          v-vaw keys = taggedusewids.take(maxmediatagcount).map(usewkey.byid)
+          vaw keyopts = keys.map((_, u-usewquewyopts))
 
-          Stitch.run {
-            Stitch
-              .traverse(keyOpts)(userRepoWithStats.tupled)
-              .map(_.flatten)
-              .map { users =>
-                val userMap = users.map(u => u.id -> u).toMap
-                val mediaTagsMutation =
-                  Mutation[Seq[MediaTag]] { mediaTags =>
-                    val validMediaTags =
-                      mediaTags.filter {
-                        case MediaTag(MediaTagType.User, Some(userId), _, _) =>
-                          userMap.get(userId).exists(_.mediaView.exists(_.canMediaTag))
-                        case _ => false
+          stitch.wun {
+            stitch
+              .twavewse(keyopts)(usewwepowithstats.tupwed)
+              .map(_.fwatten)
+              .map { u-usews =>
+                vaw usewmap = u-usews.map(u => u-u.id -> u).tomap
+                vaw mediatagsmutation =
+                  m-mutation[seq[mediatag]] { m-mediatags =>
+                    v-vaw vawidmediatags =
+                      m-mediatags.fiwtew {
+                        c-case mediatag(mediatagtype.usew, /(^•ω•^) some(usewid), (˘ω˘) _, _) =>
+                          u-usewmap.get(usewid).exists(_.mediaview.exists(_.canmediatag))
+                        case _ => f-fawse
                       }
-                    val invalidCount = mediaTags.size - validMediaTags.size
+                    v-vaw invawidcount = m-mediatags.size - vawidmediatags.size
 
-                    if (invalidCount != 0) {
-                      stats.counter("invalid").incr(invalidCount)
-                      Some(validMediaTags)
-                    } else {
-                      None
+                    i-if (invawidcount != 0) {
+                      stats.countew("invawid").incw(invawidcount)
+                      some(vawidmediatags)
+                    } e-ewse {
+                      nyone
                     }
                   }
-                TweetLenses.mediaTagMap.mutation(mediaTagsMutation.liftMapValues)
+                tweetwenses.mediatagmap.mutation(mediatagsmutation.wiftmapvawues)
               }
           }
         }
@@ -542,637 +542,637 @@ object TweetBuilder {
     }
   }
 
-  def validateCommunityMembership(
-    communityMembershipRepository: StratoCommunityMembershipRepository.Type,
-    communityAccessRepository: StratoCommunityAccessRepository.Type,
-    communities: Option[Communities]
-  ): Future[Unit] =
+  def vawidatecommunitymembewship(
+    communitymembewshipwepositowy: stwatocommunitymembewshipwepositowy.type, (///ˬ///✿)
+    communityaccesswepositowy: stwatocommunityaccesswepositowy.type, (˘ω˘)
+    c-communities: option[communities]
+  ): futuwe[unit] =
     communities match {
-      case Some(Communities(Seq(communityId))) =>
-        Stitch
-          .run {
-            communityMembershipRepository(communityId).flatMap {
-              case true => Stitch.value(None)
-              case false =>
-                communityAccessRepository(communityId).map {
-                  case Some(CommunityAccess.Public) | Some(CommunityAccess.Closed) =>
-                    Some(TweetCreateState.CommunityUserNotAuthorized)
-                  case Some(CommunityAccess.Private) | None =>
-                    Some(TweetCreateState.CommunityNotFound)
+      case some(communities(seq(communityid))) =>
+        stitch
+          .wun {
+            communitymembewshipwepositowy(communityid).fwatmap {
+              case t-twue => stitch.vawue(none)
+              case fawse =>
+                c-communityaccesswepositowy(communityid).map {
+                  case some(communityaccess.pubwic) | s-some(communityaccess.cwosed) =>
+                    some(tweetcweatestate.communityusewnotauthowized)
+                  case some(communityaccess.pwivate) | n-nyone =>
+                    some(tweetcweatestate.communitynotfound)
                 }
             }
-          }.flatMap {
-            case None =>
-              Future.Done
-            case Some(tweetCreateState) =>
-              Future.exception(TweetCreateFailure.State(tweetCreateState))
+          }.fwatmap {
+            c-case nyone =>
+              futuwe.done
+            case some(tweetcweatestate) =>
+              f-futuwe.exception(tweetcweatefaiwuwe.state(tweetcweatestate))
           }
-      case Some(Communities(communities)) if communities.length > 1 =>
-        // Not allowed to specify more than one community ID.
-        Future.exception(TweetCreateFailure.State(TweetCreateState.InvalidAdditionalField))
-      case _ => Future.Done
+      c-case some(communities(communities)) if communities.wength > 1 =>
+        // nyot awwowed to specify m-mowe than one community id. -.-
+        futuwe.exception(tweetcweatefaiwuwe.state(tweetcweatestate.invawidadditionawfiewd))
+      case _ => futuwe.done
     }
 
-  private[this] val CardUriSchemeRegex = "(?i)^(?:card|tombstone):".r
+  p-pwivate[this] vaw cawduwischemewegex = "(?i)^(?:cawd|tombstone):".w
 
   /**
-   * Is the given String a URI that is allowed as a card reference
-   * without a matching URL in the text?
+   * i-is the given stwing a uwi that i-is awwowed as a cawd wefewence
+   * w-without a m-matching uww in the text?
    */
-  def hasCardsUriScheme(uri: String): Boolean =
-    CardUriSchemeRegex.findPrefixMatchOf(uri).isDefined
+  def hascawdsuwischeme(uwi: s-stwing): boowean =
+    cawduwischemewegex.findpwefixmatchof(uwi).isdefined
 
-  val InvalidAdditionalFieldEmptyUrlEntities: TweetCreateFailure.State =
-    TweetCreateFailure.State(
-      TweetCreateState.InvalidAdditionalField,
-      Some("url entities are empty")
+  v-vaw invawidadditionawfiewdemptyuwwentities: tweetcweatefaiwuwe.state =
+    tweetcweatefaiwuwe.state(
+      tweetcweatestate.invawidadditionawfiewd, -.-
+      s-some("uww e-entities awe empty")
     )
 
-  val InvalidAdditionalFieldNonMatchingUrlAndShortUrl: TweetCreateFailure.State =
-    TweetCreateFailure.State(
-      TweetCreateState.InvalidAdditionalField,
-      Some("non-matching url and short url")
+  vaw i-invawidadditionawfiewdnonmatchinguwwandshowtuww: t-tweetcweatefaiwuwe.state =
+    tweetcweatefaiwuwe.state(
+      t-tweetcweatestate.invawidadditionawfiewd, ^^
+      some("non-matching uww and showt uww")
     )
 
-  val InvalidAdditionalFieldInvalidUri: TweetCreateFailure.State =
-    TweetCreateFailure.State(
-      TweetCreateState.InvalidAdditionalField,
-      Some("invalid URI")
+  vaw invawidadditionawfiewdinvawiduwi: t-tweetcweatefaiwuwe.state =
+    t-tweetcweatefaiwuwe.state(
+      tweetcweatestate.invawidadditionawfiewd, (ˆ ﻌ ˆ)♡
+      s-some("invawid u-uwi")
     )
 
-  val InvalidAdditionalFieldInvalidCardUri: TweetCreateFailure.State =
-    TweetCreateFailure.State(
-      TweetCreateState.InvalidAdditionalField,
-      Some("invalid card URI")
+  vaw invawidadditionawfiewdinvawidcawduwi: t-tweetcweatefaiwuwe.state =
+    tweetcweatefaiwuwe.state(
+      tweetcweatestate.invawidadditionawfiewd, UwU
+      s-some("invawid cawd uwi")
     )
 
-  type CardReferenceBuilder =
-    (Tweet, UrlShortener.Context) => Future[Mutation[Tweet]]
+  type c-cawdwefewencebuiwdew =
+    (tweet, 🥺 u-uwwshowtenew.context) => futuwe[mutation[tweet]]
 
-  def cardReferenceBuilder(
-    cardReferenceValidator: CardReferenceValidationHandler.Type,
-    urlShortener: UrlShortener.Type
-  ): CardReferenceBuilder =
-    (tweet, urlShortenerCtx) => {
-      getCardReference(tweet) match {
-        case Some(CardReference(uri)) =>
-          for {
-            cardUri <-
-              if (hasCardsUriScheme(uri)) {
-                // This is an explicit card references that does not
-                // need a corresponding URL in the text.
-                Future.value(uri)
-              } else if (UrlPattern.matcher(uri).matches) {
-                // The card reference is being used to specify which URL
-                // card to show. We need to verify that the URL is
-                // actually in the tweet text, or it can be effectively
-                // used to bypass the tweet length limit.
-                val urlEntities = getUrls(tweet)
+  def cawdwefewencebuiwdew(
+    c-cawdwefewencevawidatow: cawdwefewencevawidationhandwew.type, 🥺
+    uwwshowtenew: uwwshowtenew.type
+  ): cawdwefewencebuiwdew =
+    (tweet, 🥺 uwwshowtenewctx) => {
+      getcawdwefewence(tweet) match {
+        case some(cawdwefewence(uwi)) =>
+          f-fow {
+            c-cawduwi <-
+              if (hascawdsuwischeme(uwi)) {
+                // t-this is a-an expwicit cawd wefewences that d-does nyot
+                // nyeed a cowwesponding uww in the text. 🥺
+                futuwe.vawue(uwi)
+              } ewse if (uwwpattewn.matchew(uwi).matches) {
+                // t-the cawd wefewence is being used to specify which uww
+                // cawd to show. :3 we n-nyeed to vewify t-that the uww is
+                // a-actuawwy in the tweet text, (˘ω˘) ow it can be effectivewy
+                // used t-to bypass the t-tweet wength wimit. ^^;;
+                v-vaw uwwentities = getuwws(tweet)
 
-                if (urlEntities.isEmpty) {
-                  // Fail fast if there can't possibly be a matching URL entity
-                  Future.exception(InvalidAdditionalFieldEmptyUrlEntities)
-                } else {
-                  // Look for the URL in the expanded URL entities. If
-                  // it is present, then map it to the t.co shortened
-                  // version of the URL.
-                  urlEntities
-                    .collectFirst {
-                      case urlEntity if urlEntity.expanded.exists(_ == uri) =>
-                        Future.value(urlEntity.url)
+                i-if (uwwentities.isempty) {
+                  // faiw fast i-if thewe can't possibwy be a matching u-uww entity
+                  futuwe.exception(invawidadditionawfiewdemptyuwwentities)
+                } e-ewse {
+                  // wook fow the uww in the e-expanded uww entities. (ꈍᴗꈍ) if
+                  // i-it is pwesent, ʘwʘ t-then map it to the t.co showtened
+                  // v-vewsion of t-the uww. :3
+                  uwwentities
+                    .cowwectfiwst {
+                      c-case uwwentity if uwwentity.expanded.exists(_ == u-uwi) =>
+                        futuwe.vawue(uwwentity.uww)
                     }
-                    .getOrElse {
-                      // The URL may have been altered when it was
-                      // returned from Talon, such as expanding a pasted
-                      // t.co link. In this case, we t.co-ize the link and
-                      // make sure that the corresponding t.co is present
-                      // as a URL entity.
-                      urlShortener((uri, urlShortenerCtx)).flatMap { shortened =>
-                        if (urlEntities.exists(_.url == shortened.shortUrl)) {
-                          Future.value(shortened.shortUrl)
-                        } else {
-                          Future.exception(InvalidAdditionalFieldNonMatchingUrlAndShortUrl)
+                    .getowewse {
+                      // t-the uww may have b-been awtewed when it was
+                      // wetuwned fwom t-tawon, XD such as expanding a pasted
+                      // t.co wink. UwU in this case, rawr x3 we t.co-ize the wink and
+                      // make suwe that the cowwesponding t-t.co is pwesent
+                      // as a uww entity. ( ͡o ω ͡o )
+                      u-uwwshowtenew((uwi, :3 uwwshowtenewctx)).fwatmap { s-showtened =>
+                        if (uwwentities.exists(_.uww == showtened.showtuww)) {
+                          f-futuwe.vawue(showtened.showtuww)
+                        } ewse {
+                          futuwe.exception(invawidadditionawfiewdnonmatchinguwwandshowtuww)
                         }
                       }
                     }
                 }
-              } else {
-                Future.exception(InvalidAdditionalFieldInvalidUri)
+              } e-ewse {
+                futuwe.exception(invawidadditionawfiewdinvawiduwi)
               }
 
-            validatedCardUri <- cardReferenceValidator((getUserId(tweet), cardUri)).rescue {
-              case CardReferenceValidationFailedException =>
-                Future.exception(InvalidAdditionalFieldInvalidCardUri)
+            vawidatedcawduwi <- c-cawdwefewencevawidatow((getusewid(tweet), rawr cawduwi)).wescue {
+              case c-cawdwefewencevawidationfaiwedexception =>
+                futuwe.exception(invawidadditionawfiewdinvawidcawduwi)
             }
-          } yield {
-            TweetLenses.cardReference.mutation(
-              Mutation[CardReference] { cardReference =>
-                Some(cardReference.copy(cardUri = validatedCardUri))
-              }.checkEq.liftOption
+          } yiewd {
+            tweetwenses.cawdwefewence.mutation(
+              m-mutation[cawdwefewence] { c-cawdwefewence =>
+                some(cawdwefewence.copy(cawduwi = vawidatedcawduwi))
+              }.checkeq.wiftoption
             )
           }
 
-        case None =>
-          MutationUnitFuture
+        c-case nyone =>
+          mutationunitfutuwe
       }
     }
 
-  def filterInvalidData(
-    validateTweetMediaTags: (Tweet, Boolean) => Future[Mutation[Tweet]],
-    cardReferenceBuilder: CardReferenceBuilder
-  ): (Tweet, PostTweetRequest, UrlShortener.Context) => Future[Tweet] =
-    (tweet: Tweet, request: PostTweetRequest, urlShortenerCtx: UrlShortener.Context) => {
-      Future
+  d-def fiwtewinvawiddata(
+    vawidatetweetmediatags: (tweet, ^•ﻌ•^ b-boowean) => f-futuwe[mutation[tweet]], 🥺
+    cawdwefewencebuiwdew: cawdwefewencebuiwdew
+  ): (tweet, (⑅˘꒳˘) posttweetwequest, :3 u-uwwshowtenew.context) => futuwe[tweet] =
+    (tweet: tweet, (///ˬ///✿) wequest: posttweetwequest, 😳😳😳 u-uwwshowtenewctx: uwwshowtenew.context) => {
+      futuwe
         .join(
-          validateTweetMediaTags(tweet, request.dark),
-          cardReferenceBuilder(tweet, urlShortenerCtx)
+          vawidatetweetmediatags(tweet, 😳😳😳 w-wequest.dawk), 😳😳😳
+          c-cawdwefewencebuiwdew(tweet, nyaa~~ u-uwwshowtenewctx)
         )
         .map {
-          case (mediaMutation, cardRefMutation) =>
-            mediaMutation.also(cardRefMutation).endo(tweet)
+          case (mediamutation, cawdwefmutation) =>
+            mediamutation.awso(cawdwefmutation).endo(tweet)
         }
     }
 
-  def apply(
-    stats: StatsReceiver,
-    validateRequest: PostTweetRequest => Future[Unit],
-    validateEdit: EditValidator.Type,
-    validateUser: User => Future[Unit] = TweetBuilder.validateUser,
-    validateUpdateRateLimit: RateLimitChecker.Validate,
-    tweetIdGenerator: TweetIdGenerator,
-    userRepo: UserRepository.Type,
-    deviceSourceRepo: DeviceSourceRepository.Type,
-    communityMembershipRepo: StratoCommunityMembershipRepository.Type,
-    communityAccessRepo: StratoCommunityAccessRepository.Type,
-    urlShortener: UrlShortener.Type,
-    urlEntityBuilder: UrlEntityBuilder.Type,
-    geoBuilder: GeoBuilder.Type,
-    replyBuilder: ReplyBuilder.Type,
-    mediaBuilder: MediaBuilder.Type,
-    attachmentBuilder: AttachmentBuilder.Type,
-    duplicateTweetFinder: DuplicateTweetFinder.Type,
-    spamChecker: Spam.Checker[TweetSpamRequest],
-    filterInvalidData: (Tweet, PostTweetRequest, UrlShortener.Context) => Future[Tweet],
-    updateUserCounts: (User, Tweet) => Future[User],
-    validateConversationControl: ConversationControlBuilder.Validate.Type,
-    conversationControlBuilder: ConversationControlBuilder.Type,
-    validateTweetWrite: TweetWriteValidator.Type,
-    nudgeBuilder: NudgeBuilder.Type,
-    communitiesValidator: CommunitiesValidator.Type,
-    collabControlBuilder: CollabControlBuilder.Type,
-    editControlBuilder: EditControlBuilder.Type,
-    featureSwitches: FeatureSwitches
-  ): TweetBuilder.Type = {
-    val entityExtractor = EntityExtractor.mutationWithoutUrls.endo
-    val getUser = userLookup(userRepo)
-    val getDeviceSource = deviceSourceLookup(deviceSourceRepo)
+  d-def appwy(
+    stats: statsweceivew, UwU
+    v-vawidatewequest: posttweetwequest => f-futuwe[unit], òωó
+    v-vawidateedit: editvawidatow.type, òωó
+    vawidateusew: usew => futuwe[unit] = tweetbuiwdew.vawidateusew, UwU
+    vawidateupdatewatewimit: w-watewimitcheckew.vawidate, (///ˬ///✿)
+    t-tweetidgenewatow: tweetidgenewatow, ( ͡o ω ͡o )
+    usewwepo: usewwepositowy.type, rawr
+    d-devicesouwcewepo: devicesouwcewepositowy.type, :3
+    communitymembewshipwepo: s-stwatocommunitymembewshipwepositowy.type, >w<
+    c-communityaccesswepo: s-stwatocommunityaccesswepositowy.type, σωσ
+    uwwshowtenew: u-uwwshowtenew.type,
+    u-uwwentitybuiwdew: u-uwwentitybuiwdew.type, σωσ
+    geobuiwdew: geobuiwdew.type, >_<
+    wepwybuiwdew: w-wepwybuiwdew.type, -.-
+    m-mediabuiwdew: m-mediabuiwdew.type, 😳😳😳
+    a-attachmentbuiwdew: attachmentbuiwdew.type, :3
+    d-dupwicatetweetfindew: d-dupwicatetweetfindew.type, mya
+    spamcheckew: spam.checkew[tweetspamwequest], (✿oωo)
+    f-fiwtewinvawiddata: (tweet, 😳😳😳 p-posttweetwequest, o.O u-uwwshowtenew.context) => futuwe[tweet], (ꈍᴗꈍ)
+    updateusewcounts: (usew, (ˆ ﻌ ˆ)♡ t-tweet) => futuwe[usew], -.-
+    vawidateconvewsationcontwow: convewsationcontwowbuiwdew.vawidate.type, mya
+    convewsationcontwowbuiwdew: c-convewsationcontwowbuiwdew.type, :3
+    vawidatetweetwwite: tweetwwitevawidatow.type, σωσ
+    nyudgebuiwdew: n-nyudgebuiwdew.type, 😳😳😳
+    c-communitiesvawidatow: communitiesvawidatow.type, -.-
+    cowwabcontwowbuiwdew: cowwabcontwowbuiwdew.type, 😳😳😳
+    editcontwowbuiwdew: e-editcontwowbuiwdew.type, rawr x3
+    featuweswitches: f-featuweswitches
+  ): tweetbuiwdew.type = {
+    vaw e-entityextwactow = e-entityextwactow.mutationwithoutuwws.endo
+    vaw getusew = usewwookup(usewwepo)
+    vaw getdevicesouwce = devicesouwcewookup(devicesouwcewepo)
 
-    // create a tco of the permalink for given a tweetId
-    val permalinkShortener = (tweetId: TweetId, ctx: UrlShortener.Context) =>
-      urlShortener((s"https://twitter.com/i/web/status/$tweetId", ctx)).rescue {
-        // propagate OverCapacity
-        case e: OverCapacity => Future.exception(e)
-        // convert any other failure into UrlShorteningFailure
-        case e => Future.exception(UrlShorteningFailure(e))
+    // c-cweate a-a tco of the pewmawink fow given a tweetid
+    v-vaw pewmawinkshowtenew = (tweetid: t-tweetid, (///ˬ///✿) ctx: uwwshowtenew.context) =>
+      uwwshowtenew((s"https://twittew.com/i/web/status/$tweetid", >w< c-ctx)).wescue {
+        // pwopagate ovewcapacity
+        case e: ovewcapacity => futuwe.exception(e)
+        // convewt any othew f-faiwuwe into uwwshowteningfaiwuwe
+        case e => futuwe.exception(uwwshowteningfaiwuwe(e))
       }
 
-    def extractGeoSearchRequestId(tweetGeoOpt: Option[TweetCreateGeo]): Option[GeoSearchRequestId] =
-      for {
-        tweetGeo <- tweetGeoOpt
-        geoSearchRequestId <- tweetGeo.geoSearchRequestId
-      } yield GeoSearchRequestId(geoSearchRequestId.id)
+    d-def extwactgeoseawchwequestid(tweetgeoopt: o-option[tweetcweategeo]): option[geoseawchwequestid] =
+      f-fow {
+        tweetgeo <- tweetgeoopt
+        g-geoseawchwequestid <- t-tweetgeo.geoseawchwequestid
+      } y-yiewd g-geoseawchwequestid(geoseawchwequestid.id)
 
-    def featureSwitchResults(user: User, stats: StatsReceiver): Option[FeatureSwitchResults] =
-      TwitterContext()
-        .flatMap { viewer =>
-          UserViewerRecipient(user, viewer, stats)
-        }.map { recipient =>
-          featureSwitches.matchRecipient(recipient)
+    def f-featuweswitchwesuwts(usew: usew, o.O stats: statsweceivew): o-option[featuweswitchwesuwts] =
+      t-twittewcontext()
+        .fwatmap { v-viewew =>
+          usewviewewwecipient(usew, (˘ω˘) v-viewew, rawr stats)
+        }.map { w-wecipient =>
+          f-featuweswitches.matchwecipient(wecipient)
         }
 
-    FutureArrow { request =>
-      for {
-        () <- validateRequest(request)
+    futuweawwow { wequest =>
+      f-fow {
+        () <- v-vawidatewequest(wequest)
 
-        (tweetId, user, devsrc) <- Future.join(
-          tweetIdGenerator().rescue { case t => Future.exception(SnowflakeFailure(t)) },
-          Stitch.run(getUser(request.userId)),
-          Stitch.run(getDeviceSource(request.createdVia))
+        (tweetid, mya u-usew, devswc) <- f-futuwe.join(
+          t-tweetidgenewatow().wescue { case t => futuwe.exception(snowfwakefaiwuwe(t)) }, òωó
+          s-stitch.wun(getusew(wequest.usewid)),
+          stitch.wun(getdevicesouwce(wequest.cweatedvia))
         )
 
-        () <- validateUser(user)
-        () <- validateUpdateRateLimit((user.id, request.dark))
+        () <- v-vawidateusew(usew)
+        () <- v-vawidateupdatewatewimit((usew.id, nyaa~~ wequest.dawk))
 
-        // Feature Switch results are calculated once and shared between multiple builders
-        matchedResults = featureSwitchResults(user, stats)
+        // featuwe switch wesuwts awe c-cawcuwated once a-and shawed between muwtipwe buiwdews
+        matchedwesuwts = f-featuweswitchwesuwts(usew, òωó s-stats)
 
-        () <- validateConversationControl(
-          ConversationControlBuilder.Validate.Request(
-            matchedResults = matchedResults,
-            conversationControl = request.conversationControl,
-            inReplyToTweetId = request.inReplyToTweetId
+        () <- vawidateconvewsationcontwow(
+          convewsationcontwowbuiwdew.vawidate.wequest(
+            m-matchedwesuwts = m-matchedwesuwts, mya
+            c-convewsationcontwow = w-wequest.convewsationcontwow, ^^
+            i-inwepwytotweetid = w-wequest.inwepwytotweetid
           )
         )
 
-        // strip illegal chars, normalize newlines, collapse blank lines, etc.
-        text = preprocessText(request.text)
+        // stwip iwwegaw chaws, ^•ﻌ•^ n-nyowmawize nyewwines, -.- cowwapse bwank wines, etc. UwU
+        text = pwepwocesstext(wequest.text)
 
-        () <- prevalidateTextLength(text, stats)
+        () <- p-pwevawidatetextwength(text, (˘ω˘) s-stats)
 
-        attachmentResult <- attachmentBuilder(
-          AttachmentBuilderRequest(
-            tweetId = tweetId,
-            user = user,
-            mediaUploadIds = request.mediaUploadIds,
-            cardReference = request.additionalFields.flatMap(_.cardReference),
-            attachmentUrl = request.attachmentUrl,
-            remoteHost = request.remoteHost,
-            darkTraffic = request.dark,
-            deviceSource = devsrc
+        attachmentwesuwt <- attachmentbuiwdew(
+          attachmentbuiwdewwequest(
+            tweetid = t-tweetid, UwU
+            u-usew = usew, rawr
+            mediaupwoadids = w-wequest.mediaupwoadids, :3
+            cawdwefewence = w-wequest.additionawfiewds.fwatmap(_.cawdwefewence), nyaa~~
+            a-attachmentuww = w-wequest.attachmentuww, rawr
+            wemotehost = wequest.wemotehost, (ˆ ﻌ ˆ)♡
+            dawktwaffic = w-wequest.dawk, (ꈍᴗꈍ)
+            devicesouwce = d-devswc
           )
         )
 
-        // updated text with appended attachment url, if any.
-        text <- Future.value(
-          attachmentResult.attachmentUrl match {
-            case None => text
-            case Some(url) => s"$text $url"
+        // updated t-text with appended attachment uww, if any. (˘ω˘)
+        t-text <- futuwe.vawue(
+          attachmentwesuwt.attachmentuww m-match {
+            case nyone => text
+            c-case some(uww) => s"$text $uww"
           }
         )
 
-        spamResult <- spamChecker(
-          TweetSpamRequest(
-            tweetId = tweetId,
-            userId = request.userId,
-            text = text,
-            mediaTags = request.additionalFields.flatMap(_.mediaTags),
-            safetyMetaData = request.safetyMetaData,
-            inReplyToTweetId = request.inReplyToTweetId,
-            quotedTweetId = attachmentResult.quotedTweet.map(_.tweetId),
-            quotedTweetUserId = attachmentResult.quotedTweet.map(_.userId)
+        s-spamwesuwt <- spamcheckew(
+          tweetspamwequest(
+            tweetid = tweetid, (U ﹏ U)
+            usewid = wequest.usewid, >w<
+            t-text = t-text, UwU
+            m-mediatags = w-wequest.additionawfiewds.fwatmap(_.mediatags), (ˆ ﻌ ˆ)♡
+            safetymetadata = wequest.safetymetadata, nyaa~~
+            inwepwytotweetid = w-wequest.inwepwytotweetid, 🥺
+            quotedtweetid = attachmentwesuwt.quotedtweet.map(_.tweetid), >_<
+            quotedtweetusewid = a-attachmentwesuwt.quotedtweet.map(_.usewid)
           )
         )
 
-        safety = user.safety.get
-        createdAt = SnowflakeId(tweetId).time
+        s-safety = usew.safety.get
+        c-cweatedat = s-snowfwakeid(tweetid).time
 
-        urlShortenerCtx = UrlShortener.Context(
-          tweetId = tweetId,
-          userId = user.id,
-          createdAt = createdAt,
-          userProtected = safety.isProtected,
-          clientAppId = devsrc.clientAppId,
-          remoteHost = request.remoteHost,
-          dark = request.dark
+        uwwshowtenewctx = uwwshowtenew.context(
+          tweetid = tweetid, òωó
+          usewid = usew.id, ʘwʘ
+          c-cweatedat = c-cweatedat, mya
+          usewpwotected = safety.ispwotected, σωσ
+          cwientappid = devswc.cwientappid, OwO
+          wemotehost = w-wequest.wemotehost, (✿oωo)
+          dawk = wequest.dawk
         )
 
-        replyRequest = ReplyBuilder.Request(
-          authorId = request.userId,
-          authorScreenName = user.profile.map(_.screenName).get,
-          inReplyToTweetId = request.inReplyToTweetId,
-          tweetText = text,
-          prependImplicitMentions = request.autoPopulateReplyMetadata,
-          enableTweetToNarrowcasting = request.enableTweetToNarrowcasting,
-          excludeUserIds = request.excludeReplyUserIds.getOrElse(Nil),
-          spamResult = spamResult,
-          batchMode = request.transientContext.flatMap(_.batchCompose)
+        w-wepwywequest = w-wepwybuiwdew.wequest(
+          a-authowid = wequest.usewid, ʘwʘ
+          authowscweenname = usew.pwofiwe.map(_.scweenname).get, mya
+          inwepwytotweetid = wequest.inwepwytotweetid, -.-
+          tweettext = t-text, -.-
+          pwependimpwicitmentions = w-wequest.autopopuwatewepwymetadata, ^^;;
+          enabwetweettonawwowcasting = wequest.enabwetweettonawwowcasting, (ꈍᴗꈍ)
+          excwudeusewids = w-wequest.excwudewepwyusewids.getowewse(niw), rawr
+          spamwesuwt = s-spamwesuwt, ^^
+          batchmode = wequest.twansientcontext.fwatmap(_.batchcompose)
         )
 
-        replyResult <- replyBuilder(replyRequest)
-        replyOpt = replyResult.map(_.reply)
+        wepwywesuwt <- wepwybuiwdew(wepwywequest)
+        w-wepwyopt = wepwywesuwt.map(_.wepwy)
 
-        replyConversationId <- replyResult match {
-          case Some(r) if r.reply.inReplyToStatusId.nonEmpty =>
-            r.conversationId match {
-              case None =>
-                // Throw this specific exception to make it easier to
-                // count how often we hit this corner case.
-                Future.exception(MissingConversationId(r.reply.inReplyToStatusId.get))
-              case conversationIdOpt => Future.value(conversationIdOpt)
+        w-wepwyconvewsationid <- w-wepwywesuwt m-match {
+          c-case some(w) if w.wepwy.inwepwytostatusid.nonempty =>
+            w-w.convewsationid m-match {
+              case n-nyone =>
+                // thwow this specific e-exception to make it easiew to
+                // c-count how often w-we hit this cownew case. nyaa~~
+                f-futuwe.exception(missingconvewsationid(w.wepwy.inwepwytostatusid.get))
+              c-case convewsationidopt => futuwe.vawue(convewsationidopt)
             }
-          case _ => Future.value(None)
+          case _ => futuwe.vawue(none)
         }
 
-        // Validate that the current user can reply to this conversation, based on
-        // the conversation's ConversationControl.
-        // Note: currently we only validate conversation controls access on replies,
-        // therefore we use the conversationId from the inReplyToStatus.
-        // Validate that the exclusive tweet control option is only used by allowed users.
-        () <- validateTweetWrite(
-          TweetWriteValidator.Request(
-            replyConversationId,
-            request.userId,
-            request.exclusiveTweetControlOptions,
-            replyResult.flatMap(_.exclusiveTweetControl),
-            request.trustedFriendsControlOptions,
-            replyResult.flatMap(_.trustedFriendsControl),
-            attachmentResult.quotedTweet,
-            replyResult.flatMap(_.reply.inReplyToStatusId),
-            replyResult.flatMap(_.editControl),
-            request.editOptions
+        // vawidate that t-the cuwwent u-usew can wepwy to t-this convewsation, (⑅˘꒳˘) b-based on
+        // the convewsation's convewsationcontwow. (U ᵕ U❁)
+        // nyote: c-cuwwentwy we onwy vawidate convewsation contwows a-access on wepwies, (ꈍᴗꈍ)
+        // thewefowe we use the convewsationid f-fwom the inwepwytostatus.
+        // vawidate that the excwusive tweet contwow o-option is onwy used by awwowed u-usews. (✿oωo)
+        () <- v-vawidatetweetwwite(
+          t-tweetwwitevawidatow.wequest(
+            wepwyconvewsationid, UwU
+            w-wequest.usewid, ^^
+            w-wequest.excwusivetweetcontwowoptions, :3
+            wepwywesuwt.fwatmap(_.excwusivetweetcontwow), ( ͡o ω ͡o )
+            wequest.twustedfwiendscontwowoptions, ( ͡o ω ͡o )
+            w-wepwywesuwt.fwatmap(_.twustedfwiendscontwow), (U ﹏ U)
+            a-attachmentwesuwt.quotedtweet, -.-
+            wepwywesuwt.fwatmap(_.wepwy.inwepwytostatusid), 😳😳😳
+            w-wepwywesuwt.fwatmap(_.editcontwow), UwU
+            w-wequest.editoptions
           )
         )
 
-        convoId = replyConversationId match {
-          case Some(replyConvoId) => replyConvoId
-          case None =>
-            // This is a root tweet, so the tweet id is the conversation id.
-            tweetId
+        convoid = w-wepwyconvewsationid m-match {
+          c-case some(wepwyconvoid) => w-wepwyconvoid
+          case nyone =>
+            // this is a woot tweet, >w< so the tweet id is the convewsation i-id. mya
+            t-tweetid
         }
 
-        () <- nudgeBuilder(
-          NudgeBuilderRequest(
-            text = text,
-            inReplyToTweetId = replyOpt.flatMap(_.inReplyToStatusId),
-            conversationId = if (convoId == tweetId) None else Some(convoId),
-            hasQuotedTweet = attachmentResult.quotedTweet.nonEmpty,
-            nudgeOptions = request.nudgeOptions,
-            tweetId = Some(tweetId),
+        () <- nyudgebuiwdew(
+          n-nyudgebuiwdewwequest(
+            text = text, :3
+            inwepwytotweetid = wepwyopt.fwatmap(_.inwepwytostatusid), (ˆ ﻌ ˆ)♡
+            c-convewsationid = i-if (convoid == t-tweetid) nyone e-ewse some(convoid), (U ﹏ U)
+            hasquotedtweet = a-attachmentwesuwt.quotedtweet.nonempty, ʘwʘ
+            nyudgeoptions = wequest.nudgeoptions, rawr
+            t-tweetid = s-some(tweetid),
           )
         )
 
-        // updated text with implicit reply mentions inserted, if any
-        text <- Future.value(
-          replyResult.map(_.tweetText).getOrElse(text)
+        // updated text with impwicit wepwy mentions insewted, (ꈍᴗꈍ) i-if any
+        text <- futuwe.vawue(
+          w-wepwywesuwt.map(_.tweettext).getowewse(text)
         )
 
-        // updated text with urls replaced with t.cos
-        ((text, urlEntities), (geoCoords, placeIdOpt)) <- Future.join(
-          urlEntityBuilder((text, urlShortenerCtx))
+        // updated text with uwws wepwaced w-with t.cos
+        ((text, ( ͡o ω ͡o ) uwwentities), 😳😳😳 (geocoowds, òωó p-pwaceidopt)) <- futuwe.join(
+          uwwentitybuiwdew((text, mya u-uwwshowtenewctx))
             .map {
-              case (text, urlEntities) =>
-                UrlEntityBuilder.updateTextAndUrls(text, urlEntities)(partialHtmlEncode)
-            },
-          if (request.geo.isEmpty)
-            Future.value((None, None))
-          else
-            geoBuilder(
-              GeoBuilder.Request(
-                request.geo.get,
-                user.account.map(_.geoEnabled).getOrElse(false),
-                user.account.map(_.language).getOrElse("en")
+              case (text, rawr x3 uwwentities) =>
+                u-uwwentitybuiwdew.updatetextanduwws(text, uwwentities)(pawtiawhtmwencode)
+            }, XD
+          i-if (wequest.geo.isempty)
+            f-futuwe.vawue((none, (ˆ ﻌ ˆ)♡ nyone))
+          ewse
+            g-geobuiwdew(
+              geobuiwdew.wequest(
+                wequest.geo.get, >w<
+                u-usew.account.map(_.geoenabwed).getowewse(fawse), (ꈍᴗꈍ)
+                u-usew.account.map(_.wanguage).getowewse("en")
               )
-            ).map(r => (r.geoCoordinates, r.placeId))
+            ).map(w => (w.geocoowdinates, (U ﹏ U) w-w.pwaceid))
         )
 
-        // updated text with trailing media url
-        MediaBuilder.Result(text, mediaEntities, mediaKeys) <-
-          request.mediaUploadIds.getOrElse(Nil) match {
-            case Nil => Future.value(MediaBuilder.Result(text, Nil, Nil))
+        // updated text with twaiwing media uww
+        mediabuiwdew.wesuwt(text, >_< mediaentities, mediakeys) <-
+          w-wequest.mediaupwoadids.getowewse(niw) match {
+            case nyiw => f-futuwe.vawue(mediabuiwdew.wesuwt(text, >_< n-nyiw, -.- nyiw))
             case ids =>
-              mediaBuilder(
-                MediaBuilder.Request(
-                  mediaUploadIds = ids,
-                  text = text,
-                  tweetId = tweetId,
-                  userId = user.id,
-                  userScreenName = user.profile.get.screenName,
-                  isProtected = user.safety.get.isProtected,
-                  createdAt = createdAt,
-                  dark = request.dark,
-                  productMetadata = request.mediaMetadata.map(_.toMap)
+              m-mediabuiwdew(
+                mediabuiwdew.wequest(
+                  m-mediaupwoadids = ids, òωó
+                  text = text, o.O
+                  tweetid = t-tweetid, σωσ
+                  usewid = usew.id, σωσ
+                  u-usewscweenname = usew.pwofiwe.get.scweenname, mya
+                  ispwotected = u-usew.safety.get.ispwotected, o.O
+                  c-cweatedat = cweatedat, XD
+                  d-dawk = w-wequest.dawk,
+                  pwoductmetadata = w-wequest.mediametadata.map(_.tomap)
                 )
               )
           }
 
-        () <- Future.when(!request.dark) {
-          val reqInfo =
-            DuplicateTweetFinder.RequestInfo.fromPostTweetRequest(request, text)
+        () <- futuwe.when(!wequest.dawk) {
+          v-vaw w-weqinfo =
+            d-dupwicatetweetfindew.wequestinfo.fwomposttweetwequest(wequest, XD t-text)
 
-          duplicateTweetFinder(reqInfo).flatMap {
-            case None => Future.Unit
-            case Some(duplicateId) =>
-              log.debug(s"timeline_duplicate_check_failed:$duplicateId")
-              Future.exception(TweetCreateFailure.State(TweetCreateState.Duplicate))
+          d-dupwicatetweetfindew(weqinfo).fwatmap {
+            case n-nyone => futuwe.unit
+            c-case some(dupwicateid) =>
+              wog.debug(s"timewine_dupwicate_check_faiwed:$dupwicateid")
+              futuwe.exception(tweetcweatefaiwuwe.state(tweetcweatestate.dupwicate))
           }
         }
 
-        textVisibility = getTextVisibility(
-          text = text,
-          replyResult = replyResult,
-          urlEntities = urlEntities,
-          mediaEntities = mediaEntities,
-          attachmentUrl = attachmentResult.attachmentUrl
+        t-textvisibiwity = gettextvisibiwity(
+          t-text = text, (✿oωo)
+          wepwywesuwt = wepwywesuwt, -.-
+          uwwentities = uwwentities, (ꈍᴗꈍ)
+          mediaentities = mediaentities, ( ͡o ω ͡o )
+          a-attachmentuww = attachmentwesuwt.attachmentuww
         )
 
-        () <- validateTextLength(
-          text = text,
-          visibleText = textVisibility.visibleText,
-          replyResult = replyResult,
-          stats = stats
+        () <- v-vawidatetextwength(
+          text = text, (///ˬ///✿)
+          v-visibwetext = t-textvisibiwity.visibwetext, 🥺
+          wepwywesuwt = wepwywesuwt, (ˆ ﻌ ˆ)♡
+          s-stats = stats
         )
 
         communities =
-          request.additionalFields
-            .flatMap(CommunityAnnotation.additionalFieldsToCommunityIDs)
-            .map(ids => Communities(communityIds = ids))
+          wequest.additionawfiewds
+            .fwatmap(communityannotation.additionawfiewdstocommunityids)
+            .map(ids => c-communities(communityids = ids))
 
-        rootExclusiveControls = request.exclusiveTweetControlOptions.map { _ =>
-          ExclusiveTweetControl(request.userId)
+        w-wootexcwusivecontwows = wequest.excwusivetweetcontwowoptions.map { _ =>
+          excwusivetweetcontwow(wequest.usewid)
         }
 
-        () <- validateExclusiveTweetNotReplies(rootExclusiveControls, replyResult)
-        () <- validateExclusiveTweetParams(rootExclusiveControls, communities)
+        () <- vawidateexcwusivetweetnotwepwies(wootexcwusivecontwows, ^•ﻌ•^ wepwywesuwt)
+        () <- vawidateexcwusivetweetpawams(wootexcwusivecontwows, rawr x3 communities)
 
-        replyExclusiveControls = replyResult.flatMap(_.exclusiveTweetControl)
+        w-wepwyexcwusivecontwows = wepwywesuwt.fwatmap(_.excwusivetweetcontwow)
 
-        // The userId is pulled off of the request rather than being supplied
-        // via the ExclusiveTweetControlOptions because additional fields
-        // can be set by clients to contain any value they want.
-        // This could include userIds that don't match their actual userId.
-        // Only one of replyResult or request.exclusiveTweetControlOptions will be defined.
-        exclusiveTweetControl = replyExclusiveControls.orElse(rootExclusiveControls)
+        // the usewid is p-puwwed off of the wequest wathew t-than being suppwied
+        // via the excwusivetweetcontwowoptions because additionaw fiewds
+        // can be set by cwients to contain any vawue they want. (U ﹏ U)
+        // this c-couwd incwude usewids t-that don't m-match theiw actuaw usewid. OwO
+        // o-onwy one o-of wepwywesuwt o-ow wequest.excwusivetweetcontwowoptions wiww be defined. (✿oωo)
+        e-excwusivetweetcontwow = w-wepwyexcwusivecontwows.owewse(wootexcwusivecontwows)
 
-        rootTrustedFriendsControl = request.trustedFriendsControlOptions.map { options =>
-          TrustedFriendsControl(options.trustedFriendsListId)
+        woottwustedfwiendscontwow = w-wequest.twustedfwiendscontwowoptions.map { o-options =>
+          t-twustedfwiendscontwow(options.twustedfwiendswistid)
         }
 
-        () <- validateTrustedFriendsNotReplies(rootTrustedFriendsControl, replyResult)
-        () <- validateTrustedFriendsParams(
-          rootTrustedFriendsControl,
-          request.conversationControl,
-          communities,
-          exclusiveTweetControl
+        () <- v-vawidatetwustedfwiendsnotwepwies(woottwustedfwiendscontwow, (⑅˘꒳˘) w-wepwywesuwt)
+        () <- vawidatetwustedfwiendspawams(
+          woottwustedfwiendscontwow, UwU
+          w-wequest.convewsationcontwow, (ˆ ﻌ ˆ)♡
+          c-communities, /(^•ω•^)
+          e-excwusivetweetcontwow
         )
 
-        replyTrustedFriendsControl = replyResult.flatMap(_.trustedFriendsControl)
+        w-wepwytwustedfwiendscontwow = w-wepwywesuwt.fwatmap(_.twustedfwiendscontwow)
 
-        trustedFriendsControl = replyTrustedFriendsControl.orElse(rootTrustedFriendsControl)
+        t-twustedfwiendscontwow = w-wepwytwustedfwiendscontwow.owewse(woottwustedfwiendscontwow)
 
-        collabControl <- collabControlBuilder(
-          CollabControlBuilder.Request(
-            collabControlOptions = request.collabControlOptions,
-            replyResult = replyResult,
+        c-cowwabcontwow <- c-cowwabcontwowbuiwdew(
+          c-cowwabcontwowbuiwdew.wequest(
+            cowwabcontwowoptions = wequest.cowwabcontwowoptions,
+            wepwywesuwt = w-wepwywesuwt, (˘ω˘)
             communities = communities,
-            trustedFriendsControl = trustedFriendsControl,
-            conversationControl = request.conversationControl,
-            exclusiveTweetControl = exclusiveTweetControl,
-            userId = request.userId
+            t-twustedfwiendscontwow = twustedfwiendscontwow, XD
+            convewsationcontwow = w-wequest.convewsationcontwow, òωó
+            e-excwusivetweetcontwow = e-excwusivetweetcontwow, UwU
+            usewid = w-wequest.usewid
           ))
 
-        isCollabInvitation = collabControl.isDefined && (collabControl.get match {
-          case CollabControl.CollabInvitation(_: CollabInvitation) => true
-          case _ => false
+        i-iscowwabinvitation = cowwabcontwow.isdefined && (cowwabcontwow.get match {
+          case cowwabcontwow.cowwabinvitation(_: cowwabinvitation) => t-twue
+          case _ => fawse
         })
 
-        coreData = TweetCoreData(
-          userId = request.userId,
-          text = text,
-          createdAtSecs = createdAt.inSeconds,
-          createdVia = devsrc.internalName,
-          reply = replyOpt,
-          hasTakedown = safety.hasTakedown,
-          // We want to nullcast community tweets and CollabInvitations
-          // This will disable tweet fanout to followers' home timelines,
-          // and filter the tweets from appearing from the tweeter's profile
-          // or search results for the tweeter's tweets.
-          nullcast =
-            request.nullcast || CommunityUtil.hasCommunity(communities) || isCollabInvitation,
-          narrowcast = request.narrowcast,
-          nsfwUser = request.possiblySensitive.getOrElse(safety.nsfwUser),
-          nsfwAdmin = safety.nsfwAdmin,
-          trackingId = request.trackingId,
-          placeId = placeIdOpt,
-          coordinates = geoCoords,
-          conversationId = Some(convoId),
-          // Set hasMedia to true if we know that there is media,
-          // and leave it unknown if not, so that it will be
-          // correctly set for pasted media.
-          hasMedia = if (mediaEntities.nonEmpty) Some(true) else None
+        cowedata = t-tweetcowedata(
+          u-usewid = wequest.usewid, -.-
+          text = text, (ꈍᴗꈍ)
+          c-cweatedatsecs = c-cweatedat.inseconds, (⑅˘꒳˘)
+          c-cweatedvia = d-devswc.intewnawname, 🥺
+          w-wepwy = wepwyopt, òωó
+          h-hastakedown = s-safety.hastakedown, 😳
+          // we want to nyuwwcast community t-tweets and cowwabinvitations
+          // this wiww d-disabwe tweet fanout to fowwowews' h-home timewines, òωó
+          // a-and fiwtew the tweets fwom appeawing f-fwom the tweetew's pwofiwe
+          // ow seawch wesuwts f-fow the tweetew's t-tweets. 🥺
+          n-nyuwwcast =
+            wequest.nuwwcast || c-communityutiw.hascommunity(communities) || iscowwabinvitation, ( ͡o ω ͡o )
+          n-nawwowcast = w-wequest.nawwowcast, UwU
+          n-nysfwusew = wequest.possibwysensitive.getowewse(safety.nsfwusew), 😳😳😳
+          n-nysfwadmin = safety.nsfwadmin, ʘwʘ
+          twackingid = wequest.twackingid, ^^
+          pwaceid = pwaceidopt, >_<
+          coowdinates = geocoowds,
+          convewsationid = s-some(convoid), (ˆ ﻌ ˆ)♡
+          // s-set hasmedia to twue if we know that thewe is media,
+          // and weave i-it unknown if n-nyot, (ˆ ﻌ ˆ)♡ so that it wiww be
+          // cowwectwy set fow pasted m-media. 🥺
+          h-hasmedia = if (mediaentities.nonempty) some(twue) e-ewse nyone
         )
 
-        tweet = Tweet(
-          id = tweetId,
-          coreData = Some(coreData),
-          urls = Some(urlEntities),
-          media = Some(mediaEntities),
-          mediaKeys = if (mediaKeys.nonEmpty) Some(mediaKeys) else None,
-          contributor = getContributor(request.userId),
-          visibleTextRange = textVisibility.visibleTextRange,
-          selfThreadMetadata = replyResult.flatMap(_.selfThreadMetadata),
-          directedAtUserMetadata = replyResult.map(_.directedAtMetadata),
-          composerSource = request.composerSource,
-          quotedTweet = attachmentResult.quotedTweet,
-          exclusiveTweetControl = exclusiveTweetControl,
-          trustedFriendsControl = trustedFriendsControl,
-          collabControl = collabControl,
-          noteTweet = request.noteTweetOptions.map(options =>
-            NoteTweet(options.noteTweetId, options.isExpandable))
+        t-tweet = tweet(
+          id = tweetid, ( ͡o ω ͡o )
+          c-cowedata = some(cowedata), (ꈍᴗꈍ)
+          uwws = some(uwwentities), :3
+          m-media = s-some(mediaentities), (✿oωo)
+          mediakeys = if (mediakeys.nonempty) some(mediakeys) ewse nyone, (U ᵕ U❁)
+          c-contwibutow = g-getcontwibutow(wequest.usewid), UwU
+          v-visibwetextwange = t-textvisibiwity.visibwetextwange, ^^
+          sewfthweadmetadata = w-wepwywesuwt.fwatmap(_.sewfthweadmetadata), /(^•ω•^)
+          d-diwectedatusewmetadata = w-wepwywesuwt.map(_.diwectedatmetadata),
+          c-composewsouwce = wequest.composewsouwce, (˘ω˘)
+          quotedtweet = a-attachmentwesuwt.quotedtweet, OwO
+          excwusivetweetcontwow = e-excwusivetweetcontwow, (U ᵕ U❁)
+          twustedfwiendscontwow = twustedfwiendscontwow, (U ﹏ U)
+          cowwabcontwow = cowwabcontwow, mya
+          n-nyotetweet = w-wequest.notetweetoptions.map(options =>
+            nyotetweet(options.notetweetid, (⑅˘꒳˘) o-options.isexpandabwe))
         )
 
-        editControl <- editControlBuilder(
-          EditControlBuilder.Request(
-            postTweetRequest = request,
-            tweet = tweet,
-            matchedResults = matchedResults
+        editcontwow <- editcontwowbuiwdew(
+          editcontwowbuiwdew.wequest(
+            p-posttweetwequest = w-wequest, (U ᵕ U❁)
+            t-tweet = tweet, /(^•ω•^)
+            matchedwesuwts = m-matchedwesuwts
           )
         )
 
-        tweet <- Future.value(tweet.copy(editControl = editControl))
+        t-tweet <- futuwe.vawue(tweet.copy(editcontwow = editcontwow))
 
-        tweet <- Future.value(entityExtractor(tweet))
+        t-tweet <- futuwe.vawue(entityextwactow(tweet))
 
-        () <- validateEntities(tweet)
+        () <- vawidateentities(tweet)
 
-        tweet <- {
-          val cctlRequest =
-            ConversationControlBuilder.Request.fromTweet(
-              tweet,
-              request.conversationControl,
-              request.noteTweetOptions.flatMap(_.mentionedUserIds))
-          Stitch.run(conversationControlBuilder(cctlRequest)).map { conversationControl =>
-            tweet.copy(conversationControl = conversationControl)
+        t-tweet <- {
+          v-vaw cctwwequest =
+            c-convewsationcontwowbuiwdew.wequest.fwomtweet(
+              tweet, ^•ﻌ•^
+              w-wequest.convewsationcontwow, (///ˬ///✿)
+              wequest.notetweetoptions.fwatmap(_.mentionedusewids))
+          stitch.wun(convewsationcontwowbuiwdew(cctwwequest)).map { c-convewsationcontwow =>
+            tweet.copy(convewsationcontwow = convewsationcontwow)
           }
         }
 
-        tweet <- Future.value(
-          setAdditionalFields(tweet, request.additionalFields)
+        tweet <- futuwe.vawue(
+          setadditionawfiewds(tweet, o.O wequest.additionawfiewds)
         )
-        () <- validateCommunityMembership(communityMembershipRepo, communityAccessRepo, communities)
-        () <- validateCommunityReply(communities, replyResult)
-        () <- communitiesValidator(
-          CommunitiesValidator.Request(matchedResults, safety.isProtected, communities))
+        () <- vawidatecommunitymembewship(communitymembewshipwepo, (ˆ ﻌ ˆ)♡ c-communityaccesswepo, 😳 communities)
+        () <- v-vawidatecommunitywepwy(communities, òωó w-wepwywesuwt)
+        () <- communitiesvawidatow(
+          communitiesvawidatow.wequest(matchedwesuwts, (⑅˘꒳˘) safety.ispwotected, c-communities))
 
-        tweet <- Future.value(tweet.copy(communities = communities))
+        t-tweet <- futuwe.vawue(tweet.copy(communities = c-communities))
 
-        tweet <- Future.value(
-          tweet.copy(underlyingCreativesContainerId = request.underlyingCreativesContainerId)
+        tweet <- futuwe.vawue(
+          t-tweet.copy(undewwyingcweativescontainewid = wequest.undewwyingcweativescontainewid)
         )
 
-        // For certain tweets we want to write a self-permalink which is used to generate modified
-        // tweet text for legacy clients that contains a link. NOTE: this permalink is for
-        // the tweet being created - we also create permalinks for related tweets further down
-        // e.g. if this tweet is an edit, we might create a permalink for the initial tweet as well
-        tweet <- {
-          val isBeyond140 = textVisibility.isExtendedWithExtraChars(attachmentResult.extraChars)
-          val isEditTweet = request.editOptions.isDefined
-          val isMixedMedia = Media.isMixedMedia(mediaEntities)
-          val isNoteTweet = request.noteTweetOptions.isDefined
+        // fow cewtain tweets we w-want to wwite a sewf-pewmawink which is used to genewate modified
+        // tweet text fow wegacy c-cwients that c-contains a wink. rawr n-note: this pewmawink i-is fow
+        // the tweet being cweated - w-we awso cweate pewmawinks fow w-wewated tweets fuwthew down
+        // e.g. if t-this tweet is an e-edit, (ꈍᴗꈍ) we might c-cweate a pewmawink fow the initiaw tweet as weww
+        t-tweet <- {
+          vaw isbeyond140 = textvisibiwity.isextendedwithextwachaws(attachmentwesuwt.extwachaws)
+          vaw isedittweet = wequest.editoptions.isdefined
+          vaw ismixedmedia = media.ismixedmedia(mediaentities)
+          v-vaw isnotetweet = w-wequest.notetweetoptions.isdefined
 
-          if (isBeyond140 || isEditTweet || isMixedMedia || isNoteTweet)
-            permalinkShortener(tweetId, urlShortenerCtx)
-              .map { selfPermalink =>
+          if (isbeyond140 || isedittweet || ismixedmedia || isnotetweet)
+            pewmawinkshowtenew(tweetid, ^^ u-uwwshowtenewctx)
+              .map { sewfpewmawink =>
                 tweet.copy(
-                  selfPermalink = Some(selfPermalink),
-                  extendedTweetMetadata = Some(ExtendedTweetMetadataBuilder(tweet, selfPermalink))
+                  s-sewfpewmawink = s-some(sewfpewmawink), (ˆ ﻌ ˆ)♡
+                  e-extendedtweetmetadata = s-some(extendedtweetmetadatabuiwdew(tweet, /(^•ω•^) sewfpewmawink))
                 )
               }
-          else {
-            Future.value(tweet)
+          ewse {
+            futuwe.vawue(tweet)
           }
         }
 
-        // When an edit tweet is created we have to update some information on the
-        // initial tweet, this object stores info about those updates for use
-        // in the tweet insert store.
-        // We update the editControl for each edit tweet and for the first edit tweet
-        // we update the self permalink.
-        initialTweetUpdateRequest: Option[InitialTweetUpdateRequest] <- editControl match {
-          case Some(EditControl.Edit(edit)) =>
-            // Identifies the first edit of an initial tweet
-            val isFirstEdit =
-              request.editOptions.map(_.previousTweetId).contains(edit.initialTweetId)
+        // when an edit tweet is cweated w-we have to update s-some infowmation o-on the
+        // i-initiaw tweet, ^^ this object s-stowes info about those updates f-fow use
+        // in the tweet insewt stowe. o.O
+        // we update t-the editcontwow f-fow each edit t-tweet and fow the f-fiwst edit tweet
+        // we update the sewf p-pewmawink. 😳😳😳
+        i-initiawtweetupdatewequest: option[initiawtweetupdatewequest] <- editcontwow match {
+          c-case some(editcontwow.edit(edit)) =>
+            // i-identifies the fiwst edit of an initiaw tweet
+            vaw isfiwstedit =
+              w-wequest.editoptions.map(_.pwevioustweetid).contains(edit.initiawtweetid)
 
-            // A potential permalink for this tweet being created's initial tweet
-            val selfPermalinkForInitial: Future[Option[ShortenedUrl]] =
-              if (isFirstEdit) {
-                // `tweet` is the first edit of an initial tweet, which means
-                // we need to write a self permalink. We create it here in
-                // TweetBuilder and pass it through to the tweet store to
-                // be written to the initial tweet.
-                permalinkShortener(edit.initialTweetId, urlShortenerCtx).map(Some(_))
-              } else {
-                Future.value(None)
+            // a potentiaw p-pewmawink f-fow this tweet being c-cweated's initiaw tweet
+            vaw sewfpewmawinkfowinitiaw: futuwe[option[showteneduww]] =
+              if (isfiwstedit) {
+                // `tweet` is the fiwst edit o-of an initiaw tweet, XD which means
+                // w-we nyeed to wwite a sewf pewmawink. nyaa~~ we cweate i-it hewe in
+                // tweetbuiwdew a-and pass it thwough t-to the tweet s-stowe to
+                // b-be w-wwitten to the initiaw tweet. ^•ﻌ•^
+                p-pewmawinkshowtenew(edit.initiawtweetid, :3 uwwshowtenewctx).map(some(_))
+              } ewse {
+                futuwe.vawue(none)
               }
 
-            selfPermalinkForInitial.map { link =>
-              Some(
-                InitialTweetUpdateRequest(
-                  initialTweetId = edit.initialTweetId,
-                  editTweetId = tweet.id,
-                  selfPermalink = link
+            sewfpewmawinkfowinitiaw.map { w-wink =>
+              some(
+                initiawtweetupdatewequest(
+                  initiawtweetid = e-edit.initiawtweetid, ^^
+                  e-edittweetid = t-tweet.id, o.O
+                  sewfpewmawink = wink
                 ))
             }
 
-          // This is not an edit this is the initial tweet - so there are no initial
-          // tweet updates
-          case _ => Future.value(None)
+          // this is nyot an edit this i-is the initiaw t-tweet - so thewe a-awe nyo initiaw
+          // tweet u-updates
+          case _ => futuwe.vawue(none)
         }
 
-        tweet <- filterInvalidData(tweet, request, urlShortenerCtx)
+        tweet <- fiwtewinvawiddata(tweet, ^^ wequest, u-uwwshowtenewctx)
 
-        () <- validateEdit(tweet, request.editOptions)
+        () <- vawidateedit(tweet, (⑅˘꒳˘) wequest.editoptions)
 
-        user <- updateUserCounts(user, tweet)
+        u-usew <- updateusewcounts(usew, ʘwʘ t-tweet)
 
-      } yield {
-        TweetBuilderResult(
-          tweet,
-          user,
-          createdAt,
-          isSilentFail = spamResult == Spam.SilentFail,
-          geoSearchRequestId = extractGeoSearchRequestId(request.geo),
-          initialTweetUpdateRequest = initialTweetUpdateRequest
+      } y-yiewd {
+        tweetbuiwdewwesuwt(
+          t-tweet,
+          usew,
+          cweatedat, mya
+          issiwentfaiw = spamwesuwt == spam.siwentfaiw, >w<
+          geoseawchwequestid = extwactgeoseawchwequestid(wequest.geo), o.O
+          initiawtweetupdatewequest = initiawtweetupdatewequest
         )
       }
     }

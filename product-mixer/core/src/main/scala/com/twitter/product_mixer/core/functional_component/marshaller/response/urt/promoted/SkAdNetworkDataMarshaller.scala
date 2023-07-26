@@ -1,23 +1,23 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.SkAdNetworkData
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.render.{thriftscala => urt}
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.skadnetwowkdata
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
 
-@Singleton
-class SkAdNetworkDataMarshaller @Inject() () {
+@singweton
+c-cwass skadnetwowkdatamawshawwew @inject() () {
 
-  def apply(skAdNetworkData: SkAdNetworkData): urt.SkAdNetworkData =
-    urt.SkAdNetworkData(
-      version = skAdNetworkData.version,
-      srcAppId = skAdNetworkData.srcAppId,
-      dstAppId = skAdNetworkData.dstAppId,
-      adNetworkId = skAdNetworkData.adNetworkId,
-      campaignId = skAdNetworkData.campaignId,
-      impressionTimeInMillis = skAdNetworkData.impressionTimeInMillis,
-      nonce = skAdNetworkData.nonce,
-      signature = skAdNetworkData.signature,
-      fidelityType = skAdNetworkData.fidelityType
+  d-def appwy(skadnetwowkdata: skadnetwowkdata): uwt.skadnetwowkdata =
+    uwt.skadnetwowkdata(
+      vewsion = s-skadnetwowkdata.vewsion, 😳
+      swcappid = skadnetwowkdata.swcappid, XD
+      d-dstappid = skadnetwowkdata.dstappid, :3
+      adnetwowkid = s-skadnetwowkdata.adnetwowkid, 😳😳😳
+      campaignid = skadnetwowkdata.campaignid, -.-
+      impwessiontimeinmiwwis = s-skadnetwowkdata.impwessiontimeinmiwwis, ( ͡o ω ͡o )
+      nyonce = skadnetwowkdata.nonce, rawr x3
+      s-signatuwe = s-skadnetwowkdata.signatuwe, nyaa~~
+      fidewitytype = skadnetwowkdata.fidewitytype
     )
 }

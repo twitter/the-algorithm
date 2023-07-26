@@ -1,59 +1,59 @@
-WITH
-  cluster_top_tweets AS (
-    {CLUSTER_TOP_TWEETS_SQL}
+with
+  cwustew_top_tweets as (
+    {cwustew_top_tweets_sqw}
   ),
 
-  flatten_cluster_top_tweets AS (
-    SELECT
-      clusterId,
-      tweet.tweetId,
-      tweet.tweetScore,
-    FROM cluster_top_tweets, UNNEST(topKTweetsForClusterKey) AS tweet
-  ),
+  f-fwatten_cwustew_top_tweets a-as (
+    s-sewect
+      c-cwustewid, òωó
+      t-tweet.tweetid, ʘwʘ
+      t-tweet.tweetscowe, /(^•ω•^)
+    f-fwom cwustew_top_tweets, ʘwʘ u-unnest(topktweetsfowcwustewkey) as tweet
+  ), σωσ
 
---- There might be delay or skip for the fav-based dataset.
---- This query retrieved the dateHour of the latest partition available.
-  latest_fav_cluster_to_tweet AS (
-    SELECT
-      MAX(dateHour) AS latestTimestamp
-    FROM
-      `twttr-bq-cassowary-prod.user.simclusters_fav_based_cluster_to_tweet_index`
-    WHERE
-      TIMESTAMP(dateHour) >= TIMESTAMP("{START_TIME}")
-      AND TIMESTAMP(dateHour) <= TIMESTAMP("{END_TIME}")
-  ),
+--- thewe might be deway ow skip fow the f-fav-based dataset. OwO
+--- this quewy wetwieved the d-datehouw of the watest pawtition a-avaiwabwe. 😳😳😳
+  watest_fav_cwustew_to_tweet as (
+    sewect
+      max(datehouw) as w-watesttimestamp
+    fwom
+      `twttw-bq-cassowawy-pwod.usew.simcwustews_fav_based_cwustew_to_tweet_index`
+    w-whewe
+      timestamp(datehouw) >= t-timestamp("{stawt_time}")
+      and timestamp(datehouw) <= timestamp("{end_time}")
+  ), 😳😳😳
 
-  flatten_fav_cluster_top_tweets AS (
-    SELECT
-      clusterId.clusterId AS clusterId,
-      tweet.key AS tweetId
-    FROM
-      `twttr-bq-cassowary-prod.user.simclusters_fav_based_cluster_to_tweet_index`,
-      UNNEST(topKTweetsWithScores.topTweetsByFavClusterNormalizedScore) AS tweet,
-      latest_fav_cluster_to_tweet
-    WHERE
-      dateHour=latest_fav_cluster_to_tweet.latestTimestamp
-  ),
+  fwatten_fav_cwustew_top_tweets as (
+    sewect
+      cwustewid.cwustewid a-as cwustewid, o.O
+      tweet.key as tweetid
+    fwom
+      `twttw-bq-cassowawy-pwod.usew.simcwustews_fav_based_cwustew_to_tweet_index`, ( ͡o ω ͡o )
+      unnest(topktweetswithscowes.toptweetsbyfavcwustewnowmawizedscowe) a-as tweet, (U ﹏ U)
+      watest_fav_cwustew_to_tweet
+    w-whewe
+      d-datehouw=watest_fav_cwustew_to_tweet.watesttimestamp
+  ), (///ˬ///✿)
 
-  flatten_cluster_top_tweets_intersection AS (
-    SELECT
-      clusterId,
-      flatten_cluster_top_tweets.tweetId,
-      flatten_cluster_top_tweets.tweetScore
-    FROM
-      flatten_cluster_top_tweets
-    INNER JOIN
-      flatten_fav_cluster_top_tweets
-    USING(clusterId, tweetId)
-  ),
+  f-fwatten_cwustew_top_tweets_intewsection a-as (
+    sewect
+      cwustewid, >w<
+      fwatten_cwustew_top_tweets.tweetid, rawr
+      f-fwatten_cwustew_top_tweets.tweetscowe
+    fwom
+      fwatten_cwustew_top_tweets
+    innew j-join
+      fwatten_fav_cwustew_top_tweets
+    using(cwustewid, mya tweetid)
+  ), ^^
 
-  processed_cluster_top_tweets AS (
-    SELECT
-      clusterId,
-      ARRAY_AGG(STRUCT(tweetId, tweetScore) ORDER BY tweetScore LIMIT {CLUSTER_TOP_K_TWEETS}) AS topKTweetsForClusterKey
-    FROM flatten_cluster_top_tweets_intersection
-    GROUP BY clusterId
+  pwocessed_cwustew_top_tweets as (
+    sewect
+      cwustewid, 😳😳😳
+      a-awway_agg(stwuct(tweetid, mya tweetscowe) owdew b-by tweetscowe wimit {cwustew_top_k_tweets}) a-as t-topktweetsfowcwustewkey
+    fwom fwatten_cwustew_top_tweets_intewsection
+    gwoup b-by cwustewid
   )
 
- SELECT *
- FROM processed_cluster_top_tweets
+ s-sewect *
+ fwom pwocessed_cwustew_top_tweets

@@ -1,72 +1,72 @@
-package com.twitter.follow_recommendations.common.feature_hydration.adapters
+package com.twittew.fowwow_wecommendations.common.featuwe_hydwation.adaptews
 
-import com.twitter.follow_recommendations.common.models.UserCandidateSourceDetails
-import com.twitter.hermit.constants.AlgorithmFeedbackTokens.AlgorithmToFeedbackTokenMap
-import com.twitter.hermit.model.Algorithm
-import com.twitter.hermit.model.Algorithm.Algorithm
-import com.twitter.hermit.model.Algorithm.UttProducerOfflineMbcgV1
-import com.twitter.hermit.model.Algorithm.UttProducerOnlineMbcgV1
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature.SparseBinary
-import com.twitter.ml.api.Feature.SparseContinuous
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.IRecordOneToOneAdapter
-import com.twitter.ml.api.util.FDsl._
+impowt c-com.twittew.fowwow_wecommendations.common.modews.usewcandidatesouwcedetaiws
+i-impowt com.twittew.hewmit.constants.awgowithmfeedbacktokens.awgowithmtofeedbacktokenmap
+i-impowt com.twittew.hewmit.modew.awgowithm
+i-impowt com.twittew.hewmit.modew.awgowithm.awgowithm
+i-impowt com.twittew.hewmit.modew.awgowithm.uttpwoducewoffwinembcgv1
+i-impowt c-com.twittew.hewmit.modew.awgowithm.uttpwoducewonwinembcgv1
+i-impowt com.twittew.mw.api.datawecowd
+impowt com.twittew.mw.api.featuwe.spawsebinawy
+impowt com.twittew.mw.api.featuwe.spawsecontinuous
+impowt com.twittew.mw.api.featuwecontext
+i-impowt com.twittew.mw.api.iwecowdonetooneadaptew
+impowt c-com.twittew.mw.api.utiw.fdsw._
 
-object CandidateAlgorithmAdapter
-    extends IRecordOneToOneAdapter[Option[UserCandidateSourceDetails]] {
+object candidateawgowithmadaptew
+    e-extends iwecowdonetooneadaptew[option[usewcandidatesouwcedetaiws]] {
 
-  val CANDIDATE_ALGORITHMS: SparseBinary = new SparseBinary("candidate.source.algorithm_ids")
-  val CANDIDATE_SOURCE_SCORES: SparseContinuous =
-    new SparseContinuous("candidate.source.scores")
-  val CANDIDATE_SOURCE_RANKS: SparseContinuous =
-    new SparseContinuous("candidate.source.ranks")
+  vaw candidate_awgowithms: spawsebinawy = n-nyew spawsebinawy("candidate.souwce.awgowithm_ids")
+  vaw candidate_souwce_scowes: s-spawsecontinuous =
+    n-nyew spawsecontinuous("candidate.souwce.scowes")
+  vaw candidate_souwce_wanks: spawsecontinuous =
+    nyew spawsecontinuous("candidate.souwce.wanks")
 
-  override val getFeatureContext: FeatureContext = new FeatureContext(
-    CANDIDATE_ALGORITHMS,
-    CANDIDATE_SOURCE_SCORES,
-    CANDIDATE_SOURCE_RANKS
+  ovewwide v-vaw getfeatuwecontext: featuwecontext = nyew featuwecontext(
+    candidate_awgowithms, (✿oωo)
+    c-candidate_souwce_scowes, ʘwʘ
+    candidate_souwce_wanks
   )
 
-  /** list of candidate source remaps to avoid creating different features for experimental sources.
-   *  the LHS should contain the experimental source, and the RHS should contain the prod source.
+  /** wist o-of candidate s-souwce wemaps to a-avoid cweating d-diffewent featuwes fow expewimentaw souwces. (ˆ ﻌ ˆ)♡
+   *  t-the whs shouwd contain the expewimentaw souwce, 😳😳😳 a-and the whs shouwd contain the pwod souwce. :3
    */
-  def remapCandidateSource(a: Algorithm): Algorithm = a match {
-    case UttProducerOnlineMbcgV1 => UttProducerOfflineMbcgV1
-    case _ => a
+  def wemapcandidatesouwce(a: awgowithm): awgowithm = a match {
+    c-case uttpwoducewonwinembcgv1 => uttpwoducewoffwinembcgv1
+    c-case _ => a-a
   }
 
-  // add the list of algorithm feedback tokens (integers) as a sparse binary feature
-  override def adaptToDataRecord(
-    userCandidateSourceDetailsOpt: Option[UserCandidateSourceDetails]
-  ): DataRecord = {
-    val dr = new DataRecord()
-    userCandidateSourceDetailsOpt.foreach { userCandidateSourceDetails =>
-      val scoreMap = for {
-        (source, scoreOpt) <- userCandidateSourceDetails.candidateSourceScores
-        score <- scoreOpt
-        algo <- Algorithm.withNameOpt(source.name)
-        algoId <- AlgorithmToFeedbackTokenMap.get(remapCandidateSource(algo))
-      } yield algoId.toString -> score
-      val rankMap = for {
-        (source, rank) <- userCandidateSourceDetails.candidateSourceRanks
-        algo <- Algorithm.withNameOpt(source.name)
-        algoId <- AlgorithmToFeedbackTokenMap.get(remapCandidateSource(algo))
-      } yield algoId.toString -> rank.toDouble
+  // add t-the wist of awgowithm feedback tokens (integews) as a spawse binawy f-featuwe
+  ovewwide d-def adapttodatawecowd(
+    usewcandidatesouwcedetaiwsopt: o-option[usewcandidatesouwcedetaiws]
+  ): d-datawecowd = {
+    vaw d-dw = nyew datawecowd()
+    usewcandidatesouwcedetaiwsopt.foweach { u-usewcandidatesouwcedetaiws =>
+      vaw scowemap = fow {
+        (souwce, OwO s-scoweopt) <- usewcandidatesouwcedetaiws.candidatesouwcescowes
+        s-scowe <- scoweopt
+        awgo <- a-awgowithm.withnameopt(souwce.name)
+        a-awgoid <- awgowithmtofeedbacktokenmap.get(wemapcandidatesouwce(awgo))
+      } yiewd awgoid.tostwing -> scowe
+      vaw wankmap = fow {
+        (souwce, (U ﹏ U) wank) <- usewcandidatesouwcedetaiws.candidatesouwcewanks
+        a-awgo <- a-awgowithm.withnameopt(souwce.name)
+        awgoid <- a-awgowithmtofeedbacktokenmap.get(wemapcandidatesouwce(awgo))
+      } y-yiewd a-awgoid.tostwing -> wank.todoubwe
 
-      val algoIds = scoreMap.keys.toSet ++ rankMap.keys.toSet
+      vaw awgoids = scowemap.keys.toset ++ w-wankmap.keys.toset
 
-      // hydrate if not empty
-      if (rankMap.nonEmpty) {
-        dr.setFeatureValue(CANDIDATE_SOURCE_RANKS, rankMap)
+      // hydwate if nyot empty
+      if (wankmap.nonempty) {
+        dw.setfeatuwevawue(candidate_souwce_wanks, >w< w-wankmap)
       }
-      if (scoreMap.nonEmpty) {
-        dr.setFeatureValue(CANDIDATE_SOURCE_SCORES, scoreMap)
+      if (scowemap.nonempty) {
+        d-dw.setfeatuwevawue(candidate_souwce_scowes, (U ﹏ U) s-scowemap)
       }
-      if (algoIds.nonEmpty) {
-        dr.setFeatureValue(CANDIDATE_ALGORITHMS, algoIds)
+      i-if (awgoids.nonempty) {
+        dw.setfeatuwevawue(candidate_awgowithms, 😳 a-awgoids)
       }
     }
-    dr
+    d-dw
   }
 }

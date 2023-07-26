@@ -1,216 +1,216 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.scalding
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.scawding
 
-import com.twitter.bijection.thrift.CompactThriftCodec
-import com.twitter.bijection.Codec
-import com.twitter.bijection.Injection
-import com.twitter.ml.api._
-import com.twitter.ml.api.constant.SharedFeatures.TIMESTAMP
-import com.twitter.ml.api.util.CompactDataRecordConverter
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.scalding.Args
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.storehaus_internal.manhattan.ManhattanROConfig
-import com.twitter.summingbird.batch.option.Reducers
-import com.twitter.summingbird.batch.BatchID
-import com.twitter.summingbird.batch.Batcher
-import com.twitter.summingbird.batch.Timestamp
-import com.twitter.summingbird.option._
-import com.twitter.summingbird.scalding.Scalding
-import com.twitter.summingbird.scalding.batch.{BatchedStore => ScaldingBatchedStore}
-import com.twitter.summingbird.Options
-import com.twitter.summingbird.Producer
-import com.twitter.summingbird_internal.bijection.BatchPairImplicits._
-import com.twitter.summingbird_internal.runner.common.JobName
-import com.twitter.summingbird_internal.runner.scalding.GenericRunner
-import com.twitter.summingbird_internal.runner.scalding.ScaldingConfig
-import com.twitter.summingbird_internal.runner.scalding.StatebirdState
-import com.twitter.summingbird_internal.dalv2.DAL
-import com.twitter.summingbird_internal.runner.store_config._
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework._
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.scalding.sources._
-import job.AggregatesV2Job
-import org.apache.hadoop.conf.Configuration
+impowt com.twittew.bijection.thwift.compactthwiftcodec
+i-impowt c-com.twittew.bijection.codec
+impowt c-com.twittew.bijection.injection
+i-impowt com.twittew.mw.api._
+i-impowt com.twittew.mw.api.constant.shawedfeatuwes.timestamp
+i-impowt c-com.twittew.mw.api.utiw.compactdatawecowdconvewtew
+i-impowt com.twittew.mw.api.utiw.swichdatawecowd
+impowt com.twittew.scawding.awgs
+impowt com.twittew.scawding_intewnaw.dawv2.dawwwite.d
+impowt com.twittew.stowehaus_intewnaw.manhattan.manhattanwoconfig
+i-impowt com.twittew.summingbiwd.batch.option.weducews
+impowt com.twittew.summingbiwd.batch.batchid
+impowt com.twittew.summingbiwd.batch.batchew
+impowt c-com.twittew.summingbiwd.batch.timestamp
+impowt c-com.twittew.summingbiwd.option._
+impowt com.twittew.summingbiwd.scawding.scawding
+impowt com.twittew.summingbiwd.scawding.batch.{batchedstowe => scawdingbatchedstowe}
+i-impowt com.twittew.summingbiwd.options
+i-impowt com.twittew.summingbiwd.pwoducew
+i-impowt com.twittew.summingbiwd_intewnaw.bijection.batchpaiwimpwicits._
+impowt com.twittew.summingbiwd_intewnaw.wunnew.common.jobname
+impowt com.twittew.summingbiwd_intewnaw.wunnew.scawding.genewicwunnew
+impowt com.twittew.summingbiwd_intewnaw.wunnew.scawding.scawdingconfig
+i-impowt com.twittew.summingbiwd_intewnaw.wunnew.scawding.statebiwdstate
+impowt com.twittew.summingbiwd_intewnaw.dawv2.daw
+impowt com.twittew.summingbiwd_intewnaw.wunnew.stowe_config._
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk._
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.scawding.souwces._
+impowt job.aggwegatesv2job
+i-impowt o-owg.apache.hadoop.conf.configuwation
 /*
- * Offline scalding version of summingbird job to compute aggregates v2.
- * This is loosely based on the template created by sb-gen.
- * Extend this trait in your own scalding job, and override the val
- * "aggregatesToCompute" with your own desired set of aggregates.
+ * o-offwine s-scawding vewsion of summingbiwd job to compute a-aggwegates v2. ^^
+ * this is woosewy based on the t-tempwate cweated by sb-gen. ^•ﻌ•^
+ * extend this twait in youw own scawding job, XD and ovewwide the vaw
+ * "aggwegatestocompute" w-with youw own desiwed s-set of aggwegates. :3
  */
-trait AggregatesV2ScaldingJob {
-  val aggregatesToCompute: Set[TypedAggregateGroup[_]]
+t-twait aggwegatesv2scawdingjob {
+  v-vaw aggwegatestocompute: set[typedaggwegategwoup[_]]
 
-  implicit val aggregationKeyInjection: Injection[AggregationKey, Array[Byte]] =
-    AggregationKeyInjection
+  impwicit vaw aggwegationkeyinjection: injection[aggwegationkey, (ꈍᴗꈍ) a-awway[byte]] =
+    a-aggwegationkeyinjection
 
-  implicit val aggregationKeyOrdering: AggregationKeyOrdering.type = AggregationKeyOrdering
+  impwicit vaw aggwegationkeyowdewing: a-aggwegationkeyowdewing.type = a-aggwegationkeyowdewing
 
-  implicit val dataRecordCodec: Injection[DataRecord, Array[Byte]] = CompactThriftCodec[DataRecord]
+  impwicit v-vaw datawecowdcodec: injection[datawecowd, :3 a-awway[byte]] = compactthwiftcodec[datawecowd]
 
-  private implicit val compactDataRecordCodec: Injection[CompactDataRecord, Array[Byte]] =
-    CompactThriftCodec[CompactDataRecord]
+  pwivate impwicit v-vaw compactdatawecowdcodec: injection[compactdatawecowd, (U ﹏ U) awway[byte]] =
+    compactthwiftcodec[compactdatawecowd]
 
-  private val compactDataRecordConverter = new CompactDataRecordConverter()
+  p-pwivate vaw compactdatawecowdconvewtew = n-nyew compactdatawecowdconvewtew()
 
-  def numReducers: Int = -1
+  d-def nyumweducews: int = -1
 
   /**
-   * Function that maps from a logical ''AggregateSource''
-   * to an underlying physical source. The physical source
-   * for the scalding platform is a ScaldingAggregateSource.
+   * function that maps fwom a wogicaw ''aggwegatesouwce''
+   * to an undewwying physicaw s-souwce. UwU the physicaw s-souwce
+   * fow the scawding p-pwatfowm is a-a scawdingaggwegatesouwce. 😳😳😳
    */
-  def dataRecordSourceToScalding(
-    source: AggregateSource
-  ): Option[Producer[Scalding, DataRecord]] = {
-    source match {
-      case offlineSource: OfflineAggregateSource =>
-        Some(ScaldingAggregateSource(offlineSource).source)
-      case _ => None
+  d-def datawecowdsouwcetoscawding(
+    souwce: aggwegatesouwce
+  ): option[pwoducew[scawding, datawecowd]] = {
+    s-souwce match {
+      case offwinesouwce: offwineaggwegatesouwce =>
+        some(scawdingaggwegatesouwce(offwinesouwce).souwce)
+      case _ => n-nyone
     }
   }
 
   /**
-   * Creates and returns a versioned store using the config parameters
-   * with a specific number of versions to keep, and which can read from
-   * the most recent available version on HDFS rather than a specific
-   * version number. The store applies a timestamp correction based on the
-   * number of days of aggregate data skipped over at read time to ensure
-   * that skipping data plays nicely with halfLife decay.
+   * cweates a-and wetuwns a-a vewsioned stowe u-using the config pawametews
+   * w-with a specific n-nyumbew of v-vewsions to keep, XD a-and which can wead fwom
+   * the most wecent avaiwabwe v-vewsion o-on hdfs wathew t-than a specific
+   * v-vewsion nyumbew. o.O t-the stowe appwies a timestamp cowwection based on the
+   * n-nyumbew of days of aggwegate data skipped ovew at wead time to ensuwe
+   * that skipping data pways n-nicewy with hawfwife decay. (⑅˘꒳˘)
    *
-   * @param config         specifying the Manhattan store parameters
-   * @param versionsToKeep number of old versions to keep
+   * @pawam config         specifying the m-manhattan stowe p-pawametews
+   * @pawam v-vewsionstokeep nyumbew of o-owd vewsions to keep
    */
-  def getMostRecentLagCorrectingVersionedStoreWithRetention[
-    Key: Codec: Ordering,
-    ValInStore: Codec,
-    ValInMemory
+  def g-getmostwecentwagcowwectingvewsionedstowewithwetention[
+    k-key: codec: owdewing, 😳😳😳
+    vawinstowe: codec, nyaa~~
+    vawinmemowy
   ](
-    config: OfflineStoreOnlyConfig[ManhattanROConfig],
-    versionsToKeep: Int,
-    lagCorrector: (ValInMemory, Long) => ValInMemory,
-    packer: ValInMemory => ValInStore,
-    unpacker: ValInStore => ValInMemory
-  ): ScaldingBatchedStore[Key, ValInMemory] = {
-    MostRecentLagCorrectingVersionedStore[Key, ValInStore, ValInMemory](
-      config.offline.hdfsPath.toString,
-      packer = packer,
-      unpacker = unpacker,
-      versionsToKeep = versionsToKeep)(
-      Injection.connect[(Key, (BatchID, ValInStore)), (Array[Byte], Array[Byte])],
-      config.batcher,
-      implicitly[Ordering[Key]],
-      lagCorrector
-    ).withInitialBatch(config.batcher.batchOf(config.startTime.value))
+    config: offwinestoweonwyconfig[manhattanwoconfig], rawr
+    vewsionstokeep: i-int, -.-
+    wagcowwectow: (vawinmemowy, (✿oωo) wong) => v-vawinmemowy, /(^•ω•^)
+    packew: v-vawinmemowy => v-vawinstowe, 🥺
+    unpackew: vawinstowe => vawinmemowy
+  ): s-scawdingbatchedstowe[key, ʘwʘ v-vawinmemowy] = {
+    mostwecentwagcowwectingvewsionedstowe[key, UwU v-vawinstowe, XD vawinmemowy](
+      c-config.offwine.hdfspath.tostwing, (✿oωo)
+      packew = packew, :3
+      unpackew = unpackew, (///ˬ///✿)
+      vewsionstokeep = v-vewsionstokeep)(
+      i-injection.connect[(key, nyaa~~ (batchid, >w< v-vawinstowe)), -.- (awway[byte], (✿oωo) awway[byte])], (˘ω˘)
+      c-config.batchew, rawr
+      i-impwicitwy[owdewing[key]], OwO
+      wagcowwectow
+    ).withinitiawbatch(config.batchew.batchof(config.stawttime.vawue))
   }
 
-  def mutablyCorrectDataRecordTimestamp(
-    record: DataRecord,
-    lagToCorrectMillis: Long
-  ): DataRecord = {
-    val richRecord = SRichDataRecord(record)
-    if (richRecord.hasFeature(TIMESTAMP)) {
-      val timestamp = richRecord.getFeatureValue(TIMESTAMP).toLong
-      richRecord.setFeatureValue(TIMESTAMP, timestamp + lagToCorrectMillis)
+  def mutabwycowwectdatawecowdtimestamp(
+    w-wecowd: datawecowd, ^•ﻌ•^
+    wagtocowwectmiwwis: wong
+  ): datawecowd = {
+    vaw wichwecowd = swichdatawecowd(wecowd)
+    i-if (wichwecowd.hasfeatuwe(timestamp)) {
+      v-vaw timestamp = wichwecowd.getfeatuwevawue(timestamp).towong
+      wichwecowd.setfeatuwevawue(timestamp, t-timestamp + wagtocowwectmiwwis)
     }
-    record
+    w-wecowd
   }
 
   /**
-   * Function that maps from a logical ''AggregateStore''
-   * to an underlying physical store. The physical store for
-   * scalding is a HDFS VersionedKeyValSource dataset.
+   * function that maps fwom a wogicaw ''aggwegatestowe''
+   * to a-an undewwying physicaw stowe. UwU the physicaw stowe fow
+   * scawding is a hdfs vewsionedkeyvawsouwce d-dataset. (˘ω˘)
    */
-  def aggregateStoreToScalding(
-    store: AggregateStore
-  ): Option[Scalding#Store[AggregationKey, DataRecord]] = {
-    store match {
-      case offlineStore: OfflineAggregateDataRecordStore =>
-        Some(
-          getMostRecentLagCorrectingVersionedStoreWithRetention[
-            AggregationKey,
-            DataRecord,
-            DataRecord](
-            offlineStore,
-            versionsToKeep = offlineStore.batchesToKeep,
-            lagCorrector = mutablyCorrectDataRecordTimestamp,
-            packer = Injection.identity[DataRecord],
-            unpacker = Injection.identity[DataRecord]
+  def aggwegatestowetoscawding(
+    stowe: aggwegatestowe
+  ): o-option[scawding#stowe[aggwegationkey, (///ˬ///✿) d-datawecowd]] = {
+    stowe match {
+      case offwinestowe: o-offwineaggwegatedatawecowdstowe =>
+        s-some(
+          getmostwecentwagcowwectingvewsionedstowewithwetention[
+            aggwegationkey, σωσ
+            datawecowd, /(^•ω•^)
+            d-datawecowd](
+            offwinestowe, 😳
+            v-vewsionstokeep = offwinestowe.batchestokeep, 😳
+            wagcowwectow = mutabwycowwectdatawecowdtimestamp, (⑅˘꒳˘)
+            packew = i-injection.identity[datawecowd], 😳😳😳
+            unpackew = injection.identity[datawecowd]
           )
         )
-      case offlineStore: OfflineAggregateDataRecordStoreWithDAL =>
-        Some(
-          DAL.versionedKeyValStore[AggregationKey, DataRecord](
-            dataset = offlineStore.dalDataset,
-            pathLayout = D.Suffix(offlineStore.offline.hdfsPath.toString),
-            batcher = offlineStore.batcher,
-            maybeStartTime = Some(offlineStore.startTime),
-            maxErrors = offlineStore.maxKvSourceFailures
+      c-case offwinestowe: o-offwineaggwegatedatawecowdstowewithdaw =>
+        some(
+          daw.vewsionedkeyvawstowe[aggwegationkey, datawecowd](
+            d-dataset = offwinestowe.dawdataset, 😳
+            pathwayout = d.suffix(offwinestowe.offwine.hdfspath.tostwing), XD
+            b-batchew = o-offwinestowe.batchew, mya
+            m-maybestawttime = some(offwinestowe.stawttime), ^•ﻌ•^
+            m-maxewwows = offwinestowe.maxkvsouwcefaiwuwes
           ))
-      case _ => None
+      c-case _ => nyone
     }
   }
 
-  def generate(args: Args): ScaldingConfig = new ScaldingConfig {
-    val jobName = JobName(args("job_name"))
+  def genewate(awgs: awgs): scawdingconfig = n-nyew scawdingconfig {
+    v-vaw jobname = j-jobname(awgs("job_name"))
 
     /*
-     * Add registrars for chill serialization for user-defined types.
-     * We use the default: an empty List().
+     * add wegistwaws fow chiww s-sewiawization fow usew-defined t-types. ʘwʘ
+     * w-we use the defauwt: an empty wist(). ( ͡o ω ͡o )
      */
-    override def registrars = List()
+    ovewwide def wegistwaws = wist()
 
-    /* Use transformConfig to set Hadoop options. */
-    override def transformConfig(config: Map[String, AnyRef]): Map[String, AnyRef] =
-      super.transformConfig(config) ++ Map(
-        "mapreduce.output.fileoutputformat.compress" -> "true",
-        "mapreduce.output.fileoutputformat.compress.codec" -> "com.hadoop.compression.lzo.LzoCodec",
-        "mapreduce.output.fileoutputformat.compress.type" -> "BLOCK"
+    /* u-use twansfowmconfig to s-set hadoop options. mya */
+    o-ovewwide d-def twansfowmconfig(config: map[stwing, o.O anywef]): m-map[stwing, (✿oωo) anywef] =
+      supew.twansfowmconfig(config) ++ map(
+        "mapweduce.output.fiweoutputfowmat.compwess" -> "twue", :3
+        "mapweduce.output.fiweoutputfowmat.compwess.codec" -> "com.hadoop.compwession.wzo.wzocodec", 😳
+        "mapweduce.output.fiweoutputfowmat.compwess.type" -> "bwock"
       )
 
     /*
-     * Use getNamedOptions to set Summingbird runtime options
-     * The options we set are:
-     * 1) Set monoid to non-commutative to disable map-side
-     * aggregation and force all aggregation to reducers (provides a 20% speedup)
+     * use getnamedoptions to set summingbiwd w-wuntime options
+     * the options w-we set awe:
+     * 1) set monoid t-to nyon-commutative to disabwe m-map-side
+     * aggwegation a-and fowce aww aggwegation t-to weducews (pwovides a-a 20% speedup)
      */
-    override def getNamedOptions: Map[String, Options] = Map(
-      "DEFAULT" -> Options()
-        .set(MonoidIsCommutative(false))
-        .set(Reducers(numReducers))
+    o-ovewwide d-def getnamedoptions: map[stwing, (U ﹏ U) options] = map(
+      "defauwt" -> options()
+        .set(monoidiscommutative(fawse))
+        .set(weducews(numweducews))
     )
 
-    implicit val batcher: Batcher = Batcher.ofHours(24)
+    impwicit vaw batchew: b-batchew = batchew.ofhouws(24)
 
-    /* State implementation that uses Statebird (go/statebird) to track the batches processed. */
-    def getWaitingState(hadoopConfig: Configuration, startDate: Option[Timestamp], batches: Int) =
-      StatebirdState(
-        jobName,
-        startDate,
-        batches,
-        args.optional("statebird_service_destination"),
-        args.optional("statebird_client_id_name")
-      )(batcher)
+    /* s-state impwementation t-that uses statebiwd (go/statebiwd) to t-twack the batches pwocessed. mya */
+    def getwaitingstate(hadoopconfig: configuwation, (U ᵕ U❁) s-stawtdate: o-option[timestamp], :3 batches: int) =
+      s-statebiwdstate(
+        jobname, mya
+        stawtdate, OwO
+        b-batches, (ˆ ﻌ ˆ)♡
+        a-awgs.optionaw("statebiwd_sewvice_destination"), ʘwʘ
+        awgs.optionaw("statebiwd_cwient_id_name")
+      )(batchew)
 
-    val sourceNameFilter: Option[Set[String]] =
-      args.optional("input_sources").map(_.split(",").toSet)
-    val storeNameFilter: Option[Set[String]] =
-      args.optional("output_stores").map(_.split(",").toSet)
+    v-vaw souwcenamefiwtew: o-option[set[stwing]] =
+      awgs.optionaw("input_souwces").map(_.spwit(",").toset)
+    vaw stowenamefiwtew: option[set[stwing]] =
+      a-awgs.optionaw("output_stowes").map(_.spwit(",").toset)
 
-    val filteredAggregates =
-      AggregatesV2Job.filterAggregates(
-        aggregates = aggregatesToCompute,
-        sourceNames = sourceNameFilter,
-        storeNames = storeNameFilter
+    v-vaw fiwtewedaggwegates =
+      a-aggwegatesv2job.fiwtewaggwegates(
+        a-aggwegates = a-aggwegatestocompute, o.O
+        souwcenames = s-souwcenamefiwtew, UwU
+        s-stowenames = stowenamefiwtew
       )
 
-    override val graph =
-      AggregatesV2Job.generateJobGraph[Scalding](
-        filteredAggregates,
-        dataRecordSourceToScalding,
-        aggregateStoreToScalding
-      )(DataRecordAggregationMonoid(filteredAggregates))
+    ovewwide v-vaw gwaph =
+      a-aggwegatesv2job.genewatejobgwaph[scawding](
+        fiwtewedaggwegates, rawr x3
+        d-datawecowdsouwcetoscawding, 🥺
+        aggwegatestowetoscawding
+      )(datawecowdaggwegationmonoid(fiwtewedaggwegates))
   }
-  def main(args: Array[String]): Unit = {
-    GenericRunner(args, generate(_))
+  def main(awgs: a-awway[stwing]): unit = {
+    g-genewicwunnew(awgs, g-genewate(_))
 
   }
 }

@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.operation
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation
 
-case class CursorDisplayTreatment(
-  actionText: Option[String],
-  labelText: Option[String])
+case cwass cuwsowdispwaytweatment(
+  a-actiontext: o-option[stwing], OwO
+  w-wabewtext: option[stwing])

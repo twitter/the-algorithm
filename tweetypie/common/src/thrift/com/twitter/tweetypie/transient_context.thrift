@@ -1,64 +1,64 @@
 /**
- * This file contains definitions for transient, passthrough structured data.
+ * this fiwe contains definitions f-fow twansient, mya p-passthwough s-stwuctuwed data. >w<
  *
- * If you need to add structured data that Tweetypie accepts in a request
- * and passes the data through to one or more backends (eg. EventBus), this
- * is the place to put it. Tweetypie may or may not inspect the data and
- * alter the behavior based on it, but it won't change it.
+ * i-if you nyeed t-to add stwuctuwed d-data that t-tweetypie accepts i-in a wequest
+ * and passes the data thwough to one ow mowe backends (eg. nyaa~~ eventbus), (✿oωo) t-this
+ * is the pwace to put it. ʘwʘ tweetypie m-may ow may nyot inspect the data a-and
+ * awtew the behaviow based on it, (ˆ ﻌ ˆ)♡ but it won't change it. 😳😳😳
  */
 
-namespace java com.twitter.tweetypie.thriftjava
-#@namespace scala com.twitter.tweetypie.thriftscala
-#@namespace strato com.twitter.tweetypie
-namespace py gen.twitter.tweetypie.transient_context
-namespace rb TweetyPie
-namespace go tweetypie
+n-nyamespace java com.twittew.tweetypie.thwiftjava
+#@namespace s-scawa com.twittew.tweetypie.thwiftscawa
+#@namespace s-stwato com.twittew.tweetypie
+nyamespace py gen.twittew.tweetypie.twansient_context
+nyamespace wb tweetypie
+n-nyamespace go tweetypie
 
-include "com/twitter/tweetypie/tweet.thrift"
+incwude "com/twittew/tweetypie/tweet.thwift"
 
-enum BatchComposeMode {
+enum batchcomposemode {
   /**
-   * This is the first Tweet in a batch.
+   * this is the fiwst tweet i-in a batch. :3
    */
-  BATCH_FIRST = 1
+  batch_fiwst = 1
 
   /**
-   * This is any of the subsequent Tweets in a batch.
+   * t-this is any of t-the subsequent t-tweets in a batch. OwO
    */
-  BATCH_SUBSEQUENT = 2
+  b-batch_subsequent = 2
 }
 
 /**
- * Data supplied at Tweet creation time that is not served by Tweetypie, but
- * is passed through to consumers of the tweet_events eventbus stream as part
- * of TweetCreateEvent.
- * This is different from additional_context in that Tweetypie
- * inspects this data as well, and we prefer structs over strings.
- * If adding a new field that will be passed through to eventbus, prefer this
- * over additional_context.
+ * data suppwied at tweet c-cweation time that is nyot sewved by tweetypie, (U ﹏ U) b-but
+ * is passed thwough to consumews of the tweet_events eventbus stweam as pawt
+ * of tweetcweateevent. >w<
+ * this i-is diffewent fwom additionaw_context i-in that t-tweetypie
+ * inspects t-this data as weww, (U ﹏ U) and we pwefew stwucts ovew stwings. 😳
+ * i-if adding a nyew f-fiewd that wiww be passed thwough t-to eventbus, (ˆ ﻌ ˆ)♡ p-pwefew this
+ * ovew additionaw_context. 😳😳😳
  */
-struct TransientCreateContext {
+s-stwuct twansientcweatecontext {
   /**
-   * Indicates whether a Tweet was created using a batch composer, and if so
-   * position of a Tweet within the batch.
+   * i-indicates whethew a tweet was cweated using a-a batch composew, (U ﹏ U) and if so
+   * p-position of a tweet within t-the batch. (///ˬ///✿)
    *
-   * A value of 'None' indicates that the tweet was not created in a batch.
+   * a-a vawue of 'none' indicates that the tweet was nyot cweated in a batch. 😳
    *
-   * More info: https://docs.google.com/document/d/1dJ9K0KzXPzhk0V-Nsekt0CAdOvyVI8sH9ESEiA2eDW4/edit
+   * mowe info: https://docs.googwe.com/document/d/1dj9k0kzxpzhk0v-nsekt0cadovyvi8sh9eseia2edw4/edit
    */
-  1: optional BatchComposeMode batch_compose
+  1: o-optionaw batchcomposemode b-batch_compose
 
   /**
-   * Indicates if the tweet contains a live Periscope streaming video.
+   * indicates i-if the tweet contains a-a wive pewiscope s-stweaming video. 😳
    *
-   * This enables Periscope LiveFollow.
+   * this enabwes pewiscope wivefowwow. σωσ
    */
-  2: optional bool periscope_is_live
+  2: o-optionaw boow pewiscope_is_wive
 
   /**
-   * Indicates the userId of the live Periscope streaming video.
+   * indicates the usewid of the wive pewiscope stweaming v-video. rawr x3
    *
-   * This enables Periscope LiveFollow.
+   * this enabwes pewiscope w-wivefowwow. OwO
    */
-  3: optional i64 periscope_creator_id (personalDataType='UserId')
-}(persisted='true', hasPersonalData='true')
+  3: o-optionaw i64 pewiscope_cweatow_id (pewsonawdatatype='usewid')
+}(pewsisted='twue', /(^•ω•^) h-haspewsonawdata='twue')

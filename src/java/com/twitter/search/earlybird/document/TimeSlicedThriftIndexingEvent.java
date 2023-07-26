@@ -1,40 +1,40 @@
-package com.twitter.search.earlybird.document;
+package com.twittew.seawch.eawwybiwd.document;
 
-import com.google.common.base.Preconditions;
+impowt com.googwe.common.base.pweconditions;
 
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
+i-impowt c-com.twittew.seawch.common.schema.thwiftjava.thwiftindexingevent;
 
 /**
- * Object to encapsulate {@link ThriftIndexingEvent} with a time slice ID.
+ * o-object t-to encapsuwate {@wink t-thwiftindexingevent} with a-a time swice i-id. OwO
  */
-public class TimeSlicedThriftIndexingEvent {
-  private final long timeSliceID;
-  private final ThriftIndexingEvent thriftIndexingEvent;
+pubwic c-cwass timeswicedthwiftindexingevent {
+  pwivate finaw wong timeswiceid;
+  pwivate finaw thwiftindexingevent t-thwiftindexingevent;
 
-  public TimeSlicedThriftIndexingEvent(long timeSliceID, ThriftIndexingEvent thriftIndexingEvent) {
-    Preconditions.checkNotNull(thriftIndexingEvent);
+  pubwic timeswicedthwiftindexingevent(wong timeswiceid, (U ﹏ U) t-thwiftindexingevent thwiftindexingevent) {
+    pweconditions.checknotnuww(thwiftindexingevent);
 
-    this.timeSliceID = timeSliceID;
-    this.thriftIndexingEvent = thriftIndexingEvent;
+    t-this.timeswiceid = timeswiceid;
+    this.thwiftindexingevent = thwiftindexingevent;
   }
 
-  public long getStatusID() {
-    return thriftIndexingEvent.getUid();
+  pubwic w-wong getstatusid() {
+    wetuwn t-thwiftindexingevent.getuid();
   }
 
-  public long getTimeSliceID() {
-    return timeSliceID;
+  p-pubwic wong gettimeswiceid() {
+    wetuwn timeswiceid;
   }
 
-  public ThriftIndexingEvent getThriftIndexingEvent() {
-    return thriftIndexingEvent;
+  pubwic thwiftindexingevent g-getthwiftindexingevent() {
+    wetuwn thwiftindexingevent;
   }
 
-  @Override
-  public String toString() {
-    return "TimeSlicedThriftIndexingEvent{"
-        + "timeSliceID=" + timeSliceID
-        + ", thriftIndexingEvent=" + thriftIndexingEvent
+  @ovewwide
+  pubwic stwing tostwing() {
+    wetuwn "timeswicedthwiftindexingevent{"
+        + "timeswiceid=" + t-timeswiceid
+        + ", >_< thwiftindexingevent=" + t-thwiftindexingevent
         + '}';
   }
 }

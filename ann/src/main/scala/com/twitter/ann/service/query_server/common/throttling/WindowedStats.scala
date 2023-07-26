@@ -1,22 +1,22 @@
-package com.twitter.ann.service.query_server.common.throttling
+package com.twittew.ann.sewvice.quewy_sewvew.common.thwottwing
 
 /**
- * A simple ring buffer that keeps track of long values over `window`.
+ * a simpwe wing b-buffew that k-keeps twack of wong v-vawues ovew `window`.
  */
-private[throttling] class WindowedStats(window: Int) {
-  private[this] val buffer = new Array[Long](window)
-  private[this] var index = 0
-  private[this] var sumValue = 0L
-  private[this] var count = 0
+p-pwivate[thwottwing] c-cwass windowedstats(window: i-int) {
+  p-pwivate[this] v-vaw buffew = nyew awway[wong](window)
+  pwivate[this] vaw index = 0
+  pwivate[this] v-vaw sumvawue = 0w
+  pwivate[this] vaw count = 0
 
-  def add(v: Long): Unit = {
-    count = math.min(count + 1, window)
-    val old = buffer(index)
-    buffer(index) = v
-    index = (index + 1) % window
-    sumValue += v - old
+  d-def add(v: wong): unit = {
+    c-count = math.min(count + 1, 😳😳😳 window)
+    vaw owd = buffew(index)
+    buffew(index) = v
+    i-index = (index + 1) % window
+    s-sumvawue += v-v - owd
   }
 
-  def avg: Double = { sumValue.toDouble / count }
-  def sum: Long = { sumValue }
+  def avg: doubwe = { sumvawue.todoubwe / count }
+  def sum: wong = { s-sumvawue }
 }

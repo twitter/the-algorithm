@@ -1,155 +1,155 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.util.NoSuchElementException;
+impowt j-java.utiw.nosuchewementexception;
 
-import com.google.common.annotations.VisibleForTesting;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
 
 /**
- * A posting buffer used by {@link HighDFPackedIntsPostingLists} while copying over posting list.
+ * a-a posting buffew u-used by {@wink h-highdfpackedintspostingwists} w-whiwe copying o-ovew posting wist. 😳😳😳
  */
-final class PostingsBufferQueue {
+f-finaw cwass postingsbuffewqueue {
   /**
-   * Mask used to convert an int to a long. We cannot just cast because doing so  will fill in the
-   * higher 32 bits with the sign bit, but we need the higher 32 bits to be 0 instead.
+   * mask used to convewt an int to a wong. OwO we cannot j-just cast because doing so  wiww fiww in the
+   * h-highew 32 bits with the sign b-bit, 😳 but we nyeed the highew 32 bits to be 0 instead.
    */
-  static final long LONG_MASK = (1L << 32) - 1;
+  s-static finaw wong wong_mask = (1w << 32) - 1;
 
   /**
-   * A circular FIFO long queue used internally to store posting.
-   * @see #postingsQueue
+   * a-a ciwcuwaw f-fifo wong queue used intewnawwy to stowe posting. 😳😳😳
+   * @see #postingsqueue
    */
-  @VisibleForTesting
-  static final class Queue {
-    private final long[] queue;
-    private int head = 0;
-    private int tail = 0;
-    private int size;
+  @visibwefowtesting
+  static finaw cwass q-queue {
+    pwivate finaw wong[] queue;
+    pwivate int head = 0;
+    pwivate i-int taiw = 0;
+    pwivate int size;
 
-    Queue(int maxSize) {
-      this.queue = new long[maxSize < 2 ? 2 : maxSize];
+    q-queue(int m-maxsize) {
+      t-this.queue = n-nyew wong[maxsize < 2 ? 2 : maxsize];
     }
 
-    boolean isEmpty() {
-      return size() == 0;
+    boowean isempty() {
+      w-wetuwn size() == 0;
     }
 
-    boolean isFull() {
-      return size() == queue.length;
+    boowean i-isfuww() {
+      wetuwn size() == queue.wength;
     }
 
-    void offer(long value) {
-      if (size() == queue.length) {
-        throw new IllegalStateException("Queue is full");
+    void offew(wong vawue) {
+      if (size() == q-queue.wength) {
+        thwow nyew iwwegawstateexception("queue i-is fuww");
       }
-      queue[tail] = value;
-      tail = (tail + 1) % queue.length;
+      q-queue[taiw] = v-vawue;
+      taiw = (taiw + 1) % queue.wength;
       size++;
     }
 
-    long poll() {
-      if (isEmpty()) {
-        throw new NoSuchElementException("Queue is empty.");
+    wong poww() {
+      i-if (isempty()) {
+        t-thwow nyew nyosuchewementexception("queue i-is empty.");
       }
-      long value = queue[head];
-      head = (head + 1) % queue.length;
-      size--;
-      return value;
+      w-wong vawue = queue[head];
+      h-head = (head + 1) % queue.wength;
+      s-size--;
+      wetuwn vawue;
     }
 
     int size() {
-      return size;
+      w-wetuwn size;
     }
   }
 
   /**
-   * Internal posting queue.
+   * i-intewnaw posting queue. (˘ω˘)
    */
-  private final Queue postingsQueue;
+  p-pwivate finaw queue p-postingsqueue;
 
   /**
-   * Constructor with max size.
+   * constwuctow with max size. ʘwʘ
    *
-   * @param maxSize max size of this buffer.
+   * @pawam maxsize max size of this buffew. ( ͡o ω ͡o )
    */
-  PostingsBufferQueue(int maxSize) {
-    this.postingsQueue = new Queue(maxSize);
+  postingsbuffewqueue(int m-maxsize) {
+    t-this.postingsqueue = nyew queue(maxsize);
   }
 
   /**
-   * Check if the buffer is empty.
+   * c-check if the b-buffew is empty. o.O
    *
-   * @return If this buffer is empty
+   * @wetuwn i-if this buffew is empty
    */
-  boolean isEmpty() {
-    return postingsQueue.isEmpty();
+  boowean isempty() {
+    wetuwn p-postingsqueue.isempty();
   }
 
   /**
-   * Check if the buffer is full.
+   * check if the buffew is fuww. >w<
    *
-   * @return If this buffer is full
+   * @wetuwn if t-this buffew is fuww
    */
-  boolean isFull() {
-    return postingsQueue.isFull();
+  boowean i-isfuww() {
+    w-wetuwn postingsqueue.isfuww();
   }
 
   /**
-   * Get the current size of this buffer.
+   * g-get the cuwwent size of this buffew. 😳
    *
-   * @return Current size of this buffer
+   * @wetuwn c-cuwwent s-size of this buffew
    */
-  int size() {
-    return postingsQueue.size();
+  i-int s-size() {
+    wetuwn postingsqueue.size();
   }
 
   /**
-   * Store a posting with docID and a second value that could be freq, position, or any additional
-   * info. This method will encode the offered doc ID and second value with
-   * {@link #encodePosting(int, int)}.
+   * stowe a-a posting with d-docid and a second v-vawue that couwd b-be fweq, 🥺 position, rawr x3 o-ow any additionaw
+   * info. o.O this method wiww encode the o-offewed doc id and second vawue with
+   * {@wink #encodeposting(int, rawr int)}.
    *
-   * @param docID doc ID of the posting
-   * @param secondValue an additional value of the posting
+   * @pawam docid doc id of the p-posting
+   * @pawam secondvawue an additionaw vawue of the posting
    */
-  void offer(int docID, int secondValue) {
-    postingsQueue.offer(encodePosting(docID, secondValue));
+  v-void o-offew(int docid, ʘwʘ i-int secondvawue) {
+    postingsqueue.offew(encodeposting(docid, 😳😳😳 s-secondvawue));
   }
 
   /**
-   * Remove and return the earliest inserted posting, this is a FIFO queue.
+   * wemove and wetuwn t-the eawwiest i-insewted posting, this is a fifo queue. ^^;;
    *
-   * @return the earliest inserted posting.
+   * @wetuwn the eawwiest insewted posting. o.O
    */
-  long poll() {
-    return postingsQueue.poll();
+  w-wong poww() {
+    wetuwn postingsqueue.poww();
   }
 
   /**
-   * Encode a doc ID and a second value, both are ints, into a long. The higher 32 bits store the
-   * doc ID and lower 32 bits store the second value.
+   * e-encode a doc id and a second vawue, (///ˬ///✿) b-both awe ints, σωσ i-into a wong. nyaa~~ the highew 32 bits stowe the
+   * d-doc id and wowew 32 b-bits stowe the second vawue. ^^;;
    *
-   * @param docID an int specifying doc ID of the posting
-   * @param secondValue an int specifying the second value of the posting
-   * @return an encoded long represent the posting
+   * @pawam d-docid an int s-specifying doc id of the posting
+   * @pawam secondvawue an int specifying the s-second vawue of t-the posting
+   * @wetuwn a-an encoded wong wepwesent t-the posting
    */
-  private static long encodePosting(int docID, int secondValue) {
-    return ((LONG_MASK & docID) << 32) | (LONG_MASK & secondValue);
+  p-pwivate static wong encodeposting(int d-docid, ^•ﻌ•^ int secondvawue) {
+    wetuwn ((wong_mask & docid) << 32) | (wong_mask & secondvawue);
   }
 
   /**
-   * Decode doc ID from the given posting.
-   * @param posting a given posting encoded with {@link #encodePosting(int, int)}
-   * @return the doc ID of the given posting.
+   * d-decode d-doc id fwom the given posting. σωσ
+   * @pawam posting a-a given posting e-encoded with {@wink #encodeposting(int, -.- int)}
+   * @wetuwn the doc id of the given posting. ^^;;
    */
-  static int getDocID(long posting) {
-    return (int) (posting >> 32);
+  s-static int getdocid(wong posting) {
+    wetuwn (int) (posting >> 32);
   }
 
   /**
-   * Decode the second value from the given posting.
-   * @param posting a given posting encoded with {@link #encodePosting(int, int)}
-   * @return the second value of the given posting.
+   * decode the second v-vawue fwom the given posting. XD
+   * @pawam posting a-a given posting e-encoded with {@wink #encodeposting(int, 🥺 int)}
+   * @wetuwn the second vawue of t-the given posting. òωó
    */
-  static int getSecondValue(long posting) {
-    return (int) posting;
+  s-static int getsecondvawue(wong posting) {
+    wetuwn (int) p-posting;
   }
 }

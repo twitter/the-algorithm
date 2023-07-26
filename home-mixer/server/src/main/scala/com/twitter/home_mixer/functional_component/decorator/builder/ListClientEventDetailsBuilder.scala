@@ -1,33 +1,33 @@
-package com.twitter.home_mixer.functional_component.decorator.builder
+package com.twittew.home_mixew.functionaw_component.decowatow.buiwdew
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventDetailsBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelineservice.suggests.{thriftscala => st}
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventdetaiwsbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.timewinesdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.timewinesewvice.suggests.{thwiftscawa => s-st}
 
-case class ListClientEventDetailsBuilder(suggestType: st.SuggestType)
-    extends BaseClientEventDetailsBuilder[PipelineQuery, UniversalNoun[Any]] {
+case cwass wistcwienteventdetaiwsbuiwdew(suggesttype: st.suggesttype)
+    extends basecwienteventdetaiwsbuiwdew[pipewinequewy, u-univewsawnoun[any]] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: UniversalNoun[Any],
-    candidateFeatures: FeatureMap
-  ): Option[ClientEventDetails] = {
-    val clientEventDetails = ClientEventDetails(
-      conversationDetails = None,
-      timelinesDetails = Some(
-        TimelinesDetails(
-          injectionType = Some(suggestType.name),
-          controllerData = None,
-          sourceData = None)),
-      articleDetails = None,
-      liveEventDetails = None,
-      commerceDetails = None
+  ovewwide def appwy(
+    q-quewy: pipewinequewy, mya
+    candidate: u-univewsawnoun[any],
+    candidatefeatuwes: featuwemap
+  ): option[cwienteventdetaiws] = {
+    v-vaw cwienteventdetaiws = cwienteventdetaiws(
+      c-convewsationdetaiws = n-nyone,
+      timewinesdetaiws = some(
+        timewinesdetaiws(
+          injectiontype = s-some(suggesttype.name), nyaa~~
+          contwowwewdata = nyone, (⑅˘꒳˘)
+          souwcedata = nyone)), rawr x3
+      a-awticwedetaiws = nyone, (✿oωo)
+      w-wiveeventdetaiws = n-nyone, (ˆ ﻌ ˆ)♡
+      c-commewcedetaiws = n-nyone
     )
 
-    Some(clientEventDetails)
+    some(cwienteventdetaiws)
   }
 }

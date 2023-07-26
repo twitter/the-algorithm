@@ -1,14 +1,14 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/bijection:core",
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/thrift/com/twitter/ann/serialization:serialization-scala",
-        "mediaservices/commons",
-        "scrooge/scrooge-core",
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], OwO
+    compiwew_option_sets = ["fataw_wawnings"], 🥺
+    p-pwatfowm = "java8", òωó
+    t-tags = ["bazew-compatibwe"], o.O
+    d-dependencies = [
+        "3wdpawty/jvm/com/twittew/bijection:cowe", (U ᵕ U❁)
+        "ann/swc/main/scawa/com/twittew/ann/common", (⑅˘꒳˘)
+        "ann/swc/main/thwift/com/twittew/ann/sewiawization:sewiawization-scawa", ( ͡o ω ͡o )
+        "mediasewvices/commons", UwU
+        "scwooge/scwooge-cowe", rawr x3
+        "swc/scawa/com/twittew/scawding_intewnaw/muwtifowmat/fowmat", rawr
+    ], σωσ
 )

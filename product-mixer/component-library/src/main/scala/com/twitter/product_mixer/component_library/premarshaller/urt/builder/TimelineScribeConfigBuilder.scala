@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewinescwibeconfig
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Trait for our builder which given a query and entries will return an `Option[TimelineScribeConfig]`
+ * t-twait fow ouw buiwdew w-which given a-a quewy and entwies w-wiww wetuwn an `option[timewinescwibeconfig]`
  *
- * @tparam Query
+ * @tpawam quewy
  */
-trait TimelineScribeConfigBuilder[-Query <: PipelineQuery] {
+twait timewinescwibeconfigbuiwdew[-quewy <: pipewinequewy] {
 
-  def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Option[TimelineScribeConfig]
+  d-def buiwd(
+    quewy: quewy, (U ﹏ U)
+    entwies: s-seq[timewineentwy]
+  ): option[timewinescwibeconfig]
 }

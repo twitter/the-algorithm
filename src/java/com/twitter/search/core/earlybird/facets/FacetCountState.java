@@ -1,88 +1,88 @@
-package com.twitter.search.core.earlybird.facets;
+package com.twittew.seawch.cowe.eawwybiwd.facets;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+impowt java.utiw.hashmap;
+i-impowt j-java.utiw.hashset;
+i-impowt java.utiw.itewatow;
+i-impowt java.utiw.map;
+i-impowt java.utiw.set;
 
-import com.google.common.collect.Sets;
+i-impowt c-com.googwe.common.cowwect.sets;
 
-import com.twitter.search.common.schema.base.Schema;
+i-impowt com.twittew.seawch.common.schema.base.schema;
 
 /**
- * Maintains internal state during one facet count request.
+ * maintains intewnaw state duwing one facet count wequest. (U ﹏ U)
  */
-public final class FacetCountState<R> {
-  private final Set<Schema.FieldInfo> fieldsToCount = new HashSet<>();
-  private final Map<String, FacetFieldResults<R>> facetfieldResults =
-      new HashMap<>();
-  private final int minNumFacetResults;
-  private final Schema schema;
+p-pubwic finaw cwass facetcountstate<w> {
+  pwivate f-finaw set<schema.fiewdinfo> fiewdstocount = n-nyew hashset<>();
+  pwivate finaw map<stwing, 😳 facetfiewdwesuwts<w>> f-facetfiewdwesuwts =
+      nyew h-hashmap<>();
+  p-pwivate finaw int minnumfacetwesuwts;
+  pwivate finaw schema schema;
 
-  public FacetCountState(Schema schema, int minNumFacetResults) {
+  pubwic facetcountstate(schema s-schema, (ˆ ﻌ ˆ)♡ int minnumfacetwesuwts) {
     this.schema = schema;
-    this.minNumFacetResults = minNumFacetResults;
+    this.minnumfacetwesuwts = m-minnumfacetwesuwts;
   }
 
   /**
-   * Adds a facet to be counted in this request.
+   * adds a facet t-to be counted in t-this wequest. 😳😳😳
    */
-  public void addFacet(String facetName, int numResultsRequested) {
-    facetfieldResults.put(facetName, new FacetFieldResults(facetName,
-            Math.max(numResultsRequested, minNumFacetResults)));
-    Schema.FieldInfo field = schema.getFacetFieldByFacetName(facetName);
-    fieldsToCount.add(field);
+  p-pubwic void a-addfacet(stwing facetname, (U ﹏ U) int nyumwesuwtswequested) {
+    facetfiewdwesuwts.put(facetname, (///ˬ///✿) n-nyew facetfiewdwesuwts(facetname, 😳
+            math.max(numwesuwtswequested, 😳 minnumfacetwesuwts)));
+    s-schema.fiewdinfo fiewd = schema.getfacetfiewdbyfacetname(facetname);
+    fiewdstocount.add(fiewd);
   }
 
-  public Schema getSchema() {
-    return schema;
+  pubwic schema getschema() {
+    wetuwn schema;
   }
 
-  public int getNumFieldsToCount() {
-    return fieldsToCount.size();
+  p-pubwic int getnumfiewdstocount() {
+    w-wetuwn f-fiewdstocount.size();
   }
 
   /**
-   * Returns whether or not there is a field to be counted for which no skip list is stored
+   * w-wetuwns whethew ow nyot thewe is a fiewd to be counted f-fow which nyo s-skip wist is stowed
    */
-  public boolean hasFieldToCountWithoutSkipList() {
-    for (Schema.FieldInfo facetField: fieldsToCount) {
-      if (!facetField.getFieldType().isStoreFacetSkiplist()) {
-        return true;
+  pubwic b-boowean hasfiewdtocountwithoutskipwist() {
+    f-fow (schema.fiewdinfo facetfiewd: f-fiewdstocount) {
+      if (!facetfiewd.getfiewdtype().isstowefacetskipwist()) {
+        w-wetuwn twue;
       }
     }
-    return false;
+    wetuwn f-fawse;
   }
 
-  public Set<Schema.FieldInfo> getFacetFieldsToCountWithSkipLists() {
-    return Sets.filter(
-        fieldsToCount,
-        facetField -> facetField.getFieldType().isStoreFacetSkiplist());
+  pubwic set<schema.fiewdinfo> g-getfacetfiewdstocountwithskipwists() {
+    wetuwn sets.fiwtew(
+        f-fiewdstocount, σωσ
+        f-facetfiewd -> facetfiewd.getfiewdtype().isstowefacetskipwist());
   }
 
-  public boolean isCountField(Schema.FieldInfo field) {
-    return fieldsToCount.contains(field);
+  pubwic boowean iscountfiewd(schema.fiewdinfo fiewd) {
+    wetuwn fiewdstocount.contains(fiewd);
   }
 
-  public Iterator<FacetFieldResults<R>> getFacetFieldResultsIterator() {
-    return facetfieldResults.values().iterator();
+  pubwic i-itewatow<facetfiewdwesuwts<w>> g-getfacetfiewdwesuwtsitewatow() {
+    wetuwn facetfiewdwesuwts.vawues().itewatow();
   }
 
-  public static final class FacetFieldResults<R> {
-    public final String facetName;
-    public final int numResultsRequested;
-    public R results;
-    public int numResultsFound;
-    public boolean finished = false;
+  p-pubwic s-static finaw cwass f-facetfiewdwesuwts<w> {
+    pubwic finaw stwing facetname;
+    pubwic finaw int n-nyumwesuwtswequested;
+    pubwic w wesuwts;
+    pubwic int nyumwesuwtsfound;
+    pubwic boowean f-finished = fawse;
 
-    private FacetFieldResults(String facetName, int numResultsRequested) {
-      this.facetName = facetName;
-      this.numResultsRequested = numResultsRequested;
+    pwivate f-facetfiewdwesuwts(stwing f-facetname, i-int nyumwesuwtswequested) {
+      this.facetname = f-facetname;
+      t-this.numwesuwtswequested = n-nyumwesuwtswequested;
     }
 
-    public boolean isFinished() {
-      return finished || results != null && numResultsFound >= numResultsRequested;
+    p-pubwic boowean isfinished() {
+      wetuwn f-finished || wesuwts != n-nyuww && n-nyumwesuwtsfound >= n-nyumwesuwtswequested;
     }
   }
 }

@@ -1,73 +1,73 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+package com.twittew.fowwow_wecommendations.common.featuwe_hydwation.souwces
 
-import com.google.inject.Inject
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.feature_hydration.adapters.CandidateAlgorithmAdapter
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSource
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSourceId
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+impowt c-com.googwe.inject.inject
+i-impowt c-com.googwe.inject.pwovides
+i-impowt c-com.googwe.inject.singweton
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.featuwe_hydwation.adaptews.candidateawgowithmadaptew
+i-impowt com.twittew.fowwow_wecommendations.common.featuwe_hydwation.common.featuwesouwce
+impowt com.twittew.fowwow_wecommendations.common.featuwe_hydwation.common.featuwesouwceid
+impowt com.twittew.fowwow_wecommendations.common.featuwe_hydwation.common.haspwefetchedfeatuwe
+impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.hasdispwaywocation
+impowt com.twittew.fowwow_wecommendations.common.modews.hassimiwawtocontext
+i-impowt com.twittew.mw.api.datawecowd
+impowt c-com.twittew.mw.api.featuwecontext
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.configapi.haspawams
 
 /**
- * This source only takes features from the candidate's source,
- * which is all the information we have about the candidate pre-feature-hydration
+ * t-this souwce onwy takes f-featuwes fwom t-the candidate's souwce, :3
+ * which is aww the infowmation we have about the candidate p-pwe-featuwe-hydwation
  */
 
-@Provides
-@Singleton
-class CandidateAlgorithmSource @Inject() (stats: StatsReceiver) extends FeatureSource {
+@pwovides
+@singweton
+cwass candidateawgowithmsouwce @inject() (stats: statsweceivew) extends featuwesouwce {
 
-  override val id: FeatureSourceId = FeatureSourceId.CandidateAlgorithmSourceId
+  ovewwide vaw id: f-featuwesouwceid = featuwesouwceid.candidateawgowithmsouwceid
 
-  override val featureContext: FeatureContext = CandidateAlgorithmAdapter.getFeatureContext
+  o-ovewwide vaw featuwecontext: featuwecontext = c-candidateawgowithmadaptew.getfeatuwecontext
 
-  override def hydrateFeatures(
-    t: HasClientContext
-      with HasPreFetchedFeature
-      with HasParams
-      with HasSimilarToContext
-      with HasDisplayLocation, // we don't use the target here
-    candidates: Seq[CandidateUser]
-  ): Stitch[Map[CandidateUser, DataRecord]] = {
-    val featureHydrationStats = stats.scope("candidate_alg_source")
-    val hasSourceDetailsStat = featureHydrationStats.counter("has_source_details")
-    val noSourceDetailsStat = featureHydrationStats.counter("no_source_details")
-    val noSourceRankStat = featureHydrationStats.counter("no_source_rank")
-    val hasSourceRankStat = featureHydrationStats.counter("has_source_rank")
-    val noSourceScoreStat = featureHydrationStats.counter("no_source_score")
-    val hasSourceScoreStat = featureHydrationStats.counter("has_source_score")
+  ovewwide d-def hydwatefeatuwes(
+    t-t: hascwientcontext
+      with haspwefetchedfeatuwe
+      w-with haspawams
+      with hassimiwawtocontext
+      with h-hasdispwaywocation, 😳😳😳 // we don't use the tawget hewe
+    candidates: seq[candidateusew]
+  ): stitch[map[candidateusew, (˘ω˘) d-datawecowd]] = {
+    vaw featuwehydwationstats = s-stats.scope("candidate_awg_souwce")
+    v-vaw hassouwcedetaiwsstat = f-featuwehydwationstats.countew("has_souwce_detaiws")
+    vaw nyosouwcedetaiwsstat = featuwehydwationstats.countew("no_souwce_detaiws")
+    vaw nyosouwcewankstat = f-featuwehydwationstats.countew("no_souwce_wank")
+    v-vaw hassouwcewankstat = featuwehydwationstats.countew("has_souwce_wank")
+    v-vaw nyosouwcescowestat = f-featuwehydwationstats.countew("no_souwce_scowe")
+    vaw hassouwcescowestat = f-featuwehydwationstats.countew("has_souwce_scowe")
 
-    val candidatesToAlgoMap = for {
+    vaw candidatestoawgomap = f-fow {
       candidate <- candidates
-    } yield {
-      if (candidate.userCandidateSourceDetails.nonEmpty) {
-        hasSourceDetailsStat.incr()
-        candidate.userCandidateSourceDetails.foreach { details =>
-          if (details.candidateSourceRanks.isEmpty) {
-            noSourceRankStat.incr()
-          } else {
-            hasSourceRankStat.incr()
+    } y-yiewd {
+      if (candidate.usewcandidatesouwcedetaiws.nonempty) {
+        h-hassouwcedetaiwsstat.incw()
+        candidate.usewcandidatesouwcedetaiws.foweach { d-detaiws =>
+          i-if (detaiws.candidatesouwcewanks.isempty) {
+            nyosouwcewankstat.incw()
+          } ewse {
+            hassouwcewankstat.incw()
           }
-          if (details.candidateSourceScores.isEmpty) {
-            noSourceScoreStat.incr()
-          } else {
-            hasSourceScoreStat.incr()
+          if (detaiws.candidatesouwcescowes.isempty) {
+            nyosouwcescowestat.incw()
+          } ewse {
+            h-hassouwcescowestat.incw()
           }
         }
-      } else {
-        noSourceDetailsStat.incr()
+      } ewse {
+        n-nyosouwcedetaiwsstat.incw()
       }
-      candidate -> CandidateAlgorithmAdapter.adaptToDataRecord(candidate.userCandidateSourceDetails)
+      candidate -> c-candidateawgowithmadaptew.adapttodatawecowd(candidate.usewcandidatesouwcedetaiws)
     }
-    Stitch.value(candidatesToAlgoMap.toMap)
+    s-stitch.vawue(candidatestoawgomap.tomap)
   }
 }

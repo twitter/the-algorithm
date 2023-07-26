@@ -1,120 +1,120 @@
-package com.twitter.tweetypie.caching
+package com.twittew.tweetypie.caching
 
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import scala.util.Random
-import com.twitter.logging.Logger
+impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.time
+i-impowt scawa.utiw.wandom
+i-impowt c-com.twittew.wogging.woggew
 
 /**
- * Used to determine whether values successfully retrieved from cache
- * are [[CacheResult.Fresh]] or [[CacheResult.Stale]]. This is useful
- * in the implementation of a [[ValueSerializer]].
+ * u-used to detewmine w-whethew v-vawues successfuwwy w-wetwieved fwom cache
+ * awe [[cachewesuwt.fwesh]] ow [[cachewesuwt.stawe]]. (ˆ ﻌ ˆ)♡ this is usefuw
+ * in the impwementation o-of a [[vawuesewiawizew]]. -.-
  */
-trait SoftTtl[-V] {
+twait softttw[-v] {
 
   /**
-   * Determines whether a cached value was fresh.
+   * detewmines w-whethew a cached vawue was fwesh. :3
    *
-   * @param cachedAt  the time at which the value was cached.
+   * @pawam c-cachedat  the time at which the vawue was cached. ʘwʘ
    */
-  def isFresh(value: V, cachedAt: Time): Boolean
+  def isfwesh(vawue: v-v, 🥺 cachedat: time): boowean
 
   /**
-   * Wraps the value in Fresh or Stale depending on the value of `isFresh`.
+   * w-wwaps t-the vawue in fwesh ow stawe depending on the vawue of `isfwesh`. >_<
    *
-   * (The type variable U exists because it is not allowed to return
-   * values of a contravariant type, so we must define a variable that
-   * is a specific subclass of V. This is worth it because it allows
-   * us to create polymorphic policies without having to specify the
-   * type. Another solution would be to make the type invariant, but
-   * then we would have to specify the type whenever we create an
+   * (the type vawiabwe u e-exists because it is nyot awwowed to wetuwn
+   * vawues of a contwavawiant type, ʘwʘ s-so we must define a vawiabwe that
+   * i-is a specific s-subcwass of v-v. (˘ω˘) this is wowth i-it because it awwows
+   * us to cweate powymowphic p-powicies without having to specify the
+   * t-type. (✿oωo) anothew sowution wouwd be to make the type invawiant, (///ˬ///✿) but
+   * then we wouwd have to specify t-the type whenevew we cweate a-an
    * instance.)
    */
-  def toCacheResult[U <: V](value: U, cachedAt: Time): CacheResult[U] =
-    if (isFresh(value, cachedAt)) CacheResult.Fresh(value) else CacheResult.Stale(value)
+  d-def t-tocachewesuwt[u <: v](vawue: u, rawr x3 cachedat: time): cachewesuwt[u] =
+    i-if (isfwesh(vawue, -.- c-cachedat)) cachewesuwt.fwesh(vawue) e-ewse c-cachewesuwt.stawe(vawue)
 }
 
-object SoftTtl {
+object s-softttw {
 
   /**
-   * Regardless of the inputs, the value will always be considered
-   * fresh.
+   * wegawdwess o-of the inputs, ^^ the vawue wiww awways be considewed
+   * f-fwesh. (⑅˘꒳˘)
    */
-  object NeverRefresh extends SoftTtl[Any] {
-    override def isFresh(_unusedValue: Any, _unusedCachedAt: Time): Boolean = true
+  object n-nyevewwefwesh extends softttw[any] {
+    o-ovewwide d-def isfwesh(_unusedvawue: any, nyaa~~ _unusedcachedat: time): boowean = twue
   }
 
   /**
-   * Trigger refresh based on the length of time that a value has been
-   * stored in cache, ignoring the value.
+   * twiggew wefwesh based on the wength o-of time that a vawue h-has been
+   * stowed in cache, i-ignowing the v-vawue. /(^•ω•^)
    *
-   * @param softTtl Items that were cached longer ago than this value
-   *   will be refreshed when they are accessed.
+   * @pawam s-softttw items that wewe cached wongew ago than this vawue
+   *   w-wiww be wefweshed when they awe accessed. (U ﹏ U)
    *
-   * @param jitter Add nondeterminism to the soft TTL to prevent a
-   *   thundering herd of requests refreshing the value at the same
-   *   time. The time at which the value is considered stale will be
-   *   uniformly spread out over a range of +/- (jitter/2). It is
-   *   valid to set the jitter to zero, which will turn off jittering.
+   * @pawam jittew add nyondetewminism t-to the soft ttw to pwevent a
+   *   t-thundewing hewd o-of wequests w-wefweshing the vawue at the same
+   *   t-time. 😳😳😳 the t-time at which t-the vawue is considewed s-stawe wiww be
+   *   unifowmwy spwead out o-ovew a wange of +/- (jittew/2). >w< i-it is
+   *   vawid t-to set the j-jittew to zewo, XD w-which wiww tuwn off jittewing. o.O
    *
-   * @param logger If non-null, use this logger rather than one based
-   *   on the class name. This logger is only used for trace-level
-   *   logging.
+   * @pawam woggew if nyon-nuww, mya use this woggew w-wathew than one based
+   *   on the cwass nyame. 🥺 this woggew is onwy used fow twace-wevew
+   *   w-wogging. ^^;;
    */
-  case class ByAge[V](
-    softTtl: Duration,
-    jitter: Duration,
-    specificLogger: Logger = null,
-    rng: Random = Random)
-      extends SoftTtl[Any] {
+  case cwass byage[v](
+    softttw: duwation, :3
+    j-jittew: duwation, (U ﹏ U)
+    s-specificwoggew: w-woggew = nyuww, OwO
+    w-wng: wandom = wandom)
+      extends s-softttw[any] {
 
-    private[this] val logger: Logger =
-      if (specificLogger == null) Logger(getClass) else specificLogger
+    p-pwivate[this] vaw woggew: woggew =
+      if (specificwoggew == nyuww) woggew(getcwass) ewse specificwoggew
 
-    private[this] val maxJitterMs: Long = jitter.inMilliseconds
+    p-pwivate[this] vaw maxjittewms: w-wong = jittew.inmiwwiseconds
 
-    // this requirement is due to using Random.nextInt to choose the
-    // jitter, but it allows jitter of greater than 24 days
-    require(maxJitterMs <= (Int.MaxValue / 2))
+    // this w-wequiwement is d-due to using wandom.nextint to choose the
+    // j-jittew, 😳😳😳 but it a-awwows jittew of gweatew than 24 d-days
+    wequiwe(maxjittewms <= (int.maxvawue / 2))
 
-    // Negative jitter probably indicates misuse of the API
-    require(maxJitterMs >= 0)
+    // n-nyegative jittew pwobabwy indicates misuse of the api
+    wequiwe(maxjittewms >= 0)
 
-    // we want period +/- jitter, but the random generator
-    // generates non-negative numbers, so we generate [0, 2 *
-    // maxJitter) and subtract maxJitter to obtain [-maxJitter,
-    // maxJitter)
-    private[this] val maxJitterRangeMs: Int = (maxJitterMs * 2).toInt
+    // w-we want p-pewiod +/- jittew, (ˆ ﻌ ˆ)♡ b-but the wandom genewatow
+    // g-genewates nyon-negative n-nyumbews, XD so we genewate [0, (ˆ ﻌ ˆ)♡ 2 *
+    // m-maxjittew) and subtwact maxjittew to obtain [-maxjittew, ( ͡o ω ͡o )
+    // maxjittew)
+    pwivate[this] v-vaw maxjittewwangems: i-int = (maxjittewms * 2).toint
 
-    // We perform all calculations in milliseconds, so convert the
-    // period to milliseconds out here.
-    private[this] val softTtlMs: Long = softTtl.inMilliseconds
+    // we pewfowm aww cawcuwations i-in miwwiseconds, rawr x3 s-so convewt the
+    // pewiod to miwwiseconds out hewe. nyaa~~
+    p-pwivate[this] vaw softttwms: wong = softttw.inmiwwiseconds
 
-    // If the value is below this age, it will always be fresh,
-    // regardless of jitter.
-    private[this] val alwaysFreshAgeMs: Long = softTtlMs - maxJitterMs
+    // if the vawue is bewow this a-age, >_< it wiww awways be fwesh, ^^;;
+    // wegawdwess o-of jittew. (ˆ ﻌ ˆ)♡
+    p-pwivate[this] vaw awwaysfweshagems: wong = softttwms - maxjittewms
 
-    // If the value is above this age, it will always be stale,
-    // regardless of jitter.
-    private[this] val alwaysStaleAgeMs: Long = softTtlMs + maxJitterMs
+    // i-if t-the vawue is above this age, ^^;; it wiww awways be stawe, (⑅˘꒳˘)
+    // wegawdwess o-of jittew. rawr x3
+    pwivate[this] v-vaw awwaysstaweagems: wong = softttwms + maxjittewms
 
-    override def isFresh(value: Any, cachedAt: Time): Boolean = {
-      val ageMs: Long = (Time.now - cachedAt).inMilliseconds
-      val fresh =
-        if (ageMs <= alwaysFreshAgeMs) {
-          true
-        } else if (ageMs > alwaysStaleAgeMs) {
-          false
-        } else {
-          val jitterMs: Long = rng.nextInt(maxJitterRangeMs) - maxJitterMs
-          ageMs <= softTtlMs + jitterMs
+    ovewwide def isfwesh(vawue: a-any, (///ˬ///✿) cachedat: time): b-boowean = {
+      v-vaw agems: wong = (time.now - cachedat).inmiwwiseconds
+      v-vaw fwesh =
+        if (agems <= a-awwaysfweshagems) {
+          t-twue
+        } ewse i-if (agems > awwaysstaweagems) {
+          f-fawse
+        } e-ewse {
+          vaw jittewms: wong = wng.nextint(maxjittewwangems) - m-maxjittewms
+          a-agems <= s-softttwms + jittewms
         }
 
-      logger.ifTrace(
-        s"Checked soft ttl: fresh = $fresh, " +
-          s"soft_ttl_ms = $softTtlMs, age_ms = $ageMs, value = $value")
+      woggew.iftwace(
+        s"checked soft t-ttw: fwesh = $fwesh, 🥺 " +
+          s"soft_ttw_ms = $softttwms, >_< age_ms = $agems, UwU v-vawue = $vawue")
 
-      fresh
+      f-fwesh
     }
   }
 }

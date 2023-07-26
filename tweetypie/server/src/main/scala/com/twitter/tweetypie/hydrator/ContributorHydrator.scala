@@ -1,36 +1,36 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.stitch.NotFound
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.stitch.notfound
+i-impowt com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.wepositowy._
+i-impowt com.twittew.tweetypie.thwiftscawa._
 
-object ContributorHydrator {
-  type Type = ValueHydrator[Option[Contributor], TweetCtx]
+o-object c-contwibutowhydwatow {
+  t-type type = vawuehydwatow[option[contwibutow], (⑅˘꒳˘) tweetctx]
 
-  val hydratedField: FieldByPath = fieldByPath(Tweet.ContributorField, Contributor.ScreenNameField)
+  vaw hydwatedfiewd: fiewdbypath = f-fiewdbypath(tweet.contwibutowfiewd, (///ˬ///✿) contwibutow.scweennamefiewd)
 
-  def once(h: Type): Type =
-    TweetHydration.completeOnlyOnce(
-      hydrationType = HydrationType.Contributor,
-      hydrator = h
+  def o-once(h: type): type =
+    tweethydwation.compweteonwyonce(
+      h-hydwationtype = hydwationtype.contwibutow, 😳😳😳
+      hydwatow = h
     )
 
-  def apply(repo: UserIdentityRepository.Type): Type =
-    ValueHydrator[Contributor, TweetCtx] { (curr, _) =>
-      repo(UserKey(curr.userId)).liftToTry.map {
-        case Return(userIdent) => ValueState.delta(curr, update(curr, userIdent))
-        case Throw(NotFound) => ValueState.unmodified(curr)
-        case Throw(_) => ValueState.partial(curr, hydratedField)
+  def appwy(wepo: u-usewidentitywepositowy.type): type =
+    v-vawuehydwatow[contwibutow, 🥺 t-tweetctx] { (cuww, mya _) =>
+      wepo(usewkey(cuww.usewid)).wifttotwy.map {
+        case wetuwn(usewident) => vawuestate.dewta(cuww, 🥺 update(cuww, >_< u-usewident))
+        case thwow(notfound) => vawuestate.unmodified(cuww)
+        case thwow(_) => vawuestate.pawtiaw(cuww, >_< h-hydwatedfiewd)
       }
-    }.onlyIf((curr, _) => curr.screenName.isEmpty).liftOption
+    }.onwyif((cuww, (⑅˘꒳˘) _) => cuww.scweenname.isempty).wiftoption
 
   /**
-   * Updates a Contributor using the given user data.
+   * u-updates a c-contwibutow using t-the given usew d-data.
    */
-  private def update(curr: Contributor, userIdent: UserIdentity): Contributor =
-    curr.copy(
-      screenName = Some(userIdent.screenName)
+  pwivate def update(cuww: contwibutow, /(^•ω•^) u-usewident: usewidentity): contwibutow =
+    c-cuww.copy(
+      scweenname = some(usewident.scweenname)
     )
 }

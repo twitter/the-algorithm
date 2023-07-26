@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.service.filter_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.fiwtew_executow
 
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.service.ExecutorResult
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.executowwesuwt
 
-case class FilterExecutorResult[Candidate](
-  result: Seq[Candidate],
-  individualFilterResults: Seq[IndividualFilterResults[Candidate]])
-    extends ExecutorResult
+c-case c-cwass fiwtewexecutowwesuwt[candidate](
+  w-wesuwt: s-seq[candidate], -.-
+  i-individuawfiwtewwesuwts: s-seq[individuawfiwtewwesuwts[candidate]])
+    extends executowwesuwt
 
-sealed trait IndividualFilterResults[+Candidate]
-case class ConditionalFilterDisabled(identifier: FilterIdentifier)
-    extends IndividualFilterResults[Nothing]
-case class FilterExecutorIndividualResult[+Candidate](
-  identifier: FilterIdentifier,
-  kept: Seq[Candidate],
-  removed: Seq[Candidate])
-    extends IndividualFilterResults[Candidate]
+seawed twait individuawfiwtewwesuwts[+candidate]
+case cwass conditionawfiwtewdisabwed(identifiew: f-fiwtewidentifiew)
+    extends individuawfiwtewwesuwts[nothing]
+c-case cwass fiwtewexecutowindividuawwesuwt[+candidate](
+  identifiew: f-fiwtewidentifiew,
+  kept: seq[candidate], ^^;;
+  wemoved: seq[candidate])
+    e-extends individuawfiwtewwesuwts[candidate]

@@ -1,173 +1,173 @@
-package com.twitter.unified_user_actions.service
+package com.twittew.unified_usew_actions.sewvice
 
-import com.google.inject.Stage
-import com.twitter.adserver.thriftscala.DisplayLocation
-import com.twitter.app.GlobalFlag
-import com.twitter.finatra.kafka.consumers.FinagleKafkaConsumerBuilder
-import com.twitter.finatra.kafka.domain.AckMode
-import com.twitter.finatra.kafka.domain.KafkaGroupId
-import com.twitter.finatra.kafka.domain.KafkaTopic
-import com.twitter.finatra.kafka.domain.SeekStrategy
-import com.twitter.finatra.kafka.producers.FinagleKafkaProducerBuilder
-import com.twitter.finatra.kafka.serde.ScalaSerdes
-import com.twitter.finatra.kafka.serde.UnKeyedSerde
-import com.twitter.finatra.kafka.test.KafkaFeatureTest
-import com.twitter.iesource.thriftscala.ClientEventContext
-import com.twitter.iesource.thriftscala.TweetImpression
-import com.twitter.iesource.thriftscala.ClientType
-import com.twitter.iesource.thriftscala.ContextualEventNamespace
-import com.twitter.iesource.thriftscala.EngagingContext
-import com.twitter.iesource.thriftscala.EventSource
-import com.twitter.iesource.thriftscala.InteractionDetails
-import com.twitter.iesource.thriftscala.InteractionEvent
-import com.twitter.iesource.thriftscala.InteractionType
-import com.twitter.iesource.thriftscala.InteractionTargetType
-import com.twitter.iesource.thriftscala.UserIdentifier
-import com.twitter.inject.server.EmbeddedTwitterServer
-import com.twitter.kafka.client.processor.KafkaConsumerClient
-import com.twitter.unified_user_actions.kafka.ClientConfigs
-import com.twitter.unified_user_actions.service.module.KafkaProcessorRekeyUuaIesourceModule
-import com.twitter.unified_user_actions.thriftscala.KeyedUuaTweet
-import com.twitter.util.Duration
-import com.twitter.util.StorageUnit
+impowt com.googwe.inject.stage
+i-impowt com.twittew.adsewvew.thwiftscawa.dispwaywocation
+i-impowt com.twittew.app.gwobawfwag
+i-impowt c-com.twittew.finatwa.kafka.consumews.finagwekafkaconsumewbuiwdew
+i-impowt com.twittew.finatwa.kafka.domain.ackmode
+i-impowt com.twittew.finatwa.kafka.domain.kafkagwoupid
+i-impowt com.twittew.finatwa.kafka.domain.kafkatopic
+i-impowt com.twittew.finatwa.kafka.domain.seekstwategy
+impowt com.twittew.finatwa.kafka.pwoducews.finagwekafkapwoducewbuiwdew
+impowt com.twittew.finatwa.kafka.sewde.scawasewdes
+i-impowt com.twittew.finatwa.kafka.sewde.unkeyedsewde
+impowt com.twittew.finatwa.kafka.test.kafkafeatuwetest
+i-impowt com.twittew.iesouwce.thwiftscawa.cwienteventcontext
+impowt c-com.twittew.iesouwce.thwiftscawa.tweetimpwession
+impowt com.twittew.iesouwce.thwiftscawa.cwienttype
+impowt com.twittew.iesouwce.thwiftscawa.contextuaweventnamespace
+i-impowt com.twittew.iesouwce.thwiftscawa.engagingcontext
+i-impowt com.twittew.iesouwce.thwiftscawa.eventsouwce
+i-impowt com.twittew.iesouwce.thwiftscawa.intewactiondetaiws
+impowt com.twittew.iesouwce.thwiftscawa.intewactionevent
+impowt com.twittew.iesouwce.thwiftscawa.intewactiontype
+impowt com.twittew.iesouwce.thwiftscawa.intewactiontawgettype
+i-impowt com.twittew.iesouwce.thwiftscawa.usewidentifiew
+impowt com.twittew.inject.sewvew.embeddedtwittewsewvew
+impowt com.twittew.kafka.cwient.pwocessow.kafkaconsumewcwient
+impowt c-com.twittew.unified_usew_actions.kafka.cwientconfigs
+impowt com.twittew.unified_usew_actions.sewvice.moduwe.kafkapwocessowwekeyuuaiesouwcemoduwe
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.keyeduuatweet
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.stowageunit
 
-class RekeyUuaIesourceServiceStartupTest extends KafkaFeatureTest {
-  private val inputTopic =
-    kafkaTopic(ScalaSerdes.Long, ScalaSerdes.CompactThrift[InteractionEvent], name = "source")
-  private val outputTopic =
-    kafkaTopic(ScalaSerdes.Long, ScalaSerdes.Thrift[KeyedUuaTweet], name = "sink")
+c-cwass wekeyuuaiesouwcesewvicestawtuptest extends kafkafeatuwetest {
+  p-pwivate vaw inputtopic =
+    kafkatopic(scawasewdes.wong, (⑅˘꒳˘) scawasewdes.compactthwift[intewactionevent], XD nyame = "souwce")
+  p-pwivate vaw outputtopic =
+    kafkatopic(scawasewdes.wong, -.- scawasewdes.thwift[keyeduuatweet], :3 nyame = "sink")
 
-  val startupFlags = Map(
-    "kafka.group.id" -> "client-event",
-    "kafka.producer.client.id" -> "uua",
-    "kafka.source.topic" -> inputTopic.topic,
-    "kafka.sink.topics" -> outputTopic.topic,
-    "kafka.consumer.fetch.min" -> "6.megabytes",
-    "kafka.max.pending.requests" -> "100",
-    "kafka.worker.threads" -> "1",
-    "kafka.trust.store.enable" -> "false",
-    "kafka.producer.batch.size" -> "0.byte",
-    "cluster" -> "atla",
+  vaw s-stawtupfwags = map(
+    "kafka.gwoup.id" -> "cwient-event", nyaa~~
+    "kafka.pwoducew.cwient.id" -> "uua", 😳
+    "kafka.souwce.topic" -> i-inputtopic.topic, (⑅˘꒳˘)
+    "kafka.sink.topics" -> o-outputtopic.topic, nyaa~~
+    "kafka.consumew.fetch.min" -> "6.megabytes", OwO
+    "kafka.max.pending.wequests" -> "100", rawr x3
+    "kafka.wowkew.thweads" -> "1", XD
+    "kafka.twust.stowe.enabwe" -> "fawse", σωσ
+    "kafka.pwoducew.batch.size" -> "0.byte", (U ᵕ U❁)
+    "cwustew" -> "atwa", (U ﹏ U)
   )
 
-  val deciderFlags = Map(
-    "decider.base" -> "/decider.yml"
+  v-vaw decidewfwags = map(
+    "decidew.base" -> "/decidew.ymw"
   )
 
-  override protected def kafkaBootstrapFlag: Map[String, String] = {
-    Map(
-      ClientConfigs.kafkaBootstrapServerConfig -> kafkaCluster.bootstrapServers(),
-      ClientConfigs.kafkaBootstrapServerRemoteDestConfig -> kafkaCluster.bootstrapServers(),
+  ovewwide pwotected d-def kafkabootstwapfwag: m-map[stwing, :3 stwing] = {
+    m-map(
+      c-cwientconfigs.kafkabootstwapsewvewconfig -> kafkacwustew.bootstwapsewvews(), ( ͡o ω ͡o )
+      c-cwientconfigs.kafkabootstwapsewvewwemotedestconfig -> kafkacwustew.bootstwapsewvews(), σωσ
     )
   }
 
-  override val server: EmbeddedTwitterServer = new EmbeddedTwitterServer(
-    twitterServer = new RekeyUuaIesourceService() {
-      override def warmup(): Unit = {
-        // noop
+  o-ovewwide vaw sewvew: embeddedtwittewsewvew = nyew embeddedtwittewsewvew(
+    t-twittewsewvew = nyew wekeyuuaiesouwcesewvice() {
+      o-ovewwide def wawmup(): u-unit = {
+        // n-nyoop
       }
 
-      override val overrideModules = Seq(
-        KafkaProcessorRekeyUuaIesourceModule
+      ovewwide vaw ovewwidemoduwes = seq(
+        kafkapwocessowwekeyuuaiesouwcemoduwe
       )
-    },
-    globalFlags = Map[GlobalFlag[_], String](
-      com.twitter.finatra.kafka.consumers.enableTlsAndKerberos -> "false",
-    ),
-    flags = startupFlags ++ kafkaBootstrapFlag ++ deciderFlags,
-    stage = Stage.PRODUCTION
+    }, >w<
+    gwobawfwags = map[gwobawfwag[_], 😳😳😳 stwing](
+      com.twittew.finatwa.kafka.consumews.enabwetwsandkewbewos -> "fawse", OwO
+    ), 😳
+    fwags = s-stawtupfwags ++ k-kafkabootstwapfwag ++ decidewfwags, 😳😳😳
+    stage = s-stage.pwoduction
   )
 
-  private def getConsumer(
-    seekStrategy: SeekStrategy = SeekStrategy.BEGINNING,
+  pwivate d-def getconsumew(
+    s-seekstwategy: seekstwategy = seekstwategy.beginning, (˘ω˘)
   ) = {
-    val builder = FinagleKafkaConsumerBuilder()
-      .dest(brokers.map(_.brokerList()).mkString(","))
-      .clientId("consumer")
-      .groupId(KafkaGroupId("validator"))
-      .keyDeserializer(ScalaSerdes.Long.deserializer)
-      .valueDeserializer(ScalaSerdes.CompactThrift[InteractionEvent].deserializer)
-      .requestTimeout(Duration.fromSeconds(1))
-      .enableAutoCommit(false)
-      .seekStrategy(seekStrategy)
+    vaw b-buiwdew = finagwekafkaconsumewbuiwdew()
+      .dest(bwokews.map(_.bwokewwist()).mkstwing(","))
+      .cwientid("consumew")
+      .gwoupid(kafkagwoupid("vawidatow"))
+      .keydesewiawizew(scawasewdes.wong.desewiawizew)
+      .vawuedesewiawizew(scawasewdes.compactthwift[intewactionevent].desewiawizew)
+      .wequesttimeout(duwation.fwomseconds(1))
+      .enabweautocommit(fawse)
+      .seekstwategy(seekstwategy)
 
-    new KafkaConsumerClient(builder.config)
+    new kafkaconsumewcwient(buiwdew.config)
   }
 
-  private def getUUAConsumer(
-    seekStrategy: SeekStrategy = SeekStrategy.BEGINNING,
+  pwivate def getuuaconsumew(
+    seekstwategy: seekstwategy = s-seekstwategy.beginning, ʘwʘ
   ) = {
-    val builder = FinagleKafkaConsumerBuilder()
-      .dest(brokers.map(_.brokerList()).mkString(","))
-      .clientId("consumer_uua")
-      .groupId(KafkaGroupId("validator_uua"))
-      .keyDeserializer(UnKeyedSerde.deserializer)
-      .valueDeserializer(ScalaSerdes.Thrift[KeyedUuaTweet].deserializer)
-      .requestTimeout(Duration.fromSeconds(1))
-      .enableAutoCommit(false)
-      .seekStrategy(seekStrategy)
+    vaw buiwdew = f-finagwekafkaconsumewbuiwdew()
+      .dest(bwokews.map(_.bwokewwist()).mkstwing(","))
+      .cwientid("consumew_uua")
+      .gwoupid(kafkagwoupid("vawidatow_uua"))
+      .keydesewiawizew(unkeyedsewde.desewiawizew)
+      .vawuedesewiawizew(scawasewdes.thwift[keyeduuatweet].desewiawizew)
+      .wequesttimeout(duwation.fwomseconds(1))
+      .enabweautocommit(fawse)
+      .seekstwategy(seekstwategy)
 
-    new KafkaConsumerClient(builder.config)
+    n-nyew kafkaconsumewcwient(buiwdew.config)
   }
 
-  private def getProducer(clientId: String = "producer") = {
-    FinagleKafkaProducerBuilder()
-      .dest(brokers.map(_.brokerList()).mkString(","))
-      .clientId(clientId)
-      .ackMode(AckMode.ALL)
-      .batchSize(StorageUnit.zero)
-      .keySerializer(ScalaSerdes.Long.serializer)
-      .valueSerializer(ScalaSerdes.CompactThrift[InteractionEvent].serializer)
-      .build()
+  p-pwivate def getpwoducew(cwientid: s-stwing = "pwoducew") = {
+    f-finagwekafkapwoducewbuiwdew()
+      .dest(bwokews.map(_.bwokewwist()).mkstwing(","))
+      .cwientid(cwientid)
+      .ackmode(ackmode.aww)
+      .batchsize(stowageunit.zewo)
+      .keysewiawizew(scawasewdes.wong.sewiawizew)
+      .vawuesewiawizew(scawasewdes.compactthwift[intewactionevent].sewiawizew)
+      .buiwd()
   }
 
-  test("RekeyUuaIesourceService starts") {
-    server.assertHealthy()
+  t-test("wekeyuuaiesouwcesewvice s-stawts") {
+    sewvew.assewtheawthy()
   }
 
-  test("RekeyUuaIesourceService should process input events") {
-    val producer = getProducer()
-    val inputConsumer = getConsumer()
-    val uuaConsumer = getUUAConsumer()
+  test("wekeyuuaiesouwcesewvice s-shouwd pwocess i-input events") {
+    v-vaw pwoducew = g-getpwoducew()
+    v-vaw inputconsumew = getconsumew()
+    vaw uuaconsumew = getuuaconsumew()
 
-    val value: InteractionEvent = InteractionEvent(
-      targetId = 1L,
-      targetType = InteractionTargetType.Tweet,
-      engagingUserId = 11L,
-      eventSource = EventSource.ClientEvent,
-      timestampMillis = 123456L,
-      interactionType = Some(InteractionType.TweetRenderImpression),
-      details = InteractionDetails.TweetRenderImpression(TweetImpression()),
-      additionalEngagingUserIdentifiers = UserIdentifier(),
-      engagingContext = EngagingContext.ClientEventContext(
-        ClientEventContext(
-          clientEventNamespace = ContextualEventNamespace(),
-          clientType = ClientType.Iphone,
-          displayLocation = DisplayLocation(1)))
+    v-vaw vawue: intewactionevent = intewactionevent(
+      tawgetid = 1w, ( ͡o ω ͡o )
+      tawgettype = intewactiontawgettype.tweet, o.O
+      engagingusewid = 11w, >w<
+      e-eventsouwce = eventsouwce.cwientevent, 😳
+      timestampmiwwis = 123456w, 🥺
+      intewactiontype = s-some(intewactiontype.tweetwendewimpwession), rawr x3
+      detaiws = i-intewactiondetaiws.tweetwendewimpwession(tweetimpwession()), o.O
+      a-additionawengagingusewidentifiews = usewidentifiew(), rawr
+      e-engagingcontext = engagingcontext.cwienteventcontext(
+        c-cwienteventcontext(
+          c-cwienteventnamespace = contextuaweventnamespace(), ʘwʘ
+          cwienttype = cwienttype.iphone, 😳😳😳
+          dispwaywocation = dispwaywocation(1)))
     )
 
-    try {
-      server.assertHealthy()
+    twy {
+      s-sewvew.assewtheawthy()
 
-      // before, should be empty
-      inputConsumer.subscribe(Set(KafkaTopic(inputTopic.topic)))
-      assert(inputConsumer.poll().count() == 0)
+      // befowe, ^^;; s-shouwd be empty
+      inputconsumew.subscwibe(set(kafkatopic(inputtopic.topic)))
+      a-assewt(inputconsumew.poww().count() == 0)
 
-      // after, should contain at least a message
-      await(producer.send(inputTopic.topic, value.targetId, value, System.currentTimeMillis))
-      producer.flush()
-      assert(inputConsumer.poll().count() == 1)
+      // a-aftew, o.O shouwd contain at weast a message
+      a-await(pwoducew.send(inputtopic.topic, (///ˬ///✿) v-vawue.tawgetid, σωσ vawue, nyaa~~ system.cuwwenttimemiwwis))
+      p-pwoducew.fwush()
+      a-assewt(inputconsumew.poww().count() == 1)
 
-      uuaConsumer.subscribe(Set(KafkaTopic(outputTopic.topic)))
-      // This is tricky: it is not guaranteed that the srvice can process and output the
-      // event to output topic faster than the below consumer. So we'd use a timer here which may
-      // not be the best practice.
-      // If someone finds the below test is flaky, please just remove the below test completely.
-      Thread.sleep(5000L)
-      assert(uuaConsumer.poll().count() == 1)
-    } finally {
-      await(producer.close())
-      inputConsumer.close()
+      uuaconsumew.subscwibe(set(kafkatopic(outputtopic.topic)))
+      // this is twicky: it is nyot guawanteed that t-the swvice can pwocess a-and output t-the
+      // event to output topic f-fastew than t-the bewow consumew. ^^;; so we'd use a-a timew hewe which may
+      // nyot be the best pwactice. ^•ﻌ•^
+      // if someone f-finds the bewow t-test is fwaky, σωσ pwease just wemove the bewow test c-compwetewy. -.-
+      t-thwead.sweep(5000w)
+      assewt(uuaconsumew.poww().count() == 1)
+    } finawwy {
+      await(pwoducew.cwose())
+      i-inputconsumew.cwose()
     }
   }
 }

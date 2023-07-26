@@ -1,185 +1,185 @@
-package com.twitter.frigate.pushservice.take.sender
+package com.twittew.fwigate.pushsewvice.take.sendew
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.TweetCandidate
-import com.twitter.frigate.common.base.TweetDetails
-import com.twitter.frigate.common.store.IbisResponse
-import com.twitter.frigate.common.store.InvalidConfiguration
-import com.twitter.frigate.common.store.NoRequest
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.{PushFeatureSwitchParams => FS}
-import com.twitter.frigate.pushservice.store.Ibis2Store
-import com.twitter.frigate.pushservice.store.TweetTranslationStore
-import com.twitter.frigate.pushservice.util.CopyUtil
-import com.twitter.frigate.pushservice.util.FunctionalUtil
-import com.twitter.frigate.pushservice.util.InlineActionUtil
-import com.twitter.frigate.pushservice.util.OverrideNotificationUtil
-import com.twitter.frigate.pushservice.util.PushDeviceUtil
-import com.twitter.frigate.scribe.thriftscala.NotificationScribe
-import com.twitter.frigate.thriftscala.ChannelName
-import com.twitter.frigate.thriftscala.NotificationDisplayLocation
-import com.twitter.ibis2.service.thriftscala.Ibis2Request
-import com.twitter.notificationservice.thriftscala.CreateGenericNotificationResponse
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.base.tweetcandidate
+i-impowt c-com.twittew.fwigate.common.base.tweetdetaiws
+i-impowt c-com.twittew.fwigate.common.stowe.ibiswesponse
+i-impowt com.twittew.fwigate.common.stowe.invawidconfiguwation
+impowt c-com.twittew.fwigate.common.stowe.nowequest
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+impowt com.twittew.fwigate.pushsewvice.pawams.{pushfeatuweswitchpawams => fs}
+impowt com.twittew.fwigate.pushsewvice.stowe.ibis2stowe
+impowt com.twittew.fwigate.pushsewvice.stowe.tweettwanswationstowe
+impowt c-com.twittew.fwigate.pushsewvice.utiw.copyutiw
+impowt com.twittew.fwigate.pushsewvice.utiw.functionawutiw
+impowt com.twittew.fwigate.pushsewvice.utiw.inwineactionutiw
+i-impowt com.twittew.fwigate.pushsewvice.utiw.ovewwidenotificationutiw
+i-impowt com.twittew.fwigate.pushsewvice.utiw.pushdeviceutiw
+impowt com.twittew.fwigate.scwibe.thwiftscawa.notificationscwibe
+impowt c-com.twittew.fwigate.thwiftscawa.channewname
+impowt com.twittew.fwigate.thwiftscawa.notificationdispwaywocation
+i-impowt com.twittew.ibis2.sewvice.thwiftscawa.ibis2wequest
+i-impowt com.twittew.notificationsewvice.thwiftscawa.cweategenewicnotificationwesponse
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.utiw.futuwe
 
-class Ibis2Sender(
-  pushIbisV2Store: Ibis2Store,
-  tweetTranslationStore: ReadableStore[TweetTranslationStore.Key, TweetTranslationStore.Value],
-  statsReceiver: StatsReceiver) {
+c-cwass ibis2sendew(
+  pushibisv2stowe: ibis2stowe, :3
+  tweettwanswationstowe: w-weadabwestowe[tweettwanswationstowe.key, ʘwʘ tweettwanswationstowe.vawue], 🥺
+  s-statsweceivew: s-statsweceivew) {
 
-  private val stats = statsReceiver.scope(getClass.getSimpleName)
-  private val silentPushCounter = stats.counter("silent_push")
-  private val ibisSendFailureCounter = stats.scope("ibis_send_failure").counter("failures")
-  private val buggyAndroidReleaseCounter = stats.counter("is_buggy_android_release")
-  private val androidPrimaryCounter = stats.counter("android_primary_device")
-  private val addTranslationModelValuesCounter = stats.counter("with_translation_model_values")
-  private val patchNtabResponseEnabled = stats.scope("with_ntab_response")
-  private val noIbisPushStats = stats.counter("no_ibis_push")
+  p-pwivate vaw s-stats = statsweceivew.scope(getcwass.getsimpwename)
+  pwivate vaw siwentpushcountew = s-stats.countew("siwent_push")
+  pwivate vaw ibissendfaiwuwecountew = s-stats.scope("ibis_send_faiwuwe").countew("faiwuwes")
+  pwivate vaw buggyandwoidweweasecountew = stats.countew("is_buggy_andwoid_wewease")
+  pwivate vaw andwoidpwimawycountew = stats.countew("andwoid_pwimawy_device")
+  p-pwivate vaw addtwanswationmodewvawuescountew = s-stats.countew("with_twanswation_modew_vawues")
+  p-pwivate vaw p-patchntabwesponseenabwed = stats.scope("with_ntab_wesponse")
+  pwivate vaw nyoibispushstats = stats.countew("no_ibis_push")
 
-  private def ibisSend(
-    candidate: PushCandidate,
-    translationModelValues: Option[Map[String, String]] = None,
-    ntabResponse: Option[CreateGenericNotificationResponse] = None
-  ): Future[IbisResponse] = {
-    if (candidate.frigateNotification.notificationDisplayLocation != NotificationDisplayLocation.PushToMobileDevice) {
-      Future.value(IbisResponse(InvalidConfiguration))
-    } else {
-      candidate.ibis2Request.flatMap {
-        case Some(request) =>
-          val requestWithTranslationMV =
-            addTranslationModelValues(request, translationModelValues)
-          val patchedIbisRequest = {
-            if (candidate.target.isLoggedOutUser) {
-              requestWithTranslationMV
-            } else {
-              patchNtabResponseToIbisRequest(requestWithTranslationMV, candidate, ntabResponse)
+  pwivate d-def ibissend(
+    c-candidate: pushcandidate, >_<
+    t-twanswationmodewvawues: option[map[stwing, ʘwʘ s-stwing]] = nyone,
+    nytabwesponse: o-option[cweategenewicnotificationwesponse] = nyone
+  ): futuwe[ibiswesponse] = {
+    i-if (candidate.fwigatenotification.notificationdispwaywocation != nyotificationdispwaywocation.pushtomobiwedevice) {
+      futuwe.vawue(ibiswesponse(invawidconfiguwation))
+    } e-ewse {
+      candidate.ibis2wequest.fwatmap {
+        c-case some(wequest) =>
+          vaw wequestwithtwanswationmv =
+            a-addtwanswationmodewvawues(wequest, (˘ω˘) t-twanswationmodewvawues)
+          vaw patchedibiswequest = {
+            if (candidate.tawget.iswoggedoutusew) {
+              wequestwithtwanswationmv
+            } ewse {
+              patchntabwesponsetoibiswequest(wequestwithtwanswationmv, (✿oωo) candidate, (///ˬ///✿) nytabwesponse)
             }
           }
-          pushIbisV2Store.send(patchedIbisRequest, candidate)
-        case _ =>
-          noIbisPushStats.incr()
-          Future.value(IbisResponse(sendStatus = NoRequest, ibis2Response = None))
+          pushibisv2stowe.send(patchedibiswequest, rawr x3 c-candidate)
+        c-case _ =>
+          nyoibispushstats.incw()
+          f-futuwe.vawue(ibiswesponse(sendstatus = n-nyowequest, -.- i-ibis2wesponse = none))
       }
     }
   }
 
-  def sendAsDarkWrite(
-    candidate: PushCandidate
-  ): Future[IbisResponse] = {
-    ibisSend(candidate)
+  def sendasdawkwwite(
+    candidate: p-pushcandidate
+  ): futuwe[ibiswesponse] = {
+    ibissend(candidate)
   }
 
   def send(
-    channels: Seq[ChannelName],
-    pushCandidate: PushCandidate,
-    notificationScribe: NotificationScribe => Unit,
-    ntabResponse: Option[CreateGenericNotificationResponse],
-  ): Future[IbisResponse] = pushCandidate.target.isSilentPush.flatMap { isSilentPush: Boolean =>
-    if (isSilentPush) silentPushCounter.incr()
-    pushCandidate.target.deviceInfo.flatMap { deviceInfo =>
-      if (deviceInfo.exists(_.isSim40AndroidVersion)) buggyAndroidReleaseCounter.incr()
-      if (PushDeviceUtil.isPrimaryDeviceAndroid(deviceInfo)) androidPrimaryCounter.incr()
-      Future
+    channews: seq[channewname],
+    p-pushcandidate: pushcandidate, ^^
+    nyotificationscwibe: n-nyotificationscwibe => u-unit, (⑅˘꒳˘)
+    n-nytabwesponse: option[cweategenewicnotificationwesponse], nyaa~~
+  ): f-futuwe[ibiswesponse] = p-pushcandidate.tawget.issiwentpush.fwatmap { i-issiwentpush: b-boowean =>
+    if (issiwentpush) siwentpushcountew.incw()
+    p-pushcandidate.tawget.deviceinfo.fwatmap { d-deviceinfo =>
+      i-if (deviceinfo.exists(_.issim40andwoidvewsion)) b-buggyandwoidweweasecountew.incw()
+      i-if (pushdeviceutiw.ispwimawydeviceandwoid(deviceinfo)) andwoidpwimawycountew.incw()
+      futuwe
         .join(
-          OverrideNotificationUtil
-            .getOverrideInfo(pushCandidate, stats),
-          CopyUtil.getCopyFeatures(pushCandidate, stats),
-          getTranslationModelValues(pushCandidate)
-        ).flatMap {
-          case (overrideInfoOpt, copyFeaturesMap, translationModelValues) =>
-            ibisSend(pushCandidate, translationModelValues, ntabResponse)
-              .onSuccess { ibisResponse =>
-                pushCandidate
-                  .scribeData(
-                    ibis2Response = ibisResponse.ibis2Response,
-                    isSilentPush = isSilentPush,
-                    overrideInfoOpt = overrideInfoOpt,
-                    copyFeaturesList = copyFeaturesMap.keySet,
-                    channels = channels
-                  ).foreach(notificationScribe)
-              }.onFailure { _ =>
-                pushCandidate
-                  .scribeData(channels = channels).foreach { data =>
-                    ibisSendFailureCounter.incr()
-                    notificationScribe(data)
+          ovewwidenotificationutiw
+            .getovewwideinfo(pushcandidate, /(^•ω•^) s-stats), (U ﹏ U)
+          copyutiw.getcopyfeatuwes(pushcandidate, 😳😳😳 stats),
+          gettwanswationmodewvawues(pushcandidate)
+        ).fwatmap {
+          case (ovewwideinfoopt, >w< copyfeatuwesmap, XD t-twanswationmodewvawues) =>
+            ibissend(pushcandidate, o.O twanswationmodewvawues, mya nytabwesponse)
+              .onsuccess { i-ibiswesponse =>
+                p-pushcandidate
+                  .scwibedata(
+                    i-ibis2wesponse = ibiswesponse.ibis2wesponse, 🥺
+                    i-issiwentpush = issiwentpush, ^^;;
+                    o-ovewwideinfoopt = o-ovewwideinfoopt, :3
+                    copyfeatuweswist = copyfeatuwesmap.keyset, (U ﹏ U)
+                    channews = channews
+                  ).foweach(notificationscwibe)
+              }.onfaiwuwe { _ =>
+                pushcandidate
+                  .scwibedata(channews = channews).foweach { data =>
+                    i-ibissendfaiwuwecountew.incw()
+                    nyotificationscwibe(data)
                   }
               }
         }
     }
   }
 
-  private def getTranslationModelValues(
-    candidate: PushCandidate
-  ): Future[Option[Map[String, String]]] = {
-    candidate match {
-      case tweetCandidate: TweetCandidate with TweetDetails =>
-        val key = TweetTranslationStore.Key(
-          target = candidate.target,
-          tweetId = tweetCandidate.tweetId,
-          tweet = tweetCandidate.tweet,
-          crt = candidate.commonRecType
+  p-pwivate def gettwanswationmodewvawues(
+    candidate: p-pushcandidate
+  ): f-futuwe[option[map[stwing, OwO stwing]]] = {
+    candidate m-match {
+      case t-tweetcandidate: tweetcandidate w-with tweetdetaiws =>
+        v-vaw key = tweettwanswationstowe.key(
+          tawget = candidate.tawget, 😳😳😳
+          tweetid = tweetcandidate.tweetid, (ˆ ﻌ ˆ)♡
+          tweet = tweetcandidate.tweet, XD
+          cwt = candidate.commonwectype
         )
 
-        tweetTranslationStore
+        t-tweettwanswationstowe
           .get(key)
           .map {
-            case Some(value) =>
-              Some(
-                Map(
-                  "translated_tweet_text" -> value.translatedTweetText,
-                  "localized_source_language" -> value.localizedSourceLanguage
+            c-case some(vawue) =>
+              s-some(
+                map(
+                  "twanswated_tweet_text" -> v-vawue.twanswatedtweettext, (ˆ ﻌ ˆ)♡
+                  "wocawized_souwce_wanguage" -> v-vawue.wocawizedsouwcewanguage
                 ))
-            case None => None
+            case nyone => n-nyone
           }
-      case _ => Future.None
+      case _ => futuwe.none
     }
   }
 
-  private def addTranslationModelValues(
-    ibisRequest: Ibis2Request,
-    translationModelValues: Option[Map[String, String]]
-  ): Ibis2Request = {
-    (translationModelValues, ibisRequest.modelValues) match {
-      case (Some(translationModelVal), Some(existingModelValues)) =>
-        addTranslationModelValuesCounter.incr()
-        ibisRequest.copy(modelValues = Some(translationModelVal ++ existingModelValues))
-      case (Some(translationModelVal), None) =>
-        addTranslationModelValuesCounter.incr()
-        ibisRequest.copy(modelValues = Some(translationModelVal))
-      case (None, _) => ibisRequest
+  pwivate def addtwanswationmodewvawues(
+    i-ibiswequest: i-ibis2wequest,
+    twanswationmodewvawues: option[map[stwing, ( ͡o ω ͡o ) s-stwing]]
+  ): ibis2wequest = {
+    (twanswationmodewvawues, rawr x3 i-ibiswequest.modewvawues) match {
+      case (some(twanswationmodewvaw), nyaa~~ some(existingmodewvawues)) =>
+        a-addtwanswationmodewvawuescountew.incw()
+        ibiswequest.copy(modewvawues = some(twanswationmodewvaw ++ existingmodewvawues))
+      case (some(twanswationmodewvaw), >_< n-nyone) =>
+        addtwanswationmodewvawuescountew.incw()
+        ibiswequest.copy(modewvawues = s-some(twanswationmodewvaw))
+      c-case (none, ^^;; _) => ibiswequest
     }
   }
 
-  private def patchNtabResponseToIbisRequest(
-    ibis2Req: Ibis2Request,
-    candidate: PushCandidate,
-    ntabResponse: Option[CreateGenericNotificationResponse]
-  ): Ibis2Request = {
-    if (candidate.target.params(FS.EnableInlineFeedbackOnPush)) {
-      patchNtabResponseEnabled.counter().incr()
-      val dislikePosition = candidate.target.params(FS.InlineFeedbackSubstitutePosition)
-      val dislikeActionOption = ntabResponse
-        .map(FunctionalUtil.incr(patchNtabResponseEnabled.counter("ntab_response_exist")))
-        .flatMap(response => InlineActionUtil.getDislikeInlineAction(candidate, response))
-        .map(FunctionalUtil.incr(patchNtabResponseEnabled.counter("dislike_action_generated")))
+  pwivate def patchntabwesponsetoibiswequest(
+    ibis2weq: ibis2wequest, (ˆ ﻌ ˆ)♡
+    c-candidate: p-pushcandidate, ^^;;
+    nytabwesponse: option[cweategenewicnotificationwesponse]
+  ): ibis2wequest = {
+    i-if (candidate.tawget.pawams(fs.enabweinwinefeedbackonpush)) {
+      patchntabwesponseenabwed.countew().incw()
+      v-vaw diswikeposition = candidate.tawget.pawams(fs.inwinefeedbacksubstituteposition)
+      vaw diswikeactionoption = nytabwesponse
+        .map(functionawutiw.incw(patchntabwesponseenabwed.countew("ntab_wesponse_exist")))
+        .fwatmap(wesponse => i-inwineactionutiw.getdiswikeinwineaction(candidate, (⑅˘꒳˘) wesponse))
+        .map(functionawutiw.incw(patchntabwesponseenabwed.countew("diswike_action_genewated")))
 
-      // Only generate patch serialized inline action when original request has existing serialized_inline_actions_v2
-      val patchedSerializedActionOption = ibis2Req.modelValues
-        .flatMap(model => model.get("serialized_inline_actions_v2"))
-        .map(FunctionalUtil.incr(patchNtabResponseEnabled.counter("inline_action_v2_exists")))
-        .map(serialized =>
-          InlineActionUtil
-            .patchInlineActionAtPosition(serialized, dislikeActionOption, dislikePosition))
-        .map(FunctionalUtil.incr(patchNtabResponseEnabled.counter("patch_inline_action_generated")))
+      // o-onwy genewate p-patch sewiawized inwine action when o-owiginaw wequest has existing s-sewiawized_inwine_actions_v2
+      v-vaw patchedsewiawizedactionoption = i-ibis2weq.modewvawues
+        .fwatmap(modew => modew.get("sewiawized_inwine_actions_v2"))
+        .map(functionawutiw.incw(patchntabwesponseenabwed.countew("inwine_action_v2_exists")))
+        .map(sewiawized =>
+          i-inwineactionutiw
+            .patchinwineactionatposition(sewiawized, rawr x3 d-diswikeactionoption, (///ˬ///✿) diswikeposition))
+        .map(functionawutiw.incw(patchntabwesponseenabwed.countew("patch_inwine_action_genewated")))
 
-      (ibis2Req.modelValues, patchedSerializedActionOption) match {
-        case (Some(existingModelValue), Some(patchedActionV2)) =>
-          patchNtabResponseEnabled.scope("patch_applied").counter().incr()
-          ibis2Req.copy(modelValues =
-            Some(existingModelValue ++ Map("serialized_inline_actions_v2" -> patchedActionV2)))
-        case _ => ibis2Req
+      (ibis2weq.modewvawues, 🥺 patchedsewiawizedactionoption) m-match {
+        c-case (some(existingmodewvawue), >_< s-some(patchedactionv2)) =>
+          patchntabwesponseenabwed.scope("patch_appwied").countew().incw()
+          ibis2weq.copy(modewvawues =
+            s-some(existingmodewvawue ++ map("sewiawized_inwine_actions_v2" -> p-patchedactionv2)))
+        c-case _ => ibis2weq
       }
-    } else ibis2Req
+    } ewse ibis2weq
   }
 }

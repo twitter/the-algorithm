@@ -1,50 +1,50 @@
-package com.twitter.frigate.pushservice.predicate
+package com.twittew.fwigate.pushsewvice.pwedicate
 
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.data_pipeline.features_common.MrRequestContextForFeatureStore
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.ml.featurestore.catalog.entities.core.Tweet
-import com.twitter.ml.featurestore.catalog.features.core.Tweet.Text
-import com.twitter.ml.featurestore.lib.TweetId
-import com.twitter.ml.featurestore.lib.dynamic.DynamicFeatureStoreClient
-import com.twitter.ml.featurestore.lib.online.FeatureStoreRequest
-import com.twitter.util.Future
+impowt com.twittew.fwigate.common.base._
+i-impowt c-com.twittew.fwigate.data_pipewine.featuwes_common.mwwequestcontextfowfeatuwestowe
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt c-com.twittew.mw.featuwestowe.catawog.entities.cowe.tweet
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.cowe.tweet.text
+i-impowt c-com.twittew.mw.featuwestowe.wib.tweetid
+impowt com.twittew.mw.featuwestowe.wib.dynamic.dynamicfeatuwestowecwient
+impowt com.twittew.mw.featuwestowe.wib.onwine.featuwestowewequest
+impowt com.twittew.utiw.futuwe
 
-object PostRankingPredicateHelper {
+o-object postwankingpwedicatehewpew {
 
-  val tweetTextFeature = "tweet.core.tweet.text"
+  vaw tweettextfeatuwe = "tweet.cowe.tweet.text"
 
-  def getTweetText(
-    candidate: PushCandidate with TweetCandidate,
-    dynamicClient: DynamicFeatureStoreClient[MrRequestContextForFeatureStore]
-  ): Future[String] = {
-    if (candidate.categoricalFeatures.contains(tweetTextFeature)) {
-      Future.value(candidate.categoricalFeatures.getOrElse(tweetTextFeature, ""))
-    } else {
-      val candidateTweetEntity = Tweet.withId(TweetId(candidate.tweetId))
-      val featureStoreRequests = Seq(
-        FeatureStoreRequest(
-          entityIds = Seq(candidateTweetEntity)
+  def g-gettweettext(
+    candidate: p-pushcandidate with tweetcandidate, 😳😳😳
+    dynamiccwient: dynamicfeatuwestowecwient[mwwequestcontextfowfeatuwestowe]
+  ): f-futuwe[stwing] = {
+    if (candidate.categowicawfeatuwes.contains(tweettextfeatuwe)) {
+      f-futuwe.vawue(candidate.categowicawfeatuwes.getowewse(tweettextfeatuwe, 🥺 ""))
+    } e-ewse {
+      vaw candidatetweetentity = tweet.withid(tweetid(candidate.tweetid))
+      vaw featuwestowewequests = s-seq(
+        featuwestowewequest(
+          entityids = seq(candidatetweetentity)
         ))
-      val predictionRecords = dynamicClient(
-        featureStoreRequests,
-        requestContext = candidate.target.mrRequestContextForFeatureStore)
+      vaw pwedictionwecowds = dynamiccwient(
+        f-featuwestowewequests, mya
+        wequestcontext = c-candidate.tawget.mwwequestcontextfowfeatuwestowe)
 
-      predictionRecords.map { records =>
-        val tweetText = records.head
-          .getFeatureValue(candidateTweetEntity, Text).getOrElse(
+      p-pwedictionwecowds.map { w-wecowds =>
+        v-vaw tweettext = wecowds.head
+          .getfeatuwevawue(candidatetweetentity, 🥺 text).getowewse(
             ""
           )
-        candidate.categoricalFeatures(tweetTextFeature) = tweetText
-        tweetText
+        c-candidate.categowicawfeatuwes(tweettextfeatuwe) = tweettext
+        tweettext
       }
     }
   }
 
-  def getTweetWordLength(tweetText: String): Double = {
-    val tweetTextWithoutUrl: String =
-      tweetText.replaceAll("https?://\\S+\\s?", "").replaceAll("[\\s]+", " ")
-    tweetTextWithoutUrl.trim().split(" ").length.toDouble
+  d-def gettweetwowdwength(tweettext: stwing): doubwe = {
+    vaw tweettextwithoutuww: stwing =
+      tweettext.wepwaceaww("https?://\\s+\\s?", >_< "").wepwaceaww("[\\s]+", >_< " ")
+    tweettextwithoutuww.twim().spwit(" ").wength.todoubwe
   }
 
 }

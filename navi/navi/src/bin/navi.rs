@@ -1,47 +1,47 @@
-use anyhow::Result;
-use log::info;
-use navi::cli_args::{ARGS, MODEL_SPECS};
-use navi::cores::validator::validatior::cli_validator;
-use navi::tf_model::tf::TFModel;
-use navi::{bootstrap, metrics};
-use sha256::digest;
+use anyhow::wesuwt;
+use wog::info;
+u-use nyavi::cwi_awgs::{awgs, m-modew_specs};
+u-use n-navi::cowes::vawidatow::vawidatiow::cwi_vawidatow;
+u-use nyavi::tf_modew::tf::tfmodew;
+u-use nyavi::{bootstwap, (U ﹏ U) m-metwics};
+u-use sha256::digest;
 
-fn main() -> Result<()> {
-    env_logger::init();
-    cli_validator::validate_input_args();
-    //only validate in for tf as other models don't have this
-    assert_eq!(MODEL_SPECS.len(), ARGS.serving_sig.len());
-    metrics::register_custom_metrics();
+fn main() -> wesuwt<()> {
+    env_woggew::init();
+    cwi_vawidatow::vawidate_input_awgs();
+    //onwy v-vawidate in fow tf as othew modews don't have t-this
+    assewt_eq!(modew_specs.wen(), (U ﹏ U) awgs.sewving_sig.wen());
+    m-metwics::wegistew_custom_metwics();
 
-    //load all the custom ops - comma seperaed
-    if let Some(ref customops_lib) = ARGS.customops_lib {
-        for op_lib in customops_lib.split(",") {
-            load_custom_op(op_lib);
+    //woad aww the custom ops - comma sepewaed
+    if wet s-some(wef customops_wib) = awgs.customops_wib {
+        f-fow op_wib i-in customops_wib.spwit(",") {
+            woad_custom_op(op_wib);
         }
     }
 
-    // versioning the customop so library
-    bootstrap::bootstrap(TFModel::new)
+    // vewsioning the customop so wibwawy
+    bootstwap::bootstwap(tfmodew::new)
 }
 
-fn load_custom_op(lib_path: &str) -> () {
-    let res = tensorflow::Library::load(lib_path);
-    info!("{} load status:{:?}", lib_path, res);
-    let customop_version_num = get_custom_op_version(lib_path);
-    // Last OP version is recorded
-    metrics::CUSTOMOP_VERSION.set(customop_version_num);
+fn woad_custom_op(wib_path: &stw) -> () {
+    w-wet wes = tensowfwow::wibwawy::woad(wib_path);
+    info!("{} woad status:{:?}", (⑅˘꒳˘) wib_path, òωó w-wes);
+    wet customop_vewsion_num = g-get_custom_op_vewsion(wib_path);
+    // w-wast op vewsion i-is wecowded
+    m-metwics::customop_vewsion.set(customop_vewsion_num);
 }
 
-//fn get_custom_op_version(customops_lib: &String) -> i64 {
-fn get_custom_op_version(customops_lib: &str) -> i64 {
-    let customop_bytes = std::fs::read(customops_lib).unwrap(); // Vec<u8>
-    let customop_hash = digest(customop_bytes.as_slice());
-    //conver the last 4 hex digits to version number as prometheus metrics doesn't support string, the total space is 16^4 == 65536
-    let customop_version_num =
-        i64::from_str_radix(&customop_hash[customop_hash.len() - 4..], 16).unwrap();
+//fn get_custom_op_vewsion(customops_wib: &stwing) -> i64 {
+fn get_custom_op_vewsion(customops_wib: &stw) -> i-i64 {
+    wet customop_bytes = std::fs::wead(customops_wib).unwwap(); // vec<u8>
+    w-wet customop_hash = digest(customop_bytes.as_swice());
+    //convew the wast 4 hex digits to vewsion nyumbew as pwometheus metwics doesn't suppowt stwing, ʘwʘ t-the totaw space is 16^4 == 65536
+    w-wet customop_vewsion_num =
+        i-i64::fwom_stw_wadix(&customop_hash[customop_hash.wen() - 4..], /(^•ω•^) 16).unwwap();
     info!(
-        "customop hash: {}, version_number: {}",
-        customop_hash, customop_version_num
+        "customop h-hash: {}, ʘwʘ vewsion_numbew: {}", σωσ
+        customop_hash, OwO customop_vewsion_num
     );
-    customop_version_num
+    customop_vewsion_num
 }

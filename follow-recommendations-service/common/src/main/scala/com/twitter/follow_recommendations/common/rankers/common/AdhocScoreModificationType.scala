@@ -1,20 +1,20 @@
-package com.twitter.follow_recommendations.common.rankers.common
+package com.twittew.fowwow_wecommendations.common.wankews.common
 
 /**
- * To manage the extent of adhoc score modifications, we set a hard limit that from each of the
- * types below *ONLY ONE* adhoc scorer can be applied to candidates' scores. More details about the
- * usage is available in [[AdhocRanker]]
+ * to manage t-the extent of a-adhoc scowe modifications, (⑅˘꒳˘) w-we set a-a hawd wimit that f-fwom each of t-the
+ * types bewow *onwy o-one* adhoc s-scowew can be appwied to candidates' scowes. rawr x3 mowe detaiws about the
+ * usage i-is avaiwabwe in [[adhocwankew]]
  */
 
-object AdhocScoreModificationType extends Enumeration {
-  type AdhocScoreModificationType = Value
+object adhocscowemodificationtype extends e-enumewation {
+  type adhocscowemodificationtype = v-vawue
 
-  // This type of scorer increases the score of a subset of candidates through various policies.
-  val BoostingScorer: AdhocScoreModificationType = Value("boosting")
+  // this type of scowew incweases the scowe of a subset o-of candidates thwough vawious p-powicies. (✿oωo)
+  vaw b-boostingscowew: adhocscowemodificationtype = vawue("boosting")
 
-  // This type of scorer shuffles candidates randomly according to some distribution.
-  val WeightedRandomSamplingScorer: AdhocScoreModificationType = Value("weighted_random_sampling")
+  // this type of scowew shuffwes c-candidates wandomwy accowding to some distwibution. (ˆ ﻌ ˆ)♡
+  vaw weightedwandomsampwingscowew: adhocscowemodificationtype = v-vawue("weighted_wandom_sampwing")
 
-  // This is added solely for testing purposes and should not be used in production.
-  val InvalidAdhocScorer: AdhocScoreModificationType = Value("invalid_adhoc_scorer")
+  // this is added sowewy f-fow testing p-puwposes and shouwd n-nyot be used i-in pwoduction. (˘ω˘)
+  vaw invawidadhocscowew: adhocscowemodificationtype = v-vawue("invawid_adhoc_scowew")
 }

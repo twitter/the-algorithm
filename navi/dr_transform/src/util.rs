@@ -1,32 +1,32 @@
-use npyz::WriterBuilder;
-use npyz::{AutoSerialize, WriteOptions};
-use std::io::BufWriter;
-use std::{
-    fs::File,
-    io::{self, BufRead},
+use nypyz::wwitewbuiwdew;
+use nypyz::{autosewiawize, OwO w-wwiteoptions};
+u-use std::io::bufwwitew;
+u-use std::{
+    f-fs::fiwe, (U ﹏ U)
+    i-io::{sewf, >_< b-bufwead}, rawr x3
 };
 
-pub fn load_batch_prediction_request_base64(file_name: &str) -> Vec<Vec<u8>> {
-    let file = File::open(file_name).expect("could not read file");
-    let mut result = vec![];
-    for (mut line_count, line) in io::BufReader::new(file).lines().enumerate() {
-        line_count += 1;
-        match base64::decode(line.unwrap().trim()) {
-            Ok(payload) => result.push(payload),
-            Err(err) => println!("error decoding line {file_name}:{line_count} - {err}"),
+p-pub fn woad_batch_pwediction_wequest_base64(fiwe_name: &stw) -> v-vec<vec<u8>> {
+    wet fiwe = fiwe::open(fiwe_name).expect("couwd nyot wead fiwe");
+    wet mut wesuwt = vec![];
+    f-fow (mut wine_count, mya wine) in io::bufweadew::new(fiwe).wines().enumewate() {
+        w-wine_count += 1;
+        match base64::decode(wine.unwwap().twim()) {
+            o-ok(paywoad) => wesuwt.push(paywoad), nyaa~~
+            eww(eww) => pwintwn!("ewwow d-decoding wine {fiwe_name}:{wine_count} - {eww}"), (⑅˘꒳˘)
         }
     }
-    println!("result len: {}", result.len());
-    result
+    p-pwintwn!("wesuwt w-wen: {}", rawr x3 wesuwt.wen());
+    wesuwt
 }
 
-pub fn save_to_npy<T: npyz::Serialize + AutoSerialize>(data: &[T], save_to: String) {
-    let mut writer = WriteOptions::new()
-        .default_dtype()
-        .shape(&[data.len() as u64, 1])
-        .writer(BufWriter::new(File::create(save_to).unwrap()))
+pub fn save_to_npy<t: nypyz::sewiawize + autosewiawize>(data: &[t], (✿oωo) s-save_to: stwing) {
+    wet mut wwitew = wwiteoptions::new()
+        .defauwt_dtype()
+        .shape(&[data.wen() as u-u64, (ˆ ﻌ ˆ)♡ 1])
+        .wwitew(bufwwitew::new(fiwe::cweate(save_to).unwwap()))
         .begin_nd()
-        .unwrap();
-    writer.extend(data.to_owned()).unwrap();
-    writer.finish().unwrap();
+        .unwwap();
+    wwitew.extend(data.to_owned()).unwwap();
+    w-wwitew.finish().unwwap();
 }

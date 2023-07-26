@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.pwompt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
-
-/**
- * Represents different types of URT Prompts supported such as the Relevance Prompt.
- *
- * URT API Reference: https://docbird.twitter.biz/unified_rich_timelines_urt/gen/com/twitter/timelines/render/thriftscala/PromptContent.html
- */
-sealed trait PromptContent
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cawwback
 
 /**
- * Relevance Prompt is a Yes-No style prompt that can be used for collecting feedback from a User
- * about a part of their timeline.
+ * w-wepwesents diffewent t-types of uwt p-pwompts suppowted s-such as the w-wewevance pwompt. >_<
  *
- * URT API Reference: https://docbird.twitter.biz/unified_rich_timelines_urt/gen/com/twitter/timelines/render/thriftscala/RelevancePrompt.html
+ * u-uwt api w-wefewence: https://docbiwd.twittew.biz/unified_wich_timewines_uwt/gen/com/twittew/timewines/wendew/thwiftscawa/pwomptcontent.htmw
  */
-case class RelevancePromptContent(
-  title: String,
-  confirmation: String,
-  isRelevantText: String,
-  notRelevantText: String,
-  isRelevantCallback: Callback,
-  notRelevantCallback: Callback,
-  displayType: RelevancePromptDisplayType,
-  isRelevantFollowUp: Option[RelevancePromptFollowUpFeedbackType],
-  notRelevantFollowUp: Option[RelevancePromptFollowUpFeedbackType])
-    extends PromptContent
+s-seawed twait pwomptcontent
+
+/**
+ * wewevance pwompt is a yes-no stywe pwompt t-that can be used fow cowwecting feedback fwom a-a usew
+ * about a pawt of theiw t-timewine. rawr x3
+ *
+ * uwt api wefewence: https://docbiwd.twittew.biz/unified_wich_timewines_uwt/gen/com/twittew/timewines/wendew/thwiftscawa/wewevancepwompt.htmw
+ */
+case cwass wewevancepwomptcontent(
+  t-titwe: stwing, mya
+  confiwmation: s-stwing, nyaa~~
+  i-iswewevanttext: stwing, (⑅˘꒳˘)
+  nyotwewevanttext: stwing,
+  iswewevantcawwback: cawwback,
+  n-nyotwewevantcawwback: cawwback, rawr x3
+  dispwaytype: wewevancepwomptdispwaytype, (✿oωo)
+  iswewevantfowwowup: o-option[wewevancepwomptfowwowupfeedbacktype], (ˆ ﻌ ˆ)♡
+  nyotwewevantfowwowup: o-option[wewevancepwomptfowwowupfeedbacktype])
+    e-extends p-pwomptcontent

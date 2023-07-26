@@ -1,16 +1,16 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/configapi",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/scorer",
-        "snowflake/src/main/scala/com/twitter/snowflake/id",
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], OwO
+    stwict_deps = twue, 🥺
+    t-tags = ["bazew-compatibwe"], òωó
+    d-dependencies = [
+        "3wdpawty/jvm/javax/inject:javax.inject", o.O
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/candidate", (U ᵕ U❁)
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/configapi", (⑅˘꒳˘)
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/scowew", ( ͡o ω ͡o )
+        "snowfwake/swc/main/scawa/com/twittew/snowfwake/id", UwU
     ],
-    exports = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/scorer",
-    ],
+    e-expowts = [
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/candidate", rawr x3
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/scowew", rawr
+    ], σωσ
 )

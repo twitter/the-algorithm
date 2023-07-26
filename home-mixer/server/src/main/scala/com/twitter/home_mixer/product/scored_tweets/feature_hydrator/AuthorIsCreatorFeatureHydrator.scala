@@ -1,76 +1,76 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsCreatorFeature
-import com.twitter.home_mixer.util.MissingKeyException
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.audiencerewards.audienceRewardsService.GetSuperFollowEligibilityOnUserClientColumn
-import com.twitter.util.Throw
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.authowiscweatowfeatuwe
+i-impowt c-com.twittew.home_mixew.utiw.missingkeyexception
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.utiw.offwoadfutuwepoows
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.genewated.cwient.audiencewewawds.audiencewewawdssewvice.getsupewfowwowewigibiwityonusewcwientcowumn
+impowt com.twittew.utiw.thwow
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class AuthorIsCreatorFeatureHydrator @Inject() (
-  getSuperFollowEligibilityOnUserClientColumn: GetSuperFollowEligibilityOnUserClientColumn,
-  statsReceiver: StatsReceiver)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@singweton
+c-cwass authowiscweatowfeatuwehydwatow @inject() (
+  g-getsupewfowwowewigibiwityonusewcwientcowumn: getsupewfowwowewigibiwityonusewcwientcowumn, /(^•ω•^)
+  statsweceivew: statsweceivew)
+    extends buwkcandidatefeatuwehydwatow[pipewinequewy, nyaa~~ t-tweetcandidate] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("AuthorIsCreator")
+  ovewwide vaw identifiew: featuwehydwatowidentifiew =
+    featuwehydwatowidentifiew("authowiscweatow")
 
-  override val features: Set[Feature[_, _]] =
-    Set(AuthorIsCreatorFeature)
+  o-ovewwide vaw featuwes: set[featuwe[_, nyaa~~ _]] =
+    s-set(authowiscweatowfeatuwe)
 
-  private val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
-  private val keyFoundCounter = scopedStatsReceiver.counter("key/found")
-  private val keyFailureCounter = scopedStatsReceiver.counter("key/failure")
+  p-pwivate vaw s-scopedstatsweceivew = s-statsweceivew.scope(getcwass.getsimpwename)
+  pwivate vaw keyfoundcountew = s-scopedstatsweceivew.countew("key/found")
+  pwivate vaw keyfaiwuwecountew = s-scopedstatsweceivew.countew("key/faiwuwe")
 
-  private val MissingKeyFeatureMap = FeatureMapBuilder()
-    .add(AuthorIsCreatorFeature, Throw(MissingKeyException))
-    .build()
+  pwivate vaw missingkeyfeatuwemap = featuwemapbuiwdew()
+    .add(authowiscweatowfeatuwe, thwow(missingkeyexception))
+    .buiwd()
 
-  private val DefaultFeatureMap = FeatureMapBuilder()
-    .add(AuthorIsCreatorFeature, false)
-    .build()
+  pwivate vaw defauwtfeatuwemap = featuwemapbuiwdew()
+    .add(authowiscweatowfeatuwe, :3 f-fawse)
+    .buiwd()
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    OffloadFuturePools.offloadStitch {
-      val authorIds = candidates.flatMap(_.features.getOrElse(AuthorIdFeature, None)).distinct
-      Stitch
-        .collect {
-          authorIds.map { authorId =>
-            getSuperFollowEligibilityOnUserClientColumn.fetcher
-              .fetch(authorId)
-              .map { authorId -> _.v }
+  ovewwide d-def appwy(
+    q-quewy: pipewinequewy, 😳😳😳
+    c-candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): stitch[seq[featuwemap]] = {
+    offwoadfutuwepoows.offwoadstitch {
+      v-vaw authowids = c-candidates.fwatmap(_.featuwes.getowewse(authowidfeatuwe, (˘ω˘) nyone)).distinct
+      s-stitch
+        .cowwect {
+          a-authowids.map { authowid =>
+            getsupewfowwowewigibiwityonusewcwientcowumn.fetchew
+              .fetch(authowid)
+              .map { a-authowid -> _.v }
           }
-        }.map { authorIdsToIsCreator =>
-          val authorIdsToIsCreatorMap = authorIdsToIsCreator.toMap
-          candidates.map { candidate =>
-            candidate.features.getOrElse(AuthorIdFeature, None) match {
-              case Some(authorId) =>
-                authorIdsToIsCreatorMap.get(authorId) match {
-                  case Some(response) =>
-                    keyFoundCounter.incr()
-                    FeatureMapBuilder()
-                      .add(AuthorIsCreatorFeature, response.getOrElse(false)).build()
+        }.map { authowidstoiscweatow =>
+          v-vaw authowidstoiscweatowmap = authowidstoiscweatow.tomap
+          candidates.map { c-candidate =>
+            candidate.featuwes.getowewse(authowidfeatuwe, ^^ n-nyone) match {
+              case some(authowid) =>
+                a-authowidstoiscweatowmap.get(authowid) m-match {
+                  case some(wesponse) =>
+                    keyfoundcountew.incw()
+                    featuwemapbuiwdew()
+                      .add(authowiscweatowfeatuwe, :3 wesponse.getowewse(fawse)).buiwd()
                   case _ =>
-                    keyFailureCounter.incr()
-                    DefaultFeatureMap
+                    keyfaiwuwecountew.incw()
+                    d-defauwtfeatuwemap
                 }
-              case _ => MissingKeyFeatureMap
+              c-case _ => missingkeyfeatuwemap
             }
           }
         }

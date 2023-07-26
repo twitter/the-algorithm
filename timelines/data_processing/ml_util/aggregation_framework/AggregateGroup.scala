@@ -1,124 +1,124 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk
 
-import com.twitter.ml.api._
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetric
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.EasyMetric
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.MaxMetric
-import com.twitter.timelines.data_processing.ml_util.transforms.OneToSomeTransform
-import com.twitter.util.Duration
-import java.lang.{Boolean => JBoolean}
-import java.lang.{Long => JLong}
-import scala.language.existentials
+impowt c-com.twittew.mw.api._
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.metwics.aggwegationmetwic
+i-impowt c-com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.metwics.easymetwic
+i-impowt c-com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.metwics.maxmetwic
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.twansfowms.onetosometwansfowm
+i-impowt com.twittew.utiw.duwation
+impowt java.wang.{boowean => jboowean}
+i-impowt java.wang.{wong => jwong}
+impowt scawa.wanguage.existentiaws
 
 /**
- * A wrapper for [[com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup]]
- * (see TypedAggregateGroup.scala) with some convenient syntactic sugar that avoids
- * the user having to specify different groups for different types of features.
- * Gets translated into multiple strongly typed TypedAggregateGroup(s)
- * by the buildTypedAggregateGroups() method defined below.
+ * a w-wwappew fow [[com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.typedaggwegategwoup]]
+ * (see typedaggwegategwoup.scawa) w-with some convenient syntactic sugaw that avoids
+ * t-the usew having to specify diffewent g-gwoups fow d-diffewent types of featuwes. >w<
+ * gets twanswated into muwtipwe stwongwy typed typedaggwegategwoup(s)
+ * b-by the buiwdtypedaggwegategwoups() method defined bewow. XD
  *
- * @param inputSource Source to compute this aggregate over
- * @param preTransforms Sequence of [[ITransform]] that is applied to
- * data records pre-aggregation (e.g. discretization, renaming)
- * @param samplingTransformOpt Optional [[OneToSomeTransform]] that samples data record
- * @param aggregatePrefix Prefix to use for naming resultant aggregate features
- * @param keys Features to group by when computing the aggregates
- * (e.g. USER_ID, AUTHOR_ID). These must be either discrete, string or sparse binary.
- * Grouping by a sparse binary feature is different than grouping by a discrete or string
- * feature. For example, if you have a sparse binary feature WORDS_IN_TWEET which is
- * a set of all words in a tweet, then grouping by this feature generates a
- * separate aggregate mean/count/etc for each value of the feature (each word), and
- * not just a single aggregate count for different "sets of words"
- * @param features Features to aggregate (e.g. blender_score or is_photo).
- * @param labels Labels to cross the features with to make pair features, if any.
- * @param metrics Aggregation metrics to compute (e.g. count, mean)
- * @param halfLives Half lives to use for the aggregations, to be crossed with the above.
- * use Duration.Top for "forever" aggregations over an infinite time window (no decay).
- * @param outputStore Store to output this aggregate to
- * @param includeAnyFeature Aggregate label counts for any feature value
- * @param includeAnyLabel Aggregate feature counts for any label value (e.g. all impressions)
- * @param includeTimestampFeature compute max aggregate on timestamp feature
- * @param aggExclusionRegex Sequence of Regexes, which define features to
+ * @pawam inputsouwce souwce t-to compute this aggwegate ovew
+ * @pawam p-pwetwansfowms s-sequence o-of [[itwansfowm]] t-that is appwied to
+ * data wecowds pwe-aggwegation (e.g. o.O d-discwetization, mya wenaming)
+ * @pawam sampwingtwansfowmopt optionaw [[onetosometwansfowm]] t-that sampwes data wecowd
+ * @pawam aggwegatepwefix pwefix to use fow nyaming wesuwtant aggwegate f-featuwes
+ * @pawam keys featuwes t-to gwoup by w-when computing t-the aggwegates
+ * (e.g. 🥺 usew_id, ^^;; authow_id). :3 these must be eithew d-discwete, (U ﹏ U) stwing o-ow spawse binawy. OwO
+ * gwouping b-by a spawse binawy f-featuwe is diffewent than gwouping b-by a discwete ow stwing
+ * f-featuwe. 😳😳😳 fow exampwe, (ˆ ﻌ ˆ)♡ if you have a spawse binawy f-featuwe wowds_in_tweet which i-is
+ * a set of aww wowds in a t-tweet, XD then gwouping b-by this featuwe genewates a
+ * sepawate aggwegate mean/count/etc fow each vawue of the featuwe (each wowd), (ˆ ﻌ ˆ)♡ a-and
+ * nyot just a-a singwe aggwegate count fow diffewent "sets of w-wowds"
+ * @pawam f-featuwes featuwes t-to aggwegate (e.g. ( ͡o ω ͡o ) bwendew_scowe ow is_photo). rawr x3
+ * @pawam wabews w-wabews to cwoss the featuwes with to make paiw featuwes, nyaa~~ if any.
+ * @pawam m-metwics aggwegation metwics to compute (e.g. >_< c-count, m-mean)
+ * @pawam h-hawfwives hawf wives to use f-fow the aggwegations, ^^;; t-to be cwossed w-with the above. (ˆ ﻌ ˆ)♡
+ * u-use duwation.top fow "fowevew" aggwegations o-ovew an infinite t-time window (no d-decay). ^^;;
+ * @pawam o-outputstowe s-stowe to output this aggwegate to
+ * @pawam incwudeanyfeatuwe aggwegate wabew c-counts fow any featuwe vawue
+ * @pawam incwudeanywabew aggwegate featuwe counts fow any wabew vawue (e.g. (⑅˘꒳˘) a-aww impwessions)
+ * @pawam incwudetimestampfeatuwe compute max aggwegate o-on timestamp f-featuwe
+ * @pawam a-aggexcwusionwegex sequence of w-wegexes, rawr x3 which define featuwes to
  */
-case class AggregateGroup(
-  inputSource: AggregateSource,
-  aggregatePrefix: String,
-  keys: Set[Feature[_]],
-  features: Set[Feature[_]],
-  labels: Set[_ <: Feature[JBoolean]],
-  metrics: Set[EasyMetric],
-  halfLives: Set[Duration],
-  outputStore: AggregateStore,
-  preTransforms: Seq[OneToSomeTransform] = Seq.empty,
-  includeAnyFeature: Boolean = true,
-  includeAnyLabel: Boolean = true,
-  includeTimestampFeature: Boolean = false,
-  aggExclusionRegex: Seq[String] = Seq.empty) {
+c-case cwass a-aggwegategwoup(
+  inputsouwce: aggwegatesouwce, (///ˬ///✿)
+  aggwegatepwefix: stwing, 🥺
+  keys: set[featuwe[_]], >_<
+  f-featuwes: set[featuwe[_]], UwU
+  w-wabews: set[_ <: featuwe[jboowean]], >_<
+  m-metwics: s-set[easymetwic], -.-
+  hawfwives: set[duwation], mya
+  o-outputstowe: a-aggwegatestowe, >w<
+  pwetwansfowms: s-seq[onetosometwansfowm] = s-seq.empty, (U ﹏ U)
+  incwudeanyfeatuwe: boowean = twue, 😳😳😳
+  incwudeanywabew: boowean = t-twue, o.O
+  i-incwudetimestampfeatuwe: b-boowean = fawse, òωó
+  aggexcwusionwegex: seq[stwing] = s-seq.empty) {
 
-  private def toStrongType[T](
-    metrics: Set[EasyMetric],
-    features: Set[Feature[_]],
-    featureType: FeatureType
-  ): TypedAggregateGroup[_] = {
-    val underlyingMetrics: Set[AggregationMetric[T, _]] =
-      metrics.flatMap(_.forFeatureType[T](featureType))
-    val underlyingFeatures: Set[Feature[T]] = features
-      .map(_.asInstanceOf[Feature[T]])
+  p-pwivate def tostwongtype[t](
+    m-metwics: set[easymetwic], 😳😳😳
+    featuwes: set[featuwe[_]], σωσ
+    featuwetype: f-featuwetype
+  ): t-typedaggwegategwoup[_] = {
+    vaw undewwyingmetwics: set[aggwegationmetwic[t, (⑅˘꒳˘) _]] =
+      metwics.fwatmap(_.fowfeatuwetype[t](featuwetype))
+    v-vaw undewwyingfeatuwes: s-set[featuwe[t]] = featuwes
+      .map(_.asinstanceof[featuwe[t]])
 
-    TypedAggregateGroup[T](
-      inputSource = inputSource,
-      aggregatePrefix = aggregatePrefix,
-      keysToAggregate = keys,
-      featuresToAggregate = underlyingFeatures,
-      labels = labels,
-      metrics = underlyingMetrics,
-      halfLives = halfLives,
-      outputStore = outputStore,
-      preTransforms = preTransforms,
-      includeAnyFeature,
-      includeAnyLabel,
-      aggExclusionRegex
+    typedaggwegategwoup[t](
+      inputsouwce = i-inputsouwce, (///ˬ///✿)
+      aggwegatepwefix = aggwegatepwefix, 🥺
+      keystoaggwegate = keys, OwO
+      featuwestoaggwegate = u-undewwyingfeatuwes, >w<
+      wabews = wabews, 🥺
+      metwics = u-undewwyingmetwics, nyaa~~
+      h-hawfwives = hawfwives, ^^
+      outputstowe = outputstowe, >w<
+      p-pwetwansfowms = p-pwetwansfowms, OwO
+      incwudeanyfeatuwe, XD
+      incwudeanywabew, ^^;;
+      aggexcwusionwegex
     )
   }
 
-  private def timestampTypedAggregateGroup: TypedAggregateGroup[_] = {
-    val metrics: Set[AggregationMetric[JLong, _]] =
-      Set(MaxMetric.forFeatureType[JLong](TypedAggregateGroup.timestampFeature.getFeatureType).get)
+  p-pwivate def timestamptypedaggwegategwoup: t-typedaggwegategwoup[_] = {
+    vaw metwics: set[aggwegationmetwic[jwong, _]] =
+      set(maxmetwic.fowfeatuwetype[jwong](typedaggwegategwoup.timestampfeatuwe.getfeatuwetype).get)
 
-    TypedAggregateGroup[JLong](
-      inputSource = inputSource,
-      aggregatePrefix = aggregatePrefix,
-      keysToAggregate = keys,
-      featuresToAggregate = Set(TypedAggregateGroup.timestampFeature),
-      labels = Set.empty,
-      metrics = metrics,
-      halfLives = Set(Duration.Top),
-      outputStore = outputStore,
-      preTransforms = preTransforms,
-      includeAnyFeature = false,
-      includeAnyLabel = true,
-      aggExclusionRegex = Seq.empty
+    t-typedaggwegategwoup[jwong](
+      inputsouwce = inputsouwce, 🥺
+      a-aggwegatepwefix = a-aggwegatepwefix, XD
+      keystoaggwegate = k-keys, (U ᵕ U❁)
+      featuwestoaggwegate = s-set(typedaggwegategwoup.timestampfeatuwe), :3
+      w-wabews = s-set.empty, ( ͡o ω ͡o )
+      metwics = m-metwics, òωó
+      h-hawfwives = set(duwation.top), σωσ
+      outputstowe = outputstowe, (U ᵕ U❁)
+      p-pwetwansfowms = p-pwetwansfowms, (✿oωo)
+      i-incwudeanyfeatuwe = fawse, ^^
+      incwudeanywabew = twue, ^•ﻌ•^
+      aggexcwusionwegex = seq.empty
     )
   }
 
-  def buildTypedAggregateGroups(): List[TypedAggregateGroup[_]] = {
-    val typedAggregateGroupsList = {
-      if (features.isEmpty) {
-        List(toStrongType(metrics, features, FeatureType.BINARY))
-      } else {
-        features
-          .groupBy(_.getFeatureType())
-          .toList
+  d-def buiwdtypedaggwegategwoups(): wist[typedaggwegategwoup[_]] = {
+    v-vaw t-typedaggwegategwoupswist = {
+      if (featuwes.isempty) {
+        wist(tostwongtype(metwics, XD featuwes, :3 f-featuwetype.binawy))
+      } e-ewse {
+        f-featuwes
+          .gwoupby(_.getfeatuwetype())
+          .towist
           .map {
-            case (featureType, features) =>
-              toStrongType(metrics, features, featureType)
+            c-case (featuwetype, (ꈍᴗꈍ) featuwes) =>
+              t-tostwongtype(metwics, :3 featuwes, featuwetype)
           }
       }
     }
 
-    val optionalTimestampTypedAggregateGroup =
-      if (includeTimestampFeature) List(timestampTypedAggregateGroup) else List()
+    vaw optionawtimestamptypedaggwegategwoup =
+      if (incwudetimestampfeatuwe) w-wist(timestamptypedaggwegategwoup) ewse w-wist()
 
-    typedAggregateGroupsList ++ optionalTimestampTypedAggregateGroup
+    typedaggwegategwoupswist ++ optionawtimestamptypedaggwegategwoup
   }
 }

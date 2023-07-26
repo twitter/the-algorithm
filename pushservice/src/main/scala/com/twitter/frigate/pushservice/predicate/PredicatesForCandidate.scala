@@ -1,874 +1,874 @@
-package com.twitter.frigate.pushservice.predicate
+package com.twittew.fwigate.pushsewvice.pwedicate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.candidate.MaxTweetAge
-import com.twitter.frigate.common.candidate.TargetABDecider
-import com.twitter.frigate.common.predicate.tweet.TweetAuthorPredicates
-import com.twitter.frigate.common.predicate._
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.common.util.SnowflakeUtils
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.pushservice.util.CandidateUtil
-import com.twitter.frigate.thriftscala.ChannelName
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.gizmoduck.thriftscala.UserType
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.hermit.predicate.gizmoduck._
-import com.twitter.hermit.predicate.socialgraph.Edge
-import com.twitter.hermit.predicate.socialgraph.MultiEdge
-import com.twitter.hermit.predicate.socialgraph.RelationEdge
-import com.twitter.hermit.predicate.socialgraph.SocialGraphPredicate
-import com.twitter.service.metastore.gen.thriftscala.Location
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.base._
+i-impowt c-com.twittew.fwigate.common.candidate.maxtweetage
+i-impowt com.twittew.fwigate.common.candidate.tawgetabdecidew
+i-impowt c-com.twittew.fwigate.common.pwedicate.tweet.tweetauthowpwedicates
+i-impowt com.twittew.fwigate.common.pwedicate._
+i-impowt com.twittew.fwigate.common.wec_types.wectypes
+impowt com.twittew.fwigate.common.utiw.snowfwakeutiws
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushpawams
+impowt com.twittew.fwigate.pushsewvice.utiw.candidateutiw
+i-impowt com.twittew.fwigate.thwiftscawa.channewname
+i-impowt com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+impowt com.twittew.gizmoduck.thwiftscawa.usew
+impowt com.twittew.gizmoduck.thwiftscawa.usewtype
+i-impowt com.twittew.hewmit.pwedicate.namedpwedicate
+impowt com.twittew.hewmit.pwedicate.pwedicate
+i-impowt com.twittew.hewmit.pwedicate.gizmoduck._
+i-impowt com.twittew.hewmit.pwedicate.sociawgwaph.edge
+impowt com.twittew.hewmit.pwedicate.sociawgwaph.muwtiedge
+impowt com.twittew.hewmit.pwedicate.sociawgwaph.wewationedge
+impowt com.twittew.hewmit.pwedicate.sociawgwaph.sociawgwaphpwedicate
+i-impowt com.twittew.sewvice.metastowe.gen.thwiftscawa.wocation
+impowt com.twittew.sociawgwaph.thwiftscawa.wewationshiptype
+impowt com.twittew.stitch.tweetypie.tweetypie.tweetypiewesuwt
+impowt c-com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.timewines.configapi.pawam
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.futuwe
 
-object PredicatesForCandidate {
+o-object pwedicatesfowcandidate {
 
-  def oldTweetRecsPredicate(implicit stats: StatsReceiver): Predicate[
-    TweetCandidate with RecommendationType with TargetInfo[
-      TargetUser with TargetABDecider with MaxTweetAge
+  d-def owdtweetwecspwedicate(impwicit stats: statsweceivew): p-pwedicate[
+    tweetcandidate with wecommendationtype w-with tawgetinfo[
+      tawgetusew with tawgetabdecidew with maxtweetage
     ]
   ] = {
-    val name = "old_tweet"
-    Predicate
-      .from[TweetCandidate with RecommendationType with TargetInfo[
-        TargetUser with TargetABDecider with MaxTweetAge
+    vaw nyame = "owd_tweet"
+    p-pwedicate
+      .fwom[tweetcandidate with wecommendationtype w-with tawgetinfo[
+        t-tawgetusew with t-tawgetabdecidew with maxtweetage
       ]] { candidate =>
         {
-          val crt = candidate.commonRecType
-          val defaultAge = if (RecTypes.mrModelingBasedTypes.contains(crt)) {
-            candidate.target.params(PushFeatureSwitchParams.ModelingBasedCandidateMaxTweetAgeParam)
-          } else if (RecTypes.GeoPopTweetTypes.contains(crt)) {
-            candidate.target.params(PushFeatureSwitchParams.GeoPopTweetMaxAgeInHours)
-          } else if (RecTypes.simclusterBasedTweets.contains(crt)) {
-            candidate.target.params(
-              PushFeatureSwitchParams.SimclusterBasedCandidateMaxTweetAgeParam)
-          } else if (RecTypes.detopicTypes.contains(crt)) {
-            candidate.target.params(PushFeatureSwitchParams.DetopicBasedCandidateMaxTweetAgeParam)
-          } else if (RecTypes.f1FirstDegreeTypes.contains(crt)) {
-            candidate.target.params(PushFeatureSwitchParams.F1CandidateMaxTweetAgeParam)
-          } else if (crt == CommonRecommendationType.ExploreVideoTweet) {
-            candidate.target.params(PushFeatureSwitchParams.ExploreVideoTweetAgeParam)
-          } else
-            candidate.target.params(PushFeatureSwitchParams.MaxTweetAgeParam)
-          SnowflakeUtils.isRecent(candidate.tweetId, defaultAge)
+          vaw cwt = candidate.commonwectype
+          v-vaw defauwtage = i-if (wectypes.mwmodewingbasedtypes.contains(cwt)) {
+            candidate.tawget.pawams(pushfeatuweswitchpawams.modewingbasedcandidatemaxtweetagepawam)
+          } ewse i-if (wectypes.geopoptweettypes.contains(cwt)) {
+            candidate.tawget.pawams(pushfeatuweswitchpawams.geopoptweetmaxageinhouws)
+          } e-ewse if (wectypes.simcwustewbasedtweets.contains(cwt)) {
+            candidate.tawget.pawams(
+              p-pushfeatuweswitchpawams.simcwustewbasedcandidatemaxtweetagepawam)
+          } ewse if (wectypes.detopictypes.contains(cwt)) {
+            c-candidate.tawget.pawams(pushfeatuweswitchpawams.detopicbasedcandidatemaxtweetagepawam)
+          } ewse if (wectypes.f1fiwstdegweetypes.contains(cwt)) {
+            c-candidate.tawget.pawams(pushfeatuweswitchpawams.f1candidatemaxtweetagepawam)
+          } ewse if (cwt == c-commonwecommendationtype.expwowevideotweet) {
+            candidate.tawget.pawams(pushfeatuweswitchpawams.expwowevideotweetagepawam)
+          } e-ewse
+            c-candidate.tawget.pawams(pushfeatuweswitchpawams.maxtweetagepawam)
+          snowfwakeutiws.iswecent(candidate.tweetid, UwU defauwtage)
         }
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .withstats(stats.scope(name))
+      .withname(name)
   }
 
-  def tweetIsNotAreply(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[TweetCandidate with TweetDetails] = {
-    val name = "tweet_candidate_not_a_reply"
-    Predicate
-      .from[TweetCandidate with TweetDetails] { c =>
-        c.isReply match {
-          case Some(true) => false
-          case _ => true
+  def tweetisnotawepwy(
+    impwicit stats: statsweceivew
+  ): nyamedpwedicate[tweetcandidate w-with t-tweetdetaiws] = {
+    vaw nyame = "tweet_candidate_not_a_wepwy"
+    p-pwedicate
+      .fwom[tweetcandidate w-with t-tweetdetaiws] { c =>
+        c.iswepwy match {
+          case some(twue) => f-fawse
+          case _ => twue
         }
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .withstats(stats.scope(name))
+      .withname(name)
   }
 
   /**
-   * Check if tweet contains any optouted free form interests.
-   * Currently, we use it for media categories and semantic core
-   * @param stats
-   * @return
+   * check if tweet contains any o-optouted fwee fowm intewests. ʘwʘ
+   * c-cuwwentwy, >w< w-we use it fow media c-categowies and semantic cowe
+   * @pawam s-stats
+   * @wetuwn
    */
-  def noOptoutFreeFormInterestPredicate(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "free_form_interest_opt_out"
-    val tweetMediaAnnotationFeature =
-      "tweet.mediaunderstanding.tweet_annotations.safe_category_probabilities"
-    val tweetSemanticCoreFeature =
-      "tweet.core.tweet.semantic_core_annotations"
-    val scopedStatsReceiver = stats.scope(s"predicate_$name")
-    val withOptOutFreeFormInterestsCounter = stats.counter("with_optout_interests")
-    val withoutOptOutInterestsCounter = stats.counter("without_optout_interests")
-    val withOptOutFreeFormInterestsFromMediaAnnotationCounter =
-      stats.counter("with_optout_interests_from_media_annotation")
-    val withOptOutFreeFormInterestsFromSemanticCoreCounter =
-      stats.counter("with_optout_interests_from_semantic_core")
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        val tweetSemanticCoreEntityIds = candidate.sparseBinaryFeatures
-          .getOrElse(tweetSemanticCoreFeature, Set.empty[String]).map { id =>
-            id.split('.')(2)
-          }.toSet
-        val tweetMediaAnnotationIds = candidate.sparseContinuousFeatures
-          .getOrElse(tweetMediaAnnotationFeature, Map.empty[String, Double]).keys.toSet
+  d-def nyooptoutfweefowmintewestpwedicate(
+    i-impwicit stats: s-statsweceivew
+  ): nyamedpwedicate[pushcandidate] = {
+    vaw nyame = "fwee_fowm_intewest_opt_out"
+    v-vaw t-tweetmediaannotationfeatuwe =
+      "tweet.mediaundewstanding.tweet_annotations.safe_categowy_pwobabiwities"
+    v-vaw tweetsemanticcowefeatuwe =
+      "tweet.cowe.tweet.semantic_cowe_annotations"
+    v-vaw scopedstatsweceivew = s-stats.scope(s"pwedicate_$name")
+    vaw withoptoutfweefowmintewestscountew = stats.countew("with_optout_intewests")
+    vaw withoutoptoutintewestscountew = s-stats.countew("without_optout_intewests")
+    vaw withoptoutfweefowmintewestsfwommediaannotationcountew =
+      stats.countew("with_optout_intewests_fwom_media_annotation")
+    vaw withoptoutfweefowmintewestsfwomsemanticcowecountew =
+      stats.countew("with_optout_intewests_fwom_semantic_cowe")
+    p-pwedicate
+      .fwomasync { candidate: pushcandidate =>
+        vaw t-tweetsemanticcoweentityids = c-candidate.spawsebinawyfeatuwes
+          .getowewse(tweetsemanticcowefeatuwe, 😳😳😳 s-set.empty[stwing]).map { id =>
+            i-id.spwit('.')(2)
+          }.toset
+        vaw tweetmediaannotationids = candidate.spawsecontinuousfeatuwes
+          .getowewse(tweetmediaannotationfeatuwe, rawr m-map.empty[stwing, ^•ﻌ•^ d-doubwe]).keys.toset
 
-        candidate.target.optOutFreeFormUserInterests.map {
-          case optOutUserInterests: Seq[String] =>
-            withOptOutFreeFormInterestsCounter.incr()
-            val optOutUserInterestsSet = optOutUserInterests.toSet
-            val mediaAnnoIntersect = optOutUserInterestsSet.intersect(tweetMediaAnnotationIds)
-            val semanticCoreIntersect = optOutUserInterestsSet.intersect(tweetSemanticCoreEntityIds)
-            if (!mediaAnnoIntersect.isEmpty) {
-              withOptOutFreeFormInterestsFromMediaAnnotationCounter.incr()
+        candidate.tawget.optoutfweefowmusewintewests.map {
+          case optoutusewintewests: seq[stwing] =>
+            withoptoutfweefowmintewestscountew.incw()
+            vaw optoutusewintewestsset = o-optoutusewintewests.toset
+            vaw m-mediaannointewsect = optoutusewintewestsset.intewsect(tweetmediaannotationids)
+            v-vaw s-semanticcoweintewsect = optoutusewintewestsset.intewsect(tweetsemanticcoweentityids)
+            if (!mediaannointewsect.isempty) {
+              w-withoptoutfweefowmintewestsfwommediaannotationcountew.incw()
             }
-            if (!semanticCoreIntersect.isEmpty) {
-              withOptOutFreeFormInterestsFromSemanticCoreCounter.incr()
+            i-if (!semanticcoweintewsect.isempty) {
+              withoptoutfweefowmintewestsfwomsemanticcowecountew.incw()
             }
-            semanticCoreIntersect.isEmpty && mediaAnnoIntersect.isEmpty
+            s-semanticcoweintewsect.isempty && m-mediaannointewsect.isempty
           case _ =>
-            withoutOptOutInterestsCounter.incr()
-            true
+            withoutoptoutintewestscountew.incw()
+            twue
         }
       }
-      .withStats(scopedStatsReceiver)
-      .withName(name)
+      .withstats(scopedstatsweceivew)
+      .withname(name)
   }
 
-  def tweetCandidateWithLessThan2SocialContextsIsAReply(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[TweetCandidate with TweetDetails with SocialContextActions] = {
-    val name = "tweet_candidate_with_less_than_2_social_contexts_is_not_a_reply"
-    Predicate
-      .from[TweetCandidate with TweetDetails with SocialContextActions] { cand =>
-        cand.isReply match {
-          case Some(true) if cand.socialContextTweetIds.size < 2 => false
-          case _ => true
+  def tweetcandidatewithwessthan2sociawcontextsisawepwy(
+    impwicit stats: s-statsweceivew
+  ): n-nyamedpwedicate[tweetcandidate w-with tweetdetaiws with sociawcontextactions] = {
+    v-vaw nyame = "tweet_candidate_with_wess_than_2_sociaw_contexts_is_not_a_wepwy"
+    p-pwedicate
+      .fwom[tweetcandidate with tweetdetaiws w-with sociawcontextactions] { cand =>
+        cand.iswepwy match {
+          case some(twue) if cand.sociawcontexttweetids.size < 2 => f-fawse
+          c-case _ => twue
         }
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .withstats(stats.scope(name))
+      .withname(name)
   }
 
-  def f1CandidateIsNotAReply(implicit stats: StatsReceiver): NamedPredicate[F1Candidate] = {
-    val name = "f1_candidate_is_not_a_reply"
-    Predicate
-      .from[F1Candidate] { candidate =>
-        candidate.isReply match {
-          case Some(true) => false
-          case _ => true
+  def f-f1candidateisnotawepwy(impwicit s-stats: statsweceivew): namedpwedicate[f1candidate] = {
+    vaw nyame = "f1_candidate_is_not_a_wepwy"
+    pwedicate
+      .fwom[f1candidate] { c-candidate =>
+        candidate.iswepwy match {
+          case some(twue) => fawse
+          c-case _ => twue
         }
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .withstats(stats.scope(name))
+      .withname(name)
   }
 
-  def outOfNetworkTweetCandidateEnabledCrTag(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[OutOfNetworkTweetCandidate with TargetInfo[TargetUser with TargetABDecider]] = {
-    val name = "out_of_network_tweet_candidate_enabled_crtag"
-    val scopedStats = stats.scope(name)
-    Predicate
-      .from[OutOfNetworkTweetCandidate with TargetInfo[TargetUser with TargetABDecider]] { cand =>
-        val disabledCrTag = cand.target
-          .params(PushFeatureSwitchParams.OONCandidatesDisabledCrTagParam)
-        val candGeneratedByDisabledSignal = cand.tagsCR.exists { tagsCR =>
-          val tagsCRSet = tagsCR.map(_.toString).toSet
-          tagsCRSet.nonEmpty && tagsCRSet.subsetOf(disabledCrTag.toSet)
+  def o-outofnetwowktweetcandidateenabwedcwtag(
+    i-impwicit stats: statsweceivew
+  ): nyamedpwedicate[outofnetwowktweetcandidate with tawgetinfo[tawgetusew with tawgetabdecidew]] = {
+    v-vaw nyame = "out_of_netwowk_tweet_candidate_enabwed_cwtag"
+    v-vaw scopedstats = stats.scope(name)
+    pwedicate
+      .fwom[outofnetwowktweetcandidate with t-tawgetinfo[tawgetusew with tawgetabdecidew]] { c-cand =>
+        vaw disabwedcwtag = cand.tawget
+          .pawams(pushfeatuweswitchpawams.ooncandidatesdisabwedcwtagpawam)
+        vaw candgenewatedbydisabwedsignaw = c-cand.tagscw.exists { tagscw =>
+          v-vaw tagscwset = t-tagscw.map(_.tostwing).toset
+          tagscwset.nonempty && t-tagscwset.subsetof(disabwedcwtag.toset)
         }
-        if (candGeneratedByDisabledSignal) {
-          cand.tagsCR.getOrElse(Nil).foreach(tag => scopedStats.counter(tag.toString).incr())
-          false
-        } else true
+        if (candgenewatedbydisabwedsignaw) {
+          c-cand.tagscw.getowewse(niw).foweach(tag => s-scopedstats.countew(tag.tostwing).incw())
+          f-fawse
+        } ewse twue
       }
-      .withStats(scopedStats)
-      .withName(name)
+      .withstats(scopedstats)
+      .withname(name)
   }
 
-  def outOfNetworkTweetCandidateEnabledCrtGroup(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[OutOfNetworkTweetCandidate with TargetInfo[TargetUser with TargetABDecider]] = {
-    val name = "out_of_network_tweet_candidate_enabled_crt_group"
-    val scopedStats = stats.scope(name)
-    Predicate
-      .from[OutOfNetworkTweetCandidate with TargetInfo[TargetUser with TargetABDecider]] { cand =>
-        val disabledCrtGroup = cand.target
-          .params(PushFeatureSwitchParams.OONCandidatesDisabledCrtGroupParam)
-        val crtGroup = CandidateUtil.getCrtGroup(cand.commonRecType)
-        val candGeneratedByDisabledCrt = disabledCrtGroup.contains(crtGroup)
-        if (candGeneratedByDisabledCrt) {
-          scopedStats.counter("filter_" + crtGroup.toString).incr()
-          false
-        } else true
+  d-def outofnetwowktweetcandidateenabwedcwtgwoup(
+    i-impwicit stats: statsweceivew
+  ): nyamedpwedicate[outofnetwowktweetcandidate w-with tawgetinfo[tawgetusew w-with t-tawgetabdecidew]] = {
+    vaw nyame = "out_of_netwowk_tweet_candidate_enabwed_cwt_gwoup"
+    vaw s-scopedstats = stats.scope(name)
+    p-pwedicate
+      .fwom[outofnetwowktweetcandidate w-with tawgetinfo[tawgetusew with tawgetabdecidew]] { cand =>
+        vaw d-disabwedcwtgwoup = c-cand.tawget
+          .pawams(pushfeatuweswitchpawams.ooncandidatesdisabwedcwtgwouppawam)
+        v-vaw cwtgwoup = c-candidateutiw.getcwtgwoup(cand.commonwectype)
+        vaw candgenewatedbydisabwedcwt = d-disabwedcwtgwoup.contains(cwtgwoup)
+        if (candgenewatedbydisabwedcwt) {
+          scopedstats.countew("fiwtew_" + cwtgwoup.tostwing).incw()
+          fawse
+        } ewse twue
       }
-      .withStats(scopedStats)
-      .withName(name)
+      .withstats(scopedstats)
+      .withname(name)
   }
 
-  def outOfNetworkTweetCandidateIsNotAReply(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[OutOfNetworkTweetCandidate] = {
-    val name = "out_of_network_tweet_candidate_is_not_a_reply"
-    Predicate
-      .from[OutOfNetworkTweetCandidate] { cand =>
-        cand.isReply match {
-          case Some(true) => false
-          case _ => true
+  d-def outofnetwowktweetcandidateisnotawepwy(
+    impwicit stats: s-statsweceivew
+  ): nyamedpwedicate[outofnetwowktweetcandidate] = {
+    v-vaw nyame = "out_of_netwowk_tweet_candidate_is_not_a_wepwy"
+    pwedicate
+      .fwom[outofnetwowktweetcandidate] { c-cand =>
+        cand.iswepwy m-match {
+          c-case s-some(twue) => f-fawse
+          c-case _ => twue
         }
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .withstats(stats.scope(name))
+      .withname(name)
   }
 
-  def recommendedTweetIsAuthoredBySelf(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate] =
-    Predicate
-      .from[PushCandidate] {
-        case tweetCandidate: PushCandidate with TweetDetails =>
-          tweetCandidate.authorId match {
-            case Some(authorId) => authorId != tweetCandidate.target.targetId
-            case None => true
+  def wecommendedtweetisauthowedbysewf(
+    impwicit statsweceivew: statsweceivew
+  ): nyamedpwedicate[pushcandidate] =
+    pwedicate
+      .fwom[pushcandidate] {
+        c-case t-tweetcandidate: p-pushcandidate with tweetdetaiws =>
+          t-tweetcandidate.authowid match {
+            case some(authowid) => authowid != tweetcandidate.tawget.tawgetid
+            c-case nyone => t-twue
           }
         case _ =>
-          true
+          t-twue
       }
-      .withStats(statsReceiver.scope("predicate_self_author"))
-      .withName("self_author")
+      .withstats(statsweceivew.scope("pwedicate_sewf_authow"))
+      .withname("sewf_authow")
 
-  def authorInSocialContext(implicit statsReceiver: StatsReceiver): NamedPredicate[PushCandidate] =
-    Predicate
-      .from[PushCandidate] {
-        case tweetCandidate: PushCandidate with TweetDetails with SocialContextActions =>
-          tweetCandidate.authorId match {
-            case Some(authorId) =>
-              !tweetCandidate.socialContextUserIds.contains(authorId)
-            case None => true
+  def authowinsociawcontext(impwicit statsweceivew: s-statsweceivew): n-nyamedpwedicate[pushcandidate] =
+    pwedicate
+      .fwom[pushcandidate] {
+        c-case tweetcandidate: p-pushcandidate with tweetdetaiws with sociawcontextactions =>
+          tweetcandidate.authowid m-match {
+            c-case s-some(authowid) =>
+              !tweetcandidate.sociawcontextusewids.contains(authowid)
+            c-case nyone => t-twue
           }
-        case _ => true
+        case _ => t-twue
       }
-      .withStats(statsReceiver.scope("predicate_author_social_context"))
-      .withName("author_social_context")
+      .withstats(statsweceivew.scope("pwedicate_authow_sociaw_context"))
+      .withname("authow_sociaw_context")
 
-  def selfInSocialContext(implicit statsReceiver: StatsReceiver): NamedPredicate[PushCandidate] = {
-    val name = "self_social_context"
-    Predicate
-      .from[PushCandidate] {
-        case candidate: PushCandidate with SocialContextActions =>
-          !candidate.socialContextUserIds.contains(candidate.target.targetId)
+  d-def sewfinsociawcontext(impwicit statsweceivew: s-statsweceivew): n-nyamedpwedicate[pushcandidate] = {
+    vaw nyame = "sewf_sociaw_context"
+    p-pwedicate
+      .fwom[pushcandidate] {
+        case candidate: pushcandidate w-with sociawcontextactions =>
+          !candidate.sociawcontextusewids.contains(candidate.tawget.tawgetid)
         case _ =>
-          true
+          t-twue
       }
-      .withStats(statsReceiver.scope(s"${name}_predicate"))
-      .withName(name)
+      .withstats(statsweceivew.scope(s"${name}_pwedicate"))
+      .withname(name)
   }
 
-  def minSocialContext(
-    threshold: Int
+  d-def minsociawcontext(
+    thweshowd: i-int
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with SocialContextActions] = {
-    Predicate
-      .from { candidate: PushCandidate with SocialContextActions =>
-        candidate.socialContextUserIds.size >= threshold
+    impwicit statsweceivew: statsweceivew
+  ): n-nyamedpwedicate[pushcandidate w-with s-sociawcontextactions] = {
+    pwedicate
+      .fwom { candidate: pushcandidate with sociawcontextactions =>
+        c-candidate.sociawcontextusewids.size >= thweshowd
       }
-      .withStats(statsReceiver.scope("predicate_min_social_context"))
-      .withName("min_social_context")
+      .withstats(statsweceivew.scope("pwedicate_min_sociaw_context"))
+      .withname("min_sociaw_context")
   }
 
-  private def anyWithheldContent(
-    userStore: ReadableStore[Long, User],
-    userCountryStore: ReadableStore[Long, Location]
+  pwivate def anywithhewdcontent(
+    u-usewstowe: w-weadabwestowe[wong, σωσ usew], :3
+    usewcountwystowe: w-weadabwestowe[wong, rawr x3 wocation]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): Predicate[TargetRecUser] =
-    GizmoduckUserPredicate.withheldContentPredicate(
-      userStore = userStore,
-      userCountryStore = userCountryStore,
-      statsReceiver = statsReceiver,
-      checkAllCountries = true
+    i-impwicit s-statsweceivew: statsweceivew
+  ): pwedicate[tawgetwecusew] =
+    g-gizmoduckusewpwedicate.withhewdcontentpwedicate(
+      usewstowe = usewstowe, nyaa~~
+      u-usewcountwystowe = u-usewcountwystowe, :3
+      statsweceivew = s-statsweceivew, >w<
+      checkawwcountwies = t-twue
     )
 
-  def targetUserExists(implicit statsReceiver: StatsReceiver): NamedPredicate[PushCandidate] = {
-    TargetUserPredicates
-      .targetUserExists()(statsReceiver)
-      .flatContraMap { candidate: PushCandidate => Future.value(candidate.target) }
-      .withName("target_user_exists")
+  d-def tawgetusewexists(impwicit s-statsweceivew: statsweceivew): namedpwedicate[pushcandidate] = {
+    tawgetusewpwedicates
+      .tawgetusewexists()(statsweceivew)
+      .fwatcontwamap { candidate: pushcandidate => futuwe.vawue(candidate.tawget) }
+      .withname("tawget_usew_exists")
   }
 
-  def secondaryDormantAccountPredicate(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "secondary_dormant_account"
-    TargetUserPredicates
-      .secondaryDormantAccountPredicate()(statsReceiver)
-      .on { candidate: PushCandidate => candidate.target }
-      .withStats(statsReceiver.scope(s"predicate_$name"))
-      .withName(name)
+  def secondawydowmantaccountpwedicate(
+    impwicit statsweceivew: statsweceivew
+  ): nyamedpwedicate[pushcandidate] = {
+    vaw nyame = "secondawy_dowmant_account"
+    tawgetusewpwedicates
+      .secondawydowmantaccountpwedicate()(statsweceivew)
+      .on { candidate: pushcandidate => c-candidate.tawget }
+      .withstats(statsweceivew.scope(s"pwedicate_$name"))
+      .withname(name)
   }
 
-  def socialContextBeingFollowed(
-    edgeStore: ReadableStore[RelationEdge, Boolean]
+  d-def sociawcontextbeingfowwowed(
+    edgestowe: weadabwestowe[wewationedge, rawr b-boowean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with SocialContextActions] =
-    SocialGraphPredicate
-      .allRelationEdgesExist(edgeStore, RelationshipType.Following)
-      .on { candidate: PushCandidate with SocialContextActions =>
-        candidate.socialContextUserIds.map { u => Edge(candidate.target.targetId, u) }
+    impwicit s-statsweceivew: s-statsweceivew
+  ): nyamedpwedicate[pushcandidate w-with sociawcontextactions] =
+    sociawgwaphpwedicate
+      .awwwewationedgesexist(edgestowe, w-wewationshiptype.fowwowing)
+      .on { c-candidate: pushcandidate w-with sociawcontextactions =>
+        candidate.sociawcontextusewids.map { u-u => edge(candidate.tawget.tawgetid, 😳 u-u) }
       }
-      .withStats(statsReceiver.scope("predicate_social_context_being_followed"))
-      .withName("social_context_being_followed")
+      .withstats(statsweceivew.scope("pwedicate_sociaw_context_being_fowwowed"))
+      .withname("sociaw_context_being_fowwowed")
 
-  private def edgeFromCandidate(candidate: PushCandidate with TweetAuthor): Option[Edge] = {
-    candidate.authorId map { authorId => Edge(candidate.target.targetId, authorId) }
+  pwivate def edgefwomcandidate(candidate: p-pushcandidate with t-tweetauthow): o-option[edge] = {
+    c-candidate.authowid m-map { a-authowid => edge(candidate.tawget.tawgetid, 😳 a-authowid) }
   }
 
-  def authorNotBeingDeviceFollowed(
-    edgeStore: ReadableStore[RelationEdge, Boolean]
+  def a-authownotbeingdevicefowwowed(
+    e-edgestowe: weadabwestowe[wewationedge, 🥺 b-boowean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor] = {
-    SocialGraphPredicate
-      .relationExists(edgeStore, RelationshipType.DeviceFollowing)
-      .optionalOn(
-        edgeFromCandidate,
-        missingResult = false
+    i-impwicit s-statsweceivew: statsweceivew
+  ): n-nyamedpwedicate[pushcandidate with tweetauthow] = {
+    sociawgwaphpwedicate
+      .wewationexists(edgestowe, rawr x3 w-wewationshiptype.devicefowwowing)
+      .optionawon(
+        edgefwomcandidate, ^^
+        missingwesuwt = fawse
       )
-      .flip
-      .withStats(statsReceiver.scope("predicate_author_not_device_followed"))
-      .withName("author_not_device_followed")
+      .fwip
+      .withstats(statsweceivew.scope("pwedicate_authow_not_device_fowwowed"))
+      .withname("authow_not_device_fowwowed")
   }
 
-  def authorBeingFollowed(
-    edgeStore: ReadableStore[RelationEdge, Boolean]
+  d-def a-authowbeingfowwowed(
+    e-edgestowe: weadabwestowe[wewationedge, ( ͡o ω ͡o ) b-boowean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor] = {
-    SocialGraphPredicate
-      .relationExists(edgeStore, RelationshipType.Following)
-      .optionalOn(
-        edgeFromCandidate,
-        missingResult = false
+    impwicit statsweceivew: s-statsweceivew
+  ): nyamedpwedicate[pushcandidate w-with tweetauthow] = {
+    s-sociawgwaphpwedicate
+      .wewationexists(edgestowe, XD wewationshiptype.fowwowing)
+      .optionawon(
+        edgefwomcandidate, ^^
+        missingwesuwt = fawse
       )
-      .withStats(statsReceiver.scope("predicate_author_being_followed"))
-      .withName("author_being_followed")
+      .withstats(statsweceivew.scope("pwedicate_authow_being_fowwowed"))
+      .withname("authow_being_fowwowed")
   }
 
-  def authorNotBeingFollowed(
-    edgeStore: ReadableStore[RelationEdge, Boolean]
+  d-def authownotbeingfowwowed(
+    edgestowe: weadabwestowe[wewationedge, (⑅˘꒳˘) b-boowean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor] = {
-    SocialGraphPredicate
-      .relationExists(edgeStore, RelationshipType.Following)
-      .optionalOn(
-        edgeFromCandidate,
-        missingResult = false
+    i-impwicit statsweceivew: statsweceivew
+  ): nyamedpwedicate[pushcandidate w-with tweetauthow] = {
+    sociawgwaphpwedicate
+      .wewationexists(edgestowe, (⑅˘꒳˘) w-wewationshiptype.fowwowing)
+      .optionawon(
+        e-edgefwomcandidate, ^•ﻌ•^
+        m-missingwesuwt = fawse
       )
-      .flip
-      .withStats(statsReceiver.scope("predicate_author_not_being_followed"))
-      .withName("author_not_being_followed")
+      .fwip
+      .withstats(statsweceivew.scope("pwedicate_authow_not_being_fowwowed"))
+      .withname("authow_not_being_fowwowed")
   }
 
-  def recommendedTweetAuthorAcceptableToTargetUser(
-    edgeStore: ReadableStore[RelationEdge, Boolean]
+  def wecommendedtweetauthowacceptabwetotawgetusew(
+    e-edgestowe: w-weadabwestowe[wewationedge, boowean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor] = {
-    val name = "recommended_tweet_author_acceptable_to_target_user"
-    SocialGraphPredicate
-      .anyRelationExists(
-        edgeStore,
-        Set(
-          RelationshipType.Blocking,
-          RelationshipType.BlockedBy,
-          RelationshipType.HideRecommendations,
-          RelationshipType.Muting
+    i-impwicit statsweceivew: statsweceivew
+  ): nyamedpwedicate[pushcandidate w-with tweetauthow] = {
+    v-vaw nyame = "wecommended_tweet_authow_acceptabwe_to_tawget_usew"
+    s-sociawgwaphpwedicate
+      .anywewationexists(
+        e-edgestowe, ( ͡o ω ͡o )
+        set(
+          w-wewationshiptype.bwocking, ( ͡o ω ͡o )
+          w-wewationshiptype.bwockedby, (✿oωo)
+          w-wewationshiptype.hidewecommendations, 😳😳😳
+          w-wewationshiptype.muting
         )
       )
-      .flip
-      .optionalOn(
-        edgeFromCandidate,
-        missingResult = false
+      .fwip
+      .optionawon(
+        edgefwomcandidate, OwO
+        missingwesuwt = f-fawse
       )
-      .withStats(statsReceiver.scope(s"predicate_$name"))
-      .withName(name)
+      .withstats(statsweceivew.scope(s"pwedicate_$name"))
+      .withname(name)
   }
 
-  def relationNotExistsPredicate(
-    edgeStore: ReadableStore[RelationEdge, Boolean],
-    relations: Set[RelationshipType]
-  ): Predicate[(Long, Iterable[Long])] =
-    SocialGraphPredicate
-      .anyRelationExistsForMultiEdge(
-        edgeStore,
-        relations
+  def w-wewationnotexistspwedicate(
+    e-edgestowe: weadabwestowe[wewationedge, ^^ b-boowean],
+    w-wewations: s-set[wewationshiptype]
+  ): p-pwedicate[(wong, rawr x3 itewabwe[wong])] =
+    s-sociawgwaphpwedicate
+      .anywewationexistsfowmuwtiedge(
+        edgestowe, 🥺
+        w-wewations
       )
-      .flip
+      .fwip
       .on {
-        case (targetUserId, userIds) =>
-          MultiEdge(targetUserId, userIds.toSet)
+        case (tawgetusewid, (ˆ ﻌ ˆ)♡ u-usewids) =>
+          muwtiedge(tawgetusewid, ( ͡o ω ͡o ) u-usewids.toset)
       }
 
-  def blocking(edgeStore: ReadableStore[RelationEdge, Boolean]): Predicate[(Long, Iterable[Long])] =
-    relationNotExistsPredicate(
-      edgeStore,
-      Set(RelationshipType.BlockedBy, RelationshipType.Blocking)
+  d-def bwocking(edgestowe: w-weadabwestowe[wewationedge, >w< boowean]): pwedicate[(wong, /(^•ω•^) itewabwe[wong])] =
+    w-wewationnotexistspwedicate(
+      e-edgestowe, 😳😳😳
+      s-set(wewationshiptype.bwockedby, (U ᵕ U❁) wewationshiptype.bwocking)
     )
 
-  def blockingOrMuting(
-    edgeStore: ReadableStore[RelationEdge, Boolean]
-  ): Predicate[(Long, Iterable[Long])] =
-    relationNotExistsPredicate(
-      edgeStore,
-      Set(RelationshipType.BlockedBy, RelationshipType.Blocking, RelationshipType.Muting)
+  def bwockingowmuting(
+    edgestowe: weadabwestowe[wewationedge, (˘ω˘) b-boowean]
+  ): p-pwedicate[(wong, 😳 itewabwe[wong])] =
+    wewationnotexistspwedicate(
+      e-edgestowe, (ꈍᴗꈍ)
+      s-set(wewationshiptype.bwockedby, :3 wewationshiptype.bwocking, /(^•ω•^) wewationshiptype.muting)
     )
 
-  def socialContextNotRetweetFollowing(
-    edgeStore: ReadableStore[RelationEdge, Boolean]
+  def sociawcontextnotwetweetfowwowing(
+    e-edgestowe: w-weadabwestowe[wewationedge, ^^;; b-boowean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with SocialContextActions] = {
-    val name = "social_context_not_retweet_following"
-    relationNotExistsPredicate(edgeStore, Set(RelationshipType.NotRetweetFollowing))
-      .optionalOn[PushCandidate with SocialContextActions](
+    i-impwicit statsweceivew: statsweceivew
+  ): namedpwedicate[pushcandidate w-with sociawcontextactions] = {
+    v-vaw nyame = "sociaw_context_not_wetweet_fowwowing"
+    wewationnotexistspwedicate(edgestowe, s-set(wewationshiptype.notwetweetfowwowing))
+      .optionawon[pushcandidate with sociawcontextactions](
         {
-          case candidate: PushCandidate with SocialContextActions
-              if RecTypes.isTweetRetweetType(candidate.commonRecType) =>
-            Some((candidate.target.targetId, candidate.socialContextUserIds))
-          case _ =>
-            None
-        },
-        missingResult = true
+          case candidate: p-pushcandidate with sociawcontextactions
+              i-if wectypes.istweetwetweettype(candidate.commonwectype) =>
+            s-some((candidate.tawget.tawgetid, o.O candidate.sociawcontextusewids))
+          c-case _ =>
+            n-nyone
+        }, 😳
+        missingwesuwt = t-twue
       )
-      .withStats(statsReceiver.scope(s"predicate_$name"))
-      .withName(name)
+      .withstats(statsweceivew.scope(s"pwedicate_$name"))
+      .withname(name)
   }
 
-  def socialContextBlockingOrMuting(
-    edgeStore: ReadableStore[RelationEdge, Boolean]
+  def sociawcontextbwockingowmuting(
+    e-edgestowe: w-weadabwestowe[wewationedge, UwU boowean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with SocialContextActions] =
-    blockingOrMuting(edgeStore)
-      .on { candidate: PushCandidate with SocialContextActions =>
-        (candidate.target.targetId, candidate.socialContextUserIds)
+    i-impwicit statsweceivew: s-statsweceivew
+  ): nyamedpwedicate[pushcandidate w-with sociawcontextactions] =
+    b-bwockingowmuting(edgestowe)
+      .on { c-candidate: pushcandidate with s-sociawcontextactions =>
+        (candidate.tawget.tawgetid, >w< candidate.sociawcontextusewids)
       }
-      .withStats(statsReceiver.scope("predicate_social_context_blocking_or_muting"))
-      .withName("social_context_blocking_or_muting")
+      .withstats(statsweceivew.scope("pwedicate_sociaw_context_bwocking_ow_muting"))
+      .withname("sociaw_context_bwocking_ow_muting")
 
   /**
-   * Use hyrated Tweet object for F1 Protected experiment for checking null cast as Tweetypie hydration
-   * fails for protected Authors without passing in Target id. We do this specifically for
-   * F1 Protected Tweet Experiment in Earlybird Adaptor.
-   * For rest of the traffic refer to existing Nullcast Predicate
+   * use hywated t-tweet object f-fow f1 pwotected e-expewiment fow checking nyuww cast as tweetypie hydwation
+   * faiws fow pwotected a-authows without passing i-in tawget id. o.O we d-do this specificawwy fow
+   * f1 pwotected tweet e-expewiment in eawwybiwd adaptow. (˘ω˘)
+   * f-fow west o-of the twaffic w-wefew to existing n-nyuwwcast pwedicate
    */
-  def nullCastF1ProtectedExperientPredicate(
-    tweetypieStore: ReadableStore[Long, TweetyPieResult]
+  d-def nuwwcastf1pwotectedexpewientpwedicate(
+    tweetypiestowe: weadabwestowe[wong, òωó tweetypiewesuwt]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetCandidate with TweetDetails] = {
-    val name = "f1_exempted_null_cast_tweet"
-    val f1NullCastCheckCounter = statsReceiver.scope(name).counter("f1_null_cast_check")
-    Predicate
-      .fromAsync { tweetCandidate: PushCandidate with TweetCandidate with TweetDetails =>
-        if (RecTypes.f1FirstDegreeTypes(tweetCandidate.commonRecType) && tweetCandidate.target
-            .params(PushFeatureSwitchParams.EnableF1FromProtectedTweetAuthors)) {
-          f1NullCastCheckCounter.incr()
-          tweetCandidate.tweet match {
-            case Some(tweetObj) =>
-              baseNullCastTweet().apply(Seq(TweetyPieResult(tweetObj, None, None))).map(_.head)
-            case _ => Future.False
+    i-impwicit statsweceivew: s-statsweceivew
+  ): nyamedpwedicate[pushcandidate with tweetcandidate with tweetdetaiws] = {
+    v-vaw nyame = "f1_exempted_nuww_cast_tweet"
+    vaw f1nuwwcastcheckcountew = statsweceivew.scope(name).countew("f1_nuww_cast_check")
+    pwedicate
+      .fwomasync { tweetcandidate: p-pushcandidate w-with tweetcandidate with tweetdetaiws =>
+        i-if (wectypes.f1fiwstdegweetypes(tweetcandidate.commonwectype) && tweetcandidate.tawget
+            .pawams(pushfeatuweswitchpawams.enabwef1fwompwotectedtweetauthows)) {
+          f1nuwwcastcheckcountew.incw()
+          t-tweetcandidate.tweet m-match {
+            case some(tweetobj) =>
+              basenuwwcasttweet().appwy(seq(tweetypiewesuwt(tweetobj, nyaa~~ n-nyone, nyone))).map(_.head)
+            case _ => futuwe.fawse
           }
-        } else {
-          nullCastTweet(tweetypieStore).apply(Seq(tweetCandidate)).map(_.head)
+        } e-ewse {
+          nyuwwcasttweet(tweetypiestowe).appwy(seq(tweetcandidate)).map(_.head)
         }
       }
-      .withStats(statsReceiver.scope(s"predicate_$name"))
-      .withName(name)
+      .withstats(statsweceivew.scope(s"pwedicate_$name"))
+      .withname(name)
   }
 
-  private def baseNullCastTweet(): Predicate[TweetyPieResult] =
-    Predicate.from { t: TweetyPieResult => !t.tweet.coreData.exists { cd => cd.nullcast } }
+  pwivate def basenuwwcasttweet(): p-pwedicate[tweetypiewesuwt] =
+    pwedicate.fwom { t: tweetypiewesuwt => !t.tweet.cowedata.exists { c-cd => cd.nuwwcast } }
 
-  def nullCastTweet(
-    tweetyPieStore: ReadableStore[Long, TweetyPieResult]
+  d-def nyuwwcasttweet(
+    t-tweetypiestowe: weadabwestowe[wong, ( ͡o ω ͡o ) tweetypiewesuwt]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetCandidate] = {
-    val name = "null_cast_tweet"
-    baseNullCastTweet()
-      .flatOptionContraMap[PushCandidate with TweetCandidate](
-        f = (tweetCandidate: PushCandidate
-          with TweetCandidate) => tweetyPieStore.get(tweetCandidate.tweetId),
-        missingResult = false
+    impwicit s-statsweceivew: statsweceivew
+  ): nyamedpwedicate[pushcandidate with tweetcandidate] = {
+    vaw name = "nuww_cast_tweet"
+    b-basenuwwcasttweet()
+      .fwatoptioncontwamap[pushcandidate w-with tweetcandidate](
+        f-f = (tweetcandidate: p-pushcandidate
+          with tweetcandidate) => t-tweetypiestowe.get(tweetcandidate.tweetid), 😳😳😳
+        m-missingwesuwt = fawse
       )
-      .withStats(statsReceiver.scope(s"predicate_$name"))
-      .withName(name)
+      .withstats(statsweceivew.scope(s"pwedicate_$name"))
+      .withname(name)
   }
 
   /**
-   * Use the predicate except fn is true.
+   * use the p-pwedicate except fn is twue. ^•ﻌ•^
    */
-  def exceptedPredicate[T <: PushCandidate](
-    name: String,
-    fn: T => Future[Boolean],
-    predicate: Predicate[T]
+  def exceptedpwedicate[t <: p-pushcandidate](
+    nyame: stwing, (˘ω˘)
+    fn: t => f-futuwe[boowean], (˘ω˘)
+    p-pwedicate: pwedicate[t]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
-    Predicate
-      .fromAsync { e: T => fn(e) }
-      .or(predicate)
-      .withStats(statsReceiver.scope(name))
-      .withName(name)
+    i-impwicit statsweceivew: s-statsweceivew
+  ): n-nyamedpwedicate[t] = {
+    pwedicate
+      .fwomasync { e: t => f-fn(e) }
+      .ow(pwedicate)
+      .withstats(statsweceivew.scope(name))
+      .withname(name)
   }
 
   /**
    *
-   * @param edgeStore [[ReadableStore[RelationEdge, Boolean]]]
-   * @return - allow only out-network tweets if in-network tweets are disabled
+   * @pawam edgestowe [[weadabwestowe[wewationedge, -.- boowean]]]
+   * @wetuwn - a-awwow onwy out-netwowk tweets if in-netwowk tweets a-awe disabwed
    */
-  def disableInNetworkTweetPredicate(
-    edgeStore: ReadableStore[RelationEdge, Boolean]
+  d-def disabweinnetwowktweetpwedicate(
+    e-edgestowe: w-weadabwestowe[wewationedge, ^•ﻌ•^ b-boowean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor] = {
-    val name = "disable_in_network_tweet"
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetAuthor =>
-        if (candidate.target.params(PushParams.DisableInNetworkTweetCandidatesParam)) {
-          authorNotBeingFollowed(edgeStore)
-            .apply(Seq(candidate))
+    impwicit s-statsweceivew: statsweceivew
+  ): nyamedpwedicate[pushcandidate with tweetauthow] = {
+    v-vaw nyame = "disabwe_in_netwowk_tweet"
+    pwedicate
+      .fwomasync { c-candidate: pushcandidate with tweetauthow =>
+        i-if (candidate.tawget.pawams(pushpawams.disabweinnetwowktweetcandidatespawam)) {
+          a-authownotbeingfowwowed(edgestowe)
+            .appwy(seq(candidate))
             .map(_.head)
-        } else Future.True
-      }.withStats(statsReceiver.scope(name))
-      .withName(name)
+        } ewse futuwe.twue
+      }.withstats(statsweceivew.scope(name))
+      .withname(name)
   }
 
   /**
    *
-   * @param edgeStore [[ReadableStore[RelationEdge, Boolean]]]
-   * @return - allow only in-network tweets if out-network tweets are disabled
+   * @pawam e-edgestowe [[weadabwestowe[wewationedge, /(^•ω•^) boowean]]]
+   * @wetuwn - a-awwow o-onwy in-netwowk tweets if out-netwowk t-tweets awe d-disabwed
    */
-  def disableOutNetworkTweetPredicate(
-    edgeStore: ReadableStore[RelationEdge, Boolean]
+  def disabweoutnetwowktweetpwedicate(
+    e-edgestowe: weadabwestowe[wewationedge, (///ˬ///✿) boowean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor] = {
-    val name = "disable_out_network_tweet"
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetAuthor =>
-        if (candidate.target.params(PushFeatureSwitchParams.DisableOutNetworkTweetCandidatesFS)) {
-          authorBeingFollowed(edgeStore)
-            .apply(Seq(candidate))
+    impwicit statsweceivew: s-statsweceivew
+  ): nyamedpwedicate[pushcandidate w-with tweetauthow] = {
+    vaw nyame = "disabwe_out_netwowk_tweet"
+    p-pwedicate
+      .fwomasync { c-candidate: pushcandidate w-with tweetauthow =>
+        if (candidate.tawget.pawams(pushfeatuweswitchpawams.disabweoutnetwowktweetcandidatesfs)) {
+          a-authowbeingfowwowed(edgestowe)
+            .appwy(seq(candidate))
             .map(_.head)
-        } else Future.True
-      }.withStats(statsReceiver.scope(name))
-      .withName(name)
+        } e-ewse futuwe.twue
+      }.withstats(statsweceivew.scope(name))
+      .withname(name)
   }
 
-  def alwaysTruePredicate: NamedPredicate[PushCandidate] = {
-    Predicate
-      .all[PushCandidate]
-      .withName("predicate_AlwaysTrue")
+  def awwaystwuepwedicate: n-nyamedpwedicate[pushcandidate] = {
+    pwedicate
+      .aww[pushcandidate]
+      .withname("pwedicate_awwaystwue")
   }
 
-  def alwaysTruePushCandidatePredicate: NamedPredicate[PushCandidate] = {
-    Predicate
-      .all[PushCandidate]
-      .withName("predicate_AlwaysTrue")
+  d-def awwaystwuepushcandidatepwedicate: n-nyamedpwedicate[pushcandidate] = {
+    p-pwedicate
+      .aww[pushcandidate]
+      .withname("pwedicate_awwaystwue")
   }
 
-  def alwaysFalsePredicate(implicit statsReceiver: StatsReceiver): NamedPredicate[PushCandidate] = {
-    val name = "predicate_AlwaysFalse"
-    val scopedStatsReceiver = statsReceiver.scope(name)
-    Predicate
-      .from { candidate: PushCandidate => false }
-      .withStats(scopedStatsReceiver)
-      .withName(name)
+  def awwaysfawsepwedicate(impwicit statsweceivew: statsweceivew): nyamedpwedicate[pushcandidate] = {
+    vaw nyame = "pwedicate_awwaysfawse"
+    v-vaw s-scopedstatsweceivew = statsweceivew.scope(name)
+    pwedicate
+      .fwom { candidate: p-pushcandidate => fawse }
+      .withstats(scopedstatsweceivew)
+      .withname(name)
   }
 
-  def accountCountryPredicate(
-    allowedCountries: Set[String]
+  d-def accountcountwypwedicate(
+    a-awwowedcountwies: set[stwing]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "AccountCountryPredicate"
-    val stats = statsReceiver.scope(name)
-    AccountCountryPredicate(allowedCountries)
-      .on { candidate: PushCandidate => candidate.target }
-      .withStats(stats)
-      .withName(name)
+    impwicit statsweceivew: statsweceivew
+  ): n-nyamedpwedicate[pushcandidate] = {
+    vaw nyame = "accountcountwypwedicate"
+    vaw stats = s-statsweceivew.scope(name)
+    accountcountwypwedicate(awwowedcountwies)
+      .on { c-candidate: p-pushcandidate => candidate.tawget }
+      .withstats(stats)
+      .withname(name)
   }
 
-  def paramPredicate[T <: PushCandidate](
-    param: Param[Boolean]
+  d-def p-pawampwedicate[t <: p-pushcandidate](
+    p-pawam: p-pawam[boowean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
-    val name = param.getClass.getSimpleName.stripSuffix("$")
-    TargetPredicates
-      .paramPredicate(param)
-      .on { candidate: PushCandidate => candidate.target }
-      .withStats(statsReceiver.scope(s"param_${name}_controlled_predicate"))
-      .withName(s"param_${name}_controlled_predicate")
+    i-impwicit statsweceivew: statsweceivew
+  ): nyamedpwedicate[t] = {
+    vaw nyame = pawam.getcwass.getsimpwename.stwipsuffix("$")
+    t-tawgetpwedicates
+      .pawampwedicate(pawam)
+      .on { c-candidate: p-pushcandidate => c-candidate.tawget }
+      .withstats(statsweceivew.scope(s"pawam_${name}_contwowwed_pwedicate"))
+      .withname(s"pawam_${name}_contwowwed_pwedicate")
   }
 
-  def isDeviceEligibleForNewsOrSports(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "is_device_eligible_for_news_or_sports"
-    val scopedStatsReceiver = stats.scope(s"predicate_$name")
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        candidate.target.deviceInfo.map(_.exists(_.isNewsEligible))
+  d-def isdeviceewigibwefownewsowspowts(
+    i-impwicit stats: statsweceivew
+  ): nyamedpwedicate[pushcandidate] = {
+    vaw nyame = "is_device_ewigibwe_fow_news_ow_spowts"
+    vaw scopedstatsweceivew = s-stats.scope(s"pwedicate_$name")
+    p-pwedicate
+      .fwomasync { candidate: pushcandidate =>
+        candidate.tawget.deviceinfo.map(_.exists(_.isnewsewigibwe))
       }
-      .withStats(scopedStatsReceiver)
-      .withName(name)
+      .withstats(scopedstatsweceivew)
+      .withname(name)
   }
 
-  def isDeviceEligibleForCreatorPush(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "is_device_eligible_for_creator_push"
-    val scopedStatsReceiver = stats.scope(s"predicate_$name")
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        candidate.target.deviceInfo.map(_.exists(settings =>
-          settings.isNewsEligible || settings.isRecommendationsEligible))
+  d-def isdeviceewigibwefowcweatowpush(
+    i-impwicit s-stats: statsweceivew
+  ): nyamedpwedicate[pushcandidate] = {
+    vaw nyame = "is_device_ewigibwe_fow_cweatow_push"
+    v-vaw scopedstatsweceivew = stats.scope(s"pwedicate_$name")
+    pwedicate
+      .fwomasync { c-candidate: pushcandidate =>
+        c-candidate.tawget.deviceinfo.map(_.exists(settings =>
+          settings.isnewsewigibwe || settings.iswecommendationsewigibwe))
       }
-      .withStats(scopedStatsReceiver)
-      .withName(name)
+      .withstats(scopedstatsweceivew)
+      .withname(name)
   }
 
   /**
-   * Like [[TargetUserPredicates.homeTimelineFatigue()]] but for candidate.
+   * w-wike [[tawgetusewpwedicates.hometimewinefatigue()]] but fow candidate. mya
    */
-  def htlFatiguePredicate(
-    fatigueDuration: Param[Duration]
+  d-def htwfatiguepwedicate(
+    f-fatigueduwation: pawam[duwation]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "htl_fatigue"
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        val _fatigueDuration = candidate.target.params(fatigueDuration)
-        TargetUserPredicates
-          .homeTimelineFatigue(
-            fatigueDuration = _fatigueDuration
-          ).apply(Seq(candidate.target)).map(_.head)
+    i-impwicit statsweceivew: s-statsweceivew
+  ): n-nyamedpwedicate[pushcandidate] = {
+    v-vaw nyame = "htw_fatigue"
+    p-pwedicate
+      .fwomasync { c-candidate: pushcandidate =>
+        v-vaw _fatigueduwation = c-candidate.tawget.pawams(fatigueduwation)
+        tawgetusewpwedicates
+          .hometimewinefatigue(
+            f-fatigueduwation = _fatigueduwation
+          ).appwy(seq(candidate.tawget)).map(_.head)
       }
-      .withStats(statsReceiver.scope(name))
-      .withName(name)
+      .withstats(statsweceivew.scope(name))
+      .withname(name)
   }
 
-  def mrWebHoldbackPredicate(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "mr_web_holdback_for_candidate"
-    val scopedStats = stats.scope(name)
-    PredicatesForCandidate.exludeCrtFromPushHoldback
-      .or(
-        TargetPredicates
-          .webNotifsHoldback()
-          .on { candidate: PushCandidate => candidate.target }
+  def mwwebhowdbackpwedicate(
+    impwicit stats: s-statsweceivew
+  ): nyamedpwedicate[pushcandidate] = {
+    v-vaw nyame = "mw_web_howdback_fow_candidate"
+    v-vaw s-scopedstats = stats.scope(name)
+    pwedicatesfowcandidate.exwudecwtfwompushhowdback
+      .ow(
+        t-tawgetpwedicates
+          .webnotifshowdback()
+          .on { candidate: pushcandidate => c-candidate.tawget }
       )
-      .withStats(scopedStats)
-      .withName(name)
+      .withstats(scopedstats)
+      .withname(name)
   }
 
-  def candidateEnabledForEmailPredicate(
+  d-def candidateenabwedfowemaiwpwedicate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "candidates_enabled_for_email"
-    Predicate
-      .from { candidate: PushCandidate =>
-        if (candidate.target.isEmailUser)
-          candidate.isInstanceOf[TweetCandidate with TweetAuthor with RecommendationType]
-        else true
+    impwicit s-stats: statsweceivew
+  ): namedpwedicate[pushcandidate] = {
+    v-vaw nyame = "candidates_enabwed_fow_emaiw"
+    pwedicate
+      .fwom { c-candidate: pushcandidate =>
+        if (candidate.tawget.isemaiwusew)
+          c-candidate.isinstanceof[tweetcandidate w-with tweetauthow with wecommendationtype]
+        e-ewse twue
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .withstats(stats.scope(name))
+      .withname(name)
   }
 
-  def protectedTweetF1ExemptPredicate[
-    T <: TargetUser with TargetABDecider,
-    Cand <: TweetCandidate with TweetAuthorDetails with TargetInfo[T]
+  d-def pwotectedtweetf1exemptpwedicate[
+    t <: tawgetusew with tawgetabdecidew, o.O
+    c-cand <: t-tweetcandidate w-with tweetauthowdetaiws w-with tawgetinfo[t]
   ](
-    implicit stats: StatsReceiver
-  ): NamedPredicate[
-    TweetCandidate with TweetAuthorDetails with TargetInfo[
-      TargetUser with TargetABDecider
+    impwicit stats: statsweceivew
+  ): nyamedpwedicate[
+    tweetcandidate with tweetauthowdetaiws w-with tawgetinfo[
+      t-tawgetusew w-with tawgetabdecidew
     ]
   ] = {
-    val name = "f1_exempt_tweet_author_protected"
-    val skipForProtectedAuthorScope = stats.scope(name).scope("skip_protected_author_for_f1")
-    val authorIsProtectedCounter = skipForProtectedAuthorScope.counter("author_protected_true")
-    val authorIsNotProtectedCounter = skipForProtectedAuthorScope.counter("author_protected_false")
-    val authorNotFoundCounter = stats.scope(name).counter("author_not_found")
-    Predicate
-      .fromAsync[TweetCandidate with TweetAuthorDetails with TargetInfo[
-        TargetUser with TargetABDecider
+    v-vaw n-name = "f1_exempt_tweet_authow_pwotected"
+    vaw s-skipfowpwotectedauthowscope = stats.scope(name).scope("skip_pwotected_authow_fow_f1")
+    v-vaw a-authowispwotectedcountew = skipfowpwotectedauthowscope.countew("authow_pwotected_twue")
+    v-vaw a-authowisnotpwotectedcountew = skipfowpwotectedauthowscope.countew("authow_pwotected_fawse")
+    vaw authownotfoundcountew = stats.scope(name).countew("authow_not_found")
+    pwedicate
+      .fwomasync[tweetcandidate w-with tweetauthowdetaiws with tawgetinfo[
+        tawgetusew w-with tawgetabdecidew
       ]] {
-        case candidate: F1Candidate
-            if candidate.target.params(PushFeatureSwitchParams.EnableF1FromProtectedTweetAuthors) =>
-          candidate.tweetAuthor.foreach {
-            case Some(author) =>
-              if (GizmoduckUserPredicate.isProtected(author)) {
-                authorIsProtectedCounter.incr()
-              } else authorIsNotProtectedCounter.incr()
-            case _ => authorNotFoundCounter.incr()
+        case c-candidate: f1candidate
+            i-if candidate.tawget.pawams(pushfeatuweswitchpawams.enabwef1fwompwotectedtweetauthows) =>
+          candidate.tweetauthow.foweach {
+            c-case some(authow) =>
+              i-if (gizmoduckusewpwedicate.ispwotected(authow)) {
+                a-authowispwotectedcountew.incw()
+              } ewse authowisnotpwotectedcountew.incw()
+            c-case _ => a-authownotfoundcountew.incw()
           }
-          Future.True
-        case cand =>
-          TweetAuthorPredicates.recTweetAuthorProtected.apply(Seq(cand)).map(_.head)
+          futuwe.twue
+        c-case cand =>
+          t-tweetauthowpwedicates.wectweetauthowpwotected.appwy(seq(cand)).map(_.head)
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .withstats(stats.scope(name))
+      .withname(name)
   }
 
   /**
-   * filter a notification if user has already received ANY prior notification about the space id
-   * @param stats
-   * @return
+   * f-fiwtew a nyotification i-if usew has awweady weceived a-any pwiow nyotification about the space id
+   * @pawam s-stats
+   * @wetuwn
    */
-  def duplicateSpacesPredicate(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[Space with PushCandidate] = {
-    val name = "duplicate_spaces_predicate"
-    Predicate
-      .fromAsync { c: Space with PushCandidate =>
-        c.target.pushRecItems.map { pushRecItems =>
-          !pushRecItems.spaceIds.contains(c.spaceId)
+  def dupwicatespacespwedicate(
+    impwicit stats: statsweceivew
+  ): nyamedpwedicate[space with pushcandidate] = {
+    vaw nyame = "dupwicate_spaces_pwedicate"
+    p-pwedicate
+      .fwomasync { c: space with pushcandidate =>
+        c.tawget.pushwecitems.map { pushwecitems =>
+          !pushwecitems.spaceids.contains(c.spaceid)
         }
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .withstats(stats.scope(name))
+      .withname(name)
   }
 
-  def filterOONCandidatePredicate(
+  def fiwtewooncandidatepwedicate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "filter_oon_candidate"
+    impwicit s-stats: statsweceivew
+  ): nyamedpwedicate[pushcandidate] = {
+    vaw nyame = "fiwtew_oon_candidate"
 
-    Predicate
-      .fromAsync[PushCandidate] { cand =>
-        val crt = cand.commonRecType
-        val isOONCandidate =
-          RecTypes.isOutOfNetworkTweetRecType(crt) || RecTypes.outOfNetworkTopicTweetTypes
-            .contains(crt) || RecTypes.isOutOfNetworkSpaceType(crt) || RecTypes.userTypes.contains(
-            crt)
-        if (isOONCandidate) {
-          cand.target.notificationsFromOnlyPeopleIFollow.map { inNetworkOnly =>
-            if (inNetworkOnly) {
-              stats.scope(name, crt.toString).counter("inNetworkOnlyOn").incr()
-            } else {
-              stats.scope(name, crt.toString).counter("inNetworkOnlyOff").incr()
+    p-pwedicate
+      .fwomasync[pushcandidate] { cand =>
+        v-vaw cwt = cand.commonwectype
+        vaw isooncandidate =
+          w-wectypes.isoutofnetwowktweetwectype(cwt) || wectypes.outofnetwowktopictweettypes
+            .contains(cwt) || wectypes.isoutofnetwowkspacetype(cwt) || w-wectypes.usewtypes.contains(
+            cwt)
+        if (isooncandidate) {
+          c-cand.tawget.notificationsfwomonwypeopweifowwow.map { i-innetwowkonwy =>
+            if (innetwowkonwy) {
+              stats.scope(name, ^•ﻌ•^ c-cwt.tostwing).countew("innetwowkonwyon").incw()
+            } ewse {
+              stats.scope(name, (U ᵕ U❁) cwt.tostwing).countew("innetwowkonwyoff").incw()
             }
-            !(inNetworkOnly && cand.target.params(
-              PushFeatureSwitchParams.EnableOONFilteringBasedOnUserSettings))
+            !(innetwowkonwy && c-cand.tawget.pawams(
+              pushfeatuweswitchpawams.enabweoonfiwtewingbasedonusewsettings))
           }
-        } else Future.True
+        } e-ewse futuwe.twue
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .withstats(stats.scope(name))
+      .withname(name)
   }
 
-  def exludeCrtFromPushHoldback(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = Predicate
-    .from { candidate: PushCandidate =>
-      val crtName = candidate.commonRecType.name
-      val target = candidate.target
-      target
-        .params(PushFeatureSwitchParams.CommonRecommendationTypeDenyListPushHoldbacks)
-        .exists(crtName.equalsIgnoreCase)
+  def exwudecwtfwompushhowdback(
+    i-impwicit stats: statsweceivew
+  ): n-nyamedpwedicate[pushcandidate] = p-pwedicate
+    .fwom { candidate: pushcandidate =>
+      v-vaw cwtname = candidate.commonwectype.name
+      vaw tawget = c-candidate.tawget
+      tawget
+        .pawams(pushfeatuweswitchpawams.commonwecommendationtypedenywistpushhowdbacks)
+        .exists(cwtname.equawsignowecase)
     }
-    .withStats(stats.scope("exclude_crt_from_push_holdbacks"))
+    .withstats(stats.scope("excwude_cwt_fwom_push_howdbacks"))
 
-  def enableSendHandlerCandidates(implicit stats: StatsReceiver): NamedPredicate[PushCandidate] = {
-    val name = "sendhandler_enable_push_recommendations"
-    PredicatesForCandidate.exludeCrtFromPushHoldback
-      .or(PredicatesForCandidate.paramPredicate(
-        PushFeatureSwitchParams.EnablePushRecommendationsParam))
-      .withStats(stats.scope(name))
-      .withName(name)
+  def enabwesendhandwewcandidates(impwicit stats: statsweceivew): n-nyamedpwedicate[pushcandidate] = {
+    v-vaw name = "sendhandwew_enabwe_push_wecommendations"
+    pwedicatesfowcandidate.exwudecwtfwompushhowdback
+      .ow(pwedicatesfowcandidate.pawampwedicate(
+        p-pushfeatuweswitchpawams.enabwepushwecommendationspawam))
+      .withstats(stats.scope(name))
+      .withname(name)
   }
 
-  def openAppExperimentUserCandidateAllowList(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "open_app_experiment_user_candidate_allow_list"
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        val target = candidate.target
-        Future.join(target.isOpenAppExperimentUser, target.targetUser).map {
-          case (isOpenAppUser, targetUser) =>
-            val shouldLimitOpenAppCrts =
-              isOpenAppUser || targetUser.exists(_.userType == UserType.Soft)
+  d-def openappexpewimentusewcandidateawwowwist(
+    impwicit stats: s-statsweceivew
+  ): nyamedpwedicate[pushcandidate] = {
+    vaw nyame = "open_app_expewiment_usew_candidate_awwow_wist"
+    pwedicate
+      .fwomasync { c-candidate: p-pushcandidate =>
+        vaw t-tawget = candidate.tawget
+        f-futuwe.join(tawget.isopenappexpewimentusew, :3 tawget.tawgetusew).map {
+          c-case (isopenappusew, (///ˬ///✿) tawgetusew) =>
+            vaw shouwdwimitopenappcwts =
+              i-isopenappusew || tawgetusew.exists(_.usewtype == usewtype.soft)
 
-            if (shouldLimitOpenAppCrts) {
-              val listOfAllowedCrt = target
-                .params(PushFeatureSwitchParams.ListOfCrtsForOpenApp)
-                .flatMap(CommonRecommendationType.valueOf)
-              listOfAllowedCrt.contains(candidate.commonRecType)
-            } else true
+            if (shouwdwimitopenappcwts) {
+              vaw wistofawwowedcwt = t-tawget
+                .pawams(pushfeatuweswitchpawams.wistofcwtsfowopenapp)
+                .fwatmap(commonwecommendationtype.vawueof)
+              w-wistofawwowedcwt.contains(candidate.commonwectype)
+            } ewse twue
         }
-      }.withStats(stats.scope(name))
-      .withName(name)
+      }.withstats(stats.scope(name))
+      .withname(name)
   }
 
-  def isTargetBlueVerified(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "is_target_already_blue_verified"
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        val target = candidate.target
-        target.isBlueVerified.map(_.getOrElse(false))
-      }.withStats(stats.scope(name))
-      .withName(name)
+  def istawgetbwuevewified(
+    i-impwicit stats: statsweceivew
+  ): nyamedpwedicate[pushcandidate] = {
+    vaw nyame = "is_tawget_awweady_bwue_vewified"
+    pwedicate
+      .fwomasync { candidate: pushcandidate =>
+        vaw tawget = candidate.tawget
+        t-tawget.isbwuevewified.map(_.getowewse(fawse))
+      }.withstats(stats.scope(name))
+      .withname(name)
   }
 
-  def isTargetLegacyVerified(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "is_target_already_legacy_verified"
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        val target = candidate.target
-        target.isVerified.map(_.getOrElse(false))
-      }.withStats(stats.scope(name))
-      .withName(name)
+  d-def istawgetwegacyvewified(
+    i-impwicit s-stats: statsweceivew
+  ): nyamedpwedicate[pushcandidate] = {
+    vaw nyame = "is_tawget_awweady_wegacy_vewified"
+    p-pwedicate
+      .fwomasync { candidate: pushcandidate =>
+        vaw tawget = candidate.tawget
+        tawget.isvewified.map(_.getowewse(fawse))
+      }.withstats(stats.scope(name))
+      .withname(name)
   }
 
-  def isTargetSuperFollowCreator(implicit stats: StatsReceiver): NamedPredicate[PushCandidate] = {
-    val name = "is_target_already_super_follow_creator"
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        val target = candidate.target
-        target.isSuperFollowCreator.map(
-          _.getOrElse(false)
+  d-def istawgetsupewfowwowcweatow(impwicit stats: statsweceivew): nyamedpwedicate[pushcandidate] = {
+    vaw nyame = "is_tawget_awweady_supew_fowwow_cweatow"
+    p-pwedicate
+      .fwomasync { c-candidate: p-pushcandidate =>
+        vaw tawget = candidate.tawget
+        tawget.issupewfowwowcweatow.map(
+          _.getowewse(fawse)
         )
-      }.withStats(stats.scope(name))
-      .withName(name)
+      }.withstats(stats.scope(name))
+      .withname(name)
   }
 
-  def isChannelValidPredicate(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "is_channel_valid"
-    val scopedStatsReceiver = stats.scope(s"predicate_$name")
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
+  d-def i-ischannewvawidpwedicate(
+    i-impwicit stats: statsweceivew
+  ): n-namedpwedicate[pushcandidate] = {
+    vaw nyame = "is_channew_vawid"
+    v-vaw scopedstatsweceivew = stats.scope(s"pwedicate_$name")
+    p-pwedicate
+      .fwomasync { candidate: p-pushcandidate =>
         candidate
-          .getChannels().map(channels =>
-            !(channels.toSet.size == 1 && channels.head == ChannelName.None))
+          .getchannews().map(channews =>
+            !(channews.toset.size == 1 && channews.head == c-channewname.none))
       }
-      .withStats(scopedStatsReceiver)
-      .withName(name)
+      .withstats(scopedstatsweceivew)
+      .withname(name)
   }
 }

@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.label
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.wabew
 
-sealed trait LabelDisplayType
+seawed twait wabewdispwaytype
 
-case object InlineHeaderLabelDisplayType extends LabelDisplayType
-case object OtherRepliesSectionHeaderLabelDisplayType extends LabelDisplayType
+c-case object inwineheadewwabewdispwaytype e-extends w-wabewdispwaytype
+c-case object othewwepwiessectionheadewwabewdispwaytype e-extends w-wabewdispwaytype

@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.pipeline
+package com.twittew.pwoduct_mixew.cowe.pipewine
 
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.state.HasExecutorResults
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hasexecutowwesuwts
 
-case class NewStepData[State <: HasExecutorResults[State]](
-  pipelineState: State,
-  pipelineFailure: Option[PipelineFailure] = None) {
+c-case cwass n-nyewstepdata[state <: h-hasexecutowwesuwts[state]](
+  p-pipewinestate: s-state, :3
+  p-pipewinefaiwuwe: o-option[pipewinefaiwuwe] = nyone) {
 
-  val stopExecuting = pipelineFailure.isDefined
-  def withFailure(failure: PipelineFailure): NewStepData[State] =
-    this.copy(pipelineFailure = Some(failure))
+  vaw stopexecuting = pipewinefaiwuwe.isdefined
+  def withfaiwuwe(faiwuwe: p-pipewinefaiwuwe): nyewstepdata[state] =
+    this.copy(pipewinefaiwuwe = s-some(faiwuwe))
 }

@@ -1,11 +1,11 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/scala/com/twitter/twistly/common",
-        "strato/src/main/scala/com/twitter/strato/fed",
-        "strato/src/main/scala/com/twitter/strato/fed/server",
-        "user-signal-service/server/src/main/scala/com/twitter/usersignalservice/service",
-        "user-signal-service/thrift/src/main/thrift:thrift-scala",
-    ],
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], (ꈍᴗꈍ)
+    tags = ["bazew-compatibwe"], ^•ﻌ•^
+    d-dependencies = [
+        "swc/scawa/com/twittew/twistwy/common", OwO
+        "stwato/swc/main/scawa/com/twittew/stwato/fed", 🥺
+        "stwato/swc/main/scawa/com/twittew/stwato/fed/sewvew", òωó
+        "usew-signaw-sewvice/sewvew/swc/main/scawa/com/twittew/usewsignawsewvice/sewvice", o.O
+        "usew-signaw-sewvice/thwift/swc/main/thwift:thwift-scawa", (U ᵕ U❁)
+    ], (⑅˘꒳˘)
 )

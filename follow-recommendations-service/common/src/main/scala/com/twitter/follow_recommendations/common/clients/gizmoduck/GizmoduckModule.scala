@@ -1,24 +1,24 @@
-package com.twitter.follow_recommendations.common.clients.gizmoduck
+package com.twittew.fowwow_wecommendations.common.cwients.gizmoduck
 
-import com.google.inject.Provides
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.common.clients.common.BaseClientModule
-import com.twitter.gizmoduck.thriftscala.QueryFields
-import com.twitter.gizmoduck.thriftscala.UserService
-import com.twitter.stitch.gizmoduck.Gizmoduck
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwscwient
+i-impowt com.twittew.fowwow_wecommendations.common.cwients.common.basecwientmoduwe
+i-impowt com.twittew.gizmoduck.thwiftscawa.quewyfiewds
+i-impowt c-com.twittew.gizmoduck.thwiftscawa.usewsewvice
+i-impowt c-com.twittew.stitch.gizmoduck.gizmoduck
+i-impowt javax.inject.singweton
 
-object GizmoduckModule extends BaseClientModule[UserService.MethodPerEndpoint] with MtlsClient {
-  override val label = "gizmoduck"
-  override val dest = "/s/gizmoduck/gizmoduck"
+object gizmoduckmoduwe extends basecwientmoduwe[usewsewvice.methodpewendpoint] w-with mtwscwient {
+  ovewwide vaw wabew = "gizmoduck"
+  o-ovewwide vaw dest = "/s/gizmoduck/gizmoduck"
 
-  @Provides
-  @Singleton
-  def provideExtraGizmoduckQueryFields: Set[QueryFields] = Set.empty
+  @pwovides
+  @singweton
+  def pwovideextwagizmoduckquewyfiewds: s-set[quewyfiewds] = set.empty
 
-  @Provides
-  @Singleton
-  def providesStitchClient(futureIface: UserService.MethodPerEndpoint): Gizmoduck = {
-    Gizmoduck(futureIface)
+  @pwovides
+  @singweton
+  def pwovidesstitchcwient(futuweiface: usewsewvice.methodpewendpoint): gizmoduck = {
+    gizmoduck(futuweiface)
   }
 }

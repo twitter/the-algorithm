@@ -1,45 +1,45 @@
-package com.twitter.visibility.builder.tweets
+package com.twittew.visibiwity.buiwdew.tweets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.search.common.constants.thriftscala.ThriftQuerySource
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.features.SearchCandidateCount
-import com.twitter.visibility.features.SearchQueryHasUser
-import com.twitter.visibility.features.SearchQuerySource
-import com.twitter.visibility.features.SearchResultsPageNumber
-import com.twitter.visibility.interfaces.common.blender.BlenderVFRequestContext
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.seawch.common.constants.thwiftscawa.thwiftquewysouwce
+i-impowt com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+i-impowt c-com.twittew.visibiwity.featuwes.seawchcandidatecount
+i-impowt c-com.twittew.visibiwity.featuwes.seawchquewyhasusew
+impowt com.twittew.visibiwity.featuwes.seawchquewysouwce
+impowt com.twittew.visibiwity.featuwes.seawchwesuwtspagenumbew
+impowt c-com.twittew.visibiwity.intewfaces.common.bwendew.bwendewvfwequestcontext
 
-@Deprecated
-class BlenderContextFeatures(
-  statsReceiver: StatsReceiver) {
-  private[this] val scopedStatsReceiver = statsReceiver.scope("blender_context_features")
-  private[this] val requests = scopedStatsReceiver.counter("requests")
-  private[this] val searchResultsPageNumber =
-    scopedStatsReceiver.scope(SearchResultsPageNumber.name).counter("requests")
-  private[this] val searchCandidateCount =
-    scopedStatsReceiver.scope(SearchCandidateCount.name).counter("requests")
-  private[this] val searchQuerySource =
-    scopedStatsReceiver.scope(SearchQuerySource.name).counter("requests")
-  private[this] val searchQueryHasUser =
-    scopedStatsReceiver.scope(SearchQueryHasUser.name).counter("requests")
+@depwecated
+cwass bwendewcontextfeatuwes(
+  statsweceivew: s-statsweceivew) {
+  pwivate[this] v-vaw scopedstatsweceivew = statsweceivew.scope("bwendew_context_featuwes")
+  pwivate[this] vaw wequests = s-scopedstatsweceivew.countew("wequests")
+  pwivate[this] v-vaw seawchwesuwtspagenumbew =
+    s-scopedstatsweceivew.scope(seawchwesuwtspagenumbew.name).countew("wequests")
+  pwivate[this] vaw seawchcandidatecount =
+    scopedstatsweceivew.scope(seawchcandidatecount.name).countew("wequests")
+  pwivate[this] v-vaw seawchquewysouwce =
+    scopedstatsweceivew.scope(seawchquewysouwce.name).countew("wequests")
+  pwivate[this] vaw seawchquewyhasusew =
+    scopedstatsweceivew.scope(seawchquewyhasusew.name).countew("wequests")
 
-  def forBlenderContext(
-    blenderContext: BlenderVFRequestContext
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    searchResultsPageNumber.incr()
-    searchCandidateCount.incr()
-    searchQuerySource.incr()
-    searchQueryHasUser.incr()
+  def fowbwendewcontext(
+    b-bwendewcontext: bwendewvfwequestcontext
+  ): f-featuwemapbuiwdew => f-featuwemapbuiwdew = {
+    w-wequests.incw()
+    s-seawchwesuwtspagenumbew.incw()
+    seawchcandidatecount.incw()
+    seawchquewysouwce.incw()
+    s-seawchquewyhasusew.incw()
 
-    _.withConstantFeature(SearchResultsPageNumber, blenderContext.resultsPageNumber)
-      .withConstantFeature(SearchCandidateCount, blenderContext.candidateCount)
-      .withConstantFeature(
-        SearchQuerySource,
-        blenderContext.querySourceOption match {
-          case Some(querySource) => querySource
-          case _ => ThriftQuerySource.Unknown
+    _.withconstantfeatuwe(seawchwesuwtspagenumbew, 🥺 bwendewcontext.wesuwtspagenumbew)
+      .withconstantfeatuwe(seawchcandidatecount, >_< bwendewcontext.candidatecount)
+      .withconstantfeatuwe(
+        s-seawchquewysouwce, >_<
+        bwendewcontext.quewysouwceoption match {
+          case some(quewysouwce) => quewysouwce
+          case _ => t-thwiftquewysouwce.unknown
         })
-      .withConstantFeature(SearchQueryHasUser, blenderContext.queryHasUser)
+      .withconstantfeatuwe(seawchquewyhasusew, (⑅˘꒳˘) bwendewcontext.quewyhasusew)
   }
 }

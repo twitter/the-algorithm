@@ -1,13 +1,13 @@
-create_thrift_libraries(
-    base_name = "serialization",
-    sources = ["*.thrift"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependency_roots = [
-        "src/thrift/com/twitter/ml/api:embedding",
-    ],
-    generate_languages = [
-        "java",
-        "scala",
+cweate_thwift_wibwawies(
+    base_name = "sewiawization", 🥺
+    souwces = ["*.thwift"], òωó
+    p-pwatfowm = "java8", o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependency_woots = [
+        "swc/thwift/com/twittew/mw/api:embedding",
+    ], (⑅˘꒳˘)
+    g-genewate_wanguages = [
+        "java", ( ͡o ω ͡o )
+        "scawa", UwU
     ],
 )

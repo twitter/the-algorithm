@@ -1,9 +1,9 @@
-scala_library(
-    sources = ["*.scala"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "decider/src/main/scala",
-        "src/scala/com/twitter/recos/util:recos-util",
+scawa_wibwawy(
+    souwces = ["*.scawa"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "decidew/swc/main/scawa", òωó
+        "swc/scawa/com/twittew/wecos/utiw:wecos-utiw", o.O
     ],
 )

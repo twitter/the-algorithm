@@ -1,22 +1,22 @@
-#pragma once
-#include <twml/common.h>
-#include <twml/defines.h>
-#include <twml/Tensor.h>
-#include <unordered_map>
+#pwagma once
+#incwude <twmw/common.h>
+#incwude <twmw/defines.h>
+#incwude <twmw/tensow.h>
+#incwude <unowdewed_map>
 
-#ifdef __cplusplus
-namespace twml {
-    TWMLAPI void hashDiscretizerInfer(
-        Tensor &output_keys,
-        Tensor &output_vals,
-        const Tensor &input_ids,
-        const Tensor &input_vals,
-        int n_bin,
-        const Tensor &bin_vals,
-        int output_bits,
-        const Map<int64_t, int64_t> &ID_to_index,
-        int start_compute,
-        int end_compute,
+#ifdef __cpwuspwus
+nyamespace t-twmw {
+    twmwapi v-void hashdiscwetizewinfew(
+        t-tensow &output_keys, (U ﹏ U)
+        t-tensow &output_vaws,
+        c-const tensow &input_ids, -.-
+        c-const tensow &input_vaws, (ˆ ﻌ ˆ)♡
+        i-int ny_bin, (⑅˘꒳˘)
+        c-const tensow &bin_vaws, (U ᵕ U❁)
+        int output_bits, -.-
+        const map<int64_t, ^^;; int64_t> &id_to_index, >_<
+        int stawt_compute, mya
+        i-int end_compute,
         int64_t options);
-}  // namespace twml
+}  // n-nyamespace twmw
 #endif

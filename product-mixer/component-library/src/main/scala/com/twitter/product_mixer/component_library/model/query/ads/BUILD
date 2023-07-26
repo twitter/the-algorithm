@@ -1,17 +1,17 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "dspbidder/thrift/src/main/thrift/com/twitter/dspbidder/commons:thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
-        "src/thrift/com/twitter/ads/adserver:adserver_rpc-scala",
+scawa_wibwawy(
+    souwces = ["*.scawa"], òωó
+    compiwew_option_sets = ["fataw_wawnings"], o.O
+    p-pwatfowm = "java8", (U ᵕ U❁)
+    s-stwict_deps = t-twue, (⑅˘꒳˘)
+    tags = ["bazew-compatibwe"], ( ͡o ω ͡o )
+    d-dependencies = [
+        "dspbiddew/thwift/swc/main/thwift/com/twittew/dspbiddew/commons:thwift-scawa", UwU
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine", rawr x3
+        "swc/thwift/com/twittew/ads/adsewvew:adsewvew_wpc-scawa", rawr
     ],
-    exports = [
-        "dspbidder/thrift/src/main/thrift/com/twitter/dspbidder/commons:thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
-        "src/thrift/com/twitter/ads/adserver:adserver_rpc-scala",
-    ],
+    e-expowts = [
+        "dspbiddew/thwift/swc/main/thwift/com/twittew/dspbiddew/commons:thwift-scawa", σωσ
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine", σωσ
+        "swc/thwift/com/twittew/ads/adsewvew:adsewvew_wpc-scawa", >_<
+    ], :3
 )

@@ -1,164 +1,164 @@
-package com.twitter.simclusters_v2.scalding.optout
+package com.twittew.simcwustews_v2.scawding.optout
 
-import com.twitter.algebird.Aggregator.size
-import com.twitter.algebird.QTreeAggregatorLowerBound
-import com.twitter.octain.identifiers.thriftscala.RawId
-import com.twitter.octain.p13n.batch.P13NPreferencesScalaDataset
-import com.twitter.octain.p13n.preferences.CompositeInterest
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Execution
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.SemanticCoreEntityId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.ClusterType
-import com.twitter.simclusters_v2.thriftscala.SemanticCoreEntityWithScore
-import com.twitter.wtf.interest.thriftscala.Interest
+impowt com.twittew.awgebiwd.aggwegatow.size
+impowt c-com.twittew.awgebiwd.qtweeaggwegatowwowewbound
+i-impowt com.twittew.octain.identifiews.thwiftscawa.wawid
+i-impowt c-com.twittew.octain.p13n.batch.p13npwefewencesscawadataset
+i-impowt c-com.twittew.octain.p13n.pwefewences.compositeintewest
+i-impowt c-com.twittew.scawding.datewange
+impowt com.twittew.scawding.execution
+impowt com.twittew.scawding.typedpipe
+impowt com.twittew.scawding_intewnaw.dawv2.daw
+i-impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.awwowcwosscwustewsamedc
+impowt c-com.twittew.simcwustews_v2.common.cwustewid
+impowt com.twittew.simcwustews_v2.common.semanticcoweentityid
+i-impowt com.twittew.simcwustews_v2.common.usewid
+impowt com.twittew.simcwustews_v2.scawding.common.utiw
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.cwustewtype
+impowt com.twittew.simcwustews_v2.thwiftscawa.semanticcoweentitywithscowe
+i-impowt c-com.twittew.wtf.intewest.thwiftscawa.intewest
 
 /**
- * Opts out InterestedIn clusters based on clusters' entity embeddings. If a user opted out an
- * entity and the user also is interested in a cluster with that entity embedding, unlink the
- * user from that entity.
+ * opts out intewestedin cwustews based on cwustews' entity embeddings. rawr x3 i-if a usew opted out an
+ * entity and the usew awso is intewested in a c-cwustew with that entity embedding, o.O u-unwink the
+ * u-usew fwom that e-entity.
  */
-object SimClustersOptOutUtil {
+object s-simcwustewsoptoututiw {
 
   /**
-   * Reads User's Your Twitter Data opt-out selections
+   * weads usew's youw twittew d-data opt-out sewections
    */
-  def getP13nOptOutSources(
-    dateRange: DateRange,
-    clusterType: ClusterType
-  ): TypedPipe[(UserId, Set[SemanticCoreEntityId])] = {
-    DAL
-      .readMostRecentSnapshot(
-        P13NPreferencesScalaDataset,
-        dateRange
+  def getp13noptoutsouwces(
+    d-datewange: datewange, rawr
+    cwustewtype: cwustewtype
+  ): typedpipe[(usewid, ʘwʘ set[semanticcoweentityid])] = {
+    daw
+      .weadmostwecentsnapshot(
+        p-p13npwefewencesscawadataset, 😳😳😳
+        datewange
       )
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
-      .map { record => (record.id, record.preferences) }
-      .flatMap {
-        case (RawId.UserId(userId), p13nPreferences) =>
-          val optedOutEntities = p13nPreferences.interestPreferences
-            .map { preference =>
-              preference.disabledInterests
-                .collect {
-                  case CompositeInterest.RecommendationInterest(recInterest)
-                      if clusterType == ClusterType.InterestedIn =>
-                    recInterest.interest match {
-                      case Interest.SemanticEntityInterest(semanticCoreInterest) =>
-                        Some(semanticCoreInterest.entityId)
+      .withwemoteweadpowicy(awwowcwosscwustewsamedc)
+      .totypedpipe
+      .map { w-wecowd => (wecowd.id, ^^;; w-wecowd.pwefewences) }
+      .fwatmap {
+        c-case (wawid.usewid(usewid), o.O p13npwefewences) =>
+          vaw optedoutentities = p13npwefewences.intewestpwefewences
+            .map { p-pwefewence =>
+              p-pwefewence.disabwedintewests
+                .cowwect {
+                  case compositeintewest.wecommendationintewest(wecintewest)
+                      i-if cwustewtype == c-cwustewtype.intewestedin =>
+                    wecintewest.intewest m-match {
+                      case intewest.semanticentityintewest(semanticcoweintewest) =>
+                        s-some(semanticcoweintewest.entityid)
                       case _ =>
-                        None
+                        nyone
                     }
 
-                  case CompositeInterest.RecommendationKnownFor(recInterest)
-                      if clusterType == ClusterType.KnownFor =>
-                    recInterest.interest match {
-                      case Interest.SemanticEntityInterest(semanticCoreInterest) =>
-                        Some(semanticCoreInterest.entityId)
+                  c-case compositeintewest.wecommendationknownfow(wecintewest)
+                      if cwustewtype == c-cwustewtype.knownfow =>
+                    wecintewest.intewest m-match {
+                      c-case intewest.semanticentityintewest(semanticcoweintewest) =>
+                        some(semanticcoweintewest.entityid)
                       case _ =>
-                        None
+                        nyone
                     }
-                }.flatten.toSet
-            }.getOrElse(Set.empty)
-          if (optedOutEntities.nonEmpty) {
-            Some((userId, optedOutEntities))
-          } else {
-            None
+                }.fwatten.toset
+            }.getowewse(set.empty)
+          if (optedoutentities.nonempty) {
+            some((usewid, (///ˬ///✿) optedoutentities))
+          } e-ewse {
+            n-nyone
           }
         case _ =>
-          None
+          n-nyone
       }
   }
 
   /**
-   * Remove user's clusters whose inferred entity embeddings are opted out. Will retain the user
-   * entry in the pipe even if all the clusters are filtered out.
+   * w-wemove usew's c-cwustews whose infewwed entity embeddings awe opted out. wiww w-wetain the usew
+   * entwy in the pipe even if aww the cwustews awe fiwtewed o-out. σωσ
    */
-  def filterOptedOutClusters(
-    userToClusters: TypedPipe[(UserId, Seq[ClusterId])],
-    optedOutEntities: TypedPipe[(UserId, Set[SemanticCoreEntityId])],
-    legibleClusters: TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])]
-  ): TypedPipe[(UserId, Seq[ClusterId])] = {
+  def fiwtewoptedoutcwustews(
+    u-usewtocwustews: t-typedpipe[(usewid, nyaa~~ s-seq[cwustewid])], ^^;;
+    optedoutentities: t-typedpipe[(usewid, ^•ﻌ•^ s-set[semanticcoweentityid])], σωσ
+    w-wegibwecwustews: t-typedpipe[(cwustewid, -.- seq[semanticcoweentitywithscowe])]
+  ): typedpipe[(usewid, ^^;; s-seq[cwustewid])] = {
 
-    val inMemoryValidClusterToEntities =
-      legibleClusters
-        .mapValues(_.map(_.entityId).toSet)
-        .map(Map(_)).sum
+    v-vaw inmemowyvawidcwustewtoentities =
+      w-wegibwecwustews
+        .mapvawues(_.map(_.entityid).toset)
+        .map(map(_)).sum
 
-    userToClusters
-      .leftJoin(optedOutEntities)
-      .mapWithValue(inMemoryValidClusterToEntities) {
-        case ((userId, (userClusters, optedOutEntitiesOpt)), validClusterToEntitiesOpt) =>
-          val optedOutEntitiesSet = optedOutEntitiesOpt.getOrElse(Set.empty)
-          val validClusterToEntities = validClusterToEntitiesOpt.getOrElse(Map.empty)
+    u-usewtocwustews
+      .weftjoin(optedoutentities)
+      .mapwithvawue(inmemowyvawidcwustewtoentities) {
+        c-case ((usewid, XD (usewcwustews, 🥺 optedoutentitiesopt)), òωó vawidcwustewtoentitiesopt) =>
+          vaw optedoutentitiesset = o-optedoutentitiesopt.getowewse(set.empty)
+          vaw vawidcwustewtoentities = vawidcwustewtoentitiesopt.getowewse(map.empty)
 
-          val clustersAfterOptOut = userClusters.filter { clusterId =>
-            val isClusterOptedOut = validClusterToEntities
-              .getOrElse(clusterId, Set.empty)
-              .intersect(optedOutEntitiesSet)
-              .nonEmpty
-            !isClusterOptedOut
+          vaw cwustewsaftewoptout = usewcwustews.fiwtew { c-cwustewid =>
+            vaw iscwustewoptedout = vawidcwustewtoentities
+              .getowewse(cwustewid, (ˆ ﻌ ˆ)♡ set.empty)
+              .intewsect(optedoutentitiesset)
+              .nonempty
+            !iscwustewoptedout
           }.distinct
 
-          (userId, clustersAfterOptOut)
+          (usewid, -.- c-cwustewsaftewoptout)
       }
-      .filter { _._2.nonEmpty }
+      .fiwtew { _._2.nonempty }
   }
 
-  val AlertEmail = "no-reply@twitter.com"
+  v-vaw awewtemaiw = "no-wepwy@twittew.com"
 
   /**
-   * Does sanity check on the results, to make sure the opt out outputs are comparable to the
-   * raw version. If the delta in the number of users >= 0.1% or median of number of clusters per
-   * user >= 1%, send alert emails
+   * d-does sanity check on the w-wesuwts, :3 to make suwe the opt o-out outputs awe c-compawabwe to the
+   * waw vewsion. ʘwʘ if the dewta in the nyumbew of usews >= 0.1% ow median of nyumbew o-of cwustews pew
+   * usew >= 1%, 🥺 s-send awewt emaiws
    */
-  def sanityCheckAndSendEmail(
-    oldNumClustersPerUser: TypedPipe[Int],
-    newNumClustersPerUser: TypedPipe[Int],
-    modelVersion: String,
-    alertEmail: String
-  ): Execution[Unit] = {
-    val oldNumUsersExec = oldNumClustersPerUser.aggregate(size).toOptionExecution
-    val newNumUsersExec = newNumClustersPerUser.aggregate(size).toOptionExecution
+  d-def sanitycheckandsendemaiw(
+    o-owdnumcwustewspewusew: typedpipe[int],
+    nyewnumcwustewspewusew: t-typedpipe[int], >_<
+    m-modewvewsion: stwing, ʘwʘ
+    a-awewtemaiw: s-stwing
+  ): execution[unit] = {
+    vaw owdnumusewsexec = owdnumcwustewspewusew.aggwegate(size).tooptionexecution
+    vaw nyewnumusewsexec = nyewnumcwustewspewusew.aggwegate(size).tooptionexecution
 
-    val oldMedianExec = oldNumClustersPerUser
-      .aggregate(QTreeAggregatorLowerBound(0.5))
-      .toOptionExecution
+    v-vaw owdmedianexec = owdnumcwustewspewusew
+      .aggwegate(qtweeaggwegatowwowewbound(0.5))
+      .tooptionexecution
 
-    val newMedianExec = newNumClustersPerUser
-      .aggregate(QTreeAggregatorLowerBound(0.5))
-      .toOptionExecution
+    v-vaw newmedianexec = n-newnumcwustewspewusew
+      .aggwegate(qtweeaggwegatowwowewbound(0.5))
+      .tooptionexecution
 
-    Execution
-      .zip(oldNumUsersExec, newNumUsersExec, oldMedianExec, newMedianExec)
+    execution
+      .zip(owdnumusewsexec, (˘ω˘) n-nyewnumusewsexec, (✿oωo) o-owdmedianexec, (///ˬ///✿) nyewmedianexec)
       .map {
-        case (Some(oldNumUsers), Some(newNumUsers), Some(oldMedian), Some(newMedian)) =>
-          val deltaNum = (newNumUsers - oldNumUsers).toDouble / oldNumUsers.toDouble
-          val deltaMedian = (oldMedian - newMedian) / oldMedian
-          val message =
-            s"num users before optout=$oldNumUsers,\n" +
-              s"num users after optout=$newNumUsers,\n" +
-              s"median num clusters per user before optout=$oldMedian,\n" +
-              s"median num clusters per user after optout=$newMedian\n"
+        c-case (some(owdnumusews), rawr x3 some(newnumusews), -.- some(owdmedian), some(newmedian)) =>
+          vaw dewtanum = (newnumusews - o-owdnumusews).todoubwe / o-owdnumusews.todoubwe
+          vaw dewtamedian = (owdmedian - nyewmedian) / o-owdmedian
+          v-vaw message =
+            s"num usews befowe optout=$owdnumusews,\n" +
+              s"num usews aftew o-optout=$newnumusews,\n" +
+              s"median nyum cwustews pew usew befowe optout=$owdmedian,\n" +
+              s-s"median nyum cwustews pew usew aftew optout=$newmedian\n"
 
-          println(message)
-          if (Math.abs(deltaNum) >= 0.001 || Math.abs(deltaMedian) >= 0.01) {
-            Util.sendEmail(
-              message,
-              s"Anomaly in $modelVersion opt out job. Please check cluster optout jobs in Eagleeye",
-              alertEmail
+          p-pwintwn(message)
+          i-if (math.abs(dewtanum) >= 0.001 || math.abs(dewtamedian) >= 0.01) {
+            utiw.sendemaiw(
+              message, ^^
+              s-s"anomawy i-in $modewvewsion opt out job. (⑅˘꒳˘) pwease check cwustew optout j-jobs in eagweeye", nyaa~~
+              awewtemaiw
             )
           }
-        case err =>
-          Util.sendEmail(
-            err.toString(),
-            s"Anomaly in $modelVersion opt out job. Please check cluster optout jobs in Eagleeye",
-            alertEmail
+        c-case eww =>
+          utiw.sendemaiw(
+            eww.tostwing(), /(^•ω•^)
+            s-s"anomawy in $modewvewsion o-opt out job. (U ﹏ U) p-pwease check cwustew optout j-jobs in eagweeye", 😳😳😳
+            awewtemaiw
           )
       }
   }

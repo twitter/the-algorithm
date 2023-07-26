@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.component_library.scorer.common
+package com.twittew.pwoduct_mixew.component_wibwawy.scowew.common
 
-import com.twitter.stitch.Stitch
-import inference.GrpcService.ModelInferRequest
-import inference.GrpcService.ModelInferResponse
+impowt com.twittew.stitch.stitch
+i-impowt infewence.gwpcsewvice.modewinfewwequest
+i-impowt infewence.gwpcsewvice.modewinfewwesponse
 
 /**
- * MLModelInferenceClient for calling different Inference Service such as ManagedModelClient or NaviModelClient.
+ * m-mwmodewinfewencecwient f-fow cawwing diffewent i-infewence s-sewvice such as m-managedmodewcwient o-ow nyavimodewcwient. σωσ
  */
-trait MLModelInferenceClient {
-  def score(request: ModelInferRequest): Stitch[ModelInferResponse]
+twait mwmodewinfewencecwient {
+  def scowe(wequest: m-modewinfewwequest): stitch[modewinfewwesponse]
 }

@@ -1,78 +1,78 @@
-package com.twitter.simclusters_v2.scalding.evaluation
+package com.twittew.simcwustews_v2.scawding.evawuation
 
-import com.twitter.ml.api.constant.SharedFeatures.AUTHOR_ID
-import com.twitter.ml.api.constant.SharedFeatures.TIMESTAMP
-import com.twitter.ml.api.constant.SharedFeatures.TWEET_ID
-import com.twitter.ml.api.constant.SharedFeatures.USER_ID
-import com.twitter.ml.api.DailySuffixFeatureSource
-import com.twitter.ml.api.DataSetPipe
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecution
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecutionArgs
-import com.twitter.scalding_internal.job.analytics_batch.BatchDescription
-import com.twitter.scalding_internal.job.analytics_batch.BatchFirstTime
-import com.twitter.scalding_internal.job.analytics_batch.BatchIncrement
-import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledExecutionApp
-import com.twitter.simclusters_v2.hdfs_sources.TimelineDataExtractorFixedPathSource
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.thriftscala.DisplayLocation
-import com.twitter.simclusters_v2.thriftscala.ReferenceTweet
-import com.twitter.simclusters_v2.thriftscala.ReferenceTweets
-import com.twitter.simclusters_v2.thriftscala.TweetLabels
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures.IS_LINGER_IMPRESSION
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures.SOURCE_AUTHOR_ID
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures.SOURCE_TWEET_ID
-import com.twitter.timelines.prediction.features.itl.ITLFeatures
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
-import java.util.TimeZone
+impowt com.twittew.mw.api.constant.shawedfeatuwes.authow_id
+i-impowt com.twittew.mw.api.constant.shawedfeatuwes.timestamp
+impowt c-com.twittew.mw.api.constant.shawedfeatuwes.tweet_id
+i-impowt c-com.twittew.mw.api.constant.shawedfeatuwes.usew_id
+i-impowt com.twittew.mw.api.daiwysuffixfeatuwesouwce
+i-impowt com.twittew.mw.api.datasetpipe
+i-impowt c-com.twittew.mw.api.wichdatawecowd
+impowt com.twittew.scawding._
+impowt com.twittew.scawding_intewnaw.dawv2.dawwwite._
+impowt com.twittew.scawding_intewnaw.job.twittewexecutionapp
+i-impowt com.twittew.scawding_intewnaw.job.anawytics_batch.anawyticsbatchexecution
+impowt com.twittew.scawding_intewnaw.job.anawytics_batch.anawyticsbatchexecutionawgs
+impowt c-com.twittew.scawding_intewnaw.job.anawytics_batch.batchdescwiption
+impowt com.twittew.scawding_intewnaw.job.anawytics_batch.batchfiwsttime
+impowt c-com.twittew.scawding_intewnaw.job.anawytics_batch.batchincwement
+impowt com.twittew.scawding_intewnaw.job.anawytics_batch.twittewscheduwedexecutionapp
+impowt com.twittew.simcwustews_v2.hdfs_souwces.timewinedataextwactowfixedpathsouwce
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces._
+impowt com.twittew.simcwustews_v2.thwiftscawa.dispwaywocation
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.wefewencetweet
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.wefewencetweets
+impowt com.twittew.simcwustews_v2.thwiftscawa.tweetwabews
+impowt com.twittew.timewines.pwediction.featuwes.common.timewinesshawedfeatuwes.is_wingew_impwession
+i-impowt com.twittew.timewines.pwediction.featuwes.common.timewinesshawedfeatuwes.souwce_authow_id
+impowt com.twittew.timewines.pwediction.featuwes.common.timewinesshawedfeatuwes.souwce_tweet_id
+impowt c-com.twittew.timewines.pwediction.featuwes.itw.itwfeatuwes
+impowt c-com.twittew.timewines.pwediction.featuwes.wecap.wecapfeatuwes
+i-impowt java.utiw.timezone
 
 /**
- * A scheduled version of the job to parse Timelines data for impressed and engaged tweets.
- capesospy-v2 update|create --start_cron tweet_evaluation_timelines_reference_batch src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * a-a scheduwed vewsion o-of the job to pawse timewines data fow impwessed a-and engaged tweets. o.O
+ capesospy-v2 update|cweate --stawt_cwon t-tweet_evawuation_timewines_wefewence_batch swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc.yamw
  */
-object ScheduledTimelinesDataExtractionBatch extends TwitterScheduledExecutionApp {
+object scheduwedtimewinesdataextwactionbatch extends twittewscheduwedexecutionapp {
 
-  val outputPath = "/user/cassowary/processed/tweet_evaluation_reference_set/timelines"
+  vaw outputpath = "/usew/cassowawy/pwocessed/tweet_evawuation_wefewence_set/timewines"
 
-  private val firstTime: String = "2019-03-31"
-  private implicit val tz: TimeZone = DateOps.UTC
-  private implicit val parser: DateParser = DateParser.default
-  private val batchIncrement: Duration = Days(1)
+  p-pwivate vaw fiwsttime: stwing = "2019-03-31"
+  p-pwivate impwicit v-vaw tz: timezone = d-dateops.utc
+  pwivate impwicit vaw pawsew: datepawsew = d-datepawsew.defauwt
+  p-pwivate vaw batchincwement: d-duwation = days(1)
 
-  private val execArgs = AnalyticsBatchExecutionArgs(
-    batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
-    firstTime = BatchFirstTime(RichDate(firstTime)),
-    lastTime = None,
-    batchIncrement = BatchIncrement(batchIncrement)
+  p-pwivate vaw execawgs = a-anawyticsbatchexecutionawgs(
+    batchdesc = batchdescwiption(this.getcwass.getname.wepwace("$", UwU "")), rawr x3
+    f-fiwsttime = batchfiwsttime(wichdate(fiwsttime)), 🥺
+    wasttime = nyone, :3
+    b-batchincwement = batchincwement(batchincwement)
   )
 
-  override def scheduledJob: Execution[Unit] = AnalyticsBatchExecution(execArgs) {
-    implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
-          val defaultSampleRate = 1.0
-          val recaps =
-            TimelinesEngagementDataExtractor.readTimelinesRecapTweets(
-              recapTweets =
-                DailySuffixFeatureSource(TimelinesEngagementDataExtractor.RecapTweetHdfsPath).read,
-              sampleRate = defaultSampleRate
-            )(dateRange)
-          val recTweets =
-            TimelinesEngagementDataExtractor.readTimelinesRecTweets(
-              recTweets =
-                DailySuffixFeatureSource(TimelinesEngagementDataExtractor.RecTweetHdfsPath).read,
-              sampleRate = defaultSampleRate
-            )(dateRange)
+  o-ovewwide def scheduwedjob: e-execution[unit] = a-anawyticsbatchexecution(execawgs) {
+    impwicit datewange =>
+      execution.withid { impwicit uniqueid =>
+        execution.withawgs { awgs =>
+          vaw defauwtsampwewate = 1.0
+          v-vaw wecaps =
+            t-timewinesengagementdataextwactow.weadtimewineswecaptweets(
+              wecaptweets =
+                d-daiwysuffixfeatuwesouwce(timewinesengagementdataextwactow.wecaptweethdfspath).wead, (ꈍᴗꈍ)
+              s-sampwewate = d-defauwtsampwewate
+            )(datewange)
+          vaw wectweets =
+            timewinesengagementdataextwactow.weadtimewineswectweets(
+              wectweets =
+                d-daiwysuffixfeatuwesouwce(timewinesengagementdataextwactow.wectweethdfspath).wead, 🥺
+              sampwewate = defauwtsampwewate
+            )(datewange)
 
-          (recaps ++ recTweets).writeDALSnapshotExecution(
-            TweetEvaluationTimelinesReferenceSetScalaDataset,
-            D.Daily,
-            D.Suffix(outputPath),
-            D.EBLzo(),
-            dateRange.end
+          (wecaps ++ wectweets).wwitedawsnapshotexecution(
+            tweetevawuationtimewineswefewencesetscawadataset, (✿oωo)
+            d-d.daiwy, (U ﹏ U)
+            d.suffix(outputpath), :3
+            d-d.ebwzo(), ^^;;
+            d-datewange.end
           )
         }
       }
@@ -80,191 +80,191 @@ object ScheduledTimelinesDataExtractionBatch extends TwitterScheduledExecutionAp
 }
 
 /**
- * Ad-hoc version of the job to process a subset of the Timeline data, either to catch up with data
- * on a particular day, or to generate human readable data for debugging.
- ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/evaluation:tweet_evaluation_timelines_reference_adhoc
+ * a-ad-hoc vewsion of the job to p-pwocess a subset o-of the timewine d-data, rawr eithew to c-catch up with data
+ * on a pawticuwaw day, 😳😳😳 ow t-to genewate human w-weadabwe data f-fow debugging. (✿oωo)
+ ./bazew b-bundwe swc/scawa/com/twittew/simcwustews_v2/scawding/evawuation:tweet_evawuation_timewines_wefewence_adhoc
 
- oscar hdfs --screen --user cassowary --bundle tweet_evaluation_timelines_reference_adhoc \
- --tool com.twitter.simclusters_v2.scalding.evaluation.AdhocTimelinesDataExtraction \
- -- --date 2018-11-15 --output_dir /user/cassowary/your_ldap/test_htl_data/recap --sample_rate 0.01 \
- --recap --rectweet --output_tsv
+ o-oscaw hdfs --scween --usew cassowawy --bundwe tweet_evawuation_timewines_wefewence_adhoc \
+ --toow com.twittew.simcwustews_v2.scawding.evawuation.adhoctimewinesdataextwaction \
+ -- --date 2018-11-15 --output_diw /usew/cassowawy/youw_wdap/test_htw_data/wecap --sampwe_wate 0.01 \
+ --wecap --wectweet --output_tsv
  */
-object AdhocTimelinesDataExtraction extends TwitterExecutionApp {
+o-object adhoctimewinesdataextwaction extends twittewexecutionapp {
 
-  @Override
-  def job: Execution[Unit] = {
-    Execution.withArgs { args =>
-      implicit val dateRange: DateRange =
-        DateRange.parse(args.list("date"))(DateOps.UTC, DateParser.default)
+  @ovewwide
+  def job: execution[unit] = {
+    execution.withawgs { awgs =>
+      impwicit vaw d-datewange: datewange =
+        datewange.pawse(awgs.wist("date"))(dateops.utc, OwO datepawsew.defauwt)
 
-      val outputDir = args("output_dir")
-      val readRecTweet = args.boolean("rectweet")
-      val readRecap = args.boolean("recap")
-      val sampleRate = args.double("sample_rate")
-      val useTsv = args.boolean("output_tsv")
+      vaw o-outputdiw = awgs("output_diw")
+      v-vaw weadwectweet = a-awgs.boowean("wectweet")
+      vaw weadwecap = a-awgs.boowean("wecap")
+      vaw sampwewate = a-awgs.doubwe("sampwe_wate")
+      v-vaw usetsv = awgs.boowean("output_tsv")
 
-      if (!readRecTweet && !readRecap) {
-        throw new IllegalArgumentException("Must read at least some data!")
+      if (!weadwectweet && !weadwecap) {
+        thwow nyew iwwegawawgumentexception("must wead at weast some data!")
       }
-      val recTweets = if (readRecTweet) {
-        println("RecTweets are included in the dataset")
-        TimelinesEngagementDataExtractor.readTimelinesRecTweets(
-          recTweets =
-            DailySuffixFeatureSource(TimelinesEngagementDataExtractor.RecTweetHdfsPath).read,
-          sampleRate = sampleRate)(dateRange)
-      } else {
-        TypedPipe.empty
-      }
-
-      val recaps = if (readRecap) {
-        println("Recaps are included in the dataset")
-        TimelinesEngagementDataExtractor.readTimelinesRecapTweets(
-          recapTweets =
-            DailySuffixFeatureSource(TimelinesEngagementDataExtractor.RecapTweetHdfsPath).read,
-          sampleRate = sampleRate
-        )(dateRange)
-      } else {
-        TypedPipe.empty
+      v-vaw wectweets = if (weadwectweet) {
+        pwintwn("wectweets a-awe incwuded in the dataset")
+        t-timewinesengagementdataextwactow.weadtimewineswectweets(
+          w-wectweets =
+            daiwysuffixfeatuwesouwce(timewinesengagementdataextwactow.wectweethdfspath).wead, ʘwʘ
+          sampwewate = sampwewate)(datewange)
+      } e-ewse {
+        t-typedpipe.empty
       }
 
-      val referenceTweets = recaps ++ recTweets
+      vaw wecaps = i-if (weadwecap) {
+        pwintwn("wecaps awe i-incwuded in the dataset")
+        timewinesengagementdataextwactow.weadtimewineswecaptweets(
+          wecaptweets =
+            daiwysuffixfeatuwesouwce(timewinesengagementdataextwactow.wecaptweethdfspath).wead, (ˆ ﻌ ˆ)♡
+          s-sampwewate = sampwewate
+        )(datewange)
+      } e-ewse {
+        t-typedpipe.empty
+      }
 
-      if (useTsv) {
-        // Write in plain text in tsv format for human readability
-        referenceTweets
-          .map(t => (t.targetUserId, t.impressedTweets))
-          .writeExecution(TypedTsv[(Long, Seq[ReferenceTweet])](outputDir))
-      } else {
-        // Write in compact thrift lzo format
-        referenceTweets
-          .writeExecution(TimelineDataExtractorFixedPathSource(outputDir))
+      vaw wefewencetweets = w-wecaps ++ w-wectweets
+
+      if (usetsv) {
+        // wwite i-in pwain text in tsv fowmat fow human weadabiwity
+        wefewencetweets
+          .map(t => (t.tawgetusewid, (U ﹏ U) t.impwessedtweets))
+          .wwiteexecution(typedtsv[(wong, UwU seq[wefewencetweet])](outputdiw))
+      } e-ewse {
+        // w-wwite in compact thwift wzo fowmat
+        w-wefewencetweets
+          .wwiteexecution(timewinedataextwactowfixedpathsouwce(outputdiw))
       }
     }
   }
 }
 
 /**
- * Base class to provide functions to parse tweet engagement data from Home Timeline's data.
- * We are mainly interested in 2 tweet data sets from Home Timeline:
- * 1. Recap tweet: Tweets + RTs from user's follow graph. We are interested in out of network RTs.
- * 2. RecTweet: Out of network tweets not from user's follow graph.
+ * b-base cwass to pwovide functions to pawse tweet engagement data fwom h-home timewine's data. XD
+ * we awe mainwy intewested in 2 tweet data sets fwom h-home timewine:
+ * 1. ʘwʘ wecap tweet: tweets + wts fwom u-usew's fowwow g-gwaph. rawr x3 we awe intewested in out of nyetwowk wts. ^^;;
+ * 2. ʘwʘ wectweet: o-out of nyetwowk t-tweets nyot fwom usew's fowwow gwaph. (U ﹏ U)
  */
-object TimelinesEngagementDataExtractor {
+object timewinesengagementdataextwactow {
 
-  val RecapTweetHdfsPath = "/atla/proc2/user/timelines/processed/suggests/recap/data_records"
-  val RecTweetHdfsPath = "/atla/proc2/user/timelines/processed/injections/rectweet/data_records"
+  v-vaw wecaptweethdfspath = "/atwa/pwoc2/usew/timewines/pwocessed/suggests/wecap/data_wecowds"
+  vaw wectweethdfspath = "/atwa/pwoc2/usew/timewines/pwocessed/injections/wectweet/data_wecowds"
 
-  // Timelines name the same feature differently depending on the surface area (ex. recap vs rectweet).
-  // For each data source we extract the features with different feature names. Detail:
-  def toRecapTweetLabels(record: RichDataRecord): TweetLabels = {
-    val isClicked = record.getFeatureValue(RecapFeatures.IS_CLICKED)
-    val isFav = record.getFeatureValue(RecapFeatures.IS_FAVORITED)
-    val isRT = record.getFeatureValue(RecapFeatures.IS_RETWEETED)
-    val isQuoted = record.getFeatureValue(RecapFeatures.IS_QUOTED)
-    val isReplied = record.getFeatureValue(RecapFeatures.IS_REPLIED)
-    TweetLabels(isClicked, isFav, isRT, isQuoted, isReplied)
+  // t-timewines nyame the same featuwe diffewentwy depending o-on the suwface awea (ex. (˘ω˘) wecap v-vs wectweet). (ꈍᴗꈍ)
+  // f-fow each data souwce we extwact t-the featuwes with diffewent f-featuwe nyames. /(^•ω•^) d-detaiw:
+  def t-towecaptweetwabews(wecowd: wichdatawecowd): t-tweetwabews = {
+    v-vaw iscwicked = wecowd.getfeatuwevawue(wecapfeatuwes.is_cwicked)
+    vaw isfav = w-wecowd.getfeatuwevawue(wecapfeatuwes.is_favowited)
+    v-vaw iswt = w-wecowd.getfeatuwevawue(wecapfeatuwes.is_wetweeted)
+    vaw isquoted = wecowd.getfeatuwevawue(wecapfeatuwes.is_quoted)
+    v-vaw iswepwied = wecowd.getfeatuwevawue(wecapfeatuwes.is_wepwied)
+    t-tweetwabews(iscwicked, >_< i-isfav, iswt, σωσ isquoted, iswepwied)
   }
 
-  def toRecTweetLabels(record: RichDataRecord): TweetLabels = {
-    // Refer to ITLFeatures for more labels
-    val isClicked = record.getFeatureValue(ITLFeatures.IS_CLICKED)
-    val isFav = record.getFeatureValue(ITLFeatures.IS_FAVORITED)
-    val isRT = record.getFeatureValue(ITLFeatures.IS_RETWEETED)
-    val isQuoted = record.getFeatureValue(ITLFeatures.IS_QUOTED)
-    val isReplied = record.getFeatureValue(ITLFeatures.IS_REPLIED)
-    TweetLabels(isClicked, isFav, isRT, isQuoted, isReplied)
-  }
-
-  /**
-   * Return Recap tweets, which are in-network tweets. Here we only filter for Retweets of tweets
-   * that are outside the user's follow graph.
-   */
-  def readTimelinesRecapTweets(
-    recapTweets: DataSetPipe,
-    sampleRate: Double
-  )(
-    implicit dateRange: DateRange
-  ): TypedPipe[ReferenceTweets] = {
-    // recapTweets are in network tweets. We want to discover RTs of OON tweets.
-    // For Retweets, we check IS_RETWEET and use SOURCE_TWEET_ID, and then check
-    // PROBABLY_FROM_FOLLOWED_AUTHOR, which filters in network tweet from user's top 1000 follow graph.
-
-    recapTweets.richRecords
-      .sample(sampleRate)
-      .filter { record =>
-        val isInDateRange = dateRange.contains(RichDate(record.getFeatureValue(TIMESTAMP).toLong))
-        val isLingeredImpression = record.getFeatureValue(IS_LINGER_IMPRESSION)
-        val isInNetwork =
-          record.getFeatureValue(RecapFeatures.PROBABLY_FROM_FOLLOWED_AUTHOR) // approximate
-        val isRetweet = record.getFeatureValue(RecapFeatures.IS_RETWEET)
-        isRetweet && (!isInNetwork) && isInDateRange && isLingeredImpression
-      }
-      .flatMap { record =>
-        for {
-          userId <- Option(record.getFeatureValue(USER_ID)).map(_.toLong)
-          sourceTweetId <- Option(record.getFeatureValue(SOURCE_TWEET_ID)).map(
-            _.toLong
-          ) // source tweetId is the RT id
-          sourceAuthorId <- Option(record.getFeatureValue(SOURCE_AUTHOR_ID)).map(_.toLong)
-          timestamp <- Option(record.getFeatureValue(TIMESTAMP)).map(_.toLong)
-          labels = toRecapTweetLabels(record)
-        } yield {
-          (
-            userId,
-            Seq(
-              ReferenceTweet(
-                sourceTweetId,
-                sourceAuthorId,
-                timestamp,
-                DisplayLocation.TimelinesRecap,
-                labels))
-          )
-        }
-      }
-      .sumByKey
-      .map { case (uid, tweetSeq) => ReferenceTweets(uid, tweetSeq) }
+  def towectweetwabews(wecowd: wichdatawecowd): t-tweetwabews = {
+    // w-wefew to i-itwfeatuwes fow m-mowe wabews
+    vaw iscwicked = w-wecowd.getfeatuwevawue(itwfeatuwes.is_cwicked)
+    vaw isfav = wecowd.getfeatuwevawue(itwfeatuwes.is_favowited)
+    vaw iswt = wecowd.getfeatuwevawue(itwfeatuwes.is_wetweeted)
+    vaw isquoted = wecowd.getfeatuwevawue(itwfeatuwes.is_quoted)
+    vaw iswepwied = w-wecowd.getfeatuwevawue(itwfeatuwes.is_wepwied)
+    tweetwabews(iscwicked, ^^;; isfav, 😳 i-iswt, isquoted, >_< iswepwied)
   }
 
   /**
-   * Return RecTweets, which are out of network tweets served in the Timeline.
+   * w-wetuwn wecap tweets, -.- which awe i-in-netwowk tweets. UwU hewe we onwy f-fiwtew fow wetweets o-of tweets
+   * t-that awe outside t-the usew's fowwow g-gwaph. :3
    */
-  def readTimelinesRecTweets(
-    recTweets: DataSetPipe,
-    sampleRate: Double
+  def weadtimewineswecaptweets(
+    wecaptweets: datasetpipe, σωσ
+    sampwewate: doubwe
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[ReferenceTweets] = {
-    // recTweets contain strictly out of network injection tweets
+    impwicit datewange: d-datewange
+  ): t-typedpipe[wefewencetweets] = {
+    // w-wecaptweets awe in nyetwowk t-tweets. >w< we want to discovew wts of oon tweets. (ˆ ﻌ ˆ)♡
+    // fow w-wetweets, we check i-is_wetweet and use souwce_tweet_id, ʘwʘ a-and then check
+    // pwobabwy_fwom_fowwowed_authow, :3 which f-fiwtews in nyetwowk t-tweet fwom usew's top 1000 f-fowwow gwaph. (˘ω˘)
 
-    recTweets.richRecords
-      .sample(sampleRate)
-      .filter { record =>
-        val isInDateRange = dateRange.contains(RichDate(record.getFeatureValue(TIMESTAMP).toLong))
-        val isLingeredImpression = record.getFeatureValue(IS_LINGER_IMPRESSION)
-
-        isInDateRange && isLingeredImpression
+    w-wecaptweets.wichwecowds
+      .sampwe(sampwewate)
+      .fiwtew { wecowd =>
+        vaw isindatewange = datewange.contains(wichdate(wecowd.getfeatuwevawue(timestamp).towong))
+        vaw iswingewedimpwession = w-wecowd.getfeatuwevawue(is_wingew_impwession)
+        v-vaw isinnetwowk =
+          w-wecowd.getfeatuwevawue(wecapfeatuwes.pwobabwy_fwom_fowwowed_authow) // a-appwoximate
+        v-vaw iswetweet = wecowd.getfeatuwevawue(wecapfeatuwes.is_wetweet)
+        i-iswetweet && (!isinnetwowk) && i-isindatewange && iswingewedimpwession
       }
-      .flatMap { record =>
-        for {
-          userId <- Option(record.getFeatureValue(USER_ID)).map(_.toLong)
-          tweetId <- Option(record.getFeatureValue(TWEET_ID)).map(_.toLong)
-          authorId <- Option(record.getFeatureValue(AUTHOR_ID)).map(_.toLong)
-          timestamp <- Option(record.getFeatureValue(TIMESTAMP)).map(_.toLong)
-          labels = toRecTweetLabels(record)
-        } yield {
+      .fwatmap { w-wecowd =>
+        f-fow {
+          usewid <- o-option(wecowd.getfeatuwevawue(usew_id)).map(_.towong)
+          souwcetweetid <- option(wecowd.getfeatuwevawue(souwce_tweet_id)).map(
+            _.towong
+          ) // souwce t-tweetid is the wt id
+          s-souwceauthowid <- o-option(wecowd.getfeatuwevawue(souwce_authow_id)).map(_.towong)
+          timestamp <- option(wecowd.getfeatuwevawue(timestamp)).map(_.towong)
+          wabews = t-towecaptweetwabews(wecowd)
+        } yiewd {
           (
-            userId,
-            Seq(
-              ReferenceTweet(
-                tweetId,
-                authorId,
-                timestamp,
-                DisplayLocation.TimelinesRectweet,
-                labels))
+            usewid, 😳😳😳
+            s-seq(
+              w-wefewencetweet(
+                s-souwcetweetid, rawr x3
+                souwceauthowid, (✿oωo)
+                timestamp, (ˆ ﻌ ˆ)♡
+                dispwaywocation.timewineswecap, :3
+                w-wabews))
           )
         }
       }
-      .sumByKey
-      .map { case (uid, tweetSeq) => ReferenceTweets(uid, tweetSeq) }
+      .sumbykey
+      .map { case (uid, (U ᵕ U❁) tweetseq) => wefewencetweets(uid, ^^;; tweetseq) }
+  }
+
+  /**
+   * w-wetuwn w-wectweets, mya which awe out of nyetwowk t-tweets sewved in the timewine. 😳😳😳
+   */
+  d-def w-weadtimewineswectweets(
+    wectweets: datasetpipe, OwO
+    s-sampwewate: doubwe
+  )(
+    impwicit datewange: d-datewange
+  ): t-typedpipe[wefewencetweets] = {
+    // wectweets contain s-stwictwy out of nyetwowk injection t-tweets
+
+    w-wectweets.wichwecowds
+      .sampwe(sampwewate)
+      .fiwtew { w-wecowd =>
+        vaw isindatewange = datewange.contains(wichdate(wecowd.getfeatuwevawue(timestamp).towong))
+        vaw iswingewedimpwession = wecowd.getfeatuwevawue(is_wingew_impwession)
+
+        isindatewange && iswingewedimpwession
+      }
+      .fwatmap { wecowd =>
+        fow {
+          usewid <- option(wecowd.getfeatuwevawue(usew_id)).map(_.towong)
+          tweetid <- option(wecowd.getfeatuwevawue(tweet_id)).map(_.towong)
+          authowid <- o-option(wecowd.getfeatuwevawue(authow_id)).map(_.towong)
+          t-timestamp <- option(wecowd.getfeatuwevawue(timestamp)).map(_.towong)
+          wabews = t-towectweetwabews(wecowd)
+        } y-yiewd {
+          (
+            u-usewid, rawr
+            seq(
+              w-wefewencetweet(
+                tweetid,
+                a-authowid, XD
+                t-timestamp, (U ﹏ U)
+                dispwaywocation.timewineswectweet, (˘ω˘)
+                w-wabews))
+          )
+        }
+      }
+      .sumbykey
+      .map { case (uid, UwU tweetseq) => w-wefewencetweets(uid, >_< tweetseq) }
   }
 }

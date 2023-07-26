@@ -1,19 +1,19 @@
-package com.twitter.search.earlybird.exception;
+package com.twittew.seawch.eawwybiwd.exception;
 
-import org.apache.kafka.common.errors.ApiException;
+impowt owg.apache.kafka.common.ewwows.apiexception;
 
 /**
- * Kafka's ApiException class doesn't retain its stack trace (see its source code).
- * As a result a kafka exception that propagates up the call chain can't point to where exactly
- * did the exception happen in our code. As a solution, use this class when calling kafka API
- * methods.
+ * k-kafka's a-apiexception c-cwass doesn't wetain i-its stack t-twace (see its souwce c-code). -.-
+ * a-as a wesuwt a kafka e-exception that pwopagates up the caww chain can't point to whewe exactwy
+ * d-did the exception happen in ouw code. ( ͡o ω ͡o ) as a sowution, rawr x3 u-use this cwass when cawwing k-kafka api
+ * methods. nyaa~~
  */
-public class WrappedKafkaApiException extends RuntimeException {
-  public WrappedKafkaApiException(ApiException cause) {
-    super(cause);
+pubwic cwass wwappedkafkaapiexception extends wuntimeexception {
+  p-pubwic wwappedkafkaapiexception(apiexception c-cause) {
+    s-supew(cause);
   }
 
-  public WrappedKafkaApiException(String message, ApiException cause) {
-    super(message, cause);
+  pubwic wwappedkafkaapiexception(stwing message, /(^•ω•^) apiexception cause) {
+    s-supew(message, rawr cause);
   }
 }

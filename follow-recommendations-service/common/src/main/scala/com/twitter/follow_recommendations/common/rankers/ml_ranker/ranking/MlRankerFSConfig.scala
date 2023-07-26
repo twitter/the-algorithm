@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking
+package com.twittew.fowwow_wecommendations.common.wankews.mw_wankew.wanking
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSParam
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
+i-impowt com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+i-impowt com.twittew.timewines.configapi.fspawam
 
-@Singleton
-class MlRankerFSConfig @Inject() extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[FSParam[Boolean]] =
-    Seq(MlRankerParams.ScribeRankingInfoInMlRanker)
+@singweton
+cwass m-mwwankewfsconfig @inject() e-extends featuweswitchconfig {
+  o-ovewwide vaw booweanfspawams: s-seq[fspawam[boowean]] =
+    seq(mwwankewpawams.scwibewankinginfoinmwwankew)
 }

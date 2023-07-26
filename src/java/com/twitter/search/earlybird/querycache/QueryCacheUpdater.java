@@ -1,242 +1,242 @@
-package com.twitter.search.earlybird.querycache;
+package com.twittew.seawch.eawwybiwd.quewycache;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+impowt java.utiw.awwaywist;
+i-impowt j-java.utiw.cowwection;
+i-impowt j-java.utiw.itewatow;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.concuwwent.scheduwedexecutowsewvice;
+i-impowt java.utiw.concuwwent.scheduwedfutuwe;
+impowt java.utiw.concuwwent.timeunit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+impowt com.googwe.common.annotations.visibwefowtesting;
+impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.wists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.common.util.Clock;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.factory.QueryCacheUpdaterScheduledExecutorService;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.util.PeriodicActionParams;
-import com.twitter.search.earlybird.util.ScheduledExecutorManager;
-import com.twitter.search.earlybird.util.ShutdownWaitTimeParams;
+i-impowt com.twittew.common.quantity.amount;
+impowt com.twittew.common.quantity.time;
+i-impowt com.twittew.common.utiw.cwock;
+impowt com.twittew.decidew.decidew;
+i-impowt c-com.twittew.seawch.common.concuwwent.scheduwedexecutowsewvicefactowy;
+impowt com.twittew.seawch.common.metwics.seawchcustomgauge;
+impowt com.twittew.seawch.common.metwics.seawchstatsweceivew;
+impowt com.twittew.seawch.eawwybiwd.common.usewupdates.usewtabwe;
+i-impowt com.twittew.seawch.eawwybiwd.exception.cwiticawexceptionhandwew;
+impowt com.twittew.seawch.eawwybiwd.factowy.quewycacheupdatewscheduwedexecutowsewvice;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentinfo;
+impowt com.twittew.seawch.eawwybiwd.stats.eawwybiwdseawchewstats;
+i-impowt com.twittew.seawch.eawwybiwd.utiw.pewiodicactionpawams;
+impowt com.twittew.seawch.eawwybiwd.utiw.scheduwedexecutowmanagew;
+i-impowt com.twittew.seawch.eawwybiwd.utiw.shutdownwaittimepawams;
 
 /**
- * Class to manage the scheduler service and all the update tasks. Through this
- * class, update tasks are created and scheduled, canceled and removed.
+ * c-cwass t-to manage the s-scheduwew sewvice and aww the update tasks. 😳😳😳 thwough t-this
+ * cwass, XD update tasks awe cweated and s-scheduwed, o.O cancewed and wemoved. (⑅˘꒳˘)
  *
- * This class is not thread-safe.
+ * this cwass is nyot thwead-safe. 😳😳😳
  */
-@VisibleForTesting
-final class QueryCacheUpdater extends ScheduledExecutorManager {
-  private static final Logger LOG = LoggerFactory.getLogger(QueryCacheUpdater.class);
+@visibwefowtesting
+finaw cwass quewycacheupdatew e-extends scheduwedexecutowmanagew {
+  p-pwivate static f-finaw woggew wog = w-woggewfactowy.getwoggew(quewycacheupdatew.cwass);
 
-  private final List<Task> tasks;
-  private final EarlybirdSearcherStats searcherStats;
-  private final Decider decider;
-  private final UserTable userTable;
-  private final Clock clock;
+  pwivate finaw wist<task> tasks;
+  pwivate f-finaw eawwybiwdseawchewstats seawchewstats;
+  p-pwivate finaw decidew decidew;
+  p-pwivate finaw usewtabwe u-usewtabwe;
+  pwivate finaw c-cwock cwock;
 
-  @VisibleForTesting
-  static final class Task {
-    @VisibleForTesting public final QueryCacheUpdateTask updateTask;
-    @VisibleForTesting public final ScheduledFuture future;
+  @visibwefowtesting
+  static f-finaw cwass task {
+    @visibwefowtesting pubwic finaw quewycacheupdatetask u-updatetask;
+    @visibwefowtesting pubwic finaw scheduwedfutuwe f-futuwe;
 
-    private Task(QueryCacheUpdateTask updateTask, ScheduledFuture future) {
-      this.updateTask = updateTask;
-      this.future = future;
+    pwivate t-task(quewycacheupdatetask u-updatetask, nyaa~~ scheduwedfutuwe futuwe) {
+      this.updatetask = updatetask;
+      this.futuwe = futuwe;
     }
   }
 
-  public QueryCacheUpdater(Collection<QueryCacheFilter> cacheFilters,
-                           ScheduledExecutorServiceFactory updaterScheduledExecutorServiceFactory,
-                           UserTable userTable,
-                           SearchStatsReceiver searchStatsReceiver,
-                           EarlybirdSearcherStats searcherStats,
-                           Decider decider,
-                           CriticalExceptionHandler criticalExceptionHandler,
-                           Clock clock) {
-    super(updaterScheduledExecutorServiceFactory.build("QueryCacheUpdateThread-%d", true),
-        ShutdownWaitTimeParams.immediately(), searchStatsReceiver,
-        criticalExceptionHandler, clock);
-    Preconditions.checkNotNull(cacheFilters);
-    Preconditions.checkArgument(getExecutor() instanceof QueryCacheUpdaterScheduledExecutorService,
-        getExecutor().getClass());
+  p-pubwic q-quewycacheupdatew(cowwection<quewycachefiwtew> cachefiwtews, rawr
+                           s-scheduwedexecutowsewvicefactowy u-updatewscheduwedexecutowsewvicefactowy, -.-
+                           u-usewtabwe usewtabwe, (✿oωo)
+                           seawchstatsweceivew seawchstatsweceivew, /(^•ω•^)
+                           eawwybiwdseawchewstats s-seawchewstats, 🥺
+                           decidew decidew, ʘwʘ
+                           cwiticawexceptionhandwew cwiticawexceptionhandwew, UwU
+                           cwock cwock) {
+    s-supew(updatewscheduwedexecutowsewvicefactowy.buiwd("quewycacheupdatethwead-%d", XD twue),
+        s-shutdownwaittimepawams.immediatewy(), (✿oωo) s-seawchstatsweceivew, :3
+        c-cwiticawexceptionhandwew, (///ˬ///✿) cwock);
+    p-pweconditions.checknotnuww(cachefiwtews);
+    p-pweconditions.checkawgument(getexecutow() i-instanceof quewycacheupdatewscheduwedexecutowsewvice, nyaa~~
+        g-getexecutow().getcwass());
 
-    this.searcherStats = searcherStats;
-    this.decider = decider;
-    this.userTable = userTable;
-    this.clock = clock;
+    this.seawchewstats = seawchewstats;
+    t-this.decidew = d-decidew;
+    t-this.usewtabwe = u-usewtabwe;
+    t-this.cwock = cwock;
 
-    shouldLog = false;
-    // One update task per <query, segment>
-    tasks = Lists.newArrayListWithCapacity(cacheFilters.size() * 20);
+    shouwdwog = fawse;
+    // one update t-task pew <quewy, >w< segment>
+    tasks = wists.newawwaywistwithcapacity(cachefiwtews.size() * 20);
 
-    SearchCustomGauge.export(
-        "querycache_num_tasks",
+    seawchcustomgauge.expowt(
+        "quewycache_num_tasks", -.-
         tasks::size
     );
   }
 
   /**
-   * Create an update task and add it to the executor
+   * cweate a-an update task and add it to the executow
    *
-   * @param filter The filter the task should execute
-   * @param segmentInfo The segment that this task would be responsible for
-   * @param updateInterval time in milliseconds between successive updates
-   * @param initialDelay Introduce a delay when adding the task to the executor
+   * @pawam fiwtew t-the fiwtew t-the task shouwd e-exekawaii~
+   * @pawam segmentinfo t-the segment that this task wouwd b-be wesponsibwe f-fow
+   * @pawam updateintewvaw time in miwwiseconds between successive updates
+   * @pawam initiawdeway i-intwoduce a deway when a-adding the task to the executow
    */
-  void addTask(QueryCacheFilter filter, SegmentInfo segmentInfo,
-               Amount<Long, Time> updateInterval, Amount<Long, Time> initialDelay) {
-    String filterName = filter.getFilterName();
-    String query = filter.getQueryString();
+  v-void addtask(quewycachefiwtew f-fiwtew, (✿oωo) segmentinfo segmentinfo, (˘ω˘)
+               amount<wong, rawr t-time> updateintewvaw, OwO a-amount<wong, ^•ﻌ•^ time> initiawdeway) {
+    s-stwing fiwtewname = f-fiwtew.getfiwtewname();
+    stwing quewy = fiwtew.getquewystwing();
 
-    // Create the task.
-    QueryCacheUpdateTask qcTask = new QueryCacheUpdateTask(
-        filter,
-        segmentInfo,
-        userTable,
-        updateInterval,
-        initialDelay,
-        getIterationCounter(),
-        searcherStats,
-        decider,
-        criticalExceptionHandler,
-        clock);
+    // cweate the task. UwU
+    quewycacheupdatetask q-qctask = n-nyew quewycacheupdatetask(
+        f-fiwtew, (˘ω˘)
+        segmentinfo, (///ˬ///✿)
+        u-usewtabwe, σωσ
+        u-updateintewvaw, /(^•ω•^)
+        initiawdeway, 😳
+        g-getitewationcountew(), 😳
+        seawchewstats, (⑅˘꒳˘)
+        decidew, 😳😳😳
+        cwiticawexceptionhandwew, 😳
+        cwock);
 
-    long initialDelayAsMS = initialDelay.as(Time.MILLISECONDS);
-    long updateIntervalAsMS = updateInterval.as(Time.MILLISECONDS);
-    Preconditions.checkArgument(
-        initialDelayAsMS >= initialDelay.getValue(), "initial delay unit granularity too small");
-    Preconditions.checkArgument(
-        updateIntervalAsMS >= updateInterval.getValue(),
-        "update interval unit granularity too small");
+    w-wong initiawdewayasms = i-initiawdeway.as(time.miwwiseconds);
+    wong updateintewvawasms = updateintewvaw.as(time.miwwiseconds);
+    p-pweconditions.checkawgument(
+        i-initiawdewayasms >= initiawdeway.getvawue(), XD "initiaw deway unit gwanuwawity too smow");
+    p-pweconditions.checkawgument(
+        updateintewvawasms >= updateintewvaw.getvawue(), mya
+        "update intewvaw unit gwanuwawity too smow");
 
-    // Schedule the task.
-    ScheduledFuture future = scheduleNewTask(qcTask,
-        PeriodicActionParams.withIntialWaitAndFixedDelay(
-            initialDelayAsMS, updateIntervalAsMS, TimeUnit.MILLISECONDS
+    // scheduwe t-the task. ^•ﻌ•^
+    scheduwedfutuwe futuwe = scheduwenewtask(qctask, ʘwʘ
+        p-pewiodicactionpawams.withintiawwaitandfixeddeway(
+            i-initiawdewayasms, ( ͡o ω ͡o ) updateintewvawasms, mya timeunit.miwwiseconds
         )
     );
 
-    tasks.add(new Task(qcTask, future));
+    tasks.add(new t-task(qctask, o.O f-futuwe));
 
-    LOG.debug("Added a task for filter [" + filterName
-            + "] for segment [" + segmentInfo.getTimeSliceID()
-            + "] with query [" + query
-            + "] update interval " + updateInterval + " "
-            + (initialDelay.getValue() == 0 ? "without" : "with " + initialDelay)
-            + " initial delay");
+    wog.debug("added a task fow fiwtew [" + f-fiwtewname
+            + "] fow s-segment [" + segmentinfo.gettimeswiceid()
+            + "] with quewy [" + quewy
+            + "] update intewvaw " + u-updateintewvaw + " "
+            + (initiawdeway.getvawue() == 0 ? "without" : "with " + initiawdeway)
+            + " initiaw d-deway");
 
   }
 
-  void removeAllTasksForSegment(SegmentInfo segmentInfo) {
-    int removedTasksCount = 0;
-    for (Iterator<Task> it = tasks.iterator(); it.hasNext();) {
-      Task task = it.next();
-      if (task.updateTask.getTimeSliceID() == segmentInfo.getTimeSliceID()) {
-        task.future.cancel(true);
-        it.remove();
-        removedTasksCount += 1;
+  v-void wemoveawwtasksfowsegment(segmentinfo segmentinfo) {
+    i-int wemovedtaskscount = 0;
+    fow (itewatow<task> i-it = tasks.itewatow(); i-it.hasnext();) {
+      t-task task = it.next();
+      i-if (task.updatetask.gettimeswiceid() == s-segmentinfo.gettimeswiceid()) {
+        task.futuwe.cancew(twue);
+        it.wemove();
+        w-wemovedtaskscount += 1;
       }
     }
 
-    LOG.info("Removed {} update tasks for segment {}.", removedTasksCount,
-        segmentInfo.getTimeSliceID());
+    w-wog.info("wemoved {} u-update tasks fow segment {}.", (✿oωo) wemovedtaskscount, :3
+        s-segmentinfo.gettimeswiceid());
   }
 
-  public void clearTasks() {
-    int totalTasks = tasks.size();
-    LOG.info("Removing {} update tasks for all segments.", totalTasks);
-    for (Task task : tasks) {
-      task.future.cancel(true);
+  pubwic void c-cweawtasks() {
+    i-int totawtasks = tasks.size();
+    wog.info("wemoving {} update tasks fow a-aww segments.", 😳 t-totawtasks);
+    f-fow (task task : t-tasks) {
+      task.futuwe.cancew(twue);
     }
-    tasks.clear();
-    LOG.info("Canceled {} QueryCache update tasks", totalTasks);
+    t-tasks.cweaw();
+    wog.info("cancewed {} quewycache update tasks", (U ﹏ U) totawtasks);
   }
 
-  // Have all tasks run at least once (even if they failed)?
-  public boolean allTasksRan() {
-    boolean allTasksRan = true;
-    for (Task task : tasks) {
-      if (!task.updateTask.ranOnce()) {
-        allTasksRan = false;
-        break;
+  // have aww tasks wun at weast once (even i-if they faiwed)?
+  pubwic b-boowean awwtaskswan() {
+    boowean a-awwtaskswan = twue;
+    fow (task t-task : tasks) {
+      if (!task.updatetask.wanonce()) {
+        a-awwtaskswan = f-fawse;
+        b-bweak;
       }
     }
 
-    return allTasksRan;
+    w-wetuwn a-awwtaskswan;
   }
 
-  // Have all tasks for this run at least once (even if they failed)?
-  public boolean allTasksRanForSegment(SegmentInfo segmentInfo) {
-    boolean allTasksRanForSegment = true;
-    for (Task task : tasks) {
-      if ((task.updateTask.getTimeSliceID() == segmentInfo.getTimeSliceID())
-          && !task.updateTask.ranOnce()) {
-        allTasksRanForSegment = false;
-        break;
+  // have aww tasks fow this wun at weast once (even if they faiwed)?
+  pubwic boowean awwtaskswanfowsegment(segmentinfo s-segmentinfo) {
+    b-boowean awwtaskswanfowsegment = t-twue;
+    fow (task task : tasks) {
+      i-if ((task.updatetask.gettimeswiceid() == segmentinfo.gettimeswiceid())
+          && !task.updatetask.wanonce()) {
+        awwtaskswanfowsegment = fawse;
+        bweak;
       }
     }
 
-    return allTasksRanForSegment;
+    w-wetuwn awwtaskswanfowsegment;
   }
 
   /**
-   * After startup, we want only one thread to update the query cache.
+   * a-aftew stawtup, mya we want onwy o-one thwead to update the quewy cache. (U ᵕ U❁)
    */
-  void setWorkerPoolSizeAfterStartup() {
-    QueryCacheUpdaterScheduledExecutorService executor =
-        (QueryCacheUpdaterScheduledExecutorService) getExecutor();
-    executor.setWorkerPoolSizeAfterStartup();
-    LOG.info("Done setting executor core pool size to one");
+  v-void setwowkewpoowsizeaftewstawtup() {
+    q-quewycacheupdatewscheduwedexecutowsewvice executow =
+        (quewycacheupdatewscheduwedexecutowsewvice) g-getexecutow();
+    e-executow.setwowkewpoowsizeaftewstawtup();
+    wog.info("done setting executow cowe poow size to one");
   }
 
-  @Override
-  protected void shutdownComponent() {
-    clearTasks();
+  @ovewwide
+  p-pwotected void s-shutdowncomponent() {
+    c-cweawtasks();
   }
 
   //////////////////////////
-  // for unit tests only
+  // fow u-unit tests onwy
   //////////////////////////
 
   /**
-   * Returns the list of all query cache updater tasks. This method should be used only in tests.
+   * w-wetuwns the wist of a-aww quewy cache u-updatew tasks. :3 this method shouwd b-be used onwy in t-tests. mya
    */
-  @VisibleForTesting
-  List<Task> getTasksForTest() {
-    synchronized (tasks) {
-      return new ArrayList<>(tasks);
+  @visibwefowtesting
+  wist<task> g-gettasksfowtest() {
+    synchwonized (tasks) {
+      wetuwn nyew a-awwaywist<>(tasks);
     }
   }
 
-  @VisibleForTesting
-  int getTasksSize() {
-    synchronized (tasks) {
-      return tasks.size();
+  @visibwefowtesting
+  int gettaskssize() {
+    s-synchwonized (tasks) {
+      w-wetuwn tasks.size();
     }
   }
 
-  @VisibleForTesting
-  boolean tasksContains(Task task) {
-    synchronized (tasks) {
-      return tasks.contains(task);
+  @visibwefowtesting
+  b-boowean taskscontains(task task) {
+    synchwonized (tasks) {
+      wetuwn t-tasks.contains(task);
     }
   }
 
-  @VisibleForTesting
-  public ScheduledExecutorService getExecutorForTest() {
-    return getExecutor();
+  @visibwefowtesting
+  p-pubwic scheduwedexecutowsewvice g-getexecutowfowtest() {
+    wetuwn getexecutow();
   }
 }

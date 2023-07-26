@@ -1,62 +1,62 @@
-package com.twitter.recos.user_video_graph
+package com.twittew.wecos.usew_video_gwaph
 
-import com.twitter.graphjet.bipartite.api.EdgeTypeMask
-import com.twitter.recos.util.Action
+impowt c-com.twittew.gwaphjet.bipawtite.api.edgetypemask
+i-impowt com.twittew.wecos.utiw.action
 
 /**
- * The bit mask is used to encode edge types in the top bits of an integer,
- * e.g. favorite, retweet, reply and click. Under current segment configuration, each segment
- * stores up to 128M edges. Assuming that each node on one side is unique, each segment
- * stores up to 128M unique nodes on one side, which occupies the lower 27 bits of an integer.
- * This leaves five bits to encode the edge types, which at max can store 32 edge types.
- * The following implementation utilizes the top four bits and leaves one free bit out.
+ * the b-bit mask is used t-to encode edge t-types in the t-top bits of an integew, ʘwʘ
+ * e-e.g. f-favowite, (ˆ ﻌ ˆ)♡ wetweet, 😳😳😳 wepwy and cwick. :3 undew cuwwent segment configuwation, OwO each segment
+ * s-stowes up to 128m edges. (U ﹏ U) assuming that e-each nyode on one side is unique, >w< e-each segment
+ * stowes up to 128m unique nyodes on one side, (U ﹏ U) which o-occupies the wowew 27 bits o-of an integew. 😳
+ * t-this weaves five bits to encode the edge types, (ˆ ﻌ ˆ)♡ which at max can stowe 32 edge t-types. 😳😳😳
+ * the fowwowing impwementation utiwizes the top fouw bits and weaves one f-fwee bit out.
  */
-class UserVideoEdgeTypeMask extends EdgeTypeMask {
-  import UserVideoEdgeTypeMask._
+cwass usewvideoedgetypemask e-extends edgetypemask {
+  i-impowt u-usewvideoedgetypemask._
 
-  override def encode(node: Int, edgeType: Byte): Int = {
-    if (edgeType < 0 || edgeType > SIZE) {
-      throw new IllegalArgumentException("encode: Illegal edge type argument " + edgeType)
-    } else {
-      node | (edgeType << 28)
+  o-ovewwide def encode(node: int, (U ﹏ U) edgetype: b-byte): int = {
+    if (edgetype < 0 || edgetype > s-size) {
+      thwow nyew iwwegawawgumentexception("encode: iwwegaw edge type awgument " + edgetype)
+    } ewse {
+      nyode | (edgetype << 28)
     }
   }
 
-  override def edgeType(node: Int): Byte = {
-    (node >>> 28).toByte
+  o-ovewwide def edgetype(node: int): b-byte = {
+    (node >>> 28).tobyte
   }
 
-  override def restore(node: Int): Int = {
-    node & MASK
+  o-ovewwide d-def westowe(node: int): int = {
+    nyode & mask
   }
 }
 
-object UserVideoEdgeTypeMask extends Enumeration {
+object u-usewvideoedgetypemask e-extends enumewation {
 
-  type UserTweetEdgeTypeMask = Value
-
-  /**
-   * Byte values corresponding to the action taken on a tweet, which will be encoded in the
-   * top 4 bits in a tweet Id
-   * NOTE: THERE CAN ONLY BE UP TO 16 TYPES
-   */
-  val VideoPlayback50: UserTweetEdgeTypeMask = Value(1)
+  t-type usewtweetedgetypemask = v-vawue
 
   /**
-   * Reserve the top four bits of each integer to encode the edge type information.
+   * byte vawues c-cowwesponding to the action taken o-on a tweet, (///ˬ///✿) which wiww be encoded in the
+   * t-top 4 bits in a tweet id
+   * nyote: t-thewe can onwy be up to 16 t-types
    */
-  val MASK: Int = Integer.parseInt("00001111111111111111111111111111", 2)
-  val SIZE: Int = this.values.size
+  vaw v-videopwayback50: usewtweetedgetypemask = vawue(1)
 
   /**
-   * Converts the action byte in the RecosHoseMessage into GraphJet internal byte mapping
+   * wesewve the top fouw bits of each integew to encode the edge type i-infowmation. 😳
    */
-  def actionTypeToEdgeType(actionByte: Byte): Byte = {
-    val edgeType = Action(actionByte) match {
-      case Action.VideoPlayback50 => VideoPlayback50.id
-      case _ =>
-        throw new IllegalArgumentException("getEdgeType: Illegal edge type argument " + actionByte)
+  v-vaw mask: int = integew.pawseint("00001111111111111111111111111111", 😳 2)
+  v-vaw size: int = t-this.vawues.size
+
+  /**
+   * c-convewts the action byte in the wecoshosemessage into gwaphjet intewnaw b-byte mapping
+   */
+  def actiontypetoedgetype(actionbyte: byte): byte = {
+    vaw edgetype = action(actionbyte) m-match {
+      case action.videopwayback50 => v-videopwayback50.id
+      c-case _ =>
+        t-thwow nyew iwwegawawgumentexception("getedgetype: i-iwwegaw edge type a-awgument " + actionbyte)
     }
-    edgeType.toByte
+    e-edgetype.tobyte
   }
 }

@@ -1,11 +1,11 @@
-package com.twitter.tweetypie.federated.columns
+package com.twittew.tweetypie.fedewated.cowumns
 
-import com.twitter.strato.config.ContactInfo
+impowt com.twittew.stwato.config.contactinfo
 
-object TweetypieContactInfo
-    extends ContactInfo(
-      contactEmail = "",
-      ldapGroup = "",
-      jiraProject = "",
-      slackRoomId = ""
+o-object t-tweetypiecontactinfo
+    e-extends c-contactinfo(
+      c-contactemaiw = "", (⑅˘꒳˘)
+      w-wdapgwoup = "", ( ͡o ω ͡o )
+      j-jiwapwoject = "", UwU
+      s-swackwoomid = ""
     )

@@ -1,16 +1,16 @@
-package com.twitter.search.earlybird_root.caching;
+package com.twittew.seawch.eawwybiwd_woot.caching;
 
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
 
-public final class CacheCommonUtil {
-  public static final String NAMED_MAX_CACHE_RESULTS = "maxCacheResults";
+p-pubwic finaw cwass c-cachecommonutiw {
+  p-pubwic s-static finaw stwing n-nyamed_max_cache_wesuwts = "maxcachewesuwts";
 
-  private CacheCommonUtil() {
+  p-pwivate cachecommonutiw() {
   }
 
-  public static boolean hasResults(EarlybirdResponse response) {
-    return response.isSetSearchResults()
-      && (response.getSearchResults().getResults() != null)
-      && !response.getSearchResults().getResults().isEmpty();
+  p-pubwic static b-boowean haswesuwts(eawwybiwdwesponse wesponse) {
+    wetuwn wesponse.issetseawchwesuwts()
+      && (wesponse.getseawchwesuwts().getwesuwts() != nyuww)
+      && !wesponse.getseawchwesuwts().getwesuwts().isempty();
   }
 }

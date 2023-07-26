@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.stringcenter
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.stwingcentew
 
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseModuleStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.stringcenter.BaseModuleStringCenterPlaceholderBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.stringcenter.client.core.ExternalString
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basemoduwestw
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.stwingcentew.basemoduwestwingcentewpwacehowdewbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt c-com.twittew.stwingcentew.cwient.stwingcentew
+i-impowt com.twittew.stwingcentew.cwient.cowe.extewnawstwing
 
 /**
- * This class works the same as [[Str]] but passes in a list of candidates to the
- * [[BaseModuleStringCenterPlaceholderBuilder]] when building the placeholders.
+ * t-this cwass wowks the same as [[stw]] but passes in a wist of candidates to the
+ * [[basemoduwestwingcentewpwacehowdewbuiwdew]] w-when buiwding the pwacehowdews. nyaa~~
  */
-case class ModuleStr[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  text: ExternalString,
-  stringCenter: StringCenter,
-  stringCenterPlaceholderBuilder: Option[
-    BaseModuleStringCenterPlaceholderBuilder[Query, Candidate]
-  ] = None)
-    extends BaseModuleStr[Query, Candidate] {
+case cwass m-moduwestw[-quewy <: pipewinequewy, (⑅˘꒳˘) -candidate <: u-univewsawnoun[any]](
+  text: extewnawstwing, rawr x3
+  stwingcentew: s-stwingcentew, (✿oωo)
+  stwingcentewpwacehowdewbuiwdew: o-option[
+    basemoduwestwingcentewpwacehowdewbuiwdew[quewy, (ˆ ﻌ ˆ)♡ c-candidate]
+  ] = nyone)
+    extends basemoduwestw[quewy, (˘ω˘) candidate] {
 
-  def apply(query: Query, candidates: Seq[CandidateWithFeatures[Candidate]]): String = {
-    val placeholderMapOpt =
-      stringCenterPlaceholderBuilder.map(_.apply(query, candidates))
-    stringCenter.prepare(
-      externalString = text,
-      placeholders = placeholderMapOpt.getOrElse(Map.empty[String, Any])
+  d-def appwy(quewy: quewy, (⑅˘꒳˘) candidates: seq[candidatewithfeatuwes[candidate]]): stwing = {
+    vaw pwacehowdewmapopt =
+      s-stwingcentewpwacehowdewbuiwdew.map(_.appwy(quewy, candidates))
+    s-stwingcentew.pwepawe(
+      e-extewnawstwing = t-text, (///ˬ///✿)
+      p-pwacehowdews = pwacehowdewmapopt.getowewse(map.empty[stwing, 😳😳😳 any])
     )
   }
 }

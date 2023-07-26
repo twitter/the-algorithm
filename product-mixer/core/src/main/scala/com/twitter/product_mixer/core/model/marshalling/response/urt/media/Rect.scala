@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.media
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.media
 
-case class Rect(
-  left: Int,
-  top: Int,
-  width: Int,
-  height: Int)
+case c-cwass wect(
+  weft: i-int, 🥺
+  top: i-int, òωó
+  width: int, o.O
+  h-height: int)

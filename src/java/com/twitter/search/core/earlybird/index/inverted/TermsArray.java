@@ -1,189 +1,189 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.io.IOException;
-import java.util.Arrays;
+impowt j-java.io.ioexception;
+i-impowt java.utiw.awways;
 
-import org.apache.lucene.util.ArrayUtil;
+i-impowt owg.apache.wucene.utiw.awwayutiw;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
+i-impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
 
 /**
- * TermsArray provides information on each term in the posting list.
+ * tewmsawway pwovides infowmation on each tewm in the posting w-wist. ^^;;
  *
- * It does not provide any concurrency guarantees. The writer must ensure that all updates are
- * visible to readers with an external memory barrier.
+ * it does nyot pwovide any concuwwency g-guawantees. :3 the wwitew must ensuwe t-that aww updates awe
+ * visibwe to weadews with an extewnaw m-memowy bawwiew. (U ﹏ U)
  */
-public class TermsArray implements Flushable {
-  private static final int BYTES_PER_POSTING = 5 * Integer.BYTES;
-  public static final int INVALID = -1;
+pubwic cwass t-tewmsawway impwements f-fwushabwe {
+  pwivate static finaw int bytes_pew_posting = 5 * integew.bytes;
+  p-pubwic static finaw int invawid = -1;
 
-  private final int size;
+  pwivate finaw int size;
 
-  public final int[] termPointers;
-  private final int[] postingsPointers;
+  pubwic f-finaw int[] tewmpointews;
+  p-pwivate finaw int[] p-postingspointews;
 
-  // Derived data. Not atomic and not reliable.
-  public final int[] largestPostings;
-  public final int[] documentFrequency;
-  public final int[] offensiveCounters;
+  // d-dewived d-data. OwO nyot atomic and nyot wewiabwe. 😳😳😳
+  pubwic f-finaw int[] wawgestpostings;
+  pubwic finaw int[] documentfwequency;
+  p-pubwic finaw int[] offensivecountews;
 
-  TermsArray(int size, boolean useOffensiveCounters) {
+  tewmsawway(int size, (ˆ ﻌ ˆ)♡ boowean useoffensivecountews) {
     this.size = size;
 
-    termPointers = new int[size];
-    postingsPointers = new int[size];
+    t-tewmpointews = nyew int[size];
+    p-postingspointews = n-nyew int[size];
 
-    largestPostings = new int[size];
-    documentFrequency = new int[size];
+    w-wawgestpostings = nyew int[size];
+    documentfwequency = nyew int[size];
 
-    if (useOffensiveCounters) {
-      offensiveCounters = new int[size];
-    } else {
-      offensiveCounters = null;
+    i-if (useoffensivecountews) {
+      o-offensivecountews = nyew int[size];
+    } e-ewse {
+      o-offensivecountews = nyuww;
     }
 
-    Arrays.fill(postingsPointers, INVALID);
-    Arrays.fill(largestPostings, INVALID);
+    a-awways.fiww(postingspointews, XD invawid);
+    a-awways.fiww(wawgestpostings, (ˆ ﻌ ˆ)♡ invawid);
   }
 
-  private TermsArray(TermsArray oldArray, int newSize) {
-    this(newSize, oldArray.offensiveCounters != null);
-    copyFrom(oldArray);
+  pwivate tewmsawway(tewmsawway o-owdawway, ( ͡o ω ͡o ) int nyewsize) {
+    t-this(newsize, rawr x3 owdawway.offensivecountews != nyuww);
+    c-copyfwom(owdawway);
   }
 
-  private TermsArray(
+  p-pwivate tewmsawway(
       int size,
-      int[] termPointers,
-      int[] postingsPointers,
-      int[] largestPostings,
-      int[] documentFrequency,
-      int[] offensiveCounters) {
-    this.size = size;
+      int[] tewmpointews, nyaa~~
+      int[] postingspointews, >_<
+      int[] wawgestpostings, ^^;;
+      int[] documentfwequency, (ˆ ﻌ ˆ)♡
+      i-int[] offensivecountews) {
+    t-this.size = size;
 
-    this.termPointers = termPointers;
-    this.postingsPointers = postingsPointers;
+    this.tewmpointews = t-tewmpointews;
+    t-this.postingspointews = p-postingspointews;
 
-    this.largestPostings = largestPostings;
-    this.documentFrequency = documentFrequency;
-    this.offensiveCounters = offensiveCounters;
+    this.wawgestpostings = wawgestpostings;
+    this.documentfwequency = d-documentfwequency;
+    this.offensivecountews = offensivecountews;
   }
 
-  TermsArray grow() {
-    int newSize = ArrayUtil.oversize(size + 1, BYTES_PER_POSTING);
-    return new TermsArray(this, newSize);
+  tewmsawway gwow() {
+    i-int nyewsize = awwayutiw.ovewsize(size + 1, ^^;; b-bytes_pew_posting);
+    w-wetuwn nyew t-tewmsawway(this, (⑅˘꒳˘) nyewsize);
   }
 
 
-  private void copyFrom(TermsArray from) {
-    copy(from.termPointers, termPointers);
-    copy(from.postingsPointers, postingsPointers);
+  p-pwivate v-void copyfwom(tewmsawway f-fwom) {
+    c-copy(fwom.tewmpointews, rawr x3 tewmpointews);
+    copy(fwom.postingspointews, p-postingspointews);
 
-    copy(from.largestPostings, largestPostings);
-    copy(from.documentFrequency, documentFrequency);
+    c-copy(fwom.wawgestpostings, (///ˬ///✿) wawgestpostings);
+    c-copy(fwom.documentfwequency, 🥺 d-documentfwequency);
 
-    if (from.offensiveCounters != null) {
-      copy(from.offensiveCounters, offensiveCounters);
+    i-if (fwom.offensivecountews != nyuww) {
+      copy(fwom.offensivecountews, >_< offensivecountews);
     }
   }
 
-  private void copy(int[] from, int[] to) {
-    System.arraycopy(from, 0, to, 0, from.length);
+  p-pwivate void copy(int[] fwom, UwU int[] to) {
+    system.awwaycopy(fwom, >_< 0, to, -.- 0, fwom.wength);
   }
 
   /**
-   * Returns the size of this array.
+   * w-wetuwns the size of this awway. mya
    */
-  public int getSize() {
-    return size;
+  pubwic int getsize() {
+    w-wetuwn size;
   }
 
   /**
-   * Write side operation for updating the pointer to the last posting for a given term.
+   * w-wwite side opewation f-fow updating the pointew t-to the wast posting fow a given t-tewm. >w<
    */
-  public void updatePostingsPointer(int termID, int newPointer) {
-    postingsPointers[termID] = newPointer;
+  pubwic v-void updatepostingspointew(int tewmid, (U ﹏ U) int nyewpointew) {
+    postingspointews[tewmid] = newpointew;
   }
 
   /**
-   * The returned pointer is guaranteed to be memory safe to follow to its target. The data
-   * structure it points to will be consistent and safe to traverse. The posting list may contain
-   * doc IDs that the current reader should not see, and the reader should skip over these doc IDs
-   * to ensure that the readers provide an immutable view of the doc IDs in a posting list.
+   * the wetuwned pointew i-is guawanteed to be memowy safe t-to fowwow to its tawget. 😳😳😳 the data
+   * s-stwuctuwe i-it points to wiww be consistent and safe to twavewse. o.O t-the posting w-wist may contain
+   * doc ids t-that the cuwwent w-weadew shouwd nyot see, òωó and the weadew shouwd skip ovew these doc ids
+   * to e-ensuwe that the w-weadews pwovide a-an immutabwe view of the doc ids i-in a posting wist. 😳😳😳
    */
-  public int getPostingsPointer(int termID) {
-    return postingsPointers[termID];
+  p-pubwic int getpostingspointew(int t-tewmid) {
+    wetuwn postingspointews[tewmid];
   }
 
-  public int[] getDocumentFrequency() {
-    return documentFrequency;
+  pubwic int[] getdocumentfwequency() {
+    w-wetuwn d-documentfwequency;
   }
 
   /**
-   * Gets the array containing the first posting for each indexed term.
+   * gets the awway containing t-the fiwst posting f-fow each indexed tewm. σωσ
    */
-  public int[] getLargestPostings() {
-    return largestPostings;
+  pubwic int[] getwawgestpostings() {
+    w-wetuwn wawgestpostings;
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @suppwesswawnings("unchecked")
+  @ovewwide
+  pubwic fwushhandwew getfwushhandwew() {
+    wetuwn nyew fwushhandwew(this);
   }
 
-  public static class FlushHandler extends Flushable.Handler<TermsArray> {
-    private static final String SIZE_PROP_NAME = "size";
-    private static final String HAS_OFFENSIVE_COUNTERS_PROP_NAME = "hasOffensiveCounters";
+  p-pubwic static cwass fwushhandwew extends f-fwushabwe.handwew<tewmsawway> {
+    p-pwivate static finaw stwing size_pwop_name = "size";
+    pwivate static finaw s-stwing has_offensive_countews_pwop_name = "hasoffensivecountews";
 
-    public FlushHandler(TermsArray objectToFlush) {
-      super(objectToFlush);
+    p-pubwic fwushhandwew(tewmsawway objecttofwush) {
+      supew(objecttofwush);
     }
 
-    public FlushHandler() {
+    p-pubwic fwushhandwew() {
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      TermsArray objectToFlush = getObjectToFlush();
-      flushInfo.addIntProperty(SIZE_PROP_NAME, objectToFlush.size);
-      boolean hasOffensiveCounters = objectToFlush.offensiveCounters != null;
-      flushInfo.addBooleanProperty(HAS_OFFENSIVE_COUNTERS_PROP_NAME, hasOffensiveCounters);
+    @ovewwide
+    pwotected void d-dofwush(fwushinfo fwushinfo, (⑅˘꒳˘) datasewiawizew out) thwows ioexception {
+      tewmsawway o-objecttofwush = getobjecttofwush();
+      f-fwushinfo.addintpwopewty(size_pwop_name, (///ˬ///✿) o-objecttofwush.size);
+      boowean h-hasoffensivecountews = objecttofwush.offensivecountews != n-nyuww;
+      f-fwushinfo.addbooweanpwopewty(has_offensive_countews_pwop_name, 🥺 h-hasoffensivecountews);
 
-      out.writeIntArray(objectToFlush.termPointers);
-      out.writeIntArray(objectToFlush.postingsPointers);
+      out.wwiteintawway(objecttofwush.tewmpointews);
+      o-out.wwiteintawway(objecttofwush.postingspointews);
 
-      out.writeIntArray(objectToFlush.largestPostings);
-      out.writeIntArray(objectToFlush.documentFrequency);
+      o-out.wwiteintawway(objecttofwush.wawgestpostings);
+      out.wwiteintawway(objecttofwush.documentfwequency);
 
-      if (hasOffensiveCounters) {
-        out.writeIntArray(objectToFlush.offensiveCounters);
+      if (hasoffensivecountews) {
+        o-out.wwiteintawway(objecttofwush.offensivecountews);
       }
     }
 
-    @Override
-    protected TermsArray doLoad(
-        FlushInfo flushInfo, DataDeserializer in) throws IOException {
-      int size = flushInfo.getIntProperty(SIZE_PROP_NAME);
-      boolean hasOffensiveCounters = flushInfo.getBooleanProperty(HAS_OFFENSIVE_COUNTERS_PROP_NAME);
+    @ovewwide
+    pwotected t-tewmsawway d-dowoad(
+        fwushinfo fwushinfo, OwO datadesewiawizew i-in) thwows ioexception {
+      i-int size = f-fwushinfo.getintpwopewty(size_pwop_name);
+      boowean hasoffensivecountews = fwushinfo.getbooweanpwopewty(has_offensive_countews_pwop_name);
 
-      int[] termPointers = in.readIntArray();
-      int[] postingsPointers = in.readIntArray();
+      int[] t-tewmpointews = in.weadintawway();
+      i-int[] postingspointews = i-in.weadintawway();
 
-      int[] largestPostings = in.readIntArray();
-      int[] documentFrequency = in.readIntArray();
+      i-int[] wawgestpostings = i-in.weadintawway();
+      int[] documentfwequency = in.weadintawway();
 
-      int[] offensiveCounters = hasOffensiveCounters ? in.readIntArray() : null;
+      int[] offensivecountews = hasoffensivecountews ? i-in.weadintawway() : nyuww;
 
-      return new TermsArray(
-          size,
-          termPointers,
-          postingsPointers,
-          largestPostings,
-          documentFrequency,
-          offensiveCounters);
+      w-wetuwn nyew tewmsawway(
+          size, >w<
+          t-tewmpointews, 🥺
+          postingspointews, nyaa~~
+          w-wawgestpostings, ^^
+          documentfwequency, >w<
+          o-offensivecountews);
     }
   }
 }

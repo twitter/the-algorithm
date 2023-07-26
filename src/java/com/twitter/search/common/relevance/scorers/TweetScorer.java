@@ -1,65 +1,65 @@
-package com.twitter.search.common.relevance.scorers;
+package com.twittew.seawch.common.wewevance.scowews;
 
-import com.twitter.search.common.relevance.classifiers.TweetClassifier;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
+impowt com.twittew.seawch.common.wewevance.cwassifiews.tweetcwassifiew;
+i-impowt c-com.twittew.seawch.common.wewevance.entities.twittewmessage;
 
 /**
- * Interface to compute feature scores for a single @TwitterMessage
- * object, or a group of them, after they have been processed by
- * feature classifiers.
+ * i-intewface t-to compute featuwe s-scowes fow a-a singwe @twittewmessage
+ * o-object, (ˆ ﻌ ˆ)♡ o-ow a gwoup of them, 😳😳😳 aftew they have been pwocessed by
+ * featuwe cwassifiews. :3
  *
- * Intentionally kept Scorers separate from Classifiers, since they
- * may be run at different stages and in different batching manners.
- * Convenience methods are provided to run classification and scoring
- * in one call.
+ * i-intentionawwy kept scowews sepawate fwom c-cwassifiews, OwO since they
+ * may b-be wun at diffewent stages and in diffewent batching mannews. (U ﹏ U)
+ * c-convenience methods awe pwovided t-to wun cwassification a-and scowing
+ * in one caww. >w<
  */
-public abstract class TweetScorer {
+pubwic abstwact cwass tweetscowew {
   /**
-   * Compute and store feature score in TwitterMessage based on its
-   * TweetFeatures.
+   * compute a-and stowe featuwe scowe in twittewmessage based on its
+   * tweetfeatuwes. (U ﹏ U)
    *
-   * @param tweet tweet message to compute and store score to.
+   * @pawam tweet t-tweet message to compute and stowe s-scowe to. 😳
    */
-  public abstract void scoreTweet(final TwitterMessage tweet);
+  p-pubwic abstwact v-void scowetweet(finaw t-twittewmessage tweet);
 
   /**
-   * Score a group of TwitterMessages based on their corresponding TweetFeatures
-   * and store feature scores in TwitterMessages.
+   * scowe a gwoup of t-twittewmessages based on theiw cowwesponding tweetfeatuwes
+   * a-and stowe featuwe scowes in twittewmessages. (ˆ ﻌ ˆ)♡
    *
-   * This default implementation just iterates through the map and scores each
-   * individual tweet. Batching for better performance, if applicable, can be implemented by
-   * concrete subclasses.
+   * this defauwt impwementation just itewates thwough the map a-and scowes each
+   * individuaw t-tweet. 😳😳😳 batching f-fow bettew pewfowmance, (U ﹏ U) i-if appwicabwe, (///ˬ///✿) can be impwemented by
+   * concwete subcwasses. 😳
    *
-   * @param tweets TwitterMessages to score.
+   * @pawam t-tweets t-twittewmessages to scowe. 😳
    */
-  public void scoreTweets(Iterable<TwitterMessage> tweets) {
-    for (TwitterMessage tweet: tweets) {
-      scoreTweet(tweet);
+  p-pubwic void scowetweets(itewabwe<twittewmessage> t-tweets) {
+    fow (twittewmessage t-tweet: tweets) {
+      scowetweet(tweet);
     }
   }
 
   /**
-   * Convenience method.
-   * Classify tweet using the specified list of classifiers, then compute score.
+   * c-convenience method. σωσ
+   * cwassify tweet using t-the specified wist of cwassifiews, rawr x3 t-then compute scowe. OwO
    *
-   * @param classifier list of classifiers to use for classification.
-   * @param tweet tweet to classify and score
+   * @pawam c-cwassifiew w-wist of cwassifiews to use fow cwassification. /(^•ω•^)
+   * @pawam tweet tweet to cwassify and scowe
    */
-  public void classifyAndScoreTweet(TweetClassifier classifier, TwitterMessage tweet) {
-    classifier.classifyTweet(tweet);
-    scoreTweet(tweet);
+  pubwic void cwassifyandscowetweet(tweetcwassifiew c-cwassifiew, 😳😳😳 t-twittewmessage tweet) {
+    c-cwassifiew.cwassifytweet(tweet);
+    s-scowetweet(tweet);
   }
 
   /**
-   * Convenience method.
-   * Classify tweets using the specified list of classifiers, then compute score.
+   * c-convenience method. ( ͡o ω ͡o )
+   * cwassify tweets using the s-specified wist of cwassifiews, >_< then compute scowe. >w<
    *
-   * @param classifier classifier to use for classification.
-   * @param tweets tweets to classify and score
+   * @pawam cwassifiew cwassifiew to use f-fow cwassification. rawr
+   * @pawam tweets tweets t-to cwassify and s-scowe
    */
-  public void classifyAndScoreTweets(TweetClassifier classifier, Iterable<TwitterMessage> tweets) {
-    for (TwitterMessage tweet: tweets) {
-      classifyAndScoreTweet(classifier, tweet);
+  pubwic v-void cwassifyandscowetweets(tweetcwassifiew cwassifiew, 😳 itewabwe<twittewmessage> t-tweets) {
+    f-fow (twittewmessage t-tweet: tweets) {
+      cwassifyandscowetweet(cwassifiew, >w< t-tweet);
     }
   }
 }

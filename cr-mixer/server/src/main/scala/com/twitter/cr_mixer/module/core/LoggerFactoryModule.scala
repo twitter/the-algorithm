@@ -1,153 +1,153 @@
-package com.twitter.cr_mixer.module.core
+package com.twittew.cw_mixew.moduwe.cowe
 
-import com.google.inject.Provides
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.scribe.ScribeCategories
-import com.twitter.cr_mixer.scribe.ScribeCategory
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.logging.BareFormatter
-import com.twitter.logging.Level
-import com.twitter.logging.Logger
-import com.twitter.logging.NullHandler
-import com.twitter.logging.QueueingHandler
-import com.twitter.logging.ScribeHandler
-import com.twitter.logging.{LoggerFactory => TwitterLoggerFactory}
-import javax.inject.Named
-import javax.inject.Singleton
+impowt c-com.googwe.inject.pwovides
+i-impowt c-com.twittew.cw_mixew.modew.moduwenames
+i-impowt c-com.twittew.cw_mixew.scwibe.scwibecategowies
+i-impowt c-com.twittew.cw_mixew.scwibe.scwibecategowy
+impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.inject.twittewmoduwe
+impowt com.twittew.wogging.bawefowmattew
+impowt com.twittew.wogging.wevew
+i-impowt com.twittew.wogging.woggew
+impowt com.twittew.wogging.nuwwhandwew
+impowt c-com.twittew.wogging.queueinghandwew
+impowt com.twittew.wogging.scwibehandwew
+i-impowt com.twittew.wogging.{woggewfactowy => twittewwoggewfactowy}
+impowt javax.inject.named
+i-impowt javax.inject.singweton
 
-object LoggerFactoryModule extends TwitterModule {
+o-object w-woggewfactowymoduwe extends twittewmoduwe {
 
-  private val DefaultQueueSize = 10000
+  pwivate vaw defauwtqueuesize = 10000
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.AbDeciderLogger)
-  def provideAbDeciderLogger(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Logger = {
-    buildLoggerFactory(
-      ScribeCategories.AbDecider,
-      serviceIdentifier.environment,
-      statsReceiver.scope("ScribeLogger"))
-      .apply()
+  @pwovides
+  @singweton
+  @named(moduwenames.abdecidewwoggew)
+  def pwovideabdecidewwoggew(
+    sewviceidentifiew: s-sewviceidentifiew, 😳
+    statsweceivew: statsweceivew
+  ): woggew = {
+    buiwdwoggewfactowy(
+      s-scwibecategowies.abdecidew, >w<
+      sewviceidentifiew.enviwonment, (⑅˘꒳˘)
+      s-statsweceivew.scope("scwibewoggew"))
+      .appwy()
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.TopLevelApiDdgMetricsLogger)
-  def provideTopLevelApiDdgMetricsLogger(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Logger = {
-    buildLoggerFactory(
-      ScribeCategories.TopLevelApiDdgMetrics,
-      serviceIdentifier.environment,
-      statsReceiver.scope("ScribeLogger"))
-      .apply()
+  @pwovides
+  @singweton
+  @named(moduwenames.topwevewapiddgmetwicswoggew)
+  d-def pwovidetopwevewapiddgmetwicswoggew(
+    s-sewviceidentifiew: s-sewviceidentifiew, OwO
+    statsweceivew: statsweceivew
+  ): woggew = {
+    b-buiwdwoggewfactowy(
+      scwibecategowies.topwevewapiddgmetwics, (ꈍᴗꈍ)
+      sewviceidentifiew.enviwonment, 😳
+      s-statsweceivew.scope("scwibewoggew"))
+      .appwy()
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.TweetRecsLogger)
-  def provideTweetRecsLogger(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Logger = {
-    buildLoggerFactory(
-      ScribeCategories.TweetsRecs,
-      serviceIdentifier.environment,
-      statsReceiver.scope("ScribeLogger"))
-      .apply()
+  @pwovides
+  @singweton
+  @named(moduwenames.tweetwecswoggew)
+  def pwovidetweetwecswoggew(
+    sewviceidentifiew: sewviceidentifiew, 😳😳😳
+    statsweceivew: statsweceivew
+  ): w-woggew = {
+    buiwdwoggewfactowy(
+      s-scwibecategowies.tweetswecs, mya
+      sewviceidentifiew.enviwonment, mya
+      s-statsweceivew.scope("scwibewoggew"))
+      .appwy()
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.BlueVerifiedTweetRecsLogger)
-  def provideVITTweetRecsLogger(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Logger = {
-    buildLoggerFactory(
-      ScribeCategories.VITTweetsRecs,
-      serviceIdentifier.environment,
-      statsReceiver.scope("ScribeLogger"))
-      .apply()
+  @pwovides
+  @singweton
+  @named(moduwenames.bwuevewifiedtweetwecswoggew)
+  d-def pwovidevittweetwecswoggew(
+    sewviceidentifiew: sewviceidentifiew, (⑅˘꒳˘)
+    statsweceivew: s-statsweceivew
+  ): w-woggew = {
+    buiwdwoggewfactowy(
+      s-scwibecategowies.vittweetswecs, (U ﹏ U)
+      s-sewviceidentifiew.enviwonment, mya
+      statsweceivew.scope("scwibewoggew"))
+      .appwy()
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.RelatedTweetsLogger)
-  def provideRelatedTweetsLogger(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Logger = {
-    buildLoggerFactory(
-      ScribeCategories.RelatedTweets,
-      serviceIdentifier.environment,
-      statsReceiver.scope("ScribeLogger"))
-      .apply()
+  @pwovides
+  @singweton
+  @named(moduwenames.wewatedtweetswoggew)
+  d-def pwovidewewatedtweetswoggew(
+    sewviceidentifiew: sewviceidentifiew, ʘwʘ
+    s-statsweceivew: statsweceivew
+  ): woggew = {
+    b-buiwdwoggewfactowy(
+      scwibecategowies.wewatedtweets, (˘ω˘)
+      s-sewviceidentifiew.enviwonment, (U ﹏ U)
+      statsweceivew.scope("scwibewoggew"))
+      .appwy()
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.UtegTweetsLogger)
-  def provideUtegTweetsLogger(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Logger = {
-    buildLoggerFactory(
-      ScribeCategories.UtegTweets,
-      serviceIdentifier.environment,
-      statsReceiver.scope("ScribeLogger"))
-      .apply()
+  @pwovides
+  @singweton
+  @named(moduwenames.utegtweetswoggew)
+  def pwovideutegtweetswoggew(
+    s-sewviceidentifiew: s-sewviceidentifiew, ^•ﻌ•^
+    statsweceivew: statsweceivew
+  ): woggew = {
+    buiwdwoggewfactowy(
+      scwibecategowies.utegtweets, (˘ω˘)
+      sewviceidentifiew.enviwonment, :3
+      s-statsweceivew.scope("scwibewoggew"))
+      .appwy()
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.AdsRecommendationsLogger)
-  def provideAdsRecommendationsLogger(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Logger = {
-    buildLoggerFactory(
-      ScribeCategories.AdsRecommendations,
-      serviceIdentifier.environment,
-      statsReceiver.scope("ScribeLogger"))
-      .apply()
+  @pwovides
+  @singweton
+  @named(moduwenames.adswecommendationswoggew)
+  d-def pwovideadswecommendationswoggew(
+    sewviceidentifiew: s-sewviceidentifiew, ^^;;
+    s-statsweceivew: s-statsweceivew
+  ): woggew = {
+    buiwdwoggewfactowy(
+      scwibecategowies.adswecommendations,
+      sewviceidentifiew.enviwonment, 🥺
+      s-statsweceivew.scope("scwibewoggew"))
+      .appwy()
   }
 
-  private def buildLoggerFactory(
-    category: ScribeCategory,
-    environment: String,
-    statsReceiver: StatsReceiver
-  ): TwitterLoggerFactory = {
-    environment match {
-      case "prod" =>
-        TwitterLoggerFactory(
-          node = category.getProdLoggerFactoryNode,
-          level = Some(Level.INFO),
-          useParents = false,
-          handlers = List(
-            QueueingHandler(
-              maxQueueSize = DefaultQueueSize,
-              handler = ScribeHandler(
-                category = category.scribeCategory,
-                formatter = BareFormatter,
-                statsReceiver = statsReceiver.scope(category.getProdLoggerFactoryNode)
+  pwivate def buiwdwoggewfactowy(
+    categowy: scwibecategowy, (⑅˘꒳˘)
+    e-enviwonment: stwing, nyaa~~
+    statsweceivew: s-statsweceivew
+  ): t-twittewwoggewfactowy = {
+    e-enviwonment match {
+      c-case "pwod" =>
+        twittewwoggewfactowy(
+          node = c-categowy.getpwodwoggewfactowynode, :3
+          w-wevew = some(wevew.info), ( ͡o ω ͡o )
+          u-usepawents = fawse, mya
+          handwews = w-wist(
+            q-queueinghandwew(
+              m-maxqueuesize = d-defauwtqueuesize, (///ˬ///✿)
+              h-handwew = scwibehandwew(
+                categowy = categowy.scwibecategowy, (˘ω˘)
+                fowmattew = b-bawefowmattew, ^^;;
+                statsweceivew = statsweceivew.scope(categowy.getpwodwoggewfactowynode)
               )
             )
           )
         )
       case _ =>
-        TwitterLoggerFactory(
-          node = category.getStagingLoggerFactoryNode,
-          level = Some(Level.DEBUG),
-          useParents = false,
-          handlers = List(
-            { () => NullHandler }
+        twittewwoggewfactowy(
+          nyode = c-categowy.getstagingwoggewfactowynode, (✿oωo)
+          wevew = some(wevew.debug),
+          usepawents = fawse, (U ﹏ U)
+          h-handwews = w-wist(
+            { () => n-nyuwwhandwew }
           )
         )
     }

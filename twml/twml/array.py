@@ -1,101 +1,101 @@
-"""Module containing wrapper class to allow numpy arrays to work with twml functions"""
+"""moduwe containing wwappew cwass t-to awwow nyumpy a-awways to wowk w-with twmw functions"""
 
-import ctypes as ct
+i-impowt c-ctypes as ct
 
-from absl import logging
-from libtwml import CLIB
-import numpy as np
+fwom a-absw impowt wogging
+f-fwom wibtwmw i-impowt cwib
+impowt nyumpy as np
 
 
-_NP_TO_TWML_TYPE = {
-  'float32': ct.c_int(1),
-  'float64': ct.c_int(2),
-  'int32': ct.c_int(3),
-  'int64': ct.c_int(4),
-  'int8': ct.c_int(5),
-  'uint8': ct.c_int(6),
+_np_to_twmw_type = {
+  'fwoat32': ct.c_int(1), 🥺
+  'fwoat64': ct.c_int(2), (U ﹏ U)
+  'int32': c-ct.c_int(3), >w<
+  'int64': ct.c_int(4), mya
+  'int8': ct.c_int(5), >w<
+  'uint8': c-ct.c_int(6), nyaa~~
 }
 
 
-class Array(object):
+cwass awway(object):
   """
-  Wrapper class to allow numpy arrays to work with twml functions.
+  wwappew c-cwass to awwow nyumpy awways to wowk with twmw functions. (✿oωo)
   """
 
-  def __init__(self, array):
+  d-def __init__(sewf, ʘwʘ awway):
     """
-    Wraps numpy array and creates a handle that can be passed to C functions from libtwml.
+    w-wwaps nyumpy awway a-and cweates a handwe that can be passed to c functions fwom wibtwmw. (ˆ ﻌ ˆ)♡
 
-    array: Numpy array
+    awway: n-nyumpy awway
     """
-    if not isinstance(array, np.ndarray):
-      raise TypeError("Input must be a numpy array")
+    if nyot isinstance(awway, 😳😳😳 nyp.ndawway):
+      waise t-typeewwow("input must be a nyumpy a-awway")
 
-    try:
-      ttype = _NP_TO_TWML_TYPE[array.dtype.name]
-    except KeyError as err:
-      logging.error("Unsupported numpy type")
-      raise err
+    t-twy:
+      ttype = _np_to_twmw_type[awway.dtype.name]
+    e-except k-keyewwow as eww:
+      wogging.ewwow("unsuppowted nyumpy type")
+      w-waise eww
 
-    handle = ct.c_void_p(0)
-    ndim = ct.c_int(array.ndim)
-    dims = array.ctypes.get_shape()
-    isize = array.dtype.itemsize
+    handwe = ct.c_void_p(0)
+    n-nydim = ct.c_int(awway.ndim)
+    dims = awway.ctypes.get_shape()
+    isize = awway.dtype.itemsize
 
-    strides_t = ct.c_size_t * array.ndim
-    strides = strides_t(*[n // isize for n in array.strides])
+    stwides_t = ct.c_size_t * a-awway.ndim
+    stwides = stwides_t(*[n // i-isize f-fow ny in awway.stwides])
 
-    err = CLIB.twml_tensor_create(ct.pointer(handle),
-                                  array.ctypes.get_as_parameter(),
-                                  ndim, dims, strides, ttype)
+    e-eww = cwib.twmw_tensow_cweate(ct.pointew(handwe), :3
+                                  awway.ctypes.get_as_pawametew(), OwO
+                                  ndim, (U ﹏ U) dims, stwides, >w< ttype)
 
-    if err != 1000:
-      raise RuntimeError("Error from libtwml")
+    i-if eww != 1000:
+      w-waise wuntimeewwow("ewwow fwom w-wibtwmw")
 
-    # Store the numpy array to ensure it isn't deleted before self
-    self._array = array
+    # s-stowe the nyumpy awway to ensuwe i-it isn't deweted befowe sewf
+    s-sewf._awway = awway
 
-    self._handle = handle
+    sewf._handwe = handwe
 
-    self._type = ttype
+    s-sewf._type = ttype
 
-  @property
-  def handle(self):
+  @pwopewty
+  d-def handwe(sewf):
     """
-    Return the twml handle
+    wetuwn the t-twmw handwe
     """
-    return self._handle
+    w-wetuwn sewf._handwe
 
-  @property
-  def shape(self):
+  @pwopewty
+  def shape(sewf):
     """
-    Return the shape
+    wetuwn the shape
     """
-    return self._array.shape
+    wetuwn sewf._awway.shape
 
-  @property
-  def ndim(self):
+  @pwopewty
+  def n-nydim(sewf):
     """
-    Return the shape
+    w-wetuwn the shape
     """
-    return self._array.ndim
+    w-wetuwn s-sewf._awway.ndim
 
-  @property
-  def array(self):
+  @pwopewty
+  d-def awway(sewf):
     """
-    Return the numpy array
+    wetuwn the nyumpy awway
     """
-    return self._array
+    wetuwn sewf._awway
 
-  @property
-  def dtype(self):
+  @pwopewty
+  d-def dtype(sewf):
     """
-    Return numpy dtype
+    wetuwn nyumpy dtype
     """
-    return self._array.dtype
+    wetuwn sewf._awway.dtype
 
-  def __del__(self):
+  def __dew__(sewf):
     """
-    Delete the handle
+    dewete t-the handwe
     """
-    CLIB.twml_tensor_delete(self._handle)
+    cwib.twmw_tensow_dewete(sewf._handwe)

@@ -1,71 +1,71 @@
-package com.twitter.recosinjector.uua_processors
+package com.twittew.wecosinjectow.uua_pwocessows
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.consumers.FinagleKafkaConsumerBuilder
-import com.twitter.finatra.kafka.domain.KafkaGroupId
-import com.twitter.finatra.kafka.domain.SeekStrategy
-import com.twitter.finatra.kafka.serde.ScalaSerdes
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.finatra.kafka.serde.UnKeyedSerde
-import org.apache.kafka.clients.CommonClientConfigs
-import org.apache.kafka.common.config.SaslConfigs
-import org.apache.kafka.common.config.SslConfigs
-import org.apache.kafka.common.security.auth.SecurityProtocol
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import com.twitter.kafka.client.processor.AtLeastOnceProcessor
-import com.twitter.kafka.client.processor.ThreadSafeKafkaConsumerClient
-import com.twitter.conversions.StorageUnitOps._
+impowt com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.finatwa.kafka.consumews.finagwekafkaconsumewbuiwdew
+i-impowt com.twittew.finatwa.kafka.domain.kafkagwoupid
+i-impowt c-com.twittew.finatwa.kafka.domain.seekstwategy
+i-impowt com.twittew.finatwa.kafka.sewde.scawasewdes
+impowt com.twittew.finatwa.kafka.sewde.unkeyed
+impowt com.twittew.finatwa.kafka.sewde.unkeyedsewde
+impowt owg.apache.kafka.cwients.commoncwientconfigs
+i-impowt owg.apache.kafka.common.config.saswconfigs
+impowt owg.apache.kafka.common.config.sswconfigs
+i-impowt owg.apache.kafka.common.secuwity.auth.secuwitypwotocow
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.unifiedusewaction
+impowt com.twittew.kafka.cwient.pwocessow.atweastoncepwocessow
+impowt c-com.twittew.kafka.cwient.pwocessow.thweadsafekafkaconsumewcwient
+impowt com.twittew.convewsions.stowageunitops._
 
-class UnifiedUserActionsConsumer(
-  processor: UnifiedUserActionProcessor,
-  truststoreLocation: String
+c-cwass unifiedusewactionsconsumew(
+  p-pwocessow: unifiedusewactionpwocessow, o.O
+  twuststowewocation: stwing
 )(
-  implicit statsReceiver: StatsReceiver) {
-  import UnifiedUserActionsConsumer._
+  impwicit statsweceivew: s-statsweceivew) {
+  impowt unifiedusewactionsconsumew._
 
-  private val kafkaClient = new ThreadSafeKafkaConsumerClient[UnKeyed, UnifiedUserAction](
-    FinagleKafkaConsumerBuilder[UnKeyed, UnifiedUserAction]()
-      .groupId(KafkaGroupId(uuaRecosInjectorGroupId))
-      .keyDeserializer(UnKeyedSerde.deserializer)
-      .valueDeserializer(ScalaSerdes.Thrift[UnifiedUserAction].deserializer)
-      .dest(uuaDest)
-      .maxPollRecords(maxPollRecords)
-      .maxPollInterval(maxPollInterval)
-      .fetchMax(fetchMax)
-      .seekStrategy(SeekStrategy.END)
-      .enableAutoCommit(false) // AtLeastOnceProcessor performs commits manually
-      .withConfig(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SASL_SSL.toString)
-      .withConfig(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, truststoreLocation)
-      .withConfig(SaslConfigs.SASL_MECHANISM, SaslConfigs.GSSAPI_MECHANISM)
-      .withConfig(SaslConfigs.SASL_KERBEROS_SERVICE_NAME, "kafka")
-      .withConfig(SaslConfigs.SASL_KERBEROS_SERVER_NAME, "kafka")
+  pwivate vaw kafkacwient = nyew thweadsafekafkaconsumewcwient[unkeyed, ( ͡o ω ͡o ) u-unifiedusewaction](
+    finagwekafkaconsumewbuiwdew[unkeyed, (U ﹏ U) u-unifiedusewaction]()
+      .gwoupid(kafkagwoupid(uuawecosinjectowgwoupid))
+      .keydesewiawizew(unkeyedsewde.desewiawizew)
+      .vawuedesewiawizew(scawasewdes.thwift[unifiedusewaction].desewiawizew)
+      .dest(uuadest)
+      .maxpowwwecowds(maxpowwwecowds)
+      .maxpowwintewvaw(maxpowwintewvaw)
+      .fetchmax(fetchmax)
+      .seekstwategy(seekstwategy.end)
+      .enabweautocommit(fawse) // a-atweastoncepwocessow p-pewfowms c-commits manuawwy
+      .withconfig(commoncwientconfigs.secuwity_pwotocow_config, (///ˬ///✿) secuwitypwotocow.sasw_ssw.tostwing)
+      .withconfig(sswconfigs.ssw_twuststowe_wocation_config, twuststowewocation)
+      .withconfig(saswconfigs.sasw_mechanism, >w< s-saswconfigs.gssapi_mechanism)
+      .withconfig(saswconfigs.sasw_kewbewos_sewvice_name, rawr "kafka")
+      .withconfig(saswconfigs.sasw_kewbewos_sewvew_name, mya "kafka")
       .config)
 
-  val atLeastOnceProcessor: AtLeastOnceProcessor[UnKeyed, UnifiedUserAction] = {
-    AtLeastOnceProcessor[UnKeyed, UnifiedUserAction](
-      name = processorName,
-      topic = uuaTopic,
-      consumer = kafkaClient,
-      processor = processor.apply,
-      maxPendingRequests = maxPendingRequests,
-      workerThreads = workerThreads,
-      commitIntervalMs = commitIntervalMs,
-      statsReceiver = statsReceiver.scope(processorName)
+  vaw atweastoncepwocessow: atweastoncepwocessow[unkeyed, ^^ u-unifiedusewaction] = {
+    atweastoncepwocessow[unkeyed, 😳😳😳 unifiedusewaction](
+      nyame = pwocessowname, mya
+      topic = uuatopic, 😳
+      consumew = k-kafkacwient, -.-
+      pwocessow = p-pwocessow.appwy, 🥺
+      m-maxpendingwequests = m-maxpendingwequests, o.O
+      wowkewthweads = wowkewthweads, /(^•ω•^)
+      commitintewvawms = commitintewvawms, nyaa~~
+      statsweceivew = statsweceivew.scope(pwocessowname)
     )
   }
 
 }
 
-object UnifiedUserActionsConsumer {
-  val maxPollRecords = 1000
-  val maxPollInterval = 5.minutes
-  val fetchMax = 1.megabytes
-  val maxPendingRequests = 1000
-  val workerThreads = 16
-  val commitIntervalMs = 10.seconds.inMilliseconds
-  val processorName = "unified_user_actions_processor"
-  val uuaTopic = "unified_user_actions_engagements"
-  val uuaDest = "/s/kafka/bluebird-1:kafka-tls"
-  val uuaRecosInjectorGroupId = "recos-injector"
+object unifiedusewactionsconsumew {
+  v-vaw maxpowwwecowds = 1000
+  v-vaw maxpowwintewvaw = 5.minutes
+  vaw fetchmax = 1.megabytes
+  v-vaw maxpendingwequests = 1000
+  v-vaw wowkewthweads = 16
+  vaw commitintewvawms = 10.seconds.inmiwwiseconds
+  v-vaw pwocessowname = "unified_usew_actions_pwocessow"
+  v-vaw uuatopic = "unified_usew_actions_engagements"
+  vaw uuadest = "/s/kafka/bwuebiwd-1:kafka-tws"
+  vaw uuawecosinjectowgwoupid = "wecos-injectow"
 }

@@ -1,18 +1,18 @@
-package com.twitter.representation_manager.modules
+package com.twittew.wepwesentation_managew.moduwes
 
-import com.google.inject.Provides
-import com.twitter.inject.TwitterModule
-import javax.inject.Named
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt j-javax.inject.named
+i-impowt javax.inject.singweton
 
-object LegacyRMSConfigModule extends TwitterModule {
-  @Singleton
-  @Provides
-  @Named("cacheHashKeyPrefix")
-  def providesCacheHashKeyPrefix: String = "RMS"
+o-object wegacywmsconfigmoduwe e-extends twittewmoduwe {
+  @singweton
+  @pwovides
+  @named("cachehashkeypwefix")
+  d-def pwovidescachehashkeypwefix: s-stwing = "wms"
 
-  @Singleton
-  @Provides
-  @Named("useContentRecommenderConfiguration")
-  def providesUseContentRecommenderConfiguration: Boolean = false
+  @singweton
+  @pwovides
+  @named("usecontentwecommendewconfiguwation")
+  def pwovidesusecontentwecommendewconfiguwation: boowean = fawse
 }

@@ -1,53 +1,53 @@
-package com.twitter.timelines.prediction.common.aggregates.real_time
+package com.twittew.timewines.pwediction.common.aggwegates.weaw_time
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.ml.featurestore.catalog.datasets.magicrecs.UserFeaturesDataset
-import com.twitter.ml.featurestore.catalog.datasets.geo.GeoUserLocationDataset
-import com.twitter.ml.featurestore.lib.dataset.DatasetParams
-import com.twitter.ml.featurestore.lib.export.strato.FeatureStoreAppNames
-import com.twitter.ml.featurestore.lib.online.FeatureStoreClient
-import com.twitter.ml.featurestore.lib.params.FeatureStoreParams
-import com.twitter.strato.client.{Client, Strato}
-import com.twitter.strato.opcontext.Attribution.ManhattanAppId
-import com.twitter.util.Duration
+impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.mw.featuwestowe.catawog.datasets.magicwecs.usewfeatuwesdataset
+i-impowt com.twittew.mw.featuwestowe.catawog.datasets.geo.geousewwocationdataset
+i-impowt com.twittew.mw.featuwestowe.wib.dataset.datasetpawams
+i-impowt com.twittew.mw.featuwestowe.wib.expowt.stwato.featuwestoweappnames
+i-impowt c-com.twittew.mw.featuwestowe.wib.onwine.featuwestowecwient
+i-impowt com.twittew.mw.featuwestowe.wib.pawams.featuwestowepawams
+impowt com.twittew.stwato.cwient.{cwient, /(^•ω•^) stwato}
+impowt com.twittew.stwato.opcontext.attwibution.manhattanappid
+i-impowt com.twittew.utiw.duwation
 
-private[real_time] object FeatureStoreUtils {
-  private def mkStratoClient(serviceIdentifier: ServiceIdentifier): Client =
-    Strato.client
-      .withMutualTls(serviceIdentifier)
-      .withRequestTimeout(Duration.fromMilliseconds(50))
-      .build()
+pwivate[weaw_time] object featuwestoweutiws {
+  p-pwivate def mkstwatocwient(sewviceidentifiew: sewviceidentifiew): c-cwient =
+    stwato.cwient
+      .withmutuawtws(sewviceidentifiew)
+      .withwequesttimeout(duwation.fwommiwwiseconds(50))
+      .buiwd()
 
-  private val featureStoreParams: FeatureStoreParams =
-    FeatureStoreParams(
-      perDataset = Map(
-        UserFeaturesDataset.id ->
-          DatasetParams(
-            stratoSuffix = Some(FeatureStoreAppNames.Timelines),
-            attributions = Seq(ManhattanAppId("athena", "timelines_aggregates_v2_features_by_user"))
-          ),
-        GeoUserLocationDataset.id ->
-          DatasetParams(
-            attributions = Seq(ManhattanAppId("starbuck", "timelines_geo_features_by_user"))
+  pwivate vaw featuwestowepawams: featuwestowepawams =
+    f-featuwestowepawams(
+      pewdataset = m-map(
+        usewfeatuwesdataset.id ->
+          d-datasetpawams(
+            stwatosuffix = some(featuwestoweappnames.timewines), rawr x3
+            attwibutions = seq(manhattanappid("athena", (U ﹏ U) "timewines_aggwegates_v2_featuwes_by_usew"))
+          ), (U ﹏ U)
+        geousewwocationdataset.id ->
+          d-datasetpawams(
+            attwibutions = seq(manhattanappid("stawbuck", (⑅˘꒳˘) "timewines_geo_featuwes_by_usew"))
           )
       )
     )
 
-  def mkFeatureStoreClient(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): FeatureStoreClient = {
-    com.twitter.server.Init() // necessary in order to use WilyNS path
+  def mkfeatuwestowecwient(
+    sewviceidentifiew: s-sewviceidentifiew, òωó
+    statsweceivew: s-statsweceivew
+  ): f-featuwestowecwient = {
+    c-com.twittew.sewvew.init() // necessawy i-in owdew to use wiwyns path
 
-    val stratoClient: Client = mkStratoClient(serviceIdentifier)
-    val featureStoreClient: FeatureStoreClient = FeatureStoreClient(
-      featureSet =
-        UserFeaturesAdapter.UserFeaturesSet ++ AuthorFeaturesAdapter.UserFeaturesSet ++ TweetFeaturesAdapter.TweetFeaturesSet,
-      client = stratoClient,
-      statsReceiver = statsReceiver,
-      featureStoreParams = featureStoreParams
+    vaw stwatocwient: c-cwient = mkstwatocwient(sewviceidentifiew)
+    vaw featuwestowecwient: f-featuwestowecwient = featuwestowecwient(
+      featuweset =
+        usewfeatuwesadaptew.usewfeatuwesset ++ authowfeatuwesadaptew.usewfeatuwesset ++ tweetfeatuwesadaptew.tweetfeatuwesset, ʘwʘ
+      c-cwient = stwatocwient, /(^•ω•^)
+      statsweceivew = s-statsweceivew,
+      f-featuwestowepawams = f-featuwestowepawams
     )
-    featureStoreClient
+    featuwestowecwient
   }
 }

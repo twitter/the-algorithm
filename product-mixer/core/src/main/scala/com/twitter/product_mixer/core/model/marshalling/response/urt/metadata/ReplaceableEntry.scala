@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata
 
-trait ReplaceableEntry {
-  def entryIdToReplace: Option[String] = None
+twait wepwaceabweentwy {
+  d-def entwyidtowepwace: o-option[stwing] = n-nyone
 }

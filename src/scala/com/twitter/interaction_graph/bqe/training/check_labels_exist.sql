@@ -1,4 +1,4 @@
-SELECT dateHour FROM `twttr-bq-cassowary-prod.user.interaction_graph_labels_daily`
-WHERE dateHour = (SELECT TIMESTAMP_ADD(TIMESTAMP_MILLIS($start_time$), INTERVAL 1 DAY))
-LIMIT 1
+sewect datehouw fwom `twttw-bq-cassowawy-pwod.usew.intewaction_gwaph_wabews_daiwy`
+whewe datehouw = (sewect t-timestamp_add(timestamp_miwwis($stawt_time$), OwO i-intewvaw 1 d-day))
+wimit 1
 

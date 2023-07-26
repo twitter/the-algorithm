@@ -1,32 +1,32 @@
-package com.twitter.follow_recommendations.common.predicates.dismiss
+package com.twittew.fowwow_wecommendations.common.pwedicates.dismiss
 
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.FilterReason.DismissedId
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDismissedUserIds
-import com.twitter.stitch.Stitch
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.common.base.pwedicate
+i-impowt com.twittew.fowwow_wecommendations.common.base.pwedicatewesuwt
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.fiwtewweason.dismissedid
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.hasdismissedusewids
+i-impowt c-com.twittew.stitch.stitch
+impowt javax.inject.singweton
 
-@Singleton
-class DismissedCandidatePredicate extends Predicate[(HasDismissedUserIds, CandidateUser)] {
+@singweton
+cwass dismissedcandidatepwedicate extends pwedicate[(hasdismissedusewids, nyaa~~ c-candidateusew)] {
 
-  override def apply(pair: (HasDismissedUserIds, CandidateUser)): Stitch[PredicateResult] = {
+  ovewwide def appwy(paiw: (hasdismissedusewids, /(^•ω•^) c-candidateusew)): stitch[pwedicatewesuwt] = {
 
-    val (targetUser, candidate) = pair
-    targetUser.dismissedUserIds
-      .map { dismissedUserIds =>
-        if (!dismissedUserIds.contains(candidate.id)) {
-          DismissedCandidatePredicate.ValidStitch
-        } else {
-          DismissedCandidatePredicate.DismissedStitch
+    v-vaw (tawgetusew, candidate) = paiw
+    tawgetusew.dismissedusewids
+      .map { d-dismissedusewids =>
+        if (!dismissedusewids.contains(candidate.id)) {
+          dismissedcandidatepwedicate.vawidstitch
+        } e-ewse {
+          d-dismissedcandidatepwedicate.dismissedstitch
         }
-      }.getOrElse(DismissedCandidatePredicate.ValidStitch)
+      }.getowewse(dismissedcandidatepwedicate.vawidstitch)
   }
 }
 
-object DismissedCandidatePredicate {
-  val ValidStitch: Stitch[PredicateResult.Valid.type] = Stitch.value(PredicateResult.Valid)
-  val DismissedStitch: Stitch[PredicateResult.Invalid] =
-    Stitch.value(PredicateResult.Invalid(Set(DismissedId)))
+object dismissedcandidatepwedicate {
+  vaw vawidstitch: stitch[pwedicatewesuwt.vawid.type] = s-stitch.vawue(pwedicatewesuwt.vawid)
+  vaw dismissedstitch: stitch[pwedicatewesuwt.invawid] =
+    stitch.vawue(pwedicatewesuwt.invawid(set(dismissedid)))
 }

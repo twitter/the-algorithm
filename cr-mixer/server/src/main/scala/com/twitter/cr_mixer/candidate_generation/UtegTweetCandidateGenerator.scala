@@ -1,179 +1,179 @@
-package com.twitter.cr_mixer.candidate_generation
+package com.twittew.cw_mixew.candidate_genewation
 
-import com.twitter.contentrecommender.thriftscala.TweetInfo
-import com.twitter.cr_mixer.logging.UtegTweetScribeLogger
-import com.twitter.cr_mixer.filter.UtegFilterRunner
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.TweetWithScoreAndSocialProof
-import com.twitter.cr_mixer.model.UtegTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.similarity_engine.UserTweetEntityGraphSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.cr_mixer.source_signal.RealGraphInSourceGraphFetcher
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+impowt com.twittew.contentwecommendew.thwiftscawa.tweetinfo
+i-impowt c-com.twittew.cw_mixew.wogging.utegtweetscwibewoggew
+i-impowt com.twittew.cw_mixew.fiwtew.utegfiwtewwunnew
+i-impowt c-com.twittew.cw_mixew.modew.candidategenewationinfo
+i-impowt com.twittew.cw_mixew.modew.initiawcandidate
+i-impowt c-com.twittew.cw_mixew.modew.moduwenames
+impowt com.twittew.cw_mixew.modew.wankedcandidate
+impowt com.twittew.cw_mixew.modew.simiwawityengineinfo
+impowt com.twittew.cw_mixew.modew.tweetwithscoweandsociawpwoof
+impowt c-com.twittew.cw_mixew.modew.utegtweetcandidategenewatowquewy
+impowt com.twittew.cw_mixew.simiwawity_engine.usewtweetentitygwaphsimiwawityengine
+impowt com.twittew.cw_mixew.simiwawity_engine.standawdsimiwawityengine
+i-impowt com.twittew.cw_mixew.souwce_signaw.weawgwaphinsouwcegwaphfetchew
+i-impowt com.twittew.cw_mixew.souwce_signaw.souwcefetchew.fetchewquewy
+impowt com.twittew.cw_mixew.thwiftscawa.simiwawityenginetype
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.utiw.statsutiw
+impowt com.twittew.simcwustews_v2.common.tweetid
+i-impowt com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.utiw.futuwe
+impowt javax.inject.inject
+impowt javax.inject.named
+i-impowt javax.inject.singweton
 
-@Singleton
-class UtegTweetCandidateGenerator @Inject() (
-  @Named(ModuleNames.UserTweetEntityGraphSimilarityEngine) userTweetEntityGraphSimilarityEngine: StandardSimilarityEngine[
-    UserTweetEntityGraphSimilarityEngine.Query,
-    TweetWithScoreAndSocialProof
-  ],
-  utegTweetScribeLogger: UtegTweetScribeLogger,
-  tweetInfoStore: ReadableStore[TweetId, TweetInfo],
-  realGraphInSourceGraphFetcher: RealGraphInSourceGraphFetcher,
-  utegFilterRunner: UtegFilterRunner,
-  globalStats: StatsReceiver) {
+@singweton
+cwass utegtweetcandidategenewatow @inject() (
+  @named(moduwenames.usewtweetentitygwaphsimiwawityengine) usewtweetentitygwaphsimiwawityengine: standawdsimiwawityengine[
+    usewtweetentitygwaphsimiwawityengine.quewy, σωσ
+    tweetwithscoweandsociawpwoof
+  ], -.-
+  u-utegtweetscwibewoggew: utegtweetscwibewoggew, ^^;;
+  t-tweetinfostowe: w-weadabwestowe[tweetid, XD t-tweetinfo], 🥺
+  w-weawgwaphinsouwcegwaphfetchew: weawgwaphinsouwcegwaphfetchew, òωó
+  utegfiwtewwunnew: u-utegfiwtewwunnew, (ˆ ﻌ ˆ)♡
+  gwobawstats: statsweceivew) {
 
-  private val stats: StatsReceiver = globalStats.scope(this.getClass.getCanonicalName)
-  private val fetchSeedsStats = stats.scope("fetchSeeds")
-  private val fetchCandidatesStats = stats.scope("fetchCandidates")
-  private val utegFilterStats = stats.scope("utegFilter")
-  private val rankStats = stats.scope("rank")
+  p-pwivate vaw stats: statsweceivew = gwobawstats.scope(this.getcwass.getcanonicawname)
+  pwivate vaw fetchseedsstats = s-stats.scope("fetchseeds")
+  pwivate v-vaw fetchcandidatesstats = s-stats.scope("fetchcandidates")
+  p-pwivate vaw utegfiwtewstats = stats.scope("utegfiwtew")
+  pwivate vaw wankstats = s-stats.scope("wank")
 
-  def get(
-    query: UtegTweetCandidateGeneratorQuery
-  ): Future[Seq[TweetWithScoreAndSocialProof]] = {
+  d-def get(
+    quewy: utegtweetcandidategenewatowquewy
+  ): f-futuwe[seq[tweetwithscoweandsociawpwoof]] = {
 
-    val allStats = stats.scope("all")
-    val perProductStats = stats.scope("perProduct", query.product.toString)
-    StatsUtil.trackItemsStats(allStats) {
-      StatsUtil.trackItemsStats(perProductStats) {
+    v-vaw awwstats = stats.scope("aww")
+    v-vaw pewpwoductstats = s-stats.scope("pewpwoduct", -.- quewy.pwoduct.tostwing)
+    statsutiw.twackitemsstats(awwstats) {
+      s-statsutiw.twackitemsstats(pewpwoductstats) {
 
         /**
-         * The candidate we return in the end needs a social proof field, which isn't
-         * supported by the any existing Candidate type, so we created TweetWithScoreAndSocialProof
-         * instead.
+         * the candidate w-we wetuwn in the end nyeeds a-a sociaw pwoof f-fiewd, :3 which isn't
+         * suppowted by the any existing candidate type, ʘwʘ so we cweated tweetwithscoweandsociawpwoof
+         * instead. 🥺
          *
-         * However, filters and light ranker expect Candidate-typed param to work. In order to minimise the
-         * changes to them, we are doing conversions from/to TweetWithScoreAndSocialProof to/from Candidate
-         * in this method.
+         * h-howevew, >_< fiwtews a-and wight wankew expect candidate-typed p-pawam t-to wowk. ʘwʘ in o-owdew to minimise the
+         * changes to them, (˘ω˘) we awe doing convewsions f-fwom/to tweetwithscoweandsociawpwoof to/fwom candidate
+         * in this method. (✿oωo)
          */
-        for {
-          realGraphSeeds <- StatsUtil.trackItemMapStats(fetchSeedsStats) {
-            fetchSeeds(query)
+        f-fow {
+          weawgwaphseeds <- s-statsutiw.twackitemmapstats(fetchseedsstats) {
+            f-fetchseeds(quewy)
           }
-          initialTweets <- StatsUtil.trackItemsStats(fetchCandidatesStats) {
-            fetchCandidates(query, realGraphSeeds)
+          i-initiawtweets <- statsutiw.twackitemsstats(fetchcandidatesstats) {
+            f-fetchcandidates(quewy, (///ˬ///✿) w-weawgwaphseeds)
           }
-          initialCandidates <- convertToInitialCandidates(initialTweets)
-          filteredCandidates <- StatsUtil.trackItemsStats(utegFilterStats) {
-            utegFilter(query, initialCandidates)
+          i-initiawcandidates <- c-convewttoinitiawcandidates(initiawtweets)
+          fiwtewedcandidates <- statsutiw.twackitemsstats(utegfiwtewstats) {
+            u-utegfiwtew(quewy, rawr x3 i-initiawcandidates)
           }
-          rankedCandidates <- StatsUtil.trackItemsStats(rankStats) {
-            rankCandidates(query, filteredCandidates)
+          w-wankedcandidates <- s-statsutiw.twackitemsstats(wankstats) {
+            w-wankcandidates(quewy, fiwtewedcandidates)
           }
-        } yield {
-          val topTweets = rankedCandidates.take(query.maxNumResults)
-          convertToTweets(topTweets, initialTweets.map(tweet => tweet.tweetId -> tweet).toMap)
+        } yiewd {
+          vaw t-toptweets = wankedcandidates.take(quewy.maxnumwesuwts)
+          convewttotweets(toptweets, -.- initiawtweets.map(tweet => tweet.tweetid -> tweet).tomap)
         }
       }
     }
   }
 
-  private def utegFilter(
-    query: UtegTweetCandidateGeneratorQuery,
-    candidates: Seq[InitialCandidate]
-  ): Future[Seq[InitialCandidate]] = {
-    utegFilterRunner.runSequentialFilters(query, Seq(candidates)).map(_.flatten)
+  pwivate def u-utegfiwtew(
+    quewy: utegtweetcandidategenewatowquewy, ^^
+    candidates: seq[initiawcandidate]
+  ): futuwe[seq[initiawcandidate]] = {
+    u-utegfiwtewwunnew.wunsequentiawfiwtews(quewy, (⑅˘꒳˘) s-seq(candidates)).map(_.fwatten)
   }
 
-  private def fetchSeeds(
-    query: UtegTweetCandidateGeneratorQuery
-  ): Future[Map[UserId, Double]] = {
-    realGraphInSourceGraphFetcher
-      .get(FetcherQuery(query.userId, query.product, query.userState, query.params))
-      .map(_.map(_.seedWithScores).getOrElse(Map.empty))
+  p-pwivate def fetchseeds(
+    quewy: u-utegtweetcandidategenewatowquewy
+  ): futuwe[map[usewid, nyaa~~ d-doubwe]] = {
+    w-weawgwaphinsouwcegwaphfetchew
+      .get(fetchewquewy(quewy.usewid, quewy.pwoduct, /(^•ω•^) quewy.usewstate, quewy.pawams))
+      .map(_.map(_.seedwithscowes).getowewse(map.empty))
   }
 
-  private[candidate_generation] def rankCandidates(
-    query: UtegTweetCandidateGeneratorQuery,
-    filteredCandidates: Seq[InitialCandidate],
-  ): Future[Seq[RankedCandidate]] = {
-    val blendedCandidates = filteredCandidates.map(candidate =>
-      candidate.toBlendedCandidate(Seq(candidate.candidateGenerationInfo)))
+  pwivate[candidate_genewation] def wankcandidates(
+    q-quewy: utegtweetcandidategenewatowquewy,
+    fiwtewedcandidates: s-seq[initiawcandidate], (U ﹏ U)
+  ): futuwe[seq[wankedcandidate]] = {
+    v-vaw bwendedcandidates = f-fiwtewedcandidates.map(candidate =>
+      candidate.tobwendedcandidate(seq(candidate.candidategenewationinfo)))
 
-    Future(
-      blendedCandidates.map { candidate =>
-        val score = candidate.getSimilarityScore
-        candidate.toRankedCandidate(score)
+    futuwe(
+      b-bwendedcandidates.map { c-candidate =>
+        vaw scowe = candidate.getsimiwawityscowe
+        c-candidate.towankedcandidate(scowe)
       }
     )
 
   }
 
-  def fetchCandidates(
-    query: UtegTweetCandidateGeneratorQuery,
-    realGraphSeeds: Map[UserId, Double],
-  ): Future[Seq[TweetWithScoreAndSocialProof]] = {
-    val engineQuery = UserTweetEntityGraphSimilarityEngine.fromParams(
-      query.userId,
-      realGraphSeeds,
-      Some(query.impressedTweetList.toSeq),
-      query.params
+  d-def fetchcandidates(
+    quewy: utegtweetcandidategenewatowquewy, 😳😳😳
+    weawgwaphseeds: map[usewid, >w< doubwe], XD
+  ): futuwe[seq[tweetwithscoweandsociawpwoof]] = {
+    v-vaw e-enginequewy = usewtweetentitygwaphsimiwawityengine.fwompawams(
+      q-quewy.usewid, o.O
+      weawgwaphseeds, mya
+      s-some(quewy.impwessedtweetwist.toseq), 🥺
+      q-quewy.pawams
     )
 
-    utegTweetScribeLogger.scribeInitialCandidates(
-      query,
-      userTweetEntityGraphSimilarityEngine.getCandidates(engineQuery).map(_.toSeq.flatten)
+    utegtweetscwibewoggew.scwibeinitiawcandidates(
+      q-quewy, ^^;;
+      usewtweetentitygwaphsimiwawityengine.getcandidates(enginequewy).map(_.toseq.fwatten)
     )
   }
 
-  private[candidate_generation] def convertToInitialCandidates(
-    candidates: Seq[TweetWithScoreAndSocialProof],
-  ): Future[Seq[InitialCandidate]] = {
-    val tweetIds = candidates.map(_.tweetId).toSet
-    Future.collect(tweetInfoStore.multiGet(tweetIds)).map { tweetInfos =>
+  pwivate[candidate_genewation] def convewttoinitiawcandidates(
+    candidates: s-seq[tweetwithscoweandsociawpwoof], :3
+  ): f-futuwe[seq[initiawcandidate]] = {
+    vaw tweetids = candidates.map(_.tweetid).toset
+    f-futuwe.cowwect(tweetinfostowe.muwtiget(tweetids)).map { tweetinfos =>
       /** *
-       * If tweetInfo does not exist, we will filter out this tweet candidate.
+       * i-if tweetinfo does nyot exist, (U ﹏ U) we wiww fiwtew out this tweet candidate. OwO
        */
-      candidates.collect {
-        case candidate if tweetInfos.getOrElse(candidate.tweetId, None).isDefined =>
-          val tweetInfo = tweetInfos(candidate.tweetId)
-            .getOrElse(throw new IllegalStateException("Check previous line's condition"))
+      c-candidates.cowwect {
+        case candidate if tweetinfos.getowewse(candidate.tweetid, 😳😳😳 nyone).isdefined =>
+          vaw t-tweetinfo = tweetinfos(candidate.tweetid)
+            .getowewse(thwow nyew iwwegawstateexception("check pwevious w-wine's condition"))
 
-          InitialCandidate(
-            tweetId = candidate.tweetId,
-            tweetInfo = tweetInfo,
-            CandidateGenerationInfo(
-              None,
-              SimilarityEngineInfo(
-                similarityEngineType = SimilarityEngineType.Uteg,
-                modelId = None,
-                score = Some(candidate.score)),
-              Seq.empty
+          i-initiawcandidate(
+            tweetid = candidate.tweetid, (ˆ ﻌ ˆ)♡
+            tweetinfo = tweetinfo, XD
+            c-candidategenewationinfo(
+              n-nyone, (ˆ ﻌ ˆ)♡
+              simiwawityengineinfo(
+                simiwawityenginetype = simiwawityenginetype.uteg, ( ͡o ω ͡o )
+                modewid = nyone,
+                s-scowe = some(candidate.scowe)), rawr x3
+              seq.empty
             )
           )
       }
     }
   }
 
-  private[candidate_generation] def convertToTweets(
-    candidates: Seq[RankedCandidate],
-    tweetMap: Map[TweetId, TweetWithScoreAndSocialProof]
-  ): Seq[TweetWithScoreAndSocialProof] = {
-    candidates.map { candidate =>
-      tweetMap
-        .get(candidate.tweetId).map { tweet =>
-          TweetWithScoreAndSocialProof(
-            tweet.tweetId,
-            candidate.predictionScore,
-            tweet.socialProofByType
+  p-pwivate[candidate_genewation] def convewttotweets(
+    candidates: seq[wankedcandidate], nyaa~~
+    tweetmap: m-map[tweetid, >_< tweetwithscoweandsociawpwoof]
+  ): seq[tweetwithscoweandsociawpwoof] = {
+    c-candidates.map { c-candidate =>
+      tweetmap
+        .get(candidate.tweetid).map { t-tweet =>
+          tweetwithscoweandsociawpwoof(
+            t-tweet.tweetid, ^^;;
+            c-candidate.pwedictionscowe, (ˆ ﻌ ˆ)♡
+            t-tweet.sociawpwoofbytype
           )
-        // The exception should never be thrown
-        }.getOrElse(throw new Exception("Cannot find ranked candidate in original UTEG tweets"))
+        // the exception s-shouwd n-nyevew be thwown
+        }.getowewse(thwow nyew exception("cannot f-find wanked candidate i-in owiginaw u-uteg tweets"))
     }
   }
 }

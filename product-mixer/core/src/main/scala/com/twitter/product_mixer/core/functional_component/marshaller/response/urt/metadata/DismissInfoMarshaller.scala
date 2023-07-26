@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.DismissInfo
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.dismissinfo
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class DismissInfoMarshaller @Inject() (callbackMarshaller: CallbackMarshaller) {
+@singweton
+c-cwass dismissinfomawshawwew @inject() (cawwbackmawshawwew: c-cawwbackmawshawwew) {
 
-  def apply(dismissInfo: DismissInfo): urt.DismissInfo =
-    urt.DismissInfo(dismissInfo.callbacks.map(_.map(callbackMarshaller(_))))
+  def appwy(dismissinfo: dismissinfo): uwt.dismissinfo =
+    uwt.dismissinfo(dismissinfo.cawwbacks.map(_.map(cawwbackmawshawwew(_))))
 }

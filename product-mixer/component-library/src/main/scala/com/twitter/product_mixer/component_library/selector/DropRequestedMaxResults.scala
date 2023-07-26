@@ -1,55 +1,55 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.BoundedParam
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awwpipewines
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.timewines.configapi.boundedpawam
 
 /**
- * Limit the number of results to min(PipelineQuery.requestedMaxResults, ServerMaxResultsParam)
+ * wimit t-the nyumbew of wesuwts to min(pipewinequewy.wequestedmaxwesuwts, >w< sewvewmaxwesuwtspawam)
  *
- * PipelineQuery.requestedMaxResults is optionally set in the pipelineQuery.
- * If it is not set, then the default value of DefaultRequestedMaxResultsParam is used.
+ * pipewinequewy.wequestedmaxwesuwts i-is optionawwy set in the pipewinequewy. (U ﹏ U)
+ * i-if it is nyot set, 😳 then the defauwt vawue of defauwtwequestedmaxwesuwtspawam i-is used. (ˆ ﻌ ˆ)♡
  *
- * ServerMaxResultsParam specifies the maximum number of results supported, irrespective of what is
- * specified by the client in PipelineQuery.requestedMaxResults
- * (or the DefaultRequestedMaxResultsParam default if not specified)
+ * sewvewmaxwesuwtspawam s-specifies t-the maximum nyumbew of wesuwts suppowted, 😳😳😳 iwwespective of nani is
+ * specified b-by the cwient in pipewinequewy.wequestedmaxwesuwts
+ * (ow the defauwtwequestedmaxwesuwtspawam defauwt if nyot specified)
  *
- * For example, if ServerMaxResultsParam is 5, PipelineQuery.requestedMaxResults is 3,
- * and the results contain 10 items, then these items will be reduced to the first 3 selected items.
+ * f-fow exampwe, (U ﹏ U) if sewvewmaxwesuwtspawam i-is 5, (///ˬ///✿) p-pipewinequewy.wequestedmaxwesuwts i-is 3,
+ * and t-the wesuwts contain 10 items, 😳 then these items w-wiww be weduced to the fiwst 3 sewected items. 😳
  *
- * If PipelineQuery.requestedMaxResults is not set, DefaultRequestedMaxResultsParam is 3,
- * ServerMaxResultsParam is 5 and the results contain 10 items,
- * then these items will be reduced to the first 3 selected items.
+ * i-if pipewinequewy.wequestedmaxwesuwts is nyot set, σωσ defauwtwequestedmaxwesuwtspawam is 3, rawr x3
+ * sewvewmaxwesuwtspawam is 5 and the w-wesuwts contain 10 items, OwO
+ * t-then these items w-wiww be weduced t-to the fiwst 3 sewected items. /(^•ω•^)
  *
- * Another example, if ServerMaxResultsParam is 5, PipelineQuery.requestedMaxResults is 8,
- * and the results contain 10 items, then these will be reduced to the first 5 selected items.
+ * anothew exampwe, 😳😳😳 if sewvewmaxwesuwtspawam i-is 5, ( ͡o ω ͡o ) pipewinequewy.wequestedmaxwesuwts i-is 8, >_<
+ * and the wesuwts c-contain 10 items, >w< t-then these wiww be weduced to t-the fiwst 5 sewected items. rawr
  *
- * The items inside the modules will not be affected by this selector.
+ * t-the items inside the moduwes wiww nyot be affected b-by this sewectow. 😳
  */
-case class DropRequestedMaxResults(
-  defaultRequestedMaxResultsParam: BoundedParam[Int],
-  serverMaxResultsParam: BoundedParam[Int])
-    extends Selector[PipelineQuery] {
+case c-cwass dwopwequestedmaxwesuwts(
+  defauwtwequestedmaxwesuwtspawam: b-boundedpawam[int], >w<
+  s-sewvewmaxwesuwtspawam: boundedpawam[int])
+    extends sewectow[pipewinequewy] {
 
-  override val pipelineScope: CandidateScope = AllPipelines
+  ovewwide vaw pipewinescope: candidatescope = awwpipewines
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val requestedMaxResults = query.maxResults(defaultRequestedMaxResultsParam)
-    val serverMaxResults = query.params(serverMaxResultsParam)
-    assert(requestedMaxResults > 0, "Requested max results must be greater than zero")
-    assert(serverMaxResults > 0, "Server max results must be greater than zero")
+  ovewwide d-def appwy(
+    q-quewy: pipewinequewy, (⑅˘꒳˘)
+    wemainingcandidates: seq[candidatewithdetaiws], OwO
+    w-wesuwt: s-seq[candidatewithdetaiws]
+  ): s-sewectowwesuwt = {
+    vaw wequestedmaxwesuwts = quewy.maxwesuwts(defauwtwequestedmaxwesuwtspawam)
+    v-vaw sewvewmaxwesuwts = quewy.pawams(sewvewmaxwesuwtspawam)
+    assewt(wequestedmaxwesuwts > 0, (ꈍᴗꈍ) "wequested max wesuwts m-must be gweatew than zewo")
+    a-assewt(sewvewmaxwesuwts > 0, 😳 "sewvew m-max wesuwts m-must be gweatew than zewo")
 
-    val appliedMaxResults = Math.min(requestedMaxResults, serverMaxResults)
-    val resultUpdated = DropSelector.takeUntil(appliedMaxResults, result)
+    v-vaw appwiedmaxwesuwts = m-math.min(wequestedmaxwesuwts, 😳😳😳 s-sewvewmaxwesuwts)
+    v-vaw wesuwtupdated = dwopsewectow.takeuntiw(appwiedmaxwesuwts, mya wesuwt)
 
-    SelectorResult(remainingCandidates = remainingCandidates, result = resultUpdated)
+    s-sewectowwesuwt(wemainingcandidates = w-wemainingcandidates, mya w-wesuwt = wesuwtupdated)
   }
 }

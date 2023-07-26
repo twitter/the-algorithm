@@ -1,85 +1,85 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-import com.twitter.follow_recommendations.thriftscala.DebugDataRecord
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
-import scala.collection.convert.ImplicitConversions._
+impowt c-com.twittew.fowwow_wecommendations.thwiftscawa.debugdatawecowd
+impowt c-com.twittew.mw.api.datawecowd
+i-impowt com.twittew.mw.api.featuwecontext
+i-impowt c-com.twittew.utiw.twy
+i-impowt c-com.twittew.utiw.wogging.wogging
+i-impowt scawa.cowwection.convewt.impwicitconvewsions._
 
-// contains the standard dataRecord struct, and the debug version if required
-case class RichDataRecord(
-  dataRecord: Option[DataRecord] = None,
-  debugDataRecord: Option[DebugDataRecord] = None,
+// contains the standawd datawecowd stwuct, mya and the debug v-vewsion if wequiwed
+case cwass wichdatawecowd(
+  d-datawecowd: option[datawecowd] = nyone, >w<
+  debugdatawecowd: o-option[debugdatawecowd] = nyone, nyaa~~
 )
 
-trait HasDataRecord extends Logging {
-  def dataRecord: Option[RichDataRecord]
+twait hasdatawecowd extends wogging {
+  d-def datawecowd: option[wichdatawecowd]
 
-  def toDebugDataRecord(dr: DataRecord, featureContext: FeatureContext): DebugDataRecord = {
+  d-def todebugdatawecowd(dw: d-datawecowd, (✿oωo) featuwecontext: featuwecontext): debugdatawecowd = {
 
-    val binaryFeatures: Option[Set[String]] = if (dr.isSetBinaryFeatures) {
-      Some(dr.getBinaryFeatures.flatMap { id =>
-        Try(featureContext.getFeature(id).getFeatureName).toOption
-      }.toSet)
-    } else None
+    vaw binawyfeatuwes: o-option[set[stwing]] = if (dw.issetbinawyfeatuwes) {
+      some(dw.getbinawyfeatuwes.fwatmap { id =>
+        twy(featuwecontext.getfeatuwe(id).getfeatuwename).tooption
+      }.toset)
+    } e-ewse nyone
 
-    val continuousFeatures: Option[Map[String, Double]] = if (dr.isSetContinuousFeatures) {
-      Some(dr.getContinuousFeatures.flatMap {
-        case (id, value) =>
-          Try(featureContext.getFeature(id).getFeatureName).toOption.map { id =>
-            id -> value.toDouble
+    vaw continuousfeatuwes: o-option[map[stwing, ʘwʘ doubwe]] = i-if (dw.issetcontinuousfeatuwes) {
+      s-some(dw.getcontinuousfeatuwes.fwatmap {
+        c-case (id, (ˆ ﻌ ˆ)♡ vawue) =>
+          twy(featuwecontext.getfeatuwe(id).getfeatuwename).tooption.map { id =>
+            i-id -> vawue.todoubwe
           }
-      }.toMap)
-    } else None
+      }.tomap)
+    } ewse nyone
 
-    val discreteFeatures: Option[Map[String, Long]] = if (dr.isSetDiscreteFeatures) {
-      Some(dr.getDiscreteFeatures.flatMap {
-        case (id, value) =>
-          Try(featureContext.getFeature(id).getFeatureName).toOption.map { id =>
-            id -> value.toLong
+    vaw discwetefeatuwes: option[map[stwing, 😳😳😳 w-wong]] = if (dw.issetdiscwetefeatuwes) {
+      some(dw.getdiscwetefeatuwes.fwatmap {
+        case (id, :3 vawue) =>
+          twy(featuwecontext.getfeatuwe(id).getfeatuwename).tooption.map { id =>
+            id -> vawue.towong
           }
-      }.toMap)
-    } else None
+      }.tomap)
+    } e-ewse nyone
 
-    val stringFeatures: Option[Map[String, String]] = if (dr.isSetStringFeatures) {
-      Some(dr.getStringFeatures.flatMap {
-        case (id, value) =>
-          Try(featureContext.getFeature(id).getFeatureName).toOption.map { id =>
-            id -> value
+    vaw stwingfeatuwes: o-option[map[stwing, OwO s-stwing]] = i-if (dw.issetstwingfeatuwes) {
+      some(dw.getstwingfeatuwes.fwatmap {
+        case (id, (U ﹏ U) vawue) =>
+          t-twy(featuwecontext.getfeatuwe(id).getfeatuwename).tooption.map { i-id =>
+            id -> vawue
           }
-      }.toMap)
-    } else None
+      }.tomap)
+    } e-ewse nyone
 
-    val sparseBinaryFeatures: Option[Map[String, Set[String]]] = if (dr.isSetSparseBinaryFeatures) {
-      Some(dr.getSparseBinaryFeatures.flatMap {
-        case (id, values) =>
-          Try(featureContext.getFeature(id).getFeatureName).toOption.map { id =>
-            id -> values.toSet
+    v-vaw spawsebinawyfeatuwes: option[map[stwing, >w< s-set[stwing]]] = if (dw.issetspawsebinawyfeatuwes) {
+      s-some(dw.getspawsebinawyfeatuwes.fwatmap {
+        case (id, (U ﹏ U) vawues) =>
+          t-twy(featuwecontext.getfeatuwe(id).getfeatuwename).tooption.map { id =>
+            id -> v-vawues.toset
           }
-      }.toMap)
-    } else None
+      }.tomap)
+    } ewse nyone
 
-    val sparseContinuousFeatures: Option[Map[String, Map[String, Double]]] =
-      if (dr.isSetSparseContinuousFeatures) {
-        Some(dr.getSparseContinuousFeatures.flatMap {
-          case (id, values) =>
-            Try(featureContext.getFeature(id).getFeatureName).toOption.map { id =>
-              id -> values.map {
-                case (str, value) =>
-                  str -> value.toDouble
-              }.toMap
+    v-vaw spawsecontinuousfeatuwes: o-option[map[stwing, 😳 map[stwing, (ˆ ﻌ ˆ)♡ doubwe]]] =
+      if (dw.issetspawsecontinuousfeatuwes) {
+        some(dw.getspawsecontinuousfeatuwes.fwatmap {
+          case (id, 😳😳😳 vawues) =>
+            t-twy(featuwecontext.getfeatuwe(id).getfeatuwename).tooption.map { i-id =>
+              id -> vawues.map {
+                c-case (stw, (U ﹏ U) vawue) =>
+                  s-stw -> v-vawue.todoubwe
+              }.tomap
             }
-        }.toMap)
-      } else None
+        }.tomap)
+      } ewse nyone
 
-    DebugDataRecord(
-      binaryFeatures = binaryFeatures,
-      continuousFeatures = continuousFeatures,
-      discreteFeatures = discreteFeatures,
-      stringFeatures = stringFeatures,
-      sparseBinaryFeatures = sparseBinaryFeatures,
-      sparseContinuousFeatures = sparseContinuousFeatures,
+    debugdatawecowd(
+      binawyfeatuwes = b-binawyfeatuwes, (///ˬ///✿)
+      continuousfeatuwes = continuousfeatuwes, 😳
+      discwetefeatuwes = discwetefeatuwes, 😳
+      s-stwingfeatuwes = stwingfeatuwes, σωσ
+      s-spawsebinawyfeatuwes = s-spawsebinawyfeatuwes, rawr x3
+      spawsecontinuousfeatuwes = s-spawsecontinuousfeatuwes,
     )
   }
 

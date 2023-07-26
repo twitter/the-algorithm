@@ -1,306 +1,306 @@
-package com.twitter.frigate.pushservice.model.candidate
+package com.twittew.fwigate.pushsewvice.modew.candidate
 
-import com.twitter.frigate.common.base.FeatureMap
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.ml.HydrationContextBuilder
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.PushMLModel
-import com.twitter.frigate.pushservice.params.WeightedOpenOrNtabClickModel
-import com.twitter.nrel.hydration.push.HydrationContext
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.util.Future
-import java.util.concurrent.ConcurrentHashMap
-import scala.collection.concurrent.{Map => CMap}
-import scala.collection.convert.decorateAsScala._
+impowt com.twittew.fwigate.common.base.featuwemap
+i-impowt c-com.twittew.fwigate.common.wec_types.wectypes
+impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.mw.hydwationcontextbuiwdew
+i-impowt com.twittew.fwigate.pushsewvice.mw.pushmwmodewscowew
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushmwmodew
+i-impowt com.twittew.fwigate.pushsewvice.pawams.weightedopenowntabcwickmodew
+impowt com.twittew.nwew.hydwation.push.hydwationcontext
+impowt com.twittew.timewines.configapi.fspawam
+impowt com.twittew.utiw.futuwe
+i-impowt java.utiw.concuwwent.concuwwenthashmap
+impowt scawa.cowwection.concuwwent.{map => cmap}
+i-impowt scawa.cowwection.convewt.decowateasscawa._
 
-trait MLScores {
+twait mwscowes {
 
-  self: PushCandidate =>
+  s-sewf: pushcandidate =>
 
-  lazy val candidateHydrationContext: Future[HydrationContext] = HydrationContextBuilder.build(self)
+  wazy vaw candidatehydwationcontext: futuwe[hydwationcontext] = hydwationcontextbuiwdew.buiwd(sewf)
 
-  def weightedOpenOrNtabClickModelScorer: PushMLModelScorer
+  d-def weightedopenowntabcwickmodewscowew: pushmwmodewscowew
 
-  // Used to store the scores and avoid duplicate prediction
-  private val qualityModelScores: CMap[
-    (PushMLModel.Value, WeightedOpenOrNtabClickModel.ModelNameType),
-    Future[Option[Double]]
+  // u-used to s-stowe the scowes and avoid dupwicate pwediction
+  pwivate vaw quawitymodewscowes: cmap[
+    (pushmwmodew.vawue, :3 w-weightedopenowntabcwickmodew.modewnametype), (ꈍᴗꈍ)
+    futuwe[option[doubwe]]
   ] =
-    new ConcurrentHashMap[(PushMLModel.Value, WeightedOpenOrNtabClickModel.ModelNameType), Future[
-      Option[Double]
-    ]]().asScala
+    nyew concuwwenthashmap[(pushmwmodew.vawue, 🥺 weightedopenowntabcwickmodew.modewnametype), (✿oωo) futuwe[
+      o-option[doubwe]
+    ]]().asscawa
 
-  def populateQualityModelScore(
-    pushMLModel: PushMLModel.Value,
-    modelVersion: WeightedOpenOrNtabClickModel.ModelNameType,
-    prob: Future[Option[Double]]
+  def p-popuwatequawitymodewscowe(
+    pushmwmodew: p-pushmwmodew.vawue, (U ﹏ U)
+    m-modewvewsion: w-weightedopenowntabcwickmodew.modewnametype, :3
+    pwob: futuwe[option[doubwe]]
   ) = {
-    val modelAndVersion = (pushMLModel, modelVersion)
-    if (!qualityModelScores.contains(modelAndVersion)) {
-      qualityModelScores += modelAndVersion -> prob
+    vaw modewandvewsion = (pushmwmodew, ^^;; m-modewvewsion)
+    if (!quawitymodewscowes.contains(modewandvewsion)) {
+      quawitymodewscowes += m-modewandvewsion -> pwob
     }
   }
 
-  // The ML scores that also depend on other candidates and are only available after all candidates are processed
-  // For example, the likelihood info for Importance Sampling
-  private lazy val crossCandidateMlScores: CMap[String, Double] =
-    new ConcurrentHashMap[String, Double]().asScala
+  // the mw scowes that awso depend on othew candidates and a-awe onwy avaiwabwe aftew aww candidates a-awe pwocessed
+  // f-fow exampwe, rawr t-the wikewihood info fow impowtance sampwing
+  pwivate wazy v-vaw cwosscandidatemwscowes: cmap[stwing, 😳😳😳 d-doubwe] =
+    nyew concuwwenthashmap[stwing, (✿oωo) d-doubwe]().asscawa
 
-  def populateCrossCandidateMlScores(scoreName: String, score: Double): Unit = {
-    if (crossCandidateMlScores.contains(scoreName)) {
-      throw new Exception(
-        s"$scoreName has been populated in the CrossCandidateMlScores!\n" +
-          s"Existing crossCandidateMlScores are ${crossCandidateMlScores}\n"
+  d-def popuwatecwosscandidatemwscowes(scowename: s-stwing, OwO scowe: doubwe): u-unit = {
+    if (cwosscandidatemwscowes.contains(scowename)) {
+      thwow nyew e-exception(
+        s"$scowename h-has been popuwated in the cwosscandidatemwscowes!\n" +
+          s-s"existing c-cwosscandidatemwscowes awe ${cwosscandidatemwscowes}\n"
       )
     }
-    crossCandidateMlScores += scoreName -> score
+    cwosscandidatemwscowes += scowename -> scowe
   }
 
-  def getMLModelScore(
-    pushMLModel: PushMLModel.Value,
-    modelVersion: WeightedOpenOrNtabClickModel.ModelNameType
-  ): Future[Option[Double]] = {
-    qualityModelScores.getOrElseUpdate(
-      (pushMLModel, modelVersion),
-      weightedOpenOrNtabClickModelScorer
-        .singlePredicationForModelVersion(modelVersion, self, Some(pushMLModel))
+  def getmwmodewscowe(
+    pushmwmodew: p-pushmwmodew.vawue, ʘwʘ
+    m-modewvewsion: weightedopenowntabcwickmodew.modewnametype
+  ): f-futuwe[option[doubwe]] = {
+    q-quawitymodewscowes.getowewseupdate(
+      (pushmwmodew, m-modewvewsion), (ˆ ﻌ ˆ)♡
+      weightedopenowntabcwickmodewscowew
+        .singwepwedicationfowmodewvewsion(modewvewsion, (U ﹏ U) sewf, some(pushmwmodew))
     )
   }
 
-  def getMLModelScoreWithoutUpdate(
-    pushMLModel: PushMLModel.Value,
-    modelVersion: WeightedOpenOrNtabClickModel.ModelNameType
-  ): Future[Option[Double]] = {
-    qualityModelScores.getOrElse(
-      (pushMLModel, modelVersion),
-      Future.None
+  def getmwmodewscowewithoutupdate(
+    p-pushmwmodew: pushmwmodew.vawue,
+    modewvewsion: weightedopenowntabcwickmodew.modewnametype
+  ): futuwe[option[doubwe]] = {
+    quawitymodewscowes.getowewse(
+      (pushmwmodew, UwU modewvewsion), XD
+      f-futuwe.none
     )
   }
 
-  def getWeightedOpenOrNtabClickModelScore(
-    weightedOONCModelParam: FSParam[WeightedOpenOrNtabClickModel.ModelNameType]
-  ): Future[Option[Double]] = {
-    getMLModelScore(
-      PushMLModel.WeightedOpenOrNtabClickProbability,
-      target.params(weightedOONCModelParam)
+  def g-getweightedopenowntabcwickmodewscowe(
+    w-weightedooncmodewpawam: f-fspawam[weightedopenowntabcwickmodew.modewnametype]
+  ): futuwe[option[doubwe]] = {
+    g-getmwmodewscowe(
+      p-pushmwmodew.weightedopenowntabcwickpwobabiwity, ʘwʘ
+      t-tawget.pawams(weightedooncmodewpawam)
     )
   }
 
-  /* After we unify the ranking and filtering models, we follow the iteration process below
-     When improving the WeightedOONC model,
-     1) Run experiment which only replace the ranking model
-     2) Make decisions according to the experiment results
-     3) Use the ranking model for filtering
-     4) Adjust percentile thresholds if necessary
+  /* a-aftew we unify the wanking and fiwtewing m-modews, rawr x3 we f-fowwow the itewation p-pwocess bewow
+     w-when impwoving t-the weightedoonc modew, ^^;;
+     1) wun expewiment which onwy w-wepwace the wanking modew
+     2) make decisions accowding to the expewiment wesuwts
+     3) u-use the wanking modew fow fiwtewing
+     4) adjust pewcentiwe thweshowds i-if nyecessawy
    */
-  lazy val mrWeightedOpenOrNtabClickRankingProbability: Future[Option[Double]] =
-    target.rankingModelParam.flatMap { modelParam =>
-      getWeightedOpenOrNtabClickModelScore(modelParam)
+  wazy v-vaw mwweightedopenowntabcwickwankingpwobabiwity: f-futuwe[option[doubwe]] =
+    tawget.wankingmodewpawam.fwatmap { m-modewpawam =>
+      getweightedopenowntabcwickmodewscowe(modewpawam)
     }
 
-  def getBigFilteringScore(
-    pushMLModel: PushMLModel.Value,
-    modelVersion: WeightedOpenOrNtabClickModel.ModelNameType
-  ): Future[Option[Double]] = {
-    mrWeightedOpenOrNtabClickRankingProbability.flatMap {
-      case Some(rankingScore) =>
-        // Adds ranking score to feature map (we must ensure the feature key is also in the feature context)
-        mergeFeatures(
-          FeatureMap(
-            numericFeatures = Map("scribe.WeightedOpenOrNtabClickProbability" -> rankingScore)
+  d-def getbigfiwtewingscowe(
+    p-pushmwmodew: pushmwmodew.vawue, ʘwʘ
+    modewvewsion: weightedopenowntabcwickmodew.modewnametype
+  ): futuwe[option[doubwe]] = {
+    mwweightedopenowntabcwickwankingpwobabiwity.fwatmap {
+      case s-some(wankingscowe) =>
+        // adds wanking s-scowe to featuwe map (we must ensuwe t-the featuwe k-key is awso in the featuwe context)
+        mewgefeatuwes(
+          f-featuwemap(
+            nyumewicfeatuwes = m-map("scwibe.weightedopenowntabcwickpwobabiwity" -> wankingscowe)
           )
         )
-        getMLModelScore(pushMLModel, modelVersion)
-      case _ => Future.None
+        g-getmwmodewscowe(pushmwmodew, (U ﹏ U) m-modewvewsion)
+      case _ => futuwe.none
     }
   }
 
-  def getWeightedOpenOrNtabClickScoreForScribing(): Seq[Future[Map[String, Double]]] = {
-    Seq(
-      mrWeightedOpenOrNtabClickRankingProbability.map {
-        case Some(score) => Map(PushMLModel.WeightedOpenOrNtabClickProbability.toString -> score)
-        case _ => Map.empty[String, Double]
-      },
-      Future
+  def getweightedopenowntabcwickscowefowscwibing(): seq[futuwe[map[stwing, (˘ω˘) doubwe]]] = {
+    s-seq(
+      mwweightedopenowntabcwickwankingpwobabiwity.map {
+        c-case some(scowe) => m-map(pushmwmodew.weightedopenowntabcwickpwobabiwity.tostwing -> scowe)
+        c-case _ => m-map.empty[stwing, (ꈍᴗꈍ) doubwe]
+      }, /(^•ω•^)
+      f-futuwe
         .join(
-          target.rankingModelParam,
-          mrWeightedOpenOrNtabClickRankingProbability
+          tawget.wankingmodewpawam, >_<
+          mwweightedopenowntabcwickwankingpwobabiwity
         ).map {
-          case (rankingModelParam, Some(score)) =>
-            Map(target.params(rankingModelParam).toString -> score)
-          case _ => Map.empty[String, Double]
+          case (wankingmodewpawam, σωσ some(scowe)) =>
+            m-map(tawget.pawams(wankingmodewpawam).tostwing -> s-scowe)
+          case _ => map.empty[stwing, ^^;; d-doubwe]
         }
     )
   }
 
-  def getNsfwScoreForScribing(): Seq[Future[Map[String, Double]]] = {
-    val nsfwScoreFut = getMLModelScoreWithoutUpdate(
-      PushMLModel.HealthNsfwProbability,
-      target.params(PushFeatureSwitchParams.BqmlHealthModelTypeParam))
-    Seq(nsfwScoreFut.map { nsfwScoreOpt =>
-      nsfwScoreOpt
-        .map(nsfwScore => Map(PushMLModel.HealthNsfwProbability.toString -> nsfwScore)).getOrElse(
-          Map.empty[String, Double])
+  d-def getnsfwscowefowscwibing(): seq[futuwe[map[stwing, 😳 doubwe]]] = {
+    vaw n-nysfwscowefut = getmwmodewscowewithoutupdate(
+      pushmwmodew.heawthnsfwpwobabiwity, >_<
+      tawget.pawams(pushfeatuweswitchpawams.bqmwheawthmodewtypepawam))
+    seq(nsfwscowefut.map { nysfwscoweopt =>
+      n-nysfwscoweopt
+        .map(nsfwscowe => map(pushmwmodew.heawthnsfwpwobabiwity.tostwing -> nysfwscowe)).getowewse(
+          m-map.empty[stwing, -.- d-doubwe])
     })
   }
 
-  def getBigFilteringSupervisedScoresForScribing(): Seq[Future[Map[String, Double]]] = {
-    if (target.params(
-        PushFeatureSwitchParams.EnableMrRequestScribingBigFilteringSupervisedScores)) {
-      Seq(
-        mrBigFilteringSupervisedSendingScore.map {
-          case Some(score) =>
-            Map(PushMLModel.BigFilteringSupervisedSendingModel.toString -> score)
-          case _ => Map.empty[String, Double]
-        },
-        mrBigFilteringSupervisedWithoutSendingScore.map {
-          case Some(score) =>
-            Map(PushMLModel.BigFilteringSupervisedWithoutSendingModel.toString -> score)
-          case _ => Map.empty[String, Double]
+  def getbigfiwtewingsupewvisedscowesfowscwibing(): seq[futuwe[map[stwing, UwU doubwe]]] = {
+    i-if (tawget.pawams(
+        p-pushfeatuweswitchpawams.enabwemwwequestscwibingbigfiwtewingsupewvisedscowes)) {
+      seq(
+        mwbigfiwtewingsupewvisedsendingscowe.map {
+          case some(scowe) =>
+            m-map(pushmwmodew.bigfiwtewingsupewvisedsendingmodew.tostwing -> scowe)
+          c-case _ => map.empty[stwing, :3 doubwe]
+        }, σωσ
+        mwbigfiwtewingsupewvisedwithoutsendingscowe.map {
+          case some(scowe) =>
+            m-map(pushmwmodew.bigfiwtewingsupewvisedwithoutsendingmodew.tostwing -> scowe)
+          case _ => m-map.empty[stwing, >w< d-doubwe]
         }
       )
-    } else Seq.empty[Future[Map[String, Double]]]
+    } ewse s-seq.empty[futuwe[map[stwing, (ˆ ﻌ ˆ)♡ doubwe]]]
   }
 
-  def getBigFilteringRLScoresForScribing(): Seq[Future[Map[String, Double]]] = {
-    if (target.params(PushFeatureSwitchParams.EnableMrRequestScribingBigFilteringRLScores)) {
-      Seq(
-        mrBigFilteringRLSendingScore.map {
-          case Some(score) => Map(PushMLModel.BigFilteringRLSendingModel.toString -> score)
-          case _ => Map.empty[String, Double]
+  d-def g-getbigfiwtewingwwscowesfowscwibing(): s-seq[futuwe[map[stwing, ʘwʘ doubwe]]] = {
+    if (tawget.pawams(pushfeatuweswitchpawams.enabwemwwequestscwibingbigfiwtewingwwscowes)) {
+      s-seq(
+        mwbigfiwtewingwwsendingscowe.map {
+          c-case some(scowe) => map(pushmwmodew.bigfiwtewingwwsendingmodew.tostwing -> scowe)
+          c-case _ => m-map.empty[stwing, :3 d-doubwe]
         },
-        mrBigFilteringRLWithoutSendingScore.map {
-          case Some(score) => Map(PushMLModel.BigFilteringRLWithoutSendingModel.toString -> score)
-          case _ => Map.empty[String, Double]
+        mwbigfiwtewingwwwithoutsendingscowe.map {
+          case some(scowe) => m-map(pushmwmodew.bigfiwtewingwwwithoutsendingmodew.tostwing -> scowe)
+          c-case _ => map.empty[stwing, (˘ω˘) d-doubwe]
         }
       )
-    } else Seq.empty[Future[Map[String, Double]]]
+    } ewse seq.empty[futuwe[map[stwing, 😳😳😳 doubwe]]]
   }
 
-  def buildModelScoresSeqForScribing(): Seq[Future[Map[String, Double]]] = {
-    getWeightedOpenOrNtabClickScoreForScribing() ++
-      getBigFilteringSupervisedScoresForScribing() ++
-      getBigFilteringRLScoresForScribing() ++
-      getNsfwScoreForScribing()
+  def buiwdmodewscowesseqfowscwibing(): s-seq[futuwe[map[stwing, rawr x3 d-doubwe]]] = {
+    g-getweightedopenowntabcwickscowefowscwibing() ++
+      g-getbigfiwtewingsupewvisedscowesfowscwibing() ++
+      getbigfiwtewingwwscowesfowscwibing() ++
+      getnsfwscowefowscwibing()
   }
 
-  lazy val mrBigFilteringSupervisedSendingScore: Future[Option[Double]] =
-    getBigFilteringScore(
-      PushMLModel.BigFilteringSupervisedSendingModel,
-      target.params(PushFeatureSwitchParams.BigFilteringSupervisedSendingModelParam)
+  w-wazy vaw mwbigfiwtewingsupewvisedsendingscowe: futuwe[option[doubwe]] =
+    getbigfiwtewingscowe(
+      pushmwmodew.bigfiwtewingsupewvisedsendingmodew,
+      tawget.pawams(pushfeatuweswitchpawams.bigfiwtewingsupewvisedsendingmodewpawam)
     )
 
-  lazy val mrBigFilteringSupervisedWithoutSendingScore: Future[Option[Double]] =
-    getBigFilteringScore(
-      PushMLModel.BigFilteringSupervisedWithoutSendingModel,
-      target.params(PushFeatureSwitchParams.BigFilteringSupervisedWithoutSendingModelParam)
+  w-wazy vaw mwbigfiwtewingsupewvisedwithoutsendingscowe: futuwe[option[doubwe]] =
+    g-getbigfiwtewingscowe(
+      pushmwmodew.bigfiwtewingsupewvisedwithoutsendingmodew, (✿oωo)
+      t-tawget.pawams(pushfeatuweswitchpawams.bigfiwtewingsupewvisedwithoutsendingmodewpawam)
     )
 
-  lazy val mrBigFilteringRLSendingScore: Future[Option[Double]] =
-    getBigFilteringScore(
-      PushMLModel.BigFilteringRLSendingModel,
-      target.params(PushFeatureSwitchParams.BigFilteringRLSendingModelParam)
+  wazy vaw mwbigfiwtewingwwsendingscowe: f-futuwe[option[doubwe]] =
+    getbigfiwtewingscowe(
+      pushmwmodew.bigfiwtewingwwsendingmodew, (ˆ ﻌ ˆ)♡
+      t-tawget.pawams(pushfeatuweswitchpawams.bigfiwtewingwwsendingmodewpawam)
     )
 
-  lazy val mrBigFilteringRLWithoutSendingScore: Future[Option[Double]] =
-    getBigFilteringScore(
-      PushMLModel.BigFilteringRLWithoutSendingModel,
-      target.params(PushFeatureSwitchParams.BigFilteringRLWithoutSendingModelParam)
+  w-wazy v-vaw mwbigfiwtewingwwwithoutsendingscowe: f-futuwe[option[doubwe]] =
+    g-getbigfiwtewingscowe(
+      pushmwmodew.bigfiwtewingwwwithoutsendingmodew, :3
+      tawget.pawams(pushfeatuweswitchpawams.bigfiwtewingwwwithoutsendingmodewpawam)
     )
 
-  lazy val mrWeightedOpenOrNtabClickFilteringProbability: Future[Option[Double]] =
-    getWeightedOpenOrNtabClickModelScore(
-      target.filteringModelParam
+  wazy vaw mwweightedopenowntabcwickfiwtewingpwobabiwity: futuwe[option[doubwe]] =
+    getweightedopenowntabcwickmodewscowe(
+      tawget.fiwtewingmodewpawam
     )
 
-  lazy val mrQualityUprankingProbability: Future[Option[Double]] =
-    getMLModelScore(
-      PushMLModel.FilteringProbability,
-      target.params(PushFeatureSwitchParams.QualityUprankingModelTypeParam)
+  w-wazy vaw mwquawityupwankingpwobabiwity: f-futuwe[option[doubwe]] =
+    g-getmwmodewscowe(
+      pushmwmodew.fiwtewingpwobabiwity, (U ᵕ U❁)
+      t-tawget.pawams(pushfeatuweswitchpawams.quawityupwankingmodewtypepawam)
     )
 
-  lazy val mrNsfwScore: Future[Option[Double]] =
-    getMLModelScoreWithoutUpdate(
-      PushMLModel.HealthNsfwProbability,
-      target.params(PushFeatureSwitchParams.BqmlHealthModelTypeParam)
+  wazy vaw mwnsfwscowe: futuwe[option[doubwe]] =
+    getmwmodewscowewithoutupdate(
+      pushmwmodew.heawthnsfwpwobabiwity, ^^;;
+      t-tawget.pawams(pushfeatuweswitchpawams.bqmwheawthmodewtypepawam)
     )
 
-  // MR quality upranking param
-  private val qualityUprankingBoost: String = "QualityUprankingBoost"
-  private val producerQualityUprankingBoost: String = "ProducerQualityUprankingBoost"
-  private val qualityUprankingInfo: CMap[String, Double] =
-    new ConcurrentHashMap[String, Double]().asScala
+  // m-mw quawity upwanking pawam
+  p-pwivate vaw quawityupwankingboost: stwing = "quawityupwankingboost"
+  pwivate vaw p-pwoducewquawityupwankingboost: s-stwing = "pwoducewquawityupwankingboost"
+  pwivate v-vaw quawityupwankinginfo: cmap[stwing, mya d-doubwe] =
+    nyew concuwwenthashmap[stwing, 😳😳😳 doubwe]().asscawa
 
-  lazy val mrQualityUprankingBoost: Option[Double] =
-    qualityUprankingInfo.get(qualityUprankingBoost)
-  lazy val mrProducerQualityUprankingBoost: Option[Double] =
-    qualityUprankingInfo.get(producerQualityUprankingBoost)
+  wazy vaw mwquawityupwankingboost: o-option[doubwe] =
+    q-quawityupwankinginfo.get(quawityupwankingboost)
+  w-wazy vaw m-mwpwoducewquawityupwankingboost: o-option[doubwe] =
+    quawityupwankinginfo.get(pwoducewquawityupwankingboost)
 
-  def setQualityUprankingBoost(boost: Double) =
-    if (qualityUprankingInfo.contains(qualityUprankingBoost)) {
-      qualityUprankingInfo(qualityUprankingBoost) = boost
-    } else {
-      qualityUprankingInfo += qualityUprankingBoost -> boost
+  d-def setquawityupwankingboost(boost: d-doubwe) =
+    if (quawityupwankinginfo.contains(quawityupwankingboost)) {
+      q-quawityupwankinginfo(quawityupwankingboost) = b-boost
+    } ewse {
+      quawityupwankinginfo += q-quawityupwankingboost -> boost
     }
-  def setProducerQualityUprankingBoost(boost: Double) =
-    if (qualityUprankingInfo.contains(producerQualityUprankingBoost)) {
-      qualityUprankingInfo(producerQualityUprankingBoost) = boost
-    } else {
-      qualityUprankingInfo += producerQualityUprankingBoost -> boost
+  def setpwoducewquawityupwankingboost(boost: d-doubwe) =
+    if (quawityupwankinginfo.contains(pwoducewquawityupwankingboost)) {
+      quawityupwankinginfo(pwoducewquawityupwankingboost) = b-boost
+    } e-ewse {
+      quawityupwankinginfo += pwoducewquawityupwankingboost -> b-boost
     }
 
-  private lazy val mrModelScoresFut: Future[Map[String, Double]] = {
-    if (self.target.isLoggedOutUser) {
-      Future.value(Map.empty[String, Double])
-    } else {
-      Future
-        .collectToTry {
-          buildModelScoresSeqForScribing()
-        }.map { scoreTrySeq =>
-          scoreTrySeq
-            .collect {
-              case result if result.isReturn => result.get()
-            }.reduce(_ ++ _)
+  pwivate wazy vaw mwmodewscowesfut: f-futuwe[map[stwing, OwO d-doubwe]] = {
+    i-if (sewf.tawget.iswoggedoutusew) {
+      futuwe.vawue(map.empty[stwing, rawr doubwe])
+    } ewse {
+      f-futuwe
+        .cowwecttotwy {
+          buiwdmodewscowesseqfowscwibing()
+        }.map { scowetwyseq =>
+          s-scowetwyseq
+            .cowwect {
+              c-case wesuwt if wesuwt.iswetuwn => w-wesuwt.get()
+            }.weduce(_ ++ _)
         }
     }
   }
 
-  // Internal model scores (scores that are independent of other candidates) for scribing
-  lazy val modelScores: Future[Map[String, Double]] =
-    target.dauProbability.flatMap { dauProbabilityOpt =>
-      val dauProbScoreMap = dauProbabilityOpt
-        .map(_.probability).map { dauProb =>
-          PushMLModel.DauProbability.toString -> dauProb
-        }.toMap
+  // intewnaw m-modew scowes (scowes t-that awe independent of othew candidates) f-fow scwibing
+  wazy vaw modewscowes: futuwe[map[stwing, XD d-doubwe]] =
+    t-tawget.daupwobabiwity.fwatmap { daupwobabiwityopt =>
+      v-vaw daupwobscowemap = daupwobabiwityopt
+        .map(_.pwobabiwity).map { daupwob =>
+          p-pushmwmodew.daupwobabiwity.tostwing -> d-daupwob
+        }.tomap
 
-      // Avoid unnecessary MR model scribing
-      if (target.isDarkWrite) {
-        mrModelScoresFut.map(dauProbScoreMap ++ _)
-      } else if (RecTypes.isSendHandlerType(commonRecType) && !RecTypes
-          .sendHandlerTypesUsingMrModel(commonRecType)) {
-        Future.value(dauProbScoreMap)
-      } else {
-        mrModelScoresFut.map(dauProbScoreMap ++ _)
+      // a-avoid unnecessawy mw modew scwibing
+      if (tawget.isdawkwwite) {
+        mwmodewscowesfut.map(daupwobscowemap ++ _)
+      } ewse if (wectypes.issendhandwewtype(commonwectype) && !wectypes
+          .sendhandwewtypesusingmwmodew(commonwectype)) {
+        futuwe.vawue(daupwobscowemap)
+      } ewse {
+        mwmodewscowesfut.map(daupwobscowemap ++ _)
       }
     }
 
-  // We will scribe both internal ML scores and cross-Candidate scores
-  def getModelScoresforScribing(): Future[Map[String, Double]] = {
-    if (RecTypes.notEligibleForModelScoreTracking(commonRecType) || self.target.isLoggedOutUser) {
-      Future.value(Map.empty[String, Double])
-    } else {
-      modelScores.map { internalScores =>
-        if (internalScores.keySet.intersect(crossCandidateMlScores.keySet).nonEmpty) {
-          throw new Exception(
-            "crossCandidateMlScores overlap internalModelScores\n" +
-              s"internalScores keySet: ${internalScores.keySet}\n" +
-              s"crossCandidateScores keySet: ${crossCandidateMlScores.keySet}\n"
+  // we wiww scwibe both intewnaw mw scowes and cwoss-candidate s-scowes
+  d-def getmodewscowesfowscwibing(): futuwe[map[stwing, (U ﹏ U) doubwe]] = {
+    i-if (wectypes.notewigibwefowmodewscowetwacking(commonwectype) || s-sewf.tawget.iswoggedoutusew) {
+      f-futuwe.vawue(map.empty[stwing, (˘ω˘) doubwe])
+    } ewse {
+      m-modewscowes.map { intewnawscowes =>
+        i-if (intewnawscowes.keyset.intewsect(cwosscandidatemwscowes.keyset).nonempty) {
+          t-thwow nyew exception(
+            "cwosscandidatemwscowes ovewwap i-intewnawmodewscowes\n" +
+              s"intewnawscowes k-keyset: ${intewnawscowes.keyset}\n" +
+              s-s"cwosscandidatescowes keyset: ${cwosscandidatemwscowes.keyset}\n"
           )
         }
 
-        internalScores ++ crossCandidateMlScores
+        intewnawscowes ++ c-cwosscandidatemwscowes
       }
     }
   }

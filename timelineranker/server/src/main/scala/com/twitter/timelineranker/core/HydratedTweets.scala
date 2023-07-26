@@ -1,7 +1,7 @@
-package com.twitter.timelineranker.core
+package com.twittew.timewinewankew.cowe
 
-import com.twitter.timelines.model.tweet.HydratedTweet
+impowt com.twittew.timewines.modew.tweet.hydwatedtweet
 
-case class HydratedTweets(
-  outerTweets: Seq[HydratedTweet],
-  innerTweets: Seq[HydratedTweet] = Seq.empty)
+c-case cwass hydwatedtweets(
+  o-outewtweets: s-seq[hydwatedtweet], òωó
+  i-innewtweets: seq[hydwatedtweet] = s-seq.empty)

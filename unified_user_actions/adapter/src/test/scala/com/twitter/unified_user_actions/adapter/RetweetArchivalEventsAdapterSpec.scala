@@ -1,84 +1,84 @@
-package com.twitter.unified_user_actions.adapter
+package com.twittew.unified_usew_actions.adaptew
 
-import com.twitter.inject.Test
-import com.twitter.tweetypie.thriftscala.RetweetArchivalEvent
-import com.twitter.unified_user_actions.adapter.retweet_archival_events.RetweetArchivalEventsAdapter
-import com.twitter.unified_user_actions.thriftscala._
-import com.twitter.util.Time
-import org.scalatest.prop.TableDrivenPropertyChecks
+impowt com.twittew.inject.test
+i-impowt com.twittew.tweetypie.thwiftscawa.wetweetawchivawevent
+i-impowt c-com.twittew.unified_usew_actions.adaptew.wetweet_awchivaw_events.wetweetawchivaweventsadaptew
+i-impowt com.twittew.unified_usew_actions.thwiftscawa._
+i-impowt c-com.twittew.utiw.time
+i-impowt owg.scawatest.pwop.tabwedwivenpwopewtychecks
 
-class RetweetArchivalEventsAdapterSpec extends Test with TableDrivenPropertyChecks {
-  trait Fixture {
+c-cwass wetweetawchivaweventsadaptewspec extends test with tabwedwivenpwopewtychecks {
+  twait fixtuwe {
 
-    val frozenTime = Time.fromMilliseconds(1658949273000L)
+    v-vaw fwozentime = time.fwommiwwiseconds(1658949273000w)
 
-    val authorId = 1L
-    val tweetId = 101L
-    val retweetId = 102L
-    val retweetAuthorId = 2L
+    vaw authowid = 1w
+    v-vaw tweetid = 101w
+    vaw wetweetid = 102w
+    v-vaw wetweetauthowid = 2w
 
-    val retweetArchivalEvent = RetweetArchivalEvent(
-      retweetId = retweetId,
-      srcTweetId = tweetId,
-      retweetUserId = retweetAuthorId,
-      srcTweetUserId = authorId,
-      timestampMs = 0L,
-      isArchivingAction = Some(true),
+    vaw wetweetawchivawevent = wetweetawchivawevent(
+      wetweetid = w-wetweetid, (✿oωo)
+      swctweetid = t-tweetid, ʘwʘ
+      w-wetweetusewid = wetweetauthowid, (ˆ ﻌ ˆ)♡
+      swctweetusewid = authowid, 😳😳😳
+      timestampms = 0w, :3
+      isawchivingaction = some(twue), OwO
     )
-    val retweetUnarchivalEvent = RetweetArchivalEvent(
-      retweetId = retweetId,
-      srcTweetId = tweetId,
-      retweetUserId = retweetAuthorId,
-      srcTweetUserId = authorId,
-      timestampMs = 0L,
-      isArchivingAction = Some(false),
+    v-vaw wetweetunawchivawevent = wetweetawchivawevent(
+      wetweetid = wetweetid, (U ﹏ U)
+      swctweetid = t-tweetid, >w<
+      wetweetusewid = w-wetweetauthowid, (U ﹏ U)
+      s-swctweetusewid = a-authowid, 😳
+      t-timestampms = 0w, (ˆ ﻌ ˆ)♡
+      isawchivingaction = some(fawse), 😳😳😳
     )
 
-    val expectedUua1 = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(retweetAuthorId)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = tweetId,
-          actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(authorId))),
-          retweetingTweetId = Some(retweetId)
+    vaw e-expecteduua1 = unifiedusewaction(
+      usewidentifiew = u-usewidentifiew(usewid = some(wetweetauthowid)), (U ﹏ U)
+      item = item.tweetinfo(
+        tweetinfo(
+          actiontweetid = tweetid, (///ˬ///✿)
+          a-actiontweetauthowinfo = some(authowinfo(authowid = s-some(authowid))), 😳
+          w-wetweetingtweetid = s-some(wetweetid)
         )
-      ),
-      actionType = ActionType.ServerTweetArchiveRetweet,
-      eventMetadata = EventMetadata(
-        sourceTimestampMs = 0L,
-        receivedTimestampMs = frozenTime.inMilliseconds,
-        sourceLineage = SourceLineage.ServerRetweetArchivalEvents,
+      ), 😳
+      actiontype = actiontype.sewvewtweetawchivewetweet, σωσ
+      eventmetadata = e-eventmetadata(
+        s-souwcetimestampms = 0w, rawr x3
+        weceivedtimestampms = f-fwozentime.inmiwwiseconds,
+        s-souwcewineage = souwcewineage.sewvewwetweetawchivawevents, OwO
       )
     )
-    val expectedUua2 = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(retweetAuthorId)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = tweetId,
-          actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(authorId))),
-          retweetingTweetId = Some(retweetId)
+    v-vaw expecteduua2 = unifiedusewaction(
+      u-usewidentifiew = usewidentifiew(usewid = some(wetweetauthowid)), /(^•ω•^)
+      i-item = item.tweetinfo(
+        t-tweetinfo(
+          actiontweetid = t-tweetid, 😳😳😳
+          a-actiontweetauthowinfo = some(authowinfo(authowid = some(authowid))), ( ͡o ω ͡o )
+          wetweetingtweetid = some(wetweetid)
         )
-      ),
-      actionType = ActionType.ServerTweetUnarchiveRetweet,
-      eventMetadata = EventMetadata(
-        sourceTimestampMs = 0L,
-        receivedTimestampMs = frozenTime.inMilliseconds,
-        sourceLineage = SourceLineage.ServerRetweetArchivalEvents,
+      ), >_<
+      actiontype = actiontype.sewvewtweetunawchivewetweet, >w<
+      eventmetadata = e-eventmetadata(
+        s-souwcetimestampms = 0w, rawr
+        weceivedtimestampms = f-fwozentime.inmiwwiseconds, 😳
+        s-souwcewineage = s-souwcewineage.sewvewwetweetawchivawevents, >w<
       )
     )
   }
 
-  test("all tests") {
-    new Fixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val table = Table(
-          ("event", "expected"),
-          (retweetArchivalEvent, expectedUua1),
-          (retweetUnarchivalEvent, expectedUua2),
+  test("aww tests") {
+    nyew fixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        vaw tabwe = tabwe(
+          ("event", (⑅˘꒳˘) "expected"), OwO
+          (wetweetawchivawevent, (ꈍᴗꈍ) expecteduua1), 😳
+          (wetweetunawchivawevent, 😳😳😳 expecteduua2), mya
         )
-        forEvery(table) { (event: RetweetArchivalEvent, expected: UnifiedUserAction) =>
-          val actual = RetweetArchivalEventsAdapter.adaptEvent(event)
-          assert(Seq(expected) === actual)
+        f-fowevewy(tabwe) { (event: wetweetawchivawevent, mya e-expected: u-unifiedusewaction) =>
+          v-vaw actuaw = wetweetawchivaweventsadaptew.adaptevent(event)
+          a-assewt(seq(expected) === a-actuaw)
         }
       }
     }

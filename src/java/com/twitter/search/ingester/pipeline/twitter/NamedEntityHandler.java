@@ -1,101 +1,101 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import java.util.Set;
+impowt java.utiw.set;
 
-import scala.Option;
+i-impowt s-scawa.option;
 
-import com.google.common.collect.ImmutableSet;
+i-impowt com.googwe.common.cowwect.immutabweset;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+i-impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.cuad.ner.plain.thriftjava.NamedEntities;
-import com.twitter.cuad.ner.plain.thriftjava.NamedEntity;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.strato_fetchers.NamedEntityFetcher;
-import com.twitter.search.ingester.pipeline.util.IngesterStageTimer;
-import com.twitter.strato.catalog.Fetch;
-import com.twitter.util.Future;
+i-impowt c-com.twittew.cuad.new.pwain.thwiftjava.namedentities;
+impowt com.twittew.cuad.new.pwain.thwiftjava.namedentity;
+impowt com.twittew.decidew.decidew;
+impowt com.twittew.seawch.common.decidew.decidewutiw;
+i-impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt c-com.twittew.seawch.ingestew.modew.ingestewtwittewmessage;
+impowt c-com.twittew.seawch.ingestew.pipewine.stwato_fetchews.namedentityfetchew;
+impowt com.twittew.seawch.ingestew.pipewine.utiw.ingestewstagetimew;
+impowt com.twittew.stwato.catawog.fetch;
+i-impowt com.twittew.utiw.futuwe;
 
 /**
- * Handles the retrieval and population of named entities in TwitterMessages performed
- * by ingesters.
+ * handwes the wetwievaw a-and popuwation o-of nyamed entities in twittewmessages pewfowmed
+ * by ingestews. ʘwʘ
  */
-class NamedEntityHandler {
-  private static final Logger LOG = LoggerFactory.getLogger(NamedEntityHandler.class);
+cwass n-namedentityhandwew {
+  pwivate static finaw woggew wog = woggewfactowy.getwoggew(namedentityhandwew.cwass);
 
-  private static final String RETRIEVE_NAMED_ENTITIES_DECIDER_KEY =
-      "ingester_all_retrieve_named_entities_%s";
+  pwivate static finaw s-stwing wetwieve_named_entities_decidew_key =
+      "ingestew_aww_wetwieve_named_entities_%s";
 
-  // Named entities are only extracted in English, Spanish, and Japanese
-  private static final Set<String> NAMED_ENTITY_LANGUAGES = ImmutableSet.of("en", "es", "ja");
+  // nyamed entities a-awe onwy e-extwacted in engwish, (˘ω˘) s-spanish, (U ﹏ U) a-and japanese
+  pwivate static finaw set<stwing> n-nyamed_entity_wanguages = immutabweset.of("en", ^•ﻌ•^ "es", "ja");
 
-  private final NamedEntityFetcher namedEntityFetcher;
-  private final Decider decider;
-  private final String deciderKey;
+  pwivate finaw nyamedentityfetchew n-nyamedentityfetchew;
+  pwivate finaw decidew decidew;
+  pwivate finaw stwing decidewkey;
 
-  private SearchRateCounter lookupStat;
-  private SearchRateCounter successStat;
-  private SearchRateCounter namedEntityCountStat;
-  private SearchRateCounter errorStat;
-  private SearchRateCounter emptyResponseStat;
-  private SearchRateCounter deciderSkippedStat;
-  private IngesterStageTimer retrieveNamedEntitiesTimer;
+  pwivate s-seawchwatecountew wookupstat;
+  p-pwivate seawchwatecountew s-successstat;
+  pwivate s-seawchwatecountew nyamedentitycountstat;
+  pwivate seawchwatecountew ewwowstat;
+  p-pwivate s-seawchwatecountew emptywesponsestat;
+  p-pwivate s-seawchwatecountew decidewskippedstat;
+  p-pwivate ingestewstagetimew w-wetwievenamedentitiestimew;
 
-  NamedEntityHandler(
-      NamedEntityFetcher namedEntityFetcher, Decider decider, String statsPrefix,
-      String deciderSuffix) {
-    this.namedEntityFetcher = namedEntityFetcher;
-    this.decider = decider;
-    this.deciderKey = String.format(RETRIEVE_NAMED_ENTITIES_DECIDER_KEY, deciderSuffix);
+  nyamedentityhandwew(
+      nyamedentityfetchew n-nyamedentityfetchew, (˘ω˘) decidew decidew, :3 s-stwing statspwefix, ^^;;
+      stwing decidewsuffix) {
+    t-this.namedentityfetchew = n-nyamedentityfetchew;
+    this.decidew = decidew;
+    this.decidewkey = stwing.fowmat(wetwieve_named_entities_decidew_key, 🥺 decidewsuffix);
 
-    lookupStat = SearchRateCounter.export(statsPrefix + "_lookups");
-    successStat = SearchRateCounter.export(statsPrefix + "_success");
-    namedEntityCountStat = SearchRateCounter.export(statsPrefix + "_named_entity_count");
-    errorStat = SearchRateCounter.export(statsPrefix + "_error");
-    emptyResponseStat = SearchRateCounter.export(statsPrefix + "_empty_response");
-    deciderSkippedStat = SearchRateCounter.export(statsPrefix + "_decider_skipped");
-    retrieveNamedEntitiesTimer = new IngesterStageTimer(statsPrefix + "_request_timer");
+    wookupstat = seawchwatecountew.expowt(statspwefix + "_wookups");
+    s-successstat = s-seawchwatecountew.expowt(statspwefix + "_success");
+    nyamedentitycountstat = s-seawchwatecountew.expowt(statspwefix + "_named_entity_count");
+    e-ewwowstat = s-seawchwatecountew.expowt(statspwefix + "_ewwow");
+    emptywesponsestat = seawchwatecountew.expowt(statspwefix + "_empty_wesponse");
+    decidewskippedstat = s-seawchwatecountew.expowt(statspwefix + "_decidew_skipped");
+    wetwievenamedentitiestimew = nyew ingestewstagetimew(statspwefix + "_wequest_timew");
   }
 
-  Future<Fetch.Result<NamedEntities>> retrieve(IngesterTwitterMessage message) {
-    lookupStat.increment();
-    return namedEntityFetcher.fetch(message.getTweetId());
+  futuwe<fetch.wesuwt<namedentities>> wetwieve(ingestewtwittewmessage m-message) {
+    wookupstat.incwement();
+    w-wetuwn nyamedentityfetchew.fetch(message.gettweetid());
   }
 
-  void addEntitiesToMessage(IngesterTwitterMessage message, Fetch.Result<NamedEntities> result) {
-    retrieveNamedEntitiesTimer.start();
-    Option<NamedEntities> response = result.v();
-    if (response.isDefined()) {
-      successStat.increment();
-      for (NamedEntity namedEntity : response.get().getEntities()) {
-        namedEntityCountStat.increment();
-        message.addNamedEntity(namedEntity);
+  v-void addentitiestomessage(ingestewtwittewmessage m-message, (⑅˘꒳˘) fetch.wesuwt<namedentities> wesuwt) {
+    w-wetwievenamedentitiestimew.stawt();
+    o-option<namedentities> w-wesponse = wesuwt.v();
+    i-if (wesponse.isdefined()) {
+      successstat.incwement();
+      fow (namedentity nyamedentity : wesponse.get().getentities()) {
+        n-nyamedentitycountstat.incwement();
+        m-message.addnamedentity(namedentity);
       }
-    } else {
-      emptyResponseStat.increment();
-      LOG.debug("Empty NERResponse for named entity query on tweet {}", message.getId());
+    } e-ewse {
+      e-emptywesponsestat.incwement();
+      w-wog.debug("empty nyewwesponse fow nyamed entity quewy on t-tweet {}", nyaa~~ message.getid());
     }
-    retrieveNamedEntitiesTimer.stop();
+    wetwievenamedentitiestimew.stop();
   }
 
-  void incrementErrorCount() {
-    errorStat.increment();
+  void incwementewwowcount() {
+    ewwowstat.incwement();
   }
 
-  boolean shouldRetrieve(IngesterTwitterMessage message) {
-    // Use decider to control retrieval of named entities. This allows us to shut off retrieval
-    // if it causes problems.
-    if (!DeciderUtil.isAvailableForRandomRecipient(decider, deciderKey)) {
-      deciderSkippedStat.increment();
-      return false;
+  boowean shouwdwetwieve(ingestewtwittewmessage message) {
+    // u-use decidew to contwow wetwievaw of nyamed entities. :3 this awwows u-us to shut off w-wetwievaw
+    // i-if it causes pwobwems.
+    if (!decidewutiw.isavaiwabwefowwandomwecipient(decidew, ( ͡o ω ͡o ) d-decidewkey)) {
+      decidewskippedstat.incwement();
+      wetuwn f-fawse;
     }
 
-    // Named entities are only extracted in certain languages, so we can skip tweets
-    // in other languages
-    return NAMED_ENTITY_LANGUAGES.contains(message.getLanguage());
+    // n-nyamed entities awe onwy extwacted in cewtain wanguages, mya so we can skip tweets
+    // i-in othew wanguages
+    wetuwn nyamed_entity_wanguages.contains(message.getwanguage());
   }
 }

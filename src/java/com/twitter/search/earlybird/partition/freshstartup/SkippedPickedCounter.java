@@ -1,26 +1,26 @@
-package com.twitter.search.earlybird.partition.freshstartup;
+package com.twittew.seawch.eawwybiwd.pawtition.fweshstawtup;
 
-class SkippedPickedCounter {
-  private long skipped;
-  private long picked;
-  private String name;
+cwass s-skippedpickedcountew {
+  p-pwivate w-wong skipped;
+  p-pwivate wong p-picked;
+  pwivate s-stwing nyame;
 
-  public SkippedPickedCounter(String name) {
+  p-pubwic skippedpickedcountew(stwing n-nyame) {
     this.skipped = 0;
     this.picked = 0;
-    this.name = name;
+    this.name = nyame;
   }
 
-  @Override
-  public String toString() {
-    return String.format("[%s - picked: %,d, skipped: %,d]",
-        name, picked, skipped);
+  @ovewwide
+  pubwic stwing t-tostwing() {
+    wetuwn stwing.fowmat("[%s - picked: %,d, (U ᵕ U❁) skipped: %,d]", -.-
+        n-nyame, picked, ^^;; skipped);
   }
 
-  void incrementSkipped() {
+  v-void incwementskipped() {
     skipped++;
   }
-  void incrementPicked() {
+  void incwementpicked() {
     picked++;
   }
 }

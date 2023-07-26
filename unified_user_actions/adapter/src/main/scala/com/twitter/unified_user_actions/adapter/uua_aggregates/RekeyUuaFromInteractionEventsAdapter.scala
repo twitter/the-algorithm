@@ -1,86 +1,86 @@
-package com.twitter.unified_user_actions.adapter.uua_aggregates
+package com.twittew.unified_usew_actions.adaptew.uua_aggwegates
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.iesource.thriftscala.ClientEventContext
-import com.twitter.iesource.thriftscala.EngagingContext
-import com.twitter.unified_user_actions.adapter.AbstractAdapter
-import com.twitter.iesource.thriftscala.InteractionType
-import com.twitter.iesource.thriftscala.InteractionEvent
-import com.twitter.unified_user_actions.adapter.common.AdapterUtils
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.EventMetadata
-import com.twitter.unified_user_actions.thriftscala.KeyedUuaTweet
-import com.twitter.unified_user_actions.thriftscala.SourceLineage
-import com.twitter.unified_user_actions.thriftscala.UserIdentifier
+impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.iesouwce.thwiftscawa.cwienteventcontext
+i-impowt c-com.twittew.iesouwce.thwiftscawa.engagingcontext
+i-impowt com.twittew.unified_usew_actions.adaptew.abstwactadaptew
+i-impowt com.twittew.iesouwce.thwiftscawa.intewactiontype
+i-impowt c-com.twittew.iesouwce.thwiftscawa.intewactionevent
+impowt com.twittew.unified_usew_actions.adaptew.common.adaptewutiws
+impowt com.twittew.unified_usew_actions.thwiftscawa.actiontype
+impowt c-com.twittew.unified_usew_actions.thwiftscawa.eventmetadata
+impowt com.twittew.unified_usew_actions.thwiftscawa.keyeduuatweet
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.souwcewineage
+impowt c-com.twittew.unified_usew_actions.thwiftscawa.usewidentifiew
 
 /**
- * This is to read directly from InteractionEvents
+ * this is to wead diwectwy fwom intewactionevents
  */
-class RekeyUuaFromInteractionEventsAdapter
-    extends AbstractAdapter[InteractionEvent, Long, KeyedUuaTweet] {
+c-cwass wekeyuuafwomintewactioneventsadaptew
+    e-extends a-abstwactadaptew[intewactionevent, (U ﹏ U) wong, keyeduuatweet] {
 
-  import RekeyUuaFromInteractionEventsAdapter._
-  override def adaptOneToKeyedMany(
-    input: InteractionEvent,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Seq[(Long, KeyedUuaTweet)] =
-    adaptEvent(input, statsReceiver).map { e => (e.tweetId, e) }
+  impowt wekeyuuafwomintewactioneventsadaptew._
+  ovewwide def adaptonetokeyedmany(
+    input: intewactionevent, (///ˬ///✿)
+    s-statsweceivew: statsweceivew = nyuwwstatsweceivew
+  ): seq[(wong, 😳 keyeduuatweet)] =
+    a-adaptevent(input, 😳 statsweceivew).map { e-e => (e.tweetid, σωσ e-e) }
 }
 
-object RekeyUuaFromInteractionEventsAdapter {
+object w-wekeyuuafwomintewactioneventsadaptew {
 
-  def adaptEvent(
-    e: InteractionEvent,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Seq[KeyedUuaTweet] =
-    Option(e).flatMap { e =>
-      e.interactionType.flatMap {
-        case InteractionType.TweetRenderImpression if !isDetailImpression(e.engagingContext) =>
-          getRekeyedUUA(
-            input = e,
-            actionType = ActionType.ClientTweetRenderImpression,
-            sourceLineage = SourceLineage.ClientEvents,
-            statsReceiver = statsReceiver)
-        case _ => None
+  d-def adaptevent(
+    e: intewactionevent, rawr x3
+    s-statsweceivew: statsweceivew = nyuwwstatsweceivew
+  ): s-seq[keyeduuatweet] =
+    option(e).fwatmap { e =>
+      e.intewactiontype.fwatmap {
+        case intewactiontype.tweetwendewimpwession i-if !isdetaiwimpwession(e.engagingcontext) =>
+          getwekeyeduua(
+            input = e-e, OwO
+            a-actiontype = actiontype.cwienttweetwendewimpwession, /(^•ω•^)
+            s-souwcewineage = souwcewineage.cwientevents, 😳😳😳
+            statsweceivew = statsweceivew)
+        c-case _ => nyone
       }
-    }.toSeq
+    }.toseq
 
-  def getRekeyedUUA(
-    input: InteractionEvent,
-    actionType: ActionType,
-    sourceLineage: SourceLineage,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Option[KeyedUuaTweet] =
-    input.engagingUserId match {
-      // please see https://docs.google.com/document/d/1-fy2S-8-YMRQgEN0Sco0OLTmeOIUdqgiZ5G1KwTHt2g/edit#
-      // in order to withstand of potential attacks, we filter out the logged-out users.
-      // Checking user id is 0 is the reverse engineering of
-      // https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/iesource/thrift/src/main/thrift/com/twitter/iesource/interaction_event.thrift?L220
-      // https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/iesource/common/src/main/scala/com/twitter/iesource/common/converters/client/LogEventConverter.scala?L198
-      case 0L =>
-        statsReceiver.counter("loggedOutEvents").incr()
-        None
+  d-def getwekeyeduua(
+    input: intewactionevent,
+    a-actiontype: a-actiontype,
+    souwcewineage: s-souwcewineage, ( ͡o ω ͡o )
+    statsweceivew: s-statsweceivew = nyuwwstatsweceivew
+  ): option[keyeduuatweet] =
+    i-input.engagingusewid match {
+      // p-pwease see https://docs.googwe.com/document/d/1-fy2s-8-ymwqgen0sco0owtmeoiudqgiz5g1kwtht2g/edit#
+      // in o-owdew to withstand o-of potentiaw attacks, >_< we fiwtew out the wogged-out usews. >w<
+      // checking usew id is 0 is the wevewse engineewing o-of
+      // h-https://souwcegwaph.twittew.biz/git.twittew.biz/souwce/-/bwob/iesouwce/thwift/swc/main/thwift/com/twittew/iesouwce/intewaction_event.thwift?w220
+      // https://souwcegwaph.twittew.biz/git.twittew.biz/souwce/-/bwob/iesouwce/common/swc/main/scawa/com/twittew/iesouwce/common/convewtews/cwient/wogeventconvewtew.scawa?w198
+      c-case 0w =>
+        s-statsweceivew.countew("woggedoutevents").incw()
+        n-nyone
       case _ =>
-        Some(
-          KeyedUuaTweet(
-            tweetId = input.targetId,
-            actionType = actionType,
-            userIdentifier = UserIdentifier(userId = Some(input.engagingUserId)),
-            eventMetadata = EventMetadata(
-              sourceTimestampMs = input.triggeredTimestampMillis.getOrElse(input.timestampMillis),
-              receivedTimestampMs = AdapterUtils.currentTimestampMs,
-              sourceLineage = sourceLineage
+        some(
+          keyeduuatweet(
+            tweetid = i-input.tawgetid, rawr
+            actiontype = actiontype, 😳
+            usewidentifiew = usewidentifiew(usewid = s-some(input.engagingusewid)), >w<
+            eventmetadata = e-eventmetadata(
+              s-souwcetimestampms = i-input.twiggewedtimestampmiwwis.getowewse(input.timestampmiwwis), (⑅˘꒳˘)
+              weceivedtimestampms = a-adaptewutiws.cuwwenttimestampms, OwO
+              s-souwcewineage = s-souwcewineage
             )
           ))
     }
 
-  def isDetailImpression(engagingContext: EngagingContext): Boolean =
-    engagingContext match {
-      case EngagingContext.ClientEventContext(
-            ClientEventContext(_, _, _, _, _, _, _, Some(isDetailsImpression), _)
-          ) if isDetailsImpression =>
-        true
-      case _ => false
+  d-def isdetaiwimpwession(engagingcontext: engagingcontext): boowean =
+    e-engagingcontext m-match {
+      c-case engagingcontext.cwienteventcontext(
+            c-cwienteventcontext(_, _, (ꈍᴗꈍ) _, _, _, _, _, 😳 s-some(isdetaiwsimpwession), 😳😳😳 _)
+          ) if isdetaiwsimpwession =>
+        twue
+      case _ => fawse
     }
 }

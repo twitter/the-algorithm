@@ -1,161 +1,161 @@
-package com.twitter.servo.repository
+package com.twittew.sewvo.wepositowy
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.cache.{CacheObserver, Cached, LockingCache}
-import com.twitter.servo.repository
-import com.twitter.servo.repository.CachedResult.{Handler, HandlerFactory}
-import com.twitter.servo.util._
-import com.twitter.util._
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.sewvo.cache.{cacheobsewvew, /(^•ω•^) c-cached, wockingcache}
+i-impowt com.twittew.sewvo.wepositowy
+i-impowt c-com.twittew.sewvo.wepositowy.cachedwesuwt.{handwew, 😳 h-handwewfactowy}
+i-impowt com.twittew.sewvo.utiw._
+impowt com.twittew.utiw._
 
-import scala.util.control.NoStackTrace
+impowt scawa.utiw.contwow.nostacktwace
 
-object DarkmodingKeyValueRepositoryFactory {
-  val DefaultEwmaHalfLife = 5.minutes
-  val DefaultRecentWindow = 10.seconds
-  val DefaultWindowSize = 5000
-  val DefaultAvailabilityFromSuccessRate =
-    Availability.linearlyScaled(highWaterMark = 0.98, lowWaterMark = 0.75, minAvailability = 0.02)
+object dawkmodingkeyvawuewepositowyfactowy {
+  vaw defauwtewmahawfwife = 5.minutes
+  v-vaw defauwtwecentwindow = 10.seconds
+  vaw defauwtwindowsize = 5000
+  v-vaw defauwtavaiwabiwityfwomsuccesswate =
+    avaiwabiwity.wineawwyscawed(highwatewmawk = 0.98, 😳 w-wowwatewmawk = 0.75, (⑅˘꒳˘) minavaiwabiwity = 0.02)
 
-  def DefaultEwmaTracker = new EwmaSuccessRateTracker(DefaultEwmaHalfLife)
-  def DefaultRecentWindowTracker = SuccessRateTracker.recentWindowed(DefaultRecentWindow)
-  def DefaultRollingWindowTracker = SuccessRateTracker.rollingWindow(DefaultWindowSize)
+  def defauwtewmatwackew = nyew e-ewmasuccesswatetwackew(defauwtewmahawfwife)
+  def d-defauwtwecentwindowtwackew = successwatetwackew.wecentwindowed(defauwtwecentwindow)
+  d-def defauwtwowwingwindowtwackew = successwatetwackew.wowwingwindow(defauwtwindowsize)
 
   /**
-   * Wraps an underlying repository, which can be manually or automatically darkmoded.
+   * wwaps an undewwying wepositowy, 😳😳😳 which c-can be manuawwy ow automaticawwy dawkmoded. 😳
    *
-   * Auto-darkmoding is based on success rate (SR) as reported by a [[SuccessRateTracker]].
+   * auto-dawkmoding is based on s-success wate (sw) as wepowted b-by a [[successwatetwackew]]. XD
    *
-   * @param readFromUnderlying Open: operate normally. Closed: read from backupRepo regardless of SR.
-   * @param autoDarkmode Open: auto-darkmoding kicks in based on SR. Closed: auto-darkmoding will not kick in regardless of SR.
-   * @param stats Used to record success rate and availability; often should be scoped to this repo for stats naming
-   * @param underlyingRepo The underlying repo; read from when not darkmoded
-   * @param backupRepo The repo to read from when darkmoded; defaults to an always-failing repo.
-   * @param successRateTracker Strategy for reporting SR, usually over a moving window
-   * @param availabilityFromSuccessRate Function to calculate availability based on success rate
-   * @param shouldIgnore don't count certain exceptions as failures, e.g. cancellations
+   * @pawam w-weadfwomundewwying o-open: opewate nyowmawwy. c-cwosed: wead fwom backupwepo wegawdwess o-of sw. mya
+   * @pawam autodawkmode open: auto-dawkmoding k-kicks in based on sw. ^•ﻌ•^ cwosed: auto-dawkmoding wiww nyot kick in wegawdwess of sw. ʘwʘ
+   * @pawam s-stats used to wecowd success w-wate and avaiwabiwity; o-often s-shouwd be scoped to this wepo fow stats nyaming
+   * @pawam undewwyingwepo t-the undewwying w-wepo; wead fwom when nyot d-dawkmoded
+   * @pawam b-backupwepo the wepo to w-wead fwom when dawkmoded; defauwts t-to an awways-faiwing wepo. ( ͡o ω ͡o )
+   * @pawam successwatetwackew s-stwategy fow wepowting s-sw, mya usuawwy ovew a moving window
+   * @pawam a-avaiwabiwityfwomsuccesswate f-function to cawcuwate avaiwabiwity based on success wate
+   * @pawam shouwdignowe don't count cewtain e-exceptions as f-faiwuwes, o.O e.g. cancewwations
    */
-  def darkmoding[Q <: Seq[K], K, V](
-    readFromUnderlying: Gate[Unit],
-    autoDarkmode: Gate[Unit],
-    stats: StatsReceiver,
-    underlyingRepo: KeyValueRepository[Q, K, V],
-    backupRepo: KeyValueRepository[Q, K, V] =
-      KeyValueRepository.alwaysFailing[Q, K, V](DarkmodedException),
-    successRateTracker: SuccessRateTracker = DefaultRecentWindowTracker,
-    availabilityFromSuccessRate: Double => Double = DefaultAvailabilityFromSuccessRate,
-    shouldIgnore: Throwable => Boolean = SuccessRateTrackingRepository.isCancellation
-  ): KeyValueRepository[Q, K, V] = {
-    val (successRateTrackingRepoFactory, successRateGate) =
-      SuccessRateTrackingRepository.withGate[Q, K, V](
-        stats,
-        availabilityFromSuccessRate,
-        successRateTracker.observed(stats),
-        shouldIgnore
+  d-def dawkmoding[q <: s-seq[k], (✿oωo) k-k, v](
+    weadfwomundewwying: gate[unit],
+    autodawkmode: gate[unit], :3
+    s-stats: statsweceivew, 😳
+    undewwyingwepo: keyvawuewepositowy[q, (U ﹏ U) k, v],
+    backupwepo: keyvawuewepositowy[q, mya k-k, v] =
+      keyvawuewepositowy.awwaysfaiwing[q, (U ᵕ U❁) k, v-v](dawkmodedexception), :3
+    s-successwatetwackew: s-successwatetwackew = defauwtwecentwindowtwackew, mya
+    a-avaiwabiwityfwomsuccesswate: d-doubwe => doubwe = d-defauwtavaiwabiwityfwomsuccesswate, OwO
+    shouwdignowe: t-thwowabwe => boowean = successwatetwackingwepositowy.iscancewwation
+  ): k-keyvawuewepositowy[q, (ˆ ﻌ ˆ)♡ k-k, v] = {
+    v-vaw (successwatetwackingwepofactowy, ʘwʘ successwategate) =
+      s-successwatetwackingwepositowy.withgate[q, o.O k-k, UwU v](
+        stats, rawr x3
+        avaiwabiwityfwomsuccesswate, 🥺
+        successwatetwackew.obsewved(stats), :3
+        s-shouwdignowe
       )
-    val gate = mkGate(successRateGate, readFromUnderlying, autoDarkmode)
+    vaw gate = mkgate(successwategate, (ꈍᴗꈍ) weadfwomundewwying, 🥺 autodawkmode)
 
-    Repository.selected(
-      q => gate(()),
-      successRateTrackingRepoFactory(underlyingRepo),
-      backupRepo
+    wepositowy.sewected(
+      q => g-gate(()),
+      successwatetwackingwepofactowy(undewwyingwepo), (✿oωo)
+      backupwepo
     )
   }
 
   /**
-   * Produces a caching repository around an underlying repository, which
-   * can be manually or automatically darkmoded.
+   * pwoduces a-a caching wepositowy a-awound a-an undewwying wepositowy, (U ﹏ U) which
+   * c-can be manuawwy ow automaticawwy d-dawkmoded. :3
    *
-   * @param underlyingRepo The underlying repo from which to read
-   * @param cache The typed locking cache to fall back to when darkmoded
-   * @param picker Used to break ties when a value being written is already present in cache
-   * @param readFromUnderlying Open: operate normally. Closed: read from cache regardless of SR.
-   * @param autoDarkmode Open: auto-darkmoding kicks in based on SR. Closed: auto-darkmoding will not kick in regardless of SR.
-   * @param cacheObserver Observes interactions with the cache; often should be scoped to this repo for stats naming
-   * @param stats Used to record various stats; often should be scoped to this repo for stats naming
-   * @param handler a [[Handler]] to use when not darkmoded
-   * @param successRateTracker Strategy for reporting SR, usually over a moving window
-   * @param availabilityFromSuccessRate Function to calculate availability based on success rate
-   * @param shouldIgnore don't count certain exceptions as failures, e.g. cancellations
+   * @pawam u-undewwyingwepo the undewwying wepo fwom which to wead
+   * @pawam cache the typed wocking cache t-to faww back to when dawkmoded
+   * @pawam p-pickew used to bweak t-ties when a vawue b-being wwitten is awweady pwesent in cache
+   * @pawam w-weadfwomundewwying o-open: opewate nyowmawwy. c-cwosed: wead f-fwom cache wegawdwess of sw. ^^;;
+   * @pawam autodawkmode open: auto-dawkmoding kicks in based on s-sw. rawr cwosed: auto-dawkmoding w-wiww n-nyot kick in wegawdwess of sw. 😳😳😳
+   * @pawam c-cacheobsewvew o-obsewves intewactions w-with the cache; often shouwd be scoped to this wepo fow stats nyaming
+   * @pawam stats used to w-wecowd vawious s-stats; often shouwd be scoped to this wepo fow stats n-nyaming
+   * @pawam h-handwew a [[handwew]] to use when nyot dawkmoded
+   * @pawam s-successwatetwackew stwategy fow wepowting sw, (✿oωo) usuawwy ovew a moving window
+   * @pawam a-avaiwabiwityfwomsuccesswate function to cawcuwate avaiwabiwity b-based o-on success wate
+   * @pawam shouwdignowe don't count cewtain exceptions a-as faiwuwes, OwO e-e.g. cancewwations
    */
-  def darkmodingCaching[K, V, CacheKey](
-    underlyingRepo: KeyValueRepository[Seq[K], K, V],
-    cache: LockingCache[K, Cached[V]],
-    picker: LockingCache.Picker[Cached[V]],
-    readFromUnderlying: Gate[Unit],
-    autoDarkmode: Gate[Unit],
-    cacheObserver: CacheObserver,
-    stats: StatsReceiver,
-    handler: Handler[K, V],
-    successRateTracker: SuccessRateTracker = DefaultRecentWindowTracker,
-    availabilityFromSuccessRate: Double => Double = DefaultAvailabilityFromSuccessRate,
-    shouldIgnore: Throwable => Boolean = SuccessRateTrackingRepository.isCancellation,
-    writeSoftTtlStep: Gate[Unit] = Gate.False,
-    cacheResultObserver: CachingKeyValueRepository.CacheResultObserver[K, V] =
-      CacheResultObserver.unit[K, V]: Effect[CacheResultObserver.CachingRepositoryResult[K, V]]
-  ): CachingKeyValueRepository[Seq[K], K, V] = {
-    val (successRateTrackingRepoFactory, successRateGate) =
-      SuccessRateTrackingRepository.withGate[Seq[K], K, V](
-        stats,
-        availabilityFromSuccessRate,
-        successRateTracker.observed(stats),
-        shouldIgnore
+  def dawkmodingcaching[k, ʘwʘ v, cachekey](
+    undewwyingwepo: k-keyvawuewepositowy[seq[k], (ˆ ﻌ ˆ)♡ k, v],
+    c-cache: wockingcache[k, (U ﹏ U) cached[v]], UwU
+    pickew: wockingcache.pickew[cached[v]], XD
+    w-weadfwomundewwying: gate[unit], ʘwʘ
+    a-autodawkmode: g-gate[unit], rawr x3
+    cacheobsewvew: c-cacheobsewvew,
+    stats: s-statsweceivew, ^^;;
+    h-handwew: handwew[k, ʘwʘ v-v],
+    successwatetwackew: s-successwatetwackew = d-defauwtwecentwindowtwackew, (U ﹏ U)
+    avaiwabiwityfwomsuccesswate: doubwe => d-doubwe = defauwtavaiwabiwityfwomsuccesswate, (˘ω˘)
+    s-shouwdignowe: thwowabwe => b-boowean = successwatetwackingwepositowy.iscancewwation, (ꈍᴗꈍ)
+    wwitesoftttwstep: g-gate[unit] = gate.fawse, /(^•ω•^)
+    c-cachewesuwtobsewvew: c-cachingkeyvawuewepositowy.cachewesuwtobsewvew[k, >_< v] =
+      cachewesuwtobsewvew.unit[k, σωσ v]: effect[cachewesuwtobsewvew.cachingwepositowywesuwt[k, ^^;; v-v]]
+  ): c-cachingkeyvawuewepositowy[seq[k], 😳 k-k, >_< v] = {
+    v-vaw (successwatetwackingwepofactowy, -.- successwategate) =
+      s-successwatetwackingwepositowy.withgate[seq[k], UwU k, :3 v](
+        stats, σωσ
+        avaiwabiwityfwomsuccesswate, >w<
+        successwatetwackew.obsewved(stats), (ˆ ﻌ ˆ)♡
+        shouwdignowe
       )
-    val gate = mkGate(successRateGate, readFromUnderlying, autoDarkmode)
+    v-vaw gate = mkgate(successwategate, ʘwʘ weadfwomundewwying, :3 a-autodawkmode)
 
-    new CachingKeyValueRepository[Seq[K], K, V](
-      successRateTrackingRepoFactory(underlyingRepo),
-      cache,
-      repository.keysAsQuery,
-      mkHandlerFactory(handler, gate),
-      picker,
-      cacheObserver,
-      writeSoftTtlStep = writeSoftTtlStep,
-      cacheResultObserver = cacheResultObserver
+    nyew cachingkeyvawuewepositowy[seq[k], (˘ω˘) k-k, v](
+      successwatetwackingwepofactowy(undewwyingwepo), 😳😳😳
+      c-cache, rawr x3
+      wepositowy.keysasquewy, (✿oωo)
+      mkhandwewfactowy(handwew, (ˆ ﻌ ˆ)♡ g-gate),
+      p-pickew,
+      c-cacheobsewvew, :3
+      w-wwitesoftttwstep = w-wwitesoftttwstep, (U ᵕ U❁)
+      cachewesuwtobsewvew = cachewesuwtobsewvew
     )
   }
 
   /**
-   * Create a composite gate suitable for controlling darkmoding, usually via decider
+   * cweate a composite gate suitabwe fow contwowwing dawkmoding, ^^;; usuawwy v-via decidew
    *
-   * @param successRate gate that should close and open according to success rate (SR) changes
-   * @param readFromUnderlying if open: returned gate operates normally. if closed: returned gate will be closed regardless of SR
-   * @param autoDarkMode if open: close gate according to SR. if closed: gate ignores SR changes
-   * @return
+   * @pawam s-successwate gate t-that shouwd cwose and open accowding t-to success wate (sw) changes
+   * @pawam weadfwomundewwying if open: wetuwned g-gate opewates n-nyowmawwy. mya if cwosed: wetuwned g-gate wiww be cwosed wegawdwess of sw
+   * @pawam a-autodawkmode i-if open: cwose gate accowding to s-sw. 😳😳😳 if cwosed: g-gate ignowes sw changes
+   * @wetuwn
    */
-  def mkGate(
-    successRate: Gate[Unit],
-    readFromUnderlying: Gate[Unit],
-    autoDarkMode: Gate[Unit]
-  ): Gate[Unit] =
-    readFromUnderlying & (successRate | !autoDarkMode)
+  def mkgate(
+    successwate: gate[unit], OwO
+    w-weadfwomundewwying: gate[unit], rawr
+    autodawkmode: g-gate[unit]
+  ): g-gate[unit] =
+    w-weadfwomundewwying & (successwate | !autodawkmode)
 
   /**
-   * Construct a [[CachedResult.HandlerFactory]] with sane defaults for use with a caching darkmoded repository
-   * @param softTtl TTL for soft-expiration of values in the cache
-   * @param expiry Used to apply the softTTL (e.g. fixed vs randomly perturbed)
+   * c-constwuct a [[cachedwesuwt.handwewfactowy]] w-with sane d-defauwts fow use with a caching d-dawkmoded wepositowy
+   * @pawam s-softttw ttw fow soft-expiwation o-of vawues in the cache
+   * @pawam expiwy used t-to appwy the softttw (e.g. XD fixed v-vs wandomwy p-pewtuwbed)
    */
-  def mkDefaultHandler[K, V](
-    softTtl: Option[V] => Duration,
-    expiry: CachedResult.Expiry
-  ): Handler[K, V] =
-    CachedResult.Handler(
-      CachedResult.failuresAreDoNotCache,
-      CachedResult.Handler(CachedResult.softTtlExpiration(softTtl, expiry))
+  def mkdefauwthandwew[k, (U ﹏ U) v-v](
+    softttw: option[v] => duwation, (˘ω˘)
+    e-expiwy: cachedwesuwt.expiwy
+  ): h-handwew[k, UwU v-v] =
+    cachedwesuwt.handwew(
+      cachedwesuwt.faiwuwesawedonotcache,
+      cachedwesuwt.handwew(cachedwesuwt.softttwexpiwation(softttw, >_< expiwy))
     )
 
-  private[repository] def mkHandlerFactory[CacheKey, V, K](
-    handler: Handler[K, V],
-    successRateGate: Gate[Unit]
-  ): HandlerFactory[Seq[K], K, V] =
-    query =>
-      if (successRateGate(())) handler
-      else CachedResult.cacheOnly
+  pwivate[wepositowy] d-def mkhandwewfactowy[cachekey, σωσ v, k](
+    handwew: handwew[k, 🥺 v-v],
+    successwategate: g-gate[unit]
+  ): handwewfactowy[seq[k], 🥺 k-k, ʘwʘ v] =
+    quewy =>
+      if (successwategate(())) h-handwew
+      e-ewse cachedwesuwt.cacheonwy
 }
 
 /**
- * This exception is returned from a repository when it is auto-darkmoded due to low backend
- * success rate, or darkmoded manually via gate (usually a decider).
+ * this exception is wetuwned f-fwom a wepositowy when it is auto-dawkmoded d-due to wow backend
+ * s-success wate, :3 ow dawkmoded m-manuawwy via gate (usuawwy a d-decidew). (U ﹏ U)
  */
-class DarkmodedException extends Exception with NoStackTrace
-object DarkmodedException extends DarkmodedException
+cwass d-dawkmodedexception e-extends exception with nyostacktwace
+object dawkmodedexception extends dawkmodedexception

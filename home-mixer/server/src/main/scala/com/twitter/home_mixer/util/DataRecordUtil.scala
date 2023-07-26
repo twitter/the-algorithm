@@ -1,31 +1,31 @@
-package com.twitter.home_mixer.util
+package com.twittew.home_mixew.utiw
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.ml.api.Feature
-import java.lang.{Double => JDouble}
+impowt com.twittew.mw.api.datawecowd
+i-impowt c-com.twittew.mw.api.featuwecontext
+i-impowt com.twittew.mw.api.utiw.swichdatawecowd
+i-impowt com.twittew.mw.api.featuwe
+i-impowt java.wang.{doubwe => jdoubwe}
 
-object DataRecordUtil {
-  def applyRename(
-    dataRecord: DataRecord,
-    featureContext: FeatureContext,
-    renamedFeatureContext: FeatureContext,
-    featureRenamingMap: Map[Feature[_], Feature[_]]
-  ): DataRecord = {
-    val richFullDr = new SRichDataRecord(dataRecord, featureContext)
-    val richNewDr = new SRichDataRecord(new DataRecord, renamedFeatureContext)
-    val featureIterator = featureContext.iterator()
-    featureIterator.forEachRemaining { feature =>
-      if (richFullDr.hasFeature(feature)) {
-        val renamedFeature = featureRenamingMap.getOrElse(feature, feature)
+o-object d-datawecowdutiw {
+  d-def appwywename(
+    datawecowd: datawecowd,
+    featuwecontext: featuwecontext, rawr x3
+    w-wenamedfeatuwecontext: featuwecontext, mya
+    featuwewenamingmap: map[featuwe[_], nyaa~~ f-featuwe[_]]
+  ): datawecowd = {
+    v-vaw wichfuwwdw = nyew swichdatawecowd(datawecowd, (⑅˘꒳˘) featuwecontext)
+    v-vaw wichnewdw = nyew swichdatawecowd(new d-datawecowd, w-wenamedfeatuwecontext)
+    vaw featuweitewatow = featuwecontext.itewatow()
+    featuweitewatow.foweachwemaining { featuwe =>
+      i-if (wichfuwwdw.hasfeatuwe(featuwe)) {
+        vaw wenamedfeatuwe = featuwewenamingmap.getowewse(featuwe, featuwe)
 
-        val typedFeature = feature.asInstanceOf[Feature[JDouble]]
-        val typedRenamedFeature = renamedFeature.asInstanceOf[Feature[JDouble]]
+        vaw typedfeatuwe = f-featuwe.asinstanceof[featuwe[jdoubwe]]
+        vaw typedwenamedfeatuwe = w-wenamedfeatuwe.asinstanceof[featuwe[jdoubwe]]
 
-        richNewDr.setFeatureValue(typedRenamedFeature, richFullDr.getFeatureValue(typedFeature))
+        w-wichnewdw.setfeatuwevawue(typedwenamedfeatuwe, rawr x3 w-wichfuwwdw.getfeatuwevawue(typedfeatuwe))
       }
     }
-    richNewDr.getRecord
+    w-wichnewdw.getwecowd
   }
 }

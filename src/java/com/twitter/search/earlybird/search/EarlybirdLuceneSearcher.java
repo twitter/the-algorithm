@@ -1,98 +1,98 @@
-package com.twitter.search.earlybird.search;
+package com.twittew.seawch.eawwybiwd.seawch;
 
-import java.io.IOException;
-import java.util.Map;
+impowt j-java.io.ioexception;
+i-impowt j-java.utiw.map;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.IndexSearcher;
+i-impowt owg.apache.wucene.index.indexweadew;
+i-impowt o-owg.apache.wucene.index.tewm;
+i-impowt owg.apache.wucene.seawch.indexseawchew;
 
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.earlybird.EarlybirdSearcher;
-import com.twitter.search.earlybird.search.facets.AbstractFacetTermCollector;
-import com.twitter.search.earlybird.search.facets.FacetResultsCollector;
-import com.twitter.search.earlybird.search.facets.TermStatisticsCollector.TermStatisticsSearchResults;
-import com.twitter.search.earlybird.search.facets.TermStatisticsRequestInfo;
-import com.twitter.search.earlybird.thrift.ThriftFacetCount;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsResults;
+i-impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+impowt com.twittew.seawch.eawwybiwd.eawwybiwdseawchew;
+impowt com.twittew.seawch.eawwybiwd.seawch.facets.abstwactfacettewmcowwectow;
+impowt com.twittew.seawch.eawwybiwd.seawch.facets.facetwesuwtscowwectow;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.facets.tewmstatisticscowwectow.tewmstatisticsseawchwesuwts;
+impowt com.twittew.seawch.eawwybiwd.seawch.facets.tewmstatisticswequestinfo;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetcount;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetfiewdwesuwts;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwts;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.thwifttewmstatisticswesuwts;
 
-public abstract class EarlybirdLuceneSearcher extends IndexSearcher {
-  public EarlybirdLuceneSearcher(IndexReader r) {
-    super(r);
+pubwic abstwact c-cwass eawwybiwdwuceneseawchew e-extends indexseawchew {
+  pubwic eawwybiwdwuceneseawchew(indexweadew w) {
+    supew(w);
   }
 
   /**
-   * Fills facet information for all given search results.
+   * f-fiwws facet infowmation fow aww given seawch wesuwts. (///ˬ///✿)
    *
-   * @param collector A collector that knows how collect facet information.
-   * @param searchResults The search results.
+   * @pawam cowwectow a cowwectow t-that knows how cowwect facet i-infowmation. ^^;;
+   * @pawam s-seawchwesuwts t-the seawch w-wesuwts. >_<
    */
-  public abstract void fillFacetResults(
-      AbstractFacetTermCollector collector, ThriftSearchResults searchResults)
-      throws IOException;
+  pubwic abstwact void fiwwfacetwesuwts(
+      a-abstwactfacettewmcowwectow cowwectow, rawr x3 thwiftseawchwesuwts seawchwesuwts)
+      t-thwows ioexception;
 
   /**
-   * Fills metadata for all given facet results.
+   * fiwws metadata fow aww given facet wesuwts. /(^•ω•^)
    *
-   * @param facetResults The facet results.
-   * @param schema The earlybird schema.
-   * @param debugMode The debug mode for the request that yielded these results.
+   * @pawam facetwesuwts the facet wesuwts. :3
+   * @pawam s-schema the eawwybiwd s-schema. (ꈍᴗꈍ)
+   * @pawam d-debugmode the d-debug mode fow the wequest that yiewded these wesuwts. /(^•ω•^)
    */
-  public abstract void fillFacetResultMetadata(
-      Map<Term, ThriftFacetCount> facetResults,
-      ImmutableSchemaInterface schema,
-      byte debugMode) throws IOException;
+  p-pubwic abstwact v-void fiwwfacetwesuwtmetadata(
+      map<tewm, (⑅˘꒳˘) t-thwiftfacetcount> f-facetwesuwts, ( ͡o ω ͡o )
+      immutabweschemaintewface schema, òωó
+      b-byte debugmode) thwows i-ioexception;
 
   /**
-   * Fills metadata for all given term stats results.
+   * fiwws metadata fow a-aww given tewm stats wesuwts.
    *
-   * @param termStatsResults The term stats results.
-   * @param schema The earlybird schema.
-   * @param debugMode The debug mode for the request that yielded these results.
+   * @pawam tewmstatswesuwts t-the tewm stats wesuwts. (⑅˘꒳˘)
+   * @pawam schema the eawwybiwd s-schema. XD
+   * @pawam d-debugmode the debug mode fow the wequest that yiewded these wesuwts. -.-
    */
-  public abstract void fillTermStatsMetadata(
-      ThriftTermStatisticsResults termStatsResults,
-      ImmutableSchemaInterface schema,
-      byte debugMode) throws IOException;
+  pubwic abstwact void fiwwtewmstatsmetadata(
+      t-thwifttewmstatisticswesuwts t-tewmstatswesuwts, :3
+      immutabweschemaintewface s-schema, nyaa~~
+      b-byte debugmode) t-thwows ioexception;
 
   /**
-   * Returns the results for the given term stats request.
+   * wetuwns the wesuwts fow the given tewm stats w-wequest. 😳
    *
-   * @param searchRequestInfo Stores the original term stats request and some other useful request
-   *                          information.
-   * @param searcher The searcher that should be used to execute the request.
-   * @param requestDebugMode The debug mode for this request.
-   * @return The term stats results for the given request.
+   * @pawam seawchwequestinfo stowes the owiginaw tewm stats wequest and some o-othew usefuw wequest
+   *                          infowmation. (⑅˘꒳˘)
+   * @pawam s-seawchew t-the seawchew t-that shouwd be used to exekawaii~ t-the wequest. nyaa~~
+   * @pawam w-wequestdebugmode t-the d-debug mode fow this wequest. OwO
+   * @wetuwn the t-tewm stats wesuwts f-fow the given w-wequest. rawr x3
    */
-  public abstract TermStatisticsSearchResults collectTermStatistics(
-      TermStatisticsRequestInfo searchRequestInfo,
-      EarlybirdSearcher searcher,
-      int requestDebugMode) throws IOException;
+  p-pubwic abstwact t-tewmstatisticsseawchwesuwts cowwecttewmstatistics(
+      tewmstatisticswequestinfo seawchwequestinfo, XD
+      e-eawwybiwdseawchew seawchew, σωσ
+      int wequestdebugmode) thwows ioexception;
 
   /**
-   * Writes an explanation for the given hits into the given ThriftSearchResults instance.
+   * wwites an expwanation fow t-the given hits into the given thwiftseawchwesuwts instance. (U ᵕ U❁)
    *
-   * @param searchRequestInfo Stores the original request and some other useful request context.
-   * @param hits The hits.
-   * @param searchResults The ThriftSearchResults where the explanation for the given hits will be
-   *                      stored.
+   * @pawam seawchwequestinfo stowes t-the owiginaw w-wequest and some o-othew usefuw wequest context. (U ﹏ U)
+   * @pawam h-hits the hits. :3
+   * @pawam s-seawchwesuwts t-the thwiftseawchwesuwts whewe the expwanation fow the given hits wiww be
+   *                      stowed.
    */
-  // Writes explanations into the searchResults thrift.
-  public abstract void explainSearchResults(SearchRequestInfo searchRequestInfo,
-                                            SimpleSearchResults hits,
-                                            ThriftSearchResults searchResults) throws IOException;
+  // wwites e-expwanations into the seawchwesuwts t-thwift. ( ͡o ω ͡o )
+  pubwic abstwact v-void expwainseawchwesuwts(seawchwequestinfo s-seawchwequestinfo, σωσ
+                                            simpweseawchwesuwts hits, >w<
+                                            t-thwiftseawchwesuwts s-seawchwesuwts) thwows ioexception;
 
-  public static class FacetSearchResults extends SearchResultsInfo {
-    private FacetResultsCollector collector;
+  p-pubwic s-static cwass facetseawchwesuwts extends seawchwesuwtsinfo {
+    pwivate facetwesuwtscowwectow cowwectow;
 
-    public FacetSearchResults(FacetResultsCollector collector) {
-      this.collector = collector;
+    p-pubwic facetseawchwesuwts(facetwesuwtscowwectow c-cowwectow) {
+      t-this.cowwectow = cowwectow;
     }
 
-    public ThriftFacetFieldResults getFacetResults(String facetName, int topK) {
-      return collector.getFacetResults(facetName, topK);
+    p-pubwic t-thwiftfacetfiewdwesuwts getfacetwesuwts(stwing f-facetname, 😳😳😳 int topk) {
+      wetuwn cowwectow.getfacetwesuwts(facetname, OwO topk);
     }
   }
 }

@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.wichtext
 
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-trait RichTextRtlOptionBuilder[-Query <: PipelineQuery] {
-  def apply(query: Query): Option[Boolean]
+t-twait wichtextwtwoptionbuiwdew[-quewy <: p-pipewinequewy] {
+  d-def a-appwy(quewy: quewy): o-option[boowean]
 }
 
-case class StaticRichTextRtlOptionBuilder[-Query <: PipelineQuery](rtlOption: Option[Boolean])
-    extends RichTextRtlOptionBuilder[Query] {
-  override def apply(query: Query): Option[Boolean] = rtlOption
+c-case cwass s-staticwichtextwtwoptionbuiwdew[-quewy <: p-pipewinequewy](wtwoption: option[boowean])
+    extends wichtextwtwoptionbuiwdew[quewy] {
+  ovewwide d-def appwy(quewy: quewy): option[boowean] = wtwoption
 }

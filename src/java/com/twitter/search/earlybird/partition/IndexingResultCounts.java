@@ -1,51 +1,51 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
 /**
- * Helper class used to store counts to be logged.
+ * hewpew cwass u-used to stowe c-counts to be wogged. (⑅˘꒳˘)
  */
-public class IndexingResultCounts {
-  private int indexingCalls;
-  private int failureRetriable;
-  private int failureNotRetriable;
-  private int indexingSuccess;
+p-pubwic c-cwass indexingwesuwtcounts {
+  p-pwivate int indexingcawws;
+  p-pwivate i-int faiwuwewetwiabwe;
+  p-pwivate int faiwuwenotwetwiabwe;
+  pwivate int indexingsuccess;
 
-  public IndexingResultCounts() {
+  pubwic indexingwesuwtcounts() {
   }
 
   /**
-   * Updates the internal counts with a single result.
+   * updates the intewnaw c-counts with a singwe wesuwt. (///ˬ///✿)
    */
-  public void countResult(ISegmentWriter.Result result) {
-    indexingCalls++;
-    if (result == ISegmentWriter.Result.FAILURE_NOT_RETRYABLE) {
-      failureNotRetriable++;
-    } else if (result == ISegmentWriter.Result.FAILURE_RETRYABLE) {
-      failureRetriable++;
-    } else if (result == ISegmentWriter.Result.SUCCESS) {
-      indexingSuccess++;
+  pubwic v-void countwesuwt(isegmentwwitew.wesuwt wesuwt) {
+    i-indexingcawws++;
+    if (wesuwt == isegmentwwitew.wesuwt.faiwuwe_not_wetwyabwe) {
+      faiwuwenotwetwiabwe++;
+    } ewse i-if (wesuwt == isegmentwwitew.wesuwt.faiwuwe_wetwyabwe) {
+      faiwuwewetwiabwe++;
+    } e-ewse if (wesuwt == i-isegmentwwitew.wesuwt.success) {
+      indexingsuccess++;
     }
   }
 
-  int getIndexingCalls() {
-    return indexingCalls;
+  int getindexingcawws() {
+    wetuwn indexingcawws;
   }
 
-  int getFailureRetriable() {
-    return failureRetriable;
+  int g-getfaiwuwewetwiabwe() {
+    wetuwn faiwuwewetwiabwe;
   }
 
-  int getFailureNotRetriable() {
-    return failureNotRetriable;
+  int getfaiwuwenotwetwiabwe() {
+    w-wetuwn faiwuwenotwetwiabwe;
   }
 
-  int getIndexingSuccess() {
-    return indexingSuccess;
+  int getindexingsuccess() {
+    w-wetuwn indexingsuccess;
   }
 
-  @Override
-  public String toString() {
-    return String.format("[calls: %,d, success: %,d, fail not-retryable: %,d, fail retryable: %,d]",
-        indexingCalls, indexingSuccess, failureNotRetriable, failureRetriable);
+  @ovewwide
+  p-pubwic s-stwing tostwing() {
+    w-wetuwn stwing.fowmat("[cawws: %,d, 😳😳😳 success: %,d, 🥺 faiw n-nyot-wetwyabwe: %,d, mya faiw wetwyabwe: %,d]", 🥺
+        indexingcawws, i-indexingsuccess, >_< faiwuwenotwetwiabwe, >_< faiwuwewetwiabwe);
   }
 }
 

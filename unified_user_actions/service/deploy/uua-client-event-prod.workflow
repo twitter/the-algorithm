@@ -1,66 +1,66 @@
 {
-  "role": "discode",
-  "name": "uua-client-event-prod",
-  "config-files": [
-    "uua-client-event.aurora"
+  "wowe": "discode", XD
+  "name": "uua-cwient-event-pwod", >_<
+  "config-fiwes": [
+    "uua-cwient-event.auwowa"
   ],
-  "build": {
-    "play": true,
-    "trigger": {
-      "cron-schedule": "0 17 * * 2"
-    },
+  "buiwd": {
+    "pway": twue, (ꈍᴗꈍ)
+    "twiggew": {
+      "cwon-scheduwe": "0 17 * * 2"
+    }, ^•ﻌ•^
     "dependencies": [
       {
-        "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "wowe": "packew", OwO
+        "name": "packew-cwient-no-pex", 🥺
+        "vewsion": "watest"
       }
-    ],
+    ], òωó
     "steps": [
       {
-        "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-client-event"
-      },
+        "type": "bazew-bundwe", o.O
+        "name": "bundwe", (U ᵕ U❁)
+        "tawget": "unified_usew_actions/sewvice/swc/main/scawa:uua-cwient-event"
+      }, (⑅˘꒳˘)
       {
-        "type": "packer",
-        "name": "uua-client-event",
-        "artifact": "./dist/uua-client-event.zip"
+        "type": "packew", ( ͡o ω ͡o )
+        "name": "uua-cwient-event", UwU
+        "awtifact": "./dist/uua-cwient-event.zip"
       }
     ]
-  },
-  "targets": [
+  }, rawr x3
+  "tawgets": [
     {
-      "type": "group",
-      "name": "prod",
-      "targets": [
+      "type": "gwoup", rawr
+      "name": "pwod", σωσ
+      "tawgets": [
         {
-          "name": "uua-client-event-prod-atla",
-          "key": "atla/discode/prod/uua-client-event"
-        },
+          "name": "uua-cwient-event-pwod-atwa", σωσ
+          "key": "atwa/discode/pwod/uua-cwient-event"
+        }, >_<
         {
-          "name": "uua-client-event-prod-pdxa",
-          "key": "pdxa/discode/prod/uua-client-event"
+          "name": "uua-cwient-event-pwod-pdxa", :3
+          "key": "pdxa/discode/pwod/uua-cwient-event"
         }
       ]
     }
-  ],
-  "subscriptions": [
+  ], (U ﹏ U)
+  "subscwiptions": [
     {
-      "type": "SLACK",
-      "recipients": [
+      "type": "swack", -.-
+      "wecipients": [
         {
-          "to": "discode-oncall"
+          "to": "discode-oncaww"
         }
-      ],
-      "events": ["WORKFLOW_SUCCESS"]
-    },
+      ], (ˆ ﻌ ˆ)♡
+      "events": ["wowkfwow_success"]
+    }, (⑅˘꒳˘)
     {
-      "type": "SLACK",
-      "recipients": [{
-        "to": "discode-oncall"
-      }],
-      "events": ["*FAILED"]
+      "type": "swack", (U ᵕ U❁)
+      "wecipients": [{
+        "to": "discode-oncaww"
+      }], -.-
+      "events": ["*faiwed"]
     }
   ]
 }

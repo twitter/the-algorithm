@@ -1,47 +1,47 @@
-package com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue
+package com.twittew.fwigate.pushsewvice.pwedicate.ntab_cawet_fatigue
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.predicate.ntab_caret_fatigue.NtabCaretClickFatiguePredicateHelper
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.pwedicate.ntab_cawet_fatigue.ntabcawetcwickfatiguepwedicatehewpew
+i-impowt com.twittew.fwigate.common.wec_types.wectypes
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.hewmit.pwedicate.namedpwedicate
+i-impowt com.twittew.hewmit.pwedicate.pwedicate
+i-impowt com.twittew.utiw.futuwe
 
-object NtabCaretClickFatiguePredicate {
-  val name = "NtabCaretClickFatiguePredicate"
+o-object nytabcawetcwickfatiguepwedicate {
+  vaw nyame = "ntabcawetcwickfatiguepwedicate"
 
-  def isSpacesTypeAndTeamMember(candidate: PushCandidate): Future[Boolean] = {
-    candidate.target.isTeamMember.map { isTeamMember =>
-      val isSpacesType = RecTypes.isRecommendedSpacesType(candidate.commonRecType)
-      isTeamMember && isSpacesType
+  def isspacestypeandteammembew(candidate: p-pushcandidate): futuwe[boowean] = {
+    candidate.tawget.isteammembew.map { isteammembew =>
+      v-vaw isspacestype = wectypes.iswecommendedspacestype(candidate.commonwectype)
+      i-isteammembew && isspacestype
     }
   }
 
-  def apply()(implicit globalStats: StatsReceiver): NamedPredicate[PushCandidate] = {
-    val scopedStats = globalStats.scope(name)
-    val genericTypeCategories = Seq("MagicRecs")
-    val crts = RecTypes.sharedNTabCaretFatigueTypes
-    val recTypeNtabCaretClickFatiguePredicate =
-      RecTypeNtabCaretClickFatiguePredicate.apply(
-        genericTypeCategories,
-        crts,
-        NtabCaretClickFatiguePredicateHelper.calculateFatiguePeriodMagicRecs,
-        useMostRecentDislikeTime = false
+  def appwy()(impwicit gwobawstats: s-statsweceivew): nyamedpwedicate[pushcandidate] = {
+    vaw s-scopedstats = g-gwobawstats.scope(name)
+    vaw genewictypecategowies = seq("magicwecs")
+    vaw c-cwts = wectypes.shawedntabcawetfatiguetypes
+    vaw wectypentabcawetcwickfatiguepwedicate =
+      wectypentabcawetcwickfatiguepwedicate.appwy(
+        genewictypecategowies, (ˆ ﻌ ˆ)♡
+        cwts, (˘ω˘)
+        n-nytabcawetcwickfatiguepwedicatehewpew.cawcuwatefatiguepewiodmagicwecs, (⑅˘꒳˘)
+        usemostwecentdiswiketime = f-fawse
       )
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        isSpacesTypeAndTeamMember(candidate).flatMap { isSpacesTypeAndTeamMember =>
-          if (RecTypes.sharedNTabCaretFatigueTypes(
-              candidate.commonRecType) && !isSpacesTypeAndTeamMember) {
-            recTypeNtabCaretClickFatiguePredicate
-              .apply(Seq(candidate)).map(_.headOption.getOrElse(false))
-          } else {
-            Future.True
+    p-pwedicate
+      .fwomasync { candidate: p-pushcandidate =>
+        i-isspacestypeandteammembew(candidate).fwatmap { isspacestypeandteammembew =>
+          if (wectypes.shawedntabcawetfatiguetypes(
+              c-candidate.commonwectype) && !isspacestypeandteammembew) {
+            wectypentabcawetcwickfatiguepwedicate
+              .appwy(seq(candidate)).map(_.headoption.getowewse(fawse))
+          } ewse {
+            f-futuwe.twue
           }
         }
       }
-      .withStats(scopedStats)
-      .withName(name)
+      .withstats(scopedstats)
+      .withname(name)
   }
 }

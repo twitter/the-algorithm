@@ -1,6 +1,6 @@
-package com.twitter.simclustersann.exceptions
+package com.twittew.simcwustewsann.exceptions
 
-case class MissingClusterConfigForSimClustersAnnVariantException(sannServiceName: String)
-    extends IllegalStateException(
-      s"No cluster configuration found for service ($sannServiceName)",
-      null)
+case c-cwass missingcwustewconfigfowsimcwustewsannvawiantexception(sannsewvicename: s-stwing)
+    extends i-iwwegawstateexception(
+      s-s"no cwustew configuwation f-found f-fow sewvice ($sannsewvicename)", (U ᵕ U❁)
+      n-nyuww)

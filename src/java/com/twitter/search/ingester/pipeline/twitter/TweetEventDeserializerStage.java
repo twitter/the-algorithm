@@ -1,137 +1,137 @@
-package com.twitter.search.ingester.pipeline.twitter;
-import com.google.common.annotations.VisibleForTesting;
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducedTypes;
-import org.apache.thrift.TDeserializer;
-import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.twitter.search.common.debug.DebugEventUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.ingester.model.IngesterTweetEvent;
-import com.twitter.search.ingester.model.KafkaRawRecord;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
+package com.twittew.seawch.ingestew.pipewine.twittew;
+impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt o-owg.apache.commons.pipewine.stageexception;
+i-impowt owg.apache.commons.pipewine.vawidation.consumedtypes;
+i-impowt o-owg.apache.commons.pipewine.vawidation.pwoducedtypes;
+i-impowt o-owg.apache.thwift.tdesewiawizew;
+i-impowt owg.apache.thwift.texception;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
+impowt com.twittew.seawch.common.debug.debugeventutiw;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt c-com.twittew.seawch.ingestew.modew.ingestewtweetevent;
+impowt com.twittew.seawch.ingestew.modew.kafkawawwecowd;
+i-impowt com.twittew.seawch.ingestew.pipewine.utiw.pipewinestagewuntimeexception;
 
 /**
- * Deserializes {@link KafkaRawRecord} into IngesterTweetEvent and emits those.
+ * desewiawizes {@wink k-kafkawawwecowd} into ingestewtweetevent and emits those.
  */
-@ConsumedTypes(KafkaRawRecord.class)
-@ProducedTypes(IngesterTweetEvent.class)
-public class TweetEventDeserializerStage extends TwitterBaseStage
-    <KafkaRawRecord, IngesterTweetEvent> {
-  private static final Logger LOG = LoggerFactory.getLogger(TweetEventDeserializerStage.class);
+@consumedtypes(kafkawawwecowd.cwass)
+@pwoducedtypes(ingestewtweetevent.cwass)
+p-pubwic cwass tweeteventdesewiawizewstage e-extends twittewbasestage
+    <kafkawawwecowd, OwO i-ingestewtweetevent> {
+  pwivate static finaw woggew wog = woggewfactowy.getwoggew(tweeteventdesewiawizewstage.cwass);
 
-  // Limit how much the logs get polluted
-  private static final int MAX_OOM_SERIALIZED_BYTES_LOGGED = 5000;
-  private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+  // wimit how much the w-wogs get powwuted
+  pwivate static finaw int max_oom_sewiawized_bytes_wogged = 5000;
+  pwivate static finaw chaw[] h-hex_awway = "0123456789abcdef".tochawawway();
 
-  private final TDeserializer deserializer = new TDeserializer();
+  pwivate finaw t-tdesewiawizew d-desewiawizew = n-nyew tdesewiawizew();
 
-  private SearchCounter outOfMemoryErrors;
-  private SearchCounter outOfMemoryErrors2;
-  private SearchCounter totalEventsCount;
-  private SearchCounter validEventsCount;
-  private SearchCounter deserializationErrorsCount;
+  p-pwivate seawchcountew outofmemowyewwows;
+  p-pwivate seawchcountew outofmemowyewwows2;
+  pwivate seawchcountew t-totaweventscount;
+  pwivate seawchcountew vawideventscount;
+  pwivate seawchcountew desewiawizationewwowscount;
 
-  @Override
-  public void initStats() {
-    super.initStats();
-    innerSetupStats();
+  @ovewwide
+  p-pubwic void initstats() {
+    s-supew.initstats();
+    i-innewsetupstats();
   }
 
-  @Override
-  protected void innerSetupStats() {
-    outOfMemoryErrors = SearchCounter.export(getStageNamePrefix() + "_out_of_memory_errors");
-    outOfMemoryErrors2 = SearchCounter.export(getStageNamePrefix() + "_out_of_memory_errors_2");
-    totalEventsCount = SearchCounter.export(getStageNamePrefix() + "_total_events_count");
-    validEventsCount = SearchCounter.export(getStageNamePrefix() + "_valid_events_count");
-    deserializationErrorsCount =
-        SearchCounter.export(getStageNamePrefix() + "_deserialization_errors_count");
+  @ovewwide
+  p-pwotected void innewsetupstats() {
+    outofmemowyewwows = seawchcountew.expowt(getstagenamepwefix() + "_out_of_memowy_ewwows");
+    o-outofmemowyewwows2 = s-seawchcountew.expowt(getstagenamepwefix() + "_out_of_memowy_ewwows_2");
+    totaweventscount = s-seawchcountew.expowt(getstagenamepwefix() + "_totaw_events_count");
+    v-vawideventscount = seawchcountew.expowt(getstagenamepwefix() + "_vawid_events_count");
+    d-desewiawizationewwowscount =
+        seawchcountew.expowt(getstagenamepwefix() + "_desewiawization_ewwows_count");
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof KafkaRawRecord)) {
-      throw new StageException(this, "Object is not a KafkaRawRecord: " + obj);
+  @ovewwide
+  p-pubwic void innewpwocess(object obj) thwows stageexception {
+    if (!(obj instanceof k-kafkawawwecowd)) {
+      thwow nyew stageexception(this, 😳 "object i-is nyot a kafkawawwecowd: " + o-obj);
     }
 
-    KafkaRawRecord kafkaRecord = (KafkaRawRecord) obj;
-    IngesterTweetEvent tweetEvent = tryDeserializeRecord(kafkaRecord);
+    k-kafkawawwecowd kafkawecowd = (kafkawawwecowd) obj;
+    ingestewtweetevent tweetevent = twydesewiawizewecowd(kafkawecowd);
 
-    if (tweetEvent != null) {
-      emitAndCount(tweetEvent);
+    if (tweetevent != n-nyuww) {
+      e-emitandcount(tweetevent);
     }
   }
 
-  @Override
-  protected IngesterTweetEvent innerRunStageV2(KafkaRawRecord kafkaRawRecord) {
-    IngesterTweetEvent ingesterTweetEvent = tryDeserializeRecord(kafkaRawRecord);
-    if (ingesterTweetEvent == null) {
-      throw new PipelineStageRuntimeException("failed to deserialize KafkaRawRecord : "
-          + kafkaRawRecord);
+  @ovewwide
+  pwotected i-ingestewtweetevent i-innewwunstagev2(kafkawawwecowd k-kafkawawwecowd) {
+    ingestewtweetevent ingestewtweetevent = twydesewiawizewecowd(kafkawawwecowd);
+    i-if (ingestewtweetevent == nyuww) {
+      thwow nyew pipewinestagewuntimeexception("faiwed to desewiawize k-kafkawawwecowd : "
+          + kafkawawwecowd);
     }
-    return ingesterTweetEvent;
+    w-wetuwn ingestewtweetevent;
   }
 
-  private IngesterTweetEvent tryDeserializeRecord(KafkaRawRecord kafkaRecord) {
-    try {
-      totalEventsCount.increment();
-      IngesterTweetEvent tweetEvent = deserialize(kafkaRecord);
-      validEventsCount.increment();
-      return tweetEvent;
-    } catch (OutOfMemoryError e) {
-      try {
-        outOfMemoryErrors.increment();
-        byte[] bytes = kafkaRecord.getData();
-        int limit = Math.min(bytes.length, MAX_OOM_SERIALIZED_BYTES_LOGGED);
-        StringBuilder sb = new StringBuilder(2 * limit + 100)
-            .append("OutOfMemoryError deserializing ").append(bytes.length).append(" bytes: ");
-        appendBytesAsHex(sb, bytes, MAX_OOM_SERIALIZED_BYTES_LOGGED);
-        LOG.error(sb.toString(), e);
-      } catch (OutOfMemoryError e2) {
-        outOfMemoryErrors2.increment();
+  p-pwivate ingestewtweetevent t-twydesewiawizewecowd(kafkawawwecowd kafkawecowd) {
+    t-twy {
+      t-totaweventscount.incwement();
+      i-ingestewtweetevent t-tweetevent = desewiawize(kafkawecowd);
+      vawideventscount.incwement();
+      w-wetuwn t-tweetevent;
+    } c-catch (outofmemowyewwow e-e) {
+      t-twy {
+        outofmemowyewwows.incwement();
+        byte[] bytes = kafkawecowd.getdata();
+        i-int wimit = math.min(bytes.wength, 😳😳😳 max_oom_sewiawized_bytes_wogged);
+        stwingbuiwdew sb = nyew stwingbuiwdew(2 * wimit + 100)
+            .append("outofmemowyewwow d-desewiawizing ").append(bytes.wength).append(" bytes: ");
+        appendbytesashex(sb, (˘ω˘) bytes, ʘwʘ m-max_oom_sewiawized_bytes_wogged);
+        w-wog.ewwow(sb.tostwing(), ( ͡o ω ͡o ) e-e);
+      } catch (outofmemowyewwow e-e2) {
+        outofmemowyewwows2.incwement();
       }
     }
 
-    return null;
+    w-wetuwn n-nyuww;
 
   }
 
-  private IngesterTweetEvent deserialize(KafkaRawRecord kafkaRecord) {
-    try {
-      IngesterTweetEvent ingesterTweetEvent = new IngesterTweetEvent();
-      synchronized (this) {
-        deserializer.deserialize(ingesterTweetEvent, kafkaRecord.getData());
+  pwivate ingestewtweetevent desewiawize(kafkawawwecowd kafkawecowd) {
+    twy {
+      ingestewtweetevent i-ingestewtweetevent = nyew i-ingestewtweetevent();
+      synchwonized (this) {
+        d-desewiawizew.desewiawize(ingestewtweetevent, o.O k-kafkawecowd.getdata());
       }
-      // Record the created_at time and then we first saw this tweet in the ingester for tracking
-      // down the ingestion pipeline.
-      addDebugEventsToIncomingTweet(ingesterTweetEvent, kafkaRecord.getReadAtTimestampMs());
-      return ingesterTweetEvent;
-    } catch (TException e) {
-      LOG.error("Unable to deserialize TweetEventData", e);
-      deserializationErrorsCount.increment();
+      // wecowd the cweated_at time and t-then we fiwst saw t-this tweet in the ingestew fow t-twacking
+      // d-down the ingestion pipewine. >w<
+      adddebugeventstoincomingtweet(ingestewtweetevent, 😳 kafkawecowd.getweadattimestampms());
+      wetuwn ingestewtweetevent;
+    } c-catch (texception e-e) {
+      w-wog.ewwow("unabwe to desewiawize t-tweeteventdata", 🥺 e-e);
+      desewiawizationewwowscount.incwement();
     }
-    return null;
+    wetuwn nyuww;
   }
 
-  private void addDebugEventsToIncomingTweet(
-      IngesterTweetEvent ingesterTweetEvent, long readAtTimestampMs) {
-    DebugEventUtil.setCreatedAtDebugEvent(
-        ingesterTweetEvent, ingesterTweetEvent.getFlags().getTimestamp_ms());
-    DebugEventUtil.setProcessingStartedAtDebugEvent(ingesterTweetEvent, readAtTimestampMs);
+  p-pwivate void adddebugeventstoincomingtweet(
+      ingestewtweetevent ingestewtweetevent, rawr x3 wong w-weadattimestampms) {
+    d-debugeventutiw.setcweatedatdebugevent(
+        ingestewtweetevent, o.O ingestewtweetevent.getfwags().gettimestamp_ms());
+    debugeventutiw.setpwocessingstawtedatdebugevent(ingestewtweetevent, rawr w-weadattimestampms);
 
-    // The TweetEventDeserializerStage takes in a byte[] representation of a tweet, so debug events
-    // are not automatically appended by TwitterBaseStage. We do that explicitly here.
-    DebugEventUtil.addDebugEvent(ingesterTweetEvent, getFullStageName(), clock.nowMillis());
+    // t-the tweeteventdesewiawizewstage takes in a byte[] wepwesentation of a tweet, ʘwʘ s-so debug events
+    // awe nyot automaticawwy appended by twittewbasestage. 😳😳😳 we d-do that expwicitwy hewe.
+    debugeventutiw.adddebugevent(ingestewtweetevent, ^^;; getfuwwstagename(), o.O cwock.nowmiwwis());
   }
 
-  @VisibleForTesting
-  static void appendBytesAsHex(StringBuilder sb, byte[] bytes, int maxLength) {
-    int limit = Math.min(bytes.length, maxLength);
-    for (int j = 0; j < limit; j++) {
-      sb.append(HEX_ARRAY[(bytes[j] >>> 4) & 0x0F]);
-      sb.append(HEX_ARRAY[bytes[j] & 0x0F]);
+  @visibwefowtesting
+  s-static void appendbytesashex(stwingbuiwdew s-sb, (///ˬ///✿) byte[] bytes, σωσ int maxwength) {
+    int wimit = m-math.min(bytes.wength, nyaa~~ m-maxwength);
+    fow (int j = 0; j < wimit; j++) {
+      s-sb.append(hex_awway[(bytes[j] >>> 4) & 0x0f]);
+      sb.append(hex_awway[bytes[j] & 0x0f]);
     }
   }
 }

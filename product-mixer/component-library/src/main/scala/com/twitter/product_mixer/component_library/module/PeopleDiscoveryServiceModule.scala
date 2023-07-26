@@ -1,42 +1,42 @@
-package com.twitter.product_mixer.component_library.module
+package com.twittew.pwoduct_mixew.component_wibwawy.moduwe
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.peoplediscovery.api.thriftscala.ThriftPeopleDiscoveryService
-import com.twitter.util.Duration
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.convewsions.pewcentops._
+i-impowt com.twittew.finagwe.thwiftmux.methodbuiwdew
+i-impowt com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwscwient
+i-impowt com.twittew.inject.injectow
+i-impowt com.twittew.inject.thwift.moduwes.thwiftmethodbuiwdewcwientmoduwe
+i-impowt com.twittew.peopwediscovewy.api.thwiftscawa.thwiftpeopwediscovewysewvice
+i-impowt com.twittew.utiw.duwation
 
 /**
- * Implementation with reasonable defaults for an idempotent People Discovery Thrift client.
+ * impwementation with weasonabwe defauwts fow an idempotent p-peopwe discovewy thwift cwient. rawr x3
  *
- * Note that the per request and total timeouts configured in this module are meant to represent a
- * reasonable starting point only. These were selected based on common practice, and should not be
- * assumed to be optimal for any particular use case. If you are interested in further tuning the
- * settings in this module, it is recommended to create local copy for your service.
+ * nyote that t-the pew wequest and totaw timeouts c-configuwed in this moduwe awe meant to wepwesent a
+ * weasonabwe s-stawting point onwy. (U ﹏ U) these w-wewe sewected b-based on common pwactice, (U ﹏ U) and shouwd nyot be
+ * assumed to be optimaw fow any pawticuwaw u-use case. (⑅˘꒳˘) if you awe intewested in fuwthew tuning the
+ * settings in this m-moduwe, òωó it is wecommended to c-cweate wocaw copy f-fow youw sewvice. ʘwʘ
  */
-object PeopleDiscoveryServiceModule
-    extends ThriftMethodBuilderClientModule[
-      ThriftPeopleDiscoveryService.ServicePerEndpoint,
-      ThriftPeopleDiscoveryService.MethodPerEndpoint
+o-object p-peopwediscovewysewvicemoduwe
+    extends thwiftmethodbuiwdewcwientmoduwe[
+      thwiftpeopwediscovewysewvice.sewvicepewendpoint, /(^•ω•^)
+      t-thwiftpeopwediscovewysewvice.methodpewendpoint
     ]
-    with MtlsClient {
+    with mtwscwient {
 
-  override val label: String = "people-discovery-api"
+  ovewwide vaw w-wabew: stwing = "peopwe-discovewy-api"
 
-  override val dest: String = "/s/people-discovery-api/people-discovery-api:thrift"
+  ovewwide vaw dest: stwing = "/s/peopwe-discovewy-api/peopwe-discovewy-api:thwift"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    methodBuilder
-      .withTimeoutPerRequest(800.millis)
-      .withTimeoutTotal(1200.millis)
-      .idempotent(5.percent)
+  ovewwide pwotected def configuwemethodbuiwdew(
+    injectow: injectow, ʘwʘ
+    m-methodbuiwdew: methodbuiwdew
+  ): m-methodbuiwdew = {
+    m-methodbuiwdew
+      .withtimeoutpewwequest(800.miwwis)
+      .withtimeouttotaw(1200.miwwis)
+      .idempotent(5.pewcent)
   }
 
-  override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+  o-ovewwide pwotected def sessionacquisitiontimeout: duwation = 500.miwwiseconds
 }

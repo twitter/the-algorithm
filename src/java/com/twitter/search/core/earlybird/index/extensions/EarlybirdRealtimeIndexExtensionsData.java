@@ -1,20 +1,20 @@
-package com.twitter.search.core.earlybird.index.extensions;
+package com.twittew.seawch.cowe.eawwybiwd.index.extensions;
 
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentWriter;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdweawtimeindexsegmentwwitew;
 
 /**
- * An index extensions implementation for real-time Earlybird indexes.
+ * a-an index e-extensions impwementation f-fow weaw-time e-eawwybiwd i-indexes. -.-
  */
-public interface EarlybirdRealtimeIndexExtensionsData extends EarlybirdIndexExtensionsData {
+p-pubwic intewface e-eawwybiwdweawtimeindexextensionsdata extends eawwybiwdindexextensionsdata {
   /**
-   * Optionally, an implementing class can provide a custom consumer for inverted fields (i.e. streams of tokens).
+   * optionawwy, ( ͡o ω ͡o ) an impwementing cwass can pwovide a-a custom consumew fow invewted fiewds (i.e. rawr x3 s-stweams of tokens). nyaa~~
    */
-  void createInvertedDocConsumer(
-      EarlybirdRealtimeIndexSegmentWriter.InvertedDocConsumerBuilder builder);
+  void c-cweateinvewteddocconsumew(
+      eawwybiwdweawtimeindexsegmentwwitew.invewteddocconsumewbuiwdew buiwdew);
 
   /**
-   * Optionally, an implementing class can provide a custom consumer for stored fields (e.g. doc values fields).
+   * optionawwy, /(^•ω•^) a-an impwementing cwass can pwovide a-a custom c-consumew fow stowed fiewds (e.g. rawr doc vawues fiewds). OwO
    */
-  void createStoredFieldsConsumer(
-      EarlybirdRealtimeIndexSegmentWriter.StoredFieldsConsumerBuilder builder);
+  void cweatestowedfiewdsconsumew(
+      e-eawwybiwdweawtimeindexsegmentwwitew.stowedfiewdsconsumewbuiwdew buiwdew);
 }

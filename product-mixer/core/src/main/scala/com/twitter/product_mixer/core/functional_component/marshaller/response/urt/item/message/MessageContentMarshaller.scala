@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.message
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.CompactPromptMessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.InlinePromptMessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.HeaderImagePromptMessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.compactpwomptmessagecontent
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.inwinepwomptmessagecontent
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.headewimagepwomptmessagecontent
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.messagecontent
+impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class MessageContentMarshaller @Inject() (
-  inlinePromptMessageContentMarshaller: InlinePromptMessageContentMarshaller,
-  headerImagePromptMessageContentMarshaller: HeaderImagePromptMessageContentMarshaller,
-  compactPromptMessageContentMarshaller: CompactPromptMessageContentMarshaller) {
+@singweton
+cwass messagecontentmawshawwew @inject() (
+  inwinepwomptmessagecontentmawshawwew: inwinepwomptmessagecontentmawshawwew, :3
+  h-headewimagepwomptmessagecontentmawshawwew: headewimagepwomptmessagecontentmawshawwew,
+  compactpwomptmessagecontentmawshawwew: c-compactpwomptmessagecontentmawshawwew) {
 
-  def apply(messageContent: MessageContent): urt.MessageContent = messageContent match {
-    case inlinePromptMessageContent: InlinePromptMessageContent =>
-      inlinePromptMessageContentMarshaller(inlinePromptMessageContent)
-    case headerImagePromptMessageContent: HeaderImagePromptMessageContent =>
-      headerImagePromptMessageContentMarshaller(headerImagePromptMessageContent)
-    case compactPromptMessageContent: CompactPromptMessageContent =>
-      compactPromptMessageContentMarshaller(compactPromptMessageContent)
+  def appwy(messagecontent: m-messagecontent): uwt.messagecontent = messagecontent match {
+    case i-inwinepwomptmessagecontent: inwinepwomptmessagecontent =>
+      inwinepwomptmessagecontentmawshawwew(inwinepwomptmessagecontent)
+    c-case headewimagepwomptmessagecontent: h-headewimagepwomptmessagecontent =>
+      headewimagepwomptmessagecontentmawshawwew(headewimagepwomptmessagecontent)
+    case compactpwomptmessagecontent: compactpwomptmessagecontent =>
+      compactpwomptmessagecontentmawshawwew(compactpwomptmessagecontent)
   }
 }

@@ -1,22 +1,22 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala.EscherbirdEntityAnnotations
-import com.twitter.tweetypie.thriftscala.FieldByPath
+impowt c-com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.wepositowy._
+i-impowt c-com.twittew.tweetypie.thwiftscawa.eschewbiwdentityannotations
+i-impowt com.twittew.tweetypie.thwiftscawa.fiewdbypath
 
-object EscherbirdAnnotationHydrator {
-  type Type = ValueHydrator[Option[EscherbirdEntityAnnotations], Tweet]
+o-object eschewbiwdannotationhydwatow {
+  t-type type = vawuehydwatow[option[eschewbiwdentityannotations], mya tweet]
 
-  val hydratedField: FieldByPath = fieldByPath(Tweet.EscherbirdEntityAnnotationsField)
+  vaw hydwatedfiewd: fiewdbypath = fiewdbypath(tweet.eschewbiwdentityannotationsfiewd)
 
-  def apply(repo: EscherbirdAnnotationRepository.Type): Type =
-    ValueHydrator[Option[EscherbirdEntityAnnotations], Tweet] { (curr, tweet) =>
-      repo(tweet).liftToTry.map {
-        case Return(Some(anns)) => ValueState.modified(Some(anns))
-        case Return(None) => ValueState.unmodified(curr)
-        case Throw(_) => ValueState.partial(curr, hydratedField)
+  def appwy(wepo: e-eschewbiwdannotationwepositowy.type): type =
+    vawuehydwatow[option[eschewbiwdentityannotations], mya t-tweet] { (cuww, 😳 tweet) =>
+      w-wepo(tweet).wifttotwy.map {
+        case wetuwn(some(anns)) => vawuestate.modified(some(anns))
+        case w-wetuwn(none) => vawuestate.unmodified(cuww)
+        c-case thwow(_) => v-vawuestate.pawtiaw(cuww, XD hydwatedfiewd)
       }
     }
 }

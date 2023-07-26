@@ -1,46 +1,46 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.tweetypie.store.UpdatePossiblySensitiveTweet
-import com.twitter.tweetypie.thriftscala.UpdatePossiblySensitiveTweetRequest
-import com.twitter.tweetypie.util.TweetLenses
+impowt c-com.twittew.tweetypie.stowe.updatepossibwysensitivetweet
+i-impowt c-com.twittew.tweetypie.thwiftscawa.updatepossibwysensitivetweetwequest
+i-impowt c-com.twittew.tweetypie.utiw.tweetwenses
 
-object UpdatePossiblySensitiveTweetHandler {
-  type Type = FutureArrow[UpdatePossiblySensitiveTweetRequest, Unit]
+o-object u-updatepossibwysensitivetweethandwew {
+  type type = futuweawwow[updatepossibwysensitivetweetwequest, 🥺 unit]
 
-  def apply(
-    tweetGetter: FutureArrow[TweetId, Tweet],
-    userGetter: FutureArrow[UserId, User],
-    updatePossiblySensitiveTweetStore: FutureEffect[UpdatePossiblySensitiveTweet.Event]
-  ): Type =
-    FutureArrow { request =>
-      val nsfwAdminMutation = Mutation[Boolean](_ => request.nsfwAdmin).checkEq
-      val nsfwUserMutation = Mutation[Boolean](_ => request.nsfwUser).checkEq
-      val tweetMutation =
-        TweetLenses.nsfwAdmin
-          .mutation(nsfwAdminMutation)
-          .also(TweetLenses.nsfwUser.mutation(nsfwUserMutation))
+  def appwy(
+    tweetgettew: f-futuweawwow[tweetid, >_< tweet],
+    usewgettew: futuweawwow[usewid, >_< u-usew], (⑅˘꒳˘)
+    updatepossibwysensitivetweetstowe: f-futuweeffect[updatepossibwysensitivetweet.event]
+  ): type =
+    futuweawwow { wequest =>
+      vaw nysfwadminmutation = m-mutation[boowean](_ => wequest.nsfwadmin).checkeq
+      v-vaw nysfwusewmutation = m-mutation[boowean](_ => wequest.nsfwusew).checkeq
+      vaw tweetmutation =
+        tweetwenses.nsfwadmin
+          .mutation(nsfwadminmutation)
+          .awso(tweetwenses.nsfwusew.mutation(nsfwusewmutation))
 
-      for {
-        originalTweet <- tweetGetter(request.tweetId)
-        _ <- tweetMutation(originalTweet) match {
-          case None => Future.Unit
-          case Some(mutatedTweet) =>
-            userGetter(getUserId(originalTweet))
-              .map { user =>
-                UpdatePossiblySensitiveTweet.Event(
-                  tweet = mutatedTweet,
-                  user = user,
-                  timestamp = Time.now,
-                  byUserId = request.byUserId,
-                  nsfwAdminChange = nsfwAdminMutation(TweetLenses.nsfwAdmin.get(originalTweet)),
-                  nsfwUserChange = nsfwUserMutation(TweetLenses.nsfwUser.get(originalTweet)),
-                  note = request.note,
-                  host = request.host
+      fow {
+        o-owiginawtweet <- tweetgettew(wequest.tweetid)
+        _ <- tweetmutation(owiginawtweet) match {
+          case nyone => f-futuwe.unit
+          case some(mutatedtweet) =>
+            u-usewgettew(getusewid(owiginawtweet))
+              .map { u-usew =>
+                u-updatepossibwysensitivetweet.event(
+                  t-tweet = mutatedtweet, /(^•ω•^)
+                  usew = usew, rawr x3
+                  t-timestamp = time.now, (U ﹏ U)
+                  byusewid = w-wequest.byusewid, (U ﹏ U)
+                  nysfwadminchange = nysfwadminmutation(tweetwenses.nsfwadmin.get(owiginawtweet)), (⑅˘꒳˘)
+                  nysfwusewchange = nysfwusewmutation(tweetwenses.nsfwusew.get(owiginawtweet)), òωó
+                  nyote = wequest.note, ʘwʘ
+                  host = w-wequest.host
                 )
               }
-              .flatMap(updatePossiblySensitiveTweetStore)
+              .fwatmap(updatepossibwysensitivetweetstowe)
         }
-      } yield ()
+      } yiewd ()
     }
 }

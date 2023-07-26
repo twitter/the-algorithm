@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.service.candidate_decorator_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.candidate_decowatow_executow
 
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.service.ExecutorResult
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.decowation
+i-impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.executowwesuwt
 
-case class CandidateDecoratorExecutorResult(result: Seq[Decoration]) extends ExecutorResult
+c-case cwass c-candidatedecowatowexecutowwesuwt(wesuwt: s-seq[decowation]) extends e-executowwesuwt

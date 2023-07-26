@@ -1,174 +1,174 @@
-package com.twitter.tweetypie.serverutil
+package com.twittew.tweetypie.sewvewutiw
 
-import com.github.benmanes.caffeine.cache.stats.CacheStats
-import com.github.benmanes.caffeine.cache.stats.StatsCounter
-import com.github.benmanes.caffeine.cache.AsyncCacheLoader
-import com.github.benmanes.caffeine.cache.AsyncLoadingCache
-import com.github.benmanes.caffeine.cache.Caffeine
-import com.twitter.finagle.memcached.protocol.Value
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.memcached.GetResult
-import com.twitter.finagle.memcached.ProxyClient
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.{Promise => TwitterPromise}
-import com.twitter.util.logging.Logger
-import java.util.concurrent.TimeUnit.NANOSECONDS
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.Executor
-import java.util.concurrent.TimeUnit
-import java.util.function.BiConsumer
-import java.util.function.Supplier
-import java.lang
-import java.util
-import scala.collection.JavaConverters._
+impowt c-com.github.benmanes.caffeine.cache.stats.cachestats
+i-impowt com.github.benmanes.caffeine.cache.stats.statscountew
+i-impowt com.github.benmanes.caffeine.cache.asynccachewoadew
+i-impowt c-com.github.benmanes.caffeine.cache.asyncwoadingcache
+i-impowt com.github.benmanes.caffeine.cache.caffeine
+i-impowt c-com.twittew.finagwe.memcached.pwotocow.vawue
+impowt com.twittew.finagwe.memcached.cwient
+impowt com.twittew.finagwe.memcached.getwesuwt
+impowt c-com.twittew.finagwe.memcached.pwoxycwient
+impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.utiw.duwation
+impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.wetuwn
+i-impowt c-com.twittew.utiw.thwow
+impowt com.twittew.utiw.{pwomise => twittewpwomise}
+impowt c-com.twittew.utiw.wogging.woggew
+impowt java.utiw.concuwwent.timeunit.nanoseconds
+impowt java.utiw.concuwwent.compwetabwefutuwe
+impowt java.utiw.concuwwent.executow
+impowt j-java.utiw.concuwwent.timeunit
+impowt j-java.utiw.function.biconsumew
+i-impowt java.utiw.function.suppwiew
+i-impowt java.wang
+i-impowt java.utiw
+impowt scawa.cowwection.javaconvewtews._
 
-object CaffeineMemcacheClient {
-  val logger: Logger = Logger(getClass)
+object caffeinememcachecwient {
+  v-vaw woggew: woggew = woggew(getcwass)
 
   /**
-   * Helper method to convert between Java 8's CompletableFuture and Twitter's Future.
+   * hewpew method t-to convewt between java 8's compwetabwefutuwe and twittew's futuwe. 😳😳😳
    */
-  private def toTwitterFuture[T](cf: CompletableFuture[T]): Future[T] = {
-    if (cf.isDone && !cf.isCompletedExceptionally && !cf.isCancelled) {
-      Future.const(Return(cf.get()))
-    } else {
-      val p = new TwitterPromise[T] with TwitterPromise.InterruptHandler {
-        override protected def onInterrupt(t: Throwable): Unit = cf.cancel(true)
+  pwivate def totwittewfutuwe[t](cf: c-compwetabwefutuwe[t]): futuwe[t] = {
+    i-if (cf.isdone && !cf.iscompwetedexceptionawwy && !cf.iscancewwed) {
+      f-futuwe.const(wetuwn(cf.get()))
+    } e-ewse {
+      vaw p = nyew twittewpwomise[t] with twittewpwomise.intewwupthandwew {
+        o-ovewwide pwotected d-def onintewwupt(t: thwowabwe): u-unit = cf.cancew(twue)
       }
-      cf.whenComplete(new BiConsumer[T, Throwable] {
-        override def accept(result: T, exception: Throwable): Unit = {
-          if (exception != null) {
-            p.updateIfEmpty(Throw(exception))
-          } else {
-            p.updateIfEmpty(Return(result))
+      c-cf.whencompwete(new biconsumew[t, o.O thwowabwe] {
+        o-ovewwide def accept(wesuwt: t-t, òωó exception: thwowabwe): unit = {
+          if (exception != n-nyuww) {
+            p.updateifempty(thwow(exception))
+          } e-ewse {
+            p.updateifempty(wetuwn(wesuwt))
           }
         }
       })
-      p
+      p-p
     }
   }
 }
 
-class CaffeineMemcacheClient(
-  override val proxyClient: Client,
-  val maximumSize: Int = 1000,
-  val ttl: Duration = Duration.fromSeconds(10),
-  stats: StatsReceiver = NullStatsReceiver)
-    extends ProxyClient {
-  import CaffeineMemcacheClient._
+c-cwass caffeinememcachecwient(
+  ovewwide vaw pwoxycwient: cwient, 😳😳😳
+  vaw maximumsize: int = 1000, σωσ
+  vaw ttw: duwation = duwation.fwomseconds(10), (⑅˘꒳˘)
+  s-stats: s-statsweceivew = nyuwwstatsweceivew)
+    e-extends p-pwoxycwient {
+  i-impowt caffeinememcachecwient._
 
-  private[this] object Stats extends StatsCounter {
-    private val hits = stats.counter("hits")
-    private val miss = stats.counter("misses")
-    private val totalLoadTime = stats.stat("loads")
-    private val loadSuccess = stats.counter("loads-success")
-    private val loadFailure = stats.counter("loads-failure")
-    private val eviction = stats.counter("evictions")
-    private val evictionWeight = stats.counter("evictions-weight")
+  pwivate[this] object stats extends statscountew {
+    p-pwivate vaw hits = stats.countew("hits")
+    pwivate vaw miss = stats.countew("misses")
+    pwivate vaw t-totawwoadtime = stats.stat("woads")
+    p-pwivate v-vaw woadsuccess = s-stats.countew("woads-success")
+    pwivate v-vaw woadfaiwuwe = s-stats.countew("woads-faiwuwe")
+    p-pwivate vaw e-eviction = stats.countew("evictions")
+    pwivate vaw evictionweight = s-stats.countew("evictions-weight")
 
-    override def recordHits(i: Int): Unit = hits.incr(i)
-    override def recordMisses(i: Int): Unit = miss.incr(i)
-    override def recordLoadSuccess(l: Long): Unit = {
-      loadSuccess.incr()
-      totalLoadTime.add(NANOSECONDS.toMillis(l))
+    ovewwide d-def wecowdhits(i: i-int): u-unit = hits.incw(i)
+    o-ovewwide def wecowdmisses(i: int): unit = miss.incw(i)
+    o-ovewwide def wecowdwoadsuccess(w: wong): unit = {
+      woadsuccess.incw()
+      totawwoadtime.add(nanoseconds.tomiwwis(w))
     }
 
-    override def recordLoadFailure(l: Long): Unit = {
-      loadFailure.incr()
-      totalLoadTime.add(NANOSECONDS.toMillis(l))
+    ovewwide d-def wecowdwoadfaiwuwe(w: wong): unit = {
+      woadfaiwuwe.incw()
+      t-totawwoadtime.add(nanoseconds.tomiwwis(w))
     }
 
-    override def recordEviction(): Unit = recordEviction(1)
-    override def recordEviction(weight: Int): Unit = {
-      eviction.incr()
-      evictionWeight.incr(weight)
-    }
-
-    /**
-     * We are currently not using this method.
-     */
-    override def snapshot(): CacheStats = {
-      new CacheStats(0, 0, 0, 0, 0, 0, 0)
-    }
-  }
-
-  private[this] object MemcachedAsyncCacheLoader extends AsyncCacheLoader[String, GetResult] {
-    private[this] val EmptyMisses: Set[String] = Set.empty
-    private[this] val EmptyFailures: Map[String, Throwable] = Map.empty
-    private[this] val EmptyHits: Map[String, Value] = Map.empty
-
-    override def asyncLoad(key: String, executor: Executor): CompletableFuture[GetResult] = {
-      val f = new util.function.Function[util.Map[String, GetResult], GetResult] {
-        override def apply(r: util.Map[String, GetResult]): GetResult = r.get(key)
-      }
-      asyncLoadAll(Seq(key).asJava, executor).thenApply(f)
+    o-ovewwide def wecowdeviction(): u-unit = wecowdeviction(1)
+    ovewwide d-def wecowdeviction(weight: int): unit = {
+      e-eviction.incw()
+      e-evictionweight.incw(weight)
     }
 
     /**
-     * Converts response from multi-key to single key. Memcache returns the result
-     * in one struct that contains all the hits, misses and exceptions. Caffeine
-     * requires a map from a key to the result, so we do that conversion here.
+     * we awe cuwwentwy nyot using this method. (///ˬ///✿)
      */
-    override def asyncLoadAll(
-      keys: lang.Iterable[_ <: String],
-      executor: Executor
-    ): CompletableFuture[util.Map[String, GetResult]] = {
-      val result = new CompletableFuture[util.Map[String, GetResult]]()
-      proxyClient.getResult(keys.asScala).respond {
-        case Return(r) =>
-          val map = new util.HashMap[String, GetResult]()
-          r.hits.foreach {
-            case (key, value) =>
-              map.put(
-                key,
-                r.copy(hits = Map(key -> value), misses = EmptyMisses, failures = EmptyFailures)
-              )
-          }
-          r.misses.foreach { key =>
-            map.put(key, r.copy(hits = EmptyHits, misses = Set(key), failures = EmptyFailures))
-          }
-          // We are passing through failures so that we maintain the contract expected by clients.
-          // Without passing through the failures, several metrics get lost. Some of these failures
-          // might get cached. The cache is short-lived, so we are not worried when it does
-          // get cached.
-          r.failures.foreach {
-            case (key, value) =>
-              map.put(
-                key,
-                r.copy(hits = EmptyHits, misses = EmptyMisses, failures = Map(key -> value))
-              )
-          }
-          result.complete(map)
-        case Throw(ex) =>
-          logger.warn("Error loading keys from memcached", ex)
-          result.completeExceptionally(ex)
-      }
-      result
+    ovewwide def snapshot(): cachestats = {
+      n-nyew cachestats(0, 🥺 0, 0, 0, 0, 0, OwO 0)
     }
   }
 
-  private[this] val cache: AsyncLoadingCache[String, GetResult] =
-    Caffeine
-      .newBuilder()
-      .maximumSize(maximumSize)
-      .refreshAfterWrite(ttl.inMilliseconds * 3 / 4, TimeUnit.MILLISECONDS)
-      .expireAfterWrite(ttl.inMilliseconds, TimeUnit.MILLISECONDS)
-      .recordStats(new Supplier[StatsCounter] {
-        override def get(): StatsCounter = Stats
+  pwivate[this] o-object memcachedasynccachewoadew extends asynccachewoadew[stwing, >w< g-getwesuwt] {
+    p-pwivate[this] vaw emptymisses: set[stwing] = s-set.empty
+    pwivate[this] v-vaw emptyfaiwuwes: m-map[stwing, 🥺 thwowabwe] = m-map.empty
+    pwivate[this] vaw emptyhits: map[stwing, nyaa~~ vawue] = map.empty
+
+    o-ovewwide d-def asyncwoad(key: s-stwing, executow: executow): c-compwetabwefutuwe[getwesuwt] = {
+      v-vaw f = nyew utiw.function.function[utiw.map[stwing, ^^ g-getwesuwt], >w< getwesuwt] {
+        ovewwide def appwy(w: utiw.map[stwing, OwO g-getwesuwt]): g-getwesuwt = w.get(key)
+      }
+      asyncwoadaww(seq(key).asjava, XD executow).thenappwy(f)
+    }
+
+    /**
+     * c-convewts wesponse f-fwom muwti-key to singwe key. ^^;; memcache wetuwns the wesuwt
+     * i-in one stwuct that contains aww the hits, 🥺 misses and exceptions. XD caffeine
+     * w-wequiwes a map fwom a key to the wesuwt, (U ᵕ U❁) so w-we do that convewsion h-hewe. :3
+     */
+    ovewwide def asyncwoadaww(
+      keys: w-wang.itewabwe[_ <: s-stwing], ( ͡o ω ͡o )
+      executow: executow
+    ): compwetabwefutuwe[utiw.map[stwing, òωó getwesuwt]] = {
+      v-vaw wesuwt = nyew compwetabwefutuwe[utiw.map[stwing, σωσ g-getwesuwt]]()
+      pwoxycwient.getwesuwt(keys.asscawa).wespond {
+        case wetuwn(w) =>
+          vaw map = nyew utiw.hashmap[stwing, (U ᵕ U❁) g-getwesuwt]()
+          w.hits.foweach {
+            c-case (key, (✿oωo) v-vawue) =>
+              map.put(
+                k-key, ^^
+                w.copy(hits = m-map(key -> v-vawue), ^•ﻌ•^ misses = e-emptymisses, XD faiwuwes = emptyfaiwuwes)
+              )
+          }
+          w-w.misses.foweach { k-key =>
+            map.put(key, :3 w.copy(hits = e-emptyhits, (ꈍᴗꈍ) misses = s-set(key), :3 f-faiwuwes = emptyfaiwuwes))
+          }
+          // we awe passing thwough faiwuwes s-so that we maintain the contwact e-expected by c-cwients. (U ﹏ U)
+          // without passing thwough the faiwuwes, UwU sevewaw m-metwics get w-wost. 😳😳😳 some of these f-faiwuwes
+          // m-might get cached. XD the c-cache is showt-wived, o.O so we awe nyot wowwied when it does
+          // get cached. (⑅˘꒳˘)
+          w.faiwuwes.foweach {
+            case (key, 😳😳😳 v-vawue) =>
+              map.put(
+                k-key, nyaa~~
+                w.copy(hits = emptyhits, rawr m-misses = emptymisses, -.- faiwuwes = m-map(key -> vawue))
+              )
+          }
+          w-wesuwt.compwete(map)
+        c-case thwow(ex) =>
+          w-woggew.wawn("ewwow woading k-keys fwom m-memcached", (✿oωo) ex)
+          wesuwt.compweteexceptionawwy(ex)
+      }
+      wesuwt
+    }
+  }
+
+  pwivate[this] vaw cache: asyncwoadingcache[stwing, /(^•ω•^) getwesuwt] =
+    c-caffeine
+      .newbuiwdew()
+      .maximumsize(maximumsize)
+      .wefweshaftewwwite(ttw.inmiwwiseconds * 3 / 4, 🥺 t-timeunit.miwwiseconds)
+      .expiweaftewwwite(ttw.inmiwwiseconds, ʘwʘ t-timeunit.miwwiseconds)
+      .wecowdstats(new suppwiew[statscountew] {
+        o-ovewwide def get(): statscountew = stats
       })
-      .buildAsync(MemcachedAsyncCacheLoader)
+      .buiwdasync(memcachedasynccachewoadew)
 
-  override def getResult(keys: Iterable[String]): Future[GetResult] = {
-    val twitterFuture = toTwitterFuture(cache.getAll(keys.asJava))
-    twitterFuture
-      .map { result =>
-        val values = result.values().asScala
-        values.reduce(_ ++ _)
+  ovewwide d-def getwesuwt(keys: i-itewabwe[stwing]): futuwe[getwesuwt] = {
+    v-vaw twittewfutuwe = totwittewfutuwe(cache.getaww(keys.asjava))
+    twittewfutuwe
+      .map { w-wesuwt =>
+        v-vaw vawues = wesuwt.vawues().asscawa
+        vawues.weduce(_ ++ _)
       }
   }
 }

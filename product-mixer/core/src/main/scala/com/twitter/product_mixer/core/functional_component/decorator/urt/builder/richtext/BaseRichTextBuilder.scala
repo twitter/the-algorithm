@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.richtext
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.wichtext
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtext
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-trait BaseRichTextBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]] {
+t-twait basewichtextbuiwdew[-quewy <: p-pipewinequewy, rawr x3 -candidate <: u-univewsawnoun[any]] {
 
-  def apply(query: Query, candidate: Candidate, candidateFeatures: FeatureMap): RichText
+  def a-appwy(quewy: quewy, rawr candidate: candidate, σωσ candidatefeatuwes: featuwemap): wichtext
 }

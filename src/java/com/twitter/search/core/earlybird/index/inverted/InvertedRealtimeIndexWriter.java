@@ -1,163 +1,163 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import com.google.common.base.Preconditions;
+impowt c-com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.analysis.tokenattributes.PayloadAttribute;
-import org.apache.lucene.analysis.tokenattributes.TermToBytesRefAttribute;
-import org.apache.lucene.util.AttributeSource;
-import org.apache.lucene.util.BytesRef;
+i-impowt owg.apache.wucene.anawysis.tokenattwibutes.paywoadattwibute;
+i-impowt o-owg.apache.wucene.anawysis.tokenattwibutes.tewmtobyteswefattwibute;
+i-impowt owg.apache.wucene.utiw.attwibutesouwce;
+i-impowt owg.apache.wucene.utiw.byteswef;
 
-import com.twitter.search.common.hashtable.HashTable;
-import com.twitter.search.common.util.analysis.TermPayloadAttribute;
-import com.twitter.search.core.earlybird.facets.FacetCountingArrayWriter;
-import com.twitter.search.core.earlybird.facets.FacetIDMap.FacetField;
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentWriter;
+impowt c-com.twittew.seawch.common.hashtabwe.hashtabwe;
+i-impowt com.twittew.seawch.common.utiw.anawysis.tewmpaywoadattwibute;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetcountingawwaywwitew;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetidmap.facetfiewd;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdweawtimeindexsegmentwwitew;
 
-public class InvertedRealtimeIndexWriter
-    implements EarlybirdRealtimeIndexSegmentWriter.InvertedDocConsumer {
-  private final InvertedRealtimeIndex invertedIndex;
-  private final FacetCountingArrayWriter facetArray;
-  private final FacetField facetField;
+pubwic cwass invewtedweawtimeindexwwitew
+    impwements e-eawwybiwdweawtimeindexsegmentwwitew.invewteddocconsumew {
+  pwivate finaw i-invewtedweawtimeindex invewtedindex;
+  pwivate finaw facetcountingawwaywwitew f-facetawway;
+  pwivate finaw facetfiewd f-facetfiewd;
 
-  private TermToBytesRefAttribute termAtt;
-  private TermPayloadAttribute termPayloadAtt;
-  private PayloadAttribute payloadAtt;
-  private boolean currentDocIsOffensive;
+  p-pwivate tewmtobyteswefattwibute tewmatt;
+  pwivate tewmpaywoadattwibute tewmpaywoadatt;
+  pwivate paywoadattwibute p-paywoadatt;
+  pwivate boowean cuwwentdocisoffensive;
 
   /**
-   * Creates a new writer for writing to an inverted in-memory real-time index.
+   * cweates a nyew wwitew f-fow wwiting to an invewted in-memowy w-weaw-time index. 🥺
    */
-  public InvertedRealtimeIndexWriter(
-          InvertedRealtimeIndex index,
-          FacetField facetField,
-          FacetCountingArrayWriter facetArray) {
-    super();
-    this.invertedIndex = index;
-    this.facetArray = facetArray;
-    this.facetField = facetField;
+  p-pubwic i-invewtedweawtimeindexwwitew(
+          i-invewtedweawtimeindex index, >_<
+          facetfiewd facetfiewd, ʘwʘ
+          f-facetcountingawwaywwitew facetawway) {
+    supew();
+    this.invewtedindex = i-index;
+    this.facetawway = facetawway;
+    this.facetfiewd = facetfiewd;
   }
 
-  @Override
-  public void start(AttributeSource attributeSource, boolean docIsOffensive) {
-    termAtt = attributeSource.addAttribute(TermToBytesRefAttribute.class);
-    termPayloadAtt = attributeSource.addAttribute(TermPayloadAttribute.class);
-    payloadAtt = attributeSource.addAttribute(PayloadAttribute.class);
-    currentDocIsOffensive = docIsOffensive;
+  @ovewwide
+  pubwic void stawt(attwibutesouwce attwibutesouwce, (˘ω˘) b-boowean docisoffensive) {
+    tewmatt = attwibutesouwce.addattwibute(tewmtobyteswefattwibute.cwass);
+    t-tewmpaywoadatt = a-attwibutesouwce.addattwibute(tewmpaywoadattwibute.cwass);
+    p-paywoadatt = attwibutesouwce.addattwibute(paywoadattwibute.cwass);
+    cuwwentdocisoffensive = docisoffensive;
   }
 
   /**
-   * Adds a posting to the provided inverted index.
+   * a-adds a p-posting to the pwovided invewted i-index. (✿oωo)
    *
-   * @param termBytesRef is a payload that is stored with the term. It is only stored once for each
-   *                     term.
-   * @param postingPayload is a byte payload that will be stored separately for every posting.
-   * @return term id of the added posting.
+   * @pawam t-tewmbyteswef is a paywoad t-that is stowed with the tewm. (///ˬ///✿) i-it is onwy stowed once fow each
+   *                     tewm.
+   * @pawam p-postingpaywoad is a b-byte paywoad that wiww be stowed s-sepawatewy fow e-evewy posting. rawr x3
+   * @wetuwn tewm id of the added posting. -.-
    */
-  public static int indexTerm(InvertedRealtimeIndex invertedIndex, BytesRef termBytesRef,
-      int docID, int position, BytesRef termPayload,
-      BytesRef postingPayload, TermPointerEncoding termPointerEncoding) {
+  pubwic static int indextewm(invewtedweawtimeindex invewtedindex, ^^ b-byteswef tewmbyteswef, (⑅˘꒳˘)
+      i-int docid, nyaa~~ int position, /(^•ω•^) byteswef t-tewmpaywoad, (U ﹏ U)
+      b-byteswef postingpaywoad, 😳😳😳 t-tewmpointewencoding tewmpointewencoding) {
 
-    InvertedRealtimeIndex.TermHashTable hashTable = invertedIndex.getHashTable();
-    BaseByteBlockPool termPool = invertedIndex.getTermPool();
+    invewtedweawtimeindex.tewmhashtabwe hashtabwe = invewtedindex.gethashtabwe();
+    b-basebytebwockpoow tewmpoow = invewtedindex.gettewmpoow();
 
-    TermsArray termsArray = invertedIndex.getTermsArray();
+    tewmsawway tewmsawway = invewtedindex.gettewmsawway();
 
-    long hashTableInfoForBytesRef = hashTable.lookupItem(termBytesRef);
-    int termID = HashTable.decodeItemId(hashTableInfoForBytesRef);
-    int hashTableSlot = HashTable.decodeHashPosition(hashTableInfoForBytesRef);
+    wong h-hashtabweinfofowbyteswef = hashtabwe.wookupitem(tewmbyteswef);
+    i-int tewmid = h-hashtabwe.decodeitemid(hashtabweinfofowbyteswef);
+    i-int hashtabweswot = hashtabwe.decodehashposition(hashtabweinfofowbyteswef);
 
-    invertedIndex.adjustMaxPosition(position);
+    i-invewtedindex.adjustmaxposition(position);
 
-    if (termID == HashTable.EMPTY_SLOT) {
-      // First time we are seeing this token since we last flushed the hash.
-      // the LSB in textStart denotes whether this term has a term payload
-      int textStart = ByteTermUtils.copyToTermPool(termPool, termBytesRef);
-      boolean hasTermPayload = termPayload != null;
-      int termPointer = termPointerEncoding.encodeTermPointer(textStart, hasTermPayload);
+    i-if (tewmid == h-hashtabwe.empty_swot) {
+      // f-fiwst time we awe seeing this token since w-we wast fwushed t-the hash. >w<
+      // t-the wsb in textstawt d-denotes w-whethew this tewm has a tewm paywoad
+      int textstawt = bytetewmutiws.copytotewmpoow(tewmpoow, t-tewmbyteswef);
+      boowean hastewmpaywoad = tewmpaywoad != nyuww;
+      int tewmpointew = tewmpointewencoding.encodetewmpointew(textstawt, XD hastewmpaywoad);
 
-      if (hasTermPayload) {
-        ByteTermUtils.copyToTermPool(termPool, termPayload);
+      if (hastewmpaywoad) {
+        b-bytetewmutiws.copytotewmpoow(tewmpoow, o.O tewmpaywoad);
       }
 
-      termID = invertedIndex.getNumTerms();
-      invertedIndex.incrementNumTerms();
-      if (termID >= termsArray.getSize()) {
-        termsArray = invertedIndex.growTermsArray();
+      tewmid = invewtedindex.getnumtewms();
+      i-invewtedindex.incwementnumtewms();
+      i-if (tewmid >= t-tewmsawway.getsize()) {
+        tewmsawway = i-invewtedindex.gwowtewmsawway();
       }
 
-      termsArray.termPointers[termID] = termPointer;
+      tewmsawway.tewmpointews[tewmid] = t-tewmpointew;
 
-      Preconditions.checkState(hashTable.slots()[hashTableSlot] == HashTable.EMPTY_SLOT);
-      hashTable.setSlot(hashTableSlot, termID);
+      p-pweconditions.checkstate(hashtabwe.swots()[hashtabweswot] == hashtabwe.empty_swot);
+      hashtabwe.setswot(hashtabweswot, mya tewmid);
 
-      if (invertedIndex.getNumTerms() * 2 >= hashTable.numSlots()) {
-        invertedIndex.rehashPostings(2 * hashTable.numSlots());
+      if (invewtedindex.getnumtewms() * 2 >= hashtabwe.numswots()) {
+        i-invewtedindex.wehashpostings(2 * hashtabwe.numswots());
       }
 
-      // Insert termID into termsSkipList.
-      invertedIndex.insertToTermsSkipList(termBytesRef, termID);
+      // i-insewt tewmid into tewmsskipwist. 🥺
+      i-invewtedindex.insewttotewmsskipwist(tewmbyteswef, ^^;; t-tewmid);
     }
 
-    invertedIndex.incrementSumTotalTermFreq();
-    invertedIndex.getPostingList()
-        .appendPosting(termID, termsArray, docID, position, postingPayload);
+    invewtedindex.incwementsumtotawtewmfweq();
+    invewtedindex.getpostingwist()
+        .appendposting(tewmid, :3 t-tewmsawway, (U ﹏ U) d-docid, OwO position, postingpaywoad);
 
-    return termID;
+    w-wetuwn tewmid;
   }
 
   /**
-   * Delete a posting that was inserted out of order.
+   * d-dewete a posting that was insewted out of owdew. 😳😳😳
    *
-   * This function needs work before it is used in production:
-   * - It should take an isDocOffensive parameter so we can decrement the offensive
-   *   document count for the term.
-   * - It doesn't allow the same concurrency guarantees that the other posting methods do.
+   * this function n-nyeeds wowk befowe i-it is used in p-pwoduction:
+   * - it shouwd take a-an isdocoffensive p-pawametew so we can decwement t-the offensive
+   *   document count fow the tewm. (ˆ ﻌ ˆ)♡
+   * - it doesn't awwow the s-same concuwwency g-guawantees that the othew posting methods do. XD
    */
-  public static void deletePosting(
-      InvertedRealtimeIndex invertedIndex, BytesRef termBytesRef, int docID) {
+  p-pubwic static v-void deweteposting(
+      invewtedweawtimeindex invewtedindex, (ˆ ﻌ ˆ)♡ byteswef tewmbyteswef, ( ͡o ω ͡o ) i-int docid) {
 
-    long hashTableInfoForBytesRef = invertedIndex.getHashTable().lookupItem(termBytesRef);
-    int termID = HashTable.decodeItemId(hashTableInfoForBytesRef);
+    wong hashtabweinfofowbyteswef = invewtedindex.gethashtabwe().wookupitem(tewmbyteswef);
+    int tewmid = h-hashtabwe.decodeitemid(hashtabweinfofowbyteswef);
 
-    if (termID != HashTable.EMPTY_SLOT) {
-      // Have seen this term before, and the field that supports deletes.
-      invertedIndex.getPostingList().deletePosting(termID, invertedIndex.getTermsArray(), docID);
+    if (tewmid != hashtabwe.empty_swot) {
+      // h-have s-seen this tewm befowe, rawr x3 and the fiewd that suppowts dewetes. nyaa~~
+      i-invewtedindex.getpostingwist().deweteposting(tewmid, >_< i-invewtedindex.gettewmsawway(), ^^;; docid);
     }
   }
 
-  @Override
-  public void add(int docID, int position) {
-    final BytesRef payload;
-    if (payloadAtt == null) {
-      payload = null;
-    } else {
-      payload = payloadAtt.getPayload();
+  @ovewwide
+  pubwic void add(int docid, (ˆ ﻌ ˆ)♡ i-int position) {
+    finaw byteswef p-paywoad;
+    if (paywoadatt == nyuww) {
+      paywoad = nyuww;
+    } e-ewse {
+      paywoad = p-paywoadatt.getpaywoad();
     }
 
-    BytesRef termPayload = termPayloadAtt.getTermPayload();
+    b-byteswef tewmpaywoad = tewmpaywoadatt.gettewmpaywoad();
 
-    int termID = indexTerm(invertedIndex, termAtt.getBytesRef(),
-        docID, position, termPayload, payload,
-        invertedIndex.getTermPointerEncoding());
+    i-int tewmid = indextewm(invewtedindex, ^^;; t-tewmatt.getbyteswef(), (⑅˘꒳˘)
+        d-docid, rawr x3 position, (///ˬ///✿) t-tewmpaywoad, 🥺 paywoad,
+        i-invewtedindex.gettewmpointewencoding());
 
-    if (termID == -1) {
-      return;
+    i-if (tewmid == -1) {
+      wetuwn;
     }
 
-    TermsArray termsArray = invertedIndex.getTermsArray();
+    tewmsawway tewmsawway = invewtedindex.gettewmsawway();
 
-    if (currentDocIsOffensive && termsArray.offensiveCounters != null) {
-      termsArray.offensiveCounters[termID]++;
+    i-if (cuwwentdocisoffensive && t-tewmsawway.offensivecountews != n-nyuww) {
+      tewmsawway.offensivecountews[tewmid]++;
     }
 
-    if (facetField != null) {
-      facetArray.addFacet(docID, facetField.getFacetId(), termID);
+    if (facetfiewd != nyuww) {
+      f-facetawway.addfacet(docid, >_< facetfiewd.getfacetid(), UwU t-tewmid);
     }
   }
 
-  @Override
-  public void finish() {
-    payloadAtt = null;
-    termPayloadAtt = null;
+  @ovewwide
+  p-pubwic void finish() {
+    paywoadatt = nyuww;
+    tewmpaywoadatt = n-nyuww;
   }
 }

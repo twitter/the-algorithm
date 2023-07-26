@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.vewticaw_gwid_item
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.VerticalGridItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.VerticalGridItemTopicTile
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.vewticaw_gwid_item.vewticawgwiditem
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.vewticaw_gwid_item.vewticawgwiditemtopictiwe
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class VerticalGridItemContentMarshaller @Inject() (
-  verticalGridItemTopicTileMarshaller: VerticalGridItemTopicTileMarshaller) {
+@singweton
+cwass v-vewticawgwiditemcontentmawshawwew @inject() (
+  vewticawgwiditemtopictiwemawshawwew: vewticawgwiditemtopictiwemawshawwew) {
 
-  def apply(item: VerticalGridItem): urt.VerticalGridItemContent = item match {
-    case verticalGridItemTopicTile: VerticalGridItemTopicTile =>
-      verticalGridItemTopicTileMarshaller(verticalGridItemTopicTile)
+  def appwy(item: vewticawgwiditem): u-uwt.vewticawgwiditemcontent = item match {
+    case vewticawgwiditemtopictiwe: v-vewticawgwiditemtopictiwe =>
+      vewticawgwiditemtopictiwemawshawwew(vewticawgwiditemtopictiwe)
   }
 }

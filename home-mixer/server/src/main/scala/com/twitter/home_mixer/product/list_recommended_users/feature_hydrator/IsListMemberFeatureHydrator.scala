@@ -1,52 +1,52 @@
-package com.twitter.home_mixer.product.list_recommended_users.feature_hydrator
+package com.twittew.home_mixew.pwoduct.wist_wecommended_usews.featuwe_hydwatow
 
-import com.twitter.home_mixer.model.request.HasListId
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersFeatures.IsListMemberFeature
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.socialgraph.{thriftscala => sg}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
+impowt com.twittew.home_mixew.modew.wequest.haswistid
+i-impowt com.twittew.home_mixew.pwoduct.wist_wecommended_usews.modew.wistwecommendedusewsfeatuwes.iswistmembewfeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.usewcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.sociawgwaph.{thwiftscawa => sg}
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stitch.sociawgwaph.sociawgwaph
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class IsListMemberFeatureHydrator @Inject() (socialGraph: SocialGraph)
-    extends BulkCandidateFeatureHydrator[PipelineQuery with HasListId, UserCandidate] {
+@singweton
+cwass iswistmembewfeatuwehydwatow @inject() (sociawgwaph: s-sociawgwaph)
+    extends b-buwkcandidatefeatuwehydwatow[pipewinequewy w-with haswistid, (U ﹏ U) usewcandidate] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("IsListMember")
+  ovewwide vaw identifiew: featuwehydwatowidentifiew =
+    featuwehydwatowidentifiew("iswistmembew")
 
-  override val features: Set[Feature[_, _]] = Set(IsListMemberFeature)
+  o-ovewwide vaw featuwes: set[featuwe[_, (⑅˘꒳˘) _]] = set(iswistmembewfeatuwe)
 
-  override def apply(
-    query: PipelineQuery with HasListId,
-    candidates: Seq[CandidateWithFeatures[UserCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val userIds = candidates.map(_.candidate.id)
-    val request = sg.IdsRequest(
-      relationships = Seq(
-        sg.SrcRelationship(
-          source = query.listId,
-          relationshipType = sg.RelationshipType.ListHasMember,
-          hasRelationship = true,
-          targets = Some(userIds))),
-      pageRequest = Some(sg.PageRequest(selectAll = Some(true)))
+  ovewwide def appwy(
+    q-quewy: pipewinequewy with h-haswistid, òωó
+    c-candidates: seq[candidatewithfeatuwes[usewcandidate]]
+  ): s-stitch[seq[featuwemap]] = {
+    v-vaw usewids = candidates.map(_.candidate.id)
+    vaw wequest = sg.idswequest(
+      w-wewationships = seq(
+        sg.swcwewationship(
+          souwce = q-quewy.wistid,
+          wewationshiptype = sg.wewationshiptype.wisthasmembew,
+          haswewationship = twue, ʘwʘ
+          tawgets = some(usewids))), /(^•ω•^)
+      p-pagewequest = some(sg.pagewequest(sewectaww = some(twue)))
     )
 
-    socialGraph.ids(request).map(_.ids).map { listMembers =>
-      val listMembersSet = listMembers.toSet
+    sociawgwaph.ids(wequest).map(_.ids).map { w-wistmembews =>
+      v-vaw wistmembewsset = w-wistmembews.toset
       candidates.map { candidate =>
-        FeatureMapBuilder()
-          .add(IsListMemberFeature, listMembersSet.contains(candidate.candidate.id))
-          .build()
+        featuwemapbuiwdew()
+          .add(iswistmembewfeatuwe, ʘwʘ w-wistmembewsset.contains(candidate.candidate.id))
+          .buiwd()
       }
     }
   }

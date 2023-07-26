@@ -1,113 +1,113 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.sims_expansion
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.sims.SwitchingSimsSource
-import com.twitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.follow_recommendations.common.models.SimilarToProof
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.sims.switchingsimssouwce
+i-impowt c-com.twittew.fowwow_wecommendations.common.cwients.weaw_time_weaw_gwaph.weawtimeweawgwaphcwient
+i-impowt com.twittew.fowwow_wecommendations.common.modews.accountpwoof
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+impowt c-com.twittew.fowwow_wecommendations.common.modews.weason
+i-impowt com.twittew.fowwow_wecommendations.common.modews.simiwawtopwoof
+impowt com.twittew.hewmit.modew.awgowithm
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.configapi.haspawams
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class RecentEngagementSimilarUsersSource @Inject() (
-  realTimeRealGraphClient: RealTimeRealGraphClient,
-  switchingSimsSource: SwitchingSimsSource,
-  statsReceiver: StatsReceiver)
-    extends SimsExpansionBasedCandidateSource[HasClientContext with HasParams](
-      switchingSimsSource) {
-  override def maxSecondaryDegreeNodes(req: HasClientContext with HasParams): Int = Int.MaxValue
+@singweton
+cwass wecentengagementsimiwawusewssouwce @inject() (
+  weawtimeweawgwaphcwient: weawtimeweawgwaphcwient, >w<
+  s-switchingsimssouwce: switchingsimssouwce, rawr
+  s-statsweceivew: s-statsweceivew)
+    extends simsexpansionbasedcandidatesouwce[hascwientcontext with haspawams](
+      switchingsimssouwce) {
+  o-ovewwide def maxsecondawydegweenodes(weq: hascwientcontext with haspawams): int = int.maxvawue
 
-  override def maxResults(req: HasClientContext with HasParams): Int =
-    RecentEngagementSimilarUsersSource.MaxResults
+  o-ovewwide def maxwesuwts(weq: h-hascwientcontext w-with haspawams): i-int =
+    wecentengagementsimiwawusewssouwce.maxwesuwts
 
-  override val identifier: CandidateSourceIdentifier = RecentEngagementSimilarUsersSource.Identifier
-  private val stats = statsReceiver.scope(identifier.name)
-  private val calibratedScoreCounter = stats.counter("calibrated_scores_counter")
+  o-ovewwide vaw identifiew: candidatesouwceidentifiew = wecentengagementsimiwawusewssouwce.identifiew
+  p-pwivate vaw stats = statsweceivew.scope(identifiew.name)
+  pwivate vaw cawibwatedscowecountew = s-stats.countew("cawibwated_scowes_countew")
 
-  override def scoreCandidate(sourceScore: Double, similarToScore: Double): Double = {
-    sourceScore * similarToScore
+  ovewwide def scowecandidate(souwcescowe: doubwe, simiwawtoscowe: doubwe): doubwe = {
+    s-souwcescowe * simiwawtoscowe
   }
 
-  override def calibrateDivisor(req: HasClientContext with HasParams): Double = {
-    req.params(DBV2SimsExpansionParams.RecentEngagementSimilarUsersDBV2CalibrateDivisor)
+  o-ovewwide def cawibwatedivisow(weq: h-hascwientcontext w-with haspawams): doubwe = {
+    weq.pawams(dbv2simsexpansionpawams.wecentengagementsimiwawusewsdbv2cawibwatedivisow)
   }
 
-  override def calibrateScore(
-    candidateScore: Double,
-    req: HasClientContext with HasParams
-  ): Double = {
-    calibratedScoreCounter.incr()
-    candidateScore / calibrateDivisor(req)
+  ovewwide def cawibwatescowe(
+    c-candidatescowe: d-doubwe, 😳
+    weq: hascwientcontext w-with haspawams
+  ): d-doubwe = {
+    cawibwatedscowecountew.incw()
+    c-candidatescowe / cawibwatedivisow(weq)
   }
 
   /**
-   * fetch first degree nodes given request
+   * fetch f-fiwst degwee nyodes given wequest
    */
-  override def firstDegreeNodes(
-    target: HasClientContext with HasParams
-  ): Stitch[Seq[CandidateUser]] = {
-    target.getOptionalUserId
-      .map { userId =>
-        realTimeRealGraphClient
-          .getUsersRecentlyEngagedWith(
-            userId,
-            RealTimeRealGraphClient.EngagementScoreMap,
-            includeDirectFollowCandidates = true,
-            includeNonDirectFollowCandidates = true
-          ).map(_.sortBy(-_.score.getOrElse(0.0d))
-            .take(RecentEngagementSimilarUsersSource.MaxFirstDegreeNodes))
-      }.getOrElse(Stitch.Nil)
+  ovewwide def fiwstdegweenodes(
+    t-tawget: hascwientcontext with h-haspawams
+  ): stitch[seq[candidateusew]] = {
+    tawget.getoptionawusewid
+      .map { u-usewid =>
+        w-weawtimeweawgwaphcwient
+          .getusewswecentwyengagedwith(
+            usewid, >w<
+            weawtimeweawgwaphcwient.engagementscowemap, (⑅˘꒳˘)
+            incwudediwectfowwowcandidates = twue,
+            incwudenondiwectfowwowcandidates = twue
+          ).map(_.sowtby(-_.scowe.getowewse(0.0d))
+            .take(wecentengagementsimiwawusewssouwce.maxfiwstdegweenodes))
+      }.getowewse(stitch.niw)
   }
 
-  override def aggregateAndScore(
-    request: HasClientContext with HasParams,
-    firstDegreeToSecondDegreeNodesMap: Map[CandidateUser, Seq[SimilarUser]]
-  ): Stitch[Seq[CandidateUser]] = {
+  ovewwide d-def aggwegateandscowe(
+    w-wequest: hascwientcontext with h-haspawams, OwO
+    f-fiwstdegweetoseconddegweenodesmap: m-map[candidateusew, (ꈍᴗꈍ) seq[simiwawusew]]
+  ): stitch[seq[candidateusew]] = {
 
-    val inputNodes = firstDegreeToSecondDegreeNodesMap.keys.map(_.id).toSet
-    val aggregator = request.params(RecentEngagementSimilarUsersParams.Aggregator) match {
-      case SimsExpansionSourceAggregatorId.Max =>
-        SimsExpansionBasedCandidateSource.ScoreAggregator.Max
-      case SimsExpansionSourceAggregatorId.Sum =>
-        SimsExpansionBasedCandidateSource.ScoreAggregator.Sum
-      case SimsExpansionSourceAggregatorId.MultiDecay =>
-        SimsExpansionBasedCandidateSource.ScoreAggregator.MultiDecay
+    vaw inputnodes = f-fiwstdegweetoseconddegweenodesmap.keys.map(_.id).toset
+    vaw aggwegatow = wequest.pawams(wecentengagementsimiwawusewspawams.aggwegatow) match {
+      case s-simsexpansionsouwceaggwegatowid.max =>
+        simsexpansionbasedcandidatesouwce.scoweaggwegatow.max
+      case s-simsexpansionsouwceaggwegatowid.sum =>
+        simsexpansionbasedcandidatesouwce.scoweaggwegatow.sum
+      c-case s-simsexpansionsouwceaggwegatowid.muwtidecay =>
+        simsexpansionbasedcandidatesouwce.scoweaggwegatow.muwtidecay
     }
 
-    val groupedCandidates = firstDegreeToSecondDegreeNodesMap.values.flatten
-      .filterNot(c => inputNodes.contains(c.candidateId))
-      .groupBy(_.candidateId)
+    v-vaw g-gwoupedcandidates = f-fiwstdegweetoseconddegweenodesmap.vawues.fwatten
+      .fiwtewnot(c => i-inputnodes.contains(c.candidateid))
+      .gwoupby(_.candidateid)
       .map {
-        case (id, candidates) =>
-          // Different aggregators for final score
-          val finalScore = aggregator(candidates.map(_.score).toSeq)
-          val proofs = candidates.map(_.similarTo).toSet
+        case (id, 😳 candidates) =>
+          // diffewent a-aggwegatows f-fow finaw scowe
+          v-vaw finawscowe = a-aggwegatow(candidates.map(_.scowe).toseq)
+          vaw p-pwoofs = candidates.map(_.simiwawto).toset
 
-          CandidateUser(
-            id = id,
-            score = Some(finalScore),
-            reason =
-              Some(Reason(Some(AccountProof(similarToProof = Some(SimilarToProof(proofs.toSeq))))))
-          ).withCandidateSource(identifier)
+          candidateusew(
+            id = id, 😳😳😳
+            scowe = s-some(finawscowe), mya
+            weason =
+              some(weason(some(accountpwoof(simiwawtopwoof = some(simiwawtopwoof(pwoofs.toseq))))))
+          ).withcandidatesouwce(identifiew)
       }
-      .toSeq
-      .sortBy(-_.score.getOrElse(0.0d))
-      .take(maxResults(request))
+      .toseq
+      .sowtby(-_.scowe.getowewse(0.0d))
+      .take(maxwesuwts(wequest))
 
-    Stitch.value(groupedCandidates)
+    stitch.vawue(gwoupedcandidates)
   }
 }
 
-object RecentEngagementSimilarUsersSource {
-  val Identifier = CandidateSourceIdentifier(Algorithm.RecentEngagementSimilarUser.toString)
-  val MaxFirstDegreeNodes = 10
-  val MaxResults = 200
+object wecentengagementsimiwawusewssouwce {
+  vaw identifiew = c-candidatesouwceidentifiew(awgowithm.wecentengagementsimiwawusew.tostwing)
+  vaw maxfiwstdegweenodes = 10
+  vaw m-maxwesuwts = 200
 }

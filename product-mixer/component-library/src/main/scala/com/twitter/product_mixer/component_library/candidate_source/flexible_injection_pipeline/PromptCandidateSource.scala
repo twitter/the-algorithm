@@ -1,50 +1,50 @@
-package com.twitter.product_mixer.component_library.candidate_source.flexible_injection_pipeline
+package com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.fwexibwe_injection_pipewine
 
-import com.twitter.inject.Logging
-import com.twitter.onboarding.injections.{thriftscala => injectionsthrift}
-import com.twitter.onboarding.task.service.{thriftscala => servicethrift}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.inject.wogging
+i-impowt com.twittew.onboawding.injections.{thwiftscawa => i-injectionsthwift}
+i-impowt c-com.twittew.onboawding.task.sewvice.{thwiftscawa => s-sewvicethwift}
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.stitch.stitch
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
 /**
- * Returns a list of prompts to insert into a user's timeline (inline prompt, cover modals, etc)
- * from go/flip (the prompting platform for Twitter).
+ * w-wetuwns a wist of pwompts to insewt i-into a usew's timewine (inwine p-pwompt, o.O covew modaws, ( ͡o ω ͡o ) etc)
+ * fwom go/fwip (the pwompting pwatfowm f-fow twittew). (U ﹏ U)
  */
-@Singleton
-class PromptCandidateSource @Inject() (taskService: servicethrift.TaskService.MethodPerEndpoint)
-    extends CandidateSource[servicethrift.GetInjectionsRequest, IntermediatePrompt]
-    with Logging {
+@singweton
+cwass pwomptcandidatesouwce @inject() (tasksewvice: s-sewvicethwift.tasksewvice.methodpewendpoint)
+    e-extends candidatesouwce[sewvicethwift.getinjectionswequest, (///ˬ///✿) intewmediatepwompt]
+    with wogging {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    "InjectionPipelinePrompts")
+  ovewwide vaw identifiew: c-candidatesouwceidentifiew = candidatesouwceidentifiew(
+    "injectionpipewinepwompts")
 
-  override def apply(
-    request: servicethrift.GetInjectionsRequest
-  ): Stitch[Seq[IntermediatePrompt]] = {
-    Stitch
-      .callFuture(taskService.getInjections(request)).map {
-        _.injections.flatMap {
-          // The entire carousel is getting added to each IntermediatePrompt item with a
-          // corresponding index to be unpacked later on to populate its TimelineEntry counterpart.
-          case injection: injectionsthrift.Injection.TilesCarousel =>
-            injection.tilesCarousel.tiles.zipWithIndex.map {
-              case (tile: injectionsthrift.Tile, index: Int) =>
-                IntermediatePrompt(injection, Some(index), Some(tile))
+  ovewwide def appwy(
+    wequest: sewvicethwift.getinjectionswequest
+  ): s-stitch[seq[intewmediatepwompt]] = {
+    stitch
+      .cawwfutuwe(tasksewvice.getinjections(wequest)).map {
+        _.injections.fwatmap {
+          // the e-entiwe cawousew i-is getting added t-to each intewmediatepwompt item w-with a
+          // cowwesponding index to be u-unpacked watew on to popuwate its timewineentwy c-countewpawt. >w<
+          case injection: injectionsthwift.injection.tiwescawousew =>
+            injection.tiwescawousew.tiwes.zipwithindex.map {
+              case (tiwe: injectionsthwift.tiwe, rawr index: int) =>
+                i-intewmediatepwompt(injection, mya some(index), ^^ some(tiwe))
             }
-          case injection => Seq(IntermediatePrompt(injection, None, None))
+          c-case injection => s-seq(intewmediatepwompt(injection, 😳😳😳 n-nyone, nyone))
         }
       }
   }
 }
 
 /**
- * Gives an intermediate step to help 'explosion' of tile carousel tiles due to TimelineModule
- * not being an extension of TimelineItem
+ * gives an intewmediate step to hewp 'expwosion' o-of tiwe cawousew t-tiwes due to timewinemoduwe
+ * n-nyot being an e-extension of timewineitem
  */
-case class IntermediatePrompt(
-  injection: injectionsthrift.Injection,
-  offsetInModule: Option[Int],
-  carouselTile: Option[injectionsthrift.Tile])
+case cwass intewmediatepwompt(
+  i-injection: injectionsthwift.injection, mya
+  offsetinmoduwe: o-option[int], 😳
+  cawousewtiwe: option[injectionsthwift.tiwe])

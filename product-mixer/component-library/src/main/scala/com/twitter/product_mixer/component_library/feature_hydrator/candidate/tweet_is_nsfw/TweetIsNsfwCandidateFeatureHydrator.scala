@@ -1,109 +1,109 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_is_nsfw
+package com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.candidate.tweet_is_nsfw
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
-import com.twitter.tweetypie.{thriftscala => t}
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetweetcandidate
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.stitch.stitch
+impowt c-com.twittew.stitch.tweetypie.{tweetypie => tweetypiestitchcwient}
+impowt com.twittew.tweetypie.{thwiftscawa => t}
+impowt com.twittew.utiw.wetuwn
+i-impowt com.twittew.utiw.thwow
+impowt com.twittew.utiw.twy
+i-impowt c-com.twittew.utiw.wogging.wogging
 
-// The VF NsfwHighPrecisionLabel that powers the NSFW determination here has been deprecated and is no longer written to.
-@deprecated("Prefer VisibilityReason")
-object IsNsfw extends FeatureWithDefaultOnFailure[TweetCandidate, Option[Boolean]] {
+// the vf nysfwhighpwecisionwabew that powews the nysfw detewmination h-hewe has been depwecated and is nyo wongew wwitten to. (˘ω˘)
+@depwecated("pwefew v-visibiwityweason")
+object i-isnsfw extends f-featuwewithdefauwtonfaiwuwe[tweetcandidate, nyaa~~ o-option[boowean]] {
 
   /**
-   * Generic Logic to evaluate whether a tweet is nsfw
-   * @param hasNsfwHighPrecisionLabel flag for tweetypieTweet nsfwHighPrecision label
-   * @param isNsfwUser flag for tweetypieTweet coreData nsfwUser flag
-   * @param isNsfwAdmin flag for tweetypieTweet coreData nsfwAdmin flag
-   * @return isNsfw to true if any of the three flags is true
+   * g-genewic wogic to evawuate whethew a t-tweet is nysfw
+   * @pawam hasnsfwhighpwecisionwabew fwag fow tweetypietweet n-nysfwhighpwecision wabew
+   * @pawam isnsfwusew fwag fow tweetypietweet cowedata nysfwusew fwag
+   * @pawam i-isnsfwadmin fwag fow tweetypietweet c-cowedata n-nysfwadmin f-fwag
+   * @wetuwn isnsfw to twue if any of the thwee fwags is twue
    */
-  def apply(
-    hasNsfwHighPrecisionLabel: Option[Boolean],
-    isNsfwUser: Option[Boolean],
-    isNsfwAdmin: Option[Boolean]
-  ): Boolean = {
-    hasNsfwHighPrecisionLabel
-      .getOrElse(false) || (isNsfwUser.getOrElse(false) || isNsfwAdmin.getOrElse(false))
+  d-def a-appwy(
+    hasnsfwhighpwecisionwabew: option[boowean], UwU
+    i-isnsfwusew: o-option[boowean], :3
+    isnsfwadmin: o-option[boowean]
+  ): boowean = {
+    h-hasnsfwhighpwecisionwabew
+      .getowewse(fawse) || (isnsfwusew.getowewse(fawse) || isnsfwadmin.getowewse(fawse))
   }
 
-  override val defaultValue = None
+  ovewwide v-vaw defauwtvawue = nyone
 }
 
-// The VF NsfwHighPrecisionLabel that powers the NSFW determination here has been deprecated and is no longer written to.
-// TODO: Remove after all dependencies have migrated to using TweetCandidateVisibilityReasonFeatureHydrator.
-@deprecated("Prefer TweetCandidateVisibilityReasonFeatureHydrator")
-case class TweetIsNsfwCandidateFeatureHydrator(
-  tweetypieStitchClient: TweetypieStitchClient,
-  tweetVisibilityPolicy: t.TweetVisibilityPolicy)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, BaseTweetCandidate]
-    with Logging {
+// t-the vf nsfwhighpwecisionwabew that p-powews the nysfw d-detewmination hewe has been depwecated and is nyo wongew wwitten to. (⑅˘꒳˘)
+// todo: wemove aftew aww dependencies h-have migwated to u-using tweetcandidatevisibiwityweasonfeatuwehydwatow. (///ˬ///✿)
+@depwecated("pwefew tweetcandidatevisibiwityweasonfeatuwehydwatow")
+c-case cwass t-tweetisnsfwcandidatefeatuwehydwatow(
+  t-tweetypiestitchcwient: tweetypiestitchcwient, ^^;;
+  tweetvisibiwitypowicy: t.tweetvisibiwitypowicy)
+    e-extends buwkcandidatefeatuwehydwatow[pipewinequewy, >_< basetweetcandidate]
+    with wogging {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("TweetIsNsfw")
+  ovewwide vaw identifiew: f-featuwehydwatowidentifiew = featuwehydwatowidentifiew("tweetisnsfw")
 
-  override def features: Set[Feature[_, _]] = Set(IsNsfw)
+  ovewwide d-def featuwes: s-set[featuwe[_, rawr x3 _]] = s-set(isnsfw)
 
-  private val NsfwLabelFields: Set[t.TweetInclude] = Set[t.TweetInclude](
-    // Tweet fields containing NSFW related attributes, in addition to what exists in coreData.
-    t.TweetInclude.TweetFieldId(t.Tweet.NsfwHighPrecisionLabelField.id),
-    t.TweetInclude.TweetFieldId(t.Tweet.CoreDataField.id)
+  pwivate v-vaw nysfwwabewfiewds: s-set[t.tweetincwude] = s-set[t.tweetincwude](
+    // t-tweet fiewds containing nysfw wewated a-attwibutes, /(^•ω•^) in addition t-to nani e-exists in cowedata. :3
+    t-t.tweetincwude.tweetfiewdid(t.tweet.nsfwhighpwecisionwabewfiewd.id), (ꈍᴗꈍ)
+    t-t.tweetincwude.tweetfiewdid(t.tweet.cowedatafiewd.id)
   )
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[BaseTweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    Stitch
-      .traverse(candidates.map(_.candidate.id)) { tweetId =>
-        tweetypieStitchClient
-          .getTweetFields(
-            tweetId = tweetId,
-            options = t.GetTweetFieldsOptions(
-              forUserId = query.getOptionalUserId,
-              tweetIncludes = NsfwLabelFields,
-              doNotCache = true,
-              visibilityPolicy = tweetVisibilityPolicy,
-              safetyLevel = None,
+  ovewwide def appwy(
+    quewy: pipewinequewy, /(^•ω•^)
+    c-candidates: seq[candidatewithfeatuwes[basetweetcandidate]]
+  ): stitch[seq[featuwemap]] = {
+    stitch
+      .twavewse(candidates.map(_.candidate.id)) { tweetid =>
+        tweetypiestitchcwient
+          .gettweetfiewds(
+            tweetid = t-tweetid, (⑅˘꒳˘)
+            options = t.gettweetfiewdsoptions(
+              fowusewid = q-quewy.getoptionawusewid, ( ͡o ω ͡o )
+              t-tweetincwudes = n-nysfwwabewfiewds, òωó
+              donotcache = t-twue, (⑅˘꒳˘)
+              visibiwitypowicy = t-tweetvisibiwitypowicy, XD
+              s-safetywevew = nyone, -.-
             )
-          ).liftToTry
-      }.map { getTweetFieldsResults: Seq[Try[t.GetTweetFieldsResult]] =>
-        val tweets: Seq[Try[t.Tweet]] = getTweetFieldsResults.map {
-          case Return(t.GetTweetFieldsResult(_, t.TweetFieldsResultState.Found(found), _, _)) =>
-            Return(found.tweet)
-          case Return(t.GetTweetFieldsResult(_, resultState, _, _)) =>
-            Throw(IsNsfwFeatureHydrationFailure(s"Unexpected tweet result state: ${resultState}"))
-          case Throw(e) =>
-            Throw(e)
+          ).wifttotwy
+      }.map { gettweetfiewdswesuwts: seq[twy[t.gettweetfiewdswesuwt]] =>
+        vaw tweets: seq[twy[t.tweet]] = gettweetfiewdswesuwts.map {
+          case wetuwn(t.gettweetfiewdswesuwt(_, :3 t-t.tweetfiewdswesuwtstate.found(found), nyaa~~ _, _)) =>
+            wetuwn(found.tweet)
+          c-case wetuwn(t.gettweetfiewdswesuwt(_, 😳 wesuwtstate, (⑅˘꒳˘) _, _)) =>
+            thwow(isnsfwfeatuwehydwationfaiwuwe(s"unexpected t-tweet wesuwt state: ${wesuwtstate}"))
+          c-case thwow(e) =>
+            thwow(e)
         }
 
         candidates.zip(tweets).map {
-          case (candidateWithFeatures, tweetTry) =>
-            val isNsfwFeature = tweetTry.map { tweet =>
-              IsNsfw(
-                hasNsfwHighPrecisionLabel = Some(tweet.nsfwHighPrecisionLabel.isDefined),
-                isNsfwUser = tweet.coreData.map(_.nsfwUser),
-                isNsfwAdmin = tweet.coreData.map(_.nsfwAdmin)
+          c-case (candidatewithfeatuwes, nyaa~~ t-tweettwy) =>
+            vaw isnsfwfeatuwe = t-tweettwy.map { t-tweet =>
+              isnsfw(
+                hasnsfwhighpwecisionwabew = some(tweet.nsfwhighpwecisionwabew.isdefined),
+                isnsfwusew = tweet.cowedata.map(_.nsfwusew), OwO
+                isnsfwadmin = t-tweet.cowedata.map(_.nsfwadmin)
               )
             }
 
-            FeatureMapBuilder()
-              .add(IsNsfw, isNsfwFeature.map(Some(_)))
-              .build()
+            f-featuwemapbuiwdew()
+              .add(isnsfw, rawr x3 i-isnsfwfeatuwe.map(some(_)))
+              .buiwd()
         }
       }
   }
 }
 
-case class IsNsfwFeatureHydrationFailure(message: String)
-    extends Exception(s"IsNsfwFeatureHydrationFailure(${message})")
+case cwass isnsfwfeatuwehydwationfaiwuwe(message: s-stwing)
+    e-extends exception(s"isnsfwfeatuwehydwationfaiwuwe(${message})")

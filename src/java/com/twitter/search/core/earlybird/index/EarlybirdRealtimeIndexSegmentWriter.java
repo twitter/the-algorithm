@@ -1,789 +1,789 @@
-package com.twitter.search.core.earlybird.index;
+package com.twittew.seawch.cowe.eawwybiwd.index;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.awwaywist;
+i-impowt j-java.utiw.awways;
+i-impowt java.utiw.hashmap;
+i-impowt j-java.utiw.hashset;
+i-impowt java.utiw.wist;
+impowt java.utiw.map;
+impowt java.utiw.set;
+impowt j-java.utiw.concuwwent.concuwwenthashmap;
 
-import javax.annotation.Nullable;
+impowt javax.annotation.nuwwabwe;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+i-impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.wists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
-import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-import org.apache.lucene.analysis.tokenattributes.TermToBytesRefAttribute;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.facet.FacetsConfig;
-import org.apache.lucene.index.DocValuesType;
-import org.apache.lucene.index.FieldInvertState;
-import org.apache.lucene.index.IndexOptions;
-import org.apache.lucene.index.IndexableField;
-import org.apache.lucene.index.IndexableFieldType;
-import org.apache.lucene.search.similarities.Similarity;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.util.AttributeSource;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.BytesRefHash;
-import org.apache.lucene.util.Version;
+impowt owg.swf4j.woggew;
+impowt o-owg.swf4j.woggewfactowy;
+impowt o-owg.apache.wucene.anawysis.anawyzew;
+i-impowt owg.apache.wucene.anawysis.tokenstweam;
+impowt owg.apache.wucene.anawysis.tokenattwibutes.offsetattwibute;
+impowt owg.apache.wucene.anawysis.tokenattwibutes.positionincwementattwibute;
+impowt owg.apache.wucene.anawysis.tokenattwibutes.tewmtobyteswefattwibute;
+i-impowt owg.apache.wucene.document.document;
+impowt owg.apache.wucene.document.fiewd;
+impowt owg.apache.wucene.facet.facetsconfig;
+impowt owg.apache.wucene.index.docvawuestype;
+i-impowt owg.apache.wucene.index.fiewdinvewtstate;
+impowt owg.apache.wucene.index.indexoptions;
+i-impowt owg.apache.wucene.index.indexabwefiewd;
+impowt o-owg.apache.wucene.index.indexabwefiewdtype;
+i-impowt owg.apache.wucene.seawch.simiwawities.simiwawity;
+i-impowt owg.apache.wucene.stowe.diwectowy;
+impowt owg.apache.wucene.utiw.attwibutesouwce;
+i-impowt owg.apache.wucene.utiw.byteswef;
+impowt owg.apache.wucene.utiw.byteswefhash;
+i-impowt owg.apache.wucene.utiw.vewsion;
 
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.core.earlybird.facets.FacetCountingArrayWriter;
-import com.twitter.search.core.earlybird.facets.FacetIDMap.FacetField;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.facets.FacetUtil;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideByteIndex;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdRealtimeIndexExtensionsData;
-import com.twitter.search.core.earlybird.index.inverted.EarlybirdCSFDocValuesProcessor;
-import com.twitter.search.core.earlybird.index.inverted.InvertedRealtimeIndex;
-import com.twitter.search.core.earlybird.index.inverted.InvertedRealtimeIndexWriter;
-import com.twitter.search.core.earlybird.index.inverted.TermPointerEncoding;
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
+impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt com.twittew.seawch.common.schema.base.eawwybiwdfiewdtype;
+impowt com.twittew.seawch.common.schema.base.schema;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.facets.facetcountingawwaywwitew;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetidmap.facetfiewd;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetwabewpwovidew;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetutiw;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.cowumn.cowumnstwidebyteindex;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.extensions.eawwybiwdweawtimeindexextensionsdata;
+i-impowt c-com.twittew.seawch.cowe.eawwybiwd.index.invewted.eawwybiwdcsfdocvawuespwocessow;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.invewtedweawtimeindex;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.invewtedweawtimeindexwwitew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.tewmpointewencoding;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.utiw.awwdocsitewatow;
 
 /**
- * EarlybirdIndexWriter implementation that writes realtime in-memory segments.
- * Note that it is used by both Earlybirds and ExpertSearch.
+ * eawwybiwdindexwwitew impwementation t-that wwites weawtime in-memowy s-segments. (U ᵕ U❁)
+ * nyote that it is u-used by both eawwybiwds a-and expewtseawch. ^^
  */
-public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSegmentWriter {
-  private static final Logger LOG =
-    LoggerFactory.getLogger(EarlybirdRealtimeIndexSegmentWriter.class);
+pubwic finaw cwass eawwybiwdweawtimeindexsegmentwwitew extends eawwybiwdindexsegmentwwitew {
+  pwivate static finaw woggew wog =
+    w-woggewfactowy.getwoggew(eawwybiwdweawtimeindexsegmentwwitew.cwass);
   /**
-   * Maximum tweet length is 10k, setting maximum token position to 25k in case of weird unicode.
+   * m-maximum tweet wength is 10k, (⑅˘꒳˘) s-setting maximum t-token position to 25k i-in case of weiwd unicode. :3
    */
-  private static final int MAX_POSITION = 25000;
+  pwivate static finaw int m-max_position = 25000;
 
-  private static final String OUT_OF_ORDER_APPEND_UNSUPPORTED_STATS_PATTERN =
-      "out_of_order_append_unsupported_for_field_%s";
-  private static final ConcurrentHashMap<String, SearchRateCounter>
-      UNSUPPORTED_OUT_OF_ORDER_APPEND_MAP = new ConcurrentHashMap<>();
-  private static final SearchRateCounter NUM_TWEETS_DROPPED =
-      SearchRateCounter.export("EarlybirdRealtimeIndexSegmentWriter_num_tweets_dropped");
+  pwivate static finaw stwing out_of_owdew_append_unsuppowted_stats_pattewn =
+      "out_of_owdew_append_unsuppowted_fow_fiewd_%s";
+  pwivate s-static finaw concuwwenthashmap<stwing, (///ˬ///✿) s-seawchwatecountew>
+      u-unsuppowted_out_of_owdew_append_map = n-nyew concuwwenthashmap<>();
+  p-pwivate s-static finaw seawchwatecountew n-num_tweets_dwopped =
+      s-seawchwatecountew.expowt("eawwybiwdweawtimeindexsegmentwwitew_num_tweets_dwopped");
 
-  private long nextFieldGen;
+  pwivate wong nyextfiewdgen;
 
-  private HashMap<String, PerField> fields = new HashMap<>();
-  private List<PerField> fieldsInDocument = new ArrayList<>();
+  p-pwivate hashmap<stwing, p-pewfiewd> f-fiewds = nyew h-hashmap<>();
+  p-pwivate wist<pewfiewd> fiewdsindocument = nyew awwaywist<>();
 
-  private final EarlybirdCSFDocValuesProcessor docValuesProcessor;
+  p-pwivate finaw eawwybiwdcsfdocvawuespwocessow docvawuespwocessow;
 
-  private Map<String, InvertedRealtimeIndexWriter> termHashSync = new HashMap<>();
-  private Set<String> appendedFields = new HashSet<>();
+  pwivate map<stwing, :3 invewtedweawtimeindexwwitew> tewmhashsync = nyew hashmap<>();
+  p-pwivate set<stwing> appendedfiewds = nyew hashset<>();
 
-  private final Analyzer analyzer;
-  private final Similarity similarity;
+  pwivate finaw a-anawyzew anawyzew;
+  p-pwivate finaw s-simiwawity simiwawity;
 
-  private final EarlybirdRealtimeIndexSegmentData segmentData;
+  pwivate f-finaw eawwybiwdweawtimeindexsegmentdata segmentdata;
 
-  private final Field allDocsField;
+  pwivate finaw fiewd a-awwdocsfiewd;
 
-  @Nullable
-  private final FacetCountingArrayWriter facetCountingArrayWriter;
+  @nuwwabwe
+  p-pwivate finaw facetcountingawwaywwitew facetcountingawwaywwitew;
 
   /**
-   * Creates a new writer for a real-time in-memory Earlybird segment.
+   * cweates a nyew wwitew fow a weaw-time in-memowy eawwybiwd s-segment.
    *
-   * Do not add public constructors to this class. EarlybirdRealtimeIndexSegmentWriter instances
-   * should be created only by calling
-   * EarlybirdRealtimeIndexSegmentData.createEarlybirdIndexSegmentWriter(), to make sure everything
-   * is set up properly (such as CSF readers).
+   * do nyot a-add pubwic constwuctows to this c-cwass. 🥺 eawwybiwdweawtimeindexsegmentwwitew i-instances
+   * shouwd be cweated onwy b-by cawwing
+   * e-eawwybiwdweawtimeindexsegmentdata.cweateeawwybiwdindexsegmentwwitew(), mya to make s-suwe evewything
+   * i-is set up pwopewwy (such as csf weadews). XD
    */
-  EarlybirdRealtimeIndexSegmentWriter(
-      EarlybirdRealtimeIndexSegmentData segmentData,
-      Analyzer analyzer,
-      Similarity similarity) {
-    Preconditions.checkNotNull(segmentData);
-    this.segmentData = segmentData;
-    this.facetCountingArrayWriter = segmentData.createFacetCountingArrayWriter();
-    this.docValuesProcessor = new EarlybirdCSFDocValuesProcessor(segmentData.getDocValuesManager());
-    this.analyzer = analyzer;
-    this.similarity = similarity;
-    this.allDocsField = buildAllDocsField(segmentData);
+  eawwybiwdweawtimeindexsegmentwwitew(
+      eawwybiwdweawtimeindexsegmentdata s-segmentdata, -.-
+      a-anawyzew a-anawyzew,
+      simiwawity simiwawity) {
+    pweconditions.checknotnuww(segmentdata);
+    t-this.segmentdata = segmentdata;
+    t-this.facetcountingawwaywwitew = segmentdata.cweatefacetcountingawwaywwitew();
+    t-this.docvawuespwocessow = nyew eawwybiwdcsfdocvawuespwocessow(segmentdata.getdocvawuesmanagew());
+    this.anawyzew = anawyzew;
+    t-this.simiwawity = s-simiwawity;
+    this.awwdocsfiewd = buiwdawwdocsfiewd(segmentdata);
   }
 
-  @Override
-  public EarlybirdRealtimeIndexSegmentData getSegmentData() {
-    return segmentData;
+  @ovewwide
+  pubwic e-eawwybiwdweawtimeindexsegmentdata g-getsegmentdata() {
+    wetuwn segmentdata;
   }
 
-  @Override
-  public int numDocsNoDelete() {
-    return segmentData.getDocIDToTweetIDMapper().getNumDocs();
+  @ovewwide
+  pubwic int nyumdocsnodewete() {
+    w-wetuwn segmentdata.getdocidtotweetidmappew().getnumdocs();
   }
 
-  @Override
-  public void addDocument(Document doc) throws IOException {
-    // This method should be called only from Expertsearch, not tweets Earlybirds.
-    DocIDToTweetIDMapper docIdToTweetIdMapper = segmentData.getDocIDToTweetIDMapper();
-    Preconditions.checkState(docIdToTweetIdMapper instanceof SequentialDocIDMapper);
+  @ovewwide
+  pubwic void adddocument(document doc) thwows i-ioexception {
+    // this method shouwd be c-cawwed onwy fwom e-expewtseawch, o.O nyot tweets eawwybiwds. (˘ω˘)
+    docidtotweetidmappew docidtotweetidmappew = s-segmentdata.getdocidtotweetidmappew();
+    p-pweconditions.checkstate(docidtotweetidmappew instanceof sequentiawdocidmappew);
 
-    // Make sure we have space for a new doc in this segment.
-    Preconditions.checkState(docIdToTweetIdMapper.getNumDocs() < segmentData.getMaxSegmentSize(),
-                             "Cannot add a new document to the segment, because it's full.");
+    // make suwe we have space f-fow a nyew doc in this segment. (U ᵕ U❁)
+    p-pweconditions.checkstate(docidtotweetidmappew.getnumdocs() < segmentdata.getmaxsegmentsize(), rawr
+                             "cannot add a nyew document to t-the segment, 🥺 because it's fuww.");
 
-    addDocument(doc, docIdToTweetIdMapper.addMapping(-1L), false);
+    a-adddocument(doc, d-docidtotweetidmappew.addmapping(-1w), rawr x3 fawse);
   }
 
-  @Override
-  public void addTweet(Document doc, long tweetId, boolean docIsOffensive) throws IOException {
-    DocIDToTweetIDMapper docIdToTweetIdMapper = segmentData.getDocIDToTweetIDMapper();
-    Preconditions.checkState(!(docIdToTweetIdMapper instanceof SequentialDocIDMapper));
+  @ovewwide
+  p-pubwic void addtweet(document d-doc, ( ͡o ω ͡o ) wong t-tweetid, σωσ boowean d-docisoffensive) thwows ioexception {
+    d-docidtotweetidmappew d-docidtotweetidmappew = segmentdata.getdocidtotweetidmappew();
+    pweconditions.checkstate(!(docidtotweetidmappew i-instanceof sequentiawdocidmappew));
 
-    // Make sure we have space for a new doc in this segment.
-    Preconditions.checkState(docIdToTweetIdMapper.getNumDocs() < segmentData.getMaxSegmentSize(),
-                             "Cannot add a new document to the segment, because it's full.");
+    // m-make suwe we have s-space fow a nyew doc in this segment. rawr x3
+    pweconditions.checkstate(docidtotweetidmappew.getnumdocs() < s-segmentdata.getmaxsegmentsize(), (ˆ ﻌ ˆ)♡
+                             "cannot add a nyew document t-to the segment, rawr b-because it's fuww.");
 
-    Preconditions.checkNotNull(doc.getField(
-        EarlybirdFieldConstants.EarlybirdFieldConstant.CREATED_AT_FIELD.getFieldName()));
+    pweconditions.checknotnuww(doc.getfiewd(
+        eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.cweated_at_fiewd.getfiewdname()));
 
-    addAllDocsField(doc);
+    addawwdocsfiewd(doc);
 
-    int docId = docIdToTweetIdMapper.addMapping(tweetId);
-    // Make sure we successfully assigned a doc ID to the new document/tweet before proceeding.
-    // If the docId is DocIDToTweetIDMapper.ID_NOT_FOUND then either:
-    //  1. the tweet is older than the  OutOfOrderRealtimeTweetIDMapper.segmentBoundaryTimestamp and
-    //    is too old for this segment
-    //  2. the OutOfOrderRealtimeTweetIDMapper does not have any available doc ids left
-    if (docId == DocIDToTweetIDMapper.ID_NOT_FOUND) {
-      LOG.info("Could not assign doc id for tweet. Dropping tweet id " + tweetId
-          + " for segment with timeslice: " + segmentData.getTimeSliceID());
-      NUM_TWEETS_DROPPED.increment();
-      return;
+    int docid = docidtotweetidmappew.addmapping(tweetid);
+    // m-make s-suwe we successfuwwy a-assigned a-a doc id to the nyew document/tweet b-befowe pwoceeding. :3
+    // if the docid is docidtotweetidmappew.id_not_found then eithew:
+    //  1. rawr the tweet is owdew than the  outofowdewweawtimetweetidmappew.segmentboundawytimestamp and
+    //    i-is too owd fow this s-segment
+    //  2. (˘ω˘) the outofowdewweawtimetweetidmappew d-does nyot have any avaiwabwe d-doc ids weft
+    if (docid == d-docidtotweetidmappew.id_not_found) {
+      w-wog.info("couwd n-nyot a-assign doc id f-fow tweet. (ˆ ﻌ ˆ)♡ dwopping tweet id " + tweetid
+          + " fow segment with timeswice: " + segmentdata.gettimeswiceid());
+      nyum_tweets_dwopped.incwement();
+      w-wetuwn;
     }
 
-    addDocument(doc, docId, docIsOffensive);
+    a-adddocument(doc, mya d-docid, (U ᵕ U❁) docisoffensive);
   }
 
-  private void addDocument(Document doc,
-                           int docId,
-                           boolean docIsOffensive) throws IOException {
-    fieldsInDocument.clear();
+  pwivate void a-adddocument(document doc, mya
+                           int docid, ʘwʘ
+                           boowean docisoffensive) t-thwows ioexception {
+    f-fiewdsindocument.cweaw();
 
-    long fieldGen = nextFieldGen++;
+    wong fiewdgen = nyextfiewdgen++;
 
-    // NOTE: we need two passes here, in case there are
-    // multi-valued fields, because we must process all
-    // instances of a given field at once, since the
-    // analyzer is free to reuse TokenStream across fields
-    // (i.e., we cannot have more than one TokenStream
-    // running "at once"):
+    // n-nyote: we nyeed two passes hewe, (˘ω˘) in case t-thewe awe
+    // m-muwti-vawued fiewds, 😳 because we m-must pwocess aww
+    // i-instances of a given fiewd at once, since the
+    // anawyzew is fwee t-to weuse tokenstweam a-acwoss fiewds
+    // (i.e., w-we cannot have m-mowe than one tokenstweam
+    // w-wunning "at once"):
 
-    try {
-      for (IndexableField field : doc) {
-        if (!skipField(field.name())) {
-          processField(docId, field, fieldGen, docIsOffensive);
+    twy {
+      f-fow (indexabwefiewd f-fiewd : doc) {
+        i-if (!skipfiewd(fiewd.name())) {
+          p-pwocessfiewd(docid, òωó fiewd, fiewdgen, nyaa~~ d-docisoffensive);
         }
       }
-    } finally {
-      // Finish each indexed field name seen in the document:
-      for (PerField field : fieldsInDocument) {
-        field.finish(docId);
+    } finawwy {
+      // finish e-each indexed fiewd name seen i-in the document:
+      f-fow (pewfiewd fiewd : fiewdsindocument) {
+        f-fiewd.finish(docid);
       }
 
-      // When indexing a dummy document for out-of-order updates into a loaded segment, that
-      // document gets docID set as maxSegment size. So we have to make sure that we never
-      // sync backwards in document order.
-      int smallestDocID = Math.min(docId, segmentData.getSyncData().getSmallestDocID());
-      segmentData.updateSmallestDocID(smallestDocID);
+      // when indexing a dummy document fow o-out-of-owdew u-updates into a woaded s-segment, o.O that
+      // document gets docid set as maxsegment s-size. nyaa~~ so we have to make suwe that we nyevew
+      // s-sync backwawds i-in document owdew. (U ᵕ U❁)
+      i-int smowestdocid = math.min(docid, s-segmentdata.getsyncdata().getsmowestdocid());
+      s-segmentdata.updatesmowestdocid(smowestdocid);
     }
   }
 
-  @Override
-  protected void appendOutOfOrder(Document doc, int internalDocID) throws IOException {
-    Preconditions.checkNotNull(doc);
-    fieldsInDocument.clear();
+  @ovewwide
+  pwotected void appendoutofowdew(document doc, 😳😳😳 int i-intewnawdocid) thwows ioexception {
+    pweconditions.checknotnuww(doc);
+    f-fiewdsindocument.cweaw();
 
-    long fieldGen = nextFieldGen++;
+    w-wong fiewdgen = nyextfiewdgen++;
 
-    try {
-      for (IndexableField indexableField : doc) {
-        if (!skipField(indexableField.name())) {
-          Schema.FieldInfo fi = segmentData.getSchema().getFieldInfo(indexableField.name());
-          if (fi == null) {
-            LOG.error("FieldInfo for " + indexableField.name() + " is null!");
+    t-twy {
+      fow (indexabwefiewd indexabwefiewd : d-doc) {
+        i-if (!skipfiewd(indexabwefiewd.name())) {
+          s-schema.fiewdinfo fi = segmentdata.getschema().getfiewdinfo(indexabwefiewd.name());
+          if (fi == nyuww) {
+            wog.ewwow("fiewdinfo fow " + indexabwefiewd.name() + " is nyuww!");
             continue;
           }
-          if (segmentData.isOptimized() && fi.getFieldType().becomesImmutable()) {
-            UNSUPPORTED_OUT_OF_ORDER_APPEND_MAP.computeIfAbsent(
-                indexableField.name(),
-                f -> SearchRateCounter.export(
-                    String.format(OUT_OF_ORDER_APPEND_UNSUPPORTED_STATS_PATTERN, f))
-            ).increment();
-            continue;
+          if (segmentdata.isoptimized() && fi.getfiewdtype().becomesimmutabwe()) {
+            unsuppowted_out_of_owdew_append_map.computeifabsent(
+                indexabwefiewd.name(), (U ﹏ U)
+                f -> seawchwatecountew.expowt(
+                    stwing.fowmat(out_of_owdew_append_unsuppowted_stats_pattewn, ^•ﻌ•^ f-f))
+            ).incwement();
+            c-continue;
           }
-          processField(internalDocID, indexableField, fieldGen, false);
-          appendedFields.add(indexableField.name());
+          pwocessfiewd(intewnawdocid, (⑅˘꒳˘) indexabwefiewd, >_< f-fiewdgen, (⑅˘꒳˘) f-fawse);
+          a-appendedfiewds.add(indexabwefiewd.name());
         }
       }
-    } finally {
-      // Finish each indexed field name seen in the document:
-      for (PerField field : fieldsInDocument) {
-        field.finish(internalDocID);
+    } finawwy {
+      // f-finish each indexed f-fiewd nyame seen i-in the document:
+      fow (pewfiewd f-fiewd : fiewdsindocument) {
+        fiewd.finish(intewnawdocid);
       }
-      // force sync
-      segmentData.updateSmallestDocID(segmentData.getSyncData().getSmallestDocID());
+      // f-fowce sync
+      s-segmentdata.updatesmowestdocid(segmentdata.getsyncdata().getsmowestdocid());
     }
   }
 
-  @Override
-  public void addIndexes(Directory... dirs) {
-    throw new UnsupportedOperationException("In realtime mode addIndexes() is currently "
-            + "not supported.");
+  @ovewwide
+  pubwic void addindexes(diwectowy... diws) {
+    thwow n-nyew unsuppowtedopewationexception("in w-weawtime m-mode addindexes() i-is cuwwentwy "
+            + "not s-suppowted.");
   }
 
-  @Override
-  public void forceMerge() {
-    // we always have a single segment in realtime-mode
+  @ovewwide
+  p-pubwic v-void fowcemewge() {
+    // w-we awways h-have a singwe segment in weawtime-mode
   }
 
-  @Override
-  public void close() {
-    // nothing to close
+  @ovewwide
+  p-pubwic void cwose() {
+    // n-nyothing t-to cwose
   }
 
-  private void processField(
-      int docId,
-      IndexableField field,
-      long fieldGen,
-      boolean currentDocIsOffensive) throws IOException {
-    String fieldName = field.name();
-    IndexableFieldType fieldType = field.fieldType();
+  pwivate void p-pwocessfiewd(
+      int docid,
+      indexabwefiewd f-fiewd, σωσ
+      wong fiewdgen, 🥺
+      b-boowean c-cuwwentdocisoffensive) t-thwows ioexception {
+    stwing fiewdname = f-fiewd.name();
+    indexabwefiewdtype f-fiewdtype = fiewd.fiewdtype();
 
-    // Invert indexed fields:
-    if (fieldType.indexOptions() != IndexOptions.NONE) {
-      PerField perField = getOrAddField(fieldName, fieldType);
+    // i-invewt indexed fiewds:
+    if (fiewdtype.indexoptions() != i-indexoptions.none) {
+      pewfiewd pewfiewd = getowaddfiewd(fiewdname, :3 fiewdtype);
 
-      // Whether this is the first time we have seen this field in this document.
-      boolean first = perField.fieldGen != fieldGen;
-      perField.invert(field, docId, first, currentDocIsOffensive);
+      // whethew t-this is the fiwst time we have s-seen this fiewd i-in this document. (ꈍᴗꈍ)
+      boowean fiwst = pewfiewd.fiewdgen != fiewdgen;
+      p-pewfiewd.invewt(fiewd, ^•ﻌ•^ docid, (˘ω˘) fiwst, c-cuwwentdocisoffensive);
 
-      if (first) {
-        fieldsInDocument.add(perField);
-        perField.fieldGen = fieldGen;
+      i-if (fiwst) {
+        f-fiewdsindocument.add(pewfiewd);
+        pewfiewd.fiewdgen = fiewdgen;
       }
-    } else {
-      Schema.FieldInfo facetFieldInfo =
-              segmentData.getSchema().getFacetFieldByFieldName(fieldName);
-      FacetField facetField = facetFieldInfo != null
-              ? segmentData.getFacetIDMap().getFacetField(facetFieldInfo) : null;
-      EarlybirdFieldType facetFieldType = facetFieldInfo != null
-              ? facetFieldInfo.getFieldType() : null;
-      Preconditions.checkState(
-          facetFieldInfo == null || (facetField != null && facetFieldType != null));
-      if (facetField != null && facetFieldType.isUseCSFForFacetCounting()) {
-          segmentData.getFacetLabelProviders().put(
-              facetField.getFacetName(),
-              Preconditions.checkNotNull(
-                      FacetUtil.chooseFacetLabelProvider(facetFieldType, null)));
+    } e-ewse {
+      s-schema.fiewdinfo facetfiewdinfo =
+              s-segmentdata.getschema().getfacetfiewdbyfiewdname(fiewdname);
+      facetfiewd facetfiewd = f-facetfiewdinfo != nyuww
+              ? s-segmentdata.getfacetidmap().getfacetfiewd(facetfiewdinfo) : n-nyuww;
+      e-eawwybiwdfiewdtype facetfiewdtype = f-facetfiewdinfo != n-nyuww
+              ? facetfiewdinfo.getfiewdtype() : nyuww;
+      p-pweconditions.checkstate(
+          f-facetfiewdinfo == nyuww || (facetfiewd != n-nyuww && f-facetfiewdtype != n-nyuww));
+      i-if (facetfiewd != n-nyuww && facetfiewdtype.isusecsffowfacetcounting()) {
+          s-segmentdata.getfacetwabewpwovidews().put(
+              f-facetfiewd.getfacetname(), 🥺
+              p-pweconditions.checknotnuww(
+                      facetutiw.choosefacetwabewpwovidew(facetfiewdtype, (✿oωo) n-nyuww)));
        }
     }
 
-    if (fieldType.docValuesType() != DocValuesType.NONE) {
-      StoredFieldsConsumerBuilder consumerBuilder = new StoredFieldsConsumerBuilder(
-              fieldName, (EarlybirdFieldType) fieldType);
-      EarlybirdRealtimeIndexExtensionsData indexExtension = segmentData.getIndexExtensionsData();
-      if (indexExtension != null) {
-        indexExtension.createStoredFieldsConsumer(consumerBuilder);
+    if (fiewdtype.docvawuestype() != d-docvawuestype.none) {
+      stowedfiewdsconsumewbuiwdew c-consumewbuiwdew = n-nyew stowedfiewdsconsumewbuiwdew(
+              f-fiewdname, XD (eawwybiwdfiewdtype) fiewdtype);
+      eawwybiwdweawtimeindexextensionsdata indexextension = s-segmentdata.getindexextensionsdata();
+      i-if (indexextension != nyuww) {
+        i-indexextension.cweatestowedfiewdsconsumew(consumewbuiwdew);
       }
-      if (consumerBuilder.isUseDefaultConsumer()) {
-        consumerBuilder.addConsumer(docValuesProcessor);
+      if (consumewbuiwdew.isusedefauwtconsumew()) {
+        consumewbuiwdew.addconsumew(docvawuespwocessow);
       }
 
-      StoredFieldsConsumer storedFieldsConsumer = consumerBuilder.build();
-      if (storedFieldsConsumer != null) {
-        storedFieldsConsumer.addField(docId, field);
+      stowedfiewdsconsumew s-stowedfiewdsconsumew = c-consumewbuiwdew.buiwd();
+      if (stowedfiewdsconsumew != n-nyuww) {
+        s-stowedfiewdsconsumew.addfiewd(docid, (///ˬ///✿) fiewd);
       }
     }
   }
 
-  /** Returns a previously created {@link PerField}, absorbing the type information from
-   * {@link org.apache.lucene.document.FieldType}, and creates a new {@link PerField} if this field
-   * name wasn't seen yet. */
-  private PerField getOrAddField(String name, IndexableFieldType fieldType) {
-    // Note that this could be a computeIfAbsent, but that allocates a closure in the hot path and
-    // slows down indexing.
-    PerField perField = fields.get(name);
-    if (perField == null) {
-      boolean omitNorms = fieldType.omitNorms() || fieldType.indexOptions() == IndexOptions.NONE;
-      perField = new PerField(this, name, fieldType.indexOptions(), omitNorms);
-      fields.put(name, perField);
+  /** wetuwns a pweviouswy c-cweated {@wink p-pewfiewd}, ( ͡o ω ͡o ) absowbing t-the type i-infowmation fwom
+   * {@wink owg.apache.wucene.document.fiewdtype}, ʘwʘ and cweates a-a nyew {@wink pewfiewd} i-if this fiewd
+   * nyame wasn't seen yet. rawr */
+  p-pwivate pewfiewd getowaddfiewd(stwing nyame, o.O i-indexabwefiewdtype fiewdtype) {
+    // n-nyote t-that this couwd be a computeifabsent, ^•ﻌ•^ b-but that a-awwocates a cwosuwe in the hot path a-and
+    // swows down indexing. (///ˬ///✿)
+    p-pewfiewd p-pewfiewd = fiewds.get(name);
+    i-if (pewfiewd == n-nyuww) {
+      boowean omitnowms = f-fiewdtype.omitnowms() || f-fiewdtype.indexoptions() == i-indexoptions.none;
+      pewfiewd = new p-pewfiewd(this, (ˆ ﻌ ˆ)♡ nyame, fiewdtype.indexoptions(), XD omitnowms);
+      f-fiewds.put(name, (✿oωo) p-pewfiewd);
     }
-    return perField;
+    w-wetuwn pewfiewd;
   }
 
-  /** NOTE: not static: accesses at least docState, termsHash. */
-  private static final class PerField implements Comparable<PerField> {
+  /** nyote: nyot static: accesses at weast docstate, t-tewmshash. -.- */
+  pwivate static f-finaw cwass p-pewfiewd impwements compawabwe<pewfiewd> {
 
-    private final EarlybirdRealtimeIndexSegmentWriter indexSegmentWriter;
+    pwivate finaw eawwybiwdweawtimeindexsegmentwwitew i-indexsegmentwwitew;
 
-    private final String fieldName;
-    private final IndexOptions indexOptions;
-    private final boolean omitNorms;
+    pwivate f-finaw stwing f-fiewdname;
+    p-pwivate finaw indexoptions i-indexoptions;
+    p-pwivate finaw boowean omitnowms;
 
-    private InvertedRealtimeIndex invertedField;
-    private InvertedDocConsumer indexWriter;
+    pwivate invewtedweawtimeindex invewtedfiewd;
+    p-pwivate invewteddocconsumew indexwwitew;
 
-    /** We use this to know when a PerField is seen for the
-     *  first time in the current document. */
-    private long fieldGen = -1;
+    /** w-we use this to know when a pewfiewd is seen fow the
+     *  f-fiwst time in the cuwwent document. XD */
+    pwivate wong fiewdgen = -1;
 
-    // reused
-    private TokenStream tokenStream;
+    // weused
+    pwivate t-tokenstweam t-tokenstweam;
 
-    private int currentPosition;
-    private int currentOffset;
-    private int currentLength;
-    private int currentOverlap;
-    private int lastStartOffset;
-    private int lastPosition;
+    pwivate int cuwwentposition;
+    p-pwivate int cuwwentoffset;
+    pwivate int cuwwentwength;
+    pwivate int cuwwentovewwap;
+    p-pwivate int waststawtoffset;
+    p-pwivate int wastposition;
 
-    public PerField(
-        EarlybirdRealtimeIndexSegmentWriter indexSegmentWriter,
-        String fieldName,
-        IndexOptions indexOptions,
-        boolean omitNorms) {
-      this.indexSegmentWriter = indexSegmentWriter;
-      this.fieldName = fieldName;
-      this.indexOptions = indexOptions;
-      this.omitNorms = omitNorms;
+    pubwic pewfiewd(
+        e-eawwybiwdweawtimeindexsegmentwwitew indexsegmentwwitew,
+        s-stwing fiewdname, (✿oωo)
+        indexoptions indexoptions, (˘ω˘)
+        b-boowean omitnowms) {
+      this.indexsegmentwwitew = indexsegmentwwitew;
+      t-this.fiewdname = f-fiewdname;
+      t-this.indexoptions = indexoptions;
+      this.omitnowms = o-omitnowms;
 
-      initInvertState();
+      initinvewtstate();
     }
 
-    void initInvertState() {
-      // it's okay if this is null - in that case TwitterTermHashPerField
-      // will not add it to the facet array
-      final Schema.FieldInfo facetFieldInfo
-          = indexSegmentWriter.segmentData.getSchema().getFacetFieldByFieldName(fieldName);
-      final FacetField facetField = facetFieldInfo != null
-              ? indexSegmentWriter.segmentData.getFacetIDMap().getFacetField(facetFieldInfo) : null;
-      final EarlybirdFieldType facetFieldType
-          = facetFieldInfo != null ? facetFieldInfo.getFieldType() : null;
-      Preconditions.checkState(
-          facetFieldInfo == null || (facetField != null && facetFieldType != null));
+    void initinvewtstate() {
+      // it's okay if this is nyuww - i-in that case twittewtewmhashpewfiewd
+      // w-wiww n-nyot add it to t-the facet awway
+      finaw schema.fiewdinfo facetfiewdinfo
+          = indexsegmentwwitew.segmentdata.getschema().getfacetfiewdbyfiewdname(fiewdname);
+      f-finaw facetfiewd f-facetfiewd = facetfiewdinfo != nyuww
+              ? indexsegmentwwitew.segmentdata.getfacetidmap().getfacetfiewd(facetfiewdinfo) : n-nyuww;
+      finaw eawwybiwdfiewdtype facetfiewdtype
+          = f-facetfiewdinfo != nyuww ? facetfiewdinfo.getfiewdtype() : n-nyuww;
+      pweconditions.checkstate(
+          f-facetfiewdinfo == nyuww || (facetfiewd != n-nyuww && f-facetfiewdtype != n-nyuww));
 
-      if (facetField != null && facetFieldType.isUseCSFForFacetCounting()) {
-        indexSegmentWriter.segmentData.getFacetLabelProviders().put(
-            facetField.getFacetName(),
-            Preconditions.checkNotNull(
-                FacetUtil.chooseFacetLabelProvider(facetFieldType, null)));
-        return;
+      if (facetfiewd != nyuww && f-facetfiewdtype.isusecsffowfacetcounting()) {
+        indexsegmentwwitew.segmentdata.getfacetwabewpwovidews().put(
+            facetfiewd.getfacetname(),
+            pweconditions.checknotnuww(
+                f-facetutiw.choosefacetwabewpwovidew(facetfiewdtype, (ˆ ﻌ ˆ)♡ nyuww)));
+        wetuwn;
       }
 
-      Schema.FieldInfo fi = indexSegmentWriter.segmentData.getSchema().getFieldInfo(fieldName);
-      final EarlybirdFieldType fieldType = fi.getFieldType();
+      schema.fiewdinfo fi = i-indexsegmentwwitew.segmentdata.getschema().getfiewdinfo(fiewdname);
+      f-finaw e-eawwybiwdfiewdtype f-fiewdtype = f-fi.getfiewdtype();
 
-      InvertedDocConsumerBuilder consumerBuilder = new InvertedDocConsumerBuilder(
-          indexSegmentWriter.segmentData, fieldName, fieldType);
-      EarlybirdRealtimeIndexExtensionsData indexExtension =
-          indexSegmentWriter.segmentData.getIndexExtensionsData();
-      if (indexExtension != null) {
-        indexExtension.createInvertedDocConsumer(consumerBuilder);
+      invewteddocconsumewbuiwdew c-consumewbuiwdew = nyew invewteddocconsumewbuiwdew(
+          indexsegmentwwitew.segmentdata, >_< f-fiewdname, -.- fiewdtype);
+      e-eawwybiwdweawtimeindexextensionsdata indexextension =
+          indexsegmentwwitew.segmentdata.getindexextensionsdata();
+      i-if (indexextension != n-nyuww) {
+        indexextension.cweateinvewteddocconsumew(consumewbuiwdew);
       }
 
-      if (consumerBuilder.isUseDefaultConsumer()) {
-        if (indexSegmentWriter.segmentData.getPerFieldMap().containsKey(fieldName)) {
-          invertedField = (InvertedRealtimeIndex) indexSegmentWriter
-              .segmentData.getPerFieldMap().get(fieldName);
-        } else {
-          invertedField = new InvertedRealtimeIndex(
-              fieldType,
-              TermPointerEncoding.DEFAULT_ENCODING,
-              fieldName);
+      i-if (consumewbuiwdew.isusedefauwtconsumew()) {
+        if (indexsegmentwwitew.segmentdata.getpewfiewdmap().containskey(fiewdname)) {
+          i-invewtedfiewd = (invewtedweawtimeindex) i-indexsegmentwwitew
+              .segmentdata.getpewfiewdmap().get(fiewdname);
+        } ewse {
+          i-invewtedfiewd = n-nyew invewtedweawtimeindex(
+              fiewdtype, (///ˬ///✿)
+              t-tewmpointewencoding.defauwt_encoding, XD
+              fiewdname);
         }
 
-        InvertedRealtimeIndexWriter fieldWriter = new InvertedRealtimeIndexWriter(
-            invertedField, facetField, indexSegmentWriter.facetCountingArrayWriter);
+        invewtedweawtimeindexwwitew fiewdwwitew = n-nyew invewtedweawtimeindexwwitew(
+            invewtedfiewd, ^^;; facetfiewd, rawr x3 i-indexsegmentwwitew.facetcountingawwaywwitew);
 
-        if (facetField != null) {
-          Map<String, FacetLabelProvider> providerMap =
-              indexSegmentWriter.segmentData.getFacetLabelProviders();
-          if (!providerMap.containsKey(facetField.getFacetName())) {
-            providerMap.put(
-                facetField.getFacetName(),
-                Preconditions.checkNotNull(
-                    FacetUtil.chooseFacetLabelProvider(facetFieldType, invertedField)));
+        if (facetfiewd != nyuww) {
+          m-map<stwing, OwO f-facetwabewpwovidew> p-pwovidewmap =
+              indexsegmentwwitew.segmentdata.getfacetwabewpwovidews();
+          i-if (!pwovidewmap.containskey(facetfiewd.getfacetname())) {
+            p-pwovidewmap.put(
+                facetfiewd.getfacetname(), ʘwʘ
+                p-pweconditions.checknotnuww(
+                    facetutiw.choosefacetwabewpwovidew(facetfiewdtype, rawr i-invewtedfiewd)));
           }
         }
 
-        indexSegmentWriter.segmentData.addField(fieldName, invertedField);
+        indexsegmentwwitew.segmentdata.addfiewd(fiewdname, UwU i-invewtedfiewd);
 
-        if (indexSegmentWriter.appendedFields.contains(fieldName)) {
-          indexSegmentWriter.termHashSync.put(fieldName, fieldWriter);
+        i-if (indexsegmentwwitew.appendedfiewds.contains(fiewdname)) {
+          indexsegmentwwitew.tewmhashsync.put(fiewdname, (ꈍᴗꈍ) fiewdwwitew);
         }
 
-        consumerBuilder.addConsumer(fieldWriter);
+        consumewbuiwdew.addconsumew(fiewdwwitew);
       }
 
-      indexWriter = consumerBuilder.build();
+      indexwwitew = consumewbuiwdew.buiwd();
     }
 
-    @Override
-    public int compareTo(PerField other) {
-      return this.fieldName.compareTo(other.fieldName);
+    @ovewwide
+    p-pubwic i-int compaweto(pewfiewd othew) {
+      wetuwn this.fiewdname.compaweto(othew.fiewdname);
     }
 
-    @Override
-    public boolean equals(Object other) {
-      if (!(other instanceof PerField)) {
-        return false;
+    @ovewwide
+    pubwic boowean e-equaws(object othew) {
+      if (!(othew i-instanceof p-pewfiewd)) {
+        wetuwn fawse;
       }
 
-      return this.fieldName.equals(((PerField) other).fieldName);
+      wetuwn this.fiewdname.equaws(((pewfiewd) othew).fiewdname);
     }
 
-    @Override
-    public int hashCode() {
-      return fieldName.hashCode();
+    @ovewwide
+    pubwic i-int hashcode() {
+      wetuwn fiewdname.hashcode();
     }
 
-    public void finish(int docId) {
-      if (indexWriter != null) {
-        indexWriter.finish();
+    p-pubwic void finish(int docid) {
+      i-if (indexwwitew != n-nyuww) {
+        indexwwitew.finish();
       }
 
-      if (!omitNorms) {
-        FieldInvertState state = new FieldInvertState(
-            Version.LATEST.major,
-            fieldName,
-            indexOptions,
-            currentPosition,
-            currentLength,
-            currentOverlap,
-            currentOffset,
-            0,   // maxTermFrequency
-            0);  // uniqueTermCount
-        ColumnStrideByteIndex normsIndex =
-            indexSegmentWriter.segmentData.createNormIndex(fieldName);
-        if (normsIndex != null) {
-          normsIndex.setValue(docId, (byte) indexSegmentWriter.similarity.computeNorm(state));
+      i-if (!omitnowms) {
+        f-fiewdinvewtstate s-state = n-nyew fiewdinvewtstate(
+            v-vewsion.watest.majow, (✿oωo)
+            f-fiewdname, (⑅˘꒳˘)
+            indexoptions, OwO
+            cuwwentposition, 🥺
+            cuwwentwength, >_<
+            cuwwentovewwap, (ꈍᴗꈍ)
+            cuwwentoffset, 😳
+            0, 🥺   // maxtewmfwequency
+            0);  // u-uniquetewmcount
+        c-cowumnstwidebyteindex n-nowmsindex =
+            i-indexsegmentwwitew.segmentdata.cweatenowmindex(fiewdname);
+        if (nowmsindex != n-nyuww) {
+          n-nowmsindex.setvawue(docid, nyaa~~ (byte) indexsegmentwwitew.simiwawity.computenowm(state));
         }
       }
     }
 
-    /** Inverts one field for one document; first is true
-     *  if this is the first time we are seeing this field
-     *  name in this document. */
-    public void invert(IndexableField field,
-                       int docId,
-                       boolean first,
-                       boolean currentDocIsOffensive) throws IOException {
-      if (indexWriter == null) {
-        return;
+    /** invewts one fiewd fow one document; fiwst i-is twue
+     *  i-if this is the fiwst time we awe seeing this fiewd
+     *  nyame i-in this document. ^•ﻌ•^ */
+    p-pubwic v-void invewt(indexabwefiewd fiewd, (ˆ ﻌ ˆ)♡
+                       int d-docid, (U ᵕ U❁)
+                       boowean fiwst, mya
+                       boowean cuwwentdocisoffensive) t-thwows ioexception {
+      i-if (indexwwitew == nyuww) {
+        wetuwn;
       }
-      if (first) {
-        currentPosition = -1;
-        currentOffset = 0;
-        lastPosition = 0;
-        lastStartOffset = 0;
+      i-if (fiwst) {
+        cuwwentposition = -1;
+        cuwwentoffset = 0;
+        w-wastposition = 0;
+        w-waststawtoffset = 0;
 
-        if (invertedField != null) {
-          invertedField.incrementNumDocs();
+        if (invewtedfiewd != n-nyuww) {
+          i-invewtedfiewd.incwementnumdocs();
         }
       }
 
-      IndexableFieldType fieldType = field.fieldType();
-      final boolean analyzed = fieldType.tokenized() && indexSegmentWriter.analyzer != null;
-      boolean succeededInProcessingField = false;
-      try {
-        tokenStream = field.tokenStream(indexSegmentWriter.analyzer, tokenStream);
-        tokenStream.reset();
+      i-indexabwefiewdtype f-fiewdtype = f-fiewd.fiewdtype();
+      f-finaw boowean anawyzed = f-fiewdtype.tokenized() && i-indexsegmentwwitew.anawyzew != nyuww;
+      b-boowean succeededinpwocessingfiewd = fawse;
+      t-twy {
+        tokenstweam = f-fiewd.tokenstweam(indexsegmentwwitew.anawyzew, 😳 tokenstweam);
+        t-tokenstweam.weset();
 
-        PositionIncrementAttribute posIncrAttribute =
-            tokenStream.addAttribute(PositionIncrementAttribute.class);
-        OffsetAttribute offsetAttribute = tokenStream.addAttribute(OffsetAttribute.class);
-        TermToBytesRefAttribute termAtt = tokenStream.addAttribute(TermToBytesRefAttribute.class);
+        p-positionincwementattwibute posincwattwibute =
+            tokenstweam.addattwibute(positionincwementattwibute.cwass);
+        o-offsetattwibute offsetattwibute = tokenstweam.addattwibute(offsetattwibute.cwass);
+        t-tewmtobyteswefattwibute t-tewmatt = tokenstweam.addattwibute(tewmtobyteswefattwibute.cwass);
 
-        Set<BytesRef> seenTerms = new HashSet<>();
-        indexWriter.start(tokenStream, currentDocIsOffensive);
-        while (tokenStream.incrementToken()) {
-          // If we hit an exception in stream.next below
-          // (which is fairly common, e.g. if analyzer
-          // chokes on a given document), then it's
-          // non-aborting and (above) this one document
-          // will be marked as deleted, but still
-          // consume a docID
+        set<byteswef> s-seentewms = n-nyew hashset<>();
+        indexwwitew.stawt(tokenstweam, σωσ c-cuwwentdocisoffensive);
+        whiwe (tokenstweam.incwementtoken()) {
+          // if w-we hit an exception i-in stweam.next bewow
+          // (which i-is f-faiwwy common, ( ͡o ω ͡o ) e.g. XD if anawyzew
+          // chokes o-on a given d-document), :3 then i-it's
+          // n-nyon-abowting and (above) this one document
+          // wiww be mawked as deweted, :3 but stiww
+          // consume a-a docid
 
-          int posIncr = posIncrAttribute.getPositionIncrement();
-          currentPosition += posIncr;
-          if (currentPosition < lastPosition) {
-            if (posIncr == 0) {
-              throw new IllegalArgumentException(
-                  "first position increment must be > 0 (got 0) for field '" + field.name() + "'");
-            } else if (posIncr < 0) {
-              throw new IllegalArgumentException(
-                  "position increments (and gaps) must be >= 0 (got " + posIncr + ") for field '"
-                  + field.name() + "'");
-            } else {
-              throw new IllegalArgumentException(
-                  "position overflowed Integer.MAX_VALUE (got posIncr=" + posIncr + " lastPosition="
-                  + lastPosition + " position=" + currentPosition + ") for field '" + field.name()
+          i-int posincw = p-posincwattwibute.getpositionincwement();
+          c-cuwwentposition += p-posincw;
+          if (cuwwentposition < w-wastposition) {
+            if (posincw == 0) {
+              t-thwow nyew iwwegawawgumentexception(
+                  "fiwst p-position incwement must be > 0 (got 0) f-fow fiewd '" + f-fiewd.name() + "'");
+            } ewse if (posincw < 0) {
+              thwow nyew iwwegawawgumentexception(
+                  "position i-incwements (and gaps) must be >= 0 (got " + posincw + ") f-fow fiewd '"
+                  + fiewd.name() + "'");
+            } e-ewse {
+              t-thwow nyew iwwegawawgumentexception(
+                  "position ovewfwowed integew.max_vawue (got p-posincw=" + p-posincw + " wastposition="
+                  + w-wastposition + " position=" + cuwwentposition + ") f-fow fiewd '" + f-fiewd.name()
                   + "'");
             }
-          } else if (currentPosition > MAX_POSITION) {
-            throw new IllegalArgumentException(
-                "position " + currentPosition + " is too large for field '" + field.name()
-                + "': max allowed position is " + MAX_POSITION);
+          } ewse if (cuwwentposition > max_position) {
+            t-thwow nyew iwwegawawgumentexception(
+                "position " + c-cuwwentposition + " i-is too wawge fow f-fiewd '" + fiewd.name()
+                + "': max awwowed position i-is " + max_position);
           }
-          lastPosition = currentPosition;
-          if (posIncr == 0) {
-            currentOverlap++;
+          wastposition = cuwwentposition;
+          i-if (posincw == 0) {
+            cuwwentovewwap++;
           }
 
-          int startOffset = currentOffset + offsetAttribute.startOffset();
-          int endOffset = currentOffset + offsetAttribute.endOffset();
-          if (startOffset < lastStartOffset || endOffset < startOffset) {
-            throw new IllegalArgumentException(
-                "startOffset must be non-negative, and endOffset must be >= startOffset, and "
-                + "offsets must not go backwards startOffset=" + startOffset + ",endOffset="
-                + endOffset + ",lastStartOffset=" + lastStartOffset + " for field '" + field.name()
+          int stawtoffset = cuwwentoffset + offsetattwibute.stawtoffset();
+          int endoffset = cuwwentoffset + o-offsetattwibute.endoffset();
+          if (stawtoffset < waststawtoffset || endoffset < stawtoffset) {
+            thwow nyew iwwegawawgumentexception(
+                "stawtoffset must be nyon-negative, (⑅˘꒳˘) a-and endoffset must be >= stawtoffset, òωó a-and "
+                + "offsets must nyot go b-backwawds stawtoffset=" + stawtoffset + ",endoffset="
+                + endoffset + ",waststawtoffset=" + w-waststawtoffset + " fow f-fiewd '" + fiewd.name()
                 + "'");
           }
-          lastStartOffset = startOffset;
-          indexWriter.add(docId, currentPosition);
-          currentLength++;
+          waststawtoffset = s-stawtoffset;
+          i-indexwwitew.add(docid, mya cuwwentposition);
+          cuwwentwength++;
 
-          BytesRef term = termAtt.getBytesRef();
-          if (seenTerms.add(term) && (invertedField != null)) {
-            invertedField.incrementSumTermDocFreq();
+          b-byteswef tewm = tewmatt.getbyteswef();
+          if (seentewms.add(tewm) && (invewtedfiewd != nyuww)) {
+            i-invewtedfiewd.incwementsumtewmdocfweq();
           }
         }
 
-        tokenStream.end();
+        tokenstweam.end();
 
-        currentPosition += posIncrAttribute.getPositionIncrement();
-        currentOffset += offsetAttribute.endOffset();
-        succeededInProcessingField = true;
-      } catch (BytesRefHash.MaxBytesLengthExceededException e) {
-        byte[] prefix = new byte[30];
-        BytesRef bigTerm = tokenStream.getAttribute(TermToBytesRefAttribute.class).getBytesRef();
-        System.arraycopy(bigTerm.bytes, bigTerm.offset, prefix, 0, 30);
-        String msg = "Document contains at least one immense term in field=\"" + fieldName
-                + "\" (whose UTF8 encoding is longer than the max length), all of "
-                + "which were skipped." + "Please correct the analyzer to not produce such terms. "
-                + "The prefix of the first immense term is: '" + Arrays.toString(prefix)
-                + "...', original message: " + e.getMessage();
-        LOG.warn(msg);
-        // Document will be deleted above:
-        throw new IllegalArgumentException(msg, e);
-      } finally {
-        if (!succeededInProcessingField) {
-          LOG.warn("An exception was thrown while processing field " + fieldName);
+        c-cuwwentposition += posincwattwibute.getpositionincwement();
+        c-cuwwentoffset += offsetattwibute.endoffset();
+        s-succeededinpwocessingfiewd = twue;
+      } c-catch (byteswefhash.maxbyteswengthexceededexception e) {
+        byte[] pwefix = nyew b-byte[30];
+        byteswef bigtewm = tokenstweam.getattwibute(tewmtobyteswefattwibute.cwass).getbyteswef();
+        s-system.awwaycopy(bigtewm.bytes, 😳😳😳 bigtewm.offset, :3 pwefix, >_< 0, 30);
+        stwing msg = "document contains at w-weast one immense t-tewm in fiewd=\"" + fiewdname
+                + "\" (whose utf8 e-encoding is w-wongew than the max wength), 🥺 aww o-of "
+                + "which wewe skipped." + "pwease cowwect the anawyzew to nyot pwoduce such t-tewms. (ꈍᴗꈍ) "
+                + "the p-pwefix of the fiwst immense tewm i-is: '" + awways.tostwing(pwefix)
+                + "...', rawr x3 o-owiginaw message: " + e-e.getmessage();
+        wog.wawn(msg);
+        // document wiww b-be deweted above:
+        thwow nyew iwwegawawgumentexception(msg, (U ﹏ U) e-e);
+      } f-finawwy {
+        if (!succeededinpwocessingfiewd) {
+          wog.wawn("an exception w-was thwown whiwe pwocessing fiewd " + fiewdname);
         }
-        if (tokenStream != null) {
-          try {
-            tokenStream.close();
-          } catch (IOException e) {
-            if (succeededInProcessingField) {
-              // only throw this exception if no other exception already occurred above
-              throw e;
-            } else {
-              LOG.warn("Exception while trying to close TokenStream.", e);
+        if (tokenstweam != nyuww) {
+          twy {
+            tokenstweam.cwose();
+          } catch (ioexception e) {
+            i-if (succeededinpwocessingfiewd) {
+              // o-onwy thwow this exception i-if nyo othew e-exception awweady occuwwed above
+              t-thwow e;
+            } ewse {
+              wog.wawn("exception whiwe twying to cwose tokenstweam.", ( ͡o ω ͡o ) e);
             }
           }
         }
       }
 
-      if (analyzed) {
-        currentPosition += indexSegmentWriter.analyzer.getPositionIncrementGap(fieldName);
-        currentOffset += indexSegmentWriter.analyzer.getOffsetGap(fieldName);
+      i-if (anawyzed) {
+        cuwwentposition += indexsegmentwwitew.anawyzew.getpositionincwementgap(fiewdname);
+        cuwwentoffset += indexsegmentwwitew.anawyzew.getoffsetgap(fiewdname);
       }
     }
   }
 
-  @Override
-  public int numDocs() {
-    return segmentData.getDocIDToTweetIDMapper().getNumDocs();
+  @ovewwide
+  p-pubwic int n-nyumdocs() {
+    w-wetuwn segmentdata.getdocidtotweetidmappew().getnumdocs();
   }
 
-  public interface InvertedDocConsumer {
+  pubwic intewface invewteddocconsumew {
     /**
-     * Called for each document before inversion starts.
+     * cawwed f-fow each document b-befowe invewsion s-stawts. 😳😳😳
      */
-    void start(AttributeSource attributeSource, boolean currentDocIsOffensive);
+    void stawt(attwibutesouwce a-attwibutesouwce, 🥺 boowean cuwwentdocisoffensive);
 
     /**
-     * Called for each token in the current document.
-     * @param docID Document id.
-     * @param position Position in the token stream for this document.
+     * c-cawwed fow each token in the c-cuwwent document. òωó
+     * @pawam docid document i-id. XD
+     * @pawam position position in the token s-stweam fow this document. XD
      */
-    void add(int docID, int position) throws IOException;
+    v-void add(int d-docid, ( ͡o ω ͡o ) int position) thwows i-ioexception;
 
     /**
-     * Called after the last token was added and before the next document is processed.
+     * cawwed a-aftew the wast token was added a-and befowe the nyext document i-is pwocessed. >w<
      */
-    void finish();
+    void f-finish();
   }
 
-  public interface StoredFieldsConsumer {
+  p-pubwic intewface stowedfiewdsconsumew {
     /**
-     * Adds a new stored fields.
+     * adds a n-nyew stowed fiewds. mya
      */
-    void addField(int docID, IndexableField field) throws IOException;
+    void addfiewd(int docid, indexabwefiewd fiewd) thwows ioexception;
   }
 
   /**
-   * This Builder allows registering listeners for a particular field of an indexable document.
-   * For each field name any number of listeners can be added.
+   * this buiwdew awwows wegistewing wistenews fow a-a pawticuwaw fiewd of an indexabwe document. (ꈍᴗꈍ)
+   * f-fow each fiewd nyame any nyumbew o-of wistenews can be added. -.-
    *
-   * Using {@link #useDefaultConsumer} it can be specified whether this index writer will use
-   * the default consumer in addition to any additionally registered consumers.
+   * using {@wink #usedefauwtconsumew} i-it can be specified whethew this index w-wwitew wiww use
+   * the defauwt consumew in a-addition to any additionawwy wegistewed consumews. (⑅˘꒳˘)
    */
-  public abstract static class ConsumerBuilder<T> {
-    private boolean useDefaultConsumer;
-    private final List<T> consumers;
-    private final EarlybirdFieldType fieldType;
-    private final String fieldName;
+  p-pubwic abstwact static cwass consumewbuiwdew<t> {
+    p-pwivate boowean u-usedefauwtconsumew;
+    pwivate finaw wist<t> consumews;
+    p-pwivate f-finaw eawwybiwdfiewdtype fiewdtype;
+    pwivate f-finaw stwing f-fiewdname;
 
-    private ConsumerBuilder(String fieldName, EarlybirdFieldType fieldType) {
-      useDefaultConsumer = true;
-      consumers = Lists.newArrayList();
-      this.fieldName = fieldName;
-      this.fieldType = fieldType;
+    pwivate consumewbuiwdew(stwing fiewdname, (U ﹏ U) eawwybiwdfiewdtype f-fiewdtype) {
+      usedefauwtconsumew = twue;
+      consumews = w-wists.newawwaywist();
+      this.fiewdname = fiewdname;
+      this.fiewdtype = fiewdtype;
     }
 
-    public String getFieldName() {
-      return fieldName;
+    p-pubwic stwing g-getfiewdname() {
+      w-wetuwn fiewdname;
     }
 
-    public EarlybirdFieldType getFieldType() {
-      return fieldType;
-    }
-
-    /**
-     * If set to true, {@link EarlybirdRealtimeIndexSegmentWriter} will use the default consumer
-     * (e.g. build a default inverted index for an inverted field) in addition to any consumers
-     * added via {@link #addConsumer(Object)}.
-     */
-    public void setUseDefaultConsumer(boolean useDefaultConsumer) {
-      this.useDefaultConsumer = useDefaultConsumer;
-    }
-
-    public boolean isUseDefaultConsumer() {
-      return useDefaultConsumer;
+    pubwic eawwybiwdfiewdtype getfiewdtype() {
+      w-wetuwn fiewdtype;
     }
 
     /**
-     * Allows registering any number of additional consumers for the field associated with this
-     * builder.
+     * if set to twue, σωσ {@wink e-eawwybiwdweawtimeindexsegmentwwitew} wiww u-use the defauwt c-consumew
+     * (e.g. :3 buiwd a defauwt invewted index fow an invewted fiewd) in addition to any c-consumews
+     * a-added via {@wink #addconsumew(object)}. /(^•ω•^)
      */
-    public void addConsumer(T consumer) {
-      consumers.add(consumer);
+    pubwic void setusedefauwtconsumew(boowean usedefauwtconsumew) {
+      t-this.usedefauwtconsumew = usedefauwtconsumew;
     }
 
-    T build() {
-      if (consumers.isEmpty()) {
-        return null;
-      } else if (consumers.size() == 1) {
-        return consumers.get(0);
-      } else {
-        return build(consumers);
+    pubwic boowean i-isusedefauwtconsumew() {
+      w-wetuwn usedefauwtconsumew;
+    }
+
+    /**
+     * a-awwows wegistewing a-any nyumbew o-of additionaw c-consumews fow the fiewd associated with this
+     * b-buiwdew. σωσ
+     */
+    p-pubwic v-void addconsumew(t c-consumew) {
+      c-consumews.add(consumew);
+    }
+
+    t-t buiwd() {
+      if (consumews.isempty()) {
+        w-wetuwn n-nyuww;
+      } e-ewse if (consumews.size() == 1) {
+        wetuwn consumews.get(0);
+      } ewse {
+        w-wetuwn buiwd(consumews);
       }
     }
 
-    abstract T build(List<T> consumerList);
+    abstwact t-t buiwd(wist<t> consumewwist);
   }
 
-  public static final class StoredFieldsConsumerBuilder
-          extends ConsumerBuilder<StoredFieldsConsumer> {
-    private StoredFieldsConsumerBuilder(String fieldName, EarlybirdFieldType fieldType) {
-      super(fieldName, fieldType);
+  pubwic s-static finaw cwass s-stowedfiewdsconsumewbuiwdew
+          extends consumewbuiwdew<stowedfiewdsconsumew> {
+    pwivate s-stowedfiewdsconsumewbuiwdew(stwing f-fiewdname, (U ᵕ U❁) eawwybiwdfiewdtype f-fiewdtype) {
+      s-supew(fiewdname, fiewdtype);
     }
 
-    @Override
-    StoredFieldsConsumer build(final List<StoredFieldsConsumer> consumers) {
-      return (docID, field) -> {
-        for (StoredFieldsConsumer consumer : consumers) {
-          consumer.addField(docID, field);
+    @ovewwide
+    stowedfiewdsconsumew buiwd(finaw wist<stowedfiewdsconsumew> c-consumews) {
+      w-wetuwn (docid, 😳 fiewd) -> {
+        fow (stowedfiewdsconsumew c-consumew : c-consumews) {
+          consumew.addfiewd(docid, ʘwʘ fiewd);
         }
       };
     }
   }
 
-  public static final class InvertedDocConsumerBuilder
-      extends ConsumerBuilder<InvertedDocConsumer> {
-    private final EarlybirdIndexSegmentData segmentData;
+  p-pubwic static finaw cwass invewteddocconsumewbuiwdew
+      extends consumewbuiwdew<invewteddocconsumew> {
+    pwivate f-finaw eawwybiwdindexsegmentdata segmentdata;
 
-    private InvertedDocConsumerBuilder(
-        EarlybirdIndexSegmentData segmentData, String fieldName, EarlybirdFieldType fieldType) {
-      super(fieldName, fieldType);
-      this.segmentData = segmentData;
+    pwivate invewteddocconsumewbuiwdew(
+        e-eawwybiwdindexsegmentdata s-segmentdata, (⑅˘꒳˘) s-stwing fiewdname, ^•ﻌ•^ eawwybiwdfiewdtype f-fiewdtype) {
+      s-supew(fiewdname, nyaa~~ f-fiewdtype);
+      t-this.segmentdata = s-segmentdata;
     }
 
-    @Override
-    InvertedDocConsumer build(final List<InvertedDocConsumer> consumers) {
-      return new InvertedDocConsumer() {
-        @Override
-        public void start(AttributeSource attributeSource, boolean currentDocIsOffensive) {
-          for (InvertedDocConsumer consumer : consumers) {
-            consumer.start(attributeSource, currentDocIsOffensive);
+    @ovewwide
+    invewteddocconsumew buiwd(finaw wist<invewteddocconsumew> c-consumews) {
+      w-wetuwn n-nyew invewteddocconsumew() {
+        @ovewwide
+        pubwic void s-stawt(attwibutesouwce a-attwibutesouwce, XD b-boowean cuwwentdocisoffensive) {
+          f-fow (invewteddocconsumew consumew : c-consumews) {
+            c-consumew.stawt(attwibutesouwce, /(^•ω•^) c-cuwwentdocisoffensive);
           }
         }
 
-        @Override
-        public void finish() {
-          for (InvertedDocConsumer consumer : consumers) {
-            consumer.finish();
+        @ovewwide
+        p-pubwic void finish() {
+          f-fow (invewteddocconsumew consumew : c-consumews) {
+            c-consumew.finish();
           }
         }
 
-        @Override
-        public void add(int docID, int position) throws IOException {
-          for (InvertedDocConsumer consumer : consumers) {
-            consumer.add(docID, position);
+        @ovewwide
+        pubwic void add(int docid, (U ᵕ U❁) int position) t-thwows ioexception {
+          f-fow (invewteddocconsumew consumew : consumews) {
+            c-consumew.add(docid, mya p-position);
           }
         }
       };
     }
 
-    public EarlybirdIndexSegmentData getSegmentData() {
-      return segmentData;
+    pubwic eawwybiwdindexsegmentdata g-getsegmentdata() {
+      w-wetuwn segmentdata;
     }
   }
 
   /**
-   * Returns true, if a field should not be indexed.
-   * @deprecated This writer should be able to process all fields in the future.
+   * w-wetuwns twue, (ˆ ﻌ ˆ)♡ if a-a fiewd shouwd n-nyot be indexed. (✿oωo)
+   * @depwecated t-this wwitew shouwd be abwe to pwocess aww fiewds i-in the futuwe. (✿oωo)
    */
-  @Deprecated
-  private static boolean skipField(String fieldName) {
-    // ignore lucene facet fields for realtime index, we are handling it differently for now.
-    return fieldName.startsWith(FacetsConfig.DEFAULT_INDEX_FIELD_NAME);
+  @depwecated
+  pwivate static boowean skipfiewd(stwing fiewdname) {
+    // ignowe wucene f-facet fiewds fow w-weawtime index, òωó we awe handwing it diffewentwy fow nyow. (˘ω˘)
+    w-wetuwn fiewdname.stawtswith(facetsconfig.defauwt_index_fiewd_name);
   }
 
-  private static Field buildAllDocsField(EarlybirdRealtimeIndexSegmentData segmentData) {
-    String fieldName = EarlybirdFieldConstants.EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName();
-    if (segmentData.getSchema().hasField(fieldName)) {
-      Schema.FieldInfo fi = Preconditions.checkNotNull(
-          segmentData.getSchema().getFieldInfo(fieldName));
-      return new Field(fi.getName(), AllDocsIterator.ALL_DOCS_TERM, fi.getFieldType());
+  p-pwivate static fiewd buiwdawwdocsfiewd(eawwybiwdweawtimeindexsegmentdata s-segmentdata) {
+    stwing fiewdname = e-eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname();
+    i-if (segmentdata.getschema().hasfiewd(fiewdname)) {
+      s-schema.fiewdinfo fi = pweconditions.checknotnuww(
+          segmentdata.getschema().getfiewdinfo(fiewdname));
+      wetuwn n-nyew fiewd(fi.getname(), (ˆ ﻌ ˆ)♡ awwdocsitewatow.aww_docs_tewm, ( ͡o ω ͡o ) f-fi.getfiewdtype());
     }
 
-    return null;
+    wetuwn nyuww;
   }
 
   /**
-   * Every document must have this field and term, so that we can safely iterate through documents
-   * using {@link AllDocsIterator}. This is to prevent the problem of adding a tweet to the doc ID
-   * mapper, and returning it for a match-all query when the rest of the document hasn't been
-   * published. This could lead to queries returning incorrect results for queries that are only
-   * negations.
+   * e-evewy document must have this fiewd and tewm, rawr x3 s-so that we can safewy itewate t-thwough documents
+   * using {@wink awwdocsitewatow}. (˘ω˘) t-this is to pwevent the pwobwem o-of adding a tweet to the doc id
+   * mappew, òωó and wetuwning it fow a match-aww quewy when the west of the document h-hasn't been
+   * p-pubwished. ( ͡o ω ͡o ) t-this couwd wead t-to quewies wetuwning incowwect wesuwts fow quewies t-that awe onwy
+   * nyegations. σωσ
    * */
-  private void addAllDocsField(Document doc) {
-    if (allDocsField != null) {
-      doc.add(allDocsField);
+  pwivate void addawwdocsfiewd(document doc) {
+    i-if (awwdocsfiewd != n-nyuww) {
+      d-doc.add(awwdocsfiewd);
     }
   }
 }

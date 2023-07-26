@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.wichtext
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Center
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Natural
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextAlignment
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.centew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.natuwaw
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtextawignment
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class RichTextAlignmentMarshaller @Inject() () {
+@singweton
+cwass wichtextawignmentmawshawwew @inject() () {
 
-  def apply(alignment: RichTextAlignment): urt.RichTextAlignment = alignment match {
-    case Natural => urt.RichTextAlignment.Natural
-    case Center => urt.RichTextAlignment.Center
+  def appwy(awignment: wichtextawignment): uwt.wichtextawignment = awignment m-match {
+    case nyatuwaw => uwt.wichtextawignment.natuwaw
+    c-case centew => uwt.wichtextawignment.centew
   }
 }

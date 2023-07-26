@@ -1,20 +1,20 @@
-package com.twitter.timelineranker.entity_tweets
+package com.twittew.timewinewankew.entity_tweets
 
-import com.twitter.timelineranker.model.CandidateTweetsResult
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.util.Future
+impowt com.twittew.timewinewankew.modew.candidatetweetswesuwt
+impowt c-com.twittew.timewinewankew.modew.wecapquewy
+i-impowt com.twittew.utiw.futuwe
 
 /**
- * A repository of entity tweets candidates.
+ * a-a wepositowy o-of entity t-tweets candidates. -.-
  *
- * For now, it does not cache any results therefore forwards all calls to the underlying source.
+ * f-fow nyow, ^^;; i-it does nyot c-cache any wesuwts thewefowe fowwawds aww cawws to the undewwying souwce. >_<
  */
-class EntityTweetsRepository(source: EntityTweetsSource) {
-  def get(query: RecapQuery): Future[CandidateTweetsResult] = {
-    source.get(query)
+cwass e-entitytweetswepositowy(souwce: entitytweetssouwce) {
+  def get(quewy: w-wecapquewy): futuwe[candidatetweetswesuwt] = {
+    s-souwce.get(quewy)
   }
 
-  def get(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
-    source.get(queries)
+  def get(quewies: seq[wecapquewy]): futuwe[seq[candidatetweetswesuwt]] = {
+    s-souwce.get(quewies)
   }
 }

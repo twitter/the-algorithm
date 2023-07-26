@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.cover
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew
 
-sealed trait FullCoverDisplayType
+seawed t-twait fuwwcovewdispwaytype
 
-case object CoverFullCoverDisplayType extends FullCoverDisplayType
+case o-object covewfuwwcovewdispwaytype e-extends fuwwcovewdispwaytype

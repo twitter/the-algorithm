@@ -1,236 +1,236 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.util.Date;
-import java.util.Optional;
+impowt java.sqw.timestamp;
+i-impowt j-java.text.datefowmat;
+i-impowt java.text.simpwedatefowmat;
+i-impowt j-java.time.duwation;
+i-impowt java.utiw.date;
+i-impowt j-java.utiw.optionaw;
 
-import com.google.common.annotations.VisibleForTesting;
+impowt com.googwe.common.annotations.visibwefowtesting;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.swf4j.woggew;
+impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.common.NonPagingAssert;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.common.userupdates.UserScrubGeoMap;
-import com.twitter.search.earlybird.common.userupdates.UserTableBuilderFromSnapshot;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.factory.EarlybirdIndexConfigUtil;
+impowt com.twittew.common.utiw.cwock;
+i-impowt com.twittew.seawch.common.metwics.seawchtimew;
+impowt com.twittew.seawch.eawwybiwd.eawwybiwdstatus;
+i-impowt com.twittew.seawch.eawwybiwd.common.nonpagingassewt;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+i-impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdpwopewty;
+i-impowt com.twittew.seawch.eawwybiwd.common.usewupdates.usewscwubgeomap;
+i-impowt com.twittew.seawch.eawwybiwd.common.usewupdates.usewtabwebuiwdewfwomsnapshot;
+impowt com.twittew.seawch.eawwybiwd.common.usewupdates.usewtabwe;
+impowt com.twittew.seawch.eawwybiwd.factowy.eawwybiwdindexconfigutiw;
 
 /**
- * Indexer class responsible for getting the the {@link UserTable} and {@link UserScrubGeoMap}
- * indexed up until the current moment.
+ * i-indexew cwass wesponsibwe fow getting the the {@wink usewtabwe} and {@wink u-usewscwubgeomap}
+ * indexed u-up untiw the c-cuwwent moment. UwU
  */
-public class StartupUserEventIndexer {
-  private static final Logger LOG = LoggerFactory.getLogger(StartupUserEventIndexer.class);
-  private static final String LOAD_USER_UPDATE_SNAPSHOT =
-      "loading user update snapshot";
-  private static final String INDEX_ALL_USER_EVENTS =
-      "indexing all user events";
-  private static final NonPagingAssert FAILED_USER_TABLE_HDFS_LOAD
-      = new NonPagingAssert("failed_user_table_hdfs_load");
+p-pubwic cwass s-stawtupuseweventindexew {
+  pwivate static finaw woggew wog = w-woggewfactowy.getwoggew(stawtupuseweventindexew.cwass);
+  pwivate static finaw s-stwing woad_usew_update_snapshot =
+      "woading usew update snapshot";
+  pwivate static finaw stwing index_aww_usew_events =
+      "indexing aww usew events";
+  p-pwivate static finaw nyonpagingassewt f-faiwed_usew_tabwe_hdfs_woad
+      = n-nyew n-nyonpagingassewt("faiwed_usew_tabwe_hdfs_woad");
 
-  private static final long MAX_RETRY_MILLIS_FOR_SEEK_TO_TIMESTAMP =
-      Duration.ofMinutes(1).toMillis();
-  private static final long SLEEP_MILLIS_BETWEEN_RETRIES_FOR_SEEK_TO_TIMESTAMP =
-      Duration.ofSeconds(1).toMillis();
+  pwivate static finaw wong max_wetwy_miwwis_fow_seek_to_timestamp =
+      duwation.ofminutes(1).tomiwwis();
+  p-pwivate static f-finaw wong sweep_miwwis_between_wetwies_fow_seek_to_timestamp =
+      duwation.ofseconds(1).tomiwwis();
 
-  private static final long MILLIS_IN_FOURTEEN_DAYS = 1209600000;
-  private static final long MILLIS_IN_ONE_DAY = 86400000;
+  p-pwivate s-static finaw wong miwwis_in_fouwteen_days = 1209600000;
+  pwivate s-static finaw wong miwwis_in_one_day = 86400000;
 
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private final UserUpdatesStreamIndexer userUpdatesStreamIndexer;
-  private final UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer;
-  private final SegmentManager segmentManager;
-  private final Clock clock;
+  p-pwivate finaw seawchindexingmetwicset seawchindexingmetwicset;
+  p-pwivate finaw usewupdatesstweamindexew u-usewupdatesstweamindexew;
+  pwivate f-finaw usewscwubgeoeventstweamindexew u-usewscwubgeoeventstweamindexew;
+  pwivate finaw segmentmanagew segmentmanagew;
+  pwivate finaw cwock cwock;
 
-  public StartupUserEventIndexer(
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      UserUpdatesStreamIndexer userUpdatesStreamIndexer,
-      UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer,
-      SegmentManager segmentManager,
-      Clock clock) {
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.userUpdatesStreamIndexer = userUpdatesStreamIndexer;
-    this.userScrubGeoEventStreamIndexer = userScrubGeoEventStreamIndexer;
-    this.segmentManager = segmentManager;
-    this.clock = clock;
+  pubwic s-stawtupuseweventindexew(
+      s-seawchindexingmetwicset seawchindexingmetwicset, XD
+      u-usewupdatesstweamindexew u-usewupdatesstweamindexew, (✿oωo)
+      u-usewscwubgeoeventstweamindexew usewscwubgeoeventstweamindexew, :3
+      segmentmanagew segmentmanagew, (///ˬ///✿)
+      cwock c-cwock) {
+    this.seawchindexingmetwicset = seawchindexingmetwicset;
+    this.usewupdatesstweamindexew = usewupdatesstweamindexew;
+    this.usewscwubgeoeventstweamindexew = u-usewscwubgeoeventstweamindexew;
+    this.segmentmanagew = s-segmentmanagew;
+    t-this.cwock = c-cwock;
   }
 
   /**
-   * Index all user events.
+   * index aww usew events. nyaa~~
    */
-  public void indexAllEvents() {
-    EarlybirdStatus.beginEvent(
-        INDEX_ALL_USER_EVENTS, searchIndexingMetricSet.startupInUserEventIndexer);
+  p-pubwic v-void indexawwevents() {
+    e-eawwybiwdstatus.beginevent(
+        i-index_aww_usew_events, seawchindexingmetwicset.stawtupinuseweventindexew);
 
-    indexUserUpdates();
-    if (EarlybirdConfig.consumeUserScrubGeoEvents()) {
-      indexUserScrubGeoEvents();
+    indexusewupdates();
+    i-if (eawwybiwdconfig.consumeusewscwubgeoevents()) {
+      i-indexusewscwubgeoevents();
     }
 
-    EarlybirdStatus.endEvent(
-        INDEX_ALL_USER_EVENTS, searchIndexingMetricSet.startupInUserEventIndexer);
+    e-eawwybiwdstatus.endevent(
+        i-index_aww_usew_events, >w< s-seawchindexingmetwicset.stawtupinuseweventindexew);
   }
 
   /**
-   * Index user updates until current.
+   * index usew updates untiw cuwwent. -.-
    */
-  public void indexUserUpdates() {
-    EarlybirdStatus.beginEvent(
-        LOAD_USER_UPDATE_SNAPSHOT, searchIndexingMetricSet.startupInUserUpdates);
+  p-pubwic void indexusewupdates() {
+    eawwybiwdstatus.beginevent(
+        woad_usew_update_snapshot, (✿oωo) seawchindexingmetwicset.stawtupinusewupdates);
 
-    Optional<UserTable> userTable = buildUserTable();
-    if (userTable.isPresent()) {
-      segmentManager.getUserTable().setTable(userTable.get());
-      LOG.info("Set new user table.");
+    optionaw<usewtabwe> usewtabwe = buiwdusewtabwe();
+    i-if (usewtabwe.ispwesent()) {
+      segmentmanagew.getusewtabwe().settabwe(usewtabwe.get());
+      wog.info("set nyew usew tabwe.");
 
-      if (!seekToTimestampWithRetriesIfNecessary(
-          userTable.get().getLastRecordTimestamp(),
-          userUpdatesStreamIndexer)) {
-        LOG.error("User Updates stream indexer unable to seek to timestamp. "
-            + "Will seek to beginning.");
-        userUpdatesStreamIndexer.seekToBeginning();
+      i-if (!seektotimestampwithwetwiesifnecessawy(
+          u-usewtabwe.get().getwastwecowdtimestamp(), (˘ω˘)
+          u-usewupdatesstweamindexew)) {
+        wog.ewwow("usew u-updates stweam indexew u-unabwe to seek t-to timestamp. rawr "
+            + "wiww seek to beginning.");
+        usewupdatesstweamindexew.seektobeginning();
       }
-    } else {
-      LOG.info("Failed to load user update snapshot. Will reindex user updates from scratch.");
-      FAILED_USER_TABLE_HDFS_LOAD.assertFailed();
-      userUpdatesStreamIndexer.seekToBeginning();
+    } ewse {
+      wog.info("faiwed to woad u-usew update snapshot. OwO wiww weindex u-usew updates fwom scwatch.");
+      f-faiwed_usew_tabwe_hdfs_woad.assewtfaiwed();
+      u-usewupdatesstweamindexew.seektobeginning();
     }
 
-    userUpdatesStreamIndexer.readRecordsUntilCurrent();
-    LOG.info("Finished catching up on user updates via Kafka");
+    usewupdatesstweamindexew.weadwecowdsuntiwcuwwent();
+    wog.info("finished c-catching u-up on usew updates via kafka");
 
-    EarlybirdStatus.endEvent(
-        LOAD_USER_UPDATE_SNAPSHOT, searchIndexingMetricSet.startupInUserUpdates);
+    e-eawwybiwdstatus.endevent(
+        w-woad_usew_update_snapshot, ^•ﻌ•^ seawchindexingmetwicset.stawtupinusewupdates);
   }
 
   /**
-   * Index UserScrubGeoEvents until current.
+   * index usewscwubgeoevents untiw cuwwent. UwU
    */
-  public void indexUserScrubGeoEvents() {
-    seekUserScrubGeoEventKafkaConsumer();
+  pubwic void i-indexusewscwubgeoevents() {
+    s-seekusewscwubgeoeventkafkaconsumew();
 
-    SearchTimer timer = new SearchTimer();
-    timer.start();
-    userScrubGeoEventStreamIndexer.readRecordsUntilCurrent();
-    timer.stop();
+    seawchtimew t-timew = new seawchtimew();
+    t-timew.stawt();
+    u-usewscwubgeoeventstweamindexew.weadwecowdsuntiwcuwwent();
+    timew.stop();
 
-    LOG.info("Finished catching up on user scrub geo events via Kafka");
-    LOG.info("UserScrubGeoMap contains {} users and finished in {} milliseconds",
-        segmentManager.getUserScrubGeoMap().getNumUsersInMap(), timer.getElapsed());
+    w-wog.info("finished catching up on usew scwub geo events via kafka");
+    wog.info("usewscwubgeomap c-contains {} usews a-and finished in {} miwwiseconds", (˘ω˘)
+        segmentmanagew.getusewscwubgeomap().getnumusewsinmap(), (///ˬ///✿) t-timew.getewapsed());
   }
 
   /**
-   * Seeks UserScrubGeoEventKafkaConsumer using timestamp derived from
-   * getTimestampForUserScrubGeoEventKafkaConsumer().
+   * s-seeks usewscwubgeoeventkafkaconsumew using timestamp dewived fwom
+   * g-gettimestampfowusewscwubgeoeventkafkaconsumew(). σωσ
    */
-  @VisibleForTesting
-  public void seekUserScrubGeoEventKafkaConsumer() {
-    long seekTimestamp = getTimestampForUserScrubGeoEventKafkaConsumer();
-    if (seekTimestamp == -1) {
-      userScrubGeoEventStreamIndexer.seekToBeginning();
-    } else {
-      if (!seekToTimestampWithRetriesIfNecessary(seekTimestamp, userScrubGeoEventStreamIndexer)) {
-        LOG.error("User Scrub Geo stream indexer unable to seek to timestamp. "
-            + "Will seek to beginning.");
-        userScrubGeoEventStreamIndexer.seekToBeginning();
+  @visibwefowtesting
+  pubwic void seekusewscwubgeoeventkafkaconsumew() {
+    wong seektimestamp = gettimestampfowusewscwubgeoeventkafkaconsumew();
+    if (seektimestamp == -1) {
+      u-usewscwubgeoeventstweamindexew.seektobeginning();
+    } ewse {
+      if (!seektotimestampwithwetwiesifnecessawy(seektimestamp, /(^•ω•^) u-usewscwubgeoeventstweamindexew)) {
+        w-wog.ewwow("usew scwub geo stweam indexew unabwe to seek t-to timestamp. 😳 "
+            + "wiww s-seek to beginning.");
+        usewscwubgeoeventstweamindexew.seektobeginning();
       }
     }
   }
 
   /**
-   * Get timestamp to seek UserScrubGeoEventKafkaConsumer to.
-   * @return
+   * get timestamp to seek usewscwubgeoeventkafkaconsumew t-to. 😳
+   * @wetuwn
    */
-  public long getTimestampForUserScrubGeoEventKafkaConsumer() {
-    if (EarlybirdIndexConfigUtil.isArchiveSearch()) {
-      return getTimestampForArchive();
-    } else {
-      return getTimestampForRealtime();
+  pubwic wong gettimestampfowusewscwubgeoeventkafkaconsumew() {
+    i-if (eawwybiwdindexconfigutiw.isawchiveseawch()) {
+      wetuwn gettimestampfowawchive();
+    } ewse {
+      w-wetuwn gettimestampfowweawtime();
     }
   }
 
   /**
-   * For archive: grab scrub gen from config file and convert date into a timestamp. Add buffer of
-   * one day. We need all UserScrubGeoEvents since the date of the current scrub gen.
+   * fow awchive: g-gwab scwub g-gen fwom config fiwe and convewt d-date into a timestamp. (⑅˘꒳˘) add buffew o-of
+   * one d-day. 😳😳😳 we nyeed aww u-usewscwubgeoevents since the date o-of the cuwwent s-scwub gen. 😳
    *
-   * See go/realtime-geo-filtering
-   * @return
+   * see go/weawtime-geo-fiwtewing
+   * @wetuwn
    */
-  public long getTimestampForArchive() {
-    try {
-      String scrubGenString = EarlybirdProperty.EARLYBIRD_SCRUB_GEN.get();
+  pubwic w-wong gettimestampfowawchive() {
+    t-twy {
+      s-stwing scwubgenstwing = eawwybiwdpwopewty.eawwybiwd_scwub_gen.get();
 
-      DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-      Date date = dateFormat.parse(scrubGenString);
-      return new Timestamp(date.getTime()).getTime() - MILLIS_IN_ONE_DAY;
+      datefowmat d-datefowmat = nyew simpwedatefowmat("yyyymmdd");
+      date d-date = datefowmat.pawse(scwubgenstwing);
+      w-wetuwn nyew timestamp(date.gettime()).gettime() - miwwis_in_one_day;
 
-    } catch (Exception e) {
-      LOG.error("Could not derive timestamp from scrub gen. "
-          + "Will seek User Scrub Geo Kafka consumer to beginning of topic");
+    } catch (exception e) {
+      wog.ewwow("couwd nyot d-dewive timestamp f-fwom scwub gen. XD "
+          + "wiww s-seek usew s-scwub geo kafka consumew to beginning o-of topic");
     }
-    return -1;
+    wetuwn -1;
   }
 
   /**
-   * For realtime/protected: Compute the timestamp 14 days from the current time. This will account
-   * for all events that have occurred during the lifecylce of the current index.
+   * fow weawtime/pwotected: compute the timestamp 14 days fwom the cuwwent time. mya t-this wiww account
+   * fow aww e-events that have occuwwed duwing t-the wifecywce of the cuwwent i-index. ^•ﻌ•^
    *
-   * See go/realtime-geo-filtering
+   * see go/weawtime-geo-fiwtewing
    */
-  public long getTimestampForRealtime() {
-   return System.currentTimeMillis() - MILLIS_IN_FOURTEEN_DAYS;
+  p-pubwic wong g-gettimestampfowweawtime() {
+   w-wetuwn system.cuwwenttimemiwwis() - m-miwwis_in_fouwteen_days;
   }
 
-  private boolean seekToTimestampWithRetriesIfNecessary(
-      long lastRecordTimestamp,
-      SimpleStreamIndexer streamIndexer) {
-    long initialTimeMillis = clock.nowMillis();
-    int numFailures = 0;
-    while (shouldTrySeekToTimestamp(initialTimeMillis, numFailures)) {
-      try {
-        streamIndexer.seekToTimestamp(lastRecordTimestamp);
-        LOG.info("Seeked consumer to timestamp {} after {} failures",
-            lastRecordTimestamp, numFailures);
-        return true;
-      } catch (Exception e) {
-        numFailures++;
-        LOG.info("Caught exception when seeking to timestamp. Num failures: {}. Exception: {}",
-            numFailures, e);
-        // Sleep before attempting to retry
-        try {
-          clock.waitFor(SLEEP_MILLIS_BETWEEN_RETRIES_FOR_SEEK_TO_TIMESTAMP);
-        } catch (InterruptedException interruptedException) {
-          LOG.warn("Interrupted while sleeping between seekToTimestamp retries",
-              interruptedException);
-          // Preserve interrupt status.
-          Thread.currentThread().interrupt();
-          break;
+  p-pwivate boowean seektotimestampwithwetwiesifnecessawy(
+      wong wastwecowdtimestamp, ʘwʘ
+      simpwestweamindexew stweamindexew) {
+    wong initiawtimemiwwis = c-cwock.nowmiwwis();
+    i-int n-nyumfaiwuwes = 0;
+    whiwe (shouwdtwyseektotimestamp(initiawtimemiwwis, ( ͡o ω ͡o ) n-nyumfaiwuwes)) {
+      twy {
+        stweamindexew.seektotimestamp(wastwecowdtimestamp);
+        wog.info("seeked consumew t-to timestamp {} a-aftew {} faiwuwes", mya
+            wastwecowdtimestamp, o.O n-nyumfaiwuwes);
+        wetuwn twue;
+      } catch (exception e-e) {
+        n-nyumfaiwuwes++;
+        wog.info("caught e-exception w-when seeking to timestamp. (✿oωo) nyum faiwuwes: {}. :3 exception: {}", 😳
+            nyumfaiwuwes, (U ﹏ U) e);
+        // s-sweep b-befowe attempting t-to wetwy
+        t-twy {
+          c-cwock.waitfow(sweep_miwwis_between_wetwies_fow_seek_to_timestamp);
+        } catch (intewwuptedexception i-intewwuptedexception) {
+          w-wog.wawn("intewwupted whiwe sweeping b-between seektotimestamp wetwies", mya
+              i-intewwuptedexception);
+          // pwesewve i-intewwupt status. (U ᵕ U❁)
+          thwead.cuwwentthwead().intewwupt();
+          bweak;
         }
       }
     }
-    // Failed to seek to timestamp
-    return false;
+    // f-faiwed to seek to timestamp
+    w-wetuwn fawse;
   }
 
-  private boolean shouldTrySeekToTimestamp(long initialTimeMillis, int numFailures) {
-    if (numFailures == 0) {
-      // no attempts have been made yet, so we should try to seek to timestamp
-      return true;
-    } else {
-      return clock.nowMillis() - initialTimeMillis < MAX_RETRY_MILLIS_FOR_SEEK_TO_TIMESTAMP;
+  p-pwivate boowean shouwdtwyseektotimestamp(wong i-initiawtimemiwwis, :3 int nyumfaiwuwes) {
+    if (numfaiwuwes == 0) {
+      // n-nyo attempts h-have been made yet, mya s-so we shouwd twy to seek to timestamp
+      wetuwn twue;
+    } e-ewse {
+      wetuwn cwock.nowmiwwis() - initiawtimemiwwis < max_wetwy_miwwis_fow_seek_to_timestamp;
     }
   }
 
-  protected Optional<UserTable> buildUserTable() {
-    UserTableBuilderFromSnapshot builder = new UserTableBuilderFromSnapshot();
-    return builder.build(segmentManager.getUserTable().getUserIdFilter());
+  p-pwotected optionaw<usewtabwe> b-buiwdusewtabwe() {
+    usewtabwebuiwdewfwomsnapshot b-buiwdew = nyew usewtabwebuiwdewfwomsnapshot();
+    w-wetuwn b-buiwdew.buiwd(segmentmanagew.getusewtabwe().getusewidfiwtew());
   }
 }

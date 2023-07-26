@@ -1,92 +1,92 @@
-package com.twitter.simclusters_v2.scalding.inferred_entities
+package com.twittew.simcwustews_v2.scawding.infewwed_entities
 
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources.EntityEmbeddingsSources
-import com.twitter.simclusters_v2.thriftscala.ClusterType
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InferredEntity
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SemanticCoreEntityWithScore
-import com.twitter.simclusters_v2.thriftscala.SimClustersInferredEntities
-import com.twitter.simclusters_v2.thriftscala.SimClustersSource
-import java.util.TimeZone
+impowt c-com.twittew.scawding.datewange
+i-impowt com.twittew.scawding.days
+i-impowt com.twittew.scawding.typed.typedpipe
+i-impowt com.twittew.simcwustews_v2.common.cwustewid
+i-impowt com.twittew.simcwustews_v2.common.modewvewsions
+i-impowt c-com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.entityembeddingssouwces
+impowt com.twittew.simcwustews_v2.thwiftscawa.cwustewtype
+impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.infewwedentity
+impowt com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
+impowt com.twittew.simcwustews_v2.thwiftscawa.semanticcoweentitywithscowe
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsinfewwedentities
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewssouwce
+impowt java.utiw.timezone
 
 /**
- * Opt-out compliance for SimClusters means offering users an option to opt out of clusters that
- * have inferred legible meanings. This file sets some of the data sources & thresholds from which
- * the inferred entities are considered legible. One should always refer to the sources & constants
- * here for SimClusters' inferred entity compliance work
+ * opt-out compwiance fow simcwustews m-means offewing usews an o-option to opt out o-of cwustews that
+ * have infewwed wegibwe meanings. (ꈍᴗꈍ) this fiwe sets some of the d-data souwces & thweshowds fwom which
+ * the infewwed entities awe considewed wegibwe. 😳 o-one shouwd awways wefew t-to the souwces & c-constants
+ * hewe f-fow simcwustews' i-infewwed entity compwiance wowk
  */
-object InferredEntities {
-  val MHRootPath: String =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_inferred_entities"
+object infewwedentities {
+  v-vaw mhwootpath: stwing =
+    "/usew/cassowawy/manhattan_sequence_fiwes/simcwustews_v2_infewwed_entities"
 
-  // Convenience objects for defining cluster sources
-  val InterestedIn2020 =
-    SimClustersSource(ClusterType.InterestedIn, ModelVersion.Model20m145k2020)
+  // convenience objects f-fow defining cwustew souwces
+  vaw intewestedin2020 =
+    simcwustewssouwce(cwustewtype.intewestedin, 😳😳😳 modewvewsion.modew20m145k2020)
 
-  val Dec11KnownFor = SimClustersSource(ClusterType.KnownFor, ModelVersion.Model20m145kDec11)
+  vaw dec11knownfow = s-simcwustewssouwce(cwustewtype.knownfow, mya modewvewsion.modew20m145kdec11)
 
-  val UpdatedKnownFor = SimClustersSource(ClusterType.KnownFor, ModelVersion.Model20m145kUpdated)
+  v-vaw u-updatedknownfow = s-simcwustewssouwce(cwustewtype.knownfow, modewvewsion.modew20m145kupdated)
 
-  val KnownFor2020 = SimClustersSource(ClusterType.KnownFor, ModelVersion.Model20m145k2020)
-
-  /**
-   * This is the threshold at which we consider a simcluster "legible" through an entity
-   */
-  val MinLegibleEntityScore = 0.6
+  vaw knownfow2020 = simcwustewssouwce(cwustewtype.knownfow, m-modewvewsion.modew20m145k2020)
 
   /**
-   * Query for the entity embeddings that are used for SimClusters compliance. We will use these
-   * entity embeddings for a cluster to allow a user to opt out of a cluster
+   * t-this is the thweshowd at w-which we considew a-a simcwustew "wegibwe" thwough a-an entity
    */
-  def getLegibleEntityEmbeddings(
-    dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])] = {
-    val entityEmbeddings = EntityEmbeddingsSources
-      .getReverseIndexedSemanticCoreEntityEmbeddingsSource(
-        EmbeddingType.FavBasedSematicCoreEntity,
-        ModelVersions.Model20M145K2020, // only support the latest 2020 model
-        dateRange.embiggen(Days(7)(timeZone)) // read 7 days before & after to give buffer
+  vaw minwegibweentityscowe = 0.6
+
+  /**
+   * quewy f-fow the entity embeddings that awe used fow s-simcwustews compwiance. mya we wiww u-use these
+   * entity embeddings f-fow a cwustew t-to awwow a usew to opt out of a cwustew
+   */
+  def getwegibweentityembeddings(
+    datewange: datewange, (⑅˘꒳˘)
+    timezone: timezone
+  ): t-typedpipe[(cwustewid, (U ﹏ U) s-seq[semanticcoweentitywithscowe])] = {
+    vaw entityembeddings = e-entityembeddingssouwces
+      .getwevewseindexedsemanticcoweentityembeddingssouwce(
+        e-embeddingtype.favbasedsematiccoweentity, mya
+        m-modewvewsions.modew20m145k2020, ʘwʘ // onwy suppowt the watest 2020 modew
+        d-datewange.embiggen(days(7)(timezone)) // wead 7 days befowe & aftew to give buffew
       )
-    filterEntityEmbeddingsByScore(entityEmbeddings, MinLegibleEntityScore)
+    fiwtewentityembeddingsbyscowe(entityembeddings, (˘ω˘) m-minwegibweentityscowe)
   }
 
-  // Return entities whose score are above threshold
-  def filterEntityEmbeddingsByScore(
-    entityEmbeddings: TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])],
-    minEntityScore: Double
-  ): TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])] = {
-    entityEmbeddings.flatMap {
-      case (clusterId, entities) =>
-        val validEntities = entities.filter { entity => entity.score >= minEntityScore }
-        if (validEntities.nonEmpty) {
-          Some((clusterId, validEntities))
-        } else {
-          None
+  // wetuwn e-entities whose scowe a-awe above thweshowd
+  d-def fiwtewentityembeddingsbyscowe(
+    entityembeddings: t-typedpipe[(cwustewid, (U ﹏ U) s-seq[semanticcoweentitywithscowe])], ^•ﻌ•^
+    m-minentityscowe: d-doubwe
+  ): typedpipe[(cwustewid, (˘ω˘) seq[semanticcoweentitywithscowe])] = {
+    entityembeddings.fwatmap {
+      case (cwustewid, :3 e-entities) =>
+        v-vaw vawidentities = e-entities.fiwtew { e-entity => e-entity.scowe >= minentityscowe }
+        if (vawidentities.nonempty) {
+          some((cwustewid, ^^;; vawidentities))
+        } e-ewse {
+          nyone
         }
 
     }
   }
 
   /**
-   * Given inferred entities from different sources, combine the results into job's output format
+   * given infewwed entities fwom diffewent souwces, 🥺 combine t-the wesuwts into job's output fowmat
    */
-  def combineResults(
-    results: TypedPipe[(UserId, Seq[InferredEntity])]*
-  ): TypedPipe[(UserId, SimClustersInferredEntities)] = {
-    results
-      .reduceLeft(_ ++ _)
-      .sumByKey
+  def combinewesuwts(
+    w-wesuwts: t-typedpipe[(usewid, (⑅˘꒳˘) s-seq[infewwedentity])]*
+  ): typedpipe[(usewid, nyaa~~ simcwustewsinfewwedentities)] = {
+    w-wesuwts
+      .weduceweft(_ ++ _)
+      .sumbykey
       .map {
-        case (userId, inferredEntities) =>
-          (userId, SimClustersInferredEntities(inferredEntities))
+        case (usewid, :3 infewwedentities) =>
+          (usewid, ( ͡o ω ͡o ) s-simcwustewsinfewwedentities(infewwedentities))
       }
   }
 }

@@ -1,56 +1,56 @@
-package com.twitter.simclusters_v2.candidate_source
+package com.twittew.simcwustews_v2.candidate_souwce
 
-import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusterScores
+impowt com.twittew.simcwustews_v2.thwiftscawa.usewtointewestedincwustewscowes
 
-object ClusterRanker extends Enumeration {
-  val RankByNormalizedFavScore: ClusterRanker.Value = Value
-  val RankByFavScore: ClusterRanker.Value = Value
-  val RankByFollowScore: ClusterRanker.Value = Value
-  val RankByLogFavScore: ClusterRanker.Value = Value
-  val RankByNormalizedLogFavScore: ClusterRanker.Value = Value
+o-object cwustewwankew e-extends e-enumewation {
+  v-vaw wankbynowmawizedfavscowe: c-cwustewwankew.vawue = v-vawue
+  vaw w-wankbyfavscowe: c-cwustewwankew.vawue = vawue
+  vaw wankbyfowwowscowe: cwustewwankew.vawue = vawue
+  v-vaw wankbywogfavscowe: cwustewwankew.vawue = vawue
+  vaw wankbynowmawizedwogfavscowe: c-cwustewwankew.vawue = vawue
 
   /**
-   * Given a map of clusters, sort out the top scoring clusters by a ranking scheme
-   * provided by the caller
+   * given a map of c-cwustews, sowt out the top scowing cwustews by a wanking scheme
+   * p-pwovided by the cawwew
    */
-  def getTopKClustersByScore(
-    clustersWithScores: Map[Int, UserToInterestedInClusterScores],
-    rankByScore: ClusterRanker.Value,
-    topK: Int
-  ): Map[Int, Double] = {
-    val rankedClustersWithScores = clustersWithScores.map {
-      case (clusterId, score) =>
-        rankByScore match {
-          case ClusterRanker.RankByFavScore =>
-            (clusterId, (score.favScore.getOrElse(0.0), score.followScore.getOrElse(0.0)))
-          case ClusterRanker.RankByFollowScore =>
-            (clusterId, (score.followScore.getOrElse(0.0), score.favScore.getOrElse(0.0)))
-          case ClusterRanker.RankByLogFavScore =>
-            (clusterId, (score.logFavScore.getOrElse(0.0), score.followScore.getOrElse(0.0)))
-          case ClusterRanker.RankByNormalizedLogFavScore =>
+  d-def gettopkcwustewsbyscowe(
+    c-cwustewswithscowes: map[int, /(^•ω•^) usewtointewestedincwustewscowes], ʘwʘ
+    wankbyscowe: cwustewwankew.vawue, σωσ
+    t-topk: int
+  ): map[int, OwO doubwe] = {
+    vaw wankedcwustewswithscowes = cwustewswithscowes.map {
+      c-case (cwustewid, 😳😳😳 scowe) =>
+        w-wankbyscowe m-match {
+          c-case cwustewwankew.wankbyfavscowe =>
+            (cwustewid, 😳😳😳 (scowe.favscowe.getowewse(0.0), o.O s-scowe.fowwowscowe.getowewse(0.0)))
+          case cwustewwankew.wankbyfowwowscowe =>
+            (cwustewid, ( ͡o ω ͡o ) (scowe.fowwowscowe.getowewse(0.0), (U ﹏ U) s-scowe.favscowe.getowewse(0.0)))
+          case cwustewwankew.wankbywogfavscowe =>
+            (cwustewid, (///ˬ///✿) (scowe.wogfavscowe.getowewse(0.0), >w< s-scowe.fowwowscowe.getowewse(0.0)))
+          case cwustewwankew.wankbynowmawizedwogfavscowe =>
             (
-              clusterId,
+              cwustewid,
               (
-                score.logFavScoreClusterNormalizedOnly.getOrElse(0.0),
-                score.followScore.getOrElse(0.0)))
-          case ClusterRanker.RankByNormalizedFavScore =>
+                scowe.wogfavscowecwustewnowmawizedonwy.getowewse(0.0), rawr
+                scowe.fowwowscowe.getowewse(0.0)))
+          c-case cwustewwankew.wankbynowmawizedfavscowe =>
             (
-              clusterId,
+              cwustewid, mya
               (
-                score.favScoreProducerNormalizedOnly.getOrElse(0.0),
-                score.followScore.getOrElse(0.0)))
-          case _ =>
+                s-scowe.favscowepwoducewnowmawizedonwy.getowewse(0.0), ^^
+                s-scowe.fowwowscowe.getowewse(0.0)))
+          c-case _ =>
             (
-              clusterId,
+              cwustewid, 😳😳😳
               (
-                score.favScoreProducerNormalizedOnly.getOrElse(0.0),
-                score.followScore.getOrElse(0.0)))
+                scowe.favscowepwoducewnowmawizedonwy.getowewse(0.0), mya
+                scowe.fowwowscowe.getowewse(0.0)))
         }
     }
-    rankedClustersWithScores.toSeq
-      .sortBy(_._2) // sort in ascending order
-      .takeRight(topK)
-      .map { case (clusterId, scores) => clusterId -> math.max(scores._1, 1e-4) }
-      .toMap
+    w-wankedcwustewswithscowes.toseq
+      .sowtby(_._2) // s-sowt in ascending owdew
+      .takewight(topk)
+      .map { case (cwustewid, 😳 s-scowes) => cwustewid -> m-math.max(scowes._1, -.- 1e-4) }
+      .tomap
   }
 }

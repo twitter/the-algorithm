@@ -1,12 +1,12 @@
-# This package/target is separate from other simclusters common packages because the ml/api dep is
-# large (350MB+). Having it as a separate target means that we can avoid bundling it with targets
-# that do not need it.
-scala_library(
-    platform = "java8",
-    tags = ["bazel-compatible"],
+# this package/tawget is sepawate f-fwom othew simcwustews c-common packages b-because t-the mw/api dep is
+# w-wawge (350mb+). >_< h-having it as a-a sepawate tawget m-means that we can avoid bundwing it with tawgets
+# that do nyot nyeed it. :3
+scawa_wibwawy(
+    p-pwatfowm = "java8", (U ﹏ U)
+    tags = ["bazew-compatibwe"], -.-
     dependencies = [
-        "src/java/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/api/util",
-        "src/scala/com/twitter/simclusters_v2/common",
-    ],
+        "swc/java/com/twittew/mw/api:api-base", (ˆ ﻌ ˆ)♡
+        "swc/scawa/com/twittew/mw/api/utiw", (⑅˘꒳˘)
+        "swc/scawa/com/twittew/simcwustews_v2/common",
+    ], (U ᵕ U❁)
 )

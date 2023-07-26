@@ -1,152 +1,152 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+package com.twittew.fowwow_wecommendations.common.featuwe_hydwation.souwces
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.escherbird.util.stitchcache.StitchCache
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.bijections.Bijections.BinaryCompactScalaInjection
-import com.twitter.storage.client.manhattan.bijections.Bijections.LongInjection
-import com.twitter.storage.client.manhattan.kv.Guarantee
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClient
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpoint
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpointBuilder
-import com.twitter.storage.client.manhattan.kv.impl.Component
-import com.twitter.storage.client.manhattan.kv.impl.Component0
-import com.twitter.storage.client.manhattan.kv.impl.KeyDescriptor
-import com.twitter.storage.client.manhattan.kv.impl.ValueDescriptor
-import com.twitter.strato.generated.client.ml.featureStore.McUserCountingOnUserClientColumn
-import com.twitter.strato.generated.client.ml.featureStore.onboarding.TimelinesAuthorFeaturesOnUserClientColumn
-import com.twitter.timelines.author_features.v1.thriftscala.AuthorFeatures
-import com.twitter.conversions.DurationOps._
-import com.twitter.onboarding.relevance.features.thriftscala.MCUserCountingFeatures
-import java.lang.{Long => JLong}
-import scala.util.Random
+impowt c-com.googwe.inject.pwovides
+i-impowt c-com.googwe.inject.singweton
+i-impowt com.twittew.eschewbiwd.utiw.stitchcache.stitchcache
+i-impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.inject.twittewmoduwe
+impowt com.twittew.stitch.stitch
+impowt com.twittew.stowage.cwient.manhattan.bijections.bijections.binawycompactscawainjection
+i-impowt com.twittew.stowage.cwient.manhattan.bijections.bijections.wonginjection
+impowt com.twittew.stowage.cwient.manhattan.kv.guawantee
+impowt c-com.twittew.stowage.cwient.manhattan.kv.manhattankvcwient
+impowt c-com.twittew.stowage.cwient.manhattan.kv.manhattankvcwientmtwspawams
+impowt com.twittew.stowage.cwient.manhattan.kv.manhattankvendpoint
+impowt com.twittew.stowage.cwient.manhattan.kv.manhattankvendpointbuiwdew
+i-impowt com.twittew.stowage.cwient.manhattan.kv.impw.component
+impowt com.twittew.stowage.cwient.manhattan.kv.impw.component0
+i-impowt com.twittew.stowage.cwient.manhattan.kv.impw.keydescwiptow
+i-impowt com.twittew.stowage.cwient.manhattan.kv.impw.vawuedescwiptow
+impowt com.twittew.stwato.genewated.cwient.mw.featuwestowe.mcusewcountingonusewcwientcowumn
+impowt com.twittew.stwato.genewated.cwient.mw.featuwestowe.onboawding.timewinesauthowfeatuwesonusewcwientcowumn
+impowt com.twittew.timewines.authow_featuwes.v1.thwiftscawa.authowfeatuwes
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.onboawding.wewevance.featuwes.thwiftscawa.mcusewcountingfeatuwes
+impowt java.wang.{wong => jwong}
+impowt scawa.utiw.wandom
 
-object HydrationSourcesModule extends TwitterModule {
+o-object hydwationsouwcesmoduwe e-extends t-twittewmoduwe {
 
-  val readFromManhattan = flag(
-    "feature_hydration_enable_reading_from_manhattan",
-    false,
-    "Whether to read the data from Manhattan or Strato")
+  v-vaw weadfwommanhattan = f-fwag(
+    "featuwe_hydwation_enabwe_weading_fwom_manhattan", nyaa~~
+    fawse,
+    "whethew to wead the data f-fwom manhattan ow stwato")
 
-  val manhattanAppId =
-    flag("frs_readonly.appId", "ml_features_athena", "RO App Id used by the RO FRS service")
-  val manhattanDestName = flag(
-    "frs_readonly.destName",
-    "/s/manhattan/athena.native-thrift",
-    "manhattan Dest Name used by the RO FRS service")
+  vaw manhattanappid =
+    f-fwag("fws_weadonwy.appid", "mw_featuwes_athena", OwO "wo app id used by the wo fws sewvice")
+  vaw manhattandestname = fwag(
+    "fws_weadonwy.destname", rawr x3
+    "/s/manhattan/athena.native-thwift", XD
+    "manhattan d-dest nyame used by the wo f-fws sewvice")
 
-  @Provides
-  @Singleton
-  def providesAthenaManhattanClient(
-    serviceIdentifier: ServiceIdentifier
-  ): ManhattanKVEndpoint = {
-    val client = ManhattanKVClient(
-      manhattanAppId(),
-      manhattanDestName(),
-      ManhattanKVClientMtlsParams(serviceIdentifier)
+  @pwovides
+  @singweton
+  d-def pwovidesathenamanhattancwient(
+    s-sewviceidentifiew: sewviceidentifiew
+  ): manhattankvendpoint = {
+    vaw cwient = m-manhattankvcwient(
+      m-manhattanappid(), σωσ
+      manhattandestname(), (U ᵕ U❁)
+      m-manhattankvcwientmtwspawams(sewviceidentifiew)
     )
-    ManhattanKVEndpointBuilder(client)
-      .defaultGuarantee(Guarantee.Weak)
-      .build()
+    m-manhattankvendpointbuiwdew(cwient)
+      .defauwtguawantee(guawantee.weak)
+      .buiwd()
   }
 
-  val manhattanAuthorDataset = "timelines_author_features"
-  private val defaultCacheMaxKeys = 60000
-  private val cacheTTL = 12.hours
-  private val earlyExpiration = 0.2
+  vaw manhattanauthowdataset = "timewines_authow_featuwes"
+  p-pwivate vaw defauwtcachemaxkeys = 60000
+  p-pwivate vaw cachettw = 12.houws
+  pwivate vaw eawwyexpiwation = 0.2
 
-  val authorKeyDesc = KeyDescriptor(Component(LongInjection), Component0)
-  val authorDatasetKey = authorKeyDesc.withDataset(manhattanAuthorDataset)
-  val authorValDesc = ValueDescriptor(BinaryCompactScalaInjection(AuthorFeatures))
+  vaw authowkeydesc = k-keydescwiptow(component(wonginjection), (U ﹏ U) component0)
+  v-vaw authowdatasetkey = authowkeydesc.withdataset(manhattanauthowdataset)
+  v-vaw a-authowvawdesc = vawuedescwiptow(binawycompactscawainjection(authowfeatuwes))
 
-  @Provides
-  @Singleton
-  def timelinesAuthorStitchCache(
-    manhattanReadOnlyEndpoint: ManhattanKVEndpoint,
-    timelinesAuthorFeaturesColumn: TimelinesAuthorFeaturesOnUserClientColumn,
-    stats: StatsReceiver
-  ): StitchCache[JLong, Option[AuthorFeatures]] = {
+  @pwovides
+  @singweton
+  def timewinesauthowstitchcache(
+    manhattanweadonwyendpoint: manhattankvendpoint, :3
+    timewinesauthowfeatuwescowumn: timewinesauthowfeatuwesonusewcwientcowumn, ( ͡o ω ͡o )
+    stats: s-statsweceivew
+  ): s-stitchcache[jwong, σωσ option[authowfeatuwes]] = {
 
-    val stitchCacheStats =
-      stats
-        .scope("direct_ds_source_feature_hydration_module").scope("timelines_author")
+    v-vaw s-stitchcachestats =
+      s-stats
+        .scope("diwect_ds_souwce_featuwe_hydwation_moduwe").scope("timewines_authow")
 
-    val stStat = stitchCacheStats.counter("readFromStrato-each")
-    val mhtStat = stitchCacheStats.counter("readFromManhattan-each")
+    vaw ststat = stitchcachestats.countew("weadfwomstwato-each")
+    vaw m-mhtstat = stitchcachestats.countew("weadfwommanhattan-each")
 
-    val timelinesAuthorUnderlyingCall = if (readFromManhattan()) {
-      stitchCacheStats.counter("readFromManhattan").incr()
-      val authorCacheUnderlyingManhattanCall: JLong => Stitch[Option[AuthorFeatures]] = id => {
-        mhtStat.incr()
-        val key = authorDatasetKey.withPkey(id)
-        manhattanReadOnlyEndpoint
-          .get(key = key, valueDesc = authorValDesc).map(_.map(value =>
-            clearUnsedFieldsForAuthorFeature(value.contents)))
+    vaw timewinesauthowundewwyingcaww = if (weadfwommanhattan()) {
+      stitchcachestats.countew("weadfwommanhattan").incw()
+      vaw authowcacheundewwyingmanhattancaww: j-jwong => stitch[option[authowfeatuwes]] = i-id => {
+        m-mhtstat.incw()
+        v-vaw key = authowdatasetkey.withpkey(id)
+        m-manhattanweadonwyendpoint
+          .get(key = k-key, >w< vawuedesc = a-authowvawdesc).map(_.map(vawue =>
+            c-cweawunsedfiewdsfowauthowfeatuwe(vawue.contents)))
       }
-      authorCacheUnderlyingManhattanCall
-    } else {
-      stitchCacheStats.counter("readFromStrato").incr()
-      val authorCacheUnderlyingStratoCall: JLong => Stitch[Option[AuthorFeatures]] = id => {
-        stStat.incr()
-        val timelinesAuthorFeaturesFetcher = timelinesAuthorFeaturesColumn.fetcher
-        timelinesAuthorFeaturesFetcher
-          .fetch(id).map(result => result.v.map(clearUnsedFieldsForAuthorFeature))
+      authowcacheundewwyingmanhattancaww
+    } ewse {
+      s-stitchcachestats.countew("weadfwomstwato").incw()
+      v-vaw authowcacheundewwyingstwatocaww: j-jwong => s-stitch[option[authowfeatuwes]] = i-id => {
+        ststat.incw()
+        vaw timewinesauthowfeatuwesfetchew = t-timewinesauthowfeatuwescowumn.fetchew
+        timewinesauthowfeatuwesfetchew
+          .fetch(id).map(wesuwt => wesuwt.v.map(cweawunsedfiewdsfowauthowfeatuwe))
       }
-      authorCacheUnderlyingStratoCall
+      authowcacheundewwyingstwatocaww
     }
 
-    StitchCache[JLong, Option[AuthorFeatures]](
-      underlyingCall = timelinesAuthorUnderlyingCall,
-      maxCacheSize = defaultCacheMaxKeys,
-      ttl = randomizedTTL(cacheTTL.inSeconds).seconds,
-      statsReceiver = stitchCacheStats
+    stitchcache[jwong, 😳😳😳 option[authowfeatuwes]](
+      u-undewwyingcaww = timewinesauthowundewwyingcaww, OwO
+      maxcachesize = defauwtcachemaxkeys, 😳
+      t-ttw = w-wandomizedttw(cachettw.inseconds).seconds, 😳😳😳
+      s-statsweceivew = stitchcachestats
     )
 
   }
 
-  // Not adding manhattan since it didn't seem useful for Author Data, we can add in another phab
-  // if deemed helpful
-  @Provides
-  @Singleton
-  def metricCenterUserCountingStitchCache(
-    mcUserCountingFeaturesColumn: McUserCountingOnUserClientColumn,
-    stats: StatsReceiver
-  ): StitchCache[JLong, Option[MCUserCountingFeatures]] = {
+  // n-nyot adding manhattan since i-it didn't seem u-usefuw fow authow data, (˘ω˘) we can add in anothew phab
+  // if deemed hewpfuw
+  @pwovides
+  @singweton
+  def metwiccentewusewcountingstitchcache(
+    m-mcusewcountingfeatuwescowumn: mcusewcountingonusewcwientcowumn, ʘwʘ
+    s-stats: statsweceivew
+  ): stitchcache[jwong, ( ͡o ω ͡o ) o-option[mcusewcountingfeatuwes]] = {
 
-    val stitchCacheStats =
+    v-vaw stitchcachestats =
       stats
-        .scope("direct_ds_source_feature_hydration_module").scope("mc_user_counting")
+        .scope("diwect_ds_souwce_featuwe_hydwation_moduwe").scope("mc_usew_counting")
 
-    val stStat = stitchCacheStats.counter("readFromStrato-each")
-    stitchCacheStats.counter("readFromStrato").incr()
+    v-vaw ststat = s-stitchcachestats.countew("weadfwomstwato-each")
+    stitchcachestats.countew("weadfwomstwato").incw()
 
-    val mcUserCountingCacheUnderlyingCall: JLong => Stitch[Option[MCUserCountingFeatures]] = id => {
-      stStat.incr()
-      val mcUserCountingFeaturesFetcher = mcUserCountingFeaturesColumn.fetcher
-      mcUserCountingFeaturesFetcher.fetch(id).map(_.v)
+    v-vaw mcusewcountingcacheundewwyingcaww: j-jwong => stitch[option[mcusewcountingfeatuwes]] = id => {
+      ststat.incw()
+      vaw m-mcusewcountingfeatuwesfetchew = m-mcusewcountingfeatuwescowumn.fetchew
+      m-mcusewcountingfeatuwesfetchew.fetch(id).map(_.v)
     }
 
-    StitchCache[JLong, Option[MCUserCountingFeatures]](
-      underlyingCall = mcUserCountingCacheUnderlyingCall,
-      maxCacheSize = defaultCacheMaxKeys,
-      ttl = randomizedTTL(cacheTTL.inSeconds).seconds,
-      statsReceiver = stitchCacheStats
+    stitchcache[jwong, o-option[mcusewcountingfeatuwes]](
+      u-undewwyingcaww = mcusewcountingcacheundewwyingcaww, o.O
+      m-maxcachesize = defauwtcachemaxkeys, >w<
+      ttw = wandomizedttw(cachettw.inseconds).seconds, 😳
+      statsweceivew = stitchcachestats
     )
 
   }
 
-  // clear out fields we don't need to save cache space
-  private def clearUnsedFieldsForAuthorFeature(entry: AuthorFeatures): AuthorFeatures = {
-    entry.unsetUserTopics.unsetUserHealth.unsetAuthorCountryCodeAggregates.unsetOriginalAuthorCountryCodeAggregates
+  // c-cweaw out fiewds w-we don't nyeed to save cache space
+  pwivate def c-cweawunsedfiewdsfowauthowfeatuwe(entwy: a-authowfeatuwes): authowfeatuwes = {
+    entwy.unsetusewtopics.unsetusewheawth.unsetauthowcountwycodeaggwegates.unsetowiginawauthowcountwycodeaggwegates
   }
 
-  // To avoid a cache stampede. See https://en.wikipedia.org/wiki/Cache_stampede
-  private def randomizedTTL(ttl: Long): Long = {
-    (ttl - ttl * earlyExpiration * Random.nextDouble()).toLong
+  // to avoid a-a cache stampede. 🥺 see https://en.wikipedia.owg/wiki/cache_stampede
+  pwivate def wandomizedttw(ttw: wong): w-wong = {
+    (ttw - ttw * eawwyexpiwation * wandom.nextdoubwe()).towong
   }
 }

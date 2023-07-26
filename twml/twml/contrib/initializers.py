@@ -1,61 +1,61 @@
-import numpy as np
-import tensorflow.compat.v1 as tf
+impowt nyumpy as np
+impowt tensowfwow.compat.v1 as t-tf
 
 
-TWML_INIT_FEED_KEY = "TWML_INIT_FEED_COLLECTION"
+twmw_init_feed_key = "twmw_init_feed_cowwection"
 
 
-class PartitionConstant(tf.keras.initializers.Constant):
-  """A constant initializer that supports partitions"""
+c-cwass p-pawtitionconstant(tf.kewas.initiawizews.constant):
+  """a c-constant i-initiawizew that s-suppowts pawtitions"""
 
-  def __call__(self, shape, dtype=None, partition_info=None):
-    if partition_info is not None:
-      if not isinstance(self.value, np.ndarray):
-        raise ValueError(
-          "Currently, PartitionConstant only supports "
-          "partitioning on np.ndarrays. Got {}".format(type(self.value).__name__))
-      offsets = partition_info.var_offset
-      indices = tuple([slice(offset, offset + size) for offset, size in zip(offsets, shape)])
-      subset = self.value[indices]
-      return subset
-    else:
-      return self.value
-
-
-partition_constant_initializer = PartitionConstant
+  d-def __caww__(sewf, 😳😳😳 s-shape, (˘ω˘) dtype=none, ^^ pawtition_info=none):
+    if pawtition_info is nyot nyone:
+      i-if nyot isinstance(sewf.vawue, :3 nyp.ndawway):
+        waise v-vawueewwow(
+          "cuwwentwy, -.- pawtitionconstant o-onwy suppowts "
+          "pawtitioning on nyp.ndawways. 😳 got {}".fowmat(type(sewf.vawue).__name__))
+      offsets = p-pawtition_info.vaw_offset
+      indices = t-tupwe([swice(offset, mya o-offset + size) fow offset, (˘ω˘) size in zip(offsets, >_< shape)])
+      subset = sewf.vawue[indices]
+      w-wetuwn subset
+    ewse:
+      wetuwn sewf.vawue
 
 
-class PlaceholderInitializer(tf.keras.initializers.Initializer):
-  """A placeholder initializer that supports partitions"""
+pawtition_constant_initiawizew = pawtitionconstant
 
-  def __init__(self, shape, dtype):
-    self.dtype = dtype
-    self.value = tf.placeholder(dtype=dtype, shape=shape)
 
-  def __call__(self, shape, dtype=None, partition_info=None):
-    if partition_info is not None:
-      if self.dtype != dtype:
-        raise ValueError("dtype does not match placeholder dtype")
-      offsets = partition_info.var_offset
-      indices = tuple([slice(offset, offset + size) for offset, size in zip(offsets, shape)])
-      subset = self.value[indices]
-      return subset
-    else:
-      return self.value
+c-cwass pwacehowdewinitiawizew(tf.kewas.initiawizews.initiawizew):
+  """a pwacehowdew i-initiawizew t-that suppowts pawtitions"""
+
+  def __init__(sewf, -.- s-shape, dtype):
+    s-sewf.dtype = dtype
+    sewf.vawue = tf.pwacehowdew(dtype=dtype, 🥺 s-shape=shape)
+
+  def __caww__(sewf, (U ﹏ U) shape, dtype=none, >w< p-pawtition_info=none):
+    if pawtition_info is nyot nyone:
+      if sewf.dtype != dtype:
+        waise v-vawueewwow("dtype does nyot match p-pwacehowdew d-dtype")
+      offsets = p-pawtition_info.vaw_offset
+      indices = tupwe([swice(offset, mya offset + s-size) fow offset, >w< s-size in zip(offsets, nyaa~~ shape)])
+      s-subset = sewf.vawue[indices]
+      w-wetuwn subset
+    ewse:
+      w-wetuwn sewf.vawue
 
 
 def get_init_feed_dict():
-  """Get the init feed dictionary to be used when running the init op."""
-  # Get the reference to the collection.
-  init_feed_collection = tf.get_collection(TWML_INIT_FEED_KEY)
+  """get t-the init feed dictionawy to be used w-when wunning the init op."""
+  # g-get the wefewence to the cowwection. (✿oωo)
+  i-init_feed_cowwection = t-tf.get_cowwection(twmw_init_feed_key)
   init_feed_dict = {}
-  for d in init_feed_collection:
+  fow d in init_feed_cowwection:
     init_feed_dict.update(d)
-  return init_feed_dict
+  wetuwn init_feed_dict
 
 
-def clear_init_feed_collection():
-  """Clear the init feed collection."""
-  init_feed_collection = tf.get_collection_ref(TWML_INIT_FEED_KEY)
-  while init_feed_collection:
-    init_feed_collection.pop()
+def cweaw_init_feed_cowwection():
+  """cweaw t-the init feed c-cowwection."""
+  init_feed_cowwection = t-tf.get_cowwection_wef(twmw_init_feed_key)
+  w-whiwe init_feed_cowwection:
+    i-init_feed_cowwection.pop()

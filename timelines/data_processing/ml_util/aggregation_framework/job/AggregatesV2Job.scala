@@ -1,163 +1,163 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.job
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.job
 
-import com.twitter.algebird.Semigroup
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataRecordMerger
-import com.twitter.summingbird.Platform
-import com.twitter.summingbird.Producer
-import com.twitter.summingbird.TailProducer
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateSource
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateStore
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKey
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
+impowt com.twittew.awgebiwd.semigwoup
+i-impowt com.twittew.mw.api.datawecowd
+i-impowt c-com.twittew.mw.api.datawecowdmewgew
+i-impowt com.twittew.summingbiwd.pwatfowm
+i-impowt c-com.twittew.summingbiwd.pwoducew
+i-impowt com.twittew.summingbiwd.taiwpwoducew
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.aggwegatesouwce
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.aggwegatestowe
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.aggwegationkey
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.typedaggwegategwoup
 
-object AggregatesV2Job {
-  private lazy val merger = new DataRecordMerger
+o-object aggwegatesv2job {
+  pwivate wazy vaw mewgew = n-nyew datawecowdmewgew
 
   /**
-   * Merges all "incremental" records with the same aggregation key
-   * into a single record.
+   * mewges aww "incwementaw" w-wecowds with the same aggwegation key
+   * into a singwe wecowd. >w<
    *
-   * @param recordsPerKey A set of (AggregationKey, DataRecord) tuples
-   *   known to share the same AggregationKey
-   * @return A single merged datarecord
+   * @pawam w-wecowdspewkey a set of (aggwegationkey, (U ﹏ U) d-datawecowd) t-tupwes
+   *   known to shawe the same aggwegationkey
+   * @wetuwn a singwe mewged datawecowd
    */
-  def mergeRecords(recordsPerKey: Set[(AggregationKey, DataRecord)]): DataRecord =
-    recordsPerKey.foldLeft(new DataRecord) {
-      case (merged: DataRecord, (key: AggregationKey, elem: DataRecord)) => {
-        merger.merge(merged, elem)
-        merged
+  d-def mewgewecowds(wecowdspewkey: set[(aggwegationkey, 😳😳😳 datawecowd)]): datawecowd =
+    w-wecowdspewkey.fowdweft(new datawecowd) {
+      c-case (mewged: datawecowd, o.O (key: a-aggwegationkey, òωó e-ewem: datawecowd)) => {
+        m-mewgew.mewge(mewged, 😳😳😳 ewem)
+        mewged
       }
     }
 
   /**
-   * Given a set of aggregates to compute and a datarecord, extract key-value
-   * pairs to output to the summingbird store.
+   * g-given a set of aggwegates to compute and a datawecowd, σωσ e-extwact key-vawue
+   * paiws to output to the summingbiwd stowe. (⑅˘꒳˘)
    *
-   * @param dataRecord input data record
-   * @param aggregates set of aggregates to compute
-   * @param featureCounters counters to apply to each input data record
-   * @return computed aggregates
+   * @pawam datawecowd i-input data wecowd
+   * @pawam a-aggwegates s-set of aggwegates t-to compute
+   * @pawam featuwecountews countews to appwy to each i-input data wecowd
+   * @wetuwn c-computed aggwegates
    */
-  def computeAggregates(
-    dataRecord: DataRecord,
-    aggregates: Set[TypedAggregateGroup[_]],
-    featureCounters: Seq[DataRecordFeatureCounter]
-  ): Map[AggregationKey, DataRecord] = {
-    val computedAggregates = aggregates
-      .flatMap(_.computeAggregateKVPairs(dataRecord))
-      .groupBy { case (aggregationKey: AggregationKey, _) => aggregationKey }
-      .mapValues(mergeRecords)
+  def computeaggwegates(
+    d-datawecowd: d-datawecowd, (///ˬ///✿)
+    aggwegates: s-set[typedaggwegategwoup[_]], 🥺
+    featuwecountews: s-seq[datawecowdfeatuwecountew]
+  ): map[aggwegationkey, OwO datawecowd] = {
+    vaw c-computedaggwegates = aggwegates
+      .fwatmap(_.computeaggwegatekvpaiws(datawecowd))
+      .gwoupby { c-case (aggwegationkey: aggwegationkey, >w< _) => a-aggwegationkey }
+      .mapvawues(mewgewecowds)
 
-    featureCounters.foreach(counter =>
-      computedAggregates.map(agg => DataRecordFeatureCounter(counter, agg._2)))
+    f-featuwecountews.foweach(countew =>
+      computedaggwegates.map(agg => datawecowdfeatuwecountew(countew, 🥺 agg._2)))
 
-    computedAggregates
+    computedaggwegates
 
   }
 
   /**
-   * Util method to apply a filter on containment in an optional set.
+   * utiw method to appwy a fiwtew o-on containment i-in an optionaw set. nyaa~~
    *
-   * @param setOptional Optional set of items to check containment in.
-   * @param toCheck Item to check if contained in set.
-   * @return If the optional set is None, returns true.
+   * @pawam s-setoptionaw o-optionaw set o-of items to check containment in. ^^
+   * @pawam tocheck item to c-check if contained in set. >w<
+   * @wetuwn if the optionaw set is nyone, OwO wetuwns twue. XD
    */
-  def setFilter[T](setOptional: Option[Set[T]], toCheck: T): Boolean =
-    setOptional.map(_.contains(toCheck)).getOrElse(true)
+  d-def setfiwtew[t](setoptionaw: o-option[set[t]], ^^;; t-tocheck: t-t): boowean =
+    setoptionaw.map(_.contains(tocheck)).getowewse(twue)
 
   /**
-   * Util for filtering a collection of `TypedAggregateGroup`
+   * u-utiw fow fiwtewing a-a cowwection o-of `typedaggwegategwoup`
    *
-   * @param aggregates a set of aggregates
-   * @param sourceNames Optional filter on which AggregateGroups to process
-   *                    based on the name of the input source.
-   * @param storeNames Optional filter on which AggregateGroups to process
-   *                   based on the name of the output store.
-   * @return filtered aggregates
+   * @pawam a-aggwegates a set of aggwegates
+   * @pawam souwcenames o-optionaw f-fiwtew on which a-aggwegategwoups t-to pwocess
+   *                    b-based on the nyame of the input souwce. 🥺
+   * @pawam stowenames o-optionaw fiwtew on which aggwegategwoups to pwocess
+   *                   based on the nyame of the output stowe. XD
+   * @wetuwn f-fiwtewed aggwegates
    */
-  def filterAggregates(
-    aggregates: Set[TypedAggregateGroup[_]],
-    sourceNames: Option[Set[String]],
-    storeNames: Option[Set[String]]
-  ): Set[TypedAggregateGroup[_]] =
-    aggregates
-      .filter { aggregateGroup =>
-        val sourceName = aggregateGroup.inputSource.name
-        val storeName = aggregateGroup.outputStore.name
-        val containsSource = setFilter(sourceNames, sourceName)
-        val containsStore = setFilter(storeNames, storeName)
-        containsSource && containsStore
+  def fiwtewaggwegates(
+    aggwegates: s-set[typedaggwegategwoup[_]], (U ᵕ U❁)
+    s-souwcenames: o-option[set[stwing]], :3
+    stowenames: o-option[set[stwing]]
+  ): set[typedaggwegategwoup[_]] =
+    a-aggwegates
+      .fiwtew { a-aggwegategwoup =>
+        vaw souwcename = aggwegategwoup.inputsouwce.name
+        vaw stowename = aggwegategwoup.outputstowe.name
+        vaw containssouwce = s-setfiwtew(souwcenames, ( ͡o ω ͡o ) souwcename)
+        v-vaw containsstowe = setfiwtew(stowenames, òωó s-stowename)
+        c-containssouwce && containsstowe
       }
 
   /**
-   * The core summingbird job code.
+   * the cowe s-summingbiwd job c-code. σωσ
    *
-   * For each aggregate in the set passed in, the job
-   * processes all datarecords in the input producer
-   * stream to generate "incremental" contributions to
-   * these aggregates, and emits them grouped by
-   * aggregation key so that summingbird can aggregate them.
+   * fow each aggwegate i-in the set p-passed in, (U ᵕ U❁) the job
+   * pwocesses aww datawecowds in the input pwoducew
+   * stweam t-to genewate "incwementaw" c-contwibutions t-to
+   * these aggwegates, (✿oωo) a-and emits t-them gwouped by
+   * aggwegation k-key so that summingbiwd can aggwegate them. ^^
    *
-   * It is important that after applying the sourceNameFilter and storeNameFilter,
-   * all the result AggregateGroups share the same startDate, otherwise the job
-   * will fail or give invalid results.
+   * it is impowtant that aftew a-appwying the souwcenamefiwtew a-and stowenamefiwtew, ^•ﻌ•^
+   * aww the wesuwt aggwegategwoups s-shawe the s-same stawtdate, XD othewwise the job
+   * wiww faiw ow give invawid w-wesuwts. :3
    *
-   * @param aggregateSet A set of aggregates to compute. All aggregates
-   *   in this set that pass the sourceNameFilter and storeNameFilter
-   *   defined below, if any, will be computed.
-   * @param aggregateSourceToSummingbird Function that maps from our logical
-   *   AggregateSource abstraction to the underlying physical summingbird
-   *   producer of data records to aggregate (e.g. scalding/eventbus source)
-   * @param aggregateStoreToSummingbird Function that maps from our logical
-   *   AggregateStore abstraction to the underlying physical summingbird
-   *   store to write output aggregate records to (e.g. mahattan for scalding,
-   *   or memcache for heron)
-   * @param featureCounters counters to use with each input DataRecord
-   * @return summingbird tail producer
+   * @pawam aggwegateset a set of aggwegates to compute. (ꈍᴗꈍ) aww aggwegates
+   *   i-in this set that pass the souwcenamefiwtew and s-stowenamefiwtew
+   *   d-defined bewow, if any, :3 wiww be computed. (U ﹏ U)
+   * @pawam aggwegatesouwcetosummingbiwd f-function t-that maps fwom ouw wogicaw
+   *   aggwegatesouwce abstwaction t-to the undewwying physicaw summingbiwd
+   *   p-pwoducew of data wecowds to aggwegate (e.g. UwU scawding/eventbus s-souwce)
+   * @pawam aggwegatestowetosummingbiwd f-function t-that maps fwom ouw wogicaw
+   *   a-aggwegatestowe abstwaction t-to the undewwying p-physicaw summingbiwd
+   *   s-stowe to wwite output aggwegate w-wecowds to (e.g. 😳😳😳 m-mahattan fow scawding, XD
+   *   ow memcache fow hewon)
+   * @pawam featuwecountews c-countews to use w-with each input d-datawecowd
+   * @wetuwn summingbiwd taiw pwoducew
    */
-  def generateJobGraph[P <: Platform[P]](
-    aggregateSet: Set[TypedAggregateGroup[_]],
-    aggregateSourceToSummingbird: AggregateSource => Option[Producer[P, DataRecord]],
-    aggregateStoreToSummingbird: AggregateStore => Option[P#Store[AggregationKey, DataRecord]],
-    featureCounters: Seq[DataRecordFeatureCounter] = Seq.empty
+  d-def genewatejobgwaph[p <: p-pwatfowm[p]](
+    a-aggwegateset: set[typedaggwegategwoup[_]], o.O
+    aggwegatesouwcetosummingbiwd: aggwegatesouwce => o-option[pwoducew[p, (⑅˘꒳˘) d-datawecowd]], 😳😳😳
+    a-aggwegatestowetosummingbiwd: a-aggwegatestowe => option[p#stowe[aggwegationkey, nyaa~~ d-datawecowd]], rawr
+    featuwecountews: seq[datawecowdfeatuwecountew] = seq.empty
   )(
-    implicit semigroup: Semigroup[DataRecord]
-  ): TailProducer[P, Any] = {
-    val tailProducerList: List[TailProducer[P, Any]] = aggregateSet
-      .groupBy { aggregate => (aggregate.inputSource, aggregate.outputStore) }
-      .flatMap {
-        case (
-              (inputSource: AggregateSource, outputStore: AggregateStore),
-              aggregatesInThisStore
+    impwicit semigwoup: semigwoup[datawecowd]
+  ): t-taiwpwoducew[p, -.- any] = {
+    vaw t-taiwpwoducewwist: wist[taiwpwoducew[p, (✿oωo) a-any]] = aggwegateset
+      .gwoupby { a-aggwegate => (aggwegate.inputsouwce, /(^•ω•^) aggwegate.outputstowe) }
+      .fwatmap {
+        c-case (
+              (inputsouwce: a-aggwegatesouwce, 🥺 o-outputstowe: a-aggwegatestowe), ʘwʘ
+              a-aggwegatesinthisstowe
             ) => {
-          val producerOpt = aggregateSourceToSummingbird(inputSource)
-          val storeOpt = aggregateStoreToSummingbird(outputStore)
+          vaw pwoducewopt = aggwegatesouwcetosummingbiwd(inputsouwce)
+          vaw stoweopt = aggwegatestowetosummingbiwd(outputstowe)
 
-          (producerOpt, storeOpt) match {
-            case (Some(producer), Some(store)) =>
-              Some(
-                producer
-                  .flatMap(computeAggregates(_, aggregatesInThisStore, featureCounters))
-                  .name("FLATMAP")
-                  .sumByKey(store)
-                  .name("SUMMER")
+          (pwoducewopt, UwU stoweopt) match {
+            case (some(pwoducew), XD s-some(stowe)) =>
+              s-some(
+                p-pwoducew
+                  .fwatmap(computeaggwegates(_, (✿oωo) aggwegatesinthisstowe, :3 f-featuwecountews))
+                  .name("fwatmap")
+                  .sumbykey(stowe)
+                  .name("summew")
               )
-            case _ => None
+            case _ => nyone
           }
         }
       }
-      .toList
+      .towist
 
-    tailProducerList.reduceLeft { (left, right) => left.also(right) }
+    taiwpwoducewwist.weduceweft { (weft, (///ˬ///✿) w-wight) => weft.awso(wight) }
   }
 
-  def aggregateNames(aggregateSet: Set[TypedAggregateGroup[_]]) = {
-    aggregateSet
-      .map(typedGroup =>
+  d-def aggwegatenames(aggwegateset: set[typedaggwegategwoup[_]]) = {
+    a-aggwegateset
+      .map(typedgwoup =>
         (
-          typedGroup.aggregatePrefix,
-          typedGroup.individualAggregateDescriptors
-            .flatMap(_.outputFeatures.map(_.getFeatureName)).mkString(",")))
-  }.toMap
+          typedgwoup.aggwegatepwefix, nyaa~~
+          typedgwoup.individuawaggwegatedescwiptows
+            .fwatmap(_.outputfeatuwes.map(_.getfeatuwename)).mkstwing(",")))
+  }.tomap
 }

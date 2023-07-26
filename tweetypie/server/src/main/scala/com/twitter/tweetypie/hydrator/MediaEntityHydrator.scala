@@ -1,67 +1,67 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.mediaservices.commons.thriftscala.MediaKey
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.mediasewvices.commons.thwiftscawa.mediakey
+i-impowt c-com.twittew.tweetypie.wepositowy._
+i-impowt com.twittew.tweetypie.thwiftscawa._
 
-object MediaEntitiesHydrator {
-  object Cacheable {
-    type Ctx = MediaEntityHydrator.Cacheable.Ctx
-    type Type = ValueHydrator[Seq[MediaEntity], Ctx]
+o-object mediaentitieshydwatow {
+  o-object cacheabwe {
+    t-type ctx = mediaentityhydwatow.cacheabwe.ctx
+    type type = vawuehydwatow[seq[mediaentity], 😳😳😳 ctx]
 
-    def once(h: MediaEntityHydrator.Cacheable.Type): Type =
-      TweetHydration.completeOnlyOnce(
-        queryFilter = MediaEntityHydrator.queryFilter,
-        hydrationType = HydrationType.CacheableMedia,
-        dependsOn = Set(HydrationType.Urls),
-        hydrator = h.liftSeq
+    d-def once(h: mediaentityhydwatow.cacheabwe.type): type =
+      tweethydwation.compweteonwyonce(
+        q-quewyfiwtew = mediaentityhydwatow.quewyfiwtew, mya
+        h-hydwationtype = hydwationtype.cacheabwemedia, 😳
+        dependson = set(hydwationtype.uwws), -.-
+        h-hydwatow = h.wiftseq
       )
   }
 
-  object Uncacheable {
-    type Ctx = MediaEntityHydrator.Uncacheable.Ctx
-    type Type = ValueHydrator[Seq[MediaEntity], Ctx]
+  object uncacheabwe {
+    t-type ctx = mediaentityhydwatow.uncacheabwe.ctx
+    t-type type = vawuehydwatow[seq[mediaentity], 🥺 ctx]
   }
 }
 
-object MediaEntityHydrator {
-  val hydratedField: FieldByPath = fieldByPath(Tweet.MediaField)
+object mediaentityhydwatow {
+  vaw hydwatedfiewd: fiewdbypath = f-fiewdbypath(tweet.mediafiewd)
 
-  object Cacheable {
-    type Type = ValueHydrator[MediaEntity, Ctx]
+  object cacheabwe {
+    type type = vawuehydwatow[mediaentity, o.O ctx]
 
-    case class Ctx(urlEntities: Seq[UrlEntity], underlyingTweetCtx: TweetCtx) extends TweetCtx.Proxy
+    c-case cwass ctx(uwwentities: seq[uwwentity], u-undewwyingtweetctx: t-tweetctx) extends t-tweetctx.pwoxy
 
     /**
-     * Builds a single media-hydrator out of finer-grained hydrators
-     * only with cacheable information.
+     * b-buiwds a singwe media-hydwatow out of finew-gwained h-hydwatows
+     * onwy with cacheabwe infowmation. /(^•ω•^)
      */
-    def apply(hydrateMediaUrls: Type, hydrateMediaIsProtected: Type): Type =
-      hydrateMediaUrls.andThen(hydrateMediaIsProtected)
+    d-def appwy(hydwatemediauwws: type, nyaa~~ hydwatemediaispwotected: type): type =
+      hydwatemediauwws.andthen(hydwatemediaispwotected)
   }
 
-  object Uncacheable {
-    type Type = ValueHydrator[MediaEntity, Ctx]
+  object uncacheabwe {
+    type type = v-vawuehydwatow[mediaentity, nyaa~~ ctx]
 
-    case class Ctx(mediaKeys: Option[Seq[MediaKey]], underlyingTweetCtx: TweetCtx)
-        extends TweetCtx.Proxy {
+    case cwass c-ctx(mediakeys: o-option[seq[mediakey]], :3 u-undewwyingtweetctx: tweetctx)
+        extends tweetctx.pwoxy {
 
-      def includeMediaEntities: Boolean = tweetFieldRequested(Tweet.MediaField)
-      def includeAdditionalMetadata: Boolean =
-        opts.include.mediaFields.contains(MediaEntity.AdditionalMetadataField.id)
+      def incwudemediaentities: b-boowean = t-tweetfiewdwequested(tweet.mediafiewd)
+      def incwudeadditionawmetadata: boowean =
+        o-opts.incwude.mediafiewds.contains(mediaentity.additionawmetadatafiewd.id)
     }
 
     /**
-     * Builds a single media-hydrator out of finer-grained hydrators
-     * only with uncacheable information.
+     * b-buiwds a singwe media-hydwatow o-out of finew-gwained hydwatows
+     * o-onwy with uncacheabwe infowmation. 😳😳😳
      */
-    def apply(hydrateMediaKey: Type, hydrateMediaInfo: Type): Type =
-      (hydrateMediaKey
-        .andThen(hydrateMediaInfo))
-        .onlyIf((_, ctx) => ctx.includeMediaEntities)
+    def appwy(hydwatemediakey: t-type, (˘ω˘) hydwatemediainfo: type): type =
+      (hydwatemediakey
+        .andthen(hydwatemediainfo))
+        .onwyif((_, ^^ c-ctx) => ctx.incwudemediaentities)
   }
 
-  def queryFilter(opts: TweetQuery.Options): Boolean =
-    opts.include.tweetFields.contains(Tweet.MediaField.id)
+  def q-quewyfiwtew(opts: t-tweetquewy.options): boowean =
+    opts.incwude.tweetfiewds.contains(tweet.mediafiewd.id)
 }

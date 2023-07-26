@@ -1,105 +1,105 @@
-package com.twitter.unified_user_actions.service
+package com.twittew.unified_usew_actions.sewvice
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.StorageUnitOps._
-import com.twitter.dynmap.DynMap
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.domain.AckMode
-import com.twitter.finatra.kafka.domain.KafkaGroupId
-import com.twitter.finatra.kafka.serde.ScalaSerdes
-import com.twitter.finatra.kafkastreams.config.KafkaStreamsConfig
-import com.twitter.finatra.kafkastreams.config.SecureKafkaStreamsConfig
-import com.twitter.finatra.kafkastreams.partitioning.StaticPartitioning
-import com.twitter.finatra.mtls.modules.ServiceIdentifierModule
-import com.twitter.finatra.kafkastreams.dsl.FinatraDslFlatMapAsync
-import com.twitter.graphql.thriftscala.GraphqlExecutionService
-import com.twitter.logging.Logging
-import com.twitter.unified_user_actions.enricher.driver.EnrichmentDriver
-import com.twitter.unified_user_actions.enricher.hcache.LocalCache
-import com.twitter.unified_user_actions.enricher.hydrator.DefaultHydrator
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentEnvelop
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentKey
-import com.twitter.unified_user_actions.enricher.partitioner.DefaultPartitioner
-import com.twitter.unified_user_actions.service.module.CacheModule
-import com.twitter.unified_user_actions.service.module.ClientIdModule
-import com.twitter.unified_user_actions.service.module.GraphqlClientProviderModule
-import com.twitter.util.Future
-import org.apache.kafka.common.record.CompressionType
-import org.apache.kafka.streams.StreamsBuilder
-import org.apache.kafka.streams.processor.RecordContext
-import org.apache.kafka.streams.processor.TopicNameExtractor
-import org.apache.kafka.streams.scala.kstream.Consumed
-import org.apache.kafka.streams.scala.kstream.Produced
-import com.twitter.unified_user_actions.enricher.driver.EnrichmentPlanUtils._
+impowt com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.convewsions.stowageunitops._
+i-impowt c-com.twittew.dynmap.dynmap
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.finatwa.kafka.domain.ackmode
+i-impowt com.twittew.finatwa.kafka.domain.kafkagwoupid
+impowt com.twittew.finatwa.kafka.sewde.scawasewdes
+impowt com.twittew.finatwa.kafkastweams.config.kafkastweamsconfig
+impowt com.twittew.finatwa.kafkastweams.config.secuwekafkastweamsconfig
+i-impowt com.twittew.finatwa.kafkastweams.pawtitioning.staticpawtitioning
+impowt com.twittew.finatwa.mtws.moduwes.sewviceidentifiewmoduwe
+impowt com.twittew.finatwa.kafkastweams.dsw.finatwadswfwatmapasync
+i-impowt com.twittew.gwaphqw.thwiftscawa.gwaphqwexecutionsewvice
+i-impowt com.twittew.wogging.wogging
+impowt com.twittew.unified_usew_actions.enwichew.dwivew.enwichmentdwivew
+i-impowt com.twittew.unified_usew_actions.enwichew.hcache.wocawcache
+impowt c-com.twittew.unified_usew_actions.enwichew.hydwatow.defauwthydwatow
+i-impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentenvewop
+impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentkey
+impowt com.twittew.unified_usew_actions.enwichew.pawtitionew.defauwtpawtitionew
+impowt com.twittew.unified_usew_actions.sewvice.moduwe.cachemoduwe
+i-impowt com.twittew.unified_usew_actions.sewvice.moduwe.cwientidmoduwe
+impowt com.twittew.unified_usew_actions.sewvice.moduwe.gwaphqwcwientpwovidewmoduwe
+impowt com.twittew.utiw.futuwe
+impowt o-owg.apache.kafka.common.wecowd.compwessiontype
+impowt owg.apache.kafka.stweams.stweamsbuiwdew
+impowt o-owg.apache.kafka.stweams.pwocessow.wecowdcontext
+i-impowt owg.apache.kafka.stweams.pwocessow.topicnameextwactow
+i-impowt owg.apache.kafka.stweams.scawa.kstweam.consumed
+i-impowt owg.apache.kafka.stweams.scawa.kstweam.pwoduced
+impowt com.twittew.unified_usew_actions.enwichew.dwivew.enwichmentpwanutiws._
 
-object EnricherServiceMain extends EnricherService
+o-object enwichewsewvicemain extends enwichewsewvice
 
-class EnricherService
-    extends FinatraDslFlatMapAsync
-    with StaticPartitioning
-    with SecureKafkaStreamsConfig
-    with Logging {
-  val InputTopic = "unified_user_actions_keyed_dev"
-  val OutputTopic = "unified_user_actions_enriched"
+c-cwass enwichewsewvice
+    extends finatwadswfwatmapasync
+    with staticpawtitioning
+    with secuwekafkastweamsconfig
+    with wogging {
+  v-vaw inputtopic = "unified_usew_actions_keyed_dev"
+  vaw outputtopic = "unified_usew_actions_enwiched"
 
-  override val modules = Seq(
-    CacheModule,
-    ClientIdModule,
-    GraphqlClientProviderModule,
-    ServiceIdentifierModule
+  o-ovewwide v-vaw moduwes = s-seq(
+    cachemoduwe, 😳
+    cwientidmoduwe, σωσ
+    gwaphqwcwientpwovidewmoduwe,
+    sewviceidentifiewmoduwe
   )
 
-  override protected def configureKafkaStreams(builder: StreamsBuilder): Unit = {
-    val graphqlClient = injector.instance[GraphqlExecutionService.FinagledClient]
-    val localCache = injector.instance[LocalCache[EnrichmentKey, DynMap]]
-    val statsReceiver = injector.instance[StatsReceiver]
-    val driver = new EnrichmentDriver(
-      finalOutputTopic = Some(OutputTopic),
-      partitionedTopic = InputTopic,
-      hydrator = new DefaultHydrator(
-        cache = localCache,
-        graphqlClient = graphqlClient,
-        scopedStatsReceiver = statsReceiver.scope("DefaultHydrator")),
-      partitioner = new DefaultPartitioner
+  ovewwide pwotected d-def configuwekafkastweams(buiwdew: s-stweamsbuiwdew): unit = {
+    v-vaw gwaphqwcwient = i-injectow.instance[gwaphqwexecutionsewvice.finagwedcwient]
+    vaw wocawcache = i-injectow.instance[wocawcache[enwichmentkey, dynmap]]
+    vaw s-statsweceivew = injectow.instance[statsweceivew]
+    vaw dwivew = n-nyew enwichmentdwivew(
+      finawoutputtopic = s-some(outputtopic), rawr x3
+      pawtitionedtopic = i-inputtopic, OwO
+      h-hydwatow = nyew defauwthydwatow(
+        cache = wocawcache, /(^•ω•^)
+        gwaphqwcwient = gwaphqwcwient, 😳😳😳
+        scopedstatsweceivew = statsweceivew.scope("defauwthydwatow")), ( ͡o ω ͡o )
+      p-pawtitionew = n-nyew defauwtpawtitionew
     )
 
-    val kstream = builder.asScala
-      .stream(InputTopic)(
-        Consumed.`with`(ScalaSerdes.Thrift[EnrichmentKey], ScalaSerdes.Thrift[EnrichmentEnvelop]))
-      .flatMapAsync[EnrichmentKey, EnrichmentEnvelop](
-        commitInterval = 5.seconds,
-        numWorkers = 10000
-      ) { (enrichmentKey: EnrichmentKey, enrichmentEnvelop: EnrichmentEnvelop) =>
-        driver
-          .execute(Some(enrichmentKey), Future.value(enrichmentEnvelop))
-          .map(tuple => tuple._1.map(key => (key, tuple._2)).seq)
+    vaw kstweam = b-buiwdew.asscawa
+      .stweam(inputtopic)(
+        c-consumed.`with`(scawasewdes.thwift[enwichmentkey], >_< s-scawasewdes.thwift[enwichmentenvewop]))
+      .fwatmapasync[enwichmentkey, >w< enwichmentenvewop](
+        commitintewvaw = 5.seconds, rawr
+        nyumwowkews = 10000
+      ) { (enwichmentkey: e-enwichmentkey, 😳 enwichmentenvewop: enwichmentenvewop) =>
+        dwivew
+          .exekawaii~(some(enwichmentkey), >w< futuwe.vawue(enwichmentenvewop))
+          .map(tupwe => t-tupwe._1.map(key => (key, (⑅˘꒳˘) tupwe._2)).seq)
       }
 
-    val topicExtractor: TopicNameExtractor[EnrichmentKey, EnrichmentEnvelop] =
-      (_: EnrichmentKey, envelop: EnrichmentEnvelop, _: RecordContext) =>
-        envelop.plan.getLastCompletedStage.outputTopic.getOrElse(
-          throw new IllegalStateException("Missing output topic in the last completed stage"))
+    v-vaw topicextwactow: t-topicnameextwactow[enwichmentkey, OwO e-enwichmentenvewop] =
+      (_: enwichmentkey, (ꈍᴗꈍ) e-envewop: e-enwichmentenvewop, 😳 _: w-wecowdcontext) =>
+        e-envewop.pwan.getwastcompwetedstage.outputtopic.getowewse(
+          thwow nyew iwwegawstateexception("missing output t-topic in the w-wast compweted s-stage"))
 
-    kstream.to(topicExtractor)(
-      Produced.`with`(ScalaSerdes.Thrift[EnrichmentKey], ScalaSerdes.Thrift[EnrichmentEnvelop]))
+    k-kstweam.to(topicextwactow)(
+      p-pwoduced.`with`(scawasewdes.thwift[enwichmentkey], 😳😳😳 scawasewdes.thwift[enwichmentenvewop]))
   }
 
-  override def streamsProperties(config: KafkaStreamsConfig): KafkaStreamsConfig =
-    super
-      .streamsProperties(config)
-      .consumer.groupId(KafkaGroupId(applicationId()))
-      .consumer.clientId(s"${applicationId()}-consumer")
-      .consumer.requestTimeout(30.seconds)
-      .consumer.sessionTimeout(30.seconds)
-      .consumer.fetchMin(1.megabyte)
-      .consumer.fetchMax(5.megabytes)
-      .consumer.receiveBuffer(32.megabytes)
-      .consumer.maxPollInterval(1.minute)
-      .consumer.maxPollRecords(50000)
-      .producer.clientId(s"${applicationId()}-producer")
-      .producer.batchSize(16.kilobytes)
-      .producer.bufferMemorySize(256.megabyte)
-      .producer.requestTimeout(30.seconds)
-      .producer.compressionType(CompressionType.LZ4)
-      .producer.ackMode(AckMode.ALL)
+  ovewwide def stweamspwopewties(config: k-kafkastweamsconfig): kafkastweamsconfig =
+    supew
+      .stweamspwopewties(config)
+      .consumew.gwoupid(kafkagwoupid(appwicationid()))
+      .consumew.cwientid(s"${appwicationid()}-consumew")
+      .consumew.wequesttimeout(30.seconds)
+      .consumew.sessiontimeout(30.seconds)
+      .consumew.fetchmin(1.megabyte)
+      .consumew.fetchmax(5.megabytes)
+      .consumew.weceivebuffew(32.megabytes)
+      .consumew.maxpowwintewvaw(1.minute)
+      .consumew.maxpowwwecowds(50000)
+      .pwoducew.cwientid(s"${appwicationid()}-pwoducew")
+      .pwoducew.batchsize(16.kiwobytes)
+      .pwoducew.buffewmemowysize(256.megabyte)
+      .pwoducew.wequesttimeout(30.seconds)
+      .pwoducew.compwessiontype(compwessiontype.wz4)
+      .pwoducew.ackmode(ackmode.aww)
 }

@@ -1,194 +1,194 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.EnumSet;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+impowt java.utiw.enumset;
+i-impowt j-java.utiw.set;
+i-impowt java.utiw.concuwwent.timeunit;
 
-import scala.runtime.BoxedUnit;
+i-impowt s-scawa.wuntime.boxedunit;
 
-import com.google.common.collect.ImmutableMap;
+i-impowt c-com.googwe.common.cowwect.immutabwemap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.annotation.Annotation;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
-import com.twitter.search.queryparser.visitors.DetectAnnotationVisitor;
-import com.twitter.search.queryparser.visitors.DetectVisitor;
-import com.twitter.util.Future;
+impowt com.twittew.finagwe.sewvice;
+impowt c-com.twittew.finagwe.simpwefiwtew;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt c-com.twittew.seawch.common.metwics.seawchtimew;
+impowt com.twittew.seawch.common.metwics.seawchtimewstats;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+i-impowt com.twittew.seawch.quewypawsew.quewy.quewy;
+impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
+i-impowt com.twittew.seawch.quewypawsew.quewy.annotation.annotation;
+i-impowt com.twittew.seawch.quewypawsew.quewy.seawch.seawchopewatow;
+impowt com.twittew.seawch.quewypawsew.quewy.seawch.seawchopewatowconstants;
+impowt c-com.twittew.seawch.quewypawsew.visitows.detectannotationvisitow;
+impowt com.twittew.seawch.quewypawsew.visitows.detectvisitow;
+impowt com.twittew.utiw.futuwe;
 
 /**
- * For a given query, increments counters if that query has a number of search operators or
- * annotations applied to it. Used to detect unusual traffic patterns.
+ * fow a given quewy, (U ﹏ U) incwements c-countews if that quewy has a-a nyumbew of seawch o-opewatows ow
+ * a-annotations a-appwied to it. OwO used to detect unusuaw twaffic pattewns.
  */
-public class QueryOperatorStatFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
-  private static final Logger LOG = LoggerFactory.getLogger(QueryOperatorStatFilter.class);
+p-pubwic cwass quewyopewatowstatfiwtew
+    extends simpwefiwtew<eawwybiwdwequestcontext, 😳😳😳 e-eawwybiwdwesponse> {
+  pwivate static finaw woggew wog = woggewfactowy.getwoggew(quewyopewatowstatfiwtew.cwass);
 
-  private final SearchCounter numQueryOperatorDetectionErrors =
-      SearchCounter.export("query_operator_detection_errors");
+  pwivate finaw seawchcountew n-nyumquewyopewatowdetectionewwows =
+      seawchcountew.expowt("quewy_opewatow_detection_ewwows");
 
-  private final SearchCounter numQueryOperatorConsideredRequests =
-      SearchCounter.export("query_operator_requests_considered");
+  p-pwivate f-finaw seawchcountew n-nyumquewyopewatowconsidewedwequests =
+      seawchcountew.expowt("quewy_opewatow_wequests_considewed");
 
-  private final ImmutableMap<String, SearchTimerStats> filterOperatorStats;
+  pwivate finaw immutabwemap<stwing, (ˆ ﻌ ˆ)♡ seawchtimewstats> f-fiwtewopewatowstats;
 
-  // Keeps track of the number of queries with a filter applied, whose type we don't care about.
-  private final SearchCounter numUnknownFilterOperatorRequests =
-      SearchCounter.export("query_operator_filter_unknown_requests");
+  // keeps t-twack of the numbew of quewies w-with a fiwtew a-appwied, XD whose type we don't cawe a-about. (ˆ ﻌ ˆ)♡
+  pwivate finaw seawchcountew n-nyumunknownfiwtewopewatowwequests =
+      seawchcountew.expowt("quewy_opewatow_fiwtew_unknown_wequests");
 
-  private final ImmutableMap<String, SearchTimerStats> includeOperatorStats;
+  pwivate finaw i-immutabwemap<stwing, ( ͡o ω ͡o ) seawchtimewstats> i-incwudeopewatowstats;
 
-  // Keeps track of the number of queries with an include operator applied, whose type we don't
-  // know about.
-  private final SearchCounter numUnknownIncludeOperatorRequests =
-      SearchCounter.export("query_operator_include_unknown_requests");
+  // keeps twack o-of the nyumbew o-of quewies with an incwude opewatow appwied, rawr x3 whose type we don't
+  // know about. nyaa~~
+  pwivate finaw seawchcountew n-nyumunknownincwudeopewatowwequests =
+      s-seawchcountew.expowt("quewy_opewatow_incwude_unknown_wequests");
 
-  private final ImmutableMap<SearchOperator.Type, SearchTimerStats> operatorTypeStats;
+  pwivate finaw immutabwemap<seawchopewatow.type, >_< s-seawchtimewstats> o-opewatowtypestats;
 
-  private final SearchCounter numVariantRequests =
-      SearchCounter.export("query_operator_variant_requests");
+  p-pwivate finaw seawchcountew numvawiantwequests =
+      seawchcountew.expowt("quewy_opewatow_vawiant_wequests");
 
   /**
-   * Construct this QueryOperatorStatFilter by getting the complete set of possible filters a query
-   * might have and associating each with a counter.
+   * c-constwuct this quewyopewatowstatfiwtew by getting the compwete set of possibwe f-fiwtews a quewy
+   * might have a-and associating e-each with a c-countew. ^^;;
    */
-  public QueryOperatorStatFilter() {
+  pubwic quewyopewatowstatfiwtew() {
 
-    ImmutableMap.Builder<String, SearchTimerStats> filterBuilder = new ImmutableMap.Builder<>();
-    for (String operand : SearchOperatorConstants.VALID_FILTER_OPERANDS) {
-      filterBuilder.put(
-          operand,
-          SearchTimerStats.export(
-              "query_operator_filter_" + operand + "_requests",
-              TimeUnit.MILLISECONDS,
-              false,
-              true));
+    i-immutabwemap.buiwdew<stwing, (ˆ ﻌ ˆ)♡ s-seawchtimewstats> f-fiwtewbuiwdew = n-nyew immutabwemap.buiwdew<>();
+    fow (stwing opewand : s-seawchopewatowconstants.vawid_fiwtew_opewands) {
+      f-fiwtewbuiwdew.put(
+          o-opewand, ^^;;
+          s-seawchtimewstats.expowt(
+              "quewy_opewatow_fiwtew_" + o-opewand + "_wequests", (⑅˘꒳˘)
+              timeunit.miwwiseconds, rawr x3
+              fawse, (///ˬ///✿)
+              twue));
     }
-    filterOperatorStats = filterBuilder.build();
+    fiwtewopewatowstats = f-fiwtewbuiwdew.buiwd();
 
-    ImmutableMap.Builder<String, SearchTimerStats> includeBuilder = new ImmutableMap.Builder<>();
-    for (String operand : SearchOperatorConstants.VALID_INCLUDE_OPERANDS) {
-      includeBuilder.put(
-          operand,
-          SearchTimerStats.export(
-              "query_operator_include_" + operand + "_requests",
-              TimeUnit.MILLISECONDS,
-              false,
-              true));
+    immutabwemap.buiwdew<stwing, 🥺 seawchtimewstats> incwudebuiwdew = nyew immutabwemap.buiwdew<>();
+    f-fow (stwing opewand : seawchopewatowconstants.vawid_incwude_opewands) {
+      incwudebuiwdew.put(
+          opewand, >_<
+          seawchtimewstats.expowt(
+              "quewy_opewatow_incwude_" + o-opewand + "_wequests", UwU
+              t-timeunit.miwwiseconds, >_<
+              f-fawse, -.-
+              twue));
     }
-    includeOperatorStats = includeBuilder.build();
+    i-incwudeopewatowstats = incwudebuiwdew.buiwd();
 
-    ImmutableMap.Builder<SearchOperator.Type, SearchTimerStats> operatorBuilder =
-        new ImmutableMap.Builder<>();
-    for (SearchOperator.Type operatorType : SearchOperator.Type.values()) {
-      operatorBuilder.put(
-          operatorType,
-          SearchTimerStats.export(
-              "query_operator_" + operatorType.name().toLowerCase() + "_requests",
-              TimeUnit.MILLISECONDS,
-              false,
-              true
+    i-immutabwemap.buiwdew<seawchopewatow.type, mya s-seawchtimewstats> opewatowbuiwdew =
+        nyew immutabwemap.buiwdew<>();
+    fow (seawchopewatow.type opewatowtype : s-seawchopewatow.type.vawues()) {
+      opewatowbuiwdew.put(
+          o-opewatowtype, >w<
+          seawchtimewstats.expowt(
+              "quewy_opewatow_" + o-opewatowtype.name().towowewcase() + "_wequests", (U ﹏ U)
+              timeunit.miwwiseconds, 😳😳😳
+              f-fawse, o.O
+              twue
           ));
     }
-    operatorTypeStats = operatorBuilder.build();
+    opewatowtypestats = o-opewatowbuiwdew.buiwd();
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    numQueryOperatorConsideredRequests.increment();
-    Query parsedQuery = requestContext.getParsedQuery();
+  @ovewwide
+  p-pubwic futuwe<eawwybiwdwesponse> appwy(
+      e-eawwybiwdwequestcontext w-wequestcontext, òωó
+      sewvice<eawwybiwdwequestcontext, 😳😳😳 eawwybiwdwesponse> sewvice) {
+    nyumquewyopewatowconsidewedwequests.incwement();
+    q-quewy p-pawsedquewy = wequestcontext.getpawsedquewy();
 
-    if (parsedQuery == null) {
-      return service.apply(requestContext);
+    i-if (pawsedquewy == nyuww) {
+      w-wetuwn sewvice.appwy(wequestcontext);
     }
 
-    SearchTimer timer = new SearchTimer();
-    timer.start();
+    s-seawchtimew timew = nyew s-seawchtimew();
+    timew.stawt();
 
-    return service.apply(requestContext).ensure(() -> {
-      timer.stop();
+    wetuwn sewvice.appwy(wequestcontext).ensuwe(() -> {
+      timew.stop();
 
-      try {
-        updateTimersForOperatorsAndOperands(parsedQuery, timer);
-        updateCountersIfVariantAnnotation(parsedQuery);
-      } catch (QueryParserException e) {
-        LOG.warn("Unable to test if query has operators defined", e);
-        numQueryOperatorDetectionErrors.increment();
+      twy {
+        u-updatetimewsfowopewatowsandopewands(pawsedquewy, σωσ t-timew);
+        updatecountewsifvawiantannotation(pawsedquewy);
+      } catch (quewypawsewexception e-e) {
+        w-wog.wawn("unabwe to test if quewy has opewatows defined", (⑅˘꒳˘) e-e);
+        nyumquewyopewatowdetectionewwows.incwement();
       }
-      return BoxedUnit.UNIT;
+      wetuwn boxedunit.unit;
     });
   }
 
   /**
-   * Tracks request stats for operators and operands.
+   * twacks wequest stats fow opewatows and opewands. (///ˬ///✿)
    *
-   * @param parsedQuery the query to check.
+   * @pawam p-pawsedquewy the quewy to check. 🥺
    */
-  private void updateTimersForOperatorsAndOperands(Query parsedQuery, SearchTimer timer)
-      throws QueryParserException {
-    final DetectVisitor detectVisitor = new DetectVisitor(false, SearchOperator.Type.values());
-    parsedQuery.accept(detectVisitor);
+  p-pwivate void updatetimewsfowopewatowsandopewands(quewy p-pawsedquewy, OwO seawchtimew timew)
+      thwows quewypawsewexception {
+    f-finaw detectvisitow d-detectvisitow = nyew detectvisitow(fawse, >w< seawchopewatow.type.vawues());
+    pawsedquewy.accept(detectvisitow);
 
-    Set<SearchOperator.Type> detectedOperatorTypes = EnumSet.noneOf(SearchOperator.Type.class);
-    for (Query query : detectVisitor.getDetectedQueries()) {
-      // This detectVisitor only matches on SearchOperators.
-      SearchOperator operator = (SearchOperator) query;
-      SearchOperator.Type operatorType = operator.getOperatorType();
-      detectedOperatorTypes.add(operatorType);
+    s-set<seawchopewatow.type> detectedopewatowtypes = e-enumset.noneof(seawchopewatow.type.cwass);
+    fow (quewy quewy : detectvisitow.getdetectedquewies()) {
+      // this d-detectvisitow onwy matches on seawchopewatows. 🥺
+      s-seawchopewatow o-opewatow = (seawchopewatow) quewy;
+      seawchopewatow.type o-opewatowtype = opewatow.getopewatowtype();
+      d-detectedopewatowtypes.add(opewatowtype);
 
-      if (operatorType == SearchOperator.Type.INCLUDE) {
-        updateOperandStats(
-            operator,
-            includeOperatorStats,
-            timer,
-            numUnknownIncludeOperatorRequests);
+      i-if (opewatowtype == s-seawchopewatow.type.incwude) {
+        updateopewandstats(
+            o-opewatow, nyaa~~
+            i-incwudeopewatowstats, ^^
+            timew,
+            nyumunknownincwudeopewatowwequests);
       }
-      if (operatorType == SearchOperator.Type.FILTER) {
-        updateOperandStats(
-            operator,
-            filterOperatorStats,
-            timer,
-            numUnknownFilterOperatorRequests);
+      i-if (opewatowtype == seawchopewatow.type.fiwtew) {
+        u-updateopewandstats(
+            o-opewatow, >w<
+            fiwtewopewatowstats, OwO
+            timew, XD
+            nyumunknownfiwtewopewatowwequests);
       }
     }
 
-    for (SearchOperator.Type type : detectedOperatorTypes) {
-      operatorTypeStats.get(type).stoppedTimerIncrement(timer);
+    f-fow (seawchopewatow.type type : detectedopewatowtypes) {
+      o-opewatowtypestats.get(type).stoppedtimewincwement(timew);
     }
   }
 
-  private void updateOperandStats(
-      SearchOperator operator,
-      ImmutableMap<String, SearchTimerStats> operandRequestStats,
-      SearchTimer timer,
-      SearchCounter unknownOperandStat) {
-    String operand = operator.getOperand();
-    SearchTimerStats stats = operandRequestStats.get(operand);
+  p-pwivate void updateopewandstats(
+      seawchopewatow opewatow, ^^;;
+      i-immutabwemap<stwing, 🥺 s-seawchtimewstats> o-opewandwequeststats, XD
+      s-seawchtimew timew, (U ᵕ U❁)
+      seawchcountew u-unknownopewandstat) {
+    stwing opewand = opewatow.getopewand();
+    seawchtimewstats stats = opewandwequeststats.get(opewand);
 
-    if (stats != null) {
-      stats.stoppedTimerIncrement(timer);
-    } else {
-      unknownOperandStat.increment();
+    if (stats != nyuww) {
+      s-stats.stoppedtimewincwement(timew);
+    } ewse {
+      u-unknownopewandstat.incwement();
     }
   }
 
-  private void updateCountersIfVariantAnnotation(Query parsedQuery) throws QueryParserException {
-    DetectAnnotationVisitor visitor = new DetectAnnotationVisitor(Annotation.Type.VARIANT);
-    if (parsedQuery.accept(visitor)) {
-      numVariantRequests.increment();
+  pwivate void updatecountewsifvawiantannotation(quewy p-pawsedquewy) thwows quewypawsewexception {
+    d-detectannotationvisitow visitow = n-nyew detectannotationvisitow(annotation.type.vawiant);
+    i-if (pawsedquewy.accept(visitow)) {
+      n-nyumvawiantwequests.incwement();
     }
   }
 }

@@ -1,37 +1,37 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.twittew.fwigate.pushsewvice.modew.ntab
 
-import com.twitter.frigate.common.base.TopTweetImpressionsCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.notificationservice.thriftscala.DisplayText
-import com.twitter.notificationservice.thriftscala.DisplayTextEntity
-import com.twitter.notificationservice.thriftscala.InlineCard
-import com.twitter.notificationservice.thriftscala.StoryContext
-import com.twitter.notificationservice.thriftscala.StoryContextValue
-import com.twitter.notificationservice.thriftscala.TextValue
-import com.twitter.util.Future
+impowt com.twittew.fwigate.common.base.toptweetimpwessionscandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt c-com.twittew.notificationsewvice.thwiftscawa.dispwaytext
+i-impowt c-com.twittew.notificationsewvice.thwiftscawa.dispwaytextentity
+i-impowt com.twittew.notificationsewvice.thwiftscawa.inwinecawd
+i-impowt c-com.twittew.notificationsewvice.thwiftscawa.stowycontext
+impowt com.twittew.notificationsewvice.thwiftscawa.stowycontextvawue
+impowt com.twittew.notificationsewvice.thwiftscawa.textvawue
+impowt com.twittew.utiw.futuwe
 
-trait TopTweetImpressionsNTabRequestHydrator extends NTabRequestHydrator {
-  self: PushCandidate with TopTweetImpressionsCandidate =>
+t-twait toptweetimpwessionsntabwequesthydwatow extends nytabwequesthydwatow {
+  s-sewf: pushcandidate w-with toptweetimpwessionscandidate =>
 
-  override lazy val tapThroughFut: Future[String] =
-    Future.value(s"${target.targetId}/status/$tweetId")
+  ovewwide wazy vaw tapthwoughfut: futuwe[stwing] =
+    f-futuwe.vawue(s"${tawget.tawgetid}/status/$tweetid")
 
-  override val senderIdFut: Future[Long] = Future.value(0L)
+  ovewwide v-vaw sendewidfut: f-futuwe[wong] = futuwe.vawue(0w)
 
-  override val facepileUsersFut: Future[Seq[Long]] = Future.Nil
+  ovewwide vaw facepiweusewsfut: futuwe[seq[wong]] = f-futuwe.niw
 
-  override val storyContext: Option[StoryContext] =
-    Some(StoryContext(altText = "", value = Some(StoryContextValue.Tweets(Seq(tweetId)))))
+  ovewwide vaw stowycontext: option[stowycontext] =
+    some(stowycontext(awttext = "", (⑅˘꒳˘) v-vawue = some(stowycontextvawue.tweets(seq(tweetid)))))
 
-  override val inlineCard: Option[InlineCard] = None
+  o-ovewwide vaw i-inwinecawd: option[inwinecawd] = n-nyone
 
-  override lazy val displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] = {
-    Future.value(
-      Seq(
-        DisplayTextEntity(name = "num_impressions", value = TextValue.Number(self.impressionsCount))
+  ovewwide w-wazy vaw dispwaytextentitiesfut: futuwe[seq[dispwaytextentity]] = {
+    futuwe.vawue(
+      s-seq(
+        dispwaytextentity(name = "num_impwessions", (///ˬ///✿) vawue = textvawue.numbew(sewf.impwessionscount))
       )
     )
   }
 
-  override def socialProofDisplayText: Option[DisplayText] = None
+  o-ovewwide def sociawpwoofdispwaytext: option[dispwaytext] = nyone
 }

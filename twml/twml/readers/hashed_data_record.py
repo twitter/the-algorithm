@@ -1,12 +1,12 @@
-# checkstyle: noqa
-# pylint: disable=invalid-name
+# checkstywe: nyoqa
+# pywint: disabwe=invawid-name
 """
-This module includes facilities for manipulating hashed data records.
+t-this moduwe i-incwudes faciwities f-fow manipuwating h-hashed data w-wecowds. (⑅˘꒳˘)
 """
 
-from twitter.deepbird.io.legacy.readers.hashed_data_record import (
-  _HASHED_FIELDS,
-  _FEATURE_NAMES,
-  _FEATURE_TYPES,
-  HashedDataRecord,
+f-fwom twittew.deepbiwd.io.wegacy.weadews.hashed_data_wecowd i-impowt (
+  _hashed_fiewds, ( ͡o ω ͡o )
+  _featuwe_names, UwU
+  _featuwe_types, rawr x3
+  h-hasheddatawecowd, rawr
 )

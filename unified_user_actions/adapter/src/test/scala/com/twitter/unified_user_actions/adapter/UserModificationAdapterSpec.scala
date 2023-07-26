@@ -1,24 +1,24 @@
-package unified_user_actions.adapter.src.test.scala.com.twitter.unified_user_actions.adapter
+package unified_usew_actions.adaptew.swc.test.scawa.com.twittew.unified_usew_actions.adaptew
 
-import com.twitter.inject.Test
-import com.twitter.unified_user_actions.adapter.TestFixtures.UserModificationEventFixture
-import com.twitter.unified_user_actions.adapter.user_modification.UserModificationAdapter
-import com.twitter.util.Time
-import org.scalatest.prop.TableDrivenPropertyChecks
+impowt c-com.twittew.inject.test
+i-impowt c-com.twittew.unified_usew_actions.adaptew.testfixtuwes.usewmodificationeventfixtuwe
+i-impowt com.twittew.unified_usew_actions.adaptew.usew_modification.usewmodificationadaptew
+i-impowt com.twittew.utiw.time
+i-impowt o-owg.scawatest.pwop.tabwedwivenpwopewtychecks
 
-class UserModificationAdapterSpec extends Test with TableDrivenPropertyChecks {
-  test("User Create") {
-    new UserModificationEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        assert(UserModificationAdapter.adaptEvent(userCreate) === Seq(expectedUuaUserCreate))
+c-cwass usewmodificationadaptewspec extends test with tabwedwivenpwopewtychecks {
+  test("usew cweate") {
+    nyew u-usewmodificationeventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        assewt(usewmodificationadaptew.adaptevent(usewcweate) === s-seq(expecteduuausewcweate))
       }
     }
   }
 
-  test("User Update") {
-    new UserModificationEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        assert(UserModificationAdapter.adaptEvent(userUpdate) === Seq(expectedUuaUserUpdate))
+  test("usew u-update") {
+    nyew usewmodificationeventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        assewt(usewmodificationadaptew.adaptevent(usewupdate) === s-seq(expecteduuausewupdate))
       }
     }
   }

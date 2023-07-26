@@ -1,353 +1,353 @@
-package com.twitter.unified_user_actions.adapter
+package com.twittew.unified_usew_actions.adaptew
 
-import com.twitter.clientapp.thriftscala.SuggestionDetails
-import com.twitter.clientapp.thriftscala._
-import com.twitter.search.common.constants.thriftscala.ThriftQuerySource
-import com.twitter.search.common.constants.thriftscala.TweetResultSource
-import com.twitter.search.common.constants.thriftscala.UserResultSource
-import com.twitter.suggests.controller_data.search_response.item_types.thriftscala.ItemTypesControllerData
-import com.twitter.suggests.controller_data.search_response.request.thriftscala.RequestControllerData
-import com.twitter.suggests.controller_data.search_response.thriftscala.SearchResponseControllerData
-import com.twitter.suggests.controller_data.search_response.tweet_types.thriftscala.TweetTypesControllerData
-import com.twitter.suggests.controller_data.search_response.user_types.thriftscala.UserTypesControllerData
-import com.twitter.suggests.controller_data.search_response.v1.thriftscala.{
-  SearchResponseControllerData => SearchResponseControllerDataV1
+impowt com.twittew.cwientapp.thwiftscawa.suggestiondetaiws
+i-impowt c-com.twittew.cwientapp.thwiftscawa._
+i-impowt com.twittew.seawch.common.constants.thwiftscawa.thwiftquewysouwce
+i-impowt com.twittew.seawch.common.constants.thwiftscawa.tweetwesuwtsouwce
+i-impowt c-com.twittew.seawch.common.constants.thwiftscawa.usewwesuwtsouwce
+i-impowt com.twittew.suggests.contwowwew_data.seawch_wesponse.item_types.thwiftscawa.itemtypescontwowwewdata
+i-impowt com.twittew.suggests.contwowwew_data.seawch_wesponse.wequest.thwiftscawa.wequestcontwowwewdata
+impowt com.twittew.suggests.contwowwew_data.seawch_wesponse.thwiftscawa.seawchwesponsecontwowwewdata
+impowt com.twittew.suggests.contwowwew_data.seawch_wesponse.tweet_types.thwiftscawa.tweettypescontwowwewdata
+impowt com.twittew.suggests.contwowwew_data.seawch_wesponse.usew_types.thwiftscawa.usewtypescontwowwewdata
+impowt c-com.twittew.suggests.contwowwew_data.seawch_wesponse.v1.thwiftscawa.{
+  seawchwesponsecontwowwewdata => seawchwesponsecontwowwewdatav1
 }
-import com.twitter.suggests.controller_data.thriftscala.ControllerData
-import com.twitter.suggests.controller_data.v2.thriftscala.{ControllerData => ControllerDataV2}
-import com.twitter.util.mock.Mockito
-import org.junit.runner.RunWith
-import org.scalatest.funsuite.AnyFunSuite
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatestplus.junit.JUnitRunner
-import com.twitter.unified_user_actions.adapter.client_event.SearchInfoUtils
-import com.twitter.unified_user_actions.thriftscala.SearchQueryFilterType
-import com.twitter.unified_user_actions.thriftscala.SearchQueryFilterType._
-import org.scalatest.prop.TableFor2
+impowt c-com.twittew.suggests.contwowwew_data.thwiftscawa.contwowwewdata
+impowt com.twittew.suggests.contwowwew_data.v2.thwiftscawa.{contwowwewdata => c-contwowwewdatav2}
+impowt com.twittew.utiw.mock.mockito
+impowt owg.junit.wunnew.wunwith
+i-impowt owg.scawatest.funsuite.anyfunsuite
+i-impowt owg.scawatest.matchews.shouwd.matchews
+i-impowt owg.scawatest.pwop.tabwedwivenpwopewtychecks
+impowt owg.scawatestpwus.junit.junitwunnew
+impowt com.twittew.unified_usew_actions.adaptew.cwient_event.seawchinfoutiws
+impowt com.twittew.unified_usew_actions.thwiftscawa.seawchquewyfiwtewtype
+impowt c-com.twittew.unified_usew_actions.thwiftscawa.seawchquewyfiwtewtype._
+impowt owg.scawatest.pwop.tabwefow2
 
-@RunWith(classOf[JUnitRunner])
-class SearchInfoUtilsSpec
-    extends AnyFunSuite
-    with Matchers
-    with Mockito
-    with TableDrivenPropertyChecks {
+@wunwith(cwassof[junitwunnew])
+cwass seawchinfoutiwsspec
+    extends anyfunsuite
+    with matchews
+    w-with mockito
+    with tabwedwivenpwopewtychecks {
 
-  trait Fixture {
-    def mkControllerData(
-      queryOpt: Option[String],
-      querySourceOpt: Option[Int] = None,
-      traceId: Option[Long] = None,
-      requestJoinId: Option[Long] = None
-    ): ControllerData = {
-      ControllerData.V2(
-        ControllerDataV2.SearchResponse(
-          SearchResponseControllerData.V1(
-            SearchResponseControllerDataV1(requestControllerData = Some(
-              RequestControllerData(
-                rawQuery = queryOpt,
-                querySource = querySourceOpt,
-                traceId = traceId,
-                requestJoinId = requestJoinId
+  t-twait fixtuwe {
+    d-def mkcontwowwewdata(
+      q-quewyopt: o-option[stwing], (///ˬ///✿)
+      quewysouwceopt: option[int] = n-nyone, (U ﹏ U)
+      twaceid: option[wong] = nyone, ^^;;
+      w-wequestjoinid: option[wong] = nyone
+    ): contwowwewdata = {
+      contwowwewdata.v2(
+        contwowwewdatav2.seawchwesponse(
+          s-seawchwesponsecontwowwewdata.v1(
+            seawchwesponsecontwowwewdatav1(wequestcontwowwewdata = s-some(
+              w-wequestcontwowwewdata(
+                wawquewy = q-quewyopt, 🥺
+                quewysouwce = quewysouwceopt, òωó
+                twaceid = twaceid, XD
+                w-wequestjoinid = w-wequestjoinid
               )))
           )))
     }
 
-    def mkTweetTypeControllerData(bitmap: Long, topicId: Option[Long] = None): ControllerData.V2 = {
-      ControllerData.V2(
-        ControllerDataV2.SearchResponse(
-          SearchResponseControllerData.V1(
-            SearchResponseControllerDataV1(itemTypesControllerData = Some(
-              ItemTypesControllerData.TweetTypesControllerData(
-                TweetTypesControllerData(
-                  tweetTypesBitmap = Some(bitmap),
-                  topicId = topicId
+    def m-mktweettypecontwowwewdata(bitmap: w-wong, :3 topicid: option[wong] = n-none): contwowwewdata.v2 = {
+      contwowwewdata.v2(
+        c-contwowwewdatav2.seawchwesponse(
+          seawchwesponsecontwowwewdata.v1(
+            seawchwesponsecontwowwewdatav1(itemtypescontwowwewdata = s-some(
+              itemtypescontwowwewdata.tweettypescontwowwewdata(
+                t-tweettypescontwowwewdata(
+                  tweettypesbitmap = s-some(bitmap), (U ﹏ U)
+                  t-topicid = topicid
                 ))
             ))
           )))
     }
 
-    def mkUserTypeControllerData(bitmap: Long): ControllerData.V2 = {
-      ControllerData.V2(
-        ControllerDataV2.SearchResponse(
-          SearchResponseControllerData.V1(
-            SearchResponseControllerDataV1(itemTypesControllerData = Some(
-              ItemTypesControllerData.UserTypesControllerData(UserTypesControllerData(
-                userTypesBitmap = Some(bitmap)
+    def mkusewtypecontwowwewdata(bitmap: wong): contwowwewdata.v2 = {
+      contwowwewdata.v2(
+        contwowwewdatav2.seawchwesponse(
+          seawchwesponsecontwowwewdata.v1(
+            s-seawchwesponsecontwowwewdatav1(itemtypescontwowwewdata = s-some(
+              itemtypescontwowwewdata.usewtypescontwowwewdata(usewtypescontwowwewdata(
+                u-usewtypesbitmap = s-some(bitmap)
               ))
             ))
           )))
     }
   }
 
-  test("getQueryOptFromControllerDataFromItem should return query if present in controller data") {
-    new Fixture {
+  t-test("getquewyoptfwomcontwowwewdatafwomitem shouwd wetuwn quewy if pwesent in contwowwew d-data") {
+    nyew fixtuwe {
 
-      val controllerData: ControllerData = mkControllerData(Some("twitter"))
-      val suggestionDetails: SuggestionDetails =
-        SuggestionDetails(decodedControllerData = Some(controllerData))
-      val item: Item = Item(suggestionDetails = Some(suggestionDetails))
-      val result: Option[String] = new SearchInfoUtils(item).getQueryOptFromControllerDataFromItem
-      result shouldEqual Option("twitter")
+      vaw contwowwewdata: contwowwewdata = mkcontwowwewdata(some("twittew"))
+      vaw suggestiondetaiws: s-suggestiondetaiws =
+        suggestiondetaiws(decodedcontwowwewdata = s-some(contwowwewdata))
+      v-vaw item: item = i-item(suggestiondetaiws = some(suggestiondetaiws))
+      v-vaw wesuwt: o-option[stwing] = n-nyew seawchinfoutiws(item).getquewyoptfwomcontwowwewdatafwomitem
+      w-wesuwt shouwdequaw option("twittew")
     }
   }
 
-  test("getRequestJoinId should return requestJoinId if present in controller data") {
-    new Fixture {
+  test("getwequestjoinid s-shouwd wetuwn w-wequestjoinid i-if pwesent in c-contwowwew data") {
+    n-nyew fixtuwe {
 
-      val controllerData: ControllerData = mkControllerData(
-        Some("twitter"),
-        traceId = Some(11L),
-        requestJoinId = Some(12L)
+      vaw contwowwewdata: contwowwewdata = m-mkcontwowwewdata(
+        some("twittew"), >w<
+        twaceid = some(11w), /(^•ω•^)
+        wequestjoinid = some(12w)
       )
-      val suggestionDetails: SuggestionDetails =
-        SuggestionDetails(decodedControllerData = Some(controllerData))
-      val item: Item = Item(suggestionDetails = Some(suggestionDetails))
-      val infoUtils = new SearchInfoUtils(item)
-      infoUtils.getTraceId shouldEqual Some(11L)
-      infoUtils.getRequestJoinId shouldEqual Some(12L)
+      v-vaw suggestiondetaiws: suggestiondetaiws =
+        suggestiondetaiws(decodedcontwowwewdata = some(contwowwewdata))
+      v-vaw item: item = i-item(suggestiondetaiws = s-some(suggestiondetaiws))
+      vaw i-infoutiws = nyew seawchinfoutiws(item)
+      i-infoutiws.gettwaceid s-shouwdequaw some(11w)
+      infoutiws.getwequestjoinid shouwdequaw some(12w)
     }
   }
 
-  test("getQueryOptFromControllerDataFromItem should return None if no suggestion details") {
-    new Fixture {
+  test("getquewyoptfwomcontwowwewdatafwomitem shouwd wetuwn nyone if n-nyo suggestion detaiws") {
+    nyew fixtuwe {
 
-      val suggestionDetails: SuggestionDetails = SuggestionDetails()
-      val item: Item = Item(suggestionDetails = Some(suggestionDetails))
-      val result: Option[String] = new SearchInfoUtils(item).getQueryOptFromControllerDataFromItem
-      result shouldEqual None
+      v-vaw suggestiondetaiws: suggestiondetaiws = s-suggestiondetaiws()
+      v-vaw item: item = item(suggestiondetaiws = some(suggestiondetaiws))
+      v-vaw wesuwt: option[stwing] = n-nyew seawchinfoutiws(item).getquewyoptfwomcontwowwewdatafwomitem
+      wesuwt shouwdequaw n-none
     }
   }
 
-  test("getQueryOptFromSearchDetails should return query if present") {
-    new Fixture {
+  t-test("getquewyoptfwomseawchdetaiws shouwd wetuwn quewy if pwesent") {
+    nyew fixtuwe {
 
-      val searchDetails: SearchDetails = SearchDetails(query = Some("twitter"))
-      val result: Option[String] = new SearchInfoUtils(Item()).getQueryOptFromSearchDetails(
-        LogEvent(eventName = "", searchDetails = Some(searchDetails))
+      vaw s-seawchdetaiws: seawchdetaiws = seawchdetaiws(quewy = s-some("twittew"))
+      v-vaw wesuwt: option[stwing] = n-nyew seawchinfoutiws(item()).getquewyoptfwomseawchdetaiws(
+        w-wogevent(eventname = "", (⑅˘꒳˘) seawchdetaiws = s-some(seawchdetaiws))
       )
-      result shouldEqual Option("twitter")
+      wesuwt shouwdequaw option("twittew")
     }
   }
 
-  test("getQueryOptFromSearchDetails should return None if not present") {
-    new Fixture {
+  test("getquewyoptfwomseawchdetaiws shouwd w-wetuwn nyone i-if nyot pwesent") {
+    nyew fixtuwe {
 
-      val searchDetails: SearchDetails = SearchDetails()
-      val result: Option[String] = new SearchInfoUtils(Item()).getQueryOptFromSearchDetails(
-        LogEvent(eventName = "", searchDetails = Some(searchDetails))
+      vaw seawchdetaiws: s-seawchdetaiws = s-seawchdetaiws()
+      vaw wesuwt: option[stwing] = nyew seawchinfoutiws(item()).getquewyoptfwomseawchdetaiws(
+        w-wogevent(eventname = "", ʘwʘ seawchdetaiws = some(seawchdetaiws))
       )
-      result shouldEqual None
+      wesuwt shouwdequaw nyone
     }
   }
 
-  test("getQuerySourceOptFromControllerDataFromItem should return QuerySource if present") {
-    new Fixture {
+  t-test("getquewysouwceoptfwomcontwowwewdatafwomitem shouwd wetuwn quewysouwce i-if pwesent") {
+    n-nyew fixtuwe {
 
-      // 1 is Typed Query
-      val controllerData: ControllerData = mkControllerData(Some("twitter"), Some(1))
+      // 1 is typed quewy
+      vaw contwowwewdata: contwowwewdata = m-mkcontwowwewdata(some("twittew"), rawr x3 s-some(1))
 
-      val item: Item = Item(
-        suggestionDetails = Some(
-          SuggestionDetails(
-            decodedControllerData = Some(controllerData)
+      vaw item: item = item(
+        suggestiondetaiws = some(
+          s-suggestiondetaiws(
+            decodedcontwowwewdata = s-some(contwowwewdata)
           ))
       )
-      new SearchInfoUtils(item).getQuerySourceOptFromControllerDataFromItem shouldEqual Some(
-        ThriftQuerySource.TypedQuery)
+      nyew seawchinfoutiws(item).getquewysouwceoptfwomcontwowwewdatafwomitem shouwdequaw some(
+        thwiftquewysouwce.typedquewy)
     }
   }
 
-  test("getQuerySourceOptFromControllerDataFromItem should return None if not present") {
-    new Fixture {
+  t-test("getquewysouwceoptfwomcontwowwewdatafwomitem shouwd wetuwn n-nyone if nyot p-pwesent") {
+    nyew fixtuwe {
 
-      val controllerData: ControllerData = mkControllerData(Some("twitter"), None)
+      v-vaw contwowwewdata: contwowwewdata = mkcontwowwewdata(some("twittew"), (˘ω˘) n-nyone)
 
-      val item: Item = Item(
-        suggestionDetails = Some(
-          SuggestionDetails(
-            decodedControllerData = Some(controllerData)
+      vaw i-item: item = i-item(
+        suggestiondetaiws = some(
+          s-suggestiondetaiws(
+            d-decodedcontwowwewdata = some(contwowwewdata)
           ))
       )
-      new SearchInfoUtils(item).getQuerySourceOptFromControllerDataFromItem shouldEqual None
+      nyew seawchinfoutiws(item).getquewysouwceoptfwomcontwowwewdatafwomitem s-shouwdequaw nyone
     }
   }
 
-  test("Decoding Tweet Result Sources bitmap") {
-    new Fixture {
+  test("decoding t-tweet w-wesuwt souwces bitmap") {
+    nyew fixtuwe {
 
-      TweetResultSource.list
-        .foreach { tweetResultSource =>
-          val bitmap = (1 << tweetResultSource.getValue()).toLong
-          val controllerData = mkTweetTypeControllerData(bitmap)
+      t-tweetwesuwtsouwce.wist
+        .foweach { tweetwesuwtsouwce =>
+          v-vaw bitmap = (1 << t-tweetwesuwtsouwce.getvawue()).towong
+          vaw contwowwewdata = mktweettypecontwowwewdata(bitmap)
 
-          val item = Item(
-            suggestionDetails = Some(
-              SuggestionDetails(
-                decodedControllerData = Some(controllerData)
+          vaw item = i-item(
+            s-suggestiondetaiws = s-some(
+              s-suggestiondetaiws(
+                decodedcontwowwewdata = s-some(contwowwewdata)
               ))
           )
 
-          val result = new SearchInfoUtils(item).getTweetResultSources
-          result shouldEqual Some(Set(tweetResultSource))
+          vaw wesuwt = nyew seawchinfoutiws(item).gettweetwesuwtsouwces
+          wesuwt shouwdequaw some(set(tweetwesuwtsouwce))
         }
     }
   }
 
-  test("Decoding multiple Tweet Result Sources") {
-    new Fixture {
+  test("decoding m-muwtipwe tweet wesuwt souwces") {
+    n-nyew fixtuwe {
 
-      val tweetResultSources: Set[TweetResultSource] =
-        Set(TweetResultSource.QueryInteractionGraph, TweetResultSource.QueryExpansion)
-      val bitmap: Long = tweetResultSources.foldLeft(0L) {
-        case (acc, source) => acc + (1 << source.getValue())
+      vaw t-tweetwesuwtsouwces: set[tweetwesuwtsouwce] =
+        s-set(tweetwesuwtsouwce.quewyintewactiongwaph, o.O tweetwesuwtsouwce.quewyexpansion)
+      v-vaw bitmap: w-wong = tweetwesuwtsouwces.fowdweft(0w) {
+        c-case (acc, 😳 s-souwce) => acc + (1 << s-souwce.getvawue())
       }
 
-      val controllerData: ControllerData.V2 = mkTweetTypeControllerData(bitmap)
+      vaw contwowwewdata: contwowwewdata.v2 = mktweettypecontwowwewdata(bitmap)
 
-      val item: Item = Item(
-        suggestionDetails = Some(
-          SuggestionDetails(
-            decodedControllerData = Some(controllerData)
+      vaw item: item = item(
+        suggestiondetaiws = some(
+          suggestiondetaiws(
+            decodedcontwowwewdata = s-some(contwowwewdata)
           ))
       )
 
-      val result: Option[Set[TweetResultSource]] = new SearchInfoUtils(item).getTweetResultSources
-      result shouldEqual Some(tweetResultSources)
+      v-vaw wesuwt: o-option[set[tweetwesuwtsouwce]] = nyew seawchinfoutiws(item).gettweetwesuwtsouwces
+      w-wesuwt shouwdequaw some(tweetwesuwtsouwces)
     }
   }
 
-  test("Decoding User Result Sources bitmap") {
-    new Fixture {
+  test("decoding usew wesuwt souwces b-bitmap") {
+    n-nyew fixtuwe {
 
-      UserResultSource.list
-        .foreach { userResultSource =>
-          val bitmap = (1 << userResultSource.getValue()).toLong
-          val controllerData = mkUserTypeControllerData(bitmap)
+      usewwesuwtsouwce.wist
+        .foweach { u-usewwesuwtsouwce =>
+          vaw bitmap = (1 << usewwesuwtsouwce.getvawue()).towong
+          v-vaw contwowwewdata = m-mkusewtypecontwowwewdata(bitmap)
 
-          val item = Item(
-            suggestionDetails = Some(
-              SuggestionDetails(
-                decodedControllerData = Some(controllerData)
+          vaw item = i-item(
+            s-suggestiondetaiws = some(
+              suggestiondetaiws(
+                decodedcontwowwewdata = some(contwowwewdata)
               ))
           )
 
-          val result = new SearchInfoUtils(item).getUserResultSources
-          result shouldEqual Some(Set(userResultSource))
+          v-vaw wesuwt = nyew s-seawchinfoutiws(item).getusewwesuwtsouwces
+          w-wesuwt s-shouwdequaw some(set(usewwesuwtsouwce))
         }
     }
   }
 
-  test("Decoding multiple User Result Sources") {
-    new Fixture {
+  test("decoding m-muwtipwe usew wesuwt s-souwces") {
+    n-nyew fixtuwe {
 
-      val userResultSources: Set[UserResultSource] =
-        Set(UserResultSource.QueryInteractionGraph, UserResultSource.ExpertSearch)
-      val bitmap: Long = userResultSources.foldLeft(0L) {
-        case (acc, source) => acc + (1 << source.getValue())
+      vaw usewwesuwtsouwces: s-set[usewwesuwtsouwce] =
+        s-set(usewwesuwtsouwce.quewyintewactiongwaph, usewwesuwtsouwce.expewtseawch)
+      v-vaw bitmap: wong = usewwesuwtsouwces.fowdweft(0w) {
+        case (acc, o.O s-souwce) => acc + (1 << souwce.getvawue())
       }
 
-      val controllerData: ControllerData.V2 = mkUserTypeControllerData(bitmap)
+      v-vaw contwowwewdata: c-contwowwewdata.v2 = mkusewtypecontwowwewdata(bitmap)
 
-      val item: Item = Item(
-        suggestionDetails = Some(
-          SuggestionDetails(
-            decodedControllerData = Some(controllerData)
+      v-vaw item: item = item(
+        suggestiondetaiws = s-some(
+          s-suggestiondetaiws(
+            d-decodedcontwowwewdata = some(contwowwewdata)
           ))
       )
 
-      val result: Option[Set[UserResultSource]] = new SearchInfoUtils(item).getUserResultSources
-      result shouldEqual Some(userResultSources)
+      vaw wesuwt: option[set[usewwesuwtsouwce]] = n-nyew seawchinfoutiws(item).getusewwesuwtsouwces
+      wesuwt shouwdequaw s-some(usewwesuwtsouwces)
     }
   }
 
-  test("getQueryFilterTabType should return correct query filter type") {
-    new Fixture {
-      val infoUtils = new SearchInfoUtils(Item())
-      val eventsToBeChecked: TableFor2[Option[EventNamespace], Option[SearchQueryFilterType]] =
-        Table(
-          ("eventNamespace", "queryFilterType"),
+  t-test("getquewyfiwtewtabtype shouwd wetuwn c-cowwect quewy fiwtew type") {
+    n-nyew fixtuwe {
+      v-vaw infoutiws = nyew seawchinfoutiws(item())
+      vaw eventstobechecked: t-tabwefow2[option[eventnamespace], ^^;; option[seawchquewyfiwtewtype]] =
+        tabwe(
+          ("eventnamespace", ( ͡o ω ͡o ) "quewyfiwtewtype"), ^^;;
           (
-            Some(EventNamespace(client = Some("m5"), element = Some("search_filter_top"))),
-            Some(Top)),
+            s-some(eventnamespace(cwient = s-some("m5"), ^^;; ewement = some("seawch_fiwtew_top"))), XD
+            s-some(top)), 🥺
           (
-            Some(EventNamespace(client = Some("m5"), element = Some("search_filter_live"))),
-            Some(Latest)),
+            some(eventnamespace(cwient = s-some("m5"), (///ˬ///✿) e-ewement = some("seawch_fiwtew_wive"))), (U ᵕ U❁)
+            s-some(watest)), ^^;;
           (
-            Some(EventNamespace(client = Some("m5"), element = Some("search_filter_user"))),
-            Some(People)),
+            some(eventnamespace(cwient = some("m5"), ^^;; ewement = some("seawch_fiwtew_usew"))), rawr
+            some(peopwe)), (˘ω˘)
           (
-            Some(EventNamespace(client = Some("m5"), element = Some("search_filter_image"))),
-            Some(Photos)),
+            some(eventnamespace(cwient = some("m5"), 🥺 ewement = some("seawch_fiwtew_image"))), nyaa~~
+            some(photos)), :3
           (
-            Some(EventNamespace(client = Some("m5"), element = Some("search_filter_video"))),
-            Some(Videos)),
+            some(eventnamespace(cwient = some("m5"), ewement = some("seawch_fiwtew_video"))), /(^•ω•^)
+            s-some(videos)), ^•ﻌ•^
           (
-            Some(EventNamespace(client = Some("m5"), section = Some("search_filter_top"))),
-            None
-          ), // if client is web, element determines the query filter hence None if element is None
+            s-some(eventnamespace(cwient = some("m5"), UwU section = s-some("seawch_fiwtew_top"))), 😳😳😳
+            n-nyone
+          ), OwO // i-if cwient is web, ^•ﻌ•^ ewement detewmines t-the quewy fiwtew hence nyone i-if ewement is n-nyone
           (
-            Some(EventNamespace(client = Some("android"), element = Some("search_filter_top"))),
-            Some(Top)),
+            some(eventnamespace(cwient = s-some("andwoid"), (ꈍᴗꈍ) ewement = s-some("seawch_fiwtew_top"))), (⑅˘꒳˘)
+            some(top)), (⑅˘꒳˘)
           (
-            Some(EventNamespace(client = Some("android"), element = Some("search_filter_tweets"))),
-            Some(Latest)),
+            s-some(eventnamespace(cwient = some("andwoid"), (ˆ ﻌ ˆ)♡ ewement = some("seawch_fiwtew_tweets"))), /(^•ω•^)
+            s-some(watest)), òωó
           (
-            Some(EventNamespace(client = Some("android"), element = Some("search_filter_user"))),
-            Some(People)),
+            s-some(eventnamespace(cwient = s-some("andwoid"), (⑅˘꒳˘) e-ewement = s-some("seawch_fiwtew_usew"))), (U ᵕ U❁)
+            s-some(peopwe)), >w<
           (
-            Some(EventNamespace(client = Some("android"), element = Some("search_filter_image"))),
-            Some(Photos)),
+            s-some(eventnamespace(cwient = s-some("andwoid"), σωσ e-ewement = some("seawch_fiwtew_image"))), -.-
+            some(photos)), o.O
           (
-            Some(EventNamespace(client = Some("android"), element = Some("search_filter_video"))),
-            Some(Videos)),
+            s-some(eventnamespace(cwient = s-some("andwoid"), ^^ ewement = s-some("seawch_fiwtew_video"))), >_<
+            some(videos)), >w<
           (
-            Some(EventNamespace(client = Some("m5"), section = Some("search_filter_top"))),
-            None
-          ), // if client is android, element determines the query filter hence None if element is None
+            s-some(eventnamespace(cwient = some("m5"), >_< section = some("seawch_fiwtew_top"))), >w<
+            n-nyone
+          ), rawr // if c-cwient is andwoid, rawr x3 e-ewement detewmines t-the quewy fiwtew hence nyone i-if ewement is nyone
           (
-            Some(EventNamespace(client = Some("iphone"), section = Some("search_filter_top"))),
-            Some(Top)),
+            some(eventnamespace(cwient = s-some("iphone"), ( ͡o ω ͡o ) section = s-some("seawch_fiwtew_top"))), (˘ω˘)
+            some(top)), 😳
           (
-            Some(EventNamespace(client = Some("iphone"), section = Some("search_filter_live"))),
-            Some(Latest)),
+            some(eventnamespace(cwient = s-some("iphone"), OwO section = some("seawch_fiwtew_wive"))), (˘ω˘)
+            some(watest)), òωó
           (
-            Some(EventNamespace(client = Some("iphone"), section = Some("search_filter_user"))),
-            Some(People)),
+            some(eventnamespace(cwient = some("iphone"), ( ͡o ω ͡o ) s-section = some("seawch_fiwtew_usew"))),
+            s-some(peopwe)), UwU
           (
-            Some(EventNamespace(client = Some("iphone"), section = Some("search_filter_image"))),
-            Some(Photos)),
+            s-some(eventnamespace(cwient = some("iphone"), /(^•ω•^) section = some("seawch_fiwtew_image"))), (ꈍᴗꈍ)
+            some(photos)), 😳
           (
-            Some(EventNamespace(client = Some("iphone"), section = Some("search_filter_video"))),
-            Some(Videos)),
+            s-some(eventnamespace(cwient = some("iphone"), mya s-section = s-some("seawch_fiwtew_video"))), mya
+            s-some(videos)), /(^•ω•^)
           (
-            Some(EventNamespace(client = Some("iphone"), element = Some("search_filter_top"))),
-            None
-          ), // if client is iphone, section determines the query filter hence None if section is None
+            some(eventnamespace(cwient = some("iphone"), ^^;; e-ewement = some("seawch_fiwtew_top"))), 🥺
+            n-nyone
+          ), ^^ // if cwient i-is iphone, ^•ﻌ•^ section detewmines the quewy fiwtew h-hence none if section is nyone
           (
-            Some(EventNamespace(client = None, section = Some("search_filter_top"))),
-            Some(Top)
-          ), // if client is missing, use section by default
+            s-some(eventnamespace(cwient = n-nyone, /(^•ω•^) section = s-some("seawch_fiwtew_top"))),
+            some(top)
+          ), ^^ // i-if cwient i-is missing, u-use section by d-defauwt
           (
-            Some(EventNamespace(client = None, element = Some("search_filter_top"))),
-            None
-          ), // if client is missing, section is used by default hence None since section is missing
+            some(eventnamespace(cwient = n-nyone, 🥺 e-ewement = some("seawch_fiwtew_top"))), (U ᵕ U❁)
+            n-nyone
+          ), 😳😳😳 // i-if c-cwient is missing, s-section is used b-by defauwt hence n-nyone since section is missing
           (
-            Some(EventNamespace(client = Some("iphone"))),
-            None
-          ), // if both element and section missing, expect None
-          (None, None), // if namespace is missing from LogEvent, expect None
+            s-some(eventnamespace(cwient = some("iphone"))), nyaa~~
+            n-nyone
+          ), // if b-both ewement and s-section missing, (˘ω˘) e-expect nyone
+          (none, >_< nyone), XD // if nyamespace is missing fwom wogevent, rawr x3 e-expect nyone
         )
 
-      forEvery(eventsToBeChecked) {
+      f-fowevewy(eventstobechecked) {
         (
-          eventNamespace: Option[EventNamespace],
-          searchQueryFilterType: Option[SearchQueryFilterType]
+          e-eventnamespace: option[eventnamespace], ( ͡o ω ͡o )
+          seawchquewyfiwtewtype: option[seawchquewyfiwtewtype]
         ) =>
-          infoUtils.getQueryFilterType(
-            LogEvent(
-              eventName = "srp_event",
-              eventNamespace = eventNamespace)) shouldEqual searchQueryFilterType
+          i-infoutiws.getquewyfiwtewtype(
+            w-wogevent(
+              eventname = "swp_event", :3
+              e-eventnamespace = e-eventnamespace)) shouwdequaw seawchquewyfiwtewtype
       }
 
     }

@@ -1,75 +1,75 @@
-/* Copyright 2015 The TensorFlow Authors. All Rights Reserved.
+/* copywight 2015 the tensowfwow a-authows. 😳 aww wights w-wesewved. (ˆ ﻌ ˆ)♡
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+wicensed u-undew the a-apache wicense, 😳😳😳 v-vewsion 2.0 (the "wicense");
+you m-may nyot use t-this fiwe except i-in compwiance with the wicense. (U ﹏ U)
+you may obtain a copy of the wicense at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apache.owg/wicenses/wicense-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+u-unwess wequiwed by appwicabwe waw ow agweed t-to in wwiting, (///ˬ///✿) softwawe
+distwibuted u-undew the wicense is distwibuted on an "as is" basis, 😳
+w-without wawwanties ow conditions o-of any kind, 😳 eithew e-expwess ow impwied. σωσ
+see the wicense fow the specific wanguage govewning pewmissions a-and
+wimitations undew the wicense. rawr x3
 ==============================================================================*/
 
-// TWML modified to optimize binary features 
-#ifndef TENSORFLOW_CORE_KERNELS_BINARY_SPARSE_TENSOR_DENSE_MATMUL_OP_H_
-#define TENSORFLOW_CORE_KERNELS_BINARY_SPARSE_TENSOR_DENSE_MATMUL_OP_H_
+// twmw modified to optimize binawy f-featuwes 
+#ifndef tensowfwow_cowe_kewnews_binawy_spawse_tensow_dense_matmuw_op_h_
+#define t-tensowfwow_cowe_kewnews_binawy_spawse_tensow_dense_matmuw_op_h_
 
-#include "third_party/eigen3/unsupported/Eigen/CXX11/Tensor"
-#include "tensorflow/core/framework/tensor_types.h"
-#include "tensorflow/core/framework/types.h"
-#include "tensorflow/core/lib/core/errors.h"
+#incwude "thiwd_pawty/eigen3/unsuppowted/eigen/cxx11/tensow"
+#incwude "tensowfwow/cowe/fwamewowk/tensow_types.h"
+#incwude "tensowfwow/cowe/fwamewowk/types.h"
+#incwude "tensowfwow/cowe/wib/cowe/ewwows.h"
 
-namespace tensorflow {
+n-nyamespace t-tensowfwow {
 
-namespace functor {
+n-nyamespace functow {
 
-template <typename Device, typename T, typename Tindices, bool ADJ_A,
-          bool ADJ_B>
-struct SparseTensorDenseMatMulFunctor {
-  static EIGEN_ALWAYS_INLINE Status Compute(
-      const Device& d, typename TTypes<T>::Matrix out,
-      typename TTypes<Tindices>::ConstMatrix a_indices,
-      typename TTypes<T>::ConstVec a_values, typename TTypes<T>::ConstMatrix b);
+tempwate <typename device, OwO t-typename t, /(^•ω•^) typename tindices, 😳😳😳 boow adj_a, ( ͡o ω ͡o )
+          b-boow adj_b>
+stwuct spawsetensowdensematmuwfunctow {
+  static eigen_awways_inwine status compute(
+      const d-device& d, >_< typename ttypes<t>::matwix o-out,
+      t-typename ttypes<tindices>::constmatwix a-a_indices, >w<
+      typename ttypes<t>::constvec a_vawues, rawr t-typename ttypes<t>::constmatwix b-b);
 };
 
-template <typename MATRIX, bool ADJ>
-class MaybeAdjoint;
+tempwate <typename matwix, boow adj>
+c-cwass maybeadjoint;
 
-template <typename MATRIX>
-class MaybeAdjoint<MATRIX, false> {
- public:
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE MaybeAdjoint(MATRIX m) : m_(m) {}
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE typename MATRIX::Scalar operator()(
-      const typename MATRIX::Index i, const typename MATRIX::Index j) const {
-    return m_(i, j);
+t-tempwate <typename matwix>
+c-cwass maybeadjoint<matwix, 😳 fawse> {
+ p-pubwic:
+  eigen_device_func eigen_stwong_inwine m-maybeadjoint(matwix m) : m-m_(m) {}
+  eigen_device_func eigen_stwong_inwine t-typename matwix::scawaw o-opewatow()(
+      const typename matwix::index i, >w< const typename matwix::index j) const {
+    wetuwn m_(i, (⑅˘꒳˘) j-j);
   }
 
- private:
-  const MATRIX m_;
+ pwivate:
+  c-const matwix m_;
 };
 
-template <typename T>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE T MaybeConj(T v) {
-  return v;
+tempwate <typename t-t>
+eigen_device_func e-eigen_stwong_inwine t-t maybeconj(t v) {
+  wetuwn v;
 }
 
-template <typename MATRIX>
-class MaybeAdjoint<MATRIX, true> {
- public:
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE MaybeAdjoint(MATRIX m) : m_(m) {}
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE typename MATRIX::Scalar operator()(
-      const typename MATRIX::Index i, const typename MATRIX::Index j) const {
-    return Eigen::numext::conj(m_(j, i));
+tempwate <typename matwix>
+cwass maybeadjoint<matwix, OwO t-twue> {
+ pubwic:
+  eigen_device_func eigen_stwong_inwine maybeadjoint(matwix m) : m_(m) {}
+  eigen_device_func e-eigen_stwong_inwine typename matwix::scawaw o-opewatow()(
+      const t-typename matwix::index i-i, (ꈍᴗꈍ) const typename matwix::index j-j) const {
+    w-wetuwn e-eigen::numext::conj(m_(j, 😳 i-i));
   }
 
- private:
-  const MATRIX m_;
+ pwivate:
+  const matwix m_;
 };
 
-}  // end namespace functor
-}  // end namespace tensorflow
+}  // e-end n-nyamespace functow
+}  // e-end nyamespace t-tensowfwow
 
-#endif  // TENSORFLOW_CORE_KERNELS_BINARY_SPARSE_TENSOR_DENSE_MATMUL_OP_H_
+#endif  // t-tensowfwow_cowe_kewnews_binawy_spawse_tensow_dense_matmuw_op_h_

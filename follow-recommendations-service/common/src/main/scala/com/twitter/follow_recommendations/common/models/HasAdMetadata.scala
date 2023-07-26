@@ -1,23 +1,23 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-import com.twitter.adserver.{thriftscala => t}
+impowt c-com.twittew.adsewvew.{thwiftscawa => t-t}
 
-case class AdMetadata(
-  insertPosition: Int,
-  // use original ad impression info to avoid losing data in domain model translations
-  adImpression: t.AdImpression)
+case cwass a-admetadata(
+  i-insewtposition: i-int, ^^;;
+  // use o-owiginaw ad impwession i-info to avoid w-wosing data in domain modew twanswations
+  adimpwession: t.adimpwession)
 
-trait HasAdMetadata {
+twait hasadmetadata {
 
-  def adMetadata: Option[AdMetadata]
+  d-def admetadata: option[admetadata]
 
-  def adImpression: Option[t.AdImpression] = {
-    adMetadata.map(_.adImpression)
+  def a-adimpwession: option[t.adimpwession] = {
+    admetadata.map(_.adimpwession)
   }
 
-  def insertPosition: Option[Int] = {
-    adMetadata.map(_.insertPosition)
+  d-def insewtposition: option[int] = {
+    admetadata.map(_.insewtposition)
   }
 
-  def isPromotedAccount: Boolean = adMetadata.isDefined
+  def ispwomotedaccount: b-boowean = admetadata.isdefined
 }

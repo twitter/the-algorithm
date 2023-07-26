@@ -1,26 +1,26 @@
-package com.twitter.visibility.engine
+package com.twittew.visibiwity.engine
 
-import com.twitter.servo.util.Gate
-import com.twitter.spam.rtf.thriftscala.{SafetyLevel => ThriftSafetyLevel}
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.VisibilityResultBuilder
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.Rule
+impowt com.twittew.sewvo.utiw.gate
+i-impowt c-com.twittew.spam.wtf.thwiftscawa.{safetywevew => t-thwiftsafetywevew}
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.visibiwity.buiwdew.visibiwitywesuwt
+i-impowt c-com.twittew.visibiwity.buiwdew.visibiwitywesuwtbuiwdew
+i-impowt com.twittew.visibiwity.modews.safetywevew
+impowt com.twittew.visibiwity.wuwes.evawuationcontext
+impowt com.twittew.visibiwity.wuwes.wuwe
 
-trait DeciderableVisibilityRuleEngine {
-  def apply(
-    evaluationContext: EvaluationContext,
-    safetyLevel: SafetyLevel,
-    visibilityResultBuilder: VisibilityResultBuilder,
-    enableShortCircuiting: Gate[Unit] = Gate.True,
-    preprocessedRules: Option[Seq[Rule]] = None
-  ): Stitch[VisibilityResult]
+t-twait decidewabwevisibiwitywuweengine {
+  def appwy(
+    e-evawuationcontext: evawuationcontext, nyaa~~
+    s-safetywevew: safetywevew, /(^•ω•^)
+    visibiwitywesuwtbuiwdew: visibiwitywesuwtbuiwdew, rawr
+    e-enabweshowtciwcuiting: gate[unit] = g-gate.twue, OwO
+    p-pwepwocessedwuwes: option[seq[wuwe]] = nyone
+  ): stitch[visibiwitywesuwt]
 
-  def apply(
-    evaluationContext: EvaluationContext,
-    thriftSafetyLevel: ThriftSafetyLevel,
-    visibilityResultBuilder: VisibilityResultBuilder
-  ): Stitch[VisibilityResult]
+  def appwy(
+    e-evawuationcontext: evawuationcontext, (U ﹏ U)
+    thwiftsafetywevew: thwiftsafetywevew,
+    visibiwitywesuwtbuiwdew: visibiwitywesuwtbuiwdew
+  ): stitch[visibiwitywesuwt]
 }

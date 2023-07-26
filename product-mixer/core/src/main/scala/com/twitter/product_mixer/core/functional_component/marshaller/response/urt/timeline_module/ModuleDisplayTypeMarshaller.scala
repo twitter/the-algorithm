@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.timewine_moduwe
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Carousel
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.CompactCarousel
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ConversationTree
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.GridCarousel
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Vertical
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalConversation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalWithContextLine
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalGrid
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.render.{thriftscala => urt}
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.cawousew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.compactcawousew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.convewsationtwee
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.gwidcawousew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.moduwedispwaytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.vewticaw
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.vewticawconvewsation
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.vewticawwithcontextwine
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.vewticawgwid
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
+impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
 
-@Singleton
-class ModuleDisplayTypeMarshaller @Inject() () {
+@singweton
+cwass m-moduwedispwaytypemawshawwew @inject() () {
 
-  def apply(displayType: ModuleDisplayType): urt.ModuleDisplayType = displayType match {
-    case Vertical => urt.ModuleDisplayType.Vertical
-    case Carousel => urt.ModuleDisplayType.Carousel
-    case VerticalWithContextLine => urt.ModuleDisplayType.VerticalWithContextLine
-    case VerticalConversation => urt.ModuleDisplayType.VerticalConversation
-    case ConversationTree => urt.ModuleDisplayType.ConversationTree
-    case GridCarousel => urt.ModuleDisplayType.GridCarousel
-    case CompactCarousel => urt.ModuleDisplayType.CompactCarousel
-    case VerticalGrid => urt.ModuleDisplayType.VerticalGrid
+  def appwy(dispwaytype: moduwedispwaytype): uwt.moduwedispwaytype = d-dispwaytype match {
+    case vewticaw => u-uwt.moduwedispwaytype.vewticaw
+    c-case cawousew => uwt.moduwedispwaytype.cawousew
+    case vewticawwithcontextwine => uwt.moduwedispwaytype.vewticawwithcontextwine
+    case vewticawconvewsation => u-uwt.moduwedispwaytype.vewticawconvewsation
+    case convewsationtwee => uwt.moduwedispwaytype.convewsationtwee
+    case gwidcawousew => uwt.moduwedispwaytype.gwidcawousew
+    c-case compactcawousew => uwt.moduwedispwaytype.compactcawousew
+    c-case vewticawgwid => u-uwt.moduwedispwaytype.vewticawgwid
   }
 }

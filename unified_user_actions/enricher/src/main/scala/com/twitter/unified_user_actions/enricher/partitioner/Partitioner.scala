@@ -1,12 +1,12 @@
-package com.twitter.unified_user_actions.enricher.partitioner
+package com.twittew.unified_usew_actions.enwichew.pawtitionew
 
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentEnvelop
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentKey
+impowt c-com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentenvewop
+i-impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentinstwuction
+i-impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentkey
 
-trait Partitioner {
-  def repartition(
-    instruction: EnrichmentInstruction,
-    envelop: EnrichmentEnvelop
-  ): Option[EnrichmentKey]
+t-twait pawtitionew {
+  d-def w-wepawtition(
+    i-instwuction: enwichmentinstwuction, UwU
+    e-envewop: enwichmentenvewop
+  ): option[enwichmentkey]
 }

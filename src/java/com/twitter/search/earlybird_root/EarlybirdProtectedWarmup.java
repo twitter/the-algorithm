@@ -1,28 +1,28 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import com.google.common.base.Preconditions;
+impowt c-com.googwe.common.base.pweconditions;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.root.WarmupConfig;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
+i-impowt c-com.twittew.common.utiw.cwock;
+impowt c-com.twittew.seawch.common.woot.wawmupconfig;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
 
-public class EarlybirdProtectedWarmup extends EarlybirdWarmup {
+p-pubwic cwass eawwybiwdpwotectedwawmup e-extends eawwybiwdwawmup {
 
-  public EarlybirdProtectedWarmup(Clock clock, WarmupConfig config) {
-    super(clock, config);
+  p-pubwic eawwybiwdpwotectedwawmup(cwock cwock, mya wawmupconfig config) {
+    supew(cwock, 😳 config);
   }
 
   /**
-   * The protected cluster requires all queries to specify a fromUserIdFilter and a searcherId.
+   * t-the pwotected cwustew wequiwes aww quewies to s-specify a fwomusewidfiwtew and a s-seawchewid. XD
    */
-  @Override
-  protected EarlybirdRequest createRequest(int requestId) {
-    EarlybirdRequest request = super.createRequest(requestId);
+  @ovewwide
+  pwotected eawwybiwdwequest cweatewequest(int wequestid) {
+    eawwybiwdwequest w-wequest = supew.cweatewequest(wequestid);
 
-    Preconditions.checkState(request.isSetSearchQuery());
-    request.getSearchQuery().addToFromUserIDFilter64(requestId);
-    request.getSearchQuery().setSearcherId(0L);
+    pweconditions.checkstate(wequest.issetseawchquewy());
+    wequest.getseawchquewy().addtofwomusewidfiwtew64(wequestid);
+    w-wequest.getseawchquewy().setseawchewid(0w);
 
-    return request;
+    w-wetuwn wequest;
   }
 }

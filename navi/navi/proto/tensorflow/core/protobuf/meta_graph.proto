@@ -1,342 +1,342 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "google/protobuf/any.proto";
-import "tensorflow/core/framework/graph.proto";
-import "tensorflow/core/framework/op_def.proto";
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/types.proto";
-import "tensorflow/core/protobuf/saved_object_graph.proto";
-import "tensorflow/core/protobuf/saver.proto";
-import "tensorflow/core/protobuf/struct.proto";
+impowt "googwe/pwotobuf/any.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/gwaph.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/op_def.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/tensow_shape.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/types.pwoto";
+i-impowt "tensowfwow/cowe/pwotobuf/saved_object_gwaph.pwoto";
+i-impowt "tensowfwow/cowe/pwotobuf/savew.pwoto";
+impowt "tensowfwow/cowe/pwotobuf/stwuct.pwoto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "MetaGraphProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+o-option cc_enabwe_awenas = t-twue;
+option java_outew_cwassname = "metagwaphpwotos";
+option java_muwtipwe_fiwes = twue;
+option java_package = "owg.tensowfwow.fwamewowk";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// NOTE: This protocol buffer is evolving, and will go through revisions in the
-// coming months.
+// nyote: this pwotocow buffew i-is evowving, 😳 and wiww go thwough w-wevisions in the
+// coming months. mya
 //
-// Protocol buffer containing the following which are necessary to restart
-// training, run inference. It can be used to serialize/de-serialize memory
-// objects necessary for running computation in a graph when crossing the
-// process boundary. It can be used for long term storage of graphs,
-// cross-language execution of graphs, etc.
-//   MetaInfoDef
-//   GraphDef
-//   SaverDef
-//   CollectionDef
-//   TensorInfo
-//   SignatureDef
-message MetaGraphDef {
-  // Meta information regarding the graph to be exported.  To be used by users
-  // of this protocol buffer to encode information regarding their meta graph.
-  message MetaInfoDef {
-    // User specified Version string. Can be the name of the model and revision,
-    // steps this model has been trained to, etc.
-    string meta_graph_version = 1;
+// pwotocow buffew containing t-the fowwowing which awe n-necessawy to westawt
+// t-twaining, mya wun infewence. /(^•ω•^) it can be used to sewiawize/de-sewiawize memowy
+// o-objects nyecessawy fow wunning computation in a gwaph when cwossing the
+// pwocess b-boundawy. ^^;; it can be used f-fow wong tewm stowage o-of gwaphs, 🥺
+// c-cwoss-wanguage e-execution of gwaphs, etc. ^^
+//   metainfodef
+//   g-gwaphdef
+//   savewdef
+//   cowwectiondef
+//   tensowinfo
+//   s-signatuwedef
+message metagwaphdef {
+  // meta infowmation wegawding the gwaph to be expowted. ^•ﻌ•^  t-to be used by usews
+  // of this p-pwotocow buffew t-to encode infowmation w-wegawding theiw meta gwaph. /(^•ω•^)
+  message metainfodef {
+    // usew specified v-vewsion stwing. ^^ c-can be the nyame of the modew a-and wevision, 🥺
+    // s-steps this modew has been twained t-to, (U ᵕ U❁) etc.
+    stwing meta_gwaph_vewsion = 1;
 
-    // A copy of the OpDefs used by the producer of this graph_def.
-    // Descriptions and Ops not used in graph_def are stripped out.
-    OpList stripped_op_list = 2;
+    // a-a copy of the opdefs used by the pwoducew o-of this gwaph_def. 😳😳😳
+    // descwiptions and o-ops nyot used in gwaph_def awe stwipped o-out. nyaa~~
+    o-opwist stwipped_op_wist = 2;
 
-    // A serialized protobuf. Can be the time this meta graph is created, or
-    // modified, or name of the model.
-    google.protobuf.Any any_info = 3;
+    // a sewiawized pwotobuf. (˘ω˘) can be the time this meta gwaph is cweated, >_< ow
+    // modified, XD ow n-nyame of the modew. rawr x3
+    g-googwe.pwotobuf.any any_info = 3;
 
-    // User supplied tag(s) on the meta_graph and included graph_def.
+    // u-usew suppwied t-tag(s) on the meta_gwaph a-and incwuded gwaph_def. ( ͡o ω ͡o )
     //
-    // MetaGraphDefs should be tagged with their capabilities or use-cases.
-    // Examples: "train", "serve", "gpu", "tpu", etc.
-    // These tags enable loaders to access the MetaGraph(s) appropriate for a
-    // specific use-case or runtime environment.
-    repeated string tags = 4;
+    // metagwaphdefs shouwd be tagged with t-theiw capabiwities ow use-cases. :3
+    // exampwes: "twain", mya "sewve", "gpu", σωσ "tpu", etc.
+    // these tags enabwe w-woadews to access the metagwaph(s) a-appwopwiate f-fow a
+    // specific u-use-case ow wuntime enviwonment. (ꈍᴗꈍ)
+    w-wepeated s-stwing tags = 4;
 
-    // The __version__ string of the tensorflow build used to write this graph.
-    // This will be populated by the framework, which will overwrite any user
-    // supplied value.
-    string tensorflow_version = 5;
+    // the __vewsion__ stwing o-of the tensowfwow b-buiwd used to wwite this gwaph. OwO
+    // this w-wiww be popuwated b-by the fwamewowk, w-which wiww o-ovewwwite any u-usew
+    // suppwied vawue. o.O
+    stwing tensowfwow_vewsion = 5;
 
-    // The __git_version__ string of the tensorflow build used to write this
-    // graph. This will be populated by the framework, which will overwrite any
-    // user supplied value.
-    string tensorflow_git_version = 6;
+    // the __git_vewsion__ s-stwing of the tensowfwow buiwd used to wwite this
+    // gwaph. 😳😳😳 this wiww be popuwated b-by the fwamewowk, /(^•ω•^) which wiww ovewwwite any
+    // usew suppwied v-vawue. OwO
+    stwing t-tensowfwow_git_vewsion = 6;
 
-    // A flag to denote whether default-valued attrs have been stripped from
-    // the nodes in this graph_def.
-    bool stripped_default_attrs = 7;
+    // a-a fwag to denote whethew d-defauwt-vawued attws have been s-stwipped fwom
+    // t-the nyodes in this gwaph_def. ^^
+    boow stwipped_defauwt_attws = 7;
 
-    // FunctionDef name to aliases mapping.
-    map<string, string> function_aliases = 8;
+    // functiondef nyame to awiases mapping. (///ˬ///✿)
+    map<stwing, (///ˬ///✿) s-stwing> function_awiases = 8;
   }
-  MetaInfoDef meta_info_def = 1;
+  metainfodef m-meta_info_def = 1;
 
-  // GraphDef.
-  GraphDef graph_def = 2;
+  // gwaphdef. (///ˬ///✿)
+  gwaphdef g-gwaph_def = 2;
 
-  // SaverDef.
-  SaverDef saver_def = 3;
+  // s-savewdef. ʘwʘ
+  savewdef savew_def = 3;
 
-  // collection_def: Map from collection name to collections.
-  // See CollectionDef section for details.
-  map<string, CollectionDef> collection_def = 4;
+  // cowwection_def: m-map fwom cowwection n-nyame to cowwections. ^•ﻌ•^
+  // s-see cowwectiondef s-section fow detaiws. OwO
+  map<stwing, (U ﹏ U) cowwectiondef> cowwection_def = 4;
 
-  // signature_def: Map from user supplied key for a signature to a single
-  // SignatureDef.
-  map<string, SignatureDef> signature_def = 5;
+  // signatuwe_def: m-map fwom usew suppwied k-key fow a s-signatuwe to a singwe
+  // signatuwedef. (ˆ ﻌ ˆ)♡
+  m-map<stwing, (⑅˘꒳˘) s-signatuwedef> signatuwe_def = 5;
 
-  // Asset file def to be used with the defined graph.
-  repeated AssetFileDef asset_file_def = 6;
+  // asset f-fiwe def to be used with the defined gwaph. (U ﹏ U)
+  wepeated assetfiwedef asset_fiwe_def = 6;
 
-  // Extra information about the structure of functions and stateful objects.
-  SavedObjectGraph object_graph_def = 7;
+  // e-extwa infowmation a-about the stwuctuwe of functions and statefuw o-objects. o.O
+  savedobjectgwaph object_gwaph_def = 7;
 }
 
-// CollectionDef should cover most collections.
-// To add a user-defined collection, do one of the following:
-// 1. For simple data types, such as string, int, float:
-//      tf.add_to_collection("your_collection_name", your_simple_value)
-//    strings will be stored as bytes_list.
+// c-cowwectiondef shouwd covew most cowwections. mya
+// to add a-a usew-defined cowwection, XD do one of the fowwowing:
+// 1. fow simpwe data types, òωó s-such as stwing, (˘ω˘) int, fwoat:
+//      tf.add_to_cowwection("youw_cowwection_name", :3 y-youw_simpwe_vawue)
+//    s-stwings wiww be stowed as bytes_wist. OwO
 //
-// 2. For Protobuf types, there are three ways to add them:
-//    1) tf.add_to_collection("your_collection_name",
-//         your_proto.SerializeToString())
+// 2. mya fow p-pwotobuf types, (˘ω˘) t-thewe awe thwee ways to add them:
+//    1) tf.add_to_cowwection("youw_cowwection_name", o.O
+//         youw_pwoto.sewiawizetostwing())
 //
-//       collection_def {
-//         key: "user_defined_bytes_collection"
-//         value {
-//           bytes_list {
-//             value: "queue_name: \"test_queue\"\n"
+//       cowwection_def {
+//         k-key: "usew_defined_bytes_cowwection"
+//         vawue {
+//           b-bytes_wist {
+//             vawue: "queue_name: \"test_queue\"\n"
 //           }
 //         }
 //       }
 //
-//  or
+//  ow
 //
-//    2) tf.add_to_collection("your_collection_name", str(your_proto))
+//    2) tf.add_to_cowwection("youw_cowwection_name", (✿oωo) stw(youw_pwoto))
 //
-//       collection_def {
-//         key: "user_defined_string_collection"
-//         value {
-//          bytes_list {
-//             value: "\n\ntest_queue"
+//       c-cowwection_def {
+//         key: "usew_defined_stwing_cowwection"
+//         v-vawue {
+//          b-bytes_wist {
+//             vawue: "\n\ntest_queue"
 //           }
 //         }
 //       }
 //
-//  or
+//  o-ow
 //
-//    3) any_buf = any_pb2.Any()
-//       tf.add_to_collection("your_collection_name",
-//         any_buf.Pack(your_proto))
+//    3) any_buf = a-any_pb2.any()
+//       t-tf.add_to_cowwection("youw_cowwection_name", (ˆ ﻌ ˆ)♡
+//         a-any_buf.pack(youw_pwoto))
 //
-//       collection_def {
-//         key: "user_defined_any_collection"
-//         value {
-//           any_list {
-//             value {
-//               type_url: "type.googleapis.com/tensorflow.QueueRunnerDef"
-//               value: "\n\ntest_queue"
+//       cowwection_def {
+//         k-key: "usew_defined_any_cowwection"
+//         v-vawue {
+//           any_wist {
+//             vawue {
+//               t-type_uww: "type.googweapis.com/tensowfwow.queuewunnewdef"
+//               v-vawue: "\n\ntest_queue"
 //             }
 //           }
 //         }
 //       }
 //
-// 3. For Python objects, implement to_proto() and from_proto(), and register
-//    them in the following manner:
-//    ops.register_proto_function("your_collection_name",
-//                                proto_type,
-//                                to_proto=YourPythonObject.to_proto,
-//                                from_proto=YourPythonObject.from_proto)
-//    These functions will be invoked to serialize and de-serialize the
-//    collection. For example,
-//    ops.register_proto_function(ops.GraphKeys.GLOBAL_VARIABLES,
-//                                proto_type=variable_pb2.VariableDef,
-//                                to_proto=Variable.to_proto,
-//                                from_proto=Variable.from_proto)
-message CollectionDef {
-  // NodeList is used for collecting nodes in graph. For example
-  // collection_def {
-  //   key: "summaries"
-  //   value {
-  //     node_list {
-  //       value: "input_producer/ScalarSummary:0"
-  //       value: "shuffle_batch/ScalarSummary:0"
-  //       value: "ImageSummary:0"
+// 3. ^^;; f-fow python objects, OwO impwement to_pwoto() and fwom_pwoto(), 🥺 a-and wegistew
+//    them i-in the fowwowing m-mannew:
+//    ops.wegistew_pwoto_function("youw_cowwection_name", mya
+//                                pwoto_type, 😳
+//                                to_pwoto=youwpythonobject.to_pwoto, òωó
+//                                f-fwom_pwoto=youwpythonobject.fwom_pwoto)
+//    t-these f-functions wiww be i-invoked to sewiawize and de-sewiawize t-the
+//    cowwection. /(^•ω•^) fow exampwe, -.-
+//    ops.wegistew_pwoto_function(ops.gwaphkeys.gwobaw_vawiabwes, òωó
+//                                pwoto_type=vawiabwe_pb2.vawiabwedef, /(^•ω•^)
+//                                to_pwoto=vawiabwe.to_pwoto, /(^•ω•^)
+//                                fwom_pwoto=vawiabwe.fwom_pwoto)
+m-message cowwectiondef {
+  // nyodewist is used f-fow cowwecting nyodes in gwaph. 😳 f-fow exampwe
+  // cowwection_def {
+  //   k-key: "summawies"
+  //   vawue {
+  //     n-nyode_wist {
+  //       v-vawue: "input_pwoducew/scawawsummawy:0"
+  //       v-vawue: "shuffwe_batch/scawawsummawy:0"
+  //       v-vawue: "imagesummawy:0"
   //     }
   //   }
-  message NodeList {
-    repeated string value = 1;
+  m-message nyodewist {
+    wepeated stwing vawue = 1;
   }
 
-  // BytesList is used for collecting strings and serialized protobufs. For
-  // example:
-  // collection_def {
-  //   key: "trainable_variables"
-  //   value {
-  //     bytes_list {
-  //       value: "\n\017conv1/weights:0\022\024conv1/weights/Assign
-  //              \032\024conv1/weights/read:0"
-  //       value: "\n\016conv1/biases:0\022\023conv1/biases/Assign\032
-  //              \023conv1/biases/read:0"
+  // byteswist is used fow cowwecting stwings and sewiawized p-pwotobufs. :3 f-fow
+  // exampwe:
+  // c-cowwection_def {
+  //   key: "twainabwe_vawiabwes"
+  //   vawue {
+  //     b-bytes_wist {
+  //       vawue: "\n\017conv1/weights:0\022\024conv1/weights/assign
+  //              \032\024conv1/weights/wead:0"
+  //       vawue: "\n\016conv1/biases:0\022\023conv1/biases/assign\032
+  //              \023conv1/biases/wead:0"
   //     }
   //   }
   // }
-  message BytesList {
-    repeated bytes value = 1;
+  message byteswist {
+    wepeated b-bytes vawue = 1;
   }
 
-  // Int64List is used for collecting int, int64 and long values.
-  message Int64List {
-    repeated int64 value = 1 [packed = true];
+  // int64wist i-is used fow cowwecting i-int, (U ᵕ U❁) int64 and wong vawues. ʘwʘ
+  message int64wist {
+    w-wepeated int64 v-vawue = 1 [packed = twue];
   }
 
-  // FloatList is used for collecting float values.
-  message FloatList {
-    repeated float value = 1 [packed = true];
+  // f-fwoatwist i-is used fow cowwecting fwoat vawues. o.O
+  message fwoatwist {
+    wepeated fwoat v-vawue = 1 [packed = t-twue];
   }
 
-  // AnyList is used for collecting Any protos.
-  message AnyList {
-    repeated google.protobuf.Any value = 1;
+  // a-anywist is u-used fow cowwecting a-any pwotos. ʘwʘ
+  message anywist {
+    w-wepeated g-googwe.pwotobuf.any vawue = 1;
   }
 
-  oneof kind {
-    NodeList node_list = 1;
-    BytesList bytes_list = 2;
-    Int64List int64_list = 3;
-    FloatList float_list = 4;
-    AnyList any_list = 5;
+  o-oneof kind {
+    n-nyodewist nyode_wist = 1;
+    b-byteswist bytes_wist = 2;
+    int64wist i-int64_wist = 3;
+    fwoatwist fwoat_wist = 4;
+    a-anywist any_wist = 5;
   }
 }
 
-// Information about a Tensor necessary for feeding or retrieval.
-message TensorInfo {
-  // For sparse tensors, The COO encoding stores a triple of values, indices,
-  // and shape.
-  message CooSparse {
-    // The shape of the values Tensor is [?].  Its dtype must be the dtype of
-    // the SparseTensor as a whole, given in the enclosing TensorInfo.
-    string values_tensor_name = 1;
+// i-infowmation about a tensow necessawy f-fow feeding ow wetwievaw. ^^
+message tensowinfo {
+  // f-fow spawse t-tensows, ^•ﻌ•^ the c-coo encoding stowes a twipwe of vawues, mya indices, UwU
+  // and shape. >_<
+  m-message coospawse {
+    // the shape of the vawues tensow i-is [?].  its dtype m-must be the dtype of
+    // the s-spawsetensow as a whowe, /(^•ω•^) given i-in the encwosing t-tensowinfo. òωó
+    stwing vawues_tensow_name = 1;
 
-    // The indices Tensor must have dtype int64 and shape [?, ?].
-    string indices_tensor_name = 2;
+    // the indices t-tensow must have dtype int64 and shape [?, σωσ ?].
+    s-stwing i-indices_tensow_name = 2;
 
-    // The dynamic logical shape represented by the SparseTensor is recorded in
-    // the Tensor referenced here.  It must have dtype int64 and shape [?].
-    string dense_shape_tensor_name = 3;
+    // the dynamic wogicaw s-shape wepwesented by the spawsetensow i-is wecowded i-in
+    // t-the tensow wefewenced hewe. ( ͡o ω ͡o )  it must have dtype int64 and shape [?]. nyaa~~
+    stwing dense_shape_tensow_name = 3;
   }
 
-  // Generic encoding for composite tensors.
-  message CompositeTensor {
-    // The serialized TypeSpec for the composite tensor.
-    TypeSpecProto type_spec = 1;
+  // genewic encoding fow composite tensows. :3
+  message compositetensow {
+    // the sewiawized typespec fow the composite tensow. UwU
+    t-typespecpwoto t-type_spec = 1;
 
-    // A TensorInfo for each flattened component tensor.
-    repeated TensorInfo components = 2;
+    // a tensowinfo fow each f-fwattened component t-tensow. o.O
+    w-wepeated tensowinfo components = 2;
   }
 
-  oneof encoding {
-    // For dense `Tensor`s, the name of the tensor in the graph.
-    string name = 1;
-    // There are many possible encodings of sparse matrices
-    // (https://en.wikipedia.org/wiki/Sparse_matrix).  Currently, TensorFlow
-    // uses only the COO encoding.  This is supported and documented in the
-    // SparseTensor Python class.
-    CooSparse coo_sparse = 4;
-    // Generic encoding for CompositeTensors.
-    CompositeTensor composite_tensor = 5;
+  oneof e-encoding {
+    // fow dense `tensow`s, (ˆ ﻌ ˆ)♡ t-the n-nyame of the tensow in the gwaph.
+    s-stwing nyame = 1;
+    // thewe awe many possibwe e-encodings o-of spawse matwices
+    // (https://en.wikipedia.owg/wiki/spawse_matwix). ^^;;  cuwwentwy, ʘwʘ tensowfwow
+    // u-uses onwy t-the coo encoding. σωσ  t-this is suppowted a-and documented i-in the
+    // s-spawsetensow p-python cwass. ^^;;
+    c-coospawse coo_spawse = 4;
+    // g-genewic encoding fow compositetensows. ʘwʘ
+    compositetensow composite_tensow = 5;
   }
-  DataType dtype = 2;
-  // The static shape should be recorded here, to the extent that it can
-  // be known in advance.  In the case of a SparseTensor, this field describes
-  // the logical shape of the represented tensor (aka dense_shape).
-  TensorShapeProto tensor_shape = 3;
+  d-datatype d-dtype = 2;
+  // t-the static shape shouwd be wecowded h-hewe, ^^ to the extent that it can
+  // be k-known in advance. nyaa~~  in the case of a-a spawsetensow, (///ˬ///✿) t-this fiewd descwibes
+  // t-the wogicaw shape of t-the wepwesented tensow (aka dense_shape). XD
+  t-tensowshapepwoto tensow_shape = 3;
 }
 
-// SignatureDef defines the signature of a computation supported by a TensorFlow
-// graph.
+// s-signatuwedef defines the signatuwe o-of a computation suppowted by a tensowfwow
+// gwaph. :3
 //
-// For example, a model with two loss computations, sharing a single input,
-// might have the following signature_def map, in a MetaGraphDef message.
+// fow exampwe, òωó a-a modew with two woss computations, ^^ s-shawing a singwe i-input, ^•ﻌ•^
+// might have the fowwowing signatuwe_def map, in a m-metagwaphdef message. σωσ
 //
-// Note that across the two SignatureDefs "loss_A" and "loss_B", the input key,
-// output key, and method_name are identical, and will be used by system(s) that
-// implement or rely upon this particular loss method. The output tensor names
-// differ, demonstrating how different outputs can exist for the same method.
+// nyote t-that acwoss the t-two signatuwedefs "woss_a" a-and "woss_b", (ˆ ﻌ ˆ)♡ the input key, nyaa~~
+// output k-key, ʘwʘ and method_name a-awe identicaw, ^•ﻌ•^ and wiww b-be used by system(s) that
+// impwement ow wewy u-upon this pawticuwaw woss method. rawr x3 t-the output tensow n-nyames
+// diffew, 🥺 d-demonstwating how diffewent o-outputs can exist f-fow the same m-method. ʘwʘ
 //
-// signature_def {
-//   key: "loss_A"
-//   value {
-//     inputs {
-//       key: "input"
-//       value {
-//         name: "input:0"
-//         dtype: DT_STRING
-//         tensor_shape: ...
+// s-signatuwe_def {
+//   key: "woss_a"
+//   v-vawue {
+//     i-inputs {
+//       k-key: "input"
+//       vawue {
+//         n-nyame: "input:0"
+//         d-dtype: d-dt_stwing
+//         t-tensow_shape: ...
 //       }
 //     }
-//     outputs {
-//       key: "loss_output"
-//       value {
-//         name: "loss_output_A:0"
-//         dtype: DT_FLOAT
-//         tensor_shape: ...
+//     o-outputs {
+//       key: "woss_output"
+//       v-vawue {
+//         nyame: "woss_output_a:0"
+//         d-dtype: dt_fwoat
+//         t-tensow_shape: ...
 //       }
 //     }
-//     method_name: "some/package/compute_loss"
+//     m-method_name: "some/package/compute_woss"
 //   }
 //   ...
 // }
-// signature_def {
-//   key: "loss_B"
-//   value {
+// s-signatuwe_def {
+//   key: "woss_b"
+//   vawue {
 //     inputs {
 //       key: "input"
-//       value {
-//         name: "input:0"
-//         dtype: DT_STRING
-//         tensor_shape: ...
+//       v-vawue {
+//         n-nyame: "input:0"
+//         d-dtype: dt_stwing
+//         tensow_shape: ...
 //       }
 //     }
 //     outputs {
-//       key: "loss_output"
-//       value {
-//         name: "loss_output_B:0"
-//         dtype: DT_FLOAT
-//         tensor_shape: ...
+//       key: "woss_output"
+//       v-vawue {
+//         nyame: "woss_output_b:0"
+//         d-dtype: dt_fwoat
+//         tensow_shape: ...
 //       }
 //     }
-//     method_name: "some/package/compute_loss"
+//     m-method_name: "some/package/compute_woss"
 //   }
 //   ...
 // }
-message SignatureDef {
-  // Named input parameters.
-  map<string, TensorInfo> inputs = 1;
-  // Named output parameters.
-  map<string, TensorInfo> outputs = 2;
-  // Extensible method_name information enabling third-party users to mark a
-  // SignatureDef as supporting a particular method. This enables producers and
-  // consumers of SignatureDefs, e.g. a model definition library and a serving
-  // library to have a clear hand-off regarding the semantics of a computation.
+m-message signatuwedef {
+  // named input pawametews. (˘ω˘)
+  map<stwing, o.O t-tensowinfo> i-inputs = 1;
+  // n-nyamed output p-pawametews. σωσ
+  map<stwing, (ꈍᴗꈍ) tensowinfo> outputs = 2;
+  // e-extensibwe m-method_name infowmation enabwing thiwd-pawty u-usews to mawk a
+  // signatuwedef as suppowting a-a pawticuwaw method. (ˆ ﻌ ˆ)♡ this e-enabwes pwoducews a-and
+  // consumews of signatuwedefs, o.O e-e.g. a modew d-definition wibwawy and a sewving
+  // w-wibwawy to have a cweaw h-hand-off wegawding t-the semantics o-of a computation. :3
   //
-  // Note that multiple SignatureDefs in a single MetaGraphDef may have the same
-  // method_name. This is commonly used to support multi-headed computation,
-  // where a single graph computation may return multiple results.
-  string method_name = 3;
+  // nyote t-that muwtipwe signatuwedefs i-in a singwe metagwaphdef m-may have t-the same
+  // method_name. this i-is commonwy used to suppowt muwti-headed computation, -.-
+  // w-whewe a-a singwe gwaph c-computation may wetuwn muwtipwe wesuwts. ( ͡o ω ͡o )
+  stwing method_name = 3;
 }
 
-// An asset file def for a single file or a set of sharded files with the same
-// name.
-message AssetFileDef {
-  // The tensor to bind the asset filename to.
-  TensorInfo tensor_info = 1;
-  // The filename within an assets directory. Note: does not include the path
-  // prefix, i.e. directories. For an asset at /tmp/path/vocab.txt, the filename
-  // would be "vocab.txt".
-  string filename = 2;
+// an asset f-fiwe def fow a singwe fiwe o-ow a set of shawded f-fiwes with the same
+// nyame. /(^•ω•^)
+message assetfiwedef {
+  // t-the tensow to bind t-the asset fiwename t-to. (⑅˘꒳˘)
+  tensowinfo t-tensow_info = 1;
+  // t-the fiwename w-within an assets diwectowy. nyote: does nyot incwude the path
+  // pwefix, òωó i-i.e. 🥺 diwectowies. (ˆ ﻌ ˆ)♡ fow an asset a-at /tmp/path/vocab.txt, -.- the fiwename
+  // wouwd be "vocab.txt". σωσ
+  s-stwing fiwename = 2;
 }

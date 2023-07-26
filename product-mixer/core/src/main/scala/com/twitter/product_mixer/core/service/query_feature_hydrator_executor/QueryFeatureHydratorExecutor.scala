@@ -1,217 +1,217 @@
-package com.twitter.product_mixer.core.service.query_feature_hydrator_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.quewy_featuwe_hydwatow_executow
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.AsyncHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseQueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1.FeatureStoreV1QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.Executor._
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.product_mixer.core.service.feature_hydrator_observer.FeatureHydratorObserver
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor.AsyncIndividualFeatureHydratorResult
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor.BaseIndividualFeatureHydratorResult
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor.FeatureHydratorDisabled
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor.IndividualFeatureHydratorResult
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor.validateAsyncQueryFeatureHydrator
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.fastewxmw.jackson.databind.annotation.jsonsewiawize
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.asyncfeatuwemap.asyncfeatuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.asynchydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.basequewyfeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.featuwestowev1.featuwestowev1quewyfeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.conditionawwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pipewinestepidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow._
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executowwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.featuwe_hydwatow_obsewvew.featuwehydwatowobsewvew
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.quewy_featuwe_hydwatow_executow.quewyfeatuwehydwatowexecutow.asyncindividuawfeatuwehydwatowwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.quewy_featuwe_hydwatow_executow.quewyfeatuwehydwatowexecutow.baseindividuawfeatuwehydwatowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.quewy_featuwe_hydwatow_executow.quewyfeatuwehydwatowexecutow.featuwehydwatowdisabwed
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.quewy_featuwe_hydwatow_executow.quewyfeatuwehydwatowexecutow.individuawfeatuwehydwatowwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.quewy_featuwe_hydwatow_executow.quewyfeatuwehydwatowexecutow.vawidateasyncquewyfeatuwehydwatow
+impowt com.twittew.stitch.awwow
+impowt com.twittew.stitch.stitch
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class QueryFeatureHydratorExecutor @Inject() (override val statsReceiver: StatsReceiver)
-    extends Executor {
+@singweton
+cwass quewyfeatuwehydwatowexecutow @inject() (ovewwide vaw statsweceivew: statsweceivew)
+    e-extends executow {
 
-  def arrow[Query <: PipelineQuery](
-    hydrators: Seq[BaseQueryFeatureHydrator[Query, _]],
-    validPipelineSteps: Set[PipelineStepIdentifier],
-    context: Executor.Context
-  ): Arrow[Query, QueryFeatureHydratorExecutor.Result] = {
+  def awwow[quewy <: p-pipewinequewy](
+    hydwatows: s-seq[basequewyfeatuwehydwatow[quewy, nyaa~~ _]],
+    v-vawidpipewinesteps: s-set[pipewinestepidentifiew],
+    context: executow.context
+  ): a-awwow[quewy, >_< quewyfeatuwehydwatowexecutow.wesuwt] = {
 
-    val observer = new FeatureHydratorObserver(statsReceiver, hydrators, context)
-    val hydratorsWithErrorHandling =
-      hydrators.map { hydrator =>
-        val queryFeatureHydratorArrow =
-          getQueryHydratorArrow(hydrator, context, observer)
-        val wrappedWithAsyncHandling =
-          handleAsyncHydrator(hydrator, validPipelineSteps, queryFeatureHydratorArrow)
-        handleConditionally(hydrator, wrappedWithAsyncHandling)
+    vaw obsewvew = n-nyew featuwehydwatowobsewvew(statsweceivew, ^^;; hydwatows, (ˆ ﻌ ˆ)♡ context)
+    vaw hydwatowswithewwowhandwing =
+      hydwatows.map { hydwatow =>
+        vaw quewyfeatuwehydwatowawwow =
+          g-getquewyhydwatowawwow(hydwatow, ^^;; context, (⑅˘꒳˘) o-obsewvew)
+        v-vaw wwappedwithasynchandwing =
+          h-handweasynchydwatow(hydwatow, rawr x3 vawidpipewinesteps, (///ˬ///✿) quewyfeatuwehydwatowawwow)
+        handweconditionawwy(hydwatow, 🥺 w-wwappedwithasynchandwing)
       }
 
-    Arrow
-      .collect(hydratorsWithErrorHandling)
+    a-awwow
+      .cowwect(hydwatowswithewwowhandwing)
       .map {
-        results: Seq[
-          (FeatureHydratorIdentifier, BaseIndividualFeatureHydratorResult)
+        wesuwts: seq[
+          (featuwehydwatowidentifiew, >_< b-baseindividuawfeatuwehydwatowwesuwt)
         ] =>
-          val combinedFeatureMap = FeatureMap.merge(results.collect {
-            case (_, IndividualFeatureHydratorResult(featureMap)) => featureMap
+          v-vaw combinedfeatuwemap = featuwemap.mewge(wesuwts.cowwect {
+            c-case (_, UwU individuawfeatuwehydwatowwesuwt(featuwemap)) => f-featuwemap
           })
 
-          val asyncFeatureMaps = results.collect {
-            case (
-                  hydratorIdentifier,
-                  AsyncIndividualFeatureHydratorResult(hydrateBefore, featuresToHydrate, ref)) =>
-              (hydratorIdentifier, hydrateBefore, featuresToHydrate, ref)
+          vaw asyncfeatuwemaps = wesuwts.cowwect {
+            c-case (
+                  hydwatowidentifiew, >_<
+                  a-asyncindividuawfeatuwehydwatowwesuwt(hydwatebefowe, -.- featuwestohydwate, mya w-wef)) =>
+              (hydwatowidentifiew, >w< h-hydwatebefowe, (U ﹏ U) featuwestohydwate, 😳😳😳 wef)
           }
 
-          QueryFeatureHydratorExecutor.Result(
-            individualFeatureMaps = results.toMap,
-            featureMap = combinedFeatureMap,
-            asyncFeatureMap = AsyncFeatureMap.fromFeatureMaps(asyncFeatureMaps)
+          quewyfeatuwehydwatowexecutow.wesuwt(
+            individuawfeatuwemaps = wesuwts.tomap, o.O
+            featuwemap = combinedfeatuwemap, òωó
+            asyncfeatuwemap = a-asyncfeatuwemap.fwomfeatuwemaps(asyncfeatuwemaps)
           )
       }
   }
 
-  def handleConditionally[Query <: PipelineQuery](
-    hydrator: BaseQueryFeatureHydrator[Query, _],
-    arrow: Arrow[
-      Query,
-      BaseIndividualFeatureHydratorResult
+  d-def handweconditionawwy[quewy <: pipewinequewy](
+    h-hydwatow: basequewyfeatuwehydwatow[quewy, 😳😳😳 _],
+    a-awwow: awwow[
+      q-quewy, σωσ
+      baseindividuawfeatuwehydwatowwesuwt
     ]
-  ): Arrow[
-    Query,
-    (FeatureHydratorIdentifier, BaseIndividualFeatureHydratorResult)
+  ): awwow[
+    quewy, (⑅˘꒳˘)
+    (featuwehydwatowidentifiew, (///ˬ///✿) baseindividuawfeatuwehydwatowwesuwt)
   ] = {
-    val conditionallyRunArrow = hydrator match {
-      case hydrator: BaseQueryFeatureHydrator[Query, _] with Conditionally[Query @unchecked] =>
-        Arrow.ifelse[Query, BaseIndividualFeatureHydratorResult](
-          hydrator.onlyIf,
-          arrow,
-          Arrow.value(FeatureHydratorDisabled)
+    v-vaw conditionawwywunawwow = hydwatow match {
+      case hydwatow: basequewyfeatuwehydwatow[quewy, 🥺 _] with conditionawwy[quewy @unchecked] =>
+        a-awwow.ifewse[quewy, OwO baseindividuawfeatuwehydwatowwesuwt](
+          h-hydwatow.onwyif, >w<
+          a-awwow, 🥺
+          a-awwow.vawue(featuwehydwatowdisabwed)
         )
-      case _ => arrow
+      case _ => awwow
     }
 
-    Arrow.join(
-      Arrow.value(hydrator.identifier),
-      conditionallyRunArrow
+    a-awwow.join(
+      a-awwow.vawue(hydwatow.identifiew), nyaa~~
+      c-conditionawwywunawwow
     )
   }
 
-  def handleAsyncHydrator[Query <: PipelineQuery](
-    hydrator: BaseQueryFeatureHydrator[Query, _],
-    validPipelineSteps: Set[PipelineStepIdentifier],
-    arrow: Arrow[
-      Query,
-      IndividualFeatureHydratorResult
+  d-def handweasynchydwatow[quewy <: pipewinequewy](
+    hydwatow: b-basequewyfeatuwehydwatow[quewy, ^^ _],
+    v-vawidpipewinesteps: s-set[pipewinestepidentifiew], >w<
+    a-awwow: awwow[
+      q-quewy, OwO
+      individuawfeatuwehydwatowwesuwt
     ]
-  ): Arrow[Query, BaseIndividualFeatureHydratorResult] = {
-    hydrator match {
-      case hydrator: BaseQueryFeatureHydrator[
-            Query,
+  ): awwow[quewy, XD baseindividuawfeatuwehydwatowwesuwt] = {
+    hydwatow m-match {
+      case hydwatow: basequewyfeatuwehydwatow[
+            quewy, ^^;;
             _
-          ] with AsyncHydrator =>
-        validateAsyncQueryFeatureHydrator(hydrator, validPipelineSteps)
+          ] with asynchydwatow =>
+        vawidateasyncquewyfeatuwehydwatow(hydwatow, vawidpipewinesteps)
 
-        startArrowAsync(arrow.map(_.featureMap))
-          .map { ref =>
-            AsyncIndividualFeatureHydratorResult(
-              hydrator.hydrateBefore,
-              hydrator.features.asInstanceOf[Set[Feature[_, _]]],
-              ref
+        s-stawtawwowasync(awwow.map(_.featuwemap))
+          .map { wef =>
+            asyncindividuawfeatuwehydwatowwesuwt(
+              hydwatow.hydwatebefowe, 🥺
+              h-hydwatow.featuwes.asinstanceof[set[featuwe[_, XD _]]],
+              w-wef
             )
           }
 
-      case _ => arrow
+      c-case _ => awwow
     }
   }
 
-  def getQueryHydratorArrow[Query <: PipelineQuery](
-    hydrator: BaseQueryFeatureHydrator[Query, _],
-    context: Executor.Context,
-    queryFeatureHydratorObserver: FeatureHydratorObserver
-  ): Arrow[Query, IndividualFeatureHydratorResult] = {
+  d-def getquewyhydwatowawwow[quewy <: pipewinequewy](
+    hydwatow: b-basequewyfeatuwehydwatow[quewy, (U ᵕ U❁) _],
+    c-context: executow.context, :3
+    quewyfeatuwehydwatowobsewvew: featuwehydwatowobsewvew
+  ): awwow[quewy, ( ͡o ω ͡o ) individuawfeatuwehydwatowwesuwt] = {
 
-    val componentExecutorContext = context.pushToComponentStack(hydrator.identifier)
-    val hydratorArrow: Arrow[Query, FeatureMap] =
-      Arrow.flatMap { query: Query => hydrator.hydrate(query) }
+    vaw componentexecutowcontext = c-context.pushtocomponentstack(hydwatow.identifiew)
+    vaw hydwatowawwow: a-awwow[quewy, òωó featuwemap] =
+      a-awwow.fwatmap { q-quewy: quewy => hydwatow.hydwate(quewy) }
 
-    val validationFn: FeatureMap => FeatureMap = hydrator match {
-      // Feature store query hydrators store the resulting PredictionRecord and not
-      // the features, so we cannot validate the same way
-      case _: FeatureStoreV1QueryFeatureHydrator[Query] =>
-        identity
+    vaw vawidationfn: f-featuwemap => f-featuwemap = hydwatow m-match {
+      // f-featuwe stowe quewy hydwatows stowe the wesuwting pwedictionwecowd and nyot
+      // t-the featuwes, σωσ s-so we cannot v-vawidate the same way
+      case _: f-featuwestowev1quewyfeatuwehydwatow[quewy] =>
+        i-identity
       case _ =>
-        validateFeatureMap(
-          hydrator.features.asInstanceOf[Set[Feature[_, _]]],
-          _,
-          componentExecutorContext)
+        v-vawidatefeatuwemap(
+          hydwatow.featuwes.asinstanceof[set[featuwe[_, (U ᵕ U❁) _]]],
+          _, (✿oωo)
+          componentexecutowcontext)
     }
 
-    // record the component-level stats
-    val observedArrow =
-      wrapComponentWithExecutorBookkeeping[Query, FeatureMap](
-        context,
-        hydrator.identifier
-      )(hydratorArrow.map(validationFn))
+    // wecowd the component-wevew s-stats
+    v-vaw obsewvedawwow =
+      wwapcomponentwithexecutowbookkeeping[quewy, ^^ featuwemap](
+        c-context, ^•ﻌ•^
+        h-hydwatow.identifiew
+      )(hydwatowawwow.map(vawidationfn))
 
-    // store non-configuration errors in the FeatureMap
-    val liftNonValidationFailuresToFailedFeatures = Arrow.handle[FeatureMap, FeatureMap] {
-      case NotAMisconfiguredFeatureMapFailure(e) =>
-        featureMapWithFailuresForFeatures(
-          hydrator.features.asInstanceOf[Set[Feature[_, _]]],
+    // stowe nyon-configuwation ewwows in the featuwemap
+    v-vaw wiftnonvawidationfaiwuwestofaiwedfeatuwes = awwow.handwe[featuwemap, XD featuwemap] {
+      case nyotamisconfiguwedfeatuwemapfaiwuwe(e) =>
+        featuwemapwithfaiwuwesfowfeatuwes(
+          h-hydwatow.featuwes.asinstanceof[set[featuwe[_, :3 _]]], (ꈍᴗꈍ)
           e,
-          componentExecutorContext)
+          componentexecutowcontext)
     }
 
-    val observedLiftedAndWrapped = observedArrow
-      .andThen(liftNonValidationFailuresToFailedFeatures)
-      .applyEffect(Arrow.map[FeatureMap, Unit](featureMap =>
-        // record per-feature stats, this is separate from the component stats handled by `wrapWithExecutorBookkeeping`
-        queryFeatureHydratorObserver.observeFeatureSuccessAndFailures(hydrator, Seq(featureMap))))
-      .map(IndividualFeatureHydratorResult)
+    v-vaw obsewvedwiftedandwwapped = o-obsewvedawwow
+      .andthen(wiftnonvawidationfaiwuwestofaiwedfeatuwes)
+      .appwyeffect(awwow.map[featuwemap, :3 unit](featuwemap =>
+        // wecowd pew-featuwe stats, (U ﹏ U) t-this is sepawate f-fwom the component stats handwed by `wwapwithexecutowbookkeeping`
+        quewyfeatuwehydwatowobsewvew.obsewvefeatuwesuccessandfaiwuwes(hydwatow, UwU s-seq(featuwemap))))
+      .map(individuawfeatuwehydwatowwesuwt)
 
-    observedLiftedAndWrapped
+    obsewvedwiftedandwwapped
   }
 }
 
-object QueryFeatureHydratorExecutor {
-  case class Result(
-    individualFeatureMaps: Map[
-      FeatureHydratorIdentifier,
-      BaseIndividualFeatureHydratorResult
-    ],
-    featureMap: FeatureMap,
-    asyncFeatureMap: AsyncFeatureMap)
-      extends ExecutorResult
+o-object quewyfeatuwehydwatowexecutow {
+  case cwass wesuwt(
+    individuawfeatuwemaps: map[
+      f-featuwehydwatowidentifiew, 😳😳😳
+      baseindividuawfeatuwehydwatowwesuwt
+    ], XD
+    f-featuwemap: f-featuwemap, o.O
+    asyncfeatuwemap: a-asyncfeatuwemap)
+      extends e-executowwesuwt
 
-  sealed trait BaseIndividualFeatureHydratorResult
+  s-seawed twait b-baseindividuawfeatuwehydwatowwesuwt
 
-  case object FeatureHydratorDisabled extends BaseIndividualFeatureHydratorResult
-  case class IndividualFeatureHydratorResult(featureMap: FeatureMap)
-      extends BaseIndividualFeatureHydratorResult
+  case o-object featuwehydwatowdisabwed e-extends baseindividuawfeatuwehydwatowwesuwt
+  case cwass individuawfeatuwehydwatowwesuwt(featuwemap: f-featuwemap)
+      e-extends baseindividuawfeatuwehydwatowwesuwt
 
-  /** Async result, serializes without the [[Stitch]] field since it's not serializable */
-  @JsonSerialize(using = classOf[AsyncIndividualFeatureHydratorResultSerializer])
-  case class AsyncIndividualFeatureHydratorResult(
-    hydrateBefore: PipelineStepIdentifier,
-    features: Set[Feature[_, _]],
-    ref: Stitch[FeatureMap])
-      extends BaseIndividualFeatureHydratorResult
+  /** a-async wesuwt, (⑅˘꒳˘) sewiawizes without the [[stitch]] f-fiewd since it's nyot s-sewiawizabwe */
+  @jsonsewiawize(using = c-cwassof[asyncindividuawfeatuwehydwatowwesuwtsewiawizew])
+  case cwass asyncindividuawfeatuwehydwatowwesuwt(
+    hydwatebefowe: pipewinestepidentifiew,
+    f-featuwes: set[featuwe[_, 😳😳😳 _]], nyaa~~
+    w-wef: stitch[featuwemap])
+      e-extends baseindividuawfeatuwehydwatowwesuwt
 
   /**
-   * Validates whether the [[AsyncHydrator.hydrateBefore]] [[PipelineStepIdentifier]] is valid
+   * v-vawidates whethew the [[asynchydwatow.hydwatebefowe]] [[pipewinestepidentifiew]] i-is vawid
    *
-   * @param asyncQueryFeatureHydrator the hydrator to validate
-   * @param validPipelineSteps        a Set of [[PipelineStepIdentifier]]s which are valid places to populate async
-   *                                  [[Feature]]s in a [[com.twitter.product_mixer.core.pipeline.Pipeline]]
+   * @pawam asyncquewyfeatuwehydwatow the hydwatow to vawidate
+   * @pawam vawidpipewinesteps        a-a set of [[pipewinestepidentifiew]]s which awe v-vawid pwaces to popuwate async
+   *                                  [[featuwe]]s i-in a [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewine]]
    */
-  def validateAsyncQueryFeatureHydrator(
-    asyncQueryFeatureHydrator: AsyncHydrator,
-    validPipelineSteps: Set[PipelineStepIdentifier]
-  ): Unit =
-    require(
-      validPipelineSteps.contains(asyncQueryFeatureHydrator.hydrateBefore),
-      s"`AsyncHydrator.hydrateBefore` contained ${asyncQueryFeatureHydrator.hydrateBefore} which was not in the parent pipeline's " +
-        s"`PipelineConfig` Companion object field `stepsAsyncFeatureHydrationCanBeCompletedBy = $validPipelineSteps`."
+  def vawidateasyncquewyfeatuwehydwatow(
+    asyncquewyfeatuwehydwatow: a-asynchydwatow, rawr
+    vawidpipewinesteps: s-set[pipewinestepidentifiew]
+  ): u-unit =
+    wequiwe(
+      v-vawidpipewinesteps.contains(asyncquewyfeatuwehydwatow.hydwatebefowe), -.-
+      s-s"`asynchydwatow.hydwatebefowe` c-contained ${asyncquewyfeatuwehydwatow.hydwatebefowe} which was nyot in the pawent pipewine's " +
+        s"`pipewineconfig` companion object fiewd `stepsasyncfeatuwehydwationcanbecompwetedby = $vawidpipewinesteps`."
     )
 }

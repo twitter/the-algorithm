@@ -1,21 +1,21 @@
-package com.twitter.servo.util
+package com.twittew.sewvo.utiw
 
-import com.twitter.finagle.mux.stats.MuxCancelledCategorizer
-import com.twitter.finagle.stats.CancelledCategorizer
-import com.twitter.util.FutureCancelledException
-import com.twitter.util.Throwables.RootCause
+impowt com.twittew.finagwe.mux.stats.muxcancewwedcategowizew
+i-impowt c-com.twittew.finagwe.stats.cancewwedcategowizew
+i-impowt com.twittew.utiw.futuwecancewwedexception
+i-impowt com.twittew.utiw.thwowabwes.wootcause
 
 /**
- * Helper that consolidates various ways (nested and top level) cancel exceptions can be detected.
+ * h-hewpew that c-consowidates v-vawious ways (nested a-and top wevew) cancew exceptions can be detected. >_<
  */
-object CancelledExceptionExtractor {
-  def unapply(e: Throwable): Option[Throwable] = {
+object cancewwedexceptionextwactow {
+  d-def unappwy(e: thwowabwe): option[thwowabwe] = {
     e match {
-      case _: FutureCancelledException => Some(e)
-      case MuxCancelledCategorizer(cause) => Some(cause)
-      case CancelledCategorizer(cause) => Some(cause)
-      case RootCause(CancelledExceptionExtractor(cause)) => Some(cause)
-      case _ => None
+      c-case _: futuwecancewwedexception => s-some(e)
+      case muxcancewwedcategowizew(cause) => some(cause)
+      case cancewwedcategowizew(cause) => s-some(cause)
+      case wootcause(cancewwedexceptionextwactow(cause)) => some(cause)
+      c-case _ => nyone
     }
   }
 }

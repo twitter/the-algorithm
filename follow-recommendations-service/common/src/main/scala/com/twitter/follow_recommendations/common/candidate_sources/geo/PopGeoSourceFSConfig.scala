@@ -1,20 +1,20 @@
-package com.twitter.follow_recommendations.common.candidate_sources.geo
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.geo
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+i-impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt c-com.twittew.timewines.configapi.fsname
+i-impowt c-com.twittew.timewines.configapi.fspawam
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class PopGeoSourceFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val intFSParams: Seq[FSBoundedParam[Int] with FSName] = Seq(
-    PopGeoSourceParams.PopGeoSourceGeoHashMaxPrecision,
-    PopGeoSourceParams.PopGeoSourceMaxResultsPerPrecision,
-    PopGeoSourceParams.PopGeoSourceGeoHashMinPrecision,
+@singweton
+cwass popgeosouwcefsconfig @inject() () extends featuweswitchconfig {
+  ovewwide vaw intfspawams: s-seq[fsboundedpawam[int] with fsname] = seq(
+    p-popgeosouwcepawams.popgeosouwcegeohashmaxpwecision, ^^;;
+    popgeosouwcepawams.popgeosouwcemaxwesuwtspewpwecision, >_<
+    p-popgeosouwcepawams.popgeosouwcegeohashminpwecision, mya
   )
-  override val booleanFSParams: Seq[FSParam[Boolean] with FSName] = Seq(
-    PopGeoSourceParams.PopGeoSourceReturnFromAllPrecisions,
+  ovewwide vaw booweanfspawams: seq[fspawam[boowean] w-with fsname] = seq(
+    popgeosouwcepawams.popgeosouwcewetuwnfwomawwpwecisions, mya
   )
 }

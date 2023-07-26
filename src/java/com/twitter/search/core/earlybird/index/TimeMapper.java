@@ -1,80 +1,80 @@
-package com.twitter.search.core.earlybird.index;
+package com.twittew.seawch.cowe.eawwybiwd.index;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import com.twitter.search.common.util.io.flushable.Flushable;
+i-impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
 
 /**
- * Maps timestamps to the doc IDs assigned to the documents that are indexed (tweets, users, etc.).
+ * m-maps timestamps t-to the doc ids a-assigned to the d-documents that a-awe indexed (tweets, XD u-usews, etc.). -.-
  */
-public interface TimeMapper extends Flushable {
-  // Unless specified, all time fields are seconds-since-epoch.
-  int ILLEGAL_TIME = Integer.MIN_VALUE;
+pubwic intewface timemappew extends fwushabwe {
+  // unwess s-specified, :3 aww time fiewds awe seconds-since-epoch. nyaa~~
+  i-int iwwegaw_time = integew.min_vawue;
 
   /**
-   * Returns the time of the newest tweet in the index.
+   * w-wetuwns the time of the nyewest tweet in the index. 😳
    *
-   * @return The time of the newest tweet in the index.
+   * @wetuwn t-the time of the nyewest tweet i-in the index. (⑅˘꒳˘)
    */
-  int getLastTime();
+  i-int getwasttime();
 
   /**
-   * Returns the time of the oldest tweet in the index.
+   * wetuwns the time of the owdest tweet in the index. nyaa~~
    *
-   * @return The time of the oldest tweet in the index.
+   * @wetuwn t-the time of the owdest tweet in the index. OwO
    */
-  int getFirstTime();
+  int getfiwsttime();
 
   /**
-   * Returns the timestamp of the document mapped to the given doc ID, or ILLEGAL_TIME if this
-   * mapper doesn't know about this doc ID.
+   * w-wetuwns the timestamp o-of the document m-mapped to the g-given doc id, rawr x3 o-ow iwwegaw_time if this
+   * mappew doesn't know a-about this doc id. XD
    *
-   * @param docID The document's internal ID.
-   * @return The timestamp of the document mapped to the given doc ID.
+   * @pawam docid the document's i-intewnaw id. σωσ
+   * @wetuwn the timestamp of the document mapped to the given doc id. (U ᵕ U❁)
    */
-  int getTime(int docID);
+  i-int gettime(int docid);
 
   /**
-   * Returns the doc ID of the first indexed document with a timestamp equal to or greater than the
-   * given timestamp.
+   * w-wetuwns t-the doc id of t-the fiwst indexed document with a timestamp equaw to ow gweatew t-than the
+   * given t-timestamp. (U ﹏ U)
    *
-   * If timeSeconds is larger than the max timestamp in this mapper, smallestDocID is returned.
-   * If timeSeconds is smaller than the min timestamp in the mapper, the largest docID is returned.
+   * if timeseconds i-is wawgew t-than the max timestamp in this m-mappew, :3 smowestdocid is wetuwned. ( ͡o ω ͡o )
+   * i-if timeseconds is smowew than the min timestamp i-in the mappew, σωσ the wawgest d-docid is wetuwned. >w<
    *
-   * Note that when tweets are indexed out of order, this method might return the doc ID of a tweet
-   * with a timestamp greater than timeSeconds, even if there's a tweet with a timestamp of
-   * timeSeconds. So the callers of this method can use the returned doc ID as a starting point for
-   * iteration purposes, but should have a check that the traversed doc IDs have a timestamp in the
-   * desired range. See SinceUntilFilter.getDocIdSet() for an example.
+   * nyote that when t-tweets awe indexed o-out of owdew, 😳😳😳 this method might wetuwn the doc id of a tweet
+   * with a timestamp gweatew than timeseconds, OwO e-even if thewe's a-a tweet with a timestamp of
+   * t-timeseconds. 😳 so t-the cawwews of t-this method can use the wetuwned doc id as a stawting point fow
+   * i-itewation puwposes, 😳😳😳 but shouwd have a check that the twavewsed doc ids have a-a timestamp in the
+   * desiwed w-wange. see sinceuntiwfiwtew.getdocidset() f-fow an e-exampwe. (˘ω˘)
    *
-   * Example:
-   *   DocIds:  6, 5, 4, 3, 2, 1, 0
-   *   Times:   1, 5, 3, 4, 4, 3, 6
-   * With that data:
-   *   findFirstDocId(1, 0) should return 6.
-   *   findFirstDocId(3, 0) should return 5.
-   *   findFirstDocId(4, 0) should return 5.
-   *   findFirstDocId(5, 0) should return 5.
-   *   findFirstDocId(6, 0) should return 0.
+   * exampwe:
+   *   d-docids:  6, ʘwʘ 5, ( ͡o ω ͡o ) 4, 3, 2, 1, 0
+   *   t-times:   1, o.O 5, 3, 4, 4, >w< 3, 6
+   * w-with t-that data:
+   *   findfiwstdocid(1, 😳 0) shouwd wetuwn 6. 🥺
+   *   findfiwstdocid(3, rawr x3 0) s-shouwd wetuwn 5. o.O
+   *   f-findfiwstdocid(4, rawr 0) s-shouwd wetuwn 5. ʘwʘ
+   *   f-findfiwstdocid(5, 😳😳😳 0) s-shouwd wetuwn 5. ^^;;
+   *   findfiwstdocid(6, o.O 0) shouwd w-wetuwn 0. (///ˬ///✿)
    *
-   * @param timeSeconds The boundary timestamp, in seconds.
-   * @param smallestDocID The doc ID to return if the given time boundary is larger than the max
-   *                      timestamp in this mapper.
+   * @pawam timeseconds the boundawy timestamp, σωσ in seconds.
+   * @pawam smowestdocid t-the doc id to wetuwn if the given time boundawy is wawgew t-than the max
+   *                      t-timestamp i-in this mappew. nyaa~~
    */
-  int findFirstDocId(int timeSeconds, int smallestDocID) throws IOException;
+  int findfiwstdocid(int t-timeseconds, ^^;; int smowestdocid) thwows i-ioexception;
 
   /**
-   * Optimizes this time mapper.
+   * optimizes t-this time mappew. ^•ﻌ•^
    *
-   * At segment optimization time, the doc IDs assigned to the documents in that segment might
-   * change (they might be mapped to a more compact space for performance reasons, for example).
-   * When that happens, we need to remap accordingly the doc IDs stored in the time mapper for that
-   * segment too. It would also be a good time to optimize the data stored in the time mapper.
+   * at segment optimization time, σωσ the doc ids assigned to the documents i-in that segment might
+   * c-change (they might be mapped t-to a mowe compact s-space fow pewfowmance weasons, -.- fow exampwe). ^^;;
+   * w-when that happens, w-we nyeed to wemap accowdingwy t-the doc ids s-stowed in the time mappew fow that
+   * segment too. XD it wouwd awso be a good time t-to optimize t-the data stowed i-in the time mappew. 🥺
    *
-   * @param originalDocIdMapper The doc ID mapper used by this segment before it was optimized.
-   * @param optimizedDocIdMapper The doc ID mapper used by this segment after it was optimized.
-   * @return An optimized TimeMapper with the same tweet IDs.
+   * @pawam owiginawdocidmappew t-the doc i-id mappew used by this segment b-befowe it was optimized. òωó
+   * @pawam optimizeddocidmappew the doc id mappew used by this segment a-aftew it was optimized. (ˆ ﻌ ˆ)♡
+   * @wetuwn a-an optimized timemappew with the same tweet i-ids. -.-
    */
-  TimeMapper optimize(DocIDToTweetIDMapper originalDocIdMapper,
-                      DocIDToTweetIDMapper optimizedDocIdMapper) throws IOException;
+  timemappew o-optimize(docidtotweetidmappew owiginawdocidmappew, :3
+                      docidtotweetidmappew optimizeddocidmappew) t-thwows ioexception;
 }

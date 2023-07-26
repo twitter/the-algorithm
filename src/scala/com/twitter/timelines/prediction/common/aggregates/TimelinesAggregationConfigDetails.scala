@@ -1,578 +1,578 @@
-package com.twitter.timelines.prediction.common.aggregates
+package com.twittew.timewines.pwediction.common.aggwegates
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.ml.api.constant.SharedFeatures.AUTHOR_ID
-import com.twitter.ml.api.constant.SharedFeatures.USER_ID
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework._
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics._
-import com.twitter.timelines.data_processing.ml_util.transforms.DownsampleTransform
-import com.twitter.timelines.data_processing.ml_util.transforms.RichRemoveAuthorIdZero
-import com.twitter.timelines.data_processing.ml_util.transforms.RichRemoveUserIdZero
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import com.twitter.timelines.prediction.features.engagement_features.EngagementDataRecordFeatures
-import com.twitter.timelines.prediction.features.engagement_features.EngagementDataRecordFeatures.RichUnifyPublicEngagersTransform
-import com.twitter.timelines.prediction.features.list_features.ListFeatures
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
-import com.twitter.timelines.prediction.features.request_context.RequestContextFeatures
-import com.twitter.timelines.prediction.features.semantic_core_features.SemanticCoreFeatures
-import com.twitter.timelines.prediction.transform.filter.FilterInNetworkTransform
-import com.twitter.timelines.prediction.transform.filter.FilterImageTweetTransform
-import com.twitter.timelines.prediction.transform.filter.FilterVideoTweetTransform
-import com.twitter.timelines.prediction.transform.filter.FilterOutImageVideoTweetTransform
-import com.twitter.util.Duration
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.mw.api.constant.shawedfeatuwes.authow_id
+i-impowt com.twittew.mw.api.constant.shawedfeatuwes.usew_id
+i-impowt c-com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk._
+i-impowt c-com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.metwics._
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.twansfowms.downsampwetwansfowm
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.twansfowms.wichwemoveauthowidzewo
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.twansfowms.wichwemoveusewidzewo
+impowt com.twittew.timewines.pwediction.featuwes.common.timewinesshawedfeatuwes
+i-impowt com.twittew.timewines.pwediction.featuwes.engagement_featuwes.engagementdatawecowdfeatuwes
+impowt com.twittew.timewines.pwediction.featuwes.engagement_featuwes.engagementdatawecowdfeatuwes.wichunifypubwicengagewstwansfowm
+impowt com.twittew.timewines.pwediction.featuwes.wist_featuwes.wistfeatuwes
+i-impowt com.twittew.timewines.pwediction.featuwes.wecap.wecapfeatuwes
+impowt com.twittew.timewines.pwediction.featuwes.wequest_context.wequestcontextfeatuwes
+i-impowt com.twittew.timewines.pwediction.featuwes.semantic_cowe_featuwes.semanticcowefeatuwes
+impowt com.twittew.timewines.pwediction.twansfowm.fiwtew.fiwtewinnetwowktwansfowm
+i-impowt com.twittew.timewines.pwediction.twansfowm.fiwtew.fiwtewimagetweettwansfowm
+i-impowt com.twittew.timewines.pwediction.twansfowm.fiwtew.fiwtewvideotweettwansfowm
+i-impowt com.twittew.timewines.pwediction.twansfowm.fiwtew.fiwtewoutimagevideotweettwansfowm
+impowt com.twittew.utiw.duwation
 
-trait TimelinesAggregationConfigDetails extends Serializable {
+twait timewinesaggwegationconfigdetaiws extends s-sewiawizabwe {
 
-  import TimelinesAggregationSources._
+  impowt timewinesaggwegationsouwces._
 
-  def outputHdfsPath: String
+  def outputhdfspath: stwing
 
   /**
-   * Converts the given logical store to a physical store. The reason we do not specify the
-   * physical store directly with the [[AggregateGroup]] is because of a cyclic dependency when
-   * create physical stores that are DalDataset with PersonalDataType annotations derived from
-   * the [[AggregateGroup]].
+   * convewts the given w-wogicaw stowe to a physicaw s-stowe. ^^ the weason w-we do nyot specify t-the
+   * physicaw s-stowe diwectwy with the [[aggwegategwoup]] is because of a-a cycwic dependency when
+   * cweate physicaw stowes t-that awe dawdataset with pewsonawdatatype annotations dewived fwom
+   * the [[aggwegategwoup]]. (///ˬ///✿)
    *
    */
-  def mkPhysicalStore(store: AggregateStore): AggregateStore
+  def mkphysicawstowe(stowe: aggwegatestowe): a-aggwegatestowe
 
-  def defaultMaxKvSourceFailures: Int = 100
+  def defauwtmaxkvsouwcefaiwuwes: i-int = 100
 
-  val timelinesOfflineAggregateSink = new OfflineStoreCommonConfig {
-    override def apply(startDate: String) = OfflineAggregateStoreCommonConfig(
-      outputHdfsPathPrefix = outputHdfsPath,
-      dummyAppId = "timelines_aggregates_v2_ro",
-      dummyDatasetPrefix = "timelines_aggregates_v2_ro",
-      startDate = startDate
+  vaw t-timewinesoffwineaggwegatesink = n-nyew offwinestowecommonconfig {
+    ovewwide def appwy(stawtdate: stwing) = offwineaggwegatestowecommonconfig(
+      o-outputhdfspathpwefix = o-outputhdfspath, -.-
+      dummyappid = "timewines_aggwegates_v2_wo", /(^•ω•^)
+      d-dummydatasetpwefix = "timewines_aggwegates_v2_wo", UwU
+      s-stawtdate = stawtdate
     )
   }
 
-  val UserAggregateStore = "user_aggregates"
-  val UserAuthorAggregateStore = "user_author_aggregates"
-  val UserOriginalAuthorAggregateStore = "user_original_author_aggregates"
-  val OriginalAuthorAggregateStore = "original_author_aggregates"
-  val UserEngagerAggregateStore = "user_engager_aggregates"
-  val UserMentionAggregateStore = "user_mention_aggregates"
-  val TwitterWideUserAggregateStore = "twitter_wide_user_aggregates"
-  val TwitterWideUserAuthorAggregateStore = "twitter_wide_user_author_aggregates"
-  val UserRequestHourAggregateStore = "user_request_hour_aggregates"
-  val UserRequestDowAggregateStore = "user_request_dow_aggregates"
-  val UserListAggregateStore = "user_list_aggregates"
-  val AuthorTopicAggregateStore = "author_topic_aggregates"
-  val UserTopicAggregateStore = "user_topic_aggregates"
-  val UserInferredTopicAggregateStore = "user_inferred_topic_aggregates"
-  val UserMediaUnderstandingAnnotationAggregateStore =
-    "user_media_understanding_annotation_aggregates"
-  val AuthorCountryCodeAggregateStore = "author_country_code_aggregates"
-  val OriginalAuthorCountryCodeAggregateStore = "original_author_country_code_aggregates"
+  v-vaw usewaggwegatestowe = "usew_aggwegates"
+  vaw u-usewauthowaggwegatestowe = "usew_authow_aggwegates"
+  vaw usewowiginawauthowaggwegatestowe = "usew_owiginaw_authow_aggwegates"
+  vaw owiginawauthowaggwegatestowe = "owiginaw_authow_aggwegates"
+  v-vaw usewengagewaggwegatestowe = "usew_engagew_aggwegates"
+  vaw usewmentionaggwegatestowe = "usew_mention_aggwegates"
+  v-vaw twittewwideusewaggwegatestowe = "twittew_wide_usew_aggwegates"
+  v-vaw twittewwideusewauthowaggwegatestowe = "twittew_wide_usew_authow_aggwegates"
+  v-vaw usewwequesthouwaggwegatestowe = "usew_wequest_houw_aggwegates"
+  vaw usewwequestdowaggwegatestowe = "usew_wequest_dow_aggwegates"
+  vaw usewwistaggwegatestowe = "usew_wist_aggwegates"
+  vaw authowtopicaggwegatestowe = "authow_topic_aggwegates"
+  vaw usewtopicaggwegatestowe = "usew_topic_aggwegates"
+  vaw usewinfewwedtopicaggwegatestowe = "usew_infewwed_topic_aggwegates"
+  v-vaw u-usewmediaundewstandingannotationaggwegatestowe =
+    "usew_media_undewstanding_annotation_aggwegates"
+  vaw authowcountwycodeaggwegatestowe = "authow_countwy_code_aggwegates"
+  v-vaw owiginawauthowcountwycodeaggwegatestowe = "owiginaw_authow_countwy_code_aggwegates"
 
   /**
-   * Step 3: Configure all aggregates to compute.
-   * Note that different subsets of aggregates in this list
-   * can be launched by different summingbird job instances.
-   * Any given job can be responsible for a set of AggregateGroup
-   * configs whose outputStores share the same exact startDate.
-   * AggregateGroups that do not share the same inputSource,
-   * outputStore or startDate MUST be launched using different
-   * summingbird jobs and passed in a different --start-time argument
-   * See science/scalding/mesos/timelines/prod.yaml for an example
-   * of how to configure your own job.
+   * s-step 3: configuwe a-aww aggwegates to compute. (⑅˘꒳˘)
+   * nyote that diffewent subsets o-of aggwegates in this wist
+   * can be waunched by diffewent summingbiwd job i-instances. ʘwʘ
+   * any given job c-can be wesponsibwe f-fow a set of a-aggwegategwoup
+   * configs whose o-outputstowes s-shawe the same exact s-stawtdate. σωσ
+   * a-aggwegategwoups that do nyot shawe the same i-inputsouwce, ^^
+   * o-outputstowe ow s-stawtdate must b-be waunched using d-diffewent
+   * summingbiwd jobs and passed in a diffewent --stawt-time a-awgument
+   * see science/scawding/mesos/timewines/pwod.yamw fow an exampwe
+   * of how to configuwe youw own job. OwO
    */
-  val negativeDownsampleTransform =
-    DownsampleTransform(
-      negativeSamplingRate = 0.03,
-      keepLabels = RecapUserFeatureAggregation.LabelsV2)
-  val negativeRecTweetDownsampleTransform = DownsampleTransform(
-    negativeSamplingRate = 0.03,
-    keepLabels = RectweetUserFeatureAggregation.RectweetLabelsForAggregation
+  v-vaw nyegativedownsampwetwansfowm =
+    downsampwetwansfowm(
+      nyegativesampwingwate = 0.03, (ˆ ﻌ ˆ)♡
+      keepwabews = w-wecapusewfeatuweaggwegation.wabewsv2)
+  v-vaw nyegativewectweetdownsampwetwansfowm = d-downsampwetwansfowm(
+    nyegativesampwingwate = 0.03, o.O
+    k-keepwabews = wectweetusewfeatuweaggwegation.wectweetwabewsfowaggwegation
   )
 
-  val userAggregatesV2: AggregateGroup =
-    AggregateGroup(
-      inputSource = timelinesDailyRecapMinimalSource,
-      aggregatePrefix = "user_aggregate_v2",
-      preTransforms = Seq(RichRemoveUserIdZero), /* Eliminates reducer skew */
-      keys = Set(USER_ID),
-      features = RecapUserFeatureAggregation.UserFeaturesV2,
-      labels = RecapUserFeatureAggregation.LabelsV2,
-      metrics = Set(CountMetric, SumMetric),
-      halfLives = Set(50.days),
-      outputStore = mkPhysicalStore(
-        OfflineAggregateDataRecordStore(
-          name = UserAggregateStore,
-          startDate = "2016-07-15 00:00",
-          commonConfig = timelinesOfflineAggregateSink,
-          maxKvSourceFailures = defaultMaxKvSourceFailures
+  v-vaw usewaggwegatesv2: a-aggwegategwoup =
+    aggwegategwoup(
+      inputsouwce = timewinesdaiwywecapminimawsouwce, (˘ω˘)
+      aggwegatepwefix = "usew_aggwegate_v2", 😳
+      pwetwansfowms = s-seq(wichwemoveusewidzewo), (U ᵕ U❁) /* ewiminates w-weducew skew */
+      keys = s-set(usew_id), :3
+      f-featuwes = wecapusewfeatuweaggwegation.usewfeatuwesv2, o.O
+      wabews = wecapusewfeatuweaggwegation.wabewsv2, (///ˬ///✿)
+      metwics = s-set(countmetwic, OwO s-summetwic), >w<
+      hawfwives = set(50.days), ^^
+      o-outputstowe = m-mkphysicawstowe(
+        offwineaggwegatedatawecowdstowe(
+          nyame = usewaggwegatestowe, (⑅˘꒳˘)
+          stawtdate = "2016-07-15 00:00", ʘwʘ
+          commonconfig = t-timewinesoffwineaggwegatesink, (///ˬ///✿)
+          m-maxkvsouwcefaiwuwes = d-defauwtmaxkvsouwcefaiwuwes
         ))
     )
 
-  val userAuthorAggregatesV2: Set[AggregateGroup] = {
+  vaw usewauthowaggwegatesv2: s-set[aggwegategwoup] = {
 
     /**
-     * NOTE: We need to remove records from out-of-network authors from the recap input
-     * records (which now include out-of-network records as well after merging recap and
-     * rectweet models) that are used to compute user-author aggregates. This is necessary
-     * to limit the growth rate of user-author aggregates.
+     * n-nyote: we nyeed to wemove w-wecowds fwom out-of-netwowk authows fwom the wecap input
+     * wecowds (which nyow i-incwude out-of-netwowk w-wecowds as weww aftew mewging wecap and
+     * w-wectweet m-modews) that awe used to compute usew-authow aggwegates. XD this i-is nyecessawy
+     * to wimit the gwowth wate of usew-authow aggwegates. 😳
      */
-    val allFeatureAggregates = Set(
-      AggregateGroup(
-        inputSource = timelinesDailyRecapMinimalSource,
-        aggregatePrefix = "user_author_aggregate_v2",
-        preTransforms = Seq(FilterInNetworkTransform, RichRemoveUserIdZero),
-        keys = Set(USER_ID, AUTHOR_ID),
-        features = RecapUserFeatureAggregation.UserAuthorFeaturesV2,
-        labels = RecapUserFeatureAggregation.LabelsV2,
-        metrics = Set(SumMetric),
-        halfLives = Set(50.days),
-        outputStore = mkPhysicalStore(
-          OfflineAggregateDataRecordStore(
-            name = UserAuthorAggregateStore,
-            startDate = "2016-07-15 00:00",
-            commonConfig = timelinesOfflineAggregateSink,
-            maxKvSourceFailures = defaultMaxKvSourceFailures
+    vaw awwfeatuweaggwegates = s-set(
+      aggwegategwoup(
+        inputsouwce = timewinesdaiwywecapminimawsouwce, >w<
+        a-aggwegatepwefix = "usew_authow_aggwegate_v2", (˘ω˘)
+        p-pwetwansfowms = seq(fiwtewinnetwowktwansfowm, nyaa~~ wichwemoveusewidzewo), 😳😳😳
+        keys = set(usew_id, (U ﹏ U) a-authow_id), (˘ω˘)
+        f-featuwes = wecapusewfeatuweaggwegation.usewauthowfeatuwesv2, :3
+        wabews = wecapusewfeatuweaggwegation.wabewsv2, >w<
+        m-metwics = set(summetwic), ^^
+        hawfwives = s-set(50.days), 😳😳😳
+        outputstowe = mkphysicawstowe(
+          offwineaggwegatedatawecowdstowe(
+            n-nyame = usewauthowaggwegatestowe, nyaa~~
+            s-stawtdate = "2016-07-15 00:00", (⑅˘꒳˘)
+            c-commonconfig = timewinesoffwineaggwegatesink, :3
+            m-maxkvsouwcefaiwuwes = defauwtmaxkvsouwcefaiwuwes
           ))
       )
     )
 
-    val countAggregates: Set[AggregateGroup] = Set(
-      AggregateGroup(
-        inputSource = timelinesDailyRecapMinimalSource,
-        aggregatePrefix = "user_author_aggregate_v2",
-        preTransforms = Seq(FilterInNetworkTransform, RichRemoveUserIdZero),
-        keys = Set(USER_ID, AUTHOR_ID),
-        features = RecapUserFeatureAggregation.UserAuthorFeaturesV2Count,
-        labels = RecapUserFeatureAggregation.LabelsV2,
-        metrics = Set(CountMetric),
-        halfLives = Set(50.days),
-        outputStore = mkPhysicalStore(
-          OfflineAggregateDataRecordStore(
-            name = UserAuthorAggregateStore,
-            startDate = "2016-07-15 00:00",
-            commonConfig = timelinesOfflineAggregateSink,
-            maxKvSourceFailures = defaultMaxKvSourceFailures
+    v-vaw countaggwegates: s-set[aggwegategwoup] = s-set(
+      aggwegategwoup(
+        i-inputsouwce = timewinesdaiwywecapminimawsouwce, ʘwʘ
+        a-aggwegatepwefix = "usew_authow_aggwegate_v2", rawr x3
+        pwetwansfowms = seq(fiwtewinnetwowktwansfowm, w-wichwemoveusewidzewo), (///ˬ///✿)
+        k-keys = s-set(usew_id, 😳😳😳 authow_id), XD
+        featuwes = wecapusewfeatuweaggwegation.usewauthowfeatuwesv2count, >_<
+        wabews = w-wecapusewfeatuweaggwegation.wabewsv2, >w<
+        metwics = set(countmetwic), /(^•ω•^)
+        h-hawfwives = s-set(50.days), :3
+        outputstowe = mkphysicawstowe(
+          offwineaggwegatedatawecowdstowe(
+            n-nyame = usewauthowaggwegatestowe, ʘwʘ
+            s-stawtdate = "2016-07-15 00:00", (˘ω˘)
+            c-commonconfig = t-timewinesoffwineaggwegatesink,
+            maxkvsouwcefaiwuwes = d-defauwtmaxkvsouwcefaiwuwes
           ))
       )
     )
 
-    allFeatureAggregates ++ countAggregates
+    awwfeatuweaggwegates ++ countaggwegates
   }
 
-  val userAggregatesV5Continuous: AggregateGroup =
-    AggregateGroup(
-      inputSource = timelinesDailyRecapMinimalSource,
-      aggregatePrefix = "user_aggregate_v5.continuous",
-      preTransforms = Seq(RichRemoveUserIdZero),
-      keys = Set(USER_ID),
-      features = RecapUserFeatureAggregation.UserFeaturesV5Continuous,
-      labels = RecapUserFeatureAggregation.LabelsV2,
-      metrics = Set(CountMetric, SumMetric, SumSqMetric),
-      halfLives = Set(50.days),
-      outputStore = mkPhysicalStore(
-        OfflineAggregateDataRecordStore(
-          name = UserAggregateStore,
-          startDate = "2016-07-15 00:00",
-          commonConfig = timelinesOfflineAggregateSink,
-          maxKvSourceFailures = defaultMaxKvSourceFailures
+  vaw usewaggwegatesv5continuous: aggwegategwoup =
+    aggwegategwoup(
+      inputsouwce = t-timewinesdaiwywecapminimawsouwce, (ꈍᴗꈍ)
+      aggwegatepwefix = "usew_aggwegate_v5.continuous", ^^
+      p-pwetwansfowms = seq(wichwemoveusewidzewo), ^^
+      k-keys = set(usew_id), ( ͡o ω ͡o )
+      f-featuwes = wecapusewfeatuweaggwegation.usewfeatuwesv5continuous, -.-
+      w-wabews = wecapusewfeatuweaggwegation.wabewsv2, ^^;;
+      m-metwics = set(countmetwic, ^•ﻌ•^ s-summetwic, (˘ω˘) sumsqmetwic), o.O
+      hawfwives = s-set(50.days), (✿oωo)
+      outputstowe = m-mkphysicawstowe(
+        offwineaggwegatedatawecowdstowe(
+          nyame = usewaggwegatestowe, 😳😳😳
+          stawtdate = "2016-07-15 00:00", (ꈍᴗꈍ)
+          commonconfig = timewinesoffwineaggwegatesink, σωσ
+          maxkvsouwcefaiwuwes = defauwtmaxkvsouwcefaiwuwes
         ))
     )
 
-  val userAuthorAggregatesV5: AggregateGroup =
-    AggregateGroup(
-      inputSource = timelinesDailyRecapMinimalSource,
-      aggregatePrefix = "user_author_aggregate_v5",
-      preTransforms = Seq(FilterInNetworkTransform, RichRemoveUserIdZero),
-      keys = Set(USER_ID, AUTHOR_ID),
-      features = RecapUserFeatureAggregation.UserAuthorFeaturesV5,
-      labels = RecapUserFeatureAggregation.LabelsV2,
-      metrics = Set(CountMetric),
-      halfLives = Set(50.days),
-      outputStore = mkPhysicalStore(
-        OfflineAggregateDataRecordStore(
-          name = UserAuthorAggregateStore,
-          startDate = "2016-07-15 00:00",
-          commonConfig = timelinesOfflineAggregateSink,
-          maxKvSourceFailures = defaultMaxKvSourceFailures
+  v-vaw u-usewauthowaggwegatesv5: a-aggwegategwoup =
+    aggwegategwoup(
+      inputsouwce = t-timewinesdaiwywecapminimawsouwce, UwU
+      aggwegatepwefix = "usew_authow_aggwegate_v5", ^•ﻌ•^
+      pwetwansfowms = seq(fiwtewinnetwowktwansfowm, mya wichwemoveusewidzewo), /(^•ω•^)
+      keys = s-set(usew_id, rawr authow_id),
+      f-featuwes = wecapusewfeatuweaggwegation.usewauthowfeatuwesv5, nyaa~~
+      wabews = wecapusewfeatuweaggwegation.wabewsv2, ( ͡o ω ͡o )
+      m-metwics = set(countmetwic), σωσ
+      hawfwives = s-set(50.days),
+      o-outputstowe = mkphysicawstowe(
+        o-offwineaggwegatedatawecowdstowe(
+          n-nyame = usewauthowaggwegatestowe,
+          stawtdate = "2016-07-15 00:00", (✿oωo)
+          commonconfig = timewinesoffwineaggwegatesink, (///ˬ///✿)
+          m-maxkvsouwcefaiwuwes = d-defauwtmaxkvsouwcefaiwuwes
         ))
     )
 
-  val tweetSourceUserAuthorAggregatesV1: AggregateGroup =
-    AggregateGroup(
-      inputSource = timelinesDailyRecapMinimalSource,
-      aggregatePrefix = "user_author_aggregate_tweetsource_v1",
-      preTransforms = Seq(FilterInNetworkTransform, RichRemoveUserIdZero),
-      keys = Set(USER_ID, AUTHOR_ID),
-      features = RecapUserFeatureAggregation.UserAuthorTweetSourceFeaturesV1,
-      labels = RecapUserFeatureAggregation.LabelsV2,
-      metrics = Set(CountMetric, SumMetric),
-      halfLives = Set(50.days),
-      outputStore = mkPhysicalStore(
-        OfflineAggregateDataRecordStore(
-          name = UserAuthorAggregateStore,
-          startDate = "2016-07-15 00:00",
-          commonConfig = timelinesOfflineAggregateSink,
-          maxKvSourceFailures = defaultMaxKvSourceFailures
+  vaw t-tweetsouwceusewauthowaggwegatesv1: a-aggwegategwoup =
+    a-aggwegategwoup(
+      inputsouwce = timewinesdaiwywecapminimawsouwce, σωσ
+      a-aggwegatepwefix = "usew_authow_aggwegate_tweetsouwce_v1", UwU
+      p-pwetwansfowms = seq(fiwtewinnetwowktwansfowm, (⑅˘꒳˘) w-wichwemoveusewidzewo), /(^•ω•^)
+      k-keys = set(usew_id, -.- authow_id), (ˆ ﻌ ˆ)♡
+      f-featuwes = wecapusewfeatuweaggwegation.usewauthowtweetsouwcefeatuwesv1, nyaa~~
+      wabews = wecapusewfeatuweaggwegation.wabewsv2, ʘwʘ
+      m-metwics = set(countmetwic, :3 s-summetwic), (U ᵕ U❁)
+      h-hawfwives = set(50.days), (U ﹏ U)
+      o-outputstowe = mkphysicawstowe(
+        offwineaggwegatedatawecowdstowe(
+          nyame = u-usewauthowaggwegatestowe, ^^
+          s-stawtdate = "2016-07-15 00:00", òωó
+          c-commonconfig = timewinesoffwineaggwegatesink, /(^•ω•^)
+          maxkvsouwcefaiwuwes = defauwtmaxkvsouwcefaiwuwes
         ))
     )
 
-  val userEngagerAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_engager_aggregate",
-    keys = Set(USER_ID, EngagementDataRecordFeatures.PublicEngagementUserIds),
-    features = Set.empty,
-    labels = RecapUserFeatureAggregation.LabelsV2,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserEngagerAggregateStore,
-        startDate = "2016-09-02 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
-      )),
-    preTransforms = Seq(
-      RichRemoveUserIdZero,
-      RichUnifyPublicEngagersTransform
+  vaw u-usewengagewaggwegates = aggwegategwoup(
+    inputsouwce = t-timewinesdaiwywecapminimawsouwce, 😳😳😳
+    a-aggwegatepwefix = "usew_engagew_aggwegate", :3
+    keys = set(usew_id, (///ˬ///✿) e-engagementdatawecowdfeatuwes.pubwicengagementusewids), rawr x3
+    featuwes = set.empty, (U ᵕ U❁)
+    w-wabews = w-wecapusewfeatuweaggwegation.wabewsv2, (⑅˘꒳˘)
+    metwics = set(countmetwic), (˘ω˘)
+    h-hawfwives = set(50.days), :3
+    outputstowe = m-mkphysicawstowe(
+      o-offwineaggwegatedatawecowdstowe(
+        nyame = u-usewengagewaggwegatestowe, XD
+        stawtdate = "2016-09-02 00:00", >_<
+        c-commonconfig = t-timewinesoffwineaggwegatesink, (✿oωo)
+        m-maxkvsouwcefaiwuwes = defauwtmaxkvsouwcefaiwuwes
+      )), (ꈍᴗꈍ)
+    pwetwansfowms = seq(
+      wichwemoveusewidzewo,
+      wichunifypubwicengagewstwansfowm
     )
   )
 
-  val userMentionAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    preTransforms = Seq(RichRemoveUserIdZero), /* Eliminates reducer skew */
-    aggregatePrefix = "user_mention_aggregate",
-    keys = Set(USER_ID, RecapFeatures.MENTIONED_SCREEN_NAMES),
-    features = Set.empty,
-    labels = RecapUserFeatureAggregation.LabelsV2,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserMentionAggregateStore,
-        startDate = "2017-03-01 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
-      )),
-    includeAnyLabel = false
+  vaw usewmentionaggwegates = aggwegategwoup(
+    inputsouwce = timewinesdaiwywecapminimawsouwce, XD
+    pwetwansfowms = seq(wichwemoveusewidzewo), :3 /* ewiminates weducew skew */
+    a-aggwegatepwefix = "usew_mention_aggwegate", mya
+    k-keys = set(usew_id, òωó wecapfeatuwes.mentioned_scween_names), nyaa~~
+    featuwes = s-set.empty,
+    w-wabews = wecapusewfeatuweaggwegation.wabewsv2, 🥺
+    m-metwics = set(countmetwic), -.-
+    hawfwives = set(50.days), 🥺
+    o-outputstowe = mkphysicawstowe(
+      offwineaggwegatedatawecowdstowe(
+        nyame = u-usewmentionaggwegatestowe, (˘ω˘)
+        s-stawtdate = "2017-03-01 00:00", òωó
+        commonconfig = t-timewinesoffwineaggwegatesink,
+        maxkvsouwcefaiwuwes = d-defauwtmaxkvsouwcefaiwuwes
+      )), UwU
+    i-incwudeanywabew = fawse
   )
 
-  val twitterWideUserAggregates = AggregateGroup(
-    inputSource = timelinesDailyTwitterWideSource,
-    preTransforms = Seq(RichRemoveUserIdZero), /* Eliminates reducer skew */
-    aggregatePrefix = "twitter_wide_user_aggregate",
-    keys = Set(USER_ID),
-    features = RecapUserFeatureAggregation.TwitterWideFeatures,
-    labels = RecapUserFeatureAggregation.TwitterWideLabels,
-    metrics = Set(CountMetric, SumMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = TwitterWideUserAggregateStore,
-        startDate = "2016-12-28 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+  vaw twittewwideusewaggwegates = a-aggwegategwoup(
+    i-inputsouwce = t-timewinesdaiwytwittewwidesouwce, ^•ﻌ•^
+    p-pwetwansfowms = s-seq(wichwemoveusewidzewo), mya /* e-ewiminates w-weducew skew */
+    a-aggwegatepwefix = "twittew_wide_usew_aggwegate", (✿oωo)
+    keys = s-set(usew_id), XD
+    featuwes = w-wecapusewfeatuweaggwegation.twittewwidefeatuwes, :3
+    w-wabews = w-wecapusewfeatuweaggwegation.twittewwidewabews, (U ﹏ U)
+    metwics = set(countmetwic, UwU summetwic), ʘwʘ
+    hawfwives = s-set(50.days), >w<
+    outputstowe = mkphysicawstowe(
+      o-offwineaggwegatedatawecowdstowe(
+        nyame = t-twittewwideusewaggwegatestowe, 😳😳😳
+        s-stawtdate = "2016-12-28 00:00", rawr
+        c-commonconfig = timewinesoffwineaggwegatesink, ^•ﻌ•^
+        m-maxkvsouwcefaiwuwes = defauwtmaxkvsouwcefaiwuwes
       ))
   )
 
-  val twitterWideUserAuthorAggregates = AggregateGroup(
-    inputSource = timelinesDailyTwitterWideSource,
-    preTransforms = Seq(RichRemoveUserIdZero), /* Eliminates reducer skew */
-    aggregatePrefix = "twitter_wide_user_author_aggregate",
-    keys = Set(USER_ID, AUTHOR_ID),
-    features = RecapUserFeatureAggregation.TwitterWideFeatures,
-    labels = RecapUserFeatureAggregation.TwitterWideLabels,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = TwitterWideUserAuthorAggregateStore,
-        startDate = "2016-12-28 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
-      )),
-    includeAnyLabel = false
+  v-vaw twittewwideusewauthowaggwegates = aggwegategwoup(
+    inputsouwce = t-timewinesdaiwytwittewwidesouwce, σωσ
+    pwetwansfowms = s-seq(wichwemoveusewidzewo), :3 /* ewiminates weducew skew */
+    aggwegatepwefix = "twittew_wide_usew_authow_aggwegate", rawr x3
+    keys = set(usew_id, nyaa~~ a-authow_id),
+    featuwes = wecapusewfeatuweaggwegation.twittewwidefeatuwes, :3
+    w-wabews = wecapusewfeatuweaggwegation.twittewwidewabews, >w<
+    metwics = s-set(countmetwic), rawr
+    hawfwives = set(50.days), 😳
+    outputstowe = mkphysicawstowe(
+      o-offwineaggwegatedatawecowdstowe(
+        nyame = t-twittewwideusewauthowaggwegatestowe,
+        s-stawtdate = "2016-12-28 00:00", 😳
+        c-commonconfig = timewinesoffwineaggwegatesink, 🥺
+        maxkvsouwcefaiwuwes = d-defauwtmaxkvsouwcefaiwuwes
+      )), rawr x3
+    i-incwudeanywabew = fawse
   )
 
   /**
-   * User-HourOfDay and User-DayOfWeek aggregations, both for recap and rectweet
+   * usew-houwofday a-and usew-dayofweek aggwegations, ^^ both fow wecap a-and wectweet
    */
-  val userRequestHourAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_request_context_aggregate.hour",
-    preTransforms = Seq(RichRemoveUserIdZero, negativeDownsampleTransform),
-    keys = Set(USER_ID, RequestContextFeatures.TIMESTAMP_GMT_HOUR),
-    features = Set.empty,
-    labels = RecapUserFeatureAggregation.LabelsV2,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserRequestHourAggregateStore,
-        startDate = "2017-08-01 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+  vaw usewwequesthouwaggwegates = a-aggwegategwoup(
+    i-inputsouwce = t-timewinesdaiwywecapminimawsouwce, ( ͡o ω ͡o )
+    aggwegatepwefix = "usew_wequest_context_aggwegate.houw", XD
+    p-pwetwansfowms = s-seq(wichwemoveusewidzewo, ^^ n-nyegativedownsampwetwansfowm), (⑅˘꒳˘)
+    k-keys = set(usew_id, (⑅˘꒳˘) wequestcontextfeatuwes.timestamp_gmt_houw), ^•ﻌ•^
+    featuwes = s-set.empty, ( ͡o ω ͡o )
+    w-wabews = w-wecapusewfeatuweaggwegation.wabewsv2,
+    m-metwics = s-set(countmetwic), ( ͡o ω ͡o )
+    h-hawfwives = s-set(50.days), (✿oωo)
+    o-outputstowe = mkphysicawstowe(
+      offwineaggwegatedatawecowdstowe(
+        n-nyame = usewwequesthouwaggwegatestowe, 😳😳😳
+        s-stawtdate = "2017-08-01 00:00", OwO
+        commonconfig = timewinesoffwineaggwegatesink, ^^
+        m-maxkvsouwcefaiwuwes = d-defauwtmaxkvsouwcefaiwuwes
       ))
   )
 
-  val userRequestDowAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_request_context_aggregate.dow",
-    preTransforms = Seq(RichRemoveUserIdZero, negativeDownsampleTransform),
-    keys = Set(USER_ID, RequestContextFeatures.TIMESTAMP_GMT_DOW),
-    features = Set.empty,
-    labels = RecapUserFeatureAggregation.LabelsV2,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserRequestDowAggregateStore,
-        startDate = "2017-08-01 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+  v-vaw usewwequestdowaggwegates = aggwegategwoup(
+    inputsouwce = timewinesdaiwywecapminimawsouwce, rawr x3
+    a-aggwegatepwefix = "usew_wequest_context_aggwegate.dow", 🥺
+    p-pwetwansfowms = s-seq(wichwemoveusewidzewo, (ˆ ﻌ ˆ)♡ nyegativedownsampwetwansfowm), ( ͡o ω ͡o )
+    keys = set(usew_id, >w< wequestcontextfeatuwes.timestamp_gmt_dow), /(^•ω•^)
+    f-featuwes = s-set.empty, 😳😳😳
+    wabews = wecapusewfeatuweaggwegation.wabewsv2, (U ᵕ U❁)
+    m-metwics = s-set(countmetwic), (˘ω˘)
+    hawfwives = set(50.days), 😳
+    outputstowe = m-mkphysicawstowe(
+      o-offwineaggwegatedatawecowdstowe(
+        n-nyame = usewwequestdowaggwegatestowe, (ꈍᴗꈍ)
+        s-stawtdate = "2017-08-01 00:00", :3
+        commonconfig = timewinesoffwineaggwegatesink, /(^•ω•^)
+        m-maxkvsouwcefaiwuwes = d-defauwtmaxkvsouwcefaiwuwes
       ))
   )
 
-  val authorTopicAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "author_topic_aggregate",
-    preTransforms = Seq(RichRemoveUserIdZero),
-    keys = Set(AUTHOR_ID, TimelinesSharedFeatures.TOPIC_ID),
-    features = Set.empty,
-    labels = RecapUserFeatureAggregation.LabelsV2,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = AuthorTopicAggregateStore,
-        startDate = "2020-05-19 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+  vaw authowtopicaggwegates = aggwegategwoup(
+    inputsouwce = t-timewinesdaiwywecapminimawsouwce, ^^;;
+    aggwegatepwefix = "authow_topic_aggwegate", o.O
+    pwetwansfowms = s-seq(wichwemoveusewidzewo), 😳
+    keys = set(authow_id, UwU t-timewinesshawedfeatuwes.topic_id), >w<
+    featuwes = s-set.empty, o.O
+    wabews = w-wecapusewfeatuweaggwegation.wabewsv2, (˘ω˘)
+    m-metwics = set(countmetwic), òωó
+    h-hawfwives = set(50.days), nyaa~~
+    o-outputstowe = m-mkphysicawstowe(
+      offwineaggwegatedatawecowdstowe(
+        n-nyame = a-authowtopicaggwegatestowe, ( ͡o ω ͡o )
+        stawtdate = "2020-05-19 00:00", 😳😳😳
+        c-commonconfig = t-timewinesoffwineaggwegatesink, ^•ﻌ•^
+        m-maxkvsouwcefaiwuwes = defauwtmaxkvsouwcefaiwuwes
       ))
   )
 
-  val userTopicAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_topic_aggregate",
-    preTransforms = Seq(RichRemoveUserIdZero),
-    keys = Set(USER_ID, TimelinesSharedFeatures.TOPIC_ID),
-    features = Set.empty,
-    labels = RecapUserFeatureAggregation.LabelsV2,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserTopicAggregateStore,
-        startDate = "2020-05-23 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+  v-vaw usewtopicaggwegates = aggwegategwoup(
+    inputsouwce = timewinesdaiwywecapminimawsouwce, (˘ω˘)
+    a-aggwegatepwefix = "usew_topic_aggwegate", (˘ω˘)
+    p-pwetwansfowms = s-seq(wichwemoveusewidzewo), -.-
+    keys = set(usew_id, ^•ﻌ•^ timewinesshawedfeatuwes.topic_id), /(^•ω•^)
+    featuwes = set.empty, (///ˬ///✿)
+    w-wabews = wecapusewfeatuweaggwegation.wabewsv2, mya
+    metwics = s-set(countmetwic), o.O
+    h-hawfwives = set(50.days), ^•ﻌ•^
+    outputstowe = m-mkphysicawstowe(
+      offwineaggwegatedatawecowdstowe(
+        n-nyame = usewtopicaggwegatestowe, (U ᵕ U❁)
+        s-stawtdate = "2020-05-23 00:00", :3
+        c-commonconfig = t-timewinesoffwineaggwegatesink, (///ˬ///✿)
+        m-maxkvsouwcefaiwuwes = defauwtmaxkvsouwcefaiwuwes
       ))
   )
 
-  val userTopicAggregatesV2 = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_topic_aggregate_v2",
-    preTransforms = Seq(RichRemoveUserIdZero),
-    keys = Set(USER_ID, TimelinesSharedFeatures.TOPIC_ID),
-    features = RecapUserFeatureAggregation.UserTopicFeaturesV2Count,
-    labels = RecapUserFeatureAggregation.LabelsV2,
-    includeAnyFeature = false,
-    includeAnyLabel = false,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserTopicAggregateStore,
-        startDate = "2020-05-23 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+  vaw usewtopicaggwegatesv2 = aggwegategwoup(
+    i-inputsouwce = timewinesdaiwywecapminimawsouwce, (///ˬ///✿)
+    a-aggwegatepwefix = "usew_topic_aggwegate_v2", 🥺
+    pwetwansfowms = seq(wichwemoveusewidzewo), -.-
+    keys = set(usew_id, nyaa~~ t-timewinesshawedfeatuwes.topic_id), (///ˬ///✿)
+    featuwes = wecapusewfeatuweaggwegation.usewtopicfeatuwesv2count, 🥺
+    wabews = wecapusewfeatuweaggwegation.wabewsv2, >w<
+    incwudeanyfeatuwe = f-fawse, rawr x3
+    i-incwudeanywabew = fawse, (⑅˘꒳˘)
+    m-metwics = set(countmetwic), σωσ
+    hawfwives = set(50.days), XD
+    outputstowe = m-mkphysicawstowe(
+      o-offwineaggwegatedatawecowdstowe(
+        nyame = u-usewtopicaggwegatestowe, -.-
+        stawtdate = "2020-05-23 00:00", >_<
+        c-commonconfig = timewinesoffwineaggwegatesink, rawr
+        maxkvsouwcefaiwuwes = defauwtmaxkvsouwcefaiwuwes
       ))
   )
 
-  val userInferredTopicAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_inferred_topic_aggregate",
-    preTransforms = Seq(RichRemoveUserIdZero),
-    keys = Set(USER_ID, TimelinesSharedFeatures.INFERRED_TOPIC_IDS),
-    features = Set.empty,
-    labels = RecapUserFeatureAggregation.LabelsV2,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserInferredTopicAggregateStore,
-        startDate = "2020-09-09 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+  v-vaw usewinfewwedtopicaggwegates = aggwegategwoup(
+    inputsouwce = t-timewinesdaiwywecapminimawsouwce, 😳😳😳
+    a-aggwegatepwefix = "usew_infewwed_topic_aggwegate", UwU
+    p-pwetwansfowms = seq(wichwemoveusewidzewo), (U ﹏ U)
+    keys = set(usew_id, t-timewinesshawedfeatuwes.infewwed_topic_ids), (˘ω˘)
+    featuwes = set.empty, /(^•ω•^)
+    wabews = wecapusewfeatuweaggwegation.wabewsv2, (U ﹏ U)
+    metwics = s-set(countmetwic), ^•ﻌ•^
+    h-hawfwives = s-set(50.days),
+    o-outputstowe = mkphysicawstowe(
+      offwineaggwegatedatawecowdstowe(
+        n-nyame = usewinfewwedtopicaggwegatestowe, >w<
+        s-stawtdate = "2020-09-09 00:00", ʘwʘ
+        commonconfig = timewinesoffwineaggwegatesink, òωó
+        m-maxkvsouwcefaiwuwes = defauwtmaxkvsouwcefaiwuwes
       ))
   )
 
-  val userInferredTopicAggregatesV2 = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_inferred_topic_aggregate_v2",
-    preTransforms = Seq(RichRemoveUserIdZero),
-    keys = Set(USER_ID, TimelinesSharedFeatures.INFERRED_TOPIC_IDS),
-    features = RecapUserFeatureAggregation.UserTopicFeaturesV2Count,
-    labels = RecapUserFeatureAggregation.LabelsV2,
-    includeAnyFeature = false,
-    includeAnyLabel = false,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserInferredTopicAggregateStore,
-        startDate = "2020-09-09 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+  vaw usewinfewwedtopicaggwegatesv2 = a-aggwegategwoup(
+    inputsouwce = timewinesdaiwywecapminimawsouwce, o.O
+    a-aggwegatepwefix = "usew_infewwed_topic_aggwegate_v2",
+    p-pwetwansfowms = seq(wichwemoveusewidzewo), ( ͡o ω ͡o )
+    k-keys = set(usew_id, mya t-timewinesshawedfeatuwes.infewwed_topic_ids), >_<
+    f-featuwes = wecapusewfeatuweaggwegation.usewtopicfeatuwesv2count, rawr
+    wabews = wecapusewfeatuweaggwegation.wabewsv2, >_<
+    i-incwudeanyfeatuwe = fawse, (U ﹏ U)
+    incwudeanywabew = f-fawse, rawr
+    metwics = set(countmetwic), (U ᵕ U❁)
+    hawfwives = set(50.days), (ˆ ﻌ ˆ)♡
+    outputstowe = m-mkphysicawstowe(
+      o-offwineaggwegatedatawecowdstowe(
+        n-nyame = u-usewinfewwedtopicaggwegatestowe, >_<
+        s-stawtdate = "2020-09-09 00:00", ^^;;
+        commonconfig = t-timewinesoffwineaggwegatesink, ʘwʘ
+        maxkvsouwcefaiwuwes = defauwtmaxkvsouwcefaiwuwes
       ))
   )
 
-  val userReciprocalEngagementAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_aggregate_v6",
-    preTransforms = Seq(RichRemoveUserIdZero),
-    keys = Set(USER_ID),
-    features = Set.empty,
-    labels = RecapUserFeatureAggregation.ReciprocalLabels,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserAggregateStore,
-        startDate = "2016-07-15 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
-      )),
-    includeAnyLabel = false
+  v-vaw usewwecipwocawengagementaggwegates = a-aggwegategwoup(
+    inputsouwce = timewinesdaiwywecapminimawsouwce, 😳😳😳
+    a-aggwegatepwefix = "usew_aggwegate_v6", UwU
+    p-pwetwansfowms = seq(wichwemoveusewidzewo), OwO
+    k-keys = set(usew_id), :3
+    featuwes = set.empty, -.-
+    w-wabews = w-wecapusewfeatuweaggwegation.wecipwocawwabews, 🥺
+    metwics = set(countmetwic), -.-
+    h-hawfwives = s-set(50.days), -.-
+    outputstowe = m-mkphysicawstowe(
+      offwineaggwegatedatawecowdstowe(
+        nyame = usewaggwegatestowe, (U ﹏ U)
+        stawtdate = "2016-07-15 00:00", rawr
+        c-commonconfig = timewinesoffwineaggwegatesink, mya
+        m-maxkvsouwcefaiwuwes = defauwtmaxkvsouwcefaiwuwes
+      )), ( ͡o ω ͡o )
+    incwudeanywabew = f-fawse
   )
 
-  val userOriginalAuthorReciprocalEngagementAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_original_author_aggregate_v1",
-    preTransforms = Seq(RichRemoveUserIdZero, RichRemoveAuthorIdZero),
-    keys = Set(USER_ID, TimelinesSharedFeatures.ORIGINAL_AUTHOR_ID),
-    features = Set.empty,
-    labels = RecapUserFeatureAggregation.ReciprocalLabels,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserOriginalAuthorAggregateStore,
-        startDate = "2018-12-26 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
-      )),
-    includeAnyLabel = false
+  v-vaw usewowiginawauthowwecipwocawengagementaggwegates = a-aggwegategwoup(
+    inputsouwce = t-timewinesdaiwywecapminimawsouwce,
+    a-aggwegatepwefix = "usew_owiginaw_authow_aggwegate_v1", /(^•ω•^)
+    pwetwansfowms = s-seq(wichwemoveusewidzewo, >_< wichwemoveauthowidzewo), (✿oωo)
+    k-keys = set(usew_id, timewinesshawedfeatuwes.owiginaw_authow_id), 😳😳😳
+    f-featuwes = s-set.empty, (ꈍᴗꈍ)
+    wabews = wecapusewfeatuweaggwegation.wecipwocawwabews, 🥺
+    metwics = set(countmetwic), mya
+    hawfwives = s-set(50.days), (ˆ ﻌ ˆ)♡
+    o-outputstowe = mkphysicawstowe(
+      offwineaggwegatedatawecowdstowe(
+        nyame = usewowiginawauthowaggwegatestowe, (⑅˘꒳˘)
+        s-stawtdate = "2018-12-26 00:00", òωó
+        commonconfig = t-timewinesoffwineaggwegatesink, o.O
+        m-maxkvsouwcefaiwuwes = defauwtmaxkvsouwcefaiwuwes
+      )), XD
+    incwudeanywabew = fawse
   )
 
-  val originalAuthorReciprocalEngagementAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "original_author_aggregate_v1",
-    preTransforms = Seq(RichRemoveUserIdZero, RichRemoveAuthorIdZero),
-    keys = Set(TimelinesSharedFeatures.ORIGINAL_AUTHOR_ID),
-    features = Set.empty,
-    labels = RecapUserFeatureAggregation.ReciprocalLabels,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = OriginalAuthorAggregateStore,
-        startDate = "2023-02-25 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
-      )),
-    includeAnyLabel = false
+  vaw owiginawauthowwecipwocawengagementaggwegates = a-aggwegategwoup(
+    inputsouwce = timewinesdaiwywecapminimawsouwce, (˘ω˘)
+    a-aggwegatepwefix = "owiginaw_authow_aggwegate_v1", (ꈍᴗꈍ)
+    pwetwansfowms = s-seq(wichwemoveusewidzewo, >w< w-wichwemoveauthowidzewo), XD
+    keys = s-set(timewinesshawedfeatuwes.owiginaw_authow_id), -.-
+    f-featuwes = s-set.empty, ^^;;
+    w-wabews = wecapusewfeatuweaggwegation.wecipwocawwabews, XD
+    metwics = s-set(countmetwic), :3
+    hawfwives = s-set(50.days), σωσ
+    outputstowe = mkphysicawstowe(
+      offwineaggwegatedatawecowdstowe(
+        nyame = owiginawauthowaggwegatestowe, XD
+        s-stawtdate = "2023-02-25 00:00", :3
+        c-commonconfig = t-timewinesoffwineaggwegatesink, rawr
+        m-maxkvsouwcefaiwuwes = d-defauwtmaxkvsouwcefaiwuwes
+      )), 😳
+    i-incwudeanywabew = fawse
   )
 
-  val originalAuthorNegativeEngagementAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "original_author_aggregate_v2",
-    preTransforms = Seq(RichRemoveUserIdZero, RichRemoveAuthorIdZero),
-    keys = Set(TimelinesSharedFeatures.ORIGINAL_AUTHOR_ID),
-    features = Set.empty,
-    labels = RecapUserFeatureAggregation.NegativeEngagementLabels,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = OriginalAuthorAggregateStore,
-        startDate = "2023-02-25 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
-      )),
-    includeAnyLabel = false
+  vaw owiginawauthownegativeengagementaggwegates = aggwegategwoup(
+    inputsouwce = t-timewinesdaiwywecapminimawsouwce, 😳😳😳
+    a-aggwegatepwefix = "owiginaw_authow_aggwegate_v2", (ꈍᴗꈍ)
+    pwetwansfowms = seq(wichwemoveusewidzewo, 🥺 wichwemoveauthowidzewo), ^•ﻌ•^
+    k-keys = s-set(timewinesshawedfeatuwes.owiginaw_authow_id), XD
+    f-featuwes = set.empty, ^•ﻌ•^
+    wabews = wecapusewfeatuweaggwegation.negativeengagementwabews, ^^;;
+    m-metwics = set(countmetwic), ʘwʘ
+    hawfwives = set(50.days), OwO
+    o-outputstowe = m-mkphysicawstowe(
+      offwineaggwegatedatawecowdstowe(
+        nyame = owiginawauthowaggwegatestowe, 🥺
+        s-stawtdate = "2023-02-25 00:00", (⑅˘꒳˘)
+        commonconfig = t-timewinesoffwineaggwegatesink,
+        m-maxkvsouwcefaiwuwes = defauwtmaxkvsouwcefaiwuwes
+      )), (///ˬ///✿)
+    i-incwudeanywabew = f-fawse
   )
 
-  val userListAggregates: AggregateGroup =
-    AggregateGroup(
-      inputSource = timelinesDailyRecapMinimalSource,
-      aggregatePrefix = "user_list_aggregate",
-      keys = Set(USER_ID, ListFeatures.LIST_ID),
-      features = Set.empty,
-      labels = RecapUserFeatureAggregation.LabelsV2,
-      metrics = Set(CountMetric),
-      halfLives = Set(50.days),
-      outputStore = mkPhysicalStore(
-        OfflineAggregateDataRecordStore(
-          name = UserListAggregateStore,
-          startDate = "2020-05-28 00:00",
-          commonConfig = timelinesOfflineAggregateSink,
-          maxKvSourceFailures = defaultMaxKvSourceFailures
-        )),
-      preTransforms = Seq(RichRemoveUserIdZero)
+  v-vaw usewwistaggwegates: a-aggwegategwoup =
+    a-aggwegategwoup(
+      i-inputsouwce = timewinesdaiwywecapminimawsouwce, (✿oωo)
+      a-aggwegatepwefix = "usew_wist_aggwegate", nyaa~~
+      k-keys = set(usew_id, >w< wistfeatuwes.wist_id), (///ˬ///✿)
+      f-featuwes = set.empty, rawr
+      wabews = wecapusewfeatuweaggwegation.wabewsv2, (U ﹏ U)
+      metwics = set(countmetwic),
+      h-hawfwives = set(50.days), ^•ﻌ•^
+      o-outputstowe = mkphysicawstowe(
+        o-offwineaggwegatedatawecowdstowe(
+          n-nyame = usewwistaggwegatestowe,
+          stawtdate = "2020-05-28 00:00", (///ˬ///✿)
+          c-commonconfig = timewinesoffwineaggwegatesink, o.O
+          maxkvsouwcefaiwuwes = d-defauwtmaxkvsouwcefaiwuwes
+        )), >w<
+      p-pwetwansfowms = seq(wichwemoveusewidzewo)
     )
 
-  val userMediaUnderstandingAnnotationAggregates: AggregateGroup = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_media_annotation_aggregate",
-    preTransforms = Seq(RichRemoveUserIdZero),
-    keys =
-      Set(USER_ID, SemanticCoreFeatures.mediaUnderstandingHighRecallNonSensitiveEntityIdsFeature),
-    features = Set.empty,
-    labels = RecapUserFeatureAggregation.LabelsV2,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserMediaUnderstandingAnnotationAggregateStore,
-        startDate = "2021-03-20 00:00",
-        commonConfig = timelinesOfflineAggregateSink
+  vaw usewmediaundewstandingannotationaggwegates: a-aggwegategwoup = a-aggwegategwoup(
+    inputsouwce = timewinesdaiwywecapminimawsouwce, nyaa~~
+    a-aggwegatepwefix = "usew_media_annotation_aggwegate", òωó
+    pwetwansfowms = seq(wichwemoveusewidzewo), (U ᵕ U❁)
+    k-keys =
+      s-set(usew_id, (///ˬ///✿) semanticcowefeatuwes.mediaundewstandinghighwecawwnonsensitiveentityidsfeatuwe), (✿oωo)
+    f-featuwes = s-set.empty, 😳😳😳
+    wabews = wecapusewfeatuweaggwegation.wabewsv2, (✿oωo)
+    metwics = s-set(countmetwic),
+    h-hawfwives = s-set(50.days), (U ﹏ U)
+    o-outputstowe = mkphysicawstowe(
+      offwineaggwegatedatawecowdstowe(
+        nyame = usewmediaundewstandingannotationaggwegatestowe, (˘ω˘)
+        stawtdate = "2021-03-20 00:00", 😳😳😳
+        commonconfig = timewinesoffwineaggwegatesink
       ))
   )
 
-  val userAuthorGoodClickAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_author_good_click_aggregate",
-    preTransforms = Seq(FilterInNetworkTransform, RichRemoveUserIdZero),
-    keys = Set(USER_ID, AUTHOR_ID),
-    features = RecapUserFeatureAggregation.UserAuthorFeaturesV2,
-    labels = RecapUserFeatureAggregation.GoodClickLabels,
-    metrics = Set(SumMetric),
-    halfLives = Set(14.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserAuthorAggregateStore,
-        startDate = "2016-07-15 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+  v-vaw usewauthowgoodcwickaggwegates = a-aggwegategwoup(
+    inputsouwce = t-timewinesdaiwywecapminimawsouwce, (///ˬ///✿)
+    a-aggwegatepwefix = "usew_authow_good_cwick_aggwegate", (U ᵕ U❁)
+    p-pwetwansfowms = s-seq(fiwtewinnetwowktwansfowm, >_< wichwemoveusewidzewo), (///ˬ///✿)
+    k-keys = set(usew_id, (U ᵕ U❁) a-authow_id), >w<
+    featuwes = w-wecapusewfeatuweaggwegation.usewauthowfeatuwesv2, 😳😳😳
+    w-wabews = wecapusewfeatuweaggwegation.goodcwickwabews, (ˆ ﻌ ˆ)♡
+    metwics = set(summetwic), (ꈍᴗꈍ)
+    h-hawfwives = set(14.days), 🥺
+    outputstowe = mkphysicawstowe(
+      offwineaggwegatedatawecowdstowe(
+        nyame = u-usewauthowaggwegatestowe, >_<
+        stawtdate = "2016-07-15 00:00", OwO
+        c-commonconfig = t-timewinesoffwineaggwegatesink, ^^;;
+        maxkvsouwcefaiwuwes = d-defauwtmaxkvsouwcefaiwuwes
       ))
   )
 
-  val userEngagerGoodClickAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_engager_good_click_aggregate",
-    keys = Set(USER_ID, EngagementDataRecordFeatures.PublicEngagementUserIds),
-    features = Set.empty,
-    labels = RecapUserFeatureAggregation.GoodClickLabels,
-    metrics = Set(CountMetric),
-    halfLives = Set(14.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserEngagerAggregateStore,
-        startDate = "2016-09-02 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
-      )),
-    preTransforms = Seq(
-      RichRemoveUserIdZero,
-      RichUnifyPublicEngagersTransform
+  v-vaw usewengagewgoodcwickaggwegates = a-aggwegategwoup(
+    inputsouwce = timewinesdaiwywecapminimawsouwce, (✿oωo)
+    a-aggwegatepwefix = "usew_engagew_good_cwick_aggwegate", UwU
+    k-keys = set(usew_id, ( ͡o ω ͡o ) engagementdatawecowdfeatuwes.pubwicengagementusewids), (✿oωo)
+    featuwes = s-set.empty, mya
+    wabews = w-wecapusewfeatuweaggwegation.goodcwickwabews, ( ͡o ω ͡o )
+    m-metwics = set(countmetwic), :3
+    h-hawfwives = set(14.days), 😳
+    outputstowe = mkphysicawstowe(
+      o-offwineaggwegatedatawecowdstowe(
+        nyame = usewengagewaggwegatestowe, (U ﹏ U)
+        stawtdate = "2016-09-02 00:00", >w<
+        c-commonconfig = timewinesoffwineaggwegatesink, UwU
+        maxkvsouwcefaiwuwes = defauwtmaxkvsouwcefaiwuwes
+      )), 😳
+    pwetwansfowms = seq(
+      wichwemoveusewidzewo, XD
+      w-wichunifypubwicengagewstwansfowm
     )
   )
 

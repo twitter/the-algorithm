@@ -1,23 +1,23 @@
-package com.twitter.visibility.models
+package com.twittew.visibiwity.modews
 
-import com.twitter.tweetypie.thriftscala.Communities
-import com.twitter.tweetypie.thriftscala.Tweet
+impowt com.twittew.tweetypie.thwiftscawa.communities
+i-impowt c-com.twittew.tweetypie.thwiftscawa.tweet
 
-object CommunityTweet {
-  def getCommunityId(communities: Communities): Option[CommunityId] =
-    communities.communityIds.headOption
+o-object c-communitytweet {
+  d-def getcommunityid(communities: c-communities): o-option[communityid] =
+    c-communities.communityids.headoption
 
-  def getCommunityId(tweet: Tweet): Option[CommunityId] =
-    tweet.communities.flatMap(getCommunityId)
+  def getcommunityid(tweet: tweet): option[communityid] =
+    tweet.communities.fwatmap(getcommunityid)
 
-  def apply(tweet: Tweet): Option[CommunityTweet] =
-    getCommunityId(tweet).map { communityId =>
-      val authorId = tweet.coreData.get.userId
-      CommunityTweet(tweet, communityId, authorId)
+  d-def appwy(tweet: tweet): option[communitytweet] =
+    g-getcommunityid(tweet).map { communityid =>
+      vaw authowid = t-tweet.cowedata.get.usewid
+      communitytweet(tweet, 😳 communityid, XD authowid)
     }
 }
 
-case class CommunityTweet(
-  tweet: Tweet,
-  communityId: CommunityId,
-  authorId: Long)
+c-case cwass communitytweet(
+  t-tweet: tweet, :3
+  c-communityid: communityid, 😳😳😳
+  authowid: wong)

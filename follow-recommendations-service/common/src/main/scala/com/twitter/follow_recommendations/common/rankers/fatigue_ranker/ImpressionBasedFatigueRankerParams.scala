@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.common.rankers.fatigue_ranker
+package com.twittew.fowwow_wecommendations.common.wankews.fatigue_wankew
 
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.timewines.configapi.fspawam
+i-impowt com.twittew.timewines.configapi.pawam
 
-object ImpressionBasedFatigueRankerParams {
-  // Whether to enable hard dropping of impressed candidates
-  object DropImpressedCandidateEnabled extends Param[Boolean](false)
-  // At what # of impressions to hard drop candidates.
-  object DropCandidateImpressionThreshold extends Param[Int](default = 10)
-  // Whether to scribe candidate ranking/scoring info per ranking stage
-  object ScribeRankingInfoInFatigueRanker
-      extends FSParam[Boolean]("fatigue_ranker_scribe_ranking_info", true)
+o-object impwessionbasedfatiguewankewpawams {
+  // w-whethew to e-enabwe hawd dwopping o-of impwessed c-candidates
+  o-object dwopimpwessedcandidateenabwed extends pawam[boowean](fawse)
+  // at nyani # of impwessions to hawd dwop c-candidates. ^^;;
+  object dwopcandidateimpwessionthweshowd extends pawam[int](defauwt = 10)
+  // w-whethew to scwibe candidate w-wanking/scowing info pew wanking stage
+  object scwibewankinginfoinfatiguewankew
+      extends f-fspawam[boowean]("fatigue_wankew_scwibe_wanking_info", >_< twue)
 }

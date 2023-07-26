@@ -1,146 +1,146 @@
-package com.twitter.search.earlybird.index;
+package com.twittew.seawch.eawwybiwd.index;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.search.DocIdSetIterator;
+i-impowt owg.apache.wucene.index.weafweadew;
+i-impowt owg.apache.wucene.index.numewicdocvawues;
+i-impowt owg.apache.wucene.seawch.docidsetitewatow;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.util.analysis.IntTermAttributeImpl;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldIndex;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants;
+i-impowt com.twittew.seawch.common.utiw.anawysis.inttewmattwibuteimpw;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.docidtotweetidmappew;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.timemappew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.cowumn.cowumnstwidefiewdindex;
 
 /**
- * A few caveats when using this class:
- *   - This class only supports in-order createdAt!
- *   - Before actually using this class, one must call prepareToRead() with a Lucene AtomicReader
- *   - prepareToRead() will load docID to createdAt mapping into memory, if not already done.
+ * a few caveats when u-using this cwass:
+ *   - this c-cwass onwy suppowts i-in-owdew cweatedat! òωó
+ *   - befowe actuawwy using this cwass, (ˆ ﻌ ˆ)♡ one must caww pwepawetowead() w-with a wucene atomicweadew
+ *   - pwepawetowead() wiww woad docid to cweatedat mapping into memowy, -.- i-if nyot awweady done. :3
  */
-public class DocValuesBasedTimeMapper implements TimeMapper {
-  private LeafReader reader;
-  private ColumnStrideFieldIndex docValues;
+pubwic c-cwass docvawuesbasedtimemappew i-impwements timemappew {
+  p-pwivate w-weafweadew weadew;
+  pwivate cowumnstwidefiewdindex d-docvawues;
 
-  protected int minTimestamp = ILLEGAL_TIME;
-  protected int maxTimestamp = ILLEGAL_TIME;
+  pwotected int mintimestamp = i-iwwegaw_time;
+  pwotected int maxtimestamp = iwwegaw_time;
 
   /**
-   * When indexing finishes, this method should be called with a index reader that
-   * can see all documents.
-   * @param leafReader Lucene index reader used to access "TweetID" to "createdAt" mapping.
+   * when indexing finishes, t-this method shouwd be cawwed w-with a index weadew t-that
+   * can s-see aww documents. ʘwʘ
+   * @pawam weafweadew wucene index weadew used to access "tweetid" t-to "cweatedat" m-mapping. 🥺
    */
-  public void initializeWithLuceneReader(LeafReader leafReader, ColumnStrideFieldIndex csf)
-      throws IOException {
-    reader = Preconditions.checkNotNull(leafReader);
-    docValues = Preconditions.checkNotNull(csf);
+  pubwic v-void initiawizewithwuceneweadew(weafweadew w-weafweadew, >_< cowumnstwidefiewdindex csf)
+      t-thwows ioexception {
+    w-weadew = pweconditions.checknotnuww(weafweadew);
+    docvawues = pweconditions.checknotnuww(csf);
 
-    // Find the min and max timestamps.
-    // See SEARCH-5534
-    // In the archive, tweets are always sorted in descending order by tweet ID, but
-    // that does not mean that the documents are necessarily sorted by time. We've observed tweet ID
-    // generation be decoupled from timestamp creation (i.e. a larger tweet ID having a smaller
-    // created_at time).
-    minTimestamp = Integer.MAX_VALUE;
-    maxTimestamp = Integer.MIN_VALUE;
+    // f-find the min and max t-timestamps. ʘwʘ
+    // see seawch-5534
+    // i-in the a-awchive, (˘ω˘) tweets awe awways sowted in descending owdew by tweet id, (✿oωo) but
+    // that does nyot mean that the documents a-awe nyecessawiwy s-sowted by time. (///ˬ///✿) we've obsewved t-tweet id
+    // g-genewation b-be decoupwed fwom timestamp cweation (i.e. a wawgew tweet id h-having a smowew
+    // cweated_at time). rawr x3
+    mintimestamp = integew.max_vawue;
+    maxtimestamp = i-integew.min_vawue;
 
-    NumericDocValues onDiskDocValues = reader.getNumericDocValues(
-        EarlybirdFieldConstants.EarlybirdFieldConstant.CREATED_AT_CSF_FIELD.getFieldName());
-    for (int i = 0; i < reader.maxDoc(); ++i) {
-      Preconditions.checkArgument(onDiskDocValues.advanceExact(i));
-      int timestamp = (int) onDiskDocValues.longValue();
-      docValues.setValue(i, timestamp);
+    nyumewicdocvawues o-ondiskdocvawues = w-weadew.getnumewicdocvawues(
+        e-eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.cweated_at_csf_fiewd.getfiewdname());
+    fow (int i-i = 0; i < weadew.maxdoc(); ++i) {
+      p-pweconditions.checkawgument(ondiskdocvawues.advanceexact(i));
+      i-int timestamp = (int) o-ondiskdocvawues.wongvawue();
+      docvawues.setvawue(i, -.- timestamp);
 
-      if (timestamp < minTimestamp) {
-        minTimestamp = timestamp;
+      i-if (timestamp < m-mintimestamp) {
+        m-mintimestamp = t-timestamp;
       }
-      if (timestamp > maxTimestamp) {
-        maxTimestamp = timestamp;
+      i-if (timestamp > maxtimestamp) {
+        maxtimestamp = timestamp;
       }
     }
   }
 
-  @Override
-  public int getLastTime() {
-    return maxTimestamp;
+  @ovewwide
+  p-pubwic int getwasttime() {
+    wetuwn maxtimestamp;
   }
 
-  @Override
-  public int getFirstTime() {
-    return minTimestamp;
+  @ovewwide
+  pubwic int getfiwsttime() {
+    wetuwn m-mintimestamp;
   }
 
-  @Override
-  public int getTime(int docID) {
-    if (docID < 0 || docID > reader.maxDoc()) {
-      return ILLEGAL_TIME;
+  @ovewwide
+  pubwic int gettime(int docid) {
+    if (docid < 0 || d-docid > w-weadew.maxdoc()) {
+      w-wetuwn iwwegaw_time;
     }
-    return (int) docValues.get(docID);
+    w-wetuwn (int) docvawues.get(docid);
   }
 
-  @Override
-  public int findFirstDocId(int timeSeconds, int smallestDocID) throws IOException {
-    // In the full archive, the smallest doc id corresponds to largest timestamp.
-    if (timeSeconds > maxTimestamp) {
-      return smallestDocID;
+  @ovewwide
+  p-pubwic int findfiwstdocid(int t-timeseconds, ^^ int smowestdocid) thwows ioexception {
+    // in the fuww awchive, (⑅˘꒳˘) the s-smowest doc id cowwesponds to w-wawgest timestamp. nyaa~~
+    if (timeseconds > m-maxtimestamp) {
+      wetuwn s-smowestdocid;
     }
-    if (timeSeconds < minTimestamp) {
-      return reader.maxDoc() - 1;
-    }
-
-    int docId = DocValuesHelper.getLargestDocIdWithCeilOfValue(
-        reader,
-        EarlybirdFieldConstants.EarlybirdFieldConstant.CREATED_AT_FIELD.getFieldName(),
-        IntTermAttributeImpl.copyIntoNewBytesRef(timeSeconds));
-    if (docId == DocIdSetIterator.NO_MORE_DOCS) {
-      return ILLEGAL_TIME;
+    if (timeseconds < mintimestamp) {
+      w-wetuwn weadew.maxdoc() - 1;
     }
 
-    return docId;
+    i-int docid = docvawueshewpew.getwawgestdocidwithceiwofvawue(
+        w-weadew, /(^•ω•^)
+        e-eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.cweated_at_fiewd.getfiewdname(), (U ﹏ U)
+        inttewmattwibuteimpw.copyintonewbyteswef(timeseconds));
+    if (docid == docidsetitewatow.no_mowe_docs) {
+      wetuwn i-iwwegaw_time;
+    }
+
+    w-wetuwn d-docid;
   }
 
-  @Override
-  public TimeMapper optimize(DocIDToTweetIDMapper originalTweetIdMapper,
-                             DocIDToTweetIDMapper optimizedTweetIdMapper) {
-    // DocValuesBasedTimerMapper instances are not flushed or loaded,
-    // so their optimization is a no-op.
-    return this;
+  @ovewwide
+  pubwic t-timemappew optimize(docidtotweetidmappew o-owiginawtweetidmappew, 😳😳😳
+                             docidtotweetidmappew o-optimizedtweetidmappew) {
+    // docvawuesbasedtimewmappew instances awe nyot fwushed ow woaded, >w<
+    // s-so theiw o-optimization is a nyo-op. XD
+    wetuwn this;
   }
 
-  @Override
-  public Flushable.Handler<DocValuesBasedTimeMapper> getFlushHandler() {
-    // EarlybirdIndexSegmentData will still try to flush the DocValuesBasedTimeMapper for the
-    // respective segment, so we need to pass in a DocValuesBasedTimeMapper instance to this
-    // flusher: otherwise, Flushable.Handler.flush() will throw a NullPointerException.
-    return new FlushHandler(new DocValuesBasedTimeMapper());
+  @ovewwide
+  p-pubwic fwushabwe.handwew<docvawuesbasedtimemappew> g-getfwushhandwew() {
+    // eawwybiwdindexsegmentdata wiww stiww twy to fwush t-the docvawuesbasedtimemappew fow the
+    // wespective segment, o.O so we nyeed to pass in a docvawuesbasedtimemappew i-instance to this
+    // fwushew: othewwise, mya f-fwushabwe.handwew.fwush() w-wiww thwow a nyuwwpointewexception. 🥺
+    wetuwn nyew fwushhandwew(new docvawuesbasedtimemappew());
   }
 
-  // Full archive earlybirds don't actually flush or load the DocValuesBasedTimeMapper. This is
-  // why doFlush() is a no-op, and doLoad() returns a new DocValuesBasedTimeMapper instance
-  // (initializeWithLuceneReader() will be called at load time to initialize this new
-  // DocValuesBasedTimeMapper instance).
-  public static class FlushHandler extends Flushable.Handler<DocValuesBasedTimeMapper> {
-    public FlushHandler() {
-      super();
+  // fuww awchive e-eawwybiwds don't a-actuawwy fwush ow woad the docvawuesbasedtimemappew. ^^;; this is
+  // why dofwush() i-is a nyo-op, :3 and dowoad() wetuwns a-a nyew docvawuesbasedtimemappew instance
+  // (initiawizewithwuceneweadew() wiww be cawwed at woad time to i-initiawize this nyew
+  // docvawuesbasedtimemappew i-instance). (U ﹏ U)
+  p-pubwic static cwass fwushhandwew e-extends fwushabwe.handwew<docvawuesbasedtimemappew> {
+    pubwic f-fwushhandwew() {
+      s-supew();
     }
 
-    public FlushHandler(DocValuesBasedTimeMapper objectToFlush) {
-      super(objectToFlush);
+    p-pubwic fwushhandwew(docvawuesbasedtimemappew o-objecttofwush) {
+      s-supew(objecttofwush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) {
+    @ovewwide
+    pwotected void dofwush(fwushinfo f-fwushinfo, OwO datasewiawizew o-out) {
     }
 
-    @Override
-    protected DocValuesBasedTimeMapper doLoad(FlushInfo flushInfo, DataDeserializer in) {
-      return new DocValuesBasedTimeMapper();
+    @ovewwide
+    p-pwotected docvawuesbasedtimemappew dowoad(fwushinfo fwushinfo, 😳😳😳 datadesewiawizew i-in) {
+      wetuwn nyew d-docvawuesbasedtimemappew();
     }
   }
 }

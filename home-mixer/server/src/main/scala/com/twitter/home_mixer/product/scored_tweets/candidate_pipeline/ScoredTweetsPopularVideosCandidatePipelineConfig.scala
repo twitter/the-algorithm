@@ -1,82 +1,82 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_pipeline
+package com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_pipewine
 
-import com.twitter.explore_ranker.{thriftscala => ert}
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.TweetypieStaticEntitiesFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.gate.MinCachedTweetsGate
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CachedScoredTweets
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CandidatePipeline
-import com.twitter.home_mixer.product.scored_tweets.response_transformer.ScoredTweetsPopularVideosResponseFeatureTransformer
-import com.twitter.home_mixer.util.CachedScoredTweetsHelper
-import com.twitter.product_mixer.component_library.candidate_source.explore_ranker.ExploreRankerImmersiveRecsCandidateSource
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.marshaller.request.ClientContextMarshaller
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.timelines.configapi.decider.DeciderParam
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.expwowe_wankew.{thwiftscawa => e-ewt}
+impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.tweetypiestaticentitiesfeatuwehydwatow
+i-impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.gate.mincachedtweetsgate
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.modew.scowedtweetsquewy
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawam.cachedscowedtweets
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawam.candidatepipewine
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.wesponse_twansfowmew.scowedtweetspopuwawvideoswesponsefeatuwetwansfowmew
+impowt com.twittew.home_mixew.utiw.cachedscowedtweetshewpew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.expwowe_wankew.expwowewankewimmewsivewecscandidatesouwce
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.basecandidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.basecandidatefeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wequest.cwientcontextmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinewesuwtstwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig
+impowt com.twittew.timewines.configapi.decidew.decidewpawam
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class ScoredTweetsPopularVideosCandidatePipelineConfig @Inject() (
-  exploreRankerCandidateSource: ExploreRankerImmersiveRecsCandidateSource,
-  tweetypieStaticEntitiesFeatureHydrator: TweetypieStaticEntitiesFeatureHydrator)
-    extends CandidatePipelineConfig[
-      ScoredTweetsQuery,
-      ert.ExploreRankerRequest,
-      ert.ExploreTweetRecommendation,
-      TweetCandidate
+@singweton
+cwass scowedtweetspopuwawvideoscandidatepipewineconfig @inject() (
+  expwowewankewcandidatesouwce: expwowewankewimmewsivewecscandidatesouwce, -.-
+  t-tweetypiestaticentitiesfeatuwehydwatow: tweetypiestaticentitiesfeatuwehydwatow)
+    e-extends candidatepipewineconfig[
+      s-scowedtweetsquewy, 😳
+      e-ewt.expwowewankewwequest, mya
+      e-ewt.expwowetweetwecommendation, (˘ω˘)
+      tweetcandidate
     ] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("ScoredTweetsPopularVideos")
+  ovewwide vaw i-identifiew: candidatepipewineidentifiew =
+    candidatepipewineidentifiew("scowedtweetspopuwawvideos")
 
-  private val MaxTweetsToFetch = 40
+  pwivate vaw maxtweetstofetch = 40
 
-  override val enabledDeciderParam: Option[DeciderParam[Boolean]] =
-    Some(CandidatePipeline.EnablePopularVideosParam)
+  o-ovewwide vaw enabweddecidewpawam: option[decidewpawam[boowean]] =
+    some(candidatepipewine.enabwepopuwawvideospawam)
 
-  override val gates: Seq[Gate[ScoredTweetsQuery]] = Seq(
-    MinCachedTweetsGate(identifier, CachedScoredTweets.MinCachedTweetsParam)
+  ovewwide vaw gates: seq[gate[scowedtweetsquewy]] = seq(
+    m-mincachedtweetsgate(identifiew, >_< cachedscowedtweets.mincachedtweetspawam)
   )
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    ScoredTweetsQuery,
-    ert.ExploreRankerRequest
-  ] = { query =>
-    val excludedTweetIds = query.features.map(
-      CachedScoredTweetsHelper.tweetImpressionsAndCachedScoredTweets(_, identifier))
+  o-ovewwide vaw q-quewytwansfowmew: c-candidatepipewinequewytwansfowmew[
+    scowedtweetsquewy, -.-
+    ewt.expwowewankewwequest
+  ] = { quewy =>
+    v-vaw excwudedtweetids = q-quewy.featuwes.map(
+      cachedscowedtweetshewpew.tweetimpwessionsandcachedscowedtweets(_, 🥺 i-identifiew))
 
-    ert.ExploreRankerRequest(
-      clientContext = ClientContextMarshaller(query.clientContext),
-      product = ert.Product.HomeTimelineVideoInline,
-      productContext = Some(
-        ert.ProductContext.HomeTimelineVideoInline(ert.HomeTimelineVideoInline(excludedTweetIds))),
-      maxResults = Some(MaxTweetsToFetch)
+    e-ewt.expwowewankewwequest(
+      cwientcontext = c-cwientcontextmawshawwew(quewy.cwientcontext), (U ﹏ U)
+      pwoduct = e-ewt.pwoduct.hometimewinevideoinwine, >w<
+      pwoductcontext = some(
+        ewt.pwoductcontext.hometimewinevideoinwine(ewt.hometimewinevideoinwine(excwudedtweetids))), mya
+      maxwesuwts = some(maxtweetstofetch)
     )
   }
 
-  override def candidateSource: BaseCandidateSource[
-    ert.ExploreRankerRequest,
-    ert.ExploreTweetRecommendation
-  ] = exploreRankerCandidateSource
+  o-ovewwide def candidatesouwce: basecandidatesouwce[
+    ewt.expwowewankewwequest, >w<
+    e-ewt.expwowetweetwecommendation
+  ] = expwowewankewcandidatesouwce
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[ert.ExploreTweetRecommendation]
-  ] = Seq(ScoredTweetsPopularVideosResponseFeatureTransformer)
+  o-ovewwide v-vaw featuwesfwomcandidatesouwcetwansfowmews: seq[
+    candidatefeatuwetwansfowmew[ewt.expwowetweetwecommendation]
+  ] = seq(scowedtweetspopuwawvideoswesponsefeatuwetwansfowmew)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    ert.ExploreTweetRecommendation,
-    TweetCandidate
-  ] = { sourceResult => TweetCandidate(id = sourceResult.tweetId) }
+  ovewwide vaw wesuwttwansfowmew: candidatepipewinewesuwtstwansfowmew[
+    ewt.expwowetweetwecommendation, nyaa~~
+    t-tweetcandidate
+  ] = { s-souwcewesuwt => tweetcandidate(id = s-souwcewesuwt.tweetid) }
 
-  override val preFilterFeatureHydrationPhase1: Seq[
-    BaseCandidateFeatureHydrator[ScoredTweetsQuery, TweetCandidate, _]
-  ] = Seq(tweetypieStaticEntitiesFeatureHydrator)
+  o-ovewwide v-vaw pwefiwtewfeatuwehydwationphase1: seq[
+    basecandidatefeatuwehydwatow[scowedtweetsquewy, (✿oωo) tweetcandidate, ʘwʘ _]
+  ] = s-seq(tweetypiestaticentitiesfeatuwehydwatow)
 }

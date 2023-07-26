@@ -1,21 +1,21 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/functional_component/candidate_source",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model/request",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/scored_tweets/candidate_source",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/scored_tweets/feature_hydrator",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/scored_tweets/gate",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/scored_tweets/model",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/scored_tweets/param",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/scored_tweets/query_transformer/earlybird",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/scored_tweets/response_transformer/earlybird",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/candidate_source/earlybird",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/filter",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/gate",
-        "src/thrift/com/twitter/search:earlybird-scala",
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    s-stwict_deps = t-twue, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/functionaw_component/candidate_souwce", (⑅˘꒳˘)
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/modew/wequest", ( ͡o ω ͡o )
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pwoduct/scowed_tweets/candidate_souwce", UwU
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pwoduct/scowed_tweets/featuwe_hydwatow", rawr x3
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pwoduct/scowed_tweets/gate", rawr
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pwoduct/scowed_tweets/modew", σωσ
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pwoduct/scowed_tweets/pawam", σωσ
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pwoduct/scowed_tweets/quewy_twansfowmew/eawwybiwd", >_<
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pwoduct/scowed_tweets/wesponse_twansfowmew/eawwybiwd", :3
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/candidate_souwce/eawwybiwd", (U ﹏ U)
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/fiwtew", -.-
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/gate", (ˆ ﻌ ˆ)♡
+        "swc/thwift/com/twittew/seawch:eawwybiwd-scawa", (⑅˘꒳˘)
     ],
 )

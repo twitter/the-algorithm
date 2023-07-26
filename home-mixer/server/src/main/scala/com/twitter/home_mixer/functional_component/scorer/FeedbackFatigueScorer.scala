@@ -1,144 +1,144 @@
-package com.twitter.home_mixer.functional_component.scorer
+package com.twittew.home_mixew.functionaw_component.scowew
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.FeedbackHistoryFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidFollowedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidLikedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.common.{thriftscala => tl}
-import com.twitter.timelineservice.model.FeedbackEntry
-import com.twitter.timelineservice.{thriftscala => tls}
-import com.twitter.util.Time
-import scala.collection.mutable
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.feedbackhistowyfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.iswetweetfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.sgsvawidfowwowedbyusewidsfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.sgsvawidwikedbyusewidsfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.scowefeatuwe
+impowt com.twittew.home_mixew.utiw.candidatesutiw
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.scowew.scowew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.conditionawwy
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.scowewidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt c-com.twittew.stitch.stitch
+impowt com.twittew.timewines.common.{thwiftscawa => tw}
+impowt com.twittew.timewinesewvice.modew.feedbackentwy
+impowt c-com.twittew.timewinesewvice.{thwiftscawa => tws}
+impowt com.twittew.utiw.time
+impowt scawa.cowwection.mutabwe
 
-object FeedbackFatigueScorer
-    extends Scorer[PipelineQuery, TweetCandidate]
-    with Conditionally[PipelineQuery] {
+object feedbackfatiguescowew
+    e-extends scowew[pipewinequewy, 😳😳😳 tweetcandidate]
+    with conditionawwy[pipewinequewy] {
 
-  override val identifier: ScorerIdentifier = ScorerIdentifier("FeedbackFatigue")
+  o-ovewwide v-vaw identifiew: s-scowewidentifiew = s-scowewidentifiew("feedbackfatigue")
 
-  override def features: Set[Feature[_, _]] = Set(ScoreFeature)
+  ovewwide def featuwes: s-set[featuwe[_, OwO _]] = set(scowefeatuwe)
 
-  override def onlyIf(query: PipelineQuery): Boolean =
-    query.features.exists(_.getOrElse(FeedbackHistoryFeature, Seq.empty).nonEmpty)
+  ovewwide d-def onwyif(quewy: pipewinequewy): boowean =
+    quewy.featuwes.exists(_.getowewse(feedbackhistowyfeatuwe, 😳 seq.empty).nonempty)
 
-  val DurationForFiltering = 14.days
-  val DurationForDiscounting = 140.days
-  private val ScoreMultiplierLowerBound = 0.2
-  private val ScoreMultiplierUpperBound = 1.0
-  private val ScoreMultiplierIncrementsCount = 4
-  private val ScoreMultiplierIncrement =
-    (ScoreMultiplierUpperBound - ScoreMultiplierLowerBound) / ScoreMultiplierIncrementsCount
-  private val ScoreMultiplierIncrementDurationInDays =
-    DurationForDiscounting.inDays / ScoreMultiplierIncrementsCount.toDouble
+  vaw duwationfowfiwtewing = 14.days
+  v-vaw duwationfowdiscounting = 140.days
+  p-pwivate vaw s-scowemuwtipwiewwowewbound = 0.2
+  p-pwivate vaw scowemuwtipwiewuppewbound = 1.0
+  pwivate vaw scowemuwtipwiewincwementscount = 4
+  pwivate vaw scowemuwtipwiewincwement =
+    (scowemuwtipwiewuppewbound - s-scowemuwtipwiewwowewbound) / s-scowemuwtipwiewincwementscount
+  pwivate v-vaw scowemuwtipwiewincwementduwationindays =
+    d-duwationfowdiscounting.indays / scowemuwtipwiewincwementscount.todoubwe
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val feedbackEntriesByEngagementType =
-      query.features
-        .getOrElse(FeatureMap.empty).getOrElse(FeedbackHistoryFeature, Seq.empty)
-        .filter { entry =>
-          val timeSinceFeedback = query.queryTime.minus(entry.timestamp)
-          timeSinceFeedback < DurationForFiltering + DurationForDiscounting &&
-          entry.feedbackType == tls.FeedbackType.SeeFewer
-        }.groupBy(_.engagementType)
+  o-ovewwide def appwy(
+    q-quewy: pipewinequewy, 😳😳😳
+    candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): stitch[seq[featuwemap]] = {
+    v-vaw feedbackentwiesbyengagementtype =
+      quewy.featuwes
+        .getowewse(featuwemap.empty).getowewse(feedbackhistowyfeatuwe, (˘ω˘) s-seq.empty)
+        .fiwtew { entwy =>
+          v-vaw t-timesincefeedback = quewy.quewytime.minus(entwy.timestamp)
+          timesincefeedback < duwationfowfiwtewing + duwationfowdiscounting &&
+          entwy.feedbacktype == tws.feedbacktype.seefewew
+        }.gwoupby(_.engagementtype)
 
-    val authorsToDiscount =
-      getUserDiscounts(
-        query.queryTime,
-        feedbackEntriesByEngagementType.getOrElse(tls.FeedbackEngagementType.Tweet, Seq.empty))
-    val likersToDiscount =
-      getUserDiscounts(
-        query.queryTime,
-        feedbackEntriesByEngagementType.getOrElse(tls.FeedbackEngagementType.Like, Seq.empty))
-    val followersToDiscount =
-      getUserDiscounts(
-        query.queryTime,
-        feedbackEntriesByEngagementType.getOrElse(tls.FeedbackEngagementType.Follow, Seq.empty))
-    val retweetersToDiscount =
-      getUserDiscounts(
-        query.queryTime,
-        feedbackEntriesByEngagementType.getOrElse(tls.FeedbackEngagementType.Retweet, Seq.empty))
+    v-vaw a-authowstodiscount =
+      getusewdiscounts(
+        q-quewy.quewytime, ʘwʘ
+        feedbackentwiesbyengagementtype.getowewse(tws.feedbackengagementtype.tweet, ( ͡o ω ͡o ) s-seq.empty))
+    v-vaw wikewstodiscount =
+      getusewdiscounts(
+        quewy.quewytime, o.O
+        feedbackentwiesbyengagementtype.getowewse(tws.feedbackengagementtype.wike, >w< s-seq.empty))
+    vaw fowwowewstodiscount =
+      getusewdiscounts(
+        quewy.quewytime, 😳
+        feedbackentwiesbyengagementtype.getowewse(tws.feedbackengagementtype.fowwow, 🥺 s-seq.empty))
+    vaw wetweetewstodiscount =
+      g-getusewdiscounts(
+        q-quewy.quewytime, rawr x3
+        f-feedbackentwiesbyengagementtype.getowewse(tws.feedbackengagementtype.wetweet, o.O seq.empty))
 
-    val featureMaps = candidates.map { candidate =>
-      val multiplier = getScoreMultiplier(
-        candidate,
-        authorsToDiscount,
-        likersToDiscount,
-        followersToDiscount,
-        retweetersToDiscount
+    v-vaw featuwemaps = c-candidates.map { c-candidate =>
+      vaw m-muwtipwiew = getscowemuwtipwiew(
+        candidate, rawr
+        authowstodiscount, ʘwʘ
+        w-wikewstodiscount, 😳😳😳
+        f-fowwowewstodiscount, ^^;;
+        w-wetweetewstodiscount
       )
-      val score = candidate.features.getOrElse(ScoreFeature, None)
-      FeatureMapBuilder().add(ScoreFeature, score.map(_ * multiplier)).build()
+      v-vaw scowe = c-candidate.featuwes.getowewse(scowefeatuwe, o.O nyone)
+      featuwemapbuiwdew().add(scowefeatuwe, (///ˬ///✿) scowe.map(_ * m-muwtipwiew)).buiwd()
     }
 
-    Stitch.value(featureMaps)
+    stitch.vawue(featuwemaps)
   }
 
-  def getScoreMultiplier(
-    candidate: CandidateWithFeatures[TweetCandidate],
-    authorsToDiscount: Map[Long, Double],
-    likersToDiscount: Map[Long, Double],
-    followersToDiscount: Map[Long, Double],
-    retweetersToDiscount: Map[Long, Double],
-  ): Double = {
-    val originalAuthorId =
-      CandidatesUtil.getOriginalAuthorId(candidate.features).getOrElse(0L)
-    val originalAuthorMultiplier = authorsToDiscount.getOrElse(originalAuthorId, 1.0)
+  def getscowemuwtipwiew(
+    candidate: candidatewithfeatuwes[tweetcandidate], σωσ
+    authowstodiscount: m-map[wong, nyaa~~ doubwe], ^^;;
+    wikewstodiscount: map[wong, ^•ﻌ•^ doubwe],
+    f-fowwowewstodiscount: m-map[wong, σωσ d-doubwe], -.-
+    wetweetewstodiscount: map[wong, ^^;; doubwe],
+  ): d-doubwe = {
+    vaw owiginawauthowid =
+      c-candidatesutiw.getowiginawauthowid(candidate.featuwes).getowewse(0w)
+    v-vaw owiginawauthowmuwtipwiew = authowstodiscount.getowewse(owiginawauthowid, XD 1.0)
 
-    val likers = candidate.features.getOrElse(SGSValidLikedByUserIdsFeature, Seq.empty)
-    val likerMultipliers = likers.flatMap(likersToDiscount.get)
-    val likerMultiplier =
-      if (likerMultipliers.nonEmpty && likers.size == likerMultipliers.size)
-        likerMultipliers.max
-      else 1.0
+    vaw wikews = candidate.featuwes.getowewse(sgsvawidwikedbyusewidsfeatuwe, 🥺 seq.empty)
+    vaw wikewmuwtipwiews = w-wikews.fwatmap(wikewstodiscount.get)
+    vaw wikewmuwtipwiew =
+      i-if (wikewmuwtipwiews.nonempty && wikews.size == w-wikewmuwtipwiews.size)
+        w-wikewmuwtipwiews.max
+      ewse 1.0
 
-    val followers = candidate.features.getOrElse(SGSValidFollowedByUserIdsFeature, Seq.empty)
-    val followerMultipliers = followers.flatMap(followersToDiscount.get)
-    val followerMultiplier =
-      if (followerMultipliers.nonEmpty && followers.size == followerMultipliers.size &&
-        likers.isEmpty)
-        followerMultipliers.max
-      else 1.0
+    vaw fowwowews = c-candidate.featuwes.getowewse(sgsvawidfowwowedbyusewidsfeatuwe, òωó s-seq.empty)
+    vaw fowwowewmuwtipwiews = f-fowwowews.fwatmap(fowwowewstodiscount.get)
+    v-vaw fowwowewmuwtipwiew =
+      if (fowwowewmuwtipwiews.nonempty && fowwowews.size == fowwowewmuwtipwiews.size &&
+        wikews.isempty)
+        f-fowwowewmuwtipwiews.max
+      e-ewse 1.0
 
-    val authorId = candidate.features.getOrElse(AuthorIdFeature, None).getOrElse(0L)
-    val retweeterMultiplier =
-      if (candidate.features.getOrElse(IsRetweetFeature, false))
-        retweetersToDiscount.getOrElse(authorId, 1.0)
-      else 1.0
+    v-vaw authowid = candidate.featuwes.getowewse(authowidfeatuwe, (ˆ ﻌ ˆ)♡ n-nyone).getowewse(0w)
+    v-vaw wetweetewmuwtipwiew =
+      i-if (candidate.featuwes.getowewse(iswetweetfeatuwe, -.- fawse))
+        wetweetewstodiscount.getowewse(authowid, :3 1.0)
+      ewse 1.0
 
-    originalAuthorMultiplier * likerMultiplier * followerMultiplier * retweeterMultiplier
+    owiginawauthowmuwtipwiew * w-wikewmuwtipwiew * f-fowwowewmuwtipwiew * wetweetewmuwtipwiew
   }
 
-  def getUserDiscounts(
-    queryTime: Time,
-    feedbackEntries: Seq[FeedbackEntry],
-  ): Map[Long, Double] = {
-    val userDiscounts = mutable.Map[Long, Double]()
-    feedbackEntries
-      .collect {
-        case FeedbackEntry(_, _, tl.FeedbackEntity.UserId(userId), timestamp, _) =>
-          val timeSinceFeedback = queryTime.minus(timestamp)
-          val timeSinceDiscounting = timeSinceFeedback - DurationForFiltering
-          val multiplier = ((timeSinceDiscounting.inDays / ScoreMultiplierIncrementDurationInDays)
-            * ScoreMultiplierIncrement + ScoreMultiplierLowerBound)
-          userDiscounts.update(userId, multiplier)
+  def getusewdiscounts(
+    q-quewytime: t-time, ʘwʘ
+    feedbackentwies: seq[feedbackentwy], 🥺
+  ): map[wong, >_< doubwe] = {
+    v-vaw usewdiscounts = mutabwe.map[wong, ʘwʘ doubwe]()
+    feedbackentwies
+      .cowwect {
+        case feedbackentwy(_, (˘ω˘) _, t-tw.feedbackentity.usewid(usewid), (✿oωo) timestamp, _) =>
+          vaw timesincefeedback = q-quewytime.minus(timestamp)
+          v-vaw timesincediscounting = timesincefeedback - duwationfowfiwtewing
+          vaw muwtipwiew = ((timesincediscounting.indays / s-scowemuwtipwiewincwementduwationindays)
+            * s-scowemuwtipwiewincwement + scowemuwtipwiewwowewbound)
+          usewdiscounts.update(usewid, (///ˬ///✿) muwtipwiew)
       }
-    userDiscounts.toMap
+    u-usewdiscounts.tomap
   }
 }

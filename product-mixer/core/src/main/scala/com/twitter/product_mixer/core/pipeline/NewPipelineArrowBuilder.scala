@@ -1,181 +1,181 @@
-package com.twitter.product_mixer.core.pipeline
+package com.twittew.pwoduct_mixew.cowe.pipewine
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.state.HasExecutorResults
-import com.twitter.product_mixer.core.pipeline.state.HasResult
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.quality_factor.QualityFactorStatus
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.Executor.Context
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Arrow.Iso
-import com.twitter.util.Return
-import com.twitter.util.Throw
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pipewinestepidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hasexecutowwesuwts
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.state.haswesuwt
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.step.step
+impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.quawityfactowstatus
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow.context
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executowwesuwt
+i-impowt com.twittew.stitch.awwow
+impowt com.twittew.stitch.awwow.iso
+impowt com.twittew.utiw.wetuwn
+i-impowt com.twittew.utiw.thwow
 
 /**
- * Pipeline Arrow Builder used for constructing a final arrow for a pipeline after adding necessary
- * steps.
+ * pipewine a-awwow buiwdew used fow constwucting a finaw awwow fow a pipewine a-aftew adding nyecessawy
+ * s-steps. nyaa~~
  *
- * @param steps The kept non-empty Pipeline Steps
- * @param addedSteps Steps that have been added, but not necessarily kept.
- * @param statsReceiver Stats Receiver for metric book keeping
- * @tparam Result sThe expected final result type of the pipeline.
- * @tparam State The input state type, which should implement [[HasResult]].
+ * @pawam s-steps the kept nyon-empty pipewine steps
+ * @pawam addedsteps steps that have b-been added, ^^ but nyot nyecessawiwy kept. >w<
+ * @pawam statsweceivew stats weceivew f-fow metwic book keeping
+ * @tpawam w-wesuwt sthe e-expected finaw wesuwt t-type of the p-pipewine. OwO
+ * @tpawam state the input state type, XD w-which shouwd impwement [[haswesuwt]]. ^^;;
  */
-case class NewPipelineArrowBuilder[
-  Result,
-  State <: HasExecutorResults[State] with HasResult[Result]
-] private (
-  private val steps: Seq[PipelineStep[State, _, _, _]],
-  override val statsReceiver: StatsReceiver)
-    extends Executor {
+case c-cwass nyewpipewineawwowbuiwdew[
+  wesuwt, 🥺
+  state <: hasexecutowwesuwts[state] with haswesuwt[wesuwt]
+] pwivate (
+  pwivate vaw s-steps: seq[pipewinestep[state, XD _, (U ᵕ U❁) _, _]],
+  ovewwide v-vaw statsweceivew: s-statsweceivew)
+    e-extends executow {
 
-  def add[Config, ExecutorInput, ExResult <: ExecutorResult](
-    pipelineStepIdentifier: PipelineStepIdentifier,
-    step: Step[State, Config, ExecutorInput, ExResult],
-    executorConfig: Config
-  ): NewPipelineArrowBuilder[Result, State] = {
-    require(
-      !steps.contains(pipelineStepIdentifier),
-      s"Found duplicate step $pipelineStepIdentifier when building pipeline arrow")
+  def add[config, :3 executowinput, ( ͡o ω ͡o ) e-exwesuwt <: executowwesuwt](
+    p-pipewinestepidentifiew: pipewinestepidentifiew, òωó
+    s-step: step[state, σωσ c-config, executowinput, (U ᵕ U❁) e-exwesuwt], (✿oωo)
+    executowconfig: config
+  ): nyewpipewineawwowbuiwdew[wesuwt, ^^ s-state] = {
+    wequiwe(
+      !steps.contains(pipewinestepidentifiew), ^•ﻌ•^
+      s"found d-dupwicate step $pipewinestepidentifiew when buiwding p-pipewine awwow")
 
-    // If the step has nothing to execute, drop it for simplification but still added it to the
-    // "addedSteps" field for build time validation
-    if (step.isEmpty(executorConfig)) {
-      this
-    } else {
-      val newPipelineStep =
-        PipelineStep(pipelineStepIdentifier, executorConfig, step)
-      val newSteps = steps :+ newPipelineStep
-      this.copy(steps = newSteps)
+    // if the step has nyothing t-to exekawaii~, XD d-dwop it fow simpwification but stiww added it to the
+    // "addedsteps" fiewd fow buiwd time vawidation
+    if (step.isempty(executowconfig)) {
+      t-this
+    } e-ewse {
+      vaw nyewpipewinestep =
+        p-pipewinestep(pipewinestepidentifiew, :3 e-executowconfig, (ꈍᴗꈍ) s-step)
+      vaw nyewsteps = steps :+ nyewpipewinestep
+      this.copy(steps = n-nyewsteps)
     }
   }
 
-  def buildArrow(
-    context: Executor.Context
-  ): Arrow[State, NewPipelineResult[Result]] = {
-    val initialArrow = Arrow
-      .map { input: State => NewStepData[State](input) }
-    val allStepArrows = steps.map { step =>
-      Iso.onlyIf[NewStepData[State]] { stepData => !stepData.stopExecuting } {
-        wrapStepWithExecutorBookkeeping(step, context)
+  def buiwdawwow(
+    context: executow.context
+  ): awwow[state, :3 nyewpipewinewesuwt[wesuwt]] = {
+    v-vaw initiawawwow = awwow
+      .map { i-input: s-state => nyewstepdata[state](input) }
+    v-vaw awwstepawwows = steps.map { step =>
+      i-iso.onwyif[newstepdata[state]] { s-stepdata => !stepdata.stopexecuting } {
+        w-wwapstepwithexecutowbookkeeping(step, (U ﹏ U) c-context)
       }
     }
-    val combinedArrow = isoArrowsSequentially(allStepArrows)
-    val resultArrow = Arrow.map { stepData: NewStepData[State] =>
-      stepData.pipelineFailure match {
-        case Some(failure) =>
-          NewPipelineResult.Failure(failure, stepData.pipelineState.executorResultsByPipelineStep)
-        case None =>
-          NewPipelineResult.Success(
-            stepData.pipelineState.buildResult,
-            stepData.pipelineState.executorResultsByPipelineStep)
+    vaw combinedawwow = isoawwowssequentiawwy(awwstepawwows)
+    vaw wesuwtawwow = a-awwow.map { s-stepdata: n-nyewstepdata[state] =>
+      s-stepdata.pipewinefaiwuwe m-match {
+        case some(faiwuwe) =>
+          nyewpipewinewesuwt.faiwuwe(faiwuwe, UwU stepdata.pipewinestate.executowwesuwtsbypipewinestep)
+        c-case nyone =>
+          nyewpipewinewesuwt.success(
+            stepdata.pipewinestate.buiwdwesuwt, 😳😳😳
+            stepdata.pipewinestate.executowwesuwtsbypipewinestep)
       }
     }
-    initialArrow.andThen(combinedArrow).andThen(resultArrow)
+    initiawawwow.andthen(combinedawwow).andthen(wesuwtawwow)
   }
 
-  private[this] def wrapStepWithExecutorBookkeeping(
-    step: PipelineStep[State, _, _, _],
-    context: Context
-  ): Arrow.Iso[NewStepData[State]] = {
-    val wrapped = wrapStepWithExecutorBookkeeping[NewStepData[State], NewStepData[State]](
-      context = context,
-      identifier = step.stepIdentifier,
-      arrow = step.arrow(context),
-      // extract the failure only if it's present. Not sure if this is needed???
-      transformer = _.pipelineFailure.map(Throw(_)).getOrElse(Return.Unit)
+  pwivate[this] def w-wwapstepwithexecutowbookkeeping(
+    step: pipewinestep[state, XD _, _, _],
+    context: context
+  ): awwow.iso[newstepdata[state]] = {
+    v-vaw wwapped = w-wwapstepwithexecutowbookkeeping[newstepdata[state], o.O n-nyewstepdata[state]](
+      context = c-context, (⑅˘꒳˘)
+      identifiew = step.stepidentifiew, 😳😳😳
+      a-awwow = s-step.awwow(context), nyaa~~
+      // extwact the faiwuwe onwy if it's pwesent. rawr nyot suwe if this is nyeeded???
+      twansfowmew = _.pipewinefaiwuwe.map(thwow(_)).getowewse(wetuwn.unit)
     )
 
-    Arrow
-      .zipWithArg(wrapped.liftToTry)
+    a-awwow
+      .zipwithawg(wwapped.wifttotwy)
       .map {
-        case (_: NewStepData[State], Return(result)) =>
-          // if Step was successful, return the result
-          result
-        case (previous: NewStepData[State], Throw(pipelineFailure: PipelineFailure)) =>
-          // if the Step failed in such a way that the failure was NOT captured
-          // in the result object, then update the State with the failure
-          previous.withFailure(pipelineFailure)
-        case (_, Throw(ex)) =>
-          // an exception was thrown which was not handled by the failure classifier
-          // this only happens with cancellation exceptions which are re-thrown
-          throw ex
+        case (_: nyewstepdata[state], -.- w-wetuwn(wesuwt)) =>
+          // if s-step was successfuw, (✿oωo) w-wetuwn the wesuwt
+          wesuwt
+        c-case (pwevious: n-nyewstepdata[state], thwow(pipewinefaiwuwe: p-pipewinefaiwuwe)) =>
+          // if t-the step faiwed in such a way that the faiwuwe was not captuwed
+          // in the wesuwt object, /(^•ω•^) t-then update t-the state with t-the faiwuwe
+          pwevious.withfaiwuwe(pipewinefaiwuwe)
+        c-case (_, 🥺 thwow(ex)) =>
+          // a-an exception was thwown w-which was nyot handwed by the faiwuwe cwassifiew
+          // this onwy happens w-with cancewwation e-exceptions which awe we-thwown
+          thwow e-ex
       }
   }
 
   /**
-   * Sets up stats [[com.twitter.finagle.stats.Gauge]]s for any [[QualityFactorStatus]]
+   * s-sets up stats [[com.twittew.finagwe.stats.gauge]]s fow any [[quawityfactowstatus]]
    *
-   * @note We use provideGauge so these gauges live forever even without a reference.
+   * @note we use pwovidegauge s-so these gauges wive fowevew even without a wefewence. ʘwʘ
    */
-  private[pipeline] def buildGaugesForQualityFactor(
-    pipelineIdentifier: ComponentIdentifier,
-    qualityFactorStatus: QualityFactorStatus,
-    statsReceiver: StatsReceiver
-  ): Unit = {
-    qualityFactorStatus.qualityFactorByPipeline.foreach {
-      case (identifier, qualityFactor) =>
-        // QF is a relative stat (since the parent pipeline is monitoring a child pipeline)
-        val scopes = pipelineIdentifier.toScopes ++ identifier.toScopes :+ "QualityFactor"
-        statsReceiver.provideGauge(scopes: _*) { qualityFactor.currentValue.toFloat }
+  pwivate[pipewine] def buiwdgaugesfowquawityfactow(
+    p-pipewineidentifiew: componentidentifiew, UwU
+    quawityfactowstatus: q-quawityfactowstatus, XD
+    s-statsweceivew: statsweceivew
+  ): unit = {
+    quawityfactowstatus.quawityfactowbypipewine.foweach {
+      case (identifiew, (✿oωo) q-quawityfactow) =>
+        // q-qf is a wewative stat (since the pawent pipewine is m-monitowing a chiwd pipewine)
+        v-vaw scopes = pipewineidentifiew.toscopes ++ identifiew.toscopes :+ "quawityfactow"
+        statsweceivew.pwovidegauge(scopes: _*) { q-quawityfactow.cuwwentvawue.tofwoat }
     }
   }
 }
 
-object NewPipelineArrowBuilder {
-  def apply[Result, InputState <: HasExecutorResults[InputState] with HasResult[Result]](
-    statsReceiver: StatsReceiver
-  ): NewPipelineArrowBuilder[Result, InputState] = {
-    NewPipelineArrowBuilder(
-      Seq.empty,
-      statsReceiver
+object n-nyewpipewineawwowbuiwdew {
+  d-def appwy[wesuwt, :3 inputstate <: h-hasexecutowwesuwts[inputstate] with haswesuwt[wesuwt]](
+    s-statsweceivew: s-statsweceivew
+  ): nyewpipewineawwowbuiwdew[wesuwt, (///ˬ///✿) i-inputstate] = {
+    nyewpipewineawwowbuiwdew(
+      s-seq.empty, nyaa~~
+      s-statsweceivew
     )
   }
 }
 
 /**
- * This is a pipeline specific instance of a step, i.e, a generic step with the step identifier
- * within the pipeline and its executor configs.
- * @param stepIdentifier Step identifier of the step within a pipeline
- * @param executorConfig Config to execute the step with
- * @param step The underlying step to be used
- * @tparam InputState The input state object
- * @tparam ExecutorConfig The config expected for the given step
- * @tparam ExecutorInput Input for the underlying executor
- * @tparam ExecResult The result type
+ * this is a pipewine specific i-instance of a s-step, >w< i.e, -.- a genewic s-step with the step identifiew
+ * within the p-pipewine and its executow configs. (✿oωo)
+ * @pawam stepidentifiew s-step i-identifiew of the step within a pipewine
+ * @pawam executowconfig c-config to exekawaii~ t-the step w-with
+ * @pawam s-step the undewwying step to be u-used
+ * @tpawam inputstate the input state object
+ * @tpawam executowconfig the config expected f-fow the given step
+ * @tpawam executowinput input f-fow the undewwying executow
+ * @tpawam e-execwesuwt the wesuwt t-type
  */
-case class PipelineStep[
-  State <: HasExecutorResults[State],
-  PipelineStepConfig,
-  ExecutorInput,
-  ExecResult <: ExecutorResult
+case cwass pipewinestep[
+  s-state <: hasexecutowwesuwts[state], (˘ω˘)
+  p-pipewinestepconfig, rawr
+  e-executowinput, OwO
+  e-execwesuwt <: executowwesuwt
 ](
-  stepIdentifier: PipelineStepIdentifier,
-  executorConfig: PipelineStepConfig,
-  step: Step[State, PipelineStepConfig, ExecutorInput, ExecResult]) {
+  s-stepidentifiew: pipewinestepidentifiew, ^•ﻌ•^
+  executowconfig: pipewinestepconfig, UwU
+  step: step[state, (˘ω˘) pipewinestepconfig, (///ˬ///✿) executowinput, σωσ e-execwesuwt]) {
 
-  def arrow(
-    context: Executor.Context
-  ): Arrow.Iso[NewStepData[State]] = {
-    val inputArrow = Arrow.map { stepData: NewStepData[State] =>
-      step.adaptInput(stepData.pipelineState, executorConfig)
+  d-def awwow(
+    c-context: executow.context
+  ): a-awwow.iso[newstepdata[state]] = {
+    vaw inputawwow = awwow.map { stepdata: n-nyewstepdata[state] =>
+      s-step.adaptinput(stepdata.pipewinestate, /(^•ω•^) executowconfig)
     }
 
-    Arrow
-      .zipWithArg(inputArrow.andThen(step.arrow(executorConfig, context))).map {
-        case (stepData: NewStepData[State], executorResult: ExecResult @unchecked) =>
-          val updatedResultsByPipelineStep =
-            stepData.pipelineState.executorResultsByPipelineStep + (stepIdentifier -> executorResult)
-          val updatedPipelineState = step
-            .updateState(stepData.pipelineState, executorResult, executorConfig).setExecutorResults(
-              updatedResultsByPipelineStep)
+    a-awwow
+      .zipwithawg(inputawwow.andthen(step.awwow(executowconfig, 😳 context))).map {
+        case (stepdata: n-nyewstepdata[state], 😳 e-executowwesuwt: execwesuwt @unchecked) =>
+          v-vaw u-updatedwesuwtsbypipewinestep =
+            stepdata.pipewinestate.executowwesuwtsbypipewinestep + (stepidentifiew -> executowwesuwt)
+          vaw updatedpipewinestate = step
+            .updatestate(stepdata.pipewinestate, (⑅˘꒳˘) e-executowwesuwt, 😳😳😳 e-executowconfig).setexecutowwesuwts(
+              u-updatedwesuwtsbypipewinestep)
 
-          NewStepData(updatedPipelineState)
+          n-nyewstepdata(updatedpipewinestate)
       }
   }
 }

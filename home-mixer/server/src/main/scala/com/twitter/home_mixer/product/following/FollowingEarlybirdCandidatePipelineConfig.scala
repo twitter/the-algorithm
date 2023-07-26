@@ -1,54 +1,54 @@
-package com.twitter.home_mixer.product.following
+package com.twittew.home_mixew.pwoduct.fowwowing
 
-import com.twitter.home_mixer.candidate_pipeline.FollowingEarlybirdResponseFeatureTransformer
-import com.twitter.home_mixer.functional_component.candidate_source.EarlybirdCandidateSource
-import com.twitter.home_mixer.product.following.model.FollowingQuery
-import com.twitter.product_mixer.component_library.feature_hydrator.query.social_graph.SGSFollowedUsersFeature
-import com.twitter.product_mixer.component_library.gate.NonEmptySeqFeatureGate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.search.earlybird.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.candidate_pipewine.fowwowingeawwybiwdwesponsefeatuwetwansfowmew
+impowt c-com.twittew.home_mixew.functionaw_component.candidate_souwce.eawwybiwdcandidatesouwce
+i-impowt c-com.twittew.home_mixew.pwoduct.fowwowing.modew.fowwowingquewy
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.quewy.sociaw_gwaph.sgsfowwowedusewsfeatuwe
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.gate.nonemptyseqfeatuwegate
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.basecandidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinewesuwtstwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig
+i-impowt com.twittew.seawch.eawwybiwd.{thwiftscawa => t}
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class FollowingEarlybirdCandidatePipelineConfig @Inject() (
-  earlybirdCandidateSource: EarlybirdCandidateSource,
-  followingEarlybirdQueryTransformer: FollowingEarlybirdQueryTransformer)
-    extends CandidatePipelineConfig[
-      FollowingQuery,
-      t.EarlybirdRequest,
-      t.ThriftSearchResult,
-      TweetCandidate
+@singweton
+cwass fowwowingeawwybiwdcandidatepipewineconfig @inject() (
+  e-eawwybiwdcandidatesouwce: eawwybiwdcandidatesouwce, 🥺
+  f-fowwowingeawwybiwdquewytwansfowmew: f-fowwowingeawwybiwdquewytwansfowmew)
+    extends candidatepipewineconfig[
+      fowwowingquewy, >_<
+      t.eawwybiwdwequest, >_<
+      t.thwiftseawchwesuwt, (⑅˘꒳˘)
+      t-tweetcandidate
     ] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("FollowingEarlybird")
+  ovewwide vaw identifiew: candidatepipewineidentifiew =
+    candidatepipewineidentifiew("fowwowingeawwybiwd")
 
-  override val candidateSource: BaseCandidateSource[t.EarlybirdRequest, t.ThriftSearchResult] =
-    earlybirdCandidateSource
+  ovewwide vaw candidatesouwce: basecandidatesouwce[t.eawwybiwdwequest, /(^•ω•^) t-t.thwiftseawchwesuwt] =
+    eawwybiwdcandidatesouwce
 
-  override val gates: Seq[Gate[FollowingQuery]] = Seq(
-    NonEmptySeqFeatureGate(SGSFollowedUsersFeature)
+  ovewwide v-vaw gates: s-seq[gate[fowwowingquewy]] = seq(
+    n-nyonemptyseqfeatuwegate(sgsfowwowedusewsfeatuwe)
   )
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    FollowingQuery,
-    t.EarlybirdRequest
-  ] = followingEarlybirdQueryTransformer
+  o-ovewwide vaw quewytwansfowmew: candidatepipewinequewytwansfowmew[
+    fowwowingquewy, rawr x3
+    t.eawwybiwdwequest
+  ] = f-fowwowingeawwybiwdquewytwansfowmew
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[t.ThriftSearchResult]
-  ] = Seq(FollowingEarlybirdResponseFeatureTransformer)
+  ovewwide vaw featuwesfwomcandidatesouwcetwansfowmews: seq[
+    c-candidatefeatuwetwansfowmew[t.thwiftseawchwesuwt]
+  ] = seq(fowwowingeawwybiwdwesponsefeatuwetwansfowmew)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    t.ThriftSearchResult,
-    TweetCandidate
-  ] = { sourceResult => TweetCandidate(id = sourceResult.id) }
+  ovewwide vaw wesuwttwansfowmew: candidatepipewinewesuwtstwansfowmew[
+    t.thwiftseawchwesuwt,
+    t-tweetcandidate
+  ] = { souwcewesuwt => tweetcandidate(id = souwcewesuwt.id) }
 }

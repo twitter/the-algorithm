@@ -1,32 +1,32 @@
-package com.twitter.search.earlybird_root.routers;
+package com.twittew.seawch.eawwybiwd_woot.woutews;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+impowt javax.inject.named;
+i-impowt j-javax.inject.singweton;
 
-import com.google.inject.Provides;
+i-impowt c-com.googwe.inject.pwovides;
 
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
-import com.twitter.search.earlybird_root.filters.RealtimeServingRangeProvider;
-import com.twitter.search.earlybird_root.filters.ServingRangeProvider;
+i-impowt com.twittew.inject.twittewmoduwe;
+i-impowt c-com.twittew.seawch.common.decidew.seawchdecidew;
+i-impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.eawwybiwdtimewangefiwtew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.weawtimesewvingwangepwovidew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.sewvingwangepwovidew;
 
-public class TopTweetsRequestRouterModule extends TwitterModule {
-  public static final String TIME_RANGE_FILTER = "top_tweets_time_range_filter";
+p-pubwic cwass toptweetswequestwoutewmoduwe extends twittewmoduwe {
+  p-pubwic static finaw stwing t-time_wange_fiwtew = "top_tweets_time_wange_fiwtew";
 
-  public static final String SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY =
-      "superroot_top_tweets_serving_range_boundary_hours_ago";
+  pubwic static finaw stwing sewving_wange_boundawy_houws_ago_decidew_key =
+      "supewwoot_top_tweets_sewving_wange_boundawy_houws_ago";
 
-  private ServingRangeProvider getServingRangeProvider(final SearchDecider decider)
-      throws Exception {
-    return new RealtimeServingRangeProvider(decider, SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY);
+  p-pwivate sewvingwangepwovidew getsewvingwangepwovidew(finaw s-seawchdecidew d-decidew)
+      thwows exception {
+    wetuwn nyew weawtimesewvingwangepwovidew(decidew, rawr sewving_wange_boundawy_houws_ago_decidew_key);
   }
 
-  @Provides
-  @Singleton
-  @Named(TIME_RANGE_FILTER)
-  private EarlybirdTimeRangeFilter providesTimeRangeFilter(SearchDecider decider) throws Exception {
-    return EarlybirdTimeRangeFilter.newTimeRangeFilterWithoutQueryRewriter(
-        getServingRangeProvider(decider));
+  @pwovides
+  @singweton
+  @named(time_wange_fiwtew)
+  p-pwivate eawwybiwdtimewangefiwtew pwovidestimewangefiwtew(seawchdecidew decidew) thwows exception {
+    wetuwn e-eawwybiwdtimewangefiwtew.newtimewangefiwtewwithoutquewywewwitew(
+        getsewvingwangepwovidew(decidew));
   }
 }

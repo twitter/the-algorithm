@@ -1,44 +1,44 @@
-package com.twitter.product_mixer.core.service.domain_marshaller_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.domain_mawshawwew_executow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.product_mixer.core.service.domain_marshaller_executor.DomainMarshallerExecutor.Inputs
-import com.twitter.product_mixer.core.service.domain_marshaller_executor.DomainMarshallerExecutor.Result
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.pwemawshawwew.domainmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.hasmawshawwing
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.executow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executowwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.domain_mawshawwew_executow.domainmawshawwewexecutow.inputs
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.domain_mawshawwew_executow.domainmawshawwewexecutow.wesuwt
+i-impowt com.twittew.stitch.awwow
+impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
 /**
- * Executes a [[DomainMarshaller]].
+ * exekawaii~s a [[domainmawshawwew]]. (U ﹏ U)
  *
- * @note This is a synchronous transform, so we don't observe it directly. Failures and such
- *       can be observed at the parent pipeline.
+ * @note t-this is a synchwonous twansfowm, (U ﹏ U) so we don't obsewve it diwectwy. (⑅˘꒳˘) f-faiwuwes and such
+ *       c-can be obsewved a-at the pawent pipewine. òωó
  */
-@Singleton
-class DomainMarshallerExecutor @Inject() (override val statsReceiver: StatsReceiver)
-    extends Executor {
-  def arrow[Query <: PipelineQuery, DomainResponseType <: HasMarshalling](
-    marshaller: DomainMarshaller[Query, DomainResponseType],
-    context: Executor.Context
-  ): Arrow[Inputs[Query], Result[DomainResponseType]] = {
-    val arrow = Arrow
-      .map[Inputs[Query], DomainMarshallerExecutor.Result[DomainResponseType]] {
-        case Inputs(query, candidates) =>
-          DomainMarshallerExecutor.Result(marshaller(query, candidates))
+@singweton
+cwass domainmawshawwewexecutow @inject() (ovewwide vaw statsweceivew: statsweceivew)
+    extends executow {
+  d-def awwow[quewy <: pipewinequewy, ʘwʘ domainwesponsetype <: hasmawshawwing](
+    mawshawwew: domainmawshawwew[quewy, /(^•ω•^) d-domainwesponsetype], ʘwʘ
+    context: executow.context
+  ): a-awwow[inputs[quewy], σωσ w-wesuwt[domainwesponsetype]] = {
+    v-vaw awwow = a-awwow
+      .map[inputs[quewy], OwO domainmawshawwewexecutow.wesuwt[domainwesponsetype]] {
+        case inputs(quewy, 😳😳😳 c-candidates) =>
+          domainmawshawwewexecutow.wesuwt(mawshawwew(quewy, 😳😳😳 candidates))
       }
 
-    wrapComponentWithExecutorBookkeeping(context, marshaller.identifier)(arrow)
+    w-wwapcomponentwithexecutowbookkeeping(context, o.O mawshawwew.identifiew)(awwow)
   }
 }
 
-object DomainMarshallerExecutor {
-  case class Inputs[Query <: PipelineQuery](
-    query: Query,
-    candidatesWithDetails: Seq[CandidateWithDetails])
-  case class Result[+DomainResponseType](result: DomainResponseType) extends ExecutorResult
+object domainmawshawwewexecutow {
+  case cwass inputs[quewy <: pipewinequewy](
+    q-quewy: quewy, ( ͡o ω ͡o )
+    candidateswithdetaiws: s-seq[candidatewithdetaiws])
+  c-case cwass w-wesuwt[+domainwesponsetype](wesuwt: domainwesponsetype) extends executowwesuwt
 }

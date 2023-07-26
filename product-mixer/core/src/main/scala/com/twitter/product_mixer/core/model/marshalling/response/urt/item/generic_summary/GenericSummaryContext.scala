@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.genewic_summawy
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.HorizonIcon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.icon.howizonicon
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtext
 
-case class GenericSummaryContext(
-  text: RichText,
-  icon: Option[HorizonIcon])
+c-case cwass g-genewicsummawycontext(
+  t-text: w-wichtext, (U ᵕ U❁)
+  icon: o-option[howizonicon])

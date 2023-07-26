@@ -1,51 +1,51 @@
-package com.twitter.servo.cache
+package com.twittew.sewvo.cache
 
-import com.twitter.util.Future
+impowt com.twittew.utiw.futuwe
 
 /**
- * A cache wrapper that makes the underlying cache transparent to
- * certain keys.
+ * a-a cache wwappew t-that makes t-the undewwying c-cache twanspawent t-to
+ * cewtain k-keys. òωó
  */
-class KeyFilteringCache[K, V](val underlyingCache: Cache[K, V], keyPredicate: K => Boolean)
-    extends CacheWrapper[K, V] {
-  override def get(keys: Seq[K]): Future[KeyValueResult[K, V]] =
-    underlyingCache.get(keys filter keyPredicate)
+cwass k-keyfiwtewingcache[k, ʘwʘ v-v](vaw undewwyingcache: cache[k, /(^•ω•^) v], keypwedicate: k => boowean)
+    extends c-cachewwappew[k, ʘwʘ v] {
+  ovewwide def get(keys: s-seq[k]): futuwe[keyvawuewesuwt[k, σωσ v]] =
+    undewwyingcache.get(keys f-fiwtew keypwedicate)
 
-  override def getWithChecksum(keys: Seq[K]): Future[CsKeyValueResult[K, V]] =
-    underlyingCache.getWithChecksum(keys filter keyPredicate)
+  ovewwide def getwithchecksum(keys: seq[k]): futuwe[cskeyvawuewesuwt[k, OwO v-v]] =
+    undewwyingcache.getwithchecksum(keys fiwtew keypwedicate)
 
-  override def add(key: K, value: V) =
-    if (keyPredicate(key)) {
-      underlyingCache.add(key, value)
-    } else {
-      Future.True
+  o-ovewwide d-def add(key: k, 😳😳😳 vawue: v) =
+    if (keypwedicate(key)) {
+      undewwyingcache.add(key, 😳😳😳 vawue)
+    } e-ewse {
+      futuwe.twue
     }
 
-  override def checkAndSet(key: K, value: V, checksum: Checksum) =
-    if (keyPredicate(key)) {
-      underlyingCache.checkAndSet(key, value, checksum)
-    } else {
-      Future.True
+  ovewwide def checkandset(key: k, o.O vawue: v-v, ( ͡o ω ͡o ) checksum: checksum) =
+    i-if (keypwedicate(key)) {
+      u-undewwyingcache.checkandset(key, (U ﹏ U) v-vawue, checksum)
+    } e-ewse {
+      futuwe.twue
     }
 
-  override def set(key: K, value: V) =
-    if (keyPredicate(key)) {
-      underlyingCache.set(key, value)
-    } else {
-      Future.Done
+  ovewwide d-def set(key: k, (///ˬ///✿) vawue: v) =
+    if (keypwedicate(key)) {
+      u-undewwyingcache.set(key, >w< vawue)
+    } ewse {
+      futuwe.done
     }
 
-  override def replace(key: K, value: V) =
-    if (keyPredicate(key)) {
-      underlyingCache.replace(key, value)
-    } else {
-      Future.True
+  ovewwide def wepwace(key: k-k, rawr vawue: v) =
+    if (keypwedicate(key)) {
+      u-undewwyingcache.wepwace(key, mya v-vawue)
+    } e-ewse {
+      futuwe.twue
     }
 
-  override def delete(key: K) =
-    if (keyPredicate(key)) {
-      underlyingCache.delete(key)
-    } else {
-      Future.True
+  ovewwide def dewete(key: k) =
+    if (keypwedicate(key)) {
+      u-undewwyingcache.dewete(key)
+    } e-ewse {
+      futuwe.twue
     }
 }

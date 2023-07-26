@@ -1,33 +1,33 @@
-package com.twitter.visibility.configapi.configs
+package com.twittew.visibiwity.configapi.configs
 
-import com.twitter.timelines.configapi.Config
-import com.twitter.visibility.configapi.params.RuleParams._
-import com.twitter.visibility.configapi.params.VisibilityExperiments._
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.SafetyLevel._
+impowt com.twittew.timewines.configapi.config
+impowt c-com.twittew.visibiwity.configapi.pawams.wuwepawams._
+i-impowt c-com.twittew.visibiwity.configapi.pawams.visibiwityexpewiments._
+i-impowt com.twittew.visibiwity.modews.safetywevew
+i-impowt com.twittew.visibiwity.modews.safetywevew._
 
-private[visibility] object VisibilityExperimentsConfig {
-  import ExperimentsHelper._
+p-pwivate[visibiwity] o-object v-visibiwityexpewimentsconfig {
+  impowt expewimentshewpew._
 
-  val TestExperimentConfig: Config = mkABExperimentConfig(TestExperiment, TestHoldbackParam)
+  vaw testexpewimentconfig: config = mkabexpewimentconfig(testexpewiment, :3 t-testhowdbackpawam)
 
-  val NotGraduatedUserLabelRuleHoldbackExperimentConfig: Config =
-    mkABExperimentConfig(
-      NotGraduatedUserLabelRuleExperiment,
-      NotGraduatedUserLabelRuleHoldbackExperimentParam
+  vaw nyotgwaduatedusewwabewwuwehowdbackexpewimentconfig: c-config =
+    mkabexpewimentconfig(
+      nyotgwaduatedusewwabewwuweexpewiment, 😳😳😳
+      n-nyotgwaduatedusewwabewwuwehowdbackexpewimentpawam
     )
 
-  def config(safetyLevel: SafetyLevel): Seq[Config] = {
+  def config(safetywevew: safetywevew): seq[config] = {
 
-    val experimentConfigs = safetyLevel match {
+    v-vaw expewimentconfigs = safetywevew m-match {
 
-      case Test =>
-        Seq(TestExperimentConfig)
+      c-case test =>
+        seq(testexpewimentconfig)
 
-      case _ => Seq(NotGraduatedUserLabelRuleHoldbackExperimentConfig)
+      case _ => seq(notgwaduatedusewwabewwuwehowdbackexpewimentconfig)
     }
 
-    experimentConfigs
+    expewimentconfigs
   }
 
 }

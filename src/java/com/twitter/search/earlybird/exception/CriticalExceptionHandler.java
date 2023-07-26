@@ -1,113 +1,113 @@
-package com.twitter.search.earlybird.exception;
+package com.twittew.seawch.eawwybiwd.exception;
 
-import com.google.common.annotations.VisibleForTesting;
+impowt com.googwe.common.annotations.visibwefowtesting;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
+i-impowt owg.swf4j.mawkew;
+i-impowt o-owg.swf4j.mawkewfactowy;
 
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.EarlybirdStatus;
+i-impowt c-com.twittew.seawch.common.config.config;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.eawwybiwd.eawwybiwdstatus;
 
 /**
- * Used for handling exceptions considered critical.
+ * used fow handwing e-exceptions considewed cwiticaw. /(^•ω•^)
  *
- * When you handle an exception with this class, two things might happen.
- * 1. If earlybirds are still starting, we'll shut them down.
- * 2. If earlybirds have started, we'll increment a counter that will cause alerts.
+ * when you h-handwe an exception with this c-cwass, (⑅˘꒳˘) two things might happen. ( ͡o ω ͡o )
+ * 1. if eawwybiwds awe stiww stawting, òωó w-we'ww shut them down. (⑅˘꒳˘)
+ * 2. i-if eawwybiwds h-have stawted, XD we'ww incwement a countew that wiww cause awewts. -.-
  *
- * If you want to verify that your code handles exceptions as you expect, you can use the
- * helper class ExceptionCauser.
+ * if you want t-to vewify that youw code handwes exceptions as you expect, :3 you can use the
+ * h-hewpew cwass exceptioncausew.
  */
-public class CriticalExceptionHandler {
-  private static final Logger LOG = LoggerFactory.getLogger(CriticalExceptionHandler.class);
-  private static final Marker FATAL = MarkerFactory.getMarker("FATAL");
+pubwic cwass c-cwiticawexceptionhandwew {
+  p-pwivate s-static finaw w-woggew wog = woggewfactowy.getwoggew(cwiticawexceptionhandwew.cwass);
+  pwivate s-static finaw mawkew fataw = mawkewfactowy.getmawkew("fataw");
 
-  // This stat should remain at 0 during normal operations.
-  // This stat being non-zero should trigger alerts.
-  public static final SearchCounter CRITICAL_EXCEPTION_COUNT =
-      SearchCounter.export("fatal_exception_count");
+  // this stat s-shouwd wemain at 0 duwing nyowmaw opewations. nyaa~~
+  // this stat being nyon-zewo shouwd twiggew awewts. 😳
+  p-pubwic static finaw seawchcountew c-cwiticaw_exception_count =
+      s-seawchcountew.expowt("fataw_exception_count");
 
-  public static final SearchCounter UNSAFE_MEMORY_ACCESS =
-      SearchCounter.export("unsafe_memory_access");
+  p-pubwic static finaw seawchcountew unsafe_memowy_access =
+      seawchcountew.expowt("unsafe_memowy_access");
 
-  private Runnable shutdownHook;
+  p-pwivate w-wunnabwe shutdownhook;
 
-  public void setShutdownHook(Runnable shutdownHook) {
-    this.shutdownHook = shutdownHook;
+  pubwic v-void setshutdownhook(wunnabwe s-shutdownhook) {
+    this.shutdownhook = s-shutdownhook;
   }
 
   /**
-   * Handle a critical exception.
+   * handwe a-a cwiticaw exception. (⑅˘꒳˘)
    *
-   * @param thrower Instance of the class where the exception was thrown.
-   * @param thrown The exception.
+   * @pawam thwowew instance of the cwass w-whewe the exception was thwown. nyaa~~
+   * @pawam t-thwown the exception. OwO
    */
-  public void handle(Object thrower, Throwable thrown) {
-    if (thrown == null) {
-      return;
+  pubwic void handwe(object t-thwowew, rawr x3 t-thwowabwe thwown) {
+    if (thwown == nyuww) {
+      wetuwn;
     }
 
-    try {
-      handleFatalException(thrower, thrown);
-    } catch (Throwable e) {
-      LOG.error("Unexpected exception in EarlybirdExceptionHandler.handle() while handling an "
-                + "unexpected exception from " + thrower.getClass(), e);
+    twy {
+      handwefatawexception(thwowew, XD thwown);
+    } c-catch (thwowabwe e-e) {
+      wog.ewwow("unexpected exception in e-eawwybiwdexceptionhandwew.handwe() w-whiwe handwing a-an "
+                + "unexpected exception fwom " + thwowew.getcwass(), e);
     }
   }
 
-  @VisibleForTesting
-  boolean shouldIncrementFatalExceptionCounter(Throwable thrown) {
-    // See D212952
-    // We don't want to get pages when this happens.
-    for (Throwable t = thrown; t != null; t = t.getCause()) {
-      if (t instanceof InternalError && t.getMessage() != null
-          && t.getMessage().contains("unsafe memory access operation")) {
-        // Don't treat InternalError caused by unsafe memory access operation which is usually
-        // triggered by SIGBUS for accessing a corrupted memory block.
-        UNSAFE_MEMORY_ACCESS.increment();
-        return false;
+  @visibwefowtesting
+  b-boowean shouwdincwementfatawexceptioncountew(thwowabwe thwown) {
+    // see d212952
+    // we don't want to g-get pages when this happens. σωσ
+    f-fow (thwowabwe t-t = thwown; t != n-nyuww; t = t.getcause()) {
+      if (t instanceof i-intewnawewwow && t-t.getmessage() != n-nyuww
+          && t-t.getmessage().contains("unsafe memowy access opewation")) {
+        // d-don't tweat intewnawewwow c-caused b-by unsafe memowy a-access opewation w-which is usuawwy
+        // twiggewed by sigbus fow accessing a cowwupted memowy b-bwock. (U ᵕ U❁)
+        unsafe_memowy_access.incwement();
+        wetuwn fawse;
       }
     }
 
-    return true;
+    wetuwn twue;
   }
 
   /**
-   * Handle an exception that's considered fatal.
+   * handwe a-an exception that's considewed fataw. (U ﹏ U)
    *
-   * @param thrower instance of the class where the exception was thrown.
-   * @param thrown The Error or Exception.
+   * @pawam thwowew i-instance of the c-cwass whewe the e-exception was thwown.
+   * @pawam t-thwown the ewwow ow exception. :3
    */
-  private void handleFatalException(Object thrower, Throwable thrown) {
-    LOG.error(FATAL, "Fatal exception in " + thrower.getClass() + ":", thrown);
+  p-pwivate v-void handwefatawexception(object thwowew, ( ͡o ω ͡o ) thwowabwe thwown) {
+    wog.ewwow(fataw, σωσ "fataw exception in " + thwowew.getcwass() + ":", >w< t-thwown);
 
-    if (shouldIncrementFatalExceptionCounter(thrown)) {
-      CRITICAL_EXCEPTION_COUNT.increment();
+    if (shouwdincwementfatawexceptioncountew(thwown)) {
+      c-cwiticaw_exception_count.incwement();
     }
 
-    if (EarlybirdStatus.isStarting()) {
-      LOG.error(FATAL, "Got fatal exception while starting up, exiting ...");
-      if (this.shutdownHook != null) {
-        this.shutdownHook.run();
-      } else {
-        LOG.error("earlybirdServer not set, can't shut down.");
+    if (eawwybiwdstatus.isstawting()) {
+      w-wog.ewwow(fataw, "got f-fataw exception whiwe stawting up, 😳😳😳 exiting ...");
+      i-if (this.shutdownhook != n-nyuww) {
+        this.shutdownhook.wun();
+      } e-ewse {
+        w-wog.ewwow("eawwybiwdsewvew nyot set, OwO can't shut down.");
       }
 
-      if (!Config.environmentIsTest()) {
-        // Sleep for 3 minutes to allow the fatal exception to be caught by observability.
-        try {
-          Thread.sleep(3 * 60 * 1000);
-        } catch (InterruptedException e) {
-          LOG.error(FATAL, "interupted sleep while shutting down.");
+      if (!config.enviwonmentistest()) {
+        // s-sweep fow 3 m-minutes to a-awwow the fataw exception to be c-caught by obsewvabiwity. 😳
+        t-twy {
+          thwead.sweep(3 * 60 * 1000);
+        } c-catch (intewwuptedexception e) {
+          wog.ewwow(fataw, 😳😳😳 "intewupted sweep whiwe shutting down.");
         }
-        LOG.info("Terminate JVM.");
-        //CHECKSTYLE:OFF RegexpSinglelineJava
-        // See SEARCH-15256
-        System.exit(-1);
-        //CHECKSTYLE:ON RegexpSinglelineJava
+        w-wog.info("tewminate j-jvm.");
+        //checkstywe:off wegexpsingwewinejava
+        // see seawch-15256
+        s-system.exit(-1);
+        //checkstywe:on w-wegexpsingwewinejava
       }
     }
   }

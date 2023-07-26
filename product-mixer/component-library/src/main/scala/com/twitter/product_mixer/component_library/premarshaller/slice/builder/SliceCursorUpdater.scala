@@ -1,58 +1,58 @@
-package com.twitter.product_mixer.component_library.premarshaller.slice.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.swice.buiwdew
 
-import com.twitter.product_mixer.component_library.premarshaller.slice.builder.SliceCursorUpdater.getCursorByType
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorItem
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorType
-import com.twitter.product_mixer.core.model.marshalling.response.slice.SliceItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.swice.buiwdew.swicecuwsowupdatew.getcuwsowbytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.swice.cuwsowitem
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.swice.cuwsowtype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.swice.swiceitem
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object SliceCursorUpdater {
+o-object swicecuwsowupdatew {
 
-  def getCursorByType(
-    items: Seq[SliceItem],
-    cursorType: CursorType
-  ): Option[CursorItem] = {
-    items.collectFirst {
-      case cursor: CursorItem if cursor.cursorType == cursorType => cursor
+  d-def getcuwsowbytype(
+    i-items: s-seq[swiceitem], :3
+    cuwsowtype: cuwsowtype
+  ): option[cuwsowitem] = {
+    items.cowwectfiwst {
+      case cuwsow: c-cuwsowitem if cuwsow.cuwsowtype == cuwsowtype => c-cuwsow
     }
   }
 }
 
 /**
- * If [[SliceCursorBuilder.includeOperation]] is true and a cursor does exist in the `items`,
- * this will run the the underlying [[SliceCursorBuilder]] with the full `items`
- * (including all cursors which may be present) then filter out only the originally
- * found [[CursorItem]] from the results). Then append the new cursor to the end of the results.
+ * if [[swicecuwsowbuiwdew.incwudeopewation]] i-is twue and a cuwsow does exist in the `items`, -.-
+ * t-this wiww wun the the undewwying [[swicecuwsowbuiwdew]] w-with the f-fuww `items`
+ * (incwuding aww cuwsows which may be pwesent) then fiwtew out onwy t-the owiginawwy
+ * found [[cuwsowitem]] fwom the wesuwts). 😳 then append the nyew c-cuwsow to the end of the wesuwts. mya
  *
- * If you have multiple cursors that need to be updated, you will need to have multiple updaters.
+ * i-if you h-have muwtipwe c-cuwsows that nyeed t-to be updated, (˘ω˘) you wiww nyeed to have muwtipwe u-updatews. >_<
  *
- * If a CursorCandidate is returned by a Candidate Source, use this trait to update the Cursor
- * (if necessary) and add it to the end of the candidates list.
+ * if a cuwsowcandidate is wetuwned b-by a candidate souwce, -.- use this twait to update the cuwsow
+ * (if nyecessawy) and add it to the e-end of the candidates wist. 🥺
  */
-trait SliceCursorUpdater[-Query <: PipelineQuery] extends SliceCursorBuilder[Query] { self =>
+t-twait swicecuwsowupdatew[-quewy <: p-pipewinequewy] e-extends swicecuwsowbuiwdew[quewy] { sewf =>
 
-  def getExistingCursor(items: Seq[SliceItem]): Option[CursorItem] = {
-    getCursorByType(items, self.cursorType)
+  def getexistingcuwsow(items: seq[swiceitem]): o-option[cuwsowitem] = {
+    g-getcuwsowbytype(items, (U ﹏ U) sewf.cuwsowtype)
   }
 
-  def update(query: Query, items: Seq[SliceItem]): Seq[SliceItem] = {
-    if (includeOperation(query, items)) {
-      getExistingCursor(items)
-        .map { existingCursor =>
-          // Safe get because includeOperation() is shared in this context
-          val newCursor = build(query, items).get
+  d-def u-update(quewy: quewy, >w< items: seq[swiceitem]): s-seq[swiceitem] = {
+    if (incwudeopewation(quewy, mya i-items)) {
+      getexistingcuwsow(items)
+        .map { existingcuwsow =>
+          // s-safe get because incwudeopewation() i-is shawed in this context
+          vaw n-newcuwsow = buiwd(quewy, >w< i-items).get
 
-          items.filterNot(_ == existingCursor) :+ newCursor
-        }.getOrElse(items)
-    } else items
+          items.fiwtewnot(_ == existingcuwsow) :+ nyewcuwsow
+        }.getowewse(items)
+    } ewse items
   }
 }
 
-trait SliceCursorUpdaterFromUnderlyingBuilder[-Query <: PipelineQuery]
-    extends SliceCursorUpdater[Query] {
-  def underlying: SliceCursorBuilder[Query]
-  override def cursorValue(
-    query: Query,
-    entries: Seq[SliceItem]
-  ): String = underlying.cursorValue(query, entries)
+twait swicecuwsowupdatewfwomundewwyingbuiwdew[-quewy <: pipewinequewy]
+    e-extends swicecuwsowupdatew[quewy] {
+  d-def undewwying: swicecuwsowbuiwdew[quewy]
+  o-ovewwide def c-cuwsowvawue(
+    q-quewy: quewy, nyaa~~
+    entwies: seq[swiceitem]
+  ): stwing = undewwying.cuwsowvawue(quewy, (✿oωo) entwies)
 }

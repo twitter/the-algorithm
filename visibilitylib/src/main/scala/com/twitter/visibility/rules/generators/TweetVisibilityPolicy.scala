@@ -1,74 +1,74 @@
-package com.twitter.visibility.rules.generators
+package com.twittew.visibiwity.wuwes.genewatows
 
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.SafetyLevelGroup
-import com.twitter.visibility.rules.Action
-import com.twitter.visibility.rules.FreedomOfSpeechNotReachActions.FreedomOfSpeechNotReachActionBuilder
+impowt com.twittew.visibiwity.modews.safetywevew
+i-impowt com.twittew.visibiwity.modews.safetywevewgwoup
+i-impowt com.twittew.visibiwity.wuwes.action
+i-impowt com.twittew.visibiwity.wuwes.fweedomofspeechnotweachactions.fweedomofspeechnotweachactionbuiwdew
 
-class TweetVisibilityPolicy(
-  rules: Map[SafetyLevel, FreedomOfSpeechNotReachActionBuilder[_ <: Action]] = Map()) {
-  def getRules(): Map[SafetyLevel, FreedomOfSpeechNotReachActionBuilder[_ <: Action]] = rules
+c-cwass t-tweetvisibiwitypowicy(
+  w-wuwes: m-map[safetywevew, f-fweedomofspeechnotweachactionbuiwdew[_ <: action]] = map()) {
+  def getwuwes(): map[safetywevew, /(^•ω•^) f-fweedomofspeechnotweachactionbuiwdew[_ <: action]] = wuwes
 }
 
-object TweetVisibilityPolicy {
-  private[generators] val allApplicableSurfaces =
-    SafetyLevel.List.toSet --
-      SafetyLevelGroup.Special.levels --
-      Set(
-        SafetyLevel.SearchPeopleTypeahead,
-        SafetyLevel.UserProfileHeader,
-        SafetyLevel.UserScopedTimeline,
-        SafetyLevel.SpacesParticipants,
-        SafetyLevel.GryphonDecksAndColumns,
-        SafetyLevel.UserSettings,
-        SafetyLevel.BlockMuteUsersTimeline,
-        SafetyLevel.AdsBusinessSettings,
-        SafetyLevel.TrustedFriendsUserList,
-        SafetyLevel.UserSelfViewOnly,
-        SafetyLevel.ShoppingManagerSpyMode,
+o-object tweetvisibiwitypowicy {
+  pwivate[genewatows] v-vaw awwappwicabwesuwfaces =
+    safetywevew.wist.toset --
+      safetywevewgwoup.speciaw.wevews --
+      set(
+        safetywevew.seawchpeopwetypeahead, nyaa~~
+        s-safetywevew.usewpwofiweheadew, nyaa~~
+        safetywevew.usewscopedtimewine, :3
+        s-safetywevew.spacespawticipants,
+        s-safetywevew.gwyphondecksandcowumns, 😳😳😳
+        safetywevew.usewsettings,
+        safetywevew.bwockmuteusewstimewine, (˘ω˘)
+        safetywevew.adsbusinesssettings, ^^
+        safetywevew.twustedfwiendsusewwist, :3
+        s-safetywevew.usewsewfviewonwy, -.-
+        safetywevew.shoppingmanagewspymode, 😳
       )
 
-  def builder(): TweetVisibilityPolicyBuilder = TweetVisibilityPolicyBuilder()
+  def buiwdew(): tweetvisibiwitypowicybuiwdew = tweetvisibiwitypowicybuiwdew()
 }
 
-case class TweetVisibilityPolicyBuilder(
-  rules: Map[SafetyLevel, FreedomOfSpeechNotReachActionBuilder[_ <: Action]] = Map()) {
+c-case cwass tweetvisibiwitypowicybuiwdew(
+  wuwes: m-map[safetywevew, mya f-fweedomofspeechnotweachactionbuiwdew[_ <: action]] = m-map()) {
 
-  def addGlobalRule[T <: Action](
-    actionBuilder: FreedomOfSpeechNotReachActionBuilder[T]
-  ): TweetVisibilityPolicyBuilder =
-    copy(rules =
-      rules ++ TweetVisibilityPolicy.allApplicableSurfaces.map(_ -> actionBuilder))
+  d-def addgwobawwuwe[t <: action](
+    actionbuiwdew: f-fweedomofspeechnotweachactionbuiwdew[t]
+  ): tweetvisibiwitypowicybuiwdew =
+    copy(wuwes =
+      w-wuwes ++ tweetvisibiwitypowicy.awwappwicabwesuwfaces.map(_ -> actionbuiwdew))
 
-  def addSafetyLevelRule[T <: Action](
-    safetyLevel: SafetyLevel,
-    actionBuilder: FreedomOfSpeechNotReachActionBuilder[T]
-  ): TweetVisibilityPolicyBuilder = {
-    if (TweetVisibilityPolicy.allApplicableSurfaces.contains(safetyLevel)) {
-      copy(rules = rules ++ Map(safetyLevel -> actionBuilder))
-    } else {
+  def addsafetywevewwuwe[t <: action](
+    s-safetywevew: safetywevew, (˘ω˘)
+    a-actionbuiwdew: f-fweedomofspeechnotweachactionbuiwdew[t]
+  ): t-tweetvisibiwitypowicybuiwdew = {
+    if (tweetvisibiwitypowicy.awwappwicabwesuwfaces.contains(safetywevew)) {
+      copy(wuwes = wuwes ++ map(safetywevew -> a-actionbuiwdew))
+    } e-ewse {
       this
     }
   }
 
-  def addSafetyLevelGroupRule[T <: Action](
-    group: SafetyLevelGroup,
-    actionBuilder: FreedomOfSpeechNotReachActionBuilder[T]
-  ): TweetVisibilityPolicyBuilder =
-    copy(rules =
-      rules ++ group.levels.collect {
-        case safetyLevel if TweetVisibilityPolicy.allApplicableSurfaces.contains(safetyLevel) =>
-          safetyLevel -> actionBuilder
+  d-def addsafetywevewgwoupwuwe[t <: a-action](
+    gwoup: safetywevewgwoup, >_<
+    a-actionbuiwdew: fweedomofspeechnotweachactionbuiwdew[t]
+  ): t-tweetvisibiwitypowicybuiwdew =
+    copy(wuwes =
+      wuwes ++ gwoup.wevews.cowwect {
+        c-case safetywevew if tweetvisibiwitypowicy.awwappwicabwesuwfaces.contains(safetywevew) =>
+          s-safetywevew -> actionbuiwdew
       })
 
-  def addRuleForAllRemainingSafetyLevels[T <: Action](
-    actionBuilder: FreedomOfSpeechNotReachActionBuilder[T]
-  ): TweetVisibilityPolicyBuilder =
-    copy(rules =
-      rules ++ (TweetVisibilityPolicy.allApplicableSurfaces -- rules.keySet)
-        .map(_ -> actionBuilder).toMap)
+  d-def addwuwefowawwwemainingsafetywevews[t <: action](
+    a-actionbuiwdew: fweedomofspeechnotweachactionbuiwdew[t]
+  ): tweetvisibiwitypowicybuiwdew =
+    copy(wuwes =
+      wuwes ++ (tweetvisibiwitypowicy.awwappwicabwesuwfaces -- wuwes.keyset)
+        .map(_ -> actionbuiwdew).tomap)
 
-  def build: TweetVisibilityPolicy = {
-    new TweetVisibilityPolicy(rules)
+  d-def buiwd: tweetvisibiwitypowicy = {
+    n-nyew tweetvisibiwitypowicy(wuwes)
   }
 }

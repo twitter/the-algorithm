@@ -1,167 +1,167 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.StitchSeqGroup
-import com.twitter.storage.client.manhattan.kv.DeniedManhattanException
-import com.twitter.storage.client.manhattan.kv.ManhattanException
-import com.twitter.tweetypie.storage.TweetStateRecord.BounceDeleted
-import com.twitter.tweetypie.storage.TweetStateRecord.HardDeleted
-import com.twitter.tweetypie.storage.TweetStateRecord.SoftDeleted
-import com.twitter.tweetypie.storage.TweetStorageClient.GetTweet
-import com.twitter.tweetypie.storage.TweetUtils._
-import com.twitter.util.Duration
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Time
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.stats.countew
+i-impowt c-com.twittew.finagwe.stats.nuwwstatsweceivew
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.wogging.woggew
+i-impowt com.twittew.snowfwake.id.snowfwakeid
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.stitch.stitchseqgwoup
+impowt com.twittew.stowage.cwient.manhattan.kv.deniedmanhattanexception
+i-impowt com.twittew.stowage.cwient.manhattan.kv.manhattanexception
+impowt com.twittew.tweetypie.stowage.tweetstatewecowd.bouncedeweted
+i-impowt com.twittew.tweetypie.stowage.tweetstatewecowd.hawddeweted
+impowt com.twittew.tweetypie.stowage.tweetstatewecowd.softdeweted
+i-impowt com.twittew.tweetypie.stowage.tweetstowagecwient.gettweet
+impowt com.twittew.tweetypie.stowage.tweetutiws._
+impowt c-com.twittew.utiw.duwation
+impowt c-com.twittew.utiw.wetuwn
+i-impowt com.twittew.utiw.thwow
+impowt com.twittew.utiw.time
 
-object GetTweetHandler {
-  private[this] val logger = Logger(getClass)
+object gettweethandwew {
+  p-pwivate[this] vaw woggew = woggew(getcwass)
 
   //////////////////////////////////////////////////
-  // Logging racy reads for later validation.
+  // wogging wacy weads fow watew vawidation.
 
-  val RacyTweetWindow: Duration = 10.seconds
+  v-vaw wacytweetwindow: duwation = 10.seconds
 
   /**
-   * If this read is soon after the tweet was created, then we would usually
-   * expect it to be served from cache. This early read indicates that this
-   * tweet is prone to consistency issues, so we log what's present in
-   * Manhattan at the time of the read for later analysis.
+   * i-if this w-wead is soon a-aftew the tweet w-was cweated, ^^;; then we wouwd usuawwy
+   * expect i-it to be sewved fwom cache. (⑅˘꒳˘) this eawwy wead indicates t-that this
+   * tweet is pwone to consistency issues, rawr x3 so we wog nyani's pwesent in
+   * manhattan a-at the time of the wead fow w-watew anawysis. (///ˬ///✿)
    */
-  private[this] def logRacyRead(tweetId: TweetId, records: Seq[TweetManhattanRecord]): Unit =
-    if (SnowflakeId.isSnowflakeId(tweetId)) {
-      val tweetAge = Time.now.since(SnowflakeId(tweetId).time)
-      if (tweetAge <= RacyTweetWindow) {
-        val sb = new StringBuilder
-        sb.append("racy_tweet_read\t")
-          .append(tweetId)
+  p-pwivate[this] d-def wogwacywead(tweetid: tweetid, 🥺 wecowds: seq[tweetmanhattanwecowd]): unit =
+    if (snowfwakeid.issnowfwakeid(tweetid)) {
+      v-vaw tweetage = t-time.now.since(snowfwakeid(tweetid).time)
+      if (tweetage <= w-wacytweetwindow) {
+        v-vaw sb = nyew stwingbuiwdew
+        s-sb.append("wacy_tweet_wead\t")
+          .append(tweetid)
           .append('\t')
-          .append(tweetAge.inMilliseconds) // Log the age for analysis purposes
-        records.foreach { rec =>
+          .append(tweetage.inmiwwiseconds) // wog the a-age fow anawysis puwposes
+        wecowds.foweach { w-wec =>
           sb.append('\t')
-            .append(rec.lkey)
-          rec.value.timestamp.foreach { ts =>
-            // If there is a timestamp for this key, log it so that we can tell
-            // later on whether a value should have been present. We expect
-            // keys written in a single write to have the same timestamp, and
-            // generally, keys written in separate writes will have different
-            // timestamps. The timestamp value is optional in Manhattan, but
-            // we expect there to always be a value for the timestamp.
+            .append(wec.wkey)
+          w-wec.vawue.timestamp.foweach { ts =>
+            // i-if thewe is a timestamp f-fow this key, >_< wog it so that we can teww
+            // watew on whethew a vawue shouwd have been pwesent. UwU we expect
+            // k-keys w-wwitten in a singwe wwite to have t-the same timestamp, >_< a-and
+            // g-genewawwy, -.- keys wwitten in sepawate wwites wiww have d-diffewent
+            // timestamps. mya the timestamp vawue is optionaw in manhattan, >w< b-but
+            // we expect t-thewe to awways b-be a vawue fow the t-timestamp. (U ﹏ U)
             sb.append(':')
-              .append(ts.inMilliseconds)
+              .append(ts.inmiwwiseconds)
           }
         }
-        logger.info(sb.toString)
+        w-woggew.info(sb.tostwing)
       }
     }
 
   /**
-   * Convert a set of records from Manhattan into a GetTweet.Response.
+   * c-convewt a set o-of wecowds fwom m-manhattan into a gettweet.wesponse. 😳😳😳
    */
-  def tweetResponseFromRecords(
-    tweetId: TweetId,
-    mhRecords: Seq[TweetManhattanRecord],
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): GetTweet.Response =
-    if (mhRecords.isEmpty) {
-      GetTweet.Response.NotFound
-    } else {
-      // If no internal fields are present or no required fields present, we consider the tweet
-      // as not returnable (even if some additional fields are present)
-      def tweetFromRecords(tweetId: TweetId, mhRecords: Seq[TweetManhattanRecord]) = {
-        val storedTweet = buildStoredTweet(tweetId, mhRecords)
-        if (storedTweet.getFieldBlobs(expectedFields).nonEmpty) {
-          if (isValid(storedTweet)) {
-            statsReceiver.counter("valid").incr()
-            Some(StorageConversions.fromStoredTweet(storedTweet))
-          } else {
-            log.info(s"Invalid Tweet Id: $tweetId")
-            statsReceiver.counter("invalid").incr()
-            None
+  def t-tweetwesponsefwomwecowds(
+    tweetid: t-tweetid, o.O
+    m-mhwecowds: s-seq[tweetmanhattanwecowd], òωó
+    statsweceivew: s-statsweceivew = nyuwwstatsweceivew
+  ): gettweet.wesponse =
+    if (mhwecowds.isempty) {
+      g-gettweet.wesponse.notfound
+    } ewse {
+      // if nyo intewnaw fiewds awe pwesent ow nyo wequiwed f-fiewds pwesent, 😳😳😳 we considew the tweet
+      // as nyot wetuwnabwe (even i-if some a-additionaw fiewds a-awe pwesent)
+      def tweetfwomwecowds(tweetid: t-tweetid, σωσ mhwecowds: seq[tweetmanhattanwecowd]) = {
+        vaw s-stowedtweet = b-buiwdstowedtweet(tweetid, (⑅˘꒳˘) mhwecowds)
+        if (stowedtweet.getfiewdbwobs(expectedfiewds).nonempty) {
+          if (isvawid(stowedtweet)) {
+            statsweceivew.countew("vawid").incw()
+            some(stowageconvewsions.fwomstowedtweet(stowedtweet))
+          } e-ewse {
+            wog.info(s"invawid t-tweet id: $tweetid")
+            statsweceivew.countew("invawid").incw()
+            n-nyone
           }
-        } else {
-          // The Tweet contained none of the fields defined in `expectedFields`
-          log.info(s"Expected Fields Not Present Tweet Id: $tweetId")
-          statsReceiver.counter("expected_fields_not_present").incr()
-          None
+        } e-ewse {
+          // the tweet contained nyone o-of the fiewds d-defined in `expectedfiewds`
+          wog.info(s"expected f-fiewds n-nyot pwesent tweet id: $tweetid")
+          statsweceivew.countew("expected_fiewds_not_pwesent").incw()
+          nyone
         }
       }
 
-      val stateRecord = TweetStateRecord.mostRecent(mhRecords)
-      stateRecord match {
-        // some  other cases don't require an attempt to construct a Tweet
-        case Some(_: SoftDeleted) | Some(_: HardDeleted) => GetTweet.Response.Deleted
+      vaw statewecowd = t-tweetstatewecowd.mostwecent(mhwecowds)
+      s-statewecowd match {
+        // s-some  othew cases don't wequiwe a-an attempt to constwuct a-a tweet
+        case some(_: s-softdeweted) | some(_: hawddeweted) => gettweet.wesponse.deweted
 
-        // all other cases require an attempt to construct a Tweet, which may not be successful
+        // aww othew cases wequiwe an attempt t-to constwuct a-a tweet, (///ˬ///✿) which may nyot be successfuw
         case _ =>
-          logRacyRead(tweetId, mhRecords)
-          (stateRecord, tweetFromRecords(tweetId, mhRecords)) match {
-            // BounceDeleted contains the Tweet data so that callers can access data on the the
-            // tweet (e.g. hard delete daemon requires conversationId and userId. There are no
-            // plans for Tweetypie server to make use of the returned tweet at this time.
-            case (Some(_: BounceDeleted), Some(tweet)) => GetTweet.Response.BounceDeleted(tweet)
-            case (Some(_: BounceDeleted), None) => GetTweet.Response.Deleted
-            case (_, Some(tweet)) => GetTweet.Response.Found(tweet)
-            case _ => GetTweet.Response.NotFound
+          w-wogwacywead(tweetid, 🥺 m-mhwecowds)
+          (statewecowd, OwO tweetfwomwecowds(tweetid, >w< mhwecowds)) match {
+            // b-bouncedeweted contains the tweet data so that cawwews can access data o-on the the
+            // tweet (e.g. 🥺 hawd dewete d-daemon wequiwes c-convewsationid and usewid. nyaa~~ thewe awe nyo
+            // pwans f-fow tweetypie sewvew t-to make use of the wetuwned tweet at this time. ^^
+            case (some(_: bouncedeweted), >w< some(tweet)) => gettweet.wesponse.bouncedeweted(tweet)
+            c-case (some(_: bouncedeweted), n-nyone) => gettweet.wesponse.deweted
+            case (_, OwO some(tweet)) => gettweet.wesponse.found(tweet)
+            case _ => gettweet.wesponse.notfound
           }
       }
     }
 
-  def apply(read: ManhattanOperations.Read, statsReceiver: StatsReceiver): GetTweet = {
+  d-def appwy(wead: manhattanopewations.wead, XD s-statsweceivew: statsweceivew): gettweet = {
 
-    object stats {
-      val getTweetScope = statsReceiver.scope("getTweet")
-      val deniedCounter: Counter = getTweetScope.counter("mh_denied")
-      val mhExceptionCounter: Counter = getTweetScope.counter("mh_exception")
-      val nonFatalExceptionCounter: Counter = getTweetScope.counter("non_fatal_exception")
-      val notFoundCounter: Counter = getTweetScope.counter("not_found")
+    o-object stats {
+      vaw gettweetscope = s-statsweceivew.scope("gettweet")
+      vaw deniedcountew: c-countew = gettweetscope.countew("mh_denied")
+      v-vaw mhexceptioncountew: c-countew = gettweetscope.countew("mh_exception")
+      v-vaw nyonfatawexceptioncountew: c-countew = gettweetscope.countew("non_fataw_exception")
+      vaw nyotfoundcountew: countew = g-gettweetscope.countew("not_found")
     }
 
-    object mhGroup extends StitchSeqGroup[TweetId, Seq[TweetManhattanRecord]] {
-      override def run(tweetIds: Seq[TweetId]): Stitch[Seq[Seq[TweetManhattanRecord]]] = {
-        Stats.addWidthStat("getTweet", "tweetIds", tweetIds.size, statsReceiver)
-        Stitch.traverse(tweetIds)(read(_))
+    o-object m-mhgwoup extends stitchseqgwoup[tweetid, ^^;; seq[tweetmanhattanwecowd]] {
+      o-ovewwide def wun(tweetids: seq[tweetid]): s-stitch[seq[seq[tweetmanhattanwecowd]]] = {
+        s-stats.addwidthstat("gettweet", 🥺 "tweetids", XD tweetids.size, (U ᵕ U❁) statsweceivew)
+        stitch.twavewse(tweetids)(wead(_))
       }
     }
 
-    tweetId =>
-      if (tweetId <= 0) {
-        Stitch.NotFound
-      } else {
-        Stitch
-          .call(tweetId, mhGroup)
-          .map(mhRecords => tweetResponseFromRecords(tweetId, mhRecords, stats.getTweetScope))
-          .liftToTry
+    t-tweetid =>
+      i-if (tweetid <= 0) {
+        s-stitch.notfound
+      } e-ewse {
+        stitch
+          .caww(tweetid, m-mhgwoup)
+          .map(mhwecowds => tweetwesponsefwomwecowds(tweetid, :3 mhwecowds, ( ͡o ω ͡o ) stats.gettweetscope))
+          .wifttotwy
           .map {
-            case Throw(mhException: DeniedManhattanException) =>
-              stats.deniedCounter.incr()
-              Throw(RateLimited("", mhException))
+            case thwow(mhexception: deniedmanhattanexception) =>
+              stats.deniedcountew.incw()
+              t-thwow(watewimited("", mhexception))
 
-            // Encountered some other Manhattan error
-            case t @ Throw(_: ManhattanException) =>
-              stats.mhExceptionCounter.incr()
+            // e-encountewed some othew manhattan e-ewwow
+            case t @ thwow(_: m-manhattanexception) =>
+              stats.mhexceptioncountew.incw()
+              t-t
+
+            // s-something e-ewse happened
+            c-case t @ thwow(ex) =>
+              s-stats.nonfatawexceptioncountew.incw()
+              tweetutiws.wog
+                .wawning(ex, s"unhandwed exception in gettweethandwew fow tweetid: $tweetid")
               t
 
-            // Something else happened
-            case t @ Throw(ex) =>
-              stats.nonFatalExceptionCounter.incr()
-              TweetUtils.log
-                .warning(ex, s"Unhandled exception in GetTweetHandler for tweetId: $tweetId")
-              t
+            c-case w @ wetuwn(gettweet.wesponse.notfound) =>
+              stats.notfoundcountew.incw()
+              w-w
 
-            case r @ Return(GetTweet.Response.NotFound) =>
-              stats.notFoundCounter.incr()
-              r
-
-            case r @ Return(_) => r
+            c-case w @ wetuwn(_) => w
           }
-          .lowerFromTry
+          .wowewfwomtwy
       }
   }
 }

@@ -1,54 +1,54 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.query.qualityfactor_gated
+package com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.quewy.quawityfactow_gated
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.awewt
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.conditionawwy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.hasquawityfactowstatus
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.timewines.configapi.pawam
 
-object QualityFactorGatedQueryFeatureHydrator {
-  val IdentifierPrefix = "QfGated"
+o-object quawityfactowgatedquewyfeatuwehydwatow {
+  vaw identifiewpwefix = "qfgated"
 }
 
 /**
- * A [[QueryFeatureHydrator]] with [[Conditionally]] based on a qualityFactor threshold.
- * @param pipelineIdentifier identifier of the pipeline that associated with observed quality factor
- * @param qualityFactorInclusiveThreshold the threshold of the quality factor that results in the hydrator being turned off
- * @param queryFeatureHydrator the underlying [[QueryFeatureHydrator]] to run when quality factor value
- *                                 is above the given inclusive threshold
- * @tparam Query The domain model for the query or request
- * @tparam Result The type of the candidates
+ * a-a [[quewyfeatuwehydwatow]] with [[conditionawwy]] b-based o-on a quawityfactow thweshowd. mya
+ * @pawam pipewineidentifiew identifiew of the pipewine t-that associated with obsewved quawity factow
+ * @pawam quawityfactowincwusivethweshowd the t-thweshowd of the quawity factow t-that wesuwts in t-the hydwatow being t-tuwned off
+ * @pawam q-quewyfeatuwehydwatow the undewwying [[quewyfeatuwehydwatow]] to wun when q-quawity factow vawue
+ *                                 is above t-the given incwusive thweshowd
+ * @tpawam quewy the domain modew fow the quewy ow wequest
+ * @tpawam w-wesuwt the type of the candidates
  */
-case class QualityFactorGatedQueryFeatureHydrator[
-  -Query <: PipelineQuery with HasQualityFactorStatus,
-  Result <: UniversalNoun[Any]
+c-case c-cwass quawityfactowgatedquewyfeatuwehydwatow[
+  -quewy <: p-pipewinequewy with hasquawityfactowstatus, (˘ω˘)
+  wesuwt <: u-univewsawnoun[any]
 ](
-  pipelineIdentifier: ComponentIdentifier,
-  qualityFactorInclusiveThreshold: Param[Double],
-  queryFeatureHydrator: QueryFeatureHydrator[Query])
-    extends QueryFeatureHydrator[Query]
-    with Conditionally[Query] {
-  import QualityFactorGatedQueryFeatureHydrator._
+  p-pipewineidentifiew: componentidentifiew, >_<
+  q-quawityfactowincwusivethweshowd: p-pawam[doubwe], -.-
+  quewyfeatuwehydwatow: quewyfeatuwehydwatow[quewy])
+    e-extends quewyfeatuwehydwatow[quewy]
+    with conditionawwy[quewy] {
+  i-impowt quawityfactowgatedquewyfeatuwehydwatow._
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    IdentifierPrefix + queryFeatureHydrator.identifier.name)
+  ovewwide vaw identifiew: f-featuwehydwatowidentifiew = featuwehydwatowidentifiew(
+    i-identifiewpwefix + quewyfeatuwehydwatow.identifiew.name)
 
-  override val alerts: Seq[Alert] = queryFeatureHydrator.alerts
+  o-ovewwide v-vaw awewts: seq[awewt] = quewyfeatuwehydwatow.awewts
 
-  override val features: Set[Feature[_, _]] = queryFeatureHydrator.features
+  ovewwide vaw featuwes: set[featuwe[_, 🥺 _]] = quewyfeatuwehydwatow.featuwes
 
-  override def onlyIf(query: Query): Boolean = Conditionally.and(
-    query,
-    queryFeatureHydrator,
-    query.getQualityFactorCurrentValue(pipelineIdentifier) >= query.params(
-      qualityFactorInclusiveThreshold))
+  ovewwide d-def onwyif(quewy: q-quewy): boowean = conditionawwy.and(
+    q-quewy,
+    q-quewyfeatuwehydwatow, (U ﹏ U)
+    q-quewy.getquawityfactowcuwwentvawue(pipewineidentifiew) >= quewy.pawams(
+      quawityfactowincwusivethweshowd))
 
-  override def hydrate(query: Query): Stitch[FeatureMap] = queryFeatureHydrator.hydrate(query)
+  ovewwide def h-hydwate(quewy: quewy): stitch[featuwemap] = quewyfeatuwehydwatow.hydwate(quewy)
 }

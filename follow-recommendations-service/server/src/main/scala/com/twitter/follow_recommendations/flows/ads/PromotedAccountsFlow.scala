@@ -1,112 +1,112 @@
-package com.twitter.follow_recommendations.flows.ads
+package com.twittew.fowwow_wecommendations.fwows.ads
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.EnrichedCandidateSource
-import com.twitter.follow_recommendations.common.base.IdentityRanker
-import com.twitter.follow_recommendations.common.base.IdentityTransform
-import com.twitter.follow_recommendations.common.base.ParamPredicate
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.Ranker
-import com.twitter.follow_recommendations.common.base.RecommendationFlow
-import com.twitter.follow_recommendations.common.base.RecommendationResultsConfig
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.common.base.TruePredicate
-import com.twitter.follow_recommendations.common.candidate_sources.promoted_accounts.PromotedAccountsCandidateSource
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.predicates.ExcludedUserIdPredicate
-import com.twitter.follow_recommendations.common.transforms.tracking_token.TrackingTokenTransform
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.util.Duration
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.base.enwichedcandidatesouwce
+i-impowt com.twittew.fowwow_wecommendations.common.base.identitywankew
+i-impowt com.twittew.fowwow_wecommendations.common.base.identitytwansfowm
+impowt c-com.twittew.fowwow_wecommendations.common.base.pawampwedicate
+i-impowt com.twittew.fowwow_wecommendations.common.base.pwedicate
+i-impowt com.twittew.fowwow_wecommendations.common.base.wankew
+i-impowt com.twittew.fowwow_wecommendations.common.base.wecommendationfwow
+i-impowt com.twittew.fowwow_wecommendations.common.base.wecommendationwesuwtsconfig
+impowt com.twittew.fowwow_wecommendations.common.base.twansfowm
+impowt c-com.twittew.fowwow_wecommendations.common.base.twuepwedicate
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.pwomoted_accounts.pwomotedaccountscandidatesouwce
+impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.fowwow_wecommendations.common.pwedicates.excwudedusewidpwedicate
+impowt c-com.twittew.fowwow_wecommendations.common.twansfowms.twacking_token.twackingtokentwansfowm
+impowt com.twittew.inject.annotations.fwag
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.utiw.duwation
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class PromotedAccountsFlow @Inject() (
-  promotedAccountsCandidateSource: PromotedAccountsCandidateSource,
-  trackingTokenTransform: TrackingTokenTransform,
-  baseStatsReceiver: StatsReceiver,
-  @Flag("fetch_prod_promoted_accounts") fetchProductionPromotedAccounts: Boolean)
-    extends RecommendationFlow[PromotedAccountsFlowRequest, CandidateUser] {
+@singweton
+cwass pwomotedaccountsfwow @inject() (
+  pwomotedaccountscandidatesouwce: pwomotedaccountscandidatesouwce, 😳
+  t-twackingtokentwansfowm: twackingtokentwansfowm, >w<
+  basestatsweceivew: statsweceivew, (⑅˘꒳˘)
+  @fwag("fetch_pwod_pwomoted_accounts") fetchpwoductionpwomotedaccounts: b-boowean)
+    extends wecommendationfwow[pwomotedaccountsfwowwequest, OwO c-candidateusew] {
 
-  protected override def targetEligibility: Predicate[PromotedAccountsFlowRequest] =
-    new ParamPredicate[PromotedAccountsFlowRequest](
-      PromotedAccountsFlowParams.TargetEligibility
+  p-pwotected ovewwide d-def tawgetewigibiwity: p-pwedicate[pwomotedaccountsfwowwequest] =
+    nyew pawampwedicate[pwomotedaccountsfwowwequest](
+      pwomotedaccountsfwowpawams.tawgetewigibiwity
     )
 
-  protected override def candidateSources(
-    target: PromotedAccountsFlowRequest
-  ): Seq[CandidateSource[PromotedAccountsFlowRequest, CandidateUser]] = {
-    import EnrichedCandidateSource._
-    val candidateSourceStats = statsReceiver.scope("candidate_sources")
-    val budget: Duration = target.params(PromotedAccountsFlowParams.FetchCandidateSourceBudget)
-    val candidateSources = Seq(
-      promotedAccountsCandidateSource
-        .mapKeys[PromotedAccountsFlowRequest](r =>
-          Seq(r.toAdsRequest(fetchProductionPromotedAccounts)))
-        .mapValue(PromotedAccountsUtil.toCandidateUser)
-    ).map { candidateSource =>
-      candidateSource
-        .failOpenWithin(budget, candidateSourceStats).observe(candidateSourceStats)
+  p-pwotected ovewwide def candidatesouwces(
+    tawget: pwomotedaccountsfwowwequest
+  ): s-seq[candidatesouwce[pwomotedaccountsfwowwequest, (ꈍᴗꈍ) candidateusew]] = {
+    impowt enwichedcandidatesouwce._
+    vaw candidatesouwcestats = statsweceivew.scope("candidate_souwces")
+    vaw budget: duwation = t-tawget.pawams(pwomotedaccountsfwowpawams.fetchcandidatesouwcebudget)
+    vaw candidatesouwces = s-seq(
+      p-pwomotedaccountscandidatesouwce
+        .mapkeys[pwomotedaccountsfwowwequest](w =>
+          s-seq(w.toadswequest(fetchpwoductionpwomotedaccounts)))
+        .mapvawue(pwomotedaccountsutiw.tocandidateusew)
+    ).map { candidatesouwce =>
+      candidatesouwce
+        .faiwopenwithin(budget, 😳 candidatesouwcestats).obsewve(candidatesouwcestats)
     }
-    candidateSources
+    c-candidatesouwces
   }
 
-  protected override def preRankerCandidateFilter: Predicate[
-    (PromotedAccountsFlowRequest, CandidateUser)
+  p-pwotected ovewwide def p-pwewankewcandidatefiwtew: p-pwedicate[
+    (pwomotedaccountsfwowwequest, 😳😳😳 candidateusew)
   ] = {
-    val preRankerFilterStats = statsReceiver.scope("pre_ranker")
-    ExcludedUserIdPredicate.observe(preRankerFilterStats.scope("exclude_user_id_predicate"))
+    v-vaw pwewankewfiwtewstats = statsweceivew.scope("pwe_wankew")
+    e-excwudedusewidpwedicate.obsewve(pwewankewfiwtewstats.scope("excwude_usew_id_pwedicate"))
   }
 
   /**
-   * rank the candidates
+   * wank the candidates
    */
-  protected override def selectRanker(
-    target: PromotedAccountsFlowRequest
-  ): Ranker[PromotedAccountsFlowRequest, CandidateUser] = {
-    new IdentityRanker[PromotedAccountsFlowRequest, CandidateUser]
+  p-pwotected ovewwide def s-sewectwankew(
+    tawget: pwomotedaccountsfwowwequest
+  ): w-wankew[pwomotedaccountsfwowwequest, mya candidateusew] = {
+    n-nyew identitywankew[pwomotedaccountsfwowwequest, mya candidateusew]
   }
 
   /**
-   * transform the candidates after ranking (e.g. dedupping, grouping and etc)
+   * twansfowm the candidates aftew wanking (e.g. (⑅˘꒳˘) dedupping, (U ﹏ U) gwouping and etc)
    */
-  protected override def postRankerTransform: Transform[
-    PromotedAccountsFlowRequest,
-    CandidateUser
+  p-pwotected o-ovewwide def postwankewtwansfowm: twansfowm[
+    p-pwomotedaccountsfwowwequest, mya
+    c-candidateusew
   ] = {
-    new IdentityTransform[PromotedAccountsFlowRequest, CandidateUser]
+    n-nyew identitytwansfowm[pwomotedaccountsfwowwequest, ʘwʘ candidateusew]
   }
 
   /**
-   *  filter invalid candidates before returning the results.
+   *  fiwtew invawid c-candidates befowe wetuwning the wesuwts. (˘ω˘)
    *
-   *  Some heavy filters e.g. SGS filter could be applied in this step
+   *  some heavy fiwtews e.g. (U ﹏ U) sgs f-fiwtew couwd be appwied in this s-step
    */
-  protected override def validateCandidates: Predicate[
-    (PromotedAccountsFlowRequest, CandidateUser)
+  pwotected o-ovewwide d-def vawidatecandidates: pwedicate[
+    (pwomotedaccountsfwowwequest, ^•ﻌ•^ c-candidateusew)
   ] = {
-    new TruePredicate[(PromotedAccountsFlowRequest, CandidateUser)]
+    n-nyew twuepwedicate[(pwomotedaccountsfwowwequest, (˘ω˘) c-candidateusew)]
   }
 
   /**
-   * transform the candidates into results and return
+   * t-twansfowm the candidates into wesuwts and wetuwn
    */
-  protected override def transformResults: Transform[PromotedAccountsFlowRequest, CandidateUser] = {
-    trackingTokenTransform
+  p-pwotected o-ovewwide def t-twansfowmwesuwts: t-twansfowm[pwomotedaccountsfwowwequest, :3 c-candidateusew] = {
+    twackingtokentwansfowm
   }
 
   /**
-   *  configuration for recommendation results
+   *  configuwation fow wecommendation w-wesuwts
    */
-  protected override def resultsConfig(
-    target: PromotedAccountsFlowRequest
-  ): RecommendationResultsConfig = {
-    RecommendationResultsConfig(
-      target.params(PromotedAccountsFlowParams.ResultSizeParam),
-      target.params(PromotedAccountsFlowParams.BatchSizeParam)
+  pwotected ovewwide def wesuwtsconfig(
+    tawget: pwomotedaccountsfwowwequest
+  ): wecommendationwesuwtsconfig = {
+    w-wecommendationwesuwtsconfig(
+      tawget.pawams(pwomotedaccountsfwowpawams.wesuwtsizepawam), ^^;;
+      tawget.pawams(pwomotedaccountsfwowpawams.batchsizepawam)
     )
   }
 
-  override val statsReceiver: StatsReceiver = baseStatsReceiver.scope("promoted_accounts_flow")
+  ovewwide v-vaw statsweceivew: s-statsweceivew = b-basestatsweceivew.scope("pwomoted_accounts_fwow")
 }

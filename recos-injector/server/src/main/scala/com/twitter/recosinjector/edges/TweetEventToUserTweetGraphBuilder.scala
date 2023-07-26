@@ -1,88 +1,88 @@
-package com.twitter.recosinjector.edges
+package com.twittew.wecosinjectow.edges
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.TweetCreationTimeMHStore
-import com.twitter.frigate.common.util.SnowflakeUtils
-import com.twitter.recos.internal.thriftscala.RecosUserTweetInfo
-import com.twitter.recos.internal.thriftscala.TweetType
-import com.twitter.recos.util.Action
-import com.twitter.recosinjector.decider.RecosInjectorDecider
-import com.twitter.recosinjector.decider.RecosInjectorDeciderConstants
-import com.twitter.recosinjector.util.TweetCreateEventDetails
-import com.twitter.util.Future
-import com.twitter.util.Time
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.stowe.tweetcweationtimemhstowe
+i-impowt com.twittew.fwigate.common.utiw.snowfwakeutiws
+i-impowt c-com.twittew.wecos.intewnaw.thwiftscawa.wecosusewtweetinfo
+impowt c-com.twittew.wecos.intewnaw.thwiftscawa.tweettype
+i-impowt com.twittew.wecos.utiw.action
+i-impowt c-com.twittew.wecosinjectow.decidew.wecosinjectowdecidew
+impowt com.twittew.wecosinjectow.decidew.wecosinjectowdecidewconstants
+impowt com.twittew.wecosinjectow.utiw.tweetcweateeventdetaiws
+impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.time
 
-class TweetEventToUserTweetGraphBuilder(
-  userTweetEntityEdgeBuilder: UserTweetEntityEdgeBuilder,
-  tweetCreationStore: TweetCreationTimeMHStore,
-  decider: RecosInjectorDecider
+cwass t-tweeteventtousewtweetgwaphbuiwdew(
+  usewtweetentityedgebuiwdew: u-usewtweetentityedgebuiwdew, OwO
+  tweetcweationstowe: tweetcweationtimemhstowe, (U ﹏ U)
+  decidew: wecosinjectowdecidew
 )(
-  override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[TweetCreateEventDetails, UserTweetEntityEdge] {
+  o-ovewwide impwicit vaw statsweceivew: s-statsweceivew)
+    e-extends eventtomessagebuiwdew[tweetcweateeventdetaiws, >w< usewtweetentityedge] {
 
-  private val numRetweetEdgesCounter = statsReceiver.counter("num_retweet_edge")
-  private val numIsDecider = statsReceiver.counter("num_decider_enabled")
-  private val numIsNotDecider = statsReceiver.counter("num_decider_not_enabled")
+  pwivate vaw nyumwetweetedgescountew = s-statsweceivew.countew("num_wetweet_edge")
+  pwivate vaw nyumisdecidew = statsweceivew.countew("num_decidew_enabwed")
+  pwivate vaw nyumisnotdecidew = s-statsweceivew.countew("num_decidew_not_enabwed")
 
-  override def shouldProcessEvent(event: TweetCreateEventDetails): Future[Boolean] = {
-    val isDecider = decider.isAvailable(
-      RecosInjectorDeciderConstants.TweetEventTransformerUserTweetEntityEdgesDecider
+  ovewwide d-def shouwdpwocessevent(event: t-tweetcweateeventdetaiws): f-futuwe[boowean] = {
+    v-vaw isdecidew = decidew.isavaiwabwe(
+      wecosinjectowdecidewconstants.tweeteventtwansfowmewusewtweetentityedgesdecidew
     )
-    if (isDecider) {
-      numIsDecider.incr()
-      Future(true)
-    } else {
-      numIsNotDecider.incr()
-      Future(false)
+    i-if (isdecidew) {
+      nyumisdecidew.incw()
+      futuwe(twue)
+    } ewse {
+      n-nyumisnotdecidew.incw()
+      futuwe(fawse)
     }
   }
 
   /**
-   * Build a Retweet edge: author -> RT -> SourceTweetId.
+   * buiwd a wetweet edge: authow -> wt -> souwcetweetid. (U ﹏ U)
    */
-  private def buildRetweetEdge(event: TweetCreateEventDetails) = {
-    val userTweetEngagement = event.userTweetEngagement
-    val tweetId = userTweetEngagement.tweetId
+  p-pwivate def buiwdwetweetedge(event: tweetcweateeventdetaiws) = {
+    v-vaw usewtweetengagement = e-event.usewtweetengagement
+    v-vaw tweetid = usewtweetengagement.tweetid
 
-    event.sourceTweetDetails
-      .map { sourceTweetDetails =>
-        val sourceTweetId = sourceTweetDetails.tweet.id // Id of the tweet being Retweeted
-        val sourceTweetEntitiesMapFut = userTweetEntityEdgeBuilder.getEntitiesMapAndUpdateCache(
-          tweetId = sourceTweetId,
-          tweetDetails = Some(sourceTweetDetails)
+    event.souwcetweetdetaiws
+      .map { souwcetweetdetaiws =>
+        v-vaw souwcetweetid = souwcetweetdetaiws.tweet.id // i-id of the tweet being w-wetweeted
+        v-vaw souwcetweetentitiesmapfut = usewtweetentityedgebuiwdew.getentitiesmapandupdatecache(
+          t-tweetid = souwcetweetid,
+          t-tweetdetaiws = some(souwcetweetdetaiws)
         )
 
-        sourceTweetEntitiesMapFut.map { sourceTweetEntitiesMap =>
-          val edge = UserTweetEntityEdge(
-            sourceUser = userTweetEngagement.engageUserId,
-            targetTweet = sourceTweetId,
-            action = Action.Retweet,
-            metadata = Some(tweetId), // metadata is the tweetId
-            cardInfo = Some(sourceTweetDetails.cardInfo.toByte),
-            entitiesMap = sourceTweetEntitiesMap,
-            tweetDetails = Some(sourceTweetDetails)
+        souwcetweetentitiesmapfut.map { s-souwcetweetentitiesmap =>
+          vaw edge = u-usewtweetentityedge(
+            souwceusew = u-usewtweetengagement.engageusewid, 😳
+            t-tawgettweet = souwcetweetid, (ˆ ﻌ ˆ)♡
+            action = action.wetweet, 😳😳😳
+            metadata = some(tweetid), (U ﹏ U) // metadata is the tweetid
+            c-cawdinfo = some(souwcetweetdetaiws.cawdinfo.tobyte),
+            e-entitiesmap = souwcetweetentitiesmap, (///ˬ///✿)
+            t-tweetdetaiws = s-some(souwcetweetdetaiws)
           )
-          numRetweetEdgesCounter.incr()
-          Seq(edge)
+          n-nyumwetweetedgescountew.incw()
+          seq(edge)
         }
-      }.getOrElse(Future.Nil)
+      }.getowewse(futuwe.niw)
   }
 
-  override def buildEdges(event: TweetCreateEventDetails): Future[Seq[UserTweetEntityEdge]] = {
-    val userTweetEngagement = event.userTweetEngagement
-    userTweetEngagement.action match {
-      case Action.Retweet =>
-        buildRetweetEdge(event)
-      case _ =>
-        Future.Nil
+  ovewwide def buiwdedges(event: t-tweetcweateeventdetaiws): futuwe[seq[usewtweetentityedge]] = {
+    vaw usewtweetengagement = event.usewtweetengagement
+    usewtweetengagement.action m-match {
+      case action.wetweet =>
+        b-buiwdwetweetedge(event)
+      c-case _ =>
+        f-futuwe.niw
     }
 
   }
 
-  override def filterEdges(
-    event: TweetCreateEventDetails,
-    edges: Seq[UserTweetEntityEdge]
-  ): Future[Seq[UserTweetEntityEdge]] = {
-    Future(edges) // No filtering for now. Add more if needed
+  ovewwide def fiwtewedges(
+    e-event: t-tweetcweateeventdetaiws, 😳
+    e-edges: seq[usewtweetentityedge]
+  ): f-futuwe[seq[usewtweetentityedge]] = {
+    futuwe(edges) // nyo fiwtewing fow nyow. 😳 add mowe i-if nyeeded
   }
 }

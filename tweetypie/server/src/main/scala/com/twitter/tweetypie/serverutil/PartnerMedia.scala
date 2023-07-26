@@ -1,15 +1,15 @@
-package com.twitter.tweetypie.serverutil
+package com.twittew.tweetypie.sewvewutiw
 
-import com.twitter.config.yaml.YamlMap
-import scala.util.matching.Regex
+impowt c-com.twittew.config.yamw.yamwmap
+i-impowt scawa.utiw.matching.wegex
 
-object PartnerMedia {
-  def load(yamlMap: YamlMap): Seq[Regex] =
-    (httpOrHttps(yamlMap) ++ httpOnly(yamlMap)).map(_.r)
+o-object pawtnewmedia {
+  d-def woad(yamwmap: y-yamwmap): s-seq[wegex] =
+    (httpowhttps(yamwmap) ++ h-httponwy(yamwmap)).map(_.w)
 
-  private def httpOrHttps(yamlMap: YamlMap): Seq[String] =
-    yamlMap.stringSeq("http_or_https").map("""^(?:https?\:\/\/)?""" + _)
+  pwivate d-def httpowhttps(yamwmap: yamwmap): seq[stwing] =
+    yamwmap.stwingseq("http_ow_https").map("""^(?:https?\:\/\/)?""" + _)
 
-  private def httpOnly(yamlMap: YamlMap): Seq[String] =
-    yamlMap.stringSeq("http_only").map("""^(?:http\:\/\/)?""" + _)
+  pwivate def httponwy(yamwmap: y-yamwmap): seq[stwing] =
+    yamwmap.stwingseq("http_onwy").map("""^(?:http\:\/\/)?""" + _)
 }

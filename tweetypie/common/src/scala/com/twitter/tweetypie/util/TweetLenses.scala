@@ -1,506 +1,506 @@
-package com.twitter.tweetypie.util
+package com.twittew.tweetypie.utiw
 
-import com.twitter.dataproducts.enrichments.thriftscala.ProfileGeoEnrichment
-import com.twitter.expandodo.thriftscala._
-import com.twitter.mediaservices.commons.thriftscala.MediaKey
-import com.twitter.mediaservices.commons.tweetmedia.thriftscala._
-import com.twitter.servo.data.Lens
-import com.twitter.spam.rtf.thriftscala.SafetyLabel
-import com.twitter.tseng.withholding.thriftscala.TakedownReason
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.unmentions.thriftscala.UnmentionData
+impowt com.twittew.datapwoducts.enwichments.thwiftscawa.pwofiwegeoenwichment
+i-impowt com.twittew.expandodo.thwiftscawa._
+i-impowt c-com.twittew.mediasewvices.commons.thwiftscawa.mediakey
+i-impowt c-com.twittew.mediasewvices.commons.tweetmedia.thwiftscawa._
+i-impowt c-com.twittew.sewvo.data.wens
+i-impowt com.twittew.spam.wtf.thwiftscawa.safetywabew
+impowt com.twittew.tseng.withhowding.thwiftscawa.takedownweason
+impowt com.twittew.tweetypie.thwiftscawa._
+impowt c-com.twittew.tweetypie.unmentions.thwiftscawa.unmentiondata
 
-object TweetLenses {
-  import Lens.checkEq
+object tweetwenses {
+  impowt wens.checkeq
 
-  def requireSome[A, B](l: Lens[A, Option[B]]): Lens[A, B] =
-    checkEq[A, B](
-      a => l.get(a).get,
-      (a, b) => l.set(a, Some(b))
+  d-def wequiwesome[a, ^^ b-b](w: wens[a, (///ˬ///✿) option[b]]): wens[a, 😳 b] =
+    checkeq[a, òωó b](
+      a-a => w.get(a).get, ^^;;
+      (a, rawr b) => w.set(a, (ˆ ﻌ ˆ)♡ some(b))
     )
 
-  def tweetLens[A](get: Tweet => A, set: (Tweet, A) => Tweet): Lens[Tweet, A] =
-    checkEq[Tweet, A](get, set)
+  d-def tweetwens[a](get: t-tweet => a, XD set: (tweet, >_< a) => tweet): wens[tweet, (˘ω˘) a] =
+    checkeq[tweet, 😳 a-a](get, o.O set)
 
-  val id: Lens[Tweet, TweetId] =
-    tweetLens[TweetId](_.id, (t, id) => t.copy(id = id))
+  vaw id: wens[tweet, (ꈍᴗꈍ) tweetid] =
+    tweetwens[tweetid](_.id, rawr x3 (t, id) => t.copy(id = i-id))
 
-  val coreData: Lens[Tweet, Option[TweetCoreData]] =
-    tweetLens[Option[TweetCoreData]](_.coreData, (t, coreData) => t.copy(coreData = coreData))
+  vaw cowedata: wens[tweet, ^^ o-option[tweetcowedata]] =
+    t-tweetwens[option[tweetcowedata]](_.cowedata, OwO (t, c-cowedata) => t-t.copy(cowedata = cowedata))
 
-  val requiredCoreData: Lens[Tweet, TweetCoreData] =
-    requireSome(coreData)
+  vaw wequiwedcowedata: w-wens[tweet, ^^ tweetcowedata] =
+    wequiwesome(cowedata)
 
-  val optUrls: Lens[Tweet, Option[Seq[UrlEntity]]] =
-    tweetLens[Option[Seq[UrlEntity]]](_.urls, (t, urls) => t.copy(urls = urls))
+  v-vaw optuwws: wens[tweet, :3 option[seq[uwwentity]]] =
+    tweetwens[option[seq[uwwentity]]](_.uwws, o.O (t, -.- uwws) => t.copy(uwws = uwws))
 
-  val urls: Lens[Tweet, Seq[UrlEntity]] =
-    tweetLens[Seq[UrlEntity]](_.urls.toSeq.flatten, (t, urls) => t.copy(urls = Some(urls)))
+  vaw uwws: w-wens[tweet, (U ﹏ U) seq[uwwentity]] =
+    tweetwens[seq[uwwentity]](_.uwws.toseq.fwatten, o.O (t, u-uwws) => t-t.copy(uwws = some(uwws)))
 
-  val optMentions: Lens[Tweet, Option[Seq[MentionEntity]]] =
-    tweetLens[Option[Seq[MentionEntity]]](_.mentions, (t, v) => t.copy(mentions = v))
+  v-vaw optmentions: wens[tweet, OwO option[seq[mentionentity]]] =
+    tweetwens[option[seq[mentionentity]]](_.mentions, ^•ﻌ•^ (t, v-v) => t.copy(mentions = v-v))
 
-  val mentions: Lens[Tweet, Seq[MentionEntity]] =
-    tweetLens[Seq[MentionEntity]](_.mentions.toSeq.flatten, (t, v) => t.copy(mentions = Some(v)))
+  vaw mentions: w-wens[tweet, ʘwʘ seq[mentionentity]] =
+    t-tweetwens[seq[mentionentity]](_.mentions.toseq.fwatten, :3 (t, v) => t.copy(mentions = s-some(v)))
 
-  val unmentionData: Lens[Tweet, Option[UnmentionData]] =
-    tweetLens[Option[UnmentionData]](_.unmentionData, (t, v) => t.copy(unmentionData = v))
+  vaw unmentiondata: w-wens[tweet, 😳 option[unmentiondata]] =
+    tweetwens[option[unmentiondata]](_.unmentiondata, òωó (t, v-v) => t.copy(unmentiondata = v))
 
-  val optHashtags: Lens[Tweet, Option[Seq[HashtagEntity]]] =
-    tweetLens[Option[Seq[HashtagEntity]]](_.hashtags, (t, v) => t.copy(hashtags = v))
+  vaw o-opthashtags: wens[tweet, 🥺 option[seq[hashtagentity]]] =
+    t-tweetwens[option[seq[hashtagentity]]](_.hashtags, rawr x3 (t, v-v) => t.copy(hashtags = v))
 
-  val hashtags: Lens[Tweet, Seq[HashtagEntity]] =
-    tweetLens[Seq[HashtagEntity]](_.hashtags.toSeq.flatten, (t, v) => t.copy(hashtags = Some(v)))
+  vaw hashtags: wens[tweet, ^•ﻌ•^ seq[hashtagentity]] =
+    tweetwens[seq[hashtagentity]](_.hashtags.toseq.fwatten, :3 (t, v) => t.copy(hashtags = some(v)))
 
-  val optCashtags: Lens[Tweet, Option[Seq[CashtagEntity]]] =
-    tweetLens[Option[Seq[CashtagEntity]]](_.cashtags, (t, v) => t.copy(cashtags = v))
+  v-vaw optcashtags: w-wens[tweet, (ˆ ﻌ ˆ)♡ option[seq[cashtagentity]]] =
+    t-tweetwens[option[seq[cashtagentity]]](_.cashtags, (U ᵕ U❁) (t, v-v) => t-t.copy(cashtags = v))
 
-  val cashtags: Lens[Tweet, Seq[CashtagEntity]] =
-    tweetLens[Seq[CashtagEntity]](_.cashtags.toSeq.flatten, (t, v) => t.copy(cashtags = Some(v)))
+  vaw cashtags: wens[tweet, :3 seq[cashtagentity]] =
+    t-tweetwens[seq[cashtagentity]](_.cashtags.toseq.fwatten, ^^;; (t, v) => t.copy(cashtags = some(v)))
 
-  val optMedia: Lens[Tweet, Option[Seq[MediaEntity]]] =
-    tweetLens[Option[Seq[MediaEntity]]](_.media, (t, v) => t.copy(media = v))
+  vaw optmedia: wens[tweet, ( ͡o ω ͡o ) o-option[seq[mediaentity]]] =
+    tweetwens[option[seq[mediaentity]]](_.media, o.O (t, v-v) => t-t.copy(media = v))
 
-  val media: Lens[Tweet, Seq[MediaEntity]] =
-    tweetLens[Seq[MediaEntity]](_.media.toSeq.flatten, (t, v) => t.copy(media = Some(v)))
+  v-vaw media: wens[tweet, ^•ﻌ•^ seq[mediaentity]] =
+    t-tweetwens[seq[mediaentity]](_.media.toseq.fwatten, XD (t, v-v) => t-t.copy(media = s-some(v)))
 
-  val mediaKeys: Lens[Tweet, Seq[MediaKey]] =
-    tweetLens[Seq[MediaKey]](
-      _.mediaKeys.toSeq.flatten,
+  vaw mediakeys: wens[tweet, ^^ seq[mediakey]] =
+    t-tweetwens[seq[mediakey]](
+      _.mediakeys.toseq.fwatten, o.O
       {
-        case (t, v) => t.copy(mediaKeys = Some(v))
+        c-case (t, ( ͡o ω ͡o ) v-v) => t.copy(mediakeys = s-some(v))
       })
 
-  val place: Lens[Tweet, Option[Place]] =
-    tweetLens[Option[Place]](
-      _.place,
+  v-vaw pwace: wens[tweet, /(^•ω•^) option[pwace]] =
+    tweetwens[option[pwace]](
+      _.pwace, 🥺
       {
-        case (t, v) => t.copy(place = v)
+        case (t, nyaa~~ v) => t-t.copy(pwace = v)
       })
 
-  val quotedTweet: Lens[Tweet, Option[QuotedTweet]] =
-    tweetLens[Option[QuotedTweet]](
-      _.quotedTweet,
+  vaw quotedtweet: wens[tweet, mya option[quotedtweet]] =
+    tweetwens[option[quotedtweet]](
+      _.quotedtweet, XD
       {
-        case (t, v) => t.copy(quotedTweet = v)
+        case (t, nyaa~~ v) => t.copy(quotedtweet = v-v)
       })
 
-  val selfThreadMetadata: Lens[Tweet, Option[SelfThreadMetadata]] =
-    tweetLens[Option[SelfThreadMetadata]](
-      _.selfThreadMetadata,
+  vaw sewfthweadmetadata: wens[tweet, ʘwʘ option[sewfthweadmetadata]] =
+    t-tweetwens[option[sewfthweadmetadata]](
+      _.sewfthweadmetadata, (⑅˘꒳˘)
       {
-        case (t, v) => t.copy(selfThreadMetadata = v)
+        c-case (t, :3 v-v) => t.copy(sewfthweadmetadata = v)
       })
 
-  val composerSource: Lens[Tweet, Option[ComposerSource]] =
-    tweetLens[Option[ComposerSource]](
-      _.composerSource,
+  v-vaw composewsouwce: wens[tweet, -.- o-option[composewsouwce]] =
+    t-tweetwens[option[composewsouwce]](
+      _.composewsouwce, 😳😳😳
       {
-        case (t, v) => t.copy(composerSource = v)
+        case (t, (U ﹏ U) v) => t.copy(composewsouwce = v)
       })
 
-  val deviceSource: Lens[Tweet, Option[DeviceSource]] =
-    tweetLens[Option[DeviceSource]](
-      _.deviceSource,
+  vaw devicesouwce: wens[tweet, o-option[devicesouwce]] =
+    tweetwens[option[devicesouwce]](
+      _.devicesouwce, o.O
       {
-        case (t, v) => t.copy(deviceSource = v)
+        c-case (t, v) => t.copy(devicesouwce = v-v)
       })
 
-  val perspective: Lens[Tweet, Option[StatusPerspective]] =
-    tweetLens[Option[StatusPerspective]](
-      _.perspective,
+  v-vaw pewspective: wens[tweet, ( ͡o ω ͡o ) option[statuspewspective]] =
+    t-tweetwens[option[statuspewspective]](
+      _.pewspective, òωó
       {
-        case (t, v) => t.copy(perspective = v)
+        c-case (t, 🥺 v) => t.copy(pewspective = v-v)
       })
 
-  val cards: Lens[Tweet, Option[Seq[Card]]] =
-    tweetLens[Option[Seq[Card]]](
-      _.cards,
+  v-vaw cawds: wens[tweet, /(^•ω•^) option[seq[cawd]]] =
+    tweetwens[option[seq[cawd]]](
+      _.cawds,
       {
-        case (t, v) => t.copy(cards = v)
+        case (t, 😳😳😳 v) => t.copy(cawds = v-v)
       })
 
-  val card2: Lens[Tweet, Option[Card2]] =
-    tweetLens[Option[Card2]](
-      _.card2,
+  vaw c-cawd2: wens[tweet, ^•ﻌ•^ o-option[cawd2]] =
+    tweetwens[option[cawd2]](
+      _.cawd2, nyaa~~
       {
-        case (t, v) => t.copy(card2 = v)
+        c-case (t, OwO v) => t-t.copy(cawd2 = v)
       })
 
-  val cardReference: Lens[Tweet, Option[CardReference]] =
-    tweetLens[Option[CardReference]](
-      _.cardReference,
+  v-vaw cawdwefewence: wens[tweet, ^•ﻌ•^ option[cawdwefewence]] =
+    tweetwens[option[cawdwefewence]](
+      _.cawdwefewence,
       {
-        case (t, v) => t.copy(cardReference = v)
+        case (t, σωσ v) => t-t.copy(cawdwefewence = v-v)
       })
 
-  val spamLabel: Lens[Tweet, Option[SafetyLabel]] =
-    tweetLens[Option[SafetyLabel]](
-      _.spamLabel,
+  vaw spamwabew: wens[tweet, -.- o-option[safetywabew]] =
+    t-tweetwens[option[safetywabew]](
+      _.spamwabew, (˘ω˘)
       {
-        case (t, v) => t.copy(spamLabel = v)
+        case (t, rawr x3 v) => t.copy(spamwabew = v)
       })
 
-  val lowQualityLabel: Lens[Tweet, Option[SafetyLabel]] =
-    tweetLens[Option[SafetyLabel]](
-      _.lowQualityLabel,
+  v-vaw wowquawitywabew: wens[tweet, rawr x3 option[safetywabew]] =
+    tweetwens[option[safetywabew]](
+      _.wowquawitywabew, σωσ
       {
-        case (t, v) => t.copy(lowQualityLabel = v)
+        case (t, nyaa~~ v-v) => t.copy(wowquawitywabew = v)
       })
 
-  val nsfwHighPrecisionLabel: Lens[Tweet, Option[SafetyLabel]] =
-    tweetLens[Option[SafetyLabel]](
-      _.nsfwHighPrecisionLabel,
+  vaw nysfwhighpwecisionwabew: w-wens[tweet, (ꈍᴗꈍ) o-option[safetywabew]] =
+    tweetwens[option[safetywabew]](
+      _.nsfwhighpwecisionwabew, ^•ﻌ•^
       {
-        case (t, v) => t.copy(nsfwHighPrecisionLabel = v)
+        case (t, >_< v) => t.copy(nsfwhighpwecisionwabew = v-v)
       })
 
-  val bounceLabel: Lens[Tweet, Option[SafetyLabel]] =
-    tweetLens[Option[SafetyLabel]](
-      _.bounceLabel,
+  v-vaw bouncewabew: wens[tweet, ^^;; option[safetywabew]] =
+    tweetwens[option[safetywabew]](
+      _.bouncewabew, ^^;;
       {
-        case (t, v) => t.copy(bounceLabel = v)
+        c-case (t, /(^•ω•^) v) => t.copy(bouncewabew = v)
       })
 
-  val takedownCountryCodes: Lens[Tweet, Option[Seq[String]]] =
-    tweetLens[Option[Seq[String]]](
-      _.takedownCountryCodes,
+  v-vaw takedowncountwycodes: wens[tweet, nyaa~~ option[seq[stwing]]] =
+    tweetwens[option[seq[stwing]]](
+      _.takedowncountwycodes, (✿oωo)
       {
-        case (t, v) => t.copy(takedownCountryCodes = v)
+        c-case (t, ( ͡o ω ͡o ) v) => t.copy(takedowncountwycodes = v)
       })
 
-  val takedownReasons: Lens[Tweet, Option[Seq[TakedownReason]]] =
-    tweetLens[Option[Seq[TakedownReason]]](
-      _.takedownReasons,
+  v-vaw t-takedownweasons: wens[tweet, (U ᵕ U❁) option[seq[takedownweason]]] =
+    t-tweetwens[option[seq[takedownweason]]](
+      _.takedownweasons, òωó
       {
-        case (t, v) => t.copy(takedownReasons = v)
+        case (t, σωσ v) => t-t.copy(takedownweasons = v-v)
       })
 
-  val contributor: Lens[Tweet, Option[Contributor]] =
-    tweetLens[Option[Contributor]](
-      _.contributor,
+  v-vaw contwibutow: wens[tweet, :3 o-option[contwibutow]] =
+    t-tweetwens[option[contwibutow]](
+      _.contwibutow, OwO
       {
-        case (t, v) => t.copy(contributor = v)
+        case (t, ^^ v) => t.copy(contwibutow = v-v)
       })
 
-  val mediaTags: Lens[Tweet, Option[TweetMediaTags]] =
-    tweetLens[Option[TweetMediaTags]](
-      _.mediaTags,
+  v-vaw mediatags: w-wens[tweet, (˘ω˘) option[tweetmediatags]] =
+    tweetwens[option[tweetmediatags]](
+      _.mediatags, OwO
       {
-        case (t, v) => t.copy(mediaTags = v)
+        c-case (t, UwU v) => t.copy(mediatags = v-v)
       })
 
-  val mediaTagMap: Lens[Tweet, Map[MediaId, Seq[MediaTag]]] =
-    tweetLens[Map[MediaId, Seq[MediaTag]]](
-      _.mediaTags.map { case TweetMediaTags(tagMap) => tagMap.toMap }.getOrElse(Map.empty),
+  v-vaw mediatagmap: wens[tweet, ^•ﻌ•^ map[mediaid, (ꈍᴗꈍ) seq[mediatag]]] =
+    t-tweetwens[map[mediaid, /(^•ω•^) s-seq[mediatag]]](
+      _.mediatags.map { c-case tweetmediatags(tagmap) => t-tagmap.tomap }.getowewse(map.empty), (U ᵕ U❁)
       (t, v) => {
-        val cleanMap = v.filter { case (_, tags) => tags.nonEmpty }
-        t.copy(mediaTags = if (cleanMap.nonEmpty) Some(TweetMediaTags(cleanMap)) else None)
+        v-vaw cweanmap = v.fiwtew { case (_, (✿oωo) tags) => tags.nonempty }
+        t.copy(mediatags = if (cweanmap.nonempty) some(tweetmediatags(cweanmap)) e-ewse nyone)
       }
     )
 
-  val escherbirdEntityAnnotations: Lens[Tweet, Option[EscherbirdEntityAnnotations]] =
-    tweetLens[Option[EscherbirdEntityAnnotations]](
-      _.escherbirdEntityAnnotations,
+  vaw eschewbiwdentityannotations: w-wens[tweet, OwO option[eschewbiwdentityannotations]] =
+    tweetwens[option[eschewbiwdentityannotations]](
+      _.eschewbiwdentityannotations, :3
       {
-        case (t, v) => t.copy(escherbirdEntityAnnotations = v)
+        case (t, nyaa~~ v-v) => t.copy(eschewbiwdentityannotations = v)
       })
 
-  val communities: Lens[Tweet, Option[Communities]] =
-    tweetLens[Option[Communities]](
-      _.communities,
+  v-vaw communities: wens[tweet, ^•ﻌ•^ option[communities]] =
+    t-tweetwens[option[communities]](
+      _.communities, ( ͡o ω ͡o )
       {
-        case (t, v) => t.copy(communities = v)
+        case (t, ^^;; v-v) => t.copy(communities = v-v)
       })
 
-  val tweetypieOnlyTakedownCountryCodes: Lens[Tweet, Option[Seq[String]]] =
-    tweetLens[Option[Seq[String]]](
-      _.tweetypieOnlyTakedownCountryCodes,
+  v-vaw tweetypieonwytakedowncountwycodes: w-wens[tweet, mya option[seq[stwing]]] =
+    tweetwens[option[seq[stwing]]](
+      _.tweetypieonwytakedowncountwycodes, (U ᵕ U❁)
       {
-        case (t, v) => t.copy(tweetypieOnlyTakedownCountryCodes = v)
+        case (t, v) => t.copy(tweetypieonwytakedowncountwycodes = v)
       })
 
-  val tweetypieOnlyTakedownReasons: Lens[Tweet, Option[Seq[TakedownReason]]] =
-    tweetLens[Option[Seq[TakedownReason]]](
-      _.tweetypieOnlyTakedownReasons,
+  vaw tweetypieonwytakedownweasons: w-wens[tweet, o-option[seq[takedownweason]]] =
+    t-tweetwens[option[seq[takedownweason]]](
+      _.tweetypieonwytakedownweasons, ^•ﻌ•^
       {
-        case (t, v) => t.copy(tweetypieOnlyTakedownReasons = v)
+        case (t, (U ﹏ U) v) => t-t.copy(tweetypieonwytakedownweasons = v)
       })
 
-  val profileGeo: Lens[Tweet, Option[ProfileGeoEnrichment]] =
-    tweetLens[Option[ProfileGeoEnrichment]](
-      _.profileGeoEnrichment,
-      (t, v) => t.copy(profileGeoEnrichment = v)
+  vaw pwofiwegeo: wens[tweet, /(^•ω•^) o-option[pwofiwegeoenwichment]] =
+    t-tweetwens[option[pwofiwegeoenwichment]](
+      _.pwofiwegeoenwichment, ʘwʘ
+      (t, v) => t.copy(pwofiwegeoenwichment = v-v)
     )
 
-  val visibleTextRange: Lens[Tweet, Option[TextRange]] =
-    tweetLens[Option[TextRange]](
-      _.visibleTextRange,
+  vaw visibwetextwange: wens[tweet, XD o-option[textwange]] =
+    t-tweetwens[option[textwange]](
+      _.visibwetextwange, (⑅˘꒳˘)
       {
-        case (t, v) => t.copy(visibleTextRange = v)
+        case (t, nyaa~~ v-v) => t.copy(visibwetextwange = v-v)
       })
 
-  val selfPermalink: Lens[Tweet, Option[ShortenedUrl]] =
-    tweetLens[Option[ShortenedUrl]](
-      _.selfPermalink,
+  vaw sewfpewmawink: wens[tweet, UwU option[showteneduww]] =
+    tweetwens[option[showteneduww]](
+      _.sewfpewmawink, (˘ω˘)
       {
-        case (t, v) => t.copy(selfPermalink = v)
+        c-case (t, rawr x3 v) => t-t.copy(sewfpewmawink = v-v)
       })
 
-  val extendedTweetMetadata: Lens[Tweet, Option[ExtendedTweetMetadata]] =
-    tweetLens[Option[ExtendedTweetMetadata]](
-      _.extendedTweetMetadata,
+  v-vaw extendedtweetmetadata: w-wens[tweet, (///ˬ///✿) option[extendedtweetmetadata]] =
+    t-tweetwens[option[extendedtweetmetadata]](
+      _.extendedtweetmetadata, 😳😳😳
       {
-        case (t, v) => t.copy(extendedTweetMetadata = v)
+        c-case (t, (///ˬ///✿) v) => t.copy(extendedtweetmetadata = v)
       })
 
-  object TweetCoreData {
-    val userId: Lens[TweetCoreData, UserId] = checkEq[TweetCoreData, UserId](
-      _.userId,
-      { (c, v) =>
-        // Pleases the compiler: https://github.com/scala/bug/issues/9171
-        val userId = v
-        c.copy(userId = userId)
+  o-object t-tweetcowedata {
+    vaw usewid: w-wens[tweetcowedata, ^^;; usewid] = checkeq[tweetcowedata, ^^ u-usewid](
+      _.usewid, (///ˬ///✿)
+      { (c, -.- v) =>
+        // pweases t-the compiwew: h-https://github.com/scawa/bug/issues/9171
+        vaw usewid = v-v
+        c.copy(usewid = usewid)
       })
-    val text: Lens[TweetCoreData, String] = checkEq[TweetCoreData, String](
-      _.text,
-      { (c, v) =>
-        // Pleases the compiler: https://github.com/scala/bug/issues/9171
-        val text = v
+    vaw text: wens[tweetcowedata, /(^•ω•^) s-stwing] = checkeq[tweetcowedata, UwU s-stwing](
+      _.text, (⑅˘꒳˘)
+      { (c, ʘwʘ v-v) =>
+        // pweases the compiwew: https://github.com/scawa/bug/issues/9171
+        vaw t-text = v
         c.copy(text = text)
       })
-    val createdAt: Lens[TweetCoreData, TweetId] =
-      checkEq[TweetCoreData, Long](_.createdAtSecs, (c, v) => c.copy(createdAtSecs = v))
-    val createdVia: Lens[TweetCoreData, String] =
-      checkEq[TweetCoreData, String](
-        _.createdVia,
+    vaw cweatedat: w-wens[tweetcowedata, σωσ t-tweetid] =
+      checkeq[tweetcowedata, ^^ w-wong](_.cweatedatsecs, (c, OwO v) => c.copy(cweatedatsecs = v-v))
+    vaw c-cweatedvia: wens[tweetcowedata, (ˆ ﻌ ˆ)♡ stwing] =
+      checkeq[tweetcowedata, o.O s-stwing](
+        _.cweatedvia, (˘ω˘)
         {
-          case (c, v) => c.copy(createdVia = v)
+          case (c, 😳 v) => c.copy(cweatedvia = v-v)
         })
-    val hasTakedown: Lens[TweetCoreData, Boolean] =
-      checkEq[TweetCoreData, Boolean](
-        _.hasTakedown,
+    v-vaw hastakedown: wens[tweetcowedata, (U ᵕ U❁) b-boowean] =
+      checkeq[tweetcowedata, :3 b-boowean](
+        _.hastakedown, o.O
         {
-          case (c, v) => c.copy(hasTakedown = v)
+          c-case (c, (///ˬ///✿) v) => c-c.copy(hastakedown = v)
         })
-    val nullcast: Lens[TweetCoreData, Boolean] =
-      checkEq[TweetCoreData, Boolean](
-        _.nullcast,
+    vaw nyuwwcast: wens[tweetcowedata, OwO boowean] =
+      checkeq[tweetcowedata, >w< boowean](
+        _.nuwwcast, ^^
         {
-          case (c, v) => c.copy(nullcast = v)
+          case (c, (⑅˘꒳˘) v) => c.copy(nuwwcast = v)
         })
-    val nsfwUser: Lens[TweetCoreData, Boolean] =
-      checkEq[TweetCoreData, Boolean](
-        _.nsfwUser,
+    vaw nysfwusew: wens[tweetcowedata, ʘwʘ boowean] =
+      c-checkeq[tweetcowedata, (///ˬ///✿) b-boowean](
+        _.nsfwusew, XD
         {
-          case (c, v) => c.copy(nsfwUser = v)
+          case (c, v) => c.copy(nsfwusew = v-v)
         })
-    val nsfwAdmin: Lens[TweetCoreData, Boolean] =
-      checkEq[TweetCoreData, Boolean](
-        _.nsfwAdmin,
+    v-vaw nysfwadmin: w-wens[tweetcowedata, 😳 boowean] =
+      c-checkeq[tweetcowedata, >w< boowean](
+        _.nsfwadmin, (˘ω˘)
         {
-          case (c, v) => c.copy(nsfwAdmin = v)
+          c-case (c, nyaa~~ v-v) => c.copy(nsfwadmin = v)
         })
-    val reply: Lens[TweetCoreData, Option[Reply]] =
-      checkEq[TweetCoreData, Option[Reply]](
-        _.reply,
+    v-vaw wepwy: wens[tweetcowedata, 😳😳😳 o-option[wepwy]] =
+      c-checkeq[tweetcowedata, (U ﹏ U) option[wepwy]](
+        _.wepwy, (˘ω˘)
         {
-          case (c, v) => c.copy(reply = v)
+          case (c, :3 v-v) => c.copy(wepwy = v-v)
         })
-    val share: Lens[TweetCoreData, Option[Share]] =
-      checkEq[TweetCoreData, Option[Share]](
-        _.share,
+    v-vaw s-shawe: wens[tweetcowedata, >w< o-option[shawe]] =
+      c-checkeq[tweetcowedata, ^^ o-option[shawe]](
+        _.shawe, 😳😳😳
         {
-          case (c, v) => c.copy(share = v)
+          case (c, nyaa~~ v-v) => c.copy(shawe = v-v)
         })
-    val narrowcast: Lens[TweetCoreData, Option[Narrowcast]] =
-      checkEq[TweetCoreData, Option[Narrowcast]](
-        _.narrowcast,
+    vaw nyawwowcast: w-wens[tweetcowedata, (⑅˘꒳˘) o-option[nawwowcast]] =
+      c-checkeq[tweetcowedata, :3 option[nawwowcast]](
+        _.nawwowcast, ʘwʘ
         {
-          case (c, v) => c.copy(narrowcast = v)
+          c-case (c, rawr x3 v) => c.copy(nawwowcast = v)
         })
-    val directedAtUser: Lens[TweetCoreData, Option[DirectedAtUser]] =
-      checkEq[TweetCoreData, Option[DirectedAtUser]](
-        _.directedAtUser,
+    v-vaw diwectedatusew: wens[tweetcowedata, (///ˬ///✿) option[diwectedatusew]] =
+      c-checkeq[tweetcowedata, 😳😳😳 o-option[diwectedatusew]](
+        _.diwectedatusew, XD
         {
-          case (c, v) => c.copy(directedAtUser = v)
+          c-case (c, v) => c.copy(diwectedatusew = v-v)
         })
-    val conversationId: Lens[TweetCoreData, Option[ConversationId]] =
-      checkEq[TweetCoreData, Option[ConversationId]](
-        _.conversationId,
+    vaw convewsationid: w-wens[tweetcowedata, >_< option[convewsationid]] =
+      c-checkeq[tweetcowedata, >w< option[convewsationid]](
+        _.convewsationid, /(^•ω•^)
         {
-          case (c, v) => c.copy(conversationId = v)
+          c-case (c, :3 v) => c.copy(convewsationid = v)
         })
-    val placeId: Lens[TweetCoreData, Option[String]] =
-      checkEq[TweetCoreData, Option[String]](
-        _.placeId,
+    vaw pwaceid: wens[tweetcowedata, ʘwʘ option[stwing]] =
+      c-checkeq[tweetcowedata, (˘ω˘) option[stwing]](
+        _.pwaceid, (ꈍᴗꈍ)
         {
-          case (c, v) => c.copy(placeId = v)
+          c-case (c, ^^ v) => c-c.copy(pwaceid = v)
         })
-    val geoCoordinates: Lens[TweetCoreData, Option[GeoCoordinates]] =
-      checkEq[TweetCoreData, Option[GeoCoordinates]](
-        _.coordinates,
-        (c, v) => c.copy(coordinates = v)
+    vaw geocoowdinates: wens[tweetcowedata, ^^ o-option[geocoowdinates]] =
+      checkeq[tweetcowedata, ( ͡o ω ͡o ) o-option[geocoowdinates]](
+        _.coowdinates, -.-
+        (c, ^^;; v-v) => c-c.copy(coowdinates = v)
       )
-    val trackingId: Lens[TweetCoreData, Option[TweetId]] =
-      checkEq[TweetCoreData, Option[Long]](
-        _.trackingId,
+    vaw twackingid: w-wens[tweetcowedata, ^•ﻌ•^ o-option[tweetid]] =
+      checkeq[tweetcowedata, (˘ω˘) o-option[wong]](
+        _.twackingid, o.O
         {
-          case (c, v) => c.copy(trackingId = v)
+          case (c, v) => c.copy(twackingid = v-v)
         })
-    val hasMedia: Lens[TweetCoreData, Option[Boolean]] =
-      checkEq[TweetCoreData, Option[Boolean]](
-        _.hasMedia,
+    vaw hasmedia: w-wens[tweetcowedata, (✿oωo) o-option[boowean]] =
+      c-checkeq[tweetcowedata, 😳😳😳 option[boowean]](
+        _.hasmedia, (ꈍᴗꈍ)
         {
-          case (c, v) => c.copy(hasMedia = v)
+          c-case (c, σωσ v) => c-c.copy(hasmedia = v-v)
         })
   }
 
-  val counts: Lens[Tweet, Option[StatusCounts]] =
-    tweetLens[Option[StatusCounts]](
-      _.counts,
+  v-vaw counts: wens[tweet, UwU o-option[statuscounts]] =
+    t-tweetwens[option[statuscounts]](
+      _.counts, ^•ﻌ•^
       {
-        case (t, v) => t.copy(counts = v)
+        c-case (t, mya v) => t-t.copy(counts = v-v)
       })
 
-  object StatusCounts {
-    val retweetCount: Lens[StatusCounts, Option[TweetId]] =
-      checkEq[StatusCounts, Option[Long]](
-        _.retweetCount,
-        (c, retweetCount) => c.copy(retweetCount = retweetCount)
+  object s-statuscounts {
+    v-vaw wetweetcount: w-wens[statuscounts, option[tweetid]] =
+      c-checkeq[statuscounts, /(^•ω•^) option[wong]](
+        _.wetweetcount, rawr
+        (c, nyaa~~ w-wetweetcount) => c.copy(wetweetcount = w-wetweetcount)
       )
 
-    val replyCount: Lens[StatusCounts, Option[TweetId]] =
-      checkEq[StatusCounts, Option[Long]](
-        _.replyCount,
-        (c, replyCount) => c.copy(replyCount = replyCount)
+    v-vaw wepwycount: w-wens[statuscounts, ( ͡o ω ͡o ) option[tweetid]] =
+      checkeq[statuscounts, option[wong]](
+        _.wepwycount, σωσ
+        (c, (✿oωo) w-wepwycount) => c-c.copy(wepwycount = w-wepwycount)
       )
 
-    val favoriteCount: Lens[StatusCounts, Option[TweetId]] =
-      checkEq[StatusCounts, Option[Long]](
-        _.favoriteCount,
+    vaw favowitecount: wens[statuscounts, (///ˬ///✿) option[tweetid]] =
+      c-checkeq[statuscounts, σωσ o-option[wong]](
+        _.favowitecount, UwU
         {
-          case (c, v) => c.copy(favoriteCount = v)
+          case (c, (⑅˘꒳˘) v) => c-c.copy(favowitecount = v-v)
         })
 
-    val quoteCount: Lens[StatusCounts, Option[TweetId]] =
-      checkEq[StatusCounts, Option[Long]](
-        _.quoteCount,
+    vaw quotecount: wens[statuscounts, /(^•ω•^) option[tweetid]] =
+      c-checkeq[statuscounts, -.- o-option[wong]](
+        _.quotecount,
         {
-          case (c, v) => c.copy(quoteCount = v)
-        })
-  }
-
-  val userId: Lens[Tweet, UserId] = requiredCoreData andThen TweetCoreData.userId
-  val text: Lens[Tweet, String] = requiredCoreData andThen TweetCoreData.text
-  val createdVia: Lens[Tweet, String] = requiredCoreData andThen TweetCoreData.createdVia
-  val createdAt: Lens[Tweet, ConversationId] = requiredCoreData andThen TweetCoreData.createdAt
-  val reply: Lens[Tweet, Option[Reply]] = requiredCoreData andThen TweetCoreData.reply
-  val share: Lens[Tweet, Option[Share]] = requiredCoreData andThen TweetCoreData.share
-  val narrowcast: Lens[Tweet, Option[Narrowcast]] =
-    requiredCoreData andThen TweetCoreData.narrowcast
-  val directedAtUser: Lens[Tweet, Option[DirectedAtUser]] =
-    requiredCoreData andThen TweetCoreData.directedAtUser
-  val conversationId: Lens[Tweet, Option[ConversationId]] =
-    requiredCoreData andThen TweetCoreData.conversationId
-  val placeId: Lens[Tweet, Option[String]] = requiredCoreData andThen TweetCoreData.placeId
-  val geoCoordinates: Lens[Tweet, Option[GeoCoordinates]] =
-    requiredCoreData andThen TweetCoreData.geoCoordinates
-  val hasTakedown: Lens[Tweet, Boolean] = requiredCoreData andThen TweetCoreData.hasTakedown
-  val nsfwAdmin: Lens[Tweet, Boolean] = requiredCoreData andThen TweetCoreData.nsfwAdmin
-  val nsfwUser: Lens[Tweet, Boolean] = requiredCoreData andThen TweetCoreData.nsfwUser
-  val nullcast: Lens[Tweet, Boolean] = requiredCoreData andThen TweetCoreData.nullcast
-  val trackingId: Lens[Tweet, Option[ConversationId]] =
-    requiredCoreData andThen TweetCoreData.trackingId
-  val hasMedia: Lens[Tweet, Option[Boolean]] = requiredCoreData andThen TweetCoreData.hasMedia
-
-  object CashtagEntity {
-    val indices: Lens[CashtagEntity, (Short, Short)] =
-      checkEq[CashtagEntity, (Short, Short)](
-        t => (t.fromIndex, t.toIndex),
-        (t, v) => t.copy(fromIndex = v._1, toIndex = v._2)
-      )
-    val text: Lens[CashtagEntity, String] =
-      checkEq[CashtagEntity, String](_.text, (t, text) => t.copy(text = text))
-  }
-
-  object HashtagEntity {
-    val indices: Lens[HashtagEntity, (Short, Short)] =
-      checkEq[HashtagEntity, (Short, Short)](
-        t => (t.fromIndex, t.toIndex),
-        (t, v) => t.copy(fromIndex = v._1, toIndex = v._2)
-      )
-    val text: Lens[HashtagEntity, String] =
-      checkEq[HashtagEntity, String](_.text, (t, text) => t.copy(text = text))
-  }
-
-  object MediaEntity {
-    val indices: Lens[MediaEntity, (Short, Short)] =
-      checkEq[MediaEntity, (Short, Short)](
-        t => (t.fromIndex, t.toIndex),
-        (t, v) => t.copy(fromIndex = v._1, toIndex = v._2)
-      )
-    val mediaSizes: Lens[MediaEntity, collection.Set[MediaSize]] =
-      checkEq[MediaEntity, scala.collection.Set[MediaSize]](
-        _.sizes,
-        (m, sizes) => m.copy(sizes = sizes)
-      )
-    val url: Lens[MediaEntity, String] =
-      checkEq[MediaEntity, String](
-        _.url,
-        {
-          case (t, v) => t.copy(url = v)
-        })
-    val mediaInfo: Lens[MediaEntity, Option[MediaInfo]] =
-      checkEq[MediaEntity, Option[MediaInfo]](
-        _.mediaInfo,
-        {
-          case (t, v) => t.copy(mediaInfo = v)
+          c-case (c, (ˆ ﻌ ˆ)♡ v) => c-c.copy(quotecount = v)
         })
   }
 
-  object MentionEntity {
-    val indices: Lens[MentionEntity, (Short, Short)] =
-      checkEq[MentionEntity, (Short, Short)](
-        t => (t.fromIndex, t.toIndex),
-        (t, v) => t.copy(fromIndex = v._1, toIndex = v._2)
+  vaw u-usewid: wens[tweet, nyaa~~ u-usewid] = wequiwedcowedata andthen tweetcowedata.usewid
+  v-vaw text: wens[tweet, ʘwʘ stwing] = wequiwedcowedata a-andthen tweetcowedata.text
+  vaw c-cweatedvia: wens[tweet, :3 s-stwing] = wequiwedcowedata a-andthen tweetcowedata.cweatedvia
+  v-vaw cweatedat: wens[tweet, (U ᵕ U❁) c-convewsationid] = wequiwedcowedata a-andthen tweetcowedata.cweatedat
+  v-vaw wepwy: w-wens[tweet, (U ﹏ U) option[wepwy]] = w-wequiwedcowedata andthen tweetcowedata.wepwy
+  vaw s-shawe: wens[tweet, ^^ o-option[shawe]] = w-wequiwedcowedata andthen t-tweetcowedata.shawe
+  vaw nyawwowcast: wens[tweet, òωó o-option[nawwowcast]] =
+    w-wequiwedcowedata a-andthen tweetcowedata.nawwowcast
+  vaw diwectedatusew: wens[tweet, /(^•ω•^) option[diwectedatusew]] =
+    wequiwedcowedata a-andthen tweetcowedata.diwectedatusew
+  vaw convewsationid: w-wens[tweet, 😳😳😳 o-option[convewsationid]] =
+    wequiwedcowedata andthen tweetcowedata.convewsationid
+  v-vaw pwaceid: wens[tweet, :3 o-option[stwing]] = w-wequiwedcowedata a-andthen t-tweetcowedata.pwaceid
+  v-vaw geocoowdinates: wens[tweet, (///ˬ///✿) option[geocoowdinates]] =
+    wequiwedcowedata andthen t-tweetcowedata.geocoowdinates
+  vaw hastakedown: w-wens[tweet, rawr x3 boowean] = wequiwedcowedata andthen tweetcowedata.hastakedown
+  v-vaw nysfwadmin: wens[tweet, (U ᵕ U❁) boowean] = wequiwedcowedata andthen tweetcowedata.nsfwadmin
+  v-vaw nysfwusew: w-wens[tweet, (⑅˘꒳˘) boowean] = wequiwedcowedata a-andthen tweetcowedata.nsfwusew
+  vaw n-nyuwwcast: wens[tweet, (˘ω˘) b-boowean] = wequiwedcowedata a-andthen tweetcowedata.nuwwcast
+  vaw twackingid: w-wens[tweet, :3 option[convewsationid]] =
+    wequiwedcowedata andthen tweetcowedata.twackingid
+  v-vaw hasmedia: wens[tweet, option[boowean]] = wequiwedcowedata a-andthen tweetcowedata.hasmedia
+
+  o-object cashtagentity {
+    vaw i-indices: wens[cashtagentity, XD (showt, showt)] =
+      checkeq[cashtagentity, >_< (showt, s-showt)](
+        t => (t.fwomindex, (✿oωo) t.toindex), (ꈍᴗꈍ)
+        (t, v) => t.copy(fwomindex = v._1, XD t-toindex = v._2)
       )
-    val screenName: Lens[MentionEntity, String] =
-      checkEq[MentionEntity, String](
-        _.screenName,
-        (t, screenName) => t.copy(screenName = screenName)
+    v-vaw t-text: wens[cashtagentity, :3 s-stwing] =
+      checkeq[cashtagentity, mya stwing](_.text, òωó (t, t-text) => t-t.copy(text = text))
+  }
+
+  object hashtagentity {
+    v-vaw indices: wens[hashtagentity, (showt, nyaa~~ showt)] =
+      c-checkeq[hashtagentity, 🥺 (showt, showt)](
+        t => (t.fwomindex, -.- t.toindex), 🥺
+        (t, (˘ω˘) v-v) => t-t.copy(fwomindex = v._1, òωó toindex = v-v._2)
+      )
+    v-vaw text: w-wens[hashtagentity, UwU stwing] =
+      checkeq[hashtagentity, ^•ﻌ•^ s-stwing](_.text, mya (t, text) => t.copy(text = text))
+  }
+
+  o-object mediaentity {
+    vaw indices: wens[mediaentity, (✿oωo) (showt, showt)] =
+      c-checkeq[mediaentity, XD (showt, s-showt)](
+        t-t => (t.fwomindex, :3 t-t.toindex), (U ﹏ U)
+        (t, v-v) => t.copy(fwomindex = v-v._1, toindex = v._2)
+      )
+    vaw mediasizes: w-wens[mediaentity, cowwection.set[mediasize]] =
+      c-checkeq[mediaentity, UwU scawa.cowwection.set[mediasize]](
+        _.sizes, ʘwʘ
+        (m, >w< sizes) => m.copy(sizes = s-sizes)
+      )
+    v-vaw uww: wens[mediaentity, 😳😳😳 s-stwing] =
+      checkeq[mediaentity, rawr s-stwing](
+        _.uww, ^•ﻌ•^
+        {
+          c-case (t, σωσ v) => t.copy(uww = v-v)
+        })
+    v-vaw mediainfo: wens[mediaentity, :3 o-option[mediainfo]] =
+      checkeq[mediaentity, option[mediainfo]](
+        _.mediainfo, rawr x3
+        {
+          case (t, nyaa~~ v) => t-t.copy(mediainfo = v)
+        })
+  }
+
+  o-object mentionentity {
+    vaw indices: w-wens[mentionentity, :3 (showt, s-showt)] =
+      c-checkeq[mentionentity, >w< (showt, rawr showt)](
+        t => (t.fwomindex, 😳 t-t.toindex), 😳
+        (t, v-v) => t.copy(fwomindex = v-v._1, 🥺 toindex = v._2)
+      )
+    v-vaw scweenname: wens[mentionentity, rawr x3 s-stwing] =
+      c-checkeq[mentionentity, ^^ stwing](
+        _.scweenname, ( ͡o ω ͡o )
+        (t, XD scweenname) => t.copy(scweenname = scweenname)
       )
   }
 
-  object UrlEntity {
-    val indices: Lens[UrlEntity, (Short, Short)] =
-      checkEq[UrlEntity, (Short, Short)](
-        t => (t.fromIndex, t.toIndex),
-        (t, v) => t.copy(fromIndex = v._1, toIndex = v._2)
+  object u-uwwentity {
+    v-vaw indices: wens[uwwentity, (showt, ^^ showt)] =
+      checkeq[uwwentity, (⑅˘꒳˘) (showt, (⑅˘꒳˘) showt)](
+        t-t => (t.fwomindex, ^•ﻌ•^ t.toindex), ( ͡o ω ͡o )
+        (t, ( ͡o ω ͡o ) v-v) => t-t.copy(fwomindex = v._1, (✿oωo) toindex = v._2)
       )
-    val url: Lens[UrlEntity, String] =
-      checkEq[UrlEntity, String](_.url, (t, url) => t.copy(url = url))
+    vaw uww: wens[uwwentity, 😳😳😳 s-stwing] =
+      checkeq[uwwentity, OwO stwing](_.uww, ^^ (t, rawr x3 u-uww) => t.copy(uww = uww))
   }
 
-  object Contributor {
-    val screenName: Lens[Contributor, Option[String]] =
-      checkEq[Contributor, Option[String]](
-        _.screenName,
-        (c, screenName) => c.copy(screenName = screenName)
+  o-object c-contwibutow {
+    vaw scweenname: w-wens[contwibutow, 🥺 o-option[stwing]] =
+      c-checkeq[contwibutow, (ˆ ﻌ ˆ)♡ o-option[stwing]](
+        _.scweenname,
+        (c, ( ͡o ω ͡o ) s-scweenname) => c-c.copy(scweenname = scweenname)
       )
   }
 
-  object Reply {
-    val inReplyToScreenName: Lens[Reply, Option[String]] =
-      checkEq[Reply, Option[String]](
-        _.inReplyToScreenName,
-        (c, inReplyToScreenName) => c.copy(inReplyToScreenName = inReplyToScreenName)
+  object wepwy {
+    vaw inwepwytoscweenname: wens[wepwy, >w< option[stwing]] =
+      c-checkeq[wepwy, /(^•ω•^) o-option[stwing]](
+        _.inwepwytoscweenname, 😳😳😳
+        (c, i-inwepwytoscweenname) => c-c.copy(inwepwytoscweenname = i-inwepwytoscweenname)
       )
 
-    val inReplyToStatusId: Lens[Reply, Option[TweetId]] =
-      checkEq[Reply, Option[TweetId]](
-        _.inReplyToStatusId,
-        (c, inReplyToStatusId) => c.copy(inReplyToStatusId = inReplyToStatusId)
+    v-vaw inwepwytostatusid: wens[wepwy, (U ᵕ U❁) option[tweetid]] =
+      checkeq[wepwy, (˘ω˘) option[tweetid]](
+        _.inwepwytostatusid, 😳
+        (c, (ꈍᴗꈍ) inwepwytostatusid) => c-c.copy(inwepwytostatusid = i-inwepwytostatusid)
       )
   }
 }

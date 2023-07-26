@@ -1,45 +1,45 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-object ComposableActions {
+object composabweactions {
 
-  object ComposableActionsWithConversationSectionAbusiveQuality {
-    def unapply(
-      composableActions: TweetInterstitial
-    ): Option[ConversationSectionAbusiveQuality.type] = {
-      composableActions.abusiveQuality
+  o-object composabweactionswithconvewsationsectionabusivequawity {
+    d-def unappwy(
+      c-composabweactions: t-tweetintewstitiaw
+    ): o-option[convewsationsectionabusivequawity.type] = {
+      composabweactions.abusivequawity
     }
   }
 
-  object ComposableActionsWithSoftIntervention {
-    def unapply(composableActions: TweetInterstitial): Option[SoftIntervention] = {
-      composableActions.softIntervention match {
-        case Some(si: SoftIntervention) => Some(si)
-        case _ => None
+  o-object c-composabweactionswithsoftintewvention {
+    d-def unappwy(composabweactions: tweetintewstitiaw): option[softintewvention] = {
+      composabweactions.softintewvention match {
+        case some(si: s-softintewvention) => some(si)
+        case _ => n-nyone
       }
     }
   }
 
-  object ComposableActionsWithInterstitialLimitedEngagements {
-    def unapply(composableActions: TweetInterstitial): Option[InterstitialLimitedEngagements] = {
-      composableActions.interstitial match {
-        case Some(ile: InterstitialLimitedEngagements) => Some(ile)
-        case _ => None
+  object composabweactionswithintewstitiawwimitedengagements {
+    d-def unappwy(composabweactions: tweetintewstitiaw): option[intewstitiawwimitedengagements] = {
+      composabweactions.intewstitiaw m-match {
+        case some(iwe: i-intewstitiawwimitedengagements) => s-some(iwe)
+        case _ => nyone
       }
     }
   }
 
-  object ComposableActionsWithInterstitial {
-    def unapply(composableActions: TweetInterstitial): Option[Interstitial] = {
-      composableActions.interstitial match {
-        case Some(i: Interstitial) => Some(i)
-        case _ => None
+  object composabweactionswithintewstitiaw {
+    def u-unappwy(composabweactions: tweetintewstitiaw): option[intewstitiaw] = {
+      composabweactions.intewstitiaw match {
+        case some(i: intewstitiaw) => s-some(i)
+        case _ => n-nyone
       }
     }
   }
 
-  object ComposableActionsWithAppealable {
-    def unapply(composableActions: TweetInterstitial): Option[Appealable] = {
-      composableActions.appealable
+  o-object composabweactionswithappeawabwe {
+    def u-unappwy(composabweactions: t-tweetintewstitiaw): option[appeawabwe] = {
+      composabweactions.appeawabwe
     }
   }
 }

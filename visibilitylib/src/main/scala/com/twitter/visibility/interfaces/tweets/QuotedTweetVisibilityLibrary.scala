@@ -1,149 +1,149 @@
-package com.twitter.visibility.interfaces.tweets
+package com.twittew.visibiwity.intewfaces.tweets
 
-import com.twitter.decider.Decider
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.QuotedTweetFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ContentId.QuotedTweetRelationship
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.UserUnavailableStateEnum
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.rules.Drop
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.Reason.AuthorBlocksViewer
-import com.twitter.visibility.rules.Reason.DeactivatedAuthor
-import com.twitter.visibility.rules.Reason.ErasedAuthor
-import com.twitter.visibility.rules.Reason.OffboardedAuthor
-import com.twitter.visibility.rules.Reason.ProtectedAuthor
-import com.twitter.visibility.rules.Reason.SuspendedAuthor
-import com.twitter.visibility.rules.Reason.ViewerBlocksAuthor
-import com.twitter.visibility.rules.Reason.ViewerHardMutedAuthor
-import com.twitter.visibility.rules.Reason.ViewerMutesAuthor
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
-import com.twitter.visibility.rules.utils.ShimUtils
+impowt com.twittew.decidew.decidew
+i-impowt com.twittew.sewvo.utiw.gate
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.visibiwity.visibiwitywibwawy
+i-impowt com.twittew.visibiwity.buiwdew.visibiwitywesuwt
+impowt c-com.twittew.visibiwity.buiwdew.usews.authowfeatuwes
+i-impowt c-com.twittew.visibiwity.buiwdew.usews.quotedtweetfeatuwes
+i-impowt com.twittew.visibiwity.buiwdew.usews.wewationshipfeatuwes
+impowt com.twittew.visibiwity.buiwdew.usews.viewewfeatuwes
+impowt com.twittew.visibiwity.common.usewwewationshipsouwce
+i-impowt com.twittew.visibiwity.common.usewsouwce
+impowt com.twittew.visibiwity.configapi.configs.visibiwitydecidewgates
+impowt c-com.twittew.visibiwity.featuwes.featuwemap
+impowt c-com.twittew.visibiwity.modews.contentid.quotedtweetwewationship
+impowt com.twittew.visibiwity.modews.safetywevew
+impowt com.twittew.visibiwity.modews.usewunavaiwabwestateenum
+impowt com.twittew.visibiwity.modews.viewewcontext
+i-impowt com.twittew.visibiwity.wuwes.dwop
+impowt c-com.twittew.visibiwity.wuwes.evawuationcontext
+i-impowt com.twittew.visibiwity.wuwes.weason.authowbwocksviewew
+impowt com.twittew.visibiwity.wuwes.weason.deactivatedauthow
+impowt com.twittew.visibiwity.wuwes.weason.ewasedauthow
+impowt com.twittew.visibiwity.wuwes.weason.offboawdedauthow
+i-impowt com.twittew.visibiwity.wuwes.weason.pwotectedauthow
+impowt com.twittew.visibiwity.wuwes.weason.suspendedauthow
+impowt com.twittew.visibiwity.wuwes.weason.viewewbwocksauthow
+impowt com.twittew.visibiwity.wuwes.weason.viewewhawdmutedauthow
+i-impowt com.twittew.visibiwity.wuwes.weason.viewewmutesauthow
+impowt com.twittew.visibiwity.wuwes.pwovidews.pwovidedevawuationcontext
+i-impowt c-com.twittew.visibiwity.wuwes.utiws.shimutiws
 
-case class TweetAndAuthor(tweetId: Long, authorId: Long)
+c-case cwass tweetandauthow(tweetid: w-wong, (⑅˘꒳˘) authowid: wong)
 
-case class QuotedTweetVisibilityRequest(
-  quotedTweet: TweetAndAuthor,
-  outerTweet: TweetAndAuthor,
-  viewerContext: ViewerContext,
-  safetyLevel: SafetyLevel)
+case cwass quotedtweetvisibiwitywequest(
+  q-quotedtweet: tweetandauthow, XD
+  outewtweet: t-tweetandauthow, -.-
+  viewewcontext: viewewcontext, :3
+  safetywevew: safetywevew)
 
-object QuotedTweetVisibilityLibrary {
+object quotedtweetvisibiwitywibwawy {
 
-  type Type = QuotedTweetVisibilityRequest => Stitch[VisibilityResult]
+  t-type type = quotedtweetvisibiwitywequest => s-stitch[visibiwitywesuwt]
 
-  def apply(
-    visibilityLibrary: VisibilityLibrary,
-    userSource: UserSource,
-    userRelationshipSource: UserRelationshipSource,
-    decider: Decider,
-    userStateVisibilityLibrary: UserUnavailableStateVisibilityLibrary.Type,
-    enableVfFeatureHydration: Gate[Unit] = Gate.False
-  ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val visibilityDeciderGates = VisibilityDeciderGates(decider)
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
+  def a-appwy(
+    visibiwitywibwawy: v-visibiwitywibwawy, nyaa~~
+    usewsouwce: usewsouwce, 😳
+    usewwewationshipsouwce: u-usewwewationshipsouwce, (⑅˘꒳˘)
+    d-decidew: decidew, nyaa~~
+    usewstatevisibiwitywibwawy: u-usewunavaiwabwestatevisibiwitywibwawy.type,
+    e-enabwevffeatuwehydwation: gate[unit] = g-gate.fawse
+  ): type = {
+    vaw w-wibwawystatsweceivew = visibiwitywibwawy.statsweceivew
+    vaw v-visibiwitydecidewgates = visibiwitydecidewgates(decidew)
+    v-vaw vfenginecountew = w-wibwawystatsweceivew.countew("vf_engine_wequests")
 
     {
-      case QuotedTweetVisibilityRequest(quotedTweet, outerTweet, viewerContext, safetyLevel) =>
-        vfEngineCounter.incr()
-        val contentId = QuotedTweetRelationship(
-          outer = outerTweet.tweetId,
-          inner = quotedTweet.tweetId
+      c-case quotedtweetvisibiwitywequest(quotedtweet, OwO outewtweet, rawr x3 viewewcontext, XD safetywevew) =>
+        vfenginecountew.incw()
+        vaw contentid = quotedtweetwewationship(
+          outew = o-outewtweet.tweetid, σωσ
+          i-innew = quotedtweet.tweetid
         )
 
-        val innerAuthorId = quotedTweet.authorId
-        val outerAuthorId = outerTweet.authorId
-        val viewerId = viewerContext.userId
-        val isFeatureHydrationInShimEnabled = enableVfFeatureHydration()
+        v-vaw i-innewauthowid = q-quotedtweet.authowid
+        vaw outewauthowid = outewtweet.authowid
+        v-vaw viewewid = viewewcontext.usewid
+        vaw isfeatuwehydwationinshimenabwed = enabwevffeatuwehydwation()
 
-        val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
-        val viewerFeatures = new ViewerFeatures(userSource, libraryStatsReceiver)
-        val relationshipFeatures =
-          new RelationshipFeatures(userRelationshipSource, libraryStatsReceiver)
-        val quotedTweetFeatures =
-          new QuotedTweetFeatures(relationshipFeatures, libraryStatsReceiver)
+        vaw authowfeatuwes = n-nyew authowfeatuwes(usewsouwce, (U ᵕ U❁) wibwawystatsweceivew)
+        v-vaw viewewfeatuwes = n-nyew v-viewewfeatuwes(usewsouwce, (U ﹏ U) wibwawystatsweceivew)
+        v-vaw wewationshipfeatuwes =
+          nyew w-wewationshipfeatuwes(usewwewationshipsouwce, :3 w-wibwawystatsweceivew)
+        vaw q-quotedtweetfeatuwes =
+          nyew quotedtweetfeatuwes(wewationshipfeatuwes, ( ͡o ω ͡o ) wibwawystatsweceivew)
 
-        val featureMap = visibilityLibrary.featureMapBuilder(
-          Seq(
-            viewerFeatures.forViewerContext(viewerContext),
-            authorFeatures.forAuthorId(innerAuthorId),
-            relationshipFeatures.forAuthorId(innerAuthorId, viewerId),
-            quotedTweetFeatures.forOuterAuthor(outerAuthorId, innerAuthorId)
+        v-vaw featuwemap = v-visibiwitywibwawy.featuwemapbuiwdew(
+          s-seq(
+            v-viewewfeatuwes.fowviewewcontext(viewewcontext), σωσ
+            a-authowfeatuwes.fowauthowid(innewauthowid), >w<
+            wewationshipfeatuwes.fowauthowid(innewauthowid, 😳😳😳 viewewid),
+            quotedtweetfeatuwes.fowoutewauthow(outewauthowid, OwO i-innewauthowid)
           )
         )
 
-        val resp = if (isFeatureHydrationInShimEnabled) {
-          val evaluationContext = ProvidedEvaluationContext.injectRuntimeRulesIntoEvaluationContext(
-            evaluationContext = EvaluationContext(
-              SafetyLevel.QuotedTweetRules,
-              visibilityLibrary.getParams(viewerContext, SafetyLevel.QuotedTweetRules),
-              visibilityLibrary.statsReceiver)
+        vaw wesp = if (isfeatuwehydwationinshimenabwed) {
+          vaw evawuationcontext = pwovidedevawuationcontext.injectwuntimewuwesintoevawuationcontext(
+            evawuationcontext = evawuationcontext(
+              s-safetywevew.quotedtweetwuwes, 😳
+              visibiwitywibwawy.getpawams(viewewcontext, 😳😳😳 safetywevew.quotedtweetwuwes), (˘ω˘)
+              visibiwitywibwawy.statsweceivew)
           )
 
-          val preFilteredFeatureMap =
-            ShimUtils.preFilterFeatureMap(
-              featureMap,
-              SafetyLevel.QuotedTweetRules,
-              contentId,
-              evaluationContext)
+          v-vaw pwefiwtewedfeatuwemap =
+            s-shimutiws.pwefiwtewfeatuwemap(
+              f-featuwemap, ʘwʘ
+              safetywevew.quotedtweetwuwes, ( ͡o ω ͡o )
+              contentid, o.O
+              e-evawuationcontext)
 
-          FeatureMap.resolve(preFilteredFeatureMap, libraryStatsReceiver).flatMap {
-            resolvedFeatureMap =>
-              visibilityLibrary
-                .runRuleEngine(
-                  contentId,
-                  resolvedFeatureMap,
-                  viewerContext,
-                  SafetyLevel.QuotedTweetRules
+          featuwemap.wesowve(pwefiwtewedfeatuwemap, >w< w-wibwawystatsweceivew).fwatmap {
+            w-wesowvedfeatuwemap =>
+              visibiwitywibwawy
+                .wunwuweengine(
+                  contentid, 😳
+                  wesowvedfeatuwemap, 🥺
+                  viewewcontext,
+                  safetywevew.quotedtweetwuwes
                 )
           }
-        } else {
-          visibilityLibrary
-            .runRuleEngine(
-              contentId,
-              featureMap,
-              viewerContext,
-              SafetyLevel.QuotedTweetRules
+        } e-ewse {
+          visibiwitywibwawy
+            .wunwuweengine(
+              c-contentid, rawr x3
+              featuwemap, o.O
+              viewewcontext, rawr
+              s-safetywevew.quotedtweetwuwes
             )
         }
 
-        resp.flatMap { visResult =>
-          val userStateOpt = visResult.verdict match {
-            case Drop(DeactivatedAuthor, _) => Some(UserUnavailableStateEnum.Deactivated)
-            case Drop(OffboardedAuthor, _) => Some(UserUnavailableStateEnum.Offboarded)
-            case Drop(ErasedAuthor, _) => Some(UserUnavailableStateEnum.Erased)
-            case Drop(ProtectedAuthor, _) => Some(UserUnavailableStateEnum.Protected)
-            case Drop(SuspendedAuthor, _) => Some(UserUnavailableStateEnum.Suspended)
-            case Drop(AuthorBlocksViewer, _) => Some(UserUnavailableStateEnum.AuthorBlocksViewer)
-            case Drop(ViewerBlocksAuthor, _) => Some(UserUnavailableStateEnum.ViewerBlocksAuthor)
-            case Drop(ViewerMutesAuthor, _) => Some(UserUnavailableStateEnum.ViewerMutesAuthor)
-            case Drop(ViewerHardMutedAuthor, _) => Some(UserUnavailableStateEnum.ViewerMutesAuthor)
-            case _ => None
+        w-wesp.fwatmap { viswesuwt =>
+          vaw usewstateopt = v-viswesuwt.vewdict match {
+            c-case dwop(deactivatedauthow, ʘwʘ _) => some(usewunavaiwabwestateenum.deactivated)
+            c-case d-dwop(offboawdedauthow, 😳😳😳 _) => some(usewunavaiwabwestateenum.offboawded)
+            case dwop(ewasedauthow, ^^;; _) => some(usewunavaiwabwestateenum.ewased)
+            case dwop(pwotectedauthow, o.O _) => some(usewunavaiwabwestateenum.pwotected)
+            c-case d-dwop(suspendedauthow, (///ˬ///✿) _) => s-some(usewunavaiwabwestateenum.suspended)
+            case dwop(authowbwocksviewew, σωσ _) => s-some(usewunavaiwabwestateenum.authowbwocksviewew)
+            c-case dwop(viewewbwocksauthow, nyaa~~ _) => some(usewunavaiwabwestateenum.viewewbwocksauthow)
+            c-case dwop(viewewmutesauthow, ^^;; _) => some(usewunavaiwabwestateenum.viewewmutesauthow)
+            case dwop(viewewhawdmutedauthow, _) => some(usewunavaiwabwestateenum.viewewmutesauthow)
+            case _ => n-none
           }
 
-          userStateOpt
-            .map(userState =>
-              userStateVisibilityLibrary(
-                UserUnavailableStateVisibilityRequest(
-                  safetyLevel,
-                  quotedTweet.tweetId,
-                  viewerContext,
-                  userState,
-                  isRetweet = false,
-                  isInnerQuotedTweet = true,
-                ))).getOrElse(Stitch.value(visResult))
+          usewstateopt
+            .map(usewstate =>
+              u-usewstatevisibiwitywibwawy(
+                usewunavaiwabwestatevisibiwitywequest(
+                  safetywevew, ^•ﻌ•^
+                  q-quotedtweet.tweetid, σωσ
+                  v-viewewcontext, -.-
+                  usewstate, ^^;;
+                  iswetweet = fawse, XD
+                  isinnewquotedtweet = t-twue, 🥺
+                ))).getowewse(stitch.vawue(viswesuwt))
         }
     }
   }

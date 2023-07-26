@@ -1,37 +1,37 @@
-package com.twitter.timelineranker.model
+package com.twittew.timewinewankew.modew
 
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.util.Future
+impowt c-com.twittew.timewinewankew.{thwiftscawa => t-thwift}
+i-impowt com.twittew.utiw.futuwe
 
-object CandidateTweetsResult {
-  val Empty: CandidateTweetsResult = CandidateTweetsResult(Nil, Nil)
-  val EmptyFuture: Future[CandidateTweetsResult] = Future.value(Empty)
-  val EmptyCandidateTweet: Seq[CandidateTweet] = Seq.empty[CandidateTweet]
+o-object candidatetweetswesuwt {
+  v-vaw empty: candidatetweetswesuwt = c-candidatetweetswesuwt(niw, rawr x3 n-nyiw)
+  vaw emptyfutuwe: f-futuwe[candidatetweetswesuwt] = futuwe.vawue(empty)
+  vaw emptycandidatetweet: seq[candidatetweet] = seq.empty[candidatetweet]
 
-  def fromThrift(response: thrift.GetCandidateTweetsResponse): CandidateTweetsResult = {
-    val candidates = response.candidates
-      .map(_.map(CandidateTweet.fromThrift))
-      .getOrElse(EmptyCandidateTweet)
-    val sourceTweets = response.sourceTweets
-      .map(_.map(CandidateTweet.fromThrift))
-      .getOrElse(EmptyCandidateTweet)
-    if (sourceTweets.nonEmpty) {
-      require(candidates.nonEmpty, "sourceTweets cannot have a value if candidates list is empty.")
+  d-def fwomthwift(wesponse: thwift.getcandidatetweetswesponse): c-candidatetweetswesuwt = {
+    vaw candidates = w-wesponse.candidates
+      .map(_.map(candidatetweet.fwomthwift))
+      .getowewse(emptycandidatetweet)
+    vaw souwcetweets = wesponse.souwcetweets
+      .map(_.map(candidatetweet.fwomthwift))
+      .getowewse(emptycandidatetweet)
+    if (souwcetweets.nonempty) {
+      w-wequiwe(candidates.nonempty, (✿oωo) "souwcetweets cannot have a v-vawue if candidates w-wist is empty.")
     }
-    CandidateTweetsResult(candidates, sourceTweets)
+    candidatetweetswesuwt(candidates, (ˆ ﻌ ˆ)♡ souwcetweets)
   }
 }
 
-case class CandidateTweetsResult(
-  candidates: Seq[CandidateTweet],
-  sourceTweets: Seq[CandidateTweet]) {
+case cwass candidatetweetswesuwt(
+  candidates: s-seq[candidatetweet], (˘ω˘)
+  souwcetweets: seq[candidatetweet]) {
 
-  def toThrift: thrift.GetCandidateTweetsResponse = {
-    val thriftCandidates = candidates.map(_.toThrift)
-    val thriftSourceTweets = sourceTweets.map(_.toThrift)
-    thrift.GetCandidateTweetsResponse(
-      candidates = Some(thriftCandidates),
-      sourceTweets = Some(thriftSourceTweets)
+  def tothwift: thwift.getcandidatetweetswesponse = {
+    v-vaw thwiftcandidates = c-candidates.map(_.tothwift)
+    v-vaw thwiftsouwcetweets = s-souwcetweets.map(_.tothwift)
+    t-thwift.getcandidatetweetswesponse(
+      candidates = some(thwiftcandidates), (⑅˘꒳˘)
+      s-souwcetweets = some(thwiftsouwcetweets)
     )
   }
 }

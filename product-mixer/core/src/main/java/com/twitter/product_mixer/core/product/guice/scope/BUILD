@@ -1,8 +1,8 @@
-java_library(
-    sources = ["*.java"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
+java_wibwawy(
+    souwces = ["*.java"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/inject:guice", òωó
     ],
 )

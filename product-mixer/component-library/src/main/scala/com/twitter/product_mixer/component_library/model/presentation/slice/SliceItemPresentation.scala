@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.component_library.model.presentation.slice
+package com.twittew.pwoduct_mixew.component_wibwawy.modew.pwesentation.swice
 
-import com.twitter.product_mixer.core.model.common.presentation.slice.BaseSliceItemPresentation
-import com.twitter.product_mixer.core.model.marshalling.response.slice.SliceItem
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.swice.baseswiceitempwesentation
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.swice.swiceitem
 
-case class SliceItemPresentation(override val sliceItem: SliceItem)
-    extends BaseSliceItemPresentation
+case c-cwass swiceitempwesentation(ovewwide v-vaw swiceitem: s-swiceitem)
+    e-extends baseswiceitempwesentation

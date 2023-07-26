@@ -1,69 +1,69 @@
-package com.twitter.search.common.relevance.features;
+package com.twittew.seawch.common.wewevance.featuwes;
 
-import java.util.Set;
+impowt java.utiw.set;
 
-import com.google.common.collect.Sets;
+i-impowt c-com.googwe.common.cowwect.sets;
 
-public class TweetTextQuality {
+p-pubwic cwass t-tweettextquawity {
 
-  public static enum BooleanQualityType {
-    OFFENSIVE,          // tweet text is offensive
-    OFFENSIVE_USER,     // user name is offensive
-    HASHTAG_NAME_MATCH,  // hashtag matches username
-    SENSITIVE,           // tweet is marked as sensitive when it comes in
+  p-pubwic static e-enum booweanquawitytype {
+    o-offensive, 😳          // t-tweet text is offensive
+    offensive_usew, -.-     // usew nyame is offensive
+    h-hashtag_name_match,  // hashtag matches usewname
+    sensitive, 🥺           // t-tweet is mawked as sensitive w-when it comes in
   }
 
-  public static final double ENTROPY_NOT_SET = Double.MIN_VALUE;
+  pubwic static finaw doubwe entwopy_not_set = d-doubwe.min_vawue;
 
-  public static final byte UNSET_TEXT_SCORE = -128;
+  pubwic s-static finaw b-byte unset_text_scowe = -128;
 
-  private double readability;
-  private double shout;
-  private double entropy = ENTROPY_NOT_SET;
-  private final Set<BooleanQualityType> boolQualities = Sets.newHashSet();
-  private byte textScore = UNSET_TEXT_SCORE;
+  pwivate doubwe weadabiwity;
+  pwivate doubwe shout;
+  pwivate d-doubwe entwopy = entwopy_not_set;
+  pwivate finaw set<booweanquawitytype> boowquawities = s-sets.newhashset();
+  pwivate byte textscowe = u-unset_text_scowe;
 
-  public double getReadability() {
-    return readability;
+  p-pubwic d-doubwe getweadabiwity() {
+    w-wetuwn weadabiwity;
   }
 
-  public void setReadability(double readability) {
-    this.readability = readability;
+  pubwic void setweadabiwity(doubwe w-weadabiwity) {
+    this.weadabiwity = weadabiwity;
   }
 
-  public double getShout() {
-    return shout;
+  p-pubwic doubwe getshout() {
+    wetuwn shout;
   }
 
-  public void setShout(double shout) {
-    this.shout = shout;
+  pubwic void setshout(doubwe shout) {
+    t-this.shout = shout;
   }
 
-  public double getEntropy() {
-    return entropy;
+  p-pubwic doubwe g-getentwopy() {
+    w-wetuwn entwopy;
   }
 
-  public void setEntropy(double entropy) {
-    this.entropy = entropy;
+  pubwic void setentwopy(doubwe entwopy) {
+    t-this.entwopy = e-entwopy;
   }
 
-  public void addBoolQuality(BooleanQualityType type) {
-    boolQualities.add(type);
+  pubwic void a-addboowquawity(booweanquawitytype t-type) {
+    boowquawities.add(type);
   }
 
-  public boolean hasBoolQuality(BooleanQualityType type) {
-    return boolQualities.contains(type);
+  p-pubwic boowean hasboowquawity(booweanquawitytype type) {
+    wetuwn b-boowquawities.contains(type);
   }
 
-  public Set<BooleanQualityType> getBoolQualities() {
-    return boolQualities;
+  pubwic set<booweanquawitytype> g-getboowquawities() {
+    wetuwn boowquawities;
   }
 
-  public byte getTextScore() {
-    return textScore;
+  p-pubwic byte gettextscowe() {
+    wetuwn t-textscowe;
   }
 
-  public void setTextScore(byte textScore) {
-    this.textScore = textScore;
+  p-pubwic void settextscowe(byte textscowe) {
+    this.textscowe = textscowe;
   }
 }

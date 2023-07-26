@@ -1,146 +1,146 @@
-package com.twitter.unified_user_actions.adapter.tweetypie_event
+package com.twittew.unified_usew_actions.adaptew.tweetypie_event
 
-import com.twitter.tweetypie.thriftscala.QuotedTweet
-import com.twitter.tweetypie.thriftscala.Share
-import com.twitter.tweetypie.thriftscala.TweetDeleteEvent
-import com.twitter.tweetypie.thriftscala.TweetEventFlags
-import com.twitter.unified_user_actions.adapter.common.AdapterUtils
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.AuthorInfo
-import com.twitter.unified_user_actions.thriftscala.EventMetadata
-import com.twitter.unified_user_actions.thriftscala.Item
-import com.twitter.unified_user_actions.thriftscala.SourceLineage
-import com.twitter.unified_user_actions.thriftscala.TweetInfo
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import com.twitter.unified_user_actions.thriftscala.UserIdentifier
+impowt com.twittew.tweetypie.thwiftscawa.quotedtweet
+i-impowt com.twittew.tweetypie.thwiftscawa.shawe
+i-impowt com.twittew.tweetypie.thwiftscawa.tweetdeweteevent
+impowt c-com.twittew.tweetypie.thwiftscawa.tweeteventfwags
+i-impowt com.twittew.unified_usew_actions.adaptew.common.adaptewutiws
+i-impowt c-com.twittew.unified_usew_actions.thwiftscawa.actiontype
+i-impowt c-com.twittew.unified_usew_actions.thwiftscawa.authowinfo
+impowt com.twittew.unified_usew_actions.thwiftscawa.eventmetadata
+impowt com.twittew.unified_usew_actions.thwiftscawa.item
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.souwcewineage
+impowt com.twittew.unified_usew_actions.thwiftscawa.tweetinfo
+impowt com.twittew.unified_usew_actions.thwiftscawa.unifiedusewaction
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.usewidentifiew
 
-trait BaseTweetypieTweetEventDelete extends BaseTweetypieTweetEvent[TweetDeleteEvent] {
-  type ExtractedEvent
-  protected def actionType: ActionType
+twait b-basetweetypietweeteventdewete extends basetweetypietweetevent[tweetdeweteevent] {
+  type extwactedevent
+  pwotected def actiontype: a-actiontype
 
-  def getUnifiedUserAction(
-    tweetDeleteEvent: TweetDeleteEvent,
-    tweetEventFlags: TweetEventFlags
-  ): Option[UnifiedUserAction] =
-    extract(tweetDeleteEvent).map { extractedEvent =>
-      UnifiedUserAction(
-        userIdentifier = getUserIdentifier(tweetDeleteEvent),
-        item = getItem(extractedEvent, tweetDeleteEvent),
-        actionType = actionType,
-        eventMetadata = getEventMetadata(tweetDeleteEvent, tweetEventFlags)
+  def getunifiedusewaction(
+    t-tweetdeweteevent: t-tweetdeweteevent, :3
+    tweeteventfwags: tweeteventfwags
+  ): option[unifiedusewaction] =
+    extwact(tweetdeweteevent).map { e-extwactedevent =>
+      unifiedusewaction(
+        usewidentifiew = getusewidentifiew(tweetdeweteevent), ʘwʘ
+        item = getitem(extwactedevent, 🥺 t-tweetdeweteevent), >_<
+        actiontype = a-actiontype, ʘwʘ
+        eventmetadata = geteventmetadata(tweetdeweteevent, (˘ω˘) t-tweeteventfwags)
       )
     }
 
-  protected def extract(tweetDeleteEvent: TweetDeleteEvent): Option[ExtractedEvent]
+  p-pwotected def e-extwact(tweetdeweteevent: tweetdeweteevent): option[extwactedevent]
 
-  protected def getItem(extractedEvent: ExtractedEvent, tweetDeleteEvent: TweetDeleteEvent): Item
+  pwotected d-def getitem(extwactedevent: extwactedevent, (✿oωo) tweetdeweteevent: tweetdeweteevent): item
 
-  protected def getUserIdentifier(tweetDeleteEvent: TweetDeleteEvent): UserIdentifier =
-    UserIdentifier(userId = tweetDeleteEvent.user.map(_.id))
+  pwotected d-def getusewidentifiew(tweetdeweteevent: tweetdeweteevent): usewidentifiew =
+    usewidentifiew(usewid = tweetdeweteevent.usew.map(_.id))
 
-  protected def getEventMetadata(
-    tweetDeleteEvent: TweetDeleteEvent,
-    flags: TweetEventFlags
-  ): EventMetadata =
-    EventMetadata(
-      sourceTimestampMs = flags.timestampMs,
-      receivedTimestampMs = AdapterUtils.currentTimestampMs,
-      sourceLineage = SourceLineage.ServerTweetypieEvents,
-      traceId = None, // Currently traceId is not stored in TweetDeleteEvent.
-      // UUA sets this to None since there is no request level language info.
-      language = None,
-      // UUA sets this to be consistent with IESource. For the definition,
-      //  see https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/thrift/com/twitter/tweetypie/tweet.thrift?L1001.
-      //  The definition here conflicts with the intention of UUA to log the request country code
-      //  rather than the signup / geo-tagging country.
-      countryCode = tweetDeleteEvent.tweet.place.flatMap(_.countryCode),
-      /* clientApplicationId is user's app id if the delete is initiated by a user,
-       * or auditor's app id if the delete is initiated by an auditor */
-      clientAppId = tweetDeleteEvent.audit.flatMap(_.clientApplicationId),
-      clientVersion = None // Currently clientVersion is not stored in TweetDeleteEvent.
+  pwotected def g-geteventmetadata(
+    tweetdeweteevent: t-tweetdeweteevent, (///ˬ///✿)
+    f-fwags: t-tweeteventfwags
+  ): eventmetadata =
+    eventmetadata(
+      souwcetimestampms = f-fwags.timestampms,
+      w-weceivedtimestampms = adaptewutiws.cuwwenttimestampms, rawr x3
+      s-souwcewineage = s-souwcewineage.sewvewtweetypieevents, -.-
+      twaceid = n-nyone, ^^ // cuwwentwy twaceid is n-nyot stowed in tweetdeweteevent. (⑅˘꒳˘)
+      // uua sets t-this to nyone since thewe is n-nyo wequest wevew wanguage info. nyaa~~
+      w-wanguage = n-none, /(^•ω•^)
+      // uua sets this to be consistent with iesouwce. (U ﹏ U) fow the definition, 😳😳😳
+      //  see https://souwcegwaph.twittew.biz/git.twittew.biz/souwce/-/bwob/swc/thwift/com/twittew/tweetypie/tweet.thwift?w1001. >w<
+      //  the d-definition hewe c-confwicts with the intention o-of uua to wog the w-wequest countwy c-code
+      //  wathew than the signup / geo-tagging countwy. XD
+      c-countwycode = tweetdeweteevent.tweet.pwace.fwatmap(_.countwycode), o.O
+      /* cwientappwicationid is usew's app id if the dewete i-is initiated by a usew, mya
+       * o-ow auditow's a-app id if the d-dewete is initiated by an auditow */
+      c-cwientappid = t-tweetdeweteevent.audit.fwatmap(_.cwientappwicationid),
+      c-cwientvewsion = n-nyone // cuwwentwy cwientvewsion is nyot stowed i-in tweetdeweteevent. 🥺
     )
 }
 
-object TweetypieDeleteEvent extends BaseTweetypieTweetEventDelete {
-  type ExtractedEvent = Long
-  override protected val actionType: ActionType = ActionType.ServerTweetDelete
+o-object tweetypiedeweteevent e-extends basetweetypietweeteventdewete {
+  t-type extwactedevent = w-wong
+  ovewwide pwotected vaw actiontype: actiontype = actiontype.sewvewtweetdewete
 
-  override protected def extract(tweetDeleteEvent: TweetDeleteEvent): Option[Long] = Some(
-    tweetDeleteEvent.tweet.id)
+  o-ovewwide pwotected def extwact(tweetdeweteevent: tweetdeweteevent): option[wong] = some(
+    tweetdeweteevent.tweet.id)
 
-  protected def getItem(
-    tweetId: Long,
-    tweetDeleteEvent: TweetDeleteEvent
-  ): Item =
-    Item.TweetInfo(
-      TweetInfo(
-        actionTweetId = tweetId,
-        actionTweetAuthorInfo =
-          Some(AuthorInfo(authorId = tweetDeleteEvent.tweet.coreData.map(_.userId)))
+  p-pwotected def getitem(
+    tweetid: wong, ^^;;
+    tweetdeweteevent: t-tweetdeweteevent
+  ): i-item =
+    i-item.tweetinfo(
+      tweetinfo(
+        a-actiontweetid = tweetid, :3
+        a-actiontweetauthowinfo =
+          some(authowinfo(authowid = t-tweetdeweteevent.tweet.cowedata.map(_.usewid)))
       ))
 }
 
-object TweetypieUnretweetEvent extends BaseTweetypieTweetEventDelete {
-  override protected val actionType: ActionType = ActionType.ServerTweetUnretweet
+object tweetypieunwetweetevent extends basetweetypietweeteventdewete {
+  ovewwide pwotected vaw actiontype: actiontype = actiontype.sewvewtweetunwetweet
 
-  override type ExtractedEvent = Share
+  o-ovewwide type extwactedevent = s-shawe
 
-  override protected def extract(tweetDeleteEvent: TweetDeleteEvent): Option[Share] =
-    tweetDeleteEvent.tweet.coreData.flatMap(_.share)
+  ovewwide pwotected def e-extwact(tweetdeweteevent: t-tweetdeweteevent): option[shawe] =
+    tweetdeweteevent.tweet.cowedata.fwatmap(_.shawe)
 
-  override protected def getItem(share: Share, tweetDeleteEvent: TweetDeleteEvent): Item =
-    Item.TweetInfo(
-      TweetInfo(
-        actionTweetId = share.sourceStatusId,
-        actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(share.sourceUserId))),
-        retweetingTweetId = Some(tweetDeleteEvent.tweet.id)
+  o-ovewwide pwotected d-def getitem(shawe: shawe, (U ﹏ U) t-tweetdeweteevent: t-tweetdeweteevent): item =
+    item.tweetinfo(
+      tweetinfo(
+        actiontweetid = s-shawe.souwcestatusid, OwO
+        a-actiontweetauthowinfo = s-some(authowinfo(authowid = some(shawe.souwceusewid))), 😳😳😳
+        w-wetweetingtweetid = s-some(tweetdeweteevent.tweet.id)
       )
     )
 }
 
-object TweetypieUnreplyEvent extends BaseTweetypieTweetEventDelete {
-  case class PredicateOutput(tweetId: Long, userId: Long)
+object tweetypieunwepwyevent e-extends basetweetypietweeteventdewete {
+  case cwass pwedicateoutput(tweetid: wong, (ˆ ﻌ ˆ)♡ usewid: wong)
 
-  override type ExtractedEvent = PredicateOutput
+  ovewwide t-type extwactedevent = p-pwedicateoutput
 
-  override protected val actionType: ActionType = ActionType.ServerTweetUnreply
+  ovewwide pwotected vaw a-actiontype: actiontype = a-actiontype.sewvewtweetunwepwy
 
-  override protected def extract(tweetDeleteEvent: TweetDeleteEvent): Option[PredicateOutput] =
-    tweetDeleteEvent.tweet.coreData
-      .flatMap(_.reply).flatMap(r =>
-        r.inReplyToStatusId.map(tweetId => PredicateOutput(tweetId, r.inReplyToUserId)))
+  ovewwide pwotected def extwact(tweetdeweteevent: t-tweetdeweteevent): option[pwedicateoutput] =
+    tweetdeweteevent.tweet.cowedata
+      .fwatmap(_.wepwy).fwatmap(w =>
+        w.inwepwytostatusid.map(tweetid => pwedicateoutput(tweetid, XD w.inwepwytousewid)))
 
-  override protected def getItem(
-    repliedTweet: PredicateOutput,
-    tweetDeleteEvent: TweetDeleteEvent
-  ): Item = {
-    Item.TweetInfo(
-      TweetInfo(
-        actionTweetId = repliedTweet.tweetId,
-        actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(repliedTweet.userId))),
-        replyingTweetId = Some(tweetDeleteEvent.tweet.id)
+  o-ovewwide pwotected def getitem(
+    w-wepwiedtweet: p-pwedicateoutput, (ˆ ﻌ ˆ)♡
+    tweetdeweteevent: tweetdeweteevent
+  ): item = {
+    i-item.tweetinfo(
+      t-tweetinfo(
+        actiontweetid = wepwiedtweet.tweetid, ( ͡o ω ͡o )
+        actiontweetauthowinfo = s-some(authowinfo(authowid = some(wepwiedtweet.usewid))), rawr x3
+        w-wepwyingtweetid = some(tweetdeweteevent.tweet.id)
       )
     )
   }
 }
 
-object TweetypieUnquoteEvent extends BaseTweetypieTweetEventDelete {
-  override protected val actionType: ActionType = ActionType.ServerTweetUnquote
+object tweetypieunquoteevent extends b-basetweetypietweeteventdewete {
+  ovewwide p-pwotected vaw actiontype: a-actiontype = actiontype.sewvewtweetunquote
 
-  type ExtractedEvent = QuotedTweet
+  t-type extwactedevent = quotedtweet
 
-  override protected def extract(tweetDeleteEvent: TweetDeleteEvent): Option[QuotedTweet] =
-    tweetDeleteEvent.tweet.quotedTweet
+  o-ovewwide p-pwotected d-def extwact(tweetdeweteevent: tweetdeweteevent): o-option[quotedtweet] =
+    t-tweetdeweteevent.tweet.quotedtweet
 
-  override protected def getItem(
-    quotedTweet: QuotedTweet,
-    tweetDeleteEvent: TweetDeleteEvent
-  ): Item =
-    Item.TweetInfo(
-      TweetInfo(
-        actionTweetId = quotedTweet.tweetId,
-        actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(quotedTweet.userId))),
-        quotingTweetId = Some(tweetDeleteEvent.tweet.id)
+  ovewwide pwotected def getitem(
+    q-quotedtweet: q-quotedtweet, nyaa~~
+    t-tweetdeweteevent: tweetdeweteevent
+  ): item =
+    i-item.tweetinfo(
+      tweetinfo(
+        actiontweetid = quotedtweet.tweetid,
+        a-actiontweetauthowinfo = s-some(authowinfo(authowid = some(quotedtweet.usewid))), >_<
+        quotingtweetid = some(tweetdeweteevent.tweet.id)
       )
     )
 }

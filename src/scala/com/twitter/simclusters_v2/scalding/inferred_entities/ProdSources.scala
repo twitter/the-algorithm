@@ -1,94 +1,94 @@
-package com.twitter.simclusters_v2.scalding.inferred_entities
+package com.twittew.simcwustews_v2.scawding.infewwed_entities
 
-import com.twitter.scalding.{DateRange, Days, TypedPipe}
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{ModelVersions, SemanticCoreEntityId, UserId}
-import com.twitter.simclusters_v2.hdfs_sources.{
-  SimclustersInferredEntitiesFromKnownForScalaDataset,
-  SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
-  SimclustersV2InterestedInScalaDataset,
-  SimclustersV2KnownFor20M145KDec11ScalaDataset,
-  SimclustersV2KnownFor20M145KUpdatedScalaDataset,
-  UserUserNormalizedGraphScalaDataset
+impowt c-com.twittew.scawding.{datewange, >_< d-days, typedpipe}
+i-impowt com.twittew.scawding_intewnaw.dawv2.daw
+i-impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.{expwicitwocation, -.- p-pwocatwa}
+impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+i-impowt com.twittew.simcwustews_v2.common.{modewvewsions, 🥺 s-semanticcoweentityid, (U ﹏ U) usewid}
+impowt com.twittew.simcwustews_v2.hdfs_souwces.{
+  simcwustewsinfewwedentitiesfwomknownfowscawadataset, >w<
+  simcwustewsv2intewestedin20m145kupdatedscawadataset, mya
+  s-simcwustewsv2intewestedinscawadataset, >w<
+  simcwustewsv2knownfow20m145kdec11scawadataset, nyaa~~
+  simcwustewsv2knownfow20m145kupdatedscawadataset, (✿oωo)
+  u-usewusewnowmawizedgwaphscawadataset
 }
-import com.twitter.simclusters_v2.scalding.KnownForSources
-import com.twitter.simclusters_v2.thriftscala.{
-  EntitySource,
-  SimClusterWithScore,
-  SimClustersSource,
-  TopSimClustersWithScore,
-  UserAndNeighbors
+impowt c-com.twittew.simcwustews_v2.scawding.knownfowsouwces
+impowt com.twittew.simcwustews_v2.thwiftscawa.{
+  entitysouwce, ʘwʘ
+  simcwustewwithscowe, (ˆ ﻌ ˆ)♡
+  s-simcwustewssouwce, 😳😳😳
+  topsimcwustewswithscowe, :3
+  u-usewandneighbows
 }
-import java.util.TimeZone
+i-impowt java.utiw.timezone
 
 /**
- * Convenience functions to read data from prod.
+ * convenience functions to wead data fwom pwod.
  */
-object ProdSources {
+object pwodsouwces {
 
-  // Returns the Dec11 KnownFor from production
-  def getDec11KnownFor(implicit tz: TimeZone): TypedPipe[(UserId, Seq[SimClusterWithScore])] =
-    KnownForSources
-      .readDALDataset(
-        SimclustersV2KnownFor20M145KDec11ScalaDataset,
-        Days(30),
-        ModelVersions.Model20M145KDec11)
+  // w-wetuwns the dec11 knownfow fwom pwoduction
+  def getdec11knownfow(impwicit tz: t-timezone): typedpipe[(usewid, seq[simcwustewwithscowe])] =
+    k-knownfowsouwces
+      .weaddawdataset(
+        s-simcwustewsv2knownfow20m145kdec11scawadataset, OwO
+        d-days(30), (U ﹏ U)
+        m-modewvewsions.modew20m145kdec11)
       .map {
-        case (userId, clustersArray) =>
-          val clusters = clustersArray.map {
-            case (clusterId, score) => SimClusterWithScore(clusterId, score)
-          }.toSeq
-          (userId, clusters)
+        case (usewid, >w< cwustewsawway) =>
+          vaw cwustews = c-cwustewsawway.map {
+            case (cwustewid, (U ﹏ U) scowe) => s-simcwustewwithscowe(cwustewid, 😳 scowe)
+          }.toseq
+          (usewid, (ˆ ﻌ ˆ)♡ cwustews)
       }
 
-  // Returns the Updated KnownFor from production
-  def getUpdatedKnownFor(implicit tz: TimeZone): TypedPipe[(UserId, Seq[SimClusterWithScore])] =
-    KnownForSources
-      .readDALDataset(
-        SimclustersV2KnownFor20M145KUpdatedScalaDataset,
-        Days(30),
-        ModelVersions.Model20M145KUpdated
+  // wetuwns the updated knownfow fwom pwoduction
+  d-def getupdatedknownfow(impwicit tz: timezone): t-typedpipe[(usewid, 😳😳😳 s-seq[simcwustewwithscowe])] =
+    k-knownfowsouwces
+      .weaddawdataset(
+        simcwustewsv2knownfow20m145kupdatedscawadataset, (U ﹏ U)
+        days(30), (///ˬ///✿)
+        modewvewsions.modew20m145kupdated
       )
       .map {
-        case (userId, clustersArray) =>
-          val clusters = clustersArray.map {
-            case (clusterId, score) => SimClusterWithScore(clusterId, score)
-          }.toSeq
-          (userId, clusters)
+        c-case (usewid, 😳 cwustewsawway) =>
+          v-vaw cwustews = cwustewsawway.map {
+            c-case (cwustewid, 😳 s-scowe) => simcwustewwithscowe(cwustewid, s-scowe)
+          }.toseq
+          (usewid, σωσ cwustews)
       }
 
-  def getInferredEntitiesFromKnownFor(
-    inferredFromCluster: SimClustersSource,
-    inferredFromEntity: EntitySource,
-    dateRange: DateRange
-  ): TypedPipe[(UserId, Seq[(SemanticCoreEntityId, Double)])] = {
-    DAL
-      .readMostRecentSnapshot(SimclustersInferredEntitiesFromKnownForScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+  d-def getinfewwedentitiesfwomknownfow(
+    infewwedfwomcwustew: simcwustewssouwce, rawr x3
+    i-infewwedfwomentity: entitysouwce, OwO
+    d-datewange: datewange
+  ): typedpipe[(usewid, /(^•ω•^) s-seq[(semanticcoweentityid, 😳😳😳 d-doubwe)])] = {
+    daw
+      .weadmostwecentsnapshot(simcwustewsinfewwedentitiesfwomknownfowscawadataset, ( ͡o ω ͡o ) datewange)
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe
       .map {
-        case KeyVal(userId, entities) =>
-          val validEntities =
-            entities.entities
-              .collect {
-                case entity
-                    if entity.entitySource.contains(inferredFromEntity) &&
-                      entity.simclusterSource.contains(inferredFromCluster) =>
-                  (entity.entityId, entity.score)
+        case keyvaw(usewid, >_< entities) =>
+          vaw vawidentities =
+            e-entities.entities
+              .cowwect {
+                c-case entity
+                    if entity.entitysouwce.contains(infewwedfwomentity) &&
+                      e-entity.simcwustewsouwce.contains(infewwedfwomcwustew) =>
+                  (entity.entityid, >w< e-entity.scowe)
               }
-              .groupBy(_._1)
-              .map { case (entityId, scores) => (entityId, scores.map(_._2).max) }
-              .toSeq
-          (userId, validEntities)
+              .gwoupby(_._1)
+              .map { c-case (entityid, rawr scowes) => (entityid, 😳 scowes.map(_._2).max) }
+              .toseq
+          (usewid, >w< vawidentities)
       }
   }
 
-  def getUserUserEngagementGraph(dateRange: DateRange): TypedPipe[UserAndNeighbors] = {
-    DAL
-      .readMostRecentSnapshot(UserUserNormalizedGraphScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+  d-def getusewusewengagementgwaph(datewange: datewange): typedpipe[usewandneighbows] = {
+    daw
+      .weadmostwecentsnapshot(usewusewnowmawizedgwaphscawadataset, (⑅˘꒳˘) datewange)
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe
   }
 }

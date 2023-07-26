@@ -1,111 +1,111 @@
-package com.twitter.home_mixer.product.list_recommended_users
+package com.twittew.home_mixew.pwoduct.wist_wecommended_usews
 
-import com.twitter.home_mixer.product.list_recommended_users.feature_hydrator.RecentListMembersQueryFeatureHydrator
-import com.twitter.home_mixer.product.list_recommended_users.gate.ViewerIsListOwnerGate
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersFeatures.IsGizmoduckValidUserFeature
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersFeatures.IsSGSValidUserFeature
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersQuery
-import com.twitter.home_mixer.product.list_recommended_users.param.ListRecommendedUsersParam.ExcludedIdsMaxLengthParam
-import com.twitter.home_mixer.product.list_recommended_users.param.ListRecommendedUsersParam.ServerMaxResultsParam
-import com.twitter.product_mixer.component_library.premarshaller.urt.UrtDomainMarshaller
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.AddEntriesWithReplaceInstructionBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.ReplaceAllEntries
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.ReplaceEntryInstructionBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.StaticTimelineScribeConfigBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UnorderedExcludeIdsBottomCursorBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtMetadataBuilder
-import com.twitter.product_mixer.component_library.selector.DropFilteredCandidates
-import com.twitter.product_mixer.component_library.selector.DropMaxCandidates
-import com.twitter.product_mixer.component_library.selector.InsertAppendResults
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.UrtTransportMarshaller
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.MixerPipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserItem
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.product_mixer.core.pipeline.mixer.MixerPipelineConfig
-import com.twitter.timelines.render.{thriftscala => urt}
+impowt c-com.twittew.home_mixew.pwoduct.wist_wecommended_usews.featuwe_hydwatow.wecentwistmembewsquewyfeatuwehydwatow
+i-impowt com.twittew.home_mixew.pwoduct.wist_wecommended_usews.gate.viewewiswistownewgate
+i-impowt c-com.twittew.home_mixew.pwoduct.wist_wecommended_usews.modew.wistwecommendedusewsfeatuwes.isgizmoduckvawidusewfeatuwe
+i-impowt com.twittew.home_mixew.pwoduct.wist_wecommended_usews.modew.wistwecommendedusewsfeatuwes.issgsvawidusewfeatuwe
+i-impowt c-com.twittew.home_mixew.pwoduct.wist_wecommended_usews.modew.wistwecommendedusewsquewy
+i-impowt com.twittew.home_mixew.pwoduct.wist_wecommended_usews.pawam.wistwecommendedusewspawam.excwudedidsmaxwengthpawam
+impowt com.twittew.home_mixew.pwoduct.wist_wecommended_usews.pawam.wistwecommendedusewspawam.sewvewmaxwesuwtspawam
+impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.uwtdomainmawshawwew
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew.addentwieswithwepwaceinstwuctionbuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew.wepwaceawwentwies
+impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew.wepwaceentwyinstwuctionbuiwdew
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew.statictimewinescwibeconfigbuiwdew
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew.unowdewedexcwudeidsbottomcuwsowbuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew.uwtmetadatabuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.sewectow.dwopfiwtewedcandidates
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.sewectow.dwopmaxcandidates
+impowt com.twittew.pwoduct_mixew.component_wibwawy.sewectow.insewtappendwesuwts
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.twanspowtmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.uwttwanspowtmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.pwemawshawwew.domainmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.mixewpipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewinescwibeconfig
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.usew.usewitem
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.mixew.mixewpipewineconfig
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => uwt}
 
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class ListRecommendedUsersMixerPipelineConfig @Inject() (
-  listMemberBasedUsersCandidatePipelineConfig: ListMemberBasedUsersCandidatePipelineConfig,
-  blenderUsersCandidatePipelineConfig: BlenderUsersCandidatePipelineConfig,
-  viewerIsListOwnerGate: ViewerIsListOwnerGate,
-  recentListMembersQueryFeatureHydrator: RecentListMembersQueryFeatureHydrator,
-  urtTransportMarshaller: UrtTransportMarshaller)
-    extends MixerPipelineConfig[ListRecommendedUsersQuery, Timeline, urt.TimelineResponse] {
+@singweton
+cwass wistwecommendedusewsmixewpipewineconfig @inject() (
+  w-wistmembewbasedusewscandidatepipewineconfig: wistmembewbasedusewscandidatepipewineconfig, mya
+  bwendewusewscandidatepipewineconfig: bwendewusewscandidatepipewineconfig, mya
+  viewewiswistownewgate: viewewiswistownewgate, (⑅˘꒳˘)
+  w-wecentwistmembewsquewyfeatuwehydwatow: wecentwistmembewsquewyfeatuwehydwatow, (U ﹏ U)
+  u-uwttwanspowtmawshawwew: u-uwttwanspowtmawshawwew)
+    e-extends mixewpipewineconfig[wistwecommendedusewsquewy, mya timewine, ʘwʘ uwt.timewinewesponse] {
 
-  override val identifier: MixerPipelineIdentifier = MixerPipelineIdentifier("ListRecommendedUsers")
+  ovewwide vaw identifiew: m-mixewpipewineidentifiew = m-mixewpipewineidentifiew("wistwecommendedusews")
 
-  override val gates = Seq(viewerIsListOwnerGate)
+  ovewwide vaw g-gates = seq(viewewiswistownewgate)
 
-  override val fetchQueryFeatures: Seq[QueryFeatureHydrator[ListRecommendedUsersQuery]] =
-    Seq(recentListMembersQueryFeatureHydrator)
+  o-ovewwide vaw fetchquewyfeatuwes: s-seq[quewyfeatuwehydwatow[wistwecommendedusewsquewy]] =
+    seq(wecentwistmembewsquewyfeatuwehydwatow)
 
-  override val candidatePipelines: Seq[
-    CandidatePipelineConfig[ListRecommendedUsersQuery, _, _, _]
-  ] = Seq(
-    listMemberBasedUsersCandidatePipelineConfig,
-    blenderUsersCandidatePipelineConfig
+  o-ovewwide vaw candidatepipewines: seq[
+    candidatepipewineconfig[wistwecommendedusewsquewy, _, (˘ω˘) _, _]
+  ] = seq(
+    w-wistmembewbasedusewscandidatepipewineconfig, (U ﹏ U)
+    bwendewusewscandidatepipewineconfig
   )
 
-  private val candidatePipelineIdentifiers = Set(
-    listMemberBasedUsersCandidatePipelineConfig.identifier,
-    blenderUsersCandidatePipelineConfig.identifier
+  p-pwivate vaw candidatepipewineidentifiews = set(
+    w-wistmembewbasedusewscandidatepipewineconfig.identifiew, ^•ﻌ•^
+    b-bwendewusewscandidatepipewineconfig.identifiew
   )
 
-  override val resultSelectors: Seq[Selector[ListRecommendedUsersQuery]] = Seq(
-    DropFilteredCandidates(
-      candidatePipelines = candidatePipelineIdentifiers,
-      filter = candidate =>
-        candidate.features.getOrElse(IsSGSValidUserFeature, false) &&
-          candidate.features.getOrElse(IsGizmoduckValidUserFeature, false)
-    ),
-    DropMaxCandidates(
-      candidatePipelines = candidatePipelineIdentifiers,
-      maxSelectionsParam = ServerMaxResultsParam),
-    InsertAppendResults(candidatePipelineIdentifiers)
+  ovewwide vaw wesuwtsewectows: seq[sewectow[wistwecommendedusewsquewy]] = seq(
+    dwopfiwtewedcandidates(
+      candidatepipewines = candidatepipewineidentifiews, (˘ω˘)
+      fiwtew = candidate =>
+        c-candidate.featuwes.getowewse(issgsvawidusewfeatuwe, :3 f-fawse) &&
+          candidate.featuwes.getowewse(isgizmoduckvawidusewfeatuwe, ^^;; f-fawse)
+    ), 🥺
+    d-dwopmaxcandidates(
+      c-candidatepipewines = candidatepipewineidentifiews, (⑅˘꒳˘)
+      maxsewectionspawam = sewvewmaxwesuwtspawam), nyaa~~
+    i-insewtappendwesuwts(candidatepipewineidentifiews)
   )
 
-  override val domainMarshaller: DomainMarshaller[ListRecommendedUsersQuery, Timeline] = {
-    val instructionBuilders = Seq(
-      ReplaceEntryInstructionBuilder(ReplaceAllEntries),
-      AddEntriesWithReplaceInstructionBuilder()
+  ovewwide vaw domainmawshawwew: domainmawshawwew[wistwecommendedusewsquewy, timewine] = {
+    vaw i-instwuctionbuiwdews = seq(
+      w-wepwaceentwyinstwuctionbuiwdew(wepwaceawwentwies), :3
+      a-addentwieswithwepwaceinstwuctionbuiwdew()
     )
 
-    val metadataBuilder = UrtMetadataBuilder(
-      title = None,
-      scribeConfigBuilder = Some(
-        StaticTimelineScribeConfigBuilder(
-          TimelineScribeConfig(
-            page = Some("list_recommended_users"),
-            section = None,
-            entityToken = None)))
+    v-vaw metadatabuiwdew = uwtmetadatabuiwdew(
+      t-titwe = nyone, ( ͡o ω ͡o )
+      s-scwibeconfigbuiwdew = s-some(
+        s-statictimewinescwibeconfigbuiwdew(
+          timewinescwibeconfig(
+            page = s-some("wist_wecommended_usews"), mya
+            s-section = n-nyone, (///ˬ///✿)
+            e-entitytoken = n-nyone)))
     )
 
-    val excludeIdsSelector: PartialFunction[UniversalNoun[_], Long] = {
-      case item: UserItem => item.id
+    vaw excwudeidssewectow: pawtiawfunction[univewsawnoun[_], (˘ω˘) wong] = {
+      c-case item: usewitem => item.id
     }
 
-    val cursorBuilder = UnorderedExcludeIdsBottomCursorBuilder(
-      excludedIdsMaxLengthParam = ExcludedIdsMaxLengthParam,
-      excludeIdsSelector = excludeIdsSelector)
+    vaw cuwsowbuiwdew = unowdewedexcwudeidsbottomcuwsowbuiwdew(
+      excwudedidsmaxwengthpawam = excwudedidsmaxwengthpawam, ^^;;
+      e-excwudeidssewectow = excwudeidssewectow)
 
-    UrtDomainMarshaller(
-      instructionBuilders = instructionBuilders,
-      metadataBuilder = Some(metadataBuilder),
-      cursorBuilders = Seq(cursorBuilder)
+    uwtdomainmawshawwew(
+      instwuctionbuiwdews = i-instwuctionbuiwdews, (✿oωo)
+      m-metadatabuiwdew = s-some(metadatabuiwdew), (U ﹏ U)
+      cuwsowbuiwdews = s-seq(cuwsowbuiwdew)
     )
   }
 
-  override val transportMarshaller: TransportMarshaller[Timeline, urt.TimelineResponse] =
-    urtTransportMarshaller
+  ovewwide v-vaw twanspowtmawshawwew: t-twanspowtmawshawwew[timewine, -.- uwt.timewinewesponse] =
+    uwttwanspowtmawshawwew
 }

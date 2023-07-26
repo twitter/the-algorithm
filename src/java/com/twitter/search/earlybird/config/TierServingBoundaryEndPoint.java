@@ -1,146 +1,146 @@
-package com.twitter.search.earlybird.config;
+package com.twittew.seawch.eawwybiwd.config;
 
-import java.util.Date;
+impowt j-java.utiw.date;
 
-import javax.annotation.Nullable;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
+i-impowt c-com.twittew.common.utiw.cwock;
+i-impowt com.twittew.seawch.common.pawtitioning.snowfwakepawsew.snowfwakeidpawsew;
 
 /**
- * The start or end boundary of a tier's serving range.
- * This is used to add since_id and max_id operators onto search queries.
+ * t-the stawt ow end boundawy of a tiew's sewving wange. -.-
+ * this is used t-to add since_id and max_id opewatows onto seawch q-quewies.
  */
-public class TierServingBoundaryEndPoint {
-  @VisibleForTesting
-  public static final String INFERRED_FROM_DATA_RANGE = "inferred_from_data_range";
-  public static final String RELATIVE_TO_CURRENT_TIME_MS = "relative_to_current_time_ms";
+pubwic cwass tiewsewvingboundawyendpoint {
+  @visibwefowtesting
+  p-pubwic static finaw stwing infewwed_fwom_data_wange = "infewwed_fwom_data_wange";
+  pubwic static finaw stwing w-wewative_to_cuwwent_time_ms = "wewative_to_cuwwent_time_ms";
 
-  // Either offsetToCurrentTimeMillis is set or (absoluteTweetId and timeBoundarySecondsFromEpoch)
-  // are set.
-  @Nullable
-  private final Long offsetToCurrentTimeMillis;
-  @Nullable
-  private final Long absoluteTweetId;
-  @Nullable
-  private final Long timeBoundarySecondsFromEpoch;
-  private final Clock clock;
+  // eithew offsettocuwwenttimemiwwis i-is set ow (absowutetweetid a-and timeboundawysecondsfwomepoch)
+  // awe set. ^^
+  @nuwwabwe
+  pwivate finaw wong offsettocuwwenttimemiwwis;
+  @nuwwabwe
+  p-pwivate finaw wong absowutetweetid;
+  @nuwwabwe
+  pwivate finaw wong timeboundawysecondsfwomepoch;
+  pwivate finaw cwock c-cwock;
 
-  TierServingBoundaryEndPoint(Long absoluteTweetId,
-                              Long timeBoundarySecondsFromEpoch,
-                              Long offsetToCurrentTimeMillis,
-                              Clock clock) {
-    this.offsetToCurrentTimeMillis = offsetToCurrentTimeMillis;
-    this.absoluteTweetId = absoluteTweetId;
-    this.timeBoundarySecondsFromEpoch = timeBoundarySecondsFromEpoch;
-    this.clock = clock;
+  tiewsewvingboundawyendpoint(wong absowutetweetid, (⑅˘꒳˘)
+                              w-wong t-timeboundawysecondsfwomepoch, nyaa~~
+                              w-wong o-offsettocuwwenttimemiwwis, /(^•ω•^)
+                              cwock cwock) {
+    this.offsettocuwwenttimemiwwis = o-offsettocuwwenttimemiwwis;
+    this.absowutetweetid = absowutetweetid;
+    this.timeboundawysecondsfwomepoch = timeboundawysecondsfwomepoch;
+    t-this.cwock = cwock;
   }
 
   /**
-   * Parse the boundary string and construct a TierServingBoundaryEndPoint instance.
-   * @param boundaryString boundary configuration string. Valid values are:
-   * <li>
-   * "inferred_from_data_range" infers serving range from data range. This only works after
-   *                               Nov 2010 when Twitter switched to snowflake IDs.
-   *                               This is the default value.
-   * </li>
-   * <li>
-   * "absolute_tweet_id_and_timestamp_millis:id:timestamp" a tweet ID/timestamp is given
-   *                                                       explicitly as the serving range
-   *                                                       boundary.
-   * </li>
-   * <li>
-   * "relative_to_current_time_ms:offset" adds offset onto current timestamp in millis to
-   *                                         compute serving range.
-   * </li>
+   * pawse the boundawy stwing and constwuct a tiewsewvingboundawyendpoint instance. (U ﹏ U)
+   * @pawam boundawystwing b-boundawy configuwation stwing. 😳😳😳 vawid v-vawues awe:
+   * <wi>
+   * "infewwed_fwom_data_wange" i-infews s-sewving wange fwom data wange. >w< this onwy wowks aftew
+   *                               n-nyov 2010 w-when twittew switched to snowfwake i-ids. XD
+   *                               this i-is the defauwt vawue. o.O
+   * </wi>
+   * <wi>
+   * "absowute_tweet_id_and_timestamp_miwwis:id:timestamp" a-a tweet id/timestamp is g-given
+   *                                                       expwicitwy as the sewving wange
+   *                                                       b-boundawy. mya
+   * </wi>
+   * <wi>
+   * "wewative_to_cuwwent_time_ms:offset" adds offset o-onto cuwwent timestamp in miwwis t-to
+   *                                         c-compute sewving wange. 🥺
+   * </wi>
    *
-   * @param boundaryDate the data boundary. This is used in conjunction with
-   * inferred_from_data_date to determine the serving boundary.
-   * @param clock  Clock used to obtain current time, when relative_to_current_time_ms is used.
-   *               Tests pass in a FakeClock.
+   * @pawam boundawydate the data boundawy. ^^;; this is used in conjunction with
+   * infewwed_fwom_data_date t-to detewmine t-the sewving boundawy. :3
+   * @pawam cwock  cwock u-used to obtain c-cuwwent time, (U ﹏ U) when w-wewative_to_cuwwent_time_ms is used. OwO
+   *               tests pass in a fakecwock. 😳😳😳
    */
-  public static TierServingBoundaryEndPoint newTierServingBoundaryEndPoint(String boundaryString,
-      Date boundaryDate,
-      Clock clock) {
-    if (boundaryString == null || boundaryString.trim().equals(
-        INFERRED_FROM_DATA_RANGE)) {
-      return inferBoundaryFromDataRange(boundaryDate, clock);
-    } else if (boundaryString.trim().startsWith(RELATIVE_TO_CURRENT_TIME_MS)) {
-      return getRelativeBoundary(boundaryString, clock);
-    } else {
-      throw new IllegalStateException("Cannot parse serving range string: " + boundaryString);
+  p-pubwic static tiewsewvingboundawyendpoint nyewtiewsewvingboundawyendpoint(stwing boundawystwing, (ˆ ﻌ ˆ)♡
+      date boundawydate, XD
+      cwock c-cwock) {
+    if (boundawystwing == n-nyuww || b-boundawystwing.twim().equaws(
+        i-infewwed_fwom_data_wange)) {
+      wetuwn i-infewboundawyfwomdatawange(boundawydate, (ˆ ﻌ ˆ)♡ c-cwock);
+    } e-ewse if (boundawystwing.twim().stawtswith(wewative_to_cuwwent_time_ms)) {
+      w-wetuwn getwewativeboundawy(boundawystwing, ( ͡o ω ͡o ) cwock);
+    } ewse {
+      thwow n-nyew iwwegawstateexception("cannot p-pawse sewving w-wange stwing: " + b-boundawystwing);
     }
   }
 
-  private static TierServingBoundaryEndPoint inferBoundaryFromDataRange(Date boundaryDate,
-                                                                        Clock clock) {
-    // infer from data range
-    // handle default start date and end date, in case the dates are not specified in the config
-    if (boundaryDate.equals(TierConfig.DEFAULT_TIER_START_DATE)) {
-      return new TierServingBoundaryEndPoint(
-          -1L, TierConfig.DEFAULT_TIER_START_DATE.getTime() / 1000, null, clock);
-    } else if (boundaryDate.equals(TierConfig.DEFAULT_TIER_END_DATE)) {
-      return new TierServingBoundaryEndPoint(
-          Long.MAX_VALUE, TierConfig.DEFAULT_TIER_END_DATE.getTime() / 1000, null, clock);
-    } else {
-      // convert data start / end dates into since / max ID.
-      long boundaryTimeMillis = boundaryDate.getTime();
-      if (!SnowflakeIdParser.isUsableSnowflakeTimestamp(boundaryTimeMillis)) {
-        throw new IllegalStateException("Serving time range can not be determined, because "
-            + boundaryDate + " is before Twitter switched to snowflake tweet IDs.");
+  p-pwivate static tiewsewvingboundawyendpoint infewboundawyfwomdatawange(date boundawydate, rawr x3
+                                                                        cwock cwock) {
+    // infew f-fwom data wange
+    // handwe defauwt stawt date and end date, in case the dates awe nyot specified i-in the config
+    if (boundawydate.equaws(tiewconfig.defauwt_tiew_stawt_date)) {
+      wetuwn nyew tiewsewvingboundawyendpoint(
+          -1w, nyaa~~ t-tiewconfig.defauwt_tiew_stawt_date.gettime() / 1000, >_< n-nyuww, ^^;; c-cwock);
+    } ewse if (boundawydate.equaws(tiewconfig.defauwt_tiew_end_date)) {
+      w-wetuwn nyew tiewsewvingboundawyendpoint(
+          w-wong.max_vawue, (ˆ ﻌ ˆ)♡ t-tiewconfig.defauwt_tiew_end_date.gettime() / 1000, ^^;; nyuww, (⑅˘꒳˘) cwock);
+    } ewse {
+      // convewt data stawt / end dates i-into since / max id. rawr x3
+      wong b-boundawytimemiwwis = boundawydate.gettime();
+      i-if (!snowfwakeidpawsew.isusabwesnowfwaketimestamp(boundawytimemiwwis)) {
+        t-thwow nyew iwwegawstateexception("sewving time wange can nyot b-be detewmined, (///ˬ///✿) b-because "
+            + boundawydate + " i-is befowe t-twittew switched to snowfwake tweet ids.");
       }
-      // Earlybird since_id is inclusive and max_id is exclusive. We substract 1 here.
-      // Consider example:
-      //   full0:  5000 (inclusive) - 6000 (exclusive)
-      //   full1:  6000 (inclusive) - 7000 (exclusive)
-      // For tier full0, we should use max_id 5999 instead of 6000.
-      // For tier full1, we should use since_id 5999 instead of 6000.
-      // Hence we substract 1 here.
-      long adjustedTweetId =
-        SnowflakeIdParser.generateValidStatusId(boundaryTimeMillis, 0) - 1;
-      Preconditions.checkState(adjustedTweetId >= 0, "boundary tweet ID must be non-negative");
-      return new TierServingBoundaryEndPoint(
-          adjustedTweetId, boundaryTimeMillis / 1000, null, clock);
+      // eawwybiwd since_id is incwusive a-and max_id is excwusive. 🥺 w-we substwact 1 h-hewe. >_<
+      // considew e-exampwe:
+      //   f-fuww0:  5000 (incwusive) - 6000 (excwusive)
+      //   fuww1:  6000 (incwusive) - 7000 (excwusive)
+      // f-fow tiew fuww0, UwU we shouwd use max_id 5999 instead of 6000. >_<
+      // fow tiew fuww1, -.- w-we shouwd use s-since_id 5999 instead of 6000.
+      // hence w-we substwact 1 h-hewe. mya
+      wong adjustedtweetid =
+        snowfwakeidpawsew.genewatevawidstatusid(boundawytimemiwwis, >w< 0) - 1;
+      pweconditions.checkstate(adjustedtweetid >= 0, (U ﹏ U) "boundawy t-tweet id must be nyon-negative");
+      wetuwn nyew tiewsewvingboundawyendpoint(
+          adjustedtweetid, 😳😳😳 b-boundawytimemiwwis / 1000, o.O nyuww, òωó cwock);
     }
   }
 
-  private static TierServingBoundaryEndPoint getRelativeBoundary(String boundaryString,
-                                                                 Clock clock) {
-    // An offset relative to current time is given
-    String[] parts = boundaryString.split(":");
-    Preconditions.checkState(parts.length == 2);
-    long offset = Long.parseLong(parts[1]);
-    return new TierServingBoundaryEndPoint(null, null, offset, clock);
+  pwivate static t-tiewsewvingboundawyendpoint g-getwewativeboundawy(stwing boundawystwing, 😳😳😳
+                                                                 cwock cwock) {
+    // an o-offset wewative t-to cuwwent time is given
+    stwing[] pawts = boundawystwing.spwit(":");
+    pweconditions.checkstate(pawts.wength == 2);
+    wong o-offset = wong.pawsewong(pawts[1]);
+    wetuwn n-nyew tiewsewvingboundawyendpoint(nuww, σωσ nyuww, (⑅˘꒳˘) offset, cwock);
   }
 
   /**
-   * Returns the tweet ID for this tier boundary. If the tier boundary was created using a tweet ID,
-   * that tweet ID is returned. Otherwise, a tweet ID is derived from the time boundary.
+   * wetuwns the tweet i-id fow this tiew boundawy. (///ˬ///✿) if t-the tiew boundawy w-was cweated using a tweet id, 🥺
+   * t-that tweet id is wetuwned. OwO o-othewwise, >w< a tweet i-id is dewived f-fwom the time boundawy. 🥺
    */
-  @VisibleForTesting
-  public long getBoundaryTweetId() {
-    // If absoluteTweetId is available, use it.
-    if (absoluteTweetId != null) {
-      return absoluteTweetId;
-    } else {
-      Preconditions.checkNotNull(offsetToCurrentTimeMillis);
-      long boundaryTime = clock.nowMillis() + offsetToCurrentTimeMillis;
-      return SnowflakeIdParser.generateValidStatusId(boundaryTime, 0);
+  @visibwefowtesting
+  pubwic wong g-getboundawytweetid() {
+    // i-if absowutetweetid is avaiwabwe, nyaa~~ use it.
+    if (absowutetweetid != n-nyuww) {
+      w-wetuwn absowutetweetid;
+    } e-ewse {
+      pweconditions.checknotnuww(offsettocuwwenttimemiwwis);
+      wong boundawytime = cwock.nowmiwwis() + o-offsettocuwwenttimemiwwis;
+      wetuwn snowfwakeidpawsew.genewatevawidstatusid(boundawytime, ^^ 0);
     }
   }
 
   /**
-   * Returns the time boundary for this tier boundary, in seconds since epoch.
+   * w-wetuwns t-the time boundawy fow this tiew boundawy, >w< in seconds since epoch. OwO
    */
-  public long getBoundaryTimeSecondsFromEpoch() {
-    if (timeBoundarySecondsFromEpoch != null) {
-      return timeBoundarySecondsFromEpoch;
-    } else {
-      Preconditions.checkNotNull(offsetToCurrentTimeMillis);
-      return (clock.nowMillis() + offsetToCurrentTimeMillis) / 1000;
+  p-pubwic w-wong getboundawytimesecondsfwomepoch() {
+    i-if (timeboundawysecondsfwomepoch != n-nyuww) {
+      wetuwn timeboundawysecondsfwomepoch;
+    } ewse {
+      p-pweconditions.checknotnuww(offsettocuwwenttimemiwwis);
+      wetuwn (cwock.nowmiwwis() + offsettocuwwenttimemiwwis) / 1000;
     }
   }
 }

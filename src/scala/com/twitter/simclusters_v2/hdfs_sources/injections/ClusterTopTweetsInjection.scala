@@ -1,14 +1,14 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.twittew.simcwustews_v2.hdfs_souwces.injections
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaCompactThrift
-import com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores
-import com.twitter.simclusters_v2.thriftscala.FullClusterId
+impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection
+i-impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection.scawacompactthwift
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.topktweetswithscowes
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.fuwwcwustewid
 
-object ClusterTopTweetsInjection {
+o-object c-cwustewtoptweetsinjection {
 
-  val clusterIdToTopKTweetsInjection = KeyValInjection[FullClusterId, TopKTweetsWithScores](
-    ScalaCompactThrift(FullClusterId),
-    ScalaCompactThrift(TopKTweetsWithScores)
+  vaw cwustewidtotopktweetsinjection = keyvawinjection[fuwwcwustewid, σωσ topktweetswithscowes](
+    scawacompactthwift(fuwwcwustewid), σωσ
+    s-scawacompactthwift(topktweetswithscowes)
   )
 }

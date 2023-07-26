@@ -1,50 +1,50 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.hewon
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.EmptyServiceIdentifier
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.storehaus_internal.memcache.ConnectionConfig
-import com.twitter.storehaus_internal.memcache.MemcacheConfig
-import com.twitter.storehaus_internal.util.KeyPrefix
-import com.twitter.storehaus_internal.util.TTL
-import com.twitter.storehaus_internal.util.ZkEndPoint
-import com.twitter.summingbird_internal.runner.store_config.OnlineStoreOnlyConfig
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateStore
-import com.twitter.util.Duration
+impowt com.twittew.convewsions.duwationops._
+impowt c-com.twittew.finagwe.mtws.authentication.emptysewviceidentifiew
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.stowehaus_intewnaw.memcache.connectionconfig
+i-impowt com.twittew.stowehaus_intewnaw.memcache.memcacheconfig
+i-impowt com.twittew.stowehaus_intewnaw.utiw.keypwefix
+i-impowt c-com.twittew.stowehaus_intewnaw.utiw.ttw
+i-impowt com.twittew.stowehaus_intewnaw.utiw.zkendpoint
+impowt com.twittew.summingbiwd_intewnaw.wunnew.stowe_config.onwinestoweonwyconfig
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.aggwegatestowe
+impowt c-com.twittew.utiw.duwation
 
-object RealTimeAggregateStore {
-  val twCacheWilyPrefix = "/srv#" // s2s is only supported for wily path
+object weawtimeaggwegatestowe {
+  v-vaw twcachewiwypwefix = "/swv#" // s-s2s is onwy suppowted fow wiwy path
 
-  def makeEndpoint(
-    memcacheDataSet: String,
-    isProd: Boolean,
-    twCacheWilyPrefix: String = twCacheWilyPrefix
-  ): String = {
-    val env = if (isProd) "prod" else "test"
-    s"$twCacheWilyPrefix/$env/local/cache/$memcacheDataSet"
+  def makeendpoint(
+    memcachedataset: stwing, OwO
+    i-ispwod: boowean, 😳😳😳
+    t-twcachewiwypwefix: s-stwing = twcachewiwypwefix
+  ): stwing = {
+    vaw env = if (ispwod) "pwod" ewse "test"
+    s"$twcachewiwypwefix/$env/wocaw/cache/$memcachedataset"
   }
 }
 
-case class RealTimeAggregateStore(
-  memcacheDataSet: String,
-  isProd: Boolean = false,
-  cacheTTL: Duration = 1.day)
-    extends OnlineStoreOnlyConfig[MemcacheConfig]
-    with AggregateStore {
-  import RealTimeAggregateStore._
+case cwass weawtimeaggwegatestowe(
+  m-memcachedataset: stwing, 😳😳😳
+  ispwod: boowean = fawse, o.O
+  cachettw: duwation = 1.day)
+    e-extends onwinestoweonwyconfig[memcacheconfig]
+    w-with a-aggwegatestowe {
+  i-impowt weawtimeaggwegatestowe._
 
-  override val name: String = ""
-  val storeKeyPrefix: KeyPrefix = KeyPrefix(name)
-  val memcacheZkEndPoint: String = makeEndpoint(memcacheDataSet, isProd)
+  o-ovewwide vaw nyame: stwing = ""
+  vaw stowekeypwefix: k-keypwefix = keypwefix(name)
+  vaw memcachezkendpoint: s-stwing = makeendpoint(memcachedataset, ( ͡o ω ͡o ) ispwod)
 
-  def online: MemcacheConfig = online(serviceIdentifier = EmptyServiceIdentifier)
+  def onwine: memcacheconfig = onwine(sewviceidentifiew = emptysewviceidentifiew)
 
-  def online(serviceIdentifier: ServiceIdentifier = EmptyServiceIdentifier): MemcacheConfig =
-    new MemcacheConfig {
-      val endpoint = ZkEndPoint(memcacheZkEndPoint)
-      override val connectionConfig =
-        ConnectionConfig(endpoint, serviceIdentifier = serviceIdentifier)
-      override val keyPrefix = storeKeyPrefix
-      override val ttl = TTL(Duration.fromMilliseconds(cacheTTL.inMillis))
+  d-def onwine(sewviceidentifiew: sewviceidentifiew = e-emptysewviceidentifiew): m-memcacheconfig =
+    n-nyew memcacheconfig {
+      vaw endpoint = zkendpoint(memcachezkendpoint)
+      ovewwide v-vaw connectionconfig =
+        connectionconfig(endpoint, s-sewviceidentifiew = sewviceidentifiew)
+      o-ovewwide v-vaw keypwefix = stowekeypwefix
+      o-ovewwide vaw ttw = ttw(duwation.fwommiwwiseconds(cachettw.inmiwwis))
     }
 }

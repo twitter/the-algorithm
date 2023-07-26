@@ -1,44 +1,44 @@
-package com.twitter.tsp.common
+package com.twittew.tsp.common
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.util.Future
-import javax.inject.Inject
-import scala.util.control.NoStackTrace
+impowt com.twittew.decidew.decidew
+i-impowt com.twittew.decidew.wandomwecipient
+i-impowt c-com.twittew.utiw.futuwe
+i-impowt j-javax.inject.inject
+i-impowt scawa.utiw.contwow.nostacktwace
 
 /*
-  Provides deciders-controlled load shedding for a given displayLocation
-  The format of the decider keys is:
+  p-pwovides decidews-contwowwed w-woad shedding fow a given dispwaywocation
+  the fowmat of the decidew keys is:
 
-    enable_loadshedding_<display location>
-  E.g.:
-    enable_loadshedding_HomeTimeline
+    e-enabwe_woadshedding_<dispway wocation>
+  e.g.:
+    enabwe_woadshedding_hometimewine
 
-  Deciders are fractional, so a value of 50.00 will drop 50% of responses. If a decider key is not
-  defined for a particular displayLocation, those requests will always be served.
+  d-decidews awe fwactionaw, ( ͡o ω ͡o ) s-so a vawue of 50.00 wiww dwop 50% of wesponses. (U ﹏ U) if a decidew k-key is nyot
+  defined fow a pawticuwaw d-dispwaywocation, (///ˬ///✿) t-those wequests wiww awways be sewved. >w<
 
-  We should therefore aim to define keys for the locations we care most about in decider.yml,
-  so that we can control them during incidents.
+  we shouwd thewefowe aim to define k-keys fow the wocations we cawe most about in decidew.ymw, rawr
+  so that we can c-contwow them duwing incidents. mya
  */
-class LoadShedder @Inject() (decider: Decider) {
-  import LoadShedder._
+c-cwass woadsheddew @inject() (decidew: d-decidew) {
+  i-impowt woadsheddew._
 
-  // Fall back to False for any undefined key
-  private val deciderWithFalseFallback: Decider = decider.orElse(Decider.False)
-  private val keyPrefix = "enable_loadshedding"
+  // f-faww back to fawse fow any undefined key
+  pwivate v-vaw decidewwithfawsefawwback: decidew = decidew.owewse(decidew.fawse)
+  pwivate v-vaw keypwefix = "enabwe_woadshedding"
 
-  def apply[T](typeString: String)(serve: => Future[T]): Future[T] = {
+  def appwy[t](typestwing: stwing)(sewve: => futuwe[t]): futuwe[t] = {
     /*
-    Per-typeString level load shedding: enable_loadshedding_HomeTimeline
-    Checks if per-typeString load shedding is enabled
+    p-pew-typestwing wevew w-woad shedding: e-enabwe_woadshedding_hometimewine
+    c-checks if pew-typestwing woad shedding is enabwed
      */
-    val keyTyped = s"${keyPrefix}_$typeString"
-    if (deciderWithFalseFallback.isAvailable(keyTyped, recipient = Some(RandomRecipient)))
-      Future.exception(LoadSheddingException)
-    else serve
+    v-vaw keytyped = s-s"${keypwefix}_$typestwing"
+    if (decidewwithfawsefawwback.isavaiwabwe(keytyped, ^^ w-wecipient = s-some(wandomwecipient)))
+      futuwe.exception(woadsheddingexception)
+    e-ewse sewve
   }
 }
 
-object LoadShedder {
-  object LoadSheddingException extends Exception with NoStackTrace
+object w-woadsheddew {
+  object woadsheddingexception extends exception w-with nyostacktwace
 }

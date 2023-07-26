@@ -1,80 +1,80 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.HashMap;
-import java.util.Map;
+impowt java.utiw.hashmap;
+i-impowt j-java.utiw.map;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseMergeUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.search.earlybird_root.validators.FacetsResponseValidator;
-import com.twitter.search.earlybird_root.validators.PassThroughResponseValidator;
-import com.twitter.search.earlybird_root.validators.ServiceResponseValidator;
-import com.twitter.search.earlybird_root.validators.TermStatsResultsValidator;
-import com.twitter.search.earlybird_root.validators.TopTweetsResultsValidator;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+i-impowt com.twittew.finagwe.sewvice;
+i-impowt com.twittew.finagwe.simpwefiwtew;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+i-impowt com.twittew.seawch.common.utiw.eawwybiwd.eawwybiwdwesponsemewgeutiw;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequesttype;
+impowt com.twittew.seawch.eawwybiwd_woot.vawidatows.facetswesponsevawidatow;
+i-impowt com.twittew.seawch.eawwybiwd_woot.vawidatows.passthwoughwesponsevawidatow;
+impowt com.twittew.seawch.eawwybiwd_woot.vawidatows.sewvicewesponsevawidatow;
+i-impowt com.twittew.seawch.eawwybiwd_woot.vawidatows.tewmstatswesuwtsvawidatow;
+i-impowt com.twittew.seawch.eawwybiwd_woot.vawidatows.toptweetswesuwtsvawidatow;
+impowt com.twittew.utiw.function;
+i-impowt com.twittew.utiw.futuwe;
 
 /**
- * Filter responsible for handling invalid response returned by downstream services, and
- * translating them into EarlybirdResponseExceptions.
+ * f-fiwtew wesponsibwe f-fow handwing invawid wesponse wetuwned by downstweam sewvices, 😳 and
+ * twanswating t-them into eawwybiwdwesponseexceptions. mya
  */
-public class ServiceResponseValidationFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+pubwic cwass sewvicewesponsevawidationfiwtew
+    extends simpwefiwtew<eawwybiwdwequestcontext, (˘ω˘) e-eawwybiwdwesponse> {
 
-  private final Map<EarlybirdRequestType, ServiceResponseValidator<EarlybirdResponse>>
-      requestTypeToResponseValidators = new HashMap<>();
-  private final EarlybirdCluster cluster;
+  pwivate f-finaw map<eawwybiwdwequesttype, >_< s-sewvicewesponsevawidatow<eawwybiwdwesponse>>
+      w-wequesttypetowesponsevawidatows = n-nyew hashmap<>();
+  pwivate finaw eawwybiwdcwustew c-cwustew;
 
   /**
-   * Creates a new filter for handling invalid response
+   * cweates a nyew fiwtew fow handwing i-invawid wesponse
    */
-  public ServiceResponseValidationFilter(EarlybirdCluster cluster) {
-    this.cluster = cluster;
+  pubwic sewvicewesponsevawidationfiwtew(eawwybiwdcwustew cwustew) {
+    this.cwustew = cwustew;
 
-    ServiceResponseValidator<EarlybirdResponse> passThroughValidator =
-        new PassThroughResponseValidator();
+    s-sewvicewesponsevawidatow<eawwybiwdwesponse> passthwoughvawidatow =
+        n-nyew p-passthwoughwesponsevawidatow();
 
-    requestTypeToResponseValidators
-        .put(EarlybirdRequestType.FACETS, new FacetsResponseValidator(cluster));
-    requestTypeToResponseValidators
-        .put(EarlybirdRequestType.RECENCY, passThroughValidator);
-    requestTypeToResponseValidators
-        .put(EarlybirdRequestType.RELEVANCE, passThroughValidator);
-    requestTypeToResponseValidators
-        .put(EarlybirdRequestType.STRICT_RECENCY, passThroughValidator);
-    requestTypeToResponseValidators
-        .put(EarlybirdRequestType.TERM_STATS, new TermStatsResultsValidator(cluster));
-    requestTypeToResponseValidators
-        .put(EarlybirdRequestType.TOP_TWEETS, new TopTweetsResultsValidator(cluster));
+    w-wequesttypetowesponsevawidatows
+        .put(eawwybiwdwequesttype.facets, -.- nyew facetswesponsevawidatow(cwustew));
+    wequesttypetowesponsevawidatows
+        .put(eawwybiwdwequesttype.wecency, 🥺 passthwoughvawidatow);
+    w-wequesttypetowesponsevawidatows
+        .put(eawwybiwdwequesttype.wewevance, (U ﹏ U) passthwoughvawidatow);
+    w-wequesttypetowesponsevawidatows
+        .put(eawwybiwdwequesttype.stwict_wecency, >w< passthwoughvawidatow);
+    w-wequesttypetowesponsevawidatows
+        .put(eawwybiwdwequesttype.tewm_stats, mya n-nyew tewmstatswesuwtsvawidatow(cwustew));
+    wequesttypetowesponsevawidatows
+        .put(eawwybiwdwequesttype.top_tweets, >w< n-nyew toptweetswesuwtsvawidatow(cwustew));
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      final EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    return service.apply(requestContext).flatMap(
-        new Function<EarlybirdResponse, Future<EarlybirdResponse>>() {
-          @Override
-          public Future<EarlybirdResponse> apply(EarlybirdResponse response) {
-            if (response == null) {
-              return Future.exception(new IllegalStateException(
-                                          cluster + " returned null response"));
+  @ovewwide
+  pubwic f-futuwe<eawwybiwdwesponse> appwy(
+      finaw eawwybiwdwequestcontext w-wequestcontext, nyaa~~
+      sewvice<eawwybiwdwequestcontext, (✿oωo) e-eawwybiwdwesponse> sewvice) {
+    w-wetuwn sewvice.appwy(wequestcontext).fwatmap(
+        n-nyew function<eawwybiwdwesponse, ʘwʘ futuwe<eawwybiwdwesponse>>() {
+          @ovewwide
+          pubwic futuwe<eawwybiwdwesponse> appwy(eawwybiwdwesponse wesponse) {
+            if (wesponse == nyuww) {
+              wetuwn f-futuwe.exception(new i-iwwegawstateexception(
+                                          cwustew + " w-wetuwned n-nyuww wesponse"));
             }
 
-            if (response.getResponseCode() == EarlybirdResponseCode.SUCCESS) {
-              return requestTypeToResponseValidators
-                .get(requestContext.getEarlybirdRequestType())
-                .validate(response);
+            if (wesponse.getwesponsecode() == e-eawwybiwdwesponsecode.success) {
+              wetuwn wequesttypetowesponsevawidatows
+                .get(wequestcontext.geteawwybiwdwequesttype())
+                .vawidate(wesponse);
             }
 
-            return Future.value(EarlybirdResponseMergeUtil.transformInvalidResponse(
-                response,
-                String.format("Failure from %s (%s)", cluster, response.getResponseCode())));
+            wetuwn futuwe.vawue(eawwybiwdwesponsemewgeutiw.twansfowminvawidwesponse(
+                wesponse, (ˆ ﻌ ˆ)♡
+                stwing.fowmat("faiwuwe f-fwom %s (%s)", 😳😳😳 cwustew, wesponse.getwesponsecode())));
           }
         });
   }

@@ -1,38 +1,38 @@
-package com.twitter.tweetypie.serverutil
+package com.twittew.tweetypie.sewvewutiw
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo
-import com.twitter.servo.util.ExceptionCategorizer
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.sewvo
+i-impowt com.twittew.sewvo.utiw.exceptioncategowizew
 
-object ExceptionCounter {
-  // These throwables are alertable because they indicate conditions we never expect in production.
-  def isAlertable(throwable: Throwable): Boolean =
-    throwable match {
-      case e: RuntimeException => true
-      case e: Error => true
-      case _ => false
+o-object exceptioncountew {
+  // t-these thwowabwes a-awe awewtabwe b-because they i-indicate conditions we nyevew expect in pwoduction. 🥺
+  def isawewtabwe(thwowabwe: thwowabwe): boowean =
+    t-thwowabwe match {
+      case e: wuntimeexception => twue
+      c-case e: ewwow => twue
+      c-case _ => fawse
     }
 
-  // count how many exceptions are alertable and how many are boring
-  val tweetypieCategorizers: ExceptionCategorizer =
-    ExceptionCategorizer.const("alertableException").onlyIf(isAlertable) ++
-      ExceptionCategorizer.const("boringException").onlyIf(BoringStackTrace.isBoring)
+  // count how many exceptions awe a-awewtabwe and how many awe bowing
+  v-vaw tweetypiecategowizews: exceptioncategowizew =
+    e-exceptioncategowizew.const("awewtabweexception").onwyif(isawewtabwe) ++
+      exceptioncategowizew.const("bowingexception").onwyif(bowingstacktwace.isbowing)
 
-  val defaultCategorizer: ExceptionCategorizer =
-    ExceptionCategorizer.default() ++ tweetypieCategorizers
+  vaw defauwtcategowizew: exceptioncategowizew =
+    exceptioncategowizew.defauwt() ++ t-tweetypiecategowizews
 
-  def defaultCategorizer(name: String): ExceptionCategorizer =
-    ExceptionCategorizer.default(Seq(name)) ++ tweetypieCategorizers
+  def defauwtcategowizew(name: stwing): exceptioncategowizew =
+    exceptioncategowizew.defauwt(seq(name)) ++ tweetypiecategowizews
 
-  def apply(statsReceiver: StatsReceiver): servo.util.ExceptionCounter =
-    new servo.util.ExceptionCounter(statsReceiver, defaultCategorizer)
+  d-def appwy(statsweceivew: s-statsweceivew): s-sewvo.utiw.exceptioncountew =
+    n-nyew sewvo.utiw.exceptioncountew(statsweceivew, >_< d-defauwtcategowizew)
 
-  def apply(statsReceiver: StatsReceiver, name: String): servo.util.ExceptionCounter =
-    new servo.util.ExceptionCounter(statsReceiver, defaultCategorizer(name))
+  def appwy(statsweceivew: statsweceivew, n-nyame: stwing): sewvo.utiw.exceptioncountew =
+    nyew sewvo.utiw.exceptioncountew(statsweceivew, >_< d-defauwtcategowizew(name))
 
-  def apply(
-    statsReceiver: StatsReceiver,
-    categorizer: ExceptionCategorizer
-  ): servo.util.ExceptionCounter =
-    new servo.util.ExceptionCounter(statsReceiver, categorizer)
+  def appwy(
+    statsweceivew: statsweceivew,
+    categowizew: exceptioncategowizew
+  ): sewvo.utiw.exceptioncountew =
+    n-nyew sewvo.utiw.exceptioncountew(statsweceivew, (⑅˘꒳˘) categowizew)
 }

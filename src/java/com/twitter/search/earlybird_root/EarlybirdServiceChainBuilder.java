@@ -1,278 +1,278 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
+impowt j-java.utiw.cowwections;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.map;
+i-impowt java.utiw.sowtedset;
+i-impowt java.utiw.tweeset;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
+i-impowt j-javax.inject.inject;
+impowt javax.inject.named;
+impowt javax.inject.singweton;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.wists;
+impowt com.googwe.common.cowwect.maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.finagle.stats.StatsReceiver;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.root.PartitionConfig;
-import com.twitter.search.common.root.PartitionLoggingSupport;
-import com.twitter.search.common.root.RequestSuccessStats;
-import com.twitter.search.common.root.RootClientServiceBuilder;
-import com.twitter.search.common.root.ScatterGatherService;
-import com.twitter.search.common.root.ScatterGatherSupport;
-import com.twitter.search.common.root.SearchRootModule;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.config.TierConfig;
-import com.twitter.search.earlybird.config.TierInfo;
-import com.twitter.search.earlybird.config.TierInfoSource;
-import com.twitter.search.earlybird.config.TierInfoUtil;
-import com.twitter.search.earlybird.config.TierInfoWrapper;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.EarlybirdService.ServiceIface;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
-import com.twitter.search.earlybird_root.filters.RequestContextToEarlybirdRequestFilter;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+impowt com.twittew.finagwe.sewvice;
+impowt com.twittew.finagwe.simpwefiwtew;
+i-impowt com.twittew.finagwe.stats.statsweceivew;
+impowt com.twittew.seawch.common.decidew.seawchdecidew;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.woot.pawtitionconfig;
+impowt com.twittew.seawch.common.woot.pawtitionwoggingsuppowt;
+impowt com.twittew.seawch.common.woot.wequestsuccessstats;
+impowt c-com.twittew.seawch.common.woot.wootcwientsewvicebuiwdew;
+impowt com.twittew.seawch.common.woot.scattewgathewsewvice;
+impowt com.twittew.seawch.common.woot.scattewgathewsuppowt;
+impowt com.twittew.seawch.common.woot.seawchwootmoduwe;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+i-impowt c-com.twittew.seawch.eawwybiwd.config.tiewconfig;
+i-impowt com.twittew.seawch.eawwybiwd.config.tiewinfo;
+i-impowt com.twittew.seawch.eawwybiwd.config.tiewinfosouwce;
+impowt com.twittew.seawch.eawwybiwd.config.tiewinfoutiw;
+i-impowt com.twittew.seawch.eawwybiwd.config.tiewinfowwappew;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdsewvice.sewviceiface;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwts;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+i-impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.eawwybiwdtimewangefiwtew;
+i-impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.wequestcontexttoeawwybiwdwequestfiwtew;
+i-impowt c-com.twittew.utiw.function;
+impowt com.twittew.utiw.futuwe;
 
-@Singleton
-public class EarlybirdServiceChainBuilder {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdServiceChainBuilder.class);
+@singweton
+pubwic cwass eawwybiwdsewvicechainbuiwdew {
+  p-pwivate s-static finaw woggew wog = woggewfactowy.getwoggew(eawwybiwdsewvicechainbuiwdew.cwass);
 
-  private static final String SEARCH_METHOD_NAME = "search";
+  p-pwivate s-static finaw stwing seawch_method_name = "seawch";
 
-  private static final EarlybirdResponse TIER_SKIPPED_RESPONSE =
-      new EarlybirdResponse(EarlybirdResponseCode.TIER_SKIPPED, 0)
-          .setSearchResults(new ThriftSearchResults())
-          .setDebugString("Request to cluster dropped by decider, or sent as dark read.");
+  p-pwivate static finaw eawwybiwdwesponse t-tiew_skipped_wesponse =
+      nyew eawwybiwdwesponse(eawwybiwdwesponsecode.tiew_skipped, OwO 0)
+          .setseawchwesuwts(new t-thwiftseawchwesuwts())
+          .setdebugstwing("wequest to cwustew d-dwopped by decidew, ^•ﻌ•^ ow sent as d-dawk wead.");
 
-  private final EarlybirdTierThrottleDeciders tierThrottleDeciders;
+  p-pwivate finaw eawwybiwdtiewthwottwedecidews tiewthwottwedecidews;
 
-  private final RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter;
+  pwivate finaw wequestcontexttoeawwybiwdwequestfiwtew wequestcontexttoeawwybiwdwequestfiwtew;
 
-  private final SearchDecider decider;
-  private final String normalizedSearchRootName;
-  private final RootClientServiceBuilder<ServiceIface> clientServiceBuilder;
-  private final String partitionPath;
-  private final int numPartitions;
-  private final SortedSet<TierInfo> tierInfos;
-  private final PartitionAccessController partitionAccessController;
-  private final StatsReceiver statsReceiver;
+  pwivate finaw seawchdecidew d-decidew;
+  pwivate f-finaw stwing nyowmawizedseawchwootname;
+  pwivate f-finaw wootcwientsewvicebuiwdew<sewviceiface> c-cwientsewvicebuiwdew;
+  p-pwivate finaw stwing pawtitionpath;
+  pwivate finaw i-int nyumpawtitions;
+  pwivate finaw sowtedset<tiewinfo> tiewinfos;
+  pwivate finaw p-pawtitionaccesscontwowwew pawtitionaccesscontwowwew;
+  p-pwivate f-finaw statsweceivew s-statsweceivew;
 
   /**
-   * Construct a ScatterGatherServiceChain, by loading configurations from earlybird-tiers.yml.
+   * constwuct a scattewgathewsewvicechain, >_< b-by woading c-configuwations f-fwom eawwybiwd-tiews.ymw. OwO
    */
-  @Inject
-  public EarlybirdServiceChainBuilder(
-      PartitionConfig partitionConfig,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
-      EarlybirdTierThrottleDeciders tierThrottleDeciders,
-      @Named(SearchRootModule.NAMED_NORMALIZED_SEARCH_ROOT_NAME) String normalizedSearchRootName,
-      SearchDecider decider,
-      TierInfoSource tierConfig,
-      RootClientServiceBuilder<ServiceIface> clientServiceBuilder,
-      PartitionAccessController partitionAccessController,
-      StatsReceiver statsReceiver) {
-    this.partitionAccessController = partitionAccessController;
-    this.tierThrottleDeciders = Preconditions.checkNotNull(tierThrottleDeciders);
-    this.requestContextToEarlybirdRequestFilter = requestContextToEarlybirdRequestFilter;
-    this.normalizedSearchRootName = normalizedSearchRootName;
-    this.decider = decider;
-    this.statsReceiver = statsReceiver;
+  @inject
+  p-pubwic eawwybiwdsewvicechainbuiwdew(
+      pawtitionconfig p-pawtitionconfig,
+      w-wequestcontexttoeawwybiwdwequestfiwtew w-wequestcontexttoeawwybiwdwequestfiwtew, >_<
+      e-eawwybiwdtiewthwottwedecidews t-tiewthwottwedecidews, (ꈍᴗꈍ)
+      @named(seawchwootmoduwe.named_nowmawized_seawch_woot_name) stwing nyowmawizedseawchwootname, >w<
+      seawchdecidew d-decidew, (U ﹏ U)
+      tiewinfosouwce tiewconfig, ^^
+      wootcwientsewvicebuiwdew<sewviceiface> cwientsewvicebuiwdew, (U ﹏ U)
+      pawtitionaccesscontwowwew pawtitionaccesscontwowwew, :3
+      s-statsweceivew statsweceivew) {
+    this.pawtitionaccesscontwowwew = pawtitionaccesscontwowwew;
+    t-this.tiewthwottwedecidews = p-pweconditions.checknotnuww(tiewthwottwedecidews);
+    t-this.wequestcontexttoeawwybiwdwequestfiwtew = wequestcontexttoeawwybiwdwequestfiwtew;
+    t-this.nowmawizedseawchwootname = nyowmawizedseawchwootname;
+    t-this.decidew = d-decidew;
+    this.statsweceivew = statsweceivew;
 
-    List<TierInfo> tierInformation = tierConfig.getTierInformation();
-    if (tierInformation == null || tierInformation.isEmpty()) {
-      LOG.error(
-          "No tier found in config file {} Did you set SEARCH_ENV correctly?",
-          tierConfig.getConfigFileType());
-      throw new RuntimeException("No tier found in tier config file.");
+    wist<tiewinfo> tiewinfowmation = tiewconfig.gettiewinfowmation();
+    i-if (tiewinfowmation == nyuww || t-tiewinfowmation.isempty()) {
+      wog.ewwow(
+          "no t-tiew found in c-config fiwe {} did you set seawch_env cowwectwy?", (✿oωo)
+          t-tiewconfig.getconfigfiwetype());
+      t-thwow nyew wuntimeexception("no t-tiew found i-in tiew config fiwe.");
     }
 
-    // Get the tier info from the tier config yml file
-    TreeSet<TierInfo> infos = new TreeSet<>(TierInfoUtil.TIER_COMPARATOR);
-    infos.addAll(tierInformation);
-    this.tierInfos = Collections.unmodifiableSortedSet(infos);
-    this.clientServiceBuilder = clientServiceBuilder;
-    this.partitionPath = partitionConfig.getPartitionPath();
-    this.numPartitions = partitionConfig.getNumPartitions();
+    // get the tiew info fwom the tiew config ymw fiwe
+    tweeset<tiewinfo> i-infos = n-nyew tweeset<>(tiewinfoutiw.tiew_compawatow);
+    i-infos.addaww(tiewinfowmation);
+    this.tiewinfos = c-cowwections.unmodifiabwesowtedset(infos);
+    t-this.cwientsewvicebuiwdew = cwientsewvicebuiwdew;
+    t-this.pawtitionpath = pawtitionconfig.getpawtitionpath();
+    this.numpawtitions = pawtitionconfig.getnumpawtitions();
 
-    LOG.info("Found the following tiers from config: {}", tierInfos);
+    wog.info("found t-the fowwowing t-tiews fwom config: {}", XD tiewinfos);
   }
 
-  /** Builds the chain of services that should be queried on each request. */
-  public List<Service<EarlybirdRequestContext, EarlybirdResponse>> buildServiceChain(
-      ScatterGatherSupport<EarlybirdRequestContext, EarlybirdResponse> support,
-      PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport) {
-    // Make sure the tier serving ranges do not overlap and do not have gaps.
-    TierInfoUtil.checkTierServingRanges(tierInfos);
+  /** buiwds the c-chain of sewvices t-that shouwd be quewied on each wequest. >w< */
+  pubwic wist<sewvice<eawwybiwdwequestcontext, òωó e-eawwybiwdwesponse>> buiwdsewvicechain(
+      scattewgathewsuppowt<eawwybiwdwequestcontext, (ꈍᴗꈍ) eawwybiwdwesponse> suppowt, rawr x3
+      p-pawtitionwoggingsuppowt<eawwybiwdwequestcontext> pawtitionwoggingsuppowt) {
+    // make s-suwe the tiew s-sewving wanges do nyot ovewwap and do nyot have gaps.
+    tiewinfoutiw.checktiewsewvingwanges(tiewinfos);
 
-    List<Service<EarlybirdRequestContext, EarlybirdResponse>> chain = Lists.newArrayList();
+    wist<sewvice<eawwybiwdwequestcontext, rawr x3 e-eawwybiwdwesponse>> c-chain = wists.newawwaywist();
 
-    for (TierInfo tierInfo : tierInfos) {
-      String tierName = tierInfo.getTierName();
-      if (tierInfo.isEnabled()) {
-        String rewrittenPartitionPath = partitionPath;
-        // This rewriting rule must match the rewriting rule inside
-        // EarlybirdServer#joinServerSet().
-        if (!TierConfig.DEFAULT_TIER_NAME.equals(tierName)) {
-          rewrittenPartitionPath = partitionPath + "/" + tierName;
+    fow (tiewinfo tiewinfo : t-tiewinfos) {
+      stwing tiewname = t-tiewinfo.gettiewname();
+      if (tiewinfo.isenabwed()) {
+        stwing wewwittenpawtitionpath = p-pawtitionpath;
+        // this wewwiting w-wuwe must match t-the wewwiting wuwe inside
+        // e-eawwybiwdsewvew#joinsewvewset(). σωσ
+        if (!tiewconfig.defauwt_tiew_name.equaws(tiewname)) {
+          w-wewwittenpawtitionpath = p-pawtitionpath + "/" + t-tiewname;
         }
 
-        clientServiceBuilder.initializeWithPathSuffix(
-            tierInfo.getTierName(),
-            numPartitions,
-            rewrittenPartitionPath);
+        cwientsewvicebuiwdew.initiawizewithpathsuffix(
+            tiewinfo.gettiewname(), (ꈍᴗꈍ)
+            n-nyumpawtitions,
+            w-wewwittenpawtitionpath);
 
-        try {
-          chain.add(createTierService(
-                        support, tierInfo, clientServiceBuilder, partitionLoggingSupport));
-        } catch (Exception e) {
-          LOG.error("Failed to build clients for tier: {}", tierInfo.getTierName());
-          throw new RuntimeException(e);
+        twy {
+          chain.add(cweatetiewsewvice(
+                        s-suppowt, tiewinfo, rawr c-cwientsewvicebuiwdew, ^^;; p-pawtitionwoggingsuppowt));
+        } catch (exception e) {
+          wog.ewwow("faiwed to buiwd cwients f-fow tiew: {}", rawr x3 tiewinfo.gettiewname());
+          t-thwow new wuntimeexception(e);
         }
 
-      } else {
-        LOG.info("Skipped disabled tier: {}", tierName);
+      } e-ewse {
+        wog.info("skipped disabwed tiew: {}", (ˆ ﻌ ˆ)♡ tiewname);
       }
     }
 
-    return chain;
+    w-wetuwn c-chain;
   }
 
-  private Service<EarlybirdRequestContext, EarlybirdResponse> createTierService(
-      ScatterGatherSupport<EarlybirdRequestContext, EarlybirdResponse> support,
-      final TierInfo tierInfo,
-      RootClientServiceBuilder<ServiceIface> builder,
-      PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport) {
+  pwivate s-sewvice<eawwybiwdwequestcontext, σωσ e-eawwybiwdwesponse> cweatetiewsewvice(
+      s-scattewgathewsuppowt<eawwybiwdwequestcontext, (U ﹏ U) eawwybiwdwesponse> suppowt, >w<
+      finaw tiewinfo tiewinfo, σωσ
+      wootcwientsewvicebuiwdew<sewviceiface> b-buiwdew, nyaa~~
+      pawtitionwoggingsuppowt<eawwybiwdwequestcontext> p-pawtitionwoggingsuppowt) {
 
-    final String tierName = tierInfo.getTierName();
-    RequestSuccessStats stats = new RequestSuccessStats(tierName);
+    finaw stwing t-tiewname = tiewinfo.gettiewname();
+    w-wequestsuccessstats stats = nyew wequestsuccessstats(tiewname);
 
-    List<Service<EarlybirdRequest, EarlybirdResponse>> services =
-        builder.safeBuildServiceList(SEARCH_METHOD_NAME);
+    w-wist<sewvice<eawwybiwdwequest, 🥺 e-eawwybiwdwesponse>> s-sewvices =
+        b-buiwdew.safebuiwdsewvicewist(seawch_method_name);
 
-    // Get the client list for this tier, and apply the degradationTrackerFilter to each response.
+    // g-get the cwient wist fow this tiew, rawr x3 and appwy the degwadationtwackewfiwtew to each wesponse. σωσ
     //
-    // We currently do this only for the EarlybirdSearchMultiTierAdaptor (the full archive cluster).
-    // If we want to do this for all clusters (or if we want to apply any other filter to all
-    // earlybird responses, for other clusters), we should change ScatterGatherService's constructor
-    // to take in a filter, and apply it there.
-    ClientBackupFilter backupFilter = new ClientBackupFilter(
-        "root_" + EarlybirdCluster.FULL_ARCHIVE.getNameForStats(),
-        tierName,
-        statsReceiver,
-        decider);
-    List<Service<EarlybirdRequestContext, EarlybirdResponse>> clients = Lists.newArrayList();
-    ClientLatencyFilter latencyFilter = new ClientLatencyFilter(tierName);
-    for (Service<EarlybirdRequest, EarlybirdResponse> client : services) {
-        clients.add(requestContextToEarlybirdRequestFilter
-            .andThen(backupFilter)
-            .andThen(latencyFilter)
-            .andThen(client));
+    // we cuwwentwy d-do this o-onwy fow the eawwybiwdseawchmuwtitiewadaptow (the f-fuww awchive cwustew). (///ˬ///✿)
+    // i-if we want to do this fow aww cwustews (ow if we want to appwy a-any othew fiwtew t-to aww
+    // eawwybiwd wesponses, (U ﹏ U) f-fow othew cwustews), ^^;; we shouwd change scattewgathewsewvice's c-constwuctow
+    // t-to take in a fiwtew, 🥺 and appwy i-it thewe. òωó
+    c-cwientbackupfiwtew backupfiwtew = nyew cwientbackupfiwtew(
+        "woot_" + eawwybiwdcwustew.fuww_awchive.getnamefowstats(), XD
+        tiewname, :3
+        s-statsweceivew, (U ﹏ U)
+        d-decidew);
+    wist<sewvice<eawwybiwdwequestcontext, >w< e-eawwybiwdwesponse>> c-cwients = w-wists.newawwaywist();
+    cwientwatencyfiwtew w-watencyfiwtew = n-nyew cwientwatencyfiwtew(tiewname);
+    fow (sewvice<eawwybiwdwequest, /(^•ω•^) e-eawwybiwdwesponse> c-cwient : sewvices) {
+        c-cwients.add(wequestcontexttoeawwybiwdwequestfiwtew
+            .andthen(backupfiwtew)
+            .andthen(watencyfiwtew)
+            .andthen(cwient));
     }
 
-    clients = SkipPartitionFilter.wrapServices(tierName, clients, partitionAccessController);
+    cwients = skippawtitionfiwtew.wwapsewvices(tiewname, (⑅˘꒳˘) c-cwients, ʘwʘ pawtitionaccesscontwowwew);
 
-    // Build the scatter gather service for this tier.
-    // Each tier has their own stats.
-    ScatterGatherService<EarlybirdRequestContext, EarlybirdResponse> scatterGatherService =
-        new ScatterGatherService<>(
-            support, clients, stats, partitionLoggingSupport);
+    // buiwd t-the scattew gathew s-sewvice fow this tiew. rawr x3
+    // e-each tiew has theiw own stats. (˘ω˘)
+    scattewgathewsewvice<eawwybiwdwequestcontext, o.O e-eawwybiwdwesponse> s-scattewgathewsewvice =
+        n-nyew scattewgathewsewvice<>(
+            suppowt, 😳 cwients, o.O stats, pawtitionwoggingsuppowt);
 
-    SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> tierThrottleFilter =
-        getTierThrottleFilter(tierInfo, tierName);
+    simpwefiwtew<eawwybiwdwequestcontext, ^^;; e-eawwybiwdwesponse> tiewthwottwefiwtew =
+        gettiewthwottwefiwtew(tiewinfo, ( ͡o ω ͡o ) t-tiewname);
 
-    EarlybirdTimeRangeFilter timeRangeFilter =
-        EarlybirdTimeRangeFilter.newTimeRangeFilterWithQueryRewriter(
-            (requestContext, userOverride) -> new TierInfoWrapper(tierInfo, userOverride),
-            decider);
+    e-eawwybiwdtimewangefiwtew timewangefiwtew =
+        e-eawwybiwdtimewangefiwtew.newtimewangefiwtewwithquewywewwitew(
+            (wequestcontext, ^^;; usewovewwide) -> n-nyew t-tiewinfowwappew(tiewinfo, ^^;; usewovewwide), XD
+            decidew);
 
-    return tierThrottleFilter
-        .andThen(timeRangeFilter)
-        .andThen(scatterGatherService);
+    w-wetuwn tiewthwottwefiwtew
+        .andthen(timewangefiwtew)
+        .andthen(scattewgathewsewvice);
   }
 
-  private SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> getTierThrottleFilter(
-      final TierInfo tierInfo,
-      final String tierName) {
+  pwivate simpwefiwtew<eawwybiwdwequestcontext, 🥺 eawwybiwdwesponse> gettiewthwottwefiwtew(
+      finaw t-tiewinfo tiewinfo, (///ˬ///✿)
+      f-finaw stwing tiewname) {
 
-    // A filter that throttles request rate.
-    final String tierThrottleDeciderKey = tierThrottleDeciders.getTierThrottleDeciderKey(
-        normalizedSearchRootName, tierName);
+    // a f-fiwtew that thwottwes wequest wate. (U ᵕ U❁)
+    f-finaw stwing t-tiewthwottwedecidewkey = tiewthwottwedecidews.gettiewthwottwedecidewkey(
+        n-nyowmawizedseawchwootname, tiewname);
 
-    SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> tierThrottleFilter =
-        new SimpleFilter<EarlybirdRequestContext, EarlybirdResponse>() {
-          private final Map<TierInfo.RequestReadType, SearchCounter> readCounts =
-              getReadCountsMap();
+    simpwefiwtew<eawwybiwdwequestcontext, ^^;; eawwybiwdwesponse> tiewthwottwefiwtew =
+        nyew simpwefiwtew<eawwybiwdwequestcontext, ^^;; eawwybiwdwesponse>() {
+          pwivate finaw map<tiewinfo.wequestweadtype, rawr seawchcountew> weadcounts =
+              getweadcountsmap();
 
-          private Map<TierInfo.RequestReadType, SearchCounter> getReadCountsMap() {
-            Map<TierInfo.RequestReadType, SearchCounter> readCountsMap =
-                Maps.newEnumMap(TierInfo.RequestReadType.class);
-            for (TierInfo.RequestReadType readType : TierInfo.RequestReadType.values()) {
-              readCountsMap.put(readType,
-                  SearchCounter.export("earlybird_tier_" + tierName + "_"
-                      + readType.name().toLowerCase() + "_read_count"));
+          pwivate map<tiewinfo.wequestweadtype, (˘ω˘) seawchcountew> g-getweadcountsmap() {
+            map<tiewinfo.wequestweadtype, 🥺 s-seawchcountew> weadcountsmap =
+                maps.newenummap(tiewinfo.wequestweadtype.cwass);
+            f-fow (tiewinfo.wequestweadtype w-weadtype : t-tiewinfo.wequestweadtype.vawues()) {
+              weadcountsmap.put(weadtype, nyaa~~
+                  s-seawchcountew.expowt("eawwybiwd_tiew_" + tiewname + "_"
+                      + w-weadtype.name().towowewcase() + "_wead_count"));
             }
-            return Collections.unmodifiableMap(readCountsMap);
+            w-wetuwn cowwections.unmodifiabwemap(weadcountsmap);
           }
 
-          private final SearchCounter tierRequestDroppedByDeciderCount =
-              SearchCounter.export("earlybird_tier_" + tierName
-                  + "_request_dropped_by_decider_count");
+          p-pwivate finaw seawchcountew t-tiewwequestdwoppedbydecidewcount =
+              s-seawchcountew.expowt("eawwybiwd_tiew_" + tiewname
+                  + "_wequest_dwopped_by_decidew_count");
 
-          @Override
-          public Future<EarlybirdResponse> apply(
-              EarlybirdRequestContext requestContext,
-              Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+          @ovewwide
+          pubwic futuwe<eawwybiwdwesponse> a-appwy(
+              e-eawwybiwdwequestcontext w-wequestcontext, :3
+              s-sewvice<eawwybiwdwequestcontext, /(^•ω•^) e-eawwybiwdwesponse> s-sewvice) {
 
-            // a blank response is returned when a request is dropped by decider, or
-            // a request is sent as a dark read.
-            final Future<EarlybirdResponse> blankTierResponse = Future.value(TIER_SKIPPED_RESPONSE);
-            if (tierThrottleDeciders.shouldSendRequestToTier(tierThrottleDeciderKey)) {
-              TierInfoWrapper tierInfoWrapper =
-                  new TierInfoWrapper(tierInfo, requestContext.useOverrideTierConfig());
+            // a-a bwank w-wesponse is wetuwned w-when a wequest is dwopped b-by decidew, ^•ﻌ•^ ow
+            // a-a wequest is sent a-as a dawk wead. UwU
+            finaw f-futuwe<eawwybiwdwesponse> bwanktiewwesponse = futuwe.vawue(tiew_skipped_wesponse);
+            i-if (tiewthwottwedecidews.shouwdsendwequesttotiew(tiewthwottwedecidewkey)) {
+              tiewinfowwappew t-tiewinfowwappew =
+                  n-new tiewinfowwappew(tiewinfo, 😳😳😳 wequestcontext.useovewwidetiewconfig());
 
-              TierInfo.RequestReadType readType = tierInfoWrapper.getReadType();
-              readCounts.get(readType).increment();
-              switch (readType) {
-                case DARK:
-                  // dark read: call backend but do not wait for results
-                  service.apply(requestContext);
-                  return blankTierResponse;
-                case GREY:
-                  // grey read: call backend, wait for results, but discard results.
-                  return service.apply(requestContext).flatMap(
-                      new Function<EarlybirdResponse, Future<EarlybirdResponse>>() {
-                        @Override
-                        public Future<EarlybirdResponse> apply(EarlybirdResponse v1) {
-                          // No matter what's returned, always return blankTierResponse.
-                          return blankTierResponse;
+              t-tiewinfo.wequestweadtype weadtype = tiewinfowwappew.getweadtype();
+              w-weadcounts.get(weadtype).incwement();
+              switch (weadtype) {
+                c-case dawk:
+                  // dawk wead: caww b-backend but do nyot wait fow wesuwts
+                  s-sewvice.appwy(wequestcontext);
+                  wetuwn bwanktiewwesponse;
+                case gwey:
+                  // gwey wead: caww backend, OwO wait f-fow wesuwts, ^•ﻌ•^ but discawd wesuwts. (ꈍᴗꈍ)
+                  w-wetuwn sewvice.appwy(wequestcontext).fwatmap(
+                      n-nyew function<eawwybiwdwesponse, (⑅˘꒳˘) futuwe<eawwybiwdwesponse>>() {
+                        @ovewwide
+                        pubwic futuwe<eawwybiwdwesponse> appwy(eawwybiwdwesponse v-v1) {
+                          // nyo m-mattew nyani's w-wetuwned, (⑅˘꒳˘) awways w-wetuwn bwanktiewwesponse. (ˆ ﻌ ˆ)♡
+                          wetuwn bwanktiewwesponse;
                         }
                       });
-                case LIGHT:
-                  // light read: return the future from the backend service.
-                  return service.apply(requestContext);
-                default:
-                  throw new RuntimeException("Unknown read type: " + readType);
+                case wight:
+                  // w-wight wead: w-wetuwn the futuwe fwom the backend s-sewvice. /(^•ω•^)
+                  wetuwn sewvice.appwy(wequestcontext);
+                defauwt:
+                  t-thwow nyew wuntimeexception("unknown wead type: " + w-weadtype);
               }
-            } else {
-              // Request is dropped by throttle decider
-              tierRequestDroppedByDeciderCount.increment();
-              return blankTierResponse;
+            } e-ewse {
+              // w-wequest is dwopped by thwottwe d-decidew
+              t-tiewwequestdwoppedbydecidewcount.incwement();
+              w-wetuwn bwanktiewwesponse;
             }
           }
         };
-    return tierThrottleFilter;
+    w-wetuwn tiewthwottwefiwtew;
   }
 }

@@ -1,37 +1,37 @@
-package com.twitter.recos.user_user_graph
+package com.twittew.wecos.usew_usew_gwaph
 
-import com.twitter.recos.model.Constants
-import com.twitter.recos.graph_common.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraphBuilder.GraphBuilderConfig
+impowt c-com.twittew.wecos.modew.constants
+i-impowt com.twittew.wecos.gwaph_common.nodemetadataweftindexedpowewwawmuwtisegmentbipawtitegwaphbuiwdew.gwaphbuiwdewconfig
 
 /**
- * The class holds all the config parameters for recos graph.
+ * t-the cwass howds a-aww the config p-pawametews fow w-wecos gwaph. >w<
  */
-object RecosConfig {
-  val maxNumSegments: Int = 5
-  val maxNumEdgesPerSegment: Int = 1 << 26 // 64M edges per segment
-  val expectedNumLeftNodes: Int = 1 << 24 // should correspond to 16M nodes storage
-  val expectedMaxLeftDegree: Int = 64
-  val leftPowerLawExponent: Double = 16.0 // steep power law as most nodes will have a small degree
-  val expectedNumRightNodes: Int = 1 << 24 // 16M nodes
-  val numRightNodeMetadataTypes = 1 // UUG does not have node metadata
+o-object wecosconfig {
+  v-vaw maxnumsegments: int = 5
+  vaw maxnumedgespewsegment: int = 1 << 26 // 64m edges pew segment
+  vaw e-expectednumweftnodes: int = 1 << 24 // shouwd cowwespond t-to 16m nyodes stowage
+  v-vaw expectedmaxweftdegwee: int = 64
+  vaw weftpowewwawexponent: doubwe = 16.0 // s-steep powew waw as most nyodes w-wiww have a smow d-degwee
+  vaw expectednumwightnodes: int = 1 << 24 // 16m nyodes
+  vaw nyumwightnodemetadatatypes = 1 // u-uug does nyot have nyode metadata
 
-  val graphBuilderConfig = GraphBuilderConfig(
-    maxNumSegments = maxNumSegments,
-    maxNumEdgesPerSegment = maxNumEdgesPerSegment,
-    expectedNumLeftNodes = expectedNumLeftNodes,
-    expectedMaxLeftDegree = expectedMaxLeftDegree,
-    leftPowerLawExponent = leftPowerLawExponent,
-    expectedNumRightNodes = expectedNumRightNodes,
-    numRightNodeMetadataTypes = numRightNodeMetadataTypes,
-    edgeTypeMask = new UserEdgeTypeMask()
+  vaw gwaphbuiwdewconfig = gwaphbuiwdewconfig(
+    m-maxnumsegments = maxnumsegments, rawr
+    m-maxnumedgespewsegment = m-maxnumedgespewsegment, mya
+    e-expectednumweftnodes = e-expectednumweftnodes, ^^
+    expectedmaxweftdegwee = expectedmaxweftdegwee, 😳😳😳
+    w-weftpowewwawexponent = weftpowewwawexponent, mya
+    expectednumwightnodes = e-expectednumwightnodes, 😳
+    nyumwightnodemetadatatypes = nyumwightnodemetadatatypes, -.-
+    edgetypemask = nyew usewedgetypemask()
   )
 
-  println("RecosConfig -            maxNumSegments " + maxNumSegments)
-  println("RecosConfig -     maxNumEdgesPerSegment " + maxNumEdgesPerSegment)
-  println("RecosConfig -      expectedNumLeftNodes " + expectedNumLeftNodes)
-  println("RecosConfig -     expectedMaxLeftDegree " + expectedMaxLeftDegree)
-  println("RecosConfig -      leftPowerLawExponent " + leftPowerLawExponent)
-  println("RecosConfig -     expectedNumRightNodes " + expectedNumRightNodes)
-  println("RecosConfig -     numRightNodeMetadataTypes " + numRightNodeMetadataTypes)
-  println("RecosConfig -         salsaRunnerConfig " + Constants.salsaRunnerConfig)
+  p-pwintwn("wecosconfig -            maxnumsegments " + m-maxnumsegments)
+  p-pwintwn("wecosconfig -     m-maxnumedgespewsegment " + maxnumedgespewsegment)
+  pwintwn("wecosconfig -      expectednumweftnodes " + e-expectednumweftnodes)
+  p-pwintwn("wecosconfig -     expectedmaxweftdegwee " + e-expectedmaxweftdegwee)
+  p-pwintwn("wecosconfig -      weftpowewwawexponent " + w-weftpowewwawexponent)
+  pwintwn("wecosconfig -     e-expectednumwightnodes " + expectednumwightnodes)
+  pwintwn("wecosconfig -     n-nyumwightnodemetadatatypes " + nyumwightnodemetadatatypes)
+  pwintwn("wecosconfig -         s-sawsawunnewconfig " + constants.sawsawunnewconfig)
 }

@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.contextuaw_wef
 
-sealed trait OuterTweetContext
+seawed twait o-outewtweetcontext
 
-case class QuoteTweetId(id: Long) extends OuterTweetContext
-case class RetweetId(id: Long) extends OuterTweetContext
+c-case cwass q-quotetweetid(id: w-wong) extends outewtweetcontext
+c-case cwass wetweetid(id: w-wong) e-extends outewtweetcontext

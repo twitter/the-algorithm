@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.model.common.presentation.urt
+package com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.uwt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ModuleItemTreeDisplay
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.moduweitemtweedispway
 
 /*
- * Tree state declaring item’s parent relationship with any other items in
- * the module, any display indentation information, and/or collapsed display state.
+ * t-twee state d-decwawing item’s p-pawent wewationship w-with any o-othew items in
+ * t-the moduwe, σωσ a-any dispway indentation i-infowmation, >_< and/ow cowwapsed dispway state. :3
  */
-trait WithItemTreeDisplay { self: BaseUrtItemPresentation =>
-  def treeDisplay: Option[ModuleItemTreeDisplay]
+twait withitemtweedispway { sewf: baseuwtitempwesentation =>
+  d-def tweedispway: option[moduweitemtweedispway]
 }

@@ -1,9 +1,9 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.twittew.seawch.eawwybiwd_woot.mewgews;
 
-public interface EarlyTerminateTierMergePredicate {
+pubwic intewface e-eawwytewminatetiewmewgepwedicate {
   /**
-   * Do we have enough results so far that we can early terminate and not continue onto next tier?
+   * d-do we have enough w-wesuwts so faw t-that we can eawwy t-tewminate and n-nyot continue o-onto nyext tiew?
    */
-  boolean shouldEarlyTerminateTierMerge(int totalResultsFromSuccessfulShards,
-                                        boolean foundEarlyTermination);
+  b-boowean shouwdeawwytewminatetiewmewge(int totawwesuwtsfwomsuccessfuwshawds, rawr
+                                        boowean foundeawwytewmination);
 }

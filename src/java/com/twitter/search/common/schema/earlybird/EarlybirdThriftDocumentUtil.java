@@ -1,377 +1,377 @@
-package com.twitter.search.common.schema.earlybird;
+package com.twittew.seawch.common.schema.eawwybiwd;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
+impowt java.io.ioexception;
+i-impowt java.utiw.itewatow;
+i-impowt j-java.utiw.wist;
 
-import com.google.common.collect.ImmutableList;
+i-impowt com.googwe.common.cowwect.immutabwewist;
 
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.ThriftDocumentUtil;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftField;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldData;
-import com.twitter.search.common.util.analysis.IntTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.TwitterNormalizedMinEngagementTokenStream;
+i-impowt com.twittew.common.text.utiw.tokenstweamsewiawizew;
+impowt c-com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+i-impowt com.twittew.seawch.common.schema.base.thwiftdocumentutiw;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftdocument;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfiewd;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfiewddata;
+impowt com.twittew.seawch.common.utiw.anawysis.inttewmattwibutesewiawizew;
+i-impowt com.twittew.seawch.common.utiw.anawysis.twittewnowmawizedminengagementtokenstweam;
 
 /**
- * Utility APIs for ThriftDocument used in Earlybird.
+ * u-utiwity apis fow thwiftdocument used in eawwybiwd. ^^;;
  */
-public final class EarlybirdThriftDocumentUtil {
-  private static final EarlybirdFieldConstants ID_MAPPING = new EarlybirdFieldConstants();
+p-pubwic finaw cwass eawwybiwdthwiftdocumentutiw {
+  p-pwivate static f-finaw eawwybiwdfiewdconstants id_mapping = nyew eawwybiwdfiewdconstants();
 
-  private static final String FILTER_FORMAT_STRING = "__filter_%s";
+  pwivate static finaw stwing f-fiwtew_fowmat_stwing = "__fiwtew_%s";
 
   /**
-   * Used to check whether a thrift document has filter nullcast internal field set.
-   * @see #isNullcastFilterSet(ThriftDocument)
+   * used to check whethew a thwift document has fiwtew nyuwwcast intewnaw f-fiewd set. ^^;;
+   * @see #isnuwwcastfiwtewset(thwiftdocument)
    */
-  private static final String NULLCAST_FILTER_TERM =
-      formatFilter(EarlybirdFieldConstant.NULLCAST_FILTER_TERM);
+  pwivate s-static finaw stwing n-nyuwwcast_fiwtew_tewm =
+      f-fowmatfiwtew(eawwybiwdfiewdconstant.nuwwcast_fiwtew_tewm);
 
-  private static final String SELF_THREAD_FILTER_TERM =
-      formatFilter(EarlybirdFieldConstant.SELF_THREAD_FILTER_TERM);
+  p-pwivate static finaw stwing sewf_thwead_fiwtew_tewm =
+      fowmatfiwtew(eawwybiwdfiewdconstant.sewf_thwead_fiwtew_tewm);
 
-  private static final String DIRECTED_AT_FILTER_TERM =
-      formatFilter(EarlybirdFieldConstant.DIRECTED_AT_FILTER_TERM);
+  pwivate s-static finaw stwing diwected_at_fiwtew_tewm =
+      fowmatfiwtew(eawwybiwdfiewdconstant.diwected_at_fiwtew_tewm);
 
-  private EarlybirdThriftDocumentUtil() {
-    // Cannot instantiate.
+  p-pwivate eawwybiwdthwiftdocumentutiw() {
+    // cannot instantiate. rawr
   }
 
   /**
-   * Formats a regular, simple filter term. The 'filter' argument should correspond to a constant
-   * from the Operator class, matching the operand (filter:links -> "links").
+   * fowmats a weguwaw, (˘ω˘) simpwe fiwtew t-tewm. 🥺 the 'fiwtew' awgument shouwd c-cowwespond to a-a constant
+   * f-fwom the opewatow cwass, nyaa~~ matching the opewand (fiwtew:winks -> "winks"). :3
    */
-  public static final String formatFilter(String filter) {
-    return String.format(FILTER_FORMAT_STRING, filter);
+  pubwic static f-finaw stwing fowmatfiwtew(stwing f-fiwtew) {
+    wetuwn stwing.fowmat(fiwtew_fowmat_stwing, /(^•ω•^) f-fiwtew);
   }
 
   /**
-   * Get status id.
+   * g-get status id. ^•ﻌ•^
    */
-  public static long getID(ThriftDocument document) {
-    return ThriftDocumentUtil.getLongValue(
-        document, EarlybirdFieldConstant.ID_FIELD.getFieldName(), ID_MAPPING);
+  pubwic s-static wong getid(thwiftdocument document) {
+    w-wetuwn thwiftdocumentutiw.getwongvawue(
+        document, UwU eawwybiwdfiewdconstant.id_fiewd.getfiewdname(), 😳😳😳 id_mapping);
   }
 
   /**
-   * Get Card name.
+   * g-get cawd name. OwO
    */
-  public static String getCardName(ThriftDocument document) {
-    return ThriftDocumentUtil.getStringValue(
-        document, EarlybirdFieldConstant.CARD_NAME_FIELD.getFieldName(), ID_MAPPING);
+  p-pubwic static stwing getcawdname(thwiftdocument d-document) {
+    w-wetuwn thwiftdocumentutiw.getstwingvawue(
+        document, ^•ﻌ•^ eawwybiwdfiewdconstant.cawd_name_fiewd.getfiewdname(), (ꈍᴗꈍ) id_mapping);
   }
 
   /**
-   * Get Card language.
+   * get cawd wanguage. (⑅˘꒳˘)
    */
-  public static String getCardLang(ThriftDocument document) {
-    return ThriftDocumentUtil.getStringValue(
-        document, EarlybirdFieldConstant.CARD_LANG.getFieldName(), ID_MAPPING);
+  pubwic static stwing getcawdwang(thwiftdocument d-document) {
+    w-wetuwn thwiftdocumentutiw.getstwingvawue(
+        d-document, (⑅˘꒳˘) e-eawwybiwdfiewdconstant.cawd_wang.getfiewdname(), (ˆ ﻌ ˆ)♡ i-id_mapping);
   }
 
   /**
-   * Get Card language CSF.
+   * get cawd wanguage csf. /(^•ω•^)
    *
-   * card language CSF is represented internally as an integer ID for a ThriftLanguage.
+   * cawd wanguage c-csf is wepwesented intewnawwy as an integew id fow a thwiftwanguage. òωó
    */
-  public static int getCardLangCSF(ThriftDocument document) {
-    return ThriftDocumentUtil.getIntValue(
-        document, EarlybirdFieldConstant.CARD_LANG_CSF.getFieldName(), ID_MAPPING);
+  pubwic static int g-getcawdwangcsf(thwiftdocument document) {
+    w-wetuwn thwiftdocumentutiw.getintvawue(
+        d-document, (⑅˘꒳˘) eawwybiwdfiewdconstant.cawd_wang_csf.getfiewdname(), (U ᵕ U❁) id_mapping);
   }
 
   /**
-   * Get quoted tweet id.
+   * g-get quoted tweet id. >w<
    */
-  public static long getQuotedTweetID(ThriftDocument document) {
-    return ThriftDocumentUtil.getLongValue(
-        document, EarlybirdFieldConstant.QUOTED_TWEET_ID_FIELD.getFieldName(), ID_MAPPING);
+  p-pubwic s-static wong getquotedtweetid(thwiftdocument d-document) {
+    w-wetuwn thwiftdocumentutiw.getwongvawue(
+        document, σωσ e-eawwybiwdfiewdconstant.quoted_tweet_id_fiewd.getfiewdname(), -.- i-id_mapping);
   }
 
   /**
-   * Get quoted tweet user id.
+   * g-get quoted tweet u-usew id. o.O
    */
-  public static long getQuotedUserID(ThriftDocument document) {
-    return ThriftDocumentUtil.getLongValue(
-        document, EarlybirdFieldConstant.QUOTED_USER_ID_FIELD.getFieldName(), ID_MAPPING);
+  p-pubwic static wong getquotedusewid(thwiftdocument document) {
+    wetuwn thwiftdocumentutiw.getwongvawue(
+        d-document, ^^ eawwybiwdfiewdconstant.quoted_usew_id_fiewd.getfiewdname(), >_< id_mapping);
   }
 
   /**
-   * Get directed at user id.
+   * get diwected at usew id.
    */
-  public static long getDirectedAtUserId(ThriftDocument document) {
-    return ThriftDocumentUtil.getLongValue(
-        document, EarlybirdFieldConstant.DIRECTED_AT_USER_ID_FIELD.getFieldName(), ID_MAPPING);
+  pubwic static wong getdiwectedatusewid(thwiftdocument d-document) {
+    wetuwn thwiftdocumentutiw.getwongvawue(
+        document, >w< e-eawwybiwdfiewdconstant.diwected_at_usew_id_fiewd.getfiewdname(), >_< i-id_mapping);
   }
 
   /**
-   * Get directed at user id CSF.
+   * g-get diwected at usew id csf. >w<
    */
-  public static long getDirectedAtUserIdCSF(ThriftDocument document) {
-    return ThriftDocumentUtil.getLongValue(
-        document, EarlybirdFieldConstant.DIRECTED_AT_USER_ID_CSF.getFieldName(), ID_MAPPING);
+  p-pubwic static wong getdiwectedatusewidcsf(thwiftdocument d-document) {
+    w-wetuwn thwiftdocumentutiw.getwongvawue(
+        document, rawr eawwybiwdfiewdconstant.diwected_at_usew_id_csf.getfiewdname(), rawr x3 id_mapping);
   }
 
   /**
-   * Get reference author id CSF.
+   * get wefewence authow id csf. ( ͡o ω ͡o )
    */
-  public static long getReferenceAuthorIdCSF(ThriftDocument document) {
-    return ThriftDocumentUtil.getLongValue(
-        document, EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_CSF.getFieldName(), ID_MAPPING);
+  pubwic s-static wong getwefewenceauthowidcsf(thwiftdocument d-document) {
+    wetuwn t-thwiftdocumentutiw.getwongvawue(
+        d-document, (˘ω˘) eawwybiwdfiewdconstant.wefewence_authow_id_csf.getfiewdname(), 😳 id_mapping);
   }
 
   /**
-   * Get links.
+   * get w-winks. OwO
    */
-  public static List<String> getLinks(ThriftDocument document) {
-    return getStringValues(document, EarlybirdFieldConstant.LINKS_FIELD);
+  p-pubwic static wist<stwing> getwinks(thwiftdocument d-document) {
+    w-wetuwn getstwingvawues(document, (˘ω˘) eawwybiwdfiewdconstant.winks_fiewd);
   }
 
   /**
-   * Get created at timestamp in sec.
+   * get cweated at timestamp in sec. òωó
    */
-  public static int getCreatedAtSec(ThriftDocument document) {
-    return ThriftDocumentUtil.getIntValue(
-        document, EarlybirdFieldConstant.CREATED_AT_FIELD.getFieldName(), ID_MAPPING);
+  p-pubwic static i-int getcweatedatsec(thwiftdocument d-document) {
+    wetuwn thwiftdocumentutiw.getintvawue(
+        d-document, ( ͡o ω ͡o ) eawwybiwdfiewdconstant.cweated_at_fiewd.getfiewdname(), UwU i-id_mapping);
   }
 
   /**
-   * Get created at timestamp in ms.
+   * get cweated at t-timestamp in ms. /(^•ω•^)
    */
-  public static long getCreatedAtMs(ThriftDocument document) {
-    long createdAtSec = (long) getCreatedAtSec(document);
-    return createdAtSec * 1000L;
+  pubwic static wong getcweatedatms(thwiftdocument document) {
+    wong c-cweatedatsec = (wong) g-getcweatedatsec(document);
+    wetuwn cweatedatsec * 1000w;
   }
 
   /**
-   * Get from user id.
+   * get fwom usew i-id. (ꈍᴗꈍ)
    */
-  public static long getFromUserID(ThriftDocument document) {
-    return ThriftDocumentUtil.getLongValue(
-        document, EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName(), ID_MAPPING);
+  pubwic s-static wong getfwomusewid(thwiftdocument document) {
+    wetuwn t-thwiftdocumentutiw.getwongvawue(
+        document, 😳 eawwybiwdfiewdconstant.fwom_usew_id_fiewd.getfiewdname(), mya id_mapping);
   }
 
   /**
-   * Get from user.
+   * get f-fwom usew. mya
    */
-  public static String getFromUser(ThriftDocument document) {
-    return ThriftDocumentUtil.getStringValue(
-        document, EarlybirdFieldConstant.FROM_USER_FIELD.getFieldName(), ID_MAPPING);
+  pubwic static stwing getfwomusew(thwiftdocument d-document) {
+    w-wetuwn thwiftdocumentutiw.getstwingvawue(
+        document, /(^•ω•^) eawwybiwdfiewdconstant.fwom_usew_fiewd.getfiewdname(), ^^;; id_mapping);
   }
 
   /**
-   * Get tokenized from user display name.
+   * g-get tokenized f-fwom usew dispway nyame. 🥺
    */
-  public static String getFromUserDisplayName(ThriftDocument document) {
-    return ThriftDocumentUtil.getStringValue(
-        document, EarlybirdFieldConstant.TOKENIZED_USER_NAME_FIELD.getFieldName(), ID_MAPPING);
+  pubwic static stwing getfwomusewdispwayname(thwiftdocument document) {
+    wetuwn t-thwiftdocumentutiw.getstwingvawue(
+        document, ^^ eawwybiwdfiewdconstant.tokenized_usew_name_fiewd.getfiewdname(), ^•ﻌ•^ i-id_mapping);
   }
 
   /**
-   * Get tokenized from user.
+   * get tokenized fwom usew. /(^•ω•^)
    */
-  public static String getTokenizedFromUser(ThriftDocument document) {
-    return ThriftDocumentUtil.getStringValue(
-        document, EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName(), ID_MAPPING);
+  pubwic s-static stwing gettokenizedfwomusew(thwiftdocument document) {
+    w-wetuwn thwiftdocumentutiw.getstwingvawue(
+        d-document, ^^ eawwybiwdfiewdconstant.tokenized_fwom_usew_fiewd.getfiewdname(), 🥺 id_mapping);
   }
 
   /**
-   * Get resolved links text.
+   * g-get wesowved winks t-text. (U ᵕ U❁)
    */
-  public static String getResolvedLinksText(ThriftDocument document) {
-    return ThriftDocumentUtil.getStringValue(
-        document, EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName(), ID_MAPPING);
+  pubwic s-static stwing g-getwesowvedwinkstext(thwiftdocument document) {
+    w-wetuwn thwiftdocumentutiw.getstwingvawue(
+        d-document, 😳😳😳 eawwybiwdfiewdconstant.wesowved_winks_text_fiewd.getfiewdname(), nyaa~~ id_mapping);
   }
 
   /**
-   * Get iso language code.
+   * g-get iso wanguage c-code.
    */
-  public static List<String> getISOLanguage(ThriftDocument document) {
-    return ThriftDocumentUtil.getStringValues(
-        document, EarlybirdFieldConstant.ISO_LANGUAGE_FIELD.getFieldName(), ID_MAPPING);
+  p-pubwic static wist<stwing> getisowanguage(thwiftdocument document) {
+    w-wetuwn thwiftdocumentutiw.getstwingvawues(
+        d-document, (˘ω˘) e-eawwybiwdfiewdconstant.iso_wanguage_fiewd.getfiewdname(), id_mapping);
   }
 
   /**
-   * First remove the old timestamp if they exist.
-   * Then add the created at and created at csf fields to the given thrift document.
+   * fiwst wemove the owd t-timestamp if they e-exist. >_<
+   * t-then add the cweated a-at and cweated at csf fiewds t-to the given thwift document. XD
    */
-  public static void replaceCreatedAtAndCreatedAtCSF(ThriftDocument document, int value) {
-    removeField(document, EarlybirdFieldConstant.CREATED_AT_FIELD);
-    removeField(document, EarlybirdFieldConstant.CREATED_AT_CSF_FIELD);
+  pubwic static void wepwacecweatedatandcweatedatcsf(thwiftdocument document, rawr x3 int vawue) {
+    w-wemovefiewd(document, ( ͡o ω ͡o ) eawwybiwdfiewdconstant.cweated_at_fiewd);
+    w-wemovefiewd(document, :3 eawwybiwdfiewdconstant.cweated_at_csf_fiewd);
 
-    addIntField(document, EarlybirdFieldConstant.CREATED_AT_FIELD, value);
-    addIntField(document, EarlybirdFieldConstant.CREATED_AT_CSF_FIELD, value);
+    addintfiewd(document, mya e-eawwybiwdfiewdconstant.cweated_at_fiewd, σωσ vawue);
+    addintfiewd(document, (ꈍᴗꈍ) e-eawwybiwdfiewdconstant.cweated_at_csf_fiewd, OwO vawue);
   }
 
   /**
-   * Add the given int value as the given field into the given document.
+   * a-add the g-given int vawue a-as the given fiewd i-into the given d-document. o.O
    */
-  public static ThriftDocument addIntField(
-      ThriftDocument document, EarlybirdFieldConstant fieldConstant, int value) {
-    ThriftFieldData fieldData = new ThriftFieldData().setIntValue(value);
-    ThriftField field =
-        new ThriftField().setFieldConfigId(fieldConstant.getFieldId()).setFieldData(fieldData);
-    document.addToFields(field);
-    return document;
+  pubwic static thwiftdocument addintfiewd(
+      thwiftdocument document, 😳😳😳 eawwybiwdfiewdconstant fiewdconstant, /(^•ω•^) i-int vawue) {
+    t-thwiftfiewddata f-fiewddata = nyew thwiftfiewddata().setintvawue(vawue);
+    thwiftfiewd f-fiewd =
+        nyew thwiftfiewd().setfiewdconfigid(fiewdconstant.getfiewdid()).setfiewddata(fiewddata);
+    document.addtofiewds(fiewd);
+    w-wetuwn d-document;
   }
 
-  private static EarlybirdFieldConstant getFeatureField(EarlybirdFieldConstant field) {
-    if (field.getFieldName().startsWith(
-        EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD.getFieldName())) {
-      return EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD;
-    } else if (field.getFieldName().startsWith(
-        EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD.getFieldName())) {
-      return EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD;
-    } else {
-      throw new IllegalArgumentException("Not a feature field: " + field);
+  pwivate static e-eawwybiwdfiewdconstant getfeatuwefiewd(eawwybiwdfiewdconstant fiewd) {
+    i-if (fiewd.getfiewdname().stawtswith(
+        e-eawwybiwdfiewdconstant.encoded_tweet_featuwes_fiewd.getfiewdname())) {
+      wetuwn eawwybiwdfiewdconstant.encoded_tweet_featuwes_fiewd;
+    } e-ewse if (fiewd.getfiewdname().stawtswith(
+        e-eawwybiwdfiewdconstant.extended_encoded_tweet_featuwes_fiewd.getfiewdname())) {
+      wetuwn eawwybiwdfiewdconstant.extended_encoded_tweet_featuwes_fiewd;
+    } ewse {
+      thwow nyew iwwegawawgumentexception("not a-a featuwe fiewd: " + f-fiewd);
     }
   }
 
   /**
-   * Get the feature value of a field.
+   * g-get the featuwe v-vawue of a fiewd. OwO
    */
-  public static int getFeatureValue(
-      ImmutableSchemaInterface schema,
-      ThriftDocument document,
-      EarlybirdFieldConstant field) {
+  p-pubwic static int getfeatuwevawue(
+      i-immutabweschemaintewface schema, ^^
+      t-thwiftdocument document, (///ˬ///✿)
+      e-eawwybiwdfiewdconstant f-fiewd) {
 
-    EarlybirdFieldConstant featureField = getFeatureField(field);
+    eawwybiwdfiewdconstant f-featuwefiewd = getfeatuwefiewd(fiewd);
 
-    byte[] encodedFeaturesBytes =
-        ThriftDocumentUtil.getBytesValue(document, featureField.getFieldName(), ID_MAPPING);
+    byte[] encodedfeatuwesbytes =
+        t-thwiftdocumentutiw.getbytesvawue(document, (///ˬ///✿) featuwefiewd.getfiewdname(), (///ˬ///✿) i-id_mapping);
 
-    if (encodedFeaturesBytes == null) {
-      // Treat the feature value as 0 if there is no encoded feature field.
-      return 0;
-    } else {
-      EarlybirdEncodedFeatures encodedFeatures = EarlybirdEncodedFeaturesUtil.fromBytes(
-          schema, featureField, encodedFeaturesBytes, 0);
-      return encodedFeatures.getFeatureValue(field);
+    i-if (encodedfeatuwesbytes == nyuww) {
+      // t-tweat the featuwe vawue as 0 if thewe is nyo encoded f-featuwe fiewd. ʘwʘ
+      w-wetuwn 0;
+    } e-ewse {
+      eawwybiwdencodedfeatuwes encodedfeatuwes = eawwybiwdencodedfeatuwesutiw.fwombytes(
+          s-schema, ^•ﻌ•^ featuwefiewd, OwO encodedfeatuwesbytes, (U ﹏ U) 0);
+      wetuwn e-encodedfeatuwes.getfeatuwevawue(fiewd);
     }
   }
 
   /**
-   * Check whether the feature flag is set.
+   * c-check whethew the featuwe fwag i-is set. (ˆ ﻌ ˆ)♡
    */
-  public static boolean isFeatureBitSet(
-      ImmutableSchemaInterface schema,
-      ThriftDocument document,
-      EarlybirdFieldConstant field) {
+  pubwic static boowean i-isfeatuwebitset(
+      i-immutabweschemaintewface schema, (⑅˘꒳˘)
+      thwiftdocument d-document, (U ﹏ U)
+      eawwybiwdfiewdconstant fiewd) {
 
-    EarlybirdFieldConstant featureField = getFeatureField(field);
+    e-eawwybiwdfiewdconstant featuwefiewd = g-getfeatuwefiewd(fiewd);
 
-    byte[] encodedFeaturesBytes =
-        ThriftDocumentUtil.getBytesValue(document, featureField.getFieldName(), ID_MAPPING);
+    byte[] e-encodedfeatuwesbytes =
+        thwiftdocumentutiw.getbytesvawue(document, o.O f-featuwefiewd.getfiewdname(), mya i-id_mapping);
 
-    if (encodedFeaturesBytes == null) {
-      // Treat the bit as not set if there is no encoded feature field.
-      return false;
-    } else {
-      EarlybirdEncodedFeatures encodedFeatures = EarlybirdEncodedFeaturesUtil.fromBytes(
-          schema, featureField, encodedFeaturesBytes, 0);
-      return encodedFeatures.isFlagSet(field);
+    i-if (encodedfeatuwesbytes == nyuww) {
+      // tweat the bit as nyot set if thewe is nyo encoded featuwe fiewd. XD
+      wetuwn fawse;
+    } ewse {
+      eawwybiwdencodedfeatuwes encodedfeatuwes = eawwybiwdencodedfeatuwesutiw.fwombytes(
+          schema, òωó f-featuwefiewd, (˘ω˘) e-encodedfeatuwesbytes, :3 0);
+      wetuwn encodedfeatuwes.isfwagset(fiewd);
     }
   }
 
   /**
-   * Check whether nullcast flag is set in the encoded features field.
+   * check whethew n-nyuwwcast fwag i-is set in the encoded f-featuwes fiewd. OwO
    */
-  public static boolean isNullcastBitSet(ImmutableSchemaInterface schema, ThriftDocument document) {
-    return isFeatureBitSet(schema, document, EarlybirdFieldConstant.IS_NULLCAST_FLAG);
+  pubwic s-static boowean isnuwwcastbitset(immutabweschemaintewface s-schema, mya t-thwiftdocument document) {
+    w-wetuwn isfeatuwebitset(schema, (˘ω˘) document, eawwybiwdfiewdconstant.is_nuwwcast_fwag);
   }
 
   /**
-   * Remove all fields with the given field constant in a document.
+   * w-wemove aww f-fiewds with the given fiewd constant in a document. o.O
    */
-  public static void removeField(ThriftDocument document, EarlybirdFieldConstant fieldConstant) {
-    List<ThriftField> fields = document.getFields();
-    if (fields != null) {
-      Iterator<ThriftField> fieldsIterator = fields.iterator();
-      while (fieldsIterator.hasNext()) {
-        if (fieldsIterator.next().getFieldConfigId() == fieldConstant.getFieldId()) {
-          fieldsIterator.remove();
+  pubwic s-static void w-wemovefiewd(thwiftdocument d-document, (✿oωo) e-eawwybiwdfiewdconstant f-fiewdconstant) {
+    w-wist<thwiftfiewd> f-fiewds = document.getfiewds();
+    i-if (fiewds != n-nyuww) {
+      itewatow<thwiftfiewd> f-fiewdsitewatow = f-fiewds.itewatow();
+      w-whiwe (fiewdsitewatow.hasnext()) {
+        if (fiewdsitewatow.next().getfiewdconfigid() == f-fiewdconstant.getfiewdid()) {
+          fiewdsitewatow.wemove();
         }
       }
     }
   }
 
   /**
-   * Remove a string field with given fieldConstant and value.
+   * wemove a-a stwing fiewd with given fiewdconstant a-and vawue. (ˆ ﻌ ˆ)♡
    */
-  public static void removeStringField(
-      ThriftDocument document, EarlybirdFieldConstant fieldConstant, String value) {
-    List<ThriftField> fields = document.getFields();
-    if (fields != null) {
-      for (ThriftField field : fields) {
-        if (field.getFieldConfigId() == fieldConstant.getFieldId()
-            && field.getFieldData().getStringValue().equals(value)) {
-          fields.remove(field);
-          return;
+  p-pubwic s-static void wemovestwingfiewd(
+      thwiftdocument d-document, ^^;; eawwybiwdfiewdconstant f-fiewdconstant, stwing vawue) {
+    w-wist<thwiftfiewd> fiewds = d-document.getfiewds();
+    if (fiewds != nuww) {
+      fow (thwiftfiewd fiewd : fiewds) {
+        i-if (fiewd.getfiewdconfigid() == fiewdconstant.getfiewdid()
+            && f-fiewd.getfiewddata().getstwingvawue().equaws(vawue)) {
+          f-fiewds.wemove(fiewd);
+          wetuwn;
         }
       }
     }
   }
 
   /**
-   * Adds a new TokenStream field for each engagement counter if normalizedNumEngagements >= 1.
+   * adds a nyew tokenstweam fiewd fow e-each engagement countew if nowmawizednumengagements >= 1. OwO
    */
-  public static void addNormalizedMinEngagementField(
-      ThriftDocument doc,
-      String fieldName,
-      int normalizedNumEngagements) throws IOException {
-    if (normalizedNumEngagements < 1) {
-      return;
+  p-pubwic static v-void addnowmawizedminengagementfiewd(
+      thwiftdocument d-doc, 🥺
+      stwing fiewdname, mya
+      i-int nyowmawizednumengagements) t-thwows ioexception {
+    if (nowmawizednumengagements < 1) {
+      w-wetuwn;
     }
-    TokenStreamSerializer serializer =
-        new TokenStreamSerializer(ImmutableList.of(new IntTermAttributeSerializer()));
-    TwitterNormalizedMinEngagementTokenStream stream = new
-        TwitterNormalizedMinEngagementTokenStream(normalizedNumEngagements);
-    byte[] serializedStream = serializer.serialize(stream);
-    ThriftFieldData fieldData = new ThriftFieldData().setTokenStreamValue(serializedStream);
-    ThriftField field = new ThriftField().setFieldConfigId(ID_MAPPING.getFieldID(fieldName))
-        .setFieldData(fieldData);
-    doc.addToFields(field);
+    tokenstweamsewiawizew sewiawizew =
+        n-nyew tokenstweamsewiawizew(immutabwewist.of(new inttewmattwibutesewiawizew()));
+    t-twittewnowmawizedminengagementtokenstweam s-stweam = n-nyew
+        twittewnowmawizedminengagementtokenstweam(nowmawizednumengagements);
+    b-byte[] s-sewiawizedstweam = s-sewiawizew.sewiawize(stweam);
+    t-thwiftfiewddata fiewddata = n-nyew thwiftfiewddata().settokenstweamvawue(sewiawizedstweam);
+    t-thwiftfiewd f-fiewd = nyew t-thwiftfiewd().setfiewdconfigid(id_mapping.getfiewdid(fiewdname))
+        .setfiewddata(fiewddata);
+    d-doc.addtofiewds(fiewd);
   }
 
-  public static List<String> getStringValues(
-      ThriftDocument document, EarlybirdFieldConstant field) {
-    return ThriftDocumentUtil.getStringValues(document, field.getFieldName(), ID_MAPPING);
+  p-pubwic static w-wist<stwing> g-getstwingvawues(
+      thwiftdocument d-document, 😳 eawwybiwdfiewdconstant f-fiewd) {
+    wetuwn thwiftdocumentutiw.getstwingvawues(document, òωó f-fiewd.getfiewdname(), /(^•ω•^) id_mapping);
   }
 
-  public static boolean isNullcastFilterSet(ThriftDocument document) {
-    return isFilterSet(document, NULLCAST_FILTER_TERM);
+  p-pubwic static b-boowean isnuwwcastfiwtewset(thwiftdocument document) {
+    wetuwn isfiwtewset(document, -.- n-nyuwwcast_fiwtew_tewm);
   }
 
-  public static boolean isSelfThreadFilterSet(ThriftDocument document) {
-    return isFilterSet(document, SELF_THREAD_FILTER_TERM);
+  p-pubwic static b-boowean issewfthweadfiwtewset(thwiftdocument document) {
+    wetuwn isfiwtewset(document, òωó sewf_thwead_fiwtew_tewm);
   }
 
-  public static String getSelfThreadFilterTerm() {
-    return SELF_THREAD_FILTER_TERM;
+  p-pubwic static stwing g-getsewfthweadfiwtewtewm() {
+    wetuwn sewf_thwead_fiwtew_tewm;
   }
 
-  public static String getDirectedAtFilterTerm() {
-    return DIRECTED_AT_FILTER_TERM;
+  p-pubwic s-static stwing getdiwectedatfiwtewtewm() {
+    wetuwn diwected_at_fiwtew_tewm;
   }
 
-  public static boolean isDirectedAtFilterSet(ThriftDocument document) {
-    return isFilterSet(document, DIRECTED_AT_FILTER_TERM);
+  pubwic s-static boowean isdiwectedatfiwtewset(thwiftdocument d-document) {
+    w-wetuwn isfiwtewset(document, /(^•ω•^) d-diwected_at_fiwtew_tewm);
   }
 
   /**
-   * Check whether given filter is set in the internal field.
+   * check whethew given fiwtew i-is set in t-the intewnaw fiewd. /(^•ω•^)
    */
-  private static boolean isFilterSet(ThriftDocument document, String filter) {
-    List<String> terms = ThriftDocumentUtil.getStringValues(
-        document, EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(), ID_MAPPING);
-    for (String term : terms) {
-      if (filter.equals(term)) {
-        return true;
+  pwivate static boowean i-isfiwtewset(thwiftdocument document, stwing fiwtew) {
+    w-wist<stwing> tewms = t-thwiftdocumentutiw.getstwingvawues(
+        d-document, 😳 eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname(), :3 i-id_mapping);
+    fow (stwing t-tewm : tewms) {
+      i-if (fiwtew.equaws(tewm)) {
+        wetuwn twue;
       }
     }
-    return false;
+    w-wetuwn fawse;
   }
 }

@@ -1,96 +1,96 @@
-package com.twitter.search.core.earlybird.facets;
+package com.twittew.seawch.cowe.eawwybiwd.facets;
 
-import com.google.common.base.Preconditions;
+impowt com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.facet.FacetResult;
-import org.apache.lucene.facet.LabelAndValue;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.PriorityQueue;
+i-impowt owg.apache.wucene.facet.facetwesuwt;
+i-impowt o-owg.apache.wucene.facet.wabewandvawue;
+i-impowt o-owg.apache.wucene.utiw.byteswef;
+i-impowt owg.apache.wucene.utiw.pwiowityqueue;
 
-import com.twitter.search.common.facets.FacetSearchParam;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider.FacetLabelAccessor;
+i-impowt com.twittew.seawch.common.facets.facetseawchpawam;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetwabewpwovidew.facetwabewaccessow;
 
-import it.unimi.dsi.fastutil.ints.Int2IntMap.Entry;
-import it.unimi.dsi.fastutil.ints.Int2IntMap.FastEntrySet;
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+impowt it.unimi.dsi.fastutiw.ints.int2intmap.entwy;
+impowt it.unimi.dsi.fastutiw.ints.int2intmap.fastentwyset;
+impowt it.unimi.dsi.fastutiw.ints.int2intopenhashmap;
 
-public class PerfieldFacetCountAggregator {
+p-pubwic cwass pewfiewdfacetcountaggwegatow {
 
-  private final Int2IntOpenHashMap countMap;
-  private final FacetLabelAccessor facetLabelAccessor;
-  private final String name;
-
-  /**
-   * Creates a new per-field facet aggregator.
-   */
-  public PerfieldFacetCountAggregator(String name, FacetLabelProvider facetLabelProvider) {
-    this.name = name;
-    this.countMap = new Int2IntOpenHashMap();
-    this.countMap.defaultReturnValue(0);
-    this.facetLabelAccessor = facetLabelProvider.getLabelAccessor();
-  }
-
-  public void collect(int termId) {
-    countMap.put(termId, countMap.get(termId) + 1);
-  }
+  pwivate finaw i-int2intopenhashmap countmap;
+  p-pwivate finaw facetwabewaccessow facetwabewaccessow;
+  pwivate f-finaw stwing nyame;
 
   /**
-   * Returns the top facets.
+   * c-cweates a nyew p-pew-fiewd facet aggwegatow. σωσ
    */
-  public FacetResult getTop(FacetSearchParam facetSearchParam) {
-    Preconditions.checkArgument(
-        facetSearchParam != null
-        && facetSearchParam.getFacetFieldRequest().getField().equals(name)
-        && (facetSearchParam.getFacetFieldRequest().getPath() == null
-            || facetSearchParam.getFacetFieldRequest().getPath().isEmpty()));
+  pubwic pewfiewdfacetcountaggwegatow(stwing name, rawr x3 facetwabewpwovidew facetwabewpwovidew) {
+    t-this.name = nyame;
+    this.countmap = nyew int2intopenhashmap();
+    this.countmap.defauwtwetuwnvawue(0);
+    t-this.facetwabewaccessow = facetwabewpwovidew.getwabewaccessow();
+  }
 
-    PriorityQueue<Entry> pq = new PriorityQueue<Entry>(
-        facetSearchParam.getFacetFieldRequest().getNumResults()) {
+  p-pubwic v-void cowwect(int t-tewmid) {
+    c-countmap.put(tewmid, OwO countmap.get(tewmid) + 1);
+  }
 
-      private BytesRef buffer = new BytesRef();
+  /**
+   * wetuwns the top f-facets. /(^•ω•^)
+   */
+  pubwic facetwesuwt gettop(facetseawchpawam f-facetseawchpawam) {
+    pweconditions.checkawgument(
+        facetseawchpawam != nyuww
+        && facetseawchpawam.getfacetfiewdwequest().getfiewd().equaws(name)
+        && (facetseawchpawam.getfacetfiewdwequest().getpath() == nyuww
+            || facetseawchpawam.getfacetfiewdwequest().getpath().isempty()));
 
-      @Override
-      protected boolean lessThan(Entry a, Entry b) {
-        // first by count desc
-        int r = Integer.compare(a.getIntValue(), b.getIntValue());
-        if (r != 0) {
-          return r < 0;
+    p-pwiowityqueue<entwy> pq = n-nyew pwiowityqueue<entwy>(
+        f-facetseawchpawam.getfacetfiewdwequest().getnumwesuwts()) {
+
+      p-pwivate byteswef buffew = nyew byteswef();
+
+      @ovewwide
+      pwotected b-boowean wessthan(entwy a-a, 😳😳😳 entwy b) {
+        // f-fiwst by count d-desc
+        int w = integew.compawe(a.getintvawue(), ( ͡o ω ͡o ) b-b.getintvawue());
+        if (w != 0) {
+          w-wetuwn w < 0;
         }
 
-        // and then by label asc
-        BytesRef label1 = facetLabelAccessor.getTermRef(a.getIntKey());
-        buffer.bytes = label1.bytes;
-        buffer.offset = label1.offset;
-        buffer.length = label1.length;
+        // and t-then by wabew asc
+        byteswef w-wabew1 = facetwabewaccessow.gettewmwef(a.getintkey());
+        buffew.bytes = w-wabew1.bytes;
+        b-buffew.offset = wabew1.offset;
+        buffew.wength = wabew1.wength;
 
-        return buffer.compareTo(facetLabelAccessor.getTermRef(b.getIntKey())) > 0;
+        wetuwn buffew.compaweto(facetwabewaccessow.gettewmwef(b.getintkey())) > 0;
       }
 
     };
 
-    final FastEntrySet entrySet = countMap.int2IntEntrySet();
+    finaw fastentwyset entwyset = c-countmap.int2intentwyset();
 
-    int numValid = 0;
-    for (Entry entry : entrySet) {
-      long val = entry.getIntValue();
-      if (val > 0) {
-        numValid++;
-        pq.insertWithOverflow(entry);
+    i-int nyumvawid = 0;
+    fow (entwy e-entwy : e-entwyset) {
+      w-wong vaw = entwy.getintvawue();
+      if (vaw > 0) {
+        nyumvawid++;
+        pq.insewtwithovewfwow(entwy);
       }
     }
 
-    int numVals = pq.size();
-    LabelAndValue[] labelValues = new LabelAndValue[numVals];
+    i-int nyumvaws = pq.size();
+    wabewandvawue[] wabewvawues = nyew wabewandvawue[numvaws];
 
-    // Priority queue pops out "least" element first (that is the root).
-    // Least in our definition regardless of how we define what that is should be the last element.
-    for (int i = labelValues.length - 1; i >= 0; i--) {
-      Entry entry = pq.pop();
-      labelValues[i] = new LabelAndValue(
-          facetLabelAccessor.getTermText(entry.getIntKey()),
-          entry.getValue());
+    // p-pwiowity queue pops out "weast" e-ewement fiwst (that i-is the w-woot). >_<
+    // weast in ouw definition w-wegawdwess o-of how we define n-nyani that is s-shouwd be the wast ewement. >w<
+    fow (int i = wabewvawues.wength - 1; i-i >= 0; i--) {
+      e-entwy e-entwy = pq.pop();
+      w-wabewvawues[i] = n-nyew wabewandvawue(
+          facetwabewaccessow.gettewmtext(entwy.getintkey()), rawr
+          entwy.getvawue());
     }
 
-    return new FacetResult(name, null, 0, labelValues, numValid);
+    w-wetuwn nyew facetwesuwt(name, 😳 nyuww, 0, wabewvawues, >w< nyumvawid);
   }
 }

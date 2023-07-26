@@ -1,75 +1,75 @@
-package com.twitter.search.common.relevance.features;
+package com.twittew.seawch.common.wewevance.featuwes;
 
-import java.util.Map;
+impowt java.utiw.map;
 
-import com.google.common.collect.Maps;
+i-impowt c-com.googwe.common.cowwect.maps;
 
-import com.twitter.search.common.encoding.features.IntegerEncodedFeatures;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeatures;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
+i-impowt com.twittew.seawch.common.encoding.featuwes.integewencodedfeatuwes;
+i-impowt com.twittew.seawch.common.schema.base.featuweconfiguwation;
+i-impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+i-impowt c-com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdencodedfeatuwes;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
 
 /**
- * FeatureSink is used to write features based on feature configuration or feature name.  After
- * all feature is written, the class can return the base field integer array values.
+ * featuwesink is used to wwite featuwes based on featuwe configuwation o-ow featuwe nyame. (U ﹏ U)  aftew
+ * aww featuwe is w-wwitten, (///ˬ///✿) the cwass can wetuwn the b-base fiewd integew awway vawues. 😳
  *
- * This class is not thread-safe.
+ * this cwass is nyot thwead-safe. 😳
  */
-public class FeatureSink {
-  private ImmutableSchemaInterface schema;
-  private final Map<String, IntegerEncodedFeatures> encodedFeatureMap;
+p-pubwic cwass featuwesink {
+  p-pwivate i-immutabweschemaintewface schema;
+  pwivate finaw map<stwing, σωσ integewencodedfeatuwes> encodedfeatuwemap;
 
-  /** Creates a new FeatureSink instance. */
-  public FeatureSink(ImmutableSchemaInterface schema) {
-    this.schema = schema;
-    this.encodedFeatureMap = Maps.newHashMap();
+  /** c-cweates a nyew featuwesink instance. rawr x3 */
+  pubwic featuwesink(immutabweschemaintewface schema) {
+    t-this.schema = schema;
+    this.encodedfeatuwemap = m-maps.newhashmap();
   }
 
-  private IntegerEncodedFeatures getFeatures(String baseFieldName) {
-    IntegerEncodedFeatures features = encodedFeatureMap.get(baseFieldName);
-    if (features == null) {
-      features = EarlybirdEncodedFeatures.newEncodedTweetFeatures(schema, baseFieldName);
-      encodedFeatureMap.put(baseFieldName, features);
+  p-pwivate integewencodedfeatuwes g-getfeatuwes(stwing b-basefiewdname) {
+    integewencodedfeatuwes featuwes = encodedfeatuwemap.get(basefiewdname);
+    i-if (featuwes == nyuww) {
+      featuwes = eawwybiwdencodedfeatuwes.newencodedtweetfeatuwes(schema, OwO b-basefiewdname);
+      encodedfeatuwemap.put(basefiewdname, /(^•ω•^) featuwes);
     }
-    return features;
+    wetuwn featuwes;
   }
 
-  /** Sets the given numeric value for the field. */
-  public FeatureSink setNumericValue(EarlybirdFieldConstant field, int value) {
-    return setNumericValue(field.getFieldName(), value);
+  /** sets the given numewic vawue f-fow the fiewd. 😳😳😳 */
+  pubwic featuwesink s-setnumewicvawue(eawwybiwdfiewdconstant fiewd, ( ͡o ω ͡o ) i-int vawue) {
+    w-wetuwn setnumewicvawue(fiewd.getfiewdname(), >_< vawue);
   }
 
-  /** Sets the given numeric value for the feature with the given name. */
-  public FeatureSink setNumericValue(String featureName, int value) {
-    final FeatureConfiguration featureConfig = schema.getFeatureConfigurationByName(featureName);
-    if (featureConfig != null) {
-      getFeatures(featureConfig.getBaseField()).setFeatureValue(featureConfig, value);
+  /** sets the given nyumewic vawue f-fow the featuwe w-with the given name. >w< */
+  pubwic f-featuwesink s-setnumewicvawue(stwing featuwename, rawr i-int vawue) {
+    finaw featuweconfiguwation f-featuweconfig = schema.getfeatuweconfiguwationbyname(featuwename);
+    if (featuweconfig != n-nyuww) {
+      getfeatuwes(featuweconfig.getbasefiewd()).setfeatuwevawue(featuweconfig, 😳 v-vawue);
     }
-    return this;
+    wetuwn this;
   }
 
-  /** Sets the given boolean value for the given field. */
-  public FeatureSink setBooleanValue(EarlybirdFieldConstant field, boolean value) {
-    return setBooleanValue(field.getFieldName(), value);
+  /** s-sets the given boowean v-vawue fow the given fiewd. >w< */
+  pubwic featuwesink setbooweanvawue(eawwybiwdfiewdconstant fiewd, boowean vawue) {
+    wetuwn setbooweanvawue(fiewd.getfiewdname(), (⑅˘꒳˘) v-vawue);
   }
 
-  /** Sets the given boolean value for the feature with the given name. */
-  public FeatureSink setBooleanValue(String featureName, boolean value) {
-    final FeatureConfiguration featureConfig = schema.getFeatureConfigurationByName(featureName);
-    if (featureConfig != null) {
-      getFeatures(featureConfig.getBaseField()).setFlagValue(featureConfig, value);
+  /** s-sets the given boowean v-vawue fow the f-featuwe with the g-given nyame. OwO */
+  pubwic featuwesink setbooweanvawue(stwing featuwename, (ꈍᴗꈍ) boowean v-vawue) {
+    finaw featuweconfiguwation featuweconfig = schema.getfeatuweconfiguwationbyname(featuwename);
+    if (featuweconfig != n-nyuww) {
+      getfeatuwes(featuweconfig.getbasefiewd()).setfwagvawue(featuweconfig, 😳 v-vawue);
     }
-    return this;
+    wetuwn t-this;
   }
 
-  /** Returns the features for the given base field. */
-  public IntegerEncodedFeatures getFeaturesForBaseField(EarlybirdFieldConstant baseField) {
-    return getFeaturesForBaseField(baseField.getFieldName());
+  /** w-wetuwns the featuwes fow t-the given base fiewd. 😳😳😳 */
+  p-pubwic i-integewencodedfeatuwes g-getfeatuwesfowbasefiewd(eawwybiwdfiewdconstant basefiewd) {
+    wetuwn g-getfeatuwesfowbasefiewd(basefiewd.getfiewdname());
   }
 
-  /** Returns the features for the given base field. */
-  public IntegerEncodedFeatures getFeaturesForBaseField(String baseFieldName) {
-    return encodedFeatureMap.get(baseFieldName);
+  /** w-wetuwns t-the featuwes f-fow the given b-base fiewd. mya */
+  pubwic integewencodedfeatuwes getfeatuwesfowbasefiewd(stwing basefiewdname) {
+    wetuwn encodedfeatuwemap.get(basefiewdname);
   }
 }

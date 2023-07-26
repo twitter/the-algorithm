@@ -1,40 +1,40 @@
-package com.twitter.tsp.handlers
+package com.twittew.tsp.handwews
 
-import com.twitter.inject.utils.Handler
-import com.twitter.topiclisting.FollowableTopicProductId
-import com.twitter.topiclisting.ProductId
-import com.twitter.topiclisting.TopicListingViewerContext
-import com.twitter.topiclisting.utt.UttLocalization
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.inject.utiws.handwew
+i-impowt c-com.twittew.topicwisting.fowwowabwetopicpwoductid
+i-impowt com.twittew.topicwisting.pwoductid
+i-impowt c-com.twittew.topicwisting.topicwistingviewewcontext
+i-impowt com.twittew.topicwisting.utt.uttwocawization
+i-impowt c-com.twittew.utiw.wogging.wogging
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
 /** *
- * We configure Warmer to help warm up the cache hit rate under `CachedUttClient/get_utt_taxonomy/cache_hit_rate`
- * In uttLocalization.getRecommendableTopics, we fetch all topics exist in UTT, and yet the process
- * is in fact fetching the complete UTT tree struct (by calling getUttChildren recursively), which could take 1 sec
- * Once we have the topics, we stored them in in-memory cache, and the cache hit rate is > 99%
+ * we configuwe w-wawmew to hewp wawm up the cache hit wate undew `cacheduttcwient/get_utt_taxonomy/cache_hit_wate`
+ * i-in uttwocawization.getwecommendabwetopics, (⑅˘꒳˘) we fetch aww topics e-exist in utt, òωó and yet the pwocess
+ * is in fact fetching the c-compwete utt twee stwuct (by c-cawwing getuttchiwdwen w-wecuwsivewy), ʘwʘ which couwd take 1 sec
+ * once we have the topics, /(^•ω•^) we stowed t-them in in-memowy cache, ʘwʘ and the cache hit wate is > 99%
  *
  */
-@Singleton
-class UttChildrenWarmupHandler @Inject() (uttLocalization: UttLocalization)
-    extends Handler
-    with Logging {
+@singweton
+cwass u-uttchiwdwenwawmuphandwew @inject() (uttwocawization: uttwocawization)
+    e-extends h-handwew
+    w-with wogging {
 
-  /** Executes the function of this handler. *   */
-  override def handle(): Unit = {
-    uttLocalization
-      .getRecommendableTopics(
-        productId = ProductId.Followable,
-        viewerContext = TopicListingViewerContext(languageCode = Some("en")),
-        enableInternationalTopics = true,
-        followableTopicProductId = FollowableTopicProductId.AllFollowable
+  /** e-exekawaii~s the function of this handwew. σωσ *   */
+  o-ovewwide def handwe(): unit = {
+    uttwocawization
+      .getwecommendabwetopics(
+        p-pwoductid = pwoductid.fowwowabwe, OwO
+        viewewcontext = topicwistingviewewcontext(wanguagecode = some("en")), 😳😳😳
+        enabweintewnationawtopics = twue, 😳😳😳
+        fowwowabwetopicpwoductid = f-fowwowabwetopicpwoductid.awwfowwowabwe
       )
-      .onSuccess { result =>
-        logger.info(s"successfully warmed up UttChildren. TopicId length = ${result.size}")
+      .onsuccess { wesuwt =>
+        w-woggew.info(s"successfuwwy w-wawmed up uttchiwdwen. o.O t-topicid wength = ${wesuwt.size}")
       }
-      .onFailure { throwable =>
-        logger.info(s"failed to warm up UttChildren. Throwable = ${throwable}")
+      .onfaiwuwe { thwowabwe =>
+        woggew.info(s"faiwed to w-wawm up uttchiwdwen. ( ͡o ω ͡o ) t-thwowabwe = ${thwowabwe}")
       }
   }
 }

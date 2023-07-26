@@ -1,55 +1,55 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.stp
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.follow_recommendations.common.models.STPGraph
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.logging.Logging
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.STPFeatureGenerator
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.STPRecord
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.haswecentfowwowedusewids
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.stpgwaph
+impowt c-com.twittew.hewmit.modew.awgowithm
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+impowt c-com.twittew.stitch.stitch
+impowt com.twittew.timewines.configapi.haspawams
+impowt com.twittew.utiw.wogging.wogging
+i-impowt com.twittew.wtf.scawding.jobs.stwong_tie_pwediction.stpfeatuwegenewatow
+impowt com.twittew.wtf.scawding.jobs.stwong_tie_pwediction.stpwecowd
 
-abstract class BaseOnlineSTPSource(
-  stpGraphBuilder: STPGraphBuilder,
-  baseStatsReceiver: StatsReceiver)
-    extends CandidateSource[
-      HasClientContext with HasParams with HasRecentFollowedUserIds,
-      CandidateUser
+a-abstwact cwass baseonwinestpsouwce(
+  stpgwaphbuiwdew: stpgwaphbuiwdew, σωσ
+  b-basestatsweceivew: statsweceivew)
+    e-extends c-candidatesouwce[
+      hascwientcontext with haspawams with haswecentfowwowedusewids, OwO
+      c-candidateusew
     ]
-    with Logging {
+    with wogging {
 
-  protected val statsReceiver: StatsReceiver = baseStatsReceiver.scope("online_stp")
+  pwotected vaw statsweceivew: statsweceivew = b-basestatsweceivew.scope("onwine_stp")
 
-  override val identifier: CandidateSourceIdentifier = BaseOnlineSTPSource.Identifier
+  ovewwide vaw identifiew: c-candidatesouwceidentifiew = b-baseonwinestpsouwce.identifiew
 
-  def getCandidates(
-    records: Seq[STPRecord],
-    request: HasClientContext with HasParams with HasRecentFollowedUserIds
-  ): Stitch[Seq[CandidateUser]]
+  d-def getcandidates(
+    wecowds: s-seq[stpwecowd],
+    wequest: hascwientcontext w-with haspawams with haswecentfowwowedusewids
+  ): stitch[seq[candidateusew]]
 
-  override def apply(
-    request: HasClientContext with HasParams with HasRecentFollowedUserIds
-  ): Stitch[Seq[CandidateUser]] =
-    request.getOptionalUserId
-      .map { userId =>
-        stpGraphBuilder(request)
-          .flatMap { graph: STPGraph =>
-            logger.debug(graph)
-            val records = STPFeatureGenerator.constructFeatures(
-              userId,
-              graph.firstDegreeEdgeInfoList,
-              graph.secondDegreeEdgeInfoList)
-            getCandidates(records, request)
+  o-ovewwide def appwy(
+    wequest: hascwientcontext with haspawams with haswecentfowwowedusewids
+  ): stitch[seq[candidateusew]] =
+    w-wequest.getoptionawusewid
+      .map { usewid =>
+        s-stpgwaphbuiwdew(wequest)
+          .fwatmap { g-gwaph: stpgwaph =>
+            w-woggew.debug(gwaph)
+            vaw wecowds = stpfeatuwegenewatow.constwuctfeatuwes(
+              usewid,
+              gwaph.fiwstdegweeedgeinfowist, 😳😳😳
+              g-gwaph.seconddegweeedgeinfowist)
+            g-getcandidates(wecowds, 😳😳😳 wequest)
           }
-      }.getOrElse(Stitch.Nil)
+      }.getowewse(stitch.niw)
 }
 
-object BaseOnlineSTPSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.OnlineStrongTiePredictionRecNoCaching.toString)
+o-object baseonwinestpsouwce {
+  vaw i-identifiew: candidatesouwceidentifiew = candidatesouwceidentifiew(
+    a-awgowithm.onwinestwongtiepwedictionwecnocaching.tostwing)
 }

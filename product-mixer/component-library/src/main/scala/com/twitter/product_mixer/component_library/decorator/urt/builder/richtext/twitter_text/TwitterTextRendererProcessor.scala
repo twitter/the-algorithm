@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.twitter_text
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.wichtext.twittew_text
 
-trait TwitterTextRendererProcessor {
-  def process(twitterTextRichTextBuilder: TwitterTextRenderer): TwitterTextRenderer
+twait twittewtextwendewewpwocessow {
+  d-def pwocess(twittewtextwichtextbuiwdew: twittewtextwendewew): t-twittewtextwendewew
 }

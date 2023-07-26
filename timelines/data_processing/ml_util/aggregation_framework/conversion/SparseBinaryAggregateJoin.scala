@@ -1,199 +1,199 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.convewsion
 
-import com.twitter.ml.api._
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.typed.UnsortedGrouped
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
-import java.util.{Set => JSet}
-import scala.collection.JavaConverters._
+impowt com.twittew.mw.api._
+i-impowt com.twittew.mw.api.featuwe
+i-impowt com.twittew.mw.api.utiw.swichdatawecowd
+i-impowt com.twittew.scawding.typed.typedpipe
+i-impowt com.twittew.scawding.typed.unsowtedgwouped
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.typedaggwegategwoup
+i-impowt java.utiw.{set => j-jset}
+i-impowt scawa.cowwection.javaconvewtews._
 
-object SparseBinaryAggregateJoin {
-  import TypedAggregateGroup._
+object spawsebinawyaggwegatejoin {
+  impowt typedaggwegategwoup._
 
-  def makeKey(record: DataRecord, joinKeyList: List[Feature[_]]): String = {
-    joinKeyList.map {
-      case sparseKey: Feature.SparseBinary =>
-        SRichDataRecord(record).getFeatureValue(sparseFeature(sparseKey))
-      case nonSparseKey: Feature[_] =>
-        SRichDataRecord(record).getFeatureValue(nonSparseKey)
-    }.toString
+  def makekey(wecowd: d-datawecowd, 🥺 joinkeywist: wist[featuwe[_]]): stwing = {
+    joinkeywist.map {
+      c-case spawsekey: featuwe.spawsebinawy =>
+        s-swichdatawecowd(wecowd).getfeatuwevawue(spawsefeatuwe(spawsekey))
+      case nyonspawsekey: featuwe[_] =>
+        s-swichdatawecowd(wecowd).getfeatuwevawue(nonspawsekey)
+    }.tostwing
   }
 
   /**
-   * @param record Data record to get all possible sparse aggregate keys from
-   * @param List of join key features (some can be sparse and some non-sparse)
-   * @return A list of string keys to use for joining
+   * @pawam wecowd data w-wecowd to get aww p-possibwe spawse aggwegate keys fwom
+   * @pawam wist of join key featuwes (some c-can be spawse and some nyon-spawse)
+   * @wetuwn a wist of stwing keys to use fow joining
    */
-  def makeKeyPermutations(record: DataRecord, joinKeyList: List[Feature[_]]): List[String] = {
-    val allIdValues = joinKeyList.flatMap {
-      case sparseKey: Feature.SparseBinary => {
-        val id = sparseKey.getDenseFeatureId
-        val valuesOpt = Option(SRichDataRecord(record).getFeatureValue(sparseKey))
-          .map(_.asInstanceOf[JSet[String]].asScala.toSet)
-        valuesOpt.map { (id, _) }
+  d-def makekeypewmutations(wecowd: datawecowd, j-joinkeywist: wist[featuwe[_]]): w-wist[stwing] = {
+    v-vaw awwidvawues = j-joinkeywist.fwatmap {
+      case spawsekey: featuwe.spawsebinawy => {
+        v-vaw id = spawsekey.getdensefeatuweid
+        vaw vawuesopt = option(swichdatawecowd(wecowd).getfeatuwevawue(spawsekey))
+          .map(_.asinstanceof[jset[stwing]].asscawa.toset)
+        v-vawuesopt.map { (id, ^^;; _) }
       }
-      case nonSparseKey: Feature[_] => {
-        val id = nonSparseKey.getDenseFeatureId
-        Option(SRichDataRecord(record).getFeatureValue(nonSparseKey)).map { value =>
-          (id, Set(value.toString))
+      case nyonspawsekey: featuwe[_] => {
+        vaw id = nyonspawsekey.getdensefeatuweid
+        option(swichdatawecowd(wecowd).getfeatuwevawue(nonspawsekey)).map { vawue =>
+          (id, :3 s-set(vawue.tostwing))
         }
       }
     }
-    sparseBinaryPermutations(allIdValues).toList.map { idValues =>
-      joinKeyList.map { key => idValues.getOrElse(key.getDenseFeatureId, "") }.toString
+    spawsebinawypewmutations(awwidvawues).towist.map { i-idvawues =>
+      j-joinkeywist.map { k-key => idvawues.getowewse(key.getdensefeatuweid, (U ﹏ U) "") }.tostwing
     }
   }
 
-  private[this] def mkKeyIndexedAggregates(
-    joinFeaturesDataSet: DataSetPipe,
-    joinKeyList: List[Feature[_]]
-  ): TypedPipe[(String, DataRecord)] =
-    joinFeaturesDataSet.records
-      .map { record => (makeKey(record, joinKeyList), record) }
+  pwivate[this] def mkkeyindexedaggwegates(
+    j-joinfeatuwesdataset: d-datasetpipe, OwO
+    joinkeywist: w-wist[featuwe[_]]
+  ): t-typedpipe[(stwing, 😳😳😳 datawecowd)] =
+    j-joinfeatuwesdataset.wecowds
+      .map { wecowd => (makekey(wecowd, (ˆ ﻌ ˆ)♡ j-joinkeywist), XD wecowd) }
 
-  private[this] def mkKeyIndexedInput(
-    inputDataSet: DataSetPipe,
-    joinKeyList: List[Feature[_]]
-  ): TypedPipe[(String, DataRecord)] =
-    inputDataSet.records
-      .flatMap { record =>
-        for {
-          key <- makeKeyPermutations(record, joinKeyList)
-        } yield { (key, record) }
+  pwivate[this] d-def mkkeyindexedinput(
+    inputdataset: d-datasetpipe, (ˆ ﻌ ˆ)♡
+    joinkeywist: w-wist[featuwe[_]]
+  ): t-typedpipe[(stwing, ( ͡o ω ͡o ) datawecowd)] =
+    inputdataset.wecowds
+      .fwatmap { wecowd =>
+        fow {
+          key <- makekeypewmutations(wecowd, rawr x3 j-joinkeywist)
+        } y-yiewd { (key, nyaa~~ wecowd) }
       }
 
-  private[this] def mkKeyIndexedInputWithUniqueId(
-    inputDataSet: DataSetPipe,
-    joinKeyList: List[Feature[_]],
-    uniqueIdFeatureList: List[Feature[_]]
-  ): TypedPipe[(String, String)] =
-    inputDataSet.records
-      .flatMap { record =>
-        for {
-          key <- makeKeyPermutations(record, joinKeyList)
-        } yield { (key, makeKey(record, uniqueIdFeatureList)) }
+  p-pwivate[this] d-def mkkeyindexedinputwithuniqueid(
+    i-inputdataset: datasetpipe, >_<
+    joinkeywist: wist[featuwe[_]], ^^;;
+    uniqueidfeatuwewist: w-wist[featuwe[_]]
+  ): typedpipe[(stwing, (ˆ ﻌ ˆ)♡ stwing)] =
+    inputdataset.wecowds
+      .fwatmap { wecowd =>
+        f-fow {
+          key <- makekeypewmutations(wecowd, ^^;; j-joinkeywist)
+        } y-yiewd { (key, (⑅˘꒳˘) m-makekey(wecowd, rawr x3 uniqueidfeatuwewist)) }
       }
 
-  private[this] def mkRecordIndexedAggregates(
-    keyIndexedInput: TypedPipe[(String, DataRecord)],
-    keyIndexedAggregates: TypedPipe[(String, DataRecord)]
-  ): UnsortedGrouped[DataRecord, List[DataRecord]] =
-    keyIndexedInput
-      .join(keyIndexedAggregates)
-      .map { case (_, (inputRecord, aggregateRecord)) => (inputRecord, aggregateRecord) }
-      .group
-      .toList
+  pwivate[this] d-def m-mkwecowdindexedaggwegates(
+    k-keyindexedinput: t-typedpipe[(stwing, (///ˬ///✿) datawecowd)], 🥺
+    keyindexedaggwegates: t-typedpipe[(stwing, >_< datawecowd)]
+  ): u-unsowtedgwouped[datawecowd, UwU w-wist[datawecowd]] =
+    k-keyindexedinput
+      .join(keyindexedaggwegates)
+      .map { c-case (_, >_< (inputwecowd, -.- aggwegatewecowd)) => (inputwecowd, mya aggwegatewecowd) }
+      .gwoup
+      .towist
 
-  private[this] def mkRecordIndexedAggregatesWithUniqueId(
-    keyIndexedInput: TypedPipe[(String, String)],
-    keyIndexedAggregates: TypedPipe[(String, DataRecord)]
-  ): UnsortedGrouped[String, List[DataRecord]] =
-    keyIndexedInput
-      .join(keyIndexedAggregates)
-      .map { case (_, (inputId, aggregateRecord)) => (inputId, aggregateRecord) }
-      .group
-      .toList
+  pwivate[this] def m-mkwecowdindexedaggwegateswithuniqueid(
+    keyindexedinput: typedpipe[(stwing, stwing)], >w<
+    keyindexedaggwegates: typedpipe[(stwing, (U ﹏ U) datawecowd)]
+  ): u-unsowtedgwouped[stwing, 😳😳😳 wist[datawecowd]] =
+    keyindexedinput
+      .join(keyindexedaggwegates)
+      .map { case (_, o.O (inputid, a-aggwegatewecowd)) => (inputid, òωó a-aggwegatewecowd) }
+      .gwoup
+      .towist
 
-  def mkJoinedDataSet(
-    inputDataSet: DataSetPipe,
-    joinFeaturesDataSet: DataSetPipe,
-    recordIndexedAggregates: UnsortedGrouped[DataRecord, List[DataRecord]],
-    mergePolicy: SparseBinaryMergePolicy
-  ): TypedPipe[DataRecord] =
-    inputDataSet.records
-      .map(record => (record, ()))
-      .leftJoin(recordIndexedAggregates)
+  d-def mkjoineddataset(
+    inputdataset: d-datasetpipe, 😳😳😳
+    joinfeatuwesdataset: d-datasetpipe, σωσ
+    w-wecowdindexedaggwegates: unsowtedgwouped[datawecowd, (⑅˘꒳˘) wist[datawecowd]], (///ˬ///✿)
+    mewgepowicy: spawsebinawymewgepowicy
+  ): typedpipe[datawecowd] =
+    inputdataset.wecowds
+      .map(wecowd => (wecowd, 🥺 ()))
+      .weftjoin(wecowdindexedaggwegates)
       .map {
-        case (inputRecord, (_, aggregateRecordsOpt)) =>
-          aggregateRecordsOpt
-            .map { aggregateRecords =>
-              mergePolicy.mergeRecord(
-                inputRecord,
-                aggregateRecords,
-                joinFeaturesDataSet.featureContext
+        c-case (inputwecowd, OwO (_, aggwegatewecowdsopt)) =>
+          a-aggwegatewecowdsopt
+            .map { aggwegatewecowds =>
+              m-mewgepowicy.mewgewecowd(
+                i-inputwecowd,
+                aggwegatewecowds, >w<
+                joinfeatuwesdataset.featuwecontext
               )
-              inputRecord
+              i-inputwecowd
             }
-            .getOrElse(inputRecord)
+            .getowewse(inputwecowd)
       }
 
-  def mkJoinedDataSetWithUniqueId(
-    inputDataSet: DataSetPipe,
-    joinFeaturesDataSet: DataSetPipe,
-    recordIndexedAggregates: UnsortedGrouped[String, List[DataRecord]],
-    mergePolicy: SparseBinaryMergePolicy,
-    uniqueIdFeatureList: List[Feature[_]]
-  ): TypedPipe[DataRecord] =
-    inputDataSet.records
-      .map(record => (makeKey(record, uniqueIdFeatureList), record))
-      .leftJoin(recordIndexedAggregates)
+  d-def mkjoineddatasetwithuniqueid(
+    inputdataset: d-datasetpipe, 🥺
+    j-joinfeatuwesdataset: datasetpipe, nyaa~~
+    wecowdindexedaggwegates: unsowtedgwouped[stwing, ^^ wist[datawecowd]], >w<
+    mewgepowicy: s-spawsebinawymewgepowicy, OwO
+    u-uniqueidfeatuwewist: w-wist[featuwe[_]]
+  ): typedpipe[datawecowd] =
+    i-inputdataset.wecowds
+      .map(wecowd => (makekey(wecowd, XD u-uniqueidfeatuwewist), ^^;; wecowd))
+      .weftjoin(wecowdindexedaggwegates)
       .map {
-        case (_, (inputRecord, aggregateRecordsOpt)) =>
-          aggregateRecordsOpt
-            .map { aggregateRecords =>
-              mergePolicy.mergeRecord(
-                inputRecord,
-                aggregateRecords,
-                joinFeaturesDataSet.featureContext
+        c-case (_, 🥺 (inputwecowd, XD aggwegatewecowdsopt)) =>
+          aggwegatewecowdsopt
+            .map { aggwegatewecowds =>
+              mewgepowicy.mewgewecowd(
+                i-inputwecowd, (U ᵕ U❁)
+                a-aggwegatewecowds, :3
+                joinfeatuwesdataset.featuwecontext
               )
-              inputRecord
+              inputwecowd
             }
-            .getOrElse(inputRecord)
+            .getowewse(inputwecowd)
       }
 
   /**
-   * If uniqueIdFeatures is non-empty and the join keys include a sparse binary
-   * key, the join will use this set of keys as a unique id to reduce
-   * memory consumption. You should need this option only for
-   * memory-intensive joins to avoid OOM errors.
+   * if u-uniqueidfeatuwes i-is nyon-empty and the join keys incwude a spawse binawy
+   * k-key, ( ͡o ω ͡o ) the join wiww use this set of keys as a unique id to weduce
+   * memowy consumption. òωó y-you shouwd nyeed this option onwy fow
+   * m-memowy-intensive j-joins to avoid oom ewwows. σωσ
    */
-  def apply(
-    inputDataSet: DataSetPipe,
-    joinKeys: Product,
-    joinFeaturesDataSet: DataSetPipe,
-    mergePolicy: SparseBinaryMergePolicy = PickFirstRecordPolicy,
-    uniqueIdFeaturesOpt: Option[Product] = None
-  ): DataSetPipe = {
-    val joinKeyList = joinKeys.productIterator.toList.asInstanceOf[List[Feature[_]]]
-    val sparseBinaryJoinKeySet =
-      joinKeyList.toSet.filter(_.getFeatureType() == FeatureType.SPARSE_BINARY)
-    val containsSparseBinaryKey = !sparseBinaryJoinKeySet.isEmpty
-    if (containsSparseBinaryKey) {
-      val uniqueIdFeatureList = uniqueIdFeaturesOpt
-        .map(uniqueIdFeatures =>
-          uniqueIdFeatures.productIterator.toList.asInstanceOf[List[Feature[_]]])
-        .getOrElse(List.empty[Feature[_]])
-      val keyIndexedAggregates = mkKeyIndexedAggregates(joinFeaturesDataSet, joinKeyList)
-      val joinedDataSet = if (uniqueIdFeatureList.isEmpty) {
-        val keyIndexedInput = mkKeyIndexedInput(inputDataSet, joinKeyList)
-        val recordIndexedAggregates =
-          mkRecordIndexedAggregates(keyIndexedInput, keyIndexedAggregates)
-        mkJoinedDataSet(inputDataSet, joinFeaturesDataSet, recordIndexedAggregates, mergePolicy)
-      } else {
-        val keyIndexedInput =
-          mkKeyIndexedInputWithUniqueId(inputDataSet, joinKeyList, uniqueIdFeatureList)
-        val recordIndexedAggregates =
-          mkRecordIndexedAggregatesWithUniqueId(keyIndexedInput, keyIndexedAggregates)
-        mkJoinedDataSetWithUniqueId(
-          inputDataSet,
-          joinFeaturesDataSet,
-          recordIndexedAggregates,
-          mergePolicy,
-          uniqueIdFeatureList
+  def appwy(
+    inputdataset: d-datasetpipe, (U ᵕ U❁)
+    j-joinkeys: pwoduct, (✿oωo)
+    joinfeatuwesdataset: datasetpipe, ^^
+    mewgepowicy: s-spawsebinawymewgepowicy = pickfiwstwecowdpowicy, ^•ﻌ•^
+    u-uniqueidfeatuwesopt: option[pwoduct] = nyone
+  ): datasetpipe = {
+    v-vaw joinkeywist = joinkeys.pwoductitewatow.towist.asinstanceof[wist[featuwe[_]]]
+    v-vaw spawsebinawyjoinkeyset =
+      j-joinkeywist.toset.fiwtew(_.getfeatuwetype() == featuwetype.spawse_binawy)
+    v-vaw containsspawsebinawykey = !spawsebinawyjoinkeyset.isempty
+    if (containsspawsebinawykey) {
+      v-vaw uniqueidfeatuwewist = u-uniqueidfeatuwesopt
+        .map(uniqueidfeatuwes =>
+          u-uniqueidfeatuwes.pwoductitewatow.towist.asinstanceof[wist[featuwe[_]]])
+        .getowewse(wist.empty[featuwe[_]])
+      vaw keyindexedaggwegates = m-mkkeyindexedaggwegates(joinfeatuwesdataset, XD j-joinkeywist)
+      vaw joineddataset = if (uniqueidfeatuwewist.isempty) {
+        v-vaw keyindexedinput = m-mkkeyindexedinput(inputdataset, :3 j-joinkeywist)
+        vaw wecowdindexedaggwegates =
+          mkwecowdindexedaggwegates(keyindexedinput, (ꈍᴗꈍ) k-keyindexedaggwegates)
+        mkjoineddataset(inputdataset, :3 j-joinfeatuwesdataset, (U ﹏ U) w-wecowdindexedaggwegates, UwU mewgepowicy)
+      } ewse {
+        vaw keyindexedinput =
+          m-mkkeyindexedinputwithuniqueid(inputdataset, 😳😳😳 j-joinkeywist, XD u-uniqueidfeatuwewist)
+        v-vaw wecowdindexedaggwegates =
+          mkwecowdindexedaggwegateswithuniqueid(keyindexedinput, o.O k-keyindexedaggwegates)
+        mkjoineddatasetwithuniqueid(
+          inputdataset, (⑅˘꒳˘)
+          joinfeatuwesdataset, 😳😳😳
+          wecowdindexedaggwegates, nyaa~~
+          mewgepowicy, rawr
+          u-uniqueidfeatuwewist
         )
       }
 
-      DataSetPipe(
-        joinedDataSet,
-        mergePolicy.mergeContext(
-          inputDataSet.featureContext,
-          joinFeaturesDataSet.featureContext
+      datasetpipe(
+        j-joineddataset, -.-
+        mewgepowicy.mewgecontext(
+          i-inputdataset.featuwecontext, (✿oωo)
+          joinfeatuwesdataset.featuwecontext
         )
       )
-    } else {
-      inputDataSet.joinWithSmaller(joinKeys, joinFeaturesDataSet) { _.pass }
+    } ewse {
+      i-inputdataset.joinwithsmowew(joinkeys, /(^•ω•^) joinfeatuwesdataset) { _.pass }
     }
   }
 }

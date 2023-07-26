@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.media
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.media
 
-case class MediaKey(
-  id: Long,
-  category: Int)
+case c-cwass mediakey(
+  i-id: wong, OwO
+  categowy: i-int)

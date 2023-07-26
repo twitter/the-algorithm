@@ -1,27 +1,27 @@
-package com.twitter.frigate.pushservice.predicate.quality_model_predicate
+package com.twittew.fwigate.pushsewvice.pwedicate.quawity_modew_pwedicate
 
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.util.Future
+impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+i-impowt c-com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.utiw.futuwe
 
-object ExplicitOONCFilterPredicate extends QualityPredicateBase {
-  override lazy val name = "open_or_ntab_click_explicit_threshold"
+o-object expwicitooncfiwtewpwedicate e-extends quawitypwedicatebase {
+  o-ovewwide wazy vaw nyame = "open_ow_ntab_cwick_expwicit_thweshowd"
 
-  override lazy val thresholdExtractor = (t: Target) =>
-    Future.value(t.params(PushFeatureSwitchParams.QualityPredicateExplicitThresholdParam))
+  ovewwide wazy vaw thweshowdextwactow = (t: tawget) =>
+    f-futuwe.vawue(t.pawams(pushfeatuweswitchpawams.quawitypwedicateexpwicitthweshowdpawam))
 
-  override def scoreExtractor = (candidate: PushCandidate) =>
-    candidate.mrWeightedOpenOrNtabClickRankingProbability
+  ovewwide def scoweextwactow = (candidate: pushcandidate) =>
+    c-candidate.mwweightedopenowntabcwickwankingpwobabiwity
 }
 
-object WeightedOpenOrNtabClickQualityPredicate extends QualityPredicateBase {
-  override lazy val name = "weighted_open_or_ntab_click_model"
+object w-weightedopenowntabcwickquawitypwedicate extends quawitypwedicatebase {
+  ovewwide w-wazy vaw nyame = "weighted_open_ow_ntab_cwick_modew"
 
-  override lazy val thresholdExtractor = (t: Target) => {
-    Future.value(0.0)
+  ovewwide w-wazy vaw thweshowdextwactow = (t: t-tawget) => {
+    futuwe.vawue(0.0)
   }
 
-  override def scoreExtractor =
-    (candidate: PushCandidate) => candidate.mrWeightedOpenOrNtabClickFilteringProbability
+  ovewwide def scoweextwactow =
+    (candidate: pushcandidate) => candidate.mwweightedopenowntabcwickfiwtewingpwobabiwity
 }

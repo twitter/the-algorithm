@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.alert
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.awewt
 
-sealed trait ShowAlertType
-case object NewTweets extends ShowAlertType
-case object Navigate extends ShowAlertType
+seawed t-twait showawewttype
+c-case object n-nyewtweets extends s-showawewttype
+c-case object n-navigate extends s-showawewttype

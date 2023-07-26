@@ -1,104 +1,104 @@
-package com.twitter.frigate.pushservice.take.predicates
+package com.twittew.fwigate.pushsewvice.take.pwedicates
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.predicate.BqmlHealthModelPredicates
-import com.twitter.frigate.pushservice.predicate.BqmlQualityModelPredicates
-import com.twitter.frigate.pushservice.predicate.HealthPredicates
-import com.twitter.frigate.pushservice.predicate.OONSpreadControlPredicate
-import com.twitter.frigate.pushservice.predicate.OONTweetNegativeFeedbackBasedPredicate
-import com.twitter.frigate.pushservice.predicate.OutOfNetworkCandidatesQualityPredicates
-import com.twitter.frigate.pushservice.predicate.PredicatesForCandidate
-import com.twitter.frigate.pushservice.predicate.PNegMultimodalPredicates
-import com.twitter.frigate.pushservice.predicate.TargetEngagementPredicate
-import com.twitter.frigate.pushservice.predicate.TweetEngagementRatioPredicate
-import com.twitter.frigate.pushservice.predicate.TweetLanguagePredicate
-import com.twitter.frigate.pushservice.predicate.TweetWithheldContentPredicate
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.pushsewvice.config.config
+i-impowt c-com.twittew.fwigate.pushsewvice.pwedicate.bqmwheawthmodewpwedicates
+i-impowt com.twittew.fwigate.pushsewvice.pwedicate.bqmwquawitymodewpwedicates
+i-impowt com.twittew.fwigate.pushsewvice.pwedicate.heawthpwedicates
+i-impowt com.twittew.fwigate.pushsewvice.pwedicate.oonspweadcontwowpwedicate
+i-impowt com.twittew.fwigate.pushsewvice.pwedicate.oontweetnegativefeedbackbasedpwedicate
+i-impowt com.twittew.fwigate.pushsewvice.pwedicate.outofnetwowkcandidatesquawitypwedicates
+impowt com.twittew.fwigate.pushsewvice.pwedicate.pwedicatesfowcandidate
+impowt com.twittew.fwigate.pushsewvice.pwedicate.pnegmuwtimodawpwedicates
+impowt com.twittew.fwigate.pushsewvice.pwedicate.tawgetengagementpwedicate
+i-impowt com.twittew.fwigate.pushsewvice.pwedicate.tweetengagementwatiopwedicate
+impowt c-com.twittew.fwigate.pushsewvice.pwedicate.tweetwanguagepwedicate
+impowt com.twittew.fwigate.pushsewvice.pwedicate.tweetwithhewdcontentpwedicate
 
-trait BasicTweetPredicates {
+t-twait basictweetpwedicates {
 
-  def config: Config
+  def config: config
 
-  implicit def statsReceiver: StatsReceiver
+  impwicit def statsweceivew: s-statsweceivew
 
-  final lazy val basicTweetPredicates =
-    List(
-      HealthPredicates.sensitiveMediaCategoryPredicate(),
-      HealthPredicates.profanityPredicate(),
-      PredicatesForCandidate.disableOutNetworkTweetPredicate(config.edgeStore),
-      TweetEngagementRatioPredicate.QTtoNtabClickBasedPredicate(),
-      TweetLanguagePredicate.oonTweeetLanguageMatch(),
-      HealthPredicates.userHealthSignalsPredicate(config.userHealthSignalStore),
-      HealthPredicates.authorSensitiveMediaPredicate(config.producerMediaRepresentationStore),
-      HealthPredicates.authorProfileBasedPredicate(),
-      PNegMultimodalPredicates.healthSignalScorePNegMultimodalPredicate(
-        config.tweetHealthScoreStore),
-      BqmlHealthModelPredicates.healthModelOonPredicate(
-        config.filteringModelScorer,
-        config.producerMediaRepresentationStore,
-        config.userHealthSignalStore,
-        config.tweetHealthScoreStore),
-      BqmlQualityModelPredicates.BqmlQualityModelOonPredicate(config.filteringModelScorer),
-      HealthPredicates.tweetHealthSignalScorePredicate(config.tweetHealthScoreStore),
-      HealthPredicates
-        .tweetHealthSignalScorePredicate(config.tweetHealthScoreStore, applyToQuoteTweet = true),
-      PredicatesForCandidate.nullCastF1ProtectedExperientPredicate(
-        config.cachedTweetyPieStoreV2
-      ),
-      OONTweetNegativeFeedbackBasedPredicate.ntabDislikeBasedPredicate(),
-      OONSpreadControlPredicate.oonTweetSpreadControlPredicate(),
-      OONSpreadControlPredicate.oonAuthorSpreadControlPredicate(),
-      HealthPredicates.healthSignalScoreMultilingualPnsfwTweetTextPredicate(
-        config.tweetHealthScoreStore),
-      PredicatesForCandidate
-        .recommendedTweetAuthorAcceptableToTargetUser(config.edgeStore),
-      HealthPredicates.healthSignalScorePnsfwTweetTextPredicate(config.tweetHealthScoreStore),
-      HealthPredicates.healthSignalScoreSpammyTweetPredicate(config.tweetHealthScoreStore),
-      OutOfNetworkCandidatesQualityPredicates.NegativeKeywordsPredicate(
-        config.postRankingFeatureStoreClient),
-      PredicatesForCandidate.authorNotBeingDeviceFollowed(config.edgeStore),
-      TweetWithheldContentPredicate(),
-      PredicatesForCandidate.noOptoutFreeFormInterestPredicate,
-      PredicatesForCandidate.disableInNetworkTweetPredicate(config.edgeStore),
-      TweetEngagementRatioPredicate.TweetReplyLikeRatioPredicate(),
-      TargetEngagementPredicate(
-        config.userTweetPerspectiveStore,
-        defaultForMissing = true
-      ),
+  finaw wazy v-vaw basictweetpwedicates =
+    w-wist(
+      heawthpwedicates.sensitivemediacategowypwedicate(), 😳
+      heawthpwedicates.pwofanitypwedicate(), mya
+      pwedicatesfowcandidate.disabweoutnetwowktweetpwedicate(config.edgestowe), (˘ω˘)
+      tweetengagementwatiopwedicate.qttontabcwickbasedpwedicate(), >_<
+      tweetwanguagepwedicate.oontweeetwanguagematch(), -.-
+      heawthpwedicates.usewheawthsignawspwedicate(config.usewheawthsignawstowe), 🥺
+      h-heawthpwedicates.authowsensitivemediapwedicate(config.pwoducewmediawepwesentationstowe), (U ﹏ U)
+      heawthpwedicates.authowpwofiwebasedpwedicate(), >w<
+      pnegmuwtimodawpwedicates.heawthsignawscowepnegmuwtimodawpwedicate(
+        config.tweetheawthscowestowe), mya
+      bqmwheawthmodewpwedicates.heawthmodewoonpwedicate(
+        config.fiwtewingmodewscowew, >w<
+        c-config.pwoducewmediawepwesentationstowe, nyaa~~
+        config.usewheawthsignawstowe, (✿oωo)
+        c-config.tweetheawthscowestowe), ʘwʘ
+      b-bqmwquawitymodewpwedicates.bqmwquawitymodewoonpwedicate(config.fiwtewingmodewscowew), (ˆ ﻌ ˆ)♡
+      h-heawthpwedicates.tweetheawthsignawscowepwedicate(config.tweetheawthscowestowe), 😳😳😳
+      h-heawthpwedicates
+        .tweetheawthsignawscowepwedicate(config.tweetheawthscowestowe, :3 appwytoquotetweet = twue), OwO
+      pwedicatesfowcandidate.nuwwcastf1pwotectedexpewientpwedicate(
+        c-config.cachedtweetypiestowev2
+      ), (U ﹏ U)
+      oontweetnegativefeedbackbasedpwedicate.ntabdiswikebasedpwedicate(), >w<
+      oonspweadcontwowpwedicate.oontweetspweadcontwowpwedicate(), (U ﹏ U)
+      oonspweadcontwowpwedicate.oonauthowspweadcontwowpwedicate(), 😳
+      h-heawthpwedicates.heawthsignawscowemuwtiwinguawpnsfwtweettextpwedicate(
+        config.tweetheawthscowestowe), (ˆ ﻌ ˆ)♡
+      pwedicatesfowcandidate
+        .wecommendedtweetauthowacceptabwetotawgetusew(config.edgestowe), 😳😳😳
+      heawthpwedicates.heawthsignawscowepnsfwtweettextpwedicate(config.tweetheawthscowestowe), (U ﹏ U)
+      heawthpwedicates.heawthsignawscowespammytweetpwedicate(config.tweetheawthscowestowe), (///ˬ///✿)
+      outofnetwowkcandidatesquawitypwedicates.negativekeywowdspwedicate(
+        c-config.postwankingfeatuwestowecwient), 😳
+      pwedicatesfowcandidate.authownotbeingdevicefowwowed(config.edgestowe),
+      t-tweetwithhewdcontentpwedicate(), 😳
+      pwedicatesfowcandidate.nooptoutfweefowmintewestpwedicate, σωσ
+      pwedicatesfowcandidate.disabweinnetwowktweetpwedicate(config.edgestowe), rawr x3
+      t-tweetengagementwatiopwedicate.tweetwepwywikewatiopwedicate(), OwO
+      t-tawgetengagementpwedicate(
+        config.usewtweetpewspectivestowe, /(^•ω•^)
+        defauwtfowmissing = twue
+      ), 😳😳😳
     )
 }
 
 /**
- * This trait is a new version of BasicTweetPredicates
- * Difference from old version is that basicTweetPredicates are different
- * basicTweetPredicates here don't include Social Graph Service related predicates
+ * this twait is a n-nyew vewsion of b-basictweetpwedicates
+ * diffewence f-fwom owd vewsion i-is that basictweetpwedicates awe diffewent
+ * b-basictweetpwedicates hewe don't i-incwude sociaw gwaph sewvice wewated pwedicates
  */
-trait BasicTweetPredicatesWithoutSGSPredicates {
+t-twait basictweetpwedicateswithoutsgspwedicates {
 
-  def config: Config
+  def config: c-config
 
-  implicit def statsReceiver: StatsReceiver
+  impwicit def statsweceivew: s-statsweceivew
 
-  final lazy val basicTweetPredicates = {
-    List(
-      HealthPredicates.healthSignalScoreSpammyTweetPredicate(config.tweetHealthScoreStore),
-      PredicatesForCandidate.nullCastF1ProtectedExperientPredicate(
-        config.cachedTweetyPieStoreV2
-      ),
-      TweetWithheldContentPredicate(),
-      TargetEngagementPredicate(
-        config.userTweetPerspectiveStore,
-        defaultForMissing = true
-      ),
-      PredicatesForCandidate.noOptoutFreeFormInterestPredicate,
-      HealthPredicates.userHealthSignalsPredicate(config.userHealthSignalStore),
-      HealthPredicates.tweetHealthSignalScorePredicate(config.tweetHealthScoreStore),
-      BqmlQualityModelPredicates.BqmlQualityModelOonPredicate(config.filteringModelScorer),
-      BqmlHealthModelPredicates.healthModelOonPredicate(
-        config.filteringModelScorer,
-        config.producerMediaRepresentationStore,
-        config.userHealthSignalStore,
-        config.tweetHealthScoreStore),
+  f-finaw wazy vaw basictweetpwedicates = {
+    wist(
+      heawthpwedicates.heawthsignawscowespammytweetpwedicate(config.tweetheawthscowestowe), ( ͡o ω ͡o )
+      pwedicatesfowcandidate.nuwwcastf1pwotectedexpewientpwedicate(
+        config.cachedtweetypiestowev2
+      ), >_<
+      tweetwithhewdcontentpwedicate(), >w<
+      t-tawgetengagementpwedicate(
+        config.usewtweetpewspectivestowe, rawr
+        d-defauwtfowmissing = twue
+      ), 😳
+      p-pwedicatesfowcandidate.nooptoutfweefowmintewestpwedicate, >w<
+      h-heawthpwedicates.usewheawthsignawspwedicate(config.usewheawthsignawstowe), (⑅˘꒳˘)
+      h-heawthpwedicates.tweetheawthsignawscowepwedicate(config.tweetheawthscowestowe), OwO
+      bqmwquawitymodewpwedicates.bqmwquawitymodewoonpwedicate(config.fiwtewingmodewscowew),
+      bqmwheawthmodewpwedicates.heawthmodewoonpwedicate(
+        config.fiwtewingmodewscowew, (ꈍᴗꈍ)
+        config.pwoducewmediawepwesentationstowe, 😳
+        c-config.usewheawthsignawstowe, 😳😳😳
+        config.tweetheawthscowestowe), mya
     )
   }
 }

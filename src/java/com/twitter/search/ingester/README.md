@@ -1,10 +1,10 @@
-## Ingesters
-Ingesters are services that consume raw tweets and user updates, process them through a series of transformations and write them to kafka topics for Earlybird to consume and subsequently index. 
+## ingestews
+ingestews awe sewvices t-that consume w-waw tweets and usew u-updates, (⑅˘꒳˘) pwocess t-them thwough a-a sewies of twansfowmations a-and w-wwite them to k-kafka topics fow eawwybiwd to consume and subsequentwy index. (///ˬ///✿) 
 
-There are two types of ingesters:
-1. Tweet ingesters
-2. UserUpdates ingesters
+thewe awe two types o-of ingestews:
+1. 😳😳😳 tweet ingestews
+2. 🥺 usewupdates i-ingestews
 
-Tweet ingesters consume raw tweets and extract different fields and features for Earlybird to index. User updates ingester produces user safety information such as whether the user is deactivated, suspended or off-boarded. The user and tweet features produced by ingesters are then used by Earlybird during tweet retieval and ranking.  
+tweet ingestews consume w-waw tweets and extwact diffewent fiewds and featuwes fow e-eawwybiwd to index. mya usew updates i-ingestew pwoduces u-usew safety infowmation such as whethew the usew is deactivated, suspended ow o-off-boawded. 🥺 the usew and tweet featuwes pwoduced by ingestews awe then used by e-eawwybiwd duwing tweet wetievaw a-and wanking.  
 
-Ingesters are made up of a pipeline of stages with each stage performing a different field/feature extraction. The pipeline configuration of the ingesters can be found at science/search/ingester/config
+i-ingestews awe made u-up of a pipewine o-of stages with each stage pewfowming a diffewent f-fiewd/featuwe extwaction. >_< the pipewine configuwation o-of the ingestews can be found at science/seawch/ingestew/config

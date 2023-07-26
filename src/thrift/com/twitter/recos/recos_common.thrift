@@ -1,54 +1,54 @@
-namespace java com.twitter.recos.recos_common.thriftjava
-namespace py gen.twitter.recos.recos_common
-#@namespace scala com.twitter.recos.recos_common.thriftscala
-#@namespace strato com.twitter.recos.recos_common
-namespace rb Recos
+namespace java com.twittew.wecos.wecos_common.thwiftjava
+nyamespace p-py gen.twittew.wecos.wecos_common
+#@namespace s-scawa com.twittew.wecos.wecos_common.thwiftscawa
+#@namespace s-stwato c-com.twittew.wecos.wecos_common
+n-nyamespace wb w-wecos
 
-// Social proof types for user moment recommendations
-enum MomentSocialProofType {
-  PUBLISH         = 0
-  LIKE            = 1
-  CAPSULE_OPEN    = 2
+// sociaw p-pwoof types fow u-usew moment wecommendations
+enum momentsociawpwooftype {
+  pubwish         = 0
+  wike            = 1
+  capsuwe_open    = 2
 }
 
-// Social proof types for tweet/entity recommendations
-enum SocialProofType {
-  CLICK           = 0
-  FAVORITE        = 1
-  RETWEET         = 2
-  REPLY           = 3
-  TWEET           = 4
-  IS_MENTIONED    = 5
-  IS_MEDIATAGGED  = 6
-  QUOTE           = 7
+// s-sociaw pwoof types fow tweet/entity wecommendations
+e-enum sociawpwooftype {
+  cwick           = 0
+  f-favowite        = 1
+  wetweet         = 2
+  wepwy           = 3
+  tweet           = 4
+  is_mentioned    = 5
+  i-is_mediatagged  = 6
+  quote           = 7
 }
 
-struct SocialProof {
-  1: required i64 userId
-  2: optional i64 metadata
+s-stwuct sociawpwoof {
+  1: w-wequiwed i64 usewid
+  2: optionaw i64 metadata
 }
 
-// Social proof types for user recommendations
-enum UserSocialProofType {
-  FOLLOW     = 0
-  MENTION    = 1
-  MEDIATAG   = 2
+// sociaw pwoof types f-fow usew wecommendations
+enum usewsociawpwooftype {
+  fowwow     = 0
+  mention    = 1
+  m-mediatag   = 2
 }
 
-struct GetRecentEdgesRequest {
-  1: required i64                          requestId        // the node to query from
-  2: optional i32                          maxNumEdges      // the max number of recent edges
+stwuct g-getwecentedgeswequest {
+  1: w-wequiwed i64                          w-wequestid        // t-the nyode to quewy fwom
+  2: optionaw i-i32                          maxnumedges      // the max nyumbew of wecent edges
 }
 
-struct RecentEdge {
-  1: required i64                          nodeId           // the connecting node id
-  2: required SocialProofType              engagementType   // the engagement type of the edge
+s-stwuct wecentedge {
+  1: wequiwed i64                          nyodeid           // the connecting nyode id
+  2: wequiwed s-sociawpwooftype              engagementtype   // t-the engagement t-type of the edge
 }
 
-struct GetRecentEdgesResponse {
-  1: required list<RecentEdge>             edges            // the _ most recent edges from the query node
+s-stwuct getwecentedgeswesponse {
+  1: wequiwed wist<wecentedge>             edges            // the _ most wecent e-edges fwom t-the quewy nyode
 }
 
-struct NodeInfo {
-  1: required list<i64> edges
+stwuct nyodeinfo {
+  1: w-wequiwed w-wist<i64> edges
 }

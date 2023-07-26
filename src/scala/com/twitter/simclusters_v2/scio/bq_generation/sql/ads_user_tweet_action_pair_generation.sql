@@ -1,38 +1,38 @@
-WITH
-  vars AS (
-    SELECT
-      TIMESTAMP("{START_TIME}") AS start_date,
-      TIMESTAMP("{END_TIME}") AS end_date
-  ),
+with
+  vaws as (
+    sewect
+      t-timestamp("{stawt_time}") a-as stawt_date, >_<
+      t-timestamp("{end_time}") a-as end_date
+  ), rawr x3
 
-  ads_engagement AS (
-    SELECT
-        userId64 as userId,
-        promotedTweetId as tweetId,
-        UNIX_MILLIS(timestamp) AS tsMillis,
-        lineItemId
-    FROM `twttr-rev-core-data-prod.core_served_impressions.spend`, vars
-    WHERE TIMESTAMP(_batchEnd) >= vars.start_date AND TIMESTAMP(_batchEnd) <= vars.end_date
-    AND
-      engagementType IN ({CONTRIBUTING_ACTION_TYPES_STR})
-      AND lineItemObjective != 9 -- not pre-roll ads
-  ),
+  a-ads_engagement a-as (
+    s-sewect
+        u-usewid64 as usewid, mya
+        pwomotedtweetid as tweetid, nyaa~~
+        unix_miwwis(timestamp) as tsmiwwis, (⑅˘꒳˘)
+        wineitemid
+    fwom `twttw-wev-cowe-data-pwod.cowe_sewved_impwessions.spend`, rawr x3 v-vaws
+    whewe timestamp(_batchend) >= vaws.stawt_date a-and timestamp(_batchend) <= vaws.end_date
+    a-and
+      engagementtype in ({contwibuting_action_types_stw})
+      and wineitemobjective != 9 -- nyot pwe-woww a-ads
+  ), (✿oωo)
 
-  line_items AS (
-      SELECT
-        id AS lineItemId,
-        end_time.posixTime AS endTime
-      FROM
-        `twttr-rev-core-data-prod.rev_ads_production.line_items`
+  wine_items as (
+      s-sewect
+        i-id as wineitemid, (ˆ ﻌ ˆ)♡
+        end_time.posixtime as endtime
+      fwom
+        `twttw-wev-cowe-data-pwod.wev_ads_pwoduction.wine_items`
   )
 
 
-SELECT
-  userId,
-  tweetId,
-  tsMillis
-FROM ads_engagement JOIN line_items USING(lineItemId), vars
-WHERE
-  line_items.endTime IS NULL
-  OR TIMESTAMP_MILLIS(line_items.endTime) >= vars.end_date
+sewect
+  u-usewid, (˘ω˘)
+  tweetid, (⑅˘꒳˘)
+  tsmiwwis
+fwom ads_engagement join wine_items using(wineitemid), (///ˬ///✿) v-vaws
+whewe
+  wine_items.endtime i-is nyuww
+  o-ow timestamp_miwwis(wine_items.endtime) >= v-vaws.end_date
 

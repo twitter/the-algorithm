@@ -1,200 +1,200 @@
-package com.twitter.unified_user_actions.adapter.tweetypie_event
+package com.twittew.unified_usew_actions.adaptew.tweetypie_event
 
-import com.twitter.tweetypie.thriftscala.QuotedTweet
-import com.twitter.tweetypie.thriftscala.Share
-import com.twitter.tweetypie.thriftscala.TweetCreateEvent
-import com.twitter.tweetypie.thriftscala.TweetEventFlags
-import com.twitter.unified_user_actions.adapter.common.AdapterUtils
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.AuthorInfo
-import com.twitter.unified_user_actions.thriftscala.EventMetadata
-import com.twitter.unified_user_actions.thriftscala.Item
-import com.twitter.unified_user_actions.thriftscala.SourceLineage
-import com.twitter.unified_user_actions.thriftscala.TweetInfo
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import com.twitter.unified_user_actions.thriftscala.UserIdentifier
+impowt com.twittew.tweetypie.thwiftscawa.quotedtweet
+i-impowt com.twittew.tweetypie.thwiftscawa.shawe
+i-impowt com.twittew.tweetypie.thwiftscawa.tweetcweateevent
+impowt c-com.twittew.tweetypie.thwiftscawa.tweeteventfwags
+i-impowt com.twittew.unified_usew_actions.adaptew.common.adaptewutiws
+i-impowt c-com.twittew.unified_usew_actions.thwiftscawa.actiontype
+i-impowt c-com.twittew.unified_usew_actions.thwiftscawa.authowinfo
+impowt com.twittew.unified_usew_actions.thwiftscawa.eventmetadata
+impowt com.twittew.unified_usew_actions.thwiftscawa.item
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.souwcewineage
+impowt com.twittew.unified_usew_actions.thwiftscawa.tweetinfo
+impowt com.twittew.unified_usew_actions.thwiftscawa.unifiedusewaction
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.usewidentifiew
 
 /**
- * Base class for Tweetypie TweetCreateEvent including Quote, Reply, Retweet, and Create.
+ * b-base cwass fow tweetypie tweetcweateevent incwuding quote, nyaa~~ wepwy, wetweet, >w< a-and cweate. -.-
  */
-trait BaseTweetypieTweetEventCreate extends BaseTweetypieTweetEvent[TweetCreateEvent] {
-  type ExtractedEvent
-  protected def actionType: ActionType
+twait basetweetypietweeteventcweate e-extends basetweetypietweetevent[tweetcweateevent] {
+  t-type extwactedevent
+  pwotected def actiontype: actiontype
 
   /**
-   *  This is the country code where actionTweetId is sent from. For the definitions,
-   *  check https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/thrift/com/twitter/tweetypie/tweet.thrift?L1001.
+   *  this is the countwy c-code whewe actiontweetid is sent fwom. (✿oωo) fow the definitions, (˘ω˘)
+   *  check https://souwcegwaph.twittew.biz/git.twittew.biz/souwce/-/bwob/swc/thwift/com/twittew/tweetypie/tweet.thwift?w1001.
    *
-   *  UUA sets this to be consistent with IESource to meet existing use requirement.
+   *  u-uua sets this to be c-consistent with i-iesouwce to meet e-existing use wequiwement. rawr
    *
-   *  For ServerTweetReply/Retweet/Quote, the geo-tagging country code is not available in TweetCreatEvent.
-   *  Thus, user signup country is picked to meet a customer use case.
+   *  f-fow sewvewtweetwepwy/wetweet/quote, OwO the geo-tagging countwy c-code is nyot avaiwabwe in tweetcweatevent. ^•ﻌ•^
+   *  thus, UwU usew signup c-countwy is picked to meet a customew use case. (˘ω˘)
    *
-   *  The definition here conflicts with the intention of UUA to log the request country code
-   *  rather than the signup / geo-tagging country.
+   *  the definition hewe confwicts with the intention o-of uua to wog the wequest countwy c-code
+   *  wathew t-than the signup / g-geo-tagging countwy.
    *
    */
-  protected def getCountryCode(tce: TweetCreateEvent): Option[String] = {
-    tce.tweet.place match {
-      case Some(p) => p.countryCode
-      case _ => tce.user.safety.flatMap(_.signupCountryCode)
+  pwotected def getcountwycode(tce: t-tweetcweateevent): o-option[stwing] = {
+    tce.tweet.pwace m-match {
+      c-case some(p) => p.countwycode
+      c-case _ => tce.usew.safety.fwatmap(_.signupcountwycode)
     }
   }
 
-  protected def getItem(
-    extractedEvent: ExtractedEvent,
-    tweetCreateEvent: TweetCreateEvent
-  ): Item
-  protected def extract(tweetCreateEvent: TweetCreateEvent): Option[ExtractedEvent]
+  p-pwotected def getitem(
+    extwactedevent: e-extwactedevent, (///ˬ///✿)
+    tweetcweateevent: t-tweetcweateevent
+  ): item
+  pwotected d-def extwact(tweetcweateevent: t-tweetcweateevent): option[extwactedevent]
 
-  def getUnifiedUserAction(
-    tweetCreateEvent: TweetCreateEvent,
-    tweetEventFlags: TweetEventFlags
-  ): Option[UnifiedUserAction] = {
-    extract(tweetCreateEvent).map { extractedEvent =>
-      UnifiedUserAction(
-        userIdentifier = getUserIdentifier(tweetCreateEvent),
-        item = getItem(extractedEvent, tweetCreateEvent),
-        actionType = actionType,
-        eventMetadata = getEventMetadata(tweetCreateEvent, tweetEventFlags),
-        productSurface = None,
-        productSurfaceInfo = None
+  def getunifiedusewaction(
+    tweetcweateevent: tweetcweateevent, σωσ
+    tweeteventfwags: t-tweeteventfwags
+  ): o-option[unifiedusewaction] = {
+    extwact(tweetcweateevent).map { e-extwactedevent =>
+      u-unifiedusewaction(
+        usewidentifiew = g-getusewidentifiew(tweetcweateevent), /(^•ω•^)
+        item = getitem(extwactedevent, 😳 tweetcweateevent), 😳
+        a-actiontype = actiontype, (⑅˘꒳˘)
+        eventmetadata = geteventmetadata(tweetcweateevent, 😳😳😳 tweeteventfwags), 😳
+        p-pwoductsuwface = nyone, XD
+        p-pwoductsuwfaceinfo = n-nyone
       )
     }
   }
 
-  protected def getUserIdentifier(tweetCreateEvent: TweetCreateEvent): UserIdentifier =
-    UserIdentifier(userId = Some(tweetCreateEvent.user.id))
+  p-pwotected def getusewidentifiew(tweetcweateevent: t-tweetcweateevent): u-usewidentifiew =
+    usewidentifiew(usewid = s-some(tweetcweateevent.usew.id))
 
-  protected def getEventMetadata(
-    tweetCreateEvent: TweetCreateEvent,
-    flags: TweetEventFlags
-  ): EventMetadata =
-    EventMetadata(
-      sourceTimestampMs = flags.timestampMs,
-      receivedTimestampMs = AdapterUtils.currentTimestampMs,
-      sourceLineage = SourceLineage.ServerTweetypieEvents,
-      traceId = None, // Currently traceId is not stored in TweetCreateEvent
-      // UUA sets this to None since there is no request level language info.
-      language = None,
-      countryCode = getCountryCode(tweetCreateEvent),
-      clientAppId = tweetCreateEvent.tweet.deviceSource.flatMap(_.clientAppId),
-      clientVersion = None // Currently clientVersion is not stored in TweetCreateEvent
+  p-pwotected def geteventmetadata(
+    tweetcweateevent: t-tweetcweateevent, mya
+    f-fwags: tweeteventfwags
+  ): e-eventmetadata =
+    e-eventmetadata(
+      s-souwcetimestampms = fwags.timestampms,
+      weceivedtimestampms = adaptewutiws.cuwwenttimestampms, ^•ﻌ•^
+      souwcewineage = s-souwcewineage.sewvewtweetypieevents, ʘwʘ
+      twaceid = nyone, ( ͡o ω ͡o ) // cuwwentwy twaceid is nyot stowed in tweetcweateevent
+      // uua sets this t-to nyone since thewe is nyo wequest wevew wanguage info. mya
+      wanguage = n-nyone, o.O
+      c-countwycode = g-getcountwycode(tweetcweateevent), (✿oωo)
+      cwientappid = t-tweetcweateevent.tweet.devicesouwce.fwatmap(_.cwientappid), :3
+      cwientvewsion = n-nyone // c-cuwwentwy cwientvewsion is nyot stowed in tweetcweateevent
     )
 }
 
 /**
- * Get UnifiedUserAction from a tweet Create.
- * Note the Create is generated when the tweet is not a Quote/Retweet/Reply.
+ * get unifiedusewaction fwom a tweet c-cweate. 😳
+ * nyote the cweate i-is genewated when the tweet is nyot a-a quote/wetweet/wepwy. (U ﹏ U)
  */
-object TweetypieCreateEvent extends BaseTweetypieTweetEventCreate {
-  type ExtractedEvent = Long
-  override protected val actionType: ActionType = ActionType.ServerTweetCreate
-  override protected def extract(tweetCreateEvent: TweetCreateEvent): Option[Long] =
-    Option(tweetCreateEvent.tweet.id)
+object t-tweetypiecweateevent extends basetweetypietweeteventcweate {
+  t-type extwactedevent = w-wong
+  ovewwide pwotected v-vaw actiontype: a-actiontype = actiontype.sewvewtweetcweate
+  ovewwide pwotected def extwact(tweetcweateevent: tweetcweateevent): o-option[wong] =
+    o-option(tweetcweateevent.tweet.id)
 
-  protected def getItem(
-    tweetId: Long,
-    tweetCreateEvent: TweetCreateEvent
-  ): Item =
-    Item.TweetInfo(
-      TweetInfo(
-        actionTweetId = tweetId,
-        actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(tweetCreateEvent.user.id)))
+  p-pwotected def getitem(
+    t-tweetid: w-wong, mya
+    tweetcweateevent: tweetcweateevent
+  ): i-item =
+    item.tweetinfo(
+      tweetinfo(
+        actiontweetid = tweetid, (U ᵕ U❁)
+        actiontweetauthowinfo = s-some(authowinfo(authowid = s-some(tweetcweateevent.usew.id)))
       ))
 }
 
 /**
- * Get UnifiedUserAction from a Reply.
- * Note the Reply is generated when someone is replying to a tweet.
+ * get unifiedusewaction fwom a wepwy. :3
+ * n-nyote the w-wepwy is genewated when someone is wepwying to a tweet. mya
  */
-object TweetypieReplyEvent extends BaseTweetypieTweetEventCreate {
-  case class PredicateOutput(tweetId: Long, userId: Long)
-  override type ExtractedEvent = PredicateOutput
-  override protected val actionType: ActionType = ActionType.ServerTweetReply
-  override protected def extract(tweetCreateEvent: TweetCreateEvent): Option[PredicateOutput] =
-    tweetCreateEvent.tweet.coreData
-      .flatMap(_.reply).flatMap(r =>
-        r.inReplyToStatusId.map(tweetId => PredicateOutput(tweetId, r.inReplyToUserId)))
+object t-tweetypiewepwyevent extends basetweetypietweeteventcweate {
+  case cwass pwedicateoutput(tweetid: wong, OwO usewid: wong)
+  ovewwide t-type extwactedevent = pwedicateoutput
+  ovewwide p-pwotected vaw a-actiontype: actiontype = actiontype.sewvewtweetwepwy
+  ovewwide pwotected def e-extwact(tweetcweateevent: t-tweetcweateevent): option[pwedicateoutput] =
+    tweetcweateevent.tweet.cowedata
+      .fwatmap(_.wepwy).fwatmap(w =>
+        w.inwepwytostatusid.map(tweetid => p-pwedicateoutput(tweetid, (ˆ ﻌ ˆ)♡ w.inwepwytousewid)))
 
-  override protected def getItem(
-    repliedTweet: PredicateOutput,
-    tweetCreateEvent: TweetCreateEvent
-  ): Item = {
-    Item.TweetInfo(
-      TweetInfo(
-        actionTweetId = repliedTweet.tweetId,
-        actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(repliedTweet.userId))),
-        replyingTweetId = Some(tweetCreateEvent.tweet.id)
+  o-ovewwide pwotected def getitem(
+    wepwiedtweet: pwedicateoutput, ʘwʘ
+    t-tweetcweateevent: tweetcweateevent
+  ): i-item = {
+    i-item.tweetinfo(
+      tweetinfo(
+        actiontweetid = w-wepwiedtweet.tweetid, o.O
+        actiontweetauthowinfo = s-some(authowinfo(authowid = s-some(wepwiedtweet.usewid))), UwU
+        w-wepwyingtweetid = some(tweetcweateevent.tweet.id)
       )
     )
   }
 }
 
 /**
- * Get UnifiedUserAction from a Quote.
- * Note the Quote is generated when someone is quoting (retweeting with comment) a tweet.
+ * g-get unifiedusewaction f-fwom a quote. rawr x3
+ * nyote the quote is g-genewated when someone i-is quoting (wetweeting w-with comment) a tweet. 🥺
  */
-object TweetypieQuoteEvent extends BaseTweetypieTweetEventCreate {
-  override protected val actionType: ActionType = ActionType.ServerTweetQuote
-  type ExtractedEvent = QuotedTweet
-  override protected def extract(tweetCreateEvent: TweetCreateEvent): Option[QuotedTweet] =
-    tweetCreateEvent.tweet.quotedTweet
+object t-tweetypiequoteevent extends basetweetypietweeteventcweate {
+  o-ovewwide p-pwotected vaw actiontype: actiontype = actiontype.sewvewtweetquote
+  type e-extwactedevent = q-quotedtweet
+  o-ovewwide pwotected d-def extwact(tweetcweateevent: tweetcweateevent): o-option[quotedtweet] =
+    tweetcweateevent.tweet.quotedtweet
 
-  override protected def getItem(
-    quotedTweet: QuotedTweet,
-    tweetCreateEvent: TweetCreateEvent
-  ): Item =
-    Item.TweetInfo(
-      TweetInfo(
-        actionTweetId = quotedTweet.tweetId,
-        actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(quotedTweet.userId))),
-        quotingTweetId = Some(tweetCreateEvent.tweet.id)
+  ovewwide pwotected def getitem(
+    quotedtweet: quotedtweet, :3
+    t-tweetcweateevent: tweetcweateevent
+  ): i-item =
+    item.tweetinfo(
+      tweetinfo(
+        a-actiontweetid = quotedtweet.tweetid, (ꈍᴗꈍ)
+        actiontweetauthowinfo = s-some(authowinfo(authowid = some(quotedtweet.usewid))),
+        q-quotingtweetid = s-some(tweetcweateevent.tweet.id)
       )
     )
 }
 
 /**
- * Get UnifiedUserAction from a Retweet.
- * Note the Retweet is generated when someone is retweeting (without comment) a tweet.
+ * get u-unifiedusewaction f-fwom a wetweet. 🥺
+ * n-nyote the wetweet is genewated when someone is wetweeting (without comment) a tweet. (✿oωo)
  */
-object TweetypieRetweetEvent extends BaseTweetypieTweetEventCreate {
-  override type ExtractedEvent = Share
-  override protected val actionType: ActionType = ActionType.ServerTweetRetweet
-  override protected def extract(tweetCreateEvent: TweetCreateEvent): Option[Share] =
-    tweetCreateEvent.tweet.coreData.flatMap(_.share)
+object tweetypiewetweetevent e-extends b-basetweetypietweeteventcweate {
+  o-ovewwide type extwactedevent = s-shawe
+  ovewwide pwotected vaw actiontype: actiontype = actiontype.sewvewtweetwetweet
+  ovewwide p-pwotected d-def extwact(tweetcweateevent: tweetcweateevent): o-option[shawe] =
+    tweetcweateevent.tweet.cowedata.fwatmap(_.shawe)
 
-  override protected def getItem(share: Share, tweetCreateEvent: TweetCreateEvent): Item =
-    Item.TweetInfo(
-      TweetInfo(
-        actionTweetId = share.sourceStatusId,
-        actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(share.sourceUserId))),
-        retweetingTweetId = Some(tweetCreateEvent.tweet.id)
+  ovewwide p-pwotected def g-getitem(shawe: shawe, (U ﹏ U) tweetcweateevent: t-tweetcweateevent): i-item =
+    item.tweetinfo(
+      tweetinfo(
+        actiontweetid = shawe.souwcestatusid, :3
+        actiontweetauthowinfo = s-some(authowinfo(authowid = s-some(shawe.souwceusewid))), ^^;;
+        w-wetweetingtweetid = s-some(tweetcweateevent.tweet.id)
       )
     )
 }
 
 /**
- * Get UnifiedUserAction from a TweetEdit.
- * Note the Edit is generated when someone is editing their quote or default tweet. The edit will
- * generate a new Tweet.
+ * g-get unifiedusewaction fwom a tweetedit. rawr
+ * n-nyote t-the edit is genewated when someone i-is editing t-theiw quote ow defauwt tweet. 😳😳😳 the e-edit wiww
+ * genewate a nyew tweet. (✿oωo)
  */
-object TweetypieEditEvent extends BaseTweetypieTweetEventCreate {
-  override type ExtractedEvent = Long
-  override protected def actionType: ActionType = ActionType.ServerTweetEdit
-  override protected def extract(tweetCreateEvent: TweetCreateEvent): Option[Long] =
-    TweetypieEventUtils.editedTweetIdFromTweet(tweetCreateEvent.tweet)
+object t-tweetypieeditevent extends basetweetypietweeteventcweate {
+  ovewwide t-type extwactedevent = w-wong
+  ovewwide pwotected d-def actiontype: actiontype = actiontype.sewvewtweetedit
+  o-ovewwide pwotected d-def extwact(tweetcweateevent: t-tweetcweateevent): option[wong] =
+    tweetypieeventutiws.editedtweetidfwomtweet(tweetcweateevent.tweet)
 
-  override protected def getItem(
-    editedTweetId: Long,
-    tweetCreateEvent: TweetCreateEvent
-  ): Item =
-    Item.TweetInfo(
-      TweetInfo(
-        actionTweetId = tweetCreateEvent.tweet.id,
-        actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(tweetCreateEvent.user.id))),
-        editedTweetId = Some(editedTweetId),
-        quotedTweetId = tweetCreateEvent.tweet.quotedTweet.map(_.tweetId)
+  ovewwide pwotected d-def getitem(
+    editedtweetid: wong, OwO
+    tweetcweateevent: t-tweetcweateevent
+  ): i-item =
+    item.tweetinfo(
+      tweetinfo(
+        a-actiontweetid = tweetcweateevent.tweet.id, ʘwʘ
+        a-actiontweetauthowinfo = s-some(authowinfo(authowid = some(tweetcweateevent.usew.id))),
+        editedtweetid = s-some(editedtweetid), (ˆ ﻌ ˆ)♡
+        quotedtweetid = tweetcweateevent.tweet.quotedtweet.map(_.tweetid)
       )
     )
 }

@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.twitter_list
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.twittew_wist
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.TwitterListItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.twittew_wist.twittewwistitem
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class TwitterListItemMarshaller @Inject() (
-  twitterListDisplayTypeMarshaller: TwitterListDisplayTypeMarshaller) {
+@singweton
+c-cwass t-twittewwistitemmawshawwew @inject() (
+  t-twittewwistdispwaytypemawshawwew: t-twittewwistdispwaytypemawshawwew) {
 
-  def apply(twitterListItem: TwitterListItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.TwitterList(
-      urt.TwitterList(
-        id = twitterListItem.id,
-        displayType = twitterListItem.displayType.map(twitterListDisplayTypeMarshaller(_))
+  def appwy(twittewwistitem: twittewwistitem): uwt.timewineitemcontent =
+    uwt.timewineitemcontent.twittewwist(
+      uwt.twittewwist(
+        i-id = twittewwistitem.id, >_<
+        dispwaytype = twittewwistitem.dispwaytype.map(twittewwistdispwaytypemawshawwew(_))
       )
     )
 }

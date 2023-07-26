@@ -1,9 +1,9 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
-        "util/util-core/src/main/scala/com/twitter/conversions",
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/modews",
+        "utiw/utiw-cowe/swc/main/scawa/com/twittew/convewsions", òωó
     ],
 )

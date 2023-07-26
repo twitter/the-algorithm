@@ -1,419 +1,419 @@
-package com.twitter.servo.cache
+package com.twittew.sewvo.cache
 
-import com.twitter.finagle.stats.{Stat, StatsReceiver}
-import com.twitter.logging.{Level, Logger}
-import com.twitter.servo.util.{ExceptionCounter, WindowedAverage}
-import com.twitter.util._
+impowt com.twittew.finagwe.stats.{stat, OwO s-statsweceivew}
+i-impowt com.twittew.wogging.{wevew, ^^ w-woggew}
+i-impowt com.twittew.sewvo.utiw.{exceptioncountew, (///ˬ///✿) w-windowedavewage}
+i-impowt com.twittew.utiw._
 
 /**
- * track hits and misses in caches, time reads and writes
+ * t-twack hits a-and misses in caches, (///ˬ///✿) time weads and wwites
  */
-trait CacheObserver {
+twait cacheobsewvew {
 
   /**
-   * register a hit
+   * wegistew a hit
    */
-  def hit(key: String): Unit
+  d-def hit(key: stwing): unit
 
   /**
-   * register a miss
+   * w-wegistew a miss
    */
-  def miss(key: String): Unit
+  def miss(key: s-stwing): unit
 
   /**
-   * time the read, and automatically handle hits and misses from the KeyValueResult
+   * time the wead, (///ˬ///✿) and automaticawwy h-handwe hits and misses fwom the k-keyvawuewesuwt
    */
-  def read[K, T](
-    name: String,
-    keys: Seq[K]
+  d-def wead[k, ʘwʘ t](
+    nyame: stwing, ^•ﻌ•^
+    keys: seq[k]
   )(
-    f: => Future[KeyValueResult[K, T]]
-  ): Future[KeyValueResult[K, T]]
+    f: => futuwe[keyvawuewesuwt[k, OwO t-t]]
+  ): futuwe[keyvawuewesuwt[k, (U ﹏ U) t]]
 
   /**
-   * time the write
+   * time the wwite
    */
-  def write[K, T](name: String, key: K)(f: => Future[T]): Future[T]
+  def wwite[k, (ˆ ﻌ ˆ)♡ t](name: s-stwing, (⑅˘꒳˘) key: k)(f: => futuwe[t]): f-futuwe[t]
 
   /**
-   * time the incr, and record the success/failure
+   * t-time t-the incw, (U ﹏ U) and wecowd t-the success/faiwuwe
    */
-  def incr[K](name: String, key: Seq[K])(f: => Future[Option[Long]]): Future[Option[Long]]
+  def incw[k](name: stwing, o.O key: s-seq[k])(f: => futuwe[option[wong]]): futuwe[option[wong]]
 
   /**
-   * produce a new CacheObserver with a nested scope
+   * pwoduce a n-nyew cacheobsewvew with a nyested scope
    */
-  def scope(s: String*): CacheObserver
+  def scope(s: stwing*): cacheobsewvew
 
   /**
-   * increment a counter tracking the number of expirations.
+   * incwement a countew t-twacking the nyumbew of expiwations. mya
    */
-  def expired(delta: Int = 1): Unit
+  d-def expiwed(dewta: i-int = 1): u-unit
 
   /**
-   * Increment a counter tracking the number of failures.
+   * incwement a countew twacking the nyumbew of faiwuwes. XD
    */
-  def failure(delta: Int = 1): Unit
+  def f-faiwuwe(dewta: i-int = 1): unit
 
   /**
-   * Increment a counter tracking the number of tombstones.
+   * incwement a-a countew t-twacking the nyumbew of tombstones. òωó
    */
-  def tombstone(delta: Int = 1): Unit
+  d-def tombstone(dewta: i-int = 1): unit
 
   /**
-   * Increment a counter tracking the number of not cached.
+   * incwement a countew t-twacking the nyumbew of nyot cached. (˘ω˘)
    */
-  def noCache(delta: Int = 1): Unit
+  d-def nyocache(dewta: i-int = 1): unit
 }
 
-object NullCacheObserver extends CacheObserver {
-  override def hit(key: String) = ()
-  override def miss(key: String) = ()
-  override def read[K, T](name: String, keys: Seq[K])(f: => Future[KeyValueResult[K, T]]) = f
-  override def write[K, T](name: String, key: K)(f: => Future[T]) = f
-  override def incr[K](name: String, key: Seq[K])(f: => Future[Option[Long]]) = f
-  override def scope(s: String*) = this
-  override def expired(delta: Int = 1) = ()
-  override def failure(delta: Int = 1): Unit = {}
-  override def tombstone(delta: Int = 1): Unit = {}
-  override def noCache(delta: Int = 1): Unit = {}
+o-object nyuwwcacheobsewvew extends cacheobsewvew {
+  ovewwide def hit(key: stwing) = ()
+  ovewwide def miss(key: s-stwing) = ()
+  o-ovewwide def wead[k, :3 t](name: s-stwing, OwO keys: seq[k])(f: => f-futuwe[keyvawuewesuwt[k, mya t-t]]) = f
+  ovewwide def wwite[k, (˘ω˘) t](name: stwing, o.O key: k)(f: => f-futuwe[t]) = f
+  ovewwide def incw[k](name: stwing, (✿oωo) key: seq[k])(f: => futuwe[option[wong]]) = f-f
+  ovewwide def scope(s: stwing*) = t-this
+  o-ovewwide def expiwed(dewta: i-int = 1) = ()
+  ovewwide d-def faiwuwe(dewta: i-int = 1): u-unit = {}
+  ovewwide d-def tombstone(dewta: int = 1): unit = {}
+  o-ovewwide def n-nyocache(dewta: i-int = 1): unit = {}
 }
 
 /**
- * A CacheObserver that writes to a StatsReceiver
+ * a-a c-cacheobsewvew that wwites to a statsweceivew
  */
-class StatsReceiverCacheObserver(
-  stats: StatsReceiver,
-  windowSize: Long,
-  log: Logger,
-  disableLogging: Boolean = false)
-    extends CacheObserver {
+cwass statsweceivewcacheobsewvew(
+  stats: statsweceivew, (ˆ ﻌ ˆ)♡
+  w-windowsize: wong, ^^;;
+  wog: woggew, OwO
+  disabwewogging: boowean = fawse)
+    extends cacheobsewvew {
 
-  def this(
-    statsReceiver: StatsReceiver,
-    windowSize: Long,
-    scope: String
+  d-def this(
+    statsweceivew: statsweceivew, 🥺
+    windowsize: wong, mya
+    scope: stwing
   ) =
-    this(
-      statsReceiver.scope(scope),
-      windowSize,
-      Logger.get(scope.replaceAll("([a-z]+)([A-Z])", "$1_$2").toLowerCase)
+    t-this(
+      s-statsweceivew.scope(scope), 😳
+      w-windowsize,
+      woggew.get(scope.wepwaceaww("([a-z]+)([a-z])", òωó "$1_$2").towowewcase)
     )
 
-  def this(
-    statsReceiver: StatsReceiver,
-    windowSize: Long,
-    scope: String,
-    disableLogging: Boolean
+  d-def this(
+    statsweceivew: s-statsweceivew, /(^•ω•^)
+    w-windowsize: wong, -.-
+    scope: stwing, òωó
+    disabwewogging: boowean
   ) =
     this(
-      statsReceiver.scope(scope),
-      windowSize,
-      Logger.get(scope.replaceAll("([a-z]+)([A-Z])", "$1_$2").toLowerCase),
-      disableLogging
+      s-statsweceivew.scope(scope), /(^•ω•^)
+      windowsize, /(^•ω•^)
+      w-woggew.get(scope.wepwaceaww("([a-z]+)([a-z])", 😳 "$1_$2").towowewcase), :3
+      disabwewogging
     )
 
-  protected[this] val expirationCounter = stats.counter("expirations")
+  p-pwotected[this] v-vaw expiwationcountew = stats.countew("expiwations")
 
-  // needed to make sure we hand out the same observer for each scope,
-  // so that the hit rates are properly calculated
-  protected[this] val children = Memoize {
-    new StatsReceiverCacheObserver(stats, windowSize, _: String, disableLogging)
+  // nyeeded to m-make suwe we hand o-out the same obsewvew fow each s-scope, (U ᵕ U❁)
+  // so t-that the hit wates awe pwopewwy cawcuwated
+  pwotected[this] vaw chiwdwen = memoize {
+    n-new statsweceivewcacheobsewvew(stats, ʘwʘ w-windowsize, _: s-stwing, o.O disabwewogging)
   }
 
-  protected[this] val exceptionCounter = new ExceptionCounter(stats)
-  private[this] val hitCounter = stats.counter("hits")
-  private[this] val missCounter = stats.counter("misses")
-  private[this] val failuresCounter = stats.counter("failures")
-  private[this] val tombstonesCounter = stats.counter("tombstones")
-  private[this] val noCacheCounter = stats.counter("noCache")
+  pwotected[this] vaw exceptioncountew = n-nyew exceptioncountew(stats)
+  p-pwivate[this] vaw hitcountew = s-stats.countew("hits")
+  pwivate[this] vaw misscountew = stats.countew("misses")
+  pwivate[this] v-vaw faiwuwescountew = s-stats.countew("faiwuwes")
+  pwivate[this] vaw tombstonescountew = s-stats.countew("tombstones")
+  p-pwivate[this] vaw nocachecountew = stats.countew("nocache")
 
-  private[this] val windowedHitRate = new WindowedAverage(windowSize)
-  private[this] val windowedIncrHitRate = new WindowedAverage(windowSize)
+  pwivate[this] v-vaw windowedhitwate = nyew windowedavewage(windowsize)
+  pwivate[this] vaw windowedincwhitwate = n-nyew windowedavewage(windowsize)
 
-  private[this] val hitRateGauge = stats.addGauge("hit_rate") {
-    windowedHitRate.value.getOrElse(1.0).toFloat
+  pwivate[this] vaw hitwategauge = s-stats.addgauge("hit_wate") {
+    w-windowedhitwate.vawue.getowewse(1.0).tofwoat
   }
 
-  private[this] val incrHitRateGauge = stats.addGauge("incr_hit_rate") {
-    windowedIncrHitRate.value.getOrElse(1.0).toFloat
+  pwivate[this] vaw incwhitwategauge = stats.addgauge("incw_hit_wate") {
+    w-windowedincwhitwate.vawue.getowewse(1.0).tofwoat
   }
 
-  protected[this] def handleThrowable[K](name: String, t: Throwable, key: Option[K]): Unit = {
-    stats.counter(name + "_failures").incr()
-    exceptionCounter(t)
-    if (!disableLogging) {
-      lazy val suffix = key
-        .map { k =>
-          "(" + k.toString + ")"
+  p-pwotected[this] def handwethwowabwe[k](name: stwing, ʘwʘ t: thwowabwe, ^^ key: option[k]): u-unit = {
+    stats.countew(name + "_faiwuwes").incw()
+    e-exceptioncountew(t)
+    if (!disabwewogging) {
+      wazy vaw suffix = key
+        .map { k-k =>
+          "(" + k.tostwing + ")"
         }
-        .getOrElse("")
-      log.warning("%s%s caught: %s", name, suffix, t.getClass.getName)
-      log.trace(t, "stack trace was: ")
+        .getowewse("")
+      w-wog.wawning("%s%s c-caught: %s", ^•ﻌ•^ nyame, s-suffix, mya t.getcwass.getname)
+      wog.twace(t, UwU "stack t-twace was: ")
     }
   }
 
-  override def hit(key: String): Unit = {
+  o-ovewwide def hit(key: s-stwing): unit = {
     hits(1)
-    if (!disableLogging)
-      log.trace("cache hit: %s", key)
+    i-if (!disabwewogging)
+      w-wog.twace("cache hit: %s", >_< key)
   }
 
-  private[this] def hits(n: Int): Unit = {
-    windowedHitRate.record(n.toDouble, n.toDouble)
-    hitCounter.incr(n)
+  pwivate[this] d-def hits(n: i-int): unit = {
+    w-windowedhitwate.wecowd(n.todoubwe, /(^•ω•^) ny.todoubwe)
+    hitcountew.incw(n)
   }
 
-  override def miss(key: String): Unit = {
-    misses(1)
-    if (!disableLogging)
-      log.trace("cache miss: %s", key)
+  o-ovewwide def miss(key: stwing): u-unit = {
+    m-misses(1)
+    if (!disabwewogging)
+      wog.twace("cache miss: %s", òωó k-key)
   }
 
-  private[this] def misses(n: Int): Unit = {
-    windowedHitRate.record(0.0F, n.toDouble)
-    missCounter.incr(n)
+  p-pwivate[this] d-def misses(n: i-int): unit = {
+    windowedhitwate.wecowd(0.0f, σωσ n-n.todoubwe)
+    misscountew.incw(n)
   }
 
-  override def read[K, T](
-    name: String,
-    keys: Seq[K]
+  ovewwide def wead[k, ( ͡o ω ͡o ) t](
+    nyame: stwing, nyaa~~
+    keys: s-seq[k]
   )(
-    f: => Future[KeyValueResult[K, T]]
-  ): Future[KeyValueResult[K, T]] =
-    Stat
-      .timeFuture(stats.stat(name)) {
-        stats.counter(name).incr()
-        f
+    f: => futuwe[keyvawuewesuwt[k, :3 t-t]]
+  ): futuwe[keyvawuewesuwt[k, t]] =
+    stat
+      .timefutuwe(stats.stat(name)) {
+        stats.countew(name).incw()
+        f-f
       }
-      .respond {
-        case Return(lr) =>
-          if (log.isLoggable(Level.TRACE)) {
-            lr.found.keys.foreach { k =>
-              hit(k.toString)
+      .wespond {
+        case wetuwn(ww) =>
+          i-if (wog.iswoggabwe(wevew.twace)) {
+            ww.found.keys.foweach { k-k =>
+              h-hit(k.tostwing)
             }
-            lr.notFound.foreach { k =>
-              miss(k.toString)
+            w-ww.notfound.foweach { k-k =>
+              miss(k.tostwing)
             }
-          } else {
-            hits(lr.found.keys.size)
-            misses(lr.notFound.size)
+          } e-ewse {
+            hits(ww.found.keys.size)
+            misses(ww.notfound.size)
           }
-          lr.failed foreach {
-            case (k, t) =>
-              handleThrowable(name, t, Some(k))
-              // count failures as misses
-              miss(k.toString)
-              failuresCounter.incr()
+          ww.faiwed foweach {
+            case (k, UwU t) =>
+              handwethwowabwe(name, t, o.O some(k))
+              // c-count faiwuwes a-as misses
+              m-miss(k.tostwing)
+              faiwuwescountew.incw()
           }
-        case Throw(t) =>
-          handleThrowable(name, t, None)
-          // count failures as misses
-          keys.foreach { k =>
-            miss(k.toString)
+        c-case thwow(t) =>
+          handwethwowabwe(name, (ˆ ﻌ ˆ)♡ t, nyone)
+          // count f-faiwuwes as misses
+          k-keys.foweach { k =>
+            m-miss(k.tostwing)
           }
-          failuresCounter.incr()
+          faiwuwescountew.incw()
       }
 
-  override def write[K, T](name: String, key: K)(f: => Future[T]): Future[T] =
-    Stat.timeFuture(stats.stat(name)) {
-      stats.counter(name).incr()
+  ovewwide def w-wwite[k, ^^;; t](name: s-stwing, ʘwʘ key: k)(f: => futuwe[t]): f-futuwe[t] =
+    s-stat.timefutuwe(stats.stat(name)) {
+      stats.countew(name).incw()
       f
-    } onFailure {
-      handleThrowable(name, _, Some(key))
+    } onfaiwuwe {
+      handwethwowabwe(name, σωσ _, some(key))
     }
 
-  override def incr[K](name: String, key: Seq[K])(f: => Future[Option[Long]]) =
-    Stat.timeFuture(stats.stat(name)) {
-      stats.counter(name).incr()
-      f
-    } onSuccess { optVal =>
-      val hit = optVal.isDefined
-      windowedIncrHitRate.record(if (hit) 1F else 0F)
-      stats.counter(name + (if (hit) "_hits" else "_misses")).incr()
+  o-ovewwide d-def incw[k](name: s-stwing, ^^;; key: s-seq[k])(f: => futuwe[option[wong]]) =
+    s-stat.timefutuwe(stats.stat(name)) {
+      stats.countew(name).incw()
+      f-f
+    } onsuccess { o-optvaw =>
+      vaw hit = o-optvaw.isdefined
+      w-windowedincwhitwate.wecowd(if (hit) 1f ewse 0f)
+      s-stats.countew(name + (if (hit) "_hits" ewse "_misses")).incw()
     }
 
-  override def scope(s: String*) =
-    s.toList match {
-      case Nil => this
-      case head :: tail => children(head).scope(tail: _*)
+  ovewwide d-def scope(s: stwing*) =
+    s.towist m-match {
+      c-case nyiw => this
+      case h-head :: taiw => chiwdwen(head).scope(taiw: _*)
     }
 
-  override def expired(delta: Int = 1): Unit = { expirationCounter.incr(delta) }
-  override def failure(delta: Int = 1): Unit = { failuresCounter.incr(delta) }
-  override def tombstone(delta: Int = 1): Unit = { tombstonesCounter.incr(delta) }
-  override def noCache(delta: Int = 1): Unit = { noCacheCounter.incr(delta) }
+  ovewwide d-def expiwed(dewta: i-int = 1): u-unit = { expiwationcountew.incw(dewta) }
+  ovewwide def faiwuwe(dewta: int = 1): u-unit = { faiwuwescountew.incw(dewta) }
+  ovewwide def tombstone(dewta: i-int = 1): u-unit = { tombstonescountew.incw(dewta) }
+  ovewwide d-def nyocache(dewta: int = 1): u-unit = { nyocachecountew.incw(dewta) }
 
 }
 
 /**
- * Wraps an underlying cache with calls to a CacheObserver
+ * w-wwaps an undewwying cache with cawws to a c-cacheobsewvew
  */
-class ObservableReadCache[K, V](underlyingCache: ReadCache[K, V], observer: CacheObserver)
-    extends ReadCache[K, V] {
-  override def get(keys: Seq[K]): Future[KeyValueResult[K, V]] = {
-    observer.read("get", keys) {
-      underlyingCache.get(keys)
+cwass obsewvabweweadcache[k, ʘwʘ v](undewwyingcache: weadcache[k, ^^ v-v], obsewvew: cacheobsewvew)
+    e-extends weadcache[k, nyaa~~ v] {
+  ovewwide d-def get(keys: seq[k]): futuwe[keyvawuewesuwt[k, (///ˬ///✿) v-v]] = {
+    o-obsewvew.wead("get", XD k-keys) {
+      undewwyingcache.get(keys)
     }
   }
 
-  override def getWithChecksum(keys: Seq[K]): Future[CsKeyValueResult[K, V]] = {
-    observer.read[K, (Try[V], Checksum)]("get_with_checksum", keys) {
-      underlyingCache.getWithChecksum(keys)
+  ovewwide def getwithchecksum(keys: seq[k]): futuwe[cskeyvawuewesuwt[k, :3 v]] = {
+    obsewvew.wead[k, òωó (twy[v], ^^ checksum)]("get_with_checksum", ^•ﻌ•^ keys) {
+      undewwyingcache.getwithchecksum(keys)
     }
   }
 
-  override def release() = underlyingCache.release()
+  ovewwide def wewease() = undewwyingcache.wewease()
 }
 
-object ObservableCache {
-  def apply[K, V](
-    underlyingCache: Cache[K, V],
-    statsReceiver: StatsReceiver,
-    windowSize: Long,
-    name: String
-  ): Cache[K, V] =
-    new ObservableCache(
-      underlyingCache,
-      new StatsReceiverCacheObserver(statsReceiver, windowSize, name)
+object obsewvabwecache {
+  d-def appwy[k, σωσ v-v](
+    undewwyingcache: cache[k, (ˆ ﻌ ˆ)♡ v],
+    s-statsweceivew: s-statsweceivew, nyaa~~
+    w-windowsize: wong, ʘwʘ
+    nyame: s-stwing
+  ): cache[k, v] =
+    nyew o-obsewvabwecache(
+      u-undewwyingcache, ^•ﻌ•^
+      nyew statsweceivewcacheobsewvew(statsweceivew, rawr x3 w-windowsize, 🥺 nyame)
     )
 
-  def apply[K, V](
-    underlyingCache: Cache[K, V],
-    statsReceiver: StatsReceiver,
-    windowSize: Long,
-    name: String,
-    disableLogging: Boolean
-  ): Cache[K, V] =
-    new ObservableCache(
-      underlyingCache,
-      new StatsReceiverCacheObserver(
-        statsReceiver = statsReceiver,
-        windowSize = windowSize,
-        scope = name,
-        disableLogging = disableLogging)
+  def a-appwy[k, ʘwʘ v](
+    u-undewwyingcache: cache[k, v], (˘ω˘)
+    statsweceivew: s-statsweceivew, o.O
+    w-windowsize: w-wong, σωσ
+    nyame: s-stwing, (ꈍᴗꈍ)
+    disabwewogging: boowean
+  ): c-cache[k, (ˆ ﻌ ˆ)♡ v-v] =
+    nyew o-obsewvabwecache(
+      u-undewwyingcache, o.O
+      n-nyew statsweceivewcacheobsewvew(
+        statsweceivew = s-statsweceivew, :3
+        w-windowsize = windowsize, -.-
+        s-scope = nyame, ( ͡o ω ͡o )
+        disabwewogging = d-disabwewogging)
     )
 
-  def apply[K, V](
-    underlyingCache: Cache[K, V],
-    statsReceiver: StatsReceiver,
-    windowSize: Long,
-    log: Logger
-  ): Cache[K, V] =
-    new ObservableCache(
-      underlyingCache,
-      new StatsReceiverCacheObserver(statsReceiver, windowSize, log)
-    )
-}
-
-/**
- * Wraps an underlying Cache with calls to a CacheObserver
- */
-class ObservableCache[K, V](underlyingCache: Cache[K, V], observer: CacheObserver)
-    extends ObservableReadCache(underlyingCache, observer)
-    with Cache[K, V] {
-  override def add(key: K, value: V): Future[Boolean] =
-    observer.write("add", key) {
-      underlyingCache.add(key, value)
-    }
-
-  override def checkAndSet(key: K, value: V, checksum: Checksum): Future[Boolean] =
-    observer.write("check_and_set", key) {
-      underlyingCache.checkAndSet(key, value, checksum)
-    }
-
-  override def set(key: K, value: V): Future[Unit] =
-    observer.write("set", key) {
-      underlyingCache.set(key, value)
-    }
-
-  override def replace(key: K, value: V): Future[Boolean] =
-    observer.write("replace", key) {
-      underlyingCache.replace(key, value)
-    }
-
-  override def delete(key: K): Future[Boolean] =
-    observer.write("delete", key) {
-      underlyingCache.delete(key)
-    }
-}
-
-object ObservableTtlCache {
-  def apply[K, V](
-    underlyingCache: TtlCache[K, V],
-    statsReceiver: StatsReceiver,
-    windowSize: Long,
-    name: String
-  ): TtlCache[K, V] =
-    new ObservableTtlCache(
-      underlyingCache,
-      new StatsReceiverCacheObserver(statsReceiver, windowSize, name)
+  def appwy[k, /(^•ω•^) v](
+    undewwyingcache: c-cache[k, (⑅˘꒳˘) v],
+    statsweceivew: s-statsweceivew, òωó
+    w-windowsize: w-wong, 🥺
+    wog: woggew
+  ): c-cache[k, (ˆ ﻌ ˆ)♡ v] =
+    nyew obsewvabwecache(
+      u-undewwyingcache, -.-
+      nyew statsweceivewcacheobsewvew(statsweceivew, σωσ w-windowsize, wog)
     )
 }
 
 /**
- * Wraps an underlying TtlCache with calls to a CacheObserver
+ * w-wwaps an undewwying cache with cawws to a cacheobsewvew
  */
-class ObservableTtlCache[K, V](underlyingCache: TtlCache[K, V], observer: CacheObserver)
-    extends ObservableReadCache(underlyingCache, observer)
-    with TtlCache[K, V] {
-  override def add(key: K, value: V, ttl: Duration): Future[Boolean] =
-    observer.write("add", key) {
-      underlyingCache.add(key, value, ttl)
+cwass obsewvabwecache[k, >_< v-v](undewwyingcache: cache[k, :3 v], obsewvew: c-cacheobsewvew)
+    e-extends obsewvabweweadcache(undewwyingcache, OwO obsewvew)
+    with cache[k, rawr v-v] {
+  ovewwide def add(key: k-k, (///ˬ///✿) vawue: v): futuwe[boowean] =
+    o-obsewvew.wwite("add", ^^ k-key) {
+      undewwyingcache.add(key, XD vawue)
     }
 
-  override def checkAndSet(key: K, value: V, checksum: Checksum, ttl: Duration): Future[Boolean] =
-    observer.write("check_and_set", key) {
-      underlyingCache.checkAndSet(key, value, checksum, ttl)
+  o-ovewwide def checkandset(key: k, v-vawue: v, UwU checksum: checksum): f-futuwe[boowean] =
+    obsewvew.wwite("check_and_set", o.O key) {
+      u-undewwyingcache.checkandset(key, 😳 vawue, checksum)
     }
 
-  override def set(key: K, value: V, ttl: Duration): Future[Unit] =
-    observer.write("set", key) {
-      underlyingCache.set(key, value, ttl)
+  ovewwide d-def set(key: k-k, vawue: v): f-futuwe[unit] =
+    obsewvew.wwite("set", (˘ω˘) k-key) {
+      u-undewwyingcache.set(key, v-vawue)
     }
 
-  override def replace(key: K, value: V, ttl: Duration): Future[Boolean] =
-    observer.write("replace", key) {
-      underlyingCache.replace(key, value, ttl)
+  o-ovewwide def wepwace(key: k, 🥺 vawue: v-v): futuwe[boowean] =
+    o-obsewvew.wwite("wepwace", k-key) {
+      u-undewwyingcache.wepwace(key, ^^ v-vawue)
     }
 
-  override def delete(key: K): Future[Boolean] =
-    observer.write("delete", key) {
-      underlyingCache.delete(key)
+  o-ovewwide def d-dewete(key: k): f-futuwe[boowean] =
+    obsewvew.wwite("dewete", >w< k-key) {
+      undewwyingcache.dewete(key)
     }
 }
 
-case class ObservableMemcacheFactory(memcacheFactory: MemcacheFactory, cacheObserver: CacheObserver)
-    extends MemcacheFactory {
-
-  override def apply() =
-    new ObservableMemcache(memcacheFactory(), cacheObserver)
-}
-
-@deprecated("use ObservableMemcacheFactory or ObservableMemcache directly", "0.1.2")
-object ObservableMemcache {
-  def apply(
-    underlyingCache: Memcache,
-    statsReceiver: StatsReceiver,
-    windowSize: Long,
-    name: String
-  ): Memcache =
-    new ObservableMemcache(
-      underlyingCache,
-      new StatsReceiverCacheObserver(statsReceiver, windowSize, name)
+object obsewvabwettwcache {
+  d-def appwy[k, ^^;; v](
+    undewwyingcache: t-ttwcache[k, (˘ω˘) v-v],
+    statsweceivew: s-statsweceivew, OwO
+    windowsize: wong, (ꈍᴗꈍ)
+    nyame: stwing
+  ): t-ttwcache[k, òωó v-v] =
+    nyew obsewvabwettwcache(
+      u-undewwyingcache, ʘwʘ
+      nyew statsweceivewcacheobsewvew(statsweceivew, ʘwʘ windowsize, nyame)
     )
 }
 
-class ObservableMemcache(underlyingCache: Memcache, observer: CacheObserver)
-    extends ObservableTtlCache[String, Array[Byte]](underlyingCache, observer)
-    with Memcache {
-  def incr(key: String, delta: Long = 1): Future[Option[Long]] =
-    observer.incr("incr", key) {
-      underlyingCache.incr(key, delta)
+/**
+ * wwaps an undewwying t-ttwcache with c-cawws to a cacheobsewvew
+ */
+cwass obsewvabwettwcache[k, nyaa~~ v-v](undewwyingcache: t-ttwcache[k, UwU v], obsewvew: cacheobsewvew)
+    extends obsewvabweweadcache(undewwyingcache, (⑅˘꒳˘) o-obsewvew)
+    w-with ttwcache[k, (˘ω˘) v-v] {
+  o-ovewwide def add(key: k, :3 vawue: v, (˘ω˘) ttw: duwation): f-futuwe[boowean] =
+    o-obsewvew.wwite("add", nyaa~~ key) {
+      undewwyingcache.add(key, (U ﹏ U) vawue, nyaa~~ ttw)
     }
 
-  def decr(key: String, delta: Long = 1): Future[Option[Long]] =
-    observer.incr("decr", key) {
-      underlyingCache.decr(key, delta)
+  o-ovewwide def checkandset(key: k, ^^;; vawue: v-v, checksum: checksum, OwO ttw: duwation): f-futuwe[boowean] =
+    o-obsewvew.wwite("check_and_set", nyaa~~ key) {
+      undewwyingcache.checkandset(key, UwU v-vawue, 😳 c-checksum, 😳 ttw)
+    }
+
+  ovewwide d-def set(key: k, (ˆ ﻌ ˆ)♡ vawue: v, (✿oωo) t-ttw: duwation): f-futuwe[unit] =
+    o-obsewvew.wwite("set", nyaa~~ k-key) {
+      undewwyingcache.set(key, ^^ vawue, (///ˬ///✿) t-ttw)
+    }
+
+  o-ovewwide def w-wepwace(key: k, 😳 vawue: v, ttw: d-duwation): futuwe[boowean] =
+    obsewvew.wwite("wepwace", òωó key) {
+      u-undewwyingcache.wepwace(key, ^^;; v-vawue, rawr ttw)
+    }
+
+  o-ovewwide def dewete(key: k): futuwe[boowean] =
+    obsewvew.wwite("dewete", key) {
+      u-undewwyingcache.dewete(key)
+    }
+}
+
+case cwass o-obsewvabwememcachefactowy(memcachefactowy: m-memcachefactowy, (ˆ ﻌ ˆ)♡ cacheobsewvew: cacheobsewvew)
+    extends memcachefactowy {
+
+  o-ovewwide def appwy() =
+    n-nyew obsewvabwememcache(memcachefactowy(), XD c-cacheobsewvew)
+}
+
+@depwecated("use o-obsewvabwememcachefactowy o-ow obsewvabwememcache d-diwectwy", >_< "0.1.2")
+object obsewvabwememcache {
+  def appwy(
+    undewwyingcache: m-memcache, (˘ω˘)
+    statsweceivew: s-statsweceivew, 😳
+    windowsize: wong, o.O
+    nyame: stwing
+  ): m-memcache =
+    nyew obsewvabwememcache(
+      undewwyingcache, (ꈍᴗꈍ)
+      nyew statsweceivewcacheobsewvew(statsweceivew, rawr x3 windowsize, ^^ n-nyame)
+    )
+}
+
+c-cwass obsewvabwememcache(undewwyingcache: memcache, OwO o-obsewvew: cacheobsewvew)
+    extends obsewvabwettwcache[stwing, ^^ a-awway[byte]](undewwyingcache, :3 o-obsewvew)
+    with memcache {
+  d-def incw(key: stwing, o.O dewta: w-wong = 1): futuwe[option[wong]] =
+    obsewvew.incw("incw", -.- key) {
+      undewwyingcache.incw(key, (U ﹏ U) d-dewta)
+    }
+
+  def decw(key: stwing, o.O dewta: w-wong = 1): futuwe[option[wong]] =
+    o-obsewvew.incw("decw", OwO k-key) {
+      undewwyingcache.decw(key, ^•ﻌ•^ dewta)
     }
 }

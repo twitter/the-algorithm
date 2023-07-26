@@ -1,7 +1,7 @@
-package com.twitter.visibility.models
+package com.twittew.visibiwity.modews
 
-trait SafetyLabelType {
-  val DeprecatedEnumValue: Short = -1
-  val UnknownEnumValue: Short = -2
-  val StratoOnlyLabelEnumValue: Short = -3
+twait safetywabewtype {
+  v-vaw depwecatedenumvawue: s-showt = -1
+  v-vaw unknownenumvawue: s-showt = -2
+  v-vaw stwatoonwywabewenumvawue: s-showt = -3
 }

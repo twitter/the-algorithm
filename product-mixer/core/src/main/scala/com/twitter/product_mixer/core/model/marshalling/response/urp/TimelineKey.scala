@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urp
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp
 
-sealed trait TimelineKey
+seawed twait t-timewinekey
 
-case class TopicsLandingTimeline(topicId: Option[String]) extends TimelineKey
+c-case cwass topicswandingtimewine(topicid: o-option[stwing]) e-extends t-timewinekey
 
-case class NoteworthyAccountsTimeline(topicId: Option[String]) extends TimelineKey
+case c-cwass nyotewowthyaccountstimewine(topicid: option[stwing]) extends t-timewinekey
 
-case class TopicsPickerTimeline(topicId: Option[String]) extends TimelineKey
+c-case cwass topicspickewtimewine(topicid: option[stwing]) extends timewinekey
 
-case class NotInterestedTopicsMeTimeline() extends TimelineKey
+case cwass nyotintewestedtopicsmetimewine() e-extends timewinekey
 
-case class FollowedTopicsMeTimeline() extends TimelineKey
+case cwass fowwowedtopicsmetimewine() e-extends timewinekey
 
-case class FollowedTopicsOtherTimeline(userId: Long) extends TimelineKey
+case c-cwass fowwowedtopicsothewtimewine(usewid: wong) extends timewinekey
 
-case class NuxUserRecommendationsTimeline() extends TimelineKey
+case cwass n-nyuxusewwecommendationstimewine() extends timewinekey
 
-case class NuxForYouCategoryUserRecommendationsTimeline() extends TimelineKey
+c-case cwass n-nyuxfowyoucategowyusewwecommendationstimewine() extends timewinekey
 
-case class NuxPymkCategoryUserRecommendationsTimeline() extends TimelineKey
+case cwass nyuxpymkcategowyusewwecommendationstimewine() extends timewinekey
 
-case class NuxGeoCategoryUserRecommendationsTimeline() extends TimelineKey
+c-case cwass nyuxgeocategowyusewwecommendationstimewine() extends timewinekey
 
-case class NuxSingleInterestCategoryUserRecommendationsTimeline(topicId: Option[String])
-    extends TimelineKey
+case cwass nyuxsingweintewestcategowyusewwecommendationstimewine(topicid: option[stwing])
+    e-extends timewinekey
 
-case class ShoppingHomeTimeline() extends TimelineKey
+case cwass s-shoppinghometimewine() e-extends t-timewinekey
 
-case class ForYouExploreMixerTimeline() extends TimelineKey
+case c-cwass fowyouexpwowemixewtimewine() extends timewinekey
 
-case class TrendingExploreMixerTimeline() extends TimelineKey
+case c-cwass twendingexpwowemixewtimewine() extends timewinekey

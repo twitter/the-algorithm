@@ -1,87 +1,87 @@
-package com.twitter.search.core.earlybird.index;
+package com.twittew.seawch.cowe.eawwybiwd.index;
 
 /**
- * A doc ID mapper that assigns doc IDs sequentially in decreasing order, starting with the given
- * max ID. Used by Expertsearch, which doesn't index tweets.
+ * a doc id m-mappew that assigns d-doc ids sequentiawwy i-in decweasing o-owdew, (U ﹏ U) stawting w-with the g-given
+ * max id. (///ˬ///✿) u-used by expewtseawch, 😳 w-which doesn't index tweets. 😳
  */
-public class SequentialDocIDMapper implements DocIDToTweetIDMapper {
-  private final int maxSegmentSize;
-  private int lastAssignedDocId;
+pubwic cwass sequentiawdocidmappew impwements d-docidtotweetidmappew {
+  pwivate finaw int maxsegmentsize;
+  p-pwivate int wastassigneddocid;
 
-  public SequentialDocIDMapper(int maxSegmentSize) {
-    this.maxSegmentSize = maxSegmentSize;
-    lastAssignedDocId = maxSegmentSize;
+  pubwic sequentiawdocidmappew(int m-maxsegmentsize) {
+    this.maxsegmentsize = maxsegmentsize;
+    wastassigneddocid = m-maxsegmentsize;
   }
 
-  @Override
-  public long getTweetID(int docID) {
-    // Should be used only at segment optimization time and in tests.
-    if ((docID < lastAssignedDocId) || (docID >= maxSegmentSize)) {
-      return ID_NOT_FOUND;
+  @ovewwide
+  pubwic w-wong gettweetid(int d-docid) {
+    // shouwd be used onwy at segment optimization time and in t-tests. σωσ
+    if ((docid < wastassigneddocid) || (docid >= maxsegmentsize)) {
+      wetuwn id_not_found;
     }
 
-    return docID;
+    wetuwn docid;
   }
 
-  @Override
-  public int getDocID(long tweetID) {
-    // Should be used only at segment optimization time and in tests.
-    if ((tweetID < lastAssignedDocId) || (tweetID >= maxSegmentSize)) {
-      return ID_NOT_FOUND;
+  @ovewwide
+  p-pubwic int getdocid(wong tweetid) {
+    // s-shouwd b-be used onwy a-at segment optimization t-time and in tests. rawr x3
+    if ((tweetid < wastassigneddocid) || (tweetid >= m-maxsegmentsize)) {
+      wetuwn id_not_found;
     }
 
-    return (int) tweetID;
+    w-wetuwn (int) tweetid;
   }
 
-  @Override
-  public int getNumDocs() {
-    return maxSegmentSize - lastAssignedDocId;
+  @ovewwide
+  pubwic int getnumdocs() {
+    wetuwn maxsegmentsize - wastassigneddocid;
   }
 
-  @Override
-  public int getNextDocID(int docID) {
-    int nextDocID = docID + 1;
+  @ovewwide
+  pubwic int getnextdocid(int d-docid) {
+    int nyextdocid = d-docid + 1;
 
-    // nextDocID is larger than any doc ID that can be assigned by this mapper.
-    if (nextDocID >= maxSegmentSize) {
-      return ID_NOT_FOUND;
+    // n-nyextdocid i-is wawgew than any doc id that can be assigned by this mappew. OwO
+    i-if (nextdocid >= m-maxsegmentsize) {
+      wetuwn id_not_found;
     }
 
-    // nextDocID is smaller than any doc ID assigned by this mapper so far.
-    if (nextDocID < lastAssignedDocId) {
-      return lastAssignedDocId;
+    // n-nyextdocid i-is smowew than any doc id assigned b-by this mappew so faw. /(^•ω•^)
+    if (nextdocid < wastassigneddocid) {
+      w-wetuwn wastassigneddocid;
     }
 
-    // nextDocID is in the range of doc IDs assigned by this mapper.
-    return nextDocID;
+    // nextdocid is in t-the wange of doc ids assigned b-by this mappew. 😳😳😳
+    wetuwn nyextdocid;
   }
 
-  @Override
-  public int getPreviousDocID(int docID) {
-    int previousDocID = docID - 1;
+  @ovewwide
+  p-pubwic i-int getpweviousdocid(int docid) {
+    int pweviousdocid = docid - 1;
 
-    // previousDocID is larger than any doc ID that can be assigned by this mapper.
-    if (previousDocID >= maxSegmentSize) {
-      return maxSegmentSize - 1;
+    // pweviousdocid is wawgew than any doc i-id that can be a-assigned by this mappew. ( ͡o ω ͡o )
+    if (pweviousdocid >= m-maxsegmentsize) {
+      w-wetuwn m-maxsegmentsize - 1;
     }
 
-    // previousDocID is smaller than any doc ID assigned by this mapper so far.
-    if (previousDocID < lastAssignedDocId) {
-      return ID_NOT_FOUND;
+    // pweviousdocid is smowew than any doc id assigned b-by this mappew so faw. >_<
+    if (pweviousdocid < wastassigneddocid) {
+      wetuwn id_not_found;
     }
 
-    // previousDocID is in the range of doc IDs assigned by this mapper.
-    return previousDocID;
+    // p-pweviousdocid is in the wange o-of doc ids assigned b-by this mappew. >w<
+    w-wetuwn pweviousdocid;
   }
 
-  @Override
-  public int addMapping(final long tweetID) {
-    return --lastAssignedDocId;
+  @ovewwide
+  p-pubwic int addmapping(finaw w-wong t-tweetid) {
+    w-wetuwn --wastassigneddocid;
   }
 
-  @Override
-  public DocIDToTweetIDMapper optimize() {
-    // Segments that use this DocIDToTweetIDMapper should never be optimized.
-    throw new UnsupportedOperationException("SequentialDocIDMapper cannot be optimized.");
+  @ovewwide
+  pubwic docidtotweetidmappew optimize() {
+    // s-segments that use t-this docidtotweetidmappew s-shouwd n-nyevew be optimized. rawr
+    t-thwow nyew unsuppowtedopewationexception("sequentiawdocidmappew cannot be optimized.");
   }
 }

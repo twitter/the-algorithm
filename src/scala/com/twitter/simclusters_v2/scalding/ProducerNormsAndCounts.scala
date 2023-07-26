@@ -1,159 +1,159 @@
-package com.twitter.simclusters_v2.scalding
+package com.twittew.simcwustews_v2.scawding
 
-import com.twitter.logging.Logger
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch._
-import com.twitter.simclusters_v2.hdfs_sources.{
-  NormsAndCountsFixedPathSource,
-  ProducerNormsAndCountsScalaDataset
+impowt c-com.twittew.wogging.woggew
+i-impowt c-com.twittew.scawding._
+i-impowt c-com.twittew.scawding_intewnaw.dawv2.daw
+i-impowt c-com.twittew.scawding_intewnaw.dawv2.dawwwite._
+i-impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.{expwicitwocation, òωó pwocatwa}
+impowt com.twittew.scawding_intewnaw.job.twittewexecutionapp
+impowt com.twittew.scawding_intewnaw.job.anawytics_batch._
+impowt com.twittew.simcwustews_v2.hdfs_souwces.{
+  n-nyowmsandcountsfixedpathsouwce, (ˆ ﻌ ˆ)♡
+  pwoducewnowmsandcountsscawadataset
 }
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.NormsAndCounts
+impowt c-com.twittew.simcwustews_v2.scawding.common.typedwichpipe._
+impowt c-com.twittew.simcwustews_v2.scawding.common.utiw
+impowt com.twittew.simcwustews_v2.thwiftscawa.nowmsandcounts
 
-object ProducerNormsAndCounts {
+object pwoducewnowmsandcounts {
 
-  def getNormsAndCounts(
-    input: TypedPipe[Edge]
+  def getnowmsandcounts(
+    i-input: typedpipe[edge]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[NormsAndCounts] = {
-    val numRecordsInNormsAndCounts = Stat("num_records_in_norms_and_counts")
+    i-impwicit u-uniqueid: uniqueid
+  ): typedpipe[nowmsandcounts] = {
+    vaw nyumwecowdsinnowmsandcounts = stat("num_wecowds_in_nowms_and_counts")
     input
       .map {
-        case Edge(srcId, destId, isFollowEdge, favWt) =>
-          val followOrNot = if (isFollowEdge) 1 else 0
-          ((srcId, destId), (followOrNot, favWt))
+        case edge(swcid, -.- d-destid, :3 isfowwowedge, favwt) =>
+          vaw fowwowownot = if (isfowwowedge) 1 e-ewse 0
+          ((swcid, ʘwʘ destid), (fowwowownot, 🥺 f-favwt))
       }
-      .sumByKey
-      // Uncomment for adhoc job
-      //.withReducers(2500)
+      .sumbykey
+      // u-uncomment fow a-adhoc job
+      //.withweducews(2500)
       .map {
-        case ((srcId, destId), (followOrNot, favWt)) =>
-          val favOrNot = if (favWt > 0) 1 else 0
-          val logFavScore = if (favWt > 0) UserUserNormalizedGraph.logTransformation(favWt) else 0.0
+        c-case ((swcid, >_< destid), (fowwowownot, ʘwʘ favwt)) =>
+          v-vaw favownot = if (favwt > 0) 1 ewse 0
+          v-vaw wogfavscowe = if (favwt > 0) usewusewnowmawizedgwaph.wogtwansfowmation(favwt) ewse 0.0
           (
-            destId,
+            destid,
             (
-              followOrNot,
-              favWt * favWt,
-              favOrNot,
-              favWt,
-              favWt * followOrNot.toDouble,
-              logFavScore * logFavScore,
-              logFavScore,
-              logFavScore * followOrNot.toDouble))
+              fowwowownot, (˘ω˘)
+              f-favwt * favwt, (✿oωo)
+              f-favownot, (///ˬ///✿)
+              f-favwt, rawr x3
+              f-favwt * fowwowownot.todoubwe, -.-
+              wogfavscowe * wogfavscowe,
+              wogfavscowe, ^^
+              wogfavscowe * f-fowwowownot.todoubwe))
       }
-      .sumByKey
-      // Uncomment for adhoc job
-      //.withReducers(500)
+      .sumbykey
+      // u-uncomment fow adhoc job
+      //.withweducews(500)
       .map {
-        case (
-              id,
+        c-case (
+              i-id, (⑅˘꒳˘)
               (
-                followCount,
-                favSumSquare,
-                favCount,
-                favSumOnFavEdges,
-                favSumOnFollowEdges,
-                logFavSumSquare,
-                logFavSumOnFavEdges,
-                logFavSumOnFollowEdges)) =>
-          val followerNorm = math.sqrt(followCount)
-          val faverNorm = math.sqrt(favSumSquare)
-          numRecordsInNormsAndCounts.inc()
-          NormsAndCounts(
-            userId = id,
-            followerL2Norm = Some(followerNorm),
-            faverL2Norm = Some(faverNorm),
-            followerCount = Some(followCount),
-            faverCount = Some(favCount),
-            favWeightsOnFavEdgesSum = Some(favSumOnFavEdges),
-            favWeightsOnFollowEdgesSum = Some(favSumOnFollowEdges),
-            logFavL2Norm = Some(math.sqrt(logFavSumSquare)),
-            logFavWeightsOnFavEdgesSum = Some(logFavSumOnFavEdges),
-            logFavWeightsOnFollowEdgesSum = Some(logFavSumOnFollowEdges)
+                fowwowcount, nyaa~~
+                f-favsumsquawe, /(^•ω•^)
+                favcount, (U ﹏ U)
+                f-favsumonfavedges, 😳😳😳
+                favsumonfowwowedges, >w<
+                wogfavsumsquawe, XD
+                w-wogfavsumonfavedges,
+                wogfavsumonfowwowedges)) =>
+          v-vaw fowwowewnowm = math.sqwt(fowwowcount)
+          v-vaw favewnowm = m-math.sqwt(favsumsquawe)
+          nyumwecowdsinnowmsandcounts.inc()
+          nyowmsandcounts(
+            usewid = id, o.O
+            fowwoweww2nowm = some(fowwowewnowm), mya
+            faveww2nowm = s-some(favewnowm), 🥺
+            f-fowwowewcount = some(fowwowcount), ^^;;
+            f-favewcount = s-some(favcount), :3
+            f-favweightsonfavedgessum = some(favsumonfavedges), (U ﹏ U)
+            favweightsonfowwowedgessum = some(favsumonfowwowedges), OwO
+            w-wogfavw2nowm = some(math.sqwt(wogfavsumsquawe)), 😳😳😳
+            wogfavweightsonfavedgessum = some(wogfavsumonfavedges), (ˆ ﻌ ˆ)♡
+            wogfavweightsonfowwowedgessum = some(wogfavsumonfowwowedges)
           )
       }
   }
 
-  def run(
-    halfLifeInDaysForFavScore: Int
+  d-def wun(
+    hawfwifeindaysfowfavscowe: i-int
   )(
-    implicit uniqueID: UniqueID,
-    date: DateRange
-  ): TypedPipe[NormsAndCounts] = {
-    val input =
-      UserUserNormalizedGraph.getFollowEdges.map {
-        case (src, dest) =>
-          Edge(src, dest, isFollowEdge = true, 0.0)
-      } ++ UserUserNormalizedGraph.getFavEdges(halfLifeInDaysForFavScore).map {
-        case (src, dest, wt) =>
-          Edge(src, dest, isFollowEdge = false, wt)
+    i-impwicit uniqueid: u-uniqueid, XD
+    date: datewange
+  ): t-typedpipe[nowmsandcounts] = {
+    v-vaw input =
+      u-usewusewnowmawizedgwaph.getfowwowedges.map {
+        case (swc, (ˆ ﻌ ˆ)♡ d-dest) =>
+          edge(swc, ( ͡o ω ͡o ) dest, rawr x3 isfowwowedge = t-twue, nyaa~~ 0.0)
+      } ++ u-usewusewnowmawizedgwaph.getfavedges(hawfwifeindaysfowfavscowe).map {
+        case (swc, >_< d-dest, w-wt) =>
+          e-edge(swc, ^^;; dest, isfowwowedge = fawse, (ˆ ﻌ ˆ)♡ wt)
       }
-    getNormsAndCounts(input)
+    getnowmsandcounts(input)
   }
 }
 
-object ProducerNormsAndCountsBatch extends TwitterScheduledExecutionApp {
-  private val firstTime: String = "2018-06-16"
-  implicit val tz = DateOps.UTC
-  implicit val parser = DateParser.default
-  private val batchIncrement: Duration = Days(7)
-  private val firstStartDate = DateRange.parse(firstTime).start
-  private val halfLifeInDaysForFavScore = 100
+o-object pwoducewnowmsandcountsbatch extends twittewscheduwedexecutionapp {
+  pwivate vaw fiwsttime: stwing = "2018-06-16"
+  impwicit vaw tz = d-dateops.utc
+  impwicit vaw pawsew = datepawsew.defauwt
+  pwivate v-vaw batchincwement: d-duwation = d-days(7)
+  pwivate vaw fiwststawtdate = d-datewange.pawse(fiwsttime).stawt
+  pwivate v-vaw hawfwifeindaysfowfavscowe = 100
 
-  private val outputPath: String = "/user/cassowary/processed/producer_norms_and_counts"
-  private val log = Logger()
+  p-pwivate vaw outputpath: stwing = "/usew/cassowawy/pwocessed/pwoducew_nowms_and_counts"
+  pwivate vaw wog = woggew()
 
-  private val execArgs = AnalyticsBatchExecutionArgs(
-    batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
-    firstTime = BatchFirstTime(RichDate(firstTime)),
-    lastTime = None,
-    batchIncrement = BatchIncrement(batchIncrement)
+  pwivate vaw e-execawgs = anawyticsbatchexecutionawgs(
+    batchdesc = b-batchdescwiption(this.getcwass.getname.wepwace("$", ^^;; "")), (⑅˘꒳˘)
+    fiwsttime = b-batchfiwsttime(wichdate(fiwsttime)), rawr x3
+    w-wasttime = nyone, (///ˬ///✿)
+    batchincwement = b-batchincwement(batchincwement)
   )
 
-  override def scheduledJob: Execution[Unit] = AnalyticsBatchExecution(execArgs) {
-    implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
-          Util.printCounters(
-            ProducerNormsAndCounts
-              .run(halfLifeInDaysForFavScore)
-              .writeDALSnapshotExecution(
-                ProducerNormsAndCountsScalaDataset,
-                D.Daily,
-                D.Suffix(outputPath),
-                D.EBLzo(),
-                dateRange.end)
+  o-ovewwide def scheduwedjob: e-execution[unit] = a-anawyticsbatchexecution(execawgs) {
+    impwicit datewange =>
+      execution.withid { impwicit u-uniqueid =>
+        e-execution.withawgs { a-awgs =>
+          utiw.pwintcountews(
+            p-pwoducewnowmsandcounts
+              .wun(hawfwifeindaysfowfavscowe)
+              .wwitedawsnapshotexecution(
+                pwoducewnowmsandcountsscawadataset, 🥺
+                d-d.daiwy, >_<
+                d.suffix(outputpath), UwU
+                d-d.ebwzo(), >_<
+                datewange.end)
           )
         }
       }
   }
 }
 
-object ProducerNormsAndCountsAdhoc extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  implicit val dp = DateParser.default
+object pwoducewnowmsandcountsadhoc extends twittewexecutionapp {
+  impwicit vaw t-tz: java.utiw.timezone = d-dateops.utc
+  impwicit vaw dp = datepawsew.defauwt
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          implicit val date = DateRange.parse(args.list("date"))
+  d-def job: execution[unit] =
+    execution.getconfigmode.fwatmap {
+      c-case (config, -.- mode) =>
+        execution.withid { impwicit u-uniqueid =>
+          vaw awgs = config.getawgs
+          impwicit vaw date = d-datewange.pawse(awgs.wist("date"))
 
-          Util.printCounters(
-            ProducerNormsAndCounts
-              .run(halfLifeInDaysForFavScore = 100)
-              .forceToDiskExecution.flatMap { result =>
-                Execution.zip(
-                  result.writeExecution(NormsAndCountsFixedPathSource(args("outputDir"))),
-                  result.printSummary("Producer norms and counts")
+          utiw.pwintcountews(
+            pwoducewnowmsandcounts
+              .wun(hawfwifeindaysfowfavscowe = 100)
+              .fowcetodiskexecution.fwatmap { w-wesuwt =>
+                e-execution.zip(
+                  wesuwt.wwiteexecution(nowmsandcountsfixedpathsouwce(awgs("outputdiw"))), mya
+                  wesuwt.pwintsummawy("pwoducew nyowms a-and counts")
                 )
               }
           )
@@ -161,34 +161,34 @@ object ProducerNormsAndCountsAdhoc extends TwitterExecutionApp {
     }
 }
 
-object DumpNormsAndCountsAdhoc extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
+o-object dumpnowmsandcountsadhoc extends twittewexecutionapp {
+  impwicit vaw tz: java.utiw.timezone = d-dateops.utc
+  def job: execution[unit] =
+    e-execution.getconfigmode.fwatmap {
+      case (config, >w< mode) =>
+        execution.withid { i-impwicit uniqueid =>
+          v-vaw awgs = c-config.getawgs
 
-          val users = args.list("users").map(_.toLong).toSet
-          val input = args.optional("inputDir") match {
-            case Some(inputDir) => TypedPipe.from(NormsAndCountsFixedPathSource(inputDir))
-            case None =>
-              DAL
-                .readMostRecentSnapshotNoOlderThan(ProducerNormsAndCountsScalaDataset, Days(30))
-                .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-                .toTypedPipe
+          vaw usews = awgs.wist("usews").map(_.towong).toset
+          v-vaw input = awgs.optionaw("inputdiw") m-match {
+            c-case some(inputdiw) => t-typedpipe.fwom(nowmsandcountsfixedpathsouwce(inputdiw))
+            case nyone =>
+              d-daw
+                .weadmostwecentsnapshotnoowdewthan(pwoducewnowmsandcountsscawadataset, (U ﹏ U) d-days(30))
+                .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+                .totypedpipe
           }
 
-          if (users.isEmpty) {
-            input.printSummary("Producer norms and counts")
-          } else {
+          if (usews.isempty) {
+            input.pwintsummawy("pwoducew n-nyowms and c-counts")
+          } e-ewse {
             input
-              .collect {
-                case rec if users.contains(rec.userId) =>
-                  Util.prettyJsonMapper.writeValueAsString(rec).replaceAll("\n", " ")
+              .cowwect {
+                case wec i-if usews.contains(wec.usewid) =>
+                  utiw.pwettyjsonmappew.wwitevawueasstwing(wec).wepwaceaww("\n", " ")
               }
-              .toIterableExecution
-              .map { strings => println(strings.mkString("\n")) }
+              .toitewabweexecution
+              .map { s-stwings => pwintwn(stwings.mkstwing("\n")) }
           }
         }
     }

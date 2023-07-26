@@ -1,31 +1,31 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/algebird:core",
-        "beam-internal/src/main/scala/com/twitter/beam/io/dal",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/job",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
-        "flockdb-tools/datasets/flock/src/main/thrift:thrift-scala",
-        "src/scala/com/twitter/pluck/source/combined_user_scrooge_source",
-        "src/thrift/com/twitter/gizmoduck:user-thrift-scala",
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-scala",
-        "src/thrift/com/twitter/socialgraph:thrift-scala",
-        "src/thrift/com/twitter/twadoop/user/gen:gen-scala",
-        "src/thrift/com/twitter/user_session_store:thrift-scala",
-        "usersource/snapshot/src/main/scala/com/twitter/usersource/snapshot/flat:usersource_flat-scala",
+scawa_wibwawy(
+    souwces = ["*.scawa"], ( ͡o ω ͡o )
+    compiwew_option_sets = ["fataw_wawnings"], UwU
+    p-pwatfowm = "java8", rawr x3
+    t-tags = ["bazew-compatibwe"], rawr
+    d-dependencies = [
+        "3wdpawty/jvm/com/twittew/awgebiwd:cowe", σωσ
+        "beam-intewnaw/swc/main/scawa/com/twittew/beam/io/daw", σωσ
+        "beam-intewnaw/swc/main/scawa/com/twittew/scio_intewnaw/job", >_<
+        "beam-intewnaw/swc/main/scawa/com/twittew/scio_intewnaw/wunnew/datafwow", :3
+        "fwockdb-toows/datasets/fwock/swc/main/thwift:thwift-scawa", (U ﹏ U)
+        "swc/scawa/com/twittew/pwuck/souwce/combined_usew_scwooge_souwce", -.-
+        "swc/thwift/com/twittew/gizmoduck:usew-thwift-scawa", (ˆ ﻌ ˆ)♡
+        "swc/thwift/com/twittew/intewaction_gwaph:intewaction_gwaph-scawa",
+        "swc/thwift/com/twittew/sociawgwaph:thwift-scawa", (⑅˘꒳˘)
+        "swc/thwift/com/twittew/twadoop/usew/gen:gen-scawa", (U ᵕ U❁)
+        "swc/thwift/com/twittew/usew_session_stowe:thwift-scawa", -.-
+        "usewsouwce/snapshot/swc/main/scawa/com/twittew/usewsouwce/snapshot/fwat:usewsouwce_fwat-scawa", ^^;;
     ],
 )
 
-scala_library(
-    name = "feature_groups",
-    sources = ["FeatureGroups.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
+s-scawa_wibwawy(
+    n-nyame = "featuwe_gwoups", >_<
+    s-souwces = ["featuwegwoups.scawa"], mya
+    compiwew_option_sets = ["fataw_wawnings"], mya
+    p-pwatfowm = "java8",
+    t-tags = ["bazew-compatibwe"], 😳
     dependencies = [
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-scala",
+        "swc/thwift/com/twittew/intewaction_gwaph:intewaction_gwaph-scawa", XD
     ],
 )

@@ -1,44 +1,44 @@
-package com.twitter.product_mixer.component_library.decorator.urt
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.tweet.TweetCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.component_library.model.presentation.urt.ConversationModuleItem
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.DecoratorIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ModuleItemTreeDisplay
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.tweet.tweetcandidateuwtitembuiwdew
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.pwesentation.uwt.convewsationmoduweitem
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.pwesentation.uwt.uwtitempwesentation
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.candidatedecowatow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.decowation
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.decowatowidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.moduweitemtweedispway
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
 
-case class UrtConversationItemCandidateDecorator[
-  Query <: PipelineQuery,
-  Candidate <: BaseTweetCandidate
+case cwass u-uwtconvewsationitemcandidatedecowatow[
+  quewy <: p-pipewinequewy, (U ﹏ U)
+  candidate <: basetweetcandidate
 ](
-  tweetCandidateUrtItemBuilder: TweetCandidateUrtItemBuilder[Query, Candidate],
-  override val identifier: DecoratorIdentifier = DecoratorIdentifier("UrtConversationItem"))
-    extends CandidateDecorator[Query, Candidate] {
+  tweetcandidateuwtitembuiwdew: t-tweetcandidateuwtitembuiwdew[quewy, (⑅˘꒳˘) candidate],
+  o-ovewwide v-vaw identifiew: decowatowidentifiew = decowatowidentifiew("uwtconvewsationitem"))
+    extends candidatedecowatow[quewy, òωó candidate] {
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[Seq[Decoration]] = {
-    val candidatePresentations = candidates.view.zipWithIndex.map {
-      case (candidate, index) =>
-        val itemPresentation = new UrtItemPresentation(
-          timelineItem = tweetCandidateUrtItemBuilder(
-            pipelineQuery = query,
-            tweetCandidate = candidate.candidate,
-            candidateFeatures = candidate.features)
-        ) with ConversationModuleItem {
-          override val treeDisplay: Option[ModuleItemTreeDisplay] = None
-          override val dispensable: Boolean = index < candidates.length - 1
+  o-ovewwide def appwy(
+    quewy: quewy, ʘwʘ
+    candidates: seq[candidatewithfeatuwes[candidate]]
+  ): stitch[seq[decowation]] = {
+    v-vaw candidatepwesentations = candidates.view.zipwithindex.map {
+      c-case (candidate, /(^•ω•^) i-index) =>
+        v-vaw itempwesentation = n-nyew uwtitempwesentation(
+          timewineitem = tweetcandidateuwtitembuiwdew(
+            p-pipewinequewy = quewy, ʘwʘ
+            tweetcandidate = c-candidate.candidate, σωσ
+            candidatefeatuwes = candidate.featuwes)
+        ) with convewsationmoduweitem {
+          ovewwide vaw t-tweedispway: option[moduweitemtweedispway] = n-none
+          ovewwide v-vaw dispensabwe: b-boowean = index < candidates.wength - 1
         }
 
-        Decoration(candidate.candidate, itemPresentation)
+        decowation(candidate.candidate, OwO itempwesentation)
     }
 
-    Stitch.value(candidatePresentations)
+    s-stitch.vawue(candidatepwesentations)
   }
 }

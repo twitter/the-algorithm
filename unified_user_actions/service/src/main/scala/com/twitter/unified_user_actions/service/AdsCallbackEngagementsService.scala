@@ -1,25 +1,25 @@
-package com.twitter.unified_user_actions.service
+package com.twittew.unified_usew_actions.sewvice
 
-import com.twitter.ads.spendserver.thriftscala.SpendServerEvent
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.inject.server.TwitterServer
-import com.twitter.kafka.client.processor.AtLeastOnceProcessor
-import com.twitter.unified_user_actions.service.module.KafkaProcessorAdsCallbackEngagementsModule
+impowt com.twittew.ads.spendsewvew.thwiftscawa.spendsewvewevent
+i-impowt com.twittew.finatwa.decidew.moduwes.decidewmoduwe
+i-impowt c-com.twittew.finatwa.kafka.sewde.unkeyed
+i-impowt c-com.twittew.inject.sewvew.twittewsewvew
+i-impowt com.twittew.kafka.cwient.pwocessow.atweastoncepwocessow
+i-impowt com.twittew.unified_usew_actions.sewvice.moduwe.kafkapwocessowadscawwbackengagementsmoduwe
 
-object AdsCallbackEngagementsServiceMain extends AdsCallbackEngagementsService
+o-object adscawwbackengagementssewvicemain extends adscawwbackengagementssewvice
 
-class AdsCallbackEngagementsService extends TwitterServer {
-  override val modules = Seq(
-    KafkaProcessorAdsCallbackEngagementsModule,
-    DeciderModule
+cwass adscawwbackengagementssewvice e-extends twittewsewvew {
+  ovewwide v-vaw moduwes = seq(
+    kafkapwocessowadscawwbackengagementsmoduwe, :3
+    d-decidewmoduwe
   )
 
-  override protected def setup(): Unit = {}
+  ovewwide pwotected def setup(): unit = {}
 
-  override protected def start(): Unit = {
-    val processor = injector.instance[AtLeastOnceProcessor[UnKeyed, SpendServerEvent]]
-    closeOnExit(processor)
-    processor.start()
+  o-ovewwide pwotected def s-stawt(): unit = {
+    v-vaw pwocessow = injectow.instance[atweastoncepwocessow[unkeyed, 😳😳😳 spendsewvewevent]]
+    cwoseonexit(pwocessow)
+    pwocessow.stawt()
   }
 }

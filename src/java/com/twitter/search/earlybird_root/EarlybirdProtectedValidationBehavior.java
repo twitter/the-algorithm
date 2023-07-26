@@ -1,45 +1,45 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchquewy;
 
-public class EarlybirdProtectedValidationBehavior extends EarlybirdServiceValidationBehavior {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(EarlybirdProtectedValidationBehavior.class);
+pubwic c-cwass eawwybiwdpwotectedvawidationbehaviow e-extends eawwybiwdsewvicevawidationbehaviow {
+  p-pwivate static finaw woggew wog =
+      woggewfactowy.getwoggew(eawwybiwdpwotectedvawidationbehaviow.cwass);
 
-  @Override
-  public EarlybirdResponse getResponseIfInvalidRequest(EarlybirdRequest request) {
-    if (!request.isSetSearchQuery() || request.getSearchQuery() == null) {
-      String errorMsg = "Invalid EarlybirdRequest, no ThriftSearchQuery specified. " + request;
-      LOG.warn(errorMsg);
-      return createErrorResponse(errorMsg);
+  @ovewwide
+  pubwic eawwybiwdwesponse g-getwesponseifinvawidwequest(eawwybiwdwequest wequest) {
+    if (!wequest.issetseawchquewy() || w-wequest.getseawchquewy() == nyuww) {
+      stwing e-ewwowmsg = "invawid eawwybiwdwequest, /(^•ω•^) nyo thwiftseawchquewy s-specified. rawr x3 " + wequest;
+      w-wog.wawn(ewwowmsg);
+      w-wetuwn cweateewwowwesponse(ewwowmsg);
     }
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
+    thwiftseawchquewy seawchquewy = wequest.getseawchquewy();
 
-    // Make sure this request is valid for the protected tweets cluster.
-    if (!searchQuery.isSetFromUserIDFilter64() || searchQuery.getFromUserIDFilter64().isEmpty()) {
-      String errorMsg = "ThriftSearchQuery.fromUserIDFilter64 not set. " + request;
-      LOG.warn(errorMsg);
-      return createErrorResponse(errorMsg);
-    }
-
-    if (!searchQuery.isSetSearcherId()) {
-      String errorMsg = "ThriftSearchQuery.searcherId not set. " + request;
-      LOG.warn(errorMsg);
-      return createErrorResponse(errorMsg);
+    // m-make suwe this wequest is vawid fow the pwotected tweets cwustew. (U ﹏ U)
+    i-if (!seawchquewy.issetfwomusewidfiwtew64() || seawchquewy.getfwomusewidfiwtew64().isempty()) {
+      s-stwing ewwowmsg = "thwiftseawchquewy.fwomusewidfiwtew64 nyot s-set. (U ﹏ U) " + wequest;
+      w-wog.wawn(ewwowmsg);
+      w-wetuwn cweateewwowwesponse(ewwowmsg);
     }
 
-    if (searchQuery.getSearcherId() < 0) {
-      String errorMsg = "Invalid ThriftSearchQuery.searcherId: " + searchQuery.getSearcherId()
-          + ". " + request;
-      LOG.warn(errorMsg);
-      return createErrorResponse(errorMsg);
+    if (!seawchquewy.issetseawchewid()) {
+      stwing ewwowmsg = "thwiftseawchquewy.seawchewid n-nyot set. (⑅˘꒳˘) " + wequest;
+      wog.wawn(ewwowmsg);
+      w-wetuwn cweateewwowwesponse(ewwowmsg);
     }
 
-    return super.getResponseIfInvalidRequest(request);
+    if (seawchquewy.getseawchewid() < 0) {
+      stwing ewwowmsg = "invawid thwiftseawchquewy.seawchewid: " + seawchquewy.getseawchewid()
+          + ". òωó " + w-wequest;
+      wog.wawn(ewwowmsg);
+      w-wetuwn c-cweateewwowwesponse(ewwowmsg);
+    }
+
+    w-wetuwn supew.getwesponseifinvawidwequest(wequest);
   }
 }

@@ -1,43 +1,43 @@
-package com.twitter.product_mixer.core.service.debug_query
+package com.twittew.pwoduct_mixew.cowe.sewvice.debug_quewy
 
-import com.twitter.finagle.Service
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ProductDisabled
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineResult
-import com.twitter.scrooge.{Request => ScroogeRequest}
-import com.twitter.scrooge.{Response => ScroogeResponse}
-import com.twitter.util.Future
-import com.twitter.product_mixer.core.{thriftscala => t}
-import com.twitter.util.jackson.ScalaObjectMapper
+impowt c-com.twittew.finagwe.sewvice
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pwoductdisabwed
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct.pwoductpipewinewesuwt
+i-impowt com.twittew.scwooge.{wequest => scwoogewequest}
+impowt com.twittew.scwooge.{wesponse => scwoogewesponse}
+i-impowt com.twittew.utiw.futuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.{thwiftscawa => t}
+impowt com.twittew.utiw.jackson.scawaobjectmappew
 
 /**
- * All Mixers must implement a debug query interface. This can be a problem for in-place migrations
- * where a service may only partially implement Product Mixer patterns. This service can be used as
- * a noop implementation of [[DebugQueryService]] until the Mixer service is fully migrated.
+ * a-aww mixews must impwement a debug quewy intewface. mya t-this can be a pwobwem fow in-pwace m-migwations
+ * w-whewe a sewvice may onwy pawtiawwy impwement pwoduct mixew pattewns. 😳 this sewvice c-can be used as
+ * a nyoop impwementation of [[debugquewysewvice]] untiw the mixew sewvice is f-fuwwy migwated.
  */
-object DebugQueryNotSupportedService
-    extends Service[ScroogeRequest[_], ScroogeResponse[t.PipelineExecutionResult]] {
+object debugquewynotsuppowtedsewvice
+    e-extends s-sewvice[scwoogewequest[_], -.- s-scwoogewesponse[t.pipewineexecutionwesuwt]] {
 
-  val failureJson: String = {
-    val message = "This service does not support debug queries, this is usually due to an active " +
-      "in-place migration to Product Mixer. Please reach out in #product-mixer if you have any questions."
+  v-vaw faiwuwejson: stwing = {
+    vaw message = "this s-sewvice does nyot suppowt debug quewies, 🥺 this i-is usuawwy due to an active " +
+      "in-pwace migwation to pwoduct mixew. o.O pwease weach out in #pwoduct-mixew i-if you have any questions."
 
-    ScalaObjectMapper().writeValueAsString(
-      ProductPipelineResult(
-        transformedQuery = None,
-        qualityFactorResult = None,
-        gateResult = None,
-        pipelineSelectorResult = None,
-        mixerPipelineResult = None,
-        recommendationPipelineResult = None,
-        traceId = None,
-        failure = Some(PipelineFailure(ProductDisabled, message)),
-        result = None,
+    s-scawaobjectmappew().wwitevawueasstwing(
+      p-pwoductpipewinewesuwt(
+        t-twansfowmedquewy = nyone, /(^•ω•^)
+        quawityfactowwesuwt = nyone, nyaa~~
+        g-gatewesuwt = n-nyone, nyaa~~
+        pipewinesewectowwesuwt = n-nyone, :3
+        m-mixewpipewinewesuwt = nyone, 😳😳😳
+        w-wecommendationpipewinewesuwt = nyone, (˘ω˘)
+        twaceid = n-nyone, ^^
+        faiwuwe = some(pipewinefaiwuwe(pwoductdisabwed, :3 m-message)), -.-
+        wesuwt = n-nyone, 😳
       ))
   }
 
-  override def apply(
-    thriftRequest: ScroogeRequest[_]
-  ): Future[ScroogeResponse[t.PipelineExecutionResult]] =
-    Future.value(ScroogeResponse(t.PipelineExecutionResult(failureJson)))
+  ovewwide d-def appwy(
+    t-thwiftwequest: scwoogewequest[_]
+  ): futuwe[scwoogewesponse[t.pipewineexecutionwesuwt]] =
+    futuwe.vawue(scwoogewesponse(t.pipewineexecutionwesuwt(faiwuwejson)))
 }

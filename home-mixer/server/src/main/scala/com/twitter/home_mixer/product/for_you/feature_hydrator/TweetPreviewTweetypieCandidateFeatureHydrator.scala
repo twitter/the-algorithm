@@ -1,71 +1,71 @@
-package com.twitter.home_mixer.product.for_you.feature_hydrator
+package com.twittew.home_mixew.pwoduct.fow_you.featuwe_hydwatow
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsHydratedFeature
-import com.twitter.home_mixer.model.HomeFeatures.TweetTextFeature
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.spam.rtf.{thriftscala => rtf}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
-import com.twitter.tweetypie.{thriftscala => TP}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.ishydwatedfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.tweettextfeatuwe
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.candidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.spam.wtf.{thwiftscawa => wtf}
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stitch.tweetypie.{tweetypie => tweetypiestitchcwient}
+i-impowt com.twittew.tweetypie.{thwiftscawa => tp}
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class TweetPreviewTweetypieCandidateFeatureHydrator @Inject() (
-  tweetypieStitchClient: TweetypieStitchClient)
-    extends CandidateFeatureHydrator[PipelineQuery, BaseTweetCandidate] {
+@singweton
+cwass t-tweetpweviewtweetypiecandidatefeatuwehydwatow @inject() (
+  tweetypiestitchcwient: t-tweetypiestitchcwient)
+    e-extends candidatefeatuwehydwatow[pipewinequewy, 🥺 basetweetcandidate] {
 
-  private val CoreTweetFields: Set[TP.TweetInclude] = Set[TP.TweetInclude](
-    TP.TweetInclude.TweetFieldId(TP.Tweet.IdField.id),
-    TP.TweetInclude.TweetFieldId(TP.Tweet.CoreDataField.id)
+  pwivate vaw cowetweetfiewds: set[tp.tweetincwude] = s-set[tp.tweetincwude](
+    tp.tweetincwude.tweetfiewdid(tp.tweet.idfiewd.id), o.O
+    tp.tweetincwude.tweetfiewdid(tp.tweet.cowedatafiewd.id)
   )
 
-  private val DefaultFeatureMap = FeatureMapBuilder()
-    .add(TweetTextFeature, None)
-    .add(IsHydratedFeature, false)
-    .add(AuthorIdFeature, None)
-    .build()
+  pwivate vaw defauwtfeatuwemap = f-featuwemapbuiwdew()
+    .add(tweettextfeatuwe, /(^•ω•^) nyone)
+    .add(ishydwatedfeatuwe, nyaa~~ fawse)
+    .add(authowidfeatuwe, n-none)
+    .buiwd()
 
-  override val features: Set[Feature[_, _]] =
-    Set(TweetTextFeature, IsHydratedFeature, AuthorIdFeature)
+  o-ovewwide vaw f-featuwes: set[featuwe[_, nyaa~~ _]] =
+    s-set(tweettextfeatuwe, :3 ishydwatedfeatuwe, 😳😳😳 authowidfeatuwe)
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("TweetPreviewTweetypie")
+  ovewwide vaw i-identifiew: featuwehydwatowidentifiew =
+    featuwehydwatowidentifiew("tweetpweviewtweetypie")
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: BaseTweetCandidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = {
-    tweetypieStitchClient
-      .getTweetFields(
-        tweetId = candidate.id,
-        options = TP.GetTweetFieldsOptions(
-          tweetIncludes = CoreTweetFields,
-          includeRetweetedTweet = false,
-          includeQuotedTweet = false,
-          visibilityPolicy = TP.TweetVisibilityPolicy.UserVisible,
-          safetyLevel = Some(rtf.SafetyLevel.TimelineHomeTweetPreview),
-          forUserId = query.getOptionalUserId
+  ovewwide def appwy(
+    q-quewy: pipewinequewy, (˘ω˘)
+    candidate: basetweetcandidate, ^^
+    existingfeatuwes: featuwemap
+  ): stitch[featuwemap] = {
+    t-tweetypiestitchcwient
+      .gettweetfiewds(
+        tweetid = c-candidate.id, :3
+        o-options = t-tp.gettweetfiewdsoptions(
+          tweetincwudes = cowetweetfiewds, -.-
+          incwudewetweetedtweet = f-fawse, 😳
+          i-incwudequotedtweet = fawse, mya
+          v-visibiwitypowicy = t-tp.tweetvisibiwitypowicy.usewvisibwe, (˘ω˘)
+          safetywevew = s-some(wtf.safetywevew.timewinehometweetpweview),
+          fowusewid = q-quewy.getoptionawusewid
         )
       ).map {
-        case TP.GetTweetFieldsResult(_, TP.TweetFieldsResultState.Found(found), quoteOpt, _) =>
-          val tweetText = found.tweet.coreData.map(_.text)
-          FeatureMapBuilder()
-            .add(TweetTextFeature, tweetText)
-            .add(IsHydratedFeature, true)
-            .add(AuthorIdFeature, found.tweet.coreData.map(_.userId))
-            .build()
-        // If no tweet result found, return default features
+        case tp.gettweetfiewdswesuwt(_, tp.tweetfiewdswesuwtstate.found(found), >_< q-quoteopt, -.- _) =>
+          vaw tweettext = f-found.tweet.cowedata.map(_.text)
+          featuwemapbuiwdew()
+            .add(tweettextfeatuwe, 🥺 t-tweettext)
+            .add(ishydwatedfeatuwe, (U ﹏ U) t-twue)
+            .add(authowidfeatuwe, >w< found.tweet.cowedata.map(_.usewid))
+            .buiwd()
+        // if nyo tweet wesuwt found, mya wetuwn defauwt featuwes
         case _ =>
-          DefaultFeatureMap
+          defauwtfeatuwemap
       }
 
   }

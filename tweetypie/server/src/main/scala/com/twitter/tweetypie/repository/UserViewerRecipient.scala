@@ -1,78 +1,78 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.context.thriftscala.Viewer
-import com.twitter.featureswitches.Recipient
-import com.twitter.featureswitches.TOOClient
-import com.twitter.featureswitches.UserAgent
-import com.twitter.tweetypie.StatsReceiver
-import com.twitter.tweetypie.User
-import com.twitter.tweetypie.UserId
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.repository.UserViewerRecipient.UserIdMismatchException
+i-impowt com.twittew.context.thwiftscawa.viewew
+impowt c-com.twittew.featuweswitches.wecipient
+i-impowt c-com.twittew.featuweswitches.toocwient
+i-impowt c-com.twittew.featuweswitches.usewagent
+i-impowt com.twittew.tweetypie.statsweceivew
+impowt com.twittew.tweetypie.usew
+impowt com.twittew.tweetypie.usewid
+impowt com.twittew.tweetypie.cwient_id.cwientidhewpew
+impowt c-com.twittew.tweetypie.wepositowy.usewviewewwecipient.usewidmismatchexception
 
 /**
- * Provides a Recipient backed by a Gizmoduck User and TwitterContext Viewer for
- * use in FeatureSwitch validation.
+ * pwovides a wecipient backed b-by a gizmoduck usew and twittewcontext v-viewew fow
+ * use in featuweswitch vawidation. 😳
  */
-object UserViewerRecipient {
-  object UserIdMismatchException extends Exception
+object usewviewewwecipient {
+  o-object usewidmismatchexception e-extends e-exception
 
-  def apply(user: User, viewer: Viewer, stats: StatsReceiver): Option[Recipient] = {
-    // This is a workaround for thrift API clients that allow users to Tweet on behalf
-    // of other Twitter users. This is similar to go/contributors, however some platforms
-    // have enabled workflows that don't use the go/contributors auth platform, and
-    // therefore the TwitterContext Viewer isn't set up correctly for contributor requests.
-    if (viewer.userId.contains(user.id)) {
-      Some(new UserViewerRecipient(user, viewer))
-    } else {
-      val mismatchScope = stats.scope(s"user_viewer_mismatch")
-      ClientIdHelper.default.effectiveClientIdRoot.foreach { clientId =>
-        mismatchScope.scope("client").counter(clientId).incr()
+  def appwy(usew: usew, (ˆ ﻌ ˆ)♡ viewew: viewew, 😳😳😳 stats: statsweceivew): option[wecipient] = {
+    // this i-is a wowkawound fow thwift api cwients that awwow usews to tweet on behawf
+    // o-of othew twittew usews. (U ﹏ U) this i-is simiwaw to go/contwibutows, (///ˬ///✿) howevew s-some pwatfowms
+    // h-have e-enabwed wowkfwows that don't use the go/contwibutows a-auth pwatfowm, and
+    // thewefowe the twittewcontext v-viewew isn't set up cowwectwy fow contwibutow wequests. 😳
+    if (viewew.usewid.contains(usew.id)) {
+      some(new u-usewviewewwecipient(usew, 😳 viewew))
+    } e-ewse {
+      v-vaw mismatchscope = s-stats.scope(s"usew_viewew_mismatch")
+      cwientidhewpew.defauwt.effectivecwientidwoot.foweach { cwientid =>
+        mismatchscope.scope("cwient").countew(cwientid).incw()
       }
-      mismatchScope.counter("total").incr()
-      None
+      m-mismatchscope.countew("totaw").incw()
+      n-nyone
     }
   }
 }
 
-class UserViewerRecipient(
-  user: User,
-  viewer: Viewer)
-    extends Recipient {
+cwass usewviewewwecipient(
+  u-usew: usew, σωσ
+  viewew: v-viewew)
+    extends wecipient {
 
-  if (!viewer.userId.contains(user.id)) {
-    throw UserIdMismatchException
+  i-if (!viewew.usewid.contains(usew.id)) {
+    thwow usewidmismatchexception
   }
 
-  override def userId: Option[UserId] = viewer.userId
+  o-ovewwide def usewid: option[usewid] = v-viewew.usewid
 
-  override def userRoles: Option[Set[String]] = user.roles.map(_.roles.toSet)
+  ovewwide def usewwowes: o-option[set[stwing]] = usew.wowes.map(_.wowes.toset)
 
-  override def deviceId: Option[String] = viewer.deviceId
+  o-ovewwide def deviceid: o-option[stwing] = viewew.deviceid
 
-  override def guestId: Option[Long] = viewer.guestId
+  ovewwide def guestid: option[wong] = viewew.guestid
 
-  override def languageCode: Option[String] = viewer.requestLanguageCode
+  ovewwide def w-wanguagecode: option[stwing] = viewew.wequestwanguagecode
 
-  override def signupCountryCode: Option[String] = user.safety.flatMap(_.signupCountryCode)
+  o-ovewwide def signupcountwycode: o-option[stwing] = u-usew.safety.fwatmap(_.signupcountwycode)
 
-  override def countryCode: Option[String] = viewer.requestCountryCode
+  o-ovewwide def countwycode: option[stwing] = viewew.wequestcountwycode
 
-  override def userAgent: Option[UserAgent] = viewer.userAgent.flatMap(UserAgent(_))
+  o-ovewwide def usewagent: option[usewagent] = viewew.usewagent.fwatmap(usewagent(_))
 
-  override def isManifest: Boolean = false
+  ovewwide def ismanifest: b-boowean = fawse
 
-  override def isVerified: Option[Boolean] = user.safety.map(_.verified)
+  ovewwide def i-isvewified: option[boowean] = usew.safety.map(_.vewified)
 
-  override def clientApplicationId: Option[Long] = viewer.clientApplicationId
+  o-ovewwide d-def cwientappwicationid: option[wong] = viewew.cwientappwicationid
 
-  @Deprecated
-  override def isTwoffice: Option[Boolean] = None
+  @depwecated
+  o-ovewwide d-def istwoffice: o-option[boowean] = n-nyone
 
-  @Deprecated
-  override def tooClient: Option[TOOClient] = None
+  @depwecated
+  ovewwide def toocwient: o-option[toocwient] = n-nyone
 
-  @Deprecated
-  override def highWaterMark: Option[Long] = None
+  @depwecated
+  o-ovewwide def highwatewmawk: o-option[wong] = n-nyone
 }

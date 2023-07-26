@@ -1,62 +1,62 @@
-from .hashing_utils import make_feature_id
+fwom .hashing_utiws impowt make_featuwe_id
 
-from twml.contrib.layers.hashing_discretizer import HashingDiscretizer
-import numpy as np
+fwom t-twmw.contwib.wayews.hashing_discwetizew i-impowt hashingdiscwetizew
+i-impowt nyumpy a-as nyp
 
 
-class TFModelDiscretizerBuilder(object):
-  def __init__(self, num_bits):
-    self.num_bits = num_bits
+cwass tfmodewdiscwetizewbuiwdew(object):
+  d-def __init__(sewf, >_< n-nyum_bits):
+    s-sewf.num_bits = n-nyum_bits
 
-  def build(self, tf_model_initializer):
+  def buiwd(sewf, >_< tf_modew_initiawizew):
     '''
-    :param tf_model_initializer: dictionary of the following format:
+    :pawam tf_modew_initiawizew: dictionawy of t-the fowwowing fowmat:
       {
-        "features": {
-          "bias": 0.0,
-          "binary": {
-            # (feature name : feature weight) pairs
-            "feature_name_1": 0.0,
+        "featuwes": {
+          "bias": 0.0, (⑅˘꒳˘)
+          "binawy": {
+            # (featuwe nyame : f-featuwe weight) paiws
+            "featuwe_name_1": 0.0, /(^•ω•^)
             ...
-            "feature_nameN": 0.0
-          },
-          "discretized": {
-            # (feature name : index aligned lists of bin_boundaries and weights
-            "feature_name_1": {
-              "bin_boundaries": [1, ..., inf],
-              "weights": [0.0, ..., 0.0]
+            "featuwe_namen": 0.0
+          }, rawr x3
+          "discwetized": {
+            # (featuwe n-nyame : index awigned wists of bin_boundawies and weights
+            "featuwe_name_1": {
+              "bin_boundawies": [1, (U ﹏ U) ..., i-inf], (U ﹏ U)
+              "weights": [0.0, (⑅˘꒳˘) ..., 0.0]
             }
             ...
-            "feature_name_K": {
-              "bin_boundaries": [1, ..., inf],
-              "weights": [0.0, ..., 0.0]
+            "featuwe_name_k": {
+              "bin_boundawies": [1, òωó ..., inf], ʘwʘ
+              "weights": [0.0, /(^•ω•^) ..., 0.0]
             }
           }
         }
       }
-    :return: a HashingDiscretizer instance.
+    :wetuwn: a-a hashingdiscwetizew i-instance. ʘwʘ
     '''
-    discretized_features = tf_model_initializer["features"]["discretized"]
+    discwetized_featuwes = tf_modew_initiawizew["featuwes"]["discwetized"]
 
     max_bins = 0
 
-    feature_ids = []
-    bin_vals = []
-    for feature_name in discretized_features:
-      bin_boundaries = discretized_features[feature_name]["bin_boundaries"]
-      feature_id = make_feature_id(feature_name, self.num_bits)
-      feature_ids.append(feature_id)
-      np_bin_boundaries = [np.float(bin_boundary) for bin_boundary in bin_boundaries]
-      bin_vals.append(np_bin_boundaries)
+    featuwe_ids = []
+    b-bin_vaws = []
+    fow featuwe_name in discwetized_featuwes:
+      bin_boundawies = d-discwetized_featuwes[featuwe_name]["bin_boundawies"]
+      featuwe_id = m-make_featuwe_id(featuwe_name, σωσ s-sewf.num_bits)
+      f-featuwe_ids.append(featuwe_id)
+      n-nyp_bin_boundawies = [np.fwoat(bin_boundawy) fow bin_boundawy in bin_boundawies]
+      b-bin_vaws.append(np_bin_boundawies)
 
-      max_bins = max(max_bins, len(np_bin_boundaries))
+      max_bins = max(max_bins, OwO w-wen(np_bin_boundawies))
 
-    feature_ids_np = np.array(feature_ids)
-    bin_vals_np = np.array(bin_vals).flatten()
+    featuwe_ids_np = nyp.awway(featuwe_ids)
+    bin_vaws_np = nyp.awway(bin_vaws).fwatten()
 
-    return HashingDiscretizer(
-      feature_ids=feature_ids_np,
-      bin_vals=bin_vals_np,
-      n_bin=max_bins,
-      out_bits=self.num_bits
+    wetuwn hashingdiscwetizew(
+      featuwe_ids=featuwe_ids_np, 😳😳😳
+      b-bin_vaws=bin_vaws_np, 😳😳😳
+      ny_bin=max_bins, o.O
+      o-out_bits=sewf.num_bits
     )

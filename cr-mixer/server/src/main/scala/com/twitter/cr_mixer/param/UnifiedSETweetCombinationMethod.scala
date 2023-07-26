@@ -1,15 +1,15 @@
-package com.twitter.cr_mixer.param
+package com.twittew.cw_mixew.pawam
 
-import scala.language.implicitConversions
+impowt scawa.wanguage.impwicitconvewsions
 
-object UnifiedSETweetCombinationMethod extends Enumeration {
+o-object u-unifiedsetweetcombinationmethod e-extends enumewation {
 
-  protected case class CombinationType(s: String) extends super.Val
+  p-pwotected c-case cwass c-combinationtype(s: s-stwing) extends s-supew.vaw
 
-  implicit def valueToCombinationType(x: Value): CombinationType = x.asInstanceOf[CombinationType]
+  impwicit def vawuetocombinationtype(x: vawue): combinationtype = x-x.asinstanceof[combinationtype]
 
-  val Default: Value = CombinationType("")
-  val Interleave: Value = CombinationType("Interleave")
-  val Frontload: Value = CombinationType("Frontload")
-  val Backfill: Value = CombinationType("Backfill")
+  vaw defauwt: vawue = combinationtype("")
+  v-vaw intewweave: vawue = combinationtype("intewweave")
+  v-vaw fwontwoad: vawue = combinationtype("fwontwoad")
+  vaw backfiww: vawue = c-combinationtype("backfiww")
 }

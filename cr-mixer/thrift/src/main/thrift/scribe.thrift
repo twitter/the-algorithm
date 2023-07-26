@@ -1,168 +1,168 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namespace java com.twittew.cw_mixew.thwiftjava
+#@namespace scawa c-com.twittew.cw_mixew.thwiftscawa
+#@namespace s-stwato c-com.twittew.cw_mixew
 
-include "ads.thrift"
-include "candidate_generation_key.thrift"
-include "cr_mixer.thrift"
-include "metric_tags.thrift"
-include "product.thrift"
-include "related_tweet.thrift"
-include "source_type.thrift"
-include "uteg.thrift"
-include "com/twitter/ml/api/data.thrift"
-include "com/twitter/simclusters_v2/identifier.thrift"
+i-incwude "ads.thwift"
+incwude "candidate_genewation_key.thwift"
+i-incwude "cw_mixew.thwift"
+i-incwude "metwic_tags.thwift"
+i-incwude "pwoduct.thwift"
+i-incwude "wewated_tweet.thwift"
+incwude "souwce_type.thwift"
+incwude "uteg.thwift"
+incwude "com/twittew/mw/api/data.thwift"
+incwude "com/twittew/simcwustews_v2/identifiew.thwift"
 
-struct VITTweetCandidatesScribe {
-  1: required i64 uuid (personalDataType = 'UniversallyUniqueIdentifierUuid') # RequestUUID - unique scribe id for every request that comes in. Same request but different stages of scribe log (FetchCandidate, Filter, etc) share the same uuid
-  2: required i64 userId (personalDataType = 'UserId')
-  3: required list<VITTweetCandidateScribe> candidates
-  7: required product.Product product
-  8: required list<ImpressesedBucketInfo> impressedBuckets
-} (persisted='true', hasPersonalData = 'true')
+s-stwuct vittweetcandidatesscwibe {
+  1: wequiwed i64 u-uuid (pewsonawdatatype = 'univewsawwyuniqueidentifiewuuid') # wequestuuid - u-unique scwibe id fow evewy wequest that comes in. 🥺 same w-wequest but diffewent stages o-of scwibe wog (fetchcandidate, OwO fiwtew, >w< e-etc) shawe the same uuid
+  2: wequiwed i64 usewid (pewsonawdatatype = 'usewid')
+  3: wequiwed w-wist<vittweetcandidatescwibe> candidates
+  7: wequiwed pwoduct.pwoduct pwoduct
+  8: wequiwed w-wist<impwessesedbucketinfo> impwessedbuckets
+} (pewsisted='twue', 🥺 h-haspewsonawdata = 'twue')
 
-struct VITTweetCandidateScribe {
-  1: required i64 tweetId (personalDataType = 'TweetId')
-  2: required i64 authorId (personalDataType = 'UserId')
-  3: required double score
-  4: required list<metric_tags.MetricTag> metricTags
-} (persisted='true', hasPersonalData = 'true')
+stwuct v-vittweetcandidatescwibe {
+  1: w-wequiwed i64 t-tweetid (pewsonawdatatype = 'tweetid')
+  2: wequiwed i64 authowid (pewsonawdatatype = 'usewid')
+  3: w-wequiwed doubwe scowe
+  4: wequiwed wist<metwic_tags.metwictag> m-metwictags
+} (pewsisted='twue', nyaa~~ haspewsonawdata = 'twue')
 
-struct GetTweetsRecommendationsScribe {
-  1: required i64 uuid (personalDataType = 'UniversallyUniqueIdentifierUuid') # RequestUUID - unique scribe id for every request that comes in. Same request but different stages of scribe log (FetchCandidate, Filter, etc) share the same uuid
-  2: required i64 userId (personalDataType = 'UserId')
-  3: required Result result
-  4: optional i64 traceId
-  5: optional PerformanceMetrics performanceMetrics
-  6: optional list<ImpressesedBucketInfo> impressedBuckets
-} (persisted='true', hasPersonalData = 'true')
+stwuct gettweetswecommendationsscwibe {
+  1: wequiwed i64 uuid (pewsonawdatatype = 'univewsawwyuniqueidentifiewuuid') # wequestuuid - unique scwibe i-id fow evewy wequest that c-comes in. ^^ same wequest b-but diffewent s-stages of scwibe wog (fetchcandidate, >w< fiwtew, OwO etc) shawe the s-same uuid
+  2: w-wequiwed i64 usewid (pewsonawdatatype = 'usewid')
+  3: wequiwed w-wesuwt wesuwt
+  4: o-optionaw i64 twaceid
+  5: optionaw p-pewfowmancemetwics pewfowmancemetwics
+  6: o-optionaw wist<impwessesedbucketinfo> impwessedbuckets
+} (pewsisted='twue', XD haspewsonawdata = 'twue')
 
-struct SourceSignal {
-  # optional, since that the next step covers all info here
-  1: optional identifier.InternalId id
-} (persisted='true')
+s-stwuct souwcesignaw {
+  # optionaw, ^^;; since t-that the nyext step covews aww i-info hewe
+  1: o-optionaw identifiew.intewnawid id
+} (pewsisted='twue')
 
-struct PerformanceMetrics {
-  1: optional i64 latencyMs
-} (persisted='true')
+stwuct pewfowmancemetwics {
+  1: optionaw i64 watencyms
+} (pewsisted='twue')
 
-struct TweetCandidateWithMetadata {
-  1: required i64 tweetId (personalDataType = 'TweetId')
-  2: optional candidate_generation_key.CandidateGenerationKey candidateGenerationKey
-  3: optional i64 authorId (personalDataType = 'UserId') # only for InterleaveResult for hydrating training data
-  4: optional double score # score with respect to candidateGenerationKey
-  5: optional data.DataRecord dataRecord # attach any features to this candidate
-  6: optional i32 numCandidateGenerationKeys # num CandidateGenerationKeys generating this tweetId  
-} (persisted='true')
+stwuct tweetcandidatewithmetadata {
+  1: wequiwed i64 tweetid (pewsonawdatatype = 'tweetid')
+  2: optionaw c-candidate_genewation_key.candidategenewationkey c-candidategenewationkey
+  3: optionaw i-i64 authowid (pewsonawdatatype = 'usewid') # o-onwy fow intewweavewesuwt f-fow hydwating twaining data
+  4: optionaw doubwe scowe # s-scowe with wespect to candidategenewationkey
+  5: optionaw data.datawecowd datawecowd # attach a-any featuwes to this candidate
+  6: o-optionaw i-i32 nyumcandidategenewationkeys # n-nyum candidategenewationkeys genewating this t-tweetid  
+} (pewsisted='twue')
 
-struct FetchSignalSourcesResult { 
-  1: optional set<SourceSignal> signals
-} (persisted='true')
+s-stwuct fetchsignawsouwceswesuwt { 
+  1: o-optionaw s-set<souwcesignaw> signaws
+} (pewsisted='twue')
 
-struct FetchCandidatesResult {
-  1: optional list<TweetCandidateWithMetadata> tweets
-} (persisted='true')
+stwuct fetchcandidateswesuwt {
+  1: o-optionaw wist<tweetcandidatewithmetadata> t-tweets
+} (pewsisted='twue')
 
-struct PreRankFilterResult {
-  1: optional list<TweetCandidateWithMetadata> tweets
-} (persisted='true')
+s-stwuct p-pwewankfiwtewwesuwt {
+  1: optionaw w-wist<tweetcandidatewithmetadata> tweets
+} (pewsisted='twue')
 
-struct InterleaveResult {
-  1: optional list<TweetCandidateWithMetadata> tweets
-} (persisted='true')
+stwuct intewweavewesuwt {
+  1: optionaw wist<tweetcandidatewithmetadata> tweets
+} (pewsisted='twue')
 
-struct RankResult {
-  1: optional list<TweetCandidateWithMetadata> tweets
-} (persisted='true')
+s-stwuct wankwesuwt {
+  1: optionaw wist<tweetcandidatewithmetadata> tweets
+} (pewsisted='twue')
 
-struct TopLevelApiResult {
-  1: required i64 timestamp (personalDataType = 'PrivateTimestamp')
-  2: required cr_mixer.CrMixerTweetRequest request
-  3: required cr_mixer.CrMixerTweetResponse response
-} (persisted='true')
+stwuct topwevewapiwesuwt {
+  1: wequiwed i-i64 timestamp (pewsonawdatatype = 'pwivatetimestamp')
+  2: wequiwed cw_mixew.cwmixewtweetwequest wequest
+  3: wequiwed cw_mixew.cwmixewtweetwesponse w-wesponse
+} (pewsisted='twue')
 
-union Result {
-  1: FetchSignalSourcesResult fetchSignalSourcesResult
-  2: FetchCandidatesResult fetchCandidatesResult
-  3: PreRankFilterResult preRankFilterResult
-  4: InterleaveResult interleaveResult
-  5: RankResult rankResult
-  6: TopLevelApiResult topLevelApiResult
-} (persisted='true', hasPersonalData = 'true')
+u-union wesuwt {
+  1: f-fetchsignawsouwceswesuwt fetchsignawsouwceswesuwt
+  2: f-fetchcandidateswesuwt fetchcandidateswesuwt
+  3: p-pwewankfiwtewwesuwt p-pwewankfiwtewwesuwt
+  4: intewweavewesuwt intewweavewesuwt
+  5: wankwesuwt wankwesuwt
+  6: topwevewapiwesuwt t-topwevewapiwesuwt
+} (pewsisted='twue', 🥺 haspewsonawdata = 'twue')
 
-struct ImpressesedBucketInfo {
-  1: required i64 experimentId (personalDataType = 'ExperimentId')
-  2: required string bucketName
-  3: required i32 version
-} (persisted='true')
+s-stwuct impwessesedbucketinfo {
+  1: wequiwed i-i64 expewimentid (pewsonawdatatype = 'expewimentid')
+  2: wequiwed s-stwing bucketname
+  3: wequiwed i32 vewsion
+} (pewsisted='twue')
 
-############# RelatedTweets Scribe #############
+############# wewatedtweets s-scwibe #############
 
-struct GetRelatedTweetsScribe {
-  1: required i64 uuid (personalDataType = 'UniversallyUniqueIdentifierUuid') # RequestUUID - unique scribe id for every request that comes in. Same request but different stages of scribe log (FetchCandidate, Filter, etc) share the same uuid
-  2: required identifier.InternalId internalId
-  3: required RelatedTweetResult relatedTweetResult
-  4: optional i64 requesterId (personalDataType = 'UserId')
-  5: optional i64 guestId (personalDataType = 'GuestId')
-  6: optional i64 traceId
-  7: optional PerformanceMetrics performanceMetrics
-  8: optional list<ImpressesedBucketInfo> impressedBuckets
-} (persisted='true', hasPersonalData = 'true')
+s-stwuct getwewatedtweetsscwibe {
+  1: w-wequiwed i64 uuid (pewsonawdatatype = 'univewsawwyuniqueidentifiewuuid') # w-wequestuuid - unique scwibe id fow evewy wequest that comes in. XD same w-wequest but diffewent s-stages of s-scwibe wog (fetchcandidate, (U ᵕ U❁) fiwtew, e-etc) shawe t-the same uuid
+  2: wequiwed identifiew.intewnawid i-intewnawid
+  3: wequiwed wewatedtweetwesuwt wewatedtweetwesuwt
+  4: optionaw i64 wequestewid (pewsonawdatatype = 'usewid')
+  5: o-optionaw i64 guestid (pewsonawdatatype = 'guestid')
+  6: o-optionaw i64 twaceid
+  7: optionaw pewfowmancemetwics p-pewfowmancemetwics
+  8: o-optionaw wist<impwessesedbucketinfo> impwessedbuckets
+} (pewsisted='twue', :3 haspewsonawdata = 'twue')
 
-struct RelatedTweetTopLevelApiResult {
-  1: required i64 timestamp (personalDataType = 'PrivateTimestamp')
-  2: required related_tweet.RelatedTweetRequest request
-  3: required related_tweet.RelatedTweetResponse response
-} (persisted='true')
+stwuct w-wewatedtweettopwevewapiwesuwt {
+  1: wequiwed i64 timestamp (pewsonawdatatype = 'pwivatetimestamp')
+  2: wequiwed wewated_tweet.wewatedtweetwequest wequest
+  3: w-wequiwed wewated_tweet.wewatedtweetwesponse wesponse
+} (pewsisted='twue')
 
-union RelatedTweetResult {
-  1: RelatedTweetTopLevelApiResult relatedTweetTopLevelApiResult
-  2: FetchCandidatesResult fetchCandidatesResult
-  3: PreRankFilterResult preRankFilterResult # results after seqential filters
-  # if later we need rankResult, we can add it here
-} (persisted='true', hasPersonalData = 'true')
+u-union wewatedtweetwesuwt {
+  1: w-wewatedtweettopwevewapiwesuwt wewatedtweettopwevewapiwesuwt
+  2: fetchcandidateswesuwt fetchcandidateswesuwt
+  3: p-pwewankfiwtewwesuwt p-pwewankfiwtewwesuwt # wesuwts aftew seqentiaw fiwtews
+  # i-if watew we nyeed wankwesuwt, w-we can add it hewe
+} (pewsisted='twue', ( ͡o ω ͡o ) haspewsonawdata = 'twue')
 
-############# UtegTweets Scribe #############
+############# utegtweets scwibe #############
 
-struct GetUtegTweetsScribe {
-  1: required i64 uuid (personalDataType = 'UniversallyUniqueIdentifierUuid') # RequestUUID - unique scribe id for every request that comes in. Same request but different stages of scribe log (FetchCandidate, Filter, etc) share the same uuid
-  2: required i64 userId (personalDataType = 'UserId')
-  3: required UtegTweetResult utegTweetResult
-  4: optional i64 traceId
-  5: optional PerformanceMetrics performanceMetrics
-  6: optional list<ImpressesedBucketInfo> impressedBuckets
-} (persisted='true', hasPersonalData = 'true')
+stwuct getutegtweetsscwibe {
+  1: w-wequiwed i64 uuid (pewsonawdatatype = 'univewsawwyuniqueidentifiewuuid') # wequestuuid - u-unique s-scwibe id fow evewy wequest t-that comes in. òωó same wequest but d-diffewent stages o-of scwibe wog (fetchcandidate, σωσ f-fiwtew, (U ᵕ U❁) etc) shawe the same uuid
+  2: w-wequiwed i64 u-usewid (pewsonawdatatype = 'usewid')
+  3: wequiwed utegtweetwesuwt u-utegtweetwesuwt
+  4: o-optionaw i-i64 twaceid
+  5: optionaw pewfowmancemetwics pewfowmancemetwics
+  6: o-optionaw wist<impwessesedbucketinfo> i-impwessedbuckets
+} (pewsisted='twue', (✿oωo) h-haspewsonawdata = 'twue')
 
-struct UtegTweetTopLevelApiResult {
-  1: required i64 timestamp (personalDataType = 'PrivateTimestamp')
-  2: required uteg.UtegTweetRequest request
-  3: required uteg.UtegTweetResponse response
-} (persisted='true')
+stwuct utegtweettopwevewapiwesuwt {
+  1: wequiwed i64 timestamp (pewsonawdatatype = 'pwivatetimestamp')
+  2: w-wequiwed u-uteg.utegtweetwequest w-wequest
+  3: w-wequiwed uteg.utegtweetwesponse w-wesponse
+} (pewsisted='twue')
 
-union UtegTweetResult {
-  1: UtegTweetTopLevelApiResult utegTweetTopLevelApiResult
-  2: FetchCandidatesResult fetchCandidatesResult
-  # if later we need rankResult, we can add it here
-} (persisted='true', hasPersonalData = 'true')
+union utegtweetwesuwt {
+  1: utegtweettopwevewapiwesuwt utegtweettopwevewapiwesuwt
+  2: fetchcandidateswesuwt fetchcandidateswesuwt
+  # if watew we nyeed wankwesuwt, ^^ we c-can add it hewe
+} (pewsisted='twue', ^•ﻌ•^ haspewsonawdata = 'twue')
 
-############# getAdsRecommendations() Scribe #############
+############# g-getadswecommendations() scwibe #############
 
-struct GetAdsRecommendationsScribe {
-  1: required i64 uuid (personalDataType = 'UniversallyUniqueIdentifierUuid') # RequestUUID - unique scribe id for every request that comes in. Same request but different stages of scribe log (FetchCandidate, Filter, etc) share the same uuid
-  2: required i64 userId (personalDataType = 'UserId')
-  3: required AdsRecommendationsResult result
-  4: optional i64 traceId
-  5: optional PerformanceMetrics performanceMetrics
-  6: optional list<ImpressesedBucketInfo> impressedBuckets
-} (persisted='true', hasPersonalData = 'true')
+s-stwuct getadswecommendationsscwibe {
+  1: w-wequiwed i64 uuid (pewsonawdatatype = 'univewsawwyuniqueidentifiewuuid') # w-wequestuuid - unique s-scwibe id f-fow evewy wequest t-that comes in. XD s-same wequest but diffewent stages of scwibe wog (fetchcandidate, :3 fiwtew, (ꈍᴗꈍ) etc) shawe the same uuid
+  2: wequiwed i64 usewid (pewsonawdatatype = 'usewid')
+  3: wequiwed a-adswecommendationswesuwt w-wesuwt
+  4: optionaw i-i64 twaceid
+  5: optionaw p-pewfowmancemetwics pewfowmancemetwics
+  6: optionaw wist<impwessesedbucketinfo> i-impwessedbuckets
+} (pewsisted='twue', :3 h-haspewsonawdata = 'twue')
 
-struct AdsRecommendationTopLevelApiResult {
-  1: required i64 timestamp (personalDataType = 'PrivateTimestamp')
-  2: required ads.AdsRequest request
-  3: required ads.AdsResponse response
-} (persisted='true')
+stwuct adswecommendationtopwevewapiwesuwt {
+  1: w-wequiwed i64 timestamp (pewsonawdatatype = 'pwivatetimestamp')
+  2: wequiwed ads.adswequest wequest
+  3: w-wequiwed a-ads.adswesponse wesponse
+} (pewsisted='twue')
 
-union AdsRecommendationsResult{
-  1: AdsRecommendationTopLevelApiResult adsRecommendationTopLevelApiResult
-  2: FetchCandidatesResult fetchCandidatesResult
-}(persisted='true', hasPersonalData = 'true')
+u-union adswecommendationswesuwt{
+  1: a-adswecommendationtopwevewapiwesuwt adswecommendationtopwevewapiwesuwt
+  2: fetchcandidateswesuwt fetchcandidateswesuwt
+}(pewsisted='twue', (U ﹏ U) haspewsonawdata = 'twue')

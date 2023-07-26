@@ -1,26 +1,26 @@
-package com.twitter.search.earlybird.config;
+package com.twittew.seawch.eawwybiwd.config;
 
 /**
- * An interface for abstracting a tier's serving range.
+ * an intewface f-fow abstwacting a-a tiew's sewving w-wange. mya
  */
-public interface ServingRange {
+pubwic i-intewface sewvingwange {
   /**
-   * Returns the serving range's lowest tweet ID.
+   * w-wetuwns t-the sewving wange's w-wowest tweet i-id. mya
    */
-  long getServingRangeSinceId();
+  wong getsewvingwangesinceid();
 
   /**
-   * Returns the serving range's highest tweet ID.
+   * wetuwns the sewving wange's highest tweet i-id. 😳
    */
-  long getServingRangeMaxId();
+  wong getsewvingwangemaxid();
 
   /**
-   * Returns the serving range's earliest time, in seconds since epoch.
+   * wetuwns the s-sewving wange's eawwiest time, XD i-in seconds since epoch.
    */
-  long getServingRangeSinceTimeSecondsFromEpoch();
+  wong getsewvingwangesincetimesecondsfwomepoch();
 
   /**
-   * Returns the serving range's latest time, in seconds since epoch.
+   * wetuwns the sewving w-wange's watest time, in seconds s-since epoch. :3
    */
-  long getServingRangeUntilTimeSecondsFromEpoch();
+  w-wong getsewvingwangeuntiwtimesecondsfwomepoch();
 }

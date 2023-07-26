@@ -1,47 +1,47 @@
-package com.twitter.home_mixer.module
+package com.twittew.home_mixew.moduwe
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.timelinemixer.clients.feedback.FeedbackHistoryManhattanClient
-import com.twitter.timelinemixer.clients.feedback.FeedbackHistoryManhattanClientConfig
-import com.twitter.timelines.clients.manhattan.mhv3.ManhattanClientBuilder
-import com.twitter.util.Duration
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt c-com.twittew.inject.annotations.fwag
+i-impowt com.twittew.timewinemixew.cwients.feedback.feedbackhistowymanhattancwient
+i-impowt com.twittew.timewinemixew.cwients.feedback.feedbackhistowymanhattancwientconfig
+impowt com.twittew.timewines.cwients.manhattan.mhv3.manhattancwientbuiwdew
+impowt com.twittew.utiw.duwation
+i-impowt javax.inject.singweton
 
-object FeedbackHistoryClientModule extends TwitterModule {
-  private val ProdDataset = "feedback_history"
-  private val StagingDataset = "feedback_history_nonprod"
-  private final val Timeout = "mh_feedback_history.timeout"
+object f-feedbackhistowycwientmoduwe extends t-twittewmoduwe {
+  pwivate vaw pwoddataset = "feedback_histowy"
+  pwivate vaw s-stagingdataset = "feedback_histowy_nonpwod"
+  pwivate finaw vaw t-timeout = "mh_feedback_histowy.timeout"
 
-  flag[Duration](Timeout, 150.millis, "Timeout per request")
+  f-fwag[duwation](timeout, >_< 150.miwwis, "timeout pew wequest")
 
-  @Provides
-  @Singleton
-  def providesFeedbackHistoryClient(
-    @Flag(Timeout) timeout: Duration,
-    serviceId: ServiceIdentifier,
-    statsReceiver: StatsReceiver
+  @pwovides
+  @singweton
+  def pwovidesfeedbackhistowycwient(
+    @fwag(timeout) timeout: duwation, >_<
+    s-sewviceid: sewviceidentifiew, (⑅˘꒳˘)
+    statsweceivew: statsweceivew
   ) = {
-    val manhattanDataset = serviceId.environment.toLowerCase match {
-      case "prod" => ProdDataset
-      case _ => StagingDataset
+    vaw manhattandataset = s-sewviceid.enviwonment.towowewcase match {
+      c-case "pwod" => p-pwoddataset
+      c-case _ => stagingdataset
     }
 
-    val config = new FeedbackHistoryManhattanClientConfig {
-      val dataset = manhattanDataset
-      val isReadOnly = true
-      val serviceIdentifier = serviceId
-      override val defaultMaxTimeout = timeout
+    v-vaw config = nyew feedbackhistowymanhattancwientconfig {
+      vaw dataset = m-manhattandataset
+      vaw isweadonwy = twue
+      v-vaw sewviceidentifiew = sewviceid
+      ovewwide vaw defauwtmaxtimeout = timeout
     }
 
-    new FeedbackHistoryManhattanClient(
-      ManhattanClientBuilder.buildManhattanEndpoint(config, statsReceiver),
-      manhattanDataset,
-      statsReceiver
+    nyew feedbackhistowymanhattancwient(
+      manhattancwientbuiwdew.buiwdmanhattanendpoint(config, /(^•ω•^) s-statsweceivew), rawr x3
+      manhattandataset, (U ﹏ U)
+      s-statsweceivew
     )
   }
 }

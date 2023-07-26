@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.timewine_moduwe
 
 /**
- *  This trait is used for Module ID generation. Clients are safe to ignore this code unless they
- *  have a specific use case that requires hard-coded, specific, module ids.  In that scenario,
- *  they can use the [[ManualModuleId]] case class.
+ *  this twait is u-used fow moduwe i-id genewation. (✿oωo) cwients a-awe safe t-to ignowe this code u-unwess they
+ *  h-have a specific u-use case that w-wequiwes hawd-coded, ʘwʘ specific, (ˆ ﻌ ˆ)♡ moduwe ids.  in that scenawio,
+ *  they can use t-the [[manuawmoduweid]] case cwass. 😳😳😳
  */
-sealed trait ModuleIdGeneration {
-  val moduleId: Long
+seawed twait m-moduweidgenewation {
+  vaw m-moduweid: wong
 }
 
-object ModuleIdGeneration {
-  def apply(moduleId: Long): ModuleIdGeneration = moduleId match {
-    case moduleId if AutomaticUniqueModuleId.isAutomaticUniqueModuleId(moduleId) =>
-      AutomaticUniqueModuleId(moduleId)
-    case moduleId => ManualModuleId(moduleId)
+object moduweidgenewation {
+  def appwy(moduweid: wong): moduweidgenewation = m-moduweid match {
+    case moduweid i-if automaticuniquemoduweid.isautomaticuniquemoduweid(moduweid) =>
+      a-automaticuniquemoduweid(moduweid)
+    case moduweid => manuawmoduweid(moduweid)
   }
 }
 
 /**
- * Generate unique Ids for each module, which results in unique URT entryIds
- * for each module even if they share the same entryNamespace.
- * This is the default and recommended use case.
- * Note that the module Id value is just a placeholder
+ * genewate unique ids fow e-each moduwe, :3 which wesuwts in unique uwt entwyids
+ * fow each moduwe even if they s-shawe the same entwynamespace. OwO
+ * t-this is the d-defauwt and wecommended u-use case. (U ﹏ U)
+ * n-nyote that the moduwe id vawue is just a pwacehowdew
  */
-case class AutomaticUniqueModuleId private (moduleId: Long = 0L) extends ModuleIdGeneration {
-  def withOffset(offset: Long): AutomaticUniqueModuleId = copy(
-    AutomaticUniqueModuleId.idRange.min + offset)
+case c-cwass automaticuniquemoduweid pwivate (moduweid: wong = 0w) e-extends moduweidgenewation {
+  def withoffset(offset: wong): automaticuniquemoduweid = copy(
+    automaticuniquemoduweid.idwange.min + offset)
 }
 
-object AutomaticUniqueModuleId {
-  // We use a specific numeric range to track whether IDs should be automatically generated.
-  val idRange: Range = Range(-10000, -1000)
+o-object automaticuniquemoduweid {
+  // we use a s-specific nyumewic w-wange to twack w-whethew ids shouwd be automaticawwy genewated. >w<
+  vaw idwange: w-wange = wange(-10000, (U ﹏ U) -1000)
 
-  def apply(): AutomaticUniqueModuleId = AutomaticUniqueModuleId(idRange.min)
+  d-def appwy(): automaticuniquemoduweid = automaticuniquemoduweid(idwange.min)
 
-  def isAutomaticUniqueModuleId(moduleId: Long): Boolean = idRange.contains(moduleId)
+  def i-isautomaticuniquemoduweid(moduweid: w-wong): boowean = idwange.contains(moduweid)
 }
 
 /**
- * ManualModuleId should normally not be required, but is helpful if the
- * entryId of the module must be controlled. A scenario where this may be
- * required is if a single candidate source returns multiple modules, and
- * each module has the same presentation (e.g. Header, Footer). By setting
- * different IDs, we signal to the platform that each module should be separate
- * by using a different manual Id.
+ * m-manuawmoduweid shouwd n-nyowmawwy nyot be wequiwed, 😳 but is hewpfuw if t-the
+ * entwyid of the moduwe must b-be contwowwed. (ˆ ﻌ ˆ)♡ a scenawio whewe t-this may be
+ * w-wequiwed is if a singwe candidate souwce wetuwns muwtipwe moduwes, 😳😳😳 and
+ * each moduwe has the same pwesentation (e.g. h-headew, (U ﹏ U) f-footew). (///ˬ///✿) by setting
+ * diffewent i-ids, 😳 we signaw t-to the pwatfowm t-that each moduwe shouwd be sepawate
+ * by using a diffewent manuaw i-id. 😳
  */
-case class ManualModuleId(override val moduleId: Long) extends ModuleIdGeneration {
-  // Negative module IDs are reserved for internal usage
-  if (moduleId < 0) throw new IllegalArgumentException("moduleId must be a positive number")
+case cwass manuawmoduweid(ovewwide vaw moduweid: wong) extends moduweidgenewation {
+  // n-nyegative moduwe ids awe wesewved f-fow intewnaw u-usage
+  if (moduweid < 0) t-thwow nyew iwwegawawgumentexception("moduweid m-must b-be a positive nyumbew")
 }

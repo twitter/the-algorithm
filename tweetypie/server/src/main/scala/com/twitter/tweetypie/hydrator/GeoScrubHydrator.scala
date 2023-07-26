@@ -1,31 +1,31 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.wepositowy._
+i-impowt c-com.twittew.tweetypie.thwiftscawa._
 
 /**
- * This hydrator, which is really more of a "repairer", scrubs at read-time geo data
- * that should have been scrubbed but wasn't.  For any tweet with geo data, it checks
- * the last geo-scrub timestamp, if any, for the user, and if the tweet was created before
- * that timestamp, it removes the geo data.
+ * t-this hydwatow, 🥺 which i-is weawwy mowe o-of a "wepaiwew", >_< scwubs at wead-time geo data
+ * that shouwd have been scwubbed b-but wasn't. >_<  fow any tweet with geo data, it c-checks
+ * the wast geo-scwub timestamp, (⑅˘꒳˘) i-if any, /(^•ω•^) fow the usew, rawr x3 and if the tweet was cweated befowe
+ * t-that timestamp, (U ﹏ U) it wemoves t-the geo data. (U ﹏ U)
  */
-object GeoScrubHydrator {
-  type Data = (Option[GeoCoordinates], Option[PlaceId])
-  type Type = ValueHydrator[Data, TweetCtx]
+o-object geoscwubhydwatow {
+  type data = (option[geocoowdinates], option[pwaceid])
+  type type = vawuehydwatow[data, (⑅˘꒳˘) t-tweetctx]
 
-  private[this] val modifiedNoneNoneResult = ValueState.modified((None, None))
+  pwivate[this] vaw modifiednonenonewesuwt = vawuestate.modified((none, òωó nyone))
 
-  def apply(repo: GeoScrubTimestampRepository.Type, scribeTweetId: FutureEffect[TweetId]): Type =
-    ValueHydrator[Data, TweetCtx] { (curr, ctx) =>
-      repo(ctx.userId).liftToTry.map {
-        case Return(geoScrubTime) if ctx.createdAt <= geoScrubTime =>
-          scribeTweetId(ctx.tweetId)
-          modifiedNoneNoneResult
+  def appwy(wepo: g-geoscwubtimestampwepositowy.type, ʘwʘ scwibetweetid: f-futuweeffect[tweetid]): t-type =
+    v-vawuehydwatow[data, /(^•ω•^) t-tweetctx] { (cuww, ʘwʘ ctx) =>
+      wepo(ctx.usewid).wifttotwy.map {
+        case wetuwn(geoscwubtime) i-if ctx.cweatedat <= geoscwubtime =>
+          scwibetweetid(ctx.tweetid)
+          modifiednonenonewesuwt
 
-        // no-op on failure and no result
-        case _ => ValueState.unmodified(curr)
+        // n-nyo-op on faiwuwe and nyo wesuwt
+        case _ => vawuestate.unmodified(cuww)
       }
-    }.onlyIf { case ((coords, place), _) => coords.nonEmpty || place.nonEmpty }
+    }.onwyif { case ((coowds, σωσ pwace), _) => c-coowds.nonempty || pwace.nonempty }
 }

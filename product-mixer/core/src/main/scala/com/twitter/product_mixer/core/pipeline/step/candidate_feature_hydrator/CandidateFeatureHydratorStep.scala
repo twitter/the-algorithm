@@ -1,71 +1,71 @@
-package com.twitter.product_mixer.core.pipeline.step.candidate_feature_hydrator
+package com.twittew.pwoduct_mixew.cowe.pipewine.step.candidate_featuwe_hydwatow
 
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithFeatures
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.basecandidatefeatuwehydwatow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hascandidateswithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hasquewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.step.step
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_featuwe_hydwatow_executow.candidatefeatuwehydwatowexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_featuwe_hydwatow_executow.candidatefeatuwehydwatowexecutowwesuwt
+impowt com.twittew.stitch.awwow
+i-impowt javax.inject.inject
 
 /**
- * A candidate level feature hydration step, it takes the input list of candidates and the given
- * hydrators and executes them. The [[State]] object is responsible for merging the resulting
- * feature maps with the hydrated ones in its updateCandidatesWithFeatures.
+ * a candidate wevew featuwe hydwation s-step, >w< it takes the input w-wist of candidates and the given
+ * hydwatows and exekawaii~s them. nyaa~~ t-the [[state]] object is wesponsibwe f-fow mewging t-the wesuwting
+ * featuwe maps with the hydwated ones in its updatecandidateswithfeatuwes. (✿oωo)
  *
- * @param candidateFeatureHydratorExecutor Hydrator Executor
- * @tparam Query Type of PipelineQuery domain model
- * @tparam Candidate Type of Candidates to hydrate features for.
- * @tparam State The pipeline state domain model.
+ * @pawam c-candidatefeatuwehydwatowexecutow hydwatow executow
+ * @tpawam quewy type of pipewinequewy d-domain modew
+ * @tpawam candidate t-type of candidates t-to hydwate f-featuwes fow. ʘwʘ
+ * @tpawam s-state the pipewine state domain modew. (ˆ ﻌ ˆ)♡
  */
-case class CandidateFeatureHydratorStep[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
-  State <: HasQuery[Query, State] with HasCandidatesWithFeatures[
-    Candidate,
-    State
-  ]] @Inject() (
-  candidateFeatureHydratorExecutor: CandidateFeatureHydratorExecutor)
-    extends Step[State, Seq[
-      BaseCandidateFeatureHydrator[Query, Candidate, _]
-    ], CandidateFeatureHydratorExecutor.Inputs[
-      Query,
-      Candidate
-    ], CandidateFeatureHydratorExecutorResult[Candidate]] {
+c-case cwass candidatefeatuwehydwatowstep[
+  quewy <: pipewinequewy, 😳😳😳
+  c-candidate <: univewsawnoun[any], :3
+  state <: hasquewy[quewy, OwO state] with hascandidateswithfeatuwes[
+    candidate, (U ﹏ U)
+    s-state
+  ]] @inject() (
+  candidatefeatuwehydwatowexecutow: candidatefeatuwehydwatowexecutow)
+    e-extends step[state, >w< s-seq[
+      b-basecandidatefeatuwehydwatow[quewy, (U ﹏ U) candidate, 😳 _]
+    ], (ˆ ﻌ ˆ)♡ candidatefeatuwehydwatowexecutow.inputs[
+      quewy, 😳😳😳
+      c-candidate
+    ], c-candidatefeatuwehydwatowexecutowwesuwt[candidate]] {
 
-  override def adaptInput(
-    state: State,
-    config: Seq[BaseCandidateFeatureHydrator[Query, Candidate, _]]
-  ): CandidateFeatureHydratorExecutor.Inputs[Query, Candidate] =
-    CandidateFeatureHydratorExecutor.Inputs(state.query, state.candidatesWithFeatures)
+  ovewwide def adaptinput(
+    state: s-state, (U ﹏ U)
+    c-config: seq[basecandidatefeatuwehydwatow[quewy, (///ˬ///✿) candidate, 😳 _]]
+  ): c-candidatefeatuwehydwatowexecutow.inputs[quewy, 😳 candidate] =
+    c-candidatefeatuwehydwatowexecutow.inputs(state.quewy, σωσ state.candidateswithfeatuwes)
 
-  override def arrow(
-    config: Seq[BaseCandidateFeatureHydrator[Query, Candidate, _]],
-    context: Executor.Context
-  ): Arrow[
-    CandidateFeatureHydratorExecutor.Inputs[Query, Candidate],
-    CandidateFeatureHydratorExecutorResult[Candidate]
-  ] = candidateFeatureHydratorExecutor.arrow(config, context)
+  ovewwide d-def awwow(
+    config: seq[basecandidatefeatuwehydwatow[quewy, rawr x3 c-candidate, OwO _]],
+    context: e-executow.context
+  ): a-awwow[
+    candidatefeatuwehydwatowexecutow.inputs[quewy, /(^•ω•^) candidate], 😳😳😳
+    candidatefeatuwehydwatowexecutowwesuwt[candidate]
+  ] = candidatefeatuwehydwatowexecutow.awwow(config, ( ͡o ω ͡o ) context)
 
-  override def updateState(
-    input: State,
-    executorResult: CandidateFeatureHydratorExecutorResult[Candidate],
-    config: Seq[BaseCandidateFeatureHydrator[Query, Candidate, _]]
-  ): State = {
-    val candidatesWithHydratedFeatures = executorResult.results
-    if (candidatesWithHydratedFeatures.isEmpty) {
+  ovewwide def u-updatestate(
+    i-input: state, >_<
+    executowwesuwt: c-candidatefeatuwehydwatowexecutowwesuwt[candidate], >w<
+    c-config: s-seq[basecandidatefeatuwehydwatow[quewy, rawr candidate, 😳 _]]
+  ): state = {
+    vaw c-candidateswithhydwatedfeatuwes = executowwesuwt.wesuwts
+    if (candidateswithhydwatedfeatuwes.isempty) {
       input
-    } else {
-      input.updateCandidatesWithFeatures(candidatesWithHydratedFeatures)
+    } ewse {
+      input.updatecandidateswithfeatuwes(candidateswithhydwatedfeatuwes)
     }
   }
 
-  override def isEmpty(
-    config: Seq[BaseCandidateFeatureHydrator[Query, Candidate, _]]
-  ): Boolean =
-    config.isEmpty
+  o-ovewwide def isempty(
+    c-config: seq[basecandidatefeatuwehydwatow[quewy, >w< c-candidate, (⑅˘꒳˘) _]]
+  ): b-boowean =
+    config.isempty
 }

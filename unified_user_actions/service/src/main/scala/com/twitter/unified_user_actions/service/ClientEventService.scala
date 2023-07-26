@@ -1,23 +1,23 @@
-package com.twitter.unified_user_actions.service
+package com.twittew.unified_usew_actions.sewvice
 
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.inject.server.TwitterServer
-import com.twitter.kafka.client.processor.AtLeastOnceProcessor
-import com.twitter.unified_user_actions.service.module.KafkaProcessorClientEventModule
+impowt com.twittew.cwientapp.thwiftscawa.wogevent
+i-impowt com.twittew.finatwa.decidew.moduwes.decidewmoduwe
+i-impowt c-com.twittew.finatwa.kafka.sewde.unkeyed
+i-impowt c-com.twittew.inject.sewvew.twittewsewvew
+i-impowt c-com.twittew.kafka.cwient.pwocessow.atweastoncepwocessow
+i-impowt com.twittew.unified_usew_actions.sewvice.moduwe.kafkapwocessowcwienteventmoduwe
 
-object ClientEventServiceMain extends ClientEventService
+object cwienteventsewvicemain extends cwienteventsewvice
 
-class ClientEventService extends TwitterServer {
+cwass c-cwienteventsewvice extends twittewsewvew {
 
-  override val modules = Seq(KafkaProcessorClientEventModule, DeciderModule)
+  ovewwide vaw moduwes = s-seq(kafkapwocessowcwienteventmoduwe, XD decidewmoduwe)
 
-  override protected def setup(): Unit = {}
+  o-ovewwide pwotected def setup(): unit = {}
 
-  override protected def start(): Unit = {
-    val processor = injector.instance[AtLeastOnceProcessor[UnKeyed, LogEvent]]
-    closeOnExit(processor)
-    processor.start()
+  ovewwide p-pwotected def stawt(): unit = {
+    v-vaw pwocessow = i-injectow.instance[atweastoncepwocessow[unkeyed, :3 wogevent]]
+    cwoseonexit(pwocessow)
+    pwocessow.stawt()
   }
 }

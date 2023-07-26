@@ -1,71 +1,71 @@
-package com.twitter.follow_recommendations.services
+package com.twittew.fowwow_wecommendations.sewvices
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.common.models.Recommendation
-import com.twitter.follow_recommendations.models.RecommendationRequest
-import com.twitter.follow_recommendations.products.common.ProductRegistry
-import com.twitter.follow_recommendations.products.common.ProductRequest
-import com.twitter.stitch.Stitch
-import com.twitter.follow_recommendations.configapi.params.GlobalParams.EnableWhoToFollowProducts
-import com.twitter.timelines.configapi.Params
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.base.statsutiw
+i-impowt com.twittew.fowwow_wecommendations.common.modews.wecommendation
+i-impowt c-com.twittew.fowwow_wecommendations.modews.wecommendationwequest
+i-impowt com.twittew.fowwow_wecommendations.pwoducts.common.pwoductwegistwy
+i-impowt c-com.twittew.fowwow_wecommendations.pwoducts.common.pwoductwequest
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.fowwow_wecommendations.configapi.pawams.gwobawpawams.enabwewhotofowwowpwoducts
+impowt com.twittew.timewines.configapi.pawams
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class ProductRecommenderService @Inject() (
-  productRegistry: ProductRegistry,
-  statsReceiver: StatsReceiver) {
+@singweton
+c-cwass pwoductwecommendewsewvice @inject() (
+  pwoductwegistwy: p-pwoductwegistwy, 😳
+  statsweceivew: s-statsweceivew) {
 
-  private val stats = statsReceiver.scope("ProductRecommenderService")
+  pwivate vaw stats = statsweceivew.scope("pwoductwecommendewsewvice")
 
-  def getRecommendations(
-    request: RecommendationRequest,
-    params: Params
-  ): Stitch[Seq[Recommendation]] = {
-    val displayLocation = request.displayLocation
-    val displayLocationStatName = displayLocation.toString
-    val locationStats = stats.scope(displayLocationStatName)
-    val loggedInOrOutStats = if (request.clientContext.userId.isDefined) {
-      stats.scope("logged_in").scope(displayLocationStatName)
-    } else {
-      stats.scope("logged_out").scope(displayLocationStatName)
+  def getwecommendations(
+    w-wequest: wecommendationwequest, -.-
+    pawams: pawams
+  ): s-stitch[seq[wecommendation]] = {
+    vaw d-dispwaywocation = wequest.dispwaywocation
+    vaw dispwaywocationstatname = dispwaywocation.tostwing
+    vaw wocationstats = s-stats.scope(dispwaywocationstatname)
+    vaw woggedinowoutstats = if (wequest.cwientcontext.usewid.isdefined) {
+      stats.scope("wogged_in").scope(dispwaywocationstatname)
+    } ewse {
+      s-stats.scope("wogged_out").scope(dispwaywocationstatname)
     }
 
-    loggedInOrOutStats.counter("requests").incr()
-    val product = productRegistry.getProductByDisplayLocation(displayLocation)
-    val productRequest = ProductRequest(request, params)
-    val productEnabledStitch =
-      StatsUtil.profileStitch(product.enabled(productRequest), locationStats.scope("enabled"))
-    productEnabledStitch.flatMap { productEnabled =>
-      if (productEnabled && params(EnableWhoToFollowProducts)) {
-        loggedInOrOutStats.counter("enabled").incr()
-        val stitch = for {
-          workflows <- StatsUtil.profileStitch(
-            product.selectWorkflows(productRequest),
-            locationStats.scope("select_workflows"))
-          workflowRecos <- StatsUtil.profileStitch(
-            Stitch.collect(
-              workflows.map(_.process(productRequest).map(_.result.getOrElse(Seq.empty)))),
-            locationStats.scope("execute_workflows")
+    woggedinowoutstats.countew("wequests").incw()
+    v-vaw pwoduct = p-pwoductwegistwy.getpwoductbydispwaywocation(dispwaywocation)
+    v-vaw pwoductwequest = p-pwoductwequest(wequest, 🥺 pawams)
+    vaw pwoductenabwedstitch =
+      s-statsutiw.pwofiwestitch(pwoduct.enabwed(pwoductwequest), o.O wocationstats.scope("enabwed"))
+    pwoductenabwedstitch.fwatmap { p-pwoductenabwed =>
+      if (pwoductenabwed && pawams(enabwewhotofowwowpwoducts)) {
+        woggedinowoutstats.countew("enabwed").incw()
+        vaw stitch = fow {
+          w-wowkfwows <- statsutiw.pwofiwestitch(
+            p-pwoduct.sewectwowkfwows(pwoductwequest), /(^•ω•^)
+            w-wocationstats.scope("sewect_wowkfwows"))
+          w-wowkfwowwecos <- statsutiw.pwofiwestitch(
+            stitch.cowwect(
+              wowkfwows.map(_.pwocess(pwoductwequest).map(_.wesuwt.getowewse(seq.empty)))), nyaa~~
+            w-wocationstats.scope("exekawaii~_wowkfwows")
           )
-          blendedCandidates <- StatsUtil.profileStitch(
-            product.blender.transform(productRequest, workflowRecos.flatten),
-            locationStats.scope("blend_results"))
-          resultsTransformer <- StatsUtil.profileStitch(
-            product.resultsTransformer(productRequest),
-            locationStats.scope("results_transformer"))
-          transformedCandidates <- StatsUtil.profileStitch(
-            resultsTransformer.transform(productRequest, blendedCandidates),
-            locationStats.scope("execute_results_transformer"))
-        } yield {
-          transformedCandidates
+          b-bwendedcandidates <- statsutiw.pwofiwestitch(
+            p-pwoduct.bwendew.twansfowm(pwoductwequest, nyaa~~ w-wowkfwowwecos.fwatten), :3
+            wocationstats.scope("bwend_wesuwts"))
+          w-wesuwtstwansfowmew <- statsutiw.pwofiwestitch(
+            p-pwoduct.wesuwtstwansfowmew(pwoductwequest), 😳😳😳
+            wocationstats.scope("wesuwts_twansfowmew"))
+          twansfowmedcandidates <- s-statsutiw.pwofiwestitch(
+            wesuwtstwansfowmew.twansfowm(pwoductwequest, (˘ω˘) bwendedcandidates), ^^
+            wocationstats.scope("exekawaii~_wesuwts_twansfowmew"))
+        } y-yiewd {
+          twansfowmedcandidates
         }
-        StatsUtil.profileStitchResults[Seq[Recommendation]](stitch, locationStats, _.size)
-      } else {
-        loggedInOrOutStats.counter("disabled").incr()
-        locationStats.counter("disabled_product").incr()
-        Stitch.Nil
+        s-statsutiw.pwofiwestitchwesuwts[seq[wecommendation]](stitch, :3 w-wocationstats, -.- _.size)
+      } ewse {
+        woggedinowoutstats.countew("disabwed").incw()
+        wocationstats.countew("disabwed_pwoduct").incw()
+        stitch.niw
       }
     }
   }

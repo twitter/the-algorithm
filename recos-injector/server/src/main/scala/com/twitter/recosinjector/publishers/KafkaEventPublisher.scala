@@ -1,54 +1,54 @@
-package com.twitter.recosinjector.publishers
+package com.twittew.wecosinjectow.pubwishews
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finatra.kafka.producers.FinagleKafkaProducerBuilder
-import com.twitter.finatra.kafka.serde.ScalaSerdes
-import com.twitter.recos.internal.thriftscala.RecosHoseMessage
-import org.apache.kafka.clients.CommonClientConfigs
-import org.apache.kafka.clients.producer.ProducerRecord
-import org.apache.kafka.common.config.SaslConfigs
-import org.apache.kafka.common.config.SslConfigs
-import org.apache.kafka.common.security.auth.SecurityProtocol
-import org.apache.kafka.common.serialization.StringSerializer
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.finagwe.thwift.cwientid
+i-impowt com.twittew.finatwa.kafka.pwoducews.finagwekafkapwoducewbuiwdew
+i-impowt c-com.twittew.finatwa.kafka.sewde.scawasewdes
+i-impowt com.twittew.wecos.intewnaw.thwiftscawa.wecoshosemessage
+i-impowt owg.apache.kafka.cwients.commoncwientconfigs
+impowt owg.apache.kafka.cwients.pwoducew.pwoducewwecowd
+impowt owg.apache.kafka.common.config.saswconfigs
+impowt o-owg.apache.kafka.common.config.sswconfigs
+impowt owg.apache.kafka.common.secuwity.auth.secuwitypwotocow
+impowt o-owg.apache.kafka.common.sewiawization.stwingsewiawizew
 
-case class KafkaEventPublisher(
-  kafkaDest: String,
-  outputKafkaTopicPrefix: String,
-  clientId: ClientId,
-  truststoreLocation: String) {
+case c-cwass kafkaeventpubwishew(
+  kafkadest: stwing, ʘwʘ
+  outputkafkatopicpwefix: s-stwing, /(^•ω•^)
+  cwientid: cwientid, ʘwʘ
+  t-twuststowewocation: stwing) {
 
-  private val producer = FinagleKafkaProducerBuilder[String, RecosHoseMessage]()
-    .dest(kafkaDest)
-    .clientId(clientId.name)
-    .keySerializer(new StringSerializer)
-    .valueSerializer(ScalaSerdes.Thrift[RecosHoseMessage].serializer)
-    .withConfig(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SASL_SSL.toString)
-    .withConfig(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, truststoreLocation)
-    .withConfig(SaslConfigs.SASL_MECHANISM, SaslConfigs.GSSAPI_MECHANISM)
-    .withConfig(SaslConfigs.SASL_KERBEROS_SERVICE_NAME, "kafka")
-    .withConfig(SaslConfigs.SASL_KERBEROS_SERVER_NAME, "kafka")
-    // Use Native Kafka Client
-    .buildClient()
+  p-pwivate vaw pwoducew = finagwekafkapwoducewbuiwdew[stwing, σωσ wecoshosemessage]()
+    .dest(kafkadest)
+    .cwientid(cwientid.name)
+    .keysewiawizew(new stwingsewiawizew)
+    .vawuesewiawizew(scawasewdes.thwift[wecoshosemessage].sewiawizew)
+    .withconfig(commoncwientconfigs.secuwity_pwotocow_config, OwO s-secuwitypwotocow.sasw_ssw.tostwing)
+    .withconfig(sswconfigs.ssw_twuststowe_wocation_config, 😳😳😳 twuststowewocation)
+    .withconfig(saswconfigs.sasw_mechanism, 😳😳😳 saswconfigs.gssapi_mechanism)
+    .withconfig(saswconfigs.sasw_kewbewos_sewvice_name, o.O "kafka")
+    .withconfig(saswconfigs.sasw_kewbewos_sewvew_name, ( ͡o ω ͡o ) "kafka")
+    // use nyative kafka cwient
+    .buiwdcwient()
 
-  def publish(
-    message: RecosHoseMessage,
-    topic: String
+  d-def pubwish(
+    message: w-wecoshosemessage, (U ﹏ U)
+    t-topic: s-stwing
   )(
-    implicit statsReceiver: StatsReceiver
-  ): Unit = {
-    val topicName = s"${outputKafkaTopicPrefix}_$topic"
-    // Kafka Producer is thread-safe. No extra Future-pool protect.
-    producer.send(new ProducerRecord(topicName, message))
-    statsReceiver.counter(topicName + "_written_msg_success").incr()
+    i-impwicit statsweceivew: statsweceivew
+  ): unit = {
+    vaw t-topicname = s"${outputkafkatopicpwefix}_$topic"
+    // kafka pwoducew is thwead-safe. (///ˬ///✿) n-nyo extwa futuwe-poow pwotect. >w<
+    pwoducew.send(new pwoducewwecowd(topicname, rawr message))
+    statsweceivew.countew(topicname + "_wwitten_msg_success").incw()
   }
 }
 
-object KafkaEventPublisher {
-  // Kafka topics available for publishing
-  val UserVideoTopic = "user_video"
-  val UserTweetEntityTopic = "user_tweet_entity"
-  val UserUserTopic = "user_user"
-  val UserAdTopic = "user_tweet"
-  val UserTweetPlusTopic = "user_tweet_plus"
+o-object kafkaeventpubwishew {
+  // k-kafka t-topics avaiwabwe f-fow pubwishing
+  vaw usewvideotopic = "usew_video"
+  vaw usewtweetentitytopic = "usew_tweet_entity"
+  vaw usewusewtopic = "usew_usew"
+  v-vaw u-usewadtopic = "usew_tweet"
+  vaw u-usewtweetpwustopic = "usew_tweet_pwus"
 }

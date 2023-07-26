@@ -1,62 +1,62 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.relevance_prompt
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.wewevance_pwompt
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.relevance_prompt.RelevancePromptCandidateUrtItemStringCenterBuilder.RelevancePromptClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.RelevancePromptCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.PromptItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptFollowUpFeedbackType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.wewevance_pwompt.wewevancepwomptcandidateuwtitemstwingcentewbuiwdew.wewevancepwomptcwienteventinfoewement
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.wewevancepwomptcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.candidateuwtentwybuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventinfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basestw
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.pwompt.pwomptitem
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.pwompt.wewevancepwomptcontent
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.pwompt.wewevancepwomptdispwaytype
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.pwompt.wewevancepwomptfowwowupfeedbacktype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cawwback
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object RelevancePromptCandidateUrtItemStringCenterBuilder {
-  val RelevancePromptClientEventInfoElement: String = "relevance_prompt"
+o-object wewevancepwomptcandidateuwtitemstwingcentewbuiwdew {
+  vaw wewevancepwomptcwienteventinfoewement: s-stwing = "wewevance_pwompt"
 }
 
-case class RelevancePromptCandidateUrtItemStringCenterBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, RelevancePromptCandidate],
-  titleTextBuilder: BaseStr[Query, RelevancePromptCandidate],
-  confirmationTextBuilder: BaseStr[Query, RelevancePromptCandidate],
-  isRelevantTextBuilder: BaseStr[Query, RelevancePromptCandidate],
-  notRelevantTextBuilder: BaseStr[Query, RelevancePromptCandidate],
-  displayType: RelevancePromptDisplayType,
-  isRelevantCallback: Callback,
-  notRelevantCallback: Callback,
-  isRelevantFollowUp: Option[RelevancePromptFollowUpFeedbackType] = None,
-  notRelevantFollowUp: Option[RelevancePromptFollowUpFeedbackType] = None,
-  impressionCallbacks: Option[List[Callback]] = None)
-    extends CandidateUrtEntryBuilder[Query, RelevancePromptCandidate, PromptItem] {
+case cwass wewevancepwomptcandidateuwtitemstwingcentewbuiwdew[-quewy <: pipewinequewy](
+  c-cwienteventinfobuiwdew: basecwienteventinfobuiwdew[quewy, -.- wewevancepwomptcandidate], 🥺
+  t-titwetextbuiwdew: b-basestw[quewy, (U ﹏ U) wewevancepwomptcandidate], >w<
+  confiwmationtextbuiwdew: basestw[quewy, mya wewevancepwomptcandidate], >w<
+  iswewevanttextbuiwdew: b-basestw[quewy, nyaa~~ wewevancepwomptcandidate], (✿oωo)
+  nyotwewevanttextbuiwdew: basestw[quewy, ʘwʘ wewevancepwomptcandidate], (ˆ ﻌ ˆ)♡
+  d-dispwaytype: wewevancepwomptdispwaytype,
+  i-iswewevantcawwback: c-cawwback, 😳😳😳
+  n-nyotwewevantcawwback: c-cawwback, :3
+  iswewevantfowwowup: option[wewevancepwomptfowwowupfeedbacktype] = n-nyone, OwO
+  nyotwewevantfowwowup: option[wewevancepwomptfowwowupfeedbacktype] = none, (U ﹏ U)
+  impwessioncawwbacks: o-option[wist[cawwback]] = nyone)
+    extends candidateuwtentwybuiwdew[quewy, >w< wewevancepwomptcandidate, (U ﹏ U) pwomptitem] {
 
-  override def apply(
-    query: Query,
-    relevancePromptCandidate: RelevancePromptCandidate,
-    candidateFeatures: FeatureMap
-  ): PromptItem =
-    PromptItem(
-      id = relevancePromptCandidate.id,
-      sortIndex = None,
-      clientEventInfo = clientEventInfoBuilder(
-        query,
-        relevancePromptCandidate,
-        candidateFeatures,
-        Some(RelevancePromptClientEventInfoElement)),
-      feedbackActionInfo = None,
-      content = RelevancePromptContent(
-        title = titleTextBuilder(query, relevancePromptCandidate, candidateFeatures),
-        confirmation = confirmationTextBuilder(query, relevancePromptCandidate, candidateFeatures),
-        isRelevantText = isRelevantTextBuilder(query, relevancePromptCandidate, candidateFeatures),
-        notRelevantText =
-          notRelevantTextBuilder(query, relevancePromptCandidate, candidateFeatures),
-        isRelevantCallback = isRelevantCallback,
-        notRelevantCallback = notRelevantCallback,
-        displayType = displayType,
-        isRelevantFollowUp = isRelevantFollowUp,
-        notRelevantFollowUp = notRelevantFollowUp,
-      ),
-      impressionCallbacks = impressionCallbacks
+  ovewwide d-def appwy(
+    quewy: quewy, 😳
+    w-wewevancepwomptcandidate: w-wewevancepwomptcandidate, (ˆ ﻌ ˆ)♡
+    c-candidatefeatuwes: featuwemap
+  ): pwomptitem =
+    pwomptitem(
+      id = w-wewevancepwomptcandidate.id, 😳😳😳
+      s-sowtindex = nyone, (U ﹏ U)
+      c-cwienteventinfo = c-cwienteventinfobuiwdew(
+        quewy, (///ˬ///✿)
+        w-wewevancepwomptcandidate, 😳
+        candidatefeatuwes, 😳
+        s-some(wewevancepwomptcwienteventinfoewement)), σωσ
+      feedbackactioninfo = nyone, rawr x3
+      c-content = wewevancepwomptcontent(
+        titwe = t-titwetextbuiwdew(quewy, OwO wewevancepwomptcandidate, /(^•ω•^) c-candidatefeatuwes), 😳😳😳
+        c-confiwmation = confiwmationtextbuiwdew(quewy, ( ͡o ω ͡o ) wewevancepwomptcandidate, >_< candidatefeatuwes), >w<
+        iswewevanttext = iswewevanttextbuiwdew(quewy, rawr wewevancepwomptcandidate, 😳 c-candidatefeatuwes), >w<
+        n-nyotwewevanttext =
+          nyotwewevanttextbuiwdew(quewy, (⑅˘꒳˘) w-wewevancepwomptcandidate, c-candidatefeatuwes), OwO
+        i-iswewevantcawwback = iswewevantcawwback, (ꈍᴗꈍ)
+        nyotwewevantcawwback = nyotwewevantcawwback, 😳
+        dispwaytype = d-dispwaytype, 😳😳😳
+        iswewevantfowwowup = iswewevantfowwowup, mya
+        nyotwewevantfowwowup = nyotwewevantfowwowup, mya
+      ), (⑅˘꒳˘)
+      impwessioncawwbacks = i-impwessioncawwbacks
     )
 }

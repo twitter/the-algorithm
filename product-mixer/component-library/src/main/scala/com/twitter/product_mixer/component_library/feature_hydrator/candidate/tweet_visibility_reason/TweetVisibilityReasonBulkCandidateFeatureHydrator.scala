@@ -1,98 +1,98 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_visibility_reason
+package com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.candidate.tweet_visibiwity_weason
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.spam.rtf.{thriftscala => SPAM}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
-import com.twitter.tweetypie.{thriftscala => TP}
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.spam.wtf.{thwiftscawa => s-spam}
+impowt com.twittew.stitch.stitch
+impowt com.twittew.stitch.tweetypie.{tweetypie => tweetypiestitchcwient}
+i-impowt com.twittew.tweetypie.{thwiftscawa => tp}
+i-impowt com.twittew.utiw.wetuwn
+impowt com.twittew.utiw.thwow
+impowt com.twittew.utiw.twy
+impowt c-com.twittew.utiw.wogging.wogging
+impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-object VisibilityReason
-    extends FeatureWithDefaultOnFailure[TweetCandidate, Option[SPAM.FilteredReason]] {
-  override val defaultValue = None
+object visibiwityweason
+    extends featuwewithdefauwtonfaiwuwe[tweetcandidate, (ꈍᴗꈍ) o-option[spam.fiwtewedweason]] {
+  ovewwide vaw defauwtvawue = nyone
 }
 
 /**
- * A [[BulkCandidateFeatureHydrator]] that hydrates TweetCandidates with VisibilityReason features
- * by [[SPAM.SafetyLevel]] when present. The [[VisibilityReason]] feature represents a VisibilityFiltering
- * [[SPAM.FilteredReason]], which contains safety filtering verdict information including action (e.g.
- * Drop, Avoid) and reason (e.g. Misinformation, Abuse). This feature can inform downstream services'
- * handling and presentation of Tweets (e.g. ad avoidance).
+ * a [[buwkcandidatefeatuwehydwatow]] t-that hydwates tweetcandidates w-with v-visibiwityweason f-featuwes
+ * by [[spam.safetywevew]] w-when pwesent. 😳 the [[visibiwityweason]] featuwe w-wepwesents a visibiwityfiwtewing
+ * [[spam.fiwtewedweason]], 😳😳😳 which contains s-safety fiwtewing vewdict infowmation incwuding action (e.g. mya
+ * dwop, mya avoid) and weason (e.g. (⑅˘꒳˘) misinfowmation, (U ﹏ U) abuse). mya t-this featuwe can infowm downstweam s-sewvices'
+ * h-handwing and p-pwesentation of tweets (e.g. ʘwʘ ad avoidance). (˘ω˘)
  *
- * @param tweetypieStitchClient used to retrieve Tweet fields for BaseTweetCandidates
- * @param safetyLevel specifies VisibilityFiltering SafetyLabel
+ * @pawam tweetypiestitchcwient u-used to wetwieve t-tweet fiewds fow basetweetcandidates
+ * @pawam s-safetywevew specifies v-visibiwityfiwtewing safetywabew
  */
 
-@Singleton
-case class TweetVisibilityReasonBulkCandidateFeatureHydrator @Inject() (
-  tweetypieStitchClient: TweetypieStitchClient,
-  safetyLevel: SPAM.SafetyLevel)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, BaseTweetCandidate]
-    with Logging {
+@singweton
+c-case cwass tweetvisibiwityweasonbuwkcandidatefeatuwehydwatow @inject() (
+  t-tweetypiestitchcwient: tweetypiestitchcwient,
+  safetywevew: spam.safetywevew)
+    e-extends buwkcandidatefeatuwehydwatow[pipewinequewy, (U ﹏ U) basetweetcandidate]
+    w-with wogging {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    "TweetVisibilityReason")
+  ovewwide vaw i-identifiew: featuwehydwatowidentifiew = f-featuwehydwatowidentifiew(
+    "tweetvisibiwityweason")
 
-  override def features: Set[Feature[_, _]] = Set(VisibilityReason)
+  ovewwide def featuwes: set[featuwe[_, ^•ﻌ•^ _]] = set(visibiwityweason)
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[BaseTweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    Stitch
-      .traverse(candidates.map(_.candidate.id)) { tweetId =>
-        tweetypieStitchClient
-          .getTweetFields(
-            tweetId = tweetId,
-            options = TP.GetTweetFieldsOptions(
-              forUserId = query.getOptionalUserId,
-              tweetIncludes = Set.empty,
-              doNotCache = true,
-              visibilityPolicy = TP.TweetVisibilityPolicy.UserVisible,
-              safetyLevel = Some(safetyLevel)
+  ovewwide def appwy(
+    quewy: pipewinequewy, (˘ω˘)
+    candidates: s-seq[candidatewithfeatuwes[basetweetcandidate]]
+  ): s-stitch[seq[featuwemap]] = {
+    stitch
+      .twavewse(candidates.map(_.candidate.id)) { t-tweetid =>
+        t-tweetypiestitchcwient
+          .gettweetfiewds(
+            t-tweetid = tweetid, :3
+            options = tp.gettweetfiewdsoptions(
+              fowusewid = quewy.getoptionawusewid, ^^;;
+              t-tweetincwudes = set.empty, 🥺
+              donotcache = twue, (⑅˘꒳˘)
+              visibiwitypowicy = tp.tweetvisibiwitypowicy.usewvisibwe, nyaa~~
+              s-safetywevew = some(safetywevew)
             )
-          ).liftToTry
-      }.map { getTweetFieldsResults: Seq[Try[TP.GetTweetFieldsResult]] =>
-        val tweetFields: Seq[Try[TP.TweetFieldsResultFound]] = getTweetFieldsResults.map {
-          case Return(TP.GetTweetFieldsResult(_, TP.TweetFieldsResultState.Found(found), _, _)) =>
-            Return(found)
-          case Return(TP.GetTweetFieldsResult(_, resultState, _, _)) =>
-            Throw(
-              VisibilityReasonFeatureHydrationFailure(
-                s"Unexpected tweet result state: ${resultState}"))
-          case Throw(e) =>
-            Throw(e)
+          ).wifttotwy
+      }.map { g-gettweetfiewdswesuwts: s-seq[twy[tp.gettweetfiewdswesuwt]] =>
+        v-vaw tweetfiewds: seq[twy[tp.tweetfiewdswesuwtfound]] = g-gettweetfiewdswesuwts.map {
+          c-case w-wetuwn(tp.gettweetfiewdswesuwt(_, :3 t-tp.tweetfiewdswesuwtstate.found(found), ( ͡o ω ͡o ) _, mya _)) =>
+            wetuwn(found)
+          case wetuwn(tp.gettweetfiewdswesuwt(_, (///ˬ///✿) wesuwtstate, _, (˘ω˘) _)) =>
+            t-thwow(
+              v-visibiwityweasonfeatuwehydwationfaiwuwe(
+                s-s"unexpected tweet w-wesuwt state: ${wesuwtstate}"))
+          c-case thwow(e) =>
+            thwow(e)
         }
 
-        tweetFields.map { tweetFieldTry =>
-          val tweetFilteredReason = tweetFieldTry.map { tweetField =>
-            tweetField.suppressReason match {
-              case Some(suppressReason) => Some(suppressReason)
-              case _ => None
+        tweetfiewds.map { t-tweetfiewdtwy =>
+          vaw tweetfiwtewedweason = tweetfiewdtwy.map { tweetfiewd =>
+            tweetfiewd.suppwessweason match {
+              c-case some(suppwessweason) => some(suppwessweason)
+              case _ => n-nyone
             }
           }
 
-          FeatureMapBuilder()
-            .add(VisibilityReason, tweetFilteredReason)
-            .build()
+          f-featuwemapbuiwdew()
+            .add(visibiwityweason, ^^;; t-tweetfiwtewedweason)
+            .buiwd()
         }
       }
   }
 }
 
-case class VisibilityReasonFeatureHydrationFailure(message: String)
-    extends Exception(s"VisibilityReasonFeatureHydrationFailure($message)")
+case cwass v-visibiwityweasonfeatuwehydwationfaiwuwe(message: stwing)
+    e-extends exception(s"visibiwityweasonfeatuwehydwationfaiwuwe($message)")

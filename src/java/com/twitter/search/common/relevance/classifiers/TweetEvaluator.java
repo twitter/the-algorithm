@@ -1,37 +1,37 @@
-package com.twitter.search.common.relevance.classifiers;
+package com.twittew.seawch.common.wewevance.cwassifiews;
 
-import com.google.common.base.Preconditions;
+impowt c-com.googwe.common.base.pweconditions;
 
-import com.twitter.search.common.relevance.entities.TwitterMessage;
+i-impowt com.twittew.seawch.common.wewevance.entities.twittewmessage;
 
 /**
- * Interface to perform quality evaluation for a single @TwitterMessage
- * object or a group of them.
+ * i-intewface to p-pewfowm quawity e-evawuation fow a s-singwe @twittewmessage
+ * o-object o-ow a gwoup of them. rawr x3
  *
  */
-public abstract class TweetEvaluator {
+pubwic abstwact cwass tweetevawuatow {
   /**
-   * Passed in TwitterMessage is examined and any extractable
-   * features are stored in TweetFeatures field of TwitterMessage.
+   * passed in twittewmessage i-is examined and any extwactabwe
+   * featuwes a-awe stowed in tweetfeatuwes f-fiewd of twittewmessage. (U ﹏ U)
    *
-   * @param tweet TwitterMessage to perform classification on.
+   * @pawam tweet twittewmessage to pewfowm cwassification o-on. (U ﹏ U)
    */
-  public abstract void evaluate(final TwitterMessage tweet);
+  pubwic abstwact v-void evawuate(finaw t-twittewmessage tweet);
 
   /**
-   * Classify a group of TwitterMessages and store the features in their corresponding
-   * TweetFeatures fields.
+   * cwassify a gwoup of twittewmessages a-and stowe the featuwes in theiw cowwesponding
+   * tweetfeatuwes fiewds. (⑅˘꒳˘)
    *
-   * This default implementation just iterates through the map and classifies each
-   * individual tweet. Batching for better performance, if applicable, can be implemented by
-   * concrete subclasses.
+   * t-this defauwt impwementation j-just itewates thwough t-the map and c-cwassifies each
+   * i-individuaw tweet. òωó batching fow bettew pewfowmance, ʘwʘ i-if appwicabwe, /(^•ω•^) can be impwemented by
+   * c-concwete subcwasses. ʘwʘ
    *
-   * @param tweets TwitterMessages to perform classification on.
+   * @pawam tweets twittewmessages to pewfowm cwassification on. σωσ
    */
-   public void evaluate(final Iterable<TwitterMessage> tweets) {
-    Preconditions.checkNotNull(tweets);
-    for (TwitterMessage tweet: tweets) {
-      evaluate(tweet);
+   pubwic v-void evawuate(finaw itewabwe<twittewmessage> t-tweets) {
+    p-pweconditions.checknotnuww(tweets);
+    f-fow (twittewmessage tweet: tweets) {
+      evawuate(tweet);
     }
   }
 }

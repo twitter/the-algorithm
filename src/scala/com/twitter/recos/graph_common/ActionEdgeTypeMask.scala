@@ -1,99 +1,99 @@
-package com.twitter.recos.graph_common
+package com.twittew.wecos.gwaph_common
 
-import com.twitter.graphjet.bipartite.api.EdgeTypeMask
-import com.twitter.recos.recos_common.thriftscala.SocialProofType
+impowt com.twittew.gwaphjet.bipawtite.api.edgetypemask
+i-impowt c-com.twittew.wecos.wecos_common.thwiftscawa.sociawpwooftype
 
 /**
- * The bit mask is used to encode edge types in the top bits of an integer,
- * e.g. favorite, retweet, reply and click. Under current segment configuration, each segment
- * stores up to 128M edges. Assuming that each node on one side is unique, each segment
- * stores up to 128M unique nodes on one side, which occupies the lower 27 bits of an integer.
- * This leaves five bits to encode the edge types, which at max can store 32 edge types.
- * The following implementation utilizes the top four bits and leaves one free bit out.
+ * t-the bit m-mask is used to e-encode edge types i-in the top bits o-of an integew, mya
+ * e-e.g. ʘwʘ favowite, (˘ω˘) wetweet, wepwy and cwick. (U ﹏ U) undew cuwwent segment configuwation, ^•ﻌ•^ e-each segment
+ * stowes up to 128m edges. (˘ω˘) assuming t-that each nyode on one side i-is unique, :3 each segment
+ * stowes up to 128m unique nyodes on one s-side, which occupies the wowew 27 b-bits of an integew. ^^;;
+ * t-this weaves five bits to encode the edge types, 🥺 which at max can stowe 32 e-edge types. (⑅˘꒳˘)
+ * the fowwowing impwementation utiwizes the top fouw bits and w-weaves one fwee bit out. nyaa~~
  */
-class ActionEdgeTypeMask extends EdgeTypeMask {
-  import ActionEdgeTypeMask._
+cwass a-actionedgetypemask e-extends edgetypemask {
+  impowt a-actionedgetypemask._
 
-  override def encode(node: Int, edgeType: Byte): Int = {
-    if (edgeType == FAVORITE) {
-      node | EDGEARRAY(FAVORITE)
-    } else if (edgeType == RETWEET) {
-      node | EDGEARRAY(RETWEET)
-    } else if (edgeType == REPLY) {
-      node | EDGEARRAY(REPLY)
-    } else if (edgeType == TWEET) {
-      node | EDGEARRAY(TWEET)
-    } else {
-      // Anything that is not a public engagement (i.e. openlink, share, select, etc.) is a "click"
-      node | EDGEARRAY(CLICK)
+  o-ovewwide def encode(node: int, :3 edgetype: b-byte): int = {
+    if (edgetype == favowite) {
+      n-nyode | edgeawway(favowite)
+    } ewse if (edgetype == wetweet) {
+      nyode | edgeawway(wetweet)
+    } e-ewse if (edgetype == wepwy) {
+      n-nyode | e-edgeawway(wepwy)
+    } e-ewse if (edgetype == tweet) {
+      nyode | edgeawway(tweet)
+    } e-ewse {
+      // a-anything that is nyot a-a pubwic engagement (i.e. ( ͡o ω ͡o ) o-openwink, mya shawe, sewect, e-etc.) is a "cwick"
+      nyode | e-edgeawway(cwick)
     }
   }
 
-  override def edgeType(node: Int): Byte = {
-    (node >> 28).toByte
+  ovewwide def edgetype(node: int): b-byte = {
+    (node >> 28).tobyte
   }
 
-  override def restore(node: Int): Int = {
-    node & MASK
+  ovewwide d-def westowe(node: int): int = {
+    n-nyode & m-mask
   }
 }
 
-object ActionEdgeTypeMask {
+object actionedgetypemask {
 
   /**
-   * Reserve the top four bits of each integer to encode the edge type information.
+   * wesewve the top fouw bits of each integew to encode the edge type infowmation. (///ˬ///✿)
    */
-  val MASK: Int =
-    Integer.parseInt("00001111111111111111111111111111", 2)
-  val CLICK: Byte = 0
-  val FAVORITE: Byte = 1
-  val RETWEET: Byte = 2
-  val REPLY: Byte = 3
-  val TWEET: Byte = 4
-  val SIZE: Byte = 5
-  val UNUSED6: Byte = 6
-  val UNUSED7: Byte = 7
-  val UNUSED8: Byte = 8
-  val UNUSED9: Byte = 9
-  val UNUSED10: Byte = 10
-  val UNUSED11: Byte = 11
-  val UNUSED12: Byte = 12
-  val UNUSED13: Byte = 13
-  val UNUSED14: Byte = 14
-  val UNUSED15: Byte = 15
-  val EDGEARRAY: Array[Int] = Array(
-    0,
-    1 << 28,
+  v-vaw m-mask: int =
+    integew.pawseint("00001111111111111111111111111111", (˘ω˘) 2)
+  v-vaw cwick: b-byte = 0
+  v-vaw favowite: byte = 1
+  vaw wetweet: byte = 2
+  vaw wepwy: byte = 3
+  v-vaw tweet: byte = 4
+  vaw size: byte = 5
+  vaw unused6: byte = 6
+  vaw unused7: b-byte = 7
+  vaw unused8: b-byte = 8
+  vaw unused9: b-byte = 9
+  v-vaw unused10: byte = 10
+  vaw u-unused11: byte = 11
+  v-vaw unused12: b-byte = 12
+  v-vaw unused13: byte = 13
+  vaw unused14: byte = 14
+  v-vaw unused15: b-byte = 15
+  vaw e-edgeawway: awway[int] = a-awway(
+    0, ^^;;
+    1 << 28, (✿oωo)
     2 << 28,
-    3 << 28,
-    4 << 28,
-    5 << 28,
-    6 << 28,
+    3 << 28, (U ﹏ U)
+    4 << 28, -.-
+    5 << 28, ^•ﻌ•^
+    6 << 28, rawr
     7 << 28,
-    8 << 28,
-    9 << 28,
-    10 << 28,
-    11 << 28,
-    12 << 28,
-    13 << 28,
+    8 << 28, (˘ω˘)
+    9 << 28, nyaa~~
+    10 << 28, UwU
+    11 << 28, :3
+    12 << 28, (⑅˘꒳˘)
+    13 << 28, (///ˬ///✿)
     14 << 28,
     15 << 28
   )
 
   /**
-   * Map valid social proof types specified by clients to an array of bytes. If clients do not
-   * specify any social proof types in thrift, it will return all available social types by
-   * default.
+   * m-map vawid sociaw pwoof types specified by cwients to an awway of b-bytes. ^^;; if cwients do nyot
+   * specify any sociaw pwoof types in thwift, >_< it wiww wetuwn aww avaiwabwe s-sociaw types by
+   * defauwt. rawr x3
    *
-   * @param socialProofTypes are the valid socialProofTypes specified by clients
-   * @return an array of bytes representing valid social proof types
+   * @pawam sociawpwooftypes awe the v-vawid sociawpwooftypes s-specified b-by cwients
+   * @wetuwn an awway o-of bytes wepwesenting vawid sociaw p-pwoof types
    */
-  def getUserTweetGraphSocialProofTypes(
-    socialProofTypes: Option[Seq[SocialProofType]]
-  ): Array[Byte] = {
-    socialProofTypes
-      .map { _.map { _.getValue }.toArray }
-      .getOrElse((0 until SIZE).toArray)
-      .map { _.toByte }
+  d-def getusewtweetgwaphsociawpwooftypes(
+    sociawpwooftypes: option[seq[sociawpwooftype]]
+  ): awway[byte] = {
+    sociawpwooftypes
+      .map { _.map { _.getvawue }.toawway }
+      .getowewse((0 untiw s-size).toawway)
+      .map { _.tobyte }
   }
 }

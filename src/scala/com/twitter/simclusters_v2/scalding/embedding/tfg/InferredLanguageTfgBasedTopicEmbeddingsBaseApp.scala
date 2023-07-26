@@ -1,194 +1,194 @@
-package com.twitter.simclusters_v2.scalding.embedding.tfg
+package com.twittew.simcwustews_v2.scawding.embedding.tfg
 
-import com.twitter.bijection.{Bufferable, Injection}
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite.{D, _}
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{Country, Language, SimClustersEmbedding, TopicId}
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInSources
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.{UserId, _}
-import com.twitter.simclusters_v2.scalding.embedding.common.{
-  EmbeddingUtil,
-  ExternalDataSources,
-  SimClustersEmbeddingBaseJob
+impowt c-com.twittew.bijection.{buffewabwe, XD i-injection}
+impowt c-com.twittew.daw.cwient.dataset.keyvawdawdataset
+i-impowt com.twittew.scawding._
+i-impowt com.twittew.scawding_intewnaw.dawv2.dawwwite.{d, ^^;; _}
+impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+i-impowt com.twittew.simcwustews_v2.common.{countwy, 🥺 w-wanguage, XD simcwustewsembedding, (U ᵕ U❁) topicid}
+impowt com.twittew.simcwustews_v2.hdfs_souwces.intewestedinsouwces
+impowt com.twittew.simcwustews_v2.scawding.common.matwix.{spawsematwix, :3 s-spawsewowmatwix}
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.embeddingutiw.{usewid, ( ͡o ω ͡o ) _}
+i-impowt com.twittew.simcwustews_v2.scawding.embedding.common.{
+  embeddingutiw, òωó
+  e-extewnawdatasouwces, σωσ
+  simcwustewsembeddingbasejob
 }
-import com.twitter.simclusters_v2.thriftscala.{
-  EmbeddingType,
-  InternalId,
-  ModelVersion,
-  SimClustersEmbeddingId,
-  UserToInterestedInClusterScores,
-  SimClustersEmbedding => ThriftSimClustersEmbedding,
-  TopicId => ThriftTopicId
+impowt com.twittew.simcwustews_v2.thwiftscawa.{
+  e-embeddingtype, (U ᵕ U❁)
+  intewnawid,
+  m-modewvewsion, (✿oωo)
+  s-simcwustewsembeddingid, ^^
+  usewtointewestedincwustewscowes, ^•ﻌ•^
+  simcwustewsembedding => thwiftsimcwustewsembedding, XD
+  topicid => thwifttopicid
 }
-import com.twitter.wtf.scalding.jobs.common.DateRangeExecutionApp
-import java.util.TimeZone
+i-impowt com.twittew.wtf.scawding.jobs.common.datewangeexecutionapp
+impowt java.utiw.timezone
 
 /**
- * Base app to generate Topic-Follow-Graph (TFG) topic embeddings from inferred languages.
- * In this app, topic embeddings are keyed by (topic, language, country).
- * Given a (topic t, country c, language l) tuple, the embedding is the sum of the
- * InterestedIn of the topic followers whose inferred language has l and account country is c
- * The language and the country fields in the keys are optional.
- * The app will generate 1) country-language-based 2) language-based 3) global embeddings in one dataset.
- * It's up to the clients to decide which embeddings to use
+ * base app to genewate t-topic-fowwow-gwaph (tfg) topic e-embeddings fwom i-infewwed wanguages. :3
+ * i-in this app, (ꈍᴗꈍ) t-topic embeddings awe keyed by (topic, :3 wanguage, c-countwy). (U ﹏ U)
+ * given a (topic t, UwU countwy c, 😳😳😳 wanguage w-w) tupwe, XD the embedding is the sum of the
+ * intewestedin of the topic fowwowews whose infewwed w-wanguage has w and account c-countwy is c
+ * t-the wanguage and t-the countwy fiewds in the keys awe optionaw. o.O
+ * the app wiww g-genewate 1) countwy-wanguage-based 2) w-wanguage-based 3) gwobaw embeddings i-in one d-dataset. (⑅˘꒳˘)
+ * it's up to the cwients t-to decide which embeddings to u-use
  */
-trait InferredLanguageTfgBasedTopicEmbeddingsBaseApp
-    extends SimClustersEmbeddingBaseJob[(TopicId, Option[Language], Option[Country])]
-    with DateRangeExecutionApp {
+twait infewwedwanguagetfgbasedtopicembeddingsbaseapp
+    extends simcwustewsembeddingbasejob[(topicid, 😳😳😳 o-option[wanguage], nyaa~~ option[countwy])]
+    w-with datewangeexecutionapp {
 
-  val isAdhoc: Boolean
-  val embeddingType: EmbeddingType
-  val embeddingSource: KeyValDALDataset[KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]]
-  val pathSuffix: String
-  val modelVersion: ModelVersion
-  def scoreExtractor: UserToInterestedInClusterScores => Double
+  vaw isadhoc: b-boowean
+  v-vaw embeddingtype: embeddingtype
+  vaw embeddingsouwce: keyvawdawdataset[keyvaw[simcwustewsembeddingid, thwiftsimcwustewsembedding]]
+  vaw pathsuffix: stwing
+  v-vaw modewvewsion: m-modewvewsion
+  def scoweextwactow: u-usewtointewestedincwustewscowes => d-doubwe
 
-  override def numClustersPerNoun: Int = 50
-  override def numNounsPerClusters: Int = 1 // not used for now. Set to an arbitrary number
-  override def thresholdForEmbeddingScores: Double = 0.001
+  o-ovewwide def numcwustewspewnoun: int = 50
+  ovewwide def nyumnounspewcwustews: int = 1 // nyot u-used fow nyow. rawr set to an awbitwawy nyumbew
+  ovewwide def thweshowdfowembeddingscowes: doubwe = 0.001
 
-  implicit val inj: Injection[(TopicId, Option[Language], Option[Country]), Array[Byte]] =
-    Bufferable.injectionOf[(TopicId, Option[Language], Option[Country])]
+  i-impwicit vaw inj: injection[(topicid, -.- o-option[wanguage], (✿oωo) o-option[countwy]), /(^•ω•^) a-awway[byte]] =
+    buffewabwe.injectionof[(topicid, 🥺 o-option[wanguage], ʘwʘ o-option[countwy])]
 
-  // Default to 10K, top 1% for (topic, country, language) follows
-  // Child classes may want to tune this number for their own use cases.
-  val minPerCountryFollowers = 10000
-  val minFollowers = 100
+  // d-defauwt to 10k, UwU t-top 1% fow (topic, XD countwy, (✿oωo) wanguage) fowwows
+  // c-chiwd cwasses m-may want to tune t-this nyumbew f-fow theiw own use c-cases. :3
+  vaw minpewcountwyfowwowews = 10000
+  vaw minfowwowews = 100
 
-  def getTopicUsers(
-    topicFollowGraph: TypedPipe[(TopicId, UserId)],
-    userSource: TypedPipe[(UserId, (Country, Language))],
-    userLanguages: TypedPipe[(UserId, Seq[(Language, Double)])]
-  ): TypedPipe[((TopicId, Option[Language], Option[Country]), UserId, Double)] = {
-    topicFollowGraph
-      .map { case (topic, user) => (user, topic) }
-      .join(userSource)
-      .join(userLanguages)
-      .flatMap {
-        case (user, ((topic, (country, _)), scoredLangs)) =>
-          scoredLangs.flatMap {
-            case (lang, score) =>
-              Seq(
-                ((topic, Some(lang), Some(country)), user, score), // with language and country
-                ((topic, Some(lang), None), user, score) // with language
+  def gettopicusews(
+    t-topicfowwowgwaph: typedpipe[(topicid, (///ˬ///✿) usewid)], nyaa~~
+    usewsouwce: typedpipe[(usewid, >w< (countwy, wanguage))], -.-
+    usewwanguages: typedpipe[(usewid, (✿oωo) s-seq[(wanguage, (˘ω˘) doubwe)])]
+  ): typedpipe[((topicid, rawr option[wanguage], OwO o-option[countwy]), ^•ﻌ•^ u-usewid, UwU d-doubwe)] = {
+    topicfowwowgwaph
+      .map { c-case (topic, (˘ω˘) usew) => (usew, (///ˬ///✿) topic) }
+      .join(usewsouwce)
+      .join(usewwanguages)
+      .fwatmap {
+        c-case (usew, σωσ ((topic, /(^•ω•^) (countwy, _)), 😳 s-scowedwangs)) =>
+          scowedwangs.fwatmap {
+            case (wang, 😳 scowe) =>
+              seq(
+                ((topic, (⑅˘꒳˘) some(wang), s-some(countwy)), 😳😳😳 usew, scowe), // w-with wanguage and countwy
+                ((topic, 😳 s-some(wang), XD n-nyone), usew, mya scowe) // with wanguage
               )
-          } ++ Seq(((topic, None, None), user, 1.0)) // non-language
-      }.forceToDisk
+          } ++ seq(((topic, ^•ﻌ•^ n-nyone, ʘwʘ nyone), u-usew, ( ͡o ω ͡o ) 1.0)) // nyon-wanguage
+      }.fowcetodisk
   }
 
-  def getValidTopics(
-    topicUsers: TypedPipe[((TopicId, Option[Language], Option[Country]), UserId, Double)]
+  d-def getvawidtopics(
+    t-topicusews: typedpipe[((topicid, mya option[wanguage], o.O option[countwy]), (✿oωo) usewid, doubwe)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(TopicId, Option[Language], Option[Country])] = {
-    val countryBasedTopics = Stat("country_based_topics")
-    val nonCountryBasedTopics = Stat("non_country_based_topics")
+    i-impwicit uniqueid: u-uniqueid
+  ): t-typedpipe[(topicid, :3 option[wanguage], 😳 o-option[countwy])] = {
+    v-vaw countwybasedtopics = stat("countwy_based_topics")
+    v-vaw nyoncountwybasedtopics = stat("non_countwy_based_topics")
 
-    val (countryBased, nonCountryBased) = topicUsers.partition {
-      case ((_, lang, country), _, _) => lang.isDefined && country.isDefined
+    vaw (countwybased, (U ﹏ U) nyoncountwybased) = t-topicusews.pawtition {
+      c-case ((_, mya wang, (U ᵕ U❁) countwy), _, _) => wang.isdefined && c-countwy.isdefined
     }
 
-    SparseMatrix(countryBased).rowL1Norms.collect {
-      case (key, l1Norm) if l1Norm >= minPerCountryFollowers =>
-        countryBasedTopics.inc()
+    s-spawsematwix(countwybased).woww1nowms.cowwect {
+      case (key, :3 w1nowm) if w1nowm >= minpewcountwyfowwowews =>
+        c-countwybasedtopics.inc()
         key
     } ++
-      SparseMatrix(nonCountryBased).rowL1Norms.collect {
-        case (key, l1Norm) if l1Norm >= minFollowers =>
-          nonCountryBasedTopics.inc()
+      spawsematwix(noncountwybased).woww1nowms.cowwect {
+        case (key, mya w1nowm) if w1nowm >= minfowwowews =>
+          n-nyoncountwybasedtopics.inc()
           key
       }
   }
 
-  override def prepareNounToUserMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseMatrix[(TopicId, Option[Language], Option[Country]), UserId, Double] = {
-    val topicUsers = getTopicUsers(
-      ExternalDataSources.topicFollowGraphSource,
-      ExternalDataSources.userSource,
-      ExternalDataSources.inferredUserConsumedLanguageSource)
+  ovewwide def pwepawenountousewmatwix(
+    i-impwicit d-datewange: datewange, OwO
+    timezone: timezone, (ˆ ﻌ ˆ)♡
+    uniqueid: u-uniqueid
+  ): spawsematwix[(topicid, ʘwʘ o-option[wanguage], o.O option[countwy]), UwU usewid, doubwe] = {
+    v-vaw topicusews = gettopicusews(
+      e-extewnawdatasouwces.topicfowwowgwaphsouwce, rawr x3
+      extewnawdatasouwces.usewsouwce, 🥺
+      extewnawdatasouwces.infewwedusewconsumedwanguagesouwce)
 
-    SparseMatrix[(TopicId, Option[Language], Option[Country]), UserId, Double](topicUsers)
-      .filterRows(getValidTopics(topicUsers))
+    spawsematwix[(topicid, :3 option[wanguage], (ꈍᴗꈍ) o-option[countwy]), 🥺 usewid, (✿oωo) doubwe](topicusews)
+      .fiwtewwows(getvawidtopics(topicusews))
   }
 
-  override def prepareUserToClusterMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseRowMatrix[UserId, ClusterId, Double] =
-    SparseRowMatrix(
-      InterestedInSources
-        .simClustersInterestedInSource(modelVersion, dateRange, timeZone)
+  o-ovewwide d-def pwepaweusewtocwustewmatwix(
+    impwicit datewange: d-datewange, (U ﹏ U)
+    timezone: t-timezone, :3
+    u-uniqueid: uniqueid
+  ): s-spawsewowmatwix[usewid, cwustewid, ^^;; doubwe] =
+    s-spawsewowmatwix(
+      i-intewestedinsouwces
+        .simcwustewsintewestedinsouwce(modewvewsion, rawr datewange, 😳😳😳 timezone)
         .map {
-          case (userId, clustersUserIsInterestedIn) =>
-            userId -> clustersUserIsInterestedIn.clusterIdToScores
+          c-case (usewid, (✿oωo) c-cwustewsusewisintewestedin) =>
+            u-usewid -> cwustewsusewisintewestedin.cwustewidtoscowes
               .map {
-                case (clusterId, scores) =>
-                  clusterId -> scoreExtractor(scores)
+                case (cwustewid, OwO scowes) =>
+                  c-cwustewid -> scoweextwactow(scowes)
               }
-              .filter(_._2 > 0.0)
-              .toMap
-        },
-      isSkinnyMatrix = true
+              .fiwtew(_._2 > 0.0)
+              .tomap
+        }, ʘwʘ
+      i-isskinnymatwix = t-twue
     )
 
-  override def writeNounToClustersIndex(
-    output: TypedPipe[((TopicId, Option[Language], Option[Country]), Seq[(ClusterId, Double)])]
+  ovewwide def wwitenountocwustewsindex(
+    output: typedpipe[((topicid, (ˆ ﻌ ˆ)♡ o-option[wanguage], (U ﹏ U) option[countwy]), UwU s-seq[(cwustewid, XD d-doubwe)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val topicEmbeddingCount = Stat(s"topic_embedding_count")
+    i-impwicit datewange: datewange, ʘwʘ
+    t-timezone: timezone, rawr x3
+    uniqueid: uniqueid
+  ): execution[unit] = {
+    vaw topicembeddingcount = stat(s"topic_embedding_count")
 
-    val tsvExec =
-      output
+    v-vaw tsvexec =
+      o-output
         .map {
-          case ((entityId, language, country), clustersWithScores) =>
-            (entityId, language, country, clustersWithScores.take(5).mkString(","))
+          case ((entityid, ^^;; w-wanguage, countwy), ʘwʘ cwustewswithscowes) =>
+            (entityid, (U ﹏ U) w-wanguage, (˘ω˘) countwy, cwustewswithscowes.take(5).mkstwing(","))
         }
-        .shard(5)
-        .writeExecution(TypedTsv[(TopicId, Option[Language], Option[Country], String)](
-          s"/user/recos-platform/adhoc/topic_embedding/$pathSuffix/$ModelVersionPathMap($modelVersion)"))
+        .shawd(5)
+        .wwiteexecution(typedtsv[(topicid, (ꈍᴗꈍ) o-option[wanguage], /(^•ω•^) o-option[countwy], >_< s-stwing)](
+          s-s"/usew/wecos-pwatfowm/adhoc/topic_embedding/$pathsuffix/$modewvewsionpathmap($modewvewsion)"))
 
-    val keyValExec = output
+    v-vaw keyvawexec = output
       .map {
-        case ((entityId, lang, country), clustersWithScores) =>
-          topicEmbeddingCount.inc()
-          KeyVal(
-            SimClustersEmbeddingId(
-              embeddingType,
-              modelVersion,
-              InternalId.TopicId(ThriftTopicId(entityId, lang, country))
-            ),
-            SimClustersEmbedding(clustersWithScores).toThrift
+        case ((entityid, σωσ wang, ^^;; countwy), cwustewswithscowes) =>
+          topicembeddingcount.inc()
+          keyvaw(
+            s-simcwustewsembeddingid(
+              e-embeddingtype, 😳
+              modewvewsion, >_<
+              i-intewnawid.topicid(thwifttopicid(entityid, -.- wang, countwy))
+            ), UwU
+            s-simcwustewsembedding(cwustewswithscowes).tothwift
           )
       }
-      .writeDALVersionedKeyValExecution(
-        embeddingSource,
-        D.Suffix(
-          EmbeddingUtil
-            .getHdfsPath(isAdhoc = isAdhoc, isManhattanKeyVal = true, modelVersion, pathSuffix))
+      .wwitedawvewsionedkeyvawexecution(
+        embeddingsouwce, :3
+        d.suffix(
+          embeddingutiw
+            .gethdfspath(isadhoc = i-isadhoc, σωσ ismanhattankeyvaw = t-twue, >w< modewvewsion, pathsuffix))
       )
-    if (isAdhoc)
-      Execution.zip(tsvExec, keyValExec).unit
-    else
-      keyValExec
+    i-if (isadhoc)
+      execution.zip(tsvexec, (ˆ ﻌ ˆ)♡ keyvawexec).unit
+    ewse
+      k-keyvawexec
   }
 
-  override def writeClusterToNounsIndex(
-    output: TypedPipe[(ClusterId, Seq[((TopicId, Option[Language], Option[Country]), Double)])]
+  o-ovewwide def wwitecwustewtonounsindex(
+    o-output: typedpipe[(cwustewid, ʘwʘ s-seq[((topicid, :3 option[wanguage], (˘ω˘) option[countwy]), 😳😳😳 doubwe)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    Execution.unit // do not need this
+    impwicit d-datewange: d-datewange, rawr x3
+    timezone: t-timezone, (✿oωo)
+    u-uniqueid: u-uniqueid
+  ): execution[unit] = {
+    execution.unit // d-do nyot n-nyeed this
   }
 }

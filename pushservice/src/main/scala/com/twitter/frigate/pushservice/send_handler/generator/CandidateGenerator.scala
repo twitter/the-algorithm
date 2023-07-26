@@ -1,17 +1,17 @@
-package com.twitter.frigate.pushservice.send_handler.generator
+package com.twittew.fwigate.pushsewvice.send_handwew.genewatow
 
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.thriftscala.FrigateNotification
-import com.twitter.util.Future
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+i-impowt com.twittew.fwigate.thwiftscawa.fwigatenotification
+i-impowt c-com.twittew.utiw.futuwe
 
-trait CandidateGenerator {
+t-twait c-candidategenewatow {
 
   /**
-   * Build RawCandidate from FrigateNotification
-   * @param target
-   * @param frigateNotification
-   * @return RawCandidate
+   * b-buiwd wawcandidate f-fwom fwigatenotification
+   * @pawam tawget
+   * @pawam fwigatenotification
+   * @wetuwn wawcandidate
    */
-  def getCandidate(target: Target, frigateNotification: FrigateNotification): Future[RawCandidate]
+  def getcandidate(tawget: tawget, >_< f-fwigatenotification: fwigatenotification): futuwe[wawcandidate]
 }

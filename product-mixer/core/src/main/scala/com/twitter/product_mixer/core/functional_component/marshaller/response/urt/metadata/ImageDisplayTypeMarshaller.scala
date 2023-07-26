@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Icon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FullWidth
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.IconSmall
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.imagedispwaytype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.icon
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.fuwwwidth
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.iconsmow
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class ImageDisplayTypeMarshaller @Inject() () {
+@singweton
+cwass imagedispwaytypemawshawwew @inject() () {
 
-  def apply(imageDisplayType: ImageDisplayType): urt.ImageDisplayType =
-    imageDisplayType match {
-      case Icon => urt.ImageDisplayType.Icon
-      case FullWidth => urt.ImageDisplayType.FullWidth
-      case IconSmall => urt.ImageDisplayType.IconSmall
+  def appwy(imagedispwaytype: i-imagedispwaytype): uwt.imagedispwaytype =
+    imagedispwaytype m-match {
+      case icon => u-uwt.imagedispwaytype.icon
+      case fuwwwidth => uwt.imagedispwaytype.fuwwwidth
+      case i-iconsmow => uwt.imagedispwaytype.iconsmow
     }
 }

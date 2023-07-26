@@ -1,61 +1,61 @@
-package com.twitter.simclusters_v2.scalding.evaluation
+package com.twittew.simcwustews_v2.scawding.evawuation
 
-import com.twitter.algebird.AveragedValue
-import com.twitter.scalding.Execution
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.simclusters_v2.scalding.common.Util
+impowt com.twittew.awgebiwd.avewagedvawue
+i-impowt com.twittew.scawding.execution
+i-impowt com.twittew.scawding.typed.typedpipe
+i-impowt com.twittew.simcwustews_v2.scawding.common.utiw
 
 /**
- * Utility object for correlation measures between the algorithm scores and the user engagements,
- * such as the number of Likes.
+ * u-utiwity object f-fow cowwewation m-measuwes between t-the awgowithm s-scowes and the usew engagements, 😳😳😳
+ * such as the nyumbew of wikes. mya
  */
-object LabelCorrelationsHelper {
+object wabewcowwewationshewpew {
 
-  private def toDouble(bool: Boolean): Double = {
-    if (bool) 1.0 else 0.0
+  p-pwivate def todoubwe(boow: boowean): doubwe = {
+    i-if (boow) 1.0 ewse 0.0
   }
 
   /**
-   * Given a pipe of labeled tweets, calculate the cosine similarity between the algorithm scores
-   * and users' favorite engagements.
+   * g-given a pipe of wabewed tweets, 😳 cawcuwate the cosine simiwawity b-between the awgowithm scowes
+   * a-and usews' f-favowite engagements. -.-
    */
-  def cosineSimilarityForLike(labeledTweets: TypedPipe[LabeledTweet]): Execution[Double] = {
-    labeledTweets
-      .map { tweet => (toDouble(tweet.labels.isLiked), tweet.algorithmScore.getOrElse(0.0)) }
-      .toIterableExecution.map { iter => Util.cosineSimilarity(iter.iterator) }
+  def cosinesimiwawityfowwike(wabewedtweets: typedpipe[wabewedtweet]): execution[doubwe] = {
+    wabewedtweets
+      .map { tweet => (todoubwe(tweet.wabews.iswiked), t-tweet.awgowithmscowe.getowewse(0.0)) }
+      .toitewabweexecution.map { itew => utiw.cosinesimiwawity(itew.itewatow) }
   }
 
   /**
-   * Given a pipe of labeled tweets, calculate cosine similarity between algorithm score and users'
-   * favorites engagements, on a per user basis, and return the average of all cosine
-   * similarities across all users.
+   * given a pipe of wabewed t-tweets, 🥺 cawcuwate cosine simiwawity b-between awgowithm s-scowe and u-usews'
+   * favowites e-engagements, o.O on a pew usew basis, /(^•ω•^) and wetuwn t-the avewage of aww cosine
+   * simiwawities a-acwoss aww usews.
    */
-  def cosineSimilarityForLikePerUser(labeledTweets: TypedPipe[LabeledTweet]): Execution[Double] = {
-    val avg = AveragedValue.aggregator.composePrepare[(Unit, Double)](_._2)
+  def cosinesimiwawityfowwikepewusew(wabewedtweets: typedpipe[wabewedtweet]): execution[doubwe] = {
+    vaw avg = avewagedvawue.aggwegatow.composepwepawe[(unit, nyaa~~ d-doubwe)](_._2)
 
-    labeledTweets
+    wabewedtweets
       .map { tweet =>
         (
-          tweet.targetUserId,
-          Seq((toDouble(tweet.labels.isLiked), tweet.algorithmScore.getOrElse(0.0)))
+          t-tweet.tawgetusewid, nyaa~~
+          s-seq((todoubwe(tweet.wabews.iswiked), :3 t-tweet.awgowithmscowe.getowewse(0.0)))
         )
       }
-      .sumByKey
+      .sumbykey
       .map {
-        case (userId, seq) =>
-          ((), Util.cosineSimilarity(seq.iterator))
+        case (usewid, 😳😳😳 seq) =>
+          ((), utiw.cosinesimiwawity(seq.itewatow))
       }
-      .aggregate(avg)
-      .getOrElseExecution(0.0)
+      .aggwegate(avg)
+      .getowewseexecution(0.0)
   }
 
   /**
-   * Calculates the Pearson correlation coefficient for the algorithm scores and user's favorite
-   * engagement. Note this function call triggers a writeToDisk execution.
+   * c-cawcuwates t-the peawson cowwewation c-coefficient fow t-the awgowithm scowes and usew's f-favowite
+   * engagement. (˘ω˘) nyote t-this function caww twiggews a wwitetodisk execution. ^^
    */
-  def pearsonCoefficientForLike(labeledTweets: TypedPipe[LabeledTweet]): Execution[Double] = {
-    labeledTweets
-      .map { tweet => (toDouble(tweet.labels.isLiked), tweet.algorithmScore.getOrElse(0.0)) }
-      .toIterableExecution.map { iter => Util.computeCorrelation(iter.iterator) }
+  d-def peawsoncoefficientfowwike(wabewedtweets: t-typedpipe[wabewedtweet]): execution[doubwe] = {
+    wabewedtweets
+      .map { t-tweet => (todoubwe(tweet.wabews.iswiked), :3 t-tweet.awgowithmscowe.getowewse(0.0)) }
+      .toitewabweexecution.map { itew => utiw.computecowwewation(itew.itewatow) }
   }
 }

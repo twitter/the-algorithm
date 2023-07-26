@@ -1,120 +1,120 @@
 /**
- * Provides the ability to partially tee traffic to a secondary
- * service.
+ * pwovides the abiwity to pawtiawwy t-tee twaffic t-to a secondawy
+ * s-sewvice. rawr x3
  *
- * This code was originally written to provide a way to provide
- * production traffic to the TweetyPie staging cluster, selecting a
- * consistent subset of tweet ids, to enable a production-like cache
- * hit rate with a much smaller cache.
+ * t-this code was o-owiginawwy wwitten t-to pwovide a-a way to pwovide
+ * p-pwoduction twaffic to the tweetypie staging cwustew, XD sewecting a
+ * consistent s-subset of tweet ids, σωσ to enabwe a pwoduction-wike c-cache
+ * hit wate with a much s-smowew cache. (U ᵕ U❁)
  */
-package com.twitter.servo.forked
+package com.twittew.sewvo.fowked
 
-import com.twitter.servo.data.Lens
+impowt com.twittew.sewvo.data.wens
 
-object Forked {
+object f-fowked {
 
   /**
-   * A strategy for executing forked actions.
+   * a stwategy f-fow executing f-fowked actions. (U ﹏ U)
    */
-  type Executor = (() => Unit) => Unit
+  type executow = (() => unit) => unit
 
   /**
-   * Directly execute the forked action.
+   * diwectwy exekawaii~ the f-fowked action. :3
    */
-  val inlineExecutor: Executor = f => f()
+  vaw inwineexecutow: executow = f => f()
 
   /**
-   * Produce objects of type A to send to a secondary target.
-   * Returning None signifies that nothing should be forked.
+   * pwoduce o-objects of type a to send to a-a secondawy tawget. ( ͡o ω ͡o )
+   * w-wetuwning n-nyone signifies t-that nyothing shouwd be fowked. σωσ
    */
-  type Fork[A] = A => Option[A]
+  type f-fowk[a] = a => option[a]
 
   /**
-   * Fork the input unchanged, only when it passes the specified
-   * predicate.
+   * fowk the input u-unchanged, >w< onwy when it passes the specified
+   * pwedicate. 😳😳😳
    *
-   * For instance, if your service has a get() method
+   * fow instance, OwO if youw s-sewvice has a get() method
    */
-  def forkWhen[T](f: T => Boolean): Fork[T] =
-    a => if (f(a)) Some(a) else None
+  d-def fowkwhen[t](f: t-t => boowean): f-fowk[t] =
+    a => if (f(a)) some(a) ewse none
 
   /**
-   * Fork a subset of the elements of the Seq, based on the supplied
-   * predicate. If the resulting Seq is empty, the secondary action
-   * will not be executed.
+   * f-fowk a subset o-of the ewements of the seq, 😳 based o-on the suppwied
+   * p-pwedicate. 😳😳😳 if the wesuwting s-seq is empty, (˘ω˘) the secondawy action
+   * w-wiww nyot be exekawaii~d. ʘwʘ
    */
-  def forkSeq[T](f: T => Boolean): Fork[Seq[T]] = { xs =>
-    val newXs = xs filter f
-    if (newXs.nonEmpty) Some(newXs) else None
+  def f-fowkseq[t](f: t => boowean): fowk[seq[t]] = { xs =>
+    v-vaw nyewxs = xs fiwtew f-f
+    if (newxs.nonempty) s-some(newxs) ewse nyone
   }
 
   /**
-   * Apply forking through lens.
+   * appwy fowking thwough wens. ( ͡o ω ͡o )
    */
-  def forkLens[A, B](lens: Lens[A, B], f: Fork[B]): Fork[A] =
-    a => f(lens(a)).map(lens.set(a, _))
+  def fowkwens[a, o.O b](wens: wens[a, >w< b], 😳 f: fowk[b]): f-fowk[a] =
+    a-a => f(wens(a)).map(wens.set(a, 🥺 _))
 
   /**
-   * A factory for building actions that will partially tee their input
-   * to a secondary target. The executor is parameterized to make the
-   * execution strategy independent from the forking logic.
+   * a factowy fow b-buiwding actions t-that wiww pawtiawwy t-tee theiw input
+   * to a secondawy tawget. rawr x3 the executow i-is pawametewized to make the
+   * execution stwategy independent fwom the fowking w-wogic.
    */
-  def toSecondary[S](secondary: S, executor: Executor): S => Forked[S] =
-    primary =>
-      new Forked[S] {
+  def tosecondawy[s](secondawy: s-s, o.O executow: executow): s-s => fowked[s] =
+    p-pwimawy =>
+      nyew f-fowked[s] {
 
         /**
-         * Tee a subset of requests defined by the forking function to the
-         * secondary service.
+         * t-tee a subset o-of wequests d-defined by the fowking function to the
+         * s-secondawy sewvice. rawr
          */
-        def apply[Q, R](fork: Forked.Fork[Q], action: (S, Q) => R): Q => R = { req =>
-          fork(req) foreach { req =>
-            executor(() => action(secondary, req))
+        d-def appwy[q, ʘwʘ w-w](fowk: fowked.fowk[q], 😳😳😳 action: (s, ^^;; q-q) => w-w): q => w = { weq =>
+          fowk(weq) foweach { weq =>
+            e-executow(() => action(secondawy, o.O weq))
           }
-          action(primary, req)
+          action(pwimawy, (///ˬ///✿) weq)
         }
       }
 
   /**
-   * A forked action builder that bypasses the forking altogether and
-   * just calls the supplied action on a service.
+   * a fowked a-action buiwdew that bypasses the fowking awtogethew and
+   * just c-cawws the suppwied a-action on a-a sewvice. σωσ
    *
-   * This is useful for configurations that will sometimes have fork
-   * targets defined and sometimes not.
+   * this is usefuw f-fow configuwations that wiww s-sometimes have f-fowk
+   * tawgets defined and sometimes nyot. nyaa~~
    */
-  def notForked[S]: S => Forked[S] =
-    service =>
-      new Forked[S] {
-        def apply[Q, R](unusedFork: Forked.Fork[Q], action: (S, Q) => R): Q => R =
-          action(service, _)
+  def nyotfowked[s]: s => fowked[s] =
+    sewvice =>
+      nyew f-fowked[s] {
+        def appwy[q, ^^;; w-w](unusedfowk: fowked.fowk[q], ^•ﻌ•^ a-action: (s, σωσ q-q) => w): q => w =
+          action(sewvice, -.- _)
       }
 }
 
 /**
- * Factory for forking functions, primarily useful for sending a copy
- * of a stream of requests to a secondary service.
+ * factowy fow fowking f-functions, ^^;; p-pwimawiwy usefuw fow sending a c-copy
+ * of a stweam o-of wequests to a secondawy sewvice. XD
  */
-trait Forked[S] {
-  import Forked._
+twait fowked[s] {
+  impowt fowked._
 
   /**
-   * Fork an action that takes two parameters, forking only on the
-   * first parameter, passing the second unchanged.
+   * f-fowk a-an action that t-takes two pawametews, 🥺 fowking onwy o-on the
+   * fiwst p-pawametew, òωó passing the second u-unchanged. (ˆ ﻌ ˆ)♡
    */
-  def first[Q1, Q2, R](
-    fork: Fork[Q1],
-    action: S => (Q1, Q2) => R
-  ): (Q1, Q2) => R = {
-    val f =
-      apply[(Q1, Q2), R](
-        fork = p =>
-          fork(p._1) map { q1 =>
-            (q1, p._2)
-          },
-        action = (svc, p) => action(svc)(p._1, p._2)
+  def fiwst[q1, -.- q2, :3 w](
+    fowk: fowk[q1], ʘwʘ
+    action: s => (q1, q-q2) => w
+  ): (q1, 🥺 q-q2) => w = {
+    vaw f =
+      appwy[(q1, >_< q-q2), w](
+        f-fowk = p =>
+          fowk(p._1) map { q1 =>
+            (q1, ʘwʘ p._2)
+          }, (˘ω˘)
+        a-action = (svc, p) => action(svc)(p._1, (✿oωo) p._2)
       )
-    (q1, q2) => f((q1, q2))
+    (q1, (///ˬ///✿) q2) => f-f((q1, rawr x3 q2))
   }
 
-  def apply[Q, R](fork: Fork[Q], action: (S, Q) => R): Q => R
+  def appwy[q, -.- w](fowk: fowk[q], ^^ a-action: (s, (⑅˘꒳˘) q-q) => w): q => w
 }

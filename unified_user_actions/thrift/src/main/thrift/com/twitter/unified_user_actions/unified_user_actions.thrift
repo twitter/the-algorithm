@@ -1,37 +1,37 @@
-namespace java com.twitter.unified_user_actions.thriftjava
-#@namespace scala com.twitter.unified_user_actions.thriftscala
-#@namespace strato com.twitter.unified_user_actions
+namespace java com.twittew.unified_usew_actions.thwiftjava
+#@namespace scawa com.twittew.unified_usew_actions.thwiftscawa
+#@namespace s-stwato com.twittew.unified_usew_actions
 
-include "com/twitter/unified_user_actions/action_info.thrift"
-include "com/twitter/unified_user_actions/common.thrift"
-include "com/twitter/unified_user_actions/item.thrift"
-include "com/twitter/unified_user_actions/metadata.thrift"
-include "com/twitter/unified_user_actions/product_surface_info.thrift"
+i-incwude "com/twittew/unified_usew_actions/action_info.thwift"
+i-incwude "com/twittew/unified_usew_actions/common.thwift"
+i-incwude "com/twittew/unified_usew_actions/item.thwift"
+i-incwude "com/twittew/unified_usew_actions/metadata.thwift"
+i-incwude "com/twittew/unified_usew_actions/pwoduct_suwface_info.thwift"
 
 /*
- * A Unified User Action (UUA) is essentially a tuple of
- * (user, item, action type, some metadata) with more optional
- * information unique to product surfaces when available.
- * It represents a user (logged in / out) taking some action (e.g. engagement,
- * impression) on an item (e.g. tweet, profile).
+ * a-a unified usew a-action (uua) is essentiawwy a tupwe of
+ * (usew, (///ˬ///✿) item, action type, >w< some metadata) w-with mowe optionaw
+ * infowmation unique t-to pwoduct suwfaces when avaiwabwe. rawr
+ * i-it wepwesents a usew (wogged in / out) taking some action (e.g. mya e-engagement, ^^
+ * impwession) o-on an item (e.g. 😳😳😳 t-tweet, mya pwofiwe).
  */
-struct UnifiedUserAction {
-   /* A user refers to either a logged in / logged out user */
-   1: required common.UserIdentifier userIdentifier
-   /* The item that received the action from the user */
-   2: required item.Item item
-   /* The type of action which took place */
-   3: required action_info.ActionType actionType
-   /* Useful for event level analysis and joins */
-   4: required metadata.EventMetadata eventMetadata
+stwuct unifiedusewaction {
+   /* a usew wefews to eithew a wogged in / wogged o-out usew */
+   1: wequiwed common.usewidentifiew usewidentifiew
+   /* the i-item that weceived the action fwom t-the usew */
+   2: w-wequiwed item.item i-item
+   /* t-the type of action which took pwace */
+   3: w-wequiwed action_info.actiontype actiontype
+   /* usefuw fow event w-wevew anawysis and joins */
+   4: wequiwed metadata.eventmetadata eventmetadata
    /* 
-    * Product surface on which the action occurred. If None,
-    * it means we can not capture the product surface (e.g. for server-side events).
+    * pwoduct suwface on which the action o-occuwwed. 😳 if nyone, -.-
+    * it m-means we can nyot c-captuwe the pwoduct s-suwface (e.g. 🥺 fow sewvew-side events). o.O
     */
-   5: optional product_surface_info.ProductSurface productSurface
+   5: optionaw p-pwoduct_suwface_info.pwoductsuwface p-pwoductsuwface
    /* 
-    * Product specific information like join keys. If None,
-    * it means we can not capture the product surface information.
+    * pwoduct specific i-infowmation w-wike join keys. /(^•ω•^) if nyone, nyaa~~
+    * i-it means we can nyot captuwe the p-pwoduct suwface infowmation. nyaa~~
     */
-   6: optional product_surface_info.ProductSurfaceInfo productSurfaceInfo
-}(persisted='true', hasPersonalData='true')
+   6: optionaw p-pwoduct_suwface_info.pwoductsuwfaceinfo pwoductsuwfaceinfo
+}(pewsisted='twue', :3 h-haspewsonawdata='twue')

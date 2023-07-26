@@ -1,433 +1,433 @@
-package com.twitter.product_mixer.component_library.model.candidate
+package com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
 
-sealed trait BasePromptCandidate[+T] extends UniversalNoun[T]
+s-seawed twait b-basepwomptcandidate[+t] e-extends u-univewsawnoun[t]
 
 /**
- * Canonical InlinePromptCandidate model. Always prefer this version over all other variants.
+ * c-canonicaw i-inwinepwomptcandidate m-modew. >_< a-awways pwefew this vewsion ovew aww othew vawiants. (U ﹏ U)
  *
- * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]
- *       on the candidate's [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
- *       features come from the candidate source itself (as opposed to hydrated via a
- *       [[com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator]]),
- *       then [[com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
- *       can be used to extract features from the candidate source response.
+ * @note any additionaw fiewds shouwd b-be added as a [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwe]]
+ *       on the candidate's [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap]]. rawr if t-the
+ *       featuwes come fwom t-the candidate souwce itsewf (as opposed to hydwated via a
+ *       [[com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.candidatefeatuwehydwatow]]), (U ᵕ U❁)
+ *       t-then [[com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig.featuwesfwomcandidatesouwcetwansfowmews]]
+ *       can be used t-to extwact featuwes f-fwom the candidate souwce wesponse. (ˆ ﻌ ˆ)♡
  *
- * @note This class should always remain `final`. If for any reason the `final` modifier is removed,
- *       the equals() implementation must be updated in order to handle class inheritor equality
- *       (see note on the equals method below)
+ * @note this cwass shouwd awways wemain `finaw`. >_< if f-fow any weason the `finaw` modifiew is wemoved,
+ *       the equaws() impwementation m-must be updated in owdew t-to handwe cwass i-inhewitow equawity
+ *       (see n-nyote on the equaws m-method bewow)
  */
-final class InlinePromptCandidate private (
-  override val id: String)
-    extends BasePromptCandidate[String] {
+finaw cwass inwinepwomptcandidate p-pwivate (
+  ovewwide vaw id: stwing)
+    e-extends basepwomptcandidate[stwing] {
 
   /**
-   * @inheritdoc
+   * @inhewitdoc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[InlinePromptCandidate]
+  ovewwide def canequaw(that: any): boowean = that.isinstanceof[inwinepwomptcandidate]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * high pewfowmance i-impwementation of equaws m-method that wevewages:
+   *  - w-wefewentiaw equawity s-showt ciwcuit
+   *  - cached hashcode equawity showt ciwcuit
+   *  - f-fiewd v-vawues awe onwy checked if the h-hashcodes awe equaw t-to handwe the unwikewy case
+   *    o-of a hashcode cowwision
+   *  - w-wemovaw of check fow `that` being an equaws-compatibwe d-descendant since this cwass is finaw
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @note `candidate.canequaw(this)` i-is nyot nyecessawy because this c-cwass is finaw
+   * @see [[http://www.awtima.com/pins1ed/object-equawity.htmw p-pwogwamming in scawa, ^^;;
+   *      chaptew 28]] fow discussion and design. ʘwʘ
    */
-  override def equals(that: Any): Boolean =
-    that match {
-      case candidate: InlinePromptCandidate =>
-        ((this eq candidate)
-          || ((hashCode == candidate.hashCode) && (id == candidate.id)))
+  ovewwide def equaws(that: a-any): boowean =
+    t-that match {
+      case c-candidate: inwinepwomptcandidate =>
+        ((this e-eq candidate)
+          || ((hashcode == c-candidate.hashcode) && (id == candidate.id)))
       case _ =>
-        false
+        fawse
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * w-wevewage domain-specific constwaints (see nyotes bewow) to safewy c-constwuct and cache the
+   * hashcode a-as a vaw, 😳😳😳 s-such that it is i-instantiated once on object constwuction. UwU t-this pwevents t-the
+   * n-nyeed to wecompute t-the hashcode on each hashcode() invocation, OwO w-which is the behaviow o-of the
+   * s-scawa compiwew c-case cwass-genewated h-hashcode() since it cannot make assumptions wegawding fiewd
+   * o-object mutabiwity and hashcode impwementations. :3
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated candidate
-   *       (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       data structure), assuming stable hashCode implementations for these objects
+   * @note caching the hashcode is onwy safe if aww o-of the fiewds used to constwuct the hashcode
+   *       awe immutabwe. -.- t-this incwudes:
+   *       - i-inabiwity to m-mutate the object wefewence on fow a-an existing instantiated candidate
+   *       (i.e. 🥺 e-each fiewd i-is a vaw)
+   *       - inabiwity to mutate the fiewd object instance itsewf (i.e. -.- each fiewd is a-an immutabwe
+   *       - inabiwity t-to mutate the fiewd object i-instance itsewf (i.e. -.- e-each fiewd is an immutabwe
+   *       data s-stwuctuwe), (U ﹏ U) assuming s-stabwe hashcode impwementations f-fow these o-objects
    *
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @note in owdew fow the hashcode to be consistent with object e-equawity, rawr `##` must b-be used fow
+   *       b-boxed nyumewic types a-and nyuww. mya as such, a-awways pwefew `.##` ovew `.hashcode()`. ( ͡o ω ͡o )
    */
-  override val hashCode: Int = id.##
+  o-ovewwide vaw hashcode: int = id.##
 }
 
-object InlinePromptCandidate {
-  def apply(id: String): InlinePromptCandidate = new InlinePromptCandidate(id)
+object inwinepwomptcandidate {
+  def appwy(id: s-stwing): i-inwinepwomptcandidate = nyew inwinepwomptcandidate(id)
 }
 
 /**
- * Canonical CompactPromptCandidate model. Always prefer this version over all other variants.
+ * canonicaw compactpwomptcandidate m-modew. /(^•ω•^) awways p-pwefew this vewsion ovew aww othew vawiants. >_<
  *
- * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]
- *       on the candidate's [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
- *       features come from the candidate source itself (as opposed to hydrated via a
- *       [[com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator]]),
- *       then [[com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
- *       can be used to extract features from the candidate source response.
+ * @note any additionaw f-fiewds shouwd be added as a [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwe]]
+ *       on the candidate's [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap]]. (✿oωo) if the
+ *       f-featuwes come fwom the candidate souwce itsewf (as o-opposed t-to hydwated via a
+ *       [[com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.candidatefeatuwehydwatow]]), 😳😳😳
+ *       then [[com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig.featuwesfwomcandidatesouwcetwansfowmews]]
+ *       can b-be used to extwact f-featuwes fwom the candidate souwce wesponse.
  *
- * @note This class should always remain `final`. If for any reason the `final` modifier is removed,
- *       the equals() implementation must be updated in order to handle class inheritor equality
- *       (see note on the equals method below)
+ * @note this c-cwass shouwd awways wemain `finaw`. (ꈍᴗꈍ) i-if fow any weason the `finaw` modifiew is wemoved, 🥺
+ *       t-the equaws() impwementation must b-be updated in o-owdew to handwe cwass inhewitow e-equawity
+ *       (see nyote on t-the equaws method b-bewow)
  */
-final class CompactPromptCandidate private (
-  override val id: Long)
-    extends BasePromptCandidate[Long] {
+finaw c-cwass compactpwomptcandidate pwivate (
+  ovewwide v-vaw id: wong)
+    e-extends basepwomptcandidate[wong] {
 
   /**
-   * @inheritdoc
+   * @inhewitdoc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[CompactPromptCandidate]
+  ovewwide d-def canequaw(that: a-any): boowean = t-that.isinstanceof[compactpwomptcandidate]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * high pewfowmance impwementation of e-equaws method that wevewages:
+   *  - w-wefewentiaw e-equawity showt ciwcuit
+   *  - cached hashcode equawity showt c-ciwcuit
+   *  - f-fiewd vawues awe o-onwy checked i-if the hashcodes awe equaw to handwe t-the unwikewy case
+   *    of a hashcode cowwision
+   *  - wemovaw of check fow `that` being an equaws-compatibwe d-descendant since this cwass i-is finaw
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @note `candidate.canequaw(this)` is nyot nyecessawy b-because this cwass is finaw
+   * @see [[http://www.awtima.com/pins1ed/object-equawity.htmw p-pwogwamming in scawa, mya
+   *      c-chaptew 28]] f-fow discussion a-and design. (ˆ ﻌ ˆ)♡
    */
-  override def equals(that: Any): Boolean =
+  o-ovewwide def e-equaws(that: any): boowean =
     that match {
-      case candidate: CompactPromptCandidate =>
+      case candidate: compactpwomptcandidate =>
         (
           (this eq candidate)
-            || ((hashCode == candidate.hashCode) && (id == candidate.id))
+            || ((hashcode == candidate.hashcode) && (id == c-candidate.id))
         )
-      case _ =>
-        false
+      c-case _ =>
+        f-fawse
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * wevewage d-domain-specific constwaints (see nyotes bewow) to safewy constwuct a-and cache t-the
+   * hashcode as a vaw, (⑅˘꒳˘) such t-that it is instantiated once on object constwuction. òωó t-this pwevents t-the
+   * nyeed to wecompute t-the hashcode on e-each hashcode() invocation, o.O which is the behaviow of the
+   * scawa compiwew case c-cwass-genewated h-hashcode() since i-it cannot make a-assumptions wegawding f-fiewd
+   * object mutabiwity a-and hashcode i-impwementations. XD
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated candidate
-   *         (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *         data structure), assuming stable hashCode implementations for these objects
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @note caching the h-hashcode is onwy s-safe if aww of the fiewds used t-to constwuct the hashcode
+   *       awe immutabwe. (˘ω˘) t-this incwudes:
+   *       - inabiwity to mutate t-the object wefewence o-on fow an existing instantiated c-candidate
+   *         (i.e. (ꈍᴗꈍ) each fiewd is a vaw)
+   *       - i-inabiwity t-to mutate the f-fiewd object instance itsewf (i.e. >w< each fiewd is an immutabwe
+   *       - i-inabiwity to mutate the fiewd object i-instance itsewf (i.e. XD e-each fiewd is an immutabwe
+   *         d-data stwuctuwe), -.- assuming s-stabwe hashcode i-impwementations fow these objects
+   * @note i-in owdew fow the hashcode to be consistent w-with object equawity, ^^;; `##` m-must be used fow
+   *       b-boxed nyumewic types and n-nyuww. XD as such, a-awways pwefew `.##` o-ovew `.hashcode()`. :3
    */
-  override val hashCode: Int = id.##
+  ovewwide vaw hashcode: int = id.##
 }
 
-object CompactPromptCandidate {
-  def apply(id: Long): CompactPromptCandidate = new CompactPromptCandidate(id)
+object compactpwomptcandidate {
+  def appwy(id: wong): compactpwomptcandidate = nyew compactpwomptcandidate(id)
 }
 
 /**
- * Canonical FullCoverPromptCandidate model. Always prefer this version over all other variants.
+ * canonicaw fuwwcovewpwomptcandidate modew. σωσ awways pwefew this vewsion ovew aww othew vawiants. XD
  *
- * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]
- *       on the candidate's [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
- *       features come from the candidate source itself (as opposed to hydrated via a
- *       [[com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator]]),
- *       then [[com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
- *       can be used to extract features from the candidate source response.
+ * @note any additionaw f-fiewds s-shouwd be added as a [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwe]]
+ *       on the candidate's [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap]]. :3 i-if the
+ *       f-featuwes come f-fwom the candidate souwce itsewf (as o-opposed to hydwated via a-a
+ *       [[com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.candidatefeatuwehydwatow]]), rawr
+ *       t-then [[com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig.featuwesfwomcandidatesouwcetwansfowmews]]
+ *       can b-be used to extwact featuwes fwom t-the candidate s-souwce wesponse. 😳
  *
- * @note This class should always remain `final`. If for any reason the `final` modifier is removed,
- *       the equals() implementation must be updated in order to handle class inheritor equality
- *       (see note on the equals method below)
+ * @note this cwass shouwd awways w-wemain `finaw`. 😳😳😳 i-if fow any w-weason the `finaw` m-modifiew is w-wemoved, (ꈍᴗꈍ)
+ *       t-the equaws() impwementation m-must b-be updated in o-owdew to handwe cwass inhewitow e-equawity
+ *       (see n-nyote on t-the equaws method bewow)
  */
-final class FullCoverPromptCandidate private (
-  override val id: String)
-    extends BasePromptCandidate[String] {
+finaw c-cwass fuwwcovewpwomptcandidate pwivate (
+  ovewwide vaw id: s-stwing)
+    extends basepwomptcandidate[stwing] {
 
   /**
-   * @inheritdoc
+   * @inhewitdoc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[FullCoverPromptCandidate]
+  o-ovewwide def canequaw(that: a-any): b-boowean = that.isinstanceof[fuwwcovewpwomptcandidate]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * high pewfowmance i-impwementation of equaws m-method that wevewages:
+   *  - wefewentiaw equawity s-showt ciwcuit
+   *  - cached h-hashcode equawity showt ciwcuit
+   *  - fiewd vawues awe onwy checked if the hashcodes a-awe equaw to handwe the u-unwikewy case
+   *    o-of a hashcode cowwision
+   *  - wemovaw of check fow `that` b-being an equaws-compatibwe descendant s-since this c-cwass is finaw
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @note `candidate.canequaw(this)` i-is not nyecessawy because this cwass i-is finaw
+   * @see [[http://www.awtima.com/pins1ed/object-equawity.htmw p-pwogwamming in scawa,
+   *      c-chaptew 28]] fow discussion and design. 🥺
    */
-  override def equals(that: Any): Boolean =
-    that match {
-      case candidate: FullCoverPromptCandidate =>
-        ((this eq candidate)
-          || ((hashCode == candidate.hashCode) && (id == candidate.id)))
-      case _ =>
-        false
+  o-ovewwide def equaws(that: a-any): boowean =
+    t-that match {
+      c-case candidate: fuwwcovewpwomptcandidate =>
+        ((this e-eq candidate)
+          || ((hashcode == candidate.hashcode) && (id == c-candidate.id)))
+      c-case _ =>
+        f-fawse
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * wevewage d-domain-specific c-constwaints (see n-nyotes bewow) t-to safewy constwuct a-and cache t-the
+   * hashcode a-as a vaw, ^•ﻌ•^ such t-that it is instantiated once o-on object constwuction. XD this pwevents t-the
+   * nyeed to wecompute t-the hashcode o-on each hashcode() i-invocation, ^•ﻌ•^ which is the behaviow of the
+   * scawa compiwew c-case cwass-genewated h-hashcode() s-since it cannot make assumptions wegawding fiewd
+   * object mutabiwity a-and hashcode i-impwementations. ^^;;
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated candidate
-   *         (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *         data structure), assuming stable hashCode implementations for these objects
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @note caching the h-hashcode is onwy s-safe if aww of the fiewds used to constwuct the hashcode
+   *       a-awe immutabwe. ʘwʘ t-this incwudes:
+   *       - i-inabiwity to mutate t-the object wefewence on fow an existing instantiated c-candidate
+   *         (i.e. OwO e-each fiewd is a vaw)
+   *       - inabiwity t-to mutate the fiewd object instance itsewf (i.e. 🥺 e-each fiewd is an immutabwe
+   *       - i-inabiwity t-to mutate the fiewd object i-instance itsewf (i.e. (⑅˘꒳˘) e-each fiewd is an immutabwe
+   *         d-data stwuctuwe), (///ˬ///✿) assuming stabwe h-hashcode impwementations f-fow these o-objects
+   * @note i-in owdew fow the hashcode t-to be consistent w-with object equawity, (✿oωo) `##` m-must be used fow
+   *       b-boxed nyumewic types and nyuww. nyaa~~ as such, >w< a-awways pwefew `.##` o-ovew `.hashcode()`. (///ˬ///✿)
    */
-  override val hashCode: Int = id.##
+  o-ovewwide vaw hashcode: int = id.##
 }
 
-object FullCoverPromptCandidate {
-  def apply(id: String): FullCoverPromptCandidate = new FullCoverPromptCandidate(id)
+object fuwwcovewpwomptcandidate {
+  def appwy(id: stwing): f-fuwwcovewpwomptcandidate = nyew f-fuwwcovewpwomptcandidate(id)
 }
 
 /**
- * Canonical HalfCoverPromptCandidate model. Always prefer this version over all other variants.
+ * c-canonicaw hawfcovewpwomptcandidate modew. rawr a-awways pwefew this vewsion ovew a-aww othew vawiants. (U ﹏ U)
  *
- * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]
- *       on the candidate's [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
- *       features come from the candidate source itself (as opposed to hydrated via a
- *       [[com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator]]),
- *       then [[com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
- *       can be used to extract features from the candidate source response.
+ * @note a-any additionaw f-fiewds shouwd b-be added as a [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwe]]
+ *       o-on the candidate's [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap]]. ^•ﻌ•^ if the
+ *       featuwes come fwom the candidate s-souwce itsewf (as opposed to hydwated v-via a
+ *       [[com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.candidatefeatuwehydwatow]]), (///ˬ///✿)
+ *       then [[com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig.featuwesfwomcandidatesouwcetwansfowmews]]
+ *       can be used to extwact featuwes f-fwom the candidate souwce wesponse. o.O
  *
- * @note This class should always remain `final`. If for any reason the `final` modifier is removed,
- *       the equals() implementation must be updated in order to handle class inheritor equality
- *       (see note on the equals method below)
+ * @note this cwass shouwd awways w-wemain `finaw`. >w< i-if fow any weason the `finaw` modifiew i-is wemoved, nyaa~~
+ *       the equaws() impwementation m-must be u-updated in owdew to handwe cwass i-inhewitow equawity
+ *       (see nyote on the equaws m-method bewow)
  */
-final class HalfCoverPromptCandidate private (
-  override val id: String)
-    extends BasePromptCandidate[String] {
+finaw cwass hawfcovewpwomptcandidate pwivate (
+  o-ovewwide vaw id: stwing)
+    extends basepwomptcandidate[stwing] {
 
   /**
-   * @inheritdoc
+   * @inhewitdoc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[HalfCoverPromptCandidate]
+  o-ovewwide d-def canequaw(that: a-any): boowean = that.isinstanceof[hawfcovewpwomptcandidate]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * high pewfowmance i-impwementation of equaws method that wevewages:
+   *  - wefewentiaw equawity showt c-ciwcuit
+   *  - c-cached hashcode e-equawity showt c-ciwcuit
+   *  - fiewd vawues awe onwy checked i-if the hashcodes a-awe equaw to handwe the unwikewy case
+   *    o-of a hashcode cowwision
+   *  - wemovaw of check fow `that` being a-an equaws-compatibwe descendant since this cwass i-is finaw
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @note `candidate.canequaw(this)` i-is nyot nyecessawy because t-this cwass is f-finaw
+   * @see [[http://www.awtima.com/pins1ed/object-equawity.htmw p-pwogwamming in scawa, òωó
+   *      chaptew 28]] f-fow discussion and design. (U ᵕ U❁)
    */
-  override def equals(that: Any): Boolean =
+  ovewwide def e-equaws(that: any): boowean =
     that match {
-      case candidate: HalfCoverPromptCandidate =>
+      case candidate: h-hawfcovewpwomptcandidate =>
         (
-          (this eq candidate)
-            || ((hashCode == candidate.hashCode)
-              && (id == candidate.id))
+          (this e-eq candidate)
+            || ((hashcode == c-candidate.hashcode)
+              && (id == c-candidate.id))
         )
-      case _ =>
-        false
+      c-case _ =>
+        fawse
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * w-wevewage domain-specific constwaints (see n-nyotes bewow) to safewy constwuct a-and cache the
+   * hashcode as a vaw, (///ˬ///✿) such t-that it is instantiated o-once on object constwuction. (✿oωo) t-this pwevents the
+   * nyeed t-to wecompute t-the hashcode on each hashcode() i-invocation, 😳😳😳 which i-is the behaviow of the
+   * s-scawa compiwew case cwass-genewated hashcode() since it cannot make a-assumptions wegawding fiewd
+   * o-object mutabiwity and hashcode impwementations. (✿oωo)
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated candidate
-   *         (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *         data structure), assuming stable hashCode implementations for these objects
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @note c-caching the h-hashcode is onwy s-safe if aww of the fiewds used t-to constwuct the h-hashcode
+   *       awe immutabwe. (U ﹏ U) t-this incwudes:
+   *       - inabiwity to mutate t-the object wefewence on fow a-an existing instantiated c-candidate
+   *         (i.e. (˘ω˘) each fiewd is a vaw)
+   *       - inabiwity to mutate the f-fiewd object instance i-itsewf (i.e. 😳😳😳 each fiewd is an immutabwe
+   *       - inabiwity t-to mutate the fiewd object i-instance itsewf (i.e. (///ˬ///✿) e-each fiewd is an immutabwe
+   *         data stwuctuwe), (U ᵕ U❁) assuming stabwe hashcode impwementations f-fow these objects
+   * @note in owdew fow t-the hashcode to be consistent w-with object equawity, >_< `##` m-must be used fow
+   *       b-boxed nyumewic t-types and n-nyuww. (///ˬ///✿) as such, (U ᵕ U❁) a-awways pwefew `.##` o-ovew `.hashcode()`. >w<
    */
-  override val hashCode: Int = id.##
+  o-ovewwide vaw hashcode: int = id.##
 }
 
-object HalfCoverPromptCandidate {
-  def apply(id: String): HalfCoverPromptCandidate = new HalfCoverPromptCandidate(id)
+object hawfcovewpwomptcandidate {
+  def appwy(id: stwing): hawfcovewpwomptcandidate = n-new h-hawfcovewpwomptcandidate(id)
 }
 
 /**
- * Canonical PromptCarouselTileCandidate model. Always prefer this version over all other variants.
+ * c-canonicaw p-pwomptcawousewtiwecandidate m-modew. 😳😳😳 a-awways pwefew this vewsion ovew aww othew vawiants. (ˆ ﻌ ˆ)♡
  *
- * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]
- *       on the candidate's [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
- *       features come from the candidate source itself (as opposed to hydrated via a
- *       [[com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator]]),
- *       then [[com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
- *       can be used to extract features from the candidate source response.
+ * @note any additionaw fiewds shouwd b-be added as a [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwe]]
+ *       o-on the candidate's [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap]]. (ꈍᴗꈍ) if the
+ *       featuwes come fwom t-the candidate s-souwce itsewf (as o-opposed to hydwated via a
+ *       [[com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.candidatefeatuwehydwatow]]), 🥺
+ *       then [[com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig.featuwesfwomcandidatesouwcetwansfowmews]]
+ *       c-can be used to extwact featuwes fwom the c-candidate souwce w-wesponse. >_<
  *
- * @note This class should always remain `final`. If for any reason the `final` modifier is removed,
- *       the equals() implementation must be updated in order to handle class inheritor equality
- *       (see note on the equals method below)
+ * @note this cwass shouwd awways w-wemain `finaw`. OwO if fow any weason t-the `finaw` modifiew i-is wemoved, ^^;;
+ *       the e-equaws() impwementation m-must be u-updated in owdew t-to handwe cwass i-inhewitow equawity
+ *       (see n-nyote on the equaws method bewow)
  */
-final class PromptCarouselTileCandidate private (
-  override val id: Long)
-    extends BasePromptCandidate[Long] {
+f-finaw cwass p-pwomptcawousewtiwecandidate pwivate (
+  ovewwide v-vaw id: wong)
+    extends basepwomptcandidate[wong] {
 
   /**
-   * @inheritdoc
+   * @inhewitdoc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[PromptCarouselTileCandidate]
+  o-ovewwide def canequaw(that: a-any): boowean = that.isinstanceof[pwomptcawousewtiwecandidate]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * h-high pewfowmance i-impwementation of equaws method that wevewages:
+   *  - w-wefewentiaw equawity showt ciwcuit
+   *  - c-cached hashcode e-equawity showt ciwcuit
+   *  - fiewd vawues a-awe onwy checked i-if the hashcodes awe equaw to h-handwe the unwikewy case
+   *    of a hashcode c-cowwision
+   *  - w-wemovaw of check fow `that` being a-an equaws-compatibwe d-descendant since this cwass is finaw
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @note `candidate.canequaw(this)` i-is nyot n-nyecessawy because t-this cwass i-is finaw
+   * @see [[http://www.awtima.com/pins1ed/object-equawity.htmw pwogwamming in scawa, (✿oωo)
+   *      chaptew 28]] fow discussion and design. UwU
    */
-  override def equals(that: Any): Boolean =
-    that match {
-      case candidate: PromptCarouselTileCandidate =>
+  ovewwide d-def equaws(that: a-any): boowean =
+    t-that match {
+      c-case candidate: p-pwomptcawousewtiwecandidate =>
         (
-          (this eq candidate)
-            || ((hashCode == candidate.hashCode)
-              && (id == candidate.id))
+          (this e-eq candidate)
+            || ((hashcode == candidate.hashcode)
+              && (id == c-candidate.id))
         )
-      case _ =>
-        false
+      c-case _ =>
+        fawse
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * w-wevewage domain-specific c-constwaints (see nyotes bewow) to safewy c-constwuct and cache the
+   * hashcode as a vaw, ( ͡o ω ͡o ) s-such that it is instantiated o-once on object c-constwuction. (✿oωo) this pwevents the
+   * n-nyeed to wecompute t-the hashcode o-on each hashcode() invocation, mya w-which is the b-behaviow of the
+   * scawa compiwew c-case cwass-genewated hashcode() s-since it cannot m-make assumptions w-wegawding fiewd
+   * object m-mutabiwity and hashcode impwementations. ( ͡o ω ͡o )
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated candidate
-   *         (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *         data structure), assuming stable hashCode implementations for these objects
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @note caching t-the hashcode is onwy safe if aww of the fiewds used to constwuct the hashcode
+   *       awe immutabwe. :3 this i-incwudes:
+   *       - inabiwity to mutate the object wefewence on fow an existing instantiated candidate
+   *         (i.e. 😳 e-each fiewd is a vaw)
+   *       - inabiwity to mutate t-the fiewd object instance itsewf (i.e. (U ﹏ U) e-each fiewd is an immutabwe
+   *       - inabiwity to mutate t-the fiewd object instance i-itsewf (i.e. >w< each fiewd is an immutabwe
+   *         d-data stwuctuwe), UwU a-assuming stabwe hashcode impwementations fow these objects
+   * @note i-in owdew fow the hashcode to be consistent with object e-equawity, 😳 `##` must be used fow
+   *       b-boxed nyumewic types a-and nyuww. XD as such, (✿oωo) awways pwefew `.##` o-ovew `.hashcode()`. ^•ﻌ•^
    */
-  override val hashCode: Int = id.##
+  o-ovewwide vaw hashcode: int = id.##
 }
 
-object PromptCarouselTileCandidate {
-  def apply(id: Long): PromptCarouselTileCandidate = new PromptCarouselTileCandidate(id)
+object p-pwomptcawousewtiwecandidate {
+  def appwy(id: wong): pwomptcawousewtiwecandidate = n-nyew pwomptcawousewtiwecandidate(id)
 }
 
 /**
- * Canonical RelevancePromptCandidate model. Always prefer this version over all other variants.
+ * canonicaw wewevancepwomptcandidate modew. mya awways pwefew this v-vewsion ovew a-aww othew vawiants. (˘ω˘)
  *
- * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]
- *       on the candidate's [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
- *       features come from the candidate source itself (as opposed to hydrated via a
- *       [[com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator]]),
- *       then [[com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
- *       can be used to extract features from the candidate source response.
+ * @note any additionaw fiewds s-shouwd be a-added as a [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwe]]
+ *       on the candidate's [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap]]. nyaa~~ i-if the
+ *       featuwes come fwom the candidate souwce itsewf (as opposed t-to hydwated v-via a
+ *       [[com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.candidatefeatuwehydwatow]]), :3
+ *       then [[com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig.featuwesfwomcandidatesouwcetwansfowmews]]
+ *       can be used to e-extwact featuwes f-fwom the candidate souwce wesponse. (✿oωo)
  *
- * @note This class should always remain `final`. If for any reason the `final` modifier is removed,
- *       the equals() implementation must be updated in order to handle class inheritor equality
- *       (see note on the equals method below)
+ * @note t-this cwass shouwd awways wemain `finaw`. (U ﹏ U) if fow a-any weason the `finaw` modifiew is wemoved, (ꈍᴗꈍ)
+ *       t-the equaws() i-impwementation must be updated in owdew to h-handwe cwass inhewitow equawity
+ *       (see nyote on the equaws method bewow)
  */
-final class RelevancePromptCandidate private (
-  override val id: String,
-  val position: Option[Int])
-    extends BasePromptCandidate[String] {
+finaw cwass wewevancepwomptcandidate pwivate (
+  o-ovewwide vaw i-id: stwing, (˘ω˘)
+  vaw position: option[int])
+    extends b-basepwomptcandidate[stwing] {
 
   /**
-   * @inheritdoc
+   * @inhewitdoc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[RelevancePromptCandidate]
+  o-ovewwide def canequaw(that: a-any): boowean = that.isinstanceof[wewevancepwomptcandidate]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * high pewfowmance impwementation of equaws method that wevewages:
+   *  - w-wefewentiaw equawity showt ciwcuit
+   *  - cached hashcode equawity showt ciwcuit
+   *  - f-fiewd v-vawues awe onwy c-checked if the hashcodes awe equaw to handwe the unwikewy case
+   *    o-of a hashcode c-cowwision
+   *  - w-wemovaw of check fow `that` b-being an equaws-compatibwe descendant since t-this cwass is finaw
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @note `candidate.canequaw(this)` is nyot nyecessawy b-because this cwass is finaw
+   * @see [[http://www.awtima.com/pins1ed/object-equawity.htmw p-pwogwamming in scawa, ^^
+   *      chaptew 28]] f-fow discussion and design. (⑅˘꒳˘)
    */
-  override def equals(that: Any): Boolean =
-    that match {
-      case candidate: RelevancePromptCandidate =>
+  o-ovewwide d-def equaws(that: any): boowean =
+    t-that m-match {
+      case candidate: wewevancepwomptcandidate =>
         (
-          (this eq candidate)
-            || ((hashCode == candidate.hashCode)
-              && (id == candidate.id && position == candidate.position))
+          (this e-eq candidate)
+            || ((hashcode == candidate.hashcode)
+              && (id == c-candidate.id && position == c-candidate.position))
         )
-      case _ =>
-        false
+      c-case _ =>
+        fawse
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * wevewage domain-specific c-constwaints (see nyotes bewow) to safewy constwuct and cache the
+   * hashcode as a vaw, rawr such that it is instantiated once on object c-constwuction. :3 this pwevents the
+   * nyeed t-to wecompute the hashcode on each h-hashcode() invocation, OwO which is the behaviow of t-the
+   * scawa compiwew case cwass-genewated hashcode() since i-it cannot make assumptions wegawding fiewd
+   * o-object mutabiwity and hashcode impwementations. (ˆ ﻌ ˆ)♡
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated candidate
-   *         (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *         data structure), assuming stable hashCode implementations for these objects
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @note caching the hashcode i-is onwy safe if aww of the fiewds used to constwuct t-the hashcode
+   *       a-awe immutabwe. :3 this incwudes:
+   *       - inabiwity t-to mutate t-the object wefewence on fow an existing i-instantiated c-candidate
+   *         (i.e. -.- each fiewd is a vaw)
+   *       - i-inabiwity to mutate the fiewd object instance itsewf (i.e. -.- each f-fiewd is an immutabwe
+   *       - inabiwity to mutate the fiewd o-object instance i-itsewf (i.e. òωó e-each fiewd is an immutabwe
+   *         data stwuctuwe), 😳 assuming s-stabwe hashcode impwementations f-fow these objects
+   * @note in owdew fow the h-hashcode to be c-consistent with object equawity, nyaa~~ `##` must be used fow
+   *       boxed nyumewic types and nyuww. (⑅˘꒳˘) a-as such, awways p-pwefew `.##` ovew `.hashcode()`. 😳
    */
-  override val hashCode: Int =
+  ovewwide v-vaw hashcode: int =
     31 * (
       id.##
-    ) + position.##
+    ) + p-position.##
 }
 
-object RelevancePromptCandidate {
-  def apply(
-    id: String,
-    position: Option[Int] = None
-  ): RelevancePromptCandidate =
-    new RelevancePromptCandidate(id, position)
+o-object wewevancepwomptcandidate {
+  d-def appwy(
+    i-id: stwing, (U ﹏ U)
+    p-position: o-option[int] = nyone
+  ): wewevancepwomptcandidate =
+    nyew w-wewevancepwomptcandidate(id, /(^•ω•^) p-position)
 }

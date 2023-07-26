@@ -1,79 +1,79 @@
-package com.twitter.visibility.builder.users
+package com.twittew.visibiwity.buiwdew.usews
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.gizmoduck.thriftscala.Perspective
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.common.UserId
+impowt c-com.twittew.finagwe.stats.countew
+i-impowt com.twittew.gizmoduck.thwiftscawa.pewspective
+i-impowt c-com.twittew.gizmoduck.thwiftscawa.usew
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.visibiwity.common.usewid
 
-case object ViewerVerbsAuthor {
-  def apply(
-    authorId: UserId,
-    viewerIdOpt: Option[UserId],
-    relationship: (UserId, UserId) => Stitch[Boolean],
-    relationshipCounter: Counter
-  ): Stitch[Boolean] = {
-    relationshipCounter.incr()
+case object viewewvewbsauthow {
+  def appwy(
+    authowid: u-usewid, nyaa~~
+    viewewidopt: option[usewid], (✿oωo)
+    wewationship: (usewid, ʘwʘ usewid) => s-stitch[boowean], (ˆ ﻌ ˆ)♡
+    wewationshipcountew: c-countew
+  ): stitch[boowean] = {
+    wewationshipcountew.incw()
 
-    viewerIdOpt match {
-      case Some(viewerId) => relationship(viewerId, authorId)
-      case _ => Stitch.False
+    viewewidopt match {
+      c-case some(viewewid) => wewationship(viewewid, a-authowid)
+      c-case _ => stitch.fawse
     }
   }
 
-  def apply(
-    author: User,
-    viewerId: Option[UserId],
-    checkPerspective: Perspective => Option[Boolean],
-    relationship: (UserId, UserId) => Stitch[Boolean],
-    relationshipCounter: Counter
-  ): Stitch[Boolean] = {
-    author.perspective match {
-      case Some(perspective) =>
-        checkPerspective(perspective) match {
-          case Some(status) =>
-            relationshipCounter.incr()
-            Stitch.value(status)
-          case None =>
-            ViewerVerbsAuthor(author.id, viewerId, relationship, relationshipCounter)
+  def appwy(
+    authow: usew, 😳😳😳
+    viewewid: o-option[usewid], :3
+    checkpewspective: pewspective => option[boowean], OwO
+    wewationship: (usewid, (U ﹏ U) u-usewid) => stitch[boowean], >w<
+    w-wewationshipcountew: c-countew
+  ): s-stitch[boowean] = {
+    a-authow.pewspective match {
+      case some(pewspective) =>
+        c-checkpewspective(pewspective) match {
+          case some(status) =>
+            w-wewationshipcountew.incw()
+            stitch.vawue(status)
+          case nyone =>
+            viewewvewbsauthow(authow.id, (U ﹏ U) viewewid, 😳 wewationship, (ˆ ﻌ ˆ)♡ w-wewationshipcountew)
         }
-      case None => ViewerVerbsAuthor(author.id, viewerId, relationship, relationshipCounter)
+      case nyone => viewewvewbsauthow(authow.id, 😳😳😳 v-viewewid, (U ﹏ U) w-wewationship, (///ˬ///✿) w-wewationshipcountew)
     }
   }
 }
 
-case object AuthorVerbsViewer {
+case object authowvewbsviewew {
 
-  def apply(
-    authorId: UserId,
-    viewerIdOpt: Option[UserId],
-    relationship: (UserId, UserId) => Stitch[Boolean],
-    relationshipCounter: Counter
-  ): Stitch[Boolean] = {
-    relationshipCounter.incr()
+  def appwy(
+    a-authowid: u-usewid, 😳
+    viewewidopt: option[usewid], 😳
+    w-wewationship: (usewid, σωσ u-usewid) => stitch[boowean], rawr x3
+    w-wewationshipcountew: countew
+  ): s-stitch[boowean] = {
+    wewationshipcountew.incw()
 
-    viewerIdOpt match {
-      case Some(viewerId) => relationship(authorId, viewerId)
-      case _ => Stitch.False
+    viewewidopt match {
+      case some(viewewid) => w-wewationship(authowid, OwO viewewid)
+      c-case _ => stitch.fawse
     }
   }
-  def apply(
-    author: User,
-    viewerId: Option[UserId],
-    checkPerspective: Perspective => Option[Boolean],
-    relationship: (UserId, UserId) => Stitch[Boolean],
-    relationshipCounter: Counter
-  ): Stitch[Boolean] = {
-    author.perspective match {
-      case Some(perspective) =>
-        checkPerspective(perspective) match {
-          case Some(status) =>
-            relationshipCounter.incr()
-            Stitch.value(status)
-          case None =>
-            AuthorVerbsViewer(author.id, viewerId, relationship, relationshipCounter)
+  d-def appwy(
+    a-authow: usew, /(^•ω•^)
+    viewewid: option[usewid], 😳😳😳
+    checkpewspective: pewspective => option[boowean], ( ͡o ω ͡o )
+    wewationship: (usewid, >_< usewid) => s-stitch[boowean], >w<
+    w-wewationshipcountew: countew
+  ): s-stitch[boowean] = {
+    a-authow.pewspective m-match {
+      case some(pewspective) =>
+        checkpewspective(pewspective) match {
+          c-case some(status) =>
+            wewationshipcountew.incw()
+            stitch.vawue(status)
+          case nyone =>
+            authowvewbsviewew(authow.id, rawr v-viewewid, 😳 wewationship, wewationshipcountew)
         }
-      case None => AuthorVerbsViewer(author.id, viewerId, relationship, relationshipCounter)
+      c-case n-nyone => authowvewbsviewew(authow.id, >w< v-viewewid, wewationship, (⑅˘꒳˘) w-wewationshipcountew)
     }
   }
 }

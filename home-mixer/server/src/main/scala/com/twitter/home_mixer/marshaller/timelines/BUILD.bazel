@@ -1,11 +1,32 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model/request",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/cursor",
-        "src/thrift/com/twitter/timelineservice:thrift-scala",
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    s-stwict_deps = t-twue, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "3wdpawty/jvm/com/twittew/bijection:scwooge", (⑅˘꒳˘)
+        "3wdpawty/jvm/com/twittew/stowehaus:cowe", ( ͡o ω ͡o )
+        "swc/thwift/com/twittew/wtf/candidate:wtf-candidate-scawa", UwU
+        "stitch/stitch-cowe", rawr x3
+        "stowage/cwients/manhattan/cwient/swc/main/scawa", rawr
     ],
+)
+owwowing", (⑅˘꒳˘)
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pwoduct/fowwowing/modew",
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pwoduct/fow_you", ( ͡o ω ͡o )
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pwoduct/fow_you/modew", UwU
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pwoduct/wist_wecommended_usews", rawr x3
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pwoduct/wist_wecommended_usews/modew", rawr
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pwoduct/wist_tweets", σωσ
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pwoduct/wist_tweets/modew", σωσ
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pwoduct/scowed_tweets", >_<
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pwoduct/scowed_tweets/modew", :3
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pwoduct/subscwibed", (U ﹏ U)
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pwoduct/subscwibed/modew", -.-
+        "home-mixew/thwift/swc/main/thwift:thwift-scawa", (ˆ ﻌ ˆ)♡
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/quewy/ads", (⑅˘꒳˘)
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pwoduct", (U ᵕ U❁)
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pwoduct/guice", -.-
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pwoduct/wegistwy", ^^;;
+    ], >_<
 )

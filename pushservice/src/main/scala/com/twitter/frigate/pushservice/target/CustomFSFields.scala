@@ -1,98 +1,98 @@
-package com.twitter.frigate.pushservice.target
+package com.twittew.fwigate.pushsewvice.tawget
 
-import com.twitter.featureswitches.FSCustomMapInput
-import com.twitter.featureswitches.parsing.DynMap
-import com.twitter.frigate.common.store.deviceinfo.DeviceInfo
-import com.twitter.frigate.pushservice.util.NsfwInfo
-import com.twitter.gizmoduck.thriftscala.User
+impowt com.twittew.featuweswitches.fscustommapinput
+i-impowt com.twittew.featuweswitches.pawsing.dynmap
+i-impowt com.twittew.fwigate.common.stowe.deviceinfo.deviceinfo
+i-impowt com.twittew.fwigate.pushsewvice.utiw.nsfwinfo
+i-impowt com.twittew.gizmoduck.thwiftscawa.usew
 
-object CustomFSFields {
-  private val IsReturningUser = "is_returning_user"
-  private val DaysSinceSignup = "days_since_signup"
-  private val DaysSinceLogin = "days_since_login"
-  private val DaysSinceReactivation = "days_since_reactivation"
-  private val ReactivationDate = "reactivation_date"
-  private val FollowGraphSize = "follow_graph_size"
-  private val GizmoduckUserType = "gizmoduck_user_type"
-  private val UserAge = "mr_user_age"
-  private val SensitiveOptIn = "sensitive_opt_in"
-  private val NsfwFollowRatio = "nsfw_follow_ratio"
-  private val TotalFollows = "follow_count"
-  private val NsfwRealGraphScore = "nsfw_real_graph_score"
-  private val NsfwProfileVisit = "nsfw_profile_visit"
-  private val TotalSearches = "total_searches"
-  private val NsfwSearchScore = "nsfw_search_score"
-  private val HasReportedNsfw = "nsfw_reported"
-  private val HasDislikedNsfw = "nsfw_disliked"
-  private val UserState = "user_state"
-  private val MrUserState = "mr_user_state"
-  private val NumDaysReceivedPushInLast30Days =
-    "num_days_received_push_in_last_30_days"
-  private val RecommendationsSetting = "recommendations_setting"
-  private val TopicsSetting = "topics_setting"
-  private val SpacesSetting = "spaces_setting"
-  private val NewsSetting = "news_setting"
-  private val LiveVideoSetting = "live_video_setting"
-  private val HasRecentPushableRebDevice = "has_recent_pushable_rweb_device"
-  private val RequestSource = "request_source"
+o-object customfsfiewds {
+  p-pwivate vaw iswetuwningusew = "is_wetuwning_usew"
+  p-pwivate vaw d-dayssincesignup = "days_since_signup"
+  pwivate vaw dayssincewogin = "days_since_wogin"
+  pwivate vaw dayssinceweactivation = "days_since_weactivation"
+  p-pwivate vaw weactivationdate = "weactivation_date"
+  pwivate vaw fowwowgwaphsize = "fowwow_gwaph_size"
+  p-pwivate vaw gizmoduckusewtype = "gizmoduck_usew_type"
+  p-pwivate vaw usewage = "mw_usew_age"
+  pwivate vaw sensitiveoptin = "sensitive_opt_in"
+  pwivate vaw n-nysfwfowwowwatio = "nsfw_fowwow_watio"
+  pwivate v-vaw totawfowwows = "fowwow_count"
+  p-pwivate vaw nysfwweawgwaphscowe = "nsfw_weaw_gwaph_scowe"
+  pwivate vaw nysfwpwofiwevisit = "nsfw_pwofiwe_visit"
+  pwivate vaw totawseawches = "totaw_seawches"
+  p-pwivate vaw nysfwseawchscowe = "nsfw_seawch_scowe"
+  pwivate vaw haswepowtednsfw = "nsfw_wepowted"
+  pwivate v-vaw hasdiswikednsfw = "nsfw_diswiked"
+  pwivate v-vaw usewstate = "usew_state"
+  p-pwivate vaw mwusewstate = "mw_usew_state"
+  pwivate v-vaw nyumdaysweceivedpushinwast30days =
+    "num_days_weceived_push_in_wast_30_days"
+  p-pwivate vaw wecommendationssetting = "wecommendations_setting"
+  pwivate v-vaw topicssetting = "topics_setting"
+  pwivate vaw spacessetting = "spaces_setting"
+  p-pwivate vaw nyewssetting = "news_setting"
+  pwivate vaw wivevideosetting = "wive_video_setting"
+  pwivate vaw haswecentpushabwewebdevice = "has_wecent_pushabwe_wweb_device"
+  p-pwivate vaw wequestsouwce = "wequest_souwce"
 }
 
-case class CustomFSFields(
-  isReactivatedUser: Boolean,
-  daysSinceSignup: Int,
-  numDaysReceivedPushInLast30Days: Int,
-  daysSinceLogin: Option[Int],
-  daysSinceReactivation: Option[Int],
-  user: Option[User],
-  userState: Option[String],
-  mrUserState: Option[String],
-  reactivationDate: Option[String],
-  requestSource: Option[String],
-  userAge: Option[Int],
-  nsfwInfo: Option[NsfwInfo],
-  deviceInfo: Option[DeviceInfo]) {
+c-case c-cwass customfsfiewds(
+  i-isweactivatedusew: boowean, 😳
+  dayssincesignup: int,
+  nyumdaysweceivedpushinwast30days: i-int, 😳😳😳
+  dayssincewogin: o-option[int], mya
+  dayssinceweactivation: o-option[int], mya
+  u-usew: option[usew], (⑅˘꒳˘)
+  u-usewstate: option[stwing], (U ﹏ U)
+  mwusewstate: option[stwing], mya
+  w-weactivationdate: option[stwing],
+  wequestsouwce: o-option[stwing], ʘwʘ
+  usewage: option[int], (˘ω˘)
+  n-nysfwinfo: option[nsfwinfo], (U ﹏ U)
+  d-deviceinfo: o-option[deviceinfo]) {
 
-  import CustomFSFields._
+  impowt customfsfiewds._
 
-  private val keyValMap: Map[String, Any] = Map(
-    IsReturningUser -> isReactivatedUser,
-    DaysSinceSignup -> daysSinceSignup,
-    DaysSinceLogin -> daysSinceLogin,
-    NumDaysReceivedPushInLast30Days -> numDaysReceivedPushInLast30Days
+  pwivate vaw keyvawmap: map[stwing, ^•ﻌ•^ any] = map(
+    iswetuwningusew -> isweactivatedusew, (˘ω˘)
+    d-dayssincesignup -> d-dayssincesignup, :3
+    dayssincewogin -> dayssincewogin, ^^;;
+    n-nyumdaysweceivedpushinwast30days -> n-nyumdaysweceivedpushinwast30days
   ) ++
-    daysSinceReactivation.map(DaysSinceReactivation -> _) ++
-    reactivationDate.map(ReactivationDate -> _) ++
-    user.flatMap(_.counts.map(counts => FollowGraphSize -> counts.following)) ++
-    user.map(u => GizmoduckUserType -> u.userType.name) ++
-    userState.map(UserState -> _) ++
-    mrUserState.map(MrUserState -> _) ++
-    requestSource.map(RequestSource -> _) ++
-    userAge.map(UserAge -> _) ++
-    nsfwInfo.flatMap(_.senstiveOptIn).map(SensitiveOptIn -> _) ++
-    nsfwInfo
-      .map { nsInfo =>
-        Map[String, Any](
-          NsfwFollowRatio -> nsInfo.nsfwFollowRatio,
-          TotalFollows -> nsInfo.totalFollowCount,
-          NsfwRealGraphScore -> nsInfo.realGraphScore,
-          NsfwProfileVisit -> nsInfo.nsfwProfileVisits,
-          TotalSearches -> nsInfo.totalSearches,
-          NsfwSearchScore -> nsInfo.searchNsfwScore,
-          HasReportedNsfw -> nsInfo.hasReported,
-          HasDislikedNsfw -> nsInfo.hasDisliked
+    d-dayssinceweactivation.map(dayssinceweactivation -> _) ++
+    weactivationdate.map(weactivationdate -> _) ++
+    usew.fwatmap(_.counts.map(counts => fowwowgwaphsize -> c-counts.fowwowing)) ++
+    usew.map(u => gizmoduckusewtype -> u.usewtype.name) ++
+    usewstate.map(usewstate -> _) ++
+    m-mwusewstate.map(mwusewstate -> _) ++
+    wequestsouwce.map(wequestsouwce -> _) ++
+    usewage.map(usewage -> _) ++
+    n-nysfwinfo.fwatmap(_.senstiveoptin).map(sensitiveoptin -> _) ++
+    n-nysfwinfo
+      .map { n-nysinfo =>
+        map[stwing, 🥺 a-any](
+          n-nysfwfowwowwatio -> n-nysinfo.nsfwfowwowwatio, (⑅˘꒳˘)
+          t-totawfowwows -> nysinfo.totawfowwowcount, nyaa~~
+          nysfwweawgwaphscowe -> n-nysinfo.weawgwaphscowe, :3
+          n-nysfwpwofiwevisit -> nysinfo.nsfwpwofiwevisits, ( ͡o ω ͡o )
+          t-totawseawches -> n-nysinfo.totawseawches, mya
+          n-nysfwseawchscowe -> nysinfo.seawchnsfwscowe, (///ˬ///✿)
+          haswepowtednsfw -> nysinfo.haswepowted, (˘ω˘)
+          hasdiswikednsfw -> n-nysinfo.hasdiswiked
         )
-      }.getOrElse(Map.empty[String, Any]) ++
-    deviceInfo
-      .map { deviceInfo =>
-        Map[String, Boolean](
-          RecommendationsSetting -> deviceInfo.isRecommendationsEligible,
-          TopicsSetting -> deviceInfo.isTopicsEligible,
-          SpacesSetting -> deviceInfo.isSpacesEligible,
-          LiveVideoSetting -> deviceInfo.isBroadcastsEligible,
-          NewsSetting -> deviceInfo.isNewsEligible,
-          HasRecentPushableRebDevice -> deviceInfo.hasRecentPushableRWebDevice
+      }.getowewse(map.empty[stwing, ^^;; any]) ++
+    deviceinfo
+      .map { deviceinfo =>
+        map[stwing, (✿oωo) boowean](
+          wecommendationssetting -> deviceinfo.iswecommendationsewigibwe, (U ﹏ U)
+          t-topicssetting -> deviceinfo.istopicsewigibwe, -.-
+          spacessetting -> deviceinfo.isspacesewigibwe, ^•ﻌ•^
+          w-wivevideosetting -> d-deviceinfo.isbwoadcastsewigibwe, rawr
+          n-newssetting -> deviceinfo.isnewsewigibwe, (˘ω˘)
+          h-haswecentpushabwewebdevice -> deviceinfo.haswecentpushabwewwebdevice
         )
-      }.getOrElse(Map.empty[String, Boolean])
+      }.getowewse(map.empty[stwing, nyaa~~ boowean])
 
-  val fsMap = FSCustomMapInput(DynMap(keyValMap))
+  v-vaw f-fsmap = fscustommapinput(dynmap(keyvawmap))
 }

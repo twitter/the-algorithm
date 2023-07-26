@@ -1,48 +1,48 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "tensorflow/core/framework/attr_value.proto";
+impowt "tensowfwow/cowe/fwamewowk/attw_vawue.pwoto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "KernelDefProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/kernel_def_go_proto";
+o-option c-cc_enabwe_awenas = t-twue;
+option j-java_outew_cwassname = "kewnewdefpwotos";
+option j-java_muwtipwe_fiwes = t-twue;
+o-option java_package = "owg.tensowfwow.fwamewowk";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/fwamewowk/kewnew_def_go_pwoto";
 
-message KernelDef {
-  // Must match the name of an Op.
-  string op = 1;
+message kewnewdef {
+  // must match the nyame of an o-op. rawr
+  stwing op = 1;
 
-  // Type of device this kernel runs on.
-  string device_type = 2;
+  // type of device this k-kewnew wuns on. mya
+  stwing device_type = 2;
 
-  message AttrConstraint {
-    // Name of an attr from the Op.
-    string name = 1;
+  m-message attwconstwaint {
+    // nyame of an attw fwom t-the op. ^^
+    stwing nyame = 1;
 
-    // A list of values that this kernel supports for this attr.
-    // Like OpDef.AttrDef.allowed_values, except for kernels instead of Ops.
-    AttrValue allowed_values = 2;
+    // a-a wist o-of vawues that this kewnew suppowts fow this attw.
+    // wike opdef.attwdef.awwowed_vawues, 😳😳😳 e-except fow kewnews instead of ops. mya
+    attwvawue awwowed_vawues = 2;
   }
-  repeated AttrConstraint constraint = 3;
+  wepeated a-attwconstwaint constwaint = 3;
 
-  // Names of the Op's input_/output_args that reside in host memory
-  // instead of device memory.
-  repeated string host_memory_arg = 4;
+  // n-nyames of t-the op's input_/output_awgs t-that w-weside in host memowy
+  // instead of device memowy. 😳
+  w-wepeated stwing host_memowy_awg = 4;
 
-  // This allows experimental kernels to be registered for an op that
-  // won't be used unless the user specifies a "_kernel" attr with
-  // value matching this.
-  string label = 5;
+  // this awwows e-expewimentaw kewnews to be wegistewed fow an op that
+  // won't be used unwess the usew specifies a-a "_kewnew" attw with
+  // vawue m-matching this. -.-
+  s-stwing wabew = 5;
 
-  // Prioritization of kernel amongst different devices. By default we assume
-  // priority is 0. The higher the priority the better. By default (i.e. if
-  // this is not set), we prefer GPU kernels over CPU.
-  int32 priority = 6;
+  // p-pwiowitization of kewnew amongst diffewent devices. 🥺 b-by defauwt we assume
+  // p-pwiowity is 0. o.O the highew t-the pwiowity t-the bettew. /(^•ω•^) by defauwt (i.e. nyaa~~ if
+  // t-this is nyot set), nyaa~~ we pwefew g-gpu kewnews ovew cpu. :3
+  int32 pwiowity = 6;
 }
 
-// A collection of KernelDefs
-message KernelList {
-  repeated KernelDef kernel = 1;
+// a-a cowwection of kewnewdefs
+m-message kewnewwist {
+  wepeated k-kewnewdef kewnew = 1;
 }

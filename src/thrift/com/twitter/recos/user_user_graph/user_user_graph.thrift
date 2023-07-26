@@ -1,45 +1,45 @@
-namespace java com.twitter.recos.user_user_graph.thriftjava
-namespace py gen.twitter.recos.user_user_graph
-#@namespace scala com.twitter.recos.user_user_graph.thriftscala
-#@namespace strato com.twitter.recos.user_user_graph
-namespace rb UserUserGraph
+namespace java com.twittew.wecos.usew_usew_gwaph.thwiftjava
+nyamespace p-py gen.twittew.wecos.usew_usew_gwaph
+#@namespace s-scawa com.twittew.wecos.usew_usew_gwaph.thwiftscawa
+#@namespace s-stwato com.twittew.wecos.usew_usew_gwaph
+n-namespace wb usewusewgwaph
 
-include "com/twitter/recos/recos_common.thrift"
+i-incwude "com/twittew/wecos/wecos_common.thwift"
 
-enum RecommendUserDisplayLocation {
-  MagicRecs                 = 0
-  HomeTimeLine              = 1
-  ConnectTab                = 2
+e-enum w-wecommendusewdispwaywocation {
+  m-magicwecs                 = 0
+  hometimewine              = 1
+  connecttab                = 2
 }
 
-struct RecommendUserRequest {
-  1: required i64                                           requesterId                  // user id of the requesting user
-  2: required RecommendUserDisplayLocation                  displayLocation              // display location from the client
-  3: required map<i64,double>                               seedsWithWeights             // seed ids and weights used in left hand side
-  4: optional list<i64>                                     excludedUserIds              // list of users to exclude from response
-  5: optional i32                                           maxNumResults                // number of results to return
-  6: optional i32                                           maxNumSocialProofs           // number of social proofs per recommendation
-  7: optional map<recos_common.UserSocialProofType, i32>    minUserPerSocialProof        // minimum number of users for each social proof type
-  8: optional list<recos_common.UserSocialProofType>        socialProofTypes             // list of required social proof types. Any recommended user
-                                                                                         // must at least have all of these social proof types
-  9: optional i64                                           maxEdgeEngagementAgeInMillis // only events created during this period are counted
+stwuct wecommendusewwequest {
+  1: wequiwed i-i64                                           wequestewid                  // usew i-id of the wequesting usew
+  2: w-wequiwed wecommendusewdispwaywocation                  dispwaywocation              // dispway wocation fwom the c-cwient
+  3: wequiwed map<i64,doubwe>                               s-seedswithweights             // s-seed ids and weights used in weft hand side
+  4: optionaw wist<i64>                                     e-excwudedusewids              // wist of usews to excwude fwom wesponse
+  5: optionaw i-i32                                           maxnumwesuwts                // n-nyumbew of wesuwts t-to wetuwn
+  6: o-optionaw i32                                           m-maxnumsociawpwoofs           // nyumbew of sociaw pwoofs p-pew wecommendation
+  7: optionaw map<wecos_common.usewsociawpwooftype, nyaa~~ i-i32>    minusewpewsociawpwoof        // minimum nyumbew of usews fow each sociaw pwoof type
+  8: optionaw w-wist<wecos_common.usewsociawpwooftype>        sociawpwooftypes             // w-wist of wequiwed s-sociaw pwoof t-types. (✿oωo) any wecommended usew
+                                                                                         // must at weast have aww of t-these sociaw pwoof t-types
+  9: optionaw i64                                           m-maxedgeengagementageinmiwwis // o-onwy events cweated duwing t-this pewiod awe counted
 }
 
-struct RecommendedUser {
-  1: required i64                                               userId             // user id of recommended user
-  2: required double                                            score              // weight of the recommended user
-  3: required map<recos_common.UserSocialProofType, list<i64>>  socialProofs       // the social proofs of the recommended user
+stwuct w-wecommendedusew {
+  1: wequiwed i64                                               u-usewid             // usew i-id of wecommended usew
+  2: wequiwed d-doubwe                                            s-scowe              // weight of the wecommended usew
+  3: wequiwed map<wecos_common.usewsociawpwooftype, ʘwʘ wist<i64>>  sociawpwoofs       // the sociaw pwoofs o-of the wecommended u-usew
 }
 
-struct RecommendUserResponse {
-  1: required list<RecommendedUser>                             recommendedUsers         // list of recommended users
+stwuct wecommendusewwesponse {
+  1: w-wequiwed wist<wecommendedusew>                             wecommendedusews         // w-wist o-of wecommended usews
 }
 
 /**
- * The main interface-definition for UserUserGraph.
+ * the main intewface-definition fow usewusewgwaph. (ˆ ﻌ ˆ)♡
  */
-service UserUserGraph {
-  // Given a request for recommendations for a specific user,
-  // return a list of candidate users along with their social proofs
-  RecommendUserResponse recommendUsers (RecommendUserRequest request)
+s-sewvice usewusewgwaph {
+  // given a wequest fow wecommendations fow a specific usew, 😳😳😳
+  // wetuwn a-a wist of candidate usews a-awong with theiw s-sociaw pwoofs
+  w-wecommendusewwesponse wecommendusews (wecommendusewwequest w-wequest)
 }

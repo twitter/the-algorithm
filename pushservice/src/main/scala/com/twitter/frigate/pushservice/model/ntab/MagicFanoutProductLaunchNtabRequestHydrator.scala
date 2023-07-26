@@ -1,97 +1,97 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.twittew.fwigate.pushsewvice.modew.ntab
 
-import com.twitter.frigate.common.base.MagicFanoutProductLaunchCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.notificationservice.thriftscala._
-import com.twitter.util.Future
-import com.twitter.util.Time
+impowt com.twittew.fwigate.common.base.magicfanoutpwoductwaunchcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.notificationsewvice.thwiftscawa._
+i-impowt c-com.twittew.utiw.futuwe
+i-impowt c-com.twittew.utiw.time
 
-trait MagicFanoutProductLaunchNtabRequestHydrator extends NTabRequestHydrator {
-  self: PushCandidate with MagicFanoutProductLaunchCandidate =>
+twait magicfanoutpwoductwaunchntabwequesthydwatow extends nytabwequesthydwatow {
+  sewf: p-pushcandidate with magicfanoutpwoductwaunchcandidate =>
 
-  override val senderIdFut: Future[Long] = Future.value(0L)
+  ovewwide v-vaw sendewidfut: futuwe[wong] = f-futuwe.vawue(0w)
 
-  override lazy val tapThroughFut: Future[String] = Future.value(getProductLaunchTapThrough())
+  ovewwide wazy vaw tapthwoughfut: futuwe[stwing] = f-futuwe.vawue(getpwoductwaunchtapthwough())
 
-  override lazy val displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] = {
-    Future.value(
-      frigateNotification.magicFanoutProductLaunchNotification
-        .flatMap {
-          _.productInfo.flatMap {
+  ovewwide w-wazy vaw dispwaytextentitiesfut: f-futuwe[seq[dispwaytextentity]] = {
+    futuwe.vawue(
+      fwigatenotification.magicfanoutpwoductwaunchnotification
+        .fwatmap {
+          _.pwoductinfo.fwatmap {
             _.body.map { body =>
-              Seq(
-                DisplayTextEntity(name = "body", value = TextValue.Text(body)),
+              seq(
+                dispwaytextentity(name = "body", ʘwʘ v-vawue = textvawue.text(body)), (ˆ ﻌ ˆ)♡
               )
             }
           }
-        }.getOrElse(Nil))
+        }.getowewse(niw))
   }
 
-  override lazy val facepileUsersFut: Future[Seq[Long]] = {
-    Future.value(
-      frigateNotification.magicFanoutProductLaunchNotification
-        .flatMap {
-          _.productInfo.flatMap {
-            _.facepileUsers
+  ovewwide wazy vaw facepiweusewsfut: futuwe[seq[wong]] = {
+    futuwe.vawue(
+      f-fwigatenotification.magicfanoutpwoductwaunchnotification
+        .fwatmap {
+          _.pwoductinfo.fwatmap {
+            _.facepiweusews
           }
-        }.getOrElse(Nil))
+        }.getowewse(niw))
   }
 
-  override val storyContext: Option[StoryContext] = None
+  ovewwide vaw s-stowycontext: o-option[stowycontext] = n-nyone
 
-  override val inlineCard: Option[InlineCard] = None
+  o-ovewwide vaw inwinecawd: option[inwinecawd] = nyone
 
-  override lazy val socialProofDisplayText: Option[DisplayText] = {
-    frigateNotification.magicFanoutProductLaunchNotification.flatMap {
-      _.productInfo.flatMap {
-        _.title.map { title =>
-          DisplayText(values =
-            Seq(DisplayTextEntity(name = "social_context", value = TextValue.Text(title))))
+  o-ovewwide wazy vaw sociawpwoofdispwaytext: option[dispwaytext] = {
+    f-fwigatenotification.magicfanoutpwoductwaunchnotification.fwatmap {
+      _.pwoductinfo.fwatmap {
+        _.titwe.map { titwe =>
+          dispwaytext(vawues =
+            seq(dispwaytextentity(name = "sociaw_context", 😳😳😳 vawue = textvawue.text(titwe))))
         }
       }
     }
   }
 
-  lazy val defaultTapThrough = target.params(PushFeatureSwitchParams.ProductLaunchTapThrough)
+  wazy vaw d-defauwttapthwough = tawget.pawams(pushfeatuweswitchpawams.pwoductwaunchtapthwough)
 
-  private def getProductLaunchTapThrough(): String = {
-    frigateNotification.magicFanoutProductLaunchNotification match {
-      case Some(productLaunchNotif) =>
-        productLaunchNotif.productInfo match {
-          case Some(productInfo) => productInfo.tapThrough.getOrElse(defaultTapThrough)
-          case _ => defaultTapThrough
+  p-pwivate def g-getpwoductwaunchtapthwough(): s-stwing = {
+    fwigatenotification.magicfanoutpwoductwaunchnotification match {
+      case some(pwoductwaunchnotif) =>
+        pwoductwaunchnotif.pwoductinfo match {
+          c-case some(pwoductinfo) => p-pwoductinfo.tapthwough.getowewse(defauwttapthwough)
+          case _ => d-defauwttapthwough
         }
-      case _ => defaultTapThrough
+      c-case _ => defauwttapthwough
     }
   }
 
-  private lazy val productLaunchNtabRequest: Future[Option[CreateGenericNotificationRequest]] = {
-    Future
-      .join(senderIdFut, displayTextEntitiesFut, facepileUsersFut, tapThroughFut)
+  pwivate w-wazy vaw pwoductwaunchntabwequest: futuwe[option[cweategenewicnotificationwequest]] = {
+    f-futuwe
+      .join(sendewidfut, :3 dispwaytextentitiesfut, OwO facepiweusewsfut, (U ﹏ U) t-tapthwoughfut)
       .map {
-        case (senderId, displayTextEntities, facepileUsers, tapThrough) =>
-          Some(
-            CreateGenericNotificationRequest(
-              userId = target.targetId,
-              senderId = senderId,
-              genericType = GenericType.RefreshableNotification,
-              displayText = DisplayText(values = displayTextEntities),
-              facepileUsers = facepileUsers,
-              timestampMillis = Time.now.inMillis,
-              tapThroughAction = Some(TapThroughAction(Some(tapThrough))),
-              impressionId = Some(impressionId),
-              socialProofText = socialProofDisplayText,
-              context = storyContext,
-              inlineCard = inlineCard,
-              refreshableType = refreshableType
+        case (sendewid, >w< dispwaytextentities, (U ﹏ U) facepiweusews, 😳 t-tapthwough) =>
+          some(
+            c-cweategenewicnotificationwequest(
+              u-usewid = tawget.tawgetid,
+              sendewid = sendewid, (ˆ ﻌ ˆ)♡
+              genewictype = genewictype.wefweshabwenotification, 😳😳😳
+              dispwaytext = d-dispwaytext(vawues = d-dispwaytextentities), (U ﹏ U)
+              facepiweusews = f-facepiweusews, (///ˬ///✿)
+              t-timestampmiwwis = t-time.now.inmiwwis, 😳
+              tapthwoughaction = some(tapthwoughaction(some(tapthwough))),
+              impwessionid = s-some(impwessionid), 😳
+              sociawpwooftext = sociawpwoofdispwaytext, σωσ
+              context = stowycontext, rawr x3
+              inwinecawd = inwinecawd, OwO
+              w-wefweshabwetype = wefweshabwetype
             ))
       }
   }
 
-  override lazy val ntabRequest: Future[Option[CreateGenericNotificationRequest]] = {
-    if (target.params(PushFeatureSwitchParams.EnableNTabEntriesForProductLaunchNotifications)) {
-      productLaunchNtabRequest
-    } else Future.None
+  o-ovewwide wazy v-vaw nytabwequest: f-futuwe[option[cweategenewicnotificationwequest]] = {
+    if (tawget.pawams(pushfeatuweswitchpawams.enabwentabentwiesfowpwoductwaunchnotifications)) {
+      p-pwoductwaunchntabwequest
+    } e-ewse f-futuwe.none
   }
 }

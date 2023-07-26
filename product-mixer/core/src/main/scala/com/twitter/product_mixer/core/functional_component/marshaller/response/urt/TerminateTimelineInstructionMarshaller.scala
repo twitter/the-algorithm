@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.BottomTermination
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TerminateTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TopTermination
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TopAndBottomTermination
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.bottomtewmination
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.tewminatetimewineinstwuction
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.toptewmination
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.topandbottomtewmination
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class TerminateTimelineInstructionMarshaller @Inject() () {
+@singweton
+cwass tewminatetimewineinstwuctionmawshawwew @inject() () {
 
-  def apply(instruction: TerminateTimelineInstruction): urt.TerminateTimeline =
-    urt.TerminateTimeline(
-      direction = instruction.terminateTimelineDirection match {
-        case TopTermination => urt.TimelineTerminationDirection.Top
-        case BottomTermination => urt.TimelineTerminationDirection.Bottom
-        case TopAndBottomTermination => urt.TimelineTerminationDirection.TopAndBottom
+  def appwy(instwuction: t-tewminatetimewineinstwuction): uwt.tewminatetimewine =
+    uwt.tewminatetimewine(
+      d-diwection = instwuction.tewminatetimewinediwection m-match {
+        case toptewmination => uwt.timewinetewminationdiwection.top
+        c-case bottomtewmination => uwt.timewinetewminationdiwection.bottom
+        c-case t-topandbottomtewmination => uwt.timewinetewminationdiwection.topandbottom
       }
     )
 }

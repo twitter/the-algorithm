@@ -1,61 +1,61 @@
-package com.twitter.product_mixer.component_library.scorer.tensorbuilder
+package com.twittew.pwoduct_mixew.component_wibwawy.scowew.tensowbuiwdew
 
-import com.twitter.ml.api.thriftscala.FloatTensor
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.ModelFeatureName
-import com.twitter.product_mixer.core.feature.featuremap.featurestorev1.FeatureStoreV1FeatureMap._
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featurestorev1.FeatureStoreV1CandidateFeature
-import com.twitter.product_mixer.core.feature.featurestorev1.FeatureStoreV1QueryFeature
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import inference.GrpcService.ModelInferRequest.InferInputTensor
+impowt c-com.twittew.mw.api.thwiftscawa.fwoattensow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.modewfeatuwename
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwestowev1.featuwestowev1featuwemap._
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1.featuwestowev1candidatefeatuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1.featuwestowev1quewyfeatuwe
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt infewence.gwpcsewvice.modewinfewwequest.infewinputtensow
 
-class QueryInferInputTensorBuilder[-Query <: PipelineQuery, +Value](
-  builder: InferInputTensorBuilder[Value],
-  features: Set[_ <: Feature[Query, _] with ModelFeatureName]) {
-  def apply(query: Query): Seq[InferInputTensor] = {
-    val featureMap = query.features.getOrElse(FeatureMap.empty)
-    features.flatMap { feature =>
-      val queryFeatureValue: Value = feature match {
-        case feature: FeatureStoreV1QueryFeature[Query, _, Value] =>
-          featureMap.getFeatureStoreV1QueryFeature(feature)
-        case feature: FeatureStoreV1CandidateFeature[Query, _, _, Value] =>
-          throw new UnexpectedFeatureTypeException(feature)
-        case feature: FeatureWithDefaultOnFailure[Query, Value] =>
-          featureMap.getTry(feature).toOption.getOrElse(feature.defaultValue)
-        case feature: Feature[Query, Value] =>
-          featureMap.get(feature)
+c-cwass quewyinfewinputtensowbuiwdew[-quewy <: pipewinequewy, (U ﹏ U) +vawue](
+  b-buiwdew: infewinputtensowbuiwdew[vawue], 😳
+  featuwes: set[_ <: featuwe[quewy, (ˆ ﻌ ˆ)♡ _] w-with modewfeatuwename]) {
+  def appwy(quewy: q-quewy): seq[infewinputtensow] = {
+    v-vaw featuwemap = quewy.featuwes.getowewse(featuwemap.empty)
+    featuwes.fwatmap { featuwe =>
+      vaw quewyfeatuwevawue: v-vawue = featuwe match {
+        case featuwe: featuwestowev1quewyfeatuwe[quewy, 😳😳😳 _, vawue] =>
+          featuwemap.getfeatuwestowev1quewyfeatuwe(featuwe)
+        c-case featuwe: featuwestowev1candidatefeatuwe[quewy, (U ﹏ U) _, _, (///ˬ///✿) v-vawue] =>
+          t-thwow nyew u-unexpectedfeatuwetypeexception(featuwe)
+        c-case featuwe: featuwewithdefauwtonfaiwuwe[quewy, 😳 vawue] =>
+          f-featuwemap.gettwy(featuwe).tooption.getowewse(featuwe.defauwtvawue)
+        case featuwe: featuwe[quewy, 😳 v-vawue] =>
+          featuwemap.get(featuwe)
       }
-      builder.apply(feature.featureName, Seq(queryFeatureValue))
-    }.toSeq
+      buiwdew.appwy(featuwe.featuwename, σωσ seq(quewyfeatuwevawue))
+    }.toseq
   }
 }
 
-case class QueryBooleanInferInputTensorBuilder[-Query <: PipelineQuery](
-  features: Set[_ <: Feature[Query, Boolean] with ModelFeatureName])
-    extends QueryInferInputTensorBuilder[Query, Boolean](BooleanInferInputTensorBuilder, features)
+case cwass quewybooweaninfewinputtensowbuiwdew[-quewy <: p-pipewinequewy](
+  featuwes: set[_ <: f-featuwe[quewy, rawr x3 b-boowean] with m-modewfeatuwename])
+    extends quewyinfewinputtensowbuiwdew[quewy, OwO boowean](booweaninfewinputtensowbuiwdew, /(^•ω•^) featuwes)
 
-case class QueryBytesInferInputTensorBuilder[-Query <: PipelineQuery](
-  features: Set[_ <: Feature[Query, String] with ModelFeatureName])
-    extends QueryInferInputTensorBuilder[Query, String](BytesInferInputTensorBuilder, features)
+c-case cwass q-quewybytesinfewinputtensowbuiwdew[-quewy <: pipewinequewy](
+  f-featuwes: set[_ <: f-featuwe[quewy, 😳😳😳 stwing] with m-modewfeatuwename])
+    extends q-quewyinfewinputtensowbuiwdew[quewy, ( ͡o ω ͡o ) stwing](bytesinfewinputtensowbuiwdew, >_< featuwes)
 
-case class QueryFloat32InferInputTensorBuilder[-Query <: PipelineQuery](
-  features: Set[_ <: Feature[Query, _ <: AnyVal] with ModelFeatureName])
-    extends QueryInferInputTensorBuilder[Query, AnyVal](Float32InferInputTensorBuilder, features)
+c-case cwass quewyfwoat32infewinputtensowbuiwdew[-quewy <: pipewinequewy](
+  f-featuwes: set[_ <: featuwe[quewy, >w< _ <: a-anyvaw] w-with modewfeatuwename])
+    extends quewyinfewinputtensowbuiwdew[quewy, anyvaw](fwoat32infewinputtensowbuiwdew, rawr featuwes)
 
-case class QueryFloatTensorInferInputTensorBuilder[-Query <: PipelineQuery](
-  features: Set[_ <: Feature[Query, FloatTensor] with ModelFeatureName])
-    extends QueryInferInputTensorBuilder[Query, FloatTensor](
-      FloatTensorInferInputTensorBuilder,
-      features)
+case cwass quewyfwoattensowinfewinputtensowbuiwdew[-quewy <: pipewinequewy](
+  f-featuwes: s-set[_ <: featuwe[quewy, 😳 fwoattensow] w-with modewfeatuwename])
+    e-extends quewyinfewinputtensowbuiwdew[quewy, >w< f-fwoattensow](
+      fwoattensowinfewinputtensowbuiwdew, (⑅˘꒳˘)
+      featuwes)
 
-case class QueryInt64InferInputTensorBuilder[-Query <: PipelineQuery](
-  features: Set[_ <: Feature[Query, _ <: AnyVal] with ModelFeatureName])
-    extends QueryInferInputTensorBuilder[Query, AnyVal](Int64InferInputTensorBuilder, features)
+case cwass quewyint64infewinputtensowbuiwdew[-quewy <: p-pipewinequewy](
+  featuwes: set[_ <: featuwe[quewy, OwO _ <: anyvaw] with modewfeatuwename])
+    e-extends quewyinfewinputtensowbuiwdew[quewy, a-anyvaw](int64infewinputtensowbuiwdew, (ꈍᴗꈍ) f-featuwes)
 
-case class QuerySparseMapInferInputTensorBuilder[-Query <: PipelineQuery](
-  features: Set[_ <: Feature[Query, Option[Map[Int, Double]]] with ModelFeatureName])
-    extends QueryInferInputTensorBuilder[Query, Option[Map[Int, Double]]](
-      SparseMapInferInputTensorBuilder,
-      features)
+case c-cwass quewyspawsemapinfewinputtensowbuiwdew[-quewy <: pipewinequewy](
+  f-featuwes: s-set[_ <: featuwe[quewy, 😳 o-option[map[int, 😳😳😳 d-doubwe]]] with modewfeatuwename])
+    extends quewyinfewinputtensowbuiwdew[quewy, o-option[map[int, mya d-doubwe]]](
+      s-spawsemapinfewinputtensowbuiwdew, mya
+      f-featuwes)

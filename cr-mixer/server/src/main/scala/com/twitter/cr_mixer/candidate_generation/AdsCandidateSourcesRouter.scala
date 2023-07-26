@@ -1,516 +1,516 @@
- package com.twitter.cr_mixer.candidate_generation
+ package com.twittew.cw_mixew.candidate_genewation
 
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.InitialAdsCandidate
-import com.twitter.cr_mixer.model.ModelConfig
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.model.TweetWithCandidateGenerationInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.param.ConsumersBasedUserAdGraphParams
-import com.twitter.cr_mixer.param.ConsumerBasedWalsParams
-import com.twitter.cr_mixer.param.ConsumerEmbeddingBasedCandidateGenerationParams
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.param.InterestedInParams
-import com.twitter.cr_mixer.param.ProducerBasedCandidateGenerationParams
-import com.twitter.cr_mixer.param.SimClustersANNParams
-import com.twitter.cr_mixer.param.TweetBasedCandidateGenerationParams
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.param.decider.DeciderConstants
-import com.twitter.cr_mixer.similarity_engine.ConsumerBasedWalsSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.ConsumersBasedUserAdGraphSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.FilterUtil
-import com.twitter.cr_mixer.similarity_engine.HnswANNEngineQuery
-import com.twitter.cr_mixer.similarity_engine.HnswANNSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.ProducerBasedUserAdGraphSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.SimClustersANNSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.SimClustersANNSimilarityEngine.Query
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.TweetBasedUserAdGraphSimilarityEngine
-import com.twitter.cr_mixer.thriftscala.LineItemInfo
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Future
+impowt com.twittew.cw_mixew.modew.candidategenewationinfo
+i-impowt c-com.twittew.cw_mixew.modew.initiawadscandidate
+i-impowt com.twittew.cw_mixew.modew.modewconfig
+i-impowt com.twittew.cw_mixew.modew.moduwenames
+impowt c-com.twittew.cw_mixew.modew.simiwawityengineinfo
+i-impowt com.twittew.cw_mixew.modew.souwceinfo
+i-impowt com.twittew.cw_mixew.modew.tweetwithcandidategenewationinfo
+i-impowt com.twittew.cw_mixew.modew.tweetwithscowe
+impowt com.twittew.cw_mixew.pawam.consumewsbasedusewadgwaphpawams
+impowt com.twittew.cw_mixew.pawam.consumewbasedwawspawams
+impowt com.twittew.cw_mixew.pawam.consumewembeddingbasedcandidategenewationpawams
+i-impowt com.twittew.cw_mixew.pawam.gwobawpawams
+impowt com.twittew.cw_mixew.pawam.intewestedinpawams
+impowt c-com.twittew.cw_mixew.pawam.pwoducewbasedcandidategenewationpawams
+impowt com.twittew.cw_mixew.pawam.simcwustewsannpawams
+i-impowt com.twittew.cw_mixew.pawam.tweetbasedcandidategenewationpawams
+impowt com.twittew.cw_mixew.pawam.decidew.cwmixewdecidew
+impowt com.twittew.cw_mixew.pawam.decidew.decidewconstants
+i-impowt com.twittew.cw_mixew.simiwawity_engine.consumewbasedwawssimiwawityengine
+impowt com.twittew.cw_mixew.simiwawity_engine.consumewsbasedusewadgwaphsimiwawityengine
+i-impowt c-com.twittew.cw_mixew.simiwawity_engine.fiwtewutiw
+impowt com.twittew.cw_mixew.simiwawity_engine.hnswannenginequewy
+impowt com.twittew.cw_mixew.simiwawity_engine.hnswannsimiwawityengine
+impowt com.twittew.cw_mixew.simiwawity_engine.pwoducewbasedusewadgwaphsimiwawityengine
+i-impowt com.twittew.cw_mixew.simiwawity_engine.simcwustewsannsimiwawityengine
+impowt com.twittew.cw_mixew.simiwawity_engine.simcwustewsannsimiwawityengine.quewy
+impowt com.twittew.cw_mixew.simiwawity_engine.standawdsimiwawityengine
+impowt com.twittew.cw_mixew.simiwawity_engine.tweetbasedusewadgwaphsimiwawityengine
+i-impowt com.twittew.cw_mixew.thwiftscawa.wineiteminfo
+i-impowt com.twittew.cw_mixew.thwiftscawa.simiwawityenginetype
+impowt c-com.twittew.cw_mixew.thwiftscawa.souwcetype
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.simcwustews_v2.common.modewvewsions
+impowt com.twittew.simcwustews_v2.common.tweetid
+impowt c-com.twittew.simcwustews_v2.common.usewid
+impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.timewines.configapi
+impowt com.twittew.timewines.configapi.pawams
+i-impowt com.twittew.utiw.futuwe
 
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.named
+impowt javax.inject.singweton
 
-@Singleton
-case class AdsCandidateSourcesRouter @Inject() (
-  activePromotedTweetStore: ReadableStore[TweetId, Seq[LineItemInfo]],
-  decider: CrMixerDecider,
-  @Named(ModuleNames.SimClustersANNSimilarityEngine) simClustersANNSimilarityEngine: StandardSimilarityEngine[
-    Query,
-    TweetWithScore
-  ],
-  @Named(ModuleNames.TweetBasedUserAdGraphSimilarityEngine)
-  tweetBasedUserAdGraphSimilarityEngine: StandardSimilarityEngine[
-    TweetBasedUserAdGraphSimilarityEngine.Query,
-    TweetWithScore
-  ],
-  @Named(ModuleNames.ConsumersBasedUserAdGraphSimilarityEngine)
-  consumersBasedUserAdGraphSimilarityEngine: StandardSimilarityEngine[
-    ConsumersBasedUserAdGraphSimilarityEngine.Query,
-    TweetWithScore
-  ],
-  @Named(ModuleNames.ProducerBasedUserAdGraphSimilarityEngine)
-  producerBasedUserAdGraphSimilarityEngine: StandardSimilarityEngine[
-    ProducerBasedUserAdGraphSimilarityEngine.Query,
-    TweetWithScore
-  ],
-  @Named(ModuleNames.TweetBasedTwHINANNSimilarityEngine)
-  tweetBasedTwHINANNSimilarityEngine: HnswANNSimilarityEngine,
-  @Named(ModuleNames.ConsumerEmbeddingBasedTwHINANNSimilarityEngine) consumerTwHINANNSimilarityEngine: HnswANNSimilarityEngine,
-  @Named(ModuleNames.ConsumerBasedWalsSimilarityEngine)
-  consumerBasedWalsSimilarityEngine: StandardSimilarityEngine[
-    ConsumerBasedWalsSimilarityEngine.Query,
-    TweetWithScore
-  ],
-  globalStats: StatsReceiver,
+@singweton
+case c-cwass adscandidatesouwceswoutew @inject() (
+  a-activepwomotedtweetstowe: weadabwestowe[tweetid, /(^•ω•^) s-seq[wineiteminfo]], OwO
+  d-decidew: cwmixewdecidew, ^^
+  @named(moduwenames.simcwustewsannsimiwawityengine) s-simcwustewsannsimiwawityengine: standawdsimiwawityengine[
+    q-quewy, (///ˬ///✿)
+    tweetwithscowe
+  ], (///ˬ///✿)
+  @named(moduwenames.tweetbasedusewadgwaphsimiwawityengine)
+  tweetbasedusewadgwaphsimiwawityengine: standawdsimiwawityengine[
+    t-tweetbasedusewadgwaphsimiwawityengine.quewy, (///ˬ///✿)
+    tweetwithscowe
+  ], ʘwʘ
+  @named(moduwenames.consumewsbasedusewadgwaphsimiwawityengine)
+  c-consumewsbasedusewadgwaphsimiwawityengine: standawdsimiwawityengine[
+    c-consumewsbasedusewadgwaphsimiwawityengine.quewy, ^•ﻌ•^
+    t-tweetwithscowe
+  ], OwO
+  @named(moduwenames.pwoducewbasedusewadgwaphsimiwawityengine)
+  pwoducewbasedusewadgwaphsimiwawityengine: standawdsimiwawityengine[
+    pwoducewbasedusewadgwaphsimiwawityengine.quewy, (U ﹏ U)
+    tweetwithscowe
+  ], (ˆ ﻌ ˆ)♡
+  @named(moduwenames.tweetbasedtwhinannsimiwawityengine)
+  tweetbasedtwhinannsimiwawityengine: hnswannsimiwawityengine, (⑅˘꒳˘)
+  @named(moduwenames.consumewembeddingbasedtwhinannsimiwawityengine) consumewtwhinannsimiwawityengine: h-hnswannsimiwawityengine, (U ﹏ U)
+  @named(moduwenames.consumewbasedwawssimiwawityengine)
+  c-consumewbasedwawssimiwawityengine: standawdsimiwawityengine[
+    c-consumewbasedwawssimiwawityengine.quewy, o.O
+    tweetwithscowe
+  ], mya
+  g-gwobawstats: s-statsweceivew, XD
 ) {
 
-  import AdsCandidateSourcesRouter._
+  impowt adscandidatesouwceswoutew._
 
-  val stats: StatsReceiver = globalStats.scope(this.getClass.getSimpleName)
+  vaw stats: statsweceivew = g-gwobawstats.scope(this.getcwass.getsimpwename)
 
-  def fetchCandidates(
-    requestUserId: UserId,
-    sourceSignals: Set[SourceInfo],
-    realGraphSeeds: Map[UserId, Double],
-    params: configapi.Params
-  ): Future[Seq[Seq[InitialAdsCandidate]]] = {
+  def fetchcandidates(
+    wequestusewid: usewid, òωó
+    souwcesignaws: set[souwceinfo], (˘ω˘)
+    w-weawgwaphseeds: map[usewid, :3 doubwe],
+    p-pawams: c-configapi.pawams
+  ): f-futuwe[seq[seq[initiawadscandidate]]] = {
 
-    val simClustersANN1ConfigId = params(SimClustersANNParams.SimClustersANN1ConfigId)
+    vaw simcwustewsann1configid = p-pawams(simcwustewsannpawams.simcwustewsann1configid)
 
-    val tweetBasedSANNMinScore = params(
-      TweetBasedCandidateGenerationParams.SimClustersMinScoreParam)
-    val tweetBasedSANN1Candidates =
-      if (params(TweetBasedCandidateGenerationParams.EnableSimClustersANN1Param)) {
-        Future.collect(
-          CandidateSourcesRouter.getTweetBasedSourceInfo(sourceSignals).toSeq.map { sourceInfo =>
-            getSimClustersANNCandidates(
-              requestUserId,
-              Some(sourceInfo),
-              params,
-              simClustersANN1ConfigId,
-              tweetBasedSANNMinScore)
+    v-vaw tweetbasedsannminscowe = p-pawams(
+      t-tweetbasedcandidategenewationpawams.simcwustewsminscowepawam)
+    vaw tweetbasedsann1candidates =
+      i-if (pawams(tweetbasedcandidategenewationpawams.enabwesimcwustewsann1pawam)) {
+        f-futuwe.cowwect(
+          c-candidatesouwceswoutew.gettweetbasedsouwceinfo(souwcesignaws).toseq.map { s-souwceinfo =>
+            g-getsimcwustewsanncandidates(
+              wequestusewid,
+              some(souwceinfo),
+              pawams, OwO
+              s-simcwustewsann1configid, mya
+              tweetbasedsannminscowe)
           })
-      } else Future.value(Seq.empty)
+      } ewse futuwe.vawue(seq.empty)
 
-    val simClustersANN2ConfigId = params(SimClustersANNParams.SimClustersANN2ConfigId)
-    val tweetBasedSANN2Candidates =
-      if (params(TweetBasedCandidateGenerationParams.EnableSimClustersANN2Param)) {
-        Future.collect(
-          CandidateSourcesRouter.getTweetBasedSourceInfo(sourceSignals).toSeq.map { sourceInfo =>
-            getSimClustersANNCandidates(
-              requestUserId,
-              Some(sourceInfo),
-              params,
-              simClustersANN2ConfigId,
-              tweetBasedSANNMinScore)
+    vaw simcwustewsann2configid = pawams(simcwustewsannpawams.simcwustewsann2configid)
+    v-vaw tweetbasedsann2candidates =
+      if (pawams(tweetbasedcandidategenewationpawams.enabwesimcwustewsann2pawam)) {
+        futuwe.cowwect(
+          candidatesouwceswoutew.gettweetbasedsouwceinfo(souwcesignaws).toseq.map { souwceinfo =>
+            g-getsimcwustewsanncandidates(
+              w-wequestusewid, (˘ω˘)
+              s-some(souwceinfo), o.O
+              pawams, (✿oωo)
+              s-simcwustewsann2configid, (ˆ ﻌ ˆ)♡
+              tweetbasedsannminscowe)
           })
-      } else Future.value(Seq.empty)
+      } ewse f-futuwe.vawue(seq.empty)
 
-    val tweetBasedUagCandidates =
-      if (params(TweetBasedCandidateGenerationParams.EnableUAGParam)) {
-        Future.collect(
-          CandidateSourcesRouter.getTweetBasedSourceInfo(sourceSignals).toSeq.map { sourceInfo =>
-            getTweetBasedUserAdGraphCandidates(Some(sourceInfo), params)
+    v-vaw tweetbaseduagcandidates =
+      if (pawams(tweetbasedcandidategenewationpawams.enabweuagpawam)) {
+        futuwe.cowwect(
+          candidatesouwceswoutew.gettweetbasedsouwceinfo(souwcesignaws).toseq.map { souwceinfo =>
+            gettweetbasedusewadgwaphcandidates(some(souwceinfo), pawams)
           })
-      } else Future.value(Seq.empty)
+      } ewse f-futuwe.vawue(seq.empty)
 
-    val realGraphInNetworkBasedUagCandidates =
-      if (params(ConsumersBasedUserAdGraphParams.EnableSourceParam)) {
-        getRealGraphConsumersBasedUserAdGraphCandidates(realGraphSeeds, params).map(Seq(_))
-      } else Future.value(Seq.empty)
+    vaw weawgwaphinnetwowkbaseduagcandidates =
+      i-if (pawams(consumewsbasedusewadgwaphpawams.enabwesouwcepawam)) {
+        getweawgwaphconsumewsbasedusewadgwaphcandidates(weawgwaphseeds, ^^;; p-pawams).map(seq(_))
+      } e-ewse futuwe.vawue(seq.empty)
 
-    val producerBasedUagCandidates =
-      if (params(ProducerBasedCandidateGenerationParams.EnableUAGParam)) {
-        Future.collect(
-          CandidateSourcesRouter.getProducerBasedSourceInfo(sourceSignals).toSeq.map { sourceInfo =>
-            getProducerBasedUserAdGraphCandidates(Some(sourceInfo), params)
+    vaw pwoducewbaseduagcandidates =
+      if (pawams(pwoducewbasedcandidategenewationpawams.enabweuagpawam)) {
+        f-futuwe.cowwect(
+          c-candidatesouwceswoutew.getpwoducewbasedsouwceinfo(souwcesignaws).toseq.map { souwceinfo =>
+            g-getpwoducewbasedusewadgwaphcandidates(some(souwceinfo), OwO p-pawams)
           })
-      } else Future.value(Seq.empty)
+      } ewse futuwe.vawue(seq.empty)
 
-    val tweetBasedTwhinAdsCandidates =
-      if (params(TweetBasedCandidateGenerationParams.EnableTwHINParam)) {
-        Future.collect(
-          CandidateSourcesRouter.getTweetBasedSourceInfo(sourceSignals).toSeq.map { sourceInfo =>
-            getTwHINAdsCandidates(
-              tweetBasedTwHINANNSimilarityEngine,
-              SimilarityEngineType.TweetBasedTwHINANN,
-              requestUserId,
-              Some(sourceInfo),
-              ModelConfig.DebuggerDemo)
+    vaw tweetbasedtwhinadscandidates =
+      if (pawams(tweetbasedcandidategenewationpawams.enabwetwhinpawam)) {
+        futuwe.cowwect(
+          c-candidatesouwceswoutew.gettweetbasedsouwceinfo(souwcesignaws).toseq.map { s-souwceinfo =>
+            g-gettwhinadscandidates(
+              tweetbasedtwhinannsimiwawityengine, 🥺
+              simiwawityenginetype.tweetbasedtwhinann, mya
+              w-wequestusewid, 😳
+              s-some(souwceinfo), òωó
+              modewconfig.debuggewdemo)
           })
-      } else Future.value(Seq.empty)
+      } e-ewse futuwe.vawue(seq.empty)
 
-    val producerBasedSANNMinScore = params(
-      ProducerBasedCandidateGenerationParams.SimClustersMinScoreParam)
-    val producerBasedSANN1Candidates =
-      if (params(ProducerBasedCandidateGenerationParams.EnableSimClustersANN1Param)) {
-        Future.collect(
-          CandidateSourcesRouter.getProducerBasedSourceInfo(sourceSignals).toSeq.map { sourceInfo =>
-            getSimClustersANNCandidates(
-              requestUserId,
-              Some(sourceInfo),
-              params,
-              simClustersANN1ConfigId,
-              producerBasedSANNMinScore)
+    vaw pwoducewbasedsannminscowe = pawams(
+      pwoducewbasedcandidategenewationpawams.simcwustewsminscowepawam)
+    vaw pwoducewbasedsann1candidates =
+      i-if (pawams(pwoducewbasedcandidategenewationpawams.enabwesimcwustewsann1pawam)) {
+        f-futuwe.cowwect(
+          candidatesouwceswoutew.getpwoducewbasedsouwceinfo(souwcesignaws).toseq.map { souwceinfo =>
+            g-getsimcwustewsanncandidates(
+              w-wequestusewid, /(^•ω•^)
+              some(souwceinfo), -.-
+              pawams, òωó
+              simcwustewsann1configid, /(^•ω•^)
+              pwoducewbasedsannminscowe)
           })
-      } else Future.value(Seq.empty)
-    val producerBasedSANN2Candidates =
-      if (params(ProducerBasedCandidateGenerationParams.EnableSimClustersANN2Param)) {
-        Future.collect(
-          CandidateSourcesRouter.getProducerBasedSourceInfo(sourceSignals).toSeq.map { sourceInfo =>
-            getSimClustersANNCandidates(
-              requestUserId,
-              Some(sourceInfo),
-              params,
-              simClustersANN2ConfigId,
-              producerBasedSANNMinScore)
+      } ewse f-futuwe.vawue(seq.empty)
+    vaw pwoducewbasedsann2candidates =
+      if (pawams(pwoducewbasedcandidategenewationpawams.enabwesimcwustewsann2pawam)) {
+        futuwe.cowwect(
+          candidatesouwceswoutew.getpwoducewbasedsouwceinfo(souwcesignaws).toseq.map { s-souwceinfo =>
+            getsimcwustewsanncandidates(
+              wequestusewid, /(^•ω•^)
+              s-some(souwceinfo), 😳
+              p-pawams, :3
+              simcwustewsann2configid, (U ᵕ U❁)
+              pwoducewbasedsannminscowe)
           })
-      } else Future.value(Seq.empty)
+      } ewse futuwe.vawue(seq.empty)
 
-    val interestedInMinScore = params(InterestedInParams.MinScoreParam)
-    val interestedInSANN1Candidates = if (params(InterestedInParams.EnableSimClustersANN1Param)) {
-      getSimClustersANNCandidates(
-        requestUserId,
-        None,
-        params,
-        simClustersANN1ConfigId,
-        interestedInMinScore).map(Seq(_))
-    } else Future.value(Seq.empty)
+    v-vaw intewestedinminscowe = p-pawams(intewestedinpawams.minscowepawam)
+    vaw intewestedinsann1candidates = if (pawams(intewestedinpawams.enabwesimcwustewsann1pawam)) {
+      getsimcwustewsanncandidates(
+        w-wequestusewid, ʘwʘ
+        nyone, o.O
+        p-pawams, ʘwʘ
+        simcwustewsann1configid, ^^
+        intewestedinminscowe).map(seq(_))
+    } ewse f-futuwe.vawue(seq.empty)
 
-    val interestedInSANN2Candidates = if (params(InterestedInParams.EnableSimClustersANN2Param)) {
-      getSimClustersANNCandidates(
-        requestUserId,
-        None,
-        params,
-        simClustersANN2ConfigId,
-        interestedInMinScore).map(Seq(_))
-    } else Future.value(Seq.empty)
+    vaw i-intewestedinsann2candidates = if (pawams(intewestedinpawams.enabwesimcwustewsann2pawam)) {
+      g-getsimcwustewsanncandidates(
+        wequestusewid, ^•ﻌ•^
+        n-nyone, mya
+        pawams, UwU
+        s-simcwustewsann2configid, >_<
+        i-intewestedinminscowe).map(seq(_))
+    } e-ewse futuwe.vawue(seq.empty)
 
-    val consumerTwHINAdsCandidates =
-      if (params(ConsumerEmbeddingBasedCandidateGenerationParams.EnableTwHINParam)) {
-        getTwHINAdsCandidates(
-          consumerTwHINANNSimilarityEngine,
-          SimilarityEngineType.ConsumerEmbeddingBasedTwHINANN,
-          requestUserId,
-          None,
-          ModelConfig.DebuggerDemo).map(Seq(_))
-      } else Future.value(Seq.empty)
+    vaw consumewtwhinadscandidates =
+      if (pawams(consumewembeddingbasedcandidategenewationpawams.enabwetwhinpawam)) {
+        g-gettwhinadscandidates(
+          c-consumewtwhinannsimiwawityengine, /(^•ω•^)
+          simiwawityenginetype.consumewembeddingbasedtwhinann, òωó
+          wequestusewid, σωσ
+          n-nyone, ( ͡o ω ͡o )
+          m-modewconfig.debuggewdemo).map(seq(_))
+      } e-ewse futuwe.vawue(seq.empty)
 
-    val consumerBasedWalsCandidates =
-      if (params(
-          ConsumerBasedWalsParams.EnableSourceParam
+    vaw c-consumewbasedwawscandidates =
+      if (pawams(
+          c-consumewbasedwawspawams.enabwesouwcepawam
         )) {
-        getConsumerBasedWalsCandidates(sourceSignals, params)
+        g-getconsumewbasedwawscandidates(souwcesignaws, nyaa~~ pawams)
       }.map {
-        Seq(_)
+        seq(_)
       }
-      else Future.value(Seq.empty)
+      ewse f-futuwe.vawue(seq.empty)
 
-    Future
-      .collect(Seq(
-        tweetBasedSANN1Candidates,
-        tweetBasedSANN2Candidates,
-        tweetBasedUagCandidates,
-        tweetBasedTwhinAdsCandidates,
-        producerBasedUagCandidates,
-        producerBasedSANN1Candidates,
-        producerBasedSANN2Candidates,
-        realGraphInNetworkBasedUagCandidates,
-        interestedInSANN1Candidates,
-        interestedInSANN2Candidates,
-        consumerTwHINAdsCandidates,
-        consumerBasedWalsCandidates,
-      )).map(_.flatten).map { tweetsWithCGInfoSeq =>
-        Future.collect(
-          tweetsWithCGInfoSeq.map(candidates => convertToInitialCandidates(candidates, stats)))
-      }.flatten.map { candidatesLists =>
-        val result = candidatesLists.filter(_.nonEmpty)
-        stats.stat("numOfSequences").add(result.size)
-        stats.stat("flattenCandidatesWithDup").add(result.flatten.size)
-        result
+    f-futuwe
+      .cowwect(seq(
+        t-tweetbasedsann1candidates, :3
+        t-tweetbasedsann2candidates, UwU
+        tweetbaseduagcandidates, o.O
+        t-tweetbasedtwhinadscandidates, (ˆ ﻌ ˆ)♡
+        pwoducewbaseduagcandidates, ^^;;
+        pwoducewbasedsann1candidates, ʘwʘ
+        pwoducewbasedsann2candidates, σωσ
+        weawgwaphinnetwowkbaseduagcandidates, ^^;;
+        intewestedinsann1candidates, ʘwʘ
+        i-intewestedinsann2candidates, ^^
+        consumewtwhinadscandidates, nyaa~~
+        c-consumewbasedwawscandidates, (///ˬ///✿)
+      )).map(_.fwatten).map { tweetswithcginfoseq =>
+        f-futuwe.cowwect(
+          tweetswithcginfoseq.map(candidates => c-convewttoinitiawcandidates(candidates, XD stats)))
+      }.fwatten.map { c-candidateswists =>
+        v-vaw wesuwt = c-candidateswists.fiwtew(_.nonempty)
+        s-stats.stat("numofsequences").add(wesuwt.size)
+        s-stats.stat("fwattencandidateswithdup").add(wesuwt.fwatten.size)
+        wesuwt
       }
   }
 
-  private[candidate_generation] def convertToInitialCandidates(
-    candidates: Seq[TweetWithCandidateGenerationInfo],
-    stats: StatsReceiver
-  ): Future[Seq[InitialAdsCandidate]] = {
-    val tweetIds = candidates.map(_.tweetId).toSet
-    stats.stat("initialCandidateSizeBeforeLineItemFilter").add(tweetIds.size)
-    Future.collect(activePromotedTweetStore.multiGet(tweetIds)).map { lineItemInfos =>
+  pwivate[candidate_genewation] def convewttoinitiawcandidates(
+    candidates: seq[tweetwithcandidategenewationinfo], :3
+    stats: s-statsweceivew
+  ): f-futuwe[seq[initiawadscandidate]] = {
+    v-vaw tweetids = candidates.map(_.tweetid).toset
+    stats.stat("initiawcandidatesizebefowewineitemfiwtew").add(tweetids.size)
+    f-futuwe.cowwect(activepwomotedtweetstowe.muwtiget(tweetids)).map { wineiteminfos =>
       /** *
-       * If lineItemInfo does not exist, we will filter out the promoted tweet as it cannot be targeted and ranked in admixer
+       * if wineiteminfo does nyot exist, òωó we wiww fiwtew o-out the pwomoted t-tweet as it cannot be tawgeted a-and wanked in admixew
        */
-      val filteredCandidates = candidates.collect {
-        case candidate if lineItemInfos.getOrElse(candidate.tweetId, None).isDefined =>
-          val lineItemInfo = lineItemInfos(candidate.tweetId)
-            .getOrElse(throw new IllegalStateException("Check previous line's condition"))
+      vaw fiwtewedcandidates = c-candidates.cowwect {
+        c-case candidate if wineiteminfos.getowewse(candidate.tweetid, ^^ n-nyone).isdefined =>
+          v-vaw wineiteminfo = wineiteminfos(candidate.tweetid)
+            .getowewse(thwow nyew iwwegawstateexception("check pwevious wine's condition"))
 
-          InitialAdsCandidate(
-            tweetId = candidate.tweetId,
-            lineItemInfo = lineItemInfo,
-            candidate.candidateGenerationInfo
+          i-initiawadscandidate(
+            t-tweetid = c-candidate.tweetid, ^•ﻌ•^
+            w-wineiteminfo = w-wineiteminfo, σωσ
+            candidate.candidategenewationinfo
           )
       }
-      stats.stat("initialCandidateSizeAfterLineItemFilter").add(filteredCandidates.size)
-      filteredCandidates
+      s-stats.stat("initiawcandidatesizeaftewwineitemfiwtew").add(fiwtewedcandidates.size)
+      fiwtewedcandidates
     }
   }
 
-  private[candidate_generation] def getSimClustersANNCandidates(
-    requestUserId: UserId,
-    sourceInfo: Option[SourceInfo],
-    params: configapi.Params,
-    configId: String,
-    minScore: Double
+  pwivate[candidate_genewation] d-def getsimcwustewsanncandidates(
+    w-wequestusewid: u-usewid, (ˆ ﻌ ˆ)♡
+    souwceinfo: option[souwceinfo], nyaa~~
+    p-pawams: configapi.pawams, ʘwʘ
+    configid: stwing, ^•ﻌ•^
+    minscowe: doubwe
   ) = {
 
-    val simClustersModelVersion =
-      ModelVersions.Enum.enumToSimClustersModelVersionMap(params(GlobalParams.ModelVersionParam))
+    v-vaw simcwustewsmodewvewsion =
+      modewvewsions.enum.enumtosimcwustewsmodewvewsionmap(pawams(gwobawpawams.modewvewsionpawam))
 
-    val embeddingType =
-      if (sourceInfo.isEmpty) {
-        params(InterestedInParams.InterestedInEmbeddingIdParam).embeddingType
-      } else getSimClustersANNEmbeddingType(sourceInfo.get)
-    val query = SimClustersANNSimilarityEngine.fromParams(
-      if (sourceInfo.isEmpty) InternalId.UserId(requestUserId) else sourceInfo.get.internalId,
-      embeddingType,
-      simClustersModelVersion,
-      configId,
-      params
+    v-vaw embeddingtype =
+      i-if (souwceinfo.isempty) {
+        pawams(intewestedinpawams.intewestedinembeddingidpawam).embeddingtype
+      } e-ewse getsimcwustewsannembeddingtype(souwceinfo.get)
+    vaw quewy = simcwustewsannsimiwawityengine.fwompawams(
+      i-if (souwceinfo.isempty) intewnawid.usewid(wequestusewid) e-ewse souwceinfo.get.intewnawid, rawr x3
+      e-embeddingtype, 🥺
+      simcwustewsmodewvewsion, ʘwʘ
+      configid, (˘ω˘)
+      pawams
     )
 
-    // dark traffic to simclusters-ann-2
-    if (decider.isAvailable(DeciderConstants.enableSimClustersANN2DarkTrafficDeciderKey)) {
-      val simClustersANN2ConfigId = params(SimClustersANNParams.SimClustersANN2ConfigId)
-      val sann2Query = SimClustersANNSimilarityEngine.fromParams(
-        if (sourceInfo.isEmpty) InternalId.UserId(requestUserId) else sourceInfo.get.internalId,
-        embeddingType,
-        simClustersModelVersion,
-        simClustersANN2ConfigId,
-        params
+    // dawk t-twaffic to simcwustews-ann-2
+    if (decidew.isavaiwabwe(decidewconstants.enabwesimcwustewsann2dawktwafficdecidewkey)) {
+      vaw simcwustewsann2configid = p-pawams(simcwustewsannpawams.simcwustewsann2configid)
+      v-vaw sann2quewy = simcwustewsannsimiwawityengine.fwompawams(
+        i-if (souwceinfo.isempty) intewnawid.usewid(wequestusewid) e-ewse souwceinfo.get.intewnawid, o.O
+        e-embeddingtype,
+        simcwustewsmodewvewsion, σωσ
+        simcwustewsann2configid, (ꈍᴗꈍ)
+        p-pawams
       )
-      simClustersANNSimilarityEngine
-        .getCandidates(sann2Query)
+      simcwustewsannsimiwawityengine
+        .getcandidates(sann2quewy)
     }
 
-    simClustersANNSimilarityEngine
-      .getCandidates(query).map(_.getOrElse(Seq.empty)).map(_.filter(_.score > minScore).map {
-        tweetWithScore =>
-          val similarityEngineInfo = SimClustersANNSimilarityEngine
-            .toSimilarityEngineInfo(query, tweetWithScore.score)
-          TweetWithCandidateGenerationInfo(
-            tweetWithScore.tweetId,
-            CandidateGenerationInfo(
-              sourceInfo,
-              similarityEngineInfo,
-              Seq(similarityEngineInfo)
+    simcwustewsannsimiwawityengine
+      .getcandidates(quewy).map(_.getowewse(seq.empty)).map(_.fiwtew(_.scowe > minscowe).map {
+        t-tweetwithscowe =>
+          v-vaw simiwawityengineinfo = s-simcwustewsannsimiwawityengine
+            .tosimiwawityengineinfo(quewy, (ˆ ﻌ ˆ)♡ tweetwithscowe.scowe)
+          t-tweetwithcandidategenewationinfo(
+            t-tweetwithscowe.tweetid, o.O
+            c-candidategenewationinfo(
+              souwceinfo, :3
+              simiwawityengineinfo, -.-
+              seq(simiwawityengineinfo)
             ))
       })
   }
 
-  private[candidate_generation] def getProducerBasedUserAdGraphCandidates(
-    sourceInfo: Option[SourceInfo],
-    params: configapi.Params
+  pwivate[candidate_genewation] def getpwoducewbasedusewadgwaphcandidates(
+    souwceinfo: option[souwceinfo], ( ͡o ω ͡o )
+    pawams: configapi.pawams
   ) = {
 
-    val query = ProducerBasedUserAdGraphSimilarityEngine.fromParams(
-      sourceInfo.get.internalId,
-      params
+    vaw quewy = pwoducewbasedusewadgwaphsimiwawityengine.fwompawams(
+      souwceinfo.get.intewnawid, /(^•ω•^)
+      pawams
     )
-    producerBasedUserAdGraphSimilarityEngine
-      .getCandidates(query).map(_.getOrElse(Seq.empty)).map(_.map { tweetWithScore =>
-        val similarityEngineInfo = ProducerBasedUserAdGraphSimilarityEngine
-          .toSimilarityEngineInfo(tweetWithScore.score)
-        TweetWithCandidateGenerationInfo(
-          tweetWithScore.tweetId,
-          CandidateGenerationInfo(
-            sourceInfo,
-            similarityEngineInfo,
-            Seq(similarityEngineInfo)
+    pwoducewbasedusewadgwaphsimiwawityengine
+      .getcandidates(quewy).map(_.getowewse(seq.empty)).map(_.map { t-tweetwithscowe =>
+        v-vaw simiwawityengineinfo = pwoducewbasedusewadgwaphsimiwawityengine
+          .tosimiwawityengineinfo(tweetwithscowe.scowe)
+        tweetwithcandidategenewationinfo(
+          t-tweetwithscowe.tweetid, (⑅˘꒳˘)
+          c-candidategenewationinfo(
+            s-souwceinfo, òωó
+            simiwawityengineinfo, 🥺
+            s-seq(simiwawityengineinfo)
           ))
       })
   }
 
-  private[candidate_generation] def getTweetBasedUserAdGraphCandidates(
-    sourceInfo: Option[SourceInfo],
-    params: configapi.Params
+  pwivate[candidate_genewation] d-def gettweetbasedusewadgwaphcandidates(
+    s-souwceinfo: option[souwceinfo], (ˆ ﻌ ˆ)♡
+    p-pawams: configapi.pawams
   ) = {
 
-    val query = TweetBasedUserAdGraphSimilarityEngine.fromParams(
-      sourceInfo.get.internalId,
-      params
+    vaw quewy = t-tweetbasedusewadgwaphsimiwawityengine.fwompawams(
+      s-souwceinfo.get.intewnawid, -.-
+      pawams
     )
-    tweetBasedUserAdGraphSimilarityEngine
-      .getCandidates(query).map(_.getOrElse(Seq.empty)).map(_.map { tweetWithScore =>
-        val similarityEngineInfo = TweetBasedUserAdGraphSimilarityEngine
-          .toSimilarityEngineInfo(tweetWithScore.score)
-        TweetWithCandidateGenerationInfo(
-          tweetWithScore.tweetId,
-          CandidateGenerationInfo(
-            sourceInfo,
-            similarityEngineInfo,
-            Seq(similarityEngineInfo)
+    tweetbasedusewadgwaphsimiwawityengine
+      .getcandidates(quewy).map(_.getowewse(seq.empty)).map(_.map { t-tweetwithscowe =>
+        v-vaw simiwawityengineinfo = t-tweetbasedusewadgwaphsimiwawityengine
+          .tosimiwawityengineinfo(tweetwithscowe.scowe)
+        t-tweetwithcandidategenewationinfo(
+          t-tweetwithscowe.tweetid, σωσ
+          candidategenewationinfo(
+            s-souwceinfo,
+            s-simiwawityengineinfo, >_<
+            s-seq(simiwawityengineinfo)
           ))
       })
   }
 
-  private[candidate_generation] def getRealGraphConsumersBasedUserAdGraphCandidates(
-    realGraphSeeds: Map[UserId, Double],
-    params: configapi.Params
+  p-pwivate[candidate_genewation] def getweawgwaphconsumewsbasedusewadgwaphcandidates(
+    w-weawgwaphseeds: m-map[usewid, :3 d-doubwe],
+    pawams: configapi.pawams
   ) = {
 
-    val query = ConsumersBasedUserAdGraphSimilarityEngine
-      .fromParams(realGraphSeeds, params)
+    v-vaw quewy = consumewsbasedusewadgwaphsimiwawityengine
+      .fwompawams(weawgwaphseeds, OwO pawams)
 
-    // The internalId is a placeholder value. We do not plan to store the full seedUserId set.
-    val sourceInfo = SourceInfo(
-      sourceType = SourceType.RealGraphIn,
-      internalId = InternalId.UserId(0L),
-      sourceEventTime = None
+    // t-the intewnawid is a pwacehowdew v-vawue. rawr we do n-nyot pwan to stowe t-the fuww seedusewid set. (///ˬ///✿)
+    v-vaw souwceinfo = souwceinfo(
+      s-souwcetype = souwcetype.weawgwaphin, ^^
+      i-intewnawid = intewnawid.usewid(0w), XD
+      s-souwceeventtime = nyone
     )
-    consumersBasedUserAdGraphSimilarityEngine
-      .getCandidates(query).map(_.getOrElse(Seq.empty)).map(_.map { tweetWithScore =>
-        val similarityEngineInfo = ConsumersBasedUserAdGraphSimilarityEngine
-          .toSimilarityEngineInfo(tweetWithScore.score)
-        TweetWithCandidateGenerationInfo(
-          tweetWithScore.tweetId,
-          CandidateGenerationInfo(
-            Some(sourceInfo),
-            similarityEngineInfo,
-            Seq.empty // Atomic Similarity Engine. Hence it has no contributing SEs
+    consumewsbasedusewadgwaphsimiwawityengine
+      .getcandidates(quewy).map(_.getowewse(seq.empty)).map(_.map { tweetwithscowe =>
+        vaw simiwawityengineinfo = c-consumewsbasedusewadgwaphsimiwawityengine
+          .tosimiwawityengineinfo(tweetwithscowe.scowe)
+        tweetwithcandidategenewationinfo(
+          t-tweetwithscowe.tweetid, UwU
+          c-candidategenewationinfo(
+            some(souwceinfo),
+            simiwawityengineinfo, o.O
+            seq.empty // a-atomic simiwawity engine. 😳 h-hence it has nyo c-contwibuting ses
           )
         )
       })
   }
 
-  private[candidate_generation] def getTwHINAdsCandidates(
-    similarityEngine: HnswANNSimilarityEngine,
-    similarityEngineType: SimilarityEngineType,
-    requestUserId: UserId,
-    sourceInfo: Option[SourceInfo], // if none, then it's consumer-based similarity engine
-    model: String
-  ): Future[Seq[TweetWithCandidateGenerationInfo]] = {
-    val internalId =
-      if (sourceInfo.nonEmpty) sourceInfo.get.internalId else InternalId.UserId(requestUserId)
-    similarityEngine
-      .getCandidates(buildHnswANNQuery(internalId, model)).map(_.getOrElse(Seq.empty)).map(_.map {
-        tweetWithScore =>
-          val similarityEngineInfo = SimilarityEngineInfo(
-            similarityEngineType = similarityEngineType,
-            modelId = Some(model),
-            score = Some(tweetWithScore.score))
-          TweetWithCandidateGenerationInfo(
-            tweetWithScore.tweetId,
-            CandidateGenerationInfo(
-              None,
-              similarityEngineInfo,
-              Seq(similarityEngineInfo)
+  p-pwivate[candidate_genewation] def gettwhinadscandidates(
+    simiwawityengine: h-hnswannsimiwawityengine, (˘ω˘)
+    s-simiwawityenginetype: simiwawityenginetype, 🥺
+    w-wequestusewid: usewid, ^^
+    souwceinfo: option[souwceinfo], >w< // i-if nyone, ^^;; then it's consumew-based s-simiwawity e-engine
+    modew: s-stwing
+  ): futuwe[seq[tweetwithcandidategenewationinfo]] = {
+    vaw intewnawid =
+      i-if (souwceinfo.nonempty) s-souwceinfo.get.intewnawid ewse i-intewnawid.usewid(wequestusewid)
+    s-simiwawityengine
+      .getcandidates(buiwdhnswannquewy(intewnawid, (˘ω˘) modew)).map(_.getowewse(seq.empty)).map(_.map {
+        t-tweetwithscowe =>
+          v-vaw simiwawityengineinfo = s-simiwawityengineinfo(
+            s-simiwawityenginetype = s-simiwawityenginetype, OwO
+            m-modewid = s-some(modew), (ꈍᴗꈍ)
+            s-scowe = some(tweetwithscowe.scowe))
+          t-tweetwithcandidategenewationinfo(
+            tweetwithscowe.tweetid, òωó
+            c-candidategenewationinfo(
+              nyone, ʘwʘ
+              s-simiwawityengineinfo, ʘwʘ
+              s-seq(simiwawityengineinfo)
             ))
       })
   }
 
-  private[candidate_generation] def getConsumerBasedWalsCandidates(
-    sourceSignals: Set[SourceInfo],
-    params: configapi.Params
-  ): Future[Seq[TweetWithCandidateGenerationInfo]] = {
-    // Fetch source signals and filter them based on age.
-    val signals = FilterUtil.tweetSourceAgeFilter(
-      getConsumerBasedWalsSourceInfo(sourceSignals).toSeq,
-      params(ConsumerBasedWalsParams.MaxTweetSignalAgeHoursParam))
+  p-pwivate[candidate_genewation] def getconsumewbasedwawscandidates(
+    souwcesignaws: set[souwceinfo], nyaa~~
+    p-pawams: c-configapi.pawams
+  ): f-futuwe[seq[tweetwithcandidategenewationinfo]] = {
+    // fetch souwce signaws and fiwtew them based on a-age. UwU
+    vaw signaws = f-fiwtewutiw.tweetsouwceagefiwtew(
+      getconsumewbasedwawssouwceinfo(souwcesignaws).toseq, (⑅˘꒳˘)
+      p-pawams(consumewbasedwawspawams.maxtweetsignawagehouwspawam))
 
-    val candidatesOptFut = consumerBasedWalsSimilarityEngine.getCandidates(
-      ConsumerBasedWalsSimilarityEngine.fromParams(signals, params)
+    v-vaw candidatesoptfut = consumewbasedwawssimiwawityengine.getcandidates(
+      consumewbasedwawssimiwawityengine.fwompawams(signaws, (˘ω˘) p-pawams)
     )
-    val tweetsWithCandidateGenerationInfoOptFut = candidatesOptFut.map {
-      _.map { tweetsWithScores =>
-        val sortedCandidates = tweetsWithScores.sortBy(-_.score)
-        val filteredCandidates =
-          FilterUtil.tweetAgeFilter(sortedCandidates, params(GlobalParams.MaxTweetAgeHoursParam))
-        consumerBasedWalsSimilarityEngine.getScopedStats
-          .stat("filteredCandidates_size").add(filteredCandidates.size)
+    v-vaw tweetswithcandidategenewationinfooptfut = c-candidatesoptfut.map {
+      _.map { t-tweetswithscowes =>
+        vaw sowtedcandidates = tweetswithscowes.sowtby(-_.scowe)
+        v-vaw fiwtewedcandidates =
+          f-fiwtewutiw.tweetagefiwtew(sowtedcandidates, :3 pawams(gwobawpawams.maxtweetagehouwspawam))
+        consumewbasedwawssimiwawityengine.getscopedstats
+          .stat("fiwtewedcandidates_size").add(fiwtewedcandidates.size)
 
-        val tweetsWithCandidateGenerationInfo = filteredCandidates.map { tweetWithScore =>
+        v-vaw tweetswithcandidategenewationinfo = fiwtewedcandidates.map { tweetwithscowe =>
           {
-            val similarityEngineInfo =
-              ConsumerBasedWalsSimilarityEngine.toSimilarityEngineInfo(tweetWithScore.score)
-            TweetWithCandidateGenerationInfo(
-              tweetWithScore.tweetId,
-              CandidateGenerationInfo(
-                None,
-                similarityEngineInfo,
-                Seq.empty // Atomic Similarity Engine. Hence it has no contributing SEs
+            v-vaw simiwawityengineinfo =
+              consumewbasedwawssimiwawityengine.tosimiwawityengineinfo(tweetwithscowe.scowe)
+            t-tweetwithcandidategenewationinfo(
+              t-tweetwithscowe.tweetid, (˘ω˘)
+              candidategenewationinfo(
+                n-nyone, nyaa~~
+                s-simiwawityengineinfo, (U ﹏ U)
+                seq.empty // a-atomic simiwawity engine. nyaa~~ hence i-it has nyo contwibuting s-ses
               )
             )
           }
         }
-        val maxCandidateNum = params(GlobalParams.MaxCandidateNumPerSourceKeyParam)
-        tweetsWithCandidateGenerationInfo.take(maxCandidateNum)
+        v-vaw maxcandidatenum = p-pawams(gwobawpawams.maxcandidatenumpewsouwcekeypawam)
+        tweetswithcandidategenewationinfo.take(maxcandidatenum)
       }
     }
-    for {
-      tweetsWithCandidateGenerationInfoOpt <- tweetsWithCandidateGenerationInfoOptFut
-    } yield tweetsWithCandidateGenerationInfoOpt.toSeq.flatten
+    f-fow {
+      t-tweetswithcandidategenewationinfoopt <- t-tweetswithcandidategenewationinfooptfut
+    } yiewd tweetswithcandidategenewationinfoopt.toseq.fwatten
   }
 }
 
-object AdsCandidateSourcesRouter {
-  def getSimClustersANNEmbeddingType(
-    sourceInfo: SourceInfo
-  ): EmbeddingType = {
-    sourceInfo.sourceType match {
-      case SourceType.TweetFavorite | SourceType.Retweet | SourceType.OriginalTweet |
-          SourceType.Reply | SourceType.TweetShare | SourceType.NotificationClick |
-          SourceType.GoodTweetClick | SourceType.VideoTweetQualityView |
-          SourceType.VideoTweetPlayback50 =>
-        EmbeddingType.LogFavLongestL2EmbeddingTweet
-      case SourceType.UserFollow | SourceType.UserRepeatedProfileVisit | SourceType.RealGraphOon |
-          SourceType.FollowRecommendation | SourceType.UserTrafficAttributionProfileVisit |
-          SourceType.GoodProfileClick | SourceType.TwiceUserId =>
-        EmbeddingType.FavBasedProducer
-      case _ => throw new IllegalArgumentException("sourceInfo.sourceType not supported")
+o-object adscandidatesouwceswoutew {
+  def getsimcwustewsannembeddingtype(
+    s-souwceinfo: s-souwceinfo
+  ): e-embeddingtype = {
+    souwceinfo.souwcetype match {
+      case souwcetype.tweetfavowite | s-souwcetype.wetweet | souwcetype.owiginawtweet |
+          s-souwcetype.wepwy | s-souwcetype.tweetshawe | souwcetype.notificationcwick |
+          souwcetype.goodtweetcwick | s-souwcetype.videotweetquawityview |
+          souwcetype.videotweetpwayback50 =>
+        e-embeddingtype.wogfavwongestw2embeddingtweet
+      case s-souwcetype.usewfowwow | s-souwcetype.usewwepeatedpwofiwevisit | s-souwcetype.weawgwaphoon |
+          s-souwcetype.fowwowwecommendation | souwcetype.usewtwafficattwibutionpwofiwevisit |
+          souwcetype.goodpwofiwecwick | souwcetype.twiceusewid =>
+        embeddingtype.favbasedpwoducew
+      c-case _ => thwow nyew iwwegawawgumentexception("souwceinfo.souwcetype n-nyot suppowted")
     }
   }
 
-  def buildHnswANNQuery(internalId: InternalId, modelId: String): HnswANNEngineQuery = {
-    HnswANNEngineQuery(
-      sourceId = internalId,
-      modelId = modelId,
-      params = Params.Empty
+  def buiwdhnswannquewy(intewnawid: intewnawid, ^^;; m-modewid: stwing): hnswannenginequewy = {
+    hnswannenginequewy(
+      souwceid = intewnawid, OwO
+      modewid = m-modewid, nyaa~~
+      p-pawams = pawams.empty
     )
   }
 
-  def getConsumerBasedWalsSourceInfo(
-    sourceSignals: Set[SourceInfo]
-  ): Set[SourceInfo] = {
-    val AllowedSourceTypesForConsumerBasedWalsSE = Set(
-      SourceType.TweetFavorite.value,
-      SourceType.Retweet.value,
-      SourceType.TweetDontLike.value, //currently no-op
-      SourceType.TweetReport.value, //currently no-op
-      SourceType.AccountMute.value, //currently no-op
-      SourceType.AccountBlock.value //currently no-op
+  def getconsumewbasedwawssouwceinfo(
+    s-souwcesignaws: set[souwceinfo]
+  ): set[souwceinfo] = {
+    vaw a-awwowedsouwcetypesfowconsumewbasedwawsse = s-set(
+      souwcetype.tweetfavowite.vawue, UwU
+      s-souwcetype.wetweet.vawue, 😳
+      souwcetype.tweetdontwike.vawue, 😳 //cuwwentwy n-nyo-op
+      souwcetype.tweetwepowt.vawue, (ˆ ﻌ ˆ)♡ //cuwwentwy no-op
+      souwcetype.accountmute.vawue, (✿oωo) //cuwwentwy nyo-op
+      s-souwcetype.accountbwock.vawue //cuwwentwy nyo-op
     )
-    sourceSignals.collect {
-      case sourceInfo
-          if AllowedSourceTypesForConsumerBasedWalsSE.contains(sourceInfo.sourceType.value) =>
-        sourceInfo
+    souwcesignaws.cowwect {
+      c-case s-souwceinfo
+          i-if awwowedsouwcetypesfowconsumewbasedwawsse.contains(souwceinfo.souwcetype.vawue) =>
+        souwceinfo
     }
   }
 }

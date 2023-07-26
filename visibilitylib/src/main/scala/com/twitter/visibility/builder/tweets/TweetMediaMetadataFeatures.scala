@@ -1,130 +1,130 @@
-package com.twitter.visibility.builder.tweets
+package com.twittew.visibiwity.buiwdew.tweets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.mediaservices.commons.mediainformation.thriftscala.AdditionalMetadata
-import com.twitter.mediaservices.media_util.GenericMediaKey
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.TweetMediaMetadataSource
-import com.twitter.visibility.features.HasDmcaMediaFeature
-import com.twitter.visibility.features.MediaGeoRestrictionsAllowList
-import com.twitter.visibility.features.MediaGeoRestrictionsDenyList
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.mediasewvices.commons.mediainfowmation.thwiftscawa.additionawmetadata
+i-impowt com.twittew.mediasewvices.media_utiw.genewicmediakey
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+i-impowt com.twittew.visibiwity.common.tweetmediametadatasouwce
+impowt com.twittew.visibiwity.featuwes.hasdmcamediafeatuwe
+impowt com.twittew.visibiwity.featuwes.mediageowestwictionsawwowwist
+impowt com.twittew.visibiwity.featuwes.mediageowestwictionsdenywist
 
-class TweetMediaMetadataFeatures(
-  mediaMetadataSource: TweetMediaMetadataSource,
-  statsReceiver: StatsReceiver) {
+c-cwass tweetmediametadatafeatuwes(
+  mediametadatasouwce: t-tweetmediametadatasouwce, mya
+  statsweceivew: s-statsweceivew) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("tweet_media_metadata_features")
-  private[this] val reportedStats = scopedStatsReceiver.scope("dmcaStats")
+  pwivate[this] vaw scopedstatsweceivew = statsweceivew.scope("tweet_media_metadata_featuwes")
+  p-pwivate[this] vaw wepowtedstats = s-scopedstatsweceivew.scope("dmcastats")
 
-  def forTweet(
-    tweet: Tweet,
-    mediaKeys: Seq[GenericMediaKey],
-    enableFetchMediaMetadata: Boolean
-  ): FeatureMapBuilder => FeatureMapBuilder = { featureMapBuilder =>
-    featureMapBuilder.withFeature(
-      HasDmcaMediaFeature,
-      mediaIsDmca(tweet, mediaKeys, enableFetchMediaMetadata))
-    featureMapBuilder.withFeature(
-      MediaGeoRestrictionsAllowList,
-      allowlist(tweet, mediaKeys, enableFetchMediaMetadata))
-    featureMapBuilder.withFeature(
-      MediaGeoRestrictionsDenyList,
-      denylist(tweet, mediaKeys, enableFetchMediaMetadata))
+  d-def fowtweet(
+    tweet: tweet, mya
+    mediakeys: seq[genewicmediakey], (⑅˘꒳˘)
+    enabwefetchmediametadata: boowean
+  ): f-featuwemapbuiwdew => featuwemapbuiwdew = { featuwemapbuiwdew =>
+    featuwemapbuiwdew.withfeatuwe(
+      hasdmcamediafeatuwe, (U ﹏ U)
+      m-mediaisdmca(tweet, mya mediakeys, ʘwʘ e-enabwefetchmediametadata))
+    f-featuwemapbuiwdew.withfeatuwe(
+      m-mediageowestwictionsawwowwist, (˘ω˘)
+      a-awwowwist(tweet, (U ﹏ U) mediakeys, enabwefetchmediametadata))
+    f-featuwemapbuiwdew.withfeatuwe(
+      mediageowestwictionsdenywist, ^•ﻌ•^
+      denywist(tweet, (˘ω˘) mediakeys, :3 enabwefetchmediametadata))
   }
 
-  private def mediaIsDmca(
-    tweet: Tweet,
-    mediaKeys: Seq[GenericMediaKey],
-    enableFetchMediaMetadata: Boolean
-  ) = getMediaAdditionalMetadata(tweet, mediaKeys, enableFetchMediaMetadata)
-    .map(_.exists(_.restrictions.exists(_.isDmca)))
+  p-pwivate def mediaisdmca(
+    tweet: tweet, ^^;;
+    mediakeys: seq[genewicmediakey], 🥺
+    enabwefetchmediametadata: b-boowean
+  ) = getmediaadditionawmetadata(tweet, (⑅˘꒳˘) m-mediakeys, nyaa~~ e-enabwefetchmediametadata)
+    .map(_.exists(_.westwictions.exists(_.isdmca)))
 
-  private def allowlist(
-    tweet: Tweet,
-    mediaKeys: Seq[GenericMediaKey],
-    enableFetchMediaMetadata: Boolean
-  ) = getMediaGeoRestrictions(tweet, mediaKeys, enableFetchMediaMetadata)
-    .map(_.flatMap(_.whitelistedCountryCodes))
+  p-pwivate def awwowwist(
+    tweet: tweet, :3
+    mediakeys: seq[genewicmediakey], ( ͡o ω ͡o )
+    e-enabwefetchmediametadata: b-boowean
+  ) = getmediageowestwictions(tweet, mya mediakeys, (///ˬ///✿) e-enabwefetchmediametadata)
+    .map(_.fwatmap(_.whitewistedcountwycodes))
 
-  private def denylist(
-    tweet: Tweet,
-    mediaKeys: Seq[GenericMediaKey],
-    enableFetchMediaMetadata: Boolean
-  ) = getMediaGeoRestrictions(tweet, mediaKeys, enableFetchMediaMetadata)
-    .map(_.flatMap(_.blacklistedCountryCodes))
+  p-pwivate def denywist(
+    t-tweet: tweet, (˘ω˘)
+    mediakeys: seq[genewicmediakey], ^^;;
+    e-enabwefetchmediametadata: boowean
+  ) = getmediageowestwictions(tweet, (✿oωo) mediakeys, (U ﹏ U) e-enabwefetchmediametadata)
+    .map(_.fwatmap(_.bwackwistedcountwycodes))
 
-  private def getMediaGeoRestrictions(
-    tweet: Tweet,
-    mediaKeys: Seq[GenericMediaKey],
-    enableFetchMediaMetadata: Boolean
+  pwivate def g-getmediageowestwictions(
+    tweet: t-tweet, -.-
+    m-mediakeys: seq[genewicmediakey], ^•ﻌ•^
+    enabwefetchmediametadata: boowean
   ) = {
-    getMediaAdditionalMetadata(tweet, mediaKeys, enableFetchMediaMetadata)
-      .map(additionalMetadatasSeq => {
-        for {
-          additionalMetadata <- additionalMetadatasSeq
-          restrictions <- additionalMetadata.restrictions
-          geoRestrictions <- restrictions.geoRestrictions
-        } yield {
-          geoRestrictions
+    getmediaadditionawmetadata(tweet, rawr mediakeys, (˘ω˘) enabwefetchmediametadata)
+      .map(additionawmetadatasseq => {
+        fow {
+          additionawmetadata <- additionawmetadatasseq
+          w-westwictions <- a-additionawmetadata.westwictions
+          geowestwictions <- w-westwictions.geowestwictions
+        } y-yiewd {
+          g-geowestwictions
         }
       })
   }
 
-  private def getMediaAdditionalMetadata(
-    tweet: Tweet,
-    mediaKeys: Seq[GenericMediaKey],
-    enableFetchMediaMetadata: Boolean
-  ): Stitch[Seq[AdditionalMetadata]] = {
-    if (mediaKeys.isEmpty) {
-      reportedStats.counter("empty").incr()
-      Stitch.value(Seq.empty)
-    } else {
-      tweet.media.flatMap { mediaEntities =>
-        val alreadyHydratedMetadata = mediaEntities
-          .filter(_.mediaKey.isDefined)
-          .flatMap(_.additionalMetadata)
+  pwivate def getmediaadditionawmetadata(
+    tweet: tweet, nyaa~~
+    mediakeys: s-seq[genewicmediakey], UwU
+    enabwefetchmediametadata: boowean
+  ): stitch[seq[additionawmetadata]] = {
+    if (mediakeys.isempty) {
+      w-wepowtedstats.countew("empty").incw()
+      stitch.vawue(seq.empty)
+    } e-ewse {
+      t-tweet.media.fwatmap { m-mediaentities =>
+        vaw awweadyhydwatedmetadata = m-mediaentities
+          .fiwtew(_.mediakey.isdefined)
+          .fwatmap(_.additionawmetadata)
 
-        if (alreadyHydratedMetadata.nonEmpty) {
-          Some(alreadyHydratedMetadata)
-        } else {
-          None
+        i-if (awweadyhydwatedmetadata.nonempty) {
+          some(awweadyhydwatedmetadata)
+        } e-ewse {
+          n-nyone
         }
       } match {
-        case Some(additionalMetadata) =>
-          reportedStats.counter("already_hydrated").incr()
-          Stitch.value(additionalMetadata)
-        case None =>
-          Stitch
-            .collect(
-              mediaKeys.map(fetchAdditionalMetadata(tweet.id, _, enableFetchMediaMetadata))
-            ).map(maybeMetadatas => {
-              maybeMetadatas
-                .filter(_.isDefined)
+        case some(additionawmetadata) =>
+          w-wepowtedstats.countew("awweady_hydwated").incw()
+          s-stitch.vawue(additionawmetadata)
+        case n-nyone =>
+          s-stitch
+            .cowwect(
+              m-mediakeys.map(fetchadditionawmetadata(tweet.id, _, :3 enabwefetchmediametadata))
+            ).map(maybemetadatas => {
+              maybemetadatas
+                .fiwtew(_.isdefined)
                 .map(_.get)
             })
       }
     }
   }
 
-  private def fetchAdditionalMetadata(
-    tweetId: Long,
-    genericMediaKey: GenericMediaKey,
-    enableFetchMediaMetadata: Boolean
-  ): Stitch[Option[AdditionalMetadata]] =
-    if (enableFetchMediaMetadata) {
-      genericMediaKey.toThriftMediaKey() match {
-        case Some(mediaKey) =>
-          reportedStats.counter("request").incr()
-          mediaMetadataSource.fetch(tweetId, mediaKey)
-        case None =>
-          reportedStats.counter("empty_key").incr()
-          Stitch.None
+  pwivate d-def fetchadditionawmetadata(
+    tweetid: wong,
+    genewicmediakey: genewicmediakey, (⑅˘꒳˘)
+    enabwefetchmediametadata: boowean
+  ): s-stitch[option[additionawmetadata]] =
+    if (enabwefetchmediametadata) {
+      genewicmediakey.tothwiftmediakey() match {
+        c-case some(mediakey) =>
+          w-wepowtedstats.countew("wequest").incw()
+          m-mediametadatasouwce.fetch(tweetid, (///ˬ///✿) mediakey)
+        c-case nyone =>
+          w-wepowtedstats.countew("empty_key").incw()
+          s-stitch.none
       }
-    } else {
-      reportedStats.counter("light_request").incr()
-      Stitch.None
+    } ewse {
+      wepowtedstats.countew("wight_wequest").incw()
+      stitch.none
     }
 
 }

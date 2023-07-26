@@ -1,50 +1,50 @@
-package com.twitter.home_mixer.util
+package com.twittew.home_mixew.utiw
 
-import com.twitter.home_mixer.model.HomeFeatures.CachedScoredTweetsFeature
-import com.twitter.home_mixer.{thriftscala => hmt}
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Time
+impowt com.twittew.home_mixew.modew.homefeatuwes.cachedscowedtweetsfeatuwe
+impowt c-com.twittew.home_mixew.{thwiftscawa => h-hmt}
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+i-impowt com.twittew.snowfwake.id.snowfwakeid
+i-impowt c-com.twittew.utiw.time
 
-object CachedScoredTweetsHelper {
+o-object cachedscowedtweetshewpew {
 
-  def tweetImpressionsAndCachedScoredTweets(
-    features: FeatureMap,
-    candidatePipelineIdentifier: CandidatePipelineIdentifier
-  ): Seq[Long] = {
-    val tweetImpressions = TweetImpressionsHelper.tweetImpressions(features)
-    val cachedScoredTweets = features
-      .getOrElse(CachedScoredTweetsFeature, Seq.empty)
-      .filter { tweet =>
-        tweet.candidatePipelineIdentifier.exists(
-          CandidatePipelineIdentifier(_).equals(candidatePipelineIdentifier))
-      }.map(_.tweetId)
+  def tweetimpwessionsandcachedscowedtweets(
+    featuwes: featuwemap, 😳😳😳
+    c-candidatepipewineidentifiew: candidatepipewineidentifiew
+  ): seq[wong] = {
+    v-vaw tweetimpwessions = tweetimpwessionshewpew.tweetimpwessions(featuwes)
+    vaw cachedscowedtweets = f-featuwes
+      .getowewse(cachedscowedtweetsfeatuwe, 🥺 seq.empty)
+      .fiwtew { tweet =>
+        tweet.candidatepipewineidentifiew.exists(
+          candidatepipewineidentifiew(_).equaws(candidatepipewineidentifiew))
+      }.map(_.tweetid)
 
-    (tweetImpressions ++ cachedScoredTweets).toSeq
+    (tweetimpwessions ++ c-cachedscowedtweets).toseq
   }
 
-  def tweetImpressionsAndCachedScoredTweetsInRange(
-    features: FeatureMap,
-    candidatePipelineIdentifier: CandidatePipelineIdentifier,
-    maxNumImpressions: Int,
-    sinceTime: Time,
-    untilTime: Time
-  ): Seq[Long] =
-    tweetImpressionsAndCachedScoredTweets(features, candidatePipelineIdentifier)
-      .filter { tweetId => SnowflakeId.isSnowflakeId(tweetId) }
-      .filter { tweetId =>
-        val creationTime = SnowflakeId.timeFromId(tweetId)
-        sinceTime <= creationTime && untilTime >= creationTime
-      }.take(maxNumImpressions)
+  def tweetimpwessionsandcachedscowedtweetsinwange(
+    featuwes: f-featuwemap, mya
+    c-candidatepipewineidentifiew: candidatepipewineidentifiew, 🥺
+    maxnumimpwessions: int, >_<
+    sincetime: time,
+    u-untiwtime: time
+  ): seq[wong] =
+    tweetimpwessionsandcachedscowedtweets(featuwes, >_< candidatepipewineidentifiew)
+      .fiwtew { tweetid => s-snowfwakeid.issnowfwakeid(tweetid) }
+      .fiwtew { tweetid =>
+        v-vaw c-cweationtime = s-snowfwakeid.timefwomid(tweetid)
+        s-sincetime <= cweationtime && untiwtime >= c-cweationtime
+      }.take(maxnumimpwessions)
 
-  def unseenCachedScoredTweets(
-    features: FeatureMap
-  ): Seq[hmt.ScoredTweet] = {
-    val seenTweetIds = TweetImpressionsHelper.tweetImpressions(features)
+  def unseencachedscowedtweets(
+    featuwes: featuwemap
+  ): s-seq[hmt.scowedtweet] = {
+    vaw seentweetids = tweetimpwessionshewpew.tweetimpwessions(featuwes)
 
-    features
-      .getOrElse(CachedScoredTweetsFeature, Seq.empty)
-      .filter(tweet => !seenTweetIds.contains(tweet.tweetId))
+    featuwes
+      .getowewse(cachedscowedtweetsfeatuwe, (⑅˘꒳˘) seq.empty)
+      .fiwtew(tweet => !seentweetids.contains(tweet.tweetid))
   }
 }

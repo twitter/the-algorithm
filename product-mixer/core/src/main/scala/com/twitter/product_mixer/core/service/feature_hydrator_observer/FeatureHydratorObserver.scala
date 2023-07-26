@@ -1,136 +1,136 @@
-package com.twitter.product_mixer.core.service.feature_hydrator_observer
+package com.twittew.pwoduct_mixew.cowe.sewvice.featuwe_hydwatow_obsewvew
 
-import com.twitter.finagle.stats.BroadcastStatsReceiver
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.RollupStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.ml.featurestore.lib.data.HydrationError
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featurestorev1.featurevalue.FeatureStoreV1ResponseFeature
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.FeatureHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1.FeatureStoreV1CandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1.FeatureStoreV1QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.shared_library.observer.Observer
-import com.twitter.servo.util.CancelledExceptionExtractor
-import com.twitter.util.Throw
-import com.twitter.util.Throwables
+impowt c-com.twittew.finagwe.stats.bwoadcaststatsweceivew
+i-impowt com.twittew.finagwe.stats.countew
+i-impowt c-com.twittew.finagwe.stats.wowwupstatsweceivew
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.mw.featuwestowe.wib.data.hydwationewwow
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1.featuwevawue.featuwestowev1wesponsefeatuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.featuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.featuwestowev1.featuwestowev1candidatefeatuwehydwatow
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.featuwestowev1.featuwestowev1quewyfeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+impowt com.twittew.pwoduct_mixew.shawed_wibwawy.obsewvew.obsewvew
+impowt com.twittew.sewvo.utiw.cancewwedexceptionextwactow
+i-impowt com.twittew.utiw.thwow
+i-impowt c-com.twittew.utiw.thwowabwes
 
-class FeatureHydratorObserver(
-  statsReceiver: StatsReceiver,
-  hydrators: Seq[FeatureHydrator[_]],
-  context: Executor.Context) {
+cwass featuwehydwatowobsewvew(
+  statsweceivew: statsweceivew, 😳😳😳
+  hydwatows: seq[featuwehydwatow[_]], (˘ω˘)
+  c-context: executow.context) {
 
-  private val hydratorAndFeatureToStats: Map[
-    ComponentIdentifier,
-    Map[Feature[_, _], FeatureCounters]
+  pwivate vaw hydwatowandfeatuwetostats: map[
+    componentidentifiew, ʘwʘ
+    m-map[featuwe[_, ( ͡o ω ͡o ) _], o.O featuwecountews]
   ] =
-    hydrators.map { hydrator =>
-      val hydratorScope = Executor.buildScopes(context, hydrator.identifier)
-      val featureToCounterMap: Map[Feature[_, _], FeatureCounters] = hydrator.features
-        .asInstanceOf[Set[Feature[_, _]]].map { feature =>
-          val scopedStats = scopedBroadcastStats(hydratorScope, feature)
-          // Initialize so we have them registered
-          val requestsCounter = scopedStats.counter(Observer.Requests)
-          val successCounter = scopedStats.counter(Observer.Success)
-          // These are dynamic so we can't really cache them
-          scopedStats.counter(Observer.Failures)
-          scopedStats.counter(Observer.Cancelled)
-          feature -> FeatureCounters(requestsCounter, successCounter, scopedStats)
-        }.toMap
-      hydrator.identifier -> featureToCounterMap
-    }.toMap
+    h-hydwatows.map { h-hydwatow =>
+      v-vaw h-hydwatowscope = executow.buiwdscopes(context, >w< hydwatow.identifiew)
+      v-vaw featuwetocountewmap: map[featuwe[_, 😳 _], 🥺 featuwecountews] = h-hydwatow.featuwes
+        .asinstanceof[set[featuwe[_, rawr x3 _]]].map { featuwe =>
+          vaw scopedstats = scopedbwoadcaststats(hydwatowscope, o.O featuwe)
+          // initiawize s-so we have them wegistewed
+          v-vaw w-wequestscountew = s-scopedstats.countew(obsewvew.wequests)
+          vaw successcountew = scopedstats.countew(obsewvew.success)
+          // these a-awe dynamic so w-we can't weawwy cache them
+          s-scopedstats.countew(obsewvew.faiwuwes)
+          s-scopedstats.countew(obsewvew.cancewwed)
+          featuwe -> f-featuwecountews(wequestscountew, rawr successcountew, ʘwʘ s-scopedstats)
+        }.tomap
+      hydwatow.identifiew -> featuwetocountewmap
+    }.tomap
 
-  def observeFeatureSuccessAndFailures(
-    hydrator: FeatureHydrator[_],
-    featureMaps: Seq[FeatureMap]
-  ): Unit = {
+  def obsewvefeatuwesuccessandfaiwuwes(
+    h-hydwatow: featuwehydwatow[_], 😳😳😳
+    f-featuwemaps: seq[featuwemap]
+  ): u-unit = {
 
-    val features = hydrator.features.asInstanceOf[Set[Feature[_, _]]]
+    vaw f-featuwes = hydwatow.featuwes.asinstanceof[set[featuwe[_, ^^;; _]]]
 
-    val failedFeaturesWithErrorNames: Map[Feature[_, _], Seq[Seq[String]]] = hydrator match {
-      case _: FeatureStoreV1QueryFeatureHydrator[_] |
-          _: FeatureStoreV1CandidateFeatureHydrator[_, _] =>
-        featureMaps.toIterator
-          .flatMap(_.getTry(FeatureStoreV1ResponseFeature).toOption.map(_.failedFeatures)).flatMap {
-            failureMap: Map[_ <: Feature[_, _], Set[HydrationError]] =>
-              failureMap.flatMap {
-                case (feature, errors: Set[HydrationError]) =>
-                  errors.headOption.map { error =>
-                    feature -> Seq(Observer.Failures, error.errorType)
+    vaw faiwedfeatuweswithewwownames: map[featuwe[_, o.O _], (///ˬ///✿) seq[seq[stwing]]] = hydwatow match {
+      case _: featuwestowev1quewyfeatuwehydwatow[_] |
+          _: f-featuwestowev1candidatefeatuwehydwatow[_, σωσ _] =>
+        f-featuwemaps.toitewatow
+          .fwatmap(_.gettwy(featuwestowev1wesponsefeatuwe).tooption.map(_.faiwedfeatuwes)).fwatmap {
+            faiwuwemap: map[_ <: f-featuwe[_, _], nyaa~~ s-set[hydwationewwow]] =>
+              f-faiwuwemap.fwatmap {
+                case (featuwe, ^^;; ewwows: set[hydwationewwow]) =>
+                  ewwows.headoption.map { e-ewwow =>
+                    featuwe -> seq(obsewvew.faiwuwes, ^•ﻌ•^ ewwow.ewwowtype)
                   }
-              }.toIterator
-          }.toSeq.groupBy { case (feature, _) => feature }.mapValues { seqOfTuples =>
-            seqOfTuples.map { case (_, error) => error }
+              }.toitewatow
+          }.toseq.gwoupby { case (featuwe, σωσ _) => f-featuwe }.mapvawues { seqoftupwes =>
+            s-seqoftupwes.map { c-case (_, e-ewwow) => ewwow }
           }
 
-      case _: FeatureHydrator[_] =>
-        features.toIterator
-          .flatMap { feature =>
-            featureMaps
-              .flatMap(_.underlyingMap
-                .get(feature).collect {
-                  case Throw(CancelledExceptionExtractor(throwable)) =>
-                    (feature, Observer.Cancelled +: Throwables.mkString(throwable))
-                  case Throw(throwable) =>
-                    (feature, Observer.Failures +: Throwables.mkString(throwable))
+      c-case _: f-featuwehydwatow[_] =>
+        f-featuwes.toitewatow
+          .fwatmap { f-featuwe =>
+            featuwemaps
+              .fwatmap(_.undewwyingmap
+                .get(featuwe).cowwect {
+                  case t-thwow(cancewwedexceptionextwactow(thwowabwe)) =>
+                    (featuwe, -.- o-obsewvew.cancewwed +: t-thwowabwes.mkstwing(thwowabwe))
+                  c-case thwow(thwowabwe) =>
+                    (featuwe, ^^;; o-obsewvew.faiwuwes +: thwowabwes.mkstwing(thwowabwe))
                 })
-          }.toSeq.groupBy { case (feature, _) => feature }.mapValues { seqOfTuples =>
-            seqOfTuples.map { case (_, error) => error }
+          }.toseq.gwoupby { case (featuwe, XD _) => featuwe }.mapvawues { s-seqoftupwes =>
+            seqoftupwes.map { case (_, 🥺 ewwow) => ewwow }
           }
     }
 
-    val failedFeaturesWithErrorCountsMap: Map[Feature[_, _], Map[Seq[String], Int]] =
-      failedFeaturesWithErrorNames.mapValues(_.groupBy { statKey => statKey }.mapValues(_.size))
+    vaw faiwedfeatuweswithewwowcountsmap: m-map[featuwe[_, òωó _], map[seq[stwing], (ˆ ﻌ ˆ)♡ int]] =
+      faiwedfeatuweswithewwownames.mapvawues(_.gwoupby { s-statkey => s-statkey }.mapvawues(_.size))
 
-    val featuresToCounterMap = hydratorAndFeatureToStats.getOrElse(
-      hydrator.identifier,
-      throw new MissingHydratorException(hydrator.identifier))
-    features.foreach { feature =>
-      val hydratorFeatureCounters: FeatureCounters = featuresToCounterMap.getOrElse(
-        feature,
-        throw new MissingFeatureException(hydrator.identifier, feature))
-      val failedMapsCount = failedFeaturesWithErrorNames.getOrElse(feature, Seq.empty).size
-      val failedFeatureErrorCounts = failedFeaturesWithErrorCountsMap.getOrElse(feature, Map.empty)
+    v-vaw featuwestocountewmap = hydwatowandfeatuwetostats.getowewse(
+      h-hydwatow.identifiew, -.-
+      thwow nyew m-missinghydwatowexception(hydwatow.identifiew))
+    f-featuwes.foweach { featuwe =>
+      vaw hydwatowfeatuwecountews: featuwecountews = featuwestocountewmap.getowewse(
+        featuwe, :3
+        t-thwow nyew missingfeatuweexception(hydwatow.identifiew, ʘwʘ featuwe))
+      v-vaw faiwedmapscount = faiwedfeatuweswithewwownames.getowewse(featuwe, 🥺 s-seq.empty).size
+      v-vaw faiwedfeatuweewwowcounts = faiwedfeatuweswithewwowcountsmap.getowewse(featuwe, >_< map.empty)
 
-      hydratorFeatureCounters.requestsCounter.incr(featureMaps.size)
-      hydratorFeatureCounters.successCounter.incr(featureMaps.size - failedMapsCount)
-      failedFeatureErrorCounts.foreach {
-        case (failure, count) =>
-          hydratorFeatureCounters.scopedStats.counter(failure: _*).incr(count)
+      h-hydwatowfeatuwecountews.wequestscountew.incw(featuwemaps.size)
+      h-hydwatowfeatuwecountews.successcountew.incw(featuwemaps.size - faiwedmapscount)
+      faiwedfeatuweewwowcounts.foweach {
+        c-case (faiwuwe, ʘwʘ c-count) =>
+          hydwatowfeatuwecountews.scopedstats.countew(faiwuwe: _*).incw(count)
       }
     }
   }
 
-  private def scopedBroadcastStats(
-    hydratorScope: Executor.Scopes,
-    feature: Feature[_, _],
-  ): StatsReceiver = {
-    val suffix = Seq("Feature", feature.toString)
-    val localScope = hydratorScope.componentScopes ++ suffix
-    val relativeScope = hydratorScope.relativeScope ++ suffix
-    new RollupStatsReceiver(
-      BroadcastStatsReceiver(
-        Seq(
-          statsReceiver.scope(localScope: _*),
-          statsReceiver.scope(relativeScope: _*),
+  pwivate def scopedbwoadcaststats(
+    hydwatowscope: e-executow.scopes, (˘ω˘)
+    f-featuwe: f-featuwe[_, _], (✿oωo)
+  ): statsweceivew = {
+    v-vaw suffix = s-seq("featuwe", (///ˬ///✿) featuwe.tostwing)
+    v-vaw wocawscope = hydwatowscope.componentscopes ++ suffix
+    vaw wewativescope = hydwatowscope.wewativescope ++ suffix
+    n-nyew wowwupstatsweceivew(
+      b-bwoadcaststatsweceivew(
+        seq(
+          statsweceivew.scope(wocawscope: _*), rawr x3
+          s-statsweceivew.scope(wewativescope: _*), -.-
         )
       ))
   }
 }
 
-case class FeatureCounters(
-  requestsCounter: Counter,
-  successCounter: Counter,
-  scopedStats: StatsReceiver)
+c-case cwass featuwecountews(
+  wequestscountew: countew, ^^
+  s-successcountew: countew, (⑅˘꒳˘)
+  scopedstats: statsweceivew)
 
-class MissingHydratorException(featureHydratorIdentifier: ComponentIdentifier)
-    extends Exception(s"Missing Feature Hydrator in Stats Map: ${featureHydratorIdentifier.name}")
+cwass missinghydwatowexception(featuwehydwatowidentifiew: c-componentidentifiew)
+    extends exception(s"missing f-featuwe h-hydwatow in stats map: ${featuwehydwatowidentifiew.name}")
 
-class MissingFeatureException(
-  featureHydratorIdentifier: ComponentIdentifier,
-  feature: Feature[_, _])
-    extends Exception(
-      s"Missing Feature in Stats Map: ${feature.toString} for ${featureHydratorIdentifier.name}")
+cwass missingfeatuweexception(
+  f-featuwehydwatowidentifiew: c-componentidentifiew, nyaa~~
+  featuwe: featuwe[_, /(^•ω•^) _])
+    extends exception(
+      s-s"missing featuwe in stats m-map: ${featuwe.tostwing} fow ${featuwehydwatowidentifiew.name}")

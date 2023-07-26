@@ -1,461 +1,461 @@
-package com.twitter.frigate.pushservice.config
+package com.twittew.fwigate.pushsewvice.config
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.abuse.detection.scoring.thriftscala.TweetScoringRequest
-import com.twitter.abuse.detection.scoring.thriftscala.TweetScoringResponse
-import com.twitter.audience_rewards.thriftscala.HasSuperFollowingRelationshipRequest
-import com.twitter.channels.common.thriftscala.ApiList
-import com.twitter.datatools.entityservice.entities.sports.thriftscala._
-import com.twitter.decider.Decider
-import com.twitter.discovery.common.configapi.ConfigParamsBuilder
-import com.twitter.escherbird.common.thriftscala.QualifiedId
-import com.twitter.escherbird.metadata.thriftscala.EntityMegadata
-import com.twitter.eventbus.client.EventBusPublisher
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.candidate._
-import com.twitter.frigate.common.history._
-import com.twitter.frigate.common.ml.base._
-import com.twitter.frigate.common.ml.feature._
-import com.twitter.frigate.common.store._
-import com.twitter.frigate.common.store.deviceinfo.DeviceInfo
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
-import com.twitter.frigate.common.store.interests.UserId
-import com.twitter.frigate.common.util._
-import com.twitter.frigate.data_pipeline.features_common._
-import com.twitter.frigate.data_pipeline.thriftscala.UserHistoryKey
-import com.twitter.frigate.data_pipeline.thriftscala.UserHistoryValue
-import com.twitter.frigate.dau_model.thriftscala.DauProbability
-import com.twitter.frigate.magic_events.thriftscala.FanoutEvent
-import com.twitter.frigate.pushcap.thriftscala.PushcapUserHistory
-import com.twitter.frigate.pushservice.ml._
-import com.twitter.frigate.pushservice.params.DeciderKey
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.PushFeatureSwitches
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.pushservice.send_handler.SendHandlerPushCandidateHydrator
-import com.twitter.frigate.pushservice.refresh_handler.PushCandidateHydrator
-import com.twitter.frigate.pushservice.store._
-import com.twitter.frigate.pushservice.store.{Ibis2Store => PushIbis2Store}
-import com.twitter.frigate.pushservice.take.NotificationServiceRequest
-import com.twitter.frigate.pushservice.thriftscala.PushRequestScribe
-import com.twitter.frigate.scribe.thriftscala.NotificationScribe
-import com.twitter.frigate.thriftscala._
-import com.twitter.frigate.user_states.thriftscala.MRUserHmmState
-import com.twitter.geoduck.common.thriftscala.{Location => GeoLocation}
-import com.twitter.geoduck.service.thriftscala.LocationResponse
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.hermit.pop_geo.thriftscala.PopTweetsInPlace
-import com.twitter.hermit.predicate.socialgraph.RelationEdge
-import com.twitter.hermit.predicate.tweetypie.Perspective
-import com.twitter.hermit.predicate.tweetypie.UserTweet
-import com.twitter.hermit.store.semantic_core.SemanticEntityForQuery
-import com.twitter.hermit.store.tweetypie.{UserTweet => TweetyPieUserTweet}
-import com.twitter.hermit.stp.thriftscala.STPResult
-import com.twitter.hss.api.thriftscala.UserHealthSignalResponse
-import com.twitter.interests.thriftscala.InterestId
-import com.twitter.interests.thriftscala.{UserInterests => Interests}
-import com.twitter.interests_discovery.thriftscala.NonPersonalizedRecommendedLists
-import com.twitter.interests_discovery.thriftscala.RecommendedListsRequest
-import com.twitter.interests_discovery.thriftscala.RecommendedListsResponse
-import com.twitter.livevideo.timeline.domain.v2.{Event => LiveEvent}
-import com.twitter.ml.api.thriftscala.{DataRecord => ThriftDataRecord}
-import com.twitter.ml.featurestore.lib.dynamic.DynamicFeatureStoreClient
-import com.twitter.notificationservice.genericfeedbackstore.FeedbackPromptValue
-import com.twitter.notificationservice.genericfeedbackstore.GenericFeedbackStore
-import com.twitter.notificationservice.scribe.manhattan.GenericNotificationsFeedbackRequest
-import com.twitter.notificationservice.thriftscala.CaretFeedbackDetails
-import com.twitter.notificationservice.thriftscala.CreateGenericNotificationResponse
-import com.twitter.nrel.heavyranker.CandidateFeatureHydrator
-import com.twitter.nrel.heavyranker.{FeatureHydrator => MRFeatureHydrator}
-import com.twitter.nrel.heavyranker.{TargetFeatureHydrator => RelevanceTargetFeatureHydrator}
-import com.twitter.onboarding.task.service.thriftscala.FatigueFlowEnrollment
-import com.twitter.permissions_storage.thriftscala.AppPermission
-import com.twitter.recommendation.interests.discovery.core.model.InterestDomain
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.RecommendTweetEntityRequest
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.RecommendTweetEntityResponse
-import com.twitter.recos.user_user_graph.thriftscala.RecommendUserRequest
-import com.twitter.recos.user_user_graph.thriftscala.RecommendUserResponse
-import com.twitter.rux.common.strato.thriftscala.UserTargetingProperty
-import com.twitter.scio.nsfw_user_segmentation.thriftscala.NSFWProducer
-import com.twitter.scio.nsfw_user_segmentation.thriftscala.NSFWUserSegmentation
-import com.twitter.search.common.features.thriftscala.ThriftSearchResultFeatures
-import com.twitter.search.earlybird.thriftscala.EarlybirdRequest
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.service.gen.scarecrow.thriftscala.Event
-import com.twitter.service.gen.scarecrow.thriftscala.TieredActionResult
-import com.twitter.service.metastore.gen.thriftscala.Location
-import com.twitter.service.metastore.gen.thriftscala.UserLanguages
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.simclusters_v2.thriftscala.SimClustersInferredEntities
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.columns.frigate.logged_out_web_notifications.thriftscala.LOWebNotificationMetadata
-import com.twitter.strato.columns.notifications.thriftscala.SourceDestUserRequest
-import com.twitter.strato.client.{UserId => StratoUserId}
-import com.twitter.timelines.configapi
-import com.twitter.timelines.configapi.CompositeConfig
-import com.twitter.timelinescorer.thriftscala.v1.ScoredTweet
-import com.twitter.topiclisting.TopicListing
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripDomain
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripTweets
-import com.twitter.tsp.thriftscala.TopicSocialProofRequest
-import com.twitter.tsp.thriftscala.TopicSocialProofResponse
-import com.twitter.ubs.thriftscala.SellerTrack
-import com.twitter.ubs.thriftscala.AudioSpace
-import com.twitter.ubs.thriftscala.Participants
-import com.twitter.ubs.thriftscala.SellerApplicationState
-import com.twitter.user_session_store.thriftscala.UserSession
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.wtf.scalding.common.thriftscala.UserFeatures
+impowt com.twittew.abdecidew.woggingabdecidew
+i-impowt c-com.twittew.abuse.detection.scowing.thwiftscawa.tweetscowingwequest
+i-impowt com.twittew.abuse.detection.scowing.thwiftscawa.tweetscowingwesponse
+i-impowt com.twittew.audience_wewawds.thwiftscawa.hassupewfowwowingwewationshipwequest
+i-impowt c-com.twittew.channews.common.thwiftscawa.apiwist
+i-impowt com.twittew.datatoows.entitysewvice.entities.spowts.thwiftscawa._
+i-impowt com.twittew.decidew.decidew
+impowt com.twittew.discovewy.common.configapi.configpawamsbuiwdew
+impowt c-com.twittew.eschewbiwd.common.thwiftscawa.quawifiedid
+impowt com.twittew.eschewbiwd.metadata.thwiftscawa.entitymegadata
+i-impowt com.twittew.eventbus.cwient.eventbuspubwishew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.finagwe.thwift.cwientid
+impowt com.twittew.fwigate.common.base._
+i-impowt com.twittew.fwigate.common.candidate._
+impowt com.twittew.fwigate.common.histowy._
+impowt c-com.twittew.fwigate.common.mw.base._
+i-impowt com.twittew.fwigate.common.mw.featuwe._
+impowt com.twittew.fwigate.common.stowe._
+impowt com.twittew.fwigate.common.stowe.deviceinfo.deviceinfo
+i-impowt com.twittew.fwigate.common.stowe.intewests.intewestswookupwequestwithcontext
+impowt com.twittew.fwigate.common.stowe.intewests.usewid
+impowt com.twittew.fwigate.common.utiw._
+impowt com.twittew.fwigate.data_pipewine.featuwes_common._
+impowt com.twittew.fwigate.data_pipewine.thwiftscawa.usewhistowykey
+i-impowt com.twittew.fwigate.data_pipewine.thwiftscawa.usewhistowyvawue
+impowt c-com.twittew.fwigate.dau_modew.thwiftscawa.daupwobabiwity
+i-impowt c-com.twittew.fwigate.magic_events.thwiftscawa.fanoutevent
+i-impowt com.twittew.fwigate.pushcap.thwiftscawa.pushcapusewhistowy
+impowt com.twittew.fwigate.pushsewvice.mw._
+i-impowt com.twittew.fwigate.pushsewvice.pawams.decidewkey
+impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitches
+impowt com.twittew.fwigate.pushsewvice.pawams.pushpawams
+impowt com.twittew.fwigate.pushsewvice.send_handwew.sendhandwewpushcandidatehydwatow
+impowt c-com.twittew.fwigate.pushsewvice.wefwesh_handwew.pushcandidatehydwatow
+impowt com.twittew.fwigate.pushsewvice.stowe._
+i-impowt com.twittew.fwigate.pushsewvice.stowe.{ibis2stowe => p-pushibis2stowe}
+i-impowt com.twittew.fwigate.pushsewvice.take.notificationsewvicewequest
+impowt com.twittew.fwigate.pushsewvice.thwiftscawa.pushwequestscwibe
+impowt c-com.twittew.fwigate.scwibe.thwiftscawa.notificationscwibe
+impowt c-com.twittew.fwigate.thwiftscawa._
+impowt com.twittew.fwigate.usew_states.thwiftscawa.mwusewhmmstate
+i-impowt c-com.twittew.geoduck.common.thwiftscawa.{wocation => geowocation}
+i-impowt com.twittew.geoduck.sewvice.thwiftscawa.wocationwesponse
+impowt com.twittew.gizmoduck.thwiftscawa.usew
+i-impowt com.twittew.hewmit.pop_geo.thwiftscawa.poptweetsinpwace
+impowt com.twittew.hewmit.pwedicate.sociawgwaph.wewationedge
+impowt c-com.twittew.hewmit.pwedicate.tweetypie.pewspective
+impowt com.twittew.hewmit.pwedicate.tweetypie.usewtweet
+i-impowt com.twittew.hewmit.stowe.semantic_cowe.semanticentityfowquewy
+i-impowt com.twittew.hewmit.stowe.tweetypie.{usewtweet => t-tweetypieusewtweet}
+impowt com.twittew.hewmit.stp.thwiftscawa.stpwesuwt
+impowt com.twittew.hss.api.thwiftscawa.usewheawthsignawwesponse
+impowt com.twittew.intewests.thwiftscawa.intewestid
+impowt com.twittew.intewests.thwiftscawa.{usewintewests => intewests}
+impowt com.twittew.intewests_discovewy.thwiftscawa.nonpewsonawizedwecommendedwists
+i-impowt com.twittew.intewests_discovewy.thwiftscawa.wecommendedwistswequest
+i-impowt com.twittew.intewests_discovewy.thwiftscawa.wecommendedwistswesponse
+i-impowt com.twittew.wivevideo.timewine.domain.v2.{event => w-wiveevent}
+impowt c-com.twittew.mw.api.thwiftscawa.{datawecowd => thwiftdatawecowd}
+impowt com.twittew.mw.featuwestowe.wib.dynamic.dynamicfeatuwestowecwient
+impowt c-com.twittew.notificationsewvice.genewicfeedbackstowe.feedbackpwomptvawue
+impowt com.twittew.notificationsewvice.genewicfeedbackstowe.genewicfeedbackstowe
+impowt com.twittew.notificationsewvice.scwibe.manhattan.genewicnotificationsfeedbackwequest
+i-impowt com.twittew.notificationsewvice.thwiftscawa.cawetfeedbackdetaiws
+i-impowt com.twittew.notificationsewvice.thwiftscawa.cweategenewicnotificationwesponse
+i-impowt com.twittew.nwew.heavywankew.candidatefeatuwehydwatow
+i-impowt com.twittew.nwew.heavywankew.{featuwehydwatow => mwfeatuwehydwatow}
+i-impowt c-com.twittew.nwew.heavywankew.{tawgetfeatuwehydwatow => w-wewevancetawgetfeatuwehydwatow}
+i-impowt com.twittew.onboawding.task.sewvice.thwiftscawa.fatiguefwowenwowwment
+impowt c-com.twittew.pewmissions_stowage.thwiftscawa.apppewmission
+i-impowt c-com.twittew.wecommendation.intewests.discovewy.cowe.modew.intewestdomain
+i-impowt c-com.twittew.wecos.usew_tweet_entity_gwaph.thwiftscawa.wecommendtweetentitywequest
+impowt com.twittew.wecos.usew_tweet_entity_gwaph.thwiftscawa.wecommendtweetentitywesponse
+impowt com.twittew.wecos.usew_usew_gwaph.thwiftscawa.wecommendusewwequest
+i-impowt com.twittew.wecos.usew_usew_gwaph.thwiftscawa.wecommendusewwesponse
+impowt com.twittew.wux.common.stwato.thwiftscawa.usewtawgetingpwopewty
+impowt com.twittew.scio.nsfw_usew_segmentation.thwiftscawa.nsfwpwoducew
+impowt com.twittew.scio.nsfw_usew_segmentation.thwiftscawa.nsfwusewsegmentation
+impowt com.twittew.seawch.common.featuwes.thwiftscawa.thwiftseawchwesuwtfeatuwes
+i-impowt com.twittew.seawch.eawwybiwd.thwiftscawa.eawwybiwdwequest
+impowt com.twittew.seawch.eawwybiwd.thwiftscawa.thwiftseawchwesuwt
+impowt com.twittew.sewvice.gen.scawecwow.thwiftscawa.event
+impowt com.twittew.sewvice.gen.scawecwow.thwiftscawa.tiewedactionwesuwt
+i-impowt c-com.twittew.sewvice.metastowe.gen.thwiftscawa.wocation
+i-impowt com.twittew.sewvice.metastowe.gen.thwiftscawa.usewwanguages
+impowt c-com.twittew.sewvo.decidew.decidewgatebuiwdew
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.simcwustewsinfewwedentities
+i-impowt com.twittew.stitch.tweetypie.tweetypie.tweetypiewesuwt
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.stwato.cowumns.fwigate.wogged_out_web_notifications.thwiftscawa.wowebnotificationmetadata
+impowt com.twittew.stwato.cowumns.notifications.thwiftscawa.souwcedestusewwequest
+impowt com.twittew.stwato.cwient.{usewid => s-stwatousewid}
+impowt c-com.twittew.timewines.configapi
+impowt com.twittew.timewines.configapi.compositeconfig
+i-impowt com.twittew.timewinescowew.thwiftscawa.v1.scowedtweet
+i-impowt com.twittew.topicwisting.topicwisting
+impowt com.twittew.twends.twip_v1.twip_tweets.thwiftscawa.twipdomain
+impowt com.twittew.twends.twip_v1.twip_tweets.thwiftscawa.twiptweets
+i-impowt c-com.twittew.tsp.thwiftscawa.topicsociawpwoofwequest
+impowt com.twittew.tsp.thwiftscawa.topicsociawpwoofwesponse
+i-impowt com.twittew.ubs.thwiftscawa.sewwewtwack
+i-impowt com.twittew.ubs.thwiftscawa.audiospace
+impowt com.twittew.ubs.thwiftscawa.pawticipants
+impowt com.twittew.ubs.thwiftscawa.sewwewappwicationstate
+impowt com.twittew.usew_session_stowe.thwiftscawa.usewsession
+i-impowt com.twittew.utiw.duwation
+i-impowt c-com.twittew.utiw.futuwe
+impowt com.twittew.wtf.scawding.common.thwiftscawa.usewfeatuwes
 
-trait Config {
-  self =>
+t-twait config {
+  s-sewf =>
 
-  def isServiceLocal: Boolean
+  def issewvicewocaw: b-boowean
 
-  def localConfigRepoPath: String
+  def wocawconfigwepopath: stwing
 
-  def inMemCacheOff: Boolean
+  def inmemcacheoff: boowean
 
-  def historyStore: PushServiceHistoryStore
+  d-def histowystowe: p-pushsewvicehistowystowe
 
-  def emailHistoryStore: PushServiceHistoryStore
+  def emaiwhistowystowe: pushsewvicehistowystowe
 
-  def strongTiesStore: ReadableStore[Long, STPResult]
+  d-def stwongtiesstowe: w-weadabwestowe[wong, (ˆ ﻌ ˆ)♡ stpwesuwt]
 
-  def safeUserStore: ReadableStore[Long, User]
+  def safeusewstowe: weadabwestowe[wong, ^^;; u-usew]
 
-  def deviceInfoStore: ReadableStore[Long, DeviceInfo]
+  def deviceinfostowe: weadabwestowe[wong, OwO deviceinfo]
 
-  def edgeStore: ReadableStore[RelationEdge, Boolean]
+  def edgestowe: weadabwestowe[wewationedge, 🥺 b-boowean]
 
-  def socialGraphServiceProcessStore: ReadableStore[RelationEdge, Boolean]
+  def sociawgwaphsewvicepwocessstowe: weadabwestowe[wewationedge, b-boowean]
 
-  def userUtcOffsetStore: ReadableStore[Long, Duration]
+  d-def usewutcoffsetstowe: weadabwestowe[wong, mya duwation]
 
-  def cachedTweetyPieStoreV2: ReadableStore[Long, TweetyPieResult]
+  def cachedtweetypiestowev2: w-weadabwestowe[wong, 😳 tweetypiewesuwt]
 
-  def safeCachedTweetyPieStoreV2: ReadableStore[Long, TweetyPieResult]
+  d-def safecachedtweetypiestowev2: weadabwestowe[wong, òωó tweetypiewesuwt]
 
-  def userTweetTweetyPieStore: ReadableStore[TweetyPieUserTweet, TweetyPieResult]
+  def usewtweettweetypiestowe: w-weadabwestowe[tweetypieusewtweet, /(^•ω•^) tweetypiewesuwt]
 
-  def safeUserTweetTweetyPieStore: ReadableStore[TweetyPieUserTweet, TweetyPieResult]
+  d-def safeusewtweettweetypiestowe: weadabwestowe[tweetypieusewtweet, -.- tweetypiewesuwt]
 
-  def cachedTweetyPieStoreV2NoVF: ReadableStore[Long, TweetyPieResult]
+  def cachedtweetypiestowev2novf: w-weadabwestowe[wong, òωó tweetypiewesuwt]
 
-  def tweetContentFeatureCacheStore: ReadableStore[Long, ThriftDataRecord]
+  d-def t-tweetcontentfeatuwecachestowe: weadabwestowe[wong, /(^•ω•^) t-thwiftdatawecowd]
 
-  def scarecrowCheckEventStore: ReadableStore[Event, TieredActionResult]
+  def scawecwowcheckeventstowe: w-weadabwestowe[event, /(^•ω•^) t-tiewedactionwesuwt]
 
-  def userTweetPerspectiveStore: ReadableStore[UserTweet, Perspective]
+  d-def usewtweetpewspectivestowe: weadabwestowe[usewtweet, 😳 p-pewspective]
 
-  def userCountryStore: ReadableStore[Long, Location]
+  d-def usewcountwystowe: weadabwestowe[wong, :3 wocation]
 
-  def pushInfoStore: ReadableStore[Long, UserForPushTargeting]
+  d-def pushinfostowe: w-weadabwestowe[wong, (U ᵕ U❁) u-usewfowpushtawgeting]
 
-  def loggedOutPushInfoStore: ReadableStore[Long, LOWebNotificationMetadata]
+  def woggedoutpushinfostowe: weadabwestowe[wong, ʘwʘ w-wowebnotificationmetadata]
 
-  def tweetImpressionStore: ReadableStore[Long, Seq[Long]]
+  def tweetimpwessionstowe: w-weadabwestowe[wong, o.O s-seq[wong]]
 
-  def audioSpaceStore: ReadableStore[String, AudioSpace]
+  def audiospacestowe: weadabwestowe[stwing, ʘwʘ a-audiospace]
 
-  def basketballGameScoreStore: ReadableStore[QualifiedId, BasketballGameLiveUpdate]
+  d-def basketbawwgamescowestowe: w-weadabwestowe[quawifiedid, ^^ basketbawwgamewiveupdate]
 
-  def baseballGameScoreStore: ReadableStore[QualifiedId, BaseballGameLiveUpdate]
+  d-def basebawwgamescowestowe: w-weadabwestowe[quawifiedid, ^•ﻌ•^ basebawwgamewiveupdate]
 
-  def cricketMatchScoreStore: ReadableStore[QualifiedId, CricketMatchLiveUpdate]
+  def cwicketmatchscowestowe: weadabwestowe[quawifiedid, mya cwicketmatchwiveupdate]
 
-  def soccerMatchScoreStore: ReadableStore[QualifiedId, SoccerMatchLiveUpdate]
+  d-def soccewmatchscowestowe: weadabwestowe[quawifiedid, UwU s-soccewmatchwiveupdate]
 
-  def nflGameScoreStore: ReadableStore[QualifiedId, NflFootballGameLiveUpdate]
+  def nyfwgamescowestowe: w-weadabwestowe[quawifiedid, >_< nyfwfootbawwgamewiveupdate]
 
-  def topicSocialProofServiceStore: ReadableStore[TopicSocialProofRequest, TopicSocialProofResponse]
+  d-def topicsociawpwoofsewvicestowe: weadabwestowe[topicsociawpwoofwequest, /(^•ω•^) t-topicsociawpwoofwesponse]
 
-  def spaceDeviceFollowStore: ReadableStore[SourceDestUserRequest, Boolean]
+  d-def spacedevicefowwowstowe: w-weadabwestowe[souwcedestusewwequest, òωó b-boowean]
 
-  def audioSpaceParticipantsStore: ReadableStore[String, Participants]
+  d-def audiospacepawticipantsstowe: weadabwestowe[stwing, σωσ pawticipants]
 
-  def notificationServiceSender: ReadableStore[
-    NotificationServiceRequest,
-    CreateGenericNotificationResponse
+  def notificationsewvicesendew: weadabwestowe[
+    nyotificationsewvicewequest, ( ͡o ω ͡o )
+    cweategenewicnotificationwesponse
   ]
 
-  def ocfFatigueStore: ReadableStore[OCFHistoryStoreKey, FatigueFlowEnrollment]
+  d-def ocffatiguestowe: w-weadabwestowe[ocfhistowystowekey, f-fatiguefwowenwowwment]
 
-  def dauProbabilityStore: ReadableStore[Long, DauProbability]
+  def daupwobabiwitystowe: w-weadabwestowe[wong, nyaa~~ daupwobabiwity]
 
-  def hydratedLabeledPushRecsStore: ReadableStore[UserHistoryKey, UserHistoryValue]
+  def hydwatedwabewedpushwecsstowe: weadabwestowe[usewhistowykey, :3 u-usewhistowyvawue]
 
-  def userHTLLastVisitStore: ReadableStore[Long, Seq[Long]]
+  def u-usewhtwwastvisitstowe: weadabwestowe[wong, UwU s-seq[wong]]
 
-  def userLanguagesStore: ReadableStore[Long, UserLanguages]
+  def usewwanguagesstowe: w-weadabwestowe[wong, o.O u-usewwanguages]
 
-  def topTweetsByGeoStore: ReadableStore[InterestDomain[String], Map[String, List[
-    (Long, Double)
+  def toptweetsbygeostowe: w-weadabwestowe[intewestdomain[stwing], (ˆ ﻌ ˆ)♡ m-map[stwing, ^^;; wist[
+    (wong, ʘwʘ doubwe)
   ]]]
 
-  def topTweetsByGeoV2VersionedStore: ReadableStore[String, PopTweetsInPlace]
+  def toptweetsbygeov2vewsionedstowe: weadabwestowe[stwing, σωσ p-poptweetsinpwace]
 
-  lazy val pushRecItemStore: ReadableStore[PushRecItemsKey, RecItems] = PushRecItemStore(
-    hydratedLabeledPushRecsStore
+  w-wazy vaw pushwecitemstowe: w-weadabwestowe[pushwecitemskey, ^^;; w-wecitems] = pushwecitemstowe(
+    h-hydwatedwabewedpushwecsstowe
   )
 
-  lazy val labeledPushRecsVerifyingStore: ReadableStore[
-    LabeledPushRecsVerifyingStoreKey,
-    LabeledPushRecsVerifyingStoreResponse
+  wazy vaw wabewedpushwecsvewifyingstowe: w-weadabwestowe[
+    w-wabewedpushwecsvewifyingstowekey, ʘwʘ
+    wabewedpushwecsvewifyingstowewesponse
   ] =
-    LabeledPushRecsVerifyingStore(
-      hydratedLabeledPushRecsStore,
-      historyStore
+    w-wabewedpushwecsvewifyingstowe(
+      h-hydwatedwabewedpushwecsstowe, ^^
+      histowystowe
     )
 
-  lazy val labeledPushRecsDecideredStore: ReadableStore[LabeledPushRecsStoreKey, UserHistoryValue] =
-    LabeledPushRecsDecideredStore(
-      labeledPushRecsVerifyingStore,
-      useHydratedLabeledSendsForFeaturesDeciderKey,
-      verifyHydratedLabeledSendsForFeaturesDeciderKey
+  w-wazy vaw wabewedpushwecsdecidewedstowe: weadabwestowe[wabewedpushwecsstowekey, nyaa~~ usewhistowyvawue] =
+    w-wabewedpushwecsdecidewedstowe(
+      wabewedpushwecsvewifyingstowe, (///ˬ///✿)
+      u-usehydwatedwabewedsendsfowfeatuwesdecidewkey, XD
+      v-vewifyhydwatedwabewedsendsfowfeatuwesdecidewkey
     )
 
-  def onlineUserHistoryStore: ReadableStore[OnlineUserHistoryKey, UserHistoryValue]
+  def onwineusewhistowystowe: w-weadabwestowe[onwineusewhistowykey, :3 usewhistowyvawue]
 
-  def nsfwConsumerStore: ReadableStore[Long, NSFWUserSegmentation]
+  def nysfwconsumewstowe: w-weadabwestowe[wong, òωó n-nysfwusewsegmentation]
 
-  def nsfwProducerStore: ReadableStore[Long, NSFWProducer]
+  def n-nysfwpwoducewstowe: weadabwestowe[wong, ^^ nysfwpwoducew]
 
-  def popGeoLists: ReadableStore[String, NonPersonalizedRecommendedLists]
+  def p-popgeowists: weadabwestowe[stwing, ^•ﻌ•^ nyonpewsonawizedwecommendedwists]
 
-  def listAPIStore: ReadableStore[Long, ApiList]
+  def wistapistowe: w-weadabwestowe[wong, σωσ apiwist]
 
-  def openedPushByHourAggregatedStore: ReadableStore[Long, Map[Int, Int]]
+  d-def openedpushbyhouwaggwegatedstowe: weadabwestowe[wong, (ˆ ﻌ ˆ)♡ m-map[int, nyaa~~ int]]
 
-  def userHealthSignalStore: ReadableStore[Long, UserHealthSignalResponse]
+  def usewheawthsignawstowe: w-weadabwestowe[wong, ʘwʘ u-usewheawthsignawwesponse]
 
-  def reactivatedUserInfoStore: ReadableStore[Long, String]
+  def weactivatedusewinfostowe: weadabwestowe[wong, ^•ﻌ•^ s-stwing]
 
-  def weightedOpenOrNtabClickModelScorer: PushMLModelScorer
+  def weightedopenowntabcwickmodewscowew: pushmwmodewscowew
 
-  def optoutModelScorer: PushMLModelScorer
+  d-def o-optoutmodewscowew: pushmwmodewscowew
 
-  def filteringModelScorer: PushMLModelScorer
+  d-def fiwtewingmodewscowew: pushmwmodewscowew
 
-  def recentFollowsStore: ReadableStore[Long, Seq[Long]]
+  d-def wecentfowwowsstowe: weadabwestowe[wong, rawr x3 s-seq[wong]]
 
-  def geoDuckV2Store: ReadableStore[UserId, LocationResponse]
+  d-def geoduckv2stowe: weadabwestowe[usewid, 🥺 wocationwesponse]
 
-  def realGraphScoresTop500InStore: ReadableStore[Long, Map[Long, Double]]
+  def weawgwaphscowestop500instowe: weadabwestowe[wong, ʘwʘ map[wong, doubwe]]
 
-  def tweetEntityGraphStore: ReadableStore[
-    RecommendTweetEntityRequest,
-    RecommendTweetEntityResponse
+  def tweetentitygwaphstowe: weadabwestowe[
+    wecommendtweetentitywequest, (˘ω˘)
+    wecommendtweetentitywesponse
   ]
 
-  def userUserGraphStore: ReadableStore[RecommendUserRequest, RecommendUserResponse]
+  def usewusewgwaphstowe: weadabwestowe[wecommendusewwequest, o.O w-wecommendusewwesponse]
 
-  def userFeaturesStore: ReadableStore[Long, UserFeatures]
+  d-def usewfeatuwesstowe: weadabwestowe[wong, σωσ usewfeatuwes]
 
-  def userTargetingPropertyStore: ReadableStore[Long, UserTargetingProperty]
+  d-def usewtawgetingpwopewtystowe: w-weadabwestowe[wong, (ꈍᴗꈍ) u-usewtawgetingpwopewty]
 
-  def timelinesUserSessionStore: ReadableStore[Long, UserSession]
+  def timewinesusewsessionstowe: w-weadabwestowe[wong, (ˆ ﻌ ˆ)♡ usewsession]
 
-  def optOutUserInterestsStore: ReadableStore[UserId, Seq[InterestId]]
+  d-def optoutusewintewestsstowe: w-weadabwestowe[usewid, o.O seq[intewestid]]
 
-  def ntabCaretFeedbackStore: ReadableStore[GenericNotificationsFeedbackRequest, Seq[
-    CaretFeedbackDetails
+  d-def nytabcawetfeedbackstowe: weadabwestowe[genewicnotificationsfeedbackwequest, :3 s-seq[
+    c-cawetfeedbackdetaiws
   ]]
 
-  def genericFeedbackStore: ReadableStore[FeedbackRequest, Seq[
-    FeedbackPromptValue
+  def genewicfeedbackstowe: weadabwestowe[feedbackwequest, -.- s-seq[
+    f-feedbackpwomptvawue
   ]]
 
-  def genericNotificationFeedbackStore: GenericFeedbackStore
+  d-def g-genewicnotificationfeedbackstowe: g-genewicfeedbackstowe
 
-  def semanticCoreMegadataStore: ReadableStore[
-    SemanticEntityForQuery,
-    EntityMegadata
+  d-def s-semanticcowemegadatastowe: w-weadabwestowe[
+    s-semanticentityfowquewy, ( ͡o ω ͡o )
+    entitymegadata
   ]
 
-  def tweetHealthScoreStore: ReadableStore[TweetScoringRequest, TweetScoringResponse]
+  d-def tweetheawthscowestowe: w-weadabwestowe[tweetscowingwequest, /(^•ω•^) t-tweetscowingwesponse]
 
-  def earlybirdFeatureStore: ReadableStore[Long, ThriftSearchResultFeatures]
+  def eawwybiwdfeatuwestowe: w-weadabwestowe[wong, (⑅˘꒳˘) thwiftseawchwesuwtfeatuwes]
 
-  def earlybirdFeatureBuilder: FeatureBuilder[Long]
+  def eawwybiwdfeatuwebuiwdew: f-featuwebuiwdew[wong]
 
-  // Feature builders
+  // featuwe b-buiwdews
 
-  def tweetAuthorLocationFeatureBuilder: FeatureBuilder[Location]
+  d-def tweetauthowwocationfeatuwebuiwdew: f-featuwebuiwdew[wocation]
 
-  def tweetAuthorLocationFeatureBuilderById: FeatureBuilder[Long]
+  def tweetauthowwocationfeatuwebuiwdewbyid: featuwebuiwdew[wong]
 
-  def socialContextActionsFeatureBuilder: FeatureBuilder[SocialContextActions]
+  d-def sociawcontextactionsfeatuwebuiwdew: featuwebuiwdew[sociawcontextactions]
 
-  def tweetContentFeatureBuilder: FeatureBuilder[Long]
+  def tweetcontentfeatuwebuiwdew: f-featuwebuiwdew[wong]
 
-  def tweetAuthorRecentRealGraphFeatureBuilder: FeatureBuilder[RealGraphEdge]
+  def tweetauthowwecentweawgwaphfeatuwebuiwdew: f-featuwebuiwdew[weawgwaphedge]
 
-  def socialContextRecentRealGraphFeatureBuilder: FeatureBuilder[Set[RealGraphEdge]]
+  def s-sociawcontextwecentweawgwaphfeatuwebuiwdew: featuwebuiwdew[set[weawgwaphedge]]
 
-  def tweetSocialProofFeatureBuilder: FeatureBuilder[TweetSocialProofKey]
+  def tweetsociawpwooffeatuwebuiwdew: featuwebuiwdew[tweetsociawpwoofkey]
 
-  def targetUserFullRealGraphFeatureBuilder: FeatureBuilder[TargetFullRealGraphFeatureKey]
+  def tawgetusewfuwwweawgwaphfeatuwebuiwdew: f-featuwebuiwdew[tawgetfuwwweawgwaphfeatuwekey]
 
-  def postProcessingFeatureBuilder: PostProcessingFeatureBuilder
+  def postpwocessingfeatuwebuiwdew: p-postpwocessingfeatuwebuiwdew
 
-  def mrOfflineUserCandidateSparseAggregatesFeatureBuilder: FeatureBuilder[
-    OfflineSparseAggregateKey
+  d-def mwoffwineusewcandidatespawseaggwegatesfeatuwebuiwdew: featuwebuiwdew[
+    offwinespawseaggwegatekey
   ]
 
-  def mrOfflineUserAggregatesFeatureBuilder: FeatureBuilder[Long]
+  d-def mwoffwineusewaggwegatesfeatuwebuiwdew: f-featuwebuiwdew[wong]
 
-  def mrOfflineUserCandidateAggregatesFeatureBuilder: FeatureBuilder[OfflineAggregateKey]
+  def m-mwoffwineusewcandidateaggwegatesfeatuwebuiwdew: f-featuwebuiwdew[offwineaggwegatekey]
 
-  def tweetAnnotationsFeatureBuilder: FeatureBuilder[Long]
+  def tweetannotationsfeatuwebuiwdew: featuwebuiwdew[wong]
 
-  def targetUserMediaRepresentationFeatureBuilder: FeatureBuilder[Long]
+  d-def tawgetusewmediawepwesentationfeatuwebuiwdew: f-featuwebuiwdew[wong]
 
-  def targetLevelFeatureBuilder: FeatureBuilder[MrRequestContextForFeatureStore]
+  def tawgetwevewfeatuwebuiwdew: f-featuwebuiwdew[mwwequestcontextfowfeatuwestowe]
 
-  def candidateLevelFeatureBuilder: FeatureBuilder[EntityRequestContextForFeatureStore]
+  def candidatewevewfeatuwebuiwdew: featuwebuiwdew[entitywequestcontextfowfeatuwestowe]
 
-  def targetFeatureHydrator: RelevanceTargetFeatureHydrator
+  d-def tawgetfeatuwehydwatow: wewevancetawgetfeatuwehydwatow
 
-  def useHydratedLabeledSendsForFeaturesDeciderKey: String =
-    DeciderKey.useHydratedLabeledSendsForFeaturesDeciderKey.toString
+  d-def usehydwatedwabewedsendsfowfeatuwesdecidewkey: s-stwing =
+    d-decidewkey.usehydwatedwabewedsendsfowfeatuwesdecidewkey.tostwing
 
-  def verifyHydratedLabeledSendsForFeaturesDeciderKey: String =
-    DeciderKey.verifyHydratedLabeledSendsForFeaturesDeciderKey.toString
+  def vewifyhydwatedwabewedsendsfowfeatuwesdecidewkey: stwing =
+    d-decidewkey.vewifyhydwatedwabewedsendsfowfeatuwesdecidewkey.tostwing
 
-  def lexServiceStore: ReadableStore[EventRequest, LiveEvent]
+  d-def wexsewvicestowe: w-weadabwestowe[eventwequest, òωó w-wiveevent]
 
-  def userMediaRepresentationStore: ReadableStore[Long, UserMediaRepresentation]
+  def usewmediawepwesentationstowe: w-weadabwestowe[wong, 🥺 u-usewmediawepwesentation]
 
-  def producerMediaRepresentationStore: ReadableStore[Long, UserMediaRepresentation]
+  d-def pwoducewmediawepwesentationstowe: w-weadabwestowe[wong, (ˆ ﻌ ˆ)♡ u-usewmediawepwesentation]
 
-  def mrUserStatePredictionStore: ReadableStore[Long, MRUserHmmState]
+  d-def mwusewstatepwedictionstowe: w-weadabwestowe[wong, -.- m-mwusewhmmstate]
 
-  def pushcapDynamicPredictionStore: ReadableStore[Long, PushcapUserHistory]
+  def pushcapdynamicpwedictionstowe: w-weadabwestowe[wong, σωσ pushcapusewhistowy]
 
-  def earlybirdCandidateSource: EarlybirdCandidateSource
+  def e-eawwybiwdcandidatesouwce: eawwybiwdcandidatesouwce
 
-  def earlybirdSearchStore: ReadableStore[EarlybirdRequest, Seq[ThriftSearchResult]]
+  d-def eawwybiwdseawchstowe: w-weadabwestowe[eawwybiwdwequest, >_< s-seq[thwiftseawchwesuwt]]
 
-  def earlybirdSearchDest: String
+  def eawwybiwdseawchdest: stwing
 
-  def pushserviceThriftClientId: ClientId
+  def pushsewvicethwiftcwientid: c-cwientid
 
-  def simClusterToEntityStore: ReadableStore[Int, SimClustersInferredEntities]
+  def s-simcwustewtoentitystowe: w-weadabwestowe[int, :3 simcwustewsinfewwedentities]
 
-  def fanoutMetadataStore: ReadableStore[(Long, Long), FanoutEvent]
-
-  /**
-   * PostRanking Feature Store Client
-   */
-  def postRankingFeatureStoreClient: DynamicFeatureStoreClient[MrRequestContextForFeatureStore]
+  def fanoutmetadatastowe: w-weadabwestowe[(wong, OwO w-wong), rawr fanoutevent]
 
   /**
-   * ReadableStore to fetch [[UserInterests]] from INTS service
+   * p-postwanking f-featuwe stowe cwient
    */
-  def interestsWithLookupContextStore: ReadableStore[InterestsLookupRequestWithContext, Interests]
+  def postwankingfeatuwestowecwient: dynamicfeatuwestowecwient[mwwequestcontextfowfeatuwestowe]
+
+  /**
+   * w-weadabwestowe t-to fetch [[usewintewests]] f-fwom ints s-sewvice
+   */
+  def intewestswithwookupcontextstowe: weadabwestowe[intewestswookupwequestwithcontext, (///ˬ///✿) i-intewests]
 
   /**
    *
-   * @return: [[TopicListing]] object to fetch paused topics and scope from productId
+   * @wetuwn: [[topicwisting]] o-object to fetch paused topics and scope f-fwom pwoductid
    */
-  def topicListing: TopicListing
+  def topicwisting: topicwisting
 
   /**
    *
-   * @return: [[UttEntityHydrationStore]] object
+   * @wetuwn: [[uttentityhydwationstowe]] o-object
    */
-  def uttEntityHydrationStore: UttEntityHydrationStore
+  def uttentityhydwationstowe: u-uttentityhydwationstowe
 
-  def appPermissionStore: ReadableStore[(Long, (String, String)), AppPermission]
+  d-def apppewmissionstowe: weadabwestowe[(wong, ^^ (stwing, s-stwing)), XD a-apppewmission]
 
-  lazy val userTweetEntityGraphCandidates: UserTweetEntityGraphCandidates =
-    UserTweetEntityGraphCandidates(
-      cachedTweetyPieStoreV2,
-      tweetEntityGraphStore,
-      PushParams.UTEGTweetCandidateSourceParam,
-      PushFeatureSwitchParams.NumberOfMaxUTEGCandidatesQueriedParam,
-      PushParams.AllowOneSocialProofForTweetInUTEGParam,
-      PushParams.OutNetworkTweetsOnlyForUTEGParam,
-      PushFeatureSwitchParams.MaxTweetAgeParam
-    )(statsReceiver)
+  wazy vaw u-usewtweetentitygwaphcandidates: usewtweetentitygwaphcandidates =
+    u-usewtweetentitygwaphcandidates(
+      c-cachedtweetypiestowev2, UwU
+      t-tweetentitygwaphstowe, o.O
+      p-pushpawams.utegtweetcandidatesouwcepawam, 😳
+      pushfeatuweswitchpawams.numbewofmaxutegcandidatesquewiedpawam, (˘ω˘)
+      p-pushpawams.awwowonesociawpwooffowtweetinutegpawam, 🥺
+      p-pushpawams.outnetwowktweetsonwyfowutegpawam, ^^
+      p-pushfeatuweswitchpawams.maxtweetagepawam
+    )(statsweceivew)
 
-  def pushSendEventBusPublisher: EventBusPublisher[NotificationScribe]
+  def pushsendeventbuspubwishew: e-eventbuspubwishew[notificationscwibe]
 
-  // miscs.
+  // miscs. >w<
 
-  def isProd: Boolean
+  def ispwod: boowean
 
-  implicit def statsReceiver: StatsReceiver
+  i-impwicit d-def statsweceivew: s-statsweceivew
 
-  def decider: Decider
+  def decidew: decidew
 
-  def abDecider: LoggingABDecider
+  def abdecidew: woggingabdecidew
 
-  def casLock: CasLock
+  def caswock: caswock
 
-  def pushIbisV2Store: PushIbis2Store
+  d-def pushibisv2stowe: pushibis2stowe
 
-  // scribe
-  def notificationScribe(data: NotificationScribe): Unit
+  // s-scwibe
+  def nyotificationscwibe(data: n-nyotificationscwibe): unit
 
-  def requestScribe(data: PushRequestScribe): Unit
+  def wequestscwibe(data: p-pushwequestscwibe): unit
 
-  def init(): Future[Unit] = Future.Done
+  def init(): f-futuwe[unit] = f-futuwe.done
 
-  def configParamsBuilder: ConfigParamsBuilder
+  d-def configpawamsbuiwdew: c-configpawamsbuiwdew
 
-  def candidateFeatureHydrator: CandidateFeatureHydrator
+  d-def candidatefeatuwehydwatow: candidatefeatuwehydwatow
 
-  def featureHydrator: MRFeatureHydrator
+  def featuwehydwatow: mwfeatuwehydwatow
 
-  def candidateHydrator: PushCandidateHydrator
+  d-def candidatehydwatow: pushcandidatehydwatow
 
-  def sendHandlerCandidateHydrator: SendHandlerPushCandidateHydrator
+  def sendhandwewcandidatehydwatow: s-sendhandwewpushcandidatehydwatow
 
-  lazy val overridesConfig: configapi.Config = {
-    val pushFeatureSwitchConfigs: configapi.Config = PushFeatureSwitches(
-      deciderGateBuilder = new DeciderGateBuilder(decider),
-      statsReceiver = statsReceiver
+  wazy vaw ovewwidesconfig: configapi.config = {
+    v-vaw pushfeatuweswitchconfigs: configapi.config = pushfeatuweswitches(
+      decidewgatebuiwdew = nyew decidewgatebuiwdew(decidew), ^^;;
+      statsweceivew = s-statsweceivew
     ).config
 
-    new CompositeConfig(Seq(pushFeatureSwitchConfigs))
+    n-nyew compositeconfig(seq(pushfeatuweswitchconfigs))
   }
 
-  def realTimeClientEventStore: RealTimeClientEventStore
+  def weawtimecwienteventstowe: w-weawtimecwienteventstowe
 
-  def inlineActionHistoryStore: ReadableStore[Long, Seq[(Long, String)]]
+  def inwineactionhistowystowe: weadabwestowe[wong, (˘ω˘) s-seq[(wong, OwO stwing)]]
 
-  def softUserGeoLocationStore: ReadableStore[Long, GeoLocation]
+  d-def softusewgeowocationstowe: weadabwestowe[wong, (ꈍᴗꈍ) g-geowocation]
 
-  def tweetTranslationStore: ReadableStore[TweetTranslationStore.Key, TweetTranslationStore.Value]
+  def tweettwanswationstowe: w-weadabwestowe[tweettwanswationstowe.key, òωó tweettwanswationstowe.vawue]
 
-  def tripTweetCandidateStore: ReadableStore[TripDomain, TripTweets]
+  def twiptweetcandidatestowe: weadabwestowe[twipdomain, ʘwʘ twiptweets]
 
-  def softUserFollowingStore: ReadableStore[User, Seq[Long]]
+  d-def softusewfowwowingstowe: weadabwestowe[usew, ʘwʘ seq[wong]]
 
-  def superFollowEligibilityUserStore: ReadableStore[Long, Boolean]
+  d-def supewfowwowewigibiwityusewstowe: w-weadabwestowe[wong, nyaa~~ b-boowean]
 
-  def superFollowCreatorTweetCountStore: ReadableStore[StratoUserId, Int]
+  def supewfowwowcweatowtweetcountstowe: weadabwestowe[stwatousewid, UwU int]
 
-  def hasSuperFollowingRelationshipStore: ReadableStore[
-    HasSuperFollowingRelationshipRequest,
-    Boolean
+  d-def hassupewfowwowingwewationshipstowe: weadabwestowe[
+    hassupewfowwowingwewationshipwequest, (⑅˘꒳˘)
+    boowean
   ]
 
-  def superFollowApplicationStatusStore: ReadableStore[(Long, SellerTrack), SellerApplicationState]
+  def supewfowwowappwicationstatusstowe: w-weadabwestowe[(wong, (˘ω˘) s-sewwewtwack), :3 s-sewwewappwicationstate]
 
-  def recentHistoryCacheClient: RecentHistoryCacheClient
+  d-def wecenthistowycachecwient: wecenthistowycachecwient
 
-  def openAppUserStore: ReadableStore[Long, Boolean]
+  d-def openappusewstowe: w-weadabwestowe[wong, (˘ω˘) boowean]
 
-  def loggedOutHistoryStore: PushServiceHistoryStore
+  def woggedouthistowystowe: p-pushsewvicehistowystowe
 
-  def idsStore: ReadableStore[RecommendedListsRequest, RecommendedListsResponse]
+  def idsstowe: weadabwestowe[wecommendedwistswequest, nyaa~~ w-wecommendedwistswesponse]
 
-  def htlScoreStore(userId: Long): ReadableStore[Long, ScoredTweet]
+  def htwscowestowe(usewid: wong): w-weadabwestowe[wong, (U ﹏ U) s-scowedtweet]
 }

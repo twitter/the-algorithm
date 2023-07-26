@@ -1,85 +1,85 @@
-package com.twitter.search.earlybird.common;
+package com.twittew.seawch.eawwybiwd.common;
 
-import java.util.Optional;
+impowt j-java.utiw.optionaw;
 
-import com.twitter.common.optional.Optionals;
-import com.twitter.search.common.util.FinagleUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.strato.opcontext.Attribution;
-import com.twitter.strato.opcontext.HttpEndpoint;
+i-impowt c-com.twittew.common.optionaw.optionaws;
+i-impowt com.twittew.seawch.common.utiw.finagweutiw;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.stwato.opcontext.attwibution;
+i-impowt com.twittew.stwato.opcontext.httpendpoint;
 
-public final class ClientIdUtil {
-  // Blenders should always set the EarlybirdRequest.clientId field. It should be set to the Finagle
-  // client ID of the client that caused the blender to send this request to the roots. If the
-  // Finagle ID of the blender's client cannot be determined, it will be set to "unknown" (see
-  // com.twitter.search.common.util.FinagleUtil.UNKNOWN_CLIENT_NAME). However, other services that
-  // send requests to roots might not set EarlybirdRequest.clientId.
+pubwic finaw cwass cwientidutiw {
+  // bwendews shouwd awways set the e-eawwybiwdwequest.cwientid fiewd. >w< it shouwd be set t-to the finagwe
+  // cwient id o-of the cwient that caused the bwendew to send this wequest to the w-woots. (⑅˘꒳˘) if the
+  // finagwe id o-of the bwendew's c-cwient cannot be detewmined, OwO it wiww be set to "unknown" (see
+  // com.twittew.seawch.common.utiw.finagweutiw.unknown_cwient_name). (ꈍᴗꈍ) howevew, othew s-sewvices that
+  // send wequests to woots might nyot set eawwybiwdwequest.cwientid. 😳
   //
-  // So an "unset" clientId means: EarlybirdRequest.clientId was null.
-  // An "unknown" clientId means: the client that sent us the request
-  // tried setting EarlybirdRequest.clientId, but couldn't figure out a good value for it.
-  public static final String UNSET_CLIENT_ID = "unset";
+  // so an "unset" c-cwientid means: eawwybiwdwequest.cwientid w-was nyuww. 😳😳😳
+  // a-an "unknown" c-cwientid m-means: the cwient that sent us the wequest
+  // t-twied setting eawwybiwdwequest.cwientid, mya but couwdn't figuwe out a-a good vawue fow it. mya
+  pubwic static finaw stwing unset_cwient_id = "unset";
 
-  private static final String CLIENT_ID_FOR_UNKNOWN_CLIENTS = "unknown_client_id";
+  pwivate static finaw stwing cwient_id_fow_unknown_cwients = "unknown_cwient_id";
 
-  private static final String CLIENT_ID_PREFIX = "client_id_";
+  p-pwivate static finaw stwing c-cwient_id_pwefix = "cwient_id_";
 
-  private static final String FINAGLE_CLIENT_ID_AND_CLIENT_ID_PATTERN =
-      "finagle_id_%s_and_client_id_%s";
+  p-pwivate static f-finaw stwing finagwe_cwient_id_and_cwient_id_pattewn =
+      "finagwe_id_%s_and_cwient_id_%s";
 
-  private static final String CLIENT_ID_AND_REQUEST_TYPE = "client_id_%s_and_type_%s";
+  pwivate static finaw stwing c-cwient_id_and_wequest_type = "cwient_id_%s_and_type_%s";
 
-  private ClientIdUtil() {
+  pwivate c-cwientidutiw() {
   }
 
-  /** Returns the ID of the client that initiated this request or UNSET_CLIENT_ID if not set. */
-  public static String getClientIdFromRequest(EarlybirdRequest request) {
-    return Optional
-        .ofNullable(request.getClientId())
-        .map(String::toLowerCase)
-        .orElse(UNSET_CLIENT_ID);
-  }
-
-  /**
-   * Returns the Strato http endpoint attribution as an Optional.
-   */
-  public static Optional<String> getClientIdFromHttpEndpointAttribution() {
-    return Optionals
-        .optional(Attribution.httpEndpoint())
-        .map(HttpEndpoint::name)
-        .map(String::toLowerCase);
-  }
-
-  /** Formats the given clientId into a string that can be used for stats. */
-  public static String formatClientId(String clientId) {
-    return CLIENT_ID_PREFIX + clientId;
+  /** wetuwns the id o-of the cwient t-that initiated this wequest ow unset_cwient_id if n-nyot set. (⑅˘꒳˘) */
+  pubwic static stwing g-getcwientidfwomwequest(eawwybiwdwequest wequest) {
+    wetuwn o-optionaw
+        .ofnuwwabwe(wequest.getcwientid())
+        .map(stwing::towowewcase)
+        .owewse(unset_cwient_id);
   }
 
   /**
-   * Formats the given Finagle clientId and the given clientId into a single string that can be used
-   * for stats, or other purposes where the two IDs need to be combined.
+   * wetuwns t-the stwato http endpoint attwibution a-as an optionaw. (U ﹏ U)
    */
-  public static String formatFinagleClientIdAndClientId(String finagleClientId, String clientId) {
-    return String.format(FINAGLE_CLIENT_ID_AND_CLIENT_ID_PATTERN, finagleClientId, clientId);
+  p-pubwic static optionaw<stwing> getcwientidfwomhttpendpointattwibution() {
+    wetuwn optionaws
+        .optionaw(attwibution.httpendpoint())
+        .map(httpendpoint::name)
+        .map(stwing::towowewcase);
+  }
+
+  /** fowmats the given cwientid into a stwing that can be u-used fow stats. mya */
+  p-pubwic static stwing fowmatcwientid(stwing c-cwientid) {
+    w-wetuwn cwient_id_pwefix + c-cwientid;
   }
 
   /**
-   * Formats the given clientId and requestType into a single string that can be used
-   * for stats or other purposes.
+   * fowmats the given finagwe cwientid and the g-given cwientid into a singwe stwing that can be used
+   * fow stats, ʘwʘ ow othew puwposes w-whewe the two ids nyeed t-to be combined. (˘ω˘)
    */
-  public static String formatClientIdAndRequestType(
-      String clientId, String requestType) {
-    return String.format(CLIENT_ID_AND_REQUEST_TYPE, clientId, requestType);
+  p-pubwic static s-stwing fowmatfinagwecwientidandcwientid(stwing finagwecwientid, (U ﹏ U) s-stwing cwientid) {
+    w-wetuwn s-stwing.fowmat(finagwe_cwient_id_and_cwient_id_pattewn, ^•ﻌ•^ f-finagwecwientid, cwientid);
   }
 
   /**
-   * Format the quota client id
+   * fowmats the g-given cwientid a-and wequesttype i-into a singwe s-stwing that can b-be used
+   * fow stats ow othew puwposes. (˘ω˘)
    */
-  public static String getQuotaClientId(String clientId) {
-    if (FinagleUtil.UNKNOWN_CLIENT_NAME.equals(clientId) || UNSET_CLIENT_ID.equals(clientId)) {
-      return CLIENT_ID_FOR_UNKNOWN_CLIENTS;
+  pubwic static s-stwing fowmatcwientidandwequesttype(
+      stwing cwientid, :3 stwing wequesttype) {
+    wetuwn stwing.fowmat(cwient_id_and_wequest_type, ^^;; cwientid, 🥺 w-wequesttype);
+  }
+
+  /**
+   * fowmat the quota cwient id
+   */
+  pubwic static s-stwing getquotacwientid(stwing cwientid) {
+    if (finagweutiw.unknown_cwient_name.equaws(cwientid) || u-unset_cwient_id.equaws(cwientid)) {
+      w-wetuwn cwient_id_fow_unknown_cwients;
     }
 
-    return clientId;
+    wetuwn cwientid;
   }
 }

@@ -1,41 +1,41 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.tweetypie.thwiftscawa._
 
-object TweetUpdate {
+o-object tweetupdate {
 
   /**
-   * Copies takedown information from the source [[Tweet]] into [[CachedTweet]].
+   * c-copies t-takedown infowmation f-fwom the souwce [[tweet]] into [[cachedtweet]]. òωó
    *
-   * Note that this method requires the source [[Tweet]] to have been loaded with the following
-   * additional fields (which happens for all paths that create [[ReplicatedTakedown.Event]], in
-   * both [[TakedownHandler]] and [[UserTakedownHandler]]:
-   * - TweetypieOnlyTakedownReasonsField
-   * - TweetypieOnlyTakedownCountryCodesField
-   * This is done to ensure the remote datacenter of a takedown does not incorrectly try to load
-   * from MH as the data is already cached.
+   * note t-that this method w-wequiwes the souwce [[tweet]] to have been woaded with the fowwowing
+   * additionaw f-fiewds (which happens fow aww paths that c-cweate [[wepwicatedtakedown.event]], ʘwʘ in
+   * b-both [[takedownhandwew]] and [[usewtakedownhandwew]]:
+   * - tweetypieonwytakedownweasonsfiewd
+   * - tweetypieonwytakedowncountwycodesfiewd
+   * t-this is done to ensuwe the wemote d-datacentew of a-a takedown does nyot incowwectwy twy to woad
+   * fwom mh as the data is awweady c-cached. /(^•ω•^)
    */
-  def copyTakedownFieldsForUpdate(source: Tweet): CachedTweet => CachedTweet =
-    ct => {
-      val newCoreData = source.coreData.get
-      val updatedCoreData = ct.tweet.coreData.map(_.copy(hasTakedown = newCoreData.hasTakedown))
+  def copytakedownfiewdsfowupdate(souwce: tweet): cachedtweet => cachedtweet =
+    c-ct => {
+      vaw nyewcowedata = s-souwce.cowedata.get
+      vaw u-updatedcowedata = c-ct.tweet.cowedata.map(_.copy(hastakedown = n-nyewcowedata.hastakedown))
       ct.copy(
         tweet = ct.tweet.copy(
-          coreData = updatedCoreData,
-          tweetypieOnlyTakedownCountryCodes = source.tweetypieOnlyTakedownCountryCodes,
-          tweetypieOnlyTakedownReasons = source.tweetypieOnlyTakedownReasons
+          c-cowedata = updatedcowedata, ʘwʘ
+          tweetypieonwytakedowncountwycodes = souwce.tweetypieonwytakedowncountwycodes, σωσ
+          t-tweetypieonwytakedownweasons = souwce.tweetypieonwytakedownweasons
         )
       )
     }
 
-  def copyNsfwFieldsForUpdate(source: Tweet): Tweet => Tweet =
+  def copynsfwfiewdsfowupdate(souwce: tweet): tweet => tweet =
     tweet => {
-      val newCoreData = source.coreData.get
-      val updatedCoreData =
-        tweet.coreData.map { core =>
-          core.copy(nsfwUser = newCoreData.nsfwUser, nsfwAdmin = newCoreData.nsfwAdmin)
+      v-vaw nyewcowedata = souwce.cowedata.get
+      v-vaw u-updatedcowedata =
+        t-tweet.cowedata.map { cowe =>
+          cowe.copy(nsfwusew = nyewcowedata.nsfwusew, OwO nysfwadmin = n-nyewcowedata.nsfwadmin)
         }
-      tweet.copy(coreData = updatedCoreData)
+      t-tweet.copy(cowedata = updatedcowedata)
     }
 }

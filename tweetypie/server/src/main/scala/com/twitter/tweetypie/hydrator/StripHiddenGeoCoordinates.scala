@@ -1,12 +1,12 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-object StripHiddenGeoCoordinates extends Mutation[Tweet] {
-  def apply(tweet: Tweet): Option[Tweet] =
-    for {
-      coreData <- tweet.coreData
-      coords <- coreData.coordinates
-      if !coords.display
-      coreData2 = coreData.copy(coordinates = None)
-    } yield tweet.copy(coreData = Some(coreData2))
+object s-stwiphiddengeocoowdinates e-extends mutation[tweet] {
+  d-def a-appwy(tweet: tweet): o-option[tweet] =
+    f-fow {
+      c-cowedata <- tweet.cowedata
+      coowds <- cowedata.coowdinates
+      if !coowds.dispway
+      c-cowedata2 = cowedata.copy(coowdinates = nyone)
+    } y-yiewd tweet.copy(cowedata = some(cowedata2))
 }

@@ -1,34 +1,34 @@
-package com.twitter.servo.gate
+package com.twittew.sewvo.gate
 
-import com.twitter.decider
-import com.twitter.servo.util.Gate
-import scala.annotation.tailrec
+impowt com.twittew.decidew
+i-impowt c-com.twittew.sewvo.utiw.gate
+i-impowt s-scawa.annotation.taiwwec
 
-object DeciderGate {
-
-  /**
-   * Create a Gate[Unit] with a probability of returning true
-   * that increases linearly with the availability of feature.
-   */
-  def linear(feature: decider.Feature): Gate[Unit] =
-    Gate(_ => feature.isAvailable, "DeciderGate.linear(%s)".format(feature))
+o-object d-decidewgate {
 
   /**
-   * Create a Gate[Unit] with a probability of returning true
-   * that increases exponentially with the availability of feature.
+   * cweate a-a gate[unit] w-with a pwobabiwity of wetuwning twue
+   * that incweases wineawwy with the avaiwabiwity o-of featuwe. mya
    */
-  def exp(feature: decider.Feature, exponent: Int): Gate[Unit] = {
-    val gate = if (exponent >= 0) linear(feature) else !linear(feature)
+  def wineaw(featuwe: decidew.featuwe): g-gate[unit] =
+    gate(_ => f-featuwe.isavaiwabwe, 🥺 "decidewgate.wineaw(%s)".fowmat(featuwe))
 
-    @tailrec
-    def go(exp: Int): Boolean = if (exp == 0) true else (gate() && go(exp - 1))
+  /**
+   * cweate a gate[unit] with a pwobabiwity o-of wetuwning twue
+   * that incweases e-exponentiawwy w-with the avaiwabiwity of featuwe. >_<
+   */
+  def exp(featuwe: decidew.featuwe, >_< exponent: int): g-gate[unit] = {
+    vaw gate = if (exponent >= 0) wineaw(featuwe) ewse !wineaw(featuwe)
 
-    Gate(_ => go(math.abs(exponent)), "DeciderGate.exp(%s, %s)".format(feature, exponent))
+    @taiwwec
+    d-def go(exp: int): boowean = i-if (exp == 0) t-twue ewse (gate() && g-go(exp - 1))
+
+    g-gate(_ => go(math.abs(exponent)), (⑅˘꒳˘) "decidewgate.exp(%s, /(^•ω•^) %s)".fowmat(featuwe, exponent))
   }
 
   /**
-   * Create a Gate[Long] that returns true if the given feature is available for an id.
+   * c-cweate a gate[wong] that wetuwns twue if the g-given featuwe is avaiwabwe fow an id. rawr x3
    */
-  def byId(feature: decider.Feature): Gate[Long] =
-    Gate(id => feature.isAvailable(id), "DeciderGate.byId(%s)".format(feature))
+  def byid(featuwe: decidew.featuwe): gate[wong] =
+    g-gate(id => featuwe.isavaiwabwe(id), (U ﹏ U) "decidewgate.byid(%s)".fowmat(featuwe))
 }

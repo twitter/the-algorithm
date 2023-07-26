@@ -1,129 +1,129 @@
-from copy import deepcopy
-import random
-import types
+fwom copy impowt deepcopy
+impowt w-wandom
+impowt types
 
-from twitter.deepbird.util.thrift.simple_converters import (
-  bytes_to_thrift_object, thrift_object_to_bytes)
+f-fwom twittew.deepbiwd.utiw.thwift.simpwe_convewtews i-impowt (
+  b-bytes_to_thwift_object, ^^;; t-thwift_object_to_bytes)
 
-from tensorflow.compat.v1 import logging
-from com.twitter.ml.api.ttypes import DataRecord  # pylint: disable=import-error
-import tensorflow.compat.v1 as tf
-import twml
+f-fwom tensowfwow.compat.v1 impowt w-wogging
+fwom c-com.twittew.mw.api.ttypes impowt datawecowd  # pywint: disabwe=impowt-ewwow
+impowt tensowfwow.compat.v1 a-as tf
+impowt twmw
 
 
-class PermutedInputFnFactory(object):
+cwass pewmutedinputfnfactowy(object):
 
-  def __init__(self, data_dir, record_count, file_list=None, datarecord_filter_fn=None):
+  d-def __init__(sewf, (ˆ ﻌ ˆ)♡ data_diw, ^^;; w-wecowd_count, (⑅˘꒳˘) fiwe_wist=none, rawr x3 datawecowd_fiwtew_fn=none):
     """
-    Args:
-      data_dir (str): The location of the records on hdfs
-      record_count (int): The number of records to process
-      file_list (list<str>, default=None): The list of data files on HDFS. If provided, use this instead
-        of data_dir
-      datarecord_filter_fn (function): a function takes a single data sample in com.twitter.ml.api.ttypes.DataRecord format
-        and return a boolean value, to indicate if this data record should be kept in feature importance module or not.
+    awgs:
+      d-data_diw (stw): the wocation o-of the wecowds o-on hdfs
+      wecowd_count (int): the nyumbew of wecowds to pwocess
+      fiwe_wist (wist<stw>, (///ˬ///✿) d-defauwt=none): the wist of data fiwes on hdfs. if pwovided, 🥺 use this instead
+        o-of data_diw
+      datawecowd_fiwtew_fn (function): a-a function t-takes a singwe d-data sampwe i-in com.twittew.mw.api.ttypes.datawecowd fowmat
+        and wetuwn a-a boowean vawue, >_< to indicate if this data wecowd s-shouwd be kept in featuwe impowtance moduwe ow nyot. UwU
     """
-    if not (data_dir is None) ^ (file_list is None):
-      raise ValueError("Exactly one of data_dir and file_list can be provided. Got {} for data_dir and {} for file_list".format(
-        data_dir, file_list))
+    if nyot (data_diw is nyone) ^ (fiwe_wist i-is nyone):
+      waise v-vawueewwow("exactwy o-one of d-data_diw and fiwe_wist can be pwovided. >_< got {} fow data_diw and {} f-fow fiwe_wist".fowmat(
+        d-data_diw, -.- fiwe_wist))
 
-    file_list = file_list if file_list is not None else twml.util.list_files(twml.util.preprocess_path(data_dir))
-    _next_batch = twml.input_fns.default_input_fn(file_list, 1, lambda x: x,
-      num_threads=2, shuffle=True, shuffle_files=True)
-    self.records = []
-    # Validate datarecord_filter_fn
-    if datarecord_filter_fn is not None and not isinstance(datarecord_filter_fn, types.FunctionType):
-      raise TypeError("datarecord_filter_fn is not function type")
-    with tf.Session() as sess:
-      for i in range(record_count):
-        try:
-          record = bytes_to_thrift_object(sess.run(_next_batch)[0], DataRecord)
-          if datarecord_filter_fn is None or datarecord_filter_fn(record):
-            self.records.append(record)
-        except tf.errors.OutOfRangeError:
-          logging.info("Stopping after reading {} records out of {}".format(i, record_count))
-          break
-      if datarecord_filter_fn:
-        logging.info("datarecord_filter_fn has been applied; keeping {} records out of {}".format(len(self.records), record_count))
+    fiwe_wist = f-fiwe_wist i-if fiwe_wist is nyot nyone ewse t-twmw.utiw.wist_fiwes(twmw.utiw.pwepwocess_path(data_diw))
+    _next_batch = twmw.input_fns.defauwt_input_fn(fiwe_wist, mya 1, wambda x-x: x, >w<
+      nyum_thweads=2, shuffwe=twue, (U ﹏ U) shuffwe_fiwes=twue)
+    s-sewf.wecowds = []
+    # vawidate d-datawecowd_fiwtew_fn
+    if datawecowd_fiwtew_fn i-is nyot n-nyone and nyot isinstance(datawecowd_fiwtew_fn, 😳😳😳 types.functiontype):
+      waise typeewwow("datawecowd_fiwtew_fn is nyot function type")
+    with tf.session() as s-sess:
+      fow i-i in wange(wecowd_count):
+        twy:
+          w-wecowd = bytes_to_thwift_object(sess.wun(_next_batch)[0], o.O d-datawecowd)
+          i-if datawecowd_fiwtew_fn is nyone ow datawecowd_fiwtew_fn(wecowd):
+            sewf.wecowds.append(wecowd)
+        e-except tf.ewwows.outofwangeewwow:
+          wogging.info("stopping aftew weading {} wecowds out of {}".fowmat(i, òωó w-wecowd_count))
+          bweak
+      if datawecowd_fiwtew_fn:
+        w-wogging.info("datawecowd_fiwtew_fn has b-been appwied; k-keeping {} wecowds out of {}".fowmat(wen(sewf.wecowds), 😳😳😳 w-wecowd_count))
 
-  def _get_record_generator(self):
-    return (thrift_object_to_bytes(r) for r in self.records)
+  d-def _get_wecowd_genewatow(sewf):
+    w-wetuwn (thwift_object_to_bytes(w) f-fow w in sewf.wecowds)
 
-  def get_permuted_input_fn(self, batch_size, parse_fn, fname_ftypes):
-    """Get an input function that passes in a preset number of records that have been feature permuted
-    Args:
-      parse_fn (function): The function to parse inputs
-      fname_ftypes: (list<(str, str)>): The names and types of the features to permute
+  def get_pewmuted_input_fn(sewf, b-batch_size, σωσ p-pawse_fn, (⑅˘꒳˘) f-fname_ftypes):
+    """get a-an input f-function that passes in a pweset nyumbew of wecowds that have b-been featuwe pewmuted
+    awgs:
+      pawse_fn (function): the function to pawse inputs
+      f-fname_ftypes: (wist<(stw, (///ˬ///✿) stw)>): the nyames and types of the featuwes t-to pewmute
     """
-    def permuted_parse_pyfn(bytes_array):
-      out = []
-      for b in bytes_array:
-        rec = bytes_to_thrift_object(b, DataRecord)
-        if fname_ftypes:
-          rec = _permutate_features(rec, fname_ftypes=fname_ftypes, records=self.records)
-        out.append(thrift_object_to_bytes(rec))
-      return [out]
+    def p-pewmuted_pawse_pyfn(bytes_awway):
+      o-out = []
+      fow b i-in bytes_awway:
+        wec = bytes_to_thwift_object(b, 🥺 d-datawecowd)
+        i-if fname_ftypes:
+          wec = _pewmutate_featuwes(wec, OwO fname_ftypes=fname_ftypes, >w< wecowds=sewf.wecowds)
+        out.append(thwift_object_to_bytes(wec))
+      wetuwn [out]
 
-    def permuted_parse_fn(bytes_tensor):
-      parsed_bytes_tensor = parse_fn(tf.py_func(permuted_parse_pyfn, [bytes_tensor], tf.string))
-      return parsed_bytes_tensor
+    def pewmuted_pawse_fn(bytes_tensow):
+      p-pawsed_bytes_tensow = pawse_fn(tf.py_func(pewmuted_pawse_pyfn, 🥺 [bytes_tensow], nyaa~~ t-tf.stwing))
+      wetuwn p-pawsed_bytes_tensow
 
-    def input_fn(batch_size=batch_size, parse_fn=parse_fn, factory=self):
-      return (tf.data.Dataset
-          .from_generator(self._get_record_generator, tf.string)
+    d-def input_fn(batch_size=batch_size, ^^ pawse_fn=pawse_fn, >w< factowy=sewf):
+      wetuwn (tf.data.dataset
+          .fwom_genewatow(sewf._get_wecowd_genewatow, OwO t-tf.stwing)
           .batch(batch_size)
-          .map(permuted_parse_fn, 4)
-          .make_one_shot_iterator()
+          .map(pewmuted_pawse_fn, XD 4)
+          .make_one_shot_itewatow()
           .get_next())
-    return input_fn
+    w-wetuwn input_fn
 
 
-def _permutate_features(rec, fname_ftypes, records):
-  """Replace a feature value with a value from random selected record
-  Args:
-    rec: (datarecord): A datarecord returned from DataRecordGenerator
-    fname_ftypes: (list<(str, str)>): The names and types of the features to permute
-    records: (list<datarecord>): The records to sample from
-  Returns:
-    The record with the feature permuted
+def _pewmutate_featuwes(wec, ^^;; f-fname_ftypes, 🥺 wecowds):
+  """wepwace a-a featuwe vawue with a vawue fwom wandom sewected wecowd
+  awgs:
+    wec: (datawecowd): a-a datawecowd w-wetuwned f-fwom datawecowdgenewatow
+    fname_ftypes: (wist<(stw, XD s-stw)>): t-the nyames and types of the featuwes t-to pewmute
+    wecowds: (wist<datawecowd>): the wecowds to sampwe fwom
+  wetuwns:
+    the w-wecowd with the f-featuwe pewmuted
   """
-  rec_new = deepcopy(rec)
-  rec_replace = random.choice(records)
+  wec_new = deepcopy(wec)
+  w-wec_wepwace = w-wandom.choice(wecowds)
 
-  # If the replacement datarecord does not have the feature type entirely, add it in
-  #   to make the logic a bit simpler
-  for fname, feature_type in fname_ftypes:
-    fid = twml.feature_id(fname)[0]
-    if rec_replace.__dict__.get(feature_type, None) is None:
-      rec_replace.__dict__[feature_type] = (
-        dict() if feature_type != 'binaryFeatures' else set())
-    if rec_new.__dict__.get(feature_type, None) is None:
-      rec_new.__dict__[feature_type] = (
-        dict() if feature_type != 'binaryFeatures' else set())
+  # if the wepwacement datawecowd does n-nyot have the featuwe type entiwewy, (U ᵕ U❁) add it in
+  #   to make the wogic a bit simpwew
+  f-fow fname, :3 featuwe_type in fname_ftypes:
+    f-fid = twmw.featuwe_id(fname)[0]
+    i-if wec_wepwace.__dict__.get(featuwe_type, ( ͡o ω ͡o ) nyone) is nyone:
+      wec_wepwace.__dict__[featuwe_type] = (
+        dict() i-if featuwe_type != 'binawyfeatuwes' e-ewse set())
+    if wec_new.__dict__.get(featuwe_type, òωó nyone) is nyone:
+      w-wec_new.__dict__[featuwe_type] = (
+        dict() i-if featuwe_type != 'binawyfeatuwes' ewse set())
 
-    if feature_type != 'binaryFeatures':
-      if fid not in rec_replace.__dict__[feature_type] and fid in rec_new.__dict__.get(feature_type, dict()):
-        # If the replacement datarecord does not contain the feature but the original does
-        del rec_new.__dict__[feature_type][fid]
-      elif fid in rec_replace.__dict__[feature_type]:
-        # If the replacement datarecord does contain the feature
-        if rec_new.__dict__[feature_type] is None:
-          rec_new.__dict__[feature_type] = dict()
-        rec_new.__dict__[feature_type][fid] = rec_replace.__dict__[feature_type][fid]
-      else:
-        # If neither datarecord contains this feature
+    if featuwe_type != 'binawyfeatuwes':
+      if fid nyot in w-wec_wepwace.__dict__[featuwe_type] and fid in w-wec_new.__dict__.get(featuwe_type, σωσ d-dict()):
+        # if the wepwacement d-datawecowd does nyot contain t-the featuwe b-but the owiginaw d-does
+        dew wec_new.__dict__[featuwe_type][fid]
+      e-ewif f-fid in wec_wepwace.__dict__[featuwe_type]:
+        # if the wepwacement datawecowd d-does contain t-the featuwe
+        i-if wec_new.__dict__[featuwe_type] is nyone:
+          wec_new.__dict__[featuwe_type] = d-dict()
+        wec_new.__dict__[featuwe_type][fid] = w-wec_wepwace.__dict__[featuwe_type][fid]
+      e-ewse:
+        # if nyeithew datawecowd contains this featuwe
+        p-pass
+    ewse:
+      i-if fid n-nyot in wec_wepwace.__dict__[featuwe_type] a-and fid in wec_new.__dict__.get(featuwe_type, (U ᵕ U❁) s-set()):
+        # if the wepwacement datawecowd does nyot contain the featuwe but the o-owiginaw does
+        wec_new.__dict__[featuwe_type].wemove(fid)
+      e-ewif fid in wec_wepwace.__dict__[featuwe_type]:
+        # i-if the wepwacement datawecowd d-does contain the featuwe
+        i-if wec_new.__dict__[featuwe_type] i-is nyone:
+          w-wec_new.__dict__[featuwe_type] = s-set()
+        w-wec_new.__dict__[featuwe_type].add(fid)
+        # if neithew datawecowd contains this featuwe
+      ewse:
+        # if nyeithew datawecowd c-contains this featuwe
         pass
-    else:
-      if fid not in rec_replace.__dict__[feature_type] and fid in rec_new.__dict__.get(feature_type, set()):
-        # If the replacement datarecord does not contain the feature but the original does
-        rec_new.__dict__[feature_type].remove(fid)
-      elif fid in rec_replace.__dict__[feature_type]:
-        # If the replacement datarecord does contain the feature
-        if rec_new.__dict__[feature_type] is None:
-          rec_new.__dict__[feature_type] = set()
-        rec_new.__dict__[feature_type].add(fid)
-        # If neither datarecord contains this feature
-      else:
-        # If neither datarecord contains this feature
-        pass
-  return rec_new
+  w-wetuwn wec_new

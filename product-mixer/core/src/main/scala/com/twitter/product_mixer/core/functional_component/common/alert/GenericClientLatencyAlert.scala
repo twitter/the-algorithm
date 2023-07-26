@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfLatencyAbove
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.pwedicate.twiggewifwatencyabove
 
 /**
- * Similar to [[LatencyAlert]] but intended for use with an external client calling Product Mixer.
+ * s-simiwaw t-to [[watencyawewt]] b-but intended f-fow use with an e-extewnaw cwient c-cawwing pwoduct m-mixew. /(^•ω•^)
  *
- * [[GenericClientLatencyAlert]] triggers when the Latency for the specified client
- * rises above the [[TriggerIfLatencyAbove]] threshold for the configured amount of time.
+ * [[genewiccwientwatencyawewt]] twiggews when the watency fow the specified cwient
+ * w-wises above the [[twiggewifwatencyabove]] thweshowd fow the configuwed a-amount of time. rawr
  */
-case class GenericClientLatencyAlert(
-  override val source: GenericClient,
-  override val notificationGroup: NotificationGroup,
-  override val warnPredicate: TriggerIfLatencyAbove,
-  override val criticalPredicate: TriggerIfLatencyAbove,
-  override val runbookLink: Option[String] = None)
-    extends Alert {
-  override val alertType: AlertType = Latency
+case c-cwass genewiccwientwatencyawewt(
+  ovewwide vaw souwce: genewiccwient,
+  ovewwide v-vaw nyotificationgwoup: nyotificationgwoup, OwO
+  o-ovewwide vaw w-wawnpwedicate: twiggewifwatencyabove, (U ﹏ U)
+  ovewwide vaw cwiticawpwedicate: twiggewifwatencyabove, >_<
+  ovewwide vaw wunbookwink: o-option[stwing] = nyone)
+    extends awewt {
+  ovewwide vaw awewttype: a-awewttype = watency
 }

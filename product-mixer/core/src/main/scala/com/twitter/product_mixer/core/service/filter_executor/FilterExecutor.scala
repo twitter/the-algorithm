@@ -1,172 +1,172 @@
-package com.twitter.product_mixer.core.service.filter_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.fiwtew_executow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.filter_executor.FilterExecutor.FilterState
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Arrow.Iso
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.immutable.Queue
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.conditionawwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.executow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.fiwtew_executow.fiwtewexecutow.fiwtewstate
+impowt com.twittew.stitch.awwow
+impowt com.twittew.stitch.awwow.iso
+impowt javax.inject.inject
+impowt j-javax.inject.singweton
+impowt scawa.cowwection.immutabwe.queue
 
 /**
- * Applies a `Seq[Filter]` in sequential order.
- * Returns the results and a detailed Seq of each filter's results (for debugging / coherence).
+ * a-appwies a `seq[fiwtew]` i-in sequentiaw owdew. 🥺
+ * wetuwns the wesuwts and a detaiwed seq o-of each fiwtew's wesuwts (fow d-debugging / cohewence). ^^;;
  *
- * Note that each successive filter is only passed the 'kept' Seq from the previous filter, not the full
- * set of candidates.
+ * note t-that each successive fiwtew is onwy passed the 'kept' seq fwom the pwevious f-fiwtew, :3 nyot the fuww
+ * set of candidates. (U ﹏ U)
  */
-@Singleton
-class FilterExecutor @Inject() (override val statsReceiver: StatsReceiver) extends Executor {
+@singweton
+cwass fiwtewexecutow @inject() (ovewwide v-vaw statsweceivew: statsweceivew) e-extends executow {
 
-  private val Kept = "kept"
-  private val Removed = "removed"
+  p-pwivate v-vaw kept = "kept"
+  p-pwivate vaw wemoved = "wemoved"
 
-  def arrow[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    filters: Seq[Filter[Query, Candidate]],
-    context: Executor.Context
-  ): Arrow[(Query, Seq[CandidateWithFeatures[Candidate]]), FilterExecutorResult[Candidate]] = {
+  def awwow[quewy <: p-pipewinequewy, OwO candidate <: univewsawnoun[any]](
+    f-fiwtews: seq[fiwtew[quewy, 😳😳😳 candidate]], (ˆ ﻌ ˆ)♡
+    context: executow.context
+  ): awwow[(quewy, XD seq[candidatewithfeatuwes[candidate]]), fiwtewexecutowwesuwt[candidate]] = {
 
-    val filterArrows = filters.map(getIsoArrowForFilter(_, context))
-    val combinedArrow = isoArrowsSequentially(filterArrows)
+    v-vaw fiwtewawwows = f-fiwtews.map(getisoawwowfowfiwtew(_, (ˆ ﻌ ˆ)♡ c-context))
+    v-vaw combinedawwow = isoawwowssequentiawwy(fiwtewawwows)
 
-    Arrow
-      .map[(Query, Seq[CandidateWithFeatures[Candidate]]), FilterState[Query, Candidate]] {
-        case (query, filterCandidates) =>
-          // transform the input to the initial state of a `FilterExecutorResult`
-          val initialFilterExecutorResult =
-            FilterExecutorResult(filterCandidates.map(_.candidate), Queue.empty)
-          val allCandidates: Map[Candidate, CandidateWithFeatures[Candidate]] =
-            filterCandidates.map { fc =>
-              (fc.candidate, fc)
-            }.toMap
+    awwow
+      .map[(quewy, ( ͡o ω ͡o ) seq[candidatewithfeatuwes[candidate]]), rawr x3 f-fiwtewstate[quewy, nyaa~~ c-candidate]] {
+        case (quewy, >_< f-fiwtewcandidates) =>
+          // t-twansfowm the input to t-the initiaw state of a `fiwtewexecutowwesuwt`
+          v-vaw initiawfiwtewexecutowwesuwt =
+            fiwtewexecutowwesuwt(fiwtewcandidates.map(_.candidate), ^^;; queue.empty)
+          v-vaw awwcandidates: map[candidate, (ˆ ﻌ ˆ)♡ c-candidatewithfeatuwes[candidate]] =
+            fiwtewcandidates.map { f-fc =>
+              (fc.candidate, ^^;; f-fc)
+            }.tomap
 
-          FilterState(query, allCandidates, initialFilterExecutorResult)
+          fiwtewstate(quewy, (⑅˘꒳˘) awwcandidates, rawr x3 initiawfiwtewexecutowwesuwt)
       }
-      .flatMapArrow(combinedArrow)
+      .fwatmapawwow(combinedawwow)
       .map {
-        case FilterState(_, _, filterExecutorResult) =>
-          filterExecutorResult.copy(individualFilterResults =
-            // materialize the Queue into a List for faster future iterations
-            filterExecutorResult.individualFilterResults.toList)
+        case fiwtewstate(_, (///ˬ///✿) _, 🥺 fiwtewexecutowwesuwt) =>
+          fiwtewexecutowwesuwt.copy(individuawfiwtewwesuwts =
+            // m-matewiawize the q-queue into a wist fow fastew futuwe i-itewations
+            f-fiwtewexecutowwesuwt.individuawfiwtewwesuwts.towist)
       }
 
   }
 
   /**
-   * Adds filter specific stats, generic [[wrapComponentWithExecutorBookkeeping]] stats, and wraps with failure handling
+   * a-adds fiwtew specific stats, >_< genewic [[wwapcomponentwithexecutowbookkeeping]] stats, UwU and w-wwaps with faiwuwe handwing
    *
-   * If the filter is a [[Conditionally]] ensures that we dont record stats if its turned off
+   * if the fiwtew is a [[conditionawwy]] ensuwes t-that we dont wecowd stats if i-its tuwned off
    *
-   * @note For performance, the [[FilterExecutorResult.individualFilterResults]] is build backwards - the head being the most recent result.
-   * @param filter the filter to make an [[Arrow]] out of
-   * @param context the [[Executor.Context]] for the pipeline this is a part of
+   * @note f-fow pewfowmance, >_< t-the [[fiwtewexecutowwesuwt.individuawfiwtewwesuwts]] is buiwd backwawds - t-the head b-being the most w-wecent wesuwt. -.-
+   * @pawam f-fiwtew the fiwtew to make an [[awwow]] o-out of
+   * @pawam c-context t-the [[executow.context]] f-fow the p-pipewine this is a pawt of
    */
-  private def getIsoArrowForFilter[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    filter: Filter[Query, Candidate],
-    context: Executor.Context
-  ): Iso[FilterState[Query, Candidate]] = {
-    val broadcastStatsReceiver =
-      Executor.broadcastStatsReceiver(context, filter.identifier, statsReceiver)
+  pwivate def getisoawwowfowfiwtew[quewy <: p-pipewinequewy, mya candidate <: univewsawnoun[any]](
+    fiwtew: fiwtew[quewy, >w< candidate], (U ﹏ U)
+    context: e-executow.context
+  ): iso[fiwtewstate[quewy, 😳😳😳 candidate]] = {
+    vaw bwoadcaststatsweceivew =
+      executow.bwoadcaststatsweceivew(context, o.O fiwtew.identifiew, òωó s-statsweceivew)
 
-    val keptCounter = broadcastStatsReceiver.counter(Kept)
-    val removedCounter = broadcastStatsReceiver.counter(Removed)
+    v-vaw keptcountew = b-bwoadcaststatsweceivew.countew(kept)
+    vaw wemovedcountew = b-bwoadcaststatsweceivew.countew(wemoved)
 
-    val filterArrow = Arrow.flatMap[
-      (Query, Seq[CandidateWithFeatures[Candidate]]),
-      FilterExecutorIndividualResult[Candidate]
+    vaw fiwtewawwow = a-awwow.fwatmap[
+      (quewy, 😳😳😳 s-seq[candidatewithfeatuwes[candidate]]), σωσ
+      fiwtewexecutowindividuawwesuwt[candidate]
     ] {
-      case (query, candidates) =>
-        filter.apply(query, candidates).map { result =>
-          FilterExecutorIndividualResult(
-            identifier = filter.identifier,
-            kept = result.kept,
-            removed = result.removed)
+      case (quewy, (⑅˘꒳˘) candidates) =>
+        fiwtew.appwy(quewy, (///ˬ///✿) candidates).map { w-wesuwt =>
+          fiwtewexecutowindividuawwesuwt(
+            i-identifiew = fiwtew.identifiew, 🥺
+            kept = w-wesuwt.kept, OwO
+            w-wemoved = wesuwt.wemoved)
         }
     }
 
-    val observedArrow: Arrow[
-      (Query, Seq[CandidateWithFeatures[Candidate]]),
-      FilterExecutorIndividualResult[
-        Candidate
+    vaw o-obsewvedawwow: a-awwow[
+      (quewy, >w< seq[candidatewithfeatuwes[candidate]]), 🥺
+      f-fiwtewexecutowindividuawwesuwt[
+        c-candidate
       ]
-    ] = wrapComponentWithExecutorBookkeeping(
-      context = context,
-      currentComponentIdentifier = filter.identifier,
-      onSuccess = { result: FilterExecutorIndividualResult[Candidate] =>
-        keptCounter.incr(result.kept.size)
-        removedCounter.incr(result.removed.size)
+    ] = wwapcomponentwithexecutowbookkeeping(
+      context = context, nyaa~~
+      cuwwentcomponentidentifiew = fiwtew.identifiew, ^^
+      o-onsuccess = { wesuwt: f-fiwtewexecutowindividuawwesuwt[candidate] =>
+        k-keptcountew.incw(wesuwt.kept.size)
+        wemovedcountew.incw(wesuwt.wemoved.size)
       }
     )(
-      filterArrow
+      f-fiwtewawwow
     )
 
-    val conditionallyRunArrow: Arrow[
-      (Query, Seq[CandidateWithFeatures[Candidate]]),
-      IndividualFilterResults[
-        Candidate
+    v-vaw conditionawwywunawwow: awwow[
+      (quewy, >w< s-seq[candidatewithfeatuwes[candidate]]), OwO
+      individuawfiwtewwesuwts[
+        candidate
       ]
     ] =
-      filter match {
-        case filter: Filter[Query, Candidate] with Conditionally[
-              Filter.Input[Query, Candidate] @unchecked
+      fiwtew match {
+        c-case fiwtew: fiwtew[quewy, XD c-candidate] with conditionawwy[
+              fiwtew.input[quewy, ^^;; c-candidate] @unchecked
             ] =>
-          Arrow.ifelse(
+          a-awwow.ifewse(
             {
-              case (query, candidates) =>
-                filter.onlyIf(Filter.Input(query, candidates))
-            },
-            observedArrow,
-            Arrow.value(ConditionalFilterDisabled(filter.identifier))
+              case (quewy, 🥺 candidates) =>
+                fiwtew.onwyif(fiwtew.input(quewy, XD c-candidates))
+            }, (U ᵕ U❁)
+            obsewvedawwow, :3
+            awwow.vawue(conditionawfiwtewdisabwed(fiwtew.identifiew))
           )
-        case _ => observedArrow
+        case _ => obsewvedawwow
       }
 
-    // return an `Iso` arrow for easier composition later
-    Arrow
-      .zipWithArg(
-        Arrow
-          .map[FilterState[Query, Candidate], (Query, Seq[CandidateWithFeatures[Candidate]])] {
-            case FilterState(query, candidateToFeaturesMap, FilterExecutorResult(result, _)) =>
-              (query, result.flatMap(candidateToFeaturesMap.get))
-          }.andThen(conditionallyRunArrow))
+    // wetuwn a-an `iso` awwow fow easiew composition watew
+    a-awwow
+      .zipwithawg(
+        a-awwow
+          .map[fiwtewstate[quewy, ( ͡o ω ͡o ) candidate], òωó (quewy, seq[candidatewithfeatuwes[candidate]])] {
+            case fiwtewstate(quewy, σωσ candidatetofeatuwesmap, (U ᵕ U❁) f-fiwtewexecutowwesuwt(wesuwt, (✿oωo) _)) =>
+              (quewy, ^^ w-wesuwt.fwatmap(candidatetofeatuwesmap.get))
+          }.andthen(conditionawwywunawwow))
       .map {
         case (
-              FilterState(query, allCandidates, filterExecutorResult),
-              filterResult: FilterExecutorIndividualResult[Candidate]) =>
-          val resultWithCurrentPrepended =
-            filterExecutorResult.individualFilterResults :+ filterResult
-          val newFilterExecutorResult = FilterExecutorResult(
-            result = filterResult.kept,
-            individualFilterResults = resultWithCurrentPrepended)
-          FilterState(query, allCandidates, newFilterExecutorResult)
+              fiwtewstate(quewy, ^•ﻌ•^ awwcandidates, XD f-fiwtewexecutowwesuwt), :3
+              fiwtewwesuwt: f-fiwtewexecutowindividuawwesuwt[candidate]) =>
+          vaw wesuwtwithcuwwentpwepended =
+            fiwtewexecutowwesuwt.individuawfiwtewwesuwts :+ fiwtewwesuwt
+          vaw nyewfiwtewexecutowwesuwt = fiwtewexecutowwesuwt(
+            w-wesuwt = fiwtewwesuwt.kept, (ꈍᴗꈍ)
+            individuawfiwtewwesuwts = w-wesuwtwithcuwwentpwepended)
+          fiwtewstate(quewy, :3 a-awwcandidates, (U ﹏ U) newfiwtewexecutowwesuwt)
 
-        case (filterState, filterDisabledResult: ConditionalFilterDisabled) =>
-          filterState.copy(
-            executorResult = filterState.executorResult.copy(
-              individualFilterResults =
-                filterState.executorResult.individualFilterResults :+ filterDisabledResult
+        c-case (fiwtewstate, fiwtewdisabwedwesuwt: c-conditionawfiwtewdisabwed) =>
+          f-fiwtewstate.copy(
+            e-executowwesuwt = fiwtewstate.executowwesuwt.copy(
+              i-individuawfiwtewwesuwts =
+                f-fiwtewstate.executowwesuwt.individuawfiwtewwesuwts :+ fiwtewdisabwedwesuwt
             ))
       }
   }
 }
 
-object FilterExecutor {
+object fiwtewexecutow {
 
   /**
-   * FilterState is an internal representation of the state that is passed between each individual filter arrow.
+   * f-fiwtewstate i-is an intewnaw w-wepwesentation of the state that is passed between e-each individuaw fiwtew awwow. UwU
    *
-   * @param query: The query
-   * @param candidateToFeaturesMap: A lookup mapping from Candidate -> FilterCandidate, to rebuild the inputs quickly for the next filter
-   * @param executorResult: The in-progress executor result
+   * @pawam q-quewy: the q-quewy
+   * @pawam candidatetofeatuwesmap: a wookup mapping fwom c-candidate -> fiwtewcandidate, 😳😳😳 to w-webuiwd the inputs q-quickwy fow t-the nyext fiwtew
+   * @pawam executowwesuwt: t-the in-pwogwess executow wesuwt
    */
-  private case class FilterState[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    query: Query,
-    candidateToFeaturesMap: Map[Candidate, CandidateWithFeatures[Candidate]],
-    executorResult: FilterExecutorResult[Candidate])
+  pwivate case cwass fiwtewstate[quewy <: pipewinequewy, XD c-candidate <: univewsawnoun[any]](
+    q-quewy: quewy, o.O
+    candidatetofeatuwesmap: m-map[candidate, (⑅˘꒳˘) candidatewithfeatuwes[candidate]], 😳😳😳
+    e-executowwesuwt: fiwtewexecutowwesuwt[candidate])
 }

@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.topic
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.topic
 
-import com.twitter.product_mixer.component_library.model.candidate.TopicCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.BasicTopicFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.PivotTopicFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.RecommendationTopicFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicFunctionalityType
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.topic.BaseTopicFunctionalityTypeBuilder
-import com.twitter.timelines.configapi.FSEnumParam
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.topiccandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.basictopicfunctionawitytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.pivottopicfunctionawitytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.wecommendationtopicfunctionawitytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.topicfunctionawitytype
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.item.topic.basetopicfunctionawitytypebuiwdew
+impowt com.twittew.timewines.configapi.fsenumpawam
 
-object TopicFunctionalityTypeParamValue extends Enumeration {
-  type TopicFunctionalityType = Value
+object t-topicfunctionawitytypepawamvawue extends enumewation {
+  type t-topicfunctionawitytype = vawue
 
-  val Basic = Value
-  val Pivot = Value
-  val Recommendation = Value
+  v-vaw basic = vawue
+  vaw pivot = vawue
+  vaw wecommendation = v-vawue
 }
 
-case class ParamTopicFunctionalityTypeBuilder(
-  functionalityTypeParam: FSEnumParam[TopicFunctionalityTypeParamValue.type])
-    extends BaseTopicFunctionalityTypeBuilder[PipelineQuery, TopicCandidate] {
+case cwass pawamtopicfunctionawitytypebuiwdew(
+  f-functionawitytypepawam: f-fsenumpawam[topicfunctionawitytypepawamvawue.type])
+    extends basetopicfunctionawitytypebuiwdew[pipewinequewy, (˘ω˘) topiccandidate] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: TopicCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[TopicFunctionalityType] = {
-    val functionalityType = query.params(functionalityTypeParam)
-    functionalityType match {
-      case TopicFunctionalityTypeParamValue.Basic => Some(BasicTopicFunctionalityType)
-      case TopicFunctionalityTypeParamValue.Pivot => Some(PivotTopicFunctionalityType)
-      case TopicFunctionalityTypeParamValue.Recommendation =>
-        Some(RecommendationTopicFunctionalityType)
+  ovewwide d-def appwy(
+    quewy: pipewinequewy, (⑅˘꒳˘)
+    candidate: topiccandidate, (///ˬ///✿)
+    candidatefeatuwes: f-featuwemap
+  ): option[topicfunctionawitytype] = {
+    v-vaw functionawitytype = q-quewy.pawams(functionawitytypepawam)
+    f-functionawitytype m-match {
+      case topicfunctionawitytypepawamvawue.basic => some(basictopicfunctionawitytype)
+      c-case topicfunctionawitytypepawamvawue.pivot => some(pivottopicfunctionawitytype)
+      c-case topicfunctionawitytypepawamvawue.wecommendation =>
+        some(wecommendationtopicfunctionawitytype)
     }
   }
 }

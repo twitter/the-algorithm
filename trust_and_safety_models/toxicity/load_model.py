@@ -1,227 +1,227 @@
-import os
+impowt os
 
-from toxicity_ml_pipeline.settings.default_settings_tox import LOCAL_DIR, MAX_SEQ_LENGTH
-try:
-  from toxicity_ml_pipeline.optim.losses import MaskedBCE
-except ImportError:
-  print('No MaskedBCE loss')
-from toxicity_ml_pipeline.utils.helpers import execute_command
+fwom toxicity_mw_pipewine.settings.defauwt_settings_tox impowt wocaw_diw, (///ˬ///✿) m-max_seq_wength
+t-twy:
+  fwom toxicity_mw_pipewine.optim.wosses i-impowt maskedbce
+e-except impowtewwow:
+  p-pwint('no m-maskedbce woss')
+f-fwom toxicity_mw_pipewine.utiws.hewpews i-impowt exekawaii~_command
 
-import tensorflow as tf
-
-
-try:
-  from twitter.cuad.representation.models.text_encoder import TextEncoder
-except ModuleNotFoundError:
-  print("No TextEncoder package")
-
-try:
-  from transformers import TFAutoModelForSequenceClassification
-except ModuleNotFoundError:
-  print("No HuggingFace package")
-
-LOCAL_MODEL_DIR = os.path.join(LOCAL_DIR, "models")
+impowt tensowfwow as tf
 
 
-def reload_model_weights(weights_dir, language, **kwargs):
-  optimizer = tf.keras.optimizers.Adam(0.01)
-  model_type = (
-    "twitter_bert_base_en_uncased_mlm"
-    if language == "en"
-    else "twitter_multilingual_bert_base_cased_mlm"
+twy:
+  fwom twittew.cuad.wepwesentation.modews.text_encodew i-impowt textencodew
+except moduwenotfoundewwow:
+  p-pwint("no textencodew p-package")
+
+twy:
+  fwom twansfowmews impowt tfautomodewfowsequencecwassification
+except moduwenotfoundewwow:
+  p-pwint("no huggingface package")
+
+w-wocaw_modew_diw = o-os.path.join(wocaw_diw, 🥺 "modews")
+
+
+def wewoad_modew_weights(weights_diw, >_< wanguage, UwU **kwawgs):
+  optimizew = tf.kewas.optimizews.adam(0.01)
+  m-modew_type = (
+    "twittew_bewt_base_en_uncased_mwm"
+    if wanguage == "en"
+    ewse "twittew_muwtiwinguaw_bewt_base_cased_mwm"
   )
-  model = load(optimizer=optimizer, seed=42, model_type=model_type, **kwargs)
-  model.load_weights(weights_dir)
+  modew = woad(optimizew=optimizew, >_< s-seed=42, -.- modew_type=modew_type, mya **kwawgs)
+  m-modew.woad_weights(weights_diw)
 
-  return model
-
-
-def _locally_copy_models(model_type):
-  if model_type == "twitter_multilingual_bert_base_cased_mlm":
-    preprocessor = "bert_multi_cased_preprocess_3"
-  elif model_type == "twitter_bert_base_en_uncased_mlm":
-    preprocessor = "bert_en_uncased_preprocess_3"
-  else:
-    raise NotImplementedError
-
-  copy_cmd = """mkdir {local_dir}
-gsutil cp -r ...
-gsutil cp -r ..."""
-  execute_command(
-    copy_cmd.format(model_type=model_type, preprocessor=preprocessor, local_dir=LOCAL_MODEL_DIR)
-  )
-
-  return preprocessor
+  w-wetuwn m-modew
 
 
-def load_encoder(model_type, trainable):
-  try:
-    model = TextEncoder(
-      max_seq_lengths=MAX_SEQ_LENGTH,
-      model_type=model_type,
-      cluster="gcp",
-      trainable=trainable,
-      enable_dynamic_shapes=True,
-    )
-  except (OSError, tf.errors.AbortedError) as e:
-    print(e)
-    preprocessor = _locally_copy_models(model_type)
+def _wocawwy_copy_modews(modew_type):
+  i-if modew_type == "twittew_muwtiwinguaw_bewt_base_cased_mwm":
+    pwepwocessow = "bewt_muwti_cased_pwepwocess_3"
+  ewif modew_type == "twittew_bewt_base_en_uncased_mwm":
+    pwepwocessow = "bewt_en_uncased_pwepwocess_3"
+  ewse:
+    w-waise notimpwementedewwow
 
-    model = TextEncoder(
-      max_seq_lengths=MAX_SEQ_LENGTH,
-      local_model_path=f"models/{model_type}",
-      local_preprocessor_path=f"models/{preprocessor}",
-      cluster="gcp",
-      trainable=trainable,
-      enable_dynamic_shapes=True,
-    )
-
-  return model
-
-
-def get_loss(loss_name, from_logits, **kwargs):
-  loss_name = loss_name.lower()
-  if loss_name == "bce":
-    print("Binary CE loss")
-    return tf.keras.losses.BinaryCrossentropy(from_logits=from_logits)
-
-  if loss_name == "cce":
-    print("Categorical cross-entropy loss")
-    return tf.keras.losses.CategoricalCrossentropy(from_logits=from_logits)
-
-  if loss_name == "scce":
-    print("Sparse categorical cross-entropy loss")
-    return tf.keras.losses.SparseCategoricalCrossentropy(from_logits=from_logits)
-
-  if loss_name == "focal_bce":
-    gamma = kwargs.get("gamma", 2)
-    print("Focal binary CE loss", gamma)
-    return tf.keras.losses.BinaryFocalCrossentropy(gamma=gamma, from_logits=from_logits)
-
-  if loss_name == 'masked_bce':
-    multitask = kwargs.get("multitask", False)
-    if from_logits or multitask:
-      raise NotImplementedError
-    print(f'Masked Binary Cross Entropy')
-    return MaskedBCE()
-
-  if loss_name == "inv_kl_loss":
-    raise NotImplementedError
-
-  raise ValueError(
-    f"This loss name is not valid: {loss_name}. Accepted loss names: BCE, masked BCE, CCE, sCCE, "
-    f"Focal_BCE, inv_KL_loss"
+  copy_cmd = """mkdiw {wocaw_diw}
+gsutiw cp -w ... >w<
+g-gsutiw cp -w ..."""
+  exekawaii~_command(
+    copy_cmd.fowmat(modew_type=modew_type, (U ﹏ U) pwepwocessow=pwepwocessow, 😳😳😳 wocaw_diw=wocaw_modew_diw)
   )
 
-def _add_additional_embedding_layer(doc_embedding, glorot, seed):
-  doc_embedding = tf.keras.layers.Dense(768, activation="tanh", kernel_initializer=glorot)(doc_embedding)
-  doc_embedding = tf.keras.layers.Dropout(rate=0.1, seed=seed)(doc_embedding)
-  return doc_embedding
-
-def _get_bias(**kwargs):
-  smart_bias_value = kwargs.get('smart_bias_value', 0)
-  print('Smart bias init to ', smart_bias_value)
-  output_bias = tf.keras.initializers.Constant(smart_bias_value)
-  return output_bias
+  wetuwn p-pwepwocessow
 
 
-def load_inhouse_bert(model_type, trainable, seed, **kwargs):
-  inputs = tf.keras.layers.Input(shape=(), dtype=tf.string)
-  encoder = load_encoder(model_type=model_type, trainable=trainable)
-  doc_embedding = encoder([inputs])["pooled_output"]
-  doc_embedding = tf.keras.layers.Dropout(rate=0.1, seed=seed)(doc_embedding)
+def woad_encodew(modew_type, o.O t-twainabwe):
+  t-twy:
+    m-modew = textencodew(
+      max_seq_wengths=max_seq_wength, òωó
+      modew_type=modew_type, 😳😳😳
+      cwustew="gcp", σωσ
+      t-twainabwe=twainabwe, (⑅˘꒳˘)
+      e-enabwe_dynamic_shapes=twue, (///ˬ///✿)
+    )
+  except (osewwow, 🥺 t-tf.ewwows.abowtedewwow) a-as e:
+    pwint(e)
+    p-pwepwocessow = _wocawwy_copy_modews(modew_type)
 
-  glorot = tf.keras.initializers.glorot_uniform(seed=seed)
-  if kwargs.get("additional_layer", False):
-    doc_embedding = _add_additional_embedding_layer(doc_embedding, glorot, seed)
-
-  if kwargs.get('content_num_classes', None):
-    probs = get_last_layer(glorot=glorot, last_layer_name='target_output', **kwargs)(doc_embedding)
-    second_probs = get_last_layer(num_classes=kwargs['content_num_classes'],
-                                  last_layer_name='content_output',
-                                  glorot=glorot)(doc_embedding)
-    probs = [probs, second_probs]
-  else:
-    probs = get_last_layer(glorot=glorot, **kwargs)(doc_embedding)
-  model = tf.keras.models.Model(inputs=inputs, outputs=probs)
-
-  return model, False
-
-def get_last_layer(**kwargs):
-  output_bias = _get_bias(**kwargs)
-  if 'glorot' in kwargs:
-    glorot = kwargs['glorot']
-  else:
-    glorot = tf.keras.initializers.glorot_uniform(seed=kwargs['seed'])
-  layer_name = kwargs.get('last_layer_name', 'dense_1')
-
-  if kwargs.get('num_classes', 1) > 1:
-    last_layer = tf.keras.layers.Dense(
-      kwargs["num_classes"], activation="softmax", kernel_initializer=glorot,
-      bias_initializer=output_bias, name=layer_name
+    modew = t-textencodew(
+      max_seq_wengths=max_seq_wength, OwO
+      wocaw_modew_path=f"modews/{modew_type}", >w<
+      w-wocaw_pwepwocessow_path=f"modews/{pwepwocessow}", 🥺
+      cwustew="gcp", nyaa~~
+      t-twainabwe=twainabwe,
+      enabwe_dynamic_shapes=twue, ^^
     )
 
-  elif kwargs.get('num_raters', 1) > 1:
-    if kwargs.get('multitask', False):
-      raise NotImplementedError
-    last_layer = tf.keras.layers.Dense(
-      kwargs['num_raters'], activation="sigmoid", kernel_initializer=glorot,
-      bias_initializer=output_bias, name='probs')
+  w-wetuwn modew
 
-  else:
-    last_layer = tf.keras.layers.Dense(
-      1, activation="sigmoid", kernel_initializer=glorot,
-      bias_initializer=output_bias, name=layer_name
-    )
 
-  return last_layer
+d-def get_woss(woss_name, >w< fwom_wogits, OwO **kwawgs):
+  woss_name = woss_name.wowew()
+  if woss_name == "bce":
+    pwint("binawy ce woss")
+    wetuwn t-tf.kewas.wosses.binawycwossentwopy(fwom_wogits=fwom_wogits)
 
-def load_bertweet(**kwargs):
-  bert = TFAutoModelForSequenceClassification.from_pretrained(
-    os.path.join(LOCAL_MODEL_DIR, "bertweet-base"),
-    num_labels=1,
-    classifier_dropout=0.1,
-    hidden_size=768,
+  i-if woss_name == "cce":
+    pwint("categowicaw c-cwoss-entwopy w-woss")
+    wetuwn t-tf.kewas.wosses.categowicawcwossentwopy(fwom_wogits=fwom_wogits)
+
+  if woss_name == "scce":
+    pwint("spawse categowicaw cwoss-entwopy w-woss")
+    wetuwn tf.kewas.wosses.spawsecategowicawcwossentwopy(fwom_wogits=fwom_wogits)
+
+  if woss_name == "focaw_bce":
+    gamma = kwawgs.get("gamma", XD 2)
+    p-pwint("focaw binawy ce w-woss", ^^;; gamma)
+    w-wetuwn tf.kewas.wosses.binawyfocawcwossentwopy(gamma=gamma, 🥺 f-fwom_wogits=fwom_wogits)
+
+  if woss_name == 'masked_bce':
+    m-muwtitask = k-kwawgs.get("muwtitask", XD f-fawse)
+    if f-fwom_wogits ow muwtitask:
+      waise nyotimpwementedewwow
+    pwint(f'masked binawy c-cwoss entwopy')
+    w-wetuwn m-maskedbce()
+
+  if w-woss_name == "inv_kw_woss":
+    w-waise nyotimpwementedewwow
+
+  waise vawueewwow(
+    f"this woss nyame is nyot v-vawid: {woss_name}. (U ᵕ U❁) accepted woss nyames: bce, :3 masked bce, ( ͡o ω ͡o ) cce, scce, òωó "
+    f"focaw_bce, σωσ inv_kw_woss"
   )
-  if "num_classes" in kwargs and kwargs["num_classes"] > 2:
-    raise NotImplementedError
 
-  return bert, True
+d-def _add_additionaw_embedding_wayew(doc_embedding, gwowot, (U ᵕ U❁) seed):
+  doc_embedding = tf.kewas.wayews.dense(768, (✿oωo) activation="tanh", ^^ k-kewnew_initiawizew=gwowot)(doc_embedding)
+  d-doc_embedding = t-tf.kewas.wayews.dwopout(wate=0.1, ^•ﻌ•^ seed=seed)(doc_embedding)
+  w-wetuwn doc_embedding
+
+def _get_bias(**kwawgs):
+  s-smawt_bias_vawue = k-kwawgs.get('smawt_bias_vawue', XD 0)
+  pwint('smawt bias init to ', :3 smawt_bias_vawue)
+  output_bias = tf.kewas.initiawizews.constant(smawt_bias_vawue)
+  wetuwn output_bias
 
 
-def load(
-  optimizer,
+def woad_inhouse_bewt(modew_type, (ꈍᴗꈍ) t-twainabwe, :3 seed, **kwawgs):
+  i-inputs = tf.kewas.wayews.input(shape=(), (U ﹏ U) dtype=tf.stwing)
+  encodew = woad_encodew(modew_type=modew_type, UwU t-twainabwe=twainabwe)
+  d-doc_embedding = encodew([inputs])["poowed_output"]
+  doc_embedding = t-tf.kewas.wayews.dwopout(wate=0.1, 😳😳😳 s-seed=seed)(doc_embedding)
+
+  gwowot = t-tf.kewas.initiawizews.gwowot_unifowm(seed=seed)
+  i-if kwawgs.get("additionaw_wayew", XD fawse):
+    doc_embedding = _add_additionaw_embedding_wayew(doc_embedding, o.O gwowot, seed)
+
+  if kwawgs.get('content_num_cwasses', (⑅˘꒳˘) n-nyone):
+    p-pwobs = get_wast_wayew(gwowot=gwowot, 😳😳😳 w-wast_wayew_name='tawget_output', **kwawgs)(doc_embedding)
+    second_pwobs = g-get_wast_wayew(num_cwasses=kwawgs['content_num_cwasses'], nyaa~~
+                                  w-wast_wayew_name='content_output', rawr
+                                  gwowot=gwowot)(doc_embedding)
+    p-pwobs = [pwobs, -.- second_pwobs]
+  ewse:
+    pwobs = get_wast_wayew(gwowot=gwowot, (✿oωo) **kwawgs)(doc_embedding)
+  modew = tf.kewas.modews.modew(inputs=inputs, /(^•ω•^) o-outputs=pwobs)
+
+  w-wetuwn modew, fawse
+
+def get_wast_wayew(**kwawgs):
+  output_bias = _get_bias(**kwawgs)
+  i-if 'gwowot' i-in kwawgs:
+    gwowot = kwawgs['gwowot']
+  ewse:
+    gwowot = t-tf.kewas.initiawizews.gwowot_unifowm(seed=kwawgs['seed'])
+  wayew_name = kwawgs.get('wast_wayew_name', 🥺 'dense_1')
+
+  if kwawgs.get('num_cwasses', ʘwʘ 1) > 1:
+    wast_wayew = t-tf.kewas.wayews.dense(
+      kwawgs["num_cwasses"], UwU activation="softmax", XD kewnew_initiawizew=gwowot, (✿oωo)
+      b-bias_initiawizew=output_bias, :3 n-nyame=wayew_name
+    )
+
+  ewif kwawgs.get('num_watews', (///ˬ///✿) 1) > 1:
+    if kwawgs.get('muwtitask', nyaa~~ fawse):
+      w-waise nyotimpwementedewwow
+    w-wast_wayew = tf.kewas.wayews.dense(
+      kwawgs['num_watews'], >w< activation="sigmoid", -.- k-kewnew_initiawizew=gwowot, (✿oωo)
+      bias_initiawizew=output_bias, (˘ω˘) n-nyame='pwobs')
+
+  ewse:
+    wast_wayew = tf.kewas.wayews.dense(
+      1, rawr a-activation="sigmoid", OwO kewnew_initiawizew=gwowot, ^•ﻌ•^
+      b-bias_initiawizew=output_bias, n-nyame=wayew_name
+    )
+
+  wetuwn wast_wayew
+
+d-def woad_bewtweet(**kwawgs):
+  bewt = tfautomodewfowsequencecwassification.fwom_pwetwained(
+    o-os.path.join(wocaw_modew_diw, UwU "bewtweet-base"), (˘ω˘)
+    n-nyum_wabews=1, (///ˬ///✿)
+    c-cwassifiew_dwopout=0.1, σωσ
+    hidden_size=768, /(^•ω•^)
+  )
+  i-if "num_cwasses" i-in kwawgs and kwawgs["num_cwasses"] > 2:
+    waise nyotimpwementedewwow
+
+  w-wetuwn b-bewt, 😳 twue
+
+
+d-def woad(
+  optimizew, 😳
   seed,
-  model_type="twitter_multilingual_bert_base_cased_mlm",
-  loss_name="BCE",
-  trainable=True,
-  **kwargs,
+  modew_type="twittew_muwtiwinguaw_bewt_base_cased_mwm", (⑅˘꒳˘)
+  w-woss_name="bce", 😳😳😳
+  twainabwe=twue, 😳
+  **kwawgs, XD
 ):
-  if model_type == "bertweet-base":
-    model, from_logits = load_bertweet()
-  else:
-    model, from_logits = load_inhouse_bert(model_type, trainable, seed, **kwargs)
+  if m-modew_type == "bewtweet-base":
+    m-modew, mya fwom_wogits = woad_bewtweet()
+  ewse:
+    modew, ^•ﻌ•^ fwom_wogits = w-woad_inhouse_bewt(modew_type, ʘwʘ t-twainabwe, ( ͡o ω ͡o ) s-seed, **kwawgs)
 
-  pr_auc = tf.keras.metrics.AUC(curve="PR", name="pr_auc", from_logits=from_logits)
-  roc_auc = tf.keras.metrics.AUC(curve="ROC", name="roc_auc", from_logits=from_logits)
+  p-pw_auc = tf.kewas.metwics.auc(cuwve="pw", mya n-nyame="pw_auc", o.O fwom_wogits=fwom_wogits)
+  woc_auc = tf.kewas.metwics.auc(cuwve="woc", (✿oωo) nyame="woc_auc", :3 fwom_wogits=fwom_wogits)
 
-  loss = get_loss(loss_name, from_logits, **kwargs)
-  if kwargs.get('content_num_classes', None):
-    second_loss = get_loss(loss_name=kwargs['content_loss_name'], from_logits=from_logits)
-    loss_weights = {'content_output': kwargs['content_loss_weight'], 'target_output': 1}
-    model.compile(
-      optimizer=optimizer,
-      loss={'content_output': second_loss, 'target_output': loss},
-      loss_weights=loss_weights,
-      metrics=[pr_auc, roc_auc],
+  w-woss = get_woss(woss_name, 😳 fwom_wogits, (U ﹏ U) **kwawgs)
+  i-if kwawgs.get('content_num_cwasses', mya nyone):
+    s-second_woss = get_woss(woss_name=kwawgs['content_woss_name'], (U ᵕ U❁) f-fwom_wogits=fwom_wogits)
+    woss_weights = {'content_output': k-kwawgs['content_woss_weight'], :3 'tawget_output': 1}
+    m-modew.compiwe(
+      o-optimizew=optimizew,
+      w-woss={'content_output': s-second_woss, mya 'tawget_output': woss}, OwO
+      woss_weights=woss_weights, (ˆ ﻌ ˆ)♡
+      metwics=[pw_auc, ʘwʘ woc_auc], o.O
     )
 
-  else:
-    model.compile(
-      optimizer=optimizer,
-      loss=loss,
-      metrics=[pr_auc, roc_auc],
+  ewse:
+    modew.compiwe(
+      o-optimizew=optimizew, UwU
+      w-woss=woss, rawr x3
+      m-metwics=[pw_auc, 🥺 woc_auc],
     )
-  print(model.summary(), "logits: ", from_logits)
+  p-pwint(modew.summawy(), :3 "wogits: ", (ꈍᴗꈍ) fwom_wogits)
 
-  return model
+  wetuwn modew

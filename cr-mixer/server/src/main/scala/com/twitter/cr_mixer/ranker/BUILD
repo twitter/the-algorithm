@@ -1,30 +1,30 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/storehaus:core",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "configapi/configapi-core",
-        "content-recommender/thrift/src/main/thrift:content-recommender-common-scala",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/config",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/model",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/param",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/param/decider",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/util",
-        "cr-mixer/thrift/src/main/thrift:thrift-scala",
-        "decider/src/main/scala",
-        "frigate/frigate-common:base",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/base",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/util:stats_util",
-        "hydra/common/libraries/src/main/scala/com/twitter/hydra/common/model_config",
-        "hydra/partition/thrift/src/main/thrift:thrift-scala",
-        "hydra/root/thrift/src/main/thrift:thrift-scala",
-        "product-mixer/core/src/main/thrift/com/twitter/product_mixer/core:thrift-scala",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/thrift/com/twitter/core_workflows/user_model:user_model-scala",
-        "src/thrift/com/twitter/ml/api:data-scala",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    s-stwict_deps = t-twue, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "3wdpawty/jvm/com/twittew/stowehaus:cowe", (⑅˘꒳˘)
+        "3wdpawty/jvm/javax/inject:javax.inject", ( ͡o ω ͡o )
+        "configapi/configapi-cowe", UwU
+        "content-wecommendew/thwift/swc/main/thwift:content-wecommendew-common-scawa", rawr x3
+        "cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/config", rawr
+        "cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/modew", σωσ
+        "cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/pawam", σωσ
+        "cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/pawam/decidew", >_<
+        "cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/utiw", :3
+        "cw-mixew/thwift/swc/main/thwift:thwift-scawa", (U ﹏ U)
+        "decidew/swc/main/scawa", -.-
+        "fwigate/fwigate-common:base",
+        "fwigate/fwigate-common/swc/main/scawa/com/twittew/fwigate/common/base", (ˆ ﻌ ˆ)♡
+        "fwigate/fwigate-common/swc/main/scawa/com/twittew/fwigate/common/utiw:stats_utiw", (⑅˘꒳˘)
+        "hydwa/common/wibwawies/swc/main/scawa/com/twittew/hydwa/common/modew_config", (U ᵕ U❁)
+        "hydwa/pawtition/thwift/swc/main/thwift:thwift-scawa", -.-
+        "hydwa/woot/thwift/swc/main/thwift:thwift-scawa", ^^;;
+        "pwoduct-mixew/cowe/swc/main/thwift/com/twittew/pwoduct_mixew/cowe:thwift-scawa", >_<
+        "swc/scawa/com/twittew/simcwustews_v2/common", mya
+        "swc/thwift/com/twittew/cowe_wowkfwows/usew_modew:usew_modew-scawa", mya
+        "swc/thwift/com/twittew/mw/api:data-scawa", 😳
+        "swc/thwift/com/twittew/simcwustews_v2:simcwustews_v2-thwift-scawa", XD
+    ], :3
 )

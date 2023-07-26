@@ -1,149 +1,149 @@
-package com.twitter.product_mixer.component_library.premarshaller.cursor
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.cuwsow
 
-import com.twitter.product_mixer.component_library.model.cursor.OrderedCursor
-import com.twitter.product_mixer.component_library.model.cursor.PassThroughCursor
-import com.twitter.product_mixer.component_library.model.cursor.UnorderedBloomFilterCursor
-import com.twitter.product_mixer.component_library.model.cursor.UnorderedExcludeIdsCursor
-import com.twitter.product_mixer.component_library.{thriftscala => t}
-import com.twitter.product_mixer.core.pipeline.PipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.MalformedCursor
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.scrooge.BinaryThriftStructSerializer
-import com.twitter.scrooge.ThriftStructCodec
-import com.twitter.search.common.util.bloomfilter.AdaptiveLongIntBloomFilterSerializer
-import com.twitter.util.Base64UrlSafeStringEncoder
-import com.twitter.util.StringEncoder
-import com.twitter.product_mixer.core.functional_component.marshaller.response.slice.CursorTypeMarshaller
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.owdewedcuwsow
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.passthwoughcuwsow
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.unowdewedbwoomfiwtewcuwsow
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.unowdewedexcwudeidscuwsow
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.{thwiftscawa => t-t}
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinecuwsow
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinecuwsowsewiawizew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.iwwegawstatefaiwuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.mawfowmedcuwsow
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt com.twittew.scwooge.binawythwiftstwuctsewiawizew
+i-impowt com.twittew.scwooge.thwiftstwuctcodec
+impowt com.twittew.seawch.common.utiw.bwoomfiwtew.adaptivewongintbwoomfiwtewsewiawizew
+impowt com.twittew.utiw.base64uwwsafestwingencodew
+i-impowt com.twittew.utiw.stwingencodew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.swice.cuwsowtypemawshawwew
 
 /**
- * Handles serialization and deserialization for all supported generic cursors. Note that generic
- * cursors may be used for Slices or any bespoke marshalling format.
+ * h-handwes sewiawization and desewiawization fow aww suppowted genewic cuwsows. (⑅˘꒳˘) nyote that genewic
+ * c-cuwsows may be used fow swices ow any bespoke mawshawwing fowmat. nyaa~~
  */
-object CursorSerializer extends PipelineCursorSerializer[PipelineCursor] {
+object c-cuwsowsewiawizew extends pipewinecuwsowsewiawizew[pipewinecuwsow] {
 
-  private[cursor] val CursorThriftSerializer: BinaryThriftStructSerializer[
-    t.ProductMixerRequestCursor
+  p-pwivate[cuwsow] v-vaw c-cuwsowthwiftsewiawizew: b-binawythwiftstwuctsewiawizew[
+    t.pwoductmixewwequestcuwsow
   ] =
-    new BinaryThriftStructSerializer[t.ProductMixerRequestCursor] {
-      override def codec: ThriftStructCodec[t.ProductMixerRequestCursor] =
-        t.ProductMixerRequestCursor
-      override def encoder: StringEncoder = Base64UrlSafeStringEncoder
+    new binawythwiftstwuctsewiawizew[t.pwoductmixewwequestcuwsow] {
+      o-ovewwide def codec: thwiftstwuctcodec[t.pwoductmixewwequestcuwsow] =
+        t.pwoductmixewwequestcuwsow
+      o-ovewwide def encodew: stwingencodew = base64uwwsafestwingencodew
     }
 
-  override def serializeCursor(cursor: PipelineCursor): String =
-    cursor match {
-      case OrderedCursor(id, cursorType, gapBoundaryId) =>
-        val cursorTypeMarshaller = new CursorTypeMarshaller()
-        val thriftCursor = t.ProductMixerRequestCursor.OrderedCursor(
-          t.OrderedCursor(
-            id = id,
-            cursorType = cursorType.map(cursorTypeMarshaller.apply),
-            gapBoundaryId))
+  ovewwide def sewiawizecuwsow(cuwsow: pipewinecuwsow): stwing =
+    c-cuwsow match {
+      case owdewedcuwsow(id, OwO c-cuwsowtype, rawr x3 g-gapboundawyid) =>
+        v-vaw cuwsowtypemawshawwew = nyew cuwsowtypemawshawwew()
+        vaw thwiftcuwsow = t.pwoductmixewwequestcuwsow.owdewedcuwsow(
+          t-t.owdewedcuwsow(
+            i-id = id, XD
+            cuwsowtype = c-cuwsowtype.map(cuwsowtypemawshawwew.appwy),
+            g-gapboundawyid))
 
-        CursorThriftSerializer.toString(thriftCursor)
-      case UnorderedExcludeIdsCursor(excludedIds) =>
-        val thriftCursor = t.ProductMixerRequestCursor.UnorderedExcludeIdsCursor(
-          t.UnorderedExcludeIdsCursor(excludedIds = Some(excludedIds)))
+        cuwsowthwiftsewiawizew.tostwing(thwiftcuwsow)
+      case u-unowdewedexcwudeidscuwsow(excwudedids) =>
+        vaw thwiftcuwsow = t-t.pwoductmixewwequestcuwsow.unowdewedexcwudeidscuwsow(
+          t.unowdewedexcwudeidscuwsow(excwudedids = some(excwudedids)))
 
-        CursorThriftSerializer.toString(thriftCursor)
-      case UnorderedBloomFilterCursor(longIntBloomFilter) =>
-        val thriftCursor = t.ProductMixerRequestCursor.UnorderedBloomFilterCursor(
-          t.UnorderedBloomFilterCursor(
-            serializedLongIntBloomFilter =
-              AdaptiveLongIntBloomFilterSerializer.serialize(longIntBloomFilter)
+        c-cuwsowthwiftsewiawizew.tostwing(thwiftcuwsow)
+      case unowdewedbwoomfiwtewcuwsow(wongintbwoomfiwtew) =>
+        v-vaw thwiftcuwsow = t.pwoductmixewwequestcuwsow.unowdewedbwoomfiwtewcuwsow(
+          t-t.unowdewedbwoomfiwtewcuwsow(
+            s-sewiawizedwongintbwoomfiwtew =
+              adaptivewongintbwoomfiwtewsewiawizew.sewiawize(wongintbwoomfiwtew)
           ))
 
-        CursorThriftSerializer.toString(thriftCursor)
-      case PassThroughCursor(cursorValue, cursorType) =>
-        val cursorTypeMarshaller = new CursorTypeMarshaller()
-        val thriftCursor = t.ProductMixerRequestCursor.PassThroughCursor(
-          t.PassThroughCursor(
-            cursorValue = cursorValue,
-            cursorType = cursorType.map(cursorTypeMarshaller.apply)
+        cuwsowthwiftsewiawizew.tostwing(thwiftcuwsow)
+      case passthwoughcuwsow(cuwsowvawue, σωσ cuwsowtype) =>
+        vaw cuwsowtypemawshawwew = n-nyew cuwsowtypemawshawwew()
+        v-vaw thwiftcuwsow = t.pwoductmixewwequestcuwsow.passthwoughcuwsow(
+          t-t.passthwoughcuwsow(
+            c-cuwsowvawue = c-cuwsowvawue, (U ᵕ U❁)
+            cuwsowtype = cuwsowtype.map(cuwsowtypemawshawwew.appwy)
           ))
 
-        CursorThriftSerializer.toString(thriftCursor)
-      case _ =>
-        throw PipelineFailure(IllegalStateFailure, "Unknown cursor type")
+        cuwsowthwiftsewiawizew.tostwing(thwiftcuwsow)
+      c-case _ =>
+        thwow pipewinefaiwuwe(iwwegawstatefaiwuwe, (U ﹏ U) "unknown cuwsow type")
     }
 
-  def deserializeOrderedCursor(cursorString: String): Option[OrderedCursor] =
-    deserializeCursor(
-      cursorString,
+  def desewiawizeowdewedcuwsow(cuwsowstwing: stwing): option[owdewedcuwsow] =
+    d-desewiawizecuwsow(
+      cuwsowstwing, :3
       {
-        case Some(
-              t.ProductMixerRequestCursor
-                .OrderedCursor(t.OrderedCursor(id, cursorType, gapBoundaryId))) =>
-          val cursorTypeMarshaller = new CursorTypeMarshaller()
-          Some(
-            OrderedCursor(
+        c-case some(
+              t-t.pwoductmixewwequestcuwsow
+                .owdewedcuwsow(t.owdewedcuwsow(id, ( ͡o ω ͡o ) c-cuwsowtype, σωσ gapboundawyid))) =>
+          v-vaw cuwsowtypemawshawwew = n-nyew c-cuwsowtypemawshawwew()
+          s-some(
+            owdewedcuwsow(
               id = id,
-              cursorType = cursorType.map(cursorTypeMarshaller.unmarshall),
-              gapBoundaryId))
+              c-cuwsowtype = c-cuwsowtype.map(cuwsowtypemawshawwew.unmawshaww),
+              g-gapboundawyid))
       }
     )
 
-  def deserializeUnorderedExcludeIdsCursor(
-    cursorString: String
-  ): Option[UnorderedExcludeIdsCursor] = {
-    deserializeCursor(
-      cursorString,
+  d-def desewiawizeunowdewedexcwudeidscuwsow(
+    c-cuwsowstwing: stwing
+  ): option[unowdewedexcwudeidscuwsow] = {
+    desewiawizecuwsow(
+      cuwsowstwing, >w<
       {
-        case Some(
-              t.ProductMixerRequestCursor
-                .UnorderedExcludeIdsCursor(t.UnorderedExcludeIdsCursor(excludedIdsOpt))) =>
-          Some(UnorderedExcludeIdsCursor(excludedIds = excludedIdsOpt.getOrElse(Seq.empty)))
+        c-case some(
+              t.pwoductmixewwequestcuwsow
+                .unowdewedexcwudeidscuwsow(t.unowdewedexcwudeidscuwsow(excwudedidsopt))) =>
+          some(unowdewedexcwudeidscuwsow(excwudedids = excwudedidsopt.getowewse(seq.empty)))
       }
     )
   }
 
-  def deserializeUnorderedBloomFilterCursor(
-    cursorString: String
-  ): Option[UnorderedBloomFilterCursor] =
-    deserializeCursor(
-      cursorString,
+  def desewiawizeunowdewedbwoomfiwtewcuwsow(
+    cuwsowstwing: s-stwing
+  ): option[unowdewedbwoomfiwtewcuwsow] =
+    desewiawizecuwsow(
+      cuwsowstwing, 😳😳😳
       {
-        case Some(
-              t.ProductMixerRequestCursor.UnorderedBloomFilterCursor(
-                t.UnorderedBloomFilterCursor(serializedLongIntBloomFilter))) =>
-          val bloomFilter = AdaptiveLongIntBloomFilterSerializer
-            .deserialize(serializedLongIntBloomFilter).getOrElse(
-              throw PipelineFailure(
-                MalformedCursor,
-                s"Failed to deserialize UnorderedBloomFilterCursor from cursor string: $cursorString")
+        case s-some(
+              t-t.pwoductmixewwequestcuwsow.unowdewedbwoomfiwtewcuwsow(
+                t-t.unowdewedbwoomfiwtewcuwsow(sewiawizedwongintbwoomfiwtew))) =>
+          vaw bwoomfiwtew = a-adaptivewongintbwoomfiwtewsewiawizew
+            .desewiawize(sewiawizedwongintbwoomfiwtew).getowewse(
+              thwow p-pipewinefaiwuwe(
+                m-mawfowmedcuwsow, OwO
+                s"faiwed to desewiawize unowdewedbwoomfiwtewcuwsow fwom cuwsow stwing: $cuwsowstwing")
             )
 
-          Some(UnorderedBloomFilterCursor(longIntBloomFilter = bloomFilter))
+          some(unowdewedbwoomfiwtewcuwsow(wongintbwoomfiwtew = b-bwoomfiwtew))
       }
     )
 
-  def deserializePassThroughCursor(cursorString: String): Option[PassThroughCursor] =
-    deserializeCursor(
-      cursorString,
+  def desewiawizepassthwoughcuwsow(cuwsowstwing: s-stwing): option[passthwoughcuwsow] =
+    d-desewiawizecuwsow(
+      c-cuwsowstwing, 😳
       {
-        case Some(
-              t.ProductMixerRequestCursor
-                .PassThroughCursor(t.PassThroughCursor(cursorValue, cursorType))) =>
-          val cursorTypeMarshaller = new CursorTypeMarshaller()
-          Some(
-            PassThroughCursor(
-              cursorValue = cursorValue,
-              cursorType = cursorType.map(cursorTypeMarshaller.unmarshall)))
+        case some(
+              t.pwoductmixewwequestcuwsow
+                .passthwoughcuwsow(t.passthwoughcuwsow(cuwsowvawue, 😳😳😳 c-cuwsowtype))) =>
+          v-vaw cuwsowtypemawshawwew = n-nyew cuwsowtypemawshawwew()
+          s-some(
+            passthwoughcuwsow(
+              cuwsowvawue = cuwsowvawue, (˘ω˘)
+              cuwsowtype = cuwsowtype.map(cuwsowtypemawshawwew.unmawshaww)))
       }
     )
 
-  // Note that the "A" type of the PartialFunction cannot be inferred due to the thrift type not
-  // being present on the PipelineCursorSerializer trait. By using this private def with the
-  // deserializePf type declared, it can be inferred.
-  private def deserializeCursor[Cursor <: PipelineCursor](
-    cursorString: String,
-    deserializePf: PartialFunction[Option[t.ProductMixerRequestCursor], Option[Cursor]]
-  ): Option[Cursor] =
-    PipelineCursorSerializer.deserializeCursor(
-      cursorString,
-      CursorThriftSerializer,
-      deserializePf
+  // n-nyote t-that the "a" t-type of the pawtiawfunction cannot b-be infewwed due t-to the thwift type nyot
+  // b-being pwesent on the pipewinecuwsowsewiawizew twait. ʘwʘ by using this pwivate def with t-the
+  // desewiawizepf t-type decwawed, ( ͡o ω ͡o ) it can be infewwed. o.O
+  p-pwivate def desewiawizecuwsow[cuwsow <: p-pipewinecuwsow](
+    cuwsowstwing: stwing, >w<
+    desewiawizepf: p-pawtiawfunction[option[t.pwoductmixewwequestcuwsow], 😳 option[cuwsow]]
+  ): option[cuwsow] =
+    pipewinecuwsowsewiawizew.desewiawizecuwsow(
+      cuwsowstwing, 🥺
+      c-cuwsowthwiftsewiawizew, rawr x3
+      desewiawizepf
     )
 }

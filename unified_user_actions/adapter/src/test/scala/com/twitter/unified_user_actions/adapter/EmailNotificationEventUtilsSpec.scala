@@ -1,32 +1,32 @@
-package com.twitter.unified_user_actions.adapter
+package com.twittew.unified_usew_actions.adaptew
 
-import com.twitter.inject.Test
-import com.twitter.unified_user_actions.adapter.TestFixtures.EmailNotificationEventFixture
-import com.twitter.unified_user_actions.adapter.email_notification_event.EmailNotificationEventUtils
+impowt com.twittew.inject.test
+i-impowt com.twittew.unified_usew_actions.adaptew.testfixtuwes.emaiwnotificationeventfixtuwe
+i-impowt c-com.twittew.unified_usew_actions.adaptew.emaiw_notification_event.emaiwnotificationeventutiws
 
-class EmailNotificationEventUtilsSpec extends Test {
+c-cwass emaiwnotificationeventutiwsspec e-extends test {
 
-  test("Extract TweetId from pageUrl") {
-    new EmailNotificationEventFixture {
+  t-test("extwact t-tweetid fwom p-pageuww") {
+    nyew emaiwnotificationeventfixtuwe {
 
-      val invalidUrls: Seq[String] =
-        List("", "abc.com/what/not?x=y", "?abc=def", "12345/", "12345/?")
-      val invalidDomain = "https://twitter.app.link/addressbook/"
-      val numericHandle =
-        "https://twitter.com/1234/status/12345?cxt=HBwWgsDTgY3tp&cn=ZmxleGl&refsrc=email)"
+      vaw invawiduwws: seq[stwing] =
+        wist("", "abc.com/nani/not?x=y", mya "?abc=def", mya "12345/", "12345/?")
+      vaw i-invawiddomain = "https://twittew.app.wink/addwessbook/"
+      vaw nyumewichandwe =
+        "https://twittew.com/1234/status/12345?cxt=hbwwgsdtgy3tp&cn=zmxwegw&wefswc=emaiw)"
 
-      assert(EmailNotificationEventUtils.extractTweetId(pageUrlStatus).contains(tweetIdStatus))
-      assert(EmailNotificationEventUtils.extractTweetId(pageUrlEvent).contains(tweetIdEvent))
-      assert(EmailNotificationEventUtils.extractTweetId(pageUrlNoArgs).contains(tweetIdNoArgs))
-      assert(EmailNotificationEventUtils.extractTweetId(invalidDomain).isEmpty)
-      assert(EmailNotificationEventUtils.extractTweetId(numericHandle).contains(12345L))
-      invalidUrls.foreach(url => assert(EmailNotificationEventUtils.extractTweetId(url).isEmpty))
+      assewt(emaiwnotificationeventutiws.extwacttweetid(pageuwwstatus).contains(tweetidstatus))
+      a-assewt(emaiwnotificationeventutiws.extwacttweetid(pageuwwevent).contains(tweetidevent))
+      assewt(emaiwnotificationeventutiws.extwacttweetid(pageuwwnoawgs).contains(tweetidnoawgs))
+      a-assewt(emaiwnotificationeventutiws.extwacttweetid(invawiddomain).isempty)
+      assewt(emaiwnotificationeventutiws.extwacttweetid(numewichandwe).contains(12345w))
+      invawiduwws.foweach(uww => assewt(emaiwnotificationeventutiws.extwacttweetid(uww).isempty))
     }
   }
 
-  test("Extract TweetId from LogBase") {
-    new EmailNotificationEventFixture {
-      assert(EmailNotificationEventUtils.extractTweetId(logBase1).contains(tweetIdStatus))
+  test("extwact t-tweetid fwom wogbase") {
+    n-nyew emaiwnotificationeventfixtuwe {
+      a-assewt(emaiwnotificationeventutiws.extwacttweetid(wogbase1).contains(tweetidstatus))
     }
   }
 }

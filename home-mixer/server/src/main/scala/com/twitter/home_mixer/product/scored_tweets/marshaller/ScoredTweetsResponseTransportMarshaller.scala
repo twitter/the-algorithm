@@ -1,70 +1,70 @@
-package com.twitter.home_mixer.product.scored_tweets.marshaller
+package com.twittew.home_mixew.pwoduct.scowed_tweets.mawshawwew
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsResponse
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.TopicContextFunctionalityTypeMarshaller
-import com.twitter.product_mixer.core.model.common.identifier.TransportMarshallerIdentifier
+impowt com.twittew.home_mixew.modew.homefeatuwes._
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.modew.scowedtweetswesponse
+i-impowt com.twittew.home_mixew.{thwiftscawa => t-t}
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.twanspowtmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.topiccontextfunctionawitytypemawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twanspowtmawshawwewidentifiew
 
 /**
- * Marshall the domain model into our transport (Thrift) model.
+ * m-mawshaww t-the domain modew into ouw twanspowt (thwift) modew. >w<
  */
-object ScoredTweetsResponseTransportMarshaller
-    extends TransportMarshaller[ScoredTweetsResponse, t.ScoredTweetsResponse] {
+object scowedtweetswesponsetwanspowtmawshawwew
+    extends t-twanspowtmawshawwew[scowedtweetswesponse, (U ﹏ U) t.scowedtweetswesponse] {
 
-  override val identifier: TransportMarshallerIdentifier =
-    TransportMarshallerIdentifier("ScoredTweetsResponse")
+  ovewwide vaw identifiew: t-twanspowtmawshawwewidentifiew =
+    twanspowtmawshawwewidentifiew("scowedtweetswesponse")
 
-  override def apply(input: ScoredTweetsResponse): t.ScoredTweetsResponse = {
-    val scoredTweets = input.scoredTweets.map { tweet =>
-      mkScoredTweet(tweet.candidateIdLong, tweet.features)
+  o-ovewwide def appwy(input: scowedtweetswesponse): t.scowedtweetswesponse = {
+    vaw scowedtweets = i-input.scowedtweets.map { tweet =>
+      m-mkscowedtweet(tweet.candidateidwong, 😳 t-tweet.featuwes)
     }
-    t.ScoredTweetsResponse(scoredTweets)
+    t.scowedtweetswesponse(scowedtweets)
   }
 
-  private def mkScoredTweet(tweetId: Long, features: FeatureMap): t.ScoredTweet = {
-    val topicFunctionalityType = features
-      .getOrElse(TopicContextFunctionalityTypeFeature, None)
-      .map(TopicContextFunctionalityTypeMarshaller(_))
+  pwivate def mkscowedtweet(tweetid: wong, (ˆ ﻌ ˆ)♡ f-featuwes: featuwemap): t.scowedtweet = {
+    vaw topicfunctionawitytype = featuwes
+      .getowewse(topiccontextfunctionawitytypefeatuwe, 😳😳😳 n-nyone)
+      .map(topiccontextfunctionawitytypemawshawwew(_))
 
-    t.ScoredTweet(
-      tweetId = tweetId,
-      authorId = features.get(AuthorIdFeature).get,
-      score = features.get(ScoreFeature),
-      suggestType = features.get(SuggestTypeFeature),
-      sourceTweetId = features.getOrElse(SourceTweetIdFeature, None),
-      sourceUserId = features.getOrElse(SourceUserIdFeature, None),
-      quotedTweetId = features.getOrElse(QuotedTweetIdFeature, None),
-      quotedUserId = features.getOrElse(QuotedUserIdFeature, None),
-      inReplyToTweetId = features.getOrElse(InReplyToTweetIdFeature, None),
-      inReplyToUserId = features.getOrElse(InReplyToUserIdFeature, None),
-      directedAtUserId = features.getOrElse(DirectedAtUserIdFeature, None),
-      inNetwork = Some(features.getOrElse(InNetworkFeature, true)),
-      sgsValidLikedByUserIds = Some(features.getOrElse(SGSValidLikedByUserIdsFeature, Seq.empty)),
-      sgsValidFollowedByUserIds =
-        Some(features.getOrElse(SGSValidFollowedByUserIdsFeature, Seq.empty)),
-      topicId = features.getOrElse(TopicIdSocialContextFeature, None),
-      topicFunctionalityType = topicFunctionalityType,
-      ancestors = Some(features.getOrElse(AncestorsFeature, Seq.empty)),
-      isReadFromCache = Some(features.getOrElse(IsReadFromCacheFeature, false)),
-      streamToKafka = Some(features.getOrElse(StreamToKafkaFeature, false)),
-      exclusiveConversationAuthorId =
-        features.getOrElse(ExclusiveConversationAuthorIdFeature, None),
-      authorMetadata = Some(
-        t.AuthorMetadata(
-          blueVerified = features.getOrElse(AuthorIsBlueVerifiedFeature, false),
-          goldVerified = features.getOrElse(AuthorIsGoldVerifiedFeature, false),
-          grayVerified = features.getOrElse(AuthorIsGrayVerifiedFeature, false),
-          legacyVerified = features.getOrElse(AuthorIsLegacyVerifiedFeature, false),
-          creator = features.getOrElse(AuthorIsCreatorFeature, false)
-        )),
-      lastScoredTimestampMs = None,
-      candidatePipelineIdentifier = None,
-      tweetUrls = None,
-      perspectiveFilteredLikedByUserIds =
-        Some(features.getOrElse(PerspectiveFilteredLikedByUserIdsFeature, Seq.empty)),
+    t.scowedtweet(
+      t-tweetid = tweetid, (U ﹏ U)
+      a-authowid = f-featuwes.get(authowidfeatuwe).get,
+      s-scowe = featuwes.get(scowefeatuwe), (///ˬ///✿)
+      suggesttype = featuwes.get(suggesttypefeatuwe), 😳
+      s-souwcetweetid = featuwes.getowewse(souwcetweetidfeatuwe, 😳 nyone),
+      s-souwceusewid = featuwes.getowewse(souwceusewidfeatuwe, σωσ nyone), rawr x3
+      quotedtweetid = featuwes.getowewse(quotedtweetidfeatuwe, OwO nyone),
+      q-quotedusewid = featuwes.getowewse(quotedusewidfeatuwe, /(^•ω•^) n-nyone), 😳😳😳
+      i-inwepwytotweetid = f-featuwes.getowewse(inwepwytotweetidfeatuwe, ( ͡o ω ͡o ) nyone), >_<
+      inwepwytousewid = featuwes.getowewse(inwepwytousewidfeatuwe, >w< n-nyone),
+      d-diwectedatusewid = featuwes.getowewse(diwectedatusewidfeatuwe, rawr nyone),
+      i-innetwowk = s-some(featuwes.getowewse(innetwowkfeatuwe, 😳 twue)), >w<
+      s-sgsvawidwikedbyusewids = some(featuwes.getowewse(sgsvawidwikedbyusewidsfeatuwe, (⑅˘꒳˘) s-seq.empty)), OwO
+      sgsvawidfowwowedbyusewids =
+        some(featuwes.getowewse(sgsvawidfowwowedbyusewidsfeatuwe, (ꈍᴗꈍ) s-seq.empty)), 😳
+      topicid = featuwes.getowewse(topicidsociawcontextfeatuwe, 😳😳😳 nyone),
+      t-topicfunctionawitytype = topicfunctionawitytype, mya
+      a-ancestows = s-some(featuwes.getowewse(ancestowsfeatuwe, mya seq.empty)),
+      isweadfwomcache = some(featuwes.getowewse(isweadfwomcachefeatuwe, (⑅˘꒳˘) fawse)),
+      stweamtokafka = some(featuwes.getowewse(stweamtokafkafeatuwe, (U ﹏ U) fawse)),
+      excwusiveconvewsationauthowid =
+        f-featuwes.getowewse(excwusiveconvewsationauthowidfeatuwe, mya n-nyone),
+      authowmetadata = s-some(
+        t-t.authowmetadata(
+          b-bwuevewified = featuwes.getowewse(authowisbwuevewifiedfeatuwe, ʘwʘ fawse),
+          gowdvewified = f-featuwes.getowewse(authowisgowdvewifiedfeatuwe, (˘ω˘) fawse), (U ﹏ U)
+          gwayvewified = featuwes.getowewse(authowisgwayvewifiedfeatuwe, ^•ﻌ•^ fawse), (˘ω˘)
+          w-wegacyvewified = featuwes.getowewse(authowiswegacyvewifiedfeatuwe, :3 f-fawse),
+          c-cweatow = f-featuwes.getowewse(authowiscweatowfeatuwe, ^^;; fawse)
+        )), 🥺
+      w-wastscowedtimestampms = n-nyone, (⑅˘꒳˘)
+      c-candidatepipewineidentifiew = n-nyone, nyaa~~
+      tweetuwws = nyone, :3
+      p-pewspectivefiwtewedwikedbyusewids =
+        s-some(featuwes.getowewse(pewspectivefiwtewedwikedbyusewidsfeatuwe, ( ͡o ω ͡o ) s-seq.empty)), mya
     )
   }
 }

@@ -1,25 +1,25 @@
-package com.twitter.cr_mixer.param
+package com.twittew.cw_mixew.pawam
 
-import com.twitter.timelines.configapi._
+impowt com.twittew.timewines.configapi._
 
-object RealGraphInParams {
-  object EnableSourceGraphParam
-      extends FSParam[Boolean](
-        name = "graph_realgraphin_enable_source",
-        default = false
+o-object w-weawgwaphinpawams {
+  o-object e-enabwesouwcegwaphpawam
+      e-extends f-fspawam[boowean](
+        n-nyame = "gwaph_weawgwaphin_enabwe_souwce", (ˆ ﻌ ˆ)♡
+        d-defauwt = fawse
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableSourceGraphParam,
+  vaw awwpawams: seq[pawam[_] with fsname] = seq(
+    e-enabwesouwcegwaphpawam, (⑅˘꒳˘)
   )
 
-  lazy val config: BaseConfig = {
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableSourceGraphParam
+  wazy vaw config: baseconfig = {
+    v-vaw booweanovewwides = featuweswitchovewwideutiw.getbooweanfsovewwides(
+      e-enabwesouwcegwaphpawam
     )
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .build()
+    baseconfigbuiwdew()
+      .set(booweanovewwides: _*)
+      .buiwd()
   }
 }

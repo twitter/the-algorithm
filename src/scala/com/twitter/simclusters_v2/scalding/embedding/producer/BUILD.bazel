@@ -1,223 +1,223 @@
-scala_library(
-    sources = [
-        "*.scala",
+scawa_wibwawy(
+    souwces = [
+        "*.scawa", (ˆ ﻌ ˆ)♡
     ],
-    platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-only",
+    pwatfowm = "java8",
+    t-tags = [
+        "bazew-compatibwe", 😳😳😳
+        "bazew-onwy", :3
     ],
-    dependencies = [
-        "escherbird/src/scala/com/twitter/escherbird/scalding/source",
-        "src/scala/com/twitter/onboarding/relevance/source:utt_account_recommendations-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:aggregatable_producer_simclusters_embeddings_by_fav_score-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:aggregatable_producer_simclusters_embeddings_by_log_fav_score-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/presto_hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/scalding/common",
-        "src/scala/com/twitter/simclusters_v2/scalding/common/matrix",
-        "src/scala/com/twitter/simclusters_v2/scalding/embedding",
-        "src/scala/com/twitter/wtf/entity_real_graph/common",
-        "src/scala/com/twitter/wtf/entity_real_graph/scalding/common",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:execution_app",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:sources",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:stats_util",
-        "src/thrift/com/twitter/hermit/candidate:hermit-candidate-scala",
-        "src/thrift/com/twitter/onboarding/relevance/candidates:candidates-scala",
-        "src/thrift/com/twitter/recos/entities:entities-thrift-scala",
-        "src/thrift/com/twitter/wtf/entity_real_graph:entity_real_graph-thrift-scala",
-        "usersource/snapshot/src/main/scala/com/twitter/usersource/snapshot/flat:usersource_flat-scala",
-        "usersource/snapshot/src/main/thrift/com/twitter/usersource/snapshot/flat:flat-scala",
+    d-dependencies = [
+        "eschewbiwd/swc/scawa/com/twittew/eschewbiwd/scawding/souwce", OwO
+        "swc/scawa/com/twittew/onboawding/wewevance/souwce:utt_account_wecommendations-scawa", (U ﹏ U)
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces", >w<
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:aggwegatabwe_pwoducew_simcwustews_embeddings_by_fav_scowe-scawa", (U ﹏ U)
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:aggwegatabwe_pwoducew_simcwustews_embeddings_by_wog_fav_scowe-scawa",
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces/pwesto_hdfs_souwces", 😳
+        "swc/scawa/com/twittew/simcwustews_v2/scawding/common", (ˆ ﻌ ˆ)♡
+        "swc/scawa/com/twittew/simcwustews_v2/scawding/common/matwix", 😳😳😳
+        "swc/scawa/com/twittew/simcwustews_v2/scawding/embedding", (U ﹏ U)
+        "swc/scawa/com/twittew/wtf/entity_weaw_gwaph/common", (///ˬ///✿)
+        "swc/scawa/com/twittew/wtf/entity_weaw_gwaph/scawding/common",
+        "swc/scawa/com/twittew/wtf/scawding/jobs/common:execution_app", 😳
+        "swc/scawa/com/twittew/wtf/scawding/jobs/common:souwces", 😳
+        "swc/scawa/com/twittew/wtf/scawding/jobs/common:stats_utiw", σωσ
+        "swc/thwift/com/twittew/hewmit/candidate:hewmit-candidate-scawa", rawr x3
+        "swc/thwift/com/twittew/onboawding/wewevance/candidates:candidates-scawa", OwO
+        "swc/thwift/com/twittew/wecos/entities:entities-thwift-scawa", /(^•ω•^)
+        "swc/thwift/com/twittew/wtf/entity_weaw_gwaph:entity_weaw_gwaph-thwift-scawa", 😳😳😳
+        "usewsouwce/snapshot/swc/main/scawa/com/twittew/usewsouwce/snapshot/fwat:usewsouwce_fwat-scawa", ( ͡o ω ͡o )
+        "usewsouwce/snapshot/swc/main/thwift/com/twittew/usewsouwce/snapshot/fwat:fwat-scawa", >_<
     ],
 )
 
-hadoop_binary(
-    name = "aggregatable_logfav_based_producer_embeddings_job-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableLogFavBasedProducerEmbeddingsAdhocApp",
-    platform = "java8",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+h-hadoop_binawy(
+    n-nyame = "aggwegatabwe_wogfav_based_pwoducew_embeddings_job-adhoc", >w<
+    m-main = "com.twittew.simcwustews_v2.scawding.embedding.pwoducew.aggwegatabwewogfavbasedpwoducewembeddingsadhocapp", rawr
+    p-pwatfowm = "java8", 😳
+    w-wuntime_pwatfowm = "java8", >w<
+    t-tags = [
+        "bazew-compatibwe", (⑅˘꒳˘)
+        "bazew-compatibwe:migwated", OwO
+        "bazew-onwy", (ꈍᴗꈍ)
     ],
-    dependencies = [":producer"],
+    dependencies = [":pwoducew"], 😳
 )
 
-hadoop_binary(
-    name = "aggregatable_logfav_based_producer_embeddings_job_2020-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableLogFavBasedProducerEmbeddings2020AdhocApp",
-    platform = "java8",
-    runtime_platform = "java8",
+hadoop_binawy(
+    name = "aggwegatabwe_wogfav_based_pwoducew_embeddings_job_2020-adhoc", 😳😳😳
+    main = "com.twittew.simcwustews_v2.scawding.embedding.pwoducew.aggwegatabwewogfavbasedpwoducewembeddings2020adhocapp", mya
+    p-pwatfowm = "java8", mya
+    wuntime_pwatfowm = "java8", (⑅˘꒳˘)
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [":producer"],
+        "bazew-compatibwe", (U ﹏ U)
+        "bazew-compatibwe:migwated", mya
+        "bazew-onwy",
+    ], ʘwʘ
+    d-dependencies = [":pwoducew"], (˘ω˘)
 )
 
-hadoop_binary(
-    name = "aggregatable_follow_based_producer_embeddings_job_2020-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableFollowBasedProducerEmbeddings2020AdhocApp",
-    platform = "java8",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+hadoop_binawy(
+    n-nyame = "aggwegatabwe_fowwow_based_pwoducew_embeddings_job_2020-adhoc", (U ﹏ U)
+    main = "com.twittew.simcwustews_v2.scawding.embedding.pwoducew.aggwegatabwefowwowbasedpwoducewembeddings2020adhocapp", ^•ﻌ•^
+    pwatfowm = "java8", (˘ω˘)
+    wuntime_pwatfowm = "java8", :3
+    t-tags = [
+        "bazew-compatibwe", ^^;;
+        "bazew-compatibwe:migwated", 🥺
+        "bazew-onwy", (⑅˘꒳˘)
     ],
-    dependencies = [":producer"],
+    dependencies = [":pwoducew"], nyaa~~
 )
 
-hadoop_binary(
-    name = "aggregatable_logfav_based_producer_embeddings_job",
-    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableLogFavBasedProducerEmbeddingsScheduledApp",
-    platform = "java8",
-    runtime_platform = "java8",
+h-hadoop_binawy(
+    n-nyame = "aggwegatabwe_wogfav_based_pwoducew_embeddings_job", :3
+    main = "com.twittew.simcwustews_v2.scawding.embedding.pwoducew.aggwegatabwewogfavbasedpwoducewembeddingsscheduwedapp", ( ͡o ω ͡o )
+    pwatfowm = "java8", mya
+    wuntime_pwatfowm = "java8", (///ˬ///✿)
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [":producer"],
+        "bazew-compatibwe",
+        "bazew-compatibwe:migwated", (˘ω˘)
+        "bazew-onwy", ^^;;
+    ], (✿oωo)
+    dependencies = [":pwoducew"], (U ﹏ U)
 )
 
-hadoop_binary(
-    name = "aggregatable_logfav_based_producer_embeddings_job_2020",
-    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableLogFavBasedProducerEmbeddings2020ScheduledApp",
-    platform = "java8",
-    runtime_platform = "java8",
+hadoop_binawy(
+    n-nyame = "aggwegatabwe_wogfav_based_pwoducew_embeddings_job_2020", -.-
+    main = "com.twittew.simcwustews_v2.scawding.embedding.pwoducew.aggwegatabwewogfavbasedpwoducewembeddings2020scheduwedapp", ^•ﻌ•^
+    pwatfowm = "java8", rawr
+    wuntime_pwatfowm = "java8", (˘ω˘)
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe", nyaa~~
+        "bazew-compatibwe:migwated", UwU
+        "bazew-onwy", :3
     ],
-    dependencies = [":producer"],
+    d-dependencies = [":pwoducew"], (⑅˘꒳˘)
 )
 
-hadoop_binary(
-    name = "aggregatable_follow_based_producer_embeddings_job_2020",
-    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableFollowBasedProducerEmbeddings2020ScheduledApp",
-    platform = "java8",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [":producer"],
+hadoop_binawy(
+    n-nyame = "aggwegatabwe_fowwow_based_pwoducew_embeddings_job_2020", (///ˬ///✿)
+    m-main = "com.twittew.simcwustews_v2.scawding.embedding.pwoducew.aggwegatabwefowwowbasedpwoducewembeddings2020scheduwedapp", ^^;;
+    pwatfowm = "java8", >_<
+    w-wuntime_pwatfowm = "java8", rawr x3
+    t-tags = [
+        "bazew-compatibwe", /(^•ω•^)
+        "bazew-compatibwe:migwated", :3
+        "bazew-onwy", (ꈍᴗꈍ)
+    ], /(^•ω•^)
+    dependencies = [":pwoducew"], (⑅˘꒳˘)
 )
 
-hadoop_binary(
-    name = "aggregatable_logfav_based_producer_embeddings_job_relaxed_fav_engagement_threshold_2020",
-    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableLogFavBasedProducerEmbeddingsRelaxedFavEngagementThreshold2020ScheduledApp",
-    platform = "java8",
-    runtime_platform = "java8",
+hadoop_binawy(
+    n-nyame = "aggwegatabwe_wogfav_based_pwoducew_embeddings_job_wewaxed_fav_engagement_thweshowd_2020", ( ͡o ω ͡o )
+    main = "com.twittew.simcwustews_v2.scawding.embedding.pwoducew.aggwegatabwewogfavbasedpwoducewembeddingswewaxedfavengagementthweshowd2020scheduwedapp", òωó
+    pwatfowm = "java8", (⑅˘꒳˘)
+    w-wuntime_pwatfowm = "java8", XD
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [":producer"],
+        "bazew-compatibwe", -.-
+        "bazew-compatibwe:migwated", :3
+        "bazew-onwy", nyaa~~
+    ], 😳
+    dependencies = [":pwoducew"], (⑅˘꒳˘)
 )
 
-hadoop_binary(
-    name = "aggregatable_fav_based_producer_embeddings_job-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableFavBasedProducerEmbeddingsAdhocApp",
-    platform = "java8",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [":producer"],
+hadoop_binawy(
+    nyame = "aggwegatabwe_fav_based_pwoducew_embeddings_job-adhoc", nyaa~~
+    main = "com.twittew.simcwustews_v2.scawding.embedding.pwoducew.aggwegatabwefavbasedpwoducewembeddingsadhocapp",
+    p-pwatfowm = "java8", OwO
+    wuntime_pwatfowm = "java8", rawr x3
+    t-tags = [
+        "bazew-compatibwe", XD
+        "bazew-compatibwe:migwated", σωσ
+        "bazew-onwy",
+    ], (U ᵕ U❁)
+    d-dependencies = [":pwoducew"], (U ﹏ U)
 )
 
-hadoop_binary(
-    name = "aggregatable_fav_based_producer_embeddings_job",
-    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableFavBasedProducerEmbeddingsScheduledApp",
-    platform = "java8",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+h-hadoop_binawy(
+    nyame = "aggwegatabwe_fav_based_pwoducew_embeddings_job", :3
+    main = "com.twittew.simcwustews_v2.scawding.embedding.pwoducew.aggwegatabwefavbasedpwoducewembeddingsscheduwedapp", ( ͡o ω ͡o )
+    pwatfowm = "java8", σωσ
+    wuntime_pwatfowm = "java8", >w<
+    t-tags = [
+        "bazew-compatibwe", 😳😳😳
+        "bazew-compatibwe:migwated", OwO
+        "bazew-onwy", 😳
     ],
-    dependencies = [":producer"],
+    d-dependencies = [":pwoducew"], 😳😳😳
 )
 
-hadoop_binary(
-    name = "aggregatable_fav_based_producer_embeddings_job_2020-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableFavBasedProducerEmbeddings2020AdhocApp",
-    platform = "java8",
-    runtime_platform = "java8",
+hadoop_binawy(
+    n-nyame = "aggwegatabwe_fav_based_pwoducew_embeddings_job_2020-adhoc", (˘ω˘)
+    m-main = "com.twittew.simcwustews_v2.scawding.embedding.pwoducew.aggwegatabwefavbasedpwoducewembeddings2020adhocapp", ʘwʘ
+    pwatfowm = "java8", ( ͡o ω ͡o )
+    w-wuntime_pwatfowm = "java8", o.O
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe", >w<
+        "bazew-compatibwe:migwated", 😳
+        "bazew-onwy", 🥺
     ],
-    dependencies = [":producer"],
+    d-dependencies = [":pwoducew"], rawr x3
 )
 
-hadoop_binary(
-    name = "aggregatable_fav_based_producer_embeddings_job_2020",
-    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableFavBasedProducerEmbeddings2020ScheduledApp",
-    platform = "java8",
-    runtime_platform = "java8",
+hadoop_binawy(
+    nyame = "aggwegatabwe_fav_based_pwoducew_embeddings_job_2020", o.O
+    m-main = "com.twittew.simcwustews_v2.scawding.embedding.pwoducew.aggwegatabwefavbasedpwoducewembeddings2020scheduwedapp", rawr
+    pwatfowm = "java8", ʘwʘ
+    w-wuntime_pwatfowm = "java8", 😳😳😳
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [":producer"],
+        "bazew-compatibwe", ^^;;
+        "bazew-compatibwe:migwated", o.O
+        "bazew-onwy", (///ˬ///✿)
+    ], σωσ
+    d-dependencies = [":pwoducew"], nyaa~~
 )
 
-# Generated with `capesospy-v2 create_target aggregatable_producer_embeddings_by_logfav_score src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml`, config hash f8229a.
-scalding_job(
-    name = "aggregatable_producer_embeddings_by_logfav_score",
-    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableLogFavBasedProducerEmbeddingsScheduledApp",
+# g-genewated with `capesospy-v2 cweate_tawget aggwegatabwe_pwoducew_embeddings_by_wogfav_scowe swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc3.yamw`, ^^;; config hash f8229a. ^•ﻌ•^
+scawding_job(
+    n-nyame = "aggwegatabwe_pwoducew_embeddings_by_wogfav_scowe", σωσ
+    m-main = "com.twittew.simcwustews_v2.scawding.embedding.pwoducew.aggwegatabwewogfavbasedpwoducewembeddingsscheduwedapp", -.-
     config = [
-        ("hadoop.combine-input", "true"),
-        ("hadoop.map.jvm.total-memory", "3072m"),
-        ("hadoop.queue", "cassowary.default"),
-        ("hadoop.reduce.jvm.total-memory", "3072m"),
-        ("hadoop.submitter.jvm.total-memory", "5120m"),
-        ("submitter.tier", "preemptible"),
+        ("hadoop.combine-input", ^^;; "twue"),
+        ("hadoop.map.jvm.totaw-memowy", XD "3072m"),
+        ("hadoop.queue", 🥺 "cassowawy.defauwt"), òωó
+        ("hadoop.weduce.jvm.totaw-memowy", (ˆ ﻌ ˆ)♡ "3072m"), -.-
+        ("hadoop.submittew.jvm.totaw-memowy", :3 "5120m"),
+        ("submittew.tiew", ʘwʘ "pweemptibwe"), 🥺
     ],
-    cron = "17 * * * *",
-    hadoop_cluster = "atla-proc3",
-    platform = "java8",
-    role = "cassowary",
-    runtime_platform = "java8",
+    c-cwon = "17 * * * *", >_<
+    h-hadoop_cwustew = "atwa-pwoc3", ʘwʘ
+    p-pwatfowm = "java8", (˘ω˘)
+    wowe = "cassowawy", (✿oωo)
+    wuntime_pwatfowm = "java8", (///ˬ///✿)
     tags = [
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe:migwated", rawr x3
+        "bazew-onwy", -.-
     ],
-    dependencies = [":producer"],
+    d-dependencies = [":pwoducew"], ^^
 )
 
-# Generated with `capesospy-v2 create_target aggregatable_producer_embeddings_by_fav_score src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml`, config hash bc0103.
-scalding_job(
-    name = "aggregatable_producer_embeddings_by_fav_score",
-    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableFavBasedProducerEmbeddingsScheduledApp",
-    config = [
-        ("hadoop.combine-input", "true"),
-        ("hadoop.map.jvm.total-memory", "3072m"),
-        ("hadoop.queue", "cassowary.default"),
-        ("hadoop.reduce.jvm.total-memory", "3072m"),
-        ("hadoop.submitter.jvm.total-memory", "5120m"),
-        ("submitter.tier", "preemptible"),
+# genewated with `capesospy-v2 cweate_tawget aggwegatabwe_pwoducew_embeddings_by_fav_scowe swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc3.yamw`, (⑅˘꒳˘) config hash bc0103. nyaa~~
+s-scawding_job(
+    nyame = "aggwegatabwe_pwoducew_embeddings_by_fav_scowe", /(^•ω•^)
+    m-main = "com.twittew.simcwustews_v2.scawding.embedding.pwoducew.aggwegatabwefavbasedpwoducewembeddingsscheduwedapp", (U ﹏ U)
+    c-config = [
+        ("hadoop.combine-input", 😳😳😳 "twue"),
+        ("hadoop.map.jvm.totaw-memowy", >w< "3072m"),
+        ("hadoop.queue", XD "cassowawy.defauwt"), o.O
+        ("hadoop.weduce.jvm.totaw-memowy", mya "3072m"), 🥺
+        ("hadoop.submittew.jvm.totaw-memowy", "5120m"), ^^;;
+        ("submittew.tiew", :3 "pweemptibwe"), (U ﹏ U)
     ],
-    cron = "17 * * * *",
-    hadoop_cluster = "atla-proc3",
-    platform = "java8",
-    role = "cassowary",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible:migrated",
-        "bazel-only",
+    c-cwon = "17 * * * *", OwO
+    hadoop_cwustew = "atwa-pwoc3", 😳😳😳
+    pwatfowm = "java8", (ˆ ﻌ ˆ)♡
+    w-wowe = "cassowawy", XD
+    w-wuntime_pwatfowm = "java8", (ˆ ﻌ ˆ)♡
+    t-tags = [
+        "bazew-compatibwe:migwated", ( ͡o ω ͡o )
+        "bazew-onwy", rawr x3
     ],
-    dependencies = [":producer"],
+    d-dependencies = [":pwoducew"], nyaa~~
 )

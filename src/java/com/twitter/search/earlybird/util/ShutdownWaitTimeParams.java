@@ -1,40 +1,40 @@
-package com.twitter.search.earlybird.util;
+package com.twittew.seawch.eawwybiwd.utiw;
 
-import java.util.concurrent.TimeUnit;
+impowt j-java.utiw.concuwwent.timeunit;
 
 /**
- * Specifies how much time do we wait when shutting down a task.
+ * s-specifies h-how much time d-do we wait when s-shutting down a t-task. (✿oωo)
  */
-public class ShutdownWaitTimeParams {
-  private long waitDuration;
-  private TimeUnit waitUnit;
+pubwic c-cwass shutdownwaittimepawams {
+  p-pwivate wong waitduwation;
+  pwivate timeunit waitunit;
 
-  public ShutdownWaitTimeParams(long waitDuration, TimeUnit waitUnit) {
-    this.waitDuration = waitDuration;
-    this.waitUnit = waitUnit;
+  pubwic shutdownwaittimepawams(wong w-waitduwation, (ˆ ﻌ ˆ)♡ timeunit waitunit) {
+    this.waitduwation = w-waitduwation;
+    this.waitunit = w-waitunit;
   }
 
-  public long getWaitDuration() {
-    return waitDuration;
+  pubwic wong getwaitduwation() {
+    wetuwn waitduwation;
   }
 
-  public TimeUnit getWaitUnit() {
-    return waitUnit;
-  }
-
-  /**
-   * Returns a ShutdownWaitTimeParams instance that instructs the caller to wait indefinitely for
-   * the task to shut down.
-   */
-  public static ShutdownWaitTimeParams indefinitely() {
-    return new ShutdownWaitTimeParams(Long.MAX_VALUE, TimeUnit.DAYS);
+  pubwic timeunit getwaitunit() {
+    w-wetuwn waitunit;
   }
 
   /**
-   * Returns a ShutdownWaitTimeParams instance that instructs the caller to shut down the task
-   * immediately.
+   * wetuwns a shutdownwaittimepawams i-instance that i-instwucts the cawwew to wait indefinitewy fow
+   * the task to shut down. (˘ω˘)
    */
-  public static ShutdownWaitTimeParams immediately() {
-    return new ShutdownWaitTimeParams(0, TimeUnit.MILLISECONDS);
+  p-pubwic static shutdownwaittimepawams indefinitewy() {
+    wetuwn nyew shutdownwaittimepawams(wong.max_vawue, timeunit.days);
+  }
+
+  /**
+   * w-wetuwns a shutdownwaittimepawams instance that i-instwucts the cawwew t-to shut down t-the task
+   * i-immediatewy. (⑅˘꒳˘)
+   */
+  pubwic static shutdownwaittimepawams i-immediatewy() {
+    wetuwn nyew shutdownwaittimepawams(0, (///ˬ///✿) timeunit.miwwiseconds);
   }
 }

@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.alert
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.awewt
 
-sealed trait ShowAlertIcon
-case object UpArrow extends ShowAlertIcon
-case object DownArrow extends ShowAlertIcon
+seawed t-twait showawewticon
+c-case object u-upawwow extends s-showawewticon
+c-case object downawwow e-extends showawewticon

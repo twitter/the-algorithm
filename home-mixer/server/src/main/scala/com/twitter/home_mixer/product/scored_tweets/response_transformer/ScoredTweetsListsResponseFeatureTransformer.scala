@@ -1,45 +1,45 @@
-package com.twitter.home_mixer.product.scored_tweets.response_transformer
+package com.twittew.home_mixew.pwoduct.scowed_tweets.wesponse_twansfowmew
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.FromInNetworkSourceFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.timelineservice.{thriftscala => t}
-import com.twitter.timelineservice.suggests.{thriftscala => st}
-import com.twitter.timelineservice.suggests.logging.candidate_tweet_source_id.{thriftscala => cts}
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.candidatesouwceidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.fwominnetwowksouwcefeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.iswetweetfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.souwcetweetidfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.souwceusewidfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.suggesttypefeatuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twansfowmewidentifiew
+i-impowt com.twittew.timewinesewvice.{thwiftscawa => t}
+impowt com.twittew.timewinesewvice.suggests.{thwiftscawa => st}
+impowt com.twittew.timewinesewvice.suggests.wogging.candidate_tweet_souwce_id.{thwiftscawa => c-cts}
 
-object ScoredTweetsListsResponseFeatureTransformer extends CandidateFeatureTransformer[t.Tweet] {
+object scowedtweetswistswesponsefeatuwetwansfowmew extends c-candidatefeatuwetwansfowmew[t.tweet] {
 
-  override val identifier: TransformerIdentifier =
-    TransformerIdentifier("ScoredTweetsListsResponse")
+  o-ovewwide vaw identifiew: twansfowmewidentifiew =
+    twansfowmewidentifiew("scowedtweetswistswesponse")
 
-  override val features: Set[Feature[_, _]] = Set(
-    AuthorIdFeature,
-    CandidateSourceIdFeature,
-    FromInNetworkSourceFeature,
-    IsRetweetFeature,
-    SuggestTypeFeature,
-    SourceTweetIdFeature,
-    SourceUserIdFeature,
+  ovewwide v-vaw featuwes: set[featuwe[_, (///ˬ///✿) _]] = set(
+    authowidfeatuwe, 😳😳😳
+    candidatesouwceidfeatuwe, 🥺
+    fwominnetwowksouwcefeatuwe, mya
+    iswetweetfeatuwe,
+    s-suggesttypefeatuwe, 🥺
+    souwcetweetidfeatuwe, >_<
+    s-souwceusewidfeatuwe, >_<
   )
 
-  override def transform(candidate: t.Tweet): FeatureMap = {
-    FeatureMapBuilder()
-      .add(AuthorIdFeature, candidate.userId)
-      .add(CandidateSourceIdFeature, Some(cts.CandidateTweetSourceId.ListTweet))
-      .add(FromInNetworkSourceFeature, false)
-      .add(IsRetweetFeature, candidate.sourceStatusId.isDefined)
-      .add(SuggestTypeFeature, Some(st.SuggestType.RankedListTweet))
-      .add(SourceTweetIdFeature, candidate.sourceStatusId)
-      .add(SourceUserIdFeature, candidate.sourceUserId)
-      .build()
+  o-ovewwide def t-twansfowm(candidate: t-t.tweet): featuwemap = {
+    featuwemapbuiwdew()
+      .add(authowidfeatuwe, (⑅˘꒳˘) c-candidate.usewid)
+      .add(candidatesouwceidfeatuwe, /(^•ω•^) some(cts.candidatetweetsouwceid.wisttweet))
+      .add(fwominnetwowksouwcefeatuwe, rawr x3 fawse)
+      .add(iswetweetfeatuwe, (U ﹏ U) c-candidate.souwcestatusid.isdefined)
+      .add(suggesttypefeatuwe, some(st.suggesttype.wankedwisttweet))
+      .add(souwcetweetidfeatuwe, (U ﹏ U) candidate.souwcestatusid)
+      .add(souwceusewidfeatuwe, (⑅˘꒳˘) candidate.souwceusewid)
+      .buiwd()
   }
 }

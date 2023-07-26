@@ -1,28 +1,28 @@
-package com.twitter.timelineranker.parameters.revchron
+package com.twittew.timewinewankew.pawametews.wevchwon
 
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.timelines.configapi._
+impowt com.twittew.sewvo.decidew.decidewgatebuiwdew
+i-impowt c-com.twittew.timewines.configapi._
 
-object ReverseChronProduction {
-  val intFeatureSwitchParams = Seq(ReverseChronParams.MaxFollowedUsersParam)
-  val booleanFeatureSwitchParams = Seq(
-    ReverseChronParams.ReturnEmptyWhenOverMaxFollowsParam,
-    ReverseChronParams.DirectedAtNarrowcastingViaSearchParam,
-    ReverseChronParams.PostFilteringBasedOnSearchMetadataEnabledParam
+o-object wevewsechwonpwoduction {
+  v-vaw intfeatuweswitchpawams = s-seq(wevewsechwonpawams.maxfowwowedusewspawam)
+  v-vaw booweanfeatuweswitchpawams = s-seq(
+    wevewsechwonpawams.wetuwnemptywhenovewmaxfowwowspawam, (U ᵕ U❁)
+    w-wevewsechwonpawams.diwectedatnawwowcastingviaseawchpawam, -.-
+    wevewsechwonpawams.postfiwtewingbasedonseawchmetadataenabwedpawam
   )
 }
 
-class ReverseChronProduction(deciderGateBuilder: DeciderGateBuilder) {
-  val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-    ReverseChronProduction.intFeatureSwitchParams: _*
+cwass wevewsechwonpwoduction(decidewgatebuiwdew: decidewgatebuiwdew) {
+  vaw intovewwides = f-featuweswitchovewwideutiw.getboundedintfsovewwides(
+    wevewsechwonpwoduction.intfeatuweswitchpawams: _*
   )
 
-  val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-    ReverseChronProduction.booleanFeatureSwitchParams: _*
+  vaw b-booweanovewwides = featuweswitchovewwideutiw.getbooweanfsovewwides(
+    w-wevewsechwonpwoduction.booweanfeatuweswitchpawams: _*
   )
 
-  val config: BaseConfig = new BaseConfigBuilder()
-    .set(intOverrides: _*)
-    .set(booleanOverrides: _*)
-    .build(ReverseChronProduction.getClass.getSimpleName)
+  vaw config: baseconfig = new baseconfigbuiwdew()
+    .set(intovewwides: _*)
+    .set(booweanovewwides: _*)
+    .buiwd(wevewsechwonpwoduction.getcwass.getsimpwename)
 }

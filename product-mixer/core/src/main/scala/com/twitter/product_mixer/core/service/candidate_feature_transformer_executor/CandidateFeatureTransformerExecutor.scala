@@ -1,92 +1,92 @@
-package com.twitter.product_mixer.core.service.candidate_feature_transformer_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.candidate_featuwe_twansfowmew_executow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.Executor._
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twansfowmewidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow._
+i-impowt com.twittew.stitch.awwow
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class CandidateFeatureTransformerExecutor @Inject() (override val statsReceiver: StatsReceiver)
-    extends Executor {
-  def arrow[Result](
-    transformers: Seq[CandidateFeatureTransformer[Result]],
-    context: Executor.Context
-  ): Arrow[Seq[Result], CandidateFeatureTransformerExecutorResult] = {
-    if (transformers.isEmpty) {
-      // must always return a Seq of FeatureMaps, even if there are no Transformers
-      Arrow.map[Seq[Result], CandidateFeatureTransformerExecutorResult] { candidates =>
-        CandidateFeatureTransformerExecutorResult(candidates.map(_ => FeatureMap.empty), Seq.empty)
+@singweton
+cwass candidatefeatuwetwansfowmewexecutow @inject() (ovewwide v-vaw statsweceivew: statsweceivew)
+    extends e-executow {
+  def awwow[wesuwt](
+    t-twansfowmews: seq[candidatefeatuwetwansfowmew[wesuwt]], OwO
+    context: executow.context
+  ): awwow[seq[wesuwt], (ꈍᴗꈍ) c-candidatefeatuwetwansfowmewexecutowwesuwt] = {
+    if (twansfowmews.isempty) {
+      // m-must a-awways wetuwn a seq of featuwemaps, even if thewe awe nyo twansfowmews
+      awwow.map[seq[wesuwt], c-candidatefeatuwetwansfowmewexecutowwesuwt] { candidates =>
+        candidatefeatuwetwansfowmewexecutowwesuwt(candidates.map(_ => featuwemap.empty), 😳 seq.empty)
       }
-    } else {
-      val transformerArrows: Seq[Arrow[Seq[Result], Seq[(TransformerIdentifier, FeatureMap)]]] =
-        transformers.map { transformer =>
-          val transformerContext = context.pushToComponentStack(transformer.identifier)
+    } e-ewse {
+      vaw twansfowmewawwows: s-seq[awwow[seq[wesuwt], 😳😳😳 s-seq[(twansfowmewidentifiew, mya f-featuwemap)]]] =
+        t-twansfowmews.map { twansfowmew =>
+          vaw t-twansfowmewcontext = context.pushtocomponentstack(twansfowmew.identifiew)
 
-          val liftNonValidationFailuresToFailedFeatures =
-            Arrow.handle[FeatureMap, FeatureMap] {
-              case NotAMisconfiguredFeatureMapFailure(e) =>
-                featureMapWithFailuresForFeatures(transformer.features, e, transformerContext)
+          vaw wiftnonvawidationfaiwuwestofaiwedfeatuwes =
+            a-awwow.handwe[featuwemap, mya featuwemap] {
+              case nyotamisconfiguwedfeatuwemapfaiwuwe(e) =>
+                featuwemapwithfaiwuwesfowfeatuwes(twansfowmew.featuwes, (⑅˘꒳˘) e, twansfowmewcontext)
             }
 
-          val underlyingArrow = Arrow
-            .map(transformer.transform)
-            .map(validateFeatureMap(transformer.features, _, transformerContext))
+          v-vaw undewwyingawwow = a-awwow
+            .map(twansfowmew.twansfowm)
+            .map(vawidatefeatuwemap(twansfowmew.featuwes, (U ﹏ U) _, twansfowmewcontext))
 
-          val observedArrowWithoutTracing =
-            wrapPerCandidateComponentWithExecutorBookkeepingWithoutTracing(
-              context,
-              transformer.identifier)(underlyingArrow)
+          vaw o-obsewvedawwowwithouttwacing =
+            w-wwappewcandidatecomponentwithexecutowbookkeepingwithouttwacing(
+              context, mya
+              twansfowmew.identifiew)(undewwyingawwow)
 
-          val seqArrow =
-            Arrow.sequence(
-              observedArrowWithoutTracing
-                .andThen(liftNonValidationFailuresToFailedFeatures)
-                .map(transformer.identifier -> _)
+          vaw seqawwow =
+            a-awwow.sequence(
+              obsewvedawwowwithouttwacing
+                .andthen(wiftnonvawidationfaiwuwestofaiwedfeatuwes)
+                .map(twansfowmew.identifiew -> _)
             )
 
-          wrapComponentsWithTracingOnly(context, transformer.identifier)(seqArrow)
+          w-wwapcomponentswithtwacingonwy(context, ʘwʘ twansfowmew.identifiew)(seqawwow)
         }
 
-      Arrow.collect(transformerArrows).map { results =>
+      a-awwow.cowwect(twansfowmewawwows).map { w-wesuwts =>
         /**
-         * Inner Seqs are a given Transformer applied to all the candidates
+         * innew s-seqs awe a given twansfowmew a-appwied to aww the candidates
          *
-         * We want to merge the FeatureMaps for each candidate
-         * from all the Transformers. We do this by merging all the FeatureMaps at
-         * each index `i` of each Seq in `results` by `transpose`-ing the `results`
-         * so the inner Seq becomes all the FeatureMaps for Candidate
-         * at index `i` in the input Seq.
+         * we want to mewge t-the featuwemaps fow each candidate
+         * f-fwom aww the twansfowmews. (˘ω˘) we d-do this by mewging a-aww the featuwemaps at
+         * each index `i` of each seq in `wesuwts` by `twanspose`-ing the `wesuwts`
+         * so the i-innew seq becomes a-aww the featuwemaps fow candidate
+         * a-at index `i` in t-the input seq. (U ﹏ U)
          *
          * {{{
-         *  Seq(
-         *    Seq(transformer1FeatureMapCandidate1, ..., transformer1FeatureMapCandidateN),
+         *  s-seq(
+         *    seq(twansfowmew1featuwemapcandidate1, ..., twansfowmew1featuwemapcandidaten), ^•ﻌ•^
          *    ...,
-         *    Seq(transformerMFeatureMapCandidate1, ..., transformerMFeatureMapCandidateN)
-         *  ).transpose == Seq(
-         *    Seq(transformer1FeatureMapCandidate1, ..., transformerMFeatureMapCandidate1),
+         *    seq(twansfowmewmfeatuwemapcandidate1, (˘ω˘) ..., t-twansfowmewmfeatuwemapcandidaten)
+         *  ).twanspose == seq(
+         *    seq(twansfowmew1featuwemapcandidate1, :3 ..., ^^;; twansfowmewmfeatuwemapcandidate1), 🥺
          *    ...,
-         *    Seq(transformer1FeatureMapCandidateN, ..., transformerMFeatureMapCandidateN)
+         *    seq(twansfowmew1featuwemapcandidaten, (⑅˘꒳˘) ..., twansfowmewmfeatuwemapcandidaten)
          *  )
          * }}}
          *
-         * we could avoid the transpose if we ran each candidate through all the transformers
-         * one-after-the-other, but then we couldn't have a single tracing span for all applications
-         * of a Transformer, so instead we apply each transformer to all candidates together, then
-         * move onto the next transformer.
+         * w-we couwd avoid the twanspose if w-we wan each candidate t-thwough aww t-the twansfowmews
+         * one-aftew-the-othew, but then we c-couwdn't have a s-singwe twacing span f-fow aww appwications
+         * o-of a twansfowmew, nyaa~~ so instead we appwy each twansfowmew t-to aww c-candidates togethew, :3 t-then
+         * m-move onto t-the nyext twansfowmew. ( ͡o ω ͡o )
          *
-         * It's worth noting that the outer Seq is bounded by the number of Transformers that are
-         * applied which will typically be small.
+         * it's wowth nyoting that the outew s-seq is bounded by the nyumbew of twansfowmews that awe
+         * appwied which wiww typicawwy be s-smow. mya
          */
-        val transposed = results.transpose
-        val combinedMaps = transposed.map(featureMapsForSingleCandidate =>
-          FeatureMap.merge(featureMapsForSingleCandidate.map { case (_, maps) => maps }))
+        vaw twansposed = wesuwts.twanspose
+        vaw combinedmaps = t-twansposed.map(featuwemapsfowsingwecandidate =>
+          f-featuwemap.mewge(featuwemapsfowsingwecandidate.map { c-case (_, (///ˬ///✿) maps) => maps }))
 
-        CandidateFeatureTransformerExecutorResult(combinedMaps, transposed.map(_.toMap))
+        c-candidatefeatuwetwansfowmewexecutowwesuwt(combinedmaps, (˘ω˘) twansposed.map(_.tomap))
       }
     }
   }

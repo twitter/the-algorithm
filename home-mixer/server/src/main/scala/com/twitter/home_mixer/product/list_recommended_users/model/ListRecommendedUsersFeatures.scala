@@ -1,12 +1,12 @@
-package com.twitter.home_mixer.product.list_recommended_users.model
+package com.twittew.home_mixew.pwoduct.wist_wecommended_usews.modew
 
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.usewcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
 
-object ListRecommendedUsersFeatures {
-  // Candidate features
-  object IsGizmoduckValidUserFeature extends Feature[UserCandidate, Boolean]
-  object IsListMemberFeature extends Feature[UserCandidate, Boolean]
-  object IsSGSValidUserFeature extends Feature[UserCandidate, Boolean]
-  object ScoreFeature extends Feature[UserCandidate, Double]
+o-object w-wistwecommendedusewsfeatuwes {
+  // c-candidate f-featuwes
+  object i-isgizmoduckvawidusewfeatuwe extends f-featuwe[usewcandidate, (⑅˘꒳˘) b-boowean]
+  object iswistmembewfeatuwe extends featuwe[usewcandidate, (U ᵕ U❁) boowean]
+  object i-issgsvawidusewfeatuwe extends featuwe[usewcandidate, -.- b-boowean]
+  object scowefeatuwe e-extends featuwe[usewcandidate, ^^;; doubwe]
 }

@@ -1,127 +1,127 @@
-package com.twitter.product_mixer.core.functional_component.gate
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.gate
 
-import com.twitter.product_mixer.core.functional_component.gate.Gate.SkippedResult
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.CandidatePipelineResults
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate.skippedwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.component
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.gateidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.candidatepipewinewesuwts
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.iwwegawstatefaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+impowt com.twittew.stitch.awwow
+i-impowt com.twittew.stitch.stitch
 
 /**
- * A gate controls if a pipeline or other component is executed
+ * a gate contwows i-if a pipewine ow othew component i-is exekawaii~d
  *
- * A gate is mostly controlled by it's `shouldContinue` function - when this function
- * returns true, execution Continues.
+ * a gate is mostwy contwowwed by it's `shouwdcontinue` f-function - when this function
+ * w-wetuwns twue, (U ﹏ U) execution c-continues.
  *
- * Gates also have a optional `shouldSkip`- When it returns
- * true, then we Continue without executing `main`.
+ * gates awso have a optionaw `shouwdskip`- when it wetuwns
+ * twue, 😳😳😳 then w-we continue without executing `main`. >w<
  *
- * @tparam Query The query type that the gate will receive as input
+ * @tpawam quewy the quewy type that the gate wiww weceive a-as input
  *
- * @return A GateResult includes both the boolean `continue` and a specific reason. See [[GateResult]] for more
- *         information.
+ * @wetuwn a gatewesuwt i-incwudes b-both the boowean `continue` a-and a-a specific weason. XD see [[gatewesuwt]] fow mowe
+ *         i-infowmation. o.O
  */
 
-sealed trait BaseGate[-Query <: PipelineQuery] extends Component {
-  override val identifier: GateIdentifier
+seawed twait basegate[-quewy <: p-pipewinequewy] extends component {
+  ovewwide vaw identifiew: gateidentifiew
 
   /**
-   * If a shouldSkip returns true, the gate returns a Skip(continue=true) without executing
-   * the main predicate. We expect this to be useful for debugging, dogfooding, etc.
+   * if a shouwdskip w-wetuwns twue, mya the gate wetuwns a-a skip(continue=twue) w-without e-executing
+   * the main pwedicate. 🥺 we expect this to be usefuw f-fow debugging, ^^;; d-dogfooding, :3 etc.
    */
-  def shouldSkip(query: Query): Stitch[Boolean] = Stitch.False
+  def shouwdskip(quewy: q-quewy): stitch[boowean] = s-stitch.fawse
 
   /**
-   * The main predicate that controls this gate. If this predicate returns true, the gate returns Continue.
+   * the main pwedicate t-that contwows this gate. (U ﹏ U) i-if this pwedicate wetuwns twue, the gate wetuwns c-continue. OwO
    */
-  def shouldContinue(query: Query): Stitch[Boolean]
+  def shouwdcontinue(quewy: q-quewy): stitch[boowean]
 
-  /** returns a [[GateResult]] to determine whether a pipeline should be executed based on `t` */
-  final def apply(t: Query): Stitch[GateResult] = {
-    shouldSkip(t).flatMap { skipResult =>
-      if (skipResult) {
-        SkippedResult
-      } else {
-        shouldContinue(t).map { mainResult =>
-          if (mainResult) GateResult.Continue else GateResult.Stop
+  /** w-wetuwns a-a [[gatewesuwt]] to detewmine whethew a pipewine shouwd be exekawaii~d based on `t` */
+  finaw def appwy(t: q-quewy): stitch[gatewesuwt] = {
+    s-shouwdskip(t).fwatmap { skipwesuwt =>
+      if (skipwesuwt) {
+        s-skippedwesuwt
+      } ewse {
+        s-shouwdcontinue(t).map { m-mainwesuwt =>
+          if (mainwesuwt) gatewesuwt.continue ewse gatewesuwt.stop
         }
       }
     }
   }
 
-  /** Arrow representation of `this` [[Gate]] */
-  final def arrow: Arrow[Query, GateResult] = Arrow(apply)
+  /** a-awwow wepwesentation of `this` [[gate]] */
+  finaw def awwow: awwow[quewy, 😳😳😳 gatewesuwt] = a-awwow(appwy)
 }
 
 /**
- * A regular Gate which only has access to the Query typed PipelineQuery. This can be used anywhere
- * Gates are available.
+ * a weguwaw g-gate which onwy h-has access to t-the quewy typed pipewinequewy. (ˆ ﻌ ˆ)♡ t-this can be used a-anywhewe
+ * gates a-awe avaiwabwe. XD
  *
- * A gate is mostly controlled by it's `shouldContinue` function - when this function
- * returns true, execution Continues.
+ * a-a gate is mostwy contwowwed by it's `shouwdcontinue` f-function - w-when this f-function
+ * wetuwns t-twue, (ˆ ﻌ ˆ)♡ execution c-continues.
  *
- * Gates also have a optional `shouldSkip`- When it returns
- * true, then we Continue without executing `main`.
- * @tparam Query The query type that the gate will receive as input
+ * gates awso have a optionaw `shouwdskip`- when it wetuwns
+ * t-twue, ( ͡o ω ͡o ) then we continue without executing `main`. rawr x3
+ * @tpawam quewy the quewy type that the gate wiww weceive a-as input
  *
- * @return A GateResult includes both the boolean `continue` and a specific reason. See [[GateResult]] for more
- *         information.
+ * @wetuwn a gatewesuwt incwudes both the boowean `continue` a-and a specific w-weason. nyaa~~ s-see [[gatewesuwt]] fow mowe
+ *         i-infowmation. >_<
  */
-trait Gate[-Query <: PipelineQuery] extends BaseGate[Query]
+twait gate[-quewy <: p-pipewinequewy] e-extends basegate[quewy]
 
 /**
- * A Query And Candidate Gate which only has access both to the Query typed PipelineQuery and the
- * list of previously fetched candidates. This can be used on dependent candidate pipelines to
- * make a decision on whether to enable/disable them based on previous candidates.
+ * a quewy and candidate gate which onwy has access both t-to the quewy typed pipewinequewy a-and the
+ * wist of pweviouswy f-fetched candidates. ^^;; t-this can be used on dependent candidate pipewines t-to
+ * make a-a decision on whethew to enabwe/disabwe t-them based o-on pwevious candidates. (ˆ ﻌ ˆ)♡
  *
- * A gate is mostly controlled by it's `shouldContinue` function - when this function
- * returns true, execution Continues.
+ * a gate is mostwy contwowwed by it's `shouwdcontinue` f-function - w-when this function
+ * w-wetuwns twue, ^^;; execution c-continues. (⑅˘꒳˘)
  *
- * Gates also have a optional `shouldSkip`- When it returns
- * true, then we Continue without executing `main`.
+ * g-gates awso have a optionaw `shouwdskip`- w-when it wetuwns
+ * twue, rawr x3 then we continue without executing `main`. (///ˬ///✿)
  *
- * @tparam Query The query type that the gate will receive as input
+ * @tpawam quewy t-the quewy type t-that the gate wiww weceive as input
  *
- * @return A GateResult includes both the boolean `continue` and a specific reason. See [[GateResult]] for more
- *         information.
+ * @wetuwn a-a gatewesuwt i-incwudes both the boowean `continue` and a specific weason. 🥺 see [[gatewesuwt]] f-fow mowe
+ *         infowmation. >_<
  */
-trait QueryAndCandidateGate[-Query <: PipelineQuery] extends BaseGate[Query] {
+twait quewyandcandidategate[-quewy <: pipewinequewy] extends b-basegate[quewy] {
 
   /**
-   * If a shouldSkip returns true, the gate returns a Skip(continue=true) without executing
-   * the main predicate. We expect this to be useful for debugging, dogfooding, etc.
+   * if a shouwdskip wetuwns twue, UwU the g-gate wetuwns a s-skip(continue=twue) without executing
+   * the main pwedicate. >_< w-we expect this to b-be usefuw fow debugging, -.- dogfooding, mya etc.
    */
-  def shouldSkip(query: Query, candidates: Seq[CandidateWithDetails]): Stitch[Boolean] =
-    Stitch.False
+  def shouwdskip(quewy: q-quewy, >w< candidates: seq[candidatewithdetaiws]): s-stitch[boowean] =
+    stitch.fawse
 
   /**
-   * The main predicate that controls this gate. If this predicate returns true, the gate returns Continue.
+   * the main pwedicate that contwows this gate. (U ﹏ U) i-if this pwedicate wetuwns twue, 😳😳😳 t-the gate wetuwns c-continue. o.O
    */
-  def shouldContinue(query: Query, candidates: Seq[CandidateWithDetails]): Stitch[Boolean]
+  def shouwdcontinue(quewy: q-quewy, òωó candidates: seq[candidatewithdetaiws]): s-stitch[boowean]
 
-  final override def shouldSkip(query: Query): Stitch[Boolean] = {
-    val candidates = query.features
-      .map(_.get(CandidatePipelineResults)).getOrElse(
-        throw PipelineFailure(
-          IllegalStateFailure,
-          "Candidate Pipeline Results Feature missing from query features"))
-    shouldSkip(query, candidates)
+  f-finaw ovewwide d-def shouwdskip(quewy: quewy): s-stitch[boowean] = {
+    v-vaw candidates = quewy.featuwes
+      .map(_.get(candidatepipewinewesuwts)).getowewse(
+        thwow pipewinefaiwuwe(
+          i-iwwegawstatefaiwuwe, 😳😳😳
+          "candidate p-pipewine wesuwts f-featuwe missing fwom quewy featuwes"))
+    shouwdskip(quewy, σωσ c-candidates)
   }
 
-  final override def shouldContinue(query: Query): Stitch[Boolean] = {
-    val candidates = query.features
-      .map(_.get(CandidatePipelineResults)).getOrElse(
-        throw PipelineFailure(
-          IllegalStateFailure,
-          "Candidate Pipeline Results Feature missing from query features"))
-    shouldContinue(query, candidates)
+  finaw ovewwide d-def shouwdcontinue(quewy: q-quewy): stitch[boowean] = {
+    vaw candidates = quewy.featuwes
+      .map(_.get(candidatepipewinewesuwts)).getowewse(
+        t-thwow p-pipewinefaiwuwe(
+          i-iwwegawstatefaiwuwe, (⑅˘꒳˘)
+          "candidate p-pipewine wesuwts featuwe missing f-fwom quewy featuwes"))
+    shouwdcontinue(quewy, (///ˬ///✿) candidates)
   }
 }
 
-object Gate {
-  val SkippedResult: Stitch[GateResult] = Stitch.value(GateResult.Skipped)
+object gate {
+  vaw skippedwesuwt: s-stitch[gatewesuwt] = stitch.vawue(gatewesuwt.skipped)
 }

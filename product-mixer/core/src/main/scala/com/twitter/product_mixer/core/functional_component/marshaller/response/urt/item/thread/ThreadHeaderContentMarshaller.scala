@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.thread
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.thwead
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.thread._
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.thwead._
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class ThreadHeaderContentMarshaller @Inject() () {
-  def apply(content: ThreadHeaderContent): urt.ThreadHeaderContent = content match {
-    case UserThreadHeader(userId) =>
-      urt.ThreadHeaderContent.UserThreadHeader(urt.UserThreadHeader(userId))
+@singweton
+c-cwass thweadheadewcontentmawshawwew @inject() () {
+  d-def appwy(content: t-thweadheadewcontent): uwt.thweadheadewcontent = c-content match {
+    case usewthweadheadew(usewid) =>
+      uwt.thweadheadewcontent.usewthweadheadew(uwt.usewthweadheadew(usewid))
   }
 }

@@ -1,200 +1,200 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+package com.twittew.seawch.eawwybiwd.awchive.segmentbuiwdew;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.Optional;
+impowt j-java.io.ioexception;
+i-impowt j-java.utiw.date;
+i-impowt java.utiw.optionaw;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.apache.hadoop.fs.fiwesystem;
+impowt owg.apache.hadoop.fs.path;
+impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.util.zktrylock.TryLock;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.archive.DailyStatusBatches;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.util.ScrubGenUtil;
-import com.twitter.search.earlybird.partition.HdfsUtil;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
-import com.twitter.util.Duration;
+impowt com.twittew.common.quantity.amount;
+impowt com.twittew.common.quantity.time;
+i-impowt com.twittew.common.utiw.cwock;
+i-impowt com.twittew.seawch.common.database.databaseconfig;
+impowt com.twittew.seawch.common.utiw.zktwywock.twywock;
+impowt com.twittew.seawch.common.utiw.zktwywock.zookeepewtwywockfactowy;
+i-impowt com.twittew.seawch.eawwybiwd.awchive.daiwystatusbatches;
+i-impowt c-com.twittew.seawch.eawwybiwd.common.config.eawwybiwdpwopewty;
+impowt com.twittew.seawch.eawwybiwd.utiw.scwubgenutiw;
+impowt com.twittew.seawch.eawwybiwd.pawtition.hdfsutiw;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentsyncconfig;
+impowt com.twittew.utiw.duwation;
 
 /**
- * Coordinate between segment builders for scrubbing pipeline.
- * When segment builder is running, all of them will try to find a HDFS file indicating if data is
- * ready. If the file does not exist, only one of them will go through the files and see if
- * scrubbing pipeline has generated all data for this scrub gen.
+ * c-coowdinate between segment buiwdews fow scwubbing pipewine. mya
+ * when segment b-buiwdew is wunning, OwO aww of t-them wiww twy t-to find a hdfs fiwe i-indicating if d-data is
+ * weady. (ˆ ﻌ ˆ)♡ if the fiwe does nyot exist, ʘwʘ o-onwy one of them wiww go thwough the fiwes and s-see if
+ * scwubbing pipewine has genewated aww data fow this scwub gen. o.O
  *
- * If the instance that got the lock found all data, it still exists, because otherwise we will
- * have one single segmentbuilder instance trying to build all segments, which is not what we want.
- * But if it exists, then the next time all segmentbuilder instances are scheduled, they will all
- * find the file, and will start building segments.
+ * if the instance that g-got the wock found aww data, UwU i-it stiww exists, rawr x3 b-because othewwise w-we wiww
+ * have one singwe segmentbuiwdew instance twying to b-buiwd aww segments, 🥺 w-which is nyot nyani we want. :3
+ * b-but if it exists, t-then the nyext time aww segmentbuiwdew i-instances awe scheduwed, (ꈍᴗꈍ) t-they wiww aww
+ * find the fiwe, 🥺 and wiww stawt b-buiwding segments. (✿oωo)
  */
-class SegmentBuilderCoordinator {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentBuilderCoordinator.class);
+cwass s-segmentbuiwdewcoowdinatow {
+  pwivate static finaw w-woggew wog = w-woggewfactowy.getwoggew(segmentbuiwdewcoowdinatow.cwass);
 
-  private static final Amount<Long, Time> ZK_LOCK_EXPIRATION_MIN = Amount.of(5L, Time.MINUTES);
-  private static final String SEGMENT_BUILDER_SYNC_NODE = "scrub_gen_data_sync";
-  private static final String SEGMENT_BUILDER_SYNC_ZK_PATH =
-      EarlybirdProperty.ZK_APP_ROOT.get() + "/segment_builder_sync";
-  private static final String DATA_FULLY_BUILT_FILE = "_data_fully_built";
-  static final int FIRST_INSTANCE = 0;
+  pwivate static finaw amount<wong, (U ﹏ U) time> zk_wock_expiwation_min = amount.of(5w, :3 time.minutes);
+  pwivate static finaw stwing segment_buiwdew_sync_node = "scwub_gen_data_sync";
+  p-pwivate static finaw s-stwing segment_buiwdew_sync_zk_path =
+      eawwybiwdpwopewty.zk_app_woot.get() + "/segment_buiwdew_sync";
+  p-pwivate static f-finaw stwing data_fuwwy_buiwt_fiwe = "_data_fuwwy_buiwt";
+  s-static finaw int fiwst_instance = 0;
 
-  private static final long NON_FIRST_INSTANCE_SLEEP_BEFORE_RETRY_DURATION_MS =
-      Duration.fromHours(1).inMillis();
+  pwivate static finaw wong nyon_fiwst_instance_sweep_befowe_wetwy_duwation_ms =
+      d-duwation.fwomhouws(1).inmiwwis();
 
-  private final ZooKeeperTryLockFactory zkTryLockFactory;
-  private final SegmentSyncConfig syncConfig;
-  private final Optional<Date> scrubGenDayOpt;
-  private final Optional<String> scrubGenOpt;
-  private final Clock clock;
+  pwivate finaw zookeepewtwywockfactowy zktwywockfactowy;
+  pwivate finaw segmentsyncconfig s-syncconfig;
+  pwivate finaw o-optionaw<date> s-scwubgendayopt;
+  p-pwivate finaw optionaw<stwing> s-scwubgenopt;
+  p-pwivate finaw c-cwock cwock;
 
-  SegmentBuilderCoordinator(
-      ZooKeeperTryLockFactory zkTryLockFactory, SegmentSyncConfig syncConfig, Clock clock) {
-    this.zkTryLockFactory = zkTryLockFactory;
-    this.syncConfig = syncConfig;
-    this.scrubGenOpt = syncConfig.getScrubGen();
-    this.scrubGenDayOpt = scrubGenOpt.map(ScrubGenUtil::parseScrubGenToDate);
-    this.clock = clock;
+  s-segmentbuiwdewcoowdinatow(
+      zookeepewtwywockfactowy zktwywockfactowy, ^^;; s-segmentsyncconfig syncconfig, rawr c-cwock c-cwock) {
+    this.zktwywockfactowy = z-zktwywockfactowy;
+    t-this.syncconfig = syncconfig;
+    this.scwubgenopt = syncconfig.getscwubgen();
+    this.scwubgendayopt = s-scwubgenopt.map(scwubgenutiw::pawsescwubgentodate);
+    this.cwock = cwock;
   }
 
 
-  public boolean isScrubGenDataFullyBuilt(int instanceNumber) {
-    // Only segment builder that takes scrub gen should use isPartitioningOutputReady to coordinate
-    Preconditions.checkArgument(scrubGenDayOpt.isPresent());
+  pubwic boowean isscwubgendatafuwwybuiwt(int instancenumbew) {
+    // o-onwy segment buiwdew that takes scwub gen shouwd use i-ispawtitioningoutputweady t-to c-coowdinate
+    pweconditions.checkawgument(scwubgendayopt.ispwesent());
 
-    final FileSystem hdfs;
-    try {
-      hdfs = HdfsUtil.getHdfsFileSystem();
-    } catch (IOException e) {
-      LOG.error("Could not create HDFS file system.", e);
-      return false;
+    finaw f-fiwesystem hdfs;
+    twy {
+      h-hdfs = hdfsutiw.gethdfsfiwesystem();
+    } catch (ioexception e-e) {
+      wog.ewwow("couwd nyot cweate hdfs fiwe system.", 😳😳😳 e);
+      wetuwn fawse;
     }
 
-    return isScrubGenDataFullyBuilt(
-        instanceNumber,
-        scrubGenDayOpt.get(),
-        NON_FIRST_INSTANCE_SLEEP_BEFORE_RETRY_DURATION_MS,
+    wetuwn isscwubgendatafuwwybuiwt(
+        i-instancenumbew, (✿oωo)
+        scwubgendayopt.get(), OwO
+        n-nyon_fiwst_instance_sweep_befowe_wetwy_duwation_ms, ʘwʘ
         hdfs
     );
   }
 
-  @VisibleForTesting
-  boolean isScrubGenDataFullyBuilt(
-      int instanceNumber,
-      Date scrubGenDay,
-      long nonFirstInstanceSleepBeforeRetryDuration,
-      FileSystem hdfs) {
-    // Check if the scrub gen has been fully built file exists.
-    if (checkHaveScrubGenDataFullyBuiltFileOnHdfs(hdfs)) {
-      return true;
+  @visibwefowtesting
+  b-boowean isscwubgendatafuwwybuiwt(
+      i-int instancenumbew, (ˆ ﻌ ˆ)♡
+      date scwubgenday, (U ﹏ U)
+      w-wong n-nyonfiwstinstancesweepbefowewetwyduwation, UwU
+      fiwesystem hdfs) {
+    // c-check i-if the scwub gen has been fuwwy buiwt fiwe exists. XD
+    if (checkhavescwubgendatafuwwybuiwtfiweonhdfs(hdfs)) {
+      wetuwn twue;
     }
 
-    // If it doesn't exist, let first instance see if scrub gen has been fully built and create the
-    // file.
-    if (instanceNumber == FIRST_INSTANCE) {
-      // We were missing some data on HDFS for this scrub gen in previous run,
-      // but we might've gotten more data in the meantime, check again.
-      // Only allow instance 0 to do this mainly for 2 reasons:
-      // 1) Since instances are scheduled in batches, it's possible that a instance from latter
-      // batch find the fully built file in hdfs and start processing. We end up doing work with
-      // only partial instances.
-      // 2) If we sleep before we release lock, it's hard to estimate how long a instance will
-      // be scheduled.
-      // For deterministic reason, we simplify a bit and only allow instance 0 to check and write
-      // data is fully build file to hdfs.
-      try {
-        checkIfScrubGenDataIsFullyBuilt(hdfs, scrubGenDay);
-      } catch (IOException e) {
-        LOG.error("Failed to grab lock and check scrub gen data.", e);
+    // i-if it doesn't e-exist, ʘwʘ wet fiwst i-instance see if scwub gen has b-been fuwwy buiwt a-and cweate the
+    // fiwe. rawr x3
+    i-if (instancenumbew == fiwst_instance) {
+      // we wewe missing some data on hdfs fow this scwub g-gen in pwevious w-wun, ^^;;
+      // but we might've gotten mowe data i-in the meantime, ʘwʘ c-check again. (U ﹏ U)
+      // onwy awwow instance 0 to do this mainwy f-fow 2 weasons:
+      // 1) since instances awe scheduwed in batches, (˘ω˘) it's possibwe t-that a instance fwom wattew
+      // batch find t-the fuwwy buiwt f-fiwe in hdfs and stawt pwocessing. (ꈍᴗꈍ) we end up doing wowk with
+      // o-onwy pawtiaw i-instances.
+      // 2) if we sweep befowe we wewease wock, i-it's hawd to estimate how wong a-a instance wiww
+      // be scheduwed. /(^•ω•^)
+      // fow detewministic weason, >_< we simpwify a-a bit and onwy awwow instance 0 t-to check a-and wwite
+      // data is fuwwy b-buiwd fiwe to hdfs. σωσ
+      twy {
+        c-checkifscwubgendataisfuwwybuiwt(hdfs, ^^;; scwubgenday);
+      } c-catch (ioexception e-e) {
+        wog.ewwow("faiwed t-to gwab wock a-and check scwub gen data.", 😳 e);
       }
-    } else {
-      // for all other instances, sleep for a bit to give time for first instance to check if scrub
-      // gen has been fully built and create the file, then check again.
-      try {
-        LOG.info(
-            "Sleeping for {} ms before re-checking if scrub gen has been fully built file exists",
-            nonFirstInstanceSleepBeforeRetryDuration);
-        clock.waitFor(nonFirstInstanceSleepBeforeRetryDuration);
-        return checkHaveScrubGenDataFullyBuiltFileOnHdfs(hdfs);
-      } catch (InterruptedException e) {
-        LOG.warn("Interrupted when sleeping before re-checking if scrub gen has been fully built "
-            + "file exists", e);
+    } e-ewse {
+      // f-fow aww othew i-instances, >_< sweep fow a bit to give time fow fiwst i-instance to check if scwub
+      // g-gen has been f-fuwwy buiwt and cweate the fiwe, -.- then check again. UwU
+      twy {
+        w-wog.info(
+            "sweeping f-fow {} m-ms befowe we-checking i-if scwub gen has been fuwwy b-buiwt fiwe exists", :3
+            nyonfiwstinstancesweepbefowewetwyduwation);
+        cwock.waitfow(nonfiwstinstancesweepbefowewetwyduwation);
+        wetuwn checkhavescwubgendatafuwwybuiwtfiweonhdfs(hdfs);
+      } catch (intewwuptedexception e) {
+        w-wog.wawn("intewwupted when sweeping b-befowe we-checking if scwub g-gen has been fuwwy buiwt "
+            + "fiwe e-exists", σωσ e);
       }
     }
 
-    // if hasSuccessFileToHdfs returns false, then should always return false in the end.
-    // next run will find success file for this scrub gen and move forward.
-    return false;
+    // if hassuccessfiwetohdfs w-wetuwns f-fawse, then shouwd a-awways wetuwn f-fawse in the e-end. >w<
+    // nyext wun wiww find success fiwe fow this scwub gen and move fowwawd. (ˆ ﻌ ˆ)♡
+    wetuwn fawse;
   }
 
-  private void checkIfScrubGenDataIsFullyBuilt(
-      FileSystem hdfs, Date scrubGenDay) throws IOException {
-    // Build the lock, try to acquire it, and check the data on HDFS
-    TryLock lock = zkTryLockFactory.createTryLock(
-        DatabaseConfig.getLocalHostname(),
-        SEGMENT_BUILDER_SYNC_ZK_PATH,
-        SEGMENT_BUILDER_SYNC_NODE,
-        ZK_LOCK_EXPIRATION_MIN);
-    Preconditions.checkState(scrubGenOpt.isPresent());
-    String scrubGen = scrubGenOpt.get();
+  pwivate v-void checkifscwubgendataisfuwwybuiwt(
+      f-fiwesystem hdfs, ʘwʘ d-date scwubgenday) thwows ioexception {
+    // buiwd t-the wock, :3 twy to acquiwe it, (˘ω˘) and check the data on hdfs
+    t-twywock wock = z-zktwywockfactowy.cweatetwywock(
+        databaseconfig.getwocawhostname(), 😳😳😳
+        s-segment_buiwdew_sync_zk_path, rawr x3
+        segment_buiwdew_sync_node, (✿oωo)
+        zk_wock_expiwation_min);
+    p-pweconditions.checkstate(scwubgenopt.ispwesent());
+    s-stwing scwubgen = scwubgenopt.get();
 
-    lock.tryWithLock(() -> {
-      LOG.info(String.format(
-          "Obtained ZK lock to check if data for scrub gen %s is ready.", scrubGen));
-      final DailyStatusBatches directory =
-          new DailyStatusBatches(zkTryLockFactory, scrubGenDay);
-      if (directory.isScrubGenDataFullyBuilt(hdfs)
-          && createScrubGenDataFullyBuiltFileOnHdfs(hdfs)) {
-        LOG.info(String.format("All data for scrub gen %s is ready.", scrubGen));
-      } else {
-        LOG.info(String.format("Data for scrub gen %s is not ready yet.", scrubGen));
+    w-wock.twywithwock(() -> {
+      w-wog.info(stwing.fowmat(
+          "obtained zk wock to check if data fow scwub gen %s is weady.", (ˆ ﻌ ˆ)♡ scwubgen));
+      f-finaw d-daiwystatusbatches d-diwectowy =
+          n-nyew d-daiwystatusbatches(zktwywockfactowy, :3 scwubgenday);
+      i-if (diwectowy.isscwubgendatafuwwybuiwt(hdfs)
+          && c-cweatescwubgendatafuwwybuiwtfiweonhdfs(hdfs)) {
+        wog.info(stwing.fowmat("aww d-data fow s-scwub gen %s is weady.", (U ᵕ U❁) scwubgen));
+      } e-ewse {
+        wog.info(stwing.fowmat("data fow scwub g-gen %s is nyot weady yet.", ^^;; s-scwubgen));
       }
     });
   }
 
-  private boolean createScrubGenDataFullyBuiltFileOnHdfs(FileSystem fs) {
-    Path path = getScrubGenDataFullyBuiltFilePath();
-    try {
-      fs.mkdirs(new Path(statusReadyHDFSPath()));
-      if (fs.createNewFile(path)) {
-        LOG.info("Successfully created file " + path + " on HDFS.");
-        return true;
-      } else {
-        LOG.warn("Failed to create file " + path + " on HDFS.");
+  p-pwivate boowean cweatescwubgendatafuwwybuiwtfiweonhdfs(fiwesystem f-fs) {
+    path path = getscwubgendatafuwwybuiwtfiwepath();
+    twy {
+      f-fs.mkdiws(new path(statusweadyhdfspath()));
+      i-if (fs.cweatenewfiwe(path)) {
+        w-wog.info("successfuwwy cweated fiwe " + path + " on hdfs.");
+        wetuwn t-twue;
+      } ewse {
+        wog.wawn("faiwed t-to cweate fiwe " + p-path + " on hdfs.");
       }
-    } catch (IOException e) {
-      LOG.error("Failed to create file on HDFS " + path.toString(), e);
+    } c-catch (ioexception e) {
+      w-wog.ewwow("faiwed t-to cweate fiwe on hdfs " + path.tostwing(), mya e-e);
     }
-    return false;
+    wetuwn fawse;
   }
 
-  private boolean checkHaveScrubGenDataFullyBuiltFileOnHdfs(FileSystem fs) {
-    Path path = getScrubGenDataFullyBuiltFilePath();
-    try {
-      boolean ret = fs.exists(path);
-      LOG.info("Checking if file exists showing scrubgen is fully built.");
-      LOG.info("Path checked: {}, Exist check: {}", path, ret);
-      return ret;
-    } catch (IOException e) {
-      LOG.error("Failed to check file on HDFS " + path.toString(), e);
-      return false;
+  pwivate boowean c-checkhavescwubgendatafuwwybuiwtfiweonhdfs(fiwesystem f-fs) {
+    path path = g-getscwubgendatafuwwybuiwtfiwepath();
+    twy {
+      b-boowean wet = f-fs.exists(path);
+      w-wog.info("checking if fiwe exists showing scwubgen is fuwwy buiwt.");
+      wog.info("path checked: {}, 😳😳😳 exist check: {}", OwO path, wet);
+      wetuwn wet;
+    } catch (ioexception e) {
+      wog.ewwow("faiwed to check f-fiwe on hdfs " + p-path.tostwing(), rawr e);
+      wetuwn fawse;
     }
   }
 
-  @VisibleForTesting
-  Path getScrubGenDataFullyBuiltFilePath() {
-    return new Path(statusReadyHDFSPath(), DATA_FULLY_BUILT_FILE);
+  @visibwefowtesting
+  path g-getscwubgendatafuwwybuiwtfiwepath() {
+    w-wetuwn n-nyew path(statusweadyhdfspath(), XD data_fuwwy_buiwt_fiwe);
   }
 
-  @VisibleForTesting
-  String statusReadyHDFSPath() {
-    return syncConfig.getHdfsSegmentSyncRootDir() + "/segment_builder_sync";
+  @visibwefowtesting
+  s-stwing statusweadyhdfspath() {
+    w-wetuwn s-syncconfig.gethdfssegmentsyncwootdiw() + "/segment_buiwdew_sync";
   }
 }

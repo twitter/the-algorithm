@@ -1,46 +1,46 @@
-package com.twitter.home_mixer.functional_component.decorator.builder
+package com.twittew.home_mixew.functionaw_component.decowatow.buiwdew
 
-import com.twitter.finagle.tracing.Trace
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventDetailsBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.suggests.controller_data.home_tweets.v1.{thriftscala => v1ht}
-import com.twitter.suggests.controller_data.home_tweets.{thriftscala => ht}
-import com.twitter.suggests.controller_data.thriftscala.ControllerData
-import com.twitter.suggests.controller_data.v2.thriftscala.{ControllerData => ControllerDataV2}
+impowt com.twittew.finagwe.twacing.twace
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventdetaiwsbuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventdetaiws
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.timewinesdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.suggests.contwowwew_data.home_tweets.v1.{thwiftscawa => v-v1ht}
+impowt com.twittew.suggests.contwowwew_data.home_tweets.{thwiftscawa => ht}
+impowt com.twittew.suggests.contwowwew_data.thwiftscawa.contwowwewdata
+i-impowt com.twittew.suggests.contwowwew_data.v2.thwiftscawa.{contwowwewdata => c-contwowwewdatav2}
 
-case class HomeAdsClientEventDetailsBuilder(injectionType: Option[String])
-    extends BaseClientEventDetailsBuilder[PipelineQuery, UniversalNoun[Any]] {
+case cwass homeadscwienteventdetaiwsbuiwdew(injectiontype: option[stwing])
+    e-extends basecwienteventdetaiwsbuiwdew[pipewinequewy, (U ﹏ U) u-univewsawnoun[any]] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: UniversalNoun[Any],
-    candidateFeatures: FeatureMap
-  ): Option[ClientEventDetails] = {
-    val homeTweetsControllerDataV1 = v1ht.HomeTweetsControllerData(
-      tweetTypesBitmap = 0L,
-      traceId = Some(Trace.id.traceId.toLong),
-      requestJoinId = None)
+  o-ovewwide def appwy(
+    quewy: pipewinequewy, (U ﹏ U)
+    candidate: univewsawnoun[any], (⑅˘꒳˘)
+    c-candidatefeatuwes: featuwemap
+  ): option[cwienteventdetaiws] = {
+    vaw hometweetscontwowwewdatav1 = v1ht.hometweetscontwowwewdata(
+      t-tweettypesbitmap = 0w, òωó
+      twaceid = s-some(twace.id.twaceid.towong), ʘwʘ
+      w-wequestjoinid = n-nyone)
 
-    val serializedControllerData = HomeClientEventDetailsBuilder.ControllerDataSerializer(
-      ControllerData.V2(
-        ControllerDataV2.HomeTweets(ht.HomeTweetsControllerData.V1(homeTweetsControllerDataV1))))
+    v-vaw sewiawizedcontwowwewdata = homecwienteventdetaiwsbuiwdew.contwowwewdatasewiawizew(
+      contwowwewdata.v2(
+        c-contwowwewdatav2.hometweets(ht.hometweetscontwowwewdata.v1(hometweetscontwowwewdatav1))))
 
-    val clientEventDetails = ClientEventDetails(
-      conversationDetails = None,
-      timelinesDetails = Some(
-        TimelinesDetails(
-          injectionType = injectionType,
-          controllerData = Some(serializedControllerData),
-          sourceData = None)),
-      articleDetails = None,
-      liveEventDetails = None,
-      commerceDetails = None
+    vaw cwienteventdetaiws = cwienteventdetaiws(
+      c-convewsationdetaiws = nyone, /(^•ω•^)
+      timewinesdetaiws = some(
+        timewinesdetaiws(
+          injectiontype = i-injectiontype, ʘwʘ
+          contwowwewdata = s-some(sewiawizedcontwowwewdata), σωσ
+          s-souwcedata = nyone)), OwO
+      a-awticwedetaiws = nyone, 😳😳😳
+      wiveeventdetaiws = nyone, 😳😳😳
+      commewcedetaiws = nyone
     )
 
-    Some(clientEventDetails)
+    some(cwienteventdetaiws)
   }
 }

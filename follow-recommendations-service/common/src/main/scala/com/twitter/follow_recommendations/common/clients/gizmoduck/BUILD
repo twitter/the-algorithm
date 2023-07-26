@@ -1,21 +1,14 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/github/nscala_time",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/com/google/inject/extensions:guice-assistedinject",
-        "3rdparty/jvm/net/codingwell:scala-guice",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "finatra/inject/inject-core/src/main/scala",
-        "finatra/inject/inject-thrift-client/src/main/scala",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/base",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/common",
-        "src/thrift/com/twitter/gizmoduck:thrift-scala",
-        "stitch/stitch-gizmoduck",
-        "util/util-core:scala",
+scawa_wibwawy(
+    souwces = ["*.scawa"], OwO
+    compiwew_option_sets = ["fataw_wawnings"], 🥺
+    p-pwatfowm = "java8", òωó
+    t-tags = ["bazew-compatibwe"], o.O
+    d-dependencies = [
+        "finatwa-intewnaw/mtws-thwiftmux/swc/main/scawa", (U ᵕ U❁)
+        "finatwa/inject/inject-thwift-cwient", (⑅˘꒳˘)
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/cwients/common", ( ͡o ω ͡o )
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/modews", UwU
+        "gwaph-featuwe-sewvice/swc/main/thwift/com/twittew/gwaph_featuwe_sewvice:gwaph_featuwe_sewvice_thwift-scawa", rawr x3
+        "stitch/stitch-cowe", rawr
     ],
 )

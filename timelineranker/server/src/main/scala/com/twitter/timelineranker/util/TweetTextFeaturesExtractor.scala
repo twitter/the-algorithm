@@ -1,199 +1,199 @@
-package com.twitter.timelineranker.util
+package com.twittew.timewinewankew.utiw
 
-import com.twitter.common.text.tagger.UniversalPOS
-import com.twitter.common.text.token.attribute.TokenType
-import com.twitter.common_internal.text.pipeline.TwitterTextNormalizer
-import com.twitter.common_internal.text.pipeline.TwitterTextTokenizer
-import com.twitter.common_internal.text.version.PenguinVersion
-import com.twitter.search.common.util.text.LanguageIdentifierHelper
-import com.twitter.search.common.util.text.PhraseExtractor
-import com.twitter.search.common.util.text.TokenizerHelper
-import com.twitter.search.common.util.text.TokenizerResult
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.tweetypie.{thriftscala => tweetypie}
-import com.twitter.util.Try
-import java.util.Locale
-import scala.collection.JavaConversions._
+impowt com.twittew.common.text.taggew.univewsawpos
+i-impowt c-com.twittew.common.text.token.attwibute.tokentype
+i-impowt com.twittew.common_intewnaw.text.pipewine.twittewtextnowmawizew
+i-impowt c-com.twittew.common_intewnaw.text.pipewine.twittewtexttokenizew
+i-impowt com.twittew.common_intewnaw.text.vewsion.penguinvewsion
+i-impowt com.twittew.seawch.common.utiw.text.wanguageidentifiewhewpew
+i-impowt com.twittew.seawch.common.utiw.text.phwaseextwactow
+impowt com.twittew.seawch.common.utiw.text.tokenizewhewpew
+impowt com.twittew.seawch.common.utiw.text.tokenizewwesuwt
+impowt com.twittew.timewinewankew.wecap.modew.contentfeatuwes
+i-impowt com.twittew.tweetypie.{thwiftscawa => tweetypie}
+impowt com.twittew.utiw.twy
+i-impowt java.utiw.wocawe
+impowt scawa.cowwection.javaconvewsions._
 
-object TweetTextFeaturesExtractor {
+o-object tweettextfeatuwesextwactow {
 
-  private[this] val threadLocaltokenizer = new ThreadLocal[Option[TwitterTextTokenizer]] {
-    override protected def initialValue(): Option[TwitterTextTokenizer] =
-      Try {
-        val normalizer = new TwitterTextNormalizer.Builder(penguinVersion).build
-        TokenizerHelper
-          .getTokenizerBuilder(penguinVersion)
-          .enablePOSTagger
-          .enableStopwordFilterWithNormalizer(normalizer)
-          .setStopwordResourcePath("com/twitter/ml/feature/generator/stopwords_extended_{LANG}.txt")
-          .enableStemmer
-          .build
-      }.toOption
+  pwivate[this] vaw thweadwocawtokenizew = n-nyew thweadwocaw[option[twittewtexttokenizew]] {
+    ovewwide pwotected d-def initiawvawue(): o-option[twittewtexttokenizew] =
+      twy {
+        vaw nyowmawizew = nyew twittewtextnowmawizew.buiwdew(penguinvewsion).buiwd
+        t-tokenizewhewpew
+          .gettokenizewbuiwdew(penguinvewsion)
+          .enabwepostaggew
+          .enabwestopwowdfiwtewwithnowmawizew(nowmawizew)
+          .setstopwowdwesouwcepath("com/twittew/mw/featuwe/genewatow/stopwowds_extended_{wang}.txt")
+          .enabwestemmew
+          .buiwd
+      }.tooption
   }
 
-  val penguinVersion: PenguinVersion = PenguinVersion.PENGUIN_6
+  vaw penguinvewsion: penguinvewsion = penguinvewsion.penguin_6
 
-  def addTextFeaturesFromTweet(
-    inputFeatures: ContentFeatures,
-    tweet: tweetypie.Tweet,
-    hydratePenguinTextFeatures: Boolean,
-    hydrateTokens: Boolean,
-    hydrateTweetText: Boolean
-  ): ContentFeatures = {
-    tweet.coreData
-      .map { coreData =>
-        val tweetText = coreData.text
-        val hasQuestion = hasQuestionCharacter(tweetText)
-        val length = getLength(tweetText).toShort
-        val numCaps = getCaps(tweetText).toShort
-        val numWhiteSpaces = getSpaces(tweetText).toShort
-        val numNewlines = Some(getNumNewlines(tweetText))
-        val tweetTextOpt = getTweetText(tweetText, hydrateTweetText)
+  def addtextfeatuwesfwomtweet(
+    i-inputfeatuwes: contentfeatuwes, ^^;;
+    t-tweet: t-tweetypie.tweet, o.O
+    h-hydwatepenguintextfeatuwes: b-boowean, (///ˬ///✿)
+    hydwatetokens: boowean, σωσ
+    hydwatetweettext: b-boowean
+  ): contentfeatuwes = {
+    tweet.cowedata
+      .map { cowedata =>
+        v-vaw tweettext = cowedata.text
+        vaw hasquestion = hasquestionchawactew(tweettext)
+        vaw wength = getwength(tweettext).toshowt
+        v-vaw nyumcaps = getcaps(tweettext).toshowt
+        v-vaw nyumwhitespaces = g-getspaces(tweettext).toshowt
+        v-vaw nyumnewwines = some(getnumnewwines(tweettext))
+        vaw tweettextopt = gettweettext(tweettext, nyaa~~ h-hydwatetweettext)
 
-        if (hydratePenguinTextFeatures) {
-          val locale = getLocale(tweetText)
-          val tokenizerOpt = threadLocaltokenizer.get
+        i-if (hydwatepenguintextfeatuwes) {
+          vaw wocawe = getwocawe(tweettext)
+          v-vaw t-tokenizewopt = thweadwocawtokenizew.get
 
-          val tokenizerResult = tokenizerOpt.flatMap { tokenizer =>
-            tokenizeWithPosTagger(tokenizer, locale, tweetText)
+          v-vaw tokenizewwesuwt = tokenizewopt.fwatmap { t-tokenizew =>
+            tokenizewithpostaggew(tokenizew, ^^;; wocawe, ^•ﻌ•^ t-tweettext)
           }
 
-          val normalizedTokensOpt = if (hydrateTokens) {
-            tokenizerOpt.flatMap { tokenizer =>
-              tokenizedStringsWithNormalizerAndStemmer(tokenizer, locale, tweetText)
+          vaw nyowmawizedtokensopt = i-if (hydwatetokens) {
+            tokenizewopt.fwatmap { t-tokenizew =>
+              t-tokenizedstwingswithnowmawizewandstemmew(tokenizew, wocawe, σωσ tweettext)
             }
-          } else None
+          } ewse nyone
 
-          val emoticonTokensOpt = tokenizerResult.map(getEmoticons)
-          val emojiTokensOpt = tokenizerResult.map(getEmojis)
-          val posUnigramsOpt = tokenizerResult.map(getPosUnigrams)
-          val posBigramsOpt = posUnigramsOpt.map(getPosBigrams)
-          val tokensOpt = normalizedTokensOpt
+          vaw emoticontokensopt = tokenizewwesuwt.map(getemoticons)
+          vaw emojitokensopt = t-tokenizewwesuwt.map(getemojis)
+          v-vaw posunigwamsopt = t-tokenizewwesuwt.map(getposunigwams)
+          v-vaw posbigwamsopt = p-posunigwamsopt.map(getposbigwams)
+          vaw tokensopt = nyowmawizedtokensopt
 
-          inputFeatures.copy(
-            emojiTokens = emojiTokensOpt,
-            emoticonTokens = emoticonTokensOpt,
-            hasQuestion = hasQuestion,
-            length = length,
-            numCaps = numCaps,
-            numWhiteSpaces = numWhiteSpaces,
-            numNewlines = numNewlines,
-            posUnigrams = posUnigramsOpt.map(_.toSet),
-            posBigrams = posBigramsOpt.map(_.toSet),
-            tokens = tokensOpt.map(_.toSeq),
-            tweetText = tweetTextOpt
+          inputfeatuwes.copy(
+            e-emojitokens = emojitokensopt, -.-
+            emoticontokens = emoticontokensopt, ^^;;
+            hasquestion = hasquestion, XD
+            w-wength = wength, 🥺
+            nyumcaps = n-numcaps, òωó
+            n-nyumwhitespaces = n-nyumwhitespaces, (ˆ ﻌ ˆ)♡
+            nyumnewwines = n-numnewwines, -.-
+            p-posunigwams = p-posunigwamsopt.map(_.toset), :3
+            p-posbigwams = posbigwamsopt.map(_.toset), ʘwʘ
+            tokens = tokensopt.map(_.toseq), 🥺
+            t-tweettext = t-tweettextopt
           )
-        } else {
-          inputFeatures.copy(
-            hasQuestion = hasQuestion,
-            length = length,
-            numCaps = numCaps,
-            numWhiteSpaces = numWhiteSpaces,
-            numNewlines = numNewlines,
-            tweetText = tweetTextOpt
+        } e-ewse {
+          i-inputfeatuwes.copy(
+            h-hasquestion = hasquestion, >_<
+            wength = wength, ʘwʘ
+            nyumcaps = numcaps, (˘ω˘)
+            n-nyumwhitespaces = nyumwhitespaces, (✿oωo)
+            nyumnewwines = numnewwines, (///ˬ///✿)
+            tweettext = tweettextopt
           )
         }
       }
-      .getOrElse(inputFeatures)
+      .getowewse(inputfeatuwes)
   }
 
-  private def tokenizeWithPosTagger(
-    tokenizer: TwitterTextTokenizer,
-    locale: Locale,
-    text: String
-  ): Option[TokenizerResult] = {
-    tokenizer.enableStemmer(false)
-    tokenizer.enableStopwordFilter(false)
+  p-pwivate def tokenizewithpostaggew(
+    tokenizew: twittewtexttokenizew, rawr x3
+    w-wocawe: wocawe, -.-
+    t-text: stwing
+  ): o-option[tokenizewwesuwt] = {
+    tokenizew.enabwestemmew(fawse)
+    t-tokenizew.enabwestopwowdfiwtew(fawse)
 
-    Try { TokenizerHelper.tokenizeTweet(tokenizer, text, locale) }.toOption
+    twy { tokenizewhewpew.tokenizetweet(tokenizew, t-text, ^^ wocawe) }.tooption
   }
 
-  private def tokenizedStringsWithNormalizerAndStemmer(
-    tokenizer: TwitterTextTokenizer,
-    locale: Locale,
-    text: String
-  ): Option[Seq[String]] = {
-    tokenizer.enableStemmer(true)
-    tokenizer.enableStopwordFilter(true)
+  p-pwivate def tokenizedstwingswithnowmawizewandstemmew(
+    tokenizew: twittewtexttokenizew, (⑅˘꒳˘)
+    wocawe: wocawe, nyaa~~
+    text: stwing
+  ): option[seq[stwing]] = {
+    t-tokenizew.enabwestemmew(twue)
+    tokenizew.enabwestopwowdfiwtew(twue)
 
-    Try { tokenizer.tokenizeToStrings(text, locale).toSeq }.toOption
+    t-twy { tokenizew.tokenizetostwings(text, /(^•ω•^) wocawe).toseq }.tooption
   }
 
-  def getLocale(text: String): Locale = LanguageIdentifierHelper.identifyLanguage(text)
+  d-def getwocawe(text: stwing): w-wocawe = wanguageidentifiewhewpew.identifywanguage(text)
 
-  def getTokens(tokenizerResult: TokenizerResult): List[String] =
-    tokenizerResult.rawSequence.getTokenStrings().toList
+  def gettokens(tokenizewwesuwt: t-tokenizewwesuwt): w-wist[stwing] =
+    tokenizewwesuwt.wawsequence.gettokenstwings().towist
 
-  def getEmoticons(tokenizerResult: TokenizerResult): Set[String] =
-    tokenizerResult.smileys.toSet
+  d-def getemoticons(tokenizewwesuwt: t-tokenizewwesuwt): set[stwing] =
+    tokenizewwesuwt.smiweys.toset
 
-  def getEmojis(tokenizerResult: TokenizerResult): Set[String] =
-    tokenizerResult.rawSequence.getTokenStringsOf(TokenType.EMOJI).toSet
+  def getemojis(tokenizewwesuwt: tokenizewwesuwt): s-set[stwing] =
+    t-tokenizewwesuwt.wawsequence.gettokenstwingsof(tokentype.emoji).toset
 
-  def getPhrases(tokenizerResult: TokenizerResult, locale: Locale): Set[String] = {
-    PhraseExtractor.getPhrases(tokenizerResult.rawSequence, locale).map(_.toString).toSet
+  d-def getphwases(tokenizewwesuwt: tokenizewwesuwt, (U ﹏ U) w-wocawe: wocawe): s-set[stwing] = {
+    phwaseextwactow.getphwases(tokenizewwesuwt.wawsequence, 😳😳😳 w-wocawe).map(_.tostwing).toset
   }
 
-  def getPosUnigrams(tokenizerResult: TokenizerResult): List[String] =
-    tokenizerResult.tokenSequence.getTokens.toList
-      .map { token =>
-        Option(token.getPartOfSpeech)
-          .map(_.toString)
-          .getOrElse(UniversalPOS.X.toString) // UniversalPOS.X is unknown POS tag
+  def getposunigwams(tokenizewwesuwt: tokenizewwesuwt): wist[stwing] =
+    tokenizewwesuwt.tokensequence.gettokens.towist
+      .map { t-token =>
+        o-option(token.getpawtofspeech)
+          .map(_.tostwing)
+          .getowewse(univewsawpos.x.tostwing) // univewsawpos.x is unknown pos t-tag
       }
 
-  def getPosBigrams(tagsList: List[String]): List[String] = {
-    if (tagsList.nonEmpty) {
-      tagsList
-        .zip(tagsList.tail)
-        .map(tagPair => Seq(tagPair._1, tagPair._2).mkString(" "))
-    } else {
-      tagsList
+  d-def getposbigwams(tagswist: wist[stwing]): wist[stwing] = {
+    if (tagswist.nonempty) {
+      t-tagswist
+        .zip(tagswist.taiw)
+        .map(tagpaiw => seq(tagpaiw._1, >w< tagpaiw._2).mkstwing(" "))
+    } ewse {
+      tagswist
     }
   }
 
-  def getLength(text: String): Int =
-    text.codePointCount(0, text.length())
+  def getwength(text: s-stwing): int =
+    text.codepointcount(0, XD text.wength())
 
-  def getCaps(text: String): Int = text.count(Character.isUpperCase)
+  d-def getcaps(text: s-stwing): int = text.count(chawactew.isuppewcase)
 
-  def getSpaces(text: String): Int = text.count(Character.isWhitespace)
+  def getspaces(text: stwing): i-int = text.count(chawactew.iswhitespace)
 
-  def hasQuestionCharacter(text: String): Boolean = {
-    // List based on https://unicode-search.net/unicode-namesearch.pl?term=question
-    val QUESTION_MARK_CHARS = Seq(
-      "\u003F",
-      "\u00BF",
-      "\u037E",
-      "\u055E",
-      "\u061F",
-      "\u1367",
-      "\u1945",
-      "\u2047",
-      "\u2048",
-      "\u2049",
-      "\u2753",
-      "\u2754",
-      "\u2CFA",
-      "\u2CFB",
-      "\u2E2E",
-      "\uA60F",
-      "\uA6F7",
-      "\uFE16",
-      "\uFE56",
-      "\uFF1F",
-      "\u1114",
-      "\u1E95"
+  d-def hasquestionchawactew(text: stwing): boowean = {
+    // wist based on https://unicode-seawch.net/unicode-nameseawch.pw?tewm=question
+    v-vaw question_mawk_chaws = s-seq(
+      "\u003f", o.O
+      "\u00bf", mya
+      "\u037e", 🥺
+      "\u055e", ^^;;
+      "\u061f", :3
+      "\u1367", (U ﹏ U)
+      "\u1945", OwO
+      "\u2047", 😳😳😳
+      "\u2048", (ˆ ﻌ ˆ)♡
+      "\u2049", XD
+      "\u2753", (ˆ ﻌ ˆ)♡
+      "\u2754", ( ͡o ω ͡o )
+      "\u2cfa", rawr x3
+      "\u2cfb", nyaa~~
+      "\u2e2e", >_<
+      "\ua60f", ^^;;
+      "\ua6f7", (ˆ ﻌ ˆ)♡
+      "\ufe16", ^^;;
+      "\ufe56", (⑅˘꒳˘)
+      "\uff1f", rawr x3
+      "\u1114", (///ˬ///✿)
+      "\u1e95"
     )
-    QUESTION_MARK_CHARS.exists(text.contains)
+    question_mawk_chaws.exists(text.contains)
   }
 
-  def getNumNewlines(text: String): Short = {
-    val newlineRegex = "\r\n|\r|\n".r
-    newlineRegex.findAllIn(text).length.toShort
+  def getnumnewwines(text: stwing): showt = {
+    v-vaw nyewwinewegex = "\w\n|\w|\n".w
+    nyewwinewegex.findawwin(text).wength.toshowt
   }
 
-  private[this] def getTweetText(tweetText: String, hydrateTweetText: Boolean): Option[String] = {
-    if (hydrateTweetText) Some(tweetText) else None
+  p-pwivate[this] def g-gettweettext(tweettext: stwing, 🥺 h-hydwatetweettext: boowean): option[stwing] = {
+    i-if (hydwatetweettext) s-some(tweettext) e-ewse nyone
   }
 }

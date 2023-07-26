@@ -1,62 +1,62 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.mediaservices.commons.thriftscala.MediaKey
-import com.twitter.servo.util.FutureArrow
-import com.twitter.tweetypie.media._
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.mediasewvices.commons.thwiftscawa.mediakey
+i-impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.tweetypie.media._
+i-impowt c-com.twittew.tweetypie.thwiftscawa._
 
-trait MediaServiceStore
-    extends TweetStoreBase[MediaServiceStore]
-    with AsyncDeleteTweet.Store
-    with AsyncUndeleteTweet.Store {
-  def wrap(w: TweetStore.Wrap): MediaServiceStore =
-    new TweetStoreWrapper(w, this)
-      with MediaServiceStore
-      with AsyncDeleteTweet.StoreWrapper
-      with AsyncUndeleteTweet.StoreWrapper
+t-twait mediasewvicestowe
+    extends tweetstowebase[mediasewvicestowe]
+    with asyncdewetetweet.stowe
+    with asyncundewetetweet.stowe {
+  def wwap(w: tweetstowe.wwap): mediasewvicestowe =
+    n-nyew tweetstowewwappew(w, rawr this)
+      with mediasewvicestowe
+      w-with asyncdewetetweet.stowewwappew
+      with asyncundewetetweet.stowewwappew
 }
 
-object MediaServiceStore {
-  val Action: AsyncWriteAction.MediaDeletion.type = AsyncWriteAction.MediaDeletion
+o-object mediasewvicestowe {
+  vaw action: asyncwwiteaction.mediadewetion.type = a-asyncwwiteaction.mediadewetion
 
-  private def ownMedia(t: Tweet): Seq[(MediaKey, TweetId)] =
-    getMedia(t)
-      .collect {
-        case m if Media.isOwnMedia(t.id, m) => (MediaKeyUtil.get(m), t.id)
+  pwivate d-def ownmedia(t: t-tweet): seq[(mediakey, mya tweetid)] =
+    getmedia(t)
+      .cowwect {
+        case m if media.isownmedia(t.id, ^^ m) => (mediakeyutiw.get(m), 😳😳😳 t-t.id)
       }
 
-  def apply(
-    deleteMedia: FutureArrow[DeleteMediaRequest, Unit],
-    undeleteMedia: FutureArrow[UndeleteMediaRequest, Unit]
-  ): MediaServiceStore =
-    new MediaServiceStore {
-      override val asyncDeleteTweet: FutureEffect[AsyncDeleteTweet.Event] =
-        FutureEffect[AsyncDeleteTweet.Event] { e =>
-          Future.when(!isRetweet(e.tweet)) {
-            val ownMediaKeys: Seq[(MediaKey, TweetId)] = ownMedia(e.tweet)
-            val deleteMediaRequests = ownMediaKeys.map(DeleteMediaRequest.tupled)
-            Future.collect(deleteMediaRequests.map(deleteMedia))
+  def appwy(
+    dewetemedia: futuweawwow[dewetemediawequest, mya unit],
+    u-undewetemedia: futuweawwow[undewetemediawequest, 😳 u-unit]
+  ): m-mediasewvicestowe =
+    n-nyew mediasewvicestowe {
+      o-ovewwide vaw asyncdewetetweet: futuweeffect[asyncdewetetweet.event] =
+        f-futuweeffect[asyncdewetetweet.event] { e =>
+          futuwe.when(!iswetweet(e.tweet)) {
+            v-vaw ownmediakeys: seq[(mediakey, -.- tweetid)] = ownmedia(e.tweet)
+            vaw dewetemediawequests = ownmediakeys.map(dewetemediawequest.tupwed)
+            f-futuwe.cowwect(dewetemediawequests.map(dewetemedia))
           }
         }
 
-      override val retryAsyncDeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncDeleteTweet.Event]
+      ovewwide v-vaw wetwyasyncdewetetweet: f-futuweeffect[
+        t-tweetstowewetwyevent[asyncdewetetweet.event]
       ] =
-        TweetStore.retry(Action, asyncDeleteTweet)
+        tweetstowe.wetwy(action, asyncdewetetweet)
 
-      override val asyncUndeleteTweet: FutureEffect[AsyncUndeleteTweet.Event] =
-        FutureEffect[AsyncUndeleteTweet.Event] { e =>
-          Future.when(!isRetweet(e.tweet)) {
-            val ownMediaKeys: Seq[(MediaKey, TweetId)] = ownMedia(e.tweet)
-            val unDeleteMediaRequests = ownMediaKeys.map(UndeleteMediaRequest.tupled)
-            Future.collect(unDeleteMediaRequests.map(undeleteMedia))
+      ovewwide vaw a-asyncundewetetweet: f-futuweeffect[asyncundewetetweet.event] =
+        futuweeffect[asyncundewetetweet.event] { e-e =>
+          futuwe.when(!iswetweet(e.tweet)) {
+            v-vaw ownmediakeys: s-seq[(mediakey, 🥺 tweetid)] = ownmedia(e.tweet)
+            v-vaw undewetemediawequests = ownmediakeys.map(undewetemediawequest.tupwed)
+            futuwe.cowwect(undewetemediawequests.map(undewetemedia))
           }
         }
 
-      override val retryAsyncUndeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncUndeleteTweet.Event]
+      ovewwide vaw w-wetwyasyncundewetetweet: futuweeffect[
+        t-tweetstowewetwyevent[asyncundewetetweet.event]
       ] =
-        TweetStore.retry(Action, asyncUndeleteTweet)
+        tweetstowe.wetwy(action, o.O a-asyncundewetetweet)
     }
 }

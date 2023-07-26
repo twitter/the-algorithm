@@ -1,45 +1,45 @@
-package com.twitter.frigate.pushservice.predicate
+package com.twittew.fwigate.pushsewvice.pwedicate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.CasLock
-import com.twitter.frigate.common.util.CasSuccess
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.util.Duration
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.utiw.caswock
+i-impowt com.twittew.fwigate.common.utiw.cassuccess
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+i-impowt com.twittew.hewmit.pwedicate.namedpwedicate
+i-impowt c-com.twittew.hewmit.pwedicate.pwedicate
+i-impowt com.twittew.utiw.duwation
+impowt com.twittew.utiw.futuwe
 
-object CasLockPredicate {
-  def apply(
-    casLock: CasLock,
-    expiryDuration: Duration
+object caswockpwedicate {
+  d-def appwy(
+    caswock: caswock, (⑅˘꒳˘)
+    expiwyduwation: d-duwation
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val stats = statsReceiver.scope("predicate_addcaslock_for_candidate")
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        if (candidate.target.pushContext.exists(_.darkWrite.exists(_ == true))) {
-          Future.True
-        } else if (candidate.commonRecType == CommonRecommendationType.MagicFanoutSportsEvent) {
-          Future.True
-        } else {
-          candidate.target.history flatMap { h =>
-            val now = candidate.createdAt
-            val expiry = now + expiryDuration
-            val oldTimestamp = h.lastNotificationTime map {
-              _.inSeconds
-            } getOrElse 0
-            casLock.cas(candidate.target.targetId, oldTimestamp, now.inSeconds, expiry) map {
-              casResult =>
-                stats.counter(s"cas_$casResult").incr()
-                casResult == CasSuccess
+    impwicit s-statsweceivew: statsweceivew
+  ): nyamedpwedicate[pushcandidate] = {
+    vaw s-stats = statsweceivew.scope("pwedicate_addcaswock_fow_candidate")
+    pwedicate
+      .fwomasync { c-candidate: p-pushcandidate =>
+        if (candidate.tawget.pushcontext.exists(_.dawkwwite.exists(_ == twue))) {
+          futuwe.twue
+        } ewse if (candidate.commonwectype == c-commonwecommendationtype.magicfanoutspowtsevent) {
+          futuwe.twue
+        } ewse {
+          candidate.tawget.histowy fwatmap { h =>
+            vaw n-nyow = candidate.cweatedat
+            vaw expiwy = n-nyow + expiwyduwation
+            v-vaw owdtimestamp = h-h.wastnotificationtime m-map {
+              _.inseconds
+            } getowewse 0
+            caswock.cas(candidate.tawget.tawgetid, (///ˬ///✿) o-owdtimestamp, 😳😳😳 nyow.inseconds, 🥺 expiwy) map {
+              c-caswesuwt =>
+                stats.countew(s"cas_$caswesuwt").incw()
+                caswesuwt == cassuccess
             }
           }
         }
       }
-      .withStats(stats)
-      .withName("add_cas_lock")
+      .withstats(stats)
+      .withname("add_cas_wock")
   }
 }

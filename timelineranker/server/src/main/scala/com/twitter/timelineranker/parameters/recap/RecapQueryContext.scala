@@ -1,79 +1,79 @@
-package com.twitter.timelineranker.parameters.recap
+package com.twittew.timewinewankew.pawametews.wecap
 
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelines.util.bounds.BoundsWithDefault
+impowt com.twittew.timewinewankew.modew.wecapquewy
+i-impowt com.twittew.timewines.utiw.bounds.boundswithdefauwt
 
-object RecapQueryContext {
-  val MaxFollowedUsers: BoundsWithDefault[Int] = BoundsWithDefault[Int](1, 3000, 1000)
-  val MaxCountMultiplier: BoundsWithDefault[Double] = BoundsWithDefault[Double](0.1, 2.0, 2.0)
-  val MaxRealGraphAndFollowedUsers: BoundsWithDefault[Int] = BoundsWithDefault[Int](0, 2000, 1000)
+o-object wecapquewycontext {
+  v-vaw maxfowwowedusews: b-boundswithdefauwt[int] = boundswithdefauwt[int](1, ( ͡o ω ͡o ) 3000, 1000)
+  v-vaw maxcountmuwtipwiew: boundswithdefauwt[doubwe] = b-boundswithdefauwt[doubwe](0.1, mya 2.0, 2.0)
+  v-vaw maxweawgwaphandfowwowedusews: b-boundswithdefauwt[int] = boundswithdefauwt[int](0, (///ˬ///✿) 2000, (˘ω˘) 1000)
 
-  def getDefaultContext(query: RecapQuery): RecapQueryContext = {
-    new RecapQueryContextImpl(
-      query,
-      getEnableHydrationUsingTweetyPie = () => false,
-      getMaxFollowedUsers = () => MaxFollowedUsers.default,
-      getMaxCountMultiplier = () => MaxCountMultiplier.default,
-      getEnableRealGraphUsers = () => false,
-      getOnlyRealGraphUsers = () => false,
-      getMaxRealGraphAndFollowedUsers = () => MaxRealGraphAndFollowedUsers.default,
-      getEnableTextFeatureHydration = () => false
+  def getdefauwtcontext(quewy: wecapquewy): wecapquewycontext = {
+    n-nyew wecapquewycontextimpw(
+      quewy, ^^;;
+      getenabwehydwationusingtweetypie = () => f-fawse, (✿oωo)
+      getmaxfowwowedusews = () => maxfowwowedusews.defauwt, (U ﹏ U)
+      getmaxcountmuwtipwiew = () => m-maxcountmuwtipwiew.defauwt, -.-
+      getenabweweawgwaphusews = () => fawse, ^•ﻌ•^
+      getonwyweawgwaphusews = () => fawse, rawr
+      getmaxweawgwaphandfowwowedusews = () => maxweawgwaphandfowwowedusews.defauwt, (˘ω˘)
+      g-getenabwetextfeatuwehydwation = () => fawse
     )
   }
 }
 
-// Note that methods that return parameter value always use () to indicate that
-// side effects may be involved in their invocation.
-trait RecapQueryContext {
-  def query: RecapQuery
+// n-nyote that m-methods that wetuwn pawametew vawue awways use () to indicate that
+// side effects m-may be invowved in theiw invocation. nyaa~~
+twait wecapquewycontext {
+  def quewy: w-wecapquewy
 
-  // If true, tweet hydration are performed by calling TweetyPie.
-  // Otherwise, tweets are partially hydrated based on information in ThriftSearchResult.
-  def enableHydrationUsingTweetyPie(): Boolean
+  // if twue, UwU tweet h-hydwation awe pewfowmed b-by cawwing t-tweetypie. :3
+  // o-othewwise, (⑅˘꒳˘) tweets awe pawtiawwy hydwated based o-on infowmation in thwiftseawchwesuwt. (///ˬ///✿)
+  def enabwehydwationusingtweetypie(): b-boowean
 
-  // Maximum number of followed user accounts to use when fetching recap tweets.
-  def maxFollowedUsers(): Int
+  // maximum nyumbew of fowwowed usew accounts to use when fetching wecap tweets. ^^;;
+  def m-maxfowwowedusews(): int
 
-  // We multiply maxCount (caller supplied value) by this multiplier and fetch those many
-  // candidates from search so that we are left with sufficient number of candidates after
-  // hydration and filtering.
-  def maxCountMultiplier(): Double
+  // we m-muwtipwy maxcount (cawwew s-suppwied v-vawue) by this muwtipwiew and fetch those many
+  // candidates f-fwom seawch s-so that we awe weft with sufficient n-nyumbew of candidates a-aftew
+  // hydwation and f-fiwtewing. >_<
+  def maxcountmuwtipwiew(): d-doubwe
 
-  // Only used if user follows >= 1000.
-  // If true, fetches recap/recycled tweets using author seedset mixing with real graph users and followed users.
-  // Otherwise, fetches recap/recycled tweets only using followed users
-  def enableRealGraphUsers(): Boolean
+  // onwy used if usew fowwows >= 1000. rawr x3
+  // if t-twue, /(^•ω•^) fetches wecap/wecycwed tweets u-using authow seedset mixing w-with weaw gwaph u-usews and fowwowed usews. :3
+  // othewwise, (ꈍᴗꈍ) fetches wecap/wecycwed tweets onwy using fowwowed usews
+  def enabweweawgwaphusews(): b-boowean
 
-  // Only used if enableRealGraphUsers is true.
-  // If true, user seedset only contains real graph users.
-  // Otherwise, user seedset contains real graph users and recent followed users.
-  def onlyRealGraphUsers(): Boolean
+  // o-onwy used if enabweweawgwaphusews is twue. /(^•ω•^)
+  // i-if twue, (⑅˘꒳˘) usew seedset o-onwy contains w-weaw gwaph usews. ( ͡o ω ͡o )
+  // othewwise, òωó usew seedset contains weaw g-gwaph usews and wecent fowwowed usews. (⑅˘꒳˘)
+  def onwyweawgwaphusews(): boowean
 
-  // Only used if enableRealGraphUsers is true and onlyRealGraphUsers is false.
-  // Maximum number of real graph users and recent followed users when mixing recent/real-graph users.
-  def maxRealGraphAndFollowedUsers(): Int
+  // onwy used if enabweweawgwaphusews i-is twue and onwyweawgwaphusews i-is fawse. XD
+  // m-maximum nyumbew o-of weaw gwaph usews and wecent f-fowwowed usews w-when mixing wecent/weaw-gwaph u-usews. -.-
+  d-def maxweawgwaphandfowwowedusews(): int
 
-  // If true, text features are hydrated for prediction.
-  // Otherwise those feature values are not set at all.
-  def enableTextFeatureHydration(): Boolean
+  // if twue, :3 text f-featuwes awe h-hydwated fow pwediction. nyaa~~
+  // o-othewwise t-those featuwe v-vawues awe nyot set at aww.
+  def enabwetextfeatuwehydwation(): boowean
 }
 
-class RecapQueryContextImpl(
-  override val query: RecapQuery,
-  getEnableHydrationUsingTweetyPie: () => Boolean,
-  getMaxFollowedUsers: () => Int,
-  getMaxCountMultiplier: () => Double,
-  getEnableRealGraphUsers: () => Boolean,
-  getOnlyRealGraphUsers: () => Boolean,
-  getMaxRealGraphAndFollowedUsers: () => Int,
-  getEnableTextFeatureHydration: () => Boolean)
-    extends RecapQueryContext {
+c-cwass wecapquewycontextimpw(
+  ovewwide vaw quewy: wecapquewy,
+  getenabwehydwationusingtweetypie: () => boowean, 😳
+  getmaxfowwowedusews: () => i-int, (⑅˘꒳˘)
+  getmaxcountmuwtipwiew: () => doubwe, nyaa~~
+  getenabweweawgwaphusews: () => boowean, OwO
+  getonwyweawgwaphusews: () => b-boowean, rawr x3
+  g-getmaxweawgwaphandfowwowedusews: () => i-int, XD
+  getenabwetextfeatuwehydwation: () => boowean)
+    e-extends wecapquewycontext {
 
-  override def enableHydrationUsingTweetyPie(): Boolean = { getEnableHydrationUsingTweetyPie() }
-  override def maxFollowedUsers(): Int = { getMaxFollowedUsers() }
-  override def maxCountMultiplier(): Double = { getMaxCountMultiplier() }
-  override def enableRealGraphUsers(): Boolean = { getEnableRealGraphUsers() }
-  override def onlyRealGraphUsers(): Boolean = { getOnlyRealGraphUsers() }
-  override def maxRealGraphAndFollowedUsers(): Int = { getMaxRealGraphAndFollowedUsers() }
-  override def enableTextFeatureHydration(): Boolean = { getEnableTextFeatureHydration() }
+  ovewwide def enabwehydwationusingtweetypie(): b-boowean = { g-getenabwehydwationusingtweetypie() }
+  ovewwide def maxfowwowedusews(): int = { getmaxfowwowedusews() }
+  ovewwide def maxcountmuwtipwiew(): doubwe = { g-getmaxcountmuwtipwiew() }
+  ovewwide d-def enabweweawgwaphusews(): boowean = { getenabweweawgwaphusews() }
+  o-ovewwide d-def onwyweawgwaphusews(): boowean = { getonwyweawgwaphusews() }
+  ovewwide d-def maxweawgwaphandfowwowedusews(): i-int = { getmaxweawgwaphandfowwowedusews() }
+  ovewwide def enabwetextfeatuwehydwation(): b-boowean = { g-getenabwetextfeatuwehydwation() }
 }

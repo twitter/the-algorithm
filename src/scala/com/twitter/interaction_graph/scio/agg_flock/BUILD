@@ -1,70 +1,65 @@
-scala_library(
-    name = "agg_flock",
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
+scawa_wibwawy(
+    nyame = "agg_diwect_intewactions", OwO
+    souwces = ["*.scawa"],
+    c-compiwew_option_sets = ["fataw_wawnings"], (U ﹏ U)
+    p-pwatfowm = "java8", >_<
+    t-tags = ["bazew-compatibwe"], rawr x3
+    d-dependencies = [
+        ":intewaction_gwaph_agg_diwect_intewactions_edge_daiwy-scawa", mya
+        ":intewaction_gwaph_agg_diwect_intewactions_vewtex_daiwy-scawa", nyaa~~
+        "beam-intewnaw/swc/main/scawa/com/twittew/beam/io/daw", (⑅˘꒳˘)
+        "beam-intewnaw/swc/main/scawa/com/twittew/scio_intewnaw/job", rawr x3
+        "beam-intewnaw/swc/main/scawa/com/twittew/scio_intewnaw/wunnew/datafwow", (✿oωo)
+        "consumew-data-toows/swc/main/scawa/com/twittew/cde/scio/daw_wead", (ˆ ﻌ ˆ)♡
+        "swc/scawa/com/twittew/intewaction_gwaph/scio/common", (˘ω˘)
+        "swc/thwift/com/twittew/timewinesewvice/sewvew/intewnaw:thwift-scawa", (⑅˘꒳˘)
+        "twadoop_config/configuwation/wog_categowies/gwoup/timewine:timewine_sewvice_favowites-scawa", (///ˬ///✿)
+        "twadoop_config/configuwation/wog_categowies/gwoup/tweetypie:tweetypie_media_tag_events-scawa", 😳😳😳
+        "tweetsouwce/common:unhydwated_fwat-scawa", 🥺
+        "usewsouwce/snapshot/swc/main/scawa/com/twittew/usewsouwce/snapshot/combined:usewsouwce-scawa", mya
+    ],
+)
+
+j-jvm_binawy(
+    n-nyame = "intewaction_gwaph_agg_diwect_intewactions_scio", 🥺
+    m-main = "com.twittew.intewaction_gwaph.scio.agg_diwect_intewactions.intewactiongwaphaggdiwectintewactionsjob", >_<
+    p-pwatfowm = "java8", >_<
+    tags = ["bazew-compatibwe"], (⑅˘꒳˘)
     dependencies = [
-        ":interaction_graph_agg_flock_edge_snapshot-scala",
-        ":interaction_graph_agg_flock_vertex_snapshot-scala",
-        "3rdparty/jvm/com/twitter/storehaus:algebra",
-        "beam-internal/src/main/scala/com/twitter/beam/io/dal",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/job",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
-        "consumer-data-tools/src/main/scala/com/twitter/cde/scio/dal_read",
-        "flockdb-tools/datasets/flock:flock-blocks-edges-scala",
-        "flockdb-tools/datasets/flock:flock-mutes-edges-scala",
-        "flockdb-tools/datasets/flock:flock-report-as-abuse-edges-scala",
-        "flockdb-tools/datasets/flock:flock-report-as-spam-edges-scala",
-        "src/scala/com/twitter/interaction_graph/scio/common",
-        "src/scala/com/twitter/wtf/dataflow/user_events:valid_user_follows-scala",
-        "src/thrift/com/twitter/core_workflows/user_model:user_model-scala",
-        "src/thrift/com/twitter/twadoop/user/gen:gen-java",
-        "src/thrift/com/twitter/twadoop/user/gen:gen-scala",
-        "usersource/snapshot/src/main/scala/com/twitter/usersource/snapshot/combined:usersource-scala",
+        ":agg_diwect_intewactions", /(^•ω•^)
     ],
 )
 
-jvm_binary(
-    name = "interaction_graph_agg_flock_scio",
-    main = "com.twitter.interaction_graph.scio.agg_flock.InteractionGraphAggFlockJob",
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":agg_flock",
-    ],
-)
-
-create_datasets(
-    base_name = "interaction_graph_agg_flock_edge_snapshot",
-    description = "User-user directed edges with flock features",
-    java_schema = "com.twitter.interaction_graph.thriftjava.Edge",
-    platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.interaction_graph.thriftscala.Edge",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
+cweate_datasets(
+    base_name = "intewaction_gwaph_agg_diwect_intewactions_edge_daiwy", rawr x3
+    d-descwiption = "usew-usew diwected edges with diwect intewactions f-featuwes", (U ﹏ U)
+    java_schema = "com.twittew.intewaction_gwaph.thwiftjava.edge", (U ﹏ U)
+    p-pwatfowm = "java8", (⑅˘꒳˘)
+    wowe = "cassowawy", òωó
+    scawa_schema = "com.twittew.intewaction_gwaph.thwiftscawa.edge", ʘwʘ
+    segment_type = "pawtitioned", /(^•ω•^)
+    t-tags = ["bazew-compatibwe"], ʘwʘ
     java_dependencies = [
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-java",
-    ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-scala",
-    ],
+        "swc/thwift/com/twittew/intewaction_gwaph:intewaction_gwaph-java", σωσ
+    ], OwO
+    s-scawa_dependencies = [
+        "swc/thwift/com/twittew/intewaction_gwaph:intewaction_gwaph-scawa", 😳😳😳
+    ], 😳😳😳
 )
 
-create_datasets(
-    base_name = "interaction_graph_agg_flock_vertex_snapshot",
-    description = "User vertex with flock features",
-    java_schema = "com.twitter.interaction_graph.thriftjava.Vertex",
-    platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.interaction_graph.thriftscala.Vertex",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
+c-cweate_datasets(
+    base_name = "intewaction_gwaph_agg_diwect_intewactions_vewtex_daiwy", o.O
+    descwiption = "usew vewtex with diwect intewactions f-featuwes", ( ͡o ω ͡o )
+    java_schema = "com.twittew.intewaction_gwaph.thwiftjava.vewtex", (U ﹏ U)
+    pwatfowm = "java8", (///ˬ///✿)
+    wowe = "cassowawy", >w<
+    scawa_schema = "com.twittew.intewaction_gwaph.thwiftscawa.vewtex", rawr
+    segment_type = "pawtitioned", mya
+    t-tags = ["bazew-compatibwe"], ^^
     java_dependencies = [
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-java",
-    ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-scala",
-    ],
+        "swc/thwift/com/twittew/intewaction_gwaph:intewaction_gwaph-java", 😳😳😳
+    ], mya
+    s-scawa_dependencies = [
+        "swc/thwift/com/twittew/intewaction_gwaph:intewaction_gwaph-scawa", 😳
+    ], -.-
 )

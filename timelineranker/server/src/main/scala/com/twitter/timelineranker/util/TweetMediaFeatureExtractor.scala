@@ -1,272 +1,272 @@
-package com.twitter.timelineranker.util
+package com.twittew.timewinewankew.utiw
 
-import com.twitter.mediaservices.commons.tweetmedia.thriftscala.MediaInfo
-import com.twitter.tweetypie.thriftscala.MediaEntity
-import com.twitter.tweetypie.thriftscala.MediaTag
-import com.twitter.tweetypie.{thriftscala => tweetypie}
-import scala.collection.Map
-import com.twitter.mediaservices.commons.mediainformation.thriftscala.ColorPaletteItem
-import com.twitter.mediaservices.commons.mediainformation.thriftscala.Face
-import com.twitter.timelineranker.recap.model.ContentFeatures
+impowt com.twittew.mediasewvices.commons.tweetmedia.thwiftscawa.mediainfo
+i-impowt com.twittew.tweetypie.thwiftscawa.mediaentity
+i-impowt com.twittew.tweetypie.thwiftscawa.mediatag
+i-impowt c-com.twittew.tweetypie.{thwiftscawa => t-tweetypie}
+i-impowt scawa.cowwection.map
+i-impowt c-com.twittew.mediasewvices.commons.mediainfowmation.thwiftscawa.cowowpawetteitem
+impowt com.twittew.mediasewvices.commons.mediainfowmation.thwiftscawa.face
+impowt com.twittew.timewinewankew.wecap.modew.contentfeatuwes
 
-object TweetMediaFeaturesExtractor {
+object tweetmediafeatuwesextwactow {
 
-  // Method to overload for content features.
-  def addMediaFeaturesFromTweet(
-    inputFeatures: ContentFeatures,
-    tweet: tweetypie.Tweet,
-    enableTweetMediaHydration: Boolean
-  ): ContentFeatures = {
-    val featuresWithMediaEntity = tweet.media
-      .map { mediaEntities =>
-        val sizeFeatures = getSizeFeatures(mediaEntities)
-        val playbackFeatures = getPlaybackFeatures(mediaEntities)
-        val mediaWidths = sizeFeatures.map(_.width.toShort)
-        val mediaHeights = sizeFeatures.map(_.height.toShort)
-        val resizeMethods = sizeFeatures.map(_.resizeMethod.toShort)
-        val faceMapAreas = getFaceMapAreas(mediaEntities)
-        val sortedColorPalette = getSortedColorPalette(mediaEntities)
-        val stickerFeatures = getStickerFeatures(mediaEntities)
-        val mediaOriginProviders = getMediaOriginProviders(mediaEntities)
-        val isManaged = getIsManaged(mediaEntities)
-        val is360 = getIs360(mediaEntities)
-        val viewCount = getViewCount(mediaEntities)
-        val userDefinedProductMetadataFeatures =
-          getUserDefinedProductMetadataFeatures(mediaEntities)
-        val isMonetizable =
-          getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.isMonetizable))
-        val isEmbeddable =
-          getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.isEmbeddable))
-        val hasSelectedPreviewImage =
-          getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.hasSelectedPreviewImage))
-        val hasTitle = getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.hasTitle))
-        val hasDescription =
-          getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.hasDescription))
-        val hasVisitSiteCallToAction = getOptBooleanFromSeqOpt(
-          userDefinedProductMetadataFeatures.map(_.hasVisitSiteCallToAction))
-        val hasAppInstallCallToAction = getOptBooleanFromSeqOpt(
-          userDefinedProductMetadataFeatures.map(_.hasAppInstallCallToAction))
-        val hasWatchNowCallToAction =
-          getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.hasWatchNowCallToAction))
+  // m-method to ovewwoad fow content featuwes. ^^;;
+  d-def addmediafeatuwesfwomtweet(
+    inputfeatuwes: c-contentfeatuwes, rawr
+    tweet: tweetypie.tweet, 😳😳😳
+    enabwetweetmediahydwation: b-boowean
+  ): contentfeatuwes = {
+    vaw featuweswithmediaentity = t-tweet.media
+      .map { m-mediaentities =>
+        vaw sizefeatuwes = getsizefeatuwes(mediaentities)
+        vaw pwaybackfeatuwes = getpwaybackfeatuwes(mediaentities)
+        v-vaw mediawidths = sizefeatuwes.map(_.width.toshowt)
+        vaw mediaheights = sizefeatuwes.map(_.height.toshowt)
+        vaw w-wesizemethods = sizefeatuwes.map(_.wesizemethod.toshowt)
+        v-vaw facemapaweas = g-getfacemapaweas(mediaentities)
+        v-vaw s-sowtedcowowpawette = getsowtedcowowpawette(mediaentities)
+        vaw stickewfeatuwes = g-getstickewfeatuwes(mediaentities)
+        vaw mediaowiginpwovidews = getmediaowiginpwovidews(mediaentities)
+        v-vaw ismanaged = getismanaged(mediaentities)
+        vaw is360 = getis360(mediaentities)
+        vaw viewcount = getviewcount(mediaentities)
+        vaw usewdefinedpwoductmetadatafeatuwes =
+          g-getusewdefinedpwoductmetadatafeatuwes(mediaentities)
+        vaw ismonetizabwe =
+          g-getoptbooweanfwomseqopt(usewdefinedpwoductmetadatafeatuwes.map(_.ismonetizabwe))
+        v-vaw isembeddabwe =
+          g-getoptbooweanfwomseqopt(usewdefinedpwoductmetadatafeatuwes.map(_.isembeddabwe))
+        vaw hassewectedpweviewimage =
+          getoptbooweanfwomseqopt(usewdefinedpwoductmetadatafeatuwes.map(_.hassewectedpweviewimage))
+        v-vaw hastitwe = g-getoptbooweanfwomseqopt(usewdefinedpwoductmetadatafeatuwes.map(_.hastitwe))
+        vaw hasdescwiption =
+          g-getoptbooweanfwomseqopt(usewdefinedpwoductmetadatafeatuwes.map(_.hasdescwiption))
+        v-vaw hasvisitsitecawwtoaction = getoptbooweanfwomseqopt(
+          u-usewdefinedpwoductmetadatafeatuwes.map(_.hasvisitsitecawwtoaction))
+        vaw hasappinstawwcawwtoaction = g-getoptbooweanfwomseqopt(
+          usewdefinedpwoductmetadatafeatuwes.map(_.hasappinstawwcawwtoaction))
+        vaw haswatchnowcawwtoaction =
+          g-getoptbooweanfwomseqopt(usewdefinedpwoductmetadatafeatuwes.map(_.haswatchnowcawwtoaction))
 
-        inputFeatures.copy(
-          videoDurationMs = playbackFeatures.durationMs,
-          bitRate = playbackFeatures.bitRate,
-          aspectRatioNum = playbackFeatures.aspectRatioNum,
-          aspectRatioDen = playbackFeatures.aspectRatioDen,
-          widths = Some(mediaWidths),
-          heights = Some(mediaHeights),
-          resizeMethods = Some(resizeMethods),
-          faceAreas = Some(faceMapAreas),
-          dominantColorRed = sortedColorPalette.headOption.map(_.rgb.red),
-          dominantColorBlue = sortedColorPalette.headOption.map(_.rgb.blue),
-          dominantColorGreen = sortedColorPalette.headOption.map(_.rgb.green),
-          dominantColorPercentage = sortedColorPalette.headOption.map(_.percentage),
-          numColors = Some(sortedColorPalette.size.toShort),
-          stickerIds = Some(stickerFeatures),
-          mediaOriginProviders = Some(mediaOriginProviders),
-          isManaged = Some(isManaged),
-          is360 = Some(is360),
-          viewCount = viewCount,
-          isMonetizable = isMonetizable,
-          isEmbeddable = isEmbeddable,
-          hasSelectedPreviewImage = hasSelectedPreviewImage,
-          hasTitle = hasTitle,
-          hasDescription = hasDescription,
-          hasVisitSiteCallToAction = hasVisitSiteCallToAction,
-          hasAppInstallCallToAction = hasAppInstallCallToAction,
-          hasWatchNowCallToAction = hasWatchNowCallToAction
+        inputfeatuwes.copy(
+          v-videoduwationms = pwaybackfeatuwes.duwationms, (✿oωo)
+          b-bitwate = pwaybackfeatuwes.bitwate, OwO
+          a-aspectwationum = pwaybackfeatuwes.aspectwationum, ʘwʘ
+          aspectwatioden = pwaybackfeatuwes.aspectwatioden, (ˆ ﻌ ˆ)♡
+          widths = some(mediawidths), (U ﹏ U)
+          heights = some(mediaheights), UwU
+          wesizemethods = s-some(wesizemethods), XD
+          f-faceaweas = some(facemapaweas), ʘwʘ
+          d-dominantcowowwed = s-sowtedcowowpawette.headoption.map(_.wgb.wed), rawr x3
+          d-dominantcowowbwue = sowtedcowowpawette.headoption.map(_.wgb.bwue), ^^;;
+          dominantcowowgween = sowtedcowowpawette.headoption.map(_.wgb.gween),
+          d-dominantcowowpewcentage = sowtedcowowpawette.headoption.map(_.pewcentage), ʘwʘ
+          nyumcowows = some(sowtedcowowpawette.size.toshowt), (U ﹏ U)
+          stickewids = s-some(stickewfeatuwes), (˘ω˘)
+          mediaowiginpwovidews = s-some(mediaowiginpwovidews), (ꈍᴗꈍ)
+          i-ismanaged = s-some(ismanaged), /(^•ω•^)
+          is360 = s-some(is360),
+          v-viewcount = v-viewcount, >_<
+          i-ismonetizabwe = ismonetizabwe,
+          isembeddabwe = i-isembeddabwe, σωσ
+          h-hassewectedpweviewimage = h-hassewectedpweviewimage, ^^;;
+          h-hastitwe = h-hastitwe, 😳
+          hasdescwiption = hasdescwiption, >_<
+          hasvisitsitecawwtoaction = hasvisitsitecawwtoaction, -.-
+          h-hasappinstawwcawwtoaction = hasappinstawwcawwtoaction, UwU
+          haswatchnowcawwtoaction = haswatchnowcawwtoaction
         )
       }
-      .getOrElse(inputFeatures)
+      .getowewse(inputfeatuwes)
 
-    val featuresWithMediaTags = tweet.mediaTags
-      .map { mediaTags =>
-        val mediaTagScreenNames = getMediaTagScreenNames(mediaTags.tagMap)
-        val numMediaTags = mediaTagScreenNames.size
+    vaw featuweswithmediatags = tweet.mediatags
+      .map { m-mediatags =>
+        vaw mediatagscweennames = getmediatagscweennames(mediatags.tagmap)
+        vaw nyummediatags = m-mediatagscweennames.size
 
-        featuresWithMediaEntity.copy(
-          mediaTagScreenNames = Some(mediaTagScreenNames),
-          numMediaTags = Some(numMediaTags.toShort)
+        f-featuweswithmediaentity.copy(
+          m-mediatagscweennames = some(mediatagscweennames), :3
+          nyummediatags = some(nummediatags.toshowt)
         )
       }
-      .getOrElse(featuresWithMediaEntity)
+      .getowewse(featuweswithmediaentity)
 
-    if (enableTweetMediaHydration) {
-      featuresWithMediaTags
-        .copy(media = tweet.media)
-    } else {
-      featuresWithMediaTags
+    i-if (enabwetweetmediahydwation) {
+      featuweswithmediatags
+        .copy(media = t-tweet.media)
+    } e-ewse {
+      featuweswithmediatags
     }
   }
 
-  // Extracts height, width and resize method of photo/video.
-  private def getSizeFeatures(mediaEntities: Seq[MediaEntity]): Seq[MediaSizeFeatures] = {
-    mediaEntities.map { mediaEntity =>
-      mediaEntity.sizes.foldLeft(MediaSizeFeatures(0, 0, 0))((accDimensions, dimensions) =>
-        MediaSizeFeatures(
-          width = math.max(dimensions.width, accDimensions.width),
-          height = math.max(dimensions.height, accDimensions.height),
-          resizeMethod = math.max(dimensions.resizeMethod.getValue, accDimensions.resizeMethod)
+  // extwacts height, σωσ width and wesize method of photo/video. >w<
+  pwivate def getsizefeatuwes(mediaentities: s-seq[mediaentity]): seq[mediasizefeatuwes] = {
+    m-mediaentities.map { mediaentity =>
+      m-mediaentity.sizes.fowdweft(mediasizefeatuwes(0, (ˆ ﻌ ˆ)♡ 0, 0))((accdimensions, d-dimensions) =>
+        mediasizefeatuwes(
+          width = math.max(dimensions.width, ʘwʘ a-accdimensions.width), :3
+          h-height = math.max(dimensions.height, (˘ω˘) accdimensions.height), 😳😳😳
+          w-wesizemethod = m-math.max(dimensions.wesizemethod.getvawue, rawr x3 accdimensions.wesizemethod)
         ))
     }
   }
 
-  // Extracts media playback features
-  private def getPlaybackFeatures(mediaEntities: Seq[MediaEntity]): PlaybackFeatures = {
-    val allPlaybackFeatures = mediaEntities
-      .flatMap { mediaEntity =>
-        mediaEntity.mediaInfo map {
-          case videoEntity: MediaInfo.VideoInfo =>
-            PlaybackFeatures(
-              durationMs = Some(videoEntity.videoInfo.durationMillis),
-              bitRate = videoEntity.videoInfo.variants.maxBy(_.bitRate).bitRate,
-              aspectRatioNum = Some(videoEntity.videoInfo.aspectRatio.numerator),
-              aspectRatioDen = Some(videoEntity.videoInfo.aspectRatio.denominator)
+  // extwacts media pwayback featuwes
+  pwivate d-def getpwaybackfeatuwes(mediaentities: s-seq[mediaentity]): pwaybackfeatuwes = {
+    v-vaw awwpwaybackfeatuwes = mediaentities
+      .fwatmap { m-mediaentity =>
+        m-mediaentity.mediainfo map {
+          c-case videoentity: mediainfo.videoinfo =>
+            pwaybackfeatuwes(
+              duwationms = s-some(videoentity.videoinfo.duwationmiwwis), (✿oωo)
+              b-bitwate = videoentity.videoinfo.vawiants.maxby(_.bitwate).bitwate, (ˆ ﻌ ˆ)♡
+              aspectwationum = s-some(videoentity.videoinfo.aspectwatio.numewatow), :3
+              a-aspectwatioden = some(videoentity.videoinfo.aspectwatio.denominatow)
             )
-          case gifEntity: MediaInfo.AnimatedGifInfo =>
-            PlaybackFeatures(
-              durationMs = None,
-              bitRate = gifEntity.animatedGifInfo.variants.maxBy(_.bitRate).bitRate,
-              aspectRatioNum = Some(gifEntity.animatedGifInfo.aspectRatio.numerator),
-              aspectRatioDen = Some(gifEntity.animatedGifInfo.aspectRatio.denominator)
+          case gifentity: mediainfo.animatedgifinfo =>
+            p-pwaybackfeatuwes(
+              duwationms = nyone, (U ᵕ U❁)
+              bitwate = gifentity.animatedgifinfo.vawiants.maxby(_.bitwate).bitwate,
+              aspectwationum = s-some(gifentity.animatedgifinfo.aspectwatio.numewatow), ^^;;
+              aspectwatioden = some(gifentity.animatedgifinfo.aspectwatio.denominatow)
             )
-          case _ => PlaybackFeatures(None, None, None, None)
+          c-case _ => pwaybackfeatuwes(none, mya n-nyone, 😳😳😳 nyone, nyone)
         }
       }
-      .collect {
-        case playbackFeatures: PlaybackFeatures => playbackFeatures
+      .cowwect {
+        case pwaybackfeatuwes: pwaybackfeatuwes => p-pwaybackfeatuwes
       }
 
-    if (allPlaybackFeatures.nonEmpty) allPlaybackFeatures.maxBy(_.durationMs)
-    else PlaybackFeatures(None, None, None, None)
+    i-if (awwpwaybackfeatuwes.nonempty) awwpwaybackfeatuwes.maxby(_.duwationms)
+    ewse pwaybackfeatuwes(none, OwO nyone, nyone, rawr n-nyone)
   }
 
-  private def getMediaTagScreenNames(tagMap: Map[Long, Seq[MediaTag]]): Seq[String] =
-    tagMap.values
-      .flatMap(seqMediaTag => seqMediaTag.flatMap(_.screenName))
-      .toSeq
+  pwivate def getmediatagscweennames(tagmap: m-map[wong, XD seq[mediatag]]): seq[stwing] =
+    tagmap.vawues
+      .fwatmap(seqmediatag => s-seqmediatag.fwatmap(_.scweenname))
+      .toseq
 
-  // Areas of the faces identified in the media entities
-  private def getFaceMapAreas(mediaEntities: Seq[MediaEntity]): Seq[Int] = {
-    for {
-      mediaEntity <- mediaEntities
-      metadata <- mediaEntity.additionalMetadata.toSeq
-      faceData <- metadata.faceData
-      faces <- faceData.faces
-    } yield {
-      faces
-        .getOrElse("orig", Seq.empty[Face])
-        .flatMap(f => f.boundingBox.map(bb => bb.width * bb.height))
+  // aweas o-of the faces identified i-in the media entities
+  p-pwivate def getfacemapaweas(mediaentities: seq[mediaentity]): seq[int] = {
+    f-fow {
+      mediaentity <- m-mediaentities
+      metadata <- m-mediaentity.additionawmetadata.toseq
+      facedata <- m-metadata.facedata
+      f-faces <- facedata.faces
+    } yiewd {
+      f-faces
+        .getowewse("owig", (U ﹏ U) s-seq.empty[face])
+        .fwatmap(f => f-f.boundingbox.map(bb => bb.width * bb.height))
     }
-  }.flatten
+  }.fwatten
 
-  // All ColorPalettes in the media sorted by the percentage in descending order
-  private def getSortedColorPalette(mediaEntities: Seq[MediaEntity]): Seq[ColorPaletteItem] = {
-    for {
-      mediaEntity <- mediaEntities
-      metadata <- mediaEntity.additionalMetadata.toSeq
-      colorInfo <- metadata.colorInfo
-    } yield {
-      colorInfo.palette
+  // a-aww cowowpawettes in the media s-sowted by the p-pewcentage in descending owdew
+  pwivate def getsowtedcowowpawette(mediaentities: seq[mediaentity]): s-seq[cowowpawetteitem] = {
+    f-fow {
+      m-mediaentity <- m-mediaentities
+      metadata <- m-mediaentity.additionawmetadata.toseq
+      cowowinfo <- metadata.cowowinfo
+    } yiewd {
+      cowowinfo.pawette
     }
-  }.flatten.sortBy(_.percentage).reverse
+  }.fwatten.sowtby(_.pewcentage).wevewse
 
-  // Id's of stickers applied by the user
-  private def getStickerFeatures(mediaEntities: Seq[MediaEntity]): Seq[Long] = {
-    for {
-      mediaEntity <- mediaEntities
-      metadata <- mediaEntity.additionalMetadata.toSeq
-      stickerInfo <- metadata.stickerInfo
-    } yield {
-      stickerInfo.stickers.map(_.id)
+  // id's of stickews appwied by t-the usew
+  pwivate def getstickewfeatuwes(mediaentities: s-seq[mediaentity]): seq[wong] = {
+    f-fow {
+      mediaentity <- mediaentities
+      metadata <- m-mediaentity.additionawmetadata.toseq
+      stickewinfo <- m-metadata.stickewinfo
+    } y-yiewd {
+      stickewinfo.stickews.map(_.id)
     }
-  }.flatten
+  }.fwatten
 
-  // 3rd party media providers. eg. giphy for gifs
-  private def getMediaOriginProviders(mediaEntities: Seq[MediaEntity]): Seq[String] =
-    for {
-      mediaEntity <- mediaEntities
-      metadata <- mediaEntity.additionalMetadata.toSeq
-      mediaOrigin <- metadata.foundMediaOrigin
-    } yield {
-      mediaOrigin.provider
+  // 3wd p-pawty media p-pwovidews. (˘ω˘) e-eg. giphy fow gifs
+  pwivate def getmediaowiginpwovidews(mediaentities: seq[mediaentity]): seq[stwing] =
+    fow {
+      mediaentity <- m-mediaentities
+      m-metadata <- m-mediaentity.additionawmetadata.toseq
+      mediaowigin <- m-metadata.foundmediaowigin
+    } yiewd {
+      mediaowigin.pwovidew
     }
 
-  private def getIsManaged(mediaEntities: Seq[MediaEntity]): Boolean = {
-    for {
-      mediaEntity <- mediaEntities
-      metadata <- mediaEntity.additionalMetadata.toSeq
-      managementInfo <- metadata.managementInfo
-    } yield {
-      managementInfo.managed
+  pwivate d-def getismanaged(mediaentities: s-seq[mediaentity]): boowean = {
+    f-fow {
+      mediaentity <- mediaentities
+      m-metadata <- m-mediaentity.additionawmetadata.toseq
+      managementinfo <- metadata.managementinfo
+    } yiewd {
+      m-managementinfo.managed
     }
-  }.contains(true)
+  }.contains(twue)
 
-  private def getIs360(mediaEntities: Seq[MediaEntity]): Boolean = {
-    for {
-      mediaEntity <- mediaEntities
-      metadata <- mediaEntity.additionalMetadata.toSeq
-      info360 <- metadata.info360
-    } yield {
+  p-pwivate def getis360(mediaentities: seq[mediaentity]): boowean = {
+    fow {
+      mediaentity <- m-mediaentities
+      m-metadata <- m-mediaentity.additionawmetadata.toseq
+      i-info360 <- m-metadata.info360
+    } yiewd {
       info360.is360
     }
-  }.contains(Some(true))
+  }.contains(some(twue))
 
-  private def getViewCount(mediaEntities: Seq[MediaEntity]): Option[Long] = {
-    for {
-      mediaEntity <- mediaEntities
-      metadata <- mediaEntity.additionalMetadata.toSeq
-      engagementInfo <- metadata.engagementInfo
-      viewCounts <- engagementInfo.viewCount
-    } yield {
-      viewCounts
+  p-pwivate d-def getviewcount(mediaentities: seq[mediaentity]): o-option[wong] = {
+    f-fow {
+      mediaentity <- m-mediaentities
+      metadata <- mediaentity.additionawmetadata.toseq
+      e-engagementinfo <- metadata.engagementinfo
+      v-viewcounts <- e-engagementinfo.viewcount
+    } yiewd {
+      viewcounts
     }
-  }.reduceOption(_ max _)
+  }.weduceoption(_ m-max _)
 
-  // metadata defined by the user when uploading the image
-  private def getUserDefinedProductMetadataFeatures(
-    mediaEntities: Seq[MediaEntity]
-  ): Seq[UserDefinedProductMetadataFeatures] =
-    for {
-      mediaEntity <- mediaEntities
-      userDefinedMetadata <- mediaEntity.metadata
-    } yield {
-      UserDefinedProductMetadataFeatures(
-        isMonetizable = userDefinedMetadata.monetizable,
-        isEmbeddable = userDefinedMetadata.embeddable,
-        hasSelectedPreviewImage = Some(userDefinedMetadata.previewImage.nonEmpty),
-        hasTitle = userDefinedMetadata.title.map(_.nonEmpty),
-        hasDescription = userDefinedMetadata.description.map(_.nonEmpty),
-        hasVisitSiteCallToAction = userDefinedMetadata.callToActions.map(_.visitSite.nonEmpty),
-        hasAppInstallCallToAction = userDefinedMetadata.callToActions.map(_.appInstall.nonEmpty),
-        hasWatchNowCallToAction = userDefinedMetadata.callToActions.map(_.watchNow.nonEmpty)
+  // metadata defined by the usew when u-upwoading the image
+  p-pwivate def g-getusewdefinedpwoductmetadatafeatuwes(
+    mediaentities: seq[mediaentity]
+  ): seq[usewdefinedpwoductmetadatafeatuwes] =
+    f-fow {
+      mediaentity <- mediaentities
+      usewdefinedmetadata <- m-mediaentity.metadata
+    } y-yiewd {
+      usewdefinedpwoductmetadatafeatuwes(
+        i-ismonetizabwe = usewdefinedmetadata.monetizabwe, UwU
+        i-isembeddabwe = u-usewdefinedmetadata.embeddabwe, >_<
+        hassewectedpweviewimage = some(usewdefinedmetadata.pweviewimage.nonempty), σωσ
+        hastitwe = u-usewdefinedmetadata.titwe.map(_.nonempty), 🥺
+        hasdescwiption = usewdefinedmetadata.descwiption.map(_.nonempty), 🥺
+        h-hasvisitsitecawwtoaction = u-usewdefinedmetadata.cawwtoactions.map(_.visitsite.nonempty), ʘwʘ
+        hasappinstawwcawwtoaction = u-usewdefinedmetadata.cawwtoactions.map(_.appinstaww.nonempty), :3
+        haswatchnowcawwtoaction = u-usewdefinedmetadata.cawwtoactions.map(_.watchnow.nonempty)
       )
     }
 
-  private def getOptBooleanFromSeqOpt(
-    seqOpt: Seq[Option[Boolean]],
-    default: Boolean = false
-  ): Option[Boolean] = Some(
-    seqOpt.exists(boolOpt => boolOpt.contains(true))
+  pwivate d-def getoptbooweanfwomseqopt(
+    s-seqopt: seq[option[boowean]], (U ﹏ U)
+    defauwt: boowean = fawse
+  ): option[boowean] = some(
+    seqopt.exists(boowopt => boowopt.contains(twue))
   )
 
 }
 
-case class MediaSizeFeatures(width: Int, height: Int, resizeMethod: Int)
+case cwass mediasizefeatuwes(width: int, (U ﹏ U) height: int, ʘwʘ wesizemethod: int)
 
-case class PlaybackFeatures(
-  durationMs: Option[Int],
-  bitRate: Option[Int],
-  aspectRatioNum: Option[Short],
-  aspectRatioDen: Option[Short])
+case cwass p-pwaybackfeatuwes(
+  d-duwationms: option[int], >w<
+  bitwate: option[int], rawr x3
+  a-aspectwationum: o-option[showt], OwO
+  a-aspectwatioden: option[showt])
 
-case class UserDefinedProductMetadataFeatures(
-  isMonetizable: Option[Boolean],
-  isEmbeddable: Option[Boolean],
-  hasSelectedPreviewImage: Option[Boolean],
-  hasTitle: Option[Boolean],
-  hasDescription: Option[Boolean],
-  hasVisitSiteCallToAction: Option[Boolean],
-  hasAppInstallCallToAction: Option[Boolean],
-  hasWatchNowCallToAction: Option[Boolean])
+c-case cwass usewdefinedpwoductmetadatafeatuwes(
+  i-ismonetizabwe: o-option[boowean], ^•ﻌ•^
+  isembeddabwe: o-option[boowean], >_<
+  hassewectedpweviewimage: o-option[boowean], OwO
+  h-hastitwe: option[boowean], >_<
+  hasdescwiption: o-option[boowean], (ꈍᴗꈍ)
+  h-hasvisitsitecawwtoaction: o-option[boowean], >w<
+  h-hasappinstawwcawwtoaction: o-option[boowean], (U ﹏ U)
+  h-haswatchnowcawwtoaction: o-option[boowean])

@@ -1,208 +1,208 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.base
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.follow_recommendations.common.candidate_sources.base.RealGraphExpansionRepository.DefaultScore
-import com.twitter.follow_recommendations.common.candidate_sources.base.RealGraphExpansionRepository.MaxNumIntermediateNodesToKeep
-import com.twitter.follow_recommendations.common.candidate_sources.base.RealGraphExpansionRepository.FirstDegreeCandidatesTimeout
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models._
-import com.twitter.onboarding.relevance.features.ymbii.ExpansionCandidateScores
-import com.twitter.onboarding.relevance.features.ymbii.RawYMBIICandidateFeatures
-import com.twitter.onboarding.relevance.store.thriftscala.CandidatesFollowedV1
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.util.Duration
-import scala.collection.immutable
-import scala.util.control.NonFatal
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.finagwe.utiw.defauwttimew
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.base.weawgwaphexpansionwepositowy.defauwtscowe
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.base.weawgwaphexpansionwepositowy.maxnumintewmediatenodestokeep
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.base.weawgwaphexpansionwepositowy.fiwstdegweecandidatestimeout
+impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+impowt com.twittew.fowwow_wecommendations.common.modews._
+i-impowt com.twittew.onboawding.wewevance.featuwes.ymbii.expansioncandidatescowes
+impowt c-com.twittew.onboawding.wewevance.featuwes.ymbii.wawymbiicandidatefeatuwes
+impowt c-com.twittew.onboawding.wewevance.stowe.thwiftscawa.candidatesfowwowedv1
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.stwato.cwient.fetchew
+i-impowt c-com.twittew.utiw.duwation
+impowt scawa.cowwection.immutabwe
+impowt scawa.utiw.contwow.nonfataw
 
-private final case class InterestExpansionCandidate(
-  userID: Long,
-  score: Double,
-  features: RawYMBIICandidateFeatures)
+p-pwivate finaw case cwass intewestexpansioncandidate(
+  usewid: wong, nyaa~~
+  scowe: doubwe, /(^•ω•^)
+  featuwes: w-wawymbiicandidatefeatuwes)
 
-abstract class RealGraphExpansionRepository[Request](
-  realgraphExpansionStore: Fetcher[
-    Long,
-    Unit,
-    CandidatesFollowedV1
-  ],
-  override val identifier: CandidateSourceIdentifier,
-  statsReceiver: StatsReceiver = NullStatsReceiver,
-  maxUnderlyingCandidatesToQuery: Int = 50,
-  maxCandidatesToReturn: Int = 40,
-  overrideUnderlyingTimeout: Option[Duration] = None,
-  appendSocialProof: Boolean = false)
-    extends CandidateSource[
-      Request,
-      CandidateUser
+abstwact cwass weawgwaphexpansionwepositowy[wequest](
+  w-weawgwaphexpansionstowe: f-fetchew[
+    wong, (U ﹏ U)
+    u-unit, 😳😳😳
+    c-candidatesfowwowedv1
+  ], >w<
+  ovewwide vaw identifiew: c-candidatesouwceidentifiew, XD
+  statsweceivew: statsweceivew = n-nyuwwstatsweceivew, o.O
+  maxundewwyingcandidatestoquewy: int = 50, mya
+  maxcandidatestowetuwn: int = 40, 🥺
+  ovewwideundewwyingtimeout: o-option[duwation] = nyone, ^^;;
+  appendsociawpwoof: b-boowean = fawse)
+    e-extends candidatesouwce[
+      w-wequest, :3
+      candidateusew
     ] {
 
-  val underlyingCandidateSource: Seq[
-    CandidateSource[
-      Request,
-      CandidateUser
+  vaw undewwyingcandidatesouwce: s-seq[
+    c-candidatesouwce[
+      wequest, (U ﹏ U)
+      c-candidateusew
     ]
   ]
 
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName).scope(identifier.name)
-  private val underlyingCandidateSourceFailureStats =
-    stats.scope("underlying_candidate_source_failure")
+  p-pwivate vaw stats = statsweceivew.scope(this.getcwass.getsimpwename).scope(identifiew.name)
+  p-pwivate vaw undewwyingcandidatesouwcefaiwuwestats =
+    s-stats.scope("undewwying_candidate_souwce_faiwuwe")
 
-  def apply(
-    request: Request,
-  ): Stitch[Seq[CandidateUser]] = {
+  def appwy(
+    wequest: wequest, OwO
+  ): s-stitch[seq[candidateusew]] = {
 
-    val candidatesFromUnderlyingSourcesStitch: Seq[Stitch[Seq[CandidateUser]]] =
-      underlyingCandidateSource.map { candidateSource =>
-        candidateSource
-          .apply(request)
-          .within(overrideUnderlyingTimeout.getOrElse(FirstDegreeCandidatesTimeout))(
-            DefaultTimer
+    vaw c-candidatesfwomundewwyingsouwcesstitch: seq[stitch[seq[candidateusew]]] =
+      undewwyingcandidatesouwce.map { candidatesouwce =>
+        c-candidatesouwce
+          .appwy(wequest)
+          .within(ovewwideundewwyingtimeout.getowewse(fiwstdegweecandidatestimeout))(
+            d-defauwttimew
           )
-          .handle {
-            case NonFatal(e) =>
-              underlyingCandidateSourceFailureStats
-                .counter(candidateSource.identifier.name, e.getClass.getSimpleName).incr()
-              Seq.empty
+          .handwe {
+            case nyonfataw(e) =>
+              undewwyingcandidatesouwcefaiwuwestats
+                .countew(candidatesouwce.identifiew.name, 😳😳😳 e.getcwass.getsimpwename).incw()
+              seq.empty
           }
       }
 
-    for {
-      underlyingCandidatesFromEachAlgo <- Stitch.collect(candidatesFromUnderlyingSourcesStitch)
-      // The first algorithm in the list has the highest priority. Depending on if its not
-      // populated, fall back to other algorithms. Once a particular algorithm is chosen, only
-      // take the top few candidates from the underlying store for expansion.
-      underlyingCandidatesTuple =
-        underlyingCandidatesFromEachAlgo
-          .zip(underlyingCandidateSource)
-          .find(_._1.nonEmpty)
+    fow {
+      undewwyingcandidatesfwomeachawgo <- s-stitch.cowwect(candidatesfwomundewwyingsouwcesstitch)
+      // t-the fiwst awgowithm in the wist h-has the highest p-pwiowity. (ˆ ﻌ ˆ)♡ depending o-on if its nyot
+      // popuwated, XD faww back to othew awgowithms. (ˆ ﻌ ˆ)♡ o-once a pawticuwaw awgowithm is chosen, ( ͡o ω ͡o ) onwy
+      // take the top few candidates f-fwom the undewwying stowe f-fow expansion. rawr x3
+      u-undewwyingcandidatestupwe =
+        u-undewwyingcandidatesfwomeachawgo
+          .zip(undewwyingcandidatesouwce)
+          .find(_._1.nonempty)
 
-      underlyingAlgorithmUsed: Option[CandidateSourceIdentifier] = underlyingCandidatesTuple.map {
-        case (_, candidateSource) => candidateSource.identifier
+      undewwyingawgowithmused: o-option[candidatesouwceidentifiew] = u-undewwyingcandidatestupwe.map {
+        c-case (_, nyaa~~ candidatesouwce) => c-candidatesouwce.identifiew
       }
 
-      // Take maxUnderlyingCandidatesToQuery to query realgraphExpansionStore
-      underlyingCandidates =
-        underlyingCandidatesTuple
+      // take maxundewwyingcandidatestoquewy t-to quewy weawgwaphexpansionstowe
+      u-undewwyingcandidates =
+        u-undewwyingcandidatestupwe
           .map {
-            case (candidates, candidateSource) =>
+            c-case (candidates, >_< c-candidatesouwce) =>
               stats
-                .scope("underlyingAlgorithmUsedScope").counter(
-                  candidateSource.identifier.name).incr()
+                .scope("undewwyingawgowithmusedscope").countew(
+                  candidatesouwce.identifiew.name).incw()
               candidates
           }
-          .getOrElse(Seq.empty)
-          .sortBy(_.score.getOrElse(DefaultScore))(Ordering.Double.reverse)
-          .take(maxUnderlyingCandidatesToQuery)
+          .getowewse(seq.empty)
+          .sowtby(_.scowe.getowewse(defauwtscowe))(owdewing.doubwe.wevewse)
+          .take(maxundewwyingcandidatestoquewy)
 
-      underlyingCandidateMap: Map[Long, Double] = underlyingCandidates.map { candidate =>
-        (candidate.id, candidate.score.getOrElse(DefaultScore))
-      }.toMap
+      u-undewwyingcandidatemap: map[wong, ^^;; doubwe] = undewwyingcandidates.map { candidate =>
+        (candidate.id, (ˆ ﻌ ˆ)♡ candidate.scowe.getowewse(defauwtscowe))
+      }.tomap
 
-      expansionCandidates <-
-        Stitch
-          .traverse(underlyingCandidateMap.keySet.toSeq) { candidateId =>
-            Stitch.join(
-              Stitch.value(candidateId),
-              realgraphExpansionStore.fetch(candidateId).map(_.v))
+      expansioncandidates <-
+        s-stitch
+          .twavewse(undewwyingcandidatemap.keyset.toseq) { candidateid =>
+            stitch.join(
+              stitch.vawue(candidateid), ^^;;
+              weawgwaphexpansionstowe.fetch(candidateid).map(_.v))
 
-          }.map(_.toMap)
+          }.map(_.tomap)
 
-      rerankedCandidates: Seq[InterestExpansionCandidate] =
-        rerankCandidateExpansions(underlyingCandidateMap, expansionCandidates)
+      w-wewankedcandidates: s-seq[intewestexpansioncandidate] =
+        w-wewankcandidateexpansions(undewwyingcandidatemap, (⑅˘꒳˘) expansioncandidates)
 
-      rerankedCandidatesFiltered = rerankedCandidates.take(maxCandidatesToReturn)
+      w-wewankedcandidatesfiwtewed = wewankedcandidates.take(maxcandidatestowetuwn)
 
-    } yield {
-      rerankedCandidatesFiltered.map { candidate =>
-        val socialProofReason = if (appendSocialProof) {
-          val socialProofIds = candidate.features.expansionCandidateScores
-            .map(_.intermediateCandidateId)
-          Some(
-            Reason(Some(
-              AccountProof(followProof = Some(FollowProof(socialProofIds, socialProofIds.size))))))
-        } else {
-          None
+    } y-yiewd {
+      w-wewankedcandidatesfiwtewed.map { candidate =>
+        vaw sociawpwoofweason = if (appendsociawpwoof) {
+          vaw sociawpwoofids = c-candidate.featuwes.expansioncandidatescowes
+            .map(_.intewmediatecandidateid)
+          some(
+            w-weason(some(
+              accountpwoof(fowwowpwoof = s-some(fowwowpwoof(sociawpwoofids, rawr x3 s-sociawpwoofids.size))))))
+        } ewse {
+          nyone
         }
-        CandidateUser(
-          id = candidate.userID,
-          score = Some(candidate.score),
-          reason = socialProofReason,
-          userCandidateSourceDetails = Some(
-            UserCandidateSourceDetails(
-              primaryCandidateSource = Some(identifier),
-              candidateSourceFeatures = Map(identifier -> Seq(candidate.features))
+        c-candidateusew(
+          i-id = candidate.usewid, (///ˬ///✿)
+          s-scowe = s-some(candidate.scowe), 🥺
+          weason = sociawpwoofweason, >_<
+          usewcandidatesouwcedetaiws = some(
+            u-usewcandidatesouwcedetaiws(
+              p-pwimawycandidatesouwce = some(identifiew), UwU
+              candidatesouwcefeatuwes = m-map(identifiew -> seq(candidate.featuwes))
             ))
-        ).addAddressBookMetadataIfAvailable(underlyingAlgorithmUsed.toSeq)
+        ).addaddwessbookmetadataifavaiwabwe(undewwyingawgowithmused.toseq)
       }
     }
   }
 
   /**
-   * Expands underlying candidates, returning them in sorted order.
+   * e-expands u-undewwying candidates, >_< wetuwning t-them in sowted owdew. -.-
    *
-   * @param underlyingCandidatesMap A map from underlying candidate id to score
-   * @param expansionCandidateMap A map from underlying candidate id to optional expansion candidates
-   * @return A sorted sequence of expansion candidates and associated scores
+   * @pawam undewwyingcandidatesmap a map fwom undewwying candidate i-id to scowe
+   * @pawam e-expansioncandidatemap a map fwom undewwying candidate i-id to optionaw e-expansion candidates
+   * @wetuwn a sowted sequence of expansion candidates and a-associated scowes
    */
-  private def rerankCandidateExpansions(
-    underlyingCandidatesMap: Map[Long, Double],
-    expansionCandidateMap: Map[Long, Option[CandidatesFollowedV1]]
-  ): Seq[InterestExpansionCandidate] = {
+  pwivate def wewankcandidateexpansions(
+    undewwyingcandidatesmap: map[wong, mya doubwe], >w<
+    e-expansioncandidatemap: map[wong, (U ﹏ U) option[candidatesfowwowedv1]]
+  ): s-seq[intewestexpansioncandidate] = {
 
-    // extract features
-    val candidates: Seq[(Long, ExpansionCandidateScores)] = for {
-      (underlyingCandidateId, underlyingCandidateScore) <- underlyingCandidatesMap.toSeq
-      expansionCandidates =
-        expansionCandidateMap
-          .get(underlyingCandidateId)
-          .flatten
-          .map(_.candidatesFollowed)
-          .getOrElse(Seq.empty)
-      expansionCandidate <- expansionCandidates
-    } yield expansionCandidate.candidateID -> ExpansionCandidateScores(
-      underlyingCandidateId,
-      Some(underlyingCandidateScore),
-      Some(expansionCandidate.score)
+    // e-extwact featuwes
+    vaw candidates: seq[(wong, expansioncandidatescowes)] = f-fow {
+      (undewwyingcandidateid, 😳😳😳 u-undewwyingcandidatescowe) <- undewwyingcandidatesmap.toseq
+      expansioncandidates =
+        expansioncandidatemap
+          .get(undewwyingcandidateid)
+          .fwatten
+          .map(_.candidatesfowwowed)
+          .getowewse(seq.empty)
+      e-expansioncandidate <- expansioncandidates
+    } y-yiewd expansioncandidate.candidateid -> expansioncandidatescowes(
+      undewwyingcandidateid, o.O
+      some(undewwyingcandidatescowe), òωó
+      s-some(expansioncandidate.scowe)
     )
 
-    // merge intermediate nodes for the same candidate
-    val dedupedCandidates: Seq[(Long, Seq[ExpansionCandidateScores])] =
-      candidates.groupBy(_._1).mapValues(_.map(_._2).sortBy(_.intermediateCandidateId)).toSeq
+    // mewge intewmediate n-nyodes f-fow the same candidate
+    vaw d-dedupedcandidates: seq[(wong, 😳😳😳 seq[expansioncandidatescowes])] =
+      c-candidates.gwoupby(_._1).mapvawues(_.map(_._2).sowtby(_.intewmediatecandidateid)).toseq
 
-    // score the candidate
-    val candidatesWithTotalScore: Seq[((Long, Seq[ExpansionCandidateScores]), Double)] =
-      dedupedCandidates.map { candidate: (Long, Seq[ExpansionCandidateScores]) =>
+    // s-scowe the c-candidate
+    vaw candidateswithtotawscowe: s-seq[((wong, σωσ s-seq[expansioncandidatescowes]), (⑅˘꒳˘) doubwe)] =
+      dedupedcandidates.map { c-candidate: (wong, (///ˬ///✿) s-seq[expansioncandidatescowes]) =>
         (
-          candidate,
-          candidate._2.map { ieScore: ExpansionCandidateScores =>
-            ieScore.scoreFromUserToIntermediateCandidate.getOrElse(DefaultScore) *
-              ieScore.scoreFromIntermediateToExpansionCandidate.getOrElse(DefaultScore)
+          c-candidate, 🥺
+          candidate._2.map { iescowe: expansioncandidatescowes =>
+            iescowe.scowefwomusewtointewmediatecandidate.getowewse(defauwtscowe) *
+              i-iescowe.scowefwomintewmediatetoexpansioncandidate.getowewse(defauwtscowe)
           }.sum)
       }
 
-    // sort candidate by score
-    for {
-      ((candidate, edges), score) <- candidatesWithTotalScore.sortBy(_._2)(Ordering[Double].reverse)
-    } yield InterestExpansionCandidate(
-      candidate,
-      score,
-      RawYMBIICandidateFeatures(
-        edges.size,
-        edges.take(MaxNumIntermediateNodesToKeep).to[immutable.Seq])
+    // sowt candidate b-by scowe
+    fow {
+      ((candidate, OwO e-edges), scowe) <- candidateswithtotawscowe.sowtby(_._2)(owdewing[doubwe].wevewse)
+    } yiewd intewestexpansioncandidate(
+      candidate, >w<
+      s-scowe, 🥺
+      w-wawymbiicandidatefeatuwes(
+        e-edges.size, nyaa~~
+        e-edges.take(maxnumintewmediatenodestokeep).to[immutabwe.seq])
     )
   }
 
 }
 
-object RealGraphExpansionRepository {
-  private val FirstDegreeCandidatesTimeout: Duration = 250.milliseconds
-  private val MaxNumIntermediateNodesToKeep = 20
-  private val DefaultScore = 0.0d
+object weawgwaphexpansionwepositowy {
+  p-pwivate vaw fiwstdegweecandidatestimeout: duwation = 250.miwwiseconds
+  pwivate vaw maxnumintewmediatenodestokeep = 20
+  pwivate vaw defauwtscowe = 0.0d
 
 }

@@ -1,82 +1,82 @@
-package com.twitter.product_mixer.core.service.debug_query
+package com.twittew.pwoduct_mixew.cowe.sewvice.debug_quewy
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicyEvaluator
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.Authentication
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.turntable.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt c-com.twittew.inject.annotations.fwag
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.access_powicy.accesspowicy
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.access_powicy.accesspowicyevawuatow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiewstack
+i-impowt com.twittew.pwoduct_mixew.cowe.moduwe.pwoduct_mixew_fwags.pwoductmixewfwagmoduwe.sewvicewocaw
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.authentication
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.badwequest
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+impowt com.twittew.tuwntabwe.{thwiftscawa => t-t}
+impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
 /**
- * Basic class that provides a verification method for checking if a call to our debugging
- * features is allowed/authorized to make said call.
- * @param isServiceLocal Whether the service is being run locally.
+ * basic cwass that p-pwovides a vewification method fow checking if a caww to ouw debugging
+ * f-featuwes is awwowed/authowized t-to make s-said caww. 😳
+ * @pawam issewvicewocaw whethew the sewvice is being wun wocawwy. 😳
  */
-@Singleton
-class AuthorizationService @Inject() (@Flag(ServiceLocal) isServiceLocal: Boolean) {
-  import AuthorizationService._
+@singweton
+c-cwass authowizationsewvice @inject() (@fwag(sewvicewocaw) issewvicewocaw: boowean) {
+  impowt authowizationsewvice._
 
   /**
-   * Check whether a call to a given product is authorized. Throws an [[UnauthorizedServiceCallException]]
-   * if not.
-   * @param requestingServiceIdentifier The Service Identifier of the calling service
-   * @param productAccessPolicies The access policies of the product being called.
-   * @param requestContext The request context of the caller.
+   * check whethew a c-caww to a given pwoduct is authowized. σωσ t-thwows an [[unauthowizedsewvicecawwexception]]
+   * i-if not. rawr x3
+   * @pawam w-wequestingsewviceidentifiew t-the sewvice identifiew of the cawwing s-sewvice
+   * @pawam pwoductaccesspowicies the a-access powicies of the pwoduct being cawwed. OwO
+   * @pawam wequestcontext the wequest context of the c-cawwew. /(^•ω•^)
    */
-  def verifyRequestAuthorization(
-    componentIdentifierStack: ComponentIdentifierStack,
-    requestingServiceIdentifier: ServiceIdentifier,
-    productAccessPolicies: Set[AccessPolicy],
-    requestContext: t.TurntableRequestContext
-  ): Unit = {
-    val isServiceCallAuthorized =
-      requestingServiceIdentifier.role == AllowedServiceIdentifierRole && requestingServiceIdentifier.service == AllowedServiceIdentifierName
-    val userLdapGroups = requestContext.ldapGroups.map(_.toSet)
+  def vewifywequestauthowization(
+    c-componentidentifiewstack: c-componentidentifiewstack, 😳😳😳
+    wequestingsewviceidentifiew: s-sewviceidentifiew, ( ͡o ω ͡o )
+    pwoductaccesspowicies: set[accesspowicy], >_<
+    wequestcontext: t-t.tuwntabwewequestcontext
+  ): u-unit = {
+    vaw issewvicecawwauthowized =
+      w-wequestingsewviceidentifiew.wowe == a-awwowedsewviceidentifiewwowe && wequestingsewviceidentifiew.sewvice == a-awwowedsewviceidentifiewname
+    vaw u-usewwdapgwoups = wequestcontext.wdapgwoups.map(_.toset)
 
-    val accessPolicyAllowed = AccessPolicyEvaluator.evaluate(
-      productAccessPolicies = productAccessPolicies,
-      userLdapGroups = userLdapGroups.getOrElse(Set.empty)
+    vaw a-accesspowicyawwowed = accesspowicyevawuatow.evawuate(
+      p-pwoductaccesspowicies = pwoductaccesspowicies, >w<
+      u-usewwdapgwoups = u-usewwdapgwoups.getowewse(set.empty)
     )
 
-    if (!isServiceLocal && !isServiceCallAuthorized) {
-      throw new UnauthorizedServiceCallException(
-        requestingServiceIdentifier,
-        componentIdentifierStack)
+    if (!issewvicewocaw && !issewvicecawwauthowized) {
+      thwow nyew unauthowizedsewvicecawwexception(
+        wequestingsewviceidentifiew, rawr
+        componentidentifiewstack)
     }
 
-    if (!isServiceLocal && !accessPolicyAllowed) {
-      throw new InsufficientAccessException(
-        userLdapGroups,
-        productAccessPolicies,
-        componentIdentifierStack)
+    if (!issewvicewocaw && !accesspowicyawwowed) {
+      t-thwow nyew insufficientaccessexception(
+        u-usewwdapgwoups, 😳
+        pwoductaccesspowicies, >w<
+        c-componentidentifiewstack)
     }
   }
 }
 
-object AuthorizationService {
-  final val AllowedServiceIdentifierRole = "turntable"
-  final val AllowedServiceIdentifierName = "turntable"
+o-object a-authowizationsewvice {
+  finaw vaw awwowedsewviceidentifiewwowe = "tuwntabwe"
+  finaw vaw awwowedsewviceidentifiewname = "tuwntabwe"
 }
 
-class UnauthorizedServiceCallException(
-  serviceIdentifier: ServiceIdentifier,
-  componentIdentifierStack: ComponentIdentifierStack)
-    extends PipelineFailure(
-      BadRequest,
-      s"Unexpected Service tried to call Turntable Debug endpoint: ${ServiceIdentifier.asString(serviceIdentifier)}",
-      componentStack = Some(componentIdentifierStack))
+c-cwass unauthowizedsewvicecawwexception(
+  sewviceidentifiew: sewviceidentifiew, (⑅˘꒳˘)
+  componentidentifiewstack: componentidentifiewstack)
+    e-extends pipewinefaiwuwe(
+      badwequest, OwO
+      s-s"unexpected s-sewvice twied t-to caww tuwntabwe debug endpoint: ${sewviceidentifiew.asstwing(sewviceidentifiew)}", (ꈍᴗꈍ)
+      c-componentstack = some(componentidentifiewstack))
 
-class InsufficientAccessException(
-  ldapGroups: Option[Set[String]],
-  desiredAccessPolicies: Set[AccessPolicy],
-  componentIdentifierStack: ComponentIdentifierStack)
-    extends PipelineFailure(
-      Authentication,
-      s"Request did not satisfy access policies: $desiredAccessPolicies with ldapGroups = $ldapGroups",
-      componentStack = Some(componentIdentifierStack))
+c-cwass insufficientaccessexception(
+  w-wdapgwoups: o-option[set[stwing]], 😳
+  desiwedaccesspowicies: set[accesspowicy], 😳😳😳
+  componentidentifiewstack: c-componentidentifiewstack)
+    e-extends p-pipewinefaiwuwe(
+      a-authentication, mya
+      s-s"wequest did nyot satisfy access powicies: $desiwedaccesspowicies with wdapgwoups = $wdapgwoups", mya
+      c-componentstack = some(componentidentifiewstack))

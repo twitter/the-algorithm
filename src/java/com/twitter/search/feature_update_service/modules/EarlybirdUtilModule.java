@@ -1,13 +1,13 @@
-package com.twitter.search.feature_update_service.modules;
+package com.twittew.seawch.featuwe_update_sewvice.moduwes;
 
-import com.twitter.app.Flaggable;
-import com.twitter.inject.TwitterModule;
+impowt c-com.twittew.app.fwaggabwe;
+i-impowt c-com.twittew.inject.twittewmoduwe;
 
-public class EarlybirdUtilModule extends TwitterModule {
-  public static final String PENGUIN_VERSIONS_FLAG = "penguin.versions";
+p-pubwic cwass e-eawwybiwdutiwmoduwe e-extends t-twittewmoduwe {
+  p-pubwic static finaw stwing penguin_vewsions_fwag = "penguin.vewsions";
 
-  public EarlybirdUtilModule() {
-    flag(PENGUIN_VERSIONS_FLAG, "penguin_6",
-        "Comma-separated list of supported Penguin versions.", Flaggable.ofString());
+  pubwic eawwybiwdutiwmoduwe() {
+    fwag(penguin_vewsions_fwag, σωσ "penguin_6", >_<
+        "comma-sepawated wist of suppowted p-penguin vewsions.", :3 fwaggabwe.ofstwing());
   }
 }

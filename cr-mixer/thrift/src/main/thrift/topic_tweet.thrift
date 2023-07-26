@@ -1,28 +1,28 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namespace java com.twittew.cw_mixew.thwiftjava
+#@namespace scawa c-com.twittew.cw_mixew.thwiftscawa
+#@namespace s-stwato c-com.twittew.cw_mixew
 
-include "com/twitter/product_mixer/core/client_context.thrift"
-include "product.thrift"
-include "product_context.thrift"
-include "source_type.thrift"
+i-incwude "com/twittew/pwoduct_mixew/cowe/cwient_context.thwift"
+i-incwude "pwoduct.thwift"
+i-incwude "pwoduct_context.thwift"
+i-incwude "souwce_type.thwift"
 
 
-struct TopicTweetRequest {
-    1: required client_context.ClientContext clientContext
-    2: required product.Product product
-    3: required list<i64> topicIds
-    5: optional product_context.ProductContext productContext
-    6: optional list<i64> excludedTweetIds (personalDataType = 'TweetId')
-} (persisted='true', hasPersonalData='true')
+s-stwuct topictweetwequest {
+    1: wequiwed cwient_context.cwientcontext cwientcontext
+    2: wequiwed pwoduct.pwoduct pwoduct
+    3: w-wequiwed wist<i64> topicids
+    5: optionaw p-pwoduct_context.pwoductcontext pwoductcontext
+    6: o-optionaw wist<i64> excwudedtweetids (pewsonawdatatype = 'tweetid')
+} (pewsisted='twue', /(^•ω•^) haspewsonawdata='twue')
 
-struct TopicTweet {
-    1: required i64 tweetId (personalDataType = 'TweetId')
-    2: required double score
-    3: required source_type.SimilarityEngineType similarityEngineType
-} (persisted='true', hasPersonalData = 'true')
+stwuct t-topictweet {
+    1: wequiwed i64 t-tweetid (pewsonawdatatype = 'tweetid')
+    2: wequiwed d-doubwe scowe
+    3: wequiwed souwce_type.simiwawityenginetype simiwawityenginetype
+} (pewsisted='twue', rawr haspewsonawdata = 'twue')
 
-struct TopicTweetResponse {
-    1: required map<i64, list<TopicTweet>> tweets
-} (persisted='true')
+s-stwuct topictweetwesponse {
+    1: wequiwed map<i64, OwO wist<topictweet>> t-tweets
+} (pewsisted='twue')
 

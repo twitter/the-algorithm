@@ -1,27 +1,27 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
+impowt c-com.twittew.fowwow_wecommendations.{thwiftscawa => t-t}
+impowt com.twittew.fowwow_wecommendations.wogging.{thwiftscawa => o-offwine}
 
-case class RankingInfo(
-  scores: Option[Scores],
-  rank: Option[Int]) {
+c-case cwass wankinginfo(
+  s-scowes: o-option[scowes],
+  w-wank: option[int]) {
 
-  def toThrift: t.RankingInfo = {
-    t.RankingInfo(scores.map(_.toThrift), rank)
+  d-def tothwift: t.wankinginfo = {
+    t.wankinginfo(scowes.map(_.tothwift), >_< wank)
   }
 
-  def toOfflineThrift: offline.RankingInfo = {
-    offline.RankingInfo(scores.map(_.toOfflineThrift), rank)
+  def tooffwinethwift: o-offwine.wankinginfo = {
+    offwine.wankinginfo(scowes.map(_.tooffwinethwift), mya wank)
   }
 }
 
-object RankingInfo {
+o-object wankinginfo {
 
-  def fromThrift(rankingInfo: t.RankingInfo): RankingInfo = {
-    RankingInfo(
-      scores = rankingInfo.scores.map(Scores.fromThrift),
-      rank = rankingInfo.rank
+  def f-fwomthwift(wankinginfo: t.wankinginfo): wankinginfo = {
+    wankinginfo(
+      s-scowes = wankinginfo.scowes.map(scowes.fwomthwift), mya
+      wank = w-wankinginfo.wank
     )
   }
 

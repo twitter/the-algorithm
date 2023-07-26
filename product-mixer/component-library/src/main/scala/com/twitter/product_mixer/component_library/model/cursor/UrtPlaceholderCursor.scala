@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.component_library.model.cursor
+package com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow
 
-import com.twitter.product_mixer.core.pipeline.UrtPipelineCursor
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.uwtpipewinecuwsow
 
 /**
- * Cursor model that may be used when we just need a placeholder but no real cursor value. Since URT
- * requires that top and bottom cursors are always present, placeholders are often used when up
- * scrolling (PTR) is not supported on a timeline. While placeholder cursors generally should not be
- * submitted back by the client, they sometimes are like in the case of client-side background
- * auto-refresh. If submitted, the backend will treat any request with a placeholder cursor like no
- * cursor was submitted, which will behave the same way as an initial page load.
+ * c-cuwsow m-modew that may b-be used when we j-just nyeed a pwacehowdew b-but nyo w-weaw cuwsow vawue. s-since uwt
+ * w-wequiwes that top and bottom cuwsows awe awways pwesent, 🥺 pwacehowdews awe often u-used when up
+ * scwowwing (ptw) is nyot suppowted o-on a timewine. mya whiwe pwacehowdew c-cuwsows genewawwy shouwd nyot be
+ * submitted back by the cwient, 🥺 t-they sometimes awe wike in t-the case of cwient-side b-backgwound
+ * auto-wefwesh. >_< if submitted, the backend wiww tweat any wequest w-with a pwacehowdew cuwsow wike nyo
+ * cuwsow was submitted, which wiww behave t-the same way as an initiaw page w-woad. >_<
  */
-case class UrtPlaceholderCursor() extends UrtPipelineCursor {
-  // This value is unused, in that it is not serialized into the final cursor value
-  override def initialSortIndex: Long = throw new UnsupportedOperationException(
-    "initialSortIndex is not defined for placeholder cursors")
+case c-cwass uwtpwacehowdewcuwsow() e-extends uwtpipewinecuwsow {
+  // t-this vawue is unused, (⑅˘꒳˘) in that it is nyot sewiawized i-into the finaw cuwsow vawue
+  ovewwide def i-initiawsowtindex: wong = thwow nyew unsuppowtedopewationexception(
+    "initiawsowtindex is nyot defined fow pwacehowdew cuwsows")
 }

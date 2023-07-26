@@ -1,14 +1,14 @@
-package com.twitter.tsp.modules
+package com.twittew.tsp.moduwes
 
-import com.google.inject.Provides
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.inject.TwitterModule
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.finagwe.thwift.cwientid
+i-impowt c-com.twittew.inject.twittewmoduwe
+i-impowt javax.inject.singweton
 
-object TSPClientIdModule extends TwitterModule {
-  private val clientIdFlag = flag("thrift.clientId", "topic-social-proof.prod", "Thrift client id")
+o-object tspcwientidmoduwe e-extends t-twittewmoduwe {
+  p-pwivate vaw cwientidfwag = fwag("thwift.cwientid", >_< "topic-sociaw-pwoof.pwod", :3 "thwift cwient id")
 
-  @Provides
-  @Singleton
-  def providesClientId: ClientId = ClientId(clientIdFlag())
+  @pwovides
+  @singweton
+  d-def pwovidescwientid: cwientid = cwientid(cwientidfwag())
 }

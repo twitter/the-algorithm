@@ -1,25 +1,25 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.inferred_topic
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.adaptews.infewwed_topic
 
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.timelines.prediction.common.adapters.TimelinesMutatingAdapterBase
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import scala.collection.JavaConverters._
+impowt c-com.twittew.mw.api.featuwe
+i-impowt com.twittew.mw.api.featuwecontext
+i-impowt c-com.twittew.mw.api.wichdatawecowd
+i-impowt com.twittew.timewines.pwediction.common.adaptews.timewinesmutatingadaptewbase
+i-impowt com.twittew.timewines.pwediction.featuwes.common.timewinesshawedfeatuwes
+i-impowt scawa.cowwection.javaconvewtews._
 
-object InferredTopicAdapter extends TimelinesMutatingAdapterBase[Map[Long, Double]] {
+o-object infewwedtopicadaptew extends timewinesmutatingadaptewbase[map[wong, :3 doubwe]] {
 
-  override val getFeatureContext: FeatureContext = new FeatureContext(
-    TimelinesSharedFeatures.INFERRED_TOPIC_IDS)
+  ovewwide v-vaw getfeatuwecontext: featuwecontext = nyew f-featuwecontext(
+    timewinesshawedfeatuwes.infewwed_topic_ids)
 
-  override val commonFeatures: Set[Feature[_]] = Set.empty
+  o-ovewwide vaw commonfeatuwes: set[featuwe[_]] = set.empty
 
-  override def setFeatures(
-    inferredTopicFeatures: Map[Long, Double],
-    richDataRecord: RichDataRecord
-  ): Unit = {
-    richDataRecord.setFeatureValue(
-      TimelinesSharedFeatures.INFERRED_TOPIC_IDS,
-      inferredTopicFeatures.keys.map(_.toString).toSet.asJava)
+  ovewwide d-def setfeatuwes(
+    infewwedtopicfeatuwes: m-map[wong, 😳😳😳 doubwe], -.-
+    w-wichdatawecowd: wichdatawecowd
+  ): unit = {
+    wichdatawecowd.setfeatuwevawue(
+      timewinesshawedfeatuwes.infewwed_topic_ids, ( ͡o ω ͡o )
+      infewwedtopicfeatuwes.keys.map(_.tostwing).toset.asjava)
   }
 }

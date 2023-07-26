@@ -1,33 +1,33 @@
-package com.twitter.unified_user_actions.adapter.uua_aggregates
+package com.twittew.unified_usew_actions.adaptew.uua_aggwegates
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.unified_user_actions.adapter.AbstractAdapter
-import com.twitter.unified_user_actions.thriftscala._
+impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.unified_usew_actions.adaptew.abstwactadaptew
+i-impowt com.twittew.unified_usew_actions.thwiftscawa._
 
 /**
- * The main purpose of the rekey adapter and the rekey service is to not break the existing
- * customers with the existing Unkeyed and also making the value as a super light-weight schema.
- * After we rekey from Unkeyed to Long (tweetId), downstream KafkaStreams can directly consume
- * without repartitioning.
+ * t-the main puwpose o-of the wekey adaptew a-and the wekey s-sewvice is to n-nyot bweak the existing
+ * customews with the existing unkeyed and awso making t-the vawue as a supew wight-weight schema. (⑅˘꒳˘)
+ * aftew w-we wekey fwom unkeyed to wong (tweetid), (///ˬ///✿) d-downstweam kafkastweams can diwectwy consume
+ * without w-wepawtitioning. 😳😳😳
  */
-class RekeyUuaAdapter extends AbstractAdapter[UnifiedUserAction, Long, KeyedUuaTweet] {
+cwass wekeyuuaadaptew extends a-abstwactadaptew[unifiedusewaction, 🥺 w-wong, keyeduuatweet] {
 
-  import RekeyUuaAdapter._
-  override def adaptOneToKeyedMany(
-    input: UnifiedUserAction,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Seq[(Long, KeyedUuaTweet)] =
-    adaptEvent(input).map { e => (e.tweetId, e) }
+  impowt wekeyuuaadaptew._
+  ovewwide def adaptonetokeyedmany(
+    input: unifiedusewaction, mya
+    s-statsweceivew: statsweceivew = nyuwwstatsweceivew
+  ): seq[(wong, 🥺 keyeduuatweet)] =
+    a-adaptevent(input).map { e => (e.tweetid, >_< e-e) }
 }
 
-object RekeyUuaAdapter {
-  def adaptEvent(e: UnifiedUserAction): Seq[KeyedUuaTweet] =
-    Option(e).flatMap { e =>
-      e.actionType match {
-        case ActionType.ClientTweetRenderImpression =>
-          ClientTweetRenderImpressionUua.getRekeyedUUA(e)
-        case _ => None
+object w-wekeyuuaadaptew {
+  d-def adaptevent(e: u-unifiedusewaction): seq[keyeduuatweet] =
+    option(e).fwatmap { e-e =>
+      e.actiontype match {
+        c-case actiontype.cwienttweetwendewimpwession =>
+          cwienttweetwendewimpwessionuua.getwekeyeduua(e)
+        case _ => nyone
       }
-    }.toSeq
+    }.toseq
 }

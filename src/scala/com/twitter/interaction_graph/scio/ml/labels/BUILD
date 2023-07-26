@@ -1,49 +1,49 @@
-scala_library(
-    name = "labels",
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":interaction_graph_labels_daily-scala",
-        "beam-internal/src/main/scala/com/twitter/beam/io/dal",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/job",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
-        "consumer-data-tools/src/main/scala/com/twitter/cde/scio/dal_read",
-        "socialgraph/hadoop/src/main/scala/com/twitter/socialgraph/hadoop:socialgraph-follow-events-scala",
-        "src/scala/com/twitter/interaction_graph/scio/agg_client_event_logs:interaction_graph_agg_client_event_logs_edge_daily-scala",
-        "src/scala/com/twitter/interaction_graph/scio/agg_direct_interactions:interaction_graph_agg_direct_interactions_edge_daily-scala",
-        "src/scala/com/twitter/interaction_graph/scio/agg_email:interaction_graph_extended_email_edge_daily-scala",
-        "src/scala/com/twitter/interaction_graph/scio/agg_notifications:interaction_graph_agg_notifications_edge_daily-scala",
-        "src/scala/com/twitter/interaction_graph/scio/agg_retweets:interaction_graph_extended_retweet_edge_daily-scala",
-        "src/scala/com/twitter/interaction_graph/scio/agg_shares:interaction_graph_extended_share_edge_daily-scala",
-        "tcdc/bq_blaster/src/main/scala/com/twitter/tcdc/bqblaster/beam",
+scawa_wibwawy(
+    nyame = "wabews", (U ᵕ U❁)
+    souwces = ["*.scawa"], -.-
+    c-compiwew_option_sets = ["fataw_wawnings"],
+    p-pwatfowm = "java8", ^^;;
+    t-tags = ["bazew-compatibwe"], >_<
+    d-dependencies = [
+        ":intewaction_gwaph_wabews_daiwy-scawa", mya
+        "beam-intewnaw/swc/main/scawa/com/twittew/beam/io/daw", mya
+        "beam-intewnaw/swc/main/scawa/com/twittew/scio_intewnaw/job", 😳
+        "beam-intewnaw/swc/main/scawa/com/twittew/scio_intewnaw/wunnew/datafwow", XD
+        "consumew-data-toows/swc/main/scawa/com/twittew/cde/scio/daw_wead", :3
+        "sociawgwaph/hadoop/swc/main/scawa/com/twittew/sociawgwaph/hadoop:sociawgwaph-fowwow-events-scawa", 😳😳😳
+        "swc/scawa/com/twittew/intewaction_gwaph/scio/agg_cwient_event_wogs:intewaction_gwaph_agg_cwient_event_wogs_edge_daiwy-scawa", -.-
+        "swc/scawa/com/twittew/intewaction_gwaph/scio/agg_diwect_intewactions:intewaction_gwaph_agg_diwect_intewactions_edge_daiwy-scawa", ( ͡o ω ͡o )
+        "swc/scawa/com/twittew/intewaction_gwaph/scio/agg_emaiw:intewaction_gwaph_extended_emaiw_edge_daiwy-scawa", rawr x3
+        "swc/scawa/com/twittew/intewaction_gwaph/scio/agg_notifications:intewaction_gwaph_agg_notifications_edge_daiwy-scawa", nyaa~~
+        "swc/scawa/com/twittew/intewaction_gwaph/scio/agg_wetweets:intewaction_gwaph_extended_wetweet_edge_daiwy-scawa", /(^•ω•^)
+        "swc/scawa/com/twittew/intewaction_gwaph/scio/agg_shawes:intewaction_gwaph_extended_shawe_edge_daiwy-scawa", rawr
+        "tcdc/bq_bwastew/swc/main/scawa/com/twittew/tcdc/bqbwastew/beam", OwO
     ],
 )
 
-jvm_binary(
-    name = "interaction_graph_labels",
-    main = "com.twitter.interaction_graph.scio.ml.labels.InteractionGraphLabelsJob",
-    platform = "java8",
-    tags = ["bazel-compatible"],
+j-jvm_binawy(
+    n-nyame = "intewaction_gwaph_wabews", (U ﹏ U)
+    m-main = "com.twittew.intewaction_gwaph.scio.mw.wabews.intewactiongwaphwabewsjob", >_<
+    p-pwatfowm = "java8", rawr x3
+    tags = ["bazew-compatibwe"], mya
     dependencies = [
-        ":labels",
-    ],
+        ":wabews", nyaa~~
+    ], (⑅˘꒳˘)
 )
 
-create_datasets(
-    base_name = "interaction_graph_labels_daily",
-    description = "Daily labels",
-    java_schema = "com.twitter.interaction_graph.thriftjava.EdgeLabel",
-    platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.interaction_graph.thriftscala.EdgeLabel",
-    segment_type = "partitioned",
-    tags = ["bazel-compatible"],
+cweate_datasets(
+    base_name = "intewaction_gwaph_wabews_daiwy", rawr x3
+    descwiption = "daiwy w-wabews", (✿oωo)
+    java_schema = "com.twittew.intewaction_gwaph.thwiftjava.edgewabew", (ˆ ﻌ ˆ)♡
+    pwatfowm = "java8", (˘ω˘)
+    w-wowe = "cassowawy", (⑅˘꒳˘)
+    scawa_schema = "com.twittew.intewaction_gwaph.thwiftscawa.edgewabew", (///ˬ///✿)
+    s-segment_type = "pawtitioned", 😳😳😳
+    tags = ["bazew-compatibwe"], 🥺
     java_dependencies = [
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-java",
-    ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-scala",
-    ],
+        "swc/thwift/com/twittew/intewaction_gwaph:intewaction_gwaph-java", mya
+    ], 🥺
+    scawa_dependencies = [
+        "swc/thwift/com/twittew/intewaction_gwaph:intewaction_gwaph-scawa", >_<
+    ], >_<
 )

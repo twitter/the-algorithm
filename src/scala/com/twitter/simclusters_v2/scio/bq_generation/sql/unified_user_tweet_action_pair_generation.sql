@@ -1,45 +1,45 @@
-WITH
-  vars AS (
-    SELECT
-      TIMESTAMP("{START_TIME}") AS start_date,
-      TIMESTAMP("{END_TIME}") AS end_date,
-      TIMESTAMP("{NO_OLDER_TWEETS_THAN_DATE}") AS no_older_tweets_than_date
-  ),
+with
+  vaws as (
+    sewect
+      t-timestamp("{stawt_time}") a-as stawt_date, (U ﹏ U)
+      t-timestamp("{end_time}") a-as end_date, (///ˬ///✿)
+      t-timestamp("{no_owdew_tweets_than_date}") a-as nyo_owdew_tweets_than_date
+  ), >w<
 
-  -- Get raw user-tweet interaction events from UUA
-  interactions_unioned AS (
-    SELECT
-      userIdentifier.userId AS userId,
-      eventMetadata.sourceTimestampMs AS tsMillis,
-      CASE
-          WHEN actionType IN ({CONTRIBUTING_ACTION_TYPES_STR}) THEN {CONTRIBUTING_ACTION_TWEET_ID_COLUMN}
-          WHEN actionType IN ({UNDO_ACTION_TYPES_STR}) THEN {UNDO_ACTION_TWEET_ID_COLUMN}
-      END AS tweetId,
-      CASE
-        WHEN actionType IN ({CONTRIBUTING_ACTION_TYPES_STR}) THEN 1
-        WHEN actionType IN ({UNDO_ACTION_TYPES_STR}) THEN -1
-      END AS doOrUndo
-    FROM `twttr-bql-unified-prod.unified_user_actions_engagements.streaming_unified_user_actions_engagements`, vars
-    WHERE (DATE(dateHour) >= DATE(vars.start_date) AND DATE(dateHour) <= DATE(vars.end_date))
-      AND eventMetadata.sourceTimestampMs >= UNIX_MILLIS(vars.start_date) 
-      AND eventMetadata.sourceTimestampMs <= UNIX_MILLIS(vars.end_date)
-      AND (actionType IN ({CONTRIBUTING_ACTION_TYPES_STR})
-            OR actionType IN ({UNDO_ACTION_TYPES_STR}))
-  ),
+  -- g-get w-waw usew-tweet intewaction events fwom uua
+  intewactions_unioned as (
+    sewect
+      usewidentifiew.usewid as u-usewid, rawr
+      eventmetadata.souwcetimestampms as tsmiwwis, mya
+      c-case
+          when actiontype i-in ({contwibuting_action_types_stw}) then {contwibuting_action_tweet_id_cowumn}
+          when actiontype in ({undo_action_types_stw}) t-then {undo_action_tweet_id_cowumn}
+      end as tweetid, ^^
+      c-case
+        w-when actiontype in ({contwibuting_action_types_stw}) then 1
+        when actiontype in ({undo_action_types_stw}) t-then -1
+      end as doowundo
+    fwom `twttw-bqw-unified-pwod.unified_usew_actions_engagements.stweaming_unified_usew_actions_engagements`, 😳😳😳 vaws
+    whewe (date(datehouw) >= date(vaws.stawt_date) a-and date(datehouw) <= date(vaws.end_date))
+      a-and e-eventmetadata.souwcetimestampms >= u-unix_miwwis(vaws.stawt_date) 
+      a-and eventmetadata.souwcetimestampms <= unix_miwwis(vaws.end_date)
+      and (actiontype in ({contwibuting_action_types_stw})
+            ow actiontype in ({undo_action_types_stw}))
+  ), mya
 
-  -- Group by userId and tweetId
-  user_tweet_interaction_pairs AS (
-    SELECT userId, tweetId, ARRAY_AGG(STRUCT(doOrUndo, tsMillis) ORDER BY tsMillis DESC LIMIT 1) AS details, COUNT(*) AS cnt
-    FROM interactions_unioned
-    GROUP BY userId, tweetId
+  -- g-gwoup by usewid and tweetid
+  usew_tweet_intewaction_paiws a-as (
+    sewect usewid, 😳 tweetid, awway_agg(stwuct(doowundo, -.- tsmiwwis) owdew by tsmiwwis desc wimit 1) a-as detaiws, 🥺 count(*) as c-cnt
+    fwom intewactions_unioned
+    g-gwoup by usewid, o.O t-tweetid
   )
 
--- Remove undo events
--- Apply age filter in this step
-SELECT userId, tweetId, CAST(dt.tsMillis  AS FLOAT64) AS tsMillis
-FROM user_tweet_interaction_pairs, vars
-CROSS JOIN UNNEST(details) AS dt
-WHERE cnt < 3
-  AND dt.doOrUndo = 1
-  AND timestamp_millis((1288834974657 +
-            ((tweetId  & 9223372036850581504) >> 22))) >= vars.no_older_tweets_than_date
+-- wemove undo events
+-- appwy age fiwtew in t-this step
+sewect u-usewid, /(^•ω•^) tweetid, cast(dt.tsmiwwis  a-as fwoat64) a-as tsmiwwis
+fwom usew_tweet_intewaction_paiws, nyaa~~ v-vaws
+cwoss join unnest(detaiws) a-as dt
+whewe cnt < 3
+  and dt.doowundo = 1
+  and t-timestamp_miwwis((1288834974657 +
+            ((tweetid  & 9223372036850581504) >> 22))) >= vaws.no_owdew_tweets_than_date

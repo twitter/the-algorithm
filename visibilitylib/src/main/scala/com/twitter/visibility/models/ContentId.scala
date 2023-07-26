@@ -1,22 +1,22 @@
-package com.twitter.visibility.models
+package com.twittew.visibiwity.modews
 
-sealed trait ContentId
+seawed twait c-contentid
 
-object ContentId {
-  case class TweetId(id: Long) extends ContentId
-  case class UserId(id: Long) extends ContentId
-  case class CardId(url: String) extends ContentId
-  case class QuotedTweetRelationship(outer: Long, inner: Long) extends ContentId
-  case class NotificationId(tweetId: Option[Long]) extends ContentId
-  case class DmId(id: Long) extends ContentId
-  case class BlenderTweetId(id: Long) extends ContentId
-  case class SpaceId(id: String) extends ContentId
-  case class SpacePlusUserId(id: String) extends ContentId
-  case class DmConversationId(id: String) extends ContentId
-  case class DmEventId(id: Long) extends ContentId
-  case class UserUnavailableState(tweetId: Long) extends ContentId
-  case class TwitterArticleId(id: Long) extends ContentId
-  case class DeleteTweetId(tweetId: Long) extends ContentId
-  case class MediaId(id: String) extends ContentId
-  case class CommunityId(communityId: Long) extends ContentId
+object c-contentid {
+  c-case cwass tweetid(id: w-wong) e-extends contentid
+  c-case cwass usewid(id: w-wong) e-extends contentid
+  case cwass cawdid(uww: stwing) extends contentid
+  case cwass q-quotedtweetwewationship(outew: wong, 🥺 innew: wong) extends contentid
+  c-case cwass nyotificationid(tweetid: o-option[wong]) extends contentid
+  case cwass dmid(id: w-wong) extends contentid
+  case c-cwass bwendewtweetid(id: w-wong) extends contentid
+  case cwass spaceid(id: stwing) extends contentid
+  c-case cwass spacepwususewid(id: stwing) extends contentid
+  case cwass dmconvewsationid(id: s-stwing) extends contentid
+  case c-cwass dmeventid(id: w-wong) extends c-contentid
+  c-case cwass usewunavaiwabwestate(tweetid: wong) extends contentid
+  c-case cwass twittewawticweid(id: wong) extends contentid
+  case c-cwass dewetetweetid(tweetid: wong) extends contentid
+  case cwass mediaid(id: stwing) extends contentid
+  case c-cwass communityid(communityid: wong) extends contentid
 }

@@ -1,375 +1,375 @@
-package com.twitter.home_mixer.module
+package com.twittew.home_mixew.moduwe
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.graph_feature_service.{thriftscala => gfs}
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.EarlybirdRepository
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.GraphTwoHopRepository
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.InterestsThriftServiceClient
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TweetypieContentRepository
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.UserFollowedTopicIdsRepository
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.UtegSocialProofRepository
-import com.twitter.home_mixer.util.earlybird.EarlybirdRequestUtil
-import com.twitter.home_mixer.util.tweetypie.RequestFields
-import com.twitter.inject.TwitterModule
-import com.twitter.interests.{thriftscala => int}
-import com.twitter.product_mixer.shared_library.memcached_client.MemcachedClientBuilder
-import com.twitter.product_mixer.shared_library.thrift_client.FinagleThriftClientBuilder
-import com.twitter.product_mixer.shared_library.thrift_client.Idempotent
-import com.twitter.recos.recos_common.{thriftscala => rc}
-import com.twitter.recos.user_tweet_entity_graph.{thriftscala => uteg}
-import com.twitter.search.earlybird.{thriftscala => eb}
-import com.twitter.servo.cache.Cached
-import com.twitter.servo.cache.CachedSerializer
-import com.twitter.servo.cache.FinagleMemcacheFactory
-import com.twitter.servo.cache.MemcacheCacheFactory
-import com.twitter.servo.cache.NonLockingCache
-import com.twitter.servo.cache.ThriftSerializer
-import com.twitter.servo.keyvalue.KeyValueResultBuilder
-import com.twitter.servo.repository.CachingKeyValueRepository
-import com.twitter.servo.repository.ChunkingStrategy
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.servo.repository.KeyValueResult
-import com.twitter.servo.repository.keysAsQuery
-import com.twitter.spam.rtf.{thriftscala => sp}
-import com.twitter.tweetypie.{thriftscala => tp}
-import com.twitter.util.Future
-import com.twitter.util.Return
-import javax.inject.Named
-import javax.inject.Singleton
-import org.apache.thrift.protocol.TCompactProtocol
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.convewsions.pewcentops._
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.finagwe.thwift.cwientid
+i-impowt c-com.twittew.gwaph_featuwe_sewvice.{thwiftscawa => g-gfs}
+impowt com.twittew.home_mixew.pawam.homemixewinjectionnames.eawwybiwdwepositowy
+impowt com.twittew.home_mixew.pawam.homemixewinjectionnames.gwaphtwohopwepositowy
+impowt c-com.twittew.home_mixew.pawam.homemixewinjectionnames.inteweststhwiftsewvicecwient
+impowt com.twittew.home_mixew.pawam.homemixewinjectionnames.tweetypiecontentwepositowy
+impowt c-com.twittew.home_mixew.pawam.homemixewinjectionnames.usewfowwowedtopicidswepositowy
+impowt com.twittew.home_mixew.pawam.homemixewinjectionnames.utegsociawpwoofwepositowy
+i-impowt com.twittew.home_mixew.utiw.eawwybiwd.eawwybiwdwequestutiw
+impowt com.twittew.home_mixew.utiw.tweetypie.wequestfiewds
+impowt c-com.twittew.inject.twittewmoduwe
+impowt com.twittew.intewests.{thwiftscawa => int}
+i-impowt com.twittew.pwoduct_mixew.shawed_wibwawy.memcached_cwient.memcachedcwientbuiwdew
+i-impowt com.twittew.pwoduct_mixew.shawed_wibwawy.thwift_cwient.finagwethwiftcwientbuiwdew
+impowt com.twittew.pwoduct_mixew.shawed_wibwawy.thwift_cwient.idempotent
+impowt com.twittew.wecos.wecos_common.{thwiftscawa => w-wc}
+impowt com.twittew.wecos.usew_tweet_entity_gwaph.{thwiftscawa => uteg}
+impowt com.twittew.seawch.eawwybiwd.{thwiftscawa => eb}
+impowt com.twittew.sewvo.cache.cached
+impowt c-com.twittew.sewvo.cache.cachedsewiawizew
+impowt c-com.twittew.sewvo.cache.finagwememcachefactowy
+i-impowt com.twittew.sewvo.cache.memcachecachefactowy
+i-impowt com.twittew.sewvo.cache.nonwockingcache
+i-impowt com.twittew.sewvo.cache.thwiftsewiawizew
+impowt com.twittew.sewvo.keyvawue.keyvawuewesuwtbuiwdew
+impowt c-com.twittew.sewvo.wepositowy.cachingkeyvawuewepositowy
+impowt com.twittew.sewvo.wepositowy.chunkingstwategy
+i-impowt com.twittew.sewvo.wepositowy.keyvawuewepositowy
+impowt com.twittew.sewvo.wepositowy.keyvawuewesuwt
+impowt com.twittew.sewvo.wepositowy.keysasquewy
+impowt com.twittew.spam.wtf.{thwiftscawa => s-sp}
+impowt com.twittew.tweetypie.{thwiftscawa => t-tp}
+impowt c-com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.wetuwn
+impowt javax.inject.named
+i-impowt javax.inject.singweton
+i-impowt owg.apache.thwift.pwotocow.tcompactpwotocow
 
-object ThriftFeatureRepositoryModule extends TwitterModule {
+object thwiftfeatuwewepositowymoduwe e-extends t-twittewmoduwe {
 
-  private val DefaultRPCChunkSize = 50
-  private val GFSInteractionIdsLimit = 10
+  pwivate vaw d-defauwtwpcchunksize = 50
+  pwivate v-vaw gfsintewactionidswimit = 10
 
-  type EarlybirdQuery = (Seq[Long], Long)
-  type UtegQuery = (Seq[Long], (Long, Map[Long, Double]))
+  type eawwybiwdquewy = (seq[wong], >_< wong)
+  t-type utegquewy = (seq[wong], OwO (wong, map[wong, >_< d-doubwe]))
 
-  @Provides
-  @Singleton
-  @Named(InterestsThriftServiceClient)
-  def providesInterestsThriftServiceClient(
-    clientId: ClientId,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): int.InterestsThriftService.MethodPerEndpoint = {
-    FinagleThriftClientBuilder
-      .buildFinagleMethodPerEndpoint[
-        int.InterestsThriftService.ServicePerEndpoint,
-        int.InterestsThriftService.MethodPerEndpoint](
-        serviceIdentifier = serviceIdentifier,
-        clientId = clientId,
-        dest = "/s/interests-thrift-service/interests-thrift-service",
-        label = "interests",
-        statsReceiver = statsReceiver,
-        idempotency = Idempotent(1.percent),
-        timeoutPerRequest = 350.milliseconds,
-        timeoutTotal = 350.milliseconds
+  @pwovides
+  @singweton
+  @named(inteweststhwiftsewvicecwient)
+  def p-pwovidesinteweststhwiftsewvicecwient(
+    c-cwientid: cwientid, (ꈍᴗꈍ)
+    sewviceidentifiew: sewviceidentifiew, >w<
+    statsweceivew: statsweceivew
+  ): int.inteweststhwiftsewvice.methodpewendpoint = {
+    finagwethwiftcwientbuiwdew
+      .buiwdfinagwemethodpewendpoint[
+        i-int.inteweststhwiftsewvice.sewvicepewendpoint, (U ﹏ U)
+        i-int.inteweststhwiftsewvice.methodpewendpoint](
+        sewviceidentifiew = sewviceidentifiew, ^^
+        c-cwientid = c-cwientid, (U ﹏ U)
+        d-dest = "/s/intewests-thwift-sewvice/intewests-thwift-sewvice", :3
+        wabew = "intewests", (✿oωo)
+        statsweceivew = statsweceivew, XD
+        i-idempotency = idempotent(1.pewcent), >w<
+        timeoutpewwequest = 350.miwwiseconds, òωó
+        timeouttotaw = 350.miwwiseconds
       )
   }
 
-  @Provides
-  @Singleton
-  @Named(UserFollowedTopicIdsRepository)
-  def providesUserFollowedTopicIdsRepository(
-    @Named(InterestsThriftServiceClient) client: int.InterestsThriftService.MethodPerEndpoint
-  ): KeyValueRepository[Seq[Long], Long, Seq[Long]] = {
+  @pwovides
+  @singweton
+  @named(usewfowwowedtopicidswepositowy)
+  def pwovidesusewfowwowedtopicidswepositowy(
+    @named(inteweststhwiftsewvicecwient) c-cwient: int.inteweststhwiftsewvice.methodpewendpoint
+  ): keyvawuewepositowy[seq[wong], (ꈍᴗꈍ) w-wong, s-seq[wong]] = {
 
-    val lookupContext = Some(
-      int.ExplicitInterestLookupContext(Some(Seq(int.InterestRelationType.Followed)))
+    v-vaw wookupcontext = some(
+      i-int.expwicitintewestwookupcontext(some(seq(int.intewestwewationtype.fowwowed)))
     )
 
-    def lookup(userId: Long): Future[Seq[Long]] = {
-      client.getUserExplicitInterests(userId, lookupContext).map { interests =>
-        interests.flatMap {
-          _.interestId match {
-            case int.InterestId.SemanticCore(semanticCoreInterest) => Some(semanticCoreInterest.id)
-            case _ => None
+    d-def wookup(usewid: w-wong): futuwe[seq[wong]] = {
+      c-cwient.getusewexpwicitintewests(usewid, rawr x3 wookupcontext).map { intewests =>
+        i-intewests.fwatmap {
+          _.intewestid m-match {
+            c-case int.intewestid.semanticcowe(semanticcoweintewest) => s-some(semanticcoweintewest.id)
+            c-case _ => nyone
           }
         }
       }
     }
 
-    val keyValueRepository = toRepository(lookup)
+    vaw keyvawuewepositowy = towepositowy(wookup)
 
-    keyValueRepository
+    k-keyvawuewepositowy
   }
 
-  @Provides
-  @Singleton
-  @Named(UtegSocialProofRepository)
-  def providesUtegSocialProofRepository(
-    clientId: ClientId,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): KeyValueRepository[UtegQuery, Long, uteg.TweetRecommendation] = {
-    val client = FinagleThriftClientBuilder.buildFinagleMethodPerEndpoint[
-      uteg.UserTweetEntityGraph.ServicePerEndpoint,
-      uteg.UserTweetEntityGraph.MethodPerEndpoint](
-      serviceIdentifier = serviceIdentifier,
-      clientId = clientId,
-      dest = "/s/cassowary/user_tweet_entity_graph",
-      label = "uteg-social-proof-repo",
-      statsReceiver = statsReceiver,
-      idempotency = Idempotent(1.percent),
-      timeoutPerRequest = 150.milliseconds,
-      timeoutTotal = 250.milliseconds
+  @pwovides
+  @singweton
+  @named(utegsociawpwoofwepositowy)
+  def pwovidesutegsociawpwoofwepositowy(
+    cwientid: cwientid, rawr x3
+    sewviceidentifiew: s-sewviceidentifiew, σωσ
+    statsweceivew: statsweceivew
+  ): keyvawuewepositowy[utegquewy, (ꈍᴗꈍ) w-wong, rawr u-uteg.tweetwecommendation] = {
+    v-vaw cwient = finagwethwiftcwientbuiwdew.buiwdfinagwemethodpewendpoint[
+      u-uteg.usewtweetentitygwaph.sewvicepewendpoint, ^^;;
+      uteg.usewtweetentitygwaph.methodpewendpoint](
+      s-sewviceidentifiew = s-sewviceidentifiew, rawr x3
+      cwientid = cwientid, (ˆ ﻌ ˆ)♡
+      dest = "/s/cassowawy/usew_tweet_entity_gwaph", σωσ
+      wabew = "uteg-sociaw-pwoof-wepo", (U ﹏ U)
+      statsweceivew = s-statsweceivew, >w<
+      idempotency = i-idempotent(1.pewcent), σωσ
+      timeoutpewwequest = 150.miwwiseconds, nyaa~~
+      t-timeouttotaw = 250.miwwiseconds
     )
 
-    val utegSocialProofTypes = Seq(
-      rc.SocialProofType.Favorite,
-      rc.SocialProofType.Retweet,
-      rc.SocialProofType.Reply
+    v-vaw utegsociawpwooftypes = seq(
+      wc.sociawpwooftype.favowite, 🥺
+      wc.sociawpwooftype.wetweet, rawr x3
+      wc.sociawpwooftype.wepwy
     )
 
-    def lookup(
-      tweetIds: Seq[Long],
-      view: (Long, Map[Long, Double])
-    ): Future[Seq[Option[uteg.TweetRecommendation]]] = {
-      val (userId, seedsWithWeights) = view
-      val socialProofRequest = uteg.SocialProofRequest(
-        requesterId = Some(userId),
-        seedsWithWeights = seedsWithWeights,
-        inputTweets = tweetIds,
-        socialProofTypes = Some(utegSocialProofTypes)
+    d-def wookup(
+      t-tweetids: seq[wong], σωσ
+      view: (wong, (///ˬ///✿) map[wong, (U ﹏ U) d-doubwe])
+    ): f-futuwe[seq[option[uteg.tweetwecommendation]]] = {
+      vaw (usewid, ^^;; seedswithweights) = view
+      vaw sociawpwoofwequest = uteg.sociawpwoofwequest(
+        wequestewid = s-some(usewid), 🥺
+        s-seedswithweights = s-seedswithweights, òωó
+        inputtweets = t-tweetids, XD
+        s-sociawpwooftypes = some(utegsociawpwooftypes)
       )
-      client.findTweetSocialProofs(socialProofRequest).map { result =>
-        val resultMap = result.socialProofResults.map(t => t.tweetId -> t).toMap
-        tweetIds.map(resultMap.get)
+      c-cwient.findtweetsociawpwoofs(sociawpwoofwequest).map { wesuwt =>
+        vaw wesuwtmap = wesuwt.sociawpwoofwesuwts.map(t => t.tweetid -> t-t).tomap
+        t-tweetids.map(wesuwtmap.get)
       }
     }
 
-    toRepositoryBatchWithView(lookup, chunkSize = 200)
+    towepositowybatchwithview(wookup, :3 chunksize = 200)
   }
 
-  @Provides
-  @Singleton
-  @Named(TweetypieContentRepository)
-  def providesTweetypieContentRepository(
-    clientId: ClientId,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): KeyValueRepository[Seq[Long], Long, tp.Tweet] = {
-    val client = FinagleThriftClientBuilder
-      .buildFinagleMethodPerEndpoint[
-        tp.TweetService.ServicePerEndpoint,
-        tp.TweetService.MethodPerEndpoint](
-        serviceIdentifier = serviceIdentifier,
-        clientId = clientId,
-        dest = "/s/tweetypie/tweetypie",
-        label = "tweetypie-content-repo",
-        statsReceiver = statsReceiver,
-        idempotency = Idempotent(1.percent),
-        timeoutPerRequest = 300.milliseconds,
-        timeoutTotal = 500.milliseconds
+  @pwovides
+  @singweton
+  @named(tweetypiecontentwepositowy)
+  d-def pwovidestweetypiecontentwepositowy(
+    cwientid: c-cwientid, (U ﹏ U)
+    sewviceidentifiew: sewviceidentifiew, >w<
+    statsweceivew: s-statsweceivew
+  ): keyvawuewepositowy[seq[wong], /(^•ω•^) wong, tp.tweet] = {
+    vaw cwient = finagwethwiftcwientbuiwdew
+      .buiwdfinagwemethodpewendpoint[
+        tp.tweetsewvice.sewvicepewendpoint, (⑅˘꒳˘)
+        t-tp.tweetsewvice.methodpewendpoint](
+        sewviceidentifiew = sewviceidentifiew, ʘwʘ
+        c-cwientid = c-cwientid, rawr x3
+        dest = "/s/tweetypie/tweetypie", (˘ω˘)
+        wabew = "tweetypie-content-wepo", o.O
+        statsweceivew = s-statsweceivew, 😳
+        i-idempotency = idempotent(1.pewcent),
+        timeoutpewwequest = 300.miwwiseconds, o.O
+        timeouttotaw = 500.miwwiseconds
       )
 
-    def lookup(tweetIds: Seq[Long]): Future[Seq[Option[tp.Tweet]]] = {
-      val getTweetFieldsOptions = tp.GetTweetFieldsOptions(
-        tweetIncludes = RequestFields.ContentFields,
-        includeRetweetedTweet = false,
-        includeQuotedTweet = false,
-        forUserId = None,
-        safetyLevel = Some(sp.SafetyLevel.FilterNone),
-        visibilityPolicy = tp.TweetVisibilityPolicy.NoFiltering
+    d-def wookup(tweetids: seq[wong]): f-futuwe[seq[option[tp.tweet]]] = {
+      vaw gettweetfiewdsoptions = tp.gettweetfiewdsoptions(
+        t-tweetincwudes = wequestfiewds.contentfiewds, ^^;;
+        i-incwudewetweetedtweet = f-fawse, ( ͡o ω ͡o )
+        incwudequotedtweet = f-fawse, ^^;;
+        fowusewid = n-nyone, ^^;;
+        s-safetywevew = s-some(sp.safetywevew.fiwtewnone), XD
+        visibiwitypowicy = t-tp.tweetvisibiwitypowicy.nofiwtewing
       )
 
-      val request = tp.GetTweetFieldsRequest(tweetIds = tweetIds, options = getTweetFieldsOptions)
+      v-vaw wequest = tp.gettweetfiewdswequest(tweetids = tweetids, 🥺 o-options = gettweetfiewdsoptions)
 
-      client.getTweetFields(request).map { results =>
-        results.map {
-          case tp.GetTweetFieldsResult(_, tp.TweetFieldsResultState.Found(found), _, _) =>
-            Some(found.tweet)
-          case _ => None
+      c-cwient.gettweetfiewds(wequest).map { w-wesuwts =>
+        wesuwts.map {
+          case tp.gettweetfiewdswesuwt(_, (///ˬ///✿) t-tp.tweetfiewdswesuwtstate.found(found), (U ᵕ U❁) _, _) =>
+            some(found.tweet)
+          c-case _ => nyone
         }
       }
     }
 
-    val keyValueRepository = toRepositoryBatch(lookup, chunkSize = 20)
+    vaw k-keyvawuewepositowy = towepositowybatch(wookup, ^^;; chunksize = 20)
 
-    val cacheClient = MemcachedClientBuilder.buildRawMemcachedClient(
-      numTries = 1,
-      numConnections = 1,
-      requestTimeout = 200.milliseconds,
-      globalTimeout = 200.milliseconds,
-      connectTimeout = 200.milliseconds,
-      acquisitionTimeout = 200.milliseconds,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+    vaw cachecwient = m-memcachedcwientbuiwdew.buiwdwawmemcachedcwient(
+      nyumtwies = 1,
+      n-nyumconnections = 1, ^^;;
+      wequesttimeout = 200.miwwiseconds, rawr
+      g-gwobawtimeout = 200.miwwiseconds,
+      c-connecttimeout = 200.miwwiseconds, (˘ω˘)
+      acquisitiontimeout = 200.miwwiseconds, 🥺
+      s-sewviceidentifiew = sewviceidentifiew, nyaa~~
+      statsweceivew = statsweceivew
     )
 
-    val finagleMemcacheFactory =
-      FinagleMemcacheFactory(cacheClient, "/s/cache/home_content_features:twemcaches")
-    val cacheValueTransformer =
-      new ThriftSerializer[tp.Tweet](tp.Tweet, new TCompactProtocol.Factory())
-    val cachedSerializer = CachedSerializer.binary(cacheValueTransformer)
+    vaw finagwememcachefactowy =
+      finagwememcachefactowy(cachecwient, :3 "/s/cache/home_content_featuwes:twemcaches")
+    v-vaw cachevawuetwansfowmew =
+      nyew thwiftsewiawizew[tp.tweet](tp.tweet, /(^•ω•^) n-nyew tcompactpwotocow.factowy())
+    vaw cachedsewiawizew = c-cachedsewiawizew.binawy(cachevawuetwansfowmew)
 
-    val cache = MemcacheCacheFactory(
-      memcache = finagleMemcacheFactory(),
-      ttl = 48.hours
-    )[Long, Cached[tp.Tweet]](cachedSerializer)
+    vaw cache = memcachecachefactowy(
+      m-memcache = finagwememcachefactowy(), ^•ﻌ•^
+      t-ttw = 48.houws
+    )[wong, UwU c-cached[tp.tweet]](cachedsewiawizew)
 
-    val lockingCache = new NonLockingCache(cache)
-    val cachedKeyValueRepository = new CachingKeyValueRepository(
-      keyValueRepository,
-      lockingCache,
-      keysAsQuery[Long]
+    v-vaw wockingcache = n-nyew nyonwockingcache(cache)
+    v-vaw cachedkeyvawuewepositowy = nyew cachingkeyvawuewepositowy(
+      keyvawuewepositowy,
+      wockingcache, 😳😳😳
+      keysasquewy[wong]
     )
-    cachedKeyValueRepository
+    cachedkeyvawuewepositowy
   }
 
-  @Provides
-  @Singleton
-  @Named(GraphTwoHopRepository)
-  def providesGraphTwoHopRepository(
-    clientId: ClientId,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): KeyValueRepository[(Seq[Long], Long), Long, Seq[gfs.IntersectionValue]] = {
-    val client = FinagleThriftClientBuilder
-      .buildFinagleMethodPerEndpoint[gfs.Server.ServicePerEndpoint, gfs.Server.MethodPerEndpoint](
-        serviceIdentifier = serviceIdentifier,
-        clientId = clientId,
-        dest = "/s/cassowary/graph_feature_service-server",
-        label = "gfs-repo",
-        statsReceiver = statsReceiver,
-        idempotency = Idempotent(1.percent),
-        timeoutPerRequest = 350.milliseconds,
-        timeoutTotal = 500.milliseconds
+  @pwovides
+  @singweton
+  @named(gwaphtwohopwepositowy)
+  def pwovidesgwaphtwohopwepositowy(
+    c-cwientid: c-cwientid, OwO
+    s-sewviceidentifiew: sewviceidentifiew, ^•ﻌ•^
+    s-statsweceivew: statsweceivew
+  ): keyvawuewepositowy[(seq[wong], (ꈍᴗꈍ) wong), w-wong, seq[gfs.intewsectionvawue]] = {
+    v-vaw cwient = finagwethwiftcwientbuiwdew
+      .buiwdfinagwemethodpewendpoint[gfs.sewvew.sewvicepewendpoint, (⑅˘꒳˘) g-gfs.sewvew.methodpewendpoint](
+        sewviceidentifiew = sewviceidentifiew, (⑅˘꒳˘)
+        c-cwientid = cwientid, (ˆ ﻌ ˆ)♡
+        d-dest = "/s/cassowawy/gwaph_featuwe_sewvice-sewvew", /(^•ω•^)
+        wabew = "gfs-wepo", òωó
+        s-statsweceivew = s-statsweceivew, (⑅˘꒳˘)
+        idempotency = idempotent(1.pewcent), (U ᵕ U❁)
+        timeoutpewwequest = 350.miwwiseconds, >w<
+        timeouttotaw = 500.miwwiseconds
       )
 
-    def lookup(
-      userIds: Seq[Long],
-      viewerId: Long
-    ): Future[Seq[Option[Seq[gfs.IntersectionValue]]]] = {
-      val gfsIntersectionRequest = gfs.GfsPresetIntersectionRequest(
-        userId = viewerId,
-        candidateUserIds = userIds,
-        presetFeatureTypes = gfs.PresetFeatureTypes.HtlTwoHop,
-        intersectionIdLimit = Some(GFSInteractionIdsLimit)
+    d-def wookup(
+      u-usewids: seq[wong],
+      v-viewewid: wong
+    ): f-futuwe[seq[option[seq[gfs.intewsectionvawue]]]] = {
+      v-vaw gfsintewsectionwequest = gfs.gfspwesetintewsectionwequest(
+        u-usewid = v-viewewid, σωσ
+        candidateusewids = u-usewids,
+        p-pwesetfeatuwetypes = gfs.pwesetfeatuwetypes.htwtwohop, -.-
+        i-intewsectionidwimit = some(gfsintewactionidswimit)
       )
 
-      client
-        .getPresetIntersection(gfsIntersectionRequest)
-        .map { graphFeatureServiceResponse =>
-          val resultMap = graphFeatureServiceResponse.results
-            .map(result => result.candidateUserId -> result.intersectionValues).toMap
-          userIds.map(resultMap.get(_))
+      cwient
+        .getpwesetintewsection(gfsintewsectionwequest)
+        .map { g-gwaphfeatuwesewvicewesponse =>
+          vaw w-wesuwtmap = gwaphfeatuwesewvicewesponse.wesuwts
+            .map(wesuwt => w-wesuwt.candidateusewid -> wesuwt.intewsectionvawues).tomap
+          u-usewids.map(wesuwtmap.get(_))
         }
     }
 
-    toRepositoryBatchWithView(lookup, chunkSize = 200)
+    towepositowybatchwithview(wookup, o.O chunksize = 200)
   }
 
-  @Provides
-  @Singleton
-  @Named(EarlybirdRepository)
-  def providesEarlybirdSearchRepository(
-    client: eb.EarlybirdService.MethodPerEndpoint,
-    clientId: ClientId
-  ): KeyValueRepository[EarlybirdQuery, Long, eb.ThriftSearchResult] = {
+  @pwovides
+  @singweton
+  @named(eawwybiwdwepositowy)
+  d-def pwovideseawwybiwdseawchwepositowy(
+    c-cwient: eb.eawwybiwdsewvice.methodpewendpoint, ^^
+    c-cwientid: cwientid
+  ): keyvawuewepositowy[eawwybiwdquewy, >_< wong, eb.thwiftseawchwesuwt] = {
 
-    def lookup(
-      tweetIds: Seq[Long],
-      viewerId: Long
-    ): Future[Seq[Option[eb.ThriftSearchResult]]] = {
-      val request = EarlybirdRequestUtil.getTweetsFeaturesRequest(
-        userId = Some(viewerId),
-        tweetIds = Some(tweetIds),
-        clientId = Some(clientId.name),
-        authorScoreMap = None,
-        tensorflowModel = Some("timelines_rectweet_replica")
+    d-def wookup(
+      tweetids: seq[wong], >w<
+      v-viewewid: wong
+    ): f-futuwe[seq[option[eb.thwiftseawchwesuwt]]] = {
+      vaw w-wequest = eawwybiwdwequestutiw.gettweetsfeatuweswequest(
+        usewid = some(viewewid), >_<
+        t-tweetids = some(tweetids), >w<
+        c-cwientid = some(cwientid.name), rawr
+        authowscowemap = n-nyone, rawr x3
+        tensowfwowmodew = some("timewines_wectweet_wepwica")
       )
 
-      client
-        .search(request).map { response =>
-          val resultMap = response.searchResults
-            .map(_.results.map { result => result.id -> result }.toMap).getOrElse(Map.empty)
-          tweetIds.map(resultMap.get)
+      cwient
+        .seawch(wequest).map { w-wesponse =>
+          v-vaw wesuwtmap = wesponse.seawchwesuwts
+            .map(_.wesuwts.map { w-wesuwt => wesuwt.id -> wesuwt }.tomap).getowewse(map.empty)
+          t-tweetids.map(wesuwtmap.get)
         }
     }
-    toRepositoryBatchWithView(lookup)
+    t-towepositowybatchwithview(wookup)
   }
 
-  protected def toRepository[K, V](
-    hydrate: K => Future[V]
-  ): KeyValueRepository[Seq[K], K, V] = {
-    def asRepository(keys: Seq[K]): Future[KeyValueResult[K, V]] = {
-      Future.collect(keys.map(hydrate(_).liftToTry)).map { results =>
+  p-pwotected def towepositowy[k, v](
+    hydwate: k => futuwe[v]
+  ): keyvawuewepositowy[seq[k], k, ( ͡o ω ͡o ) v] = {
+    def aswepositowy(keys: seq[k]): futuwe[keyvawuewesuwt[k, (˘ω˘) v]] = {
+      futuwe.cowwect(keys.map(hydwate(_).wifttotwy)).map { wesuwts =>
         keys
-          .zip(results)
-          .foldLeft(new KeyValueResultBuilder[K, V]()) {
-            case (bldr, (k, result)) =>
-              result match {
-                case Return(v) => bldr.addFound(k, v)
-                case _ => bldr.addNotFound(k)
+          .zip(wesuwts)
+          .fowdweft(new keyvawuewesuwtbuiwdew[k, 😳 v-v]()) {
+            c-case (bwdw, OwO (k, (˘ω˘) wesuwt)) =>
+              wesuwt m-match {
+                c-case wetuwn(v) => b-bwdw.addfound(k, òωó v)
+                c-case _ => bwdw.addnotfound(k)
               }
-          }.result
+          }.wesuwt
       }
     }
 
-    asRepository
+    aswepositowy
   }
 
-  protected def toRepositoryBatch[K, V](
-    hydrate: Seq[K] => Future[Seq[Option[V]]],
-    chunkSize: Int = DefaultRPCChunkSize
-  ): KeyValueRepository[Seq[K], K, V] = {
-    def repository(keys: Seq[K]): Future[KeyValueResult[K, V]] =
-      batchRepositoryProcess(keys, hydrate(keys))
+  p-pwotected d-def towepositowybatch[k, ( ͡o ω ͡o ) v](
+    h-hydwate: seq[k] => futuwe[seq[option[v]]], UwU
+    c-chunksize: int = d-defauwtwpcchunksize
+  ): keyvawuewepositowy[seq[k], /(^•ω•^) k, v] = {
+    d-def wepositowy(keys: s-seq[k]): f-futuwe[keyvawuewesuwt[k, (ꈍᴗꈍ) v-v]] =
+      b-batchwepositowypwocess(keys, 😳 h-hydwate(keys))
 
-    KeyValueRepository.chunked(repository, ChunkingStrategy.equalSize(chunkSize))
+    k-keyvawuewepositowy.chunked(wepositowy, mya c-chunkingstwategy.equawsize(chunksize))
   }
 
-  protected def toRepositoryBatchWithView[K, T, V](
-    hydrate: (Seq[K], T) => Future[Seq[Option[V]]],
-    chunkSize: Int = DefaultRPCChunkSize
-  ): KeyValueRepository[(Seq[K], T), K, V] = {
-    def repository(input: (Seq[K], T)): Future[KeyValueResult[K, V]] = {
-      val (keys, view) = input
-      batchRepositoryProcess(keys, hydrate(keys, view))
+  p-pwotected def towepositowybatchwithview[k, mya t-t, /(^•ω•^) v](
+    h-hydwate: (seq[k], t-t) => futuwe[seq[option[v]]],
+    chunksize: i-int = defauwtwpcchunksize
+  ): keyvawuewepositowy[(seq[k], ^^;; t), k-k, 🥺 v] = {
+    def wepositowy(input: (seq[k], ^^ t)): f-futuwe[keyvawuewesuwt[k, ^•ﻌ•^ v-v]] = {
+      v-vaw (keys, /(^•ω•^) view) = input
+      b-batchwepositowypwocess(keys, ^^ hydwate(keys, 🥺 v-view))
     }
 
-    KeyValueRepository.chunked(repository, CustomChunkingStrategy.equalSizeWithView(chunkSize))
+    keyvawuewepositowy.chunked(wepositowy, (U ᵕ U❁) c-customchunkingstwategy.equawsizewithview(chunksize))
   }
 
-  private def batchRepositoryProcess[K, V](
-    keys: Seq[K],
-    f: Future[Seq[Option[V]]]
-  ): Future[KeyValueResult[K, V]] = {
-    f.liftToTry
+  pwivate d-def batchwepositowypwocess[k, 😳😳😳 v](
+    keys: seq[k], nyaa~~
+    f: futuwe[seq[option[v]]]
+  ): futuwe[keyvawuewesuwt[k, v]] = {
+    f.wifttotwy
       .map {
-        case Return(values) =>
+        case w-wetuwn(vawues) =>
           keys
-            .zip(values)
-            .foldLeft(new KeyValueResultBuilder[K, V]()) {
-              case (bldr, (k, value)) =>
-                value match {
-                  case Some(v) => bldr.addFound(k, v)
-                  case _ => bldr.addNotFound(k)
+            .zip(vawues)
+            .fowdweft(new k-keyvawuewesuwtbuiwdew[k, (˘ω˘) v-v]()) {
+              case (bwdw, >_< (k, vawue)) =>
+                vawue match {
+                  c-case some(v) => bwdw.addfound(k, XD v-v)
+                  c-case _ => b-bwdw.addnotfound(k)
                 }
-            }.result
+            }.wesuwt
         case _ =>
           keys
-            .foldLeft(new KeyValueResultBuilder[K, V]()) {
-              case (bldr, k) => bldr.addNotFound(k)
-            }.result
+            .fowdweft(new k-keyvawuewesuwtbuiwdew[k, rawr x3 v-v]()) {
+              case (bwdw, ( ͡o ω ͡o ) k-k) => bwdw.addnotfound(k)
+            }.wesuwt
       }
   }
 
-  // Use only for cases not already covered by Servo's [[ChunkingStrategy]]
-  object CustomChunkingStrategy {
-    def equalSizeWithView[K, T](maxSize: Int): ((Seq[K], T)) => Seq[(Seq[K], T)] = {
-      case (keys, view) =>
-        ChunkingStrategy
-          .equalSize[K](maxSize)(keys)
-          .map { chunk: Seq[K] => (chunk, view) }
+  // use onwy fow cases nyot awweady c-covewed by sewvo's [[chunkingstwategy]]
+  object c-customchunkingstwategy {
+    d-def equawsizewithview[k, :3 t-t](maxsize: int): ((seq[k], mya t-t)) => seq[(seq[k], σωσ t-t)] = {
+      c-case (keys, (ꈍᴗꈍ) v-view) =>
+        chunkingstwategy
+          .equawsize[k](maxsize)(keys)
+          .map { chunk: s-seq[k] => (chunk, OwO v-view) }
     }
   }
 }

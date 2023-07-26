@@ -1,48 +1,48 @@
-package com.twitter.simclusters_v2.common
+package com.twittew.simcwustews_v2.common
 
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
 
 /**
- * The utility to convert SimClusters Model version into different forms.
- * Required to register any new SimClusters Model version here.
+ * t-the u-utiwity to convewt s-simcwustews m-modew vewsion into d-diffewent fowms.
+ * w-wequiwed t-to wegistew any nyew simcwustews modew vewsion hewe. òωó
  */
-object ModelVersions {
+object modewvewsions {
 
-  val Model20M145KDec11 = "20M_145K_dec11"
-  val Model20M145KUpdated = "20M_145K_updated"
-  val Model20M145K2020 = "20M_145K_2020"
+  v-vaw modew20m145kdec11 = "20m_145k_dec11"
+  vaw modew20m145kupdated = "20m_145k_updated"
+  v-vaw modew20m145k2020 = "20m_145k_2020"
 
-  // Use Enum for feature switch
-  object Enum extends Enumeration {
-    val Model20M145K2020, Model20M145KUpdated: Value = Value
-    val enumToSimClustersModelVersionMap: Map[Enum.Value, ModelVersion] = Map(
-      Model20M145K2020 -> ModelVersion.Model20m145k2020,
-      Model20M145KUpdated -> ModelVersion.Model20m145kUpdated
+  // u-use enum fow featuwe switch
+  object enum extends enumewation {
+    v-vaw modew20m145k2020, ʘwʘ m-modew20m145kupdated: v-vawue = vawue
+    vaw enumtosimcwustewsmodewvewsionmap: map[enum.vawue, /(^•ω•^) modewvewsion] = map(
+      modew20m145k2020 -> m-modewvewsion.modew20m145k2020, ʘwʘ
+      modew20m145kupdated -> modewvewsion.modew20m145kupdated
     )
   }
 
-  // Add the new model version into this map
-  private val StringToThriftModelVersions: Map[String, ModelVersion] =
-    Map(
-      Model20M145KDec11 -> ModelVersion.Model20m145kDec11,
-      Model20M145KUpdated -> ModelVersion.Model20m145kUpdated,
-      Model20M145K2020 -> ModelVersion.Model20m145k2020
+  // add the nyew modew v-vewsion into this map
+  pwivate v-vaw stwingtothwiftmodewvewsions: m-map[stwing, σωσ modewvewsion] =
+    m-map(
+      modew20m145kdec11 -> m-modewvewsion.modew20m145kdec11, OwO
+      modew20m145kupdated -> modewvewsion.modew20m145kupdated, 😳😳😳
+      m-modew20m145k2020 -> modewvewsion.modew20m145k2020
     )
 
-  private val ThriftModelVersionToStrings = StringToThriftModelVersions.map(_.swap)
+  pwivate vaw thwiftmodewvewsiontostwings = s-stwingtothwiftmodewvewsions.map(_.swap)
 
-  val AllModelVersions: Set[String] = StringToThriftModelVersions.keySet
+  vaw awwmodewvewsions: set[stwing] = stwingtothwiftmodewvewsions.keyset
 
-  def toModelVersionOption(modelVersionStr: String): Option[ModelVersion] = {
-    StringToThriftModelVersions.get(modelVersionStr)
+  def tomodewvewsionoption(modewvewsionstw: stwing): o-option[modewvewsion] = {
+    stwingtothwiftmodewvewsions.get(modewvewsionstw)
   }
 
-  implicit def toModelVersion(modelVersionStr: String): ModelVersion = {
-    StringToThriftModelVersions(modelVersionStr)
+  i-impwicit d-def tomodewvewsion(modewvewsionstw: s-stwing): modewvewsion = {
+    stwingtothwiftmodewvewsions(modewvewsionstw)
   }
 
-  implicit def toKnownForModelVersion(modelVersion: ModelVersion): String = {
-    ThriftModelVersionToStrings(modelVersion)
+  impwicit def toknownfowmodewvewsion(modewvewsion: m-modewvewsion): s-stwing = {
+    thwiftmodewvewsiontostwings(modewvewsion)
   }
 
 }

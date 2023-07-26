@@ -1,65 +1,65 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twittew.simcwustews_v2.summingbiwd.common
 
-import com.twitter.recos.entities.thriftscala.NamedEntity
-import com.twitter.simclusters_v2.thriftscala.{
-  NerKey,
-  PenguinKey,
-  SimClusterEntity,
-  TweetTextEntity
+impowt com.twittew.wecos.entities.thwiftscawa.namedentity
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.{
+  n-nyewkey, (⑅˘꒳˘)
+  penguinkey, òωó
+  s-simcwustewentity, ʘwʘ
+  tweettextentity
 }
-import com.twitter.taxi.util.text.{TweetFeatureExtractor, TweetTextFeatures}
-import com.twitter.tweetypie.thriftscala.Tweet
+i-impowt com.twittew.taxi.utiw.text.{tweetfeatuweextwactow, /(^•ω•^) t-tweettextfeatuwes}
+i-impowt c-com.twittew.tweetypie.thwiftscawa.tweet
 
-object TweetEntityExtractor {
+o-object tweetentityextwactow {
 
-  private val MaxHashtagsPerTweet: Int = 4
+  pwivate vaw maxhashtagspewtweet: int = 4
 
-  private val MaxNersPerTweet: Int = 4
+  pwivate vaw maxnewspewtweet: i-int = 4
 
-  private val MaxPenguinsPerTweet: Int = 4
+  pwivate vaw maxpenguinspewtweet: int = 4
 
-  private val tweetFeatureExtractor: TweetFeatureExtractor = TweetFeatureExtractor.Default
+  pwivate v-vaw tweetfeatuweextwactow: tweetfeatuweextwactow = t-tweetfeatuweextwactow.defauwt
 
-  private def extractTweetTextFeatures(
-    text: String,
-    languageCode: Option[String]
-  ): TweetTextFeatures = {
-    if (languageCode.isDefined) {
-      tweetFeatureExtractor.extract(text, languageCode.get)
-    } else {
-      tweetFeatureExtractor.extract(text)
+  pwivate def extwacttweettextfeatuwes(
+    text: stwing, ʘwʘ
+    w-wanguagecode: option[stwing]
+  ): t-tweettextfeatuwes = {
+    i-if (wanguagecode.isdefined) {
+      tweetfeatuweextwactow.extwact(text, σωσ wanguagecode.get)
+    } ewse {
+      tweetfeatuweextwactow.extwact(text)
     }
   }
 
-  def extractEntitiesFromText(
-    tweet: Option[Tweet],
-    nerEntitiesOpt: Option[Seq[NamedEntity]]
-  ): Seq[SimClusterEntity.TweetEntity] = {
+  d-def extwactentitiesfwomtext(
+    tweet: option[tweet], OwO
+    nyewentitiesopt: option[seq[namedentity]]
+  ): seq[simcwustewentity.tweetentity] = {
 
-    val hashtagEntities = tweet
-      .flatMap(_.hashtags.map(_.map(_.text))).getOrElse(Nil)
-      .map { hashtag => TweetTextEntity.Hashtag(hashtag.toLowerCase) }.take(MaxHashtagsPerTweet)
+    v-vaw hashtagentities = tweet
+      .fwatmap(_.hashtags.map(_.map(_.text))).getowewse(niw)
+      .map { h-hashtag => t-tweettextentity.hashtag(hashtag.towowewcase) }.take(maxhashtagspewtweet)
 
-    val nerEntities = nerEntitiesOpt
-      .getOrElse(Nil).map { namedEntity =>
-        TweetTextEntity
-          .Ner(NerKey(namedEntity.namedEntity.toLowerCase, namedEntity.entityType.getValue))
-      }.take(MaxNersPerTweet)
+    v-vaw nyewentities = n-nyewentitiesopt
+      .getowewse(niw).map { nyamedentity =>
+        tweettextentity
+          .new(newkey(namedentity.namedentity.towowewcase, 😳😳😳 n-nyamedentity.entitytype.getvawue))
+      }.take(maxnewspewtweet)
 
-    val nerEntitySet = nerEntities.map(_.ner.textEntity).toSet
+    vaw nyewentityset = n-nyewentities.map(_.new.textentity).toset
 
-    val penguinEntities =
-      extractTweetTextFeatures(
-        tweet.flatMap(_.coreData.map(_.text)).getOrElse(""),
-        tweet.flatMap(_.language.map(_.language))
-      ).phrases
-        .map(_.normalizedOrOriginal)
-        .filter { s =>
-          s.charAt(0) != '#' && !nerEntitySet.contains(s) // not included in hashtags and NER
+    vaw penguinentities =
+      extwacttweettextfeatuwes(
+        tweet.fwatmap(_.cowedata.map(_.text)).getowewse(""), 😳😳😳
+        tweet.fwatmap(_.wanguage.map(_.wanguage))
+      ).phwases
+        .map(_.nowmawizedowowiginaw)
+        .fiwtew { s =>
+          s-s.chawat(0) != '#' && !newentityset.contains(s) // nyot i-incwuded in hashtags a-and nyew
         }
-        .map { penguinStr => TweetTextEntity.Penguin(PenguinKey(penguinStr.toLowerCase)) }.take(
-          MaxPenguinsPerTweet)
+        .map { p-penguinstw => tweettextentity.penguin(penguinkey(penguinstw.towowewcase)) }.take(
+          maxpenguinspewtweet)
 
-    (hashtagEntities ++ penguinEntities ++ nerEntities).map(e => SimClusterEntity.TweetEntity(e))
+    (hashtagentities ++ penguinentities ++ n-nyewentities).map(e => s-simcwustewentity.tweetentity(e))
   }
 }

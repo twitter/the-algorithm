@@ -1,167 +1,167 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.List;
+impowt java.utiw.wist;
 
-import javax.inject.Inject;
+i-impowt j-javax.inject.inject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdDebugInfo;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryNodeUtils;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
-import com.twitter.search.queryparser.visitors.DropAllProtectedOperatorVisitor;
-import com.twitter.search.queryparser.visitors.QueryTreeIndex;
-import com.twitter.util.Future;
+i-impowt com.twittew.finagwe.sewvice;
+i-impowt com.twittew.finagwe.simpwefiwtew;
+impowt c-com.twittew.seawch.common.decidew.seawchdecidew;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwddebuginfo;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+i-impowt com.twittew.seawch.quewypawsew.quewy.quewy;
+impowt com.twittew.seawch.quewypawsew.quewy.quewynodeutiws;
+impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
+impowt com.twittew.seawch.quewypawsew.quewy.seawch.seawchopewatow;
+i-impowt com.twittew.seawch.quewypawsew.quewy.seawch.seawchopewatowconstants;
+impowt com.twittew.seawch.quewypawsew.visitows.dwopawwpwotectedopewatowvisitow;
+i-impowt com.twittew.seawch.quewypawsew.visitows.quewytweeindex;
+i-impowt com.twittew.utiw.futuwe;
 
 /**
- * Full archive service filter validates requests with a protected operator, appends the
- * '[exclude protected]' operator by default, and appends '[filter protected]' operator instead if
- * 'getProtectedTweetsOnly' request param is set. A client error response is returned if any of the
- * following rules is violated.
- *   1. There is at most one 'protected' operator in the query.
- *   2. If there is a 'protected' operator, it must be in the query root node.
- *   3. The parent node of the 'protected' operator must not be negated and must be a conjunction.
- *   4. If there is a positive 'protected' operator, 'followedUserIds' and 'searcherId' request
- *   params must be set.
+ * fuww awchive sewvice fiwtew vawidates wequests with a p-pwotected opewatow, XD appends the
+ * '[excwude pwotected]' opewatow by defauwt, (U ᵕ U❁) and a-appends '[fiwtew pwotected]' o-opewatow instead i-if
+ * 'getpwotectedtweetsonwy' w-wequest pawam is s-set. :3 a cwient ewwow wesponse is wetuwned if any o-of the
+ * fowwowing wuwes is viowated. ( ͡o ω ͡o )
+ *   1. thewe is at most o-one 'pwotected' opewatow in the quewy. òωó
+ *   2. if thewe is a 'pwotected' opewatow, it must be in t-the quewy woot nyode. σωσ
+ *   3. t-the pawent nyode o-of the 'pwotected' o-opewatow must nyot be nyegated and must be a conjunction. (U ᵕ U❁)
+ *   4. i-if thewe is a-a positive 'pwotected' opewatow, (✿oωo) 'fowwowedusewids' a-and 'seawchewid' w-wequest
+ *   pawams must be s-set. ^^
  */
-public class FullArchiveProtectedOperatorFilter extends
-    SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(FullArchiveProtectedOperatorFilter.class);
-  private static final SearchOperator EXCLUDE_PROTECTED_OPERATOR =
-      new SearchOperator(SearchOperator.Type.EXCLUDE, SearchOperatorConstants.PROTECTED);
-  private static final SearchOperator FILTER_PROTECTED_OPERATOR =
-      new SearchOperator(SearchOperator.Type.FILTER, SearchOperatorConstants.PROTECTED);
-  private static final SearchCounter QUERY_PARSER_FAILURE_COUNT =
-      SearchCounter.export("protected_operator_filter_query_parser_failure_count");
+pubwic cwass fuwwawchivepwotectedopewatowfiwtew e-extends
+    simpwefiwtew<eawwybiwdwequestcontext, ^•ﻌ•^ eawwybiwdwesponse> {
+  p-pwivate static finaw woggew w-wog =
+      woggewfactowy.getwoggew(fuwwawchivepwotectedopewatowfiwtew.cwass);
+  pwivate static f-finaw seawchopewatow e-excwude_pwotected_opewatow =
+      nyew seawchopewatow(seawchopewatow.type.excwude, XD seawchopewatowconstants.pwotected);
+  pwivate static finaw seawchopewatow fiwtew_pwotected_opewatow =
+      nyew seawchopewatow(seawchopewatow.type.fiwtew, :3 s-seawchopewatowconstants.pwotected);
+  p-pwivate static finaw s-seawchcountew quewy_pawsew_faiwuwe_count =
+      s-seawchcountew.expowt("pwotected_opewatow_fiwtew_quewy_pawsew_faiwuwe_count");
 
-  private final DropAllProtectedOperatorVisitor dropProtectedOperatorVisitor;
-  private final SearchDecider decider;
+  p-pwivate finaw dwopawwpwotectedopewatowvisitow dwoppwotectedopewatowvisitow;
+  pwivate finaw seawchdecidew d-decidew;
 
-  @Inject
-  public FullArchiveProtectedOperatorFilter(
-      DropAllProtectedOperatorVisitor dropProtectedOperatorVisitor,
-      SearchDecider decider) {
-    this.dropProtectedOperatorVisitor = dropProtectedOperatorVisitor;
-    this.decider = decider;
+  @inject
+  pubwic fuwwawchivepwotectedopewatowfiwtew(
+      dwopawwpwotectedopewatowvisitow dwoppwotectedopewatowvisitow, (ꈍᴗꈍ)
+      seawchdecidew d-decidew) {
+    this.dwoppwotectedopewatowvisitow = d-dwoppwotectedopewatowvisitow;
+    t-this.decidew = d-decidew;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    Query query = requestContext.getParsedQuery();
-    if (query == null) {
-      return service.apply(requestContext);
+  @ovewwide
+  pubwic futuwe<eawwybiwdwesponse> a-appwy(
+      e-eawwybiwdwequestcontext w-wequestcontext, :3
+      s-sewvice<eawwybiwdwequestcontext, (U ﹏ U) eawwybiwdwesponse> sewvice) {
+    q-quewy quewy = w-wequestcontext.getpawsedquewy();
+    i-if (quewy == n-nyuww) {
+      w-wetuwn sewvice.appwy(wequestcontext);
     }
 
-    QueryTreeIndex queryTreeIndex = QueryTreeIndex.buildFor(query);
-    List<Query> nodeList = queryTreeIndex.getNodeList();
-    // try to find a protected operator, returns error response if more than one protected
-    // operator is detected
-    SearchOperator protectedOperator = null;
-    for (Query node : nodeList) {
-      if (node instanceof SearchOperator) {
-        SearchOperator searchOp = (SearchOperator) node;
-        if (SearchOperatorConstants.PROTECTED.equals(searchOp.getOperand())) {
-          if (protectedOperator == null) {
-            protectedOperator = searchOp;
-          } else {
-            return createErrorResponse("Only one 'protected' operator is expected.");
+    quewytweeindex quewytweeindex = quewytweeindex.buiwdfow(quewy);
+    w-wist<quewy> nyodewist = quewytweeindex.getnodewist();
+    // twy to find a pwotected opewatow, UwU wetuwns ewwow w-wesponse if mowe than one pwotected
+    // opewatow is detected
+    seawchopewatow p-pwotectedopewatow = n-nyuww;
+    f-fow (quewy nyode : nyodewist) {
+      i-if (node instanceof s-seawchopewatow) {
+        s-seawchopewatow seawchop = (seawchopewatow) nyode;
+        if (seawchopewatowconstants.pwotected.equaws(seawchop.getopewand())) {
+          if (pwotectedopewatow == nyuww) {
+            pwotectedopewatow = s-seawchop;
+          } ewse {
+            w-wetuwn cweateewwowwesponse("onwy one 'pwotected' o-opewatow is expected.");
           }
         }
       }
     }
 
-    Query processedQuery;
-    if (protectedOperator == null) {
-      // no protected operator is detected, append '[exclude protected]' by default
-      processedQuery = QueryNodeUtils.appendAsConjunction(query, EXCLUDE_PROTECTED_OPERATOR);
-    } else {
-      // protected operator must be in the query root node
-      if (queryTreeIndex.getParentOf(protectedOperator) != query) {
-        return createErrorResponse("'protected' operator must be in the query root node");
+    q-quewy pwocessedquewy;
+    if (pwotectedopewatow == nyuww) {
+      // n-nyo pwotected o-opewatow is detected, 😳😳😳 append '[excwude p-pwotected]' b-by defauwt
+      pwocessedquewy = quewynodeutiws.appendasconjunction(quewy, XD excwude_pwotected_opewatow);
+    } ewse {
+      // p-pwotected o-opewatow must b-be in the quewy woot nyode
+      i-if (quewytweeindex.getpawentof(pwotectedopewatow) != q-quewy) {
+        wetuwn cweateewwowwesponse("'pwotected' o-opewatow must be in the quewy woot nyode");
       }
-      // the query node that contains protected operator must not be negated
-      if (query.mustNotOccur()) {
-        return createErrorResponse("The query node that contains a 'protected' operator must not"
-            + " be negated.");
+      // the quewy nyode that c-contains pwotected o-opewatow must nyot be nyegated
+      if (quewy.mustnotoccuw()) {
+        w-wetuwn c-cweateewwowwesponse("the quewy nyode that contains a 'pwotected' o-opewatow must not"
+            + " be nyegated.");
       }
-      // the query node that contains protected operator must be a conjunction
-      if (!query.isTypeOf(Query.QueryType.CONJUNCTION)) {
-        return createErrorResponse("The query node that contains a 'protected' operator must"
-            + " be a conjunction.");
+      // the quewy nyode that contains p-pwotected opewatow must be a conjunction
+      i-if (!quewy.istypeof(quewy.quewytype.conjunction)) {
+        w-wetuwn cweateewwowwesponse("the quewy nyode that contains a 'pwotected' opewatow m-must"
+            + " b-be a conjunction.");
       }
-      // check the existence of 'followedUserIds' and 'searcherId' if it is a positive operator
-      if (isPositive(protectedOperator)) {
-        if (!validateRequestParam(requestContext.getRequest())) {
-          return createErrorResponse("'followedUserIds' and 'searcherId' are required "
-              + "by positive 'protected' operator.");
+      // check the existence of 'fowwowedusewids' and 'seawchewid' i-if it is a positive opewatow
+      i-if (ispositive(pwotectedopewatow)) {
+        if (!vawidatewequestpawam(wequestcontext.getwequest())) {
+          wetuwn cweateewwowwesponse("'fowwowedusewids' a-and 'seawchewid' awe w-wequiwed "
+              + "by p-positive 'pwotected' opewatow.");
         }
       }
-      processedQuery = query;
+      p-pwocessedquewy = quewy;
     }
-    // update processedQuery if 'getProtectedTweetsOnly' is set to true, it takes precedence over
-    // the existing protected operators
-    if (requestContext.getRequest().isGetProtectedTweetsOnly()) {
-      if (!validateRequestParam(requestContext.getRequest())) {
-        return createErrorResponse("'followedUserIds' and 'searcherId' are required "
-            + "when 'getProtectedTweetsOnly' is set to true.");
+    // update p-pwocessedquewy i-if 'getpwotectedtweetsonwy' i-is set to twue, o.O it takes pwecedence o-ovew
+    // t-the existing pwotected opewatows
+    if (wequestcontext.getwequest().isgetpwotectedtweetsonwy()) {
+      i-if (!vawidatewequestpawam(wequestcontext.getwequest())) {
+        w-wetuwn c-cweateewwowwesponse("'fowwowedusewids' and 'seawchewid' awe wequiwed "
+            + "when 'getpwotectedtweetsonwy' i-is set to twue.");
       }
-      try {
-        processedQuery = processedQuery.accept(dropProtectedOperatorVisitor);
-      } catch (QueryParserException e) {
-        // this should not happen since we already have a parsed query
-        QUERY_PARSER_FAILURE_COUNT.increment();
-        LOG.warn(
-            "Failed to drop protected operator for serialized query: " + query.serialize(), e);
+      t-twy {
+        p-pwocessedquewy = pwocessedquewy.accept(dwoppwotectedopewatowvisitow);
+      } catch (quewypawsewexception e) {
+        // t-this shouwd nyot h-happen since we a-awweady have a p-pawsed quewy
+        quewy_pawsew_faiwuwe_count.incwement();
+        w-wog.wawn(
+            "faiwed to dwop pwotected opewatow fow sewiawized quewy: " + quewy.sewiawize(), (⑅˘꒳˘) e);
       }
-      processedQuery =
-          QueryNodeUtils.appendAsConjunction(processedQuery, FILTER_PROTECTED_OPERATOR);
+      p-pwocessedquewy =
+          quewynodeutiws.appendasconjunction(pwocessedquewy, 😳😳😳 f-fiwtew_pwotected_opewatow);
     }
 
-    if (processedQuery == query) {
-      return service.apply(requestContext);
-    } else {
-      EarlybirdRequestContext clonedRequestContext =
-          EarlybirdRequestContext.copyRequestContext(requestContext, processedQuery);
-      return service.apply(clonedRequestContext);
+    if (pwocessedquewy == q-quewy) {
+      wetuwn sewvice.appwy(wequestcontext);
+    } e-ewse {
+      eawwybiwdwequestcontext c-cwonedwequestcontext =
+          e-eawwybiwdwequestcontext.copywequestcontext(wequestcontext, nyaa~~ p-pwocessedquewy);
+      w-wetuwn s-sewvice.appwy(cwonedwequestcontext);
     }
   }
 
-  private boolean validateRequestParam(EarlybirdRequest request) {
-    List<Long> followedUserIds = request.followedUserIds;
-    Long searcherId = (request.searchQuery != null && request.searchQuery.isSetSearcherId())
-        ? request.searchQuery.getSearcherId() : null;
-    return followedUserIds != null && !followedUserIds.isEmpty() && searcherId != null;
+  pwivate boowean vawidatewequestpawam(eawwybiwdwequest wequest) {
+    wist<wong> fowwowedusewids = wequest.fowwowedusewids;
+    w-wong seawchewid = (wequest.seawchquewy != n-nyuww && w-wequest.seawchquewy.issetseawchewid())
+        ? wequest.seawchquewy.getseawchewid() : n-nyuww;
+    wetuwn fowwowedusewids != nyuww && !fowwowedusewids.isempty() && seawchewid != n-nyuww;
   }
 
-  private boolean isPositive(SearchOperator searchOp) {
-    boolean isNegateExclude = searchOp.mustNotOccur()
-        && searchOp.getOperatorType() == SearchOperator.Type.EXCLUDE;
-    boolean isPositive = !searchOp.mustNotOccur()
-        && (searchOp.getOperatorType() == SearchOperator.Type.INCLUDE
-        || searchOp.getOperatorType() == SearchOperator.Type.FILTER);
-    return isNegateExclude || isPositive;
+  p-pwivate boowean ispositive(seawchopewatow seawchop) {
+    boowean i-isnegateexcwude = seawchop.mustnotoccuw()
+        && seawchop.getopewatowtype() == s-seawchopewatow.type.excwude;
+    b-boowean ispositive = !seawchop.mustnotoccuw()
+        && (seawchop.getopewatowtype() == s-seawchopewatow.type.incwude
+        || s-seawchop.getopewatowtype() == seawchopewatow.type.fiwtew);
+    wetuwn isnegateexcwude || ispositive;
   }
 
-  private Future<EarlybirdResponse> createErrorResponse(String errorMsg) {
-    EarlybirdResponse response = new EarlybirdResponse(EarlybirdResponseCode.CLIENT_ERROR, 0);
-    response.setDebugInfo(new EarlybirdDebugInfo().setHost("full_archive_root"));
-    response.setDebugString(errorMsg);
-    return Future.value(response);
+  p-pwivate futuwe<eawwybiwdwesponse> c-cweateewwowwesponse(stwing e-ewwowmsg) {
+    e-eawwybiwdwesponse w-wesponse = nyew eawwybiwdwesponse(eawwybiwdwesponsecode.cwient_ewwow, rawr 0);
+    w-wesponse.setdebuginfo(new e-eawwybiwddebuginfo().sethost("fuww_awchive_woot"));
+    wesponse.setdebugstwing(ewwowmsg);
+    w-wetuwn f-futuwe.vawue(wesponse);
   }
 
 }

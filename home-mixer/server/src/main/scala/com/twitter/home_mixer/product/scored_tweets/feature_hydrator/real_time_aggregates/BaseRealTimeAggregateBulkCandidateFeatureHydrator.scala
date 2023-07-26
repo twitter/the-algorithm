@@ -1,39 +1,39 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.real_time_aggregates
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.weaw_time_aggwegates
 
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.datawecowdinafeatuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.utiw.offwoadfutuwepoows
+impowt c-com.twittew.stitch.stitch
 
-trait BaseRealTimeAggregateBulkCandidateFeatureHydrator[K]
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate]
-    with BaseRealtimeAggregateHydrator[K] {
+twait baseweawtimeaggwegatebuwkcandidatefeatuwehydwatow[k]
+    extends b-buwkcandidatefeatuwehydwatow[pipewinequewy, (⑅˘꒳˘) tweetcandidate]
+    w-with baseweawtimeaggwegatehydwatow[k] {
 
-  val outputFeature: DataRecordInAFeature[TweetCandidate]
+  vaw outputfeatuwe: datawecowdinafeatuwe[tweetcandidate]
 
-  override def features: Set[Feature[_, _]] = Set(outputFeature)
+  ovewwide d-def featuwes: set[featuwe[_, (///ˬ///✿) _]] = s-set(outputfeatuwe)
 
-  override lazy val statScope: String = identifier.toString
+  o-ovewwide wazy vaw statscope: stwing = identifiew.tostwing
 
-  def keysFromQueryAndCandidates(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Seq[Option[K]]
+  def keysfwomquewyandcandidates(
+    quewy: p-pipewinequewy, 😳😳😳
+    candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): seq[option[k]]
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
-    val possiblyKeys = keysFromQueryAndCandidates(query, candidates)
-    fetchAndConstructDataRecords(possiblyKeys).map { dataRecords =>
-      dataRecords.map { dataRecord =>
-        FeatureMapBuilder().add(outputFeature, dataRecord).build()
+  ovewwide d-def appwy(
+    quewy: pipewinequewy, 🥺
+    c-candidates: s-seq[candidatewithfeatuwes[tweetcandidate]]
+  ): s-stitch[seq[featuwemap]] = offwoadfutuwepoows.offwoadfutuwe {
+    v-vaw possibwykeys = keysfwomquewyandcandidates(quewy, mya candidates)
+    f-fetchandconstwuctdatawecowds(possibwykeys).map { datawecowds =>
+      datawecowds.map { d-datawecowd =>
+        featuwemapbuiwdew().add(outputfeatuwe, 🥺 datawecowd).buiwd()
       }
     }
   }

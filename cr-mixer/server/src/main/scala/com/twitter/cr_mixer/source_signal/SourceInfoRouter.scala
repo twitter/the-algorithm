@@ -1,67 +1,67 @@
-package com.twitter.cr_mixer.source_signal
+package com.twittew.cw_mixew.souwce_signaw
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.cr_mixer.model.GraphSourceInfo
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.cr_mixer.thriftscala.{Product => TProduct}
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.timelines.configapi
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.cowe_wowkfwows.usew_modew.thwiftscawa.usewstate
+i-impowt c-com.twittew.cw_mixew.modew.gwaphsouwceinfo
+i-impowt com.twittew.cw_mixew.modew.souwceinfo
+i-impowt c-com.twittew.cw_mixew.souwce_signaw.souwcefetchew.fetchewquewy
+i-impowt com.twittew.cw_mixew.thwiftscawa.souwcetype
+i-impowt com.twittew.cw_mixew.thwiftscawa.{pwoduct => tpwoduct}
+impowt com.twittew.simcwustews_v2.common.usewid
+impowt com.twittew.timewines.configapi
+impowt c-com.twittew.utiw.futuwe
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-case class SourceInfoRouter @Inject() (
-  ussSourceSignalFetcher: UssSourceSignalFetcher,
-  frsSourceSignalFetcher: FrsSourceSignalFetcher,
-  frsSourceGraphFetcher: FrsSourceGraphFetcher,
-  realGraphOonSourceGraphFetcher: RealGraphOonSourceGraphFetcher,
-  realGraphInSourceGraphFetcher: RealGraphInSourceGraphFetcher,
+@singweton
+case c-cwass souwceinfowoutew @inject() (
+  usssouwcesignawfetchew: usssouwcesignawfetchew, (///ˬ///✿)
+  fwssouwcesignawfetchew: f-fwssouwcesignawfetchew, >w<
+  fwssouwcegwaphfetchew: f-fwssouwcegwaphfetchew, rawr
+  w-weawgwaphoonsouwcegwaphfetchew: weawgwaphoonsouwcegwaphfetchew, mya
+  weawgwaphinsouwcegwaphfetchew: weawgwaphinsouwcegwaphfetchew, ^^
 ) {
 
   def get(
-    userId: UserId,
-    product: TProduct,
-    userState: UserState,
-    params: configapi.Params
-  ): Future[(Set[SourceInfo], Map[String, Option[GraphSourceInfo]])] = {
+    u-usewid: usewid, 😳😳😳
+    pwoduct: tpwoduct, mya
+    usewstate: usewstate, 😳
+    pawams: configapi.pawams
+  ): f-futuwe[(set[souwceinfo], -.- map[stwing, 🥺 o-option[gwaphsouwceinfo]])] = {
 
-    val fetcherQuery = FetcherQuery(userId, product, userState, params)
-    Future.join(
-      getSourceSignals(fetcherQuery),
-      getSourceGraphs(fetcherQuery)
+    v-vaw f-fetchewquewy = fetchewquewy(usewid, o.O p-pwoduct, /(^•ω•^) usewstate, pawams)
+    futuwe.join(
+      g-getsouwcesignaws(fetchewquewy), nyaa~~
+      getsouwcegwaphs(fetchewquewy)
     )
   }
 
-  private def getSourceSignals(
-    fetcherQuery: FetcherQuery
-  ): Future[Set[SourceInfo]] = {
-    Future
+  pwivate d-def getsouwcesignaws(
+    fetchewquewy: fetchewquewy
+  ): futuwe[set[souwceinfo]] = {
+    futuwe
       .join(
-        ussSourceSignalFetcher.get(fetcherQuery),
-        frsSourceSignalFetcher.get(fetcherQuery)).map {
-        case (ussSignalsOpt, frsSignalsOpt) =>
-          (ussSignalsOpt.getOrElse(Seq.empty) ++ frsSignalsOpt.getOrElse(Seq.empty)).toSet
+        usssouwcesignawfetchew.get(fetchewquewy), nyaa~~
+        f-fwssouwcesignawfetchew.get(fetchewquewy)).map {
+        case (usssignawsopt, :3 f-fwssignawsopt) =>
+          (usssignawsopt.getowewse(seq.empty) ++ f-fwssignawsopt.getowewse(seq.empty)).toset
       }
   }
 
-  private def getSourceGraphs(
-    fetcherQuery: FetcherQuery
-  ): Future[Map[String, Option[GraphSourceInfo]]] = {
+  p-pwivate def getsouwcegwaphs(
+    fetchewquewy: fetchewquewy
+  ): futuwe[map[stwing, 😳😳😳 o-option[gwaphsouwceinfo]]] = {
 
-    Future
+    f-futuwe
       .join(
-        frsSourceGraphFetcher.get(fetcherQuery),
-        realGraphOonSourceGraphFetcher.get(fetcherQuery),
-        realGraphInSourceGraphFetcher.get(fetcherQuery)
+        fwssouwcegwaphfetchew.get(fetchewquewy), (˘ω˘)
+        w-weawgwaphoonsouwcegwaphfetchew.get(fetchewquewy), ^^
+        weawgwaphinsouwcegwaphfetchew.get(fetchewquewy)
       ).map {
-        case (frsGraphOpt, realGraphOonGraphOpt, realGraphInGraphOpt) =>
-          Map(
-            SourceType.FollowRecommendation.name -> frsGraphOpt,
-            SourceType.RealGraphOon.name -> realGraphOonGraphOpt,
-            SourceType.RealGraphIn.name -> realGraphInGraphOpt,
+        c-case (fwsgwaphopt, :3 weawgwaphoongwaphopt, -.- w-weawgwaphingwaphopt) =>
+          map(
+            s-souwcetype.fowwowwecommendation.name -> fwsgwaphopt, 😳
+            souwcetype.weawgwaphoon.name -> w-weawgwaphoongwaphopt, mya
+            souwcetype.weawgwaphin.name -> w-weawgwaphingwaphopt, (˘ω˘)
           )
       }
   }

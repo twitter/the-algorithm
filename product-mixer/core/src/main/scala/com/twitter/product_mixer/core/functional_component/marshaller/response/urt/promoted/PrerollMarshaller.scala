@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Preroll
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.pwewoww
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class PrerollMarshaller @Inject() (
-  dynamicPrerollTypeMarshaller: DynamicPrerollTypeMarshaller,
-  mediaInfoMarshaller: MediaInfoMarshaller) {
+@singweton
+c-cwass pwewowwmawshawwew @inject() (
+  d-dynamicpwewowwtypemawshawwew: d-dynamicpwewowwtypemawshawwew, (⑅˘꒳˘)
+  mediainfomawshawwew: mediainfomawshawwew) {
 
-  def apply(preroll: Preroll): urt.Preroll =
-    urt.Preroll(
-      prerollId = preroll.prerollId,
-      dynamicPrerollType = preroll.dynamicPrerollType.map(dynamicPrerollTypeMarshaller(_)),
-      mediaInfo = preroll.mediaInfo.map(mediaInfoMarshaller(_))
+  def appwy(pwewoww: pwewoww): u-uwt.pwewoww =
+    uwt.pwewoww(
+      pwewowwid = p-pwewoww.pwewowwid, (U ᵕ U❁)
+      dynamicpwewowwtype = p-pwewoww.dynamicpwewowwtype.map(dynamicpwewowwtypemawshawwew(_)), -.-
+      mediainfo = pwewoww.mediainfo.map(mediainfomawshawwew(_))
     )
 }

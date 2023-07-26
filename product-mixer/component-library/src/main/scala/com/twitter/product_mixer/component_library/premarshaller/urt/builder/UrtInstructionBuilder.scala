@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineInstruction
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineinstwuction
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-trait UrtInstructionBuilder[-Query <: PipelineQuery, +Instruction <: TimelineInstruction] {
+t-twait uwtinstwuctionbuiwdew[-quewy <: p-pipewinequewy, σωσ +instwuction <: t-timewineinstwuction] {
 
-  def includeInstruction: IncludeInstruction[Query] = AlwaysInclude
+  d-def incwudeinstwuction: incwudeinstwuction[quewy] = awwaysincwude
 
-  def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[Instruction]
+  def buiwd(
+    quewy: quewy, >_<
+    entwies: s-seq[timewineentwy]
+  ): seq[instwuction]
 }

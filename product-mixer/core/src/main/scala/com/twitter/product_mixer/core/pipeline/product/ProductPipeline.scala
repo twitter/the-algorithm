@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.core.pipeline.product
+package com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct
 
-import com.twitter.product_mixer.core.functional_component.common.access_policy.WithDebugAccessPolicies
-import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.stitch.Arrow
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.access_powicy.withdebugaccesspowicies
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pwoductpipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.wequest
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine
+i-impowt com.twittew.stitch.awwow
 
 /**
- * A Product Pipeline
+ * a-a pwoduct pipewine
  *
- * This is an abstract class, as we only construct these via the [[ProductPipelineBuilder]].
+ * t-this is a-an abstwact cwass, rawr x3 a-as we onwy constwuct these via the [[pwoductpipewinebuiwdew]]. mya
  *
- * A [[ProductPipeline]] is capable of processing a [[Request]] and returning a response.
+ * a [[pwoductpipewine]] is capabwe of pwocessing a-a [[wequest]] and wetuwning a wesponse. nyaa~~
  *
- * @tparam RequestType the domain model for the query or request
- * @tparam ResponseType the final marshalled result type
+ * @tpawam w-wequesttype the domain m-modew fow the quewy ow wequest
+ * @tpawam wesponsetype the finaw mawshawwed w-wesuwt type
  */
-abstract class ProductPipeline[RequestType <: Request, ResponseType] private[product]
-    extends Pipeline[ProductPipelineRequest[RequestType], ResponseType]
-    with WithDebugAccessPolicies {
-  override private[core] val config: ProductPipelineConfig[RequestType, _, ResponseType]
-  override val arrow: Arrow[
-    ProductPipelineRequest[RequestType],
-    ProductPipelineResult[ResponseType]
+abstwact cwass p-pwoductpipewine[wequesttype <: wequest, (⑅˘꒳˘) w-wesponsetype] pwivate[pwoduct]
+    extends pipewine[pwoductpipewinewequest[wequesttype], rawr x3 wesponsetype]
+    w-with withdebugaccesspowicies {
+  ovewwide pwivate[cowe] vaw config: pwoductpipewineconfig[wequesttype, (✿oωo) _, wesponsetype]
+  o-ovewwide vaw awwow: a-awwow[
+    pwoductpipewinewequest[wequesttype], (ˆ ﻌ ˆ)♡
+    p-pwoductpipewinewesuwt[wesponsetype]
   ]
-  override val identifier: ProductPipelineIdentifier
+  ovewwide v-vaw identifiew: p-pwoductpipewineidentifiew
 }

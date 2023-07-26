@@ -1,33 +1,33 @@
-package com.twitter.search.earlybird.index;
+package com.twittew.seawch.eawwybiwd.index;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentWriter.InvertedDocConsumerBuilder;
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentWriter.StoredFieldsConsumerBuilder;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdRealtimeIndexExtensionsData;
+impowt c-com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+i-impowt c-com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdweawtimeindexsegmentwwitew.invewteddocconsumewbuiwdew;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdweawtimeindexsegmentwwitew.stowedfiewdsconsumewbuiwdew;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.extensions.eawwybiwdweawtimeindexextensionsdata;
 
-public class TweetSearchRealtimeIndexExtensionsData
-    implements EarlybirdRealtimeIndexExtensionsData {
-  @Override
-  public void createStoredFieldsConsumer(StoredFieldsConsumerBuilder builder) {
-    // no extensions necessary here
+p-pubwic cwass tweetseawchweawtimeindexextensionsdata
+    i-impwements eawwybiwdweawtimeindexextensionsdata {
+  @ovewwide
+  pubwic void cweatestowedfiewdsconsumew(stowedfiewdsconsumewbuiwdew buiwdew) {
+    // n-nyo extensions nyecessawy hewe
   }
 
-  @Override
-  public void createInvertedDocConsumer(InvertedDocConsumerBuilder builder) {
-    if (EarlybirdFieldConstant.ID_FIELD.getFieldName().equals(builder.getFieldName())) {
-      // The tweet ID should've already been added to the tweet ID <-> doc ID mapper.
-      builder.setUseDefaultConsumer(false);
+  @ovewwide
+  pubwic v-void cweateinvewteddocconsumew(invewteddocconsumewbuiwdew buiwdew) {
+    if (eawwybiwdfiewdconstant.id_fiewd.getfiewdname().equaws(buiwdew.getfiewdname())) {
+      // t-the tweet id shouwd've awweady been added to the tweet i-id <-> doc id mappew. nyaa~~
+      b-buiwdew.setusedefauwtconsumew(fawse);
     }
 
-    if (EarlybirdFieldConstant.CREATED_AT_FIELD.getFieldName().equals(builder.getFieldName())) {
-      RealtimeTimeMapper timeMapper = (RealtimeTimeMapper) builder.getSegmentData().getTimeMapper();
-      builder.addConsumer(new TimeMappingWriter(timeMapper));
-      builder.setUseDefaultConsumer(false);
+    i-if (eawwybiwdfiewdconstant.cweated_at_fiewd.getfiewdname().equaws(buiwdew.getfiewdname())) {
+      weawtimetimemappew timemappew = (weawtimetimemappew) buiwdew.getsegmentdata().gettimemappew();
+      buiwdew.addconsumew(new t-timemappingwwitew(timemappew));
+      buiwdew.setusedefauwtconsumew(fawse);
     }
   }
 
-  @Override
-  public void setupExtensions(EarlybirdIndexSegmentAtomicReader atomicReader) {
+  @ovewwide
+  pubwic void setupextensions(eawwybiwdindexsegmentatomicweadew atomicweadew) {
   }
 }

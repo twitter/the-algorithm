@@ -1,170 +1,170 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import javax.annotation.Nullable;
-import javax.inject.Named;
-import javax.inject.Singleton;
+impowt j-javax.annotation.nuwwabwe;
+i-impowt j-javax.inject.named;
+i-impowt javax.inject.singweton;
 
-import scala.PartialFunction;
+i-impowt scawa.pawtiawfunction;
 
-import com.google.inject.Provides;
+i-impowt com.googwe.inject.pwovides;
 
-import org.apache.thrift.protocol.TProtocolFactory;
+i-impowt o-owg.apache.thwift.pwotocow.tpwotocowfactowy;
 
-import com.twitter.app.Flag;
-import com.twitter.app.Flaggable;
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.mtls.authorization.server.MtlsServerSessionTrackerFilter;
-import com.twitter.finagle.service.ReqRep;
-import com.twitter.finagle.service.ResponseClass;
-import com.twitter.finagle.stats.StatsReceiver;
-import com.twitter.finagle.thrift.RichServerParam;
-import com.twitter.finagle.thrift.ThriftClientRequest;
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.dark.DarkProxy;
-import com.twitter.search.common.dark.ResolverProxy;
-import com.twitter.search.common.partitioning.zookeeper.SearchZkClient;
-import com.twitter.search.common.root.PartitionConfig;
-import com.twitter.search.common.root.RemoteClientBuilder;
-import com.twitter.search.common.root.RootClientServiceBuilder;
-import com.twitter.search.common.root.SearchRootModule;
-import com.twitter.search.common.root.ServerSetsConfig;
-import com.twitter.search.common.util.zookeeper.ZooKeeperProxy;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.filters.PreCacheRequestTypeCountFilter;
-import com.twitter.search.earlybird_root.filters.QueryLangStatFilter;
+impowt com.twittew.app.fwag;
+impowt com.twittew.app.fwaggabwe;
+impowt com.twittew.common.utiw.cwock;
+i-impowt com.twittew.finagwe.sewvice;
+impowt com.twittew.finagwe.mtws.authowization.sewvew.mtwssewvewsessiontwackewfiwtew;
+i-impowt com.twittew.finagwe.sewvice.weqwep;
+i-impowt com.twittew.finagwe.sewvice.wesponsecwass;
+impowt com.twittew.finagwe.stats.statsweceivew;
+i-impowt com.twittew.finagwe.thwift.wichsewvewpawam;
+i-impowt c-com.twittew.finagwe.thwift.thwiftcwientwequest;
+impowt com.twittew.inject.twittewmoduwe;
+impowt com.twittew.seawch.common.dawk.dawkpwoxy;
+impowt com.twittew.seawch.common.dawk.wesowvewpwoxy;
+i-impowt com.twittew.seawch.common.pawtitioning.zookeepew.seawchzkcwient;
+impowt com.twittew.seawch.common.woot.pawtitionconfig;
+impowt com.twittew.seawch.common.woot.wemotecwientbuiwdew;
+impowt c-com.twittew.seawch.common.woot.wootcwientsewvicebuiwdew;
+impowt c-com.twittew.seawch.common.woot.seawchwootmoduwe;
+i-impowt com.twittew.seawch.common.woot.sewvewsetsconfig;
+i-impowt c-com.twittew.seawch.common.utiw.zookeepew.zookeepewpwoxy;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdsewvice;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdfeatuweschemamewgew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.pwecachewequesttypecountfiwtew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.quewywangstatfiwtew;
 
 /**
- * Provides common bindings.
+ * pwovides common bindings. UwU
  */
-public class EarlybirdCommonModule extends TwitterModule {
-  static final String NAMED_ALT_CLIENT = "alt_client";
-  static final String NAMED_EXP_CLUSTER_CLIENT = "exp_cluster_client";
+p-pubwic cwass eawwybiwdcommonmoduwe extends twittewmoduwe {
+  s-static f-finaw stwing n-nyamed_awt_cwient = "awt_cwient";
+  static finaw stwing nyamed_exp_cwustew_cwient = "exp_cwustew_cwient";
 
-  private final Flag<String> altZkRoleFlag = createFlag(
-      "alt_zk_role",
+  pwivate finaw fwag<stwing> a-awtzkwowefwag = c-cweatefwag(
+      "awt_zk_wowe", :3
       "",
-      "The alternative ZooKeeper role",
-      Flaggable.ofString());
-  private final Flag<String> altZkClientEnvFlag = createFlag(
-      "alt_zk_client_env",
+      "the awtewnative zookeepew w-wowe", (⑅˘꒳˘)
+      f-fwaggabwe.ofstwing());
+  pwivate f-finaw fwag<stwing> awtzkcwientenvfwag = c-cweatefwag(
+      "awt_zk_cwient_env", (///ˬ///✿)
       "",
-      "The alternative zk client environment",
-      Flaggable.ofString());
-  private final Flag<String> altPartitionZkPathFlag = createFlag(
-      "alt_partition_zk_path",
-      "",
-      "The alternative client partition zk path",
-      Flaggable.ofString());
+      "the awtewnative zk cwient enviwonment", ^^;;
+      f-fwaggabwe.ofstwing());
+  pwivate f-finaw fwag<stwing> awtpawtitionzkpathfwag = cweatefwag(
+      "awt_pawtition_zk_path", >_<
+      "", rawr x3
+      "the awtewnative c-cwient p-pawtition zk path", /(^•ω•^)
+      fwaggabwe.ofstwing());
 
-  @Override
-  public void configure() {
-    bind(InitializeFilter.class).in(Singleton.class);
-    bind(PreCacheRequestTypeCountFilter.class).in(Singleton.class);
+  @ovewwide
+  pubwic void configuwe() {
+    bind(initiawizefiwtew.cwass).in(singweton.cwass);
+    bind(pwecachewequesttypecountfiwtew.cwass).in(singweton.cwass);
 
-    bind(Clock.class).toInstance(Clock.SYSTEM_CLOCK);
-    bind(QueryLangStatFilter.Config.class).toInstance(new QueryLangStatFilter.Config(100));
+    bind(cwock.cwass).toinstance(cwock.system_cwock);
+    bind(quewywangstatfiwtew.config.cwass).toinstance(new q-quewywangstatfiwtew.config(100));
   }
 
-  // Used in SearchRootModule.
-  @Provides
-  @Singleton
-  PartialFunction<ReqRep, ResponseClass> provideResponseClassifier() {
-    return new RootResponseClassifier();
+  // u-used in seawchwootmoduwe. :3
+  @pwovides
+  @singweton
+  pawtiawfunction<weqwep, (ꈍᴗꈍ) w-wesponsecwass> pwovidewesponsecwassifiew() {
+    w-wetuwn nyew wootwesponsecwassifiew();
   }
 
-  @Provides
-  @Singleton
-  Service<byte[], byte[]> providesByteService(
-      EarlybirdService.ServiceIface svc,
-      DarkProxy<ThriftClientRequest, byte[]> darkProxy,
-      TProtocolFactory protocolFactory) {
-    return darkProxy.toFilter().andThen(
-        new EarlybirdService.Service(
-            svc, new RichServerParam(protocolFactory, SearchRootModule.SCROOGE_BUFFER_SIZE)));
+  @pwovides
+  @singweton
+  s-sewvice<byte[], /(^•ω•^) byte[]> pwovidesbytesewvice(
+      eawwybiwdsewvice.sewviceiface svc, (⑅˘꒳˘)
+      d-dawkpwoxy<thwiftcwientwequest, ( ͡o ω ͡o ) byte[]> dawkpwoxy, òωó
+      tpwotocowfactowy pwotocowfactowy) {
+    wetuwn dawkpwoxy.tofiwtew().andthen(
+        n-nyew eawwybiwdsewvice.sewvice(
+            svc, (⑅˘꒳˘) n-nyew wichsewvewpawam(pwotocowfactowy, XD s-seawchwootmoduwe.scwooge_buffew_size)));
   }
 
-  @Provides
-  @Singleton
-  @Named(SearchRootModule.NAMED_SERVICE_INTERFACE)
-  Class providesServiceInterface() {
-    return EarlybirdService.ServiceIface.class;
+  @pwovides
+  @singweton
+  @named(seawchwootmoduwe.named_sewvice_intewface)
+  c-cwass pwovidessewviceintewface() {
+    wetuwn e-eawwybiwdsewvice.sewviceiface.cwass;
   }
 
-  @Provides
-  @Singleton
-  ZooKeeperProxy provideZookeeperClient() {
-    return SearchZkClient.getSZooKeeperClient();
+  @pwovides
+  @singweton
+  z-zookeepewpwoxy p-pwovidezookeepewcwient() {
+    w-wetuwn seawchzkcwient.getszookeepewcwient();
   }
 
-  @Provides
-  @Singleton
-  EarlybirdFeatureSchemaMerger provideFeatureSchemaMerger() {
-    return new EarlybirdFeatureSchemaMerger();
+  @pwovides
+  @singweton
+  eawwybiwdfeatuweschemamewgew pwovidefeatuweschemamewgew() {
+    w-wetuwn nyew eawwybiwdfeatuweschemamewgew();
   }
 
-  @Provides
-  @Singleton
-  @Nullable
-  @Named(NAMED_ALT_CLIENT)
-  ServerSetsConfig provideAltServerSetsConfig() {
-    if (!altZkRoleFlag.isDefined() || !altZkClientEnvFlag.isDefined()) {
-      return null;
+  @pwovides
+  @singweton
+  @nuwwabwe
+  @named(named_awt_cwient)
+  s-sewvewsetsconfig p-pwovideawtsewvewsetsconfig() {
+    i-if (!awtzkwowefwag.isdefined() || !awtzkcwientenvfwag.isdefined()) {
+      w-wetuwn nyuww;
     }
 
-    return new ServerSetsConfig(altZkRoleFlag.apply(), altZkClientEnvFlag.apply());
+    wetuwn nyew sewvewsetsconfig(awtzkwowefwag.appwy(), -.- awtzkcwientenvfwag.appwy());
   }
 
-  @Provides
-  @Singleton
-  @Nullable
-  @Named(NAMED_ALT_CLIENT)
-  PartitionConfig provideAltPartitionConfig(PartitionConfig defaultPartitionConfig) {
-    if (!altPartitionZkPathFlag.isDefined()) {
-      return null;
+  @pwovides
+  @singweton
+  @nuwwabwe
+  @named(named_awt_cwient)
+  pawtitionconfig p-pwovideawtpawtitionconfig(pawtitionconfig defauwtpawtitionconfig) {
+    if (!awtpawtitionzkpathfwag.isdefined()) {
+      wetuwn nyuww;
     }
 
-    return new PartitionConfig(
-        defaultPartitionConfig.getNumPartitions(), altPartitionZkPathFlag.apply());
+    wetuwn nyew p-pawtitionconfig(
+        defauwtpawtitionconfig.getnumpawtitions(), :3 awtpawtitionzkpathfwag.appwy());
   }
 
-  @Provides
-  @Singleton
-  @Nullable
-  @Named(NAMED_ALT_CLIENT)
-  RootClientServiceBuilder<EarlybirdService.ServiceIface> provideAltRootClientServiceBuilder(
-      @Named(NAMED_ALT_CLIENT) @Nullable ServerSetsConfig serverSetsConfig,
-      @Named(SearchRootModule.NAMED_SERVICE_INTERFACE) Class serviceIface,
-      ResolverProxy resolverProxy,
-      RemoteClientBuilder<EarlybirdService.ServiceIface> remoteClientBuilder) {
-    if (serverSetsConfig == null) {
-      return null;
+  @pwovides
+  @singweton
+  @nuwwabwe
+  @named(named_awt_cwient)
+  wootcwientsewvicebuiwdew<eawwybiwdsewvice.sewviceiface> p-pwovideawtwootcwientsewvicebuiwdew(
+      @named(named_awt_cwient) @nuwwabwe s-sewvewsetsconfig s-sewvewsetsconfig, nyaa~~
+      @named(seawchwootmoduwe.named_sewvice_intewface) cwass s-sewviceiface, 😳
+      wesowvewpwoxy w-wesowvewpwoxy, (⑅˘꒳˘)
+      w-wemotecwientbuiwdew<eawwybiwdsewvice.sewviceiface> wemotecwientbuiwdew) {
+    if (sewvewsetsconfig == nyuww) {
+      wetuwn nyuww;
     }
 
-    return new RootClientServiceBuilder<>(
-        serverSetsConfig, serviceIface, resolverProxy, remoteClientBuilder);
+    wetuwn nyew w-wootcwientsewvicebuiwdew<>(
+        sewvewsetsconfig, nyaa~~ s-sewviceiface, OwO wesowvewpwoxy, rawr x3 w-wemotecwientbuiwdew);
   }
 
-  @Provides
-  @Singleton
-  @Named(NAMED_EXP_CLUSTER_CLIENT)
-  RootClientServiceBuilder<EarlybirdService.ServiceIface> provideExpClusterRootClientServiceBuilder(
-      @Named(SearchRootModule.NAMED_EXP_CLUSTER_SERVER_SETS_CONFIG)
-          ServerSetsConfig serverSetsConfig,
-      @Named(SearchRootModule.NAMED_SERVICE_INTERFACE) Class serviceIface,
-      ResolverProxy resolverProxy,
-      RemoteClientBuilder<EarlybirdService.ServiceIface> remoteClientBuilder) {
-    return new RootClientServiceBuilder<>(
-        serverSetsConfig, serviceIface, resolverProxy, remoteClientBuilder);
+  @pwovides
+  @singweton
+  @named(named_exp_cwustew_cwient)
+  wootcwientsewvicebuiwdew<eawwybiwdsewvice.sewviceiface> p-pwovideexpcwustewwootcwientsewvicebuiwdew(
+      @named(seawchwootmoduwe.named_exp_cwustew_sewvew_sets_config)
+          sewvewsetsconfig sewvewsetsconfig, XD
+      @named(seawchwootmoduwe.named_sewvice_intewface) c-cwass s-sewviceiface, σωσ
+      wesowvewpwoxy w-wesowvewpwoxy, (U ᵕ U❁)
+      w-wemotecwientbuiwdew<eawwybiwdsewvice.sewviceiface> wemotecwientbuiwdew) {
+    wetuwn new wootcwientsewvicebuiwdew<>(
+        sewvewsetsconfig, (U ﹏ U) s-sewviceiface, :3 w-wesowvewpwoxy, ( ͡o ω ͡o ) w-wemotecwientbuiwdew);
   }
 
-  @Provides
-  @Singleton
-  MtlsServerSessionTrackerFilter<EarlybirdRequest, EarlybirdResponse>
-  provideMtlsServerSessionTrackerFilter(StatsReceiver statsReceiver) {
-    return new MtlsServerSessionTrackerFilter<>(statsReceiver);
+  @pwovides
+  @singweton
+  mtwssewvewsessiontwackewfiwtew<eawwybiwdwequest, σωσ e-eawwybiwdwesponse>
+  pwovidemtwssewvewsessiontwackewfiwtew(statsweceivew s-statsweceivew) {
+    wetuwn nyew m-mtwssewvewsessiontwackewfiwtew<>(statsweceivew);
   }
 }

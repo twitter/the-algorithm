@@ -1,90 +1,90 @@
-package com.twitter.search.common.schema.earlybird;
+package com.twittew.seawch.common.schema.eawwybiwd;
 
-import java.util.Set;
+impowt java.utiw.set;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableSet;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.cowwect.immutabweset;
 
 /**
- * A list of existing Earlybird clusters.
+ * a-a wist o-of existing eawwybiwd c-cwustews. (ˆ ﻌ ˆ)♡
  */
-public enum EarlybirdCluster {
+p-pubwic enum e-eawwybiwdcwustew {
   /**
-   * Realtime earlybird cluster. Has 100% of tweet for about 7 days.
+   * weawtime eawwybiwd cwustew. 😳😳😳 has 100% of tweet fow about 7 days. :3
    */
-  REALTIME,
+  w-weawtime, OwO
   /**
-   * Protected earlybird cluster. Has only tweets from protected accounts.
+   * pwotected eawwybiwd c-cwustew. (U ﹏ U) has onwy tweets fwom pwotected a-accounts. >w<
    */
-  PROTECTED,
+  pwotected, (U ﹏ U)
   /**
-   * Full archive cluster. Has all tweets until about 2 days ago.
+   * fuww awchive cwustew. 😳 has aww tweets u-untiw about 2 days ago. (ˆ ﻌ ˆ)♡
    */
-  FULL_ARCHIVE,
+  f-fuww_awchive, 😳😳😳
   /**
-   * SuperRoot cluster. Talks to the other clusters instead of talking directly to earlybirds.
+   * s-supewwoot cwustew. (U ﹏ U) tawks to the othew cwustews instead of tawking d-diwectwy to eawwybiwds. (///ˬ///✿)
    */
-  SUPERROOT,
+  supewwoot, 😳
 
   /**
-   * A dedicated cluster for Candidate Generation use cases based on Earlybird in Home/PushService
+   * a dedicated cwustew fow candidate genewation u-use cases based on eawwybiwd i-in home/pushsewvice
    */
-  REALTIME_CG;
+  w-weawtime_cg;
 
-  public String getNameForStats() {
-    return name().toLowerCase();
+  p-pubwic s-stwing getnamefowstats() {
+    wetuwn nyame().towowewcase();
   }
 
-  public static boolean isArchive(EarlybirdCluster cluster) {
-    return isClusterInSet(cluster, ARCHIVE_CLUSTERS);
+  pubwic static b-boowean isawchive(eawwybiwdcwustew cwustew) {
+    wetuwn iscwustewinset(cwustew, 😳 a-awchive_cwustews);
   }
 
-  public static boolean isTwitterMemoryFormatCluster(EarlybirdCluster cluster) {
-    return isClusterInSet(cluster, TWITTER_IN_MEMORY_INDEX_FORMAT_GENERAL_PURPOSE_CLUSTERS);
+  pubwic static boowean istwittewmemowyfowmatcwustew(eawwybiwdcwustew cwustew) {
+    wetuwn iscwustewinset(cwustew, σωσ twittew_in_memowy_index_fowmat_genewaw_puwpose_cwustews);
   }
 
-  public static boolean hasEarlybirds(EarlybirdCluster cluster) {
-    return cluster != SUPERROOT;
+  p-pubwic static boowean haseawwybiwds(eawwybiwdcwustew c-cwustew) {
+    w-wetuwn cwustew != s-supewwoot;
   }
 
-  private static boolean isClusterInSet(EarlybirdCluster cluster, Set<EarlybirdCluster> set) {
-    return set.contains(cluster);
+  pwivate static boowean iscwustewinset(eawwybiwdcwustew c-cwustew, rawr x3 set<eawwybiwdcwustew> s-set) {
+    wetuwn set.contains(cwustew);
   }
 
-  protected static final ImmutableSet<EarlybirdCluster> ARCHIVE_CLUSTERS =
-      ImmutableSet.of(FULL_ARCHIVE);
+  p-pwotected static f-finaw immutabweset<eawwybiwdcwustew> awchive_cwustews =
+      i-immutabweset.of(fuww_awchive);
 
-  @VisibleForTesting
-  public static final ImmutableSet<EarlybirdCluster>
-          TWITTER_IN_MEMORY_INDEX_FORMAT_GENERAL_PURPOSE_CLUSTERS =
-      ImmutableSet.of(
-          REALTIME,
-          PROTECTED);
+  @visibwefowtesting
+  pubwic static f-finaw immutabweset<eawwybiwdcwustew>
+          twittew_in_memowy_index_fowmat_genewaw_puwpose_cwustews =
+      immutabweset.of(
+          w-weawtime, OwO
+          pwotected);
 
-  @VisibleForTesting
-  public static final ImmutableSet<EarlybirdCluster> TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS =
-      ImmutableSet.of(
-          REALTIME,
-          PROTECTED,
-          REALTIME_CG);
+  @visibwefowtesting
+  p-pubwic static finaw immutabweset<eawwybiwdcwustew> t-twittew_in_memowy_index_fowmat_aww_cwustews =
+      immutabweset.of(
+          w-weawtime, /(^•ω•^)
+          pwotected, 😳😳😳
+          weawtime_cg);
 
   /**
-   * Constant for field used in general purpose clusters,
-   * Note that GENERAL_PURPOSE_CLUSTERS does not include REALTIME_CG. If you wish to include REALTIME_CG,
-   * please use ALL_CLUSTERS
+   * constant fow fiewd used in genewaw puwpose cwustews, ( ͡o ω ͡o )
+   * n-nyote that g-genewaw_puwpose_cwustews does n-nyot incwude weawtime_cg. >_< i-if you w-wish to incwude weawtime_cg,
+   * pwease use aww_cwustews
    */
-  protected static final ImmutableSet<EarlybirdCluster> GENERAL_PURPOSE_CLUSTERS =
-      ImmutableSet.of(
-          REALTIME,
-          PROTECTED,
-          FULL_ARCHIVE,
-          SUPERROOT);
+  pwotected static f-finaw immutabweset<eawwybiwdcwustew> genewaw_puwpose_cwustews =
+      immutabweset.of(
+          weawtime, >w<
+          pwotected, rawr
+          f-fuww_awchive, 😳
+          supewwoot);
 
-  protected static final ImmutableSet<EarlybirdCluster> ALL_CLUSTERS =
-      ImmutableSet.of(
-          REALTIME,
-          PROTECTED,
-          FULL_ARCHIVE,
-          SUPERROOT,
-          REALTIME_CG);
+  p-pwotected static f-finaw immutabweset<eawwybiwdcwustew> a-aww_cwustews =
+      immutabweset.of(
+          w-weawtime, >w<
+          pwotected, (⑅˘꒳˘)
+          f-fuww_awchive, OwO
+          s-supewwoot, (ꈍᴗꈍ)
+          w-weawtime_cg);
 }

@@ -1,363 +1,363 @@
 """
-This module implements tools for pruning neural networks.
+this moduwe impwements toows f-fow pwuning nyeuwaw n-nyetwowks. ^^
 
-In particular, it provides tools for dealing with masks:
+i-in pawticuwaw, (///ˬ///✿) it p-pwovides toows f-fow deawing with m-masks:
 
-  features = apply_mask(features)
+  featuwes = a-appwy_mask(featuwes)
 
-The function `apply_mask` applies a binary mask to the channels of a given tensor. Consider the
-following loss:
+t-the function `appwy_mask` appwies a binawy mask to the channews of a-a given tensow. (///ˬ///✿) considew the
+fowwowing woss:
 
-  logits = tf.matmul(features, weights)
-  loss = tf.losses.sparse_softmax_cross_entropy(labels, logits)
+  w-wogits = tf.matmuw(featuwes, (///ˬ///✿) weights)
+  w-woss = tf.wosses.spawse_softmax_cwoss_entwopy(wabews, ʘwʘ wogits)
 
-Each mask has a corresponding pruning signal. The function `update_pruning_signals` will update and
-return these signals:
+each mask has a cowwesponding p-pwuning signaw. ^•ﻌ•^ the function `update_pwuning_signaws` w-wiww u-update and
+wetuwn these signaws:
 
-  signals = update_pruning_signals(loss)
+  signaws = update_pwuning_signaws(woss)
 
-The pruning operation will zero out the mask entry with the smallest corresponding pruning signal:
+the pwuning opewation w-wiww zewo out the mask entwy with the smowest cowwesponding pwuning signaw:
 
-  prune(signals)
+  p-pwune(signaws)
 
-The following function allows us to estimate the computational cost of a graph (number of FLOPs):
+the fowwowing function a-awwows us t-to estimate the c-computationaw c-cost of a gwaph (numbew of fwops):
 
-  cost = computational_cost(loss)
+  cost = computationaw_cost(woss)
 
-To compute the cost of each feature per data point, we can do:
+t-to compute the cost of each featuwe pew data p-point, OwO we can do:
 
-  costs = tf.gradients(cost / batch_size, masks)
+  costs = tf.gwadients(cost / batch_size, (U ﹏ U) masks)
 
-The current implementation of `computational_cost` is designed to work with standard feed-forward
-and convolutional network architectures only, but may fail with more complicated architectures.
+the cuwwent impwementation o-of `computationaw_cost` is designed t-to wowk w-with standawd feed-fowwawd
+a-and convowutionaw nyetwowk awchitectuwes onwy, (ˆ ﻌ ˆ)♡ but may f-faiw with mowe c-compwicated awchitectuwes. (⑅˘꒳˘)
 """
 
 
-import numpy as np
-import tensorflow.compat.v1 as tf
+impowt nyumpy a-as np
+impowt tensowfwow.compat.v1 a-as tf
 
-MASK_COLLECTION = 'pruning/masks'
-MASK_EXTENDED_COLLECTION = 'pruning/masks_extended'
-OP_COLLECTION = 'pruning/ops'
+mask_cowwection = 'pwuning/masks'
+mask_extended_cowwection = 'pwuning/masks_extended'
+op_cowwection = 'pwuning/ops'
 
 
-def apply_mask(tensor, name='pruning'):
+def a-appwy_mask(tensow, (U ﹏ U) nyame='pwuning'):
   """
-  Point-wise multiplies a tensor with a binary mask.
+  p-point-wise muwtipwies a tensow with a binawy mask. o.O
 
-  During training, pruning is simulated by setting entries of the mask to zero.
+  d-duwing twaining, mya pwuning is s-simuwated by setting entwies of t-the mask to zewo. XD
 
-  Arguments:
-    tensor: tf.Tensor
-      A tensor where the last dimension represents channels which will be masked
+  a-awguments:
+    tensow: tf.tensow
+      a tensow whewe the wast dimension wepwesents channews which wiww be m-masked
 
-  Returns:
-    `tf.Tensor` with same shape as `tensor`
+  wetuwns:
+    `tf.tensow` w-with same shape as `tensow`
   """
 
-  tensor_shape = tensor.shape
+  t-tensow_shape = t-tensow.shape
 
-  with tf.variable_scope(name, reuse=True):
-    # allocate masks and corresponding pruning signals
-    mask = tf.Variable(tf.ones(tensor.shape.as_list()[-1]), trainable=False, name='mask')
-    pruning_signal = tf.Variable(tf.zeros_like(mask), trainable=False, name='signal')
+  w-with tf.vawiabwe_scope(name, òωó weuse=twue):
+    # awwocate masks and cowwesponding p-pwuning signaws
+    mask = tf.vawiabwe(tf.ones(tensow.shape.as_wist()[-1]), (˘ω˘) twainabwe=fawse, :3 nyame='mask')
+    p-pwuning_signaw = tf.vawiabwe(tf.zewos_wike(mask), OwO t-twainabwe=fawse, mya n-nyame='signaw')
 
-    # extending masks is a trick to get a separate gradient for each data point
-    mask_extended = extend_mask(mask, tensor)
+    # e-extending masks is a twick to g-get a sepawate g-gwadient fow each d-data point
+    m-mask_extended = extend_mask(mask, (˘ω˘) tensow)
 
-  # store extended mask, pruning signal, and other vars for easy access later
+  # s-stowe extended mask, o.O p-pwuning signaw, (✿oωo) a-and othew vaws f-fow easy access w-watew
   mask.extended = mask_extended
-  mask.pruning_signal = pruning_signal
-  mask.tensor = tensor
+  mask.pwuning_signaw = pwuning_signaw
+  m-mask.tensow = tensow
 
-  # mask tensor
-  tensor = tf.multiply(tensor, mask_extended)
-  tensor.set_shape(tensor_shape)
-  tensor._mask = mask
+  # mask tensow
+  tensow = tf.muwtipwy(tensow, (ˆ ﻌ ˆ)♡ mask_extended)
+  tensow.set_shape(tensow_shape)
+  t-tensow._mask = mask
 
-  tf.add_to_collection(MASK_COLLECTION, mask)
-  tf.add_to_collection(MASK_EXTENDED_COLLECTION, mask.extended)
-  tf.add_to_collection(OP_COLLECTION, tensor.op)
+  tf.add_to_cowwection(mask_cowwection, ^^;; mask)
+  tf.add_to_cowwection(mask_extended_cowwection, m-mask.extended)
+  tf.add_to_cowwection(op_cowwection, OwO t-tensow.op)
 
-  return tensor
+  w-wetuwn tensow
 
 
-def extend_mask(mask, tensor):
+def extend_mask(mask, 🥺 t-tensow):
   """
-  Repeats the mask for each data point stored in a tensor.
+  wepeats t-the mask fow each d-data point stowed in a tensow. mya
 
-  If `tensor` is AxBxC dimensional and `mask` is C dimensional, returns an Ax1xC dimensional
-  tensor with A copies or `mask`.
+  if `tensow` is axbxc dimensionaw and `mask` is c dimensionaw, w-wetuwns an ax1xc dimensionaw
+  t-tensow with a copies ow `mask`. 😳
 
-  Arguments:
-    mask: tf.Tensor
-      The mask which will be extended
+  a-awguments:
+    m-mask: tf.tensow
+      the mask which wiww be e-extended
 
-    tensor: tf.Tensor
-      The tensor to which the extended mask will be applied
+    tensow: t-tf.tensow
+      the tensow t-to which the extended m-mask wiww be appwied
 
-  Returns:
-    The extended mask
-  """
-
-  batch_size = tf.shape(tensor)[:1]
-  ones = tf.ones([tf.rank(tensor) - 1], dtype=batch_size.dtype)
-  multiples = tf.concat([batch_size, ones], 0)
-  mask_shape = tf.concat([ones, [-1]], 0)
-  return tf.tile(tf.reshape(mask, mask_shape), multiples)
-
-
-def find_input_mask(tensor):
-  """
-  Find ancestral mask affecting the number of pruned channels of a tensor.
-
-  Arguments:
-    tensor: tf.Tensor
-      Tensor for which to identify relevant mask
-
-  Returns:
-    A `tf.Tensor` or `None`
+  wetuwns:
+    the extended mask
   """
 
-  if hasattr(tensor, '_mask'):
-    return tensor._mask
-  if tensor.op.type in ['MatMul', 'Conv1D', 'Conv2D', 'Conv3D', 'Transpose']:
-    # op produces a new number of channels, preceding mask therefore irrelevant
-    return None
-  if not tensor.op.inputs:
-    return None
-  for input in tensor.op.inputs:
-    mask = find_input_mask(input)
-    if mask is not None:
-      return mask
+  batch_size = t-tf.shape(tensow)[:1]
+  o-ones = t-tf.ones([tf.wank(tensow) - 1], òωó dtype=batch_size.dtype)
+  m-muwtipwes = t-tf.concat([batch_size, /(^•ω•^) ones], 0)
+  m-mask_shape = tf.concat([ones, -.- [-1]], 0)
+  wetuwn tf.tiwe(tf.weshape(mask, òωó mask_shape), /(^•ω•^) muwtipwes)
 
 
-def find_output_mask(tensor):
+def f-find_input_mask(tensow):
   """
-  Find mask applied to the tensor or one of its descendants if it affects the tensor's pruned shape.
+  f-find ancestwaw mask affecting the nyumbew of p-pwuned channews o-of a tensow. /(^•ω•^)
 
-  Arguments:
-    tensor: tf.Tensor or tf.Variable
-      Tensor for which to identify relevant mask
+  awguments:
+    tensow: tf.tensow
+      tensow fow w-which to identify wewevant mask
 
-  Returns:
-    A `tf.Tensor` or `None`
+  wetuwns:
+    a `tf.tensow` ow `none`
   """
 
-  if isinstance(tensor, tf.Variable):
-    return find_output_mask(tensor.op.outputs[0])
-  if hasattr(tensor, '_mask'):
-    return tensor._mask
-  for op in tensor.consumers():
-    if len(op.outputs) != 1:
-      continue
-    if op.type in ['MatMul', 'Conv1D', 'Conv2D', 'Conv3D']:
-      # masks of descendants are only relevant if tensor is right-multiplied
-      if tensor == op.inputs[1]:
-        return find_output_mask(op.outputs[0])
-      return None
+  i-if hasattw(tensow, 😳 '_mask'):
+    wetuwn tensow._mask
+  if tensow.op.type i-in ['matmuw', :3 'conv1d', 'conv2d', (U ᵕ U❁) 'conv3d', 'twanspose']:
+    # o-op pwoduces a nyew nyumbew of channews, ʘwʘ pweceding mask t-thewefowe iwwewevant
+    w-wetuwn nyone
+  if nyot tensow.op.inputs:
+    wetuwn n-nyone
+  fow input in tensow.op.inputs:
+    m-mask = find_input_mask(input)
+    if mask is nyot none:
+      w-wetuwn mask
+
+
+def find_output_mask(tensow):
+  """
+  f-find m-mask appwied to the tensow ow o-one of its descendants if it affects t-the tensow's p-pwuned shape. o.O
+
+  a-awguments:
+    tensow: tf.tensow o-ow tf.vawiabwe
+      t-tensow fow which to identify wewevant mask
+
+  w-wetuwns:
+    a-a `tf.tensow` o-ow `none`
+  """
+
+  if isinstance(tensow, ʘwʘ tf.vawiabwe):
+    w-wetuwn find_output_mask(tensow.op.outputs[0])
+  i-if h-hasattw(tensow, '_mask'):
+    wetuwn tensow._mask
+  fow op in tensow.consumews():
+    i-if wen(op.outputs) != 1:
+      c-continue
+    i-if op.type in ['matmuw', ^^ 'conv1d', 'conv2d', ^•ﻌ•^ 'conv3d']:
+      # m-masks of descendants awe onwy w-wewevant if tensow is wight-muwtipwied
+      if tensow == op.inputs[1]:
+        wetuwn find_output_mask(op.outputs[0])
+      wetuwn n-nyone
     mask = find_output_mask(op.outputs[0])
-    if mask is not None:
-      return mask
+    i-if mask is nyot nyone:
+      w-wetuwn mask
 
 
-def find_mask(tensor):
+def find_mask(tensow):
   """
-  Returns masks indicating channels of the tensor that are effectively removed from the graph.
+  w-wetuwns masks indicating channews o-of the tensow t-that awe effectivewy w-wemoved f-fwom the gwaph. mya
 
-  Arguments:
-    tensor: tf.Tensor
-      Tensor for which to compute a mask
+  a-awguments:
+    tensow: tf.tensow
+      tensow fow which to compute a mask
 
-  Returns:
-    A `tf.Tensor` with binary entries indicating disabled channels
-  """
-
-  input_mask = find_input_mask(tensor)
-  output_mask = find_output_mask(tensor)
-  if input_mask is None:
-    return output_mask
-  if output_mask is None:
-    return input_mask
-  if input_mask is output_mask:
-    return input_mask
-  return input_mask * output_mask
-
-
-def pruned_shape(tensor):
-  """
-  Computes the shape of a tensor after taking into account pruning of channels.
-
-  Note that the shape will only differ in the last dimension, even if other dimensions are also
-  effectively disabled by pruning masks.
-
-  Arguments:
-    tensor: tf.Tensor
-      Tensor for which to compute a pruned shape
-
-  Returns:
-    A `tf.Tensor[tf.float32]` representing the pruned shape
+  wetuwns:
+    a `tf.tensow` with b-binawy entwies indicating d-disabwed c-channews
   """
 
-  mask = find_mask(tensor)
+  input_mask = f-find_input_mask(tensow)
+  output_mask = find_output_mask(tensow)
+  if input_mask i-is nyone:
+    w-wetuwn output_mask
+  if output_mask i-is nyone:
+    wetuwn input_mask
+  if input_mask i-is output_mask:
+    w-wetuwn input_mask
+  wetuwn i-input_mask * o-output_mask
 
-  if mask is None:
-    return tf.cast(tf.shape(tensor), tf.float32)
 
-  return tf.concat([
-    tf.cast(tf.shape(tensor)[:-1], mask.dtype),
-    tf.reduce_sum(mask, keepdims=True)], 0)
-
-
-def computational_cost(op_or_tensor, _observed=None):
+def pwuned_shape(tensow):
   """
-  Estimates the computational complexity of a pruned graph (number of floating point operations).
+  computes the shape of a tensow aftew taking into a-account pwuning o-of channews. UwU
 
-  This function currently only supports sequential graphs such as those of MLPs and
-  simple CNNs with 2D convolutions in NHWC format.
+  n-note that the s-shape wiww onwy d-diffew in the wast dimension, >_< even i-if othew dimensions a-awe awso
+  effectivewy disabwed b-by pwuning m-masks. /(^•ω•^)
 
-  Note that the computational cost returned by this function is proportional to batch size.
+  awguments:
+    tensow: t-tf.tensow
+      tensow fow which to compute a p-pwuned shape
 
-  Arguments:
-    op_or_tensor: tf.Tensor or tf.Operation
-      Root node of graph for which to compute computational cost
-
-  Returns:
-    A `tf.Tensor` representing a number of floating point operations
-  """
-
-  cost = tf.constant(0.)
-
-  # exclude cost of computing extended pruning masks
-  masks_extended = [mask.extended for mask in tf.get_collection(MASK_COLLECTION)]
-  if op_or_tensor in masks_extended:
-    return cost
-
-  # convert tensor to op
-  op = op_or_tensor.op if isinstance(op_or_tensor, (tf.Tensor, tf.Variable)) else op_or_tensor
-
-  # make sure cost of op will not be counted twice
-  if _observed is None:
-    _observed = []
-  elif op in _observed:
-    return cost
-  _observed.append(op)
-
-  # compute cost of computing inputs
-  for tensor in op.inputs:
-    cost = cost + computational_cost(tensor, _observed)
-
-  # add cost of operation
-  if op.op_def is None or op in tf.get_collection(OP_COLLECTION):
-    # exclude cost of undefined ops and pruning ops
-    return cost
-
-  elif op.op_def.name == 'MatMul':
-    shape_a = pruned_shape(op.inputs[0])
-    shape_b = pruned_shape(op.inputs[1])
-    return cost + shape_a[0] * shape_b[1] * (2. * shape_a[1] - 1.)
-
-  elif op.op_def.name in ['Add', 'Mul', 'BiasAdd']:
-    return cost + tf.cond(
-        tf.size(op.inputs[0]) > tf.size(op.inputs[1]),
-        lambda: tf.reduce_prod(pruned_shape(op.inputs[0])),
-        lambda: tf.reduce_prod(pruned_shape(op.inputs[1])))
-
-  elif op.op_def.name in ['Conv2D']:
-    output_shape = pruned_shape(op.outputs[0])
-    input_shape = pruned_shape(op.inputs[0])
-    kernel_shape = pruned_shape(op.inputs[1])
-    inner_prod_cost = (tf.reduce_prod(kernel_shape[:2]) * input_shape[-1] * 2. - 1.)
-    return cost + tf.reduce_prod(output_shape) * inner_prod_cost
-
-  return cost
-
-
-def update_pruning_signals(loss, decay=.96, masks=None, method='Fisher'):
-  """
-  For each mask, computes corresponding pruning signals indicating the importance of a feature.
-
-  Arguments:
-    loss: tf.Tensor
-      Any cross-entropy loss
-
-    decay: float
-      Controls exponential moving average of pruning signals
-
-    method: str
-      Method used to compute pruning signal (currently only supports 'Fisher')
-
-  Returns:
-    A `list[tf.Tensor]` of pruning signals corresponding to masks
-
-  References:
-    * Theis et al., Faster gaze prediction with dense networks and Fisher pruning, 2018
+  wetuwns:
+    a `tf.tensow[tf.fwoat32]` w-wepwesenting t-the pwuned shape
   """
 
-  if masks is None:
-    masks = tf.get_collection(MASK_COLLECTION)
+  mask = f-find_mask(tensow)
 
-  if method not in ['Fisher']:
-    raise ValueError('Pruning method \'{0}\' not supported.'.format(method))
+  if mask is nyone:
+    w-wetuwn tf.cast(tf.shape(tensow), òωó t-tf.fwoat32)
 
-  if not masks:
-    return []
-
-  with tf.variable_scope('pruning_opt', reuse=True):
-    # compute gradients of extended masks (yields separate gradient for each data point)
-    grads = tf.gradients(loss, [m.extended for m in masks])
-
-    # estimate Fisher pruning signals from batch
-    signals_batch = [tf.squeeze(tf.reduce_mean(tf.square(g), 0)) for g in grads]
-
-    # update pruning signals
-    signals = [m.pruning_signal for m in masks]
-    signals = [tf.assign(s, decay * s + (1. - decay) * f, use_locking=True)
-      for s, f in zip(signals, signals_batch)]
-
-  return signals
+  w-wetuwn tf.concat([
+    tf.cast(tf.shape(tensow)[:-1], σωσ mask.dtype), ( ͡o ω ͡o )
+    tf.weduce_sum(mask, k-keepdims=twue)], nyaa~~ 0)
 
 
-def prune(signals, masks=None):
+def computationaw_cost(op_ow_tensow, :3 _obsewved=none):
   """
-  Prunes a single feature by zeroing the mask entry with the smallest pruning signal.
+  estimates the computationaw c-compwexity o-of a pwuned gwaph (numbew o-of fwoating point opewations). UwU
 
-  Arguments:
-    signals: list[tf.Tensor]
-      A list of pruning signals
+  t-this function c-cuwwentwy onwy suppowts sequentiaw gwaphs such a-as those of mwps and
+  simpwe cnns with 2d convowutions i-in nyhwc f-fowmat. o.O
 
-    masks: list[tf.Tensor]
-      A list of corresponding masks, defaults to `tf.get_collection(MASK_COLLECTION)`
+  nyote that the computationaw c-cost wetuwned by this function i-is pwopowtionaw t-to batch s-size. (ˆ ﻌ ˆ)♡
 
-  Returns:
-    A `tf.Operation` which updates masks
+  awguments:
+    op_ow_tensow: tf.tensow ow tf.opewation
+      woot nyode of gwaph fow which to compute computationaw cost
+
+  wetuwns:
+    a `tf.tensow` wepwesenting a nyumbew of fwoating point opewations
   """
 
-  if masks is None:
-    masks = tf.get_collection(MASK_COLLECTION)
+  c-cost = t-tf.constant(0.)
 
-  with tf.variable_scope('pruning_opt', reuse=True):
-    # make sure we don't select already pruned units
-    signals = [tf.where(m > .5, s, tf.zeros_like(s) + np.inf) for m, s in zip(masks, signals)]
+  # excwude cost of computing e-extended pwuning m-masks
+  masks_extended = [mask.extended f-fow mask in tf.get_cowwection(mask_cowwection)]
+  if o-op_ow_tensow in masks_extended:
+    w-wetuwn cost
 
-    # find units with smallest pruning signal in each layer
-    min_idx = [tf.argmin(s) for s in signals]
-    min_signals = [s[i] for s, i in zip(signals, min_idx)]
+  # c-convewt tensow to op
+  op = o-op_ow_tensow.op if isinstance(op_ow_tensow, ^^;; (tf.tensow, ʘwʘ t-tf.vawiabwe)) e-ewse op_ow_tensow
 
-    # find layer with smallest pruning signal
-    l = tf.argmin(min_signals)
+  # make suwe cost of op wiww nyot be c-counted twice
+  i-if _obsewved is n-nyone:
+    _obsewved = []
+  e-ewif o-op in _obsewved:
+    w-wetuwn cost
+  _obsewved.append(op)
 
-    # construct pruning operations, one for each mask
+  # c-compute cost of c-computing inputs
+  f-fow tensow in op.inputs:
+    c-cost = cost + computationaw_cost(tensow, σωσ _obsewved)
+
+  # a-add cost o-of opewation
+  if op.op_def is n-nyone ow op in tf.get_cowwection(op_cowwection):
+    # excwude c-cost of undefined ops and pwuning o-ops
+    wetuwn c-cost
+
+  ewif op.op_def.name == 'matmuw':
+    s-shape_a = pwuned_shape(op.inputs[0])
+    s-shape_b = pwuned_shape(op.inputs[1])
+    w-wetuwn cost + shape_a[0] * shape_b[1] * (2. ^^;; * s-shape_a[1] - 1.)
+
+  ewif op.op_def.name i-in ['add', ʘwʘ 'muw', ^^ 'biasadd']:
+    wetuwn cost + tf.cond(
+        tf.size(op.inputs[0]) > tf.size(op.inputs[1]), nyaa~~
+        wambda: t-tf.weduce_pwod(pwuned_shape(op.inputs[0])), (///ˬ///✿)
+        wambda: t-tf.weduce_pwod(pwuned_shape(op.inputs[1])))
+
+  e-ewif op.op_def.name in ['conv2d']:
+    output_shape = pwuned_shape(op.outputs[0])
+    i-input_shape = pwuned_shape(op.inputs[0])
+    k-kewnew_shape = p-pwuned_shape(op.inputs[1])
+    i-innew_pwod_cost = (tf.weduce_pwod(kewnew_shape[:2]) * input_shape[-1] * 2. XD - 1.)
+    wetuwn cost + t-tf.weduce_pwod(output_shape) * i-innew_pwod_cost
+
+  wetuwn cost
+
+
+d-def update_pwuning_signaws(woss, :3 decay=.96, òωó masks=none, method='fishew'):
+  """
+  f-fow each mask, ^^ computes cowwesponding p-pwuning s-signaws indicating t-the impowtance of a featuwe. ^•ﻌ•^
+
+  a-awguments:
+    w-woss: tf.tensow
+      a-any c-cwoss-entwopy woss
+
+    decay: f-fwoat
+      contwows e-exponentiaw m-moving avewage o-of pwuning signaws
+
+    m-method: s-stw
+      method u-used to compute p-pwuning signaw (cuwwentwy onwy s-suppowts 'fishew')
+
+  wetuwns:
+    a-a `wist[tf.tensow]` of pwuning s-signaws cowwesponding t-to masks
+
+  w-wefewences:
+    * theis et aw., fastew gaze pwediction with d-dense nyetwowks a-and fishew pwuning, σωσ 2018
+  """
+
+  i-if masks is nyone:
+    masks = tf.get_cowwection(mask_cowwection)
+
+  if method n-nyot in ['fishew']:
+    w-waise vawueewwow('pwuning method \'{0}\' n-nyot suppowted.'.fowmat(method))
+
+  i-if nyot masks:
+    wetuwn []
+
+  with tf.vawiabwe_scope('pwuning_opt', (ˆ ﻌ ˆ)♡ weuse=twue):
+    # compute g-gwadients o-of extended masks (yiewds s-sepawate g-gwadient fow each data point)
+    gwads = tf.gwadients(woss, nyaa~~ [m.extended f-fow m-m in masks])
+
+    # estimate fishew pwuning signaws f-fwom batch
+    signaws_batch = [tf.squeeze(tf.weduce_mean(tf.squawe(g), ʘwʘ 0)) fow g in gwads]
+
+    # u-update pwuning signaws
+    s-signaws = [m.pwuning_signaw fow m-m in masks]
+    signaws = [tf.assign(s, ^•ﻌ•^ d-decay * s-s + (1. rawr x3 - decay) * f, 🥺 use_wocking=twue)
+      f-fow s, ʘwʘ f in zip(signaws, (˘ω˘) signaws_batch)]
+
+  w-wetuwn s-signaws
+
+
+def p-pwune(signaws, o.O m-masks=none):
+  """
+  pwunes a singwe f-featuwe by z-zewoing the mask e-entwy with the smowest pwuning s-signaw. σωσ
+
+  awguments:
+    signaws: wist[tf.tensow]
+      a-a wist o-of pwuning signaws
+
+    m-masks: wist[tf.tensow]
+      a wist of cowwesponding masks, (ꈍᴗꈍ) defauwts to `tf.get_cowwection(mask_cowwection)`
+
+  w-wetuwns:
+    a `tf.opewation` w-which updates m-masks
+  """
+
+  if masks is nyone:
+    masks = t-tf.get_cowwection(mask_cowwection)
+
+  with tf.vawiabwe_scope('pwuning_opt', (ˆ ﻌ ˆ)♡ weuse=twue):
+    # m-make suwe we don't s-sewect awweady p-pwuned units
+    s-signaws = [tf.whewe(m > .5, o.O s-s, tf.zewos_wike(s) + nyp.inf) fow m, :3 s in zip(masks, -.- signaws)]
+
+    # find units w-with smowest pwuning signaw in e-each wayew
+    min_idx = [tf.awgmin(s) fow s in signaws]
+    min_signaws = [s[i] f-fow s, ( ͡o ω ͡o ) i in zip(signaws, /(^•ω•^) min_idx)]
+
+    # find wayew with smowest pwuning signaw
+    w-w = tf.awgmin(min_signaws)
+
+    # c-constwuct pwuning opewations, (⑅˘꒳˘) o-one fow each mask
     updates = []
-    for k, i in enumerate(min_idx):
-      # set mask of layer l to 0 where pruning signal is smallest
+    fow k, òωó i in enumewate(min_idx):
+      # s-set mask o-of wayew w to 0 whewe pwuning signaw i-is smowest
       updates.append(
-        tf.cond(
-          tf.equal(l, k),
-          lambda: tf.scatter_update(
-            masks[k], tf.Print(i, [i], message="Pruning layer [{0}] at index ".format(k)), 0.),
-          lambda: masks[k]))
+        t-tf.cond(
+          tf.equaw(w, 🥺 k), (ˆ ﻌ ˆ)♡
+          wambda: tf.scattew_update(
+            m-masks[k], -.- tf.pwint(i, σωσ [i], message="pwuning wayew [{0}] a-at index ".fowmat(k)), >_< 0.),
+          w-wambda: masks[k]))
 
-    updates = tf.group(updates, name='prune')
+    u-updates = tf.gwoup(updates, :3 nyame='pwune')
 
-  return updates
+  w-wetuwn updates

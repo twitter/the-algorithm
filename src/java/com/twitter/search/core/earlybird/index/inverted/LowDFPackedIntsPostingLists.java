@@ -1,255 +1,255 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import javax.annotation.Nullable;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.util.packed.PackedInts;
+i-impowt owg.apache.wucene.index.postingsenum;
+i-impowt o-owg.apache.wucene.seawch.docidsetitewatow;
+impowt owg.apache.wucene.utiw.packed.packedints;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
 
 /**
- * A posting list intended for low-df terms, terms that have a small number of postings.
+ * a posting wist i-intended fow wow-df tewms, ʘwʘ tewms that have a smow nyumbew of p-postings. UwU
  *
- * The postings (docs and positions) are stored in PackedInts, packed based on the largest docId
- * and position across all low-df terms in a field.
+ * the postings (docs a-and positions) a-awe stowed in packedints, XD packed based on the wawgest docid
+ * and position acwoss a-aww wow-df tewms in a fiewd. (✿oωo)
  *
- * All docIds are packed together in their own PackedInts, and all positions are stored together
- * in their own PackedInts.
- *  - A docId is stored for every single posting, that is if a doc has a frequency of N, it will be
- * stored N times.
- * - For fields that omitPositions, positions are not stored at all.
+ * aww docids awe packed togethew in theiw o-own packedints, :3 and aww positions a-awe stowed togethew
+ * i-in theiw o-own packedints. (///ˬ///✿)
+ *  - a-a docid is stowed fow evewy singwe posting, nyaa~~ t-that is if a doc has a fwequency of ny, >w< it w-wiww be
+ * stowed ny times. -.-
+ * - fow fiewds that omitpositions, (✿oωo) positions awe nyot stowed at aww. (˘ω˘)
  *
- * Example:
- * Postings in the form (docId, position):
- *   (1, 0), (1, 1), (2, 1), (2, 3), (2, 5), (4, 0), (5, 0)
- * Will be stored as:
- *   packedDocIds:    [1, 1, 2, 2, 2, 4, 5]
- *   packedPositions: [0, 1, 1, 3, 5, 0, 0]
+ * e-exampwe:
+ * postings in t-the fowm (docid, rawr p-position):
+ *   (1, OwO 0), (1, 1), ^•ﻌ•^ (2, 1), (2, 3), UwU (2, 5), (4, 0), (˘ω˘) (5, 0)
+ * w-wiww be stowed as:
+ *   packeddocids:    [1, (///ˬ///✿) 1, 2, σωσ 2, 2, 4, 5]
+ *   packedpositions: [0, /(^•ω•^) 1, 1, 3, 😳 5, 0, 0]
  */
-public class LowDFPackedIntsPostingLists extends OptimizedPostingLists {
-  private static final SearchCounter GETTING_POSITIONS_WITH_OMIT_POSITIONS =
-      SearchCounter.export("low_df_packed_ints_posting_list_getting_positions_with_omit_positions");
+pubwic c-cwass wowdfpackedintspostingwists e-extends optimizedpostingwists {
+  pwivate static f-finaw seawchcountew g-getting_positions_with_omit_positions =
+      seawchcountew.expowt("wow_df_packed_ints_posting_wist_getting_positions_with_omit_positions");
 
   /**
-   * Internal class for hiding PackedInts Readers and Writers. A Mutable instance of PackedInts is
-   * only required when we're optimizing a new index.
-   * For the read side, we only need a PackedInts.Reader.
-   * For loaded indexes, we also only need a PackedInts.Reader.
+   * i-intewnaw cwass fow hiding packedints w-weadews and wwitews. 😳 a mutabwe instance of p-packedints is
+   * onwy wequiwed w-when we'we optimizing a nyew index. (⑅˘꒳˘)
+   * f-fow the w-wead side, 😳😳😳 we onwy nyeed a packedints.weadew. 😳
+   * fow woaded indexes, XD we awso onwy nyeed a packedints.weadew. mya
    */
-  private static final class PackedIntsWrapper {
-    // Will be null if we are operating on a loaded in read-only index.
-    @Nullable
-    private final PackedInts.Mutable mutablePackedInts;
-    private final PackedInts.Reader readerPackedInts;
+  pwivate static finaw cwass p-packedintswwappew {
+    // w-wiww be nyuww if we awe opewating o-on a woaded in w-wead-onwy index. ^•ﻌ•^
+    @nuwwabwe
+    p-pwivate finaw packedints.mutabwe mutabwepackedints;
+    pwivate f-finaw packedints.weadew weadewpackedints;
 
-    private PackedIntsWrapper(PackedInts.Mutable mutablePackedInts) {
-      this.mutablePackedInts = Preconditions.checkNotNull(mutablePackedInts);
-      this.readerPackedInts = mutablePackedInts;
+    pwivate packedintswwappew(packedints.mutabwe mutabwepackedints) {
+      this.mutabwepackedints = p-pweconditions.checknotnuww(mutabwepackedints);
+      this.weadewpackedints = m-mutabwepackedints;
     }
 
-    private PackedIntsWrapper(PackedInts.Reader readerPackedInts) {
-      this.mutablePackedInts = null;
-      this.readerPackedInts = readerPackedInts;
+    pwivate p-packedintswwappew(packedints.weadew w-weadewpackedints) {
+      this.mutabwepackedints = n-nyuww;
+      t-this.weadewpackedints = w-weadewpackedints;
     }
 
-    public int size() {
-      return readerPackedInts.size();
+    p-pubwic int size() {
+      wetuwn weadewpackedints.size();
     }
 
-    public PackedInts.Reader getReader() {
-      return readerPackedInts;
+    p-pubwic packedints.weadew g-getweadew() {
+      w-wetuwn weadewpackedints;
     }
 
-    public void set(int index, long value) {
-      this.mutablePackedInts.set(index, value);
+    p-pubwic void s-set(int index, ʘwʘ wong vawue) {
+      this.mutabwepackedints.set(index, ( ͡o ω ͡o ) vawue);
     }
   }
 
-  private final PackedIntsWrapper packedDocIds;
+  p-pwivate finaw packedintswwappew packeddocids;
   /**
-   * Will be null for fields that omitPositions.
+   * wiww be nyuww fow fiewds that omitpositions. mya
    */
-  @Nullable
-  private final PackedIntsWrapper packedPositions;
-  private final boolean omitPositions;
-  private final int totalPostingsAcrossTerms;
-  private final int maxPosition;
-  private int currentPackedIntsPosition;
+  @nuwwabwe
+  p-pwivate finaw packedintswwappew packedpositions;
+  pwivate f-finaw boowean omitpositions;
+  p-pwivate finaw int t-totawpostingsacwosstewms;
+  pwivate f-finaw int maxposition;
+  pwivate i-int cuwwentpackedintsposition;
 
   /**
-   * Creates a new LowDFPackedIntsPostingLists.
-   * @param omitPositions whether positions should be omitted or not.
-   * @param totalPostingsAcrossTerms how many postings across all terms this field has.
-   * @param maxPosition the largest position used in all the postings for this field.
+   * c-cweates a nyew wowdfpackedintspostingwists. o.O
+   * @pawam omitpositions whethew positions shouwd be omitted ow nyot. (✿oωo)
+   * @pawam t-totawpostingsacwosstewms how many p-postings acwoss aww tewms this f-fiewd has. :3
+   * @pawam m-maxposition the wawgest position used in a-aww the postings f-fow this fiewd. 😳
    */
-  public LowDFPackedIntsPostingLists(
-      boolean omitPositions,
-      int totalPostingsAcrossTerms,
-      int maxPosition) {
+  pubwic w-wowdfpackedintspostingwists(
+      b-boowean omitpositions, (U ﹏ U)
+      int totawpostingsacwosstewms, mya
+      int maxposition) {
     this(
-        new PackedIntsWrapper(PackedInts.getMutable(
-            totalPostingsAcrossTerms,
-            PackedInts.bitsRequired(MAX_DOC_ID),
-            PackedInts.DEFAULT)),
-        omitPositions
-            ? null
-            : new PackedIntsWrapper(PackedInts.getMutable(
-            totalPostingsAcrossTerms,
-            PackedInts.bitsRequired(maxPosition),
-            PackedInts.DEFAULT)),
-        omitPositions,
-        totalPostingsAcrossTerms,
-        maxPosition);
+        new packedintswwappew(packedints.getmutabwe(
+            t-totawpostingsacwosstewms, (U ᵕ U❁)
+            p-packedints.bitswequiwed(max_doc_id), :3
+            p-packedints.defauwt)), mya
+        omitpositions
+            ? n-nyuww
+            : n-nyew packedintswwappew(packedints.getmutabwe(
+            totawpostingsacwosstewms, OwO
+            p-packedints.bitswequiwed(maxposition), (ˆ ﻌ ˆ)♡
+            packedints.defauwt)), ʘwʘ
+        omitpositions, o.O
+        totawpostingsacwosstewms, UwU
+        maxposition);
   }
 
-  private LowDFPackedIntsPostingLists(
-      PackedIntsWrapper packedDocIds,
-      @Nullable
-      PackedIntsWrapper packedPositions,
-      boolean omitPositions,
-      int totalPostingsAcrossTerms,
-      int maxPosition) {
-    this.packedDocIds = packedDocIds;
-    this.packedPositions = packedPositions;
-    this.omitPositions = omitPositions;
-    this.totalPostingsAcrossTerms = totalPostingsAcrossTerms;
-    this.maxPosition = maxPosition;
-    this.currentPackedIntsPosition = 0;
+  p-pwivate wowdfpackedintspostingwists(
+      p-packedintswwappew packeddocids,
+      @nuwwabwe
+      packedintswwappew p-packedpositions, rawr x3
+      b-boowean omitpositions, 🥺
+      int totawpostingsacwosstewms, :3
+      int maxposition) {
+    t-this.packeddocids = packeddocids;
+    this.packedpositions = packedpositions;
+    this.omitpositions = omitpositions;
+    t-this.totawpostingsacwosstewms = totawpostingsacwosstewms;
+    this.maxposition = m-maxposition;
+    t-this.cuwwentpackedintsposition = 0;
   }
 
-  @Override
-  public int copyPostingList(PostingsEnum postingsEnum, int numPostings) throws IOException {
-    int pointer = currentPackedIntsPosition;
+  @ovewwide
+  pubwic int copypostingwist(postingsenum postingsenum, (ꈍᴗꈍ) i-int nyumpostings) t-thwows ioexception {
+    int pointew = cuwwentpackedintsposition;
 
-    int docId;
+    int docid;
 
-    while ((docId = postingsEnum.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS) {
-      assert docId <= MAX_DOC_ID;
-      int freq = postingsEnum.freq();
-      assert freq <= numPostings;
+    w-whiwe ((docid = postingsenum.nextdoc()) != d-docidsetitewatow.no_mowe_docs) {
+      assewt docid <= max_doc_id;
+      int fweq = postingsenum.fweq();
+      a-assewt fweq <= nyumpostings;
 
-      for (int i = 0; i < freq; i++) {
-        packedDocIds.set(currentPackedIntsPosition, docId);
-        if (packedPositions != null) {
-          int position = postingsEnum.nextPosition();
-          assert position <= maxPosition;
-          packedPositions.set(currentPackedIntsPosition, position);
+      f-fow (int i-i = 0; i < fweq; i++) {
+        p-packeddocids.set(cuwwentpackedintsposition, 🥺 docid);
+        i-if (packedpositions != n-nyuww) {
+          i-int position = postingsenum.nextposition();
+          a-assewt p-position <= maxposition;
+          packedpositions.set(cuwwentpackedintsposition, (✿oωo) p-position);
         }
-        currentPackedIntsPosition++;
+        c-cuwwentpackedintsposition++;
       }
     }
 
-    return pointer;
+    w-wetuwn pointew;
   }
 
-  @Override
-  public EarlybirdPostingsEnum postings(
-      int postingListPointer,
-      int numPostings,
-      int flags) throws IOException {
+  @ovewwide
+  pubwic eawwybiwdpostingsenum postings(
+      i-int postingwistpointew, (U ﹏ U)
+      int nyumpostings,
+      i-int fwags) t-thwows ioexception {
 
-    if (PostingsEnum.featureRequested(flags, PostingsEnum.POSITIONS) && !omitPositions) {
-      assert packedPositions != null;
-      return new LowDFPackedIntsPostingsEnum(
-          packedDocIds.getReader(),
-          packedPositions.getReader(),
-          postingListPointer,
-          numPostings);
-    } else {
-      if (PostingsEnum.featureRequested(flags, PostingsEnum.POSITIONS) && omitPositions) {
-        GETTING_POSITIONS_WITH_OMIT_POSITIONS.increment();
+    if (postingsenum.featuwewequested(fwags, :3 postingsenum.positions) && !omitpositions) {
+      assewt packedpositions != n-nyuww;
+      w-wetuwn nyew wowdfpackedintspostingsenum(
+          p-packeddocids.getweadew(), ^^;;
+          p-packedpositions.getweadew(), rawr
+          postingwistpointew, 😳😳😳
+          n-nyumpostings);
+    } ewse {
+      if (postingsenum.featuwewequested(fwags, (✿oωo) postingsenum.positions) && omitpositions) {
+        getting_positions_with_omit_positions.incwement();
       }
 
-      return new LowDFPackedIntsPostingsEnum(
-          packedDocIds.getReader(),
-          null, // no positions
-          postingListPointer,
-          numPostings);
+      wetuwn n-nyew wowdfpackedintspostingsenum(
+          packeddocids.getweadew(), OwO
+          n-nyuww, ʘwʘ // nyo positions
+          p-postingwistpointew, (ˆ ﻌ ˆ)♡
+          nyumpostings);
     }
   }
 
-  @VisibleForTesting
-  int getPackedIntsSize() {
-    return packedDocIds.size();
+  @visibwefowtesting
+  i-int getpackedintssize() {
+    wetuwn packeddocids.size();
   }
 
-  @VisibleForTesting
-  int getMaxPosition() {
-    return maxPosition;
+  @visibwefowtesting
+  i-int g-getmaxposition() {
+    w-wetuwn maxposition;
   }
 
-  @VisibleForTesting
-  boolean isOmitPositions() {
-    return omitPositions;
+  @visibwefowtesting
+  b-boowean i-isomitpositions() {
+    wetuwn omitpositions;
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @suppwesswawnings("unchecked")
+  @ovewwide
+  pubwic fwushhandwew getfwushhandwew() {
+    wetuwn nyew fwushhandwew(this);
   }
 
-  static class FlushHandler extends Flushable.Handler<LowDFPackedIntsPostingLists> {
-    private static final String OMIT_POSITIONS_PROP_NAME = "omitPositions";
-    private static final String TOTAL_POSTINGS_PROP_NAME = "totalPostingsAcrossTerms";
-    private static final String MAX_POSITION_PROP_NAME = "maxPosition";
+  static cwass f-fwushhandwew extends f-fwushabwe.handwew<wowdfpackedintspostingwists> {
+    p-pwivate static finaw s-stwing omit_positions_pwop_name = "omitpositions";
+    pwivate static finaw stwing totaw_postings_pwop_name = "totawpostingsacwosstewms";
+    pwivate s-static finaw s-stwing max_position_pwop_name = "maxposition";
 
-    public FlushHandler() {
-      super();
+    pubwic fwushhandwew() {
+      s-supew();
     }
 
-    public FlushHandler(LowDFPackedIntsPostingLists objectToFlush) {
-      super(objectToFlush);
+    pubwic fwushhandwew(wowdfpackedintspostingwists o-objecttofwush) {
+      s-supew(objecttofwush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      LowDFPackedIntsPostingLists objectToFlush = getObjectToFlush();
+    @ovewwide
+    pwotected void dofwush(fwushinfo f-fwushinfo, (U ﹏ U) datasewiawizew o-out) thwows ioexception {
+      wowdfpackedintspostingwists objecttofwush = getobjecttofwush();
 
-      flushInfo.addBooleanProperty(OMIT_POSITIONS_PROP_NAME, objectToFlush.omitPositions);
-      flushInfo.addIntProperty(TOTAL_POSTINGS_PROP_NAME, objectToFlush.totalPostingsAcrossTerms);
-      flushInfo.addIntProperty(MAX_POSITION_PROP_NAME, objectToFlush.maxPosition);
+      f-fwushinfo.addbooweanpwopewty(omit_positions_pwop_name, UwU o-objecttofwush.omitpositions);
+      f-fwushinfo.addintpwopewty(totaw_postings_pwop_name, XD o-objecttofwush.totawpostingsacwosstewms);
+      fwushinfo.addintpwopewty(max_position_pwop_name, ʘwʘ o-objecttofwush.maxposition);
 
-      out.writePackedInts(objectToFlush.packedDocIds.getReader());
+      out.wwitepackedints(objecttofwush.packeddocids.getweadew());
 
-      if (!objectToFlush.omitPositions) {
-        assert objectToFlush.packedPositions != null;
-        out.writePackedInts(objectToFlush.packedPositions.getReader());
+      i-if (!objecttofwush.omitpositions) {
+        a-assewt objecttofwush.packedpositions != nyuww;
+        o-out.wwitepackedints(objecttofwush.packedpositions.getweadew());
       }
     }
 
-    @Override
-    protected LowDFPackedIntsPostingLists doLoad(
-        FlushInfo flushInfo,
-        DataDeserializer in) throws IOException {
+    @ovewwide
+    p-pwotected wowdfpackedintspostingwists d-dowoad(
+        fwushinfo fwushinfo, rawr x3
+        datadesewiawizew in) t-thwows ioexception {
 
-      boolean omitPositions = flushInfo.getBooleanProperty(OMIT_POSITIONS_PROP_NAME);
-      int totalPostingsAcrossTerms = flushInfo.getIntProperty(TOTAL_POSTINGS_PROP_NAME);
-      int maxPosition = flushInfo.getIntProperty(MAX_POSITION_PROP_NAME);
+      boowean omitpositions = f-fwushinfo.getbooweanpwopewty(omit_positions_pwop_name);
+      i-int totawpostingsacwosstewms = fwushinfo.getintpwopewty(totaw_postings_pwop_name);
+      i-int maxposition = fwushinfo.getintpwopewty(max_position_pwop_name);
 
-      PackedIntsWrapper packedDocIds = new PackedIntsWrapper(in.readPackedInts());
+      p-packedintswwappew p-packeddocids = n-new packedintswwappew(in.weadpackedints());
 
-      PackedIntsWrapper packedPositions = null;
-      if (!omitPositions) {
-        packedPositions = new PackedIntsWrapper(in.readPackedInts());
+      packedintswwappew packedpositions = nyuww;
+      if (!omitpositions) {
+        packedpositions = n-nyew packedintswwappew(in.weadpackedints());
       }
 
-      return new LowDFPackedIntsPostingLists(
-          packedDocIds,
-          packedPositions,
-          omitPositions,
-          totalPostingsAcrossTerms,
-          maxPosition);
+      wetuwn n-nyew wowdfpackedintspostingwists(
+          p-packeddocids, ^^;;
+          packedpositions,
+          o-omitpositions, ʘwʘ
+          totawpostingsacwosstewms, (U ﹏ U)
+          m-maxposition);
     }
   }
 }

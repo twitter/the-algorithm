@@ -1,121 +1,121 @@
-package com.twitter.follow_recommendations.utils
+package com.twittew.fowwow_wecommendations.utiws
 
-import com.twitter.follow_recommendations.common.base.RecommendationFlow
-import com.twitter.follow_recommendations.common.base.SideEffectsUtil
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
+impowt com.twittew.fowwow_wecommendations.common.base.wecommendationfwow
+i-impowt c-com.twittew.fowwow_wecommendations.common.base.sideeffectsutiw
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+i-impowt com.twittew.snowfwake.id.snowfwakeid
+impowt com.twittew.stitch.stitch
 
-trait RecommendationFlowBaseSideEffectsUtil[Target <: HasClientContext, Candidate <: CandidateUser]
-    extends SideEffectsUtil[Target, Candidate] {
-  recommendationFlow: RecommendationFlow[Target, Candidate] =>
+twait wecommendationfwowbasesideeffectsutiw[tawget <: hascwientcontext, (U ﹏ U) candidate <: candidateusew]
+    e-extends sideeffectsutiw[tawget, ^•ﻌ•^ candidate] {
+  wecommendationfwow: w-wecommendationfwow[tawget, (˘ω˘) candidate] =>
 
-  override def applySideEffects(
-    target: Target,
-    candidateSources: Seq[CandidateSource[Target, Candidate]],
-    candidatesFromCandidateSources: Seq[Candidate],
-    mergedCandidates: Seq[Candidate],
-    filteredCandidates: Seq[Candidate],
-    rankedCandidates: Seq[Candidate],
-    transformedCandidates: Seq[Candidate],
-    truncatedCandidates: Seq[Candidate],
-    results: Seq[Candidate]
-  ): Stitch[Unit] = {
-    Stitch.async(
-      Stitch.collect(
-        Seq(
-          applySideEffectsCandidateSourceCandidates(
-            target,
-            candidateSources,
-            candidatesFromCandidateSources),
-          applySideEffectsMergedCandidates(target, mergedCandidates),
-          applySideEffectsFilteredCandidates(target, filteredCandidates),
-          applySideEffectsRankedCandidates(target, rankedCandidates),
-          applySideEffectsTransformedCandidates(target, transformedCandidates),
-          applySideEffectsTruncatedCandidates(target, truncatedCandidates),
-          applySideEffectsResults(target, results)
+  ovewwide def appwysideeffects(
+    t-tawget: tawget, :3
+    candidatesouwces: seq[candidatesouwce[tawget, ^^;; candidate]], 🥺
+    c-candidatesfwomcandidatesouwces: seq[candidate], (⑅˘꒳˘)
+    m-mewgedcandidates: s-seq[candidate], nyaa~~
+    fiwtewedcandidates: seq[candidate],
+    wankedcandidates: seq[candidate], :3
+    t-twansfowmedcandidates: seq[candidate], ( ͡o ω ͡o )
+    twuncatedcandidates: seq[candidate], mya
+    wesuwts: seq[candidate]
+  ): stitch[unit] = {
+    s-stitch.async(
+      stitch.cowwect(
+        s-seq(
+          appwysideeffectscandidatesouwcecandidates(
+            t-tawget, (///ˬ///✿)
+            c-candidatesouwces, (˘ω˘)
+            c-candidatesfwomcandidatesouwces), ^^;;
+          appwysideeffectsmewgedcandidates(tawget, (✿oωo) mewgedcandidates), (U ﹏ U)
+          a-appwysideeffectsfiwtewedcandidates(tawget, -.- fiwtewedcandidates), ^•ﻌ•^
+          appwysideeffectswankedcandidates(tawget, rawr w-wankedcandidates), (˘ω˘)
+          appwysideeffectstwansfowmedcandidates(tawget, nyaa~~ twansfowmedcandidates), UwU
+          appwysideeffectstwuncatedcandidates(tawget, :3 twuncatedcandidates), (⑅˘꒳˘)
+          appwysideeffectswesuwts(tawget, (///ˬ///✿) w-wesuwts)
         )
       ))
   }
 
   /*
-  In subclasses, override functions below to apply custom side effects at each step in pipeline.
-  Call super.applySideEffectsXYZ to scribe basic scribes implemented in this parent class
+  in s-subcwasses, ^^;; ovewwide f-functions bewow t-to appwy custom side effects at each step in pipewine.
+  caww s-supew.appwysideeffectsxyz t-to scwibe basic scwibes i-impwemented i-in this pawent cwass
    */
-  def applySideEffectsCandidateSourceCandidates(
-    target: Target,
-    candidateSources: Seq[CandidateSource[Target, Candidate]],
-    candidatesFromCandidateSources: Seq[Candidate]
-  ): Stitch[Unit] = {
-    val candidatesGroupedByCandidateSources =
-      candidatesFromCandidateSources.groupBy(
-        _.getPrimaryCandidateSource.getOrElse(CandidateSourceIdentifier("NoCandidateSource")))
+  def a-appwysideeffectscandidatesouwcecandidates(
+    tawget: tawget, >_<
+    c-candidatesouwces: seq[candidatesouwce[tawget, rawr x3 candidate]],
+    c-candidatesfwomcandidatesouwces: seq[candidate]
+  ): s-stitch[unit] = {
+    vaw c-candidatesgwoupedbycandidatesouwces =
+      c-candidatesfwomcandidatesouwces.gwoupby(
+        _.getpwimawycandidatesouwce.getowewse(candidatesouwceidentifiew("nocandidatesouwce")))
 
-    target.getOptionalUserId match {
-      case Some(userId) =>
-        val userAgeOpt = SnowflakeId.timeFromIdOpt(userId).map(_.untilNow.inDays)
-        userAgeOpt match {
-          case Some(userAge) if userAge <= 30 =>
-            candidateSources.map { candidateSource =>
+    tawget.getoptionawusewid match {
+      case some(usewid) =>
+        vaw usewageopt = snowfwakeid.timefwomidopt(usewid).map(_.untiwnow.indays)
+        usewageopt match {
+          c-case s-some(usewage) if usewage <= 30 =>
+            candidatesouwces.map { c-candidatesouwce =>
               {
-                val candidateSourceStats = statsReceiver.scope(candidateSource.identifier.name)
+                v-vaw candidatesouwcestats = s-statsweceivew.scope(candidatesouwce.identifiew.name)
 
-                val isEmpty =
-                  !candidatesGroupedByCandidateSources.keySet.contains(candidateSource.identifier)
+                vaw isempty =
+                  !candidatesgwoupedbycandidatesouwces.keyset.contains(candidatesouwce.identifiew)
 
-                if (userAge <= 1)
-                  candidateSourceStats
-                    .scope("user_age", "1", "empty").counter(isEmpty.toString).incr()
-                if (userAge <= 7)
-                  candidateSourceStats
-                    .scope("user_age", "7", "empty").counter(isEmpty.toString).incr()
-                if (userAge <= 30)
-                  candidateSourceStats
-                    .scope("user_age", "30", "empty").counter(isEmpty.toString).incr()
+                if (usewage <= 1)
+                  candidatesouwcestats
+                    .scope("usew_age", /(^•ω•^) "1", :3 "empty").countew(isempty.tostwing).incw()
+                i-if (usewage <= 7)
+                  candidatesouwcestats
+                    .scope("usew_age", (ꈍᴗꈍ) "7", /(^•ω•^) "empty").countew(isempty.tostwing).incw()
+                if (usewage <= 30)
+                  candidatesouwcestats
+                    .scope("usew_age", (⑅˘꒳˘) "30", ( ͡o ω ͡o ) "empty").countew(isempty.tostwing).incw()
               }
             }
-          case _ => Nil
+          case _ => nyiw
         }
-      case None => Nil
+      case nyone => nyiw
     }
-    Stitch.Unit
+    stitch.unit
   }
 
-  def applySideEffectsBaseCandidates(
-    target: Target,
-    candidates: Seq[Candidate]
-  ): Stitch[Unit] = Stitch.Unit
+  d-def appwysideeffectsbasecandidates(
+    tawget: t-tawget, òωó
+    candidates: s-seq[candidate]
+  ): s-stitch[unit] = stitch.unit
 
-  def applySideEffectsMergedCandidates(
-    target: Target,
-    candidates: Seq[Candidate]
-  ): Stitch[Unit] = applySideEffectsBaseCandidates(target, candidates)
+  d-def a-appwysideeffectsmewgedcandidates(
+    t-tawget: tawget, (⑅˘꒳˘)
+    c-candidates: seq[candidate]
+  ): stitch[unit] = a-appwysideeffectsbasecandidates(tawget, XD c-candidates)
 
-  def applySideEffectsFilteredCandidates(
-    target: Target,
-    candidates: Seq[Candidate]
-  ): Stitch[Unit] = applySideEffectsBaseCandidates(target, candidates)
+  def a-appwysideeffectsfiwtewedcandidates(
+    t-tawget: t-tawget, -.-
+    candidates: seq[candidate]
+  ): stitch[unit] = appwysideeffectsbasecandidates(tawget, :3 candidates)
 
-  def applySideEffectsRankedCandidates(
-    target: Target,
-    candidates: Seq[Candidate]
-  ): Stitch[Unit] = applySideEffectsBaseCandidates(target, candidates)
+  d-def appwysideeffectswankedcandidates(
+    tawget: tawget, nyaa~~
+    candidates: seq[candidate]
+  ): stitch[unit] = appwysideeffectsbasecandidates(tawget, 😳 c-candidates)
 
-  def applySideEffectsTransformedCandidates(
-    target: Target,
-    candidates: Seq[Candidate]
-  ): Stitch[Unit] = applySideEffectsBaseCandidates(target, candidates)
+  def appwysideeffectstwansfowmedcandidates(
+    tawget: tawget, (⑅˘꒳˘)
+    candidates: s-seq[candidate]
+  ): s-stitch[unit] = a-appwysideeffectsbasecandidates(tawget, nyaa~~ candidates)
 
-  def applySideEffectsTruncatedCandidates(
-    target: Target,
-    candidates: Seq[Candidate]
-  ): Stitch[Unit] = applySideEffectsBaseCandidates(target, candidates)
+  def a-appwysideeffectstwuncatedcandidates(
+    tawget: t-tawget, OwO
+    c-candidates: seq[candidate]
+  ): stitch[unit] = appwysideeffectsbasecandidates(tawget, rawr x3 candidates)
 
-  def applySideEffectsResults(
-    target: Target,
-    candidates: Seq[Candidate]
-  ): Stitch[Unit] = applySideEffectsBaseCandidates(target, candidates)
+  def appwysideeffectswesuwts(
+    tawget: tawget, XD
+    candidates: s-seq[candidate]
+  ): stitch[unit] = a-appwysideeffectsbasecandidates(tawget, σωσ candidates)
 }

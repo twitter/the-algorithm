@@ -1,35 +1,35 @@
-package com.twitter.recos.user_tweet_graph.util
+package com.twittew.wecos.usew_tweet_gwaph.utiw
 
-import com.twitter.graphjet.bipartite.MultiSegmentIterator
-import com.twitter.graphjet.bipartite.api.BipartiteGraph
-import com.twitter.graphjet.bipartite.segment.BipartiteGraphSegment
-import java.util.Random
-import scala.collection.mutable.ListBuffer
+impowt com.twittew.gwaphjet.bipawtite.muwtisegmentitewatow
+i-impowt c-com.twittew.gwaphjet.bipawtite.api.bipawtitegwaph
+i-impowt com.twittew.gwaphjet.bipawtite.segment.bipawtitegwaphsegment
+i-impowt java.utiw.wandom
+i-impowt scawa.cowwection.mutabwe.wistbuffew
 
-object SampleLHSUsersUtil {
-  // sample userId nodes
-  def sampleLHSUsers(
-    maskedTweetId: Long,
-    maxNumSamplesPerNeighbor: Int,
-    bipartiteGraph: BipartiteGraph
-  ): Seq[Long] = {
-    val sampledUserIdsIterator = bipartiteGraph
-      .getRandomRightNodeEdges(
-        maskedTweetId,
-        maxNumSamplesPerNeighbor,
-        new Random(System.currentTimeMillis)).asInstanceOf[MultiSegmentIterator[
-        BipartiteGraphSegment
+o-object s-sampwewhsusewsutiw {
+  // s-sampwe usewid nyodes
+  def sampwewhsusews(
+    maskedtweetid: wong, (U ﹏ U)
+    m-maxnumsampwespewneighbow: int, >_<
+    bipawtitegwaph: bipawtitegwaph
+  ): s-seq[wong] = {
+    vaw s-sampwedusewidsitewatow = bipawtitegwaph
+      .getwandomwightnodeedges(
+        maskedtweetid, rawr x3
+        maxnumsampwespewneighbow, mya
+        n-nyew wandom(system.cuwwenttimemiwwis)).asinstanceof[muwtisegmentitewatow[
+        b-bipawtitegwaphsegment
       ]]
 
-    val userIds = new ListBuffer[Long]()
-    if (sampledUserIdsIterator != null) {
-      while (sampledUserIdsIterator.hasNext) {
-        val leftNode = sampledUserIdsIterator.nextLong()
-        // If a user likes too many things, we risk including spammy behavior.
-        if (bipartiteGraph.getLeftNodeDegree(leftNode) < 100)
-          userIds += leftNode
+    v-vaw usewids = nyew wistbuffew[wong]()
+    if (sampwedusewidsitewatow != nyuww) {
+      whiwe (sampwedusewidsitewatow.hasnext) {
+        v-vaw weftnode = sampwedusewidsitewatow.nextwong()
+        // if a usew wikes too many things, nyaa~~ we wisk incwuding s-spammy behaviow. (⑅˘꒳˘)
+        if (bipawtitegwaph.getweftnodedegwee(weftnode) < 100)
+          u-usewids += weftnode
       }
     }
-    userIds
+    u-usewids
   }
 }

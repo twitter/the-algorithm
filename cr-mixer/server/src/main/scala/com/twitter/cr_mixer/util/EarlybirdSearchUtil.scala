@@ -1,130 +1,130 @@
-package com.twitter.cr_mixer.util
+package com.twittew.cw_mixew.utiw
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant
-import com.twitter.search.queryparser.query.search.SearchOperator
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants
-import com.twitter.search.queryparser.query.{Query => EbQuery}
-import com.twitter.search.queryparser.query.Conjunction
-import scala.collection.JavaConverters._
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResultMetadataOptions
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.search.queryparser.query.Query
-import com.twitter.util.Duration
-import com.twitter.search.common.query.thriftjava.thriftscala.CollectorTerminationParams
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant
+i-impowt com.twittew.seawch.quewypawsew.quewy.seawch.seawchopewatow
+i-impowt com.twittew.seawch.quewypawsew.quewy.seawch.seawchopewatowconstants
+i-impowt com.twittew.seawch.quewypawsew.quewy.{quewy => e-ebquewy}
+impowt c-com.twittew.seawch.quewypawsew.quewy.conjunction
+i-impowt scawa.cowwection.javaconvewtews._
+i-impowt com.twittew.seawch.eawwybiwd.thwiftscawa.thwiftseawchwesuwtmetadataoptions
+i-impowt com.twittew.simcwustews_v2.common.tweetid
+impowt com.twittew.seawch.quewypawsew.quewy.quewy
+impowt com.twittew.utiw.duwation
+impowt com.twittew.seawch.common.quewy.thwiftjava.thwiftscawa.cowwectowtewminationpawams
 
-object EarlybirdSearchUtil {
-  val EarlybirdClientId: String = "cr-mixer.prod"
+object eawwybiwdseawchutiw {
+  vaw e-eawwybiwdcwientid: stwing = "cw-mixew.pwod"
 
-  val Mentions: String = EarlybirdFieldConstant.MENTIONS_FACET
-  val Hashtags: String = EarlybirdFieldConstant.HASHTAGS_FACET
-  val FacetsToFetch: Seq[String] = Seq(Mentions, Hashtags)
+  vaw mentions: s-stwing = eawwybiwdfiewdconstant.mentions_facet
+  vaw hashtags: stwing = e-eawwybiwdfiewdconstant.hashtags_facet
+  vaw facetstofetch: seq[stwing] = seq(mentions, ^•ﻌ•^ hashtags)
 
-  val MetadataOptions: ThriftSearchResultMetadataOptions = ThriftSearchResultMetadataOptions(
-    getTweetUrls = true,
-    getResultLocation = false,
-    getLuceneScore = false,
-    getInReplyToStatusId = true,
-    getReferencedTweetAuthorId = true,
-    getMediaBits = true,
-    getAllFeatures = true,
-    getFromUserId = true,
-    returnSearchResultFeatures = true,
-    // Set getExclusiveConversationAuthorId in order to retrieve Exclusive / SuperFollow tweets.
-    getExclusiveConversationAuthorId = true
+  v-vaw metadataoptions: t-thwiftseawchwesuwtmetadataoptions = t-thwiftseawchwesuwtmetadataoptions(
+    gettweetuwws = twue, rawr
+    getwesuwtwocation = fawse, (˘ω˘)
+    g-getwucenescowe = fawse, nyaa~~
+    getinwepwytostatusid = twue, UwU
+    getwefewencedtweetauthowid = t-twue, :3
+    getmediabits = t-twue, (⑅˘꒳˘)
+    g-getawwfeatuwes = t-twue, (///ˬ///✿)
+    getfwomusewid = t-twue, ^^;;
+    wetuwnseawchwesuwtfeatuwes = twue, >_<
+    // s-set getexcwusiveconvewsationauthowid in owdew to wetwieve excwusive / s-supewfowwow tweets. rawr x3
+    getexcwusiveconvewsationauthowid = twue
   )
 
-  // Filter out retweets and replies
-  val TweetTypesToExclude: Seq[String] =
-    Seq(
-      SearchOperatorConstants.NATIVE_RETWEETS,
-      SearchOperatorConstants.REPLIES)
+  // fiwtew out wetweets and wepwies
+  vaw tweettypestoexcwude: s-seq[stwing] =
+    seq(
+      s-seawchopewatowconstants.native_wetweets, /(^•ω•^)
+      s-seawchopewatowconstants.wepwies)
 
-  def GetCollectorTerminationParams(
-    maxNumHitsPerShard: Int,
-    processingTimeout: Duration
-  ): Option[CollectorTerminationParams] = {
-    Some(
-      CollectorTerminationParams(
-        // maxHitsToProcess is used for early termination on each EB shard
-        maxHitsToProcess = Some(maxNumHitsPerShard),
-        timeoutMs = processingTimeout.inMilliseconds.toInt
+  d-def getcowwectowtewminationpawams(
+    maxnumhitspewshawd: int, :3
+    pwocessingtimeout: duwation
+  ): o-option[cowwectowtewminationpawams] = {
+    s-some(
+      cowwectowtewminationpawams(
+        // m-maxhitstopwocess is u-used fow eawwy tewmination on e-each eb shawd
+        maxhitstopwocess = s-some(maxnumhitspewshawd), (ꈍᴗꈍ)
+        timeoutms = pwocessingtimeout.inmiwwiseconds.toint
       ))
   }
 
   /**
-   * Get EarlybirdQuery
-   * This function creates a EBQuery based on the search input
+   * g-get eawwybiwdquewy
+   * this function cweates a-a ebquewy based on the seawch i-input
    */
-  def GetEarlybirdQuery(
-    beforeTweetIdExclusive: Option[TweetId],
-    afterTweetIdExclusive: Option[TweetId],
-    excludedTweetIds: Set[TweetId],
-    filterOutRetweetsAndReplies: Boolean
-  ): Option[EbQuery] =
-    CreateConjunction(
-      Seq(
-        CreateRangeQuery(beforeTweetIdExclusive, afterTweetIdExclusive),
-        CreateExcludedTweetIdsQuery(excludedTweetIds),
-        CreateTweetTypesFilters(filterOutRetweetsAndReplies)
-      ).flatten)
+  d-def geteawwybiwdquewy(
+    befowetweetidexcwusive: option[tweetid], /(^•ω•^)
+    aftewtweetidexcwusive: option[tweetid], (⑅˘꒳˘)
+    excwudedtweetids: set[tweetid], ( ͡o ω ͡o )
+    f-fiwtewoutwetweetsandwepwies: b-boowean
+  ): option[ebquewy] =
+    c-cweateconjunction(
+      s-seq(
+        cweatewangequewy(befowetweetidexcwusive, òωó a-aftewtweetidexcwusive), (⑅˘꒳˘)
+        cweateexcwudedtweetidsquewy(excwudedtweetids), XD
+        cweatetweettypesfiwtews(fiwtewoutwetweetsandwepwies)
+      ).fwatten)
 
-  def CreateRangeQuery(
-    beforeTweetIdExclusive: Option[TweetId],
-    afterTweetIdExclusive: Option[TweetId]
-  ): Option[EbQuery] = {
-    val beforeIdClause = beforeTweetIdExclusive.map { beforeId =>
-      // MAX_ID is an inclusive value therefore we subtract 1 from beforeId.
-      new SearchOperator(SearchOperator.Type.MAX_ID, (beforeId - 1).toString)
+  def cweatewangequewy(
+    befowetweetidexcwusive: o-option[tweetid], -.-
+    aftewtweetidexcwusive: option[tweetid]
+  ): option[ebquewy] = {
+    vaw befoweidcwause = befowetweetidexcwusive.map { b-befoweid =>
+      // max_id i-is an incwusive v-vawue thewefowe w-we subtwact 1 fwom befoweid. :3
+      n-nyew seawchopewatow(seawchopewatow.type.max_id, nyaa~~ (befoweid - 1).tostwing)
     }
-    val afterIdClause = afterTweetIdExclusive.map { afterId =>
-      new SearchOperator(SearchOperator.Type.SINCE_ID, afterId.toString)
+    v-vaw aftewidcwause = a-aftewtweetidexcwusive.map { a-aftewid =>
+      nyew seawchopewatow(seawchopewatow.type.since_id, 😳 aftewid.tostwing)
     }
-    CreateConjunction(Seq(beforeIdClause, afterIdClause).flatten)
+    c-cweateconjunction(seq(befoweidcwause, (⑅˘꒳˘) a-aftewidcwause).fwatten)
   }
 
-  def CreateTweetTypesFilters(filterOutRetweetsAndReplies: Boolean): Option[EbQuery] = {
-    if (filterOutRetweetsAndReplies) {
-      val tweetTypeFilters = TweetTypesToExclude.map { searchOperator =>
-        new SearchOperator(SearchOperator.Type.EXCLUDE, searchOperator)
+  d-def cweatetweettypesfiwtews(fiwtewoutwetweetsandwepwies: b-boowean): option[ebquewy] = {
+    i-if (fiwtewoutwetweetsandwepwies) {
+      vaw tweettypefiwtews = tweettypestoexcwude.map { seawchopewatow =>
+        n-nyew seawchopewatow(seawchopewatow.type.excwude, nyaa~~ seawchopewatow)
       }
-      CreateConjunction(tweetTypeFilters)
-    } else None
+      cweateconjunction(tweettypefiwtews)
+    } ewse nyone
   }
 
-  def CreateConjunction(clauses: Seq[EbQuery]): Option[EbQuery] = {
-    clauses.size match {
-      case 0 => None
-      case 1 => Some(clauses.head)
-      case _ => Some(new Conjunction(clauses.asJava))
+  def cweateconjunction(cwauses: seq[ebquewy]): o-option[ebquewy] = {
+    cwauses.size match {
+      case 0 => n-nyone
+      case 1 => s-some(cwauses.head)
+      case _ => s-some(new conjunction(cwauses.asjava))
     }
   }
 
-  def CreateExcludedTweetIdsQuery(tweetIds: Set[TweetId]): Option[EbQuery] = {
-    if (tweetIds.nonEmpty) {
-      Some(
-        new SearchOperator.Builder()
-          .setType(SearchOperator.Type.NAMED_MULTI_TERM_DISJUNCTION)
-          .addOperand(EarlybirdFieldConstant.ID_FIELD.getFieldName)
-          .addOperand(EXCLUDE_TWEET_IDS)
-          .setOccur(Query.Occur.MUST_NOT)
-          .build())
-    } else None
+  d-def cweateexcwudedtweetidsquewy(tweetids: s-set[tweetid]): o-option[ebquewy] = {
+    if (tweetids.nonempty) {
+      some(
+        nyew seawchopewatow.buiwdew()
+          .settype(seawchopewatow.type.named_muwti_tewm_disjunction)
+          .addopewand(eawwybiwdfiewdconstant.id_fiewd.getfiewdname)
+          .addopewand(excwude_tweet_ids)
+          .setoccuw(quewy.occuw.must_not)
+          .buiwd())
+    } ewse nyone
   }
 
   /**
-   * Get NamedDisjunctions with excludedTweetIds
+   * g-get nyameddisjunctions with excwudedtweetids
    */
-  def GetNamedDisjunctions(excludedTweetIds: Set[TweetId]): Option[Map[String, Seq[Long]]] =
-    if (excludedTweetIds.nonEmpty)
-      createNamedDisjunctionsExcludedTweetIds(excludedTweetIds)
-    else None
+  d-def getnameddisjunctions(excwudedtweetids: s-set[tweetid]): o-option[map[stwing, OwO seq[wong]]] =
+    if (excwudedtweetids.nonempty)
+      c-cweatenameddisjunctionsexcwudedtweetids(excwudedtweetids)
+    e-ewse nyone
 
-  val EXCLUDE_TWEET_IDS = "exclude_tweet_ids"
-  private def createNamedDisjunctionsExcludedTweetIds(
-    tweetIds: Set[TweetId]
-  ): Option[Map[String, Seq[Long]]] = {
-    if (tweetIds.nonEmpty) {
-      Some(Map(EXCLUDE_TWEET_IDS -> tweetIds.toSeq))
-    } else None
+  vaw excwude_tweet_ids = "excwude_tweet_ids"
+  p-pwivate d-def cweatenameddisjunctionsexcwudedtweetids(
+    tweetids: set[tweetid]
+  ): option[map[stwing, rawr x3 seq[wong]]] = {
+    if (tweetids.nonempty) {
+      s-some(map(excwude_tweet_ids -> t-tweetids.toseq))
+    } e-ewse nyone
   }
 }

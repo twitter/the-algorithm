@@ -1,100 +1,100 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ChildFeedbackActionMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.FeedbackActionMarshaller
-import com.twitter.product_mixer.core.model.common.identifier.TransportMarshallerIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ContainsFeedbackActionInfos
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackAction
-import com.twitter.timelines.render.thriftscala.TimelineResponse
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.twanspowtmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.chiwdfeedbackactionmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.feedbackactionmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twanspowtmawshawwewidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineinstwuction
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.containsfeedbackactioninfos
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackaction
+impowt com.twittew.timewines.wendew.thwiftscawa.timewinewesponse
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
 /**
- * [[TransportMarshaller]] for URT types
+ * [[twanspowtmawshawwew]] f-fow uwt types
  *
- * @note to make an instance of a [[UrtTransportMarshaller]] you can use [[UrtTransportMarshallerBuilder.marshaller]]
+ * @note to make an instance of a [[uwttwanspowtmawshawwew]] y-you can use [[uwttwanspowtmawshawwewbuiwdew.mawshawwew]]
  */
-@Singleton
-class UrtTransportMarshaller @Inject() (
-  timelineInstructionMarshaller: TimelineInstructionMarshaller,
-  feedbackActionMarshaller: FeedbackActionMarshaller,
-  childFeedbackActionMarshaller: ChildFeedbackActionMarshaller,
-  timelineMetadataMarshaller: TimelineMetadataMarshaller)
-    extends TransportMarshaller[Timeline, urt.TimelineResponse] {
+@singweton
+c-cwass uwttwanspowtmawshawwew @inject() (
+  t-timewineinstwuctionmawshawwew: timewineinstwuctionmawshawwew, (˘ω˘)
+  feedbackactionmawshawwew: feedbackactionmawshawwew, (U ﹏ U)
+  chiwdfeedbackactionmawshawwew: c-chiwdfeedbackactionmawshawwew, ^•ﻌ•^
+  timewinemetadatamawshawwew: timewinemetadatamawshawwew)
+    extends twanspowtmawshawwew[timewine, (˘ω˘) u-uwt.timewinewesponse] {
 
-  override val identifier: TransportMarshallerIdentifier =
-    TransportMarshallerIdentifier("UnifiedRichTimeline")
+  ovewwide v-vaw identifiew: t-twanspowtmawshawwewidentifiew =
+    t-twanspowtmawshawwewidentifiew("unifiedwichtimewine")
 
-  override def apply(timeline: Timeline): urt.TimelineResponse = {
-    val feedbackActions: Option[Map[String, urt.FeedbackAction]] = {
-      collectAndMarshallFeedbackActions(timeline.instructions)
+  o-ovewwide def appwy(timewine: timewine): uwt.timewinewesponse = {
+    v-vaw feedbackactions: option[map[stwing, :3 uwt.feedbackaction]] = {
+      cowwectandmawshawwfeedbackactions(timewine.instwuctions)
     }
-    urt.TimelineResponse(
-      state = urt.TimelineState.Ok,
-      timeline = urt.Timeline(
-        id = timeline.id,
-        instructions = timeline.instructions.map(timelineInstructionMarshaller(_)),
-        responseObjects =
-          feedbackActions.map(actions => urt.ResponseObjects(feedbackActions = Some(actions))),
-        metadata = timeline.metadata.map(timelineMetadataMarshaller(_))
+    u-uwt.timewinewesponse(
+      state = uwt.timewinestate.ok, ^^;;
+      timewine = uwt.timewine(
+        id = timewine.id, 🥺
+        instwuctions = t-timewine.instwuctions.map(timewineinstwuctionmawshawwew(_)), (⑅˘꒳˘)
+        wesponseobjects =
+          f-feedbackactions.map(actions => u-uwt.wesponseobjects(feedbackactions = s-some(actions))), nyaa~~
+        metadata = timewine.metadata.map(timewinemetadatamawshawwew(_))
       )
     )
   }
 
-  // Currently, feedbackActionInfo at the URT TimelineItem level is supported, which covers almost all
-  // existing use cases. However, if additional feedbackActionInfos are defined on the URT
-  // TimelineItemContent level for "compound" URT types (see deprecated TopicCollection /
-  // TopicCollectionData), this is not supported. If "compound" URT types are added in the future,
-  // support must be added within that type (see ModuleItem) to handle the collection and marshalling
-  // of these feedbackActionInfos.
+  // cuwwentwy, :3 feedbackactioninfo a-at the uwt timewineitem w-wevew is suppowted, ( ͡o ω ͡o ) which c-covews awmost a-aww
+  // existing use cases. mya howevew, (///ˬ///✿) i-if additionaw feedbackactioninfos a-awe defined on the uwt
+  // timewineitemcontent w-wevew fow "compound" uwt t-types (see depwecated topiccowwection /
+  // topiccowwectiondata), (˘ω˘) t-this is nyot s-suppowted. ^^;; if "compound" uwt types awe added in the futuwe, (✿oωo)
+  // suppowt must be added within that type (see moduweitem) t-to handwe t-the cowwection and mawshawwing
+  // o-of these f-feedbackactioninfos. (U ﹏ U)
 
-  private[this] def collectAndMarshallFeedbackActions(
-    instructions: Seq[TimelineInstruction]
-  ): Option[Map[String, urt.FeedbackAction]] = {
-    val feedbackActions: Seq[FeedbackAction] = for {
-      feedbackActionInfos <- instructions.collect {
-        case c: ContainsFeedbackActionInfos => c.feedbackActionInfos
+  p-pwivate[this] def cowwectandmawshawwfeedbackactions(
+    instwuctions: seq[timewineinstwuction]
+  ): option[map[stwing, -.- u-uwt.feedbackaction]] = {
+    vaw feedbackactions: seq[feedbackaction] = fow {
+      feedbackactioninfos <- i-instwuctions.cowwect {
+        case c-c: containsfeedbackactioninfos => c-c.feedbackactioninfos
       }
-      feedbackInfoOpt <- feedbackActionInfos
-      feedbackInfo <- feedbackInfoOpt.toSeq
-      feedbackAction <- feedbackInfo.feedbackActions
-    } yield feedbackAction
+      f-feedbackinfoopt <- feedbackactioninfos
+      f-feedbackinfo <- f-feedbackinfoopt.toseq
+      f-feedbackaction <- f-feedbackinfo.feedbackactions
+    } yiewd feedbackaction
 
-    if (feedbackActions.nonEmpty) {
-      val urtFeedbackActions = feedbackActions.map(feedbackActionMarshaller(_))
+    if (feedbackactions.nonempty) {
+      vaw uwtfeedbackactions = f-feedbackactions.map(feedbackactionmawshawwew(_))
 
-      val urtChildFeedbackActions: Seq[urt.FeedbackAction] = for {
-        feedbackAction <- feedbackActions
-        childFeedbackActions <- feedbackAction.childFeedbackActions.toSeq
-        childFeedbackAction <- childFeedbackActions
-      } yield childFeedbackActionMarshaller(childFeedbackAction)
+      v-vaw uwtchiwdfeedbackactions: s-seq[uwt.feedbackaction] = f-fow {
+        f-feedbackaction <- feedbackactions
+        chiwdfeedbackactions <- feedbackaction.chiwdfeedbackactions.toseq
+        chiwdfeedbackaction <- c-chiwdfeedbackactions
+      } yiewd chiwdfeedbackactionmawshawwew(chiwdfeedbackaction)
 
-      val allUrtFeedbackActions = urtFeedbackActions ++ urtChildFeedbackActions
+      vaw awwuwtfeedbackactions = uwtfeedbackactions ++ uwtchiwdfeedbackactions
 
-      Some(
-        allUrtFeedbackActions.map { urtAction =>
-          FeedbackActionMarshaller.generateKey(urtAction) -> urtAction
-        }.toMap
+      some(
+        awwuwtfeedbackactions.map { u-uwtaction =>
+          feedbackactionmawshawwew.genewatekey(uwtaction) -> uwtaction
+        }.tomap
       )
-    } else {
-      None
+    } ewse {
+      nyone
     }
   }
 }
 
-object UrtTransportMarshaller {
-  def unavailable(timelineId: String): TimelineResponse = {
-    urt.TimelineResponse(
-      state = urt.TimelineState.Unavailable,
-      timeline = urt.Timeline(
-        id = timelineId,
-        instructions = Seq.empty,
-        responseObjects = None,
-        metadata = None
+o-object uwttwanspowtmawshawwew {
+  d-def unavaiwabwe(timewineid: s-stwing): timewinewesponse = {
+    u-uwt.timewinewesponse(
+      state = u-uwt.timewinestate.unavaiwabwe, ^•ﻌ•^
+      t-timewine = uwt.timewine(
+        id = timewineid, rawr
+        instwuctions = seq.empty, (˘ω˘)
+        wesponseobjects = n-nyone, nyaa~~
+        metadata = n-nyone
       )
     )
   }

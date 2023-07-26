@@ -1,45 +1,45 @@
-package com.twitter.tweetypie.util
+package com.twittew.tweetypie.utiw
 
-import com.twitter.finagle.Backoff
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.service.RetryPolicy.RetryableWriteException
-import com.twitter.servo.exception.thriftscala.ServerError
-import com.twitter.util.Duration
-import com.twitter.util.Throw
-import com.twitter.util.TimeoutException
-import com.twitter.util.Try
+impowt com.twittew.finagwe.backoff
+i-impowt com.twittew.finagwe.sewvice.wetwypowicy
+i-impowt com.twittew.finagwe.sewvice.wetwypowicy.wetwyabwewwiteexception
+i-impowt c-com.twittew.sewvo.exception.thwiftscawa.sewvewewwow
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.thwow
+i-impowt com.twittew.utiw.timeoutexception
+impowt c-com.twittew.utiw.twy
 
-object RetryPolicyBuilder {
+object wetwypowicybuiwdew {
 
   /**
-   * Retry on any exception.
+   * wetwy on any exception. mya
    */
-  def anyFailure[A](backoffs: Stream[Duration]): RetryPolicy[Try[A]] =
-    RetryPolicy.backoff[Try[A]](Backoff.fromStream(backoffs)) {
-      case Throw(_) => true
+  d-def anyfaiwuwe[a](backoffs: stweam[duwation]): wetwypowicy[twy[a]] =
+    w-wetwypowicy.backoff[twy[a]](backoff.fwomstweam(backoffs)) {
+      case thwow(_) => t-twue
     }
 
   /**
-   * Retry on com.twitter.util.TimeoutException
+   * wetwy on com.twittew.utiw.timeoutexception
    */
-  def timeouts[A](backoffs: Stream[Duration]): RetryPolicy[Try[A]] =
-    RetryPolicy.backoff[Try[A]](Backoff.fromStream(backoffs)) {
-      case Throw(_: TimeoutException) => true
+  def timeouts[a](backoffs: s-stweam[duwation]): wetwypowicy[twy[a]] =
+    w-wetwypowicy.backoff[twy[a]](backoff.fwomstweam(backoffs)) {
+      c-case thwow(_: timeoutexception) => twue
     }
 
   /**
-   * Retry on com.twitter.finagle.service.RetryableWriteExceptions
+   * wetwy on com.twittew.finagwe.sewvice.wetwyabwewwiteexceptions
    */
-  def writes[A](backoffs: Stream[Duration]): RetryPolicy[Try[A]] =
-    RetryPolicy.backoff[Try[A]](Backoff.fromStream(backoffs)) {
-      case Throw(RetryableWriteException(_)) => true
+  d-def wwites[a](backoffs: stweam[duwation]): wetwypowicy[twy[a]] =
+    wetwypowicy.backoff[twy[a]](backoff.fwomstweam(backoffs)) {
+      case thwow(wetwyabwewwiteexception(_)) => t-twue
     }
 
   /**
-   * Retry on com.twitter.servo.exception.thriftscala.ServerError
+   * wetwy o-on com.twittew.sewvo.exception.thwiftscawa.sewvewewwow
    */
-  def servoServerError[A](backoffs: Stream[Duration]): RetryPolicy[Try[A]] =
-    RetryPolicy.backoff[Try[A]](Backoff.fromStream(backoffs)) {
-      case Throw(ServerError(_)) => true
+  d-def sewvosewvewewwow[a](backoffs: s-stweam[duwation]): w-wetwypowicy[twy[a]] =
+    wetwypowicy.backoff[twy[a]](backoff.fwomstweam(backoffs)) {
+      case thwow(sewvewewwow(_)) => twue
     }
 }

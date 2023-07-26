@@ -1,21 +1,21 @@
-package com.twitter.home_mixer.marshaller.timelines
+package com.twittew.home_mixew.mawshawwew.timewines
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.timelineservice.{thriftscala => t}
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.uwtowdewedcuwsow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.bottomcuwsow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.gapcuwsow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.topcuwsow
+i-impowt com.twittew.timewinesewvice.{thwiftscawa => t-t}
 
-object TimelineServiceCursorMarshaller {
+object t-timewinesewvicecuwsowmawshawwew {
 
-  def apply(cursor: UrtOrderedCursor): Option[t.Cursor2] = {
-    val id = cursor.id.map(_.toString)
-    val gapBoundaryId = cursor.gapBoundaryId.map(_.toString)
-    cursor.cursorType match {
-      case Some(TopCursor) => Some(t.Cursor2(bottom = id))
-      case Some(BottomCursor) => Some(t.Cursor2(top = id))
-      case Some(GapCursor) => Some(t.Cursor2(top = id, bottom = gapBoundaryId))
-      case _ => None
+  d-def appwy(cuwsow: uwtowdewedcuwsow): option[t.cuwsow2] = {
+    vaw id = cuwsow.id.map(_.tostwing)
+    vaw g-gapboundawyid = cuwsow.gapboundawyid.map(_.tostwing)
+    cuwsow.cuwsowtype m-match {
+      case some(topcuwsow) => s-some(t.cuwsow2(bottom = id))
+      case some(bottomcuwsow) => some(t.cuwsow2(top = id))
+      case s-some(gapcuwsow) => some(t.cuwsow2(top = i-id, mya b-bottom = gapboundawyid))
+      case _ => nyone
     }
   }
 }

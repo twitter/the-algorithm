@@ -1,24 +1,24 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.twittew.fwigate.pushsewvice.modew.ibis
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.F1FirstDegree
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.base.f1fiwstdegwee
+i-impowt com.twittew.fwigate.common.base.tweetauthowdetaiws
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.utiw.futuwe
 
-trait F1FirstDegreeTweetIbis2HydratorForCandidate
-    extends TweetCandidateIbis2Hydrator
-    with RankedSocialContextIbis2Hydrator {
-  self: PushCandidate with F1FirstDegree with TweetAuthorDetails =>
+t-twait f1fiwstdegweetweetibis2hydwatowfowcandidate
+    e-extends t-tweetcandidateibis2hydwatow
+    w-with wankedsociawcontextibis2hydwatow {
+  sewf: pushcandidate with f1fiwstdegwee with tweetauthowdetaiws =>
 
-  override lazy val scopedStats: StatsReceiver = statsReceiver.scope(getClass.getSimpleName)
+  o-ovewwide wazy vaw scopedstats: statsweceivew = s-statsweceivew.scope(getcwass.getsimpwename)
 
-  override lazy val tweetModelValues: Future[Map[String, String]] = {
-    for {
-      superModelValues <- super.tweetModelValues
-      tweetInlineModelValues <- tweetInlineActionModelValue
-    } yield {
-      superModelValues ++ otherModelValues ++ mediaModelValue ++ tweetInlineModelValues ++ inlineVideoMediaMap
+  ovewwide wazy vaw t-tweetmodewvawues: futuwe[map[stwing, -.- stwing]] = {
+    fow {
+      s-supewmodewvawues <- supew.tweetmodewvawues
+      t-tweetinwinemodewvawues <- t-tweetinwineactionmodewvawue
+    } yiewd {
+      supewmodewvawues ++ othewmodewvawues ++ mediamodewvawue ++ t-tweetinwinemodewvawues ++ inwinevideomediamap
     }
   }
 }

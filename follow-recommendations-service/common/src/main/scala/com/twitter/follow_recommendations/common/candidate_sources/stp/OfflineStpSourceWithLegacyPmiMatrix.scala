@@ -1,23 +1,23 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.stp
 
-import com.google.inject.Singleton
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.generated.client.onboarding.userrecs.StrongTiePredictionClientColumn
-import javax.inject.Inject
+impowt com.googwe.inject.singweton
+i-impowt c-com.twittew.hewmit.modew.awgowithm
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt c-com.twittew.stwato.genewated.cwient.onboawding.usewwecs.stwongtiepwedictioncwientcowumn
+i-impowt j-javax.inject.inject
 
 /**
- * Main source for strong-tie-prediction candidates generated offline.
+ * main s-souwce fow stwong-tie-pwediction candidates genewated offwine. >_<
  */
-@Singleton
-class OfflineStpSourceWithLegacyPmiMatrix @Inject() (
-  stpColumn: StrongTiePredictionClientColumn)
-    extends OfflineStrongTiePredictionBaseSource(stpColumn.fetcher) {
-  override val identifier: CandidateSourceIdentifier =
-    OfflineStpSourceWithLegacyPmiMatrix.Identifier
+@singweton
+cwass offwinestpsouwcewithwegacypmimatwix @inject() (
+  stpcowumn: s-stwongtiepwedictioncwientcowumn)
+    extends offwinestwongtiepwedictionbasesouwce(stpcowumn.fetchew) {
+  o-ovewwide vaw identifiew: c-candidatesouwceidentifiew =
+    offwinestpsouwcewithwegacypmimatwix.identifiew
 }
 
-object OfflineStpSourceWithLegacyPmiMatrix {
-  val Identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier(Algorithm.StrongTiePredictionRec.toString)
+object offwinestpsouwcewithwegacypmimatwix {
+  v-vaw identifiew: candidatesouwceidentifiew =
+    c-candidatesouwceidentifiew(awgowithm.stwongtiepwedictionwec.tostwing)
 }

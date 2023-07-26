@@ -1,136 +1,136 @@
-package com.twitter.search.earlybird_root.visitors;
+package com.twittew.seawch.eawwybiwd_woot.visitows;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+impowt java.utiw.cowwections;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.stweam.cowwectows;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+i-impowt c-com.googwe.common.cowwect.immutabwewist;
+i-impowt c-com.googwe.common.cowwect.wists;
 
-import com.twitter.search.common.partitioning.base.PartitionDataType;
-import com.twitter.search.common.partitioning.base.PartitionMappingManager;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Disjunction;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.Query.Occur;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchQueryTransformer;
+i-impowt com.twittew.seawch.common.pawtitioning.base.pawtitiondatatype;
+impowt com.twittew.seawch.common.pawtitioning.base.pawtitionmappingmanagew;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants;
+i-impowt com.twittew.seawch.quewypawsew.quewy.conjunction;
+impowt com.twittew.seawch.quewypawsew.quewy.disjunction;
+i-impowt com.twittew.seawch.quewypawsew.quewy.quewy;
+impowt c-com.twittew.seawch.quewypawsew.quewy.quewy.occuw;
+impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
+impowt com.twittew.seawch.quewypawsew.quewy.seawch.seawchopewatow;
+impowt com.twittew.seawch.quewypawsew.quewy.seawch.seawchquewytwansfowmew;
 
 /**
- * Truncate user id or id lists in [multi_term_disjunction from_user_id/id] queries.
- * Return null if query has incorrect operators or looked at wrong field.
+ * t-twuncate usew id ow id w-wists in [muwti_tewm_disjunction f-fwom_usew_id/id] quewies. (U ﹏ U)
+ * wetuwn nyuww if quewy has incowwect opewatows ow w-wooked at wwong fiewd. :3
  */
-public class MultiTermDisjunctionPerPartitionVisitor extends SearchQueryTransformer {
-  private final PartitionMappingManager partitionMappingManager;
-  private final int partitionId;
-  private final String targetFieldName;
+pubwic cwass muwtitewmdisjunctionpewpawtitionvisitow extends seawchquewytwansfowmew {
+  pwivate finaw p-pawtitionmappingmanagew pawtitionmappingmanagew;
+  p-pwivate finaw i-int pawtitionid;
+  p-pwivate finaw s-stwing tawgetfiewdname;
 
-  public static final Conjunction NO_MATCH_CONJUNCTION =
-      new Conjunction(Occur.MUST_NOT, Collections.emptyList(), Collections.emptyList());
+  pubwic static finaw c-conjunction nyo_match_conjunction =
+      nyew conjunction(occuw.must_not, ( ͡o ω ͡o ) c-cowwections.emptywist(), σωσ cowwections.emptywist());
 
-  public MultiTermDisjunctionPerPartitionVisitor(
-      PartitionMappingManager partitionMappingManager,
-      int partitionId) {
-    this.partitionMappingManager = partitionMappingManager;
-    this.partitionId = partitionId;
-    this.targetFieldName =
-        partitionMappingManager.getPartitionDataType() == PartitionDataType.USER_ID
-            ? EarlybirdFieldConstants.EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName()
-            : EarlybirdFieldConstants.EarlybirdFieldConstant.ID_FIELD.getFieldName();
+  pubwic muwtitewmdisjunctionpewpawtitionvisitow(
+      pawtitionmappingmanagew pawtitionmappingmanagew, >w<
+      int pawtitionid) {
+    t-this.pawtitionmappingmanagew = pawtitionmappingmanagew;
+    t-this.pawtitionid = p-pawtitionid;
+    t-this.tawgetfiewdname =
+        pawtitionmappingmanagew.getpawtitiondatatype() == pawtitiondatatype.usew_id
+            ? eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.fwom_usew_id_fiewd.getfiewdname()
+            : eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.id_fiewd.getfiewdname();
   }
 
-  private boolean isTargetedQuery(Query query) {
-    if (query instanceof SearchOperator) {
-      SearchOperator operator = (SearchOperator) query;
-      return operator.getOperatorType() == SearchOperator.Type.MULTI_TERM_DISJUNCTION
-          && operator.getOperand().equals(targetFieldName);
-    } else {
-      return false;
+  p-pwivate b-boowean istawgetedquewy(quewy quewy) {
+    i-if (quewy instanceof s-seawchopewatow) {
+      seawchopewatow o-opewatow = (seawchopewatow) quewy;
+      w-wetuwn opewatow.getopewatowtype() == seawchopewatow.type.muwti_tewm_disjunction
+          && opewatow.getopewand().equaws(tawgetfiewdname);
+    } e-ewse {
+      wetuwn fawse;
     }
   }
 
-  @Override
-  public Query visit(Conjunction query) throws QueryParserException {
-    boolean modified = false;
-    ImmutableList.Builder<Query> children = ImmutableList.builder();
-    for (Query child : query.getChildren()) {
-      Query newChild = child.accept(this);
-      if (newChild != null) {
-        // For conjunction case, if any child is "multi_term_disjunction from_user_id" and returns
-        // Conjunction.NO_MATCH_CONJUNCTION, it should be considered same as match no docs. And
-        // caller should decide how to deal with it.
-        if (isTargetedQuery(child) && newChild == NO_MATCH_CONJUNCTION) {
-          return NO_MATCH_CONJUNCTION;
+  @ovewwide
+  p-pubwic quewy visit(conjunction q-quewy) t-thwows quewypawsewexception {
+    boowean modified = fawse;
+    immutabwewist.buiwdew<quewy> chiwdwen = immutabwewist.buiwdew();
+    fow (quewy chiwd : quewy.getchiwdwen()) {
+      q-quewy nyewchiwd = c-chiwd.accept(this);
+      if (newchiwd != n-nuww) {
+        // f-fow conjunction c-case, 😳😳😳 if any chiwd is "muwti_tewm_disjunction fwom_usew_id" and wetuwns
+        // c-conjunction.no_match_conjunction, OwO it shouwd be considewed same as match nyo docs. 😳 and
+        // c-cawwew shouwd decide how t-to deaw with i-it. 😳😳😳
+        if (istawgetedquewy(chiwd) && n-nyewchiwd == nyo_match_conjunction) {
+          w-wetuwn n-nyo_match_conjunction;
         }
-        if (newChild != Conjunction.EMPTY_CONJUNCTION
-            && newChild != Disjunction.EMPTY_DISJUNCTION) {
-          children.add(newChild);
+        i-if (newchiwd != c-conjunction.empty_conjunction
+            && newchiwd != disjunction.empty_disjunction) {
+          c-chiwdwen.add(newchiwd);
         }
       }
-      if (newChild != child) {
-        modified = true;
+      i-if (newchiwd != c-chiwd) {
+        modified = t-twue;
       }
     }
-    return modified ? query.newBuilder().setChildren(children.build()).build() : query;
+    w-wetuwn modified ? quewy.newbuiwdew().setchiwdwen(chiwdwen.buiwd()).buiwd() : quewy;
   }
 
-  @Override
-  public Query visit(Disjunction disjunction) throws QueryParserException {
-    boolean modified = false;
-    ImmutableList.Builder<Query> children = ImmutableList.builder();
-    for (Query child : disjunction.getChildren()) {
-      Query newChild = child.accept(this);
-      if (newChild != null
-          && newChild != Conjunction.EMPTY_CONJUNCTION
-          && newChild != Disjunction.EMPTY_DISJUNCTION
-          && newChild != NO_MATCH_CONJUNCTION) {
-        children.add(newChild);
+  @ovewwide
+  pubwic quewy visit(disjunction d-disjunction) thwows quewypawsewexception {
+    boowean modified = fawse;
+    immutabwewist.buiwdew<quewy> chiwdwen = immutabwewist.buiwdew();
+    f-fow (quewy chiwd : disjunction.getchiwdwen()) {
+      quewy nyewchiwd = chiwd.accept(this);
+      i-if (newchiwd != n-nyuww
+          && nyewchiwd != c-conjunction.empty_conjunction
+          && nyewchiwd != d-disjunction.empty_disjunction
+          && nyewchiwd != no_match_conjunction) {
+        c-chiwdwen.add(newchiwd);
       }
-      if (newChild != child) {
-        modified = true;
+      i-if (newchiwd != chiwd) {
+        modified = twue;
       }
     }
-    return modified ? disjunction.newBuilder().setChildren(children.build()).build() : disjunction;
+    wetuwn modified ? disjunction.newbuiwdew().setchiwdwen(chiwdwen.buiwd()).buiwd() : disjunction;
   }
 
-  @Override
-  public Query visit(SearchOperator operator) throws QueryParserException {
-    if (isTargetedQuery(operator)) {
-      List<Long> ids = extractIds(operator);
+  @ovewwide
+  p-pubwic quewy visit(seawchopewatow o-opewatow) thwows quewypawsewexception {
+    i-if (istawgetedquewy(opewatow)) {
+      w-wist<wong> ids = extwactids(opewatow);
       if (ids.size() > 0) {
-        List<String> operands = Lists.newArrayList(targetFieldName);
-        for (long id : ids) {
-          operands.add(String.valueOf(id));
+        w-wist<stwing> o-opewands = wists.newawwaywist(tawgetfiewdname);
+        f-fow (wong i-id : ids) {
+          opewands.add(stwing.vawueof(id));
         }
-        return operator.newBuilder().setOperands(operands).build();
-      } else {
-        // If the [multi_term_disjunction from_user_id] is a negation (i.e., occur == MUST_NOT),
-        // and there is no user id left, the whole sub query node does not do anything; if it is
-        // NOT a negation, then sub query matches nothing.
-        if (operator.getOccur() == Query.Occur.MUST_NOT) {
-          return Conjunction.EMPTY_CONJUNCTION;
-        } else {
-          return NO_MATCH_CONJUNCTION;
+        wetuwn opewatow.newbuiwdew().setopewands(opewands).buiwd();
+      } ewse {
+        // if the [muwti_tewm_disjunction f-fwom_usew_id] i-is a nyegation (i.e., o-occuw == must_not), (˘ω˘)
+        // a-and thewe i-is nyo usew id weft, ʘwʘ the whowe s-sub quewy nyode does nyot do anything; if it is
+        // nyot a nyegation, ( ͡o ω ͡o ) t-then sub quewy matches n-nyothing. o.O
+        if (opewatow.getoccuw() == quewy.occuw.must_not) {
+          w-wetuwn conjunction.empty_conjunction;
+        } e-ewse {
+          wetuwn nyo_match_conjunction;
         }
       }
     }
-    return operator;
+    wetuwn opewatow;
   }
 
-  private List<Long> extractIds(SearchOperator operator) throws QueryParserException {
-    if (EarlybirdFieldConstants.EarlybirdFieldConstant.ID_FIELD
-        .getFieldName().equals(targetFieldName)) {
-      return operator.getOperands().subList(1, operator.getNumOperands()).stream()
-          .map(Long::valueOf)
-          .filter(id -> partitionMappingManager.getPartitionIdForTweetId(id) == partitionId)
-          .collect(Collectors.toList());
-    } else {
-      return operator.getOperands().subList(1, operator.getNumOperands()).stream()
-          .map(Long::valueOf)
-          .filter(id -> partitionMappingManager.getPartitionIdForUserId(id) == partitionId)
-          .collect(Collectors.toList());
+  pwivate w-wist<wong> extwactids(seawchopewatow opewatow) thwows quewypawsewexception {
+    if (eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.id_fiewd
+        .getfiewdname().equaws(tawgetfiewdname)) {
+      wetuwn opewatow.getopewands().subwist(1, >w< o-opewatow.getnumopewands()).stweam()
+          .map(wong::vawueof)
+          .fiwtew(id -> pawtitionmappingmanagew.getpawtitionidfowtweetid(id) == pawtitionid)
+          .cowwect(cowwectows.towist());
+    } e-ewse {
+      w-wetuwn opewatow.getopewands().subwist(1, 😳 opewatow.getnumopewands()).stweam()
+          .map(wong::vawueof)
+          .fiwtew(id -> pawtitionmappingmanagew.getpawtitionidfowusewid(id) == p-pawtitionid)
+          .cowwect(cowwectows.towist());
     }
   }
 }

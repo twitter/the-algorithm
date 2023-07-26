@@ -1,71 +1,71 @@
-package com.twitter.search.common.search;
+package com.twittew.seawch.common.seawch;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import org.apache.lucene.search.DocIdSetIterator;
+i-impowt owg.apache.wucene.seawch.docidsetitewatow;
 
-public class AndNotDocIdSetIterator extends DocIdSetIterator {
-  private int nextDelDoc;
-  private final DocIdSetIterator baseIter;
-  private final DocIdSetIterator notIter;
-  private int currID;
+p-pubwic c-cwass andnotdocidsetitewatow e-extends d-docidsetitewatow {
+  p-pwivate i-int nyextdewdoc;
+  pwivate finaw docidsetitewatow baseitew;
+  pwivate finaw docidsetitewatow n-notitew;
+  pwivate int cuwwid;
 
-  /** Creates a new AndNotDocIdSetIterator instance. */
-  public AndNotDocIdSetIterator(DocIdSetIterator baseIter, DocIdSetIterator notIter)
-          throws IOException {
-    nextDelDoc = notIter.nextDoc();
-    this.baseIter = baseIter;
-    this.notIter = notIter;
-    currID = -1;
+  /** cweates a n-new andnotdocidsetitewatow instance. 😳😳😳 */
+  p-pubwic andnotdocidsetitewatow(docidsetitewatow baseitew, mya docidsetitewatow n-nyotitew)
+          thwows ioexception {
+    n-nextdewdoc = nyotitew.nextdoc();
+    t-this.baseitew = baseitew;
+    this.notitew = nyotitew;
+    cuwwid = -1;
   }
 
-  @Override
-  public int advance(int target) throws IOException {
-    currID = baseIter.advance(target);
-    if (currID == DocIdSetIterator.NO_MORE_DOCS) {
-      return currID;
+  @ovewwide
+  p-pubwic int advance(int tawget) thwows ioexception {
+    cuwwid = baseitew.advance(tawget);
+    i-if (cuwwid == docidsetitewatow.no_mowe_docs) {
+      wetuwn cuwwid;
     }
 
-    if (nextDelDoc != DocIdSetIterator.NO_MORE_DOCS) {
-      if (currID < nextDelDoc) {
-        return currID;
-      } else if (currID == nextDelDoc) {
-        return nextDoc();
-      } else {
-        nextDelDoc = notIter.advance(currID);
-        if (currID == nextDelDoc) {
-          return nextDoc();
+    if (nextdewdoc != d-docidsetitewatow.no_mowe_docs) {
+      i-if (cuwwid < n-nyextdewdoc) {
+        w-wetuwn cuwwid;
+      } ewse if (cuwwid == n-nyextdewdoc) {
+        wetuwn nyextdoc();
+      } e-ewse {
+        nyextdewdoc = nyotitew.advance(cuwwid);
+        if (cuwwid == nyextdewdoc) {
+          wetuwn n-nyextdoc();
         }
       }
     }
-    return currID;
+    wetuwn c-cuwwid;
   }
 
-  @Override
-  public int docID() {
-    return currID;
+  @ovewwide
+  pubwic i-int docid() {
+    w-wetuwn cuwwid;
   }
 
-  @Override
-  public int nextDoc() throws IOException {
-    currID = baseIter.nextDoc();
-    if (nextDelDoc != DocIdSetIterator.NO_MORE_DOCS) {
-      while (currID != DocIdSetIterator.NO_MORE_DOCS) {
-        if (currID < nextDelDoc) {
-          return currID;
-        } else {
-          if (currID == nextDelDoc) {
-            currID = baseIter.nextDoc();
+  @ovewwide
+  pubwic int nyextdoc() thwows ioexception {
+    c-cuwwid = b-baseitew.nextdoc();
+    if (nextdewdoc != d-docidsetitewatow.no_mowe_docs) {
+      w-whiwe (cuwwid != docidsetitewatow.no_mowe_docs) {
+        i-if (cuwwid < nyextdewdoc) {
+          w-wetuwn cuwwid;
+        } ewse {
+          if (cuwwid == n-nyextdewdoc) {
+            cuwwid = baseitew.nextdoc();
           }
-          nextDelDoc = notIter.advance(currID);
+          n-nyextdewdoc = nyotitew.advance(cuwwid);
         }
       }
     }
-    return currID;
+    w-wetuwn c-cuwwid;
   }
 
-  @Override
-  public long cost() {
-    return baseIter.cost();
+  @ovewwide
+  pubwic wong cost() {
+    wetuwn baseitew.cost();
   }
 }

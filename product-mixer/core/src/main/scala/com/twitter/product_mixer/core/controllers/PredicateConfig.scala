@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.controllers
+package com.twittew.pwoduct_mixew.cowe.contwowwews
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.Predicate
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.pwedicate.pwedicate
 
-/** Simple representation for a [[Predicate]] used for dashboard generation */
-private[core] case class PredicateConfig(
-  operator: String,
-  threshold: Double,
-  datapointsPastThreshold: Int,
-  duration: Int,
-  metricGranularity: String)
+/** s-simpwe wepwesentation f-fow a [[pwedicate]] u-used f-fow dashboawd g-genewation */
+pwivate[cowe] c-case c-cwass pwedicateconfig(
+  o-opewatow: stwing, 😳
+  thweshowd: doubwe, XD
+  datapointspastthweshowd: int, :3
+  d-duwation: int, 😳😳😳
+  metwicgwanuwawity: stwing)
 
-private[core] object PredicateConfig {
+p-pwivate[cowe] object pwedicateconfig {
 
-  /** Convert this [[Predicate]] into a [[PredicateConfig]] */
-  def apply(predicate: Predicate): PredicateConfig = PredicateConfig(
-    predicate.operator.toString,
-    predicate.threshold,
-    predicate.datapointsPastThreshold,
-    predicate.duration,
-    predicate.metricGranularity.unit)
+  /** convewt t-this [[pwedicate]] into a [[pwedicateconfig]] */
+  def appwy(pwedicate: pwedicate): pwedicateconfig = p-pwedicateconfig(
+    pwedicate.opewatow.tostwing, -.-
+    p-pwedicate.thweshowd, ( ͡o ω ͡o )
+    p-pwedicate.datapointspastthweshowd, rawr x3
+    pwedicate.duwation, nyaa~~
+    pwedicate.metwicgwanuwawity.unit)
 }

@@ -1,64 +1,64 @@
-package com.twitter.cr_mixer.blender
+package com.twittew.cw_mixew.bwendew
 
-import com.twitter.cr_mixer.blender.ImplicitSignalBackFillBlender.BackFillSourceTypes
-import com.twitter.cr_mixer.blender.ImplicitSignalBackFillBlender.BackFillSourceTypesWithVideo
-import com.twitter.cr_mixer.model.BlendedCandidate
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.param.BlenderParams
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.cr_mixer.util.InterleaveUtil
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Future
-import javax.inject.Inject
+impowt com.twittew.cw_mixew.bwendew.impwicitsignawbackfiwwbwendew.backfiwwsouwcetypes
+i-impowt c-com.twittew.cw_mixew.bwendew.impwicitsignawbackfiwwbwendew.backfiwwsouwcetypeswithvideo
+i-impowt c-com.twittew.cw_mixew.modew.bwendedcandidate
+i-impowt c-com.twittew.cw_mixew.modew.initiawcandidate
+i-impowt com.twittew.cw_mixew.pawam.bwendewpawams
+i-impowt com.twittew.cw_mixew.thwiftscawa.souwcetype
+impowt com.twittew.cw_mixew.utiw.intewweaveutiw
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.timewines.configapi.pawams
+impowt com.twittew.utiw.futuwe
+impowt j-javax.inject.inject
 
-case class SourceTypeBackFillBlender @Inject() (globalStats: StatsReceiver) {
+case cwass souwcetypebackfiwwbwendew @inject() (gwobawstats: s-statsweceivew) {
 
-  private val name: String = this.getClass.getCanonicalName
-  private val stats: StatsReceiver = globalStats.scope(name)
+  pwivate v-vaw nyame: stwing = this.getcwass.getcanonicawname
+  pwivate vaw stats: statsweceivew = g-gwobawstats.scope(name)
 
   /**
-   *  Partition the candidates based on source type
-   *  Interleave the two partitions of candidates separately
-   *  Then append the back fill candidates to the end
+   *  pawtition the candidates b-based o-on souwce type
+   *  intewweave the two pawtitions of candidates sepawatewy
+   *  t-then append the back fiww candidates to the end
    */
-  def blend(
-    params: Params,
-    inputCandidates: Seq[Seq[InitialCandidate]],
-  ): Future[Seq[BlendedCandidate]] = {
+  def bwend(
+    pawams: p-pawams, 🥺
+    inputcandidates: seq[seq[initiawcandidate]], o.O
+  ): futuwe[seq[bwendedcandidate]] = {
 
-    // Filter out empty candidate sequence
-    val candidates = inputCandidates.filter(_.nonEmpty)
+    // f-fiwtew o-out empty candidate s-sequence
+    v-vaw candidates = inputcandidates.fiwtew(_.nonempty)
 
-    val backFillSourceTypes =
-      if (params(BlenderParams.SourceTypeBackFillEnableVideoBackFill)) BackFillSourceTypesWithVideo
-      else BackFillSourceTypes
-    // partition candidates based on their source types
-    val (backFillCandidates, regularCandidates) =
-      candidates.partition(
-        _.head.candidateGenerationInfo.sourceInfoOpt
-          .exists(sourceInfo => backFillSourceTypes.contains(sourceInfo.sourceType)))
+    vaw backfiwwsouwcetypes =
+      i-if (pawams(bwendewpawams.souwcetypebackfiwwenabwevideobackfiww)) backfiwwsouwcetypeswithvideo
+      ewse b-backfiwwsouwcetypes
+    // pawtition candidates based on theiw souwce types
+    vaw (backfiwwcandidates, /(^•ω•^) w-weguwawcandidates) =
+      candidates.pawtition(
+        _.head.candidategenewationinfo.souwceinfoopt
+          .exists(souwceinfo => b-backfiwwsouwcetypes.contains(souwceinfo.souwcetype)))
 
-    val interleavedRegularCandidates = InterleaveUtil.interleave(regularCandidates)
-    val interleavedBackFillCandidates =
-      InterleaveUtil.interleave(backFillCandidates)
-    stats.stat("backFillCandidates").add(interleavedBackFillCandidates.size)
-    // Append interleaved backfill candidates to the end
-    val interleavedCandidates = interleavedRegularCandidates ++ interleavedBackFillCandidates
+    v-vaw i-intewweavedweguwawcandidates = intewweaveutiw.intewweave(weguwawcandidates)
+    vaw intewweavedbackfiwwcandidates =
+      intewweaveutiw.intewweave(backfiwwcandidates)
+    s-stats.stat("backfiwwcandidates").add(intewweavedbackfiwwcandidates.size)
+    // a-append intewweaved b-backfiww candidates t-to the end
+    vaw intewweavedcandidates = intewweavedweguwawcandidates ++ intewweavedbackfiwwcandidates
 
-    stats.stat("candidates").add(interleavedCandidates.size)
+    s-stats.stat("candidates").add(intewweavedcandidates.size)
 
-    val blendedCandidates = BlendedCandidatesBuilder.build(inputCandidates, interleavedCandidates)
-    Future.value(blendedCandidates)
+    vaw bwendedcandidates = b-bwendedcandidatesbuiwdew.buiwd(inputcandidates, nyaa~~ intewweavedcandidates)
+    futuwe.vawue(bwendedcandidates)
   }
 
 }
 
-object ImplicitSignalBackFillBlender {
-  final val BackFillSourceTypesWithVideo: Set[SourceType] = Set(
-    SourceType.UserRepeatedProfileVisit,
-    SourceType.VideoTweetPlayback50,
-    SourceType.VideoTweetQualityView)
+o-object impwicitsignawbackfiwwbwendew {
+  f-finaw vaw backfiwwsouwcetypeswithvideo: set[souwcetype] = s-set(
+    s-souwcetype.usewwepeatedpwofiwevisit, nyaa~~
+    souwcetype.videotweetpwayback50, :3
+    souwcetype.videotweetquawityview)
 
-  final val BackFillSourceTypes: Set[SourceType] = Set(SourceType.UserRepeatedProfileVisit)
+  finaw vaw backfiwwsouwcetypes: set[souwcetype] = set(souwcetype.usewwepeatedpwofiwevisit)
 }

@@ -1,78 +1,78 @@
-package com.twitter.search.earlybird_root.quota;
+package com.twittew.seawch.eawwybiwd_woot.quota;
 
-import com.google.common.base.Preconditions;
+impowt com.googwe.common.base.pweconditions;
 
 /**
- * Simple container of quota related information.
+ * s-simpwe containew o-of quota w-wewated infowmation. 😳😳😳
  */
-public class QuotaInfo {
-  public static final String DEFAULT_TIER_VALUE = "no_tier";
-  public static final boolean DEFAULT_ARCHIVE_ACCESS_VALUE = false;
+p-pubwic c-cwass quotainfo {
+  p-pubwic static f-finaw stwing defauwt_tiew_vawue = "no_tiew";
+  p-pubwic static finaw boowean defauwt_awchive_access_vawue = fawse;
 
-  private final String quotaClientId;
-  private final String quotaEmail;
-  private final int quota;
-  private final boolean shouldEnforceQuota;
-  private final String clientTier;
-  private final boolean archiveAccess;
+  pwivate finaw stwing quotacwientid;
+  p-pwivate finaw stwing quotaemaiw;
+  pwivate f-finaw int quota;
+  pwivate f-finaw boowean shouwdenfowcequota;
+  pwivate finaw stwing cwienttiew;
+  p-pwivate finaw boowean awchiveaccess;
 
   /**
-   * Creates a new QuotaInfo object with the given clientId, quota and shouldEnforceQuota.
+   * c-cweates a-a nyew quotainfo object with the given cwientid, (˘ω˘) quota and shouwdenfowcequota. ^^
    */
-  public QuotaInfo(
-      String quotaClientId,
-      String quotaEmail,
-      int quota,
-      boolean shouldEnforceQuota,
-      String clientTier,
-      boolean archiveAccess) {
-    this.quotaClientId = Preconditions.checkNotNull(quotaClientId);
-    this.quotaEmail = Preconditions.checkNotNull(quotaEmail);
+  pubwic q-quotainfo(
+      stwing quotacwientid, :3
+      stwing quotaemaiw, -.-
+      int quota, 😳
+      b-boowean shouwdenfowcequota, mya
+      stwing c-cwienttiew, (˘ω˘)
+      b-boowean awchiveaccess) {
+    this.quotacwientid = p-pweconditions.checknotnuww(quotacwientid);
+    t-this.quotaemaiw = pweconditions.checknotnuww(quotaemaiw);
     this.quota = quota;
-    this.shouldEnforceQuota = shouldEnforceQuota;
-    this.clientTier = Preconditions.checkNotNull(clientTier);
-    this.archiveAccess = archiveAccess;
+    t-this.shouwdenfowcequota = shouwdenfowcequota;
+    this.cwienttiew = p-pweconditions.checknotnuww(cwienttiew);
+    this.awchiveaccess = awchiveaccess;
   }
 
   /**
-   * Returns the clientId for which we have the QuotaInfo.
+   * wetuwns the cwientid fow which we have t-the quotainfo. >_<
    */
-  public String getQuotaClientId() {
-    return quotaClientId;
+  pubwic s-stwing getquotacwientid() {
+    w-wetuwn quotacwientid;
   }
 
   /**
-   * Returns the email associated with this clientId.
+   * w-wetuwns the emaiw associated with this cwientid. -.-
    */
-  public String getQuotaEmail() {
-    return quotaEmail;
+  pubwic stwing getquotaemaiw() {
+    w-wetuwn quotaemaiw;
   }
 
   /**
-   * Returns the integer based quota for the stored client id.
+   * w-wetuwns the integew based q-quota fow the s-stowed cwient id. 🥺
    */
-  public int getQuota() {
-    return quota;
+  pubwic i-int getquota() {
+    wetuwn quota;
   }
 
   /**
-   * Returns whether the quota should be enforced or not.
+   * w-wetuwns whethew the quota shouwd be enfowced o-ow nyot. (U ﹏ U)
    */
-  public boolean shouldEnforceQuota() {
-    return shouldEnforceQuota;
+  pubwic boowean s-shouwdenfowcequota() {
+    wetuwn s-shouwdenfowcequota;
   }
 
   /**
-   * Return tier info about the client.
+   * w-wetuwn tiew info about the cwient. >w<
    */
-  public String getClientTier() {
-    return clientTier;
+  pubwic stwing getcwienttiew() {
+    wetuwn cwienttiew;
   }
 
   /**
-   * Returns whether the client has access to the full archive.
+   * wetuwns w-whethew the cwient h-has access to the fuww awchive.
    */
-  public boolean hasArchiveAccess() {
-    return archiveAccess;
+  p-pubwic b-boowean hasawchiveaccess() {
+    w-wetuwn awchiveaccess;
   }
 }

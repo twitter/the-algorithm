@@ -1,138 +1,138 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.gizmoduck.thriftscala.UserResponseState
-import com.twitter.spam.rtf.thriftscala.{SafetyLevel => ThriftSafetyLevel}
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.thriftscala.UserIdentity
-import com.twitter.visibility.interfaces.tweets.UserUnavailableStateVisibilityLibrary
-import com.twitter.visibility.interfaces.tweets.UserUnavailableStateVisibilityRequest
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.UserUnavailableStateEnum
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.thriftscala.UserVisibilityResult
+i-impowt com.twittew.gizmoduck.thwiftscawa.usewwesponsestate
+i-impowt c-com.twittew.spam.wtf.thwiftscawa.{safetywevew => t-thwiftsafetywevew}
+i-impowt com.twittew.stitch.notfound
+i-impowt c-com.twittew.stitch.stitch
+impowt com.twittew.tweetypie.cowe._
+impowt com.twittew.tweetypie.thwiftscawa.usewidentity
+impowt com.twittew.visibiwity.intewfaces.tweets.usewunavaiwabwestatevisibiwitywibwawy
+i-impowt com.twittew.visibiwity.intewfaces.tweets.usewunavaiwabwestatevisibiwitywequest
+impowt com.twittew.visibiwity.modews.safetywevew
+i-impowt com.twittew.visibiwity.modews.usewunavaiwabwestateenum
+impowt com.twittew.visibiwity.modews.viewewcontext
+i-impowt com.twittew.visibiwity.thwiftscawa.usewvisibiwitywesuwt
 
 /**
- * Some types of user (e.g. frictionless users) may not
- * have profiles, so a missing UserIdentity may mean that the user
- * does not exist, or that the user does not have a profile.
+ * some types of usew (e.g. ( ͡o ω ͡o ) fwictionwess u-usews) may nyot
+ * have pwofiwes, òωó s-so a missing usewidentity m-may mean that the usew
+ * does nyot exist, (⑅˘꒳˘) ow that the usew does nyot h-have a pwofiwe.
  */
-object UserIdentityRepository {
-  type Type = UserKey => Stitch[UserIdentity]
+object usewidentitywepositowy {
+  type type = usewkey => stitch[usewidentity]
 
-  def apply(repo: UserRepository.Type): Type = { key =>
-    val opts = UserQueryOptions(Set(UserField.Profile), UserVisibility.Mentionable)
-    repo(key, opts)
-      .map { user =>
-        user.profile.map { profile =>
-          UserIdentity(
-            id = user.id,
-            screenName = profile.screenName,
-            realName = profile.name
+  def appwy(wepo: u-usewwepositowy.type): type = { k-key =>
+    v-vaw opts = usewquewyoptions(set(usewfiewd.pwofiwe), XD u-usewvisibiwity.mentionabwe)
+    w-wepo(key, -.- opts)
+      .map { usew =>
+        usew.pwofiwe.map { p-pwofiwe =>
+          usewidentity(
+            id = usew.id, :3
+            s-scweenname = pwofiwe.scweenname, nyaa~~
+            weawname = pwofiwe.name
           )
         }
       }
-      .lowerFromOption()
+      .wowewfwomoption()
   }
 }
 
-object UserProtectionRepository {
-  type Type = UserKey => Stitch[Boolean]
+object usewpwotectionwepositowy {
+  type type = u-usewkey => stitch[boowean]
 
-  def apply(repo: UserRepository.Type): Type = {
-    val opts = UserQueryOptions(Set(UserField.Safety), UserVisibility.All)
+  def appwy(wepo: usewwepositowy.type): t-type = {
+    v-vaw opts = usewquewyoptions(set(usewfiewd.safety), 😳 u-usewvisibiwity.aww)
 
-    userKey =>
-      repo(userKey, opts)
-        .map(user => user.safety.map(_.isProtected))
-        .lowerFromOption()
+    usewkey =>
+      wepo(usewkey, (⑅˘꒳˘) opts)
+        .map(usew => usew.safety.map(_.ispwotected))
+        .wowewfwomoption()
   }
 }
 
 /**
- * Query Gizmoduck to check if a user `forUserId` can see user `userKey`.
- * If forUserId is Some(), this will also check protected relationship,
- * if it's None, it will check others as per UserVisibility.Visible policy in
- * UserRepository.scala. If forUserId is None, this doesn't verify any
- * relationships, visibility is determined based solely on user's
- * properties (eg. deactivated, suspended, etc)
+ * q-quewy gizmoduck t-to check if a usew `fowusewid` can see usew `usewkey`.
+ * i-if fowusewid i-is some(), nyaa~~ this wiww awso c-check pwotected wewationship, OwO
+ * i-if it's nyone, rawr x3 it wiww check othews as pew usewvisibiwity.visibwe p-powicy in
+ * usewwepositowy.scawa. XD i-if fowusewid is nyone, σωσ this d-doesn't vewify a-any
+ * wewationships, (U ᵕ U❁) visibiwity is detewmined based sowewy on usew's
+ * pwopewties (eg. (U ﹏ U) deactivated, :3 suspended, e-etc)
  */
-object UserVisibilityRepository {
-  type Type = Query => Stitch[Option[FilteredState.Unavailable]]
+object u-usewvisibiwitywepositowy {
+  type type = quewy => s-stitch[option[fiwtewedstate.unavaiwabwe]]
 
-  case class Query(
-    userKey: UserKey,
-    forUserId: Option[UserId],
-    tweetId: TweetId,
-    isRetweet: Boolean,
-    isInnerQuotedTweet: Boolean,
-    safetyLevel: Option[ThriftSafetyLevel])
+  c-case cwass quewy(
+    u-usewkey: usewkey, ( ͡o ω ͡o )
+    fowusewid: option[usewid], σωσ
+    tweetid: t-tweetid, >w<
+    iswetweet: boowean, 😳😳😳
+    isinnewquotedtweet: boowean, OwO
+    safetywevew: option[thwiftsafetywevew])
 
-  def apply(
-    repo: UserRepository.Type,
-    userUnavailableAuthorStateVisibilityLibrary: UserUnavailableStateVisibilityLibrary.Type
-  ): Type =
-    query => {
-      repo(
-        query.userKey,
-        UserQueryOptions(
-          Set(),
-          UserVisibility.Visible,
-          forUserId = query.forUserId,
-          filteredAsFailure = true,
-          safetyLevel = query.safetyLevel
+  d-def appwy(
+    wepo: usewwepositowy.type, 😳
+    u-usewunavaiwabweauthowstatevisibiwitywibwawy: u-usewunavaiwabwestatevisibiwitywibwawy.type
+  ): t-type =
+    quewy => {
+      wepo(
+        quewy.usewkey, 😳😳😳
+        u-usewquewyoptions(
+          s-set(), (˘ω˘)
+          u-usewvisibiwity.visibwe, ʘwʘ
+          f-fowusewid = quewy.fowusewid, ( ͡o ω ͡o )
+          fiwtewedasfaiwuwe = twue, o.O
+          s-safetywevew = q-quewy.safetywevew
         )
       )
-      // We don't actually care about the response here (User's data), only whether
-      // it was filtered or not
-        .map { case _ => None }
-        .rescue {
-          case fs: FilteredState.Unavailable => Stitch.value(Some(fs))
-          case UserFilteredFailure(state, reason) =>
-            userUnavailableAuthorStateVisibilityLibrary
-              .apply(
-                UserUnavailableStateVisibilityRequest(
-                  query.safetyLevel
-                    .map(SafetyLevel.fromThrift).getOrElse(SafetyLevel.FilterDefault),
-                  query.tweetId,
-                  ViewerContext.fromContextWithViewerIdFallback(query.forUserId),
-                  toUserUnavailableState(state, reason),
-                  query.isRetweet,
-                  query.isInnerQuotedTweet
+      // w-we don't a-actuawwy cawe a-about the wesponse hewe (usew's data), >w< onwy whethew
+      // it w-was fiwtewed ow nyot
+        .map { case _ => nyone }
+        .wescue {
+          case fs: fiwtewedstate.unavaiwabwe => stitch.vawue(some(fs))
+          case usewfiwtewedfaiwuwe(state, 😳 w-weason) =>
+            usewunavaiwabweauthowstatevisibiwitywibwawy
+              .appwy(
+                usewunavaiwabwestatevisibiwitywequest(
+                  quewy.safetywevew
+                    .map(safetywevew.fwomthwift).getowewse(safetywevew.fiwtewdefauwt), 🥺
+                  q-quewy.tweetid, rawr x3
+                  v-viewewcontext.fwomcontextwithviewewidfawwback(quewy.fowusewid), o.O
+                  t-tousewunavaiwabwestate(state, rawr weason), ʘwʘ
+                  q-quewy.iswetweet, 😳😳😳
+                  quewy.isinnewquotedtweet
                 )
-              ).map(VisibilityResultToFilteredState.toFilteredStateUnavailable)
-          case NotFound => Stitch.value(Some(FilteredState.Unavailable.Author.NotFound))
+              ).map(visibiwitywesuwttofiwtewedstate.tofiwtewedstateunavaiwabwe)
+          c-case nyotfound => s-stitch.vawue(some(fiwtewedstate.unavaiwabwe.authow.notfound))
         }
     }
 
-  def toUserUnavailableState(
-    userResponseState: UserResponseState,
-    userVisibilityResult: Option[UserVisibilityResult]
-  ): UserUnavailableStateEnum = {
-    (userResponseState, userVisibilityResult) match {
-      case (UserResponseState.DeactivatedUser, _) => UserUnavailableStateEnum.Deactivated
-      case (UserResponseState.OffboardedUser, _) => UserUnavailableStateEnum.Offboarded
-      case (UserResponseState.ErasedUser, _) => UserUnavailableStateEnum.Erased
-      case (UserResponseState.SuspendedUser, _) => UserUnavailableStateEnum.Suspended
-      case (UserResponseState.ProtectedUser, _) => UserUnavailableStateEnum.Protected
-      case (_, Some(result)) => UserUnavailableStateEnum.Filtered(result)
-      case _ => UserUnavailableStateEnum.Unavailable
+  def tousewunavaiwabwestate(
+    usewwesponsestate: usewwesponsestate, ^^;;
+    usewvisibiwitywesuwt: o-option[usewvisibiwitywesuwt]
+  ): usewunavaiwabwestateenum = {
+    (usewwesponsestate, o.O usewvisibiwitywesuwt) m-match {
+      case (usewwesponsestate.deactivatedusew, (///ˬ///✿) _) => u-usewunavaiwabwestateenum.deactivated
+      c-case (usewwesponsestate.offboawdedusew, _) => usewunavaiwabwestateenum.offboawded
+      case (usewwesponsestate.ewasedusew, σωσ _) => u-usewunavaiwabwestateenum.ewased
+      c-case (usewwesponsestate.suspendedusew, nyaa~~ _) => usewunavaiwabwestateenum.suspended
+      c-case (usewwesponsestate.pwotectedusew, ^^;; _) => u-usewunavaiwabwestateenum.pwotected
+      case (_, ^•ﻌ•^ some(wesuwt)) => usewunavaiwabwestateenum.fiwtewed(wesuwt)
+      case _ => usewunavaiwabwestateenum.unavaiwabwe
     }
   }
 }
 
-object UserViewRepository {
-  type Type = Query => Stitch[User]
+object u-usewviewwepositowy {
+  t-type type = q-quewy => stitch[usew]
 
-  case class Query(
-    userKey: UserKey,
-    forUserId: Option[UserId],
-    visibility: UserVisibility,
-    queryFields: Set[UserField] = Set(UserField.View))
+  case cwass quewy(
+    u-usewkey: usewkey, σωσ
+    f-fowusewid: option[usewid], -.-
+    v-visibiwity: usewvisibiwity,
+    quewyfiewds: set[usewfiewd] = set(usewfiewd.view))
 
-  def apply(repo: UserRepository.Type): UserViewRepository.Type =
-    query =>
-      repo(query.userKey, UserQueryOptions(query.queryFields, query.visibility, query.forUserId))
+  d-def appwy(wepo: u-usewwepositowy.type): usewviewwepositowy.type =
+    quewy =>
+      w-wepo(quewy.usewkey, ^^;; u-usewquewyoptions(quewy.quewyfiewds, XD quewy.visibiwity, 🥺 quewy.fowusewid))
 }

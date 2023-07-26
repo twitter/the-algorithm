@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.common
+package com.twittew.pwoduct_mixew.cowe.modew.common
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo
+impowt com.fastewxmw.jackson.annotation.jsontypeinfo
 
-@JsonTypeInfo(include = JsonTypeInfo.As.PROPERTY, use = JsonTypeInfo.Id.NAME)
-trait UniversalNoun[+T] extends Equals {
-  def id: T
+@jsontypeinfo(incwude = j-jsontypeinfo.as.pwopewty, o.O u-use = j-jsontypeinfo.id.name)
+t-twait univewsawnoun[+t] e-extends equaws {
+  d-def id: t
 }

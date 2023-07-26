@@ -1,40 +1,40 @@
-package com.twitter.search.earlybird_root.caching;
+package com.twittew.seawch.eawwybiwd_woot.caching;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+impowt javax.inject.inject;
+impowt j-javax.inject.named;
 
-import com.twitter.search.common.caching.Cache;
-import com.twitter.search.common.caching.filter.CacheFilter;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.root.SearchRootModule;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+i-impowt c-com.twittew.seawch.common.caching.cache;
+i-impowt c-com.twittew.seawch.common.caching.fiwtew.cachefiwtew;
+i-impowt com.twittew.seawch.common.decidew.seawchdecidew;
+i-impowt com.twittew.seawch.common.woot.seawchwootmoduwe;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
 
 /**
- * A filter that:
- *  - Strips the request of all personalization fields, normalizes it and looks it up in the cache.
- *    If it finds a response with 0 results in the cache, it returns it.
- *  - Caches the response for a personalized query, whenever the response has 0 results. The cache
- *    key is the normalized request with all personalization fields stripped.
+ * a fiwtew that:
+ *  - stwips t-the wequest of aww pewsonawization fiewds, 😳😳😳 nyowmawizes i-it and wooks it up in the c-cache. 😳😳😳
+ *    if it finds a wesponse with 0 wesuwts in the cache, o.O i-it wetuwns it. ( ͡o ω ͡o )
+ *  - caches the w-wesponse fow a p-pewsonawized quewy, (U ﹏ U) whenevew the wesponse has 0 wesuwts. (///ˬ///✿) the cache
+ *    key is t-the nyowmawized wequest with aww pewsonawization fiewds stwipped. >w<
  *
- * If a query (from a logged in or logged out user) returns 0 results, then the same query will
- * always return 0 results, for all users. So we can cache that result.
+ * if a quewy (fwom a-a wogged in ow wogged o-out usew) wetuwns 0 w-wesuwts, rawr then t-the same quewy w-wiww
+ * awways wetuwn 0 wesuwts, mya fow aww usews. ^^ s-so we can cache that wesuwt. 😳😳😳
  */
-public class RelevanceZeroResultsCacheFilter
-  extends CacheFilter<EarlybirdRequestContext, EarlybirdRequest, EarlybirdResponse> {
+pubwic cwass wewevancezewowesuwtscachefiwtew
+  e-extends cachefiwtew<eawwybiwdwequestcontext, mya eawwybiwdwequest, 😳 eawwybiwdwesponse> {
 
-  /** Creates a filter that caches relevance requests with 0 results. */
-  @Inject
-  public RelevanceZeroResultsCacheFilter(
-      @RelevanceCache Cache<EarlybirdRequest, EarlybirdResponse> cache,
-      SearchDecider decider,
-      @Named(SearchRootModule.NAMED_NORMALIZED_SEARCH_ROOT_NAME) String normalizedSearchRootName) {
-    super(cache,
-          new RelevanceZeroResultsQueryCachePredicate(decider, normalizedSearchRootName),
-          new RelevanceZeroResultsCacheRequestNormalizer(),
-          new RelevanceZeroResultsCachePostProcessor(),
-          new RelevanceZeroResultsServicePostProcessor(cache),
-          new EarlybirdRequestPerClientCacheStats("relevance_zero_results"));
+  /** cweates a fiwtew that caches wewevance w-wequests with 0 wesuwts. -.- */
+  @inject
+  p-pubwic w-wewevancezewowesuwtscachefiwtew(
+      @wewevancecache c-cache<eawwybiwdwequest, 🥺 eawwybiwdwesponse> cache, o.O
+      seawchdecidew decidew, /(^•ω•^)
+      @named(seawchwootmoduwe.named_nowmawized_seawch_woot_name) s-stwing n-nyowmawizedseawchwootname) {
+    supew(cache, nyaa~~
+          n-nyew wewevancezewowesuwtsquewycachepwedicate(decidew, nyaa~~ n-nyowmawizedseawchwootname), :3
+          new wewevancezewowesuwtscachewequestnowmawizew(), 😳😳😳
+          n-nyew wewevancezewowesuwtscachepostpwocessow(), (˘ω˘)
+          nyew wewevancezewowesuwtssewvicepostpwocessow(cache), ^^
+          n-nyew eawwybiwdwequestpewcwientcachestats("wewevance_zewo_wesuwts"));
   }
 }

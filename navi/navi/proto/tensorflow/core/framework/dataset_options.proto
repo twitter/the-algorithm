@@ -1,196 +1,196 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow.data;
+package tensowfwow.data;
 
-import "tensorflow/core/framework/model.proto";
+impowt "tensowfwow/cowe/fwamewowk/modew.pwoto";
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/dataset_options_go_proto";
+o-option g-go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/fwamewowk/dataset_options_go_pwoto";
 
-// Represents the type of auto-sharding we enable.
-enum AutoShardPolicy {
-  // AUTO: Attempts FILE-based sharding, falling back to DATA-based sharding.
-  AUTO = 0;
-  // FILE: Shards by input files (i.e. each worker will get a set of files to
-  // process). When this option is selected, make sure that there is at least as
-  // many files as workers. If there are fewer input files than workers, a
-  // runtime error will be raised.
-  FILE = 1;
-  // DATA: Shards by elements produced by the dataset. Each worker will process
-  // the whole dataset and discard the portion that is not for itself. Note that
-  // for this mode to correctly partitions the dataset elements, the dataset
-  // needs to produce elements in a deterministic order.
-  DATA = 2;
-  // HINT: Looks for the presence of `shard(SHARD_HINT, ...)` which is treated
-  // as a placeholder to replace with `shard(num_workers, worker_index)`.
-  HINT = 3;
-  // OFF: No sharding will be performed.
-  OFF = -1;
+// w-wepwesents the type o-of auto-shawding w-we enabwe. UwU
+e-enum autoshawdpowicy {
+  // a-auto: a-attempts fiwe-based shawding, fawwing back to data-based shawding. XD
+  auto = 0;
+  // f-fiwe: shawds by input fiwes (i.e. ʘwʘ each wowkew w-wiww get a set of fiwes to
+  // p-pwocess). rawr x3 when this option is sewected, ^^;; make suwe that thewe i-is at weast as
+  // many fiwes a-as wowkews. ʘwʘ if thewe a-awe fewew input fiwes than wowkews, (U ﹏ U) a
+  // wuntime ewwow wiww be waised. (˘ω˘)
+  f-fiwe = 1;
+  // data: shawds by ewements pwoduced by the dataset. (ꈍᴗꈍ) each wowkew wiww p-pwocess
+  // the whowe dataset a-and discawd the p-powtion that is n-nyot fow itsewf. /(^•ω•^) n-nyote that
+  // fow this mode to cowwectwy pawtitions t-the dataset ewements, >_< the dataset
+  // nyeeds t-to pwoduce ewements in a detewministic owdew.
+  data = 2;
+  // hint: wooks fow the pwesence o-of `shawd(shawd_hint, σωσ ...)` which i-is tweated
+  // a-as a pwacehowdew t-to wepwace with `shawd(num_wowkews, ^^;; wowkew_index)`. 😳
+  hint = 3;
+  // o-off: nyo s-shawding wiww be pewfowmed. >_<
+  o-off = -1;
 }
 
-// next: 5
-message AutotuneOptions {
-  // Whether to automatically tune performance knobs.
-  oneof optional_enabled {
-    bool enabled = 1;
+// n-nyext: 5
+message autotuneoptions {
+  // w-whethew to automaticawwy t-tune pewfowmance knobs. -.-
+  oneof optionaw_enabwed {
+    b-boow enabwed = 1;
   }
-  // When autotuning is enabled (through autotune), determines the CPU budget to
-  // use. Values greater than the number of schedulable CPU cores are allowed
-  // but may result in CPU contention.
-  oneof optional_cpu_budget {
+  // when autotuning i-is enabwed (thwough autotune), UwU d-detewmines the c-cpu budget to
+  // use. :3 vawues gweatew than the nyumbew of scheduwabwe cpu cowes awe awwowed
+  // but may wesuwt i-in cpu contention.
+  o-oneof optionaw_cpu_budget {
     int32 cpu_budget = 2;
   }
-  // When autotuning is enabled (through autotune), determines the RAM budget to
-  // use. Values greater than the available RAM in bytes may result in OOM. If
-  // 0, defaults to half of the available RAM in bytes.
-  oneof optional_ram_budget {
-    int64 ram_budget = 3;
+  // w-when autotuning i-is enabwed (thwough a-autotune), σωσ detewmines the wam budget to
+  // use. >w< vawues g-gweatew than the avaiwabwe wam in bytes may wesuwt in oom. (ˆ ﻌ ˆ)♡ if
+  // 0, defauwts t-to hawf of the avaiwabwe wam i-in bytes. ʘwʘ
+  oneof o-optionaw_wam_budget {
+    i-int64 wam_budget = 3;
   }
 
-  // When autotuning is enabled (through autotune), determines the algorithm to
-  // use. If not explicitly set by user, autotuning will follow HILL_CLIMB
-  // algorithm but has more flexibility to tune parameters more aggressively,
-  // in which case the behavior is implementation specific and may change over
-  // time.
-  oneof optional_autotune_algorithm {
-    model.AutotuneAlgorithm autotune_algorithm = 4;
+  // w-when a-autotuning is enabwed (thwough a-autotune), :3 detewmines t-the awgowithm to
+  // use. (˘ω˘) if nyot expwicitwy s-set by usew, 😳😳😳 a-autotuning wiww f-fowwow hiww_cwimb
+  // a-awgowithm b-but has mowe fwexibiwity to tune pawametews mowe aggwessivewy, rawr x3
+  // i-in which case the behaviow is impwementation specific and may change ovew
+  // time. (✿oωo)
+  oneof o-optionaw_autotune_awgowithm {
+    modew.autotuneawgowithm autotune_awgowithm = 4;
   }
 }
 
-// next: 2
-message CardinalityOptions {
-  enum ComputeLevel {
-    CARDINALITY_COMPUTE_UNSPECIFIED = 0;
-    // Cardinality will only be computed if it can be determined in a cheap
-    // manner (ie. without reading from file sources). If the cardinality would
-    // be nontrivial to compute, Cardinality() will return UNKNOWN_CARDINALITY.
-    CARDINALITY_COMPUTE_LOW = 1;
-    // Moderate effort will be made to determine cardinality, such as reading
-    // index data from source files. If significant work is needed to compute
-    // cardinality (e.g. reading entire source file contents or executing user
-    // defined functions), Cardinality() will return UNKNOWN_CARDINALITY.
-    CARDINALITY_COMPUTE_MODERATE = 2;
+// nyext: 2
+message c-cawdinawityoptions {
+  e-enum computewevew {
+    cawdinawity_compute_unspecified = 0;
+    // c-cawdinawity wiww onwy b-be computed if it can be detewmined i-in a cheap
+    // m-mannew (ie. (ˆ ﻌ ˆ)♡ without weading fwom fiwe souwces). :3 if the cawdinawity wouwd
+    // be nyontwiviaw t-to compute, (U ᵕ U❁) cawdinawity() w-wiww wetuwn unknown_cawdinawity. ^^;;
+    cawdinawity_compute_wow = 1;
+    // m-modewate e-effowt wiww be made to detewmine cawdinawity, mya s-such as weading
+    // i-index data fwom souwce fiwes. 😳😳😳 i-if significant w-wowk is nyeeded to compute
+    // cawdinawity (e.g. OwO weading entiwe souwce fiwe c-contents ow executing u-usew
+    // d-defined functions), rawr cawdinawity() w-wiww wetuwn u-unknown_cawdinawity.
+    cawdinawity_compute_modewate = 2;
   }
-  ComputeLevel compute_level = 1;
+  c-computewevew compute_wevew = 1;
 }
 
-// next: 3
-message DistributeOptions {
-  AutoShardPolicy auto_shard_policy = 1;
-  // The number of devices attached to this input pipeline.
-  oneof optional_num_devices {
-    int32 num_devices = 2;
-  }
-}
-
-// next: 18
-message OptimizationOptions {
-  // Whether to apply default graph optimizations. If False, only graph
-  // optimizations that have been explicitly enabled will be applied.
-  oneof optional_apply_default_optimizations {
-    bool apply_default_optimizations = 1;
-  }
-  reserved 2;
-  reserved 3;
-  reserved 4;
-  reserved 5;
-  // Whether to fuse filter transformations.
-  oneof optional_filter_fusion {
-    bool filter_fusion = 6;
-  }
-  // NOTE: field id 7 deleted in June 2021.
-  reserved 7;
-  // NOTE: field id 8 deleted in June 2021.
-  reserved 8;
-  // Whether to fuse map and batch transformations.
-  oneof optional_map_and_batch_fusion {
-    bool map_and_batch_fusion = 9;
-  }
-  // Whether to fuse map and filter transformations.
-  oneof optional_map_and_filter_fusion {
-    bool map_and_filter_fusion = 10;
-  }
-  // Whether to fuse map transformations.
-  oneof optional_map_fusion {
-    bool map_fusion = 11;
-  }
-  // Whether to parallelize stateless map transformations.
-  oneof optional_map_parallelization {
-    bool map_parallelization = 12;
-  }
-
-  // NOTE: field id 13 deleted in June 2021.
-  reserved 13;
-
-  // Whether to eliminate no-op transformations.
-  oneof optional_noop_elimination {
-    bool noop_elimination = 14;
-  }
-  // Whether to parallelize copying of batch elements. This optimization is
-  // highly experimental and can cause performance degradation (e.g. when the
-  // parallelization overhead exceeds the benefits of performing the data copies
-  // in parallel). You should only enable this optimization if a) your input
-  // pipeline is bottlenecked on batching and b) you have validated that this
-  // optimization improves performance.
-  oneof optional_parallel_batch {
-    bool parallel_batch = 15;
-  }
-  // Field id 16 was removed in 06/2021.
-  reserved 16;
-  // Whether to fuse shuffle and repeat transformations.
-  oneof optional_shuffle_and_repeat_fusion {
-    bool shuffle_and_repeat_fusion = 17;
+// nyext: 3
+message distwibuteoptions {
+  autoshawdpowicy a-auto_shawd_powicy = 1;
+  // t-the nyumbew of devices attached to t-this input pipewine. XD
+  o-oneof optionaw_num_devices {
+    int32 nyum_devices = 2;
   }
 }
 
-// next: 3
-message ThreadingOptions {
-  // If set, it overrides the maximum degree of intra-op parallelism.
-  oneof optional_max_intra_op_parallelism {
-    int32 max_intra_op_parallelism = 1;
+// nyext: 18
+message optimizationoptions {
+  // w-whethew to appwy defauwt gwaph optimizations. (U ﹏ U) if fawse, (˘ω˘) onwy gwaph
+  // optimizations t-that have been expwicitwy enabwed wiww b-be appwied. UwU
+  o-oneof optionaw_appwy_defauwt_optimizations {
+    boow appwy_defauwt_optimizations = 1;
   }
-  // If set, the dataset will use a private threadpool of the given size.
-  oneof optional_private_threadpool_size {
-    int32 private_threadpool_size = 2;
+  wesewved 2;
+  wesewved 3;
+  wesewved 4;
+  w-wesewved 5;
+  // w-whethew to fuse fiwtew twansfowmations.
+  oneof optionaw_fiwtew_fusion {
+    b-boow fiwtew_fusion = 6;
+  }
+  // nyote: fiewd i-id 7 deweted in june 2021. >_<
+  wesewved 7;
+  // nyote: fiewd i-id 8 deweted in june 2021. σωσ
+  wesewved 8;
+  // w-whethew t-to fuse map and batch twansfowmations. 🥺
+  oneof o-optionaw_map_and_batch_fusion {
+    boow map_and_batch_fusion = 9;
+  }
+  // w-whethew to fuse m-map and fiwtew t-twansfowmations. 🥺
+  oneof optionaw_map_and_fiwtew_fusion {
+    b-boow m-map_and_fiwtew_fusion = 10;
+  }
+  // whethew to fuse map twansfowmations. ʘwʘ
+  oneof o-optionaw_map_fusion {
+    boow m-map_fusion = 11;
+  }
+  // w-whethew to pawawwewize statewess map t-twansfowmations.
+  oneof optionaw_map_pawawwewization {
+    boow m-map_pawawwewization = 12;
+  }
+
+  // n-nyote: fiewd id 13 deweted in june 2021. :3
+  wesewved 13;
+
+  // w-whethew to e-ewiminate nyo-op t-twansfowmations. (U ﹏ U)
+  o-oneof optionaw_noop_ewimination {
+    boow n-nyoop_ewimination = 14;
+  }
+  // whethew to pawawwewize copying of batch ewements. (U ﹏ U) this optimization is
+  // highwy e-expewimentaw and can cause pewfowmance d-degwadation (e.g. ʘwʘ when t-the
+  // pawawwewization ovewhead e-exceeds the benefits of pewfowming t-the data c-copies
+  // in pawawwew). y-you shouwd o-onwy enabwe t-this optimization if a) youw input
+  // pipewine is bottwenecked on batching and b) you have vawidated that this
+  // o-optimization i-impwoves pewfowmance. >w<
+  o-oneof optionaw_pawawwew_batch {
+    b-boow pawawwew_batch = 15;
+  }
+  // fiewd id 16 was wemoved in 06/2021. rawr x3
+  wesewved 16;
+  // w-whethew t-to fuse shuffwe and wepeat twansfowmations. OwO
+  o-oneof optionaw_shuffwe_and_wepeat_fusion {
+    boow shuffwe_and_wepeat_fusion = 17;
   }
 }
 
-// Represents how to handle external state during serialization.
-enum ExternalStatePolicy {
-  POLICY_WARN = 0;
-  POLICY_IGNORE = 1;
-  POLICY_FAIL = 2;
+// nyext: 3
+message t-thweadingoptions {
+  // i-if set, ^•ﻌ•^ it ovewwides the m-maximum degwee o-of intwa-op pawawwewism. >_<
+  oneof optionaw_max_intwa_op_pawawwewism {
+    int32 max_intwa_op_pawawwewism = 1;
+  }
+  // if set, the d-dataset wiww use a-a pwivate thweadpoow o-of the given s-size. OwO
+  oneof o-optionaw_pwivate_thweadpoow_size {
+    int32 p-pwivate_thweadpoow_size = 2;
+  }
 }
 
-// Message stored with Dataset objects to control how datasets are processed and
-// optimized.
+// w-wepwesents how to handwe e-extewnaw state duwing s-sewiawization. >_<
+enum extewnawstatepowicy {
+  p-powicy_wawn = 0;
+  powicy_ignowe = 1;
+  powicy_faiw = 2;
+}
+
+// m-message stowed with dataset objects t-to contwow h-how datasets awe pwocessed and
+// o-optimized. (ꈍᴗꈍ)
 //
 // next: 8
-message Options {
-  // Whether the outputs need to be produced in deterministic order.
-  oneof optional_deterministic {
-    bool deterministic = 1;
+message options {
+  // w-whethew the outputs n-nyeed to be p-pwoduced in detewministic owdew. >w<
+  oneof optionaw_detewministic {
+    boow detewministic = 1;
   }
-  // The distribution strategy options associated with the dataset.
-  AutotuneOptions autotune_options = 7;
-  // The distribution strategy options associated with the dataset.
-  DistributeOptions distribute_options = 2;
-  // The optimization options associated with the dataset.
-  OptimizationOptions optimization_options = 3;
-  // Whether to introduce 'slack' in the last `prefetch` of the input pipeline,
-  // if it exists. This may reduce CPU contention with accelerator host-side
-  // activity at the start of a step. The slack frequency is determined by the
-  // number of devices attached to this input pipeline.
-  oneof optional_slack {
-    bool slack = 4;
+  // t-the distwibution stwategy options associated w-with the dataset.
+  a-autotuneoptions autotune_options = 7;
+  // t-the distwibution stwategy options a-associated w-with the dataset. (U ﹏ U)
+  distwibuteoptions distwibute_options = 2;
+  // t-the optimization options associated with the d-dataset. ^^
+  optimizationoptions o-optimization_options = 3;
+  // whethew to intwoduce 'swack' i-in the wast `pwefetch` o-of the input p-pipewine, (U ﹏ U)
+  // i-if it exists. :3 this may weduce cpu contention with accewewatow host-side
+  // activity at the stawt of a step. (✿oωo) the swack fwequency is detewmined by the
+  // nyumbew of devices attached to this input pipewine. XD
+  o-oneof optionaw_swack {
+    b-boow swack = 4;
   }
-  // The threading options associated with the dataset.
-  ThreadingOptions threading_options = 5;
-  // This option can be used to override the default policy for how to handle
-  // external state when serializing a dataset or checkpointing its iterator.
-  // There are three settings available - IGNORE: External state is ignored
-  // without a warning; WARN: External state is ignored and a warning is logged;
-  // FAIL: External state results in an error.
-  oneof optional_external_state_policy {
-    ExternalStatePolicy external_state_policy = 6;
+  // the thweading o-options associated w-with the d-dataset. >w<
+  thweadingoptions thweading_options = 5;
+  // t-this option can be used t-to ovewwide the d-defauwt powicy fow how to handwe
+  // e-extewnaw state when sewiawizing a-a dataset o-ow checkpointing its itewatow. òωó
+  // thewe awe thwee s-settings avaiwabwe - i-ignowe: e-extewnaw state i-is ignowed
+  // w-without a wawning; w-wawn: extewnaw s-state is ignowed a-and a wawning i-is wogged;
+  // faiw: extewnaw s-state wesuwts in a-an ewwow. (ꈍᴗꈍ)
+  oneof o-optionaw_extewnaw_state_powicy {
+    extewnawstatepowicy e-extewnaw_state_powicy = 6;
   }
 }

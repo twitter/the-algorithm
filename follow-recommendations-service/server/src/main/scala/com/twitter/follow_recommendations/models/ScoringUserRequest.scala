@@ -1,45 +1,45 @@
-package com.twitter.follow_recommendations.models
+package com.twittew.fowwow_wecommendations.modews
 
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.models._
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
+impowt com.twittew.fowwow_wecommendations.common.featuwe_hydwation.common.haspwefetchedfeatuwe
+i-impowt com.twittew.fowwow_wecommendations.common.modews._
+i-impowt c-com.twittew.fowwow_wecommendations.wogging.{thwiftscawa => o-offwine}
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.cwientcontext
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+i-impowt com.twittew.timewines.configapi.haspawams
+i-impowt com.twittew.timewines.configapi.pawams
 
-case class ScoringUserRequest(
-  override val clientContext: ClientContext,
-  override val displayLocation: DisplayLocation,
-  override val params: Params,
-  override val debugOptions: Option[DebugOptions] = None,
-  override val recentFollowedUserIds: Option[Seq[Long]],
-  override val recentFollowedByUserIds: Option[Seq[Long]],
-  override val wtfImpressions: Option[Seq[WtfImpression]],
-  override val similarToUserIds: Seq[Long],
-  candidates: Seq[CandidateUser],
-  debugParams: Option[DebugParams] = None,
-  isSoftUser: Boolean = false)
-    extends HasClientContext
-    with HasDisplayLocation
-    with HasParams
-    with HasDebugOptions
-    with HasPreFetchedFeature
-    with HasSimilarToContext {
-  def toOfflineThrift: offline.OfflineScoringUserRequest = offline.OfflineScoringUserRequest(
-    ClientContextConverter.toFRSOfflineClientContextThrift(clientContext),
-    displayLocation.toOfflineThrift,
-    candidates.map(_.toOfflineUserThrift)
+case cwass scowingusewwequest(
+  ovewwide vaw cwientcontext: c-cwientcontext, 😳😳😳
+  ovewwide vaw dispwaywocation: d-dispwaywocation, 😳😳😳
+  ovewwide vaw p-pawams: pawams, o.O
+  ovewwide vaw debugoptions: option[debugoptions] = nyone, ( ͡o ω ͡o )
+  ovewwide v-vaw wecentfowwowedusewids: option[seq[wong]], (U ﹏ U)
+  o-ovewwide v-vaw wecentfowwowedbyusewids: option[seq[wong]], (///ˬ///✿)
+  ovewwide vaw wtfimpwessions: option[seq[wtfimpwession]], >w<
+  ovewwide vaw simiwawtousewids: s-seq[wong], rawr
+  candidates: seq[candidateusew], mya
+  debugpawams: option[debugpawams] = n-nyone, ^^
+  issoftusew: b-boowean = fawse)
+    e-extends h-hascwientcontext
+    w-with hasdispwaywocation
+    with haspawams
+    with hasdebugoptions
+    w-with haspwefetchedfeatuwe
+    with h-hassimiwawtocontext {
+  def tooffwinethwift: offwine.offwinescowingusewwequest = offwine.offwinescowingusewwequest(
+    cwientcontextconvewtew.tofwsoffwinecwientcontextthwift(cwientcontext), 😳😳😳
+    dispwaywocation.tooffwinethwift,
+    c-candidates.map(_.tooffwineusewthwift)
   )
-  def toRecommendationRequest: RecommendationRequest = RecommendationRequest(
-    clientContext = clientContext,
-    displayLocation = displayLocation,
-    displayContext = None,
-    maxResults = None,
-    cursor = None,
-    excludedIds = None,
-    fetchPromotedContent = None,
-    debugParams = debugParams,
-    isSoftUser = isSoftUser
+  def towecommendationwequest: w-wecommendationwequest = w-wecommendationwequest(
+    c-cwientcontext = cwientcontext, mya
+    dispwaywocation = dispwaywocation, 😳
+    d-dispwaycontext = nyone, -.-
+    m-maxwesuwts = nyone, 🥺
+    c-cuwsow = nyone, o.O
+    e-excwudedids = none, /(^•ω•^)
+    fetchpwomotedcontent = n-nyone, nyaa~~
+    debugpawams = debugpawams, nyaa~~
+    issoftusew = i-issoftusew
   )
 }

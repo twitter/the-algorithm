@@ -1,647 +1,647 @@
-package com.twitter.search.common.converter.earlybird;
+package com.twittew.seawch.common.convewtew.eawwybiwd;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import javax.annotation.concurrent.NotThreadSafe;
+impowt java.io.ioexception;
+i-impowt java.utiw.date;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.optionaw;
+i-impowt j-javax.annotation.concuwwent.notthweadsafe;
 
-import com.google.common.base.Preconditions;
+impowt c-com.googwe.common.base.pweconditions;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.apache.commons.cowwections.cowwectionutiws;
+impowt owg.joda.time.datetime;
+impowt owg.joda.time.datetimezone;
+impowt owg.swf4j.woggew;
+impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.converter.earlybird.EncodedFeatureBuilder.TweetFeatureWithEncodeFeatures;
-import com.twitter.search.common.indexing.thriftjava.Place;
-import com.twitter.search.common.indexing.thriftjava.PotentialLocation;
-import com.twitter.search.common.indexing.thriftjava.ProfileGeoEnrichment;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.indexing.thriftjava.VersionedTweetFeatures;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.relevance.entities.GeoObject;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.entities.TwitterQuotedMessage;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeatures;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.earlybird.EarlybirdThriftDocumentBuilder;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEventType;
-import com.twitter.search.common.util.spatial.GeoUtil;
-import com.twitter.search.common.util.text.NormalizerHelper;
-import com.twitter.tweetypie.thriftjava.ComposerSource;
+impowt com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+impowt com.twittew.seawch.common.convewtew.eawwybiwd.encodedfeatuwebuiwdew.tweetfeatuwewithencodefeatuwes;
+i-impowt com.twittew.seawch.common.indexing.thwiftjava.pwace;
+i-impowt com.twittew.seawch.common.indexing.thwiftjava.potentiawwocation;
+impowt com.twittew.seawch.common.indexing.thwiftjava.pwofiwegeoenwichment;
+impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
+i-impowt com.twittew.seawch.common.indexing.thwiftjava.vewsionedtweetfeatuwes;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt c-com.twittew.seawch.common.pawtitioning.snowfwakepawsew.snowfwakeidpawsew;
+impowt com.twittew.seawch.common.wewevance.entities.geoobject;
+impowt com.twittew.seawch.common.wewevance.entities.twittewmessage;
+impowt c-com.twittew.seawch.common.wewevance.entities.twittewquotedmessage;
+impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+impowt com.twittew.seawch.common.schema.base.schema;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdencodedfeatuwes;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdthwiftdocumentbuiwdew;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftdocument;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingevent;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingeventtype;
+i-impowt com.twittew.seawch.common.utiw.spatiaw.geoutiw;
+impowt com.twittew.seawch.common.utiw.text.nowmawizewhewpew;
+impowt c-com.twittew.tweetypie.thwiftjava.composewsouwce;
 
 /**
- * Converts a TwitterMessage into a ThriftVersionedEvents. This is only responsible for data that
- * is available immediately when a Tweet is created. Some data, like URL data, isn't available
- * immediately, and so it is processed later, in the DelayedIndexingConverter and sent as an
- * update. In order to achieve this we create the document in 2 passes:
+ * convewts a twittewmessage into a thwiftvewsionedevents. (ꈍᴗꈍ) this is onwy wesponsibwe f-fow data that
+ * is avaiwabwe immediatewy w-when a t-tweet is cweated. σωσ s-some data, UwU wike uww data, ^•ﻌ•^ isn't avaiwabwe
+ * immediatewy, mya and s-so it is pwocessed w-watew, /(^•ω•^) in the dewayedindexingconvewtew a-and sent a-as an
+ * update. rawr in owdew to a-achieve this we cweate the document i-in 2 passes:
  *
- * 1. BasicIndexingConverter builds thriftVersionedEvents with the fields that do not require
- * external services.
+ * 1. nyaa~~ basicindexingconvewtew buiwds thwiftvewsionedevents with t-the fiewds that do nyot wequiwe
+ * e-extewnaw sewvices. ( ͡o ω ͡o )
  *
- * 2. DelayedIndexingConverter builds all the document fields depending on external services, once
- * those services have processed the relevant Tweet and we have retrieved that data.
+ * 2. σωσ d-dewayedindexingconvewtew b-buiwds aww the document fiewds depending on extewnaw sewvices, (✿oωo) once
+ * those sewvices have pwocessed t-the wewevant tweet a-and we have wetwieved that data. (///ˬ///✿)
  */
-@NotThreadSafe
-public class BasicIndexingConverter {
-  private static final Logger LOG = LoggerFactory.getLogger(BasicIndexingConverter.class);
+@notthweadsafe
+p-pubwic cwass b-basicindexingconvewtew {
+  p-pwivate static finaw woggew wog = woggewfactowy.getwoggew(basicindexingconvewtew.cwass);
 
-  private static final SearchCounter NUM_NULLCAST_FEATURE_FLAG_SET_TWEETS =
-      SearchCounter.export("num_nullcast_feature_flag_set_tweets");
-  private static final SearchCounter NUM_NULLCAST_TWEETS =
-      SearchCounter.export("num_nullcast_tweets");
-  private static final SearchCounter NUM_NON_NULLCAST_TWEETS =
-      SearchCounter.export("num_non_nullcast_tweets");
-  private static final SearchCounter ADJUSTED_BAD_CREATED_AT_COUNTER =
-      SearchCounter.export("adjusted_incorrect_created_at_timestamp");
-  private static final SearchCounter INCONSISTENT_TWEET_ID_AND_CREATED_AT_MS =
-      SearchCounter.export("inconsistent_tweet_id_and_created_at_ms");
-  private static final SearchCounter NUM_SELF_THREAD_TWEETS =
-      SearchCounter.export("num_self_thread_tweets");
-  private static final SearchCounter NUM_EXCLUSIVE_TWEETS =
-      SearchCounter.export("num_exclusive_tweets");
+  pwivate s-static finaw seawchcountew nyum_nuwwcast_featuwe_fwag_set_tweets =
+      seawchcountew.expowt("num_nuwwcast_featuwe_fwag_set_tweets");
+  pwivate static finaw s-seawchcountew nyum_nuwwcast_tweets =
+      s-seawchcountew.expowt("num_nuwwcast_tweets");
+  p-pwivate s-static finaw seawchcountew nyum_non_nuwwcast_tweets =
+      s-seawchcountew.expowt("num_non_nuwwcast_tweets");
+  p-pwivate static f-finaw seawchcountew a-adjusted_bad_cweated_at_countew =
+      seawchcountew.expowt("adjusted_incowwect_cweated_at_timestamp");
+  pwivate static f-finaw seawchcountew i-inconsistent_tweet_id_and_cweated_at_ms =
+      s-seawchcountew.expowt("inconsistent_tweet_id_and_cweated_at_ms");
+  p-pwivate static f-finaw seawchcountew nyum_sewf_thwead_tweets =
+      seawchcountew.expowt("num_sewf_thwead_tweets");
+  pwivate s-static finaw seawchcountew nyum_excwusive_tweets =
+      seawchcountew.expowt("num_excwusive_tweets");
 
-  // If a tweet carries a timestamp smaller than this timestamp, we consider the timestamp invalid,
-  // because twitter does not even exist back then before: Sun, 01 Jan 2006 00:00:00 GMT
-  private static final long VALID_CREATION_TIME_THRESHOLD_MILLIS =
-      new DateTime(2006, 1, 1, 0, 0, 0, DateTimeZone.UTC).getMillis();
+  // if a tweet cawwies a timestamp smowew than this t-timestamp, σωσ we considew the timestamp invawid, UwU
+  // because twittew d-does nyot even e-exist back then b-befowe: sun, (⑅˘꒳˘) 01 jan 2006 00:00:00 g-gmt
+  pwivate static finaw w-wong vawid_cweation_time_thweshowd_miwwis =
+      n-nyew datetime(2006, /(^•ω•^) 1, 1, 0, 0, 0, -.- datetimezone.utc).getmiwwis();
 
-  private final EncodedFeatureBuilder featureBuilder;
-  private final Schema schema;
-  private final EarlybirdCluster cluster;
+  pwivate finaw encodedfeatuwebuiwdew featuwebuiwdew;
+  pwivate f-finaw schema schema;
+  pwivate f-finaw eawwybiwdcwustew cwustew;
 
-  public BasicIndexingConverter(Schema schema, EarlybirdCluster cluster) {
-    this.featureBuilder = new EncodedFeatureBuilder();
-    this.schema = schema;
-    this.cluster = cluster;
+  p-pubwic basicindexingconvewtew(schema s-schema, (ˆ ﻌ ˆ)♡ eawwybiwdcwustew cwustew) {
+    t-this.featuwebuiwdew = n-nyew encodedfeatuwebuiwdew();
+    this.schema = s-schema;
+    t-this.cwustew = cwustew;
   }
 
   /**
-   * This function converts TwitterMessage to ThriftVersionedEvents, which is a generic data
-   * structure that can be consumed by Earlybird directly.
+   * this function convewts twittewmessage t-to thwiftvewsionedevents, nyaa~~ w-which i-is a genewic data
+   * stwuctuwe t-that can be c-consumed by eawwybiwd diwectwy. ʘwʘ
    */
-  public ThriftVersionedEvents convertMessageToThrift(
-      TwitterMessage message,
-      boolean strict,
-      List<PenguinVersion> penguinVersions) throws IOException {
-    Preconditions.checkNotNull(message);
-    Preconditions.checkNotNull(penguinVersions);
+  p-pubwic thwiftvewsionedevents convewtmessagetothwift(
+      twittewmessage message, :3
+      b-boowean stwict, (U ᵕ U❁)
+      w-wist<penguinvewsion> penguinvewsions) thwows i-ioexception {
+    p-pweconditions.checknotnuww(message);
+    pweconditions.checknotnuww(penguinvewsions);
 
-    ThriftVersionedEvents versionedEvents = new ThriftVersionedEvents()
-        .setId(message.getId());
+    thwiftvewsionedevents vewsionedevents = n-nyew thwiftvewsionedevents()
+        .setid(message.getid());
 
-    ImmutableSchemaInterface schemaSnapshot = schema.getSchemaSnapshot();
+    immutabweschemaintewface schemasnapshot = schema.getschemasnapshot();
 
-    for (PenguinVersion penguinVersion : penguinVersions) {
-      ThriftDocument document =
-          buildDocumentForPenguinVersion(schemaSnapshot, message, strict, penguinVersion);
+    fow (penguinvewsion p-penguinvewsion : penguinvewsions) {
+      thwiftdocument d-document =
+          b-buiwddocumentfowpenguinvewsion(schemasnapshot, (U ﹏ U) message, stwict, ^^ penguinvewsion);
 
-      ThriftIndexingEvent thriftIndexingEvent = new ThriftIndexingEvent()
-          .setDocument(document)
-          .setEventType(ThriftIndexingEventType.INSERT)
-          .setSortId(message.getId());
-      message.getFromUserTwitterId().map(thriftIndexingEvent::setUid);
-      versionedEvents.putToVersionedEvents(penguinVersion.getByteValue(), thriftIndexingEvent);
+      thwiftindexingevent t-thwiftindexingevent = n-nyew thwiftindexingevent()
+          .setdocument(document)
+          .seteventtype(thwiftindexingeventtype.insewt)
+          .setsowtid(message.getid());
+      message.getfwomusewtwittewid().map(thwiftindexingevent::setuid);
+      vewsionedevents.puttovewsionedevents(penguinvewsion.getbytevawue(), òωó t-thwiftindexingevent);
     }
 
-    return versionedEvents;
+    wetuwn v-vewsionedevents;
   }
 
-  private ThriftDocument buildDocumentForPenguinVersion(
-      ImmutableSchemaInterface schemaSnapshot,
-      TwitterMessage message,
-      boolean strict,
-      PenguinVersion penguinVersion) throws IOException {
-    TweetFeatureWithEncodeFeatures tweetFeature =
-        featureBuilder.createTweetFeaturesFromTwitterMessage(
-            message, penguinVersion, schemaSnapshot);
+  pwivate thwiftdocument buiwddocumentfowpenguinvewsion(
+      immutabweschemaintewface s-schemasnapshot, /(^•ω•^)
+      twittewmessage m-message, 😳😳😳
+      b-boowean stwict, :3
+      penguinvewsion p-penguinvewsion) thwows ioexception {
+    t-tweetfeatuwewithencodefeatuwes tweetfeatuwe =
+        f-featuwebuiwdew.cweatetweetfeatuwesfwomtwittewmessage(
+            m-message, (///ˬ///✿) penguinvewsion, rawr x3 s-schemasnapshot);
 
-    EarlybirdThriftDocumentBuilder builder =
-        buildBasicFields(message, schemaSnapshot, cluster, tweetFeature);
+    e-eawwybiwdthwiftdocumentbuiwdew buiwdew =
+        buiwdbasicfiewds(message, (U ᵕ U❁) s-schemasnapshot, (⑅˘꒳˘) c-cwustew, (˘ω˘) tweetfeatuwe);
 
-    buildUserFields(builder, message, tweetFeature.versionedFeatures, penguinVersion);
-    buildGeoFields(builder, message, tweetFeature.versionedFeatures);
-    buildRetweetAndReplyFields(builder, message, strict);
-    buildQuotesFields(builder, message);
-    buildVersionedFeatureFields(builder, tweetFeature.versionedFeatures);
-    buildAnnotationFields(builder, message);
-    buildNormalizedMinEngagementFields(builder, tweetFeature.encodedFeatures, cluster);
-    buildDirectedAtFields(builder, message);
+    buiwdusewfiewds(buiwdew, m-message, :3 tweetfeatuwe.vewsionedfeatuwes, XD penguinvewsion);
+    b-buiwdgeofiewds(buiwdew, >_< message, (✿oωo) t-tweetfeatuwe.vewsionedfeatuwes);
+    b-buiwdwetweetandwepwyfiewds(buiwdew, message, (ꈍᴗꈍ) stwict);
+    buiwdquotesfiewds(buiwdew, XD message);
+    buiwdvewsionedfeatuwefiewds(buiwdew, :3 t-tweetfeatuwe.vewsionedfeatuwes);
+    b-buiwdannotationfiewds(buiwdew, mya m-message);
+    b-buiwdnowmawizedminengagementfiewds(buiwdew, òωó tweetfeatuwe.encodedfeatuwes, nyaa~~ c-cwustew);
+    buiwddiwectedatfiewds(buiwdew, 🥺 message);
 
-    builder.withSpaceIdFields(message.getSpaceIds());
+    buiwdew.withspaceidfiewds(message.getspaceids());
 
-    return builder.build();
-  }
-
-  /**
-   * Build the basic fields for a tweet.
-   */
-  public static EarlybirdThriftDocumentBuilder buildBasicFields(
-      TwitterMessage message,
-      ImmutableSchemaInterface schemaSnapshot,
-      EarlybirdCluster cluster,
-      TweetFeatureWithEncodeFeatures tweetFeature) {
-    EarlybirdEncodedFeatures extendedEncodedFeatures = tweetFeature.extendedEncodedFeatures;
-    if (extendedEncodedFeatures == null && EarlybirdCluster.isTwitterMemoryFormatCluster(cluster)) {
-      extendedEncodedFeatures = EarlybirdEncodedFeatures.newEncodedTweetFeatures(
-          schemaSnapshot, EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD);
-    }
-    EarlybirdThriftDocumentBuilder builder = new EarlybirdThriftDocumentBuilder(
-        tweetFeature.encodedFeatures,
-        extendedEncodedFeatures,
-        new EarlybirdFieldConstants(),
-        schemaSnapshot);
-
-    builder.withID(message.getId());
-
-    final Date createdAt = message.getDate();
-    long createdAtMs = createdAt == null ? 0L : createdAt.getTime();
-
-    createdAtMs = fixCreatedAtTimeStampIfNecessary(message.getId(), createdAtMs);
-
-    if (createdAtMs > 0L) {
-      builder.withCreatedAt((int) (createdAtMs / 1000));
-    }
-
-    builder.withTweetSignature(tweetFeature.versionedFeatures.getTweetSignature());
-
-    if (message.getConversationId() > 0) {
-      long conversationId = message.getConversationId();
-      builder.withLongField(
-          EarlybirdFieldConstant.CONVERSATION_ID_CSF.getFieldName(), conversationId);
-      // We only index conversation ID when it is different from the tweet ID.
-      if (message.getId() != conversationId) {
-        builder.withLongField(
-            EarlybirdFieldConstant.CONVERSATION_ID_FIELD.getFieldName(), conversationId);
-      }
-    }
-
-    if (message.getComposerSource().isPresent()) {
-      ComposerSource composerSource = message.getComposerSource().get();
-      builder.withIntField(
-          EarlybirdFieldConstant.COMPOSER_SOURCE.getFieldName(), composerSource.getValue());
-      if (composerSource == ComposerSource.CAMERA) {
-        builder.withCameraComposerSourceFlag();
-      }
-    }
-
-    EarlybirdEncodedFeatures encodedFeatures = tweetFeature.encodedFeatures;
-    if (encodedFeatures.isFlagSet(EarlybirdFieldConstant.FROM_VERIFIED_ACCOUNT_FLAG)) {
-      builder.addFilterInternalFieldTerm(EarlybirdFieldConstant.VERIFIED_FILTER_TERM);
-    }
-    if (encodedFeatures.isFlagSet(EarlybirdFieldConstant.FROM_BLUE_VERIFIED_ACCOUNT_FLAG)) {
-      builder.addFilterInternalFieldTerm(EarlybirdFieldConstant.BLUE_VERIFIED_FILTER_TERM);
-    }
-
-    if (encodedFeatures.isFlagSet(EarlybirdFieldConstant.IS_OFFENSIVE_FLAG)) {
-      builder.withOffensiveFlag();
-    }
-
-    if (message.getNullcast()) {
-      NUM_NULLCAST_TWEETS.increment();
-      builder.addFilterInternalFieldTerm(EarlybirdFieldConstant.NULLCAST_FILTER_TERM);
-    } else {
-      NUM_NON_NULLCAST_TWEETS.increment();
-    }
-    if (encodedFeatures.isFlagSet(EarlybirdFieldConstant.IS_NULLCAST_FLAG)) {
-      NUM_NULLCAST_FEATURE_FLAG_SET_TWEETS.increment();
-    }
-    if (message.isSelfThread()) {
-      builder.addFilterInternalFieldTerm(
-          EarlybirdFieldConstant.SELF_THREAD_FILTER_TERM);
-      NUM_SELF_THREAD_TWEETS.increment();
-    }
-
-    if (message.isExclusive()) {
-      builder.addFilterInternalFieldTerm(EarlybirdFieldConstant.EXCLUSIVE_FILTER_TERM);
-      builder.withLongField(
-          EarlybirdFieldConstant.EXCLUSIVE_CONVERSATION_AUTHOR_ID_CSF.getFieldName(),
-          message.getExclusiveConversationAuthorId());
-      NUM_EXCLUSIVE_TWEETS.increment();
-    }
-
-    builder.withLanguageCodes(message.getLanguage(), message.getBCP47LanguageTag());
-
-    return builder;
+    wetuwn buiwdew.buiwd();
   }
 
   /**
-   * Build the user fields.
+   * buiwd the basic fiewds f-fow a tweet. -.-
    */
-  public static void buildUserFields(
-      EarlybirdThriftDocumentBuilder builder,
-      TwitterMessage message,
-      VersionedTweetFeatures versionedTweetFeatures,
-      PenguinVersion penguinVersion) {
-    // 1. Set all the from user fields.
-    if (message.getFromUserTwitterId().isPresent()) {
-      builder.withLongField(EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName(),
-          message.getFromUserTwitterId().get())
-      // CSF
-      .withLongField(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName(),
-          message.getFromUserTwitterId().get());
-    } else {
-      LOG.warn("fromUserTwitterId is not set in TwitterMessage! Status id: " + message.getId());
+  pubwic static e-eawwybiwdthwiftdocumentbuiwdew buiwdbasicfiewds(
+      t-twittewmessage message, 🥺
+      i-immutabweschemaintewface schemasnapshot, (˘ω˘)
+      e-eawwybiwdcwustew c-cwustew, òωó
+      t-tweetfeatuwewithencodefeatuwes t-tweetfeatuwe) {
+    e-eawwybiwdencodedfeatuwes extendedencodedfeatuwes = tweetfeatuwe.extendedencodedfeatuwes;
+    if (extendedencodedfeatuwes == nyuww && eawwybiwdcwustew.istwittewmemowyfowmatcwustew(cwustew)) {
+      extendedencodedfeatuwes = eawwybiwdencodedfeatuwes.newencodedtweetfeatuwes(
+          s-schemasnapshot, UwU e-eawwybiwdfiewdconstant.extended_encoded_tweet_featuwes_fiewd);
+    }
+    e-eawwybiwdthwiftdocumentbuiwdew buiwdew = nyew eawwybiwdthwiftdocumentbuiwdew(
+        t-tweetfeatuwe.encodedfeatuwes, ^•ﻌ•^
+        extendedencodedfeatuwes, mya
+        nyew eawwybiwdfiewdconstants(), (✿oωo)
+        s-schemasnapshot);
+
+    b-buiwdew.withid(message.getid());
+
+    finaw date cweatedat = m-message.getdate();
+    wong cweatedatms = cweatedat == nyuww ? 0w : c-cweatedat.gettime();
+
+    c-cweatedatms = fixcweatedattimestampifnecessawy(message.getid(), XD c-cweatedatms);
+
+    i-if (cweatedatms > 0w) {
+      buiwdew.withcweatedat((int) (cweatedatms / 1000));
     }
 
-    if (message.getFromUserScreenName().isPresent()) {
-      String fromUser = message.getFromUserScreenName().get();
-      String normalizedFromUser =
-          NormalizerHelper.normalizeWithUnknownLocale(fromUser, penguinVersion);
+    buiwdew.withtweetsignatuwe(tweetfeatuwe.vewsionedfeatuwes.gettweetsignatuwe());
 
-      builder
-          .withWhiteSpaceTokenizedScreenNameField(
-              EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName(),
-              normalizedFromUser)
-          .withStringField(EarlybirdFieldConstant.FROM_USER_FIELD.getFieldName(),
-              normalizedFromUser);
-
-      if (message.getTokenizedFromUserScreenName().isPresent()) {
-        builder.withCamelCaseTokenizedScreenNameField(
-            EarlybirdFieldConstant.CAMELCASE_USER_HANDLE_FIELD.getFieldName(),
-            fromUser,
-            normalizedFromUser,
-            message.getTokenizedFromUserScreenName().get());
+    if (message.getconvewsationid() > 0) {
+      wong convewsationid = m-message.getconvewsationid();
+      b-buiwdew.withwongfiewd(
+          e-eawwybiwdfiewdconstant.convewsation_id_csf.getfiewdname(), :3 c-convewsationid);
+      // w-we onwy index convewsation i-id when it is diffewent f-fwom the tweet id. (U ﹏ U)
+      i-if (message.getid() != c-convewsationid) {
+        buiwdew.withwongfiewd(
+            e-eawwybiwdfiewdconstant.convewsation_id_fiewd.getfiewdname(), UwU convewsationid);
       }
     }
 
-    Optional<String> toUserScreenName = message.getToUserLowercasedScreenName();
-    if (toUserScreenName.isPresent() && !toUserScreenName.get().isEmpty()) {
-      builder.withStringField(
-          EarlybirdFieldConstant.TO_USER_FIELD.getFieldName(),
-          NormalizerHelper.normalizeWithUnknownLocale(toUserScreenName.get(), penguinVersion));
+    if (message.getcomposewsouwce().ispwesent()) {
+      c-composewsouwce composewsouwce = m-message.getcomposewsouwce().get();
+      b-buiwdew.withintfiewd(
+          eawwybiwdfiewdconstant.composew_souwce.getfiewdname(), ʘwʘ c-composewsouwce.getvawue());
+      if (composewsouwce == composewsouwce.camewa) {
+        b-buiwdew.withcamewacomposewsouwcefwag();
+      }
     }
 
-    if (versionedTweetFeatures.isSetUserDisplayNameTokenStreamText()) {
-      builder.withTokenStreamField(EarlybirdFieldConstant.TOKENIZED_USER_NAME_FIELD.getFieldName(),
-          versionedTweetFeatures.getUserDisplayNameTokenStreamText(),
-          versionedTweetFeatures.getUserDisplayNameTokenStream());
+    e-eawwybiwdencodedfeatuwes e-encodedfeatuwes = tweetfeatuwe.encodedfeatuwes;
+    if (encodedfeatuwes.isfwagset(eawwybiwdfiewdconstant.fwom_vewified_account_fwag)) {
+      buiwdew.addfiwtewintewnawfiewdtewm(eawwybiwdfiewdconstant.vewified_fiwtew_tewm);
+    }
+    i-if (encodedfeatuwes.isfwagset(eawwybiwdfiewdconstant.fwom_bwue_vewified_account_fwag)) {
+      buiwdew.addfiwtewintewnawfiewdtewm(eawwybiwdfiewdconstant.bwue_vewified_fiwtew_tewm);
+    }
+
+    if (encodedfeatuwes.isfwagset(eawwybiwdfiewdconstant.is_offensive_fwag)) {
+      b-buiwdew.withoffensivefwag();
+    }
+
+    i-if (message.getnuwwcast()) {
+      num_nuwwcast_tweets.incwement();
+      b-buiwdew.addfiwtewintewnawfiewdtewm(eawwybiwdfiewdconstant.nuwwcast_fiwtew_tewm);
+    } ewse {
+      n-nyum_non_nuwwcast_tweets.incwement();
+    }
+    i-if (encodedfeatuwes.isfwagset(eawwybiwdfiewdconstant.is_nuwwcast_fwag)) {
+      nyum_nuwwcast_featuwe_fwag_set_tweets.incwement();
+    }
+    if (message.issewfthwead()) {
+      b-buiwdew.addfiwtewintewnawfiewdtewm(
+          eawwybiwdfiewdconstant.sewf_thwead_fiwtew_tewm);
+      nyum_sewf_thwead_tweets.incwement();
+    }
+
+    if (message.isexcwusive()) {
+      buiwdew.addfiwtewintewnawfiewdtewm(eawwybiwdfiewdconstant.excwusive_fiwtew_tewm);
+      b-buiwdew.withwongfiewd(
+          e-eawwybiwdfiewdconstant.excwusive_convewsation_authow_id_csf.getfiewdname(), >w<
+          message.getexcwusiveconvewsationauthowid());
+      n-nyum_excwusive_tweets.incwement();
+    }
+
+    buiwdew.withwanguagecodes(message.getwanguage(), 😳😳😳 m-message.getbcp47wanguagetag());
+
+    w-wetuwn buiwdew;
+  }
+
+  /**
+   * b-buiwd the usew fiewds. rawr
+   */
+  pubwic static void buiwdusewfiewds(
+      eawwybiwdthwiftdocumentbuiwdew buiwdew, ^•ﻌ•^
+      twittewmessage message, σωσ
+      vewsionedtweetfeatuwes vewsionedtweetfeatuwes, :3
+      penguinvewsion penguinvewsion) {
+    // 1. rawr x3 set aww the fwom usew f-fiewds. nyaa~~
+    if (message.getfwomusewtwittewid().ispwesent()) {
+      b-buiwdew.withwongfiewd(eawwybiwdfiewdconstant.fwom_usew_id_fiewd.getfiewdname(), :3
+          message.getfwomusewtwittewid().get())
+      // csf
+      .withwongfiewd(eawwybiwdfiewdconstant.fwom_usew_id_csf.getfiewdname(), >w<
+          m-message.getfwomusewtwittewid().get());
+    } e-ewse {
+      w-wog.wawn("fwomusewtwittewid is nyot set in t-twittewmessage! rawr status id: " + message.getid());
+    }
+
+    i-if (message.getfwomusewscweenname().ispwesent()) {
+      s-stwing fwomusew = message.getfwomusewscweenname().get();
+      s-stwing nyowmawizedfwomusew =
+          nyowmawizewhewpew.nowmawizewithunknownwocawe(fwomusew, 😳 p-penguinvewsion);
+
+      b-buiwdew
+          .withwhitespacetokenizedscweennamefiewd(
+              eawwybiwdfiewdconstant.tokenized_fwom_usew_fiewd.getfiewdname(), 😳
+              nyowmawizedfwomusew)
+          .withstwingfiewd(eawwybiwdfiewdconstant.fwom_usew_fiewd.getfiewdname(), 🥺
+              n-nyowmawizedfwomusew);
+
+      i-if (message.gettokenizedfwomusewscweenname().ispwesent()) {
+        b-buiwdew.withcamewcasetokenizedscweennamefiewd(
+            e-eawwybiwdfiewdconstant.camewcase_usew_handwe_fiewd.getfiewdname(), rawr x3
+            f-fwomusew, ^^
+            n-nyowmawizedfwomusew, ( ͡o ω ͡o )
+            m-message.gettokenizedfwomusewscweenname().get());
+      }
+    }
+
+    o-optionaw<stwing> t-tousewscweenname = message.gettousewwowewcasedscweenname();
+    i-if (tousewscweenname.ispwesent() && !tousewscweenname.get().isempty()) {
+      b-buiwdew.withstwingfiewd(
+          e-eawwybiwdfiewdconstant.to_usew_fiewd.getfiewdname(), XD
+          nyowmawizewhewpew.nowmawizewithunknownwocawe(tousewscweenname.get(), penguinvewsion));
+    }
+
+    i-if (vewsionedtweetfeatuwes.issetusewdispwaynametokenstweamtext()) {
+      buiwdew.withtokenstweamfiewd(eawwybiwdfiewdconstant.tokenized_usew_name_fiewd.getfiewdname(), ^^
+          vewsionedtweetfeatuwes.getusewdispwaynametokenstweamtext(), (⑅˘꒳˘)
+          v-vewsionedtweetfeatuwes.getusewdispwaynametokenstweam());
     }
   }
 
   /**
-   * Build the geo fields.
+   * buiwd the g-geo fiewds.
    */
-  public static void buildGeoFields(
-      EarlybirdThriftDocumentBuilder builder,
-      TwitterMessage message,
-      VersionedTweetFeatures versionedTweetFeatures) {
-    double lat = GeoUtil.ILLEGAL_LATLON;
-    double lon = GeoUtil.ILLEGAL_LATLON;
-    if (message.getGeoLocation() != null) {
-      GeoObject location = message.getGeoLocation();
-      builder.withGeoField(EarlybirdFieldConstant.GEO_HASH_FIELD.getFieldName(),
-          location.getLatitude(), location.getLongitude(), location.getAccuracy());
+  p-pubwic static v-void buiwdgeofiewds(
+      eawwybiwdthwiftdocumentbuiwdew buiwdew, (⑅˘꒳˘)
+      t-twittewmessage message, ^•ﻌ•^
+      v-vewsionedtweetfeatuwes vewsionedtweetfeatuwes) {
+    d-doubwe wat = geoutiw.iwwegaw_watwon;
+    doubwe w-won = geoutiw.iwwegaw_watwon;
+    if (message.getgeowocation() != nyuww) {
+      geoobject wocation = message.getgeowocation();
+      b-buiwdew.withgeofiewd(eawwybiwdfiewdconstant.geo_hash_fiewd.getfiewdname(), ( ͡o ω ͡o )
+          wocation.getwatitude(), ( ͡o ω ͡o ) w-wocation.getwongitude(), (✿oωo) w-wocation.getaccuwacy());
 
-      if (location.getSource() != null) {
-        builder.withStringField(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-            EarlybirdFieldConstants.formatGeoType(location.getSource()));
+      if (wocation.getsouwce() != nyuww) {
+        buiwdew.withstwingfiewd(eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname(), 😳😳😳
+            e-eawwybiwdfiewdconstants.fowmatgeotype(wocation.getsouwce()));
       }
 
-      if (GeoUtil.validateGeoCoordinates(location.getLatitude(), location.getLongitude())) {
-        lat = location.getLatitude();
-        lon = location.getLongitude();
-      }
-    }
-
-    // See SEARCH-14317 for investigation on how much space geo filed is used in archive cluster.
-    // In lucene archives, this CSF is needed regardless of whether geoLocation is set.
-    builder.withLatLonCSF(lat, lon);
-
-    if (versionedTweetFeatures.isSetTokenizedPlace()) {
-      Place place = versionedTweetFeatures.getTokenizedPlace();
-      Preconditions.checkArgument(place.isSetId(), "Place ID not set for tweet "
-          + message.getId());
-      Preconditions.checkArgument(place.isSetFullName(),
-          "Place full name not set for tweet " + message.getId());
-      builder.addFilterInternalFieldTerm(EarlybirdFieldConstant.PLACE_ID_FIELD.getFieldName());
-      builder
-          .withStringField(EarlybirdFieldConstant.PLACE_ID_FIELD.getFieldName(), place.getId())
-          .withStringField(EarlybirdFieldConstant.PLACE_FULL_NAME_FIELD.getFieldName(),
-              place.getFullName());
-      if (place.isSetCountryCode()) {
-        builder.withStringField(EarlybirdFieldConstant.PLACE_COUNTRY_CODE_FIELD.getFieldName(),
-            place.getCountryCode());
+      if (geoutiw.vawidategeocoowdinates(wocation.getwatitude(), OwO w-wocation.getwongitude())) {
+        wat = w-wocation.getwatitude();
+        w-won = wocation.getwongitude();
       }
     }
 
-    if (versionedTweetFeatures.isSetTokenizedProfileGeoEnrichment()) {
-      ProfileGeoEnrichment profileGeoEnrichment =
-          versionedTweetFeatures.getTokenizedProfileGeoEnrichment();
-      Preconditions.checkArgument(
-          profileGeoEnrichment.isSetPotentialLocations(),
-          "ProfileGeoEnrichment.potentialLocations not set for tweet "
-              + message.getId());
-      List<PotentialLocation> potentialLocations = profileGeoEnrichment.getPotentialLocations();
-      Preconditions.checkArgument(
-          !potentialLocations.isEmpty(),
-          "Found tweet with an empty ProfileGeoEnrichment.potentialLocations: "
-              + message.getId());
-      builder.addFilterInternalFieldTerm(EarlybirdFieldConstant.PROFILE_GEO_FILTER_TERM);
-      for (PotentialLocation potentialLocation : potentialLocations) {
-        if (potentialLocation.isSetCountryCode()) {
-          builder.withStringField(
-              EarlybirdFieldConstant.PROFILE_GEO_COUNTRY_CODE_FIELD.getFieldName(),
-              potentialLocation.getCountryCode());
+    // see seawch-14317 fow investigation o-on h-how much space geo fiwed is used i-in awchive cwustew. ^^
+    // in wucene awchives, rawr x3 t-this csf is nyeeded wegawdwess of w-whethew geowocation i-is set. 🥺
+    b-buiwdew.withwatwoncsf(wat, (ˆ ﻌ ˆ)♡ won);
+
+    i-if (vewsionedtweetfeatuwes.issettokenizedpwace()) {
+      p-pwace pwace = v-vewsionedtweetfeatuwes.gettokenizedpwace();
+      p-pweconditions.checkawgument(pwace.issetid(), ( ͡o ω ͡o ) "pwace id nyot set f-fow tweet "
+          + m-message.getid());
+      p-pweconditions.checkawgument(pwace.issetfuwwname(), >w<
+          "pwace f-fuww nyame n-nyot set fow tweet " + m-message.getid());
+      b-buiwdew.addfiwtewintewnawfiewdtewm(eawwybiwdfiewdconstant.pwace_id_fiewd.getfiewdname());
+      b-buiwdew
+          .withstwingfiewd(eawwybiwdfiewdconstant.pwace_id_fiewd.getfiewdname(), /(^•ω•^) pwace.getid())
+          .withstwingfiewd(eawwybiwdfiewdconstant.pwace_fuww_name_fiewd.getfiewdname(), 😳😳😳
+              p-pwace.getfuwwname());
+      if (pwace.issetcountwycode()) {
+        b-buiwdew.withstwingfiewd(eawwybiwdfiewdconstant.pwace_countwy_code_fiewd.getfiewdname(),
+            pwace.getcountwycode());
+      }
+    }
+
+    i-if (vewsionedtweetfeatuwes.issettokenizedpwofiwegeoenwichment()) {
+      p-pwofiwegeoenwichment p-pwofiwegeoenwichment =
+          vewsionedtweetfeatuwes.gettokenizedpwofiwegeoenwichment();
+      pweconditions.checkawgument(
+          pwofiwegeoenwichment.issetpotentiawwocations(), (U ᵕ U❁)
+          "pwofiwegeoenwichment.potentiawwocations n-nyot s-set fow tweet "
+              + m-message.getid());
+      wist<potentiawwocation> potentiawwocations = pwofiwegeoenwichment.getpotentiawwocations();
+      p-pweconditions.checkawgument(
+          !potentiawwocations.isempty(), (˘ω˘)
+          "found t-tweet with an empty pwofiwegeoenwichment.potentiawwocations: "
+              + m-message.getid());
+      b-buiwdew.addfiwtewintewnawfiewdtewm(eawwybiwdfiewdconstant.pwofiwe_geo_fiwtew_tewm);
+      fow (potentiawwocation potentiawwocation : potentiawwocations) {
+        i-if (potentiawwocation.issetcountwycode()) {
+          b-buiwdew.withstwingfiewd(
+              e-eawwybiwdfiewdconstant.pwofiwe_geo_countwy_code_fiewd.getfiewdname(), 😳
+              p-potentiawwocation.getcountwycode());
         }
-        if (potentialLocation.isSetRegion()) {
-          builder.withStringField(EarlybirdFieldConstant.PROFILE_GEO_REGION_FIELD.getFieldName(),
-              potentialLocation.getRegion());
+        if (potentiawwocation.issetwegion()) {
+          buiwdew.withstwingfiewd(eawwybiwdfiewdconstant.pwofiwe_geo_wegion_fiewd.getfiewdname(), (ꈍᴗꈍ)
+              p-potentiawwocation.getwegion());
         }
-        if (potentialLocation.isSetLocality()) {
-          builder.withStringField(EarlybirdFieldConstant.PROFILE_GEO_LOCALITY_FIELD.getFieldName(),
-              potentialLocation.getLocality());
+        i-if (potentiawwocation.issetwocawity()) {
+          buiwdew.withstwingfiewd(eawwybiwdfiewdconstant.pwofiwe_geo_wocawity_fiewd.getfiewdname(), :3
+              potentiawwocation.getwocawity());
         }
       }
     }
 
-    builder.withPlacesField(message.getPlaces());
+    buiwdew.withpwacesfiewd(message.getpwaces());
   }
 
   /**
-   * Build the retweet and reply fields.
+   * b-buiwd the wetweet and wepwy fiewds.
    */
-  public static void buildRetweetAndReplyFields(
-      EarlybirdThriftDocumentBuilder builder,
-      TwitterMessage message,
-      boolean strict) {
-    long retweetUserIdVal = -1;
-    long sharedStatusIdVal = -1;
-    if (message.getRetweetMessage() != null) {
-      if (message.getRetweetMessage().getSharedId() != null) {
-        sharedStatusIdVal = message.getRetweetMessage().getSharedId();
+  p-pubwic static void buiwdwetweetandwepwyfiewds(
+      e-eawwybiwdthwiftdocumentbuiwdew b-buiwdew, /(^•ω•^)
+      twittewmessage m-message, ^^;;
+      b-boowean stwict) {
+    wong wetweetusewidvaw = -1;
+    w-wong shawedstatusidvaw = -1;
+    if (message.getwetweetmessage() != n-nyuww) {
+      i-if (message.getwetweetmessage().getshawedid() != n-nyuww) {
+        s-shawedstatusidvaw = message.getwetweetmessage().getshawedid();
       }
-      if (message.getRetweetMessage().hasSharedUserTwitterId()) {
-        retweetUserIdVal = message.getRetweetMessage().getSharedUserTwitterId();
-      }
-    }
-
-    long inReplyToStatusIdVal = -1;
-    long inReplyToUserIdVal = -1;
-    if (message.isReply()) {
-      if (message.getInReplyToStatusId().isPresent()) {
-        inReplyToStatusIdVal = message.getInReplyToStatusId().get();
-      }
-      if (message.getToUserTwitterId().isPresent()) {
-        inReplyToUserIdVal = message.getToUserTwitterId().get();
+      i-if (message.getwetweetmessage().hasshawedusewtwittewid()) {
+        w-wetweetusewidvaw = m-message.getwetweetmessage().getshawedusewtwittewid();
       }
     }
 
-    buildRetweetAndReplyFields(
-        retweetUserIdVal,
-        sharedStatusIdVal,
-        inReplyToStatusIdVal,
-        inReplyToUserIdVal,
-        strict,
-        builder);
+    wong inwepwytostatusidvaw = -1;
+    w-wong inwepwytousewidvaw = -1;
+    if (message.iswepwy()) {
+      if (message.getinwepwytostatusid().ispwesent()) {
+        i-inwepwytostatusidvaw = message.getinwepwytostatusid().get();
+      }
+      i-if (message.gettousewtwittewid().ispwesent()) {
+        i-inwepwytousewidvaw = message.gettousewtwittewid().get();
+      }
+    }
+
+    buiwdwetweetandwepwyfiewds(
+        wetweetusewidvaw, o.O
+        shawedstatusidvaw, 😳
+        i-inwepwytostatusidvaw, UwU
+        inwepwytousewidvaw, >w<
+        s-stwict,
+        b-buiwdew);
   }
 
   /**
-   * Build the quotes fields.
+   * buiwd the quotes fiewds. o.O
    */
-  public static void buildQuotesFields(
-      EarlybirdThriftDocumentBuilder builder,
-      TwitterMessage message) {
-    if (message.getQuotedMessage() != null) {
-      TwitterQuotedMessage quoted = message.getQuotedMessage();
-      if (quoted != null && quoted.getQuotedStatusId() > 0 && quoted.getQuotedUserId() > 0) {
-        builder.withQuote(quoted.getQuotedStatusId(), quoted.getQuotedUserId());
+  p-pubwic static void buiwdquotesfiewds(
+      e-eawwybiwdthwiftdocumentbuiwdew b-buiwdew, (˘ω˘)
+      twittewmessage m-message) {
+    i-if (message.getquotedmessage() != nyuww) {
+      t-twittewquotedmessage quoted = message.getquotedmessage();
+      if (quoted != nyuww && quoted.getquotedstatusid() > 0 && q-quoted.getquotedusewid() > 0) {
+        buiwdew.withquote(quoted.getquotedstatusid(), òωó quoted.getquotedusewid());
       }
-    }
-  }
-
-  /**
-   * Build directed at field.
-   */
-  public static void buildDirectedAtFields(
-      EarlybirdThriftDocumentBuilder builder,
-      TwitterMessage message) {
-    if (message.getDirectedAtUserId().isPresent() && message.getDirectedAtUserId().get() > 0) {
-      builder.withDirectedAtUser(message.getDirectedAtUserId().get());
-      builder.addFilterInternalFieldTerm(EarlybirdFieldConstant.DIRECTED_AT_FILTER_TERM);
     }
   }
 
   /**
-   * Build the versioned features for a tweet.
+   * b-buiwd diwected at fiewd. nyaa~~
    */
-  public static void buildVersionedFeatureFields(
-      EarlybirdThriftDocumentBuilder builder,
-      VersionedTweetFeatures versionedTweetFeatures) {
-    builder
-        .withHashtagsField(versionedTweetFeatures.getHashtags())
-        .withMentionsField(versionedTweetFeatures.getMentions())
-        .withStocksFields(versionedTweetFeatures.getStocks())
-        .withResolvedLinksText(versionedTweetFeatures.getNormalizedResolvedUrlText())
-        .withTokenStreamField(EarlybirdFieldConstant.TEXT_FIELD.getFieldName(),
-            versionedTweetFeatures.getTweetTokenStreamText(),
-            versionedTweetFeatures.isSetTweetTokenStream()
-                ? versionedTweetFeatures.getTweetTokenStream() : null)
-        .withStringField(EarlybirdFieldConstant.SOURCE_FIELD.getFieldName(),
-            versionedTweetFeatures.getSource())
-        .withStringField(EarlybirdFieldConstant.NORMALIZED_SOURCE_FIELD.getFieldName(),
-            versionedTweetFeatures.getNormalizedSource());
-
-    // Internal fields for smileys and question marks
-    if (versionedTweetFeatures.hasPositiveSmiley) {
-      builder.withStringField(
-          EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-          EarlybirdFieldConstant.HAS_POSITIVE_SMILEY);
-    }
-    if (versionedTweetFeatures.hasNegativeSmiley) {
-      builder.withStringField(
-          EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-          EarlybirdFieldConstant.HAS_NEGATIVE_SMILEY);
-    }
-    if (versionedTweetFeatures.hasQuestionMark) {
-      builder.withStringField(EarlybirdFieldConstant.TEXT_FIELD.getFieldName(),
-          EarlybirdThriftDocumentBuilder.QUESTION_MARK);
+  pubwic static void buiwddiwectedatfiewds(
+      e-eawwybiwdthwiftdocumentbuiwdew buiwdew, ( ͡o ω ͡o )
+      twittewmessage message) {
+    if (message.getdiwectedatusewid().ispwesent() && m-message.getdiwectedatusewid().get() > 0) {
+      b-buiwdew.withdiwectedatusew(message.getdiwectedatusewid().get());
+      buiwdew.addfiwtewintewnawfiewdtewm(eawwybiwdfiewdconstant.diwected_at_fiwtew_tewm);
     }
   }
 
   /**
-   * Build the escherbird annotations for a tweet.
+   * b-buiwd the vewsioned featuwes fow a tweet. 😳😳😳
    */
-  public static void buildAnnotationFields(
-      EarlybirdThriftDocumentBuilder builder,
-      TwitterMessage message) {
-    List<TwitterMessage.EscherbirdAnnotation> escherbirdAnnotations =
-        message.getEscherbirdAnnotations();
-    if (CollectionUtils.isEmpty(escherbirdAnnotations)) {
-      return;
+  p-pubwic static v-void buiwdvewsionedfeatuwefiewds(
+      eawwybiwdthwiftdocumentbuiwdew b-buiwdew, ^•ﻌ•^
+      vewsionedtweetfeatuwes v-vewsionedtweetfeatuwes) {
+    buiwdew
+        .withhashtagsfiewd(vewsionedtweetfeatuwes.gethashtags())
+        .withmentionsfiewd(vewsionedtweetfeatuwes.getmentions())
+        .withstocksfiewds(vewsionedtweetfeatuwes.getstocks())
+        .withwesowvedwinkstext(vewsionedtweetfeatuwes.getnowmawizedwesowveduwwtext())
+        .withtokenstweamfiewd(eawwybiwdfiewdconstant.text_fiewd.getfiewdname(), (˘ω˘)
+            vewsionedtweetfeatuwes.gettweettokenstweamtext(), (˘ω˘)
+            vewsionedtweetfeatuwes.issettweettokenstweam()
+                ? v-vewsionedtweetfeatuwes.gettweettokenstweam() : nyuww)
+        .withstwingfiewd(eawwybiwdfiewdconstant.souwce_fiewd.getfiewdname(), -.-
+            vewsionedtweetfeatuwes.getsouwce())
+        .withstwingfiewd(eawwybiwdfiewdconstant.nowmawized_souwce_fiewd.getfiewdname(), ^•ﻌ•^
+            v-vewsionedtweetfeatuwes.getnowmawizedsouwce());
+
+    // i-intewnaw f-fiewds fow smiweys and question mawks
+    if (vewsionedtweetfeatuwes.haspositivesmiwey) {
+      b-buiwdew.withstwingfiewd(
+          eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname(), /(^•ω•^)
+          eawwybiwdfiewdconstant.has_positive_smiwey);
+    }
+    if (vewsionedtweetfeatuwes.hasnegativesmiwey) {
+      buiwdew.withstwingfiewd(
+          e-eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname(), (///ˬ///✿)
+          e-eawwybiwdfiewdconstant.has_negative_smiwey);
+    }
+    i-if (vewsionedtweetfeatuwes.hasquestionmawk) {
+      buiwdew.withstwingfiewd(eawwybiwdfiewdconstant.text_fiewd.getfiewdname(), mya
+          e-eawwybiwdthwiftdocumentbuiwdew.question_mawk);
+    }
+  }
+
+  /**
+   * buiwd the eschewbiwd annotations f-fow a tweet. o.O
+   */
+  p-pubwic static void buiwdannotationfiewds(
+      e-eawwybiwdthwiftdocumentbuiwdew buiwdew, ^•ﻌ•^
+      twittewmessage m-message) {
+    wist<twittewmessage.eschewbiwdannotation> eschewbiwdannotations =
+        m-message.geteschewbiwdannotations();
+    i-if (cowwectionutiws.isempty(eschewbiwdannotations)) {
+      wetuwn;
     }
 
-    builder.addFacetSkipList(EarlybirdFieldConstant.ENTITY_ID_FIELD.getFieldName());
+    b-buiwdew.addfacetskipwist(eawwybiwdfiewdconstant.entity_id_fiewd.getfiewdname());
 
-    for (TwitterMessage.EscherbirdAnnotation annotation : escherbirdAnnotations) {
-      String groupDomainEntity = String.format("%d.%d.%d",
-          annotation.groupId, annotation.domainId, annotation.entityId);
-      String domainEntity = String.format("%d.%d", annotation.domainId, annotation.entityId);
-      String entity = String.format("%d", annotation.entityId);
+    f-fow (twittewmessage.eschewbiwdannotation a-annotation : eschewbiwdannotations) {
+      stwing gwoupdomainentity = s-stwing.fowmat("%d.%d.%d", (U ᵕ U❁)
+          annotation.gwoupid, :3 annotation.domainid, (///ˬ///✿) a-annotation.entityid);
+      stwing domainentity = stwing.fowmat("%d.%d", (///ˬ///✿) a-annotation.domainid, 🥺 a-annotation.entityid);
+      s-stwing entity = s-stwing.fowmat("%d", -.- a-annotation.entityid);
 
-      builder.withStringField(EarlybirdFieldConstant.ENTITY_ID_FIELD.getFieldName(),
-          groupDomainEntity);
-      builder.withStringField(EarlybirdFieldConstant.ENTITY_ID_FIELD.getFieldName(),
-          domainEntity);
-      builder.withStringField(EarlybirdFieldConstant.ENTITY_ID_FIELD.getFieldName(),
+      buiwdew.withstwingfiewd(eawwybiwdfiewdconstant.entity_id_fiewd.getfiewdname(), nyaa~~
+          g-gwoupdomainentity);
+      buiwdew.withstwingfiewd(eawwybiwdfiewdconstant.entity_id_fiewd.getfiewdname(), (///ˬ///✿)
+          domainentity);
+      b-buiwdew.withstwingfiewd(eawwybiwdfiewdconstant.entity_id_fiewd.getfiewdname(), 🥺
           entity);
     }
   }
 
   /**
-   * Build the correct ThriftIndexingEvent's fields based on retweet and reply status.
+   * b-buiwd the cowwect thwiftindexingevent's fiewds b-based on wetweet a-and wepwy status.
    */
-  public static void buildRetweetAndReplyFields(
-      long retweetUserIdVal,
-      long sharedStatusIdVal,
-      long inReplyToStatusIdVal,
-      long inReplyToUserIdVal,
-      boolean strict,
-      EarlybirdThriftDocumentBuilder builder) {
-    Optional<Long> retweetUserId = Optional.of(retweetUserIdVal).filter(x -> x > 0);
-    Optional<Long> sharedStatusId = Optional.of(sharedStatusIdVal).filter(x -> x > 0);
-    Optional<Long> inReplyToUserId = Optional.of(inReplyToUserIdVal).filter(x -> x > 0);
-    Optional<Long> inReplyToStatusId = Optional.of(inReplyToStatusIdVal).filter(x -> x > 0);
+  pubwic s-static void buiwdwetweetandwepwyfiewds(
+      wong wetweetusewidvaw, >w<
+      w-wong s-shawedstatusidvaw, rawr x3
+      wong i-inwepwytostatusidvaw, (⑅˘꒳˘)
+      w-wong inwepwytousewidvaw, σωσ
+      b-boowean stwict, XD
+      eawwybiwdthwiftdocumentbuiwdew buiwdew) {
+    o-optionaw<wong> wetweetusewid = optionaw.of(wetweetusewidvaw).fiwtew(x -> x > 0);
+    o-optionaw<wong> shawedstatusid = optionaw.of(shawedstatusidvaw).fiwtew(x -> x-x > 0);
+    optionaw<wong> i-inwepwytousewid = o-optionaw.of(inwepwytousewidvaw).fiwtew(x -> x > 0);
+    o-optionaw<wong> i-inwepwytostatusid = optionaw.of(inwepwytostatusidvaw).fiwtew(x -> x-x > 0);
 
-    // We have six combinations here. A Tweet can be
-    //   1) a reply to another tweet (then it has both in-reply-to-user-id and
-    //      in-reply-to-status-id set),
-    //   2) directed-at a user (then it only has in-reply-to-user-id set),
-    //   3) not a reply at all.
-    // Additionally, it may or may not be a Retweet (if it is, then it has retweet-user-id and
-    // retweet-status-id set).
+    // we have six c-combinations hewe. -.- a tweet can b-be
+    //   1) a-a wepwy to anothew tweet (then it has both in-wepwy-to-usew-id and
+    //      in-wepwy-to-status-id set), >_<
+    //   2) diwected-at a-a usew (then i-it onwy has in-wepwy-to-usew-id set), rawr
+    //   3) nyot a wepwy at aww. 😳😳😳
+    // additionawwy, UwU i-it may ow may nyot be a-a wetweet (if i-it is, (U ﹏ U) then it has wetweet-usew-id and
+    // wetweet-status-id set). (˘ω˘)
     //
-    // We want to set some fields unconditionally, and some fields (reference-author-id and
-    // shared-status-id) depending on the reply/retweet combination.
+    // we want to set s-some fiewds unconditionawwy, /(^•ω•^) and some fiewds (wefewence-authow-id and
+    // s-shawed-status-id) depending on the w-wepwy/wetweet c-combination. (U ﹏ U)
     //
-    // 1. Normal tweet (not a reply, not a retweet). None of the fields should be set.
+    // 1. ^•ﻌ•^ nyowmaw tweet (not a-a wepwy, >w< nyot a-a wetweet). nyone o-of the fiewds s-shouwd be set. ʘwʘ
     //
-    // 2. Reply to a tweet (both in-reply-to-user-id and in-reply-to-status-id set).
-    //   IN_REPLY_TO_USER_ID_FIELD    should be set to in-reply-to-user-id
-    //   SHARED_STATUS_ID_CSF         should be set to in-reply-to-status-id
-    //   IS_REPLY_FLAG                should be set
+    // 2. òωó w-wepwy to a tweet (both i-in-wepwy-to-usew-id and in-wepwy-to-status-id set). o.O
+    //   in_wepwy_to_usew_id_fiewd    shouwd be set to in-wepwy-to-usew-id
+    //   shawed_status_id_csf         s-shouwd b-be set to in-wepwy-to-status-id
+    //   i-is_wepwy_fwag                s-shouwd b-be set
     //
-    // 3. Directed-at a user (only in-reply-to-user-id is set).
-    //   IN_REPLY_TO_USER_ID_FIELD    should be set to in-reply-to-user-id
-    //   IS_REPLY_FLAG                should be set
+    // 3. ( ͡o ω ͡o ) d-diwected-at a usew (onwy in-wepwy-to-usew-id is set). mya
+    //   in_wepwy_to_usew_id_fiewd    s-shouwd be set t-to in-wepwy-to-usew-id
+    //   is_wepwy_fwag                shouwd be set
     //
-    // 4. Retweet of a normal tweet (retweet-user-id and retweet-status-id are set).
-    //   RETWEET_SOURCE_USER_ID_FIELD should be set to retweet-user-id
-    //   SHARED_STATUS_ID_CSF         should be set to retweet-status-id
-    //   IS_RETWEET_FLAG              should be set
+    // 4. >_< wetweet o-of a nyowmaw t-tweet (wetweet-usew-id a-and wetweet-status-id awe set). rawr
+    //   wetweet_souwce_usew_id_fiewd s-shouwd be set to wetweet-usew-id
+    //   shawed_status_id_csf         s-shouwd be s-set to wetweet-status-id
+    //   is_wetweet_fwag              shouwd be set
     //
-    // 5. Retweet of a reply (both in-reply-to-user-id and in-reply-to-status-id set,
-    // retweet-user-id and retweet-status-id are set).
-    //   RETWEET_SOURCE_USER_ID_FIELD should be set to retweet-user-id
-    //   SHARED_STATUS_ID_CSF         should be set to retweet-status-id (retweet beats reply!)
-    //   IS_RETWEET_FLAG              should be set
-    //   IN_REPLY_TO_USER_ID_FIELD    should be set to in-reply-to-user-id
-    //   IS_REPLY_FLAG                should NOT be set
+    // 5. >_< wetweet o-of a wepwy (both in-wepwy-to-usew-id a-and i-in-wepwy-to-status-id set, (U ﹏ U)
+    // w-wetweet-usew-id a-and wetweet-status-id a-awe set). rawr
+    //   w-wetweet_souwce_usew_id_fiewd s-shouwd be s-set to wetweet-usew-id
+    //   shawed_status_id_csf         shouwd b-be set to w-wetweet-status-id (wetweet beats w-wepwy!)
+    //   is_wetweet_fwag              shouwd be set
+    //   i-in_wepwy_to_usew_id_fiewd    shouwd be set t-to in-wepwy-to-usew-id
+    //   is_wepwy_fwag                s-shouwd n-nyot be set
     //
-    // 6. Retweet of a directed-at tweet (only in-reply-to-user-id is set,
-    // retweet-user-id and retweet-status-id are set).
-    //   RETWEET_SOURCE_USER_ID_FIELD should be set to retweet-user-id
-    //   SHARED_STATUS_ID_CSF         should be set to retweet-status-id
-    //   IS_RETWEET_FLAG              should be set
-    //   IN_REPLY_TO_USER_ID_FIELD    should be set to in-reply-to-user-id
-    //   IS_REPLY_FLAG                should NOT be set
+    // 6. (U ᵕ U❁) wetweet of a diwected-at tweet (onwy i-in-wepwy-to-usew-id is set, (ˆ ﻌ ˆ)♡
+    // wetweet-usew-id a-and wetweet-status-id a-awe set). >_<
+    //   wetweet_souwce_usew_id_fiewd shouwd be set to w-wetweet-usew-id
+    //   s-shawed_status_id_csf         shouwd be s-set to wetweet-status-id
+    //   is_wetweet_fwag              shouwd be set
+    //   i-in_wepwy_to_usew_id_fiewd    s-shouwd be set to in-wepwy-to-usew-id
+    //   i-is_wepwy_fwag                shouwd n-nyot be set
     //
-    // In other words:
-    // SHARED_STATUS_ID_CSF logic: if this is a retweet SHARED_STATUS_ID_CSF should be set to
-    // retweet-status-id, otherwise if it's a reply to a tweet, it should be set to
-    // in-reply-to-status-id.
+    // in othew wowds:
+    // shawed_status_id_csf w-wogic: i-if this is a w-wetweet shawed_status_id_csf s-shouwd be set to
+    // wetweet-status-id, ^^;; othewwise if it's a wepwy to a tweet, ʘwʘ it shouwd be set to
+    // i-in-wepwy-to-status-id. 😳😳😳
 
-    Preconditions.checkState(retweetUserId.isPresent() == sharedStatusId.isPresent());
+    p-pweconditions.checkstate(wetweetusewid.ispwesent() == s-shawedstatusid.ispwesent());
 
-    if (retweetUserId.isPresent()) {
-      builder.withNativeRetweet(retweetUserId.get(), sharedStatusId.get());
+    i-if (wetweetusewid.ispwesent()) {
+      b-buiwdew.withnativewetweet(wetweetusewid.get(), UwU s-shawedstatusid.get());
 
-      if (inReplyToUserId.isPresent()) {
-        // Set IN_REPLY_TO_USER_ID_FIELD even if this is a retweet of a reply.
-        builder.withInReplyToUserID(inReplyToUserId.get());
+      if (inwepwytousewid.ispwesent()) {
+        // set i-in_wepwy_to_usew_id_fiewd e-even if this is a wetweet o-of a wepwy. OwO
+        b-buiwdew.withinwepwytousewid(inwepwytousewid.get());
       }
-    } else {
-      // If this is a retweet of a reply, we don't want to mark it as a reply, or override fields
-      // set by the retweet logic.
-      // If we are in this branch, this is not a retweet. Potentially, we set the reply flag,
-      // and override shared-status-id and reference-author-id.
+    } ewse {
+      // if t-this is a wetweet of a wepwy, :3 we don't want to mawk i-it as a wepwy, -.- ow ovewwide fiewds
+      // set b-by the wetweet w-wogic. 🥺
+      // if we awe in this b-bwanch, -.- this i-is nyot a wetweet. -.- p-potentiawwy, (U ﹏ U) we set the wepwy f-fwag,
+      // a-and ovewwide shawed-status-id and wefewence-authow-id. rawr
 
-      if (inReplyToStatusId.isPresent()) {
-        if (strict) {
-          // Enforcing that if this is a reply to a tweet, then it also has a replied-to user.
-          Preconditions.checkState(inReplyToUserId.isPresent());
+      if (inwepwytostatusid.ispwesent()) {
+        i-if (stwict) {
+          // enfowcing t-that if this is a-a wepwy to a tweet, mya t-then it awso has a wepwied-to u-usew. ( ͡o ω ͡o )
+          pweconditions.checkstate(inwepwytousewid.ispwesent());
         }
-        builder.withReplyFlag();
-        builder.withLongField(
-            EarlybirdFieldConstant.SHARED_STATUS_ID_CSF.getFieldName(),
-            inReplyToStatusId.get());
-        builder.withLongField(
-            EarlybirdFieldConstant.IN_REPLY_TO_TWEET_ID_FIELD.getFieldName(),
-            inReplyToStatusId.get());
+        buiwdew.withwepwyfwag();
+        b-buiwdew.withwongfiewd(
+            eawwybiwdfiewdconstant.shawed_status_id_csf.getfiewdname(), /(^•ω•^)
+            inwepwytostatusid.get());
+        buiwdew.withwongfiewd(
+            eawwybiwdfiewdconstant.in_wepwy_to_tweet_id_fiewd.getfiewdname(), >_<
+            inwepwytostatusid.get());
       }
-      if (inReplyToUserId.isPresent()) {
-        builder.withReplyFlag();
-        builder.withInReplyToUserID(inReplyToUserId.get());
+      if (inwepwytousewid.ispwesent()) {
+        b-buiwdew.withwepwyfwag();
+        buiwdew.withinwepwytousewid(inwepwytousewid.get());
       }
     }
   }
 
   /**
-   * Build the engagement fields.
+   * buiwd the engagement fiewds. (✿oωo)
    */
-  public static void buildNormalizedMinEngagementFields(
-      EarlybirdThriftDocumentBuilder builder,
-      EarlybirdEncodedFeatures encodedFeatures,
-      EarlybirdCluster cluster) throws IOException {
-    if (EarlybirdCluster.isArchive(cluster)) {
-      int favoriteCount = encodedFeatures.getFeatureValue(EarlybirdFieldConstant.FAVORITE_COUNT);
-      int retweetCount = encodedFeatures.getFeatureValue(EarlybirdFieldConstant.RETWEET_COUNT);
-      int replyCount = encodedFeatures.getFeatureValue(EarlybirdFieldConstant.REPLY_COUNT);
-      builder
-          .withNormalizedMinEngagementField(
-              EarlybirdFieldConstant.NORMALIZED_FAVORITE_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD
-                  .getFieldName(),
-              favoriteCount);
-      builder
-          .withNormalizedMinEngagementField(
-              EarlybirdFieldConstant.NORMALIZED_RETWEET_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD
-                  .getFieldName(),
-              retweetCount);
-      builder
-          .withNormalizedMinEngagementField(
-              EarlybirdFieldConstant.NORMALIZED_REPLY_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD
-                  .getFieldName(),
-              replyCount);
+  pubwic static void buiwdnowmawizedminengagementfiewds(
+      eawwybiwdthwiftdocumentbuiwdew buiwdew, 😳😳😳
+      e-eawwybiwdencodedfeatuwes encodedfeatuwes, (ꈍᴗꈍ)
+      eawwybiwdcwustew c-cwustew) thwows ioexception {
+    i-if (eawwybiwdcwustew.isawchive(cwustew)) {
+      int favowitecount = encodedfeatuwes.getfeatuwevawue(eawwybiwdfiewdconstant.favowite_count);
+      i-int wetweetcount = encodedfeatuwes.getfeatuwevawue(eawwybiwdfiewdconstant.wetweet_count);
+      i-int wepwycount = encodedfeatuwes.getfeatuwevawue(eawwybiwdfiewdconstant.wepwy_count);
+      b-buiwdew
+          .withnowmawizedminengagementfiewd(
+              e-eawwybiwdfiewdconstant.nowmawized_favowite_count_gweatew_than_ow_equaw_to_fiewd
+                  .getfiewdname(), 🥺
+              favowitecount);
+      buiwdew
+          .withnowmawizedminengagementfiewd(
+              e-eawwybiwdfiewdconstant.nowmawized_wetweet_count_gweatew_than_ow_equaw_to_fiewd
+                  .getfiewdname(), mya
+              wetweetcount);
+      buiwdew
+          .withnowmawizedminengagementfiewd(
+              eawwybiwdfiewdconstant.nowmawized_wepwy_count_gweatew_than_ow_equaw_to_fiewd
+                  .getfiewdname(),
+              w-wepwycount);
     }
   }
 
   /**
-   * As seen in SEARCH-5617, we sometimes have incorrect createdAt. This method tries to fix them
-   * by extracting creation time from snowflake when possible.
+   * as seen i-in seawch-5617, (ˆ ﻌ ˆ)♡ we sometimes have i-incowwect cweatedat. (⑅˘꒳˘) this method t-twies to fix t-them
+   * by extwacting cweation time fwom snowfwake w-when possibwe. òωó
    */
-  public static long fixCreatedAtTimeStampIfNecessary(long id, long createdAtMs) {
-    if (createdAtMs < VALID_CREATION_TIME_THRESHOLD_MILLIS
-        && id > SnowflakeIdParser.SNOWFLAKE_ID_LOWER_BOUND) {
-      // This tweet has a snowflake ID, and we can extract timestamp from the ID.
-      ADJUSTED_BAD_CREATED_AT_COUNTER.increment();
-      return SnowflakeIdParser.getTimestampFromTweetId(id);
-    } else if (!SnowflakeIdParser.isTweetIDAndCreatedAtConsistent(id, createdAtMs)) {
-      LOG.error(
-          "Found inconsistent tweet ID and created at timestamp: [statusID={}], [createdAtMs={}]",
-          id, createdAtMs);
-      INCONSISTENT_TWEET_ID_AND_CREATED_AT_MS.increment();
+  pubwic static wong f-fixcweatedattimestampifnecessawy(wong id, wong cweatedatms) {
+    if (cweatedatms < vawid_cweation_time_thweshowd_miwwis
+        && id > snowfwakeidpawsew.snowfwake_id_wowew_bound) {
+      // t-this tweet has a s-snowfwake id, o.O and we can extwact t-timestamp fwom t-the id. XD
+      adjusted_bad_cweated_at_countew.incwement();
+      wetuwn snowfwakeidpawsew.gettimestampfwomtweetid(id);
+    } e-ewse if (!snowfwakeidpawsew.istweetidandcweatedatconsistent(id, (˘ω˘) cweatedatms)) {
+      wog.ewwow(
+          "found inconsistent tweet i-id and cweated a-at timestamp: [statusid={}], (ꈍᴗꈍ) [cweatedatms={}]", >w<
+          id, XD c-cweatedatms);
+      i-inconsistent_tweet_id_and_cweated_at_ms.incwement();
     }
 
-    return createdAtMs;
+    wetuwn cweatedatms;
   }
 }

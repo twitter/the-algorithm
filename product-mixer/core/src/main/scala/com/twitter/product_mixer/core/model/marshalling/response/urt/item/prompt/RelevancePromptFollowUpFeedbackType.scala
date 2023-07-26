@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.pwompt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cawwback
 
 /**
- * Different kinds of follow-ups after a positive-negative feedback on a prompt button.
+ * d-diffewent kinds o-of fowwow-ups aftew a-a positive-negative f-feedback o-on a pwompt button.
  *
- * URT API Reference: https://docbird.twitter.biz/unified_rich_timelines_urt/gen/com/twitter/timelines/render/thriftscala/RelevancePromptFollowUpFeedbackType.html
+ * u-uwt a-api wefewence: https://docbiwd.twittew.biz/unified_wich_timewines_uwt/gen/com/twittew/timewines/wendew/thwiftscawa/wewevancepwomptfowwowupfeedbacktype.htmw
  */
-sealed trait RelevancePromptFollowUpFeedbackType
+s-seawed twait wewevancepwomptfowwowupfeedbacktype
 
-case class RelevancePromptFollowUpTextInput(
-  context: String,
-  textFieldPlaceholder: String,
-  sendTextCallback: Callback)
-    extends RelevancePromptFollowUpFeedbackType
+case cwass wewevancepwomptfowwowuptextinput(
+  context: stwing, >_<
+  textfiewdpwacehowdew: stwing, :3
+  s-sendtextcawwback: cawwback)
+    extends wewevancepwomptfowwowupfeedbacktype

@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted
 
-case class CallToAction(
-  callToActionType: Option[String],
-  url: Option[String])
+case cwass cawwtoaction(
+  c-cawwtoactiontype: o-option[stwing],
+  u-uww: o-option[stwing])

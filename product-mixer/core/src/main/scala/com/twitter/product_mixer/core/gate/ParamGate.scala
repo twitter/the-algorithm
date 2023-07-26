@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.gate
+package com.twittew.pwoduct_mixew.cowe.gate
 
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.gateidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.timewines.configapi.pawam
 
-case class ParamGate(name: String, param: Param[Boolean])(implicit file: sourcecode.File)
-    extends Gate[PipelineQuery] {
+case cwass pawamgate(name: stwing, nyaa~~ pawam: pawam[boowean])(impwicit f-fiwe: souwcecode.fiwe)
+    extends g-gate[pipewinequewy] {
 
-  // From a customer-perspective, it's more useful to see the file that created the ParamGate
-  override val identifier: GateIdentifier = GateIdentifier(name)(file)
+  // fwom a-a customew-pewspective, /(^•ω•^) it's mowe usefuw to see the fiwe that cweated t-the pawamgate
+  ovewwide v-vaw identifiew: g-gateidentifiew = gateidentifiew(name)(fiwe)
 
-  override def shouldContinue(query: PipelineQuery): Stitch[Boolean] =
-    Stitch.value(query.params(param))
+  ovewwide def shouwdcontinue(quewy: pipewinequewy): stitch[boowean] =
+    s-stitch.vawue(quewy.pawams(pawam))
 }
 
-object ParamGate {
-  val EnabledGateSuffix = "Enabled"
-  val SupportedClientGateSuffix = "SupportedClient"
+object pawamgate {
+  vaw enabwedgatesuffix = "enabwed"
+  vaw suppowtedcwientgatesuffix = "suppowtedcwient"
 }

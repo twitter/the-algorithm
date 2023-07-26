@@ -1,70 +1,70 @@
-package com.twitter.home_mixer.functional_component.filter
+package com.twittew.home_mixew.functionaw_component.fiwtew
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.Trace
-import com.twitter.home_mixer.model.HomeFeatures.ExclusiveConversationAuthorIdFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.socialgraph.{thriftscala => sg}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
-import com.twitter.util.logging.Logging
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.finagwe.twacing.twace
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.excwusiveconvewsationauthowidfeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.sociawgwaph.{thwiftscawa => s-sg}
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stitch.sociawgwaph.sociawgwaph
+impowt com.twittew.utiw.wogging.wogging
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
 /**
- * Exclude invalid subscription tweets - cases where the viewer is not subscribed to the author
+ * e-excwude i-invawid subscwiption tweets - cases whewe the viewew is nyot subscwibed to the authow
  *
- * If SGS hydration fails, `SGSInvalidSubscriptionTweetFeature` will be set to None for
- * subscription tweets, so we explicitly filter those tweets out.
+ * i-if sgs hydwation faiws, 🥺 `sgsinvawidsubscwiptiontweetfeatuwe` wiww be set to nyone fow
+ * subscwiption t-tweets, (U ﹏ U) so we expwicitwy fiwtew t-those tweets out. >w<
  */
-@Singleton
-case class InvalidSubscriptionTweetFilter @Inject() (
-  socialGraphClient: SocialGraph,
-  statsReceiver: StatsReceiver)
-    extends Filter[PipelineQuery, TweetCandidate]
-    with Logging {
+@singweton
+c-case cwass invawidsubscwiptiontweetfiwtew @inject() (
+  s-sociawgwaphcwient: s-sociawgwaph, mya
+  statsweceivew: statsweceivew)
+    extends f-fiwtew[pipewinequewy, >w< tweetcandidate]
+    with wogging {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("InvalidSubscriptionTweet")
+  o-ovewwide vaw identifiew: fiwtewidentifiew = fiwtewidentifiew("invawidsubscwiptiontweet")
 
-  private val scopedStatsReceiver = statsReceiver.scope(identifier.toString)
-  private val validCounter = scopedStatsReceiver.counter("validExclusiveTweet")
-  private val invalidCounter = scopedStatsReceiver.counter("invalidExclusiveTweet")
+  pwivate vaw scopedstatsweceivew = statsweceivew.scope(identifiew.tostwing)
+  pwivate vaw vawidcountew = s-scopedstatsweceivew.countew("vawidexcwusivetweet")
+  pwivate v-vaw invawidcountew = s-scopedstatsweceivew.countew("invawidexcwusivetweet")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = Stitch
-    .traverse(candidates) { candidate =>
-      val exclusiveAuthorId =
-        candidate.features.getOrElse(ExclusiveConversationAuthorIdFeature, None)
+  o-ovewwide def appwy(
+    quewy: pipewinequewy, nyaa~~
+    candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): stitch[fiwtewwesuwt[tweetcandidate]] = s-stitch
+    .twavewse(candidates) { c-candidate =>
+      vaw e-excwusiveauthowid =
+        c-candidate.featuwes.getowewse(excwusiveconvewsationauthowidfeatuwe, (✿oωo) nyone)
 
-      if (exclusiveAuthorId.isDefined) {
-        val request = sg.ExistsRequest(
-          source = query.getRequiredUserId,
-          target = exclusiveAuthorId.get,
-          relationships =
-            Seq(sg.Relationship(sg.RelationshipType.TierOneSuperFollowing, hasRelationship = true)),
+      if (excwusiveauthowid.isdefined) {
+        v-vaw wequest = sg.existswequest(
+          s-souwce = quewy.getwequiwedusewid, ʘwʘ
+          tawget = excwusiveauthowid.get, (ˆ ﻌ ˆ)♡
+          w-wewationships =
+            seq(sg.wewationship(sg.wewationshiptype.tiewonesupewfowwowing, 😳😳😳 h-haswewationship = twue)), :3
         )
-        socialGraphClient.exists(request).map(_.exists).map { valid =>
-          if (!valid) invalidCounter.incr() else validCounter.incr()
-          valid
+        sociawgwaphcwient.exists(wequest).map(_.exists).map { v-vawid =>
+          i-if (!vawid) invawidcountew.incw() ewse vawidcountew.incw()
+          vawid
         }
-      } else Stitch.value(true)
-    }.map { validResults =>
-      val (kept, removed) = candidates
+      } ewse stitch.vawue(twue)
+    }.map { vawidwesuwts =>
+      vaw (kept, OwO wemoved) = c-candidates
         .map(_.candidate)
-        .zip(validResults)
-        .partition { case (candidate, valid) => valid }
+        .zip(vawidwesuwts)
+        .pawtition { c-case (candidate, (U ﹏ U) vawid) => v-vawid }
 
-      val keptCandidates = kept.map { case (candidate, _) => candidate }
-      val removedCandidates = removed.map { case (candidate, _) => candidate }
+      v-vaw keptcandidates = k-kept.map { case (candidate, >w< _) => candidate }
+      vaw w-wemovedcandidates = wemoved.map { case (candidate, (U ﹏ U) _) => candidate }
 
-      FilterResult(kept = keptCandidates, removed = removedCandidates)
+      fiwtewwesuwt(kept = k-keptcandidates, 😳 wemoved = wemovedcandidates)
     }
 }

@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.awewt
 
-import com.twitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert.BaseShowAlertIconDisplayInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertIconDisplayInfo
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.showawewtcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.item.awewt.baseshowawewticondispwayinfobuiwdew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.awewt.showawewticondispwayinfo
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case class StaticShowAlertIconDisplayInfoBuilder[-Query <: PipelineQuery](
-  iconDisplayInfo: ShowAlertIconDisplayInfo)
-    extends BaseShowAlertIconDisplayInfoBuilder[Query] {
+c-case cwass staticshowawewticondispwayinfobuiwdew[-quewy <: p-pipewinequewy](
+  i-icondispwayinfo: showawewticondispwayinfo)
+    extends baseshowawewticondispwayinfobuiwdew[quewy] {
 
-  def apply(
-    query: Query,
-    candidate: ShowAlertCandidate,
-    features: FeatureMap
-  ): Option[ShowAlertIconDisplayInfo] = Some(iconDisplayInfo)
+  def appwy(
+    quewy: quewy, -.-
+    c-candidate: showawewtcandidate, (ˆ ﻌ ˆ)♡
+    featuwes: f-featuwemap
+  ): option[showawewticondispwayinfo] = s-some(icondispwayinfo)
 }

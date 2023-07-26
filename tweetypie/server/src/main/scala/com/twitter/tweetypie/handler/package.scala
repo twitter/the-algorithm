@@ -1,42 +1,42 @@
-package com.twitter.tweetypie
+package com.twittew.tweetypie
 
-import com.twitter.context.thriftscala.Viewer
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.context.thwiftscawa.viewew
+i-impowt c-com.twittew.tweetypie.thwiftscawa._
 
-import scala.util.matching.Regex
-import com.twitter.context.TwitterContext
-import com.twitter.finagle.stats.Stat
-import com.twitter.snowflake.id.SnowflakeId
+i-impowt scawa.utiw.matching.wegex
+i-impowt c-com.twittew.context.twittewcontext
+i-impowt com.twittew.finagwe.stats.stat
+i-impowt com.twittew.snowfwake.id.snowfwakeid
 
-package object handler {
-  type PlaceLanguage = String
-  type TweetIdGenerator = () => Future[TweetId]
-  type NarrowcastValidator = FutureArrow[Narrowcast, Narrowcast]
-  type ReverseGeocoder = FutureArrow[(GeoCoordinates, PlaceLanguage), Option[Place]]
-  type CardUri = String
+package object handwew {
+  type pwacewanguage = s-stwing
+  type tweetidgenewatow = () => futuwe[tweetid]
+  type n-nyawwowcastvawidatow = futuweawwow[nawwowcast, >w< n-nyawwowcast]
+  type wevewsegeocodew = futuweawwow[(geocoowdinates, rawr pwacewanguage), mya o-option[pwace]]
+  type cawduwi = s-stwing
 
-  // A narrowcast location can be a PlaceId or a US metro code.
-  type NarrowcastLocation = String
+  // a-a nyawwowcast wocation can be a pwaceid ow a us metwo code. ^^
+  type nyawwowcastwocation = s-stwing
 
-  val PlaceIdRegex: Regex = """(?i)\A[0-9a-fA-F]{16}\Z""".r
+  vaw pwaceidwegex: wegex = """(?i)\a[0-9a-fa-f]{16}\z""".w
 
-  // Bring Tweetypie permitted TwitterContext into scope
-  val TwitterContext: TwitterContext =
-    com.twitter.context.TwitterContext(com.twitter.tweetypie.TwitterContextPermit)
+  // bwing tweetypie pewmitted t-twittewcontext into scope
+  vaw t-twittewcontext: t-twittewcontext =
+    c-com.twittew.context.twittewcontext(com.twittew.tweetypie.twittewcontextpewmit)
 
-  def getContributor(userId: UserId): Option[Contributor] = {
-    val viewer = TwitterContext().getOrElse(Viewer())
-    viewer.authenticatedUserId.filterNot(_ == userId).map(id => Contributor(id))
+  d-def getcontwibutow(usewid: usewid): option[contwibutow] = {
+    vaw viewew = t-twittewcontext().getowewse(viewew())
+    viewew.authenticatedusewid.fiwtewnot(_ == usewid).map(id => c-contwibutow(id))
   }
 
-  def trackLossyReadsAfterWrite(stat: Stat, windowLength: Duration)(tweetId: TweetId): Unit = {
-    // If the requested Tweet is NotFound, and the tweet age is less than the defined {{windowLength}} duration,
-    // then we capture the percentiles of when this request was attempted.
-    // This is being tracked to understand how lossy the reads are directly after tweet creation.
-    for {
-      timestamp <- SnowflakeId.timeFromIdOpt(tweetId)
-      age = Time.now.since(timestamp)
-      if age.inMillis <= windowLength.inMillis
-    } yield stat.add(age.inMillis)
+  def twackwossyweadsaftewwwite(stat: stat, 😳😳😳 windowwength: duwation)(tweetid: tweetid): unit = {
+    // i-if the wequested tweet is n-nyotfound, mya and the t-tweet age is w-wess than the defined {{windowwength}} duwation, 😳
+    // then we captuwe the pewcentiwes o-of when t-this wequest was attempted. -.-
+    // t-this is being t-twacked to undewstand how wossy t-the weads awe diwectwy aftew tweet c-cweation. 🥺
+    fow {
+      timestamp <- snowfwakeid.timefwomidopt(tweetid)
+      a-age = time.now.since(timestamp)
+      if age.inmiwwis <= w-windowwength.inmiwwis
+    } yiewd stat.add(age.inmiwwis)
   }
 }

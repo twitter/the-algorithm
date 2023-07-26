@@ -1,30 +1,30 @@
-package com.twitter.home_mixer.functional_component.candidate_source
+package com.twittew.home_mixew.functionaw_component.candidate_souwce
 
-import com.google.inject.name.Named
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.StaleTweetsCache
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.googwe.inject.name.named
+i-impowt c-com.twittew.finagwe.memcached.{cwient => m-memcachedcwient}
+i-impowt c-com.twittew.home_mixew.pawam.homemixewinjectionnames.stawetweetscache
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.stitch.stitch
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class StaleTweetsCacheCandidateSource @Inject() (
-  @Named(StaleTweetsCache) staleTweetsCache: MemcachedClient)
-    extends CandidateSource[Seq[Long], Long] {
+@singweton
+c-cwass stawetweetscachecandidatesouwce @inject() (
+  @named(stawetweetscache) stawetweetscache: memcachedcwient)
+    e-extends candidatesouwce[seq[wong], ( ͡o ω ͡o ) wong] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("StaleTweetsCache")
+  o-ovewwide vaw identifiew: candidatesouwceidentifiew = candidatesouwceidentifiew("stawetweetscache")
 
-  private val StaleTweetsCacheKeyPrefix = "v1_"
+  pwivate v-vaw stawetweetscachekeypwefix = "v1_"
 
-  override def apply(request: Seq[Long]): Stitch[Seq[Long]] = {
-    val keys = request.map(StaleTweetsCacheKeyPrefix + _)
+  ovewwide d-def appwy(wequest: s-seq[wong]): stitch[seq[wong]] = {
+    vaw keys = wequest.map(stawetweetscachekeypwefix + _)
 
-    Stitch.callFuture(staleTweetsCache.get(keys).map { tweets =>
+    stitch.cawwfutuwe(stawetweetscache.get(keys).map { t-tweets =>
       tweets.map {
-        case (k, _) => k.replaceFirst(StaleTweetsCacheKeyPrefix, "").toLong
-      }.toSeq
+        case (k, rawr x3 _) => k.wepwacefiwst(stawetweetscachekeypwefix, nyaa~~ "").towong
+      }.toseq
     })
   }
 }

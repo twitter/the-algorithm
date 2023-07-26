@@ -1,16 +1,16 @@
-package com.twitter.frigate.pushservice.config
+package com.twittew.fwigate.pushsewvice.config
 
-import com.twitter.frigate.common.util.Experiments
+impowt com.twittew.fwigate.common.utiw.expewiments
 
-object ExperimentsWithStats {
+o-object expewimentswithstats {
 
   /**
-   * Add an experiment here to collect detailed pushservice stats.
+   * a-add a-an expewiment hewe t-to cowwect detaiwed p-pushsewvice s-stats. (U ﹏ U)
    *
-   * ! Important !
-   * Keep this set small and remove experiments when you don't need the stats anymore.
+   * ! -.- i-impowtant ! (ˆ ﻌ ˆ)♡
+   * k-keep this set smow and wemove expewiments when you don't nyeed the stats a-anymowe. (⑅˘꒳˘)
    */
-  final val PushExperiments: Set[String] = Set(
-    Experiments.MRAndroidInlineActionHoldback.exptName,
+  finaw vaw pushexpewiments: set[stwing] = s-set(
+    expewiments.mwandwoidinwineactionhowdback.exptname, (U ᵕ U❁)
   )
 }

@@ -1,102 +1,102 @@
-package com.twitter.search.common.query;
+package com.twittew.seawch.common.quewy;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
+impowt j-java.utiw.wist;
+i-impowt java.utiw.map;
+i-impowt java.utiw.function.function;
 
-import com.google.common.collect.Maps;
+i-impowt c-com.googwe.common.cowwect.maps;
 
-import com.twitter.search.queryparser.query.Query;
+i-impowt com.twittew.seawch.quewypawsew.quewy.quewy;
 
-import static com.twitter.search.common.query.FieldRankHitInfo.UNSET_DOC_ID;
+i-impowt static c-com.twittew.seawch.common.quewy.fiewdwankhitinfo.unset_doc_id;
 
 /**
- * Generic helper class containing the data needed to set up and collect field hit attributions.
+ * genewic hewpew cwass containing the data nyeeded to s-set up and cowwect fiewd hit attwibutions. >_<
  */
-public class HitAttributeHelper implements HitAttributeProvider {
-  private final HitAttributeCollector collector;
-  private final Function<Integer, String> fieldIdsToFieldNames;
+pubwic cwass hitattwibutehewpew impwements h-hitattwibutepwovidew {
+  pwivate finaw h-hitattwibutecowwectow cowwectow;
+  pwivate finaw function<integew, rawr x3 s-stwing> fiewdidstofiewdnames;
 
-  // This is a mapping of type T query nodes to rank id
-  private final Map<Query, Integer> nodeToRankMap;
+  // this is a-a mapping of type t-t quewy nyodes to wank id
+  pwivate finaw map<quewy, /(^•ω•^) integew> nyodetowankmap;
 
-  // This is meant to expand individual Query nodes into multiple ranks,
-  // for example, expanding a multi_term_disjunction to include a rank for each disjunction value.
-  private final Map<Query, List<Integer>> expandedNodeToRankMap;
+  // t-this is meant to expand individuaw quewy nyodes into muwtipwe wanks, :3
+  // f-fow exampwe, (ꈍᴗꈍ) expanding a muwti_tewm_disjunction t-to incwude a wank f-fow each disjunction v-vawue. /(^•ω•^)
+  p-pwivate finaw map<quewy, (⑅˘꒳˘) wist<integew>> expandednodetowankmap;
 
-  // A single-entry cache for hit attribution, so we can reuse the immediate result. Will be used
-  // only when lastDocId matches
-  private ThreadLocal<Map<Integer, List<String>>> lastHitAttrHolder = new ThreadLocal<>();
-  private ThreadLocal<Integer> lastDocIdHolder = ThreadLocal.withInitial(() -> UNSET_DOC_ID);
+  // a-a singwe-entwy cache fow hit attwibution, ( ͡o ω ͡o ) so w-we can weuse the immediate wesuwt. òωó wiww be used
+  // onwy when wastdocid matches
+  pwivate thweadwocaw<map<integew, (⑅˘꒳˘) w-wist<stwing>>> wasthitattwhowdew = n-nyew thweadwocaw<>();
+  p-pwivate thweadwocaw<integew> w-wastdocidhowdew = thweadwocaw.withinitiaw(() -> unset_doc_id);
 
-  protected HitAttributeHelper(
-      HitAttributeCollector collector,
-      Function<Integer, String> fieldIdsToFieldNames,
-      Map<Query, Integer> nodeToRankMap,
-      Map<Query, List<Integer>> expandedNodeToRankMap) {
-    this.collector = collector;
-    this.fieldIdsToFieldNames = fieldIdsToFieldNames;
-    this.nodeToRankMap = nodeToRankMap;
-    this.expandedNodeToRankMap = expandedNodeToRankMap;
+  pwotected hitattwibutehewpew(
+      h-hitattwibutecowwectow c-cowwectow, XD
+      function<integew, -.- s-stwing> f-fiewdidstofiewdnames, :3
+      map<quewy, nyaa~~ integew> n-nyodetowankmap, 😳
+      map<quewy, (⑅˘꒳˘) w-wist<integew>> expandednodetowankmap) {
+    this.cowwectow = c-cowwectow;
+    this.fiewdidstofiewdnames = f-fiewdidstofiewdnames;
+    this.nodetowankmap = n-nyodetowankmap;
+    t-this.expandednodetowankmap = expandednodetowankmap;
   }
 
   /**
-   * Constructs a new {@code HitAttributeHelper} with the specified {@code HitAttributeCollector}
-   * instance and fields.
+   * constwucts a nyew {@code hitattwibutehewpew} with the specified {@code hitattwibutecowwectow}
+   * instance a-and fiewds. nyaa~~
    *
-   * @param collector a collector instance
-   * @param fieldIdsToFieldNames a list of field names indexed by id
+   * @pawam c-cowwectow a cowwectow i-instance
+   * @pawam f-fiewdidstofiewdnames a-a wist of fiewd nyames indexed by id
    */
-  public HitAttributeHelper(HitAttributeCollector collector, String[] fieldIdsToFieldNames) {
-    this(collector,
-        (fieldId) -> fieldIdsToFieldNames[fieldId],
-        Maps.newHashMap(),
-        Maps.newHashMap());
+  pubwic h-hitattwibutehewpew(hitattwibutecowwectow cowwectow, OwO stwing[] fiewdidstofiewdnames) {
+    this(cowwectow, rawr x3
+        (fiewdid) -> fiewdidstofiewdnames[fiewdid], XD
+        m-maps.newhashmap(),
+        maps.newhashmap());
   }
 
-  public HitAttributeCollector getFieldRankHitAttributeCollector() {
-    return collector;
+  p-pubwic h-hitattwibutecowwectow g-getfiewdwankhitattwibutecowwectow() {
+    wetuwn cowwectow;
   }
 
   /**
-   * Returns hit attribution information indexed by node rank
+   * w-wetuwns hit a-attwibution infowmation i-indexed b-by nyode wank
    *
-   * @param docId the document id
-   * @return a mapping from the query's node rank to a list of field names that were hit.
+   * @pawam docid the document id
+   * @wetuwn a-a mapping fwom t-the quewy's nyode w-wank to a wist o-of fiewd nyames t-that wewe hit. σωσ
    */
-  public Map<Integer, List<String>> getHitAttribution(int docId) {
-    // check cache first so we don't have to recompute the same thing.
-    if (lastDocIdHolder.get() == docId) {
-      return lastHitAttrHolder.get();
+  pubwic map<integew, (U ᵕ U❁) wist<stwing>> gethitattwibution(int d-docid) {
+    // check cache fiwst so we don't have to wecompute the same thing. (U ﹏ U)
+    if (wastdocidhowdew.get() == d-docid) {
+      wetuwn wasthitattwhowdew.get();
     }
 
-    lastDocIdHolder.set(docId);
-    Map<Integer, List<String>> hitAttribution =
-        collector.getHitAttribution(docId, fieldIdsToFieldNames);
-    lastHitAttrHolder.set(hitAttribution);
-    return hitAttribution;
+    wastdocidhowdew.set(docid);
+    map<integew, :3 w-wist<stwing>> h-hitattwibution =
+        c-cowwectow.gethitattwibution(docid, ( ͡o ω ͡o ) fiewdidstofiewdnames);
+    w-wasthitattwhowdew.set(hitattwibution);
+    wetuwn h-hitattwibution;
   }
 
   /**
-   * Adds a new node and its respective rank to the helper's node-to-rank map
-   * Will throw an exception if attempting to add/update an existing node
+   * a-adds a nyew nyode and its wespective wank to the hewpew's nyode-to-wank map
+   * wiww thwow an e-exception if attempting to add/update a-an existing nyode
    *
-   * @param node the query node
-   * @param rank the rank associated with the node
+   * @pawam n-nyode t-the quewy nyode
+   * @pawam wank the wank associated w-with the nyode
    */
-  public void addNodeRank(Query node, int rank) {
-    // if there are two of the same terms, just map them to the first rank, they should get the same
-    // hits back
-    if (!nodeToRankMap.containsKey(node)) {
-      nodeToRankMap.put(node, rank);
+  p-pubwic void addnodewank(quewy n-nyode, σωσ i-int wank) {
+    // if thewe awe two of the same tewms, >w< just map them to the fiwst w-wank, 😳😳😳 they shouwd g-get the same
+    // h-hits back
+    if (!nodetowankmap.containskey(node)) {
+      n-nyodetowankmap.put(node, OwO w-wank);
     }
   }
 
-  public Map<Query, Integer> getNodeToRankMap() {
-    return nodeToRankMap;
+  pubwic map<quewy, 😳 i-integew> getnodetowankmap() {
+    wetuwn nyodetowankmap;
   }
 
-  public Map<Query, List<Integer>> getExpandedNodeToRankMap() {
-    return expandedNodeToRankMap;
+  pubwic map<quewy, wist<integew>> getexpandednodetowankmap() {
+    w-wetuwn expandednodetowankmap;
   }
 }

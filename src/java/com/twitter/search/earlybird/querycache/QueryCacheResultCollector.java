@@ -1,124 +1,124 @@
-package com.twitter.search.earlybird.querycache;
+package com.twittew.seawch.eawwybiwd.quewycache;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.util.BitDocIdSet;
-import org.apache.lucene.util.BitSet;
-import org.apache.lucene.util.FixedBitSet;
-import org.apache.lucene.util.SparseFixedBitSet;
+i-impowt o-owg.apache.wucene.seawch.indexseawchew;
+i-impowt o-owg.apache.wucene.seawch.scowemode;
+i-impowt owg.apache.wucene.utiw.bitdocidset;
+i-impowt owg.apache.wucene.utiw.bitset;
+i-impowt o-owg.apache.wucene.utiw.fixedbitset;
+impowt owg.apache.wucene.utiw.spawsefixedbitset;
 
-import com.twitter.common.util.Clock;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.core.earlybird.index.QueryCacheResultForSegment;
-import com.twitter.search.earlybird.RecentTweetRestriction;
-import com.twitter.search.earlybird.search.AbstractResultsCollector;
-import com.twitter.search.earlybird.search.SearchRequestInfo;
-import com.twitter.search.earlybird.search.SearchResultsInfo;
-import com.twitter.search.earlybird.search.queries.SinceUntilFilter;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
+impowt com.twittew.common.utiw.cwock;
+impowt com.twittew.decidew.decidew;
+i-impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.quewycachewesuwtfowsegment;
+impowt com.twittew.seawch.eawwybiwd.wecenttweetwestwiction;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.abstwactwesuwtscowwectow;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.seawchwequestinfo;
+impowt com.twittew.seawch.eawwybiwd.seawch.seawchwesuwtsinfo;
+impowt com.twittew.seawch.eawwybiwd.seawch.quewies.sinceuntiwfiwtew;
+impowt com.twittew.seawch.eawwybiwd.stats.eawwybiwdseawchewstats;
 
-import static org.apache.lucene.search.DocIdSetIterator.NO_MORE_DOCS;
+i-impowt static owg.apache.wucene.seawch.docidsetitewatow.no_mowe_docs;
 
-import static com.twitter.search.core.earlybird.index.TimeMapper.ILLEGAL_TIME;
+i-impowt s-static com.twittew.seawch.cowe.eawwybiwd.index.timemappew.iwwegaw_time;
 
 /**
- * Collector to update the query cache (one segment for a filter)
+ * cowwectow to update the quewy cache (one segment fow a fiwtew)
  */
-public class QueryCacheResultCollector
-    extends AbstractResultsCollector<SearchRequestInfo, SearchResultsInfo> {
-  private static final int UNSET = -1;
+p-pubwic cwass quewycachewesuwtcowwectow
+    extends abstwactwesuwtscowwectow<seawchwequestinfo, :3 seawchwesuwtsinfo> {
+  pwivate s-static finaw int unset = -1;
 
-  private final QueryCacheFilter queryCacheFilter;
-  private final Decider decider;
+  p-pwivate finaw q-quewycachefiwtew q-quewycachefiwtew;
+  p-pwivate finaw decidew decidew;
 
-  private BitSet bitSet;
-  private long cardinality = 0L;
-  private int startingDocID = UNSET;
+  pwivate b-bitset bitset;
+  pwivate wong cawdinawity = 0w;
+  p-pwivate int stawtingdocid = unset;
 
-  public QueryCacheResultCollector(
-      ImmutableSchemaInterface schema,
-      QueryCacheFilter queryCacheFilter,
-      EarlybirdSearcherStats searcherStats,
-      Decider decider,
-      Clock clock,
-      int requestDebugMode) {
-    super(schema,
-        queryCacheFilter.createSearchRequestInfo(),
-        clock,
-        searcherStats,
-        requestDebugMode);
-    this.queryCacheFilter = queryCacheFilter;
-    this.decider = decider;
+  pubwic quewycachewesuwtcowwectow(
+      immutabweschemaintewface schema,
+      q-quewycachefiwtew quewycachefiwtew, (ꈍᴗꈍ)
+      e-eawwybiwdseawchewstats s-seawchewstats, /(^•ω•^)
+      decidew d-decidew, (⑅˘꒳˘)
+      cwock cwock, ( ͡o ω ͡o )
+      int wequestdebugmode) {
+    supew(schema, òωó
+        q-quewycachefiwtew.cweateseawchwequestinfo(), (⑅˘꒳˘)
+        cwock, XD
+        s-seawchewstats, -.-
+        wequestdebugmode);
+    t-this.quewycachefiwtew = q-quewycachefiwtew;
+    this.decidew = d-decidew;
   }
 
-  @Override
-  public void startSegment() throws IOException {
-    // The doc IDs in the optimized segments are always in the 0 .. (segmentSize - 1) range, so we
-    // can use a dense bitset to collect the hits. However, unoptimized segments can use any int
-    // doc IDs, so we have to use a sparse bitset to collect the hits in those segments.
-    if (currTwitterReader.getSegmentData().isOptimized()) {
-      switch (queryCacheFilter.getResultSetType()) {
-        case FixedBitSet:
-          bitSet = new FixedBitSet(currTwitterReader.maxDoc());
-          break;
-        case SparseFixedBitSet:
-          bitSet = new SparseFixedBitSet(currTwitterReader.maxDoc());
-          break;
-        default:
-          throw new IllegalStateException(
-              "Unknown ResultSetType: " + queryCacheFilter.getResultSetType().name());
+  @ovewwide
+  pubwic void s-stawtsegment() thwows ioexception {
+    // the d-doc ids in the optimized segments a-awe awways in the 0 .. (segmentsize - 1) w-wange, :3 s-so we
+    // can use a dense bitset to cowwect the hits. nyaa~~ howevew, unoptimized segments can use any int
+    // d-doc ids, 😳 so we have t-to use a spawse bitset to cowwect t-the hits in t-those segments. (⑅˘꒳˘)
+    i-if (cuwwtwittewweadew.getsegmentdata().isoptimized()) {
+      switch (quewycachefiwtew.getwesuwtsettype()) {
+        case fixedbitset:
+          b-bitset = nyew fixedbitset(cuwwtwittewweadew.maxdoc());
+          bweak;
+        case spawsefixedbitset:
+          bitset = n-nyew spawsefixedbitset(cuwwtwittewweadew.maxdoc());
+          bweak;
+        defauwt:
+          t-thwow nyew iwwegawstateexception(
+              "unknown w-wesuwtsettype: " + q-quewycachefiwtew.getwesuwtsettype().name());
       }
-    } else {
-      bitSet = new SparseFixedBitSet(currTwitterReader.maxDoc());
+    } ewse {
+      b-bitset = nyew s-spawsefixedbitset(cuwwtwittewweadew.maxdoc());
     }
 
-    startingDocID = findStartingDocID();
-    cardinality = 0;
+    s-stawtingdocid = f-findstawtingdocid();
+    cawdinawity = 0;
   }
 
-  @Override
-  protected void doCollect(long tweetID)  {
-    bitSet.set(curDocId);
-    cardinality++;
+  @ovewwide
+  pwotected v-void docowwect(wong t-tweetid)  {
+    b-bitset.set(cuwdocid);
+    c-cawdinawity++;
   }
 
-  @Override
-  protected SearchResultsInfo doGetResults() {
-    return new SearchResultsInfo();
+  @ovewwide
+  p-pwotected seawchwesuwtsinfo dogetwesuwts() {
+    wetuwn nyew seawchwesuwtsinfo();
   }
 
-  public QueryCacheResultForSegment getCachedResult() {
-    // Note that BitSet.cardinality takes linear time in the size of the maxDoc, so we track
-    // cardinality separately.
-    return new QueryCacheResultForSegment(new BitDocIdSet(bitSet, cardinality),
-        cardinality, startingDocID);
+  p-pubwic quewycachewesuwtfowsegment getcachedwesuwt() {
+    // nyote that bitset.cawdinawity takes wineaw t-time in the size of the maxdoc, nyaa~~ so we twack
+    // cawdinawity s-sepawatewy. OwO
+    w-wetuwn nyew q-quewycachewesuwtfowsegment(new bitdocidset(bitset, rawr x3 c-cawdinawity), XD
+        cawdinawity, σωσ s-stawtingdocid);
   }
 
   /**
-   * We don't want to return results less than 15 seconds older than the most recently indexed tweet,
-   * as they might not be completely indexed.
-   * We can't simply use the first hit, as some cached filters might not have any hits,
-   * e.g. has_engagement in the protected cluster.
-   * We can't use a clock because streams can lag.
+   * w-we don't want to wetuwn wesuwts wess than 15 seconds owdew than the most wecentwy indexed t-tweet, (U ᵕ U❁)
+   * as they might nyot b-be compwetewy indexed. (U ﹏ U)
+   * we can't s-simpwy use t-the fiwst hit, :3 as some cached fiwtews might nyot h-have any hits, ( ͡o ω ͡o )
+   * e-e.g. σωσ has_engagement in the p-pwotected cwustew. >w<
+   * w-we can't use a cwock because stweams can wag. 😳😳😳
    */
-  private int findStartingDocID() throws IOException {
-    int lastTime = currTwitterReader.getSegmentData().getTimeMapper().getLastTime();
-    if (lastTime == ILLEGAL_TIME) {
-      return NO_MORE_DOCS;
+  pwivate int findstawtingdocid() t-thwows i-ioexception {
+    i-int wasttime = cuwwtwittewweadew.getsegmentdata().gettimemappew().getwasttime();
+    i-if (wasttime == i-iwwegaw_time) {
+      wetuwn nyo_mowe_docs;
     }
 
-    int untilTime = RecentTweetRestriction.queryCacheUntilTime(decider, lastTime);
-    if (untilTime == 0) {
-      return currTwitterReader.getSmallestDocID();
+    i-int untiwtime = wecenttweetwestwiction.quewycacheuntiwtime(decidew, OwO wasttime);
+    if (untiwtime == 0) {
+      wetuwn cuwwtwittewweadew.getsmowestdocid();
     }
 
-    return SinceUntilFilter.getUntilQuery(untilTime)
-        .createWeight(new IndexSearcher(currTwitterReader), ScoreMode.COMPLETE_NO_SCORES, 1.0f)
-        .scorer(currTwitterReader.getContext())
-        .iterator()
-        .nextDoc();
+    w-wetuwn s-sinceuntiwfiwtew.getuntiwquewy(untiwtime)
+        .cweateweight(new indexseawchew(cuwwtwittewweadew), 😳 scowemode.compwete_no_scowes, 😳😳😳 1.0f)
+        .scowew(cuwwtwittewweadew.getcontext())
+        .itewatow()
+        .nextdoc();
   }
 }

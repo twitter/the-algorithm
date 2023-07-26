@@ -1,73 +1,73 @@
-package com.twitter.visibility.builder.tweets
+package com.twittew.visibiwity.buiwdew.tweets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.notificationservice.model.notification._
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.SettingsUnmentions
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.TweetSource
-import com.twitter.visibility.features.NotificationIsOnUnmentionedViewer
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.notificationsewvice.modew.notification._
+i-impowt c-com.twittew.sewvo.utiw.gate
+i-impowt c-com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.thwiftscawa.settingsunmentions
+impowt com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+impowt com.twittew.visibiwity.common.tweetsouwce
+i-impowt com.twittew.visibiwity.featuwes.notificationisonunmentionedviewew
 
-object UnmentionNotificationFeatures {
-  def ForNonUnmentionNotificationFeatures: FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(NotificationIsOnUnmentionedViewer, false)
+object unmentionnotificationfeatuwes {
+  d-def fownonunmentionnotificationfeatuwes: featuwemapbuiwdew => f-featuwemapbuiwdew = {
+    _.withconstantfeatuwe(notificationisonunmentionedviewew, mya fawse)
   }
 }
 
-class UnmentionNotificationFeatures(
-  tweetSource: TweetSource,
-  enableUnmentionHydration: Gate[Long],
-  statsReceiver: StatsReceiver) {
+cwass unmentionnotificationfeatuwes(
+  tweetsouwce: t-tweetsouwce, (˘ω˘)
+  enabweunmentionhydwation: g-gate[wong], >_<
+  statsweceivew: s-statsweceivew) {
 
-  private[this] val scopedStatsReceiver =
-    statsReceiver.scope("unmention_notification_features")
-  private[this] val requestsCounter = scopedStatsReceiver.counter("requests")
-  private[this] val hydrationsCounter = scopedStatsReceiver.counter("hydrations")
-  private[this] val notificationsUnmentionUserCounter =
-    scopedStatsReceiver
-      .scope(NotificationIsOnUnmentionedViewer.name).counter("unmentioned_users")
+  pwivate[this] vaw scopedstatsweceivew =
+    statsweceivew.scope("unmention_notification_featuwes")
+  pwivate[this] v-vaw wequestscountew = scopedstatsweceivew.countew("wequests")
+  pwivate[this] vaw hydwationscountew = scopedstatsweceivew.countew("hydwations")
+  p-pwivate[this] vaw nyotificationsunmentionusewcountew =
+    s-scopedstatsweceivew
+      .scope(notificationisonunmentionedviewew.name).countew("unmentioned_usews")
 
-  def forNotification(notification: Notification): FeatureMapBuilder => FeatureMapBuilder = {
-    requestsCounter.incr()
+  d-def fownotification(notification: n-nyotification): f-featuwemapbuiwdew => featuwemapbuiwdew = {
+    wequestscountew.incw()
 
-    val isUnmentionNotification = tweetId(notification) match {
-      case Some(tweetId) if enableUnmentionHydration(notification.target) =>
-        hydrationsCounter.incr()
-        tweetSource
-          .getTweet(tweetId)
+    v-vaw isunmentionnotification = tweetid(notification) match {
+      c-case some(tweetid) if enabweunmentionhydwation(notification.tawget) =>
+        hydwationscountew.incw()
+        tweetsouwce
+          .gettweet(tweetid)
           .map {
-            case Some(tweet) =>
-              tweet.settingsUnmentions match {
-                case Some(SettingsUnmentions(Some(unmentionedUserIds))) =>
-                  if (unmentionedUserIds.contains(notification.target)) {
-                    notificationsUnmentionUserCounter.incr()
-                    true
-                  } else {
-                    false
+            case some(tweet) =>
+              t-tweet.settingsunmentions match {
+                c-case some(settingsunmentions(some(unmentionedusewids))) =>
+                  i-if (unmentionedusewids.contains(notification.tawget)) {
+                    n-nyotificationsunmentionusewcountew.incw()
+                    twue
+                  } ewse {
+                    fawse
                   }
-                case _ => false
+                c-case _ => f-fawse
               }
-            case _ => false
+            case _ => fawse
           }
-      case _ => Stitch.False
+      c-case _ => s-stitch.fawse
     }
-    _.withFeature(NotificationIsOnUnmentionedViewer, isUnmentionNotification)
+    _.withfeatuwe(notificationisonunmentionedviewew, -.- isunmentionnotification)
   }
 
-  private[this] def tweetId(notification: Notification): Option[Long] = {
-    notification match {
-      case n: MentionNotification => Some(n.mentioningTweetId)
-      case n: FavoritedMentioningTweetNotification => Some(n.mentioningTweetId)
-      case n: FavoritedReplyToYourTweetNotification => Some(n.replyTweetId)
-      case n: MentionQuoteNotification => Some(n.mentioningTweetId)
-      case n: ReactionMentioningTweetNotification => Some(n.mentioningTweetId)
-      case n: ReplyNotification => Some(n.replyingTweetId)
-      case n: RetweetedMentionNotification => Some(n.mentioningTweetId)
-      case n: RetweetedReplyToYourTweetNotification => Some(n.replyTweetId)
-      case n: ReplyToConversationNotification => Some(n.replyingTweetId)
-      case n: ReactionReplyToYourTweetNotification => Some(n.replyTweetId)
-      case _ => None
+  p-pwivate[this] def tweetid(notification: n-nyotification): option[wong] = {
+    nyotification m-match {
+      case ny: mentionnotification => s-some(n.mentioningtweetid)
+      case ny: favowitedmentioningtweetnotification => s-some(n.mentioningtweetid)
+      c-case ny: favowitedwepwytoyouwtweetnotification => some(n.wepwytweetid)
+      case ny: mentionquotenotification => some(n.mentioningtweetid)
+      case ny: weactionmentioningtweetnotification => some(n.mentioningtweetid)
+      case n: wepwynotification => s-some(n.wepwyingtweetid)
+      case n-ny: wetweetedmentionnotification => some(n.mentioningtweetid)
+      c-case ny: w-wetweetedwepwytoyouwtweetnotification => s-some(n.wepwytweetid)
+      case ny: wepwytoconvewsationnotification => some(n.wepwyingtweetid)
+      case ny: weactionwepwytoyouwtweetnotification => s-some(n.wepwytweetid)
+      case _ => nyone
     }
 
   }

@@ -1,46 +1,46 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.component_library.selector.DropSelector.dropDuplicates
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.sewectow.dwopsewectow.dwopdupwicates
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awwpipewines
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Keep only the first instance of a candidate in the `result` as determined by comparing
- * the contained candidate ID and class type. Subsequent matching instances will be dropped. For
- * more details, see DropSelector#dropDuplicates
+ * keep onwy the fiwst instance of a candidate in the `wesuwt` as detewmined b-by compawing
+ * the contained candidate i-id and cwass type. 😳😳😳 subsequent matching i-instances wiww be dwopped. mya fow
+ * mowe detaiws, 😳 see dwopsewectow#dwopdupwicates
  *
- * @param duplicationKey how to generate the key used to identify duplicate candidates (by default use id and class name)
- * @param mergeStrategy how to merge two candidates with the same key (by default pick the first one)
+ * @pawam d-dupwicationkey how to genewate t-the key used t-to identify dupwicate candidates (by defauwt use id and cwass name)
+ * @pawam mewgestwategy how t-to mewge two candidates with the same key (by defauwt pick the fiwst one)
  *
- * @note [[com.twitter.product_mixer.component_library.model.candidate.CursorCandidate]] are ignored.
- * @note [[com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails]] are ignored.
+ * @note [[com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.cuwsowcandidate]] a-awe ignowed. -.-
+ * @note [[com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.moduwecandidatewithdetaiws]] awe ignowed. 🥺
  *
- * @example if `result`
- * `Seq(sourceA_Id1, sourceA_Id1, sourceA_Id2, sourceB_id1, sourceB_id2, sourceB_id3, sourceC_id4)`
- * then the output result will be `Seq(sourceA_Id1, sourceA_Id2, sourceB_id3, sourceC_id4)`
+ * @exampwe i-if `wesuwt`
+ * `seq(souwcea_id1, o.O s-souwcea_id1, /(^•ω•^) souwcea_id2, s-souwceb_id1, nyaa~~ s-souwceb_id2, nyaa~~ souwceb_id3, :3 souwcec_id4)`
+ * t-then the output wesuwt wiww be `seq(souwcea_id1, 😳😳😳 s-souwcea_id2, (˘ω˘) souwceb_id3, ^^ souwcec_id4)`
  */
-case class DropDuplicateResults(
-  duplicationKey: DeduplicationKey[_] = IdAndClassDuplicationKey,
-  mergeStrategy: CandidateMergeStrategy = PickFirstCandidateMerger)
-    extends Selector[PipelineQuery] {
+case cwass dwopdupwicatewesuwts(
+  dupwicationkey: dedupwicationkey[_] = idandcwassdupwicationkey,
+  m-mewgestwategy: candidatemewgestwategy = p-pickfiwstcandidatemewgew)
+    e-extends s-sewectow[pipewinequewy] {
 
-  override val pipelineScope: CandidateScope = AllPipelines
+  ovewwide vaw pipewinescope: candidatescope = awwpipewines
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val dedupedResults = dropDuplicates(
-      pipelineScope = pipelineScope,
-      candidates = result,
-      duplicationKey = duplicationKey,
-      mergeStrategy = mergeStrategy)
+  o-ovewwide d-def appwy(
+    quewy: pipewinequewy, :3
+    w-wemainingcandidates: s-seq[candidatewithdetaiws], -.-
+    wesuwt: seq[candidatewithdetaiws]
+  ): s-sewectowwesuwt = {
+    vaw dedupedwesuwts = d-dwopdupwicates(
+      pipewinescope = pipewinescope, 😳
+      c-candidates = wesuwt, mya
+      dupwicationkey = d-dupwicationkey, (˘ω˘)
+      mewgestwategy = m-mewgestwategy)
 
-    SelectorResult(remainingCandidates = remainingCandidates, result = dedupedResults)
+    s-sewectowwesuwt(wemainingcandidates = wemainingcandidates, >_< wesuwt = dedupedwesuwts)
   }
 }

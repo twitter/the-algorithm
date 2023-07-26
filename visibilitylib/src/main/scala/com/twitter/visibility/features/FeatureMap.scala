@@ -1,121 +1,121 @@
-package com.twitter.visibility.features
+package com.twittew.visibiwity.featuwes
 
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import scala.language.existentials
+impowt com.twittew.finagwe.mux.cwientdiscawdedwequestexception
+i-impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.stitch.stitch
+i-impowt s-scawa.wanguage.existentiaws
 
-class MissingFeatureException(feature: Feature[_]) extends Exception("Missing value for " + feature)
+c-cwass missingfeatuweexception(featuwe: featuwe[_]) extends exception("missing vawue f-fow " + featuwe)
 
-case class FeatureFailedException(feature: Feature[_], exception: Throwable) extends Exception
+case cwass featuwefaiwedexception(featuwe: featuwe[_], (U ﹏ U) exception: t-thwowabwe) extends exception
 
-private[visibility] case class FeatureFailedPlaceholderObject(throwable: Throwable)
+p-pwivate[visibiwity] case cwass featuwefaiwedpwacehowdewobject(thwowabwe: thwowabwe)
 
-class FeatureMap(
-  val map: Map[Feature[_], Stitch[_]],
-  val constantMap: Map[Feature[_], Any]) {
+c-cwass featuwemap(
+  vaw m-map: map[featuwe[_], s-stitch[_]], ^•ﻌ•^
+  vaw constantmap: map[featuwe[_], (˘ω˘) any]) {
 
-  def contains[T](feature: Feature[T]): Boolean =
-    constantMap.contains(feature) || map.contains(feature)
+  def contains[t](featuwe: f-featuwe[t]): boowean =
+    constantmap.contains(featuwe) || map.contains(featuwe)
 
-  def containsConstant[T](feature: Feature[T]): Boolean = constantMap.contains(feature)
+  def c-containsconstant[t](featuwe: featuwe[t]): boowean = c-constantmap.contains(featuwe)
 
-  lazy val size: Int = keys.size
+  w-wazy vaw s-size: int = keys.size
 
-  lazy val keys: Set[Feature[_]] = constantMap.keySet ++ map.keySet
+  w-wazy vaw keys: set[featuwe[_]] = constantmap.keyset ++ m-map.keyset
 
-  def get[T](feature: Feature[T]): Stitch[T] = {
-    map.get(feature) match {
-      case _ if constantMap.contains(feature) =>
-        Stitch.value(getConstant(feature))
-      case Some(x) =>
-        x.asInstanceOf[Stitch[T]]
+  def get[t](featuwe: featuwe[t]): stitch[t] = {
+    m-map.get(featuwe) match {
+      case _ if constantmap.contains(featuwe) =>
+        stitch.vawue(getconstant(featuwe))
+      case some(x) =>
+        x-x.asinstanceof[stitch[t]]
       case _ =>
-        Stitch.exception(new MissingFeatureException(feature))
+        s-stitch.exception(new m-missingfeatuweexception(featuwe))
     }
   }
 
-  def getConstant[T](feature: Feature[T]): T = {
-    constantMap.get(feature) match {
-      case Some(x) =>
-        x.asInstanceOf[T]
+  d-def getconstant[t](featuwe: featuwe[t]): t = {
+    constantmap.get(featuwe) match {
+      c-case some(x) =>
+        x-x.asinstanceof[t]
       case _ =>
-        throw new MissingFeatureException(feature)
+        t-thwow nyew m-missingfeatuweexception(featuwe)
     }
   }
 
-  def -[T](key: Feature[T]): FeatureMap = new FeatureMap(map - key, constantMap - key)
+  def -[t](key: featuwe[t]): f-featuwemap = nyew featuwemap(map - k-key, :3 constantmap - key)
 
-  override def toString: String = "FeatureMap(%s, %s)".format(map, constantMap)
+  ovewwide d-def tostwing: stwing = "featuwemap(%s, ^^;; %s)".fowmat(map, 🥺 constantmap)
 }
 
-object FeatureMap {
+o-object featuwemap {
 
-  def empty: FeatureMap = new FeatureMap(Map.empty, Map.empty)
+  d-def empty: featuwemap = n-nyew featuwemap(map.empty, (⑅˘꒳˘) map.empty)
 
-  def resolve(
-    featureMap: FeatureMap,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Stitch[ResolvedFeatureMap] = {
-    val featureMapHydrationStatsReceiver = statsReceiver.scope("feature_map_hydration")
+  def wesowve(
+    featuwemap: featuwemap, nyaa~~
+    statsweceivew: statsweceivew = nyuwwstatsweceivew
+  ): s-stitch[wesowvedfeatuwemap] = {
+    v-vaw featuwemaphydwationstatsweceivew = statsweceivew.scope("featuwe_map_hydwation")
 
-    Stitch
-      .traverse(featureMap.map.toSeq) {
-        case (feature, value: Stitch[_]) =>
-          val featureStatsReceiver = featureMapHydrationStatsReceiver.scope(feature.name)
-          lazy val featureFailureStat = featureStatsReceiver.scope("failures")
-          val featureStitch: Stitch[(Feature[_], Any)] = value
-            .map { resolvedValue =>
-              featureStatsReceiver.counter("success").incr()
-              (feature, resolvedValue)
+    stitch
+      .twavewse(featuwemap.map.toseq) {
+        c-case (featuwe, :3 v-vawue: stitch[_]) =>
+          v-vaw featuwestatsweceivew = featuwemaphydwationstatsweceivew.scope(featuwe.name)
+          wazy vaw featuwefaiwuwestat = featuwestatsweceivew.scope("faiwuwes")
+          vaw f-featuwestitch: stitch[(featuwe[_], ( ͡o ω ͡o ) any)] = vawue
+            .map { wesowvedvawue =>
+              featuwestatsweceivew.countew("success").incw()
+              (featuwe, mya w-wesowvedvawue)
             }
 
-          featureStitch
-            .handle {
-              case ffe: FeatureFailedException =>
-                featureFailureStat.counter().incr()
-                featureFailureStat.counter(ffe.exception.getClass.getName).incr()
-                (feature, FeatureFailedPlaceholderObject(ffe.exception))
+          featuwestitch
+            .handwe {
+              c-case ffe: f-featuwefaiwedexception =>
+                f-featuwefaiwuwestat.countew().incw()
+                featuwefaiwuwestat.countew(ffe.exception.getcwass.getname).incw()
+                (featuwe, (///ˬ///✿) featuwefaiwedpwacehowdewobject(ffe.exception))
             }
-            .ensure {
-              featureStatsReceiver.counter("requests").incr()
+            .ensuwe {
+              f-featuwestatsweceivew.countew("wequests").incw()
             }
       }
-      .map { resolvedFeatures: Seq[(Feature[_], Any)] =>
-        new ResolvedFeatureMap(resolvedFeatures.toMap ++ featureMap.constantMap)
+      .map { wesowvedfeatuwes: s-seq[(featuwe[_], (˘ω˘) a-any)] =>
+        n-new wesowvedfeatuwemap(wesowvedfeatuwes.tomap ++ featuwemap.constantmap)
       }
   }
 
-  def rescueFeatureTuple(kv: (Feature[_], Stitch[_])): (Feature[_], Stitch[_]) = {
-    val (k, v) = kv
+  def wescuefeatuwetupwe(kv: (featuwe[_], ^^;; s-stitch[_])): (featuwe[_], (✿oωo) s-stitch[_]) = {
+    v-vaw (k, (U ﹏ U) v) = kv
 
-    val rescueValue = v.rescue {
+    v-vaw wescuevawue = v-v.wescue {
       case e =>
         e match {
-          case cdre: ClientDiscardedRequestException => Stitch.exception(cdre)
-          case _ => Stitch.exception(FeatureFailedException(k, e))
+          case c-cdwe: cwientdiscawdedwequestexception => stitch.exception(cdwe)
+          case _ => stitch.exception(featuwefaiwedexception(k, -.- e))
         }
     }
 
-    (k, rescueValue)
+    (k, ^•ﻌ•^ wescuevawue)
   }
 }
 
-class ResolvedFeatureMap(private[visibility] val resolvedMap: Map[Feature[_], Any])
-    extends FeatureMap(Map.empty, resolvedMap) {
+cwass wesowvedfeatuwemap(pwivate[visibiwity] v-vaw wesowvedmap: map[featuwe[_], rawr any])
+    extends featuwemap(map.empty, (˘ω˘) w-wesowvedmap) {
 
-  override def equals(other: Any): Boolean = other match {
-    case otherResolvedFeatureMap: ResolvedFeatureMap =>
-      this.resolvedMap.equals(otherResolvedFeatureMap.resolvedMap)
-    case _ => false
+  o-ovewwide d-def equaws(othew: any): boowean = o-othew match {
+    case othewwesowvedfeatuwemap: w-wesowvedfeatuwemap =>
+      t-this.wesowvedmap.equaws(othewwesowvedfeatuwemap.wesowvedmap)
+    case _ => fawse
   }
 
-  override def toString: String = "ResolvedFeatureMap(%s)".format(resolvedMap)
+  ovewwide def tostwing: stwing = "wesowvedfeatuwemap(%s)".fowmat(wesowvedmap)
 }
 
-object ResolvedFeatureMap {
-  def apply(resolvedMap: Map[Feature[_], Any]): ResolvedFeatureMap = {
-    new ResolvedFeatureMap(resolvedMap)
+object w-wesowvedfeatuwemap {
+  def appwy(wesowvedmap: map[featuwe[_], nyaa~~ any]): w-wesowvedfeatuwemap = {
+    nyew wesowvedfeatuwemap(wesowvedmap)
   }
 }

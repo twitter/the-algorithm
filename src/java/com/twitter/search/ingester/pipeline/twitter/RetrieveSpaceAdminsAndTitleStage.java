@@ -1,246 +1,246 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
+impowt java.utiw.wist;
+i-impowt j-java.utiw.optionaw;
+i-impowt java.utiw.set;
+i-impowt j-java.utiw.concuwwent.compwetabwefutuwe;
 
-import scala.Option;
-import scala.Tuple2;
+i-impowt s-scawa.option;
+i-impowt scawa.tupwe2;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
+impowt com.googwe.common.annotations.visibwefowtesting;
+impowt com.googwe.common.cowwect.wists;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+impowt o-owg.apache.commons.wang.stwingutiws;
+impowt owg.apache.commons.pipewine.stageexception;
+impowt o-owg.apache.commons.pipewine.vawidation.consumedtypes;
+impowt owg.apache.commons.pipewine.vawidation.pwoducesconsumed;
 
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.relevance.entities.TwitterMessageUser;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.strato_fetchers.AudioSpaceCoreFetcher;
-import com.twitter.search.ingester.pipeline.strato_fetchers.AudioSpaceParticipantsFetcher;
-import com.twitter.strato.catalog.Fetch;
-import com.twitter.ubs.thriftjava.AudioSpace;
-import com.twitter.ubs.thriftjava.ParticipantUser;
-import com.twitter.ubs.thriftjava.Participants;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
-import com.twitter.util.Futures;
-import com.twitter.util.Try;
+i-impowt com.twittew.seawch.common.decidew.decidewutiw;
+impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt c-com.twittew.seawch.common.wewevance.entities.twittewmessageusew;
+impowt com.twittew.seawch.ingestew.modew.ingestewtwittewmessage;
+i-impowt com.twittew.seawch.ingestew.pipewine.stwato_fetchews.audiospacecowefetchew;
+i-impowt com.twittew.seawch.ingestew.pipewine.stwato_fetchews.audiospacepawticipantsfetchew;
+impowt com.twittew.stwato.catawog.fetch;
+impowt com.twittew.ubs.thwiftjava.audiospace;
+impowt com.twittew.ubs.thwiftjava.pawticipantusew;
+i-impowt com.twittew.ubs.thwiftjava.pawticipants;
+impowt com.twittew.utiw.function;
+impowt c-com.twittew.utiw.futuwe;
+impowt c-com.twittew.utiw.futuwes;
+i-impowt c-com.twittew.utiw.twy;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public class RetrieveSpaceAdminsAndTitleStage extends TwitterBaseStage
-    <IngesterTwitterMessage, CompletableFuture<IngesterTwitterMessage>> {
+@consumedtypes(ingestewtwittewmessage.cwass)
+@pwoducesconsumed
+p-pubwic cwass wetwievespaceadminsandtitwestage extends t-twittewbasestage
+    <ingestewtwittewmessage, òωó compwetabwefutuwe<ingestewtwittewmessage>> {
 
-  @VisibleForTesting
-  protected static final String RETRIEVE_SPACE_ADMINS_AND_TITLE_DECIDER_KEY =
-      "ingester_all_retrieve_space_admins_and_title";
+  @visibwefowtesting
+  pwotected static f-finaw stwing wetwieve_space_admins_and_titwe_decidew_key =
+      "ingestew_aww_wetwieve_space_admins_and_titwe";
 
-  private AudioSpaceCoreFetcher coreFetcher;
-  private AudioSpaceParticipantsFetcher participantsFetcher;
+  pwivate audiospacecowefetchew cowefetchew;
+  pwivate audiospacepawticipantsfetchew p-pawticipantsfetchew;
 
-  private SearchRateCounter tweetsWithSpaceAdmins;
-  private SearchRateCounter tweetsWithSpaceTitle;
-  private SearchRateCounter coreFetchSuccess;
-  private SearchRateCounter coreFetchFailure;
-  private SearchRateCounter participantsFetchSuccess;
-  private SearchRateCounter participantsFetchFailure;
-  private SearchRateCounter emptyCore;
-  private SearchRateCounter emptyParticipants;
-  private SearchRateCounter emptySpaceTitle;
-  private SearchRateCounter emptySpaceAdmins;
-  private SearchRateCounter parallelFetchAttempts;
-  private SearchRateCounter parallelFetchFailure;
+  pwivate seawchwatecountew t-tweetswithspaceadmins;
+  p-pwivate seawchwatecountew t-tweetswithspacetitwe;
+  pwivate seawchwatecountew cowefetchsuccess;
+  p-pwivate seawchwatecountew c-cowefetchfaiwuwe;
+  pwivate seawchwatecountew p-pawticipantsfetchsuccess;
+  p-pwivate seawchwatecountew p-pawticipantsfetchfaiwuwe;
+  pwivate seawchwatecountew e-emptycowe;
+  pwivate seawchwatecountew emptypawticipants;
+  p-pwivate seawchwatecountew emptyspacetitwe;
+  p-pwivate seawchwatecountew emptyspaceadmins;
+  p-pwivate seawchwatecountew p-pawawwewfetchattempts;
+  pwivate seawchwatecountew pawawwewfetchfaiwuwe;
 
 
-  @Override
-  protected void doInnerPreprocess() {
-    innerSetup();
+  @ovewwide
+  pwotected void doinnewpwepwocess() {
+    innewsetup();
   }
 
-  @Override
-  protected void innerSetup() {
-    coreFetcher = wireModule.getAudioSpaceCoreFetcher();
-    participantsFetcher = wireModule.getAudioSpaceParticipantsFetcher();
+  @ovewwide
+  pwotected v-void innewsetup() {
+    c-cowefetchew = wiwemoduwe.getaudiospacecowefetchew();
+    pawticipantsfetchew = wiwemoduwe.getaudiospacepawticipantsfetchew();
 
-    tweetsWithSpaceAdmins = getStageStat("tweets_with_audio_space_admins");
-    tweetsWithSpaceTitle = getStageStat("tweets_with_audio_space_title");
-    coreFetchSuccess = getStageStat("core_fetch_success");
-    coreFetchFailure = getStageStat("core_fetch_failure");
-    participantsFetchSuccess = getStageStat("participants_fetch_success");
-    participantsFetchFailure = getStageStat("participants_fetch_failure");
-    emptyCore = getStageStat("empty_core");
-    emptyParticipants = getStageStat("empty_participants");
-    emptySpaceTitle = getStageStat("empty_space_title");
-    emptySpaceAdmins = getStageStat("empty_space_admins");
-    parallelFetchAttempts = getStageStat("parallel_fetch_attempts");
-    parallelFetchFailure = getStageStat("parallel_fetch_failure");
+    t-tweetswithspaceadmins = g-getstagestat("tweets_with_audio_space_admins");
+    tweetswithspacetitwe = g-getstagestat("tweets_with_audio_space_titwe");
+    cowefetchsuccess = getstagestat("cowe_fetch_success");
+    cowefetchfaiwuwe = g-getstagestat("cowe_fetch_faiwuwe");
+    pawticipantsfetchsuccess = getstagestat("pawticipants_fetch_success");
+    pawticipantsfetchfaiwuwe = getstagestat("pawticipants_fetch_faiwuwe");
+    emptycowe = g-getstagestat("empty_cowe");
+    emptypawticipants = g-getstagestat("empty_pawticipants");
+    e-emptyspacetitwe = getstagestat("empty_space_titwe");
+    e-emptyspaceadmins = getstagestat("empty_space_admins");
+    p-pawawwewfetchattempts = g-getstagestat("pawawwew_fetch_attempts");
+    p-pawawwewfetchfaiwuwe = g-getstagestat("pawawwew_fetch_faiwuwe");
   }
 
-  private SearchRateCounter getStageStat(String statSuffix) {
-    return SearchRateCounter.export(getStageNamePrefix() + "_" + statSuffix);
+  pwivate seawchwatecountew g-getstagestat(stwing s-statsuffix) {
+    w-wetuwn s-seawchwatecountew.expowt(getstagenamepwefix() + "_" + s-statsuffix);
   }
 
-  private Future<Tuple2<Try<Fetch.Result<AudioSpace>>, Try<Fetch.Result<Participants>>>>
-  tryRetrieveSpaceAdminAndTitle(IngesterTwitterMessage twitterMessage) {
-    Set<String> spaceIds = twitterMessage.getSpaceIds();
+  pwivate futuwe<tupwe2<twy<fetch.wesuwt<audiospace>>, twy<fetch.wesuwt<pawticipants>>>>
+  t-twywetwievespaceadminandtitwe(ingestewtwittewmessage twittewmessage) {
+    set<stwing> spaceids = twittewmessage.getspaceids();
 
-    if (spaceIds.isEmpty()) {
-      return null;
+    if (spaceids.isempty()) {
+      wetuwn n-nyuww;
     }
 
-    if (!(DeciderUtil.isAvailableForRandomRecipient(decider,
-        RETRIEVE_SPACE_ADMINS_AND_TITLE_DECIDER_KEY))) {
-      return null;
+    if (!(decidewutiw.isavaiwabwefowwandomwecipient(decidew, 😳😳😳
+        wetwieve_space_admins_and_titwe_decidew_key))) {
+      wetuwn n-nyuww;
     }
 
-    String spaceId = spaceIds.iterator().next();
+    s-stwing spaceid = s-spaceids.itewatow().next();
 
-    // Query both columns in parallel.
-    parallelFetchAttempts.increment();
-    Future<Fetch.Result<AudioSpace>> core = coreFetcher.fetch(spaceId);
-    Future<Fetch.Result<Participants>> participants = participantsFetcher.fetch(spaceId);
+    // quewy b-both cowumns in pawawwew. σωσ
+    pawawwewfetchattempts.incwement();
+    f-futuwe<fetch.wesuwt<audiospace>> c-cowe = cowefetchew.fetch(spaceid);
+    futuwe<fetch.wesuwt<pawticipants>> pawticipants = pawticipantsfetchew.fetch(spaceid);
 
-    return Futures.join(core.liftToTry(), participants.liftToTry());
+    wetuwn futuwes.join(cowe.wifttotwy(), (⑅˘꒳˘) pawticipants.wifttotwy());
   }
 
-  @Override
-  protected CompletableFuture<IngesterTwitterMessage> innerRunStageV2(IngesterTwitterMessage
-                                                                            twitterMessage) {
-    Future<Tuple2<Try<Fetch.Result<AudioSpace>>, Try<Fetch.Result<Participants>>>>
-        tryRetrieveSpaceAdminAndTitle = tryRetrieveSpaceAdminAndTitle(twitterMessage);
+  @ovewwide
+  pwotected c-compwetabwefutuwe<ingestewtwittewmessage> innewwunstagev2(ingestewtwittewmessage
+                                                                            t-twittewmessage) {
+    futuwe<tupwe2<twy<fetch.wesuwt<audiospace>>, (///ˬ///✿) t-twy<fetch.wesuwt<pawticipants>>>>
+        t-twywetwievespaceadminandtitwe = twywetwievespaceadminandtitwe(twittewmessage);
 
-    CompletableFuture<IngesterTwitterMessage> cf = new CompletableFuture<>();
+    compwetabwefutuwe<ingestewtwittewmessage> c-cf = n-nyew compwetabwefutuwe<>();
 
-    if (tryRetrieveSpaceAdminAndTitle == null) {
-      cf.complete(twitterMessage);
-    } else {
-      tryRetrieveSpaceAdminAndTitle.onSuccess(Function.cons(tries -> {
-        handleFutureOnSuccess(tries, twitterMessage);
-        cf.complete(twitterMessage);
-      })).onFailure(Function.cons(throwable -> {
-        handleFutureOnFailure();
-        cf.complete(twitterMessage);
+    if (twywetwievespaceadminandtitwe == n-nyuww) {
+      c-cf.compwete(twittewmessage);
+    } ewse {
+      twywetwievespaceadminandtitwe.onsuccess(function.cons(twies -> {
+        handwefutuweonsuccess(twies, 🥺 twittewmessage);
+        c-cf.compwete(twittewmessage);
+      })).onfaiwuwe(function.cons(thwowabwe -> {
+        h-handwefutuweonfaiwuwe();
+        c-cf.compwete(twittewmessage);
       }));
     }
 
-    return cf;
+    wetuwn cf;
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not a IngesterTwitterMessage object: " + obj);
+  @ovewwide
+  pubwic v-void innewpwocess(object obj) t-thwows stageexception {
+    if (!(obj instanceof i-ingestewtwittewmessage)) {
+      thwow nyew stageexception(this, "object is nyot a ingestewtwittewmessage object: " + o-obj);
     }
-    IngesterTwitterMessage twitterMessage = (IngesterTwitterMessage) obj;
-    Future<Tuple2<Try<Fetch.Result<AudioSpace>>, Try<Fetch.Result<Participants>>>>
-        tryRetrieveSpaceAdminAndTitle = tryRetrieveSpaceAdminAndTitle(twitterMessage);
+    i-ingestewtwittewmessage twittewmessage = (ingestewtwittewmessage) obj;
+    f-futuwe<tupwe2<twy<fetch.wesuwt<audiospace>>, OwO t-twy<fetch.wesuwt<pawticipants>>>>
+        twywetwievespaceadminandtitwe = twywetwievespaceadminandtitwe(twittewmessage);
 
-    if (tryRetrieveSpaceAdminAndTitle == null) {
-      emitAndCount(twitterMessage);
-      return;
+    if (twywetwievespaceadminandtitwe == n-nuww) {
+      emitandcount(twittewmessage);
+      wetuwn;
     }
 
-    tryRetrieveSpaceAdminAndTitle.onSuccess(Function.cons(tries -> {
-            handleFutureOnSuccess(tries, twitterMessage);
-            emitAndCount(twitterMessage);
-          })).onFailure(Function.cons(throwable -> {
-            handleFutureOnFailure();
-            emitAndCount(twitterMessage);
+    twywetwievespaceadminandtitwe.onsuccess(function.cons(twies -> {
+            handwefutuweonsuccess(twies, >w< t-twittewmessage);
+            emitandcount(twittewmessage);
+          })).onfaiwuwe(function.cons(thwowabwe -> {
+            handwefutuweonfaiwuwe();
+            e-emitandcount(twittewmessage);
           }));
   }
 
-  private void handleFutureOnSuccess(Tuple2<Try<Fetch.Result<AudioSpace>>,
-      Try<Fetch.Result<Participants>>> tries, IngesterTwitterMessage twitterMessage) {
-    handleCoreFetchTry(tries._1(), twitterMessage);
-    handleParticipantsFetchTry(tries._2(), twitterMessage);
+  p-pwivate void handwefutuweonsuccess(tupwe2<twy<fetch.wesuwt<audiospace>>, 🥺
+      twy<fetch.wesuwt<pawticipants>>> twies, nyaa~~ i-ingestewtwittewmessage t-twittewmessage) {
+    handwecowefetchtwy(twies._1(), ^^ twittewmessage);
+    handwepawticipantsfetchtwy(twies._2(), >w< t-twittewmessage);
   }
 
-  private void handleFutureOnFailure() {
-    parallelFetchFailure.increment();
+  pwivate void handwefutuweonfaiwuwe() {
+    p-pawawwewfetchfaiwuwe.incwement();
   }
 
-  private void handleCoreFetchTry(
-      Try<Fetch.Result<AudioSpace>> fetchTry,
-      IngesterTwitterMessage twitterMessage) {
+  pwivate void handwecowefetchtwy(
+      twy<fetch.wesuwt<audiospace>> f-fetchtwy, OwO
+      ingestewtwittewmessage t-twittewmessage) {
 
-    if (fetchTry.isReturn()) {
-      coreFetchSuccess.increment();
-      addSpaceTitleToMessage(twitterMessage, fetchTry.get().v());
-    } else {
-      coreFetchFailure.increment();
+    i-if (fetchtwy.iswetuwn()) {
+      cowefetchsuccess.incwement();
+      a-addspacetitwetomessage(twittewmessage, XD fetchtwy.get().v());
+    } e-ewse {
+      c-cowefetchfaiwuwe.incwement();
     }
   }
 
-  private void handleParticipantsFetchTry(
-      Try<Fetch.Result<Participants>> fetchTry,
-      IngesterTwitterMessage twitterMessage) {
+  p-pwivate void handwepawticipantsfetchtwy(
+      t-twy<fetch.wesuwt<pawticipants>> f-fetchtwy, ^^;;
+      ingestewtwittewmessage twittewmessage) {
 
-    if (fetchTry.isReturn()) {
-      participantsFetchSuccess.increment();
-      addSpaceAdminsToMessage(twitterMessage, fetchTry.get().v());
-    } else {
-      participantsFetchFailure.increment();
+    i-if (fetchtwy.iswetuwn()) {
+      p-pawticipantsfetchsuccess.incwement();
+      a-addspaceadminstomessage(twittewmessage, 🥺 fetchtwy.get().v());
+    } ewse {
+      p-pawticipantsfetchfaiwuwe.incwement();
     }
   }
 
-  private void addSpaceTitleToMessage(
-      IngesterTwitterMessage twitterMessage,
-      Option<AudioSpace> audioSpace) {
+  pwivate void a-addspacetitwetomessage(
+      i-ingestewtwittewmessage twittewmessage, XD
+      option<audiospace> audiospace) {
 
-    if (audioSpace.isDefined()) {
-      String audioSpaceTitle = audioSpace.get().getTitle();
-      if (StringUtils.isNotEmpty(audioSpaceTitle)) {
-        twitterMessage.setSpaceTitle(audioSpaceTitle);
-        tweetsWithSpaceTitle.increment();
-      } else {
-        emptySpaceTitle.increment();
+    i-if (audiospace.isdefined()) {
+      s-stwing audiospacetitwe = a-audiospace.get().gettitwe();
+      i-if (stwingutiws.isnotempty(audiospacetitwe)) {
+        twittewmessage.setspacetitwe(audiospacetitwe);
+        tweetswithspacetitwe.incwement();
+      } e-ewse {
+        emptyspacetitwe.incwement();
       }
-    } else {
-      emptyCore.increment();
+    } ewse {
+      emptycowe.incwement();
     }
   }
 
-  private void addSpaceAdminsToMessage(
-      IngesterTwitterMessage twitterMessage,
-      Option<Participants> participants) {
+  pwivate void addspaceadminstomessage(
+      i-ingestewtwittewmessage twittewmessage, (U ᵕ U❁)
+      o-option<pawticipants> pawticipants) {
 
-    if (participants.isDefined()) {
-      List<ParticipantUser> admins = getAdminsFromParticipants(participants.get());
-      if (!admins.isEmpty()) {
-        for (ParticipantUser admin : admins) {
-          addSpaceAdminToMessage(twitterMessage, admin);
+    i-if (pawticipants.isdefined()) {
+      wist<pawticipantusew> a-admins = getadminsfwompawticipants(pawticipants.get());
+      if (!admins.isempty()) {
+        f-fow (pawticipantusew a-admin : admins) {
+          a-addspaceadmintomessage(twittewmessage, :3 a-admin);
         }
-        tweetsWithSpaceAdmins.increment();
-      } else {
-        emptySpaceAdmins.increment();
+        t-tweetswithspaceadmins.incwement();
+      } ewse {
+        emptyspaceadmins.incwement();
       }
-    } else {
-      emptyParticipants.increment();
+    } ewse {
+      emptypawticipants.incwement();
     }
   }
 
-  private List<ParticipantUser> getAdminsFromParticipants(Participants participants) {
-    if (!participants.isSetAdmins()) {
-      return Lists.newArrayList();
+  pwivate wist<pawticipantusew> getadminsfwompawticipants(pawticipants pawticipants) {
+    i-if (!pawticipants.issetadmins()) {
+      w-wetuwn wists.newawwaywist();
     }
-    return participants.getAdmins();
+    w-wetuwn pawticipants.getadmins();
   }
 
-  private void addSpaceAdminToMessage(IngesterTwitterMessage twitterMessage,
-                                      ParticipantUser admin) {
-    TwitterMessageUser.Builder userBuilder = new TwitterMessageUser.Builder();
-    if (admin.isSetTwitter_screen_name()
-        && StringUtils.isNotEmpty(admin.getTwitter_screen_name())) {
-      userBuilder.withScreenName(Optional.of(admin.getTwitter_screen_name()));
+  p-pwivate void addspaceadmintomessage(ingestewtwittewmessage twittewmessage, ( ͡o ω ͡o )
+                                      pawticipantusew admin) {
+    t-twittewmessageusew.buiwdew u-usewbuiwdew = nyew t-twittewmessageusew.buiwdew();
+    if (admin.issettwittew_scween_name()
+        && stwingutiws.isnotempty(admin.gettwittew_scween_name())) {
+      u-usewbuiwdew.withscweenname(optionaw.of(admin.gettwittew_scween_name()));
     }
-    if (admin.isSetDisplay_name() && StringUtils.isNotEmpty(admin.getDisplay_name())) {
-      userBuilder.withDisplayName(Optional.of(admin.getDisplay_name()));
+    i-if (admin.issetdispway_name() && stwingutiws.isnotempty(admin.getdispway_name())) {
+      usewbuiwdew.withdispwayname(optionaw.of(admin.getdispway_name()));
     }
-    twitterMessage.addSpaceAdmin(userBuilder.build());
+    t-twittewmessage.addspaceadmin(usewbuiwdew.buiwd());
   }
 }

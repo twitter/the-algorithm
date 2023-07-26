@@ -1,35 +1,35 @@
-package com.twitter.search.earlybird.search;
+package com.twittew.seawch.eawwybiwd.seawch;
 
-import java.util.List;
+impowt j-java.utiw.wist;
 
-public class SimpleSearchResults extends SearchResultsInfo {
-  protected Hit[] hits;
-  protected int numHits;
+p-pubwic cwass s-simpweseawchwesuwts e-extends seawchwesuwtsinfo {
+  p-pwotected hit[] h-hits;
+  pwotected i-int nyumhits;
 
-  public SimpleSearchResults(int size) {
-    this.hits = new Hit[size];
-    this.numHits = 0;
+  p-pubwic simpweseawchwesuwts(int size) {
+    this.hits = nyew hit[size];
+    this.numhits = 0;
   }
 
-  public SimpleSearchResults(List<Hit> hits) {
-    this.hits = new Hit[hits.size()];
-    this.numHits = hits.size();
-    hits.toArray(this.hits);
+  p-pubwic simpweseawchwesuwts(wist<hit> hits) {
+    this.hits = n-nyew hit[hits.size()];
+    this.numhits = h-hits.size();
+    hits.toawway(this.hits);
   }
 
-  public Hit[] hits() {
-    return hits;
+  pubwic hit[] hits() {
+    wetuwn h-hits;
   }
 
-  public int numHits() {
-    return numHits;
+  pubwic int nyumhits() {
+    w-wetuwn n-nyumhits;
   }
 
-  public void setNumHits(int numHits) {
-    this.numHits = numHits;
+  pubwic void setnumhits(int nyumhits) {
+    this.numhits = nyumhits;
   }
 
-  public Hit getHit(int hitIndex) {
-    return hits[hitIndex];
+  p-pubwic hit gethit(int hitindex) {
+    wetuwn hits[hitindex];
   }
 }

@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.awewt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertNavigationMetadata
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.awewt.showawewtnavigationmetadata
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class ShowAlertNavigationMetadataMarshaller @Inject() () {
+@singweton
+cwass s-showawewtnavigationmetadatamawshawwew @inject() () {
 
-  def apply(alertNavigationMetadata: ShowAlertNavigationMetadata): urt.ShowAlertNavigationMetadata =
-    urt.ShowAlertNavigationMetadata(navigateToEntryId =
-      Some(alertNavigationMetadata.navigateToEntryId))
+  d-def a-appwy(awewtnavigationmetadata: showawewtnavigationmetadata): uwt.showawewtnavigationmetadata =
+    uwt.showawewtnavigationmetadata(navigatetoentwyid =
+      some(awewtnavigationmetadata.navigatetoentwyid))
 }

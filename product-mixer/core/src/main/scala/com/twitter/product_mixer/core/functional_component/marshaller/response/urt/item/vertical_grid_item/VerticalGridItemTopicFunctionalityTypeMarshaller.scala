@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.vewticaw_gwid_item
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.PivotVerticalGridItemTopicFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.RecommendationVerticalGridItemTopicFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.VerticalGridItemTopicFunctionalityType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.vewticaw_gwid_item.pivotvewticawgwiditemtopicfunctionawitytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.vewticaw_gwid_item.wecommendationvewticawgwiditemtopicfunctionawitytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.vewticaw_gwid_item.vewticawgwiditemtopicfunctionawitytype
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => uwt}
+i-impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
-@Singleton
-class VerticalGridItemTopicFunctionalityTypeMarshaller @Inject() () {
+@singweton
+c-cwass vewticawgwiditemtopicfunctionawitytypemawshawwew @inject() () {
 
-  def apply(
-    verticalGridItemTopicFunctionalityType: VerticalGridItemTopicFunctionalityType
-  ): urt.VerticalGridItemTopicFunctionalityType = verticalGridItemTopicFunctionalityType match {
-    case PivotVerticalGridItemTopicFunctionalityType =>
-      urt.VerticalGridItemTopicFunctionalityType.Pivot
-    case RecommendationVerticalGridItemTopicFunctionalityType =>
-      urt.VerticalGridItemTopicFunctionalityType.Recommendation
+  def appwy(
+    vewticawgwiditemtopicfunctionawitytype: vewticawgwiditemtopicfunctionawitytype
+  ): uwt.vewticawgwiditemtopicfunctionawitytype = v-vewticawgwiditemtopicfunctionawitytype match {
+    case pivotvewticawgwiditemtopicfunctionawitytype =>
+      uwt.vewticawgwiditemtopicfunctionawitytype.pivot
+    c-case wecommendationvewticawgwiditemtopicfunctionawitytype =>
+      uwt.vewticawgwiditemtopicfunctionawitytype.wecommendation
   }
 }

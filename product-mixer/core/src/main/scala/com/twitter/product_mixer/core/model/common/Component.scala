@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.model.common
+package com.twittew.pwoduct_mixew.cowe.modew.common
 
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.HasComponentIdentifier
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.awewt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.hascomponentidentifiew
 
 /**
- * Components are very generically reusable composable pieces
- * Components are uniquely identifiable and centrally registered
+ * c-components awe v-vewy genewicawwy w-weusabwe composabwe p-pieces
+ * components a-awe uniquewy i-identifiabwe and centwawwy wegistewed
  */
-trait Component extends HasComponentIdentifier {
+twait component extends hascomponentidentifiew {
 
-  /** @see [[ComponentIdentifier]] */
-  override val identifier: ComponentIdentifier
+  /** @see [[componentidentifiew]] */
+  o-ovewwide vaw identifiew: componentidentifiew
 
-  /** the [[Alert]]s that will be used for this component. */
-  val alerts: Seq[Alert] = Seq.empty
+  /** the [[awewt]]s t-that wiww be used f-fow this component. (U ᵕ U❁) */
+  vaw awewts: seq[awewt] = seq.empty
 }

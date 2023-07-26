@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.common.candidate_sources.triangular_loops
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.twianguwaw_woops
 
-import com.twitter.timelines.configapi.FSParam
+impowt com.twittew.timewines.configapi.fspawam
 
-object TriangularLoopsParams {
+o-object twianguwawwoopspawams {
 
-  object KeepOnlyCandidatesWhoFollowTargetUser
-      extends FSParam[Boolean](
-        "triangular_loops_keep_only_candidates_who_follow_target_user",
-        false)
+  o-object keeponwycandidateswhofowwowtawgetusew
+      e-extends f-fspawam[boowean](
+        "twianguwaw_woops_keep_onwy_candidates_who_fowwow_tawget_usew", òωó
+        f-fawse)
 }

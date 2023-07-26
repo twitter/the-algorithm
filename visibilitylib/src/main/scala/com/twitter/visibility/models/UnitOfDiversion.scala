@@ -1,16 +1,16 @@
-package com.twitter.visibility.models
+package com.twittew.visibiwity.modews
 
-trait UnitOfDiversion {
+twait unitofdivewsion {
 
-  def apply: (String, Any)
+  d-def appwy: (stwing, -.- a-any)
 }
 
-object UnitOfDiversion {
-  case class ConversationId(conversationId: Long) extends UnitOfDiversion {
-    override def apply: (String, Any) = ("conversation_id", conversationId)
+object u-unitofdivewsion {
+  c-case cwass c-convewsationid(convewsationid: w-wong) extends u-unitofdivewsion {
+    o-ovewwide def appwy: (stwing, (ˆ ﻌ ˆ)♡ any) = ("convewsation_id", (⑅˘꒳˘) convewsationid)
   }
 
-  case class TweetId(tweetId: Long) extends UnitOfDiversion {
-    override def apply: (String, Any) = ("tweet_id", tweetId)
+  case cwass t-tweetid(tweetid: wong) extends unitofdivewsion {
+    ovewwide def a-appwy: (stwing, (U ᵕ U❁) any) = ("tweet_id", -.- t-tweetid)
   }
 }

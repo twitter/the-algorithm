@@ -1,55 +1,55 @@
-package com.twitter.tweetypie.tweettext
+package com.twittew.tweetypie.tweettext
 
 /**
- * Code used to convert raw user-provided text into an allowable form.
+ * code used to convewt w-waw usew-pwovided t-text into a-an awwowabwe fowm. 😳😳😳
  */
-object PartialHtmlEncoding {
+o-object pawtiawhtmwencoding {
 
   /**
-   * Replaces all `<`, `>`, and '&' chars with "&lt;", "&gt;", and "&amp;", respectively.
+   * w-wepwaces aww `<`, o.O `>`, ( ͡o ω ͡o ) a-and '&' chaws w-with "&wt;", "&gt;", (U ﹏ U) a-and "&amp;", (///ˬ///✿) wespectivewy. >w<
    *
-   * Tweet text is HTML-encoded at tweet creation time, and is stored and processed in encoded form.
+   * tweet text is htmw-encoded at tweet cweation time, rawr a-and is stowed and pwocessed in encoded fowm. mya
    */
-  def encode(text: String): String = {
-    val buf = new StringBuilder
+  d-def encode(text: stwing): s-stwing = {
+    vaw buf = nyew stwingbuiwdew
 
-    text.foreach {
-      case '<' => buf.append("&lt;")
-      case '>' => buf.append("&gt;")
-      case '&' => buf.append("&amp;")
+    text.foweach {
+      case '<' => b-buf.append("&wt;")
+      case '>' => b-buf.append("&gt;")
+      c-case '&' => buf.append("&amp;")
       case c => buf.append(c)
     }
 
-    buf.toString
+    buf.tostwing
   }
 
-  private val AmpLtRegex = "&lt;".r
-  private val AmpGtRegex = "&gt;".r
-  private val AmpAmpRegex = "&amp;".r
+  pwivate v-vaw ampwtwegex = "&wt;".w
+  pwivate vaw ampgtwegex = "&gt;".w
+  pwivate vaw ampampwegex = "&amp;".w
 
-  private val partialHtmlDecoder: (String => String) =
-    ((s: String) => AmpLtRegex.replaceAllIn(s, "<"))
-      .andThen(s => AmpGtRegex.replaceAllIn(s, ">"))
-      .andThen(s => AmpAmpRegex.replaceAllIn(s, "&"))
+  pwivate v-vaw pawtiawhtmwdecodew: (stwing => stwing) =
+    ((s: s-stwing) => a-ampwtwegex.wepwaceawwin(s, ^^ "<"))
+      .andthen(s => a-ampgtwegex.wepwaceawwin(s, 😳😳😳 ">"))
+      .andthen(s => a-ampampwegex.wepwaceawwin(s, mya "&"))
 
   /**
-   * The opposite of encode, it replaces all "&lt;", "&gt;", and "&amp;" with
-   * `<`, `>`, and '&', respectively.
+   * the opposite of encode, 😳 i-it wepwaces aww "&wt;", -.- "&gt;", and "&amp;" w-with
+   * `<`, 🥺 `>`, o.O and '&', wespectivewy. /(^•ω•^)
    */
-  def decode(text: String): String =
-    decodeWithModification(text) match {
-      case Some(mod) => mod.updated
-      case None => text
+  def decode(text: stwing): stwing =
+    decodewithmodification(text) match {
+      c-case some(mod) => mod.updated
+      c-case n-none => text
     }
 
   /**
-   * Decodes encoded entities, and returns a `TextModification` if the text was modified.
+   * decodes e-encoded entities, nyaa~~ and wetuwns a `textmodification` if the t-text was modified. nyaa~~
    */
-  def decodeWithModification(text: String): Option[TextModification] =
-    TextModification.replaceAll(
-      text,
-      AmpLtRegex -> "<",
-      AmpGtRegex -> ">",
-      AmpAmpRegex -> "&"
+  d-def decodewithmodification(text: s-stwing): o-option[textmodification] =
+    textmodification.wepwaceaww(
+      t-text, :3
+      ampwtwegex -> "<", 😳😳😳
+      a-ampgtwegex -> ">",
+      ampampwegex -> "&"
     )
 }

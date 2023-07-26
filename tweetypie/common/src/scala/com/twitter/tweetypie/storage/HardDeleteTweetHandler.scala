@@ -1,152 +1,152 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.storage.TweetKey.LKey.ForceAddedStateKey
-import com.twitter.tweetypie.storage.TweetStorageClient.HardDeleteTweet
-import com.twitter.tweetypie.storage.TweetStorageClient.HardDeleteTweet.Response._
-import com.twitter.tweetypie.storage.TweetUtils._
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Time
-import com.twitter.util.Try
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.stowage.tweetkey.wkey.fowceaddedstatekey
+i-impowt c-com.twittew.tweetypie.stowage.tweetstowagecwient.hawddewetetweet
+i-impowt com.twittew.tweetypie.stowage.tweetstowagecwient.hawddewetetweet.wesponse._
+i-impowt com.twittew.tweetypie.stowage.tweetutiws._
+i-impowt c-com.twittew.utiw.wetuwn
+impowt com.twittew.utiw.thwow
+impowt com.twittew.utiw.time
+impowt com.twittew.utiw.twy
 
-object HardDeleteTweetHandler {
+object hawddewetetweethandwew {
 
   /**
-   * When a tweet is removed lkeys with these prefixes will be deleted permanently.
+   * w-when a tweet is wemoved wkeys with these p-pwefixes wiww be deweted pewmanentwy. -.-
    */
-  private[storage] def isKeyToBeDeleted(key: TweetKey): Boolean =
-    key.lKey match {
-      case (TweetKey.LKey.CoreFieldsKey | TweetKey.LKey.InternalFieldsKey(_) |
-          TweetKey.LKey.AdditionalFieldsKey(_) | TweetKey.LKey.SoftDeletionStateKey |
-          TweetKey.LKey.BounceDeletionStateKey | TweetKey.LKey.UnDeletionStateKey |
-          TweetKey.LKey.ForceAddedStateKey) =>
-        true
-      case _ => false
+  p-pwivate[stowage] def iskeytobedeweted(key: tweetkey): boowean =
+    k-key.wkey match {
+      case (tweetkey.wkey.cowefiewdskey | t-tweetkey.wkey.intewnawfiewdskey(_) |
+          t-tweetkey.wkey.additionawfiewdskey(_) | tweetkey.wkey.softdewetionstatekey |
+          tweetkey.wkey.bouncedewetionstatekey | tweetkey.wkey.undewetionstatekey |
+          tweetkey.wkey.fowceaddedstatekey) =>
+        t-twue
+      case _ => fawse
     }
 
   /**
-   * When hard deleting, there are two actions, writing the record and
-   * removing the tweet data. If we are performing any action, we will
-   * always try to remove the tweet data. If the tweet does not yet have a
-   * hard deletion record, then we will need to write one. This method
-   * returns the HardDeleted record if it needs to be written, and None
-   * if it has already been written.
+   * when hawd deweting, ^^ thewe awe two actions, (⑅˘꒳˘) w-wwiting the wecowd and
+   * wemoving t-the tweet data. nyaa~~ i-if we awe pewfowming a-any action, /(^•ω•^) w-we wiww
+   * awways twy to wemove the tweet d-data. (U ﹏ U) if the tweet does nyot yet have a
+   * hawd d-dewetion wecowd, 😳😳😳 then we wiww nyeed to wwite one. >w< this method
+   * wetuwns the hawddeweted wecowd i-if it nyeeds to be wwitten, a-and nyone
+   * i-if it has awweady b-been wwitten. XD
    *
-   * If the tweet is not in a deleted state we signal this with a
-   * Throw(NotDeleted).
+   * if the tweet is nyot in a deweted state w-we signaw this w-with a
+   * thwow(notdeweted). o.O
    */
-  private[storage] def getHardDeleteStateRecord(
-    tweetId: TweetId,
-    records: Seq[TweetManhattanRecord],
-    mhTimestamp: Time,
-    stats: StatsReceiver
-  ): Try[Option[TweetStateRecord.HardDeleted]] = {
-    val mostRecent = TweetStateRecord.mostRecent(records)
-    val currentStateStr = mostRecent.map(_.name).getOrElse("no_tweet_state_record")
-    stats.counter(currentStateStr).incr()
+  pwivate[stowage] d-def gethawddewetestatewecowd(
+    t-tweetid: tweetid, mya
+    w-wecowds: seq[tweetmanhattanwecowd], 🥺
+    mhtimestamp: t-time, ^^;;
+    stats: statsweceivew
+  ): twy[option[tweetstatewecowd.hawddeweted]] = {
+    v-vaw mostwecent = tweetstatewecowd.mostwecent(wecowds)
+    v-vaw cuwwentstatestw = mostwecent.map(_.name).getowewse("no_tweet_state_wecowd")
+    s-stats.countew(cuwwentstatestw).incw()
 
-    mostRecent match {
-      case Some(
-            record @ (TweetStateRecord.SoftDeleted(_, _) | TweetStateRecord.BounceDeleted(_, _))) =>
-        Return(
-          Some(
-            TweetStateRecord.HardDeleted(
-              tweetId = tweetId,
-              // createdAt is the hard deletion timestamp when dealing with hard deletes in Manhattan
-              createdAt = mhTimestamp.inMillis,
-              // deletedAt is the soft deletion timestamp when dealing with hard deletes in Manhattan
-              deletedAt = record.createdAt
+    m-mostwecent match {
+      case some(
+            wecowd @ (tweetstatewecowd.softdeweted(_, :3 _) | tweetstatewecowd.bouncedeweted(_, (U ﹏ U) _))) =>
+        wetuwn(
+          some(
+            t-tweetstatewecowd.hawddeweted(
+              t-tweetid = tweetid, OwO
+              // c-cweatedat i-is the hawd d-dewetion timestamp when deawing with hawd dewetes in manhattan
+              c-cweatedat = mhtimestamp.inmiwwis, 😳😳😳
+              // dewetedat is the soft dewetion timestamp when deawing w-with hawd dewetes in manhattan
+              d-dewetedat = w-wecowd.cweatedat
             )
           )
         )
 
-      case Some(_: TweetStateRecord.HardDeleted) =>
-        Return(None)
+      c-case some(_: tweetstatewecowd.hawddeweted) =>
+        w-wetuwn(none)
 
-      case Some(_: TweetStateRecord.ForceAdded) =>
-        Throw(NotDeleted(tweetId, Some(ForceAddedStateKey)))
+      c-case some(_: t-tweetstatewecowd.fowceadded) =>
+        t-thwow(notdeweted(tweetid, (ˆ ﻌ ˆ)♡ some(fowceaddedstatekey)))
 
-      case Some(_: TweetStateRecord.Undeleted) =>
-        Throw(NotDeleted(tweetId, Some(TweetKey.LKey.UnDeletionStateKey)))
+      case some(_: t-tweetstatewecowd.undeweted) =>
+        t-thwow(notdeweted(tweetid, XD s-some(tweetkey.wkey.undewetionstatekey)))
 
-      case None =>
-        Throw(NotDeleted(tweetId, None))
+      c-case nyone =>
+        t-thwow(notdeweted(tweetid, (ˆ ﻌ ˆ)♡ none))
     }
   }
 
   /**
-   * This handler returns HardDeleteTweet.Response.Deleted if data associated with the tweet is deleted,
-   * either as a result of this request or a previous one.
+   * this handwew wetuwns hawddewetetweet.wesponse.deweted i-if data associated with the tweet is deweted, ( ͡o ω ͡o )
+   * eithew as a wesuwt of this wequest ow a-a pwevious one. rawr x3
    *
-   * The most recently added record determines the tweet's state. This method will only delete data
-   * for tweets in the soft-delete or hard-delete state. (Calling hardDeleteTweet for tweets that have
-   * already been hard-deleted will remove any lkeys that may not have been deleted previously).
+   * the most wecentwy added wecowd detewmines t-the tweet's s-state. nyaa~~ this method w-wiww onwy dewete data
+   * fow t-tweets in the soft-dewete ow h-hawd-dewete state. >_< (cawwing h-hawddewetetweet fow tweets that have
+   * awweady been hawd-deweted wiww wemove any w-wkeys that may nyot have been deweted p-pweviouswy). ^^;;
    */
-  def apply(
-    read: ManhattanOperations.Read,
-    insert: ManhattanOperations.Insert,
-    delete: ManhattanOperations.Delete,
-    scribe: Scribe,
-    stats: StatsReceiver
-  ): TweetId => Stitch[HardDeleteTweet.Response] = {
-    val hardDeleteStats = stats.scope("hardDeleteTweet")
-    val hardDeleteTweetCancelled = hardDeleteStats.counter("cancelled")
-    val beforeStateStats = hardDeleteStats.scope("before_state")
+  def appwy(
+    w-wead: m-manhattanopewations.wead,
+    insewt: manhattanopewations.insewt, (ˆ ﻌ ˆ)♡
+    d-dewete: manhattanopewations.dewete, ^^;;
+    s-scwibe: scwibe, (⑅˘꒳˘)
+    s-stats: statsweceivew
+  ): t-tweetid => stitch[hawddewetetweet.wesponse] = {
+    vaw hawddewetestats = stats.scope("hawddewetetweet")
+    vaw hawddewetetweetcancewwed = h-hawddewetestats.countew("cancewwed")
+    v-vaw befowestatestats = h-hawddewetestats.scope("befowe_state")
 
-    def removeRecords(keys: Seq[TweetKey], mhTimestamp: Time): Stitch[Unit] =
-      Stitch
-        .collect(keys.map(key => delete(key, Some(mhTimestamp)).liftToTry))
-        .map(collectWithRateLimitCheck)
-        .lowerFromTry
+    def wemovewecowds(keys: s-seq[tweetkey], m-mhtimestamp: time): stitch[unit] =
+      s-stitch
+        .cowwect(keys.map(key => dewete(key, rawr x3 some(mhtimestamp)).wifttotwy))
+        .map(cowwectwithwatewimitcheck)
+        .wowewfwomtwy
 
-    def writeRecord(record: Option[TweetStateRecord.HardDeleted]): Stitch[Unit] =
-      record match {
-        case Some(r) =>
-          insert(r.toTweetMhRecord).onSuccess { _ =>
-            scribe.logRemoved(
-              r.tweetId,
-              Time.fromMilliseconds(r.createdAt),
-              isSoftDeleted = false
+    def wwitewecowd(wecowd: option[tweetstatewecowd.hawddeweted]): s-stitch[unit] =
+      w-wecowd match {
+        case some(w) =>
+          i-insewt(w.totweetmhwecowd).onsuccess { _ =>
+            s-scwibe.wogwemoved(
+              w.tweetid, (///ˬ///✿)
+              time.fwommiwwiseconds(w.cweatedat), 🥺
+              issoftdeweted = fawse
             )
           }
-        case None => Stitch.Unit
+        c-case nyone => stitch.unit
       }
 
-    tweetId =>
-      read(tweetId)
-        .flatMap { records =>
-          val hardDeletionTimestamp = Time.now
+    tweetid =>
+      wead(tweetid)
+        .fwatmap { wecowds =>
+          v-vaw hawddewetiontimestamp = time.now
 
-          val keysToBeDeleted: Seq[TweetKey] = records.map(_.key).filter(isKeyToBeDeleted)
+          vaw keystobedeweted: s-seq[tweetkey] = w-wecowds.map(_.key).fiwtew(iskeytobedeweted)
 
-          getHardDeleteStateRecord(
-            tweetId,
-            records,
-            hardDeletionTimestamp,
-            beforeStateStats) match {
-            case Return(record) =>
-              Stitch
+          gethawddewetestatewecowd(
+            tweetid, >_<
+            wecowds, UwU
+            h-hawddewetiontimestamp, >_<
+            b-befowestatestats) match {
+            case wetuwn(wecowd) =>
+              s-stitch
                 .join(
-                  writeRecord(record),
-                  removeRecords(keysToBeDeleted, hardDeletionTimestamp)
+                  wwitewecowd(wecowd), -.-
+                  w-wemovewecowds(keystobedeweted, mya hawddewetiontimestamp)
                 ).map(_ =>
-                  // If the tweetId is non-snowflake and has previously been hard deleted
-                  // there will be no coreData record to fall back on to get the tweet
-                  // creation time and createdAtMillis will be None.
-                  Deleted(
-                    // deletedAtMillis: when the tweet was hard deleted
-                    deletedAtMillis = Some(hardDeletionTimestamp.inMillis),
-                    // createdAtMillis: when the tweet itself was created
-                    // (as opposed to when the deletion record was created)
-                    createdAtMillis =
-                      TweetUtils.creationTimeFromTweetIdOrMHRecords(tweetId, records)
+                  // if the tweetid is n-nyon-snowfwake and has pweviouswy b-been hawd deweted
+                  // t-thewe wiww be nyo cowedata w-wecowd to faww back on to get t-the tweet
+                  // c-cweation time and c-cweatedatmiwwis wiww be nyone. >w<
+                  d-deweted(
+                    // d-dewetedatmiwwis: when the tweet was hawd deweted
+                    d-dewetedatmiwwis = s-some(hawddewetiontimestamp.inmiwwis), (U ﹏ U)
+                    // c-cweatedatmiwwis: when the tweet itsewf was c-cweated
+                    // (as opposed to w-when the dewetion w-wecowd was cweated)
+                    cweatedatmiwwis =
+                      tweetutiws.cweationtimefwomtweetidowmhwecowds(tweetid, 😳😳😳 wecowds)
                   ))
-            case Throw(notDeleted: NotDeleted) =>
-              hardDeleteTweetCancelled.incr()
-              Stitch.value(notDeleted)
-            case Throw(e) => Stitch.exception(e) // this should never happen
+            c-case thwow(notdeweted: n-nyotdeweted) =>
+              h-hawddewetetweetcancewwed.incw()
+              s-stitch.vawue(notdeweted)
+            case t-thwow(e) => stitch.exception(e) // this shouwd nyevew happen
           }
         }
   }

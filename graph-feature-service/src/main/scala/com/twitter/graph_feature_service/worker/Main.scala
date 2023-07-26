@@ -1,58 +1,58 @@
-package com.twitter.graph_feature_service.worker
+package com.twittew.gwaph_featuwe_sewvice.wowkew
 
-import com.google.inject.Module
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.gizmoduck.modules.TimerModule
-import com.twitter.finatra.mtls.thriftmux.Mtls
-import com.twitter.finatra.thrift.ThriftServer
-import com.twitter.finatra.thrift.filters.{
-  LoggingMDCFilter,
-  StatsFilter,
-  ThriftMDCFilter,
-  TraceIdMDCFilter
+impowt com.googwe.inject.moduwe
+i-impowt com.twittew.finatwa.decidew.moduwes.decidewmoduwe
+i-impowt c-com.twittew.finatwa.gizmoduck.moduwes.timewmoduwe
+i-impowt com.twittew.finatwa.mtws.thwiftmux.mtws
+i-impowt com.twittew.finatwa.thwift.thwiftsewvew
+i-impowt com.twittew.finatwa.thwift.fiwtews.{
+  woggingmdcfiwtew, 🥺
+  s-statsfiwtew, mya
+  t-thwiftmdcfiwtew, 🥺
+  twaceidmdcfiwtew
 }
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule
-import com.twitter.finatra.thrift.routing.ThriftRouter
-import com.twitter.graph_feature_service.thriftscala
-import com.twitter.graph_feature_service.worker.controllers.WorkerController
-import com.twitter.graph_feature_service.worker.handlers.WorkerWarmupHandler
-import com.twitter.graph_feature_service.worker.modules.{
-  GraphContainerProviderModule,
-  WorkerFlagModule
+impowt com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwsthwiftwebfowmsmoduwe
+impowt com.twittew.finatwa.thwift.wouting.thwiftwoutew
+impowt c-com.twittew.gwaph_featuwe_sewvice.thwiftscawa
+impowt com.twittew.gwaph_featuwe_sewvice.wowkew.contwowwews.wowkewcontwowwew
+impowt c-com.twittew.gwaph_featuwe_sewvice.wowkew.handwews.wowkewwawmuphandwew
+impowt c-com.twittew.gwaph_featuwe_sewvice.wowkew.moduwes.{
+  gwaphcontainewpwovidewmoduwe, >_<
+  wowkewfwagmoduwe
 }
-import com.twitter.graph_feature_service.worker.util.GraphContainer
-import com.twitter.inject.thrift.modules.ThriftClientIdModule
-import com.twitter.util.Await
+impowt com.twittew.gwaph_featuwe_sewvice.wowkew.utiw.gwaphcontainew
+i-impowt com.twittew.inject.thwift.moduwes.thwiftcwientidmoduwe
+i-impowt c-com.twittew.utiw.await
 
-object Main extends WorkerMain
+object main extends wowkewmain
 
-class WorkerMain extends ThriftServer with Mtls {
+cwass wowkewmain extends t-thwiftsewvew with mtws {
 
-  override val name = "graph_feature_service-worker"
+  ovewwide vaw nyame = "gwaph_featuwe_sewvice-wowkew"
 
-  override val modules: Seq[Module] = {
-    Seq(
-      WorkerFlagModule,
-      DeciderModule,
-      TimerModule,
-      ThriftClientIdModule,
-      GraphContainerProviderModule,
-      new MtlsThriftWebFormsModule[thriftscala.Worker.MethodPerEndpoint](this)
+  ovewwide vaw moduwes: seq[moduwe] = {
+    seq(
+      w-wowkewfwagmoduwe, >_<
+      decidewmoduwe, (⑅˘꒳˘)
+      t-timewmoduwe, /(^•ω•^)
+      t-thwiftcwientidmoduwe, rawr x3
+      g-gwaphcontainewpwovidewmoduwe, (U ﹏ U)
+      n-nyew mtwsthwiftwebfowmsmoduwe[thwiftscawa.wowkew.methodpewendpoint](this)
     )
   }
 
-  override def configureThrift(router: ThriftRouter): Unit = {
-    router
-      .filter[LoggingMDCFilter]
-      .filter[TraceIdMDCFilter]
-      .filter[ThriftMDCFilter]
-      .filter[StatsFilter]
-      .add[WorkerController]
+  ovewwide def configuwethwift(woutew: thwiftwoutew): u-unit = {
+    woutew
+      .fiwtew[woggingmdcfiwtew]
+      .fiwtew[twaceidmdcfiwtew]
+      .fiwtew[thwiftmdcfiwtew]
+      .fiwtew[statsfiwtew]
+      .add[wowkewcontwowwew]
   }
 
-  override protected def warmup(): Unit = {
-    val graphContainer = injector.instance[GraphContainer]
-    Await.result(graphContainer.warmup)
-    handle[WorkerWarmupHandler]()
+  ovewwide p-pwotected def wawmup(): unit = {
+    vaw gwaphcontainew = injectow.instance[gwaphcontainew]
+    await.wesuwt(gwaphcontainew.wawmup)
+    handwe[wowkewwawmuphandwew]()
   }
 }

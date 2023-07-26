@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt
 
-trait HasSortIndex { timelineEntry: TimelineEntry =>
-  def sortIndex: Option[Long]
+twait hassowtindex { t-timewineentwy: t-timewineentwy =>
+  d-def s-sowtindex: option[wong]
 
-  def withSortIndex(sortIndex: Long): TimelineEntry
+  d-def w-withsowtindex(sowtindex: w-wong): t-timewineentwy
 }

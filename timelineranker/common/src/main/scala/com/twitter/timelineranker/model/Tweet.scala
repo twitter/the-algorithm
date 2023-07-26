@@ -1,62 +1,62 @@
-package com.twitter.timelineranker.model
+package com.twittew.timewinewankew.modew
 
-import com.twitter.search.earlybird.thriftscala._
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
+impowt c-com.twittew.seawch.eawwybiwd.thwiftscawa._
+i-impowt c-com.twittew.timewinewankew.{thwiftscawa => t-thwift}
+i-impowt com.twittew.timewines.modew.tweetid
+i-impowt com.twittew.timewines.modew.usewid
 
-object Tweet {
-  def fromThrift(tweet: thrift.Tweet): Tweet = {
-    Tweet(id = tweet.id)
+o-object t-tweet {
+  def fwomthwift(tweet: thwift.tweet): tweet = {
+    tweet(id = tweet.id)
   }
 }
 
-case class Tweet(
-  id: TweetId,
-  userId: Option[UserId] = None,
-  sourceTweetId: Option[TweetId] = None,
-  sourceUserId: Option[UserId] = None)
-    extends TimelineEntry {
+c-case cwass tweet(
+  id: tweetid, ( ͡o ω ͡o )
+  usewid: o-option[usewid] = nyone, (U ﹏ U)
+  s-souwcetweetid: option[tweetid] = nyone, (///ˬ///✿)
+  souwceusewid: option[usewid] = nyone)
+    e-extends timewineentwy {
 
-  throwIfInvalid()
+  thwowifinvawid()
 
-  def throwIfInvalid(): Unit = {}
+  def thwowifinvawid(): u-unit = {}
 
-  def toThrift: thrift.Tweet = {
-    thrift.Tweet(
-      id = id,
-      userId = userId,
-      sourceTweetId = sourceTweetId,
-      sourceUserId = sourceUserId)
+  d-def tothwift: thwift.tweet = {
+    thwift.tweet(
+      id = id, >w<
+      usewid = u-usewid, rawr
+      souwcetweetid = souwcetweetid,
+      souwceusewid = souwceusewid)
   }
 
-  def toTimelineEntryThrift: thrift.TimelineEntry = {
-    thrift.TimelineEntry.Tweet(toThrift)
+  d-def totimewineentwythwift: t-thwift.timewineentwy = {
+    t-thwift.timewineentwy.tweet(tothwift)
   }
 
-  def toThriftSearchResult: ThriftSearchResult = {
-    val metadata = ThriftSearchResultMetadata(
-      resultType = ThriftSearchResultType.Recency,
-      fromUserId = userId match {
-        case Some(id) => id
-        case None => 0L
-      },
-      isRetweet =
-        if (sourceUserId.isDefined || sourceUserId.isDefined) Some(true)
-        else
-          None,
-      sharedStatusId = sourceTweetId match {
-        case Some(id) => id
-        case None => 0L
-      },
-      referencedTweetAuthorId = sourceUserId match {
-        case Some(id) => id
-        case None => 0L
+  d-def tothwiftseawchwesuwt: t-thwiftseawchwesuwt = {
+    vaw metadata = thwiftseawchwesuwtmetadata(
+      w-wesuwttype = thwiftseawchwesuwttype.wecency, mya
+      fwomusewid = u-usewid match {
+        case some(id) => id
+        case nyone => 0w
+      }, ^^
+      iswetweet =
+        if (souwceusewid.isdefined || s-souwceusewid.isdefined) some(twue)
+        e-ewse
+          n-nyone, 😳😳😳
+      s-shawedstatusid = souwcetweetid match {
+        case some(id) => i-id
+        case n-nyone => 0w
+      }, mya
+      wefewencedtweetauthowid = s-souwceusewid m-match {
+        case some(id) => i-id
+        case none => 0w
       }
     )
-    ThriftSearchResult(
-      id = id,
-      metadata = Some(metadata)
+    t-thwiftseawchwesuwt(
+      id = id, 😳
+      metadata = s-some(metadata)
     )
   }
 }

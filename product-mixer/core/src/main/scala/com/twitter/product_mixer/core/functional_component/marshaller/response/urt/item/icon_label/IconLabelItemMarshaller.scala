@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.icon_label
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.icon_wabew
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.icon.HorizonIconMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.icon_label.IconLabelItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.icon.howizoniconmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.wichtext.wichtextmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.icon_wabew.iconwabewitem
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class IconLabelItemMarshaller @Inject() (
-  richTextMarshaller: RichTextMarshaller,
-  horizonIconMarshaller: HorizonIconMarshaller) {
+@singweton
+c-cwass iconwabewitemmawshawwew @inject() (
+  w-wichtextmawshawwew: wichtextmawshawwew, -.-
+  howizoniconmawshawwew: howizoniconmawshawwew) {
 
-  def apply(iconLabelItem: IconLabelItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.IconLabel(
-      urt.IconLabel(
-        text = richTextMarshaller(iconLabelItem.text),
-        icon = iconLabelItem.icon.map(horizonIconMarshaller(_))
+  def appwy(iconwabewitem: iconwabewitem): u-uwt.timewineitemcontent =
+    uwt.timewineitemcontent.iconwabew(
+      uwt.iconwabew(
+        t-text = wichtextmawshawwew(iconwabewitem.text), (ˆ ﻌ ˆ)♡
+        icon = i-iconwabewitem.icon.map(howizoniconmawshawwew(_))
       )
     )
 }

@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata
 
-sealed trait FeedbackType
+seawed twait feedbacktype
 
-case object Dismiss extends FeedbackType
-case object SeeFewer extends FeedbackType
-case object DontLike extends FeedbackType
-case object NotRelevant extends FeedbackType
-case object SeeMore extends FeedbackType
-case object NotCredible extends FeedbackType
-case object GiveFeedback extends FeedbackType
-case object NotRecent extends FeedbackType
-case object UnfollowEntity extends FeedbackType
-case object Relevant extends FeedbackType
-case object Moderate extends FeedbackType
-case object RichBehavior extends FeedbackType
-case object NotAboutTopic extends FeedbackType
-case object Generic extends FeedbackType
+c-case object d-dismiss extends f-feedbacktype
+c-case object seefewew e-extends f-feedbacktype
+case o-object dontwike e-extends feedbacktype
+case object nyotwewevant extends feedbacktype
+case object s-seemowe extends feedbacktype
+case object nyotcwedibwe e-extends feedbacktype
+case o-object givefeedback extends feedbacktype
+case object nyotwecent e-extends feedbacktype
+case object u-unfowwowentity e-extends feedbacktype
+case object wewevant extends feedbacktype
+case object modewate e-extends feedbacktype
+case object wichbehaviow extends feedbacktype
+case object n-nyotabouttopic extends feedbacktype
+c-case object g-genewic extends f-feedbacktype

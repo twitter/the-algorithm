@@ -1,66 +1,66 @@
-package com.twitter.cr_mixer.util
+package com.twittew.cw_mixew.utiw
 
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.cr_mixer.thriftscala.TweetRecommendation
-import javax.inject.Inject
-import com.twitter.finagle.stats.StatsReceiver
-import javax.inject.Singleton
-import com.twitter.relevance_platform.common.stats.BucketTimestampStats
+impowt com.twittew.cw_mixew.modew.candidategenewationinfo
+i-impowt c-com.twittew.cw_mixew.modew.wankedcandidate
+i-impowt c-com.twittew.cw_mixew.modew.souwceinfo
+i-impowt c-com.twittew.cw_mixew.thwiftscawa.souwcetype
+i-impowt c-com.twittew.cw_mixew.thwiftscawa.tweetwecommendation
+impowt javax.inject.inject
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt javax.inject.singweton
+i-impowt com.twittew.wewevance_pwatfowm.common.stats.buckettimestampstats
 
-@Singleton
-class SignalTimestampStatsUtil @Inject() (statsReceiver: StatsReceiver) {
-  import SignalTimestampStatsUtil._
+@singweton
+cwass signawtimestampstatsutiw @inject() (statsweceivew: statsweceivew) {
+  impowt signawtimestampstatsutiw._
 
-  private val signalDelayAgePerDayStats =
-    new BucketTimestampStats[TweetRecommendation](
-      BucketTimestampStats.MillisecondsPerDay,
-      _.latestSourceSignalTimestampInMillis.getOrElse(0),
-      Some(SignalTimestampMaxDays))(
-      statsReceiver.scope("signal_timestamp_per_day")
-    ) // only stats past 90 days
-  private val signalDelayAgePerHourStats =
-    new BucketTimestampStats[TweetRecommendation](
-      BucketTimestampStats.MillisecondsPerHour,
-      _.latestSourceSignalTimestampInMillis.getOrElse(0),
-      Some(SignalTimestampMaxHours))(
-      statsReceiver.scope("signal_timestamp_per_hour")
-    ) // only stats past 24 hours
-  private val signalDelayAgePerMinStats =
-    new BucketTimestampStats[TweetRecommendation](
-      BucketTimestampStats.MillisecondsPerMinute,
-      _.latestSourceSignalTimestampInMillis.getOrElse(0),
-      Some(SignalTimestampMaxMins))(
-      statsReceiver.scope("signal_timestamp_per_min")
-    ) // only stats past 60 minutes
+  p-pwivate vaw signawdewayagepewdaystats =
+    n-nyew buckettimestampstats[tweetwecommendation](
+      buckettimestampstats.miwwisecondspewday, ( ͡o ω ͡o )
+      _.watestsouwcesignawtimestampinmiwwis.getowewse(0), (U ﹏ U)
+      some(signawtimestampmaxdays))(
+      statsweceivew.scope("signaw_timestamp_pew_day")
+    ) // o-onwy stats past 90 days
+  pwivate v-vaw signawdewayagepewhouwstats =
+    n-nyew buckettimestampstats[tweetwecommendation](
+      buckettimestampstats.miwwisecondspewhouw, (///ˬ///✿)
+      _.watestsouwcesignawtimestampinmiwwis.getowewse(0), >w<
+      some(signawtimestampmaxhouws))(
+      statsweceivew.scope("signaw_timestamp_pew_houw")
+    ) // onwy stats p-past 24 houws
+  pwivate vaw signawdewayagepewminstats =
+    nyew buckettimestampstats[tweetwecommendation](
+      buckettimestampstats.miwwisecondspewminute, rawr
+      _.watestsouwcesignawtimestampinmiwwis.getowewse(0), mya
+      s-some(signawtimestampmaxmins))(
+      statsweceivew.scope("signaw_timestamp_pew_min")
+    ) // o-onwy s-stats past 60 m-minutes
 
-  def statsSignalTimestamp(
-    tweets: Seq[TweetRecommendation],
-  ): Seq[TweetRecommendation] = {
-    signalDelayAgePerMinStats.count(tweets)
-    signalDelayAgePerHourStats.count(tweets)
-    signalDelayAgePerDayStats.count(tweets)
+  def s-statssignawtimestamp(
+    tweets: seq[tweetwecommendation], ^^
+  ): s-seq[tweetwecommendation] = {
+    signawdewayagepewminstats.count(tweets)
+    signawdewayagepewhouwstats.count(tweets)
+    s-signawdewayagepewdaystats.count(tweets)
   }
 }
 
-object SignalTimestampStatsUtil {
-  val SignalTimestampMaxMins = 60 // stats at most 60 mins
-  val SignalTimestampMaxHours = 24 // stats at most 24 hours
-  val SignalTimestampMaxDays = 90 // stats at most 90 days
+object signawtimestampstatsutiw {
+  vaw signawtimestampmaxmins = 60 // stats at most 60 m-mins
+  vaw signawtimestampmaxhouws = 24 // stats a-at most 24 houws
+  v-vaw signawtimestampmaxdays = 90 // s-stats at most 90 days
 
-  def buildLatestSourceSignalTimestamp(candidate: RankedCandidate): Option[Long] = {
-    val timestampSeq = candidate.potentialReasons
-      .collect {
-        case CandidateGenerationInfo(Some(SourceInfo(sourceType, _, Some(sourceEventTime))), _, _)
-            if sourceType == SourceType.TweetFavorite =>
-          sourceEventTime.inMilliseconds
+  def buiwdwatestsouwcesignawtimestamp(candidate: wankedcandidate): o-option[wong] = {
+    v-vaw timestampseq = candidate.potentiawweasons
+      .cowwect {
+        c-case candidategenewationinfo(some(souwceinfo(souwcetype, 😳😳😳 _, s-some(souwceeventtime))), mya _, _)
+            if souwcetype == s-souwcetype.tweetfavowite =>
+          souwceeventtime.inmiwwiseconds
       }
-    if (timestampSeq.nonEmpty) {
-      Some(timestampSeq.max(Ordering.Long))
-    } else {
-      None
+    i-if (timestampseq.nonempty) {
+      some(timestampseq.max(owdewing.wong))
+    } ewse {
+      n-nyone
     }
   }
 }

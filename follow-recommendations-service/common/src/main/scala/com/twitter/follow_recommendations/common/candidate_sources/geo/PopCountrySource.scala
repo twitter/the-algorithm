@@ -1,63 +1,63 @@
-package com.twitter.follow_recommendations.common.candidate_sources.geo
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.geo
 
-import com.google.inject.Singleton
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasGeohashAndCountryCode
-import com.twitter.follow_recommendations.common.models.HasUserState
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
+impowt com.googwe.inject.singweton
+i-impowt c-com.twittew.cowe_wowkfwows.usew_modew.thwiftscawa.usewstate
+i-impowt c-com.twittew.finagwe.stats.countew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.hasgeohashandcountwycode
+impowt com.twittew.fowwow_wecommendations.common.modews.hasusewstate
+impowt com.twittew.hewmit.modew.awgowithm
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.configapi.haspawams
+i-impowt javax.inject.inject
 
-@Singleton
-class PopCountrySource @Inject() (
-  popGeoSource: PopGeoSource,
-  statsReceiver: StatsReceiver)
-    extends CandidateSource[
-      HasClientContext with HasParams with HasUserState with HasGeohashAndCountryCode,
-      CandidateUser
+@singweton
+cwass popcountwysouwce @inject() (
+  popgeosouwce: popgeosouwce, 🥺
+  s-statsweceivew: statsweceivew)
+    extends c-candidatesouwce[
+      h-hascwientcontext with haspawams with hasusewstate with hasgeohashandcountwycode, o.O
+      candidateusew
     ] {
 
-  override val identifier: CandidateSourceIdentifier = PopCountrySource.Identifier
-  val stats: StatsReceiver = statsReceiver.scope("PopCountrySource")
+  o-ovewwide vaw identifiew: candidatesouwceidentifiew = popcountwysouwce.identifiew
+  vaw stats: statsweceivew = s-statsweceivew.scope("popcountwysouwce")
 
-  // counter to check if we found a country code value in the request
-  val foundCountryCodeCounter: Counter = stats.counter("found_country_code_value")
-  // counter to check if we are missing a country code value in the request
-  val missingCountryCodeCounter: Counter = stats.counter("missing_country_code_value")
+  // countew t-to check if we f-found a countwy c-code vawue in the w-wequest
+  vaw foundcountwycodecountew: countew = s-stats.countew("found_countwy_code_vawue")
+  // countew to check if we awe missing a-a countwy code vawue in the wequest
+  vaw missingcountwycodecountew: countew = stats.countew("missing_countwy_code_vawue")
 
-  override def apply(
-    target: HasClientContext with HasParams with HasUserState with HasGeohashAndCountryCode
-  ): Stitch[Seq[CandidateUser]] = {
-    target.geohashAndCountryCode
-      .flatMap(_.countryCode).map { countryCode =>
-        foundCountryCodeCounter.incr()
-        if (target.userState.exists(PopCountrySource.BlacklistedTargetUserStates.contains)) {
-          Stitch.Nil
-        } else {
-          popGeoSource("country_" + countryCode)
-            .map(_.take(PopCountrySource.MaxResults).map(_.withCandidateSource(identifier)))
+  o-ovewwide def appwy(
+    tawget: h-hascwientcontext w-with haspawams w-with hasusewstate with hasgeohashandcountwycode
+  ): stitch[seq[candidateusew]] = {
+    tawget.geohashandcountwycode
+      .fwatmap(_.countwycode).map { c-countwycode =>
+        f-foundcountwycodecountew.incw()
+        if (tawget.usewstate.exists(popcountwysouwce.bwackwistedtawgetusewstates.contains)) {
+          s-stitch.niw
+        } e-ewse {
+          popgeosouwce("countwy_" + c-countwycode)
+            .map(_.take(popcountwysouwce.maxwesuwts).map(_.withcandidatesouwce(identifiew)))
         }
-      }.getOrElse {
-        missingCountryCodeCounter.incr()
-        Stitch.Nil
+      }.getowewse {
+        missingcountwycodecountew.incw()
+        s-stitch.niw
       }
   }
 }
 
-object PopCountrySource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.PopCountry.toString)
-  val MaxResults = 40
-  val BlacklistedTargetUserStates: Set[UserState] = Set(
-    UserState.HeavyTweeter,
-    UserState.HeavyNonTweeter,
-    UserState.MediumTweeter,
-    UserState.MediumNonTweeter)
+object popcountwysouwce {
+  v-vaw identifiew: candidatesouwceidentifiew = c-candidatesouwceidentifiew(
+    awgowithm.popcountwy.tostwing)
+  v-vaw maxwesuwts = 40
+  v-vaw bwackwistedtawgetusewstates: set[usewstate] = set(
+    usewstate.heavytweetew, /(^•ω•^)
+    usewstate.heavynontweetew, nyaa~~
+    usewstate.mediumtweetew, nyaa~~
+    usewstate.mediumnontweetew)
 }

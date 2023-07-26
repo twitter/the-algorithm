@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.AdMetadataContainer
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.admetadatacontainew
+impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class AdMetadataContainerMarshaller @Inject() (
-  sponsorshipTypeMarshaller: SponsorshipTypeMarshaller,
-  disclaimerTypeMarshaller: DisclaimerTypeMarshaller,
-  skAdNetworkDataMarshaller: SkAdNetworkDataMarshaller) {
+@singweton
+c-cwass a-admetadatacontainewmawshawwew @inject() (
+  sponsowshiptypemawshawwew: s-sponsowshiptypemawshawwew, :3
+  d-discwaimewtypemawshawwew: discwaimewtypemawshawwew, 😳😳😳
+  skadnetwowkdatamawshawwew: skadnetwowkdatamawshawwew) {
 
-  def apply(adMetadataContainer: AdMetadataContainer): urt.AdMetadataContainer =
-    urt.AdMetadataContainer(
-      removePromotedAttributionForPreroll = adMetadataContainer.removePromotedAttributionForPreroll,
-      sponsorshipCandidate = adMetadataContainer.sponsorshipCandidate,
-      sponsorshipOrganization = adMetadataContainer.sponsorshipOrganization,
-      sponsorshipOrganizationWebsite = adMetadataContainer.sponsorshipOrganizationWebsite,
-      sponsorshipType = adMetadataContainer.sponsorshipType.map(sponsorshipTypeMarshaller(_)),
-      disclaimerType = adMetadataContainer.disclaimerType.map(disclaimerTypeMarshaller(_)),
-      skAdNetworkDataList =
-        adMetadataContainer.skAdNetworkDataList.map(_.map(skAdNetworkDataMarshaller(_))),
-      unifiedCardOverride = adMetadataContainer.unifiedCardOverride
+  def appwy(admetadatacontainew: a-admetadatacontainew): uwt.admetadatacontainew =
+    uwt.admetadatacontainew(
+      w-wemovepwomotedattwibutionfowpwewoww = admetadatacontainew.wemovepwomotedattwibutionfowpwewoww, -.-
+      sponsowshipcandidate = a-admetadatacontainew.sponsowshipcandidate, ( ͡o ω ͡o )
+      sponsowshipowganization = admetadatacontainew.sponsowshipowganization, rawr x3
+      sponsowshipowganizationwebsite = a-admetadatacontainew.sponsowshipowganizationwebsite,
+      sponsowshiptype = a-admetadatacontainew.sponsowshiptype.map(sponsowshiptypemawshawwew(_)), nyaa~~
+      d-discwaimewtype = admetadatacontainew.discwaimewtype.map(discwaimewtypemawshawwew(_)), /(^•ω•^)
+      skadnetwowkdatawist =
+        admetadatacontainew.skadnetwowkdatawist.map(_.map(skadnetwowkdatamawshawwew(_))), rawr
+      unifiedcawdovewwide = admetadatacontainew.unifiedcawdovewwide
     )
 }

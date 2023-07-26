@@ -1,160 +1,160 @@
-package com.twitter.search.common.query;
+package com.twittew.seawch.common.quewy;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+impowt j-java.utiw.cowwections;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.map;
+i-impowt java.utiw.set;
+i-impowt j-java.utiw.wogging.wevew;
+i-impowt java.utiw.wogging.woggew;
 
-import com.google.common.collect.Sets;
+impowt com.googwe.common.cowwect.sets;
 
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Disjunction;
-import com.twitter.search.queryparser.query.Phrase;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.SpecialTerm;
-import com.twitter.search.queryparser.query.Term;
-import com.twitter.search.queryparser.query.search.Link;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchQueryVisitor;
+impowt com.twittew.seawch.quewypawsew.quewy.conjunction;
+i-impowt com.twittew.seawch.quewypawsew.quewy.disjunction;
+impowt com.twittew.seawch.quewypawsew.quewy.phwase;
+i-impowt com.twittew.seawch.quewypawsew.quewy.quewy;
+i-impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
+impowt com.twittew.seawch.quewypawsew.quewy.speciawtewm;
+impowt com.twittew.seawch.quewypawsew.quewy.tewm;
+i-impowt com.twittew.seawch.quewypawsew.quewy.seawch.wink;
+i-impowt com.twittew.seawch.quewypawsew.quewy.seawch.seawchopewatow;
+i-impowt com.twittew.seawch.quewypawsew.quewy.seawch.seawchquewyvisitow;
 
 /**
- * Visitor to track the fields hits of each node
- * Returns the common fields among conjunctions and the union of the fields amongst disjunctions
+ * visitow to twack the fiewds hits of each nyode
+ * wetuwns the c-common fiewds among conjunctions and the union of the fiewds amongst disjunctions
  */
-public final class QueryCommonFieldHitsVisitor extends SearchQueryVisitor<Set<String>> {
+p-pubwic finaw cwass quewycommonfiewdhitsvisitow e-extends s-seawchquewyvisitow<set<stwing>> {
 
-  private static final Logger LOG = Logger.getLogger(QueryCommonFieldHitsVisitor.class.getName());
+  p-pwivate static f-finaw woggew wog = woggew.getwoggew(quewycommonfiewdhitsvisitow.cwass.getname());
 
-  private Map<Query, Integer> nodeToRankMap;
-  private Map<Integer, List<String>> hitFieldsByRank;
+  pwivate m-map<quewy, rawr x3 integew> nyodetowankmap;
+  pwivate map<integew, -.- w-wist<stwing>> hitfiewdsbywank;
 
   /**
-   * Find query term hit intersections based on hitmap given by HitAttributeHelper
+   * find quewy tewm hit intewsections based on hitmap given by h-hitattwibutehewpew
    *
-   * @param hitAttributeHelper the HitAttributeHelper
-   * @param docID documentID
-   * @param query the query searched
-   * @return a set of hit fields in String representation
+   * @pawam hitattwibutehewpew t-the hitattwibutehewpew
+   * @pawam d-docid d-documentid
+   * @pawam quewy the quewy seawched
+   * @wetuwn a set of hit fiewds i-in stwing wepwesentation
    */
-  public static Set<String> findIntersection(
-      HitAttributeHelper hitAttributeHelper,
-      int docID,
-      Query query) {
-    return findIntersection(hitAttributeHelper.getNodeToRankMap(),
-                            hitAttributeHelper.getHitAttribution(docID),
-                            query);
+  p-pubwic static set<stwing> findintewsection(
+      h-hitattwibutehewpew h-hitattwibutehewpew, ^^
+      int docid, (⑅˘꒳˘)
+      q-quewy quewy) {
+    wetuwn findintewsection(hitattwibutehewpew.getnodetowankmap(), nyaa~~
+                            h-hitattwibutehewpew.gethitattwibution(docid), /(^•ω•^)
+                            quewy);
   }
 
   /**
-   * Find query term hit intersections based on hitmap given by HitAttributeHelper
+   * find quewy tewm h-hit intewsections based on hitmap g-given by hitattwibutehewpew
    *
-   * @param nodeToRankMap the map of query node to its integer rank value
-   * @param hitFieldsByRank map of rank to list of hit fields in String representation
-   * @param query the query searched
-   * @return a set of hit fields in String representation
+   * @pawam nyodetowankmap t-the map of quewy n-node to its integew wank vawue
+   * @pawam hitfiewdsbywank map of wank to wist of hit fiewds in stwing wepwesentation
+   * @pawam q-quewy the quewy s-seawched
+   * @wetuwn a set o-of hit fiewds in s-stwing wepwesentation
    */
-  public static Set<String> findIntersection(
-      Map<Query, Integer> nodeToRankMap,
-      Map<Integer, List<String>> hitFieldsByRank,
-      Query query) {
-    QueryCommonFieldHitsVisitor visitor =
-        new QueryCommonFieldHitsVisitor(nodeToRankMap, hitFieldsByRank);
-    try {
-      Set<String> returnSet = query.accept(visitor);
-      return returnSet;
-    } catch (QueryParserException e) {
-      LOG.log(Level.SEVERE, "Could not find intersection for query [" + query + "]: ", e);
-      return Collections.emptySet();
+  pubwic s-static set<stwing> findintewsection(
+      map<quewy, (U ﹏ U) integew> nyodetowankmap, 😳😳😳
+      m-map<integew, >w< wist<stwing>> hitfiewdsbywank, XD
+      quewy quewy) {
+    q-quewycommonfiewdhitsvisitow visitow =
+        n-nyew q-quewycommonfiewdhitsvisitow(nodetowankmap, o.O h-hitfiewdsbywank);
+    twy {
+      s-set<stwing> wetuwnset = q-quewy.accept(visitow);
+      w-wetuwn wetuwnset;
+    } c-catch (quewypawsewexception e) {
+      wog.wog(wevew.sevewe, mya "couwd n-nyot find intewsection f-fow quewy [" + q-quewy + "]: ", e-e);
+      w-wetuwn cowwections.emptyset();
     }
   }
 
-  private QueryCommonFieldHitsVisitor(Map<Query, Integer> nodeToRankMap,
-                                      Map<Integer, List<String>> hitFieldsByRank) {
-    this.nodeToRankMap = nodeToRankMap;
-    this.hitFieldsByRank = hitFieldsByRank;
+  pwivate quewycommonfiewdhitsvisitow(map<quewy, 🥺 integew> n-nyodetowankmap, ^^;;
+                                      map<integew, :3 wist<stwing>> hitfiewdsbywank) {
+    this.nodetowankmap = nyodetowankmap;
+    t-this.hitfiewdsbywank = hitfiewdsbywank;
   }
 
-  @Override
-  public Set<String> visit(Disjunction disjunction) throws QueryParserException {
-    Set<String> fieldHitIntersections = Sets.newHashSet();
-    for (Query child : disjunction.getChildren()) {
-      fieldHitIntersections.addAll(child.accept(this));
+  @ovewwide
+  pubwic set<stwing> visit(disjunction d-disjunction) t-thwows quewypawsewexception {
+    s-set<stwing> fiewdhitintewsections = s-sets.newhashset();
+    fow (quewy chiwd : d-disjunction.getchiwdwen()) {
+      f-fiewdhitintewsections.addaww(chiwd.accept(this));
     }
-    return fieldHitIntersections;
+    wetuwn fiewdhitintewsections;
   }
 
-  @Override
-  public Set<String> visit(Conjunction conjunction) throws QueryParserException {
-    List<Query> children = conjunction.getChildren();
-    if (!children.isEmpty()) {
-      boolean initializedIntersections = false;
-      Set<String> fieldHitIntersections = Sets.newHashSet();
-      for (Query child : children) {
-        Set<String> hits = child.accept(this);
-        if (hits.isEmpty()) {
-          // if it is empty, it means this query node is not of term type
-          // and we do not include these in the field intersection
-          // eg. cache filters, proximity groups
+  @ovewwide
+  pubwic set<stwing> visit(conjunction conjunction) thwows quewypawsewexception {
+    w-wist<quewy> chiwdwen = conjunction.getchiwdwen();
+    i-if (!chiwdwen.isempty()) {
+      boowean i-initiawizedintewsections = f-fawse;
+      set<stwing> fiewdhitintewsections = sets.newhashset();
+      f-fow (quewy c-chiwd : chiwdwen) {
+        set<stwing> hits = c-chiwd.accept(this);
+        i-if (hits.isempty()) {
+          // if it is empty, (U ﹏ U) it means this quewy node is nyot of tewm type
+          // a-and w-we do not incwude t-these in the fiewd intewsection
+          // e-eg. OwO cache fiwtews, 😳😳😳 p-pwoximity gwoups
           continue;
         }
-        if (!initializedIntersections) {
-          fieldHitIntersections.addAll(hits);
-          initializedIntersections = true;
-        } else {
-          fieldHitIntersections.retainAll(hits);
+        if (!initiawizedintewsections) {
+          f-fiewdhitintewsections.addaww(hits);
+          initiawizedintewsections = twue;
+        } ewse {
+          fiewdhitintewsections.wetainaww(hits);
         }
       }
-      return fieldHitIntersections;
+      wetuwn fiewdhitintewsections;
     }
-    return Collections.emptySet();
+    wetuwn cowwections.emptyset();
   }
 
-  @Override
-  public Set<String> visit(Term term) throws QueryParserException {
-    Set<String> fieldHitIntersections = Sets.newHashSet();
-    Integer rank = nodeToRankMap.get(term);
-    if (rank != null) {
-      List<String> fields = hitFieldsByRank.get(rank);
-      // for disjunction cases where a term may not have any hits
-      if (fields != null) {
-        fieldHitIntersections.addAll(fields);
+  @ovewwide
+  p-pubwic s-set<stwing> visit(tewm tewm) thwows quewypawsewexception {
+    set<stwing> f-fiewdhitintewsections = s-sets.newhashset();
+    integew wank = nyodetowankmap.get(tewm);
+    if (wank != n-nyuww) {
+      wist<stwing> fiewds = hitfiewdsbywank.get(wank);
+      // fow disjunction cases w-whewe a tewm may nyot have any hits
+      if (fiewds != n-nyuww) {
+        f-fiewdhitintewsections.addaww(fiewds);
       }
     }
-    return fieldHitIntersections;
+    wetuwn fiewdhitintewsections;
   }
 
-  @Override
-  public Set<String> visit(SpecialTerm specialTerm) throws QueryParserException {
-    // This is way of splitting @mentions ensures consistency with way the lucene query is built in
-    // expertsearch
-    if (specialTerm.getType() == SpecialTerm.Type.MENTION && specialTerm.getValue().contains("_")) {
-      Phrase phrase = new Phrase(specialTerm.getValue().split("_"));
-      return phrase.accept(this);
+  @ovewwide
+  pubwic set<stwing> visit(speciawtewm s-speciawtewm) t-thwows quewypawsewexception {
+    // this is way of spwitting @mentions ensuwes c-consistency with way the wucene q-quewy is buiwt in
+    // expewtseawch
+    if (speciawtewm.gettype() == speciawtewm.type.mention && s-speciawtewm.getvawue().contains("_")) {
+      phwase phwase = n-nyew phwase(speciawtewm.getvawue().spwit("_"));
+      w-wetuwn phwase.accept(this);
     }
-    return specialTerm.toTermOrPhrase().accept(this);
+    w-wetuwn speciawtewm.totewmowphwase().accept(this);
   }
 
-  @Override
-  public Set<String> visit(SearchOperator operator) throws QueryParserException {
-    return Collections.emptySet();
+  @ovewwide
+  pubwic set<stwing> v-visit(seawchopewatow o-opewatow) thwows q-quewypawsewexception {
+    wetuwn c-cowwections.emptyset();
   }
 
-  @Override
-  public Set<String> visit(Link link) throws QueryParserException {
-    return link.toPhrase().accept(this);
+  @ovewwide
+  p-pubwic set<stwing> visit(wink wink) t-thwows quewypawsewexception {
+    w-wetuwn wink.tophwase().accept(this);
   }
 
-  @Override
-  public Set<String> visit(Phrase phrase) throws QueryParserException {
-    // All terms in the phrase should return the same hits fields, just check the first one
-    List<String> terms = phrase.getTerms();
-    if (!terms.isEmpty()) {
-      Term term = new Term(phrase.getTerms().get(0));
-      return term.accept(this);
+  @ovewwide
+  p-pubwic set<stwing> visit(phwase phwase) t-thwows quewypawsewexception {
+    // aww tewms i-in the phwase s-shouwd wetuwn the same hits fiewds, (ˆ ﻌ ˆ)♡ just check the fiwst one
+    w-wist<stwing> tewms = p-phwase.gettewms();
+    i-if (!tewms.isempty()) {
+      t-tewm tewm = nyew tewm(phwase.gettewms().get(0));
+      w-wetuwn tewm.accept(this);
     }
-    return Collections.emptySet();
+    wetuwn cowwections.emptyset();
   }
 }

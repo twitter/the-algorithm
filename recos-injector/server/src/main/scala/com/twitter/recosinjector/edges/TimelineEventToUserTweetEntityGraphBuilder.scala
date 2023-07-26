@@ -1,60 +1,60 @@
-package com.twitter.recosinjector.edges
+package com.twittew.wecosinjectow.edges
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.util.Action
-import com.twitter.recosinjector.util.TweetFavoriteEventDetails
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.wecos.utiw.action
+i-impowt c-com.twittew.wecosinjectow.utiw.tweetfavowiteeventdetaiws
+i-impowt c-com.twittew.utiw.futuwe
 
-class TimelineEventToUserTweetEntityGraphBuilder(
-  userTweetEntityEdgeBuilder: UserTweetEntityEdgeBuilder
+c-cwass t-timewineeventtousewtweetentitygwaphbuiwdew(
+  u-usewtweetentityedgebuiwdew: usewtweetentityedgebuiwdew
 )(
-  override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[TweetFavoriteEventDetails, UserTweetEntityEdge] {
+  ovewwide impwicit vaw statsweceivew: s-statsweceivew)
+    extends eventtomessagebuiwdew[tweetfavowiteeventdetaiws, ( ͡o ω ͡o ) usewtweetentityedge] {
 
-  private val numFavEdgeCounter = statsReceiver.counter("num_favorite_edge")
-  private val numUnfavEdgeCounter = statsReceiver.counter("num_unfavorite_edge")
+  p-pwivate vaw nyumfavedgecountew = s-statsweceivew.countew("num_favowite_edge")
+  pwivate vaw nyumunfavedgecountew = statsweceivew.countew("num_unfavowite_edge")
 
-  override def shouldProcessEvent(event: TweetFavoriteEventDetails): Future[Boolean] = {
-    Future(true)
+  o-ovewwide def shouwdpwocessevent(event: tweetfavowiteeventdetaiws): f-futuwe[boowean] = {
+    f-futuwe(twue)
   }
 
-  override def buildEdges(details: TweetFavoriteEventDetails): Future[Seq[UserTweetEntityEdge]] = {
-    val engagement = details.userTweetEngagement
-    val tweetDetails = engagement.tweetDetails
+  ovewwide def buiwdedges(detaiws: tweetfavowiteeventdetaiws): futuwe[seq[usewtweetentityedge]] = {
+    v-vaw engagement = detaiws.usewtweetengagement
+    vaw tweetdetaiws = engagement.tweetdetaiws
 
-    val entitiesMapFut = userTweetEntityEdgeBuilder.getEntitiesMapAndUpdateCache(
-      tweetId = engagement.tweetId,
-      tweetDetails = tweetDetails
+    v-vaw entitiesmapfut = u-usewtweetentityedgebuiwdew.getentitiesmapandupdatecache(
+      t-tweetid = engagement.tweetid, (U ﹏ U)
+      t-tweetdetaiws = t-tweetdetaiws
     )
 
-    entitiesMapFut
-      .map { entitiesMap =>
-        UserTweetEntityEdge(
-          sourceUser = engagement.engageUserId,
-          targetTweet = engagement.tweetId,
-          action = engagement.action,
-          metadata = engagement.engagementTimeMillis,
-          cardInfo = engagement.tweetDetails.map(_.cardInfo.toByte),
-          entitiesMap = entitiesMap,
-          tweetDetails = tweetDetails
+    entitiesmapfut
+      .map { entitiesmap =>
+        u-usewtweetentityedge(
+          souwceusew = engagement.engageusewid, (///ˬ///✿)
+          tawgettweet = engagement.tweetid, >w<
+          a-action = engagement.action, rawr
+          metadata = engagement.engagementtimemiwwis, mya
+          cawdinfo = engagement.tweetdetaiws.map(_.cawdinfo.tobyte), ^^
+          entitiesmap = e-entitiesmap, 😳😳😳
+          tweetdetaiws = t-tweetdetaiws
         )
       }
-      .map { edge =>
-        edge match {
-          case fav if fav.action == Action.Favorite =>
-            numFavEdgeCounter.incr()
-          case unfav if unfav.action == Action.Unfavorite =>
-            numUnfavEdgeCounter.incr()
-          case _ =>
+      .map { e-edge =>
+        e-edge match {
+          case fav if fav.action == action.favowite =>
+            n-nyumfavedgecountew.incw()
+          c-case unfav if unfav.action == action.unfavowite =>
+            nyumunfavedgecountew.incw()
+          c-case _ =>
         }
-        Seq(edge)
+        s-seq(edge)
       }
   }
 
-  override def filterEdges(
-    event: TweetFavoriteEventDetails,
-    edges: Seq[UserTweetEntityEdge]
-  ): Future[Seq[UserTweetEntityEdge]] = {
-    Future(edges)
+  ovewwide d-def fiwtewedges(
+    event: tweetfavowiteeventdetaiws, mya
+    e-edges: seq[usewtweetentityedge]
+  ): futuwe[seq[usewtweetentityedge]] = {
+    f-futuwe(edges)
   }
 }

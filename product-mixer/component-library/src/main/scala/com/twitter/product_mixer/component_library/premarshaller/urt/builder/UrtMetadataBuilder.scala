@@ -1,43 +1,43 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineMetadata
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.stringcenter.client.core.ExternalString
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewinemetadata
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stwingcentew.cwient.stwingcentew
+i-impowt com.twittew.stwingcentew.cwient.cowe.extewnawstwing
 
-trait BaseUrtMetadataBuilder[-Query <: PipelineQuery] {
-  def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): TimelineMetadata
+t-twait baseuwtmetadatabuiwdew[-quewy <: p-pipewinequewy] {
+  d-def buiwd(
+    quewy: quewy, (ˆ ﻌ ˆ)♡
+    entwies: seq[timewineentwy]
+  ): timewinemetadata
 }
 
-case class UrtMetadataBuilder(
-  title: Option[String] = None,
-  scribeConfigBuilder: Option[TimelineScribeConfigBuilder[PipelineQuery]])
-    extends BaseUrtMetadataBuilder[PipelineQuery] {
+c-case cwass uwtmetadatabuiwdew(
+  titwe: option[stwing] = nyone, (˘ω˘)
+  s-scwibeconfigbuiwdew: option[timewinescwibeconfigbuiwdew[pipewinequewy]])
+    e-extends baseuwtmetadatabuiwdew[pipewinequewy] {
 
-  override def build(
-    query: PipelineQuery,
-    entries: Seq[TimelineEntry]
-  ): TimelineMetadata = TimelineMetadata(
-    title = title,
-    scribeConfig = scribeConfigBuilder.flatMap(_.build(query, entries))
+  ovewwide def buiwd(
+    quewy: pipewinequewy, (⑅˘꒳˘)
+    e-entwies: seq[timewineentwy]
+  ): t-timewinemetadata = t-timewinemetadata(
+    titwe = titwe, (///ˬ///✿)
+    scwibeconfig = scwibeconfigbuiwdew.fwatmap(_.buiwd(quewy, 😳😳😳 entwies))
   )
 }
 
-case class UrtMetadataStringCenterBuilder(
-  titleKey: ExternalString,
-  scribeConfigBuilder: Option[TimelineScribeConfigBuilder[PipelineQuery]],
-  stringCenter: StringCenter)
-    extends BaseUrtMetadataBuilder[PipelineQuery] {
+case cwass uwtmetadatastwingcentewbuiwdew(
+  t-titwekey: extewnawstwing, 🥺
+  scwibeconfigbuiwdew: option[timewinescwibeconfigbuiwdew[pipewinequewy]],
+  stwingcentew: s-stwingcentew)
+    extends baseuwtmetadatabuiwdew[pipewinequewy] {
 
-  override def build(
-    query: PipelineQuery,
-    entries: Seq[TimelineEntry]
-  ): TimelineMetadata = TimelineMetadata(
-    title = Some(stringCenter.prepare(titleKey)),
-    scribeConfig = scribeConfigBuilder.flatMap(_.build(query, entries))
+  o-ovewwide d-def buiwd(
+    quewy: p-pipewinequewy, mya
+    e-entwies: seq[timewineentwy]
+  ): timewinemetadata = t-timewinemetadata(
+    titwe = some(stwingcentew.pwepawe(titwekey)), 🥺
+    scwibeconfig = s-scwibeconfigbuiwdew.fwatmap(_.buiwd(quewy, >_< entwies))
   )
 }

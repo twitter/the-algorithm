@@ -1,357 +1,357 @@
-package com.twitter.unified_user_actions.adapter
+package com.twittew.unified_usew_actions.adaptew
 
-import com.twitter.inject.Test
-import com.twitter.socialgraph.thriftscala.Action
-import com.twitter.socialgraph.thriftscala.BlockGraphEvent
-import com.twitter.socialgraph.thriftscala.FollowGraphEvent
-import com.twitter.socialgraph.thriftscala.FollowRequestGraphEvent
-import com.twitter.socialgraph.thriftscala.FollowRetweetsGraphEvent
-import com.twitter.socialgraph.thriftscala.LogEventContext
-import com.twitter.socialgraph.thriftscala.MuteGraphEvent
-import com.twitter.socialgraph.thriftscala.ReportAsAbuseGraphEvent
-import com.twitter.socialgraph.thriftscala.ReportAsSpamGraphEvent
-import com.twitter.socialgraph.thriftscala.SrcTargetRequest
-import com.twitter.socialgraph.thriftscala.WriteEvent
-import com.twitter.socialgraph.thriftscala.WriteRequestResult
-import com.twitter.unified_user_actions.adapter.social_graph_event.SocialGraphAdapter
-import com.twitter.unified_user_actions.thriftscala._
-import com.twitter.util.Time
-import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatest.prop.TableFor1
-import org.scalatest.prop.TableFor3
+impowt com.twittew.inject.test
+i-impowt com.twittew.sociawgwaph.thwiftscawa.action
+i-impowt com.twittew.sociawgwaph.thwiftscawa.bwockgwaphevent
+i-impowt c-com.twittew.sociawgwaph.thwiftscawa.fowwowgwaphevent
+i-impowt c-com.twittew.sociawgwaph.thwiftscawa.fowwowwequestgwaphevent
+i-impowt c-com.twittew.sociawgwaph.thwiftscawa.fowwowwetweetsgwaphevent
+impowt com.twittew.sociawgwaph.thwiftscawa.wogeventcontext
+impowt com.twittew.sociawgwaph.thwiftscawa.mutegwaphevent
+impowt com.twittew.sociawgwaph.thwiftscawa.wepowtasabusegwaphevent
+i-impowt com.twittew.sociawgwaph.thwiftscawa.wepowtasspamgwaphevent
+impowt com.twittew.sociawgwaph.thwiftscawa.swctawgetwequest
+i-impowt com.twittew.sociawgwaph.thwiftscawa.wwiteevent
+impowt c-com.twittew.sociawgwaph.thwiftscawa.wwitewequestwesuwt
+impowt com.twittew.unified_usew_actions.adaptew.sociaw_gwaph_event.sociawgwaphadaptew
+impowt com.twittew.unified_usew_actions.thwiftscawa._
+i-impowt com.twittew.utiw.time
+impowt owg.scawatest.pwop.tabwedwivenpwopewtychecks
+i-impowt owg.scawatest.pwop.tabwefow1
+i-impowt owg.scawatest.pwop.tabwefow3
 
-class SocialGraphAdapterSpec extends Test with TableDrivenPropertyChecks {
-  trait Fixture {
+cwass sociawgwaphadaptewspec extends test with tabwedwivenpwopewtychecks {
+  t-twait fixtuwe {
 
-    val frozenTime: Time = Time.fromMilliseconds(1658949273000L)
+    vaw fwozentime: time = time.fwommiwwiseconds(1658949273000w)
 
-    val testLogEventContext: LogEventContext = LogEventContext(
-      timestamp = 1001L,
-      hostname = "",
-      transactionId = "",
-      socialGraphClientId = "",
-      loggedInUserId = Some(1111L),
+    vaw testwogeventcontext: w-wogeventcontext = wogeventcontext(
+      timestamp = 1001w, ʘwʘ
+      hostname = "", >w<
+      t-twansactionid = "", rawr x3
+      s-sociawgwaphcwientid = "", OwO
+      w-woggedinusewid = some(1111w), ^•ﻌ•^
     )
 
-    val testWriteRequestResult: WriteRequestResult = WriteRequestResult(
-      request = SrcTargetRequest(
-        source = 1111L,
-        target = 2222L
+    v-vaw testwwitewequestwesuwt: wwitewequestwesuwt = wwitewequestwesuwt(
+      w-wequest = swctawgetwequest(
+        souwce = 1111w,
+        tawget = 2222w
       )
     )
 
-    val testWriteRequestResultWithValidationError: WriteRequestResult = WriteRequestResult(
-      request = SrcTargetRequest(
-        source = 1111L,
-        target = 2222L
-      ),
-      validationError = Some("action unsuccessful")
+    v-vaw testwwitewequestwesuwtwithvawidationewwow: wwitewequestwesuwt = wwitewequestwesuwt(
+      wequest = swctawgetwequest(
+        souwce = 1111w, >_<
+        tawget = 2222w
+      ), OwO
+      v-vawidationewwow = some("action u-unsuccessfuw")
     )
 
-    val baseEvent: WriteEvent = WriteEvent(
-      context = testLogEventContext,
-      action = Action.AcceptFollowRequest
+    v-vaw baseevent: w-wwiteevent = wwiteevent(
+      context = testwogeventcontext, >_<
+      action = action.acceptfowwowwequest
     )
 
-    val sgFollowEvent: WriteEvent = baseEvent.copy(
-      action = Action.Follow,
-      follow = Some(List(FollowGraphEvent(testWriteRequestResult))))
+    vaw sgfowwowevent: w-wwiteevent = b-baseevent.copy(
+      action = a-action.fowwow, (ꈍᴗꈍ)
+      f-fowwow = some(wist(fowwowgwaphevent(testwwitewequestwesuwt))))
 
-    val sgUnfollowEvent: WriteEvent = baseEvent.copy(
-      action = Action.Unfollow,
-      follow = Some(List(FollowGraphEvent(testWriteRequestResult))))
+    v-vaw sgunfowwowevent: wwiteevent = baseevent.copy(
+      a-action = action.unfowwow, >w<
+      fowwow = some(wist(fowwowgwaphevent(testwwitewequestwesuwt))))
 
-    val sgFollowRedundantEvent: WriteEvent = baseEvent.copy(
-      action = Action.Follow,
-      follow = Some(
-        List(
-          FollowGraphEvent(
-            result = testWriteRequestResult,
-            redundantOperation = Some(true)
+    vaw sgfowwowwedundantevent: w-wwiteevent = baseevent.copy(
+      a-action = action.fowwow, (U ﹏ U)
+      fowwow = some(
+        w-wist(
+          f-fowwowgwaphevent(
+            wesuwt = testwwitewequestwesuwt, ^^
+            wedundantopewation = some(twue)
           ))))
 
-    val sgFollowRedundantIsFalseEvent: WriteEvent = baseEvent.copy(
-      action = Action.Follow,
-      follow = Some(
-        List(
-          FollowGraphEvent(
-            result = testWriteRequestResult,
-            redundantOperation = Some(false)
+    vaw sgfowwowwedundantisfawseevent: wwiteevent = b-baseevent.copy(
+      a-action = action.fowwow, (U ﹏ U)
+      fowwow = s-some(
+        w-wist(
+          f-fowwowgwaphevent(
+            wesuwt = testwwitewequestwesuwt, :3
+            wedundantopewation = some(fawse)
           ))))
 
-    val sgUnfollowRedundantEvent: WriteEvent = baseEvent.copy(
-      action = Action.Unfollow,
-      follow = Some(
-        List(
-          FollowGraphEvent(
-            result = testWriteRequestResult,
-            redundantOperation = Some(true)
+    v-vaw sgunfowwowwedundantevent: wwiteevent = baseevent.copy(
+      action = action.unfowwow, (✿oωo)
+      fowwow = some(
+        w-wist(
+          fowwowgwaphevent(
+            w-wesuwt = t-testwwitewequestwesuwt, XD
+            w-wedundantopewation = some(twue)
           ))))
 
-    val sgUnfollowRedundantIsFalseEvent: WriteEvent = baseEvent.copy(
-      action = Action.Unfollow,
-      follow = Some(
-        List(
-          FollowGraphEvent(
-            result = testWriteRequestResult,
-            redundantOperation = Some(false)
+    v-vaw s-sgunfowwowwedundantisfawseevent: w-wwiteevent = baseevent.copy(
+      a-action = action.unfowwow, >w<
+      fowwow = some(
+        wist(
+          f-fowwowgwaphevent(
+            w-wesuwt = t-testwwitewequestwesuwt, òωó
+            w-wedundantopewation = s-some(fawse)
           ))))
 
-    val sgUnsuccessfulFollowEvent: WriteEvent = baseEvent.copy(
-      action = Action.Follow,
-      follow = Some(List(FollowGraphEvent(testWriteRequestResultWithValidationError))))
+    vaw sgunsuccessfuwfowwowevent: wwiteevent = baseevent.copy(
+      a-action = action.fowwow, (ꈍᴗꈍ)
+      fowwow = some(wist(fowwowgwaphevent(testwwitewequestwesuwtwithvawidationewwow))))
 
-    val sgUnsuccessfulUnfollowEvent: WriteEvent = baseEvent.copy(
-      action = Action.Unfollow,
-      follow = Some(List(FollowGraphEvent(testWriteRequestResultWithValidationError))))
+    vaw sgunsuccessfuwunfowwowevent: wwiteevent = b-baseevent.copy(
+      action = action.unfowwow, rawr x3
+      fowwow = some(wist(fowwowgwaphevent(testwwitewequestwesuwtwithvawidationewwow))))
 
-    val sgBlockEvent: WriteEvent = baseEvent.copy(
-      action = Action.Block,
-      block = Some(List(BlockGraphEvent(testWriteRequestResult))))
+    vaw s-sgbwockevent: wwiteevent = b-baseevent.copy(
+      a-action = action.bwock, rawr x3
+      bwock = some(wist(bwockgwaphevent(testwwitewequestwesuwt))))
 
-    val sgUnsuccessfulBlockEvent: WriteEvent = baseEvent.copy(
-      action = Action.Block,
-      block = Some(List(BlockGraphEvent(testWriteRequestResultWithValidationError))))
+    v-vaw sgunsuccessfuwbwockevent: wwiteevent = baseevent.copy(
+      a-action = action.bwock, σωσ
+      bwock = s-some(wist(bwockgwaphevent(testwwitewequestwesuwtwithvawidationewwow))))
 
-    val sgUnblockEvent: WriteEvent = baseEvent.copy(
-      action = Action.Unblock,
-      block = Some(List(BlockGraphEvent(testWriteRequestResult))))
+    vaw sgunbwockevent: wwiteevent = baseevent.copy(
+      action = action.unbwock, (ꈍᴗꈍ)
+      b-bwock = some(wist(bwockgwaphevent(testwwitewequestwesuwt))))
 
-    val sgUnsuccessfulUnblockEvent: WriteEvent = baseEvent.copy(
-      action = Action.Unblock,
-      block = Some(List(BlockGraphEvent(testWriteRequestResultWithValidationError))))
+    v-vaw sgunsuccessfuwunbwockevent: w-wwiteevent = b-baseevent.copy(
+      action = action.unbwock, rawr
+      bwock = s-some(wist(bwockgwaphevent(testwwitewequestwesuwtwithvawidationewwow))))
 
-    val sgMuteEvent: WriteEvent = baseEvent.copy(
-      action = Action.Mute,
-      mute = Some(List(MuteGraphEvent(testWriteRequestResult))))
+    v-vaw sgmuteevent: wwiteevent = b-baseevent.copy(
+      a-action = action.mute, ^^;;
+      mute = some(wist(mutegwaphevent(testwwitewequestwesuwt))))
 
-    val sgUnsuccessfulMuteEvent: WriteEvent = baseEvent.copy(
-      action = Action.Mute,
-      mute = Some(List(MuteGraphEvent(testWriteRequestResultWithValidationError))))
+    vaw sgunsuccessfuwmuteevent: wwiteevent = baseevent.copy(
+      a-action = action.mute, rawr x3
+      mute = s-some(wist(mutegwaphevent(testwwitewequestwesuwtwithvawidationewwow))))
 
-    val sgUnmuteEvent: WriteEvent = baseEvent.copy(
-      action = Action.Unmute,
-      mute = Some(List(MuteGraphEvent(testWriteRequestResult))))
+    v-vaw sgunmuteevent: wwiteevent = b-baseevent.copy(
+      a-action = action.unmute, (ˆ ﻌ ˆ)♡
+      m-mute = some(wist(mutegwaphevent(testwwitewequestwesuwt))))
 
-    val sgUnsuccessfulUnmuteEvent: WriteEvent = baseEvent.copy(
-      action = Action.Unmute,
-      mute = Some(List(MuteGraphEvent(testWriteRequestResultWithValidationError))))
+    vaw sgunsuccessfuwunmuteevent: wwiteevent = baseevent.copy(
+      action = a-action.unmute, σωσ
+      m-mute = some(wist(mutegwaphevent(testwwitewequestwesuwtwithvawidationewwow))))
 
-    val sgCreateFollowRequestEvent: WriteEvent = baseEvent.copy(
-      action = Action.CreateFollowRequest,
-      followRequest = Some(List(FollowRequestGraphEvent(testWriteRequestResult)))
+    vaw sgcweatefowwowwequestevent: wwiteevent = b-baseevent.copy(
+      a-action = action.cweatefowwowwequest, (U ﹏ U)
+      fowwowwequest = some(wist(fowwowwequestgwaphevent(testwwitewequestwesuwt)))
     )
 
-    val sgCancelFollowRequestEvent: WriteEvent = baseEvent.copy(
-      action = Action.CancelFollowRequest,
-      followRequest = Some(List(FollowRequestGraphEvent(testWriteRequestResult)))
+    v-vaw sgcancewfowwowwequestevent: wwiteevent = baseevent.copy(
+      action = action.cancewfowwowwequest, >w<
+      f-fowwowwequest = some(wist(fowwowwequestgwaphevent(testwwitewequestwesuwt)))
     )
 
-    val sgAcceptFollowRequestEvent: WriteEvent = baseEvent.copy(
-      action = Action.AcceptFollowRequest,
-      followRequest = Some(List(FollowRequestGraphEvent(testWriteRequestResult)))
+    vaw sgacceptfowwowwequestevent: w-wwiteevent = b-baseevent.copy(
+      action = action.acceptfowwowwequest, σωσ
+      fowwowwequest = some(wist(fowwowwequestgwaphevent(testwwitewequestwesuwt)))
     )
 
-    val sgAcceptFollowRetweetEvent: WriteEvent = baseEvent.copy(
-      action = Action.FollowRetweets,
-      followRetweets = Some(List(FollowRetweetsGraphEvent(testWriteRequestResult)))
+    v-vaw sgacceptfowwowwetweetevent: w-wwiteevent = baseevent.copy(
+      action = action.fowwowwetweets, nyaa~~
+      f-fowwowwetweets = some(wist(fowwowwetweetsgwaphevent(testwwitewequestwesuwt)))
     )
 
-    val sgAcceptUnfollowRetweetEvent: WriteEvent = baseEvent.copy(
-      action = Action.UnfollowRetweets,
-      followRetweets = Some(List(FollowRetweetsGraphEvent(testWriteRequestResult)))
+    v-vaw sgacceptunfowwowwetweetevent: wwiteevent = baseevent.copy(
+      action = action.unfowwowwetweets, 🥺
+      f-fowwowwetweets = some(wist(fowwowwetweetsgwaphevent(testwwitewequestwesuwt)))
     )
 
-    val sgReportAsSpamEvent: WriteEvent = baseEvent.copy(
-      action = Action.ReportAsSpam,
-      reportAsSpam = Some(
-        List(
-          ReportAsSpamGraphEvent(
-            result = testWriteRequestResult
+    v-vaw sgwepowtasspamevent: w-wwiteevent = baseevent.copy(
+      a-action = action.wepowtasspam, rawr x3
+      w-wepowtasspam = some(
+        w-wist(
+          w-wepowtasspamgwaphevent(
+            wesuwt = testwwitewequestwesuwt
           ))))
 
-    val sgReportAsAbuseEvent: WriteEvent = baseEvent.copy(
-      action = Action.ReportAsAbuse,
-      reportAsAbuse = Some(
-        List(
-          ReportAsAbuseGraphEvent(
-            result = testWriteRequestResult
+    v-vaw sgwepowtasabuseevent: wwiteevent = b-baseevent.copy(
+      action = action.wepowtasabuse, σωσ
+      wepowtasabuse = s-some(
+        w-wist(
+          w-wepowtasabusegwaphevent(
+            wesuwt = testwwitewequestwesuwt
           ))))
 
-    def getExpectedUUA(
-      userId: Long,
-      actionProfileId: Long,
-      sourceTimestampMs: Long,
-      actionType: ActionType,
-      socialGraphAction: Option[Action] = None
-    ): UnifiedUserAction = {
-      val actionItem = socialGraphAction match {
-        case Some(sgAction) =>
-          Item.ProfileInfo(
-            ProfileInfo(
-              actionProfileId = actionProfileId,
-              profileActionInfo = Some(
-                ProfileActionInfo.ServerProfileReport(
-                  ServerProfileReport(reportType = sgAction)
+    d-def getexpecteduua(
+      u-usewid: w-wong, (///ˬ///✿)
+      actionpwofiweid: wong, (U ﹏ U)
+      souwcetimestampms: wong, ^^;;
+      a-actiontype: a-actiontype, 🥺
+      s-sociawgwaphaction: o-option[action] = nyone
+    ): u-unifiedusewaction = {
+      vaw actionitem = sociawgwaphaction match {
+        case some(sgaction) =>
+          item.pwofiweinfo(
+            p-pwofiweinfo(
+              actionpwofiweid = a-actionpwofiweid, òωó
+              pwofiweactioninfo = s-some(
+                pwofiweactioninfo.sewvewpwofiwewepowt(
+                  s-sewvewpwofiwewepowt(wepowttype = sgaction)
                 ))
             )
           )
-        case _ =>
-          Item.ProfileInfo(
-            ProfileInfo(
-              actionProfileId = actionProfileId
+        c-case _ =>
+          i-item.pwofiweinfo(
+            p-pwofiweinfo(
+              a-actionpwofiweid = a-actionpwofiweid
             )
           )
       }
 
-      UnifiedUserAction(
-        userIdentifier = UserIdentifier(userId = Some(userId)),
-        item = actionItem,
-        actionType = actionType,
-        eventMetadata = EventMetadata(
-          sourceTimestampMs = sourceTimestampMs,
-          receivedTimestampMs = frozenTime.inMilliseconds,
-          sourceLineage = SourceLineage.ServerSocialGraphEvents
+      unifiedusewaction(
+        usewidentifiew = usewidentifiew(usewid = some(usewid)), XD
+        item = actionitem, :3
+        actiontype = actiontype, (U ﹏ U)
+        e-eventmetadata = e-eventmetadata(
+          s-souwcetimestampms = souwcetimestampms, >w<
+          w-weceivedtimestampms = fwozentime.inmiwwiseconds, /(^•ω•^)
+          souwcewineage = souwcewineage.sewvewsociawgwaphevents
         )
       )
     }
 
-    val expectedUuaFollow: UnifiedUserAction = getExpectedUUA(
-      userId = 1111L,
-      actionProfileId = 2222L,
-      sourceTimestampMs = 1001L,
-      actionType = ActionType.ServerProfileFollow
+    v-vaw expecteduuafowwow: u-unifiedusewaction = getexpecteduua(
+      u-usewid = 1111w, (⑅˘꒳˘)
+      actionpwofiweid = 2222w, ʘwʘ
+      souwcetimestampms = 1001w, rawr x3
+      a-actiontype = actiontype.sewvewpwofiwefowwow
     )
 
-    val expectedUuaUnfollow: UnifiedUserAction = getExpectedUUA(
-      userId = 1111L,
-      actionProfileId = 2222L,
-      sourceTimestampMs = 1001L,
-      actionType = ActionType.ServerProfileUnfollow
+    v-vaw expecteduuaunfowwow: unifiedusewaction = g-getexpecteduua(
+      u-usewid = 1111w, (˘ω˘)
+      actionpwofiweid = 2222w, o.O
+      souwcetimestampms = 1001w, 😳
+      actiontype = actiontype.sewvewpwofiweunfowwow
     )
 
-    val expectedUuaMute: UnifiedUserAction = getExpectedUUA(
-      userId = 1111L,
-      actionProfileId = 2222L,
-      sourceTimestampMs = 1001L,
-      actionType = ActionType.ServerProfileMute
+    vaw expecteduuamute: u-unifiedusewaction = g-getexpecteduua(
+      u-usewid = 1111w, o.O
+      a-actionpwofiweid = 2222w, ^^;;
+      souwcetimestampms = 1001w, ( ͡o ω ͡o )
+      a-actiontype = actiontype.sewvewpwofiwemute
     )
 
-    val expectedUuaUnmute: UnifiedUserAction = getExpectedUUA(
-      userId = 1111L,
-      actionProfileId = 2222L,
-      sourceTimestampMs = 1001L,
-      actionType = ActionType.ServerProfileUnmute
+    vaw expecteduuaunmute: u-unifiedusewaction = g-getexpecteduua(
+      usewid = 1111w, ^^;;
+      a-actionpwofiweid = 2222w, ^^;;
+      s-souwcetimestampms = 1001w, XD
+      actiontype = a-actiontype.sewvewpwofiweunmute
     )
 
-    val expectedUuaBlock: UnifiedUserAction = getExpectedUUA(
-      userId = 1111L,
-      actionProfileId = 2222L,
-      sourceTimestampMs = 1001L,
-      actionType = ActionType.ServerProfileBlock
+    vaw expecteduuabwock: unifiedusewaction = g-getexpecteduua(
+      usewid = 1111w, 🥺
+      a-actionpwofiweid = 2222w, (///ˬ///✿)
+      s-souwcetimestampms = 1001w, (U ᵕ U❁)
+      actiontype = a-actiontype.sewvewpwofiwebwock
     )
 
-    val expectedUuaUnblock: UnifiedUserAction = getExpectedUUA(
-      userId = 1111L,
-      actionProfileId = 2222L,
-      sourceTimestampMs = 1001L,
-      actionType = ActionType.ServerProfileUnblock
+    vaw expecteduuaunbwock: unifiedusewaction = g-getexpecteduua(
+      u-usewid = 1111w, ^^;;
+      a-actionpwofiweid = 2222w, ^^;;
+      souwcetimestampms = 1001w, rawr
+      actiontype = actiontype.sewvewpwofiweunbwock
     )
 
-    val expectedUuaReportAsSpam: UnifiedUserAction = getExpectedUUA(
-      userId = 1111L,
-      actionProfileId = 2222L,
-      sourceTimestampMs = 1001L,
-      actionType = ActionType.ServerProfileReport,
-      socialGraphAction = Some(Action.ReportAsSpam)
+    vaw e-expecteduuawepowtasspam: unifiedusewaction = getexpecteduua(
+      u-usewid = 1111w, (˘ω˘)
+      a-actionpwofiweid = 2222w, 🥺
+      souwcetimestampms = 1001w,
+      a-actiontype = actiontype.sewvewpwofiwewepowt, nyaa~~
+      sociawgwaphaction = s-some(action.wepowtasspam)
     )
 
-    val expectedUuaReportAsAbuse: UnifiedUserAction = getExpectedUUA(
-      userId = 1111L,
-      actionProfileId = 2222L,
-      sourceTimestampMs = 1001L,
-      actionType = ActionType.ServerProfileReport,
-      socialGraphAction = Some(Action.ReportAsAbuse)
+    v-vaw expecteduuawepowtasabuse: unifiedusewaction = getexpecteduua(
+      u-usewid = 1111w, :3
+      actionpwofiweid = 2222w, /(^•ω•^)
+      souwcetimestampms = 1001w, ^•ﻌ•^
+      a-actiontype = a-actiontype.sewvewpwofiwewepowt, UwU
+      sociawgwaphaction = s-some(action.wepowtasabuse)
     )
   }
 
-  test("SocialGraphAdapter ignore events not in the list") {
-    new Fixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val ignoredSocialGraphEvents: TableFor1[WriteEvent] = Table(
-          "ignoredSocialGraphEvents",
-          sgAcceptUnfollowRetweetEvent,
-          sgAcceptFollowRequestEvent,
-          sgAcceptFollowRetweetEvent,
-          sgCreateFollowRequestEvent,
-          sgCancelFollowRequestEvent,
+  test("sociawgwaphadaptew i-ignowe e-events nyot i-in the wist") {
+    nyew fixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        vaw ignowedsociawgwaphevents: tabwefow1[wwiteevent] = tabwe(
+          "ignowedsociawgwaphevents", 😳😳😳
+          sgacceptunfowwowwetweetevent, OwO
+          sgacceptfowwowwequestevent, ^•ﻌ•^
+          sgacceptfowwowwetweetevent, (ꈍᴗꈍ)
+          sgcweatefowwowwequestevent,
+          sgcancewfowwowwequestevent, (⑅˘꒳˘)
         )
-        forEvery(ignoredSocialGraphEvents) { writeEvent: WriteEvent =>
-          val actual = SocialGraphAdapter.adaptEvent(writeEvent)
-          assert(actual.isEmpty)
+        fowevewy(ignowedsociawgwaphevents) { wwiteevent: wwiteevent =>
+          v-vaw actuaw = s-sociawgwaphadaptew.adaptevent(wwiteevent)
+          assewt(actuaw.isempty)
         }
       }
     }
   }
 
-  test("Test SocialGraphAdapter consuming Write events") {
-    new Fixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val socialProfileActions: TableFor3[String, WriteEvent, UnifiedUserAction] = Table(
-          ("actionType", "event", "expectedUnifiedUserAction"),
-          ("ProfileFollow", sgFollowEvent, expectedUuaFollow),
-          ("ProfileUnfollow", sgUnfollowEvent, expectedUuaUnfollow),
-          ("ProfileBlock", sgBlockEvent, expectedUuaBlock),
-          ("ProfileUnBlock", sgUnblockEvent, expectedUuaUnblock),
-          ("ProfileMute", sgMuteEvent, expectedUuaMute),
-          ("ProfileUnmute", sgUnmuteEvent, expectedUuaUnmute),
-          ("ProfileReportAsSpam", sgReportAsSpamEvent, expectedUuaReportAsSpam),
-          ("ProfileReportAsAbuse", sgReportAsAbuseEvent, expectedUuaReportAsAbuse),
+  test("test s-sociawgwaphadaptew c-consuming w-wwite events") {
+    nyew fixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        vaw sociawpwofiweactions: t-tabwefow3[stwing, (⑅˘꒳˘) w-wwiteevent, (ˆ ﻌ ˆ)♡ unifiedusewaction] = tabwe(
+          ("actiontype", /(^•ω•^) "event", "expectedunifiedusewaction"), òωó
+          ("pwofiwefowwow", (⑅˘꒳˘) s-sgfowwowevent, (U ᵕ U❁) expecteduuafowwow), >w<
+          ("pwofiweunfowwow", σωσ s-sgunfowwowevent, -.- e-expecteduuaunfowwow), o.O
+          ("pwofiwebwock", ^^ sgbwockevent, >_< expecteduuabwock), >w<
+          ("pwofiweunbwock", >_< s-sgunbwockevent, >w< e-expecteduuaunbwock), rawr
+          ("pwofiwemute", rawr x3 s-sgmuteevent, ( ͡o ω ͡o ) e-expecteduuamute), (˘ω˘)
+          ("pwofiweunmute", 😳 s-sgunmuteevent, OwO e-expecteduuaunmute), (˘ω˘)
+          ("pwofiwewepowtasspam", òωó s-sgwepowtasspamevent, ( ͡o ω ͡o ) e-expecteduuawepowtasspam), UwU
+          ("pwofiwewepowtasabuse", /(^•ω•^) s-sgwepowtasabuseevent, (ꈍᴗꈍ) expecteduuawepowtasabuse),
         )
-        forEvery(socialProfileActions) {
-          (_: String, event: WriteEvent, expected: UnifiedUserAction) =>
-            val actual = SocialGraphAdapter.adaptEvent(event)
-            assert(Seq(expected) === actual)
+        fowevewy(sociawpwofiweactions) {
+          (_: s-stwing, 😳 e-event: wwiteevent, e-expected: unifiedusewaction) =>
+            v-vaw actuaw = sociawgwaphadaptew.adaptevent(event)
+            assewt(seq(expected) === actuaw)
         }
       }
     }
   }
 
-  test("SocialGraphAdapter ignore redundant follow/unfollow events") {
-    new Fixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val socialGraphActions: TableFor3[String, WriteEvent, Seq[UnifiedUserAction]] = Table(
-          ("actionType", "ignoredRedundantFollowUnfollowEvents", "expectedUnifiedUserAction"),
-          ("ProfileFollow", sgFollowRedundantEvent, Nil),
-          ("ProfileFollow", sgFollowRedundantIsFalseEvent, Seq(expectedUuaFollow)),
-          ("ProfileUnfollow", sgUnfollowRedundantEvent, Nil),
-          ("ProfileUnfollow", sgUnfollowRedundantIsFalseEvent, Seq(expectedUuaUnfollow))
+  t-test("sociawgwaphadaptew ignowe w-wedundant fowwow/unfowwow e-events") {
+    n-nyew fixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        v-vaw sociawgwaphactions: tabwefow3[stwing, mya w-wwiteevent, mya seq[unifiedusewaction]] = tabwe(
+          ("actiontype", /(^•ω•^) "ignowedwedundantfowwowunfowwowevents", ^^;; "expectedunifiedusewaction"), 🥺
+          ("pwofiwefowwow", ^^ s-sgfowwowwedundantevent, ^•ﻌ•^ nyiw), /(^•ω•^)
+          ("pwofiwefowwow", ^^ s-sgfowwowwedundantisfawseevent, 🥺 seq(expecteduuafowwow)), (U ᵕ U❁)
+          ("pwofiweunfowwow", 😳😳😳 sgunfowwowwedundantevent, nyaa~~ nyiw),
+          ("pwofiweunfowwow", (˘ω˘) sgunfowwowwedundantisfawseevent, >_< s-seq(expecteduuaunfowwow))
         )
-        forEvery(socialGraphActions) {
-          (_: String, event: WriteEvent, expected: Seq[UnifiedUserAction]) =>
-            val actual = SocialGraphAdapter.adaptEvent(event)
-            assert(expected === actual)
+        fowevewy(sociawgwaphactions) {
+          (_: s-stwing, XD event: w-wwiteevent, rawr x3 expected: seq[unifiedusewaction]) =>
+            vaw actuaw = sociawgwaphadaptew.adaptevent(event)
+            assewt(expected === actuaw)
         }
       }
     }
   }
 
-  test("SocialGraphAdapter ignore Unsuccessful SocialGraph events") {
-    new Fixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val unsuccessfulSocialGraphEvents: TableFor1[WriteEvent] = Table(
-          "ignoredSocialGraphEvents",
-          sgUnsuccessfulFollowEvent,
-          sgUnsuccessfulUnfollowEvent,
-          sgUnsuccessfulBlockEvent,
-          sgUnsuccessfulUnblockEvent,
-          sgUnsuccessfulMuteEvent,
-          sgUnsuccessfulUnmuteEvent
+  t-test("sociawgwaphadaptew ignowe unsuccessfuw s-sociawgwaph e-events") {
+    n-nyew fixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        vaw unsuccessfuwsociawgwaphevents: t-tabwefow1[wwiteevent] = t-tabwe(
+          "ignowedsociawgwaphevents", ( ͡o ω ͡o )
+          sgunsuccessfuwfowwowevent, :3
+          s-sgunsuccessfuwunfowwowevent, mya
+          sgunsuccessfuwbwockevent, σωσ
+          sgunsuccessfuwunbwockevent, (ꈍᴗꈍ)
+          s-sgunsuccessfuwmuteevent, OwO
+          sgunsuccessfuwunmuteevent
         )
 
-        forEvery(unsuccessfulSocialGraphEvents) { writeEvent: WriteEvent =>
-          val actual = SocialGraphAdapter.adaptEvent(writeEvent)
-          assert(actual.isEmpty)
+        f-fowevewy(unsuccessfuwsociawgwaphevents) { w-wwiteevent: w-wwiteevent =>
+          vaw actuaw = s-sociawgwaphadaptew.adaptevent(wwiteevent)
+          a-assewt(actuaw.isempty)
         }
       }
     }

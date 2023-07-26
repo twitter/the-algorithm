@@ -1,157 +1,157 @@
-package com.twitter.unified_user_actions.adapter.client_event
+package com.twittew.unified_usew_actions.adaptew.cwient_event
 
-import com.twitter.clientapp.thriftscala.EventNamespace
-import com.twitter.clientapp.thriftscala.Item
-import com.twitter.clientapp.thriftscala.ItemType.Topic
-import com.twitter.guide.scribing.thriftscala.TopicModuleMetadata
-import com.twitter.guide.scribing.thriftscala.TransparentGuideDetails
-import com.twitter.suggests.controller_data.home_hitl_topic_annotation_prompt.thriftscala.HomeHitlTopicAnnotationPromptControllerData
-import com.twitter.suggests.controller_data.home_hitl_topic_annotation_prompt.v1.thriftscala.{
-  HomeHitlTopicAnnotationPromptControllerData => HomeHitlTopicAnnotationPromptControllerDataV1
+impowt c-com.twittew.cwientapp.thwiftscawa.eventnamespace
+i-impowt com.twittew.cwientapp.thwiftscawa.item
+i-impowt com.twittew.cwientapp.thwiftscawa.itemtype.topic
+i-impowt c-com.twittew.guide.scwibing.thwiftscawa.topicmoduwemetadata
+i-impowt c-com.twittew.guide.scwibing.thwiftscawa.twanspawentguidedetaiws
+i-impowt com.twittew.suggests.contwowwew_data.home_hitw_topic_annotation_pwompt.thwiftscawa.homehitwtopicannotationpwomptcontwowwewdata
+impowt com.twittew.suggests.contwowwew_data.home_hitw_topic_annotation_pwompt.v1.thwiftscawa.{
+  homehitwtopicannotationpwomptcontwowwewdata => homehitwtopicannotationpwomptcontwowwewdatav1
 }
-import com.twitter.suggests.controller_data.home_topic_annotation_prompt.thriftscala.HomeTopicAnnotationPromptControllerData
-import com.twitter.suggests.controller_data.home_topic_annotation_prompt.v1.thriftscala.{
-  HomeTopicAnnotationPromptControllerData => HomeTopicAnnotationPromptControllerDataV1
+i-impowt com.twittew.suggests.contwowwew_data.home_topic_annotation_pwompt.thwiftscawa.hometopicannotationpwomptcontwowwewdata
+impowt com.twittew.suggests.contwowwew_data.home_topic_annotation_pwompt.v1.thwiftscawa.{
+  h-hometopicannotationpwomptcontwowwewdata => hometopicannotationpwomptcontwowwewdatav1
 }
-import com.twitter.suggests.controller_data.home_topic_follow_prompt.thriftscala.HomeTopicFollowPromptControllerData
-import com.twitter.suggests.controller_data.home_topic_follow_prompt.v1.thriftscala.{
-  HomeTopicFollowPromptControllerData => HomeTopicFollowPromptControllerDataV1
+i-impowt com.twittew.suggests.contwowwew_data.home_topic_fowwow_pwompt.thwiftscawa.hometopicfowwowpwomptcontwowwewdata
+impowt com.twittew.suggests.contwowwew_data.home_topic_fowwow_pwompt.v1.thwiftscawa.{
+  hometopicfowwowpwomptcontwowwewdata => h-hometopicfowwowpwomptcontwowwewdatav1
 }
-import com.twitter.suggests.controller_data.home_tweets.thriftscala.HomeTweetsControllerData
-import com.twitter.suggests.controller_data.home_tweets.v1.thriftscala.{
-  HomeTweetsControllerData => HomeTweetsControllerDataV1
+impowt com.twittew.suggests.contwowwew_data.home_tweets.thwiftscawa.hometweetscontwowwewdata
+i-impowt com.twittew.suggests.contwowwew_data.home_tweets.v1.thwiftscawa.{
+  h-hometweetscontwowwewdata => hometweetscontwowwewdatav1
 }
-import com.twitter.suggests.controller_data.search_response.item_types.thriftscala.ItemTypesControllerData
-import com.twitter.suggests.controller_data.search_response.thriftscala.SearchResponseControllerData
-import com.twitter.suggests.controller_data.search_response.topic_follow_prompt.thriftscala.SearchTopicFollowPromptControllerData
-import com.twitter.suggests.controller_data.search_response.tweet_types.thriftscala.TweetTypesControllerData
-import com.twitter.suggests.controller_data.search_response.v1.thriftscala.{
-  SearchResponseControllerData => SearchResponseControllerDataV1
+impowt com.twittew.suggests.contwowwew_data.seawch_wesponse.item_types.thwiftscawa.itemtypescontwowwewdata
+impowt com.twittew.suggests.contwowwew_data.seawch_wesponse.thwiftscawa.seawchwesponsecontwowwewdata
+impowt com.twittew.suggests.contwowwew_data.seawch_wesponse.topic_fowwow_pwompt.thwiftscawa.seawchtopicfowwowpwomptcontwowwewdata
+i-impowt com.twittew.suggests.contwowwew_data.seawch_wesponse.tweet_types.thwiftscawa.tweettypescontwowwewdata
+impowt com.twittew.suggests.contwowwew_data.seawch_wesponse.v1.thwiftscawa.{
+  seawchwesponsecontwowwewdata => seawchwesponsecontwowwewdatav1
 }
-import com.twitter.suggests.controller_data.thriftscala.ControllerData
-import com.twitter.suggests.controller_data.timelines_topic.thriftscala.TimelinesTopicControllerData
-import com.twitter.suggests.controller_data.timelines_topic.v1.thriftscala.{
-  TimelinesTopicControllerData => TimelinesTopicControllerDataV1
+i-impowt com.twittew.suggests.contwowwew_data.thwiftscawa.contwowwewdata
+impowt c-com.twittew.suggests.contwowwew_data.timewines_topic.thwiftscawa.timewinestopiccontwowwewdata
+i-impowt com.twittew.suggests.contwowwew_data.timewines_topic.v1.thwiftscawa.{
+  t-timewinestopiccontwowwewdata => t-timewinestopiccontwowwewdatav1
 }
-import com.twitter.suggests.controller_data.v2.thriftscala.{ControllerData => ControllerDataV2}
-import com.twitter.util.Try
+impowt com.twittew.suggests.contwowwew_data.v2.thwiftscawa.{contwowwewdata => contwowwewdatav2}
+i-impowt com.twittew.utiw.twy
 
-object TopicIdUtils {
-  val DomainId: Long = 131 // Topical Domain
+object topicidutiws {
+  vaw domainid: w-wong = 131 // topicaw domain
 
-  def getTopicId(
-    item: Item,
-    namespace: EventNamespace
-  ): Option[Long] =
-    getTopicIdFromHomeSearch(item)
-      .orElse(getTopicFromGuide(item))
-      .orElse(getTopicFromOnboarding(item, namespace))
-      .orElse(getTopicIdFromItem(item))
+  def gettopicid(
+    item: item, UwU
+    nyamespace: eventnamespace
+  ): o-option[wong] =
+    gettopicidfwomhomeseawch(item)
+      .owewse(gettopicfwomguide(item))
+      .owewse(gettopicfwomonboawding(item, :3 n-nyamespace))
+      .owewse(gettopicidfwomitem(item))
 
-  def getTopicIdFromItem(item: Item): Option[Long] =
-    if (item.itemType.contains(Topic))
+  d-def gettopicidfwomitem(item: i-item): option[wong] =
+    if (item.itemtype.contains(topic))
       item.id
-    else None
+    ewse nyone
 
-  def getTopicIdFromHomeSearch(
-    item: Item
-  ): Option[Long] = {
-    val decodedControllerData = item.suggestionDetails.flatMap(_.decodedControllerData)
-    decodedControllerData match {
-      case Some(
-            ControllerData.V2(
-              ControllerDataV2.HomeTweets(
-                HomeTweetsControllerData.V1(homeTweets: HomeTweetsControllerDataV1)))
+  def g-gettopicidfwomhomeseawch(
+    i-item: item
+  ): option[wong] = {
+    v-vaw decodedcontwowwewdata = i-item.suggestiondetaiws.fwatmap(_.decodedcontwowwewdata)
+    decodedcontwowwewdata m-match {
+      case some(
+            c-contwowwewdata.v2(
+              contwowwewdatav2.hometweets(
+                hometweetscontwowwewdata.v1(hometweets: hometweetscontwowwewdatav1)))
           ) =>
-        homeTweets.topicId
-      case Some(
-            ControllerData.V2(
-              ControllerDataV2.HomeTopicFollowPrompt(
-                HomeTopicFollowPromptControllerData.V1(
-                  homeTopicFollowPrompt: HomeTopicFollowPromptControllerDataV1)))
+        h-hometweets.topicid
+      case s-some(
+            contwowwewdata.v2(
+              c-contwowwewdatav2.hometopicfowwowpwompt(
+                h-hometopicfowwowpwomptcontwowwewdata.v1(
+                  hometopicfowwowpwompt: hometopicfowwowpwomptcontwowwewdatav1)))
           ) =>
-        homeTopicFollowPrompt.topicId
-      case Some(
-            ControllerData.V2(
-              ControllerDataV2.TimelinesTopic(
-                TimelinesTopicControllerData.V1(
-                  timelinesTopic: TimelinesTopicControllerDataV1
+        hometopicfowwowpwompt.topicid
+      case some(
+            contwowwewdata.v2(
+              contwowwewdatav2.timewinestopic(
+                t-timewinestopiccontwowwewdata.v1(
+                  t-timewinestopic: timewinestopiccontwowwewdatav1
                 )))
           ) =>
-        Some(timelinesTopic.topicId)
-      case Some(
-            ControllerData.V2(
-              ControllerDataV2.SearchResponse(
-                SearchResponseControllerData.V1(s: SearchResponseControllerDataV1)))
+        s-some(timewinestopic.topicid)
+      c-case s-some(
+            contwowwewdata.v2(
+              contwowwewdatav2.seawchwesponse(
+                seawchwesponsecontwowwewdata.v1(s: s-seawchwesponsecontwowwewdatav1)))
           ) =>
-        s.itemTypesControllerData match {
-          case Some(
-                ItemTypesControllerData.TopicFollowControllerData(
-                  topicFollowControllerData: SearchTopicFollowPromptControllerData)) =>
-            topicFollowControllerData.topicId
-          case Some(
-                ItemTypesControllerData.TweetTypesControllerData(
-                  tweetTypesControllerData: TweetTypesControllerData)) =>
-            tweetTypesControllerData.topicId
-          case _ => None
+        s.itemtypescontwowwewdata match {
+          case some(
+                i-itemtypescontwowwewdata.topicfowwowcontwowwewdata(
+                  topicfowwowcontwowwewdata: s-seawchtopicfowwowpwomptcontwowwewdata)) =>
+            t-topicfowwowcontwowwewdata.topicid
+          c-case some(
+                itemtypescontwowwewdata.tweettypescontwowwewdata(
+                  t-tweettypescontwowwewdata: t-tweettypescontwowwewdata)) =>
+            t-tweettypescontwowwewdata.topicid
+          c-case _ => none
         }
-      case Some(
-            ControllerData.V2(
-              ControllerDataV2.HomeTopicAnnotationPrompt(
-                HomeTopicAnnotationPromptControllerData.V1(
-                  homeTopicAnnotationPrompt: HomeTopicAnnotationPromptControllerDataV1
+      case some(
+            c-contwowwewdata.v2(
+              contwowwewdatav2.hometopicannotationpwompt(
+                h-hometopicannotationpwomptcontwowwewdata.v1(
+                  h-hometopicannotationpwompt: h-hometopicannotationpwomptcontwowwewdatav1
                 )))
           ) =>
-        Some(homeTopicAnnotationPrompt.topicId)
-      case Some(
-            ControllerData.V2(
-              ControllerDataV2.HomeHitlTopicAnnotationPrompt(
-                HomeHitlTopicAnnotationPromptControllerData.V1(
-                  homeHitlTopicAnnotationPrompt: HomeHitlTopicAnnotationPromptControllerDataV1
+        s-some(hometopicannotationpwompt.topicid)
+      case some(
+            contwowwewdata.v2(
+              contwowwewdatav2.homehitwtopicannotationpwompt(
+                homehitwtopicannotationpwomptcontwowwewdata.v1(
+                  homehitwtopicannotationpwompt: h-homehitwtopicannotationpwomptcontwowwewdatav1
                 )))
           ) =>
-        Some(homeHitlTopicAnnotationPrompt.topicId)
+        some(homehitwtopicannotationpwompt.topicid)
 
-      case _ => None
+      case _ => nyone
     }
   }
 
-  def getTopicFromOnboarding(
-    item: Item,
-    namespace: EventNamespace
-  ): Option[Long] =
-    if (namespace.page.contains("onboarding") &&
+  def gettopicfwomonboawding(
+    item: item, (⑅˘꒳˘)
+    n-nyamespace: eventnamespace
+  ): option[wong] =
+    if (namespace.page.contains("onboawding") &&
       (namespace.section.exists(_.contains("topic")) ||
-      namespace.component.exists(_.contains("topic")) ||
-      namespace.element.exists(_.contains("topic")))) {
-      item.description.flatMap { description =>
-        // description: "id=123,main=xyz,row=1"
-        val tokens = description.split(",").headOption.map(_.split("="))
-        tokens match {
-          case Some(Array("id", token, _*)) => Try(token.toLong).toOption
-          case _ => None
+      n-nyamespace.component.exists(_.contains("topic")) ||
+      n-nyamespace.ewement.exists(_.contains("topic")))) {
+      i-item.descwiption.fwatmap { descwiption =>
+        // descwiption: "id=123,main=xyz,wow=1"
+        v-vaw tokens = descwiption.spwit(",").headoption.map(_.spwit("="))
+        t-tokens match {
+          c-case some(awway("id", (///ˬ///✿) token, _*)) => twy(token.towong).tooption
+          case _ => nyone
         }
       }
-    } else None
+    } e-ewse nyone
 
-  def getTopicFromGuide(
-    item: Item
-  ): Option[Long] =
-    item.guideItemDetails.flatMap {
-      _.transparentGuideDetails match {
-        case Some(TransparentGuideDetails.TopicMetadata(topicMetadata)) =>
-          topicMetadata match {
-            case TopicModuleMetadata.TttInterest(_) =>
-              None
-            case TopicModuleMetadata.SemanticCoreInterest(semanticCoreInterest) =>
-              if (semanticCoreInterest.domainId == DomainId.toString)
-                Try(semanticCoreInterest.entityId.toLong).toOption
-              else None
-            case TopicModuleMetadata.SimClusterInterest(_) =>
-              None
-            case TopicModuleMetadata.UnknownUnionField(_) => None
+  def gettopicfwomguide(
+    i-item: item
+  ): option[wong] =
+    i-item.guideitemdetaiws.fwatmap {
+      _.twanspawentguidedetaiws m-match {
+        case some(twanspawentguidedetaiws.topicmetadata(topicmetadata)) =>
+          t-topicmetadata m-match {
+            case t-topicmoduwemetadata.tttintewest(_) =>
+              n-nyone
+            case topicmoduwemetadata.semanticcoweintewest(semanticcoweintewest) =>
+              if (semanticcoweintewest.domainid == domainid.tostwing)
+                twy(semanticcoweintewest.entityid.towong).tooption
+              e-ewse none
+            c-case topicmoduwemetadata.simcwustewintewest(_) =>
+              n-nyone
+            case t-topicmoduwemetadata.unknownunionfiewd(_) => n-nyone
           }
-        case _ => None
+        case _ => n-nyone
       }
     }
 }

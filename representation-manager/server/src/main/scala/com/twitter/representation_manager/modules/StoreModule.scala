@@ -1,24 +1,24 @@
-package com.twitter.representation_manager.modules
+package com.twittew.wepwesentation_managew.moduwes
 
-import com.google.inject.Provides
-import javax.inject.Singleton
-import com.twitter.inject.TwitterModule
-import com.twitter.decider.Decider
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.representation_manager.common.RepresentationManagerDecider
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
+impowt com.googwe.inject.pwovides
+i-impowt javax.inject.singweton
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt c-com.twittew.decidew.decidew
+i-impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+impowt c-com.twittew.wepwesentation_managew.common.wepwesentationmanagewdecidew
+i-impowt com.twittew.stowage.cwient.manhattan.kv.manhattankvcwientmtwspawams
 
-object StoreModule extends TwitterModule {
-  @Singleton
-  @Provides
-  def providesMhMtlsParams(
-    serviceIdentifier: ServiceIdentifier
-  ): ManhattanKVClientMtlsParams = ManhattanKVClientMtlsParams(serviceIdentifier)
+object stowemoduwe extends twittewmoduwe {
+  @singweton
+  @pwovides
+  def p-pwovidesmhmtwspawams(
+    sewviceidentifiew: sewviceidentifiew
+  ): m-manhattankvcwientmtwspawams = manhattankvcwientmtwspawams(sewviceidentifiew)
 
-  @Singleton
-  @Provides
-  def providesRmsDecider(
-    decider: Decider
-  ): RepresentationManagerDecider = RepresentationManagerDecider(decider)
+  @singweton
+  @pwovides
+  d-def pwovideswmsdecidew(
+    decidew: decidew
+  ): wepwesentationmanagewdecidew = w-wepwesentationmanagewdecidew(decidew)
 
 }

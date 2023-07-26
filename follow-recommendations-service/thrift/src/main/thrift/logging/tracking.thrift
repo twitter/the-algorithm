@@ -1,16 +1,16 @@
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+namespace java com.twittew.fowwow_wecommendations.wogging.thwiftjava
+#@namespace scawa com.twittew.fowwow_wecommendations.wogging.thwiftscawa
+#@namespace s-stwato c-com.twittew.fowwow_wecommendations.wogging
 
-include "com/twitter/suggests/controller_data/controller_data.thrift"
-include "display_location.thrift"
+i-incwude "com/twittew/suggests/contwowwew_data/contwowwew_data.thwift"
+i-incwude "dispway_wocation.thwift"
 
-struct TrackingToken {
-  // trace-id of the request
-  1: required i64 sessionId (personalDataType='SessionId')
-  2: optional display_location.OfflineDisplayLocation displayLocation
-  // 64-bit encoded binary attributes of our recommendation
-  3: optional controller_data.ControllerData controllerData
-  // WTF Algorithm Id (backward compatibility)
-  4: optional i32 algoId
-}(persisted='true', hasPersonalData='true')
+s-stwuct twackingtoken {
+  // t-twace-id of the w-wequest
+  1: wequiwed i-i64 sessionid (pewsonawdatatype='sessionid')
+  2: optionaw dispway_wocation.offwinedispwaywocation dispwaywocation
+  // 64-bit encoded binawy a-attwibutes of ouw wecommendation
+  3: optionaw c-contwowwew_data.contwowwewdata contwowwewdata
+  // w-wtf awgowithm id (backwawd compatibiwity)
+  4: optionaw i32 a-awgoid
+}(pewsisted='twue', ^^;; haspewsonawdata='twue')

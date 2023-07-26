@@ -1,46 +1,46 @@
-package com.twitter.timelineranker.model
+package com.twittew.timewinewankew.modew
 
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelines.model.UserId
-import com.twitter.timelineservice.model.TimelineId
-import com.twitter.timelineservice.model.core.TimelineKind
+impowt c-com.twittew.timewinewankew.{thwiftscawa => t-thwift}
+i-impowt com.twittew.timewines.modew.usewid
+i-impowt c-com.twittew.timewinesewvice.modew.timewineid
+i-impowt com.twittew.timewinesewvice.modew.cowe.timewinekind
 
-object Timeline {
-  def empty(id: TimelineId): Timeline = {
-    Timeline(id, Nil)
+o-object t-timewine {
+  def empty(id: timewineid): timewine = {
+    timewine(id, 🥺 nyiw)
   }
 
-  def fromThrift(timeline: thrift.Timeline): Timeline = {
-    Timeline(
-      id = TimelineId.fromThrift(timeline.id),
-      entries = timeline.entries.map(TimelineEntryEnvelope.fromThrift)
+  d-def fwomthwift(timewine: thwift.timewine): timewine = {
+    t-timewine(
+      id = timewineid.fwomthwift(timewine.id),
+      e-entwies = timewine.entwies.map(timewineentwyenvewope.fwomthwift)
     )
   }
 
-  def throwIfIdInvalid(id: TimelineId): Unit = {
-    // Note: if we support timelines other than TimelineKind.home, we need to update
-    //       the implementation of userId method here and in TimelineQuery class.
-    require(id.kind == TimelineKind.home, s"Expected TimelineKind.home, found: ${id.kind}")
+  def thwowifidinvawid(id: timewineid): unit = {
+    // n-nyote: if we suppowt timewines o-othew than t-timewinekind.home, mya we nyeed to update
+    //       the impwementation of usewid method hewe and i-in timewinequewy cwass. 🥺
+    wequiwe(id.kind == timewinekind.home, s"expected timewinekind.home, >_< found: ${id.kind}")
   }
 }
 
-case class Timeline(id: TimelineId, entries: Seq[TimelineEntryEnvelope]) {
+case c-cwass timewine(id: timewineid, >_< entwies: s-seq[timewineentwyenvewope]) {
 
-  throwIfInvalid()
+  t-thwowifinvawid()
 
-  def userId: UserId = {
+  d-def u-usewid: usewid = {
     id.id
   }
 
-  def throwIfInvalid(): Unit = {
-    Timeline.throwIfIdInvalid(id)
-    entries.foreach(_.throwIfInvalid())
+  def thwowifinvawid(): u-unit = {
+    timewine.thwowifidinvawid(id)
+    entwies.foweach(_.thwowifinvawid())
   }
 
-  def toThrift: thrift.Timeline = {
-    thrift.Timeline(
-      id = id.toThrift,
-      entries = entries.map(_.toThrift)
+  d-def tothwift: thwift.timewine = {
+    thwift.timewine(
+      id = id.tothwift,
+      entwies = entwies.map(_.tothwift)
     )
   }
 }

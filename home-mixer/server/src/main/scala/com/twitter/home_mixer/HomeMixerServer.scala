@@ -1,128 +1,128 @@
-package com.twitter.home_mixer
+package com.twittew.home_mixew
 
-import com.google.inject.Module
-import com.twitter.finagle.Filter
-import com.twitter.finatra.annotations.DarkTrafficFilterType
-import com.twitter.finatra.http.HttpServer
-import com.twitter.finatra.http.routing.HttpRouter
-import com.twitter.finatra.mtls.http.{Mtls => HttpMtls}
-import com.twitter.finatra.mtls.thriftmux.Mtls
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule
-import com.twitter.finatra.thrift.ThriftServer
-import com.twitter.finatra.thrift.filters._
-import com.twitter.finatra.thrift.routing.ThriftRouter
-import com.twitter.home_mixer.controller.HomeThriftController
-import com.twitter.home_mixer.federated.HomeMixerColumn
-import com.twitter.home_mixer.module._
-import com.twitter.home_mixer.param.GlobalParamConfigModule
-import com.twitter.home_mixer.product.HomeMixerProductModule
-import com.twitter.home_mixer.{thriftscala => st}
-import com.twitter.product_mixer.component_library.module.AccountRecommendationsMixerModule
-import com.twitter.product_mixer.component_library.module.DarkTrafficFilterModule
-import com.twitter.product_mixer.component_library.module.EarlybirdModule
-import com.twitter.product_mixer.component_library.module.ExploreRankerClientModule
-import com.twitter.product_mixer.component_library.module.GizmoduckClientModule
-import com.twitter.product_mixer.component_library.module.OnboardingTaskServiceModule
-import com.twitter.product_mixer.component_library.module.SocialGraphServiceModule
-import com.twitter.product_mixer.component_library.module.TimelineRankerClientModule
-import com.twitter.product_mixer.component_library.module.TimelineScorerClientModule
-import com.twitter.product_mixer.component_library.module.TimelineServiceClientModule
-import com.twitter.product_mixer.component_library.module.TweetImpressionStoreModule
-import com.twitter.product_mixer.component_library.module.TweetMixerClientModule
-import com.twitter.product_mixer.component_library.module.UserSessionStoreModule
-import com.twitter.product_mixer.core.controllers.ProductMixerController
-import com.twitter.product_mixer.core.module.LoggingThrowableExceptionMapper
-import com.twitter.product_mixer.core.module.ProductMixerModule
-import com.twitter.product_mixer.core.module.stringcenter.ProductScopeStringCenterModule
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.fed.server.StratoFedServer
+impowt com.googwe.inject.moduwe
+impowt c-com.twittew.finagwe.fiwtew
+i-impowt com.twittew.finatwa.annotations.dawktwafficfiwtewtype
+i-impowt c-com.twittew.finatwa.http.httpsewvew
+i-impowt c-com.twittew.finatwa.http.wouting.httpwoutew
+i-impowt c-com.twittew.finatwa.mtws.http.{mtws => httpmtws}
+impowt com.twittew.finatwa.mtws.thwiftmux.mtws
+impowt com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwsthwiftwebfowmsmoduwe
+impowt c-com.twittew.finatwa.thwift.thwiftsewvew
+impowt com.twittew.finatwa.thwift.fiwtews._
+i-impowt com.twittew.finatwa.thwift.wouting.thwiftwoutew
+i-impowt com.twittew.home_mixew.contwowwew.homethwiftcontwowwew
+impowt com.twittew.home_mixew.fedewated.homemixewcowumn
+impowt com.twittew.home_mixew.moduwe._
+i-impowt com.twittew.home_mixew.pawam.gwobawpawamconfigmoduwe
+i-impowt c-com.twittew.home_mixew.pwoduct.homemixewpwoductmoduwe
+impowt com.twittew.home_mixew.{thwiftscawa => st}
+impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.accountwecommendationsmixewmoduwe
+impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.dawktwafficfiwtewmoduwe
+impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.eawwybiwdmoduwe
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.expwowewankewcwientmoduwe
+impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.gizmoduckcwientmoduwe
+impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.onboawdingtasksewvicemoduwe
+impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.sociawgwaphsewvicemoduwe
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.timewinewankewcwientmoduwe
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.timewinescowewcwientmoduwe
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.timewinesewvicecwientmoduwe
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.moduwe.tweetimpwessionstowemoduwe
+impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.tweetmixewcwientmoduwe
+impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.usewsessionstowemoduwe
+i-impowt com.twittew.pwoduct_mixew.cowe.contwowwews.pwoductmixewcontwowwew
+impowt com.twittew.pwoduct_mixew.cowe.moduwe.woggingthwowabweexceptionmappew
+i-impowt com.twittew.pwoduct_mixew.cowe.moduwe.pwoductmixewmoduwe
+impowt com.twittew.pwoduct_mixew.cowe.moduwe.stwingcentew.pwoductscopestwingcentewmoduwe
+impowt com.twittew.stwato.fed.stwatofed
+impowt c-com.twittew.stwato.fed.sewvew.stwatofedsewvew
 
-object HomeMixerServerMain extends HomeMixerServer
+object homemixewsewvewmain e-extends h-homemixewsewvew
 
-class HomeMixerServer
-    extends StratoFedServer
-    with ThriftServer
-    with Mtls
-    with HttpServer
-    with HttpMtls {
-  override val name = "home-mixer-server"
+c-cwass homemixewsewvew
+    extends stwatofedsewvew
+    with thwiftsewvew
+    w-with mtws
+    with h-httpsewvew
+    with httpmtws {
+  o-ovewwide vaw n-nyame = "home-mixew-sewvew"
 
-  override val modules: Seq[Module] = Seq(
-    AccountRecommendationsMixerModule,
-    AdvertiserBrandSafetySettingsStoreModule,
-    BlenderClientModule,
-    ClientSentImpressionsPublisherModule,
-    ConversationServiceModule,
-    EarlybirdModule,
-    ExploreRankerClientModule,
-    FeedbackHistoryClientModule,
-    GizmoduckClientModule,
-    GlobalParamConfigModule,
-    HomeAdsCandidateSourceModule,
-    HomeMixerFlagsModule,
-    HomeMixerProductModule,
-    HomeMixerResourcesModule,
-    ImpressionBloomFilterModule,
-    InjectionHistoryClientModule,
-    ManhattanClientsModule,
-    ManhattanFeatureRepositoryModule,
-    ManhattanTweetImpressionStoreModule,
-    MemcachedFeatureRepositoryModule,
-    NaviModelClientModule,
-    OnboardingTaskServiceModule,
-    OptimizedStratoClientModule,
-    PeopleDiscoveryServiceModule,
-    ProductMixerModule,
-    RealGraphInNetworkScoresModule,
-    RealtimeAggregateFeatureRepositoryModule,
-    ScoredTweetsMemcacheModule,
-    ScribeEventPublisherModule,
-    SimClustersRecentEngagementsClientModule,
-    SocialGraphServiceModule,
-    StaleTweetsCacheModule,
-    ThriftFeatureRepositoryModule,
-    TimelineRankerClientModule,
-    TimelineScorerClientModule,
-    TimelineServiceClientModule,
-    TimelinesPersistenceStoreClientModule,
-    TopicSocialProofClientModule,
-    TweetImpressionStoreModule,
-    TweetMixerClientModule,
-    TweetypieClientModule,
-    TweetypieStaticEntitiesCacheClientModule,
-    UserSessionStoreModule,
-    new DarkTrafficFilterModule[st.HomeMixer.ReqRepServicePerEndpoint](),
-    new MtlsThriftWebFormsModule[st.HomeMixer.MethodPerEndpoint](this),
-    new ProductScopeStringCenterModule()
+  ovewwide vaw moduwes: s-seq[moduwe] = seq(
+    accountwecommendationsmixewmoduwe, (ꈍᴗꈍ)
+    a-advewtisewbwandsafetysettingsstowemoduwe, 😳
+    bwendewcwientmoduwe, 😳😳😳
+    cwientsentimpwessionspubwishewmoduwe, mya
+    c-convewsationsewvicemoduwe, mya
+    eawwybiwdmoduwe, (⑅˘꒳˘)
+    e-expwowewankewcwientmoduwe, (U ﹏ U)
+    feedbackhistowycwientmoduwe, mya
+    g-gizmoduckcwientmoduwe, ʘwʘ
+    g-gwobawpawamconfigmoduwe, (˘ω˘)
+    homeadscandidatesouwcemoduwe, (U ﹏ U)
+    homemixewfwagsmoduwe, ^•ﻌ•^
+    homemixewpwoductmoduwe, (˘ω˘)
+    homemixewwesouwcesmoduwe, :3
+    impwessionbwoomfiwtewmoduwe, ^^;;
+    injectionhistowycwientmoduwe, 🥺
+    m-manhattancwientsmoduwe, (⑅˘꒳˘)
+    m-manhattanfeatuwewepositowymoduwe, nyaa~~
+    manhattantweetimpwessionstowemoduwe, :3
+    m-memcachedfeatuwewepositowymoduwe, ( ͡o ω ͡o )
+    n-nyavimodewcwientmoduwe, mya
+    o-onboawdingtasksewvicemoduwe, (///ˬ///✿)
+    optimizedstwatocwientmoduwe, (˘ω˘)
+    peopwediscovewysewvicemoduwe, ^^;;
+    pwoductmixewmoduwe, (✿oωo)
+    w-weawgwaphinnetwowkscowesmoduwe, (U ﹏ U)
+    weawtimeaggwegatefeatuwewepositowymoduwe, -.-
+    scowedtweetsmemcachemoduwe, ^•ﻌ•^
+    scwibeeventpubwishewmoduwe, rawr
+    simcwustewswecentengagementscwientmoduwe, (˘ω˘)
+    s-sociawgwaphsewvicemoduwe, nyaa~~
+    stawetweetscachemoduwe,
+    t-thwiftfeatuwewepositowymoduwe, UwU
+    t-timewinewankewcwientmoduwe, :3
+    t-timewinescowewcwientmoduwe, (⑅˘꒳˘)
+    timewinesewvicecwientmoduwe, (///ˬ///✿)
+    t-timewinespewsistencestowecwientmoduwe, ^^;;
+    t-topicsociawpwoofcwientmoduwe, >_<
+    tweetimpwessionstowemoduwe, rawr x3
+    tweetmixewcwientmoduwe, /(^•ω•^)
+    t-tweetypiecwientmoduwe, :3
+    t-tweetypiestaticentitiescachecwientmoduwe, (ꈍᴗꈍ)
+    usewsessionstowemoduwe,
+    nyew dawktwafficfiwtewmoduwe[st.homemixew.weqwepsewvicepewendpoint](), /(^•ω•^)
+    n-nyew m-mtwsthwiftwebfowmsmoduwe[st.homemixew.methodpewendpoint](this), (⑅˘꒳˘)
+    n-nyew pwoductscopestwingcentewmoduwe()
   )
 
-  override def configureThrift(router: ThriftRouter): Unit = {
-    router
-      .filter[LoggingMDCFilter]
-      .filter[TraceIdMDCFilter]
-      .filter[ThriftMDCFilter]
-      .filter[StatsFilter]
-      .filter[AccessLoggingFilter]
-      .filter[ExceptionMappingFilter]
-      .filter[Filter.TypeAgnostic, DarkTrafficFilterType]
-      .exceptionMapper[LoggingThrowableExceptionMapper]
-      .exceptionMapper[PipelineFailureExceptionMapper]
-      .add[HomeThriftController]
+  o-ovewwide def configuwethwift(woutew: t-thwiftwoutew): unit = {
+    woutew
+      .fiwtew[woggingmdcfiwtew]
+      .fiwtew[twaceidmdcfiwtew]
+      .fiwtew[thwiftmdcfiwtew]
+      .fiwtew[statsfiwtew]
+      .fiwtew[accesswoggingfiwtew]
+      .fiwtew[exceptionmappingfiwtew]
+      .fiwtew[fiwtew.typeagnostic, ( ͡o ω ͡o ) dawktwafficfiwtewtype]
+      .exceptionmappew[woggingthwowabweexceptionmappew]
+      .exceptionmappew[pipewinefaiwuweexceptionmappew]
+      .add[homethwiftcontwowwew]
   }
 
-  override def configureHttp(router: HttpRouter): Unit =
-    router.add(
-      ProductMixerController[st.HomeMixer.MethodPerEndpoint](
-        this.injector,
-        st.HomeMixer.ExecutePipeline))
+  ovewwide d-def configuwehttp(woutew: httpwoutew): unit =
+    woutew.add(
+      pwoductmixewcontwowwew[st.homemixew.methodpewendpoint](
+        this.injectow, òωó
+        st.homemixew.exekawaii~pipewine))
 
-  override val dest: String = "/s/home-mixer/home-mixer:strato"
+  o-ovewwide vaw dest: stwing = "/s/home-mixew/home-mixew:stwato"
 
-  override val columns: Seq[Class[_ <: StratoFed.Column]] =
-    Seq(classOf[HomeMixerColumn])
+  ovewwide vaw cowumns: seq[cwass[_ <: s-stwatofed.cowumn]] =
+    s-seq(cwassof[homemixewcowumn])
 
-  override protected def warmup(): Unit = {
-    handle[HomeMixerThriftServerWarmupHandler]()
-    handle[HomeMixerHttpServerWarmupHandler]()
+  o-ovewwide pwotected def wawmup(): u-unit = {
+    handwe[homemixewthwiftsewvewwawmuphandwew]()
+    h-handwe[homemixewhttpsewvewwawmuphandwew]()
   }
 }

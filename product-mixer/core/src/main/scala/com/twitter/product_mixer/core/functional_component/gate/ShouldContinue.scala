@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.functional_component.gate
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.gate
 
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-trait ShouldContinue[Query <: PipelineQuery] {
-  def apply(query: Query): Boolean
+twait s-shouwdcontinue[quewy <: p-pipewinequewy] {
+  d-def appwy(quewy: q-quewy): boowean
 }

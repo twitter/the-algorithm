@@ -1,17 +1,17 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finatra/thrift/src/main/scala/com/twitter/finatra/thrift:controller",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/marshaller/request",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/service",
-        "home-mixer/thrift/src/main/thrift:thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/controllers",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/configapi",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service/debug_query",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service/urt",
-        "snowflake/src/main/scala/com/twitter/snowflake/id",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    s-stwict_deps = t-twue, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "finatwa/thwift/swc/main/scawa/com/twittew/finatwa/thwift:contwowwew", (⑅˘꒳˘)
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/mawshawwew/wequest", ( ͡o ω ͡o )
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/sewvice", UwU
+        "home-mixew/thwift/swc/main/thwift:thwift-scawa", rawr x3
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/contwowwews",
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/configapi", rawr
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/sewvice/debug_quewy", σωσ
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/sewvice/uwt", σωσ
+        "snowfwake/swc/main/scawa/com/twittew/snowfwake/id",
+    ], >_<
 )

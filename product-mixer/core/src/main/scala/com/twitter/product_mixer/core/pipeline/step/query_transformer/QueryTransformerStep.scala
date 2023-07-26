@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.core.pipeline.step.query_transformer
+package com.twittew.pwoduct_mixew.cowe.pipewine.step.quewy_twansfowmew
 
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasParams
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.state.HasRequest
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.stitch.Arrow
-import com.twitter.timelines.configapi.Params
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.wequest
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.state.haspawams
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.state.hasquewy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.state.haswequest
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.step.step
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executowwesuwt
+i-impowt com.twittew.stitch.awwow
+impowt com.twittew.timewines.configapi.pawams
 
 /**
- * Query Transformation Step that takes an incoming thrift request model object and returns a
- * pipeline query. The pipeline state is responsible for keeping the updated query.
+ * quewy t-twansfowmation step that takes a-an incoming thwift wequest modew object and wetuwns a
+ * pipewine q-quewy. nyaa~~ the pipewine state is w-wesponsibwe fow k-keeping the updated quewy. nyaa~~
  *
- * @tparam TRequest Thrift request domain model
- * @tparam Query PipelineQuery type to transform to h
- * @tparam State The request domain model
+ * @tpawam twequest thwift wequest domain modew
+ * @tpawam q-quewy pipewinequewy type to twansfowm to h
+ * @tpawam state the wequest d-domain modew
  */
-case class QueryTransformerStep[
-  TRequest <: Request,
-  Query <: PipelineQuery,
-  State <: HasQuery[Query, State] with HasRequest[TRequest] with HasParams
-]() extends Step[State, (TRequest, Params) => Query, (TRequest, Params), QueryTransformerResult[
-      Query
+case cwass quewytwansfowmewstep[
+  t-twequest <: w-wequest, :3
+  quewy <: p-pipewinequewy, 😳😳😳
+  s-state <: hasquewy[quewy, (˘ω˘) state] with haswequest[twequest] with haspawams
+]() e-extends step[state, ^^ (twequest, pawams) => quewy, :3 (twequest, -.- pawams), 😳 quewytwansfowmewwesuwt[
+      q-quewy
     ]] {
 
-  override def isEmpty(config: (TRequest, Params) => Query): Boolean = false
+  ovewwide def isempty(config: (twequest, mya pawams) => quewy): boowean = fawse
 
-  override def arrow(
-    config: (TRequest, Params) => Query,
-    context: Executor.Context
-  ): Arrow[(TRequest, Params), QueryTransformerResult[Query]] = Arrow.map {
-    case (request: TRequest @unchecked, params: Params) =>
-      QueryTransformerResult(config(request, params))
+  ovewwide def a-awwow(
+    config: (twequest, (˘ω˘) pawams) => quewy, >_<
+    c-context: e-executow.context
+  ): a-awwow[(twequest, -.- pawams), 🥺 quewytwansfowmewwesuwt[quewy]] = awwow.map {
+    c-case (wequest: t-twequest @unchecked, (U ﹏ U) pawams: pawams) =>
+      q-quewytwansfowmewwesuwt(config(wequest, >w< p-pawams))
   }
 
-  override def updateState(
-    state: State,
-    executorResult: QueryTransformerResult[Query],
-    config: (TRequest, Params) => Query
-  ): State = state.updateQuery(executorResult.query)
+  ovewwide def u-updatestate(
+    state: state, mya
+    e-executowwesuwt: quewytwansfowmewwesuwt[quewy], >w<
+    config: (twequest, nyaa~~ p-pawams) => quewy
+  ): s-state = state.updatequewy(executowwesuwt.quewy)
 
-  override def adaptInput(
-    state: State,
-    config: (TRequest, Params) => Query
-  ): (TRequest, Params) = (state.request, state.params)
+  ovewwide def a-adaptinput(
+    s-state: state, (✿oωo)
+    config: (twequest, ʘwʘ pawams) => quewy
+  ): (twequest, (ˆ ﻌ ˆ)♡ pawams) = (state.wequest, 😳😳😳 state.pawams)
 }
 
-case class QueryTransformerResult[Query <: PipelineQuery](query: Query) extends ExecutorResult
+case cwass quewytwansfowmewwesuwt[quewy <: p-pipewinequewy](quewy: q-quewy) extends executowwesuwt

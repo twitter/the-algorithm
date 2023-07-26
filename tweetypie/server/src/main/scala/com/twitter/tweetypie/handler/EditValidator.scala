@@ -1,136 +1,136 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.scrooge.schema.scrooge.scala.CompiledScroogeDefBuilder
-import com.twitter.scrooge.schema.scrooge.scala.CompiledScroogeValueExtractor
-import com.twitter.scrooge.schema.tree.DefinitionTraversal
-import com.twitter.scrooge.schema.tree.FieldPath
-import com.twitter.scrooge.schema.{ThriftDefinitions => DEF}
-import com.twitter.scrooge_internal.linter.known_annotations.AllowedAnnotationKeys.TweetEditAllowed
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.TweetCreateFailure
-import com.twitter.tweetypie.repository.TweetQuery.Options
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.repository.TweetRepository
-import com.twitter.tweetypie.thriftscala.ConversationControl
-import com.twitter.tweetypie.thriftscala.TweetCreateState.FieldEditNotAllowed
-import com.twitter.tweetypie.thriftscala.TweetCreateState.InitialTweetNotFound
-import com.twitter.tweetypie.thriftscala.EditOptions
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.util.Future
-import com.twitter.util.logging.Logger
+impowt c-com.twittew.scwooge.schema.scwooge.scawa.compiwedscwoogedefbuiwdew
+i-impowt com.twittew.scwooge.schema.scwooge.scawa.compiwedscwoogevawueextwactow
+i-impowt com.twittew.scwooge.schema.twee.definitiontwavewsaw
+i-impowt com.twittew.scwooge.schema.twee.fiewdpath
+i-impowt com.twittew.scwooge.schema.{thwiftdefinitions => d-def}
+impowt c-com.twittew.scwooge_intewnaw.wintew.known_annotations.awwowedannotationkeys.tweeteditawwowed
+impowt com.twittew.stitch.stitch
+impowt com.twittew.tweetypie.cowe.tweetcweatefaiwuwe
+impowt com.twittew.tweetypie.wepositowy.tweetquewy.options
+i-impowt com.twittew.tweetypie.wepositowy.tweetquewy
+impowt com.twittew.tweetypie.wepositowy.tweetwepositowy
+impowt com.twittew.tweetypie.thwiftscawa.convewsationcontwow
+i-impowt com.twittew.tweetypie.thwiftscawa.tweetcweatestate.fiewdeditnotawwowed
+i-impowt com.twittew.tweetypie.thwiftscawa.tweetcweatestate.initiawtweetnotfound
+impowt com.twittew.tweetypie.thwiftscawa.editoptions
+i-impowt com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt c-com.twittew.utiw.futuwe
+impowt com.twittew.utiw.wogging.woggew
 
 /**
- * This class constructs a validator `Tweet => Future[Unit]` which
- * takes a new edit tweet and performs some validations. Specifically, it
+ * this cwass constwucts a-a vawidatow `tweet => futuwe[unit]` which
+ * takes a nyew edit tweet and pewfowms s-some vawidations. (✿oωo) specificawwy, (///ˬ///✿) i-it
  *
- * 1) ensures that no uneditable fields were edited. Uneditable fields are marked
- * on the tweet.thrift using the thrift annotation "tweetEditAllowed=false".
- * By default, fields with no annotation are treated as editable.
+ * 1) ensuwes t-that nyo u-uneditabwe fiewds w-wewe edited. rawr x3 uneditabwe fiewds awe mawked
+ * on t-the tweet.thwift using the thwift annotation "tweeteditawwowed=fawse". -.-
+ * b-by defauwt, ^^ fiewds with nyo annotation awe tweated as editabwe. (⑅˘꒳˘)
  *
- * 2) ensures that the conversationControl field (which is editable) remains the
- * same type, e.g. a ConversationControl.ByInvitation doesn't change to a
- * ConversationControl.Community.
+ * 2) ensuwes that t-the convewsationcontwow fiewd (which i-is editabwe) w-wemains the
+ * s-same type, nyaa~~ e.g. a convewsationcontwow.byinvitation doesn't change to a
+ * convewsationcontwow.community.
  *
- * If either of these validations fail, the validator fails with a `FieldEditNotAllowed`
- * tweet create state.
+ * i-if eithew of these v-vawidations faiw, /(^•ω•^) the vawidatow f-faiws with a-a `fiewdeditnotawwowed`
+ * tweet c-cweate state. (U ﹏ U)
  */
-object EditValidator {
-  type Type = (Tweet, Option[EditOptions]) => Future[Unit]
+object editvawidatow {
+  t-type type = (tweet, option[editoptions]) => f-futuwe[unit]
 
-  val log: Logger = Logger(getClass)
+  vaw wog: w-woggew = woggew(getcwass)
 
-  // An object that describes the tweet thrift, used to walk a tweet object looking
-  // for annotated fields.
-  val TweetDef = CompiledScroogeDefBuilder.build[Tweet].asInstanceOf[DEF.StructDef]
+  // an object that d-descwibes the tweet t-thwift, 😳😳😳 used to wawk a tweet object wooking
+  // fow annotated fiewds. >w<
+  vaw tweetdef = compiwedscwoogedefbuiwdew.buiwd[tweet].asinstanceof[def.stwuctdef]
 
-  // Collect the `FieldPath` for any nested tweet field with a uneditable field annotation
-  // that is set to false. These are the fields that this validator ensures cannot be edited.
-  val uneditableFieldPaths: Seq[FieldPath] = {
-    DefinitionTraversal().collect(TweetDef) {
-      case (d: DEF.FieldDef, path) if (d.annotations.get(TweetEditAllowed).contains("false")) =>
-        path
+  // cowwect the `fiewdpath` f-fow a-any nyested tweet fiewd with a u-uneditabwe fiewd a-annotation
+  // t-that is set to fawse. XD these awe the fiewds that this vawidatow e-ensuwes cannot be edited. o.O
+  vaw uneditabwefiewdpaths: seq[fiewdpath] = {
+    definitiontwavewsaw().cowwect(tweetdef) {
+      c-case (d: def.fiewddef, mya p-path) if (d.annotations.get(tweeteditawwowed).contains("fawse")) =>
+        p-path
     }
   }
 
-  // A tweet query options which includes
-  // - any top level tweet field which either is an uneditable field, or contains an uneditable
-  //   subfield.
-  // - the conversationControl field
-  // These fields must be present on the initial tweet in order for us to compare them against the
-  // edit tweet.
-  val previousTweetQueryOptions = {
-    // A set of the top level field ids for each (potentially nested) uneditable field.
-    val topLevelUneditableTweetFields = uneditableFieldPaths.map(_.ids.head).toSet
-    Options(
-      TweetQuery.Include(
-        tweetFields = topLevelUneditableTweetFields + Tweet.ConversationControlField.id
+  // a-a tweet quewy options which i-incwudes
+  // - a-any top wevew tweet f-fiewd which e-eithew is an uneditabwe fiewd, 🥺 ow contains an uneditabwe
+  //   s-subfiewd. ^^;;
+  // - t-the convewsationcontwow f-fiewd
+  // t-these fiewds m-must be pwesent on the initiaw tweet in owdew fow us to compawe t-them against the
+  // edit tweet. :3
+  vaw pwevioustweetquewyoptions = {
+    // a set of the top wevew fiewd ids fow each (potentiawwy n-nyested) uneditabwe fiewd. (U ﹏ U)
+    vaw topwevewuneditabwetweetfiewds = uneditabwefiewdpaths.map(_.ids.head).toset
+    o-options(
+      t-tweetquewy.incwude(
+        t-tweetfiewds = topwevewuneditabwetweetfiewds + t-tweet.convewsationcontwowfiewd.id
       ))
   }
 
-  def validateUneditableFields(previousTweet: Tweet, editTweet: Tweet): Unit = {
-    // Collect uneditable fields that were edited
-    val invalidEditedFields = uneditableFieldPaths.flatMap { fieldPath =>
-      val previousValue =
-        FieldPath.lensGet(CompiledScroogeValueExtractor, previousTweet, fieldPath)
-      val editValue = FieldPath.lensGet(CompiledScroogeValueExtractor, editTweet, fieldPath)
+  def vawidateuneditabwefiewds(pwevioustweet: tweet, e-edittweet: t-tweet): unit = {
+    // cowwect uneditabwe fiewds that wewe edited
+    vaw invawideditedfiewds = uneditabwefiewdpaths.fwatmap { f-fiewdpath =>
+      vaw pweviousvawue =
+        f-fiewdpath.wensget(compiwedscwoogevawueextwactow, OwO pwevioustweet, 😳😳😳 f-fiewdpath)
+      v-vaw editvawue = fiewdpath.wensget(compiwedscwoogevawueextwactow, (ˆ ﻌ ˆ)♡ edittweet, XD fiewdpath)
 
-      if (previousValue != editValue) {
-        Some(fieldPath.toString)
-      } else {
-        None
+      if (pweviousvawue != e-editvawue) {
+        s-some(fiewdpath.tostwing)
+      } ewse {
+        n-nyone
       }
     }
 
-    if (invalidEditedFields.nonEmpty) {
-      // If any inequalities are found, log them and return an exception.
-      val msg = "uneditable fields were edited: " + invalidEditedFields.mkString(",")
-      log.error(msg)
-      throw TweetCreateFailure.State(FieldEditNotAllowed, Some(msg))
+    i-if (invawideditedfiewds.nonempty) {
+      // if any inequawities awe found, (ˆ ﻌ ˆ)♡ wog them and wetuwn an exception. ( ͡o ω ͡o )
+      v-vaw msg = "uneditabwe f-fiewds w-wewe edited: " + invawideditedfiewds.mkstwing(",")
+      w-wog.ewwow(msg)
+      t-thwow tweetcweatefaiwuwe.state(fiewdeditnotawwowed, rawr x3 some(msg))
     }
   }
 
-  def validateConversationControl(
-    previous: Option[ConversationControl],
-    edit: Option[ConversationControl]
-  ): Unit = {
-    import ConversationControl.ByInvitation
-    import ConversationControl.Community
-    import ConversationControl.Followers
+  d-def vawidateconvewsationcontwow(
+    pwevious: option[convewsationcontwow], nyaa~~
+    edit: option[convewsationcontwow]
+  ): u-unit = {
+    i-impowt convewsationcontwow.byinvitation
+    impowt convewsationcontwow.community
+    i-impowt convewsationcontwow.fowwowews
 
-    (previous, edit) match {
-      case (None, None) => ()
-      case (Some(ByInvitation(_)), Some(ByInvitation(_))) => ()
-      case (Some(Community(_)), Some(Community(_))) => ()
-      case (Some(Followers(_)), Some(Followers(_))) => ()
-      case (_, _) =>
-        val msg = "conversationControl type was edited"
-        log.error(msg)
-        throw TweetCreateFailure.State(FieldEditNotAllowed, Some(msg))
+    (pwevious, >_< e-edit) match {
+      case (none, ^^;; nyone) => ()
+      case (some(byinvitation(_)), (ˆ ﻌ ˆ)♡ s-some(byinvitation(_))) => ()
+      case (some(community(_)), ^^;; some(community(_))) => ()
+      case (some(fowwowews(_)), (⑅˘꒳˘) some(fowwowews(_))) => ()
+      c-case (_, rawr x3 _) =>
+        vaw msg = "convewsationcontwow type was e-edited"
+        w-wog.ewwow(msg)
+        thwow tweetcweatefaiwuwe.state(fiewdeditnotawwowed, (///ˬ///✿) some(msg))
     }
   }
 
-  def apply(tweetRepo: TweetRepository.Optional): Type = { (tweet, editOptions) =>
-    Stitch.run(
-      editOptions match {
-        case Some(EditOptions(previousTweetId)) => {
-          // Query for the previous tweet so that we can compare the
-          // fields between the two tweets.
-          tweetRepo(previousTweetId, previousTweetQueryOptions).map {
-            case Some(previousTweet) =>
-              validateUneditableFields(previousTweet, tweet)
-              validateConversationControl(
-                previousTweet.conversationControl,
-                tweet.conversationControl)
-            case _ =>
-              // If the previous tweet is not found we cannot perform validations that
-              // compare tweet fields and we have to fail tweet creation.
-              throw TweetCreateFailure.State(InitialTweetNotFound)
+  def appwy(tweetwepo: t-tweetwepositowy.optionaw): t-type = { (tweet, 🥺 editoptions) =>
+    stitch.wun(
+      editoptions m-match {
+        case some(editoptions(pwevioustweetid)) => {
+          // q-quewy fow the pwevious tweet so that we can compawe the
+          // f-fiewds between the two tweets. >_<
+          tweetwepo(pwevioustweetid, UwU p-pwevioustweetquewyoptions).map {
+            c-case some(pwevioustweet) =>
+              vawidateuneditabwefiewds(pwevioustweet, >_< t-tweet)
+              vawidateconvewsationcontwow(
+                p-pwevioustweet.convewsationcontwow, -.-
+                t-tweet.convewsationcontwow)
+            c-case _ =>
+              // if the pwevious t-tweet is nyot found w-we cannot pewfowm vawidations that
+              // c-compawe t-tweet fiewds and w-we have to faiw tweet cweation. mya
+              thwow tweetcweatefaiwuwe.state(initiawtweetnotfound)
           }
         }
-        // This is the case where this isn't an edit tweet (since editOptions = None)
-        // Since this tweet is not an edit there are no fields to validate.
-        case _ => Stitch.Unit
+        // t-this is the case whewe this i-isn't an edit tweet (since e-editoptions = nyone)
+        // since this tweet is n-nyot an edit thewe a-awe nyo fiewds t-to vawidate. >w<
+        c-case _ => stitch.unit
       }
     )
   }

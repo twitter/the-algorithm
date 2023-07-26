@@ -1,210 +1,210 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.io.IOException;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicReference;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.concuwwent.concuwwentwinkedqueue;
+impowt j-java.utiw.concuwwent.atomic.atomicwefewence;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
-import com.google.common.base.Verify;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt c-com.googwe.common.base.pweconditions;
+i-impowt c-com.googwe.common.base.stopwatch;
+impowt com.googwe.common.base.vewify;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.util.GCUtil;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.common.CaughtUpMonitor;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.EarlybirdSegment;
-import com.twitter.search.earlybird.util.CoordinatedEarlybirdActionInterface;
-import com.twitter.util.Future;
-import com.twitter.util.Promise;
+i-impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
+impowt com.twittew.seawch.common.utiw.gcutiw;
+impowt c-com.twittew.seawch.eawwybiwd.eawwybiwdstatus;
+impowt com.twittew.seawch.eawwybiwd.common.caughtupmonitow;
+i-impowt com.twittew.seawch.eawwybiwd.exception.cwiticawexceptionhandwew;
+impowt com.twittew.seawch.eawwybiwd.index.eawwybiwdsegment;
+impowt com.twittew.seawch.eawwybiwd.utiw.coowdinatedeawwybiwdactionintewface;
+i-impowt com.twittew.utiw.futuwe;
+impowt com.twittew.utiw.pwomise;
 
 /**
- * This class optimizes a segment without blocking reads or writes.
+ * t-this cwass o-optimizes a segment without bwocking weads ow wwites. XD
  *
- * In steady state operation (Indexing or Optimized), it delegates operations directly to a
- * SegmentWriter.
+ * in steady state o-opewation (indexing ow optimized), mya it dewegates opewations diwectwy to a
+ * segmentwwitew. ^•ﻌ•^
  *
- * Optimization is naturally a copying operation -- we don't need to mutate anything internally.
- * We need to be able to apply updates to the unoptimized segment while we are creating
- * the optimized segment. We also need to be able to apply these updates to the optimized segment,
- * but we can't apply updates while a segment is being optimized, because document IDs will be
- * changing internally and posting lists could be any state. To deal with this, we queue updates
- * that occur during optimization, and then apply them as the last step of optimization. At that
- * point, the segment will be optimized and up to date, so we can swap the unoptimized segment for
+ * o-optimization is nyatuwawwy a copying o-opewation -- w-we don't nyeed t-to mutate anything i-intewnawwy. ʘwʘ
+ * we nyeed to be abwe to appwy u-updates to the unoptimized segment whiwe we awe c-cweating
+ * the optimized segment. we awso nyeed to be abwe to appwy these updates to the optimized s-segment, ( ͡o ω ͡o )
+ * but we can't appwy u-updates whiwe a-a segment is being o-optimized, mya because document ids wiww be
+ * changing intewnawwy a-and posting w-wists couwd be any state. o.O to deaw w-with this, (✿oωo) we q-queue updates
+ * that occuw duwing o-optimization, :3 and then appwy t-them as the wast step of optimization. 😳 at that
+ * p-point, (U ﹏ U) the segment wiww be optimized a-and up to date, mya so we can s-swap the unoptimized s-segment fow
  * the optimized one.
  */
-public class OptimizingSegmentWriter implements ISegmentWriter {
-  private static final Logger LOG = LoggerFactory.getLogger(OptimizingSegmentWriter.class);
+pubwic cwass optimizingsegmentwwitew impwements isegmentwwitew {
+  pwivate static finaw woggew wog = w-woggewfactowy.getwoggew(optimizingsegmentwwitew.cwass);
 
-  private final AtomicReference<State> state = new AtomicReference<>(State.Indexing);
-  private final ConcurrentLinkedQueue<ThriftVersionedEvents> queuedEvents =
-      new ConcurrentLinkedQueue<>();
+  p-pwivate finaw atomicwefewence<state> s-state = nyew atomicwefewence<>(state.indexing);
+  p-pwivate finaw c-concuwwentwinkedqueue<thwiftvewsionedevents> queuedevents =
+      nyew concuwwentwinkedqueue<>();
 
-  private final CriticalExceptionHandler criticalExceptionHandler;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private final String segmentName;
-  private final Promise<SegmentInfo> optimizationPromise = new Promise<>();
+  pwivate finaw c-cwiticawexceptionhandwew cwiticawexceptionhandwew;
+  pwivate finaw seawchindexingmetwicset seawchindexingmetwicset;
+  pwivate f-finaw stwing segmentname;
+  pwivate f-finaw pwomise<segmentinfo> o-optimizationpwomise = n-nyew pwomise<>();
 
-  // We use the lock to ensure that the optimizing thread and the writer thread do not attempt
-  // to call indexThriftVersionedEvents on the underlying writer simultaneously.
-  private final Object lock = new Object();
-  // The reference to the current writer. Protected by lock.
-  private final AtomicReference<SegmentWriter> segmentWriterReference;
+  // we use the wock to e-ensuwe that the o-optimizing thwead a-and the wwitew t-thwead do nyot attempt
+  // to caww indexthwiftvewsionedevents o-on the undewwying w-wwitew simuwtaneouswy. (U ᵕ U❁)
+  p-pwivate f-finaw object w-wock = nyew object();
+  // the wefewence to the cuwwent wwitew. p-pwotected by wock. :3
+  pwivate finaw atomicwefewence<segmentwwitew> segmentwwitewwefewence;
 
-  private final CaughtUpMonitor indexCaughtUpMonitor;
+  pwivate finaw caughtupmonitow indexcaughtupmonitow;
 
   /**
-   * The state flow:
-   * Indexing -> Optimizing ->
-   * ONE OF:
-   * - Optimized
-   * - FailedToOptimize
+   * the s-state fwow:
+   * indexing -> optimizing ->
+   * one of:
+   * - o-optimized
+   * - f-faiwedtooptimize
    */
-  @VisibleForTesting
-  enum State {
-    Indexing,
-    Optimizing,
-    FailedToOptimize,
-    Optimized,
+  @visibwefowtesting
+  e-enum state {
+    indexing, mya
+    o-optimizing, OwO
+    faiwedtooptimize, (ˆ ﻌ ˆ)♡
+    o-optimized, ʘwʘ
   }
 
-  public OptimizingSegmentWriter(
-      SegmentWriter segmentWriter,
-      CriticalExceptionHandler criticalExceptionHandler,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      CaughtUpMonitor indexCaughtUpMonitor
+  p-pubwic optimizingsegmentwwitew(
+      segmentwwitew segmentwwitew, o.O
+      cwiticawexceptionhandwew cwiticawexceptionhandwew, UwU
+      seawchindexingmetwicset s-seawchindexingmetwicset, rawr x3
+      caughtupmonitow i-indexcaughtupmonitow
   ) {
-    Preconditions.checkState(!segmentWriter.getSegmentInfo().isOptimized());
-    segmentWriterReference = new AtomicReference<>(segmentWriter);
+    pweconditions.checkstate(!segmentwwitew.getsegmentinfo().isoptimized());
+    s-segmentwwitewwefewence = n-nyew atomicwefewence<>(segmentwwitew);
 
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.segmentName = segmentWriter.getSegmentInfo().getSegmentName();
-    this.indexCaughtUpMonitor = indexCaughtUpMonitor;
+    this.cwiticawexceptionhandwew = cwiticawexceptionhandwew;
+    t-this.seawchindexingmetwicset = seawchindexingmetwicset;
+    t-this.segmentname = segmentwwitew.getsegmentinfo().getsegmentname();
+    this.indexcaughtupmonitow = i-indexcaughtupmonitow;
   }
 
   /**
-   * Start optimizing this segment in the background. Returns a Future that will complete when
-   * the optimization is complete.
-   * Acquires the optimizationAndFlushingCoordinationLock before attempting to optimize.
+   * s-stawt optimizing this segment in the backgwound. 🥺 wetuwns a futuwe that wiww c-compwete when
+   * t-the optimization i-is compwete. :3
+   * acquiwes t-the optimizationandfwushingcoowdinationwock b-befowe attempting to o-optimize. (ꈍᴗꈍ)
    */
-  public Future<SegmentInfo> startOptimization(
-      CoordinatedEarlybirdActionInterface gcAction,
-      OptimizationAndFlushingCoordinationLock optimizationAndFlushingCoordinationLock) {
-    new Thread(() -> {
-      // Acquire lock to ensure that flushing is not in progress. If the lock is not available,
-      // then wait until it is.
-      LOG.info("Acquire coordination lock before beginning gc_before_optimization action.");
-      try {
-        optimizationAndFlushingCoordinationLock.lock();
-        LOG.info("Successfully acquired coordination lock for gc_before_optimization action.");
-        gcAction.retryActionUntilRan("gc before optimization", () -> {
-          LOG.info("Run GC before optimization");
-          GCUtil.runGC();
-          // Wait for indexing to catch up before gcAction rejoins the serverset. We only need to do
-          // this if the host has already finished startup.
-          if (EarlybirdStatus.hasStarted()) {
-            indexCaughtUpMonitor.resetAndWaitUntilCaughtUp();
+  pubwic futuwe<segmentinfo> stawtoptimization(
+      coowdinatedeawwybiwdactionintewface gcaction,
+      optimizationandfwushingcoowdinationwock o-optimizationandfwushingcoowdinationwock) {
+    n-nyew thwead(() -> {
+      // acquiwe wock to ensuwe that fwushing i-is nyot in p-pwogwess. 🥺 if the wock is nyot avaiwabwe, (✿oωo)
+      // then wait untiw it is. (U ﹏ U)
+      wog.info("acquiwe c-coowdination wock befowe beginning gc_befowe_optimization action.");
+      twy {
+        o-optimizationandfwushingcoowdinationwock.wock();
+        wog.info("successfuwwy acquiwed c-coowdination wock f-fow gc_befowe_optimization action.");
+        gcaction.wetwyactionuntiwwan("gc befowe optimization", :3 () -> {
+          wog.info("wun g-gc befowe o-optimization");
+          gcutiw.wungc();
+          // wait fow indexing to catch u-up befowe gcaction wejoins t-the sewvewset. ^^;; we onwy nyeed to do
+          // this if the host h-has awweady finished stawtup. rawr
+          i-if (eawwybiwdstatus.hasstawted()) {
+            i-indexcaughtupmonitow.wesetandwaituntiwcaughtup();
           }
         });
-      } finally {
-        LOG.info("Finished gc_before_optimization action. "
-            + "Releasing coordination lock and beginning optimization.");
-        optimizationAndFlushingCoordinationLock.unlock();
+      } finawwy {
+        w-wog.info("finished gc_befowe_optimization a-action. 😳😳😳 "
+            + "weweasing c-coowdination w-wock and beginning optimization.");
+        o-optimizationandfwushingcoowdinationwock.unwock();
       }
 
-      transition(State.Indexing, State.Optimizing);
+      t-twansition(state.indexing, (✿oωo) state.optimizing);
 
-      SegmentInfo unoptimizedSegmentInfo = null;
-      try {
-        unoptimizedSegmentInfo = segmentWriterReference.get().getSegmentInfo();
-        Preconditions.checkState(!unoptimizedSegmentInfo.isOptimized());
+      segmentinfo unoptimizedsegmentinfo = n-nyuww;
+      t-twy {
+        u-unoptimizedsegmentinfo = segmentwwitewwefewence.get().getsegmentinfo();
+        pweconditions.checkstate(!unoptimizedsegmentinfo.isoptimized());
 
-        Stopwatch stopwatch = Stopwatch.createStarted();
-        LOG.info("Started optimizing segment data {}.", segmentName);
-        EarlybirdSegment optimizedSegment =
-            unoptimizedSegmentInfo.getIndexSegment().makeOptimizedSegment();
-        LOG.info("Finished optimizing segment data {} in {}.", segmentName, stopwatch);
+        s-stopwatch stopwatch = stopwatch.cweatestawted();
+        w-wog.info("stawted o-optimizing segment data {}.", OwO segmentname);
+        eawwybiwdsegment o-optimizedsegment =
+            u-unoptimizedsegmentinfo.getindexsegment().makeoptimizedsegment();
+        w-wog.info("finished o-optimizing segment d-data {} in {}.", ʘwʘ segmentname, (ˆ ﻌ ˆ)♡ stopwatch);
 
-        SegmentInfo newSegmentInfo = unoptimizedSegmentInfo
-            .copyWithEarlybirdSegment(optimizedSegment);
+        segmentinfo nyewsegmentinfo = unoptimizedsegmentinfo
+            .copywitheawwybiwdsegment(optimizedsegment);
 
-        SegmentWriter optimizedWriter =
-            new SegmentWriter(newSegmentInfo, searchIndexingMetricSet.updateFreshness);
-        Verify.verify(optimizedWriter.getSegmentInfo().isOptimized());
+        segmentwwitew o-optimizedwwitew =
+            nyew segmentwwitew(newsegmentinfo, (U ﹏ U) s-seawchindexingmetwicset.updatefweshness);
+        vewify.vewify(optimizedwwitew.getsegmentinfo().isoptimized());
 
-        // We want to apply all updates to the new segment twice, because this first call may apply
-        // many thousands of updates and take a while to complete.
-        applyAllPendingUpdates(optimizedWriter);
+        // w-we want to appwy aww updates t-to the nyew segment twice, UwU because t-this fiwst c-caww may appwy
+        // m-many t-thousands of updates a-and take a whiwe to compwete.
+        appwyawwpendingupdates(optimizedwwitew);
 
-        // We try to do as little as possible while holding the lock, so the writer can continue
-        // to make progress. First we apply all the updates that have been queued up before we
-        // grabbed the lock, then we need to swap the new writer for the old one.
-        synchronized (lock) {
-          applyAllPendingUpdates(optimizedWriter);
-          segmentWriterReference.getAndSet(optimizedWriter);
-          transition(State.Optimizing, State.Optimized);
+        // we twy to do as wittwe as possibwe whiwe howding the wock, XD so the w-wwitew can continue
+        // t-to make pwogwess. ʘwʘ f-fiwst we appwy aww the updates t-that have been queued up befowe we
+        // gwabbed the wock, rawr x3 t-then we nyeed t-to swap the nyew wwitew fow the o-owd one. ^^;;
+        synchwonized (wock) {
+          appwyawwpendingupdates(optimizedwwitew);
+          s-segmentwwitewwefewence.getandset(optimizedwwitew);
+          t-twansition(state.optimizing, ʘwʘ state.optimized);
         }
 
-        if (!unoptimizedSegmentInfo.isEnabled()) {
-          LOG.info("Disabling segment: {}", unoptimizedSegmentInfo.getSegmentName());
-          newSegmentInfo.setIsEnabled(false);
+        if (!unoptimizedsegmentinfo.isenabwed()) {
+          w-wog.info("disabwing s-segment: {}", (U ﹏ U) unoptimizedsegmentinfo.getsegmentname());
+          nyewsegmentinfo.setisenabwed(fawse);
         }
 
-        optimizationPromise.setValue(newSegmentInfo);
-      } catch (Throwable e) {
-        if (unoptimizedSegmentInfo != null) {
-          unoptimizedSegmentInfo.setFailedOptimize();
+        optimizationpwomise.setvawue(newsegmentinfo);
+      } catch (thwowabwe e) {
+        i-if (unoptimizedsegmentinfo != n-nyuww) {
+          u-unoptimizedsegmentinfo.setfaiwedoptimize();
         }
 
-        transition(State.Optimizing, State.FailedToOptimize);
-        optimizationPromise.setException(e);
+        t-twansition(state.optimizing, (˘ω˘) s-state.faiwedtooptimize);
+        optimizationpwomise.setexception(e);
       }
-    }, "optimizing-segment-writer").start();
+    }, (ꈍᴗꈍ) "optimizing-segment-wwitew").stawt();
 
-    return optimizationPromise;
+    w-wetuwn optimizationpwomise;
   }
 
-  private void applyAllPendingUpdates(SegmentWriter segmentWriter) throws IOException {
-    LOG.info("Applying {} queued updates to segment {}.", queuedEvents.size(), segmentName);
-    // More events can be enqueued while this method is running, so we track the total applied too.
-    long eventCount = 0;
-    Stopwatch stopwatch = Stopwatch.createStarted();
-    ThriftVersionedEvents update;
-    while ((update = queuedEvents.poll()) != null) {
-      segmentWriter.indexThriftVersionedEvents(update);
-      eventCount++;
+  p-pwivate void appwyawwpendingupdates(segmentwwitew s-segmentwwitew) t-thwows ioexception {
+    w-wog.info("appwying {} queued updates to segment {}.", /(^•ω•^) q-queuedevents.size(), >_< segmentname);
+    // m-mowe events c-can be enqueued whiwe this method i-is wunning, σωσ so we twack the totaw appwied too.
+    w-wong eventcount = 0;
+    stopwatch s-stopwatch = s-stopwatch.cweatestawted();
+    thwiftvewsionedevents update;
+    whiwe ((update = q-queuedevents.poww()) != nyuww) {
+      segmentwwitew.indexthwiftvewsionedevents(update);
+      eventcount++;
     }
-    LOG.info("Applied {} queued updates to segment {} in {}.",
-        eventCount, segmentName, stopwatch);
+    w-wog.info("appwied {} q-queued updates to segment {} i-in {}.", ^^;;
+        eventcount, 😳 segmentname, >_< s-stopwatch);
   }
 
-  @Override
-  public Result indexThriftVersionedEvents(ThriftVersionedEvents tve) throws IOException {
-    synchronized (lock) {
-      if (state.get() == State.Optimizing) {
-        queuedEvents.add(tve);
+  @ovewwide
+  p-pubwic wesuwt indexthwiftvewsionedevents(thwiftvewsionedevents tve) thwows i-ioexception {
+    synchwonized (wock) {
+      if (state.get() == s-state.optimizing) {
+        q-queuedevents.add(tve);
       }
-      return segmentWriterReference.get().indexThriftVersionedEvents(tve);
+      wetuwn segmentwwitewwefewence.get().indexthwiftvewsionedevents(tve);
     }
   }
 
-  @Override
-  public SegmentInfo getSegmentInfo() {
-    return segmentWriterReference.get().getSegmentInfo();
+  @ovewwide
+  p-pubwic segmentinfo getsegmentinfo() {
+    w-wetuwn s-segmentwwitewwefewence.get().getsegmentinfo();
   }
 
-  private void transition(State from, State to) {
-    Preconditions.checkState(state.compareAndSet(from, to));
-    LOG.info("Transitioned from {} to {} for segment {}.", from, to, segmentName);
+  p-pwivate void twansition(state fwom, -.- state to) {
+    pweconditions.checkstate(state.compaweandset(fwom, to));
+    wog.info("twansitioned fwom {} to {} fow segment {}.", UwU fwom, to, segmentname);
   }
 
-  @VisibleForTesting
-  public Future<SegmentInfo> getOptimizationPromise() {
-    return optimizationPromise;
+  @visibwefowtesting
+  pubwic futuwe<segmentinfo> getoptimizationpwomise() {
+    wetuwn optimizationpwomise;
   }
 }

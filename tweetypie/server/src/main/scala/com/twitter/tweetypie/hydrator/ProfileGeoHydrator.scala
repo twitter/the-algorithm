@@ -1,31 +1,31 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.dataproducts.enrichments.thriftscala.ProfileGeoEnrichment
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository.ProfileGeoKey
-import com.twitter.tweetypie.repository.ProfileGeoRepository
-import com.twitter.tweetypie.thriftscala.FieldByPath
+impowt c-com.twittew.datapwoducts.enwichments.thwiftscawa.pwofiwegeoenwichment
+i-impowt c-com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.wepositowy.pwofiwegeokey
+i-impowt com.twittew.tweetypie.wepositowy.pwofiwegeowepositowy
+i-impowt com.twittew.tweetypie.thwiftscawa.fiewdbypath
 
-object ProfileGeoHydrator {
-  type Type = ValueHydrator[Option[ProfileGeoEnrichment], TweetCtx]
+o-object pwofiwegeohydwatow {
+  type type = vawuehydwatow[option[pwofiwegeoenwichment], OwO tweetctx]
 
-  val hydratedField: FieldByPath = fieldByPath(Tweet.ProfileGeoEnrichmentField)
+  vaw h-hydwatedfiewd: fiewdbypath = fiewdbypath(tweet.pwofiwegeoenwichmentfiewd)
 
-  private[this] val partialResult = ValueState.partial(None, hydratedField)
+  pwivate[this] v-vaw pawtiawwesuwt = vawuestate.pawtiaw(none, (U ﹏ U) hydwatedfiewd)
 
-  def apply(repo: ProfileGeoRepository.Type): Type =
-    ValueHydrator[Option[ProfileGeoEnrichment], TweetCtx] { (curr, ctx) =>
-      val key =
-        ProfileGeoKey(
-          tweetId = ctx.tweetId,
-          userId = Some(ctx.userId),
-          coords = ctx.geoCoordinates
+  d-def appwy(wepo: pwofiwegeowepositowy.type): type =
+    vawuehydwatow[option[pwofiwegeoenwichment], >_< t-tweetctx] { (cuww, rawr x3 ctx) =>
+      vaw k-key =
+        p-pwofiwegeokey(
+          tweetid = ctx.tweetid, mya
+          usewid = some(ctx.usewid), nyaa~~
+          coowds = c-ctx.geocoowdinates
         )
-      repo(key).liftToTry.map {
-        case Return(enrichment) => ValueState.modified(Some(enrichment))
-        case Throw(_) => partialResult
+      wepo(key).wifttotwy.map {
+        case wetuwn(enwichment) => vawuestate.modified(some(enwichment))
+        c-case thwow(_) => pawtiawwesuwt
       }
-    }.onlyIf((curr, ctx) =>
-      curr.isEmpty && ctx.tweetFieldRequested(Tweet.ProfileGeoEnrichmentField))
+    }.onwyif((cuww, (⑅˘꒳˘) c-ctx) =>
+      cuww.isempty && ctx.tweetfiewdwequested(tweet.pwofiwegeoenwichmentfiewd))
 }

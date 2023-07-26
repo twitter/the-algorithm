@@ -1,14 +1,14 @@
-package com.twitter.interaction_graph.scio.agg_all
+package com.twittew.intewaction_gwaph.scio.agg_aww
 
-object InteractionGraphScoringConfig {
+object intewactiongwaphscowingconfig {
 
   /**
-   * This is alpha for a variant of the Exponentially weighted moving average, computed as:
-   *             ewma_{t+1} = x_{t+1} + (1-alpha) * ewma_t     (ewma_1 = x_1, t > 0)
-   * We choose alpha such that the half life of weights is 7 days.
-   * Note that we don't down-weight x_{t+1} (unlike in EWMA) as we only want to decay actions
-   * as they grow old, not compute the average value.
+   * t-this is awpha f-fow a vawiant o-of the exponentiawwy w-weighted m-moving avewage, mya c-computed as:
+   *             e-ewma_{t+1} = x-x_{t+1} + (1-awpha) * ewma_t     (ewma_1 = x_1, 😳 t > 0)
+   * we choose awpha such that t-the hawf wife of weights is 7 days. XD
+   * nyote t-that we don't down-weight x_{t+1} (unwike i-in ewma) as we onwy want to decay actions
+   * as they g-gwow owd, :3 nyot compute the avewage v-vawue. 😳😳😳
    */
-  val ALPHA = 1.0
-  val ONE_MINUS_ALPHA = 0.955
+  v-vaw awpha = 1.0
+  vaw one_minus_awpha = 0.955
 }

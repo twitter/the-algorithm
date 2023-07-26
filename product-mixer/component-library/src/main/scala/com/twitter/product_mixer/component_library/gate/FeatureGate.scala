@@ -1,81 +1,81 @@
-package com.twitter.product_mixer.component_library.gate
+package com.twittew.pwoduct_mixew.component_wibwawy.gate
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.MissingFeatureException
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.gate.GateResult
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.MisconfiguredFeatureMapFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.stitch.Stitch
-import com.twitter.util.Return
-import com.twitter.util.Throw
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.missingfeatuweexception
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gatewesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.gateidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.misconfiguwedfeatuwemapfaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+impowt c-com.twittew.stitch.stitch
+impowt com.twittew.utiw.wetuwn
+i-impowt com.twittew.utiw.thwow
 
-trait ShouldContinue[Value] {
+t-twait shouwdcontinue[vawue] {
 
-  /** Given the [[Feature]] value, returns whether the execution should continue */
-  def apply(featureValue: Value): Boolean
+  /** given the [[featuwe]] vawue, wetuwns w-whethew the execution shouwd continue */
+  d-def a-appwy(featuwevawue: vawue): boowean
 
-  /** If the [[Feature]] is a failure, use this value */
-  def onFailedFeature(t: Throwable): GateResult = GateResult.Stop
+  /** if the [[featuwe]] is a faiwuwe, (ˆ ﻌ ˆ)♡ use this vawue */
+  d-def onfaiwedfeatuwe(t: thwowabwe): gatewesuwt = gatewesuwt.stop
 
   /**
-   * If the [[Feature]], or [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]],
-   * is missing use this value
+   * if t-the [[featuwe]], 😳😳😳 ow [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap]], (U ﹏ U)
+   * i-is missing u-use this vawue
    */
-  def onMissingFeature: GateResult = GateResult.Stop
+  d-def o-onmissingfeatuwe: gatewesuwt = gatewesuwt.stop
 }
 
-object FeatureGate {
+o-object featuwegate {
 
-  def fromFeature(
-    feature: Feature[_, Boolean]
-  ): FeatureGate[Boolean] =
-    FeatureGate.fromFeature(GateIdentifier(feature.toString), feature)
+  def fwomfeatuwe(
+    featuwe: featuwe[_, (///ˬ///✿) b-boowean]
+  ): featuwegate[boowean] =
+    featuwegate.fwomfeatuwe(gateidentifiew(featuwe.tostwing), 😳 featuwe)
 
-  def fromNegatedFeature(
-    feature: Feature[_, Boolean]
-  ): FeatureGate[Boolean] =
-    FeatureGate.fromNegatedFeature(GateIdentifier(feature.toString), feature)
+  def fwomnegatedfeatuwe(
+    featuwe: featuwe[_, 😳 b-boowean]
+  ): featuwegate[boowean] =
+    f-featuwegate.fwomnegatedfeatuwe(gateidentifiew(featuwe.tostwing), σωσ f-featuwe)
 
-  def fromFeature(
-    gateIdentifier: GateIdentifier,
-    feature: Feature[_, Boolean]
-  ): FeatureGate[Boolean] =
-    FeatureGate[Boolean](gateIdentifier, feature, identity)
+  d-def fwomfeatuwe(
+    gateidentifiew: gateidentifiew, rawr x3
+    featuwe: featuwe[_, OwO b-boowean]
+  ): f-featuwegate[boowean] =
+    featuwegate[boowean](gateidentifiew, /(^•ω•^) featuwe, 😳😳😳 identity)
 
-  def fromNegatedFeature(
-    gateIdentifier: GateIdentifier,
-    feature: Feature[_, Boolean]
-  ): FeatureGate[Boolean] =
-    FeatureGate[Boolean](gateIdentifier, feature, !identity(_))
+  d-def fwomnegatedfeatuwe(
+    g-gateidentifiew: gateidentifiew, ( ͡o ω ͡o )
+    f-featuwe: featuwe[_, >_< boowean]
+  ): f-featuwegate[boowean] =
+    featuwegate[boowean](gateidentifiew, >w< featuwe, rawr !identity(_))
 
 }
 
 /**
- * A [[Gate]] that is actuated based upon the value of the provided feature
+ * a-a [[gate]] that is a-actuated based upon the vawue of t-the pwovided featuwe
  */
-case class FeatureGate[Value](
-  gateIdentifier: GateIdentifier,
-  feature: Feature[_, Value],
-  continue: ShouldContinue[Value])
-    extends Gate[PipelineQuery] {
+c-case cwass featuwegate[vawue](
+  gateidentifiew: gateidentifiew, 😳
+  featuwe: featuwe[_, >w< vawue], (⑅˘꒳˘)
+  continue: s-shouwdcontinue[vawue])
+    e-extends gate[pipewinequewy] {
 
-  override val identifier: GateIdentifier = gateIdentifier
+  ovewwide vaw identifiew: g-gateidentifiew = g-gateidentifiew
 
-  override def shouldContinue(query: PipelineQuery): Stitch[Boolean] = {
-    Stitch
-      .value(
-        query.features.map(_.getTry(feature)) match {
-          case Some(Return(value)) => continue(value)
-          case Some(Throw(_: MissingFeatureException)) => continue.onMissingFeature.continue
-          case Some(Throw(t)) => continue.onFailedFeature(t).continue
-          case None =>
-            throw PipelineFailure(
-              MisconfiguredFeatureMapFailure,
-              "Expected a FeatureMap to be present but none was found, ensure that your" +
-                "PipelineQuery has a FeatureMap configured before gating on Feature values"
+  o-ovewwide def shouwdcontinue(quewy: pipewinequewy): stitch[boowean] = {
+    s-stitch
+      .vawue(
+        quewy.featuwes.map(_.gettwy(featuwe)) match {
+          case some(wetuwn(vawue)) => c-continue(vawue)
+          case some(thwow(_: m-missingfeatuweexception)) => c-continue.onmissingfeatuwe.continue
+          c-case some(thwow(t)) => continue.onfaiwedfeatuwe(t).continue
+          c-case nyone =>
+            t-thwow pipewinefaiwuwe(
+              m-misconfiguwedfeatuwemapfaiwuwe, OwO
+              "expected a-a featuwemap to be pwesent but nyone w-was found, (ꈍᴗꈍ) ensuwe t-that youw" +
+                "pipewinequewy h-has a featuwemap c-configuwed befowe g-gating on featuwe vawues"
             )
         }
       )

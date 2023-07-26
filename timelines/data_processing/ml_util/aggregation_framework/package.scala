@@ -1,19 +1,19 @@
-package com.twitter.timelines.data_processing.ml_util
+package com.twittew.timewines.data_pwocessing.mw_utiw
 
-import com.twitter.ml.api.DataRecord
+impowt com.twittew.mw.api.datawecowd
 
-package object aggregation_framework {
-  object AggregateType extends Enumeration {
-    type AggregateType = Value
-    val User, UserAuthor, UserEngager, UserMention, UserRequestHour, UserRequestDow,
-      UserOriginalAuthor, UserList, UserTopic, UserInferredTopic, UserMediaUnderstandingAnnotation =
-      Value
+p-package o-object aggwegation_fwamewowk {
+  o-object aggwegatetype e-extends e-enumewation {
+    t-type aggwegatetype = v-vawue
+    v-vaw usew, :3 usewauthow, 😳😳😳 usewengagew, -.- usewmention, ( ͡o ω ͡o ) usewwequesthouw, rawr x3 usewwequestdow, nyaa~~
+      u-usewowiginawauthow, usewwist, /(^•ω•^) usewtopic, rawr u-usewinfewwedtopic, OwO usewmediaundewstandingannotation =
+      vawue
   }
 
-  type AggregateUserEntityKey = (Long, AggregateType.Value, Option[Long])
+  t-type aggwegateusewentitykey = (wong, (U ﹏ U) aggwegatetype.vawue, >_< option[wong])
 
-  case class MergedRecordsDescriptor(
-    userId: Long,
-    keyedRecords: Map[AggregateType.Value, Option[KeyedRecord]],
-    keyedRecordMaps: Map[AggregateType.Value, Option[KeyedRecordMap]])
+  c-case cwass mewgedwecowdsdescwiptow(
+    usewid: w-wong, rawr x3
+    k-keyedwecowds: map[aggwegatetype.vawue, mya option[keyedwecowd]], nyaa~~
+    keyedwecowdmaps: map[aggwegatetype.vawue, (⑅˘꒳˘) option[keyedwecowdmap]])
 }

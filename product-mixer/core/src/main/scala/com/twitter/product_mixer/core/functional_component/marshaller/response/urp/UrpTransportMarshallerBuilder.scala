@@ -1,65 +1,65 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwp
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.TimelineScribeConfigMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ArticleDetailsMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventDetailsMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.CommerceDetailsMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ConversationDetailsMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ConversationSectionMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.LiveEventDetailsMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.TimelinesDetailsMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrtEndpointOptionsMarshaller
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.timewinescwibeconfigmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.awticwedetaiwsmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.cwienteventdetaiwsmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.cwienteventinfomawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.commewcedetaiwsmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.convewsationdetaiwsmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.convewsationsectionmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.wiveeventdetaiwsmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.timewinesdetaiwsmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.uwwmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.uwwtypemawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.uwtendpointoptionsmawshawwew
 
-object UrpTransportMarshallerBuilder {
-  // Convenience constructor for services not using dependency injection and unit tests. If using
-  // dependency injection, instead @Inject an instance of UrpTransportMarshaller to construct.
+o-object uwptwanspowtmawshawwewbuiwdew {
+  // convenience constwuctow fow sewvices nyot using d-dependency injection and unit tests. >_< i-if using
+  // d-dependency injection, -.- instead @inject an instance of uwptwanspowtmawshawwew to constwuct. 🥺
 
-  val timelineKeyMarshaller = new TimelineKeyMarshaller
-  val timelineScribeConfigMarshaller = new TimelineScribeConfigMarshaller
-  val urlMarshaller = new UrlMarshaller(new UrlTypeMarshaller, new UrtEndpointOptionsMarshaller)
-  val clientEventInfoMarshaller = new ClientEventInfoMarshaller(
-    new ClientEventDetailsMarshaller(
-      new ConversationDetailsMarshaller(new ConversationSectionMarshaller),
-      new TimelinesDetailsMarshaller,
-      new ArticleDetailsMarshaller,
-      new LiveEventDetailsMarshaller,
-      new CommerceDetailsMarshaller)
+  v-vaw timewinekeymawshawwew = nyew timewinekeymawshawwew
+  vaw timewinescwibeconfigmawshawwew = nyew t-timewinescwibeconfigmawshawwew
+  vaw uwwmawshawwew = n-nyew uwwmawshawwew(new uwwtypemawshawwew, (U ﹏ U) n-nyew uwtendpointoptionsmawshawwew)
+  v-vaw cwienteventinfomawshawwew = n-nyew cwienteventinfomawshawwew(
+    nyew cwienteventdetaiwsmawshawwew(
+      n-nyew convewsationdetaiwsmawshawwew(new convewsationsectionmawshawwew), >w<
+      nyew timewinesdetaiwsmawshawwew, mya
+      n-new awticwedetaiwsmawshawwew, >w<
+      nyew wiveeventdetaiwsmawshawwew, nyaa~~
+      nyew commewcedetaiwsmawshawwew)
   )
 
-  val segmentedTimelineMarshaller =
-    new SegmentedTimelineMarshaller(timelineKeyMarshaller, timelineScribeConfigMarshaller)
-  val segmentedTimelinesMarshaller = new SegmentedTimelinesMarshaller(segmentedTimelineMarshaller)
+  vaw segmentedtimewinemawshawwew =
+    nyew segmentedtimewinemawshawwew(timewinekeymawshawwew, (✿oωo) t-timewinescwibeconfigmawshawwew)
+  vaw segmentedtimewinesmawshawwew = n-nyew s-segmentedtimewinesmawshawwew(segmentedtimewinemawshawwew)
 
-  val pageBodyMarshaller: PageBodyMarshaller = new PageBodyMarshaller(
-    timelineKeyMarshaller,
-    segmentedTimelinesMarshaller
+  vaw p-pagebodymawshawwew: pagebodymawshawwew = new pagebodymawshawwew(
+    t-timewinekeymawshawwew, ʘwʘ
+    s-segmentedtimewinesmawshawwew
   )
 
-  val topicPageHeaderFacepileMarshaller = new TopicPageHeaderFacepileMarshaller(urlMarshaller)
-  val topicPageHeaderDisplayTypeMarshaller = new TopicPageHeaderDisplayTypeMarshaller
-  val topicPageHeaderMarshaller = new TopicPageHeaderMarshaller(
-    topicPageHeaderFacepileMarshaller,
-    clientEventInfoMarshaller,
-    topicPageHeaderDisplayTypeMarshaller
+  vaw topicpageheadewfacepiwemawshawwew = nyew t-topicpageheadewfacepiwemawshawwew(uwwmawshawwew)
+  v-vaw topicpageheadewdispwaytypemawshawwew = nyew topicpageheadewdispwaytypemawshawwew
+  v-vaw topicpageheadewmawshawwew = n-new topicpageheadewmawshawwew(
+    topicpageheadewfacepiwemawshawwew, (ˆ ﻌ ˆ)♡
+    c-cwienteventinfomawshawwew, 😳😳😳
+    topicpageheadewdispwaytypemawshawwew
   )
-  val pageHeaderMarshaller: PageHeaderMarshaller = new PageHeaderMarshaller(
-    topicPageHeaderMarshaller)
+  v-vaw pageheadewmawshawwew: pageheadewmawshawwew = n-nyew pageheadewmawshawwew(
+    t-topicpageheadewmawshawwew)
 
-  val topicPageNavBarMarshaller = new TopicPageNavBarMarshaller(clientEventInfoMarshaller)
-  val titleNavBarMarshaller = new TitleNavBarMarshaller(clientEventInfoMarshaller)
-  val pageNavBarMarshaller: PageNavBarMarshaller = new PageNavBarMarshaller(
-    topicPageNavBarMarshaller,
-    titleNavBarMarshaller
+  vaw topicpagenavbawmawshawwew = nyew topicpagenavbawmawshawwew(cwienteventinfomawshawwew)
+  vaw titwenavbawmawshawwew = nyew titwenavbawmawshawwew(cwienteventinfomawshawwew)
+  vaw pagenavbawmawshawwew: p-pagenavbawmawshawwew = n-new pagenavbawmawshawwew(
+    topicpagenavbawmawshawwew, :3
+    titwenavbawmawshawwew
   )
 
-  val marshaller: UrpTransportMarshaller =
-    new UrpTransportMarshaller(
-      pageBodyMarshaller = pageBodyMarshaller,
-      timelineScribeConfigMarshaller = timelineScribeConfigMarshaller,
-      pageHeaderMarshaller = pageHeaderMarshaller,
-      pageNavBarMarshaller = pageNavBarMarshaller
+  v-vaw mawshawwew: u-uwptwanspowtmawshawwew =
+    n-nyew uwptwanspowtmawshawwew(
+      pagebodymawshawwew = pagebodymawshawwew, OwO
+      timewinescwibeconfigmawshawwew = t-timewinescwibeconfigmawshawwew, (U ﹏ U)
+      pageheadewmawshawwew = pageheadewmawshawwew, >w<
+      pagenavbawmawshawwew = pagenavbawmawshawwew
     )
 }

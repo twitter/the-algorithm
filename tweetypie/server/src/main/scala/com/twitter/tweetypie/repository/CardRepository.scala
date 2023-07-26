@@ -1,28 +1,28 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.expandodo.thriftscala._
-import com.twitter.stitch.MapGroup
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.backends.Expandodo
+i-impowt com.twittew.expandodo.thwiftscawa._
+i-impowt c-com.twittew.stitch.mapgwoup
+impowt c-com.twittew.stitch.notfound
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.backends.expandodo
 
-object CardRepository {
-  type Type = String => Stitch[Seq[Card]]
+o-object cawdwepositowy {
+  type type = stwing => stitch[seq[cawd]]
 
-  def apply(getCards: Expandodo.GetCards, maxRequestSize: Int): Type = {
-    object RequestGroup extends MapGroup[String, Seq[Card]] {
-      override def run(urls: Seq[String]): Future[String => Try[Seq[Card]]] =
-        getCards(urls.toSet).map { responseMap => url =>
-          responseMap.get(url) match {
-            case None => Throw(NotFound)
-            case Some(r) => Return(r.cards.getOrElse(Nil))
+  def appwy(getcawds: e-expandodo.getcawds, /(^•ω•^) maxwequestsize: int): type = {
+    o-object wequestgwoup extends m-mapgwoup[stwing, rawr seq[cawd]] {
+      ovewwide def wun(uwws: seq[stwing]): f-futuwe[stwing => twy[seq[cawd]]] =
+        g-getcawds(uwws.toset).map { wesponsemap => u-uww =>
+          wesponsemap.get(uww) match {
+            case nyone => thwow(notfound)
+            case some(w) => w-wetuwn(w.cawds.getowewse(niw))
           }
         }
 
-      override def maxSize: Int = maxRequestSize
+      ovewwide def maxsize: int = maxwequestsize
     }
 
-    url => Stitch.call(url, RequestGroup)
+    uww => stitch.caww(uww, OwO w-wequestgwoup)
   }
 }

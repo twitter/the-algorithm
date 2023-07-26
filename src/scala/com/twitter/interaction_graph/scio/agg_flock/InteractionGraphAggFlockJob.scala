@@ -1,82 +1,82 @@
-package com.twitter.interaction_graph.scio.agg_flock
+package com.twittew.intewaction_gwaph.scio.agg_fwock
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.dal.DAL.DiskFormat
-import com.twitter.beam.io.dal.DAL.PathLayout
-import com.twitter.beam.io.dal.DAL.WriteOptions
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.interaction_graph.scio.agg_flock.InteractionGraphAggFlockUtil._
-import com.twitter.interaction_graph.scio.common.DateUtil
-import com.twitter.interaction_graph.scio.common.FeatureGeneratorUtil
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.statebird.v2.thriftscala.Environment
-import com.twitter.util.Duration
-import java.time.Instant
-import org.joda.time.Interval
+impowt com.spotify.scio.sciocontext
+i-impowt c-com.spotify.scio.vawues.scowwection
+i-impowt com.twittew.beam.io.daw.daw
+i-impowt com.twittew.beam.io.daw.daw.diskfowmat
+i-impowt com.twittew.beam.io.daw.daw.pathwayout
+i-impowt com.twittew.beam.io.daw.daw.wwiteoptions
+i-impowt com.twittew.beam.job.sewviceidentifiewoptions
+i-impowt com.twittew.intewaction_gwaph.scio.agg_fwock.intewactiongwaphaggfwockutiw._
+impowt com.twittew.intewaction_gwaph.scio.common.dateutiw
+impowt com.twittew.intewaction_gwaph.scio.common.featuwegenewatowutiw
+impowt c-com.twittew.intewaction_gwaph.thwiftscawa.edge
+impowt com.twittew.intewaction_gwaph.thwiftscawa.featuwename
+impowt c-com.twittew.intewaction_gwaph.thwiftscawa.vewtex
+impowt com.twittew.scio_intewnaw.job.sciobeamjob
+i-impowt com.twittew.statebiwd.v2.thwiftscawa.enviwonment
+impowt com.twittew.utiw.duwation
+impowt java.time.instant
+impowt o-owg.joda.time.intewvaw
 
-object InteractionGraphAggFlockJob extends ScioBeamJob[InteractionGraphAggFlockOption] {
-  override protected def configurePipeline(
-    scioContext: ScioContext,
-    pipelineOptions: InteractionGraphAggFlockOption
-  ): Unit = {
-    @transient
-    implicit lazy val sc: ScioContext = scioContext
-    implicit lazy val dateInterval: Interval = pipelineOptions.interval
+object intewactiongwaphaggfwockjob e-extends s-sciobeamjob[intewactiongwaphaggfwockoption] {
+  ovewwide pwotected def configuwepipewine(
+    sciocontext: sciocontext, 😳
+    pipewineoptions: intewactiongwaphaggfwockoption
+  ): u-unit = {
+    @twansient
+    impwicit wazy vaw sc: sciocontext = sciocontext
+    impwicit wazy v-vaw dateintewvaw: intewvaw = pipewineoptions.intewvaw
 
-    val source = InteractionGraphAggFlockSource(pipelineOptions)
+    v-vaw s-souwce = intewactiongwaphaggfwocksouwce(pipewineoptions)
 
-    val embiggenInterval = DateUtil.embiggen(dateInterval, Duration.fromDays(7))
+    vaw e-embiggenintewvaw = d-dateutiw.embiggen(dateintewvaw, mya duwation.fwomdays(7))
 
-    val flockFollowsSnapshot = source.readFlockFollowsSnapshot(embiggenInterval)
+    vaw fwockfowwowssnapshot = s-souwce.weadfwockfowwowssnapshot(embiggenintewvaw)
 
-    // the flock snapshot we're reading from has already been filtered for safe/valid users hence no filtering for safeUsers
-    val flockFollowsFeature =
-      getFlockFeatures(flockFollowsSnapshot, FeatureName.NumFollows, dateInterval)
+    // the fwock snapshot we'we weading f-fwom has awweady been fiwtewed fow safe/vawid usews hence nyo fiwtewing fow safeusews
+    v-vaw fwockfowwowsfeatuwe =
+      getfwockfeatuwes(fwockfowwowssnapshot, (˘ω˘) f-featuwename.numfowwows, d-dateintewvaw)
 
-    val flockMutualFollowsFeature = getMutualFollowFeature(flockFollowsFeature)
+    v-vaw fwockmutuawfowwowsfeatuwe = getmutuawfowwowfeatuwe(fwockfowwowsfeatuwe)
 
-    val allSCollections = Seq(flockFollowsFeature, flockMutualFollowsFeature)
+    vaw awwscowwections = seq(fwockfowwowsfeatuwe, >_< f-fwockmutuawfowwowsfeatuwe)
 
-    val allFeatures = SCollection.unionAll(allSCollections)
+    v-vaw awwfeatuwes = scowwection.unionaww(awwscowwections)
 
-    val (vertex, edges) = FeatureGeneratorUtil.getFeatures(allFeatures)
+    v-vaw (vewtex, -.- edges) = f-featuwegenewatowutiw.getfeatuwes(awwfeatuwes)
 
-    val dalEnvironment: String = pipelineOptions
-      .as(classOf[ServiceIdentifierOptions])
-      .getEnvironment()
-    val dalWriteEnvironment = if (pipelineOptions.getDALWriteEnvironment != null) {
-      pipelineOptions.getDALWriteEnvironment
-    } else {
-      dalEnvironment
+    vaw dawenviwonment: s-stwing = pipewineoptions
+      .as(cwassof[sewviceidentifiewoptions])
+      .getenviwonment()
+    vaw d-dawwwiteenviwonment = if (pipewineoptions.getdawwwiteenviwonment != nyuww) {
+      p-pipewineoptions.getdawwwiteenviwonment
+    } ewse {
+      d-dawenviwonment
     }
 
-    vertex.saveAsCustomOutput(
-      "Write Vertex Records",
-      DAL.writeSnapshot[Vertex](
-        InteractionGraphAggFlockVertexSnapshotScalaDataset,
-        PathLayout.DailyPath(pipelineOptions.getOutputPath + "/aggregated_flock_vertex_daily"),
-        Instant.ofEpochMilli(dateInterval.getEndMillis),
-        DiskFormat.Parquet,
-        Environment.valueOf(dalWriteEnvironment),
-        writeOption =
-          WriteOptions(numOfShards = Some((pipelineOptions.getNumberOfShards / 64.0).ceil.toInt))
+    vewtex.saveascustomoutput(
+      "wwite v-vewtex wecowds", 🥺
+      d-daw.wwitesnapshot[vewtex](
+        intewactiongwaphaggfwockvewtexsnapshotscawadataset, (U ﹏ U)
+        pathwayout.daiwypath(pipewineoptions.getoutputpath + "/aggwegated_fwock_vewtex_daiwy"), >w<
+        instant.ofepochmiwwi(dateintewvaw.getendmiwwis), mya
+        diskfowmat.pawquet, >w<
+        enviwonment.vawueof(dawwwiteenviwonment), nyaa~~
+        wwiteoption =
+          wwiteoptions(numofshawds = s-some((pipewineoptions.getnumbewofshawds / 64.0).ceiw.toint))
       )
     )
 
-    edges.saveAsCustomOutput(
-      "Write Edge Records",
-      DAL.writeSnapshot[Edge](
-        InteractionGraphAggFlockEdgeSnapshotScalaDataset,
-        PathLayout.DailyPath(pipelineOptions.getOutputPath + "/aggregated_flock_edge_daily"),
-        Instant.ofEpochMilli(dateInterval.getEndMillis),
-        DiskFormat.Parquet,
-        Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards))
+    e-edges.saveascustomoutput(
+      "wwite edge wecowds", (✿oωo)
+      d-daw.wwitesnapshot[edge](
+        intewactiongwaphaggfwockedgesnapshotscawadataset, ʘwʘ
+        p-pathwayout.daiwypath(pipewineoptions.getoutputpath + "/aggwegated_fwock_edge_daiwy"), (ˆ ﻌ ˆ)♡
+        i-instant.ofepochmiwwi(dateintewvaw.getendmiwwis), 😳😳😳
+        diskfowmat.pawquet, :3
+        enviwonment.vawueof(dawwwiteenviwonment), OwO
+        wwiteoption = w-wwiteoptions(numofshawds = some(pipewineoptions.getnumbewofshawds))
       )
     )
 

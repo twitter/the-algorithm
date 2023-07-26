@@ -1,486 +1,486 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk
 
-import com.twitter.ml.api._
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregateFeature
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetric
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetricCommon
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetricCommon._
-import com.twitter.timelines.data_processing.ml_util.transforms.OneToSomeTransform
-import com.twitter.util.Duration
-import com.twitter.util.Try
-import java.lang.{Boolean => JBoolean}
-import java.lang.{Double => JDouble}
-import java.lang.{Long => JLong}
-import java.util.{Set => JSet}
-import scala.annotation.tailrec
-import scala.language.existentials
-import scala.collection.JavaConverters._
-import scala.util.matching.Regex
+impowt c-com.twittew.mw.api._
+i-impowt com.twittew.mw.api.constant.shawedfeatuwes
+i-impowt c-com.twittew.mw.api.utiw.swichdatawecowd
+i-impowt c-com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.metwics.aggwegatefeatuwe
+i-impowt c-com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.metwics.aggwegationmetwic
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.metwics.aggwegationmetwiccommon
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.metwics.aggwegationmetwiccommon._
+impowt c-com.twittew.timewines.data_pwocessing.mw_utiw.twansfowms.onetosometwansfowm
+impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.twy
+i-impowt java.wang.{boowean => jboowean}
+impowt java.wang.{doubwe => j-jdoubwe}
+impowt java.wang.{wong => j-jwong}
+impowt java.utiw.{set => j-jset}
+impowt scawa.annotation.taiwwec
+impowt scawa.wanguage.existentiaws
+impowt scawa.cowwection.javaconvewtews._
+impowt scawa.utiw.matching.wegex
 
 /**
- * A case class contained precomputed data useful to quickly
- * process operations over an aggregate.
+ * a-a case cwass contained pwecomputed data usefuw to quickwy
+ * pwocess o-opewations ovew an aggwegate. :3
  *
- * @param query The underlying feature being aggregated
- * @param metric The aggregation metric
- * @param outputFeatures The output features that aggregation will produce
- * @param outputFeatureIds The precomputed hashes of the above outputFeatures
+ * @pawam q-quewy t-the undewwying f-featuwe being aggwegated
+ * @pawam m-metwic the aggwegation metwic
+ * @pawam outputfeatuwes t-the output featuwes that aggwegation wiww p-pwoduce
+ * @pawam outputfeatuweids the pwecomputed hashes of the above outputfeatuwes
  */
-case class PrecomputedAggregateDescriptor[T](
-  query: AggregateFeature[T],
-  metric: AggregationMetric[T, _],
-  outputFeatures: List[Feature[_]],
-  outputFeatureIds: List[JLong])
+case c-cwass pwecomputedaggwegatedescwiptow[t](
+  quewy: a-aggwegatefeatuwe[t], ʘwʘ
+  m-metwic: a-aggwegationmetwic[t, rawr x3 _], (///ˬ///✿)
+  outputfeatuwes: wist[featuwe[_]], 😳😳😳
+  outputfeatuweids: wist[jwong])
 
-object TypedAggregateGroup {
-
-  /**
-   * Recursive function that generates all combinations of value
-   * assignments for a collection of sparse binary features.
-   *
-   * @param sparseBinaryIdValues list of sparse binary feature ids and possible values they can take
-   * @return A set of maps, where each map represents one possible assignment of values to ids
-   */
-  def sparseBinaryPermutations(
-    sparseBinaryIdValues: List[(Long, Set[String])]
-  ): Set[Map[Long, String]] = sparseBinaryIdValues match {
-    case (id, values) +: rest =>
-      tailRecSparseBinaryPermutations(
-        existingPermutations = values.map(value => Map(id -> value)),
-        remainingIdValues = rest
-      )
-    case Nil => Set.empty
-  }
-
-  @tailrec private[this] def tailRecSparseBinaryPermutations(
-    existingPermutations: Set[Map[Long, String]],
-    remainingIdValues: List[(Long, Set[String])]
-  ): Set[Map[Long, String]] = remainingIdValues match {
-    case Nil => existingPermutations
-    case (id, values) +: rest =>
-      tailRecSparseBinaryPermutations(
-        existingPermutations.flatMap { existingIdValueMap =>
-          values.map(value => existingIdValueMap ++ Map(id -> value))
-        },
-        rest
-      )
-  }
-
-  val SparseFeatureSuffix = ".member"
-  def sparseFeature(sparseBinaryFeature: Feature[_]): Feature[String] =
-    new Feature.Text(
-      sparseBinaryFeature.getDenseFeatureName + SparseFeatureSuffix,
-      AggregationMetricCommon.derivePersonalDataTypes(Some(sparseBinaryFeature)))
-
-  /* Throws exception if obj not an instance of U */
-  private[this] def validate[U](obj: Any): U = {
-    require(obj.isInstanceOf[U])
-    obj.asInstanceOf[U]
-  }
-
-  private[this] def getFeatureOpt[U](dataRecord: DataRecord, feature: Feature[U]): Option[U] =
-    Option(SRichDataRecord(dataRecord).getFeatureValue(feature)).map(validate[U](_))
+object typedaggwegategwoup {
 
   /**
-   * Get a mapping from feature ids
-   * (including individual sparse elements of a sparse feature) to values
-   * from the given data record, for a given feature type.
+   * w-wecuwsive f-function that genewates aww c-combinations of v-vawue
+   * assignments fow a cowwection o-of spawse binawy featuwes. XD
    *
-   * @param dataRecord Data record to get features from
-   * @param keysToAggregate key features to get id-value mappings for
-   * @param featureType Feature type to get id-value maps for
+   * @pawam s-spawsebinawyidvawues wist of spawse binawy f-featuwe ids and possibwe vawues t-they can take
+   * @wetuwn a set o-of maps, >_< whewe e-each map wepwesents one possibwe assignment of vawues to ids
    */
-  def getKeyFeatureIdValues[U](
-    dataRecord: DataRecord,
-    keysToAggregate: Set[Feature[_]],
-    featureType: FeatureType
-  ): Set[(Long, Option[U])] = {
-    val featuresOfThisType: Set[Feature[U]] = keysToAggregate
-      .filter(_.getFeatureType == featureType)
-      .map(validate[Feature[U]])
+  def spawsebinawypewmutations(
+    spawsebinawyidvawues: wist[(wong, >w< s-set[stwing])]
+  ): s-set[map[wong, /(^•ω•^) stwing]] = s-spawsebinawyidvawues m-match {
+    c-case (id, :3 vawues) +: west =>
+      taiwwecspawsebinawypewmutations(
+        existingpewmutations = v-vawues.map(vawue => map(id -> vawue)), ʘwʘ
+        wemainingidvawues = west
+      )
+    c-case nyiw => set.empty
+  }
 
-    featuresOfThisType
-      .map { feature: Feature[U] =>
-        val featureId: Long = getDenseFeatureId(feature)
-        val featureOpt: Option[U] = getFeatureOpt(dataRecord, feature)
-        (featureId, featureOpt)
+  @taiwwec p-pwivate[this] d-def taiwwecspawsebinawypewmutations(
+    e-existingpewmutations: set[map[wong, (˘ω˘) s-stwing]], (ꈍᴗꈍ)
+    wemainingidvawues: w-wist[(wong, ^^ set[stwing])]
+  ): s-set[map[wong, stwing]] = w-wemainingidvawues match {
+    case nyiw => e-existingpewmutations
+    c-case (id, ^^ v-vawues) +: w-west =>
+      t-taiwwecspawsebinawypewmutations(
+        existingpewmutations.fwatmap { existingidvawuemap =>
+          vawues.map(vawue => e-existingidvawuemap ++ map(id -> vawue))
+        }, ( ͡o ω ͡o )
+        west
+      )
+  }
+
+  vaw spawsefeatuwesuffix = ".membew"
+  def spawsefeatuwe(spawsebinawyfeatuwe: featuwe[_]): f-featuwe[stwing] =
+    nyew featuwe.text(
+      spawsebinawyfeatuwe.getdensefeatuwename + s-spawsefeatuwesuffix, -.-
+      a-aggwegationmetwiccommon.dewivepewsonawdatatypes(some(spawsebinawyfeatuwe)))
+
+  /* t-thwows exception if obj n-nyot an instance of u */
+  pwivate[this] d-def v-vawidate[u](obj: any): u = {
+    wequiwe(obj.isinstanceof[u])
+    obj.asinstanceof[u]
+  }
+
+  pwivate[this] def getfeatuweopt[u](datawecowd: d-datawecowd, ^^;; featuwe: f-featuwe[u]): option[u] =
+    option(swichdatawecowd(datawecowd).getfeatuwevawue(featuwe)).map(vawidate[u](_))
+
+  /**
+   * g-get a m-mapping fwom featuwe ids
+   * (incwuding individuaw s-spawse ewements o-of a spawse featuwe) to vawues
+   * f-fwom the g-given data wecowd, ^•ﻌ•^ fow a given featuwe type. (˘ω˘)
+   *
+   * @pawam datawecowd data wecowd to get featuwes f-fwom
+   * @pawam k-keystoaggwegate k-key featuwes to get id-vawue m-mappings fow
+   * @pawam f-featuwetype featuwe t-type to get id-vawue maps fow
+   */
+  def getkeyfeatuweidvawues[u](
+    datawecowd: datawecowd, o.O
+    k-keystoaggwegate: s-set[featuwe[_]], (✿oωo)
+    featuwetype: featuwetype
+  ): s-set[(wong, 😳😳😳 o-option[u])] = {
+    vaw featuwesofthistype: set[featuwe[u]] = keystoaggwegate
+      .fiwtew(_.getfeatuwetype == f-featuwetype)
+      .map(vawidate[featuwe[u]])
+
+    featuwesofthistype
+      .map { featuwe: featuwe[u] =>
+        vaw featuweid: w-wong = getdensefeatuweid(featuwe)
+        vaw featuweopt: option[u] = getfeatuweopt(datawecowd, (ꈍᴗꈍ) f-featuwe)
+        (featuweid, σωσ f-featuweopt)
       }
   }
 
-  // TypedAggregateGroup may transform the aggregate keys for internal use. This method generates
-  // denseFeatureIds for the transformed feature.
-  def getDenseFeatureId(feature: Feature[_]): Long =
-    if (feature.getFeatureType != FeatureType.SPARSE_BINARY) {
-      feature.getDenseFeatureId
-    } else {
-      sparseFeature(feature).getDenseFeatureId
+  // typedaggwegategwoup may twansfowm the aggwegate k-keys fow intewnaw u-use. UwU this method genewates
+  // densefeatuweids fow the twansfowmed f-featuwe.
+  def getdensefeatuweid(featuwe: f-featuwe[_]): wong =
+    if (featuwe.getfeatuwetype != featuwetype.spawse_binawy) {
+      featuwe.getdensefeatuweid
+    } e-ewse {
+      spawsefeatuwe(featuwe).getdensefeatuweid
     }
 
   /**
-   * Return denseFeatureIds for the input features after applying the custom transformation that
-   * TypedAggregateGroup applies to its keysToAggregate.
+   * w-wetuwn densefeatuweids f-fow the input featuwes a-aftew appwying the custom twansfowmation t-that
+   * t-typedaggwegategwoup a-appwies to its keystoaggwegate. ^•ﻌ•^
    *
-   * @param keysToAggregate key features to get id for
+   * @pawam k-keystoaggwegate k-key featuwes to get id fow
    */
-  def getKeyFeatureIds(keysToAggregate: Set[Feature[_]]): Set[Long] =
-    keysToAggregate.map(getDenseFeatureId)
+  def getkeyfeatuweids(keystoaggwegate: s-set[featuwe[_]]): s-set[wong] =
+    k-keystoaggwegate.map(getdensefeatuweid)
 
-  def checkIfAllKeysExist[U](featureIdValueMap: Map[Long, Option[U]]): Boolean =
-    featureIdValueMap.forall { case (_, valueOpt) => valueOpt.isDefined }
+  def checkifawwkeysexist[u](featuweidvawuemap: m-map[wong, mya option[u]]): b-boowean =
+    f-featuweidvawuemap.fowaww { case (_, /(^•ω•^) vawueopt) => vawueopt.isdefined }
 
-  def liftOptions[U](featureIdValueMap: Map[Long, Option[U]]): Map[Long, U] =
-    featureIdValueMap
-      .flatMap {
-        case (id, valueOpt) =>
-          valueOpt.map { value => (id, value) }
+  d-def wiftoptions[u](featuweidvawuemap: map[wong, rawr o-option[u]]): m-map[wong, nyaa~~ u-u] =
+    featuweidvawuemap
+      .fwatmap {
+        case (id, ( ͡o ω ͡o ) vawueopt) =>
+          v-vawueopt.map { vawue => (id, σωσ vawue) }
       }
 
-  val timestampFeature: Feature[JLong] = SharedFeatures.TIMESTAMP
+  vaw timestampfeatuwe: featuwe[jwong] = shawedfeatuwes.timestamp
 
   /**
-   * Builds all valid aggregation keys (for the output store) from
-   * a datarecord and a spec listing the keys to aggregate. There
-   * can be multiple aggregation keys generated from a single data
-   * record when grouping by sparse binary features, for which multiple
-   * values can be set within the data record.
+   * b-buiwds aww vawid aggwegation keys (fow t-the output stowe) fwom
+   * a-a datawecowd and a spec wisting t-the keys to aggwegate. (✿oωo) thewe
+   * c-can be muwtipwe a-aggwegation k-keys genewated f-fwom a singwe d-data
+   * wecowd when gwouping by spawse binawy featuwes, (///ˬ///✿) fow which muwtipwe
+   * vawues can be set within the data w-wecowd. σωσ
    *
-   * @param dataRecord Data record to read values for key features from
-   * @return A set of AggregationKeys encoding the values of all keys
+   * @pawam d-datawecowd d-data wecowd to wead vawues f-fow key featuwes fwom
+   * @wetuwn a set of aggwegationkeys encoding the vawues o-of aww keys
    */
-  def buildAggregationKeys(
-    dataRecord: DataRecord,
-    keysToAggregate: Set[Feature[_]]
-  ): Set[AggregationKey] = {
-    val discreteAggregationKeys = getKeyFeatureIdValues[Long](
-      dataRecord,
-      keysToAggregate,
-      FeatureType.DISCRETE
-    ).toMap
+  d-def buiwdaggwegationkeys(
+    datawecowd: d-datawecowd, UwU
+    keystoaggwegate: set[featuwe[_]]
+  ): s-set[aggwegationkey] = {
+    v-vaw discweteaggwegationkeys = getkeyfeatuweidvawues[wong](
+      d-datawecowd,
+      k-keystoaggwegate, (⑅˘꒳˘)
+      featuwetype.discwete
+    ).tomap
 
-    val textAggregationKeys = getKeyFeatureIdValues[String](
-      dataRecord,
-      keysToAggregate,
-      FeatureType.STRING
-    ).toMap
+    vaw textaggwegationkeys = getkeyfeatuweidvawues[stwing](
+      datawecowd,
+      k-keystoaggwegate, /(^•ω•^)
+      f-featuwetype.stwing
+    ).tomap
 
-    val sparseBinaryIdValues = getKeyFeatureIdValues[JSet[String]](
-      dataRecord,
-      keysToAggregate,
-      FeatureType.SPARSE_BINARY
+    vaw s-spawsebinawyidvawues = g-getkeyfeatuweidvawues[jset[stwing]](
+      d-datawecowd, -.-
+      keystoaggwegate, (ˆ ﻌ ˆ)♡
+      f-featuwetype.spawse_binawy
     ).map {
-      case (id, values) =>
+      c-case (id, nyaa~~ vawues) =>
         (
-          id,
-          values
-            .map(_.asScala.toSet)
-            .getOrElse(Set.empty[String])
+          i-id, ʘwʘ
+          v-vawues
+            .map(_.asscawa.toset)
+            .getowewse(set.empty[stwing])
         )
-    }.toList
+    }.towist
 
-    if (checkIfAllKeysExist(discreteAggregationKeys) &&
-      checkIfAllKeysExist(textAggregationKeys)) {
-      if (sparseBinaryIdValues.nonEmpty) {
-        sparseBinaryPermutations(sparseBinaryIdValues).map { sparseBinaryTextKeys =>
-          AggregationKey(
-            discreteFeaturesById = liftOptions(discreteAggregationKeys),
-            textFeaturesById = liftOptions(textAggregationKeys) ++ sparseBinaryTextKeys
+    if (checkifawwkeysexist(discweteaggwegationkeys) &&
+      c-checkifawwkeysexist(textaggwegationkeys)) {
+      if (spawsebinawyidvawues.nonempty) {
+        spawsebinawypewmutations(spawsebinawyidvawues).map { s-spawsebinawytextkeys =>
+          aggwegationkey(
+            d-discwetefeatuwesbyid = w-wiftoptions(discweteaggwegationkeys), :3
+            textfeatuwesbyid = w-wiftoptions(textaggwegationkeys) ++ spawsebinawytextkeys
           )
         }
-      } else {
-        Set(
-          AggregationKey(
-            discreteFeaturesById = liftOptions(discreteAggregationKeys),
-            textFeaturesById = liftOptions(textAggregationKeys)
+      } ewse {
+        set(
+          a-aggwegationkey(
+            d-discwetefeatuwesbyid = w-wiftoptions(discweteaggwegationkeys), (U ᵕ U❁)
+            textfeatuwesbyid = wiftoptions(textaggwegationkeys)
           )
         )
       }
-    } else Set.empty[AggregationKey]
+    } ewse set.empty[aggwegationkey]
   }
 
 }
 
 /**
- * Specifies one or more related aggregate(s) to compute in the summingbird job.
+ * s-specifies one ow mowe wewated aggwegate(s) t-to compute in t-the summingbiwd job.
  *
- * @param inputSource Source to compute this aggregate over
- * @param preTransforms Sequence of [[com.twitter.ml.api.RichITransform]] that transform
- * data records pre-aggregation (e.g. discretization, renaming)
- * @param samplingTransformOpt Optional [[OneToSomeTransform]] that transform data
- * record to optional data record (e.g. for sampling) before aggregation
- * @param aggregatePrefix Prefix to use for naming resultant aggregate features
- * @param keysToAggregate Features to group by when computing the aggregates
- * (e.g. USER_ID, AUTHOR_ID)
- * @param featuresToAggregate Features to aggregate (e.g. blender_score or is_photo)
- * @param labels Labels to cross the features with to make pair features, if any.
- * use Label.All if you don't want to cross with a label.
- * @param metrics Aggregation metrics to compute (e.g. count, mean)
- * @param halfLives Half lives to use for the aggregations, to be crossed with the above.
- * use Duration.Top for "forever" aggregations over an infinite time window (no decay).
- * @param outputStore Store to output this aggregate to
- * @param includeAnyFeature Aggregate label counts for any feature value
- * @param includeAnyLabel Aggregate feature counts for any label value (e.g. all impressions)
+ * @pawam i-inputsouwce souwce to compute t-this aggwegate o-ovew
+ * @pawam pwetwansfowms sequence of [[com.twittew.mw.api.wichitwansfowm]] that t-twansfowm
+ * data wecowds pwe-aggwegation (e.g. (U ﹏ U) discwetization, ^^ w-wenaming)
+ * @pawam s-sampwingtwansfowmopt optionaw [[onetosometwansfowm]] t-that twansfowm data
+ * w-wecowd to optionaw d-data wecowd (e.g. òωó f-fow sampwing) befowe aggwegation
+ * @pawam aggwegatepwefix pwefix to use fow nyaming wesuwtant aggwegate featuwes
+ * @pawam keystoaggwegate featuwes to gwoup by when computing the aggwegates
+ * (e.g. /(^•ω•^) usew_id, 😳😳😳 authow_id)
+ * @pawam featuwestoaggwegate featuwes to aggwegate (e.g. :3 bwendew_scowe o-ow i-is_photo)
+ * @pawam wabews wabews to cwoss the featuwes w-with to m-make paiw featuwes, (///ˬ///✿) i-if any. rawr x3
+ * use wabew.aww if y-you don't want to cwoss with a wabew.
+ * @pawam m-metwics aggwegation m-metwics to compute (e.g. (U ᵕ U❁) count, (⑅˘꒳˘) m-mean)
+ * @pawam hawfwives hawf w-wives to use f-fow the aggwegations, (˘ω˘) to be cwossed with the above. :3
+ * u-use duwation.top f-fow "fowevew" a-aggwegations o-ovew an infinite t-time window (no d-decay). XD
+ * @pawam o-outputstowe s-stowe to output t-this aggwegate to
+ * @pawam incwudeanyfeatuwe a-aggwegate wabew c-counts fow any featuwe v-vawue
+ * @pawam incwudeanywabew a-aggwegate featuwe counts fow any wabew vawue (e.g. >_< a-aww impwessions)
  *
- * The overall config for the summingbird job consists of a list of "AggregateGroup"
- * case class objects, which get translated into strongly typed "TypedAggregateGroup"
- * case class objects. A single TypedAggregateGroup always groups input data records from
- * ''inputSource'' by a single set of aggregation keys (''featuresToAggregate'').
- * Within these groups, we perform a comprehensive cross of:
+ * the ovewaww config f-fow the summingbiwd j-job consists o-of a wist of "aggwegategwoup"
+ * case cwass o-objects, (✿oωo) which get twanswated into s-stwongwy typed "typedaggwegategwoup"
+ * case c-cwass objects. (ꈍᴗꈍ) a singwe typedaggwegategwoup a-awways gwoups input data wecowds fwom
+ * ''inputsouwce'' by a singwe set of aggwegation k-keys (''featuwestoaggwegate''). XD
+ * within these g-gwoups, :3 we p-pewfowm a compwehensive cwoss of:
  *
- * ''featuresToAggregate'' x ''labels'' x ''metrics'' x ''halfLives''
+ * ''featuwestoaggwegate'' x ''wabews'' x ''metwics'' x ''hawfwives''
  *
- * All the resultant aggregate features are assigned a human-readable feature name
- * beginning with ''aggregatePrefix'', and are written to DataRecords that get
- * aggregated and written to the store specified by ''outputStore''.
+ * a-aww the wesuwtant aggwegate featuwes a-awe assigned a-a human-weadabwe f-featuwe nyame
+ * beginning with ''aggwegatepwefix'', mya and awe w-wwitten to datawecowds t-that get
+ * aggwegated and w-wwitten to the stowe specified by ''outputstowe''. òωó
  *
- * Illustrative example. Suppose we define our spec as follows:
+ * i-iwwustwative exampwe. nyaa~~ s-suppose we define o-ouw spec as f-fowwows:
  *
- * TypedAggregateGroup(
- *   inputSource         = "timelines_recap_daily",
- *   aggregatePrefix     = "user_author_aggregate",
- *   keysToAggregate     = Set(USER_ID, AUTHOR_ID),
- *   featuresToAggregate = Set(RecapFeatures.TEXT_SCORE, RecapFeatures.BLENDER_SCORE),
- *   labels              = Set(RecapFeatures.IS_FAVORITED, RecapFeatures.IS_REPLIED),
- *   metrics             = Set(CountMetric, MeanMetric),
- *   halfLives           = Set(7.Days, 30.Days),
- *   outputStore         = "user_author_aggregate_store"
+ * typedaggwegategwoup(
+ *   inputsouwce         = "timewines_wecap_daiwy", 🥺
+ *   a-aggwegatepwefix     = "usew_authow_aggwegate", -.-
+ *   k-keystoaggwegate     = s-set(usew_id, 🥺 a-authow_id), (˘ω˘)
+ *   featuwestoaggwegate = s-set(wecapfeatuwes.text_scowe, òωó w-wecapfeatuwes.bwendew_scowe), UwU
+ *   w-wabews              = s-set(wecapfeatuwes.is_favowited, ^•ﻌ•^ w-wecapfeatuwes.is_wepwied), mya
+ *   m-metwics             = s-set(countmetwic, (✿oωo) m-meanmetwic), XD
+ *   hawfwives           = s-set(7.days, :3 30.days),
+ *   outputstowe         = "usew_authow_aggwegate_stowe"
  * )
  *
- * This will process data records from the source named "timelines_recap_daily"
- * (see AggregateSource.scala for more details on how to add your own source)
- * It will produce a total of 2x2x2x2 = 16 aggregation features, named like:
+ * t-this wiww pwocess data w-wecowds fwom the s-souwce nyamed "timewines_wecap_daiwy"
+ * (see a-aggwegatesouwce.scawa fow mowe detaiws on how to add youw own souwce)
+ * i-it wiww p-pwoduce a totaw o-of 2x2x2x2 = 16 aggwegation featuwes, (U ﹏ U) nyamed wike:
  *
- * user_author_aggregate.pair.recap.engagement.is_favorited.recap.searchfeature.blender_score.count.7days
- * user_author_aggregate.pair.recap.engagement.is_favorited.recap.searchfeature.blender_score.count.30days
- * user_author_aggregate.pair.recap.engagement.is_favorited.recap.searchfeature.blender_score.mean.7days
+ * usew_authow_aggwegate.paiw.wecap.engagement.is_favowited.wecap.seawchfeatuwe.bwendew_scowe.count.7days
+ * u-usew_authow_aggwegate.paiw.wecap.engagement.is_favowited.wecap.seawchfeatuwe.bwendew_scowe.count.30days
+ * u-usew_authow_aggwegate.paiw.wecap.engagement.is_favowited.wecap.seawchfeatuwe.bwendew_scowe.mean.7days
  *
  * ... (and so on)
  *
- * and all the result features will be stored in DataRecords, summed up, and written
- * to the output store defined by the name "user_author_aggregate_store".
- * (see AggregateStore.scala for details on how to add your own store).
+ * a-and aww the wesuwt f-featuwes wiww be stowed in datawecowds, UwU summed up, ʘwʘ and wwitten
+ * t-to the output s-stowe defined b-by the nyame "usew_authow_aggwegate_stowe". >w<
+ * (see a-aggwegatestowe.scawa fow detaiws on how to a-add youw own stowe). 😳😳😳
  *
- * If you do not want a full cross, split up your config into multiple TypedAggregateGroup
- * objects. Splitting is strongly advised to avoid blowing up and creating invalid
- * or unnecessary combinations of aggregate features (note that some combinations
- * are useless or invalid e.g. computing the mean of a binary feature). Splitting
- * also does not cost anything in terms of real-time performance, because all
- * Aggregate objects in the master spec that share the same ''keysToAggregate'', the
- * same ''inputSource'' and the same ''outputStore'' are grouped by the summingbird
- * job logic and stored into a single DataRecord in the output store. Overlapping
- * aggregates will also automatically be deduplicated so don't worry about overlaps.
+ * i-if you do nyot want a fuww cwoss, rawr spwit u-up youw config into muwtipwe typedaggwegategwoup
+ * o-objects. ^•ﻌ•^ spwitting is stwongwy a-advised t-to avoid bwowing up and cweating i-invawid
+ * ow unnecessawy c-combinations of aggwegate f-featuwes (note that some combinations
+ * a-awe u-usewess ow invawid e-e.g. σωσ computing t-the mean of a binawy featuwe). :3 s-spwitting
+ * a-awso does nyot cost a-anything in tewms of weaw-time p-pewfowmance, rawr x3 because aww
+ * aggwegate objects i-in the mastew spec t-that shawe the s-same ''keystoaggwegate'', nyaa~~ the
+ * same ''inputsouwce'' and the same ''outputstowe'' a-awe gwouped by the summingbiwd
+ * j-job wogic a-and stowed into a singwe datawecowd in the output s-stowe. :3 ovewwapping
+ * aggwegates w-wiww awso automaticawwy b-be d-dedupwicated so d-don't wowwy about o-ovewwaps. >w<
  */
-case class TypedAggregateGroup[T](
-  inputSource: AggregateSource,
-  aggregatePrefix: String,
-  keysToAggregate: Set[Feature[_]],
-  featuresToAggregate: Set[Feature[T]],
-  labels: Set[_ <: Feature[JBoolean]],
-  metrics: Set[AggregationMetric[T, _]],
-  halfLives: Set[Duration],
-  outputStore: AggregateStore,
-  preTransforms: Seq[OneToSomeTransform] = Seq.empty,
-  includeAnyFeature: Boolean = true,
-  includeAnyLabel: Boolean = true,
-  aggExclusionRegex: Seq[String] = Seq.empty) {
-  import TypedAggregateGroup._
+case cwass typedaggwegategwoup[t](
+  inputsouwce: aggwegatesouwce, rawr
+  aggwegatepwefix: s-stwing, 😳
+  keystoaggwegate: s-set[featuwe[_]], 😳
+  featuwestoaggwegate: set[featuwe[t]], 🥺
+  wabews: s-set[_ <: featuwe[jboowean]], rawr x3
+  metwics: set[aggwegationmetwic[t, ^^ _]],
+  hawfwives: set[duwation], ( ͡o ω ͡o )
+  outputstowe: a-aggwegatestowe, XD
+  p-pwetwansfowms: seq[onetosometwansfowm] = s-seq.empty, ^^
+  incwudeanyfeatuwe: boowean = twue, (⑅˘꒳˘)
+  incwudeanywabew: b-boowean = twue, (⑅˘꒳˘)
+  a-aggexcwusionwegex: seq[stwing] = s-seq.empty) {
+  impowt typedaggwegategwoup._
 
-  val compiledRegexes = aggExclusionRegex.map(new Regex(_))
+  v-vaw compiwedwegexes = aggexcwusionwegex.map(new wegex(_))
 
-  // true if should drop, false if should keep
-  def filterOutAggregateFeature(
-    feature: PrecomputedAggregateDescriptor[_],
-    regexes: Seq[Regex]
-  ): Boolean = {
-    if (regexes.nonEmpty)
-      feature.outputFeatures.exists { feature =>
-        regexes.exists { re => re.findFirstMatchIn(feature.getDenseFeatureName).nonEmpty }
+  // twue if shouwd d-dwop, ^•ﻌ•^ fawse if shouwd keep
+  def fiwtewoutaggwegatefeatuwe(
+    f-featuwe: pwecomputedaggwegatedescwiptow[_], ( ͡o ω ͡o )
+    w-wegexes: seq[wegex]
+  ): b-boowean = {
+    if (wegexes.nonempty)
+      featuwe.outputfeatuwes.exists { f-featuwe =>
+        wegexes.exists { we => we.findfiwstmatchin(featuwe.getdensefeatuwename).nonempty }
       }
-    else false
+    ewse f-fawse
   }
 
-  def buildAggregationKeys(
-    dataRecord: DataRecord
-  ): Set[AggregationKey] = {
-    TypedAggregateGroup.buildAggregationKeys(dataRecord, keysToAggregate)
+  def b-buiwdaggwegationkeys(
+    d-datawecowd: d-datawecowd
+  ): set[aggwegationkey] = {
+    typedaggwegategwoup.buiwdaggwegationkeys(datawecowd, ( ͡o ω ͡o ) k-keystoaggwegate)
   }
 
   /**
-   * This val precomputes descriptors for all individual aggregates in this group
-   * (of type ''AggregateFeature''). Also precompute hashes of all aggregation
-   * "output" features generated by these operators for faster
-   * run-time performance (this turns out to be a primary CPU bottleneck).
-   * Ex: for the mean operator, "sum" and "count" are output features
+   * t-this vaw pwecomputes descwiptows fow aww i-individuaw aggwegates in this gwoup
+   * (of type ''aggwegatefeatuwe''). (✿oωo) a-awso pwecompute hashes of aww aggwegation
+   * "output" f-featuwes genewated b-by these opewatows fow fastew
+   * w-wun-time p-pewfowmance (this t-tuwns out to be a pwimawy cpu bottweneck). 😳😳😳
+   * e-ex: fow the mean opewatow, OwO "sum" and "count" a-awe output featuwes
    */
-  val individualAggregateDescriptors: Set[PrecomputedAggregateDescriptor[T]] = {
+  vaw individuawaggwegatedescwiptows: set[pwecomputedaggwegatedescwiptow[t]] = {
     /*
-     * By default, in additional to all feature-label crosses, also
-     * compute in aggregates over each feature and label without crossing
+     * b-by defauwt, i-in additionaw t-to aww featuwe-wabew c-cwosses, ^^ a-awso
+     * compute in aggwegates o-ovew each featuwe and wabew without cwossing
      */
-    val labelOptions = labels.map(Option(_)) ++
-      (if (includeAnyLabel) Set(None) else Set.empty)
-    val featureOptions = featuresToAggregate.map(Option(_)) ++
-      (if (includeAnyFeature) Set(None) else Set.empty)
-    for {
-      feature <- featureOptions
-      label <- labelOptions
-      metric <- metrics
-      halfLife <- halfLives
-    } yield {
-      val query = AggregateFeature[T](aggregatePrefix, feature, label, halfLife)
+    v-vaw wabewoptions = w-wabews.map(option(_)) ++
+      (if (incwudeanywabew) set(none) ewse set.empty)
+    v-vaw featuweoptions = f-featuwestoaggwegate.map(option(_)) ++
+      (if (incwudeanyfeatuwe) set(none) e-ewse set.empty)
+    fow {
+      f-featuwe <- f-featuweoptions
+      wabew <- wabewoptions
+      m-metwic <- metwics
+      h-hawfwife <- hawfwives
+    } y-yiewd {
+      vaw quewy = aggwegatefeatuwe[t](aggwegatepwefix, rawr x3 featuwe, 🥺 wabew, h-hawfwife)
 
-      val aggregateOutputFeatures = metric.getOutputFeatures(query)
-      val aggregateOutputFeatureIds = metric.getOutputFeatureIds(query)
-      PrecomputedAggregateDescriptor(
-        query,
-        metric,
-        aggregateOutputFeatures,
-        aggregateOutputFeatureIds
+      vaw aggwegateoutputfeatuwes = m-metwic.getoutputfeatuwes(quewy)
+      vaw aggwegateoutputfeatuweids = metwic.getoutputfeatuweids(quewy)
+      p-pwecomputedaggwegatedescwiptow(
+        q-quewy, (ˆ ﻌ ˆ)♡
+        m-metwic, ( ͡o ω ͡o )
+        aggwegateoutputfeatuwes, >w<
+        a-aggwegateoutputfeatuweids
       )
     }
-  }.filterNot(filterOutAggregateFeature(_, compiledRegexes))
+  }.fiwtewnot(fiwtewoutaggwegatefeatuwe(_, /(^•ω•^) c-compiwedwegexes))
 
-  /* Precomputes a map from all generated aggregate feature ids to their half lives. */
-  val continuousFeatureIdsToHalfLives: Map[Long, Duration] =
-    individualAggregateDescriptors.flatMap { descriptor =>
-      descriptor.outputFeatures
-        .flatMap { feature =>
-          if (feature.getFeatureType() == FeatureType.CONTINUOUS) {
-            Try(feature.asInstanceOf[Feature[JDouble]]).toOption
-              .map(feature => (feature.getFeatureId(), descriptor.query.halfLife))
-          } else None
+  /* pwecomputes a-a map fwom aww genewated aggwegate f-featuwe ids to theiw hawf wives. 😳😳😳 */
+  v-vaw continuousfeatuweidstohawfwives: map[wong, (U ᵕ U❁) d-duwation] =
+    individuawaggwegatedescwiptows.fwatmap { descwiptow =>
+      descwiptow.outputfeatuwes
+        .fwatmap { featuwe =>
+          i-if (featuwe.getfeatuwetype() == f-featuwetype.continuous) {
+            twy(featuwe.asinstanceof[featuwe[jdoubwe]]).tooption
+              .map(featuwe => (featuwe.getfeatuweid(), (˘ω˘) descwiptow.quewy.hawfwife))
+          } ewse nyone
         }
-    }.toMap
+    }.tomap
 
   /*
-   * Sparse binary keys become individual string keys in the output.
-   * e.g. group by "words.in.tweet", output key: "words.in.tweet.member"
+   * s-spawse binawy keys b-become individuaw s-stwing keys in the output. 😳
+   * e.g. gwoup by "wowds.in.tweet", (ꈍᴗꈍ) output key: "wowds.in.tweet.membew"
    */
-  val allOutputKeys: Set[Feature[_]] = keysToAggregate.map { key =>
-    if (key.getFeatureType == FeatureType.SPARSE_BINARY) sparseFeature(key)
-    else key
+  vaw awwoutputkeys: s-set[featuwe[_]] = keystoaggwegate.map { key =>
+    i-if (key.getfeatuwetype == featuwetype.spawse_binawy) spawsefeatuwe(key)
+    e-ewse key
   }
 
-  val allOutputFeatures: Set[Feature[_]] = individualAggregateDescriptors.flatMap {
-    case PrecomputedAggregateDescriptor(
-          query,
-          metric,
-          outputFeatures,
-          outputFeatureIds
+  v-vaw awwoutputfeatuwes: set[featuwe[_]] = i-individuawaggwegatedescwiptows.fwatmap {
+    c-case pwecomputedaggwegatedescwiptow(
+          q-quewy, :3
+          m-metwic, /(^•ω•^)
+          o-outputfeatuwes, ^^;;
+          o-outputfeatuweids
         ) =>
-      outputFeatures
+      outputfeatuwes
   }
 
-  val aggregateContext: FeatureContext = new FeatureContext(allOutputFeatures.toList.asJava)
+  vaw aggwegatecontext: featuwecontext = nyew featuwecontext(awwoutputfeatuwes.towist.asjava)
 
   /**
-   * Adds all aggregates in this group found in the two input data records
-   * into a result, mutating the result. Uses a while loop for an
-   * approximately 10% gain in speed over a for comprehension.
+   * a-adds aww aggwegates i-in this g-gwoup found in t-the two input data w-wecowds
+   * i-into a wesuwt, o.O mutating the wesuwt. 😳 uses a whiwe woop fow an
+   * appwoximatewy 10% g-gain in speed o-ovew a fow compwehension. UwU
    *
-   * WARNING: mutates ''result''
+   * wawning: mutates ''wesuwt''
    *
-   * @param result The output data record to mutate
-   * @param left The left data record to add
-   * @param right The right data record to add
+   * @pawam wesuwt the output data wecowd t-to mutate
+   * @pawam w-weft the w-weft data wecowd to add
+   * @pawam wight the wight d-data wecowd to add
    */
-  def mutatePlus(result: DataRecord, left: DataRecord, right: DataRecord): Unit = {
-    val featureIterator = individualAggregateDescriptors.iterator
-    while (featureIterator.hasNext) {
-      val descriptor = featureIterator.next
-      descriptor.metric.mutatePlus(
-        result,
-        left,
-        right,
-        descriptor.query,
-        Some(descriptor.outputFeatureIds)
+  def mutatepwus(wesuwt: d-datawecowd, >w< w-weft: datawecowd, o.O wight: datawecowd): unit = {
+    v-vaw featuweitewatow = individuawaggwegatedescwiptows.itewatow
+    w-whiwe (featuweitewatow.hasnext) {
+      vaw d-descwiptow = featuweitewatow.next
+      d-descwiptow.metwic.mutatepwus(
+        w-wesuwt, (˘ω˘)
+        w-weft, òωó
+        wight, nyaa~~
+        d-descwiptow.quewy, ( ͡o ω ͡o )
+        s-some(descwiptow.outputfeatuweids)
       )
     }
   }
 
   /**
-   * Apply preTransforms sequentially. If any transform results in a dropped (None)
-   * DataRecord, then entire tranform sequence will result in a dropped DataRecord.
-   * Note that preTransforms are order-dependent.
+   * a-appwy pwetwansfowms sequentiawwy. 😳😳😳 i-if any t-twansfowm wesuwts in a dwopped (none)
+   * d-datawecowd, ^•ﻌ•^ then entiwe twanfowm sequence w-wiww wesuwt in a dwopped datawecowd. (˘ω˘)
+   * n-nyote that pwetwansfowms awe owdew-dependent. (˘ω˘)
    */
-  private[this] def sequentiallyTransform(dataRecord: DataRecord): Option[DataRecord] = {
-    val recordOpt = Option(new DataRecord(dataRecord))
-    preTransforms.foldLeft(recordOpt) {
-      case (Some(previousRecord), preTransform) =>
-        preTransform(previousRecord)
-      case _ => Option.empty[DataRecord]
+  p-pwivate[this] d-def sequentiawwytwansfowm(datawecowd: datawecowd): option[datawecowd] = {
+    v-vaw wecowdopt = option(new datawecowd(datawecowd))
+    pwetwansfowms.fowdweft(wecowdopt) {
+      c-case (some(pweviouswecowd), -.- pwetwansfowm) =>
+        p-pwetwansfowm(pweviouswecowd)
+      case _ => option.empty[datawecowd]
     }
   }
 
   /**
-   * Given a data record, apply transforms and fetch the incremental contributions to
-   * each configured aggregate from this data record, and store these in an output data record.
+   * g-given a data w-wecowd, ^•ﻌ•^ appwy twansfowms and fetch t-the incwementaw contwibutions to
+   * each configuwed a-aggwegate f-fwom this data wecowd, /(^•ω•^) and stowe t-these in an o-output data wecowd. (///ˬ///✿)
    *
-   * @param dataRecord Input data record to aggregate.
-   * @return A set of tuples (AggregationKey, DataRecord) whose first entry is an
-   * AggregationKey indicating what keys we're grouping by, and whose second entry
-   * is an output data record with incremental contributions to the aggregate value(s)
+   * @pawam datawecowd input data wecowd t-to aggwegate. mya
+   * @wetuwn a-a s-set of tupwes (aggwegationkey, o.O datawecowd) w-whose fiwst entwy is an
+   * aggwegationkey indicating nyani keys we'we gwouping by, ^•ﻌ•^ and whose second e-entwy
+   * is an o-output data wecowd w-with incwementaw c-contwibutions t-to the aggwegate v-vawue(s)
    */
-  def computeAggregateKVPairs(dataRecord: DataRecord): Set[(AggregationKey, DataRecord)] = {
-    sequentiallyTransform(dataRecord)
-      .flatMap { dataRecord =>
-        val aggregationKeys = buildAggregationKeys(dataRecord)
-        val increment = new DataRecord
+  def computeaggwegatekvpaiws(datawecowd: d-datawecowd): s-set[(aggwegationkey, (U ᵕ U❁) datawecowd)] = {
+    s-sequentiawwytwansfowm(datawecowd)
+      .fwatmap { d-datawecowd =>
+        vaw aggwegationkeys = b-buiwdaggwegationkeys(datawecowd)
+        vaw incwement = nyew d-datawecowd
 
-        val isNonEmptyIncrement = individualAggregateDescriptors
-          .map { descriptor =>
-            descriptor.metric.setIncrement(
-              output = increment,
-              input = dataRecord,
-              query = descriptor.query,
-              timestampFeature = inputSource.timestampFeature,
-              aggregateOutputs = Some(descriptor.outputFeatureIds)
+        vaw isnonemptyincwement = i-individuawaggwegatedescwiptows
+          .map { d-descwiptow =>
+            descwiptow.metwic.setincwement(
+              o-output = i-incwement,
+              i-input = datawecowd, :3
+              q-quewy = d-descwiptow.quewy,
+              timestampfeatuwe = i-inputsouwce.timestampfeatuwe, (///ˬ///✿)
+              aggwegateoutputs = s-some(descwiptow.outputfeatuweids)
             )
           }
           .exists(identity)
 
-        if (isNonEmptyIncrement) {
-          SRichDataRecord(increment).setFeatureValue(
-            timestampFeature,
-            getTimestamp(dataRecord, inputSource.timestampFeature)
+        i-if (isnonemptyincwement) {
+          s-swichdatawecowd(incwement).setfeatuwevawue(
+            timestampfeatuwe, (///ˬ///✿)
+            g-gettimestamp(datawecowd, 🥺 inputsouwce.timestampfeatuwe)
           )
-          Some(aggregationKeys.map(key => (key, increment)))
-        } else {
-          None
+          some(aggwegationkeys.map(key => (key, -.- incwement)))
+        } e-ewse {
+          nyone
         }
       }
-      .getOrElse(Set.empty[(AggregationKey, DataRecord)])
+      .getowewse(set.empty[(aggwegationkey, nyaa~~ datawecowd)])
   }
 
-  def outputFeaturesToRenamedOutputFeatures(prefix: String): Map[Feature[_], Feature[_]] = {
-    require(prefix.nonEmpty)
+  def outputfeatuwestowenamedoutputfeatuwes(pwefix: stwing): map[featuwe[_], (///ˬ///✿) featuwe[_]] = {
+    w-wequiwe(pwefix.nonempty)
 
-    allOutputFeatures.map { feature =>
-      if (feature.isSetFeatureName) {
-        val renamedFeatureName = prefix + feature.getDenseFeatureName
-        val personalDataTypes =
-          if (feature.getPersonalDataTypes.isPresent) feature.getPersonalDataTypes.get()
-          else null
+    awwoutputfeatuwes.map { featuwe =>
+      if (featuwe.issetfeatuwename) {
+        vaw wenamedfeatuwename = pwefix + featuwe.getdensefeatuwename
+        v-vaw pewsonawdatatypes =
+          if (featuwe.getpewsonawdatatypes.ispwesent) featuwe.getpewsonawdatatypes.get()
+          e-ewse nyuww
 
-        val renamedFeature = feature.getFeatureType match {
-          case FeatureType.BINARY =>
-            new Feature.Binary(renamedFeatureName, personalDataTypes)
-          case FeatureType.DISCRETE =>
-            new Feature.Discrete(renamedFeatureName, personalDataTypes)
-          case FeatureType.STRING =>
-            new Feature.Text(renamedFeatureName, personalDataTypes)
-          case FeatureType.CONTINUOUS =>
-            new Feature.Continuous(renamedFeatureName, personalDataTypes)
-          case FeatureType.SPARSE_BINARY =>
-            new Feature.SparseBinary(renamedFeatureName, personalDataTypes)
-          case FeatureType.SPARSE_CONTINUOUS =>
-            new Feature.SparseContinuous(renamedFeatureName, personalDataTypes)
+        vaw wenamedfeatuwe = f-featuwe.getfeatuwetype match {
+          case featuwetype.binawy =>
+            n-nyew featuwe.binawy(wenamedfeatuwename, 🥺 p-pewsonawdatatypes)
+          case featuwetype.discwete =>
+            n-nyew f-featuwe.discwete(wenamedfeatuwename, >w< pewsonawdatatypes)
+          case featuwetype.stwing =>
+            n-nyew featuwe.text(wenamedfeatuwename, rawr x3 pewsonawdatatypes)
+          case featuwetype.continuous =>
+            n-nyew featuwe.continuous(wenamedfeatuwename, (⑅˘꒳˘) pewsonawdatatypes)
+          c-case featuwetype.spawse_binawy =>
+            nyew featuwe.spawsebinawy(wenamedfeatuwename, σωσ p-pewsonawdatatypes)
+          case featuwetype.spawse_continuous =>
+            n-nyew f-featuwe.spawsecontinuous(wenamedfeatuwename, pewsonawdatatypes)
         }
-        feature -> renamedFeature
-      } else {
-        feature -> feature
+        featuwe -> wenamedfeatuwe
+      } e-ewse {
+        featuwe -> featuwe
       }
-    }.toMap
+    }.tomap
   }
 }

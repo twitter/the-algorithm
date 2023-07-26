@@ -1,13 +1,13 @@
-package com.twitter.visibility.models
+package com.twittew.visibiwity.modews
 
-import com.twitter.contenthealth.sensitivemediasettings.thriftscala.SensitiveMediaSettings
+impowt com.twittew.contentheawth.sensitivemediasettings.thwiftscawa.sensitivemediasettings
 
 
-case class UserSensitiveMediaSettings(sensitiveMediaSettings: Option[SensitiveMediaSettings]) {
+c-case cwass usewsensitivemediasettings(sensitivemediasettings: o-option[sensitivemediasettings]) {
 
-  def unapply(
-    userSensitiveMediaSettings: UserSensitiveMediaSettings
-  ): Option[SensitiveMediaSettings] = {
-    sensitiveMediaSettings
+  d-def unappwy(
+    u-usewsensitivemediasettings: u-usewsensitivemediasettings
+  ): o-option[sensitivemediasettings] = {
+    s-sensitivemediasettings
   }
 }

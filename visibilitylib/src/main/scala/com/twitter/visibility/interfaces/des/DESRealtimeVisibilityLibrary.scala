@@ -1,99 +1,99 @@
-package com.twitter.visibility.interfaces.des
+package com.twittew.visibiwity.intewfaces.des
 
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.tweets.CommunityTweetFeaturesV2
-import com.twitter.visibility.builder.tweets.EditTweetFeatures
-import com.twitter.visibility.builder.tweets.ExclusiveTweetFeatures
-import com.twitter.visibility.builder.tweets.NilTweetLabelMaps
-import com.twitter.visibility.builder.tweets.TrustedFriendsFeatures
-import com.twitter.visibility.builder.tweets.TweetFeatures
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.common.CommunitiesSource
-import com.twitter.visibility.common.TrustedFriendsSource
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.rules.Allow
-import com.twitter.visibility.{thriftscala => vfthrift}
+impowt c-com.twittew.gizmoduck.thwiftscawa.usew
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt c-com.twittew.visibiwity.visibiwitywibwawy
+i-impowt com.twittew.visibiwity.buiwdew.visibiwitywesuwt
+impowt com.twittew.visibiwity.buiwdew.tweets.communitytweetfeatuwesv2
+impowt com.twittew.visibiwity.buiwdew.tweets.edittweetfeatuwes
+i-impowt com.twittew.visibiwity.buiwdew.tweets.excwusivetweetfeatuwes
+impowt com.twittew.visibiwity.buiwdew.tweets.niwtweetwabewmaps
+i-impowt com.twittew.visibiwity.buiwdew.tweets.twustedfwiendsfeatuwes
+impowt c-com.twittew.visibiwity.buiwdew.tweets.tweetfeatuwes
+impowt com.twittew.visibiwity.buiwdew.usews.authowfeatuwes
+impowt com.twittew.visibiwity.buiwdew.usews.viewewfeatuwes
+i-impowt com.twittew.visibiwity.common.communitiessouwce
+impowt com.twittew.visibiwity.common.twustedfwiendssouwce
+i-impowt com.twittew.visibiwity.common.usewwewationshipsouwce
+i-impowt com.twittew.visibiwity.common.usewsouwce
+impowt com.twittew.visibiwity.modews.contentid
+impowt c-com.twittew.visibiwity.modews.safetywevew
+impowt com.twittew.visibiwity.modews.viewewcontext
+impowt com.twittew.visibiwity.wuwes.awwow
+impowt c-com.twittew.visibiwity.{thwiftscawa => vfthwift}
 
-case class DESRealtimeVisibilityRequest(tweet: Tweet, author: User, viewer: Option[User])
+c-case cwass desweawtimevisibiwitywequest(tweet: t-tweet, 😳😳😳 authow: u-usew, ( ͡o ω ͡o ) viewew: option[usew])
 
-object DESRealtimeVisibilityLibrary {
-  type Type = DESRealtimeVisibilityRequest => Stitch[vfthrift.Action]
+o-object desweawtimevisibiwitywibwawy {
+  type type = d-desweawtimevisibiwitywequest => stitch[vfthwift.action]
 
-  private[this] val safetyLevel = SafetyLevel.DesRealtime
+  pwivate[this] v-vaw safetywevew = safetywevew.desweawtime
 
-  def apply(visibilityLibrary: VisibilityLibrary): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
+  def appwy(visibiwitywibwawy: visibiwitywibwawy): type = {
+    vaw wibwawystatsweceivew = v-visibiwitywibwawy.statsweceivew
+    vaw vfenginecountew = w-wibwawystatsweceivew.countew("vf_engine_wequests")
 
-    val tweetFeatures = new TweetFeatures(NilTweetLabelMaps, libraryStatsReceiver)
+    v-vaw tweetfeatuwes = n-nyew tweetfeatuwes(niwtweetwabewmaps, >_< wibwawystatsweceivew)
 
-    val authorFeatures = new AuthorFeatures(UserSource.empty, libraryStatsReceiver)
-    val viewerFeatures = new ViewerFeatures(UserSource.empty, libraryStatsReceiver)
-    val communityTweetFeatures = new CommunityTweetFeaturesV2(CommunitiesSource.empty)
-    val exclusiveTweetFeatures =
-      new ExclusiveTweetFeatures(UserRelationshipSource.empty, libraryStatsReceiver)
-    val trustedFriendsTweetFeatures = new TrustedFriendsFeatures(TrustedFriendsSource.empty)
-    val editTweetFeatures = new EditTweetFeatures(libraryStatsReceiver)
+    vaw authowfeatuwes = nyew a-authowfeatuwes(usewsouwce.empty, >w< w-wibwawystatsweceivew)
+    vaw v-viewewfeatuwes = n-nyew viewewfeatuwes(usewsouwce.empty, rawr wibwawystatsweceivew)
+    v-vaw communitytweetfeatuwes = nyew communitytweetfeatuwesv2(communitiessouwce.empty)
+    v-vaw excwusivetweetfeatuwes =
+      nyew excwusivetweetfeatuwes(usewwewationshipsouwce.empty, 😳 w-wibwawystatsweceivew)
+    vaw twustedfwiendstweetfeatuwes = n-nyew twustedfwiendsfeatuwes(twustedfwiendssouwce.empty)
+    vaw edittweetfeatuwes = n-nyew edittweetfeatuwes(wibwawystatsweceivew)
 
-    { request: DESRealtimeVisibilityRequest =>
-      vfEngineCounter.incr()
+    { w-wequest: desweawtimevisibiwitywequest =>
+      vfenginecountew.incw()
 
-      val tweet = request.tweet
-      val author = request.author
-      val viewer = request.viewer
-      val viewerContext = ViewerContext.fromContext
+      vaw tweet = wequest.tweet
+      vaw authow = wequest.authow
+      v-vaw viewew = w-wequest.viewew
+      vaw v-viewewcontext = v-viewewcontext.fwomcontext
 
-      val featureMap =
-        visibilityLibrary.featureMapBuilder(
-          Seq(
-            tweetFeatures.forTweetWithoutSafetyLabels(tweet),
-            authorFeatures.forAuthorNoDefaults(author),
-            viewerFeatures.forViewerNoDefaults(viewer),
-            communityTweetFeatures.forTweetOnly(tweet),
-            exclusiveTweetFeatures.forTweetOnly(tweet),
-            trustedFriendsTweetFeatures.forTweetOnly(tweet),
-            editTweetFeatures.forTweet(tweet),
+      v-vaw featuwemap =
+        visibiwitywibwawy.featuwemapbuiwdew(
+          seq(
+            tweetfeatuwes.fowtweetwithoutsafetywabews(tweet), >w<
+            a-authowfeatuwes.fowauthownodefauwts(authow), (⑅˘꒳˘)
+            viewewfeatuwes.fowviewewnodefauwts(viewew),
+            communitytweetfeatuwes.fowtweetonwy(tweet), OwO
+            excwusivetweetfeatuwes.fowtweetonwy(tweet),
+            twustedfwiendstweetfeatuwes.fowtweetonwy(tweet), (ꈍᴗꈍ)
+            e-edittweetfeatuwes.fowtweet(tweet), 😳
           )
         )
 
-      val tweetResult = visibilityLibrary.runRuleEngine(
-        ContentId.TweetId(tweet.id),
-        featureMap,
-        viewerContext,
-        safetyLevel
+      vaw tweetwesuwt = v-visibiwitywibwawy.wunwuweengine(
+        c-contentid.tweetid(tweet.id), 😳😳😳
+        f-featuwemap, mya
+        viewewcontext, mya
+        s-safetywevew
       )
-      val authorResult = visibilityLibrary.runRuleEngine(
-        ContentId.UserId(author.id),
-        featureMap,
-        viewerContext,
-        safetyLevel
+      v-vaw authowwesuwt = v-visibiwitywibwawy.wunwuweengine(
+        c-contentid.usewid(authow.id), (⑅˘꒳˘)
+        featuwemap, (U ﹏ U)
+        viewewcontext, mya
+        safetywevew
       )
 
-      Stitch.join(tweetResult, authorResult).map {
-        case (tweetResult, authorResult) => mergeResults(tweetResult, authorResult)
+      s-stitch.join(tweetwesuwt, a-authowwesuwt).map {
+        c-case (tweetwesuwt, ʘwʘ a-authowwesuwt) => m-mewgewesuwts(tweetwesuwt, (˘ω˘) authowwesuwt)
       }
     }
   }
 
-  def mergeResults(
-    tweetResult: VisibilityResult,
-    authorResult: VisibilityResult,
-  ): vfthrift.Action = {
-    Set(tweetResult.verdict, authorResult.verdict)
+  def mewgewesuwts(
+    tweetwesuwt: v-visibiwitywesuwt, (U ﹏ U)
+    authowwesuwt: visibiwitywesuwt,
+  ): vfthwift.action = {
+    set(tweetwesuwt.vewdict, ^•ﻌ•^ authowwesuwt.vewdict)
       .find {
-        case Allow => false
-        case _ => true
+        case awwow => f-fawse
+        case _ => twue
       }
-      .map(_.toActionThrift())
-      .getOrElse(Allow.toActionThrift())
+      .map(_.toactionthwift())
+      .getowewse(awwow.toactionthwift())
   }
 }

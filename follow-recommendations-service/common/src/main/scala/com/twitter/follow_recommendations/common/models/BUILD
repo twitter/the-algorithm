@@ -1,29 +1,29 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "configapi/configapi-core/src/main/scala/com/twitter/timelines/configapi",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/rankers/common",
-        "follow-recommendations-service/thrift/src/main/thrift:thrift-scala",
-        "hermit/hermit-core/src/main/scala/com/twitter/hermit/constants",
-        "hermit/hermit-core/src/main/scala/com/twitter/hermit/model",
-        "hermit/hermit-ml/src/main/scala/com/twitter/hermit/ml/models",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common/identifier",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/request",
-        "product-mixer/core/src/main/thrift/com/twitter/product_mixer/core:thrift-scala",
-        "scrooge/scrooge-serializer/src/main/scala",
-        "src/java/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/api/util",
-        "src/scala/com/twitter/wtf/scalding/jobs/strong_tie_prediction",
-        "src/thrift/com/twitter/ads/adserver:adserver_rpc-scala",
-        "src/thrift/com/twitter/timelines/author_features/user_health:thrift-scala",
-        "user-signal-service/thrift/src/main/thrift:thrift-scala",
-        "util/util-slf4j-api/src/main/scala/com/twitter/util/logging",
-    ],
-    exports = [
-        "util/util-slf4j-api/src/main/scala/com/twitter/util/logging",
-    ],
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], OwO
+    pwatfowm = "java8", 🥺
+    t-tags = ["bazew-compatibwe"], òωó
+    d-dependencies = [
+        "configapi/configapi-cowe/swc/main/scawa/com/twittew/timewines/configapi", o.O
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/wankews/common", (U ᵕ U❁)
+        "fowwow-wecommendations-sewvice/thwift/swc/main/thwift:thwift-scawa", (⑅˘꒳˘)
+        "hewmit/hewmit-cowe/swc/main/scawa/com/twittew/hewmit/constants", ( ͡o ω ͡o )
+        "hewmit/hewmit-cowe/swc/main/scawa/com/twittew/hewmit/modew", UwU
+        "hewmit/hewmit-mw/swc/main/scawa/com/twittew/hewmit/mw/modews", rawr x3
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/candidate_souwce", rawr
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/modew/common", σωσ
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/modew/common/identifiew",
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/modew/mawshawwing/wequest", σωσ
+        "pwoduct-mixew/cowe/swc/main/thwift/com/twittew/pwoduct_mixew/cowe:thwift-scawa",
+        "scwooge/scwooge-sewiawizew/swc/main/scawa", >_<
+        "swc/java/com/twittew/mw/api:api-base", :3
+        "swc/scawa/com/twittew/mw/api/utiw", (U ﹏ U)
+        "swc/scawa/com/twittew/wtf/scawding/jobs/stwong_tie_pwediction", -.-
+        "swc/thwift/com/twittew/ads/adsewvew:adsewvew_wpc-scawa", (ˆ ﻌ ˆ)♡
+        "swc/thwift/com/twittew/timewines/authow_featuwes/usew_heawth:thwift-scawa", (⑅˘꒳˘)
+        "usew-signaw-sewvice/thwift/swc/main/thwift:thwift-scawa", (U ᵕ U❁)
+        "utiw/utiw-swf4j-api/swc/main/scawa/com/twittew/utiw/wogging", -.-
+    ], ^^;;
+    e-expowts = [
+        "utiw/utiw-swf4j-api/swc/main/scawa/com/twittew/utiw/wogging", >_<
+    ], mya
 )

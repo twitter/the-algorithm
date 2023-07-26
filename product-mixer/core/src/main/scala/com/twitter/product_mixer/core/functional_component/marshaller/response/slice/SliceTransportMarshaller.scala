@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.slice
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.swice
 
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.common.identifier.TransportMarshallerIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.slice.Slice
-import com.twitter.strato.graphql.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.twanspowtmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twanspowtmawshawwewidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.swice.swice
+i-impowt c-com.twittew.stwato.gwaphqw.{thwiftscawa => t-t}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class SliceTransportMarshaller @Inject() (sliceItemMarshaller: SliceItemMarshaller)
-    extends TransportMarshaller[Slice, t.SliceResult] {
+@singweton
+cwass swicetwanspowtmawshawwew @inject() (swiceitemmawshawwew: swiceitemmawshawwew)
+    extends t-twanspowtmawshawwew[swice, t.swicewesuwt] {
 
-  override val identifier: TransportMarshallerIdentifier = TransportMarshallerIdentifier("Slice")
+  ovewwide vaw identifiew: t-twanspowtmawshawwewidentifiew = twanspowtmawshawwewidentifiew("swice")
 
-  override def apply(slice: Slice): t.SliceResult = {
-    t.SliceResult.Slice(
-      t.Slice(
-        items = slice.items.map(sliceItemMarshaller(_)),
-        sliceInfo = t.SliceInfo(
-          previousCursor = slice.sliceInfo.previousCursor,
-          nextCursor = slice.sliceInfo.nextCursor
+  o-ovewwide def appwy(swice: swice): t.swicewesuwt = {
+    t.swicewesuwt.swice(
+      t-t.swice(
+        items = s-swice.items.map(swiceitemmawshawwew(_)), XD
+        s-swiceinfo = t.swiceinfo(
+          pweviouscuwsow = swice.swiceinfo.pweviouscuwsow, :3
+          nyextcuwsow = swice.swiceinfo.nextcuwsow
         )
       ))
   }

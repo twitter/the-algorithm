@@ -1,12 +1,12 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import com.twitter.search.earlybird.config.ServingRange;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+impowt com.twittew.seawch.eawwybiwd.config.sewvingwange;
+i-impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
 
-public interface ServingRangeProvider {
+p-pubwic intewface s-sewvingwangepwovidew {
   /**
-   * Get a ServingRange implementation.
-   * Usually backed by either TierInfoWrapper or RootClusterBoundaryInfo.
+   * g-get a sewvingwange i-impwementation. σωσ
+   * u-usuawwy backed b-by eithew tiewinfowwappew ow wootcwustewboundawyinfo. σωσ
    */
-  ServingRange getServingRange(EarlybirdRequestContext requestContext, boolean useBoundaryOverride);
+  sewvingwange getsewvingwange(eawwybiwdwequestcontext wequestcontext, >_< b-boowean useboundawyovewwide);
 }

@@ -1,31 +1,31 @@
-java_library(
-    sources = ["*.java"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/commons-logging",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "decider/src/main/scala",
-        "finagle/finagle-core/src/main",
-        "finagle/finagle-http/src/main/scala",
-        "servo/decider/src/main/scala",
-        "src/java/com/twitter/search/common/debug",
-        "src/java/com/twitter/search/common/logging",
-        "src/java/com/twitter/search/common/metrics",
-        "src/java/com/twitter/search/ingester/model",
-        "src/java/com/twitter/search/ingester/pipeline/twitter",
-        "src/java/com/twitter/search/ingester/pipeline/twitter/kafka",
-        "src/java/com/twitter/search/ingester/pipeline/util",
-        "src/java/com/twitter/search/ingester/pipeline/wire",
-        "src/java/com/twitter/search/ingester/util/jndi",
-        "src/java/org/apache/commons/pipeline",
-        "src/thrift/com/twitter/tweetypie:events-java",
-        "twitter-server/server/src/main/scala",
-        "util/util-app/src/main/scala",
-        "util/util-core:scala",
-        "util/util-lint/src/main/scala",
-        "util/util-stats/src/main/scala",
-    ],
+java_wibwawy(
+    souwces = ["*.java"], OwO
+    compiwew_option_sets = ["fataw_wawnings"], 🥺
+    p-pwatfowm = "java8",
+    t-tags = ["bazew-compatibwe"], òωó
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/guava", o.O
+        "3wdpawty/jvm/commons-wogging", (U ᵕ U❁)
+        "3wdpawty/jvm/owg/swf4j:swf4j-api", (⑅˘꒳˘)
+        "decidew/swc/main/scawa", ( ͡o ω ͡o )
+        "finagwe/finagwe-cowe/swc/main", UwU
+        "finagwe/finagwe-http/swc/main/scawa", rawr x3
+        "sewvo/decidew/swc/main/scawa", rawr
+        "swc/java/com/twittew/seawch/common/debug", σωσ
+        "swc/java/com/twittew/seawch/common/wogging", σωσ
+        "swc/java/com/twittew/seawch/common/metwics", >_<
+        "swc/java/com/twittew/seawch/ingestew/modew", :3
+        "swc/java/com/twittew/seawch/ingestew/pipewine/twittew",
+        "swc/java/com/twittew/seawch/ingestew/pipewine/twittew/kafka", (U ﹏ U)
+        "swc/java/com/twittew/seawch/ingestew/pipewine/utiw", -.-
+        "swc/java/com/twittew/seawch/ingestew/pipewine/wiwe", (ˆ ﻌ ˆ)♡
+        "swc/java/com/twittew/seawch/ingestew/utiw/jndi", (⑅˘꒳˘)
+        "swc/java/owg/apache/commons/pipewine", (U ᵕ U❁)
+        "swc/thwift/com/twittew/tweetypie:events-java", -.-
+        "twittew-sewvew/sewvew/swc/main/scawa", ^^;;
+        "utiw/utiw-app/swc/main/scawa", >_<
+        "utiw/utiw-cowe:scawa", mya
+        "utiw/utiw-wint/swc/main/scawa", mya
+        "utiw/utiw-stats/swc/main/scawa",
+    ], 😳
 )

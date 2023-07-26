@@ -1,70 +1,70 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.twittew.home_mixew.functionaw_component.decowatow.uwt.buiwdew
 
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.PerspectiveFilteredLikedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidFollowedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidLikedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicContextFunctionalityTypeFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicIdSocialContextFeature
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecWithEducationTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecommendationTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorMarkNotInterestedTopic
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.innetwowkfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.pewspectivefiwtewedwikedbyusewidsfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.sgsvawidfowwowedbyusewidsfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.sgsvawidwikedbyusewidsfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.topiccontextfunctionawitytypefeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.topicidsociawcontextfeatuwe
+impowt com.twittew.home_mixew.pwoduct.fowwowing.modew.homemixewextewnawstwings
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackaction
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wecwitheducationtopiccontextfunctionawitytype
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wecommendationtopiccontextfunctionawitytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wichbehaviow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wichfeedbackbehaviowmawknotintewestedtopic
+impowt com.twittew.pwoduct_mixew.cowe.pwoduct.guice.scope.pwoductscoped
+i-impowt com.twittew.stwingcentew.cwient.stwingcentew
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-case class NotInterestedTopicFeedbackActionBuilder @Inject() (
-  @ProductScoped stringCenter: StringCenter,
-  externalStrings: HomeMixerExternalStrings) {
+@singweton
+case cwass nyotintewestedtopicfeedbackactionbuiwdew @inject() (
+  @pwoductscoped stwingcentew: s-stwingcentew,
+  extewnawstwings: homemixewextewnawstwings) {
 
-  def apply(
-    candidateFeatures: FeatureMap
-  ): Option[FeedbackAction] = {
-    val isOutOfNetwork = !candidateFeatures.getOrElse(InNetworkFeature, true)
-    val validFollowedByUserIds =
-      candidateFeatures.getOrElse(SGSValidFollowedByUserIdsFeature, Nil)
-    val validLikedByUserIds =
-      candidateFeatures
-        .getOrElse(SGSValidLikedByUserIdsFeature, Nil)
-        .filter(
-          candidateFeatures.getOrElse(PerspectiveFilteredLikedByUserIdsFeature, Nil).toSet.contains)
+  def appwy(
+    candidatefeatuwes: f-featuwemap
+  ): option[feedbackaction] = {
+    v-vaw isoutofnetwowk = !candidatefeatuwes.getowewse(innetwowkfeatuwe, (˘ω˘) t-twue)
+    v-vaw vawidfowwowedbyusewids =
+      c-candidatefeatuwes.getowewse(sgsvawidfowwowedbyusewidsfeatuwe, ^^ nyiw)
+    vaw vawidwikedbyusewids =
+      c-candidatefeatuwes
+        .getowewse(sgsvawidwikedbyusewidsfeatuwe, :3 nyiw)
+        .fiwtew(
+          candidatefeatuwes.getowewse(pewspectivefiwtewedwikedbyusewidsfeatuwe, -.- n-nyiw).toset.contains)
 
-    if (isOutOfNetwork && validLikedByUserIds.isEmpty && validFollowedByUserIds.isEmpty) {
-      val topicIdSocialContext = candidateFeatures.getOrElse(TopicIdSocialContextFeature, None)
-      val topicContextFunctionalityType =
-        candidateFeatures.getOrElse(TopicContextFunctionalityTypeFeature, None)
+    if (isoutofnetwowk && vawidwikedbyusewids.isempty && vawidfowwowedbyusewids.isempty) {
+      vaw topicidsociawcontext = candidatefeatuwes.getowewse(topicidsociawcontextfeatuwe, 😳 n-nyone)
+      vaw topiccontextfunctionawitytype =
+        c-candidatefeatuwes.getowewse(topiccontextfunctionawitytypefeatuwe, n-nyone)
 
-      (topicIdSocialContext, topicContextFunctionalityType) match {
-        case (Some(topicId), Some(topicContextFunctionalityType))
-            if topicContextFunctionalityType == RecommendationTopicContextFunctionalityType ||
-              topicContextFunctionalityType == RecWithEducationTopicContextFunctionalityType =>
-          Some(
-            FeedbackAction(
-              feedbackType = RichBehavior,
-              prompt = None,
-              confirmation = None,
-              childFeedbackActions = None,
-              feedbackUrl = None,
-              hasUndoAction = Some(true),
-              confirmationDisplayType = None,
-              clientEventInfo = None,
-              icon = None,
-              richBehavior =
-                Some(RichFeedbackBehaviorMarkNotInterestedTopic(topicId = topicId.toString)),
-              subprompt = None,
-              encodedFeedbackRequest = None
+      (topicidsociawcontext, mya t-topiccontextfunctionawitytype) match {
+        case (some(topicid), (˘ω˘) some(topiccontextfunctionawitytype))
+            i-if topiccontextfunctionawitytype == w-wecommendationtopiccontextfunctionawitytype ||
+              topiccontextfunctionawitytype == w-wecwitheducationtopiccontextfunctionawitytype =>
+          s-some(
+            feedbackaction(
+              f-feedbacktype = wichbehaviow, >_<
+              p-pwompt = nyone, -.-
+              confiwmation = nyone, 🥺
+              chiwdfeedbackactions = n-nyone, (U ﹏ U)
+              feedbackuww = nyone, >w<
+              h-hasundoaction = some(twue), mya
+              c-confiwmationdispwaytype = n-nyone, >w<
+              cwienteventinfo = nyone, nyaa~~
+              icon = nyone, (✿oωo)
+              wichbehaviow =
+                some(wichfeedbackbehaviowmawknotintewestedtopic(topicid = topicid.tostwing)), ʘwʘ
+              subpwompt = n-nyone, (ˆ ﻌ ˆ)♡
+              e-encodedfeedbackwequest = nyone
             )
           )
-        case _ => None
+        c-case _ => n-nyone
       }
-    } else {
-      None
+    } e-ewse {
+      nyone
     }
   }
 }

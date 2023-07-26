@@ -1,121 +1,121 @@
-package com.twitter.follow_recommendations.common.predicates
+package com.twittew.fowwow_wecommendations.common.pwedicates
 
-import com.google.inject.name.Named
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.follow_recommendations.common.predicates.InactivePredicateParams._
-import com.twitter.service.metastore.gen.thriftscala.UserRecommendabilityFeatures
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.conversions.DurationOps._
-import com.twitter.escherbird.util.stitchcache.StitchCache
-import com.twitter.follow_recommendations.common.models.HasUserState
-import com.twitter.follow_recommendations.common.predicates.InactivePredicateParams.DefaultInactivityThreshold
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+impowt c-com.googwe.inject.name.named
+i-impowt com.twittew.cowe_wowkfwows.usew_modew.thwiftscawa.usewstate
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.base.pwedicate
+i-impowt com.twittew.fowwow_wecommendations.common.base.pwedicatewesuwt
+i-impowt c-com.twittew.fowwow_wecommendations.common.constants.guicenamedconstants
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+impowt com.twittew.fowwow_wecommendations.common.modews.fiwtewweason
+impowt com.twittew.fowwow_wecommendations.common.pwedicates.inactivepwedicatepawams._
+impowt c-com.twittew.sewvice.metastowe.gen.thwiftscawa.usewwecommendabiwityfeatuwes
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.cwient.fetchew
+i-impowt com.twittew.timewines.configapi.haspawams
+impowt com.twittew.utiw.duwation
+impowt com.twittew.utiw.time
+impowt javax.inject.inject
+impowt j-javax.inject.singweton
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.eschewbiwd.utiw.stitchcache.stitchcache
+impowt com.twittew.fowwow_wecommendations.common.modews.hasusewstate
+impowt com.twittew.fowwow_wecommendations.common.pwedicates.inactivepwedicatepawams.defauwtinactivitythweshowd
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
 
-import java.lang.{Long => JLong}
+impowt java.wang.{wong => jwong}
 
-@Singleton
-case class InactivePredicate @Inject() (
-  statsReceiver: StatsReceiver,
-  @Named(GuiceNamedConstants.USER_RECOMMENDABILITY_FETCHER) userRecommendabilityFetcher: Fetcher[
-    Long,
-    Unit,
-    UserRecommendabilityFeatures
-  ]) extends Predicate[(HasParams with HasClientContext with HasUserState, CandidateUser)] {
+@singweton
+c-case cwass inactivepwedicate @inject() (
+  s-statsweceivew: s-statsweceivew, (⑅˘꒳˘)
+  @named(guicenamedconstants.usew_wecommendabiwity_fetchew) u-usewwecommendabiwityfetchew: f-fetchew[
+    wong, OwO
+    unit,
+    usewwecommendabiwityfeatuwes
+  ]) e-extends pwedicate[(haspawams with hascwientcontext w-with hasusewstate, (ꈍᴗꈍ) candidateusew)] {
 
-  private val stats: StatsReceiver = statsReceiver.scope("InactivePredicate")
-  private val cacheStats = stats.scope("cache")
+  pwivate vaw stats: statsweceivew = statsweceivew.scope("inactivepwedicate")
+  pwivate vaw c-cachestats = stats.scope("cache")
 
-  private def queryUserRecommendable(userId: Long): Stitch[Option[UserRecommendabilityFeatures]] =
-    userRecommendabilityFetcher.fetch(userId).map(_.v)
+  pwivate def q-quewyusewwecommendabwe(usewid: w-wong): stitch[option[usewwecommendabiwityfeatuwes]] =
+    u-usewwecommendabiwityfetchew.fetch(usewid).map(_.v)
 
-  private val userRecommendableCache =
-    StitchCache[JLong, Option[UserRecommendabilityFeatures]](
-      maxCacheSize = 100000,
-      ttl = 12.hours,
-      statsReceiver = cacheStats.scope("UserRecommendable"),
-      underlyingCall = (userId: JLong) => queryUserRecommendable(userId)
+  pwivate vaw usewwecommendabwecache =
+    stitchcache[jwong, 😳 option[usewwecommendabiwityfeatuwes]](
+      m-maxcachesize = 100000, 😳😳😳
+      t-ttw = 12.houws,
+      statsweceivew = c-cachestats.scope("usewwecommendabwe"), mya
+      u-undewwyingcaww = (usewid: jwong) => quewyusewwecommendabwe(usewid)
     )
 
-  override def apply(
-    targetAndCandidate: (HasParams with HasClientContext with HasUserState, CandidateUser)
-  ): Stitch[PredicateResult] = {
-    val (target, candidate) = targetAndCandidate
+  o-ovewwide def appwy(
+    tawgetandcandidate: (haspawams w-with hascwientcontext with hasusewstate, mya c-candidateusew)
+  ): stitch[pwedicatewesuwt] = {
+    v-vaw (tawget, (⑅˘꒳˘) candidate) = t-tawgetandcandidate
 
-    userRecommendableCache
-      .readThrough(candidate.id).map {
-        case recFeaturesFetchResult =>
-          recFeaturesFetchResult match {
-            case None =>
-              PredicateResult.Invalid(Set(FilterReason.MissingRecommendabilityData))
-            case Some(recFeatures) =>
-              if (disableInactivityPredicate(target, target.userState, recFeatures.userState)) {
-                PredicateResult.Valid
-              } else {
-                val defaultInactivityThreshold = target.params(DefaultInactivityThreshold).days
-                val hasBeenActiveRecently = recFeatures.lastStatusUpdateMs
-                  .map(Time.now - Time.fromMilliseconds(_)).getOrElse(
-                    Duration.Top) < defaultInactivityThreshold
+    u-usewwecommendabwecache
+      .weadthwough(candidate.id).map {
+        case wecfeatuwesfetchwesuwt =>
+          wecfeatuwesfetchwesuwt match {
+            case nyone =>
+              pwedicatewesuwt.invawid(set(fiwtewweason.missingwecommendabiwitydata))
+            case some(wecfeatuwes) =>
+              i-if (disabweinactivitypwedicate(tawget, (U ﹏ U) t-tawget.usewstate, mya wecfeatuwes.usewstate)) {
+                p-pwedicatewesuwt.vawid
+              } e-ewse {
+                v-vaw defauwtinactivitythweshowd = tawget.pawams(defauwtinactivitythweshowd).days
+                vaw hasbeenactivewecentwy = w-wecfeatuwes.waststatusupdatems
+                  .map(time.now - time.fwommiwwiseconds(_)).getowewse(
+                    duwation.top) < defauwtinactivitythweshowd
                 stats
-                  .scope(defaultInactivityThreshold.toString).counter(
-                    if (hasBeenActiveRecently)
+                  .scope(defauwtinactivitythweshowd.tostwing).countew(
+                    if (hasbeenactivewecentwy)
                       "active"
-                    else
+                    e-ewse
                       "inactive"
-                  ).incr()
-                if (hasBeenActiveRecently && (!target
-                    .params(UseEggFilter) || recFeatures.isNotEgg.contains(1))) {
-                  PredicateResult.Valid
-                } else {
-                  PredicateResult.Invalid(Set(FilterReason.Inactive))
+                  ).incw()
+                if (hasbeenactivewecentwy && (!tawget
+                    .pawams(useeggfiwtew) || wecfeatuwes.isnotegg.contains(1))) {
+                  p-pwedicatewesuwt.vawid
+                } e-ewse {
+                  p-pwedicatewesuwt.invawid(set(fiwtewweason.inactive))
                 }
               }
           }
-      }.rescue {
-        case e: Exception =>
-          stats.counter(e.getClass.getSimpleName).incr()
-          Stitch(PredicateResult.Invalid(Set(FilterReason.FailOpen)))
+      }.wescue {
+        case e: exception =>
+          s-stats.countew(e.getcwass.getsimpwename).incw()
+          s-stitch(pwedicatewesuwt.invawid(set(fiwtewweason.faiwopen)))
       }
   }
 
-  private[this] def disableInactivityPredicate(
-    target: HasParams,
-    consumerState: Option[UserState],
-    candidateState: Option[UserState]
-  ): Boolean = {
-    target.params(MightBeDisabled) &&
-    consumerState.exists(InactivePredicate.ValidConsumerStates.contains) &&
+  p-pwivate[this] d-def disabweinactivitypwedicate(
+    tawget: haspawams, ʘwʘ
+    c-consumewstate: o-option[usewstate], (˘ω˘)
+    c-candidatestate: o-option[usewstate]
+  ): b-boowean = {
+    tawget.pawams(mightbedisabwed) &&
+    consumewstate.exists(inactivepwedicate.vawidconsumewstates.contains) &&
     (
       (
-        candidateState.exists(InactivePredicate.ValidCandidateStates.contains) &&
-        !target.params(OnlyDisableForNewUserStateCandidates)
+        candidatestate.exists(inactivepwedicate.vawidcandidatestates.contains) &&
+        !tawget.pawams(onwydisabwefownewusewstatecandidates)
       ) ||
       (
-        candidateState.contains(UserState.New) &&
-        target.params(OnlyDisableForNewUserStateCandidates)
+        c-candidatestate.contains(usewstate.new) &&
+        tawget.pawams(onwydisabwefownewusewstatecandidates)
       )
     )
   }
 }
 
-object InactivePredicate {
-  val ValidConsumerStates: Set[UserState] = Set(
-    UserState.HeavyNonTweeter,
-    UserState.MediumNonTweeter,
-    UserState.HeavyTweeter,
-    UserState.MediumTweeter
+object inactivepwedicate {
+  vaw vawidconsumewstates: set[usewstate] = s-set(
+    usewstate.heavynontweetew, (U ﹏ U)
+    usewstate.mediumnontweetew, ^•ﻌ•^
+    usewstate.heavytweetew, (˘ω˘)
+    usewstate.mediumtweetew
   )
-  val ValidCandidateStates: Set[UserState] =
-    Set(UserState.New, UserState.VeryLight, UserState.Light, UserState.NearZero)
+  v-vaw vawidcandidatestates: s-set[usewstate] =
+    s-set(usewstate.new, :3 usewstate.vewywight, ^^;; usewstate.wight, 🥺 u-usewstate.neawzewo)
 }

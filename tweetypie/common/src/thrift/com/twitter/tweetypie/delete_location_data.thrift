@@ -1,32 +1,32 @@
-namespace java com.twitter.tweetypie.thriftjava
-#@namespace scala com.twitter.tweetypie.thriftscala
-namespace py gen.twitter.tweetypie
-namespace rb TweetyPie
-namespace go tweetypie
+namespace java com.twittew.tweetypie.thwiftjava
+#@namespace scawa c-com.twittew.tweetypie.thwiftscawa
+n-nyamespace py g-gen.twittew.tweetypie
+n-nyamespace w-wb tweetypie
+nyamespace g-go tweetypie
 
 /**
- * Event that triggers deletion of the geo information on tweets created
- * at timestamp_ms or earlier.
+ * event t-that twiggews d-dewetion of the geo infowmation on tweets cweated
+ * at timestamp_ms ow eawwiew. >_<
  */
-struct DeleteLocationData {
+s-stwuct dewetewocationdata {
   /**
-   * The id of the user whose tweets should have their geo information
-   * removed.
+   * the id of the usew whose tweets shouwd h-have theiw geo infowmation
+   * w-wemoved. (⑅˘꒳˘)
    */
-  1: required i64 user_id (personalDataType='UserId')
+  1: wequiwed i64 usew_id (pewsonawdatatype='usewid')
 
   /**
-   * The time at which this request was initiated. Tweets by this user
-   * whose snowflake ids contain timestamps less than or equal to this
-   * value will no longer be returned with geo information.
+   * the time a-at which this wequest was initiated. /(^•ω•^) t-tweets by this u-usew
+   * whose snowfwake ids contain timestamps wess than ow equaw to this
+   * v-vawue wiww nyo wongew be wetuwned with geo infowmation. rawr x3
    */
-  2: required i64 timestamp_ms
+  2: wequiwed i-i64 timestamp_ms
 
   /**
-   * The last time this user requested deletion of location data prior
-   * to this request. This value may be omitted, but should be included
-   * if available for implementation efficiency, since it eliminates the
-   * need to scan tweets older than this value for geo information.
+   * the w-wast time this u-usew wequested d-dewetion of wocation d-data pwiow
+   * to this wequest. (U ﹏ U) this vawue m-may be omitted, (U ﹏ U) but shouwd be incwuded
+   * if a-avaiwabwe fow impwementation efficiency, (⑅˘꒳˘) since it ewiminates the
+   * nyeed to scan tweets owdew t-than this vawue fow geo infowmation. òωó
    */
-  3: optional i64 last_timestamp_ms
-}(persisted='true', hasPersonalData='true')
+  3: o-optionaw i64 wast_timestamp_ms
+}(pewsisted='twue', ʘwʘ h-haspewsonawdata='twue')

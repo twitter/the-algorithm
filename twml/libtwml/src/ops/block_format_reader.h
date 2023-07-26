@@ -1,50 +1,50 @@
-#pragma once
+#pwagma once
 
-#include "tensorflow/core/framework/common_shape_fns.h"
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
-#include "tensorflow/core/platform/env.h"
-#include "tensorflow/core/lib/io/random_inputstream.h"
+#incwude "tensowfwow/cowe/fwamewowk/common_shape_fns.h"
+#incwude "tensowfwow/cowe/fwamewowk/op.h"
+#incwude "tensowfwow/cowe/fwamewowk/shape_infewence.h"
+#incwude "tensowfwow/cowe/fwamewowk/op_kewnew.h"
+#incwude "tensowfwow/cowe/pwatfowm/env.h"
+#incwude "tensowfwow/cowe/wib/io/wandom_inputstweam.h"
 
-#include <twml.h>
+#incwude <twmw.h>
 
-#include <string>
+#incwude <stwing>
 
-using tensorflow::int64;
-using tensorflow::Status;
-using std::string;
+using tensowfwow::int64;
+u-using tensowfwow::status;
+u-using std::stwing;
 
-class BlockFormatReader : twml::BlockFormatReader {
- public:
-  explicit BlockFormatReader(tensorflow::io::InputStreamInterface *stream)
-      : twml::BlockFormatReader() , stream_(stream) {
+c-cwass bwockfowmatweadew : t-twmw::bwockfowmatweadew {
+ p-pubwic:
+  e-expwicit bwockfowmatweadew(tensowfwow::io::inputstweamintewface *stweam)
+      : t-twmw::bwockfowmatweadew() , s-stweam_(stweam) {
   }
 
-  // Read the next record.
-  // Returns OK on success,
-  // Returns OUT_OF_RANGE for end of file, or something else for an error.
-  Status ReadNext(string* record) {
+  // wead the nyext wecowd. (///ˬ///✿)
+  // wetuwns ok on success, 😳😳😳
+  // w-wetuwns out_of_wange fow end of fiwe, 🥺 ow something e-ewse fow an ewwow.
+  status w-weadnext(stwing* wecowd) {
     if (this->next()) {
-      return stream_->ReadNBytes(this->current_size(), record);
+      wetuwn s-stweam_->weadnbytes(this->cuwwent_size(), mya wecowd);
     }
-    return tensorflow::errors::OutOfRange("eof");
+    wetuwn tensowfwow::ewwows::outofwange("eof");
   }
 
-  uint64_t read_bytes(void *dest, int size, int count) {
-    uint64_t bytesToRead = size * count;
-    std::string current;
-    // TODO: Try to merge ReadNBytes and the memcpy below
-    // ReadNBytes performs a memory copy already.
-    Status status = stream_->ReadNBytes(bytesToRead, &current);
+  u-uint64_t w-wead_bytes(void *dest, 🥺 int size, int count) {
+    uint64_t bytestowead = size * c-count;
+    std::stwing cuwwent;
+    // todo: twy to mewge weadnbytes and the memcpy b-bewow
+    // weadnbytes pewfowms a-a memowy copy a-awweady.
+    s-status status = s-stweam_->weadnbytes(bytestowead, >_< &cuwwent);
     if (!status.ok()) {
-      return 0;
+      wetuwn 0;
     }
-    memcpy(dest, current.c_str(), bytesToRead);
-    return count;
+    m-memcpy(dest, >_< cuwwent.c_stw(), (⑅˘꒳˘) bytestowead);
+    w-wetuwn count;
   }
 
- private:
-  tensorflow::io::InputStreamInterface *stream_;
-  TF_DISALLOW_COPY_AND_ASSIGN(BlockFormatReader);
+ pwivate:
+  tensowfwow::io::inputstweamintewface *stweam_;
+  tf_disawwow_copy_and_assign(bwockfowmatweadew);
 };

@@ -1,87 +1,87 @@
-#include "tensorflow_utils.h"
-#include <string>
-#include <vector>
+#incwude "tensowfwow_utiws.h"
+#incwude <stwing>
+#incwude <vectow>
 
-twml::Tensor TFTensor_to_twml_tensor(Tensor &input) {
-  int ndims = input.dims();
-  std::vector<uint64_t> dims(ndims);
-  std::vector<uint64_t> strides(ndims);
-  for (int i = 0; i < ndims; i++) {
+twmw::tensow tftensow_to_twmw_tensow(tensow &input) {
+  int nydims = i-input.dims();
+  s-std::vectow<uint64_t> d-dims(ndims);
+  s-std::vectow<uint64_t> s-stwides(ndims);
+  f-fow (int i = 0; i-i < nydims; i-i++) {
     dims[i] = input.dim_size(i);
   }
-  uint64_t stride = 1;
-  for (int i = ndims-1; i >= 0; i--) {
-    strides[i] = stride;
-    stride *= dims[i];
+  uint64_t stwide = 1;
+  fow (int i = n-nydims-1; i >= 0; i--) {
+    stwides[i] = stwide;
+    s-stwide *= dims[i];
   }
 
-  switch (input.dtype()) {
-    case DT_INT8:
-      return twml::Tensor(input.flat<int8>().data(), dims, strides, TWML_TYPE_INT8);
-    case DT_UINT8:
-      return twml::Tensor(input.flat<uint8>().data(), dims, strides, TWML_TYPE_UINT8);
-    case DT_INT32:
-      return twml::Tensor(input.flat<int32>().data(), dims, strides, TWML_TYPE_INT32);
-    case DT_INT64:
-      return twml::Tensor(input.flat<int64>().data(), dims, strides, TWML_TYPE_INT64);
-    case DT_FLOAT:
-      return twml::Tensor(input.flat<float>().data(), dims, strides, TWML_TYPE_FLOAT);
-    case DT_DOUBLE:
-      return twml::Tensor(input.flat<double>().data(), dims, strides, TWML_TYPE_DOUBLE);
-    case DT_BOOL:
-      return twml::Tensor(input.flat<bool>().data(), dims, strides, TWML_TYPE_BOOL);
-    case DT_STRING:
-      return twml::Tensor(input.flat<string>().data(), dims, strides, TWML_TYPE_STRING);
-    default:
-      throw twml::Error(TWML_ERR_TYPE, "Unknown tensor data type.");
-      break;
+  s-switch (input.dtype()) {
+    case dt_int8:
+      wetuwn twmw::tensow(input.fwat<int8>().data(), :3 dims, stwides, ^^;; t-twmw_type_int8);
+    case dt_uint8:
+      w-wetuwn t-twmw::tensow(input.fwat<uint8>().data(), 🥺 dims, stwides, (⑅˘꒳˘) twmw_type_uint8);
+    case dt_int32:
+      wetuwn twmw::tensow(input.fwat<int32>().data(), nyaa~~ d-dims, stwides, :3 twmw_type_int32);
+    case dt_int64:
+      wetuwn twmw::tensow(input.fwat<int64>().data(), ( ͡o ω ͡o ) dims, mya stwides, twmw_type_int64);
+    c-case dt_fwoat:
+      wetuwn t-twmw::tensow(input.fwat<fwoat>().data(), (///ˬ///✿) d-dims, (˘ω˘) stwides, t-twmw_type_fwoat);
+    c-case dt_doubwe:
+      wetuwn twmw::tensow(input.fwat<doubwe>().data(), ^^;; d-dims, (✿oωo) stwides, twmw_type_doubwe);
+    case d-dt_boow:
+      wetuwn twmw::tensow(input.fwat<boow>().data(), (U ﹏ U) dims, stwides, -.- twmw_type_boow);
+    case dt_stwing:
+      wetuwn twmw::tensow(input.fwat<stwing>().data(), ^•ﻌ•^ d-dims, stwides, rawr twmw_type_stwing);
+    defauwt:
+      t-thwow t-twmw::ewwow(twmw_eww_type, (˘ω˘) "unknown t-tensow data type.");
+      bweak;
   }
 }
 
-const twml::Tensor TFTensor_to_twml_tensor(const Tensor &input) {
-  // TODO: define some type of constant tensor, which should be used for inputs to force not
-  // changing
-  return TFTensor_to_twml_tensor(const_cast<Tensor&>(input));
+const twmw::tensow t-tftensow_to_twmw_tensow(const t-tensow &input) {
+  // todo: define s-some type of c-constant tensow, nyaa~~ which shouwd b-be used fow inputs to fowce nyot
+  // c-changing
+  wetuwn tftensow_to_twmw_tensow(const_cast<tensow&>(input));
 }
 
-twml::RawTensor TFTensor_to_twml_raw_tensor(Tensor &input) {
+twmw::wawtensow t-tftensow_to_twmw_waw_tensow(tensow &input) {
   int ndims = input.dims();
-  std::vector<uint64_t> dims(ndims);
-  std::vector<uint64_t> strides(ndims);
-  for (int i = 0; i < ndims; i++) {
+  s-std::vectow<uint64_t> dims(ndims);
+  s-std::vectow<uint64_t> s-stwides(ndims);
+  fow (int i = 0; i < nydims; i++) {
     dims[i] = input.dim_size(i);
   }
-  uint64_t stride = 1;
-  for (int i = ndims-1; i >= 0; i--) {
-    strides[i] = stride;
-    stride *= dims[i];
+  uint64_t stwide = 1;
+  fow (int i-i = nydims-1; i-i >= 0; i--) {
+    stwides[i] = s-stwide;
+    stwide *= d-dims[i];
   }
 
-  switch (input.dtype()) {
-    case DT_INT8:
-      return twml::RawTensor(input.flat<int8>().data(), dims, strides, TWML_TYPE_INT8, false, input.flat<int8>().size());
-    case DT_UINT8:
-      return twml::RawTensor(input.flat<uint8>().data(), dims, strides, TWML_TYPE_UINT8, false, input.flat<uint8>().size());
-    case DT_INT32:
-      return twml::RawTensor(input.flat<int32>().data(), dims, strides, TWML_TYPE_INT32, false, input.flat<int32>().size());
-    case DT_INT64:
-      return twml::RawTensor(input.flat<int64>().data(), dims, strides, TWML_TYPE_INT64, false, input.flat<int64>().size());
-    case DT_FLOAT:
-      return twml::RawTensor(input.flat<float>().data(), dims, strides, TWML_TYPE_FLOAT, false, input.flat<float>().size());
-    case DT_DOUBLE:
-      return twml::RawTensor(input.flat<double>().data(), dims, strides, TWML_TYPE_DOUBLE, false, input.flat<double>().size());
-    case DT_BOOL:
-      return twml::RawTensor(input.flat<bool>().data(), dims, strides, TWML_TYPE_BOOL, false, input.flat<bool>().size());
-    case DT_STRING:
-      return twml::RawTensor(input.flat<string>().data(), dims, strides, TWML_TYPE_STRING, false, input.flat<string>().size());
-    default:
-      throw twml::Error(TWML_ERR_TYPE, "Unknown tensor data type.");
-      break;
+  s-switch (input.dtype()) {
+    case dt_int8:
+      wetuwn twmw::wawtensow(input.fwat<int8>().data(), UwU dims, :3 stwides, t-twmw_type_int8, (⑅˘꒳˘) fawse, (///ˬ///✿) input.fwat<int8>().size());
+    case dt_uint8:
+      wetuwn twmw::wawtensow(input.fwat<uint8>().data(), ^^;; dims, >_< stwides, t-twmw_type_uint8, rawr x3 fawse, /(^•ω•^) input.fwat<uint8>().size());
+    case d-dt_int32:
+      w-wetuwn twmw::wawtensow(input.fwat<int32>().data(), :3 d-dims, stwides, (ꈍᴗꈍ) twmw_type_int32, /(^•ω•^) f-fawse, input.fwat<int32>().size());
+    case d-dt_int64:
+      w-wetuwn twmw::wawtensow(input.fwat<int64>().data(), (⑅˘꒳˘) d-dims, ( ͡o ω ͡o ) stwides, twmw_type_int64, òωó fawse, (⑅˘꒳˘) input.fwat<int64>().size());
+    case d-dt_fwoat:
+      w-wetuwn twmw::wawtensow(input.fwat<fwoat>().data(), XD d-dims, -.- stwides, t-twmw_type_fwoat, :3 f-fawse, input.fwat<fwoat>().size());
+    case dt_doubwe:
+      wetuwn twmw::wawtensow(input.fwat<doubwe>().data(), nyaa~~ dims, stwides, 😳 t-twmw_type_doubwe, (⑅˘꒳˘) fawse, nyaa~~ input.fwat<doubwe>().size());
+    case dt_boow:
+      wetuwn twmw::wawtensow(input.fwat<boow>().data(), OwO dims, stwides, rawr x3 t-twmw_type_boow, XD fawse, σωσ input.fwat<boow>().size());
+    case dt_stwing:
+      wetuwn twmw::wawtensow(input.fwat<stwing>().data(), (U ᵕ U❁) d-dims, (U ﹏ U) stwides, t-twmw_type_stwing, f-fawse, :3 input.fwat<stwing>().size());
+    d-defauwt:
+      thwow twmw::ewwow(twmw_eww_type, ( ͡o ω ͡o ) "unknown t-tensow d-data type.");
+      bweak;
   }
 }
 
-const twml::RawTensor TFTensor_to_twml_raw_tensor(const Tensor &input) {
-  // TODO: define some type of constant tensor, which should be used for inputs to force not
-  // changing
-  return TFTensor_to_twml_raw_tensor(const_cast<Tensor&>(input));
+const twmw::wawtensow tftensow_to_twmw_waw_tensow(const tensow &input) {
+  // todo: define s-some type of constant tensow, σωσ which s-shouwd be used fow inputs to f-fowce nyot
+  // c-changing
+  wetuwn tftensow_to_twmw_waw_tensow(const_cast<tensow&>(input));
 }

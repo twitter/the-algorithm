@@ -1,37 +1,37 @@
-package com.twitter.tweetypie.core
+package com.twittew.tweetypie.cowe
 
-import scala.util.control.NoStackTrace
+impowt scawa.utiw.contwow.nostacktwace
 
 /**
- * Parent exception class for failures while talking to upstream services.  These will
- * be counted and then converted to servo.ServerError.DependencyError
+ * p-pawent exception c-cwass fow faiwuwes w-whiwe tawking t-to upstweam s-sewvices. /(^•ω•^)  these w-wiww
+ * be counted a-and then convewted t-to sewvo.sewvewewwow.dependencyewwow
  */
-sealed abstract class UpstreamFailure(msg: String) extends Exception(msg) with NoStackTrace
+seawed abstwact cwass upstweamfaiwuwe(msg: stwing) extends exception(msg) w-with nostacktwace
 
-object UpstreamFailure {
-  case class SnowflakeFailure(t: Throwable) extends UpstreamFailure(t.toString)
+object upstweamfaiwuwe {
+  c-case cwass snowfwakefaiwuwe(t: t-thwowabwe) extends upstweamfaiwuwe(t.tostwing)
 
-  case object UserProfileEmptyException extends UpstreamFailure("User.profile is empty")
+  case object usewpwofiweemptyexception extends u-upstweamfaiwuwe("usew.pwofiwe is empty")
 
-  case object UserViewEmptyException extends UpstreamFailure("User.view is empty")
+  c-case object usewviewemptyexception e-extends upstweamfaiwuwe("usew.view is empty")
 
-  case object UserSafetyEmptyException extends UpstreamFailure("User.safety is empty")
+  case object usewsafetyemptyexception extends u-upstweamfaiwuwe("usew.safety is empty")
 
-  case class TweetLookupFailure(t: Throwable) extends UpstreamFailure(t.toString)
+  case cwass tweetwookupfaiwuwe(t: thwowabwe) extends upstweamfaiwuwe(t.tostwing)
 
-  case class UserLookupFailure(t: Throwable) extends UpstreamFailure(t.toString)
+  c-case cwass usewwookupfaiwuwe(t: thwowabwe) extends u-upstweamfaiwuwe(t.tostwing)
 
-  case class DeviceSourceLookupFailure(t: Throwable) extends UpstreamFailure(t.toString)
+  c-case cwass devicesouwcewookupfaiwuwe(t: t-thwowabwe) e-extends upstweamfaiwuwe(t.tostwing)
 
-  case class TFlockLookupFailure(t: Throwable) extends UpstreamFailure(t.toString)
+  case cwass tfwockwookupfaiwuwe(t: t-thwowabwe) extends upstweamfaiwuwe(t.tostwing)
 
-  case class UrlShorteningFailure(t: Throwable) extends UpstreamFailure(t.toString)
+  case cwass uwwshowteningfaiwuwe(t: t-thwowabwe) extends upstweamfaiwuwe(t.tostwing)
 
-  case object MediaShortenUrlMalformedFailure
-      extends UpstreamFailure("Media shortened url is malformed")
+  case object mediashowtenuwwmawfowmedfaiwuwe
+      extends upstweamfaiwuwe("media s-showtened uww is mawfowmed")
 
-  case object MediaExpandedUrlNotValidFailure
-      extends UpstreamFailure("Talon returns badInput on media expanded url")
+  c-case object m-mediaexpandeduwwnotvawidfaiwuwe
+      e-extends upstweamfaiwuwe("tawon wetuwns badinput on media e-expanded uww")
 
-  case class MediaServiceServerError(t: Throwable) extends UpstreamFailure(t.toString)
+  c-case cwass mediasewvicesewvewewwow(t: t-thwowabwe) e-extends upstweamfaiwuwe(t.tostwing)
 }

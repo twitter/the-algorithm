@@ -1,83 +1,83 @@
-package com.twitter.tweetypie.federated.columns
+package com.twittew.tweetypie.fedewated.cowumns
 
-import com.twitter.stitch.Stitch
-import com.twitter.strato.access.Access.LdapGroup
-import com.twitter.strato.catalog.Fetch
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.config.AnyOf
-import com.twitter.strato.config.ContactInfo
-import com.twitter.strato.config.FromColumns
-import com.twitter.strato.config.Has
-import com.twitter.strato.config.Path
-import com.twitter.strato.config.Policy
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
-import com.twitter.strato.data.Lifecycle.Production
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.response.Err
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.tweetypie.UserId
-import com.twitter.tweetypie.thriftscala.federated.GetStoredTweetsByUserView
-import com.twitter.tweetypie.thriftscala.federated.GetStoredTweetsByUserResponse
-import com.twitter.tweetypie.{thriftscala => thrift}
-import com.twitter.util.Future
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.access.access.wdapgwoup
+i-impowt com.twittew.stwato.catawog.fetch
+i-impowt c-com.twittew.stwato.catawog.opmetadata
+i-impowt com.twittew.stwato.config.anyof
+impowt c-com.twittew.stwato.config.contactinfo
+i-impowt c-com.twittew.stwato.config.fwomcowumns
+impowt com.twittew.stwato.config.has
+impowt com.twittew.stwato.config.path
+i-impowt com.twittew.stwato.config.powicy
+impowt com.twittew.stwato.data.conv
+i-impowt com.twittew.stwato.data.descwiption.pwaintext
+impowt com.twittew.stwato.data.wifecycwe.pwoduction
+i-impowt com.twittew.stwato.fed.stwatofed
+impowt com.twittew.stwato.wesponse.eww
+impowt com.twittew.stwato.thwift.scwoogeconv
+i-impowt com.twittew.tweetypie.usewid
+impowt c-com.twittew.tweetypie.thwiftscawa.fedewated.getstowedtweetsbyusewview
+i-impowt com.twittew.tweetypie.thwiftscawa.fedewated.getstowedtweetsbyusewwesponse
+impowt com.twittew.tweetypie.{thwiftscawa => thwift}
+impowt com.twittew.utiw.futuwe
 
-class GetStoredTweetsByUserColumn(
-  handler: thrift.GetStoredTweetsByUserRequest => Future[thrift.GetStoredTweetsByUserResult])
-    extends StratoFed.Column(GetStoredTweetsByUserColumn.Path)
-    with StratoFed.Fetch.Stitch {
+cwass g-getstowedtweetsbyusewcowumn(
+  handwew: thwift.getstowedtweetsbyusewwequest => futuwe[thwift.getstowedtweetsbyusewwesuwt])
+    extends stwatofed.cowumn(getstowedtweetsbyusewcowumn.path)
+    with stwatofed.fetch.stitch {
 
-  override val contactInfo: ContactInfo = TweetypieContactInfo
-  override val metadata: OpMetadata = OpMetadata(
-    lifecycle = Some(Production),
-    description =
-      Some(PlainText("Fetches hydrated Tweets for a particular User regardless of Tweet state."))
+  o-ovewwide vaw contactinfo: contactinfo = t-tweetypiecontactinfo
+  o-ovewwide vaw metadata: o-opmetadata = o-opmetadata(
+    wifecycwe = some(pwoduction), (U ﹏ U)
+    d-descwiption =
+      some(pwaintext("fetches hydwated tweets f-fow a pawticuwaw usew wegawdwess of tweet state."))
   )
-  override val policy: Policy = AnyOf(
-    Seq(
-      FromColumns(Set(Path("tweetypie/data-provider/storedTweets.User"))),
-      Has(LdapGroup("tweetypie-team"))
+  ovewwide vaw powicy: powicy = anyof(
+    s-seq(
+      fwomcowumns(set(path("tweetypie/data-pwovidew/stowedtweets.usew"))), >w<
+      h-has(wdapgwoup("tweetypie-team"))
     ))
 
-  override type Key = UserId
-  override type View = GetStoredTweetsByUserView
-  override type Value = GetStoredTweetsByUserResponse
+  o-ovewwide type k-key = usewid
+  ovewwide type view = getstowedtweetsbyusewview
+  ovewwide type v-vawue = getstowedtweetsbyusewwesponse
 
-  override val keyConv: Conv[Key] = Conv.ofType
-  override val viewConv: Conv[View] = ScroogeConv.fromStruct[GetStoredTweetsByUserView]
-  override val valueConv: Conv[Value] = ScroogeConv.fromStruct[GetStoredTweetsByUserResponse]
+  o-ovewwide vaw keyconv: c-conv[key] = conv.oftype
+  o-ovewwide vaw viewconv: c-conv[view] = scwoogeconv.fwomstwuct[getstowedtweetsbyusewview]
+  ovewwide vaw v-vawueconv: conv[vawue] = scwoogeconv.fwomstwuct[getstowedtweetsbyusewwesponse]
 
-  override def fetch(key: Key, view: View): Stitch[Result[Value]] = {
-    val request = thrift.GetStoredTweetsByUserRequest(
-      userId = key,
-      options = Some(
-        thrift.GetStoredTweetsByUserOptions(
-          bypassVisibilityFiltering = view.bypassVisibilityFiltering,
-          setForUserId = view.setForUserId,
-          startTimeMsec = view.startTimeMsec,
-          endTimeMsec = view.endTimeMsec,
-          cursor = view.cursor,
-          startFromOldest = view.startFromOldest,
-          additionalFieldIds = view.additionalFieldIds
+  ovewwide def fetch(key: k-key, mya view: view): stitch[wesuwt[vawue]] = {
+    v-vaw wequest = thwift.getstowedtweetsbyusewwequest(
+      u-usewid = key, >w<
+      o-options = some(
+        thwift.getstowedtweetsbyusewoptions(
+          bypassvisibiwityfiwtewing = view.bypassvisibiwityfiwtewing, nyaa~~
+          setfowusewid = view.setfowusewid, (✿oωo)
+          stawttimemsec = v-view.stawttimemsec, ʘwʘ
+          e-endtimemsec = view.endtimemsec, (ˆ ﻌ ˆ)♡
+          c-cuwsow = v-view.cuwsow, 😳😳😳
+          s-stawtfwomowdest = view.stawtfwomowdest, :3
+          additionawfiewdids = view.additionawfiewdids
         ))
     )
 
-    Stitch
-      .callFuture(handler(request))
-      .map { result =>
-        Fetch.Result.found(
-          GetStoredTweetsByUserResponse(
-            storedTweets = result.storedTweets,
-            cursor = result.cursor
+    stitch
+      .cawwfutuwe(handwew(wequest))
+      .map { w-wesuwt =>
+        fetch.wesuwt.found(
+          getstowedtweetsbyusewwesponse(
+            stowedtweets = wesuwt.stowedtweets, OwO
+            cuwsow = wesuwt.cuwsow
           ))
       }
-      .rescue {
-        case _ => Stitch.exception(Err(Err.Internal))
+      .wescue {
+        c-case _ => stitch.exception(eww(eww.intewnaw))
       }
   }
 
 }
 
-object GetStoredTweetsByUserColumn {
-  val Path = "tweetypie/internal/getStoredTweets.User"
+object getstowedtweetsbyusewcowumn {
+  v-vaw path = "tweetypie/intewnaw/getstowedtweets.usew"
 }

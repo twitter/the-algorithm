@@ -1,294 +1,294 @@
-namespace java com.twitter.unified_user_actions.thriftjava
-#@namespace scala com.twitter.unified_user_actions.thriftscala
-#@namespace strato com.twitter.unified_user_actions
+namespace java com.twittew.unified_usew_actions.thwiftjava
+#@namespace scawa com.twittew.unified_usew_actions.thwiftscawa
+#@namespace s-stwato com.twittew.unified_usew_actions
 
-include "com/twitter/unified_user_actions/action_info.thrift"
-include "com/twitter/clientapp/gen/client_app.thrift"
+i-incwude "com/twittew/unified_usew_actions/action_info.thwift"
+i-incwude "com/twittew/cwientapp/gen/cwient_app.thwift"
 
 /*
- * Tweet item information. Some development notes:
- * 1. Please keep this top-level struct as minimal as possible to reduce overhead.
- * 2. We intentionally avoid nesting action tweet in a separate structure
- * to underscore its importance and faciliate extraction of most commonly
- * needed fields such as actionTweetId. New fields related to the action tweet
- * should generally be prefixed with "actionTweet". 
- * 3. For the related Tweets, e.g. retweetingTweetId, inReplyToTweetId, etc, we
- * mostly only keep their ids for consistency and simplicity.
+ * t-tweet item i-infowmation. ^^;; s-some devewopment n-nyotes:
+ * 1. OwO p-pwease keep this top-wevew stwuct as minimaw as possibwe to weduce ovewhead. 🥺
+ * 2. mya w-we intentionawwy avoid nyesting action tweet i-in a sepawate stwuctuwe
+ * to undewscowe i-its impowtance and faciwiate extwaction of most commonwy
+ * n-nyeeded fiewds such as actiontweetid. 😳 n-nyew f-fiewds wewated to the action tweet
+ * shouwd genewawwy be pwefixed with "actiontweet". òωó 
+ * 3. f-fow the wewated tweets, /(^•ω•^) e.g. wetweetingtweetid, -.- inwepwytotweetid, òωó etc, /(^•ω•^) we
+ * mostwy o-onwy keep theiw ids fow consistency a-and simpwicity. /(^•ω•^)
  */
-struct TweetInfo {
+s-stwuct t-tweetinfo {
   
-  /* Id for the tweet that was actioned on */
-  1: required i64 actionTweetId(personalDataType = 'TweetId')
-  // Deprecated, please don't re-use!
-  // 2: optional i64 actionTweetAuthorId(personalDataType = 'UserId')
-  /* The social proof (i.e. banner) Topic Id that the action Tweet is associated to */
-  3: optional i64 actionTweetTopicSocialProofId(personalDataType='InferredInterests, ProvidedInterests')
-  4: optional AuthorInfo actionTweetAuthorInfo
+  /* i-id fow the tweet that was actioned on */
+  1: w-wequiwed i64 actiontweetid(pewsonawdatatype = 'tweetid')
+  // depwecated, 😳 pwease d-don't we-use! :3
+  // 2: optionaw i64 actiontweetauthowid(pewsonawdatatype = 'usewid')
+  /* the sociaw pwoof (i.e. bannew) topic i-id that the action tweet is associated t-to */
+  3: o-optionaw i64 a-actiontweettopicsociawpwoofid(pewsonawdatatype='infewwedintewests, (U ᵕ U❁) pwovidedintewests')
+  4: optionaw authowinfo a-actiontweetauthowinfo
 
-  // Fields 1-99 reserved for `actionFooBar` fields
+  // f-fiewds 1-99 wesewved f-fow `actionfoobaw` f-fiewds
 
-  /* Additional details for the action that took place on actionTweetId */
-  100: optional action_info.TweetActionInfo tweetActionInfo
+  /* additionaw detaiws f-fow the action that took pwace o-on actiontweetid */
+  100: optionaw action_info.tweetactioninfo tweetactioninfo
 
-  /* Id of the tweet retweeting the action tweet */
-  101: optional i64 retweetingTweetId(personalDataType = 'TweetId')
-  /* Id of the tweet quoting the action Tweet, when the action type is quote */
-  102: optional i64 quotingTweetId(personalDataType = 'TweetId')
-  /* Id of the tweet replying to the action Tweet, when the action type is reply */
-  103: optional i64 replyingTweetId(personalDataType = 'TweetId')
-  /* Id of the tweet being quoted by the action tweet */
-  104: optional i64 quotedTweetId(personalDataType = 'TweetId')
-  /* Id of the tweet being replied to by the action tweet */
-  105: optional i64 inReplyToTweetId(personalDataType = 'TweetId')
-  /* Id of the tweet being retweeted by the action tweet, this is just for Unretweet action */
-  106: optional i64 retweetedTweetId(personalDataType = 'TweetId')
-  /* Id of the tweet being edited, this is only available for TweetEdit action, and TweetDelete
-   * action when the deleted tweet was created from Edit. */
-  107: optional i64 editedTweetId(personalDataType = 'TweetId')
-  /* Position of a tweet item in a page such as home and tweet detail, and is populated in
-   * Client Event. */
-  108: optional i32 tweetPosition
-  /* PromotedId is provided by ads team for each promoted tweet and is logged in client event */
-  109: optional string promotedId(personalDataType = 'AdsId')
-  /* corresponding to inReplyToTweetId */
-  110: optional i64 inReplyToAuthorId(personalDataType = 'UserId')
-  /* corresponding to retweetingTweetId */
-  111: optional i64 retweetingAuthorId(personalDataType = 'UserId')
-  /* corresponding to quotedTweetId */
-  112: optional i64 quotedAuthorId(personalDataType = 'UserId')
-}(persisted='true', hasPersonalData='true')
+  /* i-id of the tweet wetweeting t-the action tweet */
+  101: o-optionaw i64 wetweetingtweetid(pewsonawdatatype = 'tweetid')
+  /* i-id of the tweet quoting the action tweet, ʘwʘ when the action type is quote */
+  102: optionaw i64 quotingtweetid(pewsonawdatatype = 'tweetid')
+  /* i-id of the tweet w-wepwying to the action tweet, o.O w-when the action t-type is wepwy */
+  103: o-optionaw i64 wepwyingtweetid(pewsonawdatatype = 'tweetid')
+  /* id of the tweet being quoted b-by the action tweet */
+  104: optionaw i64 quotedtweetid(pewsonawdatatype = 'tweetid')
+  /* id of the tweet b-being wepwied to by the action t-tweet */
+  105: o-optionaw i64 inwepwytotweetid(pewsonawdatatype = 'tweetid')
+  /* i-id of the tweet being wetweeted b-by the action t-tweet, ʘwʘ this is just f-fow unwetweet a-action */
+  106: optionaw i64 wetweetedtweetid(pewsonawdatatype = 'tweetid')
+  /* i-id of the tweet b-being edited, ^^ t-this is onwy avaiwabwe f-fow tweetedit a-action, ^•ﻌ•^ and tweetdewete
+   * action when the deweted tweet w-was cweated fwom edit. mya */
+  107: optionaw i64 editedtweetid(pewsonawdatatype = 'tweetid')
+  /* position of a tweet item in a page s-such as home and tweet detaiw, UwU and is popuwated in
+   * cwient e-event. >_< */
+  108: o-optionaw i32 t-tweetposition
+  /* pwomotedid is p-pwovided by ads team fow each p-pwomoted tweet and i-is wogged in cwient event */
+  109: optionaw stwing pwomotedid(pewsonawdatatype = 'adsid')
+  /* cowwesponding to inwepwytotweetid */
+  110: optionaw i-i64 inwepwytoauthowid(pewsonawdatatype = 'usewid')
+  /* cowwesponding to w-wetweetingtweetid */
+  111: optionaw i-i64 wetweetingauthowid(pewsonawdatatype = 'usewid')
+  /* cowwesponding t-to quotedtweetid */
+  112: optionaw i-i64 quotedauthowid(pewsonawdatatype = 'usewid')
+}(pewsisted='twue', /(^•ω•^) h-haspewsonawdata='twue')
 
 /*
- * Profile item information. This follows TweetInfo's development notes.
+ * pwofiwe item i-infowmation. òωó this f-fowwows tweetinfo's devewopment notes. σωσ
  */
-struct ProfileInfo {
+stwuct pwofiweinfo {
 
-  /* Id for the profile (user_id) that was actioned on
+  /* id fow t-the pwofiwe (usew_id) t-that was actioned o-on
    *
-   * In a social graph user action, e.g., user1 follows/blocks/mutes user2,
-   * userIdentifier captures userId of user1 and actionProfileId records
-   * the userId of user2.
+   * in a sociaw g-gwaph usew action, ( ͡o ω ͡o ) e-e.g., usew1 fowwows/bwocks/mutes u-usew2, nyaa~~
+   * usewidentifiew captuwes usewid of usew1 and actionpwofiweid wecowds
+   * t-the usewid o-of usew2. :3
    */
-  1: required i64 actionProfileId(personalDataType = 'UserId')
+  1: wequiwed i64 actionpwofiweid(pewsonawdatatype = 'usewid')
 
-  // Fields 1-99 reserved for `actionFooBar` fields
-  /* the full name of the user. max length is 50. */
-  2: optional string name(personalDataType = 'DisplayName')
-  /* The handle/screenName of the user. This can't be changed.
+  // f-fiewds 1-99 w-wesewved fow `actionfoobaw` fiewds
+  /* the fuww nyame of the usew. UwU max wength i-is 50. */
+  2: optionaw stwing name(pewsonawdatatype = 'dispwayname')
+  /* the handwe/scweenname of the usew. o.O t-this can't be changed.
    */
-  3: optional string handle(personalDataType = 'UserName')
-  /* the "bio" of the user. max length is 160. May contain one or more t.co
-   * links, which will be hydrated in the UrlEntities substruct if the
-   * QueryFields.URL_ENTITIES is specified.
+  3: optionaw stwing h-handwe(pewsonawdatatype = 'usewname')
+  /* t-the "bio" of the usew. (ˆ ﻌ ˆ)♡ max wength is 160. ^^;; may contain one ow mowe t-t.co
+   * winks, ʘwʘ w-which wiww be hydwated in the uwwentities substwuct if the
+   * q-quewyfiewds.uww_entities is specified. σωσ
    */
-  4: optional string description(personalDataType = 'Bio')
+  4: o-optionaw stwing descwiption(pewsonawdatatype = 'bio')
 
-  /* Additional details for the action that took place on actionProfileId */
-  100: optional action_info.ProfileActionInfo profileActionInfo
-}(persisted='true', hasPersonalData='true')
+  /* additionaw detaiws fow the action t-that took pwace on actionpwofiweid */
+  100: o-optionaw action_info.pwofiweactioninfo p-pwofiweactioninfo
+}(pewsisted='twue', ^^;; haspewsonawdata='twue')
 
 /*
- * Topic item information. This follows TweetInfo's development notes.
+ * t-topic item infowmation. ʘwʘ t-this fowwows t-tweetinfo's devewopment n-nyotes. ^^
  */
-struct TopicInfo {
-  /* Id for the Topic that was actioned on */
-  1: required i64 actionTopicId(personalDataType='InferredInterests, ProvidedInterests')
+stwuct topicinfo {
+  /* i-id f-fow the topic that was actioned on */
+  1: wequiwed i-i64 actiontopicid(pewsonawdatatype='infewwedintewests, nyaa~~ p-pwovidedintewests')
 
-  // Fields 1-99 reserved for `actionFooBar` fields
-}(persisted='true', hasPersonalData='true')
+  // f-fiewds 1-99 wesewved fow `actionfoobaw` fiewds
+}(pewsisted='twue', (///ˬ///✿) h-haspewsonawdata='twue')
 
 /*
- * Notification Item information.
+ * nyotification i-item infowmation. XD
  *
- * See go/phab-d973370-discuss, go/phab-d968144-discuss, and go/uua-action-type for details about
- * the schema design for Notification events.
+ * s-see go/phab-d973370-discuss, :3 go/phab-d968144-discuss, òωó and go/uua-action-type f-fow detaiws a-about
+ * the s-schema design f-fow nyotification events. ^^
  */
-struct NotificationInfo {
+stwuct n-nyotificationinfo {
  /*
-  * Id of the Notification was actioned on.
+  * id of the nyotification was actioned on. ^•ﻌ•^
   *
-  * Note that this field represents the `impressionId` of a Notification. It has been renamed to
-  * `notificationId` in UUA so that the name effectively represents the value it holds,
-  * i.e. a unique id for a Notification and request.
+  * nyote that this fiewd wepwesents t-the `impwessionid` of a nyotification. σωσ i-it has been wenamed to
+  * `notificationid` i-in uua so that the nyame e-effectivewy wepwesents the vawue i-it howds, (ˆ ﻌ ˆ)♡
+  * i.e. nyaa~~ a-a unique id f-fow a nyotification a-and wequest. ʘwʘ
   */
-  1: required string actionNotificationId(personalDataType='UniversallyUniqueIdentifierUuid')
+  1: w-wequiwed stwing actionnotificationid(pewsonawdatatype='univewsawwyuniqueidentifiewuuid')
   /*
-   * Additional information contained in a Notification. This is a `union` arm to differentiate
-   * among different types of Notifications and store relevant metadata for each type.
+   * additionaw infowmation contained in a nyotification. ^•ﻌ•^ this is a `union` a-awm to diffewentiate
+   * among d-diffewent types o-of nyotifications and stowe w-wewevant metadata fow each type. rawr x3
    *
-   * For example, a Notification with a single Tweet will hold the Tweet id in `TweetNotification`.
-   * Similarly, `MultiTweetNotification` is defined for Notiifcations with multiple Tweet ids.
+   * fow exampwe, 🥺 a nyotification w-with a s-singwe tweet wiww howd the tweet i-id in `tweetnotification`. ʘwʘ
+   * simiwawwy, (˘ω˘) `muwtitweetnotification` is defined f-fow nyotiifcations w-with muwtipwe tweet ids. o.O
    *
-   * Refer to the definition of `union NotificationContent` below for more details.
+   * w-wefew to the d-definition of `union nyotificationcontent` bewow fow mowe detaiws. σωσ
    */
-  2: required NotificationContent content
-}(persisted='true', hasPersonalData='true')
+  2: wequiwed nyotificationcontent content
+}(pewsisted='twue', (ꈍᴗꈍ) h-haspewsonawdata='twue')
 
 /*
- * Additional information contained in a Notification.
+ * a-additionaw i-infowmation c-contained in a n-nyotification. (ˆ ﻌ ˆ)♡
  */
-union NotificationContent {
-  1: TweetNotification tweetNotification
-  2: MultiTweetNotification multiTweetNotification
+union nyotificationcontent {
+  1: t-tweetnotification t-tweetnotification
+  2: muwtitweetnotification m-muwtitweetnotification
 
-  // 3 - 100 reserved for other specific Notification types (for example, profile, event, etc.).
+  // 3 - 100 w-wesewved fow othew specific n-nyotification types (fow exampwe, o.O pwofiwe, :3 e-event, etc.). -.-
 
   /*
-   * If a Notification cannot be categorized into any of the types at indices 1 - 100,
-   * it is considered of `Unknown` type.
+   * if a nyotification c-cannot b-be categowized into any of the t-types at indices 1 - 100, ( ͡o ω ͡o )
+   * it is considewed of `unknown` t-type. /(^•ω•^)
    */
-  101: UnknownNotification unknownNotification
-}(persisted='true', hasPersonalData='true')
+  101: u-unknownnotification u-unknownnotification
+}(pewsisted='twue', (⑅˘꒳˘) haspewsonawdata='twue')
 
 /*
- * Notification contains exactly one `tweetId`.
+ * nyotification contains exactwy one `tweetid`.
  */
-struct TweetNotification {
-  1: required i64 tweetId(personalDataType = 'TweetId')
-}(persisted='true', hasPersonalData='true')
+s-stwuct tweetnotification {
+  1: wequiwed i64 tweetid(pewsonawdatatype = 'tweetid')
+}(pewsisted='twue', òωó haspewsonawdata='twue')
 
 /*
- * Notification contains multiple `tweetIds`.
- * For example, user A receives a Notification when user B likes multiple Tweets authored by user A.
+ * n-nyotification c-contains muwtipwe `tweetids`. 🥺
+ * fow exampwe, (ˆ ﻌ ˆ)♡ u-usew a weceives a nyotification w-when usew b wikes m-muwtipwe tweets authowed by usew a. -.-
  */
-struct MultiTweetNotification {
-  1: required list<i64> tweetIds(personalDataType = 'TweetId')
-}(persisted='true', hasPersonalData='true')
+stwuct m-muwtitweetnotification {
+  1: wequiwed wist<i64> tweetids(pewsonawdatatype = 'tweetid')
+}(pewsisted='twue', σωσ haspewsonawdata='twue')
 
 /*
- * Notification could not be categrized into known types at indices 1 - 100 in `NotificationContent`.
+ * n-nyotification c-couwd nyot be categwized i-into known types at indices 1 - 100 i-in `notificationcontent`. >_<
  */
-struct UnknownNotification {
-  // this field is just a placeholder since Sparrow doesn't support empty struct
-  100: optional bool placeholder
-}(persisted='true', hasPersonalData='false')
+s-stwuct unknownnotification {
+  // t-this fiewd is just a pwacehowdew since spawwow doesn't suppowt empty stwuct
+  100: optionaw boow pwacehowdew
+}(pewsisted='twue', :3 haspewsonawdata='fawse')
 
 /*
- * Trend Item information for promoted and non-promoted Trends.  
+ * twend item infowmation fow pwomoted and nyon-pwomoted twends. OwO  
  */
-struct TrendInfo {
+stwuct t-twendinfo {
   /* 
-   * Identifier for promoted Trends only. 
-   * This is not available for non-promoted Trends and the default value should be set to 0. 
+   * i-identifiew fow pwomoted twends onwy. rawr 
+   * t-this is nyot a-avaiwabwe fow n-nyon-pwomoted twends and the defauwt v-vawue shouwd be set to 0. (///ˬ///✿) 
    */
-  1: required i32 actionTrendId(personalDataType= 'TrendId')
+  1: w-wequiwed i-i32 actiontwendid(pewsonawdatatype= 'twendid')
   /*
-   * Empty for promoted Trends only. 
-   * This should be set for all non-promoted Trends. 
+   * empty fow pwomoted t-twends onwy. ^^ 
+   * this shouwd b-be set fow aww n-nyon-pwomoted twends. XD 
    */
-  2: optional string actionTrendName
-}(persisted='true', hasPersonalData='true')
+  2: optionaw stwing actiontwendname
+}(pewsisted='twue', UwU h-haspewsonawdata='twue')
 
-struct TypeaheadInfo {
-  /* search query string */
-  1: required string actionQuery(personalDataType = 'SearchQuery')
-  2: required TypeaheadActionInfo typeaheadActionInfo
-}(persisted='true', hasPersonalData='true')
+stwuct t-typeaheadinfo {
+  /* s-seawch q-quewy stwing */
+  1: w-wequiwed s-stwing actionquewy(pewsonawdatatype = 'seawchquewy')
+  2: w-wequiwed t-typeaheadactioninfo t-typeaheadactioninfo
+}(pewsisted='twue', o.O haspewsonawdata='twue')
 
-union TypeaheadActionInfo {
-  1: UserResult userResult
-  2: TopicQueryResult topicQueryResult
-}(persisted='true', hasPersonalData='true')
+union typeaheadactioninfo {
+  1: u-usewwesuwt u-usewwesuwt
+  2: t-topicquewywesuwt topicquewywesuwt
+}(pewsisted='twue', 😳 h-haspewsonawdata='twue')
 
-struct UserResult {
-  /* The userId of the profile suggested in the typeahead drop-down, upon which the user took the action */
-  1: required i64 profileId(personalDataType = 'UserId')
-}(persisted='true', hasPersonalData='true')
+stwuct usewwesuwt {
+  /* the u-usewid of the pwofiwe suggested i-in the typeahead d-dwop-down, upon w-which the usew took the action */
+  1: w-wequiwed i64 pwofiweid(pewsonawdatatype = 'usewid')
+}(pewsisted='twue', (˘ω˘) h-haspewsonawdata='twue')
 
-struct TopicQueryResult {
-  /* The topic query name suggested in the typeahead drop-down, upon which the user took the action */
-  1: required string suggestedTopicQuery(personalDataType = 'SearchQuery')
-}(persisted='true', hasPersonalData='true')
+stwuct t-topicquewywesuwt {
+  /* the topic q-quewy nyame suggested in the typeahead dwop-down, 🥺 upon which the usew took the a-action */
+  1: wequiwed stwing s-suggestedtopicquewy(pewsonawdatatype = 'seawchquewy')
+}(pewsisted='twue', ^^ h-haspewsonawdata='twue')
 
 
-
-/*
- * Item that captures feedback related information submitted by the user across modules / item (Eg: Search Results / Tweets)
- * Design discussion doc: https://docs.google.com/document/d/1UHiCrGzfiXOSymRAUM565KchVLZBAByMwvP4ARxeixY/edit#
- */
-struct FeedbackPromptInfo {
-  1: required FeedbackPromptActionInfo feedbackPromptActionInfo
-}(persisted='true', hasPersonalData='true')
-
-union FeedbackPromptActionInfo {
-  1: DidYouFindItSearch didYouFindItSearch
-  2: TweetRelevantToSearch tweetRelevantToSearch
-}(persisted='true', hasPersonalData='true')
-
-struct DidYouFindItSearch {
-  1: required string searchQuery(personalDataType= 'SearchQuery')
-  2: optional bool isRelevant
-}(persisted='true', hasPersonalData='true')
-
-struct TweetRelevantToSearch {
-  1: required string searchQuery(personalDataType= 'SearchQuery')
-  2: required i64 tweetId
-  3: optional bool isRelevant
-}(persisted='true', hasPersonalData='true')
 
 /*
- * For (Tweet) Author info
+ * item that captuwes feedback wewated infowmation s-submitted by the usew a-acwoss moduwes / i-item (eg: seawch w-wesuwts / tweets)
+ * design discussion doc: https://docs.googwe.com/document/d/1uhicwgzfixosymwaum565kchvwzbabymwvp4awxeixy/edit#
  */
-struct AuthorInfo {
-  /* In practice, this should be set. Rarely, it may be unset. */
-  1: optional i64 authorId(personalDataType = 'UserId')
-  /* i.e. in-network (true) or out-of-network (false) */
-  2: optional bool isFollowedByActingUser
-  /* i.e. is a follower (true) or not (false) */
-  3: optional bool isFollowingActingUser
-}(persisted='true', hasPersonalData='true')
+s-stwuct f-feedbackpwomptinfo {
+  1: wequiwed f-feedbackpwomptactioninfo feedbackpwomptactioninfo
+}(pewsisted='twue', >w< haspewsonawdata='twue')
+
+u-union feedbackpwomptactioninfo {
+  1: didyoufinditseawch d-didyoufinditseawch
+  2: t-tweetwewevanttoseawch t-tweetwewevanttoseawch
+}(pewsisted='twue', ^^;; haspewsonawdata='twue')
+
+s-stwuct d-didyoufinditseawch {
+  1: w-wequiwed s-stwing seawchquewy(pewsonawdatatype= 'seawchquewy')
+  2: optionaw boow iswewevant
+}(pewsisted='twue', (˘ω˘) h-haspewsonawdata='twue')
+
+s-stwuct tweetwewevanttoseawch {
+  1: w-wequiwed s-stwing seawchquewy(pewsonawdatatype= 'seawchquewy')
+  2: w-wequiwed i-i64 tweetid
+  3: o-optionaw boow i-iswewevant
+}(pewsisted='twue', OwO haspewsonawdata='twue')
 
 /*
- * Use for Call to Action events.
+ * f-fow (tweet) authow info
  */
-struct CTAInfo {
-  // this field is just a placeholder since Sparrow doesn't support empty struct
-  100: optional bool placeholder
-}(persisted='true', hasPersonalData='false')
+stwuct a-authowinfo {
+  /* in pwactice, (ꈍᴗꈍ) t-this shouwd be s-set. òωó wawewy, it m-may be unset. ʘwʘ */
+  1: optionaw i64 authowid(pewsonawdatatype = 'usewid')
+  /* i.e. ʘwʘ in-netwowk (twue) o-ow out-of-netwowk (fawse) */
+  2: o-optionaw b-boow isfowwowedbyactingusew
+  /* i.e. nyaa~~ is a fowwowew (twue) ow nyot (fawse) */
+  3: o-optionaw boow i-isfowwowingactingusew
+}(pewsisted='twue', UwU haspewsonawdata='twue')
 
 /*
- * Card Info
+ * u-use f-fow caww to action events. (⑅˘꒳˘)
  */
-struct CardInfo {
-  1: optional i64 id
-  2: optional client_app.ItemType itemType
-  // authorId is deprecated, please use AuthorInfo instead
-  // 3: optional i64 authorId(personalDataType = 'UserId')
-  4: optional AuthorInfo actionTweetAuthorInfo
-}(persisted='true', hasPersonalData='false')
+stwuct ctainfo {
+  // this fiewd i-is just a pwacehowdew s-since spawwow d-doesn't suppowt e-empty stwuct
+  100: optionaw boow pwacehowdew
+}(pewsisted='twue', (˘ω˘) h-haspewsonawdata='fawse')
 
 /*
- * When the user exits the app, the time (in millis) spent by them on the platform is recorded as User Active Seconds (UAS). 
+ * c-cawd info
  */
-struct UASInfo {
-  1: required i64 timeSpentMs
-}(persisted='true', hasPersonalData='false')
+stwuct cawdinfo {
+  1: optionaw i-i64 id
+  2: optionaw cwient_app.itemtype itemtype
+  // a-authowid is depwecated, :3 p-pwease use authowinfo i-instead
+  // 3: optionaw i-i64 authowid(pewsonawdatatype = 'usewid')
+  4: o-optionaw authowinfo actiontweetauthowinfo
+}(pewsisted='twue', (˘ω˘) haspewsonawdata='fawse')
 
 /*
- * Corresponding item for a user action.
- * An item should be treated independently if it has different affordances
- * (https://www.interaction-design.org/literature/topics/affordances) for the user.
- * For example, a Notification has different affordances than a Tweet in the Notification Tab;
- * in the former, you can either "click" or "see less often" and in the latter,
- * you can perform inline engagements such as "like" or "reply".
- * Note that an item may be rendered differently in different contexts, but as long as the
- * affordances remain the same or nearly similar, it can be treated as the same item
- * (e.g. Tweets can be rendered in slightly different ways in embeds vs in the app).
- * Item types (e.g. Tweets, Notifications) and ActionTypes should be 1:1, and when an action can be
- * performed on multiple types of items, consider granular action types.
- * For example, a user can take the Click action on Tweets and Notifications, and we have
- * separate ActionTypes for Tweet Click and Notification Click. This makes it easier to identify all the
- * actions associated with a particular item.
+ * when t-the usew exits the app, the t-time (in miwwis) s-spent by them on t-the pwatfowm is w-wecowded as usew active seconds (uas). nyaa~~ 
  */
-union Item {
-  1: TweetInfo tweetInfo
-  2: ProfileInfo profileInfo
-  3: TopicInfo topicInfo
-  4: NotificationInfo notificationInfo
-  5: TrendInfo trendInfo
-  6: CTAInfo ctaInfo
-  7: FeedbackPromptInfo feedbackPromptInfo
-  8: TypeaheadInfo typeaheadInfo
-  9: UASInfo uasInfo
-  10: CardInfo cardInfo
-}(persisted='true', hasPersonalData='true')
+s-stwuct u-uasinfo {
+  1: w-wequiwed i64 timespentms
+}(pewsisted='twue', (U ﹏ U) h-haspewsonawdata='fawse')
+
+/*
+ * cowwesponding item fow a usew action. nyaa~~
+ * a-an item s-shouwd be tweated i-independentwy if it has diffewent affowdances
+ * (https://www.intewaction-design.owg/witewatuwe/topics/affowdances) fow the usew.
+ * fow exampwe, a-a nyotification has diffewent a-affowdances t-than a tweet in the nyotification tab;
+ * in the f-fowmew, ^^;; you can eithew "cwick" o-ow "see wess often" a-and in the wattew, OwO
+ * y-you can p-pewfowm inwine e-engagements such as "wike" ow "wepwy". nyaa~~
+ * nyote that an item may be wendewed diffewentwy i-in diffewent contexts, UwU b-but as wong as the
+ * affowdances wemain the same ow nyeawwy simiwaw, 😳 i-it can be tweated as the same item
+ * (e.g. 😳 tweets can be wendewed in swightwy d-diffewent w-ways in embeds vs in the app). (ˆ ﻌ ˆ)♡
+ * i-item types (e.g. (✿oωo) tweets, nyaa~~ nyotifications) and actiontypes s-shouwd b-be 1:1, ^^ and when an action can b-be
+ * pewfowmed on muwtipwe types o-of items, (///ˬ///✿) considew gwanuwaw action types. 😳
+ * fow exampwe, òωó a usew c-can take the cwick action on tweets and nyotifications, ^^;; a-and w-we have
+ * sepawate a-actiontypes fow tweet cwick and nyotification c-cwick. rawr this makes it easiew to identify aww the
+ * actions associated with a pawticuwaw i-item. (ˆ ﻌ ˆ)♡
+ */
+u-union item {
+  1: t-tweetinfo t-tweetinfo
+  2: pwofiweinfo pwofiweinfo
+  3: topicinfo t-topicinfo
+  4: n-nyotificationinfo nyotificationinfo
+  5: twendinfo t-twendinfo
+  6: ctainfo ctainfo
+  7: feedbackpwomptinfo feedbackpwomptinfo
+  8: t-typeaheadinfo typeaheadinfo
+  9: uasinfo u-uasinfo
+  10: cawdinfo c-cawdinfo
+}(pewsisted='twue', XD haspewsonawdata='twue')

@@ -1,248 +1,248 @@
-package com.twitter.tsp.stores
+package com.twittew.tsp.stowes
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.FailureFlags.flagsOf
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.interests
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.topiclisting.ProductId
-import com.twitter.topiclisting.TopicListing
-import com.twitter.topiclisting.TopicListingViewerContext
-import com.twitter.topiclisting.{SemanticCoreEntityId => ScEntityId}
-import com.twitter.tsp.thriftscala.TopicFollowType
-import com.twitter.tsp.thriftscala.TopicListingSetting
-import com.twitter.tsp.thriftscala.TopicSocialProofFilteringBypassMode
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.TimeoutException
-import com.twitter.util.Timer
+impowt com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.finagwe.faiwuwefwags.fwagsof
+i-impowt c-com.twittew.finagwe.mux.cwientdiscawdedwequestexception
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.stowe.intewests
+impowt com.twittew.simcwustews_v2.common.usewid
+impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.topicwisting.pwoductid
+impowt com.twittew.topicwisting.topicwisting
+impowt c-com.twittew.topicwisting.topicwistingviewewcontext
+impowt com.twittew.topicwisting.{semanticcoweentityid => s-scentityid}
+impowt com.twittew.tsp.thwiftscawa.topicfowwowtype
+impowt com.twittew.tsp.thwiftscawa.topicwistingsetting
+impowt com.twittew.tsp.thwiftscawa.topicsociawpwooffiwtewingbypassmode
+i-impowt com.twittew.utiw.duwation
+impowt c-com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.timeoutexception
+impowt com.twittew.utiw.timew
 
-class UttTopicFilterStore(
-  topicListing: TopicListing,
-  userOptOutTopicsStore: ReadableStore[interests.UserId, TopicResponses],
-  explicitFollowingTopicsStore: ReadableStore[interests.UserId, TopicResponses],
-  notInterestedTopicsStore: ReadableStore[interests.UserId, TopicResponses],
-  localizedUttRecommendableTopicsStore: ReadableStore[LocalizedUttTopicNameRequest, Set[Long]],
-  timer: Timer,
-  stats: StatsReceiver) {
-  import UttTopicFilterStore._
+cwass utttopicfiwtewstowe(
+  topicwisting: t-topicwisting, XD
+  usewoptouttopicsstowe: weadabwestowe[intewests.usewid, (✿oωo) topicwesponses], :3
+  expwicitfowwowingtopicsstowe: w-weadabwestowe[intewests.usewid, (///ˬ///✿) topicwesponses], nyaa~~
+  n-nyotintewestedtopicsstowe: w-weadabwestowe[intewests.usewid, >w< t-topicwesponses], -.-
+  w-wocawizeduttwecommendabwetopicsstowe: weadabwestowe[wocawizedutttopicnamewequest, (✿oωo) set[wong]],
+  t-timew: timew, (˘ω˘)
+  stats: statsweceivew) {
+  i-impowt utttopicfiwtewstowe._
 
-  // Set of blacklisted SemanticCore IDs that are paused.
-  private[this] def getPausedTopics(topicCtx: TopicListingViewerContext): Set[ScEntityId] = {
-    topicListing.getPausedTopics(topicCtx)
+  // set of bwackwisted semanticcowe ids that awe paused. rawr
+  pwivate[this] def g-getpausedtopics(topicctx: topicwistingviewewcontext): s-set[scentityid] = {
+    t-topicwisting.getpausedtopics(topicctx)
   }
 
-  private[this] def getOptOutTopics(userId: Long): Future[Set[ScEntityId]] = {
-    stats.counter("getOptOutTopicsCount").incr()
-    userOptOutTopicsStore
-      .get(userId).map { responseOpt =>
-        responseOpt
-          .map { responses => responses.responses.map(_.entityId) }.getOrElse(Seq.empty).toSet
-      }.raiseWithin(DefaultOptOutTimeout)(timer).rescue {
-        case err: TimeoutException =>
-          stats.counter("getOptOutTopicsTimeout").incr()
-          Future.exception(err)
-        case err: ClientDiscardedRequestException
-            if flagsOf(err).contains("interrupted") && flagsOf(err)
-              .contains("ignorable") =>
-          stats.counter("getOptOutTopicsDiscardedBackupRequest").incr()
-          Future.exception(err)
-        case err =>
-          stats.counter("getOptOutTopicsFailure").incr()
-          Future.exception(err)
+  p-pwivate[this] def getoptouttopics(usewid: wong): futuwe[set[scentityid]] = {
+    stats.countew("getoptouttopicscount").incw()
+    u-usewoptouttopicsstowe
+      .get(usewid).map { w-wesponseopt =>
+        wesponseopt
+          .map { w-wesponses => wesponses.wesponses.map(_.entityid) }.getowewse(seq.empty).toset
+      }.waisewithin(defauwtoptouttimeout)(timew).wescue {
+        c-case eww: timeoutexception =>
+          stats.countew("getoptouttopicstimeout").incw()
+          f-futuwe.exception(eww)
+        case eww: cwientdiscawdedwequestexception
+            i-if fwagsof(eww).contains("intewwupted") && fwagsof(eww)
+              .contains("ignowabwe") =>
+          stats.countew("getoptouttopicsdiscawdedbackupwequest").incw()
+          f-futuwe.exception(eww)
+        case eww =>
+          s-stats.countew("getoptouttopicsfaiwuwe").incw()
+          futuwe.exception(eww)
       }
   }
 
-  private[this] def getNotInterestedIn(userId: Long): Future[Set[ScEntityId]] = {
-    stats.counter("getNotInterestedInCount").incr()
-    notInterestedTopicsStore
-      .get(userId).map { responseOpt =>
-        responseOpt
-          .map { responses => responses.responses.map(_.entityId) }.getOrElse(Seq.empty).toSet
-      }.raiseWithin(DefaultNotInterestedInTimeout)(timer).rescue {
-        case err: TimeoutException =>
-          stats.counter("getNotInterestedInTimeout").incr()
-          Future.exception(err)
-        case err: ClientDiscardedRequestException
-            if flagsOf(err).contains("interrupted") && flagsOf(err)
-              .contains("ignorable") =>
-          stats.counter("getNotInterestedInDiscardedBackupRequest").incr()
-          Future.exception(err)
-        case err =>
-          stats.counter("getNotInterestedInFailure").incr()
-          Future.exception(err)
+  p-pwivate[this] d-def getnotintewestedin(usewid: wong): futuwe[set[scentityid]] = {
+    stats.countew("getnotintewestedincount").incw()
+    nyotintewestedtopicsstowe
+      .get(usewid).map { wesponseopt =>
+        wesponseopt
+          .map { wesponses => w-wesponses.wesponses.map(_.entityid) }.getowewse(seq.empty).toset
+      }.waisewithin(defauwtnotintewestedintimeout)(timew).wescue {
+        c-case eww: timeoutexception =>
+          stats.countew("getnotintewestedintimeout").incw()
+          f-futuwe.exception(eww)
+        c-case eww: cwientdiscawdedwequestexception
+            i-if fwagsof(eww).contains("intewwupted") && fwagsof(eww)
+              .contains("ignowabwe") =>
+          stats.countew("getnotintewestedindiscawdedbackupwequest").incw()
+          futuwe.exception(eww)
+        case e-eww =>
+          stats.countew("getnotintewestedinfaiwuwe").incw()
+          futuwe.exception(eww)
       }
   }
 
-  private[this] def getFollowedTopics(userId: Long): Future[Set[TopicResponse]] = {
-    stats.counter("getFollowedTopicsCount").incr()
+  pwivate[this] def getfowwowedtopics(usewid: wong): futuwe[set[topicwesponse]] = {
+    s-stats.countew("getfowwowedtopicscount").incw()
 
-    explicitFollowingTopicsStore
-      .get(userId).map { responseOpt =>
-        responseOpt.map(_.responses.toSet).getOrElse(Set.empty)
-      }.raiseWithin(DefaultInterestedInTimeout)(timer).rescue {
-        case _: TimeoutException =>
-          stats.counter("getFollowedTopicsTimeout").incr()
-          Future(Set.empty)
-        case _ =>
-          stats.counter("getFollowedTopicsFailure").incr()
-          Future(Set.empty)
+    expwicitfowwowingtopicsstowe
+      .get(usewid).map { w-wesponseopt =>
+        w-wesponseopt.map(_.wesponses.toset).getowewse(set.empty)
+      }.waisewithin(defauwtintewestedintimeout)(timew).wescue {
+        c-case _: timeoutexception =>
+          s-stats.countew("getfowwowedtopicstimeout").incw()
+          f-futuwe(set.empty)
+        c-case _ =>
+          s-stats.countew("getfowwowedtopicsfaiwuwe").incw()
+          futuwe(set.empty)
       }
   }
 
-  private[this] def getFollowedTopicIds(userId: Long): Future[Set[ScEntityId]] = {
-    getFollowedTopics(userId: Long).map(_.map(_.entityId))
+  pwivate[this] d-def getfowwowedtopicids(usewid: w-wong): futuwe[set[scentityid]] = {
+    g-getfowwowedtopics(usewid: w-wong).map(_.map(_.entityid))
   }
 
-  private[this] def getWhitelistTopicIds(
-    normalizedContext: TopicListingViewerContext,
-    enableInternationalTopics: Boolean
-  ): Future[Set[ScEntityId]] = {
-    stats.counter("getWhitelistTopicIdsCount").incr()
+  p-pwivate[this] def getwhitewisttopicids(
+    nyowmawizedcontext: topicwistingviewewcontext, OwO
+    e-enabweintewnationawtopics: boowean
+  ): futuwe[set[scentityid]] = {
+    stats.countew("getwhitewisttopicidscount").incw()
 
-    val uttRequest = LocalizedUttTopicNameRequest(
-      productId = ProductId.Followable,
-      viewerContext = normalizedContext,
-      enableInternationalTopics = enableInternationalTopics
+    vaw uttwequest = wocawizedutttopicnamewequest(
+      p-pwoductid = pwoductid.fowwowabwe,
+      viewewcontext = nyowmawizedcontext, ^•ﻌ•^
+      e-enabweintewnationawtopics = e-enabweintewnationawtopics
     )
-    localizedUttRecommendableTopicsStore
-      .get(uttRequest).map { response =>
-        response.getOrElse(Set.empty)
-      }.rescue {
+    w-wocawizeduttwecommendabwetopicsstowe
+      .get(uttwequest).map { wesponse =>
+        w-wesponse.getowewse(set.empty)
+      }.wescue {
         case _ =>
-          stats.counter("getWhitelistTopicIdsFailure").incr()
-          Future(Set.empty)
+          stats.countew("getwhitewisttopicidsfaiwuwe").incw()
+          f-futuwe(set.empty)
       }
   }
 
-  private[this] def getDenyListTopicIdsForUser(
-    userId: UserId,
-    topicListingSetting: TopicListingSetting,
-    context: TopicListingViewerContext,
-    bypassModes: Option[Set[TopicSocialProofFilteringBypassMode]]
-  ): Future[Set[ScEntityId]] = {
+  p-pwivate[this] def getdenywisttopicidsfowusew(
+    usewid: usewid, UwU
+    topicwistingsetting: topicwistingsetting, (˘ω˘)
+    c-context: topicwistingviewewcontext, (///ˬ///✿)
+    bypassmodes: o-option[set[topicsociawpwooffiwtewingbypassmode]]
+  ): futuwe[set[scentityid]] = {
 
-    val denyListTopicIdsFuture = topicListingSetting match {
-      case TopicListingSetting.ImplicitFollow =>
-        getFollowedTopicIds(userId)
+    v-vaw d-denywisttopicidsfutuwe = topicwistingsetting match {
+      case t-topicwistingsetting.impwicitfowwow =>
+        g-getfowwowedtopicids(usewid)
       case _ =>
-        Future(Set.empty[ScEntityId])
+        f-futuwe(set.empty[scentityid])
     }
 
-    // we don't filter opt-out topics for implicit follow topic listing setting
-    val optOutTopicIdsFuture = topicListingSetting match {
-      case TopicListingSetting.ImplicitFollow => Future(Set.empty[ScEntityId])
-      case _ => getOptOutTopics(userId)
+    // w-we don't fiwtew opt-out topics fow impwicit fowwow topic wisting setting
+    vaw o-optouttopicidsfutuwe = t-topicwistingsetting m-match {
+      case topicwistingsetting.impwicitfowwow => f-futuwe(set.empty[scentityid])
+      c-case _ => getoptouttopics(usewid)
     }
 
-    val notInterestedTopicIdsFuture =
-      if (bypassModes.exists(_.contains(TopicSocialProofFilteringBypassMode.NotInterested))) {
-        Future(Set.empty[ScEntityId])
-      } else {
-        getNotInterestedIn(userId)
+    v-vaw nyotintewestedtopicidsfutuwe =
+      if (bypassmodes.exists(_.contains(topicsociawpwooffiwtewingbypassmode.notintewested))) {
+        futuwe(set.empty[scentityid])
+      } ewse {
+        getnotintewestedin(usewid)
       }
-    val pausedTopicIdsFuture = Future.value(getPausedTopics(context))
+    vaw p-pausedtopicidsfutuwe = f-futuwe.vawue(getpausedtopics(context))
 
-    Future
-      .collect(
-        List(
-          denyListTopicIdsFuture,
-          optOutTopicIdsFuture,
-          notInterestedTopicIdsFuture,
-          pausedTopicIdsFuture)).map { list => list.reduce(_ ++ _) }
+    futuwe
+      .cowwect(
+        wist(
+          d-denywisttopicidsfutuwe, σωσ
+          o-optouttopicidsfutuwe, /(^•ω•^)
+          notintewestedtopicidsfutuwe, 😳
+          pausedtopicidsfutuwe)).map { wist => w-wist.weduce(_ ++ _) }
   }
 
-  private[this] def getDiff(
-    aFut: Future[Set[ScEntityId]],
-    bFut: Future[Set[ScEntityId]]
-  ): Future[Set[ScEntityId]] = {
-    Future.join(aFut, bFut).map {
-      case (a, b) => a.diff(b)
+  pwivate[this] def getdiff(
+    afut: futuwe[set[scentityid]], 😳
+    bfut: f-futuwe[set[scentityid]]
+  ): futuwe[set[scentityid]] = {
+    futuwe.join(afut, (⑅˘꒳˘) b-bfut).map {
+      c-case (a, 😳😳😳 b) => a.diff(b)
     }
   }
 
   /**
-   * calculates the diff of all the whitelisted IDs with blacklisted IDs and returns the set of IDs
-   * that we will be recommending from or followed topics by the user by client setting.
+   * cawcuwates the diff of aww t-the whitewisted i-ids with bwackwisted ids and wetuwns the set of ids
+   * that we w-wiww be wecommending fwom ow fowwowed t-topics by the usew by cwient setting. 😳
    */
-  def getAllowListTopicsForUser(
-    userId: UserId,
-    topicListingSetting: TopicListingSetting,
-    context: TopicListingViewerContext,
-    bypassModes: Option[Set[TopicSocialProofFilteringBypassMode]]
-  ): Future[Map[ScEntityId, Option[TopicFollowType]]] = {
+  def getawwowwisttopicsfowusew(
+    u-usewid: usewid, XD
+    topicwistingsetting: t-topicwistingsetting, mya
+    c-context: topicwistingviewewcontext, ^•ﻌ•^
+    b-bypassmodes: option[set[topicsociawpwooffiwtewingbypassmode]]
+  ): futuwe[map[scentityid, ʘwʘ o-option[topicfowwowtype]]] = {
 
     /**
-     * Title: an illustrative table to explain how allow list is composed
-     * AllowList = WhiteList - DenyList - OptOutTopics - PausedTopics - NotInterestedInTopics
+     * t-titwe: a-an iwwustwative tabwe to expwain h-how awwow wist i-is composed
+     * awwowwist = whitewist - denywist - o-optouttopics - p-pausedtopics - n-nyotintewestedintopics
      *
-     * TopicListingSetting: Following                 ImplicitFollow                       All                       Followable
-     * Whitelist:          FollowedTopics(user)      AllWhitelistedTopics                 Nil                       AllWhitelistedTopics
-     * DenyList:           Nil                       FollowedTopics(user)                 Nil                       Nil
+     * topicwistingsetting: fowwowing                 impwicitfowwow                       a-aww                       fowwowabwe
+     * w-whitewist:          f-fowwowedtopics(usew)      awwwhitewistedtopics                 nyiw                       awwwhitewistedtopics
+     * d-denywist:           n-nyiw                       f-fowwowedtopics(usew)                 n-nyiw                       nyiw
      *
-     * ps. for TopicListingSetting.All, the returned allow list is Nil. Why?
-     * It's because that allowList is not required given the TopicListingSetting == 'All'.
-     * See TopicSocialProofHandler.filterByAllowedList() for more details.
+     * p-ps. ( ͡o ω ͡o ) fow topicwistingsetting.aww, mya the wetuwned awwow wist is nyiw. o.O why?
+     * it's because that awwowwist i-is nyot wequiwed given the topicwistingsetting == 'aww'. (✿oωo)
+     * s-see topicsociawpwoofhandwew.fiwtewbyawwowedwist() fow mowe detaiws. :3
      */
 
-    topicListingSetting match {
-      // "All" means all the UTT entity is qualified. So don't need to fetch the Whitelist anymore.
-      case TopicListingSetting.All => Future.value(Map.empty)
-      case TopicListingSetting.Following =>
-        getFollowingTopicsForUserWithTimestamp(userId, context, bypassModes).map {
-          _.mapValues(_ => Some(TopicFollowType.Following))
+    t-topicwistingsetting match {
+      // "aww" m-means aww the utt entity i-is quawified. 😳 s-so don't nyeed t-to fetch the whitewist a-anymowe. (U ﹏ U)
+      c-case topicwistingsetting.aww => futuwe.vawue(map.empty)
+      case topicwistingsetting.fowwowing =>
+        getfowwowingtopicsfowusewwithtimestamp(usewid, mya context, (U ᵕ U❁) bypassmodes).map {
+          _.mapvawues(_ => some(topicfowwowtype.fowwowing))
         }
-      case TopicListingSetting.ImplicitFollow =>
-        getDiff(
-          getWhitelistTopicIds(context, enableInternationalTopics = true),
-          getDenyListTopicIdsForUser(userId, topicListingSetting, context, bypassModes)).map {
-          _.map { scEntityId =>
-            scEntityId -> Some(TopicFollowType.ImplicitFollow)
-          }.toMap
+      case t-topicwistingsetting.impwicitfowwow =>
+        g-getdiff(
+          g-getwhitewisttopicids(context, :3 enabweintewnationawtopics = twue), mya
+          g-getdenywisttopicidsfowusew(usewid, OwO topicwistingsetting, (ˆ ﻌ ˆ)♡ context, ʘwʘ bypassmodes)).map {
+          _.map { scentityid =>
+            scentityid -> s-some(topicfowwowtype.impwicitfowwow)
+          }.tomap
         }
-      case _ =>
-        val followedTopicIdsFut = getFollowedTopicIds(userId)
-        val allowListTopicIdsFut = getDiff(
-          getWhitelistTopicIds(context, enableInternationalTopics = true),
-          getDenyListTopicIdsForUser(userId, topicListingSetting, context, bypassModes))
-        Future.join(allowListTopicIdsFut, followedTopicIdsFut).map {
-          case (allowListTopicId, followedTopicIds) =>
-            allowListTopicId.map { scEntityId =>
-              if (followedTopicIds.contains(scEntityId))
-                scEntityId -> Some(TopicFollowType.Following)
-              else scEntityId -> Some(TopicFollowType.ImplicitFollow)
-            }.toMap
+      c-case _ =>
+        vaw fowwowedtopicidsfut = g-getfowwowedtopicids(usewid)
+        vaw awwowwisttopicidsfut = getdiff(
+          g-getwhitewisttopicids(context, o.O e-enabweintewnationawtopics = twue), UwU
+          g-getdenywisttopicidsfowusew(usewid, rawr x3 t-topicwistingsetting, 🥺 context, bypassmodes))
+        futuwe.join(awwowwisttopicidsfut, :3 fowwowedtopicidsfut).map {
+          case (awwowwisttopicid, (ꈍᴗꈍ) f-fowwowedtopicids) =>
+            a-awwowwisttopicid.map { s-scentityid =>
+              i-if (fowwowedtopicids.contains(scentityid))
+                s-scentityid -> some(topicfowwowtype.fowwowing)
+              ewse s-scentityid -> some(topicfowwowtype.impwicitfowwow)
+            }.tomap
         }
     }
   }
 
-  private[this] def getFollowingTopicsForUserWithTimestamp(
-    userId: UserId,
-    context: TopicListingViewerContext,
-    bypassModes: Option[Set[TopicSocialProofFilteringBypassMode]]
-  ): Future[Map[ScEntityId, Option[Long]]] = {
+  pwivate[this] d-def getfowwowingtopicsfowusewwithtimestamp(
+    u-usewid: u-usewid, 🥺
+    context: topicwistingviewewcontext, (✿oωo)
+    b-bypassmodes: option[set[topicsociawpwooffiwtewingbypassmode]]
+  ): futuwe[map[scentityid, (U ﹏ U) o-option[wong]]] = {
 
-    val followedTopicIdToTimestampFut = getFollowedTopics(userId).map(_.map { followedTopic =>
-      followedTopic.entityId -> followedTopic.topicFollowTimestamp
-    }.toMap)
+    vaw fowwowedtopicidtotimestampfut = getfowwowedtopics(usewid).map(_.map { f-fowwowedtopic =>
+      f-fowwowedtopic.entityid -> fowwowedtopic.topicfowwowtimestamp
+    }.tomap)
 
-    followedTopicIdToTimestampFut.flatMap { followedTopicIdToTimestamp =>
-      getDiff(
-        Future(followedTopicIdToTimestamp.keySet),
-        getDenyListTopicIdsForUser(userId, TopicListingSetting.Following, context, bypassModes)
+    f-fowwowedtopicidtotimestampfut.fwatmap { fowwowedtopicidtotimestamp =>
+      getdiff(
+        f-futuwe(fowwowedtopicidtotimestamp.keyset), :3
+        g-getdenywisttopicidsfowusew(usewid, t-topicwistingsetting.fowwowing, ^^;; context, bypassmodes)
       ).map {
-        _.map { scEntityId =>
-          scEntityId -> followedTopicIdToTimestamp.get(scEntityId).flatten
-        }.toMap
+        _.map { scentityid =>
+          s-scentityid -> fowwowedtopicidtotimestamp.get(scentityid).fwatten
+        }.tomap
       }
     }
   }
 }
 
-object UttTopicFilterStore {
-  val DefaultNotInterestedInTimeout: Duration = 60.milliseconds
-  val DefaultOptOutTimeout: Duration = 60.milliseconds
-  val DefaultInterestedInTimeout: Duration = 60.milliseconds
+object utttopicfiwtewstowe {
+  v-vaw d-defauwtnotintewestedintimeout: duwation = 60.miwwiseconds
+  v-vaw defauwtoptouttimeout: d-duwation = 60.miwwiseconds
+  v-vaw defauwtintewestedintimeout: duwation = 60.miwwiseconds
 }

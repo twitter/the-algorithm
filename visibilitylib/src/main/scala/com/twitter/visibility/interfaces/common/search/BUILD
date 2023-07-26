@@ -1,14 +1,14 @@
-scala_library(
-    sources = [
-        "*.scala",
+scawa_wibwawy(
+    souwces = [
+        "*.scawa", 🥺
     ],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/scala/com/twitter/search/blender/services/strato",
-        "src/thrift/com/twitter/search/common:constants-scala",
-        "stitch/stitch-core",
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    p-pwatfowm = "java8", o.O
+    s-stwict_deps = t-twue, (U ᵕ U❁)
+    tags = ["bazew-compatibwe"], (⑅˘꒳˘)
+    d-dependencies = [
+        "swc/scawa/com/twittew/seawch/bwendew/sewvices/stwato", ( ͡o ω ͡o )
+        "swc/thwift/com/twittew/seawch/common:constants-scawa", UwU
+        "stitch/stitch-cowe", rawr x3
     ],
 )

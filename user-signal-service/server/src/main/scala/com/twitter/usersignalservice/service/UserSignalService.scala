@@ -1,26 +1,26 @@
-package com.twitter.usersignalservice
-package service
+package com.twittew.usewsignawsewvice
+package sewvice
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.storehaus.StitchOfReadableStore
-import com.twitter.usersignalservice.config.SignalFetcherConfig
-import com.twitter.usersignalservice.handler.UserSignalHandler
-import com.twitter.usersignalservice.thriftscala.BatchSignalRequest
-import com.twitter.usersignalservice.thriftscala.BatchSignalResponse
-import com.twitter.util.Timer
+i-impowt com.googwe.inject.inject
+i-impowt com.googwe.inject.singweton
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.stitch.stowehaus.stitchofweadabwestowe
+i-impowt com.twittew.usewsignawsewvice.config.signawfetchewconfig
+i-impowt com.twittew.usewsignawsewvice.handwew.usewsignawhandwew
+i-impowt com.twittew.usewsignawsewvice.thwiftscawa.batchsignawwequest
+impowt com.twittew.usewsignawsewvice.thwiftscawa.batchsignawwesponse
+impowt com.twittew.utiw.timew
 
-@Singleton
-class UserSignalService @Inject() (
-  signalFetcherConfig: SignalFetcherConfig,
-  timer: Timer,
-  stats: StatsReceiver) {
+@singweton
+cwass usewsignawsewvice @inject() (
+  s-signawfetchewconfig: signawfetchewconfig, ^^;;
+  timew: timew, >_<
+  stats: statsweceivew) {
 
-  private val userSignalHandler =
-    new UserSignalHandler(signalFetcherConfig, timer, stats)
+  p-pwivate vaw usewsignawhandwew =
+    nyew usewsignawhandwew(signawfetchewconfig, mya t-timew, stats)
 
-  val userSignalServiceHandlerStoreStitch: BatchSignalRequest => com.twitter.stitch.Stitch[
-    BatchSignalResponse
-  ] = StitchOfReadableStore(userSignalHandler.toReadableStore)
+  vaw usewsignawsewvicehandwewstowestitch: batchsignawwequest => com.twittew.stitch.stitch[
+    b-batchsignawwesponse
+  ] = stitchofweadabwestowe(usewsignawhandwew.toweadabwestowe)
 }

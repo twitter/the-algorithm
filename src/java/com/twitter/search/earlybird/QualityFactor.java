@@ -1,17 +1,17 @@
-package com.twitter.search.earlybird;
+package com.twittew.seawch.eawwybiwd;
 
 /**
- * Interface defining a quality factor.
+ * intewface d-defining a-a quawity factow. (U ﹏ U)
  */
-public interface QualityFactor {
+p-pubwic intewface q-quawityfactow {
   /**
-   * Returns the current quality factor.
-   * @return The quality factor; a number between 0.0 and 1.0.
+   * w-wetuwns the cuwwent q-quawity factow. -.-
+   * @wetuwn t-the quawity factow; a-a nyumbew between 0.0 and 1.0. (ˆ ﻌ ˆ)♡
    */
-  double get();
+  doubwe get();
 
   /**
-   * Starts a thread to update the quality factor periodically.
+   * stawts a t-thwead to update the quawity factow pewiodicawwy. (⑅˘꒳˘)
    */
-  void startUpdates();
+  v-void stawtupdates();
 }

@@ -1,236 +1,236 @@
-package com.twitter.simclusters_v2.scalding.embedding
+package com.twittew.simcwustews_v2.scawding.embedding
 
-import com.twitter.onboarding.relevance.candidates.thriftscala.InterestBasedUserRecommendations
-import com.twitter.onboarding.relevance.candidates.thriftscala.UTTInterest
-import com.twitter.onboarding.relevance.source.UttAccountRecommendationsScalaDataset
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.Duration
-import com.twitter.scalding.Execution
-import com.twitter.scalding.RichDate
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.typed.UnsortedGrouped
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import com.twitter.simclusters_v2.hdfs_sources.ProducerEmbeddingSources
-import com.twitter.simclusters_v2.hdfs_sources.SemanticCoreEmbeddingsFromProducerScalaDataset
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil._
-import com.twitter.simclusters_v2.thriftscala
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClusterWithScore
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.TopSimClustersWithScore
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import com.twitter.wtf.scalding.jobs.common.StatsUtil._
-import java.util.TimeZone
+impowt com.twittew.onboawding.wewevance.candidates.thwiftscawa.intewestbasedusewwecommendations
+i-impowt com.twittew.onboawding.wewevance.candidates.thwiftscawa.uttintewest
+i-impowt com.twittew.onboawding.wewevance.souwce.uttaccountwecommendationsscawadataset
+i-impowt com.twittew.scawding.awgs
+i-impowt com.twittew.scawding.datewange
+i-impowt c-com.twittew.scawding.days
+i-impowt c-com.twittew.scawding.duwation
+impowt com.twittew.scawding.execution
+impowt com.twittew.scawding.wichdate
+impowt c-com.twittew.scawding.uniqueid
+impowt com.twittew.scawding.typed.typedpipe
+impowt com.twittew.scawding.typed.unsowtedgwouped
+i-impowt com.twittew.scawding_intewnaw.dawv2.daw
+impowt com.twittew.scawding_intewnaw.dawv2.dawwwite._
+i-impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.expwicitwocation
+impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.pwocatwa
+impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.simcwustews_v2.common.modewvewsions
+impowt c-com.twittew.simcwustews_v2.common.simcwustewsembedding
+impowt c-com.twittew.simcwustews_v2.hdfs_souwces.adhockeyvawsouwces
+impowt c-com.twittew.simcwustews_v2.hdfs_souwces.pwoducewembeddingsouwces
+impowt com.twittew.simcwustews_v2.hdfs_souwces.semanticcoweembeddingsfwompwoducewscawadataset
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.embeddingutiw._
+impowt com.twittew.simcwustews_v2.thwiftscawa
+impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+impowt com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
+impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewwithscowe
+impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembeddingid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.topsimcwustewswithscowe
+impowt c-com.twittew.wtf.scawding.jobs.common.adhocexecutionapp
+i-impowt c-com.twittew.wtf.scawding.jobs.common.scheduwedexecutionapp
+i-impowt com.twittew.wtf.scawding.jobs.common.statsutiw._
+impowt java.utiw.timezone
 
 /*
-  $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:entity_embedding_from_producer_embedding-adhoc
+  $ ./bazew b-bundwe swc/scawa/com/twittew/simcwustews_v2/scawding/embedding:entity_embedding_fwom_pwoducew_embedding-adhoc
 
-  $ scalding remote run \
-  --main-class com.twitter.simclusters_v2.scalding.embedding.EntityEmbeddingFromProducerEmbeddingAdhocJob \
-  --target src/scala/com/twitter/simclusters_v2/scalding/embedding:entity_embedding_from_producer_embedding-adhoc \
-  --user recos-platform \
-  -- --date 2019-10-23 --model_version 20M_145K_updated
+  $ scawding wemote w-wun \
+  --main-cwass com.twittew.simcwustews_v2.scawding.embedding.entityembeddingfwompwoducewembeddingadhocjob \
+  --tawget swc/scawa/com/twittew/simcwustews_v2/scawding/embedding:entity_embedding_fwom_pwoducew_embedding-adhoc \
+  --usew wecos-pwatfowm \
+  -- --date 2019-10-23 --modew_vewsion 20m_145k_updated
  */
-object EntityEmbeddingFromProducerEmbeddingAdhocJob extends AdhocExecutionApp {
-  override def runOnDateRange(
-    args: Args
+object entityembeddingfwompwoducewembeddingadhocjob e-extends adhocexecutionapp {
+  ovewwide def wunondatewange(
+    a-awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    // step 1: read in (entity, producer) pairs and remove duplicates
-    val topK = args.getOrElse("top_k", "100").toInt
+    i-impwicit datewange: d-datewange, ( ͡o ω ͡o )
+    timezone: timezone, rawr x3
+    uniqueid: uniqueid
+  ): e-execution[unit] = {
+    // s-step 1: wead in (entity, nyaa~~ pwoducew) p-paiws and wemove d-dupwicates
+    vaw topk = a-awgs.getowewse("top_k", >_< "100").toint
 
-    val modelVersion = ModelVersions.toModelVersion(
-      args.getOrElse("model_version", ModelVersions.Model20M145KUpdated))
+    vaw modewvewsion = m-modewvewsions.tomodewvewsion(
+      awgs.getowewse("modew_vewsion", ^^;; modewvewsions.modew20m145kupdated))
 
-    val entityKnownForProducers =
-      EntityEmbeddingFromProducerEmbeddingJob
-        .getNormalizedEntityProducerMatrix(dateRange.embiggen(Days(7)))
-        .count("num unique entity producer pairs").map {
-          case (entityId, producerId, score) => (producerId, (entityId, score))
+    v-vaw entityknownfowpwoducews =
+      entityembeddingfwompwoducewembeddingjob
+        .getnowmawizedentitypwoducewmatwix(datewange.embiggen(days(7)))
+        .count("num u-unique entity pwoducew paiws").map {
+          c-case (entityid, (ˆ ﻌ ˆ)♡ p-pwoducewid, ^^;; scowe) => (pwoducewid, (⑅˘꒳˘) (entityid, rawr x3 scowe))
         }
 
-    // step 2: read in producer to simclusters embeddings
+    // step 2: wead in pwoducew to simcwustews embeddings
 
-    val producersEmbeddingsFollowBased =
-      ProducerEmbeddingSources.producerEmbeddingSourceLegacy(
-        EmbeddingType.ProducerFollowBasedSemanticCoreEntity,
-        modelVersion)(dateRange.embiggen(Days(7)))
+    vaw pwoducewsembeddingsfowwowbased =
+      pwoducewembeddingsouwces.pwoducewembeddingsouwcewegacy(
+        e-embeddingtype.pwoducewfowwowbasedsemanticcoweentity, (///ˬ///✿)
+        m-modewvewsion)(datewange.embiggen(days(7)))
 
-    val producersEmbeddingsFavBased =
-      ProducerEmbeddingSources.producerEmbeddingSourceLegacy(
-        EmbeddingType.ProducerFavBasedSemanticCoreEntity,
-        modelVersion)(dateRange.embiggen(Days(7)))
+    vaw pwoducewsembeddingsfavbased =
+      p-pwoducewembeddingsouwces.pwoducewembeddingsouwcewegacy(
+        e-embeddingtype.pwoducewfavbasedsemanticcoweentity, 🥺
+        m-modewvewsion)(datewange.embiggen(days(7)))
 
-    // step 3: join producer embedding with entity, producer pairs and reformat result into format [SimClustersEmbeddingId, SimClustersEmbedding]
-    val producerBasedEntityEmbeddingsFollowBased =
-      EntityEmbeddingFromProducerEmbeddingJob
-        .computeEmbedding(
-          producersEmbeddingsFollowBased,
-          entityKnownForProducers,
-          topK,
-          modelVersion,
-          EmbeddingType.ProducerFollowBasedSemanticCoreEntity).toTypedPipe.count(
-          "follow_based_entity_count")
+    // step 3: join pwoducew embedding with e-entity, >_< pwoducew paiws and wefowmat wesuwt into fowmat [simcwustewsembeddingid, UwU simcwustewsembedding]
+    v-vaw pwoducewbasedentityembeddingsfowwowbased =
+      e-entityembeddingfwompwoducewembeddingjob
+        .computeembedding(
+          pwoducewsembeddingsfowwowbased, >_<
+          e-entityknownfowpwoducews, -.-
+          t-topk, mya
+          modewvewsion, >w<
+          e-embeddingtype.pwoducewfowwowbasedsemanticcoweentity).totypedpipe.count(
+          "fowwow_based_entity_count")
 
-    val producerBasedEntityEmbeddingsFavBased =
-      EntityEmbeddingFromProducerEmbeddingJob
-        .computeEmbedding(
-          producersEmbeddingsFavBased,
-          entityKnownForProducers,
-          topK,
-          modelVersion,
-          EmbeddingType.ProducerFavBasedSemanticCoreEntity).toTypedPipe.count(
+    v-vaw pwoducewbasedentityembeddingsfavbased =
+      e-entityembeddingfwompwoducewembeddingjob
+        .computeembedding(
+          p-pwoducewsembeddingsfavbased, (U ﹏ U)
+          entityknownfowpwoducews, 😳😳😳
+          topk, o.O
+          m-modewvewsion, òωó
+          e-embeddingtype.pwoducewfavbasedsemanticcoweentity).totypedpipe.count(
           "fav_based_entity_count")
 
-    val producerBasedEntityEmbeddings =
-      producerBasedEntityEmbeddingsFollowBased ++ producerBasedEntityEmbeddingsFavBased
+    v-vaw pwoducewbasedentityembeddings =
+      p-pwoducewbasedentityembeddingsfowwowbased ++ p-pwoducewbasedentityembeddingsfavbased
 
-    // step 4 write results to file
-    producerBasedEntityEmbeddings
-      .count("total_count").writeExecution(
-        AdhocKeyValSources.entityToClustersSource(
-          getHdfsPath(isAdhoc = true, isManhattanKeyVal = true, modelVersion, "producer")))
+    // step 4 wwite wesuwts to fiwe
+    pwoducewbasedentityembeddings
+      .count("totaw_count").wwiteexecution(
+        a-adhockeyvawsouwces.entitytocwustewssouwce(
+          gethdfspath(isadhoc = twue, 😳😳😳 ismanhattankeyvaw = twue, σωσ modewvewsion, (⑅˘꒳˘) "pwoducew")))
   }
 
 }
 
 /*
- $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:entity_embedding_from_producer_embedding_job
- $ capesospy-v2 update \
-  --build_locally \
-  --start_cron entity_embedding_from_producer_embedding_job src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+ $ ./bazew bundwe swc/scawa/com/twittew/simcwustews_v2/scawding/embedding:entity_embedding_fwom_pwoducew_embedding_job
+ $ c-capesospy-v2 update \
+  --buiwd_wocawwy \
+  --stawt_cwon entity_embedding_fwom_pwoducew_embedding_job swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc3.yamw
  */
-object EntityEmbeddingFromProducerEmbeddingScheduledJob extends ScheduledExecutionApp {
-  override def firstTime: RichDate = RichDate("2019-10-16")
+o-object entityembeddingfwompwoducewembeddingscheduwedjob e-extends scheduwedexecutionapp {
+  o-ovewwide def fiwsttime: wichdate = w-wichdate("2019-10-16")
 
-  override def batchIncrement: Duration = Days(7)
+  ovewwide def batchincwement: d-duwation = d-days(7)
 
-  override def runOnDateRange(
-    args: Args
+  ovewwide def wunondatewange(
+    awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    // parse args: modelVersion, topK
-    val topK = args.getOrElse("top_k", "100").toInt
-    // only support dec11 now since updated model is not productionized for producer embedding
-    val modelVersion =
-      ModelVersions.toModelVersion(
-        args.getOrElse("model_version", ModelVersions.Model20M145KUpdated))
+    impwicit datewange: datewange, (///ˬ///✿)
+    timezone: t-timezone, 🥺
+    uniqueid: uniqueid
+  ): e-execution[unit] = {
+    // pawse awgs: m-modewvewsion, OwO topk
+    v-vaw topk = awgs.getowewse("top_k", >w< "100").toint
+    // onwy suppowt dec11 n-nyow since updated m-modew is nyot pwoductionized f-fow pwoducew embedding
+    v-vaw modewvewsion =
+      modewvewsions.tomodewvewsion(
+        awgs.getowewse("modew_vewsion", 🥺 modewvewsions.modew20m145kupdated))
 
-    val entityKnownForProducers =
-      EntityEmbeddingFromProducerEmbeddingJob
-        .getNormalizedEntityProducerMatrix(dateRange.embiggen(Days(7)))
-        .count("num unique entity producer pairs").map {
-          case (entityId, producerId, score) => (producerId, (entityId, score))
+    v-vaw entityknownfowpwoducews =
+      e-entityembeddingfwompwoducewembeddingjob
+        .getnowmawizedentitypwoducewmatwix(datewange.embiggen(days(7)))
+        .count("num u-unique entity pwoducew p-paiws").map {
+          c-case (entityid, nyaa~~ pwoducewid, s-scowe) => (pwoducewid, ^^ (entityid, >w< scowe))
         }
 
-    val favBasedEmbeddings = EntityEmbeddingFromProducerEmbeddingJob
-      .computeEmbedding(
-        ProducerEmbeddingSources.producerEmbeddingSourceLegacy(
-          EmbeddingType.ProducerFavBasedSemanticCoreEntity,
-          modelVersion)(dateRange.embiggen(Days(7))),
-        entityKnownForProducers,
-        topK,
-        modelVersion,
-        EmbeddingType.ProducerFavBasedSemanticCoreEntity
-      ).toTypedPipe.count("follow_based_entity_count")
+    vaw favbasedembeddings = entityembeddingfwompwoducewembeddingjob
+      .computeembedding(
+        pwoducewembeddingsouwces.pwoducewembeddingsouwcewegacy(
+          e-embeddingtype.pwoducewfavbasedsemanticcoweentity, OwO
+          m-modewvewsion)(datewange.embiggen(days(7))), XD
+        entityknownfowpwoducews, ^^;;
+        topk, 🥺
+        m-modewvewsion, XD
+        e-embeddingtype.pwoducewfavbasedsemanticcoweentity
+      ).totypedpipe.count("fowwow_based_entity_count")
 
-    val followBasedEmbeddings = EntityEmbeddingFromProducerEmbeddingJob
-      .computeEmbedding(
-        ProducerEmbeddingSources.producerEmbeddingSourceLegacy(
-          EmbeddingType.ProducerFollowBasedSemanticCoreEntity,
-          modelVersion)(dateRange.embiggen(Days(7))),
-        entityKnownForProducers,
-        topK,
-        modelVersion,
-        EmbeddingType.ProducerFollowBasedSemanticCoreEntity
-      ).toTypedPipe.count("fav_based_entity_count")
+    vaw fowwowbasedembeddings = entityembeddingfwompwoducewembeddingjob
+      .computeembedding(
+        pwoducewembeddingsouwces.pwoducewembeddingsouwcewegacy(
+          e-embeddingtype.pwoducewfowwowbasedsemanticcoweentity, (U ᵕ U❁)
+          modewvewsion)(datewange.embiggen(days(7))), :3
+        entityknownfowpwoducews, ( ͡o ω ͡o )
+        topk, òωó
+        modewvewsion, σωσ
+        e-embeddingtype.pwoducewfowwowbasedsemanticcoweentity
+      ).totypedpipe.count("fav_based_entity_count")
 
-    val embedding = favBasedEmbeddings ++ followBasedEmbeddings
+    vaw embedding = favbasedembeddings ++ f-fowwowbasedembeddings
 
-    embedding
-      .count("total_count")
+    e-embedding
+      .count("totaw_count")
       .map {
-        case (embeddingId, embedding) => KeyVal(embeddingId, embedding)
-      }.writeDALVersionedKeyValExecution(
-        SemanticCoreEmbeddingsFromProducerScalaDataset,
-        D.Suffix(getHdfsPath(isAdhoc = false, isManhattanKeyVal = true, modelVersion, "producer"))
+        case (embeddingid, (U ᵕ U❁) embedding) => keyvaw(embeddingid, (✿oωo) embedding)
+      }.wwitedawvewsionedkeyvawexecution(
+        s-semanticcoweembeddingsfwompwoducewscawadataset, ^^
+        d-d.suffix(gethdfspath(isadhoc = fawse, ^•ﻌ•^ ismanhattankeyvaw = twue, XD modewvewsion, :3 "pwoducew"))
       )
 
   }
 
 }
 
-private object EntityEmbeddingFromProducerEmbeddingJob {
-  def computeEmbedding(
-    producersEmbeddings: TypedPipe[(Long, TopSimClustersWithScore)],
-    entityKnownForProducers: TypedPipe[(Long, (Long, Double))],
-    topK: Int,
-    modelVersion: ModelVersion,
-    embeddingType: EmbeddingType
-  ): UnsortedGrouped[SimClustersEmbeddingId, thriftscala.SimClustersEmbedding] = {
-    producersEmbeddings
-      .hashJoin(entityKnownForProducers).flatMap {
-        case (_, (topSimClustersWithScore, (entityId, producerScore))) => {
-          val entityEmbedding = topSimClustersWithScore.topClusters
-          entityEmbedding.map {
-            case SimClusterWithScore(clusterId, score) =>
+pwivate object e-entityembeddingfwompwoducewembeddingjob {
+  def computeembedding(
+    p-pwoducewsembeddings: typedpipe[(wong, (ꈍᴗꈍ) topsimcwustewswithscowe)], :3
+    entityknownfowpwoducews: typedpipe[(wong, (U ﹏ U) (wong, UwU doubwe))],
+    topk: i-int, 😳😳😳
+    modewvewsion: modewvewsion, XD
+    e-embeddingtype: e-embeddingtype
+  ): unsowtedgwouped[simcwustewsembeddingid, t-thwiftscawa.simcwustewsembedding] = {
+    pwoducewsembeddings
+      .hashjoin(entityknownfowpwoducews).fwatmap {
+        c-case (_, o.O (topsimcwustewswithscowe, (entityid, (⑅˘꒳˘) pwoducewscowe))) => {
+          vaw e-entityembedding = t-topsimcwustewswithscowe.topcwustews
+          entityembedding.map {
+            c-case simcwustewwithscowe(cwustewid, 😳😳😳 s-scowe) =>
               (
                 (
-                  SimClustersEmbeddingId(
-                    embeddingType,
-                    modelVersion,
-                    InternalId.EntityId(entityId)),
-                  clusterId),
-                score * producerScore)
+                  simcwustewsembeddingid(
+                    embeddingtype, nyaa~~
+                    m-modewvewsion, rawr
+                    i-intewnawid.entityid(entityid)),
+                  c-cwustewid),
+                scowe * pwoducewscowe)
           }
         }
-      }.sumByKey.map {
-        case ((embeddingId, clusterId), clusterScore) =>
-          (embeddingId, (clusterId, clusterScore))
-      }.group.sortedReverseTake(topK)(Ordering.by(_._2)).mapValues(SimClustersEmbedding
-        .apply(_).toThrift)
+      }.sumbykey.map {
+        case ((embeddingid, c-cwustewid), -.- cwustewscowe) =>
+          (embeddingid, (✿oωo) (cwustewid, /(^•ω•^) c-cwustewscowe))
+      }.gwoup.sowtedwevewsetake(topk)(owdewing.by(_._2)).mapvawues(simcwustewsembedding
+        .appwy(_).tothwift)
   }
 
-  def getNormalizedEntityProducerMatrix(
-    implicit dateRange: DateRange
-  ): TypedPipe[(Long, Long, Double)] = {
-    val uttRecs: TypedPipe[(UTTInterest, InterestBasedUserRecommendations)] =
-      DAL
-        .readMostRecentSnapshot(UttAccountRecommendationsScalaDataset).withRemoteReadPolicy(
-          ExplicitLocation(ProcAtla)).toTypedPipe.map {
-          case KeyVal(interest, candidates) => (interest, candidates)
+  d-def getnowmawizedentitypwoducewmatwix(
+    impwicit datewange: datewange
+  ): typedpipe[(wong, w-wong, 🥺 doubwe)] = {
+    v-vaw uttwecs: t-typedpipe[(uttintewest, ʘwʘ i-intewestbasedusewwecommendations)] =
+      daw
+        .weadmostwecentsnapshot(uttaccountwecommendationsscawadataset).withwemoteweadpowicy(
+          e-expwicitwocation(pwocatwa)).totypedpipe.map {
+          case keyvaw(intewest, UwU candidates) => (intewest, XD candidates)
         }
 
-    uttRecs
-      .flatMap {
-        case (interest, candidates) => {
-          // current populated features
-          val top20Producers = candidates.recommendations.sortBy(-_.score.getOrElse(0.0d)).take(20)
-          val producerScorePairs = top20Producers.map { producer =>
-            (producer.candidateUserID, producer.score.getOrElse(0.0))
+    uttwecs
+      .fwatmap {
+        case (intewest, c-candidates) => {
+          // cuwwent popuwated f-featuwes
+          vaw top20pwoducews = c-candidates.wecommendations.sowtby(-_.scowe.getowewse(0.0d)).take(20)
+          vaw p-pwoducewscowepaiws = top20pwoducews.map { p-pwoducew =>
+            (pwoducew.candidateusewid, (✿oωo) p-pwoducew.scowe.getowewse(0.0))
           }
-          val scoreSum = producerScorePairs.map(_._2).sum
-          producerScorePairs.map {
-            case (producerId, score) => (interest.uttID, producerId, score / scoreSum)
+          v-vaw scowesum = p-pwoducewscowepaiws.map(_._2).sum
+          p-pwoducewscowepaiws.map {
+            case (pwoducewid, scowe) => (intewest.uttid, :3 pwoducewid, (///ˬ///✿) scowe / scowesum)
           }
         }
       }

@@ -1,47 +1,47 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+package com.twittew.seawch.common.utiw.mw.pwediction_engine;
 
-import java.util.Arrays;
+impowt j-java.utiw.awways;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
 /**
- * Represents a continuous feature that has been discretized into a set of disjoint ranges.
+ * w-wepwesents a-a continuous f-featuwe that h-has been discwetized i-into a set o-of disjoint wanges. (///ˬ///✿)
  *
- * Each range [a, b) is represented by the lower split point (a) and its associated weight.
+ * each wange [a, >w< b) is wepwesented by the wowew spwit point (a) a-and its associated weight. rawr
  */
-class DiscretizedFeature {
+cwass discwetizedfeatuwe {
 
-  protected final double[] splitPoints;
-  protected final double[] weights;
+  p-pwotected finaw doubwe[] spwitpoints;
+  p-pwotected finaw doubwe[] weights;
 
   /**
-   * Creates an instance from a list of split points and their corresponding weights.
+   * cweates a-an instance fwom a wist of spwit p-points and t-theiw cowwesponding weights. mya
    *
-   * @param splitPoints Lower values of the ranges. The first entry must be Double.NEGATIVE_INFINITY
-   *  They must be sorted (in ascending order).
-   * @param  weights Weights for the splits.
+   * @pawam spwitpoints wowew vawues of the wanges. ^^ t-the fiwst entwy must be doubwe.negative_infinity
+   *  they must be sowted (in ascending owdew). 😳😳😳
+   * @pawam  w-weights weights fow the spwits. mya
    */
-  protected DiscretizedFeature(double[] splitPoints, double[] weights) {
-    Preconditions.checkArgument(splitPoints.length == weights.length);
-    Preconditions.checkArgument(splitPoints.length > 1);
-    Preconditions.checkArgument(splitPoints[0] == Double.NEGATIVE_INFINITY,
-        "First split point must be Double.NEGATIVE_INFINITY");
-    this.splitPoints = splitPoints;
-    this.weights = weights;
+  p-pwotected d-discwetizedfeatuwe(doubwe[] s-spwitpoints, 😳 doubwe[] w-weights) {
+    pweconditions.checkawgument(spwitpoints.wength == weights.wength);
+    p-pweconditions.checkawgument(spwitpoints.wength > 1);
+    pweconditions.checkawgument(spwitpoints[0] == doubwe.negative_infinity, -.-
+        "fiwst s-spwit point must be doubwe.negative_infinity");
+    this.spwitpoints = spwitpoints;
+    this.weights = w-weights;
   }
 
-  public double getWeight(double value) {
-    // binarySearch returns (- insertionPoint - 1)
-    int index = Math.abs(Arrays.binarySearch(splitPoints, value) + 1) - 1;
-    return weights[index];
+  pubwic doubwe g-getweight(doubwe v-vawue) {
+    // b-binawyseawch wetuwns (- insewtionpoint - 1)
+    int index = math.abs(awways.binawyseawch(spwitpoints, 🥺 v-vawue) + 1) - 1;
+    wetuwn w-weights[index];
   }
 
-  public boolean allValuesBelowThreshold(double minWeight) {
-    for (double weight : weights) {
-      if (Math.abs(weight) > minWeight) {
-        return false;
+  pubwic b-boowean awwvawuesbewowthweshowd(doubwe m-minweight) {
+    fow (doubwe w-weight : weights) {
+      i-if (math.abs(weight) > minweight) {
+        wetuwn f-fawse;
       }
     }
-    return true;
+    wetuwn t-twue;
   }
 }

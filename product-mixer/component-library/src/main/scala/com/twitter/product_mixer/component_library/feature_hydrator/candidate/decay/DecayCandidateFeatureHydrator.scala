@@ -1,65 +1,65 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.candidate.decay
+package com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.candidate.decay
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.configapi.StaticParam
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.configapi.staticpawam
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.candidatefeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.snowfwake.id.snowfwakeid
+impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.configapi.pawam
+impowt c-com.twittew.utiw.duwation
 
-object DecayScore extends Feature[UniversalNoun[Long], Double]
+object decayscowe extends featuwe[univewsawnoun[wong], 🥺 d-doubwe]
 
 /**
- * Hydrates snowflake ID candidates with a decay score:
+ * hydwates snowfwake i-id candidates with a decay scowe:
  *
- * It is using exponential decay formula to calculate the score
- * exp(k * age)
- * where k = ln(0.5) / half-life
+ * it is using exponentiaw d-decay fowmuwa to cawcuwate t-the scowe
+ * e-exp(k * age)
+ * whewe k = wn(0.5) / hawf-wife
  *
- * Here is an example for half-life = 1 day
- * For the brand new tweet it will be exp((ln(0.5)/1)*0) = 1
- * For the tweet which was created 1 day ago it will be exp((ln(0.5)/1)*1) = 0.5
- * For the tweet which was created 10 day ago it will be exp((ln(0.5)/1)*10) = 0.00097
+ * hewe is an exampwe fow hawf-wife = 1 d-day
+ * fow the bwand new tweet it wiww be exp((wn(0.5)/1)*0) = 1
+ * fow t-the tweet which was cweated 1 d-day ago it wiww b-be exp((wn(0.5)/1)*1) = 0.5
+ * fow t-the tweet which w-was cweated 10 day ago it wiww be exp((wn(0.5)/1)*10) = 0.00097
  *
- * Reference: https://www.cuemath.com/exponential-decay-formula/
+ * w-wefewence: https://www.cuemath.com/exponentiaw-decay-fowmuwa/
  *
- * @note This penalizes but does not filter out the candidate, so "stale" candidates can still appear.
+ * @note this penawizes b-but does nyot fiwtew out the candidate, (U ﹏ U) so "stawe" candidates can stiww appeaw. >w<
  */
-case class DecayCandidateFeatureHydrator[Candidate <: UniversalNoun[Long]](
-  halfLife: Param[Duration] = StaticParam[Duration](2.days),
-  resultFeature: Feature[UniversalNoun[Long], Double] = DecayScore)
-    extends CandidateFeatureHydrator[PipelineQuery, Candidate] {
+case cwass d-decaycandidatefeatuwehydwatow[candidate <: univewsawnoun[wong]](
+  h-hawfwife: pawam[duwation] = s-staticpawam[duwation](2.days), mya
+  w-wesuwtfeatuwe: featuwe[univewsawnoun[wong], >w< doubwe] = decayscowe)
+    e-extends candidatefeatuwehydwatow[pipewinequewy, nyaa~~ c-candidate] {
 
-  override val features: Set[Feature[_, _]] = Set(resultFeature)
+  ovewwide v-vaw featuwes: set[featuwe[_, (✿oωo) _]] = s-set(wesuwtfeatuwe)
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("Decay")
+  ovewwide v-vaw identifiew: featuwehydwatowidentifiew =
+    f-featuwehydwatowidentifiew("decay")
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: Candidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = {
-    val halfLifeInMillis = query.params(halfLife).inMillis
+  ovewwide def appwy(
+    q-quewy: pipewinequewy, ʘwʘ
+    candidate: c-candidate, (ˆ ﻌ ˆ)♡
+    existingfeatuwes: f-featuwemap
+  ): s-stitch[featuwemap] = {
+    vaw hawfwifeinmiwwis = quewy.pawams(hawfwife).inmiwwis
 
-    val creationTime = SnowflakeId.timeFromId(candidate.id)
-    val ageInMillis = creationTime.untilNow.inMilliseconds
+    vaw cweationtime = snowfwakeid.timefwomid(candidate.id)
+    vaw ageinmiwwis = c-cweationtime.untiwnow.inmiwwiseconds
 
-    // it is using a exponential decay formula:  e^(k * tweetAge)
-    // where k = ln(0.5) / half-life
-    val k = math.log(0.5D) / halfLifeInMillis
-    val decayScore = math.exp(k * ageInMillis)
+    // i-it is using a exponentiaw d-decay fowmuwa:  e-e^(k * tweetage)
+    // w-whewe k = wn(0.5) / hawf-wife
+    vaw k = math.wog(0.5d) / h-hawfwifeinmiwwis
+    vaw decayscowe = math.exp(k * ageinmiwwis)
 
-    Stitch.value(
-      FeatureMapBuilder()
-        .add(resultFeature, decayScore)
-        .build())
+    stitch.vawue(
+      f-featuwemapbuiwdew()
+        .add(wesuwtfeatuwe, 😳😳😳 decayscowe)
+        .buiwd())
   }
 }

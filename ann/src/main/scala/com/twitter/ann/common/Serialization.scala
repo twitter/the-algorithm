@@ -1,28 +1,28 @@
-package com.twitter.ann.common
+package com.twittew.ann.common
 
-import com.twitter.search.common.file.AbstractFile
-import org.apache.beam.sdk.io.fs.ResourceId
+impowt com.twittew.seawch.common.fiwe.abstwactfiwe
+i-impowt owg.apache.beam.sdk.io.fs.wesouwceid
 
 /**
- * Interface for writing an Appendable to a directory.
+ * i-intewface f-fow wwiting an appendabwe t-to a diwectowy. ( ͡o ω ͡o )
  */
-trait Serialization {
-  def toDirectory(
-    serializationDirectory: AbstractFile
-  ): Unit
+t-twait s-sewiawization {
+  d-def todiwectowy(
+    s-sewiawizationdiwectowy: abstwactfiwe
+  ): unit
 
-  def toDirectory(
-    serializationDirectory: ResourceId
-  ): Unit
+  def todiwectowy(
+    sewiawizationdiwectowy: w-wesouwceid
+  ): unit
 }
 
 /**
- * Interface for reading a Queryable from a directory
- * @tparam T the id of the embeddings
- * @tparam Q type of the Queryable that is deserialized.
+ * intewface f-fow weading a quewyabwe fwom a-a diwectowy
+ * @tpawam t the id of the embeddings
+ * @tpawam q type o-of the quewyabwe that is desewiawized. rawr x3
  */
-trait QueryableDeserialization[T, P <: RuntimeParams, D <: Distance[D], Q <: Queryable[T, P, D]] {
-  def fromDirectory(
-    serializationDirectory: AbstractFile
-  ): Q
+twait q-quewyabwedesewiawization[t, nyaa~~ p-p <: wuntimepawams, /(^•ω•^) d <: distance[d], rawr q <: quewyabwe[t, OwO p, d]] {
+  def fwomdiwectowy(
+    s-sewiawizationdiwectowy: abstwactfiwe
+  ): q
 }

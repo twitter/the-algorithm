@@ -1,47 +1,47 @@
-package com.twitter.search.earlybird.search;
+package com.twittew.seawch.eawwybiwd.seawch;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
+i-impowt c-com.twittew.common.utiw.cwock;
+i-impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+i-impowt c-com.twittew.seawch.eawwybiwd.common.usewupdates.usewtabwe;
+i-impowt com.twittew.seawch.eawwybiwd.stats.eawwybiwdseawchewstats;
 
 /**
- * Created with IntelliJ IDEA.
- * Date: 6/20/12
- * Time: 12:06 PM
- * To change this template use File | Settings | File Templates.
+ * cweated with intewwij idea. (U ﹏ U)
+ * date: 6/20/12
+ * t-time: 12:06 pm
+ * to change this tempwate u-use fiwe | settings | fiwe tempwates. (U ﹏ U)
  */
-public class SocialSearchResultsCollector extends SearchResultsCollector {
+p-pubwic cwass sociawseawchwesuwtscowwectow extends seawchwesuwtscowwectow {
 
-  private final SocialFilter socialFilter;
+  pwivate f-finaw sociawfiwtew sociawfiwtew;
 
-  public SocialSearchResultsCollector(
-      ImmutableSchemaInterface schema,
-      SearchRequestInfo searchRequestInfo,
-      SocialFilter socialFilter,
-      EarlybirdSearcherStats searcherStats,
-      EarlybirdCluster cluster,
-      UserTable userTable,
-      int requestDebugMode) {
-    super(schema, searchRequestInfo, Clock.SYSTEM_CLOCK, searcherStats, cluster, userTable,
-        requestDebugMode);
-    this.socialFilter = socialFilter;
+  p-pubwic sociawseawchwesuwtscowwectow(
+      i-immutabweschemaintewface schema, (⑅˘꒳˘)
+      seawchwequestinfo seawchwequestinfo, òωó
+      sociawfiwtew sociawfiwtew, ʘwʘ
+      e-eawwybiwdseawchewstats seawchewstats, /(^•ω•^)
+      eawwybiwdcwustew cwustew, ʘwʘ
+      usewtabwe usewtabwe, σωσ
+      int wequestdebugmode) {
+    s-supew(schema, OwO seawchwequestinfo, 😳😳😳 c-cwock.system_cwock, 😳😳😳 s-seawchewstats, o.O c-cwustew, ( ͡o ω ͡o ) u-usewtabwe, (U ﹏ U)
+        wequestdebugmode);
+    this.sociawfiwtew = s-sociawfiwtew;
   }
 
-  @Override
-  public final void doCollect(long tweetID) throws IOException {
-    if (socialFilter == null || socialFilter.accept(curDocId)) {
-      results.add(new Hit(currTimeSliceID, tweetID));
+  @ovewwide
+  pubwic finaw void docowwect(wong t-tweetid) thwows ioexception {
+    if (sociawfiwtew == nyuww || sociawfiwtew.accept(cuwdocid)) {
+      wesuwts.add(new h-hit(cuwwtimeswiceid, (///ˬ///✿) tweetid));
     }
   }
 
-  @Override
-  public void startSegment() throws IOException {
-    if (socialFilter != null) {
-      socialFilter.startSegment(currTwitterReader);
+  @ovewwide
+  p-pubwic void stawtsegment() t-thwows i-ioexception {
+    if (sociawfiwtew != nyuww) {
+      sociawfiwtew.stawtsegment(cuwwtwittewweadew);
     }
   }
 }

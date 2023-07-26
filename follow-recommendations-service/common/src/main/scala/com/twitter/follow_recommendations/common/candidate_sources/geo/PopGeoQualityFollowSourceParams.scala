@@ -1,42 +1,42 @@
-package com.twitter.follow_recommendations.common.candidate_sources.geo
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.geo
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt c-com.twittew.timewines.configapi.fspawam
 
-object PopGeoQualityFollowSourceParams {
-  case object CandidateSourceEnabled
-      extends FSParam[Boolean]("pop_geo_quality_follow_source_enabled", false)
+o-object p-popgeoquawityfowwowsouwcepawams {
+  c-case object c-candidatesouwceenabwed
+      e-extends fspawam[boowean]("pop_geo_quawity_fowwow_souwce_enabwed", /(^•ω•^) f-fawse)
 
-  case object PopGeoSourceGeoHashMinPrecision
-      extends FSBoundedParam[Int](
-        "pop_geo_quality_follow_source_geo_hash_min_precision",
-        default = 2,
-        min = 0,
+  case object popgeosouwcegeohashminpwecision
+      extends fsboundedpawam[int](
+        "pop_geo_quawity_fowwow_souwce_geo_hash_min_pwecision", rawr
+        defauwt = 2, OwO
+        min = 0, (U ﹏ U)
+        m-max = 10)
+
+  case object popgeosouwcegeohashmaxpwecision
+      e-extends fsboundedpawam[int](
+        "pop_geo_quawity_fowwow_souwce_geo_hash_max_pwecision", >_<
+        defauwt = 3,
+        m-min = 0, rawr x3
         max = 10)
 
-  case object PopGeoSourceGeoHashMaxPrecision
-      extends FSBoundedParam[Int](
-        "pop_geo_quality_follow_source_geo_hash_max_precision",
-        default = 3,
-        min = 0,
-        max = 10)
+  case object popgeosouwcewetuwnfwomawwpwecisions
+      extends f-fspawam[boowean](
+        "pop_geo_quawity_fowwow_souwce_wetuwn_fwom_aww_pwecisions", mya
+        defauwt = f-fawse)
 
-  case object PopGeoSourceReturnFromAllPrecisions
-      extends FSParam[Boolean](
-        "pop_geo_quality_follow_source_return_from_all_precisions",
-        default = false)
-
-  case object PopGeoSourceMaxResultsPerPrecision
-      extends FSBoundedParam[Int](
-        "pop_geo_quality_follow_source_max_results_per_precision",
-        default = 200,
-        min = 0,
+  c-case object popgeosouwcemaxwesuwtspewpwecision
+      extends fsboundedpawam[int](
+        "pop_geo_quawity_fowwow_souwce_max_wesuwts_pew_pwecision", nyaa~~
+        defauwt = 200, (⑅˘꒳˘)
+        min = 0, rawr x3
         max = 1000)
 
-  case object CandidateSourceWeight
-      extends FSBoundedParam[Double](
-        "pop_geo_quality_follow_source_weight",
-        default = 200,
-        min = 0.001,
-        max = 2000)
+  case object c-candidatesouwceweight
+      extends fsboundedpawam[doubwe](
+        "pop_geo_quawity_fowwow_souwce_weight", (✿oωo)
+        defauwt = 200, (ˆ ﻌ ˆ)♡
+        min = 0.001, (˘ω˘)
+        m-max = 2000)
 }

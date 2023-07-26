@@ -1,145 +1,145 @@
-package com.twitter.search.earlybird.index;
+package com.twittew.seawch.eawwybiwd.index;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+i-impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+i-impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.docidtotweetidmappew;
 
-import it.unimi.dsi.fastutil.longs.Long2IntMap;
-import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
-import it.unimi.dsi.fastutil.longs.LongArrays;
+impowt it.unimi.dsi.fastutiw.wongs.wong2intmap;
+impowt it.unimi.dsi.fastutiw.wongs.wong2intopenhashmap;
+impowt i-it.unimi.dsi.fastutiw.wongs.wongawways;
 
 /**
- * After a segment is complete, we call {@link EarlybirdSegment#optimizeIndexes()} to compact the
- * doc IDs assigned to the tweets in this segment, so that we can do faster ceil and floor lookups.
+ * aftew a segment is compwete, σωσ we c-caww {@wink eawwybiwdsegment#optimizeindexes()} to compact the
+ * d-doc ids assigned to the tweets in this segment, -.- so that we can d-do fastew ceiw and fwoow wookups. ^^;;
  */
-public class OptimizedTweetIDMapper extends TweetIDMapper {
-  // Maps doc IDs to tweet IDs. Therefore, it should be sorted in descending order of tweet IDs.
-  protected final long[] inverseMap;
-  private final Long2IntMap tweetIdToDocIdMap;
+p-pubwic c-cwass optimizedtweetidmappew extends tweetidmappew {
+  // maps doc ids to tweet i-ids. XD thewefowe, it shouwd be sowted in descending owdew of tweet ids. 🥺
+  pwotected f-finaw wong[] invewsemap;
+  pwivate f-finaw wong2intmap t-tweetidtodocidmap;
 
-  private OptimizedTweetIDMapper(long[] inverseMap,
-                                 long minTweetID,
-                                 long maxTweetID,
-                                 int minDocID,
-                                 int maxDocID) {
-    super(minTweetID, maxTweetID, minDocID, maxDocID, inverseMap.length);
-    this.inverseMap = inverseMap;
-    this.tweetIdToDocIdMap = buildTweetIdToDocIdMap();
+  p-pwivate o-optimizedtweetidmappew(wong[] invewsemap, òωó
+                                 wong mintweetid, (ˆ ﻌ ˆ)♡
+                                 w-wong maxtweetid, -.-
+                                 int mindocid, :3
+                                 int maxdocid) {
+    s-supew(mintweetid, ʘwʘ maxtweetid, 🥺 mindocid, maxdocid, >_< invewsemap.wength);
+    this.invewsemap = invewsemap;
+    t-this.tweetidtodocidmap = buiwdtweetidtodocidmap();
   }
 
-  public OptimizedTweetIDMapper(OutOfOrderRealtimeTweetIDMapper source) throws IOException {
-    super(source.getMinTweetID(),
-          source.getMaxTweetID(),
-          0,
-          source.getNumDocs() - 1,
-          source.getNumDocs());
-    inverseMap = source.sortTweetIds();
-    tweetIdToDocIdMap = buildTweetIdToDocIdMap();
+  p-pubwic o-optimizedtweetidmappew(outofowdewweawtimetweetidmappew s-souwce) thwows ioexception {
+    supew(souwce.getmintweetid(), ʘwʘ
+          souwce.getmaxtweetid(),
+          0, (˘ω˘)
+          s-souwce.getnumdocs() - 1, (✿oωo)
+          s-souwce.getnumdocs());
+    invewsemap = souwce.sowttweetids();
+    t-tweetidtodocidmap = b-buiwdtweetidtodocidmap();
   }
 
-  private Long2IntMap buildTweetIdToDocIdMap() {
-    int[] values = new int[inverseMap.length];
-    for (int i = 0; i < values.length; i++) {
-      values[i] = i;
+  pwivate w-wong2intmap buiwdtweetidtodocidmap() {
+    i-int[] vawues = new int[invewsemap.wength];
+    fow (int i = 0; i < v-vawues.wength; i++) {
+      vawues[i] = i-i;
     }
 
-    Long2IntMap map = new Long2IntOpenHashMap(inverseMap, values);
-    map.defaultReturnValue(-1);
-    return map;
+    wong2intmap m-map = nyew w-wong2intopenhashmap(invewsemap, (///ˬ///✿) vawues);
+    map.defauwtwetuwnvawue(-1);
+    wetuwn map;
   }
 
-  @Override
-  public int getDocID(long tweetID) {
-    return tweetIdToDocIdMap.getOrDefault(tweetID, ID_NOT_FOUND);
+  @ovewwide
+  pubwic int getdocid(wong tweetid) {
+    w-wetuwn tweetidtodocidmap.getowdefauwt(tweetid, rawr x3 i-id_not_found);
   }
 
-  @Override
-  protected int getNextDocIDInternal(int docID) {
-    // The doc IDs are consecutive and TweetIDMapper already checked the boundary conditions.
-    return docID + 1;
+  @ovewwide
+  pwotected int g-getnextdocidintewnaw(int d-docid) {
+    // t-the doc ids awe consecutive and tweetidmappew awweady c-checked the boundawy conditions. -.-
+    wetuwn docid + 1;
   }
 
-  @Override
-  protected int getPreviousDocIDInternal(int docID) {
-    // The doc IDs are consecutive and TweetIDMapper already checked the boundary conditions.
-    return docID - 1;
+  @ovewwide
+  pwotected int getpweviousdocidintewnaw(int d-docid) {
+    // the doc ids a-awe consecutive a-and tweetidmappew a-awweady checked the boundawy c-conditions. ^^
+    w-wetuwn docid - 1;
   }
 
-  @Override
-  public long getTweetID(int internalID) {
-    return inverseMap[internalID];
+  @ovewwide
+  p-pubwic wong g-gettweetid(int intewnawid) {
+    wetuwn invewsemap[intewnawid];
   }
 
-  @Override
-  protected int findDocIDBoundInternal(long tweetID, boolean findMaxDocID) {
-    int docId = tweetIdToDocIdMap.get(tweetID);
-    if (docId >= 0) {
-      return docId;
+  @ovewwide
+  p-pwotected i-int finddocidboundintewnaw(wong t-tweetid, (⑅˘꒳˘) boowean f-findmaxdocid) {
+    i-int docid = tweetidtodocidmap.get(tweetid);
+    if (docid >= 0) {
+      wetuwn d-docid;
     }
 
-    int binarySearchResult =
-        LongArrays.binarySearch(inverseMap, tweetID, (k1, k2) -> -Long.compare(k1, k2));
-    // Since the tweet ID is not present in this mapper, the binary search should return a negative
-    // value (-insertionPoint - 1). And since TweetIDMapper.findDocIdBound() already verified that
-    // tweetID is not smaller than all tweet IDs in this mapper, and not larger than all tweet IDs
-    // in this mapper, the insertionPoint should never be 0 or inverseMap.length.
-    int insertionPoint = -binarySearchResult - 1;
-    // The insertion point is the index in the tweet array of the upper bound of the search, so if
-    // we want the lower bound, because doc IDs are dense, we subtract one.
-    return findMaxDocID ? insertionPoint : insertionPoint - 1;
+    int binawyseawchwesuwt =
+        wongawways.binawyseawch(invewsemap, nyaa~~ tweetid, /(^•ω•^) (k1, k2) -> -wong.compawe(k1, (U ﹏ U) k2));
+    // since t-the tweet id is nyot pwesent in this mappew, 😳😳😳 the binawy seawch s-shouwd wetuwn a-a nyegative
+    // v-vawue (-insewtionpoint - 1). >w< and since tweetidmappew.finddocidbound() a-awweady vewified that
+    // t-tweetid i-is nyot smowew than aww tweet ids in this mappew, and nyot wawgew than aww tweet ids
+    // in this m-mappew, XD the insewtionpoint shouwd n-nyevew be 0 ow invewsemap.wength. o.O
+    i-int i-insewtionpoint = -binawyseawchwesuwt - 1;
+    // the insewtion point is the index i-in the tweet awway o-of the uppew bound of the seawch, mya s-so if
+    // w-we want the wowew bound, 🥺 because doc ids awe dense, ^^;; we subtwact one. :3
+    wetuwn f-findmaxdocid ? i-insewtionpoint : i-insewtionpoint - 1;
   }
 
-  @Override
-  protected final int addMappingInternal(final long tweetID) {
-    throw new UnsupportedOperationException("The OptimizedTweetIDMapper is immutable.");
+  @ovewwide
+  pwotected f-finaw int addmappingintewnaw(finaw w-wong tweetid) {
+    thwow n-nyew unsuppowtedopewationexception("the optimizedtweetidmappew is immutabwe.");
   }
 
-  @Override
-  public DocIDToTweetIDMapper optimize() {
-    throw new UnsupportedOperationException("OptimizedTweetIDMapper is already optimized.");
+  @ovewwide
+  pubwic docidtotweetidmappew optimize() {
+    t-thwow nyew unsuppowtedopewationexception("optimizedtweetidmappew i-is awweady optimized.");
   }
 
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @ovewwide
+  pubwic fwushhandwew getfwushhandwew() {
+    w-wetuwn n-nyew fwushhandwew(this);
   }
 
-  public static class FlushHandler extends Flushable.Handler<OptimizedTweetIDMapper> {
-    private static final String MIN_TWEET_ID_PROP_NAME = "MinTweetID";
-    private static final String MAX_TWEET_ID_PROP_NAME = "MaxTweetID";
-    private static final String MIN_DOC_ID_PROP_NAME = "MinDocID";
-    private static final String MAX_DOC_ID_PROP_NAME = "MaxDocID";
+  pubwic static cwass fwushhandwew extends fwushabwe.handwew<optimizedtweetidmappew> {
+    p-pwivate static finaw stwing min_tweet_id_pwop_name = "mintweetid";
+    pwivate static finaw stwing max_tweet_id_pwop_name = "maxtweetid";
+    p-pwivate static finaw stwing min_doc_id_pwop_name = "mindocid";
+    p-pwivate s-static finaw stwing max_doc_id_pwop_name = "maxdocid";
 
-    public FlushHandler() {
-      super();
+    pubwic fwushhandwew() {
+      supew();
     }
 
-    public FlushHandler(OptimizedTweetIDMapper objectToFlush) {
-      super(objectToFlush);
+    p-pubwic fwushhandwew(optimizedtweetidmappew o-objecttofwush) {
+      supew(objecttofwush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      OptimizedTweetIDMapper objectToFlush = getObjectToFlush();
-      flushInfo.addLongProperty(MIN_TWEET_ID_PROP_NAME, objectToFlush.getMinTweetID());
-      flushInfo.addLongProperty(MAX_TWEET_ID_PROP_NAME, objectToFlush.getMaxTweetID());
-      flushInfo.addIntProperty(MIN_DOC_ID_PROP_NAME, objectToFlush.getMinDocID());
-      flushInfo.addIntProperty(MAX_DOC_ID_PROP_NAME, objectToFlush.getMaxDocID());
-      out.writeLongArray(objectToFlush.inverseMap);
+    @ovewwide
+    pwotected void dofwush(fwushinfo f-fwushinfo, (U ﹏ U) datasewiawizew out) t-thwows ioexception {
+      optimizedtweetidmappew objecttofwush = getobjecttofwush();
+      fwushinfo.addwongpwopewty(min_tweet_id_pwop_name, OwO o-objecttofwush.getmintweetid());
+      fwushinfo.addwongpwopewty(max_tweet_id_pwop_name, 😳😳😳 o-objecttofwush.getmaxtweetid());
+      fwushinfo.addintpwopewty(min_doc_id_pwop_name, (ˆ ﻌ ˆ)♡ o-objecttofwush.getmindocid());
+      fwushinfo.addintpwopewty(max_doc_id_pwop_name, XD o-objecttofwush.getmaxdocid());
+      out.wwitewongawway(objecttofwush.invewsemap);
     }
 
-    @Override
-    protected OptimizedTweetIDMapper doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      return new OptimizedTweetIDMapper(in.readLongArray(),
-                                        flushInfo.getLongProperty(MIN_TWEET_ID_PROP_NAME),
-                                        flushInfo.getLongProperty(MAX_TWEET_ID_PROP_NAME),
-                                        flushInfo.getIntProperty(MIN_DOC_ID_PROP_NAME),
-                                        flushInfo.getIntProperty(MAX_DOC_ID_PROP_NAME));
+    @ovewwide
+    p-pwotected o-optimizedtweetidmappew d-dowoad(fwushinfo fwushinfo, (ˆ ﻌ ˆ)♡ d-datadesewiawizew i-in)
+        thwows ioexception {
+      wetuwn new optimizedtweetidmappew(in.weadwongawway(), ( ͡o ω ͡o )
+                                        fwushinfo.getwongpwopewty(min_tweet_id_pwop_name), rawr x3
+                                        f-fwushinfo.getwongpwopewty(max_tweet_id_pwop_name), nyaa~~
+                                        f-fwushinfo.getintpwopewty(min_doc_id_pwop_name), >_<
+                                        f-fwushinfo.getintpwopewty(max_doc_id_pwop_name));
     }
   }
 }

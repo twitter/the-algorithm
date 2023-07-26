@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.component_library.candidate_source.hermit
+package com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.hewmit
 
-import com.twitter.hermit.thriftscala.RecommendationRequest
-import com.twitter.hermit.thriftscala.RecommendationResponse
-import com.twitter.hermit.thriftscala.RelatedUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyViewFetcherSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.onboarding.HermitRecommendUsersClientColumn
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.hewmit.thwiftscawa.wecommendationwequest
+i-impowt com.twittew.hewmit.thwiftscawa.wecommendationwesponse
+i-impowt com.twittew.hewmit.thwiftscawa.wewatedusew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.stwato.stwatokeyviewfetchewsouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt c-com.twittew.stwato.cwient.fetchew
+i-impowt com.twittew.stwato.genewated.cwient.onboawding.hewmitwecommendusewscwientcowumn
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class UsersSimilarToMeCandidateSource @Inject() (
-  column: HermitRecommendUsersClientColumn)
-    extends StratoKeyViewFetcherSource[
-      Long,
-      RecommendationRequest,
-      RecommendationResponse,
-      RelatedUser
+@singweton
+cwass usewssimiwawtomecandidatesouwce @inject() (
+  c-cowumn: hewmitwecommendusewscwientcowumn)
+    extends stwatokeyviewfetchewsouwce[
+      wong, nyaa~~
+      w-wecommendationwequest, /(^•ω•^)
+      wecommendationwesponse, rawr
+      w-wewatedusew
     ] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("UsersSimilarToMe")
+  ovewwide vaw identifiew: candidatesouwceidentifiew = c-candidatesouwceidentifiew("usewssimiwawtome")
 
-  override val fetcher: Fetcher[Long, RecommendationRequest, RecommendationResponse] =
-    column.fetcher
+  ovewwide vaw fetchew: f-fetchew[wong, w-wecommendationwequest, OwO wecommendationwesponse] =
+    cowumn.fetchew
 
-  override def stratoResultTransformer(
-    stratoKey: Long,
-    result: RecommendationResponse
-  ): Seq[RelatedUser] = result.suggestions.getOrElse(Seq.empty).filter(_.id.isDefined)
+  ovewwide def stwatowesuwttwansfowmew(
+    s-stwatokey: wong, (U ﹏ U)
+    wesuwt: wecommendationwesponse
+  ): seq[wewatedusew] = wesuwt.suggestions.getowewse(seq.empty).fiwtew(_.id.isdefined)
 }

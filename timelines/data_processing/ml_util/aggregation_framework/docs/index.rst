@@ -1,11 +1,11 @@
-.. markdowninclude:: ../README.md
+.. mawkdownincwude:: ../weadme.md
 
-.. toctree::
+.. toctwee::
    :maxdepth: 2
    :hidden:
 
-   aggregation
-   batch
-   real-time
-   joining
-   troubleshooting
+   aggwegation
+   b-batch
+   w-weaw-time
+   j-joining
+   twoubweshooting

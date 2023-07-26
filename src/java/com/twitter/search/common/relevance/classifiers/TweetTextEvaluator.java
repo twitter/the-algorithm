@@ -1,54 +1,54 @@
-package com.twitter.search.common.relevance.classifiers;
+package com.twittew.seawch.common.wewevance.cwassifiews;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+impowt j-java.utiw.wist;
+i-impowt java.utiw.map;
+i-impowt java.utiw.function.function;
+i-impowt j-java.utiw.stweam.cowwectows;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.features.TweetTextFeatures;
-import com.twitter.search.common.relevance.features.TweetTextQuality;
+impowt c-com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+impowt c-com.twittew.seawch.common.wewevance.entities.twittewmessage;
+i-impowt com.twittew.seawch.common.wewevance.featuwes.tweettextfeatuwes;
+impowt com.twittew.seawch.common.wewevance.featuwes.tweettextquawity;
 
 /**
- * Calculates entropy of tweet text based on tokens.
+ * cawcuwates entwopy of tweet t-text based on tokens. ʘwʘ
  */
-public class TweetTextEvaluator extends TweetEvaluator {
+pubwic cwass tweettextevawuatow e-extends tweetevawuatow {
 
-  @Override
-  public void evaluate(final TwitterMessage tweet) {
-    for (PenguinVersion penguinVersion : tweet.getSupportedPenguinVersions()) {
-      TweetTextFeatures textFeatures = tweet.getTweetTextFeatures(penguinVersion);
-      TweetTextQuality textQuality = tweet.getTweetTextQuality(penguinVersion);
+  @ovewwide
+  p-pubwic void evawuate(finaw twittewmessage tweet) {
+    fow (penguinvewsion p-penguinvewsion : tweet.getsuppowtedpenguinvewsions()) {
+      tweettextfeatuwes t-textfeatuwes = t-tweet.gettweettextfeatuwes(penguinvewsion);
+      tweettextquawity textquawity = tweet.gettweettextquawity(penguinvewsion);
 
-      double readability = 0;
-      int numKeptWords = textFeatures.getStrippedTokensSize();
-      for (String token : textFeatures.getStrippedTokens()) {
-        readability += token.length();
+      doubwe weadabiwity = 0;
+      i-int nyumkeptwowds = textfeatuwes.getstwippedtokenssize();
+      fow (stwing token : textfeatuwes.getstwippedtokens()) {
+        weadabiwity += t-token.wength();
       }
-      if (numKeptWords > 0) {
-        readability = readability * Math.log(numKeptWords) / numKeptWords;
+      if (numkeptwowds > 0) {
+        w-weadabiwity = w-weadabiwity * m-math.wog(numkeptwowds) / n-nyumkeptwowds;
       }
-      textQuality.setReadability(readability);
-      textQuality.setEntropy(entropy(textFeatures.getStrippedTokens()));
-      textQuality.setShout(textFeatures.getCaps() / Math.max(textFeatures.getLength(), 1.0d));
+      textquawity.setweadabiwity(weadabiwity);
+      textquawity.setentwopy(entwopy(textfeatuwes.getstwippedtokens()));
+      textquawity.setshout(textfeatuwes.getcaps() / m-math.max(textfeatuwes.getwength(), σωσ 1.0d));
     }
   }
 
-  private static double entropy(List<String> tokens) {
-    Map<String, Long> tokenCounts =
-        tokens.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-    int numItems = tokens.size();
+  pwivate static doubwe e-entwopy(wist<stwing> tokens) {
+    map<stwing, OwO wong> tokencounts =
+        tokens.stweam().cowwect(cowwectows.gwoupingby(function.identity(), 😳😳😳 cowwectows.counting()));
+    int nyumitems = tokens.size();
 
-    double entropy = 0;
-    for (long count : tokenCounts.values()) {
-      double prob = (double) count / numItems;
-      entropy -= prob * log2(prob);
+    d-doubwe entwopy = 0;
+    fow (wong c-count : tokencounts.vawues()) {
+      d-doubwe p-pwob = (doubwe) count / nyumitems;
+      entwopy -= pwob * wog2(pwob);
     }
-    return entropy;
+    w-wetuwn entwopy;
   }
 
-  private static double log2(double n) {
-    return Math.log(n) / Math.log(2);
+  p-pwivate static doubwe w-wog2(doubwe ny) {
+    w-wetuwn math.wog(n) / math.wog(2);
   }
 }

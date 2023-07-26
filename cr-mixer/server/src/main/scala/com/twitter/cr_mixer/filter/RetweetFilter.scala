@@ -1,41 +1,41 @@
-package com.twitter.cr_mixer.filter
+package com.twittew.cw_mixew.fiwtew
 
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.param.UtegTweetGlobalParams
-import com.twitter.util.Future
+impowt com.twittew.cw_mixew.modew.candidategenewatowquewy
+i-impowt c-com.twittew.cw_mixew.modew.initiawcandidate
+i-impowt com.twittew.cw_mixew.pawam.utegtweetgwobawpawams
+i-impowt c-com.twittew.utiw.futuwe
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
 /***
- * Filters candidates that are retweets
+ * fiwtews candidates that awe wetweets
  */
-@Singleton
-case class RetweetFilter @Inject() () extends FilterBase {
-  override def name: String = this.getClass.getCanonicalName
-  override type ConfigType = Boolean
+@singweton
+case cwass wetweetfiwtew @inject() () e-extends fiwtewbase {
+  ovewwide def nyame: s-stwing = this.getcwass.getcanonicawname
+  ovewwide t-type configtype = boowean
 
-  override def filter(
-    candidates: Seq[Seq[InitialCandidate]],
-    config: ConfigType
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    if (config) {
-      Future.value(
-        candidates.map { candidateSeq =>
-          candidateSeq.filterNot { candidate =>
-            candidate.tweetInfo.isRetweet.getOrElse(false)
+  ovewwide def fiwtew(
+    candidates: s-seq[seq[initiawcandidate]], OwO
+    config: configtype
+  ): f-futuwe[seq[seq[initiawcandidate]]] = {
+    i-if (config) {
+      futuwe.vawue(
+        candidates.map { candidateseq =>
+          candidateseq.fiwtewnot { c-candidate =>
+            candidate.tweetinfo.iswetweet.getowewse(fawse)
           }
         }
       )
-    } else {
-      Future.value(candidates)
+    } ewse {
+      futuwe.vawue(candidates)
     }
   }
 
-  override def requestToConfig[CGQueryType <: CandidateGeneratorQuery](
-    query: CGQueryType
-  ): ConfigType = {
-    query.params(UtegTweetGlobalParams.EnableRetweetFilterParam)
+  ovewwide def wequesttoconfig[cgquewytype <: candidategenewatowquewy](
+    quewy: c-cgquewytype
+  ): configtype = {
+    q-quewy.pawams(utegtweetgwobawpawams.enabwewetweetfiwtewpawam)
   }
 }

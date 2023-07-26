@@ -1,374 +1,374 @@
-package com.twitter.search.common.schema.base;
+package com.twittew.seawch.common.schema.base;
 
-import javax.annotation.Nullable;
+impowt javax.annotation.nuwwabwe;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.document.FieldType;
-import org.apache.lucene.index.DocValuesType;
-import org.apache.lucene.index.IndexOptions;
+i-impowt owg.apache.commons.wang.stwingutiws;
+i-impowt o-owg.apache.wucene.document.fiewdtype;
+i-impowt o-owg.apache.wucene.index.docvawuestype;
+i-impowt o-owg.apache.wucene.index.indexoptions;
 
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFViewSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftFeatureUpdateConstraint;
+i-impowt com.twittew.common.text.utiw.tokenstweamsewiawizew;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftcsftype;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftcsfviewsettings;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfeatuweupdateconstwaint;
 
 /**
- * An extension of Lucene's {@link FieldType} that contains additional Earlybird-specific settings.
- * Lucene IndexingChains can downcast the FieldType object to access these additional settings.
+ * a-an extension of wucene's {@wink fiewdtype} t-that contains additionaw eawwybiwd-specific settings. rawr x3
+ * w-wucene indexingchains can downcast the fiewdtype object t-to access these additionaw settings. σωσ
  */
-public class EarlybirdFieldType extends FieldType {
+p-pubwic c-cwass eawwybiwdfiewdtype extends fiewdtype {
 
-  public static final EarlybirdFieldType LONG_CSF_FIELD_TYPE = new EarlybirdFieldType();
-  public static final EarlybirdFieldType INT_CSF_FIELD_TYPE = new EarlybirdFieldType();
-  public static final EarlybirdFieldType BYTE_CSF_FIELD_TYPE = new EarlybirdFieldType();
+  pubwic static finaw eawwybiwdfiewdtype w-wong_csf_fiewd_type = nyew eawwybiwdfiewdtype();
+  pubwic static finaw eawwybiwdfiewdtype i-int_csf_fiewd_type = nyew eawwybiwdfiewdtype();
+  p-pubwic static f-finaw eawwybiwdfiewdtype b-byte_csf_fiewd_type = n-nyew eawwybiwdfiewdtype();
 
   static {
-    LONG_CSF_FIELD_TYPE.setCsfType(ThriftCSFType.LONG);
-    LONG_CSF_FIELD_TYPE.setDocValuesType(DocValuesType.NUMERIC);
-    LONG_CSF_FIELD_TYPE.setCsfLoadIntoRam(true);
-    LONG_CSF_FIELD_TYPE.freeze();
+    wong_csf_fiewd_type.setcsftype(thwiftcsftype.wong);
+    wong_csf_fiewd_type.setdocvawuestype(docvawuestype.numewic);
+    w-wong_csf_fiewd_type.setcsfwoadintowam(twue);
+    wong_csf_fiewd_type.fweeze();
 
-    INT_CSF_FIELD_TYPE.setCsfType(ThriftCSFType.INT);
-    INT_CSF_FIELD_TYPE.setDocValuesType(DocValuesType.NUMERIC);
-    INT_CSF_FIELD_TYPE.setCsfLoadIntoRam(true);
-    INT_CSF_FIELD_TYPE.freeze();
+    int_csf_fiewd_type.setcsftype(thwiftcsftype.int);
+    i-int_csf_fiewd_type.setdocvawuestype(docvawuestype.numewic);
+    int_csf_fiewd_type.setcsfwoadintowam(twue);
+    int_csf_fiewd_type.fweeze();
 
-    BYTE_CSF_FIELD_TYPE.setCsfType(ThriftCSFType.BYTE);
-    BYTE_CSF_FIELD_TYPE.setDocValuesType(DocValuesType.NUMERIC);
-    BYTE_CSF_FIELD_TYPE.setCsfLoadIntoRam(true);
-    BYTE_CSF_FIELD_TYPE.freeze();
+    byte_csf_fiewd_type.setcsftype(thwiftcsftype.byte);
+    byte_csf_fiewd_type.setdocvawuestype(docvawuestype.numewic);
+    byte_csf_fiewd_type.setcsfwoadintowam(twue);
+    b-byte_csf_fiewd_type.fweeze();
   }
 
 
-  private boolean storePerPositionPayloads;
-  private int defaultPayloadLength;
-  // This is true for fields that become immutable after optimization
-  private boolean becomesImmutable = true;
-  private boolean supportOrderedTerms;
-  private boolean supportTermTextLookup;
-  private boolean indexHFTermPairs;
+  pwivate boowean s-stowepewpositionpaywoads;
+  p-pwivate int defauwtpaywoadwength;
+  // t-this is twue fow fiewds that become immutabwe aftew optimization
+  p-pwivate b-boowean becomesimmutabwe = twue;
+  p-pwivate boowean s-suppowtowdewedtewms;
+  pwivate b-boowean suppowttewmtextwookup;
+  pwivate boowean i-indexhftewmpaiws;
 
   /**
-   * This flag turns on tweet specific normalizations.
-   * This turns on the following two token processors:
-   * {@link com.twitter.search.common.util.text.splitter.HashtagMentionPunctuationSplitter}
-   * {@link com.twitter.search.common.util.text.filter.NormalizedTokenFilter}
+   * this fwag tuwns on tweet specific n-nyowmawizations. (ꈍᴗꈍ)
+   * this t-tuwns on the fowwowing two token p-pwocessows:
+   * {@wink c-com.twittew.seawch.common.utiw.text.spwittew.hashtagmentionpunctuationspwittew}
+   * {@wink com.twittew.seawch.common.utiw.text.fiwtew.nowmawizedtokenfiwtew}
    *
-   * HashtagMentionPunctuationSplitter would break a mention or hashtag like @ab_cd or #ab_cd into
-   * tokens {ab, cd}.
-   * NormalizedTokenFilter strips out the # @ $ from the tokens.
+   * hashtagmentionpunctuationspwittew wouwd bweak a mention ow hashtag wike @ab_cd ow #ab_cd into
+   * t-tokens {ab, rawr c-cd}. ^^;;
+   * nyowmawizedtokenfiwtew stwips out the # @ $ f-fwom the tokens. rawr x3
    *
    *
-   * @deprecated we should remove this flag. It is confusing to have Earlybird apply additional
-   * tokenization on top of what ingester produced.
+   * @depwecated w-we shouwd wemove t-this fwag. it is confusing to have eawwybiwd appwy additionaw
+   * t-tokenization on top of nyani ingestew pwoduced. (ˆ ﻌ ˆ)♡
    */
-  @Deprecated
-  private boolean useTweetSpecificNormalization;
+  @depwecated
+  pwivate boowean usetweetspecificnowmawization;
 
-  @Nullable
-  private TokenStreamSerializer.Builder tokenStreamSerializerProvider = null;
+  @nuwwabwe
+  p-pwivate tokenstweamsewiawizew.buiwdew t-tokenstweamsewiawizewpwovidew = n-nyuww;
 
-  // csf type settings
-  private ThriftCSFType csfType;
-  private boolean csfVariableLength;
-  private int csfFixedLengthNumValuesPerDoc;
-  private boolean csfFixedLengthUpdateable;
-  private boolean csfLoadIntoRam;
-  private boolean csfDefaultValueSet;
-  private long csfDefaultValue;
-  // True if this is a CSF field which is a view on top of a different CSF field
-  private boolean csfViewField;
-  // If this field is a csf view, this is the ID of the CSF field backing the view
-  private int csfViewBaseFieldId;
-  private FeatureConfiguration csfViewFeatureConfiguration;
+  // csf t-type settings
+  pwivate thwiftcsftype c-csftype;
+  p-pwivate boowean c-csfvawiabwewength;
+  p-pwivate int csffixedwengthnumvawuespewdoc;
+  pwivate boowean c-csffixedwengthupdateabwe;
+  p-pwivate boowean c-csfwoadintowam;
+  p-pwivate boowean c-csfdefauwtvawueset;
+  pwivate wong csfdefauwtvawue;
+  // twue i-if this is a csf fiewd which is a view on top of a diffewent csf fiewd
+  pwivate boowean csfviewfiewd;
+  // i-if this fiewd is a csf view, σωσ this is the id of the csf f-fiewd backing t-the view
+  pwivate i-int csfviewbasefiewdid;
+  pwivate f-featuweconfiguwation csfviewfeatuweconfiguwation;
 
-  // facet field settings
-  private String facetName;
-  private boolean storeFacetSkiplist;
-  private boolean storeFacetOffensiveCounters;
-  private boolean useCSFForFacetCounting;
+  // f-facet f-fiewd settings
+  pwivate stwing facetname;
+  pwivate boowean stowefacetskipwist;
+  pwivate boowean s-stowefacetoffensivecountews;
+  pwivate boowean u-usecsffowfacetcounting;
 
-  // Determines if this field is indexed
-  private boolean indexedField = false;
+  // detewmines if t-this fiewd is i-indexed
+  pwivate boowean indexedfiewd = fawse;
 
-  // search field settings
-  // whether a field should be searched by default
-  private boolean textSearchableByDefault = false;
-  private float textSearchableFieldWeight = 1.0f;
+  // s-seawch fiewd s-settings
+  // whethew a fiewd s-shouwd be seawched b-by defauwt
+  pwivate boowean textseawchabwebydefauwt = fawse;
+  pwivate fwoat t-textseawchabwefiewdweight = 1.0f;
 
-  // For indexed numerical fields
-  private IndexedNumericFieldSettings numericFieldSettings = null;
+  // f-fow indexed n-numewicaw fiewds
+  pwivate i-indexednumewicfiewdsettings n-nyumewicfiewdsettings = nyuww;
 
-  public boolean isStorePerPositionPayloads() {
-    return storePerPositionPayloads;
+  pubwic b-boowean isstowepewpositionpaywoads() {
+    wetuwn stowepewpositionpaywoads;
   }
 
-  public void setStorePerPositionPayloads(boolean storePerPositionPayloads) {
-    checkIfFrozen();
-    this.storePerPositionPayloads = storePerPositionPayloads;
+  pubwic void setstowepewpositionpaywoads(boowean stowepewpositionpaywoads) {
+    c-checkiffwozen();
+    t-this.stowepewpositionpaywoads = stowepewpositionpaywoads;
   }
 
-  public int getDefaultPayloadLength() {
-    return defaultPayloadLength;
+  pubwic int getdefauwtpaywoadwength() {
+    w-wetuwn d-defauwtpaywoadwength;
   }
 
-  public void setDefaultPayloadLength(int defaultPayloadLength) {
-    checkIfFrozen();
-    this.defaultPayloadLength = defaultPayloadLength;
+  pubwic void setdefauwtpaywoadwength(int defauwtpaywoadwength) {
+    c-checkiffwozen();
+    this.defauwtpaywoadwength = defauwtpaywoadwength;
   }
 
-  public boolean becomesImmutable() {
-    return becomesImmutable;
+  pubwic boowean becomesimmutabwe() {
+    wetuwn becomesimmutabwe;
   }
 
-  public void setBecomesImmutable(boolean becomesImmutable) {
-    checkIfFrozen();
-    this.becomesImmutable = becomesImmutable;
+  p-pubwic void setbecomesimmutabwe(boowean becomesimmutabwe) {
+    c-checkiffwozen();
+    t-this.becomesimmutabwe = becomesimmutabwe;
   }
 
-  public boolean isSupportOrderedTerms() {
-    return supportOrderedTerms;
+  pubwic boowean issuppowtowdewedtewms() {
+    w-wetuwn s-suppowtowdewedtewms;
   }
 
-  public void setSupportOrderedTerms(boolean supportOrderedTerms) {
-    checkIfFrozen();
-    this.supportOrderedTerms = supportOrderedTerms;
+  pubwic void setsuppowtowdewedtewms(boowean suppowtowdewedtewms) {
+    c-checkiffwozen();
+    this.suppowtowdewedtewms = s-suppowtowdewedtewms;
   }
 
-  public boolean isSupportTermTextLookup() {
-    return supportTermTextLookup;
+  pubwic boowean issuppowttewmtextwookup() {
+    wetuwn suppowttewmtextwookup;
   }
 
-  public void setSupportTermTextLookup(boolean supportTermTextLookup) {
-    this.supportTermTextLookup = supportTermTextLookup;
+  pubwic void s-setsuppowttewmtextwookup(boowean suppowttewmtextwookup) {
+    t-this.suppowttewmtextwookup = s-suppowttewmtextwookup;
   }
 
-  @Nullable
-  public TokenStreamSerializer getTokenStreamSerializer() {
-    return tokenStreamSerializerProvider == null ? null : tokenStreamSerializerProvider.safeBuild();
+  @nuwwabwe
+  pubwic tokenstweamsewiawizew g-gettokenstweamsewiawizew() {
+    wetuwn tokenstweamsewiawizewpwovidew == n-nyuww ? n-nyuww : tokenstweamsewiawizewpwovidew.safebuiwd();
   }
 
-  public void setTokenStreamSerializerBuilder(TokenStreamSerializer.Builder provider) {
-    checkIfFrozen();
-    this.tokenStreamSerializerProvider = provider;
+  p-pubwic void settokenstweamsewiawizewbuiwdew(tokenstweamsewiawizew.buiwdew p-pwovidew) {
+    c-checkiffwozen();
+    this.tokenstweamsewiawizewpwovidew = pwovidew;
   }
 
-  public ThriftCSFType getCsfType() {
-    return csfType;
+  p-pubwic thwiftcsftype g-getcsftype() {
+    w-wetuwn csftype;
   }
 
-  public void setCsfType(ThriftCSFType csfType) {
-    checkIfFrozen();
-    this.csfType = csfType;
+  pubwic void setcsftype(thwiftcsftype c-csftype) {
+    checkiffwozen();
+    t-this.csftype = c-csftype;
   }
 
-  public boolean isCsfVariableLength() {
-    return csfVariableLength;
+  pubwic boowean iscsfvawiabwewength() {
+    wetuwn csfvawiabwewength;
   }
 
-  public int getCsfFixedLengthNumValuesPerDoc() {
-    return csfFixedLengthNumValuesPerDoc;
+  p-pubwic int g-getcsffixedwengthnumvawuespewdoc() {
+    w-wetuwn c-csffixedwengthnumvawuespewdoc;
   }
 
-  public void setCsfVariableLength() {
-    checkIfFrozen();
-    this.csfVariableLength = true;
+  pubwic void s-setcsfvawiabwewength() {
+    checkiffwozen();
+    this.csfvawiabwewength = twue;
   }
 
   /**
-   * Make the field a fixed length CSF, with the given length.
+   * make the fiewd a fixed wength csf, with the given w-wength. (U ﹏ U)
    */
-  public void setCsfFixedLengthSettings(int csfFixedLengthNumValuesPerDocument,
-                                        boolean isCsfFixedLengthUpdateable) {
-    checkIfFrozen();
-    this.csfVariableLength = false;
-    this.csfFixedLengthNumValuesPerDoc = csfFixedLengthNumValuesPerDocument;
-    this.csfFixedLengthUpdateable = isCsfFixedLengthUpdateable;
+  pubwic void s-setcsffixedwengthsettings(int csffixedwengthnumvawuespewdocument, >w<
+                                        boowean i-iscsffixedwengthupdateabwe) {
+    checkiffwozen();
+    t-this.csfvawiabwewength = fawse;
+    this.csffixedwengthnumvawuespewdoc = c-csffixedwengthnumvawuespewdocument;
+    t-this.csffixedwengthupdateabwe = i-iscsffixedwengthupdateabwe;
   }
 
-  public boolean isCsfFixedLengthUpdateable() {
-    return csfFixedLengthUpdateable;
+  p-pubwic b-boowean iscsffixedwengthupdateabwe() {
+    wetuwn csffixedwengthupdateabwe;
   }
 
-  public boolean isCsfLoadIntoRam() {
-    return csfLoadIntoRam;
+  pubwic boowean iscsfwoadintowam() {
+    wetuwn csfwoadintowam;
   }
 
-  public void setCsfLoadIntoRam(boolean csfLoadIntoRam) {
-    checkIfFrozen();
-    this.csfLoadIntoRam = csfLoadIntoRam;
+  pubwic void setcsfwoadintowam(boowean c-csfwoadintowam) {
+    c-checkiffwozen();
+    this.csfwoadintowam = c-csfwoadintowam;
   }
 
-  public void setCsfDefaultValue(long defaultValue) {
-    checkIfFrozen();
-    this.csfDefaultValue = defaultValue;
-    this.csfDefaultValueSet = true;
+  pubwic v-void setcsfdefauwtvawue(wong defauwtvawue) {
+    checkiffwozen();
+    this.csfdefauwtvawue = d-defauwtvawue;
+    t-this.csfdefauwtvawueset = twue;
   }
 
-  public long getCsfDefaultValue() {
-    return csfDefaultValue;
+  p-pubwic wong getcsfdefauwtvawue() {
+    wetuwn csfdefauwtvawue;
   }
 
-  public boolean isCsfDefaultValueSet() {
-    return csfDefaultValueSet;
+  pubwic b-boowean iscsfdefauwtvawueset() {
+    w-wetuwn csfdefauwtvawueset;
   }
 
-  public String getFacetName() {
-    return facetName;
+  p-pubwic s-stwing getfacetname() {
+    wetuwn facetname;
   }
 
-  public void setFacetName(String facetName) {
-    checkIfFrozen();
-    this.facetName = facetName;
+  pubwic void setfacetname(stwing facetname) {
+    c-checkiffwozen();
+    this.facetname = f-facetname;
   }
 
-  public boolean isStoreFacetSkiplist() {
-    return storeFacetSkiplist;
+  p-pubwic boowean i-isstowefacetskipwist() {
+    w-wetuwn stowefacetskipwist;
   }
 
-  public void setStoreFacetSkiplist(boolean storeFacetSkiplist) {
-    checkIfFrozen();
-    this.storeFacetSkiplist = storeFacetSkiplist;
+  p-pubwic void setstowefacetskipwist(boowean s-stowefacetskipwist) {
+    checkiffwozen();
+    t-this.stowefacetskipwist = s-stowefacetskipwist;
   }
 
-  public boolean isStoreFacetOffensiveCounters() {
-    return storeFacetOffensiveCounters;
+  pubwic b-boowean isstowefacetoffensivecountews() {
+    wetuwn stowefacetoffensivecountews;
   }
 
-  public void setStoreFacetOffensiveCounters(boolean storeFacetOffensiveCounters) {
-    checkIfFrozen();
-    this.storeFacetOffensiveCounters = storeFacetOffensiveCounters;
+  pubwic v-void setstowefacetoffensivecountews(boowean stowefacetoffensivecountews) {
+    c-checkiffwozen();
+    t-this.stowefacetoffensivecountews = stowefacetoffensivecountews;
   }
 
-  public boolean isUseCSFForFacetCounting() {
-    return useCSFForFacetCounting;
+  p-pubwic boowean isusecsffowfacetcounting() {
+    wetuwn usecsffowfacetcounting;
   }
 
-  public void setUseCSFForFacetCounting(boolean useCSFForFacetCounting) {
-    checkIfFrozen();
-    this.useCSFForFacetCounting = useCSFForFacetCounting;
+  pubwic void s-setusecsffowfacetcounting(boowean u-usecsffowfacetcounting) {
+    c-checkiffwozen();
+    this.usecsffowfacetcounting = usecsffowfacetcounting;
   }
 
-  public boolean isFacetField() {
-    return facetName != null && !StringUtils.isEmpty(facetName);
+  pubwic boowean i-isfacetfiewd() {
+    wetuwn facetname != nyuww && !stwingutiws.isempty(facetname);
   }
 
-  public boolean isIndexHFTermPairs() {
-    return indexHFTermPairs;
+  p-pubwic b-boowean isindexhftewmpaiws() {
+    wetuwn indexhftewmpaiws;
   }
 
-  public void setIndexHFTermPairs(boolean indexHFTermPairs) {
-    checkIfFrozen();
-    this.indexHFTermPairs = indexHFTermPairs;
+  p-pubwic void setindexhftewmpaiws(boowean indexhftewmpaiws) {
+    c-checkiffwozen();
+    t-this.indexhftewmpaiws = indexhftewmpaiws;
   }
 
-  public boolean acceptPretokenizedField() {
-    return tokenStreamSerializerProvider != null;
+  pubwic b-boowean acceptpwetokenizedfiewd() {
+    wetuwn tokenstweamsewiawizewpwovidew != n-nyuww;
   }
 
   /**
-   * set this field to use additional twitter specific tokenization.
-   * @deprecated should avoid doing additional tokenizations on top of what ingester produced.
+   * s-set this fiewd to use a-additionaw twittew specific tokenization. σωσ
+   * @depwecated s-shouwd a-avoid doing additionaw t-tokenizations on top of nyani ingestew pwoduced. nyaa~~
    */
-  @Deprecated
-  public boolean useTweetSpecificNormalization() {
-    return useTweetSpecificNormalization;
+  @depwecated
+  pubwic boowean usetweetspecificnowmawization() {
+    wetuwn usetweetspecificnowmawization;
   }
 
   /**
-   * test whether this field uses additional twitter specific tokenization.
-   * @deprecated should avoid doing additional tokenizations on top of what ingester produced.
+   * test whethew this fiewd uses additionaw twittew specific tokenization. 🥺
+   * @depwecated shouwd avoid d-doing additionaw t-tokenizations on top of nyani ingestew pwoduced. rawr x3
    */
-  @Deprecated
-  public void setUseTweetSpecificNormalization(boolean useTweetSpecificNormalization) {
-    checkIfFrozen();
-    this.useTweetSpecificNormalization = useTweetSpecificNormalization;
+  @depwecated
+  p-pubwic v-void setusetweetspecificnowmawization(boowean u-usetweetspecificnowmawization) {
+    checkiffwozen();
+    t-this.usetweetspecificnowmawization = usetweetspecificnowmawization;
   }
 
-  public boolean isIndexedField() {
-    return indexedField;
+  p-pubwic boowean i-isindexedfiewd() {
+    wetuwn i-indexedfiewd;
   }
 
-  public void setIndexedField(boolean indexedField) {
-    this.indexedField = indexedField;
+  pubwic void s-setindexedfiewd(boowean i-indexedfiewd) {
+    this.indexedfiewd = indexedfiewd;
   }
 
-  public boolean isTextSearchableByDefault() {
-    return textSearchableByDefault;
+  p-pubwic boowean i-istextseawchabwebydefauwt() {
+    w-wetuwn textseawchabwebydefauwt;
   }
 
-  public void setTextSearchableByDefault(boolean textSearchableByDefault) {
-    checkIfFrozen();
-    this.textSearchableByDefault = textSearchableByDefault;
+  p-pubwic v-void settextseawchabwebydefauwt(boowean t-textseawchabwebydefauwt) {
+    c-checkiffwozen();
+    t-this.textseawchabwebydefauwt = t-textseawchabwebydefauwt;
   }
 
-  public float getTextSearchableFieldWeight() {
-    return textSearchableFieldWeight;
+  pubwic fwoat gettextseawchabwefiewdweight() {
+    w-wetuwn textseawchabwefiewdweight;
   }
 
-  public void setTextSearchableFieldWeight(float textSearchableFieldWeight) {
-    checkIfFrozen();
-    this.textSearchableFieldWeight = textSearchableFieldWeight;
+  p-pubwic v-void settextseawchabwefiewdweight(fwoat textseawchabwefiewdweight) {
+    c-checkiffwozen();
+    this.textseawchabwefiewdweight = textseawchabwefiewdweight;
   }
 
   /**
-   * Convenience method to find out if this field stores positions. {@link #indexOptions()} can also
-   * be used to determine the index options for this field.
+   * c-convenience method to f-find out if this f-fiewd stowes p-positions. σωσ {@wink #indexoptions()} can awso
+   * b-be used to detewmine the index o-options fow this fiewd. (///ˬ///✿)
    */
-  public final boolean hasPositions() {
-    return indexOptions() == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS
-            || indexOptions() == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+  p-pubwic finaw boowean haspositions() {
+    w-wetuwn indexoptions() == indexoptions.docs_and_fweqs_and_positions
+            || indexoptions() == indexoptions.docs_and_fweqs_and_positions_and_offsets;
   }
 
-  public boolean isCsfViewField() {
-    return csfViewField;
+  p-pubwic boowean iscsfviewfiewd() {
+    w-wetuwn csfviewfiewd;
   }
 
-  public int getCsfViewBaseFieldId() {
-    return csfViewBaseFieldId;
+  p-pubwic int getcsfviewbasefiewdid() {
+    wetuwn csfviewbasefiewdid;
   }
 
-  public FeatureConfiguration getCsfViewFeatureConfiguration() {
-    return csfViewFeatureConfiguration;
+  pubwic f-featuweconfiguwation getcsfviewfeatuweconfiguwation() {
+    w-wetuwn c-csfviewfeatuweconfiguwation;
   }
 
   /**
-   * Set the CSF view settings. A CSF view is a portion of an another CSF.
+   * s-set the csf view settings. (U ﹏ U) a csf view is a powtion o-of an anothew c-csf. ^^;;
    */
-  public void setCsfViewSettings(String fieldName,
-                                 ThriftCSFViewSettings csfViewSettings,
-                                 Schema.FieldInfo baseField) {
-    checkIfFrozen();
-    this.csfViewField = true;
-    this.csfViewBaseFieldId = csfViewSettings.getBaseFieldConfigId();
-    FeatureConfiguration.Builder builder = FeatureConfiguration.builder()
-            .withName(fieldName)
-            .withType(csfViewSettings.csfType)
-            .withBitRange(csfViewSettings.getValueIndex(),
-                csfViewSettings.getBitStartPosition(),
-                csfViewSettings.getBitLength())
-            .withBaseField(baseField.getName());
-    if (csfViewSettings.isSetOutputCSFType()) {
-      builder.withOutputType(csfViewSettings.getOutputCSFType());
+  pubwic void setcsfviewsettings(stwing f-fiewdname, 🥺
+                                 thwiftcsfviewsettings csfviewsettings, òωó
+                                 s-schema.fiewdinfo basefiewd) {
+    c-checkiffwozen();
+    this.csfviewfiewd = t-twue;
+    this.csfviewbasefiewdid = c-csfviewsettings.getbasefiewdconfigid();
+    featuweconfiguwation.buiwdew b-buiwdew = featuweconfiguwation.buiwdew()
+            .withname(fiewdname)
+            .withtype(csfviewsettings.csftype)
+            .withbitwange(csfviewsettings.getvawueindex(),
+                c-csfviewsettings.getbitstawtposition(), XD
+                c-csfviewsettings.getbitwength())
+            .withbasefiewd(basefiewd.getname());
+    i-if (csfviewsettings.issetoutputcsftype()) {
+      buiwdew.withoutputtype(csfviewsettings.getoutputcsftype());
     }
-    if (csfViewSettings.isSetNormalizationType()) {
-      builder.withFeatureNormalizationType(csfViewSettings.getNormalizationType());
+    i-if (csfviewsettings.issetnowmawizationtype()) {
+      b-buiwdew.withfeatuwenowmawizationtype(csfviewsettings.getnowmawizationtype());
     }
-    if (csfViewSettings.isSetFeatureUpdateConstraints()) {
-      for (ThriftFeatureUpdateConstraint c : csfViewSettings.getFeatureUpdateConstraints()) {
-        builder.withFeatureUpdateConstraint(c);
+    i-if (csfviewsettings.issetfeatuweupdateconstwaints()) {
+      f-fow (thwiftfeatuweupdateconstwaint c-c : csfviewsettings.getfeatuweupdateconstwaints()) {
+        b-buiwdew.withfeatuweupdateconstwaint(c);
       }
     }
 
-    this.csfViewFeatureConfiguration = builder.build();
+    t-this.csfviewfeatuweconfiguwation = b-buiwdew.buiwd();
   }
 
-  public IndexedNumericFieldSettings getNumericFieldSettings() {
-    return numericFieldSettings;
+  pubwic i-indexednumewicfiewdsettings getnumewicfiewdsettings() {
+    w-wetuwn nyumewicfiewdsettings;
   }
 
-  public void setNumericFieldSettings(IndexedNumericFieldSettings numericFieldSettings) {
-    checkIfFrozen();
-    this.numericFieldSettings = numericFieldSettings;
+  p-pubwic void setnumewicfiewdsettings(indexednumewicfiewdsettings n-nyumewicfiewdsettings) {
+    c-checkiffwozen();
+    this.numewicfiewdsettings = nyumewicfiewdsettings;
   }
 }

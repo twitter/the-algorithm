@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.slice
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.swice
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.product_mixer.component_library.{thriftscala => t}
-import com.twitter.product_mixer.core.model.marshalling.response.slice.NextCursor
-import com.twitter.product_mixer.core.model.marshalling.response.slice.PreviousCursor
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorType
-import com.twitter.product_mixer.core.model.marshalling.response.slice.GapCursor
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.{thwiftscawa => t-t}
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.swice.nextcuwsow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.swice.pweviouscuwsow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.swice.cuwsowtype
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.swice.gapcuwsow
 
-@Singleton
-class CursorTypeMarshaller @Inject() () {
+@singweton
+c-cwass cuwsowtypemawshawwew @inject() () {
 
-  def apply(cursorType: CursorType): t.CursorType = cursorType match {
-    case NextCursor => t.CursorType.Next
-    case PreviousCursor => t.CursorType.Previous
-    case GapCursor => t.CursorType.Gap
+  def appwy(cuwsowtype: cuwsowtype): t.cuwsowtype = cuwsowtype m-match {
+    case nyextcuwsow => t.cuwsowtype.next
+    c-case pweviouscuwsow => t-t.cuwsowtype.pwevious
+    case gapcuwsow => t.cuwsowtype.gap
   }
 
-  def unmarshall(cursorType: t.CursorType): CursorType = cursorType match {
-    case t.CursorType.Next => NextCursor
-    case t.CursorType.Previous => PreviousCursor
-    case t.CursorType.Gap => GapCursor
-    case t.CursorType.EnumUnknownCursorType(id) =>
-      throw new UnsupportedOperationException(
-        s"Attempted to unmarshall unrecognized cursor type: $id")
+  def unmawshaww(cuwsowtype: t-t.cuwsowtype): cuwsowtype = cuwsowtype m-match {
+    c-case t.cuwsowtype.next => nyextcuwsow
+    case t.cuwsowtype.pwevious => pweviouscuwsow
+    case t.cuwsowtype.gap => gapcuwsow
+    c-case t.cuwsowtype.enumunknowncuwsowtype(id) =>
+      thwow nyew unsuppowtedopewationexception(
+        s"attempted to unmawshaww u-unwecognized cuwsow type: $id")
   }
 
 }

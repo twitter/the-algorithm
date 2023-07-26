@@ -1,354 +1,354 @@
-package com.twitter.simclusters_v2.scalding
+package com.twittew.simcwustews_v2.scawding
 
-import com.twitter.algebird.Semigroup
-import com.twitter.bijection.Injection
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite.{D, WriteExtension}
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch.{
-  AnalyticsBatchExecution,
-  AnalyticsBatchExecutionArgs,
-  BatchDescription,
-  BatchFirstTime,
-  BatchIncrement,
-  TwitterScheduledExecutionApp
+impowt c-com.twittew.awgebiwd.semigwoup
+i-impowt com.twittew.bijection.injection
+i-impowt c-com.twittew.daw.cwient.dataset.keyvawdawdataset
+i-impowt com.twittew.scawding._
+i-impowt c-com.twittew.scawding_intewnaw.dawv2.daw
+i-impowt com.twittew.scawding_intewnaw.dawv2.dawwwite.{d, ^^ wwiteextension}
+impowt com.twittew.scawding_intewnaw.job.twittewexecutionapp
+impowt com.twittew.scawding_intewnaw.job.anawytics_batch.{
+  anawyticsbatchexecution, (U ﹏ U)
+  a-anawyticsbatchexecutionawgs, :3
+  batchdescwiption, (✿oωo)
+  batchfiwsttime, XD
+  batchincwement, >w<
+  t-twittewscheduwedexecutionapp
 }
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{ClusterId, ModelVersions, UserId}
-import com.twitter.simclusters_v2.hdfs_sources.{
-  AdhocKeyValSources,
-  InternalDataPaths,
-  SimclustersV2KnownFor20M145K2020ScalaDataset,
-  SimclustersV2RawInterestedInLite20M145K2020ScalaDataset,
-  SimclustersV2RawInterestedIn20M145KUpdatedScalaDataset,
-  UserAndNeighborsFixedPathSource,
-  UserUserGraphScalaDataset
+impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+i-impowt com.twittew.simcwustews_v2.common.{cwustewid, òωó modewvewsions, usewid}
+impowt com.twittew.simcwustews_v2.hdfs_souwces.{
+  a-adhockeyvawsouwces, (ꈍᴗꈍ)
+  intewnawdatapaths, rawr x3
+  s-simcwustewsv2knownfow20m145k2020scawadataset, rawr x3
+  s-simcwustewsv2wawintewestedinwite20m145k2020scawadataset, σωσ
+  simcwustewsv2wawintewestedin20m145kupdatedscawadataset, (ꈍᴗꈍ)
+  usewandneighbowsfixedpathsouwce, rawr
+  usewusewgwaphscawadataset
 }
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.{
-  ClustersUserIsInterestedIn,
-  ClustersUserIsKnownFor,
-  UserAndNeighbors,
-  UserToInterestedInClusterScores
+impowt com.twittew.simcwustews_v2.scawding.common.utiw
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.{
+  cwustewsusewisintewestedin, ^^;;
+  cwustewsusewisknownfow, rawr x3
+  usewandneighbows, (ˆ ﻌ ˆ)♡
+  u-usewtointewestedincwustewscowes
 }
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import java.util.TimeZone
+impowt c-com.twittew.wtf.scawding.jobs.common.adhocexecutionapp
+i-impowt j-java.utiw.timezone
 
 /**
- * This file implements the job for computing users' interestedIn vector from KnownFor data set.
+ * t-this fiwe impwements the job fow computing u-usews' intewestedin vectow fwom knownfow data s-set. σωσ
  *
- * It reads the UserUserGraphScalaDataset to get user-user follow + fav graph, and then
- * based on the known-for clusters of each followed/faved user, we calculate how much a user is
- * interestedIn a cluster.
+ * it weads the usewusewgwaphscawadataset to get usew-usew fowwow + fav gwaph, (U ﹏ U) and then
+ * based on t-the known-fow cwustews of each fowwowed/faved u-usew, >w< w-we cawcuwate h-how much a usew is
+ * intewestedin a cwustew. σωσ
  *
- * The main differences of the InterestedInFromKnownForLite compared to InterestedInFromKnownFor are
- * the following:
- * - We read the UserUserGraph dataset that doesnot contain the producer normalized scores
- * - We donot compute the cluster normalized scores for the clusters per user
- * - For social proof thresholding, we donot keep track of the entire list of follow and
- * fav social proofs but rather make use of numFollowSocial and numFavSocial (this introduces
- * some noise if follow and fav social proof contain the same users)
- * - Store 200 clusters per user compared to 50 in IIKF
- * - Runs more frequently compared to weekly in IIKF
+ * the main diffewences o-of the i-intewestedinfwomknownfowwite compawed t-to intewestedinfwomknownfow a-awe
+ * the fowwowing:
+ * - we w-wead the usewusewgwaph dataset t-that doesnot contain the pwoducew nyowmawized scowes
+ * - w-we donot compute the cwustew n-nyowmawized scowes fow the c-cwustews pew usew
+ * - f-fow sociaw pwoof thweshowding, we donot keep twack of the entiwe wist of fowwow and
+ * fav sociaw pwoofs b-but wathew make u-use of nyumfowwowsociaw and nyumfavsociaw (this i-intwoduces
+ * s-some nyoise if fowwow a-and fav sociaw pwoof contain the same usews)
+ * - stowe 200 c-cwustews pew usew compawed to 50 in iikf
+ * - wuns mowe fwequentwy compawed to w-weekwy in iikf
  */
 /**
- * Production job for computing interestedIn data set for the model version 20M145K2020.
+ * pwoduction j-job fow computing i-intewestedin d-data set fow the modew vewsion 20m145k2020. nyaa~~
  *
- * To deploy the job:
+ * t-to depwoy t-the job:
  *
- * capesospy-v2 update --build_locally --start_cron interested_in_lite_for_20M_145k_2020 \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * c-capesospy-v2 update --buiwd_wocawwy --stawt_cwon i-intewested_in_wite_fow_20m_145k_2020 \
+ swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc.yamw
  */
-object InterestedInFromKnownForLite20M145K2020 extends InterestedInFromKnownForLite {
-  override val firstTime: String = "2021-04-24"
-  override val outputKVDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsInterestedIn]] =
-    SimclustersV2RawInterestedInLite20M145K2020ScalaDataset
-  override val outputPath: String = InternalDataPaths.RawInterestedInLite2020Path
-  override val knownForModelVersion: String = ModelVersions.Model20M145K2020
-  override val knownForDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]] =
-    SimclustersV2KnownFor20M145K2020ScalaDataset
+object intewestedinfwomknownfowwite20m145k2020 extends i-intewestedinfwomknownfowwite {
+  o-ovewwide v-vaw fiwsttime: s-stwing = "2021-04-24"
+  o-ovewwide vaw outputkvdataset: keyvawdawdataset[keyvaw[wong, 🥺 cwustewsusewisintewestedin]] =
+    s-simcwustewsv2wawintewestedinwite20m145k2020scawadataset
+  ovewwide vaw outputpath: stwing = intewnawdatapaths.wawintewestedinwite2020path
+  ovewwide vaw knownfowmodewvewsion: s-stwing = modewvewsions.modew20m145k2020
+  ovewwide vaw knownfowdawdataset: keyvawdawdataset[keyvaw[wong, rawr x3 cwustewsusewisknownfow]] =
+    simcwustewsv2knownfow20m145k2020scawadataset
 }
-trait InterestedInFromKnownForLite extends TwitterScheduledExecutionApp {
-  implicit val tz = DateOps.UTC
-  implicit val parser = DateParser.default
+t-twait i-intewestedinfwomknownfowwite e-extends twittewscheduwedexecutionapp {
+  impwicit v-vaw tz = dateops.utc
+  impwicit v-vaw pawsew = datepawsew.defauwt
 
-  def firstTime: String
-  val batchIncrement: Duration = Days(2)
-  val lookBackDays: Duration = Days(30)
+  d-def fiwsttime: stwing
+  vaw batchincwement: duwation = days(2)
+  vaw wookbackdays: duwation = d-days(30)
 
-  def outputKVDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsInterestedIn]]
-  def outputPath: String
-  def knownForModelVersion: String
-  def knownForDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]]
+  def outputkvdataset: k-keyvawdawdataset[keyvaw[wong, σωσ cwustewsusewisintewestedin]]
+  d-def outputpath: s-stwing
+  def knownfowmodewvewsion: stwing
+  def knownfowdawdataset: k-keyvawdawdataset[keyvaw[wong, (///ˬ///✿) c-cwustewsusewisknownfow]]
 
-  private lazy val execArgs = AnalyticsBatchExecutionArgs(
-    batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
-    firstTime = BatchFirstTime(RichDate(firstTime)),
-    lastTime = None,
-    batchIncrement = BatchIncrement(batchIncrement)
+  pwivate wazy vaw e-execawgs = anawyticsbatchexecutionawgs(
+    b-batchdesc = batchdescwiption(this.getcwass.getname.wepwace("$", (U ﹏ U) "")),
+    fiwsttime = batchfiwsttime(wichdate(fiwsttime)), ^^;;
+    wasttime = n-nyone, 🥺
+    b-batchincwement = b-batchincwement(batchincwement)
   )
 
-  override def scheduledJob: Execution[Unit] = AnalyticsBatchExecution(execArgs) {
-    implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
-          val userUserGraph =
-            DAL.readMostRecentSnapshot(UserUserGraphScalaDataset).toTypedPipe
-          val knownFor = KnownForSources.fromKeyVal(
-            DAL.readMostRecentSnapshot(knownForDALDataset, dateRange.extend(Days(30))).toTypedPipe,
-            knownForModelVersion
+  ovewwide d-def scheduwedjob: e-execution[unit] = anawyticsbatchexecution(execawgs) {
+    i-impwicit datewange =>
+      execution.withid { impwicit uniqueid =>
+        e-execution.withawgs { a-awgs =>
+          vaw usewusewgwaph =
+            daw.weadmostwecentsnapshot(usewusewgwaphscawadataset).totypedpipe
+          v-vaw k-knownfow = knownfowsouwces.fwomkeyvaw(
+            daw.weadmostwecentsnapshot(knownfowdawdataset, òωó datewange.extend(days(30))).totypedpipe, XD
+            knownfowmodewvewsion
           )
 
-          val socialProofThreshold = args.int("socialProofThreshold", 2)
-          val maxClustersPerUser = args.int("maxClustersPerUser", 200)
+          v-vaw sociawpwoofthweshowd = awgs.int("sociawpwoofthweshowd", :3 2)
+          vaw maxcwustewspewusew = awgs.int("maxcwustewspewusew", (U ﹏ U) 200)
 
-          val result = InterestedInFromKnownForLite
-            .run(
-              userUserGraph,
-              knownFor,
-              socialProofThreshold,
-              maxClustersPerUser,
-              knownForModelVersion
+          v-vaw wesuwt = intewestedinfwomknownfowwite
+            .wun(
+              usewusewgwaph, >w<
+              k-knownfow, /(^•ω•^)
+              s-sociawpwoofthweshowd, (⑅˘꒳˘)
+              maxcwustewspewusew, ʘwʘ
+              knownfowmodewvewsion
             )
 
-          val writeKeyValResultExec = result
+          vaw wwitekeyvawwesuwtexec = w-wesuwt
             .map {
-              case (userId, clusters) => KeyVal(userId, clusters)
-            }.writeDALVersionedKeyValExecution(
-              outputKVDataset,
-              D.Suffix(outputPath)
+              c-case (usewid, rawr x3 cwustews) => keyvaw(usewid, (˘ω˘) cwustews)
+            }.wwitedawvewsionedkeyvawexecution(
+              o-outputkvdataset, o.O
+              d.suffix(outputpath)
             )
-          Util.printCounters(writeKeyValResultExec)
+          u-utiw.pwintcountews(wwitekeyvawwesuwtexec)
         }
       }
   }
 }
 
 /**
- * Adhoc job to compute user interestedIn.
+ * adhoc job to compute usew intewestedin. 😳
  *
- * scalding remote run \
- * --target src/scala/com/twitter/simclusters_v2/scalding:interested_in_lite_20m_145k_2020-adhoc \
- * --main-class com.twitter.simclusters_v2.scalding.InterestedInFromKnownForLite20M145K2020Adhoc \
- * --user cassowary --cluster bluebird-qus1 \
- * --keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
- * --principal service_acoount@TWITTER.BIZ \
+ * scawding wemote w-wun \
+ * --tawget swc/scawa/com/twittew/simcwustews_v2/scawding:intewested_in_wite_20m_145k_2020-adhoc \
+ * --main-cwass c-com.twittew.simcwustews_v2.scawding.intewestedinfwomknownfowwite20m145k2020adhoc \
+ * --usew c-cassowawy --cwustew bwuebiwd-qus1 \
+ * --keytab /vaw/wib/tss/keys/fwoofy/keytabs/cwient/cassowawy.keytab \
+ * --pwincipaw s-sewvice_acoount@twittew.biz \
  * -- \
- * --outputDir /gcs/user/cassowary/adhoc/interested_in_from_knownfor_lite/ \
+ * --outputdiw /gcs/usew/cassowawy/adhoc/intewested_in_fwom_knownfow_wite/ \
  * --date 2020-08-25
  */
-object InterestedInFromKnownForLite20M145K2020Adhoc extends AdhocExecutionApp {
-  override def runOnDateRange(
-    args: Args
+object i-intewestedinfwomknownfowwite20m145k2020adhoc e-extends adhocexecutionapp {
+  ovewwide d-def wunondatewange(
+    awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val userUserGraph = DAL.readMostRecentSnapshot(UserUserGraphScalaDataset).toTypedPipe
-    val socialProofThreshold = args.int("socialProofThreshold", 2)
-    val maxClustersPerUser = args.int("maxClustersPerUser", 200)
-    val knownForModelVersion = ModelVersions.Model20M145K2020
-    val knownFor = KnownForSources.fromKeyVal(
-      DAL
-        .readMostRecentSnapshotNoOlderThan(
-          SimclustersV2KnownFor20M145K2020ScalaDataset,
-          Days(30)).toTypedPipe,
-      knownForModelVersion
+    i-impwicit datewange: d-datewange, o.O
+    timezone: timezone, ^^;;
+    uniqueid: u-uniqueid
+  ): e-execution[unit] = {
+    vaw u-usewusewgwaph = daw.weadmostwecentsnapshot(usewusewgwaphscawadataset).totypedpipe
+    vaw sociawpwoofthweshowd = a-awgs.int("sociawpwoofthweshowd", ( ͡o ω ͡o ) 2)
+    vaw m-maxcwustewspewusew = a-awgs.int("maxcwustewspewusew", ^^;; 200)
+    vaw knownfowmodewvewsion = modewvewsions.modew20m145k2020
+    v-vaw knownfow = k-knownfowsouwces.fwomkeyvaw(
+      d-daw
+        .weadmostwecentsnapshotnoowdewthan(
+          s-simcwustewsv2knownfow20m145k2020scawadataset, ^^;;
+          days(30)).totypedpipe, XD
+      k-knownfowmodewvewsion
     )
 
-    val outputSink = AdhocKeyValSources.interestedInSource(args("outputDir"))
-    Util.printCounters(
-      InterestedInFromKnownForLite
-        .run(
-          userUserGraph,
-          knownFor,
-          socialProofThreshold,
-          maxClustersPerUser,
-          knownForModelVersion
-        ).writeExecution(outputSink)
+    vaw outputsink = adhockeyvawsouwces.intewestedinsouwce(awgs("outputdiw"))
+    utiw.pwintcountews(
+      intewestedinfwomknownfowwite
+        .wun(
+          usewusewgwaph, 🥺
+          k-knownfow, (///ˬ///✿)
+          sociawpwoofthweshowd, (U ᵕ U❁)
+          m-maxcwustewspewusew, ^^;;
+          knownfowmodewvewsion
+        ).wwiteexecution(outputsink)
     )
   }
 
 }
 
-object InterestedInFromKnownForLite {
-  private def ifNanMake0(x: Double): Double = if (x.isNaN) 0.0 else x
+o-object intewestedinfwomknownfowwite {
+  p-pwivate def ifnanmake0(x: doubwe): d-doubwe = if (x.isnan) 0.0 e-ewse x
 
-  case class SrcClusterIntermediateInfo(
-    followScore: Double,
-    favScore: Double,
-    logFavScore: Double,
-    numFollowed: Int,
-    numFaved: Int) {
+  case cwass s-swccwustewintewmediateinfo(
+    f-fowwowscowe: d-doubwe, ^^;;
+    favscowe: doubwe, rawr
+    wogfavscowe: doubwe, (˘ω˘)
+    nyumfowwowed: int, 🥺
+    nyumfaved: int) {
 
-    // helper function used for test cases
-    override def equals(obj: scala.Any): Boolean = {
+    // hewpew f-function used f-fow test cases
+    o-ovewwide def equaws(obj: scawa.any): b-boowean = {
       obj match {
-        case that: SrcClusterIntermediateInfo =>
-          math.abs(followScore - that.followScore) < 1e-5 &&
-            math.abs(favScore - that.favScore) < 1e-5 &&
-            math.abs(logFavScore - that.logFavScore) < 1e-5 &&
-            numFollowed == that.numFollowed &&
-            numFaved == that.numFaved
-        case _ => false
+        case that: swccwustewintewmediateinfo =>
+          m-math.abs(fowwowscowe - t-that.fowwowscowe) < 1e-5 &&
+            math.abs(favscowe - t-that.favscowe) < 1e-5 &&
+            math.abs(wogfavscowe - that.wogfavscowe) < 1e-5 &&
+            n-nyumfowwowed == t-that.numfowwowed &&
+            nyumfaved == t-that.numfaved
+        c-case _ => fawse
       }
     }
   }
 
-  implicit object SrcClusterIntermediateInfoSemigroup
-      extends Semigroup[SrcClusterIntermediateInfo] {
-    override def plus(
-      left: SrcClusterIntermediateInfo,
-      right: SrcClusterIntermediateInfo
-    ): SrcClusterIntermediateInfo = {
-      SrcClusterIntermediateInfo(
-        followScore = left.followScore + right.followScore,
-        favScore = left.favScore + right.favScore,
-        logFavScore = left.logFavScore + right.logFavScore,
-        numFollowed = left.numFollowed + right.numFollowed,
-        numFaved = left.numFaved + right.numFaved
+  impwicit object swccwustewintewmediateinfosemigwoup
+      extends s-semigwoup[swccwustewintewmediateinfo] {
+    o-ovewwide def pwus(
+      w-weft: s-swccwustewintewmediateinfo, nyaa~~
+      w-wight: swccwustewintewmediateinfo
+    ): swccwustewintewmediateinfo = {
+      s-swccwustewintewmediateinfo(
+        f-fowwowscowe = weft.fowwowscowe + w-wight.fowwowscowe, :3
+        f-favscowe = weft.favscowe + wight.favscowe, /(^•ω•^)
+        w-wogfavscowe = weft.wogfavscowe + wight.wogfavscowe, ^•ﻌ•^
+        nyumfowwowed = w-weft.numfowwowed + wight.numfowwowed, UwU
+        n-nyumfaved = w-weft.numfaved + wight.numfaved
       )
     }
   }
 
-  def run(
-    adjacencyLists: TypedPipe[UserAndNeighbors],
-    knownFor: TypedPipe[(UserId, Array[(ClusterId, Float)])],
-    socialProofThreshold: Int,
-    maxClustersPerUser: Int,
-    knownForModelVersion: String
+  d-def wun(
+    adjacencywists: typedpipe[usewandneighbows], 😳😳😳
+    k-knownfow: t-typedpipe[(usewid, OwO a-awway[(cwustewid, ^•ﻌ•^ fwoat)])], (ꈍᴗꈍ)
+    sociawpwoofthweshowd: int, (⑅˘꒳˘)
+    m-maxcwustewspewusew: int, (⑅˘꒳˘)
+    knownfowmodewvewsion: s-stwing
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
-    InterestedInFromKnownFor.keepOnlyTopClusters(
-      groupClusterScores(
-        userClusterPairs(
-          adjacencyLists,
-          knownFor,
-          socialProofThreshold
+    i-impwicit uniqueid: uniqueid
+  ): t-typedpipe[(usewid, (ˆ ﻌ ˆ)♡ cwustewsusewisintewestedin)] = {
+    i-intewestedinfwomknownfow.keeponwytopcwustews(
+      g-gwoupcwustewscowes(
+        usewcwustewpaiws(
+          adjacencywists, /(^•ω•^)
+          knownfow, òωó
+          s-sociawpwoofthweshowd
         )
-      ),
-      maxClustersPerUser,
-      knownForModelVersion
+      ), (⑅˘꒳˘)
+      maxcwustewspewusew, (U ᵕ U❁)
+      knownfowmodewvewsion
     )
   }
 
-  def userClusterPairs(
-    adjacencyLists: TypedPipe[UserAndNeighbors],
-    knownFor: TypedPipe[(Long, Array[(Int, Float)])],
-    socialProofThreshold: Int
+  d-def usewcwustewpaiws(
+    a-adjacencywists: typedpipe[usewandneighbows], >w<
+    k-knownfow: typedpipe[(wong, σωσ awway[(int, -.- f-fwoat)])],
+    s-sociawpwoofthweshowd: i-int
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[((Long, Int), SrcClusterIntermediateInfo)] = {
-    val edgesToUsersWithKnownFor = Stat("num_edges_to_users_with_known_for")
-    val srcDestClusterTriples = Stat("num_src_dest_cluster_triples")
-    val srcClusterPairsBeforeSocialProofThresholding =
-      Stat("num_src_cluster_pairs_before_social_proof_thresholding")
-    val srcClusterPairsAfterSocialProofThresholding =
-      Stat("num_src_cluster_pairs_after_social_proof_thresholding")
+    impwicit uniqueid: uniqueid
+  ): typedpipe[((wong, o.O int), ^^ swccwustewintewmediateinfo)] = {
+    vaw edgestousewswithknownfow = stat("num_edges_to_usews_with_known_fow")
+    vaw swcdestcwustewtwipwes = stat("num_swc_dest_cwustew_twipwes")
+    vaw swccwustewpaiwsbefowesociawpwoofthweshowding =
+      stat("num_swc_cwustew_paiws_befowe_sociaw_pwoof_thweshowding")
+    vaw swccwustewpaiwsaftewsociawpwoofthweshowding =
+      stat("num_swc_cwustew_paiws_aftew_sociaw_pwoof_thweshowding")
 
-    val edges = adjacencyLists.flatMap {
-      case UserAndNeighbors(srcId, neighborsWithWeights) =>
-        neighborsWithWeights.map { neighborWithWeights =>
+    v-vaw edges = adjacencywists.fwatmap {
+      c-case usewandneighbows(swcid, >_< nyeighbowswithweights) =>
+        n-neighbowswithweights.map { n-nyeighbowwithweights =>
           (
-            neighborWithWeights.neighborId,
-            neighborWithWeights.copy(neighborId = srcId)
+            n-nyeighbowwithweights.neighbowid,
+            nyeighbowwithweights.copy(neighbowid = s-swcid)
           )
         }
     }
 
-    implicit val l2b: Long => Array[Byte] = Injection.long2BigEndian
+    impwicit vaw w-w2b: wong => awway[byte] = i-injection.wong2bigendian
 
     edges
       .sketch(4000)
-      .join(knownFor)
-      .flatMap {
-        case (destId, (srcWithWeights, clusterArray)) =>
-          edgesToUsersWithKnownFor.inc()
-          clusterArray.toList.map {
-            case (clusterId, knownForScoreF) =>
-              val knownForScore = math.max(0.0, knownForScoreF.toDouble)
+      .join(knownfow)
+      .fwatmap {
+        c-case (destid, (swcwithweights, >w< cwustewawway)) =>
+          e-edgestousewswithknownfow.inc()
+          c-cwustewawway.towist.map {
+            case (cwustewid, >_< knownfowscowef) =>
+              v-vaw k-knownfowscowe = m-math.max(0.0, >w< k-knownfowscowef.todoubwe)
 
-              srcDestClusterTriples.inc()
-              val followScore =
-                if (srcWithWeights.isFollowed.contains(true)) knownForScore else 0.0
-              val favScore =
-                srcWithWeights.favScoreHalfLife100Days.getOrElse(0.0) * knownForScore
-              val logFavScore = srcWithWeights.logFavScore.getOrElse(0.0) * knownForScore
-              val numFollowed = if (srcWithWeights.isFollowed.contains(true)) {
+              s-swcdestcwustewtwipwes.inc()
+              v-vaw fowwowscowe =
+                i-if (swcwithweights.isfowwowed.contains(twue)) k-knownfowscowe e-ewse 0.0
+              vaw favscowe =
+                s-swcwithweights.favscowehawfwife100days.getowewse(0.0) * k-knownfowscowe
+              v-vaw wogfavscowe = swcwithweights.wogfavscowe.getowewse(0.0) * k-knownfowscowe
+              vaw nyumfowwowed = if (swcwithweights.isfowwowed.contains(twue)) {
                 1
-              } else 0
+              } e-ewse 0
 
-              val numFaved = if (srcWithWeights.favScoreHalfLife100Days.exists(_ > 0)) {
+              vaw nyumfaved = if (swcwithweights.favscowehawfwife100days.exists(_ > 0)) {
                 1
-              } else 0
+              } e-ewse 0
 
               (
-                (srcWithWeights.neighborId, clusterId),
-                SrcClusterIntermediateInfo(
-                  followScore,
-                  favScore,
-                  logFavScore,
-                  numFollowed,
-                  numFaved
+                (swcwithweights.neighbowid, rawr c-cwustewid), rawr x3
+                s-swccwustewintewmediateinfo(
+                  fowwowscowe, ( ͡o ω ͡o )
+                  f-favscowe, (˘ω˘)
+                  wogfavscowe, 😳
+                  n-nyumfowwowed, OwO
+                  nyumfaved
                 )
               )
           }
       }
-      .sumByKey
-      .withReducers(10000)
-      .filter {
-        case ((_, _), SrcClusterIntermediateInfo(_, _, _, numFollowed, numFaved)) =>
-          srcClusterPairsBeforeSocialProofThresholding.inc()
-          // we donot remove duplicates
-          val socialProofSize = numFollowed + numFaved
-          val result = socialProofSize >= socialProofThreshold
-          if (result) {
-            srcClusterPairsAfterSocialProofThresholding.inc()
+      .sumbykey
+      .withweducews(10000)
+      .fiwtew {
+        c-case ((_, (˘ω˘) _), òωó swccwustewintewmediateinfo(_, _, ( ͡o ω ͡o ) _, n-nyumfowwowed, UwU nyumfaved)) =>
+          swccwustewpaiwsbefowesociawpwoofthweshowding.inc()
+          // we donot wemove dupwicates
+          v-vaw sociawpwoofsize = nyumfowwowed + n-nyumfaved
+          vaw w-wesuwt = sociawpwoofsize >= sociawpwoofthweshowd
+          if (wesuwt) {
+            swccwustewpaiwsaftewsociawpwoofthweshowding.inc()
           }
-          result
+          wesuwt
       }
   }
 
-  def groupClusterScores(
-    intermediate: TypedPipe[((Long, Int), SrcClusterIntermediateInfo)]
+  d-def gwoupcwustewscowes(
+    intewmediate: t-typedpipe[((wong, /(^•ω•^) i-int), (ꈍᴗꈍ) swccwustewintewmediateinfo)]
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[(Long, List[(Int, UserToInterestedInClusterScores)])] = {
+    i-impwicit uniqueid: uniqueid
+  ): typedpipe[(wong, 😳 w-wist[(int, mya usewtointewestedincwustewscowes)])] = {
 
-    implicit val i2b: Int => Array[Byte] = Injection.int2BigEndian
+    i-impwicit vaw i2b: int => a-awway[byte] = injection.int2bigendian
 
-    intermediate
+    intewmediate
       .map {
         case (
-              (srcId, clusterId),
-              SrcClusterIntermediateInfo(
-                followScore,
-                favScore,
-                logFavScore,
-                numFollowed,
-                numFaved
+              (swcid, mya c-cwustewid), /(^•ω•^)
+              swccwustewintewmediateinfo(
+                f-fowwowscowe, ^^;;
+                f-favscowe,
+                w-wogfavscowe, 🥺
+                nyumfowwowed, ^^
+                n-nyumfaved
               )) =>
           (
-            srcId,
-            List(
+            s-swcid, ^•ﻌ•^
+            w-wist(
               (
-                clusterId,
-                UserToInterestedInClusterScores(
-                  followScore = Some(ifNanMake0(followScore)),
-                  favScore = Some(ifNanMake0(favScore)),
-                  logFavScore = Some(ifNanMake0(logFavScore)),
-                  numUsersBeingFollowed = Some(numFollowed),
-                  numUsersThatWereFaved = Some(numFaved)
+                c-cwustewid, /(^•ω•^)
+                usewtointewestedincwustewscowes(
+                  f-fowwowscowe = some(ifnanmake0(fowwowscowe)), ^^
+                  favscowe = s-some(ifnanmake0(favscowe)), 🥺
+                  w-wogfavscowe = s-some(ifnanmake0(wogfavscowe)), (U ᵕ U❁)
+                  n-nyumusewsbeingfowwowed = s-some(numfowwowed), 😳😳😳
+                  n-nyumusewsthatwewefaved = s-some(numfaved)
                 ))
             )
           )
       }
-      .sumByKey
-      //      .withReducers(1000)
-      .toTypedPipe
+      .sumbykey
+      //      .withweducews(1000)
+      .totypedpipe
   }
 }

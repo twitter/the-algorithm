@@ -1,83 +1,83 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow
 
-import com.twitter.dal.personal_data.{thriftjava => pd}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.model.HomeFeatures.EarlybirdFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordOptionalFeature
-import com.twitter.product_mixer.core.feature.datarecord.DoubleDataRecordCompatible
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.Fetch
-import com.twitter.strato.generated.client.ml.featureStore.SimClustersUserInterestedInTweetEmbeddingDotProduct20M145K2020OnUserTweetEdgeClientColumn
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.daw.pewsonaw_data.{thwiftjava => p-pd}
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.eawwybiwdfeatuwe
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.datawecowdoptionawfeatuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.doubwedatawecowdcompatibwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.utiw.offwoadfutuwepoows
+impowt com.twittew.stitch.stitch
+impowt com.twittew.stwato.catawog.fetch
+impowt c-com.twittew.stwato.genewated.cwient.mw.featuwestowe.simcwustewsusewintewestedintweetembeddingdotpwoduct20m145k2020onusewtweetedgecwientcowumn
+impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-object SimClustersUserInterestedInTweetEmbeddingDataRecordFeature
-    extends DataRecordOptionalFeature[TweetCandidate, Double]
-    with DoubleDataRecordCompatible {
-  override val featureName: String =
-    "user-tweet.recommendations.sim_clusters_scores.user_interested_in_tweet_embedding_dot_product_20m_145k_2020"
-  override val personalDataTypes: Set[pd.PersonalDataType] =
-    Set(pd.PersonalDataType.InferredInterests)
+object simcwustewsusewintewestedintweetembeddingdatawecowdfeatuwe
+    extends datawecowdoptionawfeatuwe[tweetcandidate, >w< doubwe]
+    with d-doubwedatawecowdcompatibwe {
+  ovewwide vaw featuwename: stwing =
+    "usew-tweet.wecommendations.sim_cwustews_scowes.usew_intewested_in_tweet_embedding_dot_pwoduct_20m_145k_2020"
+  ovewwide vaw pewsonawdatatypes: s-set[pd.pewsonawdatatype] =
+    set(pd.pewsonawdatatype.infewwedintewests)
 }
 
-@Singleton
-class SimClustersUserTweetScoresHydrator @Inject() (
-  simClustersColumn: SimClustersUserInterestedInTweetEmbeddingDotProduct20M145K2020OnUserTweetEdgeClientColumn,
-  statsReceiver: StatsReceiver)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@singweton
+c-cwass simcwustewsusewtweetscoweshydwatow @inject() (
+  s-simcwustewscowumn: s-simcwustewsusewintewestedintweetembeddingdotpwoduct20m145k2020onusewtweetedgecwientcowumn, nyaa~~
+  s-statsweceivew: statsweceivew)
+    extends b-buwkcandidatefeatuwehydwatow[pipewinequewy, (✿oωo) tweetcandidate] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("SimClustersUserTweetScores")
+  ovewwide vaw i-identifiew: featuwehydwatowidentifiew =
+    featuwehydwatowidentifiew("simcwustewsusewtweetscowes")
 
-  override val features: Set[Feature[_, _]] = Set(
-    SimClustersUserInterestedInTweetEmbeddingDataRecordFeature)
+  ovewwide vaw featuwes: set[featuwe[_, ʘwʘ _]] = set(
+    simcwustewsusewintewestedintweetembeddingdatawecowdfeatuwe)
 
-  private val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
-  private val keyFoundCounter = scopedStatsReceiver.counter("key/found")
-  private val keyLossCounter = scopedStatsReceiver.counter("key/loss")
-  private val keyFailureCounter = scopedStatsReceiver.counter("key/failure")
-  private val keySkipCounter = scopedStatsReceiver.counter("key/skip")
+  pwivate v-vaw scopedstatsweceivew = statsweceivew.scope(getcwass.getsimpwename)
+  p-pwivate v-vaw keyfoundcountew = s-scopedstatsweceivew.countew("key/found")
+  pwivate vaw keywosscountew = scopedstatsweceivew.countew("key/woss")
+  p-pwivate v-vaw keyfaiwuwecountew = scopedstatsweceivew.countew("key/faiwuwe")
+  p-pwivate v-vaw keyskipcountew = scopedstatsweceivew.countew("key/skip")
 
-  private val DefaultFeatureMap = FeatureMapBuilder()
-    .add(SimClustersUserInterestedInTweetEmbeddingDataRecordFeature, None)
-    .build()
-  private val MinFavToHydrate = 9
+  p-pwivate vaw defauwtfeatuwemap = featuwemapbuiwdew()
+    .add(simcwustewsusewintewestedintweetembeddingdatawecowdfeatuwe, (ˆ ﻌ ˆ)♡ n-nyone)
+    .buiwd()
+  pwivate vaw minfavtohydwate = 9
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
-    Stitch.run {
-      Stitch.collect {
+  ovewwide def appwy(
+    q-quewy: pipewinequewy, 😳😳😳
+    c-candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): s-stitch[seq[featuwemap]] = o-offwoadfutuwepoows.offwoadfutuwe {
+    stitch.wun {
+      stitch.cowwect {
         candidates.map { candidate =>
-          val ebFeatures = candidate.features.getOrElse(EarlybirdFeature, None)
-          val favCount = ebFeatures.flatMap(_.favCountV2).getOrElse(0)
+          vaw ebfeatuwes = candidate.featuwes.getowewse(eawwybiwdfeatuwe, :3 n-nyone)
+          v-vaw favcount = ebfeatuwes.fwatmap(_.favcountv2).getowewse(0)
           
-          if (ebFeatures.isEmpty || favCount >= MinFavToHydrate) {
-            simClustersColumn.fetcher
-              .fetch((query.getRequiredUserId, candidate.candidate.id), Unit)
+          i-if (ebfeatuwes.isempty || f-favcount >= minfavtohydwate) {
+            s-simcwustewscowumn.fetchew
+              .fetch((quewy.getwequiwedusewid, OwO candidate.candidate.id), (U ﹏ U) unit)
               .map {
-                case Fetch.Result(response, _) =>
-                  if (response.nonEmpty) keyFoundCounter.incr() else keyLossCounter.incr()
-                  FeatureMapBuilder()
-                    .add(SimClustersUserInterestedInTweetEmbeddingDataRecordFeature, response)
-                    .build()
-                case _ =>
-                  keyFailureCounter.incr()
-                  DefaultFeatureMap
+                case fetch.wesuwt(wesponse, >w< _) =>
+                  if (wesponse.nonempty) k-keyfoundcountew.incw() ewse keywosscountew.incw()
+                  featuwemapbuiwdew()
+                    .add(simcwustewsusewintewestedintweetembeddingdatawecowdfeatuwe, (U ﹏ U) wesponse)
+                    .buiwd()
+                c-case _ =>
+                  keyfaiwuwecountew.incw()
+                  d-defauwtfeatuwemap
               }
-          } else {
-            keySkipCounter.incr()
-            Stitch.value(DefaultFeatureMap)
+          } e-ewse {
+            k-keyskipcountew.incw()
+            stitch.vawue(defauwtfeatuwemap)
           }
         }
       }

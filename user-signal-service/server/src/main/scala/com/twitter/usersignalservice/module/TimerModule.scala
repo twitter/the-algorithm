@@ -1,12 +1,12 @@
-package com.twitter.usersignalservice.module
-import com.google.inject.Provides
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.inject.TwitterModule
-import com.twitter.util.Timer
-import javax.inject.Singleton
+package com.twittew.usewsignawsewvice.moduwe
+impowt c-com.googwe.inject.pwovides
+i-impowt c-com.twittew.finagwe.utiw.defauwttimew
+i-impowt c-com.twittew.inject.twittewmoduwe
+i-impowt com.twittew.utiw.timew
+i-impowt javax.inject.singweton
 
-object TimerModule extends TwitterModule {
-  @Singleton
-  @Provides
-  def providesTimer: Timer = DefaultTimer
+o-object timewmoduwe extends twittewmoduwe {
+  @singweton
+  @pwovides
+  def pwovidestimew: timew = defauwttimew
 }

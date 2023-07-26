@@ -1,42 +1,42 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+package com.twittew.fowwow_wecommendations.common.featuwe_hydwation.souwces
 
-object FeatureHydrationSourcesFeatureSwitchKeys {
-  val EnableAlgorithmAggregateFeatures = "feature_store_source_enable_algorithm_aggregate_features"
-  val EnableAuthorTopicAggregateFeatures =
-    "feature_store_source_enable_author_topic_aggregate_features"
-  val EnableCandidateClientFeatures = "feature_store_source_enable_candidate_client_features"
-  val EnableCandidateNotificationFeatures =
-    "feature_store_source_enable_candidate_notification_features"
-  val EnableCandidatePrecomputedNotificationFeatures =
-    "feature_store_source_enable_candidate_precomputed_notification_features"
-  val EnableCandidateUserFeatures = "feature_store_source_enable_candidate_user_features"
-  val EnableCandidateUserAuthorRealTimeAggregateFeatures =
-    "feature_store_source_enable_candidate_user_author_rta_features"
-  val EnableCandidateUserResurrectionFeatures =
-    "feature_store_source_enable_candidate_user_resurrection_features"
-  val EnableCandidateUserTimelinesAuthorAggregateFeatures =
-    "feature_store_source_enable_candidate_user_timelines_author_aggregate_features"
-  val EnableSimilarToUserFeatures = "feature_store_source_enable_similar_to_user_features"
-  val EnableTargetUserFeatures = "feature_store_source_enable_target_user_features"
-  val EnableTargetUserUserAuthorUserStateRealTimeAggregatesFeature =
-    "feature_store_source_enable_target_user_user_author_user_state_rta_features"
-  val EnableTargetUserResurrectionFeatures =
-    "feature_store_source_enable_target_user_resurrection_features"
-  val EnableTargetUserWtfImpressionFeatures =
-    "feature_store_source_enable_target_user_wtf_impression_features"
-  val EnableTopicAggregateFeatures = "feature_store_source_enable_topic_aggregate_features"
-  val EnableUserCandidateEdgeFeatures = "feature_store_source_enable_user_candidate_edge_features"
-  val EnableUserCandidateWtfImpressionCandidateFeatures =
-    "feature_store_source_enable_user_candidate_wtf_impression_features"
-  val EnableUserClientFeatures = "feature_store_source_enable_user_client_features"
-  val EnableUserNotificationFeatures = "feature_store_source_enable_user_notification_features"
-  val EnableUserTopicFeatures = "feature_store_source_enable_user_topic_features"
-  val EnableUserWtfAlgEdgeFeatures = "feature_store_source_enable_user_wtf_alg_edge_features"
-  val FeatureHydrationTimeout = "feature_store_source_hydration_timeout_in_millis"
-  val UseSeparateClientForTimelinesAuthor =
-    "feature_store_source_separate_client_for_timelines_author_data"
-  val UseSeparateClientMetricCenterUserCounting =
-    "feature_store_source_separate_client_for_mc_user_counting_data"
-  val UseSeparateClientForNotifications = "feature_store_source_separate_client_for_notifications"
-  val UseSeparateClientForGizmoduck = "feature_store_source_separate_client_for_gizmoduck"
+object f-featuwehydwationsouwcesfeatuweswitchkeys {
+  v-vaw enabweawgowithmaggwegatefeatuwes = "featuwe_stowe_souwce_enabwe_awgowithm_aggwegate_featuwes"
+  v-vaw enabweauthowtopicaggwegatefeatuwes =
+    "featuwe_stowe_souwce_enabwe_authow_topic_aggwegate_featuwes"
+  v-vaw enabwecandidatecwientfeatuwes = "featuwe_stowe_souwce_enabwe_candidate_cwient_featuwes"
+  vaw e-enabwecandidatenotificationfeatuwes =
+    "featuwe_stowe_souwce_enabwe_candidate_notification_featuwes"
+  v-vaw e-enabwecandidatepwecomputednotificationfeatuwes =
+    "featuwe_stowe_souwce_enabwe_candidate_pwecomputed_notification_featuwes"
+  v-vaw enabwecandidateusewfeatuwes = "featuwe_stowe_souwce_enabwe_candidate_usew_featuwes"
+  vaw enabwecandidateusewauthowweawtimeaggwegatefeatuwes =
+    "featuwe_stowe_souwce_enabwe_candidate_usew_authow_wta_featuwes"
+  vaw enabwecandidateusewwesuwwectionfeatuwes =
+    "featuwe_stowe_souwce_enabwe_candidate_usew_wesuwwection_featuwes"
+  v-vaw enabwecandidateusewtimewinesauthowaggwegatefeatuwes =
+    "featuwe_stowe_souwce_enabwe_candidate_usew_timewines_authow_aggwegate_featuwes"
+  vaw enabwesimiwawtousewfeatuwes = "featuwe_stowe_souwce_enabwe_simiwaw_to_usew_featuwes"
+  vaw enabwetawgetusewfeatuwes = "featuwe_stowe_souwce_enabwe_tawget_usew_featuwes"
+  v-vaw enabwetawgetusewusewauthowusewstateweawtimeaggwegatesfeatuwe =
+    "featuwe_stowe_souwce_enabwe_tawget_usew_usew_authow_usew_state_wta_featuwes"
+  vaw enabwetawgetusewwesuwwectionfeatuwes =
+    "featuwe_stowe_souwce_enabwe_tawget_usew_wesuwwection_featuwes"
+  v-vaw enabwetawgetusewwtfimpwessionfeatuwes =
+    "featuwe_stowe_souwce_enabwe_tawget_usew_wtf_impwession_featuwes"
+  vaw enabwetopicaggwegatefeatuwes = "featuwe_stowe_souwce_enabwe_topic_aggwegate_featuwes"
+  vaw enabweusewcandidateedgefeatuwes = "featuwe_stowe_souwce_enabwe_usew_candidate_edge_featuwes"
+  vaw e-enabweusewcandidatewtfimpwessioncandidatefeatuwes =
+    "featuwe_stowe_souwce_enabwe_usew_candidate_wtf_impwession_featuwes"
+  vaw enabweusewcwientfeatuwes = "featuwe_stowe_souwce_enabwe_usew_cwient_featuwes"
+  v-vaw enabweusewnotificationfeatuwes = "featuwe_stowe_souwce_enabwe_usew_notification_featuwes"
+  v-vaw enabweusewtopicfeatuwes = "featuwe_stowe_souwce_enabwe_usew_topic_featuwes"
+  vaw enabweusewwtfawgedgefeatuwes = "featuwe_stowe_souwce_enabwe_usew_wtf_awg_edge_featuwes"
+  vaw featuwehydwationtimeout = "featuwe_stowe_souwce_hydwation_timeout_in_miwwis"
+  vaw usesepawatecwientfowtimewinesauthow =
+    "featuwe_stowe_souwce_sepawate_cwient_fow_timewines_authow_data"
+  vaw usesepawatecwientmetwiccentewusewcounting =
+    "featuwe_stowe_souwce_sepawate_cwient_fow_mc_usew_counting_data"
+  v-vaw usesepawatecwientfownotifications = "featuwe_stowe_souwce_sepawate_cwient_fow_notifications"
+  vaw usesepawatecwientfowgizmoduck = "featuwe_stowe_souwce_sepawate_cwient_fow_gizmoduck"
 }

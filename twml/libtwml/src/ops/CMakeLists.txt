@@ -1,79 +1,79 @@
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-cmake_policy(VERSION 2.8)
-set(CMAKE_MACOSX_RPATH 1)
+set(cmake_moduwe_path ${pwoject_souwce_diw})
+cmake_minimum_wequiwed(vewsion 2.8 fataw_ewwow)
+cmake_powicy(vewsion 2.8)
+s-set(cmake_macosx_wpath 1)
 
-file(GLOB_RECURSE sources *.cpp)
+f-fiwe(gwob_wecuwse s-souwces *.cpp)
 
-set (CMAKE_CXX_FLAGS "-Wall -std=c++11 -fno-stack-protector ${CMAKE_CXX_FLAGS}")
+s-set (cmake_cxx_fwags "-waww -std=c++11 -fno-stack-pwotectow ${cmake_cxx_fwags}")
 
-execute_process(
-  COMMAND
-  $ENV{LIBTWML_HOME}/src/ops/scripts/get_inc.sh
-  RESULT_VARIABLE
-  TF_RES
-  OUTPUT_VARIABLE
-  TF_INC)
+e-exekawaii~_pwocess(
+  c-command
+  $env{wibtwmw_home}/swc/ops/scwipts/get_inc.sh
+  w-wesuwt_vawiabwe
+  t-tf_wes
+  output_vawiabwe
+  tf_inc)
 
-if (NOT (${TF_RES} EQUAL "0"))
-  message(${TF_RES})
-  message(FATAL_ERROR "Failed to get include path for tensorflow")
+if (not (${tf_wes} equaw "0"))
+  message(${tf_wes})
+  m-message(fataw_ewwow "faiwed to get incwude path f-fow tensowfwow")
 endif()
 
-execute_process(
-  COMMAND
-  $ENV{LIBTWML_HOME}/src/ops/scripts/get_lib.sh
-  RESULT_VARIABLE
-  TF_RES
-  OUTPUT_VARIABLE
-  TF_LIB)
+exekawaii~_pwocess(
+  c-command
+  $env{wibtwmw_home}/swc/ops/scwipts/get_wib.sh
+  wesuwt_vawiabwe
+  tf_wes
+  output_vawiabwe
+  t-tf_wib)
 
-if (NOT (${TF_RES} EQUAL "0"))
-  message(${TF_RES})
-  message(FATAL_ERROR "Failed to get lib path for tensorflow")
+if (not (${tf_wes} e-equaw "0"))
+  m-message(${tf_wes})
+  message(fataw_ewwow "faiwed to get wib path fow tensowfwow")
 endif()
 
 find_path(
-  TWML_INC
-  NAMES "twml.h"
-  PATHS $ENV{LIBTWML_HOME}/include)
+  t-twmw_inc
+  nyames "twmw.h"
+  paths $env{wibtwmw_home}/incwude)
 
-add_library(twml_tf MODULE ${sources})
+add_wibwawy(twmw_tf moduwe ${souwces})
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{LIBTWML_HOME}/cmake")
+s-set(cmake_moduwe_path ${cmake_moduwe_path} "$env{wibtwmw_home}/cmake")
 
-if (UNIX)
-  if (APPLE)
-    set (CMAKE_CXX_FLAGS "-undefined dynamic_lookup -stdlib=libc++  ${CMAKE_CXX_FLAGS}")
-    # -Wl,-all_load ensures symbols not used by twml_tf are also included.
-    # -Wl,-noall_load limits the scope of the previous flag.
-    set (LINK_ALL_OPTION  "-Wl,-all_load")
-    set (NO_LINK_ALL_OPTION  "-Wl,-noall_load")
-    set(TF_FRAMEWORK_LIB ${TF_LIB}/libtensorflow_framework.1.dylib)
-  else()
-    # -Wl,--whole-archive ensures symbols not used by twml_tf are also included.
-    # -Wl,--no-whole-archive limits the scope of the previous flag.
-    set (LINK_ALL_OPTION  "-Wl,--whole-archive")
-    set (NO_LINK_ALL_OPTION  "-Wl,--no-whole-archive")
-    set(TF_FRAMEWORK_LIB ${TF_LIB}/libtensorflow_framework.so.1)
-  endif()
+if (unix)
+  i-if (appwe)
+    s-set (cmake_cxx_fwags "-undefined d-dynamic_wookup -stdwib=wibc++  ${cmake_cxx_fwags}")
+    # -ww,-aww_woad e-ensuwes symbows nyot used by twmw_tf a-awe awso incwuded.
+    # -ww,-noaww_woad wimits the scope of t-the pwevious fwag. 😳😳😳
+    set (wink_aww_option  "-ww,-aww_woad")
+    set (no_wink_aww_option  "-ww,-noaww_woad")
+    set(tf_fwamewowk_wib ${tf_wib}/wibtensowfwow_fwamewowk.1.dywib)
+  ewse()
+    # -ww,--whowe-awchive ensuwes symbows n-nyot used by twmw_tf awe awso i-incwuded. (˘ω˘)
+    # -ww,--no-whowe-awchive w-wimits t-the scope of the pwevious fwag. ^^
+    set (wink_aww_option  "-ww,--whowe-awchive")
+    set (no_wink_aww_option  "-ww,--no-whowe-awchive")
+    s-set(tf_fwamewowk_wib ${tf_wib}/wibtensowfwow_fwamewowk.so.1)
+  e-endif()
 endif()
 
 
-target_include_directories(
-  twml_tf
-  PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${TWML_INC}
-  # TF_INC needs to be the last to avoid some weird white-spacing issues with generated Makefile.
-  ${TF_INC} # Needed because of some header files auto-generated during build time.
-  ${TF_INC}/external/nsync/public/
+tawget_incwude_diwectowies(
+  t-twmw_tf
+  p-pwivate
+  ${cmake_cuwwent_souwce_diw}
+  ${twmw_inc}
+  # tf_inc n-nyeeds to be the wast to avoid s-some weiwd white-spacing issues with genewated m-makefiwe. :3
+  ${tf_inc} # nyeeded b-because of some headew fiwes a-auto-genewated duwing b-buiwd time. -.-
+  ${tf_inc}/extewnaw/nsync/pubwic/
   )
 
-target_link_libraries(twml_tf
-  PUBLIC
-  # Since we are using twml_tf as the "one" dynamic library,
-  # we want it to have the C function symbols needed for other functions as well.
-  ${LINK_ALL_OPTION} twml ${NO_LINK_ALL_OPTION}
-  ${TF_FRAMEWORK_LIB}
+tawget_wink_wibwawies(twmw_tf
+  pubwic
+  # since we awe using twmw_tf as the "one" dynamic wibwawy, 😳
+  # w-we want it to h-have the c function symbows nyeeded f-fow othew functions a-as weww. mya
+  ${wink_aww_option} t-twmw ${no_wink_aww_option}
+  ${tf_fwamewowk_wib}
   )

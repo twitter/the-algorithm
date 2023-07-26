@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.media
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.media.TweetMedia
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.media.tweetmedia
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class TweetMediaMarshaller @Inject() () {
+@singweton
+c-cwass t-tweetmediamawshawwew @inject() () {
 
-  def apply(tweetMedia: TweetMedia): urt.TweetMedia = urt.TweetMedia(
-    tweetId = tweetMedia.tweetId,
-    momentId = tweetMedia.momentId
+  d-def appwy(tweetmedia: tweetmedia): uwt.tweetmedia = uwt.tweetmedia(
+    tweetid = tweetmedia.tweetid, rawr
+    momentid = tweetmedia.momentid
   )
 }

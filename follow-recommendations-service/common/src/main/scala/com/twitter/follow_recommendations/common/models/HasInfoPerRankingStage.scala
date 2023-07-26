@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-trait HasInfoPerRankingStage {
-  def infoPerRankingStage: Option[scala.collection.Map[String, RankingInfo]]
+twait hasinfopewwankingstage {
+  d-def infopewwankingstage: o-option[scawa.cowwection.map[stwing, OwO w-wankinginfo]]
 }

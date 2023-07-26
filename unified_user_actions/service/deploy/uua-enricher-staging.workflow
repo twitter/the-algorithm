@@ -1,39 +1,39 @@
 {
-  "role": "discode",
-  "name": "uua-enricher-staging",
-  "config-files": [
-    "uua-enricher.aurora"
-  ],
-  "build": {
-    "play": true,
+  "wowe": "discode", XD
+  "name": "uua-enwichew-staging", >_<
+  "config-fiwes": [
+    "uua-enwichew.auwowa"
+  ], (ꈍᴗꈍ)
+  "buiwd": {
+    "pway": twue, ^•ﻌ•^
     "dependencies": [
       {
-        "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "wowe": "packew", OwO
+        "name": "packew-cwient-no-pex", 🥺
+        "vewsion": "watest"
       }
-    ],
+    ], òωó
     "steps": [
       {
-        "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-enricher"
-      },
+        "type": "bazew-bundwe", o.O
+        "name": "bundwe", (U ᵕ U❁)
+        "tawget": "unified_usew_actions/sewvice/swc/main/scawa:uua-enwichew"
+      }, (⑅˘꒳˘)
       {
-        "type": "packer",
-        "name": "uua-enricher-staging",
-        "artifact": "./dist/uua-enricher.zip"
+        "type": "packew", ( ͡o ω ͡o )
+        "name": "uua-enwichew-staging", UwU
+        "awtifact": "./dist/uua-enwichew.zip"
       }
     ]
-  },
-  "targets": [
+  }, rawr x3
+  "tawgets": [
     {
-      "type": "group",
-      "name": "staging",
-      "targets": [
+      "type": "gwoup", rawr
+      "name": "staging", σωσ
+      "tawgets": [
         {
-          "name": "uua-enricher-staging-pdxa",
-          "key": "pdxa/discode/staging/uua-enricher"
+          "name": "uua-enwichew-staging-pdxa", σωσ
+          "key": "pdxa/discode/staging/uua-enwichew"
         }
       ]
     }

@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.card
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.cawd
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.card.CardItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.uwwmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.cawd.cawditem
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class CardItemMarshaller @Inject() (
-  cardDisplayTypeMarshaller: CardDisplayTypeMarshaller,
-  urlMarshaller: UrlMarshaller) {
+@singweton
+c-cwass c-cawditemmawshawwew @inject() (
+  cawddispwaytypemawshawwew: cawddispwaytypemawshawwew, ^^;;
+  uwwmawshawwew: uwwmawshawwew) {
 
-  def apply(cardItem: CardItem): urt.TimelineItemContent = {
-    urt.TimelineItemContent.Card(
-      urt.Card(
-        cardUrl = cardItem.cardUrl,
-        text = cardItem.text,
-        subtext = cardItem.subtext,
-        url = cardItem.url.map(urlMarshaller(_)),
-        cardDisplayType = cardItem.displayType.map(cardDisplayTypeMarshaller(_))
+  d-def appwy(cawditem: cawditem): uwt.timewineitemcontent = {
+    uwt.timewineitemcontent.cawd(
+      uwt.cawd(
+        c-cawduww = cawditem.cawduww, >_<
+        text = c-cawditem.text, mya
+        subtext = cawditem.subtext, mya
+        uww = c-cawditem.uww.map(uwwmawshawwew(_)), 😳
+        cawddispwaytype = cawditem.dispwaytype.map(cawddispwaytypemawshawwew(_))
       )
     )
   }

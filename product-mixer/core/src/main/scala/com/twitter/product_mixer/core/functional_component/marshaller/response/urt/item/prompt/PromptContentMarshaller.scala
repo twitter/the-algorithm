@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.prompt
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.pwompt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.PromptContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.pwompt.pwomptcontent
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.pwompt.wewevancepwomptcontent
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class PromptContentMarshaller @Inject() (
-  relevancePromptContentMarshaller: RelevancePromptContentMarshaller) {
+@singweton
+c-cwass pwomptcontentmawshawwew @inject() (
+  w-wewevancepwomptcontentmawshawwew: wewevancepwomptcontentmawshawwew) {
 
-  def apply(promptContent: PromptContent): urt.PromptContent = promptContent match {
-    case relevancePromptContent: RelevancePromptContent =>
-      urt.PromptContent.RelevancePrompt(relevancePromptContentMarshaller(relevancePromptContent))
+  def appwy(pwomptcontent: pwomptcontent): uwt.pwomptcontent = p-pwomptcontent match {
+    case wewevancepwomptcontent: w-wewevancepwomptcontent =>
+      uwt.pwomptcontent.wewevancepwompt(wewevancepwomptcontentmawshawwew(wewevancepwomptcontent))
   }
 }

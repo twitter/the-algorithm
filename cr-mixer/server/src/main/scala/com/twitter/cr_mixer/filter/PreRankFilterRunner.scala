@@ -1,98 +1,98 @@
-package com.twitter.cr_mixer.filter
+package com.twittew.cw_mixew.fiwtew
 
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.cw_mixew.modew.candidategenewatowquewy
+i-impowt c-com.twittew.cw_mixew.modew.initiawcandidate
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.utiw.futuwe
+impowt j-javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class PreRankFilterRunner @Inject() (
-  impressedTweetListFilter: ImpressedTweetlistFilter,
-  tweetAgeFilter: TweetAgeFilter,
-  videoTweetFilter: VideoTweetFilter,
-  tweetReplyFilter: ReplyFilter,
-  globalStats: StatsReceiver) {
+@singweton
+c-cwass pwewankfiwtewwunnew @inject() (
+  impwessedtweetwistfiwtew: impwessedtweetwistfiwtew,
+  tweetagefiwtew: tweetagefiwtew, 😳
+  v-videotweetfiwtew: videotweetfiwtew, 😳
+  tweetwepwyfiwtew: w-wepwyfiwtew, σωσ
+  gwobawstats: s-statsweceivew) {
 
-  private val scopedStats = globalStats.scope(this.getClass.getCanonicalName)
+  pwivate vaw scopedstats = gwobawstats.scope(this.getcwass.getcanonicawname)
 
   /***
-   * The order of the filters does not matter as long as we do not apply .take(N) truncation
-   * across all filters. In other words, it is fine that we first do tweetAgeFilter, and then
-   * we do impressedTweetListFilter, or the other way around.
-   * Same idea applies to the signal based filter - it is ok that we apply signal based filters
-   * before impressedTweetListFilter.
+   * t-the owdew of the fiwtews does n-nyot mattew as w-wong as we do not appwy .take(n) twuncation
+   * acwoss aww fiwtews. rawr x3 in othew w-wowds, OwO it is fine that we fiwst do tweetagefiwtew, /(^•ω•^) and then
+   * we do impwessedtweetwistfiwtew, 😳😳😳 o-ow the othew way awound. ( ͡o ω ͡o )
+   * same i-idea appwies t-to the signaw based f-fiwtew - it i-is ok that we appwy signaw based fiwtews
+   * befowe i-impwessedtweetwistfiwtew. >_<
    *
-   * We move all signal based filters before tweetAgeFilter and impressedTweetListFilter
-   * as a set of early filters.
+   * we move aww signaw based f-fiwtews befowe tweetagefiwtew and impwessedtweetwistfiwtew
+   * as a set of eawwy fiwtews. >w<
    */
-  val orderedFilters = Seq(
-    tweetAgeFilter,
-    impressedTweetListFilter,
-    videoTweetFilter,
-    tweetReplyFilter
+  vaw owdewedfiwtews = s-seq(
+    tweetagefiwtew, rawr
+    i-impwessedtweetwistfiwtew, 😳
+    v-videotweetfiwtew, >w<
+    t-tweetwepwyfiwtew
   )
 
-  def runSequentialFilters[CGQueryType <: CandidateGeneratorQuery](
-    request: CGQueryType,
-    candidates: Seq[Seq[InitialCandidate]],
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    PreRankFilterRunner.runSequentialFilters(
-      request,
-      candidates,
-      orderedFilters,
-      scopedStats
+  def wunsequentiawfiwtews[cgquewytype <: candidategenewatowquewy](
+    wequest: c-cgquewytype, (⑅˘꒳˘)
+    c-candidates: seq[seq[initiawcandidate]], OwO
+  ): f-futuwe[seq[seq[initiawcandidate]]] = {
+    p-pwewankfiwtewwunnew.wunsequentiawfiwtews(
+      wequest, (ꈍᴗꈍ)
+      c-candidates, 😳
+      owdewedfiwtews, 😳😳😳
+      s-scopedstats
     )
   }
 
 }
 
-object PreRankFilterRunner {
-  private def recordCandidateStatsBeforeFilter(
-    candidates: Seq[Seq[InitialCandidate]],
-    statsReceiver: StatsReceiver
-  ): Unit = {
-    statsReceiver
-      .counter("empty_sources", "before").incr(
-        candidates.count { _.isEmpty }
+object pwewankfiwtewwunnew {
+  p-pwivate def wecowdcandidatestatsbefowefiwtew(
+    c-candidates: seq[seq[initiawcandidate]], mya
+    s-statsweceivew: s-statsweceivew
+  ): unit = {
+    statsweceivew
+      .countew("empty_souwces", mya "befowe").incw(
+        candidates.count { _.isempty }
       )
-    candidates.foreach { candidate =>
-      statsReceiver.counter("candidates", "before").incr(candidate.size)
+    candidates.foweach { candidate =>
+      statsweceivew.countew("candidates", (⑅˘꒳˘) "befowe").incw(candidate.size)
     }
   }
 
-  private def recordCandidateStatsAfterFilter(
-    candidates: Seq[Seq[InitialCandidate]],
-    statsReceiver: StatsReceiver
-  ): Unit = {
-    statsReceiver
-      .counter("empty_sources", "after").incr(
-        candidates.count { _.isEmpty }
+  pwivate def wecowdcandidatestatsaftewfiwtew(
+    candidates: seq[seq[initiawcandidate]], (U ﹏ U)
+    statsweceivew: s-statsweceivew
+  ): u-unit = {
+    statsweceivew
+      .countew("empty_souwces", mya "aftew").incw(
+        candidates.count { _.isempty }
       )
-    candidates.foreach { candidate =>
-      statsReceiver.counter("candidates", "after").incr(candidate.size)
+    c-candidates.foweach { c-candidate =>
+      s-statsweceivew.countew("candidates", ʘwʘ "aftew").incw(candidate.size)
     }
   }
 
   /*
-  Helper function for running some candidates through a sequence of filters
+  hewpew function fow wunning some candidates t-thwough a sequence of fiwtews
    */
-  private[filter] def runSequentialFilters[CGQueryType <: CandidateGeneratorQuery](
-    request: CGQueryType,
-    candidates: Seq[Seq[InitialCandidate]],
-    filters: Seq[FilterBase],
-    statsReceiver: StatsReceiver
-  ): Future[Seq[Seq[InitialCandidate]]] =
-    filters.foldLeft(Future.value(candidates)) {
-      case (candsFut, filter) =>
-        candsFut.flatMap { cands =>
-          recordCandidateStatsBeforeFilter(cands, statsReceiver.scope(filter.name))
-          filter
-            .filter(cands, filter.requestToConfig(request))
-            .map { filteredCands =>
-              recordCandidateStatsAfterFilter(filteredCands, statsReceiver.scope(filter.name))
-              filteredCands
+  pwivate[fiwtew] def wunsequentiawfiwtews[cgquewytype <: c-candidategenewatowquewy](
+    wequest: cgquewytype, (˘ω˘)
+    c-candidates: s-seq[seq[initiawcandidate]], (U ﹏ U)
+    f-fiwtews: seq[fiwtewbase], ^•ﻌ•^
+    s-statsweceivew: s-statsweceivew
+  ): f-futuwe[seq[seq[initiawcandidate]]] =
+    f-fiwtews.fowdweft(futuwe.vawue(candidates)) {
+      case (candsfut, (˘ω˘) fiwtew) =>
+        c-candsfut.fwatmap { c-cands =>
+          w-wecowdcandidatestatsbefowefiwtew(cands, :3 s-statsweceivew.scope(fiwtew.name))
+          f-fiwtew
+            .fiwtew(cands, ^^;; fiwtew.wequesttoconfig(wequest))
+            .map { fiwtewedcands =>
+              wecowdcandidatestatsaftewfiwtew(fiwtewedcands, 🥺 s-statsweceivew.scope(fiwtew.name))
+              fiwtewedcands
             }
         }
     }

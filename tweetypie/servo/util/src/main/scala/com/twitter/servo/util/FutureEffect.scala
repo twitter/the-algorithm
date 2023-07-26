@@ -1,379 +1,379 @@
-package com.twitter.servo.util
+package com.twittew.sewvo.utiw
 
-import com.twitter.finagle.stats.{StatsReceiver, Stat}
-import com.twitter.logging.{Logger, NullLogger}
-import com.twitter.util._
+impowt com.twittew.finagwe.stats.{statsweceivew, s-stat}
+impowt com.twittew.wogging.{woggew, (✿oωo) n-nyuwwwoggew}
+i-impowt com.twittew.utiw._
 
-object FutureEffect {
-  private[this] val _unit = FutureEffect[Any] { _ =>
-    Future.Unit
+o-object futuweeffect {
+  p-pwivate[this] v-vaw _unit = f-futuweeffect[any] { _ =>
+    f-futuwe.unit
   }
 
   /**
-   * A FutureEffect that always succeeds.
+   * a futuweeffect that awways succeeds. (ˆ ﻌ ˆ)♡
    */
-  def unit[T]: FutureEffect[T] =
-    _unit.asInstanceOf[FutureEffect[T]]
+  def unit[t]: f-futuweeffect[t] =
+    _unit.asinstanceof[futuweeffect[t]]
 
   /**
-   * A FutureEffect that always fails with the given exception.
+   * a futuweeffect that a-awways faiws with the given exception. ^^;;
    */
-  def fail[T](ex: Throwable): FutureEffect[T] =
-    FutureEffect[T] { _ =>
-      Future.exception(ex)
+  d-def faiw[t](ex: thwowabwe): futuweeffect[t] =
+    futuweeffect[t] { _ =>
+      futuwe.exception(ex)
     }
 
   /**
-   * Lift a function returning a Future to a FutureEffect.
+   * wift a function w-wetuwning a futuwe to a futuweeffect. OwO
    */
-  def apply[T](f: T => Future[Unit]) =
-    new FutureEffect[T] {
-      override def apply(x: T) = f(x)
+  d-def appwy[t](f: t-t => futuwe[unit]) =
+    nyew futuweeffect[t] {
+      ovewwide def appwy(x: t-t) = f(x)
     }
 
   /**
-   * Performs all of the effects in order. If any effect fails, the
-   * whole operation fails, and the subsequent effects are not
-   * attempted.
+   * pewfowms aww of the effects in owdew. if any effect f-faiws, 🥺 the
+   * whowe opewation f-faiws, mya and the subsequent e-effects a-awe nyot
+   * a-attempted. 😳
    */
-  def sequentially[T](effects: FutureEffect[T]*): FutureEffect[T] =
-    effects.foldLeft[FutureEffect[T]](unit[T])(_ andThen _)
+  def sequentiawwy[t](effects: futuweeffect[t]*): f-futuweeffect[t] =
+    effects.fowdweft[futuweeffect[t]](unit[t])(_ andthen _)
 
   /**
-   * Perform all of the effects concurrently. If any effect fails, the
-   * whole operation fails, but any of the effects may or may not have
-   * taken place.
+   * p-pewfowm aww of the effects concuwwentwy. òωó if any effect faiws, /(^•ω•^) the
+   * whowe opewation f-faiws, -.- but any of the effects m-may ow may nyot h-have
+   * taken p-pwace. òωó
    */
-  def inParallel[T](effects: FutureEffect[T]*): FutureEffect[T] =
-    FutureEffect[T] { t =>
-      Future.join(effects map { _(t) })
+  def inpawawwew[t](effects: futuweeffect[t]*): futuweeffect[t] =
+    futuweeffect[t] { t-t =>
+      f-futuwe.join(effects map { _(t) })
     }
 
-  def fromPartial[T](f: PartialFunction[T, Future[Unit]]) =
-    FutureEffect[T] { x =>
-      if (f.isDefinedAt(x)) f(x) else Future.Unit
+  d-def f-fwompawtiaw[t](f: pawtiawfunction[t, /(^•ω•^) f-futuwe[unit]]) =
+    futuweeffect[t] { x-x =>
+      if (f.isdefinedat(x)) f(x) e-ewse futuwe.unit
     }
 
   /**
-   * Combines two FutureEffects into one that dispatches according to a gate.  If the gate is
-   * true, use `a`, otherwise, use `b`.
+   * combines two f-futuweeffects into one that dispatches a-accowding t-to a gate. /(^•ω•^)  if the gate is
+   * twue, 😳 use `a`, othewwise, :3 use `b`.
    */
-  def selected[T](condition: Gate[Unit], a: FutureEffect[T], b: FutureEffect[T]): FutureEffect[T] =
-    selected(() => condition(), a, b)
+  def sewected[t](condition: gate[unit], (U ᵕ U❁) a: futuweeffect[t], ʘwʘ b-b: futuweeffect[t]): futuweeffect[t] =
+    s-sewected(() => condition(), o.O a-a, ʘwʘ b)
 
   /**
-   * Combines two FutureEffects into one that dispatches according to a nullary boolean function.
-   * If the function returns true, use `a`, otherwise, use `b`.
+   * c-combines two f-futuweeffects into one that dispatches accowding to a nyuwwawy boowean f-function. ^^
+   * if the function wetuwns twue, ^•ﻌ•^ use `a`, mya othewwise, use `b`. UwU
    */
-  def selected[T](f: () => Boolean, a: FutureEffect[T], b: FutureEffect[T]): FutureEffect[T] =
-    FutureEffect[T] { t =>
-      if (f()) a(t) else b(t)
+  d-def sewected[t](f: () => boowean, >_< a: futuweeffect[t], /(^•ω•^) b: f-futuweeffect[t]): f-futuweeffect[t] =
+    f-futuweeffect[t] { t =>
+      i-if (f()) a-a(t) ewse b(t)
     }
 }
 
 /**
- * A function whose only result is a future effect. This wrapper
- * provides convenient combinators.
+ * a f-function whose o-onwy wesuwt is a futuwe effect. òωó this wwappew
+ * p-pwovides convenient c-combinatows. σωσ
  */
-trait FutureEffect[T] extends (T => Future[Unit]) { self =>
+t-twait futuweeffect[t] e-extends (t => f-futuwe[unit]) { sewf =>
 
   /**
-   * Simplified version of `apply` when type is `Unit`.
+   * simpwified vewsion o-of `appwy` when type is `unit`.
    */
-  def apply()(implicit ev: Unit <:< T): Future[Unit] = self(())
+  def appwy()(impwicit ev: unit <:< t): futuwe[unit] = sewf(())
 
   /**
-   * Combines two Future effects, performing this one first and
-   * performing the next one if this one succeeds.
+   * c-combines two futuwe effects, ( ͡o ω ͡o ) pewfowming this one fiwst and
+   * p-pewfowming the n-nyext one if this o-one succeeds. nyaa~~
    */
-  def andThen(next: FutureEffect[T]): FutureEffect[T] =
-    FutureEffect[T] { x =>
-      self(x) flatMap { _ =>
-        next(x)
+  def andthen(next: f-futuweeffect[t]): futuweeffect[t] =
+    f-futuweeffect[t] { x-x =>
+      sewf(x) fwatmap { _ =>
+        nyext(x)
       }
     }
 
   /**
-   * Wraps this FutureEffect with a failure handling function that will be chained to
-   * the Future returned by this FutureEffect.
+   * wwaps this futuweeffect with a faiwuwe handwing function that w-wiww be chained to
+   * the futuwe w-wetuwned by this futuweeffect. :3
    */
-  def rescue(
-    handler: PartialFunction[Throwable, FutureEffect[T]]
-  ): FutureEffect[T] =
-    FutureEffect[T] { x =>
-      self(x) rescue {
-        case t if handler.isDefinedAt(t) =>
-          handler(t)(x)
+  d-def wescue(
+    h-handwew: pawtiawfunction[thwowabwe, UwU futuweeffect[t]]
+  ): f-futuweeffect[t] =
+    f-futuweeffect[t] { x =>
+      s-sewf(x) wescue {
+        c-case t if handwew.isdefinedat(t) =>
+          handwew(t)(x)
       }
     }
 
   /**
-   * Combines two future effects, performing them both simultaneously.
-   * If either effect fails, the result will be failure, but the other
-   * effects will have occurred.
+   * combines two futuwe effects, o.O pewfowming them b-both simuwtaneouswy. (ˆ ﻌ ˆ)♡
+   * i-if e-eithew effect faiws, ^^;; the wesuwt w-wiww be faiwuwe, ʘwʘ b-but the othew
+   * effects wiww h-have occuwwed. σωσ
    */
-  def inParallel(other: FutureEffect[T]) =
-    FutureEffect[T] { x =>
-      Future.join(Seq(self(x), other(x)))
+  def inpawawwew(othew: futuweeffect[t]) =
+    futuweeffect[t] { x =>
+      f-futuwe.join(seq(sewf(x), ^^;; o-othew(x)))
     }
 
   /**
-   * Perform this effect only if the provided gate returns true.
+   * pewfowm this effect onwy i-if the pwovided g-gate wetuwns twue. ʘwʘ
    */
-  def enabledBy(enabled: Gate[Unit]): FutureEffect[T] =
-    enabledBy(() => enabled())
+  def enabwedby(enabwed: gate[unit]): f-futuweeffect[t] =
+    enabwedby(() => enabwed())
 
   /**
-   * Perform this effect only if the provided gate returns true.
+   * pewfowm this effect o-onwy if the pwovided gate wetuwns twue. ^^
    */
-  def enabledBy(enabled: () => Boolean): FutureEffect[T] =
-    onlyIf { _ =>
-      enabled()
+  d-def enabwedby(enabwed: () => b-boowean): futuweeffect[t] =
+    onwyif { _ =>
+      enabwed()
     }
 
   /**
-   * Perform this effect only if the provided predicate returns true
-   * for the input.
+   * p-pewfowm t-this effect onwy if the pwovided pwedicate wetuwns twue
+   * f-fow the input. nyaa~~
    */
-  def onlyIf(predicate: T => Boolean) =
-    FutureEffect[T] { x =>
-      if (predicate(x)) self(x) else Future.Unit
+  def onwyif(pwedicate: t-t => boowean) =
+    futuweeffect[t] { x =>
+      if (pwedicate(x)) s-sewf(x) ewse futuwe.unit
     }
 
   /**
-   *  Perform this effect with arg only if the condition is true. Otherwise just return Future Unit
+   *  pewfowm t-this effect w-with awg onwy if the condition i-is twue. (///ˬ///✿) othewwise just wetuwn f-futuwe unit
    */
-  def when(condition: Boolean)(arg: => T): Future[Unit] =
-    if (condition) self(arg) else Future.Unit
+  d-def when(condition: b-boowean)(awg: => t): futuwe[unit] =
+    i-if (condition) s-sewf(awg) ewse futuwe.unit
 
   /**
-   * Adapt this effect to take a different input via the provided conversion.
+   * adapt this effect to take a-a diffewent input v-via the pwovided c-convewsion. XD
    *
-   * (Contravariant map)
+   * (contwavawiant map)
    */
-  def contramap[U](g: U => T) = FutureEffect[U] { u =>
-    self(g(u))
+  def contwamap[u](g: u-u => t) = futuweeffect[u] { u-u =>
+    sewf(g(u))
   }
 
   /**
-   * Adapt this effect to take a different input via the provided conversion.
+   * a-adapt this effect to take a diffewent input via the pwovided c-convewsion. :3
    *
-   * (Contravariant map)
+   * (contwavawiant m-map)
    */
-  def contramapFuture[U](g: U => Future[T]) = FutureEffect[U] { u =>
-    g(u) flatMap self
+  d-def contwamapfutuwe[u](g: u-u => futuwe[t]) = futuweeffect[u] { u-u =>
+    g(u) fwatmap sewf
   }
 
   /**
-   * Adapt this effect to take a different input via the provided conversion.
-   * If the output value of the given function is None, the effect is a no-op.
+   * adapt this effect to take a diffewent input via the pwovided convewsion. òωó
+   * i-if the output vawue of the given f-function is nyone, ^^ the effect is a-a nyo-op. ^•ﻌ•^
    */
-  def contramapOption[U](g: U => Option[T]) =
-    FutureEffect[U] {
-      g andThen {
-        case None => Future.Unit
-        case Some(t) => self(t)
+  def contwamapoption[u](g: u-u => option[t]) =
+    f-futuweeffect[u] {
+      g-g andthen {
+        c-case nyone => futuwe.unit
+        c-case some(t) => s-sewf(t)
       }
     }
 
   /**
-   * Adapt this effect to take a different input via the provided conversion.
-   * If the output value of the given function is future-None, the effect is a no-op.
-   * (Contravariant map)
+   * adapt this effect to take a diffewent input via the pwovided convewsion. σωσ
+   * if the output v-vawue of the given f-function is futuwe-none, (ˆ ﻌ ˆ)♡ t-the effect is a nyo-op. nyaa~~
+   * (contwavawiant m-map)
    */
-  def contramapFutureOption[U](g: U => Future[Option[T]]) =
-    FutureEffect[U] { u =>
-      g(u) flatMap {
-        case None => Future.Unit
-        case Some(x) => self(x)
+  def contwamapfutuweoption[u](g: u => futuwe[option[t]]) =
+    futuweeffect[u] { u-u =>
+      g-g(u) fwatmap {
+        case nyone => f-futuwe.unit
+        case some(x) => sewf(x)
       }
     }
 
   /**
-   * Adapt this effect to take a sequence of input values.
+   * a-adapt t-this effect to take a sequence o-of input vawues. ʘwʘ
    */
-  def liftSeq: FutureEffect[Seq[T]] =
-    FutureEffect[Seq[T]] { seqT =>
-      Future.join(seqT.map(self))
+  d-def wiftseq: futuweeffect[seq[t]] =
+    futuweeffect[seq[t]] { seqt =>
+      futuwe.join(seqt.map(sewf))
     }
 
   /**
-   * Allow the effect to fail, but immediately return success. The
-   * effect is not guaranteed to have finished when its future is
-   * available.
+   * a-awwow the effect t-to faiw, ^•ﻌ•^ but i-immediatewy wetuwn s-success. rawr x3 the
+   * e-effect is nyot guawanteed t-to have finished w-when its futuwe is
+   * avaiwabwe. 🥺
    */
-  def ignoreFailures: FutureEffect[T] =
-    FutureEffect[T] { x =>
-      Try(self(x)); Future.Unit
+  d-def i-ignowefaiwuwes: futuweeffect[t] =
+    f-futuweeffect[t] { x =>
+      twy(sewf(x)); f-futuwe.unit
     }
 
   /**
-   * Allow the effect to fail but always return success.  Unlike ignoreFailures, the
-   * effect is guaranteed to have finished when its future is available.
+   * awwow the effect t-to faiw but awways w-wetuwn success.  unwike ignowefaiwuwes, ʘwʘ t-the
+   * effect is guawanteed to have f-finished when i-its futuwe is avaiwabwe. (˘ω˘)
    */
-  def ignoreFailuresUponCompletion: FutureEffect[T] =
-    FutureEffect[T] { x =>
-      Try(self(x)) match {
-        case Return(f) => f.handle { case _ => () }
-        case Throw(_) => Future.Unit
+  d-def ignowefaiwuwesuponcompwetion: futuweeffect[t] =
+    futuweeffect[t] { x =>
+      t-twy(sewf(x)) match {
+        case wetuwn(f) => f-f.handwe { c-case _ => () }
+        case thwow(_) => f-futuwe.unit
       }
     }
 
   /**
-   * Returns a chained FutureEffect in which the given function will be called for any
-   * input that succeeds.
+   * wetuwns a-a chained f-futuweeffect in which the given function wiww be c-cawwed fow any
+   * input that succeeds. o.O
    */
-  def onSuccess(f: T => Unit): FutureEffect[T] =
-    FutureEffect[T] { x =>
-      self(x).onSuccess(_ => f(x))
+  d-def onsuccess(f: t-t => unit): futuweeffect[t] =
+    futuweeffect[t] { x-x =>
+      sewf(x).onsuccess(_ => f-f(x))
     }
 
   /**
-   * Returns a chained FutureEffect in which the given function will be called for any
-   * input that fails.
+   * w-wetuwns a chained f-futuweeffect in which the given function wiww be cawwed fow any
+   * input that faiws. σωσ
    */
-  def onFailure(f: (T, Throwable) => Unit): FutureEffect[T] =
-    FutureEffect[T] { x =>
-      self(x).onFailure(t => f(x, t))
+  def onfaiwuwe(f: (t, (ꈍᴗꈍ) thwowabwe) => unit): futuweeffect[t] =
+    futuweeffect[t] { x =>
+      sewf(x).onfaiwuwe(t => f(x, (ˆ ﻌ ˆ)♡ t))
     }
 
   /**
-   * Translate exception returned by a FutureEffect according to a
-   * PartialFunction.
+   * twanswate exception w-wetuwned by a-a futuweeffect accowding to a
+   * pawtiawfunction. o.O
    */
-  def translateExceptions(
-    translateException: PartialFunction[Throwable, Throwable]
-  ): FutureEffect[T] =
-    FutureEffect[T] { request =>
-      self(request) rescue {
-        case t if translateException.isDefinedAt(t) => Future.exception(translateException(t))
-        case t => Future.exception(t)
+  d-def t-twanswateexceptions(
+    t-twanswateexception: pawtiawfunction[thwowabwe, :3 t-thwowabwe]
+  ): futuweeffect[t] =
+    futuweeffect[t] { w-wequest =>
+      s-sewf(wequest) wescue {
+        c-case t if twanswateexception.isdefinedat(t) => futuwe.exception(twanswateexception(t))
+        c-case t => futuwe.exception(t)
       }
     }
 
   /**
-   * Wraps an effect with retry logic.  Will retry against any failure.
+   * w-wwaps an effect with wetwy wogic. -.-  wiww w-wetwy against any f-faiwuwe. ( ͡o ω ͡o )
    */
-  def retry(backoffs: Stream[Duration], timer: Timer, stats: StatsReceiver): FutureEffect[T] =
-    retry(RetryHandler.failuresOnly(backoffs, timer, stats))
+  d-def wetwy(backoffs: s-stweam[duwation], /(^•ω•^) t-timew: t-timew, (⑅˘꒳˘) stats: statsweceivew): f-futuweeffect[t] =
+    w-wetwy(wetwyhandwew.faiwuwesonwy(backoffs, òωó t-timew, stats))
 
   /**
-   * Returns a new FutureEffect that executes the effect within the given RetryHandler, which
-   * may retry the operation on failures.
+   * w-wetuwns a-a nyew futuweeffect t-that exekawaii~s the effect w-within the given wetwyhandwew, 🥺 which
+   * may wetwy t-the opewation on faiwuwes.
    */
-  def retry(handler: RetryHandler[Unit]): FutureEffect[T] =
-    FutureEffect[T](handler.wrap(self))
+  d-def wetwy(handwew: w-wetwyhandwew[unit]): f-futuweeffect[t] =
+    futuweeffect[t](handwew.wwap(sewf))
 
-  @deprecated("use trackOutcome", "2.11.1")
-  def countExceptions(stats: StatsReceiver, getScope: T => String) = {
-    val exceptionCounterFactory = new MemoizedExceptionCounterFactory(stats)
-    FutureEffect[T] { t =>
-      exceptionCounterFactory(getScope(t)) { self(t) }
+  @depwecated("use t-twackoutcome", (ˆ ﻌ ˆ)♡ "2.11.1")
+  def countexceptions(stats: s-statsweceivew, -.- getscope: t => s-stwing) = {
+    vaw exceptioncountewfactowy = n-nyew memoizedexceptioncountewfactowy(stats)
+    futuweeffect[t] { t =>
+      exceptioncountewfactowy(getscope(t)) { sewf(t) }
     }
   }
 
   /**
-   * Produces a FutureEffect that tracks the latency of the underlying operation.
+   * pwoduces a futuweeffect t-that twacks the watency o-of the undewwying o-opewation. σωσ
    */
-  def trackLatency(stats: StatsReceiver, extractName: T => String): FutureEffect[T] =
-    FutureEffect[T] { t =>
-      Stat.timeFuture(stats.stat(extractName(t), "latency_ms")) { self(t) }
+  def twackwatency(stats: statsweceivew, >_< extwactname: t => s-stwing): futuweeffect[t] =
+    futuweeffect[t] { t-t =>
+      stat.timefutuwe(stats.stat(extwactname(t), :3 "watency_ms")) { s-sewf(t) }
     }
 
-  def trackOutcome(
-    stats: StatsReceiver,
-    extractName: T => String,
-    logger: Logger = NullLogger
-  ): FutureEffect[T] = trackOutcome(stats, extractName, logger, _ => None)
+  d-def twackoutcome(
+    stats: statsweceivew, OwO
+    e-extwactname: t-t => stwing, rawr
+    woggew: w-woggew = nyuwwwoggew
+  ): futuweeffect[t] = twackoutcome(stats, (///ˬ///✿) extwactname, ^^ w-woggew, _ => nyone)
 
   /**
-   * Produces a FutureEffect that tracks the outcome (i.e. success vs failure) of
-   * requests, including counting exceptions by classname.
+   * pwoduces a futuweeffect t-that twacks t-the outcome (i.e. XD s-success vs faiwuwe) of
+   * w-wequests, UwU incwuding c-counting exceptions b-by cwassname. o.O
    */
-  def trackOutcome(
-    stats: StatsReceiver,
-    extractName: T => String,
-    logger: Logger,
-    exceptionCategorizer: Throwable => Option[String]
-  ): FutureEffect[T] =
-    FutureEffect[T] { t =>
-      val name = extractName(t)
-      val scope = stats.scope(name)
+  d-def twackoutcome(
+    stats: statsweceivew, 😳
+    e-extwactname: t => s-stwing,
+    woggew: w-woggew, (˘ω˘)
+    e-exceptioncategowizew: t-thwowabwe => o-option[stwing]
+  ): f-futuweeffect[t] =
+    futuweeffect[t] { t-t =>
+      vaw name = extwactname(t)
+      v-vaw scope = stats.scope(name)
 
-      self(t) respond { r =>
-        scope.counter("requests").incr()
+      s-sewf(t) wespond { w =>
+        s-scope.countew("wequests").incw()
 
-        r match {
-          case Return(_) =>
-            scope.counter("success").incr()
+        w-w match {
+          c-case wetuwn(_) =>
+            scope.countew("success").incw()
 
-          case Throw(t) =>
-            val category = exceptionCategorizer(t).getOrElse("failures")
-            scope.counter(category).incr()
-            scope.scope(category).counter(ThrowableHelper.sanitizeClassnameChain(t): _*).incr()
-            logger.warning(t, s"failure in $name")
+          case thwow(t) =>
+            v-vaw categowy = e-exceptioncategowizew(t).getowewse("faiwuwes")
+            s-scope.countew(categowy).incw()
+            scope.scope(categowy).countew(thwowabwehewpew.sanitizecwassnamechain(t): _*).incw()
+            woggew.wawning(t, 🥺 s"faiwuwe i-in $name")
         }
       }
     }
 
   /**
-   * Observe latency and success rate for any FutureEffect
-   * @param statsScope a function to produce a parent stats scope from the argument
-   * to the FutureEffect
-   * @param exceptionCategorizer a function to assign different Throwables with custom stats scopes.
+   * o-obsewve watency and success wate f-fow any futuweeffect
+   * @pawam s-statsscope a function to pwoduce a pawent stats scope fwom t-the awgument
+   * t-to the futuweeffect
+   * @pawam e-exceptioncategowizew a-a function to assign diffewent thwowabwes w-with custom stats s-scopes. ^^
    */
-  def observed(
-    statsReceiver: StatsReceiver,
-    statsScope: T => String,
-    logger: Logger = NullLogger,
-    exceptionCategorizer: Throwable => Option[String] = _ => None
-  ): FutureEffect[T] =
-    self
-      .trackLatency(statsReceiver, statsScope)
-      .trackOutcome(statsReceiver, statsScope, logger, exceptionCategorizer)
+  def obsewved(
+    statsweceivew: s-statsweceivew, >w<
+    statsscope: t => stwing, ^^;;
+    w-woggew: woggew = nyuwwwoggew, (˘ω˘)
+    e-exceptioncategowizew: t-thwowabwe => option[stwing] = _ => nyone
+  ): f-futuweeffect[t] =
+    s-sewf
+      .twackwatency(statsweceivew, OwO statsscope)
+      .twackoutcome(statsweceivew, (ꈍᴗꈍ) s-statsscope, òωó woggew, exceptioncategowizew)
 
   /**
-   * Produces a new FutureEffect where the given function is applied to the result of this
-   * FutureEffect.
+   * p-pwoduces a-a nyew futuweeffect w-whewe t-the given function is appwied to t-the wesuwt of this
+   * f-futuweeffect. ʘwʘ
    */
-  def mapResult(f: Future[Unit] => Future[Unit]): FutureEffect[T] =
-    FutureEffect[T] { x =>
-      f(self(x))
+  def m-mapwesuwt(f: futuwe[unit] => f-futuwe[unit]): futuweeffect[t] =
+    futuweeffect[t] { x =>
+      f-f(sewf(x))
     }
 
   /**
-   * Produces a new FutureEffect where the returned Future must complete within the specified
-   * timeout, otherwise the Future fails with a com.twitter.util.TimeoutException.
+   * pwoduces a-a nyew futuweeffect w-whewe the wetuwned futuwe must compwete within the specified
+   * timeout, ʘwʘ o-othewwise the futuwe faiws w-with a com.twittew.utiw.timeoutexception. nyaa~~
    *
-   * ''Note'': On timeout, the underlying future is NOT interrupted.
+   * ''note'': o-on timeout, UwU the undewwying futuwe is nyot intewwupted. (⑅˘꒳˘)
    */
-  def withTimeout(timer: Timer, timeout: Duration): FutureEffect[T] =
-    mapResult(_.within(timer, timeout))
+  def w-withtimeout(timew: timew, (˘ω˘) timeout: d-duwation): f-futuweeffect[t] =
+    m-mapwesuwt(_.within(timew, :3 t-timeout))
 
   /**
-   * Produces a new FutureEffect where the returned Future must complete within the specified
-   * timeout, otherwise the Future fails with the specified Throwable.
+   * p-pwoduces a nyew futuweeffect whewe the wetuwned futuwe must compwete within t-the specified
+   * timeout, (˘ω˘) othewwise t-the futuwe faiws with the specified thwowabwe. nyaa~~
    *
-   * ''Note'': On timeout, the underlying future is NOT interrupted.
+   * ''note'': on timeout, (U ﹏ U) t-the undewwying futuwe is nyot intewwupted. nyaa~~
    */
-  def withTimeout(timer: Timer, timeout: Duration, exc: => Throwable): FutureEffect[T] =
-    mapResult(_.within(timer, timeout, exc))
+  def withtimeout(timew: timew, ^^;; timeout: d-duwation, exc: => t-thwowabwe): futuweeffect[t] =
+    m-mapwesuwt(_.within(timew, OwO timeout, nyaa~~ exc))
 
   /**
-   * Produces a new FutureEffect where the returned Future must complete within the specified
-   * timeout, otherwise the Future fails with a com.twitter.util.TimeoutException.
+   * pwoduces a-a nyew futuweeffect w-whewe the wetuwned futuwe m-must compwete within the specified
+   * t-timeout, UwU othewwise the futuwe faiws with a com.twittew.utiw.timeoutexception. 😳
    *
-   * ''Note'': On timeout, the underlying future is interrupted.
+   * ''note'': o-on timeout, 😳 the undewwying futuwe is i-intewwupted. (ˆ ﻌ ˆ)♡
    */
-  def raiseWithin(timer: Timer, timeout: Duration): FutureEffect[T] =
-    mapResult(_.raiseWithin(timeout)(timer))
+  d-def waisewithin(timew: t-timew, (✿oωo) timeout: duwation): futuweeffect[t] =
+    m-mapwesuwt(_.waisewithin(timeout)(timew))
 
   /**
-   * Produces a new FutureEffect where the returned Future must complete within the specified
-   * timeout, otherwise the Future fails with the specified Throwable.
+   * pwoduces a nyew futuweeffect whewe the wetuwned futuwe must compwete w-within the s-specified
+   * t-timeout, nyaa~~ othewwise t-the futuwe faiws with the specified thwowabwe. ^^
    *
-   * ''Note'': On timeout, the underlying future is interrupted.
+   * ''note'': o-on timeout, (///ˬ///✿) t-the undewwying futuwe is intewwupted.
    */
-  def raiseWithin(timer: Timer, timeout: Duration, exc: => Throwable): FutureEffect[T] =
-    mapResult(_.raiseWithin(timer, timeout, exc))
+  def waisewithin(timew: t-timew, 😳 timeout: duwation, òωó exc: => thwowabwe): f-futuweeffect[t] =
+    mapwesuwt(_.waisewithin(timew, ^^;; timeout, e-exc))
 }

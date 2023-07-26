@@ -1,79 +1,79 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import java.util.Map;
+impowt j-java.utiw.map;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+i-impowt javax.inject.inject;
+i-impowt j-javax.inject.singweton;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+i-impowt c-com.googwe.common.cowwect.immutabwemap;
+i-impowt c-com.googwe.common.cowwect.maps;
 
-import com.twitter.finagle.Service;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.ClientErrorException;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.search.earlybird_root.routers.FacetsRequestRouter;
-import com.twitter.search.earlybird_root.routers.RecencyRequestRouter;
-import com.twitter.search.earlybird_root.routers.RelevanceRequestRouter;
-import com.twitter.search.earlybird_root.routers.RequestRouter;
-import com.twitter.search.earlybird_root.routers.TermStatsRequestRouter;
-import com.twitter.search.earlybird_root.routers.TopTweetsRequestRouter;
-import com.twitter.util.Future;
+impowt com.twittew.finagwe.sewvice;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.cwientewwowexception;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequesttype;
+impowt c-com.twittew.seawch.eawwybiwd_woot.woutews.facetswequestwoutew;
+impowt com.twittew.seawch.eawwybiwd_woot.woutews.wecencywequestwoutew;
+impowt com.twittew.seawch.eawwybiwd_woot.woutews.wewevancewequestwoutew;
+impowt com.twittew.seawch.eawwybiwd_woot.woutews.wequestwoutew;
+impowt c-com.twittew.seawch.eawwybiwd_woot.woutews.tewmstatswequestwoutew;
+impowt com.twittew.seawch.eawwybiwd_woot.woutews.toptweetswequestwoutew;
+i-impowt com.twittew.utiw.futuwe;
 
-@Singleton
-public class SuperRootRequestTypeRouter
-    extends Service<EarlybirdRequestContext, EarlybirdResponse>  {
+@singweton
+p-pubwic cwass supewwootwequesttypewoutew
+    extends sewvice<eawwybiwdwequestcontext, 🥺 eawwybiwdwesponse>  {
 
-  private final Map<EarlybirdRequestType, RequestRouter> routingMap;
+  p-pwivate finaw map<eawwybiwdwequesttype, (U ﹏ U) wequestwoutew> woutingmap;
 
   /**
-   * constructor
+   * constwuctow
    */
-  @Inject
-  public SuperRootRequestTypeRouter(
-      FacetsRequestRouter facetsRequestRouter,
-      TermStatsRequestRouter termStatsRequestRouter,
-      TopTweetsRequestRouter topTweetsRequestRouter,
-      RecencyRequestRouter recencyRequestRouter,
-      RelevanceRequestRouter relevanceRequestRouter
+  @inject
+  p-pubwic supewwootwequesttypewoutew(
+      facetswequestwoutew f-facetswequestwoutew, >w<
+      t-tewmstatswequestwoutew t-tewmstatswequestwoutew, mya
+      t-toptweetswequestwoutew toptweetswequestwoutew, >w<
+      wecencywequestwoutew wecencywequestwoutew, nyaa~~
+      w-wewevancewequestwoutew wewevancewequestwoutew
   ) {
-    routingMap = Maps.immutableEnumMap(
-        ImmutableMap.<EarlybirdRequestType, RequestRouter>builder()
-            .put(EarlybirdRequestType.FACETS, facetsRequestRouter)
-            .put(EarlybirdRequestType.TERM_STATS, termStatsRequestRouter)
-            .put(EarlybirdRequestType.TOP_TWEETS, topTweetsRequestRouter)
-            .put(EarlybirdRequestType.RECENCY, recencyRequestRouter)
-            .put(EarlybirdRequestType.STRICT_RECENCY, recencyRequestRouter)
-            .put(EarlybirdRequestType.RELEVANCE, relevanceRequestRouter)
-            .build());
+    woutingmap = m-maps.immutabweenummap(
+        immutabwemap.<eawwybiwdwequesttype, (✿oωo) wequestwoutew>buiwdew()
+            .put(eawwybiwdwequesttype.facets, ʘwʘ facetswequestwoutew)
+            .put(eawwybiwdwequesttype.tewm_stats, (ˆ ﻌ ˆ)♡ tewmstatswequestwoutew)
+            .put(eawwybiwdwequesttype.top_tweets, 😳😳😳 toptweetswequestwoutew)
+            .put(eawwybiwdwequesttype.wecency, :3 wecencywequestwoutew)
+            .put(eawwybiwdwequesttype.stwict_wecency, OwO w-wecencywequestwoutew)
+            .put(eawwybiwdwequesttype.wewevance, (U ﹏ U) wewevancewequestwoutew)
+            .buiwd());
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequestContext requestContext) {
-    EarlybirdRequest request = requestContext.getRequest();
-    if (request.getSearchQuery() == null) {
-      return Future.exception(new ClientErrorException(
-          "Client must fill in search Query object in request"));
+  @ovewwide
+  p-pubwic futuwe<eawwybiwdwesponse> a-appwy(eawwybiwdwequestcontext w-wequestcontext) {
+    eawwybiwdwequest wequest = wequestcontext.getwequest();
+    i-if (wequest.getseawchquewy() == n-nyuww) {
+      wetuwn futuwe.exception(new c-cwientewwowexception(
+          "cwient m-must fiww in seawch quewy o-object in wequest"));
     }
 
-    EarlybirdRequestType requestType = requestContext.getEarlybirdRequestType();
+    eawwybiwdwequesttype w-wequesttype = wequestcontext.geteawwybiwdwequesttype();
 
-    if (routingMap.containsKey(requestType)) {
-      RequestRouter router = routingMap.get(requestType);
-      return router.route(requestContext);
-    } else {
-      return Future.exception(
-          new ClientErrorException(
-            "Request type " + requestType + " is unsupported.  "
-                  + "Sorry this api is a bit hard to use.\n"
-                  + "for facets, call earlybirdRequest.setFacetsRequest\n"
-                  + "for termstats, call earluybirdRequest.setTermStatisticsRequest\n"
-                  + "for recency, strict recency, relevance or toptweets,\n"
-                  + "   call req.setSearchQuery() and req.getSearchQuery().setRankingMode()\n"
-                  + "   with the correct ranking mode and for strict recency call\n"
-                  + "   earlybirdRequest.setQuerySource(ThriftQuerySource.GNIP)\n"));
+    if (woutingmap.containskey(wequesttype)) {
+      w-wequestwoutew woutew = woutingmap.get(wequesttype);
+      w-wetuwn woutew.woute(wequestcontext);
+    } ewse {
+      w-wetuwn f-futuwe.exception(
+          nyew cwientewwowexception(
+            "wequest type " + wequesttype + " is unsuppowted. >w<  "
+                  + "sowwy this api is a-a bit hawd to use.\n"
+                  + "fow facets, (U ﹏ U) c-caww eawwybiwdwequest.setfacetswequest\n"
+                  + "fow tewmstats, 😳 c-caww eawwuybiwdwequest.settewmstatisticswequest\n"
+                  + "fow w-wecency, (ˆ ﻌ ˆ)♡ stwict w-wecency, 😳😳😳 wewevance ow toptweets,\n"
+                  + "   caww weq.setseawchquewy() a-and weq.getseawchquewy().setwankingmode()\n"
+                  + "   with the cowwect wanking mode and fow stwict wecency c-caww\n"
+                  + "   eawwybiwdwequest.setquewysouwce(thwiftquewysouwce.gnip)\n"));
     }
   }
 }

@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.component_library.model.presentation.urt
+package com.twittew.pwoduct_mixew.component_wibwawy.modew.pwesentation.uwt
 
-import com.twitter.product_mixer.core.model.common.presentation.urt.BaseUrtItemPresentation
-import com.twitter.product_mixer.core.model.common.presentation.urt.BaseUrtModulePresentation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.uwt.baseuwtitempwesentation
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.uwt.baseuwtmoduwepwesentation
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineitem
 
-case class UrtItemPresentation(
-  override val timelineItem: TimelineItem,
-  override val modulePresentation: Option[BaseUrtModulePresentation] = None)
-    extends BaseUrtItemPresentation
+c-case cwass u-uwtitempwesentation(
+  o-ovewwide v-vaw timewineitem: t-timewineitem, σωσ
+  ovewwide vaw moduwepwesentation: option[baseuwtmoduwepwesentation] = nyone)
+    e-extends baseuwtitempwesentation

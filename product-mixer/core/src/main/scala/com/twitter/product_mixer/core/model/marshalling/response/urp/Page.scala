@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urp
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp
 
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.hasmawshawwing
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewinescwibeconfig
 
-case class Page(
-  id: String,
-  pageBody: PageBody,
-  scribeConfig: Option[TimelineScribeConfig] = None,
-  pageHeader: Option[PageHeader] = None,
-  pageNavBar: Option[PageNavBar] = None)
-    extends HasMarshalling
+c-case cwass p-page(
+  id: stwing, σωσ
+  p-pagebody: p-pagebody, >_<
+  scwibeconfig: o-option[timewinescwibeconfig] = n-nyone, :3
+  pageheadew: option[pageheadew] = nyone, (U ﹏ U)
+  pagenavbaw: option[pagenavbaw] = n-nyone)
+    extends hasmawshawwing

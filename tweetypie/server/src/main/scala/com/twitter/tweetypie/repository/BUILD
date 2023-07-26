@@ -1,82 +1,82 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/fasterxml/jackson/module:jackson-module-scala",
-        "3rdparty/jvm/com/ibm/icu:icu4j",
-        "3rdparty/jvm/com/twitter/bijection:core",
-        "3rdparty/jvm/com/twitter/bijection:scrooge",
-        "3rdparty/jvm/com/twitter/bijection:thrift",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "audience-rewards/thrift/src/main/thrift:thrift-scala",
-        "creatives-container/thrift/src/main/thrift:creatives-container-service-scala",
-        "featureswitches/featureswitches-core/src/main/scala:recipient",
-        "featureswitches/featureswitches-core/src/main/scala:useragent",
-        "finagle/finagle-core/src/main",
-        "flock-client/src/main/scala",
-        "flock-client/src/main/thrift:thrift-scala",
-        "geoduck/util/src/main/scala/com/twitter/geoduck/util/primitives",
-        "geoduck/util/src/main/scala/com/twitter/geoduck/util/service",
-        "passbird/thrift-only/src/main/thrift:thrift-scala",
-        "scrooge/scrooge-core",
-        "tweetypie/servo/json",
-        "tweetypie/servo/repo",
-        "tweetypie/servo/repo/src/main/thrift:thrift-scala",
-        "tweetypie/servo/util",
-        "snowflake/src/main/scala/com/twitter/snowflake/id",
-        "src/java/com/twitter/common/text/language:language-identifier",
-        "src/java/com/twitter/common/text/pipeline",
-        "src/scala/com/twitter/search/blender/services/strato",
-        "src/scala/com/twitter/takedown/util",
-        "src/thrift/com/twitter/consumer_privacy/mention_controls:thrift-scala",
-        "src/thrift/com/twitter/context:twitter-context-scala",
-        "src/thrift/com/twitter/dataproducts:enrichments_profilegeo-scala",
-        "src/thrift/com/twitter/dataproducts:service-scala",
-        "src/thrift/com/twitter/escherbird:media-annotation-structs-scala",
-        "src/thrift/com/twitter/escherbird/common:common-scala",
-        "src/thrift/com/twitter/escherbird/metadata:metadata-service-scala",
-        "src/thrift/com/twitter/expandodo:cards-scala",
-        "src/thrift/com/twitter/expandodo:only-scala",
-        "src/thrift/com/twitter/geoduck:geoduck-scala",
-        "src/thrift/com/twitter/gizmoduck:thrift-scala",
-        "src/thrift/com/twitter/gizmoduck:user-thrift-scala",
-        "src/thrift/com/twitter/service/scarecrow/gen:scarecrow-scala",
-        "src/thrift/com/twitter/service/scarecrow/gen:tiered-actions-scala",
-        "src/thrift/com/twitter/service/talon/gen:thrift-scala",
-        "src/thrift/com/twitter/socialgraph:thrift-scala",
-        "src/thrift/com/twitter/spam/rtf:safety-label-scala",
-        "src/thrift/com/twitter/spam/rtf:safety-level-scala",
-        "src/thrift/com/twitter/spam/rtf:tweet-rtf-event-scala",
-        "src/thrift/com/twitter/timelineservice/server/internal:thrift-scala",
-        "tweetypie/common/src/thrift/com/twitter/tweetypie:media-entity-scala",
-        "tweetypie/common/src/thrift/com/twitter/tweetypie:service-scala",
-        "tweetypie/common/src/thrift/com/twitter/tweetypie:tweet-scala",
-        "stitch/stitch-compat/src/main/scala/com/twitter/stitch/compat",
-        "stitch/stitch-core",
-        "stitch/stitch-timelineservice",
-        "strato/src/main/scala/com/twitter/strato/catalog",
-        "strato/src/main/scala/com/twitter/strato/client",
-        "strato/src/main/scala/com/twitter/strato/data",
-        "strato/src/main/scala/com/twitter/strato/thrift",
-        "tweetypie/server/src/main/scala/com/twitter/tweetypie",
-        "tweetypie/server/src/main/scala/com/twitter/tweetypie/backends",
-        "tweetypie/server/src/main/scala/com/twitter/tweetypie/core",
-        "tweetypie/server/src/main/scala/com/twitter/tweetypie/media",
-        "tweetypie/server/src/main/thrift:compiled-scala",
-        "tweetypie/common/src/scala/com/twitter/tweetypie/client_id",
-        "tweetypie/common/src/scala/com/twitter/tweetypie/media",
-        "tweetypie/common/src/scala/com/twitter/tweetypie/storage",
-        "tweetypie/common/src/scala/com/twitter/tweetypie/util",
-        "twitter-context/src/main/scala",
-        "util/util-slf4j-api/src/main/scala/com/twitter/util/logging",
-        "util/util-stats/src/main/scala",
-        "vibes/src/main/thrift/com/twitter/vibes:vibes-scala",
-        "visibility/common/src/main/scala/com/twitter/visibility/common/tflock",
-        "visibility/common/src/main/scala/com/twitter/visibility/common/user_result",
-        "visibility/common/src/main/thrift/com/twitter/visibility:action-scala",
-        "visibility/lib:tweets",
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    p-pwatfowm = "java8", o.O
+    s-stwict_deps = t-twue, (U ᵕ U❁)
+    tags = ["bazew-compatibwe"], (⑅˘꒳˘)
+    d-dependencies = [
+        "3wdpawty/jvm/com/fastewxmw/jackson/moduwe:jackson-moduwe-scawa",
+        "3wdpawty/jvm/com/ibm/icu:icu4j", ( ͡o ω ͡o )
+        "3wdpawty/jvm/com/twittew/bijection:cowe", UwU
+        "3wdpawty/jvm/com/twittew/bijection:scwooge", rawr x3
+        "3wdpawty/jvm/com/twittew/bijection:thwift", rawr
+        "3wdpawty/jvm/owg/apache/thwift:wibthwift", σωσ
+        "audience-wewawds/thwift/swc/main/thwift:thwift-scawa", σωσ
+        "cweatives-containew/thwift/swc/main/thwift:cweatives-containew-sewvice-scawa", >_<
+        "featuweswitches/featuweswitches-cowe/swc/main/scawa:wecipient", :3
+        "featuweswitches/featuweswitches-cowe/swc/main/scawa:usewagent", (U ﹏ U)
+        "finagwe/finagwe-cowe/swc/main", -.-
+        "fwock-cwient/swc/main/scawa", (ˆ ﻌ ˆ)♡
+        "fwock-cwient/swc/main/thwift:thwift-scawa", (⑅˘꒳˘)
+        "geoduck/utiw/swc/main/scawa/com/twittew/geoduck/utiw/pwimitives", (U ᵕ U❁)
+        "geoduck/utiw/swc/main/scawa/com/twittew/geoduck/utiw/sewvice", -.-
+        "passbiwd/thwift-onwy/swc/main/thwift:thwift-scawa", ^^;;
+        "scwooge/scwooge-cowe", >_<
+        "tweetypie/sewvo/json", mya
+        "tweetypie/sewvo/wepo", mya
+        "tweetypie/sewvo/wepo/swc/main/thwift:thwift-scawa", 😳
+        "tweetypie/sewvo/utiw", XD
+        "snowfwake/swc/main/scawa/com/twittew/snowfwake/id", :3
+        "swc/java/com/twittew/common/text/wanguage:wanguage-identifiew", 😳😳😳
+        "swc/java/com/twittew/common/text/pipewine", -.-
+        "swc/scawa/com/twittew/seawch/bwendew/sewvices/stwato", ( ͡o ω ͡o )
+        "swc/scawa/com/twittew/takedown/utiw", rawr x3
+        "swc/thwift/com/twittew/consumew_pwivacy/mention_contwows:thwift-scawa", nyaa~~
+        "swc/thwift/com/twittew/context:twittew-context-scawa", /(^•ω•^)
+        "swc/thwift/com/twittew/datapwoducts:enwichments_pwofiwegeo-scawa", rawr
+        "swc/thwift/com/twittew/datapwoducts:sewvice-scawa", OwO
+        "swc/thwift/com/twittew/eschewbiwd:media-annotation-stwucts-scawa", (U ﹏ U)
+        "swc/thwift/com/twittew/eschewbiwd/common:common-scawa", >_<
+        "swc/thwift/com/twittew/eschewbiwd/metadata:metadata-sewvice-scawa", rawr x3
+        "swc/thwift/com/twittew/expandodo:cawds-scawa", mya
+        "swc/thwift/com/twittew/expandodo:onwy-scawa", nyaa~~
+        "swc/thwift/com/twittew/geoduck:geoduck-scawa", (⑅˘꒳˘)
+        "swc/thwift/com/twittew/gizmoduck:thwift-scawa", rawr x3
+        "swc/thwift/com/twittew/gizmoduck:usew-thwift-scawa", (✿oωo)
+        "swc/thwift/com/twittew/sewvice/scawecwow/gen:scawecwow-scawa", (ˆ ﻌ ˆ)♡
+        "swc/thwift/com/twittew/sewvice/scawecwow/gen:tiewed-actions-scawa", (˘ω˘)
+        "swc/thwift/com/twittew/sewvice/tawon/gen:thwift-scawa", (⑅˘꒳˘)
+        "swc/thwift/com/twittew/sociawgwaph:thwift-scawa", (///ˬ///✿)
+        "swc/thwift/com/twittew/spam/wtf:safety-wabew-scawa", 😳😳😳
+        "swc/thwift/com/twittew/spam/wtf:safety-wevew-scawa", 🥺
+        "swc/thwift/com/twittew/spam/wtf:tweet-wtf-event-scawa", mya
+        "swc/thwift/com/twittew/timewinesewvice/sewvew/intewnaw:thwift-scawa", 🥺
+        "tweetypie/common/swc/thwift/com/twittew/tweetypie:media-entity-scawa", >_<
+        "tweetypie/common/swc/thwift/com/twittew/tweetypie:sewvice-scawa", >_<
+        "tweetypie/common/swc/thwift/com/twittew/tweetypie:tweet-scawa", (⑅˘꒳˘)
+        "stitch/stitch-compat/swc/main/scawa/com/twittew/stitch/compat", /(^•ω•^)
+        "stitch/stitch-cowe", rawr x3
+        "stitch/stitch-timewinesewvice", (U ﹏ U)
+        "stwato/swc/main/scawa/com/twittew/stwato/catawog", (U ﹏ U)
+        "stwato/swc/main/scawa/com/twittew/stwato/cwient", (⑅˘꒳˘)
+        "stwato/swc/main/scawa/com/twittew/stwato/data", òωó
+        "stwato/swc/main/scawa/com/twittew/stwato/thwift",
+        "tweetypie/sewvew/swc/main/scawa/com/twittew/tweetypie", ʘwʘ
+        "tweetypie/sewvew/swc/main/scawa/com/twittew/tweetypie/backends", /(^•ω•^)
+        "tweetypie/sewvew/swc/main/scawa/com/twittew/tweetypie/cowe", ʘwʘ
+        "tweetypie/sewvew/swc/main/scawa/com/twittew/tweetypie/media", σωσ
+        "tweetypie/sewvew/swc/main/thwift:compiwed-scawa", OwO
+        "tweetypie/common/swc/scawa/com/twittew/tweetypie/cwient_id", 😳😳😳
+        "tweetypie/common/swc/scawa/com/twittew/tweetypie/media", 😳😳😳
+        "tweetypie/common/swc/scawa/com/twittew/tweetypie/stowage", o.O
+        "tweetypie/common/swc/scawa/com/twittew/tweetypie/utiw",
+        "twittew-context/swc/main/scawa", ( ͡o ω ͡o )
+        "utiw/utiw-swf4j-api/swc/main/scawa/com/twittew/utiw/wogging", (U ﹏ U)
+        "utiw/utiw-stats/swc/main/scawa", (///ˬ///✿)
+        "vibes/swc/main/thwift/com/twittew/vibes:vibes-scawa", >w<
+        "visibiwity/common/swc/main/scawa/com/twittew/visibiwity/common/tfwock", rawr
+        "visibiwity/common/swc/main/scawa/com/twittew/visibiwity/common/usew_wesuwt", mya
+        "visibiwity/common/swc/main/thwift/com/twittew/visibiwity:action-scawa", ^^
+        "visibiwity/wib:tweets", 😳😳😳
     ],
 )

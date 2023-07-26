@@ -1,31 +1,31 @@
-package com.twitter.graph_feature_service.server.modules
+package com.twittew.gwaph_featuwe_sewvice.sewvew.moduwes
 
-import com.twitter.inject.TwitterModule
+impowt c-com.twittew.inject.twittewmoduwe
 
-object ServerFlagNames {
-  final val NumWorkers = "service.num_workers"
-  final val ServiceRole = "service.role"
-  final val ServiceEnv = "service.env"
+o-object sewvewfwagnames {
+  f-finaw v-vaw nyumwowkews = "sewvice.num_wowkews"
+  f-finaw v-vaw sewvicewowe = "sewvice.wowe"
+  f-finaw vaw s-sewviceenv = "sewvice.env"
 
-  final val MemCacheClientName = "service.mem_cache_client_name"
-  final val MemCachePath = "service.mem_cache_path"
+  finaw vaw memcachecwientname = "sewvice.mem_cache_cwient_name"
+  finaw vaw memcachepath = "sewvice.mem_cache_path"
 }
 
 /**
- * Initializes references to the flag values defined in the aurora.deploy file.
- * To check what the flag values are initialized in runtime, search FlagsModule in stdout
+ * initiawizes w-wefewences to the fwag vawues defined in t-the auwowa.depwoy fiwe. nyaa~~
+ * to check n-nyani the fwag vawues awe initiawized in wuntime, /(^•ω•^) seawch fwagsmoduwe i-in stdout
  */
-object ServerFlagsModule extends TwitterModule {
+object sewvewfwagsmoduwe e-extends twittewmoduwe {
 
-  import ServerFlagNames._
+  i-impowt sewvewfwagnames._
 
-  flag[Int](NumWorkers, "Num of workers")
+  fwag[int](numwowkews, rawr "num of wowkews")
 
-  flag[String](ServiceRole, "Service Role")
+  fwag[stwing](sewvicewowe, OwO "sewvice w-wowe")
 
-  flag[String](ServiceEnv, "Service Env")
+  fwag[stwing](sewviceenv, (U ﹏ U) "sewvice env")
 
-  flag[String](MemCacheClientName, "MemCache Client Name")
+  fwag[stwing](memcachecwientname, >_< "memcache cwient nyame")
 
-  flag[String](MemCachePath, "MemCache Path")
+  fwag[stwing](memcachepath, "memcache path")
 }

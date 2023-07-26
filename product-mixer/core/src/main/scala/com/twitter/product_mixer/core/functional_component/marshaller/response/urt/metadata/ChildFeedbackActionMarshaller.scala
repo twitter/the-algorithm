@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.icon.HorizonIconMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ChildFeedbackAction
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.icon.howizoniconmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.chiwdfeedbackaction
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class ChildFeedbackActionMarshaller @Inject() (
-  feedbackTypeMarshaller: FeedbackTypeMarshaller,
-  confirmationDisplayTypeMarshaller: ConfirmationDisplayTypeMarshaller,
-  clientEventInfoMarshaller: ClientEventInfoMarshaller,
-  horizonIconMarshaller: HorizonIconMarshaller,
-  richFeedbackBehaviorMarshaller: RichFeedbackBehaviorMarshaller) {
+@singweton
+c-cwass chiwdfeedbackactionmawshawwew @inject() (
+  feedbacktypemawshawwew: feedbacktypemawshawwew, >_<
+  confiwmationdispwaytypemawshawwew: confiwmationdispwaytypemawshawwew, rawr x3
+  c-cwienteventinfomawshawwew: cwienteventinfomawshawwew, mya
+  howizoniconmawshawwew: howizoniconmawshawwew, nyaa~~
+  wichfeedbackbehaviowmawshawwew: wichfeedbackbehaviowmawshawwew) {
 
-  def apply(feedbackAction: ChildFeedbackAction): urt.FeedbackAction = {
-    urt.FeedbackAction(
-      feedbackType = feedbackTypeMarshaller(feedbackAction.feedbackType),
-      prompt = feedbackAction.prompt,
-      confirmation = feedbackAction.confirmation,
-      childKeys = None,
-      feedbackUrl = feedbackAction.feedbackUrl,
-      hasUndoAction = feedbackAction.hasUndoAction,
-      confirmationDisplayType =
-        feedbackAction.confirmationDisplayType.map(confirmationDisplayTypeMarshaller(_)),
-      clientEventInfo = feedbackAction.clientEventInfo.map(clientEventInfoMarshaller(_)),
-      icon = feedbackAction.icon.map(horizonIconMarshaller(_)),
-      richBehavior = feedbackAction.richBehavior.map(richFeedbackBehaviorMarshaller(_)),
-      subprompt = feedbackAction.subprompt
+  d-def appwy(feedbackaction: chiwdfeedbackaction): u-uwt.feedbackaction = {
+    uwt.feedbackaction(
+      feedbacktype = feedbacktypemawshawwew(feedbackaction.feedbacktype), (⑅˘꒳˘)
+      pwompt = feedbackaction.pwompt, rawr x3
+      c-confiwmation = feedbackaction.confiwmation, (✿oωo)
+      c-chiwdkeys = n-nyone, (ˆ ﻌ ˆ)♡
+      feedbackuww = feedbackaction.feedbackuww, (˘ω˘)
+      hasundoaction = feedbackaction.hasundoaction, (⑅˘꒳˘)
+      c-confiwmationdispwaytype =
+        feedbackaction.confiwmationdispwaytype.map(confiwmationdispwaytypemawshawwew(_)), (///ˬ///✿)
+      cwienteventinfo = feedbackaction.cwienteventinfo.map(cwienteventinfomawshawwew(_)), 😳😳😳
+      icon = f-feedbackaction.icon.map(howizoniconmawshawwew(_)), 🥺
+      wichbehaviow = f-feedbackaction.wichbehaviow.map(wichfeedbackbehaviowmawshawwew(_)), mya
+      s-subpwompt = f-feedbackaction.subpwompt
     )
   }
 }

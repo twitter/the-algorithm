@@ -1,21 +1,21 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/storehaus:core",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate/ads",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/query/ads",
-        "src/thrift/com/twitter/ads/adserver:ads_shared_types-scala",
-    ],
-    exports = [
-        "3rdparty/jvm/com/twitter/storehaus:core",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate/ads",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/query/ads",
-        "src/thrift/com/twitter/ads/adserver:ads_shared_types-scala",
-    ],
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], OwO
+    stwict_deps = twue, 🥺
+    t-tags = ["bazew-compatibwe"], òωó
+    d-dependencies = [
+        "3wdpawty/jvm/com/twittew/stowehaus:cowe", o.O
+        "3wdpawty/jvm/javax/inject:javax.inject", (U ᵕ U❁)
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/candidate", (⑅˘꒳˘)
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/candidate/ads", ( ͡o ω ͡o )
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/quewy/ads", UwU
+        "swc/thwift/com/twittew/ads/adsewvew:ads_shawed_types-scawa",
+    ], rawr x3
+    e-expowts = [
+        "3wdpawty/jvm/com/twittew/stowehaus:cowe", rawr
+        "3wdpawty/jvm/javax/inject:javax.inject", σωσ
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/candidate", σωσ
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/candidate/ads", >_<
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/quewy/ads", :3
+        "swc/thwift/com/twittew/ads/adsewvew:ads_shawed_types-scawa", (U ﹏ U)
+    ], -.-
 )

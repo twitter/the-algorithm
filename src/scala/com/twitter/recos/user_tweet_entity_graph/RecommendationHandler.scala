@@ -1,75 +1,75 @@
-package com.twitter.recos.user_tweet_entity_graph
+package com.twittew.wecos.usew_tweet_entity_gwaph
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.graphjet.algorithms.RecommendationType
-import com.twitter.graphjet.algorithms.counting.tweet.TweetMetadataRecommendationInfo
-import com.twitter.graphjet.algorithms.counting.tweet.TweetRecommendationInfo
-import com.twitter.recos.user_tweet_entity_graph.thriftscala._
-import com.twitter.recos.util.Stats
-import com.twitter.servo.request._
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.utiw.statsutiw
+i-impowt com.twittew.gwaphjet.awgowithms.wecommendationtype
+i-impowt c-com.twittew.gwaphjet.awgowithms.counting.tweet.tweetmetadatawecommendationinfo
+i-impowt com.twittew.gwaphjet.awgowithms.counting.tweet.tweetwecommendationinfo
+i-impowt com.twittew.wecos.usew_tweet_entity_gwaph.thwiftscawa._
+impowt c-com.twittew.wecos.utiw.stats
+i-impowt com.twittew.sewvo.wequest._
+impowt com.twittew.utiw.futuwe
 
 /**
- * Implementation of the Thrift-defined service interface.
+ * impwementation of the thwift-defined s-sewvice intewface. ^^
  *
-* A wrapper of magicRecsRunner.
+* a wwappew of magicwecswunnew. 😳😳😳
  */
-class RecommendationHandler(
-  tweetRecsRunner: TweetRecommendationsRunner,
-  statsReceiver: StatsReceiver)
-    extends RequestHandler[RecommendTweetEntityRequest, RecommendTweetEntityResponse] {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val socialProofHydrator = new SocialProofHydrator(stats)
+c-cwass wecommendationhandwew(
+  t-tweetwecswunnew: tweetwecommendationswunnew, mya
+  statsweceivew: statsweceivew)
+    e-extends wequesthandwew[wecommendtweetentitywequest, 😳 w-wecommendtweetentitywesponse] {
+  p-pwivate vaw stats = statsweceivew.scope(this.getcwass.getsimpwename)
+  pwivate vaw sociawpwoofhydwatow = nyew s-sociawpwoofhydwatow(stats)
 
-  override def apply(request: RecommendTweetEntityRequest): Future[RecommendTweetEntityResponse] = {
-    val scopedStats: StatsReceiver = stats.scope(request.displayLocation.toString)
+  ovewwide def appwy(wequest: wecommendtweetentitywequest): futuwe[wecommendtweetentitywesponse] = {
+    v-vaw scopedstats: statsweceivew = s-stats.scope(wequest.dispwaywocation.tostwing)
 
-    StatsUtil.trackBlockStats(scopedStats) {
-      val candidatesFuture = tweetRecsRunner.apply(request)
+    s-statsutiw.twackbwockstats(scopedstats) {
+      v-vaw candidatesfutuwe = tweetwecswunnew.appwy(wequest)
 
-      candidatesFuture.map { candidates =>
-        if (candidates.isEmpty) scopedStats.counter(Stats.EmptyResult).incr()
-        else scopedStats.counter(Stats.Served).incr(candidates.size)
+      c-candidatesfutuwe.map { candidates =>
+        if (candidates.isempty) s-scopedstats.countew(stats.emptywesuwt).incw()
+        ewse scopedstats.countew(stats.sewved).incw(candidates.size)
 
-        RecommendTweetEntityResponse(candidates.flatMap {
-          _ match {
-            case tweetRec: TweetRecommendationInfo =>
-              Some(
-                UserTweetEntityRecommendationUnion.TweetRec(
-                  TweetRecommendation(
-                    tweetRec.getRecommendation,
-                    tweetRec.getWeight,
-                    socialProofHydrator.addTweetSocialProofByType(tweetRec),
-                    socialProofHydrator.addTweetSocialProofs(tweetRec)
+        wecommendtweetentitywesponse(candidates.fwatmap {
+          _ m-match {
+            case tweetwec: tweetwecommendationinfo =>
+              some(
+                usewtweetentitywecommendationunion.tweetwec(
+                  tweetwecommendation(
+                    t-tweetwec.getwecommendation, -.-
+                    tweetwec.getweight,
+                    s-sociawpwoofhydwatow.addtweetsociawpwoofbytype(tweetwec), 🥺
+                    s-sociawpwoofhydwatow.addtweetsociawpwoofs(tweetwec)
                   )
                 )
               )
-            case tweetMetadataRec: TweetMetadataRecommendationInfo =>
-              if (tweetMetadataRec.getRecommendationType == RecommendationType.HASHTAG) {
-                Some(
-                  UserTweetEntityRecommendationUnion.HashtagRec(
-                    HashtagRecommendation(
-                      tweetMetadataRec.getRecommendation,
-                      tweetMetadataRec.getWeight,
-                      socialProofHydrator.addMetadataSocialProofByType(tweetMetadataRec)
+            c-case tweetmetadatawec: tweetmetadatawecommendationinfo =>
+              if (tweetmetadatawec.getwecommendationtype == wecommendationtype.hashtag) {
+                some(
+                  u-usewtweetentitywecommendationunion.hashtagwec(
+                    h-hashtagwecommendation(
+                      tweetmetadatawec.getwecommendation,
+                      t-tweetmetadatawec.getweight, o.O
+                      s-sociawpwoofhydwatow.addmetadatasociawpwoofbytype(tweetmetadatawec)
                     )
                   )
                 )
-              } else if (tweetMetadataRec.getRecommendationType == RecommendationType.URL) {
-                Some(
-                  UserTweetEntityRecommendationUnion.UrlRec(
-                    UrlRecommendation(
-                      tweetMetadataRec.getRecommendation,
-                      tweetMetadataRec.getWeight,
-                      socialProofHydrator.addMetadataSocialProofByType(tweetMetadataRec)
+              } ewse if (tweetmetadatawec.getwecommendationtype == w-wecommendationtype.uww) {
+                some(
+                  u-usewtweetentitywecommendationunion.uwwwec(
+                    uwwwecommendation(
+                      tweetmetadatawec.getwecommendation,
+                      t-tweetmetadatawec.getweight, /(^•ω•^)
+                      sociawpwoofhydwatow.addmetadatasociawpwoofbytype(tweetmetadatawec)
                     )
                   )
                 )
-              } else {
-                None: Option[UserTweetEntityRecommendationUnion]
+              } e-ewse {
+                nyone: o-option[usewtweetentitywecommendationunion]
               }
-            case _ => None
+            c-case _ => nyone
           }
         })
       }

@@ -1,133 +1,133 @@
-package com.twitter.interaction_graph.scio.ml.scores
+package com.twittew.intewaction_gwaph.scio.mw.scowes
 
-import com.google.cloud.bigquery.BigQueryOptions
-import com.google.cloud.bigquery.QueryJobConfiguration
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.exception.DataNotFoundException
-import com.twitter.beam.io.fs.multiformat.PathLayout
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.wtf.candidate.thriftscala.Candidate
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
-import com.twitter.wtf.candidate.thriftscala.ScoredEdge
-import org.apache.avro.generic.GenericRecord
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO.TypedRead
-import org.apache.beam.sdk.io.gcp.bigquery.SchemaAndRecord
-import org.apache.beam.sdk.transforms.SerializableFunction
-import scala.collection.JavaConverters._
+impowt com.googwe.cwoud.bigquewy.bigquewyoptions
+i-impowt com.googwe.cwoud.bigquewy.quewyjobconfiguwation
+i-impowt c-com.spotify.scio.sciocontext
+i-impowt com.spotify.scio.vawues.scowwection
+i-impowt c-com.twittew.beam.io.daw.daw
+impowt c-com.twittew.beam.io.exception.datanotfoundexception
+i-impowt com.twittew.beam.io.fs.muwtifowmat.pathwayout
+impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.scio_intewnaw.job.sciobeamjob
+impowt com.twittew.wtf.candidate.thwiftscawa.candidate
+i-impowt com.twittew.wtf.candidate.thwiftscawa.candidateseq
+impowt com.twittew.wtf.candidate.thwiftscawa.scowededge
+impowt o-owg.apache.avwo.genewic.genewicwecowd
+impowt o-owg.apache.beam.sdk.io.gcp.bigquewy.bigquewyio
+impowt owg.apache.beam.sdk.io.gcp.bigquewy.bigquewyio.typedwead
+impowt owg.apache.beam.sdk.io.gcp.bigquewy.schemaandwecowd
+impowt o-owg.apache.beam.sdk.twansfowms.sewiawizabwefunction
+impowt scawa.cowwection.javaconvewtews._
 
-object InteractionGraphScoreExportJob extends ScioBeamJob[InteractionGraphScoreExportOption] {
+o-object intewactiongwaphscoweexpowtjob e-extends sciobeamjob[intewactiongwaphscoweexpowtoption] {
 
-  // to parse latest date from the BQ table we're reading from
-  val parseDateRow = new SerializableFunction[SchemaAndRecord, String] {
-    override def apply(input: SchemaAndRecord): String = {
-      val genericRecord: GenericRecord = input.getRecord()
-      genericRecord.get("ds").toString
+  // to pawse watest date fwom the bq tabwe we'we w-weading fwom
+  vaw pawsedatewow = nyew sewiawizabwefunction[schemaandwecowd, (⑅˘꒳˘) stwing] {
+    ovewwide def appwy(input: s-schemaandwecowd): stwing = {
+      v-vaw g-genewicwecowd: genewicwecowd = input.getwecowd()
+      g-genewicwecowd.get("ds").tostwing
     }
   }
 
-  // to parse each row from the BQ table we're reading from
-  val parseRow = new SerializableFunction[SchemaAndRecord, ScoredEdge] {
-    override def apply(record: SchemaAndRecord): ScoredEdge = {
-      val genericRecord: GenericRecord = record.getRecord()
-      ScoredEdge(
-        genericRecord.get("source_id").asInstanceOf[Long],
-        genericRecord.get("destination_id").asInstanceOf[Long],
-        genericRecord.get("prob").asInstanceOf[Double],
-        genericRecord.get("followed").asInstanceOf[Boolean],
+  // t-to pawse each wow fwom the bq tabwe we'we w-weading fwom
+  vaw pawsewow = new sewiawizabwefunction[schemaandwecowd, nyaa~~ s-scowededge] {
+    ovewwide def appwy(wecowd: schemaandwecowd): scowededge = {
+      vaw g-genewicwecowd: genewicwecowd = w-wecowd.getwecowd()
+      s-scowededge(
+        g-genewicwecowd.get("souwce_id").asinstanceof[wong], :3
+        genewicwecowd.get("destination_id").asinstanceof[wong], ( ͡o ω ͡o )
+        genewicwecowd.get("pwob").asinstanceof[doubwe], mya
+        genewicwecowd.get("fowwowed").asinstanceof[boowean], (///ˬ///✿)
       )
     }
   }
 
-  override def runPipeline(
-    sc: ScioContext,
-    opts: InteractionGraphScoreExportOption
-  ): Unit = {
+  o-ovewwide d-def wunpipewine(
+    sc: sciocontext, (˘ω˘)
+    o-opts: i-intewactiongwaphscoweexpowtoption
+  ): unit = {
 
-    val dateStr: String = opts.getDate().value.getStart.toString("yyyyMMdd")
-    logger.info(s"dateStr $dateStr")
-    val project: String = "twttr-recos-ml-prod"
-    val datasetName: String = "realgraph"
-    val bqTableName: String = "scores"
-    val fullBqTableName: String = s"$project:$datasetName.$bqTableName"
+    v-vaw datestw: stwing = opts.getdate().vawue.getstawt.tostwing("yyyymmdd")
+    w-woggew.info(s"datestw $datestw")
+    vaw pwoject: stwing = "twttw-wecos-mw-pwod"
+    v-vaw datasetname: stwing = "weawgwaph"
+    v-vaw bqtabwename: stwing = "scowes"
+    v-vaw f-fuwwbqtabwename: stwing = s"$pwoject:$datasetname.$bqtabwename"
 
-    if (opts.getDALWriteEnvironment == "PROD") {
-      val bqClient =
-        BigQueryOptions.newBuilder.setProjectId("twttr-recos-ml-prod").build.getService
-      val query =
+    if (opts.getdawwwiteenviwonment == "pwod") {
+      vaw bqcwient =
+        bigquewyoptions.newbuiwdew.setpwojectid("twttw-wecos-mw-pwod").buiwd.getsewvice
+      vaw quewy =
         s"""
-           |SELECT total_rows
-           |FROM `$project.$datasetName.INFORMATION_SCHEMA.PARTITIONS`
-           |WHERE partition_id ="$dateStr" AND
-           |table_name="$bqTableName" AND total_rows > 0
-           |""".stripMargin
-      val queryConfig = QueryJobConfiguration.of(query)
-      val results = bqClient.query(queryConfig).getValues.asScala.toSeq
-      if (results.isEmpty || results.head.get(0).getLongValue == 0) {
-        throw new DataNotFoundException(s"$dateStr not present in $fullBqTableName.")
+           |sewect totaw_wows
+           |fwom `$pwoject.$datasetname.infowmation_schema.pawtitions`
+           |whewe p-pawtition_id ="$datestw" a-and
+           |tabwe_name="$bqtabwename" and totaw_wows > 0
+           |""".stwipmawgin
+      v-vaw q-quewyconfig = quewyjobconfiguwation.of(quewy)
+      v-vaw wesuwts = bqcwient.quewy(quewyconfig).getvawues.asscawa.toseq
+      if (wesuwts.isempty || wesuwts.head.get(0).getwongvawue == 0) {
+        t-thwow nyew datanotfoundexception(s"$datestw not pwesent in $fuwwbqtabwename.")
       }
     }
-    sc.run()
+    sc.wun()
   }
 
-  override protected def configurePipeline(
-    sc: ScioContext,
-    opts: InteractionGraphScoreExportOption
-  ): Unit = {
+  ovewwide pwotected d-def configuwepipewine(
+    sc: sciocontext, ^^;;
+    o-opts: intewactiongwaphscoweexpowtoption
+  ): u-unit = {
 
-    val dateStr: String = opts.getDate().value.getStart.toString("yyyy-MM-dd")
-    logger.info(s"dateStr $dateStr")
-    val project: String = "twttr-recos-ml-prod"
-    val datasetName: String = "realgraph"
-    val bqTableName: String = "scores"
-    val fullBqTableName: String = s"$project:$datasetName.$bqTableName"
+    v-vaw datestw: stwing = opts.getdate().vawue.getstawt.tostwing("yyyy-mm-dd")
+    w-woggew.info(s"datestw $datestw")
+    v-vaw pwoject: s-stwing = "twttw-wecos-mw-pwod"
+    v-vaw datasetname: stwing = "weawgwaph"
+    vaw bqtabwename: s-stwing = "scowes"
+    v-vaw fuwwbqtabwename: s-stwing = s-s"$pwoject:$datasetname.$bqtabwename"
 
-    val scoreExport: SCollection[ScoredEdge] = sc
-      .customInput(
-        s"Read from BQ table $fullBqTableName",
-        BigQueryIO
-          .read(parseRow)
-          .from(fullBqTableName)
-          .withSelectedFields(List("source_id", "destination_id", "prob", "followed").asJava)
-          .withRowRestriction(s"ds = '$dateStr'")
-          .withMethod(TypedRead.Method.DIRECT_READ)
+    v-vaw scoweexpowt: scowwection[scowededge] = sc
+      .custominput(
+        s"wead f-fwom bq tabwe $fuwwbqtabwename", (✿oωo)
+        bigquewyio
+          .wead(pawsewow)
+          .fwom(fuwwbqtabwename)
+          .withsewectedfiewds(wist("souwce_id", (U ﹏ U) "destination_id", -.- "pwob", "fowwowed").asjava)
+          .withwowwestwiction(s"ds = '$datestw'")
+          .withmethod(typedwead.method.diwect_wead)
       )
 
-    val inScores = scoreExport
-      .collect {
-        case ScoredEdge(src, dest, score, true) =>
-          (src, Candidate(dest, score))
+    vaw inscowes = scoweexpowt
+      .cowwect {
+        case scowededge(swc, ^•ﻌ•^ dest, rawr s-scowe, twue) =>
+          (swc, (˘ω˘) candidate(dest, nyaa~~ scowe))
       }
-      .groupByKey
+      .gwoupbykey
       .map {
-        case (src, candidateIter) => KeyVal(src, CandidateSeq(candidateIter.toSeq.sortBy(-_.score)))
+        case (swc, UwU c-candidateitew) => k-keyvaw(swc, :3 c-candidateseq(candidateitew.toseq.sowtby(-_.scowe)))
       }
 
-    val outScores = scoreExport
-      .collect {
-        case ScoredEdge(src, dest, score, false) =>
-          (src, Candidate(dest, score))
+    vaw outscowes = s-scoweexpowt
+      .cowwect {
+        case scowededge(swc, (⑅˘꒳˘) d-dest, s-scowe, (///ˬ///✿) fawse) =>
+          (swc, ^^;; candidate(dest, >_< scowe))
       }
-      .groupByKey
+      .gwoupbykey
       .map {
-        case (src, candidateIter) => KeyVal(src, CandidateSeq(candidateIter.toSeq.sortBy(-_.score)))
+        case (swc, rawr x3 candidateitew) => keyvaw(swc, /(^•ω•^) c-candidateseq(candidateitew.toseq.sowtby(-_.scowe)))
       }
 
-    inScores.saveAsCustomOutput(
-      "Write real_graph_in_scores",
-      DAL.writeVersionedKeyVal(
-        RealGraphInScoresScalaDataset,
-        PathLayout.VersionedPath(opts.getOutputPath + "/in"),
+    inscowes.saveascustomoutput(
+      "wwite weaw_gwaph_in_scowes", :3
+      d-daw.wwitevewsionedkeyvaw(
+        weawgwaphinscowesscawadataset, (ꈍᴗꈍ)
+        p-pathwayout.vewsionedpath(opts.getoutputpath + "/in"), /(^•ω•^)
       )
     )
-    outScores.saveAsCustomOutput(
-      "Write real_graph_oon_scores",
-      DAL.writeVersionedKeyVal(
-        RealGraphOonScoresScalaDataset,
-        PathLayout.VersionedPath(opts.getOutputPath + "/oon"),
+    o-outscowes.saveascustomoutput(
+      "wwite weaw_gwaph_oon_scowes", (⑅˘꒳˘)
+      daw.wwitevewsionedkeyvaw(
+        w-weawgwaphoonscowesscawadataset,
+        p-pathwayout.vewsionedpath(opts.getoutputpath + "/oon"), ( ͡o ω ͡o )
       )
     )
   }

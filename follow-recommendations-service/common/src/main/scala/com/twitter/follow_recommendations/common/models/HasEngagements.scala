@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-trait HasEngagements {
+twait hasengagements {
 
-  def engagements: Seq[EngagementType]
+  d-def engagements: s-seq[engagementtype]
 
 }

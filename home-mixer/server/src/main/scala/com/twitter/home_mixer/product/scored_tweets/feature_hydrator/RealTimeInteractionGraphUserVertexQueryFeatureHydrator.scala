@@ -1,47 +1,47 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow
 
-import com.google.inject.name.Named
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealTimeInteractionGraphUserVertexCache
-import com.twitter.home_mixer.util.ObservedKeyValueResultHandler
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.cache.ReadCache
-import com.twitter.stitch.Stitch
-import com.twitter.wtf.real_time_interaction_graph.{thriftscala => ig}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.googwe.inject.name.named
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.home_mixew.pawam.homemixewinjectionnames.weawtimeintewactiongwaphusewvewtexcache
+i-impowt c-com.twittew.home_mixew.utiw.obsewvedkeyvawuewesuwthandwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.sewvo.cache.weadcache
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.wtf.weaw_time_intewaction_gwaph.{thwiftscawa => ig}
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-object RealTimeInteractionGraphUserVertexQueryFeature
-    extends Feature[PipelineQuery, Option[ig.UserVertex]]
+o-object weawtimeintewactiongwaphusewvewtexquewyfeatuwe
+    extends f-featuwe[pipewinequewy, rawr x3 o-option[ig.usewvewtex]]
 
-@Singleton
-class RealTimeInteractionGraphUserVertexQueryFeatureHydrator @Inject() (
-  @Named(RealTimeInteractionGraphUserVertexCache) client: ReadCache[Long, ig.UserVertex],
-  override val statsReceiver: StatsReceiver)
-    extends QueryFeatureHydrator[PipelineQuery]
-    with ObservedKeyValueResultHandler {
+@singweton
+cwass weawtimeintewactiongwaphusewvewtexquewyfeatuwehydwatow @inject() (
+  @named(weawtimeintewactiongwaphusewvewtexcache) cwient: weadcache[wong, (U ﹏ U) ig.usewvewtex], (U ﹏ U)
+  o-ovewwide vaw statsweceivew: statsweceivew)
+    extends quewyfeatuwehydwatow[pipewinequewy]
+    with obsewvedkeyvawuewesuwthandwew {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("RealTimeInteractionGraphUserVertex")
+  o-ovewwide vaw identifiew: f-featuwehydwatowidentifiew =
+    f-featuwehydwatowidentifiew("weawtimeintewactiongwaphusewvewtex")
 
-  override val features: Set[Feature[_, _]] = Set(RealTimeInteractionGraphUserVertexQueryFeature)
+  o-ovewwide v-vaw featuwes: set[featuwe[_, (⑅˘꒳˘) _]] = set(weawtimeintewactiongwaphusewvewtexquewyfeatuwe)
 
-  override val statScope: String = identifier.toString
+  ovewwide v-vaw statscope: stwing = identifiew.tostwing
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    val userId = query.getRequiredUserId
+  ovewwide def h-hydwate(quewy: pipewinequewy): stitch[featuwemap] = {
+    vaw usewid = quewy.getwequiwedusewid
 
-    Stitch.callFuture(
-      client.get(Seq(userId)).map { results =>
-        val feature = observedGet(key = Some(userId), keyValueResult = results)
-        FeatureMapBuilder()
-          .add(RealTimeInteractionGraphUserVertexQueryFeature, feature)
-          .build()
+    stitch.cawwfutuwe(
+      cwient.get(seq(usewid)).map { wesuwts =>
+        v-vaw featuwe = obsewvedget(key = s-some(usewid), òωó k-keyvawuewesuwt = w-wesuwts)
+        featuwemapbuiwdew()
+          .add(weawtimeintewactiongwaphusewvewtexquewyfeatuwe, ʘwʘ featuwe)
+          .buiwd()
       }
     )
   }

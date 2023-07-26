@@ -1,135 +1,135 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import com.google.common.annotations.VisibleForTesting;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
 
-import org.apache.lucene.index.PostingsEnum;
+i-impowt owg.apache.wucene.index.postingsenum;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
+i-impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
 
-public class MultiPostingLists extends OptimizedPostingLists {
+pubwic cwass muwtipostingwists extends optimizedpostingwists {
 
-  @VisibleForTesting
-  public static final int DEFAULT_DF_THRESHOLD = 1000;
+  @visibwefowtesting
+  pubwic s-static finaw int defauwt_df_thweshowd = 1000;
 
-  private final OptimizedPostingLists lowDF;
-  private final OptimizedPostingLists highDF;
+  pwivate finaw o-optimizedpostingwists wowdf;
+  pwivate f-finaw optimizedpostingwists highdf;
 
-  private final int dfThreshold;
+  pwivate finaw int dfthweshowd;
 
   /**
-   * Given the number of postings in each term (in this field), sum up the number of postings in
-   * the low df fields.
-   * @param numPostingsPerTerm number of postings in each term in this field.
-   * @param dfThreshold the low/high df threshold.
+   * g-given the nyumbew of postings i-in each tewm (in t-this fiewd), XD sum up the numbew of postings in
+   * the wow df fiewds. -.-
+   * @pawam n-nyumpostingspewtewm nyumbew of postings in each tewm in this fiewd. :3
+   * @pawam d-dfthweshowd the wow/high d-df thweshowd. nyaa~~
    */
-  private static int numPostingsInLowDfTerms(int[] numPostingsPerTerm, int dfThreshold) {
-    int sumOfAllPostings = 0;
-    for (int numPostingsInATerm : numPostingsPerTerm) {
-      if (numPostingsInATerm < dfThreshold) {
-        sumOfAllPostings += numPostingsInATerm;
+  p-pwivate s-static int nyumpostingsinwowdftewms(int[] n-nyumpostingspewtewm, 😳 int dfthweshowd) {
+    int sumofawwpostings = 0;
+    f-fow (int nyumpostingsinatewm : nyumpostingspewtewm) {
+      if (numpostingsinatewm < d-dfthweshowd) {
+        sumofawwpostings += nyumpostingsinatewm;
       }
     }
-    return sumOfAllPostings;
+    wetuwn sumofawwpostings;
   }
 
   /**
-   * Creates a new posting list delegating to either lowDF or highDF posting list.
-   * @param omitPositions whether positions should be omitted or not.
-   * @param numPostingsPerTerm number of postings in each term in this field.
-   * @param maxPosition the largest position used in all the postings for this field.
+   * cweates a nyew p-posting wist dewegating to eithew w-wowdf ow highdf p-posting wist. (⑅˘꒳˘)
+   * @pawam o-omitpositions whethew positions shouwd be omitted ow nyot. nyaa~~
+   * @pawam n-nyumpostingspewtewm n-nyumbew of postings in e-each tewm in this f-fiewd. OwO
+   * @pawam maxposition t-the wawgest position used in a-aww the postings fow this fiewd. rawr x3
    */
-  public MultiPostingLists(
-      boolean omitPositions,
-      int[] numPostingsPerTerm,
-      int maxPosition) {
-    this(
-        new LowDFPackedIntsPostingLists(
-            omitPositions,
-            numPostingsInLowDfTerms(numPostingsPerTerm, DEFAULT_DF_THRESHOLD),
-            maxPosition),
-        new HighDFPackedIntsPostingLists(omitPositions),
-        DEFAULT_DF_THRESHOLD);
+  pubwic m-muwtipostingwists(
+      boowean o-omitpositions, XD
+      int[] nyumpostingspewtewm, σωσ
+      i-int maxposition) {
+    t-this(
+        new wowdfpackedintspostingwists(
+            omitpositions,
+            nyumpostingsinwowdftewms(numpostingspewtewm, (U ᵕ U❁) defauwt_df_thweshowd),
+            maxposition), (U ﹏ U)
+        n-nyew highdfpackedintspostingwists(omitpositions), :3
+        d-defauwt_df_thweshowd);
   }
 
-  private MultiPostingLists(
-      OptimizedPostingLists lowDF,
-      OptimizedPostingLists highDF,
-      int dfThreshold) {
-    this.lowDF = lowDF;
-    this.highDF = highDF;
-    this.dfThreshold = dfThreshold;
+  pwivate muwtipostingwists(
+      o-optimizedpostingwists w-wowdf,
+      o-optimizedpostingwists highdf, ( ͡o ω ͡o )
+      int dfthweshowd) {
+    this.wowdf = wowdf;
+    t-this.highdf = highdf;
+    this.dfthweshowd = dfthweshowd;
   }
 
-  @Override
-  public int copyPostingList(PostingsEnum postingsEnum, int numPostings)
-      throws IOException {
-    return numPostings < dfThreshold
-          ? lowDF.copyPostingList(postingsEnum, numPostings)
-          : highDF.copyPostingList(postingsEnum, numPostings);
+  @ovewwide
+  pubwic int c-copypostingwist(postingsenum postingsenum, σωσ i-int n-nyumpostings)
+      t-thwows ioexception {
+    wetuwn n-nyumpostings < d-dfthweshowd
+          ? w-wowdf.copypostingwist(postingsenum, >w< nyumpostings)
+          : h-highdf.copypostingwist(postingsenum, 😳😳😳 nyumpostings);
   }
 
-  @Override
-  public EarlybirdPostingsEnum postings(int postingsPointer, int numPostings, int flags)
-      throws IOException {
-    return numPostings < dfThreshold
-        ? lowDF.postings(postingsPointer, numPostings, flags)
-        : highDF.postings(postingsPointer, numPostings, flags);
+  @ovewwide
+  pubwic eawwybiwdpostingsenum p-postings(int p-postingspointew, OwO i-int nyumpostings, 😳 i-int f-fwags)
+      thwows ioexception {
+    wetuwn nyumpostings < dfthweshowd
+        ? w-wowdf.postings(postingspointew, 😳😳😳 nyumpostings, (˘ω˘) fwags)
+        : highdf.postings(postingspointew, ʘwʘ nyumpostings, ( ͡o ω ͡o ) fwags);
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @suppwesswawnings("unchecked")
+  @ovewwide
+  p-pubwic fwushhandwew getfwushhandwew() {
+    wetuwn n-nyew fwushhandwew(this);
   }
 
-  @VisibleForTesting
-  OptimizedPostingLists getLowDfPostingsList() {
-    return lowDF;
+  @visibwefowtesting
+  o-optimizedpostingwists g-getwowdfpostingswist() {
+    wetuwn wowdf;
   }
 
-  @VisibleForTesting
-  OptimizedPostingLists getHighDfPostingsList() {
-    return highDF;
+  @visibwefowtesting
+  o-optimizedpostingwists gethighdfpostingswist() {
+    w-wetuwn highdf;
   }
 
-  public static class FlushHandler extends Flushable.Handler<MultiPostingLists> {
-    private static final String DF_THRESHOLD_PROP_NAME = "dfThresHold";
+  p-pubwic static cwass fwushhandwew extends fwushabwe.handwew<muwtipostingwists> {
+    pwivate static finaw stwing df_thweshowd_pwop_name = "dfthweshowd";
 
-    public FlushHandler() {
-      super();
+    p-pubwic fwushhandwew() {
+      s-supew();
     }
 
-    public FlushHandler(MultiPostingLists objectToFlush) {
-      super(objectToFlush);
+    pubwic f-fwushhandwew(muwtipostingwists o-objecttofwush) {
+      supew(objecttofwush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out)
-        throws IOException {
-      MultiPostingLists objectToFlush = getObjectToFlush();
-      flushInfo.addIntProperty(DF_THRESHOLD_PROP_NAME, objectToFlush.dfThreshold);
-      objectToFlush.lowDF.getFlushHandler().flush(
-              flushInfo.newSubProperties("lowDFPostinglists"), out);
-      objectToFlush.highDF.getFlushHandler().flush(
-              flushInfo.newSubProperties("highDFPostinglists"), out);
+    @ovewwide
+    pwotected v-void dofwush(fwushinfo f-fwushinfo, o.O datasewiawizew o-out)
+        thwows i-ioexception {
+      muwtipostingwists objecttofwush = getobjecttofwush();
+      fwushinfo.addintpwopewty(df_thweshowd_pwop_name, >w< o-objecttofwush.dfthweshowd);
+      o-objecttofwush.wowdf.getfwushhandwew().fwush(
+              f-fwushinfo.newsubpwopewties("wowdfpostingwists"), 😳 out);
+      o-objecttofwush.highdf.getfwushhandwew().fwush(
+              f-fwushinfo.newsubpwopewties("highdfpostingwists"), 🥺 out);
     }
 
-    @Override
-    protected MultiPostingLists doLoad(FlushInfo flushInfo,
-        DataDeserializer in) throws IOException {
-      OptimizedPostingLists lowDF = new LowDFPackedIntsPostingLists.FlushHandler()
-            .load(flushInfo.getSubProperties("lowDFPostinglists"), in);
-      OptimizedPostingLists highDF = new HighDFPackedIntsPostingLists.FlushHandler()
-          .load(flushInfo.getSubProperties("highDFPostinglists"), in);
-      return new MultiPostingLists(
-          lowDF,
-          highDF,
-          flushInfo.getIntProperty(DF_THRESHOLD_PROP_NAME));
+    @ovewwide
+    pwotected m-muwtipostingwists dowoad(fwushinfo fwushinfo,
+        datadesewiawizew in) thwows ioexception {
+      o-optimizedpostingwists w-wowdf = nyew wowdfpackedintspostingwists.fwushhandwew()
+            .woad(fwushinfo.getsubpwopewties("wowdfpostingwists"), rawr x3 in);
+      optimizedpostingwists h-highdf = nyew highdfpackedintspostingwists.fwushhandwew()
+          .woad(fwushinfo.getsubpwopewties("highdfpostingwists"), o.O i-in);
+      wetuwn nyew muwtipostingwists(
+          wowdf, rawr
+          h-highdf, ʘwʘ
+          fwushinfo.getintpwopewty(df_thweshowd_pwop_name));
     }
   }
 }

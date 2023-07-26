@@ -1,4 +1,4 @@
-package com.twitter.search.earlybird.exception;
+package com.twittew.seawch.eawwybiwd.exception;
 
-public class MissingUserException extends Exception {
+pubwic cwass missingusewexception e-extends exception {
 }

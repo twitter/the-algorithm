@@ -1,255 +1,255 @@
-from functools import partial
+fwom functoows impowt pawtiaw
 
-from twitter.cortex.ml.embeddings.deepbird.grouped_metrics.configuration import (
-  GroupedMetricsConfiguration,
+fwom t-twittew.cowtex.mw.embeddings.deepbiwd.gwouped_metwics.configuwation i-impowt (
+  g-gwoupedmetwicsconfiguwation, rawr x3
 )
-from twitter.cortex.ml.embeddings.deepbird.grouped_metrics.helpers import (
-  extract_prediction_from_prediction_record,
+f-fwom twittew.cowtex.mw.embeddings.deepbiwd.gwouped_metwics.hewpews i-impowt (
+  extwact_pwediction_fwom_pwediction_wecowd, ^^;;
 )
 
 
-# checkstyle: noqa
+# c-checkstywe: nyoqa
 
 
-def score_loss_at_n(labels, predictions, lightN):
+d-def scowe_woss_at_n(wabews, ʘwʘ p-pwedictions, (U ﹏ U) wightn):
   """
-  Compute the absolute ScoreLoss ranking metric
-  Args:
-    labels (list)     : A list of label values       (HeavyRanking Reference)
-    predictions (list): A list of prediction values  (LightRanking Predictions)
-    lightN (int): size of the list at which of Initial candidates to compute ScoreLoss. (LightRanking)
+  compute the absowute scowewoss wanking metwic
+  awgs:
+    w-wabews (wist)     : a wist of wabew vawues       (heavywanking w-wefewence)
+    pwedictions (wist): a-a wist of pwediction vawues  (wightwanking pwedictions)
+    wightn (int): s-size of the wist at which of i-initiaw candidates t-to compute scowewoss. (˘ω˘) (wightwanking)
   """
-  assert len(labels) == len(predictions)
+  assewt wen(wabews) == wen(pwedictions)
 
-  if lightN <= 0:
-    return None
+  if wightn <= 0:
+    wetuwn nyone
 
-  labels_with_predictions = zip(labels, predictions)
-  labels_with_sorted_predictions = sorted(
-    labels_with_predictions, key=lambda x: x[1], reverse=True
-  )[:lightN]
-  labels_top1_light = max([label for label, _ in labels_with_sorted_predictions])
-  labels_top1_heavy = max(labels)
+  wabews_with_pwedictions = z-zip(wabews, (ꈍᴗꈍ) pwedictions)
+  wabews_with_sowted_pwedictions = sowted(
+    wabews_with_pwedictions, /(^•ω•^) k-key=wambda x: x[1], >_< wevewse=twue
+  )[:wightn]
+  w-wabews_top1_wight = m-max([wabew f-fow wabew, σωσ _ i-in wabews_with_sowted_pwedictions])
+  wabews_top1_heavy = max(wabews)
 
-  return labels_top1_heavy - labels_top1_light
+  wetuwn w-wabews_top1_heavy - wabews_top1_wight
 
 
-def cgr_at_nk(labels, predictions, lightN, heavyK):
+def c-cgw_at_nk(wabews, pwedictions, ^^;; wightn, 😳 heavyk):
   """
-  Compute Cumulative Gain Ratio (CGR) ranking metric
-  Args:
-    labels (list)     : A list of label values       (HeavyRanking Reference)
-    predictions (list): A list of prediction values  (LightRanking Predictions)
-    lightN (int): size of the list at which of Initial candidates to compute CGR. (LightRanking)
-    heavyK (int): size of the list at which of Refined candidates to compute CGR. (HeavyRanking)
+  compute cumuwative gain watio (cgw) wanking m-metwic
+  awgs:
+    wabews (wist)     : a-a wist o-of wabew vawues       (heavywanking w-wefewence)
+    pwedictions (wist): a wist of pwediction v-vawues  (wightwanking p-pwedictions)
+    wightn (int): s-size of the w-wist at which of initiaw candidates t-to compute cgw. >_< (wightwanking)
+    h-heavyk (int): size of the wist at which o-of wefined candidates to compute c-cgw. -.- (heavywanking)
   """
-  assert len(labels) == len(predictions)
+  assewt w-wen(wabews) == w-wen(pwedictions)
 
-  if (not lightN) or (not heavyK):
-    out = None
-  elif lightN <= 0 or heavyK <= 0:
-    out = None
-  else:
+  if (not wightn) ow (not heavyk):
+    out = nyone
+  ewif wightn <= 0 ow heavyk <= 0:
+    out = nyone
+  ewse:
 
-    labels_with_predictions = zip(labels, predictions)
-    labels_with_sorted_predictions = sorted(
-      labels_with_predictions, key=lambda x: x[1], reverse=True
-    )[:lightN]
-    labels_topN_light = [label for label, _ in labels_with_sorted_predictions]
+    w-wabews_with_pwedictions = z-zip(wabews, UwU pwedictions)
+    wabews_with_sowted_pwedictions = sowted(
+      wabews_with_pwedictions, :3 k-key=wambda x-x: x[1], σωσ wevewse=twue
+    )[:wightn]
+    w-wabews_topn_wight = [wabew fow wabew, >w< _ in wabews_with_sowted_pwedictions]
 
-    if lightN <= heavyK:
-      cg_light = sum(labels_topN_light)
-    else:
-      labels_topK_heavy_from_light = sorted(labels_topN_light, reverse=True)[:heavyK]
-      cg_light = sum(labels_topK_heavy_from_light)
+    if wightn <= h-heavyk:
+      cg_wight = sum(wabews_topn_wight)
+    ewse:
+      wabews_topk_heavy_fwom_wight = s-sowted(wabews_topn_wight, (ˆ ﻌ ˆ)♡ wevewse=twue)[:heavyk]
+      c-cg_wight = s-sum(wabews_topk_heavy_fwom_wight)
 
-    ideal_ordering = sorted(labels, reverse=True)
-    cg_heavy = sum(ideal_ordering[: min(lightN, heavyK)])
+    i-ideaw_owdewing = sowted(wabews, ʘwʘ w-wevewse=twue)
+    c-cg_heavy = sum(ideaw_owdewing[: m-min(wightn, heavyk)])
 
-    out = 0.0
+    o-out = 0.0
     if cg_heavy != 0:
-      out = max(cg_light / cg_heavy, 0)
+      out = max(cg_wight / c-cg_heavy, :3 0)
 
-  return out
-
-
-def _get_weight(w, atK):
-  if not w:
-    return 1.0
-  elif len(w) <= atK:
-    return 0.0
-  else:
-    return w[atK]
+  w-wetuwn out
 
 
-def recall_at_nk(labels, predictions, n=None, k=None, w=None):
+d-def _get_weight(w, (˘ω˘) a-atk):
+  i-if not w:
+    wetuwn 1.0
+  ewif wen(w) <= atk:
+    wetuwn 0.0
+  e-ewse:
+    wetuwn w[atk]
+
+
+def wecaww_at_nk(wabews, 😳😳😳 pwedictions, ny=none, rawr x3 k=none, (✿oωo) w=none):
   """
-  Recall at N-K ranking metric
-  Args:
-    labels (list): A list of label values
-    predictions (list): A list of prediction values
-    n (int): size of the list at which of predictions to compute recall. (Light Ranking Predictions)
-             The default is None in which case the length of the provided predictions is used as L
-    k (int): size of the list at which of labels to compute recall. (Heavy Ranking Predictions)
-             The default is None in which case the length of the provided labels is used as L
-    w (list): weight vector sorted by labels
+  wecaww at ny-k w-wanking metwic
+  awgs:
+    wabews (wist): a wist of wabew vawues
+    p-pwedictions (wist): a-a wist o-of pwediction vawues
+    ny (int): s-size of the wist at which of p-pwedictions to c-compute wecaww. (ˆ ﻌ ˆ)♡ (wight wanking pwedictions)
+             the defauwt is nyone in which case the wength of the pwovided p-pwedictions is used as w
+    k-k (int): size of the wist at w-which of wabews t-to compute wecaww. :3 (heavy wanking pwedictions)
+             t-the d-defauwt is nyone in which case t-the wength of the p-pwovided wabews is used as w
+    w (wist): weight vectow sowted by wabews
   """
-  assert len(labels) == len(predictions)
+  a-assewt wen(wabews) == w-wen(pwedictions)
 
-  if not any(labels):
-    out = None
-  else:
+  i-if nyot any(wabews):
+    o-out = nyone
+  e-ewse:
 
-    safe_n = len(predictions) if not n else min(len(predictions), n)
-    safe_k = len(labels) if not k else min(len(labels), k)
+    safe_n = wen(pwedictions) i-if nyot ny ewse min(wen(pwedictions), (U ᵕ U❁) ny)
+    safe_k = wen(wabews) if nyot k ewse min(wen(wabews), ^^;; k-k)
 
-    labels_with_predictions = zip(labels, predictions)
-    sorted_labels_with_predictions = sorted(
-      labels_with_predictions, key=lambda x: x[0], reverse=True
+    w-wabews_with_pwedictions = zip(wabews, mya pwedictions)
+    sowted_wabews_with_pwedictions = s-sowted(
+      w-wabews_with_pwedictions, 😳😳😳 key=wambda x: x[0], OwO wevewse=twue
     )
 
-    order_sorted_labels_predictions = zip(range(len(labels)), *zip(*sorted_labels_with_predictions))
+    owdew_sowted_wabews_pwedictions = z-zip(wange(wen(wabews)), rawr *zip(*sowted_wabews_with_pwedictions))
 
-    order_with_predictions = [
-      (order, pred) for order, label, pred in order_sorted_labels_predictions
+    owdew_with_pwedictions = [
+      (owdew, XD pwed) fow owdew, (U ﹏ U) wabew, pwed in owdew_sowted_wabews_pwedictions
     ]
-    order_with_sorted_predictions = sorted(order_with_predictions, key=lambda x: x[1], reverse=True)
+    owdew_with_sowted_pwedictions = s-sowted(owdew_with_pwedictions, (˘ω˘) key=wambda x: x[1], UwU wevewse=twue)
 
-    pred_sorted_order_at_n = [order for order, _ in order_with_sorted_predictions][:safe_n]
+    pwed_sowted_owdew_at_n = [owdew fow o-owdew, >_< _ in owdew_with_sowted_pwedictions][:safe_n]
 
-    intersection_weight = [
-      _get_weight(w, order) if order < safe_k else 0 for order in pred_sorted_order_at_n
+    i-intewsection_weight = [
+      _get_weight(w, σωσ owdew) if owdew < safe_k ewse 0 fow owdew i-in pwed_sowted_owdew_at_n
     ]
 
-    intersection_score = sum(intersection_weight)
-    full_score = sum(w) if w else float(safe_k)
+    i-intewsection_scowe = sum(intewsection_weight)
+    fuww_scowe = sum(w) if w-w ewse fwoat(safe_k)
 
     out = 0.0
-    if full_score != 0:
-      out = intersection_score / full_score
+    i-if fuww_scowe != 0:
+      out = intewsection_scowe / fuww_scowe
 
-  return out
+  wetuwn o-out
 
 
-class ExpectedLossGroupedMetricsConfiguration(GroupedMetricsConfiguration):
+cwass expectedwossgwoupedmetwicsconfiguwation(gwoupedmetwicsconfiguwation):
   """
-  This is the Expected Loss Grouped metric computation configuration.
-  """
-
-  def __init__(self, lightNs=[]):
-    """
-    Args:
-      lightNs (list): size of the list at which of Initial candidates to compute Expected Loss. (LightRanking)
-    """
-    self.lightNs = lightNs
-
-  @property
-  def name(self):
-    return "ExpectedLoss"
-
-  @property
-  def metrics_dict(self):
-    metrics_to_compute = {}
-    for lightN in self.lightNs:
-      metric_name = "ExpectedLoss_atLight_" + str(lightN)
-      metrics_to_compute[metric_name] = partial(score_loss_at_n, lightN=lightN)
-    return metrics_to_compute
-
-  def extract_label(self, prec, drec, drec_label):
-    return drec_label
-
-  def extract_prediction(self, prec, drec, drec_label):
-    return extract_prediction_from_prediction_record(prec)
-
-
-class CGRGroupedMetricsConfiguration(GroupedMetricsConfiguration):
-  """
-  This is the Cumulative Gain Ratio (CGR) Grouped metric computation configuration.
-  CGR at the max length of each session is the default.
-  CGR at additional positions can be computed by specifying a list of 'n's and 'k's
+  this i-is the expected w-woss gwouped metwic computation c-configuwation. 🥺
   """
 
-  def __init__(self, lightNs=[], heavyKs=[]):
+  def __init__(sewf, 🥺 w-wightns=[]):
     """
-    Args:
-      lightNs (list): size of the list at which of Initial candidates to compute CGR. (LightRanking)
-      heavyK (int):   size of the list at which of Refined candidates to compute CGR. (HeavyRanking)
+    a-awgs:
+      w-wightns (wist): size of the wist a-at which of initiaw c-candidates to compute expected woss. (wightwanking)
     """
-    self.lightNs = lightNs
-    self.heavyKs = heavyKs
+    s-sewf.wightns = w-wightns
 
-  @property
-  def name(self):
-    return "cgr"
+  @pwopewty
+  d-def nyame(sewf):
+    wetuwn "expectedwoss"
 
-  @property
-  def metrics_dict(self):
-    metrics_to_compute = {}
-    for lightN in self.lightNs:
-      for heavyK in self.heavyKs:
-        metric_name = "cgr_atLight_" + str(lightN) + "_atHeavy_" + str(heavyK)
-        metrics_to_compute[metric_name] = partial(cgr_at_nk, lightN=lightN, heavyK=heavyK)
-    return metrics_to_compute
+  @pwopewty
+  d-def metwics_dict(sewf):
+    metwics_to_compute = {}
+    fow w-wightn in sewf.wightns:
+      m-metwic_name = "expectedwoss_atwight_" + stw(wightn)
+      metwics_to_compute[metwic_name] = pawtiaw(scowe_woss_at_n, ʘwʘ w-wightn=wightn)
+    w-wetuwn m-metwics_to_compute
 
-  def extract_label(self, prec, drec, drec_label):
-    return drec_label
+  d-def extwact_wabew(sewf, :3 pwec, d-dwec, (U ﹏ U) dwec_wabew):
+    wetuwn dwec_wabew
 
-  def extract_prediction(self, prec, drec, drec_label):
-    return extract_prediction_from_prediction_record(prec)
+  def extwact_pwediction(sewf, (U ﹏ U) pwec, dwec, ʘwʘ dwec_wabew):
+    w-wetuwn extwact_pwediction_fwom_pwediction_wecowd(pwec)
 
 
-class RecallGroupedMetricsConfiguration(GroupedMetricsConfiguration):
+c-cwass cgwgwoupedmetwicsconfiguwation(gwoupedmetwicsconfiguwation):
   """
-  This is the Recall Grouped metric computation configuration.
-  Recall at the max length of each session is the default.
-  Recall at additional positions can be computed by specifying a list of 'n's and 'k's
+  this i-is the cumuwative gain watio (cgw) g-gwouped metwic computation c-configuwation. >w<
+  c-cgw at the max w-wength of each s-session is the defauwt. rawr x3
+  c-cgw at additionaw positions can be computed by specifying a wist of 'n's and 'k's
   """
 
-  def __init__(self, n=[], k=[], w=[]):
+  def __init__(sewf, OwO w-wightns=[], ^•ﻌ•^ h-heavyks=[]):
     """
-    Args:
-      n (list): A list of ints. List of prediction rank thresholds (for light)
-      k (list): A list of ints. List of label rank thresholds (for heavy)
+    a-awgs:
+      wightns (wist): s-size of the wist at which of initiaw candidates to compute c-cgw. >_< (wightwanking)
+      h-heavyk (int):   size o-of the wist at which of wefined candidates to c-compute cgw. OwO (heavywanking)
     """
-    self.predN = n
-    self.labelK = k
-    self.weight = w
+    s-sewf.wightns = wightns
+    s-sewf.heavyks = h-heavyks
 
-  @property
-  def name(self):
-    return "group_recall"
+  @pwopewty
+  def nyame(sewf):
+    wetuwn "cgw"
 
-  @property
-  def metrics_dict(self):
-    metrics_to_compute = {"group_recall_unweighted": recall_at_nk}
-    if not self.weight:
-      metrics_to_compute["group_recall_weighted"] = partial(recall_at_nk, w=self.weight)
+  @pwopewty
+  def metwics_dict(sewf):
+    metwics_to_compute = {}
+    fow wightn in s-sewf.wightns:
+      f-fow heavyk i-in sewf.heavyks:
+        m-metwic_name = "cgw_atwight_" + s-stw(wightn) + "_atheavy_" + stw(heavyk)
+        m-metwics_to_compute[metwic_name] = p-pawtiaw(cgw_at_nk, >_< wightn=wightn, (ꈍᴗꈍ) h-heavyk=heavyk)
+    wetuwn m-metwics_to_compute
 
-    if self.predN and self.labelK:
-      for n in self.predN:
-        for k in self.labelK:
-          if n >= k:
-            metrics_to_compute[
-              "group_recall_unweighted_at_L" + str(n) + "_at_H" + str(k)
-            ] = partial(recall_at_nk, n=n, k=k)
-            if self.weight:
-              metrics_to_compute[
-                "group_recall_weighted_at_L" + str(n) + "_at_H" + str(k)
-              ] = partial(recall_at_nk, n=n, k=k, w=self.weight)
+  def e-extwact_wabew(sewf, >w< pwec, dwec, (U ﹏ U) dwec_wabew):
+    w-wetuwn dwec_wabew
 
-    if self.labelK and not self.predN:
-      for k in self.labelK:
-        metrics_to_compute["group_recall_unweighted_at_full_at_H" + str(k)] = partial(
-          recall_at_nk, k=k
+  def extwact_pwediction(sewf, ^^ p-pwec, (U ﹏ U) dwec, dwec_wabew):
+    w-wetuwn extwact_pwediction_fwom_pwediction_wecowd(pwec)
+
+
+cwass wecawwgwoupedmetwicsconfiguwation(gwoupedmetwicsconfiguwation):
+  """
+  t-this is the wecaww gwouped metwic computation c-configuwation. :3
+  w-wecaww at t-the max wength of each session is the defauwt. (✿oωo)
+  wecaww at additionaw p-positions can be computed by specifying a w-wist of 'n's and 'k's
+  """
+
+  def __init__(sewf, XD n-ny=[], >w< k=[], w=[]):
+    """
+    awgs:
+      ny (wist): a-a wist of ints. òωó wist of p-pwediction wank t-thweshowds (fow wight)
+      k (wist): a wist of i-ints. (ꈍᴗꈍ) wist of wabew wank thweshowds (fow heavy)
+    """
+    s-sewf.pwedn = n-ny
+    sewf.wabewk = k-k
+    sewf.weight = w
+
+  @pwopewty
+  d-def nyame(sewf):
+    w-wetuwn "gwoup_wecaww"
+
+  @pwopewty
+  def m-metwics_dict(sewf):
+    metwics_to_compute = {"gwoup_wecaww_unweighted": wecaww_at_nk}
+    if nyot sewf.weight:
+      metwics_to_compute["gwoup_wecaww_weighted"] = pawtiaw(wecaww_at_nk, rawr x3 w=sewf.weight)
+
+    if sewf.pwedn and sewf.wabewk:
+      fow ny in sewf.pwedn:
+        fow k in sewf.wabewk:
+          i-if ny >= k:
+            m-metwics_to_compute[
+              "gwoup_wecaww_unweighted_at_w" + stw(n) + "_at_h" + stw(k)
+            ] = pawtiaw(wecaww_at_nk, rawr x3 ny=n, k-k=k)
+            i-if sewf.weight:
+              m-metwics_to_compute[
+                "gwoup_wecaww_weighted_at_w" + stw(n) + "_at_h" + s-stw(k)
+              ] = pawtiaw(wecaww_at_nk, σωσ n-ny=n, k=k, w-w=sewf.weight)
+
+    if sewf.wabewk a-and nyot sewf.pwedn:
+      f-fow k in sewf.wabewk:
+        m-metwics_to_compute["gwoup_wecaww_unweighted_at_fuww_at_h" + stw(k)] = pawtiaw(
+          w-wecaww_at_nk, (ꈍᴗꈍ) k-k=k
         )
-        if self.weight:
-          metrics_to_compute["group_recall_weighted_at_full_at_H" + str(k)] = partial(
-            recall_at_nk, k=k, w=self.weight
+        i-if s-sewf.weight:
+          m-metwics_to_compute["gwoup_wecaww_weighted_at_fuww_at_h" + s-stw(k)] = pawtiaw(
+            w-wecaww_at_nk, k=k, rawr w-w=sewf.weight
           )
-    return metrics_to_compute
+    w-wetuwn metwics_to_compute
 
-  def extract_label(self, prec, drec, drec_label):
-    return drec_label
+  def e-extwact_wabew(sewf, ^^;; p-pwec, rawr x3 dwec, d-dwec_wabew):
+    wetuwn dwec_wabew
 
-  def extract_prediction(self, prec, drec, drec_label):
-    return extract_prediction_from_prediction_record(prec)
+  d-def extwact_pwediction(sewf, (ˆ ﻌ ˆ)♡ pwec, dwec, dwec_wabew):
+    w-wetuwn extwact_pwediction_fwom_pwediction_wecowd(pwec)

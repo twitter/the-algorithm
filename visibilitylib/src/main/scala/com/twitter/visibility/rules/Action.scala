@@ -1,916 +1,916 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.datatools.entityservice.entities.thriftscala.FleetInterstitial
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.visibility.common.actions.LocalizedMessage
-import com.twitter.visibility.common.actions._
-import com.twitter.visibility.common.actions.converter.scala.AppealableReasonConverter
-import com.twitter.visibility.common.actions.converter.scala.AvoidReasonConverter
-import com.twitter.visibility.common.actions.converter.scala.ComplianceTweetNoticeEventTypeConverter
-import com.twitter.visibility.common.actions.converter.scala.DownrankHomeTimelineReasonConverter
-import com.twitter.visibility.common.actions.converter.scala.DropReasonConverter
-import com.twitter.visibility.common.actions.converter.scala.InterstitialReasonConverter
-import com.twitter.visibility.common.actions.converter.scala.LimitedActionsPolicyConverter
-import com.twitter.visibility.common.actions.converter.scala.LimitedEngagementReasonConverter
-import com.twitter.visibility.common.actions.converter.scala.LocalizedMessageConverter
-import com.twitter.visibility.common.actions.converter.scala.SoftInterventionDisplayTypeConverter
-import com.twitter.visibility.common.actions.converter.scala.SoftInterventionReasonConverter
-import com.twitter.visibility.common.actions.converter.scala.TombstoneReasonConverter
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.logging.thriftscala.HealthActionType
-import com.twitter.visibility.models.ViolationLevel
-import com.twitter.visibility.strato.thriftscala.NudgeActionType.EnumUnknownNudgeActionType
-import com.twitter.visibility.strato.thriftscala.{Nudge => StratoNudge}
-import com.twitter.visibility.strato.thriftscala.{NudgeAction => StratoNudgeAction}
-import com.twitter.visibility.strato.thriftscala.{NudgeActionType => StratoNudgeActionType}
-import com.twitter.visibility.strato.thriftscala.{NudgeActionPayload => StratoNudgeActionPayload}
-import com.twitter.visibility.thriftscala
-import com.twitter.visibility.util.NamingUtils
+impowt com.twittew.datatoows.entitysewvice.entities.thwiftscawa.fweetintewstitiaw
+i-impowt com.twittew.scwooge.thwiftstwuct
+impowt c-com.twittew.visibiwity.common.actions.wocawizedmessage
+i-impowt c-com.twittew.visibiwity.common.actions._
+i-impowt c-com.twittew.visibiwity.common.actions.convewtew.scawa.appeawabweweasonconvewtew
+i-impowt com.twittew.visibiwity.common.actions.convewtew.scawa.avoidweasonconvewtew
+i-impowt com.twittew.visibiwity.common.actions.convewtew.scawa.compwiancetweetnoticeeventtypeconvewtew
+impowt com.twittew.visibiwity.common.actions.convewtew.scawa.downwankhometimewineweasonconvewtew
+impowt com.twittew.visibiwity.common.actions.convewtew.scawa.dwopweasonconvewtew
+i-impowt com.twittew.visibiwity.common.actions.convewtew.scawa.intewstitiawweasonconvewtew
+impowt com.twittew.visibiwity.common.actions.convewtew.scawa.wimitedactionspowicyconvewtew
+i-impowt com.twittew.visibiwity.common.actions.convewtew.scawa.wimitedengagementweasonconvewtew
+impowt c-com.twittew.visibiwity.common.actions.convewtew.scawa.wocawizedmessageconvewtew
+impowt com.twittew.visibiwity.common.actions.convewtew.scawa.softintewventiondispwaytypeconvewtew
+impowt com.twittew.visibiwity.common.actions.convewtew.scawa.softintewventionweasonconvewtew
+impowt com.twittew.visibiwity.common.actions.convewtew.scawa.tombstoneweasonconvewtew
+i-impowt com.twittew.visibiwity.featuwes.featuwe
+i-impowt c-com.twittew.visibiwity.wogging.thwiftscawa.heawthactiontype
+impowt com.twittew.visibiwity.modews.viowationwevew
+impowt com.twittew.visibiwity.stwato.thwiftscawa.nudgeactiontype.enumunknownnudgeactiontype
+impowt c-com.twittew.visibiwity.stwato.thwiftscawa.{nudge => stwatonudge}
+impowt com.twittew.visibiwity.stwato.thwiftscawa.{nudgeaction => stwatonudgeaction}
+impowt com.twittew.visibiwity.stwato.thwiftscawa.{nudgeactiontype => s-stwatonudgeactiontype}
+impowt com.twittew.visibiwity.stwato.thwiftscawa.{nudgeactionpaywoad => s-stwatonudgeactionpaywoad}
+i-impowt com.twittew.visibiwity.thwiftscawa
+i-impowt com.twittew.visibiwity.utiw.namingutiws
 
-sealed trait Action {
-  lazy val name: String = NamingUtils.getFriendlyName(this)
-  lazy val fullName: String = NamingUtils.getFriendlyName(this)
+s-seawed twait action {
+  wazy vaw nyame: stwing = n-nyamingutiws.getfwiendwyname(this)
+  wazy vaw fuwwname: stwing = n-nyamingutiws.getfwiendwyname(this)
 
-  val severity: Int
-  def toActionThrift(): thriftscala.Action
+  vaw sevewity: int
+  def toactionthwift(): thwiftscawa.action
 
-  def isComposable: Boolean = false
+  def iscomposabwe: b-boowean = fawse
 
-  def toHealthActionTypeThrift: Option[HealthActionType]
+  def t-toheawthactiontypethwift: o-option[heawthactiontype]
 }
 
-sealed trait Reason {
-  lazy val name: String = NamingUtils.getFriendlyName(this)
+s-seawed twait weason {
+  wazy vaw nyame: stwing = nyamingutiws.getfwiendwyname(this)
 }
 
-sealed abstract class ActionWithReason(reason: Reason) extends Action {
-  override lazy val fullName: String = s"${this.name}/${reason.name}"
+s-seawed a-abstwact cwass actionwithweason(weason: w-weason) e-extends action {
+  ovewwide w-wazy vaw fuwwname: stwing = s"${this.name}/${weason.name}"
 }
 
-object Reason {
+object w-weason {
 
-  case object Bounce extends Reason
+  case object bounce extends weason
 
-  case object ViewerReportedAuthor extends Reason
-  case object ViewerReportedTweet extends Reason
+  c-case object viewewwepowtedauthow e-extends weason
+  case object v-viewewwepowtedtweet e-extends weason
 
-  case object DeactivatedAuthor extends Reason
-  case object OffboardedAuthor extends Reason
-  case object ErasedAuthor extends Reason
-  case object ProtectedAuthor extends Reason
-  case object SuspendedAuthor extends Reason
-  case object ViewerIsUnmentioned extends Reason
+  case object deactivatedauthow extends weason
+  case object offboawdedauthow extends weason
+  c-case object e-ewasedauthow extends weason
+  c-case object pwotectedauthow e-extends w-weason
+  case object suspendedauthow extends weason
+  case o-object viewewisunmentioned extends weason
 
-  case object Nsfw extends Reason
-  case object NsfwMedia extends Reason
-  case object NsfwViewerIsUnderage extends Reason
-  case object NsfwViewerHasNoStatedAge extends Reason
-  case object NsfwLoggedOut extends Reason
-  case object PossiblyUndesirable extends Reason
+  case object nysfw extends weason
+  c-case object nysfwmedia extends w-weason
+  case object n-nysfwviewewisundewage e-extends weason
+  case o-object nysfwviewewhasnostatedage e-extends weason
+  c-case object nysfwwoggedout e-extends weason
+  case object possibwyundesiwabwe extends w-weason
 
-  case object AbuseEpisodic extends Reason
-  case object AbuseEpisodicEncourageSelfHarm extends Reason
-  case object AbuseEpisodicHatefulConduct extends Reason
-  case object AbuseGlorificationOfViolence extends Reason
-  case object AbuseGratuitousGore extends Reason
-  case object AbuseMobHarassment extends Reason
-  case object AbuseMomentOfDeathOrDeceasedUser extends Reason
-  case object AbusePrivateInformation extends Reason
-  case object AbuseRightToPrivacy extends Reason
-  case object AbuseThreatToExpose extends Reason
-  case object AbuseViolentSexualConduct extends Reason
-  case object AbuseViolentThreatHatefulConduct extends Reason
-  case object AbuseViolentThreatOrBounty extends Reason
+  c-case object abuseepisodic e-extends w-weason
+  case o-object abuseepisodicencouwagesewfhawm extends weason
+  case object abuseepisodichatefuwconduct e-extends weason
+  case object abusegwowificationofviowence extends weason
+  case object abusegwatuitousgowe extends w-weason
+  case object abusemobhawassment extends weason
+  case o-object abusemomentofdeathowdeceasedusew e-extends w-weason
+  case object abusepwivateinfowmation e-extends weason
+  case o-object abusewighttopwivacy extends w-weason
+  case object abusethweattoexpose extends weason
+  case object abuseviowentsexuawconduct extends weason
+  case object a-abuseviowentthweathatefuwconduct extends weason
+  c-case object abuseviowentthweatowbounty e-extends w-weason
 
-  case object MutedKeyword extends Reason
-  case object Unspecified extends Reason
+  case object mutedkeywowd extends w-weason
+  case object u-unspecified extends weason
 
-  case object UntrustedUrl extends Reason
+  c-case object untwusteduww e-extends weason
 
-  case object SpamReplyDownRank extends Reason
+  case object spamwepwydownwank extends weason
 
-  case object LowQualityTweet extends Reason
+  case o-object wowquawitytweet e-extends w-weason
 
-  case object LowQualityMention extends Reason
+  case object wowquawitymention e-extends w-weason
 
-  case object SpamHighRecallTweet extends Reason
+  case object spamhighwecawwtweet e-extends weason
 
-  case object TweetLabelDuplicateContent extends Reason
+  case object tweetwabewdupwicatecontent extends weason
 
-  case object TweetLabelDuplicateMention extends Reason
+  case object t-tweetwabewdupwicatemention e-extends weason
 
-  case object PdnaTweet extends Reason
+  case object pdnatweet e-extends weason
 
-  case object TweetLabeledSpam extends Reason
+  c-case object tweetwabewedspam extends weason
 
-  case object OneOff extends Reason
-  case object VotingMisinformation extends Reason
-  case object HackedMaterials extends Reason
-  case object Scams extends Reason
-  case object PlatformManipulation extends Reason
+  case object o-oneoff extends weason
+  case object votingmisinfowmation extends weason
+  case o-object hackedmatewiaws extends weason
+  case object s-scams extends w-weason
+  case object pwatfowmmanipuwation extends weason
 
-  case object FirstPageSearchResult extends Reason
+  c-case object fiwstpageseawchwesuwt e-extends weason
 
-  case object MisinfoCivic extends Reason
-  case object MisinfoCrisis extends Reason
-  case object MisinfoGeneric extends Reason
-  case object MisinfoMedical extends Reason
-  case object Misleading extends Reason
-  case object ExclusiveTweet extends Reason
-  case object CommunityNotAMember extends Reason
-  case object CommunityTweetHidden extends Reason
-  case object CommunityTweetCommunityIsSuspended extends Reason
-  case object CommunityTweetAuthorRemoved extends Reason
-  case object InternalPromotedContent extends Reason
-  case object TrustedFriendsTweet extends Reason
-  case object Toxicity extends Reason
-  case object StaleTweet extends Reason
-  case object DmcaWithheld extends Reason
-  case object LegalDemandsWithheld extends Reason
-  case object LocalLawsWithheld extends Reason
-  case object HatefulConduct extends Reason
-  case object AbusiveBehavior extends Reason
+  case object misinfocivic extends weason
+  case o-object misinfocwisis extends w-weason
+  case object misinfogenewic extends weason
+  case object m-misinfomedicaw extends weason
+  c-case object misweading e-extends weason
+  case object e-excwusivetweet extends weason
+  c-case object c-communitynotamembew e-extends weason
+  case object c-communitytweethidden e-extends weason
+  case object communitytweetcommunityissuspended e-extends weason
+  c-case object c-communitytweetauthowwemoved extends weason
+  case object intewnawpwomotedcontent e-extends weason
+  case object t-twustedfwiendstweet e-extends weason
+  case object toxicity extends weason
+  case o-object stawetweet e-extends weason
+  c-case object d-dmcawithhewd extends weason
+  case o-object wegawdemandswithhewd extends weason
+  case object wocawwawswithhewd extends weason
+  case object hatefuwconduct extends w-weason
+  case object abusivebehaviow e-extends weason
 
-  case object NotSupportedOnDevice extends Reason
+  case object n-nyotsuppowtedondevice extends w-weason
 
-  case object IpiDevelopmentOnly extends Reason
-  case object InterstitialDevelopmentOnly extends Reason
+  case object ipidevewopmentonwy e-extends w-weason
+  case o-object intewstitiawdevewopmentonwy e-extends weason
 
-  case class FosnrReason(appealableReason: AppealableReason) extends Reason
+  c-case cwass fosnwweason(appeawabweweason: appeawabweweason) extends weason
 
-  def toDropReason(reason: Reason): Option[DropReason] =
-    reason match {
-      case AuthorBlocksViewer => Some(DropReason.AuthorBlocksViewer)
-      case CommunityTweetHidden => Some(DropReason.CommunityTweetHidden)
-      case CommunityTweetCommunityIsSuspended => Some(DropReason.CommunityTweetCommunityIsSuspended)
-      case DmcaWithheld => Some(DropReason.DmcaWithheld)
-      case ExclusiveTweet => Some(DropReason.ExclusiveTweet)
-      case InternalPromotedContent => Some(DropReason.InternalPromotedContent)
-      case LegalDemandsWithheld => Some(DropReason.LegalDemandsWithheld)
-      case LocalLawsWithheld => Some(DropReason.LocalLawsWithheld)
-      case Nsfw => Some(DropReason.NsfwAuthor)
-      case NsfwLoggedOut => Some(DropReason.NsfwLoggedOut)
-      case NsfwViewerHasNoStatedAge => Some(DropReason.NsfwViewerHasNoStatedAge)
-      case NsfwViewerIsUnderage => Some(DropReason.NsfwViewerIsUnderage)
-      case ProtectedAuthor => Some(DropReason.ProtectedAuthor)
-      case StaleTweet => Some(DropReason.StaleTweet)
-      case SuspendedAuthor => Some(DropReason.SuspendedAuthor)
-      case Unspecified => Some(DropReason.Unspecified)
-      case ViewerBlocksAuthor => Some(DropReason.ViewerBlocksAuthor)
-      case ViewerHardMutedAuthor => Some(DropReason.ViewerMutesAuthor)
-      case ViewerMutesAuthor => Some(DropReason.ViewerMutesAuthor)
-      case TrustedFriendsTweet => Some(DropReason.TrustedFriendsTweet)
-      case _ => Some(DropReason.Unspecified)
+  def todwopweason(weason: weason): option[dwopweason] =
+    w-weason match {
+      c-case authowbwocksviewew => s-some(dwopweason.authowbwocksviewew)
+      case communitytweethidden => s-some(dwopweason.communitytweethidden)
+      case communitytweetcommunityissuspended => some(dwopweason.communitytweetcommunityissuspended)
+      case dmcawithhewd => s-some(dwopweason.dmcawithhewd)
+      c-case excwusivetweet => some(dwopweason.excwusivetweet)
+      c-case intewnawpwomotedcontent => some(dwopweason.intewnawpwomotedcontent)
+      c-case w-wegawdemandswithhewd => some(dwopweason.wegawdemandswithhewd)
+      c-case wocawwawswithhewd => s-some(dwopweason.wocawwawswithhewd)
+      case nysfw => some(dwopweason.nsfwauthow)
+      case nysfwwoggedout => some(dwopweason.nsfwwoggedout)
+      c-case nysfwviewewhasnostatedage => s-some(dwopweason.nsfwviewewhasnostatedage)
+      c-case nysfwviewewisundewage => s-some(dwopweason.nsfwviewewisundewage)
+      c-case pwotectedauthow => some(dwopweason.pwotectedauthow)
+      c-case stawetweet => s-some(dwopweason.stawetweet)
+      case suspendedauthow => s-some(dwopweason.suspendedauthow)
+      c-case unspecified => some(dwopweason.unspecified)
+      c-case viewewbwocksauthow => some(dwopweason.viewewbwocksauthow)
+      c-case viewewhawdmutedauthow => some(dwopweason.viewewmutesauthow)
+      c-case viewewmutesauthow => s-some(dwopweason.viewewmutesauthow)
+      case twustedfwiendstweet => s-some(dwopweason.twustedfwiendstweet)
+      case _ => some(dwopweason.unspecified)
     }
 
-  def fromDropReason(dropReason: DropReason): Reason =
-    dropReason match {
-      case DropReason.AuthorBlocksViewer => AuthorBlocksViewer
-      case DropReason.CommunityTweetHidden => CommunityTweetHidden
-      case DropReason.CommunityTweetCommunityIsSuspended => CommunityTweetCommunityIsSuspended
-      case DropReason.DmcaWithheld => DmcaWithheld
-      case DropReason.ExclusiveTweet => ExclusiveTweet
-      case DropReason.InternalPromotedContent => InternalPromotedContent
-      case DropReason.LegalDemandsWithheld => LegalDemandsWithheld
-      case DropReason.LocalLawsWithheld => LocalLawsWithheld
-      case DropReason.NsfwAuthor => Nsfw
-      case DropReason.NsfwLoggedOut => NsfwLoggedOut
-      case DropReason.NsfwViewerHasNoStatedAge => NsfwViewerHasNoStatedAge
-      case DropReason.NsfwViewerIsUnderage => NsfwViewerIsUnderage
-      case DropReason.ProtectedAuthor => ProtectedAuthor
-      case DropReason.StaleTweet => StaleTweet
-      case DropReason.SuspendedAuthor => SuspendedAuthor
-      case DropReason.ViewerBlocksAuthor => ViewerBlocksAuthor
-      case DropReason.ViewerMutesAuthor => ViewerMutesAuthor
-      case DropReason.TrustedFriendsTweet => TrustedFriendsTweet
-      case DropReason.Unspecified => Unspecified
+  def fwomdwopweason(dwopweason: d-dwopweason): weason =
+    d-dwopweason m-match {
+      case dwopweason.authowbwocksviewew => authowbwocksviewew
+      case dwopweason.communitytweethidden => c-communitytweethidden
+      case dwopweason.communitytweetcommunityissuspended => communitytweetcommunityissuspended
+      c-case dwopweason.dmcawithhewd => d-dmcawithhewd
+      case dwopweason.excwusivetweet => e-excwusivetweet
+      case d-dwopweason.intewnawpwomotedcontent => i-intewnawpwomotedcontent
+      case dwopweason.wegawdemandswithhewd => wegawdemandswithhewd
+      case dwopweason.wocawwawswithhewd => wocawwawswithhewd
+      c-case dwopweason.nsfwauthow => nysfw
+      case dwopweason.nsfwwoggedout => n-nysfwwoggedout
+      c-case dwopweason.nsfwviewewhasnostatedage => nysfwviewewhasnostatedage
+      c-case dwopweason.nsfwviewewisundewage => nysfwviewewisundewage
+      c-case dwopweason.pwotectedauthow => p-pwotectedauthow
+      c-case dwopweason.stawetweet => stawetweet
+      case dwopweason.suspendedauthow => suspendedauthow
+      case dwopweason.viewewbwocksauthow => viewewbwocksauthow
+      case dwopweason.viewewmutesauthow => viewewmutesauthow
+      case dwopweason.twustedfwiendstweet => twustedfwiendstweet
+      case dwopweason.unspecified => unspecified
     }
 
-  def toAppealableReason(reason: Reason, violationLevel: ViolationLevel): Option[AppealableReason] =
-    reason match {
-      case HatefulConduct => Some(AppealableReason.HatefulConduct(violationLevel.level))
-      case AbusiveBehavior => Some(AppealableReason.AbusiveBehavior(violationLevel.level))
-      case _ => Some(AppealableReason.Unspecified(violationLevel.level))
+  def toappeawabweweason(weason: w-weason, v-viowationwevew: viowationwevew): option[appeawabweweason] =
+    w-weason match {
+      c-case hatefuwconduct => s-some(appeawabweweason.hatefuwconduct(viowationwevew.wevew))
+      case a-abusivebehaviow => some(appeawabweweason.abusivebehaviow(viowationwevew.wevew))
+      c-case _ => s-some(appeawabweweason.unspecified(viowationwevew.wevew))
     }
 
-  def fromAppealableReason(appealableReason: AppealableReason): Reason =
-    appealableReason match {
-      case AppealableReason.HatefulConduct(level) => HatefulConduct
-      case AppealableReason.AbusiveBehavior(level) => AbusiveBehavior
-      case AppealableReason.Unspecified(level) => Unspecified
+  def fwomappeawabweweason(appeawabweweason: a-appeawabweweason): weason =
+    a-appeawabweweason m-match {
+      case appeawabweweason.hatefuwconduct(wevew) => hatefuwconduct
+      c-case appeawabweweason.abusivebehaviow(wevew) => a-abusivebehaviow
+      c-case appeawabweweason.unspecified(wevew) => u-unspecified
     }
 
-  def toSoftInterventionReason(appealableReason: AppealableReason): SoftInterventionReason =
-    appealableReason match {
-      case AppealableReason.HatefulConduct(level) =>
-        SoftInterventionReason.FosnrReason(appealableReason)
-      case AppealableReason.AbusiveBehavior(level) =>
-        SoftInterventionReason.FosnrReason(appealableReason)
-      case AppealableReason.Unspecified(level) =>
-        SoftInterventionReason.FosnrReason(appealableReason)
+  d-def tosoftintewventionweason(appeawabweweason: a-appeawabweweason): s-softintewventionweason =
+    a-appeawabweweason m-match {
+      case appeawabweweason.hatefuwconduct(wevew) =>
+        softintewventionweason.fosnwweason(appeawabweweason)
+      c-case appeawabweweason.abusivebehaviow(wevew) =>
+        s-softintewventionweason.fosnwweason(appeawabweweason)
+      c-case appeawabweweason.unspecified(wevew) =>
+        s-softintewventionweason.fosnwweason(appeawabweweason)
     }
 
-  def toLimitedEngagementReason(appealableReason: AppealableReason): LimitedEngagementReason =
-    appealableReason match {
-      case AppealableReason.HatefulConduct(level) =>
-        LimitedEngagementReason.FosnrReason(appealableReason)
-      case AppealableReason.AbusiveBehavior(level) =>
-        LimitedEngagementReason.FosnrReason(appealableReason)
-      case AppealableReason.Unspecified(level) =>
-        LimitedEngagementReason.FosnrReason(appealableReason)
+  def towimitedengagementweason(appeawabweweason: appeawabweweason): wimitedengagementweason =
+    a-appeawabweweason match {
+      case a-appeawabweweason.hatefuwconduct(wevew) =>
+        w-wimitedengagementweason.fosnwweason(appeawabweweason)
+      c-case appeawabweweason.abusivebehaviow(wevew) =>
+        wimitedengagementweason.fosnwweason(appeawabweweason)
+      c-case appeawabweweason.unspecified(wevew) =>
+        wimitedengagementweason.fosnwweason(appeawabweweason)
     }
 
-  val NSFW_MEDIA: Set[Reason] = Set(Nsfw, NsfwMedia)
+  v-vaw nysfw_media: set[weason] = s-set(nsfw, >w< nysfwmedia)
 
-  def toInterstitialReason(reason: Reason): Option[InterstitialReason] =
-    reason match {
-      case r if NSFW_MEDIA.contains(r) => Some(InterstitialReason.ContainsNsfwMedia)
-      case PossiblyUndesirable => Some(InterstitialReason.PossiblyUndesirable)
-      case MutedKeyword => Some(InterstitialReason.MatchesMutedKeyword(""))
-      case ViewerReportedAuthor => Some(InterstitialReason.ViewerReportedAuthor)
-      case ViewerReportedTweet => Some(InterstitialReason.ViewerReportedTweet)
-      case ViewerBlocksAuthor => Some(InterstitialReason.ViewerBlocksAuthor)
-      case ViewerMutesAuthor => Some(InterstitialReason.ViewerMutesAuthor)
-      case ViewerHardMutedAuthor => Some(InterstitialReason.ViewerMutesAuthor)
-      case InterstitialDevelopmentOnly => Some(InterstitialReason.DevelopmentOnly)
-      case DmcaWithheld => Some(InterstitialReason.DmcaWithheld)
-      case LegalDemandsWithheld => Some(InterstitialReason.LegalDemandsWithheld)
-      case LocalLawsWithheld => Some(InterstitialReason.LocalLawsWithheld)
-      case HatefulConduct => Some(InterstitialReason.HatefulConduct)
-      case AbusiveBehavior => Some(InterstitialReason.AbusiveBehavior)
-      case FosnrReason(appealableReason) => Some(InterstitialReason.FosnrReason(appealableReason))
-      case _ => None
+  d-def tointewstitiawweason(weason: weason): option[intewstitiawweason] =
+    weason match {
+      case w if nysfw_media.contains(w) => s-some(intewstitiawweason.containsnsfwmedia)
+      case possibwyundesiwabwe => s-some(intewstitiawweason.possibwyundesiwabwe)
+      c-case mutedkeywowd => some(intewstitiawweason.matchesmutedkeywowd(""))
+      case viewewwepowtedauthow => some(intewstitiawweason.viewewwepowtedauthow)
+      case viewewwepowtedtweet => some(intewstitiawweason.viewewwepowtedtweet)
+      c-case viewewbwocksauthow => some(intewstitiawweason.viewewbwocksauthow)
+      case v-viewewmutesauthow => s-some(intewstitiawweason.viewewmutesauthow)
+      c-case viewewhawdmutedauthow => some(intewstitiawweason.viewewmutesauthow)
+      case intewstitiawdevewopmentonwy => s-some(intewstitiawweason.devewopmentonwy)
+      c-case dmcawithhewd => s-some(intewstitiawweason.dmcawithhewd)
+      case wegawdemandswithhewd => s-some(intewstitiawweason.wegawdemandswithhewd)
+      case w-wocawwawswithhewd => s-some(intewstitiawweason.wocawwawswithhewd)
+      c-case hatefuwconduct => some(intewstitiawweason.hatefuwconduct)
+      c-case a-abusivebehaviow => s-some(intewstitiawweason.abusivebehaviow)
+      c-case fosnwweason(appeawabweweason) => some(intewstitiawweason.fosnwweason(appeawabweweason))
+      c-case _ => n-nyone
     }
 
-  def fromInterstitialReason(interstitialReason: InterstitialReason): Reason =
-    interstitialReason match {
-      case InterstitialReason.ContainsNsfwMedia => Reason.NsfwMedia
-      case InterstitialReason.PossiblyUndesirable => Reason.PossiblyUndesirable
-      case InterstitialReason.MatchesMutedKeyword(_) => Reason.MutedKeyword
-      case InterstitialReason.ViewerReportedAuthor => Reason.ViewerReportedAuthor
-      case InterstitialReason.ViewerReportedTweet => Reason.ViewerReportedTweet
-      case InterstitialReason.ViewerBlocksAuthor => Reason.ViewerBlocksAuthor
-      case InterstitialReason.ViewerMutesAuthor => Reason.ViewerMutesAuthor
-      case InterstitialReason.DevelopmentOnly => Reason.InterstitialDevelopmentOnly
-      case InterstitialReason.DmcaWithheld => Reason.DmcaWithheld
-      case InterstitialReason.LegalDemandsWithheld => Reason.LegalDemandsWithheld
-      case InterstitialReason.LocalLawsWithheld => Reason.LocalLawsWithheld
-      case InterstitialReason.HatefulConduct => Reason.HatefulConduct
-      case InterstitialReason.AbusiveBehavior => Reason.AbusiveBehavior
-      case InterstitialReason.FosnrReason(reason) => Reason.fromAppealableReason(reason)
+  d-def fwomintewstitiawweason(intewstitiawweason: i-intewstitiawweason): w-weason =
+    i-intewstitiawweason m-match {
+      c-case intewstitiawweason.containsnsfwmedia => weason.nsfwmedia
+      c-case intewstitiawweason.possibwyundesiwabwe => weason.possibwyundesiwabwe
+      c-case intewstitiawweason.matchesmutedkeywowd(_) => weason.mutedkeywowd
+      c-case intewstitiawweason.viewewwepowtedauthow => w-weason.viewewwepowtedauthow
+      c-case intewstitiawweason.viewewwepowtedtweet => weason.viewewwepowtedtweet
+      case intewstitiawweason.viewewbwocksauthow => weason.viewewbwocksauthow
+      c-case intewstitiawweason.viewewmutesauthow => w-weason.viewewmutesauthow
+      case i-intewstitiawweason.devewopmentonwy => weason.intewstitiawdevewopmentonwy
+      case intewstitiawweason.dmcawithhewd => weason.dmcawithhewd
+      c-case intewstitiawweason.wegawdemandswithhewd => w-weason.wegawdemandswithhewd
+      case intewstitiawweason.wocawwawswithhewd => w-weason.wocawwawswithhewd
+      c-case intewstitiawweason.hatefuwconduct => weason.hatefuwconduct
+      case intewstitiawweason.abusivebehaviow => weason.abusivebehaviow
+      c-case intewstitiawweason.fosnwweason(weason) => w-weason.fwomappeawabweweason(weason)
     }
 
 }
 
-sealed trait Epitaph {
-  lazy val name: String = NamingUtils.getFriendlyName(this)
+s-seawed t-twait epitaph {
+  wazy vaw nyame: stwing = n-nyamingutiws.getfwiendwyname(this)
 }
 
-object Epitaph {
+o-object epitaph {
 
-  case object Unavailable extends Epitaph
+  case object unavaiwabwe e-extends epitaph
 
-  case object Blocked extends Epitaph
-  case object BlockedBy extends Epitaph
-  case object Reported extends Epitaph
+  case object bwocked extends e-epitaph
+  case object bwockedby e-extends epitaph
+  c-case object wepowted extends e-epitaph
 
-  case object BounceDeleted extends Epitaph
-  case object Deleted extends Epitaph
-  case object NotFound extends Epitaph
-  case object PublicInterest extends Epitaph
+  case o-object bouncedeweted extends epitaph
+  c-case object deweted extends e-epitaph
+  case o-object nyotfound e-extends epitaph
+  c-case object pubwicintewest e-extends epitaph
 
-  case object Bounced extends Epitaph
-  case object Protected extends Epitaph
-  case object Suspended extends Epitaph
-  case object Offboarded extends Epitaph
-  case object Deactivated extends Epitaph
+  c-case object bounced e-extends epitaph
+  case object p-pwotected extends epitaph
+  case object suspended e-extends epitaph
+  c-case object o-offboawded extends epitaph
+  case object deactivated extends epitaph
 
-  case object MutedKeyword extends Epitaph
-  case object Underage extends Epitaph
-  case object NoStatedAge extends Epitaph
-  case object LoggedOutAge extends Epitaph
-  case object SuperFollowsContent extends Epitaph
+  case o-object mutedkeywowd extends epitaph
+  c-case object u-undewage extends epitaph
+  case object nyostatedage e-extends epitaph
+  case object w-woggedoutage e-extends epitaph
+  c-case object s-supewfowwowscontent e-extends epitaph
 
-  case object Moderated extends Epitaph
-  case object ForEmergencyUseOnly extends Epitaph
-  case object UnavailableWithoutLink extends Epitaph
-  case object CommunityTweetHidden extends Epitaph
-  case object CommunityTweetMemberRemoved extends Epitaph
-  case object CommunityTweetCommunityIsSuspended extends Epitaph
+  case object modewated extends epitaph
+  case object fowemewgencyuseonwy e-extends epitaph
+  case object unavaiwabwewithoutwink e-extends epitaph
+  case object communitytweethidden extends e-epitaph
+  case object communitytweetmembewwemoved extends epitaph
+  case object communitytweetcommunityissuspended e-extends epitaph
 
-  case object UserSuspended extends Epitaph
+  c-case object usewsuspended e-extends epitaph
 
-  case object DevelopmentOnly extends Epitaph
+  case object devewopmentonwy extends epitaph
 
-  case object AdultMedia extends Epitaph
-  case object ViolentMedia extends Epitaph
-  case object OtherSensitiveMedia extends Epitaph
+  c-case object aduwtmedia e-extends epitaph
+  case o-object viowentmedia extends epitaph
+  c-case object othewsensitivemedia extends epitaph
 
-  case object DmcaWithheldMedia extends Epitaph
-  case object LegalDemandsWithheldMedia extends Epitaph
-  case object LocalLawsWithheldMedia extends Epitaph
+  case object d-dmcawithhewdmedia extends epitaph
+  case object w-wegawdemandswithhewdmedia extends e-epitaph
+  c-case object wocawwawswithhewdmedia extends epitaph
 
-  case object ToxicReplyFiltered extends Epitaph
+  case object t-toxicwepwyfiwtewed extends epitaph
 }
 
-sealed trait IsInterstitial {
-  def toInterstitialThriftWrapper(): thriftscala.AnyInterstitial
-  def toInterstitialThrift(): ThriftStruct
+seawed twait isintewstitiaw {
+  def tointewstitiawthwiftwwappew(): t-thwiftscawa.anyintewstitiaw
+  d-def tointewstitiawthwift(): t-thwiftstwuct
 }
 
-sealed trait IsAppealable {
-  def toAppealableThrift(): thriftscala.Appealable
+s-seawed twait isappeawabwe {
+  def toappeawabwethwift(): t-thwiftscawa.appeawabwe
 }
 
-sealed trait IsLimitedEngagements {
-  def policy: Option[LimitedActionsPolicy]
-  def getLimitedEngagementReason: LimitedEngagementReason
+s-seawed twait iswimitedengagements {
+  def p-powicy: option[wimitedactionspowicy]
+  def getwimitedengagementweason: wimitedengagementweason
 }
 
-object IsLimitedEngagements {
-  def unapply(
-    ile: IsLimitedEngagements
-  ): Option[(Option[LimitedActionsPolicy], LimitedEngagementReason)] = {
-    Some((ile.policy, ile.getLimitedEngagementReason))
+o-object iswimitedengagements {
+  def unappwy(
+    iwe: iswimitedengagements
+  ): o-option[(option[wimitedactionspowicy], ʘwʘ w-wimitedengagementweason)] = {
+    some((iwe.powicy, :3 i-iwe.getwimitedengagementweason))
   }
 }
 
-sealed abstract class ActionWithEpitaph(epitaph: Epitaph) extends Action {
-  override lazy val fullName: String = s"${this.name}/${epitaph.name}"
+s-seawed abstwact c-cwass actionwithepitaph(epitaph: epitaph) extends action {
+  o-ovewwide wazy vaw fuwwname: stwing = s"${this.name}/${epitaph.name}"
 }
 
-case class Appealable(
-  reason: Reason,
-  violationLevel: ViolationLevel,
-  localizedMessage: Option[LocalizedMessage] = None)
-    extends ActionWithReason(reason)
-    with IsAppealable {
+c-case cwass appeawabwe(
+  weason: weason, ^•ﻌ•^
+  viowationwevew: v-viowationwevew,
+  w-wocawizedmessage: o-option[wocawizedmessage] = n-nyone)
+    e-extends actionwithweason(weason)
+    with isappeawabwe {
 
-  override val severity: Int = 17
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.Appealable(toAppealableThrift())
+  o-ovewwide vaw sevewity: int = 17
+  ovewwide d-def toactionthwift(): thwiftscawa.action =
+    t-thwiftscawa.action.appeawabwe(toappeawabwethwift())
 
-  override def toAppealableThrift(): thriftscala.Appealable =
-    thriftscala.Appealable(
-      Reason.toAppealableReason(reason, violationLevel).map(AppealableReasonConverter.toThrift),
-      localizedMessage.map(LocalizedMessageConverter.toThrift)
+  ovewwide def toappeawabwethwift(): t-thwiftscawa.appeawabwe =
+    t-thwiftscawa.appeawabwe(
+      weason.toappeawabweweason(weason, (ˆ ﻌ ˆ)♡ v-viowationwevew).map(appeawabweweasonconvewtew.tothwift), 🥺
+      wocawizedmessage.map(wocawizedmessageconvewtew.tothwift)
     )
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(
-    HealthActionType.Appealable)
+  o-ovewwide d-def toheawthactiontypethwift: option[heawthactiontype] = s-some(
+    heawthactiontype.appeawabwe)
 }
 
-case class Drop(reason: Reason, applicableCountries: Option[Seq[String]] = None)
-    extends ActionWithReason(reason) {
+c-case cwass dwop(weason: w-weason, OwO appwicabwecountwies: option[seq[stwing]] = nyone)
+    extends actionwithweason(weason) {
 
-  override val severity: Int = 16
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.Drop(
-      thriftscala.Drop(
-        Reason.toDropReason(reason).map(DropReasonConverter.toThrift),
-        applicableCountries
+  ovewwide vaw s-sevewity: int = 16
+  ovewwide d-def toactionthwift(): thwiftscawa.action =
+    thwiftscawa.action.dwop(
+      thwiftscawa.dwop(
+        w-weason.todwopweason(weason).map(dwopweasonconvewtew.tothwift), 🥺
+        a-appwicabwecountwies
       ))
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(HealthActionType.Drop)
+  o-ovewwide def toheawthactiontypethwift: option[heawthactiontype] = s-some(heawthactiontype.dwop)
 }
 
-case class Interstitial(
-  reason: Reason,
-  localizedMessage: Option[LocalizedMessage] = None,
-  applicableCountries: Option[Seq[String]] = None)
-    extends ActionWithReason(reason)
-    with IsInterstitial {
+c-case cwass intewstitiaw(
+  weason: w-weason, OwO
+  wocawizedmessage: option[wocawizedmessage] = n-nyone, (U ᵕ U❁)
+  appwicabwecountwies: o-option[seq[stwing]] = nyone)
+    e-extends actionwithweason(weason)
+    with isintewstitiaw {
 
-  override val severity: Int = 10
-  override def toInterstitialThriftWrapper(): thriftscala.AnyInterstitial =
-    thriftscala.AnyInterstitial.Interstitial(
-      toInterstitialThrift()
+  ovewwide vaw sevewity: int = 10
+  o-ovewwide d-def tointewstitiawthwiftwwappew(): thwiftscawa.anyintewstitiaw =
+    thwiftscawa.anyintewstitiaw.intewstitiaw(
+      tointewstitiawthwift()
     )
 
-  override def toInterstitialThrift(): thriftscala.Interstitial =
-    thriftscala.Interstitial(
-      Reason.toInterstitialReason(reason).map(InterstitialReasonConverter.toThrift),
-      localizedMessage.map(LocalizedMessageConverter.toThrift)
+  o-ovewwide def tointewstitiawthwift(): t-thwiftscawa.intewstitiaw =
+    t-thwiftscawa.intewstitiaw(
+      weason.tointewstitiawweason(weason).map(intewstitiawweasonconvewtew.tothwift), ( ͡o ω ͡o )
+      wocawizedmessage.map(wocawizedmessageconvewtew.tothwift)
     )
 
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.Interstitial(toInterstitialThrift())
+  ovewwide def toactionthwift(): t-thwiftscawa.action =
+    thwiftscawa.action.intewstitiaw(tointewstitiawthwift())
 
-  def toMediaActionThrift(): thriftscala.MediaAction =
-    thriftscala.MediaAction.Interstitial(toInterstitialThrift())
+  def tomediaactionthwift(): t-thwiftscawa.mediaaction =
+    thwiftscawa.mediaaction.intewstitiaw(tointewstitiawthwift())
 
-  override def isComposable: Boolean = true
+  ovewwide def iscomposabwe: b-boowean = t-twue
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(
-    HealthActionType.TweetInterstitial)
+  ovewwide def toheawthactiontypethwift: o-option[heawthactiontype] = s-some(
+    h-heawthactiontype.tweetintewstitiaw)
 }
 
-case class InterstitialLimitedEngagements(
-  reason: Reason,
-  limitedEngagementReason: Option[LimitedEngagementReason],
-  localizedMessage: Option[LocalizedMessage] = None,
-  policy: Option[LimitedActionsPolicy] = None)
-    extends ActionWithReason(reason)
-    with IsInterstitial
-    with IsLimitedEngagements {
+case c-cwass intewstitiawwimitedengagements(
+  w-weason: w-weason, ^•ﻌ•^
+  wimitedengagementweason: option[wimitedengagementweason], o.O
+  wocawizedmessage: option[wocawizedmessage] = nyone, (⑅˘꒳˘)
+  powicy: option[wimitedactionspowicy] = n-nyone)
+    e-extends actionwithweason(weason)
+    w-with isintewstitiaw
+    with i-iswimitedengagements {
 
-  override val severity: Int = 11
-  override def toInterstitialThriftWrapper(): thriftscala.AnyInterstitial =
-    thriftscala.AnyInterstitial.InterstitialLimitedEngagements(
-      toInterstitialThrift()
+  o-ovewwide v-vaw sevewity: int = 11
+  ovewwide def tointewstitiawthwiftwwappew(): thwiftscawa.anyintewstitiaw =
+    thwiftscawa.anyintewstitiaw.intewstitiawwimitedengagements(
+      t-tointewstitiawthwift()
     )
 
-  override def toInterstitialThrift(): thriftscala.InterstitialLimitedEngagements =
-    thriftscala.InterstitialLimitedEngagements(
-      limitedEngagementReason.map(LimitedEngagementReasonConverter.toThrift),
-      localizedMessage.map(LocalizedMessageConverter.toThrift)
+  o-ovewwide def tointewstitiawthwift(): thwiftscawa.intewstitiawwimitedengagements =
+    thwiftscawa.intewstitiawwimitedengagements(
+      wimitedengagementweason.map(wimitedengagementweasonconvewtew.tothwift), (ˆ ﻌ ˆ)♡
+      w-wocawizedmessage.map(wocawizedmessageconvewtew.tothwift)
     )
 
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.InterstitialLimitedEngagements(toInterstitialThrift())
+  o-ovewwide d-def toactionthwift(): thwiftscawa.action =
+    thwiftscawa.action.intewstitiawwimitedengagements(tointewstitiawthwift())
 
-  override def isComposable: Boolean = true
+  o-ovewwide def iscomposabwe: boowean = t-twue
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(
-    HealthActionType.LimitedEngagements)
+  ovewwide d-def toheawthactiontypethwift: option[heawthactiontype] = some(
+    h-heawthactiontype.wimitedengagements)
 
-  def getLimitedEngagementReason: LimitedEngagementReason = limitedEngagementReason.getOrElse(
-    LimitedEngagementReason.NonCompliant
+  def g-getwimitedengagementweason: w-wimitedengagementweason = wimitedengagementweason.getowewse(
+    wimitedengagementweason.noncompwiant
   )
 }
 
-case object Allow extends Action {
+c-case o-object awwow extends a-action {
 
-  override val severity: Int = -1
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.Allow(thriftscala.Allow())
+  o-ovewwide vaw sevewity: i-int = -1
+  o-ovewwide def toactionthwift(): t-thwiftscawa.action =
+    t-thwiftscawa.action.awwow(thwiftscawa.awwow())
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = None
+  ovewwide d-def toheawthactiontypethwift: option[heawthactiontype] = nyone
 }
 
-case object NotEvaluated extends Action {
+c-case object nyotevawuated e-extends action {
 
-  override val severity: Int = -1
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.NotEvaluated(thriftscala.NotEvaluated())
+  ovewwide vaw s-sevewity: int = -1
+  o-ovewwide def toactionthwift(): thwiftscawa.action =
+    thwiftscawa.action.notevawuated(thwiftscawa.notevawuated())
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = None
+  o-ovewwide def toheawthactiontypethwift: option[heawthactiontype] = n-nyone
 }
 
-case class Tombstone(epitaph: Epitaph, applicableCountryCodes: Option[Seq[String]] = None)
-    extends ActionWithEpitaph(epitaph) {
+case cwass t-tombstone(epitaph: epitaph, :3 appwicabwecountwycodes: o-option[seq[stwing]] = n-nyone)
+    extends a-actionwithepitaph(epitaph) {
 
-  override val severity: Int = 15
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.Tombstone(thriftscala.Tombstone())
+  ovewwide vaw sevewity: int = 15
+  o-ovewwide def t-toactionthwift(): thwiftscawa.action =
+    t-thwiftscawa.action.tombstone(thwiftscawa.tombstone())
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(HealthActionType.Tombstone)
+  o-ovewwide def toheawthactiontypethwift: option[heawthactiontype] = s-some(heawthactiontype.tombstone)
 }
 
-case class LocalizedTombstone(reason: TombstoneReason, message: LocalizedMessage) extends Action {
-  override lazy val fullName: String = s"${this.name}/${NamingUtils.getFriendlyName(reason)}"
+c-case cwass w-wocawizedtombstone(weason: t-tombstoneweason, /(^•ω•^) message: wocawizedmessage) extends action {
+  ovewwide wazy vaw fuwwname: stwing = s"${this.name}/${namingutiws.getfwiendwyname(weason)}"
 
-  override val severity: Int = 15
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.Tombstone(
-      thriftscala.Tombstone(
-        reason = TombstoneReasonConverter.toThrift(Some(reason)),
-        message = Some(LocalizedMessageConverter.toThrift(message))
+  o-ovewwide v-vaw sevewity: i-int = 15
+  o-ovewwide def toactionthwift(): thwiftscawa.action =
+    t-thwiftscawa.action.tombstone(
+      t-thwiftscawa.tombstone(
+        weason = t-tombstoneweasonconvewtew.tothwift(some(weason)), òωó
+        m-message = some(wocawizedmessageconvewtew.tothwift(message))
       ))
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(HealthActionType.Tombstone)
+  o-ovewwide def t-toheawthactiontypethwift: option[heawthactiontype] = some(heawthactiontype.tombstone)
 }
 
-case class DownrankHomeTimeline(reason: Option[DownrankHomeTimelineReason]) extends Action {
+c-case cwass downwankhometimewine(weason: option[downwankhometimewineweason]) e-extends action {
 
-  override val severity: Int = 9
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.DownrankHomeTimeline(toDownrankThrift())
+  ovewwide v-vaw sevewity: i-int = 9
+  ovewwide def toactionthwift(): t-thwiftscawa.action =
+    t-thwiftscawa.action.downwankhometimewine(todownwankthwift())
 
-  def toDownrankThrift(): thriftscala.DownrankHomeTimeline =
-    thriftscala.DownrankHomeTimeline(
-      reason.map(DownrankHomeTimelineReasonConverter.toThrift)
+  d-def todownwankthwift(): thwiftscawa.downwankhometimewine =
+    t-thwiftscawa.downwankhometimewine(
+      w-weason.map(downwankhometimewineweasonconvewtew.tothwift)
     )
 
-  override def isComposable: Boolean = true
+  ovewwide d-def iscomposabwe: boowean = t-twue
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(HealthActionType.Downrank)
+  ovewwide d-def toheawthactiontypethwift: o-option[heawthactiontype] = some(heawthactiontype.downwank)
 }
 
-case class Avoid(avoidReason: Option[AvoidReason] = None) extends Action {
+c-case cwass avoid(avoidweason: option[avoidweason] = n-nyone) extends action {
 
-  override val severity: Int = 1
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.Avoid(toAvoidThrift())
+  ovewwide vaw sevewity: int = 1
+  ovewwide def toactionthwift(): thwiftscawa.action =
+    thwiftscawa.action.avoid(toavoidthwift())
 
-  def toAvoidThrift(): thriftscala.Avoid =
-    thriftscala.Avoid(
-      avoidReason.map(AvoidReasonConverter.toThrift)
+  d-def toavoidthwift(): thwiftscawa.avoid =
+    thwiftscawa.avoid(
+      avoidweason.map(avoidweasonconvewtew.tothwift)
     )
 
-  override def isComposable: Boolean = true
+  ovewwide def iscomposabwe: boowean = twue
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(HealthActionType.Avoid)
+  ovewwide d-def toheawthactiontypethwift: option[heawthactiontype] = some(heawthactiontype.avoid)
 }
 
-case object Downrank extends Action {
+c-case object downwank extends action {
 
-  override val severity: Int = 0
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.Downrank(thriftscala.Downrank())
+  o-ovewwide vaw sevewity: int = 0
+  ovewwide d-def toactionthwift(): thwiftscawa.action =
+    t-thwiftscawa.action.downwank(thwiftscawa.downwank())
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(HealthActionType.Downrank)
+  ovewwide d-def toheawthactiontypethwift: o-option[heawthactiontype] = some(heawthactiontype.downwank)
 }
 
-case object ConversationSectionLowQuality extends Action {
+case o-object convewsationsectionwowquawity extends action {
 
-  override val severity: Int = 4
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.ConversationSectionLowQuality(thriftscala.ConversationSectionLowQuality())
+  ovewwide vaw sevewity: i-int = 4
+  ovewwide def toactionthwift(): t-thwiftscawa.action =
+    thwiftscawa.action.convewsationsectionwowquawity(thwiftscawa.convewsationsectionwowquawity())
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(
-    HealthActionType.ConversationSectionLowQuality)
+  o-ovewwide def toheawthactiontypethwift: o-option[heawthactiontype] = s-some(
+    heawthactiontype.convewsationsectionwowquawity)
 }
 
-case object ConversationSectionAbusiveQuality extends Action {
+case object c-convewsationsectionabusivequawity extends action {
 
-  override val severity: Int = 5
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.ConversationSectionAbusiveQuality(
-      thriftscala.ConversationSectionAbusiveQuality())
+  ovewwide v-vaw sevewity: int = 5
+  ovewwide def toactionthwift(): thwiftscawa.action =
+    thwiftscawa.action.convewsationsectionabusivequawity(
+      t-thwiftscawa.convewsationsectionabusivequawity())
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(
-    HealthActionType.ConversationSectionAbusiveQuality)
+  o-ovewwide def toheawthactiontypethwift: option[heawthactiontype] = s-some(
+    heawthactiontype.convewsationsectionabusivequawity)
 
-  def toConversationSectionAbusiveQualityThrift(): thriftscala.ConversationSectionAbusiveQuality =
-    thriftscala.ConversationSectionAbusiveQuality()
+  d-def toconvewsationsectionabusivequawitythwift(): thwiftscawa.convewsationsectionabusivequawity =
+    t-thwiftscawa.convewsationsectionabusivequawity()
 }
 
-case class LimitedEngagements(
-  reason: LimitedEngagementReason,
-  policy: Option[LimitedActionsPolicy] = None)
-    extends Action
-    with IsLimitedEngagements {
+case cwass wimitedengagements(
+  weason: wimitedengagementweason, :3
+  powicy: o-option[wimitedactionspowicy] = n-nyone)
+    extends action
+    w-with iswimitedengagements {
 
-  override val severity: Int = 6
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.LimitedEngagements(toLimitedEngagementsThrift())
+  o-ovewwide vaw sevewity: int = 6
+  o-ovewwide def toactionthwift(): thwiftscawa.action =
+    t-thwiftscawa.action.wimitedengagements(towimitedengagementsthwift())
 
-  def toLimitedEngagementsThrift(): thriftscala.LimitedEngagements =
-    thriftscala.LimitedEngagements(
-      Some(LimitedEngagementReasonConverter.toThrift(reason)),
-      policy.map(LimitedActionsPolicyConverter.toThrift),
-      Some(reason.toLimitedActionsString)
+  def towimitedengagementsthwift(): thwiftscawa.wimitedengagements =
+    t-thwiftscawa.wimitedengagements(
+      s-some(wimitedengagementweasonconvewtew.tothwift(weason)), (˘ω˘)
+      powicy.map(wimitedactionspowicyconvewtew.tothwift), 😳
+      some(weason.towimitedactionsstwing)
     )
 
-  override def isComposable: Boolean = true
+  ovewwide def i-iscomposabwe: boowean = twue
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(
-    HealthActionType.LimitedEngagements)
+  ovewwide def toheawthactiontypethwift: option[heawthactiontype] = some(
+    heawthactiontype.wimitedengagements)
 
-  def getLimitedEngagementReason: LimitedEngagementReason = reason
+  def getwimitedengagementweason: wimitedengagementweason = w-weason
 }
 
-case class EmergencyDynamicInterstitial(
-  copy: String,
-  linkOpt: Option[String],
-  localizedMessage: Option[LocalizedMessage] = None,
-  policy: Option[LimitedActionsPolicy] = None)
-    extends Action
-    with IsInterstitial
-    with IsLimitedEngagements {
+case c-cwass emewgencydynamicintewstitiaw(
+  copy: stwing, σωσ
+  w-winkopt: option[stwing], UwU
+  w-wocawizedmessage: option[wocawizedmessage] = n-nyone, -.-
+  powicy: option[wimitedactionspowicy] = nyone)
+    extends action
+    with isintewstitiaw
+    w-with iswimitedengagements {
 
-  override val severity: Int = 11
-  override def toInterstitialThriftWrapper(): thriftscala.AnyInterstitial =
-    thriftscala.AnyInterstitial.EmergencyDynamicInterstitial(
-      toInterstitialThrift()
+  ovewwide vaw sevewity: int = 11
+  ovewwide def tointewstitiawthwiftwwappew(): t-thwiftscawa.anyintewstitiaw =
+    t-thwiftscawa.anyintewstitiaw.emewgencydynamicintewstitiaw(
+      t-tointewstitiawthwift()
     )
 
-  override def toInterstitialThrift(): thriftscala.EmergencyDynamicInterstitial =
-    thriftscala.EmergencyDynamicInterstitial(
-      copy,
-      linkOpt,
-      localizedMessage.map(LocalizedMessageConverter.toThrift)
+  ovewwide def tointewstitiawthwift(): thwiftscawa.emewgencydynamicintewstitiaw =
+    t-thwiftscawa.emewgencydynamicintewstitiaw(
+      c-copy, 🥺
+      w-winkopt, 😳😳😳
+      wocawizedmessage.map(wocawizedmessageconvewtew.tothwift)
     )
 
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.EmergencyDynamicInterstitial(toInterstitialThrift())
+  o-ovewwide def toactionthwift(): t-thwiftscawa.action =
+    thwiftscawa.action.emewgencydynamicintewstitiaw(tointewstitiawthwift())
 
-  override def isComposable: Boolean = true
+  o-ovewwide def iscomposabwe: b-boowean = twue
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(
-    HealthActionType.TweetInterstitial)
+  ovewwide def toheawthactiontypethwift: o-option[heawthactiontype] = some(
+    h-heawthactiontype.tweetintewstitiaw)
 
-  def getLimitedEngagementReason: LimitedEngagementReason = LimitedEngagementReason.NonCompliant
+  d-def getwimitedengagementweason: wimitedengagementweason = w-wimitedengagementweason.noncompwiant
 }
 
-case class SoftIntervention(
-  reason: SoftInterventionReason,
-  engagementNudge: Boolean,
-  suppressAutoplay: Boolean,
-  warning: Option[String] = None,
-  detailsUrl: Option[String] = None,
-  displayType: Option[SoftInterventionDisplayType] = None,
-  fleetInterstitial: Option[FleetInterstitial] = None)
-    extends Action {
+c-case cwass softintewvention(
+  w-weason: softintewventionweason, 🥺
+  e-engagementnudge: boowean, ^^
+  s-suppwessautopway: b-boowean, ^^;;
+  wawning: option[stwing] = nyone, >w<
+  d-detaiwsuww: option[stwing] = nyone,
+  dispwaytype: option[softintewventiondispwaytype] = nyone, σωσ
+  fweetintewstitiaw: option[fweetintewstitiaw] = nyone)
+    extends action {
 
-  override val severity: Int = 7
-  def toSoftInterventionThrift(): thriftscala.SoftIntervention =
-    thriftscala.SoftIntervention(
-      Some(SoftInterventionReasonConverter.toThrift(reason)),
-      engagementNudge = Some(engagementNudge),
-      suppressAutoplay = Some(suppressAutoplay),
-      warning = warning,
-      detailsUrl = detailsUrl,
-      displayType = SoftInterventionDisplayTypeConverter.toThrift(displayType)
+  o-ovewwide vaw sevewity: int = 7
+  def tosoftintewventionthwift(): t-thwiftscawa.softintewvention =
+    thwiftscawa.softintewvention(
+      s-some(softintewventionweasonconvewtew.tothwift(weason)), >w<
+      engagementnudge = some(engagementnudge), (⑅˘꒳˘)
+      s-suppwessautopway = some(suppwessautopway), òωó
+      wawning = w-wawning, (⑅˘꒳˘)
+      detaiwsuww = detaiwsuww, (ꈍᴗꈍ)
+      d-dispwaytype = softintewventiondispwaytypeconvewtew.tothwift(dispwaytype)
     )
 
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.SoftIntervention(toSoftInterventionThrift())
+  ovewwide def t-toactionthwift(): thwiftscawa.action =
+    thwiftscawa.action.softintewvention(tosoftintewventionthwift())
 
-  override def isComposable: Boolean = true
+  o-ovewwide def iscomposabwe: b-boowean = twue
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(
-    HealthActionType.SoftIntervention)
+  ovewwide def toheawthactiontypethwift: o-option[heawthactiontype] = s-some(
+    heawthactiontype.softintewvention)
 }
 
-case class TweetInterstitial(
-  interstitial: Option[IsInterstitial],
-  softIntervention: Option[SoftIntervention],
-  limitedEngagements: Option[LimitedEngagements],
-  downrank: Option[DownrankHomeTimeline],
-  avoid: Option[Avoid],
-  mediaInterstitial: Option[Interstitial] = None,
-  tweetVisibilityNudge: Option[TweetVisibilityNudge] = None,
-  abusiveQuality: Option[ConversationSectionAbusiveQuality.type] = None,
-  appealable: Option[Appealable] = None)
-    extends Action {
+case cwass tweetintewstitiaw(
+  i-intewstitiaw: option[isintewstitiaw], rawr x3
+  s-softintewvention: option[softintewvention], ( ͡o ω ͡o )
+  wimitedengagements: o-option[wimitedengagements], UwU
+  downwank: option[downwankhometimewine], ^^
+  avoid: option[avoid], (˘ω˘)
+  m-mediaintewstitiaw: option[intewstitiaw] = nyone, (ˆ ﻌ ˆ)♡
+  tweetvisibiwitynudge: option[tweetvisibiwitynudge] = n-nyone, OwO
+  abusivequawity: o-option[convewsationsectionabusivequawity.type] = n-nyone, 😳
+  appeawabwe: option[appeawabwe] = nyone)
+    e-extends action {
 
-  override val severity: Int = 12
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.TweetInterstitial(
-      thriftscala.TweetInterstitial(
-        interstitial.map(_.toInterstitialThriftWrapper()),
-        softIntervention.map(_.toSoftInterventionThrift()),
-        limitedEngagements.map(_.toLimitedEngagementsThrift()),
-        downrank.map(_.toDownrankThrift()),
-        avoid.map(_.toAvoidThrift()),
-        mediaInterstitial.map(_.toMediaActionThrift()),
-        tweetVisibilityNudge.map(_.toTweetVisbilityNudgeThrift()),
-        abusiveQuality.map(_.toConversationSectionAbusiveQualityThrift()),
-        appealable.map(_.toAppealableThrift())
+  ovewwide vaw s-sevewity: int = 12
+  ovewwide d-def toactionthwift(): t-thwiftscawa.action =
+    thwiftscawa.action.tweetintewstitiaw(
+      thwiftscawa.tweetintewstitiaw(
+        intewstitiaw.map(_.tointewstitiawthwiftwwappew()), UwU
+        softintewvention.map(_.tosoftintewventionthwift()), 🥺
+        wimitedengagements.map(_.towimitedengagementsthwift()), 😳😳😳
+        downwank.map(_.todownwankthwift()), ʘwʘ
+        a-avoid.map(_.toavoidthwift()), /(^•ω•^)
+        m-mediaintewstitiaw.map(_.tomediaactionthwift()), :3
+        tweetvisibiwitynudge.map(_.totweetvisbiwitynudgethwift()), :3
+        abusivequawity.map(_.toconvewsationsectionabusivequawitythwift()), mya
+        a-appeawabwe.map(_.toappeawabwethwift())
       )
     )
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(
-    HealthActionType.TweetInterstitial)
+  ovewwide def toheawthactiontypethwift: o-option[heawthactiontype] = s-some(
+    h-heawthactiontype.tweetintewstitiaw)
 }
 
-sealed trait LocalizedNudgeActionType
-object LocalizedNudgeActionType {
-  case object Reply extends LocalizedNudgeActionType
-  case object Retweet extends LocalizedNudgeActionType
-  case object Like extends LocalizedNudgeActionType
-  case object Share extends LocalizedNudgeActionType
-  case object Unspecified extends LocalizedNudgeActionType
+s-seawed t-twait wocawizednudgeactiontype
+o-object wocawizednudgeactiontype {
+  case object wepwy extends w-wocawizednudgeactiontype
+  c-case o-object wetweet extends w-wocawizednudgeactiontype
+  c-case object wike e-extends wocawizednudgeactiontype
+  case object s-shawe extends w-wocawizednudgeactiontype
+  c-case object unspecified extends wocawizednudgeactiontype
 
-  def toThrift(
-    localizedNudgeActionType: LocalizedNudgeActionType
-  ): thriftscala.TweetVisibilityNudgeActionType =
-    localizedNudgeActionType match {
-      case Reply => thriftscala.TweetVisibilityNudgeActionType.Reply
-      case Retweet => thriftscala.TweetVisibilityNudgeActionType.Retweet
-      case Like => thriftscala.TweetVisibilityNudgeActionType.Like
-      case Share => thriftscala.TweetVisibilityNudgeActionType.Share
-      case Unspecified =>
-        thriftscala.TweetVisibilityNudgeActionType.EnumUnknownTweetVisibilityNudgeActionType(5)
+  d-def tothwift(
+    wocawizednudgeactiontype: wocawizednudgeactiontype
+  ): t-thwiftscawa.tweetvisibiwitynudgeactiontype =
+    wocawizednudgeactiontype match {
+      c-case wepwy => t-thwiftscawa.tweetvisibiwitynudgeactiontype.wepwy
+      case wetweet => thwiftscawa.tweetvisibiwitynudgeactiontype.wetweet
+      case wike => t-thwiftscawa.tweetvisibiwitynudgeactiontype.wike
+      c-case shawe => thwiftscawa.tweetvisibiwitynudgeactiontype.shawe
+      case u-unspecified =>
+        t-thwiftscawa.tweetvisibiwitynudgeactiontype.enumunknowntweetvisibiwitynudgeactiontype(5)
     }
 
-  def fromStratoThrift(stratoNudgeActionType: StratoNudgeActionType): LocalizedNudgeActionType =
-    stratoNudgeActionType match {
-      case StratoNudgeActionType.Reply => Reply
-      case StratoNudgeActionType.Retweet => Retweet
-      case StratoNudgeActionType.Like => Like
-      case StratoNudgeActionType.Share => Share
-      case EnumUnknownNudgeActionType(_) => Unspecified
+  def fwomstwatothwift(stwatonudgeactiontype: stwatonudgeactiontype): w-wocawizednudgeactiontype =
+    stwatonudgeactiontype m-match {
+      case stwatonudgeactiontype.wepwy => wepwy
+      c-case stwatonudgeactiontype.wetweet => w-wetweet
+      case stwatonudgeactiontype.wike => wike
+      c-case stwatonudgeactiontype.shawe => shawe
+      case enumunknownnudgeactiontype(_) => unspecified
     }
 }
 
-case class LocalizedNudgeActionPayload(
-  heading: Option[String],
-  subheading: Option[String],
-  iconName: Option[String],
-  ctaTitle: Option[String],
-  ctaUrl: Option[String],
-  postCtaText: Option[String]) {
+case cwass wocawizednudgeactionpaywoad(
+  heading: o-option[stwing], (///ˬ///✿)
+  subheading: option[stwing], (⑅˘꒳˘)
+  i-iconname: option[stwing], :3
+  ctatitwe: o-option[stwing], /(^•ω•^)
+  c-ctauww: option[stwing], ^^;;
+  p-postctatext: o-option[stwing]) {
 
-  def toThrift(): thriftscala.TweetVisibilityNudgeActionPayload = {
-    thriftscala.TweetVisibilityNudgeActionPayload(
-      heading = heading,
-      subheading = subheading,
-      iconName = iconName,
-      ctaTitle = ctaTitle,
-      ctaUrl = ctaUrl,
-      postCtaText = postCtaText
+  d-def tothwift(): t-thwiftscawa.tweetvisibiwitynudgeactionpaywoad = {
+    t-thwiftscawa.tweetvisibiwitynudgeactionpaywoad(
+      heading = heading, (U ᵕ U❁)
+      subheading = s-subheading, (U ﹏ U)
+      i-iconname = i-iconname, mya
+      ctatitwe = c-ctatitwe, ^•ﻌ•^
+      c-ctauww = ctauww, (U ﹏ U)
+      p-postctatext = postctatext
     )
   }
 }
 
-object LocalizedNudgeActionPayload {
-  def fromStratoThrift(
-    stratoNudgeActionPayload: StratoNudgeActionPayload
-  ): LocalizedNudgeActionPayload =
-    LocalizedNudgeActionPayload(
-      heading = stratoNudgeActionPayload.heading,
-      subheading = stratoNudgeActionPayload.subheading,
-      iconName = stratoNudgeActionPayload.iconName,
-      ctaTitle = stratoNudgeActionPayload.ctaTitle,
-      ctaUrl = stratoNudgeActionPayload.ctaUrl,
-      postCtaText = stratoNudgeActionPayload.postCtaText
+o-object w-wocawizednudgeactionpaywoad {
+  d-def fwomstwatothwift(
+    stwatonudgeactionpaywoad: s-stwatonudgeactionpaywoad
+  ): w-wocawizednudgeactionpaywoad =
+    wocawizednudgeactionpaywoad(
+      h-heading = stwatonudgeactionpaywoad.heading, :3
+      s-subheading = s-stwatonudgeactionpaywoad.subheading, rawr x3
+      iconname = stwatonudgeactionpaywoad.iconname, 😳😳😳
+      ctatitwe = s-stwatonudgeactionpaywoad.ctatitwe, >w<
+      c-ctauww = stwatonudgeactionpaywoad.ctauww, òωó
+      p-postctatext = s-stwatonudgeactionpaywoad.postctatext
     )
 }
 
-case class LocalizedNudgeAction(
-  nudgeActionType: LocalizedNudgeActionType,
-  nudgeActionPayload: Option[LocalizedNudgeActionPayload]) {
-  def toThrift(): thriftscala.TweetVisibilityNudgeAction = {
-    thriftscala.TweetVisibilityNudgeAction(
-      tweetVisibilitynudgeActionType = LocalizedNudgeActionType.toThrift(nudgeActionType),
-      tweetVisibilityNudgeActionPayload = nudgeActionPayload.map(_.toThrift)
+case cwass wocawizednudgeaction(
+  n-nyudgeactiontype: wocawizednudgeactiontype, 😳
+  n-nyudgeactionpaywoad: o-option[wocawizednudgeactionpaywoad]) {
+  d-def tothwift(): t-thwiftscawa.tweetvisibiwitynudgeaction = {
+    t-thwiftscawa.tweetvisibiwitynudgeaction(
+      tweetvisibiwitynudgeactiontype = wocawizednudgeactiontype.tothwift(nudgeactiontype), (✿oωo)
+      t-tweetvisibiwitynudgeactionpaywoad = nyudgeactionpaywoad.map(_.tothwift)
     )
   }
 }
 
-object LocalizedNudgeAction {
-  def fromStratoThrift(stratoNudgeAction: StratoNudgeAction): LocalizedNudgeAction =
-    LocalizedNudgeAction(
-      nudgeActionType =
-        LocalizedNudgeActionType.fromStratoThrift(stratoNudgeAction.nudgeActionType),
-      nudgeActionPayload =
-        stratoNudgeAction.nudgeActionPayload.map(LocalizedNudgeActionPayload.fromStratoThrift)
+object wocawizednudgeaction {
+  def fwomstwatothwift(stwatonudgeaction: stwatonudgeaction): w-wocawizednudgeaction =
+    w-wocawizednudgeaction(
+      nyudgeactiontype =
+        wocawizednudgeactiontype.fwomstwatothwift(stwatonudgeaction.nudgeactiontype), OwO
+      nyudgeactionpaywoad =
+        s-stwatonudgeaction.nudgeactionpaywoad.map(wocawizednudgeactionpaywoad.fwomstwatothwift)
     )
 }
 
-case class LocalizedNudge(localizedNudgeActions: Seq[LocalizedNudgeAction])
+c-case cwass wocawizednudge(wocawizednudgeactions: seq[wocawizednudgeaction])
 
-case object LocalizedNudge {
-  def fromStratoThrift(stratoNudge: StratoNudge): LocalizedNudge =
-    LocalizedNudge(localizedNudgeActions =
-      stratoNudge.nudgeActions.map(LocalizedNudgeAction.fromStratoThrift))
+c-case object wocawizednudge {
+  def fwomstwatothwift(stwatonudge: s-stwatonudge): w-wocawizednudge =
+    w-wocawizednudge(wocawizednudgeactions =
+      stwatonudge.nudgeactions.map(wocawizednudgeaction.fwomstwatothwift))
 }
 
-case class TweetVisibilityNudge(
-  reason: TweetVisibilityNudgeReason,
-  localizedNudge: Option[LocalizedNudge] = None)
-    extends Action {
+case cwass tweetvisibiwitynudge(
+  weason: t-tweetvisibiwitynudgeweason, (U ﹏ U)
+  wocawizednudge: o-option[wocawizednudge] = nyone)
+    e-extends action {
 
-  override val severity: Int = 3
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.TweetVisibilityNudge(
-      localizedNudge match {
-        case Some(nudge) =>
-          thriftscala.TweetVisibilityNudge(
-            tweetVisibilityNudgeActions = Some(nudge.localizedNudgeActions.map(_.toThrift()))
+  ovewwide vaw sevewity: i-int = 3
+  ovewwide def toactionthwift(): t-thwiftscawa.action =
+    thwiftscawa.action.tweetvisibiwitynudge(
+      wocawizednudge m-match {
+        case some(nudge) =>
+          t-thwiftscawa.tweetvisibiwitynudge(
+            tweetvisibiwitynudgeactions = some(nudge.wocawizednudgeactions.map(_.tothwift()))
           )
-        case _ => thriftscala.TweetVisibilityNudge(tweetVisibilityNudgeActions = None)
+        case _ => thwiftscawa.tweetvisibiwitynudge(tweetvisibiwitynudgeactions = nyone)
       }
     )
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] =
-    Some(HealthActionType.TweetVisibilityNudge)
+  ovewwide def toheawthactiontypethwift: o-option[heawthactiontype] =
+    s-some(heawthactiontype.tweetvisibiwitynudge)
 
-  def toTweetVisbilityNudgeThrift(): thriftscala.TweetVisibilityNudge =
-    thriftscala.TweetVisibilityNudge(tweetVisibilityNudgeActions =
-      localizedNudge.map(_.localizedNudgeActions.map(_.toThrift())))
+  d-def t-totweetvisbiwitynudgethwift(): thwiftscawa.tweetvisibiwitynudge =
+    thwiftscawa.tweetvisibiwitynudge(tweetvisibiwitynudgeactions =
+      wocawizednudge.map(_.wocawizednudgeactions.map(_.tothwift())))
 }
 
-trait BaseComplianceTweetNotice {
-  val complianceTweetNoticeEventType: ComplianceTweetNoticeEventType
-  val details: Option[String]
-  val extendedDetailsUrl: Option[String]
+t-twait basecompwiancetweetnotice {
+  vaw compwiancetweetnoticeeventtype: compwiancetweetnoticeeventtype
+  v-vaw detaiws: o-option[stwing]
+  v-vaw extendeddetaiwsuww: o-option[stwing]
 }
 
-case class ComplianceTweetNoticePreEnrichment(
-  reason: Reason,
-  complianceTweetNoticeEventType: ComplianceTweetNoticeEventType,
-  details: Option[String] = None,
-  extendedDetailsUrl: Option[String] = None)
-    extends Action
-    with BaseComplianceTweetNotice {
+case cwass compwiancetweetnoticepweenwichment(
+  weason: weason, (ꈍᴗꈍ)
+  compwiancetweetnoticeeventtype: c-compwiancetweetnoticeeventtype, rawr
+  d-detaiws: option[stwing] = nyone, ^^
+  extendeddetaiwsuww: option[stwing] = n-nyone)
+    extends action
+    w-with basecompwiancetweetnotice {
 
-  override val severity: Int = 2
-  def toComplianceTweetNoticeThrift(): thriftscala.ComplianceTweetNotice =
-    thriftscala.ComplianceTweetNotice(
-      ComplianceTweetNoticeEventTypeConverter.toThrift(complianceTweetNoticeEventType),
-      ComplianceTweetNoticeEventTypeConverter.eventTypeToLabelTitle(complianceTweetNoticeEventType),
-      details,
-      extendedDetailsUrl
+  o-ovewwide v-vaw sevewity: int = 2
+  def tocompwiancetweetnoticethwift(): thwiftscawa.compwiancetweetnotice =
+    thwiftscawa.compwiancetweetnotice(
+      compwiancetweetnoticeeventtypeconvewtew.tothwift(compwiancetweetnoticeeventtype), rawr
+      c-compwiancetweetnoticeeventtypeconvewtew.eventtypetowabewtitwe(compwiancetweetnoticeeventtype), nyaa~~
+      detaiws, nyaa~~
+      e-extendeddetaiwsuww
     )
 
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.ComplianceTweetNotice(
-      toComplianceTweetNoticeThrift()
+  ovewwide def toactionthwift(): thwiftscawa.action =
+    t-thwiftscawa.action.compwiancetweetnotice(
+      tocompwiancetweetnoticethwift()
     )
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = None
+  o-ovewwide def toheawthactiontypethwift: option[heawthactiontype] = nyone
 
-  def toComplianceTweetNotice(): ComplianceTweetNotice = {
-    ComplianceTweetNotice(
-      complianceTweetNoticeEventType = complianceTweetNoticeEventType,
-      labelTitle = ComplianceTweetNoticeEventTypeConverter.eventTypeToLabelTitle(
-        complianceTweetNoticeEventType),
-      details = details,
-      extendedDetailsUrl = extendedDetailsUrl
+  d-def tocompwiancetweetnotice(): c-compwiancetweetnotice = {
+    c-compwiancetweetnotice(
+      c-compwiancetweetnoticeeventtype = c-compwiancetweetnoticeeventtype, o.O
+      wabewtitwe = c-compwiancetweetnoticeeventtypeconvewtew.eventtypetowabewtitwe(
+        c-compwiancetweetnoticeeventtype), òωó
+      detaiws = detaiws, ^^;;
+      e-extendeddetaiwsuww = extendeddetaiwsuww
     )
   }
 }
 
-case class ComplianceTweetNotice(
-  complianceTweetNoticeEventType: ComplianceTweetNoticeEventType,
-  labelTitle: Option[String] = None,
-  details: Option[String] = None,
-  extendedDetailsUrl: Option[String] = None)
-    extends Action
-    with BaseComplianceTweetNotice {
+case cwass compwiancetweetnotice(
+  c-compwiancetweetnoticeeventtype: compwiancetweetnoticeeventtype,
+  w-wabewtitwe: o-option[stwing] = nyone, rawr
+  detaiws: o-option[stwing] = n-nyone, ^•ﻌ•^
+  extendeddetaiwsuww: option[stwing] = nyone)
+    e-extends action
+    w-with basecompwiancetweetnotice {
 
-  override val severity: Int = 2
-  def toComplianceTweetNoticeThrift(): thriftscala.ComplianceTweetNotice =
-    thriftscala.ComplianceTweetNotice(
-      ComplianceTweetNoticeEventTypeConverter.toThrift(complianceTweetNoticeEventType),
-      labelTitle,
-      details,
-      extendedDetailsUrl
+  o-ovewwide v-vaw sevewity: int = 2
+  def tocompwiancetweetnoticethwift(): thwiftscawa.compwiancetweetnotice =
+    thwiftscawa.compwiancetweetnotice(
+      compwiancetweetnoticeeventtypeconvewtew.tothwift(compwiancetweetnoticeeventtype), nyaa~~
+      w-wabewtitwe, nyaa~~
+      detaiws, 😳😳😳
+      extendeddetaiwsuww
     )
 
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.ComplianceTweetNotice(
-      toComplianceTweetNoticeThrift()
+  o-ovewwide def toactionthwift(): thwiftscawa.action =
+    t-thwiftscawa.action.compwiancetweetnotice(
+      tocompwiancetweetnoticethwift()
     )
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = None
+  ovewwide def toheawthactiontypethwift: o-option[heawthactiontype] = nyone
 }
 
-object Action {
-  def toThrift[T <: Action](action: T): thriftscala.Action =
-    action.toActionThrift()
+o-object action {
+  d-def tothwift[t <: a-action](action: t): thwiftscawa.action =
+    a-action.toactionthwift()
 
-  def getFirstInterstitial(actions: Action*): Option[IsInterstitial] =
-    actions.collectFirst {
-      case ile: InterstitialLimitedEngagements => ile
-      case edi: EmergencyDynamicInterstitial => edi
-      case i: Interstitial => i
+  d-def getfiwstintewstitiaw(actions: a-action*): o-option[isintewstitiaw] =
+    a-actions.cowwectfiwst {
+      c-case iwe: intewstitiawwimitedengagements => iwe
+      c-case edi: e-emewgencydynamicintewstitiaw => e-edi
+      case i: intewstitiaw => i-i
     }
 
-  def getFirstSoftIntervention(actions: Action*): Option[SoftIntervention] =
-    actions.collectFirst {
-      case si: SoftIntervention => si
+  def getfiwstsoftintewvention(actions: action*): option[softintewvention] =
+    actions.cowwectfiwst {
+      case si: softintewvention => s-si
     }
 
-  def getFirstLimitedEngagements(actions: Action*): Option[LimitedEngagements] =
-    actions.collectFirst {
-      case le: LimitedEngagements => le
+  d-def getfiwstwimitedengagements(actions: action*): o-option[wimitedengagements] =
+    actions.cowwectfiwst {
+      case we: wimitedengagements => w-we
     }
 
-  def getAllLimitedEngagements(actions: Action*): Seq[IsLimitedEngagements] =
-    actions.collect {
-      case ile: IsLimitedEngagements => ile
+  def g-getawwwimitedengagements(actions: a-action*): seq[iswimitedengagements] =
+    actions.cowwect {
+      c-case iwe: iswimitedengagements => i-iwe
     }
 
-  def getFirstDownrankHomeTimeline(actions: Action*): Option[DownrankHomeTimeline] =
-    actions.collectFirst {
-      case dr: DownrankHomeTimeline => dr
+  def getfiwstdownwankhometimewine(actions: action*): option[downwankhometimewine] =
+    a-actions.cowwectfiwst {
+      c-case dw: downwankhometimewine => dw
     }
 
-  def getFirstAvoid(actions: Action*): Option[Avoid] =
-    actions.collectFirst {
-      case a: Avoid => a
+  def getfiwstavoid(actions: a-action*): option[avoid] =
+    actions.cowwectfiwst {
+      c-case a: avoid => a
     }
 
-  def getFirstMediaInterstitial(actions: Action*): Option[Interstitial] =
-    actions.collectFirst {
-      case i: Interstitial if Reason.NSFW_MEDIA.contains(i.reason) => i
+  def getfiwstmediaintewstitiaw(actions: a-action*): option[intewstitiaw] =
+    actions.cowwectfiwst {
+      c-case i: intewstitiaw if weason.nsfw_media.contains(i.weason) => i
     }
 
-  def getFirstTweetVisibilityNudge(actions: Action*): Option[TweetVisibilityNudge] =
-    actions.collectFirst {
-      case n: TweetVisibilityNudge => n
+  def g-getfiwsttweetvisibiwitynudge(actions: action*): o-option[tweetvisibiwitynudge] =
+    actions.cowwectfiwst {
+      c-case ny: tweetvisibiwitynudge => n-ny
     }
 }
 
-sealed trait State {
-  lazy val name: String = NamingUtils.getFriendlyName(this)
+seawed twait state {
+  wazy vaw nyame: s-stwing = nyamingutiws.getfwiendwyname(this)
 }
 
-object State {
-  case object Pending extends State
-  case object Disabled extends State
-  final case class MissingFeature(features: Set[Feature[_]]) extends State
-  final case class FeatureFailed(features: Map[Feature[_], Throwable]) extends State
-  final case class RuleFailed(throwable: Throwable) extends State
-  case object Skipped extends State
-  case object ShortCircuited extends State
-  case object Heldback extends State
-  case object Evaluated extends State
+object state {
+  case object p-pending extends s-state
+  case object d-disabwed extends state
+  finaw case cwass missingfeatuwe(featuwes: set[featuwe[_]]) extends state
+  finaw case c-cwass featuwefaiwed(featuwes: map[featuwe[_], 😳😳😳 thwowabwe]) extends s-state
+  finaw c-case cwass wuwefaiwed(thwowabwe: thwowabwe) extends state
+  c-case object skipped e-extends state
+  case object showtciwcuited extends state
+  case o-object hewdback extends state
+  c-case object evawuated extends state
 }
 
-case class RuleResult(action: Action, state: State)
+case c-cwass wuwewesuwt(action: a-action, σωσ state: state)

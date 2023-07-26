@@ -1,28 +1,28 @@
-package com.twitter.search.core.earlybird.facets;
+package com.twittew.seawch.cowe.eawwybiwd.facets;
 
 /**
- * This accumulator does not accumulate the facet counts when {@link #add(long, int, int, int)}
- * is called.
+ * this accumuwatow d-does not a-accumuwate the f-facet counts when {@wink #add(wong, mya i-int, mya int, i-int)}
+ * is cawwed. 😳
  */
-public class DummyFacetAccumulator<R> extends FacetAccumulator<R> {
+p-pubwic cwass d-dummyfacetaccumuwatow<w> e-extends facetaccumuwatow<w> {
 
-  @Override
-  public int add(long termID, int scoreIncrement, int penaltyCount, int tweepCred) {
-    return 0;
+  @ovewwide
+  pubwic int add(wong tewmid, XD int scoweincwement, :3 i-int penawtycount, 😳😳😳 int tweepcwed) {
+    w-wetuwn 0;
   }
 
-  @Override
-  public R getAllFacets() {
-    return null;
+  @ovewwide
+  pubwic w getawwfacets() {
+    w-wetuwn nyuww;
   }
 
-  @Override
-  public R getTopFacets(int n) {
-    return null;
+  @ovewwide
+  pubwic w gettopfacets(int n-ny) {
+    wetuwn nyuww;
   }
 
-  @Override
-  public void reset(FacetLabelProvider facetLabelProvider) {
+  @ovewwide
+  p-pubwic void weset(facetwabewpwovidew f-facetwabewpwovidew) {
   }
 
 }

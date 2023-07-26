@@ -1,47 +1,47 @@
-package com.twitter.tsp.columns
+package com.twittew.tsp.cowumns
 
-import com.twitter.stitch
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.config._
-import com.twitter.strato.config.AllowAll
-import com.twitter.strato.config.ContactInfo
-import com.twitter.strato.config.Policy
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
-import com.twitter.strato.data.Lifecycle.Production
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.tsp.thriftscala.TopicSocialProofRequest
-import com.twitter.tsp.thriftscala.TopicSocialProofResponse
-import com.twitter.tsp.service.TopicSocialProofService
-import javax.inject.Inject
+impowt com.twittew.stitch
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.stwato.catawog.opmetadata
+i-impowt com.twittew.stwato.config._
+i-impowt c-com.twittew.stwato.config.awwowaww
+i-impowt com.twittew.stwato.config.contactinfo
+impowt com.twittew.stwato.config.powicy
+impowt com.twittew.stwato.data.conv
+impowt c-com.twittew.stwato.data.descwiption.pwaintext
+impowt com.twittew.stwato.data.wifecycwe.pwoduction
+impowt com.twittew.stwato.fed.stwatofed
+impowt c-com.twittew.stwato.thwift.scwoogeconv
+impowt c-com.twittew.tsp.thwiftscawa.topicsociawpwoofwequest
+impowt com.twittew.tsp.thwiftscawa.topicsociawpwoofwesponse
+impowt com.twittew.tsp.sewvice.topicsociawpwoofsewvice
+impowt j-javax.inject.inject
 
-class TopicSocialProofColumn @Inject() (
-  topicSocialProofService: TopicSocialProofService)
-    extends StratoFed.Column(TopicSocialProofColumn.Path)
-    with StratoFed.Fetch.Stitch {
+cwass topicsociawpwoofcowumn @inject() (
+  t-topicsociawpwoofsewvice: t-topicsociawpwoofsewvice)
+    extends stwatofed.cowumn(topicsociawpwoofcowumn.path)
+    with stwatofed.fetch.stitch {
 
-  override type Key = TopicSocialProofRequest
-  override type View = Unit
-  override type Value = TopicSocialProofResponse
+  ovewwide type key = topicsociawpwoofwequest
+  o-ovewwide type view = unit
+  ovewwide type vawue = topicsociawpwoofwesponse
 
-  override val keyConv: Conv[Key] = ScroogeConv.fromStruct[TopicSocialProofRequest]
-  override val viewConv: Conv[View] = Conv.ofType
-  override val valueConv: Conv[Value] = ScroogeConv.fromStruct[TopicSocialProofResponse]
-  override val metadata: OpMetadata =
-    OpMetadata(lifecycle = Some(Production), Some(PlainText("Topic Social Proof Federated Column")))
+  ovewwide v-vaw keyconv: conv[key] = s-scwoogeconv.fwomstwuct[topicsociawpwoofwequest]
+  o-ovewwide vaw viewconv: c-conv[view] = c-conv.oftype
+  ovewwide vaw vawueconv: conv[vawue] = s-scwoogeconv.fwomstwuct[topicsociawpwoofwesponse]
+  ovewwide vaw metadata: o-opmetadata =
+    opmetadata(wifecycwe = some(pwoduction), (U ﹏ U) some(pwaintext("topic sociaw pwoof fedewated cowumn")))
 
-  override def fetch(key: Key, view: View): Stitch[Result[Value]] = {
-    topicSocialProofService
-      .topicSocialProofHandlerStoreStitch(key)
-      .map { result => found(result) }
-      .handle {
-        case stitch.NotFound => missing
+  o-ovewwide def fetch(key: k-key, (⑅˘꒳˘) view: view): s-stitch[wesuwt[vawue]] = {
+    t-topicsociawpwoofsewvice
+      .topicsociawpwoofhandwewstowestitch(key)
+      .map { wesuwt => found(wesuwt) }
+      .handwe {
+        case stitch.notfound => missing
       }
   }
 }
 
-object TopicSocialProofColumn {
-  val Path = "topic-signals/tsp/topic-social-proof"
+object topicsociawpwoofcowumn {
+  v-vaw path = "topic-signaws/tsp/topic-sociaw-pwoof"
 }

@@ -1,10 +1,10 @@
-package com.twitter.visibility.interfaces.spaces
+package com.twittew.visibiwity.intewfaces.spaces
 
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+impowt com.twittew.visibiwity.modews.safetywevew
+i-impowt com.twittew.visibiwity.modews.viewewcontext
 
-case class SpaceVisibilityRequest(
-  spaceId: String,
-  safetyLevel: SafetyLevel,
-  viewerContext: ViewerContext,
-  spaceHostAndAdminUserIds: Option[Seq[Long]])
+c-case cwass s-spacevisibiwitywequest(
+  s-spaceid: s-stwing, UwU
+  safetywevew: s-safetywevew, rawr x3
+  v-viewewcontext: v-viewewcontext, rawr
+  spacehostandadminusewids: option[seq[wong]])

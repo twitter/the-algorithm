@@ -1,299 +1,299 @@
-package com.twitter.simclusters_v2.scalding.embedding
+package com.twittew.simcwustews_v2.scawding.embedding
 
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.hermit.candidate.thriftscala.Candidate
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.scalding._
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2._
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.CosineSimilarityUtil
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+impowt com.twittew.bijection.injection
+i-impowt c-com.twittew.bijection.scwooge.compactscawacodec
+i-impowt com.twittew.hewmit.candidate.thwiftscawa.candidate
+i-impowt c-com.twittew.hewmit.candidate.thwiftscawa.candidates
+i-impowt c-com.twittew.scawding._
+i-impowt com.twittew.scawding.commons.souwce.vewsionedkeyvawsouwce
+impowt com.twittew.scawding_intewnaw.dawv2.dawwwite._
+impowt com.twittew.scawding_intewnaw.dawv2._
+impowt c-com.twittew.scawding_intewnaw.dawv2.wemote_access.awwowcwosscwustewsamedc
+impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+i-impowt com.twittew.simcwustews_v2.common.cosinesimiwawityutiw
+impowt com.twittew.simcwustews_v2.hdfs_souwces._
+i-impowt com.twittew.simcwustews_v2.thwiftscawa._
+impowt com.twittew.wtf.scawding.jobs.common.adhocexecutionapp
+impowt com.twittew.wtf.scawding.jobs.common.scheduwedexecutionapp
+impowt java.utiw.timezone
 
 /**
-capesospy-v2 update --build_locally --start_cron \
-  --start_cron similar_users_by_simclusters_embeddings_job \
-  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+c-capesospy-v2 update --buiwd_wocawwy --stawt_cwon \
+  --stawt_cwon simiwaw_usews_by_simcwustews_embeddings_job \
+  s-swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc3.yamw
  */
-object SimilarUsersBySimClustersEmbeddingBatchApp extends ScheduledExecutionApp {
+o-object simiwawusewsbysimcwustewsembeddingbatchapp extends scheduwedexecutionapp {
 
-  override val firstTime: RichDate = RichDate("2019-07-10")
+  ovewwide vaw fiwsttime: w-wichdate = wichdate("2019-07-10")
 
-  override val batchIncrement: Duration = Days(7)
+  ovewwide vaw batchincwement: duwation = d-days(7)
 
-  private val outputByFav =
-    "/user/cassowary/manhattan_sequence_files/similar_users_by_simclusters_embeddings/by_fav"
-  private val outputByFollow =
-    "/user/cassowary/manhattan_sequence_files/similar_users_by_simclusters_embeddings/by_follow"
+  pwivate vaw outputbyfav =
+    "/usew/cassowawy/manhattan_sequence_fiwes/simiwaw_usews_by_simcwustews_embeddings/by_fav"
+  p-pwivate v-vaw outputbyfowwow =
+    "/usew/cassowawy/manhattan_sequence_fiwes/simiwaw_usews_by_simcwustews_embeddings/by_fowwow"
 
-  private implicit val valueInj: CompactScalaCodec[Candidates] = CompactScalaCodec(Candidates)
+  p-pwivate i-impwicit vaw vawueinj: compactscawacodec[candidates] = compactscawacodec(candidates)
 
-  private val topClusterEmbeddingsByFavScore = DAL
-    .readMostRecentSnapshotNoOlderThan(
-      ProducerTopKSimclusterEmbeddingsByFavScoreUpdatedScalaDataset,
-      Days(14)
+  p-pwivate vaw topcwustewembeddingsbyfavscowe = daw
+    .weadmostwecentsnapshotnoowdewthan(
+      p-pwoducewtopksimcwustewembeddingsbyfavscoweupdatedscawadataset, nyaa~~
+      days(14)
     )
-    .withRemoteReadPolicy(AllowCrossClusterSameDC)
-    .toTypedPipe
-    .map { clusterScorePair => clusterScorePair.key -> clusterScorePair.value }
+    .withwemoteweadpowicy(awwowcwosscwustewsamedc)
+    .totypedpipe
+    .map { cwustewscowepaiw => cwustewscowepaiw.key -> cwustewscowepaiw.vawue }
 
-  private val topProducersForClusterEmbeddingByFavScore = DAL
-    .readMostRecentSnapshotNoOlderThan(
-      SimclusterEmbeddingTopKProducersByFavScoreUpdatedScalaDataset,
-      Days(14)
+  pwivate vaw t-toppwoducewsfowcwustewembeddingbyfavscowe = daw
+    .weadmostwecentsnapshotnoowdewthan(
+      s-simcwustewembeddingtopkpwoducewsbyfavscoweupdatedscawadataset, ^^
+      d-days(14)
     )
-    .withRemoteReadPolicy(AllowCrossClusterSameDC)
-    .toTypedPipe
-    .map { producerScoresPair => producerScoresPair.key -> producerScoresPair.value }
+    .withwemoteweadpowicy(awwowcwosscwustewsamedc)
+    .totypedpipe
+    .map { p-pwoducewscowespaiw => pwoducewscowespaiw.key -> pwoducewscowespaiw.vawue }
 
-  private val topClusterEmbeddingsByFollowScore = DAL
-    .readMostRecentSnapshotNoOlderThan(
-      ProducerTopKSimclusterEmbeddingsByFollowScoreUpdatedScalaDataset,
-      Days(14)
+  pwivate vaw topcwustewembeddingsbyfowwowscowe = daw
+    .weadmostwecentsnapshotnoowdewthan(
+      p-pwoducewtopksimcwustewembeddingsbyfowwowscoweupdatedscawadataset, >w<
+      d-days(14)
     )
-    .withRemoteReadPolicy(AllowCrossClusterSameDC)
-    .toTypedPipe
-    .map { clusterScorePair => clusterScorePair.key -> clusterScorePair.value }
+    .withwemoteweadpowicy(awwowcwosscwustewsamedc)
+    .totypedpipe
+    .map { cwustewscowepaiw => c-cwustewscowepaiw.key -> c-cwustewscowepaiw.vawue }
 
-  private val topProducersForClusterEmbeddingByFollowScore = DAL
-    .readMostRecentSnapshotNoOlderThan(
-      SimclusterEmbeddingTopKProducersByFollowScoreUpdatedScalaDataset,
-      Days(14)
+  pwivate vaw toppwoducewsfowcwustewembeddingbyfowwowscowe = d-daw
+    .weadmostwecentsnapshotnoowdewthan(
+      simcwustewembeddingtopkpwoducewsbyfowwowscoweupdatedscawadataset, OwO
+      d-days(14)
     )
-    .withRemoteReadPolicy(AllowCrossClusterSameDC)
-    .toTypedPipe
-    .map { producerScoresPair => producerScoresPair.key -> producerScoresPair.value }
+    .withwemoteweadpowicy(awwowcwosscwustewsamedc)
+    .totypedpipe
+    .map { pwoducewscowespaiw => pwoducewscowespaiw.key -> p-pwoducewscowespaiw.vawue }
 
-  override def runOnDateRange(
-    args: Args
+  ovewwide def wunondatewange(
+    a-awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    impwicit datewange: d-datewange, XD
+    t-timezone: timezone, ^^;;
+    uniqueid: uniqueid
+  ): execution[unit] = {
 
-    Execution
+    execution
       .zip(
-        SimilarUsersBySimClustersEmbedding
-          .getTopUsersRelatedToUser(
-            topClusterEmbeddingsByFavScore,
-            topProducersForClusterEmbeddingByFavScore
+        simiwawusewsbysimcwustewsembedding
+          .gettopusewswewatedtousew(
+            topcwustewembeddingsbyfavscowe, 🥺
+            toppwoducewsfowcwustewembeddingbyfavscowe
           )
-          .map { case (key, value) => KeyVal(key, value) }
-          .writeDALVersionedKeyValExecution(
-            SimilarUsersByFavBasedProducerEmbeddingScalaDataset,
-            D.Suffix(outputByFav)
-          ),
-        SimilarUsersBySimClustersEmbedding
-          .getTopUsersRelatedToUser(
-            topClusterEmbeddingsByFollowScore,
-            topProducersForClusterEmbeddingByFollowScore
+          .map { case (key, XD v-vawue) => keyvaw(key, (U ᵕ U❁) v-vawue) }
+          .wwitedawvewsionedkeyvawexecution(
+            simiwawusewsbyfavbasedpwoducewembeddingscawadataset, :3
+            d-d.suffix(outputbyfav)
+          ), ( ͡o ω ͡o )
+        s-simiwawusewsbysimcwustewsembedding
+          .gettopusewswewatedtousew(
+            t-topcwustewembeddingsbyfowwowscowe, òωó
+            toppwoducewsfowcwustewembeddingbyfowwowscowe
           )
-          .map { case (key, value) => KeyVal(key, value) }
-          .writeDALVersionedKeyValExecution(
-            SimilarUsersByFollowBasedProducerEmbeddingScalaDataset,
-            D.Suffix(outputByFollow)
+          .map { case (key, σωσ vawue) => keyvaw(key, (U ᵕ U❁) v-vawue) }
+          .wwitedawvewsionedkeyvawexecution(
+            simiwawusewsbyfowwowbasedpwoducewembeddingscawadataset, (✿oωo)
+            d.suffix(outputbyfowwow)
           )
       ).unit
   }
 }
 
 /**
- * Adhoc job to calculate producer's simcluster embeddings, which essentially assigns interestedIn
- * SimClusters to each producer, regardless of whether the producer has a knownFor assignment.
+ * adhoc job to cawcuwate p-pwoducew's simcwustew embeddings, ^^ w-which essentiawwy a-assigns intewestedin
+ * s-simcwustews to each p-pwoducew, ^•ﻌ•^ wegawdwess o-of whethew t-the pwoducew has a-a knownfow assignment. XD
  *
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:similar_users_by_simclusters_embeddings-adhoc && \
-  oscar hdfs --user recos-platform --screen --tee similar_users_by_simclusters_embeddings --bundle similar_users_by_simclusters_embeddings-adhoc \
-  --tool com.twitter.simclusters_v2.scalding.embedding.SimilarUsersBySimClustersEmbeddingAdhocApp \
-  -- --date 2019-07-10T00 2019-07-10T23
+./bazew bundwe swc/scawa/com/twittew/simcwustews_v2/scawding/embedding:simiwaw_usews_by_simcwustews_embeddings-adhoc && \
+  oscaw hdfs --usew w-wecos-pwatfowm --scween --tee s-simiwaw_usews_by_simcwustews_embeddings --bundwe s-simiwaw_usews_by_simcwustews_embeddings-adhoc \
+  --toow c-com.twittew.simcwustews_v2.scawding.embedding.simiwawusewsbysimcwustewsembeddingadhocapp \
+  -- --date 2019-07-10t00 2019-07-10t23
  */
-object SimilarUsersBySimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
+o-object simiwawusewsbysimcwustewsembeddingadhocapp extends adhocexecutionapp {
 
-  private val outputByFav =
-    "/user/recos-platform/adhoc/similar_users_by_simclusters_embeddings/by_fav"
-  private val outputByFollow =
-    "/user/recos-platform/adhoc/similar_users_by_simclusters_embeddings/by_follow"
+  pwivate v-vaw outputbyfav =
+    "/usew/wecos-pwatfowm/adhoc/simiwaw_usews_by_simcwustews_embeddings/by_fav"
+  pwivate vaw outputbyfowwow =
+    "/usew/wecos-pwatfowm/adhoc/simiwaw_usews_by_simcwustews_embeddings/by_fowwow"
 
-  private val topClusterEmbeddingsByFavScore = DAL
-    .readMostRecentSnapshotNoOlderThan(
-      ProducerTopKSimclusterEmbeddingsByFavScoreUpdatedScalaDataset,
-      Days(14)
+  pwivate vaw topcwustewembeddingsbyfavscowe = daw
+    .weadmostwecentsnapshotnoowdewthan(
+      p-pwoducewtopksimcwustewembeddingsbyfavscoweupdatedscawadataset, :3
+      days(14)
     )
-    .withRemoteReadPolicy(AllowCrossClusterSameDC)
-    .toTypedPipe
-    .map { clusterScorePair => clusterScorePair.key -> clusterScorePair.value }
+    .withwemoteweadpowicy(awwowcwosscwustewsamedc)
+    .totypedpipe
+    .map { cwustewscowepaiw => cwustewscowepaiw.key -> c-cwustewscowepaiw.vawue }
 
-  private val topProducersForClusterEmbeddingByFavScore = DAL
-    .readMostRecentSnapshotNoOlderThan(
-      SimclusterEmbeddingTopKProducersByFavScoreUpdatedScalaDataset,
-      Days(14)
+  p-pwivate vaw toppwoducewsfowcwustewembeddingbyfavscowe = d-daw
+    .weadmostwecentsnapshotnoowdewthan(
+      simcwustewembeddingtopkpwoducewsbyfavscoweupdatedscawadataset, (ꈍᴗꈍ)
+      d-days(14)
     )
-    .withRemoteReadPolicy(AllowCrossClusterSameDC)
-    .toTypedPipe
-    .map { producerScoresPair => producerScoresPair.key -> producerScoresPair.value }
+    .withwemoteweadpowicy(awwowcwosscwustewsamedc)
+    .totypedpipe
+    .map { pwoducewscowespaiw => pwoducewscowespaiw.key -> pwoducewscowespaiw.vawue }
 
-  private val topClusterEmbeddingsByFollowScore = DAL
-    .readMostRecentSnapshotNoOlderThan(
-      ProducerTopKSimclusterEmbeddingsByFollowScoreUpdatedScalaDataset,
-      Days(14)
+  p-pwivate v-vaw topcwustewembeddingsbyfowwowscowe = daw
+    .weadmostwecentsnapshotnoowdewthan(
+      pwoducewtopksimcwustewembeddingsbyfowwowscoweupdatedscawadataset, :3
+      days(14)
     )
-    .withRemoteReadPolicy(AllowCrossClusterSameDC)
-    .toTypedPipe
-    .map { clusterScorePair => clusterScorePair.key -> clusterScorePair.value }
+    .withwemoteweadpowicy(awwowcwosscwustewsamedc)
+    .totypedpipe
+    .map { cwustewscowepaiw => cwustewscowepaiw.key -> cwustewscowepaiw.vawue }
 
-  private val topProducersForClusterEmbeddingByFollowScore = DAL
-    .readMostRecentSnapshotNoOlderThan(
-      SimclusterEmbeddingTopKProducersByFollowScoreUpdatedScalaDataset,
-      Days(14)
+  p-pwivate vaw toppwoducewsfowcwustewembeddingbyfowwowscowe = d-daw
+    .weadmostwecentsnapshotnoowdewthan(
+      simcwustewembeddingtopkpwoducewsbyfowwowscoweupdatedscawadataset, (U ﹏ U)
+      d-days(14)
     )
-    .withRemoteReadPolicy(AllowCrossClusterSameDC)
-    .toTypedPipe
-    .map { producerScoresPair => producerScoresPair.key -> producerScoresPair.value }
+    .withwemoteweadpowicy(awwowcwosscwustewsamedc)
+    .totypedpipe
+    .map { p-pwoducewscowespaiw => pwoducewscowespaiw.key -> pwoducewscowespaiw.vawue }
 
-  implicit val candidatesInj: CompactScalaCodec[Candidates] = CompactScalaCodec(Candidates)
+  i-impwicit v-vaw candidatesinj: compactscawacodec[candidates] = c-compactscawacodec(candidates)
 
-  override def runOnDateRange(
-    args: Args
+  o-ovewwide def wunondatewange(
+    awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    impwicit datewange: d-datewange, UwU
+    t-timezone: timezone, 😳😳😳
+    u-uniqueid: uniqueid
+  ): e-execution[unit] = {
 
-    Execution
+    e-execution
       .zip(
-        SimilarUsersBySimClustersEmbedding
-          .getTopUsersRelatedToUser(
-            topClusterEmbeddingsByFavScore,
-            topProducersForClusterEmbeddingByFavScore).writeExecution(
-            VersionedKeyValSource[Long, Candidates](outputByFav))
-          .getCounters
-          .flatMap {
-            case (_, counters) =>
-              counters.toMap.toSeq
-                .sortBy(e => (e._1.group, e._1.counter))
-                .foreach {
-                  case (statKey, value) =>
-                    println(s"${statKey.group}\t${statKey.counter}\t$value")
+        simiwawusewsbysimcwustewsembedding
+          .gettopusewswewatedtousew(
+            t-topcwustewembeddingsbyfavscowe, XD
+            toppwoducewsfowcwustewembeddingbyfavscowe).wwiteexecution(
+            vewsionedkeyvawsouwce[wong, o.O candidates](outputbyfav))
+          .getcountews
+          .fwatmap {
+            case (_, (⑅˘꒳˘) countews) =>
+              c-countews.tomap.toseq
+                .sowtby(e => (e._1.gwoup, 😳😳😳 e-e._1.countew))
+                .foweach {
+                  case (statkey, nyaa~~ vawue) =>
+                    p-pwintwn(s"${statkey.gwoup}\t${statkey.countew}\t$vawue")
                 }
-              Execution.unit
-          },
-        SimilarUsersBySimClustersEmbedding
-          .getTopUsersRelatedToUser(
-            topClusterEmbeddingsByFollowScore,
-            topProducersForClusterEmbeddingByFollowScore).writeExecution(
-            VersionedKeyValSource[Long, Candidates](outputByFollow))
-          .getCounters
-          .flatMap {
-            case (_, counters) =>
-              counters.toMap.toSeq
-                .sortBy(e => (e._1.group, e._1.counter))
-                .foreach {
-                  case (statKey, value) =>
-                    println(s"${statKey.group}\t${statKey.counter}\t$value")
+              e-execution.unit
+          }, rawr
+        simiwawusewsbysimcwustewsembedding
+          .gettopusewswewatedtousew(
+            topcwustewembeddingsbyfowwowscowe, -.-
+            toppwoducewsfowcwustewembeddingbyfowwowscowe).wwiteexecution(
+            v-vewsionedkeyvawsouwce[wong, (✿oωo) candidates](outputbyfowwow))
+          .getcountews
+          .fwatmap {
+            case (_, /(^•ω•^) countews) =>
+              countews.tomap.toseq
+                .sowtby(e => (e._1.gwoup, 🥺 e._1.countew))
+                .foweach {
+                  c-case (statkey, ʘwʘ vawue) =>
+                    pwintwn(s"${statkey.gwoup}\t${statkey.countew}\t$vawue")
                 }
-              Execution.unit
+              e-execution.unit
           }
       ).unit
   }
 }
 
-object SimilarUsersBySimClustersEmbedding {
-  private val maxUsersPerCluster = 300
-  private val maxClustersPerUser = 50
-  private val topK = 100
+o-object simiwawusewsbysimcwustewsembedding {
+  pwivate vaw maxusewspewcwustew = 300
+  pwivate v-vaw maxcwustewspewusew = 50
+  p-pwivate vaw topk = 100
 
-  def getTopUsersRelatedToUser(
-    clusterScores: TypedPipe[(Long, TopSimClustersWithScore)],
-    producerScores: TypedPipe[(PersistedFullClusterId, TopProducersWithScore)]
+  def gettopusewswewatedtousew(
+    cwustewscowes: t-typedpipe[(wong, UwU topsimcwustewswithscowe)], XD
+    p-pwoducewscowes: typedpipe[(pewsistedfuwwcwustewid, (✿oωo) toppwoducewswithscowe)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(Long, Candidates)] = {
+    impwicit uniqueid: u-uniqueid
+  ): typedpipe[(wong, :3 c-candidates)] = {
 
-    val numUserUserPair = Stat("num_user_producer_pairs")
-    val numUserClusterPair = Stat("num_user_cluster_pairs")
-    val numClusterProducerPair = Stat("num_cluster_producer_pairs")
+    v-vaw nyumusewusewpaiw = s-stat("num_usew_pwoducew_paiws")
+    vaw nyumusewcwustewpaiw = s-stat("num_usew_cwustew_paiws")
+    v-vaw nyumcwustewpwoducewpaiw = s-stat("num_cwustew_pwoducew_paiws")
 
-    val clusterToUserMap =
-      clusterScores.flatMap {
-        case (userId, topSimClustersWithScore) =>
-          val targetUserClusters =
-            topSimClustersWithScore.topClusters.sortBy(-_.score).take(maxClustersPerUser)
+    vaw cwustewtousewmap =
+      c-cwustewscowes.fwatmap {
+        c-case (usewid, (///ˬ///✿) topsimcwustewswithscowe) =>
+          vaw tawgetusewcwustews =
+            t-topsimcwustewswithscowe.topcwustews.sowtby(-_.scowe).take(maxcwustewspewusew)
 
-          targetUserClusters.map { simClusterWithScore =>
-            numUserClusterPair.inc()
-            simClusterWithScore.clusterId -> userId
+          t-tawgetusewcwustews.map { s-simcwustewwithscowe =>
+            nyumusewcwustewpaiw.inc()
+            simcwustewwithscowe.cwustewid -> u-usewid
           }
       }
 
-    val clusterToProducerMap = producerScores.flatMap {
-      case (persistedFullClusterId, topProducersWithScore) =>
-        numClusterProducerPair.inc()
-        val targetProducers = topProducersWithScore.topProducers
-          .sortBy(-_.score)
-          .take(maxUsersPerCluster)
-        targetProducers.map { topProducerWithScore =>
-          persistedFullClusterId.clusterId -> topProducerWithScore.userId
+    vaw c-cwustewtopwoducewmap = p-pwoducewscowes.fwatmap {
+      case (pewsistedfuwwcwustewid, nyaa~~ toppwoducewswithscowe) =>
+        nyumcwustewpwoducewpaiw.inc()
+        v-vaw t-tawgetpwoducews = t-toppwoducewswithscowe.toppwoducews
+          .sowtby(-_.scowe)
+          .take(maxusewspewcwustew)
+        t-tawgetpwoducews.map { toppwoducewwithscowe =>
+          p-pewsistedfuwwcwustewid.cwustewid -> toppwoducewwithscowe.usewid
         }
     }
 
-    implicit val intInject: Int => Array[Byte] = Injection.int2BigEndian.toFunction
+    impwicit vaw intinject: int => awway[byte] = injection.int2bigendian.tofunction
 
-    val userToProducerMap =
-      clusterToUserMap.group
+    vaw u-usewtopwoducewmap =
+      cwustewtousewmap.gwoup
         .sketch(2000)
-        .join(clusterToProducerMap.group)
-        .values
+        .join(cwustewtopwoducewmap.gwoup)
+        .vawues
         .distinct
-        .collect({
-          //filter self-pair
-          case userPair if userPair._1 != userPair._2 =>
-            numUserUserPair.inc()
-            userPair
+        .cowwect({
+          //fiwtew s-sewf-paiw
+          case usewpaiw if u-usewpaiw._1 != usewpaiw._2 =>
+            n-nyumusewusewpaiw.inc()
+            usewpaiw
         })
 
-    val userEmbeddingsAllGrouped = clusterScores.map {
-      case (userId, topSimClustersWithScore) =>
-        val targetUserClusters =
-          topSimClustersWithScore.topClusters.sortBy(-_.score).take(maxClustersPerUser)
-        val embedding = targetUserClusters.map { simClustersWithScore =>
-          simClustersWithScore.clusterId -> simClustersWithScore.score
-        }.toMap
-        val embeddingNormalized = CosineSimilarityUtil.normalize(embedding)
-        userId -> embeddingNormalized
-    }.forceToDisk
+    v-vaw usewembeddingsawwgwouped = c-cwustewscowes.map {
+      c-case (usewid, >w< topsimcwustewswithscowe) =>
+        v-vaw tawgetusewcwustews =
+          t-topsimcwustewswithscowe.topcwustews.sowtby(-_.scowe).take(maxcwustewspewusew)
+        vaw embedding = tawgetusewcwustews.map { simcwustewswithscowe =>
+          simcwustewswithscowe.cwustewid -> simcwustewswithscowe.scowe
+        }.tomap
+        vaw embeddingnowmawized = c-cosinesimiwawityutiw.nowmawize(embedding)
+        u-usewid -> e-embeddingnowmawized
+    }.fowcetodisk
 
-    val userToProducerMapJoinWithEmbedding =
-      userToProducerMap
-        .join(userEmbeddingsAllGrouped)
+    vaw u-usewtopwoducewmapjoinwithembedding =
+      usewtopwoducewmap
+        .join(usewembeddingsawwgwouped)
         .map {
-          case (user, (producer, userEmbedding)) =>
-            producer -> (user, userEmbedding)
+          case (usew, -.- (pwoducew, (✿oωo) usewembedding)) =>
+            p-pwoducew -> (usew, (˘ω˘) u-usewembedding)
         }
-        .join(userEmbeddingsAllGrouped)
+        .join(usewembeddingsawwgwouped)
         .map {
-          case (producer, ((user, userEmbedding), producerEmbedding)) =>
-            user -> (producer, CosineSimilarityUtil.dotProduct(userEmbedding, producerEmbedding))
+          case (pwoducew, rawr ((usew, OwO u-usewembedding), ^•ﻌ•^ pwoducewembedding)) =>
+            usew -> (pwoducew, UwU cosinesimiwawityutiw.dotpwoduct(usewembedding, (˘ω˘) p-pwoducewembedding))
         }
-        .group
-        .sortWithTake(topK)((a, b) => a._2 > b._2)
+        .gwoup
+        .sowtwithtake(topk)((a, (///ˬ///✿) b-b) => a._2 > b._2)
         .map {
-          case (userId, candidatesList) =>
-            val candidatesSeq = candidatesList
+          c-case (usewid, σωσ c-candidateswist) =>
+            vaw candidatesseq = candidateswist
               .map {
-                case (candidateId, score) => Candidate(candidateId, score)
+                case (candidateid, /(^•ω•^) scowe) => candidate(candidateid, 😳 s-scowe)
               }
-            userId -> Candidates(userId, candidatesSeq)
+            u-usewid -> candidates(usewid, 😳 c-candidatesseq)
         }
 
-    userToProducerMapJoinWithEmbedding
+    u-usewtopwoducewmapjoinwithembedding
   }
 
 }

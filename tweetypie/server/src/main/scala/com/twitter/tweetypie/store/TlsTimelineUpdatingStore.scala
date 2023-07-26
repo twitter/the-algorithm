@@ -1,150 +1,150 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.timelineservice.{thriftscala => tls}
-import com.twitter.tweetypie.backends.TimelineService
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.timewinesewvice.{thwiftscawa => tws}
+i-impowt com.twittew.tweetypie.backends.timewinesewvice
+i-impowt c-com.twittew.tweetypie.thwiftscawa._
 
-trait TlsTimelineUpdatingStore
-    extends TweetStoreBase[TlsTimelineUpdatingStore]
-    with AsyncInsertTweet.Store
-    with AsyncDeleteTweet.Store
-    with AsyncUndeleteTweet.Store {
-  def wrap(w: TweetStore.Wrap): TlsTimelineUpdatingStore =
-    new TweetStoreWrapper(w, this)
-      with TlsTimelineUpdatingStore
-      with AsyncInsertTweet.StoreWrapper
-      with AsyncDeleteTweet.StoreWrapper
-      with AsyncUndeleteTweet.StoreWrapper
+t-twait twstimewineupdatingstowe
+    e-extends t-tweetstowebase[twstimewineupdatingstowe]
+    with asyncinsewttweet.stowe
+    with asyncdewetetweet.stowe
+    w-with asyncundewetetweet.stowe {
+  def wwap(w: tweetstowe.wwap): t-twstimewineupdatingstowe =
+    nyew t-tweetstowewwappew(w, /(^•ω•^) this)
+      with twstimewineupdatingstowe
+      with asyncinsewttweet.stowewwappew
+      w-with asyncdewetetweet.stowewwappew
+      with asyncundewetetweet.stowewwappew
 }
 
 /**
- * An implementation of TweetStore that sends update events to
- * the Timeline Service.
+ * a-an impwementation o-of tweetstowe that sends update events to
+ * the timewine sewvice. (⑅˘꒳˘)
  */
-object TlsTimelineUpdatingStore {
-  val Action: AsyncWriteAction.TimelineUpdate.type = AsyncWriteAction.TimelineUpdate
+o-object twstimewineupdatingstowe {
+  vaw action: asyncwwiteaction.timewineupdate.type = asyncwwiteaction.timewineupdate
 
   /**
-   * Converts a TweetyPie Tweet to tls.Tweet
+   * convewts a tweetypie t-tweet to tws.tweet
    *
-   * @param explicitCreatedAt when Some, overrides the default getTimestamp defined in package
-   * object com.twitter.tweetypie
+   * @pawam e-expwicitcweatedat when s-some, ( ͡o ω ͡o ) ovewwides t-the defauwt g-gettimestamp defined in package
+   * object com.twittew.tweetypie
    */
-  def tweetToTLSFullTweet(
-    hasMedia: Tweet => Boolean
+  d-def tweettotwsfuwwtweet(
+    hasmedia: tweet => boowean
   )(
-    tweet: Tweet,
-    explicitCreatedAt: Option[Time],
-    noteTweetMentionedUserIds: Option[Seq[Long]]
-  ): tls.FullTweet =
-    tls.FullTweet(
-      userId = getUserId(tweet),
-      tweetId = tweet.id,
-      mentionedUserIds =
-        noteTweetMentionedUserIds.getOrElse(getMentions(tweet).flatMap(_.userId)).toSet,
-      isNullcasted = TweetLenses.nullcast.get(tweet),
-      conversationId = TweetLenses.conversationId.get(tweet).getOrElse(tweet.id),
-      narrowcastGeos = Set.empty,
-      createdAtMs = explicitCreatedAt.getOrElse(getTimestamp(tweet)).inMillis,
-      hasMedia = hasMedia(tweet),
-      directedAtUserId = TweetLenses.directedAtUser.get(tweet).map(_.userId),
-      retweet = getShare(tweet).map { share =>
-        tls.Retweet(
-          sourceUserId = share.sourceUserId,
-          sourceTweetId = share.sourceStatusId,
-          parentTweetId = Some(share.parentStatusId)
+    t-tweet: tweet, òωó
+    expwicitcweatedat: option[time], (⑅˘꒳˘)
+    nyotetweetmentionedusewids: option[seq[wong]]
+  ): tws.fuwwtweet =
+    t-tws.fuwwtweet(
+      usewid = g-getusewid(tweet), XD
+      tweetid = t-tweet.id, -.-
+      m-mentionedusewids =
+        nyotetweetmentionedusewids.getowewse(getmentions(tweet).fwatmap(_.usewid)).toset, :3
+      isnuwwcasted = tweetwenses.nuwwcast.get(tweet),
+      c-convewsationid = t-tweetwenses.convewsationid.get(tweet).getowewse(tweet.id), nyaa~~
+      nyawwowcastgeos = s-set.empty, 😳
+      c-cweatedatms = expwicitcweatedat.getowewse(gettimestamp(tweet)).inmiwwis, (⑅˘꒳˘)
+      h-hasmedia = hasmedia(tweet),
+      d-diwectedatusewid = tweetwenses.diwectedatusew.get(tweet).map(_.usewid),
+      wetweet = g-getshawe(tweet).map { shawe =>
+        t-tws.wetweet(
+          souwceusewid = s-shawe.souwceusewid, nyaa~~
+          s-souwcetweetid = shawe.souwcestatusid, OwO
+          pawenttweetid = some(shawe.pawentstatusid)
         )
-      },
-      reply = getReply(tweet).map { reply =>
-        tls.Reply(
-          inReplyToUserId = reply.inReplyToUserId,
-          inReplyToTweetId = reply.inReplyToStatusId
+      }, rawr x3
+      wepwy = getwepwy(tweet).map { wepwy =>
+        tws.wepwy(
+          i-inwepwytousewid = w-wepwy.inwepwytousewid, XD
+          inwepwytotweetid = w-wepwy.inwepwytostatusid
         )
-      },
-      quote = tweet.quotedTweet.map { qt =>
-        tls.Quote(
-          quotedUserId = qt.userId,
-          quotedTweetId = qt.tweetId
+      }, σωσ
+      q-quote = t-tweet.quotedtweet.map { qt =>
+        tws.quote(
+          quotedusewid = q-qt.usewid, (U ᵕ U❁)
+          quotedtweetid = qt.tweetid
         )
-      },
-      mediaTags = tweet.mediaTags,
-      text = Some(getText(tweet))
+      }, (U ﹏ U)
+      mediatags = tweet.mediatags, :3
+      t-text = some(gettext(tweet))
     )
 
-  val logger: Logger = Logger(getClass)
+  vaw w-woggew: woggew = w-woggew(getcwass)
 
-  def logValidationFailed(stats: StatsReceiver): tls.ProcessEventResult => Unit = {
-    case tls.ProcessEventResult(tls.ProcessEventResultType.ValidationFailed, errors) =>
-      logger.error(s"Validation Failed in processEvent2: $errors")
-      stats.counter("processEvent2_validation_failed").incr()
-    case _ => ()
+  d-def wogvawidationfaiwed(stats: statsweceivew): t-tws.pwocesseventwesuwt => unit = {
+    c-case t-tws.pwocesseventwesuwt(tws.pwocesseventwesuwttype.vawidationfaiwed, ( ͡o ω ͡o ) e-ewwows) =>
+      woggew.ewwow(s"vawidation faiwed in pwocessevent2: $ewwows")
+      s-stats.countew("pwocessevent2_vawidation_faiwed").incw()
+    c-case _ => ()
   }
 
-  def apply(
-    processEvent2: TimelineService.ProcessEvent2,
-    hasMedia: Tweet => Boolean,
-    stats: StatsReceiver
-  ): TlsTimelineUpdatingStore = {
-    val toTlsTweet = tweetToTLSFullTweet(hasMedia) _
+  d-def appwy(
+    p-pwocessevent2: t-timewinesewvice.pwocessevent2, σωσ
+    hasmedia: tweet => boowean, >w<
+    stats: s-statsweceivew
+  ): twstimewineupdatingstowe = {
+    vaw totwstweet = tweettotwsfuwwtweet(hasmedia) _
 
-    val processAndLog =
-      processEvent2.andThen(FutureArrow.fromFunction(logValidationFailed(stats)))
+    vaw pwocessandwog =
+      pwocessevent2.andthen(futuweawwow.fwomfunction(wogvawidationfaiwed(stats)))
 
-    new TlsTimelineUpdatingStore {
-      override val asyncInsertTweet: FutureEffect[AsyncInsertTweet.Event] =
-        processAndLog
-          .contramap[AsyncInsertTweet.Event] { event =>
-            tls.Event.FullTweetCreate(
-              tls.FullTweetCreateEvent(
-                toTlsTweet(event.tweet, Some(event.timestamp), event.noteTweetMentionedUserIds),
-                event.timestamp.inMillis,
-                featureContext = event.featureContext
+    n-nyew twstimewineupdatingstowe {
+      ovewwide vaw asyncinsewttweet: futuweeffect[asyncinsewttweet.event] =
+        p-pwocessandwog
+          .contwamap[asyncinsewttweet.event] { e-event =>
+            t-tws.event.fuwwtweetcweate(
+              tws.fuwwtweetcweateevent(
+                totwstweet(event.tweet, 😳😳😳 s-some(event.timestamp), OwO event.notetweetmentionedusewids), 😳
+                e-event.timestamp.inmiwwis, 😳😳😳
+                f-featuwecontext = event.featuwecontext
               )
             )
           }
-          .asFutureEffect[AsyncInsertTweet.Event]
+          .asfutuweeffect[asyncinsewttweet.event]
 
-      override val retryAsyncInsertTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncInsertTweet.Event]
+      ovewwide vaw wetwyasyncinsewttweet: futuweeffect[
+        tweetstowewetwyevent[asyncinsewttweet.event]
       ] =
-        TweetStore.retry(Action, asyncInsertTweet)
+        t-tweetstowe.wetwy(action, (˘ω˘) asyncinsewttweet)
 
-      override val asyncUndeleteTweet: FutureEffect[AsyncUndeleteTweet.Event] =
-        processAndLog
-          .contramap[AsyncUndeleteTweet.Event] { event =>
-            tls.Event.FullTweetRestore(
-              tls.FullTweetRestoreEvent(
-                toTlsTweet(event.tweet, None, None),
-                event.deletedAt.map(_.inMillis)
+      o-ovewwide vaw asyncundewetetweet: futuweeffect[asyncundewetetweet.event] =
+        p-pwocessandwog
+          .contwamap[asyncundewetetweet.event] { event =>
+            t-tws.event.fuwwtweetwestowe(
+              tws.fuwwtweetwestoweevent(
+                totwstweet(event.tweet, ʘwʘ n-nyone, nyone), ( ͡o ω ͡o )
+                e-event.dewetedat.map(_.inmiwwis)
               )
             )
           }
-          .asFutureEffect[AsyncUndeleteTweet.Event]
+          .asfutuweeffect[asyncundewetetweet.event]
 
-      override val retryAsyncUndeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncUndeleteTweet.Event]
+      ovewwide vaw w-wetwyasyncundewetetweet: f-futuweeffect[
+        tweetstowewetwyevent[asyncundewetetweet.event]
       ] =
-        TweetStore.retry(Action, asyncUndeleteTweet)
+        tweetstowe.wetwy(action, o.O asyncundewetetweet)
 
-      override val asyncDeleteTweet: FutureEffect[AsyncDeleteTweet.Event] =
-        processAndLog
-          .contramap[AsyncDeleteTweet.Event] { event =>
-            tls.Event.FullTweetDelete(
-              tls.FullTweetDeleteEvent(
-                toTlsTweet(event.tweet, None, None),
-                event.timestamp.inMillis,
-                isUserErasure = Some(event.isUserErasure),
-                isBounceDelete = Some(event.isBounceDelete)
+      ovewwide vaw a-asyncdewetetweet: f-futuweeffect[asyncdewetetweet.event] =
+        p-pwocessandwog
+          .contwamap[asyncdewetetweet.event] { event =>
+            t-tws.event.fuwwtweetdewete(
+              tws.fuwwtweetdeweteevent(
+                t-totwstweet(event.tweet, >w< nyone, nyone), 😳
+                e-event.timestamp.inmiwwis, 🥺
+                isusewewasuwe = some(event.isusewewasuwe), rawr x3
+                isbouncedewete = some(event.isbouncedewete)
               )
             )
           }
-          .asFutureEffect[AsyncDeleteTweet.Event]
+          .asfutuweeffect[asyncdewetetweet.event]
 
-      override val retryAsyncDeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncDeleteTweet.Event]
+      o-ovewwide vaw w-wetwyasyncdewetetweet: futuweeffect[
+        tweetstowewetwyevent[asyncdewetetweet.event]
       ] =
-        TweetStore.retry(Action, asyncDeleteTweet)
+        t-tweetstowe.wetwy(action, o.O a-asyncdewetetweet)
     }
   }
 }

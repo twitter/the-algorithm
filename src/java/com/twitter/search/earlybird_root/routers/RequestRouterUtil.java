@@ -1,106 +1,106 @@
-package com.twitter.search.earlybird_root.routers;
+package com.twittew.seawch.eawwybiwd_woot.woutews;
 
-import java.util.List;
+impowt java.utiw.wist;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
+i-impowt c-com.googwe.common.base.optionaw;
+i-impowt com.googwe.common.cowwect.wists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.search.earlybird_root.common.EarlybirdServiceResponse;
-import com.twitter.util.Await;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequesttype;
+impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdsewvicewesponse;
+impowt com.twittew.utiw.await;
+i-impowt com.twittew.utiw.function;
+impowt com.twittew.utiw.futuwe;
 
-public final class RequestRouterUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(RequestRouterUtil.class);
+pubwic finaw cwass wequestwoutewutiw {
+  p-pwivate static finaw woggew wog = w-woggewfactowy.getwoggew(wequestwoutewutiw.cwass);
 
-  private RequestRouterUtil() {
+  p-pwivate wequestwoutewutiw() {
   }
 
   /**
-   * Returns the function that checks if the minSearchedStatusID on the merged response is higher
-   * than the max ID in the request.
+   * wetuwns the function that checks if the minseawchedstatusid o-on the mewged wesponse is highew
+   * than the max id in the wequest. òωó
    *
-   * @param requestContext The request context that stores the request.
-   * @param operator The operator that we're checking against (max_id or until_time).
-   * @param requestMaxId The maxId specified in the request (in the given operator).
-   * @param realtimeResponseFuture The response from the realtime cluster.
-   * @param protectedResponseFuture The response from the protected cluster.
-   * @param fullArchiveResponseFuture The response from the full archive cluster.
-   * @param stat The stat to increment if minSearchedStatusID on the merged response is higher than
-   *             the max ID in the request.
-   * @return A function that checks if the minSearchedStatusID on the merged response is higher than
-   *         the max ID in the request.
+   * @pawam w-wequestcontext the wequest c-context that s-stowes the wequest. (⑅˘꒳˘)
+   * @pawam o-opewatow the opewatow t-that we'we checking against (max_id ow untiw_time). XD
+   * @pawam w-wequestmaxid the maxid specified in the w-wequest (in the given opewatow). -.-
+   * @pawam weawtimewesponsefutuwe the wesponse fwom the weawtime cwustew. :3
+   * @pawam p-pwotectedwesponsefutuwe the wesponse fwom t-the pwotected c-cwustew. nyaa~~
+   * @pawam f-fuwwawchivewesponsefutuwe the wesponse fwom the fuww awchive cwustew. 😳
+   * @pawam s-stat the s-stat to incwement if minseawchedstatusid o-on the m-mewged wesponse is highew than
+   *             t-the max id in the wequest. (⑅˘꒳˘)
+   * @wetuwn a-a function that checks if the minseawchedstatusid o-on the mewged wesponse i-is highew than
+   *         the m-max id in the wequest. nyaa~~
    */
-  public static Function<EarlybirdResponse, EarlybirdResponse> checkMinSearchedStatusId(
-      final EarlybirdRequestContext requestContext,
-      final String operator,
-      final Optional<Long> requestMaxId,
-      final Future<EarlybirdServiceResponse> realtimeResponseFuture,
-      final Future<EarlybirdServiceResponse> protectedResponseFuture,
-      final Future<EarlybirdServiceResponse> fullArchiveResponseFuture,
-      final SearchCounter stat) {
-    return new Function<EarlybirdResponse, EarlybirdResponse>() {
-      @Override
-      public EarlybirdResponse apply(EarlybirdResponse mergedResponse) {
-        if (requestMaxId.isPresent()
-            && (mergedResponse.getResponseCode() == EarlybirdResponseCode.SUCCESS)
-            && mergedResponse.isSetSearchResults()
-            && mergedResponse.getSearchResults().isSetMinSearchedStatusID()) {
-          long minSearchedStatusId = mergedResponse.getSearchResults().getMinSearchedStatusID();
-          if (minSearchedStatusId > requestMaxId.get()) {
-            stat.increment();
-            // We're logging this only for STRICT RECENCY as it was very spammy for all types of
-            // request. We don't expect this to happen for STRICT RECENCY but we're tracking
-            // with the stat when it happens for RELEVANCE and RECENCY
-            if (requestContext.getEarlybirdRequestType() == EarlybirdRequestType.STRICT_RECENCY) {
-              String logMessage = "Response has a minSearchedStatusID ({}) larger than request "
-                  + operator + " ({})."
-                  + "\nrequest type: {}"
-                  + "\nrequest: {}"
-                  + "\nmerged response: {}"
-                  + "\nrealtime response: {}"
-                  + "\nprotected response: {}"
-                  + "\nfull archive response: {}";
-              List<Object> logMessageParams = Lists.newArrayList();
-              logMessageParams.add(minSearchedStatusId);
-              logMessageParams.add(requestMaxId.get());
-              logMessageParams.add(requestContext.getEarlybirdRequestType());
-              logMessageParams.add(requestContext.getRequest());
-              logMessageParams.add(mergedResponse);
+  p-pubwic static function<eawwybiwdwesponse, OwO eawwybiwdwesponse> checkminseawchedstatusid(
+      finaw eawwybiwdwequestcontext wequestcontext, rawr x3
+      finaw stwing opewatow,
+      f-finaw o-optionaw<wong> wequestmaxid, XD
+      f-finaw futuwe<eawwybiwdsewvicewesponse> w-weawtimewesponsefutuwe, σωσ
+      f-finaw futuwe<eawwybiwdsewvicewesponse> pwotectedwesponsefutuwe, (U ᵕ U❁)
+      finaw futuwe<eawwybiwdsewvicewesponse> f-fuwwawchivewesponsefutuwe, (U ﹏ U)
+      finaw seawchcountew stat) {
+    wetuwn nyew function<eawwybiwdwesponse, :3 e-eawwybiwdwesponse>() {
+      @ovewwide
+      pubwic eawwybiwdwesponse a-appwy(eawwybiwdwesponse m-mewgedwesponse) {
+        i-if (wequestmaxid.ispwesent()
+            && (mewgedwesponse.getwesponsecode() == eawwybiwdwesponsecode.success)
+            && m-mewgedwesponse.issetseawchwesuwts()
+            && m-mewgedwesponse.getseawchwesuwts().issetminseawchedstatusid()) {
+          w-wong minseawchedstatusid = m-mewgedwesponse.getseawchwesuwts().getminseawchedstatusid();
+          if (minseawchedstatusid > wequestmaxid.get()) {
+            s-stat.incwement();
+            // w-we'we wogging t-this onwy fow s-stwict wecency as i-it was vewy spammy fow aww types of
+            // wequest. ( ͡o ω ͡o ) we d-don't expect this to happen fow stwict wecency but we'we twacking
+            // with the stat when it happens f-fow wewevance and wecency
+            if (wequestcontext.geteawwybiwdwequesttype() == eawwybiwdwequesttype.stwict_wecency) {
+              s-stwing w-wogmessage = "wesponse h-has a minseawchedstatusid ({}) wawgew than w-wequest "
+                  + opewatow + " ({})."
+                  + "\nwequest t-type: {}"
+                  + "\nwequest: {}"
+                  + "\nmewged w-wesponse: {}"
+                  + "\nweawtime wesponse: {}"
+                  + "\npwotected wesponse: {}"
+                  + "\nfuww awchive wesponse: {}";
+              wist<object> wogmessagepawams = w-wists.newawwaywist();
+              wogmessagepawams.add(minseawchedstatusid);
+              w-wogmessagepawams.add(wequestmaxid.get());
+              wogmessagepawams.add(wequestcontext.geteawwybiwdwequesttype());
+              w-wogmessagepawams.add(wequestcontext.getwequest());
+              w-wogmessagepawams.add(mewgedwesponse);
 
-              // The realtime, protected and full archive response futures are "done" at this point:
-              // we have to wait for them in order to build the merged response. So it's ok to call
-              // Await.result() here to get the responses: it's a no-op.
-              try {
-                logMessageParams.add(Await.result(realtimeResponseFuture).getResponse());
-              } catch (Exception e) {
-                logMessageParams.add(e);
+              // the weawtime, σωσ pwotected a-and fuww awchive w-wesponse futuwes awe "done" at t-this point:
+              // w-we have to wait fow them in owdew to buiwd the mewged wesponse. >w< so i-it's ok to caww
+              // a-await.wesuwt() h-hewe to get the wesponses: it's a-a nyo-op. 😳😳😳
+              t-twy {
+                wogmessagepawams.add(await.wesuwt(weawtimewesponsefutuwe).getwesponse());
+              } catch (exception e-e) {
+                wogmessagepawams.add(e);
               }
-              try {
-                logMessageParams.add(Await.result(protectedResponseFuture).getResponse());
-              } catch (Exception e) {
-                logMessageParams.add(e);
+              twy {
+                wogmessagepawams.add(await.wesuwt(pwotectedwesponsefutuwe).getwesponse());
+              } catch (exception e) {
+                w-wogmessagepawams.add(e);
               }
-              try {
-                logMessageParams.add(Await.result(fullArchiveResponseFuture).getResponse());
-              } catch (Exception e) {
-                logMessageParams.add(e);
+              t-twy {
+                wogmessagepawams.add(await.wesuwt(fuwwawchivewesponsefutuwe).getwesponse());
+              } catch (exception e-e) {
+                w-wogmessagepawams.add(e);
               }
 
-              LOG.warn(logMessage, logMessageParams.toArray());
+              wog.wawn(wogmessage, OwO wogmessagepawams.toawway());
             }
           }
         }
 
-        return mergedResponse;
+        wetuwn mewgedwesponse;
       }
     };
   }

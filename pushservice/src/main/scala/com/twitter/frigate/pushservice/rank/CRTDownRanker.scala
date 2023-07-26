@@ -1,45 +1,45 @@
-package com.twitter.frigate.pushservice.rank
+package com.twittew.fwigate.pushsewvice.wank
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.thriftscala.CommonRecommendationType
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.candidatedetaiws
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt c-com.twittew.fwigate.thwiftscawa.commonwecommendationtype
 
 /**
- *  This Ranker re-ranks MR candidates, down ranks input CRTs.
- *  Relative ranking between input CRTs and rest of the candidates doesn't change
+ *  t-this wankew we-wanks m-mw candidates, (U ﹏ U) down wanks input cwts. (⑅˘꒳˘)
+ *  wewative wanking between input c-cwts and west of the candidates doesn't change
  *
- *  Ex: T: Tweet candidate, F: input CRT candidates
+ *  e-ex: t: tweet candidate, òωó f: i-input cwt candidates
  *
- *  T3, F2, T1, T2, F1 => T3, T1, T2, F2, F1
+ *  t3, ʘwʘ f2, t1, t2, /(^•ω•^) f1 => t3, t1, ʘwʘ t2, f2, f-f1
  */
-case class CRTDownRanker(statsReceiver: StatsReceiver) {
+case cwass cwtdownwankew(statsweceivew: s-statsweceivew) {
 
-  private val recsToDownRankStat = statsReceiver.stat("recs_to_down_rank")
-  private val otherRecsStat = statsReceiver.stat("other_recs")
-  private val downRankerRequests = statsReceiver.counter("down_ranker_requests")
+  p-pwivate vaw wecstodownwankstat = statsweceivew.stat("wecs_to_down_wank")
+  pwivate vaw othewwecsstat = statsweceivew.stat("othew_wecs")
+  p-pwivate vaw downwankewwequests = statsweceivew.countew("down_wankew_wequests")
 
-  private def downRank(
-    inputCandidates: Seq[CandidateDetails[PushCandidate]],
-    crtToDownRank: CommonRecommendationType
-  ): Seq[CandidateDetails[PushCandidate]] = {
-    downRankerRequests.incr()
-    val (downRankedCandidates, otherCandidates) =
-      inputCandidates.partition(_.candidate.commonRecType == crtToDownRank)
-    recsToDownRankStat.add(downRankedCandidates.size)
-    otherRecsStat.add(otherCandidates.size)
-    otherCandidates ++ downRankedCandidates
+  pwivate def downwank(
+    inputcandidates: seq[candidatedetaiws[pushcandidate]], σωσ
+    c-cwttodownwank: commonwecommendationtype
+  ): s-seq[candidatedetaiws[pushcandidate]] = {
+    d-downwankewwequests.incw()
+    vaw (downwankedcandidates, OwO o-othewcandidates) =
+      i-inputcandidates.pawtition(_.candidate.commonwectype == cwttodownwank)
+    wecstodownwankstat.add(downwankedcandidates.size)
+    o-othewwecsstat.add(othewcandidates.size)
+    othewcandidates ++ downwankedcandidates
   }
 
-  final def downRank(
-    inputCandidates: Seq[CandidateDetails[PushCandidate]],
-    crtsToDownRank: Seq[CommonRecommendationType]
-  ): Seq[CandidateDetails[PushCandidate]] = {
-    crtsToDownRank.headOption match {
-      case Some(crt) =>
-        val downRankedCandidates = downRank(inputCandidates, crt)
-        downRank(downRankedCandidates, crtsToDownRank.tail)
-      case None => inputCandidates
+  finaw d-def downwank(
+    inputcandidates: seq[candidatedetaiws[pushcandidate]], 😳😳😳
+    cwtstodownwank: seq[commonwecommendationtype]
+  ): seq[candidatedetaiws[pushcandidate]] = {
+    c-cwtstodownwank.headoption match {
+      c-case some(cwt) =>
+        v-vaw downwankedcandidates = d-downwank(inputcandidates, 😳😳😳 cwt)
+        downwank(downwankedcandidates, o.O cwtstodownwank.taiw)
+      case n-nyone => inputcandidates
     }
   }
 }

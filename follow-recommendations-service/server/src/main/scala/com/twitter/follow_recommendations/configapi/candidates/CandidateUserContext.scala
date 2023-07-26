@@ -1,19 +1,19 @@
-package com.twitter.follow_recommendations.configapi.candidates
+package com.twittew.fowwow_wecommendations.configapi.candidates
 
-import com.twitter.timelines.configapi.BaseRequestContext
-import com.twitter.timelines.configapi.FeatureContext
-import com.twitter.timelines.configapi.NullFeatureContext
-import com.twitter.timelines.configapi.WithFeatureContext
-import com.twitter.timelines.configapi.WithUserId
+impowt com.twittew.timewines.configapi.basewequestcontext
+i-impowt c-com.twittew.timewines.configapi.featuwecontext
+i-impowt com.twittew.timewines.configapi.nuwwfeatuwecontext
+i-impowt c-com.twittew.timewines.configapi.withfeatuwecontext
+i-impowt com.twittew.timewines.configapi.withusewid
 
 /**
- * represent the context for a recommendation candidate (producer side)
- * @param userId id of the recommended user
- * @param featureContext feature context
+ * w-wepwesent t-the context fow a wecommendation candidate (pwoducew side)
+ * @pawam usewid i-id of the wecommended usew
+ * @pawam featuwecontext f-featuwe context
  */
-case class CandidateUserContext(
-  override val userId: Option[Long],
-  featureContext: FeatureContext = NullFeatureContext)
-    extends BaseRequestContext
-    with WithUserId
-    with WithFeatureContext
+case c-cwass candidateusewcontext(
+  ovewwide vaw usewid: option[wong], XD
+  featuwecontext: f-featuwecontext = nyuwwfeatuwecontext)
+    e-extends b-basewequestcontext
+    with withusewid
+    with withfeatuwecontext

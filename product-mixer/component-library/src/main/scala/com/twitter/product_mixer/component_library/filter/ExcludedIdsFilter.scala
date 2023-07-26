@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.component_library.filter
+package com.twittew.pwoduct_mixew.component_wibwawy.fiwtew
 
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasExcludedIds
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hasexcwudedids
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
 
-case class ExcludedIdsFilter[
-  Query <: PipelineQuery with HasExcludedIds,
-  Candidate <: UniversalNoun[Long]
-]() extends Filter[Query, Candidate] {
-  override val identifier: FilterIdentifier = FilterIdentifier("ExcludedIds")
+c-case cwass excwudedidsfiwtew[
+  quewy <: p-pipewinequewy with hasexcwudedids, OwO
+  c-candidate <: univewsawnoun[wong]
+]() extends fiwtew[quewy, (U ﹏ U) c-candidate] {
+  ovewwide vaw identifiew: f-fiwtewidentifiew = f-fiwtewidentifiew("excwudedids")
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
-    val (kept, removed) =
-      candidates.map(_.candidate).partition(candidate => !query.excludedIds.contains(candidate.id))
+  ovewwide def appwy(
+    quewy: quewy, >_<
+    candidates: seq[candidatewithfeatuwes[candidate]]
+  ): s-stitch[fiwtewwesuwt[candidate]] = {
+    vaw (kept, rawr x3 wemoved) =
+      candidates.map(_.candidate).pawtition(candidate => !quewy.excwudedids.contains(candidate.id))
 
-    val filterResult = FilterResult(kept = kept, removed = removed)
-    Stitch.value(filterResult)
+    vaw fiwtewwesuwt = f-fiwtewwesuwt(kept = kept, mya wemoved = w-wemoved)
+    stitch.vawue(fiwtewwesuwt)
   }
 }

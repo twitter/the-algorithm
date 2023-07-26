@@ -1,594 +1,594 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.visibility.common.actions.LimitedEngagementReason
-import com.twitter.visibility.configapi.params.FSRuleParams.AdAvoidanceHighToxicityModelScoreThresholdParam
-import com.twitter.visibility.configapi.params.FSRuleParams.AdAvoidanceReportedTweetModelScoreThresholdParam
-import com.twitter.visibility.configapi.params.FSRuleParams.CommunityTweetCommunityUnavailableLimitedActionsRulesEnabledParam
-import com.twitter.visibility.configapi.params.FSRuleParams.CommunityTweetDropProtectedRuleEnabledParam
-import com.twitter.visibility.configapi.params.FSRuleParams.CommunityTweetDropRuleEnabledParam
-import com.twitter.visibility.configapi.params.FSRuleParams.CommunityTweetLimitedActionsRulesEnabledParam
-import com.twitter.visibility.configapi.params.FSRuleParams.CommunityTweetMemberRemovedLimitedActionsRulesEnabledParam
-import com.twitter.visibility.configapi.params.FSRuleParams.CommunityTweetNonMemberLimitedActionsRuleEnabledParam
-import com.twitter.visibility.configapi.params.FSRuleParams.StaleTweetLimitedActionsRulesEnabledParam
-import com.twitter.visibility.configapi.params.FSRuleParams.TrustedFriendsTweetLimitedEngagementsRuleEnabledParam
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams
-import com.twitter.visibility.configapi.params.RuleParams._
-import com.twitter.visibility.features.{TweetDeleteReason => FeatureTweetDeleteReason}
-import com.twitter.visibility.models.TweetDeleteReason
-import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.visibility.rules.Condition.ViewerIsExclusiveTweetAuthor
-import com.twitter.visibility.rules.Condition._
-import com.twitter.visibility.rules.Reason.CommunityTweetAuthorRemoved
-import com.twitter.visibility.rules.Reason.CommunityTweetHidden
-import com.twitter.visibility.rules.Reason.Nsfw
-import com.twitter.visibility.rules.Reason.StaleTweet
-import com.twitter.visibility.rules.Reason.Unspecified
-import com.twitter.visibility.rules.RuleActionSourceBuilder.TweetSafetyLabelSourceBuilder
+impowt com.twittew.visibiwity.common.actions.wimitedengagementweason
+i-impowt c-com.twittew.visibiwity.configapi.pawams.fswuwepawams.adavoidancehightoxicitymodewscowethweshowdpawam
+i-impowt com.twittew.visibiwity.configapi.pawams.fswuwepawams.adavoidancewepowtedtweetmodewscowethweshowdpawam
+i-impowt com.twittew.visibiwity.configapi.pawams.fswuwepawams.communitytweetcommunityunavaiwabwewimitedactionswuwesenabwedpawam
+i-impowt com.twittew.visibiwity.configapi.pawams.fswuwepawams.communitytweetdwoppwotectedwuweenabwedpawam
+i-impowt c-com.twittew.visibiwity.configapi.pawams.fswuwepawams.communitytweetdwopwuweenabwedpawam
+i-impowt com.twittew.visibiwity.configapi.pawams.fswuwepawams.communitytweetwimitedactionswuwesenabwedpawam
+impowt com.twittew.visibiwity.configapi.pawams.fswuwepawams.communitytweetmembewwemovedwimitedactionswuwesenabwedpawam
+impowt com.twittew.visibiwity.configapi.pawams.fswuwepawams.communitytweetnonmembewwimitedactionswuweenabwedpawam
+impowt c-com.twittew.visibiwity.configapi.pawams.fswuwepawams.stawetweetwimitedactionswuwesenabwedpawam
+impowt com.twittew.visibiwity.configapi.pawams.fswuwepawams.twustedfwiendstweetwimitedengagementswuweenabwedpawam
+impowt com.twittew.visibiwity.configapi.pawams.wuwepawam
+i-impowt com.twittew.visibiwity.configapi.pawams.wuwepawams
+i-impowt com.twittew.visibiwity.configapi.pawams.wuwepawams._
+impowt com.twittew.visibiwity.featuwes.{tweetdeweteweason => featuwetweetdeweteweason}
+impowt com.twittew.visibiwity.modews.tweetdeweteweason
+i-impowt com.twittew.visibiwity.modews.tweetsafetywabewtype
+impowt c-com.twittew.visibiwity.wuwes.condition.viewewisexcwusivetweetauthow
+i-impowt com.twittew.visibiwity.wuwes.condition._
+impowt com.twittew.visibiwity.wuwes.weason.communitytweetauthowwemoved
+impowt com.twittew.visibiwity.wuwes.weason.communitytweethidden
+impowt c-com.twittew.visibiwity.wuwes.weason.nsfw
+impowt com.twittew.visibiwity.wuwes.weason.stawetweet
+impowt com.twittew.visibiwity.wuwes.weason.unspecified
+impowt c-com.twittew.visibiwity.wuwes.wuweactionsouwcebuiwdew.tweetsafetywabewsouwcebuiwdew
 
-abstract class TweetHasLabelRule(action: Action, tweetSafetyLabelType: TweetSafetyLabelType)
-    extends RuleWithConstantAction(action, TweetHasLabel(tweetSafetyLabelType)) {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(tweetSafetyLabelType))
+abstwact cwass t-tweethaswabewwuwe(action: a-action, o.O t-tweetsafetywabewtype: t-tweetsafetywabewtype)
+    extends wuwewithconstantaction(action, :3 tweethaswabew(tweetsafetywabewtype)) {
+  o-ovewwide def actionsouwcebuiwdew: option[wuweactionsouwcebuiwdew] = s-some(
+    tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype))
 }
 
-abstract class ConditionWithTweetLabelRule(
-  action: Action,
-  condition: Condition,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends RuleWithConstantAction(action, And(TweetHasLabel(tweetSafetyLabelType), condition)) {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(tweetSafetyLabelType))
+abstwact cwass conditionwithtweetwabewwuwe(
+  action: action, -.-
+  condition: c-condition, ( ͡o ω ͡o )
+  tweetsafetywabewtype: t-tweetsafetywabewtype)
+    e-extends wuwewithconstantaction(action, /(^•ω•^) a-and(tweethaswabew(tweetsafetywabewtype), (⑅˘꒳˘) condition)) {
+  ovewwide def actionsouwcebuiwdew: o-option[wuweactionsouwcebuiwdew] = s-some(
+    tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype))
 }
 
-abstract class NonAuthorWithTweetLabelRule(
-  action: Action,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(action, NonAuthorViewer, tweetSafetyLabelType) {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(tweetSafetyLabelType))
+a-abstwact c-cwass nyonauthowwithtweetwabewwuwe(
+  action: a-action, òωó
+  tweetsafetywabewtype: tweetsafetywabewtype)
+    e-extends conditionwithtweetwabewwuwe(action, 🥺 nyonauthowviewew, (ˆ ﻌ ˆ)♡ t-tweetsafetywabewtype) {
+  ovewwide def actionsouwcebuiwdew: o-option[wuweactionsouwcebuiwdew] = some(
+    t-tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype))
 }
 
-abstract class NonFollowerWithTweetLabelRule(
-  action: Action,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      action,
-      LoggedOutOrViewerNotFollowingAuthor,
-      tweetSafetyLabelType
+a-abstwact cwass nyonfowwowewwithtweetwabewwuwe(
+  action: action, -.-
+  tweetsafetywabewtype: tweetsafetywabewtype)
+    extends conditionwithtweetwabewwuwe(
+      a-action, σωσ
+      w-woggedoutowviewewnotfowwowingauthow, >_<
+      tweetsafetywabewtype
     )
 
-abstract class NonAuthorAndNonFollowerWithTweetLabelRule(
-  action: Action,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      action,
-      And(NonAuthorViewer, LoggedOutOrViewerNotFollowingAuthor),
-      tweetSafetyLabelType
+abstwact c-cwass nyonauthowandnonfowwowewwithtweetwabewwuwe(
+  a-action: a-action, :3
+  tweetsafetywabewtype: tweetsafetywabewtype)
+    extends conditionwithtweetwabewwuwe(
+      a-action, OwO
+      and(nonauthowviewew, rawr woggedoutowviewewnotfowwowingauthow), (///ˬ///✿)
+      tweetsafetywabewtype
     )
 
-abstract class NonFollowerWithUqfTweetLabelRule(
-  action: Action,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      action,
-      Or(
-        LoggedOutViewer,
-        And(
-          NonAuthorViewer,
-          Not(ViewerDoesFollowAuthor),
-          ViewerHasUqfEnabled
+abstwact cwass nyonfowwowewwithuqftweetwabewwuwe(
+  a-action: action, ^^
+  tweetsafetywabewtype: t-tweetsafetywabewtype)
+    e-extends conditionwithtweetwabewwuwe(
+      a-action, XD
+      ow(
+        woggedoutviewew, UwU
+        a-and(
+          n-nyonauthowviewew, o.O
+          nyot(viewewdoesfowwowauthow), 😳
+          v-viewewhasuqfenabwed
         )
       ),
-      tweetSafetyLabelType
+      t-tweetsafetywabewtype
     )
 
-abstract class ViewerWithUqfTweetLabelRule(action: Action, labelValue: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(action, ViewerHasUqfEnabled, labelValue)
+abstwact cwass viewewwithuqftweetwabewwuwe(action: action, (˘ω˘) wabewvawue: t-tweetsafetywabewtype)
+    e-extends conditionwithtweetwabewwuwe(action, 🥺 v-viewewhasuqfenabwed, ^^ w-wabewvawue)
 
-case object ConversationControlRules {
+case o-object convewsationcontwowwuwes {
 
-  abstract class ConversationControlBaseRule(condition: Condition)
-      extends RuleWithConstantAction(
-        LimitedEngagements(LimitedEngagementReason.ConversationControl),
+  abstwact cwass convewsationcontwowbasewuwe(condition: condition)
+      extends wuwewithconstantaction(
+        w-wimitedengagements(wimitedengagementweason.convewsationcontwow), >w<
         condition) {
-    override def enabled: Seq[RuleParam[Boolean]] = Seq(TweetConversationControlEnabledParam)
+    ovewwide def enabwed: seq[wuwepawam[boowean]] = seq(tweetconvewsationcontwowenabwedpawam)
   }
 
-  object LimitRepliesCommunityConversationRule
-      extends ConversationControlBaseRule(
-        And(
-          TweetIsCommunityConversation,
-          Not(
-            Or(
-              LoggedOutViewer,
-              Retweet,
-              ViewerIsTweetConversationRootAuthor,
-              ViewerIsInvitedToTweetConversation,
-              ConversationRootAuthorDoesFollowViewer
+  object wimitwepwiescommunityconvewsationwuwe
+      e-extends convewsationcontwowbasewuwe(
+        and(
+          tweetiscommunityconvewsation, ^^;;
+          nyot(
+            o-ow(
+              w-woggedoutviewew, (˘ω˘)
+              w-wetweet, OwO
+              viewewistweetconvewsationwootauthow, (ꈍᴗꈍ)
+              v-viewewisinvitedtotweetconvewsation, òωó
+              convewsationwootauthowdoesfowwowviewew
             ))
         )
       )
 
-  object LimitRepliesFollowersConversationRule
-      extends ConversationControlBaseRule(
-        And(
-          TweetIsFollowersConversation,
-          Not(
-            Or(
-              LoggedOutViewer,
-              Retweet,
-              ViewerIsTweetConversationRootAuthor,
-              ViewerIsInvitedToTweetConversation,
-              ViewerDoesFollowConversationRootAuthor
+  o-object wimitwepwiesfowwowewsconvewsationwuwe
+      e-extends convewsationcontwowbasewuwe(
+        and(
+          tweetisfowwowewsconvewsation, ʘwʘ
+          nyot(
+            ow(
+              woggedoutviewew, ʘwʘ
+              wetweet, nyaa~~
+              v-viewewistweetconvewsationwootauthow, UwU
+              viewewisinvitedtotweetconvewsation, (⑅˘꒳˘)
+              v-viewewdoesfowwowconvewsationwootauthow
             ))
         )
       )
 
-  object LimitRepliesByInvitationConversationRule
-      extends ConversationControlBaseRule(
-        And(
-          TweetIsByInvitationConversation,
-          Not(
-            Or(
-              LoggedOutViewer,
-              Retweet,
-              ViewerIsTweetConversationRootAuthor,
-              ViewerIsInvitedToTweetConversation
+  object wimitwepwiesbyinvitationconvewsationwuwe
+      e-extends c-convewsationcontwowbasewuwe(
+        and(
+          tweetisbyinvitationconvewsation, (˘ω˘)
+          n-nyot(
+            o-ow(
+              woggedoutviewew, :3
+              w-wetweet, (˘ω˘)
+              v-viewewistweetconvewsationwootauthow, nyaa~~
+              viewewisinvitedtotweetconvewsation
             ))
         )
       )
 
 }
 
-abstract class NonAuthorViewerOptInFilteringWithTweetLabelRule(
-  action: Action,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      action,
-      And(NonAuthorViewer, LoggedOutOrViewerOptInFiltering),
-      tweetSafetyLabelType)
+abstwact cwass nyonauthowviewewoptinfiwtewingwithtweetwabewwuwe(
+  action: action, (U ﹏ U)
+  tweetsafetywabewtype: t-tweetsafetywabewtype)
+    e-extends c-conditionwithtweetwabewwuwe(
+      action, nyaa~~
+      a-and(nonauthowviewew, w-woggedoutowviewewoptinfiwtewing), ^^;;
+      tweetsafetywabewtype)
 
-abstract class NonFollowerViewerOptInFilteringWithTweetLabelRule(
-  action: Action,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      action,
-      And(LoggedOutOrViewerNotFollowingAuthor, LoggedOutOrViewerOptInFiltering),
-      tweetSafetyLabelType
+a-abstwact cwass nyonfowwowewviewewoptinfiwtewingwithtweetwabewwuwe(
+  action: action, OwO
+  tweetsafetywabewtype: t-tweetsafetywabewtype)
+    e-extends conditionwithtweetwabewwuwe(
+      action, nyaa~~
+      and(woggedoutowviewewnotfowwowingauthow, w-woggedoutowviewewoptinfiwtewing), UwU
+      t-tweetsafetywabewtype
     )
 
-object TweetNsfwUserDropRule extends RuleWithConstantAction(Drop(Nsfw), TweetHasNsfwUserAuthor)
-object TweetNsfwAdminDropRule extends RuleWithConstantAction(Drop(Nsfw), TweetHasNsfwAdminAuthor)
+object tweetnsfwusewdwopwuwe extends wuwewithconstantaction(dwop(nsfw), tweethasnsfwusewauthow)
+o-object tweetnsfwadmindwopwuwe extends wuwewithconstantaction(dwop(nsfw), 😳 tweethasnsfwadminauthow)
 
-object NullcastedTweetRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
-      And(Nullcast, Not(Retweet), Not(IsQuotedInnerTweet), Not(TweetIsCommunityTweet)))
+object nyuwwcastedtweetwuwe
+    extends w-wuwewithconstantaction(
+      dwop(unspecified), 😳
+      and(nuwwcast, (ˆ ﻌ ˆ)♡ nyot(wetweet), (✿oωo) n-nyot(isquotedinnewtweet), nyaa~~ nyot(tweetiscommunitytweet)))
 
-object MutedRetweetsRule
-    extends RuleWithConstantAction(Drop(Unspecified), And(Retweet, ViewerMutesRetweetsFromAuthor))
+o-object mutedwetweetswuwe
+    extends wuwewithconstantaction(dwop(unspecified), ^^ a-and(wetweet, (///ˬ///✿) v-viewewmuteswetweetsfwomauthow))
 
-abstract class FilterCommunityTweetsRule(override val action: Action)
-    extends RuleWithConstantAction(action, TweetIsCommunityTweet) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(CommunityTweetDropRuleEnabledParam)
+abstwact cwass fiwtewcommunitytweetswuwe(ovewwide vaw a-action: action)
+    extends wuwewithconstantaction(action, 😳 t-tweetiscommunitytweet) {
+  ovewwide def enabwed: seq[wuwepawam[boowean]] = seq(communitytweetdwopwuweenabwedpawam)
 }
 
-object DropCommunityTweetsRule extends FilterCommunityTweetsRule(Drop(CommunityTweetHidden))
+o-object dwopcommunitytweetswuwe extends fiwtewcommunitytweetswuwe(dwop(communitytweethidden))
 
-object TombstoneCommunityTweetsRule
-    extends FilterCommunityTweetsRule(Tombstone(Epitaph.Unavailable))
+o-object tombstonecommunitytweetswuwe
+    e-extends fiwtewcommunitytweetswuwe(tombstone(epitaph.unavaiwabwe))
 
-abstract class FilterCommunityTweetCommunityNotVisibleRule(override val action: Action)
-    extends RuleWithConstantAction(
-      action,
-      And(
-        NonAuthorViewer,
-        TweetIsCommunityTweet,
-        Not(CommunityTweetCommunityVisible),
+a-abstwact cwass fiwtewcommunitytweetcommunitynotvisibwewuwe(ovewwide vaw a-action: action)
+    e-extends wuwewithconstantaction(
+      a-action, òωó
+      and(
+        n-nyonauthowviewew, ^^;;
+        t-tweetiscommunitytweet, rawr
+        nyot(communitytweetcommunityvisibwe), (ˆ ﻌ ˆ)♡
       )) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(DropCommunityTweetWithUndefinedCommunityRuleEnabledParam)
+  ovewwide def e-enabwed: seq[wuwepawam[boowean]] =
+    s-seq(dwopcommunitytweetwithundefinedcommunitywuweenabwedpawam)
 }
 
-object DropCommunityTweetCommunityNotVisibleRule
-    extends FilterCommunityTweetCommunityNotVisibleRule(Drop(CommunityTweetHidden))
+o-object dwopcommunitytweetcommunitynotvisibwewuwe
+    extends f-fiwtewcommunitytweetcommunitynotvisibwewuwe(dwop(communitytweethidden))
 
-object TombstoneCommunityTweetCommunityNotVisibleRule
-    extends FilterCommunityTweetCommunityNotVisibleRule(Tombstone(Epitaph.Unavailable))
+object tombstonecommunitytweetcommunitynotvisibwewuwe
+    e-extends f-fiwtewcommunitytweetcommunitynotvisibwewuwe(tombstone(epitaph.unavaiwabwe))
 
-abstract class FilterAllCommunityTweetsRule(override val action: Action)
-    extends RuleWithConstantAction(action, TweetIsCommunityTweet) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(CommunityTweetsEnabledParam)
+abstwact cwass fiwtewawwcommunitytweetswuwe(ovewwide vaw action: action)
+    e-extends w-wuwewithconstantaction(action, XD t-tweetiscommunitytweet) {
+  o-ovewwide def enabwed: s-seq[wuwepawam[boowean]] = seq(communitytweetsenabwedpawam)
 }
 
-object DropAllCommunityTweetsRule extends FilterAllCommunityTweetsRule(Drop(Unspecified))
+object dwopawwcommunitytweetswuwe extends fiwtewawwcommunitytweetswuwe(dwop(unspecified))
 
-object TombstoneAllCommunityTweetsRule
-    extends FilterAllCommunityTweetsRule(Tombstone(Epitaph.Unavailable))
+object tombstoneawwcommunitytweetswuwe
+    e-extends fiwtewawwcommunitytweetswuwe(tombstone(epitaph.unavaiwabwe))
 
-object DropOuterCommunityTweetsRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
-      And(TweetIsCommunityTweet, Not(IsQuotedInnerTweet)))
+object d-dwopoutewcommunitytweetswuwe
+    extends wuwewithconstantaction(
+      d-dwop(unspecified), >_<
+      and(tweetiscommunitytweet, (˘ω˘) nyot(isquotedinnewtweet)))
 
-object DropAllHiddenCommunityTweetsRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
-      And(TweetIsCommunityTweet, CommunityTweetIsHidden))
+o-object dwopawwhiddencommunitytweetswuwe
+    e-extends wuwewithconstantaction(
+      d-dwop(unspecified), 😳
+      a-and(tweetiscommunitytweet, o.O c-communitytweetishidden))
 
-abstract class FilterHiddenCommunityTweetsRule(override val action: Action)
-    extends RuleWithConstantAction(
-      action,
-      And(
-        NonAuthorViewer,
-        TweetIsCommunityTweet,
-        CommunityTweetIsHidden,
-        Not(ViewerIsCommunityModerator)
+a-abstwact cwass fiwtewhiddencommunitytweetswuwe(ovewwide vaw action: action)
+    extends wuwewithconstantaction(
+      action, (ꈍᴗꈍ)
+      and(
+        nyonauthowviewew, rawr x3
+        t-tweetiscommunitytweet, ^^
+        c-communitytweetishidden, OwO
+        n-nyot(viewewiscommunitymodewatow)
       ))
 
-object DropHiddenCommunityTweetsRule
-    extends FilterHiddenCommunityTweetsRule(Drop(CommunityTweetHidden))
+object dwophiddencommunitytweetswuwe
+    e-extends fiwtewhiddencommunitytweetswuwe(dwop(communitytweethidden))
 
-object TombstoneHiddenCommunityTweetsRule
-    extends FilterHiddenCommunityTweetsRule(Tombstone(Epitaph.CommunityTweetHidden))
+object tombstonehiddencommunitytweetswuwe
+    e-extends f-fiwtewhiddencommunitytweetswuwe(tombstone(epitaph.communitytweethidden))
 
-object DropAllAuthorRemovedCommunityTweetsRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
-      And(TweetIsCommunityTweet, CommunityTweetAuthorIsRemoved))
+object d-dwopawwauthowwemovedcommunitytweetswuwe
+    extends wuwewithconstantaction(
+      dwop(unspecified), ^^
+      a-and(tweetiscommunitytweet, :3 c-communitytweetauthowiswemoved))
 
-abstract class FilterAuthorRemovedCommunityTweetsRule(override val action: Action)
-    extends RuleWithConstantAction(
-      action,
-      And(
-        NonAuthorViewer,
-        TweetIsCommunityTweet,
-        CommunityTweetAuthorIsRemoved,
-        Not(ViewerIsCommunityModerator)
+abstwact c-cwass fiwtewauthowwemovedcommunitytweetswuwe(ovewwide v-vaw action: action)
+    extends wuwewithconstantaction(
+      action, o.O
+      and(
+        n-nonauthowviewew, -.-
+        t-tweetiscommunitytweet, (U ﹏ U)
+        c-communitytweetauthowiswemoved, o.O
+        n-nyot(viewewiscommunitymodewatow)
       ))
 
-object DropAuthorRemovedCommunityTweetsRule
-    extends FilterAuthorRemovedCommunityTweetsRule(Drop(CommunityTweetAuthorRemoved))
+o-object dwopauthowwemovedcommunitytweetswuwe
+    e-extends f-fiwtewauthowwemovedcommunitytweetswuwe(dwop(communitytweetauthowwemoved))
 
-object TombstoneAuthorRemovedCommunityTweetsRule
-    extends FilterAuthorRemovedCommunityTweetsRule(Tombstone(Epitaph.Unavailable))
+object tombstoneauthowwemovedcommunitytweetswuwe
+    e-extends fiwtewauthowwemovedcommunitytweetswuwe(tombstone(epitaph.unavaiwabwe))
 
-abstract class FilterProtectedCommunityTweetsRule(override val action: Action)
-    extends RuleWithConstantAction(
-      action,
-      And(TweetIsCommunityTweet, ProtectedAuthor, NonAuthorViewer)) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(CommunityTweetDropProtectedRuleEnabledParam)
+a-abstwact cwass fiwtewpwotectedcommunitytweetswuwe(ovewwide v-vaw action: action)
+    extends wuwewithconstantaction(
+      action, OwO
+      a-and(tweetiscommunitytweet, pwotectedauthow, ^•ﻌ•^ n-nyonauthowviewew)) {
+  o-ovewwide def enabwed: seq[wuwepawam[boowean]] = s-seq(communitytweetdwoppwotectedwuweenabwedpawam)
 }
 
-object DropProtectedCommunityTweetsRule
-    extends FilterProtectedCommunityTweetsRule(Drop(CommunityTweetHidden))
+object dwoppwotectedcommunitytweetswuwe
+    extends fiwtewpwotectedcommunitytweetswuwe(dwop(communitytweethidden))
 
-object TombstoneProtectedCommunityTweetsRule
-    extends FilterProtectedCommunityTweetsRule(Tombstone(Epitaph.Unavailable))
+o-object tombstonepwotectedcommunitytweetswuwe
+    e-extends f-fiwtewpwotectedcommunitytweetswuwe(tombstone(epitaph.unavaiwabwe))
 
-abstract class CommunityTweetCommunityUnavailableLimitedActionsRule(
-  reason: LimitedEngagementReason,
-  condition: CommunityTweetCommunityUnavailable,
-) extends RuleWithConstantAction(
-      LimitedEngagements(reason),
-      And(
-        Not(NonAuthorViewer),
-        TweetIsCommunityTweet,
-        condition,
+abstwact cwass communitytweetcommunityunavaiwabwewimitedactionswuwe(
+  weason: w-wimitedengagementweason, ʘwʘ
+  condition: communitytweetcommunityunavaiwabwe, :3
+) extends wuwewithconstantaction(
+      w-wimitedengagements(weason), 😳
+      a-and(
+        nyot(nonauthowviewew), òωó
+        t-tweetiscommunitytweet, 🥺
+        condition, rawr x3
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    CommunityTweetCommunityUnavailableLimitedActionsRulesEnabledParam)
+  o-ovewwide def enabwed: s-seq[wuwepawam[boowean]] = seq(
+    communitytweetcommunityunavaiwabwewimitedactionswuwesenabwedpawam)
 }
 
-object CommunityTweetCommunityNotFoundLimitedActionsRule
-    extends CommunityTweetCommunityUnavailableLimitedActionsRule(
-      LimitedEngagementReason.CommunityTweetCommunityNotFound,
-      CommunityTweetCommunityNotFound,
+object communitytweetcommunitynotfoundwimitedactionswuwe
+    e-extends communitytweetcommunityunavaiwabwewimitedactionswuwe(
+      wimitedengagementweason.communitytweetcommunitynotfound, ^•ﻌ•^
+      communitytweetcommunitynotfound, :3
     )
 
-object CommunityTweetCommunityDeletedLimitedActionsRule
-    extends CommunityTweetCommunityUnavailableLimitedActionsRule(
-      LimitedEngagementReason.CommunityTweetCommunityDeleted,
-      CommunityTweetCommunityDeleted,
+o-object communitytweetcommunitydewetedwimitedactionswuwe
+    e-extends communitytweetcommunityunavaiwabwewimitedactionswuwe(
+      wimitedengagementweason.communitytweetcommunitydeweted, (ˆ ﻌ ˆ)♡
+      c-communitytweetcommunitydeweted, (U ᵕ U❁)
     )
 
-object CommunityTweetCommunitySuspendedLimitedActionsRule
-    extends CommunityTweetCommunityUnavailableLimitedActionsRule(
-      LimitedEngagementReason.CommunityTweetCommunitySuspended,
-      CommunityTweetCommunitySuspended,
+object c-communitytweetcommunitysuspendedwimitedactionswuwe
+    e-extends c-communitytweetcommunityunavaiwabwewimitedactionswuwe(
+      wimitedengagementweason.communitytweetcommunitysuspended, :3
+      communitytweetcommunitysuspended, ^^;;
     )
 
-abstract class CommunityTweetModeratedLimitedActionsRule(
-  reason: LimitedEngagementReason,
-  condition: CommunityTweetIsModerated,
-  enabledParam: RuleParam[Boolean],
-) extends RuleWithConstantAction(
-      LimitedEngagements(reason),
-      And(
-        TweetIsCommunityTweet,
-        condition,
-        Or(
-          Not(NonAuthorViewer),
-          ViewerIsCommunityModerator,
+abstwact cwass communitytweetmodewatedwimitedactionswuwe(
+  weason: wimitedengagementweason, ( ͡o ω ͡o )
+  condition: communitytweetismodewated, o.O
+  enabwedpawam: wuwepawam[boowean], ^•ﻌ•^
+) extends wuwewithconstantaction(
+      wimitedengagements(weason), XD
+      and(
+        t-tweetiscommunitytweet, ^^
+        c-condition, o.O
+        ow(
+          not(nonauthowviewew), ( ͡o ω ͡o )
+          v-viewewiscommunitymodewatow, /(^•ω•^)
         )
       )) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(enabledParam)
+  o-ovewwide d-def enabwed: seq[wuwepawam[boowean]] = s-seq(enabwedpawam)
 }
 
-object CommunityTweetMemberRemovedLimitedActionsRule
-    extends CommunityTweetModeratedLimitedActionsRule(
-      LimitedEngagementReason.CommunityTweetMemberRemoved,
-      CommunityTweetAuthorIsRemoved,
-      CommunityTweetMemberRemovedLimitedActionsRulesEnabledParam,
+object communitytweetmembewwemovedwimitedactionswuwe
+    e-extends c-communitytweetmodewatedwimitedactionswuwe(
+      wimitedengagementweason.communitytweetmembewwemoved, 🥺
+      c-communitytweetauthowiswemoved, nyaa~~
+      communitytweetmembewwemovedwimitedactionswuwesenabwedpawam, mya
     )
 
-object CommunityTweetHiddenLimitedActionsRule
-    extends CommunityTweetModeratedLimitedActionsRule(
-      LimitedEngagementReason.CommunityTweetHidden,
-      CommunityTweetIsHidden,
-      CommunityTweetLimitedActionsRulesEnabledParam,
+o-object communitytweethiddenwimitedactionswuwe
+    e-extends communitytweetmodewatedwimitedactionswuwe(
+      wimitedengagementweason.communitytweethidden, XD
+      communitytweetishidden, nyaa~~
+      communitytweetwimitedactionswuwesenabwedpawam, ʘwʘ
     )
 
-abstract class CommunityTweetLimitedActionsRule(
-  reason: LimitedEngagementReason,
-  condition: Condition,
-) extends RuleWithConstantAction(
-      LimitedEngagements(reason),
-      And(
-        TweetIsCommunityTweet,
-        condition
+a-abstwact c-cwass communitytweetwimitedactionswuwe(
+  w-weason: w-wimitedengagementweason, (⑅˘꒳˘)
+  c-condition: c-condition, :3
+) e-extends wuwewithconstantaction(
+      w-wimitedengagements(weason), -.-
+      a-and(
+        tweetiscommunitytweet, 😳😳😳
+        c-condition
       )) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(CommunityTweetLimitedActionsRulesEnabledParam)
+  o-ovewwide def enabwed: s-seq[wuwepawam[boowean]] = seq(communitytweetwimitedactionswuwesenabwedpawam)
 }
 
-object CommunityTweetMemberLimitedActionsRule
-    extends CommunityTweetLimitedActionsRule(
-      LimitedEngagementReason.CommunityTweetMember,
-      ViewerIsCommunityMember,
+o-object communitytweetmembewwimitedactionswuwe
+    extends communitytweetwimitedactionswuwe(
+      w-wimitedengagementweason.communitytweetmembew, (U ﹏ U)
+      viewewiscommunitymembew, o.O
     )
 
-object CommunityTweetNonMemberLimitedActionsRule
-    extends CommunityTweetLimitedActionsRule(
-      LimitedEngagementReason.CommunityTweetNonMember,
-      Not(ViewerIsCommunityMember),
+o-object c-communitytweetnonmembewwimitedactionswuwe
+    e-extends communitytweetwimitedactionswuwe(
+      wimitedengagementweason.communitytweetnonmembew, ( ͡o ω ͡o )
+      n-nyot(viewewiscommunitymembew), òωó
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    CommunityTweetNonMemberLimitedActionsRuleEnabledParam)
+  ovewwide def enabwed: s-seq[wuwepawam[boowean]] = seq(
+    communitytweetnonmembewwimitedactionswuweenabwedpawam)
 }
 
-object ReportedTweetInterstitialRule
-    extends RuleWithConstantAction(
-      Interstitial(Reason.ViewerReportedTweet),
-      And(
-        NonAuthorViewer,
-        Not(Retweet),
-        ViewerReportsTweet
+o-object wepowtedtweetintewstitiawwuwe
+    extends w-wuwewithconstantaction(
+      intewstitiaw(weason.viewewwepowtedtweet), 🥺
+      and(
+        nyonauthowviewew,
+        nyot(wetweet), /(^•ω•^)
+        v-viewewwepowtstweet
       )) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableReportedTweetInterstitialRule)
+  ovewwide def enabwed: s-seq[wuwepawam[boowean]] = s-seq(enabwewepowtedtweetintewstitiawwuwe)
 }
 
-object ReportedTweetInterstitialSearchRule
-    extends RuleWithConstantAction(
-      Interstitial(Reason.ViewerReportedTweet),
-      And(
-        NonAuthorViewer,
-        Not(Retweet),
-        ViewerReportsTweet
+object wepowtedtweetintewstitiawseawchwuwe
+    extends w-wuwewithconstantaction(
+      intewstitiaw(weason.viewewwepowtedtweet), 😳😳😳
+      a-and(
+        nyonauthowviewew, ^•ﻌ•^
+        n-nyot(wetweet), nyaa~~
+        v-viewewwepowtstweet
       )) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableReportedTweetInterstitialSearchRule)
+  ovewwide def enabwed: seq[wuwepawam[boowean]] = s-seq(enabwewepowtedtweetintewstitiawseawchwuwe)
 }
 
-abstract class FilterExclusiveTweetContentRule(
-  action: Action,
-  additionalCondition: Condition = Condition.True)
-    extends RuleWithConstantAction(
-      action,
-      And(
-        additionalCondition,
-        TweetIsExclusiveContent,
-        Or(
-          LoggedOutViewer,
-          Not(
-            Or(
-              ViewerIsExclusiveTweetAuthor,
-              ViewerSuperFollowsExclusiveTweetAuthor,
-              And(
-                Not(NonAuthorViewer),
-                Not(Retweet)
+a-abstwact cwass fiwtewexcwusivetweetcontentwuwe(
+  a-action: action, OwO
+  additionawcondition: condition = c-condition.twue)
+    extends w-wuwewithconstantaction(
+      a-action, ^•ﻌ•^
+      and(
+        a-additionawcondition, σωσ
+        tweetisexcwusivecontent, -.-
+        o-ow(
+          w-woggedoutviewew, (˘ω˘)
+          n-nyot(
+            o-ow(
+              viewewisexcwusivetweetauthow, rawr x3
+              v-viewewsupewfowwowsexcwusivetweetauthow, rawr x3
+              a-and(
+                n-nyot(nonauthowviewew), σωσ
+                n-nyot(wetweet)
               )
             )
-          ),
-        ),
+          ), nyaa~~
+        ), (ꈍᴗꈍ)
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDropExclusiveTweetContentRule)
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(
-    EnableDropExclusiveTweetContentRuleFailClosed)
+  o-ovewwide d-def enabwed: s-seq[wuwepawam[boowean]] = s-seq(enabwedwopexcwusivetweetcontentwuwe)
+  ovewwide def e-enabwefaiwcwosed: seq[wuwepawam[boowean]] = seq(
+    e-enabwedwopexcwusivetweetcontentwuwefaiwcwosed)
 }
 
-object DropExclusiveTweetContentRule
-    extends FilterExclusiveTweetContentRule(Drop(Reason.ExclusiveTweet))
+object d-dwopexcwusivetweetcontentwuwe
+    e-extends fiwtewexcwusivetweetcontentwuwe(dwop(weason.excwusivetweet))
 
-object TombstoneExclusiveTweetContentRule
-    extends FilterExclusiveTweetContentRule(Tombstone(Epitaph.SuperFollowsContent))
+o-object tombstoneexcwusivetweetcontentwuwe
+    extends fiwtewexcwusivetweetcontentwuwe(tombstone(epitaph.supewfowwowscontent))
 
-object TombstoneExclusiveQuotedTweetContentRule
-    extends FilterExclusiveTweetContentRule(
-      Tombstone(Epitaph.SuperFollowsContent),
-      IsQuotedInnerTweet
+object tombstoneexcwusivequotedtweetcontentwuwe
+    e-extends f-fiwtewexcwusivetweetcontentwuwe(
+      t-tombstone(epitaph.supewfowwowscontent), ^•ﻌ•^
+      isquotedinnewtweet
     )
 
-object DropAllExclusiveTweetsRule
-    extends RuleWithConstantAction(
-      Drop(Reason.ExclusiveTweet),
-      TweetIsExclusiveContent
+object dwopawwexcwusivetweetswuwe
+    extends w-wuwewithconstantaction(
+      dwop(weason.excwusivetweet),
+      t-tweetisexcwusivecontent
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDropAllExclusiveTweetsRuleParam)
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(
-    EnableDropAllExclusiveTweetsRuleFailClosedParam)
+  ovewwide def e-enabwed: seq[wuwepawam[boowean]] = s-seq(enabwedwopawwexcwusivetweetswuwepawam)
+  ovewwide def enabwefaiwcwosed: seq[wuwepawam[boowean]] = seq(
+    e-enabwedwopawwexcwusivetweetswuwefaiwcwosedpawam)
 }
 
-object DropTweetsWithGeoRestrictedMediaRule
-    extends RuleWithConstantAction(Drop(Unspecified), MediaRestrictedInViewerCountry) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    EnableDropTweetsWithGeoRestrictedMediaRuleParam)
+o-object dwoptweetswithgeowestwictedmediawuwe
+    e-extends wuwewithconstantaction(dwop(unspecified), >_< m-mediawestwictedinviewewcountwy) {
+  ovewwide def enabwed: s-seq[wuwepawam[boowean]] = s-seq(
+    enabwedwoptweetswithgeowestwictedmediawuwepawam)
 }
 
-object TrustedFriendsTweetLimitedEngagementsRule
-    extends RuleWithConstantAction(
-      LimitedEngagements(LimitedEngagementReason.TrustedFriendsTweet),
-      TweetIsTrustedFriendsContent
+object t-twustedfwiendstweetwimitedengagementswuwe
+    extends wuwewithconstantaction(
+      wimitedengagements(wimitedengagementweason.twustedfwiendstweet), ^^;;
+      t-tweetistwustedfwiendscontent
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    TrustedFriendsTweetLimitedEngagementsRuleEnabledParam
+  ovewwide def e-enabwed: seq[wuwepawam[boowean]] = s-seq(
+    twustedfwiendstweetwimitedengagementswuweenabwedpawam
   )
 }
 
-object DropAllTrustedFriendsTweetsRule
-    extends RuleWithConstantAction(
-      Drop(Reason.TrustedFriendsTweet),
-      TweetIsTrustedFriendsContent
+object d-dwopawwtwustedfwiendstweetswuwe
+    e-extends wuwewithconstantaction(
+      dwop(weason.twustedfwiendstweet), ^^;;
+      t-tweetistwustedfwiendscontent
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDropAllTrustedFriendsTweetsRuleParam)
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(RuleParams.True)
+  ovewwide d-def enabwed: seq[wuwepawam[boowean]] = s-seq(enabwedwopawwtwustedfwiendstweetswuwepawam)
+  o-ovewwide d-def enabwefaiwcwosed: seq[wuwepawam[boowean]] = s-seq(wuwepawams.twue)
 }
 
-object DropAllCollabInvitationTweetsRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
-      TweetIsCollabInvitationContent
+o-object d-dwopawwcowwabinvitationtweetswuwe
+    extends w-wuwewithconstantaction(
+      dwop(unspecified), /(^•ω•^)
+      tweetiscowwabinvitationcontent
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDropAllCollabInvitationTweetsRuleParam)
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(RuleParams.True)
+  ovewwide def enabwed: s-seq[wuwepawam[boowean]] = s-seq(enabwedwopawwcowwabinvitationtweetswuwepawam)
+  o-ovewwide def enabwefaiwcwosed: seq[wuwepawam[boowean]] = seq(wuwepawams.twue)
 }
 
-abstract class FilterTrustedFriendsTweetContentRule(action: Action)
-    extends OnlyWhenNotAuthorViewerRule(
-      action,
-      And(
-        TweetIsTrustedFriendsContent,
-        Not(
-          Or(
-            ViewerIsTrustedFriendsTweetAuthor,
-            ViewerIsTrustedFriend
+abstwact cwass f-fiwtewtwustedfwiendstweetcontentwuwe(action: action)
+    extends o-onwywhennotauthowviewewwuwe(
+      a-action, nyaa~~
+      and(
+        tweetistwustedfwiendscontent, (✿oωo)
+        n-nyot(
+          ow(
+            v-viewewistwustedfwiendstweetauthow, ( ͡o ω ͡o )
+            v-viewewistwustedfwiend
           )
         )
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDropTrustedFriendsTweetContentRuleParam)
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(RuleParams.True)
+  o-ovewwide d-def enabwed: seq[wuwepawam[boowean]] = s-seq(enabwedwoptwustedfwiendstweetcontentwuwepawam)
+  ovewwide def enabwefaiwcwosed: seq[wuwepawam[boowean]] = seq(wuwepawams.twue)
 }
 
-object DropTrustedFriendsTweetContentRule
-    extends FilterTrustedFriendsTweetContentRule(Drop(Reason.TrustedFriendsTweet))
+o-object dwoptwustedfwiendstweetcontentwuwe
+    e-extends fiwtewtwustedfwiendstweetcontentwuwe(dwop(weason.twustedfwiendstweet))
 
-object TombstoneTrustedFriendsTweetContentRule
-    extends FilterTrustedFriendsTweetContentRule(Tombstone(Epitaph.Unavailable))
+object tombstonetwustedfwiendstweetcontentwuwe
+    e-extends fiwtewtwustedfwiendstweetcontentwuwe(tombstone(epitaph.unavaiwabwe))
 
-object TweetNsfwUserAdminAvoidRule
-    extends RuleWithConstantAction(
-      Avoid(),
-      Or(
-        TweetHasNsfwUserAuthor,
-        TweetHasNsfwAdminAuthor,
-        NsfwUserAuthor,
-        NsfwAdminAuthor
+object tweetnsfwusewadminavoidwuwe
+    extends wuwewithconstantaction(
+      a-avoid(), (U ᵕ U❁)
+      o-ow(
+        tweethasnsfwusewauthow, òωó
+        t-tweethasnsfwadminauthow, σωσ
+        nysfwusewauthow, :3
+        nysfwadminauthow
       )
     )
 
-object AvoidHighToxicityModelScoreRule
-    extends RuleWithConstantAction(
-      Avoid(),
-      TweetHasLabelWithScoreAboveThresholdWithParam(
-        TweetSafetyLabelType.HighToxicityScore,
-        AdAvoidanceHighToxicityModelScoreThresholdParam)
+o-object a-avoidhightoxicitymodewscowewuwe
+    extends w-wuwewithconstantaction(
+      avoid(), OwO
+      tweethaswabewwithscoweabovethweshowdwithpawam(
+        t-tweetsafetywabewtype.hightoxicityscowe, ^^
+        adavoidancehightoxicitymodewscowethweshowdpawam)
     )
 
-object AvoidReportedTweetModelScoreRule
-    extends RuleWithConstantAction(
-      Avoid(),
-      TweetHasLabelWithScoreAboveThresholdWithParam(
-        TweetSafetyLabelType.HighPReportedTweetScore,
-        AdAvoidanceReportedTweetModelScoreThresholdParam)
+object avoidwepowtedtweetmodewscowewuwe
+    e-extends wuwewithconstantaction(
+      avoid(), (˘ω˘)
+      tweethaswabewwithscoweabovethweshowdwithpawam(
+        t-tweetsafetywabewtype.highpwepowtedtweetscowe, OwO
+        a-adavoidancewepowtedtweetmodewscowethweshowdpawam)
     )
 
-object TombstoneDeletedOuterTweetRule
-    extends RuleWithConstantAction(
-      Tombstone(Epitaph.Deleted),
-      And(
-        Equals(FeatureTweetDeleteReason, TweetDeleteReason.Deleted),
-        Not(IsQuotedInnerTweet)
+o-object tombstonedewetedoutewtweetwuwe
+    extends wuwewithconstantaction(
+      t-tombstone(epitaph.deweted), UwU
+      and(
+        equaws(featuwetweetdeweteweason, ^•ﻌ•^ tweetdeweteweason.deweted), (ꈍᴗꈍ)
+        nyot(isquotedinnewtweet)
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDeleteStateTweetRulesParam)
+  o-ovewwide def e-enabwed: seq[wuwepawam[boowean]] = s-seq(enabwedewetestatetweetwuwespawam)
 }
 
-object TombstoneDeletedTweetRule
-    extends RuleWithConstantAction(
-      Tombstone(Epitaph.Deleted),
-      And(
-        Equals(FeatureTweetDeleteReason, TweetDeleteReason.Deleted),
+o-object tombstonedewetedtweetwuwe
+    extends wuwewithconstantaction(
+      t-tombstone(epitaph.deweted), /(^•ω•^)
+      a-and(
+        equaws(featuwetweetdeweteweason, (U ᵕ U❁) tweetdeweteweason.deweted), (✿oωo)
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDeleteStateTweetRulesParam)
+  o-ovewwide def enabwed: seq[wuwepawam[boowean]] = seq(enabwedewetestatetweetwuwespawam)
 }
 
-object TombstoneDeletedQuotedTweetRule
-    extends RuleWithConstantAction(
-      Tombstone(Epitaph.Deleted),
-      And(
-        Equals(FeatureTweetDeleteReason, TweetDeleteReason.Deleted),
-        IsQuotedInnerTweet
+o-object tombstonedewetedquotedtweetwuwe
+    extends w-wuwewithconstantaction(
+      tombstone(epitaph.deweted), OwO
+      a-and(
+        equaws(featuwetweetdeweteweason, :3 tweetdeweteweason.deweted), nyaa~~
+        isquotedinnewtweet
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDeleteStateTweetRulesParam)
+  o-ovewwide d-def enabwed: seq[wuwepawam[boowean]] = s-seq(enabwedewetestatetweetwuwespawam)
 }
 
-object TombstoneBounceDeletedTweetRule
-    extends RuleWithConstantAction(
-      Tombstone(Epitaph.BounceDeleted),
-      Equals(FeatureTweetDeleteReason, TweetDeleteReason.BounceDeleted),
+object tombstonebouncedewetedtweetwuwe
+    extends w-wuwewithconstantaction(
+      tombstone(epitaph.bouncedeweted), ^•ﻌ•^
+      equaws(featuwetweetdeweteweason, ( ͡o ω ͡o ) t-tweetdeweteweason.bouncedeweted), ^^;;
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDeleteStateTweetRulesParam)
+  ovewwide def enabwed: seq[wuwepawam[boowean]] = seq(enabwedewetestatetweetwuwespawam)
 }
 
-object TombstoneBounceDeletedOuterTweetRule
-    extends RuleWithConstantAction(
-      Tombstone(Epitaph.BounceDeleted),
-      And(
-        Equals(FeatureTweetDeleteReason, TweetDeleteReason.BounceDeleted),
-        Not(IsQuotedInnerTweet)
+o-object tombstonebouncedewetedoutewtweetwuwe
+    e-extends wuwewithconstantaction(
+      t-tombstone(epitaph.bouncedeweted), mya
+      a-and(
+        e-equaws(featuwetweetdeweteweason, (U ᵕ U❁) tweetdeweteweason.bouncedeweted),
+        n-nyot(isquotedinnewtweet)
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDeleteStateTweetRulesParam)
+  ovewwide def enabwed: seq[wuwepawam[boowean]] = s-seq(enabwedewetestatetweetwuwespawam)
 }
 
-object TombstoneBounceDeletedQuotedTweetRule
-    extends RuleWithConstantAction(
-      Tombstone(Epitaph.BounceDeleted),
-      And(
-        Equals(FeatureTweetDeleteReason, TweetDeleteReason.BounceDeleted),
-        IsQuotedInnerTweet
+object t-tombstonebouncedewetedquotedtweetwuwe
+    extends wuwewithconstantaction(
+      t-tombstone(epitaph.bouncedeweted), ^•ﻌ•^
+      a-and(
+        equaws(featuwetweetdeweteweason, (U ﹏ U) t-tweetdeweteweason.bouncedeweted), /(^•ω•^)
+        isquotedinnewtweet
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDeleteStateTweetRulesParam)
+  o-ovewwide def e-enabwed: seq[wuwepawam[boowean]] = seq(enabwedewetestatetweetwuwespawam)
 }
 
 
-object DropStaleTweetsRule
-    extends RuleWithConstantAction(
-      Drop(StaleTweet),
-      And(TweetIsStaleTweet, Not(IsQuotedInnerTweet), Not(Retweet), Not(IsSourceTweet))) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableStaleTweetDropRuleParam)
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(
-    EnableStaleTweetDropRuleFailClosedParam)
+o-object dwopstawetweetswuwe
+    extends w-wuwewithconstantaction(
+      dwop(stawetweet), ʘwʘ
+      a-and(tweetisstawetweet, XD not(isquotedinnewtweet), (⑅˘꒳˘) nyot(wetweet), nyaa~~ nyot(issouwcetweet))) {
+  o-ovewwide def enabwed: seq[wuwepawam[boowean]] = s-seq(enabwestawetweetdwopwuwepawam)
+  ovewwide def enabwefaiwcwosed: s-seq[wuwepawam[boowean]] = s-seq(
+    enabwestawetweetdwopwuwefaiwcwosedpawam)
 }
 
-object StaleTweetLimitedActionsRule
-    extends RuleWithConstantAction(
-      LimitedEngagements(LimitedEngagementReason.StaleTweet),
-      TweetIsStaleTweet) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(StaleTweetLimitedActionsRulesEnabledParam)
+o-object stawetweetwimitedactionswuwe
+    e-extends wuwewithconstantaction(
+      w-wimitedengagements(wimitedengagementweason.stawetweet), UwU
+      tweetisstawetweet) {
+  o-ovewwide def enabwed: s-seq[wuwepawam[boowean]] = seq(stawetweetwimitedactionswuwesenabwedpawam)
 }

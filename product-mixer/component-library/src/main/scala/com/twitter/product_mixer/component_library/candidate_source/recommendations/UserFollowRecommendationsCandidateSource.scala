@@ -1,41 +1,41 @@
-package com.twitter.product_mixer.component_library.candidate_source.recommendations
+package com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.wecommendations
 
-import com.twitter.follow_recommendations.{thriftscala => fr}
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyViewFetcherSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.onboarding.follow_recommendations_service.GetRecommendationsClientColumn
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.{thwiftscawa => fw}
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.stwato.stwatokeyviewfetchewsouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt c-com.twittew.stwato.cwient.fetchew
+i-impowt com.twittew.stwato.genewated.cwient.onboawding.fowwow_wecommendations_sewvice.getwecommendationscwientcowumn
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
 /**
- * Returns a list of FollowRecommendations as [[fr.UserRecommendation]]s fetched from Strato
+ * w-wetuwns a wist of fowwowwecommendations as [[fw.usewwecommendation]]s fetched fwom stwato
  */
-@Singleton
-class UserFollowRecommendationsCandidateSource @Inject() (
-  getRecommendationsClientColumn: GetRecommendationsClientColumn)
-    extends StratoKeyViewFetcherSource[
-      fr.RecommendationRequest,
-      Unit,
-      fr.RecommendationResponse,
-      fr.UserRecommendation
+@singweton
+cwass usewfowwowwecommendationscandidatesouwce @inject() (
+  g-getwecommendationscwientcowumn: getwecommendationscwientcowumn)
+    extends stwatokeyviewfetchewsouwce[
+      f-fw.wecommendationwequest, nyaa~~
+      unit, (⑅˘꒳˘)
+      f-fw.wecommendationwesponse, rawr x3
+      fw.usewwecommendation
     ] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    "FollowRecommendationsService")
+  ovewwide vaw identifiew: c-candidatesouwceidentifiew = candidatesouwceidentifiew(
+    "fowwowwecommendationssewvice")
 
-  override val fetcher: Fetcher[fr.RecommendationRequest, Unit, fr.RecommendationResponse] =
-    getRecommendationsClientColumn.fetcher
+  o-ovewwide vaw fetchew: f-fetchew[fw.wecommendationwequest, (✿oωo) unit, fw.wecommendationwesponse] =
+    getwecommendationscwientcowumn.fetchew
 
-  override def stratoResultTransformer(
-    stratoKey: fr.RecommendationRequest,
-    stratoResult: fr.RecommendationResponse
-  ): Seq[fr.UserRecommendation] = {
-    stratoResult.recommendations.map {
-      case fr.Recommendation.User(userRec: fr.UserRecommendation) =>
-        userRec
-      case _ =>
-        throw new Exception("Invalid recommendation type returned from FRS")
+  ovewwide def stwatowesuwttwansfowmew(
+    stwatokey: fw.wecommendationwequest, (ˆ ﻌ ˆ)♡
+    s-stwatowesuwt: fw.wecommendationwesponse
+  ): seq[fw.usewwecommendation] = {
+    stwatowesuwt.wecommendations.map {
+      case fw.wecommendation.usew(usewwec: f-fw.usewwecommendation) =>
+        usewwec
+      c-case _ =>
+        t-thwow n-nyew exception("invawid w-wecommendation type wetuwned fwom fws")
     }
   }
 }

@@ -1,99 +1,99 @@
-package com.twitter.search.earlybird.search;
+package com.twittew.seawch.eawwybiwd.seawch;
 
-import java.util.Map;
+impowt j-java.utiw.map;
 
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.cowwect.maps;
 
-import com.twitter.search.earlybird.search.queries.SinceMaxIDFilter;
+i-impowt c-com.twittew.seawch.eawwybiwd.seawch.quewies.sincemaxidfiwtew;
 
-public class SearchResultsInfo {
-  public static final long NO_ID = SinceMaxIDFilter.NO_FILTER;
-  public static final int NO_TIME = -1;
+p-pubwic cwass seawchwesuwtsinfo {
+  p-pubwic static f-finaw wong nyo_id = s-sincemaxidfiwtew.no_fiwtew;
+  pubwic static finaw int nyo_time = -1;
 
-  private int numHitsProcessed = 0;
-  private int numSearchedSegments = 0;
+  pwivate int nyumhitspwocessed = 0;
+  pwivate int n-nyumseawchedsegments = 0;
 
-  private boolean earlyTerminated = false;
-  private String earlyTerminationReason = null;
+  pwivate boowean eawwytewminated = fawse;
+  p-pwivate stwing eawwytewminationweason = n-nyuww;
 
-  private long maxSearchedStatusID = NO_ID;
-  private long minSearchedStatusID = NO_ID;
+  pwivate wong maxseawchedstatusid = nyo_id;
+  pwivate wong m-minseawchedstatusid = nyo_id;
 
-  private int maxSearchedTime = NO_TIME;
-  private int minSearchedTime = NO_TIME;
+  p-pwivate int m-maxseawchedtime = nyo_time;
+  pwivate int minseawchedtime = nyo_time;
 
-  // Map from time thresholds (in milliseconds) to number of results more recent than this period.
-  protected final Map<Long, Integer> hitCounts = Maps.newHashMap();
+  // map f-fwom time thweshowds (in miwwiseconds) to nyumbew of wesuwts mowe wecent than this p-pewiod. 😳😳😳
+  pwotected finaw map<wong, (U ﹏ U) i-integew> h-hitcounts = maps.newhashmap();
 
-  public final int getNumHitsProcessed() {
-    return numHitsProcessed;
+  p-pubwic finaw i-int getnumhitspwocessed() {
+    wetuwn nyumhitspwocessed;
   }
 
-  public final void setNumHitsProcessed(int numHitsProcessed) {
-    this.numHitsProcessed = numHitsProcessed;
+  pubwic finaw void s-setnumhitspwocessed(int nyumhitspwocessed) {
+    this.numhitspwocessed = n-nyumhitspwocessed;
   }
 
-  public final int getNumSearchedSegments() {
-    return numSearchedSegments;
+  pubwic finaw int getnumseawchedsegments() {
+    wetuwn nyumseawchedsegments;
   }
 
-  public final void setNumSearchedSegments(int numSearchedSegments) {
-    this.numSearchedSegments = numSearchedSegments;
+  pubwic finaw void setnumseawchedsegments(int n-nyumseawchedsegments) {
+    this.numseawchedsegments = n-numseawchedsegments;
   }
 
-  public final long getMaxSearchedStatusID() {
-    return maxSearchedStatusID;
+  p-pubwic f-finaw wong getmaxseawchedstatusid() {
+    wetuwn maxseawchedstatusid;
   }
 
-  public final long getMinSearchedStatusID() {
-    return minSearchedStatusID;
+  pubwic f-finaw wong g-getminseawchedstatusid() {
+    wetuwn minseawchedstatusid;
   }
 
-  public final int getMaxSearchedTime() {
-    return maxSearchedTime;
+  p-pubwic finaw int g-getmaxseawchedtime() {
+    wetuwn m-maxseawchedtime;
   }
 
-  public final int getMinSearchedTime() {
-    return minSearchedTime;
+  pubwic f-finaw int getminseawchedtime() {
+    wetuwn minseawchedtime;
   }
 
-  public boolean isSetSearchedStatusIDs() {
-    return maxSearchedStatusID != NO_ID && minSearchedStatusID != NO_ID;
+  p-pubwic boowean issetseawchedstatusids() {
+    w-wetuwn maxseawchedstatusid != nyo_id && minseawchedstatusid != n-nyo_id;
   }
 
-  public boolean isSetSearchedTimes() {
-    return maxSearchedTime != NO_TIME && minSearchedTime != NO_TIME;
+  p-pubwic boowean issetseawchedtimes() {
+    wetuwn maxseawchedtime != nyo_time && minseawchedtime != nyo_time;
   }
 
-  public void setMaxSearchedStatusID(long maxSearchedStatusID) {
-    this.maxSearchedStatusID = maxSearchedStatusID;
+  p-pubwic void s-setmaxseawchedstatusid(wong maxseawchedstatusid) {
+    t-this.maxseawchedstatusid = m-maxseawchedstatusid;
   }
 
-  public void setMinSearchedStatusID(long minSearchedStatusID) {
-    this.minSearchedStatusID = minSearchedStatusID;
+  p-pubwic void setminseawchedstatusid(wong minseawchedstatusid) {
+    this.minseawchedstatusid = minseawchedstatusid;
   }
 
-  public void setMaxSearchedTime(int maxSearchedTime) {
-    this.maxSearchedTime = maxSearchedTime;
+  p-pubwic void setmaxseawchedtime(int maxseawchedtime) {
+    this.maxseawchedtime = maxseawchedtime;
   }
 
-  public void setMinSearchedTime(int minSearchedTime) {
-    this.minSearchedTime = minSearchedTime;
+  pubwic void s-setminseawchedtime(int minseawchedtime) {
+    this.minseawchedtime = m-minseawchedtime;
   }
 
-  public void setEarlyTerminated(boolean earlyTerminated) {
-    this.earlyTerminated = earlyTerminated;
+  p-pubwic v-void seteawwytewminated(boowean eawwytewminated) {
+    t-this.eawwytewminated = e-eawwytewminated;
   }
 
-  public boolean isEarlyTerminated() {
-    return earlyTerminated;
+  p-pubwic b-boowean iseawwytewminated() {
+    wetuwn eawwytewminated;
   }
 
-  public String getEarlyTerminationReason() {
-    return earlyTerminationReason;
+  pubwic stwing g-geteawwytewminationweason() {
+    w-wetuwn eawwytewminationweason;
   }
 
-  public void setEarlyTerminationReason(String earlyTerminationReason) {
-    this.earlyTerminationReason = earlyTerminationReason;
+  p-pubwic v-void seteawwytewminationweason(stwing e-eawwytewminationweason) {
+    this.eawwytewminationweason = eawwytewminationweason;
   }
 }

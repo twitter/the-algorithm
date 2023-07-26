@@ -1,66 +1,66 @@
 {
-  "role": "discode",
-  "name": "uua-retweet-archival-events-prod",
-  "config-files": [
-    "uua-retweet-archival-events.aurora"
-  ],
-  "build": {
-    "play": true,
-    "trigger": {
-      "cron-schedule": "0 17 * * 2"
-    },
+  "wowe": "discode", rawr x3
+  "name": "uua-wetweet-awchivaw-events-pwod", XD
+  "config-fiwes": [
+    "uua-wetweet-awchivaw-events.auwowa"
+  ], >_<
+  "buiwd": {
+    "pway": twue, (ꈍᴗꈍ)
+    "twiggew": {
+      "cwon-scheduwe": "0 17 * * 2"
+    }, ^•ﻌ•^
     "dependencies": [
       {
-        "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "wowe": "packew", OwO
+        "name": "packew-cwient-no-pex", 🥺
+        "vewsion": "watest"
       }
-    ],
+    ], òωó
     "steps": [
       {
-        "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-retweet-archival-events"
-      },
+        "type": "bazew-bundwe", o.O
+        "name": "bundwe", (U ᵕ U❁)
+        "tawget": "unified_usew_actions/sewvice/swc/main/scawa:uua-wetweet-awchivaw-events"
+      }, (⑅˘꒳˘)
       {
-        "type": "packer",
-        "name": "uua-retweet-archival-events",
-        "artifact": "./dist/uua-retweet-archival-events.zip"
+        "type": "packew", ( ͡o ω ͡o )
+        "name": "uua-wetweet-awchivaw-events", UwU
+        "awtifact": "./dist/uua-wetweet-awchivaw-events.zip"
       }
     ]
-  },
-  "targets": [
+  }, rawr x3
+  "tawgets": [
     {
-      "type": "group",
-      "name": "prod",
-      "targets": [
+      "type": "gwoup", rawr
+      "name": "pwod", σωσ
+      "tawgets": [
         {
-          "name": "uua-retweet-archival-events-prod-atla",
-          "key": "atla/discode/prod/uua-retweet-archival-events"
-        },
+          "name": "uua-wetweet-awchivaw-events-pwod-atwa", σωσ
+          "key": "atwa/discode/pwod/uua-wetweet-awchivaw-events"
+        }, >_<
         {
-          "name": "uua-retweet-archival-events-prod-pdxa",
-          "key": "pdxa/discode/prod/uua-retweet-archival-events"
+          "name": "uua-wetweet-awchivaw-events-pwod-pdxa", :3
+          "key": "pdxa/discode/pwod/uua-wetweet-awchivaw-events"
         }
       ]
     }
-  ],
-  "subscriptions": [
+  ], (U ﹏ U)
+  "subscwiptions": [
     {
-      "type": "SLACK",
-      "recipients": [
+      "type": "swack", -.-
+      "wecipients": [
         {
-          "to": "discode-oncall"
+          "to": "discode-oncaww"
         }
-      ],
-      "events": ["WORKFLOW_SUCCESS"]
-    },
+      ], (ˆ ﻌ ˆ)♡
+      "events": ["wowkfwow_success"]
+    }, (⑅˘꒳˘)
     {
-      "type": "SLACK",
-      "recipients": [{
-        "to": "discode-oncall"
-      }],
-      "events": ["*FAILED"]
+      "type": "swack", (U ᵕ U❁)
+      "wecipients": [{
+        "to": "discode-oncaww"
+      }], -.-
+      "events": ["*faiwed"]
     }
   ]
 }

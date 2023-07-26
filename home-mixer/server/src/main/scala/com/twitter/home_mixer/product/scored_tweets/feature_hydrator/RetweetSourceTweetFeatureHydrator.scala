@@ -1,75 +1,75 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.product_mixer.component_library.candidate_source.timeline_ranker.TimelineRankerInNetworkSourceTweetsByTweetIdMapFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.search.common.features.thriftscala.ThriftTweetFeatures
-import com.twitter.stitch.Stitch
-import com.twitter.timelineranker.thriftscala.CandidateTweet
+impowt com.twittew.home_mixew.modew.homefeatuwes._
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.timewine_wankew.timewinewankewinnetwowksouwcetweetsbytweetidmapfeatuwe
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.seawch.common.featuwes.thwiftscawa.thwifttweetfeatuwes
+impowt c-com.twittew.stitch.stitch
+impowt c-com.twittew.timewinewankew.thwiftscawa.candidatetweet
 
-object SourceTweetEarlybirdFeature extends Feature[TweetCandidate, Option[ThriftTweetFeatures]]
+object souwcetweeteawwybiwdfeatuwe extends f-featuwe[tweetcandidate, >_< option[thwifttweetfeatuwes]]
 
 /**
- * Feature Hydrator that bulk hydrates source tweets' features to retweet candidates
+ * f-featuwe hydwatow t-that buwk hydwates souwce tweets' featuwes to wetweet candidates
  */
-object RetweetSourceTweetFeatureHydrator
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+object w-wetweetsouwcetweetfeatuwehydwatow
+    extends buwkcandidatefeatuwehydwatow[pipewinequewy, -.- tweetcandidate] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("RetweetSourceTweet")
+  ovewwide vaw identifiew: featuwehydwatowidentifiew =
+    f-featuwehydwatowidentifiew("wetweetsouwcetweet")
 
-  override val features: Set[Feature[_, _]] = Set(
-    SourceTweetEarlybirdFeature,
+  ovewwide v-vaw featuwes: s-set[featuwe[_, 🥺 _]] = s-set(
+    s-souwcetweeteawwybiwdfeatuwe, (U ﹏ U)
   )
 
-  private val DefaultFeatureMap = FeatureMapBuilder()
-    .add(SourceTweetEarlybirdFeature, None)
-    .build()
+  pwivate vaw defauwtfeatuwemap = f-featuwemapbuiwdew()
+    .add(souwcetweeteawwybiwdfeatuwe, >w< nyone)
+    .buiwd()
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val sourceTweetsByTweetId: Option[Map[Long, CandidateTweet]] = {
-      query.features.map(
-        _.getOrElse(
-          TimelineRankerInNetworkSourceTweetsByTweetIdMapFeature,
-          Map.empty[Long, CandidateTweet]))
+  ovewwide def a-appwy(
+    quewy: pipewinequewy, mya
+    candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): stitch[seq[featuwemap]] = {
+    vaw souwcetweetsbytweetid: o-option[map[wong, >w< candidatetweet]] = {
+      quewy.featuwes.map(
+        _.getowewse(
+          t-timewinewankewinnetwowksouwcetweetsbytweetidmapfeatuwe, nyaa~~
+          map.empty[wong, (✿oωo) candidatetweet]))
     }
 
     /**
-     * Return DefaultFeatureMap (no-op to candidate) when it is unfeasible to hydrate the
-     * source tweet's feature to the current candidate: early bird does not return source
-     * tweets info / candidate is not a retweet / sourceTweetId is not found
+     * w-wetuwn defauwtfeatuwemap (no-op t-to candidate) when it is unfeasibwe to hydwate the
+     * s-souwce tweet's f-featuwe to the cuwwent candidate: e-eawwy biwd does n-nyot wetuwn souwce
+     * tweets i-info / candidate is nyot a wetweet / s-souwcetweetid is nyot found
      */
-    Stitch.value {
-      if (sourceTweetsByTweetId.exists(_.nonEmpty)) {
-        candidates.map { candidate =>
-          val candidateIsRetweet = candidate.features.getOrElse(IsRetweetFeature, false)
-          val sourceTweetId = candidate.features.getOrElse(SourceTweetIdFeature, None)
-          if (!candidateIsRetweet || sourceTweetId.isEmpty) {
-            DefaultFeatureMap
-          } else {
-            val sourceTweet = sourceTweetsByTweetId.flatMap(_.get(sourceTweetId.get))
-            if (sourceTweet.nonEmpty) {
-              val source = sourceTweet.get
-              FeatureMapBuilder()
-                .add(SourceTweetEarlybirdFeature, source.features)
-                .build()
-            } else {
-              DefaultFeatureMap
+    stitch.vawue {
+      i-if (souwcetweetsbytweetid.exists(_.nonempty)) {
+        candidates.map { c-candidate =>
+          vaw candidateiswetweet = c-candidate.featuwes.getowewse(iswetweetfeatuwe, ʘwʘ f-fawse)
+          vaw souwcetweetid = candidate.featuwes.getowewse(souwcetweetidfeatuwe, (ˆ ﻌ ˆ)♡ nyone)
+          if (!candidateiswetweet || souwcetweetid.isempty) {
+            d-defauwtfeatuwemap
+          } e-ewse {
+            vaw souwcetweet = s-souwcetweetsbytweetid.fwatmap(_.get(souwcetweetid.get))
+            i-if (souwcetweet.nonempty) {
+              v-vaw souwce = souwcetweet.get
+              featuwemapbuiwdew()
+                .add(souwcetweeteawwybiwdfeatuwe, 😳😳😳 souwce.featuwes)
+                .buiwd()
+            } e-ewse {
+              defauwtfeatuwemap
             }
           }
         }
-      } else {
-        candidates.map(_ => DefaultFeatureMap)
+      } ewse {
+        candidates.map(_ => defauwtfeatuwemap)
       }
     }
   }

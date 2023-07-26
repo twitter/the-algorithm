@@ -1,64 +1,64 @@
-package com.twitter.visibility.builder
+package com.twittew.visibiwity.buiwdew
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.features._
-import com.twitter.visibility.common.stitch.StitchHelpers
-import scala.collection.mutable
+impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.sewvo.utiw.gate
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.visibiwity.featuwes._
+impowt com.twittew.visibiwity.common.stitch.stitchhewpews
+impowt scawa.cowwection.mutabwe
 
-object FeatureMapBuilder {
-  type Build = Seq[FeatureMapBuilder => FeatureMapBuilder] => FeatureMap
+object featuwemapbuiwdew {
+  type b-buiwd = seq[featuwemapbuiwdew => featuwemapbuiwdew] => featuwemap
 
-  def apply(
-    statsReceiver: StatsReceiver = NullStatsReceiver,
-    enableStitchProfiling: Gate[Unit] = Gate.False
-  ): Build =
+  d-def appwy(
+    statsweceivew: s-statsweceivew = nyuwwstatsweceivew,
+    enabwestitchpwofiwing: gate[unit] = g-gate.fawse
+  ): buiwd =
     fns =>
-      Function
-        .chain(fns).apply(
-          new FeatureMapBuilder(statsReceiver, enableStitchProfiling)
-        ).build
+      f-function
+        .chain(fns).appwy(
+          n-nyew featuwemapbuiwdew(statsweceivew, 🥺 enabwestitchpwofiwing)
+        ).buiwd
 }
 
-class FeatureMapBuilder private[builder] (
-  statsReceiver: StatsReceiver,
-  enableStitchProfiling: Gate[Unit] = Gate.False) {
+cwass featuwemapbuiwdew pwivate[buiwdew] (
+  statsweceivew: statsweceivew,
+  e-enabwestitchpwofiwing: gate[unit] = gate.fawse) {
 
-  private[this] val hydratedScope =
-    statsReceiver.scope("visibility_result_builder").scope("hydrated")
+  pwivate[this] vaw hydwatedscope =
+    s-statsweceivew.scope("visibiwity_wesuwt_buiwdew").scope("hydwated")
 
-  val mapBuilder: mutable.Builder[(Feature[_], Stitch[_]), Map[Feature[_], Stitch[_]]] =
-    Map.newBuilder[Feature[_], Stitch[_]]
+  vaw mapbuiwdew: m-mutabwe.buiwdew[(featuwe[_], o.O s-stitch[_]), /(^•ω•^) m-map[featuwe[_], nyaa~~ s-stitch[_]]] =
+    map.newbuiwdew[featuwe[_], nyaa~~ stitch[_]]
 
-  val constantMapBuilder: mutable.Builder[(Feature[_], Any), Map[Feature[_], Any]] =
-    Map.newBuilder[Feature[_], Any]
+  v-vaw constantmapbuiwdew: mutabwe.buiwdew[(featuwe[_], :3 any), map[featuwe[_], a-any]] =
+    map.newbuiwdew[featuwe[_], 😳😳😳 any]
 
-  def build: FeatureMap = new FeatureMap(mapBuilder.result(), constantMapBuilder.result())
+  def buiwd: featuwemap = nyew featuwemap(mapbuiwdew.wesuwt(), (˘ω˘) c-constantmapbuiwdew.wesuwt())
 
-  def withConstantFeature[T](feature: Feature[T], value: T): FeatureMapBuilder = {
-    val anyValue: Any = value.asInstanceOf[Any]
-    constantMapBuilder += (feature -> anyValue)
-    this
+  def withconstantfeatuwe[t](featuwe: f-featuwe[t], ^^ v-vawue: t): featuwemapbuiwdew = {
+    v-vaw anyvawue: any = vawue.asinstanceof[any]
+    constantmapbuiwdew += (featuwe -> anyvawue)
+    t-this
   }
 
-  def withFeature[T](feature: Feature[T], stitch: Stitch[T]): FeatureMapBuilder = {
-    val profiledStitch = if (enableStitchProfiling()) {
-      val featureScope = hydratedScope.scope(feature.name)
-      StitchHelpers.profileStitch(stitch, Seq(hydratedScope, featureScope))
-    } else {
+  d-def withfeatuwe[t](featuwe: featuwe[t], :3 stitch: s-stitch[t]): featuwemapbuiwdew = {
+    v-vaw pwofiwedstitch = if (enabwestitchpwofiwing()) {
+      v-vaw featuwescope = hydwatedscope.scope(featuwe.name)
+      s-stitchhewpews.pwofiwestitch(stitch, -.- seq(hydwatedscope, 😳 featuwescope))
+    } e-ewse {
       stitch
     }
 
-    val featureStitchRef = Stitch.ref(profiledStitch)
+    v-vaw featuwestitchwef = stitch.wef(pwofiwedstitch)
 
-    mapBuilder += FeatureMap.rescueFeatureTuple(feature -> featureStitchRef)
+    m-mapbuiwdew += featuwemap.wescuefeatuwetupwe(featuwe -> f-featuwestitchwef)
 
     this
   }
 
-  def withConstantFeature[T](feature: Feature[T], option: Option[T]): FeatureMapBuilder = {
-    option.map(withConstantFeature(feature, _)).getOrElse(this)
+  def withconstantfeatuwe[t](featuwe: featuwe[t], mya option: option[t]): featuwemapbuiwdew = {
+    option.map(withconstantfeatuwe(featuwe, (˘ω˘) _)).getowewse(this)
   }
 }

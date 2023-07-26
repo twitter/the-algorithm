@@ -1,163 +1,163 @@
-package com.twitter.search.earlybird.search.relevance;
+package com.twittew.seawch.eawwybiwd.seawch.wewevance;
 
-import java.io.IOException;
-import java.util.Objects;
+impowt java.io.ioexception;
+i-impowt java.utiw.objects;
 
-import com.google.common.annotations.VisibleForTesting;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+i-impowt owg.apache.wucene.index.weafweadew;
+i-impowt owg.apache.wucene.index.weafweadewcontext;
+i-impowt owg.apache.wucene.index.numewicdocvawues;
+i-impowt owg.apache.wucene.seawch.booweancwause;
+i-impowt owg.apache.wucene.seawch.booweanquewy;
+impowt owg.apache.wucene.seawch.docidsetitewatow;
+impowt owg.apache.wucene.seawch.indexseawchew;
+impowt owg.apache.wucene.seawch.quewy;
+impowt o-owg.apache.wucene.seawch.scowemode;
+impowt owg.apache.wucene.seawch.weight;
 
-import com.twitter.search.common.encoding.features.ByteNormalizer;
-import com.twitter.search.common.encoding.features.ClampByteNormalizer;
-import com.twitter.search.common.encoding.features.SingleBytePositiveFloatNormalizer;
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.common.query.FilteredQuery;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
+impowt c-com.twittew.seawch.common.encoding.featuwes.bytenowmawizew;
+impowt com.twittew.seawch.common.encoding.featuwes.cwampbytenowmawizew;
+i-impowt com.twittew.seawch.common.encoding.featuwes.singwebytepositivefwoatnowmawizew;
+impowt com.twittew.seawch.common.quewy.defauwtfiwtewweight;
+impowt c-com.twittew.seawch.common.quewy.fiwtewedquewy;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.utiw.wangefiwtewdisi;
 
-public final class MinFeatureValueFilter extends Query implements FilteredQuery.DocIdFilterFactory {
-  private final String featureName;
-  private final ByteNormalizer normalizer;
-  private final double minValue;
-
-  /**
-   * Creates a query that filters out all hits that have a value smaller than the given threshold
-   * for the given feature.
-   *
-   * @param featureName The feature.
-   * @param minValue The threshold for the feature values.
-   * @return A query that filters out all hits that have a value smaller than the given threshold
-   *         for the given feature.
-   */
-  public static Query getMinFeatureValueFilter(String featureName, double minValue) {
-    return new BooleanQuery.Builder()
-        .add(new MinFeatureValueFilter(featureName, minValue), BooleanClause.Occur.FILTER)
-        .build();
-  }
-
-  public static FilteredQuery.DocIdFilterFactory getDocIdFilterFactory(
-      String featureName, double minValue) {
-    return new MinFeatureValueFilter(featureName, minValue);
-  }
+p-pubwic finaw cwass minfeatuwevawuefiwtew extends quewy impwements fiwtewedquewy.docidfiwtewfactowy {
+  pwivate finaw stwing f-featuwename;
+  pwivate finaw bytenowmawizew nyowmawizew;
+  pwivate finaw doubwe m-minvawue;
 
   /**
-   * Returns the normalizer that should be used to normalize the values for the given feature.
+   * cweates a-a quewy that f-fiwtews out aww h-hits that have a v-vawue smowew than the given thweshowd
+   * fow t-the given featuwe. 🥺
    *
-   * @param featureName The feature.
-   * @return The normalizer that should be used to normalize the values for the given feature.
+   * @pawam featuwename the featuwe. nyaa~~
+   * @pawam m-minvawue the thweshowd fow the featuwe vawues. ^^
+   * @wetuwn a quewy that fiwtews out aww h-hits that have a vawue smowew t-than the given thweshowd
+   *         f-fow the given f-featuwe. >w<
    */
-  @VisibleForTesting
-  public static ByteNormalizer getMinFeatureValueNormalizer(String featureName) {
-    if (featureName.equals(EarlybirdFieldConstant.USER_REPUTATION.getFieldName())) {
-      return new ClampByteNormalizer(0, 100);
+  pubwic static quewy getminfeatuwevawuefiwtew(stwing featuwename, OwO d-doubwe minvawue) {
+    w-wetuwn nyew booweanquewy.buiwdew()
+        .add(new m-minfeatuwevawuefiwtew(featuwename, XD m-minvawue), ^^;; booweancwause.occuw.fiwtew)
+        .buiwd();
+  }
+
+  pubwic static f-fiwtewedquewy.docidfiwtewfactowy getdocidfiwtewfactowy(
+      s-stwing featuwename, 🥺 doubwe minvawue) {
+    wetuwn n-nyew minfeatuwevawuefiwtew(featuwename, XD minvawue);
+  }
+
+  /**
+   * w-wetuwns the nyowmawizew that s-shouwd be used t-to nyowmawize the vawues fow the given featuwe. (U ᵕ U❁)
+   *
+   * @pawam featuwename the featuwe. :3
+   * @wetuwn the nyowmawizew that shouwd b-be used to nyowmawize t-the vawues fow the given f-featuwe. ( ͡o ω ͡o )
+   */
+  @visibwefowtesting
+  p-pubwic s-static bytenowmawizew getminfeatuwevawuenowmawizew(stwing featuwename) {
+    if (featuwename.equaws(eawwybiwdfiewdconstant.usew_weputation.getfiewdname())) {
+      w-wetuwn nyew cwampbytenowmawizew(0, òωó 100);
     }
 
-    if (featureName.equals(EarlybirdFieldConstant.FAVORITE_COUNT.getFieldName())
-        || featureName.equals(EarlybirdFieldConstant.PARUS_SCORE.getFieldName())
-        || featureName.equals(EarlybirdFieldConstant.REPLY_COUNT.getFieldName())
-        || featureName.equals(EarlybirdFieldConstant.RETWEET_COUNT.getFieldName())) {
-      return new SingleBytePositiveFloatNormalizer();
+    if (featuwename.equaws(eawwybiwdfiewdconstant.favowite_count.getfiewdname())
+        || featuwename.equaws(eawwybiwdfiewdconstant.pawus_scowe.getfiewdname())
+        || featuwename.equaws(eawwybiwdfiewdconstant.wepwy_count.getfiewdname())
+        || f-featuwename.equaws(eawwybiwdfiewdconstant.wetweet_count.getfiewdname())) {
+      wetuwn nyew singwebytepositivefwoatnowmawizew();
     }
 
-    throw new IllegalArgumentException("Unknown normalization method for field " + featureName);
+    thwow n-nyew iwwegawawgumentexception("unknown n-nyowmawization m-method fow fiewd " + f-featuwename);
   }
 
-  @Override
-  public int hashCode() {
-    // Probably doesn't make sense to include the schemaSnapshot and normalizer here.
-    return (int) ((featureName == null ? 0 : featureName.hashCode() * 7) + minValue);
+  @ovewwide
+  p-pubwic int hashcode() {
+    // p-pwobabwy doesn't m-make sense to incwude the schemasnapshot and nyowmawizew h-hewe. σωσ
+    w-wetuwn (int) ((featuwename == n-nyuww ? 0 : featuwename.hashcode() * 7) + m-minvawue);
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof MinFeatureValueFilter)) {
-      return false;
+  @ovewwide
+  p-pubwic boowean equaws(object obj) {
+    if (!(obj instanceof m-minfeatuwevawuefiwtew)) {
+      wetuwn fawse;
     }
 
-    // Probably doesn't make sense to include the schemaSnapshot and normalizer here.
-    MinFeatureValueFilter filter = MinFeatureValueFilter.class.cast(obj);
-    return Objects.equals(featureName, filter.featureName) && (minValue == filter.minValue);
+    // pwobabwy doesn't make sense to incwude the schemasnapshot and n-nyowmawizew hewe. (U ᵕ U❁)
+    minfeatuwevawuefiwtew fiwtew = minfeatuwevawuefiwtew.cwass.cast(obj);
+    w-wetuwn objects.equaws(featuwename, (✿oωo) f-fiwtew.featuwename) && (minvawue == f-fiwtew.minvawue);
   }
 
-  @Override
-  public String toString(String field) {
-    return String.format("MinFeatureValueFilter(%s, %f)", featureName, minValue);
+  @ovewwide
+  pubwic s-stwing tostwing(stwing fiewd) {
+    w-wetuwn stwing.fowmat("minfeatuwevawuefiwtew(%s, ^^ %f)", f-featuwename, ^•ﻌ•^ minvawue);
   }
 
-  private MinFeatureValueFilter(String featureName, double minValue) {
-    this.featureName = featureName;
-    this.normalizer = getMinFeatureValueNormalizer(featureName);
-    this.minValue = normalizer.normalize(minValue);
+  pwivate minfeatuwevawuefiwtew(stwing featuwename, XD doubwe minvawue) {
+    t-this.featuwename = featuwename;
+    t-this.nowmawizew = getminfeatuwevawuenowmawizew(featuwename);
+    t-this.minvawue = n-nyowmawizew.nowmawize(minvawue);
   }
 
-  @Override
-  public FilteredQuery.DocIdFilter getDocIdFilter(LeafReaderContext context) throws IOException {
-    final NumericDocValues featureDocValues = context.reader().getNumericDocValues(featureName);
-    return (docId) -> featureDocValues.advanceExact(docId)
-        && ((byte) featureDocValues.longValue() >= minValue);
+  @ovewwide
+  pubwic fiwtewedquewy.docidfiwtew getdocidfiwtew(weafweadewcontext c-context) thwows i-ioexception {
+    finaw nyumewicdocvawues f-featuwedocvawues = c-context.weadew().getnumewicdocvawues(featuwename);
+    wetuwn (docid) -> featuwedocvawues.advanceexact(docid)
+        && ((byte) featuwedocvawues.wongvawue() >= minvawue);
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        return new MinFeatureValueDocIdSetIterator(
-            context.reader(), featureName, minValue);
+  @ovewwide
+  pubwic weight cweateweight(indexseawchew s-seawchew, s-scowemode scowemode, :3 f-fwoat boost) {
+    wetuwn new d-defauwtfiwtewweight(this) {
+      @ovewwide
+      p-pwotected docidsetitewatow getdocidsetitewatow(weafweadewcontext c-context) thwows ioexception {
+        wetuwn nyew minfeatuwevawuedocidsetitewatow(
+            context.weadew(), (ꈍᴗꈍ) f-featuwename, m-minvawue);
       }
     };
   }
 
-  private static final class MinFeatureValueDocIdSetIterator extends RangeFilterDISI {
-    private final NumericDocValues featureDocValues;
-    private final double minValue;
+  pwivate static finaw cwass m-minfeatuwevawuedocidsetitewatow e-extends wangefiwtewdisi {
+    pwivate finaw nyumewicdocvawues featuwedocvawues;
+    p-pwivate finaw doubwe minvawue;
 
-    MinFeatureValueDocIdSetIterator(LeafReader indexReader,
-                                    String featureName,
-                                    double minValue) throws IOException {
-      super(indexReader);
-      this.featureDocValues = indexReader.getNumericDocValues(featureName);
-      this.minValue = minValue;
+    minfeatuwevawuedocidsetitewatow(weafweadew indexweadew, :3
+                                    stwing featuwename, (U ﹏ U)
+                                    d-doubwe minvawue) thwows ioexception {
+      s-supew(indexweadew);
+      t-this.featuwedocvawues = indexweadew.getnumewicdocvawues(featuwename);
+      this.minvawue = minvawue;
     }
 
-    @Override
-    public boolean shouldReturnDoc() throws IOException {
-      // We need this explicit casting to byte, because of how we encode and decode features in our
-      // encoded_tweet_features field. If a feature is an int (uses all 32 bits of the int), then
-      // encoding the feature and then decoding it preserves its original value. However, if the
-      // feature does not use the entire int (and especially if it uses bits somewhere in the middle
-      // of the int), then the feature value is assumed to be unsigned when it goes through this
-      // process of encoding and decoding. So a user rep of
-      // RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL (-128) will be correctly encoded as the
-      // binary value 10000000, but will be treated as an unsigned value when decoded, and therefore
-      // the decoded value will be 128.
+    @ovewwide
+    p-pubwic boowean s-shouwdwetuwndoc() thwows ioexception {
+      // we nyeed this expwicit casting to b-byte, UwU because of how we encode a-and decode featuwes in ouw
+      // encoded_tweet_featuwes fiewd. 😳😳😳 i-if a featuwe is an int (uses a-aww 32 bits of the i-int), XD then
+      // encoding t-the featuwe and then decoding it p-pwesewves its owiginaw v-vawue. o.O howevew, (⑅˘꒳˘) i-if the
+      // featuwe d-does nyot use the e-entiwe int (and especiawwy if it uses bits somewhewe i-in the middwe
+      // o-of t-the int), 😳😳😳 then the featuwe vawue is assumed to b-be unsigned when it goes thwough t-this
+      // pwocess o-of encoding and decoding. nyaa~~ so a usew wep of
+      // wewevancesignawconstants.unset_weputation_sentinew (-128) w-wiww be cowwectwy e-encoded as t-the
+      // binawy v-vawue 10000000, rawr but wiww be t-tweated as an unsigned vawue when decoded, -.- and thewefowe
+      // the decoded vawue wiww be 128. (✿oωo)
       //
-      // In retrospect, this seems like a really poor design decision. It seems like it would be
-      // better if all feature values were considered to be signed, even if most features can never
-      // have negative values. Unfortunately, making this change is not easy, because some features
-      // store normalized values, so we would also need to change the range of allowed values
-      // produced by those normalizers, as well as all code that depends on those values.
+      // i-in wetwospect, this seems wike a-a weawwy poow design decision. /(^•ω•^) i-it seems wike it wouwd be
+      // b-bettew if aww featuwe vawues w-wewe considewed t-to be signed, 🥺 e-even if most featuwes c-can nyevew
+      // h-have nyegative vawues. ʘwʘ unfowtunatewy, UwU making this change is nyot easy, XD because some featuwes
+      // stowe nyowmawized v-vawues, (✿oωo) so we w-wouwd awso nyeed t-to change the wange of awwowed v-vawues
+      // pwoduced by those nyowmawizews, :3 as weww as aww c-code that depends o-on those vawues. (///ˬ///✿)
       //
-      // So for now, just cast this value to a byte, to get the proper negative value.
-      return featureDocValues.advanceExact(docID())
-          && ((byte) featureDocValues.longValue() >= minValue);
+      // so fow nyow, nyaa~~ j-just cast this vawue to a byte, >w< to get the pwopew n-nyegative vawue. -.-
+      w-wetuwn featuwedocvawues.advanceexact(docid())
+          && ((byte) f-featuwedocvawues.wongvawue() >= m-minvawue);
     }
   }
 
-  public double getMinValue() {
-    return minValue;
+  pubwic doubwe getminvawue() {
+    wetuwn minvawue;
   }
 
-  public ByteNormalizer getNormalizer() {
-    return normalizer;
+  pubwic bytenowmawizew g-getnowmawizew() {
+    w-wetuwn n-nyowmawizew;
   }
 }

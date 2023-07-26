@@ -1,13 +1,13 @@
-package com.twitter.ann.hnsw
+package com.twittew.ann.hnsw
 
-import com.twitter.ann.common.EmbeddingType._
-import java.io.OutputStream
+impowt c-com.twittew.ann.common.embeddingtype._
+i-impowt j-java.io.outputstweam
 
-trait IdEmbeddingMap[T] {
-  def putIfAbsent(id: T, embedding: EmbeddingVector): EmbeddingVector
-  def put(id: T, embedding: EmbeddingVector): EmbeddingVector
-  def get(id: T): EmbeddingVector
-  def iter(): Iterator[(T, EmbeddingVector)]
-  def size(): Int
-  def toDirectory(embeddingFileOutputStream: OutputStream): Unit
+t-twait idembeddingmap[t] {
+  d-def putifabsent(id: t-t, (U ᵕ U❁) embedding: e-embeddingvectow): e-embeddingvectow
+  def put(id: t, -.- embedding: embeddingvectow): embeddingvectow
+  d-def get(id: t): embeddingvectow
+  def itew(): i-itewatow[(t, ^^;; embeddingvectow)]
+  d-def size(): int
+  def todiwectowy(embeddingfiweoutputstweam: outputstweam): unit
 }

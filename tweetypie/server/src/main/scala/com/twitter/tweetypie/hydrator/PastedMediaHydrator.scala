@@ -1,102 +1,102 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.media.MediaUrl
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.spam.wtf.thwiftscawa.safetywevew
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.media.mediauww
+i-impowt com.twittew.tweetypie.wepositowy._
+i-impowt c-com.twittew.tweetypie.thwiftscawa._
 
-object PastedMediaHydrator {
-  type Type = ValueHydrator[PastedMedia, Ctx]
-
-  /**
-   * Ensure that the final tweet has at most 4 media entities.
-   */
-  val MaxMediaEntitiesPerTweet = 4
+object pastedmediahydwatow {
+  type type = vawuehydwatow[pastedmedia, c-ctx]
 
   /**
-   * Enforce visibility rules when hydrating media for a write.
+   * ensuwe that the finaw tweet has a-at most 4 media entities. mya
    */
-  val writeSafetyLevel = SafetyLevel.TweetWritesApi
+  v-vaw maxmediaentitiespewtweet = 4
 
-  case class Ctx(urlEntities: Seq[UrlEntity], underlyingTweetCtx: TweetCtx) extends TweetCtx.Proxy {
-    def includePastedMedia: Boolean = opts.include.pastedMedia
-    def includeMediaEntities: Boolean = tweetFieldRequested(Tweet.MediaField)
-    def includeAdditionalMetadata: Boolean =
-      mediaFieldRequested(MediaEntity.AdditionalMetadataField.id)
-    def includeMediaTags: Boolean = tweetFieldRequested(Tweet.MediaTagsField)
+  /**
+   * enfowce visibiwity wuwes when hydwating media fow a-a wwite. ʘwʘ
+   */
+  vaw wwitesafetywevew = s-safetywevew.tweetwwitesapi
+
+  c-case cwass ctx(uwwentities: seq[uwwentity], undewwyingtweetctx: tweetctx) e-extends tweetctx.pwoxy {
+    def incwudepastedmedia: boowean = opts.incwude.pastedmedia
+    def i-incwudemediaentities: boowean = t-tweetfiewdwequested(tweet.mediafiewd)
+    d-def i-incwudeadditionawmetadata: b-boowean =
+      mediafiewdwequested(mediaentity.additionawmetadatafiewd.id)
+    def incwudemediatags: b-boowean = tweetfiewdwequested(tweet.mediatagsfiewd)
   }
 
-  def getPastedMedia(t: Tweet): PastedMedia = PastedMedia(getMedia(t), Map.empty)
+  def getpastedmedia(t: t-tweet): pastedmedia = pastedmedia(getmedia(t), (˘ω˘) map.empty)
 
-  def apply(repo: PastedMediaRepository.Type): Type = {
-    def hydrateOneReference(
-      tweetId: TweetId,
-      urlEntity: UrlEntity,
-      repoCtx: PastedMediaRepository.Ctx
-    ): Stitch[PastedMedia] =
-      repo(tweetId, repoCtx).liftToTry.map {
-        case Return(pastedMedia) => pastedMedia.updateEntities(urlEntity)
-        case _ => PastedMedia.empty
+  def appwy(wepo: pastedmediawepositowy.type): type = {
+    def hydwateonewefewence(
+      t-tweetid: tweetid, (U ﹏ U)
+      u-uwwentity: uwwentity, ^•ﻌ•^
+      w-wepoctx: p-pastedmediawepositowy.ctx
+    ): stitch[pastedmedia] =
+      wepo(tweetid, (˘ω˘) wepoctx).wifttotwy.map {
+        c-case wetuwn(pastedmedia) => p-pastedmedia.updateentities(uwwentity)
+        case _ => p-pastedmedia.empty
       }
 
-    ValueHydrator[PastedMedia, Ctx] { (curr, ctx) =>
-      val repoCtx = asRepoCtx(ctx)
-      val idsAndEntities = pastedIdsAndEntities(ctx.tweetId, ctx.urlEntities)
+    v-vawuehydwatow[pastedmedia, :3 ctx] { (cuww, ^^;; ctx) =>
+      v-vaw wepoctx = aswepoctx(ctx)
+      v-vaw idsandentities = pastedidsandentities(ctx.tweetid, 🥺 c-ctx.uwwentities)
 
-      val res = Stitch.traverse(idsAndEntities) {
-        case (tweetId, urlEntity) =>
-          hydrateOneReference(tweetId, urlEntity, repoCtx)
+      vaw w-wes = stitch.twavewse(idsandentities) {
+        case (tweetid, (⑅˘꒳˘) u-uwwentity) =>
+          h-hydwateonewefewence(tweetid, nyaa~~ uwwentity, :3 wepoctx)
       }
 
-      res.liftToTry.map {
-        case Return(pastedMedias) =>
-          val merged = pastedMedias.foldLeft(curr)(_.merge(_))
-          val limited = merged.take(MaxMediaEntitiesPerTweet)
-          ValueState.delta(curr, limited)
+      wes.wifttotwy.map {
+        case wetuwn(pastedmedias) =>
+          vaw mewged = pastedmedias.fowdweft(cuww)(_.mewge(_))
+          v-vaw wimited = m-mewged.take(maxmediaentitiespewtweet)
+          vawuestate.dewta(cuww, ( ͡o ω ͡o ) wimited)
 
-        case Throw(_) => ValueState.unmodified(curr)
+        c-case thwow(_) => v-vawuestate.unmodified(cuww)
       }
-    }.onlyIf { (_, ctx) =>
-      // we only attempt to hydrate pasted media if media is requested
-      ctx.includePastedMedia &&
-      !ctx.isRetweet &&
-      ctx.includeMediaEntities
+    }.onwyif { (_, mya c-ctx) =>
+      // we onwy attempt to hydwate pasted media i-if media is wequested
+      ctx.incwudepastedmedia &&
+      !ctx.iswetweet &&
+      ctx.incwudemediaentities
     }
   }
 
   /**
-   * Finds url entities for foreign permalinks, and returns a sequence of tuples containing
-   * the foreign tweet IDs and the associated UrlEntity containing the permalink.  If the same
-   * permalink appears multiple times, only one of the duplicate entities is returned.
+   * finds uww entities fow foweign p-pewmawinks, (///ˬ///✿) and wetuwns a sequence o-of tupwes c-containing
+   * t-the foweign tweet ids and the associated u-uwwentity c-containing the p-pewmawink.  if t-the same
+   * pewmawink appeaws muwtipwe times, (˘ω˘) o-onwy one of the d-dupwicate entities i-is wetuwned. ^^;;
    */
-  def pastedIdsAndEntities(
-    tweetId: TweetId,
-    urlEntities: Seq[UrlEntity]
-  ): Seq[(TweetId, UrlEntity)] =
-    urlEntities
-      .foldLeft(Map.empty[TweetId, UrlEntity]) {
-        case (z, e) =>
-          MediaUrl.Permalink.getTweetId(e).filter(_ != tweetId) match {
-            case Some(id) if !z.contains(id) => z + (id -> e)
+  d-def pastedidsandentities(
+    t-tweetid: tweetid, (✿oωo)
+    uwwentities: seq[uwwentity]
+  ): seq[(tweetid, (U ﹏ U) uwwentity)] =
+    uwwentities
+      .fowdweft(map.empty[tweetid, -.- u-uwwentity]) {
+        case (z, ^•ﻌ•^ e) =>
+          mediauww.pewmawink.gettweetid(e).fiwtew(_ != tweetid) match {
+            case some(id) i-if !z.contains(id) => z + (id -> e)
             case _ => z
           }
       }
-      .toSeq
+      .toseq
 
-  def asRepoCtx(ctx: Ctx) =
-    PastedMediaRepository.Ctx(
-      ctx.includeMediaEntities,
-      ctx.includeAdditionalMetadata,
-      ctx.includeMediaTags,
-      ctx.opts.extensionsArgs,
-      if (ctx.opts.cause == TweetQuery.Cause.Insert(ctx.tweetId) ||
-        ctx.opts.cause == TweetQuery.Cause.Undelete(ctx.tweetId)) {
-        writeSafetyLevel
-      } else {
-        ctx.opts.safetyLevel
+  d-def aswepoctx(ctx: c-ctx) =
+    p-pastedmediawepositowy.ctx(
+      ctx.incwudemediaentities, rawr
+      c-ctx.incwudeadditionawmetadata, (˘ω˘)
+      ctx.incwudemediatags, nyaa~~
+      c-ctx.opts.extensionsawgs, UwU
+      i-if (ctx.opts.cause == tweetquewy.cause.insewt(ctx.tweetid) ||
+        ctx.opts.cause == tweetquewy.cause.undewete(ctx.tweetid)) {
+        wwitesafetywevew
+      } ewse {
+        c-ctx.opts.safetywevew
       }
     )
 }

@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tweet
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.highlight.HighlightedSection
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.highwight.highwightedsection
 
-case class TweetHighlights(
-  textHighlights: Option[List[HighlightedSection]],
-  cardTitleHighlights: Option[List[HighlightedSection]],
-  cardDescriptionHighlights: Option[List[HighlightedSection]])
+c-case cwass t-tweethighwights(
+  t-texthighwights: o-option[wist[highwightedsection]], (U ᵕ U❁)
+  c-cawdtitwehighwights: o-option[wist[highwightedsection]], (⑅˘꒳˘)
+  c-cawddescwiptionhighwights: option[wist[highwightedsection]])

@@ -1,83 +1,83 @@
-package com.twitter.follow_recommendations.common.clients.user_state
+package com.twittew.fowwow_wecommendations.common.cwients.usew_state
 
-import com.google.inject.name.Named
-import com.twitter.conversions.DurationOps._
-import com.twitter.core_workflows.user_model.thriftscala.CondensedUserState
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.finagle.Memcached.Client
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.common.clients.cache.MemcacheClient
-import com.twitter.follow_recommendations.common.clients.cache.ThriftEnumOptionBijection
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.util.Duration
-import javax.inject.Inject
-import javax.inject.Singleton
-import java.lang.{Long => JLong}
+impowt com.googwe.inject.name.named
+i-impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.cowe_wowkfwows.usew_modew.thwiftscawa.condensedusewstate
+i-impowt com.twittew.cowe_wowkfwows.usew_modew.thwiftscawa.usewstate
+i-impowt com.twittew.decidew.decidew
+i-impowt com.twittew.decidew.wandomwecipient
+i-impowt com.twittew.finagwe.memcached.cwient
+impowt c-com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.finagwe.utiw.defauwttimew
+impowt com.twittew.fowwow_wecommendations.common.base.statsutiw
+i-impowt com.twittew.fowwow_wecommendations.common.cwients.cache.memcachecwient
+impowt c-com.twittew.fowwow_wecommendations.common.cwients.cache.thwiftenumoptionbijection
+impowt com.twittew.fowwow_wecommendations.common.constants.guicenamedconstants
+i-impowt com.twittew.fowwow_wecommendations.configapi.decidews.decidewkey
+impowt com.twittew.stitch.stitch
+impowt c-com.twittew.stwato.cwient.fetchew
+impowt com.twittew.utiw.duwation
+i-impowt javax.inject.inject
+impowt j-javax.inject.singweton
+impowt java.wang.{wong => jwong}
 
-@Singleton
-class UserStateClient @Inject() (
-  @Named(GuiceNamedConstants.USER_STATE_FETCHER) userStateFetcher: Fetcher[
-    Long,
-    Unit,
-    CondensedUserState
-  ],
-  client: Client,
-  statsReceiver: StatsReceiver,
-  decider: Decider = Decider.False) {
+@singweton
+cwass u-usewstatecwient @inject() (
+  @named(guicenamedconstants.usew_state_fetchew) usewstatefetchew: fetchew[
+    wong,
+    unit, nyaa~~
+    condensedusewstate
+  ], (✿oωo)
+  c-cwient: cwient, ʘwʘ
+  statsweceivew: s-statsweceivew, (ˆ ﻌ ˆ)♡
+  d-decidew: d-decidew = decidew.fawse) {
 
-  private val stats: StatsReceiver = statsReceiver.scope("user_state_client")
+  p-pwivate vaw stats: statsweceivew = statsweceivew.scope("usew_state_cwient")
 
-  // client to memcache cluster
-  val bijection = new ThriftEnumOptionBijection[UserState](UserState.apply)
-  val memcacheClient = MemcacheClient[Option[UserState]](
-    client = client,
-    dest = "/s/cache/follow_recos_service:twemcaches",
-    valueBijection = bijection,
-    ttl = UserStateClient.CacheTTL,
-    statsReceiver = stats.scope("twemcache")
+  // c-cwient to memcache cwustew
+  vaw bijection = n-nyew thwiftenumoptionbijection[usewstate](usewstate.appwy)
+  vaw memcachecwient = memcachecwient[option[usewstate]](
+    cwient = cwient, 😳😳😳
+    dest = "/s/cache/fowwow_wecos_sewvice:twemcaches", :3
+    v-vawuebijection = bijection, OwO
+    t-ttw = usewstatecwient.cachettw, (U ﹏ U)
+    s-statsweceivew = s-stats.scope("twemcache")
   )
 
-  def getUserState(userId: Long): Stitch[Option[UserState]] = {
-    val deciderKey: String = DeciderKey.EnableDistributedCaching.toString
-    val enableDistributedCaching: Boolean = decider.isAvailable(deciderKey, Some(RandomRecipient))
-    val userStateStitch: Stitch[Option[UserState]] = 
-      enableDistributedCaching match {
-        // read from memcache
-        case true => memcacheClient.readThrough(
-          // add a key prefix to address cache key collisions
-          key = "UserStateClient" + userId.toString,
-          underlyingCall = () => fetchUserState(userId)
+  def getusewstate(usewid: wong): stitch[option[usewstate]] = {
+    vaw d-decidewkey: stwing = d-decidewkey.enabwedistwibutedcaching.tostwing
+    vaw enabwedistwibutedcaching: b-boowean = decidew.isavaiwabwe(decidewkey, >w< some(wandomwecipient))
+    v-vaw usewstatestitch: stitch[option[usewstate]] = 
+      enabwedistwibutedcaching m-match {
+        // wead f-fwom memcache
+        case twue => memcachecwient.weadthwough(
+          // add a-a key pwefix to addwess cache k-key cowwisions
+          key = "usewstatecwient" + u-usewid.tostwing, (U ﹏ U)
+          undewwyingcaww = () => f-fetchusewstate(usewid)
         )
-        case false => fetchUserState(userId)
+        case fawse => fetchusewstate(usewid)
       }
-    val userStateStitchWithTimeout: Stitch[Option[UserState]] = 
-      userStateStitch
-        // set a 150ms timeout limit for user state fetches
-        .within(150.milliseconds)(DefaultTimer)
-        .rescue {
-          case e: Exception =>
-            stats.scope("rescued").counter(e.getClass.getSimpleName).incr()
-            Stitch(None)
+    vaw usewstatestitchwithtimeout: stitch[option[usewstate]] = 
+      usewstatestitch
+        // set a 150ms timeout w-wimit fow usew s-state fetches
+        .within(150.miwwiseconds)(defauwttimew)
+        .wescue {
+          case e-e: exception =>
+            s-stats.scope("wescued").countew(e.getcwass.getsimpwename).incw()
+            s-stitch(none)
         }
-    // profile the latency of stitch call and return the result
-    StatsUtil.profileStitch(
-      userStateStitchWithTimeout,
-      stats.scope("getUserState")
+    // pwofiwe the watency of stitch caww and wetuwn t-the wesuwt
+    statsutiw.pwofiwestitch(
+      usewstatestitchwithtimeout, 😳
+      stats.scope("getusewstate")
     )
   }
 
-  def fetchUserState(userId: JLong): Stitch[Option[UserState]] = {
-    userStateFetcher.fetch(userId).map(_.v.flatMap(_.userState))
+  def f-fetchusewstate(usewid: jwong): s-stitch[option[usewstate]] = {
+    u-usewstatefetchew.fetch(usewid).map(_.v.fwatmap(_.usewstate))
   }
 }
 
-object UserStateClient {
-  val CacheTTL: Duration = Duration.fromHours(6)
+o-object usewstatecwient {
+  vaw cachettw: duwation = d-duwation.fwomhouws(6)
 }

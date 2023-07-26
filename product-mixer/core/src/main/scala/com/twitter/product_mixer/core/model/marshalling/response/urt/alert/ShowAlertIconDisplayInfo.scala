@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.alert
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.awewt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.RosettaColor
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.wosettacowow
 
-case class ShowAlertIconDisplayInfo(icon: ShowAlertIcon, tint: RosettaColor)
+c-case cwass s-showawewticondispwayinfo(icon: showawewticon, òωó t-tint: w-wosettacowow)

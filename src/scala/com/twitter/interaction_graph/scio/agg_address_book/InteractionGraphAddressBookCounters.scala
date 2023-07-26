@@ -1,34 +1,34 @@
-package com.twitter.interaction_graph.scio.agg_address_book
+package com.twittew.intewaction_gwaph.scio.agg_addwess_book
 
-import com.spotify.scio.ScioMetrics
-import org.apache.beam.sdk.metrics.Counter
+impowt c-com.spotify.scio.sciometwics
+i-impowt owg.apache.beam.sdk.metwics.countew
 
-trait InteractionGraphAddressBookCountersTrait {
-  val Namespace = "Interaction Graph Address Book"
+t-twait i-intewactiongwaphaddwessbookcountewstwait {
+  vaw n-nyamespace = "intewaction g-gwaph a-addwess book"
 
-  def emailFeatureInc(): Unit
+  d-def emaiwfeatuweinc(): unit
 
-  def phoneFeatureInc(): Unit
+  def phonefeatuweinc(): unit
 
-  def bothFeatureInc(): Unit
+  def bothfeatuweinc(): u-unit
 }
 
 /**
- * SCIO counters are used to gather run time statistics
+ * scio countews awe used to g-gathew wun time statistics
  */
-case object InteractionGraphAddressBookCounters extends InteractionGraphAddressBookCountersTrait {
-  val emailFeatureCounter: Counter =
-    ScioMetrics.counter(Namespace, "Email Feature")
+c-case object intewactiongwaphaddwessbookcountews extends intewactiongwaphaddwessbookcountewstwait {
+  vaw emaiwfeatuwecountew: countew =
+    s-sciometwics.countew(namespace, (U ﹏ U) "emaiw featuwe")
 
-  val phoneFeatureCounter: Counter =
-    ScioMetrics.counter(Namespace, "Phone Feature")
+  vaw p-phonefeatuwecountew: c-countew =
+    sciometwics.countew(namespace, >_< "phone featuwe")
 
-  val bothFeatureCounter: Counter =
-    ScioMetrics.counter(Namespace, "Both Feature")
+  vaw bothfeatuwecountew: countew =
+    sciometwics.countew(namespace, rawr x3 "both f-featuwe")
 
-  override def emailFeatureInc(): Unit = emailFeatureCounter.inc()
+  ovewwide def emaiwfeatuweinc(): unit = emaiwfeatuwecountew.inc()
 
-  override def phoneFeatureInc(): Unit = phoneFeatureCounter.inc()
+  ovewwide def phonefeatuweinc(): u-unit = phonefeatuwecountew.inc()
 
-  override def bothFeatureInc(): Unit = bothFeatureCounter.inc()
+  ovewwide d-def bothfeatuweinc(): u-unit = bothfeatuwecountew.inc()
 }

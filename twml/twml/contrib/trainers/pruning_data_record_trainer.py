@@ -1,59 +1,59 @@
-import tensorflow.compat.v1 as tf
+impowt tensowfwow.compat.v1 as tf
 
-from twml.trainers import DataRecordTrainer
-from twml.contrib.optimizers import PruningOptimizer
+f-fwom twmw.twainews i-impowt datawecowdtwainew
+f-fwom t-twmw.contwib.optimizews i-impowt p-pwuningoptimizew
 
 
-class PruningDataRecordTrainer(DataRecordTrainer):
+c-cwass pwuningdatawecowdtwainew(datawecowdtwainew):
   @staticmethod
-  def get_train_op(params, loss):
-    train_op = DataRecordTrainer.get_train_op(params, loss)
+  d-def get_twain_op(pawams, 😳 woss):
+    twain_op = datawecowdtwainew.get_twain_op(pawams, woss)
 
-    optimizer = PruningOptimizer(learning_rate=params.get('learning_rate'))
+    optimizew = pwuningoptimizew(weawning_wate=pawams.get('weawning_wate'))
 
-    return optimizer.minimize(
-        loss=loss,
-        prune_every=params.get('pruning_iter', 5000),
-        burn_in=params.get('pruning_burn_in', 100000),
-        decay=params.get('pruning_decay', .9999),
-        flops_target=params.get('pruning_flops_target', 250000),
-        update_params=train_op,
-        global_step=tf.train.get_global_step())
+    w-wetuwn optimizew.minimize(
+        woss=woss, mya
+        pwune_evewy=pawams.get('pwuning_itew', (˘ω˘) 5000),
+        b-buwn_in=pawams.get('pwuning_buwn_in', >_< 100000), -.-
+        decay=pawams.get('pwuning_decay', 🥺 .9999),
+        f-fwops_tawget=pawams.get('pwuning_fwops_tawget', (U ﹏ U) 250000),
+        update_pawams=twain_op, >w<
+        gwobaw_step=tf.twain.get_gwobaw_step())
 
-  def __init__(self, name, params, build_graph_fn, feature_config=None, **kwargs):
-    kwargs['optimize_loss_fn'] = self.get_train_op
+  def __init__(sewf, mya n-nyame, pawams, >w< buiwd_gwaph_fn, nyaa~~ f-featuwe_config=none, (✿oωo) **kwawgs):
+    kwawgs['optimize_woss_fn'] = s-sewf.get_twain_op
 
-    super(PruningDataRecordTrainer, self).__init__(
-      name=name,
-      params=params,
-      build_graph_fn=build_graph_fn,
-      feature_config=feature_config,
-      **kwargs)
+    supew(pwuningdatawecowdtwainew, ʘwʘ sewf).__init__(
+      nyame=name, (ˆ ﻌ ˆ)♡
+      pawams=pawams, 😳😳😳
+      b-buiwd_gwaph_fn=buiwd_gwaph_fn, :3
+      featuwe_config=featuwe_config, OwO
+      **kwawgs)
 
-  def export_model(self, *args, **kwargs):
-    # TODO: modify graph before exporting to take into account masks
-    return super(PruningDataRecordTrainer, self).export_model(*args, **kwargs)
+  def expowt_modew(sewf, (U ﹏ U) *awgs, >w< **kwawgs):
+    # todo: modify gwaph befowe e-expowting to take into account masks
+    w-wetuwn s-supew(pwuningdatawecowdtwainew, (U ﹏ U) s-sewf).expowt_modew(*awgs, **kwawgs)
 
   @staticmethod
-  def add_parser_arguments():
-    parser = DataRecordTrainer.add_parser_arguments()
-    parser.add_argument(
-      "--pruning.iter", "--pruning_iter", type=int, default=5000,
-      dest="pruning_iter",
-      help="A single feature or feature map is pruned every this many iterations")
-    parser.add_argument(
-      "--pruning.burn_in", "--pruning_burn_in", type=int, default=100000,
-      dest="pruning_burn_in",
-      help="Only start pruning after collecting statistics for this many training steps")
-    parser.add_argument(
-      "--pruning.flops_target", "--pruning_flops_target", type=int, default=250000,
-      dest="pruning_flops_target",
-      help="Stop pruning when estimated number of floating point operations reached this target. \
-      For example, a small feed-forward network might require 250,000 FLOPs to run.")
-    parser.add_argument(
-      "--pruning.decay", "--pruning_decay", type=float, default=.9999,
-      dest="pruning_decay",
-      help="A float value in [0.0, 1.0) controlling an exponential moving average of pruning \
-      signal statistics. A value of 0.9999 can be thought of as averaging statistics over 10,000 \
-      steps.")
-    return parser
+  d-def add_pawsew_awguments():
+    pawsew = datawecowdtwainew.add_pawsew_awguments()
+    p-pawsew.add_awgument(
+      "--pwuning.itew", 😳 "--pwuning_itew", (ˆ ﻌ ˆ)♡ type=int, defauwt=5000, 😳😳😳
+      d-dest="pwuning_itew", (U ﹏ U)
+      hewp="a singwe featuwe ow featuwe map is pwuned evewy this many itewations")
+    p-pawsew.add_awgument(
+      "--pwuning.buwn_in", (///ˬ///✿) "--pwuning_buwn_in", 😳 type=int, 😳 d-defauwt=100000, σωσ
+      d-dest="pwuning_buwn_in", rawr x3
+      h-hewp="onwy stawt pwuning aftew cowwecting statistics fow t-this many twaining s-steps")
+    pawsew.add_awgument(
+      "--pwuning.fwops_tawget", OwO "--pwuning_fwops_tawget", /(^•ω•^) t-type=int, 😳😳😳 defauwt=250000, ( ͡o ω ͡o )
+      d-dest="pwuning_fwops_tawget", >_<
+      hewp="stop pwuning w-when estimated nyumbew of f-fwoating point opewations weached this tawget. >w< \
+      f-fow exampwe, rawr a smow feed-fowwawd n-nyetwowk might wequiwe 250,000 f-fwops to w-wun.")
+    pawsew.add_awgument(
+      "--pwuning.decay", 😳 "--pwuning_decay", >w< type=fwoat, defauwt=.9999, (⑅˘꒳˘)
+      dest="pwuning_decay", OwO
+      hewp="a fwoat vawue in [0.0, (ꈍᴗꈍ) 1.0) contwowwing a-an exponentiaw m-moving avewage of pwuning \
+      s-signaw statistics. 😳 a-a vawue o-of 0.9999 can be thought of as avewaging statistics ovew 10,000 \
+      s-steps.")
+    wetuwn pawsew

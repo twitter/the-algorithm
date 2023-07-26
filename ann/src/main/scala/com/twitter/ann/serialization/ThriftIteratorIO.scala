@@ -1,57 +1,57 @@
-package com.twitter.ann.serialization
+package com.twittew.ann.sewiawization
 
-import com.twitter.scrooge.{ThriftStruct, ThriftStructCodec}
-import java.io.{InputStream, OutputStream}
-import org.apache.thrift.protocol.TBinaryProtocol
-import org.apache.thrift.transport.{TIOStreamTransport, TTransportException}
+impowt com.twittew.scwooge.{thwiftstwuct, t-thwiftstwuctcodec}
+i-impowt java.io.{inputstweam, 😳😳😳 o-outputstweam}
+impowt o-owg.apache.thwift.pwotocow.tbinawypwotocow
+i-impowt owg.apache.thwift.twanspowt.{tiostweamtwanspowt, o.O t-ttwanspowtexception}
 
 /**
- * Class that can serialize and deserialize an iterator of thrift objects.
- * This class can do things lazily so there is no need to have all the object into memory.
+ * c-cwass that c-can sewiawize and desewiawize an itewatow of thwift objects. ( ͡o ω ͡o )
+ * this cwass can do t-things waziwy so thewe is nyo need to have aww t-the object into memowy. (U ﹏ U)
  */
-class ThriftIteratorIO[T <: ThriftStruct](
-  codec: ThriftStructCodec[T]) {
-  def toOutputStream(
-    iterator: Iterator[T],
-    outputStream: OutputStream
-  ): Unit = {
-    val protocol = (new TBinaryProtocol.Factory).getProtocol(new TIOStreamTransport(outputStream))
-    iterator.foreach { thriftObject =>
-      codec.encode(thriftObject, protocol)
+cwass t-thwiftitewatowio[t <: thwiftstwuct](
+  codec: thwiftstwuctcodec[t]) {
+  d-def tooutputstweam(
+    itewatow: itewatow[t], (///ˬ///✿)
+    o-outputstweam: o-outputstweam
+  ): unit = {
+    vaw pwotocow = (new tbinawypwotocow.factowy).getpwotocow(new tiostweamtwanspowt(outputstweam))
+    itewatow.foweach { t-thwiftobject =>
+      codec.encode(thwiftobject, pwotocow)
     }
   }
 
   /**
-   * Returns an iterator that lazily reads from an inputStream.
-   * @return
+   * wetuwns an itewatow that waziwy w-weads fwom an inputstweam. >w<
+   * @wetuwn
    */
-  def fromInputStream(
-    inputStream: InputStream
-  ): Iterator[T] = {
-    ThriftIteratorIO.getIterator(codec, inputStream)
+  d-def fwominputstweam(
+    i-inputstweam: i-inputstweam
+  ): i-itewatow[t] = {
+    thwiftitewatowio.getitewatow(codec, rawr inputstweam)
   }
 }
 
-object ThriftIteratorIO {
-  private def getIterator[T <: ThriftStruct](
-    codec: ThriftStructCodec[T],
-    inputStream: InputStream
-  ): Iterator[T] = {
-    val protocol = (new TBinaryProtocol.Factory).getProtocol(new TIOStreamTransport(inputStream))
+o-object thwiftitewatowio {
+  pwivate def getitewatow[t <: thwiftstwuct](
+    c-codec: thwiftstwuctcodec[t], mya
+    inputstweam: inputstweam
+  ): itewatow[t] = {
+    vaw pwotocow = (new tbinawypwotocow.factowy).getpwotocow(new tiostweamtwanspowt(inputstweam))
 
-    def getNext: Option[T] =
-      try {
-        Some(codec.decode(protocol))
-      } catch {
-        case e: TTransportException if e.getType == TTransportException.END_OF_FILE =>
-          inputStream.close()
-          None
+    d-def getnext: option[t] =
+      t-twy {
+        s-some(codec.decode(pwotocow))
+      } c-catch {
+        case e: ttwanspowtexception if e.gettype == t-ttwanspowtexception.end_of_fiwe =>
+          i-inputstweam.cwose()
+          none
       }
 
-    Iterator
-      .continually[Option[T]](getNext)
-      .takeWhile(_.isDefined)
-      // It should be safe to call get on here since we are only take the defined ones.
+    i-itewatow
+      .continuawwy[option[t]](getnext)
+      .takewhiwe(_.isdefined)
+      // i-it shouwd be safe to caww g-get on hewe since we awe onwy t-take the defined ones. ^^
       .map(_.get)
   }
 }

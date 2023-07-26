@@ -1,18 +1,18 @@
-namespace java com.twitter.tweetypie.thriftjava
-#@namespace scala com.twitter.tweetypie.thriftscala
-#@namespace strato com.twitter.tweetypie
-namespace py gen.twitter.tweetypie.api_fields
-namespace rb TweetyPie
-// Specific namespace to avoid golang circular import
-namespace go tweetypie.tweet
+namespace java com.twittew.tweetypie.thwiftjava
+#@namespace scawa c-com.twittew.tweetypie.thwiftscawa
+#@namespace stwato c-com.twittew.tweetypie
+n-nyamespace p-py gen.twittew.tweetypie.api_fiewds
+n-nyamespace w-wb tweetypie
+// s-specific nyamespace t-to avoid gowang ciwcuwaw impowt
+nyamespace go tweetypie.tweet
 
-// Structs used specifically for rendering through graphql.
+// stwucts u-used specificawwy fow wendewing thwough gwaphqw. 😳
 
 /**
- * Perspective of a Tweet from the point of view of a User.
+ * p-pewspective of a tweet f-fwom the point of view of a usew. XD
  */
-struct TweetPerspective {
-  1: bool favorited
-  2: bool retweeted
-  3: optional bool bookmarked
-}(persisted='true', hasPersonalData = 'false', strato.graphql.typename='TweetPerspective')
+stwuct tweetpewspective {
+  1: b-boow favowited
+  2: boow w-wetweeted
+  3: o-optionaw boow bookmawked
+}(pewsisted='twue', :3 haspewsonawdata = 'fawse', 😳😳😳 stwato.gwaphqw.typename='tweetpewspective')

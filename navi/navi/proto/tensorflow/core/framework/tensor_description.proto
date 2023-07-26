@@ -1,24 +1,24 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "tensorflow/core/framework/allocation_description.proto";
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/types.proto";
+impowt "tensowfwow/cowe/fwamewowk/awwocation_descwiption.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/tensow_shape.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/types.pwoto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "TensorDescriptionProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/tensor_description_go_proto";
+o-option cc_enabwe_awenas = t-twue;
+o-option java_outew_cwassname = "tensowdescwiptionpwotos";
+o-option j-java_muwtipwe_fiwes = t-twue;
+option java_package = "owg.tensowfwow.fwamewowk";
+option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/fwamewowk/tensow_descwiption_go_pwoto";
 
-message TensorDescription {
-  // Data type of tensor elements
-  DataType dtype = 1;
+message tensowdescwiption {
+  // data type of tensow e-ewements
+  datatype dtype = 1;
 
-  // Shape of the tensor.
-  TensorShapeProto shape = 2;
+  // shape o-of the tensow. >_<
+  tensowshapepwoto s-shape = 2;
 
-  // Information about the size and allocator used for the data
-  AllocationDescription allocation_description = 4;
+  // infowmation about the size and awwocatow used f-fow the data
+  awwocationdescwiption a-awwocation_descwiption = 4;
 }

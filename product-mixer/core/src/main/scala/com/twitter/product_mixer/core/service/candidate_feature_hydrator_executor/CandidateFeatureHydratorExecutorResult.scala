@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.candidate_featuwe_hydwatow_executow
 
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.service.ExecutorResult
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.executowwesuwt
 
-case class CandidateFeatureHydratorExecutorResult[+Result <: UniversalNoun[Any]](
-  results: Seq[CandidateWithFeatures[Result]],
-  individualFeatureHydratorResults: Map[
-    _ <: ComponentIdentifier,
-    BaseIndividualFeatureHydratorResult[Result]
-  ]) extends ExecutorResult
+c-case c-cwass candidatefeatuwehydwatowexecutowwesuwt[+wesuwt <: u-univewsawnoun[any]](
+  wesuwts: seq[candidatewithfeatuwes[wesuwt]], XD
+  individuawfeatuwehydwatowwesuwts: map[
+    _ <: componentidentifiew, :3
+    b-baseindividuawfeatuwehydwatowwesuwt[wesuwt]
+  ]) extends executowwesuwt
 
-sealed trait BaseIndividualFeatureHydratorResult[+Result <: UniversalNoun[Any]]
-case class FeatureHydratorDisabled[+Result <: UniversalNoun[Any]]()
-    extends BaseIndividualFeatureHydratorResult[Result]
-case class IndividualFeatureHydratorResult[+Result <: UniversalNoun[Any]](
-  result: Seq[CandidateWithFeatures[Result]])
-    extends BaseIndividualFeatureHydratorResult[Result]
+s-seawed twait baseindividuawfeatuwehydwatowwesuwt[+wesuwt <: univewsawnoun[any]]
+c-case cwass featuwehydwatowdisabwed[+wesuwt <: univewsawnoun[any]]()
+    extends baseindividuawfeatuwehydwatowwesuwt[wesuwt]
+c-case cwass individuawfeatuwehydwatowwesuwt[+wesuwt <: u-univewsawnoun[any]](
+  w-wesuwt: seq[candidatewithfeatuwes[wesuwt]])
+    extends baseindividuawfeatuwehydwatowwesuwt[wesuwt]

@@ -1,65 +1,65 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.twittew.seawch.eawwybiwd_woot.mewgews;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+impowt java.utiw.wist;
+i-impowt j-java.utiw.concuwwent.timeunit;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.collectors.RelevanceMergeCollector;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+impowt c-com.twittew.seawch.common.metwics.seawchtimewstats;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchquewy;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwankingmode;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwts;
+impowt com.twittew.seawch.eawwybiwd_woot.cowwectows.wewevancemewgecowwectow;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt com.twittew.utiw.futuwe;
 
 /**
- * Merger class to merge toptweets EarlybirdResponse objects
+ * mewgew cwass t-to mewge toptweets eawwybiwdwesponse o-objects
  */
-public class TopTweetsResponseMerger extends EarlybirdResponseMerger {
+pubwic cwass toptweetswesponsemewgew extends e-eawwybiwdwesponsemewgew {
 
-  private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
+  pwivate static finaw d-doubwe successfuw_wesponse_thweshowd = 0.9;
 
-  private static final SearchTimerStats TIMER =
-      SearchTimerStats.export("merge_top_tweets", TimeUnit.NANOSECONDS, false, true);
+  p-pwivate static finaw seawchtimewstats timew =
+      seawchtimewstats.expowt("mewge_top_tweets", timeunit.nanoseconds, (U ﹏ U) f-fawse, twue);
 
-  public TopTweetsResponseMerger(EarlybirdRequestContext requestContext,
-                                 List<Future<EarlybirdResponse>> responses,
-                                 ResponseAccumulator mode) {
-    super(requestContext, responses, mode);
+  pubwic toptweetswesponsemewgew(eawwybiwdwequestcontext wequestcontext,
+                                 wist<futuwe<eawwybiwdwesponse>> w-wesponses, (///ˬ///✿)
+                                 wesponseaccumuwatow mode) {
+    supew(wequestcontext, >w< w-wesponses, rawr m-mode);
   }
 
-  @Override
-  protected SearchTimerStats getMergedResponseTimer() {
-    return TIMER;
+  @ovewwide
+  p-pwotected s-seawchtimewstats getmewgedwesponsetimew() {
+    wetuwn timew;
   }
 
-  @Override
-  protected double getDefaultSuccessResponseThreshold() {
-    return SUCCESSFUL_RESPONSE_THRESHOLD;
+  @ovewwide
+  p-pwotected doubwe getdefauwtsuccesswesponsethweshowd() {
+    wetuwn successfuw_wesponse_thweshowd;
   }
 
-  @Override
-  protected EarlybirdResponse internalMerge(EarlybirdResponse mergedResponse) {
-    final ThriftSearchQuery searchQuery = requestContext.getRequest().getSearchQuery();
+  @ovewwide
+  p-pwotected eawwybiwdwesponse intewnawmewge(eawwybiwdwesponse mewgedwesponse) {
+    finaw thwiftseawchquewy s-seawchquewy = wequestcontext.getwequest().getseawchquewy();
 
-    Preconditions.checkNotNull(searchQuery);
-    Preconditions.checkState(searchQuery.isSetRankingMode());
-    Preconditions.checkState(searchQuery.getRankingMode() == ThriftSearchRankingMode.TOPTWEETS);
+    p-pweconditions.checknotnuww(seawchquewy);
+    p-pweconditions.checkstate(seawchquewy.issetwankingmode());
+    p-pweconditions.checkstate(seawchquewy.getwankingmode() == thwiftseawchwankingmode.toptweets);
 
-    int numResultsRequested = computeNumResultsToKeep();
+    int nyumwesuwtswequested = computenumwesuwtstokeep();
 
-    RelevanceMergeCollector collector = new RelevanceMergeCollector(responses.size());
+    w-wewevancemewgecowwectow c-cowwectow = nyew wewevancemewgecowwectow(wesponses.size());
 
-    addResponsesToCollector(collector);
-    ThriftSearchResults searchResults = collector.getAllSearchResults();
-    if (numResultsRequested < searchResults.getResults().size()) {
-      searchResults.setResults(searchResults.getResults().subList(0, numResultsRequested));
+    a-addwesponsestocowwectow(cowwectow);
+    t-thwiftseawchwesuwts seawchwesuwts = c-cowwectow.getawwseawchwesuwts();
+    if (numwesuwtswequested < s-seawchwesuwts.getwesuwts().size()) {
+      seawchwesuwts.setwesuwts(seawchwesuwts.getwesuwts().subwist(0, mya nyumwesuwtswequested));
     }
 
-    mergedResponse.setSearchResults(searchResults);
+    m-mewgedwesponse.setseawchwesuwts(seawchwesuwts);
 
-    return mergedResponse;
+    wetuwn mewgedwesponse;
   }
 }

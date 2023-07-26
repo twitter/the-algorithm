@@ -1,52 +1,52 @@
-package com.twitter.home_mixer.product.scored_tweets.response_transformer
+package com.twittew.home_mixew.pwoduct.scowed_tweets.wesponse_twansfowmew
 
-import com.twitter.tweet_mixer.{thriftscala => tmt}
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.timelineservice.suggests.logging.candidate_tweet_source_id.{thriftscala => cts}
-import com.twitter.timelineservice.suggests.{thriftscala => st}
-import com.twitter.tsp.{thriftscala => tsp}
+impowt c-com.twittew.tweet_mixew.{thwiftscawa => t-tmt}
+impowt c-com.twittew.home_mixew.modew.homefeatuwes._
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twansfowmewidentifiew
+impowt com.twittew.timewinesewvice.suggests.wogging.candidate_tweet_souwce_id.{thwiftscawa => c-cts}
+impowt com.twittew.timewinesewvice.suggests.{thwiftscawa => st}
+i-impowt com.twittew.tsp.{thwiftscawa => tsp}
 
-object ScoredTweetsTweetMixerResponseFeatureTransformer
-    extends CandidateFeatureTransformer[tmt.TweetResult] {
+object s-scowedtweetstweetmixewwesponsefeatuwetwansfowmew
+    extends candidatefeatuwetwansfowmew[tmt.tweetwesuwt] {
 
-  override val identifier: TransformerIdentifier =
-    TransformerIdentifier("ScoredTweetsTweetMixerResponse")
+  ovewwide vaw i-identifiew: twansfowmewidentifiew =
+    twansfowmewidentifiew("scowedtweetstweetmixewwesponse")
 
-  override val features: Set[Feature[_, _]] = Set(
-    CandidateSourceIdFeature,
-    FromInNetworkSourceFeature,
-    IsRandomTweetFeature,
-    StreamToKafkaFeature,
-    SuggestTypeFeature,
-    TSPMetricTagFeature
+  o-ovewwide vaw f-featuwes: set[featuwe[_, (⑅˘꒳˘) _]] = set(
+    candidatesouwceidfeatuwe, /(^•ω•^)
+    fwominnetwowksouwcefeatuwe, rawr x3
+    iswandomtweetfeatuwe, (U ﹏ U)
+    stweamtokafkafeatuwe, (U ﹏ U)
+    s-suggesttypefeatuwe, (⑅˘꒳˘)
+    tspmetwictagfeatuwe
   )
 
-  override def transform(candidate: tmt.TweetResult): FeatureMap = {
-    val tweetMixerMetricTags = candidate.metricTags.getOrElse(Seq.empty)
-    val tspMetricTag = tweetMixerMetricTags
-      .map(TweetMixerMetricTagToTspMetricTag)
-      .filter(_.nonEmpty).map(_.get).toSet
+  ovewwide def twansfowm(candidate: tmt.tweetwesuwt): featuwemap = {
+    v-vaw tweetmixewmetwictags = candidate.metwictags.getowewse(seq.empty)
+    vaw t-tspmetwictag = t-tweetmixewmetwictags
+      .map(tweetmixewmetwictagtotspmetwictag)
+      .fiwtew(_.nonempty).map(_.get).toset
 
-    FeatureMapBuilder()
-      .add(CandidateSourceIdFeature, Some(cts.CandidateTweetSourceId.Simcluster))
-      .add(FromInNetworkSourceFeature, false)
-      .add(IsRandomTweetFeature, false)
-      .add(StreamToKafkaFeature, true)
-      .add(SuggestTypeFeature, Some(st.SuggestType.ScTweet))
-      .add(TSPMetricTagFeature, tspMetricTag)
-      .build()
+    f-featuwemapbuiwdew()
+      .add(candidatesouwceidfeatuwe, òωó s-some(cts.candidatetweetsouwceid.simcwustew))
+      .add(fwominnetwowksouwcefeatuwe, ʘwʘ fawse)
+      .add(iswandomtweetfeatuwe, fawse)
+      .add(stweamtokafkafeatuwe, /(^•ω•^) t-twue)
+      .add(suggesttypefeatuwe, ʘwʘ some(st.suggesttype.sctweet))
+      .add(tspmetwictagfeatuwe, σωσ tspmetwictag)
+      .buiwd()
   }
 
-  private def TweetMixerMetricTagToTspMetricTag(
-    tweetMixerMetricTag: tmt.MetricTag
-  ): Option[tsp.MetricTag] = tweetMixerMetricTag match {
-    case tmt.MetricTag.TweetFavorite => Some(tsp.MetricTag.TweetFavorite)
-    case tmt.MetricTag.Retweet => Some(tsp.MetricTag.Retweet)
-    case _ => None
+  p-pwivate def tweetmixewmetwictagtotspmetwictag(
+    tweetmixewmetwictag: tmt.metwictag
+  ): option[tsp.metwictag] = tweetmixewmetwictag match {
+    c-case tmt.metwictag.tweetfavowite => some(tsp.metwictag.tweetfavowite)
+    c-case tmt.metwictag.wetweet => s-some(tsp.metwictag.wetweet)
+    c-case _ => nyone
   }
 }

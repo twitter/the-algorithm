@@ -1,231 +1,231 @@
-package com.twitter.search.common.schema.base;
+package com.twittew.seawch.common.schema.base;
 
-import java.util.Collection;
-import java.util.Map;
+impowt java.utiw.cowwection;
+i-impowt j-java.utiw.map;
 
-import javax.annotation.Nullable;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableMap;
+i-impowt com.googwe.common.base.pwedicate;
+impowt c-com.googwe.common.cowwect.immutabwecowwection;
+i-impowt com.googwe.common.cowwect.immutabwemap;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.facet.FacetsConfig;
-import org.apache.lucene.index.FieldInfos;
+i-impowt owg.apache.wucene.anawysis.anawyzew;
+i-impowt owg.apache.wucene.facet.facetsconfig;
+impowt owg.apache.wucene.index.fiewdinfos;
 
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchema;
-import com.twitter.search.common.schema.thriftjava.ThriftAnalyzer;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldConfiguration;
+impowt com.twittew.seawch.common.featuwes.thwift.thwiftseawchfeatuweschema;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftanawyzew;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftcsftype;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfiewdconfiguwation;
 
 /**
- * Search Schema.
+ * s-seawch schema. ^^;;
  */
-public interface Schema {
+pubwic intewface schema {
   /**
-   * Certain Schema implementations can evolve at run time.  This call returns a snapshot of
-   * of the schema which is guaranteed to not change.
+   * cewtain s-schema impwementations can evowve a-at wun time. 🥺  t-this caww wetuwns a snapshot of
+   * of the schema which is guawanteed to nyot change. XD
    */
-  ImmutableSchemaInterface getSchemaSnapshot();
+  immutabweschemaintewface g-getschemasnapshot();
 
   /**
-   * Returns a string describing the current schema version.
+   * wetuwns a stwing descwibing the cuwwent schema vewsion. (U ᵕ U❁)
    */
-  String getVersionDescription();
+  s-stwing getvewsiondescwiption();
 
   /**
-   * Returns whether the schema version is official. Only official segments are uploaded to HDFS.
+   * w-wetuwns whethew t-the schema v-vewsion is officiaw. :3 o-onwy officiaw segments awe upwoaded to hdfs. ( ͡o ω ͡o )
    */
-  boolean isVersionOfficial();
+  b-boowean isvewsionofficiaw();
 
   /**
-   * Returns the schema's major version.
+   * wetuwns the schema's m-majow vewsion. òωó
    */
-  int getMajorVersionNumber();
+  int getmajowvewsionnumbew();
 
   /**
-   * Returns the schema's minor version.
+   * wetuwns the schema's minow vewsion. σωσ
    */
-  int getMinorVersionNumber();
+  int getminowvewsionnumbew();
 
   /**
-   * Returns the default analyzer. This analyzer is used when none is specified on the field info.
+   * w-wetuwns the defauwt a-anawyzew. (U ᵕ U❁) this a-anawyzew is used w-when nyone is specified on the fiewd info.
    */
-  Analyzer getDefaultAnalyzer(ThriftAnalyzer override);
+  anawyzew getdefauwtanawyzew(thwiftanawyzew ovewwide);
 
   /**
-   * Returns whether the given field is configured in the schema.
+   * w-wetuwns whethew t-the given fiewd is configuwed i-in the schema. (✿oωo)
    */
-  boolean hasField(int fieldConfigId);
+  b-boowean hasfiewd(int f-fiewdconfigid);
 
   /**
-   * Returns whether the given field is configured in the schema.
+   * wetuwns w-whethew the given fiewd is configuwed in the s-schema. ^^
    */
-  boolean hasField(String fieldName);
+  boowean hasfiewd(stwing f-fiewdname);
 
   /**
-   * Get the field name corresponding to the given field id.
+   * get the fiewd nyame c-cowwesponding t-to the given fiewd id. ^•ﻌ•^
    */
-  String getFieldName(int fieldConfigId);
+  stwing getfiewdname(int fiewdconfigid);
 
   /**
-   * Return the FieldInfo of all fields.
+   * wetuwn the fiewdinfo of aww fiewds. XD
    */
-  ImmutableCollection<FieldInfo> getFieldInfos();
+  i-immutabwecowwection<fiewdinfo> g-getfiewdinfos();
 
   /**
-   * Get the field info for the given field id. If an override is given, attempt to merge the
-   * base field info with the override config.
+   * get t-the fiewd info f-fow the given fiewd i-id. :3 if an ovewwide is given, (ꈍᴗꈍ) attempt to mewge the
+   * base f-fiewd info with the ovewwide config. :3
    */
-  FieldInfo getFieldInfo(int fieldConfigId, ThriftFieldConfiguration override);
+  fiewdinfo getfiewdinfo(int fiewdconfigid, (U ﹏ U) t-thwiftfiewdconfiguwation ovewwide);
 
 
   /**
-   * Get the field info for the given field id. No override.
+   * g-get the f-fiewd info fow t-the given fiewd id. nyo ovewwide. UwU
    */
-  @Nullable
-  FieldInfo getFieldInfo(int fieldConfigId);
+  @nuwwabwe
+  f-fiewdinfo g-getfiewdinfo(int f-fiewdconfigid);
 
   /**
-   * Get the field info for the given field name. No override.
+   * g-get the fiewd info fow the given fiewd n-nyame. 😳😳😳 nyo ovewwide.
    */
-  @Nullable
-  FieldInfo getFieldInfo(String fieldName);
+  @nuwwabwe
+  f-fiewdinfo g-getfiewdinfo(stwing f-fiewdname);
 
   /**
-   * Builds a lucene FieldInfos instance, usually used for indexing.
+   * b-buiwds a wucene fiewdinfos instance, XD usuawwy used fow indexing. o.O
    */
-  FieldInfos getLuceneFieldInfos(Predicate<String> acceptedFields);
+  f-fiewdinfos getwucenefiewdinfos(pwedicate<stwing> acceptedfiewds);
 
   /**
-   * Returns the number of facet fields in this schema.
+   * wetuwns the numbew of facet fiewds in this s-schema. (⑅˘꒳˘)
    */
-  int getNumFacetFields();
+  int getnumfacetfiewds();
 
   /**
-   * Return facet configurations.
+   * wetuwn facet configuwations. 😳😳😳
    */
-  FacetsConfig getFacetsConfig();
+  f-facetsconfig g-getfacetsconfig();
 
   /**
-   * Get the facet field's field info by facet name.
+   * g-get the facet fiewd's f-fiewd info by facet nyame. nyaa~~
    */
-  FieldInfo getFacetFieldByFacetName(String facetName);
+  f-fiewdinfo getfacetfiewdbyfacetname(stwing f-facetname);
 
   /**
-   * Get the facet field's field info by field name.
+   * get the facet fiewd's fiewd info by fiewd nyame. rawr
    */
-  FieldInfo getFacetFieldByFieldName(String fieldName);
+  fiewdinfo getfacetfiewdbyfiewdname(stwing f-fiewdname);
 
   /**
-   * Get the field infos for all facet fields.
+   * get the fiewd infos f-fow aww facet fiewds. -.-
    */
-  Collection<FieldInfo> getFacetFields();
+  c-cowwection<fiewdinfo> g-getfacetfiewds();
 
   /**
-   * Get the field infos for all facet fields backed by column stride fields.
+   * get the fiewd infos fow aww f-facet fiewds backed b-by cowumn stwide fiewds. (✿oωo)
    */
-  Collection<FieldInfo> getCsfFacetFields();
+  c-cowwection<fiewdinfo> g-getcsffacetfiewds();
 
   /**
-   * Get the field weight map for text searchable fields.
+   * get the fiewd weight map fow text seawchabwe fiewds. /(^•ω•^)
    */
-  Map<String, FieldWeightDefault> getFieldWeightMap();
+  m-map<stwing, 🥺 f-fiewdweightdefauwt> g-getfiewdweightmap();
 
   /**
-   * Get scoring feature configuration by feature name.
+   * get s-scowing featuwe c-configuwation by featuwe nyame. ʘwʘ
    */
-  FeatureConfiguration getFeatureConfigurationByName(String featureName);
+  f-featuweconfiguwation getfeatuweconfiguwationbyname(stwing featuwename);
 
   /**
-   * Get scoring feature configuration by feature field id.  The feature configuration is
-   * guaranteed to be not null, or a NullPointerException will be thrown out.
+   * get scowing featuwe c-configuwation by f-featuwe fiewd id. UwU  the featuwe configuwation is
+   * g-guawanteed t-to be nyot nyuww, XD ow a nyuwwpointewexception wiww be thwown out. (✿oωo)
    */
-  FeatureConfiguration getFeatureConfigurationById(int featureFieldId);
+  f-featuweconfiguwation getfeatuweconfiguwationbyid(int featuwefiewdid);
 
   /**
-   * Returns the ThriftCSFType for a CSF field.
-   * Note: for non-CSF field, null will be returned.
+   * wetuwns the thwiftcsftype fow a csf fiewd. :3
+   * nyote: f-fow nyon-csf fiewd, (///ˬ///✿) nyuww wiww be wetuwned. nyaa~~
    */
-  @Nullable
-  ThriftCSFType getCSFFieldType(String fieldName);
+  @nuwwabwe
+  t-thwiftcsftype g-getcsffiewdtype(stwing fiewdname);
 
   /**
-   * Get the search result feature schema for all possible features in all search results.
+   * get the seawch wesuwt featuwe schema f-fow aww possibwe f-featuwes in aww seawch wesuwts. >w<
    *
-   * The returned value is not really immutable (because it's a pre-generated thrift struct).
-   * We want to return it directly because we want to pre-build it once and return with the thrift
-   * search results as is.
+   * the wetuwned vawue is nyot weawwy i-immutabwe (because it's a pwe-genewated t-thwift stwuct). -.-
+   * we want to wetuwn it diwectwy because w-we want to pwe-buiwd it once a-and wetuwn with t-the thwift
+   * seawch wesuwts a-as is. (✿oωo)
    */
-  ThriftSearchFeatureSchema getSearchFeatureSchema();
+  thwiftseawchfeatuweschema g-getseawchfeatuweschema();
 
   /**
-   * Get the mapping from feature id to feature configuration.
+   * g-get the mapping f-fwom featuwe id to featuwe configuwation. (˘ω˘)
    */
-  ImmutableMap<Integer, FeatureConfiguration> getFeatureIdToFeatureConfig();
+  i-immutabwemap<integew, rawr f-featuweconfiguwation> getfeatuweidtofeatuweconfig();
 
   /**
-   * Get the mapping from feature name to feature configuration.
+   * get the m-mapping fwom featuwe n-nyame to featuwe c-configuwation.
    */
-  ImmutableMap<String, FeatureConfiguration> getFeatureNameToFeatureConfig();
+  immutabwemap<stwing, OwO featuweconfiguwation> g-getfeatuwenametofeatuweconfig();
 
   /**
-   * Field configuration for a single field.
+   * fiewd configuwation f-fow a s-singwe fiewd. ^•ﻌ•^
    */
-  final class FieldInfo {
-    private final int fieldId;
-    private final String name;
-    private final EarlybirdFieldType luceneFieldType;
+  finaw cwass fiewdinfo {
+    pwivate finaw i-int fiewdid;
+    p-pwivate finaw stwing n-nyame;
+    p-pwivate finaw eawwybiwdfiewdtype wucenefiewdtype;
 
-    public FieldInfo(int fieldId, String name, EarlybirdFieldType luceneFieldType) {
-      this.fieldId = fieldId;
-      this.name = name;
-      this.luceneFieldType = luceneFieldType;
+    p-pubwic fiewdinfo(int fiewdid, stwing nyame, UwU eawwybiwdfiewdtype wucenefiewdtype) {
+      this.fiewdid = fiewdid;
+      t-this.name = nyame;
+      t-this.wucenefiewdtype = wucenefiewdtype;
     }
 
-    public int getFieldId() {
-      return fieldId;
+    p-pubwic int getfiewdid() {
+      w-wetuwn fiewdid;
     }
 
-    public String getName() {
-      return name;
+    p-pubwic stwing g-getname() {
+      w-wetuwn nyame;
     }
 
-    public EarlybirdFieldType getFieldType() {
-      return luceneFieldType;
+    p-pubwic e-eawwybiwdfiewdtype getfiewdtype() {
+      wetuwn wucenefiewdtype;
     }
 
-    public String getDescription() {
-      return String.format(
-          "(FieldInfo [fieldId: %d, name: %s, luceneFieldType: %s])",
-          fieldId, name, luceneFieldType.getFacetName()
+    pubwic stwing getdescwiption() {
+      wetuwn stwing.fowmat(
+          "(fiewdinfo [fiewdid: %d, (˘ω˘) n-nyame: %s, (///ˬ///✿) wucenefiewdtype: %s])", σωσ
+          f-fiewdid, /(^•ω•^) nyame, w-wucenefiewdtype.getfacetname()
       );
     }
 
-    @Override
-    public boolean equals(Object obj) {
-      if (!(obj instanceof FieldInfo)) {
-        return false;
+    @ovewwide
+    pubwic boowean e-equaws(object obj) {
+      if (!(obj instanceof fiewdinfo)) {
+        w-wetuwn fawse;
       }
-      return fieldId == ((FieldInfo) obj).fieldId;
+      w-wetuwn fiewdid == ((fiewdinfo) obj).fiewdid;
     }
 
-    @Override
-    public int hashCode() {
-      return fieldId;
+    @ovewwide
+    p-pubwic int hashcode() {
+      wetuwn fiewdid;
     }
   }
 
   /**
-   * Exception thrown when errors or inconsistences are detected in a search schema.
+   * e-exception t-thwown when ewwows ow inconsistences a-awe detected i-in a seawch schema. 😳
    */
-  final class SchemaValidationException extends Exception {
-    public SchemaValidationException(String msg) {
-      super(msg);
+  finaw cwass schemavawidationexception extends e-exception {
+    p-pubwic schemavawidationexception(stwing m-msg) {
+      s-supew(msg);
     }
 
-    public SchemaValidationException(String msg, Exception e) {
-      super(msg, e);
+    p-pubwic schemavawidationexception(stwing m-msg, 😳 exception e-e) {
+      supew(msg, (⑅˘꒳˘) e);
     }
   }
 }

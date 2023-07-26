@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.pwompt
 
 /**
- * Represents the different ways to display the Relevance Prompt in a timeline.
+ * wepwesents t-the diffewent w-ways to dispway t-the wewevance p-pwompt in a timewine. -.-
  *
- * URT API Reference: https://docbird.twitter.biz/unified_rich_timelines_urt/gen/com/twitter/timelines/render/thriftscala/RelevancePromptDisplayType.html
+ * u-uwt a-api wefewence: https://docbiwd.twittew.biz/unified_wich_timewines_uwt/gen/com/twittew/timewines/wendew/thwiftscawa/wewevancepwomptdispwaytype.htmw
  */
-sealed trait RelevancePromptDisplayType
+s-seawed twait w-wewevancepwomptdispwaytype
 
-case object Normal extends RelevancePromptDisplayType
-case object Compact extends RelevancePromptDisplayType
-case object Large extends RelevancePromptDisplayType
-case object ThumbsUpAndDown extends RelevancePromptDisplayType
+case object nyowmaw extends wewevancepwomptdispwaytype
+case object compact extends w-wewevancepwomptdispwaytype
+case object wawge e-extends wewevancepwomptdispwaytype
+case object thumbsupanddown extends w-wewevancepwomptdispwaytype

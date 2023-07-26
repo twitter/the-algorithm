@@ -1,79 +1,79 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducedTypes;
+impowt owg.apache.commons.pipewine.stageexception;
+i-impowt o-owg.apache.commons.pipewine.vawidation.consumedtypes;
+i-impowt owg.apache.commons.pipewine.vawidation.pwoducedtypes;
 
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
+i-impowt com.twittew.seawch.common.decidew.decidewutiw;
+i-impowt c-com.twittew.seawch.common.metwics.seawchwatecountew;
+i-impowt com.twittew.seawch.ingestew.modew.ingestewtwittewmessage;
+i-impowt com.twittew.seawch.ingestew.pipewine.utiw.pipewinestagewuntimeexception;
 
 /**
- * Filters out tweets that are not retweets or replies.
+ * fiwtews out tweets that awe nyot wetweets ow wepwies. mya
  */
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducedTypes(IngesterTwitterMessage.class)
-public class FilterRetweetsAndRepliesStage extends TwitterBaseStage
-    <IngesterTwitterMessage, IngesterTwitterMessage> {
-  private static final String EMIT_RETWEET_AND_REPLY_ENGAGEMENTS_DECIDER_KEY =
-      "ingester_realtime_emit_retweet_and_reply_engagements";
+@consumedtypes(ingestewtwittewmessage.cwass)
+@pwoducedtypes(ingestewtwittewmessage.cwass)
+pubwic cwass f-fiwtewwetweetsandwepwiesstage extends twittewbasestage
+    <ingestewtwittewmessage, ^^ i-ingestewtwittewmessage> {
+  pwivate static finaw s-stwing emit_wetweet_and_wepwy_engagements_decidew_key =
+      "ingestew_weawtime_emit_wetweet_and_wepwy_engagements";
 
-  private SearchRateCounter filteredRetweetsCount;
-  private SearchRateCounter filteredRepliesToTweetsCount;
-  private SearchRateCounter incomingRetweetsAndRepliesToTweetsCount;
+  pwivate seawchwatecountew fiwtewedwetweetscount;
+  p-pwivate seawchwatecountew fiwtewedwepwiestotweetscount;
+  p-pwivate s-seawchwatecountew incomingwetweetsandwepwiestotweetscount;
 
-  @Override
-  public void initStats() {
-    super.initStats();
-    innerSetupStats();
+  @ovewwide
+  pubwic void initstats() {
+    supew.initstats();
+    i-innewsetupstats();
   }
 
-  @Override
-  protected void innerSetupStats() {
-    filteredRetweetsCount =
-        SearchRateCounter.export(getStageNamePrefix() + "_filtered_retweets_count");
-    filteredRepliesToTweetsCount =
-        SearchRateCounter.export(getStageNamePrefix() + "_filtered_replies_to_tweets_count");
-    incomingRetweetsAndRepliesToTweetsCount =
-        SearchRateCounter.export(
-            getStageNamePrefix() + "_incoming_retweets_and_replies_to_tweets_count");
+  @ovewwide
+  pwotected void innewsetupstats() {
+    fiwtewedwetweetscount =
+        seawchwatecountew.expowt(getstagenamepwefix() + "_fiwtewed_wetweets_count");
+    fiwtewedwepwiestotweetscount =
+        seawchwatecountew.expowt(getstagenamepwefix() + "_fiwtewed_wepwies_to_tweets_count");
+    i-incomingwetweetsandwepwiestotweetscount =
+        seawchwatecountew.expowt(
+            g-getstagenamepwefix() + "_incoming_wetweets_and_wepwies_to_tweets_count");
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not an IngesterTwitterMessage: " + obj);
+  @ovewwide
+  p-pubwic void i-innewpwocess(object o-obj) thwows stageexception {
+    if (!(obj i-instanceof ingestewtwittewmessage)) {
+      thwow nyew stageexception(this, 😳😳😳 "object i-is nyot an ingestewtwittewmessage: " + obj);
     }
 
-    IngesterTwitterMessage status = (IngesterTwitterMessage) obj;
-    if (tryToFilter(status)) {
-      emitAndCount(status);
+    ingestewtwittewmessage status = (ingestewtwittewmessage) obj;
+    if (twytofiwtew(status)) {
+      e-emitandcount(status);
     }
   }
 
-  @Override
-  public IngesterTwitterMessage runStageV2(IngesterTwitterMessage message) {
-    if (!tryToFilter(message)) {
-      throw new PipelineStageRuntimeException("Does not have to pass to the next stage.");
+  @ovewwide
+  pubwic ingestewtwittewmessage w-wunstagev2(ingestewtwittewmessage message) {
+    i-if (!twytofiwtew(message)) {
+      t-thwow nyew pipewinestagewuntimeexception("does nyot have to pass to the nyext stage.");
     }
-    return message;
+    wetuwn message;
   }
 
-  private boolean tryToFilter(IngesterTwitterMessage status) {
-    boolean shouldEmit = false;
-    if (status.isRetweet() || status.isReplyToTweet()) {
-      incomingRetweetsAndRepliesToTweetsCount.increment();
-      if (DeciderUtil.isAvailableForRandomRecipient(
-          decider, EMIT_RETWEET_AND_REPLY_ENGAGEMENTS_DECIDER_KEY)) {
-        if (status.isRetweet()) {
-          filteredRetweetsCount.increment();
-        } else {
-          filteredRepliesToTweetsCount.increment();
+  p-pwivate b-boowean twytofiwtew(ingestewtwittewmessage status) {
+    b-boowean s-shouwdemit = fawse;
+    if (status.iswetweet() || s-status.iswepwytotweet()) {
+      incomingwetweetsandwepwiestotweetscount.incwement();
+      i-if (decidewutiw.isavaiwabwefowwandomwecipient(
+          decidew, mya emit_wetweet_and_wepwy_engagements_decidew_key)) {
+        i-if (status.iswetweet()) {
+          fiwtewedwetweetscount.incwement();
+        } ewse {
+          f-fiwtewedwepwiestotweetscount.incwement();
         }
-        shouldEmit = true;
+        shouwdemit = t-twue;
       }
     }
-    return shouldEmit;
+    w-wetuwn shouwdemit;
   }
 }

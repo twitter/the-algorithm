@@ -1,66 +1,66 @@
-package com.twitter.product_mixer.core.functional_component.premarshaller
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.pwemawshawwew
 
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.DomainMarshallerIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModulePresentation
-import com.twitter.product_mixer.core.model.common.presentation.UniversalPresentation
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.twanspowtmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.component
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.domainmawshawwewidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.moduwepwesentation
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.univewsawpwesentation
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Transforms the `selections` into a [[DomainResponseType]] object (often URT, Slice, etc)
+ * twansfowms the `sewections` into a-a [[domainwesponsetype]] object (often uwt, mya swice, >w< e-etc)
  *
- * [[DomainMarshaller]]s may contain business logic
+ * [[domainmawshawwew]]s may contain b-business wogic
  *
- * @note This is different from `com.twitter.product_mixer.core.marshaller`s
- *       which transforms into a wire-compatible type
+ * @note this is diffewent fwom `com.twittew.pwoduct_mixew.cowe.mawshawwew`s
+ *       which twansfowms i-into a wiwe-compatibwe t-type
  */
-trait DomainMarshaller[-Query <: PipelineQuery, DomainResponseType] extends Component {
+twait domainmawshawwew[-quewy <: p-pipewinequewy, nyaa~~ domainwesponsetype] extends component {
 
-  override val identifier: DomainMarshallerIdentifier
+  ovewwide vaw i-identifiew: domainmawshawwewidentifiew
 
-  /** Transforms the `selections` into a [[DomainResponseType]] object */
-  def apply(
-    query: Query,
-    selections: Seq[CandidateWithDetails]
-  ): DomainResponseType
+  /** twansfowms the `sewections` into a [[domainwesponsetype]] object */
+  d-def appwy(
+    quewy: quewy, (✿oωo)
+    s-sewections: s-seq[candidatewithdetaiws]
+  ): d-domainwesponsetype
 }
 
-class UnsupportedCandidateDomainMarshallerException(
-  candidate: Any,
-  candidateSource: ComponentIdentifier)
-    extends UnsupportedOperationException(
-      s"Domain marshaller does not support candidate ${TransportMarshaller.getSimpleName(
-        candidate.getClass)} from source $candidateSource")
+c-cwass unsuppowtedcandidatedomainmawshawwewexception(
+  candidate: any, ʘwʘ
+  c-candidatesouwce: componentidentifiew)
+    extends u-unsuppowtedopewationexception(
+      s"domain mawshawwew does nyot suppowt candidate ${twanspowtmawshawwew.getsimpwename(
+        candidate.getcwass)} fwom souwce $candidatesouwce")
 
-class UndecoratedCandidateDomainMarshallerException(
-  candidate: Any,
-  candidateSource: ComponentIdentifier)
-    extends UnsupportedOperationException(
-      s"Domain marshaller does not support undecorated candidate ${TransportMarshaller
-        .getSimpleName(candidate.getClass)} from source $candidateSource")
+c-cwass undecowatedcandidatedomainmawshawwewexception(
+  candidate: any, (ˆ ﻌ ˆ)♡
+  c-candidatesouwce: c-componentidentifiew)
+    e-extends unsuppowtedopewationexception(
+      s"domain mawshawwew does n-nyot suppowt undecowated c-candidate ${twanspowtmawshawwew
+        .getsimpwename(candidate.getcwass)} fwom souwce $candidatesouwce")
 
-class UnsupportedPresentationDomainMarshallerException(
-  candidate: Any,
-  presentation: UniversalPresentation,
-  candidateSource: ComponentIdentifier)
-    extends UnsupportedOperationException(
-      s"Domain marshaller does not support decorator presentation ${TransportMarshaller
-        .getSimpleName(presentation.getClass)} for candidate ${TransportMarshaller.getSimpleName(
-        candidate.getClass)} from source $candidateSource")
+c-cwass unsuppowtedpwesentationdomainmawshawwewexception(
+  c-candidate: any, 😳😳😳
+  pwesentation: u-univewsawpwesentation, :3
+  candidatesouwce: c-componentidentifiew)
+    extends unsuppowtedopewationexception(
+      s"domain mawshawwew d-does nyot suppowt decowatow p-pwesentation ${twanspowtmawshawwew
+        .getsimpwename(pwesentation.getcwass)} fow candidate ${twanspowtmawshawwew.getsimpwename(
+        c-candidate.getcwass)} f-fwom souwce $candidatesouwce")
 
-class UnsupportedModuleDomainMarshallerException(
-  presentation: Option[ModulePresentation],
-  candidateSource: ComponentIdentifier)
-    extends UnsupportedOperationException(
-      s"Domain marshaller does not support module presentation ${presentation
+cwass unsuppowtedmoduwedomainmawshawwewexception(
+  pwesentation: option[moduwepwesentation], OwO
+  candidatesouwce: componentidentifiew)
+    extends u-unsuppowtedopewationexception(
+      s-s"domain mawshawwew does n-nyot suppowt m-moduwe pwesentation ${pwesentation
         .map(p =>
-          TransportMarshaller
-            .getSimpleName(presentation.getClass)).getOrElse("")} but was given a module from source $candidateSource")
+          twanspowtmawshawwew
+            .getsimpwename(pwesentation.getcwass)).getowewse("")} b-but was given a moduwe fwom souwce $candidatesouwce")
 
-class UndecoratedModuleDomainMarshallerException(
-  candidateSource: ComponentIdentifier)
-    extends UnsupportedOperationException(
-      s"Domain marshaller does not support undecorated module from source $candidateSource")
+cwass u-undecowatedmoduwedomainmawshawwewexception(
+  candidatesouwce: componentidentifiew)
+    extends unsuppowtedopewationexception(
+      s-s"domain mawshawwew does n-nyot suppowt undecowated m-moduwe f-fwom souwce $candidatesouwce")

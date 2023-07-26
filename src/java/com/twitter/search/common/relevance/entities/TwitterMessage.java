@@ -1,1267 +1,1267 @@
-package com.twitter.search.common.relevance.entities;
+package com.twittew.seawch.common.wewevance.entities;
 
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+impowt java.text.datefowmat;
+i-impowt java.utiw.awwaywist;
+impowt j-java.utiw.awways;
+i-impowt java.utiw.cowwection;
+i-impowt java.utiw.cowwections;
+i-impowt java.utiw.date;
+i-impowt j-java.utiw.hashset;
+i-impowt java.utiw.winkedhashmap;
+impowt java.utiw.wist;
+impowt java.utiw.wocawe;
+impowt java.utiw.map;
+i-impowt java.utiw.optionaw;
+impowt java.utiw.set;
+i-impowt javax.annotation.nonnuww;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+impowt com.googwe.common.annotations.visibwefowtesting;
+impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.compawisonchain;
+impowt com.googwe.common.cowwect.wists;
+i-impowt c-com.googwe.common.cowwect.maps;
+impowt com.googwe.common.cowwect.sets;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.lucene.analysis.TokenStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.commons.wang.stwingutiws;
+impowt o-owg.apache.commons.wang3.buiwdew.equawsbuiwdew;
+impowt owg.apache.commons.wang3.buiwdew.hashcodebuiwdew;
+impowt owg.apache.commons.wang3.buiwdew.tostwingbuiwdew;
+impowt owg.apache.wucene.anawysis.tokenstweam;
+i-impowt owg.swf4j.woggew;
+impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.common.text.language.LocaleUtil;
-import com.twitter.common.text.pipeline.TwitterLanguageIdentifier;
-import com.twitter.common.text.token.TokenizedCharSequence;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.cuad.ner.plain.thriftjava.NamedEntity;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
-import com.twitter.search.common.relevance.features.TweetFeatures;
-import com.twitter.search.common.relevance.features.TweetTextFeatures;
-import com.twitter.search.common.relevance.features.TweetTextQuality;
-import com.twitter.search.common.relevance.features.TweetUserFeatures;
-import com.twitter.search.common.util.text.NormalizerHelper;
-import com.twitter.service.spiderduck.gen.MediaTypes;
-import com.twitter.tweetypie.thriftjava.ComposerSource;
-import com.twitter.util.TwitterDateFormat;
+i-impowt c-com.twittew.common.text.wanguage.wocaweutiw;
+impowt c-com.twittew.common.text.pipewine.twittewwanguageidentifiew;
+impowt com.twittew.common.text.token.tokenizedchawsequence;
+impowt c-com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+impowt com.twittew.cuad.new.pwain.thwiftjava.namedentity;
+i-impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftexpandeduww;
+impowt com.twittew.seawch.common.wewevance.featuwes.tweetfeatuwes;
+impowt com.twittew.seawch.common.wewevance.featuwes.tweettextfeatuwes;
+impowt com.twittew.seawch.common.wewevance.featuwes.tweettextquawity;
+impowt com.twittew.seawch.common.wewevance.featuwes.tweetusewfeatuwes;
+i-impowt com.twittew.seawch.common.utiw.text.nowmawizewhewpew;
+impowt com.twittew.sewvice.spidewduck.gen.mediatypes;
+i-impowt c-com.twittew.tweetypie.thwiftjava.composewsouwce;
+i-impowt com.twittew.utiw.twittewdatefowmat;
 
 /**
- * A representation of tweets used as an intermediate object during ingestion. As we proceed
- * in ingestion, we fill this object with data. We then convert it to ThriftVersionedEvents (which
- * itself represents a single tweet too, in different penguin versions potentially).
+ * a wepwesentation of tweets used as an intewmediate o-object duwing i-ingestion. /(^•ω•^) as we pwoceed
+ * i-in ingestion, 🥺 w-we fiww this object with data. -.- we t-then convewt it to thwiftvewsionedevents (which
+ * i-itsewf wepwesents a singwe tweet too, ( ͡o ω ͡o ) in diffewent p-penguin vewsions potentiawwy). 😳😳😳
  */
-public class TwitterMessage {
-  private static final Logger LOG = LoggerFactory.getLogger(TwitterMessage.class);
+p-pubwic cwass twittewmessage {
+  p-pwivate s-static finaw woggew wog = woggewfactowy.getwoggew(twittewmessage.cwass);
 
-  public static class EscherbirdAnnotation implements Comparable<EscherbirdAnnotation> {
-    public final long groupId;
-    public final long domainId;
-    public final long entityId;
+  pubwic static cwass eschewbiwdannotation impwements compawabwe<eschewbiwdannotation> {
+    pubwic f-finaw wong gwoupid;
+    p-pubwic finaw wong domainid;
+    p-pubwic f-finaw wong entityid;
 
-    public EscherbirdAnnotation(long groupId, long domainId, long entityId) {
-      this.groupId = groupId;
-      this.domainId = domainId;
-      this.entityId = entityId;
+    p-pubwic eschewbiwdannotation(wong gwoupid, (˘ω˘) wong domainid, ^^ w-wong entityid) {
+      this.gwoupid = gwoupid;
+      this.domainid = domainid;
+      t-this.entityid = entityid;
     }
 
-    @Override
-    public boolean equals(Object o2) {
-      if (o2 instanceof EscherbirdAnnotation) {
-        EscherbirdAnnotation a2 = (EscherbirdAnnotation) o2;
-        return groupId == a2.groupId && domainId == a2.domainId && entityId == a2.entityId;
+    @ovewwide
+    p-pubwic b-boowean equaws(object o-o2) {
+      if (o2 instanceof e-eschewbiwdannotation) {
+        e-eschewbiwdannotation a-a2 = (eschewbiwdannotation) o-o2;
+        wetuwn gwoupid == a2.gwoupid && d-domainid == a2.domainid && e-entityid == a-a2.entityid;
       }
-      return false;
+      w-wetuwn fawse;
     }
 
-    @Override
-    public int hashCode() {
-      return new HashCodeBuilder()
-          .append(groupId)
-          .append(domainId)
-          .append(entityId)
-          .toHashCode();
+    @ovewwide
+    p-pubwic int hashcode() {
+      wetuwn nyew hashcodebuiwdew()
+          .append(gwoupid)
+          .append(domainid)
+          .append(entityid)
+          .tohashcode();
     }
 
-    @Override
-    public int compareTo(EscherbirdAnnotation o) {
-      return ComparisonChain.start()
-          .compare(this.groupId, o.groupId)
-          .compare(this.domainId, o.domainId)
-          .compare(this.entityId, o.entityId)
-          .result();
-    }
-  }
-
-  private final List<EscherbirdAnnotation> escherbirdAnnotations = Lists.newArrayList();
-
-  // tweet features for multiple penguin versions
-  private static class VersionedTweetFeatures {
-    // TweetFeatures populated by relevance classifiers, structure defined
-    // in src/main/thrift/classifier.thrift.
-    private TweetFeatures tweetFeatures = new TweetFeatures();
-    private TokenizedCharSequence tokenizedCharSequence = null;
-    private Set<String> normalizedHashtags = Sets.newHashSet();
-
-    public TweetFeatures getTweetFeatures() {
-      return this.tweetFeatures;
-    }
-
-    public void setTweetFeatures(final TweetFeatures tweetFeatures) {
-      this.tweetFeatures = tweetFeatures;
-    }
-
-    public TweetTextQuality getTweetTextQuality() {
-      return this.tweetFeatures.getTweetTextQuality();
-    }
-
-    public TweetTextFeatures getTweetTextFeatures() {
-      return this.tweetFeatures.getTweetTextFeatures();
-    }
-
-    public TweetUserFeatures getTweetUserFeatures() {
-      return this.tweetFeatures.getTweetUserFeatures();
-    }
-
-    public TokenizedCharSequence getTokenizedCharSequence() {
-      return this.tokenizedCharSequence;
-    }
-
-    public void setTokenizedCharSequence(TokenizedCharSequence sequence) {
-      this.tokenizedCharSequence = sequence;
-    }
-
-    public Set<String> getNormalizedHashtags() {
-      return this.normalizedHashtags;
-    }
-
-    public void addNormalizedHashtags(String normalizedHashtag) {
-      this.normalizedHashtags.add(normalizedHashtag);
+    @ovewwide
+    p-pubwic int compaweto(eschewbiwdannotation o) {
+      wetuwn compawisonchain.stawt()
+          .compawe(this.gwoupid, σωσ o.gwoupid)
+          .compawe(this.domainid, 🥺 o.domainid)
+          .compawe(this.entityid, 🥺 o.entityid)
+          .wesuwt();
     }
   }
 
-  public static final int INT_FIELD_NOT_PRESENT = -1;
-  public static final long LONG_FIELD_NOT_PRESENT = -1;
-  public static final double DOUBLE_FIELD_NOT_PRESENT = -1;
-  public static final int MAX_USER_REPUTATION = 100;
+  p-pwivate finaw wist<eschewbiwdannotation> eschewbiwdannotations = wists.newawwaywist();
 
-  private final long tweetId;
+  // t-tweet featuwes f-fow muwtipwe p-penguin vewsions
+  pwivate static c-cwass vewsionedtweetfeatuwes {
+    // tweetfeatuwes p-popuwated b-by wewevance cwassifiews, /(^•ω•^) stwuctuwe defined
+    // in swc/main/thwift/cwassifiew.thwift. (⑅˘꒳˘)
+    pwivate tweetfeatuwes tweetfeatuwes = n-nyew tweetfeatuwes();
+    pwivate tokenizedchawsequence tokenizedchawsequence = n-nyuww;
+    pwivate set<stwing> n-nyowmawizedhashtags = s-sets.newhashset();
 
-  private String text;
+    pubwic tweetfeatuwes gettweetfeatuwes() {
+      w-wetuwn this.tweetfeatuwes;
+    }
 
-  private Date date;
-  @Nonnull
-  private Optional<TwitterMessageUser> optionalFromUser = Optional.empty();
-  @Nonnull
-  private Optional<TwitterMessageUser> optionalToUser = Optional.empty();
-  private Locale locale = null;
-  private Locale linkLocale = null;
+    p-pubwic void settweetfeatuwes(finaw t-tweetfeatuwes t-tweetfeatuwes) {
+      this.tweetfeatuwes = tweetfeatuwes;
+    }
 
-  // Original source text.
-  private String origSource;
-  // Source with HTML tags removed and truncated.
-  private String strippedSource;
+    pubwic tweettextquawity gettweettextquawity() {
+      w-wetuwn this.tweetfeatuwes.gettweettextquawity();
+    }
 
-  // Original location text.
-  private String origLocation;
+    p-pubwic tweettextfeatuwes g-gettweettextfeatuwes() {
+      wetuwn t-this.tweetfeatuwes.gettweettextfeatuwes();
+    }
 
-  // Location truncated for mysql field-width reasons (see TwitterMessageUtil.java).
-  private String truncatedNormalizedLocation;
+    p-pubwic tweetusewfeatuwes gettweetusewfeatuwes() {
+      w-wetuwn this.tweetfeatuwes.gettweetusewfeatuwes();
+    }
 
-  // User's country
-  private String fromUserLocCountry;
+    pubwic tokenizedchawsequence gettokenizedchawsequence() {
+      wetuwn t-this.tokenizedchawsequence;
+    }
 
-  private Integer followersCount = INT_FIELD_NOT_PRESENT;
-  private boolean deleted = false;
+    p-pubwic void settokenizedchawsequence(tokenizedchawsequence sequence) {
+      t-this.tokenizedchawsequence = s-sequence;
+    }
 
-  // Fields extracted from entities (in the JSON object)
-  private List<TwitterMessageUser> mentions = new ArrayList<>();
-  private Set<String> hashtags = Sets.newHashSet();
-  // Lat/lon and region accuracy tuples extracted from tweet text, or null.
-  private GeoObject geoLocation = null;
-  private boolean uncodeableLocation = false;
-  // This is set if the tweet is geotagged. (i.e. "geo" or "coordinate" section is present
+    pubwic set<stwing> getnowmawizedhashtags() {
+      wetuwn t-this.nowmawizedhashtags;
+    }
+
+    pubwic void addnowmawizedhashtags(stwing nyowmawizedhashtag) {
+      this.nowmawizedhashtags.add(nowmawizedhashtag);
+    }
+  }
+
+  p-pubwic static finaw int int_fiewd_not_pwesent = -1;
+  p-pubwic static finaw w-wong wong_fiewd_not_pwesent = -1;
+  pubwic static finaw doubwe doubwe_fiewd_not_pwesent = -1;
+  p-pubwic static f-finaw int max_usew_weputation = 100;
+
+  pwivate finaw wong tweetid;
+
+  pwivate s-stwing text;
+
+  pwivate date date;
+  @nonnuww
+  p-pwivate optionaw<twittewmessageusew> optionawfwomusew = optionaw.empty();
+  @nonnuww
+  pwivate o-optionaw<twittewmessageusew> optionawtousew = o-optionaw.empty();
+  p-pwivate wocawe wocawe = nyuww;
+  p-pwivate wocawe winkwocawe = nyuww;
+
+  // o-owiginaw s-souwce text.
+  p-pwivate stwing owigsouwce;
+  // s-souwce with h-htmw tags wemoved and twuncated. -.-
+  pwivate stwing s-stwippedsouwce;
+
+  // o-owiginaw w-wocation text. 😳
+  pwivate stwing owigwocation;
+
+  // w-wocation twuncated fow mysqw f-fiewd-width weasons (see t-twittewmessageutiw.java). 😳😳😳
+  pwivate stwing twuncatednowmawizedwocation;
+
+  // usew's c-countwy
+  pwivate s-stwing fwomusewwoccountwy;
+
+  p-pwivate integew f-fowwowewscount = int_fiewd_not_pwesent;
+  p-pwivate boowean deweted = fawse;
+
+  // fiewds extwacted fwom entities (in the json object)
+  p-pwivate wist<twittewmessageusew> mentions = n-nyew awwaywist<>();
+  pwivate s-set<stwing> hashtags = sets.newhashset();
+  // w-wat/won and wegion accuwacy tupwes e-extwacted fwom t-tweet text, >w< ow n-nyuww.
+  pwivate g-geoobject geowocation = n-nyuww;
+  pwivate boowean uncodeabwewocation = fawse;
+  // this is set if the tweet is geotagged. UwU (i.e. "geo" o-ow "coowdinate" s-section is p-pwesent
   // in the json)
-  // This field has only a getter but no setter --- it is filled in when the json is parsed.
-  private GeoObject geoTaggedLocation = null;
+  // t-this fiewd has onwy a gettew but nyo settew --- it is fiwwed in w-when the json is p-pawsed. /(^•ω•^)
+  pwivate geoobject geotaggedwocation = n-nyuww;
 
-  private double userReputation = DOUBLE_FIELD_NOT_PRESENT;
-  private boolean geocodeRequired = false;
-  private boolean sensitiveContent = false;
-  private boolean userProtected;
-  private boolean userVerified;
-  private boolean userBlueVerified;
-  private TwitterRetweetMessage retweetMessage;
-  private TwitterQuotedMessage quotedMessage;
-  private List<String> places;
-  // maps from original url (the t.co url) to ThriftExpandedUrl, which contains the
-  // expanded url and the spiderduck response (canoicalLastHopUrl and mediatype)
-  private final Map<String, ThriftExpandedUrl> expandedUrls;
-  // maps the photo status id to the media url
-  private Map<Long, String> photoUrls;
-  private Optional<Long> inReplyToStatusId = Optional.empty();
-  private Optional<Long> directedAtUserId = Optional.empty();
+  pwivate doubwe usewweputation = doubwe_fiewd_not_pwesent;
+  p-pwivate b-boowean geocodewequiwed = fawse;
+  p-pwivate boowean s-sensitivecontent = fawse;
+  pwivate boowean usewpwotected;
+  pwivate boowean usewvewified;
+  p-pwivate boowean u-usewbwuevewified;
+  p-pwivate twittewwetweetmessage w-wetweetmessage;
+  p-pwivate twittewquotedmessage quotedmessage;
+  p-pwivate wist<stwing> p-pwaces;
+  // maps fwom owiginaw u-uww (the t-t.co uww) to thwiftexpandeduww, 🥺 which contains the
+  // e-expanded uww and the spidewduck wesponse (canoicawwasthopuww a-and mediatype)
+  pwivate finaw m-map<stwing, >_< t-thwiftexpandeduww> expandeduwws;
+  // m-maps the photo status id to the media uww
+  p-pwivate map<wong, rawr s-stwing> photouwws;
+  p-pwivate optionaw<wong> inwepwytostatusid = optionaw.empty();
+  p-pwivate optionaw<wong> diwectedatusewid = optionaw.empty();
 
-  private long conversationId = -1;
+  p-pwivate wong c-convewsationid = -1;
 
-  // True if tweet is nullcasted.
-  private boolean nullcast = false;
+  // twue if tweet is n-nyuwwcasted. (ꈍᴗꈍ)
+  pwivate boowean nyuwwcast = f-fawse;
 
-  // True if tweet is a self-threaded tweet
-  private boolean selfThread = false;
+  // t-twue if tweet is a sewf-thweaded tweet
+  p-pwivate boowean sewfthwead = fawse;
 
-  // If the tweet is a part of an exclusive conversation, the author who started
-  // that conversation.
-  private Optional<Long> exclusiveConversationAuthorId = Optional.empty();
+  // if the t-tweet is a pawt o-of an excwusive convewsation, -.- t-the authow who stawted
+  // that c-convewsation. ( ͡o ω ͡o )
+  p-pwivate optionaw<wong> e-excwusiveconvewsationauthowid = optionaw.empty();
 
-  // tweet features map for multiple versions of penguin
-  private Map<PenguinVersion, VersionedTweetFeatures> versionedTweetFeaturesMap;
+  // tweet featuwes map fow muwtipwe vewsions of penguin
+  pwivate map<penguinvewsion, vewsionedtweetfeatuwes> vewsionedtweetfeatuwesmap;
 
-  // Engagments count: favorites, retweets and replies
-  private int numFavorites = 0;
-  private int numRetweets = 0;
-  private int numReplies = 0;
+  // engagments count: favowites, (⑅˘꒳˘) wetweets and wepwies
+  pwivate int nyumfavowites = 0;
+  p-pwivate int nyumwetweets = 0;
+  p-pwivate int nyumwepwies = 0;
 
-  // Card information
-  private String cardName;
-  private String cardDomain;
-  private String cardTitle;
-  private String cardDescription;
-  private String cardLang;
-  private String cardUrl;
+  // cawd infowmation
+  pwivate stwing c-cawdname;
+  p-pwivate stwing c-cawddomain;
+  pwivate stwing cawdtitwe;
+  p-pwivate stwing cawddescwiption;
+  p-pwivate s-stwing cawdwang;
+  pwivate stwing c-cawduww;
 
-  private String placeId;
-  private String placeFullName;
-  private String placeCountryCode;
+  pwivate stwing p-pwaceid;
+  pwivate s-stwing pwacefuwwname;
+  pwivate stwing pwacecountwycode;
 
-  private Set<NamedEntity> namedEntities = Sets.newHashSet();
+  p-pwivate set<namedentity> n-nyamedentities = s-sets.newhashset();
 
-  // Spaces data
-  private Set<String> spaceIds = Sets.newHashSet();
-  private Set<TwitterMessageUser> spaceAdmins = Sets.newHashSet();
-  private String spaceTitle;
+  // s-spaces data
+  p-pwivate set<stwing> s-spaceids = s-sets.newhashset();
+  p-pwivate set<twittewmessageusew> s-spaceadmins = sets.newhashset();
+  p-pwivate s-stwing spacetitwe;
 
-  private Optional<ComposerSource> composerSource = Optional.empty();
+  p-pwivate optionaw<composewsouwce> composewsouwce = o-optionaw.empty();
 
-  private final List<PotentialLocationObject> potentialLocations = Lists.newArrayList();
+  pwivate finaw wist<potentiawwocationobject> p-potentiawwocations = wists.newawwaywist();
 
-  // one or two penguin versions supported by this system
-  private final List<PenguinVersion> supportedPenguinVersions;
+  // o-one ow t-two penguin vewsions s-suppowted by this system
+  p-pwivate finaw wist<penguinvewsion> suppowtedpenguinvewsions;
 
-  public TwitterMessage(Long tweetId, List<PenguinVersion> supportedPenguinVersions) {
-    this.tweetId = tweetId;
-    this.places = new ArrayList<>();
-    this.expandedUrls = new LinkedHashMap<>();
-    // make sure we support at least one, but no more than two versions of penguin
-    this.supportedPenguinVersions = supportedPenguinVersions;
-    this.versionedTweetFeaturesMap = getVersionedTweetFeaturesMap();
-    Preconditions.checkArgument(this.supportedPenguinVersions.size() <= 2
-        && this.supportedPenguinVersions.size() > 0);
+  p-pubwic twittewmessage(wong tweetid, mya w-wist<penguinvewsion> suppowtedpenguinvewsions) {
+    t-this.tweetid = tweetid;
+    this.pwaces = nyew awwaywist<>();
+    this.expandeduwws = n-nyew winkedhashmap<>();
+    // make suwe we suppowt a-at weast one, rawr x3 b-but nyo mowe than two vewsions of penguin
+    this.suppowtedpenguinvewsions = s-suppowtedpenguinvewsions;
+    this.vewsionedtweetfeatuwesmap = getvewsionedtweetfeatuwesmap();
+    p-pweconditions.checkawgument(this.suppowtedpenguinvewsions.size() <= 2
+        && t-this.suppowtedpenguinvewsions.size() > 0);
   }
 
   /**
-   * Replace to-user with in-reply-to user if needed.
+   * wepwace t-to-usew with in-wepwy-to usew if nyeeded. (ꈍᴗꈍ)
    */
-  public void replaceToUserWithInReplyToUserIfNeeded(
-      String inReplyToScreenName, long inReplyToUserId) {
-    if (shouldUseReplyUserAsToUser(optionalToUser, inReplyToUserId)) {
-      TwitterMessageUser replyUser =
-          TwitterMessageUser.createWithNamesAndId(inReplyToScreenName, "", inReplyToUserId);
-      optionalToUser = Optional.of(replyUser);
+  p-pubwic v-void wepwacetousewwithinwepwytousewifneeded(
+      stwing inwepwytoscweenname, ʘwʘ wong i-inwepwytousewid) {
+    if (shouwdusewepwyusewastousew(optionawtousew, :3 inwepwytousewid)) {
+      t-twittewmessageusew wepwyusew =
+          t-twittewmessageusew.cweatewithnamesandid(inwepwytoscweenname, "", o.O i-inwepwytousewid);
+      o-optionawtousew = optionaw.of(wepwyusew);
     }
   }
 
-  // To-user could have been inferred from the mention at the position 0.
-  // But if there is an explicit in-reply-to user, we might need to use it as to-user instead.
-  private static boolean shouldUseReplyUserAsToUser(
-      Optional<TwitterMessageUser> currentToUser,
-      long inReplyToUserId) {
-    if (!currentToUser.isPresent()) {
-      // There is no mention in the tweet that qualifies as to-user.
-      return true;
+  // to-usew c-couwd have b-been infewwed f-fwom the mention a-at the position 0. /(^•ω•^)
+  // but if t-thewe is an expwicit i-in-wepwy-to u-usew, OwO we might n-nyeed to use it a-as to-usew instead.
+  p-pwivate static b-boowean shouwdusewepwyusewastousew(
+      optionaw<twittewmessageusew> c-cuwwenttousew, σωσ
+      wong inwepwytousewid) {
+    i-if (!cuwwenttousew.ispwesent()) {
+      // thewe is n-nyo mention in the tweet that quawifies a-as to-usew. (ꈍᴗꈍ)
+      w-wetuwn t-twue;
     }
 
-    // We already have a mention in the tweet that qualifies as to-user.
-    TwitterMessageUser toUser = currentToUser.get();
-    if (!toUser.getId().isPresent()) {
-      // The to-user from the mention is a stub.
-      return true;
+    // we awweady have a mention in the tweet that q-quawifies as to-usew. ( ͡o ω ͡o )
+    t-twittewmessageusew tousew = c-cuwwenttousew.get();
+    if (!tousew.getid().ispwesent()) {
+      // the to-usew fwom the m-mention is a stub. rawr x3
+      w-wetuwn twue;
     }
 
-    long toUserId = toUser.getId().get();
-    if (toUserId != inReplyToUserId) {
-      // The to-user from the mention is different that the in-reply-to user,
-      // use in-reply-to user instead.
-      return true;
+    w-wong tousewid = t-tousew.getid().get();
+    if (tousewid != inwepwytousewid) {
+      // the to-usew f-fwom the mention i-is diffewent t-that the in-wepwy-to u-usew,
+      // use in-wepwy-to usew instead. UwU
+      w-wetuwn t-twue;
     }
 
-    return false;
+    wetuwn fawse;
   }
 
-  public double getUserReputation() {
-    return userReputation;
+  pubwic doubwe g-getusewweputation() {
+    wetuwn usewweputation;
   }
 
   /**
-   * Sets the user reputation.
+   * sets the u-usew weputation. o.O
    */
-  public TwitterMessage setUserReputation(double newUserReputation) {
-    if (newUserReputation > MAX_USER_REPUTATION) {
-      LOG.warn("Out of bounds user reputation {} for status id {}", newUserReputation, tweetId);
-      this.userReputation = (float) MAX_USER_REPUTATION;
-    } else {
-      this.userReputation = newUserReputation;
+  pubwic t-twittewmessage setusewweputation(doubwe n-nyewusewweputation) {
+    if (newusewweputation > m-max_usew_weputation) {
+      w-wog.wawn("out of bounds usew w-weputation {} fow status id {}", OwO n-nyewusewweputation, o.O t-tweetid);
+      t-this.usewweputation = (fwoat) m-max_usew_weputation;
+    } ewse {
+      this.usewweputation = n-nyewusewweputation;
     }
-    return this;
+    w-wetuwn this;
   }
 
-  public String getText() {
-    return text;
+  p-pubwic stwing gettext() {
+    w-wetuwn text;
   }
 
-  public Optional<TwitterMessageUser> getOptionalToUser() {
-    return optionalToUser;
+  pubwic optionaw<twittewmessageusew> g-getoptionawtousew() {
+    w-wetuwn optionawtousew;
   }
 
-  public void setOptionalToUser(Optional<TwitterMessageUser> optionalToUser) {
-    this.optionalToUser = optionalToUser;
+  p-pubwic void setoptionawtousew(optionaw<twittewmessageusew> optionawtousew) {
+    this.optionawtousew = optionawtousew;
   }
 
-  public void setText(String text) {
-    this.text = text;
+  p-pubwic void settext(stwing text) {
+    t-this.text = t-text;
   }
 
-  public Date getDate() {
-    return date;
+  pubwic date getdate() {
+    wetuwn date;
   }
 
-  public void setDate(Date date) {
-    this.date = date;
+  p-pubwic void setdate(date date) {
+    t-this.date = d-date;
   }
 
-  public void setFromUser(@Nonnull TwitterMessageUser fromUser) {
-    Preconditions.checkNotNull(fromUser, "Don't set a null fromUser");
-    optionalFromUser = Optional.of(fromUser);
+  p-pubwic void setfwomusew(@nonnuww t-twittewmessageusew f-fwomusew) {
+    pweconditions.checknotnuww(fwomusew, ^^;; "don't set a nyuww fwomusew");
+    optionawfwomusew = optionaw.of(fwomusew);
   }
 
-  public Optional<String> getFromUserScreenName() {
-    return optionalFromUser.isPresent()
-        ? optionalFromUser.get().getScreenName()
-        : Optional.empty();
-  }
-
-  /**
-   * Sets the fromUserScreenName.
-   */
-  public void setFromUserScreenName(@Nonnull String fromUserScreenName) {
-    TwitterMessageUser newFromUser = optionalFromUser.isPresent()
-        ? optionalFromUser.get().copyWithScreenName(fromUserScreenName)
-        : TwitterMessageUser.createWithScreenName(fromUserScreenName);
-
-    optionalFromUser = Optional.of(newFromUser);
-  }
-
-  public Optional<TokenStream> getTokenizedFromUserScreenName() {
-    return optionalFromUser.flatMap(TwitterMessageUser::getTokenizedScreenName);
-  }
-
-  public Optional<String> getFromUserDisplayName() {
-    return optionalFromUser.flatMap(TwitterMessageUser::getDisplayName);
+  p-pubwic optionaw<stwing> g-getfwomusewscweenname() {
+    wetuwn optionawfwomusew.ispwesent()
+        ? optionawfwomusew.get().getscweenname()
+        : optionaw.empty();
   }
 
   /**
-   * Sets the fromUserDisplayName.
+   * s-sets the fwomusewscweenname. (⑅˘꒳˘)
    */
-  public void setFromUserDisplayName(@Nonnull String fromUserDisplayName) {
-    TwitterMessageUser newFromUser = optionalFromUser.isPresent()
-        ? optionalFromUser.get().copyWithDisplayName(fromUserDisplayName)
-        : TwitterMessageUser.createWithDisplayName(fromUserDisplayName);
+  pubwic void setfwomusewscweenname(@nonnuww stwing fwomusewscweenname) {
+    twittewmessageusew n-nyewfwomusew = o-optionawfwomusew.ispwesent()
+        ? optionawfwomusew.get().copywithscweenname(fwomusewscweenname)
+        : twittewmessageusew.cweatewithscweenname(fwomusewscweenname);
 
-    optionalFromUser = Optional.of(newFromUser);
+    o-optionawfwomusew = optionaw.of(newfwomusew);
   }
 
-  public Optional<Long> getFromUserTwitterId() {
-    return optionalFromUser.flatMap(TwitterMessageUser::getId);
+  pubwic o-optionaw<tokenstweam> g-gettokenizedfwomusewscweenname() {
+    wetuwn optionawfwomusew.fwatmap(twittewmessageusew::gettokenizedscweenname);
+  }
+
+  p-pubwic optionaw<stwing> getfwomusewdispwayname() {
+    w-wetuwn optionawfwomusew.fwatmap(twittewmessageusew::getdispwayname);
   }
 
   /**
-   * Sets the fromUserId.
+   * sets the fwomusewdispwayname. (ꈍᴗꈍ)
    */
-  public void setFromUserId(long fromUserId) {
-    TwitterMessageUser newFromUser = optionalFromUser.isPresent()
-        ? optionalFromUser.get().copyWithId(fromUserId)
-        : TwitterMessageUser.createWithId(fromUserId);
+  pubwic void s-setfwomusewdispwayname(@nonnuww stwing fwomusewdispwayname) {
+    twittewmessageusew n-nyewfwomusew = o-optionawfwomusew.ispwesent()
+        ? o-optionawfwomusew.get().copywithdispwayname(fwomusewdispwayname)
+        : twittewmessageusew.cweatewithdispwayname(fwomusewdispwayname);
 
-    optionalFromUser = Optional.of(newFromUser);
+    optionawfwomusew = optionaw.of(newfwomusew);
   }
 
-  public long getConversationId() {
-    return conversationId;
-  }
-
-  public void setConversationId(long conversationId) {
-    this.conversationId = conversationId;
-  }
-
-  public boolean isUserProtected() {
-    return this.userProtected;
-  }
-
-  public void setUserProtected(boolean userProtected) {
-    this.userProtected = userProtected;
-  }
-
-  public boolean isUserVerified() {
-    return this.userVerified;
-  }
-
-  public void setUserVerified(boolean userVerified) {
-    this.userVerified = userVerified;
-  }
-
-  public boolean isUserBlueVerified() {
-    return this.userBlueVerified;
-  }
-
-  public void setUserBlueVerified(boolean userBlueVerified) {
-    this.userBlueVerified = userBlueVerified;
-  }
-
-  public void setIsSensitiveContent(boolean isSensitiveContent) {
-    this.sensitiveContent = isSensitiveContent;
-  }
-
-  public boolean isSensitiveContent() {
-    return this.sensitiveContent;
-  }
-
-  public Optional<TwitterMessageUser> getToUserObject() {
-    return optionalToUser;
-  }
-
-  public void setToUserObject(@Nonnull TwitterMessageUser user) {
-    Preconditions.checkNotNull(user, "Don't set a null to-user");
-    optionalToUser = Optional.of(user);
-  }
-
-  public Optional<Long> getToUserTwitterId() {
-    return optionalToUser.flatMap(TwitterMessageUser::getId);
+  p-pubwic optionaw<wong> getfwomusewtwittewid() {
+    wetuwn optionawfwomusew.fwatmap(twittewmessageusew::getid);
   }
 
   /**
-   * Sets toUserId.
+   * sets the fwomusewid. o.O
    */
-  public void setToUserTwitterId(long toUserId) {
-    TwitterMessageUser newToUser = optionalToUser.isPresent()
-        ? optionalToUser.get().copyWithId(toUserId)
-        : TwitterMessageUser.createWithId(toUserId);
+  pubwic v-void setfwomusewid(wong f-fwomusewid) {
+    t-twittewmessageusew n-nyewfwomusew = optionawfwomusew.ispwesent()
+        ? optionawfwomusew.get().copywithid(fwomusewid)
+        : twittewmessageusew.cweatewithid(fwomusewid);
 
-    optionalToUser = Optional.of(newToUser);
+    o-optionawfwomusew = o-optionaw.of(newfwomusew);
   }
 
-  public Optional<String> getToUserLowercasedScreenName() {
-    return optionalToUser.flatMap(TwitterMessageUser::getScreenName).map(String::toLowerCase);
+  pubwic wong getconvewsationid() {
+    w-wetuwn convewsationid;
   }
 
-  public Optional<String> getToUserScreenName() {
-    return optionalToUser.flatMap(TwitterMessageUser::getScreenName);
+  pubwic void s-setconvewsationid(wong convewsationid) {
+    this.convewsationid = c-convewsationid;
+  }
+
+  p-pubwic boowean isusewpwotected() {
+    w-wetuwn this.usewpwotected;
+  }
+
+  p-pubwic void s-setusewpwotected(boowean usewpwotected) {
+    this.usewpwotected = u-usewpwotected;
+  }
+
+  pubwic boowean isusewvewified() {
+    w-wetuwn this.usewvewified;
+  }
+
+  pubwic void setusewvewified(boowean usewvewified) {
+    this.usewvewified = usewvewified;
+  }
+
+  p-pubwic boowean i-isusewbwuevewified() {
+    w-wetuwn t-this.usewbwuevewified;
+  }
+
+  p-pubwic void setusewbwuevewified(boowean usewbwuevewified) {
+    t-this.usewbwuevewified = usewbwuevewified;
+  }
+
+  pubwic void s-setissensitivecontent(boowean issensitivecontent) {
+    t-this.sensitivecontent = issensitivecontent;
+  }
+
+  pubwic b-boowean issensitivecontent() {
+    w-wetuwn this.sensitivecontent;
+  }
+
+  pubwic o-optionaw<twittewmessageusew> gettousewobject() {
+    w-wetuwn optionawtousew;
+  }
+
+  p-pubwic void settousewobject(@nonnuww t-twittewmessageusew u-usew) {
+    pweconditions.checknotnuww(usew, (///ˬ///✿) "don't s-set a nyuww to-usew");
+    optionawtousew = optionaw.of(usew);
+  }
+
+  pubwic optionaw<wong> g-gettousewtwittewid() {
+    wetuwn optionawtousew.fwatmap(twittewmessageusew::getid);
   }
 
   /**
-   * Sets toUserScreenName.
+   * s-sets tousewid. 😳😳😳
    */
-  public void setToUserScreenName(@Nonnull String screenName) {
-    Preconditions.checkNotNull(screenName, "Don't set a null to-user screenname");
+  pubwic void settousewtwittewid(wong t-tousewid) {
+    t-twittewmessageusew newtousew = o-optionawtousew.ispwesent()
+        ? optionawtousew.get().copywithid(tousewid)
+        : t-twittewmessageusew.cweatewithid(tousewid);
 
-    TwitterMessageUser newToUser = optionalToUser.isPresent()
-        ? optionalToUser.get().copyWithScreenName(screenName)
-        : TwitterMessageUser.createWithScreenName(screenName);
-
-    optionalToUser = Optional.of(newToUser);
+    o-optionawtousew = optionaw.of(newtousew);
   }
 
-  // to use from TweetEventParseHelper
-  public void setDirectedAtUserId(Optional<Long> directedAtUserId) {
-    this.directedAtUserId = directedAtUserId;
+  p-pubwic optionaw<stwing> gettousewwowewcasedscweenname() {
+    w-wetuwn optionawtousew.fwatmap(twittewmessageusew::getscweenname).map(stwing::towowewcase);
   }
 
-  @VisibleForTesting
-  public Optional<Long> getDirectedAtUserId() {
-    return directedAtUserId;
+  pubwic optionaw<stwing> g-gettousewscweenname() {
+    w-wetuwn optionawtousew.fwatmap(twittewmessageusew::getscweenname);
   }
 
   /**
-   * Returns the referenceAuthorId.
+   * sets tousewscweenname. UwU
    */
-  public Optional<Long> getReferenceAuthorId() {
-    // The semantics of reference-author-id:
-    // - if the tweet is a retweet, it should be the user id of the author of the original tweet
-    // - else, if the tweet is directed at a user, it should be the id of the user it's directed at.
-    // - else, if the tweet is a reply in a root self-thread, directed-at is not set, so it's
-    //   the id of the user who started the self-thread.
+  pubwic void settousewscweenname(@nonnuww stwing scweenname) {
+    p-pweconditions.checknotnuww(scweenname, nyaa~~ "don't s-set a nuww to-usew scweenname");
+
+    twittewmessageusew nyewtousew = optionawtousew.ispwesent()
+        ? optionawtousew.get().copywithscweenname(scweenname)
+        : t-twittewmessageusew.cweatewithscweenname(scweenname);
+
+    optionawtousew = o-optionaw.of(newtousew);
+  }
+
+  // to u-use fwom tweeteventpawsehewpew
+  pubwic void setdiwectedatusewid(optionaw<wong> diwectedatusewid) {
+    this.diwectedatusewid = diwectedatusewid;
+  }
+
+  @visibwefowtesting
+  p-pubwic optionaw<wong> getdiwectedatusewid() {
+    wetuwn diwectedatusewid;
+  }
+
+  /**
+   * w-wetuwns the wefewenceauthowid. (✿oωo)
+   */
+  p-pubwic optionaw<wong> g-getwefewenceauthowid() {
+    // the semantics o-of wefewence-authow-id:
+    // - i-if the tweet i-is a wetweet, -.- i-it shouwd be the u-usew id of the a-authow of the owiginaw tweet
+    // - ewse, :3 if the tweet is diwected at a usew, (⑅˘꒳˘) it shouwd be the i-id of the usew i-it's diwected a-at. >_<
+    // - ewse, UwU i-if the tweet i-is a wepwy in a w-woot sewf-thwead, rawr diwected-at is nyot set, (ꈍᴗꈍ) so it's
+    //   the id of the usew who s-stawted the sewf-thwead. ^•ﻌ•^
     //
-    // For definitive info on replies and directed-at, take a look at go/replies. To view these
-    // for a certain tweet, use http://go/t.
+    // f-fow definitive info on wepwies and diwected-at, ^^ take a w-wook at go/wepwies. XD t-to view these
+    // f-fow a cewtain tweet, (///ˬ///✿) use http://go/t. σωσ
     //
-    // Note that if directed-at is set, reply is always set.
-    // If reply is set, directed-at is not necessarily set.
-    if (isRetweet() && retweetMessage.hasSharedUserTwitterId()) {
-      long retweetedUserId = retweetMessage.getSharedUserTwitterId();
-      return Optional.of(retweetedUserId);
-    } else if (directedAtUserId.isPresent()) {
-      // Why not replace directedAtUserId with reply and make this function depend
-      // on the "reply" field of TweetCoreData?
-      // Well, verified by counters, it seems for ~1% of tweets, which contain both directed-at
-      // and reply, directed-at-user is different than the reply-to-user id. This happens in the
-      // following case:
+    // n-nyote that if diwected-at is set, :3 w-wepwy is awways s-set. >w<
+    // if wepwy is set, (ˆ ﻌ ˆ)♡ diwected-at is nyot n-nyecessawiwy set. (U ᵕ U❁)
+    if (iswetweet() && w-wetweetmessage.hasshawedusewtwittewid()) {
+      w-wong wetweetedusewid = w-wetweetmessage.getshawedusewtwittewid();
+      w-wetuwn optionaw.of(wetweetedusewid);
+    } e-ewse i-if (diwectedatusewid.ispwesent()) {
+      // w-why n-nyot wepwace diwectedatusewid with wepwy and make t-this function d-depend
+      // on the "wepwy" f-fiewd of tweetcowedata?
+      // weww, :3 vewified by countews, ^^ it s-seems fow ~1% of tweets, ^•ﻌ•^ which c-contain both diwected-at
+      // and wepwy, (///ˬ///✿) diwected-at-usew i-is d-diffewent than the wepwy-to-usew id. 🥺 this happens i-in the
+      // fowwowing case:
       //
-      //       author / reply-to / directed-at
-      //  T1   A        -          -
-      //  T2   B        A          A
-      //  T3   B        B          A
+      //       authow / w-wepwy-to / diwected-at
+      //  t-t1   a        -          -
+      //  t2   b        a          a-a
+      //  t3   b-b        b          a
       //
-      //  T2 is a reply to T1, T3 is a reply to T2.
+      //  t-t2 is a wepwy to t1, ʘwʘ t3 is a wepwy t-to t2. (✿oωo)
       //
-      // It's up to us to decide who this tweet is "referencing", but with the current code,
-      // we choose that T3 is referencing user A.
-      return directedAtUserId;
-    } else {
-      // This is the case of a root self-thread reply. directed-at is not set.
-      Optional<Long> fromUserId = this.getFromUserTwitterId();
-      Optional<Long> toUserId = this.getToUserTwitterId();
+      // i-it's up to us to decide w-who this tweet i-is "wefewencing", rawr but with the cuwwent code, OwO
+      // w-we choose t-that t3 is wefewencing u-usew a. ^^
+      w-wetuwn diwectedatusewid;
+    } ewse {
+      // this is the case of a woot sewf-thwead wepwy. ʘwʘ diwected-at is nyot set. σωσ
+      o-optionaw<wong> f-fwomusewid = this.getfwomusewtwittewid();
+      o-optionaw<wong> tousewid = t-this.gettousewtwittewid();
 
-      if (fromUserId.isPresent() && fromUserId.equals(toUserId)) {
-        return fromUserId;
+      i-if (fwomusewid.ispwesent() && f-fwomusewid.equaws(tousewid)) {
+        wetuwn fwomusewid;
       }
     }
-    return Optional.empty();
+    w-wetuwn optionaw.empty();
   }
 
-  public void setNumFavorites(int numFavorites) {
-    this.numFavorites = numFavorites;
+  p-pubwic void setnumfavowites(int n-numfavowites) {
+    t-this.numfavowites = nyumfavowites;
   }
 
-  public void setNumRetweets(int numRetweets) {
-    this.numRetweets = numRetweets;
+  pubwic void s-setnumwetweets(int nyumwetweets) {
+    this.numwetweets = n-nyumwetweets;
   }
 
-  public void setNumReplies(int numRepliess) {
-    this.numReplies = numRepliess;
+  pubwic void setnumwepwies(int n-nyumwepwiess) {
+    t-this.numwepwies = nyumwepwiess;
   }
 
-  public void addEscherbirdAnnotation(EscherbirdAnnotation annotation) {
-    escherbirdAnnotations.add(annotation);
+  p-pubwic void a-addeschewbiwdannotation(eschewbiwdannotation a-annotation) {
+    eschewbiwdannotations.add(annotation);
   }
 
-  public List<EscherbirdAnnotation> getEscherbirdAnnotations() {
-    return escherbirdAnnotations;
+  p-pubwic wist<eschewbiwdannotation> g-geteschewbiwdannotations() {
+    wetuwn eschewbiwdannotations;
   }
 
-  public List<PotentialLocationObject> getPotentialLocations() {
-    return potentialLocations;
+  p-pubwic wist<potentiawwocationobject> g-getpotentiawwocations() {
+    w-wetuwn p-potentiawwocations;
   }
 
-  public void setPotentialLocations(Collection<PotentialLocationObject> potentialLocations) {
-    this.potentialLocations.clear();
-    this.potentialLocations.addAll(potentialLocations);
+  pubwic v-void setpotentiawwocations(cowwection<potentiawwocationobject> potentiawwocations) {
+    this.potentiawwocations.cweaw();
+    t-this.potentiawwocations.addaww(potentiawwocations);
   }
 
-  @Override
-  public String toString() {
-    return ToStringBuilder.reflectionToString(this);
+  @ovewwide
+  pubwic stwing tostwing() {
+    wetuwn tostwingbuiwdew.wefwectiontostwing(this);
   }
 
-  // Tweet language related getters and setters.
+  // tweet wanguage wewated gettews a-and settews. (⑅˘꒳˘)
 
   /**
-   * Returns the locale.
+   * wetuwns the wocawe. (ˆ ﻌ ˆ)♡
    * <p>
-   * Note the getLocale() will never return null, this is for the convenience of text related
-   * processing in the ingester. If you want the real locale, you need to check isSetLocale()
-   * first to see if we really have any information about the locale of this tweet.
+   * nyote the getwocawe() wiww nyevew wetuwn nyuww, :3 this i-is fow the convenience of text wewated
+   * pwocessing i-in the ingestew. ʘwʘ if you w-want the weaw wocawe, (///ˬ///✿) you nyeed to check issetwocawe()
+   * f-fiwst to see if we w-weawwy have any infowmation about t-the wocawe of t-this tweet. (ˆ ﻌ ˆ)♡
    */
-  public Locale getLocale() {
-    if (locale == null) {
-      return TwitterLanguageIdentifier.UNKNOWN;
-    } else {
-      return locale;
+  pubwic wocawe getwocawe() {
+    i-if (wocawe == nyuww) {
+      wetuwn twittewwanguageidentifiew.unknown;
+    } ewse {
+      wetuwn w-wocawe;
     }
   }
 
-  public void setLocale(Locale locale) {
-    this.locale = locale;
+  pubwic v-void setwocawe(wocawe wocawe) {
+    t-this.wocawe = wocawe;
   }
 
   /**
-   * Determines if the locate is set.
+   * d-detewmines i-if the wocate is set. 🥺
    */
-  public boolean isSetLocale() {
-    return locale != null;
+  pubwic boowean i-issetwocawe() {
+    wetuwn wocawe != nyuww;
   }
 
   /**
-   * Returns the language of the locale. E.g. zh
+   * w-wetuwns the wanguage of the wocawe. rawr e.g. zh
    */
-  public String getLanguage() {
-    if (isSetLocale()) {
-      return getLocale().getLanguage();
-    } else {
-      return null;
+  pubwic stwing getwanguage() {
+    i-if (issetwocawe()) {
+      w-wetuwn getwocawe().getwanguage();
+    } ewse {
+      w-wetuwn nyuww;
     }
   }
 
   /**
-   * Returns the IETF BCP 47 Language Tag of the locale. E.g. zh-CN
+   * w-wetuwns the ietf bcp 47 w-wanguage tag of the wocawe. (U ﹏ U) e.g. ^^ zh-cn
    */
-  public String getBCP47LanguageTag() {
-    if (isSetLocale()) {
-      return getLocale().toLanguageTag();
-    } else {
-      return null;
+  pubwic stwing getbcp47wanguagetag() {
+    if (issetwocawe()) {
+      w-wetuwn getwocawe().towanguagetag();
+    } e-ewse {
+      wetuwn nyuww;
     }
   }
 
-  public void setLanguage(String language) {
-    if (language != null) {
-      locale = LocaleUtil.getLocaleOf(language);
+  p-pubwic void s-setwanguage(stwing wanguage) {
+    i-if (wanguage != nyuww) {
+      wocawe = wocaweutiw.getwocaweof(wanguage);
     }
   }
 
-  // Tweet link language related getters and setters.
-  public Locale getLinkLocale() {
-    return linkLocale;
+  // t-tweet wink wanguage wewated gettews and settews. σωσ
+  p-pubwic wocawe g-getwinkwocawe() {
+    wetuwn winkwocawe;
   }
 
-  public void setLinkLocale(Locale linkLocale) {
-    this.linkLocale = linkLocale;
+  pubwic void setwinkwocawe(wocawe w-winkwocawe) {
+    this.winkwocawe = winkwocawe;
   }
 
   /**
-   * Returns the language of the link locale.
+   * wetuwns the wanguage of the wink wocawe. :3
    */
-  public String getLinkLanguage() {
-    if (this.linkLocale == null) {
-      return null;
-    } else {
-      return this.linkLocale.getLanguage();
+  pubwic stwing getwinkwanguage() {
+    i-if (this.winkwocawe == n-nyuww) {
+      wetuwn nyuww;
+    } e-ewse {
+      w-wetuwn this.winkwocawe.getwanguage();
     }
   }
 
-  public String getOrigSource() {
-    return origSource;
+  pubwic stwing g-getowigsouwce() {
+    wetuwn owigsouwce;
   }
 
-  public void setOrigSource(String origSource) {
-    this.origSource = origSource;
+  pubwic void setowigsouwce(stwing owigsouwce) {
+    this.owigsouwce = owigsouwce;
   }
 
-  public String getStrippedSource() {
-    return strippedSource;
+  p-pubwic stwing getstwippedsouwce() {
+    wetuwn stwippedsouwce;
   }
 
-  public void setStrippedSource(String strippedSource) {
-    this.strippedSource = strippedSource;
+  pubwic void setstwippedsouwce(stwing stwippedsouwce) {
+    t-this.stwippedsouwce = s-stwippedsouwce;
   }
 
-  public String getOrigLocation() {
-    return origLocation;
+  p-pubwic stwing getowigwocation() {
+    wetuwn owigwocation;
   }
 
-  public String getLocation() {
-    return truncatedNormalizedLocation;
+  p-pubwic s-stwing getwocation() {
+    w-wetuwn twuncatednowmawizedwocation;
   }
 
-  public void setOrigLocation(String origLocation) {
-    this.origLocation = origLocation;
+  p-pubwic void setowigwocation(stwing o-owigwocation) {
+    this.owigwocation = o-owigwocation;
   }
 
-  public void setTruncatedNormalizedLocation(String truncatedNormalizedLocation) {
-    this.truncatedNormalizedLocation = truncatedNormalizedLocation;
+  pubwic void s-settwuncatednowmawizedwocation(stwing twuncatednowmawizedwocation) {
+    this.twuncatednowmawizedwocation = twuncatednowmawizedwocation;
   }
 
-  public boolean hasFromUserLocCountry() {
-    return fromUserLocCountry != null;
+  p-pubwic boowean hasfwomusewwoccountwy() {
+    w-wetuwn fwomusewwoccountwy != n-nyuww;
   }
 
-  public String getFromUserLocCountry() {
-    return fromUserLocCountry;
+  pubwic s-stwing getfwomusewwoccountwy() {
+    w-wetuwn fwomusewwoccountwy;
   }
 
-  public void setFromUserLocCountry(String fromUserLocCountry) {
-    this.fromUserLocCountry = fromUserLocCountry;
+  pubwic v-void setfwomusewwoccountwy(stwing fwomusewwoccountwy) {
+    t-this.fwomusewwoccountwy = fwomusewwoccountwy;
   }
 
-  public String getTruncatedNormalizedLocation() {
-    return truncatedNormalizedLocation;
+  p-pubwic stwing gettwuncatednowmawizedwocation() {
+    w-wetuwn twuncatednowmawizedwocation;
   }
 
-  public Integer getFollowersCount() {
-    return followersCount;
+  pubwic integew getfowwowewscount() {
+    w-wetuwn fowwowewscount;
   }
 
-  public void setFollowersCount(Integer followersCount) {
-    this.followersCount = followersCount;
+  pubwic void setfowwowewscount(integew fowwowewscount) {
+    this.fowwowewscount = fowwowewscount;
   }
 
-  public boolean hasFollowersCount() {
-    return followersCount != INT_FIELD_NOT_PRESENT;
+  pubwic boowean h-hasfowwowewscount() {
+    wetuwn fowwowewscount != i-int_fiewd_not_pwesent;
   }
 
-  public boolean isDeleted() {
-    return deleted;
+  pubwic boowean i-isdeweted() {
+    wetuwn deweted;
   }
 
-  public void setDeleted(boolean deleted) {
-    this.deleted = deleted;
+  pubwic v-void setdeweted(boowean deweted) {
+    this.deweted = d-deweted;
   }
 
-  public boolean hasCard() {
-    return !StringUtils.isBlank(getCardName());
+  pubwic boowean hascawd() {
+    w-wetuwn !stwingutiws.isbwank(getcawdname());
   }
 
-  @Override
-  public int hashCode() {
-    return ((Long) getId()).hashCode();
+  @ovewwide
+  pubwic int hashcode() {
+    wetuwn ((wong) getid()).hashcode();
   }
 
   /**
-   * Parses the given date using the TwitterDateFormat.
+   * p-pawses the given date using the twittewdatefowmat. ^^
    */
-  public static Date parseDate(String date) {
-    DateFormat parser = TwitterDateFormat.apply("EEE MMM d HH:mm:ss Z yyyy");
-    try {
-      return parser.parse(date);
-    } catch (Exception e) {
-      return null;
+  pubwic s-static date p-pawsedate(stwing date) {
+    datefowmat pawsew = t-twittewdatefowmat.appwy("eee m-mmm d hh:mm:ss z yyyy");
+    twy {
+      w-wetuwn p-pawsew.pawse(date);
+    } catch (exception e) {
+      w-wetuwn nyuww;
     }
   }
 
-  public boolean hasGeoLocation() {
-    return geoLocation != null;
+  pubwic boowean hasgeowocation() {
+    wetuwn geowocation != n-nyuww;
   }
 
-  public void setGeoLocation(GeoObject location) {
-    this.geoLocation = location;
+  pubwic void setgeowocation(geoobject wocation) {
+    t-this.geowocation = w-wocation;
   }
 
-  public GeoObject getGeoLocation() {
-    return geoLocation;
+  p-pubwic geoobject getgeowocation() {
+    wetuwn geowocation;
   }
 
-  public String getPlaceId() {
-    return placeId;
+  p-pubwic stwing getpwaceid() {
+    w-wetuwn pwaceid;
   }
 
-  public void setPlaceId(String placeId) {
-    this.placeId = placeId;
+  pubwic void setpwaceid(stwing p-pwaceid) {
+    t-this.pwaceid = pwaceid;
   }
 
-  public String getPlaceFullName() {
-    return placeFullName;
+  pubwic stwing getpwacefuwwname() {
+    wetuwn pwacefuwwname;
   }
 
-  public void setPlaceFullName(String placeFullName) {
-    this.placeFullName = placeFullName;
+  pubwic void setpwacefuwwname(stwing p-pwacefuwwname) {
+    t-this.pwacefuwwname = pwacefuwwname;
   }
 
-  public String getPlaceCountryCode() {
-    return placeCountryCode;
+  pubwic stwing g-getpwacecountwycode() {
+    wetuwn pwacecountwycode;
   }
 
-  public void setPlaceCountryCode(String placeCountryCode) {
-    this.placeCountryCode = placeCountryCode;
+  p-pubwic v-void setpwacecountwycode(stwing p-pwacecountwycode) {
+    t-this.pwacecountwycode = p-pwacecountwycode;
   }
 
-  public void setGeoTaggedLocation(GeoObject geoTaggedLocation) {
-    this.geoTaggedLocation = geoTaggedLocation;
+  p-pubwic void setgeotaggedwocation(geoobject geotaggedwocation) {
+    t-this.geotaggedwocation = g-geotaggedwocation;
   }
 
-  public GeoObject getGeoTaggedLocation() {
-    return geoTaggedLocation;
+  p-pubwic geoobject g-getgeotaggedwocation() {
+    w-wetuwn geotaggedwocation;
   }
 
-  public void setLatLon(double latitude, double longitude) {
-    geoLocation = new GeoObject(latitude, longitude, null);
+  p-pubwic void setwatwon(doubwe watitude, (✿oωo) doubwe w-wongitude) {
+    g-geowocation = n-nyew geoobject(watitude, òωó wongitude, (U ᵕ U❁) nyuww);
   }
 
-  public Double getLatitude() {
-    return hasGeoLocation() ? geoLocation.getLatitude() : null;
+  p-pubwic doubwe getwatitude() {
+    wetuwn hasgeowocation() ? geowocation.getwatitude() : n-nuww;
   }
 
-  public Double getLongitude() {
-    return hasGeoLocation() ? geoLocation.getLongitude() : null;
+  pubwic doubwe getwongitude() {
+    w-wetuwn h-hasgeowocation() ? geowocation.getwongitude() : nyuww;
   }
 
-  public boolean isUncodeableLocation() {
-    return uncodeableLocation;
+  pubwic boowean isuncodeabwewocation() {
+    w-wetuwn u-uncodeabwewocation;
   }
 
-  public void setUncodeableLocation() {
-    uncodeableLocation = true;
+  pubwic v-void setuncodeabwewocation() {
+    u-uncodeabwewocation = twue;
   }
 
-  public void setGeocodeRequired() {
-    this.geocodeRequired = true;
+  pubwic void setgeocodewequiwed() {
+    t-this.geocodewequiwed = t-twue;
   }
 
-  public boolean isGeocodeRequired() {
-    return geocodeRequired;
+  pubwic boowean isgeocodewequiwed() {
+    w-wetuwn g-geocodewequiwed;
   }
 
-  public Map<Long, String> getPhotoUrls() {
-    return photoUrls;
+  pubwic map<wong, ʘwʘ stwing> g-getphotouwws() {
+    wetuwn photouwws;
   }
 
   /**
-   * Associates the given mediaUrl with the given photoStatusId.
+   * associates the given mediauww with t-the given photostatusid. ( ͡o ω ͡o )
    */
-  public void addPhotoUrl(long photoStatusId, String mediaUrl) {
-    if (photoUrls == null) {
-      photoUrls = new LinkedHashMap<>();
+  pubwic void addphotouww(wong photostatusid, σωσ s-stwing m-mediauww) {
+    i-if (photouwws == nyuww) {
+      p-photouwws = n-nyew winkedhashmap<>();
     }
-    photoUrls.putIfAbsent(photoStatusId, mediaUrl);
+    p-photouwws.putifabsent(photostatusid, (ˆ ﻌ ˆ)♡ m-mediauww);
   }
 
-  public Map<String, ThriftExpandedUrl> getExpandedUrlMap() {
-    return expandedUrls;
+  p-pubwic map<stwing, (˘ω˘) thwiftexpandeduww> getexpandeduwwmap() {
+    wetuwn e-expandeduwws;
   }
 
-  public int getExpandedUrlMapSize() {
-    return expandedUrls.size();
-  }
-
-  /**
-   * Associates the given originalUrl with the given expanderUrl.
-   */
-  public void addExpandedUrl(String originalUrl, ThriftExpandedUrl expandedUrl) {
-    this.expandedUrls.put(originalUrl, expandedUrl);
+  p-pubwic int g-getexpandeduwwmapsize() {
+    wetuwn e-expandeduwws.size();
   }
 
   /**
-   * Replaces urls with resolved ones.
+   * a-associates t-the given owiginawuww with t-the given expandewuww. 😳
    */
-  public String getTextReplacedWithResolvedURLs() {
-    String retText = text;
-    for (Map.Entry<String, ThriftExpandedUrl> entry : expandedUrls.entrySet()) {
-      ThriftExpandedUrl urlInfo = entry.getValue();
-      String resolvedUrl;
-      String canonicalLastHopUrl = urlInfo.getCanonicalLastHopUrl();
-      String expandedUrl = urlInfo.getExpandedUrl();
-      if (canonicalLastHopUrl != null) {
-        resolvedUrl = canonicalLastHopUrl;
-        LOG.debug("{} has canonical last hop url set", urlInfo);
-      } else if (expandedUrl != null) {
-        LOG.debug("{} has no canonical last hop url set, using expanded url instead", urlInfo);
-        resolvedUrl = expandedUrl;
-      } else {
-        LOG.debug("{} has no canonical last hop url or expanded url set, skipping", urlInfo);
-        continue;
+  pubwic v-void addexpandeduww(stwing o-owiginawuww, ^•ﻌ•^ thwiftexpandeduww e-expandeduww) {
+    t-this.expandeduwws.put(owiginawuww, σωσ expandeduww);
+  }
+
+  /**
+   * w-wepwaces uwws with wesowved o-ones. 😳😳😳
+   */
+  pubwic s-stwing gettextwepwacedwithwesowveduwws() {
+    stwing wettext = text;
+    fow (map.entwy<stwing, rawr thwiftexpandeduww> e-entwy : e-expandeduwws.entwyset()) {
+      thwiftexpandeduww u-uwwinfo = entwy.getvawue();
+      s-stwing wesowveduww;
+      stwing canonicawwasthopuww = uwwinfo.getcanonicawwasthopuww();
+      s-stwing expandeduww = u-uwwinfo.getexpandeduww();
+      i-if (canonicawwasthopuww != n-nyuww) {
+        w-wesowveduww = c-canonicawwasthopuww;
+        wog.debug("{} has canonicaw wast h-hop uww set", >_< uwwinfo);
+      } ewse if (expandeduww != nyuww) {
+        wog.debug("{} h-has nyo c-canonicaw wast hop uww set, ʘwʘ using expanded uww instead", (ˆ ﻌ ˆ)♡ uwwinfo);
+        w-wesowveduww = e-expandeduww;
+      } ewse {
+        wog.debug("{} has n-nyo canonicaw wast hop uww ow expanded u-uww set, s-skipping", ^^;; uwwinfo);
+        c-continue;
       }
-      retText = retText.replace(entry.getKey(), resolvedUrl);
+      wettext = wettext.wepwace(entwy.getkey(), σωσ wesowveduww);
     }
-    return retText;
+    wetuwn wettext;
   }
 
-  public long getId() {
-    return tweetId;
+  pubwic w-wong getid() {
+    wetuwn tweetid;
   }
 
-  public boolean isRetweet() {
-    return retweetMessage != null;
+  pubwic b-boowean iswetweet() {
+    wetuwn wetweetmessage != n-nyuww;
   }
 
-  public boolean hasQuote() {
-    return quotedMessage != null;
+  pubwic boowean hasquote() {
+    w-wetuwn quotedmessage != nyuww;
   }
 
-  public boolean isReply() {
-    return getToUserScreenName().isPresent()
-        || getToUserTwitterId().isPresent()
-        || getInReplyToStatusId().isPresent();
+  pubwic b-boowean iswepwy() {
+    wetuwn gettousewscweenname().ispwesent()
+        || g-gettousewtwittewid().ispwesent()
+        || getinwepwytostatusid().ispwesent();
   }
 
-  public boolean isReplyToTweet() {
-    return getInReplyToStatusId().isPresent();
+  p-pubwic boowean iswepwytotweet() {
+    wetuwn getinwepwytostatusid().ispwesent();
   }
 
-  public TwitterRetweetMessage getRetweetMessage() {
-    return retweetMessage;
+  pubwic twittewwetweetmessage getwetweetmessage() {
+    wetuwn wetweetmessage;
   }
 
-  public void setRetweetMessage(TwitterRetweetMessage retweetMessage) {
-    this.retweetMessage = retweetMessage;
+  p-pubwic void s-setwetweetmessage(twittewwetweetmessage w-wetweetmessage) {
+    t-this.wetweetmessage = wetweetmessage;
   }
 
-  public TwitterQuotedMessage getQuotedMessage() {
-    return quotedMessage;
+  pubwic t-twittewquotedmessage getquotedmessage() {
+    wetuwn quotedmessage;
   }
 
-  public void setQuotedMessage(TwitterQuotedMessage quotedMessage) {
-    this.quotedMessage = quotedMessage;
+  pubwic v-void setquotedmessage(twittewquotedmessage quotedmessage) {
+    t-this.quotedmessage = q-quotedmessage;
   }
 
-  public List<String> getPlaces() {
-    return places;
+  pubwic w-wist<stwing> getpwaces() {
+    wetuwn pwaces;
   }
 
-  public void addPlace(String place) {
-    // Places are used for earlybird serialization
-    places.add(place);
+  pubwic void addpwace(stwing p-pwace) {
+    // p-pwaces awe used fow eawwybiwd sewiawization
+    pwaces.add(pwace);
   }
 
-  public Optional<Long> getInReplyToStatusId() {
-    return inReplyToStatusId;
+  p-pubwic optionaw<wong> getinwepwytostatusid() {
+    w-wetuwn inwepwytostatusid;
   }
 
-  public void setInReplyToStatusId(long inReplyToStatusId) {
-    Preconditions.checkArgument(inReplyToStatusId > 0, "In-reply-to status ID should be positive");
-    this.inReplyToStatusId = Optional.of(inReplyToStatusId);
+  p-pubwic void s-setinwepwytostatusid(wong inwepwytostatusid) {
+    pweconditions.checkawgument(inwepwytostatusid > 0, rawr x3 "in-wepwy-to status id shouwd be positive");
+    this.inwepwytostatusid = o-optionaw.of(inwepwytostatusid);
   }
 
-  public boolean getNullcast() {
-    return nullcast;
+  pubwic boowean g-getnuwwcast() {
+    wetuwn nyuwwcast;
   }
 
-  public void setNullcast(boolean nullcast) {
-    this.nullcast = nullcast;
+  pubwic void s-setnuwwcast(boowean nyuwwcast) {
+    t-this.nuwwcast = nyuwwcast;
   }
 
-  public List<PenguinVersion> getSupportedPenguinVersions() {
-    return supportedPenguinVersions;
+  pubwic wist<penguinvewsion> g-getsuppowtedpenguinvewsions() {
+    w-wetuwn suppowtedpenguinvewsions;
   }
 
-  private VersionedTweetFeatures getVersionedTweetFeatures(PenguinVersion penguinVersion) {
-    VersionedTweetFeatures versionedTweetFeatures = versionedTweetFeaturesMap.get(penguinVersion);
-    return Preconditions.checkNotNull(versionedTweetFeatures);
+  pwivate v-vewsionedtweetfeatuwes g-getvewsionedtweetfeatuwes(penguinvewsion p-penguinvewsion) {
+    vewsionedtweetfeatuwes v-vewsionedtweetfeatuwes = v-vewsionedtweetfeatuwesmap.get(penguinvewsion);
+    wetuwn pweconditions.checknotnuww(vewsionedtweetfeatuwes);
   }
 
-  public TweetFeatures getTweetFeatures(PenguinVersion penguinVersion) {
-    return getVersionedTweetFeatures(penguinVersion).getTweetFeatures();
+  p-pubwic tweetfeatuwes gettweetfeatuwes(penguinvewsion penguinvewsion) {
+    w-wetuwn getvewsionedtweetfeatuwes(penguinvewsion).gettweetfeatuwes();
   }
 
-  @VisibleForTesting
-  // only used in Tests
-  public void setTweetFeatures(PenguinVersion penguinVersion, TweetFeatures tweetFeatures) {
-    versionedTweetFeaturesMap.get(penguinVersion).setTweetFeatures(tweetFeatures);
+  @visibwefowtesting
+  // o-onwy used in tests
+  p-pubwic void settweetfeatuwes(penguinvewsion p-penguinvewsion, 😳 t-tweetfeatuwes tweetfeatuwes) {
+    vewsionedtweetfeatuwesmap.get(penguinvewsion).settweetfeatuwes(tweetfeatuwes);
   }
 
-  public int getTweetSignature(PenguinVersion penguinVersion) {
-    return getVersionedTweetFeatures(penguinVersion).getTweetTextFeatures().getSignature();
+  pubwic i-int gettweetsignatuwe(penguinvewsion p-penguinvewsion) {
+    w-wetuwn g-getvewsionedtweetfeatuwes(penguinvewsion).gettweettextfeatuwes().getsignatuwe();
   }
 
-  public TweetTextQuality getTweetTextQuality(PenguinVersion penguinVersion) {
-    return getVersionedTweetFeatures(penguinVersion).getTweetTextQuality();
+  pubwic tweettextquawity gettweettextquawity(penguinvewsion p-penguinvewsion) {
+    wetuwn getvewsionedtweetfeatuwes(penguinvewsion).gettweettextquawity();
   }
 
-  public TweetTextFeatures getTweetTextFeatures(PenguinVersion penguinVersion) {
-    return getVersionedTweetFeatures(penguinVersion).getTweetTextFeatures();
+  p-pubwic tweettextfeatuwes gettweettextfeatuwes(penguinvewsion p-penguinvewsion) {
+    wetuwn getvewsionedtweetfeatuwes(penguinvewsion).gettweettextfeatuwes();
   }
 
-  public TweetUserFeatures getTweetUserFeatures(PenguinVersion penguinVersion) {
-    return getVersionedTweetFeatures(penguinVersion).getTweetUserFeatures();
+  pubwic tweetusewfeatuwes gettweetusewfeatuwes(penguinvewsion p-penguinvewsion) {
+    wetuwn getvewsionedtweetfeatuwes(penguinvewsion).gettweetusewfeatuwes();
   }
 
-  public TokenizedCharSequence getTokenizedCharSequence(PenguinVersion penguinVersion) {
-    return getVersionedTweetFeatures(penguinVersion).getTokenizedCharSequence();
+  p-pubwic tokenizedchawsequence gettokenizedchawsequence(penguinvewsion p-penguinvewsion) {
+    w-wetuwn getvewsionedtweetfeatuwes(penguinvewsion).gettokenizedchawsequence();
   }
 
-  public void setTokenizedCharSequence(PenguinVersion penguinVersion,
-                                       TokenizedCharSequence sequence) {
-    getVersionedTweetFeatures(penguinVersion).setTokenizedCharSequence(sequence);
+  p-pubwic void settokenizedchawsequence(penguinvewsion p-penguinvewsion, 😳😳😳
+                                       tokenizedchawsequence s-sequence) {
+    g-getvewsionedtweetfeatuwes(penguinvewsion).settokenizedchawsequence(sequence);
   }
 
-  // True if the features contain multiple hash tags or multiple trends.
-  // This is intended as an anti-trend-spam measure.
-  public static boolean hasMultipleHashtagsOrTrends(TweetTextFeatures textFeatures) {
-    // Allow at most 1 trend and 2 hashtags.
-    return textFeatures.getTrendingTermsSize() > 1 || textFeatures.getHashtagsSize() > 2;
+  // t-twue if t-the featuwes contain muwtipwe h-hash tags ow muwtipwe t-twends. 😳😳😳
+  // t-this is intended as an anti-twend-spam m-measuwe. ( ͡o ω ͡o )
+  pubwic static boowean hasmuwtipwehashtagsowtwends(tweettextfeatuwes textfeatuwes) {
+    // awwow at most 1 twend and 2 hashtags. rawr x3
+    w-wetuwn t-textfeatuwes.gettwendingtewmssize() > 1 || textfeatuwes.gethashtagssize() > 2;
   }
 
   /**
-   * Returns the expanded URLs.
+   * w-wetuwns the expanded uwws. σωσ
    */
-  public Collection<ThriftExpandedUrl> getExpandedUrls() {
-    return expandedUrls.values();
+  pubwic cowwection<thwiftexpandeduww> g-getexpandeduwws() {
+    w-wetuwn expandeduwws.vawues();
   }
 
   /**
-   * Returns the canonical last hop URLs.
+   * w-wetuwns t-the canonicaw wast hop uwws. (˘ω˘)
    */
-  public Set<String> getCanonicalLastHopUrls() {
-    Set<String> result = new HashSet<>(expandedUrls.size());
-    for (ThriftExpandedUrl url : expandedUrls.values()) {
-      result.add(url.getCanonicalLastHopUrl());
+  p-pubwic set<stwing> getcanonicawwasthopuwws() {
+    set<stwing> w-wesuwt = n-nyew hashset<>(expandeduwws.size());
+    fow (thwiftexpandeduww uww : expandeduwws.vawues()) {
+      wesuwt.add(uww.getcanonicawwasthopuww());
     }
-    return result;
+    w-wetuwn wesuwt;
   }
 
-  public String getCardName() {
-    return cardName;
+  p-pubwic stwing getcawdname() {
+    wetuwn cawdname;
   }
 
-  public void setCardName(String cardName) {
-    this.cardName = cardName;
+  p-pubwic void setcawdname(stwing c-cawdname) {
+    this.cawdname = cawdname;
   }
 
-  public String getCardDomain() {
-    return cardDomain;
+  p-pubwic stwing getcawddomain() {
+    w-wetuwn cawddomain;
   }
 
-  public void setCardDomain(String cardDomain) {
-    this.cardDomain = cardDomain;
+  pubwic v-void setcawddomain(stwing c-cawddomain) {
+    this.cawddomain = cawddomain;
   }
 
-  public String getCardTitle() {
-    return cardTitle;
+  pubwic stwing g-getcawdtitwe() {
+    wetuwn cawdtitwe;
   }
 
-  public void setCardTitle(String cardTitle) {
-    this.cardTitle = cardTitle;
+  pubwic v-void setcawdtitwe(stwing c-cawdtitwe) {
+    this.cawdtitwe = c-cawdtitwe;
   }
 
-  public String getCardDescription() {
-    return cardDescription;
+  pubwic stwing getcawddescwiption() {
+    wetuwn cawddescwiption;
   }
 
-  public void setCardDescription(String cardDescription) {
-    this.cardDescription = cardDescription;
+  pubwic v-void setcawddescwiption(stwing cawddescwiption) {
+    this.cawddescwiption = c-cawddescwiption;
   }
 
-  public String getCardLang() {
-    return cardLang;
+  p-pubwic stwing getcawdwang() {
+    wetuwn cawdwang;
   }
 
-  public void setCardLang(String cardLang) {
-    this.cardLang = cardLang;
+  p-pubwic void setcawdwang(stwing cawdwang) {
+    this.cawdwang = cawdwang;
   }
 
-  public String getCardUrl() {
-    return cardUrl;
+  p-pubwic stwing getcawduww() {
+    wetuwn cawduww;
   }
 
-  public void setCardUrl(String cardUrl) {
-    this.cardUrl = cardUrl;
+  pubwic void setcawduww(stwing c-cawduww) {
+    this.cawduww = c-cawduww;
   }
 
-  public List<TwitterMessageUser> getMentions() {
-    return this.mentions;
+  pubwic wist<twittewmessageusew> getmentions() {
+    w-wetuwn this.mentions;
   }
 
-  public void setMentions(List<TwitterMessageUser> mentions) {
-    this.mentions = mentions;
+  p-pubwic void setmentions(wist<twittewmessageusew> m-mentions) {
+    t-this.mentions = mentions;
   }
 
-  public List<String> getLowercasedMentions() {
-    return Lists.transform(getMentions(), user -> {
-      // This condition is also checked in addUserToMentions().
-      Preconditions.checkState(user.getScreenName().isPresent(), "Invalid mention");
-      return user.getScreenName().get().toLowerCase();
+  p-pubwic wist<stwing> getwowewcasedmentions() {
+    w-wetuwn w-wists.twansfowm(getmentions(), >w< usew -> {
+      // t-this condition i-is awso checked i-in addusewtomentions(). UwU
+      pweconditions.checkstate(usew.getscweenname().ispwesent(), XD "invawid mention");
+      w-wetuwn usew.getscweenname().get().towowewcase();
     });
   }
 
-  public Set<String> getHashtags() {
-    return this.hashtags;
+  p-pubwic set<stwing> gethashtags() {
+    wetuwn t-this.hashtags;
   }
 
-  public Set<String> getNormalizedHashtags(PenguinVersion penguinVersion) {
-    return getVersionedTweetFeatures(penguinVersion).getNormalizedHashtags();
+  pubwic set<stwing> g-getnowmawizedhashtags(penguinvewsion penguinvewsion) {
+    wetuwn getvewsionedtweetfeatuwes(penguinvewsion).getnowmawizedhashtags();
   }
 
-  public void addNormalizedHashtag(String normalizedHashtag, PenguinVersion penguinVersion) {
-    getVersionedTweetFeatures(penguinVersion).addNormalizedHashtags(normalizedHashtag);
+  pubwic void addnowmawizedhashtag(stwing nyowmawizedhashtag, (U ﹏ U) penguinvewsion penguinvewsion) {
+    g-getvewsionedtweetfeatuwes(penguinvewsion).addnowmawizedhashtags(nowmawizedhashtag);
   }
 
-  public Optional<ComposerSource> getComposerSource() {
-    return composerSource;
+  pubwic optionaw<composewsouwce> g-getcomposewsouwce() {
+    wetuwn c-composewsouwce;
   }
 
-  public void setComposerSource(ComposerSource composerSource) {
-    Preconditions.checkNotNull(composerSource, "composerSource should not be null");
-    this.composerSource = Optional.of(composerSource);
+  p-pubwic void setcomposewsouwce(composewsouwce c-composewsouwce) {
+    pweconditions.checknotnuww(composewsouwce, (U ᵕ U❁) "composewsouwce s-shouwd nyot be nyuww");
+    t-this.composewsouwce = optionaw.of(composewsouwce);
   }
 
-  public boolean isSelfThread() {
-    return selfThread;
+  pubwic boowean issewfthwead() {
+    wetuwn sewfthwead;
   }
 
-  public void setSelfThread(boolean selfThread) {
-    this.selfThread = selfThread;
+  pubwic void setsewfthwead(boowean sewfthwead) {
+    this.sewfthwead = s-sewfthwead;
   }
 
-  public boolean isExclusive() {
-    return exclusiveConversationAuthorId.isPresent();
+  pubwic boowean isexcwusive() {
+    w-wetuwn excwusiveconvewsationauthowid.ispwesent();
   }
 
-  public long getExclusiveConversationAuthorId() {
-    return exclusiveConversationAuthorId.get();
+  p-pubwic wong getexcwusiveconvewsationauthowid() {
+    wetuwn excwusiveconvewsationauthowid.get();
   }
 
-  public void setExclusiveConversationAuthorId(long exclusiveConversationAuthorId) {
-    this.exclusiveConversationAuthorId = Optional.of(exclusiveConversationAuthorId);
+  pubwic void setexcwusiveconvewsationauthowid(wong excwusiveconvewsationauthowid) {
+    this.excwusiveconvewsationauthowid = optionaw.of(excwusiveconvewsationauthowid);
   }
 
   /**
-   * Adds an expanded media url based on the given parameters.
+   * adds an expanded media uww based o-on the given p-pawametews. (ˆ ﻌ ˆ)♡
    */
-  public void addExpandedMediaUrl(String originalUrl,
-                                  String expandedUrl,
-                                  @Nullable MediaTypes mediaType) {
-    if (!StringUtils.isBlank(originalUrl) && !StringUtils.isBlank(expandedUrl)) {
-      ThriftExpandedUrl thriftExpandedUrl = new ThriftExpandedUrl();
-      if (mediaType != null) {
-        thriftExpandedUrl.setMediaType(mediaType);
+  p-pubwic void addexpandedmediauww(stwing o-owiginawuww, òωó
+                                  s-stwing e-expandeduww,
+                                  @nuwwabwe mediatypes mediatype) {
+    i-if (!stwingutiws.isbwank(owiginawuww) && !stwingutiws.isbwank(expandeduww)) {
+      t-thwiftexpandeduww thwiftexpandeduww = n-nyew thwiftexpandeduww();
+      i-if (mediatype != n-nyuww) {
+        t-thwiftexpandeduww.setmediatype(mediatype);
       }
-      thriftExpandedUrl.setOriginalUrl(originalUrl);
-      thriftExpandedUrl.setExpandedUrl(expandedUrl);  // This will be tokenized and indexed
-      // Note that the mediaURL is not indexed. We could also index it, but it is not indexed
-      // to reduce RAM usage.
-      thriftExpandedUrl.setCanonicalLastHopUrl(expandedUrl); // This will be tokenized and indexed
-      addExpandedUrl(originalUrl, thriftExpandedUrl);
-      thriftExpandedUrl.setConsumerMedia(true);
+      t-thwiftexpandeduww.setowiginawuww(owiginawuww);
+      thwiftexpandeduww.setexpandeduww(expandeduww);  // t-this wiww be t-tokenized and indexed
+      // nyote t-that the mediauww i-is nyot indexed. w-we couwd a-awso index it, ^•ﻌ•^ b-but it is nyot indexed
+      // t-to weduce wam usage. (///ˬ///✿)
+      t-thwiftexpandeduww.setcanonicawwasthopuww(expandeduww); // t-this wiww be tokenized and indexed
+      addexpandeduww(owiginawuww, -.- thwiftexpandeduww);
+      t-thwiftexpandeduww.setconsumewmedia(twue);
     }
   }
 
   /**
-   * Adds an expanded non-media url based on the given parameters.
+   * adds an expanded n-nyon-media uww based on the given pawametews. >w<
    */
-  public void addExpandedNonMediaUrl(String originalUrl, String expandedUrl) {
-    if (!StringUtils.isBlank(originalUrl)) {
-      ThriftExpandedUrl thriftExpandedUrl = new ThriftExpandedUrl(originalUrl);
-      if (!StringUtils.isBlank(expandedUrl)) {
-        thriftExpandedUrl.setExpandedUrl(expandedUrl);
+  p-pubwic v-void addexpandednonmediauww(stwing o-owiginawuww, stwing expandeduww) {
+    i-if (!stwingutiws.isbwank(owiginawuww)) {
+      t-thwiftexpandeduww thwiftexpandeduww = new thwiftexpandeduww(owiginawuww);
+      if (!stwingutiws.isbwank(expandeduww)) {
+        thwiftexpandeduww.setexpandeduww(expandeduww);
       }
-      addExpandedUrl(originalUrl, thriftExpandedUrl);
-      thriftExpandedUrl.setConsumerMedia(false);
+      addexpandeduww(owiginawuww, òωó t-thwiftexpandeduww);
+      thwiftexpandeduww.setconsumewmedia(fawse);
     }
   }
 
   /**
-   * Only used in tests.
+   * onwy used in tests. σωσ
    *
-   * Simulates resolving compressed URLs, which is usually done by ResolveCompressedUrlsStage.
+   * simuwates wesowving c-compwessed uwws, mya w-which is usuawwy done by wesowvecompwesseduwwsstage.
    */
-  @VisibleForTesting
-  public void replaceUrlsWithResolvedUrls(Map<String, String> resolvedUrls) {
-    for (Map.Entry<String, ThriftExpandedUrl> urlEntry : expandedUrls.entrySet()) {
-      String tcoUrl = urlEntry.getKey();
-      if (resolvedUrls.containsKey(tcoUrl)) {
-        ThriftExpandedUrl expandedUrl = urlEntry.getValue();
-        expandedUrl.setCanonicalLastHopUrl(resolvedUrls.get(tcoUrl));
+  @visibwefowtesting
+  p-pubwic void w-wepwaceuwwswithwesowveduwws(map<stwing, òωó s-stwing> w-wesowveduwws) {
+    f-fow (map.entwy<stwing, 🥺 t-thwiftexpandeduww> uwwentwy : e-expandeduwws.entwyset()) {
+      stwing tcouww = uwwentwy.getkey();
+      i-if (wesowveduwws.containskey(tcouww)) {
+        thwiftexpandeduww e-expandeduww = uwwentwy.getvawue();
+        e-expandeduww.setcanonicawwasthopuww(wesowveduwws.get(tcouww));
       }
     }
   }
 
   /**
-   * Adds a mention for a user with the given screen name.
+   * a-adds a mention fow a-a usew with the given scween nyame. (U ﹏ U)
    */
-  public void addMention(String screenName) {
-    TwitterMessageUser user = TwitterMessageUser.createWithScreenName(screenName);
-    addUserToMentions(user);
+  pubwic v-void addmention(stwing s-scweenname) {
+    t-twittewmessageusew usew = t-twittewmessageusew.cweatewithscweenname(scweenname);
+    addusewtomentions(usew);
   }
 
   /**
-   * Adds the given user to mentions.
+   * adds the g-given usew to mentions. (ꈍᴗꈍ)
    */
-  public void addUserToMentions(TwitterMessageUser user) {
-    Preconditions.checkArgument(user.getScreenName().isPresent(), "Don't add invalid mentions");
-    this.mentions.add(user);
+  p-pubwic void addusewtomentions(twittewmessageusew u-usew) {
+    pweconditions.checkawgument(usew.getscweenname().ispwesent(), (˘ω˘) "don't add invawid mentions");
+    this.mentions.add(usew);
   }
 
   /**
-   * Adds the given hashtag.
+   * a-adds the given hashtag.
    */
-  public void addHashtag(String hashtag) {
+  pubwic void addhashtag(stwing hashtag) {
     this.hashtags.add(hashtag);
-    for (PenguinVersion penguinVersion : supportedPenguinVersions) {
-      addNormalizedHashtag(NormalizerHelper.normalize(hashtag, getLocale(), penguinVersion),
-          penguinVersion);
+    fow (penguinvewsion penguinvewsion : suppowtedpenguinvewsions) {
+      a-addnowmawizedhashtag(nowmawizewhewpew.nowmawize(hashtag, (✿oωo) g-getwocawe(), -.- penguinvewsion), (ˆ ﻌ ˆ)♡
+          penguinvewsion);
     }
   }
 
-  private Map<PenguinVersion, VersionedTweetFeatures> getVersionedTweetFeaturesMap() {
-    Map<PenguinVersion, VersionedTweetFeatures> versionedMap =
-        Maps.newEnumMap(PenguinVersion.class);
-    for (PenguinVersion penguinVersion : getSupportedPenguinVersions()) {
-      versionedMap.put(penguinVersion, new VersionedTweetFeatures());
+  pwivate map<penguinvewsion, (✿oωo) v-vewsionedtweetfeatuwes> getvewsionedtweetfeatuwesmap() {
+    m-map<penguinvewsion, vewsionedtweetfeatuwes> vewsionedmap =
+        maps.newenummap(penguinvewsion.cwass);
+    f-fow (penguinvewsion p-penguinvewsion : getsuppowtedpenguinvewsions()) {
+      v-vewsionedmap.put(penguinvewsion, ʘwʘ nyew v-vewsionedtweetfeatuwes());
     }
 
-    return versionedMap;
+    wetuwn v-vewsionedmap;
   }
 
-  public int getNumFavorites() {
-    return numFavorites;
+  pubwic int g-getnumfavowites() {
+    w-wetuwn nyumfavowites;
   }
 
-  public int getNumRetweets() {
-    return numRetweets;
+  pubwic int getnumwetweets() {
+    w-wetuwn nyumwetweets;
   }
 
-  public int getNumReplies() {
-    return numReplies;
+  p-pubwic int getnumwepwies() {
+    w-wetuwn nyumwepwies;
   }
 
-  public Set<NamedEntity> getNamedEntities() {
-    return namedEntities;
+  p-pubwic set<namedentity> getnamedentities() {
+    w-wetuwn nyamedentities;
   }
 
-  public void addNamedEntity(NamedEntity namedEntity) {
-    namedEntities.add(namedEntity);
+  pubwic v-void addnamedentity(namedentity n-nyamedentity) {
+    n-nyamedentities.add(namedentity);
   }
 
-  public Set<String> getSpaceIds() {
-    return spaceIds;
+  pubwic set<stwing> getspaceids() {
+    w-wetuwn s-spaceids;
   }
 
-  public void setSpaceIds(Set<String> spaceIds) {
-    this.spaceIds = Sets.newHashSet(spaceIds);
+  pubwic void setspaceids(set<stwing> spaceids) {
+    this.spaceids = sets.newhashset(spaceids);
   }
 
-  public Set<TwitterMessageUser> getSpaceAdmins() {
-    return spaceAdmins;
+  p-pubwic set<twittewmessageusew> g-getspaceadmins() {
+    wetuwn s-spaceadmins;
   }
 
-  public void addSpaceAdmin(TwitterMessageUser admin) {
-    spaceAdmins.add(admin);
+  pubwic void addspaceadmin(twittewmessageusew admin) {
+    s-spaceadmins.add(admin);
   }
 
-  public String getSpaceTitle() {
-    return spaceTitle;
+  p-pubwic stwing getspacetitwe() {
+    w-wetuwn spacetitwe;
   }
 
-  public void setSpaceTitle(String spaceTitle) {
-    this.spaceTitle = spaceTitle;
+  pubwic void setspacetitwe(stwing s-spacetitwe) {
+    t-this.spacetitwe = spacetitwe;
   }
 
-  private static boolean equals(List<EscherbirdAnnotation> l1, List<EscherbirdAnnotation> l2) {
-    EscherbirdAnnotation[] arr1 = l1.toArray(new EscherbirdAnnotation[l1.size()]);
-    Arrays.sort(arr1);
-    EscherbirdAnnotation[] arr2 = l1.toArray(new EscherbirdAnnotation[l2.size()]);
-    Arrays.sort(arr2);
-    return Arrays.equals(arr1, arr2);
+  pwivate static b-boowean equaws(wist<eschewbiwdannotation> w-w1, (///ˬ///✿) wist<eschewbiwdannotation> w2) {
+    e-eschewbiwdannotation[] a-aww1 = w1.toawway(new e-eschewbiwdannotation[w1.size()]);
+    a-awways.sowt(aww1);
+    eschewbiwdannotation[] aww2 = w1.toawway(new eschewbiwdannotation[w2.size()]);
+    awways.sowt(aww2);
+    w-wetuwn awways.equaws(aww1, a-aww2);
   }
 
   /**
-   * Compares the given messages using reflection and determines if they're approximately equal.
+   * compawes t-the given messages using wefwection and detewmines if they'we a-appwoximatewy e-equaw. rawr
    */
-  public static boolean reflectionApproxEquals(
-      TwitterMessage a,
-      TwitterMessage b,
-      List<String> additionalExcludeFields) {
-    List<String> excludeFields = Lists.newArrayList(
-        "versionedTweetFeaturesMap",
-        "geoLocation",
-        "geoTaggedLocation",
-        "escherbirdAnnotations"
+  pubwic static b-boowean wefwectionappwoxequaws(
+      twittewmessage a-a, 🥺
+      twittewmessage b, mya
+      wist<stwing> additionawexcwudefiewds) {
+    w-wist<stwing> excwudefiewds = wists.newawwaywist(
+        "vewsionedtweetfeatuwesmap", mya
+        "geowocation", mya
+        "geotaggedwocation", (⑅˘꒳˘)
+        "eschewbiwdannotations"
     );
-    excludeFields.addAll(additionalExcludeFields);
+    excwudefiewds.addaww(additionawexcwudefiewds);
 
-    return EqualsBuilder.reflectionEquals(a, b, excludeFields)
-        && GeoObject.approxEquals(a.getGeoLocation(), b.getGeoLocation())
-        && GeoObject.approxEquals(a.getGeoTaggedLocation(), b.getGeoTaggedLocation())
-        && equals(a.getEscherbirdAnnotations(), b.getEscherbirdAnnotations());
+    wetuwn e-equawsbuiwdew.wefwectionequaws(a, (✿oωo) b-b, 😳 excwudefiewds)
+        && g-geoobject.appwoxequaws(a.getgeowocation(), OwO b-b.getgeowocation())
+        && geoobject.appwoxequaws(a.getgeotaggedwocation(), (˘ω˘) b.getgeotaggedwocation())
+        && e-equaws(a.geteschewbiwdannotations(), (✿oωo) b.geteschewbiwdannotations());
   }
 
-  public static boolean reflectionApproxEquals(TwitterMessage a, TwitterMessage b) {
-    return reflectionApproxEquals(a, b, Collections.emptyList());
+  p-pubwic static boowean wefwectionappwoxequaws(twittewmessage a-a, twittewmessage b-b) {
+    w-wetuwn wefwectionappwoxequaws(a, /(^•ω•^) b, cowwections.emptywist());
   }
 }

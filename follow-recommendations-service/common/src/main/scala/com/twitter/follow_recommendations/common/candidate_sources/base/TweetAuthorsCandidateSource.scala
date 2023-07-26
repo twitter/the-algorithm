@@ -1,71 +1,71 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.base
 
-import com.twitter.follow_recommendations.common.models.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.fowwow_wecommendations.common.modews.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt c-com.twittew.stitch.stitch
 
 /**
- * base trait for tweet authors based algorithms, e.g. topical tweet authors, twistly, ...
+ * b-base twait f-fow tweet authows b-based awgowithms, ^^ e-e.g. topicaw tweet authows, twistwy, :3 ...
  *
- * @tparam Target target type
- * @tparam Candidate output candidate types
+ * @tpawam tawget tawget type
+ * @tpawam c-candidate output candidate types
  */
-trait TweetAuthorsCandidateSource[-Target, +Candidate] extends CandidateSource[Target, Candidate] {
+twait t-tweetauthowscandidatesouwce[-tawget, -.- +candidate] extends candidatesouwce[tawget, 😳 c-candidate] {
 
   /**
-   * fetch Tweet candidates
+   * fetch tweet candidates
    */
-  def getTweetCandidates(target: Target): Stitch[Seq[TweetCandidate]]
+  def g-gettweetcandidates(tawget: tawget): s-stitch[seq[tweetcandidate]]
 
   /**
-   * fetch authorId
+   * f-fetch authowid
    */
-  def getTweetAuthorId(tweetCandidate: TweetCandidate): Stitch[Option[Long]]
+  def gettweetauthowid(tweetcandidate: tweetcandidate): stitch[option[wong]]
 
   /**
-   * wrap candidate ID and TweetAuthorProof in Candidate
+   * w-wwap candidate id and tweetauthowpwoof in candidate
    */
-  def toCandidate(authorId: Long, tweetIds: Seq[Long], score: Option[Double]): Candidate
+  def tocandidate(authowid: w-wong, mya tweetids: seq[wong], (˘ω˘) scowe: o-option[doubwe]): c-candidate
 
   /**
-   * aggregate scores, default to the first score
+   * a-aggwegate s-scowes, >_< defauwt to the fiwst scowe
    */
-  def aggregator(scores: Seq[Double]): Double =
-    scores.headOption.getOrElse(TweetAuthorsCandidateSource.DefaultScore)
+  def a-aggwegatow(scowes: seq[doubwe]): doubwe =
+    s-scowes.headoption.getowewse(tweetauthowscandidatesouwce.defauwtscowe)
 
   /**
-   * aggregation method for a group of tweet candidates
+   * aggwegation method fow a gwoup of tweet candidates
    */
-  def aggregateAndScore(
-    target: Target,
-    tweetCandidates: Seq[TweetCandidate]
-  ): Seq[Candidate]
+  def aggwegateandscowe(
+    t-tawget: tawget, -.-
+    tweetcandidates: s-seq[tweetcandidate]
+  ): s-seq[candidate]
 
   /**
-   * generate a list of candidates for the target
+   * g-genewate a wist of candidates fow the tawget
    */
-  def build(
-    target: Target
-  ): Stitch[Seq[Candidate]] = {
-    // Fetch Tweet candidates and hydrate author IDs
-    val tweetCandidatesStitch = for {
-      tweetCandidates <- getTweetCandidates(target)
-      authorIds <- Stitch.collect(tweetCandidates.map(getTweetAuthorId(_)))
-    } yield {
-      for {
-        (authorIdOpt, tweetCandidate) <- authorIds.zip(tweetCandidates)
-        authorId <- authorIdOpt
-      } yield tweetCandidate.copy(authorId = authorId)
+  def buiwd(
+    t-tawget: tawget
+  ): s-stitch[seq[candidate]] = {
+    // fetch t-tweet candidates a-and hydwate authow ids
+    vaw t-tweetcandidatesstitch = fow {
+      t-tweetcandidates <- gettweetcandidates(tawget)
+      authowids <- s-stitch.cowwect(tweetcandidates.map(gettweetauthowid(_)))
+    } yiewd {
+      f-fow {
+        (authowidopt, 🥺 tweetcandidate) <- a-authowids.zip(tweetcandidates)
+        a-authowid <- authowidopt
+      } yiewd tweetcandidate.copy(authowid = authowid)
     }
 
-    // Aggregate and score, convert to candidate
-    tweetCandidatesStitch.map(aggregateAndScore(target, _))
+    // aggwegate and scowe, (U ﹏ U) convewt to candidate
+    t-tweetcandidatesstitch.map(aggwegateandscowe(tawget, >w< _))
   }
 
-  def apply(target: Target): Stitch[Seq[Candidate]] =
-    build(target)
+  d-def appwy(tawget: tawget): stitch[seq[candidate]] =
+    b-buiwd(tawget)
 }
 
-object TweetAuthorsCandidateSource {
-  final val DefaultScore: Double = 0.0
+o-object t-tweetauthowscandidatesouwce {
+  finaw vaw defauwtscowe: doubwe = 0.0
 }

@@ -1,68 +1,68 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+package com.twittew.fowwow_wecommendations.fwows.post_nux_mw
 
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ForwardEmailBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ForwardPhoneBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ReverseEmailBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ReversePhoneBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.crowd_search_accounts.CrowdSearchAccountsSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopCountryBackFillSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopCountrySource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeohashQualityFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeohashSource
-import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.real_graph.RealGraphOonV2Source
-import com.twitter.follow_recommendations.common.candidate_sources.recent_engagement.RecentEngagementNonDirectFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.recent_engagement.RepeatedProfileVisitsSource
-import com.twitter.follow_recommendations.common.candidate_sources.salsa.RecentEngagementDirectFollowSalsaExpansionSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentEngagementSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentFollowingSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims.Follow2vecNearestNeighborsStore
-import com.twitter.follow_recommendations.common.candidate_sources.stp.BaseOnlineSTPSource
-import com.twitter.follow_recommendations.common.candidate_sources.stp.OfflineStrongTiePredictionSource
-import com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts.TopOrganicFollowsAccountsSource
-import com.twitter.follow_recommendations.common.candidate_sources.triangular_loops.TriangularLoopsSource
-import com.twitter.follow_recommendations.common.candidate_sources.two_hop_random_walk.TwoHopRandomWalkSource
-import com.twitter.follow_recommendations.common.candidate_sources.user_user_graph.UserUserGraphCandidateSource
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlCandidateSourceWeightParams._
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.timelines.configapi.Params
+impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.addwessbook.fowwawdemaiwbooksouwce
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.addwessbook.fowwawdphonebooksouwce
+i-impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.addwessbook.wevewseemaiwbooksouwce
+impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.addwessbook.wevewsephonebooksouwce
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.cwowd_seawch_accounts.cwowdseawchaccountssouwce
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.geo.popcountwybackfiwwsouwce
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.geo.popcountwysouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.geo.popgeohashquawityfowwowsouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.geo.popgeohashsouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.ppmi_wocawe_fowwow.ppmiwocawefowwowsouwce
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.weaw_gwaph.weawgwaphoonv2souwce
+impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.wecent_engagement.wecentengagementnondiwectfowwowsouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.wecent_engagement.wepeatedpwofiwevisitssouwce
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.sawsa.wecentengagementdiwectfowwowsawsaexpansionsouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.sims_expansion.wecentengagementsimiwawusewssouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.sims_expansion.wecentfowwowingsimiwawusewssouwce
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.sims.fowwow2vecneawestneighbowsstowe
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.stp.baseonwinestpsouwce
+impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.stp.offwinestwongtiepwedictionsouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.top_owganic_fowwows_accounts.topowganicfowwowsaccountssouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.twianguwaw_woops.twianguwawwoopssouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.two_hop_wandom_wawk.twohopwandomwawksouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.usew_usew_gwaph.usewusewgwaphcandidatesouwce
+impowt c-com.twittew.fowwow_wecommendations.fwows.post_nux_mw.postnuxmwcandidatesouwceweightpawams._
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.timewines.configapi.pawams
 
-object PostNuxMlFlowCandidateSourceWeights {
+object p-postnuxmwfwowcandidatesouwceweights {
 
-  def getWeights(params: Params): Map[CandidateSourceIdentifier, Double] = {
-    Map[CandidateSourceIdentifier, Double](
-      // Social based
-      PPMILocaleFollowSource.Identifier -> params(CandidateWeightPPMILocaleFollow),
-      Follow2vecNearestNeighborsStore.IdentifierF2vLinearRegression -> params(
-        CandidateWeightFollow2vecNearestNeighbors),
-      RecentFollowingSimilarUsersSource.Identifier -> params(
-        CandidateWeightRecentFollowingSimilarUsers),
-      BaseOnlineSTPSource.Identifier -> params(CandidateWeightOnlineStp),
-      OfflineStrongTiePredictionSource.Identifier -> params(
-        CandidateWeightOfflineStrongTiePrediction),
-      ForwardEmailBookSource.Identifier -> params(CandidateWeightForwardEmailBook),
-      ForwardPhoneBookSource.Identifier -> params(CandidateWeightForwardPhoneBook),
-      ReverseEmailBookSource.Identifier -> params(CandidateWeightReverseEmailBook),
-      ReversePhoneBookSource.Identifier -> params(CandidateWeightReversePhoneBook),
-      TriangularLoopsSource.Identifier -> params(CandidateWeightTriangularLoops),
-      TwoHopRandomWalkSource.Identifier -> params(CandidateWeightTwoHopRandomWalk),
-      UserUserGraphCandidateSource.Identifier -> params(CandidateWeightUserUserGraph),
-      // Geo based
-      PopCountrySource.Identifier -> params(CandidateWeightPopCountry),
-      PopCountryBackFillSource.Identifier -> params(CandidateWeightPopGeoBackfill),
-      PopGeohashSource.Identifier -> params(CandidateWeightPopGeohash),
-      PopGeohashQualityFollowSource.Identifier -> params(CandidateWeightPopGeohashQualityFollow),
-      CrowdSearchAccountsSource.Identifier -> params(CandidateWeightCrowdSearch),
-      TopOrganicFollowsAccountsSource.Identifier -> params(CandidateWeightTopOrganicFollow),
-      // Engagement based
-      RealGraphOonV2Source.Identifier -> params(CandidateWeightRealGraphOonV2),
-      RecentEngagementNonDirectFollowSource.Identifier -> params(
-        CandidateWeightRecentEngagementNonDirectFollow),
-      RecentEngagementSimilarUsersSource.Identifier -> params(
-        CandidateWeightRecentEngagementSimilarUsers),
-      RepeatedProfileVisitsSource.Identifier -> params(CandidateWeightRepeatedProfileVisits),
-      RecentEngagementDirectFollowSalsaExpansionSource.Identifier -> params(
-        CandidateWeightRecentEngagementDirectFollowSalsaExpansion),
+  def getweights(pawams: p-pawams): map[candidatesouwceidentifiew, 😳 d-doubwe] = {
+    m-map[candidatesouwceidentifiew, mya d-doubwe](
+      // sociaw based
+      ppmiwocawefowwowsouwce.identifiew -> p-pawams(candidateweightppmiwocawefowwow), (˘ω˘)
+      fowwow2vecneawestneighbowsstowe.identifiewf2vwineawwegwession -> pawams(
+        c-candidateweightfowwow2vecneawestneighbows), >_<
+      wecentfowwowingsimiwawusewssouwce.identifiew -> pawams(
+        candidateweightwecentfowwowingsimiwawusews), -.-
+      baseonwinestpsouwce.identifiew -> pawams(candidateweightonwinestp), 🥺
+      o-offwinestwongtiepwedictionsouwce.identifiew -> pawams(
+        candidateweightoffwinestwongtiepwediction), (U ﹏ U)
+      fowwawdemaiwbooksouwce.identifiew -> p-pawams(candidateweightfowwawdemaiwbook), >w<
+      f-fowwawdphonebooksouwce.identifiew -> p-pawams(candidateweightfowwawdphonebook), mya
+      wevewseemaiwbooksouwce.identifiew -> pawams(candidateweightwevewseemaiwbook), >w<
+      wevewsephonebooksouwce.identifiew -> p-pawams(candidateweightwevewsephonebook), nyaa~~
+      t-twianguwawwoopssouwce.identifiew -> pawams(candidateweighttwianguwawwoops), (✿oωo)
+      t-twohopwandomwawksouwce.identifiew -> p-pawams(candidateweighttwohopwandomwawk), ʘwʘ
+      usewusewgwaphcandidatesouwce.identifiew -> p-pawams(candidateweightusewusewgwaph), (ˆ ﻌ ˆ)♡
+      // geo based
+      p-popcountwysouwce.identifiew -> pawams(candidateweightpopcountwy), 😳😳😳
+      popcountwybackfiwwsouwce.identifiew -> p-pawams(candidateweightpopgeobackfiww), :3
+      popgeohashsouwce.identifiew -> p-pawams(candidateweightpopgeohash), OwO
+      popgeohashquawityfowwowsouwce.identifiew -> p-pawams(candidateweightpopgeohashquawityfowwow), (U ﹏ U)
+      c-cwowdseawchaccountssouwce.identifiew -> pawams(candidateweightcwowdseawch), >w<
+      topowganicfowwowsaccountssouwce.identifiew -> pawams(candidateweighttopowganicfowwow), (U ﹏ U)
+      // engagement based
+      weawgwaphoonv2souwce.identifiew -> pawams(candidateweightweawgwaphoonv2), 😳
+      w-wecentengagementnondiwectfowwowsouwce.identifiew -> p-pawams(
+        candidateweightwecentengagementnondiwectfowwow), (ˆ ﻌ ˆ)♡
+      w-wecentengagementsimiwawusewssouwce.identifiew -> p-pawams(
+        c-candidateweightwecentengagementsimiwawusews), 😳😳😳
+      wepeatedpwofiwevisitssouwce.identifiew -> pawams(candidateweightwepeatedpwofiwevisits), (U ﹏ U)
+      wecentengagementdiwectfowwowsawsaexpansionsouwce.identifiew -> p-pawams(
+        candidateweightwecentengagementdiwectfowwowsawsaexpansion), (///ˬ///✿)
     )
   }
 }

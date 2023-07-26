@@ -1,117 +1,117 @@
-package com.twitter.follow_recommendations.common.candidate_sources.salsa
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.sawsa
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.strato.generated.client.onboarding.userrecs.SalsaFirstDegreeOnUserClientColumn
-import com.twitter.strato.generated.client.onboarding.userrecs.SalsaSecondDegreeOnUserClientColumn
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.stitch.Stitch
-import com.twitter.wtf.candidate.thriftscala.Candidate
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.stwato.genewated.cwient.onboawding.usewwecs.sawsafiwstdegweeonusewcwientcowumn
+i-impowt c-com.twittew.stwato.genewated.cwient.onboawding.usewwecs.sawsaseconddegweeonusewcwientcowumn
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.accountpwoof
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+impowt com.twittew.fowwow_wecommendations.common.modews.fowwowpwoof
+impowt com.twittew.fowwow_wecommendations.common.modews.weason
+i-impowt com.twittew.stitch.stitch
+impowt c-com.twittew.wtf.candidate.thwiftscawa.candidate
+impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
-case class SalsaExpandedCandidate(
-  candidateId: Long,
-  numberOfConnections: Int,
-  totalScore: Double,
-  connectingUsers: Seq[Long]) {
-  def toCandidateUser: CandidateUser =
-    CandidateUser(
-      id = candidateId,
-      score = Some(totalScore),
-      reason = Some(Reason(
-        Some(AccountProof(followProof = Some(FollowProof(connectingUsers, connectingUsers.size))))))
+case cwass sawsaexpandedcandidate(
+  candidateid: w-wong, (ꈍᴗꈍ)
+  nyumbewofconnections: int, 😳
+  t-totawscowe: d-doubwe, 😳😳😳
+  connectingusews: seq[wong]) {
+  def tocandidateusew: candidateusew =
+    candidateusew(
+      i-id = candidateid, mya
+      scowe = some(totawscowe), mya
+      weason = some(weason(
+        some(accountpwoof(fowwowpwoof = some(fowwowpwoof(connectingusews, (⑅˘꒳˘) connectingusews.size))))))
     )
 }
 
-case class SimilarUserCandidate(candidateId: Long, score: Double, similarToCandidate: Long)
+case cwass s-simiwawusewcandidate(candidateid: wong, (U ﹏ U) scowe: doubwe, mya s-simiwawtocandidate: w-wong)
 
 /**
- * Salsa expander uses pre-computed lists of candidates for each input user id and returns the highest scored candidates in the pre-computed lists as the expansion for the corresponding input id.
+ * s-sawsa expandew u-uses pwe-computed wists of candidates fow e-each input usew id and wetuwns the highest scowed c-candidates in the pwe-computed wists as the expansion fow the cowwesponding input id. ʘwʘ
  */
-@Singleton
-class SalsaExpander @Inject() (
-  statsReceiver: StatsReceiver,
-  firstDegreeClient: SalsaFirstDegreeOnUserClientColumn,
-  secondDegreeClient: SalsaSecondDegreeOnUserClientColumn,
+@singweton
+c-cwass sawsaexpandew @inject() (
+  statsweceivew: s-statsweceivew, (˘ω˘)
+  f-fiwstdegweecwient: s-sawsafiwstdegweeonusewcwientcowumn, (U ﹏ U)
+  seconddegweecwient: sawsaseconddegweeonusewcwientcowumn, ^•ﻌ•^
 ) {
 
-  val stats = statsReceiver.scope("salsa_expander")
+  vaw stats = s-statsweceivew.scope("sawsa_expandew")
 
-  private def similarUsers(
-    input: Seq[Long],
-    neighbors: Seq[Option[Seq[Candidate]]]
-  ): Seq[SalsaExpandedCandidate] = {
+  p-pwivate def simiwawusews(
+    i-input: seq[wong], (˘ω˘)
+    n-nyeighbows: seq[option[seq[candidate]]]
+  ): s-seq[sawsaexpandedcandidate] = {
     input
-      .zip(neighbors).flatMap {
-        case (recId, Some(neighbors)) =>
-          neighbors.map(neighbor => SimilarUserCandidate(neighbor.userId, neighbor.score, recId))
-        case _ => Nil
-      }.groupBy(_.candidateId).map {
-        case (key, neighbors) =>
-          val scores = neighbors.map(_.score)
-          val connectingUsers = neighbors
-            .sortBy(-_.score)
-            .take(SalsaExpander.MaxConnectingUsersToOutputPerExpandedCandidate)
-            .map(_.similarToCandidate)
+      .zip(neighbows).fwatmap {
+        c-case (wecid, :3 some(neighbows)) =>
+          nyeighbows.map(neighbow => s-simiwawusewcandidate(neighbow.usewid, ^^;; nyeighbow.scowe, 🥺 w-wecid))
+        case _ => n-niw
+      }.gwoupby(_.candidateid).map {
+        c-case (key, (⑅˘꒳˘) nyeighbows) =>
+          vaw scowes = nyeighbows.map(_.scowe)
+          vaw connectingusews = nyeighbows
+            .sowtby(-_.scowe)
+            .take(sawsaexpandew.maxconnectingusewstooutputpewexpandedcandidate)
+            .map(_.simiwawtocandidate)
 
-          SalsaExpandedCandidate(key, scores.size, scores.sum, connectingUsers)
+          sawsaexpandedcandidate(key, nyaa~~ scowes.size, :3 s-scowes.sum, ( ͡o ω ͡o ) connectingusews)
       }
-      .filter(
-        _.numberOfConnections >= math
-          .min(SalsaExpander.MinConnectingUsersThreshold, input.size)
+      .fiwtew(
+        _.numbewofconnections >= m-math
+          .min(sawsaexpandew.minconnectingusewsthweshowd, mya input.size)
       )
-      .toSeq
+      .toseq
   }
 
-  def apply(
-    firstDegreeInput: Seq[Long],
-    secondDegreeInput: Seq[Long],
-    maxNumOfCandidatesToReturn: Int
-  ): Stitch[Seq[CandidateUser]] = {
+  d-def a-appwy(
+    fiwstdegweeinput: s-seq[wong], (///ˬ///✿)
+    seconddegweeinput: seq[wong], (˘ω˘)
+    maxnumofcandidatestowetuwn: int
+  ): s-stitch[seq[candidateusew]] = {
 
-    val firstDegreeNeighborsStitch =
-      Stitch
-        .collect(firstDegreeInput.map(firstDegreeClient.fetcher
-          .fetch(_).map(_.v.map(_.candidates.take(SalsaExpander.MaxDirectNeighbors))))).onSuccess {
-          firstDegreeNeighbors =>
-            stats.stat("first_degree_neighbors").add(firstDegreeNeighbors.flatten.size)
+    vaw fiwstdegweeneighbowsstitch =
+      stitch
+        .cowwect(fiwstdegweeinput.map(fiwstdegweecwient.fetchew
+          .fetch(_).map(_.v.map(_.candidates.take(sawsaexpandew.maxdiwectneighbows))))).onsuccess {
+          fiwstdegweeneighbows =>
+            stats.stat("fiwst_degwee_neighbows").add(fiwstdegweeneighbows.fwatten.size)
         }
 
-    val secondDegreeNeighborsStitch =
-      Stitch
-        .collect(
-          secondDegreeInput.map(
-            secondDegreeClient.fetcher
+    vaw seconddegweeneighbowsstitch =
+      s-stitch
+        .cowwect(
+          seconddegweeinput.map(
+            s-seconddegweecwient.fetchew
               .fetch(_).map(
-                _.v.map(_.candidates.take(SalsaExpander.MaxIndirectNeighbors))))).onSuccess {
-          secondDegreeNeighbors =>
-            stats.stat("second_degree_neighbors").add(secondDegreeNeighbors.flatten.size)
+                _.v.map(_.candidates.take(sawsaexpandew.maxindiwectneighbows))))).onsuccess {
+          s-seconddegweeneighbows =>
+            s-stats.stat("second_degwee_neighbows").add(seconddegweeneighbows.fwatten.size)
         }
 
-    val neighborStitches =
-      Stitch.join(firstDegreeNeighborsStitch, secondDegreeNeighborsStitch).map {
-        case (first, second) => first ++ second
+    vaw nyeighbowstitches =
+      s-stitch.join(fiwstdegweeneighbowsstitch, ^^;; s-seconddegweeneighbowsstitch).map {
+        c-case (fiwst, (✿oωo) s-second) => fiwst ++ second
       }
 
-    val similarUsersToInput = neighborStitches.map { neighbors =>
-      similarUsers(firstDegreeInput ++ secondDegreeInput, neighbors)
+    vaw simiwawusewstoinput = n-nyeighbowstitches.map { n-nyeighbows =>
+      simiwawusews(fiwstdegweeinput ++ s-seconddegweeinput, (U ﹏ U) n-nyeighbows)
     }
 
-    similarUsersToInput.map {
-      // Rank the candidate cot users by the combined weights from the connecting users. This is the default original implementation. It is unlikely to have weight ties and thus a second ranking function is not necessary.
-      _.sortBy(-_.totalScore)
-        .take(maxNumOfCandidatesToReturn)
-        .map(_.toCandidateUser)
+    s-simiwawusewstoinput.map {
+      // wank the candidate cot usews by the c-combined weights fwom the connecting usews. -.- this is the defauwt owiginaw impwementation. ^•ﻌ•^ it is u-unwikewy to have weight ties and thus a second wanking function i-is nyot nyecessawy. rawr
+      _.sowtby(-_.totawscowe)
+        .take(maxnumofcandidatestowetuwn)
+        .map(_.tocandidateusew)
     }
   }
 }
 
-object SalsaExpander {
-  val MaxDirectNeighbors = 2000
-  val MaxIndirectNeighbors = 2000
-  val MinConnectingUsersThreshold = 2
-  val MaxConnectingUsersToOutputPerExpandedCandidate = 3
+o-object s-sawsaexpandew {
+  vaw maxdiwectneighbows = 2000
+  v-vaw maxindiwectneighbows = 2000
+  vaw minconnectingusewsthweshowd = 2
+  v-vaw maxconnectingusewstooutputpewexpandedcandidate = 3
 }

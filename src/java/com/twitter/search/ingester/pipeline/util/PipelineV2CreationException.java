@@ -1,7 +1,7 @@
-package com.twitter.search.ingester.pipeline.util;
+package com.twittew.seawch.ingestew.pipewine.utiw;
 
-public class PipelineV2CreationException extends Exception {
-  public PipelineV2CreationException(String message) {
-    super(message);
+pubwic cwass p-pipewinev2cweationexception e-extends e-exception {
+  p-pubwic pipewinev2cweationexception(stwing m-message) {
+    s-supew(message);
   }
 }

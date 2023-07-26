@@ -1,16 +1,16 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = False,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "mediaservices/media-util",
-        "stitch/stitch-core",
-        "visibility/lib/src/main/scala/com/twitter/visibility",
-        "visibility/lib/src/main/scala/com/twitter/visibility/builder/media",
-        "visibility/lib/src/main/scala/com/twitter/visibility/builder/users",
-        "visibility/lib/src/main/scala/com/twitter/visibility/features",
-        "visibility/lib/src/main/scala/com/twitter/visibility/rules/providers",
-        "visibility/lib/src/main/scala/com/twitter/visibility/rules/utils",
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    s-stwict_deps = f-fawse, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "mediasewvices/media-utiw", (⑅˘꒳˘)
+        "stitch/stitch-cowe", ( ͡o ω ͡o )
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity", UwU
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity/buiwdew/media", rawr x3
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity/buiwdew/usews", rawr
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity/featuwes", σωσ
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity/wuwes/pwovidews", σωσ
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity/wuwes/utiws", >_<
     ],
 )

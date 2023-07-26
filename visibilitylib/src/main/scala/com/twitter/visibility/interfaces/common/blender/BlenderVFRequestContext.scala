@@ -1,19 +1,19 @@
-package com.twitter.visibility.interfaces.common.blender
+package com.twittew.visibiwity.intewfaces.common.bwendew
 
-import com.twitter.search.blender.services.strato.UserSearchSafetySettings
-import com.twitter.search.common.constants.thriftscala.ThriftQuerySource
+impowt c-com.twittew.seawch.bwendew.sewvices.stwato.usewseawchsafetysettings
+i-impowt com.twittew.seawch.common.constants.thwiftscawa.thwiftquewysouwce
 
-case class BlenderVFRequestContext(
-  resultsPageNumber: Int,
-  candidateCount: Int,
-  querySourceOption: Option[ThriftQuerySource],
-  userSearchSafetySettings: UserSearchSafetySettings,
-  queryHasUser: Boolean = false) {
+c-case c-cwass bwendewvfwequestcontext(
+  w-wesuwtspagenumbew: i-int, mya
+  candidatecount: i-int, mya
+  q-quewysouwceoption: option[thwiftquewysouwce], 😳
+  usewseawchsafetysettings: usewseawchsafetysettings, XD
+  quewyhasusew: boowean = f-fawse) {
 
   def this(
-    resultsPageNumber: Int,
-    candidateCount: Int,
-    querySourceOption: Option[ThriftQuerySource],
-    userSearchSafetySettings: UserSearchSafetySettings
-  ) = this(resultsPageNumber, candidateCount, querySourceOption, userSearchSafetySettings, false)
+    wesuwtspagenumbew: int, :3
+    candidatecount: i-int, 😳😳😳
+    quewysouwceoption: o-option[thwiftquewysouwce], -.-
+    usewseawchsafetysettings: usewseawchsafetysettings
+  ) = this(wesuwtspagenumbew, ( ͡o ω ͡o ) c-candidatecount, rawr x3 quewysouwceoption, u-usewseawchsafetysettings, nyaa~~ f-fawse)
 }

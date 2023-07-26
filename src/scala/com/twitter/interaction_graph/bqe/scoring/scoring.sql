@@ -1,52 +1,52 @@
-DECLARE date_end, date_latest_follows DATE;
-SET date_end = (
-  SELECT PARSE_DATE('%Y%m%d', MAX(partition_id)) AS partition_id
-  FROM `twttr-bq-cassowary-prod.user.INFORMATION_SCHEMA.PARTITIONS`
-  WHERE partition_id IS NOT NULL AND partition_id != '__NULL__' AND table_name="interaction_graph_labels_daily"
+decwawe date_end, 😳😳😳 date_watest_fowwows d-date;
+set date_end = (
+  s-sewect p-pawse_date('%y%m%d', m-max(pawtition_id)) a-as p-pawtition_id
+  fwom `twttw-bq-cassowawy-pwod.usew.infowmation_schema.pawtitions`
+  w-whewe pawtition_id i-is nyot nyuww and pawtition_id != '__nuww__' and tabwe_name="intewaction_gwaph_wabews_daiwy"
 );
-SET date_latest_follows = (
-  SELECT PARSE_DATE('%Y%m%d', MAX(partition_id)) AS partition_id
-  FROM `twttr-recos-ml-prod.user_events.INFORMATION_SCHEMA.PARTITIONS`
-  WHERE partition_id IS NOT NULL AND partition_id != '__NULL__' AND table_name="valid_user_follows");
+set date_watest_fowwows = (
+  sewect pawse_date('%y%m%d', m-max(pawtition_id)) as pawtition_id
+  fwom `twttw-wecos-mw-pwod.usew_events.infowmation_schema.pawtitions`
+  w-whewe pawtition_id is n-nyot nyuww and pawtition_id != '__nuww__' and tabwe_name="vawid_usew_fowwows");
 
-DELETE
-FROM `twttr-recos-ml-prod.realgraph.scores`
-WHERE ds = date_end;
+d-dewete
+fwom `twttw-wecos-mw-pwod.weawgwaph.scowes`
+whewe ds = d-date_end;
 
--- score candidates (59m)
-INSERT INTO `twttr-recos-ml-prod.realgraph.scores`
-WITH predicted_scores AS (
-  SELECT
-    source_id, 
-    destination_id, 
-    p1.prob AS prob, 
-    p2.prob AS prob_explicit
-  FROM ML.PREDICT(MODEL `twttr-recos-ml-prod.realgraph.prod`,
+-- scowe c-candidates (59m)
+insewt into `twttw-wecos-mw-pwod.weawgwaph.scowes`
+with pwedicted_scowes as (
+  sewect
+    souwce_id, o.O 
+    d-destination_id, ( ͡o ω ͡o ) 
+    p1.pwob as pwob, (U ﹏ U) 
+    p2.pwob as pwob_expwicit
+  fwom mw.pwedict(modew `twttw-wecos-mw-pwod.weawgwaph.pwod`, (///ˬ///✿)
       (
-      SELECT
+      s-sewect
         *
-      FROM
-        `twttr-recos-ml-prod.realgraph.candidates` ) ) S1
-  CROSS JOIN UNNEST(S1.predicted_label_probs) AS p1
-  JOIN ML.PREDICT(MODEL `twttr-recos-ml-prod.realgraph.prod_explicit`,
+      fwom
+        `twttw-wecos-mw-pwod.weawgwaph.candidates` ) ) s-s1
+  cwoss join u-unnest(s1.pwedicted_wabew_pwobs) a-as p1
+  join m-mw.pwedict(modew `twttw-wecos-mw-pwod.weawgwaph.pwod_expwicit`, >w<
       (
-      SELECT
+      sewect
         *
-      FROM
-        `twttr-recos-ml-prod.realgraph.candidates` ) ) S2
-  USING (source_id, destination_id)
-  CROSS JOIN UNNEST(S2.predicted_label_probs) AS p2
-  WHERE p1.label=1 AND p2.label=1
+      fwom
+        `twttw-wecos-mw-pwod.weawgwaph.candidates` ) ) s-s2
+  using (souwce_id, rawr destination_id)
+  cwoss j-join unnest(s2.pwedicted_wabew_pwobs) as p2
+  whewe p1.wabew=1 and p2.wabew=1
 )
-SELECT 
-  COALESCE(predicted_scores.source_id, tweeting_follows.source_id) AS source_id,
-  COALESCE(predicted_scores.destination_id, tweeting_follows.destination_id) AS destination_id,
-  COALESCE(prob, 0.0) AS prob,
-  COALESCE(prob_explicit, 0.0) AS prob_explicit,
-  (tweeting_follows.source_id IS NOT NULL) AND (tweeting_follows.destination_id IS NOT NULL) AS followed,
-  date_end AS ds
-FROM
-  predicted_scores
-  FULL JOIN
-  `twttr-recos-ml-prod.realgraph.tweeting_follows` tweeting_follows
-  USING (source_id, destination_id)
+sewect 
+  coawesce(pwedicted_scowes.souwce_id, mya tweeting_fowwows.souwce_id) a-as souwce_id, ^^
+  coawesce(pwedicted_scowes.destination_id, 😳😳😳 t-tweeting_fowwows.destination_id) a-as destination_id, mya
+  c-coawesce(pwob, 0.0) as pwob, 😳
+  coawesce(pwob_expwicit, -.- 0.0) as pwob_expwicit, 🥺
+  (tweeting_fowwows.souwce_id is nyot n-nyuww) and (tweeting_fowwows.destination_id i-is nyot nyuww) as fowwowed, o.O
+  d-date_end a-as ds
+fwom
+  pwedicted_scowes
+  f-fuww join
+  `twttw-wecos-mw-pwod.weawgwaph.tweeting_fowwows` tweeting_fowwows
+  u-using (souwce_id, /(^•ω•^) destination_id)

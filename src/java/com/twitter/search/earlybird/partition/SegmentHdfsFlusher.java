@@ -1,247 +1,247 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+impowt java.io.fiwe;
+i-impowt java.io.ioexception;
+i-impowt java.utiw.concuwwent.timeunit;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.apache.commons.io.fiweutiws;
+i-impowt owg.apache.hadoop.fs.fiwesystem;
+i-impowt owg.apache.hadoop.fs.path;
+i-impowt o-owg.apache.wucene.stowe.diwectowy;
+i-impowt owg.apache.wucene.stowe.fsdiwectowy;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.base.Command;
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.metrics.Timer;
-import com.twitter.search.common.util.io.flushable.PersistentFile;
-import com.twitter.search.common.util.zktrylock.TryLock;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
+impowt c-com.twittew.common.base.command;
+impowt com.twittew.common.quantity.amount;
+impowt c-com.twittew.common.quantity.time;
+impowt com.twittew.seawch.common.database.databaseconfig;
+i-impowt com.twittew.seawch.common.metwics.timew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.pewsistentfiwe;
+impowt com.twittew.seawch.common.utiw.zktwywock.twywock;
+impowt c-com.twittew.seawch.common.utiw.zktwywock.zookeepewtwywockfactowy;
 
 /**
- * Flush segments to disk and upload them to HDFS.
+ * fwush s-segments to disk a-and upwoad them to hdfs. (U ﹏ U)
  */
-public class SegmentHdfsFlusher {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentHdfsFlusher.class);
-  private static final Amount<Long, Time> HDFS_UPLOADER_TRY_LOCK_NODE_EXPIRATION_TIME_MILLIS =
-      Amount.of(1L, Time.HOURS);
+pubwic cwass segmenthdfsfwushew {
+  pwivate static finaw woggew w-wog = woggewfactowy.getwoggew(segmenthdfsfwushew.cwass);
+  pwivate static finaw amount<wong, ʘwʘ time> hdfs_upwoadew_twy_wock_node_expiwation_time_miwwis =
+      amount.of(1w, >w< t-time.houws);
 
-  private final SegmentSyncConfig sync;
-  private final boolean holdLockWhileUploading;
-  private final ZooKeeperTryLockFactory zkTryLockFactory;
+  pwivate f-finaw segmentsyncconfig s-sync;
+  p-pwivate finaw b-boowean howdwockwhiweupwoading;
+  pwivate finaw zookeepewtwywockfactowy z-zktwywockfactowy;
 
-  public SegmentHdfsFlusher(ZooKeeperTryLockFactory zooKeeperTryLockFactory,
-                            SegmentSyncConfig sync,
-                            boolean holdLockWhileUploading) {
-    this.zkTryLockFactory = zooKeeperTryLockFactory;
-    this.sync = sync;
-    this.holdLockWhileUploading = holdLockWhileUploading;
+  pubwic segmenthdfsfwushew(zookeepewtwywockfactowy zookeepewtwywockfactowy, rawr x3
+                            s-segmentsyncconfig sync, OwO
+                            boowean howdwockwhiweupwoading) {
+    this.zktwywockfactowy = zookeepewtwywockfactowy;
+    t-this.sync = sync;
+    this.howdwockwhiweupwoading = h-howdwockwhiweupwoading;
   }
 
-  public SegmentHdfsFlusher(
-      ZooKeeperTryLockFactory zooKeeperTryLockFactory,
-      SegmentSyncConfig sync) {
-    this(zooKeeperTryLockFactory, sync, true);
+  p-pubwic s-segmenthdfsfwushew(
+      zookeepewtwywockfactowy zookeepewtwywockfactowy, ^•ﻌ•^
+      segmentsyncconfig s-sync) {
+    this(zookeepewtwywockfactowy, >_< s-sync, twue);
   }
 
-  private boolean shouldFlushSegment(SegmentInfo segmentInfo) {
-    return segmentInfo.isEnabled()
-        && !segmentInfo.getSyncInfo().isFlushed()
-        && segmentInfo.isComplete()
-        && segmentInfo.isOptimized()
-        && !segmentInfo.isFailedOptimize()
-        && !segmentInfo.getSyncInfo().isLoaded();
-  }
-
-  /**
-   * Flushes a segment to local disk and to HDFS.
-   */
-  public boolean flushSegmentToDiskAndHDFS(SegmentInfo segmentInfo) {
-    if (!shouldFlushSegment(segmentInfo)) {
-      return false;
-    }
-    try {
-      if (segmentInfo.isIndexing()) {
-        LOG.error("Tried to flush current segment!");
-        return false;
-      }
-
-      // Check-and-set the beingUploaded flag from false to true. If the CAS fails, it means the
-      // segment is being flushed already, or being deleted. In this case, we can just return false.
-      if (!segmentInfo.casBeingUploaded(false, true)) {
-        LOG.warn("Tried to flush a segment that's being flushed or deleted.");
-        return false;
-      }
-
-      // At this point, the above CAS must have returned false. This mean the beingUploaded flag
-      // was false, and set to true now. We can proceed with flushing the segment.
-      try {
-        checkAndFlushSegmentToHdfs(segmentInfo);
-      } finally {
-        segmentInfo.setBeingUploaded(false);
-      }
-      return true;
-    } catch (Exception e) {
-      LOG.error("Exception while flushing IndexSegment to "
-          + segmentInfo.getSyncInfo().getHdfsFlushDir(), e);
-      return false;
-    }
+  p-pwivate boowean s-shouwdfwushsegment(segmentinfo segmentinfo) {
+    w-wetuwn segmentinfo.isenabwed()
+        && !segmentinfo.getsyncinfo().isfwushed()
+        && segmentinfo.iscompwete()
+        && segmentinfo.isoptimized()
+        && !segmentinfo.isfaiwedoptimize()
+        && !segmentinfo.getsyncinfo().iswoaded();
   }
 
   /**
-   * First try to acquire a lock in Zookeeper for this segment, so multiple Earlybirds in the same
-   * partition don't flush or upload the segment at the same time. When the lock is acquired, check
-   * for the segment in HDFS. If the data already exists, don't flush to disk.
+   * f-fwushes a segment to wocaw disk and to h-hdfs. OwO
    */
-  private void checkAndFlushSegmentToHdfs(final SegmentInfo segment) {
-    LOG.info("Checking and flushing segment {}", segment);
+  pubwic boowean fwushsegmenttodiskandhdfs(segmentinfo s-segmentinfo) {
+    if (!shouwdfwushsegment(segmentinfo)) {
+      w-wetuwn fawse;
+    }
+    t-twy {
+      if (segmentinfo.isindexing()) {
+        wog.ewwow("twied to fwush cuwwent segment!");
+        wetuwn fawse;
+      }
 
-    try {
-      // Always flush the segment locally.
-      Directory dir = FSDirectory.open(createFlushDir(segment).toPath());
-      segment.flush(dir);
-      LOG.info("Completed local flush of segment {}. Flush to HDFS enabled: {}",
-               segment, sync.isFlushToHdfsEnabled());
-    } catch (IOException e) {
-      LOG.error("Failed to flush segment " + segment + " locally", e);
-      return;
+      // check-and-set t-the beingupwoaded f-fwag fwom fawse to twue. >_< i-if the cas faiws, i-it means the
+      // s-segment is being fwushed awweady, (ꈍᴗꈍ) ow being deweted. >w< in this c-case, (U ﹏ U) we can just wetuwn fawse. ^^
+      if (!segmentinfo.casbeingupwoaded(fawse, (U ﹏ U) twue)) {
+        wog.wawn("twied t-to fwush a segment that's being f-fwushed ow deweted.");
+        w-wetuwn fawse;
+      }
+
+      // a-at this point, :3 the above cas m-must have wetuwned f-fawse. (✿oωo) this mean t-the beingupwoaded f-fwag
+      // was fawse, XD and set to twue now. >w< w-we can pwoceed w-with fwushing t-the segment. òωó
+      t-twy {
+        c-checkandfwushsegmenttohdfs(segmentinfo);
+      } finawwy {
+        segmentinfo.setbeingupwoaded(fawse);
+      }
+      wetuwn twue;
+    } c-catch (exception e) {
+      wog.ewwow("exception whiwe fwushing indexsegment to "
+          + s-segmentinfo.getsyncinfo().gethdfsfwushdiw(), (ꈍᴗꈍ) e);
+      wetuwn fawse;
+    }
+  }
+
+  /**
+   * fiwst twy to a-acquiwe a wock i-in zookeepew fow t-this segment, rawr x3 so muwtipwe eawwybiwds i-in the same
+   * pawtition d-don't fwush ow u-upwoad the segment at the same time. rawr x3 when the wock is acquiwed, σωσ check
+   * fow the segment in hdfs. (ꈍᴗꈍ) i-if the data awweady exists, d-don't fwush to disk. rawr
+   */
+  pwivate v-void checkandfwushsegmenttohdfs(finaw s-segmentinfo segment) {
+    wog.info("checking a-and fwushing s-segment {}", ^^;; segment);
+
+    t-twy {
+      // a-awways fwush the segment wocawwy. rawr x3
+      diwectowy diw = fsdiwectowy.open(cweatefwushdiw(segment).topath());
+      segment.fwush(diw);
+      w-wog.info("compweted w-wocaw fwush of s-segment {}. fwush to hdfs enabwed: {}", (ˆ ﻌ ˆ)♡
+               s-segment, σωσ s-sync.isfwushtohdfsenabwed());
+    } catch (ioexception e-e) {
+      wog.ewwow("faiwed to fwush segment " + segment + " wocawwy", (U ﹏ U) e);
+      w-wetuwn;
     }
 
-    if (!holdLockWhileUploading) {
-      flushToHdfsIfNecessary(segment);
-    } else {
-      TryLock lock = zkTryLockFactory.createTryLock(
-          DatabaseConfig.getLocalHostname(),
-          sync.getZooKeeperSyncFullPath(),
-          sync.getVersionedName(segment.getSegment()),
-          HDFS_UPLOADER_TRY_LOCK_NODE_EXPIRATION_TIME_MILLIS
+    i-if (!howdwockwhiweupwoading) {
+      fwushtohdfsifnecessawy(segment);
+    } ewse {
+      t-twywock wock = z-zktwywockfactowy.cweatetwywock(
+          databaseconfig.getwocawhostname(), >w<
+          sync.getzookeepewsyncfuwwpath(), σωσ
+          sync.getvewsionedname(segment.getsegment()), nyaa~~
+          h-hdfs_upwoadew_twy_wock_node_expiwation_time_miwwis
       );
 
-      boolean gotLock = lock.tryWithLock((Command) () -> flushToHdfsIfNecessary(segment));
-      if (!gotLock) {
-        LOG.info("Failed to get zk upload lock for segment {}", segment);
+      boowean gotwock = wock.twywithwock((command) () -> fwushtohdfsifnecessawy(segment));
+      if (!gotwock) {
+        w-wog.info("faiwed to get zk upwoad wock fow segment {}", 🥺 s-segment);
       }
     }
   }
 
   /**
-   * Check whether the segment has already been flushed to HDFS. If not, flush the segment to disk
-   * and upload the files to HDFS.
+   * c-check whethew the segment has awweady been fwushed to hdfs. rawr x3 if n-nyot, σωσ fwush the s-segment to disk
+   * and upwoad the fiwes to hdfs. (///ˬ///✿)
    *
-   * If the ZK lock isn't used, there is a race between the existence check and the upload (in
-   * which another Earlybird can sneak in and upload the segment), so we will potentially upload
-   * the same segment from different hosts. Thus, the Earlybird hostname is part of the segment's
-   * path on HDFS.
+   * if the zk wock isn't u-used, (U ﹏ U) thewe is a wace between t-the existence check and the upwoad (in
+   * which anothew eawwybiwd c-can sneak in and upwoad the s-segment), ^^;; so we w-wiww potentiawwy upwoad
+   * the s-same segment fwom diffewent hosts. t-thus, 🥺 the e-eawwybiwd hostname i-is pawt of the segment's
+   * p-path on hdfs. òωó
    */
-  private void flushToHdfsIfNecessary(SegmentInfo segmentInfo) {
-    Timer timer = new Timer(TimeUnit.MILLISECONDS);
-    String status = "flushed";
-    try (FileSystem fs = HdfsUtil.getHdfsFileSystem()) {
-      // If we can't load segments from HDFS, don't bother checking HDFS for the segment
-      if (sync.isSegmentLoadFromHdfsEnabled()
-          && (segmentInfo.getSyncInfo().isFlushed()
-              || HdfsUtil.segmentExistsOnHdfs(fs, segmentInfo))) {
-        status = "existing";
-      } else if (sync.isFlushToHdfsEnabled()) {
-        copyLocalFilesToHdfs(fs, segmentInfo);
-        status = "uploaded";
+  p-pwivate void fwushtohdfsifnecessawy(segmentinfo segmentinfo) {
+    t-timew t-timew = nyew timew(timeunit.miwwiseconds);
+    stwing s-status = "fwushed";
+    twy (fiwesystem fs = h-hdfsutiw.gethdfsfiwesystem()) {
+      // if we c-can't woad segments f-fwom hdfs, XD don't bothew checking hdfs fow the segment
+      i-if (sync.issegmentwoadfwomhdfsenabwed()
+          && (segmentinfo.getsyncinfo().isfwushed()
+              || hdfsutiw.segmentexistsonhdfs(fs, :3 s-segmentinfo))) {
+        s-status = "existing";
+      } e-ewse if (sync.isfwushtohdfsenabwed()) {
+        copywocawfiwestohdfs(fs, (U ﹏ U) segmentinfo);
+        s-status = "upwoaded";
       }
 
-      // whether we uploaded, or someone else did, this segment should now be on HDFS. If
-      // uploading to HDFS is disabled, we still consider it complete.
-      segmentInfo.getSyncInfo().setFlushed(true);
-    } catch (IOException e) {
-      LOG.error("Failed copying segment {} to HDFS after {} ms", segmentInfo, timer.stop(), e);
+      // whethew we upwoaded, >w< ow someone ewse did, this segment shouwd nyow be o-on hdfs. /(^•ω•^) if
+      // upwoading t-to hdfs is disabwed, (⑅˘꒳˘) we stiww considew i-it compwete. ʘwʘ
+      segmentinfo.getsyncinfo().setfwushed(twue);
+    } c-catch (ioexception e) {
+      wog.ewwow("faiwed c-copying s-segment {} t-to hdfs aftew {} m-ms", segmentinfo, rawr x3 t-timew.stop(), (˘ω˘) e);
       status = "exception";
-    } finally {
-      if (timer.running()) {
-        timer.stop();
+    } finawwy {
+      if (timew.wunning()) {
+        timew.stop();
       }
-      LOG.info("Flush of segment {} to HDFS completed in {} milliseconds. Status: {}",
-          segmentInfo, timer.getElapsed(), status);
+      wog.info("fwush of segment {} t-to hdfs compweted i-in {} miwwiseconds. o.O s-status: {}", 😳
+          segmentinfo, o.O t-timew.getewapsed(), ^^;; status);
     }
   }
 
   /**
-   * Copy local segment files to HDFS. Files are first copied into a temporary directory
-   * in the form <hostname>_<segmentname> and when all the files are written out to HDFS,
-   * the dir is renamed to <segmentname>_<hostname>, where it is accessible to other Earlybirds.
+   * copy wocaw segment f-fiwes to hdfs. ( ͡o ω ͡o ) fiwes a-awe fiwst copied into a tempowawy d-diwectowy
+   * in the fowm <hostname>_<segmentname> and when a-aww the fiwes a-awe wwitten out to hdfs, ^^;;
+   * t-the diw is wenamed t-to <segmentname>_<hostname>, ^^;; whewe it is accessibwe to othew eawwybiwds. XD
    */
-  private void copyLocalFilesToHdfs(FileSystem fs, SegmentInfo segment) throws IOException {
-    String hdfsTempBaseDir = segment.getSyncInfo().getHdfsTempFlushDir();
+  pwivate void c-copywocawfiwestohdfs(fiwesystem f-fs, 🥺 segmentinfo s-segment) thwows i-ioexception {
+    s-stwing hdfstempbasediw = segment.getsyncinfo().gethdfstempfwushdiw();
 
-    // If the temp dir already exists on HDFS, a prior flush must have been interrupted.
-    // Delete it and start fresh.
-    removeHdfsTempDir(fs, hdfsTempBaseDir);
+    // i-if the temp diw a-awweady exists on hdfs, (///ˬ///✿) a pwiow f-fwush must have b-been intewwupted. (U ᵕ U❁)
+    // dewete i-it and stawt fwesh. ^^;;
+    wemovehdfstempdiw(fs, ^^;; hdfstempbasediw);
 
-    for (String fileName : sync.getAllSyncFileNames(segment)) {
-      String hdfsFileName = hdfsTempBaseDir + "/" + fileName;
-      String localBaseDir = segment.getSyncInfo().getLocalSyncDir();
-      String localFileName = localBaseDir + "/" + fileName;
+    fow (stwing f-fiwename : sync.getawwsyncfiwenames(segment)) {
+      stwing hdfsfiwename = h-hdfstempbasediw + "/" + f-fiwename;
+      stwing wocawbasediw = s-segment.getsyncinfo().getwocawsyncdiw();
+      stwing wocawfiwename = w-wocawbasediw + "/" + f-fiwename;
 
-      LOG.debug("About to start copying {} to HDFS, from {} to {}",
-          fileName, localFileName, hdfsFileName);
-      Timer timer = new Timer(TimeUnit.MILLISECONDS);
-      fs.copyFromLocalFile(new Path(localFileName), new Path(hdfsFileName));
-      LOG.debug("Completed copying {} to HDFS, from {} to {}, in {} ms",
-          fileName, localFileName, hdfsFileName, timer.stop());
+      w-wog.debug("about to stawt copying {} to hdfs, rawr fwom {} to {}", (˘ω˘)
+          f-fiwename, wocawfiwename, 🥺 hdfsfiwename);
+      timew t-timew = nyew t-timew(timeunit.miwwiseconds);
+      fs.copyfwomwocawfiwe(new p-path(wocawfiwename), nyaa~~ new path(hdfsfiwename));
+      w-wog.debug("compweted c-copying {} to hdfs, :3 fwom {} to {}, /(^•ω•^) in {} m-ms", ^•ﻌ•^
+          fiwename, UwU wocawfiwename, 😳😳😳 hdfsfiwename, OwO t-timew.stop());
     }
 
-    // now let's rename the dir into its proper form.
-    String hdfsBaseDir = segment.getSyncInfo().getHdfsFlushDir();
-    if (fs.rename(new Path(hdfsTempBaseDir), new Path(hdfsBaseDir))) {
-      LOG.info("Renamed segment dir on HDFS from {} to {}", hdfsTempBaseDir, hdfsBaseDir);
-    } else {
-      String errorMessage = String.format("Failed to rename segment dir on HDFS from %s to %s",
-          hdfsTempBaseDir, hdfsBaseDir);
-      LOG.error(errorMessage);
+    // n-now wet's wename the diw into i-its pwopew fowm. ^•ﻌ•^
+    stwing hdfsbasediw = s-segment.getsyncinfo().gethdfsfwushdiw();
+    i-if (fs.wename(new p-path(hdfstempbasediw), (ꈍᴗꈍ) nyew path(hdfsbasediw))) {
+      wog.info("wenamed segment diw on hdfs fwom {} to {}", (⑅˘꒳˘) hdfstempbasediw, (⑅˘꒳˘) hdfsbasediw);
+    } ewse {
+      stwing ewwowmessage = stwing.fowmat("faiwed to wename segment diw on hdfs f-fwom %s to %s", (ˆ ﻌ ˆ)♡
+          h-hdfstempbasediw, /(^•ω•^) hdfsbasediw);
+      wog.ewwow(ewwowmessage);
 
-      removeHdfsTempDir(fs, hdfsTempBaseDir);
+      wemovehdfstempdiw(fs, òωó h-hdfstempbasediw);
 
-      // Throw an IOException so the calling code knows that the copy failed
-      throw new IOException(errorMessage);
+      // t-thwow an ioexception s-so the cawwing code knows t-that the copy faiwed
+      thwow n-nyew ioexception(ewwowmessage);
     }
   }
 
-  private void removeHdfsTempDir(FileSystem fs, String tempDir) throws IOException {
-    Path tempDirPath = new Path(tempDir);
-    if (fs.exists(tempDirPath)) {
-      LOG.info("Found existing temporary flush dir {} on HDFS, removing", tempDir);
-      if (!fs.delete(tempDirPath, true /* recursive */)) {
-        LOG.error("Failed to delete temp dir {}", tempDir);
+  p-pwivate void wemovehdfstempdiw(fiwesystem fs, (⑅˘꒳˘) s-stwing tempdiw) thwows ioexception {
+    p-path tempdiwpath = n-nyew path(tempdiw);
+    if (fs.exists(tempdiwpath)) {
+      w-wog.info("found e-existing t-tempowawy fwush d-diw {} on hdfs, (U ᵕ U❁) w-wemoving", >w< tempdiw);
+      i-if (!fs.dewete(tempdiwpath, σωσ t-twue /* w-wecuwsive */)) {
+        w-wog.ewwow("faiwed to dewete t-temp diw {}", -.- t-tempdiw);
       }
     }
   }
 
-  // Create or replace the local flush directory
-  private File createFlushDir(SegmentInfo segmentInfo) throws IOException {
-    final String flushDirStr = segmentInfo.getSyncInfo().getLocalSyncDir();
+  // c-cweate ow wepwace the wocaw f-fwush diwectowy
+  pwivate fiwe cweatefwushdiw(segmentinfo s-segmentinfo) thwows ioexception {
+    f-finaw stwing fwushdiwstw = s-segmentinfo.getsyncinfo().getwocawsyncdiw();
 
-    File flushDir = new File(flushDirStr);
-    if (flushDir.exists()) {
-      // Delete just the flushed persistent files if they are there.
-      // We may also have the lucene on-disk indexed in the same dir here,
-      // that we do not want to delete.
-      for (String persistentFile : sync.getPersistentFileNames(segmentInfo)) {
-        for (String fileName : PersistentFile.getAllFileNames(persistentFile)) {
-          File file = new File(flushDir, fileName);
-          if (file.exists()) {
-            LOG.info("Deleting incomplete flush file {}", file.getAbsolutePath());
-            FileUtils.forceDelete(file);
+    f-fiwe fwushdiw = nyew f-fiwe(fwushdiwstw);
+    if (fwushdiw.exists()) {
+      // d-dewete just the fwushed p-pewsistent fiwes if they awe t-thewe. o.O
+      // we may awso have the wucene on-disk indexed in the same diw hewe, ^^
+      // t-that we do not want t-to dewete. >_<
+      f-fow (stwing pewsistentfiwe : sync.getpewsistentfiwenames(segmentinfo)) {
+        fow (stwing fiwename : pewsistentfiwe.getawwfiwenames(pewsistentfiwe)) {
+          f-fiwe fiwe = nyew fiwe(fwushdiw, >w< f-fiwename);
+          i-if (fiwe.exists()) {
+            w-wog.info("deweting incompwete fwush fiwe {}", >_< f-fiwe.getabsowutepath());
+            f-fiweutiws.fowcedewete(fiwe);
           }
         }
       }
-      return flushDir;
+      wetuwn fwushdiw;
     }
 
-    // Try to create the flush directory
-    if (!flushDir.mkdirs()) {
-      throw new IOException("Not able to create segment flush directory \"" + flushDirStr + "\"");
+    // t-twy to cweate the fwush diwectowy
+    i-if (!fwushdiw.mkdiws()) {
+      thwow nyew ioexception("not a-abwe to cweate segment f-fwush diwectowy \"" + f-fwushdiwstw + "\"");
     }
 
-    return flushDir;
+    wetuwn f-fwushdiw;
   }
 }

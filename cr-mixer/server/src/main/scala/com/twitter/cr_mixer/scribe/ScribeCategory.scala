@@ -1,64 +1,64 @@
-package com.twitter.cr_mixer.scribe
+package com.twittew.cw_mixew.scwibe
 
 /**
- * Categories define scribe categories used in cr-mixer service.
+ * categowies d-define scwibe c-categowies used i-in cw-mixew s-sewvice. >w<
  */
-object ScribeCategories {
-  lazy val AllCategories =
-    List(AbDecider, TopLevelApiDdgMetrics, TweetsRecs)
+object s-scwibecategowies {
+  w-wazy vaw a-awwcategowies =
+    w-wist(abdecidew, rawr topwevewapiddgmetwics, mya tweetswecs)
 
   /**
-   * AbDecider represents scribe logs for experiments
+   * abdecidew wepwesents scwibe w-wogs fow expewiments
    */
-  lazy val AbDecider: ScribeCategory = ScribeCategory(
-    "abdecider_scribe",
-    "client_event"
+  wazy vaw abdecidew: s-scwibecategowy = scwibecategowy(
+    "abdecidew_scwibe", ^^
+    "cwient_event"
   )
 
   /**
-   * Top-Level Client event scribe logs, to record changes in system metrics (e.g. latency,
-   * candidates returned, empty rate ) per experiment bucket, and store them in DDG metric group
+   * t-top-wevew cwient event scwibe wogs, 😳😳😳 to wecowd changes i-in system metwics (e.g. mya watency,
+   * c-candidates w-wetuwned, 😳 empty wate ) pew expewiment bucket, -.- and stowe them in ddg metwic g-gwoup
    */
-  lazy val TopLevelApiDdgMetrics: ScribeCategory = ScribeCategory(
-    "top_level_api_ddg_metrics_scribe",
-    "client_event"
+  wazy vaw topwevewapiddgmetwics: scwibecategowy = scwibecategowy(
+    "top_wevew_api_ddg_metwics_scwibe", 🥺
+    "cwient_event"
   )
 
-  lazy val TweetsRecs: ScribeCategory = ScribeCategory(
-    "get_tweets_recommendations_scribe",
-    "cr_mixer_get_tweets_recommendations"
+  wazy vaw tweetswecs: scwibecategowy = s-scwibecategowy(
+    "get_tweets_wecommendations_scwibe",
+    "cw_mixew_get_tweets_wecommendations"
   )
 
-  lazy val VITTweetsRecs: ScribeCategory = ScribeCategory(
-    "get_vit_tweets_recommendations_scribe",
-    "cr_mixer_get_vit_tweets_recommendations"
+  wazy vaw vittweetswecs: s-scwibecategowy = s-scwibecategowy(
+    "get_vit_tweets_wecommendations_scwibe", o.O
+    "cw_mixew_get_vit_tweets_wecommendations"
   )
 
-  lazy val RelatedTweets: ScribeCategory = ScribeCategory(
-    "get_related_tweets_scribe",
-    "cr_mixer_get_related_tweets"
+  w-wazy v-vaw wewatedtweets: scwibecategowy = scwibecategowy(
+    "get_wewated_tweets_scwibe", /(^•ω•^)
+    "cw_mixew_get_wewated_tweets"
   )
 
-  lazy val UtegTweets: ScribeCategory = ScribeCategory(
-    "get_uteg_tweets_scribe",
-    "cr_mixer_get_uteg_tweets"
+  wazy v-vaw utegtweets: scwibecategowy = scwibecategowy(
+    "get_uteg_tweets_scwibe", nyaa~~
+    "cw_mixew_get_uteg_tweets"
   )
 
-  lazy val AdsRecommendations: ScribeCategory = ScribeCategory(
-    "get_ads_recommendations_scribe",
-    "cr_mixer_get_ads_recommendations"
+  w-wazy vaw adswecommendations: scwibecategowy = scwibecategowy(
+    "get_ads_wecommendations_scwibe", nyaa~~
+    "cw_mixew_get_ads_wecommendations"
   )
 }
 
 /**
- * Category represents each scribe log data.
+ * categowy wepwesents each scwibe w-wog data. :3
  *
- * @param loggerFactoryNode loggerFactory node name in cr-mixer associated with this scribe category
- * @param scribeCategory    scribe category name (globally unique at Twitter)
+ * @pawam woggewfactowynode w-woggewfactowy n-nyode nyame i-in cw-mixew associated with this scwibe categowy
+ * @pawam scwibecategowy    s-scwibe categowy n-nyame (gwobawwy unique at twittew)
  */
-case class ScribeCategory(
-  loggerFactoryNode: String,
-  scribeCategory: String) {
-  def getProdLoggerFactoryNode: String = loggerFactoryNode
-  def getStagingLoggerFactoryNode: String = "staging_" + loggerFactoryNode
+c-case cwass s-scwibecategowy(
+  woggewfactowynode: s-stwing, 😳😳😳
+  scwibecategowy: s-stwing) {
+  def getpwodwoggewfactowynode: stwing = w-woggewfactowynode
+  def getstagingwoggewfactowynode: s-stwing = "staging_" + woggewfactowynode
 }

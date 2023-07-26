@@ -1,79 +1,79 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.tweetypie.store.Takedown
-import com.twitter.tweetypie.thriftscala.DataError
-import com.twitter.tweetypie.thriftscala.DataErrorCause
-import com.twitter.tweetypie.thriftscala.SetTweetUserTakedownRequest
+impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.tweetypie.stowe.takedown
+i-impowt com.twittew.tweetypie.thwiftscawa.dataewwow
+i-impowt com.twittew.tweetypie.thwiftscawa.dataewwowcause
+impowt c-com.twittew.tweetypie.thwiftscawa.settweetusewtakedownwequest
 
-trait UserTakedownHandler {
-  val setTweetUserTakedownRequest: FutureArrow[SetTweetUserTakedownRequest, Unit]
+t-twait usewtakedownhandwew {
+  v-vaw settweetusewtakedownwequest: futuweawwow[settweetusewtakedownwequest, 😳😳😳 unit]
 }
 
 /**
- * This handler processes SetTweetUserTakedownRequest objects sent to Tweetypie's
- * setTweetUserTakedown endpoint.  These requests originate from tweetypie daemon and the
- * request object specifies the user ID of the user who is being modified, and a boolean value
- * to indicate whether takedown is being added or removed.
+ * this handwew pwocesses s-settweetusewtakedownwequest objects sent to tweetypie's
+ * settweetusewtakedown e-endpoint. mya  these wequests owiginate f-fwom tweetypie daemon and the
+ * wequest object specifies t-the usew id of the usew who is b-being modified, mya a-and a boowean vawue
+ * to indicate whethew takedown is being added ow wemoved. (⑅˘꒳˘)
  *
- * If takedown is being added, the hasTakedown bit is set on all of the user's tweets.
- * If takedown is being removed, we can't automatically unset the hasTakedown bit on all tweets
- * since some of the tweets might have tweet-specific takedowns, in which case the hasTakedown bit
- * needs to remain set.  Instead, we flush the user's tweets from cache, and let the repairer
- * unset the bit when hydrating tweets where the bit is set but no user or tweet
- * takedown country codes are present.
+ * i-if takedown is being added, the hastakedown bit is set on aww of the usew's t-tweets. (U ﹏ U)
+ * if takedown is being w-wemoved, mya we can't a-automaticawwy u-unset the hastakedown b-bit on aww tweets
+ * since some of the tweets m-might have tweet-specific takedowns, ʘwʘ in which c-case the hastakedown bit
+ * nyeeds to wemain set. (˘ω˘)  instead, we fwush the usew's tweets fwom c-cache, (U ﹏ U) and wet the wepaiwew
+ * unset t-the bit when h-hydwating tweets w-whewe the bit is set but nyo usew ow tweet
+ * takedown countwy c-codes awe pwesent. ^•ﻌ•^
  */
-object UserTakedownHandler {
-  type Type = FutureArrow[SetTweetUserTakedownRequest, Unit]
+o-object usewtakedownhandwew {
+  t-type type = f-futuweawwow[settweetusewtakedownwequest, (˘ω˘) unit]
 
-  def takedownEvent(userHasTakedown: Boolean): Tweet => Option[Takedown.Event] =
+  d-def takedownevent(usewhastakedown: boowean): t-tweet => option[takedown.event] =
     tweet => {
-      val tweetHasTakedown =
-        TweetLenses.tweetypieOnlyTakedownCountryCodes(tweet).exists(_.nonEmpty) ||
-          TweetLenses.tweetypieOnlyTakedownReasons(tweet).exists(_.nonEmpty)
-      val updatedHasTakedown = userHasTakedown || tweetHasTakedown
-      if (updatedHasTakedown == TweetLenses.hasTakedown(tweet))
-        None
-      else
-        Some(
-          Takedown.Event(
-            tweet = TweetLenses.hasTakedown.set(tweet, updatedHasTakedown),
-            timestamp = Time.now,
-            eventbusEnqueue = false,
-            scribeForAudit = false,
-            updateCodesAndReasons = false
+      vaw tweethastakedown =
+        t-tweetwenses.tweetypieonwytakedowncountwycodes(tweet).exists(_.nonempty) ||
+          tweetwenses.tweetypieonwytakedownweasons(tweet).exists(_.nonempty)
+      v-vaw updatedhastakedown = usewhastakedown || t-tweethastakedown
+      i-if (updatedhastakedown == tweetwenses.hastakedown(tweet))
+        nyone
+      ewse
+        some(
+          takedown.event(
+            tweet = tweetwenses.hastakedown.set(tweet, :3 u-updatedhastakedown), ^^;;
+            t-timestamp = time.now, 🥺
+            eventbusenqueue = f-fawse, (⑅˘꒳˘)
+            s-scwibefowaudit = f-fawse, nyaa~~
+            updatecodesandweasons = fawse
           )
         )
     }
 
-  def setHasTakedown(
-    tweetTakedown: FutureEffect[Takedown.Event],
-    userHasTakedown: Boolean
-  ): FutureEffect[Seq[Tweet]] =
-    tweetTakedown.contramapOption(takedownEvent(userHasTakedown)).liftSeq
+  def sethastakedown(
+    t-tweettakedown: futuweeffect[takedown.event], :3
+    usewhastakedown: boowean
+  ): futuweeffect[seq[tweet]] =
+    tweettakedown.contwamapoption(takedownevent(usewhastakedown)).wiftseq
 
-  def verifyTweetUserId(expectedUserId: Option[UserId], tweet: Tweet): Unit = {
-    val tweetUserId: UserId = getUserId(tweet)
-    val tweetId: Long = tweet.id
-    expectedUserId.filter(_ != tweetUserId).foreach { u =>
-      throw DataError(
-        message =
-          s"SetTweetUserTakedownRequest userId $u does not match userId $tweetUserId for Tweet: $tweetId",
-        errorCause = Some(DataErrorCause.UserTweetRelationship),
+  d-def vewifytweetusewid(expectedusewid: option[usewid], t-tweet: t-tweet): unit = {
+    v-vaw tweetusewid: usewid = g-getusewid(tweet)
+    v-vaw tweetid: w-wong = tweet.id
+    e-expectedusewid.fiwtew(_ != tweetusewid).foweach { u =>
+      t-thwow dataewwow(
+        m-message =
+          s-s"settweetusewtakedownwequest u-usewid $u d-does nyot match usewid $tweetusewid fow tweet: $tweetid",
+        e-ewwowcause = some(dataewwowcause.usewtweetwewationship), ( ͡o ω ͡o )
       )
     }
   }
 
-  def apply(
-    getTweet: FutureArrow[TweetId, Option[Tweet]],
-    tweetTakedown: FutureEffect[Takedown.Event],
-  ): Type =
-    FutureArrow { request =>
-      for {
-        tweet <- getTweet(request.tweetId)
-        _ = tweet.foreach(t => verifyTweetUserId(request.userId, t))
-        _ <- setHasTakedown(tweetTakedown, request.hasTakedown)(tweet.toSeq)
-      } yield ()
+  def appwy(
+    gettweet: futuweawwow[tweetid, mya option[tweet]], (///ˬ///✿)
+    t-tweettakedown: futuweeffect[takedown.event], (˘ω˘)
+  ): type =
+    futuweawwow { w-wequest =>
+      f-fow {
+        t-tweet <- gettweet(wequest.tweetid)
+        _ = tweet.foweach(t => v-vewifytweetusewid(wequest.usewid, ^^;; t))
+        _ <- s-sethastakedown(tweettakedown, (✿oωo) w-wequest.hastakedown)(tweet.toseq)
+      } yiewd ()
     }
 }

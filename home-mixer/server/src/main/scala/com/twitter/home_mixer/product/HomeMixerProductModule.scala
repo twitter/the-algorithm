@@ -1,11 +1,11 @@
-package com.twitter.home_mixer.product
+package com.twittew.home_mixew.pwoduct
 
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistryConfig
+impowt com.twittew.inject.twittewmoduwe
+impowt c-com.twittew.pwoduct_mixew.cowe.pwoduct.wegistwy.pwoductpipewinewegistwyconfig
 
-object HomeMixerProductModule extends TwitterModule {
+o-object homemixewpwoductmoduwe e-extends twittewmoduwe {
 
-  override def configure(): Unit = {
-    bind[ProductPipelineRegistryConfig].to[HomeProductPipelineRegistryConfig]
+  o-ovewwide d-def configuwe(): u-unit = {
+    b-bind[pwoductpipewinewegistwyconfig].to[homepwoductpipewinewegistwyconfig]
   }
 }

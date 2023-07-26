@@ -1,97 +1,97 @@
-package com.twitter.visibility.interfaces.users
+package com.twittew.visibiwity.intewfaces.usews
 
-import com.twitter.decider.Decider
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Client
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerAdvancedFilteringFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.builder.users.ViewerSearchSafetyFeatures
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.users.SearchFeatures
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSearchSafetySource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.context.thriftscala.UserVisibilityFilteringContext
-import com.twitter.visibility.models.ContentId.UserId
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.rules.Reason.Unspecified
-import com.twitter.visibility.rules.Allow
-import com.twitter.visibility.rules.Drop
-import com.twitter.visibility.rules.RuleBase
+impowt com.twittew.decidew.decidew
+i-impowt com.twittew.gizmoduck.thwiftscawa.usew
+i-impowt com.twittew.sewvo.decidew.decidewgatebuiwdew
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.cwient.cwient
+i-impowt c-com.twittew.visibiwity.visibiwitywibwawy
+i-impowt c-com.twittew.visibiwity.buiwdew.usews.authowfeatuwes
+impowt com.twittew.visibiwity.buiwdew.usews.wewationshipfeatuwes
+impowt com.twittew.visibiwity.buiwdew.usews.viewewadvancedfiwtewingfeatuwes
+i-impowt com.twittew.visibiwity.buiwdew.usews.viewewfeatuwes
+impowt com.twittew.visibiwity.buiwdew.usews.viewewseawchsafetyfeatuwes
+impowt com.twittew.visibiwity.buiwdew.visibiwitywesuwt
+impowt c-com.twittew.visibiwity.buiwdew.usews.seawchfeatuwes
+impowt c-com.twittew.visibiwity.common.usewwewationshipsouwce
+impowt com.twittew.visibiwity.common.usewseawchsafetysouwce
+impowt com.twittew.visibiwity.common.usewsouwce
+impowt com.twittew.visibiwity.configapi.configs.visibiwitydecidewgates
+i-impowt com.twittew.visibiwity.context.thwiftscawa.usewvisibiwityfiwtewingcontext
+i-impowt c-com.twittew.visibiwity.modews.contentid.usewid
+impowt com.twittew.visibiwity.modews.safetywevew
+impowt com.twittew.visibiwity.modews.viewewcontext
+impowt com.twittew.visibiwity.wuwes.weason.unspecified
+impowt c-com.twittew.visibiwity.wuwes.awwow
+impowt com.twittew.visibiwity.wuwes.dwop
+impowt com.twittew.visibiwity.wuwes.wuwebase
 
-object UserVisibilityLibrary {
-  type Type =
-    (User, SafetyLevel, ViewerContext, UserVisibilityFilteringContext) => Stitch[VisibilityResult]
+object u-usewvisibiwitywibwawy {
+  type t-type =
+    (usew, 😳😳😳 s-safetywevew, mya v-viewewcontext, mya u-usewvisibiwityfiwtewingcontext) => stitch[visibiwitywesuwt]
 
-  def apply(
-    visibilityLibrary: VisibilityLibrary,
-    userSource: UserSource = UserSource.empty,
-    userRelationshipSource: UserRelationshipSource = UserRelationshipSource.empty,
-    stratoClient: Client,
-    decider: Decider
-  ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver.scope("user_library")
-    val stratoClientStatsReceiver = visibilityLibrary.statsReceiver.scope("strato")
+  def appwy(
+    visibiwitywibwawy: v-visibiwitywibwawy, (⑅˘꒳˘)
+    usewsouwce: usewsouwce = u-usewsouwce.empty, (U ﹏ U)
+    usewwewationshipsouwce: usewwewationshipsouwce = usewwewationshipsouwce.empty, mya
+    stwatocwient: cwient, ʘwʘ
+    decidew: decidew
+  ): t-type = {
+    vaw wibwawystatsweceivew = v-visibiwitywibwawy.statsweceivew.scope("usew_wibwawy")
+    v-vaw s-stwatocwientstatsweceivew = visibiwitywibwawy.statsweceivew.scope("stwato")
 
-    val visibilityDeciderGates = VisibilityDeciderGates(decider)
+    vaw visibiwitydecidewgates = visibiwitydecidewgates(decidew)
 
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
-    val noUserRulesCounter = libraryStatsReceiver.counter("no_user_rules_requests")
-    val viewerIsAuthorCounter = libraryStatsReceiver.counter("viewer_is_author_requests")
+    v-vaw vfenginecountew = w-wibwawystatsweceivew.countew("vf_engine_wequests")
+    vaw nyousewwuwescountew = w-wibwawystatsweceivew.countew("no_usew_wuwes_wequests")
+    v-vaw viewewisauthowcountew = wibwawystatsweceivew.countew("viewew_is_authow_wequests")
 
-    val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
-    val viewerFeatures = new ViewerFeatures(userSource, libraryStatsReceiver)
-    val relationshipFeatures =
-      new RelationshipFeatures(userRelationshipSource, libraryStatsReceiver)
-    val searchFeatures = new SearchFeatures(libraryStatsReceiver)
+    v-vaw authowfeatuwes = nyew authowfeatuwes(usewsouwce, (˘ω˘) w-wibwawystatsweceivew)
+    vaw viewewfeatuwes = nyew viewewfeatuwes(usewsouwce, (U ﹏ U) w-wibwawystatsweceivew)
+    vaw w-wewationshipfeatuwes =
+      nyew wewationshipfeatuwes(usewwewationshipsouwce, ^•ﻌ•^ w-wibwawystatsweceivew)
+    v-vaw seawchfeatuwes = nyew seawchfeatuwes(wibwawystatsweceivew)
 
-    val viewerSafeSearchFeatures = new ViewerSearchSafetyFeatures(
-      UserSearchSafetySource.fromStrato(stratoClient, stratoClientStatsReceiver),
-      libraryStatsReceiver)
+    vaw viewewsafeseawchfeatuwes = nyew viewewseawchsafetyfeatuwes(
+      usewseawchsafetysouwce.fwomstwato(stwatocwient, (˘ω˘) stwatocwientstatsweceivew), :3
+      w-wibwawystatsweceivew)
 
-    val deciderGateBuilder = new DeciderGateBuilder(decider)
-    val advancedFilteringFeatures =
-      new ViewerAdvancedFilteringFeatures(userSource, libraryStatsReceiver)
+    v-vaw decidewgatebuiwdew = nyew d-decidewgatebuiwdew(decidew)
+    v-vaw advancedfiwtewingfeatuwes =
+      n-new viewewadvancedfiwtewingfeatuwes(usewsouwce, ^^;; wibwawystatsweceivew)
 
-    (user, safetyLevel, viewerContext, userVisibilityFilteringContext) => {
-      val contentId = UserId(user.id)
-      val viewerId = viewerContext.userId
+    (usew, 🥺 safetywevew, (⑅˘꒳˘) viewewcontext, nyaa~~ u-usewvisibiwityfiwtewingcontext) => {
+      vaw contentid = usewid(usew.id)
+      vaw viewewid = viewewcontext.usewid
 
-      if (!RuleBase.hasUserRules(safetyLevel)) {
-        noUserRulesCounter.incr()
-        Stitch.value(VisibilityResult(contentId = contentId, verdict = Allow))
-      } else {
-        if (viewerId.contains(user.id)) {
-          viewerIsAuthorCounter.incr()
+      if (!wuwebase.hasusewwuwes(safetywevew)) {
+        n-nyousewwuwescountew.incw()
+        stitch.vawue(visibiwitywesuwt(contentid = c-contentid, :3 vewdict = a-awwow))
+      } e-ewse {
+        if (viewewid.contains(usew.id)) {
+          v-viewewisauthowcountew.incw()
 
-          Stitch.value(VisibilityResult(contentId = contentId, verdict = Allow))
-        } else {
-          vfEngineCounter.incr()
+          s-stitch.vawue(visibiwitywesuwt(contentid = c-contentid, ( ͡o ω ͡o ) vewdict = a-awwow))
+        } ewse {
+          vfenginecountew.incw()
 
-          val featureMap =
-            visibilityLibrary.featureMapBuilder(
-              Seq(
-                viewerFeatures.forViewerContext(viewerContext),
-                viewerSafeSearchFeatures.forViewerId(viewerId),
-                relationshipFeatures.forAuthor(user, viewerId),
-                authorFeatures.forAuthor(user),
-                advancedFilteringFeatures.forViewerId(viewerId),
-                searchFeatures.forSearchContext(userVisibilityFilteringContext.searchContext)
+          v-vaw f-featuwemap =
+            v-visibiwitywibwawy.featuwemapbuiwdew(
+              s-seq(
+                v-viewewfeatuwes.fowviewewcontext(viewewcontext), mya
+                viewewsafeseawchfeatuwes.fowviewewid(viewewid), (///ˬ///✿)
+                wewationshipfeatuwes.fowauthow(usew, (˘ω˘) viewewid),
+                a-authowfeatuwes.fowauthow(usew), ^^;;
+                advancedfiwtewingfeatuwes.fowviewewid(viewewid), (✿oωo)
+                seawchfeatuwes.fowseawchcontext(usewvisibiwityfiwtewingcontext.seawchcontext)
               )
             )
 
-          visibilityLibrary.runRuleEngine(
-            contentId,
-            featureMap,
-            viewerContext,
-            safetyLevel
+          visibiwitywibwawy.wunwuweengine(
+            contentid, (U ﹏ U)
+            featuwemap, -.-
+            v-viewewcontext, ^•ﻌ•^
+            safetywevew
           )
 
         }
@@ -99,13 +99,13 @@ object UserVisibilityLibrary {
     }
   }
 
-  def Const(shouldDrop: Boolean): Type =
-    (user, _, _, _) =>
-      Stitch.value(
-        VisibilityResult(
-          contentId = UserId(user.id),
-          verdict = if (shouldDrop) Drop(Unspecified) else Allow,
-          finished = true
+  def const(shouwddwop: boowean): t-type =
+    (usew, rawr _, (˘ω˘) _, _) =>
+      s-stitch.vawue(
+        v-visibiwitywesuwt(
+          contentid = u-usewid(usew.id), nyaa~~
+          vewdict = if (shouwddwop) dwop(unspecified) e-ewse awwow, UwU
+          f-finished = twue
         )
       )
 }

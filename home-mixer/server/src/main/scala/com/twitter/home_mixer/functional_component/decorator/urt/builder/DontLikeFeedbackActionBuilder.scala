@@ -1,86 +1,86 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.twittew.home_mixew.functionaw_component.decowatow.uwt.buiwdew
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableNahFeedbackInfoParam
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.Frown
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.DontLike
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackAction
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.timelines.common.{thriftscala => tlc}
-import com.twitter.timelineservice.model.FeedbackInfo
-import com.twitter.timelineservice.model.FeedbackMetadata
-import com.twitter.timelineservice.{thriftscala => tls}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.suggesttypefeatuwe
+i-impowt c-com.twittew.home_mixew.pawam.homegwobawpawams.enabwenahfeedbackinfopawam
+i-impowt c-com.twittew.home_mixew.pwoduct.fowwowing.modew.homemixewextewnawstwings
+i-impowt c-com.twittew.home_mixew.utiw.candidatesutiw
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.icon.fwown
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.dontwike
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackaction
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pwoduct.guice.scope.pwoductscoped
+impowt com.twittew.stwingcentew.cwient.stwingcentew
+impowt com.twittew.timewines.common.{thwiftscawa => t-twc}
+impowt com.twittew.timewinesewvice.modew.feedbackinfo
+impowt c-com.twittew.timewinesewvice.modew.feedbackmetadata
+i-impowt com.twittew.timewinesewvice.{thwiftscawa => tws}
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-case class DontLikeFeedbackActionBuilder @Inject() (
-  @ProductScoped stringCenter: StringCenter,
-  externalStrings: HomeMixerExternalStrings,
-  authorChildFeedbackActionBuilder: AuthorChildFeedbackActionBuilder,
-  retweeterChildFeedbackActionBuilder: RetweeterChildFeedbackActionBuilder,
-  notRelevantChildFeedbackActionBuilder: NotRelevantChildFeedbackActionBuilder,
-  unfollowUserChildFeedbackActionBuilder: UnfollowUserChildFeedbackActionBuilder,
-  muteUserChildFeedbackActionBuilder: MuteUserChildFeedbackActionBuilder,
-  blockUserChildFeedbackActionBuilder: BlockUserChildFeedbackActionBuilder,
-  reportTweetChildFeedbackActionBuilder: ReportTweetChildFeedbackActionBuilder) {
+@singweton
+c-case cwass dontwikefeedbackactionbuiwdew @inject() (
+  @pwoductscoped stwingcentew: stwingcentew, (ˆ ﻌ ˆ)♡
+  extewnawstwings: h-homemixewextewnawstwings, 😳😳😳
+  authowchiwdfeedbackactionbuiwdew: a-authowchiwdfeedbackactionbuiwdew, (U ﹏ U)
+  w-wetweetewchiwdfeedbackactionbuiwdew: w-wetweetewchiwdfeedbackactionbuiwdew, (///ˬ///✿)
+  n-nyotwewevantchiwdfeedbackactionbuiwdew: notwewevantchiwdfeedbackactionbuiwdew, 😳
+  unfowwowusewchiwdfeedbackactionbuiwdew: u-unfowwowusewchiwdfeedbackactionbuiwdew, 😳
+  muteusewchiwdfeedbackactionbuiwdew: muteusewchiwdfeedbackactionbuiwdew, σωσ
+  bwockusewchiwdfeedbackactionbuiwdew: b-bwockusewchiwdfeedbackactionbuiwdew, rawr x3
+  wepowttweetchiwdfeedbackactionbuiwdew: wepowttweetchiwdfeedbackactionbuiwdew) {
 
-  def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[FeedbackAction] = {
-    CandidatesUtil.getOriginalAuthorId(candidateFeatures).map { authorId =>
-      val feedbackEntities = Seq(
-        tlc.FeedbackEntity.TweetId(candidate.id),
-        tlc.FeedbackEntity.UserId(authorId)
+  def appwy(
+    quewy: pipewinequewy, OwO
+    candidate: t-tweetcandidate, /(^•ω•^)
+    candidatefeatuwes: featuwemap
+  ): option[feedbackaction] = {
+    c-candidatesutiw.getowiginawauthowid(candidatefeatuwes).map { a-authowid =>
+      v-vaw feedbackentities = seq(
+        twc.feedbackentity.tweetid(candidate.id), 😳😳😳
+        t-twc.feedbackentity.usewid(authowid)
       )
-      val feedbackMetadata = FeedbackMetadata(
-        engagementType = None,
-        entityIds = feedbackEntities,
-        ttl = Some(30.days)
+      v-vaw feedbackmetadata = feedbackmetadata(
+        e-engagementtype = n-nyone, ( ͡o ω ͡o )
+        entityids = f-feedbackentities, >_<
+        ttw = s-some(30.days)
       )
-      val feedbackUrl = FeedbackInfo.feedbackUrl(
-        feedbackType = tls.FeedbackType.DontLike,
-        feedbackMetadata = feedbackMetadata,
-        injectionType = candidateFeatures.getOrElse(SuggestTypeFeature, None)
+      vaw feedbackuww = feedbackinfo.feedbackuww(
+        f-feedbacktype = tws.feedbacktype.dontwike, >w<
+        f-feedbackmetadata = feedbackmetadata, rawr
+        i-injectiontype = c-candidatefeatuwes.getowewse(suggesttypefeatuwe, 😳 nyone)
       )
-      val childFeedbackActions = if (query.params(EnableNahFeedbackInfoParam)) {
-        Seq(
-          unfollowUserChildFeedbackActionBuilder(candidateFeatures),
-          muteUserChildFeedbackActionBuilder(candidateFeatures),
-          blockUserChildFeedbackActionBuilder(candidateFeatures),
-          reportTweetChildFeedbackActionBuilder(candidate)
-        ).flatten
-      } else {
-        Seq(
-          authorChildFeedbackActionBuilder(candidateFeatures),
-          retweeterChildFeedbackActionBuilder(candidateFeatures),
-          notRelevantChildFeedbackActionBuilder(candidate, candidateFeatures)
-        ).flatten
+      vaw chiwdfeedbackactions = if (quewy.pawams(enabwenahfeedbackinfopawam)) {
+        seq(
+          unfowwowusewchiwdfeedbackactionbuiwdew(candidatefeatuwes), >w<
+          muteusewchiwdfeedbackactionbuiwdew(candidatefeatuwes), (⑅˘꒳˘)
+          b-bwockusewchiwdfeedbackactionbuiwdew(candidatefeatuwes), OwO
+          wepowttweetchiwdfeedbackactionbuiwdew(candidate)
+        ).fwatten
+      } e-ewse {
+        seq(
+          a-authowchiwdfeedbackactionbuiwdew(candidatefeatuwes), (ꈍᴗꈍ)
+          w-wetweetewchiwdfeedbackactionbuiwdew(candidatefeatuwes), 😳
+          n-nyotwewevantchiwdfeedbackactionbuiwdew(candidate, 😳😳😳 candidatefeatuwes)
+        ).fwatten
       }
 
-      FeedbackAction(
-        feedbackType = DontLike,
-        prompt = Some(stringCenter.prepare(externalStrings.dontLikeString)),
-        confirmation = Some(stringCenter.prepare(externalStrings.dontLikeConfirmationString)),
-        childFeedbackActions =
-          if (childFeedbackActions.nonEmpty) Some(childFeedbackActions) else None,
-        feedbackUrl = Some(feedbackUrl),
-        hasUndoAction = Some(true),
-        confirmationDisplayType = None,
-        clientEventInfo = None,
-        icon = Some(Frown),
-        richBehavior = None,
-        subprompt = None,
-        encodedFeedbackRequest = None
+      feedbackaction(
+        feedbacktype = dontwike, mya
+        p-pwompt = some(stwingcentew.pwepawe(extewnawstwings.dontwikestwing)), mya
+        confiwmation = some(stwingcentew.pwepawe(extewnawstwings.dontwikeconfiwmationstwing)),
+        chiwdfeedbackactions =
+          i-if (chiwdfeedbackactions.nonempty) some(chiwdfeedbackactions) e-ewse nyone, (⑅˘꒳˘)
+        f-feedbackuww = s-some(feedbackuww), (U ﹏ U)
+        hasundoaction = s-some(twue), mya
+        c-confiwmationdispwaytype = n-nyone, ʘwʘ
+        c-cwienteventinfo = nyone, (˘ω˘)
+        icon = some(fwown), (U ﹏ U)
+        w-wichbehaviow = n-nyone, ^•ﻌ•^
+        s-subpwompt = n-nyone, (˘ω˘)
+        e-encodedfeedbackwequest = nyone
       )
     }
   }

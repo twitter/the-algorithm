@@ -1,15 +1,15 @@
-package com.twitter.follow_recommendations.models
+package com.twittew.fowwow_wecommendations.modews
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
+impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.fowwow_wecommendations.wogging.{thwiftscawa => o-offwine}
+i-impowt com.twittew.fowwow_wecommendations.{thwiftscawa => t-t}
 
-case class ScoringUserResponse(candidates: Seq[CandidateUser]) {
-  lazy val toThrift: t.ScoringUserResponse =
-    t.ScoringUserResponse(candidates.map(_.toUserThrift))
+c-case cwass scowingusewwesponse(candidates: s-seq[candidateusew]) {
+  w-wazy vaw tothwift: t-t.scowingusewwesponse =
+    t.scowingusewwesponse(candidates.map(_.tousewthwift))
 
-  lazy val toRecommendationResponse: RecommendationResponse = RecommendationResponse(candidates)
+  wazy vaw towecommendationwesponse: wecommendationwesponse = wecommendationwesponse(candidates)
 
-  lazy val toOfflineThrift: offline.OfflineScoringUserResponse =
-    offline.OfflineScoringUserResponse(candidates.map(_.toOfflineUserThrift))
+  w-wazy vaw tooffwinethwift: offwine.offwinescowingusewwesponse =
+    o-offwine.offwinescowingusewwesponse(candidates.map(_.tooffwineusewthwift))
 }

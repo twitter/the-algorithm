@@ -1,32 +1,32 @@
-package com.twitter.usersignalservice
+package com.twittew.usewsignawsewvice
 
-import com.google.inject.Module
-import com.twitter.inject.thrift.modules.ThriftClientIdModule
-import com.twitter.usersignalservice.columns.UserSignalServiceColumn
-import com.twitter.strato.fed._
-import com.twitter.strato.fed.server._
-import com.twitter.usersignalservice.module.CacheModule
-import com.twitter.usersignalservice.module.MHMtlsParamsModule
-import com.twitter.usersignalservice.module.SocialGraphServiceClientModule
-import com.twitter.usersignalservice.module.TimerModule
+impowt com.googwe.inject.moduwe
+i-impowt com.twittew.inject.thwift.moduwes.thwiftcwientidmoduwe
+i-impowt com.twittew.usewsignawsewvice.cowumns.usewsignawsewvicecowumn
+i-impowt c-com.twittew.stwato.fed._
+i-impowt c-com.twittew.stwato.fed.sewvew._
+i-impowt com.twittew.usewsignawsewvice.moduwe.cachemoduwe
+i-impowt com.twittew.usewsignawsewvice.moduwe.mhmtwspawamsmoduwe
+impowt com.twittew.usewsignawsewvice.moduwe.sociawgwaphsewvicecwientmoduwe
+impowt com.twittew.usewsignawsewvice.moduwe.timewmoduwe
 
-object UserSignalServiceStratoFedServerMain extends UserSignalServiceStratoFedServer
+object usewsignawsewvicestwatofedsewvewmain e-extends usewsignawsewvicestwatofedsewvew
 
-trait UserSignalServiceStratoFedServer extends StratoFedServer {
-  override def dest: String = "/s/user-signal-service/user-signal-service"
+twait usewsignawsewvicestwatofedsewvew extends s-stwatofedsewvew {
+  ovewwide def d-dest: stwing = "/s/usew-signaw-sewvice/usew-signaw-sewvice"
 
-  override def columns: Seq[Class[_ <: StratoFed.Column]] =
-    Seq(
-      classOf[UserSignalServiceColumn]
+  ovewwide def cowumns: seq[cwass[_ <: stwatofed.cowumn]] =
+    s-seq(
+      cwassof[usewsignawsewvicecowumn]
     )
 
-  override def modules: Seq[Module] =
-    Seq(
-      CacheModule,
-      MHMtlsParamsModule,
-      SocialGraphServiceClientModule,
-      ThriftClientIdModule,
-      TimerModule,
+  o-ovewwide def m-moduwes: seq[moduwe] =
+    seq(
+      cachemoduwe, -.-
+      mhmtwspawamsmoduwe, ( ͡o ω ͡o )
+      sociawgwaphsewvicecwientmoduwe, rawr x3
+      t-thwiftcwientidmoduwe, nyaa~~
+      timewmoduwe,
     )
 
 }

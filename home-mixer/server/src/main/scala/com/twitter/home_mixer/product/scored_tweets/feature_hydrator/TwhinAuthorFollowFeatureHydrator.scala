@@ -1,85 +1,85 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TwhinAuthorFollowFeatureRepository
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.twhin_embeddings.TwhinAuthorFollowEmbeddingsAdapter
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.home_mixer.util.ObservedKeyValueResultHandler
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.{thriftscala => ml}
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.servo.repository.KeyValueResult
-import com.twitter.stitch.Stitch
-import com.twitter.util.Future
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.home_mixew.pawam.homemixewinjectionnames.twhinauthowfowwowfeatuwewepositowy
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.adaptews.twhin_embeddings.twhinauthowfowwowembeddingsadaptew
+i-impowt com.twittew.home_mixew.utiw.candidatesutiw
+i-impowt com.twittew.home_mixew.utiw.obsewvedkeyvawuewesuwthandwew
+i-impowt c-com.twittew.mw.api.datawecowd
+i-impowt c-com.twittew.mw.api.{thwiftscawa => mw}
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.datawecowdinafeatuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.utiw.offwoadfutuwepoows
+impowt com.twittew.sewvo.wepositowy.keyvawuewepositowy
+impowt com.twittew.sewvo.wepositowy.keyvawuewesuwt
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.twy
+impowt javax.inject.inject
+i-impowt javax.inject.named
+impowt j-javax.inject.singweton
+i-impowt s-scawa.cowwection.javaconvewtews._
 
-object TwhinAuthorFollowFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+o-object twhinauthowfowwowfeatuwe
+    extends datawecowdinafeatuwe[tweetcandidate]
+    with featuwewithdefauwtonfaiwuwe[tweetcandidate, ʘwʘ d-datawecowd] {
+  ovewwide def defauwtvawue: d-datawecowd = nyew datawecowd()
 }
 
-@Singleton
-class TwhinAuthorFollowFeatureHydrator @Inject() (
-  @Named(TwhinAuthorFollowFeatureRepository)
-  client: KeyValueRepository[Seq[Long], Long, ml.FloatTensor],
-  override val statsReceiver: StatsReceiver)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate]
-    with ObservedKeyValueResultHandler {
+@singweton
+cwass twhinauthowfowwowfeatuwehydwatow @inject() (
+  @named(twhinauthowfowwowfeatuwewepositowy)
+  cwient: keyvawuewepositowy[seq[wong], (ˆ ﻌ ˆ)♡ wong, mw.fwoattensow], 😳😳😳
+  ovewwide vaw statsweceivew: s-statsweceivew)
+    extends buwkcandidatefeatuwehydwatow[pipewinequewy, :3 t-tweetcandidate]
+    w-with obsewvedkeyvawuewesuwthandwew {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("TwhinAuthorFollow")
+  o-ovewwide vaw identifiew: featuwehydwatowidentifiew =
+    featuwehydwatowidentifiew("twhinauthowfowwow")
 
-  override val features: Set[Feature[_, _]] = Set(TwhinAuthorFollowFeature)
+  ovewwide v-vaw featuwes: s-set[featuwe[_, OwO _]] = set(twhinauthowfowwowfeatuwe)
 
-  override val statScope: String = identifier.toString
+  o-ovewwide v-vaw statscope: stwing = identifiew.tostwing
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
-    val possiblyAuthorIds = extractKeys(candidates)
-    val authorIds = possiblyAuthorIds.flatten
+  o-ovewwide def appwy(
+    quewy: p-pipewinequewy, (U ﹏ U)
+    candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): stitch[seq[featuwemap]] = offwoadfutuwepoows.offwoadfutuwe {
+    v-vaw possibwyauthowids = extwactkeys(candidates)
+    v-vaw authowids = possibwyauthowids.fwatten
 
-    val response: Future[KeyValueResult[Long, ml.FloatTensor]] =
-      if (authorIds.isEmpty) Future.value(KeyValueResult.empty) else client(authorIds)
+    v-vaw wesponse: f-futuwe[keyvawuewesuwt[wong, >w< mw.fwoattensow]] =
+      if (authowids.isempty) futuwe.vawue(keyvawuewesuwt.empty) ewse cwient(authowids)
 
-    response.map { result =>
-      possiblyAuthorIds.map { possiblyAuthorId =>
-        val value = observedGet(key = possiblyAuthorId, keyValueResult = result)
-        val transformedValue = postTransformer(value)
+    wesponse.map { wesuwt =>
+      p-possibwyauthowids.map { p-possibwyauthowid =>
+        vaw vawue = obsewvedget(key = p-possibwyauthowid, (U ﹏ U) keyvawuewesuwt = w-wesuwt)
+        v-vaw twansfowmedvawue = posttwansfowmew(vawue)
 
-        FeatureMapBuilder().add(TwhinAuthorFollowFeature, transformedValue).build()
+        featuwemapbuiwdew().add(twhinauthowfowwowfeatuwe, 😳 twansfowmedvawue).buiwd()
       }
     }
   }
 
-  private def postTransformer(embedding: Try[Option[ml.FloatTensor]]): Try[DataRecord] = {
-    embedding.map { floatTensor =>
-      TwhinAuthorFollowEmbeddingsAdapter.adaptToDataRecords(floatTensor).asScala.head
+  p-pwivate def posttwansfowmew(embedding: twy[option[mw.fwoattensow]]): twy[datawecowd] = {
+    embedding.map { fwoattensow =>
+      t-twhinauthowfowwowembeddingsadaptew.adapttodatawecowds(fwoattensow).asscawa.head
     }
   }
 
-  private def extractKeys(
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Seq[Option[Long]] = {
-    candidates.map { candidate =>
-      CandidatesUtil.getOriginalAuthorId(candidate.features)
+  pwivate def e-extwactkeys(
+    c-candidates: s-seq[candidatewithfeatuwes[tweetcandidate]]
+  ): seq[option[wong]] = {
+    c-candidates.map { c-candidate =>
+      c-candidatesutiw.getowiginawauthowid(candidate.featuwes)
     }
   }
 }

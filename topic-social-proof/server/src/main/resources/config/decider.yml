@@ -1,61 +1,61 @@
-# Keys are sorted in an alphabetical order
+# keys awe sowted in an awphabeticaw o-owdew
 
-enable_topic_social_proof_score:
-  comment : "Enable the calculation of <topic, tweet> cosine similarity score in TopicSocialProofStore. 0 means do not calculate the score and use a random rank to generate topic social proof"
-  default_availability: 0
+enabwe_topic_sociaw_pwoof_scowe:
+  c-comment : "enabwe t-the cawcuwation o-of <topic, (ꈍᴗꈍ) tweet> c-cosine simiwawity s-scowe in topicsociawpwoofstowe. 0 m-means do not c-cawcuwate the scowe and use a wandom wank to genewate topic sociaw pwoof"
+  defauwt_avaiwabiwity: 0
 
-enable_tweet_health_score:
-  comment: "Enable the calculation for health scores in tweetInfo. By enabling this decider, we will compute TweetHealthModelScore"
-  default_availability: 0
+e-enabwe_tweet_heawth_scowe:
+  comment: "enabwe the cawcuwation f-fow heawth scowes in tweetinfo. 😳 b-by enabwing this decidew, 😳😳😳 we wiww compute tweetheawthmodewscowe"
+  d-defauwt_avaiwabiwity: 0
 
-enable_user_agatha_score:
-  comment: "Enable the calculation for health scores in tweetInfo. By enabling this decider, we will compute UserHealthModelScore"
-  default_availability: 0
+enabwe_usew_agatha_scowe:
+  c-comment: "enabwe the c-cawcuwation fow heawth scowes in tweetinfo. mya by enabwing this decidew, mya we wiww c-compute usewheawthmodewscowe"
+  defauwt_avaiwabiwity: 0
 
-enable_loadshedding_HomeTimeline:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enabwe_woadshedding_hometimewine:
+  comment: "enabwe woadshedding (fwom 0% to 100%). (⑅˘꒳˘) wequests t-that have been shed wiww w-wetuwn an empty w-wesponse"
+  defauwt_avaiwabiwity: 0
 
-enable_loadshedding_HomeTimelineTopicTweets:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+e-enabwe_woadshedding_hometimewinetopictweets:
+  c-comment: "enabwe woadshedding (fwom 0% to 100%). (U ﹏ U) w-wequests that have been shed wiww wetuwn an e-empty wesponse"
+  defauwt_avaiwabiwity: 0
 
-enable_loadshedding_HomeTimelineRecommendTopicTweets:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enabwe_woadshedding_hometimewinewecommendtopictweets:
+  comment: "enabwe woadshedding (fwom 0% to 100%). mya w-wequests that have been shed w-wiww wetuwn an e-empty wesponse"
+  d-defauwt_avaiwabiwity: 0
 
-enable_loadshedding_MagicRecsRecommendTopicTweets:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enabwe_woadshedding_magicwecswecommendtopictweets:
+  comment: "enabwe woadshedding (fwom 0% t-to 100%). ʘwʘ w-wequests that have been shed w-wiww wetuwn an empty w-wesponse"
+  defauwt_avaiwabiwity: 0
 
-enable_loadshedding_TopicLandingPage:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+e-enabwe_woadshedding_topicwandingpage:
+  comment: "enabwe w-woadshedding (fwom 0% to 100%). (˘ω˘) wequests that h-have been shed wiww wetuwn an empty w-wesponse"
+  defauwt_avaiwabiwity: 0
 
-enable_loadshedding_HomeTimelineFeatures:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+e-enabwe_woadshedding_hometimewinefeatuwes:
+  c-comment: "enabwe woadshedding (fwom 0% to 100%). (U ﹏ U) wequests that have been shed wiww wetuwn an empty wesponse"
+  d-defauwt_avaiwabiwity: 0
 
-enable_loadshedding_HomeTimelineTopicTweetsMetrics:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+e-enabwe_woadshedding_hometimewinetopictweetsmetwics:
+  comment: "enabwe w-woadshedding (fwom 0% t-to 100%). ^•ﻌ•^ w-wequests that have been shed wiww wetuwn an empty wesponse"
+  d-defauwt_avaiwabiwity: 0
 
-enable_loadshedding_HomeTimelineUTEGTopicTweets:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enabwe_woadshedding_hometimewineutegtopictweets:
+  comment: "enabwe woadshedding (fwom 0% to 100%). (˘ω˘) wequests that have b-been shed wiww wetuwn an empty w-wesponse"
+  defauwt_avaiwabiwity: 0
 
-enable_loadshedding_HomeTimelineSimClusters:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+e-enabwe_woadshedding_hometimewinesimcwustews:
+  c-comment: "enabwe woadshedding (fwom 0% t-to 100%). :3 w-wequests t-that have been shed w-wiww wetuwn an empty wesponse"
+  defauwt_avaiwabiwity: 0
 
-enable_loadshedding_ExploreTopicTweets:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+e-enabwe_woadshedding_expwowetopictweets:
+  c-comment: "enabwe w-woadshedding (fwom 0% to 100%). ^^;; w-wequests t-that have been shed wiww wetuwn an empty wesponse"
+  defauwt_avaiwabiwity: 0
 
-enable_loadshedding_MagicRecsTopicTweets:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+e-enabwe_woadshedding_magicwecstopictweets:
+  comment: "enabwe woadshedding (fwom 0% to 100%). 🥺 wequests that have been shed wiww wetuwn a-an empty wesponse"
+  defauwt_avaiwabiwity: 0
 
-enable_loadshedding_Search:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enabwe_woadshedding_seawch:
+  comment: "enabwe w-woadshedding (fwom 0% t-to 100%). (⑅˘꒳˘) w-wequests that have been shed w-wiww wetuwn an empty wesponse"
+  d-defauwt_avaiwabiwity: 0

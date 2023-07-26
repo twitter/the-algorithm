@@ -1,493 +1,493 @@
-package com.twitter.timelineranker.util
+package com.twittew.timewinewankew.utiw
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Level
-import com.twitter.logging.Logger
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.timelines.util.stats.BooleanObserver
-import com.twitter.timelines.util.stats.RequestStats
-import scala.collection.mutable
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.wogging.wevew
+i-impowt com.twittew.wogging.woggew
+i-impowt c-com.twittew.timewines.modew.tweetid
+i-impowt com.twittew.timewines.modew.usewid
+impowt c-com.twittew.timewines.modew.tweet.hydwatedtweet
+i-impowt com.twittew.timewines.utiw.stats.booweanobsewvew
+i-impowt com.twittew.timewines.utiw.stats.wequeststats
+impowt scawa.cowwection.mutabwe
 
-object TweetFilters extends Enumeration {
-  // Filters independent of users or their follow graph.
-  val DuplicateRetweets: Value = Value
-  val DuplicateTweets: Value = Value
-  val NullcastTweets: Value = Value
-  val Replies: Value = Value
-  val Retweets: Value = Value
+object tweetfiwtews extends e-enumewation {
+  // fiwtews independent of usews o-ow theiw fowwow gwaph. o.O
+  vaw dupwicatewetweets: v-vawue = vawue
+  vaw dupwicatetweets: vawue = vawue
+  vaw nyuwwcasttweets: v-vawue = vawue
+  vaw wepwies: v-vawue = vawue
+  v-vaw wetweets: vawue = vawue
 
-  // Filters that depend on users or their follow graph.
-  val DirectedAtNotFollowedUsers: Value = Value
-  val NonReplyDirectedAtNotFollowedUsers: Value = Value
-  val TweetsFromNotFollowedUsers: Value = Value
-  val ExtendedReplies: Value = Value
-  val NotQualifiedExtendedReplies: Value = Value
-  val NotValidExpandedExtendedReplies: Value = Value
-  val NotQualifiedReverseExtendedReplies: Value = Value
-  val RecommendedRepliesToNotFollowedUsers: Value = Value
+  // fiwtews that depend on usews ow theiw fowwow g-gwaph. :3
+  vaw diwectedatnotfowwowedusews: vawue = vawue
+  vaw nyonwepwydiwectedatnotfowwowedusews: vawue = v-vawue
+  vaw tweetsfwomnotfowwowedusews: vawue = v-vawue
+  vaw extendedwepwies: v-vawue = v-vawue
+  vaw n-notquawifiedextendedwepwies: vawue = vawue
+  vaw n-nyotvawidexpandedextendedwepwies: vawue = vawue
+  vaw nyotquawifiedwevewseextendedwepwies: v-vawue = vawue
+  vaw wecommendedwepwiestonotfowwowedusews: vawue = vawue
 
-  val None: TweetFilters.ValueSet = ValueSet.empty
+  vaw nyone: tweetfiwtews.vawueset = v-vawueset.empty
 
-  val UserDependent: ValueSet = ValueSet(
-    NonReplyDirectedAtNotFollowedUsers,
-    DirectedAtNotFollowedUsers,
-    TweetsFromNotFollowedUsers,
-    ExtendedReplies,
-    NotQualifiedExtendedReplies,
-    NotValidExpandedExtendedReplies,
-    NotQualifiedReverseExtendedReplies,
-    RecommendedRepliesToNotFollowedUsers
+  vaw u-usewdependent: v-vawueset = vawueset(
+    n-nyonwepwydiwectedatnotfowwowedusews, -.-
+    diwectedatnotfowwowedusews, ( ͡o ω ͡o )
+    tweetsfwomnotfowwowedusews, /(^•ω•^)
+    extendedwepwies, (⑅˘꒳˘)
+    n-nyotquawifiedextendedwepwies, òωó
+    n-nyotvawidexpandedextendedwepwies, 🥺
+    nyotquawifiedwevewseextendedwepwies, (ˆ ﻌ ˆ)♡
+    wecommendedwepwiestonotfowwowedusews
   )
 
-  val UserIndependent: ValueSet = ValueSet(
-    DuplicateRetweets,
-    DuplicateTweets,
-    NullcastTweets,
-    Replies,
-    Retweets
+  v-vaw usewindependent: v-vawueset = vawueset(
+    d-dupwicatewetweets, -.-
+    dupwicatetweets, σωσ
+    n-nyuwwcasttweets, >_<
+    wepwies, :3
+    wetweets
   )
-  require(
-    (UserDependent ++ UserIndependent) == TweetFilters.values,
-    "UserIndependent and UserDependent should contain all possible filters"
+  wequiwe(
+    (usewdependent ++ u-usewindependent) == tweetfiwtews.vawues, OwO
+    "usewindependent a-and usewdependent shouwd c-contain aww p-possibwe fiwtews"
   )
 
-  private[util] type FilterMethod =
-    (HydratedTweet, TweetsPostFilterParams, MutableState) => Boolean
+  pwivate[utiw] type fiwtewmethod =
+    (hydwatedtweet, rawr tweetspostfiwtewpawams, mutabwestate) => boowean
 
-  case class MutableState(
-    seenTweetIds: mutable.Map[TweetId, Int] = mutable.Map.empty[TweetId, Int].withDefaultValue(0)) {
-    def isSeen(tweetId: TweetId): Boolean = {
-      val seen = seenTweetIds(tweetId) >= 1
-      incrementIf0(tweetId)
-      seen
+  case cwass mutabwestate(
+    s-seentweetids: mutabwe.map[tweetid, (///ˬ///✿) i-int] = mutabwe.map.empty[tweetid, ^^ int].withdefauwtvawue(0)) {
+    d-def isseen(tweetid: t-tweetid): b-boowean = {
+      vaw seen = seentweetids(tweetid) >= 1
+      incwementif0(tweetid)
+      s-seen
     }
 
-    def incrementIf0(key: TweetId): Unit = {
-      if (seenTweetIds(key) == 0) {
-        seenTweetIds(key) = 1
+    def incwementif0(key: tweetid): unit = {
+      if (seentweetids(key) == 0) {
+        s-seentweetids(key) = 1
       }
     }
 
-    def incrementThenGetCount(key: TweetId): Int = {
-      seenTweetIds(key) += 1
-      seenTweetIds(key)
+    def i-incwementthengetcount(key: t-tweetid): i-int = {
+      seentweetids(key) += 1
+      s-seentweetids(key)
     }
   }
 }
 
-case class TweetsPostFilterParams(
-  userId: UserId,
-  followedUserIds: Seq[UserId],
-  inNetworkUserIds: Seq[UserId],
-  mutedUserIds: Set[UserId],
-  numRetweetsAllowed: Int,
-  loggingPrefix: String = "",
-  sourceTweets: Seq[HydratedTweet] = Nil) {
-  lazy val sourceTweetsById: Map[TweetId, HydratedTweet] =
-    sourceTweets.map(tweet => tweet.tweetId -> tweet).toMap
+case c-cwass tweetspostfiwtewpawams(
+  u-usewid: usewid, XD
+  f-fowwowedusewids: seq[usewid], UwU
+  innetwowkusewids: s-seq[usewid], o.O
+  m-mutedusewids: s-set[usewid], 😳
+  n-nyumwetweetsawwowed: i-int, (˘ω˘)
+  woggingpwefix: stwing = "", 🥺
+  souwcetweets: seq[hydwatedtweet] = n-nyiw) {
+  wazy vaw souwcetweetsbyid: map[tweetid, ^^ hydwatedtweet] =
+    souwcetweets.map(tweet => tweet.tweetid -> t-tweet).tomap
 }
 
 /**
- * Performs post-filtering on tweets obtained from search.
+ * pewfowms post-fiwtewing on tweets obtained f-fwom seawch. >w<
  *
- * Search currently does not perform certain steps or performs them inadequately.
- * This class addresses those shortcomings by post-processing hydrated search results.
+ * s-seawch cuwwentwy d-does nyot pewfowm cewtain s-steps ow pewfowms them inadequatewy. ^^;;
+ * t-this c-cwass addwesses those showtcomings by post-pwocessing hydwated seawch wesuwts. (˘ω˘)
  */
-abstract class TweetsPostFilterBase(
-  filters: TweetFilters.ValueSet,
-  logger: Logger,
-  statsReceiver: StatsReceiver)
-    extends RequestStats {
-  import TweetFilters.FilterMethod
-  import TweetFilters.MutableState
+abstwact cwass t-tweetspostfiwtewbase(
+  fiwtews: t-tweetfiwtews.vawueset, OwO
+  woggew: w-woggew,
+  statsweceivew: s-statsweceivew)
+    extends wequeststats {
+  impowt t-tweetfiwtews.fiwtewmethod
+  i-impowt tweetfiwtews.mutabwestate
 
-  private[this] val baseScope = statsReceiver.scope("filter")
-  private[this] val directedAtNotFollowedCounter = baseScope.counter("directedAtNotFollowed")
-  private[this] val nonReplyDirectedAtNotFollowedObserver =
-    BooleanObserver(baseScope.scope("nonReplyDirectedAtNotFollowed"))
-  private[this] val dupRetweetCounter = baseScope.counter("dupRetweet")
-  private[this] val dupTweetCounter = baseScope.counter("dupTweet")
-  private[this] val notFollowedCounter = baseScope.counter("notFollowed")
-  private[this] val nullcastCounter = baseScope.counter("nullcast")
-  private[this] val repliesCounter = baseScope.counter("replies")
-  private[this] val retweetsCounter = baseScope.counter("retweets")
-  private[this] val extendedRepliesCounter = baseScope.counter("extendedReplies")
-  private[this] val notQualifiedExtendedRepliesObserver =
-    BooleanObserver(baseScope.scope("notQualifiedExtendedReplies"))
-  private[this] val notValidExpandedExtendedRepliesObserver =
-    BooleanObserver(baseScope.scope("notValidExpandedExtendedReplies"))
-  private[this] val notQualifiedReverseExtendedRepliesCounter =
-    baseScope.counter("notQualifiedReverseExtendedReplies")
-  private[this] val recommendedRepliesToNotFollowedUsersObserver =
-    BooleanObserver(baseScope.scope("recommendedRepliesToNotFollowedUsers"))
+  p-pwivate[this] vaw b-basescope = statsweceivew.scope("fiwtew")
+  pwivate[this] vaw diwectedatnotfowwowedcountew = basescope.countew("diwectedatnotfowwowed")
+  pwivate[this] v-vaw nyonwepwydiwectedatnotfowwowedobsewvew =
+    b-booweanobsewvew(basescope.scope("nonwepwydiwectedatnotfowwowed"))
+  pwivate[this] v-vaw dupwetweetcountew = b-basescope.countew("dupwetweet")
+  p-pwivate[this] vaw duptweetcountew = b-basescope.countew("duptweet")
+  pwivate[this] vaw notfowwowedcountew = basescope.countew("notfowwowed")
+  pwivate[this] v-vaw nyuwwcastcountew = b-basescope.countew("nuwwcast")
+  pwivate[this] vaw wepwiescountew = b-basescope.countew("wepwies")
+  p-pwivate[this] vaw wetweetscountew = basescope.countew("wetweets")
+  pwivate[this] vaw e-extendedwepwiescountew = basescope.countew("extendedwepwies")
+  pwivate[this] vaw nyotquawifiedextendedwepwiesobsewvew =
+    booweanobsewvew(basescope.scope("notquawifiedextendedwepwies"))
+  pwivate[this] vaw n-nyotvawidexpandedextendedwepwiesobsewvew =
+    booweanobsewvew(basescope.scope("notvawidexpandedextendedwepwies"))
+  pwivate[this] v-vaw nyotquawifiedwevewseextendedwepwiescountew =
+    b-basescope.countew("notquawifiedwevewseextendedwepwies")
+  pwivate[this] vaw wecommendedwepwiestonotfowwowedusewsobsewvew =
+    booweanobsewvew(basescope.scope("wecommendedwepwiestonotfowwowedusews"))
 
-  private[this] val totalCounter = baseScope.counter(Total)
-  private[this] val resultCounter = baseScope.counter("result")
+  p-pwivate[this] v-vaw totawcountew = basescope.countew(totaw)
+  pwivate[this] vaw wesuwtcountew = b-basescope.countew("wesuwt")
 
-  // Used for debugging. Its values should remain false for prod use.
-  private[this] val alwaysLog = false
+  // used fow debugging. (ꈍᴗꈍ) i-its vawues shouwd wemain fawse fow pwod use. òωó
+  pwivate[this] v-vaw awwayswog = fawse
 
-  val applicableFilters: Seq[FilterMethod] = Filters.getApplicableFilters(filters)
+  v-vaw appwicabwefiwtews: s-seq[fiwtewmethod] = fiwtews.getappwicabwefiwtews(fiwtews)
 
-  protected def filter(
-    tweets: Seq[HydratedTweet],
-    params: TweetsPostFilterParams
-  ): Seq[HydratedTweet] = {
-    val invocationState = MutableState()
-    val result = tweets.reverseIterator
-      .filterNot { tweet => applicableFilters.exists(_(tweet, params, invocationState)) }
-      .toSeq
-      .reverse
-    totalCounter.incr(tweets.size)
-    resultCounter.incr(result.size)
-    result
+  p-pwotected def fiwtew(
+    tweets: s-seq[hydwatedtweet], ʘwʘ
+    p-pawams: t-tweetspostfiwtewpawams
+  ): seq[hydwatedtweet] = {
+    v-vaw i-invocationstate = mutabwestate()
+    vaw wesuwt = t-tweets.wevewseitewatow
+      .fiwtewnot { t-tweet => a-appwicabwefiwtews.exists(_(tweet, ʘwʘ pawams, invocationstate)) }
+      .toseq
+      .wevewse
+    t-totawcountew.incw(tweets.size)
+    wesuwtcountew.incw(wesuwt.size)
+    w-wesuwt
   }
 
-  object Filters {
-    case class FilterData(kind: TweetFilters.Value, method: FilterMethod)
-    private val allFilters = Seq[FilterData](
-      FilterData(TweetFilters.DuplicateTweets, isDuplicateTweet),
-      FilterData(TweetFilters.DuplicateRetweets, isDuplicateRetweet),
-      FilterData(TweetFilters.DirectedAtNotFollowedUsers, isDirectedAtNonFollowedUser),
-      FilterData(
-        TweetFilters.NonReplyDirectedAtNotFollowedUsers,
-        isNonReplyDirectedAtNonFollowedUser
+  o-object fiwtews {
+    case cwass fiwtewdata(kind: tweetfiwtews.vawue, nyaa~~ m-method: f-fiwtewmethod)
+    p-pwivate v-vaw awwfiwtews = seq[fiwtewdata](
+      f-fiwtewdata(tweetfiwtews.dupwicatetweets, UwU isdupwicatetweet), (⑅˘꒳˘)
+      fiwtewdata(tweetfiwtews.dupwicatewetweets, (˘ω˘) isdupwicatewetweet), :3
+      fiwtewdata(tweetfiwtews.diwectedatnotfowwowedusews, (˘ω˘) isdiwectedatnonfowwowedusew), nyaa~~
+      f-fiwtewdata(
+        tweetfiwtews.nonwepwydiwectedatnotfowwowedusews, (U ﹏ U)
+        i-isnonwepwydiwectedatnonfowwowedusew
       ),
-      FilterData(TweetFilters.NullcastTweets, isNullcast),
-      FilterData(TweetFilters.Replies, isReply),
-      FilterData(TweetFilters.Retweets, isRetweet),
-      FilterData(TweetFilters.TweetsFromNotFollowedUsers, isFromNonFollowedUser),
-      FilterData(TweetFilters.ExtendedReplies, isExtendedReply),
-      FilterData(TweetFilters.NotQualifiedExtendedReplies, isNotQualifiedExtendedReply),
-      FilterData(TweetFilters.NotValidExpandedExtendedReplies, isNotValidExpandedExtendedReply),
-      FilterData(
-        TweetFilters.NotQualifiedReverseExtendedReplies,
-        isNotQualifiedReverseExtendedReply),
-      FilterData(
-        TweetFilters.RecommendedRepliesToNotFollowedUsers,
-        isRecommendedRepliesToNotFollowedUsers)
+      fiwtewdata(tweetfiwtews.nuwwcasttweets, nyaa~~ i-isnuwwcast), ^^;;
+      fiwtewdata(tweetfiwtews.wepwies, OwO i-iswepwy),
+      fiwtewdata(tweetfiwtews.wetweets, nyaa~~ i-iswetweet), UwU
+      f-fiwtewdata(tweetfiwtews.tweetsfwomnotfowwowedusews, 😳 i-isfwomnonfowwowedusew), 😳
+      f-fiwtewdata(tweetfiwtews.extendedwepwies, (ˆ ﻌ ˆ)♡ i-isextendedwepwy), (✿oωo)
+      fiwtewdata(tweetfiwtews.notquawifiedextendedwepwies, nyaa~~ isnotquawifiedextendedwepwy), ^^
+      fiwtewdata(tweetfiwtews.notvawidexpandedextendedwepwies, (///ˬ///✿) isnotvawidexpandedextendedwepwy), 😳
+      fiwtewdata(
+        tweetfiwtews.notquawifiedwevewseextendedwepwies, òωó
+        i-isnotquawifiedwevewseextendedwepwy), ^^;;
+      f-fiwtewdata(
+        t-tweetfiwtews.wecommendedwepwiestonotfowwowedusews, rawr
+        iswecommendedwepwiestonotfowwowedusews)
     )
 
-    def getApplicableFilters(filters: TweetFilters.ValueSet): Seq[FilterMethod] = {
-      require(allFilters.map(_.kind).toSet == TweetFilters.values)
-      allFilters.filter(data => filters.contains(data.kind)).map(_.method)
+    def g-getappwicabwefiwtews(fiwtews: tweetfiwtews.vawueset): seq[fiwtewmethod] = {
+      wequiwe(awwfiwtews.map(_.kind).toset == t-tweetfiwtews.vawues)
+      a-awwfiwtews.fiwtew(data => fiwtews.contains(data.kind)).map(_.method)
     }
 
-    private def isNullcast(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      if (tweet.isNullcast) {
-        nullcastCounter.incr()
-        log(
-          Level.ERROR,
-          () => s"${params.loggingPrefix}:: Found nullcast tweet: tweet-id: ${tweet.tweetId}"
+    p-pwivate def isnuwwcast(
+      tweet: hydwatedtweet, (ˆ ﻌ ˆ)♡
+      p-pawams: tweetspostfiwtewpawams, XD
+      i-invocationstate: mutabwestate
+    ): b-boowean = {
+      if (tweet.isnuwwcast) {
+        nyuwwcastcountew.incw()
+        wog(
+          w-wevew.ewwow, >_<
+          () => s"${pawams.woggingpwefix}:: found nyuwwcast tweet: tweet-id: ${tweet.tweetid}"
         )
-        true
-      } else {
-        false
+        twue
+      } e-ewse {
+        f-fawse
       }
     }
 
-    private def isReply(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      if (tweet.hasReply) {
-        repliesCounter.incr()
-        log(Level.OFF, () => s"${params.loggingPrefix}:: Removed reply: tweet-id: ${tweet.tweetId}")
-        true
-      } else {
-        false
+    p-pwivate def iswepwy(
+      t-tweet: h-hydwatedtweet, (˘ω˘)
+      pawams: t-tweetspostfiwtewpawams, 😳
+      i-invocationstate: mutabwestate
+    ): boowean = {
+      i-if (tweet.haswepwy) {
+        w-wepwiescountew.incw()
+        wog(wevew.off, o.O () => s-s"${pawams.woggingpwefix}:: wemoved wepwy: tweet-id: ${tweet.tweetid}")
+        t-twue
+      } ewse {
+        f-fawse
       }
     }
 
-    private def isRetweet(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      if (tweet.isRetweet) {
-        retweetsCounter.incr()
-        log(
-          Level.OFF,
-          () => s"${params.loggingPrefix}:: Removed retweet: tweet-id: ${tweet.tweetId}"
+    p-pwivate def iswetweet(
+      t-tweet: hydwatedtweet, (ꈍᴗꈍ)
+      pawams: tweetspostfiwtewpawams, rawr x3
+      invocationstate: m-mutabwestate
+    ): boowean = {
+      i-if (tweet.iswetweet) {
+        w-wetweetscountew.incw()
+        wog(
+          wevew.off, ^^
+          () => s"${pawams.woggingpwefix}:: wemoved wetweet: t-tweet-id: ${tweet.tweetid}"
         )
-        true
-      } else {
-        false
+        twue
+      } ewse {
+        f-fawse
       }
     }
 
-    private def isFromNonFollowedUser(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      if ((tweet.userId != params.userId) && !params.inNetworkUserIds.contains(tweet.userId)) {
-        notFollowedCounter.incr()
-        log(
-          Level.ERROR,
+    p-pwivate def isfwomnonfowwowedusew(
+      t-tweet: hydwatedtweet, OwO
+      pawams: t-tweetspostfiwtewpawams, ^^
+      i-invocationstate: mutabwestate
+    ): boowean = {
+      i-if ((tweet.usewid != pawams.usewid) && !pawams.innetwowkusewids.contains(tweet.usewid)) {
+        nyotfowwowedcountew.incw()
+        w-wog(
+          wevew.ewwow,
           () =>
-            s"${params.loggingPrefix}:: Found tweet from not-followed user: ${tweet.tweetId} from ${tweet.userId}"
+            s-s"${pawams.woggingpwefix}:: found tweet f-fwom nyot-fowwowed usew: ${tweet.tweetid} f-fwom ${tweet.usewid}"
         )
-        true
-      } else {
-        false
+        t-twue
+      } ewse {
+        f-fawse
       }
     }
 
-    private def isDirectedAtNonFollowedUser(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      tweet.directedAtUser.exists { directedAtUserId =>
-        val shouldFilterOut = (tweet.userId != params.userId) && !params.inNetworkUserIds
-          .contains(directedAtUserId)
-        // We do not log here because search is known to not handle this case.
-        if (shouldFilterOut) {
-          log(
-            Level.OFF,
+    pwivate def isdiwectedatnonfowwowedusew(
+      tweet: hydwatedtweet, :3
+      pawams: tweetspostfiwtewpawams,
+      invocationstate: mutabwestate
+    ): boowean = {
+      tweet.diwectedatusew.exists { diwectedatusewid =>
+        vaw shouwdfiwtewout = (tweet.usewid != pawams.usewid) && !pawams.innetwowkusewids
+          .contains(diwectedatusewid)
+        // we do nyot wog hewe b-because seawch is k-known to nyot handwe this case. o.O
+        if (shouwdfiwtewout) {
+          w-wog(
+            w-wevew.off, -.-
             () =>
-              s"${params.loggingPrefix}:: Found tweet: ${tweet.tweetId} directed-at not-followed user: $directedAtUserId"
+              s-s"${pawams.woggingpwefix}:: found tweet: ${tweet.tweetid} d-diwected-at nyot-fowwowed usew: $diwectedatusewid"
           )
-          directedAtNotFollowedCounter.incr()
+          d-diwectedatnotfowwowedcountew.incw()
         }
-        shouldFilterOut
+        s-shouwdfiwtewout
       }
     }
 
-    private def isNonReplyDirectedAtNonFollowedUser(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      tweet.directedAtUser.exists { directedAtUserId =>
-        val shouldFilterOut = !tweet.hasReply &&
-          (tweet.userId != params.userId) &&
-          !params.inNetworkUserIds.contains(directedAtUserId)
-        // We do not log here because search is known to not handle this case.
-        if (nonReplyDirectedAtNotFollowedObserver(shouldFilterOut)) {
-          log(
-            Level.OFF,
+    pwivate def isnonwepwydiwectedatnonfowwowedusew(
+      t-tweet: hydwatedtweet,
+      p-pawams: tweetspostfiwtewpawams, (U ﹏ U)
+      i-invocationstate: mutabwestate
+    ): boowean = {
+      t-tweet.diwectedatusew.exists { d-diwectedatusewid =>
+        v-vaw s-shouwdfiwtewout = !tweet.haswepwy &&
+          (tweet.usewid != p-pawams.usewid) &&
+          !pawams.innetwowkusewids.contains(diwectedatusewid)
+        // w-we do n-nyot wog hewe b-because seawch is k-known to nyot handwe this case. o.O
+        i-if (nonwepwydiwectedatnotfowwowedobsewvew(shouwdfiwtewout)) {
+          w-wog(
+            w-wevew.off, OwO
             () =>
-              s"${params.loggingPrefix}:: Found non-reply tweet: ${tweet.tweetId} directed-at not-followed user: $directedAtUserId"
+              s"${pawams.woggingpwefix}:: f-found nyon-wepwy tweet: ${tweet.tweetid} diwected-at nyot-fowwowed u-usew: $diwectedatusewid"
           )
         }
-        shouldFilterOut
+        shouwdfiwtewout
       }
     }
 
     /**
-     * Determines whether the given tweet has already been seen.
+     * d-detewmines whethew t-the given tweet h-has awweady been seen. ^•ﻌ•^
      */
-    private def isDuplicateTweet(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      val shouldFilterOut = invocationState.isSeen(tweet.tweetId)
-      if (shouldFilterOut) {
-        dupTweetCounter.incr()
-        log(Level.ERROR, () => s"${params.loggingPrefix}:: Duplicate tweet found: ${tweet.tweetId}")
+    p-pwivate def isdupwicatetweet(
+      t-tweet: hydwatedtweet, ʘwʘ
+      p-pawams: tweetspostfiwtewpawams, :3
+      i-invocationstate: mutabwestate
+    ): boowean = {
+      vaw shouwdfiwtewout = invocationstate.isseen(tweet.tweetid)
+      if (shouwdfiwtewout) {
+        d-duptweetcountew.incw()
+        wog(wevew.ewwow, 😳 () => s-s"${pawams.woggingpwefix}:: d-dupwicate tweet found: ${tweet.tweetid}")
       }
-      shouldFilterOut
+      shouwdfiwtewout
     }
 
     /**
-     * If the given tweet is a retweet, determines whether the source tweet
-     * of that retweet has already been seen.
+     * if the given t-tweet is a wetweet, òωó detewmines w-whethew the souwce t-tweet
+     * o-of that wetweet has awweady been seen. 🥺
      */
-    private def isDuplicateRetweet(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      invocationState.incrementIf0(tweet.tweetId)
-      tweet.sourceTweetId.exists { sourceTweetId =>
-        val seenCount = invocationState.incrementThenGetCount(sourceTweetId)
-        val shouldFilterOut = seenCount > params.numRetweetsAllowed
-        if (shouldFilterOut) {
-          // We do not log here because search is known to not handle this case.
-          dupRetweetCounter.incr()
-          log(
-            Level.OFF,
+    p-pwivate def i-isdupwicatewetweet(
+      tweet: h-hydwatedtweet, rawr x3
+      pawams: tweetspostfiwtewpawams, ^•ﻌ•^
+      invocationstate: m-mutabwestate
+    ): boowean = {
+      i-invocationstate.incwementif0(tweet.tweetid)
+      t-tweet.souwcetweetid.exists { s-souwcetweetid =>
+        vaw s-seencount = invocationstate.incwementthengetcount(souwcetweetid)
+        v-vaw shouwdfiwtewout = seencount > p-pawams.numwetweetsawwowed
+        i-if (shouwdfiwtewout) {
+          // we do nyot wog h-hewe because seawch i-is known to n-nyot handwe this c-case. :3
+          d-dupwetweetcountew.incw()
+          w-wog(
+            w-wevew.off,
             () =>
-              s"${params.loggingPrefix}:: Found dup retweet: ${tweet.tweetId} (source tweet: $sourceTweetId), count: $seenCount"
+              s-s"${pawams.woggingpwefix}:: found d-dup wetweet: ${tweet.tweetid} (souwce tweet: $souwcetweetid), (ˆ ﻌ ˆ)♡ c-count: $seencount"
           )
         }
-        shouldFilterOut
+        shouwdfiwtewout
       }
     }
 
-    private def isExtendedReply(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      val shouldFilterOut = ExtendedRepliesFilter.isExtendedReply(
-        tweet,
-        params.followedUserIds
+    p-pwivate def i-isextendedwepwy(
+      t-tweet: hydwatedtweet, (U ᵕ U❁)
+      pawams: tweetspostfiwtewpawams, :3
+      invocationstate: mutabwestate
+    ): b-boowean = {
+      v-vaw shouwdfiwtewout = e-extendedwepwiesfiwtew.isextendedwepwy(
+        tweet, ^^;;
+        pawams.fowwowedusewids
       )
-      if (shouldFilterOut) {
-        extendedRepliesCounter.incr()
-        log(
-          Level.DEBUG,
-          () => s"${params.loggingPrefix}:: extended reply to be filtered: ${tweet.tweetId}"
+      if (shouwdfiwtewout) {
+        e-extendedwepwiescountew.incw()
+        w-wog(
+          wevew.debug,
+          () => s-s"${pawams.woggingpwefix}:: e-extended wepwy to be fiwtewed: ${tweet.tweetid}"
         )
       }
-      shouldFilterOut
+      shouwdfiwtewout
     }
 
-    private def isNotQualifiedExtendedReply(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      val shouldFilterOut = ExtendedRepliesFilter.isNotQualifiedExtendedReply(
+    pwivate def isnotquawifiedextendedwepwy(
+      t-tweet: h-hydwatedtweet, ( ͡o ω ͡o )
+      p-pawams: tweetspostfiwtewpawams, o.O
+      i-invocationstate: mutabwestate
+    ): boowean = {
+      v-vaw shouwdfiwtewout = e-extendedwepwiesfiwtew.isnotquawifiedextendedwepwy(
         tweet,
-        params.userId,
-        params.followedUserIds,
-        params.mutedUserIds,
-        params.sourceTweetsById
+        pawams.usewid, ^•ﻌ•^
+        p-pawams.fowwowedusewids, XD
+        pawams.mutedusewids, ^^
+        pawams.souwcetweetsbyid
       )
-      if (notQualifiedExtendedRepliesObserver(shouldFilterOut)) {
-        log(
-          Level.DEBUG,
+      i-if (notquawifiedextendedwepwiesobsewvew(shouwdfiwtewout)) {
+        wog(
+          wevew.debug, o.O
           () =>
-            s"${params.loggingPrefix}:: non qualified extended reply to be filtered: ${tweet.tweetId}"
+            s-s"${pawams.woggingpwefix}:: n-nyon quawified extended wepwy t-to be fiwtewed: ${tweet.tweetid}"
         )
       }
-      shouldFilterOut
+      s-shouwdfiwtewout
     }
 
-    private def isNotValidExpandedExtendedReply(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      val shouldFilterOut = ExtendedRepliesFilter.isNotValidExpandedExtendedReply(
-        tweet,
-        params.userId,
-        params.followedUserIds,
-        params.mutedUserIds,
-        params.sourceTweetsById
+    pwivate def i-isnotvawidexpandedextendedwepwy(
+      tweet: h-hydwatedtweet, ( ͡o ω ͡o )
+      p-pawams: tweetspostfiwtewpawams, /(^•ω•^)
+      i-invocationstate: m-mutabwestate
+    ): boowean = {
+      v-vaw shouwdfiwtewout = e-extendedwepwiesfiwtew.isnotvawidexpandedextendedwepwy(
+        t-tweet, 🥺
+        pawams.usewid, nyaa~~
+        p-pawams.fowwowedusewids, mya
+        pawams.mutedusewids, XD
+        pawams.souwcetweetsbyid
       )
-      if (notValidExpandedExtendedRepliesObserver(shouldFilterOut)) {
-        log(
-          Level.DEBUG,
+      i-if (notvawidexpandedextendedwepwiesobsewvew(shouwdfiwtewout)) {
+        w-wog(
+          w-wevew.debug, nyaa~~
           () =>
-            s"${params.loggingPrefix}:: non qualified extended reply to be filtered: ${tweet.tweetId}"
+            s"${pawams.woggingpwefix}:: nyon quawified extended wepwy to be f-fiwtewed: ${tweet.tweetid}"
         )
       }
-      shouldFilterOut
+      shouwdfiwtewout
     }
 
-    private def isRecommendedRepliesToNotFollowedUsers(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      val shouldFilterOut = RecommendedRepliesFilter.isRecommendedReplyToNotFollowedUser(
-        tweet,
-        params.userId,
-        params.followedUserIds,
-        params.mutedUserIds
+    p-pwivate def iswecommendedwepwiestonotfowwowedusews(
+      t-tweet: hydwatedtweet,
+      pawams: tweetspostfiwtewpawams, ʘwʘ
+      i-invocationstate: mutabwestate
+    ): b-boowean = {
+      v-vaw shouwdfiwtewout = w-wecommendedwepwiesfiwtew.iswecommendedwepwytonotfowwowedusew(
+        tweet, (⑅˘꒳˘)
+        p-pawams.usewid, :3
+        p-pawams.fowwowedusewids, -.-
+        pawams.mutedusewids
       )
-      if (recommendedRepliesToNotFollowedUsersObserver(shouldFilterOut)) {
-        log(
-          Level.DEBUG,
+      if (wecommendedwepwiestonotfowwowedusewsobsewvew(shouwdfiwtewout)) {
+        wog(
+          wevew.debug, 😳😳😳
           () =>
-            s"${params.loggingPrefix}:: non qualified recommended reply to be filtered: ${tweet.tweetId}"
+            s-s"${pawams.woggingpwefix}:: nyon quawified w-wecommended wepwy to be fiwtewed: ${tweet.tweetid}"
         )
       }
-      shouldFilterOut
+      shouwdfiwtewout
     }
 
-    //For now this filter is meant to be used only with reply tweets from the inReplyToUserId query
-    private def isNotQualifiedReverseExtendedReply(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      val shouldFilterOut = !ReverseExtendedRepliesFilter.isQualifiedReverseExtendedReply(
-        tweet,
-        params.userId,
-        params.followedUserIds,
-        params.mutedUserIds,
-        params.sourceTweetsById
+    //fow nyow this fiwtew i-is meant to be used onwy with wepwy tweets fwom the inwepwytousewid quewy
+    p-pwivate def isnotquawifiedwevewseextendedwepwy(
+      t-tweet: hydwatedtweet, (U ﹏ U)
+      p-pawams: tweetspostfiwtewpawams, o.O
+      invocationstate: mutabwestate
+    ): b-boowean = {
+      v-vaw shouwdfiwtewout = !wevewseextendedwepwiesfiwtew.isquawifiedwevewseextendedwepwy(
+        tweet, ( ͡o ω ͡o )
+        pawams.usewid, òωó
+        p-pawams.fowwowedusewids, 🥺
+        pawams.mutedusewids, /(^•ω•^)
+        p-pawams.souwcetweetsbyid
       )
 
-      if (shouldFilterOut) {
-        notQualifiedReverseExtendedRepliesCounter.incr()
-        log(
-          Level.DEBUG,
+      if (shouwdfiwtewout) {
+        nyotquawifiedwevewseextendedwepwiescountew.incw()
+        wog(
+          w-wevew.debug,
           () =>
-            s"${params.loggingPrefix}:: non qualified reverse extended reply to be filtered: ${tweet.tweetId}"
+            s"${pawams.woggingpwefix}:: nyon quawified w-wevewse extended w-wepwy to be f-fiwtewed: ${tweet.tweetid}"
         )
       }
-      shouldFilterOut
+      shouwdfiwtewout
     }
 
-    private def log(level: Level, message: () => String): Unit = {
-      if (alwaysLog || ((level != Level.OFF) && logger.isLoggable(level))) {
-        val updatedLevel = if (alwaysLog) Level.INFO else level
-        logger.log(updatedLevel, message())
+    pwivate def wog(wevew: w-wevew, 😳😳😳 message: () => stwing): unit = {
+      if (awwayswog || ((wevew != wevew.off) && w-woggew.iswoggabwe(wevew))) {
+        v-vaw updatedwevew = i-if (awwayswog) w-wevew.info ewse wevew
+        woggew.wog(updatedwevew, m-message())
       }
     }
   }
 }
 
-class TweetsPostFilter(filters: TweetFilters.ValueSet, logger: Logger, statsReceiver: StatsReceiver)
-    extends TweetsPostFilterBase(filters, logger, statsReceiver) {
+c-cwass tweetspostfiwtew(fiwtews: tweetfiwtews.vawueset, ^•ﻌ•^ w-woggew: woggew, nyaa~~ statsweceivew: statsweceivew)
+    e-extends tweetspostfiwtewbase(fiwtews, OwO woggew, statsweceivew) {
 
-  def apply(
-    userId: UserId,
-    followedUserIds: Seq[UserId],
-    inNetworkUserIds: Seq[UserId],
-    mutedUserIds: Set[UserId],
-    tweets: Seq[HydratedTweet],
-    numRetweetsAllowed: Int = 1,
-    sourceTweets: Seq[HydratedTweet] = Nil
-  ): Seq[HydratedTweet] = {
-    val loggingPrefix = s"userId: $userId"
-    val params = TweetsPostFilterParams(
-      userId = userId,
-      followedUserIds = followedUserIds,
-      inNetworkUserIds = inNetworkUserIds,
-      mutedUserIds = mutedUserIds,
-      numRetweetsAllowed = numRetweetsAllowed,
-      loggingPrefix = loggingPrefix,
-      sourceTweets = sourceTweets
+  d-def appwy(
+    u-usewid: usewid, ^•ﻌ•^
+    fowwowedusewids: s-seq[usewid], σωσ
+    i-innetwowkusewids: s-seq[usewid], -.-
+    mutedusewids: set[usewid],
+    tweets: seq[hydwatedtweet],
+    n-nyumwetweetsawwowed: int = 1, (˘ω˘)
+    souwcetweets: s-seq[hydwatedtweet] = niw
+  ): seq[hydwatedtweet] = {
+    vaw woggingpwefix = s"usewid: $usewid"
+    v-vaw pawams = t-tweetspostfiwtewpawams(
+      usewid = u-usewid, rawr x3
+      f-fowwowedusewids = f-fowwowedusewids, rawr x3
+      innetwowkusewids = innetwowkusewids, σωσ
+      m-mutedusewids = mutedusewids, nyaa~~
+      nyumwetweetsawwowed = n-nyumwetweetsawwowed, (ꈍᴗꈍ)
+      woggingpwefix = w-woggingpwefix, ^•ﻌ•^
+      souwcetweets = souwcetweets
     )
-    super.filter(tweets, params)
+    s-supew.fiwtew(tweets, >_< p-pawams)
   }
 }
 
-class TweetsPostFilterUserIndependent(
-  filters: TweetFilters.ValueSet,
-  logger: Logger,
-  statsReceiver: StatsReceiver)
-    extends TweetsPostFilterBase(filters, logger, statsReceiver) {
+cwass t-tweetspostfiwtewusewindependent(
+  fiwtews: tweetfiwtews.vawueset, ^^;;
+  w-woggew: w-woggew, ^^;;
+  statsweceivew: statsweceivew)
+    e-extends t-tweetspostfiwtewbase(fiwtews, /(^•ω•^) woggew, statsweceivew) {
 
-  require(
-    (filters -- TweetFilters.UserIndependent).isEmpty,
-    "Only user independent filters are supported"
+  w-wequiwe(
+    (fiwtews -- tweetfiwtews.usewindependent).isempty, nyaa~~
+    "onwy usew independent fiwtews a-awe suppowted"
   )
 
-  def apply(tweets: Seq[HydratedTweet], numRetweetsAllowed: Int = 1): Seq[HydratedTweet] = {
-    val params = TweetsPostFilterParams(
-      userId = 0L,
-      followedUserIds = Seq.empty,
-      inNetworkUserIds = Seq.empty,
-      mutedUserIds = Set.empty,
-      numRetweetsAllowed
+  def appwy(tweets: s-seq[hydwatedtweet], (✿oωo) nyumwetweetsawwowed: int = 1): seq[hydwatedtweet] = {
+    v-vaw pawams = t-tweetspostfiwtewpawams(
+      u-usewid = 0w, ( ͡o ω ͡o )
+      fowwowedusewids = s-seq.empty, (U ᵕ U❁)
+      i-innetwowkusewids = seq.empty, òωó
+      m-mutedusewids = set.empty, σωσ
+      n-nyumwetweetsawwowed
     )
-    super.filter(tweets, params)
+    supew.fiwtew(tweets, :3 pawams)
   }
 }

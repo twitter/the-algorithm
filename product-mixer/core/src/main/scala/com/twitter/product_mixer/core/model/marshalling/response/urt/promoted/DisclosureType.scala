@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted
 
-sealed trait DisclosureType
+seawed twait discwosuwetype
 
-case object NoDisclosure extends DisclosureType
-case object Political extends DisclosureType
-case object Earned extends DisclosureType
-case object Issue extends DisclosureType
+c-case o-object nyodiscwosuwe e-extends discwosuwetype
+c-case o-object powiticaw e-extends discwosuwetype
+c-case object e-eawned extends discwosuwetype
+case object issue extends discwosuwetype

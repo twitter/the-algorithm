@@ -1,39 +1,39 @@
-package com.twitter.search.core.earlybird.index;
+package com.twittew.seawch.cowe.eawwybiwd.index;
 
-import org.apache.lucene.search.DocIdSet;
+impowt owg.apache.wucene.seawch.docidset;
 
 /**
- * Class to hold the actual cache which provides a doc id iterator to walk through the cache/result.
+ * c-cwass to howd t-the actuaw cache w-which pwovides a-a doc id itewatow t-to wawk thwough t-the cache/wesuwt. >_<
  *
- * An instance holds the results for a single query of the different ones defined in querycache.yml.
+ * a-an instance h-howds the wesuwts fow a singwe quewy of the diffewent ones defined in quewycache.ymw. >_<
  */
-public class QueryCacheResultForSegment {
-  private final DocIdSet docIdSet;
-  private final int smallestDocID;
-  private final long cardinality;
+p-pubwic cwass quewycachewesuwtfowsegment {
+  pwivate finaw docidset d-docidset;
+  pwivate finaw int s-smowestdocid;
+  pwivate finaw wong cawdinawity;
 
   /**
-   * Stores query cache results.
+   * stowes q-quewy cache wesuwts. (⑅˘꒳˘)
    *
-   * @param docIdSet Documents in the cache.
-   * @param cardinality Size of the cache.
-   * @param smallestDocID The most recently posted document contained in the cache.
+   * @pawam d-docidset d-documents in the cache. /(^•ω•^)
+   * @pawam cawdinawity size of the cache. rawr x3
+   * @pawam s-smowestdocid the most wecentwy posted document contained in the cache. (U ﹏ U)
    */
-  public QueryCacheResultForSegment(DocIdSet docIdSet, long cardinality, int smallestDocID) {
-    this.docIdSet = docIdSet;
-    this.smallestDocID = smallestDocID;
-    this.cardinality = cardinality;
+  p-pubwic quewycachewesuwtfowsegment(docidset docidset, (U ﹏ U) w-wong cawdinawity, (⑅˘꒳˘) i-int smowestdocid) {
+    t-this.docidset = d-docidset;
+    this.smowestdocid = smowestdocid;
+    this.cawdinawity = c-cawdinawity;
   }
 
-  public DocIdSet getDocIdSet() {
-    return docIdSet;
+  pubwic docidset getdocidset() {
+    w-wetuwn docidset;
   }
 
-  public int getSmallestDocID() {
-    return smallestDocID;
+  pubwic int getsmowestdocid() {
+    wetuwn smowestdocid;
   }
 
-  public long getCardinality() {
-    return cardinality;
+  pubwic wong g-getcawdinawity() {
+    wetuwn c-cawdinawity;
   }
 }

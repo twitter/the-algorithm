@@ -1,28 +1,28 @@
-package com.twitter.search.earlybird.util;
+package com.twittew.seawch.eawwybiwd.utiw;
 
-import java.text.ParseException;
-import java.util.Date;
+impowt j-java.text.pawseexception;
+i-impowt j-java.utiw.date;
 
-import org.apache.commons.lang3.time.FastDateFormat;
+i-impowt owg.apache.commons.wang3.time.fastdatefowmat;
 
-public final class ScrubGenUtil {
-  public static final FastDateFormat SCRUB_GEN_DATE_FORMAT = FastDateFormat.getInstance("yyyyMMdd");
+p-pubwic f-finaw cwass scwubgenutiw {
+  p-pubwic s-static finaw fastdatefowmat scwub_gen_date_fowmat = fastdatefowmat.getinstance("yyyymmdd");
 
-  private ScrubGenUtil() { }
+  pwivate scwubgenutiw() { }
 
   /**
-   * Helper method to parse a scrub gen from String to date
+   * h-hewpew method to pawse a scwub gen fwom s-stwing to date
    *
-   * @param scrubGen
-   * @return scrubGen in Date type
+   * @pawam scwubgen
+   * @wetuwn s-scwubgen in date type
    */
-  public static Date parseScrubGenToDate(String scrubGen) {
-    try {
-      return SCRUB_GEN_DATE_FORMAT.parse(scrubGen);
-    } catch (ParseException e) {
-      String msg = "Malformed scrub gen date: " + scrubGen;
-      // If we are running a scrub gen and the date is bad we should quit and not continue.
-      throw new RuntimeException(msg, e);
+  pubwic static date pawsescwubgentodate(stwing s-scwubgen) {
+    twy {
+      w-wetuwn scwub_gen_date_fowmat.pawse(scwubgen);
+    } c-catch (pawseexception e) {
+      stwing msg = "mawfowmed scwub gen date: " + s-scwubgen;
+      // if we awe wunning a scwub gen and the date is bad we shouwd q-quit and nyot continue. OwO
+      thwow nyew wuntimeexception(msg, e-e);
     }
   }
 }

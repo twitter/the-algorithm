@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tile
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tiwe
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.CallToActionTileContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.StandardTileContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.TileContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tiwe.cawwtoactiontiwecontent
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tiwe.standawdtiwecontent
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tiwe.tiwecontent
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class TileContentMarshaller @Inject() (
-  standardTileContentMarshaller: StandardTileContentMarshaller,
-  callToActionTileContentMarshaller: CallToActionTileContentMarshaller) {
+@singweton
+c-cwass tiwecontentmawshawwew @inject() (
+  standawdtiwecontentmawshawwew: standawdtiwecontentmawshawwew, ^^;;
+  cawwtoactiontiwecontentmawshawwew: cawwtoactiontiwecontentmawshawwew) {
 
-  def apply(tileContent: TileContent): urt.TileContent = tileContent match {
-    case tileCont: StandardTileContent =>
-      urt.TileContent.Standard(standardTileContentMarshaller(tileCont))
-    case tileCont: CallToActionTileContent =>
-      urt.TileContent.CallToAction(callToActionTileContentMarshaller(tileCont))
+  d-def appwy(tiwecontent: tiwecontent): uwt.tiwecontent = t-tiwecontent match {
+    c-case tiwecont: standawdtiwecontent =>
+      uwt.tiwecontent.standawd(standawdtiwecontentmawshawwew(tiwecont))
+    case tiwecont: c-cawwtoactiontiwecontent =>
+      uwt.tiwecontent.cawwtoaction(cawwtoactiontiwecontentmawshawwew(tiwecont))
   }
 }

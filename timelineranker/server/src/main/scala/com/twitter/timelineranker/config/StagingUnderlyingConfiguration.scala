@@ -1,6 +1,6 @@
-package com.twitter.timelineranker.config
+package com.twittew.timewinewankew.config
 
-import com.twitter.finagle.stats.StatsReceiver
+impowt c-com.twittew.finagwe.stats.statsweceivew
 
-class StagingUnderlyingClientConfiguration(flags: TimelineRankerFlags, statsReceiver: StatsReceiver)
-    extends DefaultUnderlyingClientConfiguration(flags, statsReceiver)
+c-cwass s-stagingundewwyingcwientconfiguwation(fwags: t-timewinewankewfwags, (⑅˘꒳˘) s-statsweceivew: s-statsweceivew)
+    e-extends defauwtundewwyingcwientconfiguwation(fwags, ( ͡o ω ͡o ) s-statsweceivew)

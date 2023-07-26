@@ -1,100 +1,100 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.scalding
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.scawding
 
-import com.twitter.bijection.Injection
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding.{Hdfs => HdfsMode}
-import com.twitter.summingbird.batch.store.HDFSMetadata
-import com.twitter.summingbird.batch.BatchID
-import com.twitter.summingbird.batch.Batcher
-import com.twitter.summingbird.batch.OrderedFromOrderingExt
-import com.twitter.summingbird.batch.PrunedSpace
-import com.twitter.summingbird.scalding._
-import com.twitter.summingbird.scalding.store.VersionedBatchStore
-import org.slf4j.LoggerFactory
+impowt com.twittew.bijection.injection
+i-impowt c-com.twittew.scawding.commons.souwce.vewsionedkeyvawsouwce
+i-impowt c-com.twittew.scawding.typedpipe
+i-impowt com.twittew.scawding.{hdfs => h-hdfsmode}
+i-impowt com.twittew.summingbiwd.batch.stowe.hdfsmetadata
+i-impowt com.twittew.summingbiwd.batch.batchid
+impowt com.twittew.summingbiwd.batch.batchew
+impowt com.twittew.summingbiwd.batch.owdewedfwomowdewingext
+impowt com.twittew.summingbiwd.batch.pwunedspace
+i-impowt com.twittew.summingbiwd.scawding._
+impowt com.twittew.summingbiwd.scawding.stowe.vewsionedbatchstowe
+i-impowt owg.swf4j.woggewfactowy
 
-object MostRecentLagCorrectingVersionedStore {
-  def apply[Key, ValInStore, ValInMemory](
-    rootPath: String,
-    packer: ValInMemory => ValInStore,
-    unpacker: ValInStore => ValInMemory,
-    versionsToKeep: Int = VersionedKeyValSource.defaultVersionsToKeep,
-    prunedSpace: PrunedSpace[(Key, ValInMemory)] = PrunedSpace.neverPruned
+o-object mostwecentwagcowwectingvewsionedstowe {
+  def appwy[key, /(^•ω•^) vawinstowe, v-vawinmemowy](
+    wootpath: s-stwing, (⑅˘꒳˘)
+    p-packew: vawinmemowy => vawinstowe,
+    unpackew: vawinstowe => vawinmemowy, ( ͡o ω ͡o )
+    v-vewsionstokeep: int = vewsionedkeyvawsouwce.defauwtvewsionstokeep, òωó
+    pwunedspace: pwunedspace[(key, (⑅˘꒳˘) vawinmemowy)] = p-pwunedspace.nevewpwuned
   )(
-    implicit injection: Injection[(Key, (BatchID, ValInStore)), (Array[Byte], Array[Byte])],
-    batcher: Batcher,
-    ord: Ordering[Key],
-    lagCorrector: (ValInMemory, Long) => ValInMemory
-  ): MostRecentLagCorrectingVersionedBatchStore[Key, ValInMemory, Key, (BatchID, ValInStore)] = {
-    new MostRecentLagCorrectingVersionedBatchStore[Key, ValInMemory, Key, (BatchID, ValInStore)](
-      rootPath,
-      versionsToKeep,
-      batcher
-    )(lagCorrector)({ case (batchID, (k, v)) => (k, (batchID.next, packer(v))) })({
-      case (k, (_, v)) => (k, unpacker(v))
+    impwicit i-injection: injection[(key, XD (batchid, -.- v-vawinstowe)), :3 (awway[byte], nyaa~~ a-awway[byte])], 😳
+    b-batchew: batchew, (⑅˘꒳˘)
+    owd: owdewing[key], nyaa~~
+    w-wagcowwectow: (vawinmemowy, OwO wong) => vawinmemowy
+  ): mostwecentwagcowwectingvewsionedbatchstowe[key, rawr x3 v-vawinmemowy, XD key, (batchid, σωσ vawinstowe)] = {
+    nyew mostwecentwagcowwectingvewsionedbatchstowe[key, (U ᵕ U❁) vawinmemowy, (U ﹏ U) key, (batchid, :3 vawinstowe)](
+      wootpath, ( ͡o ω ͡o )
+      vewsionstokeep, σωσ
+      b-batchew
+    )(wagcowwectow)({ case (batchid, (k, >w< v-v)) => (k, 😳😳😳 (batchid.next, p-packew(v))) })({
+      c-case (k, OwO (_, v)) => (k, 😳 unpackew(v))
     }) {
-      override def select(b: List[BatchID]) = List(b.last)
-      override def pruning: PrunedSpace[(Key, ValInMemory)] = prunedSpace
+      ovewwide def sewect(b: w-wist[batchid]) = w-wist(b.wast)
+      ovewwide def p-pwuning: pwunedspace[(key, 😳😳😳 v-vawinmemowy)] = pwunedspace
     }
   }
 }
 
 /**
- * @param lagCorrector lagCorrector allows one to take data from one batch and pretend as if it
- *                     came from a different batch.
- * @param pack Converts the in-memory tuples to the type used by the underlying key-val store.
- * @param unpack Converts the key-val tuples from the store in the form used by the calling object.
+ * @pawam w-wagcowwectow wagcowwectow awwows o-one to take data fwom one batch and pwetend a-as if it
+ *                     came fwom a diffewent b-batch. (˘ω˘)
+ * @pawam pack convewts t-the in-memowy t-tupwes to the type used by the undewwying key-vaw stowe. ʘwʘ
+ * @pawam unpack convewts the key-vaw tupwes fwom t-the stowe in the f-fowm used by the cawwing object. ( ͡o ω ͡o )
  */
-class MostRecentLagCorrectingVersionedBatchStore[KeyInMemory, ValInMemory, KeyInStore, ValInStore](
-  rootPath: String,
-  versionsToKeep: Int,
-  override val batcher: Batcher
+c-cwass mostwecentwagcowwectingvewsionedbatchstowe[keyinmemowy, o.O v-vawinmemowy, >w< k-keyinstowe, vawinstowe](
+  wootpath: stwing,
+  vewsionstokeep: i-int, 😳
+  ovewwide vaw batchew: batchew
 )(
-  lagCorrector: (ValInMemory, Long) => ValInMemory
+  wagcowwectow: (vawinmemowy, 🥺 wong) => vawinmemowy
 )(
-  pack: (BatchID, (KeyInMemory, ValInMemory)) => (KeyInStore, ValInStore)
+  pack: (batchid, rawr x3 (keyinmemowy, o.O v-vawinmemowy)) => (keyinstowe, rawr vawinstowe)
 )(
-  unpack: ((KeyInStore, ValInStore)) => (KeyInMemory, ValInMemory)
+  u-unpack: ((keyinstowe, ʘwʘ v-vawinstowe)) => (keyinmemowy, 😳😳😳 v-vawinmemowy)
 )(
-  implicit @transient injection: Injection[(KeyInStore, ValInStore), (Array[Byte], Array[Byte])],
-  override val ordering: Ordering[KeyInMemory])
-    extends VersionedBatchStore[KeyInMemory, ValInMemory, KeyInStore, ValInStore](
-      rootPath,
-      versionsToKeep,
-      batcher)(pack)(unpack)(injection, ordering) {
+  impwicit @twansient i-injection: i-injection[(keyinstowe, ^^;; v-vawinstowe), o.O (awway[byte], (///ˬ///✿) a-awway[byte])], σωσ
+  ovewwide vaw owdewing: owdewing[keyinmemowy])
+    e-extends vewsionedbatchstowe[keyinmemowy, nyaa~~ v-vawinmemowy, ^^;; keyinstowe, ^•ﻌ•^ v-vawinstowe](
+      w-wootpath, σωσ
+      v-vewsionstokeep, -.-
+      batchew)(pack)(unpack)(injection, ^^;; owdewing) {
 
-  import OrderedFromOrderingExt._
+  impowt owdewedfwomowdewingext._
 
-  @transient private val logger =
-    LoggerFactory.getLogger(classOf[MostRecentLagCorrectingVersionedBatchStore[_, _, _, _]])
+  @twansient p-pwivate vaw woggew =
+    woggewfactowy.getwoggew(cwassof[mostwecentwagcowwectingvewsionedbatchstowe[_, XD _, _, _]])
 
-  override protected def lastBatch(
-    exclusiveUB: BatchID,
-    mode: HdfsMode
-  ): Option[(BatchID, FlowProducer[TypedPipe[(KeyInMemory, ValInMemory)]])] = {
-    val batchToPretendAs = exclusiveUB.prev
-    val versionToPretendAs = batchIDToVersion(batchToPretendAs)
-    logger.info(
-      s"Most recent lag correcting versioned batched store at $rootPath entering lastBatch method versionToPretendAs = $versionToPretendAs")
-    val meta = new HDFSMetadata(mode.conf, rootPath)
-    meta.versions
-      .map { ver => (versionToBatchID(ver), readVersion(ver)) }
-      .filter { _._1 < exclusiveUB }
-      .reduceOption { (a, b) => if (a._1 > b._1) a else b }
+  ovewwide pwotected def wastbatch(
+    excwusiveub: batchid, 🥺
+    m-mode: hdfsmode
+  ): option[(batchid, òωó fwowpwoducew[typedpipe[(keyinmemowy, (ˆ ﻌ ˆ)♡ vawinmemowy)]])] = {
+    v-vaw batchtopwetendas = e-excwusiveub.pwev
+    v-vaw vewsiontopwetendas = batchidtovewsion(batchtopwetendas)
+    w-woggew.info(
+      s"most wecent w-wag cowwecting v-vewsioned batched stowe at $wootpath entewing wastbatch method vewsiontopwetendas = $vewsiontopwetendas")
+    vaw meta = nyew h-hdfsmetadata(mode.conf, -.- wootpath)
+    m-meta.vewsions
+      .map { vew => (vewsiontobatchid(vew), :3 w-weadvewsion(vew)) }
+      .fiwtew { _._1 < e-excwusiveub }
+      .weduceoption { (a, ʘwʘ b) => if (a._1 > b._1) a ewse b-b }
       .map {
-        case (
-              lastBatchID: BatchID,
-              flowProducer: FlowProducer[TypedPipe[(KeyInMemory, ValInMemory)]]) =>
-          val lastVersion = batchIDToVersion(lastBatchID)
-          val lagToCorrectMillis: Long =
-            batchIDToVersion(batchToPretendAs) - batchIDToVersion(lastBatchID)
-          logger.info(
-            s"Most recent available version is $lastVersion, so lagToCorrectMillis is $lagToCorrectMillis")
-          val lagCorrectedFlowProducer = flowProducer.map {
-            pipe: TypedPipe[(KeyInMemory, ValInMemory)] =>
-              pipe.map { case (k, v) => (k, lagCorrector(v, lagToCorrectMillis)) }
+        c-case (
+              wastbatchid: batchid, 🥺
+              f-fwowpwoducew: f-fwowpwoducew[typedpipe[(keyinmemowy, >_< vawinmemowy)]]) =>
+          vaw wastvewsion = batchidtovewsion(wastbatchid)
+          vaw wagtocowwectmiwwis: w-wong =
+            b-batchidtovewsion(batchtopwetendas) - b-batchidtovewsion(wastbatchid)
+          woggew.info(
+            s-s"most wecent avaiwabwe v-vewsion is $wastvewsion, ʘwʘ s-so wagtocowwectmiwwis is $wagtocowwectmiwwis")
+          vaw wagcowwectedfwowpwoducew = fwowpwoducew.map {
+            pipe: typedpipe[(keyinmemowy, (˘ω˘) v-vawinmemowy)] =>
+              p-pipe.map { case (k, (✿oωo) v) => (k, (///ˬ///✿) wagcowwectow(v, rawr x3 w-wagtocowwectmiwwis)) }
           }
-          (batchToPretendAs, lagCorrectedFlowProducer)
+          (batchtopwetendas, -.- w-wagcowwectedfwowpwoducew)
       }
   }
 }

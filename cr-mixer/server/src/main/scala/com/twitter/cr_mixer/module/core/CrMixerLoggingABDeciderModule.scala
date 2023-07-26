@@ -1,20 +1,20 @@
-package com.twitter.cr_mixer.module.core
+package com.twittew.cw_mixew.moduwe.cowe
 
-import com.google.inject.Provides
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.cr_mixer.featureswitch.CrMixerLoggingABDecider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import javax.inject.Singleton
+impowt c-com.googwe.inject.pwovides
+i-impowt c-com.twittew.abdecidew.woggingabdecidew
+i-impowt c-com.twittew.cw_mixew.featuweswitch.cwmixewwoggingabdecidew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.inject.twittewmoduwe
+impowt javax.inject.singweton
 
-object CrMixerLoggingABDeciderModule extends TwitterModule {
+object cwmixewwoggingabdecidewmoduwe extends twittewmoduwe {
 
-  @Provides
-  @Singleton
-  def provideABDecider(
-    loggingABDecider: LoggingABDecider,
-    statsReceiver: StatsReceiver
-  ): CrMixerLoggingABDecider = {
-    CrMixerLoggingABDecider(loggingABDecider, statsReceiver)
+  @pwovides
+  @singweton
+  d-def pwovideabdecidew(
+    woggingabdecidew: woggingabdecidew, (⑅˘꒳˘)
+    s-statsweceivew: statsweceivew
+  ): c-cwmixewwoggingabdecidew = {
+    cwmixewwoggingabdecidew(woggingabdecidew, (U ᵕ U❁) statsweceivew)
   }
 }

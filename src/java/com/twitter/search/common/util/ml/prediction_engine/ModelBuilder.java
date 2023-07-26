@@ -1,16 +1,16 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+package com.twittew.seawch.common.utiw.mw.pwediction_engine;
 
 /**
- * A builder interface to build a LightweightLinearModel.
+ * a buiwdew intewface t-to buiwd a-a wightweightwineawmodew. σωσ
  */
-public interface ModelBuilder {
+pubwic i-intewface m-modewbuiwdew {
   /**
-   * parses a line of the model file and updates the build state
+   * p-pawses a-a wine of the modew f-fiwe and updates t-the buiwd state
    */
-  ModelBuilder parseLine(String line);
+  modewbuiwdew pawsewine(stwing wine);
 
   /**
-   * builds the model
+   * buiwds the modew
    */
-  LightweightLinearModel build();
+  w-wightweightwineawmodew buiwd();
 }

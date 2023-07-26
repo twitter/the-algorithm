@@ -1,154 +1,154 @@
-package com.twitter.simclusters_v2.scalding.embedding.abuse
+package com.twittew.simcwustews_v2.scawding.embedding.abuse
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.scalding._
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.ClusterId
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.UserId
-import com.twitter.simclusters_v2.thriftscala.AdhocSingleSideClusterScores
-import com.twitter.simclusters_v2.thriftscala.SimClusterWithScore
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding
+impowt c-com.googwe.common.annotations.visibwefowtesting
+i-impowt com.twittew.scawding._
+i-impowt com.twittew.simcwustews_v2.scawding.common.matwix.spawsematwix
+i-impowt com.twittew.simcwustews_v2.scawding.embedding.common.embeddingutiw.cwustewid
+i-impowt c-com.twittew.simcwustews_v2.scawding.embedding.common.embeddingutiw.usewid
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.adhocsingwesidecwustewscowes
+impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewwithscowe
+impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembedding
 
 /**
- * Logic for building a SimCluster represenation of interaction signals. The purpose of this job is
- * to model negative behavior (like abuse and blocks).
+ * wogic fow buiwding a-a simcwustew wepwesenation of intewaction s-signaws. -.- the puwpose of this job i-is
+ * to modew nyegative behaviow (wike abuse and bwocks). mya
  *
- * This is a "SingleSide", because we are only considering one side of the interaction graph to
- * build these features. So for instance we would keep track of which simclusters are most likely to
- * get reported for abuse regardless of who reported it. Another job will be responsible for
- * building the simcluster to simcluster interaction matrix as described in the doc.
+ * t-this is a "singweside", >w< because w-we awe onwy considewing o-one side of the intewaction gwaph to
+ * buiwd these featuwes. (U ﹏ U) so fow i-instance we wouwd keep twack of which simcwustews awe most wikewy to
+ * get wepowted f-fow abuse wegawdwess of who w-wepowted it. anothew j-job wiww be w-wesponsibwe fow
+ * b-buiwding the simcwustew to simcwustew intewaction m-matwix as descwibed in the doc. 😳😳😳
  */
-object SingleSideInteractionTransformation {
+object s-singwesideintewactiontwansfowmation {
 
   /**
-   * Compute a score for every SimCluster. The SimCluster score is a count of the number of
-   * interactions for each SimCluster. For a user that has many SimClusters, we distribute each of
-   * their interactions across all of these SimClusters.
+   * compute a scowe fow evewy simcwustew. o.O the simcwustew scowe is a count of the n-nyumbew of
+   * intewactions fow e-each simcwustew. òωó f-fow a usew that h-has many simcwustews, 😳😳😳 we distwibute each of
+   * theiw intewactions a-acwoss aww o-of these simcwustews.
    *
-   * @param normalizedUserSimClusters Sparse matrix of User-SimCluster scores. Users are rows and
-   *                                  SimClusters are columns. This should already by L2normalized.
-   *                                  It is important that we normalize so that each interaction
-   *                                  only adds 1 to the counts.
-   * @param interactionGraph Graph of interactions. Rows are the users, columns are not used.
-   *                   All values in this graph are assumed to be positive; they are the number of
-   *                   interactions.
+   * @pawam nyowmawizedusewsimcwustews s-spawse matwix o-of usew-simcwustew scowes. σωσ usews a-awe wows and
+   *                                  simcwustews a-awe cowumns. (⑅˘꒳˘) this shouwd awweady by w2nowmawized. (///ˬ///✿)
+   *                                  i-it is impowtant that we n-nowmawize so that each intewaction
+   *                                  o-onwy a-adds 1 to the counts. 🥺
+   * @pawam intewactiongwaph gwaph of intewactions. OwO wows awe the usews, >w< cowumns awe nyot used. 🥺
+   *                   aww v-vawues in this gwaph a-awe assumed to be positive; t-they awe the nyumbew o-of
+   *                   i-intewactions.
    *
-   * @return SingleSideClusterFeatures for each SimCluster that has user with an interaction.
+   * @wetuwn singwesidecwustewfeatuwes fow each simcwustew that h-has usew with an intewaction. nyaa~~
    */
-  def computeClusterFeatures(
-    normalizedUserSimClusters: SparseMatrix[UserId, ClusterId, Double],
-    interactionGraph: SparseMatrix[UserId, _, Double]
-  ): TypedPipe[SimClusterWithScore] = {
+  def computecwustewfeatuwes(
+    nyowmawizedusewsimcwustews: spawsematwix[usewid, ^^ c-cwustewid, >w< doubwe], OwO
+    i-intewactiongwaph: s-spawsematwix[usewid, XD _, d-doubwe]
+  ): typedpipe[simcwustewwithscowe] = {
 
-    val numReportsForUserEntries = interactionGraph.rowL1Norms.map {
-      // turn into a vector where we use 1 as the column key for every entry.
-      case (user, count) => (user, 1, count)
+    v-vaw numwepowtsfowusewentwies = i-intewactiongwaph.woww1nowms.map {
+      // t-tuwn i-into a vectow whewe we use 1 as the cowumn key fow e-evewy entwy. ^^;;
+      c-case (usew, 🥺 c-count) => (usew, XD 1, c-count)
     }
 
-    val numReportsForUser = SparseMatrix[UserId, Int, Double](numReportsForUserEntries)
+    v-vaw nyumwepowtsfowusew = spawsematwix[usewid, (U ᵕ U❁) int, doubwe](numwepowtsfowusewentwies)
 
-    normalizedUserSimClusters.transpose
-      .multiplySparseMatrix(numReportsForUser)
-      .toTypedPipe
+    nyowmawizedusewsimcwustews.twanspose
+      .muwtipwyspawsematwix(numwepowtsfowusew)
+      .totypedpipe
       .map {
-        case (clusterId, _, clusterScore: Double) =>
-          SimClusterWithScore(clusterId, clusterScore)
+        c-case (cwustewid, :3 _, ( ͡o ω ͡o ) cwustewscowe: doubwe) =>
+          simcwustewwithscowe(cwustewid, òωó cwustewscowe)
       }
   }
 
   /**
-   * Given that we have the score for each SimCluster and the user's SimClusters, create a
-   * representation of the user so that the new SimCluster scores are an estimate of the
-   * interactions for this user.
+   * given t-that we have the scowe fow each simcwustew and the usew's simcwustews, σωσ c-cweate a
+   * w-wepwesentation o-of the usew so that the nyew s-simcwustew scowes awe an estimate o-of the
+   * intewactions f-fow this usew. (U ᵕ U❁)
    *
-   * @param normalizedUserSimClusters sparse matrix of User-SimCluster scores. Users are rows and
-   *                                  SimClusters are columns. This should already be L2 normalized.
-   * @param simClusterFeatures For each SimCluster, a score associated with this interaction type.
+   * @pawam nyowmawizedusewsimcwustews spawse matwix of usew-simcwustew scowes. (✿oωo) u-usews awe wows and
+   *                                  simcwustews a-awe cowumns. ^^ this shouwd awweady b-be w2 nyowmawized. ^•ﻌ•^
+   * @pawam s-simcwustewfeatuwes fow each simcwustew, XD a scowe a-associated w-with this intewaction type. :3
    *
-   * @return SingleSideAbuseFeatures for each user the SimClusters and scores for this
+   * @wetuwn s-singwesideabusefeatuwes f-fow each usew the simcwustews and scowes fow this
    */
-  @VisibleForTesting
-  private[abuse] def computeUserFeaturesFromClusters(
-    normalizedUserSimClusters: SparseMatrix[UserId, ClusterId, Double],
-    simClusterFeatures: TypedPipe[SimClusterWithScore]
-  ): TypedPipe[(UserId, SimClustersEmbedding)] = {
+  @visibwefowtesting
+  pwivate[abuse] d-def computeusewfeatuwesfwomcwustews(
+    n-nyowmawizedusewsimcwustews: s-spawsematwix[usewid, (ꈍᴗꈍ) cwustewid, d-doubwe], :3
+    s-simcwustewfeatuwes: typedpipe[simcwustewwithscowe]
+  ): t-typedpipe[(usewid, (U ﹏ U) simcwustewsembedding)] = {
 
-    normalizedUserSimClusters.toTypedPipe
+    nyowmawizedusewsimcwustews.totypedpipe
       .map {
-        case (userId, clusterId, score) =>
-          (clusterId, (userId, score))
+        case (usewid, UwU cwustewid, s-scowe) =>
+          (cwustewid, 😳😳😳 (usewid, scowe))
       }
-      .group
-      // There are at most 140k SimClusters. They should fit in memory
-      .hashJoin(simClusterFeatures.groupBy(_.clusterId))
+      .gwoup
+      // t-thewe awe at most 140k simcwustews. XD they shouwd f-fit in memowy
+      .hashjoin(simcwustewfeatuwes.gwoupby(_.cwustewid))
       .map {
-        case (_, ((userId, score), singleSideClusterFeatures)) =>
+        c-case (_, o.O ((usewid, (⑅˘꒳˘) scowe), singwesidecwustewfeatuwes)) =>
           (
-            userId,
-            List(
-              SimClusterWithScore(
-                singleSideClusterFeatures.clusterId,
-                singleSideClusterFeatures.score * score))
+            usewid, 😳😳😳
+            wist(
+              s-simcwustewwithscowe(
+                singwesidecwustewfeatuwes.cwustewid, nyaa~~
+                singwesidecwustewfeatuwes.scowe * scowe))
           )
       }
-      .sumByKey
-      .mapValues(SimClustersEmbedding.apply)
+      .sumbykey
+      .mapvawues(simcwustewsembedding.appwy)
   }
 
   /**
-   * Combines all the different SimClustersEmbedding for a user into one
-   * AdhocSingleSideClusterScores.
+   * combines aww the d-diffewent simcwustewsembedding fow a usew into one
+   * adhocsingwesidecwustewscowes. rawr
    *
-   * @param interactionMap The key is an identifier for the embedding type. The typed pipe will have
-   *                       embeddings of only for that type of embedding.
-   * @return Typed pipe with one AdhocSingleSideClusterScores per user.
+   * @pawam i-intewactionmap t-the key is an identifiew fow the embedding type. -.- the typed p-pipe wiww have
+   *                       e-embeddings of onwy fow that type of embedding. (✿oωo)
+   * @wetuwn t-typed pipe with one adhocsingwesidecwustewscowes p-pew usew. /(^•ω•^)
    */
-  def pairScores(
-    interactionMap: Map[String, TypedPipe[(UserId, SimClustersEmbedding)]]
-  ): TypedPipe[AdhocSingleSideClusterScores] = {
+  def paiwscowes(
+    intewactionmap: map[stwing, 🥺 typedpipe[(usewid, simcwustewsembedding)]]
+  ): t-typedpipe[adhocsingwesidecwustewscowes] = {
 
-    val combinedInteractions = interactionMap
+    vaw c-combinedintewactions = i-intewactionmap
       .map {
-        case (interactionTypeName, userInteractionFeatures) =>
-          userInteractionFeatures.map {
-            case (userId, simClustersEmbedding) =>
-              (userId, List((interactionTypeName, simClustersEmbedding)))
+        case (intewactiontypename, ʘwʘ u-usewintewactionfeatuwes) =>
+          usewintewactionfeatuwes.map {
+            c-case (usewid, s-simcwustewsembedding) =>
+              (usewid, UwU w-wist((intewactiontypename, XD simcwustewsembedding)))
           }
       }
-      .reduce[TypedPipe[(UserId, List[(String, SimClustersEmbedding)])]] {
-        case (list1, list2) =>
-          list1 ++ list2
+      .weduce[typedpipe[(usewid, (✿oωo) wist[(stwing, :3 s-simcwustewsembedding)])]] {
+        c-case (wist1, (///ˬ///✿) wist2) =>
+          wist1 ++ wist2
       }
-      .group
-      .sumByKey
+      .gwoup
+      .sumbykey
 
-    combinedInteractions.toTypedPipe
+    c-combinedintewactions.totypedpipe
       .map {
-        case (userId, interactionFeatureList) =>
-          AdhocSingleSideClusterScores(
-            userId,
-            interactionFeatureList.toMap
+        c-case (usewid, nyaa~~ i-intewactionfeatuwewist) =>
+          adhocsingwesidecwustewscowes(
+            usewid, >w<
+            intewactionfeatuwewist.tomap
           )
       }
   }
 
   /**
-   * Given the SimCluster and interaction graph get the user representation for this interaction.
-   * See the documentation of the underlying methods for more details
+   * g-given the simcwustew and intewaction g-gwaph get the u-usew wepwesentation fow this intewaction. -.-
+   * see the documentation o-of the undewwying m-methods f-fow mowe detaiws
    *
-   * @param normalizedUserSimClusters sparse matrix of User-SimCluster scores. Users are rows and
-   *                                  SimClusters are columns. This should already by L2normalized.
-   * @param interactionGraph Graph of interactions. Rows are the users, columns are not used.
-   *                   All values in this graph are assumed to be positive; they are the number of
-   *                   interactions.
+   * @pawam n-nyowmawizedusewsimcwustews spawse matwix of u-usew-simcwustew scowes. (✿oωo) usews awe wows and
+   *                                  simcwustews awe cowumns. (˘ω˘) this shouwd awweady by w-w2nowmawized. rawr
+   * @pawam intewactiongwaph g-gwaph of intewactions. OwO w-wows awe the usews, ^•ﻌ•^ cowumns awe n-nyot used.
+   *                   aww vawues i-in this gwaph awe a-assumed to be p-positive; they awe t-the nyumbew of
+   *                   i-intewactions. UwU
    *
-   * @return SimClustersEmbedding for all users in the give SimCluster graphs
+   * @wetuwn simcwustewsembedding fow aww usews in the give simcwustew gwaphs
    */
-  def clusterScoresFromGraphs(
-    normalizedUserSimClusters: SparseMatrix[UserId, ClusterId, Double],
-    interactionGraph: SparseMatrix[UserId, _, Double]
-  ): TypedPipe[(UserId, SimClustersEmbedding)] = {
-    val clusterFeatures = computeClusterFeatures(normalizedUserSimClusters, interactionGraph)
-    computeUserFeaturesFromClusters(normalizedUserSimClusters, clusterFeatures)
+  def cwustewscowesfwomgwaphs(
+    n-nyowmawizedusewsimcwustews: spawsematwix[usewid, (˘ω˘) c-cwustewid, doubwe], (///ˬ///✿)
+    i-intewactiongwaph: spawsematwix[usewid, σωσ _, d-doubwe]
+  ): typedpipe[(usewid, /(^•ω•^) simcwustewsembedding)] = {
+    vaw cwustewfeatuwes = c-computecwustewfeatuwes(nowmawizedusewsimcwustews, 😳 i-intewactiongwaph)
+    computeusewfeatuwesfwomcwustews(nowmawizedusewsimcwustews, 😳 c-cwustewfeatuwes)
   }
 }

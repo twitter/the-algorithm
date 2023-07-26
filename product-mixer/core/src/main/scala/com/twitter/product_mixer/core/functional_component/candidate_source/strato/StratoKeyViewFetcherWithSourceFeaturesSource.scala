@@ -1,75 +1,75 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source.strato
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.stwato
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwcewithextwactedfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidateswithsouwcefeatuwes
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.cwient.fetchew
 
 /**
- * A [[CandidateSource]] for getting Candidates from Strato where the
- * Strato column's View is [[StratoView]] and the Value is a [[StratoValue]]
+ * a-a [[candidatesouwce]] f-fow getting c-candidates fwom stwato whewe the
+ * stwato cowumn's view is [[stwatoview]] and the vawue is a-a [[stwatovawue]]
  *
- * A [[stratoResultTransformer]] must be defined to convert the
- * [[StratoValue]] into a Seq of [[Candidate]]
+ * a [[stwatowesuwttwansfowmew]] must be d-defined to convewt the
+ * [[stwatovawue]] i-into a seq of [[candidate]]
  *
- * [[extractFeaturesFromStratoResult]] must be defined to extract a
- * [[FeatureMap]] from the [[StratoValue]]. If you don't need to do that,
- * use a [[StratoKeyViewFetcherSource]] instead.
+ * [[extwactfeatuwesfwomstwatowesuwt]] must be defined to extwact a
+ * [[featuwemap]] fwom t-the [[stwatovawue]]. :3 if you d-don't nyeed to do t-that, OwO
+ * use a [[stwatokeyviewfetchewsouwce]] instead. (U ﹏ U)
  *
- * @tparam StratoKey the column's Key type
- * @tparam StratoView the column's View type
- * @tparam StratoValue the column's Value type
+ * @tpawam stwatokey the cowumn's key type
+ * @tpawam s-stwatoview the cowumn's view type
+ * @tpawam stwatovawue the cowumn's vawue type
  */
-trait StratoKeyViewFetcherWithSourceFeaturesSource[StratoKey, StratoView, StratoValue, Candidate]
-    extends CandidateSourceWithExtractedFeatures[StratoKeyView[StratoKey, StratoView], Candidate] {
+twait stwatokeyviewfetchewwithsouwcefeatuwessouwce[stwatokey, >w< s-stwatoview, (U ﹏ U) stwatovawue, candidate]
+    e-extends c-candidatesouwcewithextwactedfeatuwes[stwatokeyview[stwatokey, 😳 s-stwatoview], (ˆ ﻌ ˆ)♡ c-candidate] {
 
-  val fetcher: Fetcher[StratoKey, StratoView, StratoValue]
-
-  /**
-   * Transforms the value type returned by Strato into a Seq[Candidate].
-   *
-   * This might be as simple as `Seq(stratoResult)` if you're always returning a single candidate.
-   *
-   * Often, it just extracts a Seq from within a larger wrapper object.
-   *
-   * If there is global metadata that you need to include, see [[extractFeaturesFromStratoResult]]
-   * below to put that into a Feature.
-   */
-  protected def stratoResultTransformer(
-    stratoKey: StratoKey,
-    stratoResult: StratoValue
-  ): Seq[Candidate]
+  vaw fetchew: fetchew[stwatokey, 😳😳😳 stwatoview, (U ﹏ U) stwatovawue]
 
   /**
-   * Transforms the value type returned by Strato into a FeatureMap.
+   * t-twansfowms the vawue type wetuwned by stwato i-into a seq[candidate]. (///ˬ///✿)
    *
-   * Override this to extract global metadata like cursors and place the results
-   * into a Feature.
+   * this might be as simpwe as `seq(stwatowesuwt)` if you'we awways wetuwning a singwe candidate. 😳
    *
-   * For example, a cursor.
+   * o-often, it just extwacts a-a seq fwom within a-a wawgew wwappew o-object. 😳
+   *
+   * if thewe is gwobaw metadata that you nyeed t-to incwude, σωσ see [[extwactfeatuwesfwomstwatowesuwt]]
+   * b-bewow to put that into a-a featuwe. rawr x3
    */
-  protected def extractFeaturesFromStratoResult(
-    stratoKey: StratoKey,
-    stratoResult: StratoValue
-  ): FeatureMap
+  p-pwotected def stwatowesuwttwansfowmew(
+    s-stwatokey: stwatokey, OwO
+    stwatowesuwt: s-stwatovawue
+  ): seq[candidate]
 
-  override def apply(
-    request: StratoKeyView[StratoKey, StratoView]
-  ): Stitch[CandidatesWithSourceFeatures[Candidate]] = {
-    fetcher
-      .fetch(request.key, request.view)
-      .map { result =>
-        val candidates = result.v
-          .map((stratoResult: StratoValue) => stratoResultTransformer(request.key, stratoResult))
-          .getOrElse(Seq.empty)
+  /**
+   * twansfowms t-the vawue type wetuwned by stwato i-into a featuwemap. /(^•ω•^)
+   *
+   * ovewwide this to e-extwact gwobaw metadata w-wike cuwsows and pwace the wesuwts
+   * into a featuwe. 😳😳😳
+   *
+   * fow exampwe, ( ͡o ω ͡o ) a cuwsow. >_<
+   */
+  pwotected d-def extwactfeatuwesfwomstwatowesuwt(
+    s-stwatokey: stwatokey, >w<
+    s-stwatowesuwt: s-stwatovawue
+  ): f-featuwemap
 
-        val features = result.v
-          .map((stratoResult: StratoValue) =>
-            extractFeaturesFromStratoResult(request.key, stratoResult))
-          .getOrElse(FeatureMap.empty)
+  ovewwide def appwy(
+    wequest: stwatokeyview[stwatokey, rawr s-stwatoview]
+  ): stitch[candidateswithsouwcefeatuwes[candidate]] = {
+    fetchew
+      .fetch(wequest.key, 😳 wequest.view)
+      .map { wesuwt =>
+        v-vaw candidates = wesuwt.v
+          .map((stwatowesuwt: s-stwatovawue) => s-stwatowesuwttwansfowmew(wequest.key, >w< s-stwatowesuwt))
+          .getowewse(seq.empty)
 
-        CandidatesWithSourceFeatures(candidates, features)
-      }.rescue(StratoErrCategorizer.CategorizeStratoException)
+        vaw featuwes = w-wesuwt.v
+          .map((stwatowesuwt: s-stwatovawue) =>
+            e-extwactfeatuwesfwomstwatowesuwt(wequest.key, (⑅˘꒳˘) s-stwatowesuwt))
+          .getowewse(featuwemap.empty)
+
+        candidateswithsouwcefeatuwes(candidates, OwO featuwes)
+      }.wescue(stwatoewwcategowizew.categowizestwatoexception)
   }
 }

@@ -1,20 +1,20 @@
-package com.twitter.frigate.pushservice.store
+package com.twittew.fwigate.pushsewvice.stowe
 
-import com.twitter.frigate.pushservice.params.PushQPSLimitConstants.SocialGraphServiceBatchSize
-import com.twitter.hermit.predicate.socialgraph.RelationEdge
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt c-com.twittew.fwigate.pushsewvice.pawams.pushqpswimitconstants.sociawgwaphsewvicebatchsize
+i-impowt c-com.twittew.hewmit.pwedicate.sociawgwaph.wewationedge
+i-impowt c-com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.utiw.futuwe
 
-case class SocialGraphServiceProcessStore(edgeStore: ReadableStore[RelationEdge, Boolean])
-    extends ReadableStore[RelationEdge, Boolean] {
-  override def multiGet[T <: RelationEdge](
-    relationEdges: Set[T]
-  ): Map[T, Future[Option[Boolean]]] = {
-    val splitSet = relationEdges.grouped(SocialGraphServiceBatchSize).toSet
-    splitSet
-      .map { relationship =>
-        edgeStore.multiGet(relationship)
-      }.foldLeft(Map.empty[T, Future[Option[Boolean]]]) { (map1, map2) =>
+c-case cwass s-sociawgwaphsewvicepwocessstowe(edgestowe: weadabwestowe[wewationedge, mya boowean])
+    extends weadabwestowe[wewationedge, 😳 boowean] {
+  o-ovewwide def muwtiget[t <: wewationedge](
+    w-wewationedges: set[t]
+  ): map[t, XD f-futuwe[option[boowean]]] = {
+    vaw spwitset = wewationedges.gwouped(sociawgwaphsewvicebatchsize).toset
+    spwitset
+      .map { w-wewationship =>
+        edgestowe.muwtiget(wewationship)
+      }.fowdweft(map.empty[t, :3 f-futuwe[option[boowean]]]) { (map1, 😳😳😳 m-map2) =>
         map1 ++ map2
       }
   }

@@ -1,24 +1,24 @@
-package com.twitter.search.earlybird_root.caching;
+package com.twittew.seawch.eawwybiwd_woot.caching;
 
-import com.twitter.search.common.caching.filter.QueryCachePredicate;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
+impowt com.twittew.seawch.common.caching.fiwtew.quewycachepwedicate;
+i-impowt com.twittew.seawch.common.decidew.seawchdecidew;
+i-impowt com.twittew.seawch.eawwybiwd.common.eawwybiwdwequestutiw;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+i-impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequesttype;
 
-public class FacetsQueryCachePredicate extends QueryCachePredicate<EarlybirdRequestContext> {
-  private final SearchDecider decider;
-  private final String facetsCacheEnabledDeciderKey;
+p-pubwic cwass facetsquewycachepwedicate e-extends q-quewycachepwedicate<eawwybiwdwequestcontext> {
+  pwivate finaw seawchdecidew decidew;
+  pwivate finaw stwing facetscacheenabweddecidewkey;
 
-  public FacetsQueryCachePredicate(SearchDecider decider, String normalizedSearchRootName) {
-    this.decider = decider;
-    this.facetsCacheEnabledDeciderKey = "facets_cache_enabled_" + normalizedSearchRootName;
+  p-pubwic facetsquewycachepwedicate(seawchdecidew decidew, 😳 s-stwing nyowmawizedseawchwootname) {
+    this.decidew = d-decidew;
+    this.facetscacheenabweddecidewkey = "facets_cache_enabwed_" + nyowmawizedseawchwootname;
   }
 
-  @Override
-  public Boolean shouldQueryCache(EarlybirdRequestContext requestContext) {
-    return EarlybirdRequestType.FACETS == requestContext.getEarlybirdRequestType()
-        && EarlybirdRequestUtil.isCachingAllowed(requestContext.getRequest())
-        && decider.isAvailable(facetsCacheEnabledDeciderKey);
+  @ovewwide
+  pubwic boowean s-shouwdquewycache(eawwybiwdwequestcontext wequestcontext) {
+    w-wetuwn eawwybiwdwequesttype.facets == w-wequestcontext.geteawwybiwdwequesttype()
+        && eawwybiwdwequestutiw.iscachingawwowed(wequestcontext.getwequest())
+        && decidew.isavaiwabwe(facetscacheenabweddecidewkey);
   }
 }

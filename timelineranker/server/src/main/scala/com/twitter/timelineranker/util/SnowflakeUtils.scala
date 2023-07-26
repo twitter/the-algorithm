@@ -1,19 +1,19 @@
-package com.twitter.timelineranker.util
+package com.twittew.timewinewankew.utiw
 
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Duration
-import com.twitter.util.Time
+impowt com.twittew.snowfwake.id.snowfwakeid
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.time
 
-object SnowflakeUtils {
-  def mutateIdTime(id: Long, timeOp: Time => Time): Long = {
-    SnowflakeId.firstIdFor(timeOp(SnowflakeId(id).time))
+o-object snowfwakeutiws {
+  d-def m-mutateidtime(id: w-wong, (U ﹏ U) timeop: t-time => time): wong = {
+    s-snowfwakeid.fiwstidfow(timeop(snowfwakeid(id).time))
   }
 
-  def quantizeDown(id: Long, step: Duration): Long = {
-    mutateIdTime(id, _.floor(step))
+  def quantizedown(id: wong, -.- step: duwation): wong = {
+    m-mutateidtime(id, (ˆ ﻌ ˆ)♡ _.fwoow(step))
   }
 
-  def quantizeUp(id: Long, step: Duration): Long = {
-    mutateIdTime(id, _.ceil(step))
+  def quantizeup(id: wong, (⑅˘꒳˘) s-step: duwation): wong = {
+    mutateidtime(id, (U ᵕ U❁) _.ceiw(step))
   }
 }

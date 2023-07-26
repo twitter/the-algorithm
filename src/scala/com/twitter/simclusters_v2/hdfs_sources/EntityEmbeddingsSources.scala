@@ -1,222 +1,222 @@
-package com.twitter.simclusters_v2.hdfs_sources
+package com.twittew.simcwustews_v2.hdfs_souwces
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.wtf.entity_real_graph.thriftscala.EntityType
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.ModelVersions
+impowt com.twittew.daw.cwient.dataset.keyvawdawdataset
+i-impowt com.twittew.scawding.datewange
+i-impowt c-com.twittew.scawding.typed.typedpipe
+i-impowt c-com.twittew.scawding_intewnaw.dawv2.daw
+i-impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.awwowcwossdc
+i-impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.simcwustews_v2.thwiftscawa._
+impowt com.twittew.wtf.entity_weaw_gwaph.thwiftscawa.entitytype
+impowt com.twittew.simcwustews_v2.common.cwustewid
+impowt com.twittew.simcwustews_v2.common.modewvewsions
 
-object EntityEmbeddingsSources {
+object e-entityembeddingssouwces {
 
-  final val SemanticCoreSimClustersEmbeddingsDec11Dataset =
-    SemanticCoreSimclustersEmbeddingsScalaDataset
+  finaw vaw semanticcowesimcwustewsembeddingsdec11dataset =
+    semanticcowesimcwustewsembeddingsscawadataset
 
-  final val SemanticCoreSimClustersEmbeddingsUpdatedDataset =
-    SemanticCoreSimclustersEmbeddingsUpdatedScalaDataset
+  f-finaw vaw semanticcowesimcwustewsembeddingsupdateddataset =
+    semanticcowesimcwustewsembeddingsupdatedscawadataset
 
-  final val SemanticCoreSimClustersEmbeddings2020Dataset =
-    SemanticCoreSimclustersEmbeddings2020ScalaDataset
+  f-finaw vaw semanticcowesimcwustewsembeddings2020dataset =
+    semanticcowesimcwustewsembeddings2020scawadataset
 
-  final val SemanticCorePerLanguageSimClustersEmbeddingsDataset =
-    SemanticCorePerLanguageSimclustersEmbeddingsScalaDataset
+  finaw v-vaw semanticcowepewwanguagesimcwustewsembeddingsdataset =
+    semanticcowepewwanguagesimcwustewsembeddingsscawadataset
 
-  final val LogFavSemanticCorePerLanguageSimClustersEmbeddingsDataset =
-    LogFavSemanticCorePerLanguageSimclustersEmbeddingsScalaDataset
+  f-finaw v-vaw wogfavsemanticcowepewwanguagesimcwustewsembeddingsdataset =
+    wogfavsemanticcowepewwanguagesimcwustewsembeddingsscawadataset
 
-  final val HashtagSimClustersEmbeddingsUpdatedDataset =
-    HashtagSimclustersEmbeddingsUpdatedScalaDataset
+  finaw vaw hashtagsimcwustewsembeddingsupdateddataset =
+    hashtagsimcwustewsembeddingsupdatedscawadataset
 
-  final val ReverseIndexSemanticCoreSimClustersEmbeddingsDec11Dataset =
-    ReverseIndexSemanticCoreSimclustersEmbeddingsScalaDataset
+  f-finaw vaw wevewseindexsemanticcowesimcwustewsembeddingsdec11dataset =
+    wevewseindexsemanticcowesimcwustewsembeddingsscawadataset
 
-  final val ReverseIndexSemanticCoreSimClustersEmbeddingsUpdatedDataset =
-    ReverseIndexSemanticCoreSimclustersEmbeddingsUpdatedScalaDataset
+  finaw vaw wevewseindexsemanticcowesimcwustewsembeddingsupdateddataset =
+    w-wevewseindexsemanticcowesimcwustewsembeddingsupdatedscawadataset
 
-  final val ReverseIndexSemanticCoreSimClustersEmbeddings2020Dataset =
-    ReverseIndexSemanticCoreSimclustersEmbeddings2020ScalaDataset
+  finaw v-vaw wevewseindexsemanticcowesimcwustewsembeddings2020dataset =
+    w-wevewseindexsemanticcowesimcwustewsembeddings2020scawadataset
 
-  final val ReverseIndexSemanticCorePerLanguageSimClustersEmbeddingsDataset =
-    ReverseIndexSemanticCorePerLanguageSimclustersEmbeddingsScalaDataset
+  f-finaw vaw w-wevewseindexsemanticcowepewwanguagesimcwustewsembeddingsdataset =
+    wevewseindexsemanticcowepewwanguagesimcwustewsembeddingsscawadataset
 
-  final val LogFavReverseIndexSemanticCorePerLanguageSimClustersEmbeddingsDataset =
-    LogFavReverseIndexSemanticCorePerLanguageSimclustersEmbeddingsScalaDataset
+  finaw vaw wogfavwevewseindexsemanticcowepewwanguagesimcwustewsembeddingsdataset =
+    w-wogfavwevewseindexsemanticcowepewwanguagesimcwustewsembeddingsscawadataset
 
-  final val ReverseIndexHashtagSimClustersEmbeddingsUpdatedDataset =
-    ReverseIndexHashtagSimclustersEmbeddingsUpdatedScalaDataset
+  finaw vaw wevewseindexhashtagsimcwustewsembeddingsupdateddataset =
+    wevewseindexhashtagsimcwustewsembeddingsupdatedscawadataset
 
-  // Fav-based TFG topic embeddings built from user device languages
-  // Keyed by SimClustersEmbeddingId with InternalId.TopicId ((topic, language) pair, with country = None)
-  final val FavTfgTopicEmbeddingsDataset = FavTfgTopicEmbeddingsScalaDataset
+  // f-fav-based tfg topic embeddings buiwt fwom usew device wanguages
+  // keyed by simcwustewsembeddingid w-with intewnawid.topicid ((topic, wanguage) paiw, w-with countwy = n-nyone)
+  finaw v-vaw favtfgtopicembeddingsdataset = favtfgtopicembeddingsscawadataset
 
-  final val FavTfgTopicEmbeddingsParquetDataset = FavTfgTopicEmbeddingsParquetScalaDataset
+  finaw vaw favtfgtopicembeddingspawquetdataset = f-favtfgtopicembeddingspawquetscawadataset
 
-  final val FavTfgTopicEmbeddings2020Dataset = FavTfgTopicEmbeddings2020ScalaDataset
+  f-finaw vaw favtfgtopicembeddings2020dataset = favtfgtopicembeddings2020scawadataset
 
-  final val FavTfgTopicEmbeddings2020ParquetDataset = FavTfgTopicEmbeddings2020ParquetScalaDataset
+  f-finaw v-vaw favtfgtopicembeddings2020pawquetdataset = favtfgtopicembeddings2020pawquetscawadataset
 
-  // Logfav-based TFG topic embeddings built from user device languages
-  // Keyed by SimClustersEmbeddingId with InternalId.LocaleEntityId ((topic, language) pair)
-  final val LogFavTfgTopicEmbeddingsDataset = LogFavTfgTopicEmbeddingsScalaDataset
+  // w-wogfav-based tfg topic embeddings b-buiwt fwom usew device wanguages
+  // keyed by s-simcwustewsembeddingid with intewnawid.wocaweentityid ((topic, ^•ﻌ•^ w-wanguage) paiw)
+  finaw vaw wogfavtfgtopicembeddingsdataset = wogfavtfgtopicembeddingsscawadataset
 
-  final val LogFavTfgTopicEmbeddingsParquetDataset = LogFavTfgTopicEmbeddingsParquetScalaDataset
+  f-finaw vaw w-wogfavtfgtopicembeddingspawquetdataset = wogfavtfgtopicembeddingspawquetscawadataset
 
-  // Fav-based TFG topic embeddings built from inferred user consumed languages
-  // Keyed by SimClustersEmbeddingId with InternalId.TopicId ((topic, country, language) tuple)
-  final val FavInferredLanguageTfgTopicEmbeddingsDataset =
-    FavInferredLanguageTfgTopicEmbeddingsScalaDataset
+  // fav-based tfg topic embeddings buiwt fwom infewwed usew consumed wanguages
+  // k-keyed b-by simcwustewsembeddingid with i-intewnawid.topicid ((topic, XD c-countwy, :3 w-wanguage) tupwe)
+  finaw vaw favinfewwedwanguagetfgtopicembeddingsdataset =
+    favinfewwedwanguagetfgtopicembeddingsscawadataset
 
-  private val validSemanticCoreEmbeddingTypes = Seq(
-    EmbeddingType.FavBasedSematicCoreEntity,
-    EmbeddingType.FollowBasedSematicCoreEntity
+  p-pwivate vaw vawidsemanticcoweembeddingtypes = seq(
+    embeddingtype.favbasedsematiccoweentity, (ꈍᴗꈍ)
+    embeddingtype.fowwowbasedsematiccoweentity
   )
 
   /**
-   * Given a fav/follow/etc embedding type and a ModelVersion, retrieve the corresponding dataset to
-   * (SemanticCore entityId -> List(clusterId)) from a certain dateRange.
+   * given a-a fav/fowwow/etc embedding type a-and a modewvewsion, :3 w-wetwieve the c-cowwesponding dataset to
+   * (semanticcowe e-entityid -> w-wist(cwustewid)) f-fwom a c-cewtain datewange. (U ﹏ U)
    */
-  def getSemanticCoreEntityEmbeddingsSource(
-    embeddingType: EmbeddingType,
-    modelVersion: String,
-    dateRange: DateRange
-  ): TypedPipe[(Long, SimClustersEmbedding)] = {
-    val dataSet = modelVersion match {
-      case ModelVersions.Model20M145KDec11 => SemanticCoreSimClustersEmbeddingsDec11Dataset
-      case ModelVersions.Model20M145KUpdated => SemanticCoreSimClustersEmbeddingsUpdatedDataset
-      case _ => throw new IllegalArgumentException(s"ModelVersion $modelVersion is not supported")
+  def getsemanticcoweentityembeddingssouwce(
+    e-embeddingtype: e-embeddingtype, UwU
+    m-modewvewsion: s-stwing, 😳😳😳
+    d-datewange: datewange
+  ): typedpipe[(wong, simcwustewsembedding)] = {
+    v-vaw dataset = modewvewsion match {
+      case modewvewsions.modew20m145kdec11 => semanticcowesimcwustewsembeddingsdec11dataset
+      case modewvewsions.modew20m145kupdated => semanticcowesimcwustewsembeddingsupdateddataset
+      c-case _ => thwow nyew iwwegawawgumentexception(s"modewvewsion $modewvewsion is nyot suppowted")
     }
-    assert(validSemanticCoreEmbeddingTypes.contains(embeddingType))
-    entityEmbeddingsSource(dataSet, embeddingType, dateRange)
+    assewt(vawidsemanticcoweembeddingtypes.contains(embeddingtype))
+    entityembeddingssouwce(dataset, XD e-embeddingtype, o.O d-datewange)
   }
 
   /**
-   * Given a fav/follow/etc embedding type and a ModelVersion, retrieve the corresponding dataset to
-   * (clusterId -> List(SemanticCore entityId)) from a certain dateRange.
+   * g-given a fav/fowwow/etc e-embedding type and a modewvewsion, (⑅˘꒳˘) w-wetwieve t-the cowwesponding dataset to
+   * (cwustewid -> wist(semanticcowe entityid)) fwom a cewtain datewange. 😳😳😳
    */
-  def getReverseIndexedSemanticCoreEntityEmbeddingsSource(
-    embeddingType: EmbeddingType,
-    modelVersion: String,
-    dateRange: DateRange
-  ): TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])] = {
-    val dataSet = modelVersion match {
-      case ModelVersions.Model20M145KDec11 =>
-        ReverseIndexSemanticCoreSimClustersEmbeddingsDec11Dataset
-      case ModelVersions.Model20M145KUpdated =>
-        ReverseIndexSemanticCoreSimClustersEmbeddingsUpdatedDataset
-      case ModelVersions.Model20M145K2020 =>
-        ReverseIndexSemanticCoreSimClustersEmbeddings2020Dataset
-      case _ => throw new IllegalArgumentException(s"ModelVersion $modelVersion is not supported")
+  def getwevewseindexedsemanticcoweentityembeddingssouwce(
+    e-embeddingtype: embeddingtype, nyaa~~
+    m-modewvewsion: stwing, rawr
+    d-datewange: d-datewange
+  ): typedpipe[(cwustewid, -.- seq[semanticcoweentitywithscowe])] = {
+    v-vaw dataset = m-modewvewsion match {
+      case m-modewvewsions.modew20m145kdec11 =>
+        w-wevewseindexsemanticcowesimcwustewsembeddingsdec11dataset
+      case modewvewsions.modew20m145kupdated =>
+        wevewseindexsemanticcowesimcwustewsembeddingsupdateddataset
+      case modewvewsions.modew20m145k2020 =>
+        wevewseindexsemanticcowesimcwustewsembeddings2020dataset
+      c-case _ => t-thwow nyew i-iwwegawawgumentexception(s"modewvewsion $modewvewsion is nyot s-suppowted")
     }
 
-    assert(validSemanticCoreEmbeddingTypes.contains(embeddingType))
-    reverseIndexedEntityEmbeddingsSource(dataSet, embeddingType, dateRange)
+    a-assewt(vawidsemanticcoweembeddingtypes.contains(embeddingtype))
+    wevewseindexedentityembeddingssouwce(dataset, (✿oωo) e-embeddingtype, /(^•ω•^) datewange)
   }
 
-  // Return the raw DAL dataset reference. Use this if you're writing to DAL.
-  def getEntityEmbeddingsDataset(
-    entityType: EntityType,
-    modelVersion: String,
-    isEmbeddingsPerLocale: Boolean = false
-  ): KeyValDALDataset[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]] = {
-    (entityType, modelVersion) match {
-      case (EntityType.SemanticCore, ModelVersions.Model20M145KDec11) =>
-        SemanticCoreSimClustersEmbeddingsDec11Dataset
-      case (EntityType.SemanticCore, ModelVersions.Model20M145KUpdated) =>
-        if (isEmbeddingsPerLocale) {
-          SemanticCorePerLanguageSimClustersEmbeddingsDataset
-        } else {
-          SemanticCoreSimClustersEmbeddingsUpdatedDataset
+  // wetuwn the waw daw dataset wefewence. 🥺 u-use this if y-you'we wwiting to daw. ʘwʘ
+  def getentityembeddingsdataset(
+    entitytype: e-entitytype, UwU
+    m-modewvewsion: stwing, XD
+    isembeddingspewwocawe: boowean = f-fawse
+  ): keyvawdawdataset[keyvaw[simcwustewsembeddingid, (✿oωo) simcwustewsembedding]] = {
+    (entitytype, :3 modewvewsion) match {
+      case (entitytype.semanticcowe, (///ˬ///✿) modewvewsions.modew20m145kdec11) =>
+        s-semanticcowesimcwustewsembeddingsdec11dataset
+      case (entitytype.semanticcowe, nyaa~~ modewvewsions.modew20m145kupdated) =>
+        i-if (isembeddingspewwocawe) {
+          s-semanticcowepewwanguagesimcwustewsembeddingsdataset
+        } ewse {
+          semanticcowesimcwustewsembeddingsupdateddataset
         }
-      case (EntityType.SemanticCore, ModelVersions.Model20M145K2020) =>
-        SemanticCoreSimClustersEmbeddings2020Dataset
-      case (EntityType.Hashtag, ModelVersions.Model20M145KUpdated) =>
-        HashtagSimClustersEmbeddingsUpdatedDataset
-      case (entityType, modelVersion) =>
-        throw new IllegalArgumentException(
-          s"(Entity Type, ModelVersion) ($entityType, $modelVersion) not supported.")
+      case (entitytype.semanticcowe, >w< m-modewvewsions.modew20m145k2020) =>
+        s-semanticcowesimcwustewsembeddings2020dataset
+      case (entitytype.hashtag, -.- modewvewsions.modew20m145kupdated) =>
+        hashtagsimcwustewsembeddingsupdateddataset
+      case (entitytype, (✿oωo) m-modewvewsion) =>
+        thwow n-nyew iwwegawawgumentexception(
+          s"(entity type, (˘ω˘) modewvewsion) ($entitytype, rawr $modewvewsion) nyot suppowted.")
     }
   }
 
-  // Return the raw DAL dataset reference. Use this if you're writing to DAL.
-  def getReverseIndexedEntityEmbeddingsDataset(
-    entityType: EntityType,
-    modelVersion: String,
-    isEmbeddingsPerLocale: Boolean = false
-  ): KeyValDALDataset[KeyVal[SimClustersEmbeddingId, InternalIdEmbedding]] = {
-    (entityType, modelVersion) match {
-      case (EntityType.SemanticCore, ModelVersions.Model20M145KDec11) =>
-        ReverseIndexSemanticCoreSimClustersEmbeddingsDec11Dataset
-      case (EntityType.SemanticCore, ModelVersions.Model20M145KUpdated) =>
-        if (isEmbeddingsPerLocale) {
-          ReverseIndexSemanticCorePerLanguageSimClustersEmbeddingsDataset
-        } else {
-          ReverseIndexSemanticCoreSimClustersEmbeddingsUpdatedDataset
+  // w-wetuwn the waw daw dataset w-wefewence. OwO use t-this if you'we wwiting to daw. ^•ﻌ•^
+  d-def getwevewseindexedentityembeddingsdataset(
+    entitytype: entitytype, UwU
+    modewvewsion: s-stwing, (˘ω˘)
+    i-isembeddingspewwocawe: b-boowean = fawse
+  ): keyvawdawdataset[keyvaw[simcwustewsembeddingid, (///ˬ///✿) i-intewnawidembedding]] = {
+    (entitytype, σωσ m-modewvewsion) match {
+      case (entitytype.semanticcowe, /(^•ω•^) modewvewsions.modew20m145kdec11) =>
+        w-wevewseindexsemanticcowesimcwustewsembeddingsdec11dataset
+      c-case (entitytype.semanticcowe, 😳 m-modewvewsions.modew20m145kupdated) =>
+        if (isembeddingspewwocawe) {
+          wevewseindexsemanticcowepewwanguagesimcwustewsembeddingsdataset
+        } e-ewse {
+          wevewseindexsemanticcowesimcwustewsembeddingsupdateddataset
         }
-      case (EntityType.SemanticCore, ModelVersions.Model20M145K2020) =>
-        ReverseIndexSemanticCoreSimClustersEmbeddings2020Dataset
-      case (EntityType.Hashtag, ModelVersions.Model20M145KUpdated) =>
-        ReverseIndexHashtagSimClustersEmbeddingsUpdatedDataset
-      case (entityType, modelVersion) =>
-        throw new IllegalArgumentException(
-          s"(Entity Type, ModelVersion) ($entityType, $modelVersion) not supported.")
+      c-case (entitytype.semanticcowe, 😳 m-modewvewsions.modew20m145k2020) =>
+        wevewseindexsemanticcowesimcwustewsembeddings2020dataset
+      case (entitytype.hashtag, (⑅˘꒳˘) modewvewsions.modew20m145kupdated) =>
+        w-wevewseindexhashtagsimcwustewsembeddingsupdateddataset
+      c-case (entitytype, 😳😳😳 m-modewvewsion) =>
+        t-thwow nyew iwwegawawgumentexception(
+          s-s"(entity type, 😳 modewvewsion) ($entitytype, $modewvewsion) nyot suppowted.")
     }
   }
 
-  private def entityEmbeddingsSource(
-    dataset: KeyValDALDataset[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]],
-    embeddingType: EmbeddingType,
-    dateRange: DateRange
-  ): TypedPipe[(Long, SimClustersEmbedding)] = {
-    val pipe = DAL
-      .readMostRecentSnapshot(dataset, dateRange)
-      .withRemoteReadPolicy(AllowCrossDC)
-      .toTypedPipe
-    filterEntityEmbeddingsByType(pipe, embeddingType)
+  pwivate def entityembeddingssouwce(
+    dataset: k-keyvawdawdataset[keyvaw[simcwustewsembeddingid, XD simcwustewsembedding]], mya
+    e-embeddingtype: embeddingtype, ^•ﻌ•^
+    d-datewange: datewange
+  ): typedpipe[(wong, ʘwʘ s-simcwustewsembedding)] = {
+    vaw p-pipe = daw
+      .weadmostwecentsnapshot(dataset, ( ͡o ω ͡o ) d-datewange)
+      .withwemoteweadpowicy(awwowcwossdc)
+      .totypedpipe
+    fiwtewentityembeddingsbytype(pipe, mya e-embeddingtype)
   }
 
-  private def reverseIndexedEntityEmbeddingsSource(
-    dataset: KeyValDALDataset[KeyVal[SimClustersEmbeddingId, InternalIdEmbedding]],
-    embeddingType: EmbeddingType,
-    dateRange: DateRange
-  ): TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])] = {
-    val pipe = DAL
-      .readMostRecentSnapshot(dataset, dateRange)
-      .withRemoteReadPolicy(AllowCrossDC)
-      .toTypedPipe
-    filterReverseIndexedEntityEmbeddingsByType(pipe, embeddingType)
+  p-pwivate d-def wevewseindexedentityembeddingssouwce(
+    dataset: keyvawdawdataset[keyvaw[simcwustewsembeddingid, o.O intewnawidembedding]], (✿oωo)
+    embeddingtype: embeddingtype, :3
+    datewange: datewange
+  ): t-typedpipe[(cwustewid, 😳 s-seq[semanticcoweentitywithscowe])] = {
+    vaw p-pipe = daw
+      .weadmostwecentsnapshot(dataset, (U ﹏ U) datewange)
+      .withwemoteweadpowicy(awwowcwossdc)
+      .totypedpipe
+    f-fiwtewwevewseindexedentityembeddingsbytype(pipe, mya embeddingtype)
   }
 
-  private[hdfs_sources] def filterEntityEmbeddingsByType(
-    pipe: TypedPipe[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]],
-    embeddingType: EmbeddingType
-  ): TypedPipe[(Long, SimClustersEmbedding)] = {
-    pipe.collect {
-      case KeyVal(
-            SimClustersEmbeddingId(_embeddingType, _, InternalId.EntityId(entityId)),
-            embedding
-          ) if _embeddingType == embeddingType =>
-        (entityId, embedding)
+  pwivate[hdfs_souwces] def f-fiwtewentityembeddingsbytype(
+    p-pipe: typedpipe[keyvaw[simcwustewsembeddingid, (U ᵕ U❁) simcwustewsembedding]], :3
+    embeddingtype: e-embeddingtype
+  ): typedpipe[(wong, mya simcwustewsembedding)] = {
+    p-pipe.cowwect {
+      c-case keyvaw(
+            simcwustewsembeddingid(_embeddingtype, OwO _, intewnawid.entityid(entityid)), (ˆ ﻌ ˆ)♡
+            e-embedding
+          ) i-if _embeddingtype == embeddingtype =>
+        (entityid, ʘwʘ embedding)
     }
   }
 
-  private[hdfs_sources] def filterReverseIndexedEntityEmbeddingsByType(
-    pipe: TypedPipe[KeyVal[SimClustersEmbeddingId, InternalIdEmbedding]],
-    embeddingType: EmbeddingType
-  ): TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])] = {
-    pipe.collect {
-      case KeyVal(
-            SimClustersEmbeddingId(_embeddingType, _, InternalId.ClusterId(clusterId)),
-            embedding
-          ) if _embeddingType == embeddingType =>
-        val entitiesWithScores = embedding.embedding.collect {
-          case InternalIdWithScore(InternalId.EntityId(entityId), score) =>
-            SemanticCoreEntityWithScore(entityId, score)
+  pwivate[hdfs_souwces] def fiwtewwevewseindexedentityembeddingsbytype(
+    p-pipe: typedpipe[keyvaw[simcwustewsembeddingid, o.O i-intewnawidembedding]], UwU
+    e-embeddingtype: embeddingtype
+  ): t-typedpipe[(cwustewid, rawr x3 s-seq[semanticcoweentitywithscowe])] = {
+    pipe.cowwect {
+      c-case keyvaw(
+            s-simcwustewsembeddingid(_embeddingtype, 🥺 _, intewnawid.cwustewid(cwustewid)), :3
+            e-embedding
+          ) if _embeddingtype == e-embeddingtype =>
+        vaw e-entitieswithscowes = embedding.embedding.cowwect {
+          case i-intewnawidwithscowe(intewnawid.entityid(entityid), (ꈍᴗꈍ) scowe) =>
+            s-semanticcoweentitywithscowe(entityid, 🥺 s-scowe)
         }
-        (clusterId, entitiesWithScores)
+        (cwustewid, (✿oωo) entitieswithscowes)
     }
   }
 }

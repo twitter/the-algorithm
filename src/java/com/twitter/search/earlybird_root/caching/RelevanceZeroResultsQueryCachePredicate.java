@@ -1,31 +1,31 @@
-package com.twitter.search.earlybird_root.caching;
+package com.twittew.seawch.eawwybiwd_woot.caching;
 
-import com.twitter.search.common.caching.filter.QueryCachePredicate;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
+impowt com.twittew.seawch.common.caching.fiwtew.quewycachepwedicate;
+i-impowt com.twittew.seawch.common.decidew.seawchdecidew;
+i-impowt com.twittew.seawch.eawwybiwd.common.eawwybiwdwequestutiw;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+i-impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequesttype;
 
-public class RelevanceZeroResultsQueryCachePredicate
-    extends QueryCachePredicate<EarlybirdRequestContext> {
-  private final SearchDecider decider;
-  private final String relevanceCacheEnabledDeciderKey;
-  private final String relevanceZeroResultsCacheEnabledDeciderKey;
+p-pubwic cwass wewevancezewowesuwtsquewycachepwedicate
+    e-extends q-quewycachepwedicate<eawwybiwdwequestcontext> {
+  pwivate finaw seawchdecidew decidew;
+  pwivate finaw stwing wewevancecacheenabweddecidewkey;
+  p-pwivate finaw stwing wewevancezewowesuwtscacheenabweddecidewkey;
 
-  public RelevanceZeroResultsQueryCachePredicate(
-      SearchDecider decider, String normalizedSearchRootName) {
-    this.decider = decider;
-    this.relevanceCacheEnabledDeciderKey =
-        "relevance_cache_enabled_" + normalizedSearchRootName;
-    this.relevanceZeroResultsCacheEnabledDeciderKey =
-        "relevance_zero_results_cache_enabled_" + normalizedSearchRootName;
+  pubwic wewevancezewowesuwtsquewycachepwedicate(
+      s-seawchdecidew decidew, -.- s-stwing nyowmawizedseawchwootname) {
+    this.decidew = decidew;
+    this.wewevancecacheenabweddecidewkey =
+        "wewevance_cache_enabwed_" + n-nyowmawizedseawchwootname;
+    this.wewevancezewowesuwtscacheenabweddecidewkey =
+        "wewevance_zewo_wesuwts_cache_enabwed_" + n-nyowmawizedseawchwootname;
   }
 
-  @Override
-  public Boolean shouldQueryCache(EarlybirdRequestContext requestContext) {
-    return EarlybirdRequestType.RELEVANCE == requestContext.getEarlybirdRequestType()
-        && EarlybirdRequestUtil.isCachingAllowed(requestContext.getRequest())
-        && decider.isAvailable(relevanceCacheEnabledDeciderKey)
-        && decider.isAvailable(relevanceZeroResultsCacheEnabledDeciderKey);
+  @ovewwide
+  p-pubwic boowean shouwdquewycache(eawwybiwdwequestcontext wequestcontext) {
+    wetuwn eawwybiwdwequesttype.wewevance == wequestcontext.geteawwybiwdwequesttype()
+        && eawwybiwdwequestutiw.iscachingawwowed(wequestcontext.getwequest())
+        && d-decidew.isavaiwabwe(wewevancecacheenabweddecidewkey)
+        && decidew.isavaiwabwe(wewevancezewowesuwtscacheenabweddecidewkey);
   }
 }

@@ -1,32 +1,32 @@
-package com.twitter.timelineranker.util
+package com.twittew.timewinewankew.utiw
 
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.model.tweet.HydratedTweet
+impowt com.twittew.timewines.modew.tweetid
+i-impowt com.twittew.timewines.modew.usewid
+i-impowt c-com.twittew.timewines.modew.tweet.hydwatedtweet
 
-object ReverseExtendedRepliesFilter {
-  private[util] def isQualifiedReverseExtendedReply(
-    tweet: HydratedTweet,
-    currentUserId: UserId,
-    followedUserIds: Seq[UserId],
-    mutedUserIds: Set[UserId],
-    sourceTweetsById: Map[TweetId, HydratedTweet]
-  ): Boolean = {
-    // tweet author is out of the current user's network
-    !followedUserIds.contains(tweet.userId) &&
-    // tweet author is not muted
-    !mutedUserIds.contains(tweet.userId) &&
-    // tweet is not a retweet
-    !tweet.isRetweet &&
-    // there must be a source tweet
-    tweet.inReplyToTweetId
-      .flatMap(sourceTweetsById.get)
-      .filter { sourceTweet =>
-        (!sourceTweet.isRetweet) && // and it's not a retweet
-        (!sourceTweet.hasReply) && // and it's not a reply
-        (sourceTweet.userId != 0) && // and the author's id must be non zero
-        followedUserIds.contains(sourceTweet.userId) // and the author is followed
-      } // and the author has not been muted
-      .exists(sourceTweet => !mutedUserIds.contains(sourceTweet.userId))
+o-object wevewseextendedwepwiesfiwtew {
+  p-pwivate[utiw] d-def isquawifiedwevewseextendedwepwy(
+    t-tweet: hydwatedtweet, >_<
+    c-cuwwentusewid: usewid, rawr x3
+    fowwowedusewids: seq[usewid], mya
+    mutedusewids: s-set[usewid], nyaa~~
+    souwcetweetsbyid: map[tweetid, (⑅˘꒳˘) h-hydwatedtweet]
+  ): boowean = {
+    // t-tweet authow is out of the cuwwent usew's nyetwowk
+    !fowwowedusewids.contains(tweet.usewid) &&
+    // tweet authow i-is nyot muted
+    !mutedusewids.contains(tweet.usewid) &&
+    // tweet is n-nyot a wetweet
+    !tweet.iswetweet &&
+    // t-thewe must be a souwce tweet
+    tweet.inwepwytotweetid
+      .fwatmap(souwcetweetsbyid.get)
+      .fiwtew { souwcetweet =>
+        (!souwcetweet.iswetweet) && // and it's nyot a w-wetweet
+        (!souwcetweet.haswepwy) && // and it's nyot a wepwy
+        (souwcetweet.usewid != 0) && // and the authow's id must be nyon zewo
+        f-fowwowedusewids.contains(souwcetweet.usewid) // and the a-authow is fowwowed
+      } // a-and the authow h-has nyot been muted
+      .exists(souwcetweet => !mutedusewids.contains(souwcetweet.usewid))
   }
 }

@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt
 
-case class TimelineScribeConfig(
-  page: Option[String],
-  section: Option[String],
-  entityToken: Option[String])
+case cwass t-timewinescwibeconfig(
+  p-page: option[stwing], òωó
+  s-section: option[stwing],
+  e-entitytoken: o-option[stwing])

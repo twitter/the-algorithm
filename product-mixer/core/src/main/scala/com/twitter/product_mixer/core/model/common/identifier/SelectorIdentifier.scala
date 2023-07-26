@@ -1,79 +1,79 @@
-package com.twitter.product_mixer.core.model.common.identifier
+package com.twittew.pwoduct_mixew.cowe.modew.common.identifiew
 
 /**
- * Selector identifier
+ * sewectow identifiew
  *
- * @note This class should always remain effectively `final`. If for any reason the `sealed`
- *       modifier is removed, the equals() implementation must be updated in order to handle class
- *       inheritor equality (see note on the equals method below)
+ * @note t-this cwass s-shouwd awways wemain e-effectivewy `finaw`. nyaa~~ i-if fow a-any weason the `seawed`
+ *       m-modifiew is wemoved, 😳 t-the equaws() i-impwementation must be updated in owdew to handwe cwass
+ *       inhewitow e-equawity (see nyote on the equaws method bewow)
  */
-sealed abstract class SelectorIdentifier(override val name: String)
-    extends ComponentIdentifier("Selector", name) {
+s-seawed abstwact cwass sewectowidentifiew(ovewwide v-vaw nyame: stwing)
+    extends componentidentifiew("sewectow", (⑅˘꒳˘) nyame) {
 
   /**
-   * @inheritdoc
+   * @inhewitdoc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[SelectorIdentifier]
+  o-ovewwide def canequaw(that: a-any): b-boowean = that.isinstanceof[sewectowidentifiew]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * high pewfowmance impwementation of equaws method that w-wevewages:
+   *  - wefewentiaw equawity showt ciwcuit
+   *  - cached hashcode e-equawity showt ciwcuit
+   *  - fiewd vawues awe o-onwy checked if t-the hashcodes awe e-equaw to handwe t-the unwikewy case
+   *    of a hashcode cowwision
+   *  - w-wemovaw of check fow `that` being an e-equaws-compatibwe descendant since this cwass is finaw
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @note `candidate.canequaw(this)` is nyot nyecessawy because this c-cwass is finaw
+   * @see [[http://www.awtima.com/pins1ed/object-equawity.htmw pwogwamming in s-scawa, nyaa~~
+   *      c-chaptew 28]] fow d-discussion and design. OwO
    */
-  override def equals(that: Any): Boolean =
-    that match {
-      case identifier: SelectorIdentifier =>
-        // Note identifier.canEqual(this) is not necessary because this class is effectively final
-        ((this eq identifier)
-          || ((hashCode == identifier.hashCode) && ((componentType == identifier.componentType) && (name == identifier.name))))
+  ovewwide def equaws(that: any): b-boowean =
+    that m-match {
+      case identifiew: s-sewectowidentifiew =>
+        // n-note identifiew.canequaw(this) is nyot nyecessawy b-because this cwass is effectivewy f-finaw
+        ((this eq identifiew)
+          || ((hashcode == i-identifiew.hashcode) && ((componenttype == identifiew.componenttype) && (name == i-identifiew.name))))
       case _ =>
-        false
+        f-fawse
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * w-wevewage domain-specific constwaints (see notes bewow) to safewy constwuct and cache the
+   * hashcode a-as a vaw, rawr x3 such t-that it is instantiated once on o-object constwuction. XD t-this pwevents t-the
+   * nyeed to wecompute the hashcode on each hashcode() i-invocation, σωσ which is the behaviow of the
+   * scawa compiwew case cwass-genewated h-hashcode() since it cannot make a-assumptions wegawding f-fiewd
+   * o-object mutabiwity and hashcode i-impwementations. (U ᵕ U❁)
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated identifier
-   *       (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       data structure), assuming stable hashCode implementations for these objects
+   * @note c-caching the h-hashcode is onwy s-safe if aww of the fiewds used to constwuct the h-hashcode
+   *       a-awe immutabwe. (U ﹏ U) t-this incwudes:
+   *       - i-inabiwity to mutate t-the object wefewence on fow an existing instantiated identifiew
+   *       (i.e. :3 e-each fiewd is a vaw)
+   *       - inabiwity to mutate the fiewd object instance itsewf (i.e. ( ͡o ω ͡o ) e-each fiewd is an immutabwe
+   *       - inabiwity to mutate the f-fiewd object instance i-itsewf (i.e. σωσ e-each fiewd is an immutabwe
+   *       d-data stwuctuwe), >w< assuming s-stabwe hashcode i-impwementations fow these objects
    *
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @note in owdew fow the hashcode to be consistent with object equawity, 😳😳😳 `##` m-must be used fow
+   *       b-boxed nyumewic types and n-nyuww. OwO as such, 😳 a-awways pwefew `.##` ovew `.hashcode()`.
    */
-  override val hashCode: Int = 31 * componentType.## + name.##
+  ovewwide vaw hashcode: i-int = 31 * c-componenttype.## + nyame.##
 }
 
 /**
- * Used in `SelectorExecutor` to give an ID to each selector in the `ComponentIdentifierStack`
+ * u-used in `sewectowexecutow` t-to give an id to each sewectow in the `componentidentifiewstack`
  *
- * These are often generated automatically in the executor and are dependent on the class names
- * so we skip validation to avoid issues. Since we dont record stats for Selectors this is okay.
+ * these awe often genewated a-automaticawwy i-in the executow a-and awe dependent on the cwass n-nyames
+ * so w-we skip vawidation to avoid issues. 😳😳😳 s-since we dont wecowd stats fow sewectows this is okay. (˘ω˘)
  */
-private[core] object SelectorIdentifier {
-  def apply(
-    name: String,
-    index: Int
+pwivate[cowe] object s-sewectowidentifiew {
+  d-def appwy(
+    nyame: stwing, ʘwʘ
+    index: i-int
   )(
-    implicit sourceFile: sourcecode.File
-  ): SelectorIdentifier = {
-    val capitalizedWithoutSpecialCharacters = name.replace("$", "").capitalize
-    new SelectorIdentifier(index.toString + capitalizedWithoutSpecialCharacters) {
-      override val file: sourcecode.File = sourceFile
+    i-impwicit souwcefiwe: souwcecode.fiwe
+  ): sewectowidentifiew = {
+    vaw capitawizedwithoutspeciawchawactews = n-nyame.wepwace("$", ( ͡o ω ͡o ) "").capitawize
+    nyew sewectowidentifiew(index.tostwing + capitawizedwithoutspeciawchawactews) {
+      ovewwide vaw fiwe: souwcecode.fiwe = souwcefiwe
     }
   }
 }

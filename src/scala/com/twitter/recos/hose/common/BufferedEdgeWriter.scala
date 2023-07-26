@@ -1,48 +1,48 @@
-package com.twitter.recos.hose.common
+package com.twittew.wecos.hose.common
 
-import com.twitter.finagle.stats.{Stat, StatsReceiver}
-import com.twitter.logging.Logger
-import com.twitter.recos.internal.thriftscala.RecosHoseMessage
-import java.util.concurrent.Semaphore
+impowt com.twittew.finagwe.stats.{stat, ʘwʘ s-statsweceivew}
+i-impowt c-com.twittew.wogging.woggew
+impowt c-com.twittew.wecos.intewnaw.thwiftscawa.wecoshosemessage
+i-impowt j-java.utiw.concuwwent.semaphowe
 
 /**
- * This class reads a buffer of edges from the concurrently linked queue
- * and inserts each edge into the recos graph.
- * If the queue is empty the thread will sleep for 100ms and attempt to read from the queue again.
+ * t-this c-cwass weads a buffew of edges fwom the concuwwentwy winked queue
+ * and insewts e-each edge into the wecos gwaph. /(^•ω•^)
+ * if the queue i-is empty the thwead wiww sweep f-fow 100ms and attempt to wead fwom the queue again. ʘwʘ
  */
-case class BufferedEdgeWriter(
-  queue: java.util.Queue[Array[RecosHoseMessage]],
-  queuelimit: Semaphore,
-  edgeCollector: EdgeCollector,
-  statsReceiver: StatsReceiver,
-  isRunning: () => Boolean)
-    extends Runnable {
-  val logger = Logger()
-  private val queueRemoveCounter = statsReceiver.counter("queueRemove")
-  private val queueSleepCounter = statsReceiver.counter("queueSleep")
+case cwass b-buffewededgewwitew(
+  queue: j-java.utiw.queue[awway[wecoshosemessage]], σωσ
+  q-queuewimit: semaphowe, OwO
+  edgecowwectow: edgecowwectow, 😳😳😳
+  statsweceivew: s-statsweceivew, 😳😳😳
+  iswunning: () => boowean)
+    extends wunnabwe {
+  vaw woggew = w-woggew()
+  pwivate vaw queuewemovecountew = s-statsweceivew.countew("queuewemove")
+  p-pwivate v-vaw queuesweepcountew = s-statsweceivew.countew("queuesweep")
 
-  def running: Boolean = {
-    isRunning()
+  def wunning: boowean = {
+    iswunning()
   }
 
-  override def run(): Unit = {
-    while (running) {
-      val currentBatch = queue.poll
-      if (currentBatch != null) {
-        queueRemoveCounter.incr()
-        queuelimit.release()
-        var i = 0
-        Stat.time(statsReceiver.stat("batchAddEdge")) {
-          while (i < currentBatch.length) {
-            edgeCollector.addEdge(currentBatch(i))
+  ovewwide d-def wun(): unit = {
+    whiwe (wunning) {
+      v-vaw cuwwentbatch = queue.poww
+      if (cuwwentbatch != nyuww) {
+        queuewemovecountew.incw()
+        queuewimit.wewease()
+        v-vaw i = 0
+        stat.time(statsweceivew.stat("batchaddedge")) {
+          w-whiwe (i < c-cuwwentbatch.wength) {
+            e-edgecowwectow.addedge(cuwwentbatch(i))
             i = i + 1
           }
         }
-      } else {
-        queueSleepCounter.incr()
-        Thread.sleep(100L)
+      } ewse {
+        q-queuesweepcountew.incw()
+        t-thwead.sweep(100w)
       }
     }
-    logger.info(this.getClass.getSimpleName + " is done")
+    woggew.info(this.getcwass.getsimpwename + " i-is done")
   }
 }

@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Cover
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.addentwiestimewineinstwuction
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Build AddEntries instruction with special handling for Covers.
+ * b-buiwd addentwies i-instwuction w-with speciaw handwing fow covews. 🥺
  *
- * Cover Entries should be collected and transformed into ShowCover instructions. These should be
- * filtered out of the AddEntries instruction. We avoid doing this as part of the regular
- * AddEntriesInstructionBuilder because covers are used only used when using a Flip Pipeline and
- * detecting cover entries takes linear time.
+ * covew entwies shouwd be cowwected and twansfowmed i-into showcovew instwuctions. >_< these shouwd b-be
+ * fiwtewed out of the addentwies i-instwuction. >_< we avoid doing this as pawt of the weguwaw
+ * a-addentwiesinstwuctionbuiwdew because covews a-awe used onwy used w-when using a fwip pipewine and
+ * detecting covew entwies takes wineaw time. (⑅˘꒳˘)
  */
-case class AddEntriesWithShowCoverInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, AddEntriesTimelineInstruction] {
-  override def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[AddEntriesTimelineInstruction] = {
-    if (includeInstruction(query, entries)) {
-      val entriesToAdd = entries.filterNot(_.isInstanceOf[Cover])
-      if (entriesToAdd.nonEmpty) Seq(AddEntriesTimelineInstruction(entriesToAdd)) else Seq.empty
-    } else
-      Seq.empty
+c-case cwass addentwieswithshowcovewinstwuctionbuiwdew[quewy <: pipewinequewy](
+  ovewwide vaw incwudeinstwuction: i-incwudeinstwuction[quewy] = awwaysincwude)
+    e-extends uwtinstwuctionbuiwdew[quewy, /(^•ω•^) a-addentwiestimewineinstwuction] {
+  o-ovewwide d-def buiwd(
+    quewy: quewy, rawr x3
+    entwies: s-seq[timewineentwy]
+  ): seq[addentwiestimewineinstwuction] = {
+    if (incwudeinstwuction(quewy, (U ﹏ U) e-entwies)) {
+      vaw entwiestoadd = entwies.fiwtewnot(_.isinstanceof[covew])
+      if (entwiestoadd.nonempty) seq(addentwiestimewineinstwuction(entwiestoadd)) ewse seq.empty
+    } e-ewse
+      seq.empty
   }
 }

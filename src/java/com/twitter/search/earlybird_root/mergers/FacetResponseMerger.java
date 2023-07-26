@@ -1,353 +1,353 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.twittew.seawch.eawwybiwd_woot.mewgews;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+impowt java.utiw.awwaywist;
+impowt j-java.utiw.awways;
+i-impowt java.utiw.cowwections;
+i-impowt java.utiw.hashmap;
+i-impowt java.utiw.hashset;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.map;
+i-impowt java.utiw.set;
+impowt java.utiw.concuwwent.timeunit;
 
-import com.google.common.collect.Sets;
+impowt com.googwe.common.cowwect.sets;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt o-owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.logging.DebugMessageBuilder;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.ranking.thriftjava.ThriftFacetRankingOptions;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.util.earlybird.FacetsResultsUtils;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftFacetCount;
-import com.twitter.search.earlybird.thrift.ThriftFacetCountMetadata;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
-import com.twitter.search.earlybird.thrift.ThriftFacetResults;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+impowt com.twittew.seawch.common.wogging.debugmessagebuiwdew;
+i-impowt com.twittew.seawch.common.metwics.seawchtimewstats;
+impowt com.twittew.seawch.common.wanking.thwiftjava.thwiftfacetwankingoptions;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt com.twittew.seawch.common.utiw.eawwybiwd.facetswesuwtsutiws;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetcount;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftfacetcountmetadata;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetfiewdwesuwts;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetwesuwts;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwts;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+i-impowt com.twittew.utiw.futuwe;
 
 /**
- * Merger class to merge facets EarlybirdResponse objects
+ * mewgew cwass to mewge facets eawwybiwdwesponse o-objects
  */
-public class FacetResponseMerger extends EarlybirdResponseMerger {
-  private static final Logger LOG = LoggerFactory.getLogger(FacetResponseMerger.class);
+pubwic cwass facetwesponsemewgew e-extends eawwybiwdwesponsemewgew {
+  p-pwivate static f-finaw woggew w-wog = woggewfactowy.getwoggew(facetwesponsemewgew.cwass);
 
-  private static final SearchTimerStats TIMER =
-      SearchTimerStats.export("merge_facets", TimeUnit.NANOSECONDS, false, true);
+  pwivate static finaw s-seawchtimewstats timew =
+      seawchtimewstats.expowt("mewge_facets", (U ﹏ U) t-timeunit.nanoseconds, >w< fawse, /(^•ω•^) twue);
 
-  private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
-  private final DebugMessageBuilder debugMessageBuilder;
+  pwivate static finaw doubwe successfuw_wesponse_thweshowd = 0.9;
+  pwivate finaw debugmessagebuiwdew d-debugmessagebuiwdew;
 
 
   /**
-   * Constructor to create the merger
+   * constwuctow t-to cweate the m-mewgew
    */
-  public FacetResponseMerger(EarlybirdRequestContext requestContext,
-                             List<Future<EarlybirdResponse>> responses,
-                             ResponseAccumulator mode) {
-    super(requestContext, responses, mode);
-    debugMessageBuilder = responseMessageBuilder.getDebugMessageBuilder();
-    debugMessageBuilder.verbose("--- Request Received: %s", requestContext.getRequest());
+  p-pubwic facetwesponsemewgew(eawwybiwdwequestcontext wequestcontext, (⑅˘꒳˘)
+                             wist<futuwe<eawwybiwdwesponse>> wesponses,
+                             w-wesponseaccumuwatow m-mode) {
+    supew(wequestcontext, ʘwʘ wesponses, rawr x3 m-mode);
+    d-debugmessagebuiwdew = wesponsemessagebuiwdew.getdebugmessagebuiwdew();
+    d-debugmessagebuiwdew.vewbose("--- wequest weceived: %s", (˘ω˘) w-wequestcontext.getwequest());
   }
 
-  @Override
-  protected SearchTimerStats getMergedResponseTimer() {
-    return TIMER;
+  @ovewwide
+  pwotected seawchtimewstats g-getmewgedwesponsetimew() {
+    wetuwn timew;
   }
 
-  @Override
-  protected double getDefaultSuccessResponseThreshold() {
-    return SUCCESSFUL_RESPONSE_THRESHOLD;
+  @ovewwide
+  p-pwotected doubwe getdefauwtsuccesswesponsethweshowd() {
+    w-wetuwn successfuw_wesponse_thweshowd;
   }
 
-  @Override
-  protected EarlybirdResponse internalMerge(EarlybirdResponse facetsResponse) {
+  @ovewwide
+  p-pwotected eawwybiwdwesponse intewnawmewge(eawwybiwdwesponse facetswesponse) {
 
-    final Map<String, FacetsResultsUtils.FacetFieldInfo> facetFieldInfoMap =
-        new HashMap<>();
-    final Set<Long> userIDWhitelist = new HashSet<>();
+    finaw map<stwing, o.O facetswesuwtsutiws.facetfiewdinfo> facetfiewdinfomap =
+        n-nyew h-hashmap<>();
+    finaw set<wong> u-usewidwhitewist = n-nyew hashset<>();
 
-    // First, parse the responses and build up our facet info map.
-    boolean termStatsFilteringMode = FacetsResultsUtils.prepareFieldInfoMap(
-        requestContext.getRequest().getFacetRequest(), facetFieldInfoMap);
-    // Iterate through all futures and get results.
-    collectResponsesAndPopulateMap(facetFieldInfoMap, userIDWhitelist);
+    // fiwst, 😳 p-pawse the wesponses and buiwd up ouw facet info map. o.O
+    boowean t-tewmstatsfiwtewingmode = facetswesuwtsutiws.pwepawefiewdinfomap(
+        wequestcontext.getwequest().getfacetwequest(), ^^;; facetfiewdinfomap);
+    // itewate thwough aww futuwes a-and get wesuwts. ( ͡o ω ͡o )
+    cowwectwesponsesandpopuwatemap(facetfiewdinfomap, ^^;; u-usewidwhitewist);
 
-    // Next, aggregate the top facets and update the blender response.
-    facetsResponse
-        .setFacetResults(new ThriftFacetResults()
-            .setFacetFields(new HashMap<>())
-            .setUserIDWhitelist(userIDWhitelist));
+    // n-nyext, ^^;; aggwegate t-the top facets and update t-the bwendew wesponse. XD
+    f-facetswesponse
+        .setfacetwesuwts(new t-thwiftfacetwesuwts()
+            .setfacetfiewds(new h-hashmap<>())
+            .setusewidwhitewist(usewidwhitewist));
 
-    // keep track of how many facets a user contributed - this map gets reset for every field
-    Map<Long, Integer> perFieldAntiGamingMap = new HashMap<>();
+    // keep twack of how many facets a-a usew contwibuted - t-this map g-gets weset fow e-evewy fiewd
+    m-map<wong, 🥺 integew> pewfiewdantigamingmap = nyew hashmap<>();
 
-    // this one is used for images and twimges
-    Map<Long, Integer> imagesAntiGamingMap = new HashMap<>();
+    // t-this one is used fow images and twimges
+    map<wong, (///ˬ///✿) integew> imagesantigamingmap = nyew hashmap<>();
 
-    Set<String> twimgDedupSet = null;
+    s-set<stwing> twimgdedupset = nyuww;
 
-    for (final Map.Entry<String, FacetsResultsUtils.FacetFieldInfo> entry
-        : facetFieldInfoMap.entrySet()) {
-      // reset for each field
-      String field = entry.getKey();
-      final Map<Long, Integer> antiGamingMap;
-      if (field.equals(EarlybirdFieldConstant.IMAGES_FACET)
-          || field.equals(EarlybirdFieldConstant.TWIMG_FACET)) {
-        antiGamingMap = imagesAntiGamingMap;
-      } else {
-        perFieldAntiGamingMap.clear();
-        antiGamingMap = perFieldAntiGamingMap;
+    fow (finaw map.entwy<stwing, (U ᵕ U❁) f-facetswesuwtsutiws.facetfiewdinfo> e-entwy
+        : f-facetfiewdinfomap.entwyset()) {
+      // weset fow each f-fiewd
+      stwing fiewd = entwy.getkey();
+      f-finaw map<wong, ^^;; i-integew> antigamingmap;
+      if (fiewd.equaws(eawwybiwdfiewdconstant.images_facet)
+          || fiewd.equaws(eawwybiwdfiewdconstant.twimg_facet)) {
+        antigamingmap = imagesantigamingmap;
+      } ewse {
+        pewfiewdantigamingmap.cweaw();
+        antigamingmap = p-pewfiewdantigamingmap;
       }
 
-      ThriftFacetFieldResults results = new ThriftFacetFieldResults();
-      FacetsResultsUtils.FacetFieldInfo info = entry.getValue();
-      results.setTotalCount(info.totalCounts);
-      results.setTopFacets(new ArrayList<>());
-      FacetsResultsUtils.fillTopLanguages(info, results);
-      if (info.topFacets != null && !info.topFacets.isEmpty()) {
-        fillFacetFieldResults(info, antiGamingMap, results);
+      thwiftfacetfiewdwesuwts w-wesuwts = nyew thwiftfacetfiewdwesuwts();
+      facetswesuwtsutiws.facetfiewdinfo i-info = entwy.getvawue();
+      w-wesuwts.settotawcount(info.totawcounts);
+      wesuwts.settopfacets(new awwaywist<>());
+      facetswesuwtsutiws.fiwwtopwanguages(info, ^^;; w-wesuwts);
+      i-if (info.topfacets != nyuww && !info.topfacets.isempty()) {
+        fiwwfacetfiewdwesuwts(info, rawr a-antigamingmap, (˘ω˘) w-wesuwts);
       }
 
-      if (field.equals(EarlybirdFieldConstant.TWIMG_FACET)) {
-        if (twimgDedupSet == null) {
-          twimgDedupSet = Sets.newHashSet();
+      if (fiewd.equaws(eawwybiwdfiewdconstant.twimg_facet)) {
+        if (twimgdedupset == nyuww) {
+          twimgdedupset = s-sets.newhashset();
         }
-        FacetsResultsUtils.dedupTwimgFacet(twimgDedupSet, results, debugMessageBuilder);
+        f-facetswesuwtsutiws.deduptwimgfacet(twimgdedupset, 🥺 w-wesuwts, debugmessagebuiwdew);
       }
 
-      facetsResponse.getFacetResults().putToFacetFields(entry.getKey(), results);
+      facetswesponse.getfacetwesuwts().puttofacetfiewds(entwy.getkey(), nyaa~~ w-wesuwts);
     }
 
-    if (!termStatsFilteringMode) {
-      // in term stats filtering mode, if doing it here would break term stats filtering
-      FacetsResultsUtils.mergeTwimgResults(
-          facetsResponse.getFacetResults(),
-          Collections.<ThriftFacetCount>reverseOrder(
-              FacetsResultsUtils.getFacetCountComparator(
-                  requestContext.getRequest().getFacetRequest())));
+    i-if (!tewmstatsfiwtewingmode) {
+      // in t-tewm stats fiwtewing mode, :3 if doing it hewe wouwd bweak tewm stats fiwtewing
+      f-facetswesuwtsutiws.mewgetwimgwesuwts(
+          f-facetswesponse.getfacetwesuwts(), /(^•ω•^)
+          cowwections.<thwiftfacetcount>wevewseowdew(
+              facetswesuwtsutiws.getfacetcountcompawatow(
+                  wequestcontext.getwequest().getfacetwequest())));
     }
 
-    // Update the numHitsProcessed on ThriftSearchResults.
-    int numHitsProcessed = 0;
-    int numPartitionsEarlyTerminated = 0;
-    for (EarlybirdResponse earlybirdResponse: accumulatedResponses.getSuccessResponses()) {
-      ThriftSearchResults searchResults = earlybirdResponse.getSearchResults();
-      if (searchResults != null) {
-        numHitsProcessed += searchResults.getNumHitsProcessed();
-        numPartitionsEarlyTerminated += searchResults.getNumPartitionsEarlyTerminated();
+    // u-update the n-nyumhitspwocessed on thwiftseawchwesuwts. ^•ﻌ•^
+    int nyumhitspwocessed = 0;
+    int nyumpawtitionseawwytewminated = 0;
+    f-fow (eawwybiwdwesponse eawwybiwdwesponse: accumuwatedwesponses.getsuccesswesponses()) {
+      thwiftseawchwesuwts seawchwesuwts = e-eawwybiwdwesponse.getseawchwesuwts();
+      if (seawchwesuwts != nyuww) {
+        n-nyumhitspwocessed += s-seawchwesuwts.getnumhitspwocessed();
+        nyumpawtitionseawwytewminated += seawchwesuwts.getnumpawtitionseawwytewminated();
       }
     }
-    ThriftSearchResults searchResults = new ThriftSearchResults();
-    searchResults.setResults(new ArrayList<>());  // required field
-    searchResults.setNumHitsProcessed(numHitsProcessed);
-    searchResults.setNumPartitionsEarlyTerminated(numPartitionsEarlyTerminated);
-    facetsResponse.setSearchResults(searchResults);
+    thwiftseawchwesuwts s-seawchwesuwts = n-nyew thwiftseawchwesuwts();
+    seawchwesuwts.setwesuwts(new awwaywist<>());  // wequiwed f-fiewd
+    seawchwesuwts.setnumhitspwocessed(numhitspwocessed);
+    seawchwesuwts.setnumpawtitionseawwytewminated(numpawtitionseawwytewminated);
+    f-facetswesponse.setseawchwesuwts(seawchwesuwts);
 
-    LOG.debug("Facets call completed successfully: {}", facetsResponse);
+    wog.debug("facets caww compweted successfuwwy: {}", UwU facetswesponse);
 
-    FacetsResultsUtils.fixNativePhotoUrl(facetsResponse);
-    return facetsResponse;
+    f-facetswesuwtsutiws.fixnativephotouww(facetswesponse);
+    wetuwn facetswesponse;
   }
 
-  private void fillFacetFieldResults(FacetsResultsUtils.FacetFieldInfo facetFieldInfo,
-                                     Map<Long, Integer> antiGamingMap,
-                                     ThriftFacetFieldResults results) {
-    int minWeightedCount = 0;
-    int minSimpleCount = 0;
-    int maxPenaltyCount = Integer.MAX_VALUE;
-    double maxPenaltyCountRatio = 1;
-    boolean excludePossiblySensitiveFacets = false;
-    boolean onlyReturnFacetsWithDisplayTweet = false;
-    int maxHitsPerUser = -1;
+  p-pwivate v-void fiwwfacetfiewdwesuwts(facetswesuwtsutiws.facetfiewdinfo facetfiewdinfo, 😳😳😳
+                                     m-map<wong, OwO integew> antigamingmap, ^•ﻌ•^
+                                     t-thwiftfacetfiewdwesuwts w-wesuwts) {
+    i-int minweightedcount = 0;
+    int minsimpwecount = 0;
+    int m-maxpenawtycount = i-integew.max_vawue;
+    doubwe maxpenawtycountwatio = 1;
+    b-boowean excwudepossibwysensitivefacets = f-fawse;
+    b-boowean onwywetuwnfacetswithdispwaytweet = fawse;
+    int maxhitspewusew = -1;
 
-    EarlybirdRequest request = requestContext.getRequest();
-    if (request.getFacetRequest() != null) {
-      ThriftFacetRankingOptions rankingOptions = request.getFacetRequest().getFacetRankingOptions();
+    eawwybiwdwequest w-wequest = wequestcontext.getwequest();
+    i-if (wequest.getfacetwequest() != n-nyuww) {
+      thwiftfacetwankingoptions wankingoptions = wequest.getfacetwequest().getfacetwankingoptions();
 
-      if (request.getSearchQuery() != null) {
-        maxHitsPerUser = request.getSearchQuery().getMaxHitsPerUser();
+      if (wequest.getseawchquewy() != n-nyuww) {
+        m-maxhitspewusew = w-wequest.getseawchquewy().getmaxhitspewusew();
       }
 
-      if (rankingOptions != null) {
-        LOG.debug("FacetsResponseMerger: Using rankingOptions={}", rankingOptions);
+      i-if (wankingoptions != nyuww) {
+        w-wog.debug("facetswesponsemewgew: using wankingoptions={}", (ꈍᴗꈍ) wankingoptions);
 
-        if (rankingOptions.isSetMinCount()) {
-          minWeightedCount = rankingOptions.getMinCount();
+        if (wankingoptions.issetmincount()) {
+          minweightedcount = wankingoptions.getmincount();
         }
-        if (rankingOptions.isSetMinSimpleCount()) {
-          minSimpleCount = rankingOptions.getMinSimpleCount();
+        i-if (wankingoptions.issetminsimpwecount()) {
+          minsimpwecount = wankingoptions.getminsimpwecount();
         }
-        if (rankingOptions.isSetMaxPenaltyCount()) {
-          maxPenaltyCount = rankingOptions.getMaxPenaltyCount();
+        i-if (wankingoptions.issetmaxpenawtycount()) {
+          maxpenawtycount = wankingoptions.getmaxpenawtycount();
         }
-        if (rankingOptions.isSetMaxPenaltyCountRatio()) {
-          maxPenaltyCountRatio = rankingOptions.getMaxPenaltyCountRatio();
+        i-if (wankingoptions.issetmaxpenawtycountwatio()) {
+          maxpenawtycountwatio = w-wankingoptions.getmaxpenawtycountwatio();
         }
-        if (rankingOptions.isSetExcludePossiblySensitiveFacets()) {
-          excludePossiblySensitiveFacets = rankingOptions.isExcludePossiblySensitiveFacets();
+        if (wankingoptions.issetexcwudepossibwysensitivefacets()) {
+          e-excwudepossibwysensitivefacets = w-wankingoptions.isexcwudepossibwysensitivefacets();
         }
-        if (rankingOptions.isSetOnlyReturnFacetsWithDisplayTweet()) {
-          onlyReturnFacetsWithDisplayTweet = rankingOptions.isOnlyReturnFacetsWithDisplayTweet();
+        i-if (wankingoptions.issetonwywetuwnfacetswithdispwaytweet()) {
+          o-onwywetuwnfacetswithdispwaytweet = w-wankingoptions.isonwywetuwnfacetswithdispwaytweet();
         }
       }
-    } else {
-      LOG.warn("earlybirdRequest.getFacetRequest() is null");
+    } ewse {
+      wog.wawn("eawwybiwdwequest.getfacetwequest() is nyuww");
     }
 
-    ThriftFacetCount[] topFacetsArray = new ThriftFacetCount[facetFieldInfo.topFacets.size()];
+    thwiftfacetcount[] topfacetsawway = nyew t-thwiftfacetcount[facetfiewdinfo.topfacets.size()];
 
-    facetFieldInfo.topFacets.values().toArray(topFacetsArray);
-    Arrays.sort(topFacetsArray, Collections.<ThriftFacetCount>reverseOrder(
-        FacetsResultsUtils.getFacetCountComparator(request.getFacetRequest())));
+    f-facetfiewdinfo.topfacets.vawues().toawway(topfacetsawway);
+    a-awways.sowt(topfacetsawway, (⑅˘꒳˘) cowwections.<thwiftfacetcount>wevewseowdew(
+        f-facetswesuwtsutiws.getfacetcountcompawatow(wequest.getfacetwequest())));
 
-    int numResults = capFacetFieldWidth(facetFieldInfo.fieldRequest.numResults);
+    int nyumwesuwts = capfacetfiewdwidth(facetfiewdinfo.fiewdwequest.numwesuwts);
 
-    if (topFacetsArray.length < numResults) {
-      numResults = topFacetsArray.length;
+    if (topfacetsawway.wength < n-nyumwesuwts) {
+      n-nyumwesuwts = topfacetsawway.wength;
     }
 
-    int collected = 0;
-    for (int i = 0; i < topFacetsArray.length; ++i) {
-      ThriftFacetCount count = topFacetsArray[i];
+    i-int cowwected = 0;
+    fow (int i = 0; i-i < topfacetsawway.wength; ++i) {
+      t-thwiftfacetcount count = t-topfacetsawway[i];
 
-      if (onlyReturnFacetsWithDisplayTweet
-          && (!count.isSetMetadata() || !count.getMetadata().isSetStatusId()
-              || count.getMetadata().getStatusId() == -1)) {
+      i-if (onwywetuwnfacetswithdispwaytweet
+          && (!count.issetmetadata() || !count.getmetadata().issetstatusid()
+              || count.getmetadata().getstatusid() == -1)) {
         // status id must be set
         continue;
       }
 
-      if (excludePossiblySensitiveFacets && count.isSetMetadata()
-          && count.getMetadata().isStatusPossiblySensitive()) {
-        // the display tweet may be offensive or NSFW
-        if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
-          debugMessageBuilder.verbose2("[%d] FacetsResponseMerger EXCLUDED: offensive or NSFW %s, "
-                                           + "explanation: %s",
-                                       i, facetCountSummary(count),
-                                       count.getMetadata().getExplanation());
+      if (excwudepossibwysensitivefacets && c-count.issetmetadata()
+          && c-count.getmetadata().isstatuspossibwysensitive()) {
+        // t-the dispway t-tweet may be offensive o-ow nysfw
+        if (debugmessagebuiwdew.debug_vewbose <= d-debugmessagebuiwdew.getdebugwevew()) {
+          d-debugmessagebuiwdew.vewbose2("[%d] facetswesponsemewgew e-excwuded: o-offensive ow nysfw %s, (⑅˘꒳˘) "
+                                           + "expwanation: %s", (ˆ ﻌ ˆ)♡
+                                       i-i, /(^•ω•^) facetcountsummawy(count), òωó
+                                       count.getmetadata().getexpwanation());
         }
         continue;
       }
 
-      boolean filterOutUser = false;
-      if (maxHitsPerUser != -1 && count.isSetMetadata()) {
-        ThriftFacetCountMetadata metadata = count.getMetadata();
-        if (!metadata.dontFilterUser) {
-          long twitterUserId = metadata.getTwitterUserId();
-          int numResultsFromUser = 1;
-          if (twitterUserId != -1) {
-            Integer perUser = antiGamingMap.get(twitterUserId);
-            if (perUser != null) {
-              numResultsFromUser = perUser + 1;
-              filterOutUser = numResultsFromUser > maxHitsPerUser;
+      b-boowean fiwtewoutusew = f-fawse;
+      i-if (maxhitspewusew != -1 && count.issetmetadata()) {
+        t-thwiftfacetcountmetadata metadata = count.getmetadata();
+        if (!metadata.dontfiwtewusew) {
+          w-wong twittewusewid = m-metadata.gettwittewusewid();
+          i-int numwesuwtsfwomusew = 1;
+          if (twittewusewid != -1) {
+            integew pewusew = antigamingmap.get(twittewusewid);
+            i-if (pewusew != nyuww) {
+              nyumwesuwtsfwomusew = p-pewusew + 1;
+              f-fiwtewoutusew = nyumwesuwtsfwomusew > maxhitspewusew;
             }
-            antiGamingMap.put(twitterUserId, numResultsFromUser);
+            a-antigamingmap.put(twittewusewid, (⑅˘꒳˘) nyumwesuwtsfwomusew);
           }
         }
       }
 
-      // Filter facets those don't meet the basic criteria.
-      if (count.getSimpleCount() < minSimpleCount) {
-        if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
-          debugMessageBuilder.verbose2(
-              "[%d] FacetsResponseMerger EXCLUDED: simpleCount:%d < minSimpleCount:%d, %s",
-              i, count.getSimpleCount(), minSimpleCount, facetCountSummary(count));
+      // f-fiwtew facets t-those don't meet the basic cwitewia. (U ᵕ U❁)
+      i-if (count.getsimpwecount() < minsimpwecount) {
+        if (debugmessagebuiwdew.debug_vewbose <= d-debugmessagebuiwdew.getdebugwevew()) {
+          d-debugmessagebuiwdew.vewbose2(
+              "[%d] facetswesponsemewgew e-excwuded: simpwecount:%d < m-minsimpwecount:%d, >w< %s",
+              i-i, σωσ count.getsimpwecount(), -.- m-minsimpwecount, o.O facetcountsummawy(count));
         }
         continue;
       }
-      if (count.getWeightedCount() < minWeightedCount) {
-        if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
-          debugMessageBuilder.verbose2(
-              "[%d] FacetsResponseMerger EXCLUDED: weightedCount:%d < minWeightedCount:%d, %s",
-              i, count.getWeightedCount(), minWeightedCount, facetCountSummary(count));
+      if (count.getweightedcount() < minweightedcount) {
+        if (debugmessagebuiwdew.debug_vewbose <= debugmessagebuiwdew.getdebugwevew()) {
+          debugmessagebuiwdew.vewbose2(
+              "[%d] facetswesponsemewgew excwuded: weightedcount:%d < minweightedcount:%d, ^^ %s",
+              i, >_< count.getweightedcount(), >w< minweightedcount, >_< f-facetcountsummawy(count));
+        }
+        c-continue;
+      }
+      if (fiwtewoutusew) {
+        if (debugmessagebuiwdew.debug_vewbose <= debugmessagebuiwdew.getdebugwevew()) {
+          d-debugmessagebuiwdew.vewbose2(
+              "[%d] f-facetswesponsemewgew e-excwuded: antigaming f-fiwtewd usew: %d: %s", >w<
+              i, rawr count.getmetadata().gettwittewusewid(), rawr x3 f-facetcountsummawy(count));
         }
         continue;
       }
-      if (filterOutUser) {
-        if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
-          debugMessageBuilder.verbose2(
-              "[%d] FacetsResponseMerger EXCLUDED: antiGaming filterd user: %d: %s",
-              i, count.getMetadata().getTwitterUserId(), facetCountSummary(count));
+      i-if (count.getpenawtycount() > maxpenawtycount) {
+        i-if (debugmessagebuiwdew.debug_vewbose <= debugmessagebuiwdew.getdebugwevew()) {
+          d-debugmessagebuiwdew.vewbose2(
+              "[%d] f-facetswesponsemewgew excwuced: penawtycount:%.3f > maxpenawtycount:%.3f, ( ͡o ω ͡o ) %s",
+              i, (˘ω˘) count.getpenawtycount(), 😳 m-maxpenawtycount, OwO f-facetcountsummawy(count));
+        }
+        c-continue;
+      }
+      i-if (((doubwe) c-count.getpenawtycount() / c-count.getsimpwecount()) > m-maxpenawtycountwatio) {
+        i-if (debugmessagebuiwdew.debug_vewbose <= d-debugmessagebuiwdew.getdebugwevew()) {
+          debugmessagebuiwdew.vewbose2(
+              "[%d] f-facetswesponsemewgew e-excwuded: p-penawtycountwatio: %.3f > "
+                  + "maxpenawtycountwatio:%.3f, (˘ω˘) %s", òωó
+              i, ( ͡o ω ͡o ) (doubwe) c-count.getpenawtycount() / count.getsimpwecount(), UwU maxpenawtycountwatio, /(^•ω•^)
+              f-facetcountsummawy(count));
         }
         continue;
       }
-      if (count.getPenaltyCount() > maxPenaltyCount) {
-        if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
-          debugMessageBuilder.verbose2(
-              "[%d] FacetsResponseMerger EXCLUCED: penaltyCount:%.3f > maxPenaltyCount:%.3f, %s",
-              i, count.getPenaltyCount(), maxPenaltyCount, facetCountSummary(count));
-        }
-        continue;
-      }
-      if (((double) count.getPenaltyCount() / count.getSimpleCount()) > maxPenaltyCountRatio) {
-        if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
-          debugMessageBuilder.verbose2(
-              "[%d] FacetsResponseMerger EXCLUDED: penaltyCountRatio: %.3f > "
-                  + "maxPenaltyCountRatio:%.3f, %s",
-              i, (double) count.getPenaltyCount() / count.getSimpleCount(), maxPenaltyCountRatio,
-              facetCountSummary(count));
-        }
-        continue;
-      }
-      results.addToTopFacets(count);
+      w-wesuwts.addtotopfacets(count);
 
-      collected++;
-      if (collected >= numResults) {
-        break;
+      c-cowwected++;
+      i-if (cowwected >= nyumwesuwts) {
+        b-bweak;
       }
     }
   }
 
-  private static int capFacetFieldWidth(int numResults) {
-    int ret = numResults;
-    if (numResults <= 0) {
-      // this in theory should not be allowed, but for now we issue the request with goodwill length
-      ret = 10;  // default to 10 for future merge code to terminate correctly
+  pwivate s-static int capfacetfiewdwidth(int nyumwesuwts) {
+    i-int wet = nyumwesuwts;
+    i-if (numwesuwts <= 0) {
+      // this in theowy shouwd nyot be awwowed, (ꈍᴗꈍ) but fow now we issue the w-wequest with goodwiww wength
+      w-wet = 10;  // d-defauwt to 10 fow futuwe mewge code to tewminate cowwectwy
     }
-    if (numResults >= 100) {
-      ret = 100;
+    i-if (numwesuwts >= 100) {
+      wet = 100;
     }
-    return ret;
+    w-wetuwn w-wet;
   }
 
-  private static String facetCountSummary(final ThriftFacetCount count) {
-    if (count.isSetMetadata()) {
-      return String.format("Label: %s (s:%d, w:%d, p:%d, score:%.2f, sid:%d (%s))",
-          count.getFacetLabel(), count.getSimpleCount(), count.getWeightedCount(),
-          count.getPenaltyCount(), count.getScore(), count.getMetadata().getStatusId(),
-          count.getMetadata().getStatusLanguage());
-    } else {
-      return String.format("Label: %s (s:%d, w:%d, p:%d, score:%.2f)", count.getFacetLabel(),
-          count.getSimpleCount(), count.getWeightedCount(), count.getPenaltyCount(),
-          count.getScore());
+  pwivate s-static stwing facetcountsummawy(finaw thwiftfacetcount c-count) {
+    i-if (count.issetmetadata()) {
+      wetuwn s-stwing.fowmat("wabew: %s (s:%d, 😳 w:%d, p:%d, mya scowe:%.2f, sid:%d (%s))", mya
+          c-count.getfacetwabew(), /(^•ω•^) count.getsimpwecount(), ^^;; c-count.getweightedcount(), 🥺
+          c-count.getpenawtycount(), ^^ c-count.getscowe(), ^•ﻌ•^ count.getmetadata().getstatusid(), /(^•ω•^)
+          c-count.getmetadata().getstatuswanguage());
+    } e-ewse {
+      wetuwn s-stwing.fowmat("wabew: %s (s:%d, ^^ w-w:%d, p:%d, 🥺 scowe:%.2f)", (U ᵕ U❁) count.getfacetwabew(), 😳😳😳
+          c-count.getsimpwecount(), nyaa~~ c-count.getweightedcount(), (˘ω˘) c-count.getpenawtycount(), >_<
+          c-count.getscowe());
     }
   }
 
-  // Iterate through the backend responses and fill up the FacetFieldInfo map.
-  private void collectResponsesAndPopulateMap(
-      final Map<String, FacetsResultsUtils.FacetFieldInfo> facetFieldInfoMap,
-      final Set<Long> userIDWhitelist) {
-    // Next, iterate through the backend responses.
-    int i = 0;
-    for (EarlybirdResponse facetsResponse : accumulatedResponses.getSuccessResponses()) {
-      if (facetsResponse.isSetFacetResults()) {
-        LOG.debug("Facet response from earlybird {} is {} ", i, facetsResponse.getFacetResults());
-        i++;
-        ThriftFacetResults facetResults = facetsResponse.getFacetResults();
-        if (facetResults.isSetUserIDWhitelist()) {
-          userIDWhitelist.addAll(facetResults.getUserIDWhitelist());
+  // i-itewate t-thwough the backend w-wesponses and f-fiww up the facetfiewdinfo map. XD
+  p-pwivate void cowwectwesponsesandpopuwatemap(
+      f-finaw map<stwing, rawr x3 facetswesuwtsutiws.facetfiewdinfo> f-facetfiewdinfomap, ( ͡o ω ͡o )
+      f-finaw set<wong> u-usewidwhitewist) {
+    // nyext, :3 itewate thwough the backend wesponses. mya
+    i-int i = 0;
+    f-fow (eawwybiwdwesponse f-facetswesponse : accumuwatedwesponses.getsuccesswesponses()) {
+      if (facetswesponse.issetfacetwesuwts()) {
+        wog.debug("facet wesponse f-fwom eawwybiwd {} i-is {} ", σωσ i, facetswesponse.getfacetwesuwts());
+        i-i++;
+        thwiftfacetwesuwts f-facetwesuwts = facetswesponse.getfacetwesuwts();
+        if (facetwesuwts.issetusewidwhitewist()) {
+          usewidwhitewist.addaww(facetwesuwts.getusewidwhitewist());
         }
-        FacetsResultsUtils.fillFacetFieldInfo(
-            facetResults, facetFieldInfoMap,
-            userIDWhitelist);
+        facetswesuwtsutiws.fiwwfacetfiewdinfo(
+            facetwesuwts, (ꈍᴗꈍ) f-facetfiewdinfomap, OwO
+            u-usewidwhitewist);
       }
     }
-    LOG.debug("Earlybird facet response total size {}", i);
+    w-wog.debug("eawwybiwd f-facet wesponse totaw size {}", o.O i);
   }
 }
 

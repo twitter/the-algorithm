@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.covew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.FullCoverContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCoverContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.covewcontent
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.fuwwcovewcontent
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.hawfcovewcontent
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class CoverContentMarshaller @Inject() (
-  fullCoverContentMarshaller: FullCoverContentMarshaller,
-  halfCoverContentMarshaller: HalfCoverContentMarshaller) {
+@singweton
+cwass covewcontentmawshawwew @inject() (
+  fuwwcovewcontentmawshawwew: fuwwcovewcontentmawshawwew, >_<
+  h-hawfcovewcontentmawshawwew: hawfcovewcontentmawshawwew) {
 
-  def apply(coverContent: CoverContent): urt.Cover = coverContent match {
-    case fullCover: FullCoverContent => fullCoverContentMarshaller(fullCover)
-    case halfCover: HalfCoverContent => halfCoverContentMarshaller(halfCover)
+  def appwy(covewcontent: c-covewcontent): uwt.covew = covewcontent m-match {
+    case fuwwcovew: fuwwcovewcontent => fuwwcovewcontentmawshawwew(fuwwcovew)
+    c-case hawfcovew: hawfcovewcontent => h-hawfcovewcontentmawshawwew(hawfcovew)
   }
 }

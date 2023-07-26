@@ -1,101 +1,101 @@
-scala_library(
-    name = "common_types",
-    sources = ["*.scala"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/com/twitter/algebird:bijection",
-        "3rdparty/jvm/com/twitter/algebird:core",
-        "3rdparty/jvm/com/twitter/algebird:util",
-        "3rdparty/jvm/com/twitter/bijection:core",
-        "3rdparty/jvm/com/twitter/bijection:json",
-        "3rdparty/jvm/com/twitter/bijection:macros",
-        "3rdparty/jvm/com/twitter/bijection:netty",
-        "3rdparty/jvm/com/twitter/bijection:scrooge",
-        "3rdparty/jvm/com/twitter/bijection:thrift",
-        "3rdparty/jvm/com/twitter/bijection:util",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "3rdparty/src/jvm/com/twitter/scalding:date",
-        "3rdparty/src/jvm/com/twitter/summingbird:batch",
-        "src/java/com/twitter/ml/api:api-base",
-        "src/java/com/twitter/ml/api/constant",
-        "src/scala/com/twitter/dal/client/dataset",
-        "src/scala/com/twitter/ml/api/util:datarecord",
-        "src/scala/com/twitter/scalding_internal/dalv2/vkvs",
-        "src/scala/com/twitter/scalding_internal/multiformat/format/keyval",
-        "src/scala/com/twitter/storehaus_internal/manhattan/config",
-        "src/scala/com/twitter/storehaus_internal/offline",
-        "src/scala/com/twitter/storehaus_internal/util",
-        "src/scala/com/twitter/summingbird_internal/bijection:bijection-implicits",
-        "src/scala/com/twitter/summingbird_internal/runner/store_config",
-        "src/thrift/com/twitter/dal/personal_data:personal_data-java",
-        "src/thrift/com/twitter/dal/personal_data:personal_data-scala",
-        "src/thrift/com/twitter/ml/api:data-java",
-        "timelines/data_processing/ml_util/aggregation_framework/metrics",
-        "timelines/data_processing/ml_util/transforms",
-        "util/util-core:util-core-util",
+scawa_wibwawy(
+    nyame = "common_types", >_<
+    souwces = ["*.scawa"], mya
+    p-pwatfowm = "java8", mya
+    s-stwict_deps = twue, 😳
+    t-tags = ["bazew-compatibwe"], XD
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/guava", :3
+        "3wdpawty/jvm/com/twittew/awgebiwd:bijection", 😳😳😳
+        "3wdpawty/jvm/com/twittew/awgebiwd:cowe", -.-
+        "3wdpawty/jvm/com/twittew/awgebiwd:utiw", ( ͡o ω ͡o )
+        "3wdpawty/jvm/com/twittew/bijection:cowe", rawr x3
+        "3wdpawty/jvm/com/twittew/bijection:json", nyaa~~
+        "3wdpawty/jvm/com/twittew/bijection:macwos", /(^•ω•^)
+        "3wdpawty/jvm/com/twittew/bijection:netty", rawr
+        "3wdpawty/jvm/com/twittew/bijection:scwooge", OwO
+        "3wdpawty/jvm/com/twittew/bijection:thwift", (U ﹏ U)
+        "3wdpawty/jvm/com/twittew/bijection:utiw", >_<
+        "3wdpawty/jvm/owg/apache/thwift:wibthwift", rawr x3
+        "3wdpawty/swc/jvm/com/twittew/scawding:date", mya
+        "3wdpawty/swc/jvm/com/twittew/summingbiwd:batch", nyaa~~
+        "swc/java/com/twittew/mw/api:api-base", (⑅˘꒳˘)
+        "swc/java/com/twittew/mw/api/constant", rawr x3
+        "swc/scawa/com/twittew/daw/cwient/dataset", (✿oωo)
+        "swc/scawa/com/twittew/mw/api/utiw:datawecowd", (ˆ ﻌ ˆ)♡
+        "swc/scawa/com/twittew/scawding_intewnaw/dawv2/vkvs", (˘ω˘)
+        "swc/scawa/com/twittew/scawding_intewnaw/muwtifowmat/fowmat/keyvaw", (⑅˘꒳˘)
+        "swc/scawa/com/twittew/stowehaus_intewnaw/manhattan/config", (///ˬ///✿)
+        "swc/scawa/com/twittew/stowehaus_intewnaw/offwine",
+        "swc/scawa/com/twittew/stowehaus_intewnaw/utiw", 😳😳😳
+        "swc/scawa/com/twittew/summingbiwd_intewnaw/bijection:bijection-impwicits", 🥺
+        "swc/scawa/com/twittew/summingbiwd_intewnaw/wunnew/stowe_config", mya
+        "swc/thwift/com/twittew/daw/pewsonaw_data:pewsonaw_data-java", 🥺
+        "swc/thwift/com/twittew/daw/pewsonaw_data:pewsonaw_data-scawa", >_<
+        "swc/thwift/com/twittew/mw/api:data-java", >_<
+        "timewines/data_pwocessing/mw_utiw/aggwegation_fwamewowk/metwics", (⑅˘꒳˘)
+        "timewines/data_pwocessing/mw_utiw/twansfowms", /(^•ω•^)
+        "utiw/utiw-cowe:utiw-cowe-utiw", rawr x3
     ],
 )
 
-target(
-    name = "common_online_stores",
-    dependencies = [
-        "src/scala/com/twitter/storehaus_internal/memcache",
+t-tawget(
+    n-nyame = "common_onwine_stowes", (U ﹏ U)
+    d-dependencies = [
+        "swc/scawa/com/twittew/stowehaus_intewnaw/memcache", (U ﹏ U)
     ],
 )
 
-target(
-    name = "common_offline_stores",
+tawget(
+    n-nyame = "common_offwine_stowes", (⑅˘꒳˘)
     dependencies = [
-        "src/scala/com/twitter/storehaus_internal/manhattan",
+        "swc/scawa/com/twittew/stowehaus_intewnaw/manhattan", òωó
+    ], ʘwʘ
+)
+
+tawget(
+    nyame = "usew_job", /(^•ω•^)
+    dependencies = [
+        "timewines/data_pwocessing/mw_utiw/aggwegation_fwamewowk/job", ʘwʘ
     ],
 )
 
-target(
-    name = "user_job",
+tawget(
+    n-nyame = "scawding", σωσ
     dependencies = [
-        "timelines/data_processing/ml_util/aggregation_framework/job",
+        "timewines/data_pwocessing/mw_utiw/aggwegation_fwamewowk/scawding", OwO
     ],
 )
 
-target(
-    name = "scalding",
+tawget(
+    n-nyame = "convewsion",
     dependencies = [
-        "timelines/data_processing/ml_util/aggregation_framework/scalding",
+        "timewines/data_pwocessing/mw_utiw/aggwegation_fwamewowk/convewsion", 😳😳😳
     ],
 )
 
-target(
-    name = "conversion",
+t-tawget(
+    name = "quewy", 😳😳😳
     dependencies = [
-        "timelines/data_processing/ml_util/aggregation_framework/conversion",
+        "timewines/data_pwocessing/mw_utiw/aggwegation_fwamewowk/quewy", o.O
     ],
 )
 
-target(
-    name = "query",
+tawget(
+    n-nyame = "hewon", ( ͡o ω ͡o )
     dependencies = [
-        "timelines/data_processing/ml_util/aggregation_framework/query",
-    ],
+        "timewines/data_pwocessing/mw_utiw/aggwegation_fwamewowk/hewon",
+    ], (U ﹏ U)
 )
 
-target(
-    name = "heron",
+t-tawget(
     dependencies = [
-        "timelines/data_processing/ml_util/aggregation_framework/heron",
-    ],
-)
-
-target(
-    dependencies = [
-        ":common_offline_stores",
-        ":common_online_stores",
-        ":common_types",
-        ":conversion",
-        ":heron",
-        ":query",
-        ":scalding",
+        ":common_offwine_stowes", (///ˬ///✿)
+        ":common_onwine_stowes", >w<
+        ":common_types", rawr
+        ":convewsion", mya
+        ":hewon", ^^
+        ":quewy",
+        ":scawding", 😳😳😳
     ],
 )

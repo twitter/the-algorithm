@@ -1,52 +1,52 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.socialgraph.{thriftscala => sg}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.sociawgwaph.{thwiftscawa => sg}
+impowt c-com.twittew.stitch.stitch
+impowt com.twittew.stitch.sociawgwaph.sociawgwaph
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-case object ListIdsFeature extends FeatureWithDefaultOnFailure[PipelineQuery, Seq[Long]] {
-  override val defaultValue: Seq[Long] = Seq.empty
+c-case object wistidsfeatuwe extends featuwewithdefauwtonfaiwuwe[pipewinequewy, OwO seq[wong]] {
+  o-ovewwide vaw defauwtvawue: s-seq[wong] = seq.empty
 }
 
-@Singleton
-class ListIdsQueryFeatureHydrator @Inject() (socialGraph: SocialGraph)
-    extends QueryFeatureHydrator[PipelineQuery] {
+@singweton
+c-cwass wistidsquewyfeatuwehydwatow @inject() (sociawgwaph: sociawgwaph)
+    extends quewyfeatuwehydwatow[pipewinequewy] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("ListIds")
+  ovewwide vaw identifiew: featuwehydwatowidentifiew = f-featuwehydwatowidentifiew("wistids")
 
-  override val features: Set[Feature[_, _]] = Set(ListIdsFeature)
+  ovewwide vaw featuwes: set[featuwe[_, 😳😳😳 _]] = set(wistidsfeatuwe)
 
-  private val MaxListsToFetch = 20
+  pwivate vaw maxwiststofetch = 20
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    val userId = query.getRequiredUserId
+  o-ovewwide def hydwate(quewy: p-pipewinequewy): s-stitch[featuwemap] = {
+    v-vaw u-usewid = quewy.getwequiwedusewid
 
-    val ownedSubscribedRequest = sg.IdsRequest(
-      relationships = Seq(
-        sg.SrcRelationship(userId, sg.RelationshipType.ListIsSubscriber, hasRelationship = true),
-        sg.SrcRelationship(userId, sg.RelationshipType.ListOwning, hasRelationship = true)
-      ),
-      pageRequest = Some(sg.PageRequest(selectAll = Some(false), count = Some(MaxListsToFetch))),
-      context = Some(
-        sg.LookupContext(
-          includeInactive = false,
-          performUnion = Some(true),
-          includeAll = Some(false)
+    vaw ownedsubscwibedwequest = sg.idswequest(
+      w-wewationships = seq(
+        sg.swcwewationship(usewid, 😳😳😳 s-sg.wewationshiptype.wistissubscwibew, o.O haswewationship = twue), ( ͡o ω ͡o )
+        sg.swcwewationship(usewid, sg.wewationshiptype.wistowning, haswewationship = t-twue)
+      ), (U ﹏ U)
+      pagewequest = s-some(sg.pagewequest(sewectaww = s-some(fawse), (///ˬ///✿) c-count = some(maxwiststofetch))), >w<
+      context = some(
+        sg.wookupcontext(
+          i-incwudeinactive = f-fawse, rawr
+          pewfowmunion = s-some(twue), mya
+          i-incwudeaww = some(fawse)
         )
       )
     )
 
-    socialGraph.ids(ownedSubscribedRequest).map { response =>
-      FeatureMapBuilder().add(ListIdsFeature, response.ids).build()
+    sociawgwaph.ids(ownedsubscwibedwequest).map { w-wesponse =>
+      featuwemapbuiwdew().add(wistidsfeatuwe, ^^ wesponse.ids).buiwd()
     }
   }
 }

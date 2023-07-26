@@ -1,80 +1,80 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+impowt java.utiw.enummap;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.map;
 
-import com.google.common.annotations.VisibleForTesting;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultExtraMetadata;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.util.Future;
-import com.twitter.util.FutureEventListener;
+i-impowt com.twittew.finagwe.sewvice;
+i-impowt com.twittew.finagwe.simpwefiwtew;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwt;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtextwametadata;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequesttype;
+i-impowt com.twittew.utiw.futuwe;
+impowt com.twittew.utiw.futuweeventwistenew;
 
 /**
- * Filter tracks the isUserProtected metadata stats returned from Earlybirds.
+ * f-fiwtew twacks the isusewpwotected metadata stats wetuwned f-fwom eawwybiwds. :3
  */
-public class IsUserProtectedMetadataTrackingFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
-  private static final String COUNTER_PREFIX = "is_user_protected_metadata_count_filter_";
-  @VisibleForTesting
-  final Map<EarlybirdRequestType, SearchCounter> totalCounterByRequestTypeMap;
-  @VisibleForTesting
-  final Map<EarlybirdRequestType, SearchCounter> isProtectedCounterByRequestTypeMap;
+pubwic cwass i-isusewpwotectedmetadatatwackingfiwtew
+    e-extends simpwefiwtew<eawwybiwdwequestcontext, -.- eawwybiwdwesponse> {
+  pwivate static finaw stwing countew_pwefix = "is_usew_pwotected_metadata_count_fiwtew_";
+  @visibwefowtesting
+  f-finaw map<eawwybiwdwequesttype, 😳 seawchcountew> totawcountewbywequesttypemap;
+  @visibwefowtesting
+  finaw map<eawwybiwdwequesttype, mya seawchcountew> i-ispwotectedcountewbywequesttypemap;
 
-  public IsUserProtectedMetadataTrackingFilter() {
-    this.totalCounterByRequestTypeMap = new EnumMap<>(EarlybirdRequestType.class);
-    this.isProtectedCounterByRequestTypeMap = new EnumMap<>(EarlybirdRequestType.class);
-    for (EarlybirdRequestType requestType : EarlybirdRequestType.values()) {
-      this.totalCounterByRequestTypeMap.put(requestType,
-          SearchCounter.export(COUNTER_PREFIX + requestType.getNormalizedName() + "_total"));
-      this.isProtectedCounterByRequestTypeMap.put(requestType,
-          SearchCounter.export(COUNTER_PREFIX + requestType.getNormalizedName() + "_is_protected"));
+  pubwic i-isusewpwotectedmetadatatwackingfiwtew() {
+    t-this.totawcountewbywequesttypemap = n-nyew enummap<>(eawwybiwdwequesttype.cwass);
+    t-this.ispwotectedcountewbywequesttypemap = nyew enummap<>(eawwybiwdwequesttype.cwass);
+    f-fow (eawwybiwdwequesttype wequesttype : eawwybiwdwequesttype.vawues()) {
+      t-this.totawcountewbywequesttypemap.put(wequesttype, (˘ω˘)
+          seawchcountew.expowt(countew_pwefix + wequesttype.getnowmawizedname() + "_totaw"));
+      this.ispwotectedcountewbywequesttypemap.put(wequesttype, >_<
+          seawchcountew.expowt(countew_pwefix + wequesttype.getnowmawizedname() + "_is_pwotected"));
     }
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext request,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    Future<EarlybirdResponse> response = service.apply(request);
+  @ovewwide
+  p-pubwic futuwe<eawwybiwdwesponse> a-appwy(
+      e-eawwybiwdwequestcontext w-wequest, -.-
+      sewvice<eawwybiwdwequestcontext, 🥺 eawwybiwdwesponse> sewvice) {
+    f-futuwe<eawwybiwdwesponse> w-wesponse = sewvice.appwy(wequest);
 
-    EarlybirdRequestType requestType = request.getEarlybirdRequestType();
-    response.addEventListener(new FutureEventListener<EarlybirdResponse>() {
-      @Override
-      public void onSuccess(EarlybirdResponse response) {
-        if (!response.isSetSearchResults() || response.getSearchResults().getResults().isEmpty()) {
-          return;
+    e-eawwybiwdwequesttype w-wequesttype = wequest.geteawwybiwdwequesttype();
+    wesponse.addeventwistenew(new f-futuweeventwistenew<eawwybiwdwesponse>() {
+      @ovewwide
+      pubwic v-void onsuccess(eawwybiwdwesponse wesponse) {
+        if (!wesponse.issetseawchwesuwts() || w-wesponse.getseawchwesuwts().getwesuwts().isempty()) {
+          wetuwn;
         }
-        List<ThriftSearchResult> searchResults = response.getSearchResults().getResults();
-        int totalCount = searchResults.size();
-        int isUserProtectedCount = 0;
-        for (ThriftSearchResult searchResult : searchResults) {
-          if (searchResult.isSetMetadata() && searchResult.getMetadata().isSetExtraMetadata()) {
-            ThriftSearchResultExtraMetadata extraMetadata =
-                searchResult.getMetadata().getExtraMetadata();
-            if (extraMetadata.isIsUserProtected()) {
-              isUserProtectedCount++;
+        w-wist<thwiftseawchwesuwt> seawchwesuwts = w-wesponse.getseawchwesuwts().getwesuwts();
+        i-int totawcount = seawchwesuwts.size();
+        int isusewpwotectedcount = 0;
+        fow (thwiftseawchwesuwt seawchwesuwt : seawchwesuwts) {
+          if (seawchwesuwt.issetmetadata() && s-seawchwesuwt.getmetadata().issetextwametadata()) {
+            thwiftseawchwesuwtextwametadata extwametadata =
+                seawchwesuwt.getmetadata().getextwametadata();
+            i-if (extwametadata.isisusewpwotected()) {
+              isusewpwotectedcount++;
             }
           }
         }
-        IsUserProtectedMetadataTrackingFilter.this
-            .totalCounterByRequestTypeMap.get(requestType).add(totalCount);
-        IsUserProtectedMetadataTrackingFilter.this
-            .isProtectedCounterByRequestTypeMap.get(requestType).add(isUserProtectedCount);
+        i-isusewpwotectedmetadatatwackingfiwtew.this
+            .totawcountewbywequesttypemap.get(wequesttype).add(totawcount);
+        i-isusewpwotectedmetadatatwackingfiwtew.this
+            .ispwotectedcountewbywequesttypemap.get(wequesttype).add(isusewpwotectedcount);
       }
 
-      @Override
-      public void onFailure(Throwable cause) { }
+      @ovewwide
+      p-pubwic void onfaiwuwe(thwowabwe cause) { }
     });
 
-    return response;
+    wetuwn wesponse;
   }
 
 }

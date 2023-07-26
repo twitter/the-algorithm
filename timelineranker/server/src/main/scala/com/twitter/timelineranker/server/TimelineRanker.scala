@@ -1,253 +1,253 @@
-package com.twitter.timelineranker.server
+package com.twittew.timewinewankew.sewvew
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.finagle.TimeoutException
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FunctionArrow
-import com.twitter.timelineranker.entity_tweets.EntityTweetsRepository
-import com.twitter.timelineranker.in_network_tweets.InNetworkTweetRepository
-import com.twitter.timelineranker.model._
-import com.twitter.timelineranker.observe.ObservedRequests
-import com.twitter.timelineranker.recap_author.RecapAuthorRepository
-import com.twitter.timelineranker.recap_hydration.RecapHydrationRepository
-import com.twitter.timelineranker.repository._
-import com.twitter.timelineranker.uteg_liked_by_tweets.UtegLikedByTweetsRepository
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelines.authorization.TimelinesClientRequestAuthorizer
-import com.twitter.timelines.observe.DebugObserver
-import com.twitter.timelines.observe.ObservedAndValidatedRequests
-import com.twitter.timelines.observe.QueryWidth
-import com.twitter.timelines.observe.ServiceObserver
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+impowt c-com.twittew.abdecidew.woggingabdecidew
+i-impowt com.twittew.finagwe.timeoutexception
+i-impowt com.twittew.finagwe.stats.stat
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.sewvo.utiw.functionawwow
+i-impowt com.twittew.timewinewankew.entity_tweets.entitytweetswepositowy
+impowt com.twittew.timewinewankew.in_netwowk_tweets.innetwowktweetwepositowy
+impowt com.twittew.timewinewankew.modew._
+i-impowt com.twittew.timewinewankew.obsewve.obsewvedwequests
+impowt com.twittew.timewinewankew.wecap_authow.wecapauthowwepositowy
+i-impowt com.twittew.timewinewankew.wecap_hydwation.wecaphydwationwepositowy
+impowt c-com.twittew.timewinewankew.wepositowy._
+impowt com.twittew.timewinewankew.uteg_wiked_by_tweets.utegwikedbytweetswepositowy
+impowt com.twittew.timewinewankew.{thwiftscawa => t-thwift}
+impowt com.twittew.timewines.authowization.timewinescwientwequestauthowizew
+i-impowt com.twittew.timewines.obsewve.debugobsewvew
+i-impowt com.twittew.timewines.obsewve.obsewvedandvawidatedwequests
+impowt com.twittew.timewines.obsewve.quewywidth
+impowt c-com.twittew.timewines.obsewve.sewviceobsewvew
+impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.wetuwn
+impowt com.twittew.utiw.thwow
+i-impowt com.twittew.utiw.twy
 
-object TimelineRanker {
-  def toTimelineErrorThriftResponse(
-    ex: Throwable,
-    reason: Option[thrift.ErrorReason] = None
-  ): thrift.GetTimelineResponse = {
-    thrift.GetTimelineResponse(
-      error = Some(thrift.TimelineError(message = ex.toString, reason))
+o-object t-timewinewankew {
+  d-def totimewineewwowthwiftwesponse(
+    e-ex: thwowabwe, -.-
+    weason: option[thwift.ewwowweason] = n-nyone
+  ): thwift.gettimewinewesponse = {
+    thwift.gettimewinewesponse(
+      ewwow = some(thwift.timewineewwow(message = e-ex.tostwing, mya weason))
     )
   }
 
-  def getTimelinesExceptionHandler: PartialFunction[
-    Throwable,
-    Future[thrift.GetTimelineResponse]
+  def gettimewinesexceptionhandwew: pawtiawfunction[
+    thwowabwe, >w<
+    futuwe[thwift.gettimewinewesponse]
   ] = {
-    case e: TimeoutException =>
-      Future.value(toTimelineErrorThriftResponse(e, Some(thrift.ErrorReason.UpstreamTimeout)))
-    case e: Throwable if ObservedAndValidatedRequests.isOverCapacityException(e) =>
-      Future.value(toTimelineErrorThriftResponse(e, Some(thrift.ErrorReason.OverCapacity)))
-    case e => Future.value(toTimelineErrorThriftResponse(e))
+    c-case e: timeoutexception =>
+      futuwe.vawue(totimewineewwowthwiftwesponse(e, (U ﹏ U) s-some(thwift.ewwowweason.upstweamtimeout)))
+    c-case e: thwowabwe i-if obsewvedandvawidatedwequests.isovewcapacityexception(e) =>
+      futuwe.vawue(totimewineewwowthwiftwesponse(e, 😳😳😳 some(thwift.ewwowweason.ovewcapacity)))
+    case e => futuwe.vawue(totimewineewwowthwiftwesponse(e))
   }
 
-  def toErrorThriftResponse(
-    ex: Throwable,
-    reason: Option[thrift.ErrorReason] = None
-  ): thrift.GetCandidateTweetsResponse = {
-    thrift.GetCandidateTweetsResponse(
-      error = Some(thrift.TimelineError(message = ex.toString, reason))
+  d-def toewwowthwiftwesponse(
+    e-ex: thwowabwe, o.O
+    weason: option[thwift.ewwowweason] = n-nyone
+  ): t-thwift.getcandidatetweetswesponse = {
+    thwift.getcandidatetweetswesponse(
+      e-ewwow = some(thwift.timewineewwow(message = e-ex.tostwing, òωó weason))
     )
   }
 
-  def exceptionHandler: PartialFunction[Throwable, Future[thrift.GetCandidateTweetsResponse]] = {
-    case e: TimeoutException =>
-      Future.value(toErrorThriftResponse(e, Some(thrift.ErrorReason.UpstreamTimeout)))
-    case e: Throwable if ObservedAndValidatedRequests.isOverCapacityException(e) =>
-      Future.value(toErrorThriftResponse(e, Some(thrift.ErrorReason.OverCapacity)))
-    case e => Future.value(toErrorThriftResponse(e))
+  def exceptionhandwew: pawtiawfunction[thwowabwe, 😳😳😳 f-futuwe[thwift.getcandidatetweetswesponse]] = {
+    case e-e: timeoutexception =>
+      futuwe.vawue(toewwowthwiftwesponse(e, σωσ some(thwift.ewwowweason.upstweamtimeout)))
+    c-case e: thwowabwe i-if obsewvedandvawidatedwequests.isovewcapacityexception(e) =>
+      futuwe.vawue(toewwowthwiftwesponse(e, (⑅˘꒳˘) some(thwift.ewwowweason.ovewcapacity)))
+    case e => futuwe.vawue(toewwowthwiftwesponse(e))
   }
 }
 
-class TimelineRanker(
-  routingRepository: RoutingTimelineRepository,
-  inNetworkTweetRepository: InNetworkTweetRepository,
-  recapHydrationRepository: RecapHydrationRepository,
-  recapAuthorRepository: RecapAuthorRepository,
-  entityTweetsRepository: EntityTweetsRepository,
-  utegLikedByTweetsRepository: UtegLikedByTweetsRepository,
-  serviceObserver: ServiceObserver,
-  val abdecider: Option[LoggingABDecider],
-  override val clientRequestAuthorizer: TimelinesClientRequestAuthorizer,
-  override val debugObserver: DebugObserver,
-  queryParamInitializer: FunctionArrow[RecapQuery, Future[RecapQuery]],
-  statsReceiver: StatsReceiver)
-    extends thrift.TimelineRanker.MethodPerEndpoint
-    with ObservedRequests {
+cwass timewinewankew(
+  woutingwepositowy: woutingtimewinewepositowy, (///ˬ///✿)
+  i-innetwowktweetwepositowy: i-innetwowktweetwepositowy, 🥺
+  wecaphydwationwepositowy: w-wecaphydwationwepositowy, OwO
+  w-wecapauthowwepositowy: wecapauthowwepositowy, >w<
+  e-entitytweetswepositowy: entitytweetswepositowy, 🥺
+  utegwikedbytweetswepositowy: utegwikedbytweetswepositowy, nyaa~~
+  s-sewviceobsewvew: sewviceobsewvew, ^^
+  vaw abdecidew: option[woggingabdecidew], >w<
+  ovewwide vaw c-cwientwequestauthowizew: timewinescwientwequestauthowizew, OwO
+  ovewwide v-vaw debugobsewvew: d-debugobsewvew, XD
+  q-quewypawaminitiawizew: functionawwow[wecapquewy, ^^;; f-futuwe[wecapquewy]],
+  s-statsweceivew: s-statsweceivew)
+    e-extends thwift.timewinewankew.methodpewendpoint
+    with obsewvedwequests {
 
-  override val requestWidthStats: Stat = statsReceiver.stat("TimelineRanker/requestWidth")
+  ovewwide vaw w-wequestwidthstats: s-stat = statsweceivew.stat("timewinewankew/wequestwidth")
 
-  private[this] val getTimelinesStats = serviceObserver.readMethodStats(
-    "getTimelines",
-    QueryWidth.one[TimelineQuery]
+  p-pwivate[this] vaw g-gettimewinesstats = s-sewviceobsewvew.weadmethodstats(
+    "gettimewines", 🥺
+    quewywidth.one[timewinequewy]
   )
 
-  private[this] val getInNetworkTweetCandidatesStats = serviceObserver.readMethodStats(
-    "getInNetworkTweetCandidates",
-    QueryWidth.one[RecapQuery]
+  pwivate[this] vaw getinnetwowktweetcandidatesstats = s-sewviceobsewvew.weadmethodstats(
+    "getinnetwowktweetcandidates", XD
+    quewywidth.one[wecapquewy]
   )
 
-  private[this] val hydrateTweetCandidatesStats = serviceObserver.readMethodStats(
-    "hydrateTweetCandidates",
-    QueryWidth.one[RecapQuery]
+  pwivate[this] vaw hydwatetweetcandidatesstats = sewviceobsewvew.weadmethodstats(
+    "hydwatetweetcandidates", (U ᵕ U❁)
+    quewywidth.one[wecapquewy]
   )
 
-  private[this] val getRecapCandidatesFromAuthorsStats = serviceObserver.readMethodStats(
-    "getRecapCandidatesFromAuthors",
-    QueryWidth.one[RecapQuery]
+  p-pwivate[this] vaw getwecapcandidatesfwomauthowsstats = sewviceobsewvew.weadmethodstats(
+    "getwecapcandidatesfwomauthows", :3
+    quewywidth.one[wecapquewy]
   )
 
-  private[this] val getEntityTweetCandidatesStats = serviceObserver.readMethodStats(
-    "getEntityTweetCandidates",
-    QueryWidth.one[RecapQuery]
+  p-pwivate[this] v-vaw getentitytweetcandidatesstats = s-sewviceobsewvew.weadmethodstats(
+    "getentitytweetcandidates", ( ͡o ω ͡o )
+    quewywidth.one[wecapquewy]
   )
 
-  private[this] val getUtegLikedByTweetCandidatesStats = serviceObserver.readMethodStats(
-    "getUtegLikedByTweetCandidates",
-    QueryWidth.one[RecapQuery]
+  p-pwivate[this] vaw getutegwikedbytweetcandidatesstats = s-sewviceobsewvew.weadmethodstats(
+    "getutegwikedbytweetcandidates", òωó
+    q-quewywidth.one[wecapquewy]
   )
 
-  def getTimelines(
-    thriftQueries: Seq[thrift.TimelineQuery]
-  ): Future[Seq[thrift.GetTimelineResponse]] = {
-    Future.collect(
-      thriftQueries.map { thriftQuery =>
-        Try(TimelineQuery.fromThrift(thriftQuery)) match {
-          case Return(query) =>
-            observeAndValidate(
-              query,
-              Seq(query.userId),
-              getTimelinesStats,
-              TimelineRanker.getTimelinesExceptionHandler) { validatedQuery =>
-              routingRepository.get(validatedQuery).map { timeline =>
-                thrift.GetTimelineResponse(Some(timeline.toThrift))
+  def gettimewines(
+    thwiftquewies: seq[thwift.timewinequewy]
+  ): futuwe[seq[thwift.gettimewinewesponse]] = {
+    futuwe.cowwect(
+      t-thwiftquewies.map { thwiftquewy =>
+        t-twy(timewinequewy.fwomthwift(thwiftquewy)) match {
+          c-case wetuwn(quewy) =>
+            o-obsewveandvawidate(
+              quewy, σωσ
+              seq(quewy.usewid), (U ᵕ U❁)
+              g-gettimewinesstats, (✿oωo)
+              t-timewinewankew.gettimewinesexceptionhandwew) { vawidatedquewy =>
+              w-woutingwepositowy.get(vawidatedquewy).map { t-timewine =>
+                thwift.gettimewinewesponse(some(timewine.tothwift))
               }
             }
-          case Throw(e) => Future.value(TimelineRanker.toTimelineErrorThriftResponse(e))
+          case thwow(e) => futuwe.vawue(timewinewankew.totimewineewwowthwiftwesponse(e))
         }
       }
     )
   }
 
-  def getRecycledTweetCandidates(
-    thriftQueries: Seq[thrift.RecapQuery]
-  ): Future[Seq[thrift.GetCandidateTweetsResponse]] = {
-    Future.collect(
-      thriftQueries.map { thriftQuery =>
-        Try(RecapQuery.fromThrift(thriftQuery)) match {
-          case Return(query) =>
-            observeAndValidate(
-              query,
-              Seq(query.userId),
-              getInNetworkTweetCandidatesStats,
-              TimelineRanker.exceptionHandler
-            ) { validatedQuery =>
-              Future(queryParamInitializer(validatedQuery)).flatten.liftToTry.flatMap {
-                case Return(q) => inNetworkTweetRepository.get(q).map(_.toThrift)
-                case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+  def getwecycwedtweetcandidates(
+    t-thwiftquewies: s-seq[thwift.wecapquewy]
+  ): f-futuwe[seq[thwift.getcandidatetweetswesponse]] = {
+    futuwe.cowwect(
+      t-thwiftquewies.map { t-thwiftquewy =>
+        twy(wecapquewy.fwomthwift(thwiftquewy)) m-match {
+          case wetuwn(quewy) =>
+            obsewveandvawidate(
+              quewy, ^^
+              seq(quewy.usewid), ^•ﻌ•^
+              g-getinnetwowktweetcandidatesstats, XD
+              t-timewinewankew.exceptionhandwew
+            ) { vawidatedquewy =>
+              futuwe(quewypawaminitiawizew(vawidatedquewy)).fwatten.wifttotwy.fwatmap {
+                c-case w-wetuwn(q) => innetwowktweetwepositowy.get(q).map(_.tothwift)
+                case thwow(e) => futuwe.vawue(timewinewankew.toewwowthwiftwesponse(e))
               }
             }
-          case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+          case t-thwow(e) => futuwe.vawue(timewinewankew.toewwowthwiftwesponse(e))
         }
       }
     )
   }
 
-  def hydrateTweetCandidates(
-    thriftQueries: Seq[thrift.RecapHydrationQuery]
-  ): Future[Seq[thrift.GetCandidateTweetsResponse]] = {
-    Future.collect(
-      thriftQueries.map { thriftQuery =>
-        Try(RecapQuery.fromThrift(thriftQuery)) match {
-          case Return(query) =>
-            observeAndValidate(
-              query,
-              Seq(query.userId),
-              hydrateTweetCandidatesStats,
-              TimelineRanker.exceptionHandler
-            ) { validatedQuery =>
-              Future(queryParamInitializer(validatedQuery)).flatten.liftToTry.flatMap {
-                case Return(q) => recapHydrationRepository.hydrate(q).map(_.toThrift)
-                case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+  def hydwatetweetcandidates(
+    thwiftquewies: seq[thwift.wecaphydwationquewy]
+  ): futuwe[seq[thwift.getcandidatetweetswesponse]] = {
+    f-futuwe.cowwect(
+      thwiftquewies.map { thwiftquewy =>
+        t-twy(wecapquewy.fwomthwift(thwiftquewy)) m-match {
+          case wetuwn(quewy) =>
+            obsewveandvawidate(
+              quewy, :3
+              s-seq(quewy.usewid),
+              h-hydwatetweetcandidatesstats, (ꈍᴗꈍ)
+              timewinewankew.exceptionhandwew
+            ) { vawidatedquewy =>
+              futuwe(quewypawaminitiawizew(vawidatedquewy)).fwatten.wifttotwy.fwatmap {
+                c-case wetuwn(q) => wecaphydwationwepositowy.hydwate(q).map(_.tothwift)
+                c-case thwow(e) => futuwe.vawue(timewinewankew.toewwowthwiftwesponse(e))
               }
             }
-          case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+          case thwow(e) => futuwe.vawue(timewinewankew.toewwowthwiftwesponse(e))
         }
       }
     )
   }
 
-  def getRecapCandidatesFromAuthors(
-    thriftQueries: Seq[thrift.RecapQuery]
-  ): Future[Seq[thrift.GetCandidateTweetsResponse]] = {
-    Future.collect(
-      thriftQueries.map { thriftQuery =>
-        Try(RecapQuery.fromThrift(thriftQuery)) match {
-          case Return(query) =>
-            observeAndValidate(
-              query,
-              Seq(query.userId),
-              getRecapCandidatesFromAuthorsStats,
-              TimelineRanker.exceptionHandler
-            ) { validatedQuery =>
-              Future(queryParamInitializer(validatedQuery)).flatten.liftToTry.flatMap {
-                case Return(q) => recapAuthorRepository.get(q).map(_.toThrift)
-                case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+  d-def getwecapcandidatesfwomauthows(
+    thwiftquewies: s-seq[thwift.wecapquewy]
+  ): f-futuwe[seq[thwift.getcandidatetweetswesponse]] = {
+    futuwe.cowwect(
+      t-thwiftquewies.map { thwiftquewy =>
+        t-twy(wecapquewy.fwomthwift(thwiftquewy)) m-match {
+          c-case wetuwn(quewy) =>
+            obsewveandvawidate(
+              q-quewy, :3
+              seq(quewy.usewid), (U ﹏ U)
+              g-getwecapcandidatesfwomauthowsstats, UwU
+              timewinewankew.exceptionhandwew
+            ) { vawidatedquewy =>
+              f-futuwe(quewypawaminitiawizew(vawidatedquewy)).fwatten.wifttotwy.fwatmap {
+                c-case w-wetuwn(q) => wecapauthowwepositowy.get(q).map(_.tothwift)
+                case thwow(e) => futuwe.vawue(timewinewankew.toewwowthwiftwesponse(e))
               }
             }
-          case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+          c-case thwow(e) => futuwe.vawue(timewinewankew.toewwowthwiftwesponse(e))
         }
       }
     )
   }
 
-  def getEntityTweetCandidates(
-    thriftQueries: Seq[thrift.EntityTweetsQuery]
-  ): Future[Seq[thrift.GetCandidateTweetsResponse]] = {
-    Future.collect(
-      thriftQueries.map { thriftQuery =>
-        Try(RecapQuery.fromThrift(thriftQuery)) match {
-          case Return(query) =>
-            observeAndValidate(
-              query,
-              Seq(query.userId),
-              getEntityTweetCandidatesStats,
-              TimelineRanker.exceptionHandler
-            ) { validatedQuery =>
-              Future(queryParamInitializer(validatedQuery)).flatten.liftToTry.flatMap {
-                case Return(q) => entityTweetsRepository.get(q).map(_.toThrift)
-                case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+  d-def getentitytweetcandidates(
+    t-thwiftquewies: seq[thwift.entitytweetsquewy]
+  ): futuwe[seq[thwift.getcandidatetweetswesponse]] = {
+    futuwe.cowwect(
+      t-thwiftquewies.map { t-thwiftquewy =>
+        t-twy(wecapquewy.fwomthwift(thwiftquewy)) m-match {
+          case wetuwn(quewy) =>
+            o-obsewveandvawidate(
+              quewy, 😳😳😳
+              seq(quewy.usewid), XD
+              getentitytweetcandidatesstats, o.O
+              timewinewankew.exceptionhandwew
+            ) { vawidatedquewy =>
+              futuwe(quewypawaminitiawizew(vawidatedquewy)).fwatten.wifttotwy.fwatmap {
+                c-case wetuwn(q) => entitytweetswepositowy.get(q).map(_.tothwift)
+                c-case thwow(e) => futuwe.vawue(timewinewankew.toewwowthwiftwesponse(e))
               }
             }
-          case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+          c-case thwow(e) => futuwe.vawue(timewinewankew.toewwowthwiftwesponse(e))
         }
       }
     )
   }
 
-  def getUtegLikedByTweetCandidates(
-    thriftQueries: Seq[thrift.UtegLikedByTweetsQuery]
-  ): Future[Seq[thrift.GetCandidateTweetsResponse]] = {
-    Future.collect(
-      thriftQueries.map { thriftQuery =>
-        Try(RecapQuery.fromThrift(thriftQuery)) match {
-          case Return(query) =>
-            observeAndValidate(
-              query,
-              Seq(query.userId),
-              getUtegLikedByTweetCandidatesStats,
-              TimelineRanker.exceptionHandler
-            ) { validatedQuery =>
-              Future(queryParamInitializer(validatedQuery)).flatten.liftToTry.flatMap {
-                case Return(q) => utegLikedByTweetsRepository.get(q).map(_.toThrift)
-                case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+  d-def getutegwikedbytweetcandidates(
+    t-thwiftquewies: s-seq[thwift.utegwikedbytweetsquewy]
+  ): f-futuwe[seq[thwift.getcandidatetweetswesponse]] = {
+    f-futuwe.cowwect(
+      t-thwiftquewies.map { thwiftquewy =>
+        twy(wecapquewy.fwomthwift(thwiftquewy)) match {
+          case wetuwn(quewy) =>
+            obsewveandvawidate(
+              q-quewy, (⑅˘꒳˘)
+              s-seq(quewy.usewid), 😳😳😳
+              g-getutegwikedbytweetcandidatesstats, nyaa~~
+              timewinewankew.exceptionhandwew
+            ) { v-vawidatedquewy =>
+              futuwe(quewypawaminitiawizew(vawidatedquewy)).fwatten.wifttotwy.fwatmap {
+                case wetuwn(q) => utegwikedbytweetswepositowy.get(q).map(_.tothwift)
+                c-case thwow(e) => f-futuwe.vawue(timewinewankew.toewwowthwiftwesponse(e))
               }
             }
-          case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+          case thwow(e) => f-futuwe.vawue(timewinewankew.toewwowthwiftwesponse(e))
         }
       }
     )

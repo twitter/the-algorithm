@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddToModuleTimelineInstruction
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.addtomoduwetimewineinstwuction
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class AddToModuleInstructionMarshaller @Inject() (moduleItemMarshaller: ModuleItemMarshaller) {
+@singweton
+c-cwass addtomoduweinstwuctionmawshawwew @inject() (moduweitemmawshawwew: m-moduweitemmawshawwew) {
 
-  def apply(instruction: AddToModuleTimelineInstruction): urt.AddToModule = urt.AddToModule(
-    moduleItems = instruction.moduleItems.map(moduleItemMarshaller(_, instruction.moduleEntryId)),
-    moduleEntryId = instruction.moduleEntryId,
-    moduleItemEntryId = instruction.moduleItemEntryId,
-    prepend = instruction.prepend
+  d-def appwy(instwuction: addtomoduwetimewineinstwuction): uwt.addtomoduwe = uwt.addtomoduwe(
+    moduweitems = i-instwuction.moduweitems.map(moduweitemmawshawwew(_, (ˆ ﻌ ˆ)♡ instwuction.moduweentwyid)), (⑅˘꒳˘)
+    moduweentwyid = i-instwuction.moduweentwyid, (U ᵕ U❁)
+    moduweitementwyid = i-instwuction.moduweitementwyid, -.-
+    pwepend = instwuction.pwepend
   )
 }

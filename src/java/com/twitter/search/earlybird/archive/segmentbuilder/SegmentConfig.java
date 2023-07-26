@@ -1,41 +1,41 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+package com.twittew.seawch.eawwybiwd.awchive.segmentbuiwdew;
 
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.archive.ArchiveOnDiskEarlybirdIndexConfig;
+impowt c-com.twittew.common.quantity.amount;
+i-impowt com.twittew.common.quantity.time;
+i-impowt com.twittew.seawch.common.utiw.zktwywock.zookeepewtwywockfactowy;
+i-impowt c-com.twittew.seawch.eawwybiwd.awchive.awchiveondiskeawwybiwdindexconfig;
 
-public class SegmentConfig {
-  private final ArchiveOnDiskEarlybirdIndexConfig earlybirdIndexConfig;
-  private final Amount<Long, Time> segmentZKLockExpirationTime;
-  private final int maxRetriesOnFailure;
-  private final ZooKeeperTryLockFactory tryLockFactory;
+p-pubwic c-cwass segmentconfig {
+  p-pwivate finaw awchiveondiskeawwybiwdindexconfig eawwybiwdindexconfig;
+  pwivate finaw amount<wong, (///ˬ///✿) time> s-segmentzkwockexpiwationtime;
+  pwivate finaw int maxwetwiesonfaiwuwe;
+  p-pwivate finaw zookeepewtwywockfactowy t-twywockfactowy;
 
-  public SegmentConfig(
-      ArchiveOnDiskEarlybirdIndexConfig earlybirdIndexConfig,
-      Amount<Long, Time> segmentZKLockExpirationTime,
-      int maxRetriesOnFailure,
-      ZooKeeperTryLockFactory tryLockFactory) {
+  pubwic segmentconfig(
+      awchiveondiskeawwybiwdindexconfig eawwybiwdindexconfig, 😳😳😳
+      amount<wong, t-time> segmentzkwockexpiwationtime, 🥺
+      i-int maxwetwiesonfaiwuwe, mya
+      z-zookeepewtwywockfactowy twywockfactowy) {
 
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
-    this.segmentZKLockExpirationTime = segmentZKLockExpirationTime;
-    this.maxRetriesOnFailure = maxRetriesOnFailure;
-    this.tryLockFactory = tryLockFactory;
+    this.eawwybiwdindexconfig = eawwybiwdindexconfig;
+    this.segmentzkwockexpiwationtime = s-segmentzkwockexpiwationtime;
+    this.maxwetwiesonfaiwuwe = maxwetwiesonfaiwuwe;
+    this.twywockfactowy = twywockfactowy;
   }
 
-  public ArchiveOnDiskEarlybirdIndexConfig getEarlybirdIndexConfig() {
-    return earlybirdIndexConfig;
+  pubwic a-awchiveondiskeawwybiwdindexconfig geteawwybiwdindexconfig() {
+    w-wetuwn eawwybiwdindexconfig;
   }
 
-  public Amount<Long, Time> getSegmentZKLockExpirationTime() {
-    return segmentZKLockExpirationTime;
+  p-pubwic a-amount<wong, 🥺 time> g-getsegmentzkwockexpiwationtime() {
+    wetuwn segmentzkwockexpiwationtime;
   }
 
-  public int getMaxRetriesOnFailure() {
-    return maxRetriesOnFailure;
+  p-pubwic int getmaxwetwiesonfaiwuwe() {
+    wetuwn maxwetwiesonfaiwuwe;
   }
 
-  public ZooKeeperTryLockFactory getTryLockFactory() {
-    return tryLockFactory;
+  p-pubwic zookeepewtwywockfactowy gettwywockfactowy() {
+    wetuwn twywockfactowy;
   }
 }

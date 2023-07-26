@@ -1,29 +1,29 @@
-package com.twitter.timelineranker.common
+package com.twittew.timewinewankew.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.model.TweetId
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.timewinewankew.cowe.candidateenvewope
+i-impowt c-com.twittew.timewines.cwients.wewevance_seawch.seawchcwient
+impowt c-com.twittew.timewines.modew.tweetid
+i-impowt com.twittew.utiw.futuwe
 
-trait RecapHydrationSearchResultsTransformBase
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  protected def statsReceiver: StatsReceiver
-  protected def searchClient: SearchClient
-  private[this] val numResultsFromSearchStat = statsReceiver.stat("numResultsFromSearch")
+twait wecaphydwationseawchwesuwtstwansfowmbase
+    extends f-futuweawwow[candidateenvewope, rawr candidateenvewope] {
+  pwotected d-def statsweceivew: statsweceivew
+  p-pwotected def seawchcwient: seawchcwient
+  pwivate[this] v-vaw nyumwesuwtsfwomseawchstat = statsweceivew.stat("numwesuwtsfwomseawch")
 
-  def tweetIdsToHydrate(envelope: CandidateEnvelope): Seq[TweetId]
+  def t-tweetidstohydwate(envewope: candidateenvewope): s-seq[tweetid]
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    searchClient
-      .getTweetsScoredForRecap(
-        envelope.query.userId,
-        tweetIdsToHydrate(envelope),
-        envelope.query.earlybirdOptions
-      ).map { results =>
-        numResultsFromSearchStat.add(results.size)
-        envelope.copy(searchResults = results)
+  ovewwide def appwy(envewope: candidateenvewope): futuwe[candidateenvewope] = {
+    s-seawchcwient
+      .gettweetsscowedfowwecap(
+        envewope.quewy.usewid,
+        tweetidstohydwate(envewope), OwO
+        envewope.quewy.eawwybiwdoptions
+      ).map { wesuwts =>
+        numwesuwtsfwomseawchstat.add(wesuwts.size)
+        e-envewope.copy(seawchwesuwts = wesuwts)
       }
   }
 }

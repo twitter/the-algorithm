@@ -1,48 +1,48 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-
-/**
- * Predicate which will be applied to each candidate. True indicates that the candidate will be
- * kept.
- */
-trait ShouldKeepCandidate {
-  def apply(candidateWithDetails: CandidateWithDetails): Boolean
-}
-
-object DropFilteredCandidates {
-  def apply(candidatePipeline: CandidatePipelineIdentifier, filter: ShouldKeepCandidate) =
-    new DropFilteredCandidates(SpecificPipeline(candidatePipeline), filter)
-
-  def apply(candidatePipelines: Set[CandidatePipelineIdentifier], filter: ShouldKeepCandidate) =
-    new DropFilteredCandidates(SpecificPipelines(candidatePipelines), filter)
-}
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.specificpipewine
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.specificpipewines
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Limit candidates from certain candidates sources to those which satisfy the provided predicate.
+ * pwedicate which wiww be appwied to each c-candidate. (⑅˘꒳˘) twue indicates that the candidate wiww b-be
+ * kept. òωó
  */
-case class DropFilteredCandidates(
-  override val pipelineScope: CandidateScope,
-  filter: ShouldKeepCandidate)
-    extends Selector[PipelineQuery] {
+twait shouwdkeepcandidate {
+  d-def appwy(candidatewithdetaiws: candidatewithdetaiws): boowean
+}
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val candidatesUpdated = remainingCandidates.filter { candidate =>
-      if (pipelineScope.contains(candidate)) filter.apply(candidate)
-      else true
+object dwopfiwtewedcandidates {
+  d-def appwy(candidatepipewine: candidatepipewineidentifiew, ʘwʘ fiwtew: s-shouwdkeepcandidate) =
+    n-nyew dwopfiwtewedcandidates(specificpipewine(candidatepipewine), /(^•ω•^) fiwtew)
+
+  def appwy(candidatepipewines: set[candidatepipewineidentifiew], ʘwʘ fiwtew: s-shouwdkeepcandidate) =
+    nyew dwopfiwtewedcandidates(specificpipewines(candidatepipewines), σωσ fiwtew)
+}
+
+/**
+ * wimit candidates fwom cewtain c-candidates souwces to those w-which satisfy the p-pwovided pwedicate. OwO
+ */
+c-case cwass d-dwopfiwtewedcandidates(
+  ovewwide vaw pipewinescope: candidatescope, 😳😳😳
+  f-fiwtew: shouwdkeepcandidate)
+    extends s-sewectow[pipewinequewy] {
+
+  ovewwide def appwy(
+    quewy: pipewinequewy, 😳😳😳
+    wemainingcandidates: seq[candidatewithdetaiws], o.O
+    w-wesuwt: seq[candidatewithdetaiws]
+  ): s-sewectowwesuwt = {
+    v-vaw candidatesupdated = wemainingcandidates.fiwtew { c-candidate =>
+      if (pipewinescope.contains(candidate)) fiwtew.appwy(candidate)
+      ewse twue
     }
 
-    SelectorResult(remainingCandidates = candidatesUpdated, result = result)
+    sewectowwesuwt(wemainingcandidates = c-candidatesupdated, ( ͡o ω ͡o ) w-wesuwt = wesuwt)
   }
 }

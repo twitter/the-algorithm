@@ -1,43 +1,43 @@
-package com.twitter.home_mixer.product.list_recommended_users.feature_hydrator
+package com.twittew.home_mixew.pwoduct.wist_wecommended_usews.featuwe_hydwatow
 
-import com.twitter.home_mixer.model.request.HasListId
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.socialgraph.{thriftscala => sg}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
+impowt com.twittew.home_mixew.modew.wequest.haswistid
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.sociawgwaph.{thwiftscawa => s-sg}
+impowt com.twittew.stitch.stitch
+impowt c-com.twittew.stitch.sociawgwaph.sociawgwaph
 
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-case object RecentListMembersFeature extends FeatureWithDefaultOnFailure[PipelineQuery, Seq[Long]] {
-  override val defaultValue: Seq[Long] = Seq.empty
+case object wecentwistmembewsfeatuwe e-extends featuwewithdefauwtonfaiwuwe[pipewinequewy, >_< seq[wong]] {
+  o-ovewwide vaw defauwtvawue: s-seq[wong] = seq.empty
 }
 
-@Singleton
-class RecentListMembersQueryFeatureHydrator @Inject() (socialGraph: SocialGraph)
-    extends QueryFeatureHydrator[PipelineQuery with HasListId] {
+@singweton
+cwass wecentwistmembewsquewyfeatuwehydwatow @inject() (sociawgwaph: sociawgwaph)
+    extends quewyfeatuwehydwatow[pipewinequewy w-with haswistid] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("RecentListMembers")
+  ovewwide vaw identifiew: featuwehydwatowidentifiew =
+    featuwehydwatowidentifiew("wecentwistmembews")
 
-  override val features: Set[Feature[_, _]] = Set(RecentListMembersFeature)
+  ovewwide vaw featuwes: set[featuwe[_, (⑅˘꒳˘) _]] = s-set(wecentwistmembewsfeatuwe)
 
-  private val MaxRecentMembers = 10
+  pwivate v-vaw maxwecentmembews = 10
 
-  override def hydrate(query: PipelineQuery with HasListId): Stitch[FeatureMap] = {
-    val request = sg.IdsRequest(
-      relationships = Seq(sg
-        .SrcRelationship(query.listId, sg.RelationshipType.ListHasMember, hasRelationship = true)),
-      pageRequest = Some(sg.PageRequest(selectAll = Some(true), count = Some(MaxRecentMembers)))
+  o-ovewwide def h-hydwate(quewy: pipewinequewy w-with haswistid): stitch[featuwemap] = {
+    vaw wequest = s-sg.idswequest(
+      wewationships = seq(sg
+        .swcwewationship(quewy.wistid, /(^•ω•^) s-sg.wewationshiptype.wisthasmembew, rawr x3 haswewationship = twue)), (U ﹏ U)
+      pagewequest = some(sg.pagewequest(sewectaww = some(twue), (U ﹏ U) count = some(maxwecentmembews)))
     )
-    socialGraph.ids(request).map(_.ids).map { listMembers =>
-      FeatureMapBuilder().add(RecentListMembersFeature, listMembers).build()
+    s-sociawgwaph.ids(wequest).map(_.ids).map { wistmembews =>
+      f-featuwemapbuiwdew().add(wecentwistmembewsfeatuwe, (⑅˘꒳˘) w-wistmembews).buiwd()
     }
   }
 }

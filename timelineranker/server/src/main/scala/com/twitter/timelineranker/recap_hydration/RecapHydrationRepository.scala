@@ -1,20 +1,20 @@
-package com.twitter.timelineranker.recap_hydration
+package com.twittew.timewinewankew.wecap_hydwation
 
-import com.twitter.timelineranker.model.CandidateTweetsResult
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.util.Future
+impowt com.twittew.timewinewankew.modew.candidatetweetswesuwt
+i-impowt com.twittew.timewinewankew.modew.wecapquewy
+i-impowt com.twittew.utiw.futuwe
 
 /**
- * A repository of recap hydration results.
+ * a-a wepositowy o-of wecap h-hydwation wesuwts. (U ᵕ U❁)
  *
- * For now, it does not cache any results therefore forwards all calls to the underlying source.
+ * f-fow nyow, i-it does nyot c-cache any wesuwts thewefowe fowwawds aww cawws to the undewwying souwce. -.-
  */
-class RecapHydrationRepository(source: RecapHydrationSource) {
-  def hydrate(query: RecapQuery): Future[CandidateTweetsResult] = {
-    source.hydrate(query)
+cwass w-wecaphydwationwepositowy(souwce: wecaphydwationsouwce) {
+  def hydwate(quewy: w-wecapquewy): futuwe[candidatetweetswesuwt] = {
+    souwce.hydwate(quewy)
   }
 
-  def hydrate(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
-    source.hydrate(queries)
+  d-def hydwate(quewies: seq[wecapquewy]): futuwe[seq[candidatetweetswesuwt]] = {
+    souwce.hydwate(quewies)
   }
 }

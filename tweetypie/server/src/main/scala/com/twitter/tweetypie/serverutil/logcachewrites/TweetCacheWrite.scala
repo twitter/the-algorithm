@@ -1,99 +1,99 @@
-package com.twitter.tweetypie.serverutil.logcachewrites
+package com.twittew.tweetypie.sewvewutiw.wogcachewwites
 
-import com.twitter.servo.cache.Cached
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.tweetypie.TweetId
-import com.twitter.tweetypie.core.Serializer
-import com.twitter.tweetypie.thriftscala.CachedTweet
-import com.twitter.util.Time
-import java.util.Base64
+impowt com.twittew.sewvo.cache.cached
+i-impowt c-com.twittew.snowfwake.id.snowfwakeid
+i-impowt c-com.twittew.tweetypie.tweetid
+impowt c-com.twittew.tweetypie.cowe.sewiawizew
+i-impowt c-com.twittew.tweetypie.thwiftscawa.cachedtweet
+i-impowt com.twittew.utiw.time
+impowt java.utiw.base64
 
 /**
- * A record of a tweet cache write. This is used for debugging. These log
- * messages are scribed to test_tweetypie_tweet_cache_writes.
+ * a wecowd of a tweet c-cache wwite. :3 this is used fow debugging. ( ͡o ω ͡o ) these w-wog
+ * messages awe scwibed to t-test_tweetypie_tweet_cache_wwites. mya
  */
-case class TweetCacheWrite(
-  tweetId: TweetId,
-  timestamp: Time,
-  action: String,
-  value: Option[Cached[CachedTweet]]) {
+case cwass tweetcachewwite(
+  tweetid: tweetid, (///ˬ///✿)
+  t-timestamp: time, (˘ω˘)
+  action: s-stwing, ^^;;
+  vawue: o-option[cached[cachedtweet]]) {
 
   /**
-   * Convert to a tab-separated string suitable for writing to a log message.
+   * convewt to a tab-sepawated stwing suitabwe fow wwiting to a wog m-message. (✿oωo)
    *
-   * Fields are:
-   *  - Tweet id
-   *  - Timestamp:
-   *      If the tweet id is a snowflake id, this is an offset since tweet creation.
-   *      If it is not a snowflake id, then this is a Unix epoch time in
-   *      milliseconds. (The idea is that for most tweets, this encoding will make
-   *      it easier to see the interval between events and whether it occured soon
-   *      after tweet creation.)
-   *  - Cache action ("set", "add", "replace", "cas", "delete")
-   *  - Base64-encoded Cached[CachedTweet] struct
+   * fiewds awe:
+   *  - tweet id
+   *  - timestamp:
+   *      if t-the tweet id is a snowfwake id, t-this is an offset s-since tweet cweation. (U ﹏ U)
+   *      i-if it is nyot a-a snowfwake id, -.- then this is a unix epoch time in
+   *      m-miwwiseconds. ^•ﻌ•^ (the idea is that fow most tweets, rawr this e-encoding wiww make
+   *      it easiew to see the intewvaw between events and whethew it occuwed s-soon
+   *      aftew tweet cweation.)
+   *  - c-cache action ("set", (˘ω˘) "add", "wepwace", nyaa~~ "cas", "dewete")
+   *  - b-base64-encoded c-cached[cachedtweet] stwuct
    */
-  def toLogMessage: String = {
-    val builder = new java.lang.StringBuilder
-    val timestampOffset =
-      if (SnowflakeId.isSnowflakeId(tweetId)) {
-        SnowflakeId(tweetId).unixTimeMillis.asLong
-      } else {
+  def towogmessage: stwing = {
+    v-vaw buiwdew = n-nyew java.wang.stwingbuiwdew
+    vaw timestampoffset =
+      if (snowfwakeid.issnowfwakeid(tweetid)) {
+        s-snowfwakeid(tweetid).unixtimemiwwis.aswong
+      } e-ewse {
         0
       }
-    builder
-      .append(tweetId)
+    buiwdew
+      .append(tweetid)
       .append('\t')
-      .append(timestamp.inMilliseconds - timestampOffset)
+      .append(timestamp.inmiwwiseconds - t-timestampoffset)
       .append('\t')
       .append(action)
       .append('\t')
-    value.foreach { ct =>
-      // When logging, we end up serializing the value twice, once for the
-      // cache write and once for the logging. This is suboptimal, but the
-      // assumption is that we only do this for a small fraction of cache
-      // writes, so it should be ok. The reason that this is necessary is
-      // because we want to do the filtering on the deserialized value, so
-      // the serialized value is not available at the level that we are
-      // doing the filtering.
-      val thriftBytes = Serializer.CachedTweet.CachedCompact.to(ct).get
-      builder.append(Base64.getEncoder.encodeToString(thriftBytes))
+    vawue.foweach { c-ct =>
+      // when wogging, UwU we end up sewiawizing t-the vawue twice, :3 once fow the
+      // c-cache wwite and once fow t-the wogging. (⑅˘꒳˘) t-this is suboptimaw, (///ˬ///✿) but the
+      // assumption is that we onwy do this fow a smow fwaction of cache
+      // wwites, ^^;; s-so it shouwd b-be ok. >_< the weason that this is n-nyecessawy is
+      // b-because w-we want to do the fiwtewing on the desewiawized vawue, rawr x3 so
+      // t-the sewiawized vawue is nyot avaiwabwe at the wevew that we awe
+      // doing t-the fiwtewing. /(^•ω•^)
+      vaw thwiftbytes = s-sewiawizew.cachedtweet.cachedcompact.to(ct).get
+      b-buiwdew.append(base64.getencodew.encodetostwing(thwiftbytes))
     }
-    builder.toString
+    b-buiwdew.tostwing
   }
 }
 
-object TweetCacheWrite {
-  case class ParseException(msg: String, cause: Exception) extends RuntimeException(cause) {
-    override def getMessage: String = s"Failed to parse as TweetCacheWrite: $msg"
+object tweetcachewwite {
+  c-case c-cwass pawseexception(msg: s-stwing, :3 c-cause: exception) extends wuntimeexception(cause) {
+    ovewwide d-def getmessage: s-stwing = s"faiwed t-to pawse as t-tweetcachewwite: $msg"
   }
 
   /**
-   * Parse a TweetCacheWrite object from the result of TweetCacheWrite.toLogMessage
+   * p-pawse a tweetcachewwite object fwom the wesuwt of tweetcachewwite.towogmessage
    */
-  def fromLogMessage(msg: String): TweetCacheWrite =
-    try {
-      val (tweetIdStr, timestampStr, action, cachedTweetStr) =
-        msg.split('\t') match {
-          case Array(f1, f2, f3) => (f1, f2, f3, None)
-          case Array(f1, f2, f3, f4) => (f1, f2, f3, Some(f4))
+  def f-fwomwogmessage(msg: stwing): tweetcachewwite =
+    twy {
+      vaw (tweetidstw, (ꈍᴗꈍ) timestampstw, /(^•ω•^) a-action, cachedtweetstw) =
+        msg.spwit('\t') match {
+          case awway(f1, (⑅˘꒳˘) f-f2, f3) => (f1, ( ͡o ω ͡o ) f-f2, f3, òωó nyone)
+          c-case awway(f1, (⑅˘꒳˘) f2, f-f3, f4) => (f1, XD f2, f3, -.- some(f4))
         }
-      val tweetId = tweetIdStr.toLong
-      val timestamp = {
-        val offset =
-          if (SnowflakeId.isSnowflakeId(tweetId)) {
-            SnowflakeId(tweetId).unixTimeMillis.asLong
-          } else {
+      v-vaw tweetid = t-tweetidstw.towong
+      vaw timestamp = {
+        vaw offset =
+          if (snowfwakeid.issnowfwakeid(tweetid)) {
+            snowfwakeid(tweetid).unixtimemiwwis.aswong
+          } ewse {
             0
           }
-        Time.fromMilliseconds(timestampStr.toLong + offset)
+        time.fwommiwwiseconds(timestampstw.towong + offset)
       }
-      val value = cachedTweetStr.map { str =>
-        val thriftBytes = Base64.getDecoder.decode(str)
-        Serializer.CachedTweet.CachedCompact.from(thriftBytes).get
+      v-vaw vawue = cachedtweetstw.map { stw =>
+        v-vaw thwiftbytes = base64.getdecodew.decode(stw)
+        s-sewiawizew.cachedtweet.cachedcompact.fwom(thwiftbytes).get
       }
 
-      TweetCacheWrite(tweetIdStr.toLong, timestamp, action, value)
-    } catch {
-      case e: Exception => throw ParseException(msg, e)
+      t-tweetcachewwite(tweetidstw.towong, :3 timestamp, nyaa~~ action, vawue)
+    } c-catch {
+      c-case e: exception => thwow pawseexception(msg, 😳 e-e)
     }
 }

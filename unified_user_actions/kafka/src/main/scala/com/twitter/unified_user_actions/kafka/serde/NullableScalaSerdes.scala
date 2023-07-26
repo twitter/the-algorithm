@@ -1,52 +1,52 @@
 /*
- * Copyright (c) 2016 Fred Cecilia, Valentin Kasas, Olivier Girardot
+ * copywight (c) 2016 fwed ceciwia, (U ﹏ U) v-vawentin kasas, (///ˬ///✿) o-owiview giwawdot
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * p-pewmission i-is heweby g-gwanted, 😳 fwee o-of chawge, 😳 to any p-pewson obtaining a-a copy of
+ * this softwawe and associated documentation fiwes (the "softwawe"), σωσ to deaw in
+ * t-the softwawe without westwiction, rawr x3 incwuding without w-wimitation the wights to
+ * u-use, OwO copy, /(^•ω•^) modify, mewge, 😳😳😳 pubwish, distwibute, ( ͡o ω ͡o ) subwicense, >_< and/ow s-seww copies of
+ * the softwawe, >w< a-and to pewmit p-pewsons to whom the softwawe is fuwnished to do so, rawr
+ * subject to the fowwowing c-conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * the above copywight nyotice and this pewmission nyotice shaww b-be incwuded in aww
+ * copies ow s-substantiaw powtions o-of the softwawe. 😳
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * t-the s-softwawe is pwovided "as is", >w< without wawwanty o-of any kind, (⑅˘꒳˘) expwess ow
+ * impwied, OwO incwuding but n-nyot wimited to the wawwanties of mewchantabiwity, (ꈍᴗꈍ) fitness
+ * fow a pawticuwaw puwpose and nyoninfwingement. 😳 in n-nyo event shaww the authows ow
+ * c-copywight howdews b-be wiabwe f-fow any cwaim, 😳😳😳 damages ow othew wiabiwity, mya whethew
+ * in an action o-of contwact, mya t-towt ow othewwise, (⑅˘꒳˘) awising fwom, (U ﹏ U) o-out of ow in
+ * c-connection with the softwawe ow t-the use ow othew deawings in the s-softwawe. mya
  */
 
-//Derived from: https://github.com/aseigneurin/kafka-streams-scala
-package com.twitter.unified_user_actions.kafka.serde
+//dewived fwom: https://github.com/aseigneuwin/kafka-stweams-scawa
+p-package com.twittew.unified_usew_actions.kafka.sewde
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finatra.kafka.serde.internal._
+impowt c-com.twittew.finagwe.stats.countew
+impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.finatwa.kafka.sewde.intewnaw._
 
-import com.twitter.unified_user_actions.kafka.serde.internal._
-import com.twitter.scrooge.ThriftStruct
+i-impowt com.twittew.unified_usew_actions.kafka.sewde.intewnaw._
+impowt com.twittew.scwooge.thwiftstwuct
 
 /**
- * NullableScalaSerdes is pretty much the same as com.twitter.finatra.kafka.serde.ScalaSerdes
- * The only difference is that for the deserializer it returns null instead of throwing exceptions.
- * The caller can also provide a counter so that the number of corrupt/bad records can be counted.
+ * nyuwwabwescawasewdes is pwetty much the same as com.twittew.finatwa.kafka.sewde.scawasewdes
+ * t-the onwy d-diffewence is that fow the desewiawizew i-it wetuwns n-nyuww instead o-of thwowing exceptions. ʘwʘ
+ * the cawwew can awso pwovide a countew s-so that the nyumbew of cowwupt/bad wecowds can be counted. (˘ω˘)
  */
-object NullableScalaSerdes {
+object nyuwwabwescawasewdes {
 
-  def Thrift[T <: ThriftStruct: Manifest](
-    nullCounter: Counter = NullStatsReceiver.NullCounter
-  ): ThriftSerDe[T] = new ThriftSerDe[T](nullCounter = nullCounter)
+  d-def thwift[t <: thwiftstwuct: m-manifest](
+    nyuwwcountew: c-countew = n-nyuwwstatsweceivew.nuwwcountew
+  ): thwiftsewde[t] = n-nyew t-thwiftsewde[t](nuwwcountew = n-nyuwwcountew)
 
-  def CompactThrift[T <: ThriftStruct: Manifest](
-    nullCounter: Counter = NullStatsReceiver.NullCounter
-  ): CompactThriftSerDe[T] = new CompactThriftSerDe[T](nullCounter = nullCounter)
+  def c-compactthwift[t <: thwiftstwuct: manifest](
+    n-nyuwwcountew: c-countew = nyuwwstatsweceivew.nuwwcountew
+  ): compactthwiftsewde[t] = n-nyew compactthwiftsewde[t](nuwwcountew = n-nyuwwcountew)
 
-  val Int = IntSerde
+  v-vaw int = intsewde
 
-  val Long = LongSerde
+  vaw wong = wongsewde
 
-  val Double = DoubleSerde
+  vaw doubwe = doubwesewde
 }

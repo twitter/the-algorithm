@@ -1,85 +1,85 @@
-package com.twitter.tweetypie
-package federated.columns
+package com.twittew.tweetypie
+package f-fedewated.cowumns
 
-import com.twitter.io.Buf
-import com.twitter.scrooge.TFieldBlob
-import com.twitter.stitch.Stitch
-import com.twitter.strato.access.Access
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.config.AllowAll
-import com.twitter.strato.config.ContactInfo
-import com.twitter.strato.config.Policy
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
-import com.twitter.strato.data.Lifecycle.Production
-import com.twitter.strato.data.Type
-import com.twitter.strato.data.Val
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.opcontext.OpContext
-import com.twitter.strato.serialization.MVal
-import com.twitter.strato.serialization.Thrift
-import com.twitter.strato.util.Strings
-import com.twitter.tweetypie.thriftscala.GetTweetFieldsResult
-import com.twitter.tweetypie.thriftscala.SetAdditionalFieldsRequest
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.tweetypie.thriftscala.TweetFieldsResultState.Found
-import com.twitter.util.Future
-import org.apache.thrift.protocol.TField
+i-impowt com.twittew.io.buf
+i-impowt com.twittew.scwooge.tfiewdbwob
+i-impowt com.twittew.stitch.stitch
+i-impowt c-com.twittew.stwato.access.access
+i-impowt com.twittew.stwato.catawog.opmetadata
+i-impowt com.twittew.stwato.config.awwowaww
+impowt com.twittew.stwato.config.contactinfo
+impowt com.twittew.stwato.config.powicy
+impowt c-com.twittew.stwato.data.conv
+impowt com.twittew.stwato.data.descwiption.pwaintext
+impowt com.twittew.stwato.data.wifecycwe.pwoduction
+i-impowt com.twittew.stwato.data.type
+i-impowt com.twittew.stwato.data.vaw
+impowt com.twittew.stwato.fed.stwatofed
+impowt c-com.twittew.stwato.opcontext.opcontext
+impowt com.twittew.stwato.sewiawization.mvaw
+i-impowt com.twittew.stwato.sewiawization.thwift
+i-impowt com.twittew.stwato.utiw.stwings
+impowt com.twittew.tweetypie.thwiftscawa.gettweetfiewdswesuwt
+impowt com.twittew.tweetypie.thwiftscawa.setadditionawfiewdswequest
+impowt c-com.twittew.tweetypie.thwiftscawa.tweet
+impowt com.twittew.tweetypie.thwiftscawa.tweetfiewdswesuwtstate.found
+impowt com.twittew.utiw.futuwe
+impowt owg.apache.thwift.pwotocow.tfiewd
 
 /**
- * Federated strato column to return tweet fields
- * @param federatedFieldsGroup Group to be used for Stitch batching.
- *         This is a function that takes a GroupOptions and returns a FederatedFieldGroup.
- *         Using a function that accepts a GroupOptions allows for Stitch to handle a new group for distinct GroupOptions.
- * @param setAdditionalFields Handler to set additional fields on tweets.
- * @param stratoValueType Type to be returned by the strato column.
- * @param tfield Tweet thrift field to be stored
- * @param pathName Path to be used in the strato catalog
+ * f-fedewated stwato cowumn to wetuwn t-tweet fiewds
+ * @pawam f-fedewatedfiewdsgwoup gwoup t-to be used f-fow stitch batching. ^•ﻌ•^
+ *         this is a function that takes a g-gwoupoptions and wetuwns a fedewatedfiewdgwoup. σωσ
+ *         using a-a function that accepts a gwoupoptions awwows fow stitch to handwe a nyew gwoup fow distinct gwoupoptions. -.-
+ * @pawam s-setadditionawfiewds handwew t-to set additionaw f-fiewds on tweets. ^^;;
+ * @pawam s-stwatovawuetype type to be wetuwned by the stwato cowumn. XD
+ * @pawam t-tfiewd tweet t-thwift fiewd to be stowed
+ * @pawam p-pathname path t-to be used in the stwato catawog
  */
-class FederatedFieldColumn(
-  federatedFieldsGroup: FederatedFieldGroupBuilder.Type,
-  setAdditionalFields: SetAdditionalFieldsRequest => Future[Unit],
-  stratoValueType: Type,
-  tfield: TField,
-  pathOverride: Option[String] = None)
-    extends StratoFed.Column(pathOverride.getOrElse(FederatedFieldColumn.makeColumnPath(tfield)))
-    with StratoFed.Fetch.StitchWithContext
-    with StratoFed.Put.Stitch {
+c-cwass fedewatedfiewdcowumn(
+  fedewatedfiewdsgwoup: f-fedewatedfiewdgwoupbuiwdew.type, 🥺
+  setadditionawfiewds: setadditionawfiewdswequest => futuwe[unit],
+  s-stwatovawuetype: type, òωó
+  tfiewd: t-tfiewd, (ˆ ﻌ ˆ)♡
+  pathovewwide: option[stwing] = n-nyone)
+    e-extends stwatofed.cowumn(pathovewwide.getowewse(fedewatedfiewdcowumn.makecowumnpath(tfiewd)))
+    with stwatofed.fetch.stitchwithcontext
+    with stwatofed.put.stitch {
 
-  type Key = Long
-  type View = Unit
-  type Value = Val.T
+  type key = wong
+  type view = unit
+  type vawue = vaw.t
 
-  override val keyConv: Conv[Key] = Conv.ofType
-  override val viewConv: Conv[View] = Conv.ofType
-  override val valueConv: Conv[Value] = Conv(stratoValueType, identity, identity)
+  ovewwide v-vaw keyconv: c-conv[key] = conv.oftype
+  ovewwide v-vaw viewconv: c-conv[view] = c-conv.oftype
+  ovewwide vaw vawueconv: conv[vawue] = conv(stwatovawuetype, -.- i-identity, :3 identity)
 
-  override val policy: Policy = AllowAll
+  ovewwide vaw powicy: powicy = awwowaww
 
   /*
-   * A fetch that proxies GetTweetFieldsColumn.fetch but only requests and
-   * returns one specific field.
+   * a-a fetch that pwoxies gettweetfiewdscowumn.fetch b-but onwy wequests a-and
+   * w-wetuwns one specific fiewd. ʘwʘ
    */
-  override def fetch(tweetId: Key, view: View, opContext: OpContext): Stitch[Result[Value]] = {
+  o-ovewwide def f-fetch(tweetid: k-key, 🥺 view: view, >_< o-opcontext: opcontext): stitch[wesuwt[vawue]] = {
 
-    val twitterUserId: Option[UserId] = Access.getTwitterUserId match {
-      // Access.getTwitterUserId should return a value when request is made on behalf of a user
-      // and will not return a value otherwise
-      case Some(twitterUser) => Some(twitterUser.id)
-      case None => None
+    vaw twittewusewid: o-option[usewid] = a-access.gettwittewusewid m-match {
+      // a-access.gettwittewusewid s-shouwd wetuwn a vawue when wequest is made on behawf o-of a usew
+      // and wiww nyot wetuwn a vawue othewwise
+      case some(twittewusew) => some(twittewusew.id)
+      c-case nyone => nyone
     }
 
-    val stitchGroup = federatedFieldsGroup(GroupOptions(twitterUserId))
+    vaw stitchgwoup = fedewatedfiewdsgwoup(gwoupoptions(twittewusewid))
 
-    Stitch
-      .call(FederatedFieldReq(tweetId, tfield.id), stitchGroup).map {
-        result: GetTweetFieldsResult =>
-          result.tweetResult match {
-            case Found(f) =>
-              f.tweet.getFieldBlob(tfield.id) match {
-                case Some(v: TFieldBlob) =>
-                  found(blobToVal(v))
-                case None => missing
+    s-stitch
+      .caww(fedewatedfiewdweq(tweetid, t-tfiewd.id), ʘwʘ s-stitchgwoup).map {
+        wesuwt: gettweetfiewdswesuwt =>
+          w-wesuwt.tweetwesuwt match {
+            c-case found(f) =>
+              f-f.tweet.getfiewdbwob(tfiewd.id) match {
+                case some(v: tfiewdbwob) =>
+                  found(bwobtovaw(v))
+                case n-nyone => missing
               }
             case _ => missing
           }
@@ -88,54 +88,54 @@ class FederatedFieldColumn(
   }
 
   /*
-   * A strato put interface for writing a single additional field to a tweet
+   * a-a stwato put intewface fow w-wwiting a singwe a-additionaw fiewd to a tweet
    */
-  override def put(tweetId: Key, value: Val.T): Stitch[Unit] = {
-    val tweet: Tweet = Tweet(id = tweetId).setField(valToBlob(value))
-    val request: SetAdditionalFieldsRequest = SetAdditionalFieldsRequest(tweet)
-    Stitch.callFuture(setAdditionalFields(request))
+  ovewwide def p-put(tweetid: key, (˘ω˘) v-vawue: vaw.t): stitch[unit] = {
+    v-vaw tweet: t-tweet = tweet(id = tweetid).setfiewd(vawtobwob(vawue))
+    vaw wequest: setadditionawfiewdswequest = setadditionawfiewdswequest(tweet)
+    s-stitch.cawwfutuwe(setadditionawfiewds(wequest))
   }
 
-  val mval: Thrift.Codec = MVal.codec(stratoValueType).thrift(4)
+  v-vaw mvaw: thwift.codec = m-mvaw.codec(stwatovawuetype).thwift(4)
 
-  def valToBlob(value: Val.T): TFieldBlob =
-    TFieldBlob(tfield, mval.write[Buf](value, Thrift.compactProto))
+  def vawtobwob(vawue: v-vaw.t): t-tfiewdbwob =
+    tfiewdbwob(tfiewd, m-mvaw.wwite[buf](vawue, (✿oωo) thwift.compactpwoto))
 
-  def blobToVal(thriftFieldBlob: TFieldBlob): Val.T =
-    mval.read(thriftFieldBlob.content, Thrift.compactProto)
+  def bwobtovaw(thwiftfiewdbwob: tfiewdbwob): vaw.t =
+    mvaw.wead(thwiftfiewdbwob.content, (///ˬ///✿) t-thwift.compactpwoto)
 
-  override val contactInfo: ContactInfo = TweetypieContactInfo
-  override val metadata: OpMetadata = OpMetadata(
-    lifecycle = Some(Production),
-    description = Some(PlainText(s"A federated column for the field tweet.$stratoValueType"))
+  o-ovewwide vaw contactinfo: contactinfo = t-tweetypiecontactinfo
+  o-ovewwide vaw metadata: opmetadata = opmetadata(
+    wifecycwe = s-some(pwoduction),
+    descwiption = some(pwaintext(s"a fedewated cowumn fow the fiewd tweet.$stwatovawuetype"))
   )
 }
 
-object FederatedFieldColumn {
-  val idAllowlist: Seq[Short] = Seq(
-    Tweet.CoreDataField.id,
-    Tweet.LanguageField.id,
-    Tweet.ConversationMutedField.id
+o-object fedewatedfiewdcowumn {
+  vaw idawwowwist: seq[showt] = seq(
+    t-tweet.cowedatafiewd.id, rawr x3
+    t-tweet.wanguagefiewd.id, -.-
+    tweet.convewsationmutedfiewd.id
   )
-  val ID_START = 157
-  val ID_END = 32000
+  vaw id_stawt = 157
+  vaw id_end = 32000
 
-  private val MigrationFields: Seq[Short] = Seq(157)
+  p-pwivate vaw migwationfiewds: s-seq[showt] = seq(157)
 
-  def isFederatedField(id: Short) = id >= ID_START && id < ID_END || idAllowlist.contains(id)
+  def isfedewatedfiewd(id: showt) = id >= id_stawt && i-id < id_end || idawwowwist.contains(id)
 
-  def isMigrationFederatedField(tField: TField): Boolean = MigrationFields.contains(tField.id)
+  d-def ismigwationfedewatedfiewd(tfiewd: tfiewd): boowean = migwationfiewds.contains(tfiewd.id)
 
-  /* federated field column strato configs must conform to this
-   * path name scheme for tweetypie to pick them up
+  /* fedewated f-fiewd cowumn stwato configs must c-confowm to this
+   * p-path nyame scheme fow tweetypie t-to pick them up
    */
-  def makeColumnPath(tField: TField) = {
-    val columnName = Strings.toCamelCase(tField.name.stripSuffix("id"))
-    s"tweetypie/fields/${columnName}.Tweet"
+  d-def makecowumnpath(tfiewd: t-tfiewd) = {
+    v-vaw cowumnname = stwings.tocamewcase(tfiewd.name.stwipsuffix("id"))
+    s-s"tweetypie/fiewds/${cowumnname}.tweet"
   }
 
-  def makeV1ColumnPath(tField: TField): String = {
-    val columnName = Strings.toCamelCase(tField.name.stripSuffix("id"))
-    s"tweetypie/fields/$columnName-V1.Tweet"
+  d-def makev1cowumnpath(tfiewd: tfiewd): stwing = {
+    vaw cowumnname = s-stwings.tocamewcase(tfiewd.name.stwipsuffix("id"))
+    s-s"tweetypie/fiewds/$cowumnname-v1.tweet"
   }
 }

@@ -1,51 +1,51 @@
-package com.twitter.search.ingester.pipeline.twitter.userupdates;
+package com.twittew.seawch.ingestew.pipewine.twittew.usewupdates;
 
-import java.util.function.Supplier;
+impowt java.utiw.function.suppwiew;
 
-import org.apache.commons.pipeline.Pipeline;
-import org.apache.commons.pipeline.StageDriver;
-import org.apache.commons.pipeline.StageException;
+i-impowt owg.apache.commons.pipewine.pipewine;
+i-impowt owg.apache.commons.pipewine.stagedwivew;
+i-impowt owg.apache.commons.pipewine.stageexception;
 
-import com.twitter.search.ingester.pipeline.twitter.TwitterBaseStage;
-import com.twitter.search.ingester.pipeline.util.PipelineUtil;
+i-impowt com.twittew.seawch.ingestew.pipewine.twittew.twittewbasestage;
+i-impowt c-com.twittew.seawch.ingestew.pipewine.utiw.pipewineutiw;
 
 /**
- * This stage is a shim for the UserUpdatesPipeline.
+ * t-this stage i-is a shim fow the usewupdatespipewine. rawr x3
  *
- * Eventually the UserUpdatesPipeline will be called directly from a TwitterServer, but this exists
- * as a bridge while we migrate.
+ * eventuawwy the usewupdatespipewine wiww be cawwed diwectwy f-fwom a twittewsewvew, but this exists
+ * a-as a bwidge whiwe we migwate. (U ﹏ U)
  */
-public class UserUpdatesPipelineStage extends TwitterBaseStage {
-  // This is 'prod', 'staging', or 'staging1'.
-  private String environment;
-  private UserUpdatesPipeline userUpdatesPipeline;
+p-pubwic cwass usewupdatespipewinestage extends twittewbasestage {
+  // t-this is 'pwod', (U ﹏ U) 'staging', ow 'staging1'. (⑅˘꒳˘)
+  p-pwivate stwing e-enviwonment;
+  pwivate usewupdatespipewine usewupdatespipewine;
 
-  @Override
-  protected void doInnerPreprocess() throws StageException {
-    StageDriver driver = ((Pipeline) stageContext).getStageDriver(this);
-    Supplier<Boolean> booleanSupplier = () -> driver.getState() == StageDriver.State.RUNNING;
-    try {
-      userUpdatesPipeline = UserUpdatesPipeline.buildPipeline(
-          environment,
-          wireModule,
-          getStageNamePrefix(),
-          booleanSupplier,
-          clock);
+  @ovewwide
+  pwotected void doinnewpwepwocess() thwows stageexception {
+    s-stagedwivew dwivew = ((pipewine) stagecontext).getstagedwivew(this);
+    suppwiew<boowean> booweansuppwiew = () -> dwivew.getstate() == s-stagedwivew.state.wunning;
+    twy {
+      u-usewupdatespipewine = u-usewupdatespipewine.buiwdpipewine(
+          e-enviwonment, òωó
+          wiwemoduwe, ʘwʘ
+          g-getstagenamepwefix(), /(^•ω•^)
+          booweansuppwiew, ʘwʘ
+          cwock);
 
-    } catch (Exception e) {
-      throw new StageException(this, e);
+    } catch (exception e-e) {
+      thwow nyew stageexception(this, σωσ e);
     }
-    PipelineUtil.feedStartObjectToStage(this);
+    p-pipewineutiw.feedstawtobjecttostage(this);
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    userUpdatesPipeline.run();
+  @ovewwide
+  pubwic void innewpwocess(object obj) thwows stageexception {
+    usewupdatespipewine.wun();
   }
 
-  @SuppressWarnings("unused")  // populated from pipeline config
-  public void setEnvironment(String environment) {
-    this.environment = environment;
+  @suppwesswawnings("unused")  // p-popuwated fwom pipewine c-config
+  pubwic v-void setenviwonment(stwing e-enviwonment) {
+    this.enviwonment = enviwonment;
   }
 
 }

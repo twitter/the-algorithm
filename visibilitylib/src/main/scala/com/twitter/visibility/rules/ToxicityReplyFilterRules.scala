@@ -1,28 +1,28 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams
-import com.twitter.visibility.rules.Reason.Toxicity
+impowt com.twittew.visibiwity.configapi.pawams.wuwepawam
+i-impowt c-com.twittew.visibiwity.configapi.pawams.wuwepawams
+i-impowt com.twittew.visibiwity.wuwes.weason.toxicity
 
-object ToxicityReplyFilterRules {
+o-object t-toxicitywepwyfiwtewwuwes {
 
-  sealed abstract class ToxicityReplyFilterBaseRule(
-    action: Action)
-      extends RuleWithConstantAction(
-        action = action,
-        condition = Condition.ToxrfFilteredFromAuthorViewer)
+  s-seawed abstwact c-cwass toxicitywepwyfiwtewbasewuwe(
+    a-action: action)
+      extends wuwewithconstantaction(
+        action = action, 😳
+        c-condition = condition.toxwffiwtewedfwomauthowviewew)
 
-  object ToxicityReplyFilterRule
-      extends ToxicityReplyFilterBaseRule(action = Tombstone(Epitaph.Unavailable)) {
+  object toxicitywepwyfiwtewwuwe
+      extends t-toxicitywepwyfiwtewbasewuwe(action = tombstone(epitaph.unavaiwabwe)) {
 
-    override def enabled: Seq[RuleParam[Boolean]] = Seq(
-      RuleParams.EnableToxicReplyFilteringConversationRulesParam)
+    o-ovewwide def enabwed: seq[wuwepawam[boowean]] = seq(
+      wuwepawams.enabwetoxicwepwyfiwtewingconvewsationwuwespawam)
   }
 
-  object ToxicityReplyFilterDropNotificationRule
-      extends ToxicityReplyFilterBaseRule(action = Drop(Toxicity)) {
+  object toxicitywepwyfiwtewdwopnotificationwuwe
+      e-extends toxicitywepwyfiwtewbasewuwe(action = dwop(toxicity)) {
 
-    override def enabled: Seq[RuleParam[Boolean]] = Seq(
-      RuleParams.EnableToxicReplyFilteringNotificationsRulesParam)
+    o-ovewwide d-def enabwed: seq[wuwepawam[boowean]] = seq(
+      wuwepawams.enabwetoxicwepwyfiwtewingnotificationswuwespawam)
   }
 }

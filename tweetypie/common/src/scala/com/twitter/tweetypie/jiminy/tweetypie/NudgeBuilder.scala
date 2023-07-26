@@ -1,165 +1,165 @@
-package com.twitter.tweetypie.jiminy.tweetypie
+package com.twittew.tweetypie.jiminy.tweetypie
 
-import com.twitter.finagle.stats.CategorizingExceptionStatsHandler
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.incentives.jiminy.thriftscala._
-import com.twitter.servo.util.FutureArrow
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.tweetypie.core.TweetCreateFailure
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Throw
+impowt com.twittew.finagwe.stats.categowizingexceptionstatshandwew
+i-impowt com.twittew.finagwe.stats.stat
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.incentives.jiminy.thwiftscawa._
+i-impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.sewvo.utiw.gate
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.thwift.scwoogeconvimpwicits._
+impowt com.twittew.stwato.cwient.{cwient => stwatocwient}
+impowt com.twittew.tweetypie.cowe.tweetcweatefaiwuwe
+impowt c-com.twittew.utiw.futuwe
+impowt com.twittew.utiw.wetuwn
+i-impowt com.twittew.utiw.thwow
 
-case class NudgeBuilderRequest(
-  text: String,
-  inReplyToTweetId: Option[NudgeBuilder.TweetId],
-  conversationId: Option[NudgeBuilder.TweetId],
-  hasQuotedTweet: Boolean,
-  nudgeOptions: Option[CreateTweetNudgeOptions],
-  tweetId: Option[NudgeBuilder.TweetId])
+c-case cwass nyudgebuiwdewwequest(
+  text: stwing, -.-
+  inwepwytotweetid: option[nudgebuiwdew.tweetid], ^^;;
+  c-convewsationid: option[nudgebuiwdew.tweetid], XD
+  h-hasquotedtweet: b-boowean, 🥺
+  nyudgeoptions: option[cweatetweetnudgeoptions], òωó
+  tweetid: option[nudgebuiwdew.tweetid])
 
-trait NudgeBuilder extends FutureArrow[NudgeBuilderRequest, Unit] {
+twait nyudgebuiwdew e-extends futuweawwow[nudgebuiwdewwequest, (ˆ ﻌ ˆ)♡ unit] {
 
   /**
-   * Check whether the user should receive a nudge instead of creating
-   * the Tweet. If nudgeOptions is None, then no nudge check will be
-   * performed.
+   * check whethew the usew shouwd w-weceive a nyudge instead of c-cweating
+   * the t-tweet. -.- if nyudgeoptions i-is nyone, :3 t-then nyo nyudge check wiww be
+   * pewfowmed. ʘwʘ
    *
-   * @return a Future.exception containing a [[TweetCreateFailure]] if the
-   *   user should be nudged, or Future.Unit if the user should not be
-   *   nudged.
+   * @wetuwn a-a futuwe.exception containing a [[tweetcweatefaiwuwe]] i-if the
+   *   usew shouwd be nyudged, 🥺 ow futuwe.unit if the usew shouwd nyot be
+   *   n-nyudged. >_<
    */
-  def apply(
-    request: NudgeBuilderRequest
-  ): Future[Unit]
+  def appwy(
+    w-wequest: nyudgebuiwdewwequest
+  ): f-futuwe[unit]
 }
 
-object NudgeBuilder {
-  type Type = FutureArrow[NudgeBuilderRequest, Unit]
-  type TweetId = Long
+o-object nyudgebuiwdew {
+  type type = futuweawwow[nudgebuiwdewwequest, unit]
+  type tweetid = w-wong
 
-  // darkTrafficCreateNudgeOptions ensure that our dark traffic sends a request that will
-  // accurately test the Jiminy backend. in this case, we specify that we want checks for all
-  // possible nudge types
-  private[this] val darkTrafficCreateNudgeOptions = Some(
-    CreateTweetNudgeOptions(
-      requestedNudgeTypes = Some(
-        Set(
-          TweetNudgeType.PotentiallyToxicTweet,
-          TweetNudgeType.ReviseOrMute,
-          TweetNudgeType.ReviseOrHideThenBlock,
-          TweetNudgeType.ReviseOrBlock
+  // dawktwafficcweatenudgeoptions e-ensuwe that ouw dawk t-twaffic sends a w-wequest that wiww
+  // accuwatewy t-test the jiminy backend. ʘwʘ in this c-case, (˘ω˘) we specify that we want checks fow aww
+  // p-possibwe nyudge types
+  pwivate[this] v-vaw dawktwafficcweatenudgeoptions = s-some(
+    cweatetweetnudgeoptions(
+      w-wequestednudgetypes = some(
+        set(
+          tweetnudgetype.potentiawwytoxictweet, (✿oωo)
+          tweetnudgetype.weviseowmute, (///ˬ///✿)
+          tweetnudgetype.weviseowhidethenbwock, rawr x3
+          tweetnudgetype.weviseowbwock
         )
       )
     )
   )
 
-  private[this] def mkJiminyRequest(
-    request: NudgeBuilderRequest,
-    isDarkRequest: Boolean = false
-  ): CreateTweetNudgeRequest = {
-    val tweetType =
-      if (request.inReplyToTweetId.nonEmpty) TweetType.Reply
-      else if (request.hasQuotedTweet) TweetType.QuoteTweet
-      else TweetType.OriginalTweet
+  pwivate[this] def m-mkjiminywequest(
+    w-wequest: nyudgebuiwdewwequest, -.-
+    isdawkwequest: b-boowean = f-fawse
+  ): cweatetweetnudgewequest = {
+    v-vaw tweettype =
+      if (wequest.inwepwytotweetid.nonempty) tweettype.wepwy
+      e-ewse if (wequest.hasquotedtweet) tweettype.quotetweet
+      ewse tweettype.owiginawtweet
 
-    CreateTweetNudgeRequest(
-      tweetText = request.text,
-      tweetType = tweetType,
-      inReplyToTweetId = request.inReplyToTweetId,
-      conversationId = request.conversationId,
-      createTweetNudgeOptions =
-        if (isDarkRequest) darkTrafficCreateNudgeOptions else request.nudgeOptions,
-      tweetId = request.tweetId
+    cweatetweetnudgewequest(
+      t-tweettext = wequest.text, ^^
+      t-tweettype = t-tweettype, (⑅˘꒳˘)
+      i-inwepwytotweetid = wequest.inwepwytotweetid, nyaa~~
+      c-convewsationid = w-wequest.convewsationid, /(^•ω•^)
+      c-cweatetweetnudgeoptions =
+        i-if (isdawkwequest) dawktwafficcweatenudgeoptions ewse wequest.nudgeoptions, (U ﹏ U)
+      t-tweetid = wequest.tweetid
     )
   }
 
   /**
-   * NudgeBuilder implemented by calling the strato column `incentives/createNudge`.
+   * n-nyudgebuiwdew impwemented b-by cawwing t-the stwato c-cowumn `incentives/cweatenudge`. 😳😳😳
    *
-   * Stats recorded:
-   *   - latency_ms: Latency histogram (also implicitly number of
-   *     invocations). This is counted only in the case that a nudge
-   *     check was requested (`nudgeOptions` is non-empty)
+   * stats wecowded:
+   *   - watency_ms: w-watency histogwam (awso impwicitwy nyumbew of
+   *     invocations). >w< this is counted onwy in the c-case that a nyudge
+   *     check was wequested (`nudgeoptions` is nyon-empty)
    *
-   *   - nudge: The nudge check succeeded and a nudge was created.
+   *   - n-nyudge: t-the nyudge c-check succeeded and a nyudge was c-cweated. XD
    *
-   *   - no_nudge: The nudge check succeeded, but no nudge was created.
+   *   - nyo_nudge: t-the nyudge check s-succeeded, o.O but nyo nudge was cweated. mya
    *
-   *   - failures: Calling strato to create a nudge failed. Broken out
-   *     by exception.
+   *   - faiwuwes: cawwing stwato to cweate a nyudge f-faiwed. 🥺 bwoken out
+   *     b-by exception. ^^;;
    */
 
-  def apply(
-    nudgeArrow: FutureArrow[CreateTweetNudgeRequest, CreateTweetNudgeResponse],
-    enableDarkTraffic: Gate[Unit],
-    stats: StatsReceiver
-  ): NudgeBuilder = {
-    new NudgeBuilder {
-      private[this] val nudgeLatencyStat = stats.stat("latency_ms")
-      private[this] val nudgeCounter = stats.counter("nudge")
-      private[this] val noNudgeCounter = stats.counter("no_nudge")
-      private[this] val darkRequestCounter = stats.counter("dark_request")
-      private[this] val nudgeExceptionHandler = new CategorizingExceptionStatsHandler
+  def appwy(
+    n-nyudgeawwow: f-futuweawwow[cweatetweetnudgewequest, :3 cweatetweetnudgewesponse], (U ﹏ U)
+    enabwedawktwaffic: g-gate[unit], OwO
+    s-stats: statsweceivew
+  ): n-nyudgebuiwdew = {
+    n-new nyudgebuiwdew {
+      pwivate[this] vaw nyudgewatencystat = stats.stat("watency_ms")
+      pwivate[this] v-vaw nyudgecountew = s-stats.countew("nudge")
+      p-pwivate[this] vaw nyonudgecountew = s-stats.countew("no_nudge")
+      p-pwivate[this] vaw dawkwequestcountew = s-stats.countew("dawk_wequest")
+      pwivate[this] vaw nyudgeexceptionhandwew = nyew categowizingexceptionstatshandwew
 
-      override def apply(
-        request: NudgeBuilderRequest
-      ): Future[Unit] =
-        request.nudgeOptions match {
-          case None =>
-            if (enableDarkTraffic()) {
-              darkRequestCounter.incr()
-              Stat
-                .timeFuture(nudgeLatencyStat) {
-                  nudgeArrow(mkJiminyRequest(request, isDarkRequest = true))
+      ovewwide def appwy(
+        w-wequest: n-nyudgebuiwdewwequest
+      ): futuwe[unit] =
+        wequest.nudgeoptions m-match {
+          c-case nyone =>
+            if (enabwedawktwaffic()) {
+              dawkwequestcountew.incw()
+              stat
+                .timefutuwe(nudgewatencystat) {
+                  n-nyudgeawwow(mkjiminywequest(wequest, 😳😳😳 isdawkwequest = twue))
                 }
-                .transform { _ =>
-                  // ignore the response since it is a dark request
-                  Future.Done
+                .twansfowm { _ =>
+                  // ignowe the wesponse since i-it is a dawk wequest
+                  futuwe.done
                 }
-            } else {
-              Future.Done
+            } e-ewse {
+              f-futuwe.done
             }
 
-          case Some(_) =>
-            Stat
-              .timeFuture(nudgeLatencyStat) {
-                nudgeArrow(mkJiminyRequest(request))
+          case some(_) =>
+            stat
+              .timefutuwe(nudgewatencystat) {
+                nyudgeawwow(mkjiminywequest(wequest))
               }
-              .transform {
-                case Throw(e) =>
-                  nudgeExceptionHandler.record(stats, e)
-                  // If we failed to invoke the nudge column, then
-                  // just continue on with the Tweet creation.
-                  Future.Done
+              .twansfowm {
+                case thwow(e) =>
+                  n-nyudgeexceptionhandwew.wecowd(stats, (ˆ ﻌ ˆ)♡ e-e)
+                  // if we faiwed to invoke the nyudge cowumn, XD then
+                  // j-just continue on with the tweet c-cweation.
+                  futuwe.done
 
-                case Return(CreateTweetNudgeResponse(Some(nudge))) =>
-                  nudgeCounter.incr()
-                  Future.exception(TweetCreateFailure.Nudged(nudge = nudge))
+                case wetuwn(cweatetweetnudgewesponse(some(nudge))) =>
+                  n-nyudgecountew.incw()
+                  futuwe.exception(tweetcweatefaiwuwe.nudged(nudge = nyudge))
 
-                case Return(CreateTweetNudgeResponse(None)) =>
-                  noNudgeCounter.incr()
-                  Future.Done
+                c-case wetuwn(cweatetweetnudgewesponse(none)) =>
+                  n-nyonudgecountew.incw()
+                  futuwe.done
               }
         }
     }
   }
 
-  def apply(
-    strato: StratoClient,
-    enableDarkTraffic: Gate[Unit],
-    stats: StatsReceiver
-  ): NudgeBuilder = {
-    val executer =
-      strato.executer[CreateTweetNudgeRequest, CreateTweetNudgeResponse](
-        "incentives/createTweetNudge")
-    val nudgeArrow: FutureArrow[CreateTweetNudgeRequest, CreateTweetNudgeResponse] = { req =>
-      Stitch.run(executer.execute(req))
+  d-def appwy(
+    stwato: stwatocwient, (ˆ ﻌ ˆ)♡
+    enabwedawktwaffic: g-gate[unit], ( ͡o ω ͡o )
+    s-stats: statsweceivew
+  ): n-nyudgebuiwdew = {
+    vaw exekawaii~w =
+      s-stwato.exekawaii~w[cweatetweetnudgewequest, rawr x3 c-cweatetweetnudgewesponse](
+        "incentives/cweatetweetnudge")
+    vaw nyudgeawwow: futuweawwow[cweatetweetnudgewequest, nyaa~~ c-cweatetweetnudgewesponse] = { w-weq =>
+      stitch.wun(exekawaii~w.exekawaii~(weq))
     }
-    apply(nudgeArrow, enableDarkTraffic, stats)
+    appwy(nudgeawwow, >_< e-enabwedawktwaffic, ^^;; stats)
   }
 }

@@ -1,18 +1,18 @@
-package com.twitter.follow_recommendations.common.base
+package com.twittew.fowwow_wecommendations.common.base
 
-import com.twitter.follow_recommendations.common.models.FilterReason
+impowt com.twittew.fowwow_wecommendations.common.modews.fiwtewweason
 
-sealed trait PredicateResult {
-  def value: Boolean
+s-seawed t-twait pwedicatewesuwt {
+  d-def v-vawue: boowean
 }
 
-object PredicateResult {
+o-object pwedicatewesuwt {
 
-  case object Valid extends PredicateResult {
-    override val value = true
+  c-case object vawid e-extends pwedicatewesuwt {
+    o-ovewwide vaw vawue = twue
   }
 
-  case class Invalid(reasons: Set[FilterReason] = Set.empty[FilterReason]) extends PredicateResult {
-    override val value = false
+  case cwass invawid(weasons: set[fiwtewweason] = set.empty[fiwtewweason]) e-extends pwedicatewesuwt {
+    ovewwide v-vaw vawue = fawse
   }
 }

@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.cover
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.uww
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtext
 
-sealed trait CoverCtaBehavior
+s-seawed twait c-covewctabehaviow
 
-case class CoverBehaviorNavigate(url: Url) extends CoverCtaBehavior
-case class CoverBehaviorDismiss(feedbackMessage: Option[RichText]) extends CoverCtaBehavior
+c-case cwass c-covewbehaviownavigate(uww: u-uww) extends covewctabehaviow
+case cwass covewbehaviowdismiss(feedbackmessage: option[wichtext]) e-extends covewctabehaviow

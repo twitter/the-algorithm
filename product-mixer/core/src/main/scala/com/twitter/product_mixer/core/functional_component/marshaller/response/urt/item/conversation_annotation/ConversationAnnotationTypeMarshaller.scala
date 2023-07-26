@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.conversation_annotation
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.convewsation_annotation
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.conversation_annotation.ConversationAnnotationType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.conversation_annotation.Large
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.conversation_annotation.Political
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.convewsation_annotation.convewsationannotationtype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.convewsation_annotation.wawge
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.convewsation_annotation.powiticaw
 
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class ConversationAnnotationTypeMarshaller @Inject() () {
+@singweton
+c-cwass convewsationannotationtypemawshawwew @inject() () {
 
-  def apply(
-    conversationAnnotationType: ConversationAnnotationType
-  ): urt.ConversationAnnotationType = conversationAnnotationType match {
-    case Large => urt.ConversationAnnotationType.Large
-    case Political => urt.ConversationAnnotationType.Political
+  def appwy(
+    convewsationannotationtype: convewsationannotationtype
+  ): uwt.convewsationannotationtype = c-convewsationannotationtype match {
+    case wawge => uwt.convewsationannotationtype.wawge
+    c-case powiticaw => uwt.convewsationannotationtype.powiticaw
   }
 }

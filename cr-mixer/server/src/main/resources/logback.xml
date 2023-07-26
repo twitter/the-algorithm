@@ -1,168 +1,168 @@
-<configuration>
-  <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
+<configuwation>
+  <shutdownhook cwass="ch.qos.wogback.cowe.hook.dewayingshutdownhook"/>
 
   <!-- ===================================================== -->
-  <!-- Service Config -->
+  <!-- sewvice config -->
   <!-- ===================================================== -->
-  <property name="DEFAULT_SERVICE_PATTERN"
-            value="%-16X{traceId} %-12X{clientId:--} %-16X{method} %-25logger{0} %msg"/>
+  <pwopewty nyame="defauwt_sewvice_pattewn"
+            v-vawue="%-16x{twaceid} %-12x{cwientid:--} %-16x{method} %-25woggew{0} %msg"/>
 
-  <property name="DEFAULT_ACCESS_PATTERN"
-            value="%msg"/>
+  <pwopewty n-nyame="defauwt_access_pattewn"
+            v-vawue="%msg"/>
 
   <!-- ===================================================== -->
-  <!-- Common Config -->
+  <!-- c-common c-config -->
   <!-- ===================================================== -->
 
-  <!-- JUL/JDK14 to Logback bridge -->
-  <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
-    <resetJUL>true</resetJUL>
-  </contextListener>
+  <!-- j-juw/jdk14 to w-wogback bwidge -->
+  <contextwistenew c-cwass="ch.qos.wogback.cwassic.juw.wevewchangepwopagatow">
+    <wesetjuw>twue</wesetjuw>
+  </contextwistenew>
 
   <!-- ====================================================================================== -->
-  <!-- NOTE: The following appenders use a simple TimeBasedRollingPolicy configuration.       -->
-  <!--       You may want to consider using a more advanced SizeAndTimeBasedRollingPolicy.    -->
-  <!--       See: https://logback.qos.ch/manual/appenders.html#SizeAndTimeBasedRollingPolicy  -->
+  <!-- nyote: the fowwowing appendews use a simpwe timebasedwowwingpowicy c-configuwation. :3       -->
+  <!--       you may want to considew u-using a mowe advanced sizeandtimebasedwowwingpowicy. OwO    -->
+  <!--       s-see: https://wogback.qos.ch/manuaw/appendews.htmw#sizeandtimebasedwowwingpowicy  -->
   <!-- ====================================================================================== -->
 
-  <!-- Service Log (rollover daily, keep maximum of 21 days of gzip compressed logs) -->
-  <appender name="SERVICE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${log.service.output}</file>
-    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <!-- daily rollover -->
-      <fileNamePattern>${log.service.output}.%d.gz</fileNamePattern>
-      <!-- keep 21 days' worth of history -->
-      <maxHistory>21</maxHistory>
-      <cleanHistoryOnStart>true</cleanHistoryOnStart>
-    </rollingPolicy>
-    <encoder>
-      <pattern>%date %.-3level ${DEFAULT_SERVICE_PATTERN}%n</pattern>
-    </encoder>
-  </appender>
+  <!-- sewvice wog (wowwuvw daiwy, (U ﹏ U) keep maximum o-of 21 days of gzip compwessed wogs) -->
+  <appendew n-nyame="sewvice" c-cwass="ch.qos.wogback.cowe.wowwing.wowwingfiweappendew">
+    <fiwe>${wog.sewvice.output}</fiwe>
+    <wowwingpowicy cwass="ch.qos.wogback.cowe.wowwing.timebasedwowwingpowicy">
+      <!-- daiwy wowwuvw -->
+      <fiwenamepattewn>${wog.sewvice.output}.%d.gz</fiwenamepattewn>
+      <!-- keep 21 days' wowth of histowy -->
+      <maxhistowy>21</maxhistowy>
+      <cweanhistowyonstawt>twue</cweanhistowyonstawt>
+    </wowwingpowicy>
+    <encodew>
+      <pattewn>%date %.-3wevew ${defauwt_sewvice_pattewn}%n</pattewn>
+    </encodew>
+  </appendew>
 
-  <!-- Access Log (rollover daily, keep maximum of 21 days of gzip compressed logs) -->
-  <appender name="ACCESS" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${log.access.output}</file>
-    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <!-- daily rollover -->
-      <fileNamePattern>${log.access.output}.%d.gz</fileNamePattern>
-      <!-- keep 21 days' worth of history -->
-      <maxHistory>21</maxHistory>
-      <cleanHistoryOnStart>true</cleanHistoryOnStart>
-    </rollingPolicy>
-    <encoder>
-      <pattern>${DEFAULT_ACCESS_PATTERN}%n</pattern>
-    </encoder>
-  </appender>
+  <!-- a-access wog (wowwuvw daiwy, >w< keep maximum of 21 days of gzip compwessed w-wogs) -->
+  <appendew nyame="access" c-cwass="ch.qos.wogback.cowe.wowwing.wowwingfiweappendew">
+    <fiwe>${wog.access.output}</fiwe>
+    <wowwingpowicy c-cwass="ch.qos.wogback.cowe.wowwing.timebasedwowwingpowicy">
+      <!-- d-daiwy w-wowwuvw -->
+      <fiwenamepattewn>${wog.access.output}.%d.gz</fiwenamepattewn>
+      <!-- keep 21 days' wowth of histowy -->
+      <maxhistowy>21</maxhistowy>
+      <cweanhistowyonstawt>twue</cweanhistowyonstawt>
+    </wowwingpowicy>
+    <encodew>
+      <pattewn>${defauwt_access_pattewn}%n</pattewn>
+    </encodew>
+  </appendew>
 
-  <!--LogLens -->
-  <appender name="LOGLENS" class="com.twitter.loglens.logback.LoglensAppender">
-    <mdcAdditionalContext>true</mdcAdditionalContext>
-    <category>${log.lens.category}</category>
-    <index>${log.lens.index}</index>
-    <tag>${log.lens.tag}/service</tag>
-    <encoder>
-      <pattern>%msg</pattern>
-    </encoder>
-  </appender>
+  <!--wogwens -->
+  <appendew n-nyame="wogwens" cwass="com.twittew.wogwens.wogback.wogwensappendew">
+    <mdcadditionawcontext>twue</mdcadditionawcontext>
+    <categowy>${wog.wens.categowy}</categowy>
+    <index>${wog.wens.index}</index>
+    <tag>${wog.wens.tag}/sewvice</tag>
+    <encodew>
+      <pattewn>%msg</pattewn>
+    </encodew>
+  </appendew>
 
-  <!-- LogLens Access -->
-  <appender name="LOGLENS-ACCESS" class="com.twitter.loglens.logback.LoglensAppender">
-    <mdcAdditionalContext>true</mdcAdditionalContext>
-    <category>${log.lens.category}</category>
-    <index>${log.lens.index}</index>
-    <tag>${log.lens.tag}/access</tag>
-    <encoder>
-      <pattern>%msg</pattern>
-    </encoder>
-  </appender>
+  <!-- wogwens access -->
+  <appendew n-nyame="wogwens-access" cwass="com.twittew.wogwens.wogback.wogwensappendew">
+    <mdcadditionawcontext>twue</mdcadditionawcontext>
+    <categowy>${wog.wens.categowy}</categowy>
+    <index>${wog.wens.index}</index>
+    <tag>${wog.wens.tag}/access</tag>
+    <encodew>
+      <pattewn>%msg</pattewn>
+    </encodew>
+  </appendew>
 
-  <!-- Pipeline Execution Logs -->
-  <appender name="ALLOW-LISTED-PIPELINE-EXECUTIONS" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>allow_listed_pipeline_executions.log</file>
-    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <!-- daily rollover -->
-      <fileNamePattern>allow_listed_pipeline_executions.log.%d.gz</fileNamePattern>
-      <!-- keep 7 days' worth of history -->
-      <maxHistory>7</maxHistory>
-      <cleanHistoryOnStart>true</cleanHistoryOnStart>
-    </rollingPolicy>
-    <encoder>
-      <pattern>%date %.-3level ${DEFAULT_SERVICE_PATTERN}%n</pattern>
-    </encoder>
-  </appender>
-
-  <!-- ===================================================== -->
-  <!-- Primary Async Appenders -->
-  <!-- ===================================================== -->
-
-  <property name="async_queue_size" value="${queue.size:-50000}"/>
-  <property name="async_max_flush_time" value="${max.flush.time:-0}"/>
-
-  <appender name="ASYNC-SERVICE" class="com.twitter.inject.logback.AsyncAppender">
-    <queueSize>${async_queue_size}</queueSize>
-    <maxFlushTime>${async_max_flush_time}</maxFlushTime>
-    <appender-ref ref="SERVICE"/>
-  </appender>
-
-  <appender name="ASYNC-ACCESS" class="com.twitter.inject.logback.AsyncAppender">
-    <queueSize>${async_queue_size}</queueSize>
-    <maxFlushTime>${async_max_flush_time}</maxFlushTime>
-    <appender-ref ref="ACCESS"/>
-  </appender>
-
-  <appender name="ASYNC-ALLOW-LISTED-PIPELINE-EXECUTIONS" class="com.twitter.inject.logback.AsyncAppender">
-    <queueSize>${async_queue_size}</queueSize>
-    <maxFlushTime>${async_max_flush_time}</maxFlushTime>
-    <appender-ref ref="ALLOW-LISTED-PIPELINE-EXECUTIONS"/>
-  </appender>
-
-  <appender name="ASYNC-LOGLENS" class="com.twitter.inject.logback.AsyncAppender">
-    <queueSize>${async_queue_size}</queueSize>
-    <maxFlushTime>${async_max_flush_time}</maxFlushTime>
-    <appender-ref ref="LOGLENS"/>
-  </appender>
-
-  <appender name="ASYNC-LOGLENS-ACCESS" class="com.twitter.inject.logback.AsyncAppender">
-    <queueSize>${async_queue_size}</queueSize>
-    <maxFlushTime>${async_max_flush_time}</maxFlushTime>
-    <appender-ref ref="LOGLENS-ACCESS"/>
-  </appender>
+  <!-- pipewine execution wogs -->
+  <appendew nyame="awwow-wisted-pipewine-executions" cwass="ch.qos.wogback.cowe.wowwing.wowwingfiweappendew">
+    <fiwe>awwow_wisted_pipewine_executions.wog</fiwe>
+    <wowwingpowicy c-cwass="ch.qos.wogback.cowe.wowwing.timebasedwowwingpowicy">
+      <!-- daiwy wowwuvw -->
+      <fiwenamepattewn>awwow_wisted_pipewine_executions.wog.%d.gz</fiwenamepattewn>
+      <!-- k-keep 7 d-days' wowth of h-histowy -->
+      <maxhistowy>7</maxhistowy>
+      <cweanhistowyonstawt>twue</cweanhistowyonstawt>
+    </wowwingpowicy>
+    <encodew>
+      <pattewn>%date %.-3wevew ${defauwt_sewvice_pattewn}%n</pattewn>
+    </encodew>
+  </appendew>
 
   <!-- ===================================================== -->
-  <!-- Package Config -->
+  <!-- pwimawy async appendews -->
   <!-- ===================================================== -->
 
-  <!-- Per-Package Config -->
-  <logger name="com.twitter" level="info"/>
-  <logger name="com.twitter.wilyns" level="warn"/>
-  <logger name="com.twitter.configbus.client.file" level="off"/>  
-  <logger name="com.twitter.finagle.mux" level="warn"/>
-  <logger name="com.twitter.finagle.serverset2" level="warn"/>
-  <logger name="com.twitter.logging.ScribeHandler" level="off"/>
-  <logger name="com.twitter.zookeeper.client.internal" level="warn"/>
-  <logger name="io.netty.handler.ssl.SslHandler" level="OFF"/>
+  <pwopewty nyame="async_queue_size" v-vawue="${queue.size:-50000}"/>
+  <pwopewty n-nyame="async_max_fwush_time" vawue="${max.fwush.time:-0}"/>
+
+  <appendew n-name="async-sewvice" c-cwass="com.twittew.inject.wogback.asyncappendew">
+    <queuesize>${async_queue_size}</queuesize>
+    <maxfwushtime>${async_max_fwush_time}</maxfwushtime>
+    <appendew-wef wef="sewvice"/>
+  </appendew>
+
+  <appendew n-nyame="async-access" cwass="com.twittew.inject.wogback.asyncappendew">
+    <queuesize>${async_queue_size}</queuesize>
+    <maxfwushtime>${async_max_fwush_time}</maxfwushtime>
+    <appendew-wef w-wef="access"/>
+  </appendew>
+
+  <appendew nyame="async-awwow-wisted-pipewine-executions" cwass="com.twittew.inject.wogback.asyncappendew">
+    <queuesize>${async_queue_size}</queuesize>
+    <maxfwushtime>${async_max_fwush_time}</maxfwushtime>
+    <appendew-wef wef="awwow-wisted-pipewine-executions"/>
+  </appendew>
+
+  <appendew nyame="async-wogwens" c-cwass="com.twittew.inject.wogback.asyncappendew">
+    <queuesize>${async_queue_size}</queuesize>
+    <maxfwushtime>${async_max_fwush_time}</maxfwushtime>
+    <appendew-wef wef="wogwens"/>
+  </appendew>
+
+  <appendew n-name="async-wogwens-access" cwass="com.twittew.inject.wogback.asyncappendew">
+    <queuesize>${async_queue_size}</queuesize>
+    <maxfwushtime>${async_max_fwush_time}</maxfwushtime>
+    <appendew-wef w-wef="wogwens-access"/>
+  </appendew>
+
+  <!-- ===================================================== -->
+  <!-- p-package config -->
+  <!-- ===================================================== -->
+
+  <!-- pew-package config -->
+  <woggew nyame="com.twittew" wevew="info"/>
+  <woggew nyame="com.twittew.wiwyns" wevew="wawn"/>
+  <woggew nyame="com.twittew.configbus.cwient.fiwe" w-wevew="off"/>  
+  <woggew n-nyame="com.twittew.finagwe.mux" wevew="wawn"/>
+  <woggew n-nyame="com.twittew.finagwe.sewvewset2" w-wevew="wawn"/>
+  <woggew n-nyame="com.twittew.wogging.scwibehandwew" wevew="off"/>
+  <woggew nyame="com.twittew.zookeepew.cwient.intewnaw" wevew="wawn"/>
+  <woggew nyame="io.netty.handwew.ssw.sswhandwew" w-wevew="off"/>
 
 
-  <!-- Root Config -->
-  <root level="${log_level:-INFO}">
-    <appender-ref ref="ASYNC-SERVICE"/>
-    <appender-ref ref="ASYNC-LOGLENS"/>
-  </root>
+  <!-- woot config -->
+  <woot wevew="${wog_wevew:-info}">
+    <appendew-wef wef="async-sewvice"/>
+    <appendew-wef wef="async-wogwens"/>
+  </woot>
 
-  <!-- Access Logging -->
-  <logger name="com.twitter.finatra.thrift.filters.AccessLoggingFilter"
-          level="info"
-          additivity="false">
-    <appender-ref ref="ASYNC-ACCESS"/>
-    <appender-ref ref="ASYNC-LOGLENS-ACCESS"/>
-  </logger>
+  <!-- a-access wogging -->
+  <woggew n-nyame="com.twittew.finatwa.thwift.fiwtews.accesswoggingfiwtew"
+          w-wevew="info"
+          a-additivity="fawse">
+    <appendew-wef wef="async-access"/>
+    <appendew-wef w-wef="async-wogwens-access"/>
+  </woggew>
 
-  <!-- Pipeline Executions Log -->
-  <logger name="com.twitter.product_mixer.core.service.pipeline_execution_logger"
-          level="info"
-          additivity="false">
-    <appender-ref ref="ASYNC-ALLOW-LISTED-PIPELINE-EXECUTIONS" />
-  </logger>
+  <!-- p-pipewine executions w-wog -->
+  <woggew n-nyame="com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_execution_woggew"
+          wevew="info"
+          additivity="fawse">
+    <appendew-wef wef="async-awwow-wisted-pipewine-executions" />
+  </woggew>
 
-</configuration>
+</configuwation>

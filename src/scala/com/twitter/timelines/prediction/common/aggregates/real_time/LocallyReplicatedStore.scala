@@ -1,79 +1,79 @@
-package com.twitter.timelines.prediction.common.aggregates.real_time
+package com.twittew.timewines.pwediction.common.aggwegates.weaw_time
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.ReplicatedReadableStore
-import com.twitter.storehaus.Store
-import com.twitter.timelines.clients.memcache_common._
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.util.Future
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.stowehaus.wepwicatedweadabwestowe
+i-impowt com.twittew.stowehaus.stowe
+i-impowt c-com.twittew.timewines.cwients.memcache_common._
+i-impowt com.twittew.timewines.utiw.faiwopenhandwew
+i-impowt com.twittew.utiw.futuwe
 
-object ServedFeaturesMemcacheConfigBuilder {
-  def getTwCacheDestination(cluster: String, isProd: Boolean = false): String =
-    if (!isProd) {
-      s"/srv#/test/$cluster/cache//twemcache_timelines_served_features_cache"
-    } else {
-      s"/srv#/prod/$cluster/cache/timelines_served_features"
+o-object sewvedfeatuwesmemcacheconfigbuiwdew {
+  def gettwcachedestination(cwustew: stwing, (U ﹏ U) ispwod: boowean = fawse): stwing =
+    i-if (!ispwod) {
+      s"/swv#/test/$cwustew/cache//twemcache_timewines_sewved_featuwes_cache"
+    } ewse {
+      s-s"/swv#/pwod/$cwustew/cache/timewines_sewved_featuwes"
     }
 
   /**
-   * @cluster The DC of the cache that this client will send requests to. This
-   *   can be different to the DC where the summingbird job is running in.
-   * @isProd  Define if this client is part of a production summingbird job as
-   *   different accesspoints will need to be chosen.
+   * @cwustew the dc of the c-cache that this cwient wiww send wequests to. >w< this
+   *   can b-be diffewent to the dc whewe the s-summingbiwd job i-is wunning in. (U ﹏ U)
+   * @ispwod  define if this cwient is pawt of a pwoduction summingbiwd job as
+   *   d-diffewent accesspoints wiww nyeed to be chosen. 😳
    */
-  def build(cluster: String, isProd: Boolean = false): StorehausMemcacheConfig =
-    StorehausMemcacheConfig(
-      destName = getTwCacheDestination(cluster, isProd),
-      keyPrefix = "",
-      requestTimeout = 200.milliseconds,
-      numTries = 2,
-      globalTimeout = 400.milliseconds,
-      tcpConnectTimeout = 200.milliseconds,
-      connectionAcquisitionTimeout = 200.milliseconds,
-      numPendingRequests = 1000,
-      isReadOnly = false
+  def buiwd(cwustew: stwing, (ˆ ﻌ ˆ)♡ ispwod: b-boowean = fawse): stowehausmemcacheconfig =
+    s-stowehausmemcacheconfig(
+      d-destname = gettwcachedestination(cwustew, 😳😳😳 i-ispwod), (U ﹏ U)
+      k-keypwefix = "", (///ˬ///✿)
+      wequesttimeout = 200.miwwiseconds, 😳
+      nyumtwies = 2,
+      g-gwobawtimeout = 400.miwwiseconds, 😳
+      tcpconnecttimeout = 200.miwwiseconds, σωσ
+      connectionacquisitiontimeout = 200.miwwiseconds, rawr x3
+      n-nyumpendingwequests = 1000, OwO
+      isweadonwy = fawse
     )
 }
 
 /**
- * If lookup key does not exist locally, make a call to the replicated store(s).
- * If value exists remotely, write the first returned value to the local store
- * and return it. Map any exceptions to None so that the subsequent operations
- * may proceed.
+ * if wookup key does nyot exist wocawwy, /(^•ω•^) m-make a caww to the wepwicated s-stowe(s). 😳😳😳
+ * i-if vawue exists w-wemotewy, ( ͡o ω ͡o ) wwite the fiwst wetuwned vawue to the wocaw stowe
+ * and w-wetuwn it. >_< map a-any exceptions to nyone so that t-the subsequent o-opewations
+ * may pwoceed. >w<
  */
-class LocallyReplicatedStore[-K, V](
-  localStore: Store[K, V],
-  remoteStore: ReplicatedReadableStore[K, V],
-  scopedStatsReceiver: StatsReceiver)
-    extends Store[K, V] {
-  private[this] val failOpenHandler = new FailOpenHandler(scopedStatsReceiver.scope("failOpen"))
-  private[this] val localFailsCounter = scopedStatsReceiver.counter("localFails")
-  private[this] val localWritesCounter = scopedStatsReceiver.counter("localWrites")
-  private[this] val remoteFailsCounter = scopedStatsReceiver.counter("remoteFails")
+c-cwass wocawwywepwicatedstowe[-k, rawr v](
+  wocawstowe: s-stowe[k, 😳 v],
+  wemotestowe: wepwicatedweadabwestowe[k, >w< v],
+  s-scopedstatsweceivew: statsweceivew)
+    e-extends stowe[k, (⑅˘꒳˘) v] {
+  p-pwivate[this] vaw f-faiwopenhandwew = new faiwopenhandwew(scopedstatsweceivew.scope("faiwopen"))
+  pwivate[this] vaw wocawfaiwscountew = scopedstatsweceivew.countew("wocawfaiws")
+  pwivate[this] vaw wocawwwitescountew = s-scopedstatsweceivew.countew("wocawwwites")
+  p-pwivate[this] vaw wemotefaiwscountew = s-scopedstatsweceivew.countew("wemotefaiws")
 
-  override def get(k: K): Future[Option[V]] =
-    failOpenHandler {
-      localStore
+  o-ovewwide d-def get(k: k): futuwe[option[v]] =
+    faiwopenhandwew {
+      wocawstowe
         .get(k)
-        .flatMap {
-          case Some(v) => Future.value(Some(v))
+        .fwatmap {
+          c-case some(v) => futuwe.vawue(some(v))
           case _ => {
-            localFailsCounter.incr()
-            val replicatedOptFu = remoteStore.get(k)
-            // async write if result is not empty
-            replicatedOptFu.onSuccess {
-              case Some(v) => {
-                localWritesCounter.incr()
-                localStore.put((k, Some(v)))
+            wocawfaiwscountew.incw()
+            vaw wepwicatedoptfu = wemotestowe.get(k)
+            // a-async wwite if wesuwt is nyot empty
+            w-wepwicatedoptfu.onsuccess {
+              c-case s-some(v) => {
+                wocawwwitescountew.incw()
+                w-wocawstowe.put((k, OwO s-some(v)))
               }
-              case _ => {
-                remoteFailsCounter.incr()
-                Unit
+              c-case _ => {
+                w-wemotefaiwscountew.incw()
+                unit
               }
             }
-            replicatedOptFu
+            wepwicatedoptfu
           }
         }
-    } { _: Throwable => Future.None }
+    } { _: t-thwowabwe => f-futuwe.none }
 }

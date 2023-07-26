@@ -1,6 +1,6 @@
-package com.twitter.ann.dataflow.offline
+package com.twittew.ann.datafwow.offwine
 
-trait BaseEmbeddingData {
-  val entityId: Option[Long]
-  val embedding: Seq[Double]
+twait baseembeddingdata {
+  v-vaw entityid: o-option[wong]
+  v-vaw embedding: s-seq[doubwe]
 }

@@ -1,37 +1,37 @@
-package com.twitter.home_mixer.product.scored_tweets.filter
+package com.twittew.home_mixew.pwoduct.scowed_tweets.fiwtew
 
-import com.twitter.home_mixer.model.HomeFeatures.AncestorsFeature
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.ancestowsfeatuwe
+i-impowt c-com.twittew.home_mixew.utiw.candidatesutiw
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
 
 /**
- * Remove any candidate that is in the ancestor list of any reply, including retweets of ancestors.
+ * w-wemove any candidate that is in the ancestow w-wist of any wepwy, 🥺 incwuding w-wetweets of ancestows. >_<
  *
- * E.g. if B replied to A and D was a retweet of A, we would prefer to drop D since otherwise
- * we may end up serving the same tweet twice in the timeline (e.g. serving both A->B and D).
+ * e.g. >_< if b wepwied to a and d was a wetweet of a, (⑅˘꒳˘) w-we wouwd pwefew to dwop d since o-othewwise
+ * we m-may end up sewving the same tweet twice in the timewine (e.g. /(^•ω•^) sewving both a->b a-and d). rawr x3
  */
-object DuplicateConversationTweetsFilter extends Filter[PipelineQuery, TweetCandidate] {
+object dupwicateconvewsationtweetsfiwtew extends fiwtew[pipewinequewy, (U ﹏ U) tweetcandidate] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("DuplicateConversationTweets")
+  ovewwide v-vaw identifiew: fiwtewidentifiew = f-fiwtewidentifiew("dupwicateconvewsationtweets")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
-    val allAncestors = candidates
-      .flatMap(_.features.getOrElse(AncestorsFeature, Seq.empty))
-      .map(_.tweetId).toSet
+  o-ovewwide d-def appwy(
+    quewy: p-pipewinequewy, (U ﹏ U)
+    candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): s-stitch[fiwtewwesuwt[tweetcandidate]] = {
+    vaw awwancestows = candidates
+      .fwatmap(_.featuwes.getowewse(ancestowsfeatuwe, s-seq.empty))
+      .map(_.tweetid).toset
 
-    val (kept, removed) = candidates.partition { candidate =>
-      !allAncestors.contains(CandidatesUtil.getOriginalTweetId(candidate))
+    vaw (kept, (⑅˘꒳˘) wemoved) = candidates.pawtition { candidate =>
+      !awwancestows.contains(candidatesutiw.getowiginawtweetid(candidate))
     }
 
-    Stitch.value(FilterResult(kept = kept.map(_.candidate), removed = removed.map(_.candidate)))
+    stitch.vawue(fiwtewwesuwt(kept = kept.map(_.candidate), òωó w-wemoved = wemoved.map(_.candidate)))
   }
 }

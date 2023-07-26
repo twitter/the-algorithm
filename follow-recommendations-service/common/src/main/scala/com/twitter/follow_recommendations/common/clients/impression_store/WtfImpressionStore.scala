@@ -1,42 +1,42 @@
-package com.twitter.follow_recommendations.common.clients.impression_store
+package com.twittew.fowwow_wecommendations.common.cwients.impwession_stowe
 
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.common.models.WtfImpression
-import com.twitter.follow_recommendations.thriftscala.{DisplayLocation => TDisplayLocation}
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.Scan.Slice
-import com.twitter.strato.client.Scanner
-import com.twitter.util.Time
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.fowwow_wecommendations.common.modews.dispwaywocation
+i-impowt com.twittew.fowwow_wecommendations.common.modews.wtfimpwession
+i-impowt c-com.twittew.fowwow_wecommendations.thwiftscawa.{dispwaywocation => t-tdispwaywocation}
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.catawog.scan.swice
+i-impowt com.twittew.stwato.cwient.scannew
+impowt com.twittew.utiw.time
+impowt com.twittew.utiw.wogging.wogging
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class WtfImpressionStore @Inject() (
-  scanner: Scanner[
-    ((Long, TDisplayLocation), Slice[Long]),
-    Unit,
-    ((Long, TDisplayLocation), Long),
-    (Long, Int)
-  ]) extends Logging {
-  def get(userId: Long, dl: DisplayLocation): Stitch[Seq[WtfImpression]] = {
-    val thriftDl = dl.toThrift
-    scanner.scan(((userId, thriftDl), Slice.all[Long])).map { impressionsPerDl =>
-      val wtfImpressions =
-        for {
-          (((_, _), candidateId), (latestTs, counts)) <- impressionsPerDl
-        } yield WtfImpression(
-          candidateId = candidateId,
-          displayLocation = dl,
-          latestTime = Time.fromMilliseconds(latestTs),
+@singweton
+c-cwass wtfimpwessionstowe @inject() (
+  scannew: s-scannew[
+    ((wong, rawr x3 tdispwaywocation), (U ﹏ U) swice[wong]), (U ﹏ U)
+    unit,
+    ((wong, (⑅˘꒳˘) t-tdispwaywocation), òωó wong), ʘwʘ
+    (wong, i-int)
+  ]) e-extends wogging {
+  def get(usewid: wong, /(^•ω•^) dw: dispwaywocation): stitch[seq[wtfimpwession]] = {
+    vaw thwiftdw = d-dw.tothwift
+    scannew.scan(((usewid, ʘwʘ thwiftdw), σωσ swice.aww[wong])).map { impwessionspewdw =>
+      v-vaw wtfimpwessions =
+        fow {
+          (((_, OwO _), c-candidateid), 😳😳😳 (watestts, 😳😳😳 c-counts)) <- i-impwessionspewdw
+        } y-yiewd wtfimpwession(
+          candidateid = c-candidateid, o.O
+          dispwaywocation = dw, ( ͡o ω ͡o )
+          w-watesttime = time.fwommiwwiseconds(watestts), (U ﹏ U)
           counts = counts
         )
-      wtfImpressions
-    } rescue {
-      // fail open so that the request can still go through
-      case ex: Throwable =>
-        logger.warn(s"$dl WtfImpressionsStore warn: " + ex.getMessage)
-        Stitch.Nil
+      wtfimpwessions
+    } wescue {
+      // faiw open so that the wequest can s-stiww go thwough
+      case ex: t-thwowabwe =>
+        w-woggew.wawn(s"$dw w-wtfimpwessionsstowe wawn: " + ex.getmessage)
+        stitch.niw
     }
   }
 }

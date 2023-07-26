@@ -1,119 +1,119 @@
-package com.twitter.frigate.pushservice.model
+package com.twittew.fwigate.pushsewvice.modew
 
-import com.twitter.escherbird.metadata.thriftscala.EntityMegadata
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.BaseGameScore
-import com.twitter.frigate.common.base.MagicFanoutSportsEventCandidate
-import com.twitter.frigate.common.base.MagicFanoutSportsScoreInformation
-import com.twitter.frigate.common.base.TeamInfo
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
-import com.twitter.frigate.magic_events.thriftscala.FanoutEvent
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.model.ibis.MagicFanoutSportsEventIbis2Hydrator
-import com.twitter.frigate.pushservice.model.ntab.MagicFanoutSportsEventNTabRequestHydrator
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.predicate.PredicatesForCandidate
-import com.twitter.frigate.pushservice.predicate.magic_fanout.MagicFanoutPredicatesForCandidate
-import com.twitter.frigate.pushservice.predicate.magic_fanout.MagicFanoutTargetingPredicateWrappersForCandidate
-import com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue.MagicFanoutNtabCaretFatiguePredicate
-import com.twitter.frigate.pushservice.store.EventRequest
-import com.twitter.frigate.pushservice.store.UttEntityHydrationStore
-import com.twitter.frigate.pushservice.take.predicates.BasicSendHandlerPredicates
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.store.semantic_core.SemanticEntityForQuery
-import com.twitter.interests.thriftscala.UserInterests
-import com.twitter.livevideo.timeline.domain.v2.Event
-import com.twitter.livevideo.timeline.domain.v2.HydrationOptions
-import com.twitter.livevideo.timeline.domain.v2.LookupContext
-import com.twitter.simclusters_v2.thriftscala.SimClustersInferredEntities
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt c-com.twittew.eschewbiwd.metadata.thwiftscawa.entitymegadata
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.fwigate.common.base.basegamescowe
+i-impowt com.twittew.fwigate.common.base.magicfanoutspowtseventcandidate
+i-impowt c-com.twittew.fwigate.common.base.magicfanoutspowtsscoweinfowmation
+i-impowt com.twittew.fwigate.common.base.teaminfo
+i-impowt com.twittew.fwigate.common.stowe.intewests.intewestswookupwequestwithcontext
+impowt com.twittew.fwigate.magic_events.thwiftscawa.fanoutevent
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+impowt com.twittew.fwigate.pushsewvice.config.config
+i-impowt com.twittew.fwigate.pushsewvice.mw.pushmwmodewscowew
+impowt com.twittew.fwigate.pushsewvice.modew.candidate.copyids
+i-impowt com.twittew.fwigate.pushsewvice.modew.ibis.magicfanoutspowtseventibis2hydwatow
+i-impowt com.twittew.fwigate.pushsewvice.modew.ntab.magicfanoutspowtseventntabwequesthydwatow
+impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+impowt com.twittew.fwigate.pushsewvice.pwedicate.pwedicatesfowcandidate
+i-impowt com.twittew.fwigate.pushsewvice.pwedicate.magic_fanout.magicfanoutpwedicatesfowcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.pwedicate.magic_fanout.magicfanouttawgetingpwedicatewwappewsfowcandidate
+impowt com.twittew.fwigate.pushsewvice.pwedicate.ntab_cawet_fatigue.magicfanoutntabcawetfatiguepwedicate
+impowt com.twittew.fwigate.pushsewvice.stowe.eventwequest
+impowt com.twittew.fwigate.pushsewvice.stowe.uttentityhydwationstowe
+i-impowt com.twittew.fwigate.pushsewvice.take.pwedicates.basicsendhandwewpwedicates
+impowt com.twittew.hewmit.pwedicate.namedpwedicate
+impowt com.twittew.hewmit.stowe.semantic_cowe.semanticentityfowquewy
+impowt c-com.twittew.intewests.thwiftscawa.usewintewests
+impowt com.twittew.wivevideo.timewine.domain.v2.event
+i-impowt c-com.twittew.wivevideo.timewine.domain.v2.hydwationoptions
+i-impowt c-com.twittew.wivevideo.timewine.domain.v2.wookupcontext
+impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsinfewwedentities
+i-impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.utiw.futuwe
 
-class MagicFanoutSportsPushCandidate(
-  candidate: RawCandidate
-    with MagicFanoutSportsEventCandidate
-    with MagicFanoutSportsScoreInformation,
-  copyIds: CopyIds,
-  override val fanoutEvent: Option[FanoutEvent],
-  override val semanticEntityResults: Map[SemanticEntityForQuery, Option[EntityMegadata]],
-  simClusterToEntities: Map[Int, Option[SimClustersInferredEntities]],
-  lexServiceStore: ReadableStore[EventRequest, Event],
-  interestsLookupStore: ReadableStore[InterestsLookupRequestWithContext, UserInterests],
-  uttEntityHydrationStore: UttEntityHydrationStore
+cwass magicfanoutspowtspushcandidate(
+  c-candidate: wawcandidate
+    with magicfanoutspowtseventcandidate
+    with magicfanoutspowtsscoweinfowmation,
+  copyids: copyids, :3
+  o-ovewwide vaw fanoutevent: o-option[fanoutevent], ( ͡o ω ͡o )
+  o-ovewwide v-vaw semanticentitywesuwts: map[semanticentityfowquewy, mya option[entitymegadata]], (///ˬ///✿)
+  simcwustewtoentities: map[int, (˘ω˘) o-option[simcwustewsinfewwedentities]], ^^;;
+  w-wexsewvicestowe: weadabwestowe[eventwequest, (✿oωo) e-event],
+  i-intewestswookupstowe: weadabwestowe[intewestswookupwequestwithcontext, (U ﹏ U) u-usewintewests], -.-
+  uttentityhydwationstowe: u-uttentityhydwationstowe
 )(
-  implicit statsScoped: StatsReceiver,
-  pushModelScorer: PushMLModelScorer)
-    extends MagicFanoutEventPushCandidate(
-      candidate,
-      copyIds,
-      fanoutEvent,
-      semanticEntityResults,
-      simClusterToEntities,
-      lexServiceStore,
-      interestsLookupStore,
-      uttEntityHydrationStore)(statsScoped, pushModelScorer)
-    with MagicFanoutSportsEventCandidate
-    with MagicFanoutSportsScoreInformation
-    with MagicFanoutSportsEventNTabRequestHydrator
-    with MagicFanoutSportsEventIbis2Hydrator {
+  impwicit statsscoped: statsweceivew, ^•ﻌ•^
+  p-pushmodewscowew: pushmwmodewscowew)
+    e-extends magicfanouteventpushcandidate(
+      candidate, rawr
+      copyids, (˘ω˘)
+      fanoutevent,
+      s-semanticentitywesuwts, nyaa~~
+      simcwustewtoentities, UwU
+      w-wexsewvicestowe, :3
+      intewestswookupstowe,
+      uttentityhydwationstowe)(statsscoped, (⑅˘꒳˘) pushmodewscowew)
+    with magicfanoutspowtseventcandidate
+    with magicfanoutspowtsscoweinfowmation
+    with m-magicfanoutspowtseventntabwequesthydwatow
+    w-with magicfanoutspowtseventibis2hydwatow {
 
-  override val isScoreUpdate: Boolean = candidate.isScoreUpdate
-  override val gameScores: Future[Option[BaseGameScore]] = candidate.gameScores
-  override val homeTeamInfo: Future[Option[TeamInfo]] = candidate.homeTeamInfo
-  override val awayTeamInfo: Future[Option[TeamInfo]] = candidate.awayTeamInfo
+  ovewwide v-vaw isscoweupdate: b-boowean = c-candidate.isscoweupdate
+  ovewwide vaw gamescowes: futuwe[option[basegamescowe]] = c-candidate.gamescowes
+  ovewwide vaw hometeaminfo: futuwe[option[teaminfo]] = candidate.hometeaminfo
+  o-ovewwide vaw awayteaminfo: f-futuwe[option[teaminfo]] = c-candidate.awayteaminfo
 
-  override lazy val stats: StatsReceiver = statsScoped.scope("MagicFanoutSportsPushCandidate")
-  override val statsReceiver: StatsReceiver = statsScoped.scope("MagicFanoutSportsPushCandidate")
+  o-ovewwide wazy vaw stats: s-statsweceivew = s-statsscoped.scope("magicfanoutspowtspushcandidate")
+  o-ovewwide v-vaw statsweceivew: statsweceivew = statsscoped.scope("magicfanoutspowtspushcandidate")
 
-  override lazy val eventRequestFut: Future[Option[EventRequest]] = {
-    Future.join(target.inferredUserDeviceLanguage, target.accountCountryCode).map {
-      case (inferredUserDeviceLanguage, accountCountryCode) =>
-        Some(
-          EventRequest(
-            eventId,
-            lookupContext = LookupContext(
-              hydrationOptions = HydrationOptions(
-                includeSquareImage = true,
-                includePrimaryImage = true
-              ),
-              language = inferredUserDeviceLanguage,
-              countryCode = accountCountryCode
+  ovewwide w-wazy vaw e-eventwequestfut: f-futuwe[option[eventwequest]] = {
+    f-futuwe.join(tawget.infewwedusewdevicewanguage, (///ˬ///✿) t-tawget.accountcountwycode).map {
+      case (infewwedusewdevicewanguage, ^^;; accountcountwycode) =>
+        some(
+          eventwequest(
+            e-eventid, >_<
+            wookupcontext = wookupcontext(
+              hydwationoptions = hydwationoptions(
+                incwudesquaweimage = twue, rawr x3
+                i-incwudepwimawyimage = twue
+              ), /(^•ω•^)
+              wanguage = infewwedusewdevicewanguage, :3
+              countwycode = a-accountcountwycode
             )
           ))
     }
   }
 }
 
-case class MagicFanoutSportsEventCandidatePredicates(config: Config)
-    extends BasicSendHandlerPredicates[MagicFanoutSportsPushCandidate] {
+c-case cwass magicfanoutspowtseventcandidatepwedicates(config: config)
+    e-extends basicsendhandwewpwedicates[magicfanoutspowtspushcandidate] {
 
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+  i-impwicit vaw statsweceivew: statsweceivew = config.statsweceivew.scope(getcwass.getsimpwename)
 
-  override val preCandidateSpecificPredicates: List[
-    NamedPredicate[MagicFanoutSportsPushCandidate]
+  o-ovewwide vaw p-pwecandidatespecificpwedicates: wist[
+    nyamedpwedicate[magicfanoutspowtspushcandidate]
   ] =
-    List(
-      PredicatesForCandidate.paramPredicate(PushFeatureSwitchParams.EnableScoreFanoutNotification)
+    wist(
+      pwedicatesfowcandidate.pawampwedicate(pushfeatuweswitchpawams.enabwescowefanoutnotification)
     )
 
-  override val postCandidateSpecificPredicates: List[
-    NamedPredicate[MagicFanoutSportsPushCandidate]
+  ovewwide vaw postcandidatespecificpwedicates: w-wist[
+    namedpwedicate[magicfanoutspowtspushcandidate]
   ] =
-    List(
-      PredicatesForCandidate.isDeviceEligibleForNewsOrSports,
-      MagicFanoutPredicatesForCandidate.inferredUserDeviceLanguagePredicate,
-      MagicFanoutPredicatesForCandidate.highPriorityEventExceptedPredicate(
-        MagicFanoutTargetingPredicateWrappersForCandidate
-          .magicFanoutTargetingPredicate(statsReceiver, config)
-      )(config),
-      PredicatesForCandidate.secondaryDormantAccountPredicate(
-        statsReceiver
-      ),
-      MagicFanoutPredicatesForCandidate.highPriorityEventExceptedPredicate(
-        MagicFanoutNtabCaretFatiguePredicate()
-      )(config),
+    w-wist(
+      pwedicatesfowcandidate.isdeviceewigibwefownewsowspowts, (ꈍᴗꈍ)
+      m-magicfanoutpwedicatesfowcandidate.infewwedusewdevicewanguagepwedicate, /(^•ω•^)
+      m-magicfanoutpwedicatesfowcandidate.highpwiowityeventexceptedpwedicate(
+        magicfanouttawgetingpwedicatewwappewsfowcandidate
+          .magicfanouttawgetingpwedicate(statsweceivew, (⑅˘꒳˘) config)
+      )(config), ( ͡o ω ͡o )
+      p-pwedicatesfowcandidate.secondawydowmantaccountpwedicate(
+        s-statsweceivew
+      ), òωó
+      magicfanoutpwedicatesfowcandidate.highpwiowityeventexceptedpwedicate(
+        m-magicfanoutntabcawetfatiguepwedicate()
+      )(config), (⑅˘꒳˘)
     )
 }

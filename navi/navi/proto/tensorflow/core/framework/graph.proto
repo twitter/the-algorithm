@@ -1,56 +1,56 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "tensorflow/core/framework/function.proto";
-import "tensorflow/core/framework/node_def.proto";
-import "tensorflow/core/framework/versions.proto";
+impowt "tensowfwow/cowe/fwamewowk/function.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/node_def.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/vewsions.pwoto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "GraphProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/graph_go_proto";
+o-option cc_enabwe_awenas = t-twue;
+o-option java_outew_cwassname = "gwaphpwotos";
+option j-java_muwtipwe_fiwes = t-twue;
+o-option java_package = "owg.tensowfwow.fwamewowk";
+option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/fwamewowk/gwaph_go_pwoto";
 
-// Represents the graph of operations
-message GraphDef {
-  repeated NodeDef node = 1;
+// wepwesents the gwaph of opewations
+message g-gwaphdef {
+  wepeated nyodedef nyode = 1;
 
-  // Compatibility versions of the graph.  See core/public/version.h for version
-  // history.  The GraphDef version is distinct from the TensorFlow version, and
-  // each release of TensorFlow will support a range of GraphDef versions.
-  VersionDef versions = 4;
+  // c-compatibiwity vewsions of t-the gwaph. ʘwʘ  see cowe/pubwic/vewsion.h fow vewsion
+  // histowy. (ˆ ﻌ ˆ)♡  t-the gwaphdef vewsion is distinct f-fwom the tensowfwow v-vewsion, 😳😳😳 and
+  // each wewease of tensowfwow wiww suppowt a wange of gwaphdef v-vewsions. :3
+  vewsiondef vewsions = 4;
 
-  // Deprecated single version field; use versions above instead.  Since all
-  // GraphDef changes before "versions" was introduced were forward
-  // compatible, this field is entirely ignored.
-  int32 version = 3 [deprecated = true];
+  // depwecated singwe vewsion fiewd; use vewsions above i-instead. OwO  since aww
+  // gwaphdef c-changes befowe "vewsions" w-was intwoduced wewe f-fowwawd
+  // c-compatibwe, (U ﹏ U) this fiewd is entiwewy ignowed. >w<
+  int32 v-vewsion = 3 [depwecated = twue];
 
-  // "library" provides user-defined functions.
+  // "wibwawy" pwovides usew-defined functions. (U ﹏ U)
   //
-  // Naming:
-  //   * library.function.name are in a flat namespace.
-  //     NOTE: We may need to change it to be hierarchical to support
-  //     different orgs. E.g.,
-  //     { "/google/nn", { ... }},
-  //     { "/google/vision", { ... }}
-  //     { "/org_foo/module_bar", { ... }}
-  //     map<string, FunctionDefLib> named_lib;
-  //   * If node[i].op is the name of one function in "library",
-  //     node[i] is deemed as a function call. Otherwise, node[i].op
-  //     must be a primitive operation supported by the runtime.
+  // n-naming:
+  //   * wibwawy.function.name awe in a fwat nyamespace. 😳
+  //     nyote: we may nyeed to c-change it to be hiewawchicaw to s-suppowt
+  //     d-diffewent owgs. (ˆ ﻌ ˆ)♡ e-e.g.,
+  //     { "/googwe/nn", 😳😳😳 { ... }},
+  //     { "/googwe/vision", (U ﹏ U) { ... }}
+  //     { "/owg_foo/moduwe_baw", (///ˬ///✿) { ... }}
+  //     map<stwing, 😳 functiondefwib> nyamed_wib;
+  //   * i-if nyode[i].op i-is the nyame of one function i-in "wibwawy", 😳
+  //     n-nyode[i] is deemed as a-a function caww. σωσ othewwise, rawr x3 nyode[i].op
+  //     m-must be a pwimitive opewation suppowted by the w-wuntime. OwO
   //
   //
-  // Function call semantics:
+  // function c-caww semantics:
   //
-  //   * The callee may start execution as soon as some of its inputs
-  //     are ready. The caller may want to use Tuple() mechanism to
-  //     ensure all inputs are ready in the same time.
+  //   * the cawwee may stawt e-execution as s-soon as some of its inputs
+  //     awe weady. /(^•ω•^) the cawwew may want to use tupwe() mechanism to
+  //     ensuwe a-aww inputs awe weady i-in the same time. 😳😳😳
   //
-  //   * The consumer of return values may start executing as soon as
-  //     the return values the consumer depends on are ready.  The
-  //     consumer may want to use Tuple() mechanism to ensure the
-  //     consumer does not start until all return values of the callee
-  //     function are ready.
-  FunctionDefLibrary library = 2;
+  //   * t-the consumew o-of wetuwn vawues m-may stawt executing as soon as
+  //     the wetuwn vawues the c-consumew depends on awe weady. ( ͡o ω ͡o )  the
+  //     consumew may want to use tupwe() mechanism t-to ensuwe the
+  //     c-consumew does nyot s-stawt untiw aww w-wetuwn vawues of the cawwee
+  //     f-function a-awe weady. >_<
+  functiondefwibwawy w-wibwawy = 2;
 }

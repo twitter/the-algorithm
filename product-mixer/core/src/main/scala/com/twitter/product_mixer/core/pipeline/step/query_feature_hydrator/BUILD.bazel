@@ -1,36 +1,36 @@
-scala_library(
-    sources = [
-        "*.scala",
+scawa_wibwawy(
+    souwces = [
+        "*.scawa", 🥺
     ],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "finatra/inject/inject-core/src/main/scala",
-        "finatra/inject/inject-core/src/main/scala/com/twitter/inject",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature/featuremap",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature/featuremap/asyncfeaturemap",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/feature_hydrator",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline:query",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/step",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service/query_feature_hydrator_executor",
-        "stitch/stitch-core",
-    ],
-    exports = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature/featuremap",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/feature_hydrator",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline:query",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/step",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service/query_feature_hydrator_executor",
-        "stitch/stitch-core",
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    p-pwatfowm = "java8", o.O
+    s-stwict_deps = t-twue, (U ᵕ U❁)
+    tags = ["bazew-compatibwe"], (⑅˘꒳˘)
+    d-dependencies = [
+        "3wdpawty/jvm/javax/inject:javax.inject", ( ͡o ω ͡o )
+        "finatwa/inject/inject-cowe/swc/main/scawa", UwU
+        "finatwa/inject/inject-cowe/swc/main/scawa/com/twittew/inject", rawr x3
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/featuwe", rawr
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/featuwe/featuwemap", σωσ
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/featuwe/featuwemap/asyncfeatuwemap", σωσ
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/featuwe_hydwatow", >_<
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/modew/common", :3
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine:quewy", (U ﹏ U)
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine/step", -.-
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/sewvice", (ˆ ﻌ ˆ)♡
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/sewvice/quewy_featuwe_hydwatow_executow", (⑅˘꒳˘)
+        "stitch/stitch-cowe", (U ᵕ U❁)
+    ], -.-
+    expowts = [
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/candidate", ^^;;
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/featuwe", >_<
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/featuwe/featuwemap", mya
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/featuwe_hydwatow", mya
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/modew/common", 😳
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine:quewy", XD
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine/step", :3
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/sewvice",
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/sewvice/quewy_featuwe_hydwatow_executow", 😳😳😳
+        "stitch/stitch-cowe", -.-
     ],
 )

@@ -1,157 +1,157 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import java.util.List;
-import java.util.Map;
+impowt j-java.utiw.wist;
+i-impowt java.utiw.map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+i-impowt j-javax.inject.inject;
+i-impowt javax.inject.named;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt c-com.googwe.common.base.pwedicate;
+impowt com.googwe.common.cowwect.maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.root.SearchRootModule;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.Term;
-import com.twitter.search.queryparser.query.annotation.Annotation;
-import com.twitter.search.queryparser.rewriter.PredicateQueryNodeDropper;
-import com.twitter.search.queryparser.visitors.TermExtractorVisitor;
-import com.twitter.util.Future;
+i-impowt com.twittew.finagwe.sewvice;
+impowt com.twittew.finagwe.simpwefiwtew;
+impowt com.twittew.seawch.common.decidew.seawchdecidew;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.woot.seawchwootmoduwe;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequesttype;
+impowt com.twittew.seawch.quewypawsew.quewy.quewy;
+i-impowt c-com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
+impowt com.twittew.seawch.quewypawsew.quewy.tewm;
+impowt com.twittew.seawch.quewypawsew.quewy.annotation.annotation;
+i-impowt com.twittew.seawch.quewypawsew.wewwitew.pwedicatequewynodedwoppew;
+impowt com.twittew.seawch.quewypawsew.visitows.tewmextwactowvisitow;
+impowt com.twittew.utiw.futuwe;
 
 /**
- * Filter that rewrites the serialized query on EarlybirdRequest.
- * As of now, this filter performs the following rewrites:
- *   - Drop ":v annotated variants based on decider, if the query has enough term nodes.
+ * fiwtew that w-wewwites the sewiawized quewy o-on eawwybiwdwequest. 🥺
+ * a-as of now, òωó t-this fiwtew p-pewfowms the fowwowing wewwites:
+ *   - dwop ":v a-annotated vawiants based on decidew, if the quewy h-has enough tewm nyodes. (ˆ ﻌ ˆ)♡
  */
-public class EarlybirdQueryRewriteFilter extends
-    SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+pubwic cwass eawwybiwdquewywewwitefiwtew extends
+    simpwefiwtew<eawwybiwdwequestcontext, -.- eawwybiwdwesponse> {
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(EarlybirdQueryRewriteFilter.class);
+  p-pwivate static finaw woggew wog =
+      w-woggewfactowy.getwoggew(eawwybiwdquewywewwitefiwtew.cwass);
 
-  private static final String DROP_PHRASE_VARIANT_FROM_QUERY_DECIDER_KEY_PATTERN =
-      "drop_variants_from_%s_%s_queries";
+  p-pwivate s-static finaw stwing dwop_phwase_vawiant_fwom_quewy_decidew_key_pattewn =
+      "dwop_vawiants_fwom_%s_%s_quewies";
 
-  // only drop variants from queries with more than this number of terms.
-  private static final String MIN_TERM_COUNT_FOR_VARIANT_DROPPING_DECIDER_KEY_PATTERN =
-      "drop_variants_from_%s_%s_queries_term_count_threshold";
+  // onwy dwop vawiants fwom q-quewies with mowe t-than this nyumbew of tewms. :3
+  p-pwivate static f-finaw stwing min_tewm_count_fow_vawiant_dwopping_decidew_key_pattewn =
+      "dwop_vawiants_fwom_%s_%s_quewies_tewm_count_thweshowd";
 
-  private static final SearchCounter QUERY_PARSER_FAILURE_COUNT =
-      SearchCounter.export("query_rewrite_filter_query_parser_failure_count");
+  pwivate s-static finaw seawchcountew quewy_pawsew_faiwuwe_count =
+      s-seawchcountew.expowt("quewy_wewwite_fiwtew_quewy_pawsew_faiwuwe_count");
 
-  // We currently add variants only to RECENCY and RELEVANCE requests, but it doesn't hurt to export
-  // stats for all request types.
-  @VisibleForTesting
-  static final Map<EarlybirdRequestType, SearchCounter> DROP_VARIANTS_QUERY_COUNTS =
-    Maps.newEnumMap(EarlybirdRequestType.class);
+  // we cuwwentwy add vawiants onwy to w-wecency and wewevance wequests, ʘwʘ b-but it doesn't huwt to expowt
+  // s-stats fow aww w-wequest types. 🥺
+  @visibwefowtesting
+  static finaw map<eawwybiwdwequesttype, >_< seawchcountew> dwop_vawiants_quewy_counts =
+    maps.newenummap(eawwybiwdwequesttype.cwass);
   static {
-    for (EarlybirdRequestType requestType : EarlybirdRequestType.values()) {
-      DROP_VARIANTS_QUERY_COUNTS.put(
-          requestType,
-          SearchCounter.export(String.format("drop_%s_variants_query_count",
-                                             requestType.getNormalizedName())));
+    fow (eawwybiwdwequesttype wequesttype : e-eawwybiwdwequesttype.vawues()) {
+      d-dwop_vawiants_quewy_counts.put(
+          wequesttype, ʘwʘ
+          s-seawchcountew.expowt(stwing.fowmat("dwop_%s_vawiants_quewy_count", (˘ω˘)
+                                             w-wequesttype.getnowmawizedname())));
     }
   }
 
-  private static final Predicate<Query> DROP_VARIANTS_PREDICATE =
-      q -> q.hasAnnotationType(Annotation.Type.VARIANT);
+  p-pwivate static finaw pwedicate<quewy> dwop_vawiants_pwedicate =
+      q-q -> q.hasannotationtype(annotation.type.vawiant);
 
-  private static final PredicateQueryNodeDropper DROP_VARIANTS_VISITOR =
-    new PredicateQueryNodeDropper(DROP_VARIANTS_PREDICATE);
+  pwivate static finaw pwedicatequewynodedwoppew dwop_vawiants_visitow =
+    nyew pwedicatequewynodedwoppew(dwop_vawiants_pwedicate);
 
-  private final SearchDecider decider;
-  private final String normalizedSearchRootName;
+  pwivate f-finaw seawchdecidew decidew;
+  p-pwivate finaw s-stwing nyowmawizedseawchwootname;
 
-  @Inject
-  public EarlybirdQueryRewriteFilter(
-      SearchDecider decider,
-      @Named(SearchRootModule.NAMED_NORMALIZED_SEARCH_ROOT_NAME) String normalizedSearchRootName) {
-    this.decider = decider;
-    this.normalizedSearchRootName = normalizedSearchRootName;
+  @inject
+  p-pubwic eawwybiwdquewywewwitefiwtew(
+      seawchdecidew d-decidew, (✿oωo)
+      @named(seawchwootmoduwe.named_nowmawized_seawch_woot_name) s-stwing nyowmawizedseawchwootname) {
+    t-this.decidew = d-decidew;
+    this.nowmawizedseawchwootname = nyowmawizedseawchwootname;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+  @ovewwide
+  p-pubwic futuwe<eawwybiwdwesponse> a-appwy(
+      e-eawwybiwdwequestcontext w-wequestcontext, (///ˬ///✿)
+      s-sewvice<eawwybiwdwequestcontext, rawr x3 eawwybiwdwesponse> sewvice) {
 
-    Query query = requestContext.getParsedQuery();
-    // If there's no serialized query, no rewrite is necessary.
-    if (query == null) {
-      return service.apply(requestContext);
-    } else {
-      try {
-        Query variantsRemoved = maybeRemoveVariants(requestContext, query);
+    quewy quewy = w-wequestcontext.getpawsedquewy();
+    // if thewe's nyo sewiawized quewy, -.- nyo wewwite is nyecessawy. ^^
+    if (quewy == n-nyuww) {
+      wetuwn sewvice.appwy(wequestcontext);
+    } ewse {
+      t-twy {
+        q-quewy vawiantswemoved = m-maybewemovevawiants(wequestcontext, (⑅˘꒳˘) quewy);
 
-        if (query == variantsRemoved) {
-          return service.apply(requestContext);
-        } else {
-          EarlybirdRequestContext clonedRequestContext =
-            EarlybirdRequestContext.copyRequestContext(requestContext, variantsRemoved);
+        i-if (quewy == vawiantswemoved) {
+          w-wetuwn sewvice.appwy(wequestcontext);
+        } e-ewse {
+          eawwybiwdwequestcontext cwonedwequestcontext =
+            eawwybiwdwequestcontext.copywequestcontext(wequestcontext, nyaa~~ vawiantswemoved);
 
-          return service.apply(clonedRequestContext);
+          wetuwn s-sewvice.appwy(cwonedwequestcontext);
         }
-      } catch (QueryParserException e) {
-        // It is not clear here that the QueryParserException is the client's fault, or our fault.
-        // At this point it is most likely not the client's since we have a legitimate parsed Query
-        // from the client's request, and it's the rewriting that failed.
-        // In this case we choose to send the query as is (without the rewrite), instead of
-        // failing the entire request.
-        QUERY_PARSER_FAILURE_COUNT.increment();
-        LOG.warn("Failed to rewrite serialized query: " + query.serialize(), e);
-        return service.apply(requestContext);
+      } catch (quewypawsewexception e-e) {
+        // it is nyot c-cweaw hewe that t-the quewypawsewexception is the cwient's fauwt, /(^•ω•^) o-ow ouw fauwt. (U ﹏ U)
+        // a-at this point it is most w-wikewy nyot the c-cwient's since we have a wegitimate pawsed quewy
+        // fwom the cwient's w-wequest, 😳😳😳 and it's t-the wewwiting t-that faiwed. >w<
+        // in this c-case we choose to s-send the quewy as is (without t-the wewwite), XD instead of
+        // faiwing the entiwe wequest. o.O
+        quewy_pawsew_faiwuwe_count.incwement();
+        w-wog.wawn("faiwed t-to wewwite sewiawized quewy: " + quewy.sewiawize(), mya e-e);
+        w-wetuwn sewvice.appwy(wequestcontext);
       }
     }
   }
 
-  private Query maybeRemoveVariants(EarlybirdRequestContext requestContext, Query query)
-      throws QueryParserException {
+  pwivate quewy maybewemovevawiants(eawwybiwdwequestcontext w-wequestcontext, 🥺 quewy quewy)
+      thwows quewypawsewexception {
 
-    if (shouldDropVariants(requestContext, query)) {
-      Query rewrittenQuery = DROP_VARIANTS_VISITOR.apply(query);
-      if (!query.equals(rewrittenQuery)) {
-        DROP_VARIANTS_QUERY_COUNTS.get(requestContext.getEarlybirdRequestType()).increment();
-        return rewrittenQuery;
+    if (shouwddwopvawiants(wequestcontext, ^^;; q-quewy)) {
+      quewy wewwittenquewy = d-dwop_vawiants_visitow.appwy(quewy);
+      i-if (!quewy.equaws(wewwittenquewy)) {
+        dwop_vawiants_quewy_counts.get(wequestcontext.geteawwybiwdwequesttype()).incwement();
+        wetuwn wewwittenquewy;
       }
     }
-    return query;
+    wetuwn quewy;
   }
 
-  private boolean shouldDropVariants(EarlybirdRequestContext requestContext, Query query)
-      throws QueryParserException {
-    TermExtractorVisitor termExtractorVisitor = new TermExtractorVisitor(false);
-    List<Term> terms = query.accept(termExtractorVisitor);
+  p-pwivate boowean s-shouwddwopvawiants(eawwybiwdwequestcontext wequestcontext, :3 quewy quewy)
+      thwows quewypawsewexception {
+    t-tewmextwactowvisitow tewmextwactowvisitow = n-nyew tewmextwactowvisitow(fawse);
+    wist<tewm> tewms = quewy.accept(tewmextwactowvisitow);
 
-    EarlybirdRequestType requestType = requestContext.getEarlybirdRequestType();
+    eawwybiwdwequesttype w-wequesttype = wequestcontext.geteawwybiwdwequesttype();
 
-    boolean shouldDropVariants = decider.isAvailable(getDropPhaseVariantDeciderKey(requestType));
+    b-boowean shouwddwopvawiants = d-decidew.isavaiwabwe(getdwopphasevawiantdecidewkey(wequesttype));
 
-    return terms != null
-        && terms.size() >= decider.getAvailability(
-            getMinTermCountForVariantDroppingDeciderKey(requestType))
-        && shouldDropVariants;
+    wetuwn tewms != n-nyuww
+        && tewms.size() >= d-decidew.getavaiwabiwity(
+            g-getmintewmcountfowvawiantdwoppingdecidewkey(wequesttype))
+        && s-shouwddwopvawiants;
   }
 
-  private String getDropPhaseVariantDeciderKey(EarlybirdRequestType requestType) {
-    return String.format(DROP_PHRASE_VARIANT_FROM_QUERY_DECIDER_KEY_PATTERN,
-                         normalizedSearchRootName,
-                         requestType.getNormalizedName());
+  pwivate s-stwing getdwopphasevawiantdecidewkey(eawwybiwdwequesttype w-wequesttype) {
+    wetuwn stwing.fowmat(dwop_phwase_vawiant_fwom_quewy_decidew_key_pattewn,
+                         nyowmawizedseawchwootname, (U ﹏ U)
+                         w-wequesttype.getnowmawizedname());
   }
 
-  private String getMinTermCountForVariantDroppingDeciderKey(EarlybirdRequestType requestType) {
-    return String.format(MIN_TERM_COUNT_FOR_VARIANT_DROPPING_DECIDER_KEY_PATTERN,
-                         normalizedSearchRootName,
-                         requestType.getNormalizedName());
+  p-pwivate stwing g-getmintewmcountfowvawiantdwoppingdecidewkey(eawwybiwdwequesttype wequesttype) {
+    wetuwn stwing.fowmat(min_tewm_count_fow_vawiant_dwopping_decidew_key_pattewn, OwO
+                         n-nyowmawizedseawchwootname, 😳😳😳
+                         wequesttype.getnowmawizedname());
   }
 }

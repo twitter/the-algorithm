@@ -1,80 +1,80 @@
-package com.twitter.recosinjector.edges
+package com.twittew.wecosinjectow.edges
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.algorithms.RecommendationType
-import com.twitter.recosinjector.clients.CacheEntityEntry
-import com.twitter.recosinjector.clients.RecosHoseEntitiesCache
-import com.twitter.recosinjector.clients.UrlResolver
-import com.twitter.recosinjector.util.TweetDetails
-import com.twitter.util.Future
-import scala.collection.Map
-import scala.util.hashing.MurmurHash3
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.gwaphjet.awgowithms.wecommendationtype
+i-impowt com.twittew.wecosinjectow.cwients.cacheentityentwy
+i-impowt c-com.twittew.wecosinjectow.cwients.wecoshoseentitiescache
+i-impowt c-com.twittew.wecosinjectow.cwients.uwwwesowvew
+i-impowt com.twittew.wecosinjectow.utiw.tweetdetaiws
+i-impowt com.twittew.utiw.futuwe
+impowt scawa.cowwection.map
+impowt scawa.utiw.hashing.muwmuwhash3
 
-class UserTweetEntityEdgeBuilder(
-  cache: RecosHoseEntitiesCache,
-  urlResolver: UrlResolver
+cwass usewtweetentityedgebuiwdew(
+  c-cache: wecoshoseentitiescache, (U ﹏ U)
+  uwwwesowvew: u-uwwwesowvew
 )(
-  implicit val stats: StatsReceiver) {
+  impwicit v-vaw stats: statsweceivew) {
 
-  def getHashedEntities(entities: Seq[String]): Seq[Int] = {
-    entities.map(MurmurHash3.stringHash)
+  def gethashedentities(entities: seq[stwing]): seq[int] = {
+    entities.map(muwmuwhash3.stwinghash)
   }
 
   /**
-   * Given the entities and their corresponding hashedIds, store the hashId->entity mapping into a
-   * cache.
-   * This is because UTEG edges only store the hashIds, and relies on the cache values to
-   * recover the actual entities. This allows us to store integer values instead of string in the
-   * edges to save space.
+   * given the entities a-and theiw cowwesponding hashedids, >w< s-stowe t-the hashid->entity mapping into a
+   * cache. mya
+   * this is because uteg edges onwy s-stowe the hashids, >w< and wewies on the cache vawues to
+   * wecovew the actuaw e-entities. nyaa~~ this awwows us to stowe i-integew vawues i-instead of stwing i-in the
+   * edges t-to save space. (✿oωo)
    */
-  private def storeEntitiesInCache(
-    urlEntities: Seq[String],
-    urlHashIds: Seq[Int]
-  ): Future[Unit] = {
-    val urlCacheEntries = urlHashIds.zip(urlEntities).map {
-      case (hashId, url) =>
-        CacheEntityEntry(RecosHoseEntitiesCache.UrlPrefix, hashId, url)
+  pwivate def stoweentitiesincache(
+    u-uwwentities: seq[stwing], ʘwʘ
+    uwwhashids: seq[int]
+  ): futuwe[unit] = {
+    vaw u-uwwcacheentwies = uwwhashids.zip(uwwentities).map {
+      case (hashid, (ˆ ﻌ ˆ)♡ uww) =>
+        cacheentityentwy(wecoshoseentitiescache.uwwpwefix, 😳😳😳 hashid, :3 u-uww)
     }
-    cache.updateEntitiesCache(
-      newCacheEntries = urlCacheEntries,
-      stats = stats.scope("urlCache")
+    cache.updateentitiescache(
+      n-nyewcacheentwies = u-uwwcacheentwies, OwO
+      s-stats = stats.scope("uwwcache")
     )
   }
 
   /**
-   * Return an entity mapping from GraphJet recType -> hash(entity)
+   * wetuwn an entity mapping fwom gwaphjet wectype -> h-hash(entity)
    */
-  private def getEntitiesMap(
-    urlHashIds: Seq[Int]
+  p-pwivate def getentitiesmap(
+    u-uwwhashids: s-seq[int]
   ) = {
-    val entitiesMap = Seq(
-      RecommendationType.URL.getValue.toByte -> urlHashIds
-    ).collect {
-      case (keys, ids) if ids.nonEmpty => keys -> ids
-    }.toMap
-    if (entitiesMap.isEmpty) None else Some(entitiesMap)
+    vaw e-entitiesmap = seq(
+      wecommendationtype.uww.getvawue.tobyte -> u-uwwhashids
+    ).cowwect {
+      case (keys, (U ﹏ U) ids) if ids.nonempty => k-keys -> ids
+    }.tomap
+    i-if (entitiesmap.isempty) nyone ewse some(entitiesmap)
   }
 
-  def getEntitiesMapAndUpdateCache(
-    tweetId: Long,
-    tweetDetails: Option[TweetDetails]
-  ): Future[Option[Map[Byte, Seq[Int]]]] = {
-    val resolvedUrlFut = urlResolver
-      .getResolvedUrls(
-        urls = tweetDetails.flatMap(_.urls).getOrElse(Nil),
-        tweetId = tweetId
-      ).map(_.values.toSeq)
+  d-def getentitiesmapandupdatecache(
+    t-tweetid: wong,
+    tweetdetaiws: option[tweetdetaiws]
+  ): futuwe[option[map[byte, >w< seq[int]]]] = {
+    vaw wesowveduwwfut = uwwwesowvew
+      .getwesowveduwws(
+        u-uwws = tweetdetaiws.fwatmap(_.uwws).getowewse(niw), (U ﹏ U)
+        t-tweetid = tweetid
+      ).map(_.vawues.toseq)
 
-    resolvedUrlFut.map { resolvedUrls =>
-      val urlEntities = resolvedUrls
-      val urlHashIds = getHashedEntities(urlEntities)
+    w-wesowveduwwfut.map { w-wesowveduwws =>
+      v-vaw uwwentities = wesowveduwws
+      vaw uwwhashids = gethashedentities(uwwentities)
 
-      // Async call to cache
-      storeEntitiesInCache(
-        urlEntities = urlEntities,
-        urlHashIds = urlHashIds
+      // a-async caww to cache
+      stoweentitiesincache(
+        uwwentities = uwwentities, 😳
+        u-uwwhashids = uwwhashids
       )
-      getEntitiesMap(urlHashIds)
+      g-getentitiesmap(uwwhashids)
     }
   }
 }

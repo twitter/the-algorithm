@@ -1,27 +1,27 @@
-package com.twitter.home_mixer.product.scored_tweets.gate
+package com.twittew.home_mixew.pwoduct.scowed_tweets.gate
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures.LastNonPollingTimeFeature
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.wastnonpowwingtimefeatuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.gateidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.stitch
 
 /**
- * Gate continues if the amount of time passed since the previous request is greater
- * than the configured amount or if the previous request time in not available
+ * g-gate continues i-if the amount of time passed since the pwevious wequest is gweatew
+ * than t-the configuwed amount ow if the pwevious wequest t-time in nyot avaiwabwe
  */
-object MinTimeSinceLastRequestGate extends Gate[PipelineQuery] {
+o-object mintimesincewastwequestgate extends gate[pipewinequewy] {
 
-  override val identifier: GateIdentifier = GateIdentifier("TimeSinceLastRequest")
+  ovewwide vaw identifiew: gateidentifiew = g-gateidentifiew("timesincewastwequest")
 
-  private val MinTimeSinceLastRequest = 24.hours
+  pwivate v-vaw mintimesincewastwequest = 24.houws
 
-  override def shouldContinue(query: PipelineQuery): Stitch[Boolean] = Stitch.value {
-    query.features.exists { features =>
-      features
-        .getOrElse(LastNonPollingTimeFeature, None)
-        .forall(lnpt => (query.queryTime - lnpt) > MinTimeSinceLastRequest)
+  o-ovewwide def shouwdcontinue(quewy: pipewinequewy): stitch[boowean] = stitch.vawue {
+    quewy.featuwes.exists { f-featuwes =>
+      featuwes
+        .getowewse(wastnonpowwingtimefeatuwe, rawr x3 nyone)
+        .fowaww(wnpt => (quewy.quewytime - wnpt) > mintimesincewastwequest)
     }
   }
 }

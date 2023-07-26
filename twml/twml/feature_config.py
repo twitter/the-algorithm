@@ -1,54 +1,54 @@
 """
-Feature configuration for DeepBird jobs:
-- Which features to keep
-- Which features to blacklist
-- Which features are labels
-- Which feature is the weight
+featuwe configuwation fow deepbiwd j-jobs:
+- which f-featuwes to k-keep
+- which featuwes t-to bwackwist
+- w-which featuwes a-awe wabews
+- w-which featuwe is t-the weight
 """
 
-from twitter.deepbird.io.legacy import feature_config
+fwom twittew.deepbiwd.io.wegacy impowt featuwe_config
 
 
-class FeatureConfig(feature_config.FeatureConfig):
-  def get_feature_spec(self):
+cwass featuweconfig(featuwe_config.featuweconfig):
+  def g-get_featuwe_spec(sewf):
     """
-    Generates a serialization-friendly dict representing this FeatureConfig.
+    genewates a sewiawization-fwiendwy d-dict wepwesenting this f-featuweconfig. mya
     """
-    doc = super(FeatureConfig, self).get_feature_spec()
-    # Override the class in the spec.
-    doc["class"] = "twml.FeatureConfig"
-    return doc
+    doc = supew(featuweconfig, 🥺 sewf).get_featuwe_spec()
+    # o-ovewwide the cwass in the s-spec.
+    doc["cwass"] = "twmw.featuweconfig"
+    w-wetuwn doc
 
 
-class FeatureConfigBuilder(feature_config.FeatureConfigBuilder):
-  def build(self):
-    # Overwrite self.build() to return twml.FeatureConfig instead
+cwass featuweconfigbuiwdew(featuwe_config.featuweconfigbuiwdew):
+  def buiwd(sewf):
+    # ovewwwite sewf.buiwd() t-to wetuwn twmw.featuweconfig instead
     """
-    Builds and returns FeatureConfig object.
+    buiwds and wetuwns featuweconfig object. >_<
     """
 
     (
-      features,
-      tensor_types,
-      sparse_tensor_types,
-      feature_map,
-      feature_name_to_feature_parser,
-      feature_in_bq_name,
-    ) = self._build()
+      featuwes, >_<
+      tensow_types, (⑅˘꒳˘)
+      s-spawse_tensow_types, /(^•ω•^)
+      featuwe_map, rawr x3
+      f-featuwe_name_to_featuwe_pawsew, (U ﹏ U)
+      f-featuwe_in_bq_name, (U ﹏ U)
+    ) = s-sewf._buiwd()
 
-    return FeatureConfig(
-      features=features,
-      labels=self._labels,
-      weight=self._weight,
-      filters=self._filter_features,
-      tensor_types=tensor_types,
-      sparse_tensor_types=sparse_tensor_types,
-      feature_types=feature_map,
-      decode_mode=self._decode_mode,
-      legacy_sparse=self._legacy_sparse,
-      feature_name_to_feature_parser=self._feature_name_to_feature_parser,
-      feature_in_bq_name=self._feature_in_bq_name,
+    w-wetuwn featuweconfig(
+      featuwes=featuwes, (⑅˘꒳˘)
+      wabews=sewf._wabews, òωó
+      w-weight=sewf._weight, ʘwʘ
+      fiwtews=sewf._fiwtew_featuwes, /(^•ω•^)
+      tensow_types=tensow_types, ʘwʘ
+      s-spawse_tensow_types=spawse_tensow_types, σωσ
+      featuwe_types=featuwe_map, OwO
+      decode_mode=sewf._decode_mode, 😳😳😳
+      wegacy_spawse=sewf._wegacy_spawse, 😳😳😳
+      featuwe_name_to_featuwe_pawsew=sewf._featuwe_name_to_featuwe_pawsew, o.O
+      featuwe_in_bq_name=sewf._featuwe_in_bq_name, ( ͡o ω ͡o )
     )
 
 
-_name_to_id = feature_config._name_to_id
+_name_to_id = f-featuwe_config._name_to_id

@@ -1,7 +1,7 @@
-package com.twitter.search.earlybird.exception;
+package com.twittew.seawch.eawwybiwd.exception;
 
-public class EarlybirdRuntimeException extends RuntimeException {
-  public EarlybirdRuntimeException(Throwable cause) {
-    super(cause);
+pubwic cwass eawwybiwdwuntimeexception e-extends wuntimeexception {
+  p-pubwic eawwybiwdwuntimeexception(thwowabwe cause) {
+    s-supew(cause);
   }
 }

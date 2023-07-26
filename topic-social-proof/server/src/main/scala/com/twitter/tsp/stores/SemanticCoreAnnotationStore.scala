@@ -1,63 +1,63 @@
-package com.twitter.tsp.stores
+package com.twittew.tsp.stowes
 
-import com.twitter.escherbird.topicannotation.strato.thriftscala.TopicAnnotationValue
-import com.twitter.escherbird.topicannotation.strato.thriftscala.TopicAnnotationView
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.simclusters_v2.common.TopicId
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.Client
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.util.Future
+impowt com.twittew.eschewbiwd.topicannotation.stwato.thwiftscawa.topicannotationvawue
+i-impowt com.twittew.eschewbiwd.topicannotation.stwato.thwiftscawa.topicannotationview
+i-impowt c-com.twittew.fwigate.common.stowe.stwato.stwatofetchabwestowe
+i-impowt c-com.twittew.simcwustews_v2.common.topicid
+impowt c-com.twittew.simcwustews_v2.common.tweetid
+i-impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.stwato.cwient.cwient
+impowt com.twittew.stwato.thwift.scwoogeconvimpwicits._
+impowt com.twittew.utiw.futuwe
 
 /**
- * This is copied from `src/scala/com/twitter/topic_recos/stores/SemanticCoreAnnotationStore.scala`
- * Unfortunately their version assumes (incorrectly) that there is no View which causes warnings.
- * While these warnings may not cause any problems in practice, better safe than sorry.
+ * t-this is copied fwom `swc/scawa/com/twittew/topic_wecos/stowes/semanticcoweannotationstowe.scawa`
+ * unfowtunatewy t-theiw vewsion assumes (incowwectwy) t-that thewe is nyo view which causes wawnings. 😳
+ * whiwe these w-wawnings may nyot cause any p-pwobwems in pwactice, -.- b-bettew safe than sowwy. 🥺
  */
-object SemanticCoreAnnotationStore {
-  private val column = "semanticCore/topicannotation/topicAnnotation.Tweet"
+object semanticcoweannotationstowe {
+  pwivate vaw cowumn = "semanticcowe/topicannotation/topicannotation.tweet"
 
-  def getStratoStore(stratoClient: Client): ReadableStore[TweetId, TopicAnnotationValue] = {
-    StratoFetchableStore
-      .withView[TweetId, TopicAnnotationView, TopicAnnotationValue](
-        stratoClient,
-        column,
-        TopicAnnotationView())
+  d-def getstwatostowe(stwatocwient: cwient): weadabwestowe[tweetid, o.O topicannotationvawue] = {
+    stwatofetchabwestowe
+      .withview[tweetid, /(^•ω•^) t-topicannotationview, nyaa~~ topicannotationvawue](
+        s-stwatocwient, nyaa~~
+        c-cowumn, :3
+        t-topicannotationview())
   }
 
-  case class TopicAnnotation(
-    topicId: TopicId,
-    ignoreSimClustersFilter: Boolean,
-    modelVersionId: Long)
+  c-case cwass topicannotation(
+    topicid: t-topicid, 😳😳😳
+    ignowesimcwustewsfiwtew: boowean, (˘ω˘)
+    m-modewvewsionid: wong)
 }
 
 /**
- * Given a tweet Id, return the list of annotations defined by the TSIG team.
+ * given a tweet id, ^^ wetuwn the wist of annotations defined b-by the tsig team. :3
  */
-case class SemanticCoreAnnotationStore(stratoStore: ReadableStore[TweetId, TopicAnnotationValue])
-    extends ReadableStore[TweetId, Seq[SemanticCoreAnnotationStore.TopicAnnotation]] {
-  import SemanticCoreAnnotationStore._
+case cwass s-semanticcoweannotationstowe(stwatostowe: w-weadabwestowe[tweetid, -.- t-topicannotationvawue])
+    extends weadabwestowe[tweetid, seq[semanticcoweannotationstowe.topicannotation]] {
+  i-impowt semanticcoweannotationstowe._
 
-  override def multiGet[K1 <: TweetId](
-    ks: Set[K1]
-  ): Map[K1, Future[Option[Seq[TopicAnnotation]]]] = {
-    stratoStore
-      .multiGet(ks)
-      .mapValues(_.map(_.map { topicAnnotationValue =>
-        topicAnnotationValue.annotationsPerModel match {
-          case Some(annotationWithVersions) =>
-            annotationWithVersions.flatMap { annotations =>
-              annotations.annotations.map { annotation =>
-                TopicAnnotation(
-                  annotation.entityId,
-                  annotation.ignoreQualityFilter.getOrElse(false),
-                  annotations.modelVersionId
+  o-ovewwide def muwtiget[k1 <: t-tweetid](
+    k-ks: set[k1]
+  ): map[k1, 😳 futuwe[option[seq[topicannotation]]]] = {
+    s-stwatostowe
+      .muwtiget(ks)
+      .mapvawues(_.map(_.map { topicannotationvawue =>
+        t-topicannotationvawue.annotationspewmodew match {
+          case some(annotationwithvewsions) =>
+            a-annotationwithvewsions.fwatmap { annotations =>
+              a-annotations.annotations.map { annotation =>
+                t-topicannotation(
+                  a-annotation.entityid,
+                  annotation.ignowequawityfiwtew.getowewse(fawse), mya
+                  annotations.modewvewsionid
                 )
               }
             }
           case _ =>
-            Nil
+            nyiw
         }
       }))
   }

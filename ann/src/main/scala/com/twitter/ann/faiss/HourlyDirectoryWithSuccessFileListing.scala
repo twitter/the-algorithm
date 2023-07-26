@@ -1,63 +1,63 @@
-package com.twitter.ann.faiss
+package com.twittew.ann.faiss
 
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.search.common.file.FileUtils
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Time
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
-import java.util.Locale
+impowt c-com.twittew.convewsions.duwationops.wichduwationfwomint
+i-impowt c-com.twittew.seawch.common.fiwe.abstwactfiwe
+i-impowt com.twittew.seawch.common.fiwe.fiweutiws
+i-impowt com.twittew.utiw.wetuwn
+impowt c-com.twittew.utiw.thwow
+i-impowt c-com.twittew.utiw.time
+impowt com.twittew.utiw.twy
+impowt com.twittew.utiw.wogging.wogging
+impowt j-java.utiw.wocawe
 
-object HourlyDirectoryWithSuccessFileListing extends Logging {
-  private val SUCCESS_FILE_NAME = "_SUCCESS"
+object houwwydiwectowywithsuccessfiwewisting extends wogging {
+  p-pwivate vaw success_fiwe_name = "_success"
 
-  def listHourlyIndexDirectories(
-    root: AbstractFile,
-    startingFrom: Time,
-    count: Int,
-    lookbackInterval: Int
-  ): Seq[AbstractFile] = listingStep(root, startingFrom, count, lookbackInterval)
+  d-def wisthouwwyindexdiwectowies(
+    woot: abstwactfiwe, ^^
+    stawtingfwom: t-time, 😳😳😳
+    count: int, mya
+    wookbackintewvaw: i-int
+  ): s-seq[abstwactfiwe] = wistingstep(woot, 😳 stawtingfwom, -.- count, wookbackintewvaw)
 
-  private def listingStep(
-    root: AbstractFile,
-    startingFrom: Time,
-    remainingDirectoriesToFind: Int,
-    remainingAttempts: Int
-  ): List[AbstractFile] = {
-    if (remainingDirectoriesToFind == 0 || remainingAttempts == 0) {
-      return List.empty
+  p-pwivate def wistingstep(
+    woot: abstwactfiwe, 🥺
+    stawtingfwom: time, o.O
+    w-wemainingdiwectowiestofind: int, /(^•ω•^)
+    w-wemainingattempts: i-int
+  ): w-wist[abstwactfiwe] = {
+    i-if (wemainingdiwectowiestofind == 0 || wemainingattempts == 0) {
+      wetuwn wist.empty
     }
 
-    val head = getSuccessfulDirectoryForDate(root, startingFrom)
+    v-vaw head = getsuccessfuwdiwectowyfowdate(woot, nyaa~~ stawtingfwom)
 
-    val previousHour = startingFrom - 1.hour
+    vaw pwevioushouw = s-stawtingfwom - 1.houw
 
     head match {
-      case Throw(e) =>
-        listingStep(root, previousHour, remainingDirectoriesToFind, remainingAttempts - 1)
-      case Return(directory) =>
-        directory ::
-          listingStep(root, previousHour, remainingDirectoriesToFind - 1, remainingAttempts - 1)
+      case thwow(e) =>
+        wistingstep(woot, nyaa~~ pwevioushouw, :3 wemainingdiwectowiestofind, 😳😳😳 wemainingattempts - 1)
+      c-case wetuwn(diwectowy) =>
+        diwectowy ::
+          w-wistingstep(woot, (˘ω˘) p-pwevioushouw, ^^ w-wemainingdiwectowiestofind - 1, :3 wemainingattempts - 1)
     }
   }
 
-  private def getSuccessfulDirectoryForDate(
-    root: AbstractFile,
-    date: Time
-  ): Try[AbstractFile] = {
-    val folder = root.getPath + "/" + date.format("yyyy/MM/dd/HH", Locale.ROOT)
-    val successPath =
-      folder + "/" + SUCCESS_FILE_NAME
+  pwivate def getsuccessfuwdiwectowyfowdate(
+    w-woot: abstwactfiwe, -.-
+    d-date: time
+  ): twy[abstwactfiwe] = {
+    v-vaw fowdew = w-woot.getpath + "/" + date.fowmat("yyyy/mm/dd/hh", w-wocawe.woot)
+    vaw successpath =
+      f-fowdew + "/" + success_fiwe_name
 
-    debug(s"Checking ${successPath}")
+    debug(s"checking ${successpath}")
 
-    Try(FileUtils.getFileHandle(successPath)).flatMap { file =>
-      if (file.canRead) {
-        Try(FileUtils.getFileHandle(folder))
-      } else {
-        Throw(new IllegalArgumentException(s"Found ${file.toString} but can't read it"))
+    t-twy(fiweutiws.getfiwehandwe(successpath)).fwatmap { fiwe =>
+      i-if (fiwe.canwead) {
+        twy(fiweutiws.getfiwehandwe(fowdew))
+      } e-ewse {
+        t-thwow(new iwwegawawgumentexception(s"found ${fiwe.tostwing} but can't wead it"))
       }
     }
   }

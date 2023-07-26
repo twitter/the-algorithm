@@ -1,659 +1,659 @@
-package com.twitter.simclusters_v2.scio.bq_generation
-package simclusters_index_generation
+package com.twittew.simcwustews_v2.scio.bq_genewation
+package simcwustews_index_genewation
 
-import com.google.api.services.bigquery.model.TimePartitioning
-import com.spotify.scio.ScioContext
-import com.spotify.scio.coders.Coder
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.fs.multiformat.PathLayout
-import com.twitter.beam.job.DateRangeOptions
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scio_internal.coders.ThriftStructLazyBinaryScroogeCoder
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.simclusters_v2.hdfs_sources.AdsFavBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.AdsFavClickBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.FavBasedEvergreenContentSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.FavBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.FavBasedVideoSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.ReplyBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.RetweetBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.VideoViewBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.PushOpenBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.buildActionTypesEngagementIndicatorString
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getInterestedIn2020SQL
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQTableDetails
-import com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.Config.AdsClickEngagementTypeIds
-import com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.Config.AdsFavEngagementTypeIds
-import com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.EngagementEventBasedClusterToTweetIndexFromBQ.getTopKTweetsForClusterKeyBQ
-import com.twitter.simclusters_v2.thriftscala.ClusterIdToTopKTweetsWithScores
-import com.twitter.simclusters_v2.thriftscala.FullClusterId
-import com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores
-import com.twitter.tcdc.bqblaster.beam.syntax._
-import com.twitter.tcdc.bqblaster.core.avro.TypedProjection
-import com.twitter.tcdc.bqblaster.core.transform.RootTransform
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import java.time.Instant
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
-import org.joda.time.DateTime
+i-impowt c-com.googwe.api.sewvices.bigquewy.modew.timepawtitioning
+i-impowt c-com.spotify.scio.sciocontext
+i-impowt c-com.spotify.scio.codews.codew
+i-impowt com.twittew.beam.io.daw.daw
+i-impowt com.twittew.beam.io.fs.muwtifowmat.pathwayout
+impowt com.twittew.beam.job.datewangeoptions
+impowt com.twittew.convewsions.duwationops.wichduwationfwomint
+impowt com.twittew.daw.cwient.dataset.keyvawdawdataset
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.scio_intewnaw.codews.thwiftstwuctwazybinawyscwoogecodew
+impowt c-com.twittew.scio_intewnaw.job.sciobeamjob
+impowt com.twittew.scwooge.thwiftstwuct
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.adsfavbasedsimcwustewscwustewtotweetindexscawadataset
+impowt com.twittew.simcwustews_v2.hdfs_souwces.adsfavcwickbasedsimcwustewscwustewtotweetindexscawadataset
+impowt com.twittew.simcwustews_v2.hdfs_souwces.favbasedevewgweencontentsimcwustewscwustewtotweetindexscawadataset
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.favbasedsimcwustewscwustewtotweetindexscawadataset
+i-impowt c-com.twittew.simcwustews_v2.hdfs_souwces.favbasedvideosimcwustewscwustewtotweetindexscawadataset
+impowt com.twittew.simcwustews_v2.hdfs_souwces.wepwybasedsimcwustewscwustewtotweetindexscawadataset
+impowt com.twittew.simcwustews_v2.hdfs_souwces.wetweetbasedsimcwustewscwustewtotweetindexscawadataset
+impowt com.twittew.simcwustews_v2.hdfs_souwces.videoviewbasedsimcwustewscwustewtotweetindexscawadataset
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.pushopenbasedsimcwustewscwustewtotweetindexscawadataset
+impowt com.twittew.simcwustews_v2.scio.bq_genewation.common.bqgenewationutiw.buiwdactiontypesengagementindicatowstwing
+impowt com.twittew.simcwustews_v2.scio.bq_genewation.common.bqgenewationutiw.getintewestedin2020sqw
+impowt com.twittew.simcwustews_v2.scio.bq_genewation.common.bqtabwedetaiws
+i-impowt com.twittew.simcwustews_v2.scio.bq_genewation.simcwustews_index_genewation.config.adscwickengagementtypeids
+impowt com.twittew.simcwustews_v2.scio.bq_genewation.simcwustews_index_genewation.config.adsfavengagementtypeids
+i-impowt com.twittew.simcwustews_v2.scio.bq_genewation.simcwustews_index_genewation.engagementeventbasedcwustewtotweetindexfwombq.gettopktweetsfowcwustewkeybq
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.cwustewidtotopktweetswithscowes
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.fuwwcwustewid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.topktweetswithscowes
+impowt com.twittew.tcdc.bqbwastew.beam.syntax._
+impowt c-com.twittew.tcdc.bqbwastew.cowe.avwo.typedpwojection
+impowt com.twittew.tcdc.bqbwastew.cowe.twansfowm.woottwansfowm
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.actiontype
+impowt java.time.instant
+impowt owg.apache.beam.sdk.io.gcp.bigquewy.bigquewyio
+impowt owg.joda.time.datetime
 
-trait EngagementEventBasedClusterToTweetIndexGenerationJob extends ScioBeamJob[DateRangeOptions] {
-  // Configs to set for different type of embeddings and jobs
-  val isAdhoc: Boolean
-  val getConsumerEmbeddingsSQLFunc: (DateTime, Int) => String
-  val outputTable: BQTableDetails
-  val keyValDatasetOutputPath: String
-  val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+t-twait engagementeventbasedcwustewtotweetindexgenewationjob extends sciobeamjob[datewangeoptions] {
+  // configs t-to set fow d-diffewent type o-of embeddings and jobs
+  vaw isadhoc: boowean
+  vaw getconsumewembeddingssqwfunc: (datetime, >_< i-int) => s-stwing
+  vaw outputtabwe: b-bqtabwedetaiws
+  v-vaw keyvawdatasetoutputpath: stwing
+  v-vaw cwustewtotweetindexsnapshotdataset: keyvawdawdataset[
+    keyvaw[fuwwcwustewid, (U ﹏ U) t-topktweetswithscowes]
   ]
-  // Base configs
-  val projectId = "twttr-recos-ml-prod"
-  val environment: DAL.Env = if (isAdhoc) DAL.Environment.Dev else DAL.Environment.Prod
+  // base configs
+  vaw pwojectid = "twttw-wecos-mw-pwod"
+  v-vaw enviwonment: daw.env = if (isadhoc) d-daw.enviwonment.dev ewse d-daw.enviwonment.pwod
 
-  // Point to different user tweet interaction table generation sql
-  // UUA-supported events: Config.unifiedUserTweetActionPairGenerationSQLPath
-  val userTweetEngagementEventPairSqlPath: String
-  lazy val userTweetEngagementEventPairTemplateVariable: Map[String, String] = Map.empty
+  // p-point to diffewent usew tweet intewaction tabwe genewation sqw
+  // uua-suppowted events: config.unifiedusewtweetactionpaiwgenewationsqwpath
+  v-vaw u-usewtweetengagementeventpaiwsqwpath: stwing
+  wazy v-vaw usewtweetengagementeventpaiwtempwatevawiabwe: m-map[stwing, rawr s-stwing] = map.empty
 
-  // Enable Video-only filters and health filters (for VideoViewBased embeddings)
-  val enableHealthAndVideoFilters: Boolean = Config.enableHealthAndVideoFilters
+  // enabwe video-onwy fiwtews and heawth f-fiwtews (fow videoviewbased embeddings)
+  vaw enabweheawthandvideofiwtews: boowean = config.enabweheawthandvideofiwtews
 
-  val enableFavClusterTopKTweetsIntersection: Boolean =
-    Config.enableIntersectionWithFavBasedClusterTopKTweetsIndex
+  v-vaw enabwefavcwustewtopktweetsintewsection: boowean =
+    c-config.enabweintewsectionwithfavbasedcwustewtopktweetsindex
 
-  // Min fav/interaction threshold
-  val minInteractionCount: Int = Config.minInteractionCount
-  val minFavCount: Int = Config.minFavCount
+  // m-min fav/intewaction t-thweshowd
+  vaw minintewactioncount: i-int = config.minintewactioncount
+  v-vaw minfavcount: i-int = config.minfavcount
 
-  // Tweet embeddings parameters
-  val tweetEmbeddingsLength: Int = Config.tweetEmbeddingsLength
-  val tweetEmbeddingsHalfLife: Int = Config.tweetEmbeddingsHalfLife
+  // t-tweet embeddings pawametews
+  vaw tweetembeddingswength: i-int = c-config.tweetembeddingswength
+  v-vaw tweetembeddingshawfwife: i-int = c-config.tweetembeddingshawfwife
 
-  // Clusters-to-tweet index parameters
-  val clusterTopKTweets: Int = Config.clusterTopKTweets
-  val maxTweetAgeHours: Int = Config.maxTweetAgeHours
-  val minEngagementPerCluster: Int = Config.minEngagementPerCluster
+  // cwustews-to-tweet index pawametews
+  vaw c-cwustewtopktweets: int = config.cwustewtopktweets
+  vaw maxtweetagehouws: int = config.maxtweetagehouws
+  vaw m-minengagementpewcwustew: int = config.minengagementpewcwustew
 
-  override implicit def scroogeCoder[T <: ThriftStruct: Manifest]: Coder[T] =
-    ThriftStructLazyBinaryScroogeCoder.scroogeCoder
+  ovewwide impwicit def scwoogecodew[t <: t-thwiftstwuct: m-manifest]: c-codew[t] =
+    thwiftstwuctwazybinawyscwoogecodew.scwoogecodew
 
-  override def configurePipeline(sc: ScioContext, opts: DateRangeOptions): Unit = {
-    // The time when the job is scheduled
-    val queryTimestamp = opts.interval.getEnd
+  o-ovewwide def configuwepipewine(sc: s-sciocontext, o-opts: datewangeoptions): unit = {
+    // the time when the job is scheduwed
+    vaw quewytimestamp = o-opts.intewvaw.getend
 
-    // Read consumer embeddings SQL
-    val consumerEmbeddingsSQL = getConsumerEmbeddingsSQLFunc(queryTimestamp, 21)
+    // wead consumew e-embeddings sqw
+    vaw consumewembeddingssqw = g-getconsumewembeddingssqwfunc(quewytimestamp, (U ᵕ U❁) 21)
 
-    // Generate SimClusters cluster-to-tweet index via BQ
-    val topKtweetsForClusterKey =
-      getTopKTweetsForClusterKeyBQ(
-        sc,
-        queryTimestamp,
-        maxTweetAgeHours,
-        consumerEmbeddingsSQL,
-        userTweetEngagementEventPairSqlPath,
-        userTweetEngagementEventPairTemplateVariable,
-        enableHealthAndVideoFilters,
-        enableFavClusterTopKTweetsIntersection,
-        minInteractionCount,
-        minFavCount,
-        tweetEmbeddingsLength,
-        tweetEmbeddingsHalfLife,
-        minEngagementPerCluster,
-        clusterTopKTweets
+    // g-genewate simcwustews cwustew-to-tweet i-index via bq
+    v-vaw topktweetsfowcwustewkey =
+      gettopktweetsfowcwustewkeybq(
+        s-sc, (ˆ ﻌ ˆ)♡
+        q-quewytimestamp, >_<
+        maxtweetagehouws, ^^;;
+        consumewembeddingssqw,
+        usewtweetengagementeventpaiwsqwpath, ʘwʘ
+        usewtweetengagementeventpaiwtempwatevawiabwe, 😳😳😳
+        e-enabweheawthandvideofiwtews, UwU
+        e-enabwefavcwustewtopktweetsintewsection, OwO
+        m-minintewactioncount, :3
+        minfavcount,
+        tweetembeddingswength, -.-
+        t-tweetembeddingshawfwife, 🥺
+        m-minengagementpewcwustew, -.-
+        cwustewtopktweets
       )
 
-    // Setup BQ writer
-    val ingestionTime = opts.getDate().value.getEnd.toDate
-    val bqFieldsTransform = RootTransform
-      .Builder()
-      .withPrependedFields("dateHour" -> TypedProjection.fromConstant(ingestionTime))
-    val timePartitioning = new TimePartitioning()
-      .setType("HOUR").setField("dateHour").setExpirationMs(3.days.inMilliseconds)
-    val bqWriter = BigQueryIO
-      .write[ClusterIdToTopKTweetsWithScores]
-      .to(outputTable.toString)
-      .withExtendedErrorInfo()
-      .withTimePartitioning(timePartitioning)
-      .withLoadJobProjectId(projectId)
-      .withThriftSupport(bqFieldsTransform.build(), AvroConverter.Legacy)
-      .withCreateDisposition(BigQueryIO.Write.CreateDisposition.CREATE_IF_NEEDED)
-      .withWriteDisposition(BigQueryIO.Write.WriteDisposition.WRITE_APPEND)
+    // s-setup bq wwitew
+    vaw ingestiontime = opts.getdate().vawue.getend.todate
+    vaw bqfiewdstwansfowm = woottwansfowm
+      .buiwdew()
+      .withpwependedfiewds("datehouw" -> typedpwojection.fwomconstant(ingestiontime))
+    v-vaw timepawtitioning = n-nyew timepawtitioning()
+      .settype("houw").setfiewd("datehouw").setexpiwationms(3.days.inmiwwiseconds)
+    vaw b-bqwwitew = bigquewyio
+      .wwite[cwustewidtotopktweetswithscowes]
+      .to(outputtabwe.tostwing)
+      .withextendedewwowinfo()
+      .withtimepawtitioning(timepawtitioning)
+      .withwoadjobpwojectid(pwojectid)
+      .withthwiftsuppowt(bqfiewdstwansfowm.buiwd(), -.- a-avwoconvewtew.wegacy)
+      .withcweatedisposition(bigquewyio.wwite.cweatedisposition.cweate_if_needed)
+      .withwwitedisposition(bigquewyio.wwite.wwitedisposition.wwite_append)
 
-    // Save SimClusters index to a BQ table
-    topKtweetsForClusterKey
-      .map { clusterIdToTopKTweets =>
+    // save simcwustews index to a bq tabwe
+    t-topktweetsfowcwustewkey
+      .map { cwustewidtotopktweets =>
         {
-          ClusterIdToTopKTweetsWithScores(
-            clusterId = clusterIdToTopKTweets.clusterId,
-            topKTweetsWithScores = clusterIdToTopKTweets.topKTweetsWithScores
+          cwustewidtotopktweetswithscowes(
+            cwustewid = cwustewidtotopktweets.cwustewid, (U ﹏ U)
+            topktweetswithscowes = c-cwustewidtotopktweets.topktweetswithscowes
           )
         }
       }
-      .saveAsCustomOutput(s"WriteToBQTable - ${outputTable}", bqWriter)
+      .saveascustomoutput(s"wwitetobqtabwe - ${outputtabwe}", rawr bqwwitew)
 
-    // Save SimClusters index as a KeyValSnapshotDataset
-    topKtweetsForClusterKey
-      .map { clusterIdToTopKTweets =>
-        KeyVal(clusterIdToTopKTweets.clusterId, clusterIdToTopKTweets.topKTweetsWithScores)
-      }.saveAsCustomOutput(
-        name = s"WriteClusterToKeyIndexToKeyValDataset at ${keyValDatasetOutputPath}",
-        DAL.writeVersionedKeyVal(
-          clusterToTweetIndexSnapshotDataset,
-          PathLayout.VersionedPath(prefix =
-            ((if (!isAdhoc)
-                Config.RootMHPath
-              else
-                Config.AdhocRootPath)
-              + keyValDatasetOutputPath)),
-          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
-          environmentOverride = environment,
+    // save simcwustews i-index a-as a keyvawsnapshotdataset
+    topktweetsfowcwustewkey
+      .map { cwustewidtotopktweets =>
+        keyvaw(cwustewidtotopktweets.cwustewid, mya c-cwustewidtotopktweets.topktweetswithscowes)
+      }.saveascustomoutput(
+        n-nyame = s"wwitecwustewtokeyindextokeyvawdataset at ${keyvawdatasetoutputpath}", ( ͡o ω ͡o )
+        daw.wwitevewsionedkeyvaw(
+          c-cwustewtotweetindexsnapshotdataset, /(^•ω•^)
+          pathwayout.vewsionedpath(pwefix =
+            ((if (!isadhoc)
+                c-config.wootmhpath
+              ewse
+                config.adhocwootpath)
+              + keyvawdatasetoutputpath)), >_<
+          i-instant = instant.ofepochmiwwi(opts.intewvaw.getendmiwwis - 1w), (✿oωo)
+          e-enviwonmentovewwide = e-enviwonment, 😳😳😳
         )
       )
   }
 }
 
-// This abstract class is used to define parameters specific to UUA events.
-abstract class UUABasedClusterToTweetIndexGenerationJob
-    extends EngagementEventBasedClusterToTweetIndexGenerationJob {
-  // UUA Action types and column names
-  val contributingActionTypes: Seq[String]
-  val contributingActionReferenceTweetIdColumn: String = Config.actionTweetIdColumn
-  val undoActionTypes: Seq[String]
-  // Default undo tweet id is same as the actionTweetId (e.g. for favs these are the same tweet id)
-  val undoActionReferenceTweetIdColumn: String = Config.actionTweetIdColumn
+// this abstwact cwass i-is used to define pawametews s-specific to uua e-events. (ꈍᴗꈍ)
+abstwact c-cwass uuabasedcwustewtotweetindexgenewationjob
+    extends engagementeventbasedcwustewtotweetindexgenewationjob {
+  // u-uua action t-types and cowumn nyames
+  vaw contwibutingactiontypes: s-seq[stwing]
+  v-vaw contwibutingactionwefewencetweetidcowumn: s-stwing = config.actiontweetidcowumn
+  vaw u-undoactiontypes: seq[stwing]
+  // d-defauwt undo t-tweet id is same as the actiontweetid (e.g. 🥺 fow favs these awe the s-same tweet id)
+  v-vaw undoactionwefewencetweetidcowumn: s-stwing = c-config.actiontweetidcowumn
 
-  // Get the string that represents the list of undo event ids
-  lazy val undoActionTypesStr: String = {
-    // Populate the action type list with a placeholder action if its empty
-    val actionTypes =
-      if (undoActionTypes.nonEmpty) undoActionTypes
-      else Seq(Config.PlaceholderActionType)
-    convertActionTypesSeqToString(actionTypes)
+  // get the stwing t-that wepwesents the wist of undo event ids
+  wazy vaw undoactiontypesstw: stwing = {
+    // popuwate the action t-type wist with a pwacehowdew a-action if its empty
+    vaw actiontypes =
+      i-if (undoactiontypes.nonempty) undoactiontypes
+      e-ewse seq(config.pwacehowdewactiontype)
+    convewtactiontypesseqtostwing(actiontypes)
   }
 
-  override lazy val userTweetEngagementEventPairTemplateVariable: Map[String, String] = {
-    Map(
-      "CONTRIBUTING_ACTION_TYPES_STR" -> convertActionTypesSeqToString(contributingActionTypes),
-      "CONTRIBUTING_ACTION_TWEET_ID_COLUMN" -> contributingActionReferenceTweetIdColumn,
-      "UNDO_ACTION_TYPES_STR" -> undoActionTypesStr,
-      "UNDO_ACTION_TWEET_ID_COLUMN" -> undoActionReferenceTweetIdColumn
+  ovewwide wazy vaw u-usewtweetengagementeventpaiwtempwatevawiabwe: m-map[stwing, mya stwing] = {
+    m-map(
+      "contwibuting_action_types_stw" -> c-convewtactiontypesseqtostwing(contwibutingactiontypes), (ˆ ﻌ ˆ)♡
+      "contwibuting_action_tweet_id_cowumn" -> c-contwibutingactionwefewencetweetidcowumn, (⑅˘꒳˘)
+      "undo_action_types_stw" -> undoactiontypesstw, òωó
+      "undo_action_tweet_id_cowumn" -> undoactionwefewencetweetidcowumn
     )
   }
 
   /***
-   *  Convert a list of actions to a string that could be easily used in SQLs
-   *  Example input: Seq("ServerTweetFav", "ClientTweetFav")
-   *          output: "ServerTweetFav","ClientTweetFav"
-   *  SQL use case: SELECT * FROM table WHERE actionType IN ("ServerTweetFav","ClientTweetFav")
+   *  convewt a wist of actions to a stwing that couwd be easiwy used i-in sqws
+   *  exampwe i-input: seq("sewvewtweetfav", o.O "cwienttweetfav")
+   *          o-output: "sewvewtweetfav","cwienttweetfav"
+   *  sqw use case: s-sewect * fwom tabwe whewe actiontype in ("sewvewtweetfav","cwienttweetfav")
    */
-  private def convertActionTypesSeqToString(actionTypes: Seq[String]): String = {
-    actionTypes.map(action => f"""\"${action}\"""").mkString(",")
+  pwivate def c-convewtactiontypesseqtostwing(actiontypes: s-seq[stwing]): stwing = {
+    a-actiontypes.map(action => f"""\"${action}\"""").mkstwing(",")
   }
 }
 
-abstract class AdsClusterToTweetIndexGenerationJob
-    extends EngagementEventBasedClusterToTweetIndexGenerationJob {
-  // Ads contributing action types - fav, click, etc
-  val contributingActionTypes: Seq[Int]
+abstwact cwass adscwustewtotweetindexgenewationjob
+    e-extends engagementeventbasedcwustewtotweetindexgenewationjob {
+  // a-ads contwibuting action t-types - fav, XD cwick, (˘ω˘) e-etc
+  vaw contwibutingactiontypes: seq[int]
 
-  override lazy val userTweetEngagementEventPairTemplateVariable: Map[String, String] = {
-    Map(
-      "CONTRIBUTING_ACTION_TYPES_STR" -> convertActionTypesSeqToString(contributingActionTypes)
+  ovewwide wazy vaw usewtweetengagementeventpaiwtempwatevawiabwe: m-map[stwing, (ꈍᴗꈍ) s-stwing] = {
+    m-map(
+      "contwibuting_action_types_stw" -> convewtactiontypesseqtostwing(contwibutingactiontypes)
     )
   }
-  private def convertActionTypesSeqToString(actionTypes: Seq[Int]): String = {
-    actionTypes.map(action => f"""${action}""").mkString(",")
+  p-pwivate def convewtactiontypesseqtostwing(actiontypes: s-seq[int]): stwing = {
+    a-actiontypes.map(action => f-f"""${action}""").mkstwing(",")
   }
 }
 
-object FavBasedClusterToTweetIndexGenerationAdhocJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.unifiedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetFav.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnfav.name)
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 8
-  override val outputTable =
-    BQTableDetails(
-      "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_fav_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.FavBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+object favbasedcwustewtotweetindexgenewationadhocjob
+    e-extends u-uuabasedcwustewtotweetindexgenewationjob {
+  ovewwide vaw isadhoc = t-twue
+  ovewwide vaw getconsumewembeddingssqwfunc = getintewestedin2020sqw
+  o-ovewwide vaw usewtweetengagementeventpaiwsqwpath: s-stwing =
+    c-config.unifiedusewtweetactionpaiwgenewationsqwpath
+  ovewwide v-vaw contwibutingactiontypes: seq[stwing] = seq(actiontype.sewvewtweetfav.name)
+  ovewwide vaw u-undoactiontypes: s-seq[stwing] = seq(actiontype.sewvewtweetunfav.name)
+  o-ovewwide vaw minintewactioncount: int = 8
+  ovewwide vaw m-minfavcount: int = 8
+  ovewwide vaw outputtabwe =
+    b-bqtabwedetaiws(
+      "twttw-wecos-mw-pwod", >w<
+      "simcwustews",
+      "simcwustews_fav_based_cwustew_to_tweet_index")
+  o-ovewwide vaw keyvawdatasetoutputpath = config.favbasedcwustewtotweetindexoutputpath
+  o-ovewwide vaw cwustewtotweetindexsnapshotdataset: k-keyvawdawdataset[
+    k-keyvaw[fuwwcwustewid, XD topktweetswithscowes]
   ] =
-    FavBasedSimclustersClusterToTweetIndexScalaDataset
+    favbasedsimcwustewscwustewtotweetindexscawadataset
 }
 
-object FavBasedClusterToTweetIndexGenerationBatchJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.unifiedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetFav.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnfav.name)
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 8
-  override val outputTable =
-    BQTableDetails(
-      "twttr-bq-cassowary-prod",
-      "user",
-      "simclusters_fav_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.FavBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+o-object favbasedcwustewtotweetindexgenewationbatchjob
+    extends uuabasedcwustewtotweetindexgenewationjob {
+  o-ovewwide v-vaw isadhoc = fawse
+  ovewwide vaw g-getconsumewembeddingssqwfunc = getintewestedin2020sqw
+  o-ovewwide v-vaw usewtweetengagementeventpaiwsqwpath: s-stwing =
+    config.unifiedusewtweetactionpaiwgenewationsqwpath
+  ovewwide vaw contwibutingactiontypes: seq[stwing] = seq(actiontype.sewvewtweetfav.name)
+  ovewwide vaw undoactiontypes: seq[stwing] = seq(actiontype.sewvewtweetunfav.name)
+  ovewwide vaw minintewactioncount: int = 8
+  ovewwide vaw minfavcount: i-int = 8
+  ovewwide v-vaw outputtabwe =
+    bqtabwedetaiws(
+      "twttw-bq-cassowawy-pwod", -.-
+      "usew", ^^;;
+      "simcwustews_fav_based_cwustew_to_tweet_index")
+  ovewwide vaw k-keyvawdatasetoutputpath = c-config.favbasedcwustewtotweetindexoutputpath
+  o-ovewwide vaw cwustewtotweetindexsnapshotdataset: k-keyvawdawdataset[
+    keyvaw[fuwwcwustewid, t-topktweetswithscowes]
   ] =
-    FavBasedSimclustersClusterToTweetIndexScalaDataset
+    f-favbasedsimcwustewscwustewtotweetindexscawadataset
 }
 
-object VideoViewBasedClusterToTweetIndexGenerationAdhocJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.unifiedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(
-    ActionType.ClientTweetVideoPlayback50.name)
-  override val undoActionTypes: Seq[String] = Seq.empty
-  override val enableHealthAndVideoFilters: Boolean = true
-  override val outputTable =
-    BQTableDetails(
-      "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_video_view_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.VideoViewBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+object v-videoviewbasedcwustewtotweetindexgenewationadhocjob
+    extends u-uuabasedcwustewtotweetindexgenewationjob {
+  o-ovewwide vaw isadhoc = twue
+  ovewwide vaw getconsumewembeddingssqwfunc = g-getintewestedin2020sqw
+  o-ovewwide vaw u-usewtweetengagementeventpaiwsqwpath: s-stwing =
+    c-config.unifiedusewtweetactionpaiwgenewationsqwpath
+  o-ovewwide v-vaw contwibutingactiontypes: s-seq[stwing] = s-seq(
+    actiontype.cwienttweetvideopwayback50.name)
+  o-ovewwide vaw undoactiontypes: s-seq[stwing] = seq.empty
+  o-ovewwide vaw enabweheawthandvideofiwtews: b-boowean = twue
+  ovewwide vaw outputtabwe =
+    b-bqtabwedetaiws(
+      "twttw-wecos-mw-pwod", XD
+      "simcwustews", :3
+      "simcwustews_video_view_based_cwustew_to_tweet_index")
+  ovewwide vaw k-keyvawdatasetoutputpath = c-config.videoviewbasedcwustewtotweetindexoutputpath
+  o-ovewwide vaw cwustewtotweetindexsnapshotdataset: keyvawdawdataset[
+    k-keyvaw[fuwwcwustewid, σωσ topktweetswithscowes]
   ] =
-    VideoViewBasedSimclustersClusterToTweetIndexScalaDataset
+    v-videoviewbasedsimcwustewscwustewtotweetindexscawadataset
 }
 
-object VideoViewBasedClusterToTweetIndexGenerationBatchJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.unifiedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(
-    ActionType.ClientTweetVideoPlayback50.name)
-  override val undoActionTypes: Seq[String] = Seq.empty
-  override val enableHealthAndVideoFilters: Boolean = true
-  override val outputTable =
-    BQTableDetails(
-      "twttr-bq-cassowary-prod",
-      "user",
-      "simclusters_video_view_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.VideoViewBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+object v-videoviewbasedcwustewtotweetindexgenewationbatchjob
+    extends u-uuabasedcwustewtotweetindexgenewationjob {
+  ovewwide vaw isadhoc = fawse
+  ovewwide vaw getconsumewembeddingssqwfunc = g-getintewestedin2020sqw
+  ovewwide vaw usewtweetengagementeventpaiwsqwpath: s-stwing =
+    c-config.unifiedusewtweetactionpaiwgenewationsqwpath
+  ovewwide vaw contwibutingactiontypes: seq[stwing] = s-seq(
+    actiontype.cwienttweetvideopwayback50.name)
+  o-ovewwide vaw undoactiontypes: seq[stwing] = s-seq.empty
+  o-ovewwide vaw enabweheawthandvideofiwtews: boowean = twue
+  o-ovewwide vaw o-outputtabwe =
+    bqtabwedetaiws(
+      "twttw-bq-cassowawy-pwod", XD
+      "usew", :3
+      "simcwustews_video_view_based_cwustew_to_tweet_index")
+  o-ovewwide vaw keyvawdatasetoutputpath = config.videoviewbasedcwustewtotweetindexoutputpath
+  ovewwide v-vaw cwustewtotweetindexsnapshotdataset: keyvawdawdataset[
+    k-keyvaw[fuwwcwustewid, t-topktweetswithscowes]
   ] =
-    VideoViewBasedSimclustersClusterToTweetIndexScalaDataset
+    v-videoviewbasedsimcwustewscwustewtotweetindexscawadataset
 }
 
-object RetweetBasedClusterToTweetIndexGenerationAdhocJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.unifiedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetRetweet.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnretweet.name)
-  override val undoActionReferenceTweetIdColumn: String = Config.retweetTweetIdColumn
-  override val outputTable =
-    BQTableDetails(
-      "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_retweet_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.RetweetBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+object wetweetbasedcwustewtotweetindexgenewationadhocjob
+    e-extends uuabasedcwustewtotweetindexgenewationjob {
+  o-ovewwide v-vaw isadhoc = twue
+  o-ovewwide vaw getconsumewembeddingssqwfunc = g-getintewestedin2020sqw
+  o-ovewwide v-vaw usewtweetengagementeventpaiwsqwpath: s-stwing =
+    c-config.unifiedusewtweetactionpaiwgenewationsqwpath
+  ovewwide v-vaw contwibutingactiontypes: s-seq[stwing] = s-seq(actiontype.sewvewtweetwetweet.name)
+  ovewwide v-vaw undoactiontypes: seq[stwing] = s-seq(actiontype.sewvewtweetunwetweet.name)
+  ovewwide vaw u-undoactionwefewencetweetidcowumn: s-stwing = config.wetweettweetidcowumn
+  o-ovewwide vaw outputtabwe =
+    bqtabwedetaiws(
+      "twttw-wecos-mw-pwod", rawr
+      "simcwustews", 😳
+      "simcwustews_wetweet_based_cwustew_to_tweet_index")
+  ovewwide v-vaw keyvawdatasetoutputpath = config.wetweetbasedcwustewtotweetindexoutputpath
+  o-ovewwide vaw cwustewtotweetindexsnapshotdataset: k-keyvawdawdataset[
+    keyvaw[fuwwcwustewid, 😳😳😳 topktweetswithscowes]
   ] =
-    RetweetBasedSimclustersClusterToTweetIndexScalaDataset
+    wetweetbasedsimcwustewscwustewtotweetindexscawadataset
 }
 
-object RetweetBasedClusterToTweetIndexGenerationBatchJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.unifiedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetRetweet.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnretweet.name)
-  override val undoActionReferenceTweetIdColumn: String = Config.retweetTweetIdColumn
-  override val outputTable =
-    BQTableDetails(
-      "twttr-bq-cassowary-prod",
-      "user",
-      "simclusters_retweet_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.RetweetBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+object wetweetbasedcwustewtotweetindexgenewationbatchjob
+    e-extends uuabasedcwustewtotweetindexgenewationjob {
+  o-ovewwide vaw isadhoc = f-fawse
+  ovewwide v-vaw getconsumewembeddingssqwfunc = getintewestedin2020sqw
+  ovewwide vaw usewtweetengagementeventpaiwsqwpath: stwing =
+    config.unifiedusewtweetactionpaiwgenewationsqwpath
+  o-ovewwide vaw c-contwibutingactiontypes: s-seq[stwing] = s-seq(actiontype.sewvewtweetwetweet.name)
+  ovewwide vaw undoactiontypes: seq[stwing] = seq(actiontype.sewvewtweetunwetweet.name)
+  o-ovewwide v-vaw undoactionwefewencetweetidcowumn: stwing = config.wetweettweetidcowumn
+  ovewwide v-vaw outputtabwe =
+    bqtabwedetaiws(
+      "twttw-bq-cassowawy-pwod", (ꈍᴗꈍ)
+      "usew", 🥺
+      "simcwustews_wetweet_based_cwustew_to_tweet_index")
+  ovewwide v-vaw keyvawdatasetoutputpath = config.wetweetbasedcwustewtotweetindexoutputpath
+  o-ovewwide vaw c-cwustewtotweetindexsnapshotdataset: keyvawdawdataset[
+    k-keyvaw[fuwwcwustewid, t-topktweetswithscowes]
   ] =
-    RetweetBasedSimclustersClusterToTweetIndexScalaDataset
+    wetweetbasedsimcwustewscwustewtotweetindexscawadataset
 }
 
-object ReplyBasedClusterToTweetIndexGenerationAdhocJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.combinedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetReply.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetDelete.name)
-  override val undoActionReferenceTweetIdColumn: String = Config.replyTweetIdColumn
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 8
-  override val minEngagementPerCluster: Int = 3
-  // Add supplemental positive signals to the user tweet engagement event template
-  // We bundle each reply signal with a positive signal (fav or retweet)
-  val supplementalPositiveSignals: Seq[String] =
-    Seq(ActionType.ServerTweetFav.name, ActionType.ServerTweetRetweet.name)
-  override lazy val userTweetEngagementEventPairTemplateVariable: Map[String, String] = {
-    Map(
-      "CONTRIBUTING_ACTION_TYPE_STR" -> contributingActionTypes.head,
-      "UNDO_ACTION_TYPES_STR" -> undoActionTypesStr,
-      "UNDO_ACTION_TWEET_ID_COLUMN" -> undoActionReferenceTweetIdColumn,
-      "SUPPLEMENTAL_ACTION_TYPES_ENGAGEMENT_STR" -> buildActionTypesEngagementIndicatorString(
-        supplementalPositiveSignals)
+o-object wepwybasedcwustewtotweetindexgenewationadhocjob
+    e-extends uuabasedcwustewtotweetindexgenewationjob {
+  o-ovewwide v-vaw isadhoc = t-twue
+  ovewwide vaw getconsumewembeddingssqwfunc = g-getintewestedin2020sqw
+  o-ovewwide v-vaw usewtweetengagementeventpaiwsqwpath: stwing =
+    config.combinedusewtweetactionpaiwgenewationsqwpath
+  o-ovewwide vaw contwibutingactiontypes: seq[stwing] = seq(actiontype.sewvewtweetwepwy.name)
+  o-ovewwide v-vaw undoactiontypes: s-seq[stwing] = seq(actiontype.sewvewtweetdewete.name)
+  ovewwide vaw undoactionwefewencetweetidcowumn: stwing = config.wepwytweetidcowumn
+  o-ovewwide vaw minintewactioncount: i-int = 8
+  o-ovewwide vaw minfavcount: int = 8
+  ovewwide v-vaw minengagementpewcwustew: int = 3
+  // a-add suppwementaw p-positive s-signaws to the u-usew tweet engagement e-event tempwate
+  // we bundwe each wepwy signaw with a positive signaw (fav o-ow wetweet)
+  vaw suppwementawpositivesignaws: s-seq[stwing] =
+    seq(actiontype.sewvewtweetfav.name, ^•ﻌ•^ actiontype.sewvewtweetwetweet.name)
+  ovewwide wazy vaw u-usewtweetengagementeventpaiwtempwatevawiabwe: map[stwing, XD stwing] = {
+    map(
+      "contwibuting_action_type_stw" -> contwibutingactiontypes.head, ^•ﻌ•^
+      "undo_action_types_stw" -> undoactiontypesstw, ^^;;
+      "undo_action_tweet_id_cowumn" -> u-undoactionwefewencetweetidcowumn, ʘwʘ
+      "suppwementaw_action_types_engagement_stw" -> b-buiwdactiontypesengagementindicatowstwing(
+        suppwementawpositivesignaws)
     )
   }
-  override val outputTable =
-    BQTableDetails(
-      "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_reply_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.ReplyBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+  o-ovewwide vaw outputtabwe =
+    bqtabwedetaiws(
+      "twttw-wecos-mw-pwod", OwO
+      "simcwustews", 🥺
+      "simcwustews_wepwy_based_cwustew_to_tweet_index")
+  o-ovewwide vaw keyvawdatasetoutputpath = c-config.wepwybasedcwustewtotweetindexoutputpath
+  ovewwide v-vaw cwustewtotweetindexsnapshotdataset: keyvawdawdataset[
+    keyvaw[fuwwcwustewid, (⑅˘꒳˘) t-topktweetswithscowes]
   ] =
-    ReplyBasedSimclustersClusterToTweetIndexScalaDataset
+    wepwybasedsimcwustewscwustewtotweetindexscawadataset
 }
 
-object ReplyBasedClusterToTweetIndexGenerationBatchJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.combinedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetReply.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetDelete.name)
-  override val undoActionReferenceTweetIdColumn: String = Config.replyTweetIdColumn
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 8
-  override val minEngagementPerCluster: Int = 3
-  // Add supplemental positive signals to the user tweet engagement event template
-  // We bundle each reply signal with a positive signal (fav or retweet)
-  val supplementalPositiveSignals: Seq[String] =
-    Seq(ActionType.ServerTweetFav.name, ActionType.ServerTweetRetweet.name)
-  override lazy val userTweetEngagementEventPairTemplateVariable: Map[String, String] = {
-    Map(
-      "CONTRIBUTING_ACTION_TYPE_STR" -> contributingActionTypes.head,
-      "UNDO_ACTION_TYPES_STR" -> undoActionTypesStr,
-      "UNDO_ACTION_TWEET_ID_COLUMN" -> undoActionReferenceTweetIdColumn,
-      "SUPPLEMENTAL_ACTION_TYPES_ENGAGEMENT_STR" -> buildActionTypesEngagementIndicatorString(
-        supplementalPositiveSignals)
+object wepwybasedcwustewtotweetindexgenewationbatchjob
+    e-extends uuabasedcwustewtotweetindexgenewationjob {
+  ovewwide v-vaw isadhoc = f-fawse
+  ovewwide v-vaw getconsumewembeddingssqwfunc = getintewestedin2020sqw
+  ovewwide vaw usewtweetengagementeventpaiwsqwpath: s-stwing =
+    config.combinedusewtweetactionpaiwgenewationsqwpath
+  ovewwide vaw contwibutingactiontypes: seq[stwing] = s-seq(actiontype.sewvewtweetwepwy.name)
+  o-ovewwide vaw undoactiontypes: s-seq[stwing] = seq(actiontype.sewvewtweetdewete.name)
+  o-ovewwide vaw undoactionwefewencetweetidcowumn: stwing = config.wepwytweetidcowumn
+  o-ovewwide v-vaw minintewactioncount: int = 8
+  ovewwide v-vaw minfavcount: int = 8
+  ovewwide vaw minengagementpewcwustew: i-int = 3
+  // add suppwementaw positive signaws t-to the usew tweet e-engagement event tempwate
+  // w-we bundwe each w-wepwy signaw with a-a positive signaw (fav ow wetweet)
+  vaw suppwementawpositivesignaws: s-seq[stwing] =
+    seq(actiontype.sewvewtweetfav.name, (///ˬ///✿) actiontype.sewvewtweetwetweet.name)
+  o-ovewwide wazy vaw usewtweetengagementeventpaiwtempwatevawiabwe: map[stwing, (✿oωo) stwing] = {
+    m-map(
+      "contwibuting_action_type_stw" -> c-contwibutingactiontypes.head, nyaa~~
+      "undo_action_types_stw" -> u-undoactiontypesstw, >w<
+      "undo_action_tweet_id_cowumn" -> u-undoactionwefewencetweetidcowumn, (///ˬ///✿)
+      "suppwementaw_action_types_engagement_stw" -> b-buiwdactiontypesengagementindicatowstwing(
+        suppwementawpositivesignaws)
     )
   }
-  override val outputTable =
-    BQTableDetails(
-      "twttr-bq-cassowary-prod",
-      "user",
-      "simclusters_reply_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.ReplyBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+  o-ovewwide vaw outputtabwe =
+    bqtabwedetaiws(
+      "twttw-bq-cassowawy-pwod", rawr
+      "usew", (U ﹏ U)
+      "simcwustews_wepwy_based_cwustew_to_tweet_index")
+  o-ovewwide vaw keyvawdatasetoutputpath = config.wepwybasedcwustewtotweetindexoutputpath
+  o-ovewwide vaw cwustewtotweetindexsnapshotdataset: keyvawdawdataset[
+    k-keyvaw[fuwwcwustewid, t-topktweetswithscowes]
   ] =
-    ReplyBasedSimclustersClusterToTweetIndexScalaDataset
+    wepwybasedsimcwustewscwustewtotweetindexscawadataset
 }
 
-object PushOpenBasedClusterToTweetIndexGenerationAdhocJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.unifiedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ClientNotificationOpen.name)
-  override val contributingActionReferenceTweetIdColumn: String = Config.pushTweetIdColumn
-  override val undoActionTypes: Seq[String] = Seq.empty
-  override val minInteractionCount = 1
-  override val minFavCount = 0
-  override val enableFavClusterTopKTweetsIntersection = true
-  override val outputTable =
-    BQTableDetails(
-      "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_push_open_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.PushOpenBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+o-object pushopenbasedcwustewtotweetindexgenewationadhocjob
+    e-extends u-uuabasedcwustewtotweetindexgenewationjob {
+  ovewwide vaw isadhoc = t-twue
+  ovewwide v-vaw getconsumewembeddingssqwfunc = getintewestedin2020sqw
+  o-ovewwide vaw usewtweetengagementeventpaiwsqwpath: stwing =
+    config.unifiedusewtweetactionpaiwgenewationsqwpath
+  o-ovewwide vaw contwibutingactiontypes: s-seq[stwing] = seq(actiontype.cwientnotificationopen.name)
+  ovewwide v-vaw contwibutingactionwefewencetweetidcowumn: s-stwing = config.pushtweetidcowumn
+  o-ovewwide vaw undoactiontypes: s-seq[stwing] = s-seq.empty
+  ovewwide vaw minintewactioncount = 1
+  o-ovewwide vaw minfavcount = 0
+  o-ovewwide vaw enabwefavcwustewtopktweetsintewsection = t-twue
+  o-ovewwide vaw outputtabwe =
+    bqtabwedetaiws(
+      "twttw-wecos-mw-pwod", ^•ﻌ•^
+      "simcwustews", (///ˬ///✿)
+      "simcwustews_push_open_based_cwustew_to_tweet_index")
+  ovewwide vaw keyvawdatasetoutputpath = config.pushopenbasedcwustewtotweetindexoutputpath
+  ovewwide vaw cwustewtotweetindexsnapshotdataset: k-keyvawdawdataset[
+    k-keyvaw[fuwwcwustewid, o.O topktweetswithscowes]
   ] =
-    PushOpenBasedSimclustersClusterToTweetIndexScalaDataset
+    pushopenbasedsimcwustewscwustewtotweetindexscawadataset
 }
 
-object PushOpenBasedClusterToTweetIndexGenerationBatchJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.unifiedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ClientNotificationOpen.name)
-  override val contributingActionReferenceTweetIdColumn: String = Config.pushTweetIdColumn
-  override val undoActionTypes: Seq[String] = Seq.empty
-  override val minInteractionCount = 1
-  override val minFavCount = 0
-  override val enableFavClusterTopKTweetsIntersection = true
-  override val outputTable =
-    BQTableDetails(
-      "twttr-bq-cassowary-prod",
-      "user",
-      "simclusters_push_open_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.PushOpenBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+object pushopenbasedcwustewtotweetindexgenewationbatchjob
+    e-extends uuabasedcwustewtotweetindexgenewationjob {
+  ovewwide vaw i-isadhoc = fawse
+  o-ovewwide vaw getconsumewembeddingssqwfunc = getintewestedin2020sqw
+  ovewwide vaw usewtweetengagementeventpaiwsqwpath: s-stwing =
+    config.unifiedusewtweetactionpaiwgenewationsqwpath
+  ovewwide v-vaw contwibutingactiontypes: seq[stwing] = s-seq(actiontype.cwientnotificationopen.name)
+  ovewwide v-vaw contwibutingactionwefewencetweetidcowumn: stwing = config.pushtweetidcowumn
+  o-ovewwide v-vaw undoactiontypes: s-seq[stwing] = s-seq.empty
+  o-ovewwide vaw minintewactioncount = 1
+  o-ovewwide vaw minfavcount = 0
+  ovewwide vaw enabwefavcwustewtopktweetsintewsection = twue
+  ovewwide vaw o-outputtabwe =
+    b-bqtabwedetaiws(
+      "twttw-bq-cassowawy-pwod", >w<
+      "usew", nyaa~~
+      "simcwustews_push_open_based_cwustew_to_tweet_index")
+  o-ovewwide vaw keyvawdatasetoutputpath = c-config.pushopenbasedcwustewtotweetindexoutputpath
+  o-ovewwide v-vaw cwustewtotweetindexsnapshotdataset: keyvawdawdataset[
+    keyvaw[fuwwcwustewid, òωó topktweetswithscowes]
   ] =
-    PushOpenBasedSimclustersClusterToTweetIndexScalaDataset
+    pushopenbasedsimcwustewscwustewtotweetindexscawadataset
 }
 
-object AdsFavBasedClusterToTweetIndexGenerationAdhocJob
-    extends AdsClusterToTweetIndexGenerationJob {
-  val isAdhoc: Boolean = true
-  val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val contributingActionTypes: Seq[Int] = AdsFavEngagementTypeIds // fav
-  override val tweetEmbeddingsHalfLife: Int = 345600000 // 4 days
-  // The earliest user tweet engagement event we consider is 7 days ago
-  // The tweet could be older than 7 days
-  override val maxTweetAgeHours: Int = 168 // 7 days
-  override val minInteractionCount: Int = 3
-  override val minFavCount: Int = 3
-  override val minEngagementPerCluster: Int = 2
-  override val outputTable =
-    BQTableDetails(
-      "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_ads_fav_based_cluster_to_tweet_index")
-  val keyValDatasetOutputPath: String = Config.AdsFavBasedClusterToTweetIndexOutputPath
-  val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
-  ] = AdsFavBasedSimclustersClusterToTweetIndexScalaDataset
-  val userTweetEngagementEventPairSqlPath: String =
-    Config.adsUserTweetActionPairGenerationSQLPath
+o-object adsfavbasedcwustewtotweetindexgenewationadhocjob
+    e-extends adscwustewtotweetindexgenewationjob {
+  vaw isadhoc: boowean = twue
+  vaw getconsumewembeddingssqwfunc = g-getintewestedin2020sqw
+  o-ovewwide v-vaw contwibutingactiontypes: seq[int] = adsfavengagementtypeids // fav
+  ovewwide v-vaw tweetembeddingshawfwife: int = 345600000 // 4 days
+  // t-the eawwiest usew t-tweet engagement event we considew is 7 days a-ago
+  // the tweet couwd be owdew t-than 7 days
+  o-ovewwide vaw maxtweetagehouws: int = 168 // 7 days
+  o-ovewwide vaw m-minintewactioncount: i-int = 3
+  o-ovewwide vaw minfavcount: i-int = 3
+  o-ovewwide vaw minengagementpewcwustew: i-int = 2
+  o-ovewwide vaw outputtabwe =
+    b-bqtabwedetaiws(
+      "twttw-wecos-mw-pwod", (U ᵕ U❁)
+      "simcwustews", (///ˬ///✿)
+      "simcwustews_ads_fav_based_cwustew_to_tweet_index")
+  vaw keyvawdatasetoutputpath: stwing = config.adsfavbasedcwustewtotweetindexoutputpath
+  v-vaw cwustewtotweetindexsnapshotdataset: keyvawdawdataset[
+    k-keyvaw[fuwwcwustewid, (✿oωo) topktweetswithscowes]
+  ] = a-adsfavbasedsimcwustewscwustewtotweetindexscawadataset
+  v-vaw usewtweetengagementeventpaiwsqwpath: stwing =
+    config.adsusewtweetactionpaiwgenewationsqwpath
 }
-object AdsFavBasedClusterToTweetIndexGenerationBatchJob
-    extends AdsClusterToTweetIndexGenerationJob {
-  val isAdhoc: Boolean = false
-  val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val contributingActionTypes: Seq[Int] = AdsFavEngagementTypeIds // fav
-  override val tweetEmbeddingsHalfLife: Int = 345600000 // 4 days
-  // The earliest user tweet engagement event we consider is 7 days ago
-  // The tweet could be older than 7 days
-  override val maxTweetAgeHours: Int = 168 // 7 days
-  override val minInteractionCount: Int = 3
-  override val minFavCount: Int = 3
-  override val minEngagementPerCluster: Int = 2
-  override val outputTable =
-    BQTableDetails(
-      "twttr-bq-cassowary-prod",
-      "user",
-      "simclusters_ads_fav_based_cluster_to_tweet_index")
-  val keyValDatasetOutputPath: String = Config.AdsFavBasedClusterToTweetIndexOutputPath
-  val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
-  ] = AdsFavBasedSimclustersClusterToTweetIndexScalaDataset
-  val userTweetEngagementEventPairSqlPath: String =
-    Config.adsUserTweetActionPairGenerationSQLPath
-}
-
-object AdsFavClickBasedClusterToTweetIndexGenerationAdhocJob
-    extends AdsClusterToTweetIndexGenerationJob {
-  val isAdhoc: Boolean = true
-  val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val contributingActionTypes: Seq[Int] =
-    AdsFavEngagementTypeIds ++ AdsClickEngagementTypeIds // fav + click
-  override val tweetEmbeddingsHalfLife: Int = 604800000 // 7 days
-  // The earliest user tweet engagement event we consider is 21 days ago
-  // The tweet could be older than 21 days
-  override val maxTweetAgeHours: Int = 504 // 21 days
-  override val minInteractionCount: Int = 3
-  override val minFavCount: Int = 3
-  override val minEngagementPerCluster: Int = 2
-  override val outputTable =
-    BQTableDetails(
-      "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_ads_fav_click_ sbased_cluster_to_tweet_index")
-  val keyValDatasetOutputPath: String = Config.AdsFavClickBasedClusterToTweetIndexOutputPath
-  val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
-  ] = AdsFavClickBasedSimclustersClusterToTweetIndexScalaDataset
-  val userTweetEngagementEventPairSqlPath: String =
-    Config.adsUserTweetActionPairGenerationSQLPath
+o-object adsfavbasedcwustewtotweetindexgenewationbatchjob
+    extends adscwustewtotweetindexgenewationjob {
+  v-vaw isadhoc: b-boowean = fawse
+  vaw getconsumewembeddingssqwfunc = getintewestedin2020sqw
+  o-ovewwide vaw contwibutingactiontypes: s-seq[int] = adsfavengagementtypeids // f-fav
+  ovewwide vaw tweetembeddingshawfwife: int = 345600000 // 4 d-days
+  // t-the eawwiest usew tweet engagement e-event w-we considew is 7 days ago
+  // the tweet couwd be o-owdew than 7 days
+  o-ovewwide vaw m-maxtweetagehouws: i-int = 168 // 7 days
+  ovewwide vaw minintewactioncount: int = 3
+  ovewwide vaw minfavcount: int = 3
+  ovewwide v-vaw minengagementpewcwustew: i-int = 2
+  ovewwide v-vaw outputtabwe =
+    b-bqtabwedetaiws(
+      "twttw-bq-cassowawy-pwod", 😳😳😳
+      "usew", (✿oωo)
+      "simcwustews_ads_fav_based_cwustew_to_tweet_index")
+  v-vaw keyvawdatasetoutputpath: s-stwing = config.adsfavbasedcwustewtotweetindexoutputpath
+  vaw c-cwustewtotweetindexsnapshotdataset: k-keyvawdawdataset[
+    keyvaw[fuwwcwustewid, (U ﹏ U) t-topktweetswithscowes]
+  ] = a-adsfavbasedsimcwustewscwustewtotweetindexscawadataset
+  vaw usewtweetengagementeventpaiwsqwpath: stwing =
+    c-config.adsusewtweetactionpaiwgenewationsqwpath
 }
 
-object AdsFavClickBasedClusterToTweetIndexGenerationBatchJob
-    extends AdsClusterToTweetIndexGenerationJob {
-  val isAdhoc: Boolean = false
-  val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val contributingActionTypes: Seq[Int] =
-    AdsFavEngagementTypeIds ++ AdsClickEngagementTypeIds // fav + click
-  override val tweetEmbeddingsHalfLife: Int = 604800000 // 7 days
-  // The earliest user tweet engagement event we consider is 21 days ago
-  // The tweet could be older than 21 days
-  override val maxTweetAgeHours: Int = 504 // 21 days
-  override val minInteractionCount: Int = 3
-  override val minFavCount: Int = 3
-  override val minEngagementPerCluster: Int = 2
-  override val outputTable =
-    BQTableDetails(
-      "twttr-bq-cassowary-prod",
-      "user",
-      "simclusters_ads_fav_click_based_cluster_to_tweet_index")
-  val keyValDatasetOutputPath: String = Config.AdsFavClickBasedClusterToTweetIndexOutputPath
-  val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
-  ] = AdsFavClickBasedSimclustersClusterToTweetIndexScalaDataset
-  val userTweetEngagementEventPairSqlPath: String =
-    Config.adsUserTweetActionPairGenerationSQLPath
+object adsfavcwickbasedcwustewtotweetindexgenewationadhocjob
+    e-extends adscwustewtotweetindexgenewationjob {
+  v-vaw i-isadhoc: boowean = twue
+  vaw g-getconsumewembeddingssqwfunc = getintewestedin2020sqw
+  o-ovewwide v-vaw contwibutingactiontypes: seq[int] =
+    a-adsfavengagementtypeids ++ a-adscwickengagementtypeids // fav + cwick
+  o-ovewwide vaw tweetembeddingshawfwife: i-int = 604800000 // 7 d-days
+  // t-the eawwiest usew tweet e-engagement event we considew is 21 days ago
+  // t-the tweet couwd be owdew than 21 days
+  ovewwide vaw maxtweetagehouws: int = 504 // 21 days
+  ovewwide vaw minintewactioncount: i-int = 3
+  ovewwide vaw minfavcount: int = 3
+  ovewwide vaw minengagementpewcwustew: int = 2
+  ovewwide vaw outputtabwe =
+    bqtabwedetaiws(
+      "twttw-wecos-mw-pwod", (˘ω˘)
+      "simcwustews", 😳😳😳
+      "simcwustews_ads_fav_cwick_ s-sbased_cwustew_to_tweet_index")
+  vaw keyvawdatasetoutputpath: stwing = config.adsfavcwickbasedcwustewtotweetindexoutputpath
+  v-vaw cwustewtotweetindexsnapshotdataset: keyvawdawdataset[
+    keyvaw[fuwwcwustewid, (///ˬ///✿) t-topktweetswithscowes]
+  ] = adsfavcwickbasedsimcwustewscwustewtotweetindexscawadataset
+  vaw u-usewtweetengagementeventpaiwsqwpath: stwing =
+    c-config.adsusewtweetactionpaiwgenewationsqwpath
 }
 
-object FavBasedEvergreenContentClusterToTweetIndexGenerationAdhocJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.evergreenContentUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetFav.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnfav.name)
-  override val tweetEmbeddingsHalfLife: Int = 57600000 // 16 hours
-  override val maxTweetAgeHours: Int = 48 // 2 days
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 0
-  override val outputTable =
-    BQTableDetails(
-      "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_fav_based_evergreen_content_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath =
-    Config.FavBasedEvergreenContentClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+object adsfavcwickbasedcwustewtotweetindexgenewationbatchjob
+    e-extends adscwustewtotweetindexgenewationjob {
+  v-vaw isadhoc: boowean = fawse
+  vaw getconsumewembeddingssqwfunc = g-getintewestedin2020sqw
+  ovewwide vaw contwibutingactiontypes: seq[int] =
+    adsfavengagementtypeids ++ a-adscwickengagementtypeids // fav + cwick
+  ovewwide v-vaw tweetembeddingshawfwife: int = 604800000 // 7 d-days
+  // the eawwiest usew t-tweet engagement e-event we considew is 21 days ago
+  // the tweet c-couwd be owdew than 21 days
+  ovewwide vaw m-maxtweetagehouws: int = 504 // 21 days
+  ovewwide vaw minintewactioncount: int = 3
+  o-ovewwide vaw m-minfavcount: int = 3
+  ovewwide v-vaw minengagementpewcwustew: int = 2
+  o-ovewwide vaw outputtabwe =
+    b-bqtabwedetaiws(
+      "twttw-bq-cassowawy-pwod", (U ᵕ U❁)
+      "usew", >_<
+      "simcwustews_ads_fav_cwick_based_cwustew_to_tweet_index")
+  vaw keyvawdatasetoutputpath: stwing = config.adsfavcwickbasedcwustewtotweetindexoutputpath
+  vaw cwustewtotweetindexsnapshotdataset: keyvawdawdataset[
+    k-keyvaw[fuwwcwustewid, (///ˬ///✿) t-topktweetswithscowes]
+  ] = adsfavcwickbasedsimcwustewscwustewtotweetindexscawadataset
+  v-vaw usewtweetengagementeventpaiwsqwpath: s-stwing =
+    config.adsusewtweetactionpaiwgenewationsqwpath
+}
+
+o-object favbasedevewgweencontentcwustewtotweetindexgenewationadhocjob
+    extends uuabasedcwustewtotweetindexgenewationjob {
+  o-ovewwide vaw isadhoc = twue
+  ovewwide v-vaw getconsumewembeddingssqwfunc = g-getintewestedin2020sqw
+  ovewwide vaw usewtweetengagementeventpaiwsqwpath: s-stwing =
+    config.evewgweencontentusewtweetactionpaiwgenewationsqwpath
+  ovewwide vaw contwibutingactiontypes: seq[stwing] = seq(actiontype.sewvewtweetfav.name)
+  ovewwide vaw undoactiontypes: seq[stwing] = seq(actiontype.sewvewtweetunfav.name)
+  o-ovewwide v-vaw tweetembeddingshawfwife: int = 57600000 // 16 h-houws
+  ovewwide v-vaw maxtweetagehouws: int = 48 // 2 d-days
+  ovewwide vaw minintewactioncount: int = 8
+  ovewwide vaw minfavcount: int = 0
+  ovewwide vaw outputtabwe =
+    b-bqtabwedetaiws(
+      "twttw-wecos-mw-pwod", (U ᵕ U❁)
+      "simcwustews", >w<
+      "simcwustews_fav_based_evewgween_content_cwustew_to_tweet_index")
+  ovewwide vaw keyvawdatasetoutputpath =
+    config.favbasedevewgweencontentcwustewtotweetindexoutputpath
+  ovewwide vaw c-cwustewtotweetindexsnapshotdataset: k-keyvawdawdataset[
+    k-keyvaw[fuwwcwustewid, 😳😳😳 topktweetswithscowes]
   ] =
-    FavBasedEvergreenContentSimclustersClusterToTweetIndexScalaDataset
+    favbasedevewgweencontentsimcwustewscwustewtotweetindexscawadataset
 }
 
-object FavBasedEvergreenContentClusterToTweetIndexGenerationBatchJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.evergreenContentUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetFav.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnfav.name)
-  override val tweetEmbeddingsHalfLife: Int = 57600000 // 16 hours
-  override val maxTweetAgeHours: Int = 48 // 2 days
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 0
-  override val outputTable =
-    BQTableDetails(
-      "twttr-bq-cassowary-prod",
-      "user",
-      "simclusters_fav_based_evergreen_content_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath =
-    Config.FavBasedEvergreenContentClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+object favbasedevewgweencontentcwustewtotweetindexgenewationbatchjob
+    extends u-uuabasedcwustewtotweetindexgenewationjob {
+  o-ovewwide vaw i-isadhoc = fawse
+  ovewwide vaw g-getconsumewembeddingssqwfunc = getintewestedin2020sqw
+  ovewwide v-vaw usewtweetengagementeventpaiwsqwpath: stwing =
+    c-config.evewgweencontentusewtweetactionpaiwgenewationsqwpath
+  ovewwide vaw c-contwibutingactiontypes: seq[stwing] = seq(actiontype.sewvewtweetfav.name)
+  ovewwide v-vaw undoactiontypes: seq[stwing] = s-seq(actiontype.sewvewtweetunfav.name)
+  o-ovewwide vaw tweetembeddingshawfwife: i-int = 57600000 // 16 h-houws
+  ovewwide vaw m-maxtweetagehouws: int = 48 // 2 d-days
+  ovewwide vaw minintewactioncount: i-int = 8
+  o-ovewwide vaw minfavcount: int = 0
+  ovewwide v-vaw outputtabwe =
+    bqtabwedetaiws(
+      "twttw-bq-cassowawy-pwod",
+      "usew", (ˆ ﻌ ˆ)♡
+      "simcwustews_fav_based_evewgween_content_cwustew_to_tweet_index")
+  ovewwide vaw keyvawdatasetoutputpath =
+    config.favbasedevewgweencontentcwustewtotweetindexoutputpath
+  ovewwide vaw cwustewtotweetindexsnapshotdataset: keyvawdawdataset[
+    keyvaw[fuwwcwustewid, (ꈍᴗꈍ) t-topktweetswithscowes]
   ] =
-    FavBasedEvergreenContentSimclustersClusterToTweetIndexScalaDataset
+    favbasedevewgweencontentsimcwustewscwustewtotweetindexscawadataset
 }
 
-object FavBasedVideoClusterToTweetIndexGenerationAdhocJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.favBasedVideoTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetFav.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnfav.name)
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 0
-  override val outputTable =
-    BQTableDetails(
-      "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_fav_based_video_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath =
-    Config.FavBasedVideoClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+object favbasedvideocwustewtotweetindexgenewationadhocjob
+    e-extends uuabasedcwustewtotweetindexgenewationjob {
+  o-ovewwide vaw isadhoc = twue
+  ovewwide vaw getconsumewembeddingssqwfunc = g-getintewestedin2020sqw
+  ovewwide vaw usewtweetengagementeventpaiwsqwpath: s-stwing =
+    config.favbasedvideotweetactionpaiwgenewationsqwpath
+  ovewwide v-vaw contwibutingactiontypes: seq[stwing] = seq(actiontype.sewvewtweetfav.name)
+  ovewwide vaw u-undoactiontypes: seq[stwing] = seq(actiontype.sewvewtweetunfav.name)
+  o-ovewwide v-vaw minintewactioncount: int = 8
+  ovewwide vaw m-minfavcount: int = 0
+  o-ovewwide vaw outputtabwe =
+    b-bqtabwedetaiws(
+      "twttw-wecos-mw-pwod", 🥺
+      "simcwustews", >_<
+      "simcwustews_fav_based_video_cwustew_to_tweet_index")
+  o-ovewwide vaw keyvawdatasetoutputpath =
+    config.favbasedvideocwustewtotweetindexoutputpath
+  o-ovewwide vaw cwustewtotweetindexsnapshotdataset: keyvawdawdataset[
+    keyvaw[fuwwcwustewid, OwO t-topktweetswithscowes]
   ] =
-    FavBasedVideoSimclustersClusterToTweetIndexScalaDataset
+    favbasedvideosimcwustewscwustewtotweetindexscawadataset
 }
 
-object FavBasedVideoClusterToTweetIndexGenerationBatchJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.favBasedVideoTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetFav.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnfav.name)
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 0
-  override val outputTable =
-    BQTableDetails(
-      "twttr-bq-cassowary-prod",
-      "user",
-      "simclusters_fav_based_video_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath =
-    Config.FavBasedVideoClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+object favbasedvideocwustewtotweetindexgenewationbatchjob
+    extends u-uuabasedcwustewtotweetindexgenewationjob {
+  o-ovewwide vaw isadhoc = f-fawse
+  ovewwide vaw getconsumewembeddingssqwfunc = getintewestedin2020sqw
+  ovewwide vaw u-usewtweetengagementeventpaiwsqwpath: stwing =
+    c-config.favbasedvideotweetactionpaiwgenewationsqwpath
+  ovewwide v-vaw contwibutingactiontypes: s-seq[stwing] = seq(actiontype.sewvewtweetfav.name)
+  ovewwide vaw undoactiontypes: seq[stwing] = seq(actiontype.sewvewtweetunfav.name)
+  o-ovewwide v-vaw minintewactioncount: int = 8
+  ovewwide vaw m-minfavcount: int = 0
+  ovewwide vaw outputtabwe =
+    b-bqtabwedetaiws(
+      "twttw-bq-cassowawy-pwod", ^^;;
+      "usew", (✿oωo)
+      "simcwustews_fav_based_video_cwustew_to_tweet_index")
+  o-ovewwide vaw k-keyvawdatasetoutputpath =
+    c-config.favbasedvideocwustewtotweetindexoutputpath
+  o-ovewwide vaw c-cwustewtotweetindexsnapshotdataset: keyvawdawdataset[
+    keyvaw[fuwwcwustewid, UwU t-topktweetswithscowes]
   ] =
-    FavBasedVideoSimclustersClusterToTweetIndexScalaDataset
+    f-favbasedvideosimcwustewscwustewtotweetindexscawadataset
 }

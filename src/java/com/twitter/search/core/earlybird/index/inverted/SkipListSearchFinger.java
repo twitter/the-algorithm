@@ -1,45 +1,45 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
 /**
- * A forward search finger used, optionally, by {@link SkipListContainer#search}.
+ * a fowwawd seawch f-fingew used, (⑅˘꒳˘) optionawwy, b-by {@wink s-skipwistcontainew#seawch}. òωó
  *
- * A search finger is pointer to the result returned by last time a search method is performed.
- * @see <a href="http://en.wikipedia.org/wiki/Finger_search">Finger search wikipedia</a>.
+ * a-a seawch fingew i-is pointew t-to the wesuwt wetuwned b-by wast t-time a seawch method is pewfowmed. ʘwʘ
+ * @see <a hwef="http://en.wikipedia.owg/wiki/fingew_seawch">fingew seawch wikipedia</a>. /(^•ω•^)
  *
- * Using a search finger on a skip list could reduce the search search time from
- * log(n) to log(k), where n is length of the skip list and k is the distance between last searched
- * key and current searched key.
+ * using a seawch f-fingew on a skip wist couwd weduce the seawch s-seawch time fwom
+ * wog(n) to wog(k), ʘwʘ w-whewe ny is wength of the skip wist and k is the distance b-between wast seawched
+ * key and c-cuwwent seawched k-key. σωσ
  */
-public class SkipListSearchFinger {
-  // Pointer used when initialize the search finger.
-  public static final int INITIAL_POINTER = Integer.MIN_VALUE;
+pubwic cwass skipwistseawchfingew {
+  // pointew used when initiawize the seawch fingew.
+  p-pubwic static finaw int initiaw_pointew = integew.min_vawue;
 
-  private final int[] lastPointers;
+  pwivate finaw int[] wastpointews;
 
   /**
-   * Creates a new search finger.
+   * c-cweates a nyew seawch fingew. OwO
    */
-  public SkipListSearchFinger(int maxTowerHeight) {
-    lastPointers = new int[maxTowerHeight];
+  p-pubwic s-skipwistseawchfingew(int m-maxtowewheight) {
+    w-wastpointews = nyew int[maxtowewheight];
 
-    reset();
+    weset();
   }
 
-  public void reset() {
-    for (int i = 0; i < lastPointers.length; i++) {
-      setPointer(i, INITIAL_POINTER);
+  p-pubwic void weset() {
+    fow (int i-i = 0; i < wastpointews.wength; i++) {
+      setpointew(i, 😳😳😳 initiaw_pointew);
     }
   }
 
-  public int getPointer(int level) {
-    return lastPointers[level];
+  pubwic int getpointew(int wevew) {
+    w-wetuwn wastpointews[wevew];
   }
 
-  public void setPointer(int level, int pointer) {
-    lastPointers[level] = pointer;
+  pubwic void s-setpointew(int w-wevew, 😳😳😳 int pointew) {
+    w-wastpointews[wevew] = pointew;
   }
 
-  public boolean isInitialPointer(int pointer) {
-    return pointer == INITIAL_POINTER;
+  pubwic boowean isinitiawpointew(int pointew) {
+    w-wetuwn pointew == i-initiaw_pointew;
   }
 }

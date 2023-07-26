@@ -1,48 +1,48 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import org.apache.lucene.util.CloseableThreadLocal;
+impowt o-owg.apache.wucene.utiw.cwoseabwethweadwocaw;
 
-import com.twitter.search.common.search.QueryCostProvider;
+impowt c-com.twittew.seawch.common.seawch.quewycostpwovidew;
 
-public class QueryCostTracker implements QueryCostProvider {
-  public static enum CostType {
-    // For the realtime segment we track how many posting list blocks
-    // are accessed during the lifetime of one query.
-    LOAD_REALTIME_POSTING_BLOCK(1),
+p-pubwic c-cwass quewycosttwackew i-impwements q-quewycostpwovidew {
+  p-pubwic s-static enum costtype {
+    // fow the weawtime segment we twack how many posting wist bwocks
+    // a-awe accessed duwing the wifetime of one quewy. 😳😳😳
+    w-woad_weawtime_posting_bwock(1), 🥺
 
-    // Number of optimized posting list blocks
-    LOAD_OPTIMIZED_POSTING_BLOCK(1);
+    // nyumbew of optimized p-posting wist bwocks
+    woad_optimized_posting_bwock(1);
 
-    private final double cost;
+    pwivate finaw doubwe cost;
 
-    private CostType(double cost) {
-      this.cost = cost;
+    p-pwivate costtype(doubwe cost) {
+      t-this.cost = c-cost;
     }
   }
 
-  private static final CloseableThreadLocal<QueryCostTracker> TRACKERS
-      = new CloseableThreadLocal<QueryCostTracker>() {
-    @Override protected QueryCostTracker initialValue() {
-      return new QueryCostTracker();
+  pwivate static finaw cwoseabwethweadwocaw<quewycosttwackew> twackews
+      = nyew cwoseabwethweadwocaw<quewycosttwackew>() {
+    @ovewwide p-pwotected quewycosttwackew initiawvawue() {
+      wetuwn nyew quewycosttwackew();
     }
   };
 
-  public static QueryCostTracker getTracker() {
-    return TRACKERS.get();
+  pubwic static q-quewycosttwackew gettwackew() {
+    w-wetuwn twackews.get();
   }
 
-  private double totalCost;
+  p-pwivate doubwe t-totawcost;
 
-  public void track(CostType costType) {
-    totalCost += costType.cost;
+  p-pubwic void twack(costtype costtype) {
+    totawcost += c-costtype.cost;
   }
 
-  public void reset() {
-    totalCost = 0;
+  pubwic void weset() {
+    t-totawcost = 0;
   }
 
-  @Override
-  public double getTotalCost() {
-    return totalCost;
+  @ovewwide
+  pubwic doubwe gettotawcost() {
+    wetuwn totawcost;
   }
 }

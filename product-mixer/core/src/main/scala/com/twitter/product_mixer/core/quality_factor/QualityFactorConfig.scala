@@ -1,120 +1,120 @@
-package com.twitter.product_mixer.core.quality_factor
+package com.twittew.pwoduct_mixew.cowe.quawity_factow
 
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ClientFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.quality_factor.QualityFactorConfig.defaultIgnorableFailures
-import com.twitter.servo.util.CancelledExceptionExtractor
-import com.twitter.util.Duration
-import com.twitter.conversions.DurationOps.RichDuration
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.cwientfaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.quawityfactowconfig.defauwtignowabwefaiwuwes
+i-impowt com.twittew.sewvo.utiw.cancewwedexceptionextwactow
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.convewsions.duwationops.wichduwation
 
 /**
- * Quality factor is an abstract number that enables a feedback loop to control operation costs and ultimately
- * maintain the operation success rate. Abstractly, if operations/calls are too expensive (such as high
- * latencies), the quality factor should go down, which helps future calls to ease their demand/load (such as
- * reducing request width); if ops/calls are fast, the quality factor should go up, so we can incur more load.
+ * q-quawity factow i-is an abstwact numbew t-that enabwes a feedback woop to contwow opewation costs and uwtimatewy
+ * m-maintain the opewation success wate. ʘwʘ abstwactwy, UwU i-if opewations/cawws awe too expensive (such a-as high
+ * watencies), XD the quawity factow shouwd go d-down, (✿oωo) which hewps futuwe cawws t-to ease theiw demand/woad (such a-as
+ * weducing wequest width); if ops/cawws awe fast, :3 the quawity factow shouwd g-go up, (///ˬ///✿) so we can incuw mowe woad.
  */
-sealed trait QualityFactorConfig {
+seawed twait quawityfactowconfig {
 
   /**
-   * specifies the quality factor min and max bounds and default value.
+   * specifies the q-quawity factow min and max bounds a-and defauwt v-vawue. nyaa~~
    */
-  def qualityFactorBounds: BoundsWithDefault[Double]
+  d-def quawityfactowbounds: b-boundswithdefauwt[doubwe]
 
   /**
-   * initialDelay Specifies how much delay we should have before the quality factor calculation start to kick in. This is
-   * mostly to ease the load during the initial warmup/startup.
+   * initiawdeway specifies how much deway w-we shouwd have befowe the quawity factow cawcuwation s-stawt to kick in. >w< this is
+   * mostwy to ease the woad duwing the initiaw wawmup/stawtup.
    */
-  def initialDelay: Duration
+  d-def initiawdeway: duwation
 
   /**
-   * [[Throwable]]s that should be ignored when calculating
-   * the [[QualityFactor]] if this is [[PartialFunction.isDefinedAt]]
+   * [[thwowabwe]]s t-that shouwd be i-ignowed when cawcuwating
+   * the [[quawityfactow]] i-if this is [[pawtiawfunction.isdefinedat]]
    */
-  def ignorableFailures: PartialFunction[Throwable, Unit] = defaultIgnorableFailures
+  def ignowabwefaiwuwes: pawtiawfunction[thwowabwe, -.- unit] = defauwtignowabwefaiwuwes
 }
 
-object QualityFactorConfig {
+o-object q-quawityfactowconfig {
 
   /**
-   * Default value for [[QualityFactorConfig.ignorableFailures]] that ignores any
-   * Cancelled requests and [[ClientFailure]]
+   * defauwt vawue f-fow [[quawityfactowconfig.ignowabwefaiwuwes]] t-that ignowes any
+   * cancewwed w-wequests and [[cwientfaiwuwe]]
    */
-  val defaultIgnorableFailures: PartialFunction[Throwable, Unit] = {
-    case PipelineFailure(_: ClientFailure, _, _, _) => ()
-    case CancelledExceptionExtractor(_) => ()
+  vaw defauwtignowabwefaiwuwes: p-pawtiawfunction[thwowabwe, (✿oωo) unit] = {
+    case pipewinefaiwuwe(_: c-cwientfaiwuwe, (˘ω˘) _, _, _) => ()
+    case c-cancewwedexceptionextwactow(_) => ()
   }
 }
 
 /**
- * This is a linear quality factor implementation, aimed to achieve and maintain a percentile latency target.
+ * this is a wineaw q-quawity factow i-impwementation, rawr aimed to achieve and maintain a pewcentiwe watency tawget. OwO
  *
- * If we call quality factor q, target latency t and target percentile p,
- *   then the q (quality factor) formula should be:
- *   q += delta                      for each request with latency <= t
- *   q -= delta * p / (100 - p)      for each request with latency > t ms or a timeout.
+ * if we caww quawity factow q, ^•ﻌ•^ t-tawget watency t-t and tawget pewcentiwe p, UwU
+ *   t-then the q (quawity f-factow) fowmuwa s-shouwd be:
+ *   q += dewta                      fow each wequest with watency <= t-t
+ *   q -= dewta * p / (100 - p)      fow each wequest with watency > t ms o-ow a timeout. (˘ω˘)
  *
- *   When percentile p latency stays at target latency t, then based on the formula above, q will
- *   stay constant (fluctuates around a constant value).
+ *   when pewcentiwe p-p watency s-stays at tawget w-watency t, (///ˬ///✿) then based on the fowmuwa a-above, σωσ q wiww
+ *   s-stay constant (fwuctuates a-awound a constant v-vawue). /(^•ω•^)
  *
- *   For example, assume t = 100ms, p = p99, and q = 0.5
- *   let's say, p99 latency stays at 100ms when q = 0.5. p99 means that out of every 100 latencies,
- *   99 times the latency is below 100ms and 1 time it is above 100ms. So based on the formula above,
- *   q will increase by "delta" 99 times and it will decrease by delta * p / (100 - p) = delta * 99 once,
- *   which results in the same q = 0.5.
+ *   fow exampwe, 😳 assume t = 100ms, 😳 p-p = p99, (⑅˘꒳˘) and q-q = 0.5
+ *   wet's s-say, 😳😳😳 p99 watency s-stays at 100ms w-when q = 0.5. p99 means that out of evewy 100 watencies, 😳
+ *   99 t-times the watency is bewow 100ms and 1 time it is above 100ms. XD so based on the fowmuwa above, mya
+ *   q-q wiww incwease by "dewta" 99 times and it wiww decwease b-by dewta * p / (100 - p-p) = dewta * 99 o-once, ^•ﻌ•^
+ *   which wesuwts i-in the same q = 0.5. ʘwʘ
  *
- * @param targetLatency This is the latency target, calls with latencies above which will cause quality
- * factor to go down, and vice versa. e.g. 500ms.
- * @param targetLatencyPercentile This the percentile where the target latency is aimed at. e.g. 95.0.
- * @param delta the step for adjusting quality factor. It should be a positive double. If delta is
- *              too large, then quality factor will fluctuate more, and if it is too small, the
- *              responsiveness will be reduced.
+ * @pawam tawgetwatency t-this is the watency t-tawget, ( ͡o ω ͡o ) cawws with watencies above which wiww cause quawity
+ * factow to go down, mya and vice vewsa. o.O e-e.g. 500ms. (✿oωo)
+ * @pawam tawgetwatencypewcentiwe t-this the pewcentiwe whewe the t-tawget watency i-is aimed at. :3 e.g. 95.0.
+ * @pawam dewta the step fow adjusting q-quawity factow. 😳 i-it shouwd be a positive doubwe. (U ﹏ U) i-if dewta is
+ *              t-too wawge, mya then quawity factow wiww fwuctuate mowe, (U ᵕ U❁) and if it is too s-smow, :3 the
+ *              w-wesponsiveness w-wiww be weduced. mya
  */
-case class LinearLatencyQualityFactorConfig(
-  override val qualityFactorBounds: BoundsWithDefault[Double],
-  override val initialDelay: Duration,
-  targetLatency: Duration,
-  targetLatencyPercentile: Double,
-  delta: Double,
-  override val ignorableFailures: PartialFunction[Throwable, Unit] =
-    QualityFactorConfig.defaultIgnorableFailures)
-    extends QualityFactorConfig {
-  require(
-    targetLatencyPercentile >= 50.0 && targetLatencyPercentile < 100.0,
-    s"Invalid targetLatencyPercentile value: ${targetLatencyPercentile}.\n" +
-      s"Correct sample values: 95.0, 99.9. Incorrect sample values: 0.95, 0.999."
+case c-cwass wineawwatencyquawityfactowconfig(
+  o-ovewwide vaw quawityfactowbounds: b-boundswithdefauwt[doubwe], OwO
+  ovewwide vaw initiawdeway: duwation, (ˆ ﻌ ˆ)♡
+  tawgetwatency: d-duwation, ʘwʘ
+  tawgetwatencypewcentiwe: d-doubwe, o.O
+  dewta: doubwe, UwU
+  ovewwide vaw i-ignowabwefaiwuwes: p-pawtiawfunction[thwowabwe, unit] =
+    quawityfactowconfig.defauwtignowabwefaiwuwes)
+    extends q-quawityfactowconfig {
+  wequiwe(
+    tawgetwatencypewcentiwe >= 50.0 && tawgetwatencypewcentiwe < 100.0, rawr x3
+    s"invawid tawgetwatencypewcentiwe v-vawue: ${tawgetwatencypewcentiwe}.\n" +
+      s"cowwect sampwe vawues: 95.0, 🥺 99.9. i-incowwect s-sampwe vawues: 0.95, :3 0.999."
   )
 }
 
 /**
- * A quality factor provides component capacity state based on sampling component
- * Queries Per Second (qps) at local host level.
+ * a quawity factow pwovides component capacity s-state based o-on sampwing component
+ * quewies pew second (qps) at wocaw host w-wevew. (ꈍᴗꈍ)
  *
- * If we call quality factor q, max qps R:
- *   then the q (quality factor) formula should be:
- *   q = Math.min([[qualityFactorBounds.bounds.maxInclusive]], q + delta)      for each request that observed qps <= R on local host
- *   q -= delta                                      for each request that observed qps > R on local host
+ * if we caww quawity f-factow q, max qps w:
+ *   then the q (quawity factow) fowmuwa s-shouwd be:
+ *   q = math.min([[quawityfactowbounds.bounds.maxincwusive]], q-q + d-dewta)      fow each wequest that o-obsewved qps <= w on wocaw host
+ *   q-q -= dewta                                      f-fow each w-wequest that obsewved qps > w on w-wocaw host
  *
- *   When qps r stays below R, q will stay as constant (value at [[qualityFactorBounds.bounds.maxInclusive]]).
- *   When qps r starts to increase above R, q will decrease by delta per request,
- *   with delta being an additive factor that controls how sensitive q is when max qps R is exceeded.
+ *   w-when qps w stays bewow w, 🥺 q wiww stay as constant (vawue a-at [[quawityfactowbounds.bounds.maxincwusive]]). (✿oωo)
+ *   w-when qps w stawts t-to incwease above w, (U ﹏ U) q wiww decwease by dewta p-pew wequest, :3
+ *   with dewta b-being an additive f-factow that contwows how sensitive q is when max qps w is exceeded. ^^;;
  *
- *   @param initialDelay Specifies an initial delay time to allow query rate counter warm up to start reflecting actual traffic load.
- *                       Qf value would only start to update after this initial delay.
- *   @param maxQueriesPerSecond The max qps the underlying component can take. Requests go above this qps threshold will cause quality factor to go down.
- *   @param queriesPerSecondSampleWindow The window of underlying query rate counter counting with and calculate an average qps over the window,
- *                                 default to count with 10 seconds time window (i.e. qps = total requests over last 10 secs / 10).
- *                                 Note: underlying query rate counter has a sliding window with 10 fixed slices. Therefore a larger
- *                                 window would lead to a coarser qps calculation. (e.g. with 60 secs time window, it sliding over 6 seconds slice (60 / 10 = 6 secs)).
- *                                 A larger time window also lead to a slower reaction to sudden qps burst, but more robust to flaky qps pattern.
- *   @param delta The step for adjusting quality factor. It should be a positive double. If the delta is large, the quality factor
- *                will fluctuate more and be more responsive to exceeding max qps, and if it is small, the quality factor will be less responsive.
+ *   @pawam i-initiawdeway s-specifies an initiaw d-deway time t-to awwow quewy wate countew wawm u-up to stawt wefwecting actuaw twaffic woad. rawr
+ *                       qf vawue wouwd onwy stawt to update aftew t-this initiaw deway. 😳😳😳
+ *   @pawam maxquewiespewsecond t-the max qps the undewwying c-component can take. (✿oωo) wequests go a-above this qps thweshowd wiww cause q-quawity factow t-to go down. OwO
+ *   @pawam q-quewiespewsecondsampwewindow t-the window o-of undewwying quewy wate countew counting with and cawcuwate an avewage qps ovew the window, ʘwʘ
+ *                                 defauwt to count w-with 10 seconds t-time window (i.e. (ˆ ﻌ ˆ)♡ q-qps = totaw wequests ovew w-wast 10 secs / 10). (U ﹏ U)
+ *                                 nyote: undewwying quewy wate countew has a-a swiding window w-with 10 fixed swices. thewefowe a-a wawgew
+ *                                 window wouwd wead t-to a coawsew qps c-cawcuwation. UwU (e.g. XD with 60 secs t-time window, ʘwʘ it s-swiding ovew 6 seconds swice (60 / 10 = 6 secs)). rawr x3
+ *                                 a wawgew time window awso w-wead to a swowew w-weaction to sudden q-qps buwst, ^^;; but m-mowe wobust to f-fwaky qps pattewn. ʘwʘ
+ *   @pawam dewta the step f-fow adjusting quawity f-factow. (U ﹏ U) it shouwd be a positive d-doubwe. if t-the dewta is wawge, (˘ω˘) the quawity f-factow
+ *                wiww fwuctuate mowe and b-be mowe wesponsive to exceeding m-max qps, (ꈍᴗꈍ) and if i-it is smow, /(^•ω•^) the quawity factow w-wiww be wess wesponsive. >_<
  */
-case class QueriesPerSecondBasedQualityFactorConfig(
-  override val qualityFactorBounds: BoundsWithDefault[Double],
-  override val initialDelay: Duration,
-  maxQueriesPerSecond: Int,
-  queriesPerSecondSampleWindow: Duration = 10.seconds,
-  delta: Double = 0.001,
-  override val ignorableFailures: PartialFunction[Throwable, Unit] =
-    QualityFactorConfig.defaultIgnorableFailures)
-    extends QualityFactorConfig
+case cwass quewiespewsecondbasedquawityfactowconfig(
+  o-ovewwide vaw q-quawityfactowbounds: b-boundswithdefauwt[doubwe], σωσ
+  ovewwide vaw initiawdeway: duwation, ^^;;
+  maxquewiespewsecond: i-int, 😳
+  quewiespewsecondsampwewindow: duwation = 10.seconds, >_<
+  dewta: d-doubwe = 0.001, -.-
+  o-ovewwide vaw ignowabwefaiwuwes: p-pawtiawfunction[thwowabwe, UwU unit] =
+    quawityfactowconfig.defauwtignowabwefaiwuwes)
+    e-extends quawityfactowconfig

@@ -1,20 +1,20 @@
-package com.twitter.search.earlybird_root.common;
+package com.twittew.seawch.eawwybiwd_woot.common;
 
-import javax.inject.Singleton;
+impowt javax.inject.singweton;
 
-import scala.Option;
+i-impowt scawa.option;
 
-import com.twitter.context.TwitterContext;
-import com.twitter.context.thriftscala.Viewer;
-import com.twitter.search.TwitterContextPermit;
+i-impowt com.twittew.context.twittewcontext;
+i-impowt com.twittew.context.thwiftscawa.viewew;
+i-impowt com.twittew.seawch.twittewcontextpewmit;
 
 /**
- * This class is needed to provide an easy way for unit tests to "inject"
- * a TwitterContext Viewer
+ * t-this cwass i-is nyeeded t-to pwovide an easy w-way fow unit tests to "inject"
+ * a twittewcontext viewew
  */
-@Singleton
-public class TwitterContextProvider {
-  public Option<Viewer> get() {
-    return TwitterContext.acquire(TwitterContextPermit.get()).apply();
+@singweton
+pubwic c-cwass twittewcontextpwovidew {
+  pubwic option<viewew> get() {
+    w-wetuwn twittewcontext.acquiwe(twittewcontextpewmit.get()).appwy();
   }
 }

@@ -1,87 +1,87 @@
-package com.twitter.ann.common
+package com.twittew.ann.common
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.util.Future
-import scala.util.Random
+impowt com.twittew.ann.common.embeddingtype.embeddingvectow
+i-impowt c-com.twittew.utiw.futuwe
+i-impowt s-scawa.utiw.wandom
 
-trait ShardFunction[T] {
+t-twait shawdfunction[t] {
 
   /**
-   * Shard function to shard embedding based on total shards and embedding data.
-   * @param shards
-   * @param entity
-   * @return Shard index, from 0(Inclusive) to shards(Exclusive))
+   * s-shawd function t-to shawd e-embedding based on totaw shawds and embedding data. >w<
+   * @pawam shawds
+   * @pawam entity
+   * @wetuwn s-shawd index, (⑅˘꒳˘) fwom 0(incwusive) to shawds(excwusive))
    */
-  def apply(shards: Int, entity: EntityEmbedding[T]): Int
+  d-def appwy(shawds: int, entity: e-entityembedding[t]): int
 }
 
 /**
- * Randomly shards the embeddings based on number of total shards.
+ * wandomwy shawds the embeddings b-based on numbew of totaw shawds. OwO
  */
-class RandomShardFunction[T] extends ShardFunction[T] {
-  def apply(shards: Int, entity: EntityEmbedding[T]): Int = {
-    Random.nextInt(shards)
-  }
-}
-
-/**
- * Sharded appendable to shard the embedding into different appendable indices
- * @param indices: Sequence of appendable indices
- * @param shardFn: Shard function to shard data into different indices
- * @param shards: Total shards
- * @tparam T: Type of id.
- */
-class ShardedAppendable[T, P <: RuntimeParams, D <: Distance[D]](
-  indices: Seq[Appendable[T, P, D]],
-  shardFn: ShardFunction[T],
-  shards: Int)
-    extends Appendable[T, P, D] {
-  override def append(entity: EntityEmbedding[T]): Future[Unit] = {
-    val shard = shardFn(shards, entity)
-    val index = indices(shard)
-    index.append(entity)
-  }
-
-  override def toQueryable: Queryable[T, P, D] = {
-    new ComposedQueryable[T, P, D](indices.map(_.toQueryable))
+c-cwass w-wandomshawdfunction[t] extends shawdfunction[t] {
+  def appwy(shawds: int, (ꈍᴗꈍ) entity: e-entityembedding[t]): int = {
+    wandom.nextint(shawds)
   }
 }
 
 /**
- * Composition of sequence of queryable indices, it queries all the indices,
- * and merges the result in memory to return the K nearest neighbours
- * @param indices: Sequence of queryable indices
- * @tparam T: Type of id
- * @tparam P: Type of runtime param
- * @tparam D: Type of distance metric
+ * shawded appendabwe to s-shawd the embedding into diffewent a-appendabwe indices
+ * @pawam i-indices: sequence o-of appendabwe i-indices
+ * @pawam shawdfn: shawd function to shawd d-data into diffewent indices
+ * @pawam shawds: t-totaw shawds
+ * @tpawam t: type of id. 😳
  */
-class ComposedQueryable[T, P <: RuntimeParams, D <: Distance[D]](
-  indices: Seq[Queryable[T, P, D]])
-    extends Queryable[T, P, D] {
-  private[this] val ordering =
-    Ordering.by[NeighborWithDistance[T, D], D](_.distance)
-  override def query(
-    embedding: EmbeddingVector,
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Future[List[T]] = {
-    val neighbours = queryWithDistance(embedding, numOfNeighbors, runtimeParams)
-    neighbours.map(list => list.map(nn => nn.neighbor))
+cwass shawdedappendabwe[t, 😳😳😳 p <: wuntimepawams, mya d <: d-distance[d]](
+  indices: seq[appendabwe[t, mya p-p, d]], (⑅˘꒳˘)
+  s-shawdfn: shawdfunction[t], (U ﹏ U)
+  s-shawds: int)
+    extends appendabwe[t, mya p, d] {
+  ovewwide def a-append(entity: entityembedding[t]): f-futuwe[unit] = {
+    vaw shawd = s-shawdfn(shawds, ʘwʘ e-entity)
+    vaw index = indices(shawd)
+    i-index.append(entity)
   }
 
-  override def queryWithDistance(
-    embedding: EmbeddingVector,
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Future[List[NeighborWithDistance[T, D]]] = {
-    val futures = Future.collect(
-      indices.map(index => index.queryWithDistance(embedding, numOfNeighbors, runtimeParams))
+  ovewwide d-def toquewyabwe: quewyabwe[t, (˘ω˘) p, d] = {
+    n-nyew composedquewyabwe[t, (U ﹏ U) p, d](indices.map(_.toquewyabwe))
+  }
+}
+
+/**
+ * c-composition of sequence o-of quewyabwe i-indices, ^•ﻌ•^ it quewies aww the indices, (˘ω˘)
+ * and mewges the wesuwt in memowy to wetuwn the k nyeawest neighbouws
+ * @pawam i-indices: sequence o-of quewyabwe indices
+ * @tpawam t-t: type o-of id
+ * @tpawam p-p: type of wuntime pawam
+ * @tpawam d: type of distance metwic
+ */
+c-cwass composedquewyabwe[t, :3 p <: wuntimepawams, ^^;; d <: distance[d]](
+  indices: seq[quewyabwe[t, 🥺 p-p, d]])
+    extends quewyabwe[t, (⑅˘꒳˘) p-p, d] {
+  pwivate[this] v-vaw owdewing =
+    o-owdewing.by[neighbowwithdistance[t, nyaa~~ d], :3 d](_.distance)
+  o-ovewwide d-def quewy(
+    embedding: e-embeddingvectow, ( ͡o ω ͡o )
+    nyumofneighbows: i-int, mya
+    wuntimepawams: p
+  ): futuwe[wist[t]] = {
+    vaw nyeighbouws = q-quewywithdistance(embedding, (///ˬ///✿) n-nyumofneighbows, (˘ω˘) w-wuntimepawams)
+    n-nyeighbouws.map(wist => w-wist.map(nn => nyn.neighbow))
+  }
+
+  ovewwide def quewywithdistance(
+    e-embedding: embeddingvectow, ^^;;
+    nyumofneighbows: int, (✿oωo)
+    wuntimepawams: p
+  ): futuwe[wist[neighbowwithdistance[t, (U ﹏ U) d]]] = {
+    v-vaw futuwes = futuwe.cowwect(
+      indices.map(index => index.quewywithdistance(embedding, -.- n-nyumofneighbows, ^•ﻌ•^ w-wuntimepawams))
     )
-    futures.map { list =>
-      list.flatten
-        .sorted(ordering)
-        .take(numOfNeighbors)
-        .toList
+    f-futuwes.map { wist =>
+      wist.fwatten
+        .sowted(owdewing)
+        .take(numofneighbows)
+        .towist
     }
   }
 }

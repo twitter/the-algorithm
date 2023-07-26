@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.message
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.FollowAllMessageActionType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageActionType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.fowwowawwmessageactiontype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.messageactiontype
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class MessageActionTypeMarshaller @Inject() () {
+@singweton
+c-cwass messageactiontypemawshawwew @inject() () {
 
-  def apply(messageActionType: MessageActionType): urt.MessageActionType = messageActionType match {
-    case FollowAllMessageActionType => urt.MessageActionType.FollowAll
+  d-def appwy(messageactiontype: messageactiontype): uwt.messageactiontype = messageactiontype match {
+    case f-fowwowawwmessageactiontype => uwt.messageactiontype.fowwowaww
   }
 }

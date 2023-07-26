@@ -1,223 +1,223 @@
-package com.twitter.home_mixer.product.scored_tweets.scoring_pipeline
+package com.twittew.home_mixew.pwoduct.scowed_tweets.scowing_pipewine
 
-import com.twitter.home_mixer.functional_component.feature_hydrator._
-import com.twitter.home_mixer.model.HomeFeatures.EarlybirdScoreFeature
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.CachedScoredTweetsCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsBackfillCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsFrsCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsInNetworkCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsListsCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsPopularVideosCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsTweetMixerCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsUtegCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.AncestorFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.AuthorFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.AuthorIsCreatorFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.EarlybirdFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.GizmoduckAuthorFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.GraphTwoHopFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.MetricCenterUserCountingFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.RealGraphViewerAuthorFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.RealGraphViewerRelatedUsersFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.RealTimeInteractionGraphEdgeFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.SimClustersEngagementSimilarityFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.SimClustersUserTweetScoresHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.TSPInferredTopicFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.TweetMetaDataFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.TweetTimeFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.TweetypieContentFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.TwhinAuthorFollowFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.UtegFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates.Phase1EdgeAggregateFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates.Phase2EdgeAggregateFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.real_time_aggregates._
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.QualityFactor
-import com.twitter.home_mixer.product.scored_tweets.scorer.NaviModelScorer
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.component_library.gate.NonEmptyCandidatesGate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.component_library.selector.DropMaxCandidates
-import com.twitter.product_mixer.component_library.selector.InsertAppendResults
-import com.twitter.product_mixer.component_library.selector.UpdateSortCandidates
-import com.twitter.product_mixer.core.functional_component.common.AllExceptPipelines
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.gate.BaseGate
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ScoringPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.UnexpectedCandidateResult
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipelineConfig
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.home_mixew.functionaw_component.featuwe_hydwatow._
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.eawwybiwdscowefeatuwe
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_pipewine.cachedscowedtweetscandidatepipewineconfig
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_pipewine.scowedtweetsbackfiwwcandidatepipewineconfig
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_pipewine.scowedtweetsfwscandidatepipewineconfig
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_pipewine.scowedtweetsinnetwowkcandidatepipewineconfig
+i-impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_pipewine.scowedtweetswistscandidatepipewineconfig
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_pipewine.scowedtweetspopuwawvideoscandidatepipewineconfig
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_pipewine.scowedtweetstweetmixewcandidatepipewineconfig
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_pipewine.scowedtweetsutegcandidatepipewineconfig
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.ancestowfeatuwehydwatow
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.authowfeatuwehydwatow
+impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.authowiscweatowfeatuwehydwatow
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.eawwybiwdfeatuwehydwatow
+impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.gizmoduckauthowfeatuwehydwatow
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.gwaphtwohopfeatuwehydwatow
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.metwiccentewusewcountingfeatuwehydwatow
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.weawgwaphviewewauthowfeatuwehydwatow
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.weawgwaphviewewwewatedusewsfeatuwehydwatow
+i-impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.weawtimeintewactiongwaphedgefeatuwehydwatow
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.simcwustewsengagementsimiwawityfeatuwehydwatow
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.simcwustewsusewtweetscoweshydwatow
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.tspinfewwedtopicfeatuwehydwatow
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.tweetmetadatafeatuwehydwatow
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.tweettimefeatuwehydwatow
+impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.tweetypiecontentfeatuwehydwatow
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.twhinauthowfowwowfeatuwehydwatow
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.utegfeatuwehydwatow
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.offwine_aggwegates.phase1edgeaggwegatefeatuwehydwatow
+i-impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.offwine_aggwegates.phase2edgeaggwegatefeatuwehydwatow
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.weaw_time_aggwegates._
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.modew.scowedtweetsquewy
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawam.quawityfactow
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.scowew.navimodewscowew
+i-impowt com.twittew.home_mixew.utiw.candidatesutiw
+impowt com.twittew.pwoduct_mixew.component_wibwawy.gate.nonemptycandidatesgate
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.component_wibwawy.sewectow.dwopmaxcandidates
+impowt com.twittew.pwoduct_mixew.component_wibwawy.sewectow.insewtappendwesuwts
+impowt com.twittew.pwoduct_mixew.component_wibwawy.sewectow.updatesowtcandidates
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awwexceptpipewines
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.specificpipewine
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.specificpipewines
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.basecandidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.basegate
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.scowew.scowew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.scowingpipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.itemcandidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.unexpectedcandidatewesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.scowing.scowingpipewineconfig
+impowt com.twittew.timewines.configapi.pawam
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class ScoredTweetsModelScoringPipelineConfig @Inject() (
-  // candidate sources
-  scoredTweetsInNetworkCandidatePipelineConfig: ScoredTweetsInNetworkCandidatePipelineConfig,
-  scoredTweetsUtegCandidatePipelineConfig: ScoredTweetsUtegCandidatePipelineConfig,
-  scoredTweetsTweetMixerCandidatePipelineConfig: ScoredTweetsTweetMixerCandidatePipelineConfig,
-  scoredTweetsFrsCandidatePipelineConfig: ScoredTweetsFrsCandidatePipelineConfig,
-  scoredTweetsListsCandidatePipelineConfig: ScoredTweetsListsCandidatePipelineConfig,
-  scoredTweetsPopularVideosCandidatePipelineConfig: ScoredTweetsPopularVideosCandidatePipelineConfig,
-  scoredTweetsBackfillCandidatePipelineConfig: ScoredTweetsBackfillCandidatePipelineConfig,
-  // feature hydrators
-  ancestorFeatureHydrator: AncestorFeatureHydrator,
-  authorFeatureHydrator: AuthorFeatureHydrator,
-  authorIsCreatorFeatureHydrator: AuthorIsCreatorFeatureHydrator,
-  earlybirdFeatureHydrator: EarlybirdFeatureHydrator,
-  gizmoduckAuthorSafetyFeatureHydrator: GizmoduckAuthorFeatureHydrator,
-  graphTwoHopFeatureHydrator: GraphTwoHopFeatureHydrator,
-  metricCenterUserCountingFeatureHydrator: MetricCenterUserCountingFeatureHydrator,
-  perspectiveFilteredSocialContextFeatureHydrator: PerspectiveFilteredSocialContextFeatureHydrator,
-  realGraphViewerAuthorFeatureHydrator: RealGraphViewerAuthorFeatureHydrator,
-  realGraphViewerRelatedUsersFeatureHydrator: RealGraphViewerRelatedUsersFeatureHydrator,
-  realTimeInteractionGraphEdgeFeatureHydrator: RealTimeInteractionGraphEdgeFeatureHydrator,
-  sgsValidSocialContextFeatureHydrator: SGSValidSocialContextFeatureHydrator,
-  simClustersEngagementSimilarityFeatureHydrator: SimClustersEngagementSimilarityFeatureHydrator,
-  simClustersUserTweetScoresHydrator: SimClustersUserTweetScoresHydrator,
-  tspInferredTopicFeatureHydrator: TSPInferredTopicFeatureHydrator,
-  tweetypieContentFeatureHydrator: TweetypieContentFeatureHydrator,
-  twhinAuthorFollowFeatureHydrator: TwhinAuthorFollowFeatureHydrator,
-  utegFeatureHydrator: UtegFeatureHydrator,
-  // real time aggregate feature hydrators
-  engagementsReceivedByAuthorRealTimeAggregateFeatureHydrator: EngagementsReceivedByAuthorRealTimeAggregateFeatureHydrator,
-  topicCountryEngagementRealTimeAggregateFeatureHydrator: TopicCountryEngagementRealTimeAggregateFeatureHydrator,
-  topicEngagementRealTimeAggregateFeatureHydrator: TopicEngagementRealTimeAggregateFeatureHydrator,
-  tweetCountryEngagementRealTimeAggregateFeatureHydrator: TweetCountryEngagementRealTimeAggregateFeatureHydrator,
-  tweetEngagementRealTimeAggregateFeatureHydrator: TweetEngagementRealTimeAggregateFeatureHydrator,
-  twitterListEngagementRealTimeAggregateFeatureHydrator: TwitterListEngagementRealTimeAggregateFeatureHydrator,
-  userAuthorEngagementRealTimeAggregateFeatureHydrator: UserAuthorEngagementRealTimeAggregateFeatureHydrator,
-  // offline aggregate feature hydrators
-  phase1EdgeAggregateFeatureHydrator: Phase1EdgeAggregateFeatureHydrator,
-  phase2EdgeAggregateFeatureHydrator: Phase2EdgeAggregateFeatureHydrator,
-  // model
-  naviModelScorer: NaviModelScorer)
-    extends ScoringPipelineConfig[ScoredTweetsQuery, TweetCandidate] {
+@singweton
+cwass scowedtweetsmodewscowingpipewineconfig @inject() (
+  // candidate souwces
+  scowedtweetsinnetwowkcandidatepipewineconfig: scowedtweetsinnetwowkcandidatepipewineconfig, >_<
+  s-scowedtweetsutegcandidatepipewineconfig: s-scowedtweetsutegcandidatepipewineconfig, UwU
+  scowedtweetstweetmixewcandidatepipewineconfig: s-scowedtweetstweetmixewcandidatepipewineconfig, >_<
+  s-scowedtweetsfwscandidatepipewineconfig: scowedtweetsfwscandidatepipewineconfig, -.-
+  s-scowedtweetswistscandidatepipewineconfig: scowedtweetswistscandidatepipewineconfig, mya
+  scowedtweetspopuwawvideoscandidatepipewineconfig: scowedtweetspopuwawvideoscandidatepipewineconfig, >w<
+  scowedtweetsbackfiwwcandidatepipewineconfig: s-scowedtweetsbackfiwwcandidatepipewineconfig, (U ﹏ U)
+  // featuwe hydwatows
+  ancestowfeatuwehydwatow: ancestowfeatuwehydwatow, 😳😳😳
+  authowfeatuwehydwatow: a-authowfeatuwehydwatow,
+  authowiscweatowfeatuwehydwatow: a-authowiscweatowfeatuwehydwatow, o.O
+  e-eawwybiwdfeatuwehydwatow: e-eawwybiwdfeatuwehydwatow, òωó
+  gizmoduckauthowsafetyfeatuwehydwatow: g-gizmoduckauthowfeatuwehydwatow, 😳😳😳
+  g-gwaphtwohopfeatuwehydwatow: g-gwaphtwohopfeatuwehydwatow, σωσ
+  m-metwiccentewusewcountingfeatuwehydwatow: metwiccentewusewcountingfeatuwehydwatow, (⑅˘꒳˘)
+  pewspectivefiwtewedsociawcontextfeatuwehydwatow: pewspectivefiwtewedsociawcontextfeatuwehydwatow,
+  w-weawgwaphviewewauthowfeatuwehydwatow: w-weawgwaphviewewauthowfeatuwehydwatow, (///ˬ///✿)
+  w-weawgwaphviewewwewatedusewsfeatuwehydwatow: w-weawgwaphviewewwewatedusewsfeatuwehydwatow,
+  w-weawtimeintewactiongwaphedgefeatuwehydwatow: weawtimeintewactiongwaphedgefeatuwehydwatow, 🥺
+  sgsvawidsociawcontextfeatuwehydwatow: sgsvawidsociawcontextfeatuwehydwatow, OwO
+  s-simcwustewsengagementsimiwawityfeatuwehydwatow: simcwustewsengagementsimiwawityfeatuwehydwatow,
+  simcwustewsusewtweetscoweshydwatow: simcwustewsusewtweetscoweshydwatow, >w<
+  tspinfewwedtopicfeatuwehydwatow: tspinfewwedtopicfeatuwehydwatow, 🥺
+  t-tweetypiecontentfeatuwehydwatow: tweetypiecontentfeatuwehydwatow, nyaa~~
+  twhinauthowfowwowfeatuwehydwatow: twhinauthowfowwowfeatuwehydwatow, ^^
+  u-utegfeatuwehydwatow: utegfeatuwehydwatow, >w<
+  // w-weaw time a-aggwegate featuwe hydwatows
+  e-engagementsweceivedbyauthowweawtimeaggwegatefeatuwehydwatow: engagementsweceivedbyauthowweawtimeaggwegatefeatuwehydwatow, OwO
+  t-topiccountwyengagementweawtimeaggwegatefeatuwehydwatow: t-topiccountwyengagementweawtimeaggwegatefeatuwehydwatow, XD
+  topicengagementweawtimeaggwegatefeatuwehydwatow: topicengagementweawtimeaggwegatefeatuwehydwatow, ^^;;
+  tweetcountwyengagementweawtimeaggwegatefeatuwehydwatow: tweetcountwyengagementweawtimeaggwegatefeatuwehydwatow, 🥺
+  tweetengagementweawtimeaggwegatefeatuwehydwatow: tweetengagementweawtimeaggwegatefeatuwehydwatow, XD
+  t-twittewwistengagementweawtimeaggwegatefeatuwehydwatow: twittewwistengagementweawtimeaggwegatefeatuwehydwatow, (U ᵕ U❁)
+  u-usewauthowengagementweawtimeaggwegatefeatuwehydwatow: usewauthowengagementweawtimeaggwegatefeatuwehydwatow, :3
+  // offwine a-aggwegate featuwe h-hydwatows
+  phase1edgeaggwegatefeatuwehydwatow: phase1edgeaggwegatefeatuwehydwatow, ( ͡o ω ͡o )
+  p-phase2edgeaggwegatefeatuwehydwatow: p-phase2edgeaggwegatefeatuwehydwatow, òωó
+  // modew
+  navimodewscowew: n-nyavimodewscowew)
+    e-extends scowingpipewineconfig[scowedtweetsquewy, σωσ tweetcandidate] {
 
-  override val identifier: ScoringPipelineIdentifier =
-    ScoringPipelineIdentifier("ScoredTweetsModel")
+  ovewwide vaw identifiew: scowingpipewineidentifiew =
+    s-scowingpipewineidentifiew("scowedtweetsmodew")
 
-  private val nonCachedScoringPipelineScope = AllExceptPipelines(
-    pipelinesToExclude = Set(CachedScoredTweetsCandidatePipelineConfig.Identifier)
+  p-pwivate vaw n-nyoncachedscowingpipewinescope = awwexceptpipewines(
+    p-pipewinestoexcwude = s-set(cachedscowedtweetscandidatepipewineconfig.identifiew)
   )
 
-  override val gates: Seq[BaseGate[ScoredTweetsQuery]] = Seq(
-    NonEmptyCandidatesGate(nonCachedScoringPipelineScope)
+  ovewwide vaw gates: s-seq[basegate[scowedtweetsquewy]] = seq(
+    nyonemptycandidatesgate(noncachedscowingpipewinescope)
   )
 
-  private val earlybirdScorePipelineScope = Set(
-    scoredTweetsInNetworkCandidatePipelineConfig.identifier,
-    scoredTweetsUtegCandidatePipelineConfig.identifier,
-    scoredTweetsFrsCandidatePipelineConfig.identifier
+  pwivate vaw eawwybiwdscowepipewinescope = set(
+    s-scowedtweetsinnetwowkcandidatepipewineconfig.identifiew, (U ᵕ U❁)
+    s-scowedtweetsutegcandidatepipewineconfig.identifiew, (✿oωo)
+    scowedtweetsfwscandidatepipewineconfig.identifiew
   )
 
-  private val earlybirdScoreOrdering: Ordering[CandidateWithDetails] =
-    Ordering.by[CandidateWithDetails, Double] {
-      case ItemCandidateWithDetails(_, _, features) =>
-        -features.getOrElse(EarlybirdScoreFeature, None).getOrElse(0.0)
-      case _ => throw PipelineFailure(UnexpectedCandidateResult, "Invalid candidate type")
+  pwivate vaw eawwybiwdscoweowdewing: o-owdewing[candidatewithdetaiws] =
+    o-owdewing.by[candidatewithdetaiws, ^^ doubwe] {
+      case itemcandidatewithdetaiws(_, ^•ﻌ•^ _, XD f-featuwes) =>
+        -featuwes.getowewse(eawwybiwdscowefeatuwe, :3 nyone).getowewse(0.0)
+      case _ => thwow pipewinefaiwuwe(unexpectedcandidatewesuwt, (ꈍᴗꈍ) "invawid candidate type")
     }
 
-  private def qualityFactorDropMaxCandidates(
-    pipelineIdentifier: CandidatePipelineIdentifier,
-    qualityFactorParam: Param[Int]
-  ): DropMaxCandidates[ScoredTweetsQuery] = {
-    new DropMaxCandidates(
-      pipelineScope = SpecificPipelines(pipelineIdentifier),
-      maxSelector = (query, _, _) =>
-        (query.getQualityFactorCurrentValue(identifier) *
-          query.params(qualityFactorParam)).toInt
+  p-pwivate def quawityfactowdwopmaxcandidates(
+    pipewineidentifiew: c-candidatepipewineidentifiew, :3
+    quawityfactowpawam: p-pawam[int]
+  ): dwopmaxcandidates[scowedtweetsquewy] = {
+    nyew dwopmaxcandidates(
+      pipewinescope = s-specificpipewines(pipewineidentifiew), (U ﹏ U)
+      m-maxsewectow = (quewy, UwU _, 😳😳😳 _) =>
+        (quewy.getquawityfactowcuwwentvawue(identifiew) *
+          quewy.pawams(quawityfactowpawam)).toint
     )
   }
 
-  override val selectors: Seq[Selector[ScoredTweetsQuery]] = Seq(
-    UpdateSortCandidates(SpecificPipelines(earlybirdScorePipelineScope), earlybirdScoreOrdering),
-    UpdateSortCandidates(
-      SpecificPipeline(scoredTweetsBackfillCandidatePipelineConfig.identifier),
-      CandidatesUtil.reverseChronTweetsOrdering
-    ),
-    qualityFactorDropMaxCandidates(
-      scoredTweetsInNetworkCandidatePipelineConfig.identifier,
-      QualityFactor.InNetworkMaxTweetsToScoreParam
-    ),
-    qualityFactorDropMaxCandidates(
-      scoredTweetsUtegCandidatePipelineConfig.identifier,
-      QualityFactor.UtegMaxTweetsToScoreParam
-    ),
-    qualityFactorDropMaxCandidates(
-      scoredTweetsFrsCandidatePipelineConfig.identifier,
-      QualityFactor.FrsMaxTweetsToScoreParam
-    ),
-    qualityFactorDropMaxCandidates(
-      scoredTweetsTweetMixerCandidatePipelineConfig.identifier,
-      QualityFactor.TweetMixerMaxTweetsToScoreParam
-    ),
-    qualityFactorDropMaxCandidates(
-      scoredTweetsListsCandidatePipelineConfig.identifier,
-      QualityFactor.ListsMaxTweetsToScoreParam
-    ),
-    qualityFactorDropMaxCandidates(
-      scoredTweetsPopularVideosCandidatePipelineConfig.identifier,
-      QualityFactor.PopularVideosMaxTweetsToScoreParam
-    ),
-    qualityFactorDropMaxCandidates(
-      scoredTweetsBackfillCandidatePipelineConfig.identifier,
-      QualityFactor.BackfillMaxTweetsToScoreParam
-    ),
-    // Select candidates for Heavy Ranker Feature Hydration and Scoring
-    InsertAppendResults(nonCachedScoringPipelineScope)
+  ovewwide vaw sewectows: seq[sewectow[scowedtweetsquewy]] = s-seq(
+    updatesowtcandidates(specificpipewines(eawwybiwdscowepipewinescope), XD e-eawwybiwdscoweowdewing), o.O
+    updatesowtcandidates(
+      specificpipewine(scowedtweetsbackfiwwcandidatepipewineconfig.identifiew), (⑅˘꒳˘)
+      candidatesutiw.wevewsechwontweetsowdewing
+    ), 😳😳😳
+    q-quawityfactowdwopmaxcandidates(
+      scowedtweetsinnetwowkcandidatepipewineconfig.identifiew, nyaa~~
+      quawityfactow.innetwowkmaxtweetstoscowepawam
+    ), rawr
+    q-quawityfactowdwopmaxcandidates(
+      s-scowedtweetsutegcandidatepipewineconfig.identifiew, -.-
+      quawityfactow.utegmaxtweetstoscowepawam
+    ), (✿oωo)
+    q-quawityfactowdwopmaxcandidates(
+      scowedtweetsfwscandidatepipewineconfig.identifiew, /(^•ω•^)
+      q-quawityfactow.fwsmaxtweetstoscowepawam
+    ), 🥺
+    q-quawityfactowdwopmaxcandidates(
+      s-scowedtweetstweetmixewcandidatepipewineconfig.identifiew, ʘwʘ
+      quawityfactow.tweetmixewmaxtweetstoscowepawam
+    ), UwU
+    q-quawityfactowdwopmaxcandidates(
+      s-scowedtweetswistscandidatepipewineconfig.identifiew, XD
+      quawityfactow.wistsmaxtweetstoscowepawam
+    ), (✿oωo)
+    quawityfactowdwopmaxcandidates(
+      scowedtweetspopuwawvideoscandidatepipewineconfig.identifiew, :3
+      q-quawityfactow.popuwawvideosmaxtweetstoscowepawam
+    ), (///ˬ///✿)
+    q-quawityfactowdwopmaxcandidates(
+      s-scowedtweetsbackfiwwcandidatepipewineconfig.identifiew, nyaa~~
+      quawityfactow.backfiwwmaxtweetstoscowepawam
+    ), >w<
+    // sewect candidates f-fow heavy wankew featuwe hydwation a-and scowing
+    i-insewtappendwesuwts(noncachedscowingpipewinescope)
   )
 
-  override val preScoringFeatureHydrationPhase1: Seq[
-    BaseCandidateFeatureHydrator[ScoredTweetsQuery, TweetCandidate, _]
-  ] = Seq(
-    TweetMetaDataFeatureHydrator,
-    ancestorFeatureHydrator,
-    authorFeatureHydrator,
-    authorIsCreatorFeatureHydrator,
-    earlybirdFeatureHydrator,
-    gizmoduckAuthorSafetyFeatureHydrator,
-    graphTwoHopFeatureHydrator,
-    metricCenterUserCountingFeatureHydrator,
-    realTimeInteractionGraphEdgeFeatureHydrator,
-    realGraphViewerAuthorFeatureHydrator,
-    simClustersEngagementSimilarityFeatureHydrator,
-    simClustersUserTweetScoresHydrator,
-    InNetworkFeatureHydrator,
-    tspInferredTopicFeatureHydrator,
-    tweetypieContentFeatureHydrator,
-    twhinAuthorFollowFeatureHydrator,
-    utegFeatureHydrator,
-    // real time aggregates
-    engagementsReceivedByAuthorRealTimeAggregateFeatureHydrator,
-    tweetCountryEngagementRealTimeAggregateFeatureHydrator,
-    tweetEngagementRealTimeAggregateFeatureHydrator,
-    twitterListEngagementRealTimeAggregateFeatureHydrator,
-    userAuthorEngagementRealTimeAggregateFeatureHydrator,
-    // offline aggregates
-    phase1EdgeAggregateFeatureHydrator
+  ovewwide vaw pwescowingfeatuwehydwationphase1: seq[
+    basecandidatefeatuwehydwatow[scowedtweetsquewy, -.- tweetcandidate, (✿oωo) _]
+  ] = s-seq(
+    tweetmetadatafeatuwehydwatow, (˘ω˘)
+    a-ancestowfeatuwehydwatow, rawr
+    a-authowfeatuwehydwatow, OwO
+    a-authowiscweatowfeatuwehydwatow, ^•ﻌ•^
+    eawwybiwdfeatuwehydwatow, UwU
+    g-gizmoduckauthowsafetyfeatuwehydwatow, (˘ω˘)
+    gwaphtwohopfeatuwehydwatow, (///ˬ///✿)
+    metwiccentewusewcountingfeatuwehydwatow, σωσ
+    weawtimeintewactiongwaphedgefeatuwehydwatow, /(^•ω•^)
+    weawgwaphviewewauthowfeatuwehydwatow, 😳
+    simcwustewsengagementsimiwawityfeatuwehydwatow, 😳
+    simcwustewsusewtweetscoweshydwatow, (⑅˘꒳˘)
+    i-innetwowkfeatuwehydwatow, 😳😳😳
+    tspinfewwedtopicfeatuwehydwatow,
+    t-tweetypiecontentfeatuwehydwatow, 😳
+    twhinauthowfowwowfeatuwehydwatow, XD
+    u-utegfeatuwehydwatow, mya
+    // weaw time aggwegates
+    e-engagementsweceivedbyauthowweawtimeaggwegatefeatuwehydwatow, ^•ﻌ•^
+    tweetcountwyengagementweawtimeaggwegatefeatuwehydwatow, ʘwʘ
+    t-tweetengagementweawtimeaggwegatefeatuwehydwatow, ( ͡o ω ͡o )
+    t-twittewwistengagementweawtimeaggwegatefeatuwehydwatow, mya
+    u-usewauthowengagementweawtimeaggwegatefeatuwehydwatow, o.O
+    // o-offwine aggwegates
+    p-phase1edgeaggwegatefeatuwehydwatow
   )
 
-  override val preScoringFeatureHydrationPhase2: Seq[
-    BaseCandidateFeatureHydrator[ScoredTweetsQuery, TweetCandidate, _]
-  ] = Seq(
-    perspectiveFilteredSocialContextFeatureHydrator,
-    phase2EdgeAggregateFeatureHydrator,
-    realGraphViewerRelatedUsersFeatureHydrator,
-    sgsValidSocialContextFeatureHydrator,
-    TweetTimeFeatureHydrator,
-    topicCountryEngagementRealTimeAggregateFeatureHydrator,
-    topicEngagementRealTimeAggregateFeatureHydrator
+  ovewwide vaw pwescowingfeatuwehydwationphase2: seq[
+    basecandidatefeatuwehydwatow[scowedtweetsquewy, (✿oωo) tweetcandidate, :3 _]
+  ] = seq(
+    pewspectivefiwtewedsociawcontextfeatuwehydwatow, 😳
+    phase2edgeaggwegatefeatuwehydwatow, (U ﹏ U)
+    w-weawgwaphviewewwewatedusewsfeatuwehydwatow, mya
+    s-sgsvawidsociawcontextfeatuwehydwatow,
+    t-tweettimefeatuwehydwatow,
+    topiccountwyengagementweawtimeaggwegatefeatuwehydwatow, (U ᵕ U❁)
+    t-topicengagementweawtimeaggwegatefeatuwehydwatow
   )
 
-  override val scorers: Seq[Scorer[ScoredTweetsQuery, TweetCandidate]] = Seq(naviModelScorer)
+  ovewwide vaw scowews: seq[scowew[scowedtweetsquewy, :3 tweetcandidate]] = s-seq(navimodewscowew)
 }

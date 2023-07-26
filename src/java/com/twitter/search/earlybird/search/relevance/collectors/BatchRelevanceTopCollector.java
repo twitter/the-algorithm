@@ -1,118 +1,118 @@
-package com.twitter.search.earlybird.search.relevance.collectors;
+package com.twittew.seawch.eawwybiwd.seawch.wewevance.cowwectows;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.awwaywist;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.concuwwent.timeunit;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.search.EarlyTerminationState;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.search.relevance.LinearScoringData;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchRequestInfo;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchResults;
-import com.twitter.search.earlybird.search.relevance.scoring.BatchHit;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftSearchRelevanceOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultExtraMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
+i-impowt com.twittew.common.cowwections.paiw;
+i-impowt com.twittew.common.utiw.cwock;
+i-impowt com.twittew.seawch.common.featuwes.thwift.thwiftseawchwesuwtfeatuwes;
+impowt com.twittew.seawch.common.metwics.seawchtimewstats;
+impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+impowt c-com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+impowt com.twittew.seawch.common.seawch.eawwytewminationstate;
+i-impowt com.twittew.seawch.eawwybiwd.common.usewupdates.usewtabwe;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.wewevance.wineawscowingdata;
+impowt com.twittew.seawch.eawwybiwd.seawch.wewevance.wewevanceseawchwequestinfo;
+impowt com.twittew.seawch.eawwybiwd.seawch.wewevance.wewevanceseawchwesuwts;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.wewevance.scowing.batchhit;
+impowt c-com.twittew.seawch.eawwybiwd.seawch.wewevance.scowing.scowingfunction;
+i-impowt com.twittew.seawch.eawwybiwd.stats.eawwybiwdseawchewstats;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwewevanceoptions;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtextwametadata;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtmetadata;
 
 /**
- * BatchRelevanceTopCollector is similar to the `RelevanceTopCollector` in what it outputs:
- * Collects the top numResults by score, filtering out duplicates
- * and results with scores equal to Flat.MIN_VALUE.
- * The way that it achieves that is different though: it will score documents through the batch score
- * function instead of scoring documents one by one.
+ * batchwewevancetopcowwectow is simiwaw to the `wewevancetopcowwectow` in nyani it outputs:
+ * cowwects t-the top nyumwesuwts by scowe, (⑅˘꒳˘) f-fiwtewing out d-dupwicates
+ * and w-wesuwts with s-scowes equaw to fwat.min_vawue. (///ˬ///✿)
+ * the way that i-it achieves that is diffewent though: it wiww scowe d-documents thwough the batch scowe
+ * function instead of scowing documents one by one. ^^;;
  */
-public class BatchRelevanceTopCollector extends RelevanceTopCollector {
-  protected final List<BatchHit> hits;
+pubwic c-cwass batchwewevancetopcowwectow extends wewevancetopcowwectow {
+  p-pwotected f-finaw wist<batchhit> h-hits;
 
-  public BatchRelevanceTopCollector(
-      ImmutableSchemaInterface schema,
-      RelevanceSearchRequestInfo searchRequestInfo,
-      ScoringFunction scoringFunction,
-      EarlybirdSearcherStats searcherStats,
-      EarlybirdCluster cluster,
-      UserTable userTable,
-      Clock clock,
-      int requestDebugMode) {
-    super(schema, searchRequestInfo, scoringFunction, searcherStats, cluster, userTable, clock,
-        requestDebugMode);
-    this.hits = new ArrayList<>((int) getMaxHitsToProcess());
+  pubwic batchwewevancetopcowwectow(
+      immutabweschemaintewface schema, >_<
+      w-wewevanceseawchwequestinfo s-seawchwequestinfo, rawr x3
+      scowingfunction s-scowingfunction,
+      e-eawwybiwdseawchewstats seawchewstats, /(^•ω•^)
+      e-eawwybiwdcwustew cwustew,
+      u-usewtabwe usewtabwe, :3
+      cwock cwock,
+      i-int wequestdebugmode) {
+    supew(schema, (ꈍᴗꈍ) s-seawchwequestinfo, /(^•ω•^) scowingfunction, (⑅˘꒳˘) s-seawchewstats, ( ͡o ω ͡o ) c-cwustew, òωó usewtabwe, cwock, (⑅˘꒳˘)
+        wequestdebugmode);
+    this.hits = nyew awwaywist<>((int) getmaxhitstopwocess());
   }
 
-  @Override
-  protected void doCollectWithScore(long tweetID, float score) throws IOException {
-    Pair<LinearScoringData, ThriftSearchResultFeatures> pair =
-        scoringFunction.collectFeatures(score);
-    ThriftSearchResultMetadata metadata = collectMetadata();
-    hits.add(new BatchHit(pair.getFirst(),
-        pair.getSecond(),
-        metadata,
-        tweetID,
-        currTimeSliceID));
+  @ovewwide
+  pwotected v-void docowwectwithscowe(wong t-tweetid, XD fwoat scowe) thwows ioexception {
+    p-paiw<wineawscowingdata, -.- t-thwiftseawchwesuwtfeatuwes> p-paiw =
+        scowingfunction.cowwectfeatuwes(scowe);
+    thwiftseawchwesuwtmetadata metadata = c-cowwectmetadata();
+    hits.add(new batchhit(paiw.getfiwst(), :3
+        paiw.getsecond(), nyaa~~
+        metadata, 😳
+        t-tweetid, (⑅˘꒳˘)
+        cuwwtimeswiceid));
   }
 
-  @Override
-  public EarlyTerminationState innerShouldCollectMore() {
-    if (hits.size() >= getMaxHitsToProcess()) {
-      return setEarlyTerminationState(EarlyTerminationState.TERMINATED_MAX_HITS_EXCEEDED);
+  @ovewwide
+  pubwic e-eawwytewminationstate i-innewshouwdcowwectmowe() {
+    i-if (hits.size() >= getmaxhitstopwocess()) {
+      w-wetuwn s-seteawwytewminationstate(eawwytewminationstate.tewminated_max_hits_exceeded);
     }
-    return EarlyTerminationState.COLLECTING;
+    w-wetuwn e-eawwytewminationstate.cowwecting;
   }
 
-  @Override
-  protected RelevanceSearchResults doGetRelevanceResults() throws IOException {
-    final long scoringStartNanos = getClock().nowNanos();
-    float[] scores = scoringFunction.batchScore(hits);
-    final long scoringEndNanos = getClock().nowNanos();
-    addToOverallScoringTimeNanos(scoringStartNanos, scoringEndNanos);
-    exportBatchScoringTime(scoringEndNanos - scoringStartNanos);
+  @ovewwide
+  pwotected wewevanceseawchwesuwts d-dogetwewevancewesuwts() t-thwows ioexception {
+    f-finaw w-wong scowingstawtnanos = g-getcwock().nownanos();
+    fwoat[] scowes = scowingfunction.batchscowe(hits);
+    finaw w-wong scowingendnanos = getcwock().nownanos();
+    addtoovewawwscowingtimenanos(scowingstawtnanos, nyaa~~ scowingendnanos);
+    expowtbatchscowingtime(scowingendnanos - scowingstawtnanos);
 
-    for (int i = 0; i < hits.size(); i++) {
-      BatchHit hit = hits.get(i);
-      ThriftSearchResultMetadata metadata = hit.getMetadata();
+    f-fow (int i = 0; i < hits.size(); i++) {
+      batchhit h-hit = hits.get(i);
+      t-thwiftseawchwesuwtmetadata m-metadata = hit.getmetadata();
 
-      if (!metadata.isSetExtraMetadata()) {
-        metadata.setExtraMetadata(new ThriftSearchResultExtraMetadata());
+      i-if (!metadata.issetextwametadata()) {
+        metadata.setextwametadata(new t-thwiftseawchwesuwtextwametadata());
       }
-      metadata.getExtraMetadata().setFeatures(hit.getFeatures());
+      m-metadata.getextwametadata().setfeatuwes(hit.getfeatuwes());
 
 
-      // Populate the ThriftSearchResultMetadata post batch scoring with information from the
-      // LinearScoringData, which now includes a score.
-      scoringFunction.populateResultMetadataBasedOnScoringData(
-          searchRequestInfo.getSearchQuery().getResultMetadataOptions(),
-          metadata,
-          hit.getScoringData());
+      // popuwate the thwiftseawchwesuwtmetadata post batch scowing with infowmation fwom the
+      // wineawscowingdata, OwO w-which nyow incwudes a scowe. rawr x3
+      s-scowingfunction.popuwatewesuwtmetadatabasedonscowingdata(
+          seawchwequestinfo.getseawchquewy().getwesuwtmetadataoptions(), XD
+          m-metadata, σωσ
+          h-hit.getscowingdata());
 
-      collectWithScoreInternal(
-          hit.getTweetID(),
-          hit.getTimeSliceID(),
-          scores[i],
+      cowwectwithscoweintewnaw(
+          hit.gettweetid(), (U ᵕ U❁)
+          h-hit.gettimeswiceid(), (U ﹏ U)
+          s-scowes[i], :3
           metadata
       );
     }
-    return getRelevanceResultsInternal();
+    w-wetuwn getwewevancewesuwtsintewnaw();
   }
 
-  private void exportBatchScoringTime(long scoringTimeNanos) {
-    ThriftSearchRelevanceOptions relevanceOptions = searchRequestInfo.getRelevanceOptions();
-    if (relevanceOptions.isSetRankingParams()
-        && relevanceOptions.getRankingParams().isSetSelectedTensorflowModel()) {
-      String model = relevanceOptions.getRankingParams().getSelectedTensorflowModel();
-      SearchTimerStats batchScoringPerModelTimer = SearchTimerStats.export(
-          String.format("batch_scoring_time_for_model_%s", model),
-          TimeUnit.NANOSECONDS,
-          false,
-          true);
-      batchScoringPerModelTimer.timerIncrement(scoringTimeNanos);
+  p-pwivate void expowtbatchscowingtime(wong scowingtimenanos) {
+    thwiftseawchwewevanceoptions wewevanceoptions = seawchwequestinfo.getwewevanceoptions();
+    if (wewevanceoptions.issetwankingpawams()
+        && wewevanceoptions.getwankingpawams().issetsewectedtensowfwowmodew()) {
+      s-stwing modew = wewevanceoptions.getwankingpawams().getsewectedtensowfwowmodew();
+      s-seawchtimewstats b-batchscowingpewmodewtimew = seawchtimewstats.expowt(
+          s-stwing.fowmat("batch_scowing_time_fow_modew_%s", ( ͡o ω ͡o ) m-modew), σωσ
+          timeunit.nanoseconds, >w<
+          f-fawse, 😳😳😳
+          twue);
+      batchscowingpewmodewtimew.timewincwement(scowingtimenanos);
     }
   }
 }

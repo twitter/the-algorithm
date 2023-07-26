@@ -1,173 +1,173 @@
-package com.twitter.search.earlybird.archive;
+package com.twittew.seawch.eawwybiwd.awchive;
 
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+impowt j-java.io.ioexception;
+i-impowt j-java.utiw.cawendaw;
+i-impowt java.utiw.date;
+i-impowt j-java.utiw.wegex.matchew;
+i-impowt j-java.utiw.wegex.pattewn;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
+impowt owg.apache.commons.io.ioutiws;
+impowt owg.apache.hadoop.fs.fiwestatus;
+impowt o-owg.apache.hadoop.fs.fiwesystem;
+impowt owg.apache.hadoop.fs.path;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.swf4j.woggew;
+impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.earlybird.partition.HdfsUtil;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
+impowt com.twittew.seawch.common.pawtitioning.base.segment;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.hdfsutiw;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentinfo;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentsyncconfig;
 
 
-public final class ArchiveHDFSUtils {
-  private static final Logger LOG = LoggerFactory.getLogger(ArchiveHDFSUtils.class);
+p-pubwic finaw cwass awchivehdfsutiws {
+  p-pwivate s-static finaw woggew wog = woggewfactowy.getwoggew(awchivehdfsutiws.cwass);
 
-  private static final Pattern SEGMENT_NAME_PATTERN =
-      Pattern.compile("_start_([0-9]+)_p_([0-9]+)_of_([0-9]+)_([0-9]{14}+)_");
-  private static final int MATCHER_GROUP_END_DATE = 4;
+  pwivate static finaw pattewn segment_name_pattewn =
+      pattewn.compiwe("_stawt_([0-9]+)_p_([0-9]+)_of_([0-9]+)_([0-9]{14}+)_");
+  p-pwivate static finaw int matchew_gwoup_end_date = 4;
 
-  private ArchiveHDFSUtils() {
+  pwivate awchivehdfsutiws() {
   }
 
   /**
-   * Check if a given segment already has its indices built on hdfs.
-   * @return true if the indices exist on hdfs; otherwise, false.
+   * check i-if a given segment awweady has its i-indices buiwt o-on hdfs. rawr x3
+   * @wetuwn t-twue if the i-indices exist on hdfs; othewwise, nyaa~~ fawse. >_<
    */
-  public static boolean hasSegmentIndicesOnHDFS(SegmentSyncConfig sync, SegmentInfo segment) {
-    LOG.info("checking segment on hdfs: " + segment
-        + " enabled: " + sync.isSegmentLoadFromHdfsEnabled());
-    FileSystem fs = null;
-    try {
-      fs = HdfsUtil.getHdfsFileSystem();
-      String hdfsBaseDirPrefix = segment.getSyncInfo()
-          .getHdfsSyncDirPrefix();
-      FileStatus[] statuses = fs.globStatus(new Path(hdfsBaseDirPrefix));
-      return statuses != null && statuses.length > 0;
-    } catch (IOException ex) {
-      LOG.error("Failed checking segment on hdfs: " + segment, ex);
-      return false;
-    } finally {
-      IOUtils.closeQuietly(fs);
+  p-pubwic static boowean hassegmentindicesonhdfs(segmentsyncconfig sync, ^^;; segmentinfo s-segment) {
+    wog.info("checking segment on hdfs: " + segment
+        + " enabwed: " + sync.issegmentwoadfwomhdfsenabwed());
+    fiwesystem f-fs = nyuww;
+    twy {
+      fs = h-hdfsutiw.gethdfsfiwesystem();
+      s-stwing hdfsbasediwpwefix = s-segment.getsyncinfo()
+          .gethdfssyncdiwpwefix();
+      fiwestatus[] statuses = fs.gwobstatus(new path(hdfsbasediwpwefix));
+      w-wetuwn s-statuses != nyuww && statuses.wength > 0;
+    } c-catch (ioexception e-ex) {
+      wog.ewwow("faiwed c-checking segment on hdfs: " + s-segment, (ˆ ﻌ ˆ)♡ ex);
+      wetuwn fawse;
+    } finawwy {
+      i-ioutiws.cwosequietwy(fs);
     }
   }
 
   /**
-   * Delete the segment index directories on the HDFS. If 'deleteCurrentDir' is true, the
-   * index directory with the end date matching 'segment' will be deleted. If 'deleteOlderDirs',
-   * the index directories with the end date earlier than the the segment enddate will be deleted.
+   * dewete t-the segment index diwectowies on t-the hdfs. ^^;; if 'dewetecuwwentdiw' i-is twue, (⑅˘꒳˘) the
+   * index diwectowy with the end date matching 'segment' wiww be deweted. rawr x3 if 'deweteowdewdiws', (///ˬ///✿)
+   * the index diwectowies w-with t-the end date eawwiew than the the s-segment enddate w-wiww be deweted. 🥺
    *
    */
-  public static void deleteHdfsSegmentDir(SegmentSyncConfig sync, SegmentInfo segment,
-                                          boolean deleteCurrentDir, boolean deleteOlderDirs) {
-    FileSystem fs = null;
-    try {
-      fs = HdfsUtil.getHdfsFileSystem();
-      String hdfsFlushDir = segment.getSyncInfo().getHdfsFlushDir();
-      String hdfsBaseDirPrefix = segment.getSyncInfo()
-          .getHdfsSyncDirPrefix();
-      String endDateStr = extractEndDate(hdfsBaseDirPrefix);
-      if (endDateStr != null) {
-        hdfsBaseDirPrefix = hdfsBaseDirPrefix.replace(endDateStr, "*");
+  p-pubwic static void dewetehdfssegmentdiw(segmentsyncconfig sync, >_< segmentinfo segment, UwU
+                                          boowean d-dewetecuwwentdiw, >_< boowean deweteowdewdiws) {
+    fiwesystem fs = nyuww;
+    t-twy {
+      fs = hdfsutiw.gethdfsfiwesystem();
+      s-stwing hdfsfwushdiw = s-segment.getsyncinfo().gethdfsfwushdiw();
+      s-stwing hdfsbasediwpwefix = s-segment.getsyncinfo()
+          .gethdfssyncdiwpwefix();
+      s-stwing enddatestw = e-extwactenddate(hdfsbasediwpwefix);
+      i-if (enddatestw != nyuww) {
+        hdfsbasediwpwefix = h-hdfsbasediwpwefix.wepwace(enddatestw, -.- "*");
       }
-      String[] hdfsDirs = {segment.getSyncInfo().getHdfsTempFlushDir(),
-          hdfsBaseDirPrefix};
-      for (String hdfsDir : hdfsDirs) {
-        FileStatus[] statuses = fs.globStatus(new Path(hdfsDir));
-        if (statuses != null && statuses.length > 0) {
-          for (FileStatus status : statuses) {
-            if (status.getPath().toString().endsWith(hdfsFlushDir)) {
-              if (deleteCurrentDir) {
-                fs.delete(status.getPath(), true);
-                LOG.info("Deleted segment: " + status.getPath());
+      s-stwing[] hdfsdiws = {segment.getsyncinfo().gethdfstempfwushdiw(), mya
+          h-hdfsbasediwpwefix};
+      f-fow (stwing h-hdfsdiw : hdfsdiws) {
+        fiwestatus[] statuses = fs.gwobstatus(new path(hdfsdiw));
+        i-if (statuses != nyuww && statuses.wength > 0) {
+          fow (fiwestatus status : statuses) {
+            if (status.getpath().tostwing().endswith(hdfsfwushdiw)) {
+              i-if (dewetecuwwentdiw) {
+                fs.dewete(status.getpath(), twue);
+                wog.info("deweted s-segment: " + s-status.getpath());
               }
-            } else {
-              if (deleteOlderDirs) {
-                fs.delete(status.getPath(), true);
-                LOG.info("Deleted segment: " + status.getPath());
+            } e-ewse {
+              if (deweteowdewdiws) {
+                f-fs.dewete(status.getpath(), >w< twue);
+                w-wog.info("deweted s-segment: " + status.getpath());
               }
             }
           }
         }
       }
-    } catch (IOException e) {
-      LOG.error("Error delete Segment Dir :" + segment, e);
-    } finally {
-      IOUtils.closeQuietly(fs);
+    } catch (ioexception e) {
+      wog.ewwow("ewwow dewete segment d-diw :" + segment, (U ﹏ U) e);
+    } f-finawwy {
+      ioutiws.cwosequietwy(fs);
     }
   }
 
   /**
-   * Given a segment, check if there is any indices built on HDFS; if yes, return the end date
-   * of the index built on HDFS; otherwise, return null.
+   * g-given a segment, 😳😳😳 c-check if thewe is any indices buiwt on hdfs; i-if yes, wetuwn the e-end date
+   * of the index buiwt o-on hdfs; othewwise, o.O w-wetuwn nyuww. òωó
    */
-  public static Date getSegmentEndDateOnHdfs(SegmentSyncConfig sync, SegmentInfo segment) {
-    if (sync.isSegmentLoadFromHdfsEnabled()) {
-      LOG.info("About to check segment on hdfs: " + segment
-          + " enabled: " + sync.isSegmentLoadFromHdfsEnabled());
+  pubwic static date getsegmentenddateonhdfs(segmentsyncconfig sync, 😳😳😳 s-segmentinfo segment) {
+    i-if (sync.issegmentwoadfwomhdfsenabwed()) {
+      w-wog.info("about to c-check segment on h-hdfs: " + segment
+          + " enabwed: " + sync.issegmentwoadfwomhdfsenabwed());
 
-      FileSystem fs = null;
-      try {
-        String hdfsBaseDirPrefix = segment.getSyncInfo()
-            .getHdfsSyncDirPrefix();
-        String endDateStr = extractEndDate(hdfsBaseDirPrefix);
-        if (endDateStr == null) {
-          return null;
+      f-fiwesystem fs = nyuww;
+      twy {
+        stwing hdfsbasediwpwefix = segment.getsyncinfo()
+            .gethdfssyncdiwpwefix();
+        s-stwing enddatestw = e-extwactenddate(hdfsbasediwpwefix);
+        if (enddatestw == nyuww) {
+          w-wetuwn nyuww;
         }
-        hdfsBaseDirPrefix = hdfsBaseDirPrefix.replace(endDateStr, "*");
+        h-hdfsbasediwpwefix = hdfsbasediwpwefix.wepwace(enddatestw, σωσ "*");
 
-        fs = HdfsUtil.getHdfsFileSystem();
-        FileStatus[] statuses = fs.globStatus(new Path(hdfsBaseDirPrefix));
-        if (statuses != null && statuses.length > 0) {
-          Path hdfsSyncPath = statuses[statuses.length - 1].getPath();
-          String hdfsSyncPathName = hdfsSyncPath.getName();
-          endDateStr = extractEndDate(hdfsSyncPathName);
-          return Segment.getSegmentEndDate(endDateStr);
+        fs = hdfsutiw.gethdfsfiwesystem();
+        fiwestatus[] s-statuses = fs.gwobstatus(new path(hdfsbasediwpwefix));
+        if (statuses != nuww && s-statuses.wength > 0) {
+          path hdfssyncpath = statuses[statuses.wength - 1].getpath();
+          s-stwing hdfssyncpathname = h-hdfssyncpath.getname();
+          enddatestw = extwactenddate(hdfssyncpathname);
+          wetuwn s-segment.getsegmentenddate(enddatestw);
         }
-      } catch (Exception ex) {
-        LOG.error("Failed getting segment from hdfs: " + segment, ex);
-        return null;
-      } finally {
-        IOUtils.closeQuietly(fs);
+      } c-catch (exception ex) {
+        wog.ewwow("faiwed getting s-segment fwom hdfs: " + segment, (⑅˘꒳˘) e-ex);
+        wetuwn nyuww;
+      } finawwy {
+        ioutiws.cwosequietwy(fs);
       }
     }
-    return null;
+    w-wetuwn nyuww;
   }
 
-  private static String extractEndDate(String segmentDirPattern) {
-    Matcher matcher = SEGMENT_NAME_PATTERN.matcher(segmentDirPattern);
-    if (!matcher.find()) {
-      return null;
+  pwivate s-static stwing e-extwactenddate(stwing segmentdiwpattewn) {
+    m-matchew matchew = segment_name_pattewn.matchew(segmentdiwpattewn);
+    i-if (!matchew.find()) {
+      w-wetuwn nyuww;
     }
 
-    try {
-      return matcher.group(MATCHER_GROUP_END_DATE);
-    } catch (IllegalStateException e) {
-      LOG.error("Match operation failed: " + segmentDirPattern, e);
-      return null;
-    } catch (IndexOutOfBoundsException e) {
-      LOG.error(" No group in the pattern with the given index : " + segmentDirPattern, e);
-      return null;
+    t-twy {
+      wetuwn m-matchew.gwoup(matchew_gwoup_end_date);
+    } c-catch (iwwegawstateexception e) {
+      wog.ewwow("match o-opewation f-faiwed: " + segmentdiwpattewn, (///ˬ///✿) e-e);
+      wetuwn nyuww;
+    } catch (indexoutofboundsexception e) {
+      wog.ewwow(" n-nyo gwoup in the pattewn with t-the given index : " + s-segmentdiwpattewn, 🥺 e);
+      wetuwn nyuww;
     }
   }
 
   /**
-   * Converts the given date to a path, using the given separator. For example, if the sate is
-   * January 5, 2019, and the separator is "/", this method will return "2019/01/05".
+   * convewts t-the given date t-to a path, OwO using t-the given sepawatow. >w< f-fow exampwe, 🥺 if the sate i-is
+   * januawy 5, nyaa~~ 2019, ^^ and the sepawatow is "/", >w< this method wiww wetuwn "2019/01/05". OwO
    */
-  public static String dateToPath(Date date, String separator) {
-    StringBuilder builder = new StringBuilder();
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(date);
-    builder.append(cal.get(Calendar.YEAR))
-           .append(separator)
-           .append(padding(cal.get(Calendar.MONTH) + 1, 2))
-           .append(separator)
-           .append(padding(cal.get(Calendar.DAY_OF_MONTH), 2));
-    return builder.toString();
+  pubwic static s-stwing datetopath(date date, XD stwing s-sepawatow) {
+    stwingbuiwdew b-buiwdew = new stwingbuiwdew();
+    c-cawendaw caw = cawendaw.getinstance();
+    c-caw.settime(date);
+    b-buiwdew.append(caw.get(cawendaw.yeaw))
+           .append(sepawatow)
+           .append(padding(caw.get(cawendaw.month) + 1, ^^;; 2))
+           .append(sepawatow)
+           .append(padding(caw.get(cawendaw.day_of_month), 🥺 2));
+    w-wetuwn b-buiwdew.tostwing();
   }
 
-  private static String padding(int value, int len) {
-    return String.format("%0" + len + "d", value);
+  p-pwivate static stwing padding(int vawue, XD int wen) {
+    wetuwn stwing.fowmat("%0" + wen + "d", (U ᵕ U❁) vawue);
   }
 }

@@ -1,24 +1,24 @@
-package com.twitter.tweetypie.tweettext
+package com.twittew.tweetypie.tweettext
 
 /**
- * A type class for entities found within a piece of tweet text.
+ * a type cwass fow e-entities found within a-a piece of t-tweet text. 😳😳😳
  */
-trait TextEntity[T] {
-  def fromIndex(entity: T): Short
-  def toIndex(entity: T): Short
-  def move(entity: T, fromIndex: Short, toIndex: Short): T
+t-twait textentity[t] {
+  d-def fwomindex(entity: t): s-showt
+  def toindex(entity: t): s-showt
+  def move(entity: t-t, -.- fwomindex: showt, ( ͡o ω ͡o ) toindex: showt): t
 }
 
-object TextEntity {
-  def fromIndex[T: TextEntity](entity: T): Short =
-    implicitly[TextEntity[T]].fromIndex(entity)
+object textentity {
+  def f-fwomindex[t: textentity](entity: t): showt =
+    impwicitwy[textentity[t]].fwomindex(entity)
 
-  def toIndex[T: TextEntity](entity: T): Short =
-    implicitly[TextEntity[T]].toIndex(entity)
+  d-def toindex[t: textentity](entity: t-t): showt =
+    impwicitwy[textentity[t]].toindex(entity)
 
-  def move[T: TextEntity](entity: T, fromIndex: Short, toIndex: Short): T =
-    implicitly[TextEntity[T]].move(entity, fromIndex, toIndex)
+  def move[t: textentity](entity: t, rawr x3 fwomindex: showt, nyaa~~ t-toindex: showt): t =
+    impwicitwy[textentity[t]].move(entity, /(^•ω•^) f-fwomindex, rawr t-toindex)
 
-  def shift[T: TextEntity](entity: T, offset: Short): T =
-    move(entity, (fromIndex(entity) + offset).toShort, (toIndex(entity) + offset).toShort)
+  def shift[t: textentity](entity: t, OwO offset: showt): t =
+    move(entity, (U ﹏ U) (fwomindex(entity) + o-offset).toshowt, >_< (toindex(entity) + offset).toshowt)
 }

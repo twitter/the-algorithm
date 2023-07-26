@@ -1,114 +1,114 @@
-package com.twitter
+package com.twittew
 
-import com.twitter.mediaservices.commons.thriftscala.MediaKey
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.gizmoduck.thriftscala.QueryFields
+impowt com.twittew.mediasewvices.commons.thwiftscawa.mediakey
+i-impowt com.twittew.snowfwake.id.snowfwakeid
+i-impowt c-com.twittew.tweetypie.thwiftscawa._
+i-impowt c-com.twittew.gizmoduck.thwiftscawa.quewyfiewds
 
-package object tweetypie {
-  // common imports that many classes need, will probably expand this list in the future.
-  type Logger = com.twitter.util.logging.Logger
-  val Logger: com.twitter.util.logging.Logger.type = com.twitter.util.logging.Logger
-  type StatsReceiver = com.twitter.finagle.stats.StatsReceiver
-  val TweetLenses: com.twitter.tweetypie.util.TweetLenses.type =
-    com.twitter.tweetypie.util.TweetLenses
+package o-object tweetypie {
+  // common i-impowts that m-many cwasses nyeed, ^^;; wiww pwobabwy expand this wist in the futuwe. ^•ﻌ•^
+  type woggew = c-com.twittew.utiw.wogging.woggew
+  vaw woggew: com.twittew.utiw.wogging.woggew.type = c-com.twittew.utiw.wogging.woggew
+  type s-statsweceivew = com.twittew.finagwe.stats.statsweceivew
+  vaw tweetwenses: com.twittew.tweetypie.utiw.tweetwenses.type =
+    c-com.twittew.tweetypie.utiw.tweetwenses
 
-  type Future[A] = com.twitter.util.Future[A]
-  val Future: com.twitter.util.Future.type = com.twitter.util.Future
+  type futuwe[a] = c-com.twittew.utiw.futuwe[a]
+  v-vaw futuwe: com.twittew.utiw.futuwe.type = com.twittew.utiw.futuwe
 
-  type Duration = com.twitter.util.Duration
-  val Duration: com.twitter.util.Duration.type = com.twitter.util.Duration
+  type duwation = com.twittew.utiw.duwation
+  v-vaw duwation: com.twittew.utiw.duwation.type = com.twittew.utiw.duwation
 
-  type Time = com.twitter.util.Time
-  val Time: com.twitter.util.Time.type = com.twitter.util.Time
+  type time = com.twittew.utiw.time
+  v-vaw time: com.twittew.utiw.time.type = com.twittew.utiw.time
 
-  type Try[A] = com.twitter.util.Try[A]
-  val Try: com.twitter.util.Try.type = com.twitter.util.Try
+  t-type twy[a] = c-com.twittew.utiw.twy[a]
+  v-vaw twy: com.twittew.utiw.twy.type = c-com.twittew.utiw.twy
 
-  type Throw[A] = com.twitter.util.Throw[A]
-  val Throw: com.twitter.util.Throw.type = com.twitter.util.Throw
+  type thwow[a] = com.twittew.utiw.thwow[a]
+  v-vaw thwow: com.twittew.utiw.thwow.type = com.twittew.utiw.thwow
 
-  type Return[A] = com.twitter.util.Return[A]
-  val Return: com.twitter.util.Return.type = com.twitter.util.Return
+  t-type wetuwn[a] = com.twittew.utiw.wetuwn[a]
+  vaw wetuwn: com.twittew.utiw.wetuwn.type = com.twittew.utiw.wetuwn
 
-  type Gate[T] = com.twitter.servo.util.Gate[T]
-  val Gate: com.twitter.servo.util.Gate.type = com.twitter.servo.util.Gate
+  type gate[t] = com.twittew.sewvo.utiw.gate[t]
+  v-vaw gate: com.twittew.sewvo.utiw.gate.type = com.twittew.sewvo.utiw.gate
 
-  type Effect[A] = com.twitter.servo.util.Effect[A]
-  val Effect: com.twitter.servo.util.Effect.type = com.twitter.servo.util.Effect
+  t-type e-effect[a] = com.twittew.sewvo.utiw.effect[a]
+  v-vaw effect: com.twittew.sewvo.utiw.effect.type = com.twittew.sewvo.utiw.effect
 
-  type FutureArrow[A, B] = com.twitter.servo.util.FutureArrow[A, B]
-  val FutureArrow: com.twitter.servo.util.FutureArrow.type = com.twitter.servo.util.FutureArrow
+  type futuweawwow[a, σωσ b] = com.twittew.sewvo.utiw.futuweawwow[a, -.- b-b]
+  vaw futuweawwow: c-com.twittew.sewvo.utiw.futuweawwow.type = com.twittew.sewvo.utiw.futuweawwow
 
-  type FutureEffect[A] = com.twitter.servo.util.FutureEffect[A]
-  val FutureEffect: com.twitter.servo.util.FutureEffect.type = com.twitter.servo.util.FutureEffect
+  t-type futuweeffect[a] = c-com.twittew.sewvo.utiw.futuweeffect[a]
+  vaw futuweeffect: c-com.twittew.sewvo.utiw.futuweeffect.type = com.twittew.sewvo.utiw.futuweeffect
 
-  type Lens[A, B] = com.twitter.servo.data.Lens[A, B]
-  val Lens: com.twitter.servo.data.Lens.type = com.twitter.servo.data.Lens
+  t-type wens[a, ^^;; b] = com.twittew.sewvo.data.wens[a, XD b]
+  v-vaw wens: com.twittew.sewvo.data.wens.type = com.twittew.sewvo.data.wens
 
-  type Mutation[A] = com.twitter.servo.data.Mutation[A]
-  val Mutation: com.twitter.servo.data.Mutation.type = com.twitter.servo.data.Mutation
+  t-type mutation[a] = c-com.twittew.sewvo.data.mutation[a]
+  v-vaw mutation: com.twittew.sewvo.data.mutation.type = com.twittew.sewvo.data.mutation
 
-  type User = com.twitter.gizmoduck.thriftscala.User
-  val User: com.twitter.gizmoduck.thriftscala.User.type = com.twitter.gizmoduck.thriftscala.User
-  type Safety = com.twitter.gizmoduck.thriftscala.Safety
-  val Safety: com.twitter.gizmoduck.thriftscala.Safety.type =
-    com.twitter.gizmoduck.thriftscala.Safety
-  type UserField = com.twitter.gizmoduck.thriftscala.QueryFields
-  val UserField: QueryFields.type = com.twitter.gizmoduck.thriftscala.QueryFields
+  type usew = com.twittew.gizmoduck.thwiftscawa.usew
+  vaw usew: com.twittew.gizmoduck.thwiftscawa.usew.type = com.twittew.gizmoduck.thwiftscawa.usew
+  t-type safety = c-com.twittew.gizmoduck.thwiftscawa.safety
+  vaw s-safety: com.twittew.gizmoduck.thwiftscawa.safety.type =
+    c-com.twittew.gizmoduck.thwiftscawa.safety
+  t-type usewfiewd = com.twittew.gizmoduck.thwiftscawa.quewyfiewds
+  vaw usewfiewd: quewyfiewds.type = c-com.twittew.gizmoduck.thwiftscawa.quewyfiewds
 
-  type Tweet = thriftscala.Tweet
-  val Tweet: com.twitter.tweetypie.thriftscala.Tweet.type = thriftscala.Tweet
+  type tweet = thwiftscawa.tweet
+  vaw tweet: com.twittew.tweetypie.thwiftscawa.tweet.type = t-thwiftscawa.tweet
 
-  type ThriftTweetService = TweetServiceInternal.MethodPerEndpoint
+  type t-thwifttweetsewvice = t-tweetsewviceintewnaw.methodpewendpoint
 
-  type TweetId = Long
-  type UserId = Long
-  type MediaId = Long
-  type AppId = Long
-  type KnownDeviceToken = String
-  type ConversationId = Long
-  type CommunityId = Long
-  type PlaceId = String
-  type FieldId = Short
-  type Count = Long
-  type CountryCode = String // ISO 3166-1-alpha-2
-  type CreativesContainerId = Long
+  type t-tweetid = wong
+  type usewid = w-wong
+  type mediaid = w-wong
+  t-type appid = wong
+  t-type knowndevicetoken = stwing
+  type convewsationid = w-wong
+  t-type communityid = w-wong
+  type p-pwaceid = stwing
+  t-type fiewdid = showt
+  type count = wong
+  type countwycode = s-stwing // iso 3166-1-awpha-2
+  type cweativescontainewid = wong
 
-  def hasGeo(tweet: Tweet): Boolean =
-    TweetLenses.placeId.get(tweet).nonEmpty ||
-      TweetLenses.geoCoordinates.get(tweet).nonEmpty
+  def hasgeo(tweet: tweet): boowean =
+    tweetwenses.pwaceid.get(tweet).nonempty ||
+      t-tweetwenses.geocoowdinates.get(tweet).nonempty
 
-  def getUserId(tweet: Tweet): UserId = TweetLenses.userId.get(tweet)
-  def getText(tweet: Tweet): String = TweetLenses.text.get(tweet)
-  def getCreatedAt(tweet: Tweet): Long = TweetLenses.createdAt.get(tweet)
-  def getCreatedVia(tweet: Tweet): String = TweetLenses.createdVia.get(tweet)
-  def getReply(tweet: Tweet): Option[Reply] = TweetLenses.reply.get(tweet)
-  def getDirectedAtUser(tweet: Tweet): Option[DirectedAtUser] =
-    TweetLenses.directedAtUser.get(tweet)
-  def getShare(tweet: Tweet): Option[Share] = TweetLenses.share.get(tweet)
-  def getQuotedTweet(tweet: Tweet): Option[QuotedTweet] = TweetLenses.quotedTweet.get(tweet)
-  def getUrls(tweet: Tweet): Seq[UrlEntity] = TweetLenses.urls.get(tweet)
-  def getMedia(tweet: Tweet): Seq[MediaEntity] = TweetLenses.media.get(tweet)
-  def getMediaKeys(tweet: Tweet): Seq[MediaKey] = TweetLenses.mediaKeys.get(tweet)
-  def getMentions(tweet: Tweet): Seq[MentionEntity] = TweetLenses.mentions.get(tweet)
-  def getCashtags(tweet: Tweet): Seq[CashtagEntity] = TweetLenses.cashtags.get(tweet)
-  def getHashtags(tweet: Tweet): Seq[HashtagEntity] = TweetLenses.hashtags.get(tweet)
-  def getMediaTagMap(tweet: Tweet): Map[MediaId, Seq[MediaTag]] = TweetLenses.mediaTagMap.get(tweet)
-  def isRetweet(tweet: Tweet): Boolean = tweet.coreData.flatMap(_.share).nonEmpty
-  def isSelfReply(authorUserId: UserId, r: Reply): Boolean =
-    r.inReplyToStatusId.isDefined && (r.inReplyToUserId == authorUserId)
-  def isSelfReply(tweet: Tweet): Boolean = {
-    getReply(tweet).exists { r => isSelfReply(getUserId(tweet), r) }
+  def getusewid(tweet: tweet): usewid = tweetwenses.usewid.get(tweet)
+  d-def gettext(tweet: t-tweet): s-stwing = tweetwenses.text.get(tweet)
+  def getcweatedat(tweet: t-tweet): wong = tweetwenses.cweatedat.get(tweet)
+  def getcweatedvia(tweet: t-tweet): s-stwing = tweetwenses.cweatedvia.get(tweet)
+  def getwepwy(tweet: tweet): option[wepwy] = tweetwenses.wepwy.get(tweet)
+  def getdiwectedatusew(tweet: tweet): o-option[diwectedatusew] =
+    tweetwenses.diwectedatusew.get(tweet)
+  d-def getshawe(tweet: tweet): o-option[shawe] = t-tweetwenses.shawe.get(tweet)
+  def getquotedtweet(tweet: tweet): o-option[quotedtweet] = t-tweetwenses.quotedtweet.get(tweet)
+  def g-getuwws(tweet: t-tweet): seq[uwwentity] = tweetwenses.uwws.get(tweet)
+  def getmedia(tweet: tweet): seq[mediaentity] = t-tweetwenses.media.get(tweet)
+  d-def getmediakeys(tweet: t-tweet): seq[mediakey] = t-tweetwenses.mediakeys.get(tweet)
+  d-def getmentions(tweet: tweet): seq[mentionentity] = t-tweetwenses.mentions.get(tweet)
+  def getcashtags(tweet: tweet): seq[cashtagentity] = tweetwenses.cashtags.get(tweet)
+  d-def gethashtags(tweet: t-tweet): seq[hashtagentity] = tweetwenses.hashtags.get(tweet)
+  d-def getmediatagmap(tweet: t-tweet): map[mediaid, 🥺 seq[mediatag]] = tweetwenses.mediatagmap.get(tweet)
+  def iswetweet(tweet: t-tweet): boowean = tweet.cowedata.fwatmap(_.shawe).nonempty
+  def issewfwepwy(authowusewid: usewid, òωó w: wepwy): boowean =
+    w-w.inwepwytostatusid.isdefined && (w.inwepwytousewid == authowusewid)
+  def issewfwepwy(tweet: t-tweet): b-boowean = {
+    getwepwy(tweet).exists { w => issewfwepwy(getusewid(tweet), (ˆ ﻌ ˆ)♡ w) }
   }
-  def getConversationId(tweet: Tweet): Option[TweetId] = TweetLenses.conversationId.get(tweet)
-  def getSelfThreadMetadata(tweet: Tweet): Option[SelfThreadMetadata] =
-    TweetLenses.selfThreadMetadata.get(tweet)
-  def getCardReference(tweet: Tweet): Option[CardReference] = TweetLenses.cardReference.get(tweet)
-  def getEscherbirdAnnotations(tweet: Tweet): Option[EscherbirdEntityAnnotations] =
-    TweetLenses.escherbirdEntityAnnotations.get(tweet)
-  def getCommunities(tweet: Tweet): Option[Communities] = TweetLenses.communities.get(tweet)
-  def getTimestamp(tweet: Tweet): Time =
-    if (SnowflakeId.isSnowflakeId(tweet.id)) SnowflakeId(tweet.id).time
-    else Time.fromSeconds(getCreatedAt(tweet).toInt)
+  def g-getconvewsationid(tweet: t-tweet): option[tweetid] = tweetwenses.convewsationid.get(tweet)
+  def g-getsewfthweadmetadata(tweet: tweet): o-option[sewfthweadmetadata] =
+    tweetwenses.sewfthweadmetadata.get(tweet)
+  def getcawdwefewence(tweet: tweet): o-option[cawdwefewence] = tweetwenses.cawdwefewence.get(tweet)
+  d-def geteschewbiwdannotations(tweet: t-tweet): option[eschewbiwdentityannotations] =
+    t-tweetwenses.eschewbiwdentityannotations.get(tweet)
+  def getcommunities(tweet: t-tweet): o-option[communities] = t-tweetwenses.communities.get(tweet)
+  def g-gettimestamp(tweet: t-tweet): time =
+    if (snowfwakeid.issnowfwakeid(tweet.id)) snowfwakeid(tweet.id).time
+    e-ewse time.fwomseconds(getcweatedat(tweet).toint)
 }

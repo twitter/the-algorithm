@@ -1,75 +1,75 @@
-package com.twitter.search.earlybird.archive;
+package com.twittew.seawch.eawwybiwd.awchive;
 
-import java.io.IOException;
-import java.util.List;
+impowt j-java.io.ioexception;
+i-impowt j-java.utiw.wist;
 
-import com.google.common.annotations.VisibleForTesting;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
 
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.store.Directory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.apache.wucene.index.diwectowyweadew;
+i-impowt o-owg.apache.wucene.index.weafweadew;
+impowt owg.apache.wucene.index.weafweadewcontext;
+impowt owg.apache.wucene.stowe.diwectowy;
+impowt owg.swf4j.woggew;
+impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.search.earlybird.partition.SegmentInfo;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentinfo;
 
-public final class ArchiveSegmentVerifier {
-  private static final Logger LOG = LoggerFactory.getLogger(ArchiveSegmentVerifier.class);
+p-pubwic finaw cwass awchivesegmentvewifiew {
+  p-pwivate static finaw woggew wog = woggewfactowy.getwoggew(awchivesegmentvewifiew.cwass);
 
-  private ArchiveSegmentVerifier() {
+  pwivate awchivesegmentvewifiew() {
   }
 
-  @VisibleForTesting
-  static boolean shouldVerifySegment(SegmentInfo segmentInfo) {
-    if (segmentInfo.isIndexing()) {
-      LOG.warn("ArchiveSegmentVerifier got segment still indexing.");
-      return false;
+  @visibwefowtesting
+  s-static boowean shouwdvewifysegment(segmentinfo s-segmentinfo) {
+    i-if (segmentinfo.isindexing()) {
+      wog.wawn("awchivesegmentvewifiew got segment stiww indexing.");
+      wetuwn fawse;
     }
 
-    if (!segmentInfo.isComplete()) {
-      LOG.warn("ArchiveSegmentVerifyer got incomplete segment.");
-      return false;
+    i-if (!segmentinfo.iscompwete()) {
+      wog.wawn("awchivesegmentvewifyew got incompwete segment.");
+      wetuwn fawse;
     }
 
-    if (!segmentInfo.isOptimized()) {
-      LOG.warn("ArchiveSegmentVerifyer got unoptimized segment.");
-      return false;
+    if (!segmentinfo.isoptimized()) {
+      wog.wawn("awchivesegmentvewifyew g-got unoptimized segment.");
+      w-wetuwn fawse;
     }
 
-    return true;
+    w-wetuwn t-twue;
   }
 
   /**
-   * Verifies an archive segment has a sane number of leaves.
+   * v-vewifies an awchive segment has a sane n-nyumbew of weaves. nyaa~~
    */
-  public static boolean verifySegment(SegmentInfo segmentInfo) {
-    if (!shouldVerifySegment(segmentInfo)) {
-      return false;
+  pubwic static boowean v-vewifysegment(segmentinfo segmentinfo) {
+    if (!shouwdvewifysegment(segmentinfo)) {
+      wetuwn fawse;
     }
-    Directory directory = segmentInfo.getIndexSegment().getLuceneDirectory();
-    return verifyLuceneIndex(directory);
+    diwectowy diwectowy = segmentinfo.getindexsegment().getwucenediwectowy();
+    w-wetuwn vewifywuceneindex(diwectowy);
   }
 
-  private static boolean verifyLuceneIndex(Directory directory) {
-    try {
-      DirectoryReader indexerReader = DirectoryReader.open(directory);
-      List<LeafReaderContext> leaves = indexerReader.getContext().leaves();
-      if (leaves.size() != 1) {
-        LOG.warn("Lucene index does not have exactly one segment: " + leaves.size() + " != 1. "
-            + "Lucene segments should have been merged during optimization.");
-        return false;
+  pwivate static b-boowean vewifywuceneindex(diwectowy d-diwectowy) {
+    t-twy {
+      diwectowyweadew indexewweadew = diwectowyweadew.open(diwectowy);
+      w-wist<weafweadewcontext> w-weaves = indexewweadew.getcontext().weaves();
+      if (weaves.size() != 1) {
+        w-wog.wawn("wucene i-index does nyot have exactwy o-one segment: " + weaves.size() + " != 1. :3 "
+            + "wucene s-segments shouwd have been mewged duwing optimization.");
+        w-wetuwn fawse;
       }
 
-      LeafReader reader = leaves.get(0).reader();
-      if (reader.numDocs() <= 0) {
-        LOG.warn("Lucene index has no document: " + reader);
-        return false;
+      weafweadew weadew = w-weaves.get(0).weadew();
+      if (weadew.numdocs() <= 0) {
+        w-wog.wawn("wucene i-index has nyo document: " + weadew);
+        wetuwn fawse;
       }
-      return true;
-    } catch (IOException e) {
-      LOG.warn("Found bad lucene index at: " + directory);
-      return false;
+      wetuwn twue;
+    } catch (ioexception e) {
+      w-wog.wawn("found b-bad wucene index at: " + diwectowy);
+      w-wetuwn fawse;
     }
   }
 }

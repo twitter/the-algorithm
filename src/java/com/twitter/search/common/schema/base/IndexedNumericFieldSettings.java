@@ -1,37 +1,37 @@
-package com.twitter.search.common.schema.base;
+package com.twittew.seawch.common.schema.base;
 
-import com.twitter.search.common.schema.thriftjava.ThriftIndexedNumericFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftNumericType;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexednumewicfiewdsettings;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftnumewictype;
 
-public class IndexedNumericFieldSettings {
-  private final ThriftNumericType numericType;
-  private final int numericPrecisionStep;
-  private final boolean useTwitterFormat;
-  private final boolean useSortableEncoding;
+p-pubwic c-cwass indexednumewicfiewdsettings {
+  p-pwivate f-finaw thwiftnumewictype n-nyumewictype;
+  p-pwivate f-finaw int nyumewicpwecisionstep;
+  pwivate finaw boowean usetwittewfowmat;
+  pwivate finaw boowean u-usesowtabweencoding;
 
   /**
-   * Create a IndexedNumericFieldSettings from a ThriftIndexedNumericFieldSettings
+   * cweate a indexednumewicfiewdsettings fwom a t-thwiftindexednumewicfiewdsettings
    */
-  public IndexedNumericFieldSettings(ThriftIndexedNumericFieldSettings numericFieldSettings) {
-    this.numericType            = numericFieldSettings.getNumericType();
-    this.numericPrecisionStep   = numericFieldSettings.getNumericPrecisionStep();
-    this.useTwitterFormat       = numericFieldSettings.isUseTwitterFormat();
-    this.useSortableEncoding    = numericFieldSettings.isUseSortableEncoding();
+  pubwic i-indexednumewicfiewdsettings(thwiftindexednumewicfiewdsettings nyumewicfiewdsettings) {
+    this.numewictype            = nyumewicfiewdsettings.getnumewictype();
+    t-this.numewicpwecisionstep   = nyumewicfiewdsettings.getnumewicpwecisionstep();
+    t-this.usetwittewfowmat       = n-nyumewicfiewdsettings.isusetwittewfowmat();
+    this.usesowtabweencoding    = nyumewicfiewdsettings.isusesowtabweencoding();
   }
 
-  public ThriftNumericType getNumericType() {
-    return numericType;
+  pubwic thwiftnumewictype g-getnumewictype() {
+    wetuwn nyumewictype;
   }
 
-  public int getNumericPrecisionStep() {
-    return numericPrecisionStep;
+  pubwic int getnumewicpwecisionstep() {
+    w-wetuwn nyumewicpwecisionstep;
   }
 
-  public boolean isUseTwitterFormat() {
-    return useTwitterFormat;
+  pubwic boowean i-isusetwittewfowmat() {
+    w-wetuwn usetwittewfowmat;
   }
 
-  public boolean isUseSortableEncoding() {
-    return useSortableEncoding;
+  p-pubwic boowean i-isusesowtabweencoding() {
+    wetuwn usesowtabweencoding;
   }
 }

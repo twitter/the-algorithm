@@ -1,17 +1,17 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.twittew.fwigate.pushsewvice.modew.ibis
 
-import com.twitter.frigate.common.base.DiscoverTwitterCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.util.PushIbisUtil.mergeFutModelValues
-import com.twitter.util.Future
+impowt com.twittew.fwigate.common.base.discovewtwittewcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.utiw.pushibisutiw.mewgefutmodewvawues
+i-impowt com.twittew.utiw.futuwe
 
-trait DiscoverTwitterPushIbis2Hydrator extends Ibis2HydratorForCandidate {
-  self: PushCandidate with DiscoverTwitterCandidate =>
+t-twait discovewtwittewpushibis2hydwatow e-extends i-ibis2hydwatowfowcandidate {
+  s-sewf: pushcandidate w-with discovewtwittewcandidate =>
 
-  private lazy val targetModelValues: Map[String, String] = Map(
-    "target_user" -> target.targetId.toString
+  pwivate wazy vaw tawgetmodewvawues: map[stwing, (ˆ ﻌ ˆ)♡ stwing] = m-map(
+    "tawget_usew" -> tawget.tawgetid.tostwing
   )
 
-  override lazy val modelValues: Future[Map[String, String]] =
-    mergeFutModelValues(super.modelValues, Future.value(targetModelValues))
+  ovewwide w-wazy vaw modewvawues: futuwe[map[stwing, (⑅˘꒳˘) s-stwing]] =
+    mewgefutmodewvawues(supew.modewvawues, (U ᵕ U❁) futuwe.vawue(tawgetmodewvawues))
 }

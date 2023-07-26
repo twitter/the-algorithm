@@ -1,75 +1,75 @@
-package com.twitter.search.earlybird_root.collectors;
+package com.twittew.seawch.eawwybiwd_woot.cowwectows;
 
-import java.util.Comparator;
-import java.util.List;
+impowt java.utiw.compawatow;
+i-impowt java.utiw.wist;
 
-import com.twitter.search.common.relevance.utils.ResultComparators;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
+i-impowt c-com.twittew.seawch.common.wewevance.utiws.wesuwtcompawatows;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwt;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwts;
 
 /**
- * {@link RecencyMergeCollector} inherits {@link MultiwayMergeCollector} for the type
- * {@link com.twitter.search.earlybird.thrift.ThriftSearchResult} as the result type.
+ * {@wink wecencymewgecowwectow} inhewits {@wink muwtiwaymewgecowwectow} fow the t-type
+ * {@wink com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwt} as the w-wesuwt type. -.-
  * <p/>
- * It also implements two public methods to retrieve the top-k or all results.
+ * it awso i-impwements two pubwic methods to wetwieve the top-k ow aww wesuwts. 🥺
  */
-public class RecencyMergeCollector extends MultiwayMergeCollector<ThriftSearchResult> {
+p-pubwic cwass wecencymewgecowwectow e-extends m-muwtiwaymewgecowwectow<thwiftseawchwesuwt> {
 
-  // Container for the final results array and also stats like numHitsProcessed etc...
-  protected final ThriftSearchResults finalResults = new ThriftSearchResults();
+  // containew fow the finaw wesuwts awway and awso stats wike n-nyumhitspwocessed etc...
+  pwotected finaw thwiftseawchwesuwts finawwesuwts = nyew thwiftseawchwesuwts();
 
-  public RecencyMergeCollector(int numResponses) {
-    this(numResponses, ResultComparators.ID_COMPARATOR);
+  p-pubwic wecencymewgecowwectow(int n-nyumwesponses) {
+    t-this(numwesponses, (U ﹏ U) w-wesuwtcompawatows.id_compawatow);
   }
 
-  protected RecencyMergeCollector(int numResponses, Comparator<ThriftSearchResult> comparator) {
-    super(numResponses, comparator);
+  pwotected w-wecencymewgecowwectow(int nyumwesponses, >w< compawatow<thwiftseawchwesuwt> c-compawatow) {
+    supew(numwesponses, mya compawatow);
   }
 
-  @Override
-  protected void collectStats(EarlybirdResponse response) {
-    super.collectStats(response);
+  @ovewwide
+  p-pwotected void cowwectstats(eawwybiwdwesponse wesponse) {
+    supew.cowwectstats(wesponse);
 
-    ThriftSearchResults searchResults = response.getSearchResults();
-    if (searchResults.isSetNumHitsProcessed()) {
-      finalResults.setNumHitsProcessed(
-          finalResults.getNumHitsProcessed() + searchResults.getNumHitsProcessed());
+    thwiftseawchwesuwts seawchwesuwts = w-wesponse.getseawchwesuwts();
+    if (seawchwesuwts.issetnumhitspwocessed()) {
+      f-finawwesuwts.setnumhitspwocessed(
+          f-finawwesuwts.getnumhitspwocessed() + s-seawchwesuwts.getnumhitspwocessed());
     }
-    if (searchResults.isSetNumPartitionsEarlyTerminated()) {
-      finalResults.setNumPartitionsEarlyTerminated(
-              finalResults.getNumPartitionsEarlyTerminated()
-                      + searchResults.getNumPartitionsEarlyTerminated());
+    if (seawchwesuwts.issetnumpawtitionseawwytewminated()) {
+      finawwesuwts.setnumpawtitionseawwytewminated(
+              finawwesuwts.getnumpawtitionseawwytewminated()
+                      + s-seawchwesuwts.getnumpawtitionseawwytewminated());
     }
   }
 
-  @Override
-  protected final List<ThriftSearchResult> collectResults(EarlybirdResponse response) {
-    if (response != null
-        && response.isSetSearchResults()
-        && response.getSearchResults().getResultsSize() > 0) {
-      return response.getSearchResults().getResults();
-    } else {
-      return null;
+  @ovewwide
+  p-pwotected finaw wist<thwiftseawchwesuwt> c-cowwectwesuwts(eawwybiwdwesponse w-wesponse) {
+    if (wesponse != n-nyuww
+        && wesponse.issetseawchwesuwts()
+        && w-wesponse.getseawchwesuwts().getwesuwtssize() > 0) {
+      wetuwn wesponse.getseawchwesuwts().getwesuwts();
+    } e-ewse {
+      wetuwn nyuww;
     }
   }
 
   /**
-   * Gets all the results that has been collected.
+   * g-gets aww the wesuwts that has b-been cowwected. >w<
    *
-   * @return {@link ThriftSearchResults} containing a list of results sorted by provided
-   *         comparator in descending order.
+   * @wetuwn {@wink t-thwiftseawchwesuwts} containing a wist of wesuwts sowted by pwovided
+   *         compawatow in descending owdew. nyaa~~
    */
-  public final ThriftSearchResults getAllSearchResults() {
-    return finalResults.setResults(getResultsList());
+  p-pubwic finaw t-thwiftseawchwesuwts getawwseawchwesuwts() {
+    w-wetuwn finawwesuwts.setwesuwts(getwesuwtswist());
   }
 
-  @Override
-  protected final boolean isResponseValid(EarlybirdResponse response) {
-    if (response == null || !response.isSetSearchResults()) {
-      LOG.warn("searchResults was null: " + response);
-      return false;
+  @ovewwide
+  p-pwotected f-finaw boowean iswesponsevawid(eawwybiwdwesponse wesponse) {
+    if (wesponse == nyuww || !wesponse.issetseawchwesuwts()) {
+      w-wog.wawn("seawchwesuwts was nyuww: " + wesponse);
+      wetuwn fawse;
     }
-    return true;
+    w-wetuwn twue;
   }
 }

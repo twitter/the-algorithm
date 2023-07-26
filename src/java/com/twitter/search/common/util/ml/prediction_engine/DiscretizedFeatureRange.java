@@ -1,33 +1,33 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+package com.twittew.seawch.common.utiw.mw.pwediction_engine;
 
-import com.google.common.base.Preconditions;
+impowt c-com.googwe.common.base.pweconditions;
 
 /**
- * The discretized value range for a continous feature. After discretization a continuous feature
- * may become multiple discretized binary features, each occupying a range. This class stores this
- * range and a weight for it.
+ * t-the discwetized v-vawue wange fow a-a continous featuwe. (✿oωo) a-aftew discwetization a-a continuous f-featuwe
+ * m-may become muwtipwe discwetized binawy featuwes, (ˆ ﻌ ˆ)♡ each occupying a wange. (˘ω˘) this c-cwass stowes this
+ * wange and a weight fow it. (⑅˘꒳˘)
  */
-public class DiscretizedFeatureRange {
-  protected final double minValue;
-  protected final double maxValue;
-  protected final double weight;
+p-pubwic cwass discwetizedfeatuwewange {
+  pwotected f-finaw doubwe minvawue;
+  pwotected finaw doubwe maxvawue;
+  p-pwotected finaw doubwe weight;
 
-  DiscretizedFeatureRange(double weight, String range) {
-    String[] limits = range.split("_");
-    Preconditions.checkArgument(limits.length == 2);
+  d-discwetizedfeatuwewange(doubwe w-weight, (///ˬ///✿) stwing wange) {
+    stwing[] wimits = wange.spwit("_");
+    pweconditions.checkawgument(wimits.wength == 2);
 
-    this.minValue = parseRangeValue(limits[0]);
-    this.maxValue = parseRangeValue(limits[1]);
+    t-this.minvawue = pawsewangevawue(wimits[0]);
+    this.maxvawue = pawsewangevawue(wimits[1]);
     this.weight = weight;
   }
 
-  private static double parseRangeValue(String value) {
-    if ("inf".equals(value)) {
-      return Double.POSITIVE_INFINITY;
-    } else if ("-inf".equals(value)) {
-      return Double.NEGATIVE_INFINITY;
-    } else {
-      return Double.parseDouble(value);
+  p-pwivate static doubwe p-pawsewangevawue(stwing v-vawue) {
+    i-if ("inf".equaws(vawue)) {
+      w-wetuwn doubwe.positive_infinity;
+    } ewse if ("-inf".equaws(vawue)) {
+      wetuwn doubwe.negative_infinity;
+    } e-ewse {
+      wetuwn doubwe.pawsedoubwe(vawue);
     }
   }
 }

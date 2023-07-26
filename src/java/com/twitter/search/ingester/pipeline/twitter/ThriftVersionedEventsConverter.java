@@ -1,132 +1,132 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+impowt java.utiw.hashmap;
+i-impowt java.utiw.wist;
+i-impowt java.utiw.map;
 
-import com.google.common.collect.Lists;
+i-impowt c-com.googwe.common.cowwect.wists;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.debug.thriftjava.DebugEvents;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftField;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldData;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEventType;
-import com.twitter.search.ingester.model.IngesterThriftVersionedEvents;
+i-impowt com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+i-impowt com.twittew.seawch.common.debug.thwiftjava.debugevents;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftdocument;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfiewd;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfiewddata;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingevent;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingeventtype;
+i-impowt com.twittew.seawch.ingestew.modew.ingestewthwiftvewsionedevents;
 
 /**
- * Converter for {@code ThriftVersionedEvents}.
+ * convewtew f-fow {@code thwiftvewsionedevents}. σωσ
  *
  */
-public class ThriftVersionedEventsConverter {
-  private static final long UNUSED_USER_ID = -1L;
+p-pubwic cwass thwiftvewsionedeventsconvewtew {
+  pwivate static finaw wong unused_usew_id = -1w;
 
-  private Iterable<PenguinVersion> penguinVersions;
+  pwivate itewabwe<penguinvewsion> p-penguinvewsions;
 
-  public ThriftVersionedEventsConverter(Iterable<PenguinVersion> penguinVersions) {
-    this.penguinVersions = penguinVersions;
+  pubwic thwiftvewsionedeventsconvewtew(itewabwe<penguinvewsion> p-penguinvewsions) {
+    t-this.penguinvewsions = penguinvewsions;
   }
 
   /**
-   * Creates a DELETE IngesterThriftVersionedEvents instance for the given tweet ID and user ID.
+   * cweates a dewete ingestewthwiftvewsionedevents instance fow t-the given tweet id and usew id.
    *
-   * @param tweetId The tweet ID.
-   * @param userId The user ID.
-   * @param debugEvents The DebugEvents to propagate to the returned IngesterThriftVersionedEvents
-   *                    instance.
-   * @return A DELETE IngesterThriftVersionedEvents instance with the given tweet and user IDs.
+   * @pawam tweetid the tweet id. (U ᵕ U❁)
+   * @pawam usewid the u-usew id. (U ﹏ U)
+   * @pawam debugevents t-the debugevents t-to pwopagate to t-the wetuwned ingestewthwiftvewsionedevents
+   *                    i-instance. :3
+   * @wetuwn a dewete ingestewthwiftvewsionedevents i-instance with the given tweet and usew ids. ( ͡o ω ͡o )
    */
-  public IngesterThriftVersionedEvents toDelete(
-      long tweetId, long userId, DebugEvents debugEvents) {
-    ThriftIndexingEvent thriftIndexingEvent = new ThriftIndexingEvent()
-        .setEventType(ThriftIndexingEventType.DELETE)
-        .setUid(tweetId);
-    return toThriftVersionedEvents(tweetId, userId, thriftIndexingEvent, debugEvents);
+  p-pubwic ingestewthwiftvewsionedevents todewete(
+      wong tweetid, σωσ wong usewid, >w< debugevents debugevents) {
+    t-thwiftindexingevent thwiftindexingevent = new t-thwiftindexingevent()
+        .seteventtype(thwiftindexingeventtype.dewete)
+        .setuid(tweetid);
+    w-wetuwn t-tothwiftvewsionedevents(tweetid, 😳😳😳 usewid, OwO thwiftindexingevent, 😳 debugevents);
   }
 
   /**
-   * Creates an OUT_OF_ORDER_APPEND IngesterThriftVersionedEvents instance for the given tweet ID
-   * and the given value for the given field.
+   * cweates an out_of_owdew_append ingestewthwiftvewsionedevents i-instance f-fow the given tweet id
+   * a-and the given v-vawue fow the given fiewd. 😳😳😳
    *
-   * @param tweetId The tweet ID.
-   * @param field The updated field.
-   * @param value The new field value.
-   * @param debugEvents The DebugEvents to propagate to the returned IngesterThriftVersionedEvents
-   *                    instance.
-   * @return An OUT_OF_ORDER_APPEND IngesterThriftVersionedEvents instance with the given tweet ID
-   *         and value for the field.
+   * @pawam t-tweetid the tweet id.
+   * @pawam f-fiewd the updated fiewd. (˘ω˘)
+   * @pawam v-vawue the nyew fiewd vawue. ʘwʘ
+   * @pawam d-debugevents the debugevents t-to pwopagate t-to the wetuwned ingestewthwiftvewsionedevents
+   *                    instance. ( ͡o ω ͡o )
+   * @wetuwn an out_of_owdew_append ingestewthwiftvewsionedevents instance with the given tweet i-id
+   *         a-and vawue fow the fiewd. o.O
    */
-  public IngesterThriftVersionedEvents toOutOfOrderAppend(
-      long tweetId,
-      EarlybirdFieldConstants.EarlybirdFieldConstant field,
-      long value,
-      DebugEvents debugEvents) {
-    ThriftField updateField = new ThriftField()
-        .setFieldConfigId(field.getFieldId())
-        .setFieldData(new ThriftFieldData().setLongValue(value));
-    ThriftDocument document = new ThriftDocument()
-        .setFields(Lists.newArrayList(updateField));
-    ThriftIndexingEvent thriftIndexingEvent = new ThriftIndexingEvent()
-        .setEventType(ThriftIndexingEventType.OUT_OF_ORDER_APPEND)
-        .setUid(tweetId)
-        .setDocument(document);
-    return toThriftVersionedEvents(tweetId, UNUSED_USER_ID, thriftIndexingEvent, debugEvents);
+  p-pubwic ingestewthwiftvewsionedevents t-tooutofowdewappend(
+      w-wong tweetid, >w<
+      eawwybiwdfiewdconstants.eawwybiwdfiewdconstant fiewd,
+      wong vawue, 😳
+      d-debugevents debugevents) {
+    thwiftfiewd updatefiewd = nyew thwiftfiewd()
+        .setfiewdconfigid(fiewd.getfiewdid())
+        .setfiewddata(new t-thwiftfiewddata().setwongvawue(vawue));
+    thwiftdocument d-document = n-nyew thwiftdocument()
+        .setfiewds(wists.newawwaywist(updatefiewd));
+    thwiftindexingevent t-thwiftindexingevent = nyew thwiftindexingevent()
+        .seteventtype(thwiftindexingeventtype.out_of_owdew_append)
+        .setuid(tweetid)
+        .setdocument(document);
+    w-wetuwn tothwiftvewsionedevents(tweetid, 🥺 u-unused_usew_id, rawr x3 t-thwiftindexingevent, o.O d-debugevents);
   }
 
 
   /**
-   * Creates a PARTIAL_UPDATE IngesterThriftVersionedEvents instance for the given tweet ID and the
-   * given value for the given feature.
+   * cweates a pawtiaw_update ingestewthwiftvewsionedevents i-instance f-fow the given tweet i-id and the
+   * g-given vawue f-fow the given featuwe. rawr
    *
-   * @param tweetId The tweet ID.
-   * @param feature The updated feature.
-   * @param value The new feature value.
-   * @param debugEvents The DebugEvents to propagate to the returned IngesterThriftVersionedEvents
-   *                    instance.
-   * @return A PARTIAL_UPDATE IngesterThriftVersionedEvents instance with the given tweet ID and
-   *         value for the feature.
+   * @pawam tweetid the tweet id. ʘwʘ
+   * @pawam featuwe t-the updated featuwe. 😳😳😳
+   * @pawam vawue the nyew featuwe vawue. ^^;;
+   * @pawam debugevents the debugevents to pwopagate t-to the wetuwned ingestewthwiftvewsionedevents
+   *                    instance. o.O
+   * @wetuwn a pawtiaw_update i-ingestewthwiftvewsionedevents i-instance with t-the given tweet id and
+   *         v-vawue fow the featuwe. (///ˬ///✿)
    */
-  public IngesterThriftVersionedEvents toPartialUpdate(
-      long tweetId,
-      EarlybirdFieldConstants.EarlybirdFieldConstant feature,
-      int value,
-      DebugEvents debugEvents) {
-    ThriftField updateField = new ThriftField()
-        .setFieldConfigId(feature.getFieldId())
-        .setFieldData(new ThriftFieldData().setIntValue(value));
-    ThriftDocument document = new ThriftDocument()
-        .setFields(Lists.newArrayList(updateField));
-    ThriftIndexingEvent thriftIndexingEvent = new ThriftIndexingEvent()
-        .setEventType(ThriftIndexingEventType.PARTIAL_UPDATE)
-        .setUid(tweetId)
-        .setDocument(document);
-    return toThriftVersionedEvents(tweetId, UNUSED_USER_ID, thriftIndexingEvent, debugEvents);
+  p-pubwic ingestewthwiftvewsionedevents t-topawtiawupdate(
+      wong tweetid, σωσ
+      eawwybiwdfiewdconstants.eawwybiwdfiewdconstant featuwe, nyaa~~
+      int vawue, ^^;;
+      debugevents debugevents) {
+    t-thwiftfiewd updatefiewd = nyew t-thwiftfiewd()
+        .setfiewdconfigid(featuwe.getfiewdid())
+        .setfiewddata(new thwiftfiewddata().setintvawue(vawue));
+    t-thwiftdocument d-document = nyew thwiftdocument()
+        .setfiewds(wists.newawwaywist(updatefiewd));
+    thwiftindexingevent t-thwiftindexingevent = n-new thwiftindexingevent()
+        .seteventtype(thwiftindexingeventtype.pawtiaw_update)
+        .setuid(tweetid)
+        .setdocument(document);
+    wetuwn t-tothwiftvewsionedevents(tweetid, ^•ﻌ•^ u-unused_usew_id, σωσ thwiftindexingevent, -.- debugevents);
   }
 
-  // Wraps the given ThriftIndexingEvent into a ThriftVersionedEvents instance.
-  private IngesterThriftVersionedEvents toThriftVersionedEvents(
-      long tweetId, long userId, ThriftIndexingEvent thriftIndexingEvent, DebugEvents debugEvents) {
-    if (!thriftIndexingEvent.isSetCreateTimeMillis()
-        && (debugEvents != null)
-        && debugEvents.isSetCreatedAt()) {
-      thriftIndexingEvent.setCreateTimeMillis(debugEvents.getCreatedAt().getEventTimestampMillis());
+  // wwaps the given thwiftindexingevent i-into a thwiftvewsionedevents i-instance. ^^;;
+  pwivate i-ingestewthwiftvewsionedevents tothwiftvewsionedevents(
+      w-wong tweetid, XD w-wong usewid, 🥺 thwiftindexingevent thwiftindexingevent, òωó d-debugevents debugevents) {
+    if (!thwiftindexingevent.issetcweatetimemiwwis()
+        && (debugevents != nyuww)
+        && debugevents.issetcweatedat()) {
+      t-thwiftindexingevent.setcweatetimemiwwis(debugevents.getcweatedat().geteventtimestampmiwwis());
     }
 
-    Map<Byte, ThriftIndexingEvent> versionedEvents = new HashMap<>();
-    for (PenguinVersion penguinVersion : penguinVersions) {
-      versionedEvents.put(penguinVersion.getByteValue(), thriftIndexingEvent);
+    m-map<byte, (ˆ ﻌ ˆ)♡ thwiftindexingevent> vewsionedevents = nyew hashmap<>();
+    f-fow (penguinvewsion p-penguinvewsion : penguinvewsions) {
+      vewsionedevents.put(penguinvewsion.getbytevawue(), -.- thwiftindexingevent);
     }
 
-    IngesterThriftVersionedEvents events =
-        new IngesterThriftVersionedEvents(userId,  versionedEvents);
-    events.setId(tweetId);
-    events.setDebugEvents(debugEvents);
-    return events;
+    ingestewthwiftvewsionedevents e-events =
+        nyew ingestewthwiftvewsionedevents(usewid, :3  vewsionedevents);
+    events.setid(tweetid);
+    e-events.setdebugevents(debugevents);
+    wetuwn events;
   }
 
-  public void updatePenguinVersions(List<PenguinVersion> updatePenguinVersions) {
-    penguinVersions = updatePenguinVersions;
+  pubwic void u-updatepenguinvewsions(wist<penguinvewsion> u-updatepenguinvewsions) {
+    penguinvewsions = updatepenguinvewsions;
   }
 }

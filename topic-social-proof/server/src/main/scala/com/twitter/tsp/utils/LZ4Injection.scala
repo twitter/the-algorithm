@@ -1,19 +1,19 @@
-package com.twitter.tsp.utils
+package com.twittew.tsp.utiws
 
-import com.twitter.bijection.Injection
-import scala.util.Try
-import net.jpountz.lz4.LZ4CompressorWithLength
-import net.jpountz.lz4.LZ4DecompressorWithLength
-import net.jpountz.lz4.LZ4Factory
+impowt c-com.twittew.bijection.injection
+i-impowt scawa.utiw.twy
+i-impowt n-nyet.jpountz.wz4.wz4compwessowwithwength
+i-impowt n-nyet.jpountz.wz4.wz4decompwessowwithwength
+i-impowt n-nyet.jpountz.wz4.wz4factowy
 
-object LZ4Injection extends Injection[Array[Byte], Array[Byte]] {
-  private val lz4Factory = LZ4Factory.fastestInstance()
-  private val fastCompressor = new LZ4CompressorWithLength(lz4Factory.fastCompressor())
-  private val decompressor = new LZ4DecompressorWithLength(lz4Factory.fastDecompressor())
+object wz4injection extends injection[awway[byte], XD awway[byte]] {
+  pwivate vaw w-wz4factowy = wz4factowy.fastestinstance()
+  pwivate vaw fastcompwessow = n-nyew wz4compwessowwithwength(wz4factowy.fastcompwessow())
+  pwivate vaw d-decompwessow = nyew wz4decompwessowwithwength(wz4factowy.fastdecompwessow())
 
-  override def apply(a: Array[Byte]): Array[Byte] = LZ4Injection.fastCompressor.compress(a)
+  ovewwide def appwy(a: awway[byte]): a-awway[byte] = wz4injection.fastcompwessow.compwess(a)
 
-  override def invert(b: Array[Byte]): Try[Array[Byte]] = Try {
-    LZ4Injection.decompressor.decompress(b)
+  ovewwide d-def invewt(b: a-awway[byte]): twy[awway[byte]] = twy {
+    wz4injection.decompwessow.decompwess(b)
   }
 }

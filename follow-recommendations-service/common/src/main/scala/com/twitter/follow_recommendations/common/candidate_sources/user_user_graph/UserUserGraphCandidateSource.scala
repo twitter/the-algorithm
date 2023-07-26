@@ -1,125 +1,125 @@
-package com.twitter.follow_recommendations.common.candidate_sources.user_user_graph
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.usew_usew_gwaph
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.models._
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.recos.recos_common.thriftscala.UserSocialProofType
-import com.twitter.recos.user_user_graph.thriftscala.RecommendUserDisplayLocation
-import com.twitter.recos.user_user_graph.thriftscala.RecommendUserRequest
-import com.twitter.recos.user_user_graph.thriftscala.RecommendUserResponse
-import com.twitter.recos.user_user_graph.thriftscala.RecommendedUser
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+impowt com.twittew.finagwe.stats.countew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fowwow_wecommendations.common.constants.guicenamedconstants
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews._
+i-impowt com.twittew.hewmit.modew.awgowithm
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+impowt com.twittew.wecos.wecos_common.thwiftscawa.usewsociawpwooftype
+i-impowt com.twittew.wecos.usew_usew_gwaph.thwiftscawa.wecommendusewdispwaywocation
+impowt c-com.twittew.wecos.usew_usew_gwaph.thwiftscawa.wecommendusewwequest
+impowt com.twittew.wecos.usew_usew_gwaph.thwiftscawa.wecommendusewwesponse
+i-impowt com.twittew.wecos.usew_usew_gwaph.thwiftscawa.wecommendedusew
+impowt com.twittew.stitch.stitch
+impowt com.twittew.stwato.cwient.fetchew
+impowt com.twittew.timewines.configapi.haspawams
+i-impowt javax.inject.inject
+impowt j-javax.inject.named
+i-impowt javax.inject.singweton
 
-@Singleton
-class UserUserGraphCandidateSource @Inject() (
-  @Named(GuiceNamedConstants.USER_USER_GRAPH_FETCHER)
-  fetcher: Fetcher[RecommendUserRequest, Unit, RecommendUserResponse],
-  statsReceiver: StatsReceiver)
-    extends CandidateSource[
-      UserUserGraphCandidateSource.Target,
-      CandidateUser
+@singweton
+cwass usewusewgwaphcandidatesouwce @inject() (
+  @named(guicenamedconstants.usew_usew_gwaph_fetchew)
+  fetchew: fetchew[wecommendusewwequest, (U ﹏ U) unit, w-wecommendusewwesponse], mya
+  statsweceivew: statsweceivew)
+    extends candidatesouwce[
+      usewusewgwaphcandidatesouwce.tawget, ʘwʘ
+      candidateusew
     ] {
 
-  override val identifier: CandidateSourceIdentifier = UserUserGraphCandidateSource.Identifier
-  val stats: StatsReceiver = statsReceiver.scope("UserUserGraph")
-  val requestCounter: Counter = stats.counter("requests")
+  o-ovewwide vaw identifiew: candidatesouwceidentifiew = u-usewusewgwaphcandidatesouwce.identifiew
+  v-vaw stats: statsweceivew = s-statsweceivew.scope("usewusewgwaph")
+  v-vaw wequestcountew: countew = stats.countew("wequests")
 
-  override def apply(
-    target: UserUserGraphCandidateSource.Target
-  ): Stitch[Seq[CandidateUser]] = {
-    if (target.params(UserUserGraphParams.UserUserGraphCandidateSourceEnabledInWeightMap)) {
-      requestCounter.incr()
-      buildRecommendUserRequest(target)
-        .map { request =>
-          fetcher
-            .fetch(request)
+  ovewwide d-def appwy(
+    tawget: usewusewgwaphcandidatesouwce.tawget
+  ): stitch[seq[candidateusew]] = {
+    i-if (tawget.pawams(usewusewgwaphpawams.usewusewgwaphcandidatesouwceenabwedinweightmap)) {
+      wequestcountew.incw()
+      buiwdwecommendusewwequest(tawget)
+        .map { wequest =>
+          fetchew
+            .fetch(wequest)
             .map(_.v)
-            .map { responseOpt =>
-              responseOpt
-                .map { response =>
-                  response.recommendedUsers
-                    .sortBy(-_.score)
-                    .map(convertToCandidateUsers)
-                    .map(_.withCandidateSource(identifier))
-                }.getOrElse(Nil)
+            .map { wesponseopt =>
+              w-wesponseopt
+                .map { wesponse =>
+                  w-wesponse.wecommendedusews
+                    .sowtby(-_.scowe)
+                    .map(convewttocandidateusews)
+                    .map(_.withcandidatesouwce(identifiew))
+                }.getowewse(niw)
             }
-        }.getOrElse(Stitch.Nil)
-    } else {
-      Stitch.Nil
+        }.getowewse(stitch.niw)
+    } e-ewse {
+      s-stitch.niw
     }
   }
 
-  private[this] def buildRecommendUserRequest(
-    target: UserUserGraphCandidateSource.Target
-  ): Option[RecommendUserRequest] = {
-    (target.getOptionalUserId, target.recentFollowedUserIds) match {
-      case (Some(userId), Some(recentFollowedUserIds)) =>
-        // use recentFollowedUserIds as seeds for initial experiment
-        val seedsWithWeights: Map[Long, Double] = recentFollowedUserIds.map {
-          recentFollowedUserId =>
-            recentFollowedUserId -> UserUserGraphCandidateSource.DefaultSeedWeight
-        }.toMap
-        val request = RecommendUserRequest(
-          requesterId = userId,
-          displayLocation = UserUserGraphCandidateSource.DisplayLocation,
-          seedsWithWeights = seedsWithWeights,
-          excludedUserIds = Some(target.excludedUserIds),
-          maxNumResults = Some(target.params.getInt(UserUserGraphParams.MaxCandidatesToReturn)),
-          maxNumSocialProofs = Some(UserUserGraphCandidateSource.MaxNumSocialProofs),
-          minUserPerSocialProof = Some(UserUserGraphCandidateSource.MinUserPerSocialProof),
-          socialProofTypes = Some(Seq(UserUserGraphCandidateSource.SocialProofType))
+  pwivate[this] def buiwdwecommendusewwequest(
+    tawget: usewusewgwaphcandidatesouwce.tawget
+  ): o-option[wecommendusewwequest] = {
+    (tawget.getoptionawusewid, (˘ω˘) t-tawget.wecentfowwowedusewids) match {
+      case (some(usewid), (U ﹏ U) s-some(wecentfowwowedusewids)) =>
+        // u-use wecentfowwowedusewids a-as seeds fow initiaw expewiment
+        v-vaw seedswithweights: map[wong, ^•ﻌ•^ doubwe] = w-wecentfowwowedusewids.map {
+          wecentfowwowedusewid =>
+            w-wecentfowwowedusewid -> usewusewgwaphcandidatesouwce.defauwtseedweight
+        }.tomap
+        v-vaw wequest = wecommendusewwequest(
+          wequestewid = u-usewid, (˘ω˘)
+          dispwaywocation = usewusewgwaphcandidatesouwce.dispwaywocation, :3
+          seedswithweights = seedswithweights, ^^;;
+          excwudedusewids = some(tawget.excwudedusewids),
+          maxnumwesuwts = s-some(tawget.pawams.getint(usewusewgwaphpawams.maxcandidatestowetuwn)), 🥺
+          m-maxnumsociawpwoofs = some(usewusewgwaphcandidatesouwce.maxnumsociawpwoofs), (⑅˘꒳˘)
+          m-minusewpewsociawpwoof = s-some(usewusewgwaphcandidatesouwce.minusewpewsociawpwoof), nyaa~~
+          s-sociawpwooftypes = some(seq(usewusewgwaphcandidatesouwce.sociawpwooftype))
         )
-        Some(request)
-      case _ => None
+        some(wequest)
+      case _ => n-nyone
     }
   }
 
-  private[this] def convertToCandidateUsers(
-    recommendedUser: RecommendedUser
-  ): CandidateUser = {
-    val socialProofUserIds =
-      recommendedUser.socialProofs.getOrElse(UserUserGraphCandidateSource.SocialProofType, Nil)
-    val reasonOpt = if (socialProofUserIds.nonEmpty) {
-      Some(
-        Reason(
-          Some(AccountProof(followProof =
-            Some(FollowProof(socialProofUserIds, socialProofUserIds.size)))))
+  pwivate[this] def convewttocandidateusews(
+    wecommendedusew: wecommendedusew
+  ): c-candidateusew = {
+    vaw s-sociawpwoofusewids =
+      w-wecommendedusew.sociawpwoofs.getowewse(usewusewgwaphcandidatesouwce.sociawpwooftype, :3 n-nyiw)
+    vaw weasonopt = if (sociawpwoofusewids.nonempty) {
+      s-some(
+        w-weason(
+          s-some(accountpwoof(fowwowpwoof =
+            s-some(fowwowpwoof(sociawpwoofusewids, ( ͡o ω ͡o ) sociawpwoofusewids.size)))))
       )
-    } else {
-      None
+    } ewse {
+      nyone
     }
-    CandidateUser(
-      id = recommendedUser.userId,
-      score = Some(recommendedUser.score),
-      reason = reasonOpt)
+    c-candidateusew(
+      i-id = wecommendedusew.usewid, mya
+      s-scowe = some(wecommendedusew.scowe), (///ˬ///✿)
+      w-weason = weasonopt)
   }
 }
 
-object UserUserGraphCandidateSource {
-  type Target = HasParams
-    with HasClientContext
-    with HasRecentFollowedUserIds
-    with HasExcludedUserIds
+o-object usewusewgwaphcandidatesouwce {
+  type tawget = haspawams
+    w-with hascwientcontext
+    with haswecentfowwowedusewids
+    with hasexcwudedusewids
 
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.UserUserGraph.toString)
-  //Use HomeTimeline for experiment
-  val DisplayLocation: RecommendUserDisplayLocation = RecommendUserDisplayLocation.HomeTimeLine
+  vaw identifiew: candidatesouwceidentifiew = c-candidatesouwceidentifiew(
+    awgowithm.usewusewgwaph.tostwing)
+  //use hometimewine fow expewiment
+  v-vaw dispwaywocation: wecommendusewdispwaywocation = w-wecommendusewdispwaywocation.hometimewine
 
-  //Default params used in MagicRecs
-  val DefaultSeedWeight: Double = 1.0
-  val SocialProofType = UserSocialProofType.Follow
-  val MaxNumSocialProofs = 10
-  val MinUserPerSocialProof: Map[UserSocialProofType, Int] =
-    Map[UserSocialProofType, Int]((SocialProofType, 2))
+  //defauwt p-pawams used in magicwecs
+  v-vaw defauwtseedweight: doubwe = 1.0
+  v-vaw sociawpwooftype = u-usewsociawpwooftype.fowwow
+  vaw maxnumsociawpwoofs = 10
+  vaw minusewpewsociawpwoof: map[usewsociawpwooftype, (˘ω˘) int] =
+    map[usewsociawpwooftype, ^^;; int]((sociawpwooftype, (✿oωo) 2))
 }

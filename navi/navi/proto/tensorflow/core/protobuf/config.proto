@@ -1,902 +1,902 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "tensorflow/core/framework/cost_graph.proto";
-import "tensorflow/core/framework/graph.proto";
-import "tensorflow/core/framework/step_stats.proto";
-import "tensorflow/core/protobuf/cluster.proto";
-import "tensorflow/core/protobuf/coordination_config.proto";
-import "tensorflow/core/protobuf/debug.proto";
-import "tensorflow/core/protobuf/rewriter_config.proto";
+impowt "tensowfwow/cowe/fwamewowk/cost_gwaph.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/gwaph.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/step_stats.pwoto";
+i-impowt "tensowfwow/cowe/pwotobuf/cwustew.pwoto";
+i-impowt "tensowfwow/cowe/pwotobuf/coowdination_config.pwoto";
+i-impowt "tensowfwow/cowe/pwotobuf/debug.pwoto";
+impowt "tensowfwow/cowe/pwotobuf/wewwitew_config.pwoto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "ConfigProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+o-option c-cc_enabwe_awenas = t-twue;
+option java_outew_cwassname = "configpwotos";
+option java_muwtipwe_fiwes = twue;
+option java_package = "owg.tensowfwow.fwamewowk";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-message GPUOptions {
-  // Fraction of the available GPU memory to allocate for each process.
-  // 1 means to allocate all of the GPU memory, 0.5 means the process
-  // allocates up to ~50% of the available GPU memory.
+message g-gpuoptions {
+  // fwaction of t-the avaiwabwe gpu memowy to awwocate fow each pwocess. ^^;;
+  // 1 means t-to awwocate aww of the gpu memowy, rawr 0.5 m-means t-the pwocess
+  // awwocates up to ~50% of the avaiwabwe gpu memowy.
   //
-  // GPU memory is pre-allocated unless the allow_growth option is enabled.
+  // gpu m-memowy is pwe-awwocated unwess the awwow_gwowth option is enabwed. nyaa~~
   //
-  // If greater than 1.0, uses CUDA unified memory to potentially oversubscribe
-  // the amount of memory available on the GPU device by using host memory as a
-  // swap space. Accessing memory not available on the device will be
-  // significantly slower as that would require memory transfer between the host
-  // and the device. Options to reduce the memory requirement should be
-  // considered before enabling this option as this may come with a negative
-  // performance impact. Oversubscription using the unified memory requires
-  // Pascal class or newer GPUs and it is currently only supported on the Linux
-  // operating system. See
-  // https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-requirements
-  // for the detailed requirements.
-  double per_process_gpu_memory_fraction = 1;
+  // if gweatew than 1.0, rawr x3 u-uses cuda unified memowy to p-potentiawwy ovewsubscwibe
+  // the a-amount of memowy a-avaiwabwe on t-the gpu device by using host memowy as a
+  // swap s-space. (⑅˘꒳˘) accessing memowy nyot avaiwabwe on the d-device wiww be
+  // significantwy swowew as that wouwd wequiwe memowy twansfew between the host
+  // a-and the device. OwO options to w-weduce the memowy w-wequiwement s-shouwd be
+  // considewed befowe enabwing this option as this may c-come with a nyegative
+  // p-pewfowmance impact. OwO o-ovewsubscwiption u-using the unified memowy wequiwes
+  // p-pascaw cwass ow nyewew g-gpus and it is cuwwentwy onwy suppowted on the winux
+  // o-opewating system. ʘwʘ see
+  // h-https://docs.nvidia.com/cuda/cuda-c-pwogwamming-guide/index.htmw#um-wequiwements
+  // fow the d-detaiwed wequiwements.
+  d-doubwe pew_pwocess_gpu_memowy_fwaction = 1;
 
-  // If true, the allocator does not pre-allocate the entire specified
-  // GPU memory region, instead starting small and growing as needed.
-  bool allow_growth = 4;
+  // if twue, :3 the awwocatow does nyot pwe-awwocate the entiwe specified
+  // g-gpu memowy w-wegion, mya instead stawting smow and g-gwowing as nyeeded. OwO
+  b-boow awwow_gwowth = 4;
 
-  // The type of GPU allocation strategy to use.
+  // t-the type of gpu awwocation stwategy to use. :3
   //
-  // Allowed values:
-  // "": The empty string (default) uses a system-chosen default
-  //     which may change over time.
+  // awwowed v-vawues:
+  // "": the empty stwing (defauwt) uses a system-chosen defauwt
+  //     which may c-change ovew time. >_<
   //
-  // "BFC": A "Best-fit with coalescing" algorithm, simplified from a
-  //        version of dlmalloc.
-  string allocator_type = 2;
+  // "bfc": a "best-fit with c-coawescing" a-awgowithm, σωσ simpwified f-fwom a
+  //        vewsion o-of dwmawwoc. /(^•ω•^)
+  s-stwing awwocatow_type = 2;
 
-  // Delay deletion of up to this many bytes to reduce the number of
-  // interactions with gpu driver code.  If 0, the system chooses
-  // a reasonable default (several MBs).
-  int64 deferred_deletion_bytes = 3;
+  // d-deway dewetion o-of up to this many bytes to weduce the nyumbew of
+  // i-intewactions w-with gpu dwivew c-code. mya  if 0, t-the system chooses
+  // a-a weasonabwe defauwt (sevewaw mbs). nyaa~~
+  int64 defewwed_dewetion_bytes = 3;
 
-  // A comma-separated list of GPU ids that determines the 'visible'
-  // to 'virtual' mapping of GPU devices.  For example, if TensorFlow
-  // can see 8 GPU devices in the process, and one wanted to map
-  // visible GPU devices 5 and 3 as "/device:GPU:0", and "/device:GPU:1",
-  // then one would specify this field as "5,3".  This field is similar in
-  // spirit to the CUDA_VISIBLE_DEVICES environment variable, except
-  // it applies to the visible GPU devices in the process.
+  // a-a comma-sepawated wist of gpu ids that detewmines the 'visibwe'
+  // to 'viwtuaw' mapping o-of gpu devices. 😳  fow exampwe, ^^;; if tensowfwow
+  // can see 8 gpu d-devices in the p-pwocess, 😳😳😳 and one w-wanted to map
+  // visibwe gpu d-devices 5 and 3 as "/device:gpu:0", nyaa~~ a-and "/device:gpu:1", 🥺
+  // t-then one wouwd specify this fiewd as "5,3". XD  this fiewd is simiwaw in
+  // spiwit t-to the cuda_visibwe_devices enviwonment v-vawiabwe, (ꈍᴗꈍ) except
+  // it a-appwies to the v-visibwe gpu devices in the pwocess. 😳😳😳
   //
-  // NOTE:
-  // 1. The GPU driver provides the process with the visible GPUs
-  //    in an order which is not guaranteed to have any correlation to
-  //    the *physical* GPU id in the machine.  This field is used for
-  //    remapping "visible" to "virtual", which means this operates only
-  //    after the process starts.  Users are required to use vendor
-  //    specific mechanisms (e.g., CUDA_VISIBLE_DEVICES) to control the
-  //    physical to visible device mapping prior to invoking TensorFlow.
-  // 2. In the code, the ids in this list are also called "platform GPU id"s,
-  //    and the 'virtual' ids of GPU devices (i.e. the ids in the device
-  //    name "/device:GPU:<id>") are also called "TF GPU id"s. Please
-  //    refer to third_party/tensorflow/core/common_runtime/gpu/gpu_id.h
-  //    for more information.
-  string visible_device_list = 5;
+  // nyote:
+  // 1. ( ͡o ω ͡o ) t-the g-gpu dwivew pwovides the pwocess w-with the visibwe g-gpus
+  //    in an owdew which is nyot guawanteed to have any cowwewation to
+  //    t-the *physicaw* g-gpu id in t-the machine. nyaa~~  this fiewd is used f-fow
+  //    wemapping "visibwe" t-to "viwtuaw", XD which means this o-opewates onwy
+  //    aftew the pwocess stawts. (ˆ ﻌ ˆ)♡  usews awe wequiwed to use vendow
+  //    s-specific m-mechanisms (e.g., cuda_visibwe_devices) to contwow t-the
+  //    p-physicaw to visibwe device mapping pwiow to invoking tensowfwow. rawr x3
+  // 2. i-in the code, OwO the ids in this wist awe awso cawwed "pwatfowm gpu id"s, UwU
+  //    a-and the 'viwtuaw' ids of gpu devices (i.e. ^^ t-the ids in the d-device
+  //    nyame "/device:gpu:<id>") awe awso cawwed "tf g-gpu id"s. (✿oωo) pwease
+  //    w-wefew to thiwd_pawty/tensowfwow/cowe/common_wuntime/gpu/gpu_id.h
+  //    fow mowe infowmation. 😳😳😳
+  stwing v-visibwe_device_wist = 5;
 
-  // In the event polling loop sleep this many microseconds between
-  // PollEvents calls, when the queue is not empty.  If value is not
-  // set or set to 0, gets set to a non-zero default.
-  int32 polling_active_delay_usecs = 6;
+  // in the event powwing w-woop sweep this many micwoseconds between
+  // powwevents cawws, 🥺 w-when the queue is not empty. ʘwʘ  i-if vawue is n-nyot
+  // set ow set to 0, 😳 gets s-set to a non-zewo defauwt. ^^;;
+  int32 p-powwing_active_deway_usecs = 6;
 
-  // This field is deprecated and ignored.
-  int32 polling_inactive_delay_msecs = 7;
+  // t-this fiewd i-is depwecated and ignowed. (///ˬ///✿)
+  i-int32 powwing_inactive_deway_msecs = 7;
 
-  // Force all tensors to be gpu_compatible. On a GPU-enabled TensorFlow,
-  // enabling this option forces all CPU tensors to be allocated with Cuda
-  // pinned memory. Normally, TensorFlow will infer which tensors should be
-  // allocated as the pinned memory. But in case where the inference is
-  // incomplete, this option can significantly speed up the cross-device memory
-  // copy performance as long as it fits the memory.
-  // Note that this option is not something that should be
-  // enabled by default for unknown or very large models, since all Cuda pinned
-  // memory is unpageable, having too much pinned memory might negatively impact
-  // the overall host system performance.
-  bool force_gpu_compatible = 8;
+  // fowce a-aww tensows to be gpu_compatibwe. OwO on a gpu-enabwed t-tensowfwow, -.-
+  // e-enabwing t-this option fowces aww cpu tensows to be awwocated w-with cuda
+  // pinned memowy. ^^ n-nyowmawwy, (ꈍᴗꈍ) tensowfwow w-wiww infew which tensows shouwd be
+  // awwocated as the p-pinned memowy. ^^;; b-but in case whewe t-the infewence i-is
+  // incompwete, (˘ω˘) this option c-can significantwy speed up the cwoss-device memowy
+  // copy pewfowmance as wong as it fits the m-memowy. 🥺
+  // nyote that this option i-is nyot something that shouwd b-be
+  // enabwed by defauwt fow u-unknown ow vewy wawge modews, ʘwʘ s-since aww cuda pinned
+  // m-memowy i-is unpageabwe, (///ˬ///✿) h-having too much p-pinned memowy might nyegativewy impact
+  // the ovewaww host system pewfowmance. ^^;;
+  boow fowce_gpu_compatibwe = 8;
 
-  message Experimental {
-    // Configuration for breaking down a visible GPU into multiple "virtual"
-    // devices.
-    message VirtualDevices {
-      // Per "virtual" device memory limit, in MB. The number of elements in
-      // the list is the number of virtual devices to create on the
-      // corresponding visible GPU (see "virtual_devices" below).
-      // If empty, it will create single virtual device taking all available
-      // memory from the device.
+  message expewimentaw {
+    // c-configuwation f-fow bweaking down a-a visibwe gpu into muwtipwe "viwtuaw"
+    // d-devices. XD
+    message viwtuawdevices {
+      // pew "viwtuaw" device memowy wimit, (ˆ ﻌ ˆ)♡ i-in mb. the nyumbew o-of ewements in
+      // the w-wist is the numbew of viwtuaw devices to cweate o-on the
+      // c-cowwesponding visibwe gpu (see "viwtuaw_devices" b-bewow). (˘ω˘)
+      // i-if empty, it wiww cweate singwe viwtuaw device taking aww avaiwabwe
+      // memowy fwom the d-device. σωσ
       //
-      // For the concept of "visible" and "virtual" GPU, see the comments for
-      // "visible_device_list" above for more information.
-      repeated float memory_limit_mb = 1;
+      // f-fow the c-concept of "visibwe" a-and "viwtuaw" g-gpu, 😳😳😳 see the comments fow
+      // "visibwe_device_wist" above f-fow mowe infowmation. ^•ﻌ•^
+      w-wepeated fwoat memowy_wimit_mb = 1;
 
-      // Priority values to use with the virtual devices. Use the cuda function
-      // cudaDeviceGetStreamPriorityRange to query for valid range of values for
-      // priority.
+      // pwiowity v-vawues to u-use with the viwtuaw devices. σωσ u-use the cuda function
+      // cudadevicegetstweampwiowitywange to quewy fow vawid wange of vawues f-fow
+      // pwiowity. (///ˬ///✿)
       //
-      // On a P4000 GPU with cuda 10.1, the priority range reported was 0 for
-      // least priority and -1 for greatest priority.
+      // o-on a p-p4000 gpu with cuda 10.1, XD the pwiowity w-wange wepowted was 0 fow
+      // weast p-pwiowity and -1 f-fow gweatest pwiowity. >_<
       //
-      // If this field is not specified, then the virtual devices will be
-      // created with the default. If this field has values set, then the size
-      // of this must match with the above memory_limit_mb.
-      repeated int32 priority = 2;
+      // i-if this fiewd is nyot specified, òωó then the viwtuaw devices w-wiww be
+      // cweated with the defauwt. (U ᵕ U❁) if t-this fiewd has v-vawues set, (˘ω˘) then the size
+      // o-of this must match with the above m-memowy_wimit_mb. 🥺
+      w-wepeated int32 pwiowity = 2;
     }
 
-    // The multi virtual device settings. If empty (not set), it will create
-    // single virtual device on each visible GPU, according to the settings
-    // in "visible_device_list" above. Otherwise, the number of elements in the
-    // list must be the same as the number of visible GPUs (after
-    // "visible_device_list" filtering if it is set), and the string represented
-    // device names (e.g. /device:GPU:<id>) will refer to the virtual
-    // devices and have the <id> field assigned sequentially starting from 0,
-    // according to the order they appear in this list and the "memory_limit"
-    // list inside each element. For example,
-    //   visible_device_list = "1,0"
-    //   virtual_devices { memory_limit: 1GB memory_limit: 2GB }
-    //   virtual_devices {}
-    // will create three virtual devices as:
-    //   /device:GPU:0 -> visible GPU 1 with 1GB memory
-    //   /device:GPU:1 -> visible GPU 1 with 2GB memory
-    //   /device:GPU:2 -> visible GPU 0 with all available memory
+    // the muwti v-viwtuaw device settings. (✿oωo) if empty (not set), it w-wiww cweate
+    // s-singwe viwtuaw device on each v-visibwe gpu, (˘ω˘) accowding to the s-settings
+    // i-in "visibwe_device_wist" a-above. (ꈍᴗꈍ) othewwise, ( ͡o ω ͡o ) the numbew of ewements in the
+    // wist must be the same as the nyumbew of visibwe gpus (aftew
+    // "visibwe_device_wist" fiwtewing if it is set), and the stwing wepwesented
+    // device nyames (e.g. (U ᵕ U❁) /device:gpu:<id>) w-wiww wefew t-to the viwtuaw
+    // devices and have the <id> f-fiewd assigned s-sequentiawwy s-stawting fwom 0, ʘwʘ
+    // accowding t-to the owdew they appeaw in this w-wist and the "memowy_wimit"
+    // w-wist inside each ewement. (ˆ ﻌ ˆ)♡ f-fow exampwe, /(^•ω•^)
+    //   visibwe_device_wist = "1,0"
+    //   v-viwtuaw_devices { m-memowy_wimit: 1gb memowy_wimit: 2gb }
+    //   viwtuaw_devices {}
+    // w-wiww cweate t-thwee viwtuaw d-devices as:
+    //   /device:gpu:0 -> v-visibwe gpu 1 w-with 1gb memowy
+    //   /device:gpu:1 -> visibwe g-gpu 1 with 2gb m-memowy
+    //   /device:gpu:2 -> v-visibwe gpu 0 w-with aww avaiwabwe memowy
     //
-    // NOTE:
-    // 1. It's invalid to set both this and "per_process_gpu_memory_fraction"
-    //    at the same time.
-    // 2. Currently this setting is per-process, not per-session. Using
-    //    different settings in different sessions within same process will
-    //    result in undefined behavior.
-    repeated VirtualDevices virtual_devices = 1;
+    // n-nyote:
+    // 1. (ˆ ﻌ ˆ)♡ i-it's i-invawid to set both this and "pew_pwocess_gpu_memowy_fwaction"
+    //    a-at the same time. (✿oωo)
+    // 2. ^•ﻌ•^ cuwwentwy t-this setting is pew-pwocess, (ˆ ﻌ ˆ)♡ nyot p-pew-session. XD u-using
+    //    d-diffewent settings in diffewent s-sessions within same pwocess wiww
+    //    w-wesuwt in undefined b-behaviow. :3
+    wepeated viwtuawdevices v-viwtuaw_devices = 1;
 
-    // If true, uses CUDA unified memory for memory allocations. If
-    // per_process_gpu_memory_fraction option is greater than 1.0, then unified
-    // memory is used regardless of the value for this field. See comments for
-    // per_process_gpu_memory_fraction field for more details and requirements
-    // of the unified memory. This option is useful to oversubscribe memory if
-    // multiple processes are sharing a single GPU while individually using less
-    // than 1.0 per process memory fraction.
-    bool use_unified_memory = 2;
+    // if twue, -.- uses cuda unified memowy fow memowy awwocations. ^^;; if
+    // p-pew_pwocess_gpu_memowy_fwaction option is g-gweatew than 1.0, OwO t-then unified
+    // memowy is used wegawdwess of the vawue fow t-this fiewd. ^^;; see comments fow
+    // p-pew_pwocess_gpu_memowy_fwaction f-fiewd fow m-mowe detaiws and wequiwements
+    // of the unified m-memowy. 🥺 this o-option is usefuw to ovewsubscwibe m-memowy if
+    // muwtipwe pwocesses awe shawing a-a singwe gpu whiwe individuawwy u-using wess
+    // t-than 1.0 pew p-pwocess memowy fwaction. ^^
+    b-boow use_unified_memowy = 2;
 
-    // If > 1, the number of device-to-device copy streams to create
-    // for each GPUDevice.  Default value is 0, which is automatically
-    // converted to 1.
-    int32 num_dev_to_dev_copy_streams = 3;
+    // i-if > 1, o.O the n-nyumbew of device-to-device c-copy stweams to cweate
+    // f-fow each g-gpudevice. ( ͡o ω ͡o )  d-defauwt vawue is 0, nyaa~~ w-which is automaticawwy
+    // c-convewted to 1. (///ˬ///✿)
+    i-int32 nyum_dev_to_dev_copy_stweams = 3;
 
-    // If non-empty, defines a good GPU ring order on a single worker based on
-    // device interconnect.  This assumes that all workers have the same GPU
-    // topology.  Specify as a comma-separated string, e.g. "3,2,1,0,7,6,5,4".
-    // This ring order is used by the RingReducer implementation of
-    // CollectiveReduce, and serves as an override to automatic ring order
-    // generation in OrderTaskDeviceMap() during CollectiveParam resolution.
-    string collective_ring_order = 4;
+    // i-if nyon-empty, (ˆ ﻌ ˆ)♡ d-defines a good gpu wing owdew o-on a singwe wowkew based on
+    // d-device intewconnect. XD  this a-assumes that aww w-wowkews have the s-same gpu
+    // topowogy. >_<  specify as a comma-sepawated stwing, (U ﹏ U) e-e.g. òωó "3,2,1,0,7,6,5,4". >w<
+    // t-this wing owdew i-is used by the wingweducew impwementation of
+    // cowwectiveweduce, ^•ﻌ•^ a-and sewves a-as an ovewwide to automatic wing o-owdew
+    // g-genewation in owdewtaskdevicemap() duwing cowwectivepawam wesowution. 🥺
+    stwing c-cowwective_wing_owdew = 4;
 
-    // If true then extra work is done by GPUDevice and GPUBFCAllocator to
-    // keep track of when GPU memory is freed and when kernels actually
-    // complete so that we can know when a nominally free memory chunk
-    // is really not subject to pending use.
-    bool timestamped_allocator = 5;
+    // i-if twue then e-extwa wowk is d-done by gpudevice and gpubfcawwocatow to
+    // k-keep twack of when g-gpu memowy is fweed and when kewnews actuawwy
+    // c-compwete so that we can know when a nyominawwy f-fwee memowy chunk
+    // i-is weawwy nyot subject t-to pending use. (✿oωo)
+    boow t-timestamped_awwocatow = 5;
 
-    // reserved id: 6
+    // w-wesewved id: 6
 
-    // Parameters for GPUKernelTracker.  By default no kernel tracking is done.
-    // Note that timestamped_allocator is only effective if some tracking is
-    // specified.
+    // pawametews f-fow gpukewnewtwackew. UwU  by defauwt n-nyo kewnew t-twacking is done. (˘ω˘)
+    // n-nyote t-that timestamped_awwocatow is onwy e-effective if s-some twacking is
+    // s-specified. ʘwʘ
     //
-    // If kernel_tracker_max_interval = n > 0, then a tracking event
-    // is inserted after every n kernels without an event.
-    int32 kernel_tracker_max_interval = 7;
-    // If kernel_tracker_max_bytes = n > 0, then a tracking event is
-    // inserted after every series of kernels allocating a sum of
-    // memory >= n.  If one kernel allocates b * n bytes, then one
-    // event will be inserted after it, but it will count as b against
-    // the pending limit.
-    int32 kernel_tracker_max_bytes = 8;
-    // If kernel_tracker_max_pending > 0 then no more than this many
-    // tracking events can be outstanding at a time.  An attempt to
-    // launch an additional kernel will stall until an event
-    // completes.
-    int32 kernel_tracker_max_pending = 9;
+    // if kewnew_twackew_max_intewvaw = n-ny > 0, (ˆ ﻌ ˆ)♡ then a twacking event
+    // is insewted a-aftew evewy n-ny kewnews without a-an event. ( ͡o ω ͡o )
+    int32 kewnew_twackew_max_intewvaw = 7;
+    // if kewnew_twackew_max_bytes = ny > 0, :3 then a twacking e-event is
+    // insewted aftew e-evewy sewies o-of kewnews awwocating a sum of
+    // memowy >= n-ny. 😳  if one kewnew awwocates b * n-ny bytes, then o-one
+    // event w-wiww be insewted a-aftew it, (✿oωo) but i-it wiww count as b against
+    // the pending wimit. /(^•ω•^)
+    int32 kewnew_twackew_max_bytes = 8;
+    // i-if kewnew_twackew_max_pending > 0 then nyo m-mowe than this many
+    // twacking events can be outstanding at a-a time. :3  an attempt to
+    // waunch an additionaw kewnew wiww staww untiw an event
+    // c-compwetes. σωσ
+    i-int32 kewnew_twackew_max_pending = 9;
 
-    // BFC Allocator can return an allocated chunk of memory upto 2x the
-    // requested size. For virtual devices with tight memory constraints, and
-    // proportionately large allocation requests, this can lead to a significant
-    // reduction in available memory. The threshold below controls when a chunk
-    // should be split if the chunk size exceeds requested memory size. It is
-    // expressed as a fraction of total available memory for the tf device. For
-    // example setting it to 0.05 would imply a chunk needs to be split if its
-    // size exceeds the requested memory by 5% of the total virtual device/gpu
-    // memory size.
-    double internal_fragmentation_fraction = 10;
+    // b-bfc awwocatow can wetuwn an awwocated chunk o-of memowy upto 2x t-the
+    // wequested size. σωσ f-fow viwtuaw devices with tight m-memowy constwaints, 🥺 and
+    // pwopowtionatewy wawge awwocation w-wequests, rawr this can wead to a significant
+    // weduction in avaiwabwe m-memowy. o.O t-the thweshowd bewow c-contwows when a chunk
+    // shouwd be spwit i-if the chunk size exceeds wequested memowy size. 😳😳😳 it is
+    // expwessed as a fwaction o-of totaw a-avaiwabwe memowy f-fow the tf device. /(^•ω•^) f-fow
+    // exampwe setting it to 0.05 wouwd i-impwy a chunk nyeeds t-to be spwit if its
+    // size exceeds the w-wequested memowy by 5% of the totaw viwtuaw device/gpu
+    // m-memowy size. σωσ
+    doubwe intewnaw_fwagmentation_fwaction = 10;
 
-    // When true, use CUDA cudaMallocAsync API instead of TF gpu allocator.
-    bool use_cuda_malloc_async = 11;
+    // w-when twue, OwO use c-cuda cudamawwocasync api instead o-of tf gpu awwocatow. OwO
+    b-boow u-use_cuda_mawwoc_async = 11;
 
-    // By default, BFCAllocator may sleep when it runs out of memory, in the
-    // hopes that another thread will free up memory in the meantime.  Setting
-    // this to true disables the sleep; instead we'll OOM immediately.
-    bool disallow_retry_on_allocation_failure = 12;
+    // by defauwt, òωó bfcawwocatow may s-sweep when it wuns out of memowy, :3 in the
+    // h-hopes that anothew thwead wiww fwee up memowy in the meantime. σωσ  s-setting
+    // t-this to twue disabwes t-the sweep; i-instead we'ww o-oom immediatewy. σωσ
+    boow disawwow_wetwy_on_awwocation_faiwuwe = 12;
   }
 
-  // Everything inside experimental is subject to change and is not subject
-  // to API stability guarantees in
-  // https://www.tensorflow.org/guide/version_compat.
-  Experimental experimental = 9;
+  // e-evewything inside expewimentaw is subject to change a-and is nyot subject
+  // to a-api stabiwity guawantees in
+  // https://www.tensowfwow.owg/guide/vewsion_compat. -.-
+  e-expewimentaw e-expewimentaw = 9;
 }
 
-// Options passed to the graph optimizer
-message OptimizerOptions {
-  // If true, optimize the graph using common subexpression elimination.
-  // Note: the optimization Level L1 will override this setting to true. So in
-  // order to disable common subexpression elimination the opt_level has to be
-  // set to L0.
-  bool do_common_subexpression_elimination = 1;
+// options p-passed to the gwaph optimizew
+message o-optimizewoptions {
+  // if t-twue, (///ˬ///✿) optimize the gwaph using c-common subexpwession e-ewimination. rawr x3
+  // nyote: the o-optimization wevew w1 wiww ovewwide this setting to twue. (U ﹏ U) so i-in
+  // owdew to disabwe common s-subexpwession ewimination the opt_wevew has to be
+  // s-set to w0.
+  b-boow do_common_subexpwession_ewimination = 1;
 
-  // If true, perform constant folding optimization on the graph.
-  // Note: the optimization Level L1 will override this setting to true. So in
-  // order to disable constant folding the opt_level has to be set to L0.
-  bool do_constant_folding = 2;
+  // i-if twue, òωó pewfowm constant f-fowding optimization o-on the gwaph. OwO
+  // nyote: t-the optimization wevew w1 wiww o-ovewwide this setting to twue. ^^ so i-in
+  // owdew t-to disabwe constant fowding the opt_wevew has to be set to w0. /(^•ω•^)
+  boow do_constant_fowding = 2;
 
-  // Constant folding optimization replaces tensors whose values can be
-  // predetermined, with constant nodes. To avoid inserting too large constants,
-  // the size of each constant created can be limited. If this value is zero, a
-  // default limit of 10 MiB will be applied. If constant folding optimization
-  // is disabled, this value is ignored.
-  int64 max_folded_constant_in_bytes = 6;
+  // c-constant fowding o-optimization wepwaces tensows whose vawues can be
+  // pwedetewmined, >_< w-with constant nyodes. -.- t-to avoid insewting t-too wawge constants, (˘ω˘)
+  // the size of each constant cweated can be wimited. >_< if this vawue is z-zewo, (˘ω˘) a
+  // defauwt wimit of 10 mib wiww be appwied. >w< i-if constant fowding optimization
+  // i-is d-disabwed, 😳😳😳 this vawue is ignowed. 😳
+  i-int64 max_fowded_constant_in_bytes = 6;
 
-  // If true, perform function inlining on the graph.
-  bool do_function_inlining = 4;
+  // i-if twue, XD pewfowm f-function inwining o-on the gwaph. OwO
+  b-boow do_function_inwining = 4;
 
-  // Optimization level
-  enum Level {
-    // L1 is the default level.
-    // Optimization performed at L1 :
-    // 1. Common subexpression elimination
-    // 2. Constant folding
-    L1 = 0;
+  // o-optimization wevew
+  enum wevew {
+    // w1 is the defauwt wevew. -.-
+    // optimization p-pewfowmed at w1 :
+    // 1. o.O c-common s-subexpwession e-ewimination
+    // 2. ^^ c-constant f-fowding
+    w1 = 0;
 
-    // No optimizations
-    L0 = -1;
+    // nyo optimizations
+    w0 = -1;
   }
 
-  // Overall optimization level. The actual optimizations applied will be the
-  // logical OR of the flags that this level implies and any flags already set.
-  Level opt_level = 3;
+  // ovewaww optimization w-wevew. ^^ t-the actuaw optimizations appwied wiww be the
+  // wogicaw ow of t-the fwags that t-this wevew impwies a-and any fwags awweady set.
+  wevew opt_wevew = 3;
 
-  // Control the use of the compiler/jit.  Experimental.
-  enum GlobalJitLevel {
-    DEFAULT = 0;  // Default setting ("off" now, but later expected to be "on")
-    OFF = -1;
-    // The following settings turn on compilation, with higher values being
-    // more aggressive.  Higher values may reduce opportunities for parallelism
-    // and may use more memory.  (At present, there is no distinction, but this
-    // is expected to change.)
-    ON_1 = 1;
-    ON_2 = 2;
+  // c-contwow the use of the compiwew/jit. XD  e-expewimentaw. >w<
+  e-enum gwobawjitwevew {
+    defauwt = 0;  // defauwt s-setting ("off" nyow, (⑅˘꒳˘) but watew e-expected to be "on")
+    o-off = -1;
+    // the f-fowwowing settings t-tuwn on compiwation, 😳 w-with highew v-vawues being
+    // m-mowe aggwessive. :3  h-highew vawues may weduce o-oppowtunities f-fow pawawwewism
+    // and may u-use mowe memowy. :3  (at pwesent, thewe is nyo distinction, OwO b-but this
+    // is expected t-to change.)
+    on_1 = 1;
+    o-on_2 = 2;
   }
-  GlobalJitLevel global_jit_level = 5;
+  g-gwobawjitwevew gwobaw_jit_wevew = 5;
 
-  // CPU code will be autoclustered only if global_jit_level >= ON_1 and either:
-  //  - this flag is true, or
-  //  - TF_XLA_FLAGS contains --tf_xla_cpu_global_jit=true.
-  bool cpu_global_jit = 7;
+  // cpu code wiww be a-autocwustewed onwy if gwobaw_jit_wevew >= on_1 and e-eithew:
+  //  - t-this fwag is twue, (U ﹏ U) ow
+  //  - tf_xwa_fwags contains --tf_xwa_cpu_gwobaw_jit=twue. (⑅˘꒳˘)
+  b-boow cpu_gwobaw_jit = 7;
 }
 
-message GraphOptions {
-  // Removed, use optimizer_options below.
-  reserved "skip_common_subexpression_elimination";
-  reserved 1;
+m-message gwaphoptions {
+  // wemoved, 😳 use optimizew_options b-bewow. (ˆ ﻌ ˆ)♡
+  wesewved "skip_common_subexpwession_ewimination";
+  wesewved 1;
 
-  // If true, use control flow to schedule the activation of Recv nodes.
-  // (Currently ignored.)
-  bool enable_recv_scheduling = 2;
+  // i-if t-twue, mya use contwow fwow to scheduwe t-the activation o-of wecv nyodes. ʘwʘ
+  // (cuwwentwy ignowed.)
+  boow enabwe_wecv_scheduwing = 2;
 
-  // Options controlling how graph is optimized.
-  OptimizerOptions optimizer_options = 3;
+  // o-options contwowwing h-how gwaph i-is optimized. (˘ω˘)
+  o-optimizewoptions optimizew_options = 3;
 
-  // The number of steps to run before returning a cost model detailing
-  // the memory usage and performance of each node of the graph. 0 means
-  // no cost model.
-  int64 build_cost_model = 4;
+  // the nyumbew of steps to wun befowe wetuwning a cost modew detaiwing
+  // the memowy u-usage and pewfowmance o-of each n-nyode of the g-gwaph. (///ˬ///✿) 0 means
+  // n-nyo cost modew. XD
+  i-int64 buiwd_cost_modew = 4;
 
-  // The number of steps to skip before collecting statistics for the
-  // cost model.
-  int64 build_cost_model_after = 9;
+  // the numbew o-of steps to skip b-befowe cowwecting statistics f-fow the
+  // cost m-modew. 😳
+  int64 buiwd_cost_modew_aftew = 9;
 
-  // Annotate each Node with Op output shape data, to the extent it can
-  // be statically inferred.
-  bool infer_shapes = 5;
+  // annotate each n-nyode with op output shape data, :3 to the extent i-it can
+  // be staticawwy infewwed. 😳😳😳
+  b-boow infew_shapes = 5;
 
-  // Only place the subgraphs that are run, rather than the entire graph.
+  // o-onwy pwace the subgwaphs that a-awe wun, (U ᵕ U❁) wathew t-than the entiwe g-gwaph. ^•ﻌ•^
   //
-  // This is useful for interactive graph building, where one might
-  // produce graphs that cannot be placed during the debugging
-  // process.  In particular, it allows the client to continue work in
-  // a session after adding a node to a graph whose placement
-  // constraints are unsatisfiable.
-  bool place_pruned_graph = 6;
+  // this is usefuw f-fow intewactive g-gwaph buiwding, (˘ω˘) whewe one might
+  // p-pwoduce gwaphs that cannot b-be pwaced duwing t-the debugging
+  // p-pwocess. /(^•ω•^)  in pawticuwaw, ^•ﻌ•^ it a-awwows the cwient to continue wowk in
+  // a session a-aftew adding a nyode to a gwaph whose pwacement
+  // constwaints awe unsatisfiabwe. ^^
+  boow pwace_pwuned_gwaph = 6;
 
-  // If true, transfer float values between processes as bfloat16.
-  bool enable_bfloat16_sendrecv = 7;
+  // i-if twue, (U ﹏ U) twansfew fwoat vawues between pwocesses as bfwoat16. :3
+  boow enabwe_bfwoat16_sendwecv = 7;
 
-  // If > 0, record a timeline every this many steps.
-  // EXPERIMENTAL: This currently has no effect in MasterSession.
-  int32 timeline_step = 8;
+  // if > 0, òωó wecowd a timewine e-evewy this many steps. σωσ
+  // expewimentaw: this c-cuwwentwy has nyo effect in mastewsession. σωσ
+  int32 t-timewine_step = 8;
 
-  // Options that control the type and amount of graph rewriting.
-  // Not currently configurable via the public Python API (i.e. there is no API
-  // stability guarantee if you import RewriterConfig explicitly).
-  RewriterConfig rewrite_options = 10;
+  // options that contwow t-the type and amount of gwaph w-wewwiting. (⑅˘꒳˘)
+  // nyot cuwwentwy configuwabwe v-via t-the pubwic python api (i.e. 🥺 thewe is nyo api
+  // s-stabiwity guawantee if you impowt wewwitewconfig expwicitwy). (U ﹏ U)
+  w-wewwitewconfig wewwite_options = 10;
 }
 
-message ThreadPoolOptionProto {
-  // The number of threads in the pool.
+m-message thweadpoowoptionpwoto {
+  // the n-nyumbew of thweads in the poow. >w<
   //
-  // 0 means the system picks a value based on where this option proto is used
-  // (see the declaration of the specific field for more info).
-  int32 num_threads = 1;
+  // 0 means t-the system p-picks a vawue based on whewe this option pwoto is u-used
+  // (see the decwawation of the specific f-fiewd fow mowe info). nyaa~~
+  int32 nyum_thweads = 1;
 
-  // The global name of the threadpool.
+  // the gwobaw nyame of the thweadpoow. -.-
   //
-  // If empty, then the threadpool is made and used according to the scope it's
-  // in - e.g., for a session threadpool, it is used by that session only.
+  // if empty, XD then t-the thweadpoow i-is made and used accowding to t-the scope it's
+  // i-in - e.g., fow a session thweadpoow, -.- i-it is used by that session onwy. >w<
   //
-  // If non-empty, then:
-  // - a global threadpool associated with this name is looked
-  //   up or created. This allows, for example, sharing one threadpool across
-  //   many sessions (e.g., like the default behavior, if
-  //   inter_op_parallelism_threads is not configured), but still partitioning
-  //   into a large and small pool.
-  // - if the threadpool for this global_name already exists, then it is an
-  //   error if the existing pool was created using a different num_threads
-  //   value as is specified on this call.
-  // - threadpools created this way are never garbage collected.
-  string global_name = 2;
+  // if nyon-empty, (ꈍᴗꈍ) then:
+  // - a-a gwobaw thweadpoow a-associated with this nyame i-is wooked
+  //   u-up ow cweated. :3 this awwows, (ˆ ﻌ ˆ)♡ fow e-exampwe, -.- shawing one thweadpoow acwoss
+  //   many s-sessions (e.g., wike the defauwt behaviow, mya if
+  //   i-intew_op_pawawwewism_thweads i-is nyot configuwed), (˘ω˘) but stiww pawtitioning
+  //   i-into a wawge and smow poow. ^•ﻌ•^
+  // - if the thweadpoow fow this gwobaw_name awweady exists, 😳😳😳 then it is an
+  //   ewwow if t-the existing poow w-was cweated using a diffewent n-nyum_thweads
+  //   v-vawue as is specified on this c-caww. σωσ
+  // - thweadpoows cweated this way awe nyevew gawbage cowwected. ( ͡o ω ͡o )
+  stwing gwobaw_name = 2;
 }
 
-message RPCOptions {
-  // If true, always use RPC to contact the session target.
+m-message wpcoptions {
+  // if twue, nyaa~~ awways use wpc to contact the session t-tawget. :3
   //
-  // If false (the default option), TensorFlow may use an optimized
-  // transport for client-master communication that avoids the RPC
-  // stack. This option is primarily for used testing the RPC stack.
-  bool use_rpc_for_inprocess_master = 1;
+  // i-if fawse (the d-defauwt option), (✿oωo) tensowfwow may use an optimized
+  // twanspowt f-fow cwient-mastew c-communication t-that avoids the wpc
+  // stack. >_< t-this option is pwimawiwy fow used t-testing the wpc stack. ^^
+  boow u-use_wpc_fow_inpwocess_mastew = 1;
 
-  // The compression algorithm to be used. One of "deflate", "gzip".
-  string compression_algorithm = 2;
+  // the compwession a-awgowithm to be used. (///ˬ///✿) one of "defwate", :3 "gzip".
+  s-stwing compwession_awgowithm = 2;
 
-  // If compression_algorithm is set, the compression level to be used.
-  // From 0 (no compression), up to 3.
-  int32 compression_level = 3;
+  // i-if compwession_awgowithm i-is set, :3 the compwession w-wevew to be u-used. (ˆ ﻌ ˆ)♡
+  // fwom 0 (no compwession), u-up to 3. 🥺
+  int32 compwession_wevew = 3;
 
-  // Setting cache_rpc_response to true will enable sender side caching of
-  // response for RecvTensorAsync and RecvBufAsync to allow receiver to retry
-  // requests . This is only necessary when the network fabric is experiencing a
-  // significant error rate.  Without it we'll fail a step on an network error,
-  // while with it we'll be able to complete long steps (like complex
-  // initializations) in the face of some network errors during RecvTensor.
-  bool cache_rpc_response = 4;
+  // s-setting cache_wpc_wesponse to t-twue wiww enabwe s-sendew side caching of
+  // wesponse fow wecvtensowasync a-and wecvbufasync to awwow weceivew to wetwy
+  // wequests . 😳 this is onwy nyecessawy when the nyetwowk fabwic is expewiencing a-a
+  // significant ewwow wate. (ꈍᴗꈍ)  without it w-we'ww faiw a step on an nyetwowk e-ewwow, mya
+  // whiwe with it we'ww be abwe to compwete w-wong steps (wike compwex
+  // initiawizations) i-in the face of some nyetwowk ewwows duwing w-wecvtensow. rawr
+  boow cache_wpc_wesponse = 4;
 
-  // Disables TCP connection sharing when opening a new RPC channel.
-  bool disable_session_connection_sharing = 5;
+  // disabwes tcp connection s-shawing when opening a nyew wpc channew. ʘwʘ
+  b-boow disabwe_session_connection_shawing = 5;
 
-  // Setting num_channels_per_target > 0 allows uses of multiple channels to
-  // communicate to the same target. This can be used to improve the aggregate
-  // throughput on high speed links (e.g 100G) where single connection is not
-  // sufficient to maximize link utilization. Note that a single RPC only goes
-  // on a single channel, this only helps in situations where there are multiple
-  // transfers to the same target overlapping in time.
-  int32 num_channels_per_target = 6;
+  // s-setting nyum_channews_pew_tawget > 0 awwows u-uses of muwtipwe c-channews to
+  // communicate t-to the same tawget. -.- t-this can be used to impwove the aggwegate
+  // t-thwoughput on high speed winks (e.g 100g) whewe singwe connection is nyot
+  // s-sufficient to maximize wink utiwization. UwU nyote that a singwe w-wpc onwy goes
+  // o-on a singwe c-channew, :3 this onwy hewps in situations whewe thewe awe muwtipwe
+  // t-twansfews to the same tawget o-ovewwapping in time. 😳
+  int32 nyum_channews_pew_tawget = 6;
 }
 
-// Metadata about the session.
+// m-metadata about t-the session. (ꈍᴗꈍ)
 //
-// This can be used by the runtime and the Ops for debugging, monitoring, etc.
+// this can be used by the wuntime and the ops fow debugging, mya monitowing, etc. nyaa~~
 //
-// The (name, version) tuple is expected to be a unique identifier for
-// sessions within the same process.
+// t-the (name, o.O v-vewsion) tupwe is expected to be a unique identifiew f-fow
+// sessions within the same pwocess. òωó
 //
-// NOTE: This is currently used and propagated only by the direct session.
-message SessionMetadata {
-  string name = 1;
+// n-nyote: this i-is cuwwentwy used a-and pwopagated o-onwy by the diwect s-session. ^•ﻌ•^
+message s-sessionmetadata {
+  stwing nyame = 1;
 
-  // The version is optional. If set, needs to be >= 0.
-  int64 version = 2;
+  // t-the vewsion is o-optionaw. (˘ω˘) if set, n-needs to be >= 0.
+  i-int64 vewsion = 2;
 }
 
-// Session configuration parameters.
-// The system picks appropriate values for fields that are not set.
-message ConfigProto {
-  // Map from device type name (e.g., "CPU" or "GPU" ) to maximum
-  // number of devices of that type to use.  If a particular device
-  // type is not found in the map, the system picks an appropriate
-  // number.
-  map<string, int32> device_count = 1;
+// s-session configuwation p-pawametews. òωó
+// the system p-picks appwopwiate v-vawues fow fiewds t-that awe nyot set. mya
+message configpwoto {
+  // m-map fwom device type nyame (e.g., "cpu" ow "gpu" ) t-to maximum
+  // numbew of devices of that t-type to use. ^^  if a-a pawticuwaw device
+  // type is nyot found in the map, rawr the system p-picks an appwopwiate
+  // n-nyumbew. >_<
+  map<stwing, (U ᵕ U❁) i-int32> device_count = 1;
 
-  // The execution of an individual op (for some op types) can be
-  // parallelized on a pool of intra_op_parallelism_threads.
-  // 0 means the system picks an appropriate number.
+  // t-the execution of an individuaw op (fow some op types) can be
+  // p-pawawwewized o-on a poow of intwa_op_pawawwewism_thweads. /(^•ω•^)
+  // 0 means the system p-picks an appwopwiate n-nyumbew. mya
   //
-  // If you create an ordinary session, e.g., from Python or C++,
-  // then there is exactly one intra op thread pool per process.
-  // The first session created determines the number of threads in this pool.
-  // All subsequent sessions reuse/share this one global pool.
+  // if you cweate an owdinawy s-session, OwO e.g., fwom python ow c++, UwU
+  // then thewe is exactwy one intwa op thwead poow pew p-pwocess. 🥺
+  // the fiwst session cweated detewmines t-the nyumbew o-of thweads in t-this poow. (✿oωo)
+  // aww subsequent sessions w-weuse/shawe t-this one gwobaw p-poow. rawr
   //
-  // There are notable exceptions to the default behavior described above:
-  // 1. There is an environment variable  for overriding this thread pool,
-  //    named TF_OVERRIDE_GLOBAL_THREADPOOL.
-  // 2. When connecting to a server, such as a remote `tf.train.Server`
-  //    instance, then this option will be ignored altogether.
-  int32 intra_op_parallelism_threads = 2;
+  // t-thewe awe nyotabwe e-exceptions to the defauwt behaviow descwibed a-above:
+  // 1. rawr t-thewe is an enviwonment v-vawiabwe  fow ovewwiding t-this thwead p-poow, ( ͡o ω ͡o )
+  //    nyamed t-tf_ovewwide_gwobaw_thweadpoow. /(^•ω•^)
+  // 2. when c-connecting to a s-sewvew, -.- such as a-a wemote `tf.twain.sewvew`
+  //    i-instance, >w< then t-this option wiww be ignowed awtogethew. ( ͡o ω ͡o )
+  i-int32 intwa_op_pawawwewism_thweads = 2;
 
-  // Nodes that perform blocking operations are enqueued on a pool of
-  // inter_op_parallelism_threads available in each process.
+  // n-nyodes t-that pewfowm bwocking opewations awe enqueued on a poow of
+  // i-intew_op_pawawwewism_thweads avaiwabwe i-in each pwocess. (˘ω˘)
   //
-  // 0 means the system picks an appropriate number.
-  // Negative means all operations are performed in caller's thread.
+  // 0 m-means the s-system picks an appwopwiate nyumbew. /(^•ω•^)
+  // nyegative m-means aww opewations a-awe pewfowmed i-in cawwew's t-thwead. (˘ω˘)
   //
-  // Note that the first Session created in the process sets the
-  // number of threads for all future sessions unless use_per_session_threads is
-  // true or session_inter_op_thread_pool is configured.
-  int32 inter_op_parallelism_threads = 5;
+  // n-nyote that t-the fiwst session cweated in the pwocess sets the
+  // n-nyumbew of thweads fow aww futuwe sessions unwess use_pew_session_thweads is
+  // twue ow s-session_intew_op_thwead_poow i-is configuwed. o.O
+  int32 intew_op_pawawwewism_thweads = 5;
 
-  // If true, use a new set of threads for this session rather than the global
-  // pool of threads. Only supported by direct sessions.
+  // if t-twue, use a nyew s-set of thweads fow this session wathew than the g-gwobaw
+  // poow of thweads. nyaa~~ onwy s-suppowted by d-diwect sessions. :3
   //
-  // If false, use the global threads created by the first session, or the
-  // per-session thread pools configured by session_inter_op_thread_pool.
+  // i-if fawse, (///ˬ///✿) use the gwobaw thweads cweated by the fiwst s-session, ow the
+  // pew-session t-thwead poows configuwed by session_intew_op_thwead_poow. (U ﹏ U)
   //
-  // This option is deprecated. The same effect can be achieved by setting
-  // session_inter_op_thread_pool to have one element, whose num_threads equals
-  // inter_op_parallelism_threads.
-  bool use_per_session_threads = 9;
+  // t-this option is depwecated. o.O the same effect c-can be achieved by setting
+  // s-session_intew_op_thwead_poow to have one ewement, w-whose nyum_thweads equaws
+  // i-intew_op_pawawwewism_thweads. ^^;;
+  boow use_pew_session_thweads = 9;
 
-  // This option is experimental - it may be replaced with a different mechanism
-  // in the future.
+  // this option is expewimentaw - it may be wepwaced with a diffewent mechanism
+  // i-in the f-futuwe. ʘwʘ
   //
-  // Configures session thread pools. If this is configured, then RunOptions for
-  // a Run call can select the thread pool to use.
+  // c-configuwes session t-thwead poows. (///ˬ///✿) if this is configuwed, σωσ then w-wunoptions fow
+  // a wun caww can sewect the thwead poow to use. ^^;;
   //
-  // The intended use is for when some session invocations need to run in a
-  // background pool limited to a small number of threads:
-  // - For example, a session may be configured to have one large pool (for
-  // regular compute) and one small pool (for periodic, low priority work);
-  // using the small pool is currently the mechanism for limiting the inter-op
-  // parallelism of the low priority work.  Note that it does not limit the
-  // parallelism of work spawned by a single op kernel implementation.
-  // - Using this setting is normally not needed in training, but may help some
-  // serving use cases.
-  // - It is also generally recommended to set the global_name field of this
-  // proto, to avoid creating multiple large pools. It is typically better to
-  // run the non-low-priority work, even across sessions, in a single large
-  // pool.
-  repeated ThreadPoolOptionProto session_inter_op_thread_pool = 12;
+  // t-the i-intended use is f-fow when some session i-invocations nyeed to wun in a
+  // backgwound poow wimited to a smow nyumbew o-of thweads:
+  // - f-fow exampwe, UwU a session may be configuwed to have one wawge p-poow (fow
+  // weguwaw compute) a-and one smow poow (fow p-pewiodic, w-wow pwiowity wowk);
+  // using the smow poow is cuwwentwy the mechanism fow wimiting the intew-op
+  // p-pawawwewism of the wow p-pwiowity wowk. mya  nyote that it does nyot wimit the
+  // pawawwewism o-of wowk spawned by a singwe op k-kewnew impwementation. ^•ﻌ•^
+  // - using this setting is nyowmawwy n-nyot nyeeded in t-twaining, (⑅˘꒳˘) but may h-hewp some
+  // s-sewving use cases. nyaa~~
+  // - i-it is awso genewawwy w-wecommended to set t-the gwobaw_name fiewd of this
+  // p-pwoto, ^^;; to avoid cweating muwtipwe wawge poows. 🥺 i-it is typicawwy bettew to
+  // w-wun the nyon-wow-pwiowity w-wowk, ^^;; even acwoss s-sessions, nyaa~~ in a singwe w-wawge
+  // poow. 🥺
+  wepeated thweadpoowoptionpwoto session_intew_op_thwead_poow = 12;
 
-  // Assignment of Nodes to Devices is recomputed every placement_period
-  // steps until the system warms up (at which point the recomputation
-  // typically slows down automatically).
-  int32 placement_period = 3;
+  // a-assignment of nyodes t-to devices i-is wecomputed evewy p-pwacement_pewiod
+  // steps untiw the system wawms up (at which p-point the wecomputation
+  // typicawwy swows down automaticawwy). (ˆ ﻌ ˆ)♡
+  i-int32 pwacement_pewiod = 3;
 
-  // When any filters are present sessions will ignore all devices which do not
-  // match the filters. Each filter can be partially specified, e.g. "/job:ps"
-  // "/job:worker/replica:3", etc.
-  repeated string device_filters = 4;
+  // when any fiwtews awe p-pwesent sessions wiww ignowe aww devices which do nyot
+  // match t-the fiwtews. ( ͡o ω ͡o ) each fiwtew can be p-pawtiawwy specified, nyaa~~ e-e.g. ( ͡o ω ͡o ) "/job:ps"
+  // "/job:wowkew/wepwica:3", ^^;; e-etc. rawr x3
+  wepeated stwing device_fiwtews = 4;
 
-  // Options that apply to all GPUs.
-  GPUOptions gpu_options = 6;
+  // o-options that a-appwy to aww gpus. ^^;;
+  gpuoptions g-gpu_options = 6;
 
-  // Whether soft placement is allowed. If allow_soft_placement is true,
-  // an op will be placed on CPU if
-  //   1. there's no GPU implementation for the OP
-  // or
-  //   2. no GPU devices are known or registered
-  // or
-  //   3. need to co-locate with reftype input(s) which are from CPU.
-  bool allow_soft_placement = 7;
+  // w-whethew s-soft pwacement i-is awwowed. if awwow_soft_pwacement is twue, ^•ﻌ•^
+  // a-an op wiww be p-pwaced on cpu if
+  //   1. 🥺 t-thewe's nyo gpu impwementation f-fow the op
+  // ow
+  //   2. (ꈍᴗꈍ) nyo gpu devices awe known ow wegistewed
+  // ow
+  //   3. ^•ﻌ•^ n-nyeed to co-wocate w-with weftype input(s) which a-awe fwom cpu.
+  boow awwow_soft_pwacement = 7;
 
-  // Whether device placements should be logged.
-  bool log_device_placement = 8;
+  // whethew device p-pwacements shouwd b-be wogged. :3
+  b-boow wog_device_pwacement = 8;
 
-  // Options that apply to all graphs.
-  GraphOptions graph_options = 10;
+  // o-options that appwy to aww g-gwaphs. (˘ω˘)
+  gwaphoptions gwaph_options = 10;
 
-  // Global timeout for all blocking operations in this session.  If non-zero,
-  // and not overridden on a per-operation basis, this value will be used as the
-  // deadline for all blocking operations.
-  int64 operation_timeout_in_ms = 11;
+  // gwobaw timeout f-fow aww bwocking o-opewations in this session. ^^  if nyon-zewo, /(^•ω•^)
+  // and nyot ovewwidden o-on a pew-opewation basis, σωσ t-this vawue wiww be used as the
+  // deadwine fow a-aww bwocking opewations. òωó
+  int64 o-opewation_timeout_in_ms = 11;
 
-  // Options that apply when this session uses the distributed runtime.
-  RPCOptions rpc_options = 13;
+  // options that appwy when this s-session uses the distwibuted w-wuntime. >w<
+  wpcoptions wpc_options = 13;
 
-  // Optional list of all workers to use in this session.
-  ClusterDef cluster_def = 14;
+  // optionaw w-wist of a-aww wowkews to use in this session. (˘ω˘)
+  cwustewdef c-cwustew_def = 14;
 
-  // If true, any resources such as Variables used in the session will not be
-  // shared with other sessions. However, when clusterspec propagation is
-  // enabled, this field is ignored and sessions are always isolated.
-  bool isolate_session_state = 15;
+  // if twue, ^•ﻌ•^ any wesouwces s-such as vawiabwes u-used in the session w-wiww nyot be
+  // shawed with othew sessions. >_< howevew, -.- when cwustewspec pwopagation is
+  // e-enabwed, òωó this fiewd is ignowed and sessions awe a-awways isowated. ( ͡o ω ͡o )
+  b-boow isowate_session_state = 15;
 
-  // When true, WorkerSessions are created with device attributes from the
-  // full cluster.
-  // This is helpful when a worker wants to partition a graph
-  // (for example during a PartitionedCallOp).
-  bool share_cluster_devices_in_session = 17;
+  // when twue, (ˆ ﻌ ˆ)♡ wowkewsessions a-awe cweated w-with device attwibutes fwom the
+  // fuww cwustew. :3
+  // this is h-hewpfuw when a wowkew wants to p-pawtition a gwaph
+  // (fow exampwe duwing a pawtitionedcawwop). ^•ﻌ•^
+  b-boow shawe_cwustew_devices_in_session = 17;
 
-  // Everything inside Experimental is subject to change and is not subject
-  // to API stability guarantees in
-  // https://www.tensorflow.org/guide/version_compat.
-  message Experimental {
-    // Task name for group resolution.
-    string collective_group_leader = 1;
+  // e-evewything inside expewimentaw i-is subject t-to change and is nyot subject
+  // t-to api stabiwity guawantees in
+  // h-https://www.tensowfwow.owg/guide/vewsion_compat. ( ͡o ω ͡o )
+  m-message e-expewimentaw {
+    // t-task nyame f-fow gwoup wesowution. ^•ﻌ•^
+    stwing c-cowwective_gwoup_weadew = 1;
 
-    // We removed the flag client_handles_error_formatting. Marking the tag
-    // number as reserved.
-    // TODO(shikharagarwal): Should we just remove this tag so that it can be
-    // used in future for other purpose?
-    reserved 2;
+    // w-we wemoved the fwag cwient_handwes_ewwow_fowmatting. ʘwʘ mawking t-the tag
+    // numbew as wesewved. :3
+    // t-todo(shikhawagawwaw): shouwd we just wemove this tag so that it can be
+    // used in futuwe fow othew puwpose?
+    w-wesewved 2;
 
-    // Which executor to use, the default executor will be used
-    // if it is an empty string or "DEFAULT"
-    string executor_type = 3;
+    // which executow t-to use, >_< the defauwt executow w-wiww be used
+    // i-if it is an empty stwing o-ow "defauwt"
+    stwing executow_type = 3;
 
-    // Guidance to formatting of large RecvBuf fields for transfer.
-    // Any positive value sets the max chunk size.  0 defaults to 4096.
-    // Any negative value indicates no max, i.e. one chunk only.
-    int32 recv_buf_max_chunk = 4;
+    // g-guidance to fowmatting of wawge w-wecvbuf fiewds fow twansfew. rawr
+    // any positive vawue sets the max chunk size. 🥺  0 defauwts to 4096. (✿oωo)
+    // a-any nyegative vawue indicates nyo max, (U ﹏ U) i.e. one c-chunk onwy.
+    int32 wecv_buf_max_chunk = 4;
 
-    // If true, and supported by the platform, the runtime will attempt to
-    // use NUMA affinity where applicable.  One consequence will be the
-    // existence of as many CPU devices as there are available NUMA nodes.
-    bool use_numa_affinity = 5;
+    // i-if twue, rawr x3 and suppowted by the pwatfowm, (✿oωo) the wuntime wiww attempt to
+    // use nyuma affinity whewe appwicabwe. (U ᵕ U❁)  one consequence wiww be the
+    // e-existence o-of as many cpu d-devices as thewe awe avaiwabwe n-nyuma nyodes. -.-
+    b-boow use_numa_affinity = 5;
 
-    // If true, make collective op execution order sequential and deterministic
-    // for potentially concurrent collective instances.
-    bool collective_deterministic_sequential_execution = 6;
+    // i-if twue, /(^•ω•^) make cowwective op execution owdew s-sequentiaw and d-detewministic
+    // fow potentiawwy c-concuwwent c-cowwective instances. OwO
+    b-boow c-cowwective_detewministic_sequentiaw_execution = 6;
 
-    // If true, use NCCL for CollectiveOps.  This feature is highly
-    // experimental.
-    bool collective_nccl = 7;
+    // i-if twue, rawr x3 use nccw fow c-cowwectiveops. σωσ  t-this featuwe i-is highwy
+    // e-expewimentaw. ʘwʘ
+    b-boow cowwective_nccw = 7;
 
-    // In the following, session state means the value of a variable, elements
-    // in a hash table, or any other resource, accessible by worker sessions
-    // held by a TF server.
+    // i-in the fowwowing, -.- s-session state m-means the vawue o-of a vawiabwe, 😳 e-ewements
+    // in a hash tabwe, 😳😳😳 ow any othew wesouwce, accessibwe b-by wowkew sessions
+    // h-hewd by a tf sewvew. OwO
     //
-    // When ClusterSpec propagation is enabled, the value of
-    // isolate_session_state is ignored when deciding whether to share session
-    // states in a TF server (for backwards compatibility reasons).
-    // - If share_session_state_in_clusterspec_propagation is true, the session
-    // states are shared.
-    // - If share_session_state_in_clusterspec_propagation is false, session
-    // states are isolated.
+    // when cwustewspec pwopagation i-is enabwed, ^•ﻌ•^ the v-vawue of
+    // i-isowate_session_state is ignowed w-when deciding w-whethew to shawe session
+    // states in a tf sewvew (fow backwawds compatibiwity weasons). rawr
+    // - i-if shawe_session_state_in_cwustewspec_pwopagation is twue, (✿oωo) the session
+    // states awe shawed. ^^
+    // - i-if shawe_session_state_in_cwustewspec_pwopagation i-is fawse, -.- session
+    // states a-awe isowated. (✿oωo)
     //
-    // When clusterspec propagation is not used, the value of
-    // share_session_state_in_clusterspec_propagation is ignored when deciding
-    // whether to share session states in a TF server.
-    // - If isolate_session_state is true, session states are isolated.
-    // - If isolate_session_state is false, session states are shared.
+    // w-when c-cwustewspec pwopagation i-is nyot u-used, o.O the vawue o-of
+    // shawe_session_state_in_cwustewspec_pwopagation i-is ignowed when deciding
+    // whethew t-to shawe session states in a t-tf sewvew. :3
+    // - if isowate_session_state i-is t-twue, rawr x3 session states awe isowated. (U ᵕ U❁)
+    // - i-if isowate_session_state is fawse, s-session states awe s-shawed. :3
     //
-    // TODO(b/129330037): Add a single API that consistently treats
-    // isolate_session_state and ClusterSpec propagation.
-    bool share_session_state_in_clusterspec_propagation = 8;
+    // t-todo(b/129330037): a-add a singwe api that c-consistentwy tweats
+    // i-isowate_session_state a-and cwustewspec pwopagation. 🥺
+    b-boow shawe_session_state_in_cwustewspec_pwopagation = 8;
 
-    // If using a direct session, disable spinning while waiting for work in
-    // the thread pool. This may result in higher latency for completing ops,
-    // but in the case where there is a lot of spinning may result in lower
-    // CPU usage.
-    bool disable_thread_spinning = 9;
+    // if using a diwect session, disabwe spinning whiwe waiting fow wowk in
+    // the thwead poow. XD this may wesuwt in highew watency f-fow compweting o-ops, >_<
+    // but in the case whewe thewe is a wot of spinning may wesuwt in wowew
+    // c-cpu u-usage. (ꈍᴗꈍ)
+    boow disabwe_thwead_spinning = 9;
 
-    // This was promoted to a non-experimental API. Please use
-    // ConfigProto.share_cluster_devices_in_session instead.
-    bool share_cluster_devices_in_session = 10;
+    // this was pwomoted to a nyon-expewimentaw a-api. ( ͡o ω ͡o ) p-pwease use
+    // configpwoto.shawe_cwustew_devices_in_session i-instead. (˘ω˘)
+    boow s-shawe_cwustew_devices_in_session = 10;
 
-    // Metadata about the session.
+    // metadata about t-the session. (˘ω˘)
     //
-    // If set, this can be used by the runtime and the Ops for debugging,
-    // monitoring, etc.
+    // if s-set, UwU this can be u-used by the wuntime and the ops fow debugging, (ˆ ﻌ ˆ)♡
+    // monitowing, (///ˬ///✿) e-etc.
     //
-    // NOTE: This is currently used and propagated only by the direct session.
-    SessionMetadata session_metadata = 11;
+    // n-nyote: this i-is cuwwentwy used a-and pwopagated onwy by the diwect s-session. (ꈍᴗꈍ)
+    s-sessionmetadata s-session_metadata = 11;
 
-    // If true, the session may treat the graph as being static for optimization
-    // purposes.
+    // i-if twue, -.- the session may tweat the gwaph as being s-static fow optimization
+    // p-puwposes. 😳😳😳
     //
-    // If this option is set to true when a session is created, the full
-    // GraphDef must be passed in a single call to Session::Create(), and
-    // Session::Extend() may not be supported.
-    bool optimize_for_static_graph = 12;
+    // if this option is set to twue when a session is cweated, (///ˬ///✿) t-the fuww
+    // g-gwaphdef must be passed in a s-singwe caww to session::cweate(), UwU and
+    // session::extend() may nyot be suppowted. 😳
+    b-boow o-optimize_fow_static_gwaph = 12;
 
-    // This field will eventually be deprecated and replaced by
-    // mlir_bridge_rollout (b/166038521).
+    // t-this fiewd wiww eventuawwy b-be depwecated a-and wepwaced by
+    // mwiw_bwidge_wowwout (b/166038521). /(^•ω•^)
     //
-    // Whether to enable the MLIR-based TF->XLA bridge.
+    // whethew t-to enabwe the mwiw-based t-tf->xwa b-bwidge. òωó
     //
-    // This is a replacement to the existing bridge, and not ready for
-    // production usage yet.
-    // If this option is set to true when a session is created, MLIR is used to
-    // perform the set of graph transformations to put the graph in a form that
-    // can be executed with delegation of some computations to an accelerator.
-    // This builds on the model of XLA where a subset of the graph is
-    // encapsulated and attached to a "compile" operation, whose result is fed
-    // to an "execute" operation. The kernel for these operations is responsible
-    // to lower the encapsulated graph to a particular device.
-    bool enable_mlir_bridge = 13;
+    // t-this is a-a wepwacement to t-the existing bwidge, >w< and nyot weady fow
+    // pwoduction usage yet. -.-
+    // if this option is set t-to twue when a session is cweated, (⑅˘꒳˘) m-mwiw is used t-to
+    // pewfowm the set of gwaph twansfowmations to put the g-gwaph in a fowm t-that
+    // can be exekawaii~d w-with dewegation of some computations t-to an accewewatow. (˘ω˘)
+    // this buiwds on the modew of xwa whewe a subset of t-the gwaph is
+    // encapsuwated and attached to a "compiwe" opewation, (U ᵕ U❁) whose wesuwt i-is fed
+    // t-to an "exekawaii~" o-opewation. ^^ t-the kewnew fow these opewations is wesponsibwe
+    // t-to wowew the encapsuwated g-gwaph to a pawticuwaw device. ^^
+    boow enabwe_mwiw_bwidge = 13;
 
-    // An enum that describes the state of the MLIR bridge rollout.
-    enum MlirBridgeRollout {
-      // If this field is left unspecified, the MLIR bridge may be selectively
-      // enabled on a per graph basis.
-      MLIR_BRIDGE_ROLLOUT_UNSPECIFIED = 0;
-      // Enabling the MLIR bridge enables it for all graphs in this session.
-      MLIR_BRIDGE_ROLLOUT_ENABLED = 1;
-      // Disabling the MLIR bridge disables it for all graphs in this session.
-      MLIR_BRIDGE_ROLLOUT_DISABLED = 2;
-      // Enable the MLIR bridge on a per graph basis based on an analysis of
-      // the features used in the graph. If the features used by the graph are
-      // supported by the MLIR bridge, the MLIR bridge will be used to run the
-      // graph.
-      MLIR_BRIDGE_ROLLOUT_SAFE_MODE_ENABLED = 3;
-      // Enable the MLIR bridge in a fallback mode on a per graph basis based
-      // on an analysis of the features used in the graph.
-      // Running the MLIR bridge in the fallback mode means that it is
-      // executed and it commits all the changes to the TF graph in case
-      // of success. And it does not in case of failures and let the old bridge
-      // to process the TF graph.
-      MLIR_BRIDGE_ROLLOUT_SAFE_MODE_FALLBACK_ENABLED = 4;
+    // a-an enum t-that descwibes t-the state of the mwiw bwidge wowwout. rawr x3
+    enum m-mwiwbwidgewowwout {
+      // if this fiewd is weft unspecified, >w< the mwiw bwidge may be sewectivewy
+      // enabwed o-on a pew gwaph b-basis. (U ᵕ U❁)
+      mwiw_bwidge_wowwout_unspecified = 0;
+      // enabwing the mwiw bwidge enabwes it fow aww gwaphs i-in this session. 🥺
+      mwiw_bwidge_wowwout_enabwed = 1;
+      // disabwing the m-mwiw bwidge disabwes i-it fow aww g-gwaphs in this session. (⑅˘꒳˘)
+      m-mwiw_bwidge_wowwout_disabwed = 2;
+      // enabwe the mwiw bwidge on a pew gwaph basis based on an anawysis of
+      // t-the featuwes u-used in the gwaph. OwO i-if the featuwes u-used by the gwaph awe
+      // s-suppowted by the mwiw bwidge, 😳 t-the mwiw bwidge wiww be used to wun the
+      // gwaph. òωó
+      m-mwiw_bwidge_wowwout_safe_mode_enabwed = 3;
+      // e-enabwe the m-mwiw bwidge in a f-fawwback mode on a pew gwaph basis b-based
+      // o-on an anawysis of the featuwes used in the gwaph. (ˆ ﻌ ˆ)♡
+      // wunning t-the mwiw bwidge i-in the fawwback mode means that it is
+      // exekawaii~d a-and it commits aww the changes t-to the tf gwaph i-in case
+      // o-of success. ʘwʘ and it does nyot in case of faiwuwes and wet the owd bwidge
+      // to pwocess the t-tf gwaph. ^^;;
+      mwiw_bwidge_wowwout_safe_mode_fawwback_enabwed = 4;
     }
-    // This field is underdevelopment, for now use enable_mlir_bridge
-    // (b/166038521).
+    // t-this fiewd is undewdevewopment, ʘwʘ fow nyow use enabwe_mwiw_bwidge
+    // (b/166038521). òωó
     //
-    // Whether to enable the MLIR-based TF->XLA bridge.
-    MlirBridgeRollout mlir_bridge_rollout = 17;
+    // w-whethew to enabwe the mwiw-based t-tf->xwa bwidge. ( ͡o ω ͡o )
+    m-mwiwbwidgewowwout m-mwiw_bwidge_wowwout = 17;
 
-    // Whether to enable the MLIR-based Graph optimizations.
+    // whethew t-to enabwe t-the mwiw-based gwaph optimizations. ʘwʘ
     //
-    // This will become a part of standard Tensorflow graph optimization
-    // pipeline, currently this is only used for gradual migration and testing
-    // new passes that are replacing existing optimizations in Grappler.
-    bool enable_mlir_graph_optimization = 16;
+    // t-this wiww become a pawt of standawd tensowfwow gwaph optimization
+    // pipewine, >w< c-cuwwentwy this is onwy used fow gwaduaw migwation a-and testing
+    // n-nyew p-passes that awe wepwacing existing optimizations in gwappwew. 😳😳😳
+    boow enabwe_mwiw_gwaph_optimization = 16;
 
-    // If true, the session will not store an additional copy of the graph for
-    // each subgraph.
+    // i-if twue, σωσ the s-session wiww nyot s-stowe an additionaw c-copy of the gwaph fow
+    // each subgwaph. -.-
     //
-    // If this option is set to true when a session is created, the
-    // `RunOptions.output_partition_graphs` options must not be set.
-    bool disable_output_partition_graphs = 14;
+    // if this option is set to twue when a session is c-cweated, 🥺 the
+    // `wunoptions.output_pawtition_gwaphs` options must nyot be set. >w<
+    b-boow disabwe_output_pawtition_gwaphs = 14;
 
-    // Minimum number of batches run through the XLA graph before XLA fusion
-    // autotuner is enabled. Default value of zero disables the autotuner.
+    // m-minimum n-nyumbew of batches wun thwough t-the xwa gwaph befowe xwa fusion
+    // autotunew is enabwed. (///ˬ///✿) defauwt vawue of zewo disabwes the autotunew. UwU
     //
-    // The XLA fusion autotuner can improve performance by executing a heuristic
-    // search on the compiler parameters.
-    int64 xla_fusion_autotuner_thresh = 15;
+    // the xwa fusion autotunew can impwove p-pewfowmance by executing a heuwistic
+    // seawch o-on the compiwew p-pawametews. ( ͡o ω ͡o )
+    int64 xwa_fusion_autotunew_thwesh = 15;
 
-    // Whether runtime execution uses TFRT.
-    bool use_tfrt = 18;
+    // w-whethew wuntime e-execution uses tfwt. (ˆ ﻌ ˆ)♡
+    boow use_tfwt = 18;
 
-    // The field "coordination_service was previously specified as a string;
-    // this has been replaced with a message below.
-    reserved 19;
+    // t-the fiewd "coowdination_sewvice w-was pweviouswy specified as a stwing;
+    // t-this has been w-wepwaced with a-a message bewow. ^^;;
+    w-wesewved 19;
 
-    // We removed the flag fetch_remote_devices_in_multi_client. Marking the tag
-    // number as reserved.
-    reserved 20;
+    // we wemoved t-the fwag fetch_wemote_devices_in_muwti_cwient. (U ᵕ U❁) mawking the tag
+    // nyumbew a-as wesewved. XD
+    w-wesewved 20;
 
-    // Whether functional control flow op lowering should be disabled. This is
-    // useful when executing within a portable runtime where control flow op
-    // kernels may not be loaded due to selective registration.
-    bool disable_functional_ops_lowering = 21;
+    // whethew f-functionaw contwow f-fwow op wowewing shouwd be disabwed. (ꈍᴗꈍ) this is
+    // usefuw when executing within a-a powtabwe wuntime whewe contwow f-fwow op
+    // kewnews may n-nyot be woaded due to sewective wegistwation. -.-
+    b-boow disabwe_functionaw_ops_wowewing = 21;
 
-    // Provides a hint to XLA auto clustering to prefer forming a single large
-    // cluster that encompases most of the graph.
-    bool xla_prefer_single_graph_cluster = 22;
+    // pwovides a hint to xwa auto cwustewing to p-pwefew fowming a singwe wawge
+    // c-cwustew that e-encompases most o-of the gwaph. >_<
+    boow xwa_pwefew_singwe_gwaph_cwustew = 22;
 
-    // Distributed coordination service configurations.
-    CoordinationServiceConfig coordination_config = 23;
+    // distwibuted c-coowdination s-sewvice configuwations. (ˆ ﻌ ˆ)♡
+    c-coowdinationsewviceconfig c-coowdination_config = 23;
 
-    // Next: 24
+    // nyext: 24
   }
 
-  Experimental experimental = 16;
+  e-expewimentaw e-expewimentaw = 16;
 
-  // Next: 18
+  // n-nyext: 18
 }
 
-// Options for a single Run() call.
-message RunOptions {
-  // TODO(pbar) Turn this into a TraceOptions proto which allows
-  // tracing to be controlled in a more orthogonal manner?
-  enum TraceLevel {
-    NO_TRACE = 0;
-    SOFTWARE_TRACE = 1;
-    HARDWARE_TRACE = 2;
-    FULL_TRACE = 3;
+// o-options fow a singwe w-wun() caww. ( ͡o ω ͡o )
+message wunoptions {
+  // todo(pbaw) t-tuwn this i-into a twaceoptions pwoto which awwows
+  // twacing t-to be contwowwed i-in a mowe owthogonaw m-mannew?
+  enum twacewevew {
+    n-nyo_twace = 0;
+    s-softwawe_twace = 1;
+    hawdwawe_twace = 2;
+    f-fuww_twace = 3;
   }
-  TraceLevel trace_level = 1;
+  t-twacewevew twace_wevew = 1;
 
-  // Time to wait for operation to complete in milliseconds.
-  int64 timeout_in_ms = 2;
+  // time to wait f-fow opewation to compwete in miwwiseconds. rawr x3
+  int64 t-timeout_in_ms = 2;
 
-  // The thread pool to use, if session_inter_op_thread_pool is configured.
-  // To use the caller thread set this to -1 - this uses the caller thread
-  // to execute Session::Run() and thus avoids a context switch. Using the
-  // caller thread to execute Session::Run() should be done ONLY for simple
-  // graphs, where the overhead of an additional context switch is
-  // comparable with the overhead of Session::Run().
-  int32 inter_op_thread_pool = 3;
+  // t-the t-thwead poow to u-use, òωó if session_intew_op_thwead_poow is configuwed. 😳
+  // to use the cawwew thwead s-set this to -1 - this uses the c-cawwew thwead
+  // to exekawaii~ s-session::wun() a-and thus avoids a context switch. (ˆ ﻌ ˆ)♡ u-using the
+  // c-cawwew thwead to exekawaii~ session::wun() shouwd b-be done onwy f-fow simpwe
+  // gwaphs, whewe the ovewhead of an additionaw context switch is
+  // compawabwe with the ovewhead of session::wun(). 🥺
+  int32 intew_op_thwead_poow = 3;
 
-  // Whether the partition graph(s) executed by the executor(s) should be
-  // outputted via RunMetadata.
-  bool output_partition_graphs = 5;
+  // whethew the pawtition g-gwaph(s) exekawaii~d b-by the executow(s) s-shouwd b-be
+  // outputted via wunmetadata. ^^
+  boow output_pawtition_gwaphs = 5;
 
-  // EXPERIMENTAL.  Options used to initialize DebuggerState, if enabled.
-  DebugOptions debug_options = 6;
+  // expewimentaw. /(^•ω•^)  o-options u-used to initiawize d-debuggewstate, o.O i-if enabwed. òωó
+  debugoptions debug_options = 6;
 
-  // When enabled, causes tensor allocation information to be included in
-  // the error message when the Run() call fails because the allocator ran
-  // out of memory (OOM).
+  // when enabwed, causes t-tensow awwocation i-infowmation to b-be incwuded in
+  // t-the ewwow message when the w-wun() caww faiws because the awwocatow wan
+  // out of memowy (oom). XD
   //
-  // Enabling this option can slow down the Run() call.
-  bool report_tensor_allocations_upon_oom = 7;
+  // enabwing this option c-can swow down the wun() caww. rawr x3
+  b-boow wepowt_tensow_awwocations_upon_oom = 7;
 
-  // Everything inside Experimental is subject to change and is not subject
-  // to API stability guarantees in
-  // https://www.tensorflow.org/guide/version_compat.
-  message Experimental {
-    // If non-zero, declares that this graph is going to use collective
-    // ops and must synchronize step_ids with any other graph with this
-    // same group_key value (in a distributed computation where tasks
-    // run disjoint graphs).
-    int64 collective_graph_key = 1;
-    // If true, then operations (using the inter-op pool) across all
-    // session::run() calls will be centrally scheduled, optimizing for (median
-    // and tail) latency.
-    // Consider using this option for CPU-bound workloads like inference.
-    bool use_run_handler_pool = 2;
-    // Options for run handler thread pool.
-    message RunHandlerPoolOptions {
-      // Priority of the request. The run handler thread pool will schedule ops
-      // based on the priority number. The larger number means higher priority.
-      int64 priority = 1;
+  // e-evewything inside expewimentaw is subject to change and i-is nyot subject
+  // to api stabiwity g-guawantees in
+  // https://www.tensowfwow.owg/guide/vewsion_compat. (˘ω˘)
+  message e-expewimentaw {
+    // if nyon-zewo, :3 decwawes t-that this gwaph is going to use c-cowwective
+    // ops and must s-synchwonize step_ids w-with any othew gwaph with this
+    // same gwoup_key vawue (in a-a distwibuted computation whewe tasks
+    // wun disjoint gwaphs). (U ᵕ U❁)
+    int64 cowwective_gwaph_key = 1;
+    // if twue, rawr then o-opewations (using t-the intew-op poow) acwoss aww
+    // s-session::wun() cawws wiww b-be centwawwy scheduwed, OwO o-optimizing f-fow (median
+    // and taiw) watency. ʘwʘ
+    // c-considew using this option fow cpu-bound wowkwoads wike infewence. XD
+    boow use_wun_handwew_poow = 2;
+    // o-options f-fow wun handwew t-thwead poow. rawr x3
+    m-message wunhandwewpoowoptions {
+      // pwiowity of the w-wequest. OwO the wun handwew thwead p-poow wiww scheduwe o-ops
+      // based on the pwiowity nyumbew. nyaa~~ the w-wawgew nyumbew m-means highew pwiowity. ʘwʘ
+      int64 p-pwiowity = 1;
     }
-    RunHandlerPoolOptions run_handler_pool_options = 3;
+    w-wunhandwewpoowoptions w-wun_handwew_poow_options = 3;
   }
 
-  Experimental experimental = 8;
+  expewimentaw expewimentaw = 8;
 
-  reserved 4;
+  w-wesewved 4;
 }
 
-// Metadata output (i.e., non-Tensor) for a single Run() call.
-message RunMetadata {
-  // Statistics traced for this step. Populated if tracing is turned on via the
-  // "RunOptions" proto.
-  // EXPERIMENTAL: The format and set of events may change in future versions.
-  StepStats step_stats = 1;
+// m-metadata o-output (i.e., nyon-tensow) fow a singwe wun() caww. nyaa~~
+message w-wunmetadata {
+  // s-statistics twaced f-fow this step. (U ﹏ U) popuwated if t-twacing is tuwned on via the
+  // "wunoptions" p-pwoto. (///ˬ///✿)
+  // expewimentaw: t-the fowmat a-and set of events may change in futuwe vewsions. :3
+  s-stepstats step_stats = 1;
 
-  // The cost graph for the computation defined by the run call.
-  CostGraphDef cost_graph = 2;
+  // the cost g-gwaph fow the computation defined by the wun caww. (˘ω˘)
+  costgwaphdef c-cost_gwaph = 2;
 
-  // Graphs of the partitions executed by executors.
-  repeated GraphDef partition_graphs = 3;
+  // gwaphs o-of the pawtitions exekawaii~d by e-executows. 😳
+  wepeated g-gwaphdef p-pawtition_gwaphs = 3;
 
-  message FunctionGraphs {
-    // TODO(nareshmodi): Include some sort of function/cache-key identifier?
-    repeated GraphDef partition_graphs = 1;
+  m-message functiongwaphs {
+    // todo(naweshmodi): i-incwude some sowt of function/cache-key identifiew?
+    wepeated gwaphdef p-pawtition_gwaphs = 1;
 
-    GraphDef pre_optimization_graph = 2;
-    GraphDef post_optimization_graph = 3;
+    g-gwaphdef pwe_optimization_gwaph = 2;
+    g-gwaphdef p-post_optimization_gwaph = 3;
   }
-  // This is only populated for graphs that are run as functions in TensorFlow
-  // V2. There will be an entry below for each function that is traced.
-  // The main use cases of the post_optimization_graph and the partition_graphs
-  // is to give the caller insight into the graphs that were actually run by the
-  // runtime. Additional information (such as those in step_stats) will match
-  // these graphs.
-  // We also include the pre_optimization_graph since it is usually easier to
-  // read, and is helpful in situations where the caller wants to get a high
-  // level idea of what the built graph looks like (since the various graph
-  // optimization passes might change the structure of the graph significantly).
-  repeated FunctionGraphs function_graphs = 4;
+  // t-this is onwy popuwated f-fow gwaphs that a-awe wun as functions in tensowfwow
+  // v2. 😳😳😳 thewe wiww be an entwy b-bewow fow each function that is twaced. ʘwʘ
+  // t-the main use cases of the post_optimization_gwaph a-and the pawtition_gwaphs
+  // is to give the cawwew insight into t-the gwaphs that wewe actuawwy w-wun by the
+  // wuntime. (⑅˘꒳˘) additionaw i-infowmation (such a-as those i-in step_stats) wiww match
+  // these gwaphs. nyaa~~
+  // we awso incwude the pwe_optimization_gwaph since it is usuawwy e-easiew to
+  // wead, (U ﹏ U) and is hewpfuw in situations w-whewe the cawwew wants to get a-a high
+  // wevew i-idea of nyani the buiwt gwaph w-wooks wike (since t-the vawious gwaph
+  // optimization passes might change the stwuctuwe o-of the gwaph significantwy). ʘwʘ
+  w-wepeated functiongwaphs function_gwaphs = 4;
 }
 
-// Defines a connection between two tensors in a `GraphDef`.
-message TensorConnection {
-  // A tensor name. The value of this tensor will be substituted for
-  // the tensor named in `to_tensor`.
-  string from_tensor = 1;
+// d-defines a connection b-between two tensows in a `gwaphdef`. (ꈍᴗꈍ)
+m-message tensowconnection {
+  // a-a tensow nyame. :3 the vawue of this tensow wiww be substituted fow
+  // the tensow n-nyamed in `to_tensow`. ( ͡o ω ͡o )
+  stwing f-fwom_tensow = 1;
 
-  // A tensor name. The value of this tensor will be bound to the
-  // value of the tensor named in `from_tensor`.
-  string to_tensor = 2;
+  // a-a tensow nyame. rawr x3 the vawue of this tensow w-wiww be bound to the
+  // v-vawue of the tensow nyamed in `fwom_tensow`. rawr x3
+  stwing t-to_tensow = 2;
 }
 
-// Defines a subgraph in another `GraphDef` as a set of feed points and nodes
-// to be fetched or executed.
+// defines a subgwaph in a-anothew `gwaphdef` as a set of f-feed points and n-nyodes
+// to be fetched ow exekawaii~d. mya
 //
-// Compare with the arguments to `Session::Run()`.
-message CallableOptions {
-  // Tensors to be fed in the callable. Each feed is the name of a tensor.
-  repeated string feed = 1;
+// compawe with the awguments to `session::wun()`. nyaa~~
+m-message cawwabweoptions {
+  // tensows t-to be fed in t-the cawwabwe. e-each feed is the nyame of a tensow. (///ˬ///✿)
+  w-wepeated stwing feed = 1;
 
-  // Fetches. A list of tensor names. The caller of the callable expects a
-  // tensor to be returned for each fetch[i] (see RunStepResponse.tensor). The
-  // order of specified fetches does not change the execution order.
-  repeated string fetch = 2;
+  // fetches. ^^ a w-wist of tensow nyames. OwO the cawwew o-of the cawwabwe e-expects a
+  // t-tensow to be wetuwned fow each f-fetch[i] (see wunstepwesponse.tensow). :3 t-the
+  // o-owdew of specified f-fetches does nyot change the e-execution owdew. ^^
+  wepeated stwing f-fetch = 2;
 
-  // Target Nodes. A list of node names. The named nodes will be run by the
-  // callable but their outputs will not be returned.
-  repeated string target = 3;
+  // t-tawget nyodes. (✿oωo) a wist of nyode nyames. 😳 the nyamed nyodes wiww be wun by the
+  // c-cawwabwe but theiw outputs wiww nyot be wetuwned. (///ˬ///✿)
+  wepeated s-stwing tawget = 3;
 
-  // Options that will be applied to each run.
-  RunOptions run_options = 4;
+  // o-options that wiww be appwied to each wun. (///ˬ///✿)
+  wunoptions wun_options = 4;
 
-  // Tensors to be connected in the callable. Each TensorConnection denotes
-  // a pair of tensors in the graph, between which an edge will be created
-  // in the callable.
-  repeated TensorConnection tensor_connection = 5;
+  // tensows to be connected i-in the cawwabwe. (U ﹏ U) e-each tensowconnection d-denotes
+  // a-a paiw of t-tensows in the gwaph, b-between which an edge wiww b-be cweated
+  // in the cawwabwe.
+  w-wepeated tensowconnection tensow_connection = 5;
 
-  // The Tensor objects fed in the callable and fetched from the callable
-  // are expected to be backed by host (CPU) memory by default.
+  // t-the tensow objects fed i-in the cawwabwe a-and fetched fwom t-the cawwabwe
+  // a-awe expected t-to be backed by host (cpu) memowy by defauwt. òωó
   //
-  // The options below allow changing that - feeding tensors backed by
-  // device memory, or returning tensors that are backed by device memory.
+  // t-the options bewow awwow changing that - feeding tensows b-backed by
+  // device memowy, ow wetuwning tensows t-that awe backed b-by device memowy. :3
   //
-  // The maps below map the name of a feed/fetch tensor (which appears in
-  // 'feed' or 'fetch' fields above), to the fully qualified name of the device
-  // owning the memory backing the contents of the tensor.
+  // the maps bewow m-map the nyame of a feed/fetch tensow (which a-appeaws i-in
+  // 'feed' ow 'fetch' fiewds a-above), (⑅˘꒳˘) to the fuwwy quawified n-nyame of the d-device
+  // owning the memowy backing t-the contents of the tensow. 😳😳😳
   //
-  // For example, creating a callable with the following options:
+  // fow exampwe, ʘwʘ cweating a-a cawwabwe with the fowwowing o-options:
   //
-  // CallableOptions {
+  // cawwabweoptions {
   //   feed: "a:0"
-  //   feed: "b:0"
+  //   f-feed: "b:0"
   //
   //   fetch: "x:0"
-  //   fetch: "y:0"
+  //   f-fetch: "y:0"
   //
   //   feed_devices: {
-  //     "a:0": "/job:localhost/replica:0/task:0/device:GPU:0"
+  //     "a:0": "/job:wocawhost/wepwica:0/task:0/device:gpu:0"
   //   }
   //
-  //   fetch_devices: {
-  //     "y:0": "/job:localhost/replica:0/task:0/device:GPU:0"
+  //   f-fetch_devices: {
+  //     "y:0": "/job:wocawhost/wepwica:0/task:0/device:gpu:0"
   //  }
   // }
   //
-  // means that the Callable expects:
-  // - The first argument ("a:0") is a Tensor backed by GPU memory.
-  // - The second argument ("b:0") is a Tensor backed by host memory.
-  // and of its return values:
-  // - The first output ("x:0") will be backed by host memory.
-  // - The second output ("y:0") will be backed by GPU memory.
+  // means that the c-cawwabwe expects:
+  // - the fiwst a-awgument ("a:0") is a tensow backed by gpu memowy. OwO
+  // - t-the s-second awgument ("b:0") i-is a tensow b-backed by h-host memowy. >_<
+  // a-and of its wetuwn vawues:
+  // - t-the fiwst output ("x:0") w-wiww b-be backed by host memowy. /(^•ω•^)
+  // - t-the second output ("y:0") wiww be backed by gpu m-memowy.
   //
-  // FEEDS:
-  // It is the responsibility of the caller to ensure that the memory of the fed
-  // tensors will be correctly initialized and synchronized before it is
-  // accessed by operations executed during the call to Session::RunCallable().
+  // f-feeds:
+  // it is the wesponsibiwity of the c-cawwew to ensuwe t-that the memowy of the fed
+  // t-tensows wiww be c-cowwectwy initiawized a-and synchwonized b-befowe it is
+  // accessed by opewations exekawaii~d duwing the caww to session::wuncawwabwe(). (˘ω˘)
   //
-  // This is typically ensured by using the TensorFlow memory allocators
-  // (Device::GetAllocator()) to create the Tensor to be fed.
+  // this is typicawwy e-ensuwed by using the tensowfwow m-memowy awwocatows
+  // (device::getawwocatow()) to cweate the t-tensow to be fed. >w<
   //
-  // Alternatively, for CUDA-enabled GPU devices, this typically means that the
-  // operation that produced the contents of the tensor has completed, i.e., the
-  // CUDA stream has been synchronized (e.g., via cuCtxSynchronize() or
-  // cuStreamSynchronize()).
-  map<string, string> feed_devices = 6;
-  map<string, string> fetch_devices = 7;
+  // awtewnativewy, ^•ﻌ•^ f-fow c-cuda-enabwed gpu devices, ʘwʘ this t-typicawwy means t-that the
+  // opewation that pwoduced the contents o-of the tensow has compweted, OwO i.e., the
+  // cuda s-stweam has been synchwonized (e.g., v-via cuctxsynchwonize() ow
+  // c-custweamsynchwonize()). nyaa~~
+  m-map<stwing, nyaa~~ stwing> feed_devices = 6;
+  m-map<stwing, XD stwing> fetch_devices = 7;
 
-  // By default, RunCallable() will synchronize the GPU stream before returning
-  // fetched tensors on a GPU device, to ensure that the values in those tensors
-  // have been produced. This simplifies interacting with the tensors, but
-  // potentially incurs a performance hit.
+  // by defauwt, wuncawwabwe() w-wiww synchwonize the gpu stweam befowe wetuwning
+  // fetched tensows on a gpu device, o.O to ensuwe that the vawues in those tensows
+  // h-have been p-pwoduced. òωó this simpwifies intewacting w-with the t-tensows, (⑅˘꒳˘) but
+  // potentiawwy incuws a pewfowmance hit.
   //
-  // If this options is set to true, the caller is responsible for ensuring
-  // that the values in the fetched tensors have been produced before they are
-  // used. The caller can do this by invoking `Device::Sync()` on the underlying
-  // device(s), or by feeding the tensors back to the same Session using
-  // `feed_devices` with the same corresponding device name.
-  bool fetch_skip_sync = 8;
+  // i-if this options i-is set to twue, o.O the cawwew is w-wesponsibwe fow e-ensuwing
+  // that t-the vawues in t-the fetched tensows have been pwoduced befowe they a-awe
+  // used. (ˆ ﻌ ˆ)♡ the cawwew can do this by invoking `device::sync()` on the undewwying
+  // d-device(s), (⑅˘꒳˘) ow by feeding the tensows back to the same session using
+  // `feed_devices` with the same c-cowwesponding device nyame. (U ᵕ U❁)
+  boow fetch_skip_sync = 8;
 
-  // Next: 9
+  // nyext: 9
 }

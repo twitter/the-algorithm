@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.message
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ImageVariantMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageImage
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.imagevawiantmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.messageimage
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class MessageImageMarshaller @Inject() (
-  imageVariantMarshaller: ImageVariantMarshaller) {
+@singweton
+c-cwass messageimagemawshawwew @inject() (
+  i-imagevawiantmawshawwew: i-imagevawiantmawshawwew) {
 
-  def apply(messageImage: MessageImage): urt.MessageImage = {
-    urt.MessageImage(
-      imageVariants = messageImage.imageVariants.map(imageVariantMarshaller(_)),
-      backgroundColor = messageImage.backgroundColor
+  def appwy(messageimage: messageimage): uwt.messageimage = {
+    uwt.messageimage(
+      i-imagevawiants = messageimage.imagevawiants.map(imagevawiantmawshawwew(_)), :3
+      backgwoundcowow = m-messageimage.backgwoundcowow
     )
   }
 }

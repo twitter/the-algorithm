@@ -1,106 +1,106 @@
-package com.twitter.representationscorer.scorestore
+package com.twittew.wepwesentationscowew.scowestowe
 
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.ScoreInternalId.GenericPairScoreId
-import com.twitter.simclusters_v2.thriftscala.ScoringAlgorithm.CertoNormalizedDotProductScore
-import com.twitter.simclusters_v2.thriftscala.ScoringAlgorithm.CertoNormalizedCosineScore
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.simclusters_v2.thriftscala.{Score => ThriftScore}
-import com.twitter.simclusters_v2.thriftscala.{ScoreId => ThriftScoreId}
-import com.twitter.storehaus.FutureOps
-import com.twitter.storehaus.ReadableStore
-import com.twitter.topic_recos.thriftscala.Scores
-import com.twitter.topic_recos.thriftscala.TopicToScores
-import com.twitter.util.Future
+impowt com.twittew.simcwustews_v2.common.tweetid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.scoweintewnawid.genewicpaiwscoweid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.scowingawgowithm.cewtonowmawizeddotpwoductscowe
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.scowingawgowithm.cewtonowmawizedcosinescowe
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.topicid
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.{scowe => thwiftscowe}
+impowt com.twittew.simcwustews_v2.thwiftscawa.{scoweid => thwiftscoweid}
+impowt c-com.twittew.stowehaus.futuweops
+impowt com.twittew.stowehaus.weadabwestowe
+impowt c-com.twittew.topic_wecos.thwiftscawa.scowes
+impowt com.twittew.topic_wecos.thwiftscawa.topictoscowes
+i-impowt com.twittew.utiw.futuwe
 
 /**
- * Score store to get Certo <topic, tweet> scores.
- * Currently, the store supports two Scoring Algorithms (i.e., two types of Certo scores):
- * 1. NormalizedDotProduct
- * 2. NormalizedCosine
- * Querying with corresponding scoring algorithms results in different Certo scores.
+ * scowe stowe to get cewto <topic, rawr tweet> scowes. 😳
+ * c-cuwwentwy, >w< the stowe suppowts t-two scowing awgowithms (i.e., t-two types of cewto scowes):
+ * 1. (⑅˘꒳˘) nyowmawizeddotpwoduct
+ * 2. OwO nyowmawizedcosine
+ * q-quewying with cowwesponding scowing awgowithms wesuwts in diffewent cewto scowes. (ꈍᴗꈍ)
  */
-case class TopicTweetCertoScoreStore(certoStratoStore: ReadableStore[TweetId, TopicToScores])
-    extends ReadableStore[ThriftScoreId, ThriftScore] {
+c-case cwass topictweetcewtoscowestowe(cewtostwatostowe: w-weadabwestowe[tweetid, 😳 t-topictoscowes])
+    e-extends w-weadabwestowe[thwiftscoweid, 😳😳😳 thwiftscowe] {
 
-  override def multiGet[K1 <: ThriftScoreId](ks: Set[K1]): Map[K1, Future[Option[ThriftScore]]] = {
-    val tweetIds =
-      ks.map(_.internalId).collect {
-        case GenericPairScoreId(scoreId) =>
-          ((scoreId.id1, scoreId.id2): @annotation.nowarn(
-            "msg=may not be exhaustive|max recursion depth")) match {
-            case (InternalId.TweetId(tweetId), _) => tweetId
-            case (_, InternalId.TweetId(tweetId)) => tweetId
+  ovewwide def muwtiget[k1 <: t-thwiftscoweid](ks: set[k1]): map[k1, mya futuwe[option[thwiftscowe]]] = {
+    v-vaw tweetids =
+      ks.map(_.intewnawid).cowwect {
+        case genewicpaiwscoweid(scoweid) =>
+          ((scoweid.id1, mya scoweid.id2): @annotation.nowawn(
+            "msg=may nyot be exhaustive|max wecuwsion depth")) m-match {
+            case (intewnawid.tweetid(tweetid), (⑅˘꒳˘) _) => t-tweetid
+            c-case (_, (U ﹏ U) intewnawid.tweetid(tweetid)) => t-tweetid
           }
       }
 
-    val result = for {
-      certoScores <- Future.collect(certoStratoStore.multiGet(tweetIds))
-    } yield {
-      ks.map { k =>
-        (k.algorithm, k.internalId) match {
-          case (CertoNormalizedDotProductScore, GenericPairScoreId(scoreId)) =>
-            (scoreId.id1, scoreId.id2) match {
-              case (InternalId.TweetId(tweetId), InternalId.TopicId(topicId)) =>
+    vaw wesuwt = fow {
+      cewtoscowes <- f-futuwe.cowwect(cewtostwatostowe.muwtiget(tweetids))
+    } y-yiewd {
+      ks.map { k-k =>
+        (k.awgowithm, mya k.intewnawid) m-match {
+          case (cewtonowmawizeddotpwoductscowe, ʘwʘ genewicpaiwscoweid(scoweid)) =>
+            (scoweid.id1, (˘ω˘) scoweid.id2) m-match {
+              case (intewnawid.tweetid(tweetid), (U ﹏ U) i-intewnawid.topicid(topicid)) =>
                 (
-                  k,
-                  extractScore(
-                    tweetId,
-                    topicId,
-                    certoScores,
-                    _.followerL2NormalizedDotProduct8HrHalfLife))
-              case (InternalId.TopicId(topicId), InternalId.TweetId(tweetId)) =>
+                  k, ^•ﻌ•^
+                  extwactscowe(
+                    t-tweetid, (˘ω˘)
+                    topicid, :3
+                    c-cewtoscowes, ^^;;
+                    _.fowwoweww2nowmawizeddotpwoduct8hwhawfwife))
+              case (intewnawid.topicid(topicid), 🥺 i-intewnawid.tweetid(tweetid)) =>
                 (
-                  k,
-                  extractScore(
-                    tweetId,
-                    topicId,
-                    certoScores,
-                    _.followerL2NormalizedDotProduct8HrHalfLife))
-              case _ => (k, None)
+                  k-k, (⑅˘꒳˘)
+                  extwactscowe(
+                    tweetid, nyaa~~
+                    topicid, :3
+                    cewtoscowes, ( ͡o ω ͡o )
+                    _.fowwoweww2nowmawizeddotpwoduct8hwhawfwife))
+              case _ => (k, mya nyone)
             }
-          case (CertoNormalizedCosineScore, GenericPairScoreId(scoreId)) =>
-            (scoreId.id1, scoreId.id2) match {
-              case (InternalId.TweetId(tweetId), InternalId.TopicId(topicId)) =>
+          case (cewtonowmawizedcosinescowe, (///ˬ///✿) g-genewicpaiwscoweid(scoweid)) =>
+            (scoweid.id1, (˘ω˘) s-scoweid.id2) match {
+              c-case (intewnawid.tweetid(tweetid), ^^;; i-intewnawid.topicid(topicid)) =>
                 (
-                  k,
-                  extractScore(
-                    tweetId,
-                    topicId,
-                    certoScores,
-                    _.followerL2NormalizedCosineSimilarity8HrHalfLife))
-              case (InternalId.TopicId(topicId), InternalId.TweetId(tweetId)) =>
+                  k, (✿oωo)
+                  e-extwactscowe(
+                    tweetid, (U ﹏ U)
+                    topicid, -.-
+                    cewtoscowes, ^•ﻌ•^
+                    _.fowwoweww2nowmawizedcosinesimiwawity8hwhawfwife))
+              c-case (intewnawid.topicid(topicid), rawr intewnawid.tweetid(tweetid)) =>
                 (
-                  k,
-                  extractScore(
-                    tweetId,
-                    topicId,
-                    certoScores,
-                    _.followerL2NormalizedCosineSimilarity8HrHalfLife))
-              case _ => (k, None)
+                  k, (˘ω˘)
+                  extwactscowe(
+                    tweetid, nyaa~~
+                    topicid, UwU
+                    c-cewtoscowes, :3
+                    _.fowwoweww2nowmawizedcosinesimiwawity8hwhawfwife))
+              case _ => (k, (⑅˘꒳˘) n-nyone)
             }
-          case _ => (k, None)
+          c-case _ => (k, (///ˬ///✿) n-nyone)
         }
-      }.toMap
+      }.tomap
     }
-    FutureOps.liftValues(ks, result)
+    futuweops.wiftvawues(ks, ^^;; w-wesuwt)
   }
 
   /**
-   * Given tweetToCertoScores, extract certain Certo score between the given tweetId and topicId.
-   * The Certo score of interest is specified using scoreExtractor.
+   * g-given tweettocewtoscowes, >_< e-extwact c-cewtain cewto scowe between the given tweetid a-and topicid. rawr x3
+   * t-the cewto scowe o-of intewest i-is specified using s-scoweextwactow. /(^•ω•^)
    */
-  def extractScore(
-    tweetId: TweetId,
-    topicId: TopicId,
-    tweetToCertoScores: Map[TweetId, Option[TopicToScores]],
-    scoreExtractor: Scores => Double
-  ): Option[ThriftScore] = {
-    tweetToCertoScores.get(tweetId).flatMap {
-      case Some(topicToScores) =>
-        topicToScores.topicToScores.flatMap(_.get(topicId).map(scoreExtractor).map(ThriftScore(_)))
-      case _ => Some(ThriftScore(0.0))
+  def extwactscowe(
+    tweetid: tweetid, :3
+    t-topicid: topicid, (ꈍᴗꈍ)
+    tweettocewtoscowes: map[tweetid, /(^•ω•^) option[topictoscowes]], (⑅˘꒳˘)
+    scoweextwactow: scowes => doubwe
+  ): o-option[thwiftscowe] = {
+    tweettocewtoscowes.get(tweetid).fwatmap {
+      case some(topictoscowes) =>
+        t-topictoscowes.topictoscowes.fwatmap(_.get(topicid).map(scoweextwactow).map(thwiftscowe(_)))
+      c-case _ => some(thwiftscowe(0.0))
     }
   }
 }

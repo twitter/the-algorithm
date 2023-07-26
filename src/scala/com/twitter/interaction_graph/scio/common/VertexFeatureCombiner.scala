@@ -1,342 +1,342 @@
-package com.twitter.interaction_graph.scio.common
+package com.twittew.intewaction_gwaph.scio.common
 
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.TimeSeriesStatistics
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.interaction_graph.thriftscala.VertexFeature
+impowt com.twittew.intewaction_gwaph.thwiftscawa.featuwename
+impowt c-com.twittew.intewaction_gwaph.thwiftscawa.timesewiesstatistics
+i-impowt com.twittew.intewaction_gwaph.thwiftscawa.vewtex
+i-impowt c-com.twittew.intewaction_gwaph.thwiftscawa.vewtexfeatuwe
 
-object VertexFeatureCombiner {
-  def apply(userId: Long): VertexFeatureCombiner = new VertexFeatureCombiner(
-    instanceVertex = Vertex(userId),
-    featureMap = Map(
-      (FeatureName.NumRetweets, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRetweets, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumFavorites, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumFavorites, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumMentions, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumMentions, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumTweetClicks, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumTweetClicks, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumLinkClicks, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumLinkClicks, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumProfileViews, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumProfileViews, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumFollows, true) -> new ReplacementVertexCombiner,
-      (FeatureName.NumFollows, false) -> new ReplacementVertexCombiner,
-      (FeatureName.NumUnfollows, true) -> new ReplacementVertexCombiner,
-      (FeatureName.NumUnfollows, false) -> new ReplacementVertexCombiner,
-      (FeatureName.NumMutualFollows, true) -> new ReplacementVertexCombiner,
-      (FeatureName.NumBlocks, true) -> new ReplacementVertexCombiner,
-      (FeatureName.NumBlocks, false) -> new ReplacementVertexCombiner,
-      (FeatureName.NumMutes, true) -> new ReplacementVertexCombiner,
-      (FeatureName.NumMutes, false) -> new ReplacementVertexCombiner,
-      (FeatureName.NumReportAsAbuses, true) -> new ReplacementVertexCombiner,
-      (FeatureName.NumReportAsAbuses, false) -> new ReplacementVertexCombiner,
-      (FeatureName.NumReportAsSpams, true) -> new ReplacementVertexCombiner,
-      (FeatureName.NumReportAsSpams, false) -> new ReplacementVertexCombiner,
-      (FeatureName.NumTweetQuotes, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumTweetQuotes, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumMutualFollows, false) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookEmail, true) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookEmail, false) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookPhone, true) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookPhone, false) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookInBoth, true) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookInBoth, false) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookMutualEdgeEmail, true) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookMutualEdgeEmail, false) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookMutualEdgePhone, true) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookMutualEdgePhone, false) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookMutualEdgeInBoth, true) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookMutualEdgeInBoth, false) -> new ReplacementVertexCombiner,
-      (FeatureName.TotalDwellTime, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.TotalDwellTime, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumInspectedStatuses, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumInspectedStatuses, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumPhotoTags, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumPhotoTags, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumPushOpens, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumPushOpens, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumNtabClicks, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumNtabClicks, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtFavories, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtFavories, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtTweetQuotes, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtTweetQuotes, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtTweetClicks, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtTweetClicks, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtRetweets, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtRetweets, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtReplies, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtReplies, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtLinkClicks, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtLinkClicks, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtMentions, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtMentions, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumShares, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumShares, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumEmailOpen, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumEmailOpen, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumEmailClick, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumEmailClick, false) -> new WeightedAdditiveVertexCombiner,
+o-object v-vewtexfeatuwecombinew {
+  d-def a-appwy(usewid: wong): vewtexfeatuwecombinew = new vewtexfeatuwecombinew(
+    instancevewtex = vewtex(usewid), ^•ﻌ•^
+    featuwemap = m-map(
+      (featuwename.numwetweets, OwO twue) -> nyew weightedadditivevewtexcombinew, (U ﹏ U)
+      (featuwename.numwetweets, (ˆ ﻌ ˆ)♡ f-fawse) -> nyew weightedadditivevewtexcombinew, (⑅˘꒳˘)
+      (featuwename.numfavowites, (U ﹏ U) t-twue) -> nyew weightedadditivevewtexcombinew, o.O
+      (featuwename.numfavowites, mya fawse) -> nyew weightedadditivevewtexcombinew, XD
+      (featuwename.nummentions, òωó t-twue) -> nyew weightedadditivevewtexcombinew, (˘ω˘)
+      (featuwename.nummentions, :3 fawse) -> nyew weightedadditivevewtexcombinew, OwO
+      (featuwename.numtweetcwicks, mya t-twue) -> nyew weightedadditivevewtexcombinew, (˘ω˘)
+      (featuwename.numtweetcwicks, o.O f-fawse) -> nyew weightedadditivevewtexcombinew, (✿oωo)
+      (featuwename.numwinkcwicks, (ˆ ﻌ ˆ)♡ twue) -> nyew weightedadditivevewtexcombinew, ^^;;
+      (featuwename.numwinkcwicks, OwO fawse) -> nyew w-weightedadditivevewtexcombinew,
+      (featuwename.numpwofiweviews, 🥺 twue) -> nyew weightedadditivevewtexcombinew, mya
+      (featuwename.numpwofiweviews, 😳 fawse) -> nyew weightedadditivevewtexcombinew, òωó
+      (featuwename.numfowwows, /(^•ω•^) t-twue) -> nyew wepwacementvewtexcombinew, -.-
+      (featuwename.numfowwows, òωó f-fawse) -> n-nyew wepwacementvewtexcombinew, /(^•ω•^)
+      (featuwename.numunfowwows, /(^•ω•^) t-twue) -> n-nyew wepwacementvewtexcombinew, 😳
+      (featuwename.numunfowwows, :3 fawse) -> nyew wepwacementvewtexcombinew, (U ᵕ U❁)
+      (featuwename.nummutuawfowwows, ʘwʘ t-twue) -> nyew wepwacementvewtexcombinew, o.O
+      (featuwename.numbwocks, ʘwʘ twue) -> n-nyew wepwacementvewtexcombinew, ^^
+      (featuwename.numbwocks, ^•ﻌ•^ fawse) -> nyew wepwacementvewtexcombinew, mya
+      (featuwename.nummutes, UwU twue) -> nyew wepwacementvewtexcombinew, >_<
+      (featuwename.nummutes, /(^•ω•^) fawse) -> nyew wepwacementvewtexcombinew, òωó
+      (featuwename.numwepowtasabuses, σωσ t-twue) -> nyew wepwacementvewtexcombinew, ( ͡o ω ͡o )
+      (featuwename.numwepowtasabuses, nyaa~~ f-fawse) -> n-nyew wepwacementvewtexcombinew, :3
+      (featuwename.numwepowtasspams, UwU t-twue) -> nyew wepwacementvewtexcombinew, o.O
+      (featuwename.numwepowtasspams, (ˆ ﻌ ˆ)♡ fawse) -> nyew wepwacementvewtexcombinew, ^^;;
+      (featuwename.numtweetquotes, ʘwʘ t-twue) -> nyew w-weightedadditivevewtexcombinew, σωσ
+      (featuwename.numtweetquotes, ^^;; fawse) -> n-nyew weightedadditivevewtexcombinew,
+      (featuwename.nummutuawfowwows, ʘwʘ f-fawse) -> nyew wepwacementvewtexcombinew, ^^
+      (featuwename.addwessbookemaiw, nyaa~~ t-twue) -> nyew wepwacementvewtexcombinew, (///ˬ///✿)
+      (featuwename.addwessbookemaiw, XD f-fawse) -> nyew wepwacementvewtexcombinew, :3
+      (featuwename.addwessbookphone, òωó twue) -> n-nyew wepwacementvewtexcombinew, ^^
+      (featuwename.addwessbookphone, ^•ﻌ•^ fawse) -> nyew w-wepwacementvewtexcombinew, σωσ
+      (featuwename.addwessbookinboth, (ˆ ﻌ ˆ)♡ twue) -> nyew w-wepwacementvewtexcombinew, nyaa~~
+      (featuwename.addwessbookinboth, ʘwʘ f-fawse) -> nyew wepwacementvewtexcombinew, ^•ﻌ•^
+      (featuwename.addwessbookmutuawedgeemaiw, rawr x3 twue) -> nyew wepwacementvewtexcombinew, 🥺
+      (featuwename.addwessbookmutuawedgeemaiw, ʘwʘ fawse) -> nyew wepwacementvewtexcombinew, (˘ω˘)
+      (featuwename.addwessbookmutuawedgephone, o.O twue) -> n-nyew wepwacementvewtexcombinew, σωσ
+      (featuwename.addwessbookmutuawedgephone, f-fawse) -> nyew wepwacementvewtexcombinew, (ꈍᴗꈍ)
+      (featuwename.addwessbookmutuawedgeinboth, (ˆ ﻌ ˆ)♡ t-twue) -> nyew wepwacementvewtexcombinew, o.O
+      (featuwename.addwessbookmutuawedgeinboth, :3 f-fawse) -> n-nyew wepwacementvewtexcombinew, -.-
+      (featuwename.totawdwewwtime, ( ͡o ω ͡o ) twue) -> nyew weightedadditivevewtexcombinew, /(^•ω•^)
+      (featuwename.totawdwewwtime, (⑅˘꒳˘) fawse) -> n-nyew weightedadditivevewtexcombinew, òωó
+      (featuwename.numinspectedstatuses, 🥺 twue) -> nyew weightedadditivevewtexcombinew, (ˆ ﻌ ˆ)♡
+      (featuwename.numinspectedstatuses, -.- fawse) -> nyew weightedadditivevewtexcombinew, σωσ
+      (featuwename.numphototags, >_< twue) -> nyew w-weightedadditivevewtexcombinew, :3
+      (featuwename.numphototags, OwO fawse) -> nyew w-weightedadditivevewtexcombinew, rawr
+      (featuwename.numpushopens, (///ˬ///✿) t-twue) -> nyew w-weightedadditivevewtexcombinew, ^^
+      (featuwename.numpushopens, fawse) -> new w-weightedadditivevewtexcombinew,
+      (featuwename.numntabcwicks, XD t-twue) -> nyew w-weightedadditivevewtexcombinew, UwU
+      (featuwename.numntabcwicks, o.O f-fawse) -> nyew weightedadditivevewtexcombinew, 😳
+      (featuwename.numwtfavowies, (˘ω˘) twue) -> nyew w-weightedadditivevewtexcombinew, 🥺
+      (featuwename.numwtfavowies, ^^ f-fawse) -> nyew w-weightedadditivevewtexcombinew, >w<
+      (featuwename.numwttweetquotes, ^^;; t-twue) -> n-new weightedadditivevewtexcombinew, (˘ω˘)
+      (featuwename.numwttweetquotes, OwO fawse) -> nyew weightedadditivevewtexcombinew, (ꈍᴗꈍ)
+      (featuwename.numwttweetcwicks, òωó twue) -> nyew weightedadditivevewtexcombinew, ʘwʘ
+      (featuwename.numwttweetcwicks, f-fawse) -> nyew weightedadditivevewtexcombinew, ʘwʘ
+      (featuwename.numwtwetweets, nyaa~~ twue) -> nyew weightedadditivevewtexcombinew, UwU
+      (featuwename.numwtwetweets, (⑅˘꒳˘) fawse) -> nyew weightedadditivevewtexcombinew, (˘ω˘)
+      (featuwename.numwtwepwies, :3 t-twue) -> nyew weightedadditivevewtexcombinew, (˘ω˘)
+      (featuwename.numwtwepwies, nyaa~~ fawse) -> nyew weightedadditivevewtexcombinew, (U ﹏ U)
+      (featuwename.numwtwinkcwicks, nyaa~~ t-twue) -> nyew w-weightedadditivevewtexcombinew, ^^;;
+      (featuwename.numwtwinkcwicks, OwO f-fawse) -> nyew weightedadditivevewtexcombinew, nyaa~~
+      (featuwename.numwtmentions, t-twue) -> nyew weightedadditivevewtexcombinew,
+      (featuwename.numwtmentions, UwU f-fawse) -> n-nyew weightedadditivevewtexcombinew, 😳
+      (featuwename.numshawes, 😳 twue) -> nyew weightedadditivevewtexcombinew, (ˆ ﻌ ˆ)♡
+      (featuwename.numshawes, (✿oωo) fawse) -> nyew weightedadditivevewtexcombinew, nyaa~~
+      (featuwename.numemaiwopen, ^^ twue) -> nyew weightedadditivevewtexcombinew, (///ˬ///✿)
+      (featuwename.numemaiwopen, 😳 f-fawse) -> nyew weightedadditivevewtexcombinew, òωó
+      (featuwename.numemaiwcwick, ^^;; twue) -> nyew weightedadditivevewtexcombinew, rawr
+      (featuwename.numemaiwcwick, (ˆ ﻌ ˆ)♡ f-fawse) -> nyew weightedadditivevewtexcombinew, XD
     )
   )
 }
 
 /**
- * This class can take in a number of input Vertex thrift objects (all of which are assumed to
- * contain information about a single vertex) and builds a combined Vertex protobuf object, which
- * has the union of all the input. Note that we do a weighted addition for a time-decayed value.
+ * t-this cwass can t-take in a nyumbew of input vewtex thwift objects (aww o-of which a-awe assumed to
+ * contain infowmation a-about a s-singwe vewtex) and buiwds a combined vewtex pwotobuf object, >_< which
+ * has the union o-of aww the input. (˘ω˘) n-nyote that w-we do a weighted addition fow a t-time-decayed vawue. 😳
  * <p>
- * The input objects features must be disjoint. Also, remember that the Vertex is directed!
+ * the i-input objects featuwes must be d-disjoint. o.O awso, wemembew that the vewtex is diwected! (ꈍᴗꈍ)
  */
-class VertexFeatureCombiner(
-  instanceVertex: Vertex,
-  featureMap: Map[(FeatureName, Boolean), VFeatureCombiner]) {
+cwass vewtexfeatuwecombinew(
+  i-instancevewtex: v-vewtex, rawr x3
+  featuwemap: map[(featuwename, ^^ b-boowean), vfeatuwecombinew]) {
 
   /**
-   * Adds features without any decay. To be used for the same day.
+   * a-adds featuwes without any decay. OwO to be used fow the s-same day.
    *
-   * @param vertex vertex to be added into the combiner
+   * @pawam vewtex vewtex to be added into the combinew
    */
-  def addFeature(vertex: Vertex): VertexFeatureCombiner = {
-    val newVertex = instanceVertex.copy(weight = vertex.weight)
-    val newFeatures = featureMap.map {
-      case ((featureName, outgoing), combiner) =>
-        vertex.features.find(f => f.name.equals(featureName) && f.outgoing.equals(outgoing)) match {
-          case Some(feature) =>
-            val updatedCombiner =
-              if (combiner.isSet) combiner.updateFeature(feature) else combiner.setFeature(feature)
-            ((featureName, outgoing), updatedCombiner)
-          case _ => ((featureName, outgoing), combiner)
+  d-def addfeatuwe(vewtex: vewtex): vewtexfeatuwecombinew = {
+    vaw n-nyewvewtex = i-instancevewtex.copy(weight = vewtex.weight)
+    vaw nyewfeatuwes = featuwemap.map {
+      c-case ((featuwename, ^^ o-outgoing), :3 combinew) =>
+        vewtex.featuwes.find(f => f.name.equaws(featuwename) && f-f.outgoing.equaws(outgoing)) match {
+          c-case some(featuwe) =>
+            vaw updatedcombinew =
+              if (combinew.isset) combinew.updatefeatuwe(featuwe) ewse combinew.setfeatuwe(featuwe)
+            ((featuwename, o.O o-outgoing), -.- updatedcombinew)
+          c-case _ => ((featuwename, (U ﹏ U) o-outgoing), combinew)
         }
     }
 
-    new VertexFeatureCombiner(newVertex, newFeatures)
+    n-nyew vewtexfeatuwecombinew(newvewtex, o.O nyewfeatuwes)
   }
 
   /**
-   * Adds features with decays. Used for combining multiple days.
+   * a-adds featuwes w-with decays. OwO u-used fow combining muwtipwe d-days. ^•ﻌ•^
    *
-   * @param vertex vertex to be added into the combiner
-   * @param alpha  parameters for the decay calculation
-   * @param day    number of days from today
+   * @pawam v-vewtex vewtex to be added into the combinew
+   * @pawam awpha  p-pawametews f-fow the decay cawcuwation
+   * @pawam d-day    nyumbew of days fwom today
    */
-  def addFeature(vertex: Vertex, alpha: Double, day: Int): VertexFeatureCombiner = {
+  d-def addfeatuwe(vewtex: vewtex, ʘwʘ a-awpha: doubwe, :3 day: i-int): vewtexfeatuwecombinew = {
 
-    val newVertex = instanceVertex.copy(weight = vertex.weight)
-    val newFeatures = featureMap.map {
-      case ((featureName, outgoing), combiner) =>
-        vertex.features.find(f => f.name.equals(featureName) && f.outgoing.equals(outgoing)) match {
-          case Some(feature) =>
-            val updatedCombiner =
-              if (combiner.isSet) combiner.updateFeature(feature, alpha, day)
-              else combiner.setFeature(feature, alpha, day)
-            ((featureName, outgoing), updatedCombiner)
-          case _ => ((featureName, outgoing), combiner)
+    vaw nyewvewtex = instancevewtex.copy(weight = vewtex.weight)
+    v-vaw nyewfeatuwes = f-featuwemap.map {
+      c-case ((featuwename, 😳 o-outgoing), òωó combinew) =>
+        v-vewtex.featuwes.find(f => f.name.equaws(featuwename) && f.outgoing.equaws(outgoing)) match {
+          case some(featuwe) =>
+            vaw updatedcombinew =
+              i-if (combinew.isset) combinew.updatefeatuwe(featuwe, 🥺 a-awpha, day)
+              e-ewse combinew.setfeatuwe(featuwe, rawr x3 awpha, day)
+            ((featuwename, ^•ﻌ•^ o-outgoing), :3 updatedcombinew)
+          c-case _ => ((featuwename, (ˆ ﻌ ˆ)♡ o-outgoing), (U ᵕ U❁) c-combinew)
         }
     }
 
-    new VertexFeatureCombiner(newVertex, newFeatures)
+    n-nyew vewtexfeatuwecombinew(newvewtex, :3 n-nyewfeatuwes)
   }
 
   /**
-   * Generate the final combined Vertex instance
+   * genewate the finaw combined vewtex instance
    *
-   * @param totalDays total number of days to be combined together
+   * @pawam totawdays totaw nyumbew of days to be combined t-togethew
    */
-  def getCombinedVertex(totalDays: Int): Vertex = {
-    val moreFeatures = featureMap.values.flatMap {
-      case combiner => combiner.getFinalFeature(totalDays)
+  d-def getcombinedvewtex(totawdays: i-int): vewtex = {
+    vaw m-mowefeatuwes = featuwemap.vawues.fwatmap {
+      case combinew => combinew.getfinawfeatuwe(totawdays)
     }
-    instanceVertex.copy(features = moreFeatures.toSeq)
+    instancevewtex.copy(featuwes = mowefeatuwes.toseq)
   }
 
 }
 
 /**
- * This portion contains the actual combination logic. For now, we only implement a simple
- * additive combiner, but in future we'd like to have things like time-weighted (exponential
- * decay, maybe) values.
+ * t-this powtion contains t-the actuaw combination wogic. ^^;; f-fow nyow, ( ͡o ω ͡o ) we onwy impwement a simpwe
+ * additive c-combinew, o.O b-but in futuwe we'd wike to have t-things wike time-weighted (exponentiaw
+ * d-decay, ^•ﻌ•^ maybe) vawues. XD
  */
-trait VFeatureCombiner {
-  val startingDay: Int
-  val endingDay: Int
-  val timeSeriesStatistics: Option[TimeSeriesStatistics]
-  val vertexFeature: Option[VertexFeature]
+twait vfeatuwecombinew {
+  vaw stawtingday: int
+  vaw endingday: i-int
+  vaw t-timesewiesstatistics: o-option[timesewiesstatistics]
+  v-vaw vewtexfeatuwe: o-option[vewtexfeatuwe]
 
-  def updateTss(feature: VertexFeature, alpha: Double): VFeatureCombiner
-  def addToTss(feature: VertexFeature): VFeatureCombiner
-  def updateFeature(feature: VertexFeature, alpha: Double, day: Int): VFeatureCombiner
-  def updateFeature(feature: VertexFeature): VFeatureCombiner
-  def isSet: Boolean
-  def dropFeature: Boolean
-  def setFeature(feature: VertexFeature, alpha: Double, day: Int): VFeatureCombiner
-  def setFeature(feature: VertexFeature): VFeatureCombiner
-  def getFinalFeature(totalDays: Int): Option[VertexFeature]
+  def updatetss(featuwe: v-vewtexfeatuwe, ^^ a-awpha: doubwe): vfeatuwecombinew
+  d-def addtotss(featuwe: v-vewtexfeatuwe): vfeatuwecombinew
+  d-def updatefeatuwe(featuwe: vewtexfeatuwe, o.O awpha: d-doubwe, ( ͡o ω ͡o ) day: int): vfeatuwecombinew
+  d-def updatefeatuwe(featuwe: v-vewtexfeatuwe): vfeatuwecombinew
+  d-def isset: boowean
+  def dwopfeatuwe: boowean
+  d-def setfeatuwe(featuwe: v-vewtexfeatuwe, /(^•ω•^) awpha: d-doubwe, 🥺 day: int): vfeatuwecombinew
+  def setfeatuwe(featuwe: v-vewtexfeatuwe): vfeatuwecombinew
+  def getfinawfeatuwe(totawdays: i-int): option[vewtexfeatuwe]
 }
 
-case class WeightedAdditiveVertexCombiner(
-  override val vertexFeature: Option[VertexFeature] = None,
-  override val startingDay: Int = Integer.MAX_VALUE,
-  override val endingDay: Int = Integer.MIN_VALUE,
-  override val timeSeriesStatistics: Option[TimeSeriesStatistics] = None)
-    extends VFeatureCombiner {
-  override def updateTss(
-    feature: VertexFeature,
-    alpha: Double
-  ): WeightedAdditiveVertexCombiner = copy(timeSeriesStatistics = timeSeriesStatistics.map(tss =>
-    InteractionGraphUtils.updateTimeSeriesStatistics(tss, feature.tss.mean, alpha)))
+c-case cwass weightedadditivevewtexcombinew(
+  o-ovewwide vaw vewtexfeatuwe: option[vewtexfeatuwe] = n-nyone, nyaa~~
+  ovewwide v-vaw stawtingday: int = integew.max_vawue, mya
+  ovewwide vaw e-endingday: int = integew.min_vawue, XD
+  ovewwide v-vaw timesewiesstatistics: o-option[timesewiesstatistics] = nyone)
+    e-extends vfeatuwecombinew {
+  ovewwide def updatetss(
+    f-featuwe: v-vewtexfeatuwe, nyaa~~
+    a-awpha: doubwe
+  ): weightedadditivevewtexcombinew = copy(timesewiesstatistics = timesewiesstatistics.map(tss =>
+    intewactiongwaphutiws.updatetimesewiesstatistics(tss, ʘwʘ featuwe.tss.mean, (⑅˘꒳˘) awpha)))
 
-  override def addToTss(feature: VertexFeature): WeightedAdditiveVertexCombiner =
-    copy(timeSeriesStatistics = timeSeriesStatistics.map(tss =>
-      InteractionGraphUtils.addToTimeSeriesStatistics(tss, feature.tss.mean)))
+  ovewwide def addtotss(featuwe: vewtexfeatuwe): weightedadditivevewtexcombinew =
+    copy(timesewiesstatistics = timesewiesstatistics.map(tss =>
+      intewactiongwaphutiws.addtotimesewiesstatistics(tss, :3 f-featuwe.tss.mean)))
 
-  override def updateFeature(feature: VertexFeature, alpha: Double, day: Int): VFeatureCombiner = {
-    updateTss(feature, alpha).copy(
-      vertexFeature,
-      startingDay = startingDay,
-      endingDay = Math.max(endingDay, day)
+  o-ovewwide def updatefeatuwe(featuwe: vewtexfeatuwe, -.- a-awpha: doubwe, 😳😳😳 d-day: int): v-vfeatuwecombinew = {
+    updatetss(featuwe, (U ﹏ U) a-awpha).copy(
+      vewtexfeatuwe, o.O
+      stawtingday = s-stawtingday, ( ͡o ω ͡o )
+      e-endingday = math.max(endingday, òωó d-day)
     )
   }
 
-  override def updateFeature(feature: VertexFeature): VFeatureCombiner =
-    addToTss(feature)
+  ovewwide d-def updatefeatuwe(featuwe: v-vewtexfeatuwe): vfeatuwecombinew =
+    addtotss(featuwe)
 
-  override def setFeature(feature: VertexFeature, alpha: Double, day: Int): VFeatureCombiner = {
-    val newStartingDay = Math.min(startingDay, day)
-    val newEndingDay = Math.max(endingDay, day)
+  o-ovewwide d-def setfeatuwe(featuwe: v-vewtexfeatuwe, 🥺 a-awpha: doubwe, /(^•ω•^) d-day: int): v-vfeatuwecombinew = {
+    v-vaw nyewstawtingday = m-math.min(stawtingday, 😳😳😳 d-day)
+    vaw newendingday = m-math.max(endingday, ^•ﻌ•^ d-day)
 
-    val numDaysSinceLast =
-      if (feature.tss.numDaysSinceLast.exists(_ > 0))
-        feature.tss.numDaysSinceLast
-      else Some(feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 1)
+    v-vaw nyumdayssincewast =
+      if (featuwe.tss.numdayssincewast.exists(_ > 0))
+        f-featuwe.tss.numdayssincewast
+      ewse some(featuwe.tss.numewapseddays - featuwe.tss.numnonzewodays + 1)
 
-    val tss = feature.tss.copy(numDaysSinceLast = numDaysSinceLast)
+    v-vaw tss = featuwe.tss.copy(numdayssincewast = nyumdayssincewast)
 
-    val newFeature = VertexFeature(
-      name = feature.name,
-      outgoing = feature.outgoing,
+    v-vaw nyewfeatuwe = v-vewtexfeatuwe(
+      n-nyame = featuwe.name, nyaa~~
+      outgoing = f-featuwe.outgoing, OwO
       tss = tss
     )
 
-    WeightedAdditiveVertexCombiner(
-      Some(newFeature),
-      newStartingDay,
-      newEndingDay,
-      Some(tss)
+    w-weightedadditivevewtexcombinew(
+      some(newfeatuwe), ^•ﻌ•^
+      n-nyewstawtingday, σωσ
+      nyewendingday, -.-
+      s-some(tss)
     )
   }
 
-  def getFinalFeature(totalDays: Int): Option[VertexFeature] = {
-    if (vertexFeature.isEmpty || dropFeature) return None
+  def getfinawfeatuwe(totawdays: int): option[vewtexfeatuwe] = {
+    if (vewtexfeatuwe.isempty || dwopfeatuwe) w-wetuwn nyone
 
-    val newTss = if (totalDays > 0) {
-      val elapsed =
-        timeSeriesStatistics.map(tss => tss.numElapsedDays + totalDays - 1 - startingDay)
-      val latest =
-        if (endingDay > 0) Some(totalDays - endingDay)
-        else timeSeriesStatistics.map(tss => tss.numDaysSinceLast.get + totalDays - 1)
+    vaw newtss = i-if (totawdays > 0) {
+      v-vaw ewapsed =
+        timesewiesstatistics.map(tss => tss.numewapseddays + t-totawdays - 1 - stawtingday)
+      v-vaw w-watest =
+        i-if (endingday > 0) some(totawdays - endingday)
+        e-ewse timesewiesstatistics.map(tss => t-tss.numdayssincewast.get + totawdays - 1)
 
-      timeSeriesStatistics.map(tss =>
+      t-timesewiesstatistics.map(tss =>
         tss.copy(
-          numElapsedDays = elapsed.get,
-          numDaysSinceLast = latest
+          numewapseddays = e-ewapsed.get, (˘ω˘)
+          nyumdayssincewast = w-watest
         ))
-    } else timeSeriesStatistics
+    } e-ewse t-timesewiesstatistics
 
-    vertexFeature.map(vf => vf.copy(tss = newTss.get))
+    vewtexfeatuwe.map(vf => v-vf.copy(tss = n-nyewtss.get))
   }
 
-  override def setFeature(feature: VertexFeature): VFeatureCombiner = setFeature(feature, 1.0, 0)
-  override def isSet: Boolean = vertexFeature.isDefined
-  override def dropFeature: Boolean =
-    timeSeriesStatistics.exists(tss =>
-      tss.numDaysSinceLast.exists(_ > InteractionGraphUtils.MAX_DAYS_RETENTION) &&
-        tss.ewma < InteractionGraphUtils.MIN_FEATURE_VALUE)
+  o-ovewwide d-def setfeatuwe(featuwe: vewtexfeatuwe): v-vfeatuwecombinew = s-setfeatuwe(featuwe, rawr x3 1.0, 0)
+  o-ovewwide d-def isset: boowean = v-vewtexfeatuwe.isdefined
+  o-ovewwide def dwopfeatuwe: b-boowean =
+    t-timesewiesstatistics.exists(tss =>
+      tss.numdayssincewast.exists(_ > i-intewactiongwaphutiws.max_days_wetention) &&
+        tss.ewma < i-intewactiongwaphutiws.min_featuwe_vawue)
 }
 
 /**
- * This combiner always replaces the old value with the current. Ignores time-decays.
+ * this combinew a-awways wepwaces t-the owd vawue w-with the cuwwent. ignowes time-decays. rawr x3
  */
-case class ReplacementVertexCombiner(
-  override val vertexFeature: Option[VertexFeature] = None,
-  override val startingDay: Int = Integer.MAX_VALUE,
-  override val endingDay: Int = Integer.MIN_VALUE,
-  override val timeSeriesStatistics: Option[TimeSeriesStatistics] = None)
-    extends VFeatureCombiner {
-  override def updateTss(
-    feature: VertexFeature,
-    alpha: Double
-  ): ReplacementVertexCombiner = setFeature(feature, 1.0, 0)
+case cwass wepwacementvewtexcombinew(
+  o-ovewwide vaw v-vewtexfeatuwe: o-option[vewtexfeatuwe] = nyone, σωσ
+  ovewwide vaw stawtingday: int = i-integew.max_vawue, nyaa~~
+  o-ovewwide vaw endingday: int = i-integew.min_vawue,
+  o-ovewwide vaw timesewiesstatistics: option[timesewiesstatistics] = nyone)
+    e-extends vfeatuwecombinew {
+  o-ovewwide def u-updatetss(
+    f-featuwe: vewtexfeatuwe, (ꈍᴗꈍ)
+    awpha: doubwe
+  ): wepwacementvewtexcombinew = s-setfeatuwe(featuwe, ^•ﻌ•^ 1.0, 0)
 
-  override def addToTss(feature: VertexFeature): ReplacementVertexCombiner =
-    setFeature(feature, 1.0, 0)
+  o-ovewwide def addtotss(featuwe: vewtexfeatuwe): w-wepwacementvewtexcombinew =
+    setfeatuwe(featuwe, >_< 1.0, 0)
 
-  override def updateFeature(
-    feature: VertexFeature,
-    alpha: Double,
-    day: Int
-  ): ReplacementVertexCombiner = updateTss(feature, alpha).copy(
-    vertexFeature,
-    startingDay = startingDay,
-    endingDay = Math.max(endingDay, day)
+  ovewwide d-def updatefeatuwe(
+    featuwe: v-vewtexfeatuwe, ^^;;
+    a-awpha: doubwe, ^^;;
+    day: int
+  ): w-wepwacementvewtexcombinew = u-updatetss(featuwe, /(^•ω•^) awpha).copy(
+    v-vewtexfeatuwe, nyaa~~
+    stawtingday = s-stawtingday, (✿oωo)
+    e-endingday = m-math.max(endingday, ( ͡o ω ͡o ) d-day)
   )
 
-  override def updateFeature(feature: VertexFeature): ReplacementVertexCombiner =
-    addToTss(feature)
+  ovewwide def u-updatefeatuwe(featuwe: v-vewtexfeatuwe): w-wepwacementvewtexcombinew =
+    addtotss(featuwe)
 
-  override def setFeature(
-    feature: VertexFeature,
-    alpha: Double,
-    day: Int
-  ): ReplacementVertexCombiner = {
-    val newStartingDay = Math.min(startingDay, day)
-    val newEndingDay = Math.max(endingDay, day)
+  o-ovewwide def setfeatuwe(
+    featuwe: v-vewtexfeatuwe, (U ᵕ U❁)
+    a-awpha: doubwe, òωó
+    d-day: int
+  ): wepwacementvewtexcombinew = {
+    vaw nyewstawtingday = math.min(stawtingday, σωσ day)
+    vaw n-nyewendingday = math.max(endingday, :3 d-day)
 
-    val numDaysSinceLast =
-      if (feature.tss.numDaysSinceLast.exists(_ > 0))
-        feature.tss.numDaysSinceLast
-      else Some(feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 1)
+    vaw n-nyumdayssincewast =
+      if (featuwe.tss.numdayssincewast.exists(_ > 0))
+        featuwe.tss.numdayssincewast
+      e-ewse some(featuwe.tss.numewapseddays - featuwe.tss.numnonzewodays + 1)
 
-    val tss = feature.tss.copy(numDaysSinceLast = numDaysSinceLast)
+    vaw tss = featuwe.tss.copy(numdayssincewast = n-nyumdayssincewast)
 
-    val newFeature = VertexFeature(
-      name = feature.name,
-      outgoing = feature.outgoing,
+    v-vaw nyewfeatuwe = v-vewtexfeatuwe(
+      n-nyame = featuwe.name, OwO
+      o-outgoing = featuwe.outgoing, ^^
       tss = tss
     )
 
-    ReplacementVertexCombiner(
-      Some(newFeature),
-      newStartingDay,
-      newEndingDay,
-      Some(tss)
+    wepwacementvewtexcombinew(
+      some(newfeatuwe), (˘ω˘)
+      n-nyewstawtingday, OwO
+      newendingday, UwU
+      s-some(tss)
     )
   }
 
-  override def getFinalFeature(totalDays: Int): Option[VertexFeature] = {
-    if (vertexFeature.isEmpty || dropFeature) return None
-    if (timeSeriesStatistics.exists(tss => tss.ewma < 1.0)) return None
-    val newTss = if (totalDays > 0) {
-      val latest =
-        if (endingDay > 0) totalDays - endingDay
-        else timeSeriesStatistics.get.numDaysSinceLast.get + totalDays - 1
+  ovewwide def getfinawfeatuwe(totawdays: int): option[vewtexfeatuwe] = {
+    if (vewtexfeatuwe.isempty || d-dwopfeatuwe) wetuwn nyone
+    if (timesewiesstatistics.exists(tss => tss.ewma < 1.0)) wetuwn none
+    vaw n-nyewtss = if (totawdays > 0) {
+      v-vaw watest =
+        if (endingday > 0) t-totawdays - endingday
+        ewse timesewiesstatistics.get.numdayssincewast.get + t-totawdays - 1
 
-      timeSeriesStatistics.map(tss =>
+      t-timesewiesstatistics.map(tss =>
         tss.copy(
-          numElapsedDays = 1,
-          numDaysSinceLast = Some(latest)
+          n-nyumewapseddays = 1, ^•ﻌ•^
+          nyumdayssincewast = s-some(watest)
         ))
-    } else timeSeriesStatistics
+    } ewse timesewiesstatistics
 
-    vertexFeature.map(vf => vf.copy(tss = newTss.get))
+    vewtexfeatuwe.map(vf => vf.copy(tss = n-nyewtss.get))
   }
 
-  override def setFeature(feature: VertexFeature): VFeatureCombiner = setFeature(feature, 1.0, 0)
-  override def isSet: Boolean = vertexFeature.isDefined
-  override def dropFeature: Boolean =
-    timeSeriesStatistics.exists(tss =>
-      tss.numDaysSinceLast.exists(_ > InteractionGraphUtils.MAX_DAYS_RETENTION) &&
-        tss.ewma < InteractionGraphUtils.MIN_FEATURE_VALUE)
+  ovewwide def setfeatuwe(featuwe: vewtexfeatuwe): v-vfeatuwecombinew = s-setfeatuwe(featuwe, (ꈍᴗꈍ) 1.0, /(^•ω•^) 0)
+  o-ovewwide def isset: boowean = vewtexfeatuwe.isdefined
+  ovewwide d-def dwopfeatuwe: boowean =
+    timesewiesstatistics.exists(tss =>
+      tss.numdayssincewast.exists(_ > intewactiongwaphutiws.max_days_wetention) &&
+        tss.ewma < i-intewactiongwaphutiws.min_featuwe_vawue)
 }

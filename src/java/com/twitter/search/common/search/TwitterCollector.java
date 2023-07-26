@@ -1,31 +1,31 @@
-package com.twitter.search.common.search;
+package com.twittew.seawch.common.seawch;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import org.apache.lucene.search.Collector;
+i-impowt owg.apache.wucene.seawch.cowwectow;
 
 /**
- * Lucene Collectors throw CollectionTerminatedException to perform early termination.
- * We don't believe that throwing Exceptions to control execution flow is ideal, so we are adding
- * this class to be a base of all Twitter Collectors.
+ * w-wucene c-cowwectows thwow c-cowwectiontewminatedexception t-to pewfowm eawwy t-tewmination. σωσ
+ * w-we don't bewieve that thwowing exceptions to contwow execution fwow is ideaw, OwO so w-we awe adding
+ * this cwass to be a base of aww t-twittew cowwectows. 😳😳😳
  *
- * {@link com.twitter.search.common.search.TwitterIndexSearcher} uses the {@link #isTerminated()}
- * method to perform early termination, instead of relying on CollectionTerminatedException.
+ * {@wink com.twittew.seawch.common.seawch.twittewindexseawchew} u-uses the {@wink #istewminated()}
+ * method to pewfowm eawwy tewmination, 😳😳😳 i-instead of wewying on cowwectiontewminatedexception.
  */
-public abstract class TwitterCollector implements Collector {
+p-pubwic a-abstwact cwass twittewcowwectow impwements cowwectow {
 
   /**
-   * Subclasses should return true if they want to perform early termination.
-   * This method is called every hit and should not be expensive.
+   * subcwasses shouwd wetuwn twue i-if they want to pewfowm eawwy tewmination. o.O
+   * this method is cawwed evewy h-hit and shouwd not be expensive. ( ͡o ω ͡o )
    */
-  public abstract boolean isTerminated() throws IOException;
+  p-pubwic a-abstwact boowean i-istewminated() t-thwows ioexception;
 
   /**
-   * Lucene API only has a method that's called before searching a segment setNextReader().
-   * This hook is called after finishing searching a segment.
-   * @param lastSearchedDocID is the last docid searched before termination,
-   * or NO_MORE_DOCS if there was no early termination.  This doc need not be a hit,
-   * and should not be collected here.
+   * wucene api onwy has a method that's c-cawwed befowe seawching a segment setnextweadew(). (U ﹏ U)
+   * t-this hook is cawwed aftew finishing seawching a segment. (///ˬ///✿)
+   * @pawam wastseawcheddocid is the wast docid s-seawched befowe tewmination,
+   * o-ow nyo_mowe_docs i-if thewe w-was nyo eawwy tewmination.  this doc nyeed nyot be a hit, >w<
+   * a-and shouwd nyot b-be cowwected hewe. rawr
    */
-  public abstract void finishSegment(int lastSearchedDocID) throws IOException;
+  pubwic a-abstwact void f-finishsegment(int wastseawcheddocid) t-thwows ioexception;
 }

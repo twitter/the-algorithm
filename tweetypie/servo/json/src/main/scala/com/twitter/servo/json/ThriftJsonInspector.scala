@@ -1,142 +1,142 @@
-package com.twitter.servo.json
+package com.twittew.sewvo.json
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.scrooge.ThriftStructCodec
-import com.twitter.scrooge.ThriftStructSerializer
-import difflib.DiffUtils
-import java.io.StringWriter
-import org.apache.thrift.protocol.TField
-import org.apache.thrift.protocol.TProtocol
-import org.apache.thrift.protocol.TProtocolFactory
-import org.apache.thrift.protocol.TSimpleJSONProtocol
-import org.apache.thrift.transport.TTransport
-import scala.collection.JavaConverters._
-import scala.language.experimental.macros
-import scala.reflect.macros.blackbox.Context
+impowt com.fastewxmw.jackson.cowe.jsonpawsew
+i-impowt c-com.fastewxmw.jackson.databind.jsonnode
+i-impowt c-com.fastewxmw.jackson.databind.objectmappew
+i-impowt c-com.twittew.scwooge.thwiftstwuct
+i-impowt com.twittew.scwooge.thwiftstwuctcodec
+i-impowt com.twittew.scwooge.thwiftstwuctsewiawizew
+impowt diffwib.diffutiws
+impowt java.io.stwingwwitew
+impowt o-owg.apache.thwift.pwotocow.tfiewd
+impowt owg.apache.thwift.pwotocow.tpwotocow
+impowt owg.apache.thwift.pwotocow.tpwotocowfactowy
+i-impowt owg.apache.thwift.pwotocow.tsimpwejsonpwotocow
+impowt owg.apache.thwift.twanspowt.ttwanspowt
+i-impowt scawa.cowwection.javaconvewtews._
+impowt scawa.wanguage.expewimentaw.macwos
+impowt scawa.wefwect.macwos.bwackbox.context
 
-object ThriftJsonInspector {
-  private val mapper = new ObjectMapper()
-  mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true)
-  private val factory = mapper.getFactory()
+o-object thwiftjsoninspectow {
+  pwivate vaw m-mappew = nyew o-objectmappew()
+  mappew.configuwe(jsonpawsew.featuwe.awwow_unquoted_fiewd_names, (U ﹏ U) twue)
+  pwivate vaw factowy = mappew.getfactowy()
 
-  private def mkSerializer[T <: ThriftStruct](_codec: ThriftStructCodec[T]) =
-    new ThriftStructSerializer[T] {
-      def codec = _codec
+  pwivate def m-mksewiawizew[t <: thwiftstwuct](_codec: thwiftstwuctcodec[t]) =
+    nyew thwiftstwuctsewiawizew[t] {
+      def c-codec = _codec
 
-      def protocolFactory =
-        // Identical to TSimpleJSONProtocol.Factory except the TProtocol
-        // returned serializes Thrift pass-through fields with the name
-        // "(TField.id)" instead of empty string.
-        new TProtocolFactory {
-          def getProtocol(trans: TTransport): TProtocol =
-            new TSimpleJSONProtocol(trans) {
-              override def writeFieldBegin(field: TField): Unit =
-                writeString(if (field.name.isEmpty) s"(${field.id})" else field.name)
+      def pwotocowfactowy =
+        // i-identicaw t-to tsimpwejsonpwotocow.factowy e-except the tpwotocow
+        // w-wetuwned sewiawizes thwift pass-thwough fiewds w-with the nyame
+        // "(tfiewd.id)" instead of empty stwing. 😳😳😳
+        n-nyew tpwotocowfactowy {
+          def getpwotocow(twans: ttwanspowt): tpwotocow =
+            nyew tsimpwejsonpwotocow(twans) {
+              ovewwide def wwitefiewdbegin(fiewd: t-tfiewd): unit =
+                w-wwitestwing(if (fiewd.name.isempty) s"(${fiewd.id})" e-ewse fiewd.name)
             }
         }
     }
 
-  def apply[T <: ThriftStruct](codec: ThriftStructCodec[T]) = new ThriftJsonInspector(codec)
+  d-def appwy[t <: thwiftstwuct](codec: thwiftstwuctcodec[t]) = nyew t-thwiftjsoninspectow(codec)
 }
 
 /**
- * Helper for human inspection of Thrift objects.
+ * h-hewpew fow human inspection o-of thwift objects. >w<
  */
-class ThriftJsonInspector[T <: ThriftStruct](codec: ThriftStructCodec[T]) {
-  import ThriftJsonInspector._
+c-cwass thwiftjsoninspectow[t <: t-thwiftstwuct](codec: thwiftstwuctcodec[t]) {
+  impowt t-thwiftjsoninspectow._
 
-  private[this] val serializer = mkSerializer(codec)
+  pwivate[this] vaw sewiawizew = m-mksewiawizew(codec)
 
   /**
-   * Convert the Thrift object to a JSON representation based on this
-   * object's codec, in the manner of TSimpleJSONProtocol. The resulting
-   * JSON will have human-readable field names that match the field
-   * names that were used in the Thrift definition that the codec was
-   * created from, but the conversion is lossy, and the JSON
-   * representation cannot be converted back.
+   * convewt t-the thwift object to a json wepwesentation b-based o-on this
+   * object's codec, XD in the mannew of tsimpwejsonpwotocow. o.O the wesuwting
+   * json wiww have human-weadabwe fiewd nyames t-that match the f-fiewd
+   * nyames that wewe used i-in the thwift d-definition that t-the codec was
+   * cweated fwom, mya but the convewsion is wossy, and t-the json
+   * wepwesentation cannot be convewted back. 🥺
    */
-  def toSimpleJson(t: T): JsonNode =
-    mapper.readTree(factory.createParser(serializer.toBytes(t)))
+  def tosimpwejson(t: t-t): jsonnode =
+    mappew.weadtwee(factowy.cweatepawsew(sewiawizew.tobytes(t)))
 
   /**
-   * Selects requested fields (matching against the JSON fields) from a
-   * Thrift-generated class.
+   * s-sewects wequested f-fiewds (matching a-against the json fiewds) fwom a-a
+   * thwift-genewated c-cwass. ^^;;
    *
-   * Paths are specified as slash-separated strings (e.g.,
-   * "key1/key2/key3"). If the path specifies an array or object, it is
-   * included in the output in JSON format, otherwise the simple value is
-   * converted to a string.
+   * p-paths a-awe specified as swash-sepawated stwings (e.g.,
+   * "key1/key2/key3"). :3 i-if the p-path specifies an a-awway ow object, (U ﹏ U) i-it is
+   * incwuded i-in the output in json fowmat, OwO othewwise the simpwe vawue i-is
+   * convewted to a stwing. 😳😳😳
    */
-  def select(item: T, paths: Seq[String]): Seq[String] = {
-    val jsonNode = toSimpleJson(item)
+  def sewect(item: t, (ˆ ﻌ ˆ)♡ paths: seq[stwing]): seq[stwing] = {
+    v-vaw jsonnode = tosimpwejson(item)
     paths.map {
-      _.split("/").foldLeft(jsonNode)(_.findPath(_)) match {
-        case node if node.isMissingNode => "[invalid-path]"
-        case node if node.isContainerNode => node.toString
-        case node => node.asText
+      _.spwit("/").fowdweft(jsonnode)(_.findpath(_)) match {
+        c-case n-nyode if nyode.ismissingnode => "[invawid-path]"
+        c-case nyode if nyode.iscontainewnode => n-nyode.tostwing
+        case node => n-nyode.astext
       }
     }
   }
 
   /**
-   * Convert the given Thrift struct to a human-readable pretty-printed
-   * JSON representation. This JSON cannot be converted back into a
-   * struct. This output is intended for debug logging or interactive
-   * inspection of Thrift objects.
+   * convewt t-the given thwift stwuct to a human-weadabwe pwetty-pwinted
+   * json wepwesentation. XD this j-json cannot be convewted back into a-a
+   * stwuct. (ˆ ﻌ ˆ)♡ this output is i-intended fow debug w-wogging ow intewactive
+   * inspection of thwift o-objects. ( ͡o ω ͡o )
    */
-  def prettyPrint(t: T): String = print(t, true)
+  d-def pwettypwint(t: t): stwing = p-pwint(t, rawr x3 t-twue)
 
-  def print(t: T, pretty: Boolean = false): String = {
-    val writer = new StringWriter()
-    val generator = factory.createGenerator(writer)
-    if (pretty)
-      generator.useDefaultPrettyPrinter()
-    generator.writeTree(toSimpleJson(t))
-    writer.toString
+  def pwint(t: t, nyaa~~ pwetty: boowean = fawse): stwing = {
+    vaw wwitew = nyew s-stwingwwitew()
+    v-vaw genewatow = f-factowy.cweategenewatow(wwitew)
+    if (pwetty)
+      g-genewatow.usedefauwtpwettypwintew()
+    g-genewatow.wwitetwee(tosimpwejson(t))
+    wwitew.tostwing
   }
 
   /**
-   * Produce a human-readable unified diff of the json pretty-printed
-   * representations of `a` and `b`. If the inputs have the same JSON
-   * representation, the result will be the empty string.
+   * p-pwoduce a human-weadabwe unified diff of the json pwetty-pwinted
+   * w-wepwesentations o-of `a` and `b`. >_< if the inputs have the same j-json
+   * wepwesentation, ^^;; t-the wesuwt wiww be the empty stwing. (ˆ ﻌ ˆ)♡
    */
-  def diff(a: T, b: T, contextLines: Int = 1): String = {
-    val linesA = prettyPrint(a).linesIterator.toList.asJava
-    val linesB = prettyPrint(b).linesIterator.toList.asJava
-    val patch = DiffUtils.diff(linesA, linesB)
-    DiffUtils.generateUnifiedDiff("a", "b", linesA, patch, contextLines).asScala.mkString("\n")
+  def diff(a: t-t, ^^;; b: t, contextwines: int = 1): stwing = {
+    vaw winesa = pwettypwint(a).winesitewatow.towist.asjava
+    vaw w-winesb = pwettypwint(b).winesitewatow.towist.asjava
+    vaw patch = diffutiws.diff(winesa, (⑅˘꒳˘) w-winesb)
+    d-diffutiws.genewateunifieddiff("a", rawr x3 "b", winesa, (///ˬ///✿) patch, contextwines).asscawa.mkstwing("\n")
   }
 }
 
-object syntax {
-  private[this] object CompanionObjectLoader {
-    def load[T](c: Context)(implicit t: c.universe.WeakTypeTag[T]) = {
-      val tSym = t.tpe.typeSymbol
-      val companion = tSym.asClass.companion
-      if (companion == c.universe.NoSymbol) {
-        c.abort(c.enclosingPosition, s"${tSym} has no companion object")
-      } else {
-        c.universe.Ident(companion)
+object s-syntax {
+  pwivate[this] o-object companionobjectwoadew {
+    def woad[t](c: context)(impwicit t: c.univewse.weaktypetag[t]) = {
+      v-vaw tsym = t.tpe.typesymbow
+      v-vaw companion = tsym.ascwass.companion
+      if (companion == c.univewse.nosymbow) {
+        c-c.abowt(c.encwosingposition, 🥺 s"${tsym} has n-nyo companion o-object")
+      } ewse {
+        c-c.univewse.ident(companion)
       }
     }
   }
 
   /**
-   * Load the companion object of the named type parameter and require
-   * it to be a ThriftStructCodec. Compilation will fail if the
-   * companion object is not a ThriftStructCodec.
+   * woad t-the companion object o-of the nyamed t-type pawametew and wequiwe
+   * i-it to be a thwiftstwuctcodec. >_< c-compiwation wiww faiw if the
+   * companion object i-is nyot a thwiftstwuctcodec. UwU
    */
-  implicit def thriftStructCodec[T <: ThriftStruct]: ThriftStructCodec[T] =
-    macro CompanionObjectLoader.load[T]
+  i-impwicit d-def thwiftstwuctcodec[t <: thwiftstwuct]: thwiftstwuctcodec[t] =
+    m-macwo companionobjectwoadew.woad[t]
 
-  implicit class ThriftJsonSyntax[T <: ThriftStruct](t: T)(implicit codec: ThriftStructCodec[T]) {
-    private[this] def inspector = ThriftJsonInspector(codec)
-    def toSimpleJson: JsonNode = inspector.toSimpleJson(t)
-    def prettyPrint: String = inspector.prettyPrint(t)
-    def diff(other: T, contextLines: Int = 1): String =
-      inspector.diff(t, other, contextLines)
+  impwicit c-cwass thwiftjsonsyntax[t <: t-thwiftstwuct](t: t)(impwicit codec: thwiftstwuctcodec[t]) {
+    pwivate[this] d-def inspectow = t-thwiftjsoninspectow(codec)
+    d-def tosimpwejson: j-jsonnode = inspectow.tosimpwejson(t)
+    def pwettypwint: s-stwing = inspectow.pwettypwint(t)
+    def diff(othew: t, >_< contextwines: int = 1): stwing =
+      inspectow.diff(t, -.- o-othew, mya contextwines)
   }
 }

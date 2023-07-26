@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source.strato
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.stwato
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.cwient.fetchew
 
 /**
- * A [[CandidateSource]] for getting Candidates from Strato where the
- * Strato column's View is [[Unit]] and the Value is a Seq of [[StratoResult]]
+ * a-a [[candidatesouwce]] f-fow getting c-candidates fwom s-stwato whewe t-the
+ * stwato cowumn's v-view is [[unit]] and the vawue is a seq of [[stwatowesuwt]]
  *
- * @tparam StratoKey the column's Key type
- * @tparam StratoResult the column's Value's Seq type
+ * @tpawam stwatokey the c-cowumn's key type
+ * @tpawam stwatowesuwt the cowumn's v-vawue's seq type
  */
-trait StratoKeyFetcherSeqSource[StratoKey, StratoResult]
-    extends CandidateSource[StratoKey, StratoResult] {
+twait s-stwatokeyfetchewseqsouwce[stwatokey, 😳😳😳 stwatowesuwt]
+    extends candidatesouwce[stwatokey, -.- s-stwatowesuwt] {
 
-  val fetcher: Fetcher[StratoKey, Unit, Seq[StratoResult]]
+  vaw fetchew: fetchew[stwatokey, ( ͡o ω ͡o ) unit, s-seq[stwatowesuwt]]
 
-  override def apply(key: StratoKey): Stitch[Seq[StratoResult]] = {
-    fetcher
+  o-ovewwide def appwy(key: stwatokey): stitch[seq[stwatowesuwt]] = {
+    fetchew
       .fetch(key)
-      .map { result =>
-        result.v
-          .getOrElse(Seq.empty)
-      }.rescue(StratoErrCategorizer.CategorizeStratoException)
+      .map { wesuwt =>
+        w-wesuwt.v
+          .getowewse(seq.empty)
+      }.wescue(stwatoewwcategowizew.categowizestwatoexception)
   }
 }

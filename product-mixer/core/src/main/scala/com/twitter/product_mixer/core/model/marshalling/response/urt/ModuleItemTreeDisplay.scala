@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleDisplayType
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.moduwedispwaytype
 
-case class ModuleItemTreeDisplay(
-  parentModuleEntryItemId: Option[String],
-  indentFromParent: Option[Boolean],
-  displayType: Option[ModuleDisplayType],
-  isAnchorChild: Option[Boolean])
+c-case c-cwass moduweitemtweedispway(
+  p-pawentmoduweentwyitemid: o-option[stwing], (⑅˘꒳˘)
+  i-indentfwompawent: option[boowean], ( ͡o ω ͡o )
+  d-dispwaytype: option[moduwedispwaytype], UwU
+  i-isanchowchiwd: o-option[boowean])

@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.rankers.interleave_ranker
+package com.twittew.fowwow_wecommendations.common.wankews.intewweave_wankew
 
-import com.twitter.timelines.configapi.FSParam
+impowt c-com.twittew.timewines.configapi.fspawam
 
-object InterleaveRankerParams {
-  case object ScribeRankingInfoInInterleaveRanker
-      extends FSParam[Boolean]("interleave_ranker_scribe_ranking_info", true)
+o-object i-intewweavewankewpawams {
+  c-case o-object scwibewankinginfoinintewweavewankew
+      e-extends fspawam[boowean]("intewweave_wankew_scwibe_wanking_info", (U ᵕ U❁) t-twue)
 }

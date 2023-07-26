@@ -1,47 +1,47 @@
-package com.twitter.home_mixer.marshaller.timeline_logging
+package com.twittew.home_mixew.mawshawwew.timewine_wogging
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtModulePresentation
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.GeneralContextTypeMarshaller
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ConversationGeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TopicContext
-import com.twitter.timelines.service.{thriftscala => tst}
-import com.twitter.timelines.timeline_logging.{thriftscala => thriftlog}
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.souwcetweetidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.souwceusewidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.suggesttypefeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.pwesentation.uwt.uwtitempwesentation
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.pwesentation.uwt.uwtmoduwepwesentation
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.genewawcontexttypemawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tweet.tweetitem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.convewsationgenewawcontexttype
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.genewawcontext
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.topiccontext
+impowt com.twittew.timewines.sewvice.{thwiftscawa => tst}
+impowt com.twittew.timewines.timewine_wogging.{thwiftscawa => t-thwiftwog}
 
-object TweetDetailsMarshaller {
+object t-tweetdetaiwsmawshawwew {
 
-  private val generalContextTypeMarshaller = new GeneralContextTypeMarshaller()
+  p-pwivate vaw genewawcontexttypemawshawwew = nyew genewawcontexttypemawshawwew()
 
-  def apply(entry: TweetItem, candidate: CandidateWithDetails): thriftlog.TweetDetails = {
-    val socialContext = candidate.presentation.flatMap {
-      case _ @UrtItemPresentation(timelineItem: TweetItem, _) => timelineItem.socialContext
-      case _ @UrtModulePresentation(timelineModule) =>
-        timelineModule.items.head.item match {
-          case timelineItem: TweetItem => timelineItem.socialContext
-          case _ => Some(ConversationGeneralContextType)
+  def appwy(entwy: tweetitem, 😳😳😳 candidate: c-candidatewithdetaiws): thwiftwog.tweetdetaiws = {
+    vaw sociawcontext = candidate.pwesentation.fwatmap {
+      c-case _ @uwtitempwesentation(timewineitem: tweetitem, o.O _) => t-timewineitem.sociawcontext
+      c-case _ @uwtmoduwepwesentation(timewinemoduwe) =>
+        t-timewinemoduwe.items.head.item m-match {
+          case timewineitem: t-tweetitem => timewineitem.sociawcontext
+          case _ => some(convewsationgenewawcontexttype)
         }
     }
 
-    val socialContextType = socialContext match {
-      case Some(GeneralContext(contextType, _, _, _, _)) =>
-        Some(generalContextTypeMarshaller(contextType).value.toShort)
-      case Some(TopicContext(_, _)) => Some(tst.ContextType.Topic.value.toShort)
-      case _ => None
+    vaw sociawcontexttype = s-sociawcontext match {
+      case some(genewawcontext(contexttype, ( ͡o ω ͡o ) _, _, (U ﹏ U) _, _)) =>
+        some(genewawcontexttypemawshawwew(contexttype).vawue.toshowt)
+      case some(topiccontext(_, (///ˬ///✿) _)) => s-some(tst.contexttype.topic.vawue.toshowt)
+      case _ => n-nyone
     }
 
-    thriftlog.TweetDetails(
-      sourceTweetId = candidate.features.getOrElse(SourceTweetIdFeature, None),
-      socialContextType = socialContextType,
-      suggestType = candidate.features.getOrElse(SuggestTypeFeature, None).map(_.name),
-      authorId = candidate.features.getOrElse(AuthorIdFeature, None),
-      sourceAuthorId = candidate.features.getOrElse(SourceUserIdFeature, None)
+    t-thwiftwog.tweetdetaiws(
+      s-souwcetweetid = candidate.featuwes.getowewse(souwcetweetidfeatuwe, >w< nyone), rawr
+      sociawcontexttype = s-sociawcontexttype, mya
+      s-suggesttype = candidate.featuwes.getowewse(suggesttypefeatuwe, ^^ n-nyone).map(_.name), 😳😳😳
+      a-authowid = candidate.featuwes.getowewse(authowidfeatuwe, mya n-nyone),
+      souwceauthowid = c-candidate.featuwes.getowewse(souwceusewidfeatuwe, 😳 nyone)
     )
   }
 }

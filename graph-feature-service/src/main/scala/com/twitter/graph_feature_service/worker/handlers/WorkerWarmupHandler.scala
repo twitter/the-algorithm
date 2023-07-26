@@ -1,14 +1,14 @@
-package com.twitter.graph_feature_service.worker.handlers
+package com.twittew.gwaph_featuwe_sewvice.wowkew.handwews
 
-import com.twitter.finatra.thrift.routing.ThriftWarmup
-import com.twitter.inject.Logging
-import com.twitter.inject.utils.Handler
-import javax.inject.{Inject, Singleton}
+impowt c-com.twittew.finatwa.thwift.wouting.thwiftwawmup
+i-impowt com.twittew.inject.wogging
+i-impowt com.twittew.inject.utiws.handwew
+i-impowt j-javax.inject.{inject, σωσ s-singweton}
 
-@Singleton
-class WorkerWarmupHandler @Inject() (warmup: ThriftWarmup) extends Handler with Logging {
+@singweton
+cwass w-wowkewwawmuphandwew @inject() (wawmup: t-thwiftwawmup) extends handwew with wogging {
 
-  override def handle(): Unit = {
-    info("Warmup Done!")
+  ovewwide def handwe(): u-unit = {
+    info("wawmup done!")
   }
 }

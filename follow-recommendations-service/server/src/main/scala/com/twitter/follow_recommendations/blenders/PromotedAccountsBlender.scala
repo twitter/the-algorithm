@@ -1,138 +1,138 @@
-package com.twitter.follow_recommendations.blenders
+package com.twittew.fowwow_wecommendations.bwendews
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.common.models.AdMetadata
-import com.twitter.follow_recommendations.common.models.Recommendation
-import com.twitter.inject.Logging
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.googwe.common.annotations.visibwefowtesting
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fowwow_wecommendations.common.base.twansfowm
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.admetadata
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.wecommendation
+impowt com.twittew.inject.wogging
+impowt com.twittew.stitch.stitch
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class PromotedAccountsBlender @Inject() (statsReceiver: StatsReceiver)
-    extends Transform[Int, Recommendation]
-    with Logging {
+@singweton
+c-cwass pwomotedaccountsbwendew @inject() (statsweceivew: statsweceivew)
+    e-extends twansfowm[int, 😳 wecommendation]
+    w-with wogging {
 
-  import PromotedAccountsBlender._
-  val stats = statsReceiver.scope(Name)
-  val inputOrganicAccounts = stats.counter(InputOrganic)
-  val inputPromotedAccounts = stats.counter(InputPromoted)
-  val outputOrganicAccounts = stats.counter(OutputOrganic)
-  val outputPromotedAccounts = stats.counter(OutputPromoted)
-  val promotedAccountsStats = stats.scope(NumPromotedAccounts)
+  impowt pwomotedaccountsbwendew._
+  vaw stats = statsweceivew.scope(name)
+  vaw i-inputowganicaccounts = stats.countew(inputowganic)
+  v-vaw inputpwomotedaccounts = s-stats.countew(inputpwomoted)
+  vaw outputowganicaccounts = stats.countew(outputowganic)
+  vaw outputpwomotedaccounts = stats.countew(outputpwomoted)
+  v-vaw pwomotedaccountsstats = stats.scope(numpwomotedaccounts)
 
-  override def transform(
-    maxResults: Int,
-    items: Seq[Recommendation]
-  ): Stitch[Seq[Recommendation]] = {
-    val (promoted, organic) = items.partition(_.isPromotedAccount)
-    val promotedIds = promoted.map(_.id).toSet
-    val dedupedOrganic = organic.filterNot(u => promotedIds.contains(u.id))
-    val blended = blendPromotedAccount(dedupedOrganic, promoted, maxResults)
-    val (outputPromoted, outputOrganic) = blended.partition(_.isPromotedAccount)
-    inputOrganicAccounts.incr(dedupedOrganic.size)
-    inputPromotedAccounts.incr(promoted.size)
-    outputOrganicAccounts.incr(outputOrganic.size)
-    val size = outputPromoted.size
-    outputPromotedAccounts.incr(size)
-    if (size <= 5) {
-      promotedAccountsStats.counter(outputPromoted.size.toString).incr()
-    } else {
-      promotedAccountsStats.counter(MoreThan5Promoted).incr()
+  ovewwide def twansfowm(
+    maxwesuwts: i-int, (⑅˘꒳˘)
+    items: seq[wecommendation]
+  ): s-stitch[seq[wecommendation]] = {
+    v-vaw (pwomoted, nyaa~~ owganic) = i-items.pawtition(_.ispwomotedaccount)
+    v-vaw pwomotedids = pwomoted.map(_.id).toset
+    vaw dedupedowganic = o-owganic.fiwtewnot(u => pwomotedids.contains(u.id))
+    vaw b-bwended = bwendpwomotedaccount(dedupedowganic, OwO pwomoted, rawr x3 maxwesuwts)
+    vaw (outputpwomoted, XD outputowganic) = bwended.pawtition(_.ispwomotedaccount)
+    inputowganicaccounts.incw(dedupedowganic.size)
+    inputpwomotedaccounts.incw(pwomoted.size)
+    o-outputowganicaccounts.incw(outputowganic.size)
+    vaw size = outputpwomoted.size
+    o-outputpwomotedaccounts.incw(size)
+    i-if (size <= 5) {
+      p-pwomotedaccountsstats.countew(outputpwomoted.size.tostwing).incw()
+    } ewse {
+      pwomotedaccountsstats.countew(mowethan5pwomoted).incw()
     }
-    Stitch.value(blended)
+    stitch.vawue(bwended)
   }
 
   /**
-   * Merge Promoted results and organic results. Promoted result dictates the position
-   * in the merge list.
+   * m-mewge p-pwomoted wesuwts and owganic w-wesuwts. σωσ pwomoted w-wesuwt dictates the position
+   * i-in the mewge wist. (U ᵕ U❁)
    *
-   * merge a list of positioned users, aka. promoted, and a list of organic
-   * users.  The positioned promoted users are pre-sorted with regards to their
-   * position ascendingly.  Only requirement about position is to be within the
-   * range, i.e, can not exceed the combined length if merge is successful, ok
-   * to be at the last position, but not beyond.
-   * For more detailed description of location position:
-   * http://confluence.local.twitter.com/display/ADS/Promoted+Tweets+in+Timeline+Design+Document
+   * m-mewge a wist of positioned usews, (U ﹏ U) aka. pwomoted, :3 a-and a wist of owganic
+   * usews. ( ͡o ω ͡o )  t-the positioned pwomoted usews a-awe pwe-sowted w-with wegawds to theiw
+   * position ascendingwy. σωσ  onwy wequiwement about position is to be within the
+   * wange, >w< i-i.e, 😳😳😳 can nyot e-exceed the combined wength if m-mewge is successfuw, OwO o-ok
+   * to b-be at the wast position, 😳 but nyot beyond. 😳😳😳
+   * fow mowe detaiwed d-descwiption of wocation position:
+   * http://confwuence.wocaw.twittew.com/dispway/ads/pwomoted+tweets+in+timewine+design+document
    */
-  @VisibleForTesting
-  private[blenders] def mergePromotedAccounts(
-    organicUsers: Seq[Recommendation],
-    promotedUsers: Seq[Recommendation]
-  ): Seq[Recommendation] = {
-    def mergeAccountWithIndex(
-      organicUsers: Seq[Recommendation],
-      promotedUsers: Seq[Recommendation],
-      index: Int
-    ): Stream[Recommendation] = {
-      if (promotedUsers.isEmpty) organicUsers.toStream
-      else {
-        val promotedHead = promotedUsers.head
-        val promotedTail = promotedUsers.tail
-        promotedHead.adMetadata match {
-          case Some(AdMetadata(position, _)) =>
-            if (position < 0) mergeAccountWithIndex(organicUsers, promotedTail, index)
-            else if (position == index)
-              promotedHead #:: mergeAccountWithIndex(organicUsers, promotedTail, index)
-            else if (organicUsers.isEmpty) organicUsers.toStream
-            else {
-              val organicHead = organicUsers.head
-              val organicTail = organicUsers.tail
-              organicHead #:: mergeAccountWithIndex(organicTail, promotedUsers, index + 1)
+  @visibwefowtesting
+  pwivate[bwendews] def mewgepwomotedaccounts(
+    o-owganicusews: seq[wecommendation], (˘ω˘)
+    p-pwomotedusews: s-seq[wecommendation]
+  ): s-seq[wecommendation] = {
+    def m-mewgeaccountwithindex(
+      owganicusews: s-seq[wecommendation], ʘwʘ
+      p-pwomotedusews: s-seq[wecommendation],
+      index: int
+    ): stweam[wecommendation] = {
+      i-if (pwomotedusews.isempty) o-owganicusews.tostweam
+      e-ewse {
+        v-vaw pwomotedhead = p-pwomotedusews.head
+        vaw pwomotedtaiw = pwomotedusews.taiw
+        pwomotedhead.admetadata match {
+          c-case some(admetadata(position, _)) =>
+            if (position < 0) mewgeaccountwithindex(owganicusews, ( ͡o ω ͡o ) pwomotedtaiw, o.O index)
+            ewse if (position == index)
+              p-pwomotedhead #:: mewgeaccountwithindex(owganicusews, >w< pwomotedtaiw, 😳 index)
+            e-ewse if (owganicusews.isempty) o-owganicusews.tostweam
+            e-ewse {
+              vaw owganichead = o-owganicusews.head
+              vaw owganictaiw = o-owganicusews.taiw
+              o-owganichead #:: mewgeaccountwithindex(owganictaiw, 🥺 pwomotedusews, rawr x3 index + 1)
             }
           case _ =>
-            logger.error("Unknown Candidate type in mergePromotedAccounts")
-            Stream.empty
+            woggew.ewwow("unknown candidate type i-in mewgepwomotedaccounts")
+            stweam.empty
         }
       }
     }
 
-    mergeAccountWithIndex(organicUsers, promotedUsers, 0)
+    m-mewgeaccountwithindex(owganicusews, o.O pwomotedusews, rawr 0)
   }
 
-  private[this] def blendPromotedAccount(
-    organic: Seq[Recommendation],
-    promoted: Seq[Recommendation],
-    maxResults: Int
-  ): Seq[Recommendation] = {
+  p-pwivate[this] d-def bwendpwomotedaccount(
+    owganic: seq[wecommendation], ʘwʘ
+    p-pwomoted: seq[wecommendation], 😳😳😳
+    m-maxwesuwts: int
+  ): seq[wecommendation] = {
 
-    val merged = mergePromotedAccounts(organic, promoted)
-    val mergedServed = merged.take(maxResults)
-    val promotedServed = promoted.intersect(mergedServed)
+    v-vaw mewged = m-mewgepwomotedaccounts(owganic, ^^;; pwomoted)
+    vaw mewgedsewved = mewged.take(maxwesuwts)
+    vaw p-pwomotedsewved = p-pwomoted.intewsect(mewgedsewved)
 
-    if (isBlendPromotedNeeded(
-        mergedServed.size - promotedServed.size,
-        promotedServed.size,
-        maxResults
+    i-if (isbwendpwomotedneeded(
+        mewgedsewved.size - p-pwomotedsewved.size, o.O
+        p-pwomotedsewved.size, (///ˬ///✿)
+        maxwesuwts
       )) {
-      mergedServed
-    } else {
-      organic.take(maxResults)
+      m-mewgedsewved
+    } ewse {
+      owganic.take(maxwesuwts)
     }
   }
 
-  @VisibleForTesting
-  private[blenders] def isBlendPromotedNeeded(
-    organicSize: Int,
-    promotedSize: Int,
-    maxResults: Int
-  ): Boolean = {
-    (organicSize > 1) &&
-    (promotedSize > 0) &&
-    (promotedSize < organicSize) &&
-    (promotedSize <= 2) &&
-    (maxResults > 1)
+  @visibwefowtesting
+  pwivate[bwendews] def isbwendpwomotedneeded(
+    o-owganicsize: int,
+    p-pwomotedsize: int, σωσ
+    maxwesuwts: int
+  ): b-boowean = {
+    (owganicsize > 1) &&
+    (pwomotedsize > 0) &&
+    (pwomotedsize < o-owganicsize) &&
+    (pwomotedsize <= 2) &&
+    (maxwesuwts > 1)
   }
 }
 
-object PromotedAccountsBlender {
-  val Name = "promoted_accounts_blender"
-  val InputOrganic = "input_organic_accounts"
-  val InputPromoted = "input_promoted_accounts"
-  val OutputOrganic = "output_organic_accounts"
-  val OutputPromoted = "output_promoted_accounts"
-  val NumPromotedAccounts = "num_promoted_accounts"
-  val MoreThan5Promoted = "more_than_5"
+object pwomotedaccountsbwendew {
+  vaw nyame = "pwomoted_accounts_bwendew"
+  v-vaw inputowganic = "input_owganic_accounts"
+  vaw inputpwomoted = "input_pwomoted_accounts"
+  vaw outputowganic = "output_owganic_accounts"
+  vaw outputpwomoted = "output_pwomoted_accounts"
+  vaw nyumpwomotedaccounts = "num_pwomoted_accounts"
+  v-vaw mowethan5pwomoted = "mowe_than_5"
 }

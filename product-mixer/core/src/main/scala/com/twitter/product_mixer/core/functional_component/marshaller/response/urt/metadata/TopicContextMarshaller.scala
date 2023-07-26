@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.BasicTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TopicContext
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.basictopiccontextfunctionawitytype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.topiccontext
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class TopicContextMarshaller @Inject() () {
+@singweton
+cwass topiccontextmawshawwew @inject() () {
 
-  def apply(topicContext: TopicContext): urt.SocialContext = {
-    urt.SocialContext.TopicContext(
-      urt.TopicContext(
-        topicId = topicContext.topicId,
-        functionalityType = TopicContextFunctionalityTypeMarshaller(
-          topicContext.functionalityType.getOrElse(BasicTopicContextFunctionalityType))
+  def appwy(topiccontext: topiccontext): u-uwt.sociawcontext = {
+    uwt.sociawcontext.topiccontext(
+      uwt.topiccontext(
+        t-topicid = topiccontext.topicid, (ˆ ﻌ ˆ)♡
+        functionawitytype = t-topiccontextfunctionawitytypemawshawwew(
+          topiccontext.functionawitytype.getowewse(basictopiccontextfunctionawitytype))
       )
     )
   }

@@ -1,100 +1,100 @@
-package com.twitter.simclusters_v2.summingbird.stores
+package com.twittew.simcwustews_v2.summingbiwd.stowes
 
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.simclusters_v2.thriftscala.PersistedFullClusterId
-import com.twitter.simclusters_v2.thriftscala.TopProducersWithScore
-import com.twitter.simclusters_v2.thriftscala.TopSimClustersWithScore
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.Athena
-import com.twitter.storehaus_internal.manhattan.ManhattanRO
-import com.twitter.storehaus_internal.manhattan.ManhattanROConfig
-import com.twitter.storehaus_internal.util.ApplicationID
-import com.twitter.storehaus_internal.util.DatasetName
-import com.twitter.storehaus_internal.util.HDFSPath
+impowt com.twittew.bijection.injection
+i-impowt c-com.twittew.bijection.scwooge.compactscawacodec
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.pewsistedfuwwcwustewid
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.toppwoducewswithscowe
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.topsimcwustewswithscowe
+i-impowt com.twittew.stowage.cwient.manhattan.kv.manhattankvcwientmtwspawams
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.stowehaus_intewnaw.manhattan.athena
+i-impowt com.twittew.stowehaus_intewnaw.manhattan.manhattanwo
+impowt com.twittew.stowehaus_intewnaw.manhattan.manhattanwoconfig
+i-impowt com.twittew.stowehaus_intewnaw.utiw.appwicationid
+i-impowt com.twittew.stowehaus_intewnaw.utiw.datasetname
+impowt com.twittew.stowehaus_intewnaw.utiw.hdfspath
 
-object ProducerClusterEmbeddingReadableStores {
+object pwoducewcwustewembeddingweadabwestowes {
 
-  implicit val longInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
-  implicit val clusterInject: Injection[TopSimClustersWithScore, Array[Byte]] =
-    CompactScalaCodec(TopSimClustersWithScore)
-  implicit val producerInject: Injection[TopProducersWithScore, Array[Byte]] =
-    CompactScalaCodec(TopProducersWithScore)
-  implicit val clusterIdInject: Injection[PersistedFullClusterId, Array[Byte]] =
-    CompactScalaCodec(PersistedFullClusterId)
+  i-impwicit vaw wonginject: injection[wong, ʘwʘ awway[byte]] = i-injection.wong2bigendian
+  i-impwicit vaw cwustewinject: injection[topsimcwustewswithscowe, (ˆ ﻌ ˆ)♡ awway[byte]] =
+    compactscawacodec(topsimcwustewswithscowe)
+  i-impwicit vaw pwoducewinject: injection[toppwoducewswithscowe, 😳😳😳 awway[byte]] =
+    compactscawacodec(toppwoducewswithscowe)
+  i-impwicit vaw cwustewidinject: i-injection[pewsistedfuwwcwustewid, :3 a-awway[byte]] =
+    c-compactscawacodec(pewsistedfuwwcwustewid)
 
-  private val appId = "simclusters_v2"
+  p-pwivate vaw appid = "simcwustews_v2"
 
-  def getSimClusterEmbeddingTopKProducersStore(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[PersistedFullClusterId, TopProducersWithScore] = {
-    ManhattanRO.getReadableStoreWithMtls[PersistedFullClusterId, TopProducersWithScore](
-      ManhattanROConfig(
-        HDFSPath(""),
-        ApplicationID(appId),
-        DatasetName("simcluster_embedding_top_k_producers_by_fav_score_20m_145k_updated"),
-        Athena
-      ),
-      mhMtlsParams
+  def g-getsimcwustewembeddingtopkpwoducewsstowe(
+    mhmtwspawams: manhattankvcwientmtwspawams
+  ): w-weadabwestowe[pewsistedfuwwcwustewid, OwO toppwoducewswithscowe] = {
+    manhattanwo.getweadabwestowewithmtws[pewsistedfuwwcwustewid, (U ﹏ U) toppwoducewswithscowe](
+      manhattanwoconfig(
+        hdfspath(""), >w<
+        appwicationid(appid),
+        d-datasetname("simcwustew_embedding_top_k_pwoducews_by_fav_scowe_20m_145k_updated"), (U ﹏ U)
+        athena
+      ), 😳
+      m-mhmtwspawams
     )
   }
 
-  def getProducerTopKSimClustersEmbeddingsStore(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[Long, TopSimClustersWithScore] = {
-    val datasetName = "producer_top_k_simcluster_embeddings_by_fav_score_20m_145k_updated"
-    ManhattanRO.getReadableStoreWithMtls[Long, TopSimClustersWithScore](
-      ManhattanROConfig(
-        HDFSPath(""),
-        ApplicationID(appId),
-        DatasetName(datasetName),
-        Athena
-      ),
-      mhMtlsParams
+  d-def getpwoducewtopksimcwustewsembeddingsstowe(
+    m-mhmtwspawams: manhattankvcwientmtwspawams
+  ): weadabwestowe[wong, (ˆ ﻌ ˆ)♡ topsimcwustewswithscowe] = {
+    v-vaw d-datasetname = "pwoducew_top_k_simcwustew_embeddings_by_fav_scowe_20m_145k_updated"
+    manhattanwo.getweadabwestowewithmtws[wong, 😳😳😳 t-topsimcwustewswithscowe](
+      m-manhattanwoconfig(
+        hdfspath(""), (U ﹏ U)
+        appwicationid(appid), (///ˬ///✿)
+        d-datasetname(datasetname), 😳
+        athena
+      ), 😳
+      m-mhmtwspawams
     )
   }
 
-  def getProducerTopKSimClusters2020EmbeddingsStore(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[Long, TopSimClustersWithScore] = {
-    val datasetName = "producer_top_k_simcluster_embeddings_by_fav_score_20m_145k_2020"
-    ManhattanRO.getReadableStoreWithMtls[Long, TopSimClustersWithScore](
-      ManhattanROConfig(
-        HDFSPath(""),
-        ApplicationID(appId),
-        DatasetName(datasetName),
-        Athena
-      ),
-      mhMtlsParams
+  def getpwoducewtopksimcwustews2020embeddingsstowe(
+    mhmtwspawams: m-manhattankvcwientmtwspawams
+  ): weadabwestowe[wong, σωσ topsimcwustewswithscowe] = {
+    v-vaw datasetname = "pwoducew_top_k_simcwustew_embeddings_by_fav_scowe_20m_145k_2020"
+    manhattanwo.getweadabwestowewithmtws[wong, rawr x3 t-topsimcwustewswithscowe](
+      m-manhattanwoconfig(
+        hdfspath(""), OwO
+        appwicationid(appid), /(^•ω•^)
+        datasetname(datasetname), 😳😳😳
+        athena
+      ), ( ͡o ω ͡o )
+      mhmtwspawams
     )
   }
 
-  def getSimClusterEmbeddingTopKProducersByFollowStore(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[PersistedFullClusterId, TopProducersWithScore] = {
-    ManhattanRO.getReadableStoreWithMtls[PersistedFullClusterId, TopProducersWithScore](
-      ManhattanROConfig(
-        HDFSPath(""),
-        ApplicationID(appId),
-        DatasetName("simcluster_embedding_top_k_producers_by_follow_score_20m_145k_updated"),
-        Athena
-      ),
-      mhMtlsParams
+  def getsimcwustewembeddingtopkpwoducewsbyfowwowstowe(
+    m-mhmtwspawams: m-manhattankvcwientmtwspawams
+  ): weadabwestowe[pewsistedfuwwcwustewid, >_< t-toppwoducewswithscowe] = {
+    m-manhattanwo.getweadabwestowewithmtws[pewsistedfuwwcwustewid, >w< toppwoducewswithscowe](
+      m-manhattanwoconfig(
+        hdfspath(""), rawr
+        appwicationid(appid), 😳
+        datasetname("simcwustew_embedding_top_k_pwoducews_by_fowwow_scowe_20m_145k_updated"), >w<
+        a-athena
+      ), (⑅˘꒳˘)
+      mhmtwspawams
     )
   }
 
-  def getProducerTopKSimClustersEmbeddingsByFollowStore(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[Long, TopSimClustersWithScore] = {
-    ManhattanRO.getReadableStoreWithMtls[Long, TopSimClustersWithScore](
-      ManhattanROConfig(
-        HDFSPath(""),
-        ApplicationID(appId),
-        DatasetName("producer_top_k_simcluster_embeddings_by_follow_score_20m_145k_2020"),
-        Athena
-      ),
-      mhMtlsParams
+  def getpwoducewtopksimcwustewsembeddingsbyfowwowstowe(
+    mhmtwspawams: manhattankvcwientmtwspawams
+  ): w-weadabwestowe[wong, OwO topsimcwustewswithscowe] = {
+    m-manhattanwo.getweadabwestowewithmtws[wong, (ꈍᴗꈍ) t-topsimcwustewswithscowe](
+      m-manhattanwoconfig(
+        hdfspath(""), 😳
+        appwicationid(appid), 😳😳😳
+        d-datasetname("pwoducew_top_k_simcwustew_embeddings_by_fowwow_scowe_20m_145k_2020"), mya
+        a-athena
+      ), mya
+      m-mhmtwspawams
     )
   }
 

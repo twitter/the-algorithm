@@ -1,56 +1,56 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.twittew.home_mixew.functionaw_component.decowatow.uwt.buiwdew
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScreenNamesFeature
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ChildFeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorToggleFollowUser
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.innetwowkfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.scweennamesfeatuwe
+i-impowt com.twittew.home_mixew.pwoduct.fowwowing.modew.homemixewextewnawstwings
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.icon
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.chiwdfeedbackaction
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wichbehaviow
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wichfeedbackbehaviowtoggwefowwowusew
+impowt com.twittew.pwoduct_mixew.cowe.pwoduct.guice.scope.pwoductscoped
+i-impowt com.twittew.stwingcentew.cwient.stwingcentew
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-case class UnfollowUserChildFeedbackActionBuilder @Inject() (
-  @ProductScoped stringCenter: StringCenter,
-  externalStrings: HomeMixerExternalStrings) {
+@singweton
+case cwass unfowwowusewchiwdfeedbackactionbuiwdew @inject() (
+  @pwoductscoped stwingcentew: s-stwingcentew, mya
+  extewnawstwings: h-homemixewextewnawstwings) {
 
-  def apply(candidateFeatures: FeatureMap): Option[ChildFeedbackAction] = {
-    val isInNetwork = candidateFeatures.getOrElse(InNetworkFeature, false)
-    val userIdOpt = candidateFeatures.getOrElse(AuthorIdFeature, None)
+  d-def appwy(candidatefeatuwes: featuwemap): option[chiwdfeedbackaction] = {
+    vaw isinnetwowk = c-candidatefeatuwes.getowewse(innetwowkfeatuwe, ^^ fawse)
+    vaw usewidopt = candidatefeatuwes.getowewse(authowidfeatuwe, nyone)
 
-    if (isInNetwork) {
-      userIdOpt.flatMap { userId =>
-        val screenNamesMap =
-          candidateFeatures.getOrElse(ScreenNamesFeature, Map.empty[Long, String])
-        val userScreenNameOpt = screenNamesMap.get(userId)
-        userScreenNameOpt.map { userScreenName =>
-          val prompt = stringCenter.prepare(
-            externalStrings.unfollowUserString,
-            Map("username" -> userScreenName)
+    if (isinnetwowk) {
+      u-usewidopt.fwatmap { usewid =>
+        v-vaw s-scweennamesmap =
+          c-candidatefeatuwes.getowewse(scweennamesfeatuwe, 😳😳😳 m-map.empty[wong, mya stwing])
+        vaw u-usewscweennameopt = scweennamesmap.get(usewid)
+        usewscweennameopt.map { u-usewscweenname =>
+          vaw pwompt = stwingcentew.pwepawe(
+            extewnawstwings.unfowwowusewstwing, 😳
+            map("usewname" -> usewscweenname)
           )
-          val confirmation = stringCenter.prepare(
-            externalStrings.unfollowUserConfirmationString,
-            Map("username" -> userScreenName)
+          v-vaw confiwmation = stwingcentew.pwepawe(
+            e-extewnawstwings.unfowwowusewconfiwmationstwing, -.-
+            m-map("usewname" -> u-usewscweenname)
           )
-          ChildFeedbackAction(
-            feedbackType = RichBehavior,
-            prompt = Some(prompt),
-            confirmation = Some(confirmation),
-            feedbackUrl = None,
-            hasUndoAction = Some(true),
-            confirmationDisplayType = None,
-            clientEventInfo = None,
-            icon = Some(icon.Unfollow),
-            richBehavior = Some(RichFeedbackBehaviorToggleFollowUser(userId)),
-            subprompt = None
+          chiwdfeedbackaction(
+            feedbacktype = wichbehaviow, 🥺
+            p-pwompt = some(pwompt), o.O
+            c-confiwmation = some(confiwmation), /(^•ω•^)
+            f-feedbackuww = n-nyone, nyaa~~
+            hasundoaction = s-some(twue), nyaa~~
+            confiwmationdispwaytype = n-nyone, :3
+            cwienteventinfo = nyone, 😳😳😳
+            i-icon = some(icon.unfowwow), (˘ω˘)
+            wichbehaviow = s-some(wichfeedbackbehaviowtoggwefowwowusew(usewid)), ^^
+            subpwompt = n-nyone
           )
         }
       }
-    } else None
+    } e-ewse nyone
   }
 }

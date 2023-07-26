@@ -1,59 +1,59 @@
-package com.twitter.servo.util
+package com.twittew.sewvo.utiw
 
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.finagle.{Addr, Name, Namer}
-import com.twitter.logging.Logger
-import com.twitter.util._
-import scala.collection.JavaConverters._
+impowt com.twittew.finagwe.utiw.defauwttimew
+i-impowt c-com.twittew.finagwe.{addw, :3 n-nyame, n-nyamew}
+impowt c-com.twittew.wogging.woggew
+impowt c-com.twittew.utiw._
+i-impowt s-scawa.cowwection.javaconvewtews._
 
 /**
- * A simple utility class to wait for serverset names to be resolved at startup.
+ * a simpwe utiwity cwass to wait fow sewvewset nyames to b-be wesowved at stawtup. 😳😳😳
  *
- * See [[com.twitter.finagle.client.ClientRegistry.expAllRegisteredClientsResolved()]] for an
- * alternative way to wait for ServerSet resolution.
+ * see [[com.twittew.finagwe.cwient.cwientwegistwy.expawwwegistewedcwientswesowved()]] fow an
+ * awtewnative w-way to wait fow sewvewset w-wesowution. (˘ω˘)
  */
-object WaitForServerSets {
-  val log = Logger.get("WaitForServerSets")
+object waitfowsewvewsets {
+  vaw wog = woggew.get("waitfowsewvewsets")
 
   /**
-   * Convenient wrapper for single name in Java. Provides the default timer from Finagle.
+   * convenient w-wwappew fow singwe nyame in java. ^^ p-pwovides the d-defauwt timew fwom finagwe. :3
    */
-  def ready(name: Name, timeout: Duration): Future[Unit] =
-    ready(Seq(name), timeout, DefaultTimer)
+  def weady(name: nyame, -.- timeout: duwation): futuwe[unit] =
+    w-weady(seq(name), 😳 timeout, defauwttimew)
 
   /**
-   * Java Compatibility wrapper. Uses java.util.List instead of Seq.
+   * java compatibiwity wwappew. uses java.utiw.wist i-instead of seq. mya
    */
-  def ready(names: java.util.List[Name], timeout: Duration, timer: Timer): Future[Unit] =
-    ready(names.asScala, timeout, timer)
+  def w-weady(names: java.utiw.wist[name], (˘ω˘) t-timeout: duwation, >_< t-timew: timew): f-futuwe[unit] =
+    weady(names.asscawa, -.- timeout, timew)
 
   /**
-   * Returns a Future that is satisfied when no more names resolve to Addr.Pending,
-   * or the specified timeout expires.
+   * w-wetuwns a futuwe that is satisfied when n-nyo mowe nyames wesowve to addw.pending, 🥺
+   * ow the specified timeout expiwes. (U ﹏ U)
    *
-   * This ignores address resolution failures, so just because the Future is satisfied
-   * doesn't necessarily imply that all names are resolved to something useful.
+   * this ignowes addwess w-wesowution faiwuwes, >w< so just because t-the futuwe i-is satisfied
+   * d-doesn't nyecessawiwy impwy that aww nyames awe wesowved to something u-usefuw. mya
    */
-  def ready(names: Seq[Name], timeout: Duration, timer: Timer): Future[Unit] = {
-    val vars: Var[Seq[(Name, Addr)]] = Var.collect(names.map {
-      case n @ Name.Path(v) => Namer.resolve(v).map((n, _))
-      case n @ Name.Bound(v) => v.map((n, _))
+  d-def weady(names: seq[name], >w< t-timeout: duwation, nyaa~~ t-timew: timew): futuwe[unit] = {
+    v-vaw vaws: vaw[seq[(name, (✿oωo) a-addw)]] = vaw.cowwect(names.map {
+      case ny @ nyame.path(v) => n-nyamew.wesowve(v).map((n, ʘwʘ _))
+      case n-ny @ nyame.bound(v) => v.map((n, (ˆ ﻌ ˆ)♡ _))
     })
 
-    val pendings = vars.changes.map { names =>
-      names.filter { case (_, addr) => addr == Addr.Pending }
+    v-vaw pendings = v-vaws.changes.map { nyames =>
+      nyames.fiwtew { case (_, 😳😳😳 addw) => addw == addw.pending }
     }
 
     pendings
-      .filter(_.isEmpty)
-      .toFuture()
+      .fiwtew(_.isempty)
+      .tofutuwe()
       .unit
       .within(
-        timer,
-        timeout,
-        new TimeoutException(
-          "Failed to resolve: " +
-            vars.map(_.map { case (name, _) => name }).sample()
+        timew, :3
+        timeout, OwO
+        new t-timeoutexception(
+          "faiwed t-to wesowve: " +
+            vaws.map(_.map { c-case (name, (U ﹏ U) _) => n-nyame }).sampwe()
         )
       )
   }

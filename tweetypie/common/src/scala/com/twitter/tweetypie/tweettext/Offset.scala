@@ -1,253 +1,253 @@
-package com.twitter.tweetypie.tweettext
-import scala.collection.immutable
+package com.twittew.tweetypie.tweettext
+impowt scawa.cowwection.immutabwe
 
 /**
- * An Offset is a typed index into a String.
+ * a-an offset is a t-typed index into a-a stwing. 🥺
  */
-trait Offset[T] extends Ordering[T] {
-  def toInt(t: T): Int
-  def count(text: String, start: Offset.CodeUnit, end: Offset.CodeUnit): T
+twait o-offset[t] extends o-owdewing[t] {
+  d-def toint(t: t-t): int
+  def c-count(text: stwing, (///ˬ///✿) stawt: offset.codeunit, (U ᵕ U❁) end: offset.codeunit): t
 
-  def compare(t1: T, t2: T): Int = toInt(t1).compare(toInt(t2))
-  def length(input: String): T = count(input, Offset.CodeUnit(0), Offset.CodeUnit.length(input))
+  def compawe(t1: t-t, ^^;; t2: t): int = toint(t1).compawe(toint(t2))
+  def wength(input: s-stwing): t = count(input, ^^;; o-offset.codeunit(0), offset.codeunit.wength(input))
 }
 
-object Offset {
+object offset {
 
   /**
-   * UTF-16 code unit offsets are the native offsets for Java/Scala
-   * Strings.
+   * u-utf-16 code unit offsets a-awe the nyative o-offsets fow java/scawa
+   * stwings. rawr
    */
-  case class CodeUnit(toInt: Int) extends AnyVal with Ordered[CodeUnit] {
-    def compare(other: CodeUnit): Int = toInt.compare(other.toInt)
-    def +(other: CodeUnit) = CodeUnit(toInt + other.toInt)
-    def -(other: CodeUnit) = CodeUnit(toInt - other.toInt)
-    def min(other: CodeUnit): CodeUnit = if (toInt < other.toInt) this else other
-    def max(other: CodeUnit): CodeUnit = if (toInt > other.toInt) this else other
-    def incr: CodeUnit = CodeUnit(toInt + 1)
-    def decr: CodeUnit = CodeUnit(toInt - 1)
-    def until(end: CodeUnit): immutable.IndexedSeq[CodeUnit] =
-      toInt.until(end.toInt).map(CodeUnit(_))
+  case cwass codeunit(toint: int) extends a-anyvaw with owdewed[codeunit] {
+    def compawe(othew: codeunit): int = toint.compawe(othew.toint)
+    d-def +(othew: codeunit) = c-codeunit(toint + o-othew.toint)
+    d-def -(othew: c-codeunit) = codeunit(toint - othew.toint)
+    d-def min(othew: codeunit): codeunit = if (toint < o-othew.toint) this ewse othew
+    def max(othew: codeunit): codeunit = if (toint > othew.toint) t-this ewse othew
+    def incw: c-codeunit = codeunit(toint + 1)
+    d-def decw: codeunit = c-codeunit(toint - 1)
+    def untiw(end: codeunit): immutabwe.indexedseq[codeunit] =
+      toint.untiw(end.toint).map(codeunit(_))
 
     /**
-     * Converts this `CodeUnit` to the equivalent `CodePoint` within the
-     * given text.
+     * c-convewts t-this `codeunit` to the equivawent `codepoint` w-within the
+     * g-given text. (˘ω˘)
      */
-    def toCodePoint(text: String): CodePoint =
-      CodePoint(text.codePointCount(0, toInt))
+    def tocodepoint(text: s-stwing): codepoint =
+      codepoint(text.codepointcount(0, 🥺 t-toint))
 
-    def offsetByCodePoints(text: String, codePoints: CodePoint): CodeUnit =
-      CodeUnit(text.offsetByCodePoints(toInt, codePoints.toInt))
+    def offsetbycodepoints(text: stwing, nyaa~~ codepoints: c-codepoint): codeunit =
+      c-codeunit(text.offsetbycodepoints(toint, :3 codepoints.toint))
   }
 
-  implicit object CodeUnit extends Offset[CodeUnit] {
-    def toInt(u: CodeUnit): Int = u.toInt
-    override def length(text: String): CodeUnit = CodeUnit(text.length)
-    def count(text: String, start: CodeUnit, end: CodeUnit): CodeUnit = end - start
-  }
-
-  /**
-   * Offsets in whole Unicode code points. Any CodePoint is a valid
-   * offset into the String as long as it is >= 0 and less than the
-   * number of code points in the string.
-   */
-  case class CodePoint(toInt: Int) extends AnyVal with Ordered[CodePoint] {
-    def toShort: Short = toInt.toShort
-    def compare(other: CodePoint): Int = toInt.compare(other.toInt)
-    def +(other: CodePoint) = CodePoint(toInt + other.toInt)
-    def -(other: CodePoint) = CodePoint(toInt - other.toInt)
-    def min(other: CodePoint): CodePoint = if (toInt < other.toInt) this else other
-    def max(other: CodePoint): CodePoint = if (toInt > other.toInt) this else other
-    def until(end: CodePoint): immutable.IndexedSeq[CodePoint] =
-      toInt.until(end.toInt).map(CodePoint(_))
-
-    def toCodeUnit(text: String): CodeUnit =
-      CodeUnit(text.offsetByCodePoints(0, toInt))
-  }
-
-  implicit object CodePoint extends Offset[CodePoint] {
-    def toInt(p: CodePoint): Int = p.toInt
-
-    def count(text: String, start: CodeUnit, end: CodeUnit): CodePoint =
-      CodePoint(text.codePointCount(start.toInt, end.toInt))
+  i-impwicit o-object codeunit extends offset[codeunit] {
+    def toint(u: codeunit): int = u.toint
+    ovewwide def wength(text: stwing): codeunit = c-codeunit(text.wength)
+    d-def count(text: stwing, /(^•ω•^) stawt: c-codeunit, ^•ﻌ•^ end: c-codeunit): codeunit = e-end - stawt
   }
 
   /**
-   * Offsets into the String as if the String were encoded as UTF-8. You
-   * cannot use a [[Utf8]] offset to index a String, because not all
-   * Utf8 indices are valid indices into the String.
+   * offsets in whowe unicode code points. UwU any codepoint i-is a vawid
+   * offset into the stwing as wong as it is >= 0 and wess than t-the
+   * nyumbew of code points i-in the stwing. 😳😳😳
    */
-  case class Utf8(toInt: Int) extends AnyVal with Ordered[Utf8] {
-    def compare(other: Utf8): Int = toInt.compare(other.toInt)
-    def +(other: Utf8) = Utf8(toInt + other.toInt)
-    def -(other: Utf8) = Utf8(toInt - other.toInt)
-    def min(other: Utf8): Utf8 = if (toInt < other.toInt) this else other
-    def max(other: Utf8): Utf8 = if (toInt > other.toInt) this else other
+  c-case cwass c-codepoint(toint: int) extends a-anyvaw with owdewed[codepoint] {
+    d-def toshowt: s-showt = toint.toshowt
+    def c-compawe(othew: codepoint): int = toint.compawe(othew.toint)
+    d-def +(othew: c-codepoint) = codepoint(toint + othew.toint)
+    d-def -(othew: codepoint) = c-codepoint(toint - o-othew.toint)
+    def min(othew: codepoint): codepoint = i-if (toint < othew.toint) this ewse othew
+    def max(othew: codepoint): codepoint = if (toint > o-othew.toint) this ewse othew
+    def untiw(end: codepoint): i-immutabwe.indexedseq[codepoint] =
+      t-toint.untiw(end.toint).map(codepoint(_))
+
+    d-def tocodeunit(text: stwing): c-codeunit =
+      codeunit(text.offsetbycodepoints(0, OwO t-toint))
   }
 
-  implicit object Utf8 extends Offset[Utf8] {
-    def toInt(u: Utf8): Int = u.toInt
+  i-impwicit object codepoint extends offset[codepoint] {
+    def toint(p: codepoint): int = p.toint
+
+    def c-count(text: stwing, ^•ﻌ•^ stawt: codeunit, (ꈍᴗꈍ) e-end: codeunit): codepoint =
+      c-codepoint(text.codepointcount(stawt.toint, (⑅˘꒳˘) e-end.toint))
+  }
+
+  /**
+   * offsets into the stwing as if the s-stwing wewe encoded a-as utf-8. (⑅˘꒳˘) you
+   * cannot u-use a [[utf8]] offset t-to index a stwing, (ˆ ﻌ ˆ)♡ because not aww
+   * utf8 indices awe vawid indices into t-the stwing. /(^•ω•^)
+   */
+  c-case cwass u-utf8(toint: int) extends anyvaw w-with owdewed[utf8] {
+    d-def compawe(othew: utf8): i-int = toint.compawe(othew.toint)
+    def +(othew: utf8) = utf8(toint + othew.toint)
+    def -(othew: u-utf8) = u-utf8(toint - othew.toint)
+    def min(othew: utf8): utf8 = if (toint < o-othew.toint) t-this ewse othew
+    def max(othew: utf8): utf8 = if (toint > o-othew.toint) this ewse othew
+  }
+
+  impwicit object utf8 extends offset[utf8] {
+    d-def toint(u: utf8): int = u.toint
 
     /**
-     * Count how many bytes this section of text would be when encoded as
-     * UTF-8.
+     * c-count how m-many bytes this section of text wouwd be when encoded as
+     * u-utf-8. òωó
      */
-    def count(s: String, start: CodeUnit, end: CodeUnit): Utf8 = {
-      def go(i: CodeUnit, byteLength: Utf8): Utf8 =
+    d-def count(s: stwing, (⑅˘꒳˘) stawt: codeunit, (U ᵕ U❁) end: codeunit): utf8 = {
+      d-def go(i: codeunit, >w< bytewength: u-utf8): utf8 =
         if (i < end) {
-          val cp = s.codePointAt(i.toInt)
-          go(i + CodeUnit(Character.charCount(cp)), byteLength + forCodePoint(cp))
-        } else {
-          byteLength
+          vaw cp = s-s.codepointat(i.toint)
+          go(i + codeunit(chawactew.chawcount(cp)), σωσ b-bytewength + f-fowcodepoint(cp))
+        } ewse {
+          b-bytewength
         }
 
-      go(start, Utf8(0))
+      go(stawt, -.- utf8(0))
     }
 
     /**
-     * Unfortunately, there is no convenient API for finding out how many
-     * bytes a unicode code point would take in UTF-8, so we have to
-     * explicitly calculate it.
+     * u-unfowtunatewy, o.O t-thewe i-is nyo convenient api fow finding o-out how many
+     * b-bytes a unicode code point wouwd take in u-utf-8, ^^ so we have t-to
+     * expwicitwy c-cawcuwate it. >_<
      *
-     * @see http://en.wikipedia.org/wiki/UTF-8#Description
+     * @see http://en.wikipedia.owg/wiki/utf-8#descwiption
      */
-    def forCodePoint(cp: Int): Utf8 =
-      Utf8 {
-        // if the code point is an unpaired surrogate, it will be converted
-        // into a 1 byte replacement character
-        if (Character.getType(cp) == Character.SURROGATE) 1
-        else {
+    d-def fowcodepoint(cp: int): utf8 =
+      u-utf8 {
+        // i-if the code point is an unpaiwed suwwogate, >w< it wiww b-be convewted
+        // i-into a 1 b-byte wepwacement c-chawactew
+        if (chawactew.gettype(cp) == c-chawactew.suwwogate) 1
+        ewse {
           cp match {
             case _ if cp < 0x80 => 1
-            case _ if cp < 0x800 => 2
+            case _ i-if cp < 0x800 => 2
             case _ if cp < 0x10000 => 3
-            case _ => 4
+            c-case _ => 4
           }
         }
       }
   }
 
   /**
-   * Display units count what we consider a "character" in a
-   * Tweet. [[DisplayUnit]] offsets are only valid for text that is
-   * NFC-normalized (See: http://www.unicode.org/reports/tr15) and
-   * HTML-encoded, though this interface cannot enforce that.
+   * dispway units c-count nyani we considew a "chawactew" i-in a
+   * tweet. >_< [[dispwayunit]] o-offsets a-awe onwy vawid f-fow text that i-is
+   * nyfc-nowmawized (see: h-http://www.unicode.owg/wepowts/tw15) and
+   * htmw-encoded, >w< though this intewface cannot enfowce that. rawr
    *
-   * Currently, a [[DisplayUnit]] is equivalent to a single Unicode code
-   * point combined with treating "&lt;", "&gt;", and "&amp;" each as a
-   * single character (since they are displayed as '<', '>', and '&'
-   * respectively). This implementation is not directly exposed.
+   * cuwwentwy, rawr x3 a [[dispwayunit]] is equivawent t-to a singwe u-unicode code
+   * p-point combined with tweating "&wt;", ( ͡o ω ͡o ) "&gt;", (˘ω˘) a-and "&amp;" each as a
+   * singwe chawactew (since they awe d-dispwayed as '<', 😳 '>', a-and '&'
+   * wespectivewy). OwO t-this impwementation is nyot diwectwy exposed. (˘ω˘)
    *
-   * It should be possible to change this definition without breaking
-   * code that uses the [[DisplayUnit]] interface e.g. to count
-   * user-perceived characters (graphemes) rather than code points,
-   * though any change has to be made in concert with changing the
-   * mobile client and Web implementations so that the user experience
-   * of character counting remains consistent.
+   * i-it shouwd b-be possibwe to change this d-definition without b-bweaking
+   * code that uses the [[dispwayunit]] intewface e.g. òωó to count
+   * u-usew-pewceived c-chawactews (gwaphemes) w-wathew than c-code points, ( ͡o ω ͡o )
+   * t-though any change has to be m-made in concewt w-with changing the
+   * mobiwe c-cwient and web impwementations so t-that the usew expewience
+   * o-of chawactew counting wemains consistent.
    */
-  case class DisplayUnit(toInt: Int) extends AnyVal with Ordered[DisplayUnit] {
-    def compare(other: DisplayUnit): Int = toInt.compare(other.toInt)
-    def +(other: DisplayUnit) = DisplayUnit(toInt + other.toInt)
-    def -(other: DisplayUnit) = DisplayUnit(toInt - other.toInt)
-    def min(other: DisplayUnit): DisplayUnit = if (toInt < other.toInt) this else other
-    def max(other: DisplayUnit): DisplayUnit = if (toInt > other.toInt) this else other
+  case cwass dispwayunit(toint: i-int) extends anyvaw with owdewed[dispwayunit] {
+    d-def compawe(othew: d-dispwayunit): int = toint.compawe(othew.toint)
+    d-def +(othew: dispwayunit) = dispwayunit(toint + o-othew.toint)
+    d-def -(othew: d-dispwayunit) = dispwayunit(toint - othew.toint)
+    def m-min(othew: dispwayunit): dispwayunit = if (toint < o-othew.toint) t-this ewse othew
+    def max(othew: d-dispwayunit): dispwayunit = if (toint > o-othew.toint) t-this ewse othew
   }
 
-  implicit object DisplayUnit extends Offset[DisplayUnit] {
-    def toInt(d: DisplayUnit): Int = d.toInt
+  impwicit object dispwayunit e-extends offset[dispwayunit] {
+    def t-toint(d: dispwayunit): i-int = d.toint
 
     /**
-     * Returns the number of display units in the specified range of the
-     * given text.  See [[DisplayUnit]] for a descrption of what we
-     * consider a display unit.
+     * wetuwns the n-nyumbew of dispway units in the s-specified wange o-of the
+     * g-given text. UwU  see [[dispwayunit]] fow a descwption of nyani we
+     * considew a dispway unit. /(^•ω•^)
      *
-     * The input string should already be NFC normalized to get
-     * consistent results.  If partially html encoded, it will correctly
-     * count html entities as a single display unit.
+     * the input stwing shouwd awweady be nyfc nyowmawized to get
+     * consistent wesuwts.  if pawtiawwy htmw encoded, (ꈍᴗꈍ) it w-wiww cowwectwy
+     * c-count htmw entities as a singwe dispway unit. 😳
      *
-     * @param text the string containing the characters to count.
-     * @param the index to the first char of the text range
-     * @param the index after the last char of the text range.
+     * @pawam t-text the s-stwing containing t-the chawactews to count. mya
+     * @pawam t-the index to the fiwst c-chaw of the text w-wange
+     * @pawam the index a-aftew the wast chaw of the text w-wange. mya
      */
-    def count(text: String, start: CodeUnit, end: CodeUnit): DisplayUnit = {
-      val stop = end.min(CodeUnit.length(text))
+    d-def count(text: stwing, /(^•ω•^) stawt: codeunit, ^^;; end: c-codeunit): dispwayunit = {
+      v-vaw stop = end.min(codeunit.wength(text))
 
-      @annotation.tailrec
-      def go(offset: CodeUnit, total: DisplayUnit): DisplayUnit =
-        if (offset >= stop) total
-        else go(offset + at(text, offset), total + DisplayUnit(1))
+      @annotation.taiwwec
+      def g-go(offset: codeunit, 🥺 t-totaw: dispwayunit): d-dispwayunit =
+        i-if (offset >= s-stop) totaw
+        e-ewse go(offset + a-at(text, ^^ offset), totaw + d-dispwayunit(1))
 
-      go(start, DisplayUnit(0))
+      g-go(stawt, ^•ﻌ•^ d-dispwayunit(0))
     }
 
     /**
-     * Return the length of the display unit at the specified offset in
-     * the (NFC-normalized, HTML-encoded) text.
+     * wetuwn the w-wength of the dispway unit at the specified offset i-in
+     * the (nfc-nowmawized, /(^•ω•^) htmw-encoded) t-text. ^^
      */
-    def at(text: String, offset: CodeUnit): CodeUnit =
-      CodeUnit {
-        text.codePointAt(offset.toInt) match {
-          case '&' =>
-            if (text.regionMatches(offset.toInt, "&amp;", 0, 5)) 5
-            else if (text.regionMatches(offset.toInt, "&lt;", 0, 4)) 4
-            else if (text.regionMatches(offset.toInt, "&gt;", 0, 4)) 4
-            else 1
+    d-def at(text: s-stwing, 🥺 offset: codeunit): codeunit =
+      c-codeunit {
+        text.codepointat(offset.toint) match {
+          c-case '&' =>
+            if (text.wegionmatches(offset.toint, (U ᵕ U❁) "&amp;", 😳😳😳 0, 5)) 5
+            e-ewse if (text.wegionmatches(offset.toint, nyaa~~ "&wt;", 0, 4)) 4
+            e-ewse if (text.wegionmatches(offset.toint, (˘ω˘) "&gt;", >_< 0, 4)) 4
+            ewse 1
 
-          case cp => Character.charCount(cp)
+          case cp => chawactew.chawcount(cp)
         }
       }
   }
 
   /**
-   * Ranges of offsets, useful for avoiding slicing entities.
+   * wanges of offsets, XD u-usefuw fow avoiding swicing e-entities. rawr x3
    */
-  sealed trait Ranges[T] {
-    def contains(t: T): Boolean
+  s-seawed twait wanges[t] {
+    def contains(t: t): boowean
   }
 
-  object Ranges {
-    private[this] case class Impl[T](toSeq: Seq[(T, T)])(implicit off: Offset[T])
-        extends Ranges[T] {
-      def contains(t: T): Boolean = toSeq.exists { case (lo, hi) => off.gt(t, lo) && off.lt(t, hi) }
+  object wanges {
+    p-pwivate[this] case cwass impw[t](toseq: s-seq[(t, ( ͡o ω ͡o ) t-t)])(impwicit o-off: offset[t])
+        extends wanges[t] {
+      d-def contains(t: t-t): boowean = toseq.exists { c-case (wo, :3 hi) => off.gt(t, wo) && off.wt(t, mya hi) }
     }
 
     /**
-     * Non-inclusive range of offsets (matches values that are strictly
-     * between `hi` and `lo`)
+     * n-nyon-incwusive wange o-of offsets (matches v-vawues that a-awe stwictwy
+     * between `hi` a-and `wo`)
      */
-    def between[T](lo: T, hi: T)(implicit off: Offset[T]): Ranges[T] =
-      if (off.toInt(hi) > off.toInt(lo) + 1 && off.toInt(lo) < Int.MaxValue) Impl(Seq((lo, hi)))
-      else Impl(Nil)
+    d-def between[t](wo: t-t, σωσ hi: t-t)(impwicit off: offset[t]): wanges[t] =
+      i-if (off.toint(hi) > o-off.toint(wo) + 1 && o-off.toint(wo) < i-int.maxvawue) i-impw(seq((wo, (ꈍᴗꈍ) h-hi)))
+      e-ewse impw(niw)
 
     /**
-     * The union of all of the specified ranges.
+     * t-the union of aww of the specified w-wanges. OwO
      */
-    def all[T](ranges: Seq[Ranges[T]])(implicit off: Offset[T]): Ranges[T] =
-      Impl(
-        // Preprocess the ranges so that each contains check is as cheap
-        // as possible.
-        ranges
-          .flatMap { case r: Impl[T] => r.toSeq }
-          .sortBy(_._1)
-          .foldLeft(Nil: List[(T, T)]) {
-            case ((a, b) :: out, (c, d)) if off.lt(c, b) => (a, d) :: out
-            case (out, r) => r :: out
+    def aww[t](wanges: s-seq[wanges[t]])(impwicit off: offset[t]): w-wanges[t] =
+      i-impw(
+        // p-pwepwocess the wanges so that each contains check is as cheap
+        // as p-possibwe. o.O
+        w-wanges
+          .fwatmap { c-case w: impw[t] => w.toseq }
+          .sowtby(_._1)
+          .fowdweft(niw: wist[(t, 😳😳😳 t)]) {
+            c-case ((a, /(^•ω•^) b-b) :: out, OwO (c, d)) if off.wt(c, ^^ b-b) => (a, (///ˬ///✿) d) :: o-out
+            case (out, (///ˬ///✿) w) => w :: out
           }
       )
 
-    def Empty[T: Offset]: Ranges[T] = Impl[T](Nil)
+    def empty[t: o-offset]: wanges[t] = i-impw[t](niw)
 
-    private[this] val HtmlEscapes = """&(?:amp|lt|gt);""".r
+    p-pwivate[this] v-vaw htmwescapes = """&(?:amp|wt|gt);""".w
 
     /**
-     * Match [[CodeUnit]]s that would split a HTML entity.
+     * match [[codeunit]]s that wouwd s-spwit a htmw entity. (///ˬ///✿)
      */
-    def htmlEntities(s: String): Ranges[CodeUnit] = {
-      val it = HtmlEscapes.findAllIn(s)
-      all(it.map(_ => between(CodeUnit(it.start), CodeUnit(it.end))).toSeq)
+    d-def htmwentities(s: stwing): wanges[codeunit] = {
+      v-vaw it = htmwescapes.findawwin(s)
+      aww(it.map(_ => b-between(codeunit(it.stawt), ʘwʘ codeunit(it.end))).toseq)
     }
 
-    def fromCodePointPairs(pairs: Seq[(Int, Int)]): Ranges[CodePoint] =
-      all(pairs.map { case (lo, hi) => between(CodePoint(lo), CodePoint(hi)) })
+    def fwomcodepointpaiws(paiws: s-seq[(int, ^•ﻌ•^ int)]): w-wanges[codepoint] =
+      aww(paiws.map { c-case (wo, OwO h-hi) => between(codepoint(wo), (U ﹏ U) codepoint(hi)) })
   }
 }

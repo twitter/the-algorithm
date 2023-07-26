@@ -1,72 +1,72 @@
-package com.twitter.follow_recommendations.common.candidate_sources.addressbook
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.addwessbook
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.AddressBookParams.ReadFromABV2Only
-import com.twitter.follow_recommendations.common.clients.addressbook.AddressbookClient
-import com.twitter.follow_recommendations.common.clients.addressbook.models.EdgeType
-import com.twitter.follow_recommendations.common.clients.addressbook.models.RecordIdentifier
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.utils.RescueWithStatsUtils.rescueWithStats
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.ForwardPhoneContactsClientColumn
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.addwessbook.addwessbookpawams.weadfwomabv2onwy
+i-impowt com.twittew.fowwow_wecommendations.common.cwients.addwessbook.addwessbookcwient
+i-impowt c-com.twittew.fowwow_wecommendations.common.cwients.addwessbook.modews.edgetype
+i-impowt com.twittew.fowwow_wecommendations.common.cwients.addwessbook.modews.wecowdidentifiew
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+impowt com.twittew.fowwow_wecommendations.common.utiws.wescuewithstatsutiws.wescuewithstats
+impowt com.twittew.hewmit.modew.awgowithm
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+i-impowt com.twittew.stitch.stitch
+impowt c-com.twittew.stwato.genewated.cwient.onboawding.usewwecs.fowwawdphonecontactscwientcowumn
+impowt com.twittew.timewines.configapi.haspawams
+impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
-@Singleton
-class ForwardPhoneBookSource @Inject() (
-  forwardPhoneContactsClientColumn: ForwardPhoneContactsClientColumn,
-  addressBookClient: AddressbookClient,
-  statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends CandidateSource[HasParams with HasClientContext, CandidateUser] {
+@singweton
+cwass fowwawdphonebooksouwce @inject() (
+  f-fowwawdphonecontactscwientcowumn: f-fowwawdphonecontactscwientcowumn,
+  addwessbookcwient: addwessbookcwient, :3
+  statsweceivew: statsweceivew = n-nyuwwstatsweceivew)
+    extends candidatesouwce[haspawams with hascwientcontext, 😳😳😳 candidateusew] {
 
-  override val identifier: CandidateSourceIdentifier =
-    ForwardPhoneBookSource.Identifier
-  private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getSimpleName)
+  ovewwide vaw identifiew: c-candidatesouwceidentifiew =
+    fowwawdphonebooksouwce.identifiew
+  pwivate v-vaw stats: s-statsweceivew = s-statsweceivew.scope(this.getcwass.getsimpwename)
 
   /**
-   * Generate a list of candidates for the target
+   * genewate a-a wist of candidates fow the tawget
    */
-  override def apply(target: HasParams with HasClientContext): Stitch[Seq[CandidateUser]] = {
-    val candidateUsers: Stitch[Seq[Long]] = target.getOptionalUserId
-      .map { userId =>
-        rescueWithStats(
-          addressBookClient.getUsers(
-            userId,
-            identifiers =
-              Seq(RecordIdentifier(userId = Some(userId), email = None, phoneNumber = None)),
-            batchSize = AddressbookClient.AddressBook2BatchSize,
-            edgeType = ForwardPhoneBookSource.DefaultEdgeType,
-            fetcherOption =
-              if (target.params.apply(ReadFromABV2Only)) None
-              else Some(forwardPhoneContactsClientColumn.fetcher),
-            queryOption = AddressbookClient
-              .createQueryOption(
-                edgeType = ForwardPhoneBookSource.DefaultEdgeType,
-                isPhone = ForwardPhoneBookSource.IsPhone)
-          ),
-          stats,
-          "AddressBookClient"
+  o-ovewwide def appwy(tawget: haspawams with hascwientcontext): s-stitch[seq[candidateusew]] = {
+    vaw candidateusews: stitch[seq[wong]] = tawget.getoptionawusewid
+      .map { usewid =>
+        wescuewithstats(
+          addwessbookcwient.getusews(
+            u-usewid, (˘ω˘)
+            identifiews =
+              s-seq(wecowdidentifiew(usewid = s-some(usewid), ^^ e-emaiw = nyone, :3 phonenumbew = nyone)), -.-
+            batchsize = a-addwessbookcwient.addwessbook2batchsize,
+            e-edgetype = fowwawdphonebooksouwce.defauwtedgetype, 😳
+            f-fetchewoption =
+              i-if (tawget.pawams.appwy(weadfwomabv2onwy)) nyone
+              e-ewse some(fowwawdphonecontactscwientcowumn.fetchew), mya
+            quewyoption = a-addwessbookcwient
+              .cweatequewyoption(
+                edgetype = fowwawdphonebooksouwce.defauwtedgetype, (˘ω˘)
+                i-isphone = fowwawdphonebooksouwce.isphone)
+          ), >_<
+          s-stats, -.-
+          "addwessbookcwient"
         )
-      }.getOrElse(Stitch.Nil)
+      }.getowewse(stitch.niw)
 
-    candidateUsers
+    candidateusews
       .map(
-        _.take(ForwardPhoneBookSource.NumPhoneBookEntries)
-          .map(CandidateUser(_, score = Some(CandidateUser.DefaultCandidateScore))
-            .withCandidateSource(identifier)))
+        _.take(fowwawdphonebooksouwce.numphonebookentwies)
+          .map(candidateusew(_, 🥺 s-scowe = some(candidateusew.defauwtcandidatescowe))
+            .withcandidatesouwce(identifiew)))
   }
 }
 
-object ForwardPhoneBookSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.ForwardPhoneBook.toString)
-  val NumPhoneBookEntries: Int = 1000
-  val IsPhone = true
-  val DefaultEdgeType: EdgeType = EdgeType.Forward
+o-object fowwawdphonebooksouwce {
+  vaw identifiew: candidatesouwceidentifiew = candidatesouwceidentifiew(
+    awgowithm.fowwawdphonebook.tostwing)
+  vaw n-nyumphonebookentwies: i-int = 1000
+  vaw isphone = t-twue
+  vaw defauwtedgetype: edgetype = e-edgetype.fowwawd
 }

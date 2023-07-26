@@ -1,123 +1,123 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.logging.Logger
-import com.twitter.spam.rtf.thriftscala.{SafetyLevel => ThriftSafetyLevel}
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository.VisibilityResultToFilteredState.toFilteredState
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.interfaces.tweets.TweetVisibilityLibrary
-import com.twitter.visibility.interfaces.tweets.TweetVisibilityRequest
-import com.twitter.visibility.models.SafetyLevel.DeprecatedSafetyLevel
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+i-impowt com.twittew.wogging.woggew
+i-impowt com.twittew.spam.wtf.thwiftscawa.{safetywevew => t-thwiftsafetywevew}
+i-impowt c-com.twittew.stitch.stitch
+impowt c-com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.wepositowy.visibiwitywesuwttofiwtewedstate.tofiwtewedstate
+impowt com.twittew.tweetypie.thwiftscawa.tweet
+impowt com.twittew.visibiwity.configapi.configs.visibiwitydecidewgates
+i-impowt com.twittew.visibiwity.intewfaces.tweets.tweetvisibiwitywibwawy
+impowt com.twittew.visibiwity.intewfaces.tweets.tweetvisibiwitywequest
+impowt com.twittew.visibiwity.modews.safetywevew.depwecatedsafetywevew
+i-impowt com.twittew.visibiwity.modews.safetywevew
+impowt com.twittew.visibiwity.modews.viewewcontext
 
 /**
- * This repository handles visibility filtering of tweets
+ * t-this wepositowy handwes visibiwity fiwtewing of tweets
  *
- * i.e. deciding whether to drop/suppress tweets based on viewer
- * and safety level for instance. Rules in VF library can be thought as:
+ * i.e. ( ͡o ω ͡o ) d-deciding whethew to dwop/suppwess t-tweets based o-on viewew
+ * and safety wevew fow instance. o.O wuwes in vf wibwawy can be thought a-as:
  *
- * (SafetyLevel)(Viewer, Content, Features) => Action
+ * (safetywevew)(viewew, content, >w< featuwes) => action
  *
- * SafetyLevel represents the product context in which the Viewer is
- * requesting to view the Content. Example: TimelineHome, TweetDetail,
- * Recommendations, Notifications
+ * safetywevew wepwesents the p-pwoduct context in which the viewew i-is
+ * wequesting t-to view the c-content. exampwe: t-timewinehome, 😳 tweetdetaiw, 🥺
+ * wecommendations, rawr x3 n-nyotifications
  *
- * Content here is mainly tweets (can be users, notifications, cards etc)
+ * content hewe is mainwy tweets (can b-be usews, nyotifications, cawds etc)
  *
- * Features might include safety labels and other metadata of a Tweet,
- * flags set on a User (including the Viewer), relationships between Users
- * (e.g. block, follow), relationships between Users and Content
- * (e.g. reported for spam)
+ * featuwes might incwude safety wabews and othew m-metadata of a tweet, o.O
+ * fwags s-set on a usew (incwuding t-the viewew), rawr w-wewationships between usews
+ * (e.g. ʘwʘ bwock, fowwow), 😳😳😳 wewationships b-between u-usews and content
+ * (e.g. ^^;; wepowted f-fow spam)
  *
- * We initialize VisibilityLibrary using UserSource and UserRelationshipSource:
- * Stitch interfaces that provide methods to retrieve user and relationship
- * information in Gizmoduck and SocialGraph repositories, respectively.
- * This user and relationship info along with Tweet labels, provide necessary
- * features to take a filtering decision.
+ * w-we initiawize visibiwitywibwawy u-using usewsouwce and usewwewationshipsouwce:
+ * s-stitch intewfaces that pwovide methods to w-wetwieve usew and wewationship
+ * i-infowmation in gizmoduck and s-sociawgwaph wepositowies, w-wespectivewy.
+ * this usew and wewationship info awong with tweet wabews, o.O pwovide nyecessawy
+ * featuwes t-to take a fiwtewing d-decision. (///ˬ///✿)
  *
- * Actions supported in Tweetypie right now are Drop and Suppress.
- * In the future, we might want to surface other granular actions such as
- * Tombstone and Downrank which are supported in VF lib.
+ * actions suppowted i-in tweetypie w-wight nyow a-awe dwop and suppwess. σωσ
+ * in the futuwe, nyaa~~ we might want to suwface o-othew gwanuwaw actions such as
+ * tombstone and downwank which awe suppowted i-in vf wib. ^^;;
  *
- * The TweetVisibilityRepository has the following format:
+ * the tweetvisibiwitywepositowy has t-the fowwowing f-fowmat:
  *
- * Request(Tweet, Option[SafetyLevel], Option[UserId]) => Stitch[Option[FilteredState]]
+ * wequest(tweet, ^•ﻌ•^ o-option[safetywevew], σωσ option[usewid]) => s-stitch[option[fiwtewedstate]]
  *
- * SafetyLevel is plumbed from the tweet query options.
+ * s-safetywevew i-is pwumbed f-fwom the tweet quewy options. -.-
  *
- * In addition to the latency stats and rpc counts from VF library, we also capture
- * unsupported and deprecated safety level stats here to inform the relevant clients.
+ * in addition t-to the watency s-stats and wpc counts f-fwom vf wibwawy, w-we awso captuwe
+ * u-unsuppowted and depwecated safety wevew stats hewe to infowm t-the wewevant cwients. ^^;;
  *
- * go/visibilityfiltering, go/visibilityfilteringdocs
+ * go/visibiwityfiwtewing, XD go/visibiwityfiwtewingdocs
  *
  */
-object TweetVisibilityRepository {
-  type Type = Request => Stitch[Option[FilteredState]]
+object tweetvisibiwitywepositowy {
+  t-type type = wequest => stitch[option[fiwtewedstate]]
 
-  case class Request(
-    tweet: Tweet,
-    viewerId: Option[UserId],
-    safetyLevel: ThriftSafetyLevel,
-    isInnerQuotedTweet: Boolean,
-    isRetweet: Boolean,
-    hydrateConversationControl: Boolean,
-    isSourceTweet: Boolean)
+  case cwass wequest(
+    t-tweet: tweet, 🥺
+    v-viewewid: option[usewid], òωó
+    s-safetywevew: thwiftsafetywevew, (ˆ ﻌ ˆ)♡
+    isinnewquotedtweet: b-boowean, -.-
+    iswetweet: b-boowean, :3
+    hydwateconvewsationcontwow: b-boowean, ʘwʘ
+    issouwcetweet: boowean)
 
-  def apply(
-    visibilityLibrary: TweetVisibilityLibrary.Type,
-    visibilityDeciderGates: VisibilityDeciderGates,
-    log: Logger,
-    statsReceiver: StatsReceiver
-  ): TweetVisibilityRepository.Type = {
+  def appwy(
+    visibiwitywibwawy: tweetvisibiwitywibwawy.type, 🥺
+    v-visibiwitydecidewgates: visibiwitydecidewgates, >_<
+    w-wog: woggew, ʘwʘ
+    statsweceivew: s-statsweceivew
+  ): t-tweetvisibiwitywepositowy.type = {
 
-    val noTweetRulesCounter = statsReceiver.counter("no_tweet_rules_requests")
-    val deprecatedScope = statsReceiver.scope("deprecated_safety_level")
+    vaw nyotweetwuwescountew = statsweceivew.countew("no_tweet_wuwes_wequests")
+    vaw depwecatedscope = s-statsweceivew.scope("depwecated_safety_wevew")
 
-    request: Request =>
-      SafetyLevel.fromThrift(request.safetyLevel) match {
-        case DeprecatedSafetyLevel =>
-          deprecatedScope.counter(request.safetyLevel.name.toLowerCase()).incr()
-          log.warning("Deprecated SafetyLevel (%s) requested".format(request.safetyLevel.name))
-          Stitch.None
-        case safetyLevel: SafetyLevel =>
-          if (!TweetVisibilityLibrary.hasTweetRules(safetyLevel)) {
-            noTweetRulesCounter.incr()
-            Stitch.None
-          } else {
-            visibilityLibrary(
-              TweetVisibilityRequest(
-                tweet = request.tweet,
-                safetyLevel = safetyLevel,
-                viewerContext = ViewerContext.fromContextWithViewerIdFallback(request.viewerId),
-                isInnerQuotedTweet = request.isInnerQuotedTweet,
-                isRetweet = request.isRetweet,
-                hydrateConversationControl = request.hydrateConversationControl,
-                isSourceTweet = request.isSourceTweet
+    w-wequest: wequest =>
+      s-safetywevew.fwomthwift(wequest.safetywevew) m-match {
+        case depwecatedsafetywevew =>
+          depwecatedscope.countew(wequest.safetywevew.name.towowewcase()).incw()
+          wog.wawning("depwecated safetywevew (%s) w-wequested".fowmat(wequest.safetywevew.name))
+          s-stitch.none
+        c-case safetywevew: safetywevew =>
+          i-if (!tweetvisibiwitywibwawy.hastweetwuwes(safetywevew)) {
+            n-nyotweetwuwescountew.incw()
+            stitch.none
+          } e-ewse {
+            visibiwitywibwawy(
+              tweetvisibiwitywequest(
+                tweet = wequest.tweet, (˘ω˘)
+                s-safetywevew = s-safetywevew, (✿oωo)
+                viewewcontext = viewewcontext.fwomcontextwithviewewidfawwback(wequest.viewewid), (///ˬ///✿)
+                i-isinnewquotedtweet = w-wequest.isinnewquotedtweet, rawr x3
+                iswetweet = wequest.iswetweet, -.-
+                hydwateconvewsationcontwow = wequest.hydwateconvewsationcontwow, ^^
+                i-issouwcetweet = wequest.issouwcetweet
               )
-            ).map(visibilityResult =>
-              toFilteredState(
-                visibilityResult = visibilityResult,
-                disableLegacyInterstitialFilteredReason =
-                  visibilityDeciderGates.disableLegacyInterstitialFilteredReason()))
+            ).map(visibiwitywesuwt =>
+              tofiwtewedstate(
+                visibiwitywesuwt = visibiwitywesuwt, (⑅˘꒳˘)
+                d-disabwewegacyintewstitiawfiwtewedweason =
+                  visibiwitydecidewgates.disabwewegacyintewstitiawfiwtewedweason()))
           }
       }
   }
 
   /**
-   * We can skip visibility filtering when any of the following is true:
+   * we can skip v-visibiwity fiwtewing w-when any of the fowwowing is twue:
    *
-   * - SafetyLevel is deprecated
-   * - SafetyLevel has no tweet rules
+   * - safetywevew i-is depwecated
+   * - s-safetywevew has nyo tweet wuwes
    */
-  def canSkipVisibilityFiltering(thriftSafetyLevel: ThriftSafetyLevel): Boolean =
-    SafetyLevel.fromThrift(thriftSafetyLevel) match {
-      case DeprecatedSafetyLevel =>
-        true
-      case safetyLevel: SafetyLevel =>
-        !TweetVisibilityLibrary.hasTweetRules(safetyLevel)
+  def canskipvisibiwityfiwtewing(thwiftsafetywevew: t-thwiftsafetywevew): boowean =
+    s-safetywevew.fwomthwift(thwiftsafetywevew) match {
+      case depwecatedsafetywevew =>
+        twue
+      case s-safetywevew: safetywevew =>
+        !tweetvisibiwitywibwawy.hastweetwuwes(safetywevew)
     }
 }

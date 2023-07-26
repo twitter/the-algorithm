@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.contextuaw_wef
 
-case class ContextualTweetRef(
-  id: Long,
-  hydrationContext: Option[TweetHydrationContext])
+case cwass c-contextuawtweetwef(
+  i-id: wong, 🥺
+  h-hydwationcontext: o-option[tweethydwationcontext])

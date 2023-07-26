@@ -1,123 +1,123 @@
-namespace java com.twitter.graph_feature_service.thriftjava
-#@namespace scala com.twitter.graph_feature_service.thriftscala
-#@namespace strato com.twitter.graph_feature_service.thriftscala
+namespace java com.twittew.gwaph_featuwe_sewvice.thwiftjava
+#@namespace scawa com.twittew.gwaph_featuwe_sewvice.thwiftscawa
+#@namespace s-stwato com.twittew.gwaph_featuwe_sewvice.thwiftscawa
 
-// edge type to differentiate different types of graphs (we can also add a lot of other types of edges)
-enum EdgeType {
-  FOLLOWING,
-  FOLLOWED_BY,
-  FAVORITE,
-  FAVORITED_BY,
-  RETWEET,
-  RETWEETED_BY,
-  REPLY,
-  REPLYED_BY,
-  MENTION,
-  MENTIONED_BY,
-  MUTUAL_FOLLOW,
-  SIMILAR_TO, // more edge types (like block, report, etc.) can be supported later.
-  RESERVED_12,
-  RESERVED_13,
-  RESERVED_14,
-  RESERVED_15,
-  RESERVED_16,
-  RESERVED_17,
-  RESERVED_18,
-  RESERVED_19,
-  RESERVED_20
+// e-edge type to diffewentiate d-diffewent t-types of gwaphs (we c-can awso a-add a wot of othew t-types of edges)
+e-enum edgetype {
+  fowwowing, (///ˬ///✿)
+  fowwowed_by, (˘ω˘)
+  favowite,
+  favowited_by, ^^;;
+  wetweet, (✿oωo)
+  wetweeted_by, (U ﹏ U)
+  w-wepwy, -.-
+  wepwyed_by, ^•ﻌ•^
+  mention,
+  mentioned_by, rawr
+  m-mutuaw_fowwow, (˘ω˘)
+  simiwaw_to, nyaa~~ // m-mowe edge types (wike bwock, UwU wepowt, :3 etc.) can be suppowted w-watew. (⑅˘꒳˘)
+  wesewved_12, (///ˬ///✿)
+  w-wesewved_13, ^^;;
+  wesewved_14, >_<
+  w-wesewved_15, rawr x3
+  wesewved_16, /(^•ω•^)
+  wesewved_17, :3
+  wesewved_18, (ꈍᴗꈍ)
+  wesewved_19, /(^•ω•^)
+  w-wesewved_20
 }
 
-enum PresetFeatureTypes {
-  EMPTY,
-  HTL_TWO_HOP,
-  WTF_TWO_HOP,
-  SQ_TWO_HOP,
-  RUX_TWO_HOP,
-  MR_TWO_HOP,
-  USER_TYPEAHEAD_TWO_HOP
+enum pwesetfeatuwetypes {
+  empty, (⑅˘꒳˘)
+  htw_two_hop, ( ͡o ω ͡o )
+  wtf_two_hop, òωó
+  sq_two_hop, (⑅˘꒳˘)
+  w-wux_two_hop, XD
+  mw_two_hop, -.-
+  u-usew_typeahead_two_hop
 }
 
-struct UserWithCount {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required i32 count
-}(hasPersonalData = 'true')
+s-stwuct usewwithcount {
+  1: w-wequiwed i-i64 usewid(pewsonawdatatype = 'usewid')
+  2: wequiwed i32 count
+}(haspewsonawdata = 'twue')
 
-struct UserWithScore {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required double score
-}(hasPersonalData = 'true')
+stwuct usewwithscowe {
+  1: w-wequiwed i64 usewid(pewsonawdatatype = 'usewid')
+  2: wequiwed doubwe s-scowe
+}(haspewsonawdata = 'twue')
 
-// Feature Type
-// For example, to compute how many of source user's following's have favorited candidate user,
-// we need to compute the intersection between source user's FOLLOWING edges, and candidate user's
-// FAVORITED_BY edge. In this case, we should user FeatureType(FOLLOWING, FAVORITED_BY)
-struct FeatureType {
-  1: required EdgeType leftEdgeType // edge type from source user
-  2: required EdgeType rightEdgeType // edge type from candidate user
-}(persisted="true")
+// featuwe type
+// fow exampwe, :3 to compute how many of souwce usew's fowwowing's h-have favowited candidate u-usew, nyaa~~
+// we nyeed t-to compute the i-intewsection between souwce usew's fowwowing edges, 😳 and candidate u-usew's
+// favowited_by e-edge. (⑅˘꒳˘) in this case, nyaa~~ we s-shouwd usew featuwetype(fowwowing, OwO f-favowited_by)
+stwuct featuwetype {
+  1: w-wequiwed edgetype weftedgetype // edge t-type fwom souwce usew
+  2: wequiwed edgetype w-wightedgetype // edge type fwom c-candidate usew
+}(pewsisted="twue")
 
-struct IntersectionValue {
-  1: required FeatureType featureType
-  2: optional i32 count
-  3: optional list<i64> intersectionIds(personalDataType = 'UserId')
-  4: optional i32 leftNodeDegree
-  5: optional i32 rightNodeDegree
-}(persisted="true", hasPersonalData = 'true')
+stwuct intewsectionvawue {
+  1: w-wequiwed featuwetype f-featuwetype
+  2: optionaw i32 count
+  3: optionaw wist<i64> intewsectionids(pewsonawdatatype = 'usewid')
+  4: optionaw i32 weftnodedegwee
+  5: o-optionaw i-i32 wightnodedegwee
+}(pewsisted="twue", rawr x3 haspewsonawdata = 'twue')
 
-struct GfsIntersectionResult {
-  1: required i64 candidateUserId(personalDataType = 'UserId')
-  2: required list<IntersectionValue> intersectionValues
-}(hasPersonalData = 'true')
+s-stwuct gfsintewsectionwesuwt {
+  1: w-wequiwed i-i64 candidateusewid(pewsonawdatatype = 'usewid')
+  2: wequiwed wist<intewsectionvawue> intewsectionvawues
+}(haspewsonawdata = 'twue')
 
-struct GfsIntersectionRequest {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required list<i64> candidateUserIds(personalDataType = 'UserId')
-  3: required list<FeatureType> featureTypes
-  4: optional i32 intersectionIdLimit
+s-stwuct gfsintewsectionwequest {
+  1: wequiwed i64 usewid(pewsonawdatatype = 'usewid')
+  2: wequiwed wist<i64> c-candidateusewids(pewsonawdatatype = 'usewid')
+  3: wequiwed w-wist<featuwetype> f-featuwetypes
+  4: o-optionaw i32 intewsectionidwimit
 }
 
-struct GfsPresetIntersectionRequest {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required list<i64> candidateUserIds(personalDataType = 'UserId')
-  3: required PresetFeatureTypes presetFeatureTypes
-  4: optional i32 intersectionIdLimit
-}(hasPersonalData = 'true')
+s-stwuct g-gfspwesetintewsectionwequest {
+  1: w-wequiwed i64 u-usewid(pewsonawdatatype = 'usewid')
+  2: wequiwed wist<i64> candidateusewids(pewsonawdatatype = 'usewid')
+  3: w-wequiwed pwesetfeatuwetypes p-pwesetfeatuwetypes
+  4: o-optionaw i32 i-intewsectionidwimit
+}(haspewsonawdata = 'twue')
 
-struct GfsIntersectionResponse {
-  1: required list<GfsIntersectionResult> results
+s-stwuct gfsintewsectionwesponse {
+  1: wequiwed wist<gfsintewsectionwesuwt> wesuwts
 }
 
-service Server {
-  GfsIntersectionResponse getIntersection(1: GfsIntersectionRequest request)
-  GfsIntersectionResponse getPresetIntersection(1: GfsPresetIntersectionRequest request)
+sewvice s-sewvew {
+  gfsintewsectionwesponse getintewsection(1: gfsintewsectionwequest wequest)
+  gfsintewsectionwesponse getpwesetintewsection(1: gfspwesetintewsectionwequest w-wequest)
 }
 
 ###################################################################################################
-##  For internal usage only
+##  fow intewnaw usage onwy
 ###################################################################################################
-struct WorkerIntersectionRequest {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required list<i64> candidateUserIds(personalDataType = 'UserId')
-  3: required list<FeatureType> featureTypes
-  4: required PresetFeatureTypes presetFeatureTypes
-  5: required i32 intersectionIdLimit
-}(hasPersonalData = 'true')
+stwuct wowkewintewsectionwequest {
+  1: w-wequiwed i64 usewid(pewsonawdatatype = 'usewid')
+  2: w-wequiwed wist<i64> c-candidateusewids(pewsonawdatatype = 'usewid')
+  3: wequiwed w-wist<featuwetype> featuwetypes
+  4: w-wequiwed p-pwesetfeatuwetypes pwesetfeatuwetypes
+  5: wequiwed i32 intewsectionidwimit
+}(haspewsonawdata = 'twue')
 
-struct WorkerIntersectionResponse {
-  1: required list<list<WorkerIntersectionValue>> results
+stwuct wowkewintewsectionwesponse {
+  1: w-wequiwed wist<wist<wowkewintewsectionvawue>> wesuwts
 }
 
-struct WorkerIntersectionValue {
+stwuct w-wowkewintewsectionvawue {
   1: i32 count
-  2: i32 leftNodeDegree
-  3: i32 rightNodeDegree
-  4: list<i64> intersectionIds(personalDataType = 'UserId')
-}(hasPersonalData = 'true')
+  2: i-i32 weftnodedegwee
+  3: i-i32 wightnodedegwee
+  4: wist<i64> intewsectionids(pewsonawdatatype = 'usewid')
+}(haspewsonawdata = 'twue')
 
-struct CachedIntersectionResult {
-  1: required list<WorkerIntersectionValue> values
+stwuct cachedintewsectionwesuwt {
+  1: w-wequiwed w-wist<wowkewintewsectionvawue> vawues
 }
 
-service Worker {
-  WorkerIntersectionResponse getIntersection(1: WorkerIntersectionRequest request)
+sewvice w-wowkew {
+  w-wowkewintewsectionwesponse getintewsection(1: wowkewintewsectionwequest wequest)
 }

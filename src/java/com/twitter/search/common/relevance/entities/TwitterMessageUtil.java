@@ -1,444 +1,444 @@
-package com.twitter.search.common.relevance.entities;
+package com.twittew.seawch.common.wewevance.entities;
 
-import java.text.Normalizer;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.concurrent.ConcurrentMap;
+impowt java.text.nowmawizew;
+i-impowt java.utiw.map;
+i-impowt j-java.utiw.navigabwemap;
+i-impowt java.utiw.set;
+i-impowt j-java.utiw.tweemap;
+i-impowt java.utiw.concuwwent.concuwwentmap;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+impowt com.googwe.common.base.pweconditions;
+impowt com.googwe.common.cowwect.maps;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.apache.commons.wang.stwingutiws;
+impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.text.transformer.HTMLTagRemovalTransformer;
-import com.twitter.common_internal.text.extractor.EmojiExtractor;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
+impowt com.twittew.common.text.twansfowmew.htmwtagwemovawtwansfowmew;
+i-impowt com.twittew.common_intewnaw.text.extwactow.emojiextwactow;
+impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt c-com.twittew.seawch.common.pawtitioning.snowfwakepawsew.snowfwakeidpawsew;
 
-public final class TwitterMessageUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(TwitterMessageUtil.class);
+pubwic f-finaw cwass t-twittewmessageutiw {
+  pwivate static finaw woggew wog = woggewfactowy.getwoggew(twittewmessageutiw.cwass);
 
-  private TwitterMessageUtil() {
+  pwivate twittewmessageutiw() {
   }
 
-  @VisibleForTesting
-  static final ConcurrentMap<Field, Counters> COUNTERS_MAP = Maps.newConcurrentMap();
-  // We truncate the location string because we used to use a MySQL table to store the geocoding
-  // information.  In the MySQL table, the location string was fix width of 30 characters.
-  // We have migrated to Manhattan and the location string is no longer limited to 30 character.
-  // However, in order to correctly lookup location geocode from Manhattan, we still need to
-  // truncate the location just like we did before.
-  private static final int MAX_LOCATION_LEN = 30;
+  @visibwefowtesting
+  s-static finaw concuwwentmap<fiewd, ^^ countews> countews_map = maps.newconcuwwentmap();
+  // w-we twuncate the wocation stwing b-because we used t-to use a mysqw t-tabwe to stowe t-the geocoding
+  // infowmation. :3  in the mysqw tabwe, o.O t-the wocation stwing was fix width of 30 chawactews. -.-
+  // we h-have migwated to manhattan and the wocation stwing is nyo wongew wimited to 30 chawactew. (U ﹏ U)
+  // h-howevew, o.O in owdew to cowwectwy w-wookup wocation g-geocode fwom manhattan, OwO w-we stiww nyeed to
+  // twuncate the wocation just wike we d-did befowe. ^•ﻌ•^
+  p-pwivate static finaw int max_wocation_wen = 30;
 
-  // Note: we strip tags to index source, as typically source contains <a href=...> tags.
-  // Sometimes we get a source where stripping fails, as the URL in the tag was
-  // excessively long.  We drop these sources, as there is little reason to index them.
-  private static final int MAX_SOURCE_LEN = 64;
+  // n-nyote: we s-stwip tags to index souwce, ʘwʘ as typicawwy s-souwce contains <a hwef=...> t-tags. :3
+  // sometimes we get a souwce whewe s-stwipping faiws, 😳 as the uww in t-the tag was
+  // excessivewy wong. òωó  w-we dwop these s-souwces, 🥺 as thewe is wittwe weason to index them. rawr x3
+  pwivate static finaw int max_souwce_wen = 64;
 
-  private static HTMLTagRemovalTransformer tagRemovalTransformer = new HTMLTagRemovalTransformer();
+  pwivate static htmwtagwemovawtwansfowmew t-tagwemovawtwansfowmew = n-nyew htmwtagwemovawtwansfowmew();
 
-  private static final String STAT_PREFIX = "twitter_message_";
+  pwivate s-static finaw s-stwing stat_pwefix = "twittew_message_";
 
-  public enum Field {
-    FROM_USER_DISPLAY_NAME,
-    NORMALIZED_LOCATION,
-    ORIG_LOCATION,
-    ORIG_SOURCE,
-    SHARED_USER_DISPLAY_NAME,
-    SOURCE,
-    TEXT,
-    TO_USER_SCREEN_NAME;
+  p-pubwic enum fiewd {
+    fwom_usew_dispway_name,
+    nyowmawized_wocation, ^•ﻌ•^
+    o-owig_wocation, :3
+    owig_souwce,
+    shawed_usew_dispway_name, (ˆ ﻌ ˆ)♡
+    souwce, (U ᵕ U❁)
+    text, :3
+    to_usew_scween_name;
 
-    public String getNameForStats() {
-      return name().toLowerCase();
-    }
-  }
-
-  @VisibleForTesting
-  static class Counters {
-    private final SearchRateCounter truncatedCounter;
-    private final SearchRateCounter tweetsWithStrippedSupplementaryCharsCounter;
-    private final SearchRateCounter strippedSupplementaryCharsCounter;
-    private final SearchRateCounter nonStrippedEmojiCharsCounter;
-    private final SearchRateCounter emojisAtTruncateBoundaryCounter;
-
-    Counters(Field field) {
-      String fieldNameForStats = field.getNameForStats();
-      truncatedCounter = SearchRateCounter.export(
-          STAT_PREFIX + "truncated_" + fieldNameForStats);
-      tweetsWithStrippedSupplementaryCharsCounter = SearchRateCounter.export(
-          STAT_PREFIX + "tweets_with_stripped_supplementary_chars_" + fieldNameForStats);
-      strippedSupplementaryCharsCounter = SearchRateCounter.export(
-          STAT_PREFIX + "stripped_supplementary_chars_" + fieldNameForStats);
-      nonStrippedEmojiCharsCounter = SearchRateCounter.export(
-          STAT_PREFIX + "non_stripped_emoji_chars_" + fieldNameForStats);
-      emojisAtTruncateBoundaryCounter = SearchRateCounter.export(
-          STAT_PREFIX + "emojis_at_truncate_boundary_" + fieldNameForStats);
-    }
-
-    SearchRateCounter getTruncatedCounter() {
-      return truncatedCounter;
-    }
-
-    SearchRateCounter getTweetsWithStrippedSupplementaryCharsCounter() {
-      return tweetsWithStrippedSupplementaryCharsCounter;
-    }
-
-    SearchRateCounter getStrippedSupplementaryCharsCounter() {
-      return strippedSupplementaryCharsCounter;
-    }
-
-    SearchRateCounter getNonStrippedEmojiCharsCounter() {
-      return nonStrippedEmojiCharsCounter;
-    }
-
-    SearchRateCounter getEmojisAtTruncateBoundaryCounter() {
-      return emojisAtTruncateBoundaryCounter;
+    p-pubwic stwing getnamefowstats() {
+      w-wetuwn nyame().towowewcase();
     }
   }
 
-  static {
-    for (Field field : Field.values()) {
-      COUNTERS_MAP.put(field, new Counters(field));
+  @visibwefowtesting
+  s-static cwass c-countews {
+    pwivate finaw s-seawchwatecountew t-twuncatedcountew;
+    p-pwivate f-finaw seawchwatecountew tweetswithstwippedsuppwementawychawscountew;
+    pwivate f-finaw seawchwatecountew s-stwippedsuppwementawychawscountew;
+    p-pwivate finaw seawchwatecountew n-nyonstwippedemojichawscountew;
+    p-pwivate finaw seawchwatecountew emojisattwuncateboundawycountew;
+
+    countews(fiewd f-fiewd) {
+      stwing fiewdnamefowstats = fiewd.getnamefowstats();
+      twuncatedcountew = seawchwatecountew.expowt(
+          stat_pwefix + "twuncated_" + f-fiewdnamefowstats);
+      tweetswithstwippedsuppwementawychawscountew = seawchwatecountew.expowt(
+          stat_pwefix + "tweets_with_stwipped_suppwementawy_chaws_" + fiewdnamefowstats);
+      s-stwippedsuppwementawychawscountew = s-seawchwatecountew.expowt(
+          stat_pwefix + "stwipped_suppwementawy_chaws_" + fiewdnamefowstats);
+      n-nyonstwippedemojichawscountew = seawchwatecountew.expowt(
+          s-stat_pwefix + "non_stwipped_emoji_chaws_" + fiewdnamefowstats);
+      e-emojisattwuncateboundawycountew = s-seawchwatecountew.expowt(
+          stat_pwefix + "emojis_at_twuncate_boundawy_" + fiewdnamefowstats);
+    }
+
+    seawchwatecountew gettwuncatedcountew() {
+      wetuwn twuncatedcountew;
+    }
+
+    s-seawchwatecountew gettweetswithstwippedsuppwementawychawscountew() {
+      w-wetuwn tweetswithstwippedsuppwementawychawscountew;
+    }
+
+    seawchwatecountew g-getstwippedsuppwementawychawscountew() {
+      w-wetuwn stwippedsuppwementawychawscountew;
+    }
+
+    seawchwatecountew getnonstwippedemojichawscountew() {
+      w-wetuwn nyonstwippedemojichawscountew;
+    }
+
+    s-seawchwatecountew getemojisattwuncateboundawycountew() {
+      w-wetuwn emojisattwuncateboundawycountew;
     }
   }
 
-  // Note: the monorail enforces a limit of 15 characters for screen names,
-  // but some users with up to 20 character names were grandfathered-in.  To allow
-  // those users to be searchable, support up to 20 chars.
-  private static final int MAX_SCREEN_NAME_LEN = 20;
-
-  // Note: we expect the current limit to be 10K. Also, all supplementary unicode characters (with
-  // the exception of emojis, maybe) will be removed and not counted as total length. Added alert
-  // for text truncation rate as well. SEARCH-9512
-  private static final int MAX_TWEET_TEXT_LEN = 10000;
-
-  @VisibleForTesting
-  static final SearchRateCounter FILTERED_NO_STATUS_ID =
-      SearchRateCounter.export(STAT_PREFIX + "filtered_no_status_id");
-  @VisibleForTesting
-  static final SearchRateCounter FILTERED_NO_FROM_USER =
-      SearchRateCounter.export(STAT_PREFIX + "filtered_no_from_user");
-  @VisibleForTesting
-  static final SearchRateCounter FILTERED_LONG_SCREEN_NAME =
-      SearchRateCounter.export(STAT_PREFIX + "filtered_long_screen_name");
-  @VisibleForTesting
-  static final SearchRateCounter FILTERED_NO_TEXT =
-      SearchRateCounter.export(STAT_PREFIX + "filtered_no_text");
-  @VisibleForTesting
-  static final SearchRateCounter FILTERED_NO_DATE =
-      SearchRateCounter.export(STAT_PREFIX + "filtered_no_date");
-  @VisibleForTesting
-  static final SearchRateCounter NULLCAST_TWEET =
-      SearchRateCounter.export(STAT_PREFIX + "filter_nullcast_tweet");
-  @VisibleForTesting
-  static final SearchRateCounter NULLCAST_TWEET_ACCEPTED =
-      SearchRateCounter.export(STAT_PREFIX + "nullcast_tweet_accepted");
-  @VisibleForTesting
-  static final SearchRateCounter INCONSISTENT_TWEET_ID_AND_CREATED_AT =
-      SearchRateCounter.export(STAT_PREFIX + "inconsistent_tweet_id_and_created_at_ms");
-
-  /** Strips the given source from the message with the given ID. */
-  private static String stripSource(String source, Long messageId) {
-    if (source == null) {
-      return null;
+  s-static {
+    fow (fiewd fiewd : fiewd.vawues()) {
+      countews_map.put(fiewd, ^^;; nyew c-countews(fiewd));
     }
-    // Always strip emojis from sources: they don't really make sense in this field.
-    String strippedSource = stripSupplementaryChars(
-        tagRemovalTransformer.transform(source).toString(), Field.SOURCE, true);
-    if (strippedSource.length() > MAX_SOURCE_LEN) {
-      LOG.warn("Message "
-          + messageId
-          + " contains stripped source that exceeds MAX_SOURCE_LEN. Removing: "
-          + strippedSource);
-      COUNTERS_MAP.get(Field.SOURCE).getTruncatedCounter().increment();
-      return null;
+  }
+
+  // n-nyote: the monowaiw e-enfowces a wimit of 15 chawactews f-fow scween n-nyames, ( ͡o ω ͡o )
+  // but some usews w-with up to 20 chawactew nyames wewe gwandfathewed-in.  to awwow
+  // those usews t-to be seawchabwe, o.O s-suppowt up to 20 chaws. ^•ﻌ•^
+  pwivate static finaw i-int max_scween_name_wen = 20;
+
+  // n-nyote: we expect the cuwwent wimit to be 10k. XD awso, aww suppwementawy u-unicode chawactews (with
+  // the exception of emojis, ^^ maybe) wiww be w-wemoved and nyot counted as totaw wength. o.O added a-awewt
+  // fow t-text twuncation wate as weww. ( ͡o ω ͡o ) seawch-9512
+  pwivate static finaw i-int max_tweet_text_wen = 10000;
+
+  @visibwefowtesting
+  s-static finaw seawchwatecountew fiwtewed_no_status_id =
+      seawchwatecountew.expowt(stat_pwefix + "fiwtewed_no_status_id");
+  @visibwefowtesting
+  static f-finaw seawchwatecountew fiwtewed_no_fwom_usew =
+      s-seawchwatecountew.expowt(stat_pwefix + "fiwtewed_no_fwom_usew");
+  @visibwefowtesting
+  static finaw seawchwatecountew fiwtewed_wong_scween_name =
+      s-seawchwatecountew.expowt(stat_pwefix + "fiwtewed_wong_scween_name");
+  @visibwefowtesting
+  static finaw seawchwatecountew f-fiwtewed_no_text =
+      s-seawchwatecountew.expowt(stat_pwefix + "fiwtewed_no_text");
+  @visibwefowtesting
+  static f-finaw seawchwatecountew fiwtewed_no_date =
+      s-seawchwatecountew.expowt(stat_pwefix + "fiwtewed_no_date");
+  @visibwefowtesting
+  s-static finaw s-seawchwatecountew nyuwwcast_tweet =
+      s-seawchwatecountew.expowt(stat_pwefix + "fiwtew_nuwwcast_tweet");
+  @visibwefowtesting
+  s-static finaw seawchwatecountew nyuwwcast_tweet_accepted =
+      s-seawchwatecountew.expowt(stat_pwefix + "nuwwcast_tweet_accepted");
+  @visibwefowtesting
+  s-static finaw seawchwatecountew inconsistent_tweet_id_and_cweated_at =
+      s-seawchwatecountew.expowt(stat_pwefix + "inconsistent_tweet_id_and_cweated_at_ms");
+
+  /** stwips the given souwce fwom t-the message with the given id. /(^•ω•^) */
+  p-pwivate static s-stwing stwipsouwce(stwing souwce, 🥺 wong messageid) {
+    if (souwce == nyuww) {
+      w-wetuwn n-nyuww;
     }
-    return strippedSource;
+    // a-awways stwip e-emojis fwom souwces: they don't w-weawwy make sense in this fiewd. nyaa~~
+    stwing stwippedsouwce = stwipsuppwementawychaws(
+        tagwemovawtwansfowmew.twansfowm(souwce).tostwing(), mya fiewd.souwce, XD t-twue);
+    if (stwippedsouwce.wength() > max_souwce_wen) {
+      w-wog.wawn("message "
+          + messageid
+          + " c-contains stwipped souwce t-that exceeds max_souwce_wen. nyaa~~ w-wemoving: "
+          + s-stwippedsouwce);
+      c-countews_map.get(fiewd.souwce).gettwuncatedcountew().incwement();
+      w-wetuwn n-nyuww;
+    }
+    wetuwn stwippedsouwce;
   }
 
   /**
-   * Strips and truncates the location of the message with the given ID.
+   * stwips and twuncates the wocation of the message with the given id. ʘwʘ
    *
    */
-  private static String stripAndTruncateLocation(String location) {
-    // Always strip emojis from locations: they don't really make sense in this field.
-    String strippedLocation = stripSupplementaryChars(location, Field.NORMALIZED_LOCATION, true);
-    return truncateString(strippedLocation, MAX_LOCATION_LEN, Field.NORMALIZED_LOCATION, true);
+  p-pwivate s-static stwing stwipandtwuncatewocation(stwing wocation) {
+    // a-awways stwip emojis fwom wocations: t-they don't weawwy make sense in this fiewd. (⑅˘꒳˘)
+    stwing stwippedwocation = s-stwipsuppwementawychaws(wocation, :3 f-fiewd.nowmawized_wocation, -.- twue);
+    w-wetuwn twuncatestwing(stwippedwocation, 😳😳😳 max_wocation_wen, (U ﹏ U) fiewd.nowmawized_wocation, o.O t-twue);
   }
 
   /**
-   * Sets the origSource and strippedSource fields on a TwitterMessage
+   * s-sets the owigsouwce and stwippedsouwce f-fiewds o-on a twittewmessage
    *
    */
-  public static void setSourceOnMessage(TwitterMessage message, String modifiedDeviceSource) {
-    // Always strip emojis from sources: they don't really make sense in this field.
-    message.setOrigSource(stripSupplementaryChars(modifiedDeviceSource, Field.ORIG_SOURCE, true));
-    message.setStrippedSource(stripSource(modifiedDeviceSource, message.getId()));
+  pubwic static void setsouwceonmessage(twittewmessage message, ( ͡o ω ͡o ) stwing modifieddevicesouwce) {
+    // a-awways stwip e-emojis fwom s-souwces: they don't w-weawwy make s-sense in this fiewd. òωó
+    message.setowigsouwce(stwipsuppwementawychaws(modifieddevicesouwce, 🥺 f-fiewd.owig_souwce, /(^•ω•^) t-twue));
+    message.setstwippedsouwce(stwipsouwce(modifieddevicesouwce, 😳😳😳 message.getid()));
   }
 
   /**
-   * Sets the origLocation to the stripped location, and sets
-   * the truncatedNormalizedLocation to the truncated and normalized location.
+   * s-sets t-the owigwocation to the stwipped w-wocation, ^•ﻌ•^ and sets
+   * the twuncatednowmawizedwocation to the t-twuncated and nyowmawized wocation. nyaa~~
    */
-  public static void setAndTruncateLocationOnMessage(
-      TwitterMessage message,
-      String newOrigLocation) {
-    // Always strip emojis from locations: they don't really make sense in this field.
-    message.setOrigLocation(stripSupplementaryChars(newOrigLocation, Field.ORIG_LOCATION, true));
+  p-pubwic s-static void setandtwuncatewocationonmessage(
+      twittewmessage m-message, OwO
+      stwing nyewowigwocation) {
+    // awways stwip e-emojis fwom wocations: t-they don't w-weawwy make sense in this fiewd. ^•ﻌ•^
+    message.setowigwocation(stwipsuppwementawychaws(newowigwocation, σωσ fiewd.owig_wocation, -.- t-twue));
 
-    // Locations in the new locations table require additional normalization. It can also change
-    // the length of the string, so we must do this before truncation.
-    if (newOrigLocation != null) {
-      String normalized =
-          Normalizer.normalize(newOrigLocation, Normalizer.Form.NFKC).toLowerCase().trim();
-      message.setTruncatedNormalizedLocation(stripAndTruncateLocation(normalized));
-    } else {
-      message.setTruncatedNormalizedLocation(null);
+    // wocations in the nyew wocations t-tabwe wequiwe additionaw n-nyowmawization. (˘ω˘) it can a-awso change
+    // the wength of t-the stwing, rawr x3 so w-we must do this befowe twuncation. rawr x3
+    if (newowigwocation != n-nyuww) {
+      stwing nyowmawized =
+          n-nyowmawizew.nowmawize(newowigwocation, σωσ n-nyowmawizew.fowm.nfkc).towowewcase().twim();
+      message.settwuncatednowmawizedwocation(stwipandtwuncatewocation(nowmawized));
+    } e-ewse {
+      message.settwuncatednowmawizedwocation(nuww);
     }
   }
 
   /**
-   * Validates the given TwitterMessage.
+   * v-vawidates t-the given twittewmessage. nyaa~~
    *
-   * @param message The message to validate.
-   * @param stripEmojisForFields The set of fields for which emojis should be stripped.
-   * @param acceptNullcastMessage Determines if this message should be accepted, if it's a nullcast
-   *                              message.
-   * @return {@code true} if the given message is valid; {@code false} otherwise.
+   * @pawam m-message the message to vawidate. (ꈍᴗꈍ)
+   * @pawam stwipemojisfowfiewds the set of fiewds fow which emojis shouwd be stwipped. ^•ﻌ•^
+   * @pawam acceptnuwwcastmessage detewmines if this message shouwd be accepted, >_< if it's a nyuwwcast
+   *                              message. ^^;;
+   * @wetuwn {@code t-twue} i-if the given message is vawid; {@code fawse} o-othewwise. ^^;;
    */
-  public static boolean validateTwitterMessage(
-      TwitterMessage message,
-      Set<Field> stripEmojisForFields,
-      boolean acceptNullcastMessage) {
-    if (message.getNullcast()) {
-      NULLCAST_TWEET.increment();
-      if (!acceptNullcastMessage) {
-        LOG.info("Dropping nullcasted message " + message.getId());
-        return false;
+  p-pubwic static b-boowean vawidatetwittewmessage(
+      twittewmessage m-message, /(^•ω•^)
+      set<fiewd> s-stwipemojisfowfiewds, nyaa~~
+      b-boowean acceptnuwwcastmessage) {
+    i-if (message.getnuwwcast()) {
+      nyuwwcast_tweet.incwement();
+      i-if (!acceptnuwwcastmessage) {
+        w-wog.info("dwopping nyuwwcasted message " + message.getid());
+        w-wetuwn fawse;
       }
-      NULLCAST_TWEET_ACCEPTED.increment();
+      n-nuwwcast_tweet_accepted.incwement();
     }
 
-    if (!message.getFromUserScreenName().isPresent()
-        || StringUtils.isBlank(message.getFromUserScreenName().get())) {
-      LOG.error("Message " + message.getId() + " contains no from user. Skipping.");
-      FILTERED_NO_FROM_USER.increment();
-      return false;
+    i-if (!message.getfwomusewscweenname().ispwesent()
+        || s-stwingutiws.isbwank(message.getfwomusewscweenname().get())) {
+      w-wog.ewwow("message " + m-message.getid() + " c-contains n-nyo fwom usew. (✿oωo) s-skipping.");
+      fiwtewed_no_fwom_usew.incwement();
+      w-wetuwn f-fawse;
     }
-    String fromUserScreenName = message.getFromUserScreenName().get();
+    s-stwing fwomusewscweenname = message.getfwomusewscweenname().get();
 
-    if (fromUserScreenName.length() > MAX_SCREEN_NAME_LEN) {
-      LOG.warn("Message " + message.getId() + " has a user screen name longer than "
-               + MAX_SCREEN_NAME_LEN + " characters: " + message.getFromUserScreenName()
-               + ". Skipping.");
-      FILTERED_LONG_SCREEN_NAME.increment();
-      return false;
-    }
-
-    // Remove supplementary characters and truncate these text fields.
-    if (message.getFromUserDisplayName().isPresent()) {
-      message.setFromUserDisplayName(stripSupplementaryChars(
-          message.getFromUserDisplayName().get(),
-          Field.FROM_USER_DISPLAY_NAME,
-          stripEmojisForFields.contains(Field.FROM_USER_DISPLAY_NAME)));
-    }
-    if (message.getToUserScreenName().isPresent()) {
-      String strippedToUserScreenName = stripSupplementaryChars(
-          message.getToUserLowercasedScreenName().get(),
-          Field.TO_USER_SCREEN_NAME,
-          stripEmojisForFields.contains(Field.TO_USER_SCREEN_NAME));
-      message.setToUserScreenName(
-          truncateString(
-              strippedToUserScreenName,
-              MAX_SCREEN_NAME_LEN,
-              Field.TO_USER_SCREEN_NAME,
-              stripEmojisForFields.contains(Field.TO_USER_SCREEN_NAME)));
+    i-if (fwomusewscweenname.wength() > max_scween_name_wen) {
+      wog.wawn("message " + message.getid() + " h-has a usew scween nyame wongew t-than "
+               + m-max_scween_name_wen + " c-chawactews: " + message.getfwomusewscweenname()
+               + ". ( ͡o ω ͡o ) s-skipping.");
+      fiwtewed_wong_scween_name.incwement();
+      w-wetuwn fawse;
     }
 
-    String strippedText = stripSupplementaryChars(
-        message.getText(),
-        Field.TEXT,
-        stripEmojisForFields.contains(Field.TEXT));
-    message.setText(truncateString(
-        strippedText,
-        MAX_TWEET_TEXT_LEN,
-        Field.TEXT,
-        stripEmojisForFields.contains(Field.TEXT)));
-
-    if (StringUtils.isBlank(message.getText())) {
-      FILTERED_NO_TEXT.increment();
-      return false;
+    // w-wemove suppwementawy chawactews a-and twuncate these text fiewds. (U ᵕ U❁)
+    if (message.getfwomusewdispwayname().ispwesent()) {
+      message.setfwomusewdispwayname(stwipsuppwementawychaws(
+          message.getfwomusewdispwayname().get(), òωó
+          f-fiewd.fwom_usew_dispway_name, σωσ
+          stwipemojisfowfiewds.contains(fiewd.fwom_usew_dispway_name)));
+    }
+    if (message.gettousewscweenname().ispwesent()) {
+      stwing s-stwippedtousewscweenname = s-stwipsuppwementawychaws(
+          message.gettousewwowewcasedscweenname().get(), :3
+          fiewd.to_usew_scween_name, OwO
+          stwipemojisfowfiewds.contains(fiewd.to_usew_scween_name));
+      m-message.settousewscweenname(
+          twuncatestwing(
+              s-stwippedtousewscweenname, ^^
+              m-max_scween_name_wen, (˘ω˘)
+              f-fiewd.to_usew_scween_name, OwO
+              stwipemojisfowfiewds.contains(fiewd.to_usew_scween_name)));
     }
 
-    if (message.getDate() == null) {
-      LOG.error("Message " + message.getId() + " contains no date. Skipping.");
-      FILTERED_NO_DATE.increment();
-      return false;
+    stwing stwippedtext = s-stwipsuppwementawychaws(
+        m-message.gettext(), UwU
+        fiewd.text, ^•ﻌ•^
+        s-stwipemojisfowfiewds.contains(fiewd.text));
+    message.settext(twuncatestwing(
+        stwippedtext, (ꈍᴗꈍ)
+        m-max_tweet_text_wen, /(^•ω•^)
+        fiewd.text, (U ᵕ U❁)
+        s-stwipemojisfowfiewds.contains(fiewd.text)));
+
+    i-if (stwingutiws.isbwank(message.gettext())) {
+      f-fiwtewed_no_text.incwement();
+      wetuwn fawse;
     }
 
-    if (message.isRetweet()) {
-      return validateRetweetMessage(message.getRetweetMessage(), stripEmojisForFields);
+    i-if (message.getdate() == n-nyuww) {
+      w-wog.ewwow("message " + m-message.getid() + " contains n-nyo date. (✿oωo) s-skipping.");
+      f-fiwtewed_no_date.incwement();
+      w-wetuwn fawse;
     }
 
-    // Track if both the snowflake ID and created at timestamp are consistent.
-    if (!SnowflakeIdParser.isTweetIDAndCreatedAtConsistent(message.getId(), message.getDate())) {
-      LOG.error("Found inconsistent tweet ID and created at timestamp: [messageID="
-                + message.getId() + "], [messageDate=" + message.getDate() + "].");
-      INCONSISTENT_TWEET_ID_AND_CREATED_AT.increment();
+    i-if (message.iswetweet()) {
+      w-wetuwn vawidatewetweetmessage(message.getwetweetmessage(), OwO s-stwipemojisfowfiewds);
     }
 
-    return true;
+    // t-twack if both the snowfwake id a-and cweated at timestamp awe consistent. :3
+    i-if (!snowfwakeidpawsew.istweetidandcweatedatconsistent(message.getid(), nyaa~~ message.getdate())) {
+      w-wog.ewwow("found i-inconsistent tweet i-id and cweated at timestamp: [messageid="
+                + message.getid() + "], ^•ﻌ•^ [messagedate=" + message.getdate() + "].");
+      i-inconsistent_tweet_id_and_cweated_at.incwement();
+    }
+
+    w-wetuwn twue;
   }
 
-  private static boolean validateRetweetMessage(
-      TwitterRetweetMessage message, Set<Field> stripEmojisForFields) {
-    if (message.getSharedId() == null || message.getRetweetId() == null) {
-      LOG.error("Retweet Message contains a null twitter id. Skipping.");
-      FILTERED_NO_STATUS_ID.increment();
-      return false;
+  p-pwivate static boowean vawidatewetweetmessage(
+      twittewwetweetmessage message, set<fiewd> s-stwipemojisfowfiewds) {
+    i-if (message.getshawedid() == nuww || message.getwetweetid() == n-nyuww) {
+      w-wog.ewwow("wetweet message contains a nyuww twittew id. ( ͡o ω ͡o ) skipping.");
+      f-fiwtewed_no_status_id.incwement();
+      w-wetuwn fawse;
     }
 
-    if (message.getSharedDate() == null) {
-      LOG.error("Retweet Message " + message.getRetweetId() + " contains no date. Skipping.");
-      return false;
+    i-if (message.getshaweddate() == nyuww) {
+      w-wog.ewwow("wetweet message " + message.getwetweetid() + " contains n-nyo date. ^^;; skipping.");
+      w-wetuwn fawse;
     }
 
-    // Remove supplementary characters from these text fields.
-    message.setSharedUserDisplayName(stripSupplementaryChars(
-        message.getSharedUserDisplayName(),
-        Field.SHARED_USER_DISPLAY_NAME,
-        stripEmojisForFields.contains(Field.SHARED_USER_DISPLAY_NAME)));
+    // wemove s-suppwementawy chawactews fwom these text fiewds. mya
+    m-message.setshawedusewdispwayname(stwipsuppwementawychaws(
+        message.getshawedusewdispwayname(), (U ᵕ U❁)
+        f-fiewd.shawed_usew_dispway_name,
+        s-stwipemojisfowfiewds.contains(fiewd.shawed_usew_dispway_name)));
 
-    return true;
+    wetuwn twue;
   }
 
   /**
-   * Strips non indexable chars from the text.
+   * stwips n-non indexabwe c-chaws fwom the text. ^•ﻌ•^
    *
-   * Returns the resulting string, which may be the same object as the text argument when
-   * no stripping or truncation is necessary.
+   * w-wetuwns the wesuwting stwing, (U ﹏ U) w-which may be the s-same object as t-the text awgument w-when
+   * nyo stwipping ow twuncation i-is nyecessawy. /(^•ω•^)
    *
-   * Non-indexed characters are "supplementary unicode" that are not emojis. Note that
-   * supplementary unicode are still characters that seem worth indexing, as many characters
-   * in CJK languages are supplementary. However this would make the size of our index
-   * explode (~186k supplementary characters exist), so it's not feasible.
+   * n-nyon-indexed chawactews a-awe "suppwementawy unicode" t-that awe nyot emojis. nyote that
+   * suppwementawy u-unicode a-awe stiww chawactews t-that seem wowth indexing, ʘwʘ as many chawactews
+   * in cjk wanguages awe suppwementawy. XD h-howevew this wouwd m-make the size of o-ouw index
+   * expwode (~186k suppwementawy chawactews e-exist), (⑅˘꒳˘) so it's nyot feasibwe. nyaa~~
    *
-   * @param text The text to strip
-   * @param field The field this text is from
-   * @param stripSupplementaryEmojis Whether or not to strip supplementary emojis. Note that this
-   * parameter name isn't 100% accurate. This parameter is meant to replicate behavior prior to
-   * adding support for *not* stripping supplementary emojis. The prior behavior would turn an
-   * emoji such as a keycap "1\uFE0F\u20E3" (http://www.iemoji.com/view/emoji/295/symbols/keycap-1)
-   * into just '1'. So the keycap emoji is not completely stripped, only the portion after the '1'.
+   * @pawam t-text the t-text to stwip
+   * @pawam f-fiewd t-the fiewd this t-text is fwom
+   * @pawam stwipsuppwementawyemojis whethew ow nyot to stwip suppwementawy emojis. UwU n-nyote that this
+   * pawametew n-nyame isn't 100% accuwate. (˘ω˘) this pawametew is meant to wepwicate b-behaviow pwiow to
+   * adding suppowt fow *not* stwipping suppwementawy emojis. rawr x3 t-the pwiow behaviow w-wouwd tuwn an
+   * emoji such a-as a keycap "1\ufe0f\u20e3" (http://www.iemoji.com/view/emoji/295/symbows/keycap-1)
+   * into just '1'. (///ˬ///✿) so the k-keycap emoji is n-nyot compwetewy stwipped, 😳😳😳 onwy the p-powtion aftew the '1'. (///ˬ///✿)
    *
    */
-  @VisibleForTesting
-  public static String stripSupplementaryChars(
-      String text,
-      Field field,
-      boolean stripSupplementaryEmojis) {
-    if (text == null || text.isEmpty()) {
-      return text;
+  @visibwefowtesting
+  p-pubwic static stwing stwipsuppwementawychaws(
+      stwing text, ^^;;
+      f-fiewd fiewd, ^^
+      boowean stwipsuppwementawyemojis) {
+    if (text == n-nyuww || t-text.isempty()) {
+      w-wetuwn text;
     }
 
-    // Initialize an empty map so that if we choose not to strip emojis,
-    // then no emojipositions will be found and we don't need a null
-    // check before checking if an emoji is at a certain spot.
-    NavigableMap<Integer, Integer> emojiPositions = new TreeMap<>();
+    // initiawize a-an empty map so that if we choose nyot to stwip emojis, (///ˬ///✿)
+    // then nyo emojipositions w-wiww be f-found and we don't n-need a nyuww
+    // c-check befowe checking if an emoji is at a c-cewtain spot. -.-
+    n-nyavigabwemap<integew, integew> emojipositions = n-nyew tweemap<>();
 
-    if (!stripSupplementaryEmojis) {
-      emojiPositions = EmojiExtractor.getEmojiPositions(text);
+    if (!stwipsuppwementawyemojis) {
+      emojipositions = e-emojiextwactow.getemojipositions(text);
     }
 
-    StringBuilder strippedTextBuilder = new StringBuilder();
-    int sequenceStart = 0;
+    stwingbuiwdew stwippedtextbuiwdew = n-nyew stwingbuiwdew();
+    i-int sequencestawt = 0;
     int i = 0;
-    while (i < text.length()) {
-      if (Character.isSupplementaryCodePoint(text.codePointAt(i))) {
-        // Check if this supplementary character is an emoji
-        if (!emojiPositions.containsKey(i)) {
-          // It's not an emoji, or we want to strip emojis, so strip it
+    whiwe (i < t-text.wength()) {
+      i-if (chawactew.issuppwementawycodepoint(text.codepointat(i))) {
+        // c-check if this suppwementawy chawactew i-is an emoji
+        if (!emojipositions.containskey(i)) {
+          // it's nyot a-an emoji, /(^•ω•^) ow we want to stwip emojis, UwU so stwip it
 
-          // text[i] and text[i + 1] are part of a supplementary code point.
-          strippedTextBuilder.append(text.substring(sequenceStart, i));
-          sequenceStart = i + 2;  // skip 2 chars
-          i = sequenceStart;
-          COUNTERS_MAP.get(field).getStrippedSupplementaryCharsCounter().increment();
-        } else {
-          // It's an emoji, keep it
-          i += emojiPositions.get(i);
-          COUNTERS_MAP.get(field).getNonStrippedEmojiCharsCounter().increment();
+          // t-text[i] and text[i + 1] a-awe pawt o-of a suppwementawy c-code point. (⑅˘꒳˘)
+          s-stwippedtextbuiwdew.append(text.substwing(sequencestawt, ʘwʘ i));
+          s-sequencestawt = i + 2;  // skip 2 chaws
+          i-i = sequencestawt;
+          countews_map.get(fiewd).getstwippedsuppwementawychawscountew().incwement();
+        } e-ewse {
+          // it's an emoji, σωσ keep i-it
+          i += e-emojipositions.get(i);
+          countews_map.get(fiewd).getnonstwippedemojichawscountew().incwement();
         }
-      } else {
+      } e-ewse {
         ++i;
       }
     }
-    if (sequenceStart < text.length()) {
-      strippedTextBuilder.append(text.substring(sequenceStart));
+    if (sequencestawt < t-text.wength()) {
+      s-stwippedtextbuiwdew.append(text.substwing(sequencestawt));
     }
 
-    String strippedText = strippedTextBuilder.toString();
-    if (strippedText.length() < text.length()) {
-      COUNTERS_MAP.get(field).getTweetsWithStrippedSupplementaryCharsCounter().increment();
+    stwing stwippedtext = s-stwippedtextbuiwdew.tostwing();
+    i-if (stwippedtext.wength() < text.wength()) {
+      c-countews_map.get(fiewd).gettweetswithstwippedsuppwementawychawscountew().incwement();
     }
-    return strippedText;
+    wetuwn stwippedtext;
   }
 
   /**
-   * Truncates the given string to the given length.
+   * twuncates the given stwing t-to the given wength. ^^
    *
-   * Note that we are truncating based on the # of UTF-16 characters a given emoji takes up.
-   * So if a single emoji takes up 4 UTF-16 characters, that counts as 4 for the truncation,
-   * not just 1.
+   * nyote that we awe t-twuncating based on the # of utf-16 chawactews a-a given emoji takes u-up. OwO
+   * so i-if a singwe emoji takes up 4 utf-16 c-chawactews, (ˆ ﻌ ˆ)♡ t-that counts as 4 fow the twuncation, o.O
+   * n-nyot just 1. (˘ω˘)
    *
-   * @param text The text to truncate
-   * @param maxLength The maximum length of the string after truncation
-   * @param field The field from which this string cames
-   * @param splitEmojisAtMaxLength If true, don't worry about emojis and just truncate at maxLength,
-   * potentially splitting them. If false, truncate before the emoji if truncating at maxLength
-   * would cause the emoji to be split.
+   * @pawam text the t-text to twuncate
+   * @pawam maxwength t-the maximum w-wength of the stwing aftew twuncation
+   * @pawam fiewd the fiewd fwom which this stwing cames
+   * @pawam spwitemojisatmaxwength i-if twue, 😳 don't w-wowwy about emojis and just twuncate at maxwength, (U ᵕ U❁)
+   * potentiawwy s-spwitting them. :3 if fawse, o.O t-twuncate befowe t-the emoji if twuncating at maxwength
+   * wouwd cause the emoji to be spwit. (///ˬ///✿)
    */
-  @VisibleForTesting
-  static String truncateString(
-      String text,
-      int maxLength,
-      Field field,
-      boolean splitEmojisAtMaxLength) {
-    Preconditions.checkArgument(maxLength > 0);
+  @visibwefowtesting
+  s-static stwing twuncatestwing(
+      stwing text, OwO
+      i-int maxwength, >w<
+      fiewd fiewd, ^^
+      b-boowean s-spwitemojisatmaxwength) {
+    pweconditions.checkawgument(maxwength > 0);
 
-    if ((text == null) || (text.length() <= maxLength)) {
-      return text;
+    i-if ((text == n-nyuww) || (text.wength() <= m-maxwength)) {
+      w-wetuwn text;
     }
 
-    int truncatePoint = maxLength;
-    NavigableMap<Integer, Integer> emojiPositions;
-    // If we want to consider emojis we should not strip on an emoji boundary.
-    if (!splitEmojisAtMaxLength) {
-      emojiPositions = EmojiExtractor.getEmojiPositions(text);
+    i-int twuncatepoint = m-maxwength;
+    navigabwemap<integew, (⑅˘꒳˘) integew> emojipositions;
+    // if we want to considew emojis we shouwd nyot stwip o-on an emoji b-boundawy. ʘwʘ
+    if (!spwitemojisatmaxwength) {
+      e-emojipositions = e-emojiextwactow.getemojipositions(text);
 
-      // Get the last emoji before maxlength.
-      Map.Entry<Integer, Integer> lastEmojiBeforeMaxLengthEntry =
-          emojiPositions.lowerEntry(maxLength);
+      // g-get the wast e-emoji befowe maxwength. (///ˬ///✿)
+      map.entwy<integew, XD integew> wastemojibefowemaxwengthentwy =
+          emojipositions.wowewentwy(maxwength);
 
-      if (lastEmojiBeforeMaxLengthEntry != null) {
-        int lowerEmojiEnd = lastEmojiBeforeMaxLengthEntry.getKey()
-            + lastEmojiBeforeMaxLengthEntry.getValue();
+      i-if (wastemojibefowemaxwengthentwy != n-nyuww) {
+        int wowewemojiend = wastemojibefowemaxwengthentwy.getkey()
+            + wastemojibefowemaxwengthentwy.getvawue();
 
-        // If the last emoji would be truncated, truncate before the last emoji.
-        if (lowerEmojiEnd > truncatePoint) {
-          truncatePoint = lastEmojiBeforeMaxLengthEntry.getKey();
-          COUNTERS_MAP.get(field).getEmojisAtTruncateBoundaryCounter().increment();
+        // i-if the w-wast emoji wouwd b-be twuncated, 😳 twuncate befowe the wast emoji. >w<
+        i-if (wowewemojiend > twuncatepoint) {
+          twuncatepoint = w-wastemojibefowemaxwengthentwy.getkey();
+          c-countews_map.get(fiewd).getemojisattwuncateboundawycountew().incwement();
         }
       }
     }
 
-    COUNTERS_MAP.get(field).getTruncatedCounter().increment();
-    return text.substring(0, truncatePoint);
+    countews_map.get(fiewd).gettwuncatedcountew().incwement();
+    wetuwn text.substwing(0, (˘ω˘) t-twuncatepoint);
   }
 }

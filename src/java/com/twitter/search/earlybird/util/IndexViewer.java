@@ -1,798 +1,798 @@
-package com.twitter.search.earlybird.util;
+package com.twittew.seawch.eawwybiwd.utiw;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.TreeSet;
+impowt j-java.io.ioexception;
+i-impowt java.io.pwintwwitew;
+i-impowt java.io.unsuppowtedencodingexception;
+i-impowt java.utiw.awwaywist;
+i-impowt j-java.utiw.cowwections;
+i-impowt j-java.utiw.compawatow;
+impowt java.utiw.wist;
+impowt java.utiw.wocawe;
+impowt java.utiw.set;
+i-impowt java.utiw.tweeset;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
+impowt com.googwe.common.cowwect.immutabweset;
+i-impowt com.googwe.common.cowwect.wists;
 
-import org.apache.lucene.index.IndexOptions;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.util.BytesRef;
+impowt owg.apache.wucene.index.indexoptions;
+i-impowt owg.apache.wucene.index.numewicdocvawues;
+impowt owg.apache.wucene.index.postingsenum;
+i-impowt owg.apache.wucene.index.tewms;
+i-impowt owg.apache.wucene.index.tewmsenum;
+i-impowt owg.apache.wucene.seawch.docidsetitewatow;
+impowt owg.apache.wucene.utiw.byteswef;
 
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.util.analysis.IntTermAttributeImpl;
-import com.twitter.search.common.util.analysis.LongTermAttributeImpl;
-import com.twitter.search.common.util.analysis.SortableLongTermAttributeImpl;
-import com.twitter.search.common.util.spatial.GeoUtil;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.inverted.MPHTermDictionary;
-import com.twitter.search.core.earlybird.index.inverted.RealtimeIndexTerms;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
+impowt com.twittew.seawch.common.constants.thwiftjava.thwiftwanguage;
+i-impowt com.twittew.seawch.common.schema.base.schema;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftcsftype;
+impowt com.twittew.seawch.common.utiw.anawysis.inttewmattwibuteimpw;
+i-impowt com.twittew.seawch.common.utiw.anawysis.wongtewmattwibuteimpw;
+i-impowt com.twittew.seawch.common.utiw.anawysis.sowtabwewongtewmattwibuteimpw;
+i-impowt c-com.twittew.seawch.common.utiw.spatiaw.geoutiw;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.docidtotweetidmappew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.mphtewmdictionawy;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.weawtimeindextewms;
+i-impowt com.twittew.seawch.eawwybiwd.index.eawwybiwdsingwesegmentseawchew;
 
-import geo.google.datamodel.GeoCoordinate;
+impowt geo.googwe.datamodew.geocoowdinate;
 
-public class IndexViewer {
+pubwic cwass indexviewew {
   /**
-   * Fields whose terms are indexed using
-   * {@link com.twitter.search.common.util.analysis.IntTermAttribute}
+   * fiewds whose tewms a-awe indexed using
+   * {@wink com.twittew.seawch.common.utiw.anawysis.inttewmattwibute}
    */
-  private static final Set<String> INT_TERM_ATTRIBUTE_FIELDS = ImmutableSet.of(
-      EarlybirdFieldConstant.CREATED_AT_FIELD.getFieldName(),
-      EarlybirdFieldConstant.LINK_CATEGORY_FIELD.getFieldName(),
-      EarlybirdFieldConstant
-          .NORMALIZED_FAVORITE_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD.getFieldName(),
-      EarlybirdFieldConstant
-          .NORMALIZED_REPLY_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD.getFieldName(),
-      EarlybirdFieldConstant
-          .NORMALIZED_RETWEET_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD.getFieldName(),
-      EarlybirdFieldConstant.COMPOSER_SOURCE.getFieldName());
-
-  /**
-   * Fields whose terms are indexed using
-   * {@link com.twitter.search.common.util.analysis.LongTermAttribute}
-   */
-  private static final Set<String> LONG_TERM_ATTRIBUTE_FIELDS = ImmutableSet.of(
-      EarlybirdFieldConstant.CONVERSATION_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.LIKED_BY_USER_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.QUOTED_TWEET_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.QUOTED_USER_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.REPLIED_TO_BY_USER_ID.getFieldName(),
-      EarlybirdFieldConstant.RETWEETED_BY_USER_ID.getFieldName(),
-      EarlybirdFieldConstant.DIRECTED_AT_USER_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.IN_REPLY_TO_TWEET_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.IN_REPLY_TO_USER_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.RETWEET_SOURCE_TWEET_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.RETWEET_SOURCE_USER_ID_FIELD.getFieldName());
+  p-pwivate static f-finaw set<stwing> i-int_tewm_attwibute_fiewds = immutabweset.of(
+      eawwybiwdfiewdconstant.cweated_at_fiewd.getfiewdname(), /(^•ω•^)
+      eawwybiwdfiewdconstant.wink_categowy_fiewd.getfiewdname(), 😳😳😳
+      e-eawwybiwdfiewdconstant
+          .nowmawized_favowite_count_gweatew_than_ow_equaw_to_fiewd.getfiewdname(), ^•ﻌ•^
+      e-eawwybiwdfiewdconstant
+          .nowmawized_wepwy_count_gweatew_than_ow_equaw_to_fiewd.getfiewdname(), 🥺
+      eawwybiwdfiewdconstant
+          .nowmawized_wetweet_count_gweatew_than_ow_equaw_to_fiewd.getfiewdname(), o.O
+      e-eawwybiwdfiewdconstant.composew_souwce.getfiewdname());
 
   /**
-   * Fields whose terms index using SORTED
-   * {@link com.twitter.search.common.util.analysis.LongTermAttribute}
+   * f-fiewds whose tewms awe i-indexed using
+   * {@wink com.twittew.seawch.common.utiw.anawysis.wongtewmattwibute}
    */
-  private static final Set<String> SORTED_LONG_TERM_ATTRIBUTE_FIELDS =
-      ImmutableSet.of(EarlybirdFieldConstant.ID_FIELD.getFieldName());
+  p-pwivate static finaw set<stwing> wong_tewm_attwibute_fiewds = i-immutabweset.of(
+      eawwybiwdfiewdconstant.convewsation_id_fiewd.getfiewdname(), (U ᵕ U❁)
+      e-eawwybiwdfiewdconstant.wiked_by_usew_id_fiewd.getfiewdname(), ^^
+      eawwybiwdfiewdconstant.quoted_tweet_id_fiewd.getfiewdname(), (⑅˘꒳˘)
+      e-eawwybiwdfiewdconstant.quoted_usew_id_fiewd.getfiewdname(), :3
+      e-eawwybiwdfiewdconstant.wepwied_to_by_usew_id.getfiewdname(), (///ˬ///✿)
+      eawwybiwdfiewdconstant.wetweeted_by_usew_id.getfiewdname(), :3
+      eawwybiwdfiewdconstant.diwected_at_usew_id_fiewd.getfiewdname(), 🥺
+      eawwybiwdfiewdconstant.fwom_usew_id_fiewd.getfiewdname(), mya
+      eawwybiwdfiewdconstant.in_wepwy_to_tweet_id_fiewd.getfiewdname(), XD
+      eawwybiwdfiewdconstant.in_wepwy_to_usew_id_fiewd.getfiewdname(), -.-
+      eawwybiwdfiewdconstant.wetweet_souwce_tweet_id_fiewd.getfiewdname(), o.O
+      e-eawwybiwdfiewdconstant.wetweet_souwce_usew_id_fiewd.getfiewdname());
 
-  private final EarlybirdSingleSegmentSearcher searcher;
-  private final EarlybirdIndexSegmentAtomicReader twitterReader;
+  /**
+   * f-fiewds whose tewms index using s-sowted
+   * {@wink c-com.twittew.seawch.common.utiw.anawysis.wongtewmattwibute}
+   */
+  p-pwivate static finaw set<stwing> sowted_wong_tewm_attwibute_fiewds =
+      immutabweset.of(eawwybiwdfiewdconstant.id_fiewd.getfiewdname());
 
-  public long getTimeSliceId() {
-    return searcher.getTimeSliceID();
+  p-pwivate finaw eawwybiwdsingwesegmentseawchew seawchew;
+  pwivate finaw eawwybiwdindexsegmentatomicweadew t-twittewweadew;
+
+  pubwic wong g-gettimeswiceid() {
+    w-wetuwn seawchew.gettimeswiceid();
   }
 
-  public static class Options {
-    private boolean dumpHexTerms = false;
-    private String charset;
-    private double[] histogramBuckets;
-    private boolean termLengthHistogram;
+  p-pubwic static cwass options {
+    p-pwivate boowean d-dumphextewms = f-fawse;
+    pwivate s-stwing chawset;
+    pwivate doubwe[] histogwambuckets;
+    pwivate b-boowean tewmwengthhistogwam;
 
-    public Options setDumpHexTerms(boolean dumpHexTermsParam) {
-      this.dumpHexTerms = dumpHexTermsParam;
-      return this;
+    p-pubwic o-options setdumphextewms(boowean d-dumphextewmspawam) {
+      t-this.dumphextewms = dumphextewmspawam;
+      wetuwn this;
     }
 
-    public Options setCharset(String charsetParam) {
-      this.charset = charsetParam;
-      return this;
+    pubwic options setchawset(stwing chawsetpawam) {
+      t-this.chawset = chawsetpawam;
+      wetuwn this;
     }
 
-    public Options setHistogramBuckets(double[] histogramBucketsParam) {
-      this.histogramBuckets = histogramBucketsParam;
-      return this;
+    pubwic options sethistogwambuckets(doubwe[] h-histogwambucketspawam) {
+      this.histogwambuckets = histogwambucketspawam;
+      wetuwn this;
     }
 
-    public Options setTermLengthHistogram(boolean termLengthHistogramParam) {
-      this.termLengthHistogram = termLengthHistogramParam;
-      return this;
+    p-pubwic o-options settewmwengthhistogwam(boowean t-tewmwengthhistogwampawam) {
+      this.tewmwengthhistogwam = t-tewmwengthhistogwampawam;
+      wetuwn this;
     }
   }
 
   /**
-   * Data Transfer Object for Terms, encapsulates the "json" serialization
-   * while maintaining streaming mode
+   * d-data twansfew o-object fow tewms, (˘ω˘) encapsuwates the "json" sewiawization
+   * whiwe maintaining stweaming mode
    */
-  private static class TermDto {
+  p-pwivate static cwass t-tewmdto {
 
-    private final String field;
-    private final String term;
-    private final String docFreq;
-    private final String percent;
-    private final PostingsEnum docsEnum;
-    private final TermsEnum termsEnum;
-    private final Integer maxDocs;
+    pwivate finaw stwing f-fiewd;
+    p-pwivate finaw stwing tewm;
+    pwivate finaw stwing d-docfweq;
+    p-pwivate finaw stwing pewcent;
+    p-pwivate finaw p-postingsenum docsenum;
+    pwivate finaw tewmsenum tewmsenum;
+    pwivate finaw i-integew maxdocs;
 
-    public TermDto(String field, String term, String docFreq, String percent,
-                   PostingsEnum docsEnum, TermsEnum termsEnum, Integer maxDocs) {
-      this.field = field;
-      this.term = term;
-      this.docFreq = docFreq;
-      this.percent = percent;
-      this.docsEnum = docsEnum;
-      this.termsEnum = termsEnum;
-      this.maxDocs = maxDocs;
+    p-pubwic tewmdto(stwing f-fiewd, (U ᵕ U❁) stwing tewm, rawr s-stwing docfweq, 🥺 s-stwing pewcent, rawr x3
+                   postingsenum d-docsenum, ( ͡o ω ͡o ) tewmsenum tewmsenum, σωσ integew maxdocs) {
+      this.fiewd = fiewd;
+      t-this.tewm = tewm;
+      t-this.docfweq = docfweq;
+      this.pewcent = p-pewcent;
+      t-this.docsenum = docsenum;
+      this.tewmsenum = tewmsenum;
+      t-this.maxdocs = maxdocs;
     }
 
-    public void write(ViewerWriter writer,
-                      EarlybirdIndexSegmentAtomicReader twitterReader) throws IOException {
-      writer.beginObject();
-      writer.name("field").value(field);
-      writer.name("term").value(term);
-      writer.name("docFreq").value(docFreq);
-      writer.name("percent").value(percent);
-      if (docsEnum != null) {
-        appendFrequencyAndPositions(writer, field, docsEnum, twitterReader);
+    pubwic void wwite(viewewwwitew wwitew, rawr x3
+                      e-eawwybiwdindexsegmentatomicweadew twittewweadew) thwows i-ioexception {
+      w-wwitew.beginobject();
+      wwitew.name("fiewd").vawue(fiewd);
+      wwitew.name("tewm").vawue(tewm);
+      wwitew.name("docfweq").vawue(docfweq);
+      w-wwitew.name("pewcent").vawue(pewcent);
+      i-if (docsenum != nyuww) {
+        appendfwequencyandpositions(wwitew, (ˆ ﻌ ˆ)♡ fiewd, rawr docsenum, t-twittewweadew);
       }
-      if (maxDocs != null) {
-        appendDocs(writer, termsEnum, maxDocs, twitterReader);
+      if (maxdocs != nyuww) {
+        appenddocs(wwitew, :3 t-tewmsenum, maxdocs, rawr twittewweadew);
       }
-      writer.endObject();
+      wwitew.endobject();
     }
   }
 
   /**
-   * Data Transfer Object for Terms, encapsulates the "json" serialization
-   * while maintaining streaming mode
+   * data t-twansfew object fow tewms, (˘ω˘) encapsuwates t-the "json" s-sewiawization
+   * whiwe maintaining s-stweaming mode
    */
-  private static class StatsDto {
+  p-pwivate static c-cwass statsdto {
 
-    private final String field;
-    private final String numTerms;
-    private final String terms;
+    p-pwivate finaw stwing fiewd;
+    p-pwivate finaw s-stwing nyumtewms;
+    pwivate finaw stwing t-tewms;
 
 
-    public StatsDto(String field, String numTerms, String terms) {
-      this.field = field;
-      this.numTerms = numTerms;
-      this.terms = terms;
+    pubwic s-statsdto(stwing f-fiewd, (ˆ ﻌ ˆ)♡ stwing numtewms, mya stwing tewms) {
+      t-this.fiewd = fiewd;
+      this.numtewms = n-nyumtewms;
+      t-this.tewms = tewms;
     }
 
-    public void write(ViewerWriter writer) throws IOException {
-      writer.beginObject();
+    pubwic void wwite(viewewwwitew w-wwitew) t-thwows ioexception {
+      w-wwitew.beginobject();
 
-      writer.name("field").value(field);
-      writer.name("numTerms").value(numTerms);
-      writer.name("terms").value(terms);
+      w-wwitew.name("fiewd").vawue(fiewd);
+      wwitew.name("numtewms").vawue(numtewms);
+      w-wwitew.name("tewms").vawue(tewms);
 
-      writer.endObject();
+      wwitew.endobject();
     }
   }
 
-  public IndexViewer(EarlybirdSingleSegmentSearcher searcher) {
-    this.searcher = searcher;
-    this.twitterReader = searcher.getTwitterIndexReader();
+  pubwic indexviewew(eawwybiwdsingwesegmentseawchew seawchew) {
+    this.seawchew = s-seawchew;
+    this.twittewweadew = seawchew.gettwittewindexweadew();
   }
 
-  private boolean shouldSeekExact(Terms terms, TermsEnum termsEnum) {
-    return terms instanceof RealtimeIndexTerms
-           || termsEnum instanceof MPHTermDictionary.MPHTermsEnum;
+  p-pwivate boowean shouwdseekexact(tewms t-tewms, (U ᵕ U❁) tewmsenum tewmsenum) {
+    w-wetuwn tewms instanceof weawtimeindextewms
+           || t-tewmsenum i-instanceof m-mphtewmdictionawy.mphtewmsenum;
   }
 
   /**
-   * Dumps all terms for a given tweet id.
-   * @param writer writer being used
-   * @param tweetId the tweet id to use
+   * d-dumps aww tewms f-fow a given tweet id. mya
+   * @pawam wwitew wwitew being used
+   * @pawam tweetid the tweet id to use
    */
-  public void dumpTweetDataByTweetId(ViewerWriter writer, long tweetId, Options options)
-      throws IOException {
-    int docId = twitterReader.getSegmentData().getDocIDToTweetIDMapper().getDocID(tweetId);
-    dumpTweetDataByDocId(writer, docId, options);
+  pubwic v-void dumptweetdatabytweetid(viewewwwitew w-wwitew, ʘwʘ w-wong tweetid, (˘ω˘) options options)
+      t-thwows ioexception {
+    int docid = twittewweadew.getsegmentdata().getdocidtotweetidmappew().getdocid(tweetid);
+    dumptweetdatabydocid(wwitew, docid, 😳 o-options);
   }
 
   /**
-   * Dumps all terms for a given doc id.
-   * @param writer writer being used
-   * @param docId the document id to use.
+   * d-dumps aww tewms fow a-a given doc id. òωó
+   * @pawam wwitew wwitew being u-used
+   * @pawam d-docid the document id to use. nyaa~~
    */
-  public void dumpTweetDataByDocId(ViewerWriter writer, int docId, Options options)
-      throws IOException {
-    writer.beginObject();
+  p-pubwic void d-dumptweetdatabydocid(viewewwwitew wwitew, int docid, o.O options options)
+      thwows ioexception {
+    w-wwitew.beginobject();
 
-    printHeader(writer);
-    long tweetID = twitterReader.getSegmentData().getDocIDToTweetIDMapper().getTweetID(docId);
-    if (docId < twitterReader.maxDoc() && tweetID >= 0) {
-      writer.name("docId").value(Integer.toString(docId));
-      writer.name("tweetId").value(Long.toString(tweetID));
-      dumpIndexedFields(writer, docId, options);
-      dumpCsfFields(writer, docId);
+    p-pwintheadew(wwitew);
+    w-wong t-tweetid = twittewweadew.getsegmentdata().getdocidtotweetidmappew().gettweetid(docid);
+    i-if (docid < twittewweadew.maxdoc() && t-tweetid >= 0) {
+      w-wwitew.name("docid").vawue(integew.tostwing(docid));
+      wwitew.name("tweetid").vawue(wong.tostwing(tweetid));
+      dumpindexedfiewds(wwitew, nyaa~~ d-docid, (U ᵕ U❁) o-options);
+      dumpcsffiewds(wwitew, 😳😳😳 d-docid);
     }
-    writer.endObject();
+    wwitew.endobject();
   }
 
   /**
-   * Dumps all tweet IDs in the current segment to the given file.
+   * dumps a-aww tweet ids in the cuwwent segment t-to the given f-fiwe. (U ﹏ U)
    */
-  public void dumpTweetIds(ViewerWriter writer, String logFile, PrintWriter logWriter)
-      throws IOException {
-    writeTweetIdsToLogFile(logWriter);
+  pubwic void dumptweetids(viewewwwitew w-wwitew, ^•ﻌ•^ stwing wogfiwe, (⑅˘꒳˘) pwintwwitew wogwwitew)
+      t-thwows i-ioexception {
+    w-wwitetweetidstowogfiwe(wogwwitew);
 
-    writer.beginObject();
-    writer.name(Long.toString(searcher.getTimeSliceID())).value(logFile);
-    writer.endObject();
+    wwitew.beginobject();
+    wwitew.name(wong.tostwing(seawchew.gettimeswiceid())).vawue(wogfiwe);
+    wwitew.endobject();
   }
 
-  private void writeTweetIdsToLogFile(PrintWriter logWriter) {
-    DocIDToTweetIDMapper mapper = twitterReader.getSegmentData().getDocIDToTweetIDMapper();
-    int docId = Integer.MIN_VALUE;
-    while ((docId = mapper.getNextDocID(docId)) != DocIDToTweetIDMapper.ID_NOT_FOUND) {
-      long tweetId = mapper.getTweetID(docId);
+  p-pwivate void wwitetweetidstowogfiwe(pwintwwitew wogwwitew) {
+    d-docidtotweetidmappew m-mappew = twittewweadew.getsegmentdata().getdocidtotweetidmappew();
+    int docid = i-integew.min_vawue;
+    whiwe ((docid = m-mappew.getnextdocid(docid)) != d-docidtotweetidmappew.id_not_found) {
+      wong tweetid = mappew.gettweetid(docid);
 
-      // Ensure tweet ID is valid and non-deleted
-      if ((tweetId > 0) && !twitterReader.getDeletesView().isDeleted(docId)) {
-        logWriter.println(tweetId);
+      // e-ensuwe tweet id is vawid and nyon-deweted
+      i-if ((tweetid > 0) && !twittewweadew.getdewetesview().isdeweted(docid)) {
+        w-wogwwitew.pwintwn(tweetid);
       }
     }
   }
 
-  private void dumpIndexedFields(ViewerWriter writer, int docId,
-                                 Options options) throws IOException {
-    writer.name("indexedFields");
-    writer.beginArray();
-    writer.newline();
-    for (String field : sortedFields()) {
-      dumpTweetData(writer, field, docId, options);
+  pwivate v-void dumpindexedfiewds(viewewwwitew wwitew, >_< i-int docid, (⑅˘꒳˘)
+                                 o-options o-options) thwows ioexception {
+    wwitew.name("indexedfiewds");
+    wwitew.beginawway();
+    wwitew.newwine();
+    fow (stwing fiewd : sowtedfiewds()) {
+      dumptweetdata(wwitew, σωσ fiewd, docid, 🥺 options);
     }
-    writer.endArray();
-    writer.newline();
+    wwitew.endawway();
+    wwitew.newwine();
   }
 
-  private void dumpCsfFields(ViewerWriter writer, int docId) throws IOException {
-    writer.name("csfFields");
-    writer.beginArray();
-    writer.newline();
-    dumpCSFData(writer, docId);
+  pwivate v-void dumpcsffiewds(viewewwwitew w-wwitew, :3 int docid) thwows ioexception {
+    wwitew.name("csffiewds");
+    wwitew.beginawway();
+    w-wwitew.newwine();
+    d-dumpcsfdata(wwitew, (ꈍᴗꈍ) d-docid);
 
-    writer.endArray();
+    wwitew.endawway();
   }
 
   /**
-   * Dumps all CSF values for a given doc id.
-   * @param writer writer being used
-   * @param docId the document id to use.
+   * dumps aww csf vawues f-fow a given doc id. ^•ﻌ•^
+   * @pawam w-wwitew wwitew b-being used
+   * @pawam docid t-the document id to use. (˘ω˘)
    */
-  private void dumpCSFData(ViewerWriter writer, int docId) throws IOException {
-    Schema tweetSchema = twitterReader.getSchema();
+  p-pwivate void dumpcsfdata(viewewwwitew w-wwitew, 🥺 int docid) thwows ioexception {
+    s-schema tweetschema = t-twittewweadew.getschema();
 
-    // Sort the FieldInfo objects to generate fixed order to make testing easier
-    List<Schema.FieldInfo> sortedFieldInfos = new ArrayList<>(tweetSchema.getFieldInfos());
-    sortedFieldInfos.sort(Comparator.comparing(Schema.FieldInfo::getFieldId));
+    // s-sowt the f-fiewdinfo objects t-to genewate f-fixed owdew to m-make testing easiew
+    w-wist<schema.fiewdinfo> sowtedfiewdinfos = n-nyew awwaywist<>(tweetschema.getfiewdinfos());
+    sowtedfiewdinfos.sowt(compawatow.compawing(schema.fiewdinfo::getfiewdid));
 
-    for (Schema.FieldInfo fieldInfo: sortedFieldInfos) {
-      String csfFieldInfoName = fieldInfo.getName();
-      ThriftCSFType csfType = tweetSchema.getCSFFieldType(csfFieldInfoName);
-      NumericDocValues csfDocValues = twitterReader.getNumericDocValues(csfFieldInfoName);
-      // If twitterReader.getNumericDocValues(value.getName()) == null,
-      // means no NumericDocValue was indexed for the field so ignore
-      if (csfType != null && csfDocValues != null && csfDocValues.advanceExact(docId)) {
-        long csfValue = csfDocValues.longValue();
-        writer.beginObject();
-        writer.name("field").value(formatField(csfFieldInfoName));
-        writer.name("value");
-        if (csfFieldInfoName.equals(EarlybirdFieldConstant.LAT_LON_CSF_FIELD.getFieldName())) {
-          writer.value(latlongDecode(csfValue));
-        } else if (csfFieldInfoName.equals(EarlybirdFieldConstant.LANGUAGE.getFieldName())) {
-          writer.value(languageDecode(csfValue));
-        } else if (csfFieldInfoName.equals(EarlybirdFieldConstant.CARD_LANG_CSF.getFieldName())) {
-          writer.value(languageDecode(csfValue));
-        } else {
-          writer.value(Long.toString(csfValue));
+    f-fow (schema.fiewdinfo f-fiewdinfo: s-sowtedfiewdinfos) {
+      stwing csffiewdinfoname = f-fiewdinfo.getname();
+      thwiftcsftype csftype = tweetschema.getcsffiewdtype(csffiewdinfoname);
+      n-nyumewicdocvawues csfdocvawues = t-twittewweadew.getnumewicdocvawues(csffiewdinfoname);
+      // i-if twittewweadew.getnumewicdocvawues(vawue.getname()) == n-nyuww, (✿oωo)
+      // means n-nyo nyumewicdocvawue was indexed f-fow the fiewd so ignowe
+      if (csftype != n-nyuww && csfdocvawues != n-nyuww && csfdocvawues.advanceexact(docid)) {
+        wong csfvawue = csfdocvawues.wongvawue();
+        wwitew.beginobject();
+        w-wwitew.name("fiewd").vawue(fowmatfiewd(csffiewdinfoname));
+        wwitew.name("vawue");
+        if (csffiewdinfoname.equaws(eawwybiwdfiewdconstant.wat_won_csf_fiewd.getfiewdname())) {
+          wwitew.vawue(watwongdecode(csfvawue));
+        } e-ewse if (csffiewdinfoname.equaws(eawwybiwdfiewdconstant.wanguage.getfiewdname())) {
+          w-wwitew.vawue(wanguagedecode(csfvawue));
+        } ewse if (csffiewdinfoname.equaws(eawwybiwdfiewdconstant.cawd_wang_csf.getfiewdname())) {
+          wwitew.vawue(wanguagedecode(csfvawue));
+        } ewse {
+          w-wwitew.vawue(wong.tostwing(csfvawue));
         }
-        writer.endObject();
-        writer.newline();
+        wwitew.endobject();
+        wwitew.newwine();
       }
     }
   }
 
   /**
-   * Decipher long value gotten, put into format (lat, lon)
-   * Decode the stored long value by creating a geocode
+   * d-deciphew w-wong vawue gotten, XD p-put into fowmat (wat, (///ˬ///✿) won)
+   * decode the s-stowed wong vawue b-by cweating a geocode
    */
-  private String latlongDecode(long csfValue) {
-    StringBuilder sb = new StringBuilder();
-    GeoCoordinate geoCoordinate = new GeoCoordinate();
-    if (GeoUtil.decodeLatLonFromInt64(csfValue, geoCoordinate)) {
-      sb.append(geoCoordinate.getLatitude()).append(", ").append(geoCoordinate.getLongitude());
-    } else {
-      sb.append(csfValue).append(" (Value Unset or Invalid Coordinate)");
+  p-pwivate stwing watwongdecode(wong csfvawue) {
+    s-stwingbuiwdew sb = nyew stwingbuiwdew();
+    g-geocoowdinate geocoowdinate = nyew g-geocoowdinate();
+    i-if (geoutiw.decodewatwonfwomint64(csfvawue, ( ͡o ω ͡o ) geocoowdinate)) {
+      s-sb.append(geocoowdinate.getwatitude()).append(", ʘwʘ ").append(geocoowdinate.getwongitude());
+    } e-ewse {
+      s-sb.append(csfvawue).append(" (vawue u-unset ow invawid coowdinate)");
     }
-    return sb.toString();
+    w-wetuwn sb.tostwing();
   }
 
   /**
-   * Decipher long value gotten into string of tweet's language
+   * d-deciphew w-wong vawue g-gotten into stwing o-of tweet's w-wanguage
    */
-  private String languageDecode(long csfValue) {
-    StringBuilder sb = new StringBuilder();
-    ThriftLanguage languageType = ThriftLanguage.findByValue((int) csfValue);
-    sb.append(csfValue).append(" (").append(languageType).append(")");
-    return sb.toString();
+  p-pwivate stwing w-wanguagedecode(wong csfvawue) {
+    s-stwingbuiwdew sb = nyew stwingbuiwdew();
+    t-thwiftwanguage wanguagetype = thwiftwanguage.findbyvawue((int) c-csfvawue);
+    sb.append(csfvawue).append(" (").append(wanguagetype).append(")");
+    w-wetuwn sb.tostwing();
   }
 
-  private void dumpTweetData(ViewerWriter writer,
-                             String field,
-                             int docId,
-                             Options options) throws IOException {
+  p-pwivate void dumptweetdata(viewewwwitew wwitew, rawr
+                             stwing fiewd, o.O
+                             i-int docid, ^•ﻌ•^
+                             o-options options) t-thwows ioexception {
 
-    Terms terms = twitterReader.terms(field);
-    if (terms != null) {
-      TermsEnum termsEnum = terms.iterator();
-      if (shouldSeekExact(terms, termsEnum)) {
-        long numTerms = terms.size();
-        for (int i = 0; i < numTerms; i++) {
-          termsEnum.seekExact(i);
-          dumpTweetDataTerm(writer, field, termsEnum, docId, options);
+    tewms tewms = twittewweadew.tewms(fiewd);
+    if (tewms != n-nyuww) {
+      t-tewmsenum tewmsenum = tewms.itewatow();
+      i-if (shouwdseekexact(tewms, (///ˬ///✿) t-tewmsenum)) {
+        wong nyumtewms = tewms.size();
+        fow (int i-i = 0; i < n-nyumtewms; i++) {
+          t-tewmsenum.seekexact(i);
+          d-dumptweetdatatewm(wwitew, (ˆ ﻌ ˆ)♡ fiewd, XD tewmsenum, docid, (✿oωo) o-options);
         }
-      } else {
-        while (termsEnum.next() != null) {
-          dumpTweetDataTerm(writer, field, termsEnum, docId, options);
-        }
-      }
-    }
-  }
-
-  private void dumpTweetDataTerm(ViewerWriter writer, String field, TermsEnum termsEnum,
-                                 int docId, Options options) throws IOException {
-    PostingsEnum docsAndPositionsEnum = termsEnum.postings(null, PostingsEnum.ALL);
-    if (docsAndPositionsEnum != null && docsAndPositionsEnum.advance(docId) == docId) {
-      printTerm(writer, field, termsEnum, docsAndPositionsEnum, null, options);
-    }
-  }
-
-  /**
-   * Prints the histogram for the currently viewed index.
-   * @param writer current viewerWriter
-   * @param field if null, will use all fields
-   * @param options options for dumping out text
-   */
-  public void dumpHistogram(ViewerWriter writer, String field, Options options) throws IOException {
-    writer.beginObject();
-    printHeader(writer);
-    writer.name("histogram");
-    writer.beginArray();
-    writer.newline();
-    if (field == null) {
-      for (String field2 : sortedFields()) {
-        dumpFieldHistogram(writer, field2, options);
-      }
-    } else {
-      dumpFieldHistogram(writer, field, options);
-    }
-    writer.endArray();
-    writer.endObject();
-  }
-
-  private void dumpFieldHistogram(ViewerWriter writer, String field, Options options)
-      throws IOException {
-    Histogram histo = new Histogram(options.histogramBuckets);
-
-    Terms terms = twitterReader.terms(field);
-    if (terms != null) {
-      TermsEnum termsEnum = terms.iterator();
-      if (shouldSeekExact(terms, termsEnum)) {
-        long numTerms = terms.size();
-        for (int i = 0; i < numTerms; i++) {
-          termsEnum.seekExact(i);
-          countHistogram(options, histo, termsEnum);
-        }
-      } else {
-        while (termsEnum.next() != null) {
-          countHistogram(options, histo, termsEnum);
+      } ewse {
+        w-whiwe (tewmsenum.next() != nyuww) {
+          dumptweetdatatewm(wwitew, -.- f-fiewd, XD tewmsenum, docid, (✿oωo) options);
         }
       }
-      printHistogram(writer, field, options, histo);
     }
   }
 
-  private void printHistogram(ViewerWriter writer, String field, Options options,
-                              Histogram histo) throws IOException {
+  pwivate v-void dumptweetdatatewm(viewewwwitew wwitew, (˘ω˘) stwing f-fiewd, (ˆ ﻌ ˆ)♡ tewmsenum t-tewmsenum, >_<
+                                 int docid, -.- options o-options) thwows i-ioexception {
+    postingsenum d-docsandpositionsenum = tewmsenum.postings(nuww, (///ˬ///✿) p-postingsenum.aww);
+    i-if (docsandpositionsenum != n-nyuww && docsandpositionsenum.advance(docid) == d-docid) {
+      pwinttewm(wwitew, XD f-fiewd, tewmsenum, ^^;; d-docsandpositionsenum, rawr x3 n-nyuww, OwO options);
+    }
+  }
 
-    String bucket = options.termLengthHistogram ? "termLength" : "df";
-    for (Histogram.Entry histEntry : histo.entries()) {
-      String format =
-          String.format(Locale.US,
-              "field: %s %sBucket: %11s count: %10d "
-                  + "percent: %6.2f%% cumulative: %6.2f%% totalCount: %10d"
-                  + " sum: %15d percent: %6.2f%% cumulative: %6.2f%% totalSum: %15d",
-              formatField(field),
-              bucket,
-              histEntry.getBucketName(),
-              histEntry.getCount(),
-              histEntry.getCountPercent() * 100.0,
-              histEntry.getCountCumulative() * 100.0,
-              histo.getTotalCount(),
-              histEntry.getSum(),
-              histEntry.getSumPercent() * 100.0,
-              histEntry.getSumCumulative() * 100.0,
-              histo.getTotalSum()
+  /**
+   * p-pwints the histogwam fow the cuwwentwy viewed i-index.
+   * @pawam w-wwitew cuwwent v-viewewwwitew
+   * @pawam fiewd if nyuww, ʘwʘ wiww use aww fiewds
+   * @pawam options o-options fow dumping out text
+   */
+  p-pubwic v-void dumphistogwam(viewewwwitew wwitew, rawr stwing fiewd, UwU options o-options) thwows ioexception {
+    w-wwitew.beginobject();
+    p-pwintheadew(wwitew);
+    w-wwitew.name("histogwam");
+    w-wwitew.beginawway();
+    w-wwitew.newwine();
+    if (fiewd == nyuww) {
+      fow (stwing fiewd2 : sowtedfiewds()) {
+        d-dumpfiewdhistogwam(wwitew, (ꈍᴗꈍ) fiewd2, o-options);
+      }
+    } ewse {
+      dumpfiewdhistogwam(wwitew, fiewd, (✿oωo) options);
+    }
+    w-wwitew.endawway();
+    wwitew.endobject();
+  }
+
+  pwivate void dumpfiewdhistogwam(viewewwwitew wwitew, (⑅˘꒳˘) s-stwing fiewd, OwO o-options options)
+      thwows ioexception {
+    h-histogwam histo = nyew histogwam(options.histogwambuckets);
+
+    tewms tewms = twittewweadew.tewms(fiewd);
+    if (tewms != n-nyuww) {
+      t-tewmsenum tewmsenum = t-tewms.itewatow();
+      if (shouwdseekexact(tewms, 🥺 t-tewmsenum)) {
+        wong nyumtewms = tewms.size();
+        fow (int i = 0; i-i < nyumtewms; i++) {
+          tewmsenum.seekexact(i);
+          c-counthistogwam(options, >_< h-histo, (ꈍᴗꈍ) t-tewmsenum);
+        }
+      } ewse {
+        whiwe (tewmsenum.next() != nuww) {
+          c-counthistogwam(options, 😳 histo, 🥺 tewmsenum);
+        }
+      }
+      pwinthistogwam(wwitew, fiewd, nyaa~~ options, histo);
+    }
+  }
+
+  pwivate v-void pwinthistogwam(viewewwwitew w-wwitew, ^•ﻌ•^ stwing f-fiewd, (ˆ ﻌ ˆ)♡ options o-options, (U ᵕ U❁)
+                              histogwam histo) thwows i-ioexception {
+
+    s-stwing bucket = options.tewmwengthhistogwam ? "tewmwength" : "df";
+    fow (histogwam.entwy h-histentwy : histo.entwies()) {
+      stwing fowmat =
+          stwing.fowmat(wocawe.us,
+              "fiewd: %s %sbucket: %11s count: %10d "
+                  + "pewcent: %6.2f%% c-cumuwative: %6.2f%% totawcount: %10d"
+                  + " sum: %15d pewcent: %6.2f%% c-cumuwative: %6.2f%% totawsum: %15d", mya
+              f-fowmatfiewd(fiewd),
+              bucket, 😳
+              h-histentwy.getbucketname(), σωσ
+              histentwy.getcount(), ( ͡o ω ͡o )
+              h-histentwy.getcountpewcent() * 100.0, XD
+              h-histentwy.getcountcumuwative() * 100.0, :3
+              histo.gettotawcount(), :3
+              histentwy.getsum(), (⑅˘꒳˘)
+              h-histentwy.getsumpewcent() * 100.0, òωó
+              histentwy.getsumcumuwative() * 100.0,
+              histo.gettotawsum()
           );
-      writer.value(format);
-      writer.newline();
+      wwitew.vawue(fowmat);
+      w-wwitew.newwine();
     }
   }
 
-  private void countHistogram(Options options, Histogram histo, TermsEnum termsEnum)
-          throws IOException {
-    if (options.termLengthHistogram) {
-      final BytesRef bytesRef = termsEnum.term();
-      histo.addItem(bytesRef.length);
-    } else {
-      histo.addItem(termsEnum.docFreq());
+  pwivate void counthistogwam(options options, mya h-histogwam h-histo, 😳😳😳 tewmsenum t-tewmsenum)
+          t-thwows ioexception {
+    i-if (options.tewmwengthhistogwam) {
+      finaw byteswef b-byteswef = tewmsenum.tewm();
+      histo.additem(byteswef.wength);
+    } e-ewse {
+      histo.additem(tewmsenum.docfweq());
     }
   }
 
 
   /**
-   * Prints terms and optionally documents for the currently viewed index.
-   * @param writer writer being used
-   * @param field if null, will use all fields
-   * @param term if null will use all terms
-   * @param maxTerms will print at most this many terms per field. If null will print 0 terms.
-   * @param maxDocs will print at most this many documents, If null, will not print docs.
-   * @param options options for dumping out text
+   * pwints t-tewms and optionawwy documents fow the cuwwentwy v-viewed index. :3
+   * @pawam w-wwitew wwitew being used
+   * @pawam f-fiewd if nyuww, >_< wiww use aww fiewds
+   * @pawam t-tewm if nyuww wiww u-use aww tewms
+   * @pawam maxtewms w-wiww pwint a-at most this many tewms pew fiewd. 🥺 i-if nyuww wiww pwint 0 tewms. (ꈍᴗꈍ)
+   * @pawam maxdocs wiww pwint a-at most this many documents, rawr x3 if n-nyuww, (U ﹏ U) wiww nyot pwint docs. ( ͡o ω ͡o )
+   * @pawam options o-options fow dumping o-out text
    */
-  public void dumpData(ViewerWriter writer, String field, String term, Integer maxTerms,
-        Integer maxDocs, Options options, boolean shouldSeekToTerm) throws IOException {
+  p-pubwic void dumpdata(viewewwwitew w-wwitew, 😳😳😳 s-stwing fiewd, 🥺 stwing tewm, òωó integew m-maxtewms, XD
+        integew maxdocs, XD o-options options, ( ͡o ω ͡o ) boowean shouwdseektotewm) t-thwows ioexception {
 
-    writer.beginObject();
-    printHeader(writer);
+    w-wwitew.beginobject();
+    pwintheadew(wwitew);
 
-    writer.name("terms");
-    writer.beginArray();
-    writer.newline();
-    dumpDataInternal(writer, field, term, maxTerms, maxDocs, options, shouldSeekToTerm);
-    writer.endArray();
-    writer.endObject();
+    wwitew.name("tewms");
+    wwitew.beginawway();
+    wwitew.newwine();
+    dumpdataintewnaw(wwitew, >w< f-fiewd, mya tewm, maxtewms, (ꈍᴗꈍ) m-maxdocs, -.- options, shouwdseektotewm);
+    wwitew.endawway();
+    wwitew.endobject();
   }
 
-  private void dumpDataInternal(ViewerWriter writer, String field, String term, Integer maxTerms,
-      Integer maxDocs, Options options, boolean shouldSeekToTerm) throws IOException {
+  p-pwivate void dumpdataintewnaw(viewewwwitew w-wwitew, (⑅˘꒳˘) s-stwing fiewd, (U ﹏ U) stwing tewm, σωσ integew maxtewms, :3
+      integew maxdocs, /(^•ω•^) options o-options, σωσ boowean shouwdseektotewm) thwows ioexception {
 
-    if (field == null) {
-      dumpDataForAllFields(writer, term, maxTerms, maxDocs, options);
-      return;
+    if (fiewd == n-nyuww) {
+      dumpdatafowawwfiewds(wwitew, (U ᵕ U❁) t-tewm, maxtewms, 😳 m-maxdocs, ʘwʘ options);
+      w-wetuwn;
     }
-    if (term == null) {
-      dumpDataForAllTerms(writer, field, maxTerms, maxDocs, options);
-      return;
+    i-if (tewm == nyuww) {
+      d-dumpdatafowawwtewms(wwitew, f-fiewd, (⑅˘꒳˘) m-maxtewms, ^•ﻌ•^ maxdocs, o-options);
+      wetuwn;
     }
-    Terms terms = twitterReader.terms(field);
-    if (terms != null) {
-      TermsEnum termsEnum = terms.iterator();
-      TermsEnum.SeekStatus status = termsEnum.seekCeil(new BytesRef(term));
-      if (status == TermsEnum.SeekStatus.FOUND) {
-        printTerm(writer, field, termsEnum, null, maxDocs, options);
+    tewms tewms = twittewweadew.tewms(fiewd);
+    if (tewms != nuww) {
+      tewmsenum t-tewmsenum = t-tewms.itewatow();
+      t-tewmsenum.seekstatus s-status = tewmsenum.seekceiw(new b-byteswef(tewm));
+      i-if (status == tewmsenum.seekstatus.found) {
+        pwinttewm(wwitew, nyaa~~ fiewd, tewmsenum, XD nuww, maxdocs, /(^•ω•^) o-options);
       }
-      if (shouldSeekToTerm) {
-        dumpTermsAfterSeek(writer, field, terms, maxTerms, maxDocs, options, termsEnum, status);
+      i-if (shouwdseektotewm) {
+        dumptewmsaftewseek(wwitew, (U ᵕ U❁) fiewd, mya tewms, maxtewms, (ˆ ﻌ ˆ)♡ maxdocs, o-options, (✿oωo) tewmsenum, (✿oωo) s-status);
       }
     }
   }
 
   /**
-   * if term (cursor) is found for an indexed segment - dump the next termsLeft words
-   * starting from the current position in the enum.  For an indexed segment,
-   * seekCeil will place the enum at the word or the next "ceiling" term.  For
-   * a realtime index, if the word is not found we do not paginate anything
-   * We also only paginate if the TermsEnum is not at the end.
+   * if t-tewm (cuwsow) is found fow an indexed segment - d-dump the nyext tewmsweft wowds
+   * stawting fwom t-the cuwwent p-position in the enum. òωó  fow an indexed segment, (˘ω˘)
+   * s-seekceiw wiww pwace the enum a-at the wowd ow t-the nyext "ceiwing" tewm. (ˆ ﻌ ˆ)♡  fow
+   * a-a weawtime index, ( ͡o ω ͡o ) i-if the wowd i-is nyot found w-we do nyot paginate a-anything
+   * w-we awso onwy paginate if the tewmsenum i-is nyot a-at the end. rawr x3
    */
-  private void dumpTermsAfterSeek(ViewerWriter writer, String field, Terms terms, Integer maxTerms,
-      Integer maxDocs, Options options, TermsEnum termsEnum, TermsEnum.SeekStatus status)
-      throws IOException {
-    if (status != TermsEnum.SeekStatus.END) {
-      // for realtime, to not repeat the found word
-      if (shouldSeekExact(terms, termsEnum)) {
-        termsEnum.next();
+  pwivate void d-dumptewmsaftewseek(viewewwwitew wwitew, (˘ω˘) stwing fiewd, òωó tewms tewms, ( ͡o ω ͡o ) i-integew maxtewms, σωσ
+      integew m-maxdocs, (U ﹏ U) options options, rawr tewmsenum t-tewmsenum, -.- t-tewmsenum.seekstatus status)
+      thwows ioexception {
+    i-if (status != tewmsenum.seekstatus.end) {
+      // fow weawtime, ( ͡o ω ͡o ) to nyot wepeat t-the found wowd
+      i-if (shouwdseekexact(tewms, >_< tewmsenum)) {
+        tewmsenum.next();
       }
-      if (status != TermsEnum.SeekStatus.FOUND) {
-        // if not found, print out curr term before calling next()
-        printTerm(writer, field, termsEnum, null, maxDocs, options);
+      i-if (status != t-tewmsenum.seekstatus.found) {
+        // if n-nyot found, pwint out cuww tewm befowe cawwing nyext()
+        pwinttewm(wwitew, o.O f-fiewd, tewmsenum, σωσ n-nyuww, -.- maxdocs, options);
       }
-      for (int termsLeft = maxTerms - 1; termsLeft > 0 && termsEnum.next() != null; termsLeft--) {
-        printTerm(writer, field, termsEnum, null, maxDocs, options);
+      f-fow (int t-tewmsweft = maxtewms - 1; tewmsweft > 0 && tewmsenum.next() != nyuww; tewmsweft--) {
+        p-pwinttewm(wwitew, σωσ f-fiewd, tewmsenum, :3 n-nyuww, maxdocs, ^^ o-options);
       }
     }
   }
 
-  private void dumpDataForAllFields(ViewerWriter writer, String term, Integer maxTerms,
-                                    Integer maxDocs, Options options) throws IOException {
-    for (String field : sortedFields()) {
-      dumpDataInternal(writer, field, term, maxTerms, maxDocs, options, false);
+  pwivate void dumpdatafowawwfiewds(viewewwwitew wwitew, òωó stwing tewm, (ˆ ﻌ ˆ)♡ integew maxtewms, XD
+                                    integew m-maxdocs, òωó options o-options) t-thwows ioexception {
+    f-fow (stwing f-fiewd : sowtedfiewds()) {
+      d-dumpdataintewnaw(wwitew, (ꈍᴗꈍ) fiewd, UwU t-tewm, maxtewms, >w< m-maxdocs, ʘwʘ options, fawse);
     }
   }
 
-  private List<String> sortedFields() {
-    // Tweet facets are added to a special $facets field, which is not part of the schema.
-    // We include it here, because seeing the facets for a tweet is generally useful.
-    List<String> fields = Lists.newArrayList("$facets");
-    for (Schema.FieldInfo fieldInfo : twitterReader.getSchema().getFieldInfos()) {
-      if (fieldInfo.getFieldType().indexOptions() != IndexOptions.NONE) {
-        fields.add(fieldInfo.getName());
+  p-pwivate w-wist<stwing> sowtedfiewds() {
+    // tweet facets a-awe added to a speciaw $facets fiewd, :3 which i-is nyot pawt of the schema. ^•ﻌ•^
+    // w-we incwude i-it hewe, (ˆ ﻌ ˆ)♡ because seeing the facets f-fow a tweet is g-genewawwy usefuw. 🥺
+    w-wist<stwing> fiewds = wists.newawwaywist("$facets");
+    f-fow (schema.fiewdinfo f-fiewdinfo : twittewweadew.getschema().getfiewdinfos()) {
+      i-if (fiewdinfo.getfiewdtype().indexoptions() != indexoptions.none) {
+        f-fiewds.add(fiewdinfo.getname());
       }
     }
-    Collections.sort(fields);
-    return fields;
+    c-cowwections.sowt(fiewds);
+    w-wetuwn fiewds;
   }
 
-  private void dumpDataForAllTerms(ViewerWriter writer,
-                                   String field,
-                                   Integer maxTerms,
-                                   Integer maxDocs,
-                                   Options options) throws IOException {
-    Terms terms = twitterReader.terms(field);
-    if (terms != null) {
-      TermsEnum termsEnum = terms.iterator();
-      if (shouldSeekExact(terms, termsEnum)) {
-        long numTerms = terms.size();
-        long termToDump = maxTerms == null ? 0 : Math.min(numTerms, maxTerms);
-        for (int i = 0; i < termToDump; i++) {
-          termsEnum.seekExact(i);
-          printTerm(writer, field, termsEnum, null, maxDocs, options);
+  pwivate v-void dumpdatafowawwtewms(viewewwwitew wwitew, OwO
+                                   stwing fiewd, 🥺
+                                   i-integew maxtewms, OwO
+                                   integew maxdocs, (U ᵕ U❁)
+                                   options options) thwows ioexception {
+    tewms tewms = t-twittewweadew.tewms(fiewd);
+    if (tewms != nyuww) {
+      tewmsenum tewmsenum = tewms.itewatow();
+      if (shouwdseekexact(tewms, ( ͡o ω ͡o ) tewmsenum)) {
+        wong n-nyumtewms = tewms.size();
+        wong tewmtodump = m-maxtewms == nyuww ? 0 : m-math.min(numtewms, ^•ﻌ•^ maxtewms);
+        fow (int i = 0; i-i < tewmtodump; i++) {
+          t-tewmsenum.seekexact(i);
+          pwinttewm(wwitew, o.O f-fiewd, (⑅˘꒳˘) t-tewmsenum, (ˆ ﻌ ˆ)♡ nyuww, maxdocs, :3 options);
         }
-      } else {
-        int max = maxTerms == null ? 0 : maxTerms;
-        while (max > 0 && termsEnum.next() != null) {
-          printTerm(writer, field, termsEnum, null, maxDocs, options);
-          max--;
+      } ewse {
+        i-int max = maxtewms == nyuww ? 0 : maxtewms;
+        whiwe (max > 0 && t-tewmsenum.next() != nuww) {
+          p-pwinttewm(wwitew, /(^•ω•^) fiewd, tewmsenum, òωó n-nyuww, maxdocs, :3 options);
+          m-max--;
         }
       }
     }
   }
 
-  private String termToString(String field, BytesRef bytesTerm, Options options)
-      throws UnsupportedEncodingException {
-    if (INT_TERM_ATTRIBUTE_FIELDS.contains(field)) {
-      return Integer.toString(IntTermAttributeImpl.copyBytesRefToInt(bytesTerm));
-    } else if (LONG_TERM_ATTRIBUTE_FIELDS.contains(field)) {
-      return Long.toString(LongTermAttributeImpl.copyBytesRefToLong(bytesTerm));
-    } else if (SORTED_LONG_TERM_ATTRIBUTE_FIELDS.contains(field)) {
-      return Long.toString(SortableLongTermAttributeImpl.copyBytesRefToLong(bytesTerm));
-    } else {
-      if (options != null && options.charset != null && !options.charset.isEmpty()) {
-        return new String(bytesTerm.bytes, bytesTerm.offset, bytesTerm.length, options.charset);
-      } else {
-        return bytesTerm.utf8ToString();
+  p-pwivate stwing tewmtostwing(stwing fiewd, (˘ω˘) byteswef b-bytestewm, 😳 options options)
+      thwows unsuppowtedencodingexception {
+    i-if (int_tewm_attwibute_fiewds.contains(fiewd)) {
+      wetuwn integew.tostwing(inttewmattwibuteimpw.copybytesweftoint(bytestewm));
+    } ewse if (wong_tewm_attwibute_fiewds.contains(fiewd)) {
+      wetuwn wong.tostwing(wongtewmattwibuteimpw.copybytesweftowong(bytestewm));
+    } ewse if (sowted_wong_tewm_attwibute_fiewds.contains(fiewd)) {
+      w-wetuwn w-wong.tostwing(sowtabwewongtewmattwibuteimpw.copybytesweftowong(bytestewm));
+    } ewse {
+      i-if (options != n-nyuww && options.chawset != nyuww && !options.chawset.isempty()) {
+        w-wetuwn nyew stwing(bytestewm.bytes, bytestewm.offset, σωσ bytestewm.wength, UwU options.chawset);
+      } e-ewse {
+        w-wetuwn bytestewm.utf8tostwing();
       }
     }
   }
 
-  private void printTerm(ViewerWriter writer, String field, TermsEnum termsEnum,
-                         PostingsEnum docsEnum, Integer maxDocs, Options options)
-      throws IOException {
-    final BytesRef bytesRef = termsEnum.term();
-    StringBuilder termToString = new StringBuilder();
-    termToString.append(termToString(field, bytesRef, options));
-    if (options != null && options.dumpHexTerms) {
-      termToString.append(" ").append(bytesRef.toString());
+  p-pwivate void p-pwinttewm(viewewwwitew wwitew, -.- stwing f-fiewd, 🥺 tewmsenum tewmsenum, 😳😳😳
+                         postingsenum d-docsenum, 🥺 integew maxdocs, ^^ options options)
+      t-thwows i-ioexception {
+    finaw byteswef byteswef = tewmsenum.tewm();
+    s-stwingbuiwdew tewmtostwing = nyew stwingbuiwdew();
+    tewmtostwing.append(tewmtostwing(fiewd, ^^;; byteswef, options));
+    if (options != nyuww && options.dumphextewms) {
+      t-tewmtostwing.append(" ").append(byteswef.tostwing());
     }
-    final int df = termsEnum.docFreq();
-    double dfPercent = ((double) df / this.twitterReader.numDocs()) * 100.0;
-    TermDto termDto = new TermDto(field, termToString.toString(), Integer.toString(df),
-                                   String.format(Locale.US, "%.2f%%", dfPercent),
-                                   docsEnum, termsEnum, maxDocs);
-    termDto.write(writer, twitterReader);
-    writer.newline();
+    f-finaw int df = tewmsenum.docfweq();
+    d-doubwe d-dfpewcent = ((doubwe) df / this.twittewweadew.numdocs()) * 100.0;
+    t-tewmdto tewmdto = new tewmdto(fiewd, >w< tewmtostwing.tostwing(), integew.tostwing(df), σωσ
+                                   stwing.fowmat(wocawe.us, >w< "%.2f%%", dfpewcent), (⑅˘꒳˘)
+                                   docsenum, òωó t-tewmsenum, (⑅˘꒳˘) maxdocs);
+    tewmdto.wwite(wwitew, (ꈍᴗꈍ) twittewweadew);
+    wwitew.newwine();
   }
 
-  private static void appendFrequencyAndPositions(ViewerWriter writer, String field,
-      PostingsEnum docsEnum, EarlybirdIndexSegmentAtomicReader twitterReader) throws IOException {
-    final int frequency = docsEnum.freq();
-    writer.name("freq").value(Integer.toString(frequency));
+  p-pwivate static v-void appendfwequencyandpositions(viewewwwitew w-wwitew, rawr x3 stwing fiewd, ( ͡o ω ͡o )
+      postingsenum docsenum, UwU eawwybiwdindexsegmentatomicweadew t-twittewweadew) t-thwows ioexception {
+    finaw i-int fwequency = docsenum.fweq();
+    w-wwitew.name("fweq").vawue(integew.tostwing(fwequency));
 
-    Schema schema = twitterReader.getSchema();
-    Schema.FieldInfo fieldInfo = schema.getFieldInfo(field);
+    schema schema = t-twittewweadew.getschema();
+    schema.fiewdinfo f-fiewdinfo = schema.getfiewdinfo(fiewd);
 
-    if (fieldInfo != null
-            && (fieldInfo.getFieldType().indexOptions() == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS
-            || fieldInfo.getFieldType().indexOptions()
-                == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)) {
-      appendPositions(writer, docsEnum);
+    i-if (fiewdinfo != nyuww
+            && (fiewdinfo.getfiewdtype().indexoptions() == indexoptions.docs_and_fweqs_and_positions
+            || fiewdinfo.getfiewdtype().indexoptions()
+                == i-indexoptions.docs_and_fweqs_and_positions_and_offsets)) {
+      appendpositions(wwitew, ^^ d-docsenum);
     }
   }
 
-  private static void appendPositions(ViewerWriter writer, PostingsEnum docsAndPositionsEnum)
-      throws IOException {
-    writer.name("positions");
+  p-pwivate static void appendpositions(viewewwwitew w-wwitew, (˘ω˘) p-postingsenum docsandpositionsenum)
+      t-thwows ioexception {
+    w-wwitew.name("positions");
 
-    writer.beginArray();
-    final int frequency = docsAndPositionsEnum.freq();
-    for (int i = 0; i < frequency; i++) {
-      int position = docsAndPositionsEnum.nextPosition();
-      writer.value(Integer.toString(position));
+    wwitew.beginawway();
+    f-finaw i-int fwequency = docsandpositionsenum.fweq();
+    fow (int i = 0; i-i < fwequency; i++) {
+      int position = docsandpositionsenum.nextposition();
+      wwitew.vawue(integew.tostwing(position));
     }
-    writer.endArray();
+    wwitew.endawway();
   }
 
-  private static void appendDocs(ViewerWriter writer, TermsEnum termsEnum, int maxDocs,
-                                 EarlybirdIndexSegmentAtomicReader twitterReader)
-      throws IOException {
-    writer.name("docIds");
+  pwivate static void appenddocs(viewewwwitew wwitew, (ˆ ﻌ ˆ)♡ tewmsenum t-tewmsenum, OwO int maxdocs, 😳
+                                 eawwybiwdindexsegmentatomicweadew twittewweadew)
+      t-thwows ioexception {
+    wwitew.name("docids");
 
-    writer.beginArray();
+    wwitew.beginawway();
 
-    PostingsEnum docs = termsEnum.postings(null, 0);
-    int docsReturned = 0;
-    int docId;
-    boolean endedEarly = false;
-    DocIDToTweetIDMapper mapper = twitterReader.getSegmentData().getDocIDToTweetIDMapper();
-    while ((docId = docs.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS) {
-      if (docsReturned < maxDocs) {
-        docsReturned++;
-        long tweetID = mapper.getTweetID(docId);
+    p-postingsenum docs = tewmsenum.postings(nuww, UwU 0);
+    int docswetuwned = 0;
+    i-int docid;
+    boowean endedeawwy = fawse;
+    d-docidtotweetidmappew mappew = twittewweadew.getsegmentdata().getdocidtotweetidmappew();
+    whiwe ((docid = docs.nextdoc()) != d-docidsetitewatow.no_mowe_docs) {
+      if (docswetuwned < maxdocs) {
+        docswetuwned++;
+        w-wong tweetid = mappew.gettweetid(docid);
 
-        writer.beginObject();
-        writer.name("docId").value(Long.toString(docId));
-        writer.name("tweetId").value(Long.toString(tweetID));
-        writer.endObject();
-      } else {
-        endedEarly = true;
-        break;
+        wwitew.beginobject();
+        w-wwitew.name("docid").vawue(wong.tostwing(docid));
+        w-wwitew.name("tweetid").vawue(wong.tostwing(tweetid));
+        wwitew.endobject();
+      } ewse {
+        endedeawwy = t-twue;
+        b-bweak;
       }
     }
-    if (endedEarly) {
-      writer.beginObject();
-      writer.name("status").value("ended early");
-      writer.endObject();
+    if (endedeawwy) {
+      w-wwitew.beginobject();
+      w-wwitew.name("status").vawue("ended eawwy");
+      wwitew.endobject();
     }
-    writer.endArray();
+    w-wwitew.endawway();
   }
 
   /**
-   * Prints generic stats for all fields in the currently viewed index.
+   * pwints genewic stats fow aww fiewds in the c-cuwwentwy viewed index. 🥺
    */
-  public void dumpStats(ViewerWriter writer) throws IOException {
-    writer.beginObject();
+  pubwic void dumpstats(viewewwwitew wwitew) thwows i-ioexception {
+    w-wwitew.beginobject();
 
-    printHeader(writer);
-    // stats section
-    writer.name("stats");
-    writer.beginArray();
-    writer.newline();
-    for (String field : sortedFields()) {
-      Terms terms = twitterReader.terms(field);
-      if (terms != null) {
-        printStats(writer, field, terms);
+    pwintheadew(wwitew);
+    // s-stats section
+    wwitew.name("stats");
+    wwitew.beginawway();
+    wwitew.newwine();
+    f-fow (stwing fiewd : sowtedfiewds()) {
+      t-tewms tewms = twittewweadew.tewms(fiewd);
+      i-if (tewms != nyuww) {
+        p-pwintstats(wwitew, 😳😳😳 fiewd, tewms);
       }
     }
-    writer.endArray();
-    writer.endObject();
+    wwitew.endawway();
+    wwitew.endobject();
   }
 
-  private void printStats(ViewerWriter writer, String field, Terms terms) throws IOException {
-    StatsDto statsDto = new StatsDto(
-        field, String.valueOf(terms.size()), terms.getClass().getCanonicalName());
-    statsDto.write(writer);
-    writer.newline();
+  pwivate void pwintstats(viewewwwitew w-wwitew, ʘwʘ s-stwing fiewd, /(^•ω•^) tewms tewms) thwows ioexception {
+    s-statsdto statsdto = nyew statsdto(
+        f-fiewd, :3 stwing.vawueof(tewms.size()), :3 t-tewms.getcwass().getcanonicawname());
+    s-statsdto.wwite(wwitew);
+    w-wwitew.newwine();
   }
 
-  private void printHeader(ViewerWriter writer) throws IOException {
-    writer.name("timeSliceId").value(Long.toString(this.searcher.getTimeSliceID()));
-    writer.name("maxDocNumber").value(Integer.toString(this.twitterReader.maxDoc()));
-    writer.newline();
+  p-pwivate void p-pwintheadew(viewewwwitew wwitew) thwows ioexception {
+    w-wwitew.name("timeswiceid").vawue(wong.tostwing(this.seawchew.gettimeswiceid()));
+    w-wwitew.name("maxdocnumbew").vawue(integew.tostwing(this.twittewweadew.maxdoc()));
+    w-wwitew.newwine();
   }
 
-  private static String formatField(String field) {
-    return String.format("%20s", field);
+  p-pwivate static s-stwing fowmatfiewd(stwing f-fiewd) {
+    wetuwn stwing.fowmat("%20s", mya f-fiewd);
   }
 
   /**
-   * Dumps out the schema of the current segment.
-   * @param writer to be used for printing
+   * d-dumps o-out the schema of the cuwwent segment. (///ˬ///✿)
+   * @pawam w-wwitew to be used fow pwinting
    */
-  public void dumpSchema(ViewerWriter writer) throws IOException {
-    writer.beginObject();
-    printHeader(writer);
-    writer.name("schemaFields");
-    writer.beginArray();
-    writer.newline();
-    Schema schema = this.twitterReader.getSchema();
-    // The fields in the schema are not sorted. Sort them so that the output is deterministic
-    Set<String> fieldNameSet = new TreeSet<>();
-    for (Schema.FieldInfo fieldInfo: schema.getFieldInfos()) {
-      fieldNameSet.add(fieldInfo.getName());
+  pubwic v-void dumpschema(viewewwwitew wwitew) thwows ioexception {
+    wwitew.beginobject();
+    p-pwintheadew(wwitew);
+    w-wwitew.name("schemafiewds");
+    wwitew.beginawway();
+    wwitew.newwine();
+    schema schema = t-this.twittewweadew.getschema();
+    // t-the fiewds in the schema a-awe nyot sowted. (⑅˘꒳˘) s-sowt them so that the output is detewministic
+    set<stwing> f-fiewdnameset = n-nyew tweeset<>();
+    fow (schema.fiewdinfo fiewdinfo: s-schema.getfiewdinfos()) {
+      f-fiewdnameset.add(fiewdinfo.getname());
     }
-    for (String fieldName : fieldNameSet) {
-      writer.value(fieldName);
-      writer.newline();
+    fow (stwing fiewdname : f-fiewdnameset) {
+      wwitew.vawue(fiewdname);
+      wwitew.newwine();
     }
-    writer.endArray();
-    writer.endObject();
+    wwitew.endawway();
+    wwitew.endobject();
   }
 
   /**
-   * Dumps out the indexed fields inside the current segment.
-   * Mainly used to help the front end populate the fields.
-   * @param writer writer to be used for printing
+   * dumps o-out the indexed fiewds inside the cuwwent segment. :3
+   * m-mainwy u-used to hewp t-the fwont end popuwate the fiewds. /(^•ω•^)
+   * @pawam wwitew w-wwitew to b-be used fow pwinting
    */
-  public void dumpFields(ViewerWriter writer) throws IOException {
-    writer.beginObject();
-    printHeader(writer);
-    writer.name("fields");
-    writer.beginArray();
-    writer.newline();
-    for (String field : sortedFields()) {
-      writer.value(field);
-      writer.newline();
+  p-pubwic v-void dumpfiewds(viewewwwitew w-wwitew) thwows ioexception {
+    wwitew.beginobject();
+    p-pwintheadew(wwitew);
+    w-wwitew.name("fiewds");
+    w-wwitew.beginawway();
+    wwitew.newwine();
+    fow (stwing f-fiewd : s-sowtedfiewds()) {
+      w-wwitew.vawue(fiewd);
+      wwitew.newwine();
     }
-    writer.endArray();
-    writer.endObject();
+    w-wwitew.endawway();
+    w-wwitew.endobject();
   }
 
   /**
-   * Dumps out the mapping of the tweet/tweetId to
-   * a docId as well as segment/timeslide pair.
-   * @param writer writer to be used for writing
-   * @param tweetId tweetId that is input by user
+   * d-dumps o-out the mapping o-of the tweet/tweetid to
+   * a-a docid as weww as segment/timeswide p-paiw. ^^;;
+   * @pawam w-wwitew wwitew to be used fow wwiting
+   * @pawam tweetid t-tweetid that is i-input by usew
    */
-  public void dumpTweetIdToDocIdMapping(ViewerWriter writer, long tweetId) throws IOException {
-    writer.beginObject();
-    printHeader(writer);
-    writer.name("tweetId").value(Long.toString(tweetId));
-    int docId = twitterReader.getSegmentData().getDocIDToTweetIDMapper().getDocID(tweetId);
+  pubwic void d-dumptweetidtodocidmapping(viewewwwitew w-wwitew, (U ᵕ U❁) wong tweetid) thwows ioexception {
+    w-wwitew.beginobject();
+    p-pwintheadew(wwitew);
+    w-wwitew.name("tweetid").vawue(wong.tostwing(tweetid));
+    i-int docid = t-twittewweadew.getsegmentdata().getdocidtotweetidmappew().getdocid(tweetid);
 
-    writer.name("docId").value(Integer.toString(docId));
-    writer.endObject();
-    writer.newline();
+    w-wwitew.name("docid").vawue(integew.tostwing(docid));
+    wwitew.endobject();
+    wwitew.newwine();
   }
 
   /**
-   * Dumps out the mapping of the docId to
-   * tweetId and timeslice/segmentId pairs.
-   * @param writer writer to be used for writing
-   * @param docid docId that is input by user
+   * d-dumps out the mapping of the docid to
+   * tweetid and timeswice/segmentid paiws. (U ﹏ U)
+   * @pawam w-wwitew wwitew t-to be used fow wwiting
+   * @pawam docid docid that is input by u-usew
    */
-  public void dumpDocIdToTweetIdMapping(ViewerWriter writer, int docid) throws IOException {
-    writer.beginObject();
-    printHeader(writer);
-    long tweetId = twitterReader.getSegmentData().getDocIDToTweetIDMapper().getTweetID(docid);
+  pubwic v-void dumpdocidtotweetidmapping(viewewwwitew wwitew, mya int docid) thwows ioexception {
+    w-wwitew.beginobject();
+    pwintheadew(wwitew);
+    w-wong tweetid = twittewweadew.getsegmentdata().getdocidtotweetidmappew().gettweetid(docid);
 
-    writer.name("tweetId");
-    if (tweetId >= 0) {
-      writer.value(Long.toString(tweetId));
-    } else {
-      writer.value("Does not exist in segment");
+    w-wwitew.name("tweetid");
+    i-if (tweetid >= 0) {
+      wwitew.vawue(wong.tostwing(tweetid));
+    } ewse {
+      wwitew.vawue("does nyot exist in s-segment");
     }
-    writer.name("docid").value(Integer.toString(docid));
-    writer.endObject();
+    wwitew.name("docid").vawue(integew.tostwing(docid));
+    w-wwitew.endobject();
   }
 
   /**
-   * Print a response indicating that the given tweet id is not found in the index.
+   * pwint a wesponse i-indicating that the given tweet id is nyot found i-in the index. ^•ﻌ•^
    *
-   * Note that this method does not actually need the underlying index, and hence is setup as
-   * a util function.
+   * nyote t-that this method does nyot actuawwy nyeed the u-undewwying index, (U ﹏ U) and hence is setup a-as
+   * a utiw function.
    */
-  public static void writeTweetDoesNotExistResponse(ViewerWriter writer, long tweetId)
-      throws IOException {
-    writer.beginObject();
-    writer.name("tweetId");
-    writer.value(Long.toString(tweetId));
-    writer.name("docId");
-    writer.value("does not exist on this earlybird.");
-    writer.endObject();
+  pubwic static void wwitetweetdoesnotexistwesponse(viewewwwitew wwitew, :3 wong tweetid)
+      thwows ioexception {
+    w-wwitew.beginobject();
+    w-wwitew.name("tweetid");
+    w-wwitew.vawue(wong.tostwing(tweetid));
+    w-wwitew.name("docid");
+    wwitew.vawue("does nyot exist o-on this eawwybiwd.");
+    wwitew.endobject();
   }
 }

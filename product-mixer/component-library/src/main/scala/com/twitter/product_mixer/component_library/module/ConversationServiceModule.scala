@@ -1,42 +1,42 @@
-package com.twitter.product_mixer.component_library.module
+package com.twittew.pwoduct_mixew.component_wibwawy.moduwe
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.tweetconvosvc.thriftscala.ConversationService
-import com.twitter.util.Duration
-import org.apache.thrift.protocol.TCompactProtocol
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.convewsions.pewcentops._
+i-impowt com.twittew.finagwe.thwiftmux
+i-impowt c-com.twittew.finagwe.thwiftmux.methodbuiwdew
+i-impowt c-com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwscwient
+i-impowt com.twittew.inject.injectow
+impowt com.twittew.inject.thwift.moduwes.thwiftmethodbuiwdewcwientmoduwe
+impowt com.twittew.tweetconvosvc.thwiftscawa.convewsationsewvice
+i-impowt com.twittew.utiw.duwation
+impowt owg.apache.thwift.pwotocow.tcompactpwotocow
 
-object ConversationServiceModule
-    extends ThriftMethodBuilderClientModule[
-      ConversationService.ServicePerEndpoint,
-      ConversationService.MethodPerEndpoint
+object c-convewsationsewvicemoduwe
+    extends thwiftmethodbuiwdewcwientmoduwe[
+      convewsationsewvice.sewvicepewendpoint, (⑅˘꒳˘)
+      c-convewsationsewvice.methodpewendpoint
     ]
-    with MtlsClient {
+    with mtwscwient {
 
-  override val label: String = "tweetconvosvc"
-  override val dest: String = "/s/tweetconvosvc/tweetconvosvc"
+  ovewwide vaw wabew: s-stwing = "tweetconvosvc"
+  ovewwide vaw dest: s-stwing = "/s/tweetconvosvc/tweetconvosvc"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder =
-    methodBuilder
-      .withTimeoutTotal(200.milliseconds)
-      .withTimeoutPerRequest(100.milliseconds)
-      .idempotent(1.percent)
+  o-ovewwide pwotected def configuwemethodbuiwdew(
+    injectow: injectow, rawr x3
+    methodbuiwdew: methodbuiwdew
+  ): m-methodbuiwdew =
+    methodbuiwdew
+      .withtimeouttotaw(200.miwwiseconds)
+      .withtimeoutpewwequest(100.miwwiseconds)
+      .idempotent(1.pewcent)
 
-  override def configureThriftMuxClient(
-    injector: Injector,
-    client: ThriftMux.Client
-  ): ThriftMux.Client =
-    super
-      .configureThriftMuxClient(injector, client)
-      .withProtocolFactory(new TCompactProtocol.Factory())
+  ovewwide def configuwethwiftmuxcwient(
+    injectow: injectow, (✿oωo)
+    c-cwient: thwiftmux.cwient
+  ): t-thwiftmux.cwient =
+    s-supew
+      .configuwethwiftmuxcwient(injectow, (ˆ ﻌ ˆ)♡ c-cwient)
+      .withpwotocowfactowy(new t-tcompactpwotocow.factowy())
 
-  override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+  ovewwide pwotected def sessionacquisitiontimeout: d-duwation = 500.miwwiseconds
 }

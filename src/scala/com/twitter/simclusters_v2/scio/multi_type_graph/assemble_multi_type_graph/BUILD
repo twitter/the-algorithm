@@ -1,73 +1,167 @@
-scala_library(
-    name = "assemble-multi-type-graph-scio-lib",
-    sources = [
-        "*.scala",
+scawa_wibwawy(
+    nyame = "simcwustews_index_genewation", >w<
+    souwces = [
+        "**/*.scawa",
+    ], rawr
+    p-pwatfowm = "java8", mya
+    t-tags = ["bazew-compatibwe"], ^^
+    d-dependencies = [
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:ads_fav_based_simcwustews_cwustew_to_tweet_index-scawa", 😳😳😳
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:ads_fav_cwick_based_simcwustews_cwustew_to_tweet_index-scawa", mya
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:fav_based_evewgween_content_simcwustews_cwustew_to_tweet_index-scawa", 😳
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:fav_based_simcwustews_cwustew_to_tweet_index-scawa", -.-
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:fav_based_video_simcwustews_cwustew_to_tweet_index-scawa", 🥺
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:push_open_based_simcwustews_cwustew_to_tweet_index-scawa", o.O
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:wepwy_based_simcwustews_cwustew_to_tweet_index-scawa", /(^•ω•^)
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:wetweet_based_simcwustews_cwustew_to_tweet_index-scawa", nyaa~~
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:video_view_based_simcwustews_cwustew_to_tweet_index-scawa", nyaa~~
+        "swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/common", :3
+        "swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/sqw", 😳😳😳
+        "swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/tweets_ann:bq_genewation", (˘ω˘)
+        "unified_usew_actions/thwift/swc/main/thwift/com/twittew/unified_usew_actions:unified_usew_actions-scawa", ^^
     ],
-    platform = "java8",
-    tags = ["bazel-compatible"],
+)
+
+j-jvm_binawy(
+    n-nyame = "fav-based-cwustew-to-tweet-index-genewation-adhoc-job", :3
+    m-main = "com.twittew.simcwustews_v2.scio.bq_genewation.simcwustews_index_genewation.favbasedcwustewtotweetindexgenewationadhocjob", -.-
+    d-dependencies = [
+        ":simcwustews_index_genewation", 😳
+    ], mya
+)
+
+j-jvm_binawy(
+    nyame = "fav-based-cwustew-to-tweet-index-genewation-batch-job", (˘ω˘)
+    main = "com.twittew.simcwustews_v2.scio.bq_genewation.simcwustews_index_genewation.favbasedcwustewtotweetindexgenewationbatchjob",
     dependencies = [
-        ":full_multi_type_graph_scio-scala",
-        ":top_k_right_nouns_mh_scio-scala",
-        "beam-internal/src/main/scala/com/twitter/beam/io/dal",
-        "beam-internal/src/main/scala/com/twitter/beam/io/manhattan",
-        "beam-internal/src/main/scala/com/twitter/beam/job",
-        "beam-internal/src/main/scala/com/twitter/beam/transform",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/scalding/multi_type_graph/assemble_multi_type_graph",
-        "src/scala/com/twitter/simclusters_v2/scio/common",
-        "src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/common",
-    ],
+        ":simcwustews_index_genewation", >_<
+    ], -.-
 )
 
-jvm_binary(
-    name = "assemble-multi-type-graph-scio-adhoc-app",
-    main = "com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.AssembleMultiTypeGraphScioAdhocApp",
-    platform = "java8",
-    tags = ["bazel-compatible"],
+jvm_binawy(
+    n-nyame = "video-view-based-cwustew-to-tweet-index-genewation-adhoc-job", 🥺
+    main = "com.twittew.simcwustews_v2.scio.bq_genewation.simcwustews_index_genewation.videoviewbasedcwustewtotweetindexgenewationadhocjob", (U ﹏ U)
     dependencies = [
-        ":assemble-multi-type-graph-scio-lib",
-        "beam-internal/src/main/scala/com/twitter/beam/runner/dataflow",
-    ],
+        ":simcwustews_index_genewation", >w<
+    ], mya
 )
 
-jvm_binary(
-    name = "assemble-multi-type-graph-scio-batch-app",
-    main = "com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.AssembleMultiTypeGraphScioBatchApp",
-    platform = "java8",
-    tags = ["bazel-compatible"],
+j-jvm_binawy(
+    nyame = "video-view-based-cwustew-to-tweet-index-genewation-batch-job", >w<
+    m-main = "com.twittew.simcwustews_v2.scio.bq_genewation.simcwustews_index_genewation.videoviewbasedcwustewtotweetindexgenewationbatchjob",
     dependencies = [
-        ":assemble-multi-type-graph-scio-lib",
-        "beam-internal/src/main/scala/com/twitter/beam/runner/dataflow",
+        ":simcwustews_index_genewation", nyaa~~
+    ], (✿oωo)
+)
+
+jvm_binawy(
+    nyame = "wetweet-based-cwustew-to-tweet-index-genewation-adhoc-job", ʘwʘ
+    m-main = "com.twittew.simcwustews_v2.scio.bq_genewation.simcwustews_index_genewation.wetweetbasedcwustewtotweetindexgenewationadhocjob", (ˆ ﻌ ˆ)♡
+    dependencies = [
+        ":simcwustews_index_genewation", 😳😳😳
     ],
 )
 
-create_datasets(
-    base_name = "full_multi_type_graph_scio",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.MultiTypeGraphEdge",
-    platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.MultiTypeGraphEdge",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
-    ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+j-jvm_binawy(
+    n-nyame = "wetweet-based-cwustew-to-tweet-index-genewation-batch-job", :3
+    main = "com.twittew.simcwustews_v2.scio.bq_genewation.simcwustews_index_genewation.wetweetbasedcwustewtotweetindexgenewationbatchjob", OwO
+    dependencies = [
+        ":simcwustews_index_genewation", (U ﹏ U)
     ],
 )
 
-create_datasets(
-    base_name = "top_k_right_nouns_mh_scio",
-    key_type = "com.twitter.simclusters_v2.thriftscala.RightNodeTypeStruct",
-    platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.MultiTypeGraphInjections.topKRightNounListInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.NounWithFrequencyList",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+jvm_binawy(
+    nyame = "wepwy-based-cwustew-to-tweet-index-genewation-adhoc-job", >w<
+    m-main = "com.twittew.simcwustews_v2.scio.bq_genewation.simcwustews_index_genewation.wepwybasedcwustewtotweetindexgenewationadhocjob", (U ﹏ U)
+    dependencies = [
+        ":simcwustews_index_genewation", 😳
+    ], (ˆ ﻌ ˆ)♡
+)
+
+jvm_binawy(
+    nyame = "wepwy-based-cwustew-to-tweet-index-genewation-batch-job", 😳😳😳
+    main = "com.twittew.simcwustews_v2.scio.bq_genewation.simcwustews_index_genewation.wepwybasedcwustewtotweetindexgenewationbatchjob",
+    d-dependencies = [
+        ":simcwustews_index_genewation",
+    ], (U ﹏ U)
+)
+
+jvm_binawy(
+    n-nyame = "push-open-based-cwustew-to-tweet-index-genewation-adhoc-job", (///ˬ///✿)
+    m-main = "com.twittew.simcwustews_v2.scio.bq_genewation.simcwustews_index_genewation.pushopenbasedcwustewtotweetindexgenewationadhocjob", 😳
+    d-dependencies = [
+        ":simcwustews_index_genewation", 😳
+    ],
+)
+
+j-jvm_binawy(
+    nyame = "push-open-based-cwustew-to-tweet-index-genewation-batch-job", σωσ
+    main = "com.twittew.simcwustews_v2.scio.bq_genewation.simcwustews_index_genewation.pushopenbasedcwustewtotweetindexgenewationbatchjob",
+    d-dependencies = [
+        ":simcwustews_index_genewation",
+    ], rawr x3
+)
+
+jvm_binawy(
+    nyame = "ads-fav-based-cwustew-to-tweet-index-genewation-adhoc-job", OwO
+    m-main = "com.twittew.simcwustews_v2.scio.bq_genewation.simcwustews_index_genewation.adsfavbasedcwustewtotweetindexgenewationadhocjob", /(^•ω•^)
+    dependencies = [
+        ":simcwustews_index_genewation", 😳😳😳
+    ],
+)
+
+jvm_binawy(
+    nyame = "ads-fav-based-cwustew-to-tweet-index-genewation-batch-job", ( ͡o ω ͡o )
+    main = "com.twittew.simcwustews_v2.scio.bq_genewation.simcwustews_index_genewation.adsfavbasedcwustewtotweetindexgenewationbatchjob", >_<
+    dependencies = [
+        ":simcwustews_index_genewation",
+    ], >w<
+)
+
+j-jvm_binawy(
+    nyame = "ads-fav-cwick-based-cwustew-to-tweet-index-genewation-adhoc-job", rawr
+    m-main = "com.twittew.simcwustews_v2.scio.bq_genewation.simcwustews_index_genewation.adsfavcwickbasedcwustewtotweetindexgenewationadhocjob", 😳
+    d-dependencies = [
+        ":simcwustews_index_genewation", >w<
+    ],
+)
+
+j-jvm_binawy(
+    nyame = "ads-fav-cwick-based-cwustew-to-tweet-index-genewation-batch-job", (⑅˘꒳˘)
+    main = "com.twittew.simcwustews_v2.scio.bq_genewation.simcwustews_index_genewation.adsfavcwickbasedcwustewtotweetindexgenewationbatchjob", OwO
+    dependencies = [
+        ":simcwustews_index_genewation", (ꈍᴗꈍ)
+    ], 😳
+)
+
+jvm_binawy(
+    n-nyame = "fav-based-evewgween-content-cwustew-to-tweet-index-genewation-adhoc-job", 😳😳😳
+    m-main = "com.twittew.simcwustews_v2.scio.bq_genewation.simcwustews_index_genewation.favbasedevewgweencontentcwustewtotweetindexgenewationadhocjob", mya
+    dependencies = [
+        ":simcwustews_index_genewation", mya
+    ],
+)
+
+j-jvm_binawy(
+    n-nyame = "fav-based-evewgween-content-cwustew-to-tweet-index-genewation-batch-job", (⑅˘꒳˘)
+    main = "com.twittew.simcwustews_v2.scio.bq_genewation.simcwustews_index_genewation.favbasedevewgweencontentcwustewtotweetindexgenewationbatchjob", (U ﹏ U)
+    d-dependencies = [
+        ":simcwustews_index_genewation", mya
+    ], ʘwʘ
+)
+
+jvm_binawy(
+    n-nyame = "fav-based-video-cwustew-to-tweet-index-genewation-adhoc-job", (˘ω˘)
+    main = "com.twittew.simcwustews_v2.scio.bq_genewation.simcwustews_index_genewation.favbasedvideocwustewtotweetindexgenewationadhocjob", (U ﹏ U)
+    dependencies = [
+        ":simcwustews_index_genewation", ^•ﻌ•^
+    ],
+)
+
+j-jvm_binawy(
+    name = "fav-based-video-cwustew-to-tweet-index-genewation-batch-job", (˘ω˘)
+    m-main = "com.twittew.simcwustews_v2.scio.bq_genewation.simcwustews_index_genewation.favbasedvideocwustewtotweetindexgenewationbatchjob", :3
+    dependencies = [
+        ":simcwustews_index_genewation", ^^;;
     ],
 )

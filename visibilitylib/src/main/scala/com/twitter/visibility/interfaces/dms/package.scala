@@ -1,12 +1,12 @@
-package com.twitter.visibility.interfaces
+package com.twittew.visibiwity.intewfaces
 
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.common.DmId
-import com.twitter.visibility.safety_label_store.thriftscala.DmSafetyLabelMap
+impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.visibiwity.common.dmid
+i-impowt com.twittew.visibiwity.safety_wabew_stowe.thwiftscawa.dmsafetywabewmap
 
-package object dms {
-  type DmSafetyLabelMapFetcherType = DmId => Stitch[Option[DmSafetyLabelMap]]
+p-package object d-dms {
+  type d-dmsafetywabewmapfetchewtype = d-dmid => stitch[option[dmsafetywabewmap]]
 
-  val DmSafetyLabelMapFetcherStratoColumn =
-    "visibility/safety-label-store/vflib/dm/safetyLabelMap.Dm"
+  vaw dmsafetywabewmapfetchewstwatocowumn =
+    "visibiwity/safety-wabew-stowe/vfwib/dm/safetywabewmap.dm"
 }

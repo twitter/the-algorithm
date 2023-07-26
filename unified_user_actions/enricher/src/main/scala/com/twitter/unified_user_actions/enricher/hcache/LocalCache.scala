@@ -1,34 +1,34 @@
-package com.twitter.unified_user_actions.enricher.hcache
+package com.twittew.unified_usew_actions.enwichew.hcache
 
-import com.google.common.cache.Cache
-import com.twitter.cache.FutureCache
-import com.twitter.cache.guava.GuavaCache
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Future
+impowt c-com.googwe.common.cache.cache
+i-impowt c-com.twittew.cache.futuwecache
+i-impowt com.twittew.cache.guava.guavacache
+i-impowt c-com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.utiw.futuwe
 
 /**
- * A local cache implementation using GuavaCache.
- * Underneath it uses a customized version of the EvictingCache to 1) deal with Futures, 2) add more stats.
+ * a wocaw cache impwementation using guavacache. (⑅˘꒳˘)
+ * undewneath i-it uses a customized vewsion of the evictingcache t-to 1) deaw with futuwes, /(^•ω•^) 2) a-add mowe stats. rawr x3
  */
-class LocalCache[K, V](
-  underlying: Cache[K, Future[V]],
-  statsReceiver: StatsReceiver = NullStatsReceiver) {
+cwass wocawcache[k, (U ﹏ U) v](
+  undewwying: cache[k, (U ﹏ U) f-futuwe[v]], (⑅˘꒳˘)
+  statsweceivew: s-statsweceivew = n-nyuwwstatsweceivew) {
 
-  private[this] val cache = new GuavaCache(underlying)
-  private[this] val evictingCache: FutureCache[K, V] =
-    ObservedEvictingCache(underlying = cache, statsReceiver = statsReceiver)
+  pwivate[this] vaw cache = nyew guavacache(undewwying)
+  pwivate[this] v-vaw evictingcache: futuwecache[k, v] =
+    obsewvedevictingcache(undewwying = cache, òωó statsweceivew = s-statsweceivew)
 
-  def getOrElseUpdate(key: K)(fn: => Future[V]): Future[V] = evictingCache.getOrElseUpdate(key)(fn)
+  def getowewseupdate(key: k-k)(fn: => futuwe[v]): f-futuwe[v] = e-evictingcache.getowewseupdate(key)(fn)
 
-  def get(key: K): Option[Future[V]] = evictingCache.get(key)
+  d-def get(key: k): option[futuwe[v]] = evictingcache.get(key)
 
-  def evict(key: K, value: Future[V]): Boolean = evictingCache.evict(key, value)
+  d-def evict(key: k, ʘwʘ vawue: futuwe[v]): b-boowean = evictingcache.evict(key, /(^•ω•^) vawue)
 
-  def set(key: K, value: Future[V]): Unit = evictingCache.set(key, value)
+  def set(key: k, ʘwʘ vawue: futuwe[v]): unit = evictingcache.set(key, σωσ vawue)
 
-  def reset(): Unit =
-    underlying.invalidateAll()
+  d-def weset(): unit =
+    u-undewwying.invawidateaww()
 
-  def size: Int = evictingCache.size
+  d-def s-size: int = evictingcache.size
 }

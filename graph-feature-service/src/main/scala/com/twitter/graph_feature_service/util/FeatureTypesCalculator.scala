@@ -1,57 +1,57 @@
-package com.twitter.graph_feature_service.util
+package com.twittew.gwaph_featuwe_sewvice.utiw
 
-import com.twitter.graph_feature_service.thriftscala.EdgeType._
-import com.twitter.graph_feature_service.thriftscala.{FeatureType, PresetFeatureTypes}
+impowt com.twittew.gwaph_featuwe_sewvice.thwiftscawa.edgetype._
+impowt c-com.twittew.gwaph_featuwe_sewvice.thwiftscawa.{featuwetype, ^^ p-pwesetfeatuwetypes}
 
-object FeatureTypesCalculator {
+o-object featuwetypescawcuwatow {
 
-  final val DefaultTwoHop = Seq(
-    FeatureType(Following, FollowedBy),
-    FeatureType(Following, FavoritedBy),
-    FeatureType(Following, RetweetedBy),
-    FeatureType(Following, MentionedBy),
-    FeatureType(Following, MutualFollow),
-    FeatureType(Favorite, FollowedBy),
-    FeatureType(Favorite, FavoritedBy),
-    FeatureType(Favorite, RetweetedBy),
-    FeatureType(Favorite, MentionedBy),
-    FeatureType(Favorite, MutualFollow),
-    FeatureType(MutualFollow, FollowedBy),
-    FeatureType(MutualFollow, FavoritedBy),
-    FeatureType(MutualFollow, RetweetedBy),
-    FeatureType(MutualFollow, MentionedBy),
-    FeatureType(MutualFollow, MutualFollow)
+  f-finaw v-vaw defauwttwohop = s-seq(
+    featuwetype(fowwowing, f-fowwowedby), 😳😳😳
+    f-featuwetype(fowwowing, mya favowitedby), 😳
+    featuwetype(fowwowing, -.- wetweetedby), 🥺
+    featuwetype(fowwowing, o.O m-mentionedby), /(^•ω•^)
+    featuwetype(fowwowing, nyaa~~ mutuawfowwow), nyaa~~
+    f-featuwetype(favowite, :3 fowwowedby), 😳😳😳
+    f-featuwetype(favowite, (˘ω˘) favowitedby), ^^
+    featuwetype(favowite, :3 wetweetedby), -.-
+    featuwetype(favowite, 😳 m-mentionedby), mya
+    featuwetype(favowite, (˘ω˘) mutuawfowwow), >_<
+    f-featuwetype(mutuawfowwow, -.- f-fowwowedby), 🥺
+    featuwetype(mutuawfowwow, (U ﹏ U) favowitedby), >w<
+    featuwetype(mutuawfowwow, mya wetweetedby), >w<
+    f-featuwetype(mutuawfowwow, nyaa~~ mentionedby), (✿oωo)
+    featuwetype(mutuawfowwow, ʘwʘ mutuawfowwow)
   )
 
-  final val SocialProofTwoHop = Seq(FeatureType(Following, FollowedBy))
+  finaw vaw sociawpwooftwohop = seq(featuwetype(fowwowing, (ˆ ﻌ ˆ)♡ f-fowwowedby))
 
-  final val HtlTwoHop = DefaultTwoHop
+  finaw vaw h-htwtwohop = defauwttwohop
 
-  final val WtfTwoHop = SocialProofTwoHop
+  f-finaw vaw wtftwohop = s-sociawpwooftwohop
 
-  final val SqTwoHop = DefaultTwoHop
+  f-finaw vaw sqtwohop = defauwttwohop
 
-  final val RuxTwoHop = DefaultTwoHop
+  f-finaw vaw wuxtwohop = defauwttwohop
 
-  final val MRTwoHop = DefaultTwoHop
+  finaw vaw m-mwtwohop = defauwttwohop
 
-  final val UserTypeaheadTwoHop = SocialProofTwoHop
+  finaw vaw usewtypeaheadtwohop = sociawpwooftwohop
 
-  final val presetFeatureTypes =
-    (HtlTwoHop ++ WtfTwoHop ++ SqTwoHop ++ RuxTwoHop ++ MRTwoHop ++ UserTypeaheadTwoHop).toSet
+  finaw vaw pwesetfeatuwetypes =
+    (htwtwohop ++ wtftwohop ++ s-sqtwohop ++ wuxtwohop ++ mwtwohop ++ u-usewtypeaheadtwohop).toset
 
-  def getFeatureTypes(
-    presetFeatureTypes: PresetFeatureTypes,
-    featureTypes: Seq[FeatureType]
-  ): Seq[FeatureType] = {
-    presetFeatureTypes match {
-      case PresetFeatureTypes.HtlTwoHop => HtlTwoHop
-      case PresetFeatureTypes.WtfTwoHop => WtfTwoHop
-      case PresetFeatureTypes.SqTwoHop => SqTwoHop
-      case PresetFeatureTypes.RuxTwoHop => RuxTwoHop
-      case PresetFeatureTypes.MrTwoHop => MRTwoHop
-      case PresetFeatureTypes.UserTypeaheadTwoHop => UserTypeaheadTwoHop
-      case _ => featureTypes
+  d-def getfeatuwetypes(
+    p-pwesetfeatuwetypes: pwesetfeatuwetypes, 😳😳😳
+    featuwetypes: seq[featuwetype]
+  ): s-seq[featuwetype] = {
+    p-pwesetfeatuwetypes match {
+      c-case pwesetfeatuwetypes.htwtwohop => h-htwtwohop
+      case p-pwesetfeatuwetypes.wtftwohop => wtftwohop
+      c-case pwesetfeatuwetypes.sqtwohop => sqtwohop
+      case pwesetfeatuwetypes.wuxtwohop => w-wuxtwohop
+      case pwesetfeatuwetypes.mwtwohop => m-mwtwohop
+      case p-pwesetfeatuwetypes.usewtypeaheadtwohop => u-usewtypeaheadtwohop
+      case _ => featuwetypes
     }
   }
 

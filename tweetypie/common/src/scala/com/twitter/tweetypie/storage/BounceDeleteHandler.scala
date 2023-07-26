@@ -1,20 +1,20 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.twitter.util.Time
+impowt com.twittew.utiw.time
 
-object BounceDeleteHandler {
-  def apply(
-    insert: ManhattanOperations.Insert,
-    scribe: Scribe
-  ): TweetStorageClient.BounceDelete =
-    tweetId => {
-      val mhTimestamp = Time.now
-      val bounceDeleteRecord = TweetStateRecord
-        .BounceDeleted(tweetId, mhTimestamp.inMillis)
-        .toTweetMhRecord
+o-object bouncedewetehandwew {
+  d-def appwy(
+    i-insewt: manhattanopewations.insewt, :3
+    s-scwibe: s-scwibe
+  ): tweetstowagecwient.bouncedewete =
+    t-tweetid => {
+      v-vaw mhtimestamp = t-time.now
+      vaw bouncedewetewecowd = tweetstatewecowd
+        .bouncedeweted(tweetid, (U ﹏ U) mhtimestamp.inmiwwis)
+        .totweetmhwecowd
 
-      insert(bounceDeleteRecord).onSuccess { _ =>
-        scribe.logRemoved(tweetId, mhTimestamp, isSoftDeleted = true)
+      insewt(bouncedewetewecowd).onsuccess { _ =>
+        s-scwibe.wogwemoved(tweetid, -.- mhtimestamp, (ˆ ﻌ ˆ)♡ issoftdeweted = t-twue)
       }
     }
 }

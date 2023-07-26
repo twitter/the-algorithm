@@ -1,67 +1,67 @@
-package com.twitter.home_mixer.product.subscribed
+package com.twittew.home_mixew.pwoduct.subscwibed
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.tracing.Trace
-import com.twitter.home_mixer.product.subscribed.model.SubscribedQuery
-import com.twitter.home_mixer.product.subscribed.param.SubscribedParam.ServerMaxResultsParam
-import com.twitter.product_mixer.component_library.feature_hydrator.query.social_graph.SGSSubscribedUsersFeature
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.MalformedCursor
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant
-import com.twitter.search.earlybird.{thriftscala => t}
-import com.twitter.search.queryparser.query.Conjunction
-import com.twitter.search.queryparser.query.search.SearchOperator
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.thwift.cwientid
+i-impowt c-com.twittew.finagwe.twacing.twace
+i-impowt com.twittew.home_mixew.pwoduct.subscwibed.modew.subscwibedquewy
+i-impowt c-com.twittew.home_mixew.pwoduct.subscwibed.pawam.subscwibedpawam.sewvewmaxwesuwtspawam
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.quewy.sociaw_gwaph.sgssubscwibedusewsfeatuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.bottomcuwsow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.gapcuwsow
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.topcuwsow
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.mawfowmedcuwsow
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant
+impowt com.twittew.seawch.eawwybiwd.{thwiftscawa => t-t}
+impowt com.twittew.seawch.quewypawsew.quewy.conjunction
+impowt com.twittew.seawch.quewypawsew.quewy.seawch.seawchopewatow
+impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
-@Singleton
-case class SubscribedEarlybirdQueryTransformer @Inject() (clientId: ClientId)
-    extends CandidatePipelineQueryTransformer[SubscribedQuery, t.EarlybirdRequest] {
+@singweton
+case cwass s-subscwibedeawwybiwdquewytwansfowmew @inject() (cwientid: c-cwientid)
+    extends candidatepipewinequewytwansfowmew[subscwibedquewy, 😳😳😳 t.eawwybiwdwequest] {
 
-  override def transform(query: SubscribedQuery): t.EarlybirdRequest = {
-    val subscribedUserIds =
-      query.features.map(_.get(SGSSubscribedUsersFeature)).getOrElse(Seq.empty)
+  ovewwide def twansfowm(quewy: s-subscwibedquewy): t.eawwybiwdwequest = {
+    vaw subscwibedusewids =
+      quewy.featuwes.map(_.get(sgssubscwibedusewsfeatuwe)).getowewse(seq.empty)
 
-    val subscribedUsersQuery = new SearchOperator.Builder()
-      .setType(SearchOperator.Type.FILTER)
-      .addOperand(EarlybirdFieldConstant.EXCLUSIVE_FILTER_TERM)
-      .build()
+    vaw subscwibedusewsquewy = nyew seawchopewatow.buiwdew()
+      .settype(seawchopewatow.type.fiwtew)
+      .addopewand(eawwybiwdfiewdconstant.excwusive_fiwtew_tewm)
+      .buiwd()
 
-    val searchQuery = query.pipelineCursor
-      .map { cursor =>
-        val sinceIdQuery =
-          (id: Long) => new SearchOperator(SearchOperator.Type.SINCE_ID, id.toString)
-        val maxIdQuery = // max ID is inclusive, so subtract 1
-          (id: Long) => new SearchOperator(SearchOperator.Type.MAX_ID, (id - 1).toString)
+    vaw s-seawchquewy = quewy.pipewinecuwsow
+      .map { c-cuwsow =>
+        v-vaw sinceidquewy =
+          (id: w-wong) => n-new seawchopewatow(seawchopewatow.type.since_id, (˘ω˘) id.tostwing)
+        vaw maxidquewy = // m-max id is incwusive, ^^ so subtwact 1
+          (id: w-wong) => nyew seawchopewatow(seawchopewatow.type.max_id, :3 (id - 1).tostwing)
 
-        (cursor.cursorType, cursor.id, cursor.gapBoundaryId) match {
-          case (Some(TopCursor), Some(sinceId), _) =>
-            new Conjunction(sinceIdQuery(sinceId), subscribedUsersQuery)
-          case (Some(BottomCursor), Some(maxId), _) =>
-            new Conjunction(maxIdQuery(maxId), subscribedUsersQuery)
-          case (Some(GapCursor), Some(maxId), Some(sinceId)) =>
-            new Conjunction(sinceIdQuery(sinceId), maxIdQuery(maxId), subscribedUsersQuery)
-          case (Some(GapCursor), _, _) =>
-            throw PipelineFailure(MalformedCursor, "Invalid cursor " + cursor.toString)
-          case _ => subscribedUsersQuery
+        (cuwsow.cuwsowtype, -.- cuwsow.id, cuwsow.gapboundawyid) match {
+          case (some(topcuwsow), 😳 some(sinceid), mya _) =>
+            n-nyew conjunction(sinceidquewy(sinceid), (˘ω˘) subscwibedusewsquewy)
+          c-case (some(bottomcuwsow), >_< s-some(maxid), -.- _) =>
+            n-nyew conjunction(maxidquewy(maxid), 🥺 subscwibedusewsquewy)
+          case (some(gapcuwsow), some(maxid), (U ﹏ U) s-some(sinceid)) =>
+            n-nyew conjunction(sinceidquewy(sinceid), >w< maxidquewy(maxid), mya subscwibedusewsquewy)
+          c-case (some(gapcuwsow), >w< _, _) =>
+            t-thwow pipewinefaiwuwe(mawfowmedcuwsow, nyaa~~ "invawid c-cuwsow " + cuwsow.tostwing)
+          c-case _ => subscwibedusewsquewy
         }
-      }.getOrElse(subscribedUsersQuery)
+      }.getowewse(subscwibedusewsquewy)
 
-    t.EarlybirdRequest(
-      searchQuery = t.ThriftSearchQuery(
-        serializedQuery = Some(searchQuery.serialize),
-        fromUserIDFilter64 = Some(subscribedUserIds),
-        numResults = query.requestedMaxResults.getOrElse(query.params(ServerMaxResultsParam)),
-        rankingMode = t.ThriftSearchRankingMode.Recency,
+    t.eawwybiwdwequest(
+      seawchquewy = t-t.thwiftseawchquewy(
+        sewiawizedquewy = some(seawchquewy.sewiawize),
+        f-fwomusewidfiwtew64 = some(subscwibedusewids), (✿oωo)
+        n-nyumwesuwts = q-quewy.wequestedmaxwesuwts.getowewse(quewy.pawams(sewvewmaxwesuwtspawam)), ʘwʘ
+        wankingmode = t.thwiftseawchwankingmode.wecency, (ˆ ﻌ ˆ)♡
       ),
-      getOlderResults = Some(true), // needed for archive access to older tweets
-      clientRequestID = Some(s"${Trace.id.traceId}"),
-      numResultsToReturnAtRoot = Some(query.params(ServerMaxResultsParam)),
-      clientId = Some(clientId.name),
+      getowdewwesuwts = some(twue), 😳😳😳 // nyeeded fow awchive a-access to owdew t-tweets
+      cwientwequestid = some(s"${twace.id.twaceid}"), :3
+      n-nyumwesuwtstowetuwnatwoot = s-some(quewy.pawams(sewvewmaxwesuwtspawam)), OwO
+      c-cwientid = some(cwientid.name), (U ﹏ U)
     )
   }
 }

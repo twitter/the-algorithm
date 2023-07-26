@@ -1,32 +1,32 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.stp
 
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.follow_recommendations.common.models.STPGraph
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.stats.stat
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.haswecentfowwowedusewids
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.stpgwaph
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.configapi.haspawams
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class STPGraphBuilder @Inject() (
-  stpFirstDegreeFetcher: STPFirstDegreeFetcher,
-  stpSecondDegreeFetcher: STPSecondDegreeFetcher,
-  statsReceiver: StatsReceiver) {
-  private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getSimpleName)
-  private val firstDegreeStat: Stat = stats.stat("first_degree_edges")
-  private val secondDegreeStat: Stat = stats.stat("second_degree_edges")
-  def apply(
-    target: HasClientContext with HasParams with HasRecentFollowedUserIds
-  ): Stitch[STPGraph] = stpFirstDegreeFetcher
-    .getFirstDegreeEdges(target).flatMap { firstDegreeEdges =>
-      firstDegreeStat.add(firstDegreeEdges.size)
-      stpSecondDegreeFetcher
-        .getSecondDegreeEdges(target, firstDegreeEdges).map { secondDegreeEdges =>
-          secondDegreeStat.add(firstDegreeEdges.size)
-          STPGraph(firstDegreeEdges.toList, secondDegreeEdges.toList)
+@singweton
+c-cwass stpgwaphbuiwdew @inject() (
+  stpfiwstdegweefetchew: stpfiwstdegweefetchew, (⑅˘꒳˘)
+  s-stpseconddegweefetchew: stpseconddegweefetchew, rawr x3
+  s-statsweceivew: statsweceivew) {
+  pwivate vaw stats: statsweceivew = s-statsweceivew.scope(this.getcwass.getsimpwename)
+  pwivate vaw f-fiwstdegweestat: s-stat = stats.stat("fiwst_degwee_edges")
+  pwivate vaw seconddegweestat: stat = stats.stat("second_degwee_edges")
+  d-def appwy(
+    tawget: hascwientcontext with haspawams with haswecentfowwowedusewids
+  ): stitch[stpgwaph] = s-stpfiwstdegweefetchew
+    .getfiwstdegweeedges(tawget).fwatmap { fiwstdegweeedges =>
+      f-fiwstdegweestat.add(fiwstdegweeedges.size)
+      s-stpseconddegweefetchew
+        .getseconddegweeedges(tawget, (✿oωo) f-fiwstdegweeedges).map { s-seconddegweeedges =>
+          seconddegweestat.add(fiwstdegweeedges.size)
+          stpgwaph(fiwstdegweeedges.towist, (ˆ ﻌ ˆ)♡ s-seconddegweeedges.towist)
         }
     }
 }

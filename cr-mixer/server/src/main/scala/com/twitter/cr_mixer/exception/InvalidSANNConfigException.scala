@@ -1,4 +1,4 @@
-package com.twitter.cr_mixer
-package exception
+package com.twittew.cw_mixew
+package e-exception
 
-case class InvalidSANNConfigException(msg: String) extends Exception(msg)
+case c-cwass invawidsannconfigexception(msg: s-stwing) e-extends exception(msg)

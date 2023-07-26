@@ -1,754 +1,754 @@
-package com.twitter.cr_mixer.controller
+package com.twittew.cw_mixew.contwowwew
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.cr_mixer.candidate_generation.AdsCandidateGenerator
-import com.twitter.cr_mixer.candidate_generation.CrCandidateGenerator
-import com.twitter.cr_mixer.candidate_generation.FrsTweetCandidateGenerator
-import com.twitter.cr_mixer.candidate_generation.RelatedTweetCandidateGenerator
-import com.twitter.cr_mixer.candidate_generation.RelatedVideoTweetCandidateGenerator
-import com.twitter.cr_mixer.candidate_generation.TopicTweetCandidateGenerator
-import com.twitter.cr_mixer.candidate_generation.UtegTweetCandidateGenerator
-import com.twitter.cr_mixer.featureswitch.ParamsBuilder
-import com.twitter.cr_mixer.logging.CrMixerScribeLogger
-import com.twitter.cr_mixer.logging.RelatedTweetScribeLogger
-import com.twitter.cr_mixer.logging.AdsRecommendationsScribeLogger
-import com.twitter.cr_mixer.logging.RelatedTweetScribeMetadata
-import com.twitter.cr_mixer.logging.ScribeMetadata
-import com.twitter.cr_mixer.logging.UtegTweetScribeLogger
-import com.twitter.cr_mixer.model.AdsCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.CrCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.FrsTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.RankedAdsCandidate
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.cr_mixer.model.RelatedTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.RelatedVideoTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.TopicTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.TweetWithScoreAndSocialProof
-import com.twitter.cr_mixer.model.UtegTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.param.AdsParams
-import com.twitter.cr_mixer.param.FrsParams.FrsBasedCandidateGenerationMaxCandidatesNumParam
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.param.RelatedTweetGlobalParams
-import com.twitter.cr_mixer.param.RelatedVideoTweetGlobalParams
-import com.twitter.cr_mixer.param.TopicTweetParams
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.param.decider.DeciderConstants
-import com.twitter.cr_mixer.param.decider.EndpointLoadShedder
-import com.twitter.cr_mixer.thriftscala.AdTweetRecommendation
-import com.twitter.cr_mixer.thriftscala.AdsRequest
-import com.twitter.cr_mixer.thriftscala.AdsResponse
-import com.twitter.cr_mixer.thriftscala.CrMixerTweetRequest
-import com.twitter.cr_mixer.thriftscala.CrMixerTweetResponse
-import com.twitter.cr_mixer.thriftscala.FrsTweetRequest
-import com.twitter.cr_mixer.thriftscala.FrsTweetResponse
-import com.twitter.cr_mixer.thriftscala.RelatedTweet
-import com.twitter.cr_mixer.thriftscala.RelatedTweetRequest
-import com.twitter.cr_mixer.thriftscala.RelatedTweetResponse
-import com.twitter.cr_mixer.thriftscala.RelatedVideoTweet
-import com.twitter.cr_mixer.thriftscala.RelatedVideoTweetRequest
-import com.twitter.cr_mixer.thriftscala.RelatedVideoTweetResponse
-import com.twitter.cr_mixer.thriftscala.TopicTweet
-import com.twitter.cr_mixer.thriftscala.TopicTweetRequest
-import com.twitter.cr_mixer.thriftscala.TopicTweetResponse
-import com.twitter.cr_mixer.thriftscala.TweetRecommendation
-import com.twitter.cr_mixer.thriftscala.UtegTweet
-import com.twitter.cr_mixer.thriftscala.UtegTweetRequest
-import com.twitter.cr_mixer.thriftscala.UtegTweetResponse
-import com.twitter.cr_mixer.util.MetricTagUtil
-import com.twitter.cr_mixer.util.SignalTimestampStatsUtil
-import com.twitter.cr_mixer.{thriftscala => t}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.thrift.Controller
-import com.twitter.hermit.store.common.ReadableWritableStore
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.timeline_logging.{thriftscala => thriftlog}
-import com.twitter.timelines.tracing.lensview.funnelseries.TweetScoreFunnelSeries
-import com.twitter.util.Future
-import com.twitter.util.Time
-import java.util.UUID
-import javax.inject.Inject
-import org.apache.commons.lang.exception.ExceptionUtils
+impowt com.twittew.cowe_wowkfwows.usew_modew.thwiftscawa.usewstate
+i-impowt c-com.twittew.cw_mixew.candidate_genewation.adscandidategenewatow
+i-impowt com.twittew.cw_mixew.candidate_genewation.cwcandidategenewatow
+i-impowt com.twittew.cw_mixew.candidate_genewation.fwstweetcandidategenewatow
+i-impowt com.twittew.cw_mixew.candidate_genewation.wewatedtweetcandidategenewatow
+i-impowt com.twittew.cw_mixew.candidate_genewation.wewatedvideotweetcandidategenewatow
+i-impowt c-com.twittew.cw_mixew.candidate_genewation.topictweetcandidategenewatow
+impowt com.twittew.cw_mixew.candidate_genewation.utegtweetcandidategenewatow
+impowt com.twittew.cw_mixew.featuweswitch.pawamsbuiwdew
+impowt com.twittew.cw_mixew.wogging.cwmixewscwibewoggew
+i-impowt com.twittew.cw_mixew.wogging.wewatedtweetscwibewoggew
+impowt com.twittew.cw_mixew.wogging.adswecommendationsscwibewoggew
+impowt com.twittew.cw_mixew.wogging.wewatedtweetscwibemetadata
+i-impowt com.twittew.cw_mixew.wogging.scwibemetadata
+impowt com.twittew.cw_mixew.wogging.utegtweetscwibewoggew
+i-impowt com.twittew.cw_mixew.modew.adscandidategenewatowquewy
+impowt com.twittew.cw_mixew.modew.cwcandidategenewatowquewy
+impowt c-com.twittew.cw_mixew.modew.fwstweetcandidategenewatowquewy
+impowt c-com.twittew.cw_mixew.modew.initiawcandidate
+i-impowt com.twittew.cw_mixew.modew.wankedadscandidate
+impowt com.twittew.cw_mixew.modew.wankedcandidate
+impowt com.twittew.cw_mixew.modew.wewatedtweetcandidategenewatowquewy
+impowt c-com.twittew.cw_mixew.modew.wewatedvideotweetcandidategenewatowquewy
+impowt com.twittew.cw_mixew.modew.topictweetcandidategenewatowquewy
+impowt com.twittew.cw_mixew.modew.tweetwithscoweandsociawpwoof
+impowt c-com.twittew.cw_mixew.modew.utegtweetcandidategenewatowquewy
+impowt c-com.twittew.cw_mixew.pawam.adspawams
+i-impowt com.twittew.cw_mixew.pawam.fwspawams.fwsbasedcandidategenewationmaxcandidatesnumpawam
+i-impowt com.twittew.cw_mixew.pawam.gwobawpawams
+i-impowt com.twittew.cw_mixew.pawam.wewatedtweetgwobawpawams
+impowt com.twittew.cw_mixew.pawam.wewatedvideotweetgwobawpawams
+impowt com.twittew.cw_mixew.pawam.topictweetpawams
+i-impowt com.twittew.cw_mixew.pawam.decidew.cwmixewdecidew
+impowt com.twittew.cw_mixew.pawam.decidew.decidewconstants
+i-impowt com.twittew.cw_mixew.pawam.decidew.endpointwoadsheddew
+impowt com.twittew.cw_mixew.thwiftscawa.adtweetwecommendation
+impowt com.twittew.cw_mixew.thwiftscawa.adswequest
+impowt com.twittew.cw_mixew.thwiftscawa.adswesponse
+impowt com.twittew.cw_mixew.thwiftscawa.cwmixewtweetwequest
+i-impowt com.twittew.cw_mixew.thwiftscawa.cwmixewtweetwesponse
+impowt com.twittew.cw_mixew.thwiftscawa.fwstweetwequest
+i-impowt c-com.twittew.cw_mixew.thwiftscawa.fwstweetwesponse
+i-impowt com.twittew.cw_mixew.thwiftscawa.wewatedtweet
+impowt com.twittew.cw_mixew.thwiftscawa.wewatedtweetwequest
+impowt com.twittew.cw_mixew.thwiftscawa.wewatedtweetwesponse
+impowt com.twittew.cw_mixew.thwiftscawa.wewatedvideotweet
+i-impowt c-com.twittew.cw_mixew.thwiftscawa.wewatedvideotweetwequest
+impowt c-com.twittew.cw_mixew.thwiftscawa.wewatedvideotweetwesponse
+i-impowt com.twittew.cw_mixew.thwiftscawa.topictweet
+i-impowt com.twittew.cw_mixew.thwiftscawa.topictweetwequest
+impowt c-com.twittew.cw_mixew.thwiftscawa.topictweetwesponse
+impowt com.twittew.cw_mixew.thwiftscawa.tweetwecommendation
+impowt com.twittew.cw_mixew.thwiftscawa.utegtweet
+i-impowt com.twittew.cw_mixew.thwiftscawa.utegtweetwequest
+impowt c-com.twittew.cw_mixew.thwiftscawa.utegtweetwesponse
+impowt com.twittew.cw_mixew.utiw.metwictagutiw
+i-impowt com.twittew.cw_mixew.utiw.signawtimestampstatsutiw
+i-impowt com.twittew.cw_mixew.{thwiftscawa => t}
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.finatwa.thwift.contwowwew
+impowt com.twittew.hewmit.stowe.common.weadabwewwitabwestowe
+i-impowt com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.topicid
+impowt c-com.twittew.stowehaus.weadabwestowe
+i-impowt c-com.twittew.timewines.timewine_wogging.{thwiftscawa => thwiftwog}
+impowt com.twittew.timewines.twacing.wensview.funnewsewies.tweetscowefunnewsewies
+impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.time
+impowt java.utiw.uuid
+impowt javax.inject.inject
+impowt owg.apache.commons.wang.exception.exceptionutiws
 
-class CrMixerThriftController @Inject() (
-  crCandidateGenerator: CrCandidateGenerator,
-  relatedTweetCandidateGenerator: RelatedTweetCandidateGenerator,
-  relatedVideoTweetCandidateGenerator: RelatedVideoTweetCandidateGenerator,
-  utegTweetCandidateGenerator: UtegTweetCandidateGenerator,
-  frsTweetCandidateGenerator: FrsTweetCandidateGenerator,
-  topicTweetCandidateGenerator: TopicTweetCandidateGenerator,
-  crMixerScribeLogger: CrMixerScribeLogger,
-  relatedTweetScribeLogger: RelatedTweetScribeLogger,
-  utegTweetScribeLogger: UtegTweetScribeLogger,
-  adsRecommendationsScribeLogger: AdsRecommendationsScribeLogger,
-  adsCandidateGenerator: AdsCandidateGenerator,
-  decider: CrMixerDecider,
-  paramsBuilder: ParamsBuilder,
-  endpointLoadShedder: EndpointLoadShedder,
-  signalTimestampStatsUtil: SignalTimestampStatsUtil,
-  tweetRecommendationResultsStore: ReadableWritableStore[UserId, CrMixerTweetResponse],
-  userStateStore: ReadableStore[UserId, UserState],
-  statsReceiver: StatsReceiver)
-    extends Controller(t.CrMixer) {
+cwass c-cwmixewthwiftcontwowwew @inject() (
+  cwcandidategenewatow: c-cwcandidategenewatow, (///ˬ///✿)
+  w-wewatedtweetcandidategenewatow: w-wewatedtweetcandidategenewatow,
+  wewatedvideotweetcandidategenewatow: w-wewatedvideotweetcandidategenewatow, σωσ
+  u-utegtweetcandidategenewatow: utegtweetcandidategenewatow, UwU
+  f-fwstweetcandidategenewatow: f-fwstweetcandidategenewatow, (⑅˘꒳˘)
+  topictweetcandidategenewatow: topictweetcandidategenewatow, /(^•ω•^)
+  c-cwmixewscwibewoggew: c-cwmixewscwibewoggew, -.-
+  w-wewatedtweetscwibewoggew: w-wewatedtweetscwibewoggew, (ˆ ﻌ ˆ)♡
+  u-utegtweetscwibewoggew: utegtweetscwibewoggew, nyaa~~
+  adswecommendationsscwibewoggew: adswecommendationsscwibewoggew, ʘwʘ
+  adscandidategenewatow: a-adscandidategenewatow, :3
+  decidew: cwmixewdecidew, (U ᵕ U❁)
+  pawamsbuiwdew: pawamsbuiwdew, (U ﹏ U)
+  endpointwoadsheddew: e-endpointwoadsheddew, ^^
+  signawtimestampstatsutiw: signawtimestampstatsutiw, òωó
+  tweetwecommendationwesuwtsstowe: w-weadabwewwitabwestowe[usewid, /(^•ω•^) c-cwmixewtweetwesponse], 😳😳😳
+  usewstatestowe: weadabwestowe[usewid, :3 u-usewstate], (///ˬ///✿)
+  statsweceivew: s-statsweceivew)
+    extends contwowwew(t.cwmixew) {
 
-  lazy private val tweetScoreFunnelSeries = new TweetScoreFunnelSeries(statsReceiver)
+  w-wazy pwivate v-vaw tweetscowefunnewsewies = nyew tweetscowefunnewsewies(statsweceivew)
 
-  private def logErrMessage(endpoint: String, e: Throwable): Unit = {
-    val msg = Seq(
-      s"Failed endpoint $endpoint: ${e.getLocalizedMessage}",
-      ExceptionUtils.getStackTrace(e)
-    ).mkString("\n")
-
-    /** *
-     * We chose logger.info() here to print message instead of logger.error since that
-     * logger.error sometimes suppresses detailed stacktrace.
-     */
-    logger.info(msg)
-  }
-
-  private def generateRequestUUID(): Long = {
+  pwivate def wogewwmessage(endpoint: stwing, rawr x3 e: thwowabwe): unit = {
+    vaw msg = s-seq(
+      s"faiwed endpoint $endpoint: ${e.getwocawizedmessage}", (U ᵕ U❁)
+      e-exceptionutiws.getstacktwace(e)
+    ).mkstwing("\n")
 
     /** *
-     * We generate unique UUID via bitwise operations. See the below link for more:
-     * https://stackoverflow.com/questions/15184820/how-to-generate-unique-positive-long-using-uuid
+     * we chose woggew.info() h-hewe to p-pwint message instead of woggew.ewwow since that
+     * w-woggew.ewwow s-sometimes suppwesses detaiwed s-stacktwace. (⑅˘꒳˘)
      */
-    UUID.randomUUID().getMostSignificantBits & Long.MaxValue
+    w-woggew.info(msg)
   }
 
-  handle(t.CrMixer.GetTweetRecommendations) { args: t.CrMixer.GetTweetRecommendations.Args =>
-    val endpointName = "getTweetRecommendations"
+  pwivate def genewatewequestuuid(): wong = {
 
-    val requestUUID = generateRequestUUID()
-    val startTime = Time.now.inMilliseconds
-    val userId = args.request.clientContext.userId.getOrElse(
-      throw new IllegalArgumentException("userId must be present in the Thrift clientContext")
+    /** *
+     * we genewate unique u-uuid via bitwise o-opewations. (˘ω˘) s-see the bewow wink fow mowe:
+     * h-https://stackovewfwow.com/questions/15184820/how-to-genewate-unique-positive-wong-using-uuid
+     */
+    uuid.wandomuuid().getmostsignificantbits & w-wong.maxvawue
+  }
+
+  handwe(t.cwmixew.gettweetwecommendations) { awgs: t-t.cwmixew.gettweetwecommendations.awgs =>
+    vaw endpointname = "gettweetwecommendations"
+
+    vaw wequestuuid = genewatewequestuuid()
+    vaw s-stawttime = time.now.inmiwwiseconds
+    v-vaw usewid = awgs.wequest.cwientcontext.usewid.getowewse(
+      thwow nyew i-iwwegawawgumentexception("usewid m-must be pwesent in the thwift cwientcontext")
     )
-    val queryFut = buildCrCandidateGeneratorQuery(args.request, requestUUID, userId)
-    queryFut.flatMap { query =>
-      val scribeMetadata = ScribeMetadata.from(query)
-      endpointLoadShedder(endpointName, query.product.originalName) {
+    vaw q-quewyfut = buiwdcwcandidategenewatowquewy(awgs.wequest, :3 wequestuuid, XD usewid)
+    quewyfut.fwatmap { quewy =>
+      v-vaw scwibemetadata = scwibemetadata.fwom(quewy)
+      endpointwoadsheddew(endpointname, >_< q-quewy.pwoduct.owiginawname) {
 
-        val response = crCandidateGenerator.get(query)
+        v-vaw wesponse = cwcandidategenewatow.get(quewy)
 
-        val blueVerifiedScribedResponse = response.flatMap { rankedCandidates =>
-          val hasBlueVerifiedCandidate = rankedCandidates.exists { tweet =>
-            tweet.tweetInfo.hasBlueVerifiedAnnotation.contains(true)
+        vaw bwuevewifiedscwibedwesponse = wesponse.fwatmap { w-wankedcandidates =>
+          v-vaw hasbwuevewifiedcandidate = wankedcandidates.exists { tweet =>
+            t-tweet.tweetinfo.hasbwuevewifiedannotation.contains(twue)
           }
 
-          if (hasBlueVerifiedCandidate) {
-            crMixerScribeLogger.scribeGetTweetRecommendationsForBlueVerified(
-              scribeMetadata,
-              response)
-          } else {
-            response
+          if (hasbwuevewifiedcandidate) {
+            c-cwmixewscwibewoggew.scwibegettweetwecommendationsfowbwuevewified(
+              scwibemetadata, (✿oωo)
+              wesponse)
+          } ewse {
+            wesponse
           }
         }
 
-        val thriftResponse = blueVerifiedScribedResponse.map { candidates =>
-          if (query.product == t.Product.Home) {
-            scribeTweetScoreFunnelSeries(candidates)
+        v-vaw thwiftwesponse = bwuevewifiedscwibedwesponse.map { c-candidates =>
+          i-if (quewy.pwoduct == t.pwoduct.home) {
+            s-scwibetweetscowefunnewsewies(candidates)
           }
-          buildThriftResponse(candidates)
+          buiwdthwiftwesponse(candidates)
         }
 
-        cacheTweetRecommendationResults(args.request, thriftResponse)
+        c-cachetweetwecommendationwesuwts(awgs.wequest, (ꈍᴗꈍ) t-thwiftwesponse)
 
-        crMixerScribeLogger.scribeGetTweetRecommendations(
-          args.request,
-          startTime,
-          scribeMetadata,
-          thriftResponse)
-      }.rescue {
-        case EndpointLoadShedder.LoadSheddingException =>
-          Future(CrMixerTweetResponse(Seq.empty))
-        case e =>
-          logErrMessage(endpointName, e)
-          Future(CrMixerTweetResponse(Seq.empty))
+        c-cwmixewscwibewoggew.scwibegettweetwecommendations(
+          awgs.wequest, XD
+          stawttime, :3
+          s-scwibemetadata, mya
+          t-thwiftwesponse)
+      }.wescue {
+        case endpointwoadsheddew.woadsheddingexception =>
+          futuwe(cwmixewtweetwesponse(seq.empty))
+        c-case e-e =>
+          wogewwmessage(endpointname, òωó e-e)
+          futuwe(cwmixewtweetwesponse(seq.empty))
       }
     }
 
   }
 
   /** *
-   * GetRelatedTweetsForQueryTweet and GetRelatedTweetsForQueryAuthor are essentially
-   * doing very similar things, except that one passes in TweetId which calls TweetBased engine,
-   * and the other passes in AuthorId which calls ProducerBased engine.
+   * getwewatedtweetsfowquewytweet and g-getwewatedtweetsfowquewyauthow awe essentiawwy
+   * d-doing vewy s-simiwaw things, nyaa~~ except that one passes in tweetid which cawws t-tweetbased engine, 🥺
+   * a-and the o-othew passes in a-authowid which cawws pwoducewbased e-engine. -.-
    */
-  handle(t.CrMixer.GetRelatedTweetsForQueryTweet) {
-    args: t.CrMixer.GetRelatedTweetsForQueryTweet.Args =>
-      val endpointName = "getRelatedTweetsForQueryTweet"
-      getRelatedTweets(endpointName, args.request)
+  handwe(t.cwmixew.getwewatedtweetsfowquewytweet) {
+    awgs: t.cwmixew.getwewatedtweetsfowquewytweet.awgs =>
+      vaw endpointname = "getwewatedtweetsfowquewytweet"
+      getwewatedtweets(endpointname, 🥺 awgs.wequest)
   }
 
-  handle(t.CrMixer.GetRelatedVideoTweetsForQueryTweet) {
-    args: t.CrMixer.GetRelatedVideoTweetsForQueryTweet.Args =>
-      val endpointName = "getRelatedVideoTweetsForQueryVideoTweet"
-      getRelatedVideoTweets(endpointName, args.request)
+  h-handwe(t.cwmixew.getwewatedvideotweetsfowquewytweet) {
+    awgs: t-t.cwmixew.getwewatedvideotweetsfowquewytweet.awgs =>
+      vaw e-endpointname = "getwewatedvideotweetsfowquewyvideotweet"
+      getwewatedvideotweets(endpointname, (˘ω˘) a-awgs.wequest)
 
   }
 
-  handle(t.CrMixer.GetRelatedTweetsForQueryAuthor) {
-    args: t.CrMixer.GetRelatedTweetsForQueryAuthor.Args =>
-      val endpointName = "getRelatedTweetsForQueryAuthor"
-      getRelatedTweets(endpointName, args.request)
+  handwe(t.cwmixew.getwewatedtweetsfowquewyauthow) {
+    a-awgs: t.cwmixew.getwewatedtweetsfowquewyauthow.awgs =>
+      vaw e-endpointname = "getwewatedtweetsfowquewyauthow"
+      g-getwewatedtweets(endpointname, a-awgs.wequest)
   }
 
-  private def getRelatedTweets(
-    endpointName: String,
-    request: RelatedTweetRequest
-  ): Future[RelatedTweetResponse] = {
-    val requestUUID = generateRequestUUID()
-    val startTime = Time.now.inMilliseconds
-    val queryFut = buildRelatedTweetQuery(request, requestUUID)
+  p-pwivate def getwewatedtweets(
+    endpointname: stwing, òωó
+    wequest: wewatedtweetwequest
+  ): futuwe[wewatedtweetwesponse] = {
+    vaw wequestuuid = g-genewatewequestuuid()
+    v-vaw s-stawttime = time.now.inmiwwiseconds
+    vaw quewyfut = b-buiwdwewatedtweetquewy(wequest, UwU wequestuuid)
 
-    queryFut.flatMap { query =>
-      val relatedTweetScribeMetadata = RelatedTweetScribeMetadata.from(query)
-      endpointLoadShedder(endpointName, query.product.originalName) {
-        relatedTweetScribeLogger.scribeGetRelatedTweets(
-          request,
-          startTime,
-          relatedTweetScribeMetadata,
-          relatedTweetCandidateGenerator
-            .get(query)
-            .map(buildRelatedTweetResponse))
-      }.rescue {
-        case EndpointLoadShedder.LoadSheddingException =>
-          Future(RelatedTweetResponse(Seq.empty))
-        case e =>
-          logErrMessage(endpointName, e)
-          Future(RelatedTweetResponse(Seq.empty))
+    quewyfut.fwatmap { quewy =>
+      v-vaw wewatedtweetscwibemetadata = w-wewatedtweetscwibemetadata.fwom(quewy)
+      endpointwoadsheddew(endpointname, ^•ﻌ•^ q-quewy.pwoduct.owiginawname) {
+        wewatedtweetscwibewoggew.scwibegetwewatedtweets(
+          wequest, mya
+          stawttime, (✿oωo)
+          w-wewatedtweetscwibemetadata, XD
+          w-wewatedtweetcandidategenewatow
+            .get(quewy)
+            .map(buiwdwewatedtweetwesponse))
+      }.wescue {
+        case endpointwoadsheddew.woadsheddingexception =>
+          f-futuwe(wewatedtweetwesponse(seq.empty))
+        c-case e =>
+          wogewwmessage(endpointname, :3 e)
+          futuwe(wewatedtweetwesponse(seq.empty))
       }
     }
 
   }
 
-  private def getRelatedVideoTweets(
-    endpointName: String,
-    request: RelatedVideoTweetRequest
-  ): Future[RelatedVideoTweetResponse] = {
-    val requestUUID = generateRequestUUID()
-    val queryFut = buildRelatedVideoTweetQuery(request, requestUUID)
+  pwivate d-def getwewatedvideotweets(
+    e-endpointname: s-stwing, (U ﹏ U)
+    wequest: w-wewatedvideotweetwequest
+  ): f-futuwe[wewatedvideotweetwesponse] = {
+    vaw wequestuuid = g-genewatewequestuuid()
+    v-vaw quewyfut = buiwdwewatedvideotweetquewy(wequest, w-wequestuuid)
 
-    queryFut.flatMap { query =>
-      endpointLoadShedder(endpointName, query.product.originalName) {
-        relatedVideoTweetCandidateGenerator.get(query).map { initialCandidateSeq =>
-          buildRelatedVideoTweetResponse(initialCandidateSeq)
+    q-quewyfut.fwatmap { quewy =>
+      e-endpointwoadsheddew(endpointname, UwU quewy.pwoduct.owiginawname) {
+        wewatedvideotweetcandidategenewatow.get(quewy).map { i-initiawcandidateseq =>
+          buiwdwewatedvideotweetwesponse(initiawcandidateseq)
         }
-      }.rescue {
-        case EndpointLoadShedder.LoadSheddingException =>
-          Future(RelatedVideoTweetResponse(Seq.empty))
+      }.wescue {
+        c-case endpointwoadsheddew.woadsheddingexception =>
+          f-futuwe(wewatedvideotweetwesponse(seq.empty))
         case e =>
-          logErrMessage(endpointName, e)
-          Future(RelatedVideoTweetResponse(Seq.empty))
+          w-wogewwmessage(endpointname, ʘwʘ e)
+          futuwe(wewatedvideotweetwesponse(seq.empty))
       }
     }
   }
 
-  handle(t.CrMixer.GetFrsBasedTweetRecommendations) {
-    args: t.CrMixer.GetFrsBasedTweetRecommendations.Args =>
-      val endpointName = "getFrsBasedTweetRecommendations"
+  h-handwe(t.cwmixew.getfwsbasedtweetwecommendations) {
+    a-awgs: t.cwmixew.getfwsbasedtweetwecommendations.awgs =>
+      vaw e-endpointname = "getfwsbasedtweetwecommendations"
 
-      val requestUUID = generateRequestUUID()
-      val queryFut = buildFrsBasedTweetQuery(args.request, requestUUID)
-      queryFut.flatMap { query =>
-        endpointLoadShedder(endpointName, query.product.originalName) {
-          frsTweetCandidateGenerator.get(query).map(FrsTweetResponse(_))
-        }.rescue {
-          case e =>
-            logErrMessage(endpointName, e)
-            Future(FrsTweetResponse(Seq.empty))
+      vaw wequestuuid = genewatewequestuuid()
+      vaw quewyfut = b-buiwdfwsbasedtweetquewy(awgs.wequest, >w< wequestuuid)
+      quewyfut.fwatmap { q-quewy =>
+        e-endpointwoadsheddew(endpointname, 😳😳😳 quewy.pwoduct.owiginawname) {
+          fwstweetcandidategenewatow.get(quewy).map(fwstweetwesponse(_))
+        }.wescue {
+          c-case e =>
+            w-wogewwmessage(endpointname, rawr e-e)
+            futuwe(fwstweetwesponse(seq.empty))
         }
       }
   }
 
-  handle(t.CrMixer.GetTopicTweetRecommendations) {
-    args: t.CrMixer.GetTopicTweetRecommendations.Args =>
-      val endpointName = "getTopicTweetRecommendations"
+  handwe(t.cwmixew.gettopictweetwecommendations) {
+    a-awgs: t.cwmixew.gettopictweetwecommendations.awgs =>
+      vaw endpointname = "gettopictweetwecommendations"
 
-      val requestUUID = generateRequestUUID()
-      val query = buildTopicTweetQuery(args.request, requestUUID)
+      v-vaw wequestuuid = g-genewatewequestuuid()
+      vaw quewy = buiwdtopictweetquewy(awgs.wequest, ^•ﻌ•^ wequestuuid)
 
-      endpointLoadShedder(endpointName, query.product.originalName) {
-        topicTweetCandidateGenerator.get(query).map(TopicTweetResponse(_))
-      }.rescue {
-        case e =>
-          logErrMessage(endpointName, e)
-          Future(TopicTweetResponse(Map.empty[Long, Seq[TopicTweet]]))
+      e-endpointwoadsheddew(endpointname, σωσ quewy.pwoduct.owiginawname) {
+        t-topictweetcandidategenewatow.get(quewy).map(topictweetwesponse(_))
+      }.wescue {
+        c-case e =>
+          w-wogewwmessage(endpointname, :3 e)
+          futuwe(topictweetwesponse(map.empty[wong, rawr x3 seq[topictweet]]))
       }
   }
 
-  handle(t.CrMixer.GetUtegTweetRecommendations) {
-    args: t.CrMixer.GetUtegTweetRecommendations.Args =>
-      val endpointName = "getUtegTweetRecommendations"
+  handwe(t.cwmixew.getutegtweetwecommendations) {
+    awgs: t.cwmixew.getutegtweetwecommendations.awgs =>
+      vaw endpointname = "getutegtweetwecommendations"
 
-      val requestUUID = generateRequestUUID()
-      val startTime = Time.now.inMilliseconds
-      val queryFut = buildUtegTweetQuery(args.request, requestUUID)
-      queryFut
-        .flatMap { query =>
-          val scribeMetadata = ScribeMetadata.from(query)
-          endpointLoadShedder(endpointName, query.product.originalName) {
-            utegTweetScribeLogger.scribeGetUtegTweetRecommendations(
-              args.request,
-              startTime,
-              scribeMetadata,
-              utegTweetCandidateGenerator
-                .get(query)
-                .map(buildUtegTweetResponse)
+      vaw wequestuuid = genewatewequestuuid()
+      vaw stawttime = time.now.inmiwwiseconds
+      vaw quewyfut = b-buiwdutegtweetquewy(awgs.wequest, nyaa~~ w-wequestuuid)
+      quewyfut
+        .fwatmap { quewy =>
+          v-vaw scwibemetadata = s-scwibemetadata.fwom(quewy)
+          endpointwoadsheddew(endpointname, :3 q-quewy.pwoduct.owiginawname) {
+            utegtweetscwibewoggew.scwibegetutegtweetwecommendations(
+              a-awgs.wequest, >w<
+              stawttime, rawr
+              s-scwibemetadata, 😳
+              u-utegtweetcandidategenewatow
+                .get(quewy)
+                .map(buiwdutegtweetwesponse)
             )
-          }.rescue {
+          }.wescue {
             case e =>
-              logErrMessage(endpointName, e)
-              Future(UtegTweetResponse(Seq.empty))
+              w-wogewwmessage(endpointname, 😳 e)
+              f-futuwe(utegtweetwesponse(seq.empty))
           }
         }
   }
 
-  handle(t.CrMixer.GetAdsRecommendations) { args: t.CrMixer.GetAdsRecommendations.Args =>
-    val endpointName = "getAdsRecommendations"
-    val queryFut = buildAdsCandidateGeneratorQuery(args.request)
-    val startTime = Time.now.inMilliseconds
-    queryFut.flatMap { query =>
+  h-handwe(t.cwmixew.getadswecommendations) { awgs: t.cwmixew.getadswecommendations.awgs =>
+    v-vaw e-endpointname = "getadswecommendations"
+    v-vaw quewyfut = b-buiwdadscandidategenewatowquewy(awgs.wequest)
+    v-vaw s-stawttime = time.now.inmiwwiseconds
+    q-quewyfut.fwatmap { q-quewy =>
       {
-        val scribeMetadata = ScribeMetadata.from(query)
-        val response = adsCandidateGenerator
-          .get(query).map { candidates =>
-            buildAdsResponse(candidates)
+        v-vaw scwibemetadata = scwibemetadata.fwom(quewy)
+        v-vaw w-wesponse = adscandidategenewatow
+          .get(quewy).map { c-candidates =>
+            buiwdadswesponse(candidates)
           }
-        adsRecommendationsScribeLogger.scribeGetAdsRecommendations(
-          args.request,
-          startTime,
-          scribeMetadata,
-          response,
-          query.params(AdsParams.EnableScribe)
+        a-adswecommendationsscwibewoggew.scwibegetadswecommendations(
+          awgs.wequest, 🥺
+          stawttime, rawr x3
+          s-scwibemetadata, ^^
+          wesponse, ( ͡o ω ͡o )
+          q-quewy.pawams(adspawams.enabwescwibe)
         )
-      }.rescue {
-        case e =>
-          logErrMessage(endpointName, e)
-          Future(AdsResponse(Seq.empty))
+      }.wescue {
+        c-case e =>
+          w-wogewwmessage(endpointname, XD e)
+          futuwe(adswesponse(seq.empty))
       }
     }
 
   }
 
-  private def buildCrCandidateGeneratorQuery(
-    thriftRequest: CrMixerTweetRequest,
-    requestUUID: Long,
-    userId: Long
-  ): Future[CrCandidateGeneratorQuery] = {
+  p-pwivate def buiwdcwcandidategenewatowquewy(
+    thwiftwequest: c-cwmixewtweetwequest, ^^
+    wequestuuid: w-wong, (⑅˘꒳˘)
+    usewid: wong
+  ): f-futuwe[cwcandidategenewatowquewy] = {
 
-    val product = thriftRequest.product
-    val productContext = thriftRequest.productContext
-    val scopedStats = statsReceiver
-      .scope(product.toString).scope("CrMixerTweetRequest")
+    vaw pwoduct = thwiftwequest.pwoduct
+    vaw pwoductcontext = thwiftwequest.pwoductcontext
+    vaw s-scopedstats = statsweceivew
+      .scope(pwoduct.tostwing).scope("cwmixewtweetwequest")
 
-    userStateStore
-      .get(userId).map { userStateOpt =>
-        val userState = userStateOpt
-          .getOrElse(UserState.EnumUnknownUserState(100))
-        scopedStats.scope("UserState").counter(userState.toString).incr()
+    usewstatestowe
+      .get(usewid).map { u-usewstateopt =>
+        v-vaw usewstate = usewstateopt
+          .getowewse(usewstate.enumunknownusewstate(100))
+        scopedstats.scope("usewstate").countew(usewstate.tostwing).incw()
 
-        val params =
-          paramsBuilder.buildFromClientContext(
-            thriftRequest.clientContext,
-            thriftRequest.product,
-            userState
+        vaw pawams =
+          pawamsbuiwdew.buiwdfwomcwientcontext(
+            t-thwiftwequest.cwientcontext, (⑅˘꒳˘)
+            thwiftwequest.pwoduct, ^•ﻌ•^
+            u-usewstate
           )
 
-        // Specify product-specific behavior mapping here
-        val maxNumResults = (product, productContext) match {
-          case (t.Product.Home, Some(t.ProductContext.HomeContext(homeContext))) =>
-            homeContext.maxResults.getOrElse(9999)
-          case (t.Product.Notifications, Some(t.ProductContext.NotificationsContext(cxt))) =>
-            params(GlobalParams.MaxCandidatesPerRequestParam)
-          case (t.Product.Email, None) =>
-            params(GlobalParams.MaxCandidatesPerRequestParam)
-          case (t.Product.ImmersiveMediaViewer, None) =>
-            params(GlobalParams.MaxCandidatesPerRequestParam)
-          case (t.Product.VideoCarousel, None) =>
-            params(GlobalParams.MaxCandidatesPerRequestParam)
+        // specify p-pwoduct-specific b-behaviow mapping hewe
+        vaw maxnumwesuwts = (pwoduct, p-pwoductcontext) m-match {
+          case (t.pwoduct.home, ( ͡o ω ͡o ) s-some(t.pwoductcontext.homecontext(homecontext))) =>
+            homecontext.maxwesuwts.getowewse(9999)
+          case (t.pwoduct.notifications, ( ͡o ω ͡o ) s-some(t.pwoductcontext.notificationscontext(cxt))) =>
+            pawams(gwobawpawams.maxcandidatespewwequestpawam)
+          c-case (t.pwoduct.emaiw, (✿oωo) n-nyone) =>
+            p-pawams(gwobawpawams.maxcandidatespewwequestpawam)
+          case (t.pwoduct.immewsivemediaviewew, 😳😳😳 n-nyone) =>
+            p-pawams(gwobawpawams.maxcandidatespewwequestpawam)
+          c-case (t.pwoduct.videocawousew, OwO n-nyone) =>
+            pawams(gwobawpawams.maxcandidatespewwequestpawam)
           case _ =>
-            throw new IllegalArgumentException(
-              s"Product ${product} and ProductContext ${productContext} are not allowed in CrMixer"
+            t-thwow nyew iwwegawawgumentexception(
+              s-s"pwoduct ${pwoduct} a-and pwoductcontext ${pwoductcontext} a-awe n-nyot awwowed in c-cwmixew"
             )
         }
 
-        CrCandidateGeneratorQuery(
-          userId = userId,
-          product = product,
-          userState = userState,
-          maxNumResults = maxNumResults,
-          impressedTweetList = thriftRequest.excludedTweetIds.getOrElse(Nil).toSet,
-          params = params,
-          requestUUID = requestUUID,
-          languageCode = thriftRequest.clientContext.languageCode
+        c-cwcandidategenewatowquewy(
+          u-usewid = usewid, ^^
+          pwoduct = p-pwoduct, rawr x3
+          usewstate = u-usewstate, 🥺
+          maxnumwesuwts = m-maxnumwesuwts, (ˆ ﻌ ˆ)♡
+          i-impwessedtweetwist = t-thwiftwequest.excwudedtweetids.getowewse(niw).toset, ( ͡o ω ͡o )
+          pawams = pawams, >w<
+          wequestuuid = w-wequestuuid, /(^•ω•^)
+          w-wanguagecode = t-thwiftwequest.cwientcontext.wanguagecode
         )
       }
   }
 
-  private def buildRelatedTweetQuery(
-    thriftRequest: RelatedTweetRequest,
-    requestUUID: Long
-  ): Future[RelatedTweetCandidateGeneratorQuery] = {
+  pwivate def buiwdwewatedtweetquewy(
+    thwiftwequest: wewatedtweetwequest, 😳😳😳
+    w-wequestuuid: w-wong
+  ): futuwe[wewatedtweetcandidategenewatowquewy] = {
 
-    val product = thriftRequest.product
-    val scopedStats = statsReceiver
-      .scope(product.toString).scope("RelatedTweetRequest")
-    val userStateFut: Future[UserState] = (thriftRequest.clientContext.userId match {
-      case Some(userId) => userStateStore.get(userId)
-      case None => Future.value(Some(UserState.EnumUnknownUserState(100)))
-    }).map(_.getOrElse(UserState.EnumUnknownUserState(100)))
+    vaw pwoduct = t-thwiftwequest.pwoduct
+    v-vaw scopedstats = statsweceivew
+      .scope(pwoduct.tostwing).scope("wewatedtweetwequest")
+    vaw usewstatefut: futuwe[usewstate] = (thwiftwequest.cwientcontext.usewid m-match {
+      c-case some(usewid) => u-usewstatestowe.get(usewid)
+      c-case nyone => futuwe.vawue(some(usewstate.enumunknownusewstate(100)))
+    }).map(_.getowewse(usewstate.enumunknownusewstate(100)))
 
-    userStateFut.map { userState =>
-      scopedStats.scope("UserState").counter(userState.toString).incr()
-      val params =
-        paramsBuilder.buildFromClientContext(
-          thriftRequest.clientContext,
-          thriftRequest.product,
-          userState)
+    usewstatefut.map { u-usewstate =>
+      s-scopedstats.scope("usewstate").countew(usewstate.tostwing).incw()
+      vaw pawams =
+        pawamsbuiwdew.buiwdfwomcwientcontext(
+          t-thwiftwequest.cwientcontext, (U ᵕ U❁)
+          thwiftwequest.pwoduct, (˘ω˘)
+          usewstate)
 
-      // Specify product-specific behavior mapping here
-      // Currently, Home takes 10, and RUX takes 100
-      val maxNumResults = params(RelatedTweetGlobalParams.MaxCandidatesPerRequestParam)
+      // s-specify pwoduct-specific behaviow m-mapping hewe
+      // c-cuwwentwy, 😳 home takes 10, (ꈍᴗꈍ) a-and wux takes 100
+      v-vaw maxnumwesuwts = p-pawams(wewatedtweetgwobawpawams.maxcandidatespewwequestpawam)
 
-      RelatedTweetCandidateGeneratorQuery(
-        internalId = thriftRequest.internalId,
-        clientContext = thriftRequest.clientContext,
-        product = product,
-        maxNumResults = maxNumResults,
-        impressedTweetList = thriftRequest.excludedTweetIds.getOrElse(Nil).toSet,
-        params = params,
-        requestUUID = requestUUID
+      wewatedtweetcandidategenewatowquewy(
+        i-intewnawid = thwiftwequest.intewnawid, :3
+        c-cwientcontext = t-thwiftwequest.cwientcontext, /(^•ω•^)
+        p-pwoduct = pwoduct, ^^;;
+        m-maxnumwesuwts = m-maxnumwesuwts,
+        i-impwessedtweetwist = thwiftwequest.excwudedtweetids.getowewse(niw).toset, o.O
+        p-pawams = pawams, 😳
+        wequestuuid = w-wequestuuid
       )
     }
   }
 
-  private def buildAdsCandidateGeneratorQuery(
-    thriftRequest: AdsRequest
-  ): Future[AdsCandidateGeneratorQuery] = {
-    val userId = thriftRequest.clientContext.userId.getOrElse(
-      throw new IllegalArgumentException("userId must be present in the Thrift clientContext")
+  p-pwivate def buiwdadscandidategenewatowquewy(
+    t-thwiftwequest: adswequest
+  ): futuwe[adscandidategenewatowquewy] = {
+    vaw usewid = thwiftwequest.cwientcontext.usewid.getowewse(
+      t-thwow nyew iwwegawawgumentexception("usewid m-must be p-pwesent in the thwift cwientcontext")
     )
-    val product = thriftRequest.product
-    val requestUUID = generateRequestUUID()
-    userStateStore
-      .get(userId).map { userStateOpt =>
-        val userState = userStateOpt
-          .getOrElse(UserState.EnumUnknownUserState(100))
-        val params =
-          paramsBuilder.buildFromClientContext(
-            thriftRequest.clientContext,
-            thriftRequest.product,
-            userState)
-        val maxNumResults = params(AdsParams.AdsCandidateGenerationMaxCandidatesNumParam)
-        AdsCandidateGeneratorQuery(
-          userId = userId,
-          product = product,
-          userState = userState,
-          params = params,
-          maxNumResults = maxNumResults,
-          requestUUID = requestUUID
+    vaw pwoduct = t-thwiftwequest.pwoduct
+    vaw wequestuuid = g-genewatewequestuuid()
+    u-usewstatestowe
+      .get(usewid).map { u-usewstateopt =>
+        v-vaw usewstate = u-usewstateopt
+          .getowewse(usewstate.enumunknownusewstate(100))
+        vaw pawams =
+          pawamsbuiwdew.buiwdfwomcwientcontext(
+            thwiftwequest.cwientcontext, UwU
+            thwiftwequest.pwoduct, >w<
+            u-usewstate)
+        vaw m-maxnumwesuwts = pawams(adspawams.adscandidategenewationmaxcandidatesnumpawam)
+        adscandidategenewatowquewy(
+          usewid = u-usewid,
+          pwoduct = pwoduct, o.O
+          usewstate = usewstate, (˘ω˘)
+          p-pawams = pawams, òωó
+          m-maxnumwesuwts = maxnumwesuwts, nyaa~~
+          w-wequestuuid = wequestuuid
         )
       }
   }
 
-  private def buildRelatedVideoTweetQuery(
-    thriftRequest: RelatedVideoTweetRequest,
-    requestUUID: Long
-  ): Future[RelatedVideoTweetCandidateGeneratorQuery] = {
+  pwivate d-def buiwdwewatedvideotweetquewy(
+    t-thwiftwequest: wewatedvideotweetwequest, ( ͡o ω ͡o )
+    w-wequestuuid: wong
+  ): futuwe[wewatedvideotweetcandidategenewatowquewy] = {
 
-    val product = thriftRequest.product
-    val scopedStats = statsReceiver
-      .scope(product.toString).scope("RelatedVideoTweetRequest")
-    val userStateFut: Future[UserState] = (thriftRequest.clientContext.userId match {
-      case Some(userId) => userStateStore.get(userId)
-      case None => Future.value(Some(UserState.EnumUnknownUserState(100)))
-    }).map(_.getOrElse(UserState.EnumUnknownUserState(100)))
+    v-vaw pwoduct = thwiftwequest.pwoduct
+    vaw scopedstats = statsweceivew
+      .scope(pwoduct.tostwing).scope("wewatedvideotweetwequest")
+    v-vaw usewstatefut: futuwe[usewstate] = (thwiftwequest.cwientcontext.usewid match {
+      case s-some(usewid) => u-usewstatestowe.get(usewid)
+      c-case none => futuwe.vawue(some(usewstate.enumunknownusewstate(100)))
+    }).map(_.getowewse(usewstate.enumunknownusewstate(100)))
 
-    userStateFut.map { userState =>
-      scopedStats.scope("UserState").counter(userState.toString).incr()
-      val params =
-        paramsBuilder.buildFromClientContext(
-          thriftRequest.clientContext,
-          thriftRequest.product,
-          userState)
+    usewstatefut.map { u-usewstate =>
+      scopedstats.scope("usewstate").countew(usewstate.tostwing).incw()
+      vaw pawams =
+        pawamsbuiwdew.buiwdfwomcwientcontext(
+          thwiftwequest.cwientcontext, 😳😳😳
+          t-thwiftwequest.pwoduct, ^•ﻌ•^
+          u-usewstate)
 
-      val maxNumResults = params(RelatedVideoTweetGlobalParams.MaxCandidatesPerRequestParam)
+      v-vaw maxnumwesuwts = p-pawams(wewatedvideotweetgwobawpawams.maxcandidatespewwequestpawam)
 
-      RelatedVideoTweetCandidateGeneratorQuery(
-        internalId = thriftRequest.internalId,
-        clientContext = thriftRequest.clientContext,
-        product = product,
-        maxNumResults = maxNumResults,
-        impressedTweetList = thriftRequest.excludedTweetIds.getOrElse(Nil).toSet,
-        params = params,
-        requestUUID = requestUUID
+      wewatedvideotweetcandidategenewatowquewy(
+        intewnawid = t-thwiftwequest.intewnawid, (˘ω˘)
+        c-cwientcontext = thwiftwequest.cwientcontext, (˘ω˘)
+        pwoduct = p-pwoduct, -.-
+        maxnumwesuwts = maxnumwesuwts, ^•ﻌ•^
+        i-impwessedtweetwist = thwiftwequest.excwudedtweetids.getowewse(niw).toset, /(^•ω•^)
+        pawams = pawams, (///ˬ///✿)
+        w-wequestuuid = w-wequestuuid
       )
     }
 
   }
 
-  private def buildUtegTweetQuery(
-    thriftRequest: UtegTweetRequest,
-    requestUUID: Long
-  ): Future[UtegTweetCandidateGeneratorQuery] = {
+  pwivate d-def buiwdutegtweetquewy(
+    t-thwiftwequest: u-utegtweetwequest, mya
+    wequestuuid: wong
+  ): futuwe[utegtweetcandidategenewatowquewy] = {
 
-    val userId = thriftRequest.clientContext.userId.getOrElse(
-      throw new IllegalArgumentException("userId must be present in the Thrift clientContext")
+    v-vaw usewid = thwiftwequest.cwientcontext.usewid.getowewse(
+      thwow n-nyew iwwegawawgumentexception("usewid must be pwesent in the thwift cwientcontext")
     )
-    val product = thriftRequest.product
-    val productContext = thriftRequest.productContext
-    val scopedStats = statsReceiver
-      .scope(product.toString).scope("UtegTweetRequest")
+    v-vaw pwoduct = thwiftwequest.pwoduct
+    v-vaw pwoductcontext = t-thwiftwequest.pwoductcontext
+    v-vaw s-scopedstats = statsweceivew
+      .scope(pwoduct.tostwing).scope("utegtweetwequest")
 
-    userStateStore
-      .get(userId).map { userStateOpt =>
-        val userState = userStateOpt
-          .getOrElse(UserState.EnumUnknownUserState(100))
-        scopedStats.scope("UserState").counter(userState.toString).incr()
+    u-usewstatestowe
+      .get(usewid).map { usewstateopt =>
+        vaw u-usewstate = usewstateopt
+          .getowewse(usewstate.enumunknownusewstate(100))
+        scopedstats.scope("usewstate").countew(usewstate.tostwing).incw()
 
-        val params =
-          paramsBuilder.buildFromClientContext(
-            thriftRequest.clientContext,
-            thriftRequest.product,
-            userState
+        v-vaw pawams =
+          pawamsbuiwdew.buiwdfwomcwientcontext(
+            thwiftwequest.cwientcontext, o.O
+            thwiftwequest.pwoduct, ^•ﻌ•^
+            u-usewstate
           )
 
-        // Specify product-specific behavior mapping here
-        val maxNumResults = (product, productContext) match {
-          case (t.Product.Home, Some(t.ProductContext.HomeContext(homeContext))) =>
-            homeContext.maxResults.getOrElse(9999)
-          case _ =>
-            throw new IllegalArgumentException(
-              s"Product ${product} and ProductContext ${productContext} are not allowed in CrMixer"
+        // s-specify pwoduct-specific b-behaviow mapping hewe
+        v-vaw maxnumwesuwts = (pwoduct, (U ᵕ U❁) p-pwoductcontext) match {
+          c-case (t.pwoduct.home, :3 s-some(t.pwoductcontext.homecontext(homecontext))) =>
+            homecontext.maxwesuwts.getowewse(9999)
+          c-case _ =>
+            thwow nyew iwwegawawgumentexception(
+              s"pwoduct ${pwoduct} and pwoductcontext ${pwoductcontext} a-awe nyot awwowed in c-cwmixew"
             )
         }
 
-        UtegTweetCandidateGeneratorQuery(
-          userId = userId,
-          product = product,
-          userState = userState,
-          maxNumResults = maxNumResults,
-          impressedTweetList = thriftRequest.excludedTweetIds.getOrElse(Nil).toSet,
-          params = params,
-          requestUUID = requestUUID
+        utegtweetcandidategenewatowquewy(
+          usewid = u-usewid, (///ˬ///✿)
+          p-pwoduct = pwoduct, (///ˬ///✿)
+          u-usewstate = usewstate, 🥺
+          maxnumwesuwts = m-maxnumwesuwts, -.-
+          i-impwessedtweetwist = thwiftwequest.excwudedtweetids.getowewse(niw).toset, nyaa~~
+          pawams = p-pawams, (///ˬ///✿)
+          wequestuuid = w-wequestuuid
         )
       }
 
   }
 
-  private def buildTopicTweetQuery(
-    thriftRequest: TopicTweetRequest,
-    requestUUID: Long
-  ): TopicTweetCandidateGeneratorQuery = {
-    val userId = thriftRequest.clientContext.userId.getOrElse(
-      throw new IllegalArgumentException(
-        "userId must be present in the TopicTweetRequest clientContext")
+  pwivate d-def buiwdtopictweetquewy(
+    t-thwiftwequest: topictweetwequest, 🥺
+    wequestuuid: wong
+  ): topictweetcandidategenewatowquewy = {
+    v-vaw usewid = t-thwiftwequest.cwientcontext.usewid.getowewse(
+      thwow nyew iwwegawawgumentexception(
+        "usewid must be pwesent i-in the topictweetwequest cwientcontext")
     )
-    val product = thriftRequest.product
-    val productContext = thriftRequest.productContext
+    v-vaw pwoduct = t-thwiftwequest.pwoduct
+    vaw pwoductcontext = thwiftwequest.pwoductcontext
 
-    // Specify product-specific behavior mapping here
-    val isVideoOnly = (product, productContext) match {
-      case (t.Product.ExploreTopics, Some(t.ProductContext.ExploreContext(context))) =>
-        context.isVideoOnly
-      case (t.Product.TopicLandingPage, None) =>
-        false
-      case (t.Product.HomeTopicsBackfill, None) =>
-        false
-      case (t.Product.TopicTweetsStrato, None) =>
-        false
+    // specify pwoduct-specific behaviow m-mapping hewe
+    vaw isvideoonwy = (pwoduct, >w< pwoductcontext) m-match {
+      case (t.pwoduct.expwowetopics, rawr x3 s-some(t.pwoductcontext.expwowecontext(context))) =>
+        c-context.isvideoonwy
+      case (t.pwoduct.topicwandingpage, (⑅˘꒳˘) n-nyone) =>
+        f-fawse
+      c-case (t.pwoduct.hometopicsbackfiww, n-nyone) =>
+        f-fawse
+      c-case (t.pwoduct.topictweetsstwato, σωσ nyone) =>
+        fawse
       case _ =>
-        throw new IllegalArgumentException(
-          s"Product ${product} and ProductContext ${productContext} are not allowed in CrMixer"
+        thwow nyew iwwegawawgumentexception(
+          s-s"pwoduct ${pwoduct} and p-pwoductcontext ${pwoductcontext} a-awe nyot awwowed i-in cwmixew"
         )
     }
 
-    statsReceiver.scope(product.toString).counter(TopicTweetRequest.toString).incr()
+    s-statsweceivew.scope(pwoduct.tostwing).countew(topictweetwequest.tostwing).incw()
 
-    val params =
-      paramsBuilder.buildFromClientContext(
-        thriftRequest.clientContext,
-        product,
-        UserState.EnumUnknownUserState(100)
+    v-vaw pawams =
+      pawamsbuiwdew.buiwdfwomcwientcontext(
+        thwiftwequest.cwientcontext, XD
+        pwoduct, -.-
+        usewstate.enumunknownusewstate(100)
       )
 
-    val topicIds = thriftRequest.topicIds.map { topicId =>
-      TopicId(
-        entityId = topicId,
-        language = thriftRequest.clientContext.languageCode,
-        country = None
+    v-vaw topicids = t-thwiftwequest.topicids.map { topicid =>
+      topicid(
+        entityid = topicid, >_<
+        w-wanguage = t-thwiftwequest.cwientcontext.wanguagecode, rawr
+        c-countwy = nyone
       )
-    }.toSet
+    }.toset
 
-    TopicTweetCandidateGeneratorQuery(
-      userId = userId,
-      topicIds = topicIds,
-      product = product,
-      maxNumResults = params(TopicTweetParams.MaxTopicTweetCandidatesParam),
-      impressedTweetList = thriftRequest.excludedTweetIds.getOrElse(Nil).toSet,
-      params = params,
-      requestUUID = requestUUID,
-      isVideoOnly = isVideoOnly
+    topictweetcandidategenewatowquewy(
+      u-usewid = usewid, 😳😳😳
+      topicids = topicids, UwU
+      pwoduct = p-pwoduct, (U ﹏ U)
+      m-maxnumwesuwts = pawams(topictweetpawams.maxtopictweetcandidatespawam), (˘ω˘)
+      impwessedtweetwist = t-thwiftwequest.excwudedtweetids.getowewse(niw).toset, /(^•ω•^)
+      pawams = pawams,
+      w-wequestuuid = w-wequestuuid, (U ﹏ U)
+      isvideoonwy = i-isvideoonwy
     )
   }
 
-  private def buildFrsBasedTweetQuery(
-    thriftRequest: FrsTweetRequest,
-    requestUUID: Long
-  ): Future[FrsTweetCandidateGeneratorQuery] = {
-    val userId = thriftRequest.clientContext.userId.getOrElse(
-      throw new IllegalArgumentException(
-        "userId must be present in the FrsTweetRequest clientContext")
+  p-pwivate def b-buiwdfwsbasedtweetquewy(
+    t-thwiftwequest: f-fwstweetwequest, ^•ﻌ•^
+    w-wequestuuid: wong
+  ): futuwe[fwstweetcandidategenewatowquewy] = {
+    v-vaw usewid = t-thwiftwequest.cwientcontext.usewid.getowewse(
+      thwow nyew i-iwwegawawgumentexception(
+        "usewid must be pwesent in t-the fwstweetwequest cwientcontext")
     )
-    val product = thriftRequest.product
-    val productContext = thriftRequest.productContext
+    vaw p-pwoduct = thwiftwequest.pwoduct
+    vaw pwoductcontext = t-thwiftwequest.pwoductcontext
 
-    val scopedStats = statsReceiver
-      .scope(product.toString).scope("FrsTweetRequest")
+    v-vaw scopedstats = statsweceivew
+      .scope(pwoduct.tostwing).scope("fwstweetwequest")
 
-    userStateStore
-      .get(userId).map { userStateOpt =>
-        val userState = userStateOpt
-          .getOrElse(UserState.EnumUnknownUserState(100))
-        scopedStats.scope("UserState").counter(userState.toString).incr()
+    u-usewstatestowe
+      .get(usewid).map { usewstateopt =>
+        vaw usewstate = u-usewstateopt
+          .getowewse(usewstate.enumunknownusewstate(100))
+        s-scopedstats.scope("usewstate").countew(usewstate.tostwing).incw()
 
-        val params =
-          paramsBuilder.buildFromClientContext(
-            thriftRequest.clientContext,
-            thriftRequest.product,
-            userState
+        vaw pawams =
+          pawamsbuiwdew.buiwdfwomcwientcontext(
+            t-thwiftwequest.cwientcontext, >w<
+            t-thwiftwequest.pwoduct,
+            usewstate
           )
-        val maxNumResults = (product, productContext) match {
-          case (t.Product.Home, Some(t.ProductContext.HomeContext(homeContext))) =>
-            homeContext.maxResults.getOrElse(
-              params(FrsBasedCandidateGenerationMaxCandidatesNumParam))
-          case _ =>
-            params(FrsBasedCandidateGenerationMaxCandidatesNumParam)
+        v-vaw maxnumwesuwts = (pwoduct, ʘwʘ pwoductcontext) match {
+          c-case (t.pwoduct.home, òωó s-some(t.pwoductcontext.homecontext(homecontext))) =>
+            homecontext.maxwesuwts.getowewse(
+              p-pawams(fwsbasedcandidategenewationmaxcandidatesnumpawam))
+          c-case _ =>
+            pawams(fwsbasedcandidategenewationmaxcandidatesnumpawam)
         }
 
-        FrsTweetCandidateGeneratorQuery(
-          userId = userId,
-          product = product,
-          maxNumResults = maxNumResults,
-          impressedTweetList = thriftRequest.excludedTweetIds.getOrElse(Nil).toSet,
-          impressedUserList = thriftRequest.excludedUserIds.getOrElse(Nil).toSet,
-          params = params,
-          languageCodeOpt = thriftRequest.clientContext.languageCode,
-          countryCodeOpt = thriftRequest.clientContext.countryCode,
-          requestUUID = requestUUID
+        fwstweetcandidategenewatowquewy(
+          usewid = u-usewid, o.O
+          p-pwoduct = p-pwoduct, ( ͡o ω ͡o )
+          m-maxnumwesuwts = maxnumwesuwts, mya
+          impwessedtweetwist = thwiftwequest.excwudedtweetids.getowewse(niw).toset, >_<
+          impwessedusewwist = thwiftwequest.excwudedusewids.getowewse(niw).toset,
+          pawams = pawams, rawr
+          w-wanguagecodeopt = t-thwiftwequest.cwientcontext.wanguagecode, >_<
+          c-countwycodeopt = t-thwiftwequest.cwientcontext.countwycode, (U ﹏ U)
+          w-wequestuuid = w-wequestuuid
         )
       }
   }
 
-  private def buildThriftResponse(
-    candidates: Seq[RankedCandidate]
-  ): CrMixerTweetResponse = {
+  pwivate d-def buiwdthwiftwesponse(
+    c-candidates: seq[wankedcandidate]
+  ): cwmixewtweetwesponse = {
 
-    val tweets = candidates.map { candidate =>
-      TweetRecommendation(
-        tweetId = candidate.tweetId,
-        score = candidate.predictionScore,
-        metricTags = Some(MetricTagUtil.buildMetricTags(candidate)),
-        latestSourceSignalTimestampInMillis =
-          SignalTimestampStatsUtil.buildLatestSourceSignalTimestamp(candidate)
+    v-vaw tweets = c-candidates.map { candidate =>
+      tweetwecommendation(
+        t-tweetid = candidate.tweetid, rawr
+        scowe = candidate.pwedictionscowe, (U ᵕ U❁)
+        m-metwictags = some(metwictagutiw.buiwdmetwictags(candidate)), (ˆ ﻌ ˆ)♡
+        w-watestsouwcesignawtimestampinmiwwis =
+          s-signawtimestampstatsutiw.buiwdwatestsouwcesignawtimestamp(candidate)
       )
     }
-    signalTimestampStatsUtil.statsSignalTimestamp(tweets)
-    CrMixerTweetResponse(tweets)
+    signawtimestampstatsutiw.statssignawtimestamp(tweets)
+    c-cwmixewtweetwesponse(tweets)
   }
 
-  private def scribeTweetScoreFunnelSeries(
-    candidates: Seq[RankedCandidate]
-  ): Seq[RankedCandidate] = {
-    // 202210210901 is a random number for code search of Lensview
-    tweetScoreFunnelSeries.startNewSpan(
-      name = "GetTweetRecommendationsTopLevelTweetSimilarityEngineType",
-      codePtr = 202210210901L) {
+  pwivate d-def scwibetweetscowefunnewsewies(
+    c-candidates: seq[wankedcandidate]
+  ): s-seq[wankedcandidate] = {
+    // 202210210901 i-is a wandom nyumbew fow code seawch o-of wensview
+    tweetscowefunnewsewies.stawtnewspan(
+      nyame = "gettweetwecommendationstopwevewtweetsimiwawityenginetype", >_<
+      c-codeptw = 202210210901w) {
       (
-        candidates,
-        candidates.map { candidate =>
-          thriftlog.TweetDimensionMeasure(
-            dimension = Some(
-              thriftlog
-                .RequestTweetDimension(
-                  candidate.tweetId,
-                  candidate.reasonChosen.similarityEngineInfo.similarityEngineType.value)),
-            measure = Some(thriftlog.RequestTweetMeasure(candidate.predictionScore))
+        c-candidates,
+        c-candidates.map { candidate =>
+          t-thwiftwog.tweetdimensionmeasuwe(
+            dimension = some(
+              t-thwiftwog
+                .wequesttweetdimension(
+                  candidate.tweetid, ^^;;
+                  candidate.weasonchosen.simiwawityengineinfo.simiwawityenginetype.vawue)), ʘwʘ
+            measuwe = some(thwiftwog.wequesttweetmeasuwe(candidate.pwedictionscowe))
           )
         }
       )
     }
   }
 
-  private def buildRelatedTweetResponse(candidates: Seq[InitialCandidate]): RelatedTweetResponse = {
-    val tweets = candidates.map { candidate =>
-      RelatedTweet(
-        tweetId = candidate.tweetId,
-        score = Some(candidate.getSimilarityScore),
-        authorId = Some(candidate.tweetInfo.authorId)
+  pwivate def buiwdwewatedtweetwesponse(candidates: seq[initiawcandidate]): w-wewatedtweetwesponse = {
+    vaw tweets = candidates.map { candidate =>
+      wewatedtweet(
+        tweetid = candidate.tweetid, 😳😳😳
+        s-scowe = some(candidate.getsimiwawityscowe), UwU
+        authowid = some(candidate.tweetinfo.authowid)
       )
     }
-    RelatedTweetResponse(tweets)
+    w-wewatedtweetwesponse(tweets)
   }
 
-  private def buildRelatedVideoTweetResponse(
-    candidates: Seq[InitialCandidate]
-  ): RelatedVideoTweetResponse = {
-    val tweets = candidates.map { candidate =>
-      RelatedVideoTweet(
-        tweetId = candidate.tweetId,
-        score = Some(candidate.getSimilarityScore)
+  pwivate d-def buiwdwewatedvideotweetwesponse(
+    candidates: seq[initiawcandidate]
+  ): w-wewatedvideotweetwesponse = {
+    vaw tweets = c-candidates.map { candidate =>
+      w-wewatedvideotweet(
+        t-tweetid = candidate.tweetid, OwO
+        scowe = some(candidate.getsimiwawityscowe)
       )
     }
-    RelatedVideoTweetResponse(tweets)
+    wewatedvideotweetwesponse(tweets)
   }
 
-  private def buildUtegTweetResponse(
-    candidates: Seq[TweetWithScoreAndSocialProof]
-  ): UtegTweetResponse = {
-    val tweets = candidates.map { candidate =>
-      UtegTweet(
-        tweetId = candidate.tweetId,
-        score = candidate.score,
-        socialProofByType = candidate.socialProofByType
+  p-pwivate def buiwdutegtweetwesponse(
+    candidates: seq[tweetwithscoweandsociawpwoof]
+  ): utegtweetwesponse = {
+    v-vaw tweets = candidates.map { candidate =>
+      u-utegtweet(
+        tweetid = candidate.tweetid, :3
+        s-scowe = candidate.scowe,
+        s-sociawpwoofbytype = c-candidate.sociawpwoofbytype
       )
     }
-    UtegTweetResponse(tweets)
+    utegtweetwesponse(tweets)
   }
 
-  private def buildAdsResponse(
-    candidates: Seq[RankedAdsCandidate]
-  ): AdsResponse = {
-    AdsResponse(ads = candidates.map { candidate =>
-      AdTweetRecommendation(
-        tweetId = candidate.tweetId,
-        score = candidate.predictionScore,
-        lineItems = Some(candidate.lineItemInfo))
+  pwivate d-def buiwdadswesponse(
+    candidates: seq[wankedadscandidate]
+  ): adswesponse = {
+    a-adswesponse(ads = candidates.map { candidate =>
+      adtweetwecommendation(
+        tweetid = candidate.tweetid, -.-
+        scowe = candidate.pwedictionscowe, 🥺
+        w-wineitems = some(candidate.wineiteminfo))
     })
   }
 
-  private def cacheTweetRecommendationResults(
-    request: CrMixerTweetRequest,
-    response: Future[CrMixerTweetResponse]
-  ): Unit = {
+  p-pwivate def cachetweetwecommendationwesuwts(
+    w-wequest: c-cwmixewtweetwequest, -.-
+    wesponse: f-futuwe[cwmixewtweetwesponse]
+  ): unit = {
 
-    val userId = request.clientContext.userId.getOrElse(
-      throw new IllegalArgumentException(
-        "userId must be present in getTweetRecommendations() Thrift clientContext"))
+    vaw usewid = wequest.cwientcontext.usewid.getowewse(
+      thwow nyew iwwegawawgumentexception(
+        "usewid m-must be pwesent i-in gettweetwecommendations() thwift cwientcontext"))
 
-    if (decider.isAvailableForId(userId, DeciderConstants.getTweetRecommendationsCacheRate)) {
-      response.map { crMixerTweetResponse =>
+    i-if (decidew.isavaiwabwefowid(usewid, -.- d-decidewconstants.gettweetwecommendationscachewate)) {
+      wesponse.map { c-cwmixewtweetwesponse =>
         {
           (
-            request.product,
-            request.clientContext.userId,
-            crMixerTweetResponse.tweets.nonEmpty) match {
-            case (t.Product.Home, Some(userId), true) =>
-              tweetRecommendationResultsStore.put((userId, crMixerTweetResponse))
-            case _ => Future.value(Unit)
+            wequest.pwoduct, (U ﹏ U)
+            wequest.cwientcontext.usewid, rawr
+            c-cwmixewtweetwesponse.tweets.nonempty) match {
+            case (t.pwoduct.home, mya s-some(usewid), ( ͡o ω ͡o ) twue) =>
+              t-tweetwecommendationwesuwtsstowe.put((usewid, /(^•ω•^) cwmixewtweetwesponse))
+            case _ => f-futuwe.vawue(unit)
           }
         }
       }

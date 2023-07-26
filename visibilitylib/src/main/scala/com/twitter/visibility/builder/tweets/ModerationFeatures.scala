@@ -1,23 +1,23 @@
-package com.twitter.visibility.builder.tweets
+package com.twittew.visibiwity.buiwdew.tweets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.features.TweetIsModerated
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+i-impowt com.twittew.visibiwity.featuwes.tweetismodewated
 
-class ModerationFeatures(moderationSource: Long => Boolean, statsReceiver: StatsReceiver) {
+c-cwass m-modewationfeatuwes(modewationsouwce: w-wong => b-boowean, XD statsweceivew: statsweceivew) {
 
-  private[this] val scopedStatsReceiver: StatsReceiver =
-    statsReceiver.scope("moderation_features")
+  pwivate[this] vaw scopedstatsweceivew: statsweceivew =
+    s-statsweceivew.scope("modewation_featuwes")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  pwivate[this] vaw wequests = s-scopedstatsweceivew.countew("wequests")
 
-  private[this] val tweetIsModerated =
-    scopedStatsReceiver.scope(TweetIsModerated.name).counter("requests")
+  pwivate[this] v-vaw tweetismodewated =
+    scopedstatsweceivew.scope(tweetismodewated.name).countew("wequests")
 
-  def forTweetId(tweetId: Long): FeatureMapBuilder => FeatureMapBuilder = { featureMapBuilder =>
-    requests.incr()
-    tweetIsModerated.incr()
+  def fowtweetid(tweetid: w-wong): featuwemapbuiwdew => featuwemapbuiwdew = { f-featuwemapbuiwdew =>
+    w-wequests.incw()
+    tweetismodewated.incw()
 
-    featureMapBuilder.withConstantFeature(TweetIsModerated, moderationSource(tweetId))
+    featuwemapbuiwdew.withconstantfeatuwe(tweetismodewated, :3 modewationsouwce(tweetid))
   }
 }

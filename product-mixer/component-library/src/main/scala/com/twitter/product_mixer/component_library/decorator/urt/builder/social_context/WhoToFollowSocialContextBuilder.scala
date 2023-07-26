@@ -1,48 +1,48 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.social_context
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.sociaw_context
 
-import com.twitter.hermit.{thriftscala => h}
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FollowGeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.LocationGeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.NewUserGeneralContextType
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.hewmit.{thwiftscawa => h-h}
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.usewcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.sociaw_context.basesociawcontextbuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.fowwowgenewawcontexttype
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.genewawcontext
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.genewawcontexttype
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wocationgenewawcontexttype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.newusewgenewawcontexttype
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case class WhoToFollowSocialContextBuilder(
-  socialTextFeature: Feature[_, Option[String]],
-  contextTypeFeature: Feature[_, Option[h.ContextType]])
-    extends BaseSocialContextBuilder[PipelineQuery, UserCandidate] {
+case c-cwass whotofowwowsociawcontextbuiwdew(
+  sociawtextfeatuwe: featuwe[_, σωσ o-option[stwing]], OwO
+  contexttypefeatuwe: featuwe[_, 😳😳😳 option[h.contexttype]])
+    extends b-basesociawcontextbuiwdew[pipewinequewy, usewcandidate] {
 
-  def apply(
-    query: PipelineQuery,
-    candidate: UserCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[GeneralContext] = {
-    val socialTextOpt = candidateFeatures.getOrElse(socialTextFeature, None)
-    val contextTypeOpt = convertContextType(candidateFeatures.getOrElse(contextTypeFeature, None))
+  d-def a-appwy(
+    quewy: pipewinequewy, 😳😳😳
+    candidate: usewcandidate, o.O
+    candidatefeatuwes: f-featuwemap
+  ): option[genewawcontext] = {
+    vaw sociawtextopt = candidatefeatuwes.getowewse(sociawtextfeatuwe, ( ͡o ω ͡o ) nyone)
+    v-vaw contexttypeopt = convewtcontexttype(candidatefeatuwes.getowewse(contexttypefeatuwe, (U ﹏ U) n-nyone))
 
-    (socialTextOpt, contextTypeOpt) match {
-      case (Some(socialText), Some(contextType)) if socialText.nonEmpty =>
-        Some(
-          GeneralContext(
-            text = socialText,
-            contextType = contextType,
-            url = None,
-            contextImageUrls = None,
-            landingUrl = None))
-      case _ => None
+    (sociawtextopt, (///ˬ///✿) c-contexttypeopt) m-match {
+      c-case (some(sociawtext), >w< some(contexttype)) if sociawtext.nonempty =>
+        s-some(
+          genewawcontext(
+            text = sociawtext, rawr
+            c-contexttype = contexttype, mya
+            uww = nyone, ^^
+            contextimageuwws = nyone, 😳😳😳
+            wandinguww = n-nyone))
+      case _ => nyone
     }
   }
 
-  private def convertContextType(contextType: Option[h.ContextType]): Option[GeneralContextType] =
-    contextType match {
-      case Some(h.ContextType.Geo) => Some(LocationGeneralContextType)
-      case Some(h.ContextType.Social) => Some(FollowGeneralContextType)
-      case Some(h.ContextType.NewUser) => Some(NewUserGeneralContextType)
-      case _ => None
+  p-pwivate d-def convewtcontexttype(contexttype: o-option[h.contexttype]): option[genewawcontexttype] =
+    contexttype match {
+      case s-some(h.contexttype.geo) => s-some(wocationgenewawcontexttype)
+      case some(h.contexttype.sociaw) => s-some(fowwowgenewawcontexttype)
+      c-case some(h.contexttype.newusew) => some(newusewgenewawcontexttype)
+      c-case _ => nyone
     }
 }

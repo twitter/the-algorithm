@@ -1,251 +1,251 @@
-package com.twitter.simclusters_v2.common
+package com.twittew.simcwustews_v2.common
 
-object CosineSimilarityUtil {
+object c-cosinesimiwawityutiw {
 
   /**
-   * Sum of squared elements for a given vector v
+   * s-sum of squawed e-ewements fow a-a given vectow v
    */
-  def sumOfSquares[T](v: Map[T, Double]): Double = {
-    v.values.foldLeft(0.0) { (sum, value) => sum + value * value }
+  d-def sumofsquawes[t](v: m-map[t, (U ﹏ U) doubwe]): d-doubwe = {
+    v-v.vawues.fowdweft(0.0) { (sum, (˘ω˘) vawue) => sum + vawue * vawue }
   }
 
   /**
-   * Sum of squared elements for a given vector v
+   * sum of squawed ewements fow a given v-vectow v
    */
-  def sumOfSquaresArray(v: Array[Double]): Double = {
-    v.foldLeft(0.0) { (sum, value) => sum + value * value }
+  def sumofsquawesawway(v: awway[doubwe]): d-doubwe = {
+    v.fowdweft(0.0) { (sum, (ꈍᴗꈍ) v-vawue) => sum + vawue * vawue }
   }
 
   /**
-   * Calculate the l2Norm score
+   * cawcuwate the w2nowm scowe
    */
-  def norm[T](v: Map[T, Double]): Double = {
-    math.sqrt(sumOfSquares(v))
+  d-def nyowm[t](v: map[t, /(^•ω•^) doubwe]): d-doubwe = {
+    m-math.sqwt(sumofsquawes(v))
   }
 
   /**
-   * Calculate the l2Norm score
+   * cawcuwate the w2nowm scowe
    */
-  def normArray(v: Array[Double]): Double = {
-    math.sqrt(sumOfSquaresArray(v))
+  def nyowmawway(v: awway[doubwe]): d-doubwe = {
+    math.sqwt(sumofsquawesawway(v))
   }
 
   /**
-   * Calculate the logNorm score
+   * cawcuwate the wognowm scowe
    */
-  def logNorm[T](v: Map[T, Double]): Double = {
-    math.log(sumOfSquares(v) + 1)
+  def wognowm[t](v: m-map[t, >_< doubwe]): doubwe = {
+    m-math.wog(sumofsquawes(v) + 1)
   }
 
   /**
-   * Calculate the logNorm score
+   * c-cawcuwate t-the wognowm s-scowe
    */
-  def logNormArray(v: Array[Double]): Double = {
-    math.log(sumOfSquaresArray(v) + 1)
+  def wognowmawway(v: awway[doubwe]): d-doubwe = {
+    math.wog(sumofsquawesawway(v) + 1)
   }
 
   /**
-   * Calculate the exp scaled norm score
+   * cawcuwate the e-exp scawed nyowm scowe
    * */
-  def expScaledNorm[T](v: Map[T, Double], exponent: Double): Double = {
-    math.pow(sumOfSquares(v), exponent)
+  def expscawednowm[t](v: map[t, σωσ doubwe], ^^;; exponent: doubwe): doubwe = {
+    m-math.pow(sumofsquawes(v), 😳 exponent)
   }
 
   /**
-   * Calculate the exp scaled norm score
+   * c-cawcuwate the exp s-scawed nyowm s-scowe
    * */
-  def expScaledNormArray(v: Array[Double], exponent: Double): Double = {
-    math.pow(sumOfSquaresArray(v), exponent)
+  def expscawednowmawway(v: awway[doubwe], >_< exponent: d-doubwe): doubwe = {
+    m-math.pow(sumofsquawesawway(v), -.- exponent)
   }
 
   /**
-   * Calculate the l1Norm score
+   * c-cawcuwate the w-w1nowm scowe
    */
-  def l1Norm[T](v: Map[T, Double]): Double = {
-    v.values.foldLeft(0.0) { (sum, value) => sum + Math.abs(value) }
+  def w1nowm[t](v: m-map[t, UwU doubwe]): doubwe = {
+    v-v.vawues.fowdweft(0.0) { (sum, :3 vawue) => sum + math.abs(vawue) }
   }
 
   /**
-   * Calculate the l1Norm score
+   * c-cawcuwate the w1nowm scowe
    */
-  def l1NormArray(v: Array[Double]): Double = {
-    v.foldLeft(0.0) { (sum, value) => sum + Math.abs(value) }
+  d-def w1nowmawway(v: awway[doubwe]): doubwe = {
+    v-v.fowdweft(0.0) { (sum, σωσ v-vawue) => sum + math.abs(vawue) }
   }
 
   /**
-   * Divide the weight vector with the applied norm
-   * Return the original object if the norm is 0
+   * divide the weight vectow with the appwied nyowm
+   * wetuwn the owiginaw o-object if the nyowm i-is 0
    *
-   * @param v    a map from cluster id to its weight
-   * @param norm a calculated norm from the given map v
+   * @pawam v    a-a map fwom cwustew i-id to its weight
+   * @pawam n-nyowm a cawcuwated nyowm fwom the given map v
    *
-   * @return a map with normalized weight
+   * @wetuwn a map with nyowmawized w-weight
    */
-  def applyNorm[T](v: Map[T, Double], norm: Double): Map[T, Double] = {
-    if (norm == 0) v else v.mapValues(x => x / norm)
+  def appwynowm[t](v: map[t, >w< doubwe], nyowm: doubwe): map[t, (ˆ ﻌ ˆ)♡ d-doubwe] = {
+    if (nowm == 0) v-v ewse v.mapvawues(x => x-x / nyowm)
   }
 
   /**
-   * Divide the weight vector with the applied norm
-   * Return the original object if the norm is 0
+   * d-divide the weight vectow with t-the appwied nyowm
+   * w-wetuwn the o-owiginaw object i-if the nyowm is 0
    *
-   * @param v    a an array of weights
-   * @param norm a calculated norm from the given array v
+   * @pawam v    a an a-awway of weights
+   * @pawam n-nyowm a-a cawcuwated n-nyowm fwom the given a-awway v
    *
-   * @return an array with normalized weight in the same order as v
+   * @wetuwn an awway with nyowmawized weight in the same owdew a-as v
    */
-  def applyNormArray(v: Array[Double], norm: Double): Array[Double] = {
-    if (norm == 0) v else v.map(_ / norm)
+  def appwynowmawway(v: awway[doubwe], ʘwʘ nyowm: doubwe): awway[doubwe] = {
+    if (nowm == 0) v-v ewse v.map(_ / nyowm)
   }
 
   /**
-   * Normalize the weight vector for easy cosine similarity calculation. If the input weight vector
-   * is empty or its norm is 0, return the original map.
+   * nowmawize the weight vectow fow e-easy cosine simiwawity c-cawcuwation. :3 i-if the input weight vectow
+   * i-is empty ow its nyowm is 0, (˘ω˘) w-wetuwn the owiginaw m-map. 😳😳😳
    *
-   * @param v a map from cluster id to its weight
+   * @pawam v a map fwom cwustew id to its weight
    *
-   * @return a map with normalized weight (the norm of the weight vector is 1)
+   * @wetuwn a map with nyowmawized weight (the n-nyowm of the weight vectow i-is 1)
    */
-  def normalize[T](v: Map[T, Double], maybeNorm: Option[Double] = None): Map[T, Double] = {
-    val norm = maybeNorm.getOrElse(CosineSimilarityUtil.norm(v))
-    applyNorm(v, norm)
+  def nyowmawize[t](v: m-map[t, rawr x3 doubwe], (✿oωo) m-maybenowm: option[doubwe] = nyone): map[t, (ˆ ﻌ ˆ)♡ doubwe] = {
+    vaw nyowm = maybenowm.getowewse(cosinesimiwawityutiw.nowm(v))
+    a-appwynowm(v, :3 nyowm)
   }
 
   /**
-   * Normalize the weight vector for easy cosine similarity calculation. If the input weight vector
-   * is empty or its norm is 0, return the original array.
+   * n-nyowmawize the weight vectow f-fow easy cosine s-simiwawity cawcuwation. (U ᵕ U❁) if the input weight vectow
+   * is empty ow its nyowm i-is 0, ^^;; wetuwn the o-owiginaw awway. mya
    *
-   * @param v an array of weights
+   * @pawam v-v an awway of weights
    *
-   * @return an array with normalized weight (the norm of the weight vector is 1), in the same order as v
+   * @wetuwn a-an awway w-with nyowmawized weight (the n-nyowm of the weight vectow is 1), 😳😳😳 in the same owdew as v
    */
-  def normalizeArray(
-    v: Array[Double],
-    maybeNorm: Option[Double] = None
-  ): Array[Double] = {
-    val norm = maybeNorm.getOrElse(CosineSimilarityUtil.normArray(v))
-    applyNormArray(v, norm)
+  def nyowmawizeawway(
+    v-v: awway[doubwe], OwO
+    m-maybenowm: option[doubwe] = nyone
+  ): awway[doubwe] = {
+    v-vaw n-nyowm = maybenowm.getowewse(cosinesimiwawityutiw.nowmawway(v))
+    appwynowmawway(v, rawr nyowm)
   }
 
   /**
-   * Normalize the weight vector with log norm. If the input weight vector
-   * is empty or its norm is 0, return the original map.
+   * nyowmawize t-the weight vectow with wog nyowm. XD if the input weight vectow
+   * is empty o-ow its nyowm is 0, (U ﹏ U) wetuwn the owiginaw map. (˘ω˘)
    *
-   * @param v a map from cluster id to its weight
+   * @pawam v-v a map fwom cwustew i-id to its weight
    *
-   * @return a map with log normalized weight
+   * @wetuwn a map with wog nyowmawized weight
    * */
-  def logNormalize[T](v: Map[T, Double], maybeNorm: Option[Double] = None): Map[T, Double] = {
-    val norm = maybeNorm.getOrElse(CosineSimilarityUtil.logNorm(v))
-    applyNorm(v, norm)
+  d-def wognowmawize[t](v: m-map[t, doubwe], UwU maybenowm: option[doubwe] = nyone): map[t, >_< d-doubwe] = {
+    vaw nyowm = m-maybenowm.getowewse(cosinesimiwawityutiw.wognowm(v))
+    appwynowm(v, σωσ nyowm)
   }
 
   /**
-   * Normalize the weight vector with log norm. If the input weight vector
-   * is empty or its norm is 0, return the original array.
+   * nyowmawize the weight v-vectow with wog nyowm. if the i-input weight v-vectow
+   * is empty ow its nyowm i-is 0, 🥺 wetuwn the owiginaw awway. 🥺
    *
-   * @param v an array of weights
+   * @pawam v-v an awway of w-weights
    *
-   * @return an array with log normalized weight, in the same order as v
+   * @wetuwn a-an awway with wog nyowmawized w-weight, ʘwʘ i-in the same owdew as v
    * */
-  def logNormalizeArray(
-    v: Array[Double],
-    maybeNorm: Option[Double] = None
-  ): Array[Double] = {
-    val norm = maybeNorm.getOrElse(CosineSimilarityUtil.logNormArray(v))
-    applyNormArray(v, norm)
+  def wognowmawizeawway(
+    v-v: a-awway[doubwe], :3
+    m-maybenowm: option[doubwe] = nyone
+  ): awway[doubwe] = {
+    vaw nyowm = maybenowm.getowewse(cosinesimiwawityutiw.wognowmawway(v))
+    a-appwynowmawway(v, (U ﹏ U) nowm)
   }
 
   /**
-   * Normalize the weight vector with exponentially scaled norm. If the input weight vector
-   * is empty or its norm is 0, return the original map.
+   * n-nyowmawize the w-weight vectow with exponentiawwy scawed nyowm. (U ﹏ U) if the input weight v-vectow
+   * i-is empty ow its n-nyowm is 0, ʘwʘ wetuwn t-the owiginaw map. >w<
    *
-   * @param v        a map from cluster id to its weight
-   * @param exponent the exponent we apply to the weight vector's norm
+   * @pawam v-v        a map fwom cwustew id to its weight
+   * @pawam exponent the exponent we appwy to the weight vectow's n-nyowm
    *
-   * @return a map with exp scaled normalized weight
+   * @wetuwn a m-map with exp scawed nyowmawized w-weight
    * */
-  def expScaledNormalize[T](
-    v: Map[T, Double],
-    exponent: Option[Double] = None,
-    maybeNorm: Option[Double] = None
-  ): Map[T, Double] = {
-    val norm = maybeNorm.getOrElse(CosineSimilarityUtil.expScaledNorm(v, exponent.getOrElse(0.3)))
-    applyNorm(v, norm)
+  def expscawednowmawize[t](
+    v-v: map[t, rawr x3 doubwe], OwO
+    exponent: o-option[doubwe] = n-none, ^•ﻌ•^
+    maybenowm: o-option[doubwe] = n-nyone
+  ): m-map[t, >_< doubwe] = {
+    vaw nyowm = maybenowm.getowewse(cosinesimiwawityutiw.expscawednowm(v, OwO exponent.getowewse(0.3)))
+    appwynowm(v, >_< nyowm)
   }
 
   /**
-   * Normalize the weight vector with exponentially scaled norm. If the input weight vector
-   * is empty or its norm is 0, return the original map.
+   * nyowmawize the w-weight vectow with e-exponentiawwy s-scawed nyowm. (ꈍᴗꈍ) if the input weight v-vectow
+   * is empty ow its nyowm is 0, wetuwn the owiginaw m-map. >w<
    *
-   * @param v        an array of weights
-   * @param exponent the exponent we apply to the weight vector's norm
+   * @pawam v-v        an awway of weights
+   * @pawam exponent t-the exponent we appwy to the weight vectow's n-nyowm
    *
-   * @return an array with exp scaled normalized weight, in the same order as v
+   * @wetuwn a-an awway with exp scawed n-nyowmawized w-weight, (U ﹏ U) in the same owdew as v
    * */
-  def expScaledNormalizeArray(
-    v: Array[Double],
-    exponent: Double,
-    maybeNorm: Option[Double] = None
-  ): Array[Double] = {
-    val norm = maybeNorm.getOrElse(CosineSimilarityUtil.expScaledNormArray(v, exponent))
-    applyNormArray(v, norm)
+  def expscawednowmawizeawway(
+    v: awway[doubwe],
+    exponent: doubwe, ^^
+    m-maybenowm: o-option[doubwe] = n-nyone
+  ): awway[doubwe] = {
+    v-vaw nyowm = m-maybenowm.getowewse(cosinesimiwawityutiw.expscawednowmawway(v, (U ﹏ U) exponent))
+    appwynowmawway(v, :3 n-nyowm)
   }
 
   /**
-   * Given two sparse vectors, calculate its dot product.
+   * g-given two spawse vectows, (✿oωo) c-cawcuwate its d-dot pwoduct. XD
    *
-   * @param v1 the first map from cluster id to its weight
-   * @param v2 the second map from cluster id to its weight
+   * @pawam v1 t-the fiwst map fwom cwustew id to its weight
+   * @pawam v-v2 the second map fwom c-cwustew id to its w-weight
    *
-   * @return the dot product of above two sparse vector
+   * @wetuwn the dot p-pwoduct of above two spawse vectow
    */
-  def dotProduct[T](v1: Map[T, Double], v2: Map[T, Double]): Double = {
-    val comparer = v1.size - v2.size
-    val smaller = if (comparer > 0) v2 else v1
-    val bigger = if (comparer > 0) v1 else v2
+  def d-dotpwoduct[t](v1: m-map[t, >w< doubwe], òωó v-v2: map[t, (ꈍᴗꈍ) doubwe]): doubwe = {
+    vaw compawew = v1.size - v-v2.size
+    vaw smowew = if (compawew > 0) v2 ewse v-v1
+    vaw biggew = i-if (compawew > 0) v1 ewse v-v2
 
-    smaller.foldLeft(0.0) {
-      case (sum, (id, value)) =>
-        sum + bigger.getOrElse(id, 0.0) * value
+    smowew.fowdweft(0.0) {
+      case (sum, rawr x3 (id, rawr x3 v-vawue)) =>
+        s-sum + biggew.getowewse(id, σωσ 0.0) * vawue
     }
   }
 
   /**
-   * Given two sparse vectors, calculate its dot product.
+   * g-given two spawse vectows, (ꈍᴗꈍ) cawcuwate its d-dot pwoduct. rawr
    *
-   * @param v1C an array of cluster ids. Must be sorted in ascending order
-   * @param v1S an array of corresponding cluster scores, of the same length and order as v1c
-   * @param v2C an array of cluster ids. Must be sorted in ascending order
-   * @param v2S an array of corresponding cluster scores, of the same length and order as v2c
+   * @pawam v-v1c an awway of cwustew i-ids. ^^;; must be sowted in ascending o-owdew
+   * @pawam v-v1s an a-awway of cowwesponding cwustew scowes, rawr x3 of the same wength and owdew as v1c
+   * @pawam v2c an awway of cwustew ids. (ˆ ﻌ ˆ)♡ must be sowted in ascending owdew
+   * @pawam v2s an awway of cowwesponding cwustew scowes, σωσ o-of the same wength a-and owdew as v2c
    *
-   * @return the dot product of above two sparse vector
+   * @wetuwn the dot pwoduct o-of above two s-spawse vectow
    */
-  def dotProductForSortedClusterAndScores(
-    v1C: Array[Int],
-    v1S: Array[Double],
-    v2C: Array[Int],
-    v2S: Array[Double]
-  ): Double = {
-    require(v1C.size == v1S.size)
-    require(v2C.size == v2S.size)
-    var i1 = 0
-    var i2 = 0
-    var product: Double = 0.0
+  d-def dotpwoductfowsowtedcwustewandscowes(
+    v1c: awway[int], (U ﹏ U)
+    v-v1s: awway[doubwe], >w<
+    v-v2c: awway[int],
+    v-v2s: awway[doubwe]
+  ): doubwe = {
+    wequiwe(v1c.size == v-v1s.size)
+    wequiwe(v2c.size == v-v2s.size)
+    v-vaw i1 = 0
+    vaw i2 = 0
+    vaw pwoduct: doubwe = 0.0
 
-    while (i1 < v1C.size && i2 < v2C.size) {
-      if (v1C(i1) == v2C(i2)) {
-        product += v1S(i1) * v2S(i2)
-        i1 += 1
+    w-whiwe (i1 < v1c.size && i-i2 < v2c.size) {
+      if (v1c(i1) == v-v2c(i2)) {
+        p-pwoduct += v1s(i1) * v-v2s(i2)
+        i-i1 += 1
+        i-i2 += 1
+      } e-ewse if (v1c(i1) > v-v2c(i2)) {
+        // v2 cwustew is wowew. σωσ i-incwement it t-to see if the nyext o-one matches v1's
         i2 += 1
-      } else if (v1C(i1) > v2C(i2)) {
-        // v2 cluster is lower. Increment it to see if the next one matches v1's
-        i2 += 1
-      } else {
-        // v1 cluster is lower. Increment it to see if the next one matches v2's
+      } e-ewse {
+        // v1 cwustew is wowew. nyaa~~ incwement it t-to see if the nyext one matches v-v2's
         i1 += 1
       }
     }
-    product
+    p-pwoduct
   }
 }

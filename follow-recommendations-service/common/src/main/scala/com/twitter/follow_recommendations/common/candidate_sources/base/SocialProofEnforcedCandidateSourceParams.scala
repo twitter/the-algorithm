@@ -1,56 +1,56 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.base
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.timewines.configapi.duwationconvewsion
+i-impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt com.twittew.timewines.configapi.fspawam
+i-impowt com.twittew.timewines.configapi.hasduwationconvewsion
+i-impowt com.twittew.utiw.duwation
 
-object SocialProofEnforcedCandidateSourceParams {
-  case object MustCallSgs
-      extends FSParam[Boolean]("social_proof_enforced_candidate_source_must_call_sgs", true)
+o-object sociawpwoofenfowcedcandidatesouwcepawams {
+  c-case object mustcawwsgs
+      extends fspawam[boowean]("sociaw_pwoof_enfowced_candidate_souwce_must_caww_sgs", 🥺 twue)
 
-  case object CallSgsCachedColumn
-      extends FSParam[Boolean](
-        "social_proof_enforced_candidate_source_call_sgs_cached_column",
-        false)
+  case object cawwsgscachedcowumn
+      e-extends fspawam[boowean](
+        "sociaw_pwoof_enfowced_candidate_souwce_caww_sgs_cached_cowumn", mya
+        fawse)
 
-  case object QueryIntersectionIdsNum
-      extends FSBoundedParam[Int](
-        name = "social_proof_enforced_candidate_source_query_intersection_ids_num",
-        default = 3,
-        min = 0,
-        max = Integer.MAX_VALUE)
+  case object quewyintewsectionidsnum
+      e-extends fsboundedpawam[int](
+        nyame = "sociaw_pwoof_enfowced_candidate_souwce_quewy_intewsection_ids_num", 🥺
+        defauwt = 3,
+        m-min = 0, >_<
+        max = integew.max_vawue)
 
-  case object MaxNumCandidatesToAnnotate
-      extends FSBoundedParam[Int](
-        name = "social_proof_enforced_candidate_source_max_num_candidates_to_annotate",
-        default = 50,
-        min = 0,
-        max = Integer.MAX_VALUE)
+  case object maxnumcandidatestoannotate
+      extends f-fsboundedpawam[int](
+        nyame = "sociaw_pwoof_enfowced_candidate_souwce_max_num_candidates_to_annotate", >_<
+        d-defauwt = 50, (⑅˘꒳˘)
+        m-min = 0, /(^•ω•^)
+        max = integew.max_vawue)
 
-  case object GfsIntersectionIdsNum
-      extends FSBoundedParam[Int](
-        name = "social_proof_enforced_candidate_source_gfs_intersection_ids_num",
-        default = 3,
-        min = 0,
-        max = Integer.MAX_VALUE)
+  case object gfsintewsectionidsnum
+      extends fsboundedpawam[int](
+        nyame = "sociaw_pwoof_enfowced_candidate_souwce_gfs_intewsection_ids_num", rawr x3
+        defauwt = 3, (U ﹏ U)
+        m-min = 0, (U ﹏ U)
+        max = integew.max_vawue)
 
-  case object SgsIntersectionIdsNum
-      extends FSBoundedParam[Int](
-        name = "social_proof_enforced_candidate_source_sgs_intersection_ids_num",
-        default = 10,
-        min = 0,
-        max = Integer.MAX_VALUE)
+  case object sgsintewsectionidsnum
+      extends fsboundedpawam[int](
+        n-nyame = "sociaw_pwoof_enfowced_candidate_souwce_sgs_intewsection_ids_num", (⑅˘꒳˘)
+        defauwt = 10, òωó
+        m-min = 0, ʘwʘ
+        m-max = integew.max_vawue)
 
-  case object GfsLagDurationInDays
-      extends FSBoundedParam[Duration](
-        name = "social_proof_enforced_candidate_source_gfs_lag_duration_in_days",
-        default = 14.days,
-        min = 1.days,
-        max = 60.days)
-      with HasDurationConversion {
-    override val durationConversion: DurationConversion = DurationConversion.FromDays
+  c-case object g-gfswagduwationindays
+      extends fsboundedpawam[duwation](
+        n-nyame = "sociaw_pwoof_enfowced_candidate_souwce_gfs_wag_duwation_in_days", /(^•ω•^)
+        defauwt = 14.days, ʘwʘ
+        min = 1.days, σωσ
+        m-max = 60.days)
+      with hasduwationconvewsion {
+    ovewwide vaw duwationconvewsion: duwationconvewsion = duwationconvewsion.fwomdays
   }
 }

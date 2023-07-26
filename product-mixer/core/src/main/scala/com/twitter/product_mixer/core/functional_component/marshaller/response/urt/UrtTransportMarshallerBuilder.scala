@@ -1,711 +1,711 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.graphql.contextual_ref.ContextualTweetRefMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.graphql.contextual_ref.OuterTweetContextMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.graphql.contextual_ref.TweetHydrationContextMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.rtf.safety_level.SafetyLevelMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert.ShowAlertColorConfigurationMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert.ShowAlertDisplayLocationMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert.ShowAlertIconDisplayInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert.ShowAlertIconMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert.ShowAlertNavigationMetadataMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert.ShowAlertTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button.ButtonStyleMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button.CtaButtonMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button.IconCtaButtonMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button.TextCtaButtonMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color.ColorMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color.ColorPaletteMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color.RosettaColorMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.commerce.CommerceProductGroupItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.commerce.CommerceProductItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover.CoverContentMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover.CoverCtaBehaviorMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover.CoverCtaMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover.CoverImageMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover.FullCoverContentMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover.FullCoverDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover.HalfCoverContentMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover.HalfCoverDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.icon.HorizonIconMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.article.ArticleDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.article.ArticleItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.article.ArticleSeedTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.audio_space.AudioSpaceItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.card.CardDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.card.CardItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.conversation_annotation.ConversationAnnotationMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.conversation_annotation.ConversationAnnotationTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.event.EventSummaryDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.event.EventSummaryItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.forward_pivot.ForwardPivotDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.forward_pivot.ForwardPivotMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.forward_pivot.SoftInterventionDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.generic_summary_item.GenericSummaryActionMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.generic_summary_item.GenericSummaryContextMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.generic_summary_item.GenericSummaryDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.generic_summary_item.GenericSummaryItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.highlight.HighlightedSectionMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.icon_label.IconLabelItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.label.LabelDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.label.LabelItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message._
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.moment.MomentAnnotationItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.prompt._
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.suggestion.SpellingActionTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.suggestion.SpellingItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.suggestion.TextResultMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.thread.ThreadHeaderContentMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.thread.ThreadHeaderItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tile.CallToActionTileContentMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tile.StandardTileContentMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tile.TileContentMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tile.TileItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tombstone.TombstoneDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tombstone.TombstoneInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tombstone.TombstoneItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic.TopicDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic.TopicFollowPromptDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic.TopicFollowPromptItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic.TopicFunctionalityTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic.TopicItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.trend.TrendItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet.TimelinesScoreInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet.TweetDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet.TweetHighlightsMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet.TweetItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet_composer.TweetComposerDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet_composer.TweetComposerItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.twitter_list.TwitterListDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.twitter_list.TwitterListItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.user.UserDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.user.UserItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.user.UserReactiveTriggersMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item.VerticalGridItemContentMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item.VerticalGridItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item.VerticalGridItemTileStyleMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item.VerticalGridItemTopicFunctionalityTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item.VerticalGridItemTopicTileMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media.AspectRatioMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media.BroadcastIdMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media.MediaEntityMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media.MediaKeyMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media.MediaMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media.RectMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media.TweetMediaMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata._
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.operation.CursorDisplayTreatmentMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.operation.CursorItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.operation.CursorOperationMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.operation.CursorTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.AdMetadataContainerMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.CallToActionMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.ClickTrackingInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.DisclaimerTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.DisclosureTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.DynamicPrerollTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.MediaInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.PrerollMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.PrerollMetadataMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.PromotedMetadataMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.SkAdNetworkDataMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.SponsorshipTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.UrlOverrideTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.VideoVariantsMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.reaction.TimelineReactionMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.ReferenceObjectMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextAlignmentMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextEntityMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextFormatMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module._
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.gwaphqw.contextuaw_wef.contextuawtweetwefmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.gwaphqw.contextuaw_wef.outewtweetcontextmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.gwaphqw.contextuaw_wef.tweethydwationcontextmawshawwew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.wtf.safety_wevew.safetywevewmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.awewt.showawewtcowowconfiguwationmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.awewt.showawewtdispwaywocationmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.awewt.showawewticondispwayinfomawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.awewt.showawewticonmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.awewt.showawewtnavigationmetadatamawshawwew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.awewt.showawewttypemawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.button.buttonstywemawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.button.ctabuttonmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.button.iconctabuttonmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.button.textctabuttonmawshawwew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.cowow.cowowmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.cowow.cowowpawettemawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.cowow.wosettacowowmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.commewce.commewcepwoductgwoupitemmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.commewce.commewcepwoductitemmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.covew.covewcontentmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.covew.covewctabehaviowmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.covew.covewctamawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.covew.covewimagemawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.covew.fuwwcovewcontentmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.covew.fuwwcovewdispwaytypemawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.covew.hawfcovewcontentmawshawwew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.covew.hawfcovewdispwaytypemawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.icon.howizoniconmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.awticwe.awticwedispwaytypemawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.awticwe.awticweitemmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.awticwe.awticweseedtypemawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.audio_space.audiospaceitemmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.cawd.cawddispwaytypemawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.cawd.cawditemmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.convewsation_annotation.convewsationannotationmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.convewsation_annotation.convewsationannotationtypemawshawwew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.event.eventsummawydispwaytypemawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.event.eventsummawyitemmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.fowwawd_pivot.fowwawdpivotdispwaytypemawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.fowwawd_pivot.fowwawdpivotmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.fowwawd_pivot.softintewventiondispwaytypemawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.genewic_summawy_item.genewicsummawyactionmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.genewic_summawy_item.genewicsummawycontextmawshawwew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.genewic_summawy_item.genewicsummawydispwaytypemawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.genewic_summawy_item.genewicsummawyitemmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.highwight.highwightedsectionmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.icon_wabew.iconwabewitemmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.wabew.wabewdispwaytypemawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.wabew.wabewitemmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.message._
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.moment.momentannotationitemmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.pwompt._
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.suggestion.spewwingactiontypemawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.suggestion.spewwingitemmawshawwew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.suggestion.textwesuwtmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.thwead.thweadheadewcontentmawshawwew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.thwead.thweadheadewitemmawshawwew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tiwe.cawwtoactiontiwecontentmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tiwe.standawdtiwecontentmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tiwe.tiwecontentmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tiwe.tiweitemmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tombstone.tombstonedispwaytypemawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tombstone.tombstoneinfomawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tombstone.tombstoneitemmawshawwew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.topic.topicdispwaytypemawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.topic.topicfowwowpwomptdispwaytypemawshawwew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.topic.topicfowwowpwomptitemmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.topic.topicfunctionawitytypemawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.topic.topicitemmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.twend.twenditemmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tweet.timewinesscoweinfomawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tweet.tweetdispwaytypemawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tweet.tweethighwightsmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tweet.tweetitemmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tweet_composew.tweetcomposewdispwaytypemawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tweet_composew.tweetcomposewitemmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.twittew_wist.twittewwistdispwaytypemawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.twittew_wist.twittewwistitemmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.usew.usewdispwaytypemawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.usew.usewitemmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.usew.usewweactivetwiggewsmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.vewticaw_gwid_item.vewticawgwiditemcontentmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.vewticaw_gwid_item.vewticawgwiditemmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.vewticaw_gwid_item.vewticawgwiditemtiwestywemawshawwew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.vewticaw_gwid_item.vewticawgwiditemtopicfunctionawitytypemawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.vewticaw_gwid_item.vewticawgwiditemtopictiwemawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.media.aspectwatiomawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.media.bwoadcastidmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.media.mediaentitymawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.media.mediakeymawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.media.mediamawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.media.wectmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.media.tweetmediamawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata._
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.opewation.cuwsowdispwaytweatmentmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.opewation.cuwsowitemmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.opewation.cuwsowopewationmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.opewation.cuwsowtypemawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted.admetadatacontainewmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted.cawwtoactionmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted.cwicktwackinginfomawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted.discwaimewtypemawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted.discwosuwetypemawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted.dynamicpwewowwtypemawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted.mediainfomawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted.pwewowwmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted.pwewowwmetadatamawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted.pwomotedmetadatamawshawwew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted.skadnetwowkdatamawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted.sponsowshiptypemawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted.uwwuvwwidetypemawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted.videovawiantsmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.weaction.timewineweactionmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.wichtext.wefewenceobjectmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.wichtext.wichtextawignmentmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.wichtext.wichtextentitymawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.wichtext.wichtextfowmatmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.wichtext.wichtextmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.timewine_moduwe._
 
 /**
- * Convenience constructor for services not using dependency injection and unit tests. If using
- * dependency injection, instead `@Inject` an instance of [[UrtTransportMarshaller]] to construct.
+ * convenience c-constwuctow f-fow sewvices n-nyot using dependency injection a-and unit tests. (U ᵕ U❁) i-if using
+ * dependency injection, (///ˬ///✿) i-instead `@inject` an instance of [[uwttwanspowtmawshawwew]] to constwuct. (✿oωo)
  */
-object UrtTransportMarshallerBuilder {
-  val conversationSectionMarshaller = new ConversationSectionMarshaller
-  val conversationDetailsMarshaller = new ConversationDetailsMarshaller(
-    conversationSectionMarshaller)
-  val timelinesDetailsMarshaller = new TimelinesDetailsMarshaller
-  val articleDetailsMarshaller = new ArticleDetailsMarshaller
-  val liveEventDetailsMarshaller = new LiveEventDetailsMarshaller
-  val commerceDetailsMarshaller = new CommerceDetailsMarshaller
-  val clientEventDetailsMarshaller =
-    new ClientEventDetailsMarshaller(
-      conversationDetailsMarshaller,
-      timelinesDetailsMarshaller,
-      articleDetailsMarshaller,
-      liveEventDetailsMarshaller,
-      commerceDetailsMarshaller)
-  val clientEventInfoMarshaller = new ClientEventInfoMarshaller(clientEventDetailsMarshaller)
+object uwttwanspowtmawshawwewbuiwdew {
+  v-vaw convewsationsectionmawshawwew = n-nyew convewsationsectionmawshawwew
+  vaw convewsationdetaiwsmawshawwew = n-nyew convewsationdetaiwsmawshawwew(
+    convewsationsectionmawshawwew)
+  v-vaw timewinesdetaiwsmawshawwew = nyew timewinesdetaiwsmawshawwew
+  vaw awticwedetaiwsmawshawwew = nyew awticwedetaiwsmawshawwew
+  v-vaw wiveeventdetaiwsmawshawwew = nyew wiveeventdetaiwsmawshawwew
+  vaw commewcedetaiwsmawshawwew = new commewcedetaiwsmawshawwew
+  vaw cwienteventdetaiwsmawshawwew =
+    n-nyew cwienteventdetaiwsmawshawwew(
+      convewsationdetaiwsmawshawwew, 😳😳😳
+      t-timewinesdetaiwsmawshawwew, (✿oωo)
+      a-awticwedetaiwsmawshawwew,
+      wiveeventdetaiwsmawshawwew, (U ﹏ U)
+      commewcedetaiwsmawshawwew)
+  vaw cwienteventinfomawshawwew = n-nyew c-cwienteventinfomawshawwew(cwienteventdetaiwsmawshawwew)
 
-  val feedbackTypeMarshaller = new FeedbackTypeMarshaller
-  val confirmationDisplayTypeMarshaller = new ConfirmationDisplayTypeMarshaller
-  val horizonIconMarshaller = new HorizonIconMarshaller
-  val richFeedbackBehaviorMarshaller = new RichFeedbackBehaviorMarshaller
-  val childFeedbackActionMarshaller = new ChildFeedbackActionMarshaller(
-    feedbackTypeMarshaller = feedbackTypeMarshaller,
-    confirmationDisplayTypeMarshaller = confirmationDisplayTypeMarshaller,
-    clientEventInfoMarshaller = clientEventInfoMarshaller,
-    horizonIconMarshaller = horizonIconMarshaller,
-    richFeedbackBehaviorMarshaller = richFeedbackBehaviorMarshaller
+  vaw feedbacktypemawshawwew = nyew feedbacktypemawshawwew
+  vaw confiwmationdispwaytypemawshawwew = n-nyew confiwmationdispwaytypemawshawwew
+  v-vaw howizoniconmawshawwew = nyew howizoniconmawshawwew
+  vaw wichfeedbackbehaviowmawshawwew = nyew wichfeedbackbehaviowmawshawwew
+  v-vaw chiwdfeedbackactionmawshawwew = nyew chiwdfeedbackactionmawshawwew(
+    f-feedbacktypemawshawwew = f-feedbacktypemawshawwew,
+    confiwmationdispwaytypemawshawwew = c-confiwmationdispwaytypemawshawwew, (˘ω˘)
+    cwienteventinfomawshawwew = c-cwienteventinfomawshawwew, 😳😳😳
+    h-howizoniconmawshawwew = h-howizoniconmawshawwew, (///ˬ///✿)
+    wichfeedbackbehaviowmawshawwew = w-wichfeedbackbehaviowmawshawwew
   )
-  val feedbackActionMarshaller = new FeedbackActionMarshaller(
-    childFeedbackActionMarshaller = childFeedbackActionMarshaller,
-    feedbackTypeMarshaller = feedbackTypeMarshaller,
-    confirmationDisplayTypeMarshaller = confirmationDisplayTypeMarshaller,
-    clientEventInfoMarshaller = clientEventInfoMarshaller,
-    horizonIconMarshaller = horizonIconMarshaller,
-    richFeedbackBehaviorMarshaller = richFeedbackBehaviorMarshaller
+  v-vaw feedbackactionmawshawwew = nyew feedbackactionmawshawwew(
+    chiwdfeedbackactionmawshawwew = c-chiwdfeedbackactionmawshawwew, (U ᵕ U❁)
+    f-feedbacktypemawshawwew = f-feedbacktypemawshawwew, >_<
+    confiwmationdispwaytypemawshawwew = confiwmationdispwaytypemawshawwew, (///ˬ///✿)
+    c-cwienteventinfomawshawwew = cwienteventinfomawshawwew, (U ᵕ U❁)
+    h-howizoniconmawshawwew = h-howizoniconmawshawwew, >w<
+    wichfeedbackbehaviowmawshawwew = wichfeedbackbehaviowmawshawwew
   )
-  val feedbackDisplayContextMarshaller = new FeedbackDisplayContextMarshaller
-  val feedbackInfoMarshaller = new FeedbackInfoMarshaller(
-    feedbackActionMarshaller = feedbackActionMarshaller,
-    feedbackDisplayContextMarshaller = feedbackDisplayContextMarshaller,
-    clientEventInfoMarshaller = clientEventInfoMarshaller
-  )
-
-  val urlTypeMarshaller = new UrlTypeMarshaller
-  val urtEndpointOptionsMarshaller = new UrtEndpointOptionsMarshaller
-  val urlMarshaller = new UrlMarshaller(
-    urlTypeMarshaller = urlTypeMarshaller,
-    urtEndpointOptionsMarshaller = urtEndpointOptionsMarshaller
-  )
-  val referenceObjectMarshaller = new ReferenceObjectMarshaller(urlMarshaller)
-  val richTextFormatMarshaller = new RichTextFormatMarshaller
-  val richTextEntityMarshaller =
-    new RichTextEntityMarshaller(referenceObjectMarshaller, richTextFormatMarshaller)
-  val richTextAlignmentMarshaller = new RichTextAlignmentMarshaller
-  val richTextMarshaller =
-    new RichTextMarshaller(richTextEntityMarshaller, richTextAlignmentMarshaller)
-
-  val tombstoneInfoMarshaller = new TombstoneInfoMarshaller(richTextMarshaller = richTextMarshaller)
-
-  val generalContextTypeMarshaller = new GeneralContextTypeMarshaller
-  val generalContextMarshaller = new GeneralContextMarshaller(
-    generalContextTypeMarshaller = generalContextTypeMarshaller,
-    urlMarshaller = urlMarshaller
+  vaw feedbackdispwaycontextmawshawwew = nyew f-feedbackdispwaycontextmawshawwew
+  v-vaw feedbackinfomawshawwew = n-nyew feedbackinfomawshawwew(
+    f-feedbackactionmawshawwew = feedbackactionmawshawwew, 😳😳😳
+    f-feedbackdispwaycontextmawshawwew = feedbackdispwaycontextmawshawwew, (ˆ ﻌ ˆ)♡
+    cwienteventinfomawshawwew = cwienteventinfomawshawwew
   )
 
-  val timelineReactionMarshaller = new TimelineReactionMarshaller
-
-  val topicContextMarshaller = new TopicContextMarshaller()
-
-  val socialContextMarshaller = new SocialContextMarshaller(
-    generalContextMarshaller = generalContextMarshaller,
-    topicContextMarshaller = topicContextMarshaller
+  vaw uwwtypemawshawwew = nyew uwwtypemawshawwew
+  vaw uwtendpointoptionsmawshawwew = n-nyew uwtendpointoptionsmawshawwew
+  vaw uwwmawshawwew = n-nyew uwwmawshawwew(
+    u-uwwtypemawshawwew = uwwtypemawshawwew, (ꈍᴗꈍ)
+    uwtendpointoptionsmawshawwew = u-uwtendpointoptionsmawshawwew
   )
+  vaw wefewenceobjectmawshawwew = n-nyew wefewenceobjectmawshawwew(uwwmawshawwew)
+  v-vaw wichtextfowmatmawshawwew = n-nyew wichtextfowmatmawshawwew
+  v-vaw wichtextentitymawshawwew =
+    n-nyew wichtextentitymawshawwew(wefewenceobjectmawshawwew, 🥺 wichtextfowmatmawshawwew)
+  vaw wichtextawignmentmawshawwew = nyew wichtextawignmentmawshawwew
+  vaw wichtextmawshawwew =
+    nyew wichtextmawshawwew(wichtextentitymawshawwew, >_< w-wichtextawignmentmawshawwew)
 
-  val highlightedSectionMarshaller = new HighlightedSectionMarshaller()
-  val tweetHighlightsMarshaller = new TweetHighlightsMarshaller(highlightedSectionMarshaller)
+  v-vaw t-tombstoneinfomawshawwew = nyew tombstoneinfomawshawwew(wichtextmawshawwew = w-wichtextmawshawwew)
 
-  val topicDisplayTypeMarshaller = new TopicDisplayTypeMarshaller
-  val topicFunctionalityTypeMarshaller = new TopicFunctionalityTypeMarshaller
-  val topicItemMarshaller = new TopicItemMarshaller(
-    displayTypeMarshaller = topicDisplayTypeMarshaller,
-    functionalityTypeMarshaller = topicFunctionalityTypeMarshaller
-  )
-
-  val topicFollowPromptDisplayTypeMarshaller = new TopicFollowPromptDisplayTypeMarshaller
-  val topicFollowPromptItemMarshaller = new TopicFollowPromptItemMarshaller(
-    displayTypeMarshaller = topicFollowPromptDisplayTypeMarshaller
+  vaw genewawcontexttypemawshawwew = nyew genewawcontexttypemawshawwew
+  vaw genewawcontextmawshawwew = n-new genewawcontextmawshawwew(
+    g-genewawcontexttypemawshawwew = genewawcontexttypemawshawwew,
+    u-uwwmawshawwew = uwwmawshawwew
   )
 
-  val rosettaColorMarshaller = new RosettaColorMarshaller()
-  val badgeMarshaller = new BadgeMarshaller(
-    rosettaColorMarshaller = rosettaColorMarshaller
-  )
-  val iconCtaButtonMarshaller = new IconCtaButtonMarshaller(horizonIconMarshaller, urlMarshaller)
-  val textCtaButtonMarshaller = new TextCtaButtonMarshaller(urlMarshaller)
-  val ctaButtonMarshaller =
-    new CtaButtonMarshaller(iconCtaButtonMarshaller, textCtaButtonMarshaller)
+  vaw timewineweactionmawshawwew = n-nyew timewineweactionmawshawwew
 
-  val standardTileContentMarshaller = new StandardTileContentMarshaller(
-    badgeMarshaller = badgeMarshaller
-  )
-  val callToActionTileContentMarshaller = new CallToActionTileContentMarshaller(
-    ctaButtonMarshaller = ctaButtonMarshaller,
-    richTextMarshaller = richTextMarshaller
+  v-vaw topiccontextmawshawwew = nyew topiccontextmawshawwew()
+
+  v-vaw sociawcontextmawshawwew = n-nyew sociawcontextmawshawwew(
+    genewawcontextmawshawwew = genewawcontextmawshawwew, OwO
+    topiccontextmawshawwew = topiccontextmawshawwew
   )
 
-  val tileContentMarshaller = new TileContentMarshaller(
-    standardTileContentMarshaller = standardTileContentMarshaller,
-    callToActionTileContentMarshaller = callToActionTileContentMarshaller
-  )
-  val colorMarshaller = new ColorMarshaller()
-  val colorPaletteMarshaller = new ColorPaletteMarshaller(
-    colorMarshaller = colorMarshaller
-  )
-  val imageVariantMarshaller = new ImageVariantMarshaller(
-    colorPaletteMarshaller = colorPaletteMarshaller
-  )
-  val imageDisplayTypeMarshaller = new ImageDisplayTypeMarshaller()
-  val imageAnimationTypeMarshaller = new ImageAnimationTypeMarshaller()
+  v-vaw highwightedsectionmawshawwew = n-nyew highwightedsectionmawshawwew()
+  v-vaw t-tweethighwightsmawshawwew = n-nyew tweethighwightsmawshawwew(highwightedsectionmawshawwew)
 
-  val softInterventionDisplayTypeMarshaller = new SoftInterventionDisplayTypeMarshaller
-  val forwardPivotDisplayTypeMarshaller = new ForwardPivotDisplayTypeMarshaller
-  val forwardPivotMarshaller = new ForwardPivotMarshaller(
-    urlMarshaller = urlMarshaller,
-    richTextMarshaller = richTextMarshaller,
-    forwardPivotDisplayTypeMarshaller = forwardPivotDisplayTypeMarshaller,
-    imageVariantMarshaller = imageVariantMarshaller,
-    badgeMarshaller = badgeMarshaller,
-    rosettaColorMarshaller = rosettaColorMarshaller,
-    softInterventionDisplayTypeMarshaller = softInterventionDisplayTypeMarshaller
+  v-vaw t-topicdispwaytypemawshawwew = nyew t-topicdispwaytypemawshawwew
+  vaw t-topicfunctionawitytypemawshawwew = nyew topicfunctionawitytypemawshawwew
+  v-vaw topicitemmawshawwew = nyew topicitemmawshawwew(
+    d-dispwaytypemawshawwew = topicdispwaytypemawshawwew, ^^;;
+    f-functionawitytypemawshawwew = t-topicfunctionawitytypemawshawwew
   )
 
-  val tweetDisplayTypeMarshaller = new TweetDisplayTypeMarshaller
-  val timelinesScoreInfoMarshaller = new TimelinesScoreInfoMarshaller
-  val disclosureTypeMarshaller = new DisclosureTypeMarshaller
-  val dynamicPrerollTypeMarshaller = new DynamicPrerollTypeMarshaller
-  val callToActionMarshaller = new CallToActionMarshaller
-  val videoVariantsMarshaller = new VideoVariantsMarshaller
-  val mediaInfoMarshaller = new MediaInfoMarshaller(
-    callToActionMarshaller = callToActionMarshaller,
-    videoVariantsMarshaller = videoVariantsMarshaller
-  )
-  val prerollMarshaller = new PrerollMarshaller(
-    dynamicPrerollTypeMarshaller = dynamicPrerollTypeMarshaller,
-    mediaInfoMarshaller = mediaInfoMarshaller
-  )
-  val sponsorshipTypeMarshaller = new SponsorshipTypeMarshaller
-  val disclaimerTypeMarshaller = new DisclaimerTypeMarshaller
-  val skAdNetworkDataMarshaller = new SkAdNetworkDataMarshaller
-  val adMetadataContainerMarshaller = new AdMetadataContainerMarshaller(
-    sponsorshipTypeMarshaller = sponsorshipTypeMarshaller,
-    disclaimerTypeMarshaller = disclaimerTypeMarshaller,
-    skAdNetworkDataMarshaller = skAdNetworkDataMarshaller
-  )
-  val urlOverrideTypeMarshaller = new UrlOverrideTypeMarshaller
-  val clickTrackingInfoMarshaller = new ClickTrackingInfoMarshaller(
-    urlOverrideTypeMarshaller = urlOverrideTypeMarshaller
-  )
-  val promotedMetadataMarshaller = new PromotedMetadataMarshaller(
-    disclosureTypeMarshaller = disclosureTypeMarshaller,
-    adMetadataContainerMarshaller = adMetadataContainerMarshaller,
-    clickTrackingInfoMarshaller = clickTrackingInfoMarshaller
+  vaw topicfowwowpwomptdispwaytypemawshawwew = n-new topicfowwowpwomptdispwaytypemawshawwew
+  vaw topicfowwowpwomptitemmawshawwew = n-nyew topicfowwowpwomptitemmawshawwew(
+    d-dispwaytypemawshawwew = t-topicfowwowpwomptdispwaytypemawshawwew
   )
 
-  val conversationAnnotationTypeMarshaller = new ConversationAnnotationTypeMarshaller
-  val conversationAnnotationMarshaller = new ConversationAnnotationMarshaller(
-    conversationAnnotationTypeMarshaller = conversationAnnotationTypeMarshaller,
-    richTextMarshaller = richTextMarshaller
+  vaw wosettacowowmawshawwew = nyew wosettacowowmawshawwew()
+  vaw badgemawshawwew = n-nyew badgemawshawwew(
+    wosettacowowmawshawwew = wosettacowowmawshawwew
+  )
+  v-vaw iconctabuttonmawshawwew = n-nyew iconctabuttonmawshawwew(howizoniconmawshawwew, (✿oωo) uwwmawshawwew)
+  v-vaw textctabuttonmawshawwew = nyew textctabuttonmawshawwew(uwwmawshawwew)
+  v-vaw ctabuttonmawshawwew =
+    n-nyew ctabuttonmawshawwew(iconctabuttonmawshawwew, UwU textctabuttonmawshawwew)
+
+  vaw standawdtiwecontentmawshawwew = n-nyew standawdtiwecontentmawshawwew(
+    badgemawshawwew = badgemawshawwew
+  )
+  v-vaw cawwtoactiontiwecontentmawshawwew = n-nyew cawwtoactiontiwecontentmawshawwew(
+    c-ctabuttonmawshawwew = ctabuttonmawshawwew, ( ͡o ω ͡o )
+    w-wichtextmawshawwew = w-wichtextmawshawwew
   )
 
-  val safetyLevelMarshaller = new SafetyLevelMarshaller
-  val outerTweetContextMarshaller = new OuterTweetContextMarshaller
-  val tweetHydrationContextMarshaller = new TweetHydrationContextMarshaller(
-    safetyLevelMarshaller = safetyLevelMarshaller,
-    outerTweetContextMarshaller = outerTweetContextMarshaller
+  v-vaw tiwecontentmawshawwew = nyew tiwecontentmawshawwew(
+    standawdtiwecontentmawshawwew = standawdtiwecontentmawshawwew, (✿oωo)
+    cawwtoactiontiwecontentmawshawwew = cawwtoactiontiwecontentmawshawwew
   )
-  val contextualTweetRefMarshaller = new ContextualTweetRefMarshaller(
-    tweetHydrationContextMarshaller = tweetHydrationContextMarshaller
+  vaw cowowmawshawwew = nyew cowowmawshawwew()
+  vaw cowowpawettemawshawwew = nyew cowowpawettemawshawwew(
+    cowowmawshawwew = cowowmawshawwew
   )
-  val prerollMetadataMarshaller = new PrerollMetadataMarshaller(
-    prerollMarshaller = prerollMarshaller
+  vaw imagevawiantmawshawwew = n-nyew imagevawiantmawshawwew(
+    c-cowowpawettemawshawwew = cowowpawettemawshawwew
+  )
+  vaw imagedispwaytypemawshawwew = n-new i-imagedispwaytypemawshawwew()
+  v-vaw imageanimationtypemawshawwew = nyew imageanimationtypemawshawwew()
+
+  v-vaw softintewventiondispwaytypemawshawwew = nyew softintewventiondispwaytypemawshawwew
+  v-vaw fowwawdpivotdispwaytypemawshawwew = n-nyew fowwawdpivotdispwaytypemawshawwew
+  v-vaw fowwawdpivotmawshawwew = nyew fowwawdpivotmawshawwew(
+    u-uwwmawshawwew = u-uwwmawshawwew, mya
+    wichtextmawshawwew = wichtextmawshawwew, ( ͡o ω ͡o )
+    f-fowwawdpivotdispwaytypemawshawwew = f-fowwawdpivotdispwaytypemawshawwew, :3
+    i-imagevawiantmawshawwew = i-imagevawiantmawshawwew, 😳
+    b-badgemawshawwew = b-badgemawshawwew, (U ﹏ U)
+    w-wosettacowowmawshawwew = w-wosettacowowmawshawwew, >w<
+    s-softintewventiondispwaytypemawshawwew = softintewventiondispwaytypemawshawwew
   )
 
-  val rectMarshaller = new RectMarshaller
-  val mediaKeyMarshaller = new MediaKeyMarshaller
-  val broadcastIdMarshaller = new BroadcastIdMarshaller
-  val tweetMediaMarshaller = new TweetMediaMarshaller
-  val mediaEntityMarshaller = new MediaEntityMarshaller(
-    tweetMediaMarshaller = tweetMediaMarshaller,
-    broadcastIdMarshaller = broadcastIdMarshaller,
-    imageVariantMarshaller = imageVariantMarshaller)
-  val aspectRatioMarshaller = new AspectRatioMarshaller
-  val mediaMarshaller = new MediaMarshaller(
-    mediaEntityMarshaller = mediaEntityMarshaller,
-    mediaKeyMarshaller = mediaKeyMarshaller,
-    rectMarshaller = rectMarshaller,
-    aspectRatioMarshaller = aspectRatioMarshaller)
-
-  val tweetItemMarshaller = new TweetItemMarshaller(
-    tweetDisplayTypeMarshaller = tweetDisplayTypeMarshaller,
-    socialContextMarshaller = socialContextMarshaller,
-    tweetHighlightsMarshaller = tweetHighlightsMarshaller,
-    tombstoneInfoMarshaller = tombstoneInfoMarshaller,
-    timelinesScoreInfoMarshaller = timelinesScoreInfoMarshaller,
-    forwardPivotMarshaller = forwardPivotMarshaller,
-    promotedMetadataMarshaller = promotedMetadataMarshaller,
-    conversationAnnotationMarshaller = conversationAnnotationMarshaller,
-    contextualTweetRefMarshaller = contextualTweetRefMarshaller,
-    prerollMetadataMarshaller = prerollMetadataMarshaller,
-    badgeMarshaller = badgeMarshaller,
-    urlMarshaller = urlMarshaller
+  v-vaw tweetdispwaytypemawshawwew = n-nyew tweetdispwaytypemawshawwew
+  v-vaw timewinesscoweinfomawshawwew = nyew timewinesscoweinfomawshawwew
+  v-vaw discwosuwetypemawshawwew = nyew d-discwosuwetypemawshawwew
+  vaw d-dynamicpwewowwtypemawshawwew = nyew d-dynamicpwewowwtypemawshawwew
+  v-vaw cawwtoactionmawshawwew = nyew cawwtoactionmawshawwew
+  v-vaw videovawiantsmawshawwew = n-nyew videovawiantsmawshawwew
+  v-vaw mediainfomawshawwew = nyew mediainfomawshawwew(
+    c-cawwtoactionmawshawwew = cawwtoactionmawshawwew, UwU
+    videovawiantsmawshawwew = videovawiantsmawshawwew
+  )
+  vaw pwewowwmawshawwew = n-new pwewowwmawshawwew(
+    dynamicpwewowwtypemawshawwew = d-dynamicpwewowwtypemawshawwew, 😳
+    m-mediainfomawshawwew = mediainfomawshawwew
+  )
+  vaw sponsowshiptypemawshawwew = nyew sponsowshiptypemawshawwew
+  v-vaw discwaimewtypemawshawwew = nyew discwaimewtypemawshawwew
+  v-vaw skadnetwowkdatamawshawwew = n-nyew skadnetwowkdatamawshawwew
+  v-vaw admetadatacontainewmawshawwew = nyew admetadatacontainewmawshawwew(
+    sponsowshiptypemawshawwew = s-sponsowshiptypemawshawwew, XD
+    d-discwaimewtypemawshawwew = discwaimewtypemawshawwew, (✿oωo)
+    s-skadnetwowkdatamawshawwew = skadnetwowkdatamawshawwew
+  )
+  vaw uwwuvwwidetypemawshawwew = n-nyew uwwuvwwidetypemawshawwew
+  vaw cwicktwackinginfomawshawwew = n-nyew cwicktwackinginfomawshawwew(
+    u-uwwuvwwidetypemawshawwew = u-uwwuvwwidetypemawshawwew
+  )
+  vaw pwomotedmetadatamawshawwew = n-nyew pwomotedmetadatamawshawwew(
+    d-discwosuwetypemawshawwew = d-discwosuwetypemawshawwew, ^•ﻌ•^
+    a-admetadatacontainewmawshawwew = admetadatacontainewmawshawwew, mya
+    c-cwicktwackinginfomawshawwew = c-cwicktwackinginfomawshawwew
   )
 
-  val eventSummaryDisplayTypeMarshaller = new EventSummaryDisplayTypeMarshaller
-  val eventSummaryItemMarshaller = new EventSummaryItemMarshaller(
-    eventSummaryDisplayTypeMarshaller = eventSummaryDisplayTypeMarshaller,
-    imageVariantMarshaller = imageVariantMarshaller,
-    urlMarshaller = urlMarshaller
+  v-vaw convewsationannotationtypemawshawwew = n-nyew convewsationannotationtypemawshawwew
+  v-vaw c-convewsationannotationmawshawwew = n-nyew convewsationannotationmawshawwew(
+    c-convewsationannotationtypemawshawwew = convewsationannotationtypemawshawwew, (˘ω˘)
+    wichtextmawshawwew = w-wichtextmawshawwew
   )
 
-  val trendItemMarshaller = new TrendItemMarshaller(
-    promotedMetadataMarshaller = promotedMetadataMarshaller,
-    urlMarshaller = urlMarshaller
+  vaw s-safetywevewmawshawwew = nyew safetywevewmawshawwew
+  v-vaw outewtweetcontextmawshawwew = n-nyew outewtweetcontextmawshawwew
+  v-vaw tweethydwationcontextmawshawwew = nyew tweethydwationcontextmawshawwew(
+    safetywevewmawshawwew = s-safetywevewmawshawwew, nyaa~~
+    outewtweetcontextmawshawwew = o-outewtweetcontextmawshawwew
+  )
+  vaw c-contextuawtweetwefmawshawwew = nyew contextuawtweetwefmawshawwew(
+    tweethydwationcontextmawshawwew = tweethydwationcontextmawshawwew
+  )
+  v-vaw pwewowwmetadatamawshawwew = n-nyew pwewowwmetadatamawshawwew(
+    pwewowwmawshawwew = p-pwewowwmawshawwew
   )
 
-  val userDisplayTypeMarshaller = new UserDisplayTypeMarshaller
-  val userReactiveTriggersMarshaller = new UserReactiveTriggersMarshaller(
-    timelineReactionMarshaller)
-  val userItemMarshaller = new UserItemMarshaller(
-    userDisplayTypeMarshaller = userDisplayTypeMarshaller,
-    promotedMetadataMarshaller = promotedMetadataMarshaller,
-    socialContextMarshaller = socialContextMarshaller,
-    userReactiveTriggersMarshaller = userReactiveTriggersMarshaller,
+  v-vaw wectmawshawwew = nyew wectmawshawwew
+  vaw mediakeymawshawwew = n-nyew mediakeymawshawwew
+  v-vaw bwoadcastidmawshawwew = n-nyew b-bwoadcastidmawshawwew
+  vaw tweetmediamawshawwew = nyew tweetmediamawshawwew
+  v-vaw mediaentitymawshawwew = n-nyew mediaentitymawshawwew(
+    tweetmediamawshawwew = t-tweetmediamawshawwew, :3
+    bwoadcastidmawshawwew = bwoadcastidmawshawwew, (✿oωo)
+    i-imagevawiantmawshawwew = imagevawiantmawshawwew)
+  v-vaw aspectwatiomawshawwew = nyew a-aspectwatiomawshawwew
+  vaw m-mediamawshawwew = n-nyew mediamawshawwew(
+    mediaentitymawshawwew = m-mediaentitymawshawwew, (U ﹏ U)
+    mediakeymawshawwew = mediakeymawshawwew, (ꈍᴗꈍ)
+    w-wectmawshawwew = w-wectmawshawwew, (˘ω˘)
+    a-aspectwatiomawshawwew = a-aspectwatiomawshawwew)
+
+  vaw tweetitemmawshawwew = n-new t-tweetitemmawshawwew(
+    t-tweetdispwaytypemawshawwew = tweetdispwaytypemawshawwew, ^^
+    s-sociawcontextmawshawwew = sociawcontextmawshawwew, (⑅˘꒳˘)
+    tweethighwightsmawshawwew = t-tweethighwightsmawshawwew, rawr
+    t-tombstoneinfomawshawwew = t-tombstoneinfomawshawwew, :3
+    timewinesscoweinfomawshawwew = timewinesscoweinfomawshawwew, OwO
+    fowwawdpivotmawshawwew = fowwawdpivotmawshawwew, (ˆ ﻌ ˆ)♡
+    pwomotedmetadatamawshawwew = p-pwomotedmetadatamawshawwew, :3
+    convewsationannotationmawshawwew = c-convewsationannotationmawshawwew, -.-
+    c-contextuawtweetwefmawshawwew = contextuawtweetwefmawshawwew, -.-
+    pwewowwmetadatamawshawwew = p-pwewowwmetadatamawshawwew, òωó
+    badgemawshawwew = b-badgemawshawwew, 😳
+    uwwmawshawwew = uwwmawshawwew
   )
 
-  val verticalGridItemTileStyleMarshaller = new VerticalGridItemTileStyleMarshaller
-  val verticalGridItemTopicFunctionalityTypeMarshaller =
-    new VerticalGridItemTopicFunctionalityTypeMarshaller
-
-  val verticalGridItemTopicTileMarshaller = new VerticalGridItemTopicTileMarshaller(
-    styleMarshaller = verticalGridItemTileStyleMarshaller,
-    functionalityTypeMarshaller = verticalGridItemTopicFunctionalityTypeMarshaller,
-    urlMarshaller = urlMarshaller
+  v-vaw eventsummawydispwaytypemawshawwew = n-nyew e-eventsummawydispwaytypemawshawwew
+  v-vaw eventsummawyitemmawshawwew = nyew eventsummawyitemmawshawwew(
+    eventsummawydispwaytypemawshawwew = eventsummawydispwaytypemawshawwew, nyaa~~
+    imagevawiantmawshawwew = imagevawiantmawshawwew, (⑅˘꒳˘)
+    uwwmawshawwew = u-uwwmawshawwew
   )
 
-  val verticalGridItemContentMarshaller = new VerticalGridItemContentMarshaller(
-    verticalGridItemTopicTileMarshaller)
-
-  val verticalGridItemMarshaller = new VerticalGridItemMarshaller(verticalGridItemContentMarshaller)
-
-  val tombstoneDisplayTypeMarshaller = new TombstoneDisplayTypeMarshaller
-  val tombstoneItemMarshaller = new TombstoneItemMarshaller(
-    displayTypeMarshaller = tombstoneDisplayTypeMarshaller,
-    tombstoneInfoMarshaller = tombstoneInfoMarshaller,
-    tweetItemMarshaller = tweetItemMarshaller)
-
-  val iconLabelItemMarshaller = new IconLabelItemMarshaller(
-    richTextMarshaller,
-    horizonIconMarshaller
+  vaw twenditemmawshawwew = n-nyew twenditemmawshawwew(
+    pwomotedmetadatamawshawwew = pwomotedmetadatamawshawwew, 😳
+    uwwmawshawwew = u-uwwmawshawwew
   )
 
-  val labelDisplayTypeMarshaller = new LabelDisplayTypeMarshaller
-  val labelItemMarshaller = new LabelItemMarshaller(
-    displayTypeMarshaller = labelDisplayTypeMarshaller,
-    urlMarshaller = urlMarshaller
+  vaw usewdispwaytypemawshawwew = nyew usewdispwaytypemawshawwew
+  vaw usewweactivetwiggewsmawshawwew = nyew usewweactivetwiggewsmawshawwew(
+    t-timewineweactionmawshawwew)
+  v-vaw usewitemmawshawwew = nyew usewitemmawshawwew(
+    u-usewdispwaytypemawshawwew = usewdispwaytypemawshawwew, (U ﹏ U)
+    pwomotedmetadatamawshawwew = p-pwomotedmetadatamawshawwew, /(^•ω•^)
+    s-sociawcontextmawshawwew = sociawcontextmawshawwew, OwO
+    usewweactivetwiggewsmawshawwew = u-usewweactivetwiggewsmawshawwew, ( ͡o ω ͡o )
   )
 
-  val tileItemMarshaller = new TileItemMarshaller(
-    tileContentMarshaller = tileContentMarshaller,
-    urlMarshaller = urlMarshaller,
-    imageVariantMarshaller = imageVariantMarshaller
+  vaw vewticawgwiditemtiwestywemawshawwew = n-nyew vewticawgwiditemtiwestywemawshawwew
+  vaw vewticawgwiditemtopicfunctionawitytypemawshawwew =
+    new vewticawgwiditemtopicfunctionawitytypemawshawwew
+
+  v-vaw vewticawgwiditemtopictiwemawshawwew = nyew vewticawgwiditemtopictiwemawshawwew(
+    s-stywemawshawwew = v-vewticawgwiditemtiwestywemawshawwew, XD
+    functionawitytypemawshawwew = v-vewticawgwiditemtopicfunctionawitytypemawshawwew, /(^•ω•^)
+    uwwmawshawwew = uwwmawshawwew
   )
 
-  val callbackMarshaller = new CallbackMarshaller
-  val messageActionMarshaller = new MessageActionMarshaller(
-    callbackMarshaller,
-    clientEventInfoMarshaller
-  )
-  val messageTextActionMarshaller = new MessageTextActionMarshaller(messageActionMarshaller)
-  val messageImageMarshaller = new MessageImageMarshaller(
-    imageVariantMarshaller
-  )
-  val userFacepileDisplayTypeMarshaller = new UserFacepileDisplayTypeMarshaller()
-  val messageActionTypeMarshaller = new MessageActionTypeMarshaller()
-  val userFacepileMarshaller = new UserFacepileMarshaller(
-    messageActionTypeMarshaller,
-    messageTextActionMarshaller,
-    userFacepileDisplayTypeMarshaller
-  )
-  val inlinePromptMessageContentMarshaller = new InlinePromptMessageContentMarshaller(
-    messageTextActionMarshaller = messageTextActionMarshaller,
-    richTextMarshaller = richTextMarshaller,
-    socialContextMarshaller = socialContextMarshaller,
-    userFacepileMarshaller = userFacepileMarshaller
-  )
-  val headerImagePromptMessageContentMarshaller = new HeaderImagePromptMessageContentMarshaller(
-    messageImageMarshaller = messageImageMarshaller,
-    messageTextActionMarshaller = messageTextActionMarshaller,
-    messageActionMarshaller = messageActionMarshaller,
-    richTextMarshaller = richTextMarshaller
-  )
-  val compactPromptMessageContentMarshaller = new CompactPromptMessageContentMarshaller(
-    messageTextActionMarshaller = messageTextActionMarshaller,
-    messageActionMarshaller = messageActionMarshaller,
-    richTextMarshaller = richTextMarshaller
-  )
-  val messageContentMarshaller = new MessageContentMarshaller(
-    inlinePromptMessageContentMarshaller = inlinePromptMessageContentMarshaller,
-    headerImagePromptMessageContentMarshaller = headerImagePromptMessageContentMarshaller,
-    compactPromptMessageContentMarshaller = compactPromptMessageContentMarshaller
-  )
-  val messagePromptItemMarshaller = new MessagePromptItemMarshaller(
-    messageContentMarshaller = messageContentMarshaller,
-    callbackMarshaller = callbackMarshaller
+  v-vaw vewticawgwiditemcontentmawshawwew = nyew vewticawgwiditemcontentmawshawwew(
+    vewticawgwiditemtopictiwemawshawwew)
+
+  vaw vewticawgwiditemmawshawwew = nyew vewticawgwiditemmawshawwew(vewticawgwiditemcontentmawshawwew)
+
+  v-vaw tombstonedispwaytypemawshawwew = n-nyew tombstonedispwaytypemawshawwew
+  v-vaw tombstoneitemmawshawwew = n-nyew tombstoneitemmawshawwew(
+    dispwaytypemawshawwew = tombstonedispwaytypemawshawwew,
+    t-tombstoneinfomawshawwew = t-tombstoneinfomawshawwew, /(^•ω•^)
+    tweetitemmawshawwew = tweetitemmawshawwew)
+
+  vaw iconwabewitemmawshawwew = n-nyew iconwabewitemmawshawwew(
+    wichtextmawshawwew, 😳😳😳
+    howizoniconmawshawwew
   )
 
-  val tweetComposerDisplayTypeMarshaller = new TweetComposerDisplayTypeMarshaller
-  val tweetComposerItemMarshaller = new TweetComposerItemMarshaller(
-    tweetComposerDisplayTypeMarshaller = tweetComposerDisplayTypeMarshaller,
-    urlMarshaller = urlMarshaller
+  vaw w-wabewdispwaytypemawshawwew = nyew wabewdispwaytypemawshawwew
+  vaw w-wabewitemmawshawwew = n-nyew wabewitemmawshawwew(
+    dispwaytypemawshawwew = wabewdispwaytypemawshawwew, (ˆ ﻌ ˆ)♡
+    uwwmawshawwew = uwwmawshawwew
   )
 
-  val cursorTypeMarshaller = new CursorTypeMarshaller
-  val cursorDisplayTreatmentMarshaller = new CursorDisplayTreatmentMarshaller
-  val cursorItemMarshaller = new CursorItemMarshaller(
-    cursorTypeMarshaller = cursorTypeMarshaller,
-    cursorDisplayTreatmentMarshaller = cursorDisplayTreatmentMarshaller)
-  val articleDisplayTypeMarshaller = new ArticleDisplayTypeMarshaller
-  val articleSeedTypeMarshaller = new ArticleSeedTypeMarshaller
-  val articleItemMarshaller =
-    new ArticleItemMarshaller(
-      articleDisplayTypeMarshaller,
-      socialContextMarshaller,
-      articleSeedTypeMarshaller)
-  val audioSpaceItemMarshaller = new AudioSpaceItemMarshaller
-  val cardDisplayTypeMarshaller = new CardDisplayTypeMarshaller
-  val cardItemMarshaller = new CardItemMarshaller(
-    cardDisplayTypeMarshaller = cardDisplayTypeMarshaller,
-    urlMarshaller = urlMarshaller
+  v-vaw tiweitemmawshawwew = n-nyew t-tiweitemmawshawwew(
+    tiwecontentmawshawwew = tiwecontentmawshawwew, :3
+    u-uwwmawshawwew = uwwmawshawwew, òωó
+    imagevawiantmawshawwew = i-imagevawiantmawshawwew
   )
 
-  val twitterListDisplayTypeMarshaller = new TwitterListDisplayTypeMarshaller
-  val twitterListItemMarshaller = new TwitterListItemMarshaller(
-    twitterListDisplayTypeMarshaller = twitterListDisplayTypeMarshaller)
-
-  val threadHeaderItemMarshaller = new ThreadHeaderItemMarshaller(
-    threadHeaderContentMarshaller = new ThreadHeaderContentMarshaller
+  vaw cawwbackmawshawwew = nyew cawwbackmawshawwew
+  vaw messageactionmawshawwew = n-nyew messageactionmawshawwew(
+    c-cawwbackmawshawwew, 🥺
+    c-cwienteventinfomawshawwew
+  )
+  v-vaw messagetextactionmawshawwew = n-nyew messagetextactionmawshawwew(messageactionmawshawwew)
+  vaw messageimagemawshawwew = n-nyew messageimagemawshawwew(
+    imagevawiantmawshawwew
+  )
+  v-vaw usewfacepiwedispwaytypemawshawwew = nyew usewfacepiwedispwaytypemawshawwew()
+  v-vaw messageactiontypemawshawwew = nyew messageactiontypemawshawwew()
+  v-vaw usewfacepiwemawshawwew = n-nyew usewfacepiwemawshawwew(
+    messageactiontypemawshawwew, (U ﹏ U)
+    m-messagetextactionmawshawwew, XD
+    usewfacepiwedispwaytypemawshawwew
+  )
+  v-vaw i-inwinepwomptmessagecontentmawshawwew = nyew inwinepwomptmessagecontentmawshawwew(
+    m-messagetextactionmawshawwew = m-messagetextactionmawshawwew, ^^
+    wichtextmawshawwew = w-wichtextmawshawwew, o.O
+    sociawcontextmawshawwew = sociawcontextmawshawwew, 😳😳😳
+    usewfacepiwemawshawwew = u-usewfacepiwemawshawwew
+  )
+  vaw headewimagepwomptmessagecontentmawshawwew = n-nyew headewimagepwomptmessagecontentmawshawwew(
+    messageimagemawshawwew = messageimagemawshawwew, /(^•ω•^)
+    m-messagetextactionmawshawwew = m-messagetextactionmawshawwew, 😳😳😳
+    m-messageactionmawshawwew = messageactionmawshawwew, ^•ﻌ•^
+    wichtextmawshawwew = w-wichtextmawshawwew
+  )
+  v-vaw compactpwomptmessagecontentmawshawwew = n-nyew compactpwomptmessagecontentmawshawwew(
+    messagetextactionmawshawwew = m-messagetextactionmawshawwew, 🥺
+    messageactionmawshawwew = m-messageactionmawshawwew, o.O
+    wichtextmawshawwew = w-wichtextmawshawwew
+  )
+  vaw messagecontentmawshawwew = nyew messagecontentmawshawwew(
+    inwinepwomptmessagecontentmawshawwew = i-inwinepwomptmessagecontentmawshawwew, (U ᵕ U❁)
+    h-headewimagepwomptmessagecontentmawshawwew = headewimagepwomptmessagecontentmawshawwew, ^^
+    compactpwomptmessagecontentmawshawwew = compactpwomptmessagecontentmawshawwew
+  )
+  vaw m-messagepwomptitemmawshawwew = nyew messagepwomptitemmawshawwew(
+    m-messagecontentmawshawwew = m-messagecontentmawshawwew, (⑅˘꒳˘)
+    cawwbackmawshawwew = cawwbackmawshawwew
   )
 
-  val relevancePromptFollowUpTextInputMarshaller = new RelevancePromptFollowUpTextInputMarshaller(
-    callbackMarshaller = callbackMarshaller
+  vaw tweetcomposewdispwaytypemawshawwew = nyew tweetcomposewdispwaytypemawshawwew
+  v-vaw tweetcomposewitemmawshawwew = nyew tweetcomposewitemmawshawwew(
+    tweetcomposewdispwaytypemawshawwew = tweetcomposewdispwaytypemawshawwew, :3
+    u-uwwmawshawwew = uwwmawshawwew
   )
-  val relevancePromptFollowUpFeedbackTypeMarshaller =
-    new RelevancePromptFollowUpFeedbackTypeMarshaller(
-      relevancePromptFollowUpTextInputMarshaller = relevancePromptFollowUpTextInputMarshaller
+
+  v-vaw c-cuwsowtypemawshawwew = nyew cuwsowtypemawshawwew
+  v-vaw cuwsowdispwaytweatmentmawshawwew = n-nyew cuwsowdispwaytweatmentmawshawwew
+  v-vaw cuwsowitemmawshawwew = n-new c-cuwsowitemmawshawwew(
+    c-cuwsowtypemawshawwew = cuwsowtypemawshawwew, (///ˬ///✿)
+    cuwsowdispwaytweatmentmawshawwew = cuwsowdispwaytweatmentmawshawwew)
+  vaw awticwedispwaytypemawshawwew = nyew awticwedispwaytypemawshawwew
+  vaw awticweseedtypemawshawwew = n-nyew awticweseedtypemawshawwew
+  v-vaw awticweitemmawshawwew =
+    n-nyew a-awticweitemmawshawwew(
+      a-awticwedispwaytypemawshawwew, :3
+      s-sociawcontextmawshawwew, 🥺
+      awticweseedtypemawshawwew)
+  vaw audiospaceitemmawshawwew = nyew a-audiospaceitemmawshawwew
+  v-vaw cawddispwaytypemawshawwew = nyew cawddispwaytypemawshawwew
+  v-vaw c-cawditemmawshawwew = n-nyew cawditemmawshawwew(
+    cawddispwaytypemawshawwew = cawddispwaytypemawshawwew, mya
+    uwwmawshawwew = u-uwwmawshawwew
+  )
+
+  vaw twittewwistdispwaytypemawshawwew = nyew twittewwistdispwaytypemawshawwew
+  v-vaw twittewwistitemmawshawwew = n-nyew twittewwistitemmawshawwew(
+    twittewwistdispwaytypemawshawwew = twittewwistdispwaytypemawshawwew)
+
+  v-vaw thweadheadewitemmawshawwew = nyew t-thweadheadewitemmawshawwew(
+    t-thweadheadewcontentmawshawwew = nyew thweadheadewcontentmawshawwew
+  )
+
+  v-vaw w-wewevancepwomptfowwowuptextinputmawshawwew = nyew w-wewevancepwomptfowwowuptextinputmawshawwew(
+    c-cawwbackmawshawwew = c-cawwbackmawshawwew
+  )
+  v-vaw wewevancepwomptfowwowupfeedbacktypemawshawwew =
+    nyew wewevancepwomptfowwowupfeedbacktypemawshawwew(
+      w-wewevancepwomptfowwowuptextinputmawshawwew = w-wewevancepwomptfowwowuptextinputmawshawwew
     )
-  val relevancePromptDisplayTypeMarshaller = new RelevancePromptDisplayTypeMarshaller
-  val relevancePromptContentMarshaller = new RelevancePromptContentMarshaller(
-    callbackMarshaller = callbackMarshaller,
-    relevancePromptDisplayTypeMarshaller = relevancePromptDisplayTypeMarshaller,
-    relevancePromptFollowUpFeedbackTypeMarshaller = relevancePromptFollowUpFeedbackTypeMarshaller
+  vaw wewevancepwomptdispwaytypemawshawwew = nyew w-wewevancepwomptdispwaytypemawshawwew
+  vaw wewevancepwomptcontentmawshawwew = nyew wewevancepwomptcontentmawshawwew(
+    c-cawwbackmawshawwew = cawwbackmawshawwew, XD
+    w-wewevancepwomptdispwaytypemawshawwew = wewevancepwomptdispwaytypemawshawwew, -.-
+    w-wewevancepwomptfowwowupfeedbacktypemawshawwew = w-wewevancepwomptfowwowupfeedbacktypemawshawwew
   )
-  val promptContentMarshaller = new PromptContentMarshaller(
-    relevancePromptContentMarshaller = relevancePromptContentMarshaller
+  vaw pwomptcontentmawshawwew = nyew p-pwomptcontentmawshawwew(
+    wewevancepwomptcontentmawshawwew = wewevancepwomptcontentmawshawwew
   )
-  val promptItemMarshaller = new PromptItemMarshaller(
-    promptContentMarshaller = promptContentMarshaller,
-    clientEventInfoMarshaller = clientEventInfoMarshaller,
-    callbackMarshaller = callbackMarshaller
-  )
-
-  val textResultMarshaller = new TextResultMarshaller(highlightedSectionMarshaller)
-  val spellingActionTypeMarshaller = new SpellingActionTypeMarshaller()
-  val spellingItemMarshaller = new SpellingItemMarshaller(
-    textResultMarshaller = textResultMarshaller,
-    spellingActionTypeMarshaller = spellingActionTypeMarshaller)
-
-  val momentAnnotationItemMarshaller = new MomentAnnotationItemMarshaller(richTextMarshaller)
-
-  val genericSummaryDisplayTypeMarshaller = new GenericSummaryDisplayTypeMarshaller
-  val genericSummaryActionMarshaller = new GenericSummaryActionMarshaller(
-    urlMarshaller = urlMarshaller,
-    clientEventInfoMarshaller = clientEventInfoMarshaller)
-  val genericSummaryContextMarshaller = new GenericSummaryContextMarshaller(
-    richTextMarshaller = richTextMarshaller,
-    horizonIconMarshaller = horizonIconMarshaller
-  )
-  val genericSummaryItemMarshaller = new GenericSummaryItemMarshaller(
-    genericSummaryDisplayTypeMarshaller = genericSummaryDisplayTypeMarshaller,
-    genericSummaryContextMarshaller = genericSummaryContextMarshaller,
-    genericSummaryActionMarshaller = genericSummaryActionMarshaller,
-    mediaMarshaller = mediaMarshaller,
-    promotedMetadataMarshaller = promotedMetadataMarshaller,
-    richTextMarshaller = richTextMarshaller
+  vaw pwomptitemmawshawwew = n-nyew pwomptitemmawshawwew(
+    p-pwomptcontentmawshawwew = pwomptcontentmawshawwew, o.O
+    cwienteventinfomawshawwew = c-cwienteventinfomawshawwew, (˘ω˘)
+    c-cawwbackmawshawwew = cawwbackmawshawwew
   )
 
-  val commerceProductItemMarshaller = new CommerceProductItemMarshaller
-  val commerceProductGroupItemMarshaller = new CommerceProductGroupItemMarshaller
+  v-vaw textwesuwtmawshawwew = nyew textwesuwtmawshawwew(highwightedsectionmawshawwew)
+  vaw spewwingactiontypemawshawwew = n-nyew s-spewwingactiontypemawshawwew()
+  vaw spewwingitemmawshawwew = new s-spewwingitemmawshawwew(
+    textwesuwtmawshawwew = t-textwesuwtmawshawwew, (U ᵕ U❁)
+    spewwingactiontypemawshawwew = spewwingactiontypemawshawwew)
 
-  val timelineItemMarshaller = new TimelineItemMarshaller(
-    timelineItemContentMarshaller = new TimelineItemContentMarshaller(
-      articleItemMarshaller = articleItemMarshaller,
-      audioSpaceItemMarshaller = audioSpaceItemMarshaller,
-      cardItemMarshaller = cardItemMarshaller,
-      cursorItemMarshaller = cursorItemMarshaller,
-      eventSummaryItemMarshaller = eventSummaryItemMarshaller,
-      iconLabelItemMarshaller = iconLabelItemMarshaller,
-      labelItemMarshaller = labelItemMarshaller,
-      messagePromptItemMarshaller = messagePromptItemMarshaller,
-      tileItemMarshaller = tileItemMarshaller,
-      tombstoneItemMarshaller = tombstoneItemMarshaller,
-      topicFollowPromptItemMarshaller = topicFollowPromptItemMarshaller,
-      topicItemMarshaller = topicItemMarshaller,
-      tweetComposerItemMarshaller = tweetComposerItemMarshaller,
-      tweetItemMarshaller = tweetItemMarshaller,
-      twitterListItemMarshaller = twitterListItemMarshaller,
-      userItemMarshaller = userItemMarshaller,
-      verticalGridItemMarshaller = verticalGridItemMarshaller,
-      threadHeaderItemMarshaller = threadHeaderItemMarshaller,
-      promptItemMarshaller = promptItemMarshaller,
-      spellingItemMarshaller = spellingItemMarshaller,
-      momentAnnotationItemMarshaller = momentAnnotationItemMarshaller,
-      genericSummaryItemMarshaller = genericSummaryItemMarshaller,
-      commerceProductItemMarshaller = commerceProductItemMarshaller,
-      commerceProductGroupItemMarshaller = commerceProductGroupItemMarshaller,
-      trendItemMarshaller = trendItemMarshaller
-    ),
-    clientEventInfoMarshaller = clientEventInfoMarshaller,
-    feedbackInfoMarshaller = feedbackInfoMarshaller
+  vaw momentannotationitemmawshawwew = n-nyew momentannotationitemmawshawwew(wichtextmawshawwew)
+
+  v-vaw genewicsummawydispwaytypemawshawwew = n-nyew genewicsummawydispwaytypemawshawwew
+  v-vaw genewicsummawyactionmawshawwew = nyew genewicsummawyactionmawshawwew(
+    uwwmawshawwew = uwwmawshawwew, rawr
+    cwienteventinfomawshawwew = cwienteventinfomawshawwew)
+  vaw genewicsummawycontextmawshawwew = n-nyew genewicsummawycontextmawshawwew(
+    wichtextmawshawwew = w-wichtextmawshawwew,
+    h-howizoniconmawshawwew = h-howizoniconmawshawwew
+  )
+  v-vaw genewicsummawyitemmawshawwew = n-new genewicsummawyitemmawshawwew(
+    genewicsummawydispwaytypemawshawwew = genewicsummawydispwaytypemawshawwew, 🥺
+    g-genewicsummawycontextmawshawwew = g-genewicsummawycontextmawshawwew, rawr x3
+    genewicsummawyactionmawshawwew = genewicsummawyactionmawshawwew, ( ͡o ω ͡o )
+    m-mediamawshawwew = m-mediamawshawwew, σωσ
+    pwomotedmetadatamawshawwew = pwomotedmetadatamawshawwew, rawr x3
+    w-wichtextmawshawwew = wichtextmawshawwew
   )
 
-  val moduleDisplayTypeMarshaller = new ModuleDisplayTypeMarshaller
-  val moduleItemTreeDisplayMarshaller =
-    new ModuleItemTreeDisplayMarshaller(moduleDisplayTypeMarshaller)
+  vaw commewcepwoductitemmawshawwew = n-nyew commewcepwoductitemmawshawwew
+  v-vaw commewcepwoductgwoupitemmawshawwew = n-nyew commewcepwoductgwoupitemmawshawwew
 
-  val moduleItemMarshaller = new ModuleItemMarshaller(
-    timelineItemMarshaller = timelineItemMarshaller,
-    moduleItemTreeDisplayMarshaller = moduleItemTreeDisplayMarshaller)
-
-  val moduleHeaderDisplayTypeMarshaller = new ModuleHeaderDisplayTypeMarshaller
-  val moduleHeaderMarshaller = new ModuleHeaderMarshaller(
-    horizonIconMarshaller = horizonIconMarshaller,
-    imageVariantMarshaller = imageVariantMarshaller,
-    socialContextMarshaller = socialContextMarshaller,
-    moduleHeaderDisplayTypeMarshaller = moduleHeaderDisplayTypeMarshaller
-  )
-  val moduleFooterMarshaller = new ModuleFooterMarshaller(urlMarshaller = urlMarshaller)
-  val adsMetadataMarshaller = new AdsMetadataMarshaller
-  val moduleConversationMetadataMarshaller = new ModuleConversationMetadataMarshaller(
-    socialContextMarshaller = socialContextMarshaller)
-  val gridCarouselMetadataMarshaller = new GridCarouselMetadataMarshaller
-  val moduleMetadataMarshaller = new ModuleMetadataMarshaller(
-    adsMetadataMarshaller = adsMetadataMarshaller,
-    moduleConversationMetadataMarshaller = moduleConversationMetadataMarshaller,
-    gridCarouselMetadataMarshaller = gridCarouselMetadataMarshaller
-  )
-  val moduleShowMoreBehaviorRevealByCountMarshaller =
-    new ModuleShowMoreBehaviorRevealByCountMarshaller
-  val moduleShowMoreBehaviorMarshaller = new ModuleShowMoreBehaviorMarshaller(
-    moduleShowMoreBehaviorRevealByCountMarshaller = moduleShowMoreBehaviorRevealByCountMarshaller
-  )
-  val timelineModuleMarshaller = new TimelineModuleMarshaller(
-    moduleItemMarshaller = moduleItemMarshaller,
-    moduleDisplayTypeMarshaller = moduleDisplayTypeMarshaller,
-    moduleHeaderMarshaller = moduleHeaderMarshaller,
-    moduleFooterMarshaller = moduleFooterMarshaller,
-    clientEventInfoMarshaller = clientEventInfoMarshaller,
-    feedbackInfoMarshaller = feedbackInfoMarshaller,
-    moduleMetadataMarshaller = moduleMetadataMarshaller,
-    moduleShowMoreBehaviorMarshaller = moduleShowMoreBehaviorMarshaller
+  vaw timewineitemmawshawwew = n-nyew timewineitemmawshawwew(
+    t-timewineitemcontentmawshawwew = n-nyew timewineitemcontentmawshawwew(
+      awticweitemmawshawwew = a-awticweitemmawshawwew, (ˆ ﻌ ˆ)♡
+      a-audiospaceitemmawshawwew = audiospaceitemmawshawwew,
+      c-cawditemmawshawwew = cawditemmawshawwew, rawr
+      c-cuwsowitemmawshawwew = c-cuwsowitemmawshawwew, :3
+      e-eventsummawyitemmawshawwew = eventsummawyitemmawshawwew, rawr
+      i-iconwabewitemmawshawwew = iconwabewitemmawshawwew, (˘ω˘)
+      wabewitemmawshawwew = w-wabewitemmawshawwew, (ˆ ﻌ ˆ)♡
+      messagepwomptitemmawshawwew = messagepwomptitemmawshawwew, mya
+      tiweitemmawshawwew = tiweitemmawshawwew, (U ᵕ U❁)
+      tombstoneitemmawshawwew = tombstoneitemmawshawwew,
+      t-topicfowwowpwomptitemmawshawwew = topicfowwowpwomptitemmawshawwew, mya
+      topicitemmawshawwew = topicitemmawshawwew, ʘwʘ
+      tweetcomposewitemmawshawwew = tweetcomposewitemmawshawwew, (˘ω˘)
+      tweetitemmawshawwew = tweetitemmawshawwew, 😳
+      t-twittewwistitemmawshawwew = twittewwistitemmawshawwew, òωó
+      usewitemmawshawwew = u-usewitemmawshawwew, nyaa~~
+      vewticawgwiditemmawshawwew = v-vewticawgwiditemmawshawwew, o.O
+      thweadheadewitemmawshawwew = thweadheadewitemmawshawwew, nyaa~~
+      p-pwomptitemmawshawwew = pwomptitemmawshawwew, (U ᵕ U❁)
+      s-spewwingitemmawshawwew = spewwingitemmawshawwew, 😳😳😳
+      m-momentannotationitemmawshawwew = m-momentannotationitemmawshawwew, (U ﹏ U)
+      genewicsummawyitemmawshawwew = genewicsummawyitemmawshawwew, ^•ﻌ•^
+      c-commewcepwoductitemmawshawwew = commewcepwoductitemmawshawwew, (⑅˘꒳˘)
+      commewcepwoductgwoupitemmawshawwew = commewcepwoductgwoupitemmawshawwew,
+      twenditemmawshawwew = t-twenditemmawshawwew
+    ), >_<
+    cwienteventinfomawshawwew = cwienteventinfomawshawwew, (⑅˘꒳˘)
+    f-feedbackinfomawshawwew = feedbackinfomawshawwew
   )
 
-  val halfCoverDisplayTypeMarshaller = new HalfCoverDisplayTypeMarshaller()
-  val fullCoverDisplayTypeMarshaller = new FullCoverDisplayTypeMarshaller()
-  val coverCtaBehaviorMarshaller = new CoverCtaBehaviorMarshaller(richTextMarshaller, urlMarshaller)
-  val buttonStyleMarshaller = new ButtonStyleMarshaller()
-  val coverCtaMarshaller = new CoverCtaMarshaller(
-    coverCtaBehaviorMarshaller,
-    callbackMarshaller,
-    clientEventInfoMarshaller,
-    horizonIconMarshaller,
-    buttonStyleMarshaller)
-  val coverImageMarshaller =
-    new CoverImageMarshaller(
-      imageVariantMarshaller,
-      imageDisplayTypeMarshaller,
-      imageAnimationTypeMarshaller)
-  val dismissInfoMarshaller = new DismissInfoMarshaller(callbackMarshaller)
+  v-vaw moduwedispwaytypemawshawwew = new moduwedispwaytypemawshawwew
+  v-vaw moduweitemtweedispwaymawshawwew =
+    n-nyew moduweitemtweedispwaymawshawwew(moduwedispwaytypemawshawwew)
 
-  val halfCoverContentMarshaller = new HalfCoverContentMarshaller(
-    halfCoverDisplayTypeMarshaller,
-    coverCtaMarshaller,
-    richTextMarshaller,
-    coverImageMarshaller,
-    dismissInfoMarshaller,
-    callbackMarshaller)
-  val fullCoverContentMarshaller = new FullCoverContentMarshaller(
-    fullCoverDisplayTypeMarshaller,
-    coverCtaMarshaller,
-    richTextMarshaller,
-    imageVariantMarshaller,
-    dismissInfoMarshaller,
-    imageDisplayTypeMarshaller,
-    callbackMarshaller)
-  val coverContentMarshaller =
-    new CoverContentMarshaller(fullCoverContentMarshaller, halfCoverContentMarshaller)
-  val coverMarshaller = new CoverMarshaller(coverContentMarshaller, clientEventInfoMarshaller)
+  vaw moduweitemmawshawwew = nyew moduweitemmawshawwew(
+    t-timewineitemmawshawwew = timewineitemmawshawwew, σωσ
+    moduweitemtweedispwaymawshawwew = m-moduweitemtweedispwaymawshawwew)
 
-  val cursorOperationMarshaller = new CursorOperationMarshaller(
-    cursorTypeMarshaller = cursorTypeMarshaller,
-    cursorDisplayTreatmentMarshaller = cursorDisplayTreatmentMarshaller)
-  val timelineOperationMarshaller = new TimelineOperationMarshaller(
-    cursorOperationMarshaller = cursorOperationMarshaller)
-
-  val timelineEntryMarshaller = new TimelineEntryMarshaller(
-    timelineEntryContentMarshaller = new TimelineEntryContentMarshaller(
-      timelineItemMarshaller = timelineItemMarshaller,
-      timelineModuleMarshaller = timelineModuleMarshaller,
-      timelineOperationMarshaller = timelineOperationMarshaller))
-
-  val addEntriesInstructionMarshaller = new AddEntriesInstructionMarshaller(
-    timelineEntryMarshaller = timelineEntryMarshaller)
-
-  val markEntriesUnreadInstructionMarshaller = new MarkEntriesUnreadInstructionMarshaller()
-
-  val addToModuleInstructionMarshaller = new AddToModuleInstructionMarshaller(
-    moduleItemMarshaller = moduleItemMarshaller)
-
-  val replaceEntryInstructionMarshaller = new ReplaceEntryInstructionMarshaller(
-    timelineEntryMarshaller = timelineEntryMarshaller
+  vaw moduweheadewdispwaytypemawshawwew = nyew moduweheadewdispwaytypemawshawwew
+  vaw m-moduweheadewmawshawwew = n-nyew moduweheadewmawshawwew(
+    h-howizoniconmawshawwew = h-howizoniconmawshawwew, 🥺
+    imagevawiantmawshawwew = imagevawiantmawshawwew, :3
+    s-sociawcontextmawshawwew = sociawcontextmawshawwew, (ꈍᴗꈍ)
+    moduweheadewdispwaytypemawshawwew = moduweheadewdispwaytypemawshawwew
+  )
+  vaw moduwefootewmawshawwew = nyew moduwefootewmawshawwew(uwwmawshawwew = u-uwwmawshawwew)
+  v-vaw adsmetadatamawshawwew = nyew a-adsmetadatamawshawwew
+  v-vaw moduweconvewsationmetadatamawshawwew = nyew moduweconvewsationmetadatamawshawwew(
+    s-sociawcontextmawshawwew = sociawcontextmawshawwew)
+  vaw gwidcawousewmetadatamawshawwew = n-new gwidcawousewmetadatamawshawwew
+  vaw moduwemetadatamawshawwew = n-nyew moduwemetadatamawshawwew(
+    a-adsmetadatamawshawwew = adsmetadatamawshawwew, ^•ﻌ•^
+    moduweconvewsationmetadatamawshawwew = moduweconvewsationmetadatamawshawwew, (˘ω˘)
+    g-gwidcawousewmetadatamawshawwew = gwidcawousewmetadatamawshawwew
+  )
+  vaw moduweshowmowebehaviowweveawbycountmawshawwew =
+    nyew moduweshowmowebehaviowweveawbycountmawshawwew
+  vaw moduweshowmowebehaviowmawshawwew = nyew moduweshowmowebehaviowmawshawwew(
+    moduweshowmowebehaviowweveawbycountmawshawwew = m-moduweshowmowebehaviowweveawbycountmawshawwew
+  )
+  v-vaw timewinemoduwemawshawwew = new timewinemoduwemawshawwew(
+    m-moduweitemmawshawwew = m-moduweitemmawshawwew, 🥺
+    moduwedispwaytypemawshawwew = m-moduwedispwaytypemawshawwew, (✿oωo)
+    moduweheadewmawshawwew = moduweheadewmawshawwew,
+    moduwefootewmawshawwew = moduwefootewmawshawwew, XD
+    cwienteventinfomawshawwew = c-cwienteventinfomawshawwew, (///ˬ///✿)
+    feedbackinfomawshawwew = feedbackinfomawshawwew, ( ͡o ω ͡o )
+    moduwemetadatamawshawwew = moduwemetadatamawshawwew,
+    m-moduweshowmowebehaviowmawshawwew = m-moduweshowmowebehaviowmawshawwew
   )
 
-  val pinEntryInstructionMarshaller = new PinEntryInstructionMarshaller(
-    timelineEntryMarshaller = timelineEntryMarshaller
+  v-vaw hawfcovewdispwaytypemawshawwew = nyew hawfcovewdispwaytypemawshawwew()
+  vaw fuwwcovewdispwaytypemawshawwew = n-nyew fuwwcovewdispwaytypemawshawwew()
+  v-vaw covewctabehaviowmawshawwew = n-nyew covewctabehaviowmawshawwew(wichtextmawshawwew, ʘwʘ u-uwwmawshawwew)
+  vaw buttonstywemawshawwew = n-nyew buttonstywemawshawwew()
+  v-vaw covewctamawshawwew = n-new covewctamawshawwew(
+    covewctabehaviowmawshawwew, rawr
+    cawwbackmawshawwew, o.O
+    c-cwienteventinfomawshawwew, ^•ﻌ•^
+    howizoniconmawshawwew, (///ˬ///✿)
+    b-buttonstywemawshawwew)
+  v-vaw covewimagemawshawwew =
+    n-nyew c-covewimagemawshawwew(
+      imagevawiantmawshawwew,
+      i-imagedispwaytypemawshawwew, (ˆ ﻌ ˆ)♡
+      imageanimationtypemawshawwew)
+  v-vaw dismissinfomawshawwew = n-nyew dismissinfomawshawwew(cawwbackmawshawwew)
+
+  v-vaw hawfcovewcontentmawshawwew = nyew hawfcovewcontentmawshawwew(
+    h-hawfcovewdispwaytypemawshawwew, XD
+    covewctamawshawwew, (✿oωo)
+    wichtextmawshawwew, -.-
+    covewimagemawshawwew,
+    dismissinfomawshawwew, XD
+    cawwbackmawshawwew)
+  vaw fuwwcovewcontentmawshawwew = nyew fuwwcovewcontentmawshawwew(
+    f-fuwwcovewdispwaytypemawshawwew, (✿oωo)
+    covewctamawshawwew, (˘ω˘)
+    wichtextmawshawwew, (ˆ ﻌ ˆ)♡
+    i-imagevawiantmawshawwew, >_<
+    dismissinfomawshawwew, -.-
+    i-imagedispwaytypemawshawwew, (///ˬ///✿)
+    cawwbackmawshawwew)
+  vaw covewcontentmawshawwew =
+    n-nyew covewcontentmawshawwew(fuwwcovewcontentmawshawwew, XD hawfcovewcontentmawshawwew)
+  vaw covewmawshawwew = n-nyew covewmawshawwew(covewcontentmawshawwew, cwienteventinfomawshawwew)
+
+  vaw c-cuwsowopewationmawshawwew = nyew cuwsowopewationmawshawwew(
+    c-cuwsowtypemawshawwew = cuwsowtypemawshawwew, ^^;;
+    cuwsowdispwaytweatmentmawshawwew = c-cuwsowdispwaytweatmentmawshawwew)
+  v-vaw timewineopewationmawshawwew = new timewineopewationmawshawwew(
+    c-cuwsowopewationmawshawwew = c-cuwsowopewationmawshawwew)
+
+  vaw timewineentwymawshawwew = n-nyew timewineentwymawshawwew(
+    t-timewineentwycontentmawshawwew = nyew timewineentwycontentmawshawwew(
+      t-timewineitemmawshawwew = timewineitemmawshawwew, rawr x3
+      timewinemoduwemawshawwew = timewinemoduwemawshawwew, OwO
+      t-timewineopewationmawshawwew = timewineopewationmawshawwew))
+
+  vaw addentwiesinstwuctionmawshawwew = new a-addentwiesinstwuctionmawshawwew(
+    t-timewineentwymawshawwew = t-timewineentwymawshawwew)
+
+  vaw mawkentwiesunweadinstwuctionmawshawwew = nyew mawkentwiesunweadinstwuctionmawshawwew()
+
+  v-vaw addtomoduweinstwuctionmawshawwew = nyew addtomoduweinstwuctionmawshawwew(
+    m-moduweitemmawshawwew = moduweitemmawshawwew)
+
+  v-vaw w-wepwaceentwyinstwuctionmawshawwew = nyew wepwaceentwyinstwuctionmawshawwew(
+    timewineentwymawshawwew = timewineentwymawshawwew
   )
 
-  val showAlertTypeMarshaller = new ShowAlertTypeMarshaller()
-  val showAlertIconMarshaller = new ShowAlertIconMarshaller()
-  val showAlertIconDisplayInfoMarshaller = new ShowAlertIconDisplayInfoMarshaller(
-    showAlertIconMarshaller = showAlertIconMarshaller,
-    rosettaColorMarshaller = rosettaColorMarshaller
-  )
-  val showAlertColorConfigurationMarshaller = new ShowAlertColorConfigurationMarshaller(
-    rosettaColorMarshaller = rosettaColorMarshaller
-  )
-  val showAlertDisplayLocationMarshaller = new ShowAlertDisplayLocationMarshaller()
-  val showAlertNavigationMetadataMarshaller = new ShowAlertNavigationMetadataMarshaller()
-  val showAlertInstructionMarshaller = new ShowAlertInstructionMarshaller(
-    showAlertTypeMarshaller = new ShowAlertTypeMarshaller(),
-    clientEventInfoMarshaller = clientEventInfoMarshaller,
-    richTextMarshaller = richTextMarshaller,
-    showAlertIconDisplayInfoMarshaller = showAlertIconDisplayInfoMarshaller,
-    showAlertColorConfigurationMarshaller = showAlertColorConfigurationMarshaller,
-    showAlertDisplayLocationMarshaller = showAlertDisplayLocationMarshaller,
-    showAlertNavigationMetadataMarshaller = showAlertNavigationMetadataMarshaller
+  vaw pinentwyinstwuctionmawshawwew = nyew p-pinentwyinstwuctionmawshawwew(
+    t-timewineentwymawshawwew = timewineentwymawshawwew
   )
 
-  val timelineInstructionMarshaller = new TimelineInstructionMarshaller(
-    addEntriesInstructionMarshaller = addEntriesInstructionMarshaller,
-    addToModuleInstructionMarshaller = addToModuleInstructionMarshaller,
-    markEntriesUnreadInstructionMarshaller = markEntriesUnreadInstructionMarshaller,
-    pinEntryInstructionMarshaller = pinEntryInstructionMarshaller,
-    replaceEntryInstructionMarshaller = replaceEntryInstructionMarshaller,
-    showAlertInstructionMarshaller = showAlertInstructionMarshaller,
-    terminateTimelineInstructionMarshaller = new TerminateTimelineInstructionMarshaller,
-    coverMarshaller = coverMarshaller,
+  vaw showawewttypemawshawwew = n-nyew showawewttypemawshawwew()
+  vaw s-showawewticonmawshawwew = n-nyew s-showawewticonmawshawwew()
+  v-vaw s-showawewticondispwayinfomawshawwew = n-nyew showawewticondispwayinfomawshawwew(
+    showawewticonmawshawwew = showawewticonmawshawwew, ʘwʘ
+    w-wosettacowowmawshawwew = w-wosettacowowmawshawwew
+  )
+  v-vaw showawewtcowowconfiguwationmawshawwew = n-nyew s-showawewtcowowconfiguwationmawshawwew(
+    w-wosettacowowmawshawwew = wosettacowowmawshawwew
+  )
+  v-vaw showawewtdispwaywocationmawshawwew = n-nyew s-showawewtdispwaywocationmawshawwew()
+  vaw showawewtnavigationmetadatamawshawwew = nyew showawewtnavigationmetadatamawshawwew()
+  v-vaw showawewtinstwuctionmawshawwew = nyew showawewtinstwuctionmawshawwew(
+    showawewttypemawshawwew = n-nyew showawewttypemawshawwew(), rawr
+    cwienteventinfomawshawwew = cwienteventinfomawshawwew, UwU
+    w-wichtextmawshawwew = w-wichtextmawshawwew,
+    showawewticondispwayinfomawshawwew = showawewticondispwayinfomawshawwew, (ꈍᴗꈍ)
+    showawewtcowowconfiguwationmawshawwew = s-showawewtcowowconfiguwationmawshawwew, (✿oωo)
+    s-showawewtdispwaywocationmawshawwew = showawewtdispwaywocationmawshawwew, (⑅˘꒳˘)
+    s-showawewtnavigationmetadatamawshawwew = s-showawewtnavigationmetadatamawshawwew
   )
 
-  val timelineScribeConfigMarshaller = new TimelineScribeConfigMarshaller
-
-  val readerModeConfigMarshaller = new ReaderModeConfigMarshaller(urlMarshaller)
-
-  val timelineMetadataMarshaller = new TimelineMetadataMarshaller(
-    timelineScribeConfigMarshaller = timelineScribeConfigMarshaller,
-    readerModeConfigMarshaller = readerModeConfigMarshaller
+  vaw timewineinstwuctionmawshawwew = nyew timewineinstwuctionmawshawwew(
+    a-addentwiesinstwuctionmawshawwew = a-addentwiesinstwuctionmawshawwew, OwO
+    addtomoduweinstwuctionmawshawwew = addtomoduweinstwuctionmawshawwew, 🥺
+    m-mawkentwiesunweadinstwuctionmawshawwew = m-mawkentwiesunweadinstwuctionmawshawwew, >_<
+    pinentwyinstwuctionmawshawwew = pinentwyinstwuctionmawshawwew, (ꈍᴗꈍ)
+    w-wepwaceentwyinstwuctionmawshawwew = wepwaceentwyinstwuctionmawshawwew, 😳
+    showawewtinstwuctionmawshawwew = showawewtinstwuctionmawshawwew, 🥺
+    tewminatetimewineinstwuctionmawshawwew = nyew tewminatetimewineinstwuctionmawshawwew, nyaa~~
+    c-covewmawshawwew = covewmawshawwew, ^•ﻌ•^
   )
 
-  val marshaller: UrtTransportMarshaller =
-    new UrtTransportMarshaller(
-      timelineInstructionMarshaller = timelineInstructionMarshaller,
-      feedbackActionMarshaller = feedbackActionMarshaller,
-      childFeedbackActionMarshaller = childFeedbackActionMarshaller,
-      timelineMetadataMarshaller = timelineMetadataMarshaller
+  vaw timewinescwibeconfigmawshawwew = n-nyew timewinescwibeconfigmawshawwew
+
+  v-vaw w-weadewmodeconfigmawshawwew = new w-weadewmodeconfigmawshawwew(uwwmawshawwew)
+
+  v-vaw t-timewinemetadatamawshawwew = nyew t-timewinemetadatamawshawwew(
+    t-timewinescwibeconfigmawshawwew = timewinescwibeconfigmawshawwew, (ˆ ﻌ ˆ)♡
+    weadewmodeconfigmawshawwew = w-weadewmodeconfigmawshawwew
+  )
+
+  v-vaw mawshawwew: u-uwttwanspowtmawshawwew =
+    nyew uwttwanspowtmawshawwew(
+      t-timewineinstwuctionmawshawwew = t-timewineinstwuctionmawshawwew, (U ᵕ U❁)
+      f-feedbackactionmawshawwew = feedbackactionmawshawwew,
+      c-chiwdfeedbackactionmawshawwew = c-chiwdfeedbackactionmawshawwew, mya
+      t-timewinemetadatamawshawwew = t-timewinemetadatamawshawwew
     )
 }

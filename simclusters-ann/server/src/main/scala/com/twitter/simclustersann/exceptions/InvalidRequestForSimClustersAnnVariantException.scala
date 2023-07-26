@@ -1,16 +1,16 @@
-package com.twitter.simclustersann.exceptions
+package com.twittew.simcwustewsann.exceptions
 
-import com.twitter.finagle.RequestException
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
+impowt c-com.twittew.finagwe.wequestexception
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.embeddingtype
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
 
-case class InvalidRequestForSimClustersAnnVariantException(
-  modelVersion: ModelVersion,
-  embeddingType: EmbeddingType,
-  actualServiceName: String,
-  expectedServiceName: Option[String])
-    extends RequestException(
-      s"Request with model version ($modelVersion) and embedding type ($embeddingType) cannot be " +
-        s"processed by service variant ($actualServiceName)." +
-        s" Expected service variant: $expectedServiceName.",
-      null)
+c-case cwass invawidwequestfowsimcwustewsannvawiantexception(
+  m-modewvewsion: modewvewsion, -.-
+  e-embeddingtype: e-embeddingtype, ^^;;
+  actuawsewvicename: stwing, >_<
+  expectedsewvicename: option[stwing])
+    extends wequestexception(
+      s-s"wequest with modew vewsion ($modewvewsion) and embedding type ($embeddingtype) c-cannot be " +
+        s"pwocessed b-by sewvice vawiant ($actuawsewvicename)." +
+        s" expected sewvice vawiant: $expectedsewvicename.", mya
+      n-nyuww)

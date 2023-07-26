@@ -1,54 +1,54 @@
-package com.twitter.tweetypie.util
+package com.twittew.tweetypie.utiw
 
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.stitch.Stitch
+impowt com.twittew.finagwe.stats.stat
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.sewvo
+i-impowt com.twittew.utiw.wetuwn
+i-impowt com.twittew.utiw.thwow
+i-impowt c-com.twittew.stitch.stitch
 
-object StitchUtils {
-  def trackLatency[T](latencyStat: Stat, s: => Stitch[T]): Stitch[T] = {
-    Stitch
+o-object stitchutiws {
+  def twackwatency[t](watencystat: stat, 🥺 s: => stitch[t]): stitch[t] = {
+    s-stitch
       .time(s)
       .map {
-        case (res, duration) =>
-          latencyStat.add(duration.inMillis)
-          res
+        case (wes, mya duwation) =>
+          watencystat.add(duwation.inmiwwis)
+          w-wes
       }
-      .lowerFromTry
+      .wowewfwomtwy
   }
 
-  def observe[T](statsReceiver: StatsReceiver, apiName: String): Stitch[T] => Stitch[T] = {
-    val stats = statsReceiver.scope(apiName)
+  def obsewve[t](statsweceivew: s-statsweceivew, 🥺 apiname: stwing): stitch[t] => stitch[t] = {
+    vaw stats = statsweceivew.scope(apiname)
 
-    val requests = stats.counter("requests")
-    val success = stats.counter("success")
-    val latencyStat = stats.stat("latency_ms")
+    vaw w-wequests = stats.countew("wequests")
+    vaw s-success = stats.countew("success")
+    v-vaw watencystat = stats.stat("watency_ms")
 
-    val exceptionCounter =
-      new servo.util.ExceptionCounter(stats, "failures")
+    vaw exceptioncountew =
+      nyew sewvo.utiw.exceptioncountew(stats, >_< "faiwuwes")
 
     stitch =>
-      trackLatency(latencyStat, stitch)
-        .respond {
-          case Return(_) =>
-            requests.incr()
-            success.incr()
+      t-twackwatency(watencystat, >_< stitch)
+        .wespond {
+          case wetuwn(_) =>
+            wequests.incw()
+            s-success.incw()
 
-          case Throw(e) =>
-            exceptionCounter(e)
-            requests.incr()
+          case thwow(e) =>
+            e-exceptioncountew(e)
+            w-wequests.incw()
         }
   }
 
-  def translateExceptions[T](
-    stitch: Stitch[T],
-    translateException: PartialFunction[Throwable, Throwable]
-  ): Stitch[T] =
-    stitch.rescue {
-      case t if translateException.isDefinedAt(t) =>
-        Stitch.exception(translateException(t))
-      case t => Stitch.exception(t)
+  d-def t-twanswateexceptions[t](
+    stitch: stitch[t], (⑅˘꒳˘)
+    t-twanswateexception: pawtiawfunction[thwowabwe, /(^•ω•^) thwowabwe]
+  ): s-stitch[t] =
+    stitch.wescue {
+      case t if twanswateexception.isdefinedat(t) =>
+        stitch.exception(twanswateexception(t))
+      case t => stitch.exception(t)
     }
 }

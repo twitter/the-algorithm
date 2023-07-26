@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.component_library.scorer.tensorbuilder
+package com.twittew.pwoduct_mixew.component_wibwawy.scowew.tensowbuiwdew
 
-import inference.GrpcService.ModelInferRequest.InferInputTensor
+impowt i-infewence.gwpcsewvice.modewinfewwequest.infewinputtensow
 
-case object BytesInferInputTensorBuilder extends InferInputTensorBuilder[String] {
-  def apply(
-    featureName: String,
-    featureValues: Seq[String]
-  ): Seq[InferInputTensor] = {
-    val tensorShape = Seq(featureValues.size, 1)
-    InferInputTensorBuilder.buildBytesInferInputTensor(featureName, featureValues, tensorShape)
+c-case object b-bytesinfewinputtensowbuiwdew e-extends infewinputtensowbuiwdew[stwing] {
+  def a-appwy(
+    featuwename: s-stwing, σωσ
+    f-featuwevawues: s-seq[stwing]
+  ): seq[infewinputtensow] = {
+    vaw tensowshape = seq(featuwevawues.size, >_< 1)
+    infewinputtensowbuiwdew.buiwdbytesinfewinputtensow(featuwename, :3 f-featuwevawues, (U ﹏ U) tensowshape)
   }
 }

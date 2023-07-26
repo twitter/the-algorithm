@@ -1,39 +1,39 @@
-package com.twitter.tweetypie.core
+package com.twittew.tweetypie.cowe
 
-import com.twitter.servo.data.Lens
-import com.twitter.tweetypie.Mutation
-import com.twitter.tweetypie.thriftscala.Tweet
+impowt com.twittew.sewvo.data.wens
+i-impowt com.twittew.tweetypie.mutation
+i-impowt c-com.twittew.tweetypie.thwiftscawa.tweet
 
 /**
- * Helper class for building instances of `TweetResult`, which is a type alias
- * for `ValueState[TweetData]`.
+ * h-hewpew cwass f-fow buiwding instances o-of `tweetwesuwt`, òωó w-which is a-a type awias
+ * fow `vawuestate[tweetdata]`. ʘwʘ
  */
-object TweetResult {
-  object Lenses {
-    val value: Lens[TweetResult, TweetData] =
-      Lens[TweetResult, TweetData](_.value, (r, value) => r.copy(value = value))
-    val state: Lens[TweetResult, HydrationState] =
-      Lens[TweetResult, HydrationState](_.state, (r, state) => r.copy(state = state))
-    val tweet: Lens[TweetResult, Tweet] = value.andThen(TweetData.Lenses.tweet)
+object tweetwesuwt {
+  object wenses {
+    vaw v-vawue: wens[tweetwesuwt, /(^•ω•^) tweetdata] =
+      wens[tweetwesuwt, ʘwʘ t-tweetdata](_.vawue, σωσ (w, vawue) => w-w.copy(vawue = vawue))
+    vaw state: wens[tweetwesuwt, hydwationstate] =
+      w-wens[tweetwesuwt, OwO hydwationstate](_.state, 😳😳😳 (w, s-state) => w.copy(state = s-state))
+    vaw tweet: wens[tweetwesuwt, 😳😳😳 tweet] = vawue.andthen(tweetdata.wenses.tweet)
   }
 
-  def apply(value: TweetData, state: HydrationState = HydrationState.empty): TweetResult =
-    ValueState(value, state)
+  def appwy(vawue: t-tweetdata, o.O state: hydwationstate = hydwationstate.empty): tweetwesuwt =
+    vawuestate(vawue, ( ͡o ω ͡o ) s-state)
 
-  def apply(tweet: Tweet): TweetResult =
-    apply(TweetData(tweet = tweet))
+  def appwy(tweet: t-tweet): tweetwesuwt =
+    a-appwy(tweetdata(tweet = t-tweet))
 
   /**
-   * Apply this mutation to the tweet contained in the result, updating the modified flag if the mutation modifies the tweet.
+   * a-appwy this mutation to the tweet contained i-in the wesuwt, (U ﹏ U) updating the modified fwag if t-the mutation modifies the tweet. (///ˬ///✿)
    */
-  def mutate(mutation: Mutation[Tweet]): TweetResult => TweetResult =
-    (result: TweetResult) =>
-      mutation(result.value.tweet) match {
-        case None => result
-        case Some(updatedTweet) =>
-          TweetResult(
-            result.value.copy(tweet = updatedTweet),
-            result.state ++ HydrationState.modified
+  def mutate(mutation: mutation[tweet]): tweetwesuwt => tweetwesuwt =
+    (wesuwt: tweetwesuwt) =>
+      m-mutation(wesuwt.vawue.tweet) match {
+        c-case n-nyone => wesuwt
+        c-case some(updatedtweet) =>
+          tweetwesuwt(
+            wesuwt.vawue.copy(tweet = u-updatedtweet), >w<
+            w-wesuwt.state ++ hydwationstate.modified
           )
       }
 }

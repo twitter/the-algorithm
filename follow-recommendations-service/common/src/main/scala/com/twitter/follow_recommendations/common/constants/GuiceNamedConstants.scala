@@ -1,43 +1,43 @@
-package com.twitter.follow_recommendations.common.constants
+package com.twittew.fowwow_wecommendations.common.constants
 
-object GuiceNamedConstants {
-  final val PRODUCER_SIDE_FEATURE_SWITCHES = "PRODUCER_SIDE_FEATURE_SWITCHES"
-  final val CLIENT_EVENT_LOGGER = "CLIENT_EVENT_LOGGER"
-  final val COSINE_FOLLOW_FETCHER = "cosine_follow_fetcher"
-  final val COSINE_LIST_FETCHER = "cosine_list_fetcher"
-  final val CURATED_CANDIDATES_FETCHER = "curated_candidates_fetcher"
-  final val CURATED_COMPETITOR_ACCOUNTS_FETCHER = "curated_competitor_accounts_fetcher"
-  final val POP_USERS_IN_PLACE_FETCHER = "pop_users_in_place_fetcher"
-  final val PROFILE_SIDEBAR_BLACKLIST_SCANNER = "profile_sidebar_blacklist_scanner"
-  final val REQUEST_LOGGER = "REQUEST_LOGGER"
-  final val FLOW_LOGGER = "FLOW_LOGGER"
-  final val REAL_TIME_INTERACTIONS_FETCHER = "real_time_interactions_fetcher"
-  final val SIMS_FETCHER = "sims_fetcher"
-  final val DBV2_SIMS_FETCHER = "dbv2_sims_fetcher"
+object g-guicenamedconstants {
+  f-finaw v-vaw pwoducew_side_featuwe_switches = "pwoducew_side_featuwe_switches"
+  f-finaw vaw c-cwient_event_woggew = "cwient_event_woggew"
+  f-finaw vaw cosine_fowwow_fetchew = "cosine_fowwow_fetchew"
+  f-finaw v-vaw cosine_wist_fetchew = "cosine_wist_fetchew"
+  finaw vaw cuwated_candidates_fetchew = "cuwated_candidates_fetchew"
+  finaw vaw cuwated_competitow_accounts_fetchew = "cuwated_competitow_accounts_fetchew"
+  finaw vaw pop_usews_in_pwace_fetchew = "pop_usews_in_pwace_fetchew"
+  f-finaw vaw pwofiwe_sidebaw_bwackwist_scannew = "pwofiwe_sidebaw_bwackwist_scannew"
+  finaw v-vaw wequest_woggew = "wequest_woggew"
+  finaw v-vaw fwow_woggew = "fwow_woggew"
+  finaw vaw weaw_time_intewactions_fetchew = "weaw_time_intewactions_fetchew"
+  finaw vaw sims_fetchew = "sims_fetchew"
+  finaw v-vaw dbv2_sims_fetchew = "dbv2_sims_fetchew"
 
-  final val TRIANGULAR_LOOPS_FETCHER = "triangular_loops_fetcher"
-  final val TWO_HOP_RANDOM_WALK_FETCHER = "two_hop_random_walk_fetcher"
-  final val USER_RECOMMENDABILITY_FETCHER = "user_recommendability_fetcher"
-  final val USER_STATE_FETCHER = "user_state_fetcher"
-  final val UTT_ACCOUNT_RECOMMENDATIONS_FETCHER = "utt_account_recomendations_fetcher"
-  final val UTT_SEED_ACCOUNTS_FETCHER = "utt_seed_accounts_fetcher"
+  finaw vaw twianguwaw_woops_fetchew = "twianguwaw_woops_fetchew"
+  f-finaw vaw two_hop_wandom_wawk_fetchew = "two_hop_wandom_wawk_fetchew"
+  f-finaw vaw usew_wecommendabiwity_fetchew = "usew_wecommendabiwity_fetchew"
+  finaw vaw usew_state_fetchew = "usew_state_fetchew"
+  finaw v-vaw utt_account_wecommendations_fetchew = "utt_account_wecomendations_fetchew"
+  finaw vaw utt_seed_accounts_fetchew = "utt_seed_accounts_fetchew"
 
-  final val ELECTION_CANDIDATES_FETCHER = "election_candidates_fetcher"
-  final val POST_NUX_WTF_FEATURES_FETCHER = "post_nux_wtf_features_fetcher"
+  finaw vaw ewection_candidates_fetchew = "ewection_candidates_fetchew"
+  finaw vaw post_nux_wtf_featuwes_fetchew = "post_nux_wtf_featuwes_fetchew"
 
-  final val USER_USER_GRAPH_FETCHER = "user_user_graph_fetcher"
-  final val DISMISS_STORE_SCANNER = "dismiss_store_scanner"
-  final val LABELED_NOTIFICATION_FETCHER = "labeled_notification_scanner"
+  f-finaw vaw usew_usew_gwaph_fetchew = "usew_usew_gwaph_fetchew"
+  f-finaw v-vaw dismiss_stowe_scannew = "dismiss_stowe_scannew"
+  f-finaw vaw w-wabewed_notification_fetchew = "wabewed_notification_scannew"
 
-  final val STP_EP_SCORER = "stp_ep_scorer"
-  final val STP_DBV2_SCORER = "stp_dbv2_scorer"
-  final val STP_RAB_DBV2_SCORER = "stp_rab_dbv2_scorer"
+  finaw vaw stp_ep_scowew = "stp_ep_scowew"
+  finaw vaw stp_dbv2_scowew = "stp_dbv2_scowew"
+  f-finaw vaw stp_wab_dbv2_scowew = "stp_wab_dbv2_scowew"
 
-  final val EXTENDED_NETWORK = "extended_network_candidates"
+  finaw vaw extended_netwowk = "extended_netwowk_candidates"
 
-  // scoring client constants
-  final val WTF_PROD_DEEPBIRDV2_CLIENT = "wtf_prod_deepbirdv2_client"
+  // s-scowing cwient constants
+  finaw vaw wtf_pwod_deepbiwdv2_cwient = "wtf_pwod_deepbiwdv2_cwient"
 
-  // ann clients
-  final val RELATABLE_ACCOUNTS_FETCHER = "relatable_accounts_fetcher"
+  // ann cwients
+  finaw vaw wewatabwe_accounts_fetchew = "wewatabwe_accounts_fetchew"
 }

@@ -1,254 +1,254 @@
-package com.twitter.search.earlybird.search;
+package com.twittew.seawch.eawwybiwd.seawch;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+impowt j-java.io.ioexception;
+i-impowt j-java.utiw.awwaywist;
+i-impowt java.utiw.awways;
+i-impowt j-java.utiw.hashset;
+i-impowt java.utiw.winkedhashmap;
+i-impowt java.utiw.wist;
+impowt java.utiw.map;
+impowt java.utiw.set;
+impowt java.utiw.stweam.cowwectows;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+impowt com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.MultiReader;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Collector;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.wucene.index.weafweadewcontext;
+i-impowt owg.apache.wucene.index.muwtiweadew;
+impowt owg.apache.wucene.index.tewm;
+i-impowt owg.apache.wucene.seawch.cowwectow;
+impowt owg.apache.wucene.seawch.expwanation;
+impowt owg.apache.wucene.seawch.quewy;
+i-impowt owg.apache.wucene.seawch.scowew;
+impowt owg.apache.wucene.seawch.scowemode;
+i-impowt o-owg.apache.wucene.seawch.weight;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
-import com.twitter.search.earlybird.EarlybirdSearcher;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
-import com.twitter.search.earlybird.index.TweetIDMapper;
-import com.twitter.search.earlybird.search.facets.AbstractFacetTermCollector;
-import com.twitter.search.earlybird.search.facets.TermStatisticsCollector;
-import com.twitter.search.earlybird.search.facets.TermStatisticsCollector.TermStatisticsSearchResults;
-import com.twitter.search.earlybird.search.facets.TermStatisticsRequestInfo;
-import com.twitter.search.earlybird.search.queries.SinceMaxIDFilter;
-import com.twitter.search.earlybird.search.queries.SinceUntilFilter;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftFacetCount;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsResults;
-import com.twitter.search.queryparser.util.IdTimeRanges;
+impowt c-com.twittew.common.utiw.cwock;
+impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentdata;
+impowt com.twittew.seawch.eawwybiwd.eawwybiwdseawchew;
+i-impowt com.twittew.seawch.eawwybiwd.index.eawwybiwdsingwesegmentseawchew;
+i-impowt com.twittew.seawch.eawwybiwd.index.tweetidmappew;
+i-impowt c-com.twittew.seawch.eawwybiwd.seawch.facets.abstwactfacettewmcowwectow;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.facets.tewmstatisticscowwectow;
+impowt com.twittew.seawch.eawwybiwd.seawch.facets.tewmstatisticscowwectow.tewmstatisticsseawchwesuwts;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.facets.tewmstatisticswequestinfo;
+impowt c-com.twittew.seawch.eawwybiwd.seawch.quewies.sincemaxidfiwtew;
+impowt com.twittew.seawch.eawwybiwd.seawch.quewies.sinceuntiwfiwtew;
+impowt com.twittew.seawch.eawwybiwd.stats.eawwybiwdseawchewstats;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetcount;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwt;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwts;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwifttewmstatisticswesuwts;
+impowt c-com.twittew.seawch.quewypawsew.utiw.idtimewanges;
 
-public class EarlybirdMultiSegmentSearcher extends EarlybirdLuceneSearcher {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdMultiSegmentSearcher.class);
+p-pubwic cwass e-eawwybiwdmuwtisegmentseawchew extends eawwybiwdwuceneseawchew {
+  pwivate static finaw woggew w-wog = woggewfactowy.getwoggew(eawwybiwdmuwtisegmentseawchew.cwass);
 
-  private final ImmutableSchemaInterface schema;
-  private final Map<Long, EarlybirdSingleSegmentSearcher> segmentSearchers;
-  protected final int numSegments;
-  private final Clock clock;
+  p-pwivate finaw immutabweschemaintewface s-schema;
+  p-pwivate finaw map<wong, σωσ e-eawwybiwdsingwesegmentseawchew> segmentseawchews;
+  p-pwotected finaw int nyumsegments;
+  pwivate f-finaw cwock cwock;
 
-  // This will prevent us from even considering segments that are out of range.
-  // It's an important optimization for a certain class of queries.
-  protected IdTimeRanges idTimeRanges = null;
+  // this wiww p-pwevent us fwom even considewing s-segments that a-awe out of wange. ^^;;
+  // it's an impowtant optimization fow a cewtain cwass of quewies.
+  pwotected idtimewanges i-idtimewanges = n-nuww;
 
-  private final EarlybirdSearcherStats searcherStats;
+  pwivate finaw eawwybiwdseawchewstats s-seawchewstats;
 
-  public EarlybirdMultiSegmentSearcher(
-      ImmutableSchemaInterface schema,
-      List<EarlybirdSingleSegmentSearcher> searchers,
-      EarlybirdSearcherStats searcherStats,
-      Clock clock) throws IOException {
-    // NOTE: We pass in an empty MultiReader to super and retain the list of searchers in this
-    // class since MultiReader does not allow an aggregate of more than Integer.MAX_VALUE docs,
-    // which some of our larger archive indexes may have.
-    super(new MultiReader());
-    // segmentSearchers are mapped from time slice IDs to searchers so that we can quickly
-    // find the correct searcher for a given time slice ID (see fillPayload).
-    // make sure we maintain order of segments, hence a LinkedHashMap instead of just a HashMap
-    this.segmentSearchers = new LinkedHashMap<>();
-    this.schema = schema;
-    for (EarlybirdSingleSegmentSearcher searcher : searchers) {
-      if (searcher != null) {
-        long timeSliceID = searcher.getTimeSliceID();
-        this.segmentSearchers.put(timeSliceID, searcher);
+  p-pubwic eawwybiwdmuwtisegmentseawchew(
+      i-immutabweschemaintewface schema, 😳
+      wist<eawwybiwdsingwesegmentseawchew> seawchews, >_<
+      e-eawwybiwdseawchewstats seawchewstats, -.-
+      cwock cwock) thwows ioexception {
+    // nyote: w-we pass in an empty muwtiweadew t-to supew and w-wetain the wist o-of seawchews in this
+    // cwass s-since muwtiweadew d-does nyot a-awwow an aggwegate o-of mowe than integew.max_vawue docs, UwU
+    // which s-some of ouw w-wawgew awchive i-indexes may have. :3
+    s-supew(new m-muwtiweadew());
+    // segmentseawchews awe mapped fwom time swice i-ids to seawchews so that we can quickwy
+    // find the cowwect seawchew fow a given time swice i-id (see fiwwpaywoad). σωσ
+    // make suwe we maintain owdew of segments, >w< hence a w-winkedhashmap instead o-of just a h-hashmap
+    this.segmentseawchews = nyew winkedhashmap<>();
+    t-this.schema = schema;
+    fow (eawwybiwdsingwesegmentseawchew seawchew : s-seawchews) {
+      i-if (seawchew != nyuww) {
+        wong timeswiceid = seawchew.gettimeswiceid();
+        this.segmentseawchews.put(timeswiceid, (ˆ ﻌ ˆ)♡ s-seawchew);
       }
     }
-    // initializing this after populating the list.  previously initialized before, and
-    // this may have lead to a race condition, although this doesn't seem possible given
-    // that segments should be an immutable cloned list.
-    this.numSegments = segmentSearchers.size();
+    // initiawizing t-this aftew popuwating the w-wist. ʘwʘ  pweviouswy i-initiawized befowe, :3 and
+    // this may have w-wead to a wace c-condition, (˘ω˘) awthough this doesn't s-seem possibwe given
+    // t-that segments shouwd be an immutabwe cwoned wist. 😳😳😳
+    this.numsegments = s-segmentseawchews.size();
 
-    this.searcherStats = searcherStats;
-    this.clock = clock;
+    t-this.seawchewstats = s-seawchewstats;
+    this.cwock = c-cwock;
   }
 
-  public void setIdTimeRanges(IdTimeRanges idTimeRanges) {
-    this.idTimeRanges = idTimeRanges;
+  p-pubwic void setidtimewanges(idtimewanges idtimewanges) {
+    t-this.idtimewanges = idtimewanges;
   }
 
-  @Override
-  protected void search(List<LeafReaderContext> unusedLeaves, Weight weight, Collector coll)
-      throws IOException {
-    Preconditions.checkState(coll instanceof AbstractResultsCollector);
-    AbstractResultsCollector<?, ?> collector = (AbstractResultsCollector<?, ?>) coll;
+  @ovewwide
+  pwotected void seawch(wist<weafweadewcontext> unusedweaves, rawr x3 w-weight weight, (✿oωo) c-cowwectow coww)
+      thwows ioexception {
+    p-pweconditions.checkstate(coww i-instanceof abstwactwesuwtscowwectow);
+    abstwactwesuwtscowwectow<?, (ˆ ﻌ ˆ)♡ ?> cowwectow = (abstwactwesuwtscowwectow<?, :3 ?>) coww;
 
-    for (EarlybirdSingleSegmentSearcher segmentSearcher : segmentSearchers.values()) {
-      if (shouldSkipSegment(segmentSearcher)) {
-        collector.skipSegment(segmentSearcher);
-      } else {
-        segmentSearcher.search(weight.getQuery(), collector);
-        if (collector.isTerminated()) {
-          break;
+    f-fow (eawwybiwdsingwesegmentseawchew segmentseawchew : segmentseawchews.vawues()) {
+      if (shouwdskipsegment(segmentseawchew)) {
+        cowwectow.skipsegment(segmentseawchew);
+      } e-ewse {
+        segmentseawchew.seawch(weight.getquewy(), (U ᵕ U❁) cowwectow);
+        i-if (cowwectow.istewminated()) {
+          b-bweak;
         }
       }
     }
   }
 
-  @VisibleForTesting
-  protected boolean shouldSkipSegment(EarlybirdSingleSegmentSearcher segmentSearcher) {
-    EarlybirdIndexSegmentData segmentData =
-        segmentSearcher.getTwitterIndexReader().getSegmentData();
-    if (idTimeRanges != null) {
-      if (!SinceMaxIDFilter.sinceMaxIDsInRange(
-              (TweetIDMapper) segmentData.getDocIDToTweetIDMapper(),
-              idTimeRanges.getSinceIDExclusive().or(SinceMaxIDFilter.NO_FILTER),
-              idTimeRanges.getMaxIDInclusive().or(SinceMaxIDFilter.NO_FILTER))
-          || !SinceUntilFilter.sinceUntilTimesInRange(
-              segmentData.getTimeMapper(),
-              idTimeRanges.getSinceTimeInclusive().or(SinceUntilFilter.NO_FILTER),
-              idTimeRanges.getUntilTimeExclusive().or(SinceUntilFilter.NO_FILTER))) {
-        return true;
+  @visibwefowtesting
+  pwotected boowean shouwdskipsegment(eawwybiwdsingwesegmentseawchew s-segmentseawchew) {
+    e-eawwybiwdindexsegmentdata segmentdata =
+        segmentseawchew.gettwittewindexweadew().getsegmentdata();
+    if (idtimewanges != n-nyuww) {
+      if (!sincemaxidfiwtew.sincemaxidsinwange(
+              (tweetidmappew) s-segmentdata.getdocidtotweetidmappew(), ^^;;
+              idtimewanges.getsinceidexcwusive().ow(sincemaxidfiwtew.no_fiwtew), mya
+              idtimewanges.getmaxidincwusive().ow(sincemaxidfiwtew.no_fiwtew))
+          || !sinceuntiwfiwtew.sinceuntiwtimesinwange(
+              segmentdata.gettimemappew(), 😳😳😳
+              i-idtimewanges.getsincetimeincwusive().ow(sinceuntiwfiwtew.no_fiwtew), OwO
+              idtimewanges.getuntiwtimeexcwusive().ow(sinceuntiwfiwtew.no_fiwtew))) {
+        w-wetuwn t-twue;
       }
     }
-    return false;
+    wetuwn f-fawse;
   }
 
-  @Override
-  public void fillFacetResults(
-      AbstractFacetTermCollector collector, ThriftSearchResults searchResults) throws IOException {
-    for (EarlybirdSingleSegmentSearcher segmentSearcher : segmentSearchers.values()) {
-      segmentSearcher.fillFacetResults(collector, searchResults);
+  @ovewwide
+  pubwic v-void fiwwfacetwesuwts(
+      abstwactfacettewmcowwectow c-cowwectow, rawr t-thwiftseawchwesuwts seawchwesuwts) t-thwows ioexception {
+    f-fow (eawwybiwdsingwesegmentseawchew segmentseawchew : segmentseawchews.vawues()) {
+      s-segmentseawchew.fiwwfacetwesuwts(cowwectow, XD s-seawchwesuwts);
     }
   }
 
-  @Override
-  public TermStatisticsSearchResults collectTermStatistics(
-      TermStatisticsRequestInfo searchRequestInfo,
-      EarlybirdSearcher searcher,
-      int requestDebugMode) throws IOException {
-    TermStatisticsCollector collector = new TermStatisticsCollector(
-        schema, searchRequestInfo, searcherStats, clock, requestDebugMode);
-    search(collector.getSearchRequestInfo().getLuceneQuery(), collector);
-    searcher.maybeSetCollectorDebugInfo(collector);
-    return collector.getResults();
+  @ovewwide
+  pubwic t-tewmstatisticsseawchwesuwts cowwecttewmstatistics(
+      tewmstatisticswequestinfo seawchwequestinfo, (U ﹏ U)
+      e-eawwybiwdseawchew seawchew, (˘ω˘)
+      i-int wequestdebugmode) t-thwows ioexception {
+    tewmstatisticscowwectow cowwectow = n-nyew tewmstatisticscowwectow(
+        s-schema, UwU s-seawchwequestinfo, >_< s-seawchewstats, σωσ cwock, 🥺 wequestdebugmode);
+    s-seawch(cowwectow.getseawchwequestinfo().getwucenequewy(), 🥺 cowwectow);
+    seawchew.maybesetcowwectowdebuginfo(cowwectow);
+    wetuwn cowwectow.getwesuwts();
   }
 
-  @Override
-  public void explainSearchResults(SearchRequestInfo searchRequestInfo,
-      SimpleSearchResults hits, ThriftSearchResults searchResults) throws IOException {
-    for (EarlybirdSingleSegmentSearcher segmentSearcher : segmentSearchers.values()) {
-      // the hits that are getting passed into this method are hits across
-      // all searched segments. We need to get the per segment hits and
-      // generate explanations one segment at a time.
-      List<Hit> hitsForCurrentSegment = new ArrayList<>();
-      Set<Long> tweetIdsForCurrentSegment = new HashSet<>();
-      List<ThriftSearchResult> hitResultsForCurrentSegment = new ArrayList<>();
+  @ovewwide
+  pubwic void expwainseawchwesuwts(seawchwequestinfo seawchwequestinfo, ʘwʘ
+      simpweseawchwesuwts h-hits, :3 thwiftseawchwesuwts seawchwesuwts) thwows i-ioexception {
+    fow (eawwybiwdsingwesegmentseawchew s-segmentseawchew : segmentseawchews.vawues()) {
+      // t-the hits that awe getting passed i-into this method a-awe hits acwoss
+      // a-aww s-seawched segments. (U ﹏ U) w-we nyeed to get the pew segment hits and
+      // genewate expwanations one segment at a time.
+      wist<hit> h-hitsfowcuwwentsegment = n-nyew a-awwaywist<>();
+      set<wong> t-tweetidsfowcuwwentsegment = nyew hashset<>();
+      wist<thwiftseawchwesuwt> h-hitwesuwtsfowcuwwentsegment = n-nyew awwaywist<>();
 
-      for (Hit hit : hits.hits) {
-        if (hit.getTimeSliceID() == segmentSearcher.getTimeSliceID()) {
-          hitsForCurrentSegment.add(hit);
-          tweetIdsForCurrentSegment.add(hit.statusID);
+      f-fow (hit hit : hits.hits) {
+        if (hit.gettimeswiceid() == s-segmentseawchew.gettimeswiceid()) {
+          h-hitsfowcuwwentsegment.add(hit);
+          tweetidsfowcuwwentsegment.add(hit.statusid);
         }
       }
-      for (ThriftSearchResult result : searchResults.getResults()) {
-        if (tweetIdsForCurrentSegment.contains(result.id)) {
-          hitResultsForCurrentSegment.add(result);
+      f-fow (thwiftseawchwesuwt w-wesuwt : seawchwesuwts.getwesuwts()) {
+        if (tweetidsfowcuwwentsegment.contains(wesuwt.id)) {
+          hitwesuwtsfowcuwwentsegment.add(wesuwt);
         }
       }
-      ThriftSearchResults resultsForSegment = new ThriftSearchResults()
-          .setResults(hitResultsForCurrentSegment);
+      thwiftseawchwesuwts w-wesuwtsfowsegment = n-nyew thwiftseawchwesuwts()
+          .setwesuwts(hitwesuwtsfowcuwwentsegment);
 
-      SimpleSearchResults finalHits = new SimpleSearchResults(hitsForCurrentSegment);
-      segmentSearcher.explainSearchResults(searchRequestInfo, finalHits, resultsForSegment);
+      s-simpweseawchwesuwts f-finawhits = n-nyew simpweseawchwesuwts(hitsfowcuwwentsegment);
+      segmentseawchew.expwainseawchwesuwts(seawchwequestinfo, (U ﹏ U) finawhits, w-wesuwtsfowsegment);
     }
-    // We should not see hits that are not associated with an active segment
-    List<Hit> hitsWithUnknownSegment =
-        Arrays.stream(hits.hits()).filter(hit -> !hit.isHasExplanation())
-            .collect(Collectors.toList());
-    for (Hit hit : hitsWithUnknownSegment) {
-      LOG.error("Unable to find segment associated with hit: " + hit.toString());
-    }
-  }
-
-  @Override
-  public void fillFacetResultMetadata(Map<Term, ThriftFacetCount> facetResults,
-                                      ImmutableSchemaInterface documentSchema, byte debugMode)
-      throws IOException {
-    for (EarlybirdSingleSegmentSearcher segmentSearcher : segmentSearchers.values()) {
-      segmentSearcher.fillFacetResultMetadata(facetResults, documentSchema, debugMode);
+    // w-we shouwd nyot see hits that a-awe nyot associated w-with an active segment
+    wist<hit> h-hitswithunknownsegment =
+        awways.stweam(hits.hits()).fiwtew(hit -> !hit.ishasexpwanation())
+            .cowwect(cowwectows.towist());
+    fow (hit h-hit : hitswithunknownsegment) {
+      wog.ewwow("unabwe t-to find s-segment associated with hit: " + h-hit.tostwing());
     }
   }
 
-  @Override
-  public void fillTermStatsMetadata(ThriftTermStatisticsResults termStatsResults,
-                                    ImmutableSchemaInterface documentSchema, byte debugMode)
-      throws IOException {
-    for (EarlybirdSingleSegmentSearcher segmentSearcher : segmentSearchers.values()) {
-      segmentSearcher.fillTermStatsMetadata(termStatsResults, documentSchema, debugMode);
+  @ovewwide
+  pubwic void fiwwfacetwesuwtmetadata(map<tewm, ʘwʘ thwiftfacetcount> facetwesuwts, >w<
+                                      i-immutabweschemaintewface d-documentschema, rawr x3 b-byte debugmode)
+      thwows ioexception {
+    fow (eawwybiwdsingwesegmentseawchew segmentseawchew : s-segmentseawchews.vawues()) {
+      segmentseawchew.fiwwfacetwesuwtmetadata(facetwesuwts, documentschema, d-debugmode);
     }
   }
 
-  /**
-   * The searchers for individual segments will rewrite the query as they see fit, so the multi
-   * segment searcher does not need to rewrite it. In fact, not rewriting the query here improves
-   * the request latency by ~5%.
-   */
-  @Override
-  public Query rewrite(Query original) {
-    return original;
+  @ovewwide
+  pubwic v-void fiwwtewmstatsmetadata(thwifttewmstatisticswesuwts tewmstatswesuwts, OwO
+                                    i-immutabweschemaintewface documentschema, ^•ﻌ•^ b-byte d-debugmode)
+      thwows ioexception {
+    fow (eawwybiwdsingwesegmentseawchew segmentseawchew : s-segmentseawchews.vawues()) {
+      segmentseawchew.fiwwtewmstatsmetadata(tewmstatswesuwts, >_< documentschema, OwO d-debugmode);
+    }
   }
 
   /**
-   * The searchers for individual segments will create their own weights. This method only creates
-   * a dummy weight to pass the Lucene query to the search() method of these individual segment
-   * searchers.
+   * t-the seawchews fow i-individuaw segments wiww wewwite t-the quewy as they s-see fit, >_< so the m-muwti
+   * segment seawchew does nyot nyeed to wewwite it. (ꈍᴗꈍ) in fact, >w< nyot wewwiting the quewy hewe impwoves
+   * the wequest watency by ~5%. (U ﹏ U)
    */
-  @Override
-  public Weight createWeight(Query query, ScoreMode scoreMode, float boost) {
-    return new DummyWeight(query);
+  @ovewwide
+  pubwic quewy wewwite(quewy owiginaw) {
+    wetuwn owiginaw;
   }
 
   /**
-   * Dummy weight used solely to pass Lucene Query around.
+   * the s-seawchews fow i-individuaw segments wiww cweate theiw own weights. ^^ t-this method o-onwy cweates
+   * a-a dummy weight to pass the wucene q-quewy to the seawch() method o-of these individuaw s-segment
+   * seawchews. (U ﹏ U)
    */
-  private static final class DummyWeight extends Weight {
-    private DummyWeight(Query luceneQuery) {
-      super(luceneQuery);
+  @ovewwide
+  p-pubwic weight cweateweight(quewy quewy, :3 scowemode s-scowemode, fwoat b-boost) {
+    wetuwn nyew dummyweight(quewy);
+  }
+
+  /**
+   * dummy weight used s-sowewy to pass w-wucene quewy awound. (✿oωo)
+   */
+  pwivate s-static finaw c-cwass dummyweight e-extends weight {
+    p-pwivate d-dummyweight(quewy w-wucenequewy) {
+      s-supew(wucenequewy);
     }
 
-    @Override
-    public Explanation explain(LeafReaderContext context, int doc) {
-      throw new UnsupportedOperationException();
+    @ovewwide
+    pubwic expwanation e-expwain(weafweadewcontext c-context, XD int d-doc) {
+      thwow nyew unsuppowtedopewationexception();
     }
 
-    @Override
-    public Scorer scorer(LeafReaderContext context) {
-      throw new UnsupportedOperationException();
+    @ovewwide
+    p-pubwic scowew scowew(weafweadewcontext context) {
+      t-thwow nyew unsuppowtedopewationexception();
     }
 
-    @Override
-    public void extractTerms(Set<Term> terms) {
-      throw new UnsupportedOperationException();
+    @ovewwide
+    p-pubwic void extwacttewms(set<tewm> t-tewms) {
+      t-thwow nyew unsuppowtedopewationexception();
     }
 
-    @Override
-    public boolean isCacheable(LeafReaderContext context) {
-      return true;
+    @ovewwide
+    pubwic boowean i-iscacheabwe(weafweadewcontext context) {
+      w-wetuwn twue;
     }
   }
 }

@@ -1,31 +1,31 @@
-package com.twitter.simclusters_v2.common
+package com.twittew.simcwustews_v2.common
 
-import com.twitter.simclusters_v2.common.SimClustersMultiEmbeddingId._
-import com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbedding.{Ids, Values}
-import com.twitter.simclusters_v2.thriftscala.{
-  SimClustersMultiEmbedding,
-  SimClustersEmbeddingId,
-  SimClustersMultiEmbeddingId
+impowt c-com.twittew.simcwustews_v2.common.simcwustewsmuwtiembeddingid._
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsmuwtiembedding.{ids, :3 vawues}
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.{
+  s-simcwustewsmuwtiembedding, 😳😳😳
+  s-simcwustewsembeddingid, -.-
+  s-simcwustewsmuwtiembeddingid
 }
 
 /**
- * Helper methods for SimClustersMultiEmbedding
+ * h-hewpew methods f-fow simcwustewsmuwtiembedding
  */
-object SimClustersMultiEmbedding {
+object simcwustewsmuwtiembedding {
 
-  // Convert a multiEmbedding to a list of (embeddingId, score)
-  def toSimClustersEmbeddingIdWithScores(
-    simClustersMultiEmbeddingId: SimClustersMultiEmbeddingId,
-    simClustersMultiEmbedding: SimClustersMultiEmbedding
-  ): Seq[(SimClustersEmbeddingId, Double)] = {
-    simClustersMultiEmbedding match {
-      case Values(values) =>
-        values.embeddings.zipWithIndex.map {
-          case (embeddingWithScore, i) =>
-            (toEmbeddingId(simClustersMultiEmbeddingId, i), embeddingWithScore.score)
+  // convewt a muwtiembedding to a wist of (embeddingid, ( ͡o ω ͡o ) s-scowe)
+  def tosimcwustewsembeddingidwithscowes(
+    simcwustewsmuwtiembeddingid: s-simcwustewsmuwtiembeddingid, rawr x3
+    simcwustewsmuwtiembedding: s-simcwustewsmuwtiembedding
+  ): seq[(simcwustewsembeddingid, nyaa~~ doubwe)] = {
+    simcwustewsmuwtiembedding match {
+      c-case vawues(vawues) =>
+        vawues.embeddings.zipwithindex.map {
+          c-case (embeddingwithscowe, /(^•ω•^) i) =>
+            (toembeddingid(simcwustewsmuwtiembeddingid, rawr i-i), embeddingwithscowe.scowe)
         }
-      case Ids(ids) =>
-        ids.ids.map(_.toTuple)
+      case ids(ids) =>
+        ids.ids.map(_.totupwe)
     }
   }
 

@@ -1,78 +1,78 @@
-package com.twitter.visibility.interfaces.dms
+package com.twittew.visibiwity.intewfaces.dms
 
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.dms.DmConversationFeatures
-import com.twitter.visibility.builder.dms.DmEventFeatures
-import com.twitter.visibility.builder.dms.InvalidDmEventFeatureException
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.common.dm_sources.DmConversationSource
-import com.twitter.visibility.common.dm_sources.DmEventSource
-import com.twitter.visibility.common.stitch.StitchHelpers
-import com.twitter.visibility.models.ContentId.DmEventId
-import com.twitter.visibility.rules.Drop
-import com.twitter.visibility.rules.Reason
-import com.twitter.visibility.rules.RuleBase
+impowt c-com.twittew.stitch.stitch
+impowt c-com.twittew.stwato.cwient.{cwient => s-stwatocwient}
+i-impowt c-com.twittew.visibiwity.visibiwitywibwawy
+i-impowt c-com.twittew.visibiwity.buiwdew.visibiwitywesuwt
+i-impowt com.twittew.visibiwity.buiwdew.dms.dmconvewsationfeatuwes
+impowt com.twittew.visibiwity.buiwdew.dms.dmeventfeatuwes
+impowt com.twittew.visibiwity.buiwdew.dms.invawiddmeventfeatuweexception
+impowt com.twittew.visibiwity.buiwdew.usews.authowfeatuwes
+impowt c-com.twittew.visibiwity.common.usewsouwce
+impowt com.twittew.visibiwity.common.dm_souwces.dmconvewsationsouwce
+impowt com.twittew.visibiwity.common.dm_souwces.dmeventsouwce
+i-impowt com.twittew.visibiwity.common.stitch.stitchhewpews
+impowt c-com.twittew.visibiwity.modews.contentid.dmeventid
+impowt com.twittew.visibiwity.wuwes.dwop
+impowt com.twittew.visibiwity.wuwes.weason
+i-impowt com.twittew.visibiwity.wuwes.wuwebase
 
-object DmEventVisibilityLibrary {
-  type Type = DmEventVisibilityRequest => Stitch[VisibilityResult]
+o-object dmeventvisibiwitywibwawy {
+  t-type type = dmeventvisibiwitywequest => stitch[visibiwitywesuwt]
 
-  def apply(
-    visibilityLibrary: VisibilityLibrary,
-    stratoClient: StratoClient,
-    userSource: UserSource
-  ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val stratoClientStatsReceiver = visibilityLibrary.statsReceiver.scope("strato")
-    val vfLatencyStatsReceiver = visibilityLibrary.statsReceiver.scope("vf_latency")
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
-    val dmConversationSource = {
-      DmConversationSource.fromStrato(stratoClient, stratoClientStatsReceiver)
+  def appwy(
+    visibiwitywibwawy: visibiwitywibwawy,
+    s-stwatocwient: stwatocwient, mya
+    usewsouwce: usewsouwce
+  ): type = {
+    v-vaw wibwawystatsweceivew = visibiwitywibwawy.statsweceivew
+    v-vaw stwatocwientstatsweceivew = v-visibiwitywibwawy.statsweceivew.scope("stwato")
+    v-vaw vfwatencystatsweceivew = v-visibiwitywibwawy.statsweceivew.scope("vf_watency")
+    vaw vfenginecountew = wibwawystatsweceivew.countew("vf_engine_wequests")
+    vaw dmconvewsationsouwce = {
+      d-dmconvewsationsouwce.fwomstwato(stwatocwient, (˘ω˘) stwatocwientstatsweceivew)
     }
-    val dmEventSource = {
-      DmEventSource.fromStrato(stratoClient, stratoClientStatsReceiver)
+    vaw d-dmeventsouwce = {
+      dmeventsouwce.fwomstwato(stwatocwient, >_< stwatocwientstatsweceivew)
     }
-    val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
-    val dmConversationFeatures = new DmConversationFeatures(dmConversationSource, authorFeatures)
-    val dmEventFeatures =
-      new DmEventFeatures(
-        dmEventSource,
-        dmConversationSource,
-        authorFeatures,
-        dmConversationFeatures,
-        libraryStatsReceiver)
+    vaw authowfeatuwes = nyew authowfeatuwes(usewsouwce, -.- wibwawystatsweceivew)
+    vaw dmconvewsationfeatuwes = n-new dmconvewsationfeatuwes(dmconvewsationsouwce, 🥺 authowfeatuwes)
+    v-vaw dmeventfeatuwes =
+      n-nyew dmeventfeatuwes(
+        dmeventsouwce,
+        d-dmconvewsationsouwce,
+        authowfeatuwes, (U ﹏ U)
+        dmconvewsationfeatuwes, >w<
+        wibwawystatsweceivew)
 
-    { req: DmEventVisibilityRequest =>
-      val dmEventId = req.dmEventId
-      val contentId = DmEventId(dmEventId)
-      val safetyLevel = req.safetyLevel
+    { w-weq: dmeventvisibiwitywequest =>
+      v-vaw dmeventid = weq.dmeventid
+      v-vaw contentid = d-dmeventid(dmeventid)
+      vaw safetywevew = w-weq.safetywevew
 
-      if (!RuleBase.hasDmEventRules(safetyLevel)) {
-        Stitch.value(VisibilityResult(contentId = contentId, verdict = Drop(Reason.Unspecified)))
-      } else {
-        vfEngineCounter.incr()
+      if (!wuwebase.hasdmeventwuwes(safetywevew)) {
+        s-stitch.vawue(visibiwitywesuwt(contentid = contentid, mya vewdict = dwop(weason.unspecified)))
+      } e-ewse {
+        vfenginecountew.incw()
 
-        val viewerContext = req.viewerContext
-        val viewerIdOpt = viewerContext.userId
+        vaw viewewcontext = w-weq.viewewcontext
+        vaw v-viewewidopt = viewewcontext.usewid
 
-        viewerIdOpt match {
-          case Some(viewerId) =>
-            val featureMap = visibilityLibrary.featureMapBuilder(
-              Seq(dmEventFeatures.forDmEventId(dmEventId, viewerId)))
+        v-viewewidopt match {
+          case some(viewewid) =>
+            vaw featuwemap = visibiwitywibwawy.featuwemapbuiwdew(
+              seq(dmeventfeatuwes.fowdmeventid(dmeventid, >w< v-viewewid)))
 
-            val resp = visibilityLibrary
-              .runRuleEngine(
-                contentId,
-                featureMap,
-                viewerContext,
-                safetyLevel
+            v-vaw wesp = visibiwitywibwawy
+              .wunwuweengine(
+                c-contentid, nyaa~~
+                f-featuwemap, (✿oωo)
+                v-viewewcontext, ʘwʘ
+                safetywevew
               )
-            StitchHelpers.profileStitch(resp, Seq(vfLatencyStatsReceiver))
+            stitchhewpews.pwofiwestitch(wesp, (ˆ ﻌ ˆ)♡ seq(vfwatencystatsweceivew))
 
-          case None => Stitch.exception(InvalidDmEventFeatureException("Viewer id is missing"))
+          c-case nyone => stitch.exception(invawiddmeventfeatuweexception("viewew id is missing"))
         }
       }
     }

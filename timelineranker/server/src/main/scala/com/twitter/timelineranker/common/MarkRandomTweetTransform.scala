@@ -1,55 +1,55 @@
-package com.twitter.timelineranker.common
+package com.twittew.timewinewankew.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.CandidateTweet
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.util.Future
-import com.twitter.util.Time
-import scala.util.Random
+impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.timewinewankew.cowe.candidateenvewope
+i-impowt c-com.twittew.timewinewankew.modew.candidatetweet
+i-impowt com.twittew.timewinewankew.modew.wecapquewy.dependencypwovidew
+i-impowt c-com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.time
+impowt scawa.utiw.wandom
 
 /**
- * picks up one or more random tweets and sets its tweetFeatures.isRandomTweet field to true.
+ * picks up one ow mowe wandom t-tweets and sets its tweetfeatuwes.iswandomtweet fiewd to twue. (///ˬ///✿)
  */
-class MarkRandomTweetTransform(
-  includeRandomTweetProvider: DependencyProvider[Boolean],
-  randomGenerator: Random = new Random(Time.now.inMilliseconds),
-  includeSingleRandomTweetProvider: DependencyProvider[Boolean],
-  probabilityRandomTweetProvider: DependencyProvider[Double])
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+c-cwass mawkwandomtweettwansfowm(
+  incwudewandomtweetpwovidew: d-dependencypwovidew[boowean], >w<
+  wandomgenewatow: wandom = nyew wandom(time.now.inmiwwiseconds), rawr
+  i-incwudesingwewandomtweetpwovidew: dependencypwovidew[boowean], mya
+  p-pwobabiwitywandomtweetpwovidew: d-dependencypwovidew[doubwe])
+    extends futuweawwow[candidateenvewope, ^^ candidateenvewope] {
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val includeRandomTweet = includeRandomTweetProvider(envelope.query)
-    val includeSingleRandomTweet = includeSingleRandomTweetProvider(envelope.query)
-    val probabilityRandomTweet = probabilityRandomTweetProvider(envelope.query)
-    val searchResults = envelope.searchResults
+  ovewwide def appwy(envewope: c-candidateenvewope): futuwe[candidateenvewope] = {
+    vaw incwudewandomtweet = incwudewandomtweetpwovidew(envewope.quewy)
+    vaw incwudesingwewandomtweet = incwudesingwewandomtweetpwovidew(envewope.quewy)
+    v-vaw pwobabiwitywandomtweet = pwobabiwitywandomtweetpwovidew(envewope.quewy)
+    v-vaw seawchwesuwts = e-envewope.seawchwesuwts
 
-    if (!includeRandomTweet || searchResults.isEmpty) { // random tweet off
-      Future.value(envelope)
-    } else if (includeSingleRandomTweet) { // pick only one
-      val randomIdx = randomGenerator.nextInt(searchResults.size)
-      val randomTweet = searchResults(randomIdx)
-      val randomTweetWithFlag = randomTweet.copy(
-        tweetFeatures = randomTweet.tweetFeatures
-          .orElse(Some(CandidateTweet.DefaultFeatures))
-          .map(_.copy(isRandomTweet = Some(true)))
+    i-if (!incwudewandomtweet || seawchwesuwts.isempty) { // w-wandom tweet off
+      futuwe.vawue(envewope)
+    } ewse i-if (incwudesingwewandomtweet) { // pick onwy one
+      vaw wandomidx = w-wandomgenewatow.nextint(seawchwesuwts.size)
+      vaw wandomtweet = seawchwesuwts(wandomidx)
+      vaw wandomtweetwithfwag = wandomtweet.copy(
+        t-tweetfeatuwes = wandomtweet.tweetfeatuwes
+          .owewse(some(candidatetweet.defauwtfeatuwes))
+          .map(_.copy(iswandomtweet = s-some(twue)))
       )
-      val updatedSearchResults = searchResults.updated(randomIdx, randomTweetWithFlag)
+      v-vaw updatedseawchwesuwts = s-seawchwesuwts.updated(wandomidx, 😳😳😳 wandomtweetwithfwag)
 
-      Future.value(envelope.copy(searchResults = updatedSearchResults))
-    } else { // pick tweets with perTweetProbability
-      val updatedSearchResults = searchResults.map { result =>
-        if (randomGenerator.nextDouble() < probabilityRandomTweet) {
-          result.copy(
-            tweetFeatures = result.tweetFeatures
-              .orElse(Some(CandidateTweet.DefaultFeatures))
-              .map(_.copy(isRandomTweet = Some(true))))
+      futuwe.vawue(envewope.copy(seawchwesuwts = updatedseawchwesuwts))
+    } e-ewse { // pick t-tweets with pewtweetpwobabiwity
+      v-vaw updatedseawchwesuwts = s-seawchwesuwts.map { wesuwt =>
+        i-if (wandomgenewatow.nextdoubwe() < pwobabiwitywandomtweet) {
+          w-wesuwt.copy(
+            tweetfeatuwes = wesuwt.tweetfeatuwes
+              .owewse(some(candidatetweet.defauwtfeatuwes))
+              .map(_.copy(iswandomtweet = s-some(twue))))
 
-        } else
-          result
+        } ewse
+          wesuwt
       }
 
-      Future.value(envelope.copy(searchResults = updatedSearchResults))
+      f-futuwe.vawue(envewope.copy(seawchwesuwts = updatedseawchwesuwts))
     }
   }
 }

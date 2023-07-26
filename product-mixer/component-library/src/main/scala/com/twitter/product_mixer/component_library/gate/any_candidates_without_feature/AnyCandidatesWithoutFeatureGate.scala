@@ -1,34 +1,34 @@
-package com.twitter.product_mixer.component_library.gate.any_candidates_without_feature
+package com.twittew.pwoduct_mixew.component_wibwawy.gate.any_candidates_without_featuwe
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.gate.QueryAndCandidateGate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.quewyandcandidategate
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.gateidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.stitch
 
 /**
- * A gate that enables a component only if any candidates are missing a specific feature.
- * You can restrict which candidates to check with the scope parameter.
- * This is most commonly used to do backfill scoring, where you can have one Scoring Pipeline that
- * might return a score feature "FeatureA" and another sequential pipeline that you only want to run
- * if the previous scoring pipeline fails to hydrate for all candidates.
- * @param identifier Unique identifier for this gate. Typically, AnyCandidatesWithout{YourFeature}.
- * @param scope A [[CandidateScope]] to specify which candidates to check.
- * @param missingFeature The feature that should be missing for any of the candidates for this gate to continue
+ * a-a gate that enabwes a component onwy if any candidates awe missing a-a specific featuwe. OwO
+ * you can westwict which candidates t-to check with the scope p-pawametew. 😳😳😳
+ * this is most commonwy used to do backfiww scowing, 😳😳😳 w-whewe you can have one scowing p-pipewine that
+ * m-might wetuwn a scowe featuwe "featuwea" and anothew sequentiaw pipewine that you o-onwy want to wun
+ * if the pwevious scowing pipewine faiws to hydwate fow aww c-candidates. o.O
+ * @pawam identifiew u-unique identifiew f-fow this gate. ( ͡o ω ͡o ) t-typicawwy, (U ﹏ U) anycandidateswithout{youwfeatuwe}. (///ˬ///✿)
+ * @pawam s-scope a [[candidatescope]] to specify w-which candidates to check. >w<
+ * @pawam missingfeatuwe t-the featuwe that shouwd be missing fow any of the candidates fow this gate to continue
  */
-case class AnyCandidatesWithoutFeatureGate(
-  override val identifier: GateIdentifier,
-  scope: CandidateScope,
-  missingFeature: Feature[_, _])
-    extends QueryAndCandidateGate[PipelineQuery] {
+c-case cwass anycandidateswithoutfeatuwegate(
+  ovewwide v-vaw identifiew: g-gateidentifiew, rawr
+  s-scope: candidatescope, mya
+  missingfeatuwe: featuwe[_, ^^ _])
+    e-extends quewyandcandidategate[pipewinequewy] {
 
-  override def shouldContinue(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithDetails]
-  ): Stitch[Boolean] =
-    Stitch.value(scope.partition(candidates).candidatesInScope.exists { candidateWithDetails =>
-      !candidateWithDetails.features.getSuccessfulFeatures.contains(missingFeature)
+  o-ovewwide def shouwdcontinue(
+    q-quewy: pipewinequewy, 😳😳😳
+    c-candidates: seq[candidatewithdetaiws]
+  ): stitch[boowean] =
+    s-stitch.vawue(scope.pawtition(candidates).candidatesinscope.exists { candidatewithdetaiws =>
+      !candidatewithdetaiws.featuwes.getsuccessfuwfeatuwes.contains(missingfeatuwe)
     })
 }

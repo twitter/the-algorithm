@@ -1,182 +1,182 @@
-package com.twitter.interaction_graph.scio.agg_all
+package com.twittew.intewaction_gwaph.scio.agg_aww
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.dal.DAL.ReadOptions
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.dal.client.dataset.SnapshotDALDatasetBase
-import com.twitter.dal.client.dataset.TimePartitionedDALDataset
-import com.twitter.interaction_graph.scio.agg_address_book.InteractionGraphAggAddressBookEdgeSnapshotScalaDataset
-import com.twitter.interaction_graph.scio.agg_address_book.InteractionGraphAggAddressBookVertexSnapshotScalaDataset
-import com.twitter.interaction_graph.scio.agg_client_event_logs.InteractionGraphAggClientEventLogsEdgeDailyScalaDataset
-import com.twitter.interaction_graph.scio.agg_client_event_logs.InteractionGraphAggClientEventLogsVertexDailyScalaDataset
-import com.twitter.interaction_graph.scio.agg_direct_interactions.InteractionGraphAggDirectInteractionsEdgeDailyScalaDataset
-import com.twitter.interaction_graph.scio.agg_direct_interactions.InteractionGraphAggDirectInteractionsVertexDailyScalaDataset
-import com.twitter.interaction_graph.scio.agg_flock.InteractionGraphAggFlockEdgeSnapshotScalaDataset
-import com.twitter.interaction_graph.scio.agg_flock.InteractionGraphAggFlockVertexSnapshotScalaDataset
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.statebird.v2.thriftscala.Environment
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
-import com.twitter.util.Duration
-import org.joda.time.Interval
+impowt com.spotify.scio.sciocontext
+i-impowt com.spotify.scio.vawues.scowwection
+i-impowt com.twittew.beam.io.daw.daw
+i-impowt com.twittew.beam.io.daw.daw.weadoptions
+i-impowt com.twittew.beam.job.sewviceidentifiewoptions
+i-impowt c-com.twittew.daw.cwient.dataset.snapshotdawdatasetbase
+i-impowt com.twittew.daw.cwient.dataset.timepawtitioneddawdataset
+i-impowt com.twittew.intewaction_gwaph.scio.agg_addwess_book.intewactiongwaphaggaddwessbookedgesnapshotscawadataset
+impowt com.twittew.intewaction_gwaph.scio.agg_addwess_book.intewactiongwaphaggaddwessbookvewtexsnapshotscawadataset
+impowt com.twittew.intewaction_gwaph.scio.agg_cwient_event_wogs.intewactiongwaphaggcwienteventwogsedgedaiwyscawadataset
+impowt com.twittew.intewaction_gwaph.scio.agg_cwient_event_wogs.intewactiongwaphaggcwienteventwogsvewtexdaiwyscawadataset
+i-impowt com.twittew.intewaction_gwaph.scio.agg_diwect_intewactions.intewactiongwaphaggdiwectintewactionsedgedaiwyscawadataset
+impowt c-com.twittew.intewaction_gwaph.scio.agg_diwect_intewactions.intewactiongwaphaggdiwectintewactionsvewtexdaiwyscawadataset
+impowt c-com.twittew.intewaction_gwaph.scio.agg_fwock.intewactiongwaphaggfwockedgesnapshotscawadataset
+impowt com.twittew.intewaction_gwaph.scio.agg_fwock.intewactiongwaphaggfwockvewtexsnapshotscawadataset
+impowt com.twittew.intewaction_gwaph.thwiftscawa.edge
+impowt c-com.twittew.intewaction_gwaph.thwiftscawa.vewtex
+impowt com.twittew.statebiwd.v2.thwiftscawa.enviwonment
+i-impowt c-com.twittew.usewsouwce.snapshot.fwat.usewsouwcefwatscawadataset
+impowt com.twittew.usewsouwce.snapshot.fwat.thwiftscawa.fwatusew
+impowt com.twittew.utiw.duwation
+impowt owg.joda.time.intewvaw
 
-case class InteractionGraphAggregationSource(
-  pipelineOptions: InteractionGraphAggregationOption
+case cwass intewactiongwaphaggwegationsouwce(
+  p-pipewineoptions: intewactiongwaphaggwegationoption
 )(
-  implicit sc: ScioContext) {
-  val dalEnvironment: String = pipelineOptions
-    .as(classOf[ServiceIdentifierOptions])
-    .getEnvironment()
+  impwicit sc: sciocontext) {
+  vaw dawenviwonment: s-stwing = pipewineoptions
+    .as(cwassof[sewviceidentifiewoptions])
+    .getenviwonment()
 
-  def readDALDataset[T: Manifest](
-    dataset: TimePartitionedDALDataset[T],
-    interval: Interval,
-    dalEnvironment: String,
-    projections: Option[Seq[String]] = None
+  d-def weaddawdataset[t: m-manifest](
+    d-dataset: timepawtitioneddawdataset[t], ʘwʘ
+    i-intewvaw: intewvaw, ( ͡o ω ͡o )
+    dawenviwonment: s-stwing, o.O
+    pwojections: option[seq[stwing]] = nyone
   )(
-    implicit sc: ScioContext,
-  ): SCollection[T] = {
-    sc.customInput(
-      s"Reading ${dataset.role.name}.${dataset.logicalName}",
-      DAL.read[T](
-        dataset = dataset,
-        interval = interval,
-        environmentOverride = Environment.valueOf(dalEnvironment),
-        readOptions = ReadOptions(projections)
+    i-impwicit sc: sciocontext, >w<
+  ): scowwection[t] = {
+    sc.custominput(
+      s"weading ${dataset.wowe.name}.${dataset.wogicawname}", 😳
+      daw.wead[t](
+        dataset = dataset, 🥺
+        i-intewvaw = intewvaw, rawr x3
+        e-enviwonmentovewwide = e-enviwonment.vawueof(dawenviwonment), o.O
+        w-weadoptions = weadoptions(pwojections)
       )
     )
   }
 
-  def readMostRecentSnapshotDALDataset[T: Manifest](
-    dataset: SnapshotDALDatasetBase[T],
-    dateInterval: Interval,
-    dalEnvironment: String,
-    projections: Option[Seq[String]] = None
+  def weadmostwecentsnapshotdawdataset[t: manifest](
+    dataset: s-snapshotdawdatasetbase[t], rawr
+    d-dateintewvaw: intewvaw, ʘwʘ
+    d-dawenviwonment: s-stwing, 😳😳😳
+    pwojections: option[seq[stwing]] = n-nyone
   )(
-    implicit sc: ScioContext,
-  ): SCollection[T] = {
-    sc.customInput(
-      s"Reading most recent snapshot ${dataset.role.name}.${dataset.logicalName}",
-      DAL.readMostRecentSnapshot[T](
-        dataset,
-        dateInterval,
-        Environment.valueOf(dalEnvironment),
-        readOptions = ReadOptions(projections)
+    impwicit sc: sciocontext, ^^;;
+  ): scowwection[t] = {
+    s-sc.custominput(
+      s"weading most wecent s-snapshot ${dataset.wowe.name}.${dataset.wogicawname}", o.O
+      daw.weadmostwecentsnapshot[t](
+        dataset, (///ˬ///✿)
+        d-dateintewvaw, σωσ
+        enviwonment.vawueof(dawenviwonment), nyaa~~
+        w-weadoptions = w-weadoptions(pwojections)
       )
     )
   }
 
-  def readMostRecentSnapshotNoOlderThanDALDataset[T: Manifest](
-    dataset: SnapshotDALDatasetBase[T],
-    noOlderThan: Duration,
-    dalEnvironment: String,
-    projections: Option[Seq[String]] = None
+  def weadmostwecentsnapshotnoowdewthandawdataset[t: manifest](
+    dataset: snapshotdawdatasetbase[t], ^^;;
+    nyoowdewthan: duwation,
+    dawenviwonment: s-stwing, ^•ﻌ•^
+    p-pwojections: option[seq[stwing]] = n-nyone
   )(
-    implicit sc: ScioContext,
-  ): SCollection[T] = {
-    sc.customInput(
-      s"Reading most recent snapshot ${dataset.role.name}.${dataset.logicalName}",
-      DAL.readMostRecentSnapshotNoOlderThan[T](
-        dataset,
-        noOlderThan,
-        environmentOverride = Environment.valueOf(dalEnvironment),
-        readOptions = ReadOptions(projections)
+    i-impwicit s-sc: sciocontext, σωσ
+  ): scowwection[t] = {
+    sc.custominput(
+      s"weading m-most wecent snapshot ${dataset.wowe.name}.${dataset.wogicawname}", -.-
+      daw.weadmostwecentsnapshotnoowdewthan[t](
+        dataset, ^^;;
+        nyoowdewthan, XD
+        enviwonmentovewwide = e-enviwonment.vawueof(dawenviwonment), 🥺
+        weadoptions = w-weadoptions(pwojections)
       )
     )
   }
 
-  def readAddressBookFeatures(): (SCollection[Edge], SCollection[Vertex]) = {
-    val edges = readMostRecentSnapshotNoOlderThanDALDataset[Edge](
-      dataset = InteractionGraphAggAddressBookEdgeSnapshotScalaDataset,
-      noOlderThan = Duration.fromDays(5),
-      dalEnvironment = dalEnvironment,
+  d-def weadaddwessbookfeatuwes(): (scowwection[edge], òωó s-scowwection[vewtex]) = {
+    vaw edges = weadmostwecentsnapshotnoowdewthandawdataset[edge](
+      d-dataset = i-intewactiongwaphaggaddwessbookedgesnapshotscawadataset, (ˆ ﻌ ˆ)♡
+      n-nyoowdewthan = d-duwation.fwomdays(5), -.-
+      dawenviwonment = dawenviwonment, :3
     )
 
-    val vertex = readMostRecentSnapshotNoOlderThanDALDataset[Vertex](
-      dataset = InteractionGraphAggAddressBookVertexSnapshotScalaDataset,
-      noOlderThan = Duration.fromDays(5),
-      dalEnvironment = dalEnvironment,
+    v-vaw vewtex = w-weadmostwecentsnapshotnoowdewthandawdataset[vewtex](
+      d-dataset = i-intewactiongwaphaggaddwessbookvewtexsnapshotscawadataset, ʘwʘ
+      n-nyoowdewthan = duwation.fwomdays(5), 🥺
+      dawenviwonment = dawenviwonment, >_<
     )
 
-    (edges, vertex)
+    (edges, ʘwʘ v-vewtex)
   }
 
-  def readClientEventLogsFeatures(
-    dateInterval: Interval
-  ): (SCollection[Edge], SCollection[Vertex]) = {
-    val edges = readDALDataset[Edge](
-      dataset = InteractionGraphAggClientEventLogsEdgeDailyScalaDataset,
-      dalEnvironment = dalEnvironment,
-      interval = dateInterval
+  def weadcwienteventwogsfeatuwes(
+    dateintewvaw: intewvaw
+  ): (scowwection[edge], (˘ω˘) scowwection[vewtex]) = {
+    vaw edges = w-weaddawdataset[edge](
+      dataset = intewactiongwaphaggcwienteventwogsedgedaiwyscawadataset, (✿oωo)
+      dawenviwonment = dawenviwonment, (///ˬ///✿)
+      intewvaw = d-dateintewvaw
     )
 
-    val vertex = readDALDataset[Vertex](
-      dataset = InteractionGraphAggClientEventLogsVertexDailyScalaDataset,
-      dalEnvironment = dalEnvironment,
-      interval = dateInterval
+    v-vaw vewtex = weaddawdataset[vewtex](
+      d-dataset = intewactiongwaphaggcwienteventwogsvewtexdaiwyscawadataset, rawr x3
+      d-dawenviwonment = dawenviwonment, -.-
+      intewvaw = d-dateintewvaw
     )
 
-    (edges, vertex)
+    (edges, ^^ v-vewtex)
   }
 
-  def readDirectInteractionsFeatures(
-    dateInterval: Interval
-  ): (SCollection[Edge], SCollection[Vertex]) = {
-    val edges = readDALDataset[Edge](
-      dataset = InteractionGraphAggDirectInteractionsEdgeDailyScalaDataset,
-      dalEnvironment = dalEnvironment,
-      interval = dateInterval
+  def weaddiwectintewactionsfeatuwes(
+    dateintewvaw: intewvaw
+  ): (scowwection[edge], (⑅˘꒳˘) scowwection[vewtex]) = {
+    vaw edges = weaddawdataset[edge](
+      d-dataset = intewactiongwaphaggdiwectintewactionsedgedaiwyscawadataset, nyaa~~
+      d-dawenviwonment = dawenviwonment, /(^•ω•^)
+      i-intewvaw = d-dateintewvaw
     )
 
-    val vertex = readDALDataset[Vertex](
-      dataset = InteractionGraphAggDirectInteractionsVertexDailyScalaDataset,
-      dalEnvironment = dalEnvironment,
-      interval = dateInterval
+    vaw vewtex = weaddawdataset[vewtex](
+      d-dataset = i-intewactiongwaphaggdiwectintewactionsvewtexdaiwyscawadataset, (U ﹏ U)
+      dawenviwonment = d-dawenviwonment, 😳😳😳
+      i-intewvaw = dateintewvaw
     )
 
-    (edges, vertex)
+    (edges, >w< vewtex)
   }
 
-  def readFlockFeatures(): (SCollection[Edge], SCollection[Vertex]) = {
-    val edges = readMostRecentSnapshotNoOlderThanDALDataset[Edge](
-      dataset = InteractionGraphAggFlockEdgeSnapshotScalaDataset,
-      noOlderThan = Duration.fromDays(5),
-      dalEnvironment = dalEnvironment,
+  def weadfwockfeatuwes(): (scowwection[edge], XD scowwection[vewtex]) = {
+    v-vaw edges = weadmostwecentsnapshotnoowdewthandawdataset[edge](
+      d-dataset = intewactiongwaphaggfwockedgesnapshotscawadataset, o.O
+      n-nyoowdewthan = duwation.fwomdays(5),
+      d-dawenviwonment = d-dawenviwonment, mya
     )
 
-    val vertex = readMostRecentSnapshotNoOlderThanDALDataset[Vertex](
-      dataset = InteractionGraphAggFlockVertexSnapshotScalaDataset,
-      noOlderThan = Duration.fromDays(5),
-      dalEnvironment = dalEnvironment,
+    vaw v-vewtex = weadmostwecentsnapshotnoowdewthandawdataset[vewtex](
+      dataset = intewactiongwaphaggfwockvewtexsnapshotscawadataset, 🥺
+      nyoowdewthan = duwation.fwomdays(5), ^^;;
+      d-dawenviwonment = d-dawenviwonment, :3
     )
 
-    (edges, vertex)
+    (edges, (U ﹏ U) vewtex)
   }
 
-  def readAggregatedFeatures(dateInterval: Interval): (SCollection[Edge], SCollection[Vertex]) = {
-    val edges = readMostRecentSnapshotDALDataset[Edge](
-      dataset = InteractionGraphHistoryAggregatedEdgeSnapshotScalaDataset,
-      dalEnvironment = dalEnvironment,
-      dateInterval = dateInterval
+  def weadaggwegatedfeatuwes(dateintewvaw: i-intewvaw): (scowwection[edge], s-scowwection[vewtex]) = {
+    vaw edges = weadmostwecentsnapshotdawdataset[edge](
+      dataset = i-intewactiongwaphhistowyaggwegatededgesnapshotscawadataset,
+      dawenviwonment = dawenviwonment, OwO
+      dateintewvaw = dateintewvaw
     )
 
-    val vertex = readMostRecentSnapshotDALDataset[Vertex](
-      dataset = InteractionGraphHistoryAggregatedVertexSnapshotScalaDataset,
-      dalEnvironment = dalEnvironment,
-      dateInterval = dateInterval
+    v-vaw vewtex = weadmostwecentsnapshotdawdataset[vewtex](
+      dataset = intewactiongwaphhistowyaggwegatedvewtexsnapshotscawadataset, 😳😳😳
+      d-dawenviwonment = d-dawenviwonment, (ˆ ﻌ ˆ)♡
+      dateintewvaw = dateintewvaw
     )
 
-    (edges, vertex)
+    (edges, XD vewtex)
   }
 
-  def readFlatUsers(): SCollection[FlatUser] =
-    readMostRecentSnapshotNoOlderThanDALDataset[FlatUser](
-      dataset = UsersourceFlatScalaDataset,
-      noOlderThan = Duration.fromDays(5),
-      dalEnvironment = dalEnvironment,
-      projections = Some(Seq("id", "valid_user"))
+  def w-weadfwatusews(): s-scowwection[fwatusew] =
+    weadmostwecentsnapshotnoowdewthandawdataset[fwatusew](
+      dataset = usewsouwcefwatscawadataset, (ˆ ﻌ ˆ)♡
+      n-nyoowdewthan = duwation.fwomdays(5), ( ͡o ω ͡o )
+      d-dawenviwonment = dawenviwonment, rawr x3
+      pwojections = some(seq("id", nyaa~~ "vawid_usew"))
     )
 }

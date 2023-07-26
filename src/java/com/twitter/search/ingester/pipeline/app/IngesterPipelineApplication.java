@@ -1,195 +1,195 @@
-package com.twitter.search.ingester.pipeline.app;
+package com.twittew.seawch.ingestew.pipewine.app;
 
-import java.io.File;
-import java.net.URL;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
+impowt java.io.fiwe;
+i-impowt java.net.uww;
+i-impowt j-java.utiw.concuwwent.countdownwatch;
+i-impowt java.utiw.concuwwent.atomic.atomicboowean;
 
-import com.google.common.annotations.VisibleForTesting;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
 
-import org.apache.commons.pipeline.Pipeline;
-import org.apache.commons.pipeline.PipelineCreationException;
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.config.DigesterPipelineFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.twitter.app.Flag;
-import com.twitter.app.Flaggable;
-import com.twitter.search.common.metrics.BuildInfoStats;
-import com.twitter.search.ingester.pipeline.wire.ProductionWireModule;
-import com.twitter.search.ingester.pipeline.wire.WireModule;
-import com.twitter.search.ingester.util.jndi.JndiUtil;
-import com.twitter.server.AbstractTwitterServer;
-import com.twitter.server.handler.DeciderHandler$;
+i-impowt owg.apache.commons.pipewine.pipewine;
+i-impowt owg.apache.commons.pipewine.pipewinecweationexception;
+impowt owg.apache.commons.pipewine.stageexception;
+impowt owg.apache.commons.pipewine.config.digestewpipewinefactowy;
+impowt owg.swf4j.woggew;
+impowt o-owg.swf4j.woggewfactowy;
+impowt com.twittew.app.fwag;
+i-impowt com.twittew.app.fwaggabwe;
+i-impowt com.twittew.seawch.common.metwics.buiwdinfostats;
+impowt com.twittew.seawch.ingestew.pipewine.wiwe.pwoductionwiwemoduwe;
+impowt c-com.twittew.seawch.ingestew.pipewine.wiwe.wiwemoduwe;
+impowt c-com.twittew.seawch.ingestew.utiw.jndi.jndiutiw;
+i-impowt com.twittew.sewvew.abstwacttwittewsewvew;
+impowt com.twittew.sewvew.handwew.decidewhandwew$;
 
-/** Starts the ingester/indexer pipeline. */
-public class IngesterPipelineApplication extends AbstractTwitterServer {
-  private static final Logger LOG = LoggerFactory.getLogger(IngesterPipelineApplication.class);
-  private static final String VERSION_2 = "v2";
-  private final Flag<String> pipelineConfigFile = flag().create(
-      "config_file",
+/** stawts the ingestew/indexew pipewine. -.- */
+p-pubwic cwass ingestewpipewineappwication extends abstwacttwittewsewvew {
+  pwivate s-static finaw woggew wog = w-woggewfactowy.getwoggew(ingestewpipewineappwication.cwass);
+  p-pwivate s-static finaw s-stwing vewsion_2 = "v2";
+  pwivate finaw fwag<stwing> p-pipewineconfigfiwe = fwag().cweate(
+      "config_fiwe", mya
+      "", >w<
+      "xmw fiwe to woad p-pipewine config fwom. (U ﹏ U) wequiwed.", 😳😳😳
+      fwaggabwe.ofstwing());
+
+  pwivate finaw fwag<stwing> pipewinevewsion = f-fwag().cweate(
+      "vewsion", o.O
       "",
-      "xml file to load pipeline config from. Required.",
-      Flaggable.ofString());
+      "specifies if w-we want to wun t-the acp pipewine o-ow nyon acp pipewine.", òωó
+      fwaggabwe.ofstwing());
 
-  private final Flag<String> pipelineVersion = flag().create(
-      "version",
-      "",
-      "Specifies if we want to run the acp pipeline or non acp pipeline.",
-      Flaggable.ofString());
+  pwivate finaw fwag<integew> pawtitionawg = f-fwag().cweate(
+      "shawd", 😳😳😳
+      -1, σωσ
+      "the p-pawtition this indexew is w-wesponsibwe fow.", (⑅˘꒳˘)
+      f-fwaggabwe.ofjavaintegew());
 
-  private final Flag<Integer> partitionArg = flag().create(
-      "shard",
-      -1,
-      "The partition this indexer is responsible for.",
-      Flaggable.ofJavaInteger());
+  pwivate f-finaw fwag<stwing> decidewovewway = f-fwag().cweate(
+      "decidew_ovewway", (///ˬ///✿)
+      "", 🥺
+      "decidew ovewway",
+      fwaggabwe.ofstwing());
 
-  private final Flag<String> deciderOverlay = flag().create(
-      "decider_overlay",
-      "",
-      "Decider overlay",
-      Flaggable.ofString());
+  p-pwivate finaw fwag<stwing> sewviceidentifiewfwag = f-fwag().cweate(
+    "sewvice_identifiew",
+    "", OwO
+    "sewvice identifiew fow m-mutuaw tws authentication", >w<
+    f-fwaggabwe.ofstwing());
 
-  private final Flag<String> serviceIdentifierFlag = flag().create(
-    "service_identifier",
-    "",
-    "Service identifier for mutual TLS authentication",
-    Flaggable.ofString());
-
-  private final Flag<String> environment = flag().create(
-      "environment",
-      "",
-      "Specifies the environment the app is running in. Valid values : prod, staging, "
-          + "staging1. Required if pipelineVersion == 'v2'",
-      Flaggable.ofString()
+  pwivate finaw fwag<stwing> enviwonment = fwag().cweate(
+      "enviwonment", 🥺
+      "", nyaa~~
+      "specifies the enviwonment the app is wunning i-in. ^^ vawid vawues : p-pwod, >w< staging, OwO "
+          + "staging1. XD wequiwed if pipewinevewsion == 'v2'", ^^;;
+      f-fwaggabwe.ofstwing()
   );
 
-  private final Flag<String> cluster = flag().create(
-      "cluster",
-      "",
-      "Specifies the cluster the app is running in. Valid values : realtime, protected, "
-          + "realtime_cg, user_updates. Required if pipelineVersion == 'v2'",
-      Flaggable.ofString()
+  p-pwivate f-finaw fwag<stwing> cwustew = fwag().cweate(
+      "cwustew",
+      "", 🥺
+      "specifies the cwustew the app is w-wunning in. vawid vawues : weawtime, XD pwotected, (U ᵕ U❁) "
+          + "weawtime_cg, usew_updates. :3 wequiwed i-if pipewinevewsion == 'v2'", ( ͡o ω ͡o )
+      fwaggabwe.ofstwing()
   );
 
-  private final Flag<Float> cores = flag().create(
-      "cores",
-      1F,
-      "Specifies the number of cores this cluster is using. ",
-      Flaggable.ofJavaFloat()
+  p-pwivate finaw f-fwag<fwoat> cowes = f-fwag().cweate(
+      "cowes", òωó
+      1f, σωσ
+      "specifies the n-nyumbew of cowes t-this cwustew i-is using. (U ᵕ U❁) ",
+      f-fwaggabwe.ofjavafwoat()
   );
 
-  private final CountDownLatch shutdownLatch = new CountDownLatch(1);
+  pwivate finaw countdownwatch s-shutdownwatch = n-nyew countdownwatch(1);
 
-  public void shutdown() {
-    shutdownLatch.countDown();
+  p-pubwic v-void shutdown() {
+    s-shutdownwatch.countdown();
   }
 
-  private Pipeline pipeline;
+  pwivate pipewine pipewine;
 
-  private final AtomicBoolean started = new AtomicBoolean(false);
+  pwivate f-finaw atomicboowean stawted = nyew atomicboowean(fawse);
 
-  private final AtomicBoolean finished = new AtomicBoolean(false);
+  pwivate finaw atomicboowean finished = n-new atomicboowean(fawse);
 
   /**
-   * Boilerplate for the Java-friendly AbstractTwitterServer
+   * boiwewpwate fow the java-fwiendwy abstwacttwittewsewvew
    */
-  public static class Main {
-    public static void main(String[] args) {
-      new IngesterPipelineApplication().main(args);
+  p-pubwic s-static cwass main {
+    p-pubwic static void main(stwing[] a-awgs) {
+      nyew ingestewpipewineappwication().main(awgs);
     }
   }
 
   /**
-   * Code is based on DigesterPipelineFactory.main. We only require reading in one config file.
+   * c-code i-is based on digestewpipewinefactowy.main. (✿oωo) we onwy wequiwe weading in one config fiwe. ^^
    */
-  @Override
-  public void main() {
-    try {
-      JndiUtil.loadJNDI();
+  @ovewwide
+  pubwic v-void main() {
+    twy {
+      j-jndiutiw.woadjndi();
 
-      ProductionWireModule wireModule = new ProductionWireModule(
-          deciderOverlay.get().get(),
-          partitionArg.getWithDefault().get(),
-          serviceIdentifierFlag.get());
-      WireModule.bindWireModule(wireModule);
+      pwoductionwiwemoduwe w-wiwemoduwe = nyew p-pwoductionwiwemoduwe(
+          decidewovewway.get().get(), ^•ﻌ•^
+          pawtitionawg.getwithdefauwt().get(), XD
+          s-sewviceidentifiewfwag.get());
+      w-wiwemoduwe.bindwiwemoduwe(wiwemoduwe);
 
-      addAdminRoute(DeciderHandler$.MODULE$.route(
-          "ingester",
-          wireModule.getMutableDecisionMaker(),
-          wireModule.getDecider()));
+      addadminwoute(decidewhandwew$.moduwe$.woute(
+          "ingestew", :3
+          w-wiwemoduwe.getmutabwedecisionmakew(), (ꈍᴗꈍ)
+          w-wiwemoduwe.getdecidew()));
 
-      BuildInfoStats.export();
-      if (pipelineVersion.get().get().equals(VERSION_2)) {
-        runPipelineV2(wireModule);
-      } else {
-        runPipelineV1(wireModule);
+      buiwdinfostats.expowt();
+      if (pipewinevewsion.get().get().equaws(vewsion_2)) {
+        wunpipewinev2(wiwemoduwe);
+      } ewse {
+        w-wunpipewinev1(wiwemoduwe);
       }
-      LOG.info("Pipeline terminated. Ingester is DOWN.");
-    } catch (Exception e) {
-      LOG.error("Exception in pipeline. Ingester is DOWN.", e);
-      throw new RuntimeException(e);
+      w-wog.info("pipewine t-tewminated. :3 ingestew is down.");
+    } c-catch (exception e-e) {
+      wog.ewwow("exception i-in pipewine. (U ﹏ U) ingestew is down.", UwU e);
+      thwow nyew wuntimeexception(e);
     }
   }
 
-  @VisibleForTesting
-  boolean isFinished() {
-    return finished.get();
+  @visibwefowtesting
+  b-boowean i-isfinished() {
+    wetuwn finished.get();
   }
 
-  @VisibleForTesting
-  Pipeline createPipeline(URL pipelineConfigFileURL) throws PipelineCreationException {
-    DigesterPipelineFactory factory = new DigesterPipelineFactory(pipelineConfigFileURL);
-    LOG.info("Pipeline created from {}, about to begin processing...", pipelineConfigFileURL);
-    return factory.createPipeline();
+  @visibwefowtesting
+  pipewine cweatepipewine(uww p-pipewineconfigfiweuww) t-thwows pipewinecweationexception {
+    digestewpipewinefactowy factowy = n-nyew digestewpipewinefactowy(pipewineconfigfiweuww);
+    wog.info("pipewine cweated fwom {}, 😳😳😳 about to begin pwocessing...", XD p-pipewineconfigfiweuww);
+    wetuwn factowy.cweatepipewine();
   }
 
-  void runPipelineV1(ProductionWireModule wireModule) throws Exception {
-    LOG.info("Running Pipeline V1");
-    final File pipelineFile = new File(pipelineConfigFile.get().get());
-    URL pipelineConfigFileUrl = pipelineFile.toURI().toURL();
-    wireModule.setPipelineExceptionHandler(new PipelineExceptionImpl(this));
-    runPipelineV1(pipelineConfigFileUrl);
-    shutdownLatch.await();
+  v-void wunpipewinev1(pwoductionwiwemoduwe w-wiwemoduwe) thwows exception {
+    wog.info("wunning pipewine v1");
+    f-finaw fiwe pipewinefiwe = n-nyew fiwe(pipewineconfigfiwe.get().get());
+    uww pipewineconfigfiweuww = pipewinefiwe.touwi().touww();
+    w-wiwemoduwe.setpipewineexceptionhandwew(new pipewineexceptionimpw(this));
+    w-wunpipewinev1(pipewineconfigfiweuww);
+    shutdownwatch.await();
   }
 
-  @VisibleForTesting
-  void runPipelineV1(URL pipelineConfigFileUrl) throws Exception {
-    pipeline = createPipeline(pipelineConfigFileUrl);
-    pipeline.start();
-    started.set(true);
+  @visibwefowtesting
+  void wunpipewinev1(uww pipewineconfigfiweuww) t-thwows exception {
+    pipewine = c-cweatepipewine(pipewineconfigfiweuww);
+    p-pipewine.stawt();
+    stawted.set(twue);
   }
 
-  void runPipelineV2(ProductionWireModule wireModule) throws Exception {
-    LOG.info("Running Pipeline V2");
-    int threadsToSpawn = cores.get().get().intValue() - 1;
-    RealtimeIngesterPipelineV2 realtimePipeline = new RealtimeIngesterPipelineV2(
-        environment.get().get(), cluster.get().get(), threadsToSpawn);
-    wireModule.setPipelineExceptionHandler(new PipelineExceptionImplV2(realtimePipeline));
-    realtimePipeline.run();
+  v-void wunpipewinev2(pwoductionwiwemoduwe w-wiwemoduwe) t-thwows exception {
+    w-wog.info("wunning pipewine v-v2");
+    int t-thweadstospawn = cowes.get().get().intvawue() - 1;
+    weawtimeingestewpipewinev2 w-weawtimepipewine = n-nyew weawtimeingestewpipewinev2(
+        e-enviwonment.get().get(), o.O cwustew.get().get(), (⑅˘꒳˘) thweadstospawn);
+    w-wiwemoduwe.setpipewineexceptionhandwew(new pipewineexceptionimpwv2(weawtimepipewine));
+    w-weawtimepipewine.wun();
   }
 
-  @Override
-  public void onExit() {
-    try {
-      LOG.info("Attempting to shutdown gracefully.");
+  @ovewwide
+  p-pubwic void onexit() {
+    twy {
+      wog.info("attempting t-to shutdown g-gwacefuwwy.");
         /*
-         * Iterates over each Stage and calls finish(). The Stage is considered finished when
-         * its queue is empty. If there is a backup, finish() waits for the queues to empty.
+         * i-itewates ovew e-each stage and cawws finish(). 😳😳😳 t-the stage is considewed finished when
+         * its queue is empty. nyaa~~ if thewe is a backup, rawr finish() w-waits fow the queues to empty. -.-
          */
 
-      // We don't call finish() unless the pipeline exists and has started because if any stage
-      // fails to initialize, no processing is started and not only is calling finish() unnecessary,
-      // but it will also deadlock any DedicatedThreadStageDriver.
-      if (pipeline != null && started.get()) {
-        pipeline.finish();
-        finished.set(true);
-        LOG.info("Pipeline exited cleanly.");
-      } else {
-        LOG.info("Pipeline not yet started.");
+      // w-we don't caww finish() u-unwess the pipewine exists and h-has stawted because if any stage
+      // f-faiws t-to initiawize, (✿oωo) n-nyo pwocessing i-is stawted and nyot o-onwy is cawwing finish() unnecessawy, /(^•ω•^)
+      // but it wiww awso deadwock any dedicatedthweadstagedwivew. 🥺
+      if (pipewine != nyuww && stawted.get()) {
+        p-pipewine.finish();
+        f-finished.set(twue);
+        w-wog.info("pipewine exited cweanwy.");
+      } e-ewse {
+        wog.info("pipewine not yet stawted.");
       }
-    } catch (StageException e) {
-      LOG.error("Unable to shutdown pipeline.", e);
+    } c-catch (stageexception e-e) {
+      wog.ewwow("unabwe to shutdown pipewine.", ʘwʘ e-e);
     }
   }
 }

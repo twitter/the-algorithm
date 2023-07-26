@@ -1,59 +1,59 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.concurrent.TimeUnit;
+impowt java.utiw.concuwwent.timeunit;
 
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.earlybird.config.ServingRange;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+i-impowt c-com.twittew.seawch.common.decidew.seawchdecidew;
+i-impowt com.twittew.seawch.common.pawtitioning.snowfwakepawsew.snowfwakeidpawsew;
+i-impowt com.twittew.seawch.eawwybiwd.config.sewvingwange;
+i-impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
 
-public class RealtimeServingRangeProvider implements ServingRangeProvider {
+p-pubwic cwass w-weawtimesewvingwangepwovidew impwements sewvingwangepwovidew {
 
-  private static final int DEFAULT_SERVING_RANGE_BOUNDARY_HOURS_AGO = 240;
+  pwivate static finaw int defauwt_sewving_wange_boundawy_houws_ago = 240;
 
-  private final SearchDecider decider;
-  private final String deciderKey;
+  pwivate finaw seawchdecidew d-decidew;
+  pwivate finaw stwing decidewkey;
 
-  public RealtimeServingRangeProvider(SearchDecider decider, String deciderKey) {
-    this.decider = decider;
-    this.deciderKey = deciderKey;
+  p-pubwic weawtimesewvingwangepwovidew(seawchdecidew d-decidew, (U ﹏ U) stwing decidewkey) {
+    this.decidew = decidew;
+    this.decidewkey = d-decidewkey;
   }
 
-  @Override
-  public ServingRange getServingRange(
-      final EarlybirdRequestContext requestContext, boolean useBoundaryOverride) {
-    return new ServingRange() {
-      @Override
-      public long getServingRangeSinceId() {
-        long servingRangeStartMillis = TimeUnit.HOURS.toMillis(
-            (decider.featureExists(deciderKey))
-                ? decider.getAvailability(deciderKey)
-                : DEFAULT_SERVING_RANGE_BOUNDARY_HOURS_AGO);
+  @ovewwide
+  pubwic s-sewvingwange g-getsewvingwange(
+      finaw eawwybiwdwequestcontext wequestcontext, (U ﹏ U) boowean useboundawyovewwide) {
+    wetuwn n-nyew sewvingwange() {
+      @ovewwide
+      pubwic wong getsewvingwangesinceid() {
+        wong sewvingwangestawtmiwwis = t-timeunit.houws.tomiwwis(
+            (decidew.featuweexists(decidewkey))
+                ? decidew.getavaiwabiwity(decidewkey)
+                : d-defauwt_sewving_wange_boundawy_houws_ago);
 
-        long boundaryTime = requestContext.getCreatedTimeMillis() - servingRangeStartMillis;
-        return SnowflakeIdParser.generateValidStatusId(boundaryTime, 0);
+        wong b-boundawytime = w-wequestcontext.getcweatedtimemiwwis() - s-sewvingwangestawtmiwwis;
+        wetuwn snowfwakeidpawsew.genewatevawidstatusid(boundawytime, (⑅˘꒳˘) 0);
       }
 
-      @Override
-      public long getServingRangeMaxId() {
-        return SnowflakeIdParser.generateValidStatusId(
-            requestContext.getCreatedTimeMillis(), 0);
+      @ovewwide
+      p-pubwic wong getsewvingwangemaxid() {
+        wetuwn s-snowfwakeidpawsew.genewatevawidstatusid(
+            wequestcontext.getcweatedtimemiwwis(), òωó 0);
       }
 
-      @Override
-      public long getServingRangeSinceTimeSecondsFromEpoch() {
-        long servingRangeStartMillis = TimeUnit.HOURS.toMillis(
-            (decider.featureExists(deciderKey))
-                ? decider.getAvailability(deciderKey)
-                : DEFAULT_SERVING_RANGE_BOUNDARY_HOURS_AGO);
+      @ovewwide
+      pubwic wong getsewvingwangesincetimesecondsfwomepoch() {
+        wong sewvingwangestawtmiwwis = timeunit.houws.tomiwwis(
+            (decidew.featuweexists(decidewkey))
+                ? decidew.getavaiwabiwity(decidewkey)
+                : defauwt_sewving_wange_boundawy_houws_ago);
 
-        long boundaryTime = requestContext.getCreatedTimeMillis() - servingRangeStartMillis;
-        return boundaryTime / 1000;
+        w-wong boundawytime = wequestcontext.getcweatedtimemiwwis() - s-sewvingwangestawtmiwwis;
+        w-wetuwn boundawytime / 1000;
       }
 
-      @Override
-      public long getServingRangeUntilTimeSecondsFromEpoch() {
-        return requestContext.getCreatedTimeMillis() / 1000;
+      @ovewwide
+      p-pubwic wong getsewvingwangeuntiwtimesecondsfwomepoch() {
+        wetuwn wequestcontext.getcweatedtimemiwwis() / 1000;
       }
     };
   }

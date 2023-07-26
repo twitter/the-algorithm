@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.item.awewt
 
-import com.twitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.showawewtcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-trait BaseShowAlertUserIdsBuilder[-Query <: PipelineQuery] {
+t-twait baseshowawewtusewidsbuiwdew[-quewy <: p-pipewinequewy] {
 
-  def apply(query: Query, candidate: ShowAlertCandidate, features: FeatureMap): Option[Seq[Long]]
+  d-def appwy(quewy: q-quewy, rawr x3 candidate: s-showawewtcandidate, rawr featuwes: featuwemap): option[seq[wong]]
 }

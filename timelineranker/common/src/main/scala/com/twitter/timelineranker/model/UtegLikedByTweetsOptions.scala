@@ -1,8 +1,8 @@
-package com.twitter.timelineranker.model
+package com.twittew.timewinewankew.modew
 
-import com.twitter.timelines.model.UserId
+impowt c-com.twittew.timewines.modew.usewid
 
-case class UtegLikedByTweetsOptions(
-  utegCount: Int,
-  isInNetwork: Boolean,
-  weightedFollowings: Map[UserId, Double])
+c-case cwass utegwikedbytweetsoptions(
+  u-utegcount: i-int, (⑅˘꒳˘)
+  isinnetwowk: b-boowean, ( ͡o ω ͡o )
+  w-weightedfowwowings: m-map[usewid, UwU d-doubwe])

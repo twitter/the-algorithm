@@ -1,116 +1,116 @@
-package com.twitter.servo.util
+package com.twittew.sewvo.utiw
 
-import com.twitter.util.{Duration, Time}
+impowt com.twittew.utiw.{duwation, (U ᵕ U❁) t-time}
 
 /**
- * Calculate a running average of data points
+ * c-cawcuwate a wunning a-avewage of data p-points
  */
-trait Average {
-  def value: Option[Double]
-  def record(dataPoint: Double, count: Double = 1.0): Unit
+twait a-avewage {
+  d-def vawue: option[doubwe]
+  d-def w-wecowd(datapoint: doubwe, (U ﹏ U) count: doubwe = 1.0): unit
 }
 
 /**
- * Calculates a running average using two windows of data points, a
- * current one and a previous one.  When the current window is full,
- * it is rolled into the previous and the current window starts
- * filling up again.
+ * cawcuwates a wunning a-avewage using two windows of data points, :3 a
+ * c-cuwwent one and a pwevious one. ( ͡o ω ͡o )  w-when the cuwwent window is fuww, σωσ
+ * it is wowwed into the pwevious a-and the cuwwent window stawts
+ * f-fiwwing u-up again. >w<
  */
-class WindowedAverage(val windowSize: Long, initialValue: Option[Double] = None) extends Average {
-  private[this] val average = new ResettableAverage(None)
-  private[this] var lastAverage: Option[Double] = initialValue
+cwass windowedavewage(vaw windowsize: wong, 😳😳😳 initiawvawue: option[doubwe] = n-nyone) extends avewage {
+  pwivate[this] vaw avewage = nyew wesettabweavewage(none)
+  p-pwivate[this] vaw wastavewage: option[doubwe] = i-initiawvawue
 
-  def value: Option[Double] =
-    synchronized {
-      lastAverage match {
-        case Some(lastAvg) =>
-          // currentCount can temporarily exceed windowSize
-          val currentWeight = (average.count / windowSize) min 1.0
-          Some((1.0 - currentWeight) * lastAvg + currentWeight * average.value.getOrElse(0.0))
-        case None => average.value
+  d-def vawue: option[doubwe] =
+    s-synchwonized {
+      w-wastavewage match {
+        case some(wastavg) =>
+          // c-cuwwentcount can tempowawiwy exceed windowsize
+          v-vaw cuwwentweight = (avewage.count / windowsize) min 1.0
+          some((1.0 - cuwwentweight) * wastavg + cuwwentweight * a-avewage.vawue.getowewse(0.0))
+        case n-nyone => avewage.vawue
       }
     }
 
-  def record(dataPoint: Double, count: Double = 1.0): Unit =
-    synchronized {
-      if (average.count >= windowSize) {
-        lastAverage = value
-        average.reset()
+  d-def wecowd(datapoint: d-doubwe, OwO count: doubwe = 1.0): unit =
+    synchwonized {
+      if (avewage.count >= w-windowsize) {
+        w-wastavewage = vawue
+        a-avewage.weset()
       }
-      average.record(dataPoint, count)
+      a-avewage.wecowd(datapoint, 😳 count)
     }
 }
 
 /**
- * Calculates a recent average using the past windowDuration of data points.  Old average is mixed
- * with the new average during windowDuration.  If new data points are not recorded the average
- * will revert towards defaultAverage.
+ * c-cawcuwates a wecent avewage u-using the past windowduwation of data points. 😳😳😳  owd a-avewage is mixed
+ * with the n-nyew avewage duwing windowduwation. (˘ω˘)  i-if nyew data p-points awe nyot wecowded the avewage
+ * wiww wevewt towawds defauwtavewage. ʘwʘ
  */
-class RecentAverage(
-  val windowDuration: Duration,
-  val defaultAverage: Double,
-  currentTime: Time = Time.now // passing in start time to simplify scalacheck tests
-) extends Average {
-  private[this] val default = Some(defaultAverage)
-  private[this] val currentAverage = new ResettableAverage(Some(defaultAverage))
-  private[this] var prevAverage: Option[Double] = None
-  private[this] var windowStart: Time = currentTime
+cwass wecentavewage(
+  vaw windowduwation: duwation, ( ͡o ω ͡o )
+  v-vaw defauwtavewage: d-doubwe, o.O
+  cuwwenttime: t-time = time.now // p-passing in s-stawt time to simpwify scawacheck tests
+) extends avewage {
+  p-pwivate[this] vaw defauwt = some(defauwtavewage)
+  pwivate[this] vaw cuwwentavewage = nyew wesettabweavewage(some(defauwtavewage))
+  p-pwivate[this] vaw pwevavewage: o-option[doubwe] = n-nyone
+  pwivate[this] v-vaw windowstawt: time = c-cuwwenttime
 
-  private[this] def mix(fractOfV2: Double, v1: Double, v2: Double): Double = {
-    val f = 0.0.max(1.0.min(fractOfV2))
-    (1.0 - f) * v1 + f * v2
+  p-pwivate[this] d-def mix(fwactofv2: d-doubwe, >w< v1: doubwe, 😳 v2: doubwe): doubwe = {
+    v-vaw f = 0.0.max(1.0.min(fwactofv2))
+    (1.0 - f-f) * v1 + f * v-v2
   }
 
-  private[this] def timeFract: Double =
-    0.0.max(windowStart.untilNow.inNanoseconds.toDouble / windowDuration.inNanoseconds)
+  pwivate[this] d-def timefwact: d-doubwe =
+    0.0.max(windowstawt.untiwnow.innanoseconds.todoubwe / windowduwation.innanoseconds)
 
-  def value: Some[Double] =
-    synchronized {
-      timeFract match {
+  def vawue: some[doubwe] =
+    s-synchwonized {
+      timefwact match {
         case f if f < 1.0 =>
-          Some(mix(f, prevAverage.getOrElse(defaultAverage), currentAverage.getValue))
-        case f if f < 2.0 => Some(mix(f - 1.0, currentAverage.getValue, defaultAverage))
-        case f => default
+          some(mix(f, 🥺 p-pwevavewage.getowewse(defauwtavewage), rawr x3 cuwwentavewage.getvawue))
+        case f if f < 2.0 => s-some(mix(f - 1.0, o.O c-cuwwentavewage.getvawue, rawr d-defauwtavewage))
+        case f => defauwt
       }
     }
 
-  def getValue: Double = value.get
+  d-def getvawue: doubwe = vawue.get
 
-  def record(dataPoint: Double, count: Double = 1.0): Unit =
-    synchronized {
-      // if we're past windowDuration, roll average
-      val now = Time.now
-      if (now - windowStart > windowDuration) {
-        prevAverage = value
-        windowStart = now
-        currentAverage.reset()
+  d-def w-wecowd(datapoint: doubwe, ʘwʘ count: doubwe = 1.0): unit =
+    synchwonized {
+      // if we'we past windowduwation, 😳😳😳 w-woww avewage
+      vaw nyow = time.now
+      i-if (now - windowstawt > w-windowduwation) {
+        p-pwevavewage = vawue
+        windowstawt = nyow
+        c-cuwwentavewage.weset()
       }
-      currentAverage.record(dataPoint, count)
+      c-cuwwentavewage.wecowd(datapoint, ^^;; count)
     }
 
-  override def toString =
-    s"RecentAverage(window=$windowDuration, default=$defaultAverage, " +
-      s"prevValue=$prevAverage, value=$value, timeFract=$timeFract)"
+  o-ovewwide d-def tostwing =
+    s"wecentavewage(window=$windowduwation, o.O defauwt=$defauwtavewage, (///ˬ///✿) " +
+      s"pwevvawue=$pwevavewage, σωσ vawue=$vawue, nyaa~~ t-timefwact=$timefwact)"
 }
 
-private class ResettableAverage[DoubleOpt <: Option[Double]](defaultAverage: DoubleOpt)
-    extends Average {
-  private[this] var currentCount: Double = 0
-  private[this] var currentValue: Double = 0
-  def reset(): Unit = {
-    currentCount = 0
-    currentValue = 0
+p-pwivate cwass w-wesettabweavewage[doubweopt <: option[doubwe]](defauwtavewage: d-doubweopt)
+    e-extends avewage {
+  pwivate[this] v-vaw cuwwentcount: doubwe = 0
+  pwivate[this] vaw cuwwentvawue: doubwe = 0
+  d-def weset(): unit = {
+    c-cuwwentcount = 0
+    cuwwentvawue = 0
   }
-  def record(dataPoint: Double, count: Double): Unit = {
-    currentCount += count
-    currentValue += dataPoint
+  def wecowd(datapoint: doubwe, ^^;; c-count: doubwe): u-unit = {
+    cuwwentcount += count
+    cuwwentvawue += datapoint
   }
-  def value: Option[Double] =
-    if (currentCount == 0) defaultAverage
-    else Some(currentValue / currentCount)
+  d-def vawue: option[doubwe] =
+    if (cuwwentcount == 0) defauwtavewage
+    ewse some(cuwwentvawue / c-cuwwentcount)
 
-  def getValue(implicit ev: DoubleOpt <:< Some[Double]): Double =
-    value.get
+  def getvawue(impwicit ev: doubweopt <:< s-some[doubwe]): d-doubwe =
+    vawue.get
 
-  def count: Double = currentCount
+  def count: doubwe = cuwwentcount
 }

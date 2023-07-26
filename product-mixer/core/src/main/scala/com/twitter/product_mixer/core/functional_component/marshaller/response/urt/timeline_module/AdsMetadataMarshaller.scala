@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.timewine_moduwe
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.AdsMetadata
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.adsmetadata
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class AdsMetadataMarshaller @Inject() () {
+@singweton
+c-cwass adsmetadatamawshawwew @inject() () {
 
-  def apply(adsMetadata: AdsMetadata): urt.AdsMetadata =
-    urt.AdsMetadata(carouselId = adsMetadata.carouselId)
+  d-def appwy(adsmetadata: a-adsmetadata): uwt.adsmetadata =
+    uwt.adsmetadata(cawousewid = adsmetadata.cawousewid)
 }

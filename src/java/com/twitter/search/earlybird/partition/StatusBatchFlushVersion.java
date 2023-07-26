@@ -1,41 +1,41 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
 /**
- * Keeps track of versioning for flushed status batch data.
+ * keeps twack o-of vewsioning f-fow fwushed status b-batch data. >_<
  */
-public enum StatusBatchFlushVersion {
+p-pubwic enum s-statusbatchfwushvewsion {
 
-  VERSION_0("Initial version of status batch flushing", true),
-  VERSION_1("Switching to use field groups (contains changes to PartitionedBatch)", true),
-  VERSION_2("Removing support for per-partition _SUCCESS markers", true),
-  /* Put the semi colon on a separate line to avoid polluting git blame history */;
+  v-vewsion_0("initiaw v-vewsion of status b-batch fwushing", >_< twue),
+  vewsion_1("switching to use fiewd gwoups (contains changes to pawtitionedbatch)", (⑅˘꒳˘) twue), /(^•ω•^)
+  v-vewsion_2("wemoving suppowt fow pew-pawtition _success m-mawkews", rawr x3 twue), (U ﹏ U)
+  /* p-put the semi cowon on a sepawate wine to avoid powwuting git b-bwame histowy */;
 
-  public static final StatusBatchFlushVersion CURRENT_FLUSH_VERSION =
-      StatusBatchFlushVersion.values()[StatusBatchFlushVersion.values().length - 1];
+  pubwic static f-finaw statusbatchfwushvewsion c-cuwwent_fwush_vewsion =
+      statusbatchfwushvewsion.vawues()[statusbatchfwushvewsion.vawues().wength - 1];
 
-  public static final String DELIMITER = "_v_";
+  pubwic static finaw stwing dewimitew = "_v_";
 
-  private final String description;
-  private final boolean isOfficial;
+  pwivate finaw s-stwing descwiption;
+  pwivate finaw boowean isofficiaw;
 
-  private StatusBatchFlushVersion(String description, boolean official) {
-    this.description = description;
-    isOfficial = official;
+  pwivate statusbatchfwushvewsion(stwing d-descwiption, boowean officiaw) {
+    t-this.descwiption = d-descwiption;
+    i-isofficiaw = o-officiaw;
   }
 
-  public int getVersionNumber() {
-    return this.ordinal();
+  pubwic int getvewsionnumbew() {
+    w-wetuwn this.owdinaw();
   }
 
-  public String getVersionFileExtension() {
-      return DELIMITER + ordinal();
+  pubwic s-stwing getvewsionfiweextension() {
+      wetuwn dewimitew + owdinaw();
   }
 
-  public boolean isOfficial() {
-    return isOfficial;
+  pubwic boowean isofficiaw() {
+    wetuwn isofficiaw;
   }
 
-  public String getDescription() {
-    return description;
+  p-pubwic stwing getdescwiption() {
+    w-wetuwn descwiption;
   }
 }

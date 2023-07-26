@@ -1,25 +1,25 @@
-package com.twitter.timelineranker.repository
+package com.twittew.timewinewankew.wepositowy
 
-import com.twitter.timelineranker.model._
-import com.twitter.util.Future
+impowt c-com.twittew.timewinewankew.modew._
+i-impowt com.twittew.utiw.futuwe
 
-class RoutingTimelineRepository(
-  reverseChronTimelineRepository: ReverseChronHomeTimelineRepository,
-  rankedTimelineRepository: RankedHomeTimelineRepository)
-    extends TimelineRepository {
+c-cwass woutingtimewinewepositowy(
+  w-wevewsechwontimewinewepositowy: w-wevewsechwonhometimewinewepositowy, rawr x3
+  w-wankedtimewinewepositowy: w-wankedhometimewinewepositowy)
+    e-extends timewinewepositowy {
 
-  override def get(query: TimelineQuery): Future[Timeline] = {
-    query match {
-      case q: ReverseChronTimelineQuery => reverseChronTimelineRepository.get(q)
-      case q: RankedTimelineQuery => rankedTimelineRepository.get(q)
+  ovewwide def get(quewy: timewinequewy): f-futuwe[timewine] = {
+    quewy match {
+      c-case q: wevewsechwontimewinequewy => wevewsechwontimewinewepositowy.get(q)
+      c-case q: wankedtimewinequewy => wankedtimewinewepositowy.get(q)
       case _ =>
-        throw new IllegalArgumentException(
-          s"Query types other than RankedTimelineQuery and ReverseChronTimelineQuery are not supported. Found: $query"
+        thwow n-nyew iwwegawawgumentexception(
+          s"quewy t-types othew than w-wankedtimewinequewy and wevewsechwontimewinequewy awe nyot suppowted. nyaa~~ found: $quewy"
         )
     }
   }
 
-  override def get(queries: Seq[TimelineQuery]): Seq[Future[Timeline]] = {
-    queries.map(get)
+  ovewwide d-def get(quewies: seq[timewinequewy]): seq[futuwe[timewine]] = {
+    quewies.map(get)
   }
 }

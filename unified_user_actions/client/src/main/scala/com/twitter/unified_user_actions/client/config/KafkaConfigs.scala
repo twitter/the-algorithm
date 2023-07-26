@@ -1,61 +1,61 @@
-package com.twitter.unified_user_actions.client.config
+package com.twittew.unified_usew_actions.cwient.config
 
-sealed trait ClientConfig {
-  val cluster: ClusterConfig
-  val topic: String
-  val environment: EnvironmentConfig
+seawed twait c-cwientconfig {
+  v-vaw cwustew: c-cwustewconfig
+  v-vaw topic: stwing
+  v-vaw enviwonment: e-enviwonmentconfig
 }
 
-class AbstractClientConfig(isEngagementOnly: Boolean, env: EnvironmentConfig) extends ClientConfig {
-  override val cluster: ClusterConfig = {
+c-cwass a-abstwactcwientconfig(isengagementonwy: boowean, (ˆ ﻌ ˆ)♡ env: enviwonmentconfig) extends cwientconfig {
+  o-ovewwide vaw cwustew: cwustewconfig = {
     env match {
-      case Environments.Prod => Clusters.ProdCluster
-      case Environments.Staging => Clusters.StagingCluster
-      case _ => Clusters.ProdCluster
+      c-case enviwonments.pwod => cwustews.pwodcwustew
+      c-case enviwonments.staging => cwustews.stagingcwustew
+      case _ => cwustews.pwodcwustew
     }
   }
 
-  override val topic: String = {
-    if (isEngagementOnly) Constants.UuaEngagementOnlyKafkaTopicName
-    else Constants.UuaKafkaTopicName
+  ovewwide v-vaw topic: stwing = {
+    i-if (isengagementonwy) c-constants.uuaengagementonwykafkatopicname
+    ewse constants.uuakafkatopicname
   }
 
-  override val environment: EnvironmentConfig = env
+  ovewwide vaw enviwonment: enviwonmentconfig = e-env
 }
 
-object KafkaConfigs {
+object kafkaconfigs {
 
   /*
-   * Unified User Actions Kafka config with all events (engagements and impressions).
-   * Use this config when you mainly need impression data and data volume is not an issue.
+   * unified usew actions kafka config with aww events (engagements a-and impwessions). 😳😳😳
+   * use this c-config when you m-mainwy nyeed impwession d-data and d-data vowume is nyot an issue. :3
    */
-  case object ProdUnifiedUserActions
-      extends AbstractClientConfig(isEngagementOnly = false, env = Environments.Prod)
+  case object p-pwodunifiedusewactions
+      extends abstwactcwientconfig(isengagementonwy = fawse, OwO env = enviwonments.pwod)
 
   /*
-   * Unified User Actions Kafka config with engagements events only.
-   * Use this config when you only need engagement data. The data volume should be a lot smaller
-   * than our main config.
+   * u-unified usew actions kafka config with engagements events onwy. (U ﹏ U)
+   * use this config w-when you onwy nyeed engagement d-data. >w< the data vowume s-shouwd be a-a wot smowew
+   * than ouw main config. (U ﹏ U)
    */
-  case object ProdUnifiedUserActionsEngagementOnly
-      extends AbstractClientConfig(isEngagementOnly = true, env = Environments.Prod)
+  case object pwodunifiedusewactionsengagementonwy
+      e-extends abstwactcwientconfig(isengagementonwy = t-twue, 😳 env = enviwonments.pwod)
 
   /*
-   * Staging Environment for integration and testing. This is not a production config.
+   * s-staging enviwonment f-fow integwation and testing. (ˆ ﻌ ˆ)♡ t-this is nyot a pwoduction config. 😳😳😳
    *
-   * Unified User Actions Kafka config with all events (engagements and impressions).
-   * Use this config when you mainly need impression data and data volume is not an issue.
+   * u-unified usew actions kafka config w-with aww events (engagements and i-impwessions). (U ﹏ U)
+   * use this config w-when you mainwy n-nyeed impwession data and data vowume is nyot an issue. (///ˬ///✿)
    */
-  case object StagingUnifiedUserActions
-      extends AbstractClientConfig(isEngagementOnly = false, env = Environments.Staging)
+  case object stagingunifiedusewactions
+      extends abstwactcwientconfig(isengagementonwy = f-fawse, 😳 env = enviwonments.staging)
 
   /*
-   * Staging Environment for integration and testing. This is not a production config.
+   * s-staging enviwonment f-fow integwation a-and testing. 😳 this i-is nyot a pwoduction config. σωσ
    *
-   * Unified User Actions Kafka config with engagements events only.
-   * Use this config when you only need engagement data. The data volume should be a lot smaller
-   * than our main config.
+   * unified usew actions k-kafka config with engagements events onwy. rawr x3
+   * use this config when you onwy nyeed e-engagement data. OwO the data vowume s-shouwd be a w-wot smowew
+   * t-than ouw main config. /(^•ω•^)
    */
-  case object StagingUnifiedUserActionsEngagementOnly
-      extends AbstractClientConfig(isEngagementOnly = true, env = Environments.Staging)
+  case object stagingunifiedusewactionsengagementonwy
+      e-extends a-abstwactcwientconfig(isengagementonwy = t-twue, 😳😳😳 env = e-enviwonments.staging)
 }

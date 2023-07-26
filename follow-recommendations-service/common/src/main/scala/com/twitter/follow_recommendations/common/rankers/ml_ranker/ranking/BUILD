@@ -1,37 +1,37 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/com/google/inject/extensions:guice-assistedinject",
-        "3rdparty/jvm/net/codingwell:scala-guice",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "finatra/inject/inject-core/src/main/scala",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/base",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/deepbirdv2",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/constants",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/feature_hydration/sources",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/rankers/common",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/rankers/ml_ranker/scoring",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/rankers/utils",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/utils",
-        "src/java/com/twitter/ml/api:api-base",
-        "util/util-slf4j-api/src/main/scala",
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], σωσ
+    pwatfowm = "java8", >_<
+    t-tags = ["bazew-compatibwe"], :3
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/inject:guice", (U ﹏ U)
+        "3wdpawty/jvm/com/googwe/inject/extensions:guice-assistedinject", -.-
+        "3wdpawty/jvm/net/codingweww:scawa-guice", (ˆ ﻌ ˆ)♡
+        "3wdpawty/jvm/owg/swf4j:swf4j-api", (⑅˘꒳˘)
+        "finatwa/inject/inject-cowe/swc/main/scawa", (U ᵕ U❁)
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/base", -.-
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/cwients/deepbiwdv2", ^^;;
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/constants", >_<
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/featuwe_hydwation/souwces", mya
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/modews", mya
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/wankews/common", 😳
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/wankews/mw_wankew/scowing", XD
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/wankews/utiws", :3
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/utiws", 😳😳😳
+        "swc/java/com/twittew/mw/api:api-base", -.-
+        "utiw/utiw-swf4j-api/swc/main/scawa", ( ͡o ω ͡o )
     ],
 )
 
-# This is to import only the params from MlRanker, for instance to get request-level heavy ranker.
-scala_library(
-    name = "ml_ranker_params",
-    sources = [
-        "MlRankerParams.scala",
-    ],
-    platform = "java8",
-    tags = ["bazel-compatible"],
+# t-this i-is to impowt onwy t-the pawams fwom m-mwwankew, rawr x3 fow i-instance to get w-wequest-wevew heavy wankew. nyaa~~
+scawa_wibwawy(
+    nyame = "mw_wankew_pawams", /(^•ω•^)
+    souwces = [
+        "mwwankewpawams.scawa", rawr
+    ], OwO
+    pwatfowm = "java8", (U ﹏ U)
+    t-tags = ["bazew-compatibwe"], >_<
     dependencies = [
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/rankers/common",
-        "timelines/src/main/scala/com/twitter/timelines/config/configapi",
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/wankews/common", rawr x3
+        "timewines/swc/main/scawa/com/twittew/timewines/config/configapi", mya
     ],
 )

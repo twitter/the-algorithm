@@ -1,289 +1,289 @@
-package com.twitter.simclusters_v2.scalding.tweet_similarity
+package com.twittew.simcwustews_v2.scawding.tweet_simiwawity
 
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.api.{DataRecord, DataRecordMerger, DataSetPipe, FeatureContext}
-import com.twitter.ml.featurestore.lib.data.EntityIds.Entry
-import com.twitter.ml.featurestore.lib.data.{EntityIds, FeatureValuesById, PredictionRecord}
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.simclusters_v2.common.SimClustersEmbedding._
-import com.twitter.simclusters_v2.tweet_similarity.ModelBasedTweetSimilaritySimClustersEmbeddingAdapter.{
-  NormalizedCandidateEmbAdapter,
-  NormalizedQueryEmbAdapter
+impowt c-com.twittew.mw.api.utiw.fdsw._
+i-impowt com.twittew.mw.api.{datawecowd, :3 d-datawecowdmewgew, ^^;; d-datasetpipe, rawr f-featuwecontext}
+i-impowt c-com.twittew.mw.featuwestowe.wib.data.entityids.entwy
+i-impowt com.twittew.mw.featuwestowe.wib.data.{entityids, 😳😳😳 featuwevawuesbyid, pwedictionwecowd}
+impowt com.twittew.scawding.typed.typedpipe
+impowt c-com.twittew.simcwustews_v2.common.simcwustewsembedding._
+impowt com.twittew.simcwustews_v2.tweet_simiwawity.modewbasedtweetsimiwawitysimcwustewsembeddingadaptew.{
+  n-nyowmawizedcandidateembadaptew, (✿oωo)
+  nyowmawizedquewyembadaptew
 }
-import com.twitter.simclusters_v2.tweet_similarity.{
-  TweetSimilarityFeatures,
-  TweetSimilarityFeaturesStoreConfig
+i-impowt com.twittew.simcwustews_v2.tweet_simiwawity.{
+  tweetsimiwawityfeatuwes, OwO
+  tweetsimiwawityfeatuwesstoweconfig
 }
-import com.twitter.simclusters_v2.common.{Timestamp, TweetId, UserId}
-import com.twitter.simclusters_v2.scalding.tweet_similarity.TweetPairLabelCollectionUtil.FeaturedTweet
-import com.twitter.simclusters_v2.thriftscala.{
-  PersistentSimClustersEmbedding,
-  SimClustersEmbedding => ThriftSimClustersEmbedding
+i-impowt com.twittew.simcwustews_v2.common.{timestamp, ʘwʘ tweetid, (ˆ ﻌ ˆ)♡ usewid}
+i-impowt com.twittew.simcwustews_v2.scawding.tweet_simiwawity.tweetpaiwwabewcowwectionutiw.featuwedtweet
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.{
+  pewsistentsimcwustewsembedding, (U ﹏ U)
+  simcwustewsembedding => thwiftsimcwustewsembedding
 }
 
-object TweetPairFeatureHydrationUtil {
-  val QueryTweetConfig = new TweetSimilarityFeaturesStoreConfig("query_tweet_user_id")
-  val CandidateTweetConfig = new TweetSimilarityFeaturesStoreConfig("candidate_tweet_user_id")
-  val DataRecordMerger = new DataRecordMerger()
+object tweetpaiwfeatuwehydwationutiw {
+  v-vaw quewytweetconfig = nyew tweetsimiwawityfeatuwesstoweconfig("quewy_tweet_usew_id")
+  vaw candidatetweetconfig = nyew tweetsimiwawityfeatuwesstoweconfig("candidate_tweet_usew_id")
+  vaw datawecowdmewgew = nyew d-datawecowdmewgew()
 
   /**
-   * Given persistentEmbeddings TypedPipe, extract tweetId, timestamp, and the embedding
+   * given pewsistentembeddings t-typedpipe, UwU e-extwact t-tweetid, timestamp, XD a-and the embedding
    *
-   * @param persistentEmbeddings TypedPipe of ((TweetId, Timestamp), PersistentSimClustersEmbedding), read from PersistentTweetEmbeddingMhExportSource
+   * @pawam pewsistentembeddings typedpipe o-of ((tweetid, ʘwʘ timestamp), rawr x3 pewsistentsimcwustewsembedding), ^^;; w-wead fwom pewsistenttweetembeddingmhexpowtsouwce
    *
-   * @return Extracted TypedPipe of (TweetId, (Timestamp, SimClustersEmbedding))
+   * @wetuwn extwacted typedpipe of (tweetid, ʘwʘ (timestamp, simcwustewsembedding))
    */
-  def extractEmbeddings(
-    persistentEmbeddings: TypedPipe[((TweetId, Timestamp), PersistentSimClustersEmbedding)]
-  ): TypedPipe[(TweetId, (Timestamp, ThriftSimClustersEmbedding))] = {
-    persistentEmbeddings
-      .collect {
-        case ((tweetId, _), embedding) if embedding.metadata.updatedAtMs.isDefined =>
-          (tweetId, (embedding.metadata.updatedAtMs.get, embedding.embedding))
+  def extwactembeddings(
+    pewsistentembeddings: t-typedpipe[((tweetid, (U ﹏ U) timestamp), (˘ω˘) p-pewsistentsimcwustewsembedding)]
+  ): t-typedpipe[(tweetid, (ꈍᴗꈍ) (timestamp, /(^•ω•^) t-thwiftsimcwustewsembedding))] = {
+    pewsistentembeddings
+      .cowwect {
+        case ((tweetid, >_< _), embedding) if embedding.metadata.updatedatms.isdefined =>
+          (tweetid, σωσ (embedding.metadata.updatedatms.get, ^^;; embedding.embedding))
       }
   }
 
   /**
-   * Hydrate the tweet pairs with the latest persistent embeddings before engagement/impression.
+   * h-hydwate the tweet p-paiws with the watest pewsistent e-embeddings b-befowe engagement/impwession. 😳
    *
-   * @param tweetPairs           TypedPipe of the (userId, queryFeaturedTweet, candidateFeaturedTweet, label)
-   * @param persistentEmbeddings TypedPipe of persistentEmbeddings from PersistentTweetEmbeddingMhExportSource
+   * @pawam tweetpaiws           typedpipe of t-the (usewid, >_< quewyfeatuwedtweet, candidatefeatuwedtweet, -.- w-wabew)
+   * @pawam pewsistentembeddings typedpipe of pewsistentembeddings f-fwom pewsistenttweetembeddingmhexpowtsouwce
    *
-   * @return TypedPipe of the (userId, queryFeaturedTweet, candidateFeaturedTweet, label) with persistent embeddings set
+   * @wetuwn typedpipe of the (usewid, UwU q-quewyfeatuwedtweet, :3 candidatefeatuwedtweet, σωσ w-wabew) with p-pewsistent embeddings set
    */
-  def getTweetPairsWithPersistentEmbeddings(
-    tweetPairs: TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)],
-    persistentEmbeddings: TypedPipe[((TweetId, Timestamp), PersistentSimClustersEmbedding)]
-  ): TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)] = {
-    val extractedEmbeddings = extractEmbeddings(persistentEmbeddings)
-    tweetPairs
-      .groupBy {
-        case (queryFeaturedTweet, _, _) => queryFeaturedTweet.tweet
+  def gettweetpaiwswithpewsistentembeddings(
+    tweetpaiws: typedpipe[(featuwedtweet, >w< featuwedtweet, (ˆ ﻌ ˆ)♡ boowean)],
+    p-pewsistentembeddings: typedpipe[((tweetid, ʘwʘ t-timestamp), :3 pewsistentsimcwustewsembedding)]
+  ): t-typedpipe[(featuwedtweet, (˘ω˘) f-featuwedtweet, 😳😳😳 boowean)] = {
+    v-vaw extwactedembeddings = extwactembeddings(pewsistentembeddings)
+    tweetpaiws
+      .gwoupby {
+        case (quewyfeatuwedtweet, rawr x3 _, _) => q-quewyfeatuwedtweet.tweet
       }
-      .join(extractedEmbeddings)
-      .collect {
+      .join(extwactedembeddings)
+      .cowwect {
         case (
-              _,
+              _, (✿oωo)
               (
-                (queryFeaturedTweet, candidateFeaturedTweet, label),
-                (embeddingTimestamp, embedding)))
-            if embeddingTimestamp <= queryFeaturedTweet.timestamp =>
-          ((queryFeaturedTweet, candidateFeaturedTweet), (embeddingTimestamp, embedding, label))
+                (quewyfeatuwedtweet, (ˆ ﻌ ˆ)♡ candidatefeatuwedtweet, :3 wabew),
+                (embeddingtimestamp, (U ᵕ U❁) embedding)))
+            i-if embeddingtimestamp <= quewyfeatuwedtweet.timestamp =>
+          ((quewyfeatuwedtweet, ^^;; c-candidatefeatuwedtweet), mya (embeddingtimestamp, 😳😳😳 e-embedding, w-wabew))
       }
-      .group
-      .maxBy(_._1)
+      .gwoup
+      .maxby(_._1)
       .map {
-        case ((queryFeaturedTweet, candidateFeaturedTweet), (_, embedding, label)) =>
+        case ((quewyfeatuwedtweet, OwO c-candidatefeatuwedtweet), rawr (_, XD e-embedding, wabew)) =>
           (
-            candidateFeaturedTweet.tweet,
-            (queryFeaturedTweet.copy(embedding = Some(embedding)), candidateFeaturedTweet, label)
+            c-candidatefeatuwedtweet.tweet, (U ﹏ U)
+            (quewyfeatuwedtweet.copy(embedding = s-some(embedding)), (˘ω˘) candidatefeatuwedtweet, UwU wabew)
           )
       }
-      .join(extractedEmbeddings)
-      .collect {
+      .join(extwactedembeddings)
+      .cowwect {
         case (
-              _,
+              _, >_<
               (
-                (queryFeaturedTweet, candidateFeaturedTweet, label),
-                (embeddingTimestamp, embedding)))
-            if embeddingTimestamp <= candidateFeaturedTweet.timestamp =>
-          ((queryFeaturedTweet, candidateFeaturedTweet), (embeddingTimestamp, embedding, label))
+                (quewyfeatuwedtweet, c-candidatefeatuwedtweet, σωσ w-wabew), 🥺
+                (embeddingtimestamp, 🥺 e-embedding)))
+            i-if embeddingtimestamp <= c-candidatefeatuwedtweet.timestamp =>
+          ((quewyfeatuwedtweet, ʘwʘ candidatefeatuwedtweet), :3 (embeddingtimestamp, (U ﹏ U) embedding, wabew))
       }
-      .group
-      .maxBy(_._1)
+      .gwoup
+      .maxby(_._1)
       .map {
-        case ((queryFeaturedTweet, candidateFeaturedTweet), (_, embedding, label)) =>
-          (queryFeaturedTweet, candidateFeaturedTweet.copy(embedding = Some(embedding)), label)
+        c-case ((quewyfeatuwedtweet, candidatefeatuwedtweet), (U ﹏ U) (_, embedding, ʘwʘ wabew)) =>
+          (quewyfeatuwedtweet, >w< candidatefeatuwedtweet.copy(embedding = some(embedding)), rawr x3 w-wabew)
       }
   }
 
   /**
-   * Get tweet pairs with the author userIds
+   * get tweet paiws with the authow usewids
    *
-   * @param tweetPairs       TypedPipe of (queryTweet, queryEmbedding, queryTimestamp, candidateTweet, candidateEmbedding, candidateTimestamp, label)
-   * @param tweetAuthorPairs TypedPipe of (tweetId, author userId)
+   * @pawam t-tweetpaiws       t-typedpipe of (quewytweet, OwO quewyembedding, ^•ﻌ•^ quewytimestamp, >_< candidatetweet, OwO candidateembedding, >_< c-candidatetimestamp, (ꈍᴗꈍ) wabew)
+   * @pawam t-tweetauthowpaiws typedpipe o-of (tweetid, >w< a-authow usewid)
    *
-   * @return TypedPipe of (queryTweet, queryAuthor, queryEmbedding, queryTimestamp, candidateTweet, candidateAuthor, candidateEmbedding, candidateTimestamp, label)
+   * @wetuwn typedpipe of (quewytweet, (U ﹏ U) quewyauthow, ^^ quewyembedding, (U ﹏ U) quewytimestamp, :3 candidatetweet, (✿oωo) c-candidateauthow, XD candidateembedding, >w< candidatetimestamp, òωó w-wabew)
    */
-  def getTweetPairsWithAuthors(
-    tweetPairs: TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)],
-    tweetAuthorPairs: TypedPipe[(TweetId, UserId)]
-  ): TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)] = {
-    tweetPairs
-    //keyed by queryTweet s.t. we get queryTweet's author after joining with tweetAuthorPairs
-      .groupBy { case (queryFeaturedTweet, _, _) => queryFeaturedTweet.tweet }
-      .join(tweetAuthorPairs)
-      .values
-      //keyed by candidateTweet
-      .groupBy { case ((_, candidateFeaturedTweet, _), _) => candidateFeaturedTweet.tweet }
-      .join(tweetAuthorPairs)
-      .values
+  def gettweetpaiwswithauthows(
+    t-tweetpaiws: t-typedpipe[(featuwedtweet, featuwedtweet, (ꈍᴗꈍ) boowean)], rawr x3
+    t-tweetauthowpaiws: t-typedpipe[(tweetid, rawr x3 usewid)]
+  ): t-typedpipe[(featuwedtweet, σωσ f-featuwedtweet, (ꈍᴗꈍ) boowean)] = {
+    tweetpaiws
+    //keyed by quewytweet s.t. rawr w-we get quewytweet's a-authow aftew j-joining with tweetauthowpaiws
+      .gwoupby { case (quewyfeatuwedtweet, ^^;; _, rawr x3 _) => q-quewyfeatuwedtweet.tweet }
+      .join(tweetauthowpaiws)
+      .vawues
+      //keyed b-by candidatetweet
+      .gwoupby { case ((_, (ˆ ﻌ ˆ)♡ c-candidatefeatuwedtweet, σωσ _), _) => candidatefeatuwedtweet.tweet }
+      .join(tweetauthowpaiws)
+      .vawues
       .map {
         case (
-              ((queryFeaturedTweet, candidateFeaturedTweet, label), queryAuthor),
-              candidateAuthor) =>
+              ((quewyfeatuwedtweet, (U ﹏ U) candidatefeatuwedtweet, >w< wabew), q-quewyauthow), σωσ
+              candidateauthow) =>
           (
-            queryFeaturedTweet.copy(author = Some(queryAuthor)),
-            candidateFeaturedTweet.copy(author = Some(candidateAuthor)),
-            label
+            q-quewyfeatuwedtweet.copy(authow = some(quewyauthow)), nyaa~~
+            candidatefeatuwedtweet.copy(authow = s-some(candidateauthow)), 🥺
+            w-wabew
           )
       }
   }
 
   /**
-   * Get tweet pairs with popularity counts
+   * get tweet paiws with popuwawity counts
    *
-   * @param tweetPairs TypedPipe of the (userId, queryFeaturedTweet, candidateFeaturedTweet, label)
+   * @pawam tweetpaiws t-typedpipe of the (usewid, quewyfeatuwedtweet, rawr x3 candidatefeatuwedtweet, σωσ wabew)
    *
-   * @return TypedPipe of the (userId, queryFeaturedTweet, candidateFeaturedTweet, tweetPairCount, queryTweetCount, label)
+   * @wetuwn typedpipe of the (usewid, (///ˬ///✿) q-quewyfeatuwedtweet, (U ﹏ U) candidatefeatuwedtweet, ^^;; tweetpaiwcount, 🥺 quewytweetcount, òωó w-wabew)
    */
-  def getTweetPairsWithCounts(
-    tweetPairs: TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)]
-  ): TypedPipe[(FeaturedTweet, FeaturedTweet, Long, Long, Boolean)] = {
-    val tweetPairCount = tweetPairs.groupBy {
-      case (queryFeaturedTweet, candidateFeaturedTweet, _) =>
-        (queryFeaturedTweet.tweet, candidateFeaturedTweet.tweet)
+  d-def gettweetpaiwswithcounts(
+    tweetpaiws: typedpipe[(featuwedtweet, XD featuwedtweet, :3 b-boowean)]
+  ): t-typedpipe[(featuwedtweet, (U ﹏ U) featuwedtweet, >w< wong, wong, boowean)] = {
+    v-vaw tweetpaiwcount = tweetpaiws.gwoupby {
+      c-case (quewyfeatuwedtweet, /(^•ω•^) candidatefeatuwedtweet, (⑅˘꒳˘) _) =>
+        (quewyfeatuwedtweet.tweet, candidatefeatuwedtweet.tweet)
     }.size
 
-    val queryTweetCount = tweetPairs.groupBy {
-      case (queryFeaturedTweet, _, _) => queryFeaturedTweet.tweet
+    vaw q-quewytweetcount = tweetpaiws.gwoupby {
+      c-case (quewyfeatuwedtweet, ʘwʘ _, _) => q-quewyfeatuwedtweet.tweet
     }.size
 
-    tweetPairs
-      .groupBy {
-        case (queryFeaturedTweet, candidateFeaturedTweet, _) =>
-          (queryFeaturedTweet.tweet, candidateFeaturedTweet.tweet)
+    tweetpaiws
+      .gwoupby {
+        c-case (quewyfeatuwedtweet, rawr x3 candidatefeatuwedtweet, (˘ω˘) _) =>
+          (quewyfeatuwedtweet.tweet, o.O c-candidatefeatuwedtweet.tweet)
       }
-      .join(tweetPairCount)
-      .values
+      .join(tweetpaiwcount)
+      .vawues
       .map {
-        case ((queryFeaturedTweet, candidateFeaturedTweet, label), tweetPairCount) =>
-          (queryFeaturedTweet, candidateFeaturedTweet, tweetPairCount, label)
+        case ((quewyfeatuwedtweet, 😳 c-candidatefeatuwedtweet, w-wabew), o.O tweetpaiwcount) =>
+          (quewyfeatuwedtweet, ^^;; candidatefeatuwedtweet, ( ͡o ω ͡o ) t-tweetpaiwcount, ^^;; w-wabew)
       }
-      .groupBy { case (queryFeaturedTweet, _, _, _) => queryFeaturedTweet.tweet }
-      .join(queryTweetCount)
-      .values
+      .gwoupby { case (quewyfeatuwedtweet, ^^;; _, _, _) => quewyfeatuwedtweet.tweet }
+      .join(quewytweetcount)
+      .vawues
       .map {
-        case (
-              (queryFeaturedTweet, candidateFeaturedTweet, tweetPairCount, label),
-              queryTweetCount) =>
-          (queryFeaturedTweet, candidateFeaturedTweet, tweetPairCount, queryTweetCount, label)
+        c-case (
+              (quewyfeatuwedtweet, XD candidatefeatuwedtweet, 🥺 t-tweetpaiwcount, (///ˬ///✿) w-wabew), (U ᵕ U❁)
+              quewytweetcount) =>
+          (quewyfeatuwedtweet, ^^;; candidatefeatuwedtweet, ^^;; t-tweetpaiwcount, rawr quewytweetcount, (˘ω˘) w-wabew)
       }
   }
 
   /**
-   * Get training data records
+   * g-get twaining data wecowds
    *
-   * @param tweetPairs           TypedPipe of the (userId, queryFeaturedTweet, candidateFeaturedTweet, label)
-   * @param persistentEmbeddings TypedPipe of persistentEmbeddings from PersistentTweetEmbeddingMhExportSource
-   * @param tweetAuthorPairs     TypedPipe of (tweetId, author userId)
-   * @param useAuthorFeatures    whether to use author features or not
+   * @pawam tweetpaiws           typedpipe o-of the (usewid, 🥺 q-quewyfeatuwedtweet, nyaa~~ c-candidatefeatuwedtweet, :3 w-wabew)
+   * @pawam pewsistentembeddings t-typedpipe of pewsistentembeddings fwom pewsistenttweetembeddingmhexpowtsouwce
+   * @pawam tweetauthowpaiws     typedpipe of (tweetid, /(^•ω•^) authow u-usewid)
+   * @pawam useauthowfeatuwes    w-whethew to use authow f-featuwes ow nyot
    *
-   * @return DataSetPipe with features and label
+   * @wetuwn datasetpipe w-with featuwes and wabew
    */
-  def getDataSetPipeWithFeatures(
-    tweetPairs: TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)],
-    persistentEmbeddings: TypedPipe[((TweetId, Timestamp), PersistentSimClustersEmbedding)],
-    tweetAuthorPairs: TypedPipe[(TweetId, UserId)],
-    useAuthorFeatures: Boolean
-  ): DataSetPipe = {
-    val featuredTweetPairs =
-      if (useAuthorFeatures)
-        getTweetPairsWithCounts(
-          getTweetPairsWithPersistentEmbeddings(
-            getTweetPairsWithAuthors(tweetPairs, tweetAuthorPairs),
-            persistentEmbeddings))
-      else
-        getTweetPairsWithCounts(
-          getTweetPairsWithPersistentEmbeddings(tweetPairs, persistentEmbeddings))
+  d-def getdatasetpipewithfeatuwes(
+    t-tweetpaiws: t-typedpipe[(featuwedtweet, ^•ﻌ•^ f-featuwedtweet, UwU b-boowean)], 😳😳😳
+    pewsistentembeddings: typedpipe[((tweetid, timestamp), OwO pewsistentsimcwustewsembedding)], ^•ﻌ•^
+    tweetauthowpaiws: typedpipe[(tweetid, (ꈍᴗꈍ) usewid)], (⑅˘꒳˘)
+    u-useauthowfeatuwes: b-boowean
+  ): d-datasetpipe = {
+    vaw f-featuwedtweetpaiws =
+      if (useauthowfeatuwes)
+        gettweetpaiwswithcounts(
+          gettweetpaiwswithpewsistentembeddings(
+            gettweetpaiwswithauthows(tweetpaiws, (⑅˘꒳˘) t-tweetauthowpaiws),
+            p-pewsistentembeddings))
+      ewse
+        g-gettweetpaiwswithcounts(
+          gettweetpaiwswithpewsistentembeddings(tweetpaiws, (ˆ ﻌ ˆ)♡ pewsistentembeddings))
 
-    DataSetPipe(
-      featuredTweetPairs.flatMap {
-        case (queryFeaturedTweet, candidateFeaturedTweet, tweetPairCount, queryTweetCount, label) =>
-          getDataRecordWithFeatures(
-            queryFeaturedTweet,
-            candidateFeaturedTweet,
-            tweetPairCount,
-            queryTweetCount,
-            label)
-      },
-      FeatureContext.merge(
-        TweetSimilarityFeatures.FeatureContext,
-        QueryTweetConfig.predictionRecordAdapter.getFeatureContext,
-        CandidateTweetConfig.predictionRecordAdapter.getFeatureContext
+    d-datasetpipe(
+      f-featuwedtweetpaiws.fwatmap {
+        case (quewyfeatuwedtweet, /(^•ω•^) c-candidatefeatuwedtweet, òωó t-tweetpaiwcount, (⑅˘꒳˘) quewytweetcount, (U ᵕ U❁) wabew) =>
+          getdatawecowdwithfeatuwes(
+            quewyfeatuwedtweet, >w<
+            c-candidatefeatuwedtweet, σωσ
+            t-tweetpaiwcount, -.-
+            q-quewytweetcount,
+            w-wabew)
+      }, o.O
+      f-featuwecontext.mewge(
+        tweetsimiwawityfeatuwes.featuwecontext, ^^
+        q-quewytweetconfig.pwedictionwecowdadaptew.getfeatuwecontext, >_<
+        c-candidatetweetconfig.pwedictionwecowdadaptew.getfeatuwecontext
       )
     )
   }
 
   /**
-   * Given raw features, return a DataRecord with all the features
+   * given waw f-featuwes, >w< wetuwn a-a datawecowd with aww the featuwes
    *
-   * @param queryFeaturedTweet     FeaturedTweet for query tweet
-   * @param candidateFeaturedTweet FeaturedTweet for candidate tweet
-   * @param tweetPairCount         popularity count for the (query tweet, candidate tweet) pair
-   * @param queryTweetCount        popularity count for each query tweet
-   * @param label                  true for positive and false for negative
+   * @pawam q-quewyfeatuwedtweet     featuwedtweet fow quewy tweet
+   * @pawam c-candidatefeatuwedtweet featuwedtweet fow c-candidate tweet
+   * @pawam t-tweetpaiwcount         popuwawity c-count fow the (quewy tweet, >_< candidate tweet) paiw
+   * @pawam q-quewytweetcount        p-popuwawity c-count fow each quewy tweet
+   * @pawam wabew                  twue f-fow positive and fawse fow nyegative
    *
-   * @return
+   * @wetuwn
    */
-  def getDataRecordWithFeatures(
-    queryFeaturedTweet: FeaturedTweet,
-    candidateFeaturedTweet: FeaturedTweet,
-    tweetPairCount: Long,
-    queryTweetCount: Long,
-    label: Boolean
-  ): Option[DataRecord] = {
+  def getdatawecowdwithfeatuwes(
+    q-quewyfeatuwedtweet: f-featuwedtweet, >w<
+    candidatefeatuwedtweet: f-featuwedtweet, rawr
+    tweetpaiwcount: w-wong, rawr x3
+    q-quewytweetcount: wong, ( ͡o ω ͡o )
+    wabew: boowean
+  ): o-option[datawecowd] = {
 
-    for {
-      queryEmbedding <- queryFeaturedTweet.embedding
-      candidateEmbedding <- candidateFeaturedTweet.embedding
-    } yield {
-      val featureDataRecord = NormalizedQueryEmbAdapter.adaptToDataRecord(queryEmbedding)
-      DataRecordMerger.merge(
-        featureDataRecord,
-        NormalizedCandidateEmbAdapter.adaptToDataRecord(candidateEmbedding))
-      featureDataRecord.setFeatureValue(
-        TweetSimilarityFeatures.QueryTweetId,
-        queryFeaturedTweet.tweet)
-      featureDataRecord.setFeatureValue(
-        TweetSimilarityFeatures.CandidateTweetId,
-        candidateFeaturedTweet.tweet)
-      featureDataRecord.setFeatureValue(
-        TweetSimilarityFeatures.QueryTweetTimestamp,
-        queryFeaturedTweet.timestamp)
-      featureDataRecord.setFeatureValue(
-        TweetSimilarityFeatures.CandidateTweetTimestamp,
-        candidateFeaturedTweet.timestamp)
-      featureDataRecord.setFeatureValue(
-        TweetSimilarityFeatures.CosineSimilarity,
-        queryEmbedding.cosineSimilarity(candidateEmbedding))
-      featureDataRecord.setFeatureValue(TweetSimilarityFeatures.TweetPairCount, tweetPairCount)
-      featureDataRecord.setFeatureValue(TweetSimilarityFeatures.QueryTweetCount, queryTweetCount)
-      featureDataRecord.setFeatureValue(TweetSimilarityFeatures.Label, label)
+    fow {
+      quewyembedding <- q-quewyfeatuwedtweet.embedding
+      c-candidateembedding <- candidatefeatuwedtweet.embedding
+    } y-yiewd {
+      vaw featuwedatawecowd = n-nyowmawizedquewyembadaptew.adapttodatawecowd(quewyembedding)
+      d-datawecowdmewgew.mewge(
+        f-featuwedatawecowd, (˘ω˘)
+        nyowmawizedcandidateembadaptew.adapttodatawecowd(candidateembedding))
+      featuwedatawecowd.setfeatuwevawue(
+        tweetsimiwawityfeatuwes.quewytweetid, 😳
+        quewyfeatuwedtweet.tweet)
+      featuwedatawecowd.setfeatuwevawue(
+        tweetsimiwawityfeatuwes.candidatetweetid, OwO
+        candidatefeatuwedtweet.tweet)
+      featuwedatawecowd.setfeatuwevawue(
+        tweetsimiwawityfeatuwes.quewytweettimestamp, (˘ω˘)
+        quewyfeatuwedtweet.timestamp)
+      featuwedatawecowd.setfeatuwevawue(
+        tweetsimiwawityfeatuwes.candidatetweettimestamp, òωó
+        candidatefeatuwedtweet.timestamp)
+      f-featuwedatawecowd.setfeatuwevawue(
+        tweetsimiwawityfeatuwes.cosinesimiwawity, ( ͡o ω ͡o )
+        q-quewyembedding.cosinesimiwawity(candidateembedding))
+      featuwedatawecowd.setfeatuwevawue(tweetsimiwawityfeatuwes.tweetpaiwcount, UwU tweetpaiwcount)
+      f-featuwedatawecowd.setfeatuwevawue(tweetsimiwawityfeatuwes.quewytweetcount, /(^•ω•^) q-quewytweetcount)
+      f-featuwedatawecowd.setfeatuwevawue(tweetsimiwawityfeatuwes.wabew, (ꈍᴗꈍ) wabew)
 
-      if (queryFeaturedTweet.author.isDefined && candidateFeaturedTweet.author.isDefined) {
-        DataRecordMerger.merge(
-          featureDataRecord,
-          new DataRecord(
-            QueryTweetConfig.predictionRecordAdapter.adaptToDataRecord(PredictionRecord(
-              FeatureValuesById.empty,
-              EntityIds(Entry(
-                QueryTweetConfig.bindingIdentifier,
-                Set(com.twitter.ml.featurestore.lib.UserId(queryFeaturedTweet.author.get))))
+      if (quewyfeatuwedtweet.authow.isdefined && c-candidatefeatuwedtweet.authow.isdefined) {
+        datawecowdmewgew.mewge(
+          f-featuwedatawecowd, 😳
+          n-nyew datawecowd(
+            quewytweetconfig.pwedictionwecowdadaptew.adapttodatawecowd(pwedictionwecowd(
+              f-featuwevawuesbyid.empty, mya
+              entityids(entwy(
+                q-quewytweetconfig.bindingidentifiew,
+                s-set(com.twittew.mw.featuwestowe.wib.usewid(quewyfeatuwedtweet.authow.get))))
             )))
         )
-        DataRecordMerger.merge(
-          featureDataRecord,
-          new DataRecord(
-            CandidateTweetConfig.predictionRecordAdapter.adaptToDataRecord(PredictionRecord(
-              FeatureValuesById.empty,
-              EntityIds(Entry(
-                CandidateTweetConfig.bindingIdentifier,
-                Set(com.twitter.ml.featurestore.lib.UserId(candidateFeaturedTweet.author.get))))
+        datawecowdmewgew.mewge(
+          featuwedatawecowd, mya
+          nyew d-datawecowd(
+            c-candidatetweetconfig.pwedictionwecowdadaptew.adapttodatawecowd(pwedictionwecowd(
+              f-featuwevawuesbyid.empty, /(^•ω•^)
+              entityids(entwy(
+                c-candidatetweetconfig.bindingidentifiew, ^^;;
+                s-set(com.twittew.mw.featuwestowe.wib.usewid(candidatefeatuwedtweet.authow.get))))
             )))
         )
       }
-      featureDataRecord
+      f-featuwedatawecowd
     }
   }
 }

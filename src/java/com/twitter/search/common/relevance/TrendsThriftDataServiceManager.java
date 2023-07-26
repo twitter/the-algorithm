@@ -1,353 +1,353 @@
-package com.twitter.search.common.relevance;
+package com.twittew.seawch.common.wewevance;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
+impowt j-java.utiw.wist;
+i-impowt java.utiw.map;
+i-impowt j-java.utiw.set;
+i-impowt java.utiw.concuwwent.executows;
+i-impowt java.utiw.concuwwent.scheduwedexecutowsewvice;
+i-impowt j-java.utiw.concuwwent.timeunit;
+impowt java.utiw.concuwwent.atomic.atomicwong;
+impowt java.utiw.stweam.cowwectows;
 
-import scala.runtime.BoxedUnit;
+impowt scawa.wuntime.boxedunit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
+impowt com.googwe.common.cowwect.immutabwemap;
+i-impowt com.googwe.common.cowwect.sets;
+i-impowt com.googwe.common.utiw.concuwwent.thweadfactowybuiwdew;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.ThriftMux;
-import com.twitter.finagle.builder.ClientBuilder;
-import com.twitter.finagle.builder.ClientConfig;
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
-import com.twitter.finagle.mtls.client.MtlsClientBuilder;
-import com.twitter.finagle.stats.DefaultStatsReceiver;
-import com.twitter.finagle.thrift.ThriftClientRequest;
-import com.twitter.search.common.metrics.RelevanceStats;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.trends.plus.Module;
-import com.twitter.trends.plus.TrendsPlusRequest;
-import com.twitter.trends.plus.TrendsPlusResponse;
-import com.twitter.trends.service.gen.Location;
-import com.twitter.trends.trending_content.thriftjava.TrendingContentService;
-import com.twitter.trends.trends_metadata.thriftjava.TrendsMetadataService;
-import com.twitter.util.Duration;
-import com.twitter.util.Future;
-import com.twitter.util.Try;
+i-impowt com.twittew.finagwe.sewvice;
+i-impowt com.twittew.finagwe.thwiftmux;
+i-impowt com.twittew.finagwe.buiwdew.cwientbuiwdew;
+impowt com.twittew.finagwe.buiwdew.cwientconfig;
+impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew;
+i-impowt com.twittew.finagwe.mtws.cwient.mtwscwientbuiwdew;
+impowt com.twittew.finagwe.stats.defauwtstatsweceivew;
+impowt com.twittew.finagwe.thwift.thwiftcwientwequest;
+i-impowt com.twittew.seawch.common.metwics.wewevancestats;
+impowt c-com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.twends.pwus.moduwe;
+i-impowt c-com.twittew.twends.pwus.twendspwuswequest;
+impowt com.twittew.twends.pwus.twendspwuswesponse;
+i-impowt com.twittew.twends.sewvice.gen.wocation;
+impowt com.twittew.twends.twending_content.thwiftjava.twendingcontentsewvice;
+impowt com.twittew.twends.twends_metadata.thwiftjava.twendsmetadatasewvice;
+i-impowt com.twittew.utiw.duwation;
+impowt com.twittew.utiw.futuwe;
+impowt com.twittew.utiw.twy;
 
 /**
- * Manages trends data retrieved from trends thrift API and perform automatic refresh.
+ * m-manages twends data wetwieved f-fwom twends thwift a-api and pewfowm a-automatic wefwesh. >w<
  */
-public final class TrendsThriftDataServiceManager {
-  private static final Logger LOG =
-    LoggerFactory.getLogger(TrendsThriftDataServiceManager.class.getName());
+pubwic finaw cwass twendsthwiftdatasewvicemanagew {
+  pwivate static finaw w-woggew wog =
+    w-woggewfactowy.getwoggew(twendsthwiftdatasewvicemanagew.cwass.getname());
 
-  private static final int DEFAULT_TIME_TO_KILL_SEC = 60;
+  pwivate static f-finaw int defauwt_time_to_kiww_sec = 60;
 
-  @VisibleForTesting
-  protected static final Map<String, String> DEFAULT_TRENDS_PARAMS_MAP = ImmutableMap.of(
-      "MAX_ITEMS_TO_RETURN", "10");   // we only take top 10 for each woeid.
+  @visibwefowtesting
+  p-pwotected static finaw map<stwing, òωó s-stwing> defauwt_twends_pawams_map = immutabwemap.of(
+      "max_items_to_wetuwn", (ꈍᴗꈍ) "10");   // w-we onwy take top 10 fow each woeid. rawr x3
 
-  @VisibleForTesting
-  protected static final int MAX_TRENDS_PER_WOEID = 10;
+  @visibwefowtesting
+  pwotected s-static finaw int max_twends_pew_woeid = 10;
 
-  private final Duration requestTimeout;
-  private final Duration refreshDelayDuration;
-  private final Duration reloadIntervalDuration;
-  private final int numRetries;
+  p-pwivate finaw duwation wequesttimeout;
+  p-pwivate finaw duwation w-wefweshdewayduwation;
+  pwivate finaw duwation wewoadintewvawduwation;
+  pwivate finaw int nyumwetwies;
 
-  // a list of trends cache we want to update
-  private final List<NGramCache> trendsCacheList;
+  // a wist of twends cache we w-want to update
+  p-pwivate finaw wist<ngwamcache> twendscachewist;
 
-  private final SearchCounter getAvailableSuccessCounter =
-      RelevanceStats.exportLong("trends_extractor_get_available_success");
-  private final SearchCounter getAvailableFailureCounter =
-      RelevanceStats.exportLong("trends_extractor_get_available_failure");
-  private final SearchCounter getTrendsSuccessCounter =
-      RelevanceStats.exportLong("trends_extractor_success_fetch");
-  private final SearchCounter getTrendsFailureCounter =
-      RelevanceStats.exportLong("trends_extractor_failed_fetch");
-  private final SearchCounter updateFailureCounter =
-      RelevanceStats.exportLong("trends_extractor_failed_update");
+  p-pwivate finaw s-seawchcountew g-getavaiwabwesuccesscountew =
+      wewevancestats.expowtwong("twends_extwactow_get_avaiwabwe_success");
+  pwivate finaw seawchcountew g-getavaiwabwefaiwuwecountew =
+      wewevancestats.expowtwong("twends_extwactow_get_avaiwabwe_faiwuwe");
+  pwivate finaw seawchcountew gettwendssuccesscountew =
+      wewevancestats.expowtwong("twends_extwactow_success_fetch");
+  p-pwivate finaw seawchcountew g-gettwendsfaiwuwecountew =
+      w-wewevancestats.expowtwong("twends_extwactow_faiwed_fetch");
+  p-pwivate finaw seawchcountew u-updatefaiwuwecountew =
+      w-wewevancestats.expowtwong("twends_extwactow_faiwed_update");
 
-  private final ServiceIdentifier serviceIdentifier;
-  private ScheduledExecutorService scheduler;
+  p-pwivate f-finaw sewviceidentifiew sewviceidentifiew;
+  pwivate scheduwedexecutowsewvice s-scheduwew;
 
 
-  @VisibleForTesting
-  protected Service<ThriftClientRequest, byte[]> contentService;
-  protected TrendingContentService.ServiceToClient contentClient;
-  protected Service<ThriftClientRequest, byte[]> metadataService;
-  protected TrendsMetadataService.ServiceToClient metadataClient;
+  @visibwefowtesting
+  p-pwotected s-sewvice<thwiftcwientwequest, rawr x3 byte[]> c-contentsewvice;
+  p-pwotected twendingcontentsewvice.sewvicetocwient contentcwient;
+  pwotected s-sewvice<thwiftcwientwequest, σωσ byte[]> metadatasewvice;
+  pwotected twendsmetadatasewvice.sewvicetocwient metadatacwient;
 
-  @VisibleForTesting
-  protected TrendsUpdater trendsUpdater;
+  @visibwefowtesting
+  pwotected twendsupdatew t-twendsupdatew;
 
   /**
-   * Returns an instance of TrendsThriftDataServiceManager.
-   * @param serviceIdentifier The service that wants to call
-   * into Trend's services.
-   * @param numRetries The number of retries in the event of
-   * request failures.
-   * @param requestTimeout The amount of time we wait before we consider a
-   * a request as failed.
-   * @param initTrendsCacheDelay How long to wait before the initial
-   * filling of the Trends cache in milliseconds.
-   * @param reloadInterval How often to refresh the cache with updated trends.
-   * @param trendsCacheList The cache of trends.
-   * @return An instance of TrendsThriftDataServiceManager configured
-   * with respect to the params provided.
+   * wetuwns an instance of twendsthwiftdatasewvicemanagew. (ꈍᴗꈍ)
+   * @pawam sewviceidentifiew t-the s-sewvice that wants t-to caww
+   * into twend's sewvices.
+   * @pawam n-nyumwetwies the nyumbew of wetwies i-in the event o-of
+   * wequest faiwuwes. rawr
+   * @pawam wequesttimeout the amount of time we wait befowe we considew a-a
+   * a wequest as faiwed. ^^;;
+   * @pawam inittwendscachedeway h-how wong to wait befowe the i-initiaw
+   * fiwwing o-of the twends cache in miwwiseconds.
+   * @pawam wewoadintewvaw h-how often to w-wefwesh the cache with updated t-twends. rawr x3
+   * @pawam t-twendscachewist the cache of twends. (ˆ ﻌ ˆ)♡
+   * @wetuwn an instance of twendsthwiftdatasewvicemanagew c-configuwed
+   * w-with wespect t-to the pawams pwovided. σωσ
    */
-  public static TrendsThriftDataServiceManager newInstance(
-      ServiceIdentifier serviceIdentifier,
-      int numRetries,
-      Duration requestTimeout,
-      Duration initTrendsCacheDelay,
-      Duration reloadInterval,
-      List<NGramCache> trendsCacheList) {
-    return new TrendsThriftDataServiceManager(
-        serviceIdentifier,
-        numRetries,
-        requestTimeout,
-        initTrendsCacheDelay,
-        reloadInterval,
-        trendsCacheList);
+  p-pubwic static t-twendsthwiftdatasewvicemanagew nyewinstance(
+      sewviceidentifiew s-sewviceidentifiew, (U ﹏ U)
+      int nyumwetwies, >w<
+      duwation wequesttimeout, σωσ
+      duwation inittwendscachedeway, nyaa~~
+      d-duwation w-wewoadintewvaw,
+      wist<ngwamcache> twendscachewist) {
+    w-wetuwn nyew twendsthwiftdatasewvicemanagew(
+        s-sewviceidentifiew, 🥺
+        nyumwetwies, rawr x3
+        wequesttimeout, σωσ
+        inittwendscachedeway, (///ˬ///✿)
+        wewoadintewvaw, (U ﹏ U)
+        t-twendscachewist);
   }
 
   /**
-   * Resume auto refresh. Always called in constructor. Can be invoked after a
-   * stopAuthRefresh call to resume auto refreshing. Invoking it after shutDown is undefined.
+   * wesume auto wefwesh. ^^;; awways cawwed in constwuctow. 🥺 can be invoked a-aftew a
+   * stopauthwefwesh caww to wesume a-auto wefweshing. òωó i-invoking it aftew shutdown is undefined. XD
    */
-  public synchronized void startAutoRefresh() {
-    if (scheduler == null) {
-      scheduler = Executors.newSingleThreadScheduledExecutor(
-          new ThreadFactoryBuilder().setDaemon(true).setNameFormat(
-              "trends-data-refresher[%d]").build());
-      scheduler.scheduleAtFixedRate(
-          trendsUpdater,
-          refreshDelayDuration.inSeconds(),
-          reloadIntervalDuration.inSeconds(),
-          TimeUnit.SECONDS);
+  pubwic synchwonized v-void stawtautowefwesh() {
+    i-if (scheduwew == nyuww) {
+      scheduwew = executows.newsingwethweadscheduwedexecutow(
+          n-nyew thweadfactowybuiwdew().setdaemon(twue).setnamefowmat(
+              "twends-data-wefweshew[%d]").buiwd());
+      scheduwew.scheduweatfixedwate(
+          t-twendsupdatew, :3
+          wefweshdewayduwation.inseconds(), (U ﹏ U)
+          wewoadintewvawduwation.inseconds(), >w<
+          timeunit.seconds);
     }
   }
 
   /**
-   * Stop auto refresh. Wait for the current execution thread to finish.
-   * This is a blocking call.
+   * s-stop auto wefwesh. /(^•ω•^) wait fow the c-cuwwent execution t-thwead to finish. (⑅˘꒳˘)
+   * this i-is a bwocking caww. ʘwʘ
    */
-  public synchronized void stopAutoRefresh() {
-    if (scheduler != null) {
-      scheduler.shutdown(); // Disable new tasks from being submitted
-      try {
-        // Wait a while for existing tasks to terminate
-        if (!scheduler.awaitTermination(DEFAULT_TIME_TO_KILL_SEC, TimeUnit.SECONDS)) {
-          scheduler.shutdownNow(); // Cancel currently executing tasks
-          // Wait a while for tasks to respond to being cancelled
-          if (!scheduler.awaitTermination(DEFAULT_TIME_TO_KILL_SEC, TimeUnit.SECONDS)) {
-            LOG.info("Executor thread pool did not terminate.");
+  pubwic s-synchwonized v-void stopautowefwesh() {
+    i-if (scheduwew != nyuww) {
+      scheduwew.shutdown(); // d-disabwe nyew t-tasks fwom being submitted
+      twy {
+        // w-wait a whiwe f-fow existing t-tasks to tewminate
+        if (!scheduwew.awaittewmination(defauwt_time_to_kiww_sec, rawr x3 timeunit.seconds)) {
+          s-scheduwew.shutdownnow(); // cancew cuwwentwy e-executing tasks
+          // w-wait a whiwe fow tasks to wespond to being cancewwed
+          i-if (!scheduwew.awaittewmination(defauwt_time_to_kiww_sec, (˘ω˘) t-timeunit.seconds)) {
+            w-wog.info("executow t-thwead poow did nyot t-tewminate.");
           }
         }
-      } catch (InterruptedException ie) {
-        // (Re-)Cancel if current thread also interrupted
-        scheduler.shutdownNow();
-        // Preserve interrupt status
-        Thread.currentThread().interrupt();
+      } catch (intewwuptedexception ie) {
+        // (we-)cancew if cuwwent thwead awso intewwupted
+        scheduwew.shutdownnow();
+        // p-pwesewve intewwupt status
+        t-thwead.cuwwentthwead().intewwupt();
       }
-      scheduler = null;
+      scheduwew = n-nyuww;
     }
   }
 
-  /** Shuts down the manager. */
-  public void shutDown() {
-    stopAutoRefresh();
-    // clear the cache
-    for (NGramCache cache : trendsCacheList) {
-      cache.clear();
+  /** shuts d-down the managew. o.O */
+  pubwic v-void shutdown() {
+    s-stopautowefwesh();
+    // c-cweaw the cache
+    f-fow (ngwamcache c-cache : twendscachewist) {
+      cache.cweaw();
     }
 
-    if (contentService != null) {
-      contentService.close();
+    if (contentsewvice != nyuww) {
+      contentsewvice.cwose();
     }
 
-    if (metadataService != null) {
-      metadataService.close();
+    if (metadatasewvice != nyuww) {
+      metadatasewvice.cwose();
     }
   }
 
-  private TrendsThriftDataServiceManager(
-      ServiceIdentifier serviceIdentifier,
-      int numRetries,
-      Duration requestTimeoutMS,
-      Duration refreshDelayDuration,
-      Duration reloadIntervalDuration,
-      List<NGramCache> trendsCacheList) {
-    this.numRetries = numRetries;
-    this.requestTimeout = requestTimeoutMS;
-    this.refreshDelayDuration = refreshDelayDuration;
-    this.reloadIntervalDuration = reloadIntervalDuration;
-    this.serviceIdentifier = serviceIdentifier;
-    this.trendsCacheList = Preconditions.checkNotNull(trendsCacheList);
-    trendsUpdater = new TrendsUpdater();
-    metadataService = buildMetadataService();
-    metadataClient = buildMetadataClient(metadataService);
-    contentService = buildContentService();
-    contentClient = buildContentClient(contentService);
+  p-pwivate twendsthwiftdatasewvicemanagew(
+      s-sewviceidentifiew s-sewviceidentifiew, 😳
+      int n-nyumwetwies, o.O
+      duwation wequesttimeoutms, ^^;;
+      duwation wefweshdewayduwation, ( ͡o ω ͡o )
+      duwation w-wewoadintewvawduwation,
+      w-wist<ngwamcache> twendscachewist) {
+    t-this.numwetwies = nyumwetwies;
+    this.wequesttimeout = w-wequesttimeoutms;
+    t-this.wefweshdewayduwation = wefweshdewayduwation;
+    t-this.wewoadintewvawduwation = w-wewoadintewvawduwation;
+    this.sewviceidentifiew = sewviceidentifiew;
+    this.twendscachewist = pweconditions.checknotnuww(twendscachewist);
+    twendsupdatew = nyew t-twendsupdatew();
+    m-metadatasewvice = b-buiwdmetadatasewvice();
+    m-metadatacwient = b-buiwdmetadatacwient(metadatasewvice);
+    contentsewvice = b-buiwdcontentsewvice();
+    c-contentcwient = buiwdcontentcwient(contentsewvice);
   }
 
-  @VisibleForTesting
-  protected Service<ThriftClientRequest, byte[]> buildContentService() {
-    ClientBuilder<
-        ThriftClientRequest,
-        byte[], ClientConfig.Yes,
-        ClientConfig.Yes,
-        ClientConfig.Yes
+  @visibwefowtesting
+  p-pwotected s-sewvice<thwiftcwientwequest, ^^;; byte[]> buiwdcontentsewvice() {
+    c-cwientbuiwdew<
+        thwiftcwientwequest, ^^;;
+        byte[], XD c-cwientconfig.yes, 🥺
+        cwientconfig.yes, (///ˬ///✿)
+        cwientconfig.yes
         >
-        builder = ClientBuilder.get()
-          .stack(ThriftMux.client())
-          .name("trends_thrift_data_service_manager_content")
+        b-buiwdew = c-cwientbuiwdew.get()
+          .stack(thwiftmux.cwient())
+          .name("twends_thwift_data_sewvice_managew_content")
           .dest("")
-          .retries(numRetries)
-          .reportTo(DefaultStatsReceiver.get())
-          .tcpConnectTimeout(requestTimeout)
-          .requestTimeout(requestTimeout);
-    ClientBuilder mtlsBuilder =
-        new MtlsClientBuilder.MtlsClientBuilderSyntax<>(builder).mutualTls(serviceIdentifier);
+          .wetwies(numwetwies)
+          .wepowtto(defauwtstatsweceivew.get())
+          .tcpconnecttimeout(wequesttimeout)
+          .wequesttimeout(wequesttimeout);
+    cwientbuiwdew m-mtwsbuiwdew =
+        nyew mtwscwientbuiwdew.mtwscwientbuiwdewsyntax<>(buiwdew).mutuawtws(sewviceidentifiew);
 
-    return ClientBuilder.safeBuild(mtlsBuilder);
+    wetuwn c-cwientbuiwdew.safebuiwd(mtwsbuiwdew);
   }
 
-  @VisibleForTesting
-  protected TrendingContentService.ServiceToClient buildContentClient(
-      Service<ThriftClientRequest, byte[]> service) {
-    return new TrendingContentService.ServiceToClient(service);
+  @visibwefowtesting
+  p-pwotected t-twendingcontentsewvice.sewvicetocwient buiwdcontentcwient(
+      sewvice<thwiftcwientwequest, (U ᵕ U❁) byte[]> s-sewvice) {
+    wetuwn nyew twendingcontentsewvice.sewvicetocwient(sewvice);
   }
 
-  @VisibleForTesting
-  protected Service<ThriftClientRequest, byte[]> buildMetadataService() {
-    ClientBuilder<
-        ThriftClientRequest,
-        byte[],
-        ClientConfig.Yes,
-        ClientConfig.Yes,
-        ClientConfig.Yes
+  @visibwefowtesting
+  p-pwotected s-sewvice<thwiftcwientwequest, ^^;; byte[]> buiwdmetadatasewvice() {
+    c-cwientbuiwdew<
+        thwiftcwientwequest, ^^;;
+        b-byte[], rawr
+        c-cwientconfig.yes,
+        cwientconfig.yes, (˘ω˘)
+        cwientconfig.yes
         >
-        builder = ClientBuilder.get()
-          .stack(ThriftMux.client())
-          .name("trends_thrift_data_service_manager_metadata")
+        b-buiwdew = cwientbuiwdew.get()
+          .stack(thwiftmux.cwient())
+          .name("twends_thwift_data_sewvice_managew_metadata")
           .dest("")
-          .retries(numRetries)
-          .reportTo(DefaultStatsReceiver.get())
-          .tcpConnectTimeout(requestTimeout)
-          .requestTimeout(requestTimeout);
-    ClientBuilder mtlsBuilder =
-        new MtlsClientBuilder.MtlsClientBuilderSyntax<>(builder).mutualTls(serviceIdentifier);
+          .wetwies(numwetwies)
+          .wepowtto(defauwtstatsweceivew.get())
+          .tcpconnecttimeout(wequesttimeout)
+          .wequesttimeout(wequesttimeout);
+    cwientbuiwdew mtwsbuiwdew =
+        n-nyew mtwscwientbuiwdew.mtwscwientbuiwdewsyntax<>(buiwdew).mutuawtws(sewviceidentifiew);
 
-    return ClientBuilder.safeBuild(mtlsBuilder);
+    w-wetuwn cwientbuiwdew.safebuiwd(mtwsbuiwdew);
   }
 
-  @VisibleForTesting
-  protected TrendsMetadataService.ServiceToClient buildMetadataClient(
-      Service<ThriftClientRequest, byte[]> service) {
-    return new TrendsMetadataService.ServiceToClient(service);
+  @visibwefowtesting
+  pwotected twendsmetadatasewvice.sewvicetocwient b-buiwdmetadatacwient(
+      sewvice<thwiftcwientwequest, b-byte[]> s-sewvice) {
+    wetuwn n-nyew twendsmetadatasewvice.sewvicetocwient(sewvice);
   }
 
   /**
-   * Updater that fetches available woeids and corresponding trending terms.
+   * updatew that fetches avaiwabwe woeids and cowwesponding twending tewms. 🥺
    */
-  @VisibleForTesting
-  protected class TrendsUpdater implements Runnable {
-    @Override
-    public void run() {
-      populateCacheFromTrendsService();
+  @visibwefowtesting
+  pwotected cwass twendsupdatew impwements wunnabwe {
+    @ovewwide
+    pubwic void wun() {
+      popuwatecachefwomtwendssewvice();
     }
 
-    private Future<BoxedUnit> populateCacheFromTrendsService() {
-      long startTime = System.currentTimeMillis();
-      AtomicLong numTrendsReceived = new AtomicLong(0);
-      return metadataClient.getAvailable().flatMap(locations -> {
-        if (locations == null) {
-          getAvailableFailureCounter.increment();
-          LOG.warn("Failed to get woeids from trends.");
-          return Future.value(BoxedUnit.UNIT);
+    pwivate f-futuwe<boxedunit> p-popuwatecachefwomtwendssewvice() {
+      wong stawttime = system.cuwwenttimemiwwis();
+      a-atomicwong nyumtwendsweceived = n-nyew atomicwong(0);
+      w-wetuwn metadatacwient.getavaiwabwe().fwatmap(wocations -> {
+        i-if (wocations == nyuww) {
+          g-getavaiwabwefaiwuwecountew.incwement();
+          w-wog.wawn("faiwed to get woeids f-fwom twends.");
+          wetuwn futuwe.vawue(boxedunit.unit);
         }
-        getAvailableSuccessCounter.increment();
-        return populateCacheFromTrendLocations(locations, numTrendsReceived);
-      }).onFailure(throwable -> {
-        LOG.info("Update failed", throwable);
-        updateFailureCounter.increment();
-        return BoxedUnit.UNIT;
-      }).ensure(() -> {
-        logRefreshStatus(startTime, numTrendsReceived);
-        return BoxedUnit.UNIT;
+        g-getavaiwabwesuccesscountew.incwement();
+        w-wetuwn popuwatecachefwomtwendwocations(wocations, nyaa~~ nyumtwendsweceived);
+      }).onfaiwuwe(thwowabwe -> {
+        wog.info("update f-faiwed", :3 t-thwowabwe);
+        u-updatefaiwuwecountew.incwement();
+        w-wetuwn boxedunit.unit;
+      }).ensuwe(() -> {
+        w-wogwefweshstatus(stawttime, /(^•ω•^) n-nyumtwendsweceived);
+        w-wetuwn boxedunit.unit;
       });
     }
 
-    private Future<BoxedUnit> populateCacheFromTrendLocations(
-        List<Location> locations,
-        AtomicLong numTrendsReceived) {
-      List<Future<TrendsPlusResponse>> trendsPlusFutures = locations.stream()
-          .map(location -> makeTrendsPlusRequest(location))
-          .collect(Collectors.toList());
+    p-pwivate f-futuwe<boxedunit> popuwatecachefwomtwendwocations(
+        wist<wocation> w-wocations, ^•ﻌ•^
+        a-atomicwong nyumtwendsweceived) {
+      w-wist<futuwe<twendspwuswesponse>> twendspwusfutuwes = w-wocations.stweam()
+          .map(wocation -> maketwendspwuswequest(wocation))
+          .cowwect(cowwectows.towist());
 
-      Future<List<Try<TrendsPlusResponse>>> trendsPlusFuture =
-          Future.collectToTry(trendsPlusFutures);
-      return trendsPlusFuture.map(tryResponses -> {
-        populateCacheFromResponses(tryResponses, numTrendsReceived);
-        return BoxedUnit.UNIT;
+      futuwe<wist<twy<twendspwuswesponse>>> t-twendspwusfutuwe =
+          futuwe.cowwecttotwy(twendspwusfutuwes);
+      wetuwn t-twendspwusfutuwe.map(twywesponses -> {
+        p-popuwatecachefwomwesponses(twywesponses, n-nyumtwendsweceived);
+        wetuwn b-boxedunit.unit;
       });
     }
 
-    private Future<TrendsPlusResponse> makeTrendsPlusRequest(Location location) {
-      TrendsPlusRequest request = new TrendsPlusRequest()
-          .setWoeid(location.getWoeid())
-          .setMaxTrends(MAX_TRENDS_PER_WOEID);
-      long startTime = System.currentTimeMillis();
-      return contentClient.getTrendsPlus(request)
-          .onSuccess(response -> {
-            getTrendsSuccessCounter.increment();
-            return BoxedUnit.UNIT;
-          }).onFailure(throwable -> {
-            getTrendsFailureCounter.increment();
-            return BoxedUnit.UNIT;
+    pwivate futuwe<twendspwuswesponse> m-maketwendspwuswequest(wocation wocation) {
+      t-twendspwuswequest wequest = n-nyew twendspwuswequest()
+          .setwoeid(wocation.getwoeid())
+          .setmaxtwends(max_twends_pew_woeid);
+      wong stawttime = system.cuwwenttimemiwwis();
+      wetuwn contentcwient.gettwendspwus(wequest)
+          .onsuccess(wesponse -> {
+            gettwendssuccesscountew.incwement();
+            w-wetuwn boxedunit.unit;
+          }).onfaiwuwe(thwowabwe -> {
+            g-gettwendsfaiwuwecountew.incwement();
+            w-wetuwn boxedunit.unit;
           });
     }
 
-    private void populateCacheFromResponses(
-        List<Try<TrendsPlusResponse>> tryResponses,
-        AtomicLong numTrendsReceived) {
-      Set<String> trendStrings = Sets.newHashSet();
+    pwivate void popuwatecachefwomwesponses(
+        wist<twy<twendspwuswesponse>> t-twywesponses, UwU
+        atomicwong n-nyumtwendsweceived) {
+      s-set<stwing> twendstwings = s-sets.newhashset();
 
-      for (Try<TrendsPlusResponse> tryResponse : tryResponses) {
-        if (tryResponse.isThrow()) {
-          LOG.warn("Failed to fetch trends:" + tryResponse.toString());
+      fow (twy<twendspwuswesponse> twywesponse : t-twywesponses) {
+        i-if (twywesponse.isthwow()) {
+          wog.wawn("faiwed t-to fetch twends:" + twywesponse.tostwing());
           continue;
         }
 
-        TrendsPlusResponse trendsPlusResponse = tryResponse.get();
-        numTrendsReceived.addAndGet(trendsPlusResponse.modules.size());
-        for (Module module : trendsPlusResponse.modules) {
-          trendStrings.add(module.getTrend().name);
+        t-twendspwuswesponse twendspwuswesponse = t-twywesponse.get();
+        n-nyumtwendsweceived.addandget(twendspwuswesponse.moduwes.size());
+        f-fow (moduwe moduwe : twendspwuswesponse.moduwes) {
+          t-twendstwings.add(moduwe.gettwend().name);
         }
       }
 
-      for (NGramCache cache : trendsCacheList) {
-        cache.addAll(trendStrings);
+      f-fow (ngwamcache c-cache : twendscachewist) {
+        c-cache.addaww(twendstwings);
       }
     }
   }
 
-  private void logRefreshStatus(long startTime, AtomicLong numTrendsReceived) {
-    LOG.info(String.format("Refresh done in [%dms] :\nfetchSuccess[%d] fetchFailure[%d] "
-            + "updateFailure[%d] num trends received [%d]",
-        System.currentTimeMillis() - startTime,
-        getTrendsSuccessCounter.get(),
-        getTrendsFailureCounter.get(),
-        updateFailureCounter.get(),
-        numTrendsReceived.get()));
+  pwivate void w-wogwefweshstatus(wong s-stawttime, 😳😳😳 a-atomicwong nyumtwendsweceived) {
+    w-wog.info(stwing.fowmat("wefwesh d-done in [%dms] :\nfetchsuccess[%d] f-fetchfaiwuwe[%d] "
+            + "updatefaiwuwe[%d] nyum t-twends weceived [%d]", OwO
+        s-system.cuwwenttimemiwwis() - stawttime, ^•ﻌ•^
+        g-gettwendssuccesscountew.get(), (ꈍᴗꈍ)
+        gettwendsfaiwuwecountew.get(), (⑅˘꒳˘)
+        u-updatefaiwuwecountew.get(), (⑅˘꒳˘)
+        nyumtwendsweceived.get()));
   }
 }

@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.cover
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Cover
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.FullCover.FullCoverEntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCover.HalfCoverEntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.entwynamespace
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.fuwwcovew.fuwwcovewentwynamespace
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.hawfcovew.hawfcovewentwynamespace
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
 
-object HalfCover {
-  val HalfCoverEntryNamespace = EntryNamespace("half-cover")
+object hawfcovew {
+  v-vaw hawfcovewentwynamespace = entwynamespace("hawf-covew")
 }
-case class HalfCover(
-  override val id: String,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  content: HalfCoverContent)
-    extends Cover {
+c-case cwass hawfcovew(
+  o-ovewwide vaw id: stwing, o.O
+  ovewwide vaw sowtindex: option[wong], /(^•ω•^)
+  o-ovewwide vaw cwienteventinfo: o-option[cwienteventinfo], nyaa~~
+  c-content: hawfcovewcontent)
+    extends covew {
 
-  override val entryNamespace: EntryNamespace = HalfCoverEntryNamespace
+  ovewwide vaw entwynamespace: e-entwynamespace = hawfcovewentwynamespace
 
-  // Note that sort index is not used for Covers, as they are not TimelineEntry and do not have entryId
-  override def withSortIndex(newSortIndex: Long): TimelineEntry =
-    copy(sortIndex = Some(newSortIndex))
+  // nyote that sowt index is nyot used fow c-covews, nyaa~~ as they awe nyot timewineentwy a-and do n-nyot have entwyid
+  o-ovewwide def w-withsowtindex(newsowtindex: wong): timewineentwy =
+    c-copy(sowtindex = some(newsowtindex))
 
-  // Not used for covers
-  override def feedbackActionInfo: Option[FeedbackActionInfo] = None
+  // nyot used fow c-covews
+  ovewwide def feedbackactioninfo: option[feedbackactioninfo] = nyone
 }
 
-object FullCover {
-  val FullCoverEntryNamespace = EntryNamespace("full-cover")
+object fuwwcovew {
+  vaw fuwwcovewentwynamespace = e-entwynamespace("fuww-covew")
 }
-case class FullCover(
-  override val id: String,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  content: FullCoverContent)
-    extends Cover {
+case cwass fuwwcovew(
+  o-ovewwide v-vaw id: stwing, :3
+  o-ovewwide vaw sowtindex: option[wong], 😳😳😳
+  ovewwide vaw cwienteventinfo: option[cwienteventinfo], (˘ω˘)
+  c-content: f-fuwwcovewcontent)
+    extends covew {
 
-  override val entryNamespace: EntryNamespace = FullCoverEntryNamespace
+  o-ovewwide v-vaw entwynamespace: entwynamespace = f-fuwwcovewentwynamespace
 
-  // Note that sort index is not used for Covers, as they are not TimelineEntry and do not have entryId
-  override def withSortIndex(newSortIndex: Long): TimelineEntry =
-    copy(sortIndex = Some(newSortIndex))
+  // nyote that s-sowt index is nyot used fow covews, ^^ as they awe n-nyot timewineentwy and do nyot h-have entwyid
+  ovewwide def withsowtindex(newsowtindex: w-wong): timewineentwy =
+    c-copy(sowtindex = some(newsowtindex))
 
-  // Not used for covers
-  override def feedbackActionInfo: Option[FeedbackActionInfo] = None
+  // nyot used fow covews
+  ovewwide def feedbackactioninfo: option[feedbackactioninfo] = n-nyone
 }

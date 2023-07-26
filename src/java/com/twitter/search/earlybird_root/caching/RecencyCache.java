@@ -1,15 +1,15 @@
-package com.twitter.search.earlybird_root.caching;
+package com.twittew.seawch.eawwybiwd_woot.caching;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+impowt java.wang.annotation.ewementtype;
+i-impowt j-java.wang.annotation.wetention;
+i-impowt java.wang.annotation.tawget;
 
-import com.google.inject.BindingAnnotation;
+i-impowt com.googwe.inject.bindingannotation;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+i-impowt static j-java.wang.annotation.wetentionpowicy.wuntime;
 
-@Retention(RUNTIME)
-@Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
-@BindingAnnotation
-public @interface RecencyCache {
+@wetention(wuntime)
+@tawget({ e-ewementtype.fiewd, rawr x3 e-ewementtype.pawametew, rawr ewementtype.method })
+@bindingannotation
+pubwic @intewface wecencycache {
 }

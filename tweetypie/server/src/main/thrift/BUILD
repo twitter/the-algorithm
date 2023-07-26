@@ -1,29 +1,29 @@
-create_thrift_libraries(
-    base_name = "compiled",
-    sources = ["**/*.thrift"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependency_roots = [
-        "mediaservices/commons/src/main/thrift",
-        "tweetypie/servo/repo/src/main/thrift",
-        "src/thrift/com/twitter/context:feature-context",
-        "src/thrift/com/twitter/escherbird:media-annotation-structs",
-        "src/thrift/com/twitter/expandodo:capi",
-        "src/thrift/com/twitter/expandodo:only",
-        "src/thrift/com/twitter/geoduck",
-        "src/thrift/com/twitter/gizmoduck:thrift",
-        "src/thrift/com/twitter/gizmoduck:user-thrift",
-        "src/thrift/com/twitter/servo:servo-exception",
-        "tweetypie/common/src/thrift/com/twitter/tweetypie:audit",
-        "tweetypie/common/src/thrift/com/twitter/tweetypie:delete_location_data",
-        "tweetypie/common/src/thrift/com/twitter/tweetypie:media-entity",
-        "tweetypie/common/src/thrift/com/twitter/tweetypie:service",
-        "tweetypie/common/src/thrift/com/twitter/tweetypie:stored-tweet-info",
-        "tweetypie/common/src/thrift/com/twitter/tweetypie:tweet",
-    ],
-    generate_languages = [
-        "java",
-        "scala",
-    ],
+cweate_thwift_wibwawies(
+    base_name = "compiwed", òωó
+    souwces = ["**/*.thwift"], o.O
+    p-pwatfowm = "java8", (U ᵕ U❁)
+    stwict_deps = t-twue, (⑅˘꒳˘)
+    t-tags = ["bazew-compatibwe"], ( ͡o ω ͡o )
+    d-dependency_woots = [
+        "mediasewvices/commons/swc/main/thwift", UwU
+        "tweetypie/sewvo/wepo/swc/main/thwift", rawr x3
+        "swc/thwift/com/twittew/context:featuwe-context",
+        "swc/thwift/com/twittew/eschewbiwd:media-annotation-stwucts", rawr
+        "swc/thwift/com/twittew/expandodo:capi", σωσ
+        "swc/thwift/com/twittew/expandodo:onwy", σωσ
+        "swc/thwift/com/twittew/geoduck", >_<
+        "swc/thwift/com/twittew/gizmoduck:thwift", :3
+        "swc/thwift/com/twittew/gizmoduck:usew-thwift", (U ﹏ U)
+        "swc/thwift/com/twittew/sewvo:sewvo-exception", -.-
+        "tweetypie/common/swc/thwift/com/twittew/tweetypie:audit", (ˆ ﻌ ˆ)♡
+        "tweetypie/common/swc/thwift/com/twittew/tweetypie:dewete_wocation_data", (⑅˘꒳˘)
+        "tweetypie/common/swc/thwift/com/twittew/tweetypie:media-entity", (U ᵕ U❁)
+        "tweetypie/common/swc/thwift/com/twittew/tweetypie:sewvice", -.-
+        "tweetypie/common/swc/thwift/com/twittew/tweetypie:stowed-tweet-info", ^^;;
+        "tweetypie/common/swc/thwift/com/twittew/tweetypie:tweet", >_<
+    ], mya
+    g-genewate_wanguages = [
+        "java", mya
+        "scawa",
+    ], 😳
 )

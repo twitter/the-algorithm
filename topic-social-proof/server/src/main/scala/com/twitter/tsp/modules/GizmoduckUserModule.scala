@@ -1,35 +1,35 @@
-package com.twitter.tsp.modules
+package com.twittew.tsp.moduwes
 
-import com.google.inject.Module
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.gizmoduck.thriftscala.UserService
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
+impowt com.googwe.inject.moduwe
+i-impowt com.twittew.finagwe.thwiftmux
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.mtws.cwient.mtwsstackcwient._
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.finagwe.thwift.cwientid
+i-impowt c-com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwscwient
+impowt com.twittew.gizmoduck.thwiftscawa.usewsewvice
+impowt com.twittew.inject.injectow
+impowt c-com.twittew.inject.thwift.moduwes.thwiftmethodbuiwdewcwientmoduwe
 
-object GizmoduckUserModule
-    extends ThriftMethodBuilderClientModule[
-      UserService.ServicePerEndpoint,
-      UserService.MethodPerEndpoint
+object gizmoduckusewmoduwe
+    extends thwiftmethodbuiwdewcwientmoduwe[
+      u-usewsewvice.sewvicepewendpoint, rawr x3
+      usewsewvice.methodpewendpoint
     ]
-    with MtlsClient {
+    w-with mtwscwient {
 
-  override val label: String = "gizmoduck"
-  override val dest: String = "/s/gizmoduck/gizmoduck"
-  override val modules: Seq[Module] = Seq(TSPClientIdModule)
+  ovewwide vaw wabew: stwing = "gizmoduck"
+  ovewwide vaw d-dest: stwing = "/s/gizmoduck/gizmoduck"
+  ovewwide v-vaw moduwes: s-seq[moduwe] = seq(tspcwientidmoduwe)
 
-  override def configureThriftMuxClient(
-    injector: Injector,
-    client: ThriftMux.Client
-  ): ThriftMux.Client = {
-    super
-      .configureThriftMuxClient(injector, client)
-      .withMutualTls(injector.instance[ServiceIdentifier])
-      .withClientId(injector.instance[ClientId])
-      .withStatsReceiver(injector.instance[StatsReceiver].scope("giz"))
+  ovewwide def configuwethwiftmuxcwient(
+    injectow: injectow, nyaa~~
+    cwient: t-thwiftmux.cwient
+  ): thwiftmux.cwient = {
+    supew
+      .configuwethwiftmuxcwient(injectow, /(^•ω•^) cwient)
+      .withmutuawtws(injectow.instance[sewviceidentifiew])
+      .withcwientid(injectow.instance[cwientid])
+      .withstatsweceivew(injectow.instance[statsweceivew].scope("giz"))
   }
 }

@@ -1,53 +1,53 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.metwics
 
-import com.twitter.ml.api._
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.util.Time
-import java.lang.{Double => JDouble}
-import java.lang.{Long => JLong}
+impowt com.twittew.mw.api._
+i-impowt com.twittew.mw.api.utiw.swichdatawecowd
+impowt c-com.twittew.utiw.time
+i-impowt j-java.wang.{doubwe => j-jdoubwe}
+i-impowt java.wang.{wong => j-jwong}
 
-case class TypedSumSqMetric() extends TypedSumLikeMetric[JDouble] {
-  import AggregationMetricCommon._
+c-case cwass typedsumsqmetwic() extends typedsumwikemetwic[jdoubwe] {
+  impowt aggwegationmetwiccommon._
 
-  override val operatorName = "sumsq"
+  ovewwide v-vaw opewatowname = "sumsq"
 
   /*
-   * Transform feature -> its squared value in the given record
-   * or 0 when feature = None (sumsq has no meaning in this case)
+   * twansfowm featuwe -> i-its squawed vawue in the given w-wecowd
+   * ow 0 when featuwe = nyone (sumsq has nyo meaning in t-this case)
    */
-  override def getIncrementValue(
-    record: DataRecord,
-    feature: Option[Feature[JDouble]],
-    timestampFeature: Feature[JLong]
-  ): TimedValue[Double] = feature match {
-    case Some(f) => {
-      val featureVal =
-        Option(SRichDataRecord(record).getFeatureValue(f)).map(_.toDouble).getOrElse(0.0)
-      TimedValue[Double](
-        value = featureVal * featureVal,
-        timestamp = Time.fromMilliseconds(getTimestamp(record, timestampFeature))
+  ovewwide def g-getincwementvawue(
+    w-wecowd: datawecowd, OwO
+    featuwe: option[featuwe[jdoubwe]], 😳😳😳
+    timestampfeatuwe: featuwe[jwong]
+  ): timedvawue[doubwe] = f-featuwe match {
+    case some(f) => {
+      vaw featuwevaw =
+        option(swichdatawecowd(wecowd).getfeatuwevawue(f)).map(_.todoubwe).getowewse(0.0)
+      t-timedvawue[doubwe](
+        vawue = f-featuwevaw * featuwevaw, 😳😳😳
+        t-timestamp = time.fwommiwwiseconds(gettimestamp(wecowd, o.O t-timestampfeatuwe))
       )
     }
 
-    case None =>
-      TimedValue[Double](
-        value = 0.0,
-        timestamp = Time.fromMilliseconds(getTimestamp(record, timestampFeature))
+    c-case nyone =>
+      timedvawue[doubwe](
+        vawue = 0.0, ( ͡o ω ͡o )
+        t-timestamp = time.fwommiwwiseconds(gettimestamp(wecowd, (U ﹏ U) timestampfeatuwe))
       )
   }
 }
 
 /**
- * Syntactic sugar for the sum of squares metric that works with continuous features.
- * See EasyMetric.scala for more details on why this is useful.
+ * s-syntactic sugaw fow the sum of squawes metwic that wowks with continuous featuwes. (///ˬ///✿)
+ * see easymetwic.scawa f-fow mowe detaiws on why this is u-usefuw. >w<
  */
-object SumSqMetric extends EasyMetric {
-  override def forFeatureType[T](
-    featureType: FeatureType
-  ): Option[AggregationMetric[T, _]] =
-    featureType match {
-      case FeatureType.CONTINUOUS =>
-        Some(TypedSumSqMetric().asInstanceOf[AggregationMetric[T, Double]])
-      case _ => None
+object s-sumsqmetwic extends e-easymetwic {
+  ovewwide def fowfeatuwetype[t](
+    featuwetype: f-featuwetype
+  ): o-option[aggwegationmetwic[t, rawr _]] =
+    featuwetype m-match {
+      c-case featuwetype.continuous =>
+        some(typedsumsqmetwic().asinstanceof[aggwegationmetwic[t, mya doubwe]])
+      c-case _ => nyone
     }
 }

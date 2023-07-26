@@ -1,95 +1,95 @@
-package com.twitter.product_mixer.component_library.model.candidate.ads
+package com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.ads
 
-import com.twitter.adserver.{thriftscala => adsthrift}
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.model.common.UniversalNoun
+impowt com.twittew.adsewvew.{thwiftscawa => a-adsthwift}
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
 
 /**
- * An [[AdsCandidate]] represents a piece of promoted content.
+ * a-an [[adscandidate]] w-wepwesents a piece o-of pwomoted c-content. ( ͡o ω ͡o )
  *
- * This candidate class stores a reference to the adImpression, which is the common thrift structure
- * used by the Ads team to represent an ad.
+ * t-this candidate cwass stowes a wefewence to the adimpwession, o.O which is the common t-thwift stwuctuwe
+ * used by the ads team to wepwesent a-an ad. >w<
  *
- * Goldfinch, the ads-injection library, consumes the [[AdImpression]].
+ * gowdfinch, 😳 the a-ads-injection wibwawy, consumes the [[adimpwession]]. 🥺
  */
-sealed trait AdsCandidate extends UniversalNoun[Any] {
-  val adImpression: adsthrift.AdImpression
+seawed t-twait adscandidate extends univewsawnoun[any] {
+  v-vaw adimpwession: a-adsthwift.adimpwession
 }
 
 /**
- * Canonical AdsTweetCandidate model. Always prefer this version over all other variants.
+ * canonicaw adstweetcandidate modew. rawr x3 awways pwefew this vewsion o-ovew aww othew vawiants. o.O
  *
- * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]
- *       on the candidate's [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
- *       features come from the candidate source itself (as opposed to hydrated via a
- *       [[com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator]]),
- *       then [[com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
- *       can be used to extract features from the candidate source response.
+ * @note any additionaw fiewds shouwd be added a-as a [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwe]]
+ *       on the candidate's [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap]]. rawr i-if the
+ *       f-featuwes c-come fwom the candidate s-souwce itsewf (as opposed to hydwated via a-a
+ *       [[com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.candidatefeatuwehydwatow]]), ʘwʘ
+ *       then [[com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig.featuwesfwomcandidatesouwcetwansfowmews]]
+ *       can be used to extwact f-featuwes fwom the candidate souwce wesponse. 😳😳😳
  *
- * @note This class should always remain `final`. If for any reason the `final` modifier is removed,
- *       the equals() implementation must be updated in order to handle class inheritor equality
- *       (see note on the equals method below)
+ * @note this cwass shouwd awways wemain `finaw`. ^^;; if fow any w-weason the `finaw` modifiew is w-wemoved, o.O
+ *       t-the equaws() i-impwementation must be updated in owdew to handwe cwass inhewitow e-equawity
+ *       (see n-nyote on the equaws method b-bewow)
  */
-final class AdsTweetCandidate private (
-  override val id: Long,
-  override val adImpression: adsthrift.AdImpression)
-    extends AdsCandidate
-    with BaseTweetCandidate {
+f-finaw cwass adstweetcandidate pwivate (
+  o-ovewwide vaw id: wong, (///ˬ///✿)
+  o-ovewwide vaw adimpwession: adsthwift.adimpwession)
+    extends a-adscandidate
+    with basetweetcandidate {
 
   /**
-   * @inheritdoc
+   * @inhewitdoc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[AdsTweetCandidate]
+  o-ovewwide def canequaw(that: a-any): boowean = t-that.isinstanceof[adstweetcandidate]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * high pewfowmance impwementation of equaws method that wevewages:
+   *  - wefewentiaw equawity s-showt ciwcuit
+   *  - c-cached hashcode equawity s-showt ciwcuit
+   *  - f-fiewd v-vawues awe onwy checked if the hashcodes awe equaw to handwe t-the unwikewy case
+   *    of a hashcode cowwision
+   *  - wemovaw of check fow `that` b-being an equaws-compatibwe descendant since t-this cwass is f-finaw
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @note `candidate.canequaw(this)` i-is nyot nyecessawy because this c-cwass is finaw
+   * @see [[http://www.awtima.com/pins1ed/object-equawity.htmw pwogwamming i-in scawa, σωσ
+   *      chaptew 28]] f-fow d-discussion and design. nyaa~~
    */
-  override def equals(that: Any): Boolean =
-    that match {
-      case candidate: AdsTweetCandidate =>
+  ovewwide def equaws(that: any): boowean =
+    t-that m-match {
+      c-case candidate: a-adstweetcandidate =>
         (
-          (this eq candidate)
-            || ((hashCode == candidate.hashCode)
-              && (id == candidate.id && adImpression == candidate.adImpression))
+          (this eq c-candidate)
+            || ((hashcode == candidate.hashcode)
+              && (id == candidate.id && adimpwession == c-candidate.adimpwession))
         )
       case _ =>
-        false
+        fawse
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * wevewage domain-specific constwaints (see nyotes bewow) t-to safewy constwuct and cache the
+   * hashcode as a vaw, ^^;; such t-that it is instantiated o-once on o-object constwuction. ^•ﻌ•^ this pwevents t-the
+   * nyeed to wecompute the h-hashcode on each h-hashcode() invocation, σωσ which is the behaviow of the
+   * scawa compiwew case cwass-genewated h-hashcode() since it cannot make a-assumptions wegawding fiewd
+   * o-object mutabiwity a-and hashcode impwementations. -.-
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated candidate
-   *       (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       data structure), assuming stable hashCode implementations for these objects
+   * @note caching the hashcode i-is onwy safe i-if aww of the fiewds used to c-constwuct the hashcode
+   *       a-awe immutabwe. this incwudes:
+   *       - inabiwity to mutate the object wefewence o-on fow an e-existing instantiated c-candidate
+   *       (i.e. ^^;; each fiewd is a-a vaw)
+   *       - i-inabiwity to mutate the fiewd o-object instance itsewf (i.e. XD each fiewd is an immutabwe
+   *       - inabiwity t-to mutate the fiewd o-object instance itsewf (i.e. each fiewd is a-an immutabwe
+   *       d-data stwuctuwe), 🥺 assuming stabwe hashcode impwementations f-fow these objects
    *
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @note in owdew fow the hashcode to be consistent with object equawity, òωó `##` m-must be used fow
+   *       boxed nyumewic t-types and nyuww. (ˆ ﻌ ˆ)♡ a-as such, -.- awways pwefew `.##` ovew `.hashcode()`. :3
    */
-  override val hashCode: Int =
+  ovewwide vaw hashcode: i-int =
     31 * (
-      id.##
-    ) + adImpression.##
+      i-id.##
+    ) + adimpwession.##
 }
 
-object AdsTweetCandidate {
-  def apply(id: Long, adImpression: adsthrift.AdImpression): AdsTweetCandidate =
-    new AdsTweetCandidate(id, adImpression)
+object adstweetcandidate {
+  d-def appwy(id: wong, ʘwʘ adimpwession: a-adsthwift.adimpwession): adstweetcandidate =
+    nyew adstweetcandidate(id, 🥺 a-adimpwession)
 }

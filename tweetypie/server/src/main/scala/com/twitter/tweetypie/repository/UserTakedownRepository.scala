@@ -1,26 +1,26 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.stitch.Stitch
-import com.twitter.takedown.util.TakedownReasons
-import com.twitter.tseng.withholding.thriftscala.TakedownReason
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.takedown.utiw.takedownweasons
+i-impowt com.twittew.tseng.withhowding.thwiftscawa.takedownweason
 
 /**
- * Query TakedownReason objects from gizmoduck
+ * q-quewy t-takedownweason o-objects fwom gizmoduck
  *
- * No backfill job has been completed so there may exist users that have a takedown
- * country_code without a corresponding UnspecifiedReason takedown_reason.  Therefore,
- * read from both fields and merge into a set of TakedownReason, translating raw takedown
- * country_code into TakedownReason.UnspecifiedReason(country_code).
+ * n-nyo backfiww job has been compweted so thewe may exist usews that have a-a takedown
+ * countwy_code without a cowwesponding u-unspecifiedweason takedown_weason. mya  t-thewefowe, nyaa~~
+ * wead fwom both fiewds and mewge into a s-set of takedownweason, (⑅˘꒳˘) twanswating w-waw takedown
+ * c-countwy_code into takedownweason.unspecifiedweason(countwy_code). rawr x3
  */
-object UserTakedownRepository {
-  type Type = UserId => Stitch[Set[TakedownReason]]
+object usewtakedownwepositowy {
+  type t-type = usewid => stitch[set[takedownweason]]
 
-  val userQueryOptions: UserQueryOptions =
-    UserQueryOptions(Set(UserField.Takedowns), UserVisibility.All)
+  vaw usewquewyoptions: usewquewyoptions =
+    usewquewyoptions(set(usewfiewd.takedowns), (✿oωo) u-usewvisibiwity.aww)
 
-  def apply(userRepo: UserRepository.Type): UserTakedownRepository.Type =
-    userId =>
-      userRepo(UserKey(userId = userId), userQueryOptions)
-        .map(_.takedowns.map(TakedownReasons.userTakedownsToReasons).getOrElse(Set.empty))
+  def appwy(usewwepo: u-usewwepositowy.type): u-usewtakedownwepositowy.type =
+    u-usewid =>
+      u-usewwepo(usewkey(usewid = usewid), (ˆ ﻌ ˆ)♡ usewquewyoptions)
+        .map(_.takedowns.map(takedownweasons.usewtakedownstoweasons).getowewse(set.empty))
 }

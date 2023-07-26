@@ -1,17 +1,17 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/filter",
-        "src/thrift/com/twitter/socialgraph:thrift-scala",
-        "strato/config/columns/lists/reads:core-strato-client",
-        "strato/src/main/scala/com/twitter/strato/client",
+scawa_wibwawy(
+    souwces = ["*.scawa"], òωó
+    compiwew_option_sets = ["fataw_wawnings"], o.O
+    s-stwict_deps = t-twue, (U ᵕ U❁)
+    t-tags = ["bazew-compatibwe"], (⑅˘꒳˘)
+    d-dependencies = [
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/candidate", ( ͡o ω ͡o )
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/fiwtew", UwU
+        "swc/thwift/com/twittew/sociawgwaph:thwift-scawa", rawr x3
+        "stwato/config/cowumns/wists/weads:cowe-stwato-cwient", rawr
+        "stwato/swc/main/scawa/com/twittew/stwato/cwient", σωσ
     ],
-    exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/filter",
-        "strato/config/columns/lists/reads:core-strato-client",
+    e-expowts = [
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/fiwtew", σωσ
+        "stwato/config/cowumns/wists/weads:cowe-stwato-cwient", >_<
     ],
 )

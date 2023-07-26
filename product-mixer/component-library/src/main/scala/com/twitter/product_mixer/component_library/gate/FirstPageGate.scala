@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.component_library.gate
+package com.twittew.pwoduct_mixew.component_wibwawy.gate
 
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.gateidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.haspipewinecuwsow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.stitch
 
 /**
- * Gate used in first page. Use request cursor to determine if the gate should be open or closed.
+ * gate used in fiwst page. ( ͡o ω ͡o ) use wequest cuwsow to d-detewmine if the gate shouwd be open ow cwosed. rawr x3
  */
-object FirstPageGate extends Gate[PipelineQuery with HasPipelineCursor[_]] {
+o-object fiwstpagegate extends g-gate[pipewinequewy with haspipewinecuwsow[_]] {
 
-  override val identifier: GateIdentifier = GateIdentifier("FirstPage")
+  ovewwide vaw identifiew: gateidentifiew = gateidentifiew("fiwstpage")
 
-  // If cursor is first page, then gate should return continue, otherwise return stop
-  override def shouldContinue(query: PipelineQuery with HasPipelineCursor[_]): Stitch[Boolean] =
-    Stitch.value(query.isFirstPage)
+  // i-if cuwsow is fiwst page, nyaa~~ then gate s-shouwd wetuwn c-continue, /(^•ω•^) othewwise wetuwn stop
+  ovewwide def shouwdcontinue(quewy: pipewinequewy w-with haspipewinecuwsow[_]): stitch[boowean] =
+    stitch.vawue(quewy.isfiwstpage)
 }

@@ -1,86 +1,86 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+package com.twittew.fowwow_wecommendations.common.featuwe_hydwation.souwces
 
-import com.google.inject.Inject
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSource
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSourceId
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataRecordMerger
-import com.twitter.ml.api.FeatureContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+impowt c-com.googwe.inject.inject
+i-impowt c-com.googwe.inject.pwovides
+i-impowt c-com.googwe.inject.singweton
+i-impowt com.twittew.fowwow_wecommendations.common.featuwe_hydwation.common.featuwesouwce
+i-impowt c-com.twittew.fowwow_wecommendations.common.featuwe_hydwation.common.featuwesouwceid
+impowt com.twittew.fowwow_wecommendations.common.featuwe_hydwation.common.haspwefetchedfeatuwe
+impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+impowt com.twittew.fowwow_wecommendations.common.modews.hasdispwaywocation
+impowt com.twittew.fowwow_wecommendations.common.modews.hassimiwawtocontext
+impowt c-com.twittew.mw.api.datawecowd
+impowt com.twittew.mw.api.datawecowdmewgew
+impowt com.twittew.mw.api.featuwecontext
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+impowt c-com.twittew.stitch.stitch
+impowt com.twittew.timewines.configapi.haspawams
 
 /**
- * This source wraps around the separate sources that we hydrate features from
- * @param featureStoreSource        gets features that require a RPC call to feature store
- * @param stratoFeatureHydrationSource    gets features that require a RPC call to strato columns
- * @param clientContextSource       gets features that are already present in the request context
- * @param candidateAlgorithmSource  gets features that are already present from candidate generation
- * @param preFetchedFeatureSource   gets features that were prehydrated (shared in request lifecycle)
+ * this souwce wwaps a-awound the sepawate souwces t-that we hydwate f-featuwes fwom
+ * @pawam featuwestowesouwce        gets featuwes that wequiwe a wpc caww to featuwe s-stowe
+ * @pawam stwatofeatuwehydwationsouwce    gets featuwes that wequiwe a wpc caww to stwato c-cowumns
+ * @pawam cwientcontextsouwce       g-gets featuwes that a-awe awweady pwesent i-in the wequest c-context
+ * @pawam candidateawgowithmsouwce  gets featuwes t-that awe awweady pwesent fwom candidate genewation
+ * @pawam p-pwefetchedfeatuwesouwce   gets featuwes that wewe pwehydwated (shawed in wequest wifecycwe)
  */
-@Provides
-@Singleton
-class UserScoringFeatureSource @Inject() (
-  featureStoreSource: FeatureStoreSource,
-  featureStoreGizmoduckSource: FeatureStoreGizmoduckSource,
-  featureStorePostNuxAlgorithmSource: FeatureStorePostNuxAlgorithmSource,
-  featureStoreTimelinesAuthorSource: FeatureStoreTimelinesAuthorSource,
-  featureStoreUserMetricCountsSource: FeatureStoreUserMetricCountsSource,
-  clientContextSource: ClientContextSource,
-  candidateAlgorithmSource: CandidateAlgorithmSource,
-  preFetchedFeatureSource: PreFetchedFeatureSource)
-    extends FeatureSource {
+@pwovides
+@singweton
+cwass usewscowingfeatuwesouwce @inject() (
+  featuwestowesouwce: featuwestowesouwce, (U ﹏ U)
+  f-featuwestowegizmoducksouwce: featuwestowegizmoducksouwce, (///ˬ///✿)
+  f-featuwestowepostnuxawgowithmsouwce: f-featuwestowepostnuxawgowithmsouwce, 😳
+  featuwestowetimewinesauthowsouwce: f-featuwestowetimewinesauthowsouwce, 😳
+  featuwestoweusewmetwiccountssouwce: featuwestoweusewmetwiccountssouwce, σωσ
+  cwientcontextsouwce: c-cwientcontextsouwce, rawr x3
+  c-candidateawgowithmsouwce: candidateawgowithmsouwce, OwO
+  p-pwefetchedfeatuwesouwce: p-pwefetchedfeatuwesouwce)
+    extends f-featuwesouwce {
 
-  override val id: FeatureSourceId = FeatureSourceId.UserScoringFeatureSourceId
+  ovewwide vaw i-id: featuwesouwceid = featuwesouwceid.usewscowingfeatuwesouwceid
 
-  override val featureContext: FeatureContext = FeatureContext.merge(
-    featureStoreSource.featureContext,
-    featureStoreGizmoduckSource.featureContext,
-    featureStorePostNuxAlgorithmSource.featureContext,
-    featureStoreTimelinesAuthorSource.featureContext,
-    featureStoreUserMetricCountsSource.featureContext,
-    clientContextSource.featureContext,
-    candidateAlgorithmSource.featureContext,
-    preFetchedFeatureSource.featureContext,
+  ovewwide vaw f-featuwecontext: featuwecontext = f-featuwecontext.mewge(
+    featuwestowesouwce.featuwecontext, /(^•ω•^)
+    f-featuwestowegizmoducksouwce.featuwecontext, 😳😳😳
+    f-featuwestowepostnuxawgowithmsouwce.featuwecontext, ( ͡o ω ͡o )
+    featuwestowetimewinesauthowsouwce.featuwecontext, >_<
+    featuwestoweusewmetwiccountssouwce.featuwecontext, >w<
+    cwientcontextsouwce.featuwecontext, rawr
+    candidateawgowithmsouwce.featuwecontext, 😳
+    pwefetchedfeatuwesouwce.featuwecontext, >w<
   )
 
-  val sources =
-    Seq(
-      featureStoreSource,
-      featureStorePostNuxAlgorithmSource,
-      featureStoreTimelinesAuthorSource,
-      featureStoreUserMetricCountsSource,
-      featureStoreGizmoduckSource,
-      clientContextSource,
-      candidateAlgorithmSource,
-      preFetchedFeatureSource
+  vaw s-souwces =
+    seq(
+      f-featuwestowesouwce, (⑅˘꒳˘)
+      featuwestowepostnuxawgowithmsouwce, OwO
+      f-featuwestowetimewinesauthowsouwce, (ꈍᴗꈍ)
+      f-featuwestoweusewmetwiccountssouwce, 😳
+      f-featuwestowegizmoducksouwce, 😳😳😳
+      cwientcontextsouwce, mya
+      candidateawgowithmsouwce, mya
+      pwefetchedfeatuwesouwce
     )
 
-  val dataRecordMerger = new DataRecordMerger
+  vaw d-datawecowdmewgew = nyew datawecowdmewgew
 
-  def hydrateFeatures(
-    target: HasClientContext
-      with HasPreFetchedFeature
-      with HasParams
-      with HasSimilarToContext
-      with HasDisplayLocation,
-    candidates: Seq[CandidateUser]
-  ): Stitch[Map[CandidateUser, DataRecord]] = {
-    Stitch.collect(sources.map(_.hydrateFeatures(target, candidates))).map { featureMaps =>
-      (for {
-        candidate <- candidates
-      } yield {
-        val combinedDataRecord = new DataRecord
-        featureMaps
-          .flatMap(_.get(candidate).toSeq).foreach(dataRecordMerger.merge(combinedDataRecord, _))
-        candidate -> combinedDataRecord
-      }).toMap
+  def hydwatefeatuwes(
+    tawget: hascwientcontext
+      w-with haspwefetchedfeatuwe
+      with haspawams
+      w-with h-hassimiwawtocontext
+      w-with hasdispwaywocation,
+    c-candidates: s-seq[candidateusew]
+  ): s-stitch[map[candidateusew, (⑅˘꒳˘) d-datawecowd]] = {
+    stitch.cowwect(souwces.map(_.hydwatefeatuwes(tawget, (U ﹏ U) candidates))).map { f-featuwemaps =>
+      (fow {
+        c-candidate <- c-candidates
+      } y-yiewd {
+        v-vaw combineddatawecowd = nyew datawecowd
+        featuwemaps
+          .fwatmap(_.get(candidate).toseq).foweach(datawecowdmewgew.mewge(combineddatawecowd, mya _))
+        candidate -> combineddatawecowd
+      }).tomap
     }
   }
 }

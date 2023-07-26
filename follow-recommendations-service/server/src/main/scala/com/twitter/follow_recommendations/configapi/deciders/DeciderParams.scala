@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.configapi.deciders
+package com.twittew.fowwow_wecommendations.configapi.decidews
 
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.timewines.configapi.pawam
 
-object DeciderParams {
-  object EnableRecommendations extends Param[Boolean](false)
-  object EnableScoreUserCandidates extends Param[Boolean](false)
+o-object d-decidewpawams {
+  o-object enabwewecommendations e-extends pawam[boowean](fawse)
+  o-object enabwescoweusewcandidates e-extends pawam[boowean](fawse)
 }

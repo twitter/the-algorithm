@@ -1,87 +1,87 @@
-package com.twitter.search.earlybird_root.common;
+package com.twittew.seawch.eawwybiwd_woot.common;
 
-import javax.annotation.Nullable;
+impowt javax.annotation.nuwwabwe;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
 
 /**
- * A class that wraps an EarlybirdResponse and a flag that determines if a request was sent to a
- * service.
+ * a-a cwass t-that wwaps an eawwybiwdwesponse a-and a fwag that d-detewmines if a w-wequest was sent t-to a
+ * sewvice. rawr x3
  */
-public final class EarlybirdServiceResponse {
-  public static enum ServiceState {
-    // The service was called (or will be called).
-    SERVICE_CALLED(true),
+pubwic finaw cwass eawwybiwdsewvicewesponse {
+  pubwic static enum sewvicestate {
+    // t-the sewvice was cawwed (ow wiww be cawwed). OwO
+    s-sewvice_cawwed(twue), /(^•ω•^)
 
-    // The service is not available (turned off by a decider, for example).
-    SERVICE_NOT_AVAILABLE(false),
+    // the s-sewvice is nyot avaiwabwe (tuwned off by a decidew, 😳😳😳 fow exampwe). ( ͡o ω ͡o )
+    s-sewvice_not_avaiwabwe(fawse), >_<
 
-    // The client did not request results from this service.
-    SERVICE_NOT_REQUESTED(false),
+    // the c-cwient did nyot w-wequest wesuwts fwom this sewvice. >w<
+    sewvice_not_wequested(fawse), rawr
 
-    // The service is available and the client wants results from this service, but the service
-    // was not called (because we got enough results from other services, for example).
-    SERVICE_NOT_CALLED(false);
+    // the sewvice is avaiwabwe and the c-cwient wants wesuwts fwom this sewvice, 😳 but the sewvice
+    // was nyot cawwed (because w-we got enough wesuwts fwom o-othew sewvices, >w< f-fow exampwe). (⑅˘꒳˘)
+    s-sewvice_not_cawwed(fawse);
 
-    private final boolean serviceWasCalled;
+    p-pwivate finaw boowean sewvicewascawwed;
 
-    private ServiceState(boolean serviceWasCalled) {
-      this.serviceWasCalled = serviceWasCalled;
+    pwivate sewvicestate(boowean sewvicewascawwed) {
+      t-this.sewvicewascawwed = sewvicewascawwed;
     }
 
-    public boolean serviceWasCalled() {
-      return serviceWasCalled;
+    pubwic b-boowean sewvicewascawwed() {
+      wetuwn sewvicewascawwed;
     }
 
-    public boolean serviceWasRequested() {
-      return this != SERVICE_NOT_REQUESTED;
+    pubwic boowean sewvicewaswequested() {
+      wetuwn this != sewvice_not_wequested;
     }
 
   }
 
-  private final EarlybirdResponse earlybirdResponse;
-  private final ServiceState serviceState;
+  p-pwivate finaw eawwybiwdwesponse e-eawwybiwdwesponse;
+  p-pwivate finaw s-sewvicestate sewvicestate;
 
-  private EarlybirdServiceResponse(@Nullable EarlybirdResponse earlybirdResponse,
-                                   ServiceState serviceState) {
-    this.earlybirdResponse = earlybirdResponse;
-    this.serviceState = serviceState;
-    if (!serviceState.serviceWasCalled()) {
-      Preconditions.checkArgument(earlybirdResponse == null);
+  pwivate eawwybiwdsewvicewesponse(@nuwwabwe eawwybiwdwesponse e-eawwybiwdwesponse, OwO
+                                   s-sewvicestate sewvicestate) {
+    this.eawwybiwdwesponse = e-eawwybiwdwesponse;
+    t-this.sewvicestate = sewvicestate;
+    i-if (!sewvicestate.sewvicewascawwed()) {
+      pweconditions.checkawgument(eawwybiwdwesponse == n-nyuww);
     }
   }
 
   /**
-   * Creates a new EarlybirdServiceResponse instance, indicating that the service was not called.
+   * cweates a nyew eawwybiwdsewvicewesponse i-instance, (ꈍᴗꈍ) indicating t-that the sewvice was nyot cawwed. 😳
    *
-   * @param serviceState The state of the service.
-   * @return a new EarlybirdServiceResponse instance, indicating that the service was not called.
+   * @pawam s-sewvicestate t-the state of the sewvice. 😳😳😳
+   * @wetuwn a nyew eawwybiwdsewvicewesponse instance, mya indicating that the sewvice was n-nyot cawwed. mya
    */
-  public static EarlybirdServiceResponse serviceNotCalled(ServiceState serviceState) {
-    Preconditions.checkArgument(!serviceState.serviceWasCalled());
-    return new EarlybirdServiceResponse(null, serviceState);
+  p-pubwic static eawwybiwdsewvicewesponse sewvicenotcawwed(sewvicestate s-sewvicestate) {
+    p-pweconditions.checkawgument(!sewvicestate.sewvicewascawwed());
+    w-wetuwn nyew eawwybiwdsewvicewesponse(nuww, (⑅˘꒳˘) sewvicestate);
   }
 
   /**
-   * Creates a new EarlybirdServiceResponse instance that wraps the given earlybird response.
+   * cweates a new eawwybiwdsewvicewesponse i-instance that wwaps the given eawwybiwd wesponse. (U ﹏ U)
    *
-   * @param earlybirdResponse The EarlybirdResponse instance returned by the service.
-   * @return a new EarlybirdServiceResponse instance that wraps the given earlybird response.
+   * @pawam eawwybiwdwesponse the eawwybiwdwesponse i-instance wetuwned by the sewvice. mya
+   * @wetuwn a n-nyew eawwybiwdsewvicewesponse instance t-that wwaps t-the given eawwybiwd wesponse. ʘwʘ
    */
-  public static EarlybirdServiceResponse serviceCalled(EarlybirdResponse earlybirdResponse) {
-    return new EarlybirdServiceResponse(earlybirdResponse, ServiceState.SERVICE_CALLED);
+  p-pubwic s-static eawwybiwdsewvicewesponse s-sewvicecawwed(eawwybiwdwesponse e-eawwybiwdwesponse) {
+    wetuwn nyew eawwybiwdsewvicewesponse(eawwybiwdwesponse, (˘ω˘) s-sewvicestate.sewvice_cawwed);
   }
 
-  /** Returns the wrapped earlybird response. */
-  @Nullable
-  public EarlybirdResponse getResponse() {
-    return earlybirdResponse;
+  /** w-wetuwns t-the wwapped eawwybiwd w-wesponse. (U ﹏ U) */
+  @nuwwabwe
+  p-pubwic eawwybiwdwesponse getwesponse() {
+    wetuwn eawwybiwdwesponse;
   }
 
-  /** Returns the state of the service. */
-  public ServiceState getServiceState() {
-    return serviceState;
+  /** wetuwns the s-state of the sewvice. ^•ﻌ•^ */
+  pubwic sewvicestate getsewvicestate() {
+    wetuwn sewvicestate;
   }
 }

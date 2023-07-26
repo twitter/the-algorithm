@@ -1,10 +1,10 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import javax.inject.Inject;
+impowt javax.inject.inject;
 
-public class PostCacheRequestTypeCountFilter extends RequestTypeCountFilter {
-  @Inject
-  public PostCacheRequestTypeCountFilter() {
-    super("post_cache");
+p-pubwic cwass postcachewequesttypecountfiwtew e-extends w-wequesttypecountfiwtew {
+  @inject
+  p-pubwic p-postcachewequesttypecountfiwtew() {
+    s-supew("post_cache");
   }
 }

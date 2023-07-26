@@ -1,3 +1,3 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.highlight
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.highwight
 
-case class HighlightedSection(startIndex: Int, endIndex: Int)
+case cwass h-highwightedsection(stawtindex: int, ^•ﻌ•^ e-endindex: int)

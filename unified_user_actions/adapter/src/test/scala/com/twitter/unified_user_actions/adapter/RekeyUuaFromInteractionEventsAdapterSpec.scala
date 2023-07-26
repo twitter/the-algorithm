@@ -1,35 +1,35 @@
-package com.twitter.unified_user_actions.adapter
+package com.twittew.unified_usew_actions.adaptew
 
-import com.twitter.inject.Test
-import com.twitter.unified_user_actions.adapter.TestFixtures.InteractionEventsFixtures
-import com.twitter.unified_user_actions.adapter.uua_aggregates.RekeyUuaFromInteractionEventsAdapter
-import com.twitter.util.Time
-import org.scalatest.prop.TableDrivenPropertyChecks
+impowt com.twittew.inject.test
+i-impowt com.twittew.unified_usew_actions.adaptew.testfixtuwes.intewactioneventsfixtuwes
+i-impowt com.twittew.unified_usew_actions.adaptew.uua_aggwegates.wekeyuuafwomintewactioneventsadaptew
+i-impowt c-com.twittew.utiw.time
+i-impowt owg.scawatest.pwop.tabwedwivenpwopewtychecks
 
-class RekeyUuaFromInteractionEventsAdapterSpec extends Test with TableDrivenPropertyChecks {
-  test("ClientTweetRenderImpressions") {
-    new InteractionEventsFixtures {
-      Time.withTimeAt(frozenTime) { _ =>
-        assert(
-          RekeyUuaFromInteractionEventsAdapter.adaptEvent(baseInteractionEvent) === Seq(
-            expectedBaseKeyedUuaTweet))
+c-cwass w-wekeyuuafwomintewactioneventsadaptewspec e-extends test with tabwedwivenpwopewtychecks {
+  test("cwienttweetwendewimpwessions") {
+    nyew intewactioneventsfixtuwes {
+      time.withtimeat(fwozentime) { _ =>
+        a-assewt(
+          wekeyuuafwomintewactioneventsadaptew.adaptevent(baseintewactionevent) === seq(
+            e-expectedbasekeyeduuatweet))
       }
     }
   }
 
-  test("Filter out logged out users") {
-    new InteractionEventsFixtures {
-      Time.withTimeAt(frozenTime) { _ =>
-        assert(RekeyUuaFromInteractionEventsAdapter.adaptEvent(loggedOutInteractionEvent) === Nil)
+  test("fiwtew o-out wogged out usews") {
+    nyew intewactioneventsfixtuwes {
+      time.withtimeat(fwozentime) { _ =>
+        a-assewt(wekeyuuafwomintewactioneventsadaptew.adaptevent(woggedoutintewactionevent) === nyiw)
       }
     }
   }
 
-  test("Filter out detail impressions") {
-    new InteractionEventsFixtures {
-      Time.withTimeAt(frozenTime) { _ =>
-        assert(
-          RekeyUuaFromInteractionEventsAdapter.adaptEvent(detailImpressionInteractionEvent) === Nil)
+  t-test("fiwtew o-out detaiw impwessions") {
+    nyew intewactioneventsfixtuwes {
+      time.withtimeat(fwozentime) { _ =>
+        assewt(
+          wekeyuuafwomintewactioneventsadaptew.adaptevent(detaiwimpwessionintewactionevent) === n-nyiw)
       }
     }
   }

@@ -1,14 +1,14 @@
-java_library(
-    sources = ["*.java"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/org/apache/hadoop:hadoop-client-default",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "3rdparty/jvm/org/yaml:snakeyaml",
-        "src/java/com/twitter/search/common/file",
-        "src/java/com/twitter/search/common/metrics",
-    ],
+java_wibwawy(
+    souwces = ["*.java"], OwO
+    pwatfowm = "java8", 🥺
+    s-stwict_deps = t-twue, òωó
+    tags = ["bazew-compatibwe"], o.O
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/guava", (U ᵕ U❁)
+        "3wdpawty/jvm/owg/apache/hadoop:hadoop-cwient-defauwt", (⑅˘꒳˘)
+        "3wdpawty/jvm/owg/swf4j:swf4j-api", ( ͡o ω ͡o )
+        "3wdpawty/jvm/owg/yamw:snakeyamw", UwU
+        "swc/java/com/twittew/seawch/common/fiwe", rawr x3
+        "swc/java/com/twittew/seawch/common/metwics", rawr
+    ], σωσ
 )

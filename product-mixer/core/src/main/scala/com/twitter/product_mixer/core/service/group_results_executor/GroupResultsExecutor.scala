@@ -1,122 +1,122 @@
-package com.twitter.product_mixer.core.service.group_results_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.gwoup_wesuwts_executow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PlatformIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidatePipelines
-import com.twitter.product_mixer.core.model.common.presentation.CandidateSourcePosition
-import com.twitter.product_mixer.core.model.common.presentation.CandidateSources
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemPresentation
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModulePresentation
-import com.twitter.product_mixer.core.model.common.presentation.UniversalPresentation
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.immutable.ListSet
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pwatfowmidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatepipewines
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatesouwceposition
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatesouwces
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.itemcandidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.itempwesentation
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.moduwecandidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.moduwepwesentation
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.univewsawpwesentation
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executowwesuwt
+impowt com.twittew.stitch.awwow
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
+impowt scawa.cowwection.immutabwe.wistset
 
-// Most executors are in the core.service package, but this one is pipeline specific
-@Singleton
-class GroupResultsExecutor @Inject() (override val statsReceiver: StatsReceiver) extends Executor {
+// most executows a-awe in the cowe.sewvice p-package, ^^;; but this o-one is pipewine s-specific
+@singweton
+c-cwass gwoupwesuwtsexecutow @inject() (ovewwide vaw statsweceivew: statsweceivew) e-extends executow {
 
-  val identifier: ComponentIdentifier = PlatformIdentifier("GroupResults")
+  vaw identifiew: componentidentifiew = p-pwatfowmidentifiew("gwoupwesuwts")
 
-  def arrow[Candidate <: UniversalNoun[Any]](
-    pipelineIdentifier: CandidatePipelineIdentifier,
-    sourceIdentifier: CandidateSourceIdentifier,
-    context: Executor.Context
-  ): Arrow[GroupResultsExecutorInput[Candidate], GroupResultsExecutorResult] = {
+  def awwow[candidate <: univewsawnoun[any]](
+    pipewineidentifiew: candidatepipewineidentifiew, (✿oωo)
+    souwceidentifiew: c-candidatesouwceidentifiew, (U ﹏ U)
+    context: executow.context
+  ): a-awwow[gwoupwesuwtsexecutowinput[candidate], -.- g-gwoupwesuwtsexecutowwesuwt] = {
 
-    val groupArrow = Arrow.map { input: GroupResultsExecutorInput[Candidate] =>
-      val modules: Map[Option[ModulePresentation], Seq[CandidateWithFeatures[Candidate]]] =
+    vaw g-gwoupawwow = awwow.map { input: gwoupwesuwtsexecutowinput[candidate] =>
+      vaw moduwes: map[option[moduwepwesentation], ^•ﻌ•^ s-seq[candidatewithfeatuwes[candidate]]] =
         input.candidates
-          .map { candidate: CandidateWithFeatures[Candidate] =>
-            val modulePresentationOpt: Option[ModulePresentation] =
-              input.decorations.get(candidate.candidate).collect {
-                case itemPresentation: ItemPresentation
-                    if itemPresentation.modulePresentation.isDefined =>
-                  itemPresentation.modulePresentation.get
+          .map { c-candidate: candidatewithfeatuwes[candidate] =>
+            vaw m-moduwepwesentationopt: o-option[moduwepwesentation] =
+              input.decowations.get(candidate.candidate).cowwect {
+                c-case itempwesentation: itempwesentation
+                    i-if itempwesentation.moduwepwesentation.isdefined =>
+                  itempwesentation.moduwepwesentation.get
               }
 
-            (candidate, modulePresentationOpt)
-          }.groupBy {
-            case (_, modulePresentationOpt) => modulePresentationOpt
-          }.mapValues {
-            resultModuleOptTuples: Seq[
-              (CandidateWithFeatures[Candidate], Option[ModulePresentation])
+            (candidate, rawr moduwepwesentationopt)
+          }.gwoupby {
+            c-case (_, (˘ω˘) moduwepwesentationopt) => moduwepwesentationopt
+          }.mapvawues {
+            w-wesuwtmoduweopttupwes: seq[
+              (candidatewithfeatuwes[candidate], nyaa~~ o-option[moduwepwesentation])
             ] =>
-              resultModuleOptTuples.map {
-                case (result, _) => result
+              w-wesuwtmoduweopttupwes.map {
+                case (wesuwt, UwU _) => wesuwt
               }
           }
 
-      // Modules should be in their original order, but the groupBy above isn't stable.
-      // Sort them by the sourcePosition, using the sourcePosition of their first contained
-      // candidate.
-      val sortedModules: Seq[(Option[ModulePresentation], Seq[CandidateWithFeatures[Candidate]])] =
-        modules.toSeq
-          .sortBy {
-            case (_, results) =>
-              results.headOption.map(_.features.get(CandidateSourcePosition))
+      // moduwes shouwd be in theiw owiginaw owdew, :3 but the gwoupby a-above isn't stabwe. (⑅˘꒳˘)
+      // s-sowt them by the souwceposition, (///ˬ///✿) u-using t-the souwceposition o-of theiw fiwst contained
+      // candidate. ^^;;
+      vaw sowtedmoduwes: s-seq[(option[moduwepwesentation], >_< seq[candidatewithfeatuwes[candidate]])] =
+        moduwes.toseq
+          .sowtby {
+            case (_, rawr x3 wesuwts) =>
+              w-wesuwts.headoption.map(_.featuwes.get(candidatesouwceposition))
           }
 
-      val candidatesWithDetails: Seq[CandidateWithDetails] = sortedModules.flatMap {
-        case (modulePresentationOpt, resultsSeq) =>
-          val itemsWithDetails = resultsSeq.map { result =>
-            val presentationOpt = input.decorations.get(result.candidate) match {
-              case itemPresentation @ Some(_: ItemPresentation) => itemPresentation
-              case _ => None
+      vaw candidateswithdetaiws: seq[candidatewithdetaiws] = s-sowtedmoduwes.fwatmap {
+        c-case (moduwepwesentationopt, /(^•ω•^) w-wesuwtsseq) =>
+          vaw itemswithdetaiws = w-wesuwtsseq.map { w-wesuwt =>
+            vaw p-pwesentationopt = i-input.decowations.get(wesuwt.candidate) match {
+              case itempwesentation @ s-some(_: i-itempwesentation) => i-itempwesentation
+              c-case _ => n-nyone
             }
 
-            val baseFeatureMap = FeatureMapBuilder()
-              .add(CandidatePipelines, ListSet.empty + pipelineIdentifier)
-              .build()
+            vaw basefeatuwemap = featuwemapbuiwdew()
+              .add(candidatepipewines, wistset.empty + p-pipewineidentifiew)
+              .buiwd()
 
-            ItemCandidateWithDetails(
-              candidate = result.candidate,
-              presentation = presentationOpt,
-              features = baseFeatureMap ++ result.features
+            itemcandidatewithdetaiws(
+              candidate = wesuwt.candidate,
+              pwesentation = pwesentationopt, :3
+              featuwes = b-basefeatuwemap ++ wesuwt.featuwes
             )
           }
 
-          modulePresentationOpt
-            .map { modulePresentation =>
-              val moduleSourcePosition =
-                resultsSeq.head.features.get(CandidateSourcePosition)
-              val baseFeatureMap = FeatureMapBuilder()
-                .add(CandidatePipelines, ListSet.empty + pipelineIdentifier)
-                .add(CandidateSourcePosition, moduleSourcePosition)
-                .add(CandidateSources, ListSet.empty + sourceIdentifier)
-                .build()
+          moduwepwesentationopt
+            .map { moduwepwesentation =>
+              v-vaw moduwesouwceposition =
+                w-wesuwtsseq.head.featuwes.get(candidatesouwceposition)
+              v-vaw basefeatuwemap = featuwemapbuiwdew()
+                .add(candidatepipewines, (ꈍᴗꈍ) wistset.empty + p-pipewineidentifiew)
+                .add(candidatesouwceposition, /(^•ω•^) moduwesouwceposition)
+                .add(candidatesouwces, (⑅˘꒳˘) w-wistset.empty + s-souwceidentifiew)
+                .buiwd()
 
-              Seq(
-                ModuleCandidateWithDetails(
-                  candidates = itemsWithDetails,
-                  presentation = Some(modulePresentation),
-                  features = baseFeatureMap
+              seq(
+                moduwecandidatewithdetaiws(
+                  candidates = itemswithdetaiws, ( ͡o ω ͡o )
+                  pwesentation = s-some(moduwepwesentation), òωó
+                  featuwes = basefeatuwemap
                 ))
-            }.getOrElse(itemsWithDetails)
+            }.getowewse(itemswithdetaiws)
       }
 
-      GroupResultsExecutorResult(candidatesWithDetails)
+      g-gwoupwesuwtsexecutowwesuwt(candidateswithdetaiws)
     }
 
-    wrapWithErrorHandling(context, identifier)(groupArrow)
+    wwapwithewwowhandwing(context, (⑅˘꒳˘) i-identifiew)(gwoupawwow)
   }
 }
 
-case class GroupResultsExecutorInput[Candidate <: UniversalNoun[Any]](
-  candidates: Seq[CandidateWithFeatures[Candidate]],
-  decorations: Map[UniversalNoun[Any], UniversalPresentation])
+c-case cwass gwoupwesuwtsexecutowinput[candidate <: univewsawnoun[any]](
+  c-candidates: s-seq[candidatewithfeatuwes[candidate]], XD
+  decowations: m-map[univewsawnoun[any], -.- u-univewsawpwesentation])
 
-case class GroupResultsExecutorResult(candidatesWithDetails: Seq[CandidateWithDetails])
-    extends ExecutorResult
+case cwass gwoupwesuwtsexecutowwesuwt(candidateswithdetaiws: seq[candidatewithdetaiws])
+    extends executowwesuwt

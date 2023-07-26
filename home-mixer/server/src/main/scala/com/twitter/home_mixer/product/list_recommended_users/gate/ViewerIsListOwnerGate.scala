@@ -1,29 +1,29 @@
-package com.twitter.home_mixer.product.list_recommended_users.gate
+package com.twittew.home_mixew.pwoduct.wist_wecommended_usews.gate
 
-import com.twitter.home_mixer.model.request.HasListId
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.socialgraph.{thriftscala => sg}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
+impowt com.twittew.home_mixew.modew.wequest.haswistid
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.gateidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.sociawgwaph.{thwiftscawa => s-sg}
+impowt com.twittew.stitch.stitch
+impowt com.twittew.stitch.sociawgwaph.sociawgwaph
 
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-case class ViewerIsListOwnerGate @Inject() (socialGraph: SocialGraph)
-    extends Gate[PipelineQuery with HasListId] {
+@singweton
+case cwass viewewiswistownewgate @inject() (sociawgwaph: s-sociawgwaph)
+    extends g-gate[pipewinequewy with haswistid] {
 
-  override val identifier: GateIdentifier = GateIdentifier("ViewerIsListOwner")
+  ovewwide vaw identifiew: g-gateidentifiew = gateidentifiew("viewewiswistownew")
 
-  private val relationship = sg.Relationship(relationshipType = sg.RelationshipType.ListOwning)
+  pwivate v-vaw wewationship = s-sg.wewationship(wewationshiptype = sg.wewationshiptype.wistowning)
 
-  override def shouldContinue(query: PipelineQuery with HasListId): Stitch[Boolean] = {
-    val request = sg.ExistsRequest(
-      source = query.getRequiredUserId,
-      target = query.listId,
-      relationships = Seq(relationship))
-    socialGraph.exists(request).map(_.exists)
+  ovewwide def shouwdcontinue(quewy: pipewinequewy with haswistid): s-stitch[boowean] = {
+    vaw wequest = sg.existswequest(
+      souwce = quewy.getwequiwedusewid,
+      tawget = q-quewy.wistid, (U ﹏ U)
+      wewationships = s-seq(wewationship))
+    s-sociawgwaph.exists(wequest).map(_.exists)
   }
 }

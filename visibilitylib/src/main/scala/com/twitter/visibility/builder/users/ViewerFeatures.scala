@@ -1,245 +1,245 @@
-package com.twitter.visibility.builder.users
+package com.twittew.visibiwity.buiwdew.usews
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.Label
-import com.twitter.gizmoduck.thriftscala.Safety
-import com.twitter.gizmoduck.thriftscala.UniversalQualityFiltering
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.gizmoduck.thriftscala.UserType
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.features._
-import com.twitter.visibility.interfaces.common.blender.BlenderVFRequestContext
-import com.twitter.visibility.interfaces.common.search.SearchVFRequestContext
-import com.twitter.visibility.models.UserAge
-import com.twitter.visibility.models.ViewerContext
+impowt c-com.twittew.finagwe.stats.countew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.gizmoduck.thwiftscawa.wabew
+i-impowt com.twittew.gizmoduck.thwiftscawa.safety
+i-impowt com.twittew.gizmoduck.thwiftscawa.univewsawquawityfiwtewing
+i-impowt com.twittew.gizmoduck.thwiftscawa.usew
+i-impowt com.twittew.gizmoduck.thwiftscawa.usewtype
+i-impowt com.twittew.stitch.notfound
+impowt com.twittew.stitch.stitch
+impowt com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+i-impowt com.twittew.visibiwity.common.usewid
+impowt com.twittew.visibiwity.common.usewsouwce
+impowt com.twittew.visibiwity.featuwes._
+i-impowt com.twittew.visibiwity.intewfaces.common.bwendew.bwendewvfwequestcontext
+impowt com.twittew.visibiwity.intewfaces.common.seawch.seawchvfwequestcontext
+i-impowt com.twittew.visibiwity.modews.usewage
+impowt com.twittew.visibiwity.modews.viewewcontext
 
-class ViewerFeatures(userSource: UserSource, statsReceiver: StatsReceiver) {
-  private[this] val scopedStatsReceiver = statsReceiver.scope("viewer_features")
+cwass viewewfeatuwes(usewsouwce: usewsouwce, rawr x3 s-statsweceivew: statsweceivew) {
+  p-pwivate[this] v-vaw scopedstatsweceivew = statsweceivew.scope("viewew_featuwes")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  pwivate[this] vaw wequests = scopedstatsweceivew.countew("wequests")
 
-  private[this] val viewerIdCount =
-    scopedStatsReceiver.scope(ViewerId.name).counter("requests")
-  private[this] val requestCountryCode =
-    scopedStatsReceiver.scope(RequestCountryCode.name).counter("requests")
-  private[this] val requestIsVerifiedCrawler =
-    scopedStatsReceiver.scope(RequestIsVerifiedCrawler.name).counter("requests")
-  private[this] val viewerUserLabels =
-    scopedStatsReceiver.scope(ViewerUserLabels.name).counter("requests")
-  private[this] val viewerIsDeactivated =
-    scopedStatsReceiver.scope(ViewerIsDeactivated.name).counter("requests")
-  private[this] val viewerIsProtected =
-    scopedStatsReceiver.scope(ViewerIsProtected.name).counter("requests")
-  private[this] val viewerIsSuspended =
-    scopedStatsReceiver.scope(ViewerIsSuspended.name).counter("requests")
-  private[this] val viewerRoles =
-    scopedStatsReceiver.scope(ViewerRoles.name).counter("requests")
-  private[this] val viewerCountryCode =
-    scopedStatsReceiver.scope(ViewerCountryCode.name).counter("requests")
-  private[this] val viewerAge =
-    scopedStatsReceiver.scope(ViewerAge.name).counter("requests")
-  private[this] val viewerHasUniversalQualityFilterEnabled =
-    scopedStatsReceiver.scope(ViewerHasUniversalQualityFilterEnabled.name).counter("requests")
-  private[this] val viewerIsSoftUserCtr =
-    scopedStatsReceiver.scope(ViewerIsSoftUser.name).counter("requests")
+  p-pwivate[this] vaw viewewidcount =
+    scopedstatsweceivew.scope(viewewid.name).countew("wequests")
+  pwivate[this] vaw wequestcountwycode =
+    s-scopedstatsweceivew.scope(wequestcountwycode.name).countew("wequests")
+  pwivate[this] v-vaw wequestisvewifiedcwawwew =
+    s-scopedstatsweceivew.scope(wequestisvewifiedcwawwew.name).countew("wequests")
+  p-pwivate[this] v-vaw viewewusewwabews =
+    scopedstatsweceivew.scope(viewewusewwabews.name).countew("wequests")
+  pwivate[this] v-vaw viewewisdeactivated =
+    scopedstatsweceivew.scope(viewewisdeactivated.name).countew("wequests")
+  pwivate[this] vaw v-viewewispwotected =
+    scopedstatsweceivew.scope(viewewispwotected.name).countew("wequests")
+  pwivate[this] vaw viewewissuspended =
+    scopedstatsweceivew.scope(viewewissuspended.name).countew("wequests")
+  pwivate[this] v-vaw viewewwowes =
+    scopedstatsweceivew.scope(viewewwowes.name).countew("wequests")
+  p-pwivate[this] v-vaw viewewcountwycode =
+    s-scopedstatsweceivew.scope(viewewcountwycode.name).countew("wequests")
+  pwivate[this] vaw viewewage =
+    scopedstatsweceivew.scope(viewewage.name).countew("wequests")
+  p-pwivate[this] v-vaw viewewhasunivewsawquawityfiwtewenabwed =
+    scopedstatsweceivew.scope(viewewhasunivewsawquawityfiwtewenabwed.name).countew("wequests")
+  p-pwivate[this] v-vaw viewewissoftusewctw =
+    scopedstatsweceivew.scope(viewewissoftusew.name).countew("wequests")
 
-  def forViewerBlenderContext(
-    blenderContext: BlenderVFRequestContext,
-    viewerContext: ViewerContext
-  ): FeatureMapBuilder => FeatureMapBuilder =
-    forViewerContext(viewerContext)
-      .andThen(
-        _.withConstantFeature(
-          ViewerOptInBlocking,
-          blenderContext.userSearchSafetySettings.optInBlocking)
-          .withConstantFeature(
-            ViewerOptInFiltering,
-            blenderContext.userSearchSafetySettings.optInFiltering)
+  d-def fowviewewbwendewcontext(
+    b-bwendewcontext: bwendewvfwequestcontext, nyaa~~
+    viewewcontext: v-viewewcontext
+  ): featuwemapbuiwdew => f-featuwemapbuiwdew =
+    fowviewewcontext(viewewcontext)
+      .andthen(
+        _.withconstantfeatuwe(
+          v-viewewoptinbwocking, >_<
+          b-bwendewcontext.usewseawchsafetysettings.optinbwocking)
+          .withconstantfeatuwe(
+            viewewoptinfiwtewing, ^^;;
+            bwendewcontext.usewseawchsafetysettings.optinfiwtewing)
       )
 
-  def forViewerSearchContext(
-    searchContext: SearchVFRequestContext,
-    viewerContext: ViewerContext
-  ): FeatureMapBuilder => FeatureMapBuilder =
-    forViewerContext(viewerContext)
-      .andThen(
-        _.withConstantFeature(
-          ViewerOptInBlocking,
-          searchContext.userSearchSafetySettings.optInBlocking)
-          .withConstantFeature(
-            ViewerOptInFiltering,
-            searchContext.userSearchSafetySettings.optInFiltering)
+  def fowviewewseawchcontext(
+    seawchcontext: seawchvfwequestcontext, (ˆ ﻌ ˆ)♡
+    viewewcontext: v-viewewcontext
+  ): f-featuwemapbuiwdew => featuwemapbuiwdew =
+    f-fowviewewcontext(viewewcontext)
+      .andthen(
+        _.withconstantfeatuwe(
+          v-viewewoptinbwocking, ^^;;
+          s-seawchcontext.usewseawchsafetysettings.optinbwocking)
+          .withconstantfeatuwe(
+            viewewoptinfiwtewing, (⑅˘꒳˘)
+            seawchcontext.usewseawchsafetysettings.optinfiwtewing)
       )
 
-  def forViewerContext(viewerContext: ViewerContext): FeatureMapBuilder => FeatureMapBuilder =
-    forViewerId(viewerContext.userId)
-      .andThen(
-        _.withConstantFeature(RequestCountryCode, requestCountryCode(viewerContext))
-      ).andThen(
-        _.withConstantFeature(RequestIsVerifiedCrawler, requestIsVerifiedCrawler(viewerContext))
+  def fowviewewcontext(viewewcontext: v-viewewcontext): featuwemapbuiwdew => featuwemapbuiwdew =
+    fowviewewid(viewewcontext.usewid)
+      .andthen(
+        _.withconstantfeatuwe(wequestcountwycode, rawr x3 wequestcountwycode(viewewcontext))
+      ).andthen(
+        _.withconstantfeatuwe(wequestisvewifiedcwawwew, (///ˬ///✿) w-wequestisvewifiedcwawwew(viewewcontext))
       )
 
-  def forViewerId(viewerId: Option[UserId]): FeatureMapBuilder => FeatureMapBuilder = { builder =>
-    requests.incr()
+  def fowviewewid(viewewid: o-option[usewid]): f-featuwemapbuiwdew => f-featuwemapbuiwdew = { buiwdew =>
+    w-wequests.incw()
 
-    val builderWithFeatures = builder
-      .withConstantFeature(ViewerId, viewerId)
-      .withFeature(ViewerIsProtected, viewerIsProtected(viewerId))
-      .withFeature(
-        ViewerHasUniversalQualityFilterEnabled,
-        viewerHasUniversalQualityFilterEnabled(viewerId)
+    v-vaw buiwdewwithfeatuwes = b-buiwdew
+      .withconstantfeatuwe(viewewid, 🥺 v-viewewid)
+      .withfeatuwe(viewewispwotected, >_< viewewispwotected(viewewid))
+      .withfeatuwe(
+        viewewhasunivewsawquawityfiwtewenabwed, UwU
+        v-viewewhasunivewsawquawityfiwtewenabwed(viewewid)
       )
-      .withFeature(ViewerIsSuspended, viewerIsSuspended(viewerId))
-      .withFeature(ViewerIsDeactivated, viewerIsDeactivated(viewerId))
-      .withFeature(ViewerUserLabels, viewerUserLabels(viewerId))
-      .withFeature(ViewerRoles, viewerRoles(viewerId))
-      .withFeature(ViewerAge, viewerAgeInYears(viewerId))
-      .withFeature(ViewerIsSoftUser, viewerIsSoftUser(viewerId))
+      .withfeatuwe(viewewissuspended, >_< v-viewewissuspended(viewewid))
+      .withfeatuwe(viewewisdeactivated, -.- v-viewewisdeactivated(viewewid))
+      .withfeatuwe(viewewusewwabews, mya v-viewewusewwabews(viewewid))
+      .withfeatuwe(viewewwowes, >w< v-viewewwowes(viewewid))
+      .withfeatuwe(viewewage, (U ﹏ U) viewewageinyeaws(viewewid))
+      .withfeatuwe(viewewissoftusew, 😳😳😳 viewewissoftusew(viewewid))
 
-    viewerId match {
-      case Some(_) =>
-        viewerIdCount.incr()
-        builderWithFeatures
-          .withFeature(ViewerCountryCode, viewerCountryCode(viewerId))
+    viewewid m-match {
+      case some(_) =>
+        viewewidcount.incw()
+        buiwdewwithfeatuwes
+          .withfeatuwe(viewewcountwycode, o.O viewewcountwycode(viewewid))
 
       case _ =>
-        builderWithFeatures
+        b-buiwdewwithfeatuwes
     }
   }
 
-  def forViewerNoDefaults(viewerOpt: Option[User]): FeatureMapBuilder => FeatureMapBuilder = {
-    builder =>
-      requests.incr()
+  def fowviewewnodefauwts(viewewopt: option[usew]): featuwemapbuiwdew => f-featuwemapbuiwdew = {
+    b-buiwdew =>
+      wequests.incw()
 
-      viewerOpt match {
-        case Some(viewer) =>
-          builder
-            .withConstantFeature(ViewerId, viewer.id)
-            .withConstantFeature(ViewerIsProtected, viewerIsProtectedOpt(viewer))
-            .withConstantFeature(ViewerIsSuspended, viewerIsSuspendedOpt(viewer))
-            .withConstantFeature(ViewerIsDeactivated, viewerIsDeactivatedOpt(viewer))
-            .withConstantFeature(ViewerCountryCode, viewerCountryCode(viewer))
-        case None =>
-          builder
-            .withConstantFeature(ViewerIsProtected, false)
-            .withConstantFeature(ViewerIsSuspended, false)
-            .withConstantFeature(ViewerIsDeactivated, false)
+      v-viewewopt match {
+        c-case some(viewew) =>
+          buiwdew
+            .withconstantfeatuwe(viewewid, òωó viewew.id)
+            .withconstantfeatuwe(viewewispwotected, 😳😳😳 v-viewewispwotectedopt(viewew))
+            .withconstantfeatuwe(viewewissuspended, σωσ v-viewewissuspendedopt(viewew))
+            .withconstantfeatuwe(viewewisdeactivated, (⑅˘꒳˘) viewewisdeactivatedopt(viewew))
+            .withconstantfeatuwe(viewewcountwycode, (///ˬ///✿) viewewcountwycode(viewew))
+        case nyone =>
+          buiwdew
+            .withconstantfeatuwe(viewewispwotected, f-fawse)
+            .withconstantfeatuwe(viewewissuspended, 🥺 fawse)
+            .withconstantfeatuwe(viewewisdeactivated, OwO f-fawse)
       }
   }
 
-  private def checkSafetyValue(
-    viewerId: Option[UserId],
-    safetyCheck: Safety => Boolean,
-    featureCounter: Counter
-  ): Stitch[Boolean] =
-    viewerId match {
-      case Some(id) =>
-        userSource.getSafety(id).map(safetyCheck).ensure {
-          featureCounter.incr()
+  pwivate def checksafetyvawue(
+    v-viewewid: option[usewid],
+    s-safetycheck: safety => boowean, >w<
+    featuwecountew: c-countew
+  ): s-stitch[boowean] =
+    viewewid m-match {
+      case s-some(id) =>
+        usewsouwce.getsafety(id).map(safetycheck).ensuwe {
+          featuwecountew.incw()
         }
-      case None => Stitch.False
+      case nyone => stitch.fawse
     }
 
-  private def checkSafetyValue(
-    viewer: User,
-    safetyCheck: Safety => Boolean
-  ): Boolean = {
-    viewer.safety.exists(safetyCheck)
+  p-pwivate d-def checksafetyvawue(
+    v-viewew: usew, 🥺
+    safetycheck: safety => b-boowean
+  ): b-boowean = {
+    viewew.safety.exists(safetycheck)
   }
 
-  def viewerIsProtected(viewerId: Option[UserId]): Stitch[Boolean] =
-    checkSafetyValue(viewerId, s => s.isProtected, viewerIsProtected)
+  def v-viewewispwotected(viewewid: option[usewid]): stitch[boowean] =
+    checksafetyvawue(viewewid, nyaa~~ s => s.ispwotected, ^^ viewewispwotected)
 
-  def viewerIsProtected(viewer: User): Boolean =
-    checkSafetyValue(viewer, s => s.isProtected)
+  d-def viewewispwotected(viewew: u-usew): boowean =
+    checksafetyvawue(viewew, >w< s => s.ispwotected)
 
-  def viewerIsProtectedOpt(viewer: User): Option[Boolean] =
-    viewer.safety.map(_.isProtected)
+  d-def v-viewewispwotectedopt(viewew: usew): option[boowean] =
+    viewew.safety.map(_.ispwotected)
 
-  def viewerIsDeactivated(viewerId: Option[UserId]): Stitch[Boolean] =
-    checkSafetyValue(viewerId, s => s.deactivated, viewerIsDeactivated)
+  def viewewisdeactivated(viewewid: o-option[usewid]): stitch[boowean] =
+    checksafetyvawue(viewewid, OwO s => s.deactivated, XD viewewisdeactivated)
 
-  def viewerIsDeactivated(viewer: User): Boolean =
-    checkSafetyValue(viewer, s => s.deactivated)
+  d-def viewewisdeactivated(viewew: usew): boowean =
+    checksafetyvawue(viewew, ^^;; s-s => s-s.deactivated)
 
-  def viewerIsDeactivatedOpt(viewer: User): Option[Boolean] =
-    viewer.safety.map(_.deactivated)
+  def viewewisdeactivatedopt(viewew: usew): option[boowean] =
+    viewew.safety.map(_.deactivated)
 
-  def viewerHasUniversalQualityFilterEnabled(viewerId: Option[UserId]): Stitch[Boolean] =
-    checkSafetyValue(
-      viewerId,
-      s => s.universalQualityFiltering == UniversalQualityFiltering.Enabled,
-      viewerHasUniversalQualityFilterEnabled
+  d-def viewewhasunivewsawquawityfiwtewenabwed(viewewid: o-option[usewid]): stitch[boowean] =
+    checksafetyvawue(
+      viewewid, 🥺
+      s => s-s.univewsawquawityfiwtewing == univewsawquawityfiwtewing.enabwed, XD
+      v-viewewhasunivewsawquawityfiwtewenabwed
     )
 
-  def viewerUserLabels(viewerIdOpt: Option[UserId]): Stitch[Seq[Label]] =
-    viewerIdOpt match {
-      case Some(viewerId) =>
-        userSource
-          .getLabels(viewerId).map(_.labels)
-          .handle {
-            case NotFound => Seq.empty
-          }.ensure {
-            viewerUserLabels.incr()
+  def viewewusewwabews(viewewidopt: option[usewid]): stitch[seq[wabew]] =
+    v-viewewidopt match {
+      c-case some(viewewid) =>
+        usewsouwce
+          .getwabews(viewewid).map(_.wabews)
+          .handwe {
+            c-case nyotfound => seq.empty
+          }.ensuwe {
+            v-viewewusewwabews.incw()
           }
-      case _ => Stitch.value(Seq.empty)
+      case _ => s-stitch.vawue(seq.empty)
     }
 
-  def viewerAgeInYears(viewerId: Option[UserId]): Stitch[UserAge] =
-    (viewerId match {
-      case Some(id) =>
-        userSource
-          .getExtendedProfile(id).map(_.ageInYears)
-          .handle {
-            case NotFound => None
-          }.ensure {
-            viewerAge.incr()
+  d-def viewewageinyeaws(viewewid: o-option[usewid]): stitch[usewage] =
+    (viewewid m-match {
+      c-case some(id) =>
+        usewsouwce
+          .getextendedpwofiwe(id).map(_.ageinyeaws)
+          .handwe {
+            case nyotfound => n-nyone
+          }.ensuwe {
+            v-viewewage.incw()
           }
-      case _ => Stitch.value(None)
-    }).map(UserAge)
+      c-case _ => stitch.vawue(none)
+    }).map(usewage)
 
-  def viewerIsSoftUser(viewerId: Option[UserId]): Stitch[Boolean] = {
-    viewerId match {
-      case Some(id) =>
-        userSource
-          .getUserType(id).map { userType =>
-            userType == UserType.Soft
-          }.ensure {
-            viewerIsSoftUserCtr.incr()
+  def viewewissoftusew(viewewid: o-option[usewid]): stitch[boowean] = {
+    viewewid m-match {
+      case s-some(id) =>
+        usewsouwce
+          .getusewtype(id).map { usewtype =>
+            usewtype == u-usewtype.soft
+          }.ensuwe {
+            v-viewewissoftusewctw.incw()
           }
-      case _ => Stitch.False
+      c-case _ => stitch.fawse
     }
   }
 
-  def requestCountryCode(viewerContext: ViewerContext): Option[String] = {
-    requestCountryCode.incr()
-    viewerContext.requestCountryCode
+  d-def wequestcountwycode(viewewcontext: viewewcontext): o-option[stwing] = {
+    wequestcountwycode.incw()
+    viewewcontext.wequestcountwycode
   }
 
-  def requestIsVerifiedCrawler(viewerContext: ViewerContext): Boolean = {
-    requestIsVerifiedCrawler.incr()
-    viewerContext.isVerifiedCrawler
+  def wequestisvewifiedcwawwew(viewewcontext: viewewcontext): boowean = {
+    w-wequestisvewifiedcwawwew.incw()
+    viewewcontext.isvewifiedcwawwew
   }
 
-  def viewerCountryCode(viewerId: Option[UserId]): Stitch[String] =
-    viewerId match {
-      case Some(id) =>
-        userSource
-          .getAccount(id).map(_.countryCode).flatMap {
-            case Some(countryCode) => Stitch.value(countryCode.toLowerCase)
-            case _ => Stitch.NotFound
-          }.ensure {
-            viewerCountryCode.incr()
+  d-def viewewcountwycode(viewewid: option[usewid]): s-stitch[stwing] =
+    viewewid m-match {
+      case some(id) =>
+        u-usewsouwce
+          .getaccount(id).map(_.countwycode).fwatmap {
+            c-case some(countwycode) => stitch.vawue(countwycode.towowewcase)
+            c-case _ => stitch.notfound
+          }.ensuwe {
+            v-viewewcountwycode.incw()
           }
 
-      case _ => Stitch.NotFound
+      c-case _ => stitch.notfound
     }
 
-  def viewerCountryCode(viewer: User): Option[String] =
-    viewer.account.flatMap(_.countryCode)
+  def viewewcountwycode(viewew: usew): option[stwing] =
+    viewew.account.fwatmap(_.countwycode)
 }

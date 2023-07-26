@@ -1,37 +1,37 @@
-package com.twitter.search.earlybird.common;
+package com.twittew.seawch.eawwybiwd.common;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.common.metrics.Timer;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+impowt c-com.twittew.decidew.decidew;
+i-impowt com.twittew.seawch.common.metwics.timew;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
 
-public final class EarlybirdRequestPostLogger {
-  private final EarlybirdRequestLogger logger;
+p-pubwic f-finaw cwass e-eawwybiwdwequestpostwoggew {
+  pwivate finaw eawwybiwdwequestwoggew woggew;
 
-  public static EarlybirdRequestPostLogger buildForRoot(
-      int latencyWarnThreshold, Decider decider) {
+  pubwic static eawwybiwdwequestpostwoggew buiwdfowwoot(
+      i-int watencywawnthweshowd, (˘ω˘) decidew decidew) {
 
-    EarlybirdRequestLogger requestLogger = EarlybirdRequestLogger.buildForRoot(
-        EarlybirdRequestPostLogger.class.getName(), latencyWarnThreshold, decider);
+    e-eawwybiwdwequestwoggew wequestwoggew = e-eawwybiwdwequestwoggew.buiwdfowwoot(
+        eawwybiwdwequestpostwoggew.cwass.getname(), (⑅˘꒳˘) watencywawnthweshowd, (///ˬ///✿) decidew);
 
-    return new EarlybirdRequestPostLogger(requestLogger);
+    w-wetuwn nyew eawwybiwdwequestpostwoggew(wequestwoggew);
   }
 
-  public static EarlybirdRequestPostLogger buildForShard(
-      int latencyWarnThreshold, Decider decider) {
+  pubwic static eawwybiwdwequestpostwoggew b-buiwdfowshawd(
+      int w-watencywawnthweshowd, 😳😳😳 decidew decidew) {
 
-    EarlybirdRequestLogger requestLogger = EarlybirdRequestLogger.buildForShard(
-        EarlybirdRequestPostLogger.class.getName(), latencyWarnThreshold, decider);
+    eawwybiwdwequestwoggew wequestwoggew = e-eawwybiwdwequestwoggew.buiwdfowshawd(
+        eawwybiwdwequestpostwoggew.cwass.getname(), watencywawnthweshowd, 🥺 decidew);
 
-    return new EarlybirdRequestPostLogger(requestLogger);
+    wetuwn nyew e-eawwybiwdwequestpostwoggew(wequestwoggew);
   }
 
-  private EarlybirdRequestPostLogger(EarlybirdRequestLogger logger) {
-    this.logger = logger;
+  pwivate eawwybiwdwequestpostwoggew(eawwybiwdwequestwoggew woggew) {
+    t-this.woggew = w-woggew;
   }
 
-  public void logRequest(EarlybirdRequest request, EarlybirdResponse response, Timer timer) {
-    EarlybirdRequestUtil.updateHitsCounters(request);
-    logger.logRequest(request, response, timer);
+  p-pubwic v-void wogwequest(eawwybiwdwequest wequest, mya eawwybiwdwesponse wesponse, 🥺 t-timew timew) {
+    eawwybiwdwequestutiw.updatehitscountews(wequest);
+    woggew.wogwequest(wequest, >_< w-wesponse, >_< timew);
   }
 }

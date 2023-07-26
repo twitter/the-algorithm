@@ -1,34 +1,34 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow.eager;
+package tensowfwow.eagew;
 
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/types.proto";
+impowt "tensowfwow/cowe/fwamewowk/tensow_shape.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/types.pwoto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "RemoteTensorHandleProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+o-option cc_enabwe_awenas = t-twue;
+option java_outew_cwassname = "wemotetensowhandwepwotos";
+o-option java_muwtipwe_fiwes = t-twue;
+o-option java_package = "owg.tensowfwow.fwamewowk";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-message ResourceDtypeAndShape {
-  DataType dtype = 1;
-  TensorShapeProto shape = 2;
+m-message wesouwcedtypeandshape {
+  datatype dtype = 1;
+  tensowshapepwoto shape = 2;
 }
 
-message RemoteTensorHandle {
-  // The ID of the operation that produced this tensor.
-  int64 op_id = 1;
-  // The index into the outputs of the operation that produced this tensor.
-  int32 output_num = 2;
-  // Device where the tensor is located. Cannot be empty.
-  // For multi-device functions, it's the default device passed to placer.
-  string device = 3;
-  // Device of the operation producing this tensor. Can be empty if the
-  // operation producing this tensor is a multi-device function.
-  string op_device = 4;
-  // Tensor type.
-  DataType dtype = 5;
-  // Optional data types and shapes of a remote resource variable.
-  repeated ResourceDtypeAndShape resource_dtypes_and_shapes = 6;
+message w-wemotetensowhandwe {
+  // the id of the opewation t-that pwoduced this tensow. 🥺
+  i-int64 op_id = 1;
+  // the index into the outputs of the opewation t-that pwoduced this tensow. >_<
+  i-int32 output_num = 2;
+  // d-device whewe the tensow is wocated. >_< cannot be empty. (⑅˘꒳˘)
+  // fow muwti-device f-functions, /(^•ω•^) it's the defauwt device passed to pwacew. rawr x3
+  stwing device = 3;
+  // d-device of the opewation pwoducing t-this tensow. (U ﹏ U) c-can be empty i-if the
+  // opewation p-pwoducing this tensow is a muwti-device function. (U ﹏ U)
+  s-stwing op_device = 4;
+  // tensow type. (⑅˘꒳˘)
+  d-datatype dtype = 5;
+  // optionaw data types and shapes of a wemote wesouwce vawiabwe. òωó
+  wepeated w-wesouwcedtypeandshape wesouwce_dtypes_and_shapes = 6;
 }

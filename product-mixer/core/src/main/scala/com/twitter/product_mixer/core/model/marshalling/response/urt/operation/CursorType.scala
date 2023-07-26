@@ -1,37 +1,37 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.operation
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.HasEntryNamespace
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.entwynamespace
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.hasentwynamespace
 
-sealed trait CursorType extends HasEntryNamespace
+s-seawed t-twait cuwsowtype e-extends hasentwynamespace
 
-case object TopCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("top")
+case o-object topcuwsow e-extends cuwsowtype {
+  o-ovewwide v-vaw entwynamespace: entwynamespace = entwynamespace("top")
 }
-case object BottomCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("bottom")
+case object bottomcuwsow extends c-cuwsowtype {
+  ovewwide vaw entwynamespace: entwynamespace = entwynamespace("bottom")
 }
-case object GapCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("gap")
+c-case object gapcuwsow e-extends cuwsowtype {
+  ovewwide vaw entwynamespace: entwynamespace = e-entwynamespace("gap")
 }
-case object PivotCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("pivot")
+case o-object pivotcuwsow e-extends cuwsowtype {
+  ovewwide vaw entwynamespace: entwynamespace = entwynamespace("pivot")
 }
-case object SubBranchCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("subbranch")
+c-case object subbwanchcuwsow extends cuwsowtype {
+  ovewwide vaw entwynamespace: e-entwynamespace = entwynamespace("subbwanch")
 }
-case object ShowMoreCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("showmore")
+c-case object s-showmowecuwsow extends c-cuwsowtype {
+  o-ovewwide vaw entwynamespace: entwynamespace = e-entwynamespace("showmowe")
 }
-case object ShowMoreThreadsCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("showmorethreads")
+case object showmowethweadscuwsow extends cuwsowtype {
+  o-ovewwide vaw entwynamespace: entwynamespace = entwynamespace("showmowethweads")
 }
-case object ShowMoreThreadsPromptCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("showmorethreadsprompt")
+case object showmowethweadspwomptcuwsow e-extends cuwsowtype {
+  ovewwide v-vaw entwynamespace: e-entwynamespace = e-entwynamespace("showmowethweadspwompt")
 }
-case object SecondRepliesSectionCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("secondrepliessection")
+case object secondwepwiessectioncuwsow extends cuwsowtype {
+  o-ovewwide vaw entwynamespace: e-entwynamespace = entwynamespace("secondwepwiessection")
 }
-case object ThirdRepliesSectionCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("thirdrepliessection")
+case object t-thiwdwepwiessectioncuwsow e-extends cuwsowtype {
+  o-ovewwide vaw entwynamespace: e-entwynamespace = entwynamespace("thiwdwepwiessection")
 }

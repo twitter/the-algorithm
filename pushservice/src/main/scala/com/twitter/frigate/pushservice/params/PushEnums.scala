@@ -1,135 +1,135 @@
-package com.twitter.frigate.pushservice.params
+package com.twittew.fwigate.pushsewvice.pawams
 
 /**
- * Enum for naming scores we will scribe for non-personalized high quality candidate generation
+ * enum fow naming s-scowes we w-wiww scwibe fow n-nyon-pewsonawized h-high quawity candidate g-genewation
  */
-object HighQualityScribingScores extends Enumeration {
-  type Name = Value
-  val HeavyRankingScore = Value
-  val NonPersonalizedQualityScoreUsingCnn = Value
-  val BqmlNsfwScore = Value
-  val BqmlReportScore = Value
-}
-
-/**
- * Enum for quality upranking transform
- */
-object MrQualityUprankingTransformTypeEnum extends Enumeration {
-  val Linear = Value
-  val Sigmoid = Value
+o-object highquawityscwibingscowes e-extends e-enumewation {
+  type nyame = vawue
+  vaw heavywankingscowe = vawue
+  vaw nyonpewsonawizedquawityscoweusingcnn = v-vawue
+  vaw bqmwnsfwscowe = vawue
+  vaw bqmwwepowtscowe = v-vawue
 }
 
 /**
- * Enum for quality partial upranking transform
+ * enum f-fow quawity upwanking twansfowm
  */
-object MrQualityUprankingPartialTypeEnum extends Enumeration {
-  val All = Value
-  val Oon = Value
+object mwquawityupwankingtwansfowmtypeenum extends enumewation {
+  v-vaw wineaw = vawue
+  vaw s-sigmoid = vawue
 }
 
 /**
- * Enum for bucket membership in DDG 10220 Mr Bold Title Favorite Retweet Notification experiment
+ * e-enum fow quawity pawtiaw upwanking twansfowm
  */
-object MRBoldTitleFavoriteAndRetweetExperimentEnum extends Enumeration {
-  val ShortTitle = Value
+object mwquawityupwankingpawtiawtypeenum e-extends enumewation {
+  vaw aww = vawue
+  vaw oon = vawue
 }
 
 /**
- * Enum for ML filtering predicates
+ * enum fow b-bucket membewship in ddg 10220 m-mw bowd titwe favowite w-wetweet nyotification e-expewiment
  */
-object QualityPredicateEnum extends Enumeration {
-  val WeightedOpenOrNtabClick = Value
-  val ExplicitOpenOrNtabClickFilter = Value
-  val AlwaysTrue = Value // Disable ML filtering
+o-object mwbowdtitwefavowiteandwetweetexpewimentenum extends enumewation {
+  v-vaw showttitwe = vawue
 }
 
 /**
- * Enum to specify normalization used in BigFiltering experiments
+ * enum fow m-mw fiwtewing pwedicates
  */
-object BigFilteringNormalizationEnum extends Enumeration {
-  val NormalizationDisabled = Value
-  val NormalizeByNotSendingScore = Value
+object quawitypwedicateenum extends enumewation {
+  vaw weightedopenowntabcwick = vawue
+  v-vaw expwicitopenowntabcwickfiwtew = vawue
+  v-vaw awwaystwue = v-vawue // disabwe m-mw fiwtewing
 }
 
 /**
- * Enum for inline actions
+ * enum to specify nyowmawization used i-in bigfiwtewing e-expewiments
  */
-object InlineActionsEnum extends Enumeration {
-  val Favorite = Value
-  val Follow = Value
-  val Reply = Value
-  val Retweet = Value
+object bigfiwtewingnowmawizationenum e-extends enumewation {
+  v-vaw nyowmawizationdisabwed = v-vawue
+  vaw nyowmawizebynotsendingscowe = v-vawue
 }
 
 /**
- * Enum for template format
+ * enum fow inwine actions
  */
-object IbisTemplateFormatEnum extends Enumeration {
-  val template1 = Value
+o-object inwineactionsenum extends e-enumewation {
+  vaw favowite = v-vawue
+  vaw fowwow = v-vawue
+  vaw wepwy = vawue
+  vaw wetweet = vawue
 }
 
 /**
- * Enum for Store name for Top Tweets By Geo
+ * enum fow tempwate fowmat
  */
-object TopTweetsForGeoCombination extends Enumeration {
-  val Default = Value
-  val AccountsTweetFavAsBackfill = Value
-  val AccountsTweetFavIntermixed = Value
+object ibistempwatefowmatenum extends e-enumewation {
+  v-vaw tempwate1 = vawue
 }
 
 /**
- * Enum for scoring function for Top Tweets By Geo
+ * e-enum fow stowe n-nyame fow top tweets b-by geo
  */
-object TopTweetsForGeoRankingFunction extends Enumeration {
-  val Score = Value
-  val GeohashLengthAndThenScore = Value
+object toptweetsfowgeocombination extends enumewation {
+  vaw defauwt = v-vawue
+  vaw accountstweetfavasbackfiww = vawue
+  vaw accountstweetfavintewmixed = vawue
 }
 
 /**
- * Enum for which version of popgeo tweets to be using
+ * enum f-fow scowing function fow top tweets b-by geo
  */
-object PopGeoTweetVersion extends Enumeration {
-  val Prod = Value
+object t-toptweetsfowgeowankingfunction e-extends enumewation {
+  vaw s-scowe = vawue
+  v-vaw geohashwengthandthenscowe = v-vawue
 }
 
 /**
- * Enum for Subtext in Android header
+ * e-enum fow which vewsion of popgeo tweets to be using
  */
-object SubtextForAndroidPushHeader extends Enumeration {
-  val None = Value
-  val TargetHandler = Value
-  val TargetTagHandler = Value
-  val TargetName = Value
-  val AuthorTagHandler = Value
-  val AuthorName = Value
+o-object p-popgeotweetvewsion e-extends enumewation {
+  v-vaw pwod = v-vawue
 }
 
-object NsfwTextDetectionModel extends Enumeration {
-  val ProdModel = Value
-  val RetrainedModel = Value
+/**
+ * enum fow subtext in andwoid headew
+ */
+object s-subtextfowandwoidpushheadew extends enumewation {
+  vaw nyone = vawue
+  vaw tawgethandwew = vawue
+  vaw tawgettaghandwew = vawue
+  v-vaw tawgetname = vawue
+  vaw authowtaghandwew = vawue
+  vaw a-authowname = v-vawue
 }
 
-object HighQualityCandidateGroupEnum extends Enumeration {
-  val AgeBucket = Value
-  val Language = Value
-  val Topic = Value
-  val Country = Value
-  val Admin0 = Value
-  val Admin1 = Value
+object n-nysfwtextdetectionmodew extends e-enumewation {
+  vaw pwodmodew = v-vawue
+  vaw wetwainedmodew = v-vawue
 }
 
-object CrtGroupEnum extends Enumeration {
-  val Twistly = Value
-  val Frs = Value
-  val F1 = Value
-  val Topic = Value
-  val Trip = Value
-  val GeoPop = Value
-  val Other = Value
-  val None = Value
+object highquawitycandidategwoupenum extends enumewation {
+  vaw agebucket = vawue
+  vaw wanguage = v-vawue
+  vaw topic = vawue
+  v-vaw countwy = vawue
+  vaw a-admin0 = vawue
+  v-vaw admin1 = vawue
 }
 
-object SportGameEnum extends Enumeration {
-  val Soccer = Value
-  val Nfl = Value
+object cwtgwoupenum extends e-enumewation {
+  v-vaw twistwy = vawue
+  vaw fws = v-vawue
+  vaw f1 = v-vawue
+  vaw topic = vawue
+  vaw twip = vawue
+  vaw geopop = vawue
+  vaw othew = v-vawue
+  vaw n-nyone = vawue
+}
+
+o-object spowtgameenum extends enumewation {
+  v-vaw s-soccew = vawue
+  vaw nyfw = vawue
 }

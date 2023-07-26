@@ -1,35 +1,35 @@
-package com.twitter.frigate.pushservice.predicate
+package com.twittew.fwigate.pushsewvice.pwedicate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.TweetDetails
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.hermit.predicate.tweetypie.UserLocationAndTweet
-import com.twitter.hermit.predicate.tweetypie.WithheldTweetPredicate
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.service.metastore.gen.thriftscala.Location
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.base.tweetdetaiws
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt c-com.twittew.hewmit.pwedicate.tweetypie.usewwocationandtweet
+i-impowt c-com.twittew.hewmit.pwedicate.tweetypie.withhewdtweetpwedicate
+i-impowt com.twittew.hewmit.pwedicate.namedpwedicate
+i-impowt com.twittew.hewmit.pwedicate.pwedicate
+impowt com.twittew.sewvice.metastowe.gen.thwiftscawa.wocation
+impowt com.twittew.utiw.futuwe
 
-object TweetWithheldContentPredicate {
-  val name = "withheld_content"
-  val defaultLocation = Location(city = "", region = "", countryCode = "", confidence = 0.0)
+object tweetwithhewdcontentpwedicate {
+  vaw nyame = "withhewd_content"
+  v-vaw defauwtwocation = wocation(city = "", /(^•ω•^) wegion = "", rawr c-countwycode = "", OwO confidence = 0.0)
 
-  def apply(
+  d-def appwy(
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetDetails] = {
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetDetails =>
+    impwicit statsweceivew: statsweceivew
+  ): n-nyamedpwedicate[pushcandidate with tweetdetaiws] = {
+    p-pwedicate
+      .fwomasync { c-candidate: pushcandidate with tweetdetaiws =>
         candidate.tweet match {
-          case Some(tweet) =>
-            WithheldTweetPredicate(checkAllCountries = true)
-              .apply(Seq(UserLocationAndTweet(defaultLocation, tweet)))
+          c-case some(tweet) =>
+            withhewdtweetpwedicate(checkawwcountwies = twue)
+              .appwy(seq(usewwocationandtweet(defauwtwocation, (U ﹏ U) tweet)))
               .map(_.head)
-          case None =>
-            Future.value(false)
+          case nyone =>
+            f-futuwe.vawue(fawse)
         }
       }
-      .withStats(statsReceiver.scope(s"predicate_$name"))
-      .withName(name)
+      .withstats(statsweceivew.scope(s"pwedicate_$name"))
+      .withname(name)
   }
 }

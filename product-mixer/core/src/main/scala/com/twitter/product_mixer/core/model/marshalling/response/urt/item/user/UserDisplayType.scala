@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.user
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.usew
 
-sealed trait UserDisplayType
+seawed twait usewdispwaytype
 
-case object User extends UserDisplayType
-case object UserDetailed extends UserDisplayType
-case object PendingFollowUser extends UserDisplayType
+c-case o-object usew extends u-usewdispwaytype
+c-case object u-usewdetaiwed e-extends usewdispwaytype
+c-case object p-pendingfowwowusew extends usewdispwaytype

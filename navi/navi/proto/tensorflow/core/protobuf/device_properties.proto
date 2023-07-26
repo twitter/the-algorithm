@@ -1,58 +1,58 @@
-/* Copyright 2017 The TensorFlow Authors. All Rights Reserved.
+/* copywight 2017 the tensowfwow a-authows. -.- aww wights w-wesewved. 😳
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+wicensed u-undew the a-apache wicense, mya v-vewsion 2.0 (the "wicense");
+you m-may nyot use t-this fiwe except i-in compwiance with the wicense. (˘ω˘)
+you may obtain a copy of the wicense at
 
-   http://www.apache.org/licenses/LICENSE-2.0
+   http://www.apache.owg/wicenses/wicense-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+u-unwess wequiwed by appwicabwe waw ow agweed t-to in wwiting, >_< softwawe
+distwibuted u-undew the wicense is distwibuted on an "as is" basis, -.-
+without w-wawwanties ow conditions o-of any kind, 🥺 eithew e-expwess ow impwied. (U ﹏ U)
+see the wicense fow the specific wanguage govewning pewmissions a-and
+wimitations undew the wicense. >w<
 ==============================================================================*/
 
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "DevicePropertiesProtos";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+o-option cc_enabwe_awenas = twue;
+option java_outew_cwassname = "devicepwopewtiespwotos";
+o-option g-go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-message DeviceProperties {
-  // Device type (CPU, GPU, ...)
-  string type = 1;
-  // Vendor (Intel, nvidia, ...)
-  string vendor = 2;
-  // Model (Haswell, K40, ...)
-  string model = 3;
-  // Core Frequency in Mhz
-  int64 frequency = 4;
-  // Number of cores
-  int64 num_cores = 5;
-  // Version of the tools and libraries used with this device (e.g. gcc 4.9,
-  // cudnn 5.1)
-  map<string, string> environment = 6;
-  // Number of registers per core.
-  int64 num_registers = 7;
-  // L1 cache size in bytes
-  int64 l1_cache_size = 8;
-  // L2 cache size in bytes
-  int64 l2_cache_size = 9;
-  // L3 cache size in bytes
-  int64 l3_cache_size = 10;
-  // Shared memory size per multiprocessor in bytes. This field is
-  // applicable to GPUs only.
-  int64 shared_memory_size_per_multiprocessor = 11;
-  // Memory size in bytes
-  int64 memory_size = 12;
-  // Memory bandwidth in KB/s
+m-message d-devicepwopewties {
+  // device type (cpu, mya gpu, ...)
+  s-stwing type = 1;
+  // vendow (intew, >w< nyvidia, nyaa~~ ...)
+  stwing v-vendow = 2;
+  // modew (hasweww, (✿oωo) k40, ...)
+  stwing modew = 3;
+  // cowe fwequency in mhz
+  i-int64 fwequency = 4;
+  // nyumbew o-of cowes
+  int64 n-nyum_cowes = 5;
+  // v-vewsion of the toows and wibwawies used with this device (e.g. ʘwʘ g-gcc 4.9, (ˆ ﻌ ˆ)♡
+  // c-cudnn 5.1)
+  map<stwing, 😳😳😳 s-stwing> enviwonment = 6;
+  // n-nyumbew of wegistews p-pew cowe. :3
+  int64 nyum_wegistews = 7;
+  // w-w1 cache size in bytes
+  int64 w1_cache_size = 8;
+  // w-w2 cache size in bytes
+  int64 w-w2_cache_size = 9;
+  // w3 cache s-size in bytes
+  i-int64 w3_cache_size = 10;
+  // shawed memowy size pew muwtipwocessow in bytes. OwO this fiewd is
+  // appwicabwe to gpus onwy. (U ﹏ U)
+  i-int64 shawed_memowy_size_pew_muwtipwocessow = 11;
+  // m-memowy size in bytes
+  i-int64 memowy_size = 12;
+  // m-memowy b-bandwidth in kb/s
   int64 bandwidth = 13;
 }
 
-message NamedDevice {
-  string name = 1;
-  DeviceProperties properties = 2;
+message nyameddevice {
+  stwing n-nyame = 1;
+  devicepwopewties pwopewties = 2;
 }

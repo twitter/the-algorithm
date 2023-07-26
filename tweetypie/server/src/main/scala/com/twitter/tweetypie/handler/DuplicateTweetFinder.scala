@@ -1,254 +1,254 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.stitch.Stitch
-import com.twitter.timelineservice.{thriftscala => tls}
-import com.twitter.tweetypie.backends.TimelineService
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.repository.TweetRepository
-import com.twitter.tweetypie.thriftscala.CardReference
-import com.twitter.tweetypie.thriftscala.ConversationControl
-import com.twitter.tweetypie.thriftscala.ConversationControlByInvitation
-import com.twitter.tweetypie.thriftscala.ConversationControlCommunity
-import com.twitter.tweetypie.thriftscala.ConversationControlFollowers
-import com.twitter.tweetypie.thriftscala.EditControl
-import com.twitter.tweetypie.thriftscala.EditOptions
-import com.twitter.tweetypie.thriftscala.NoteTweetOptions
-import com.twitter.tweetypie.thriftscala.PostTweetRequest
-import com.twitter.tweetypie.thriftscala.TweetCreateConversationControl
-import com.twitter.tweetypie.util.ConversationControls
-import com.twitter.tweetypie.util.EditControlUtil
-import com.twitter.util.Time
+impowt c-com.twittew.stitch.stitch
+impowt c-com.twittew.timewinesewvice.{thwiftscawa => t-tws}
+impowt com.twittew.tweetypie.backends.timewinesewvice
+i-impowt c-com.twittew.tweetypie.wepositowy.tweetquewy
+i-impowt com.twittew.tweetypie.wepositowy.tweetwepositowy
+i-impowt com.twittew.tweetypie.thwiftscawa.cawdwefewence
+impowt com.twittew.tweetypie.thwiftscawa.convewsationcontwow
+impowt com.twittew.tweetypie.thwiftscawa.convewsationcontwowbyinvitation
+impowt com.twittew.tweetypie.thwiftscawa.convewsationcontwowcommunity
+i-impowt com.twittew.tweetypie.thwiftscawa.convewsationcontwowfowwowews
+impowt com.twittew.tweetypie.thwiftscawa.editcontwow
+i-impowt com.twittew.tweetypie.thwiftscawa.editoptions
+impowt c-com.twittew.tweetypie.thwiftscawa.notetweetoptions
+impowt com.twittew.tweetypie.thwiftscawa.posttweetwequest
+impowt com.twittew.tweetypie.thwiftscawa.tweetcweateconvewsationcontwow
+impowt com.twittew.tweetypie.utiw.convewsationcontwows
+i-impowt com.twittew.tweetypie.utiw.editcontwowutiw
+i-impowt com.twittew.utiw.time
 
 /**
- * Used at tweet creation time to determine whether the tweet creation
- * request should be considered a duplicate of an existing tweet.
+ * u-used at tweet cweation time to detewmine whethew the tweet cweation
+ * wequest s-shouwd be considewed a dupwicate of an existing tweet. UwU
  */
-object DuplicateTweetFinder {
+object dupwicatetweetfindew {
 
   /**
-   * Return the ids of any tweets that are found to be duplicates of
-   * this request.
+   * w-wetuwn the ids of any tweets t-that awe found t-to be dupwicates o-of
+   * this w-wequest. :3
    */
-  type Type = RequestInfo => Future[Option[TweetId]]
+  type type = wequestinfo => futuwe[option[tweetid]]
 
-  final case class Settings(
-    // The number of tweets that are loaded from the user's timeline
-    // for the heuristic duplicate check
-    numTweetsToCheck: Int,
-    // The oldest that a tweet can be to still be considered a
-    // duplicate by the heuristic duplicate check
-    maxDuplicateAge: Duration)
+  f-finaw case cwass settings(
+    // the n-nyumbew of tweets that awe woaded fwom the usew's timewine
+    // fow the heuwistic dupwicate check
+    n-nyumtweetstocheck: int, σωσ
+    // t-the owdest t-that a tweet can b-be to stiww be considewed a
+    // dupwicate by the heuwistic d-dupwicate check
+    m-maxdupwicateage: duwation)
 
-  // Takes a ConversationControl from a Tweet and converts to the equivalent
-  // TweetCreateConversationControl. Note: this is a lossy conversion because the
-  // ConversationControl contains additional data from the Tweet.
-  def toTweetCreateConversationControl(
-    conversationControl: ConversationControl
-  ): TweetCreateConversationControl =
-    conversationControl match {
-      case ConversationControl.ByInvitation(
-            ConversationControlByInvitation(_, _, inviteViaMention)) =>
-        ConversationControls.Create.byInvitation(inviteViaMention)
-      case ConversationControl.Community(ConversationControlCommunity(_, _, inviteViaMention)) =>
-        ConversationControls.Create.community(inviteViaMention)
-      case ConversationControl.Followers(ConversationControlFollowers(_, _, inviteViaMention)) =>
-        ConversationControls.Create.followers(inviteViaMention)
-      case _ => throw new IllegalArgumentException
+  // t-takes a convewsationcontwow f-fwom a tweet and convewts to the e-equivawent
+  // tweetcweateconvewsationcontwow. >w< n-nyote: this is a wossy convewsion because the
+  // c-convewsationcontwow contains a-additionaw data fwom the tweet. (ˆ ﻌ ˆ)♡
+  d-def totweetcweateconvewsationcontwow(
+    convewsationcontwow: c-convewsationcontwow
+  ): tweetcweateconvewsationcontwow =
+    convewsationcontwow match {
+      case convewsationcontwow.byinvitation(
+            convewsationcontwowbyinvitation(_, ʘwʘ _, inviteviamention)) =>
+        c-convewsationcontwows.cweate.byinvitation(inviteviamention)
+      c-case convewsationcontwow.community(convewsationcontwowcommunity(_, :3 _, i-inviteviamention)) =>
+        c-convewsationcontwows.cweate.community(inviteviamention)
+      c-case convewsationcontwow.fowwowews(convewsationcontwowfowwowews(_, (˘ω˘) _, inviteviamention)) =>
+        convewsationcontwows.cweate.fowwowews(inviteviamention)
+      c-case _ => thwow nyew iwwegawawgumentexception
     }
 
   /**
-   * The parts of the request that we need in order to perform
-   * duplicate detection.
+   * the pawts of the wequest that we nyeed in owdew t-to pewfowm
+   * dupwicate detection. 😳😳😳
    */
-  final case class RequestInfo(
-    userId: UserId,
-    isNarrowcast: Boolean,
-    isNullcast: Boolean,
-    text: String,
-    replyToTweetId: Option[TweetId],
-    mediaUploadIds: Seq[MediaId],
-    cardReference: Option[CardReference],
-    conversationControl: Option[TweetCreateConversationControl],
-    underlyingCreativesContainer: Option[CreativesContainerId],
-    editOptions: Option[EditOptions] = None,
-    noteTweetOptions: Option[NoteTweetOptions] = None) {
+  f-finaw c-case cwass wequestinfo(
+    usewid: u-usewid, rawr x3
+    isnawwowcast: b-boowean, (✿oωo)
+    isnuwwcast: b-boowean, (ˆ ﻌ ˆ)♡
+    t-text: stwing, :3
+    w-wepwytotweetid: option[tweetid], (U ᵕ U❁)
+    mediaupwoadids: s-seq[mediaid], ^^;;
+    c-cawdwefewence: option[cawdwefewence], mya
+    c-convewsationcontwow: option[tweetcweateconvewsationcontwow], 😳😳😳
+    u-undewwyingcweativescontainew: o-option[cweativescontainewid], OwO
+    editoptions: option[editoptions] = nyone, rawr
+    n-nyotetweetoptions: option[notetweetoptions] = nyone) {
 
-    def isDuplicateOf(tweet: Tweet, oldestAcceptableTimestamp: Time): Boolean = {
-      val createdAt = getTimestamp(tweet)
-      val isDuplicateText = text == getText(tweet)
-      val isDuplicateReplyToTweetId = replyToTweetId == getReply(tweet).flatMap(_.inReplyToStatusId)
-      val isDuplicateMedia = getMedia(tweet).map(_.mediaId) == mediaUploadIds
-      val isDuplicateCardReference = getCardReference(tweet) == cardReference
-      val isDuplicateConversationControl =
-        tweet.conversationControl.map(toTweetCreateConversationControl) == conversationControl
-      val isDuplicateConversationContainerId = {
-        tweet.underlyingCreativesContainerId == underlyingCreativesContainer
+    def isdupwicateof(tweet: tweet, XD owdestacceptabwetimestamp: t-time): boowean = {
+      vaw cweatedat = gettimestamp(tweet)
+      vaw isdupwicatetext = t-text == g-gettext(tweet)
+      v-vaw isdupwicatewepwytotweetid = wepwytotweetid == g-getwepwy(tweet).fwatmap(_.inwepwytostatusid)
+      vaw isdupwicatemedia = g-getmedia(tweet).map(_.mediaid) == m-mediaupwoadids
+      vaw isdupwicatecawdwefewence = getcawdwefewence(tweet) == cawdwefewence
+      vaw isdupwicateconvewsationcontwow =
+        tweet.convewsationcontwow.map(totweetcweateconvewsationcontwow) == c-convewsationcontwow
+      vaw isdupwicateconvewsationcontainewid = {
+        t-tweet.undewwyingcweativescontainewid == undewwyingcweativescontainew
       }
 
-      val isDuplicateIfEditRequest = if (editOptions.isDefined) {
-        // We do not count an incoming edit request as creating a duplicate tweet if:
-        // 1) The tweet that is considered a duplicate is a previous version of this tweet OR
-        // 2) The tweet that is considered a duplicate is otherwise stale.
-        val tweetEditChain = tweet.editControl match {
-          case Some(EditControl.Initial(initial)) =>
-            initial.editTweetIds
-          case Some(EditControl.Edit(edit)) =>
-            edit.editControlInitial.map(_.editTweetIds).getOrElse(Nil)
-          case _ => Nil
+      v-vaw isdupwicateifeditwequest = i-if (editoptions.isdefined) {
+        // we do nyot count an incoming edit w-wequest as cweating a-a dupwicate tweet if:
+        // 1) t-the tweet t-that is considewed a dupwicate is a pwevious vewsion of this tweet ow
+        // 2) t-the tweet t-that is considewed a-a dupwicate is othewwise stawe. (U ﹏ U)
+        v-vaw t-tweeteditchain = tweet.editcontwow m-match {
+          case some(editcontwow.initiaw(initiaw)) =>
+            initiaw.edittweetids
+          case some(editcontwow.edit(edit)) =>
+            e-edit.editcontwowinitiaw.map(_.edittweetids).getowewse(niw)
+          c-case _ => nyiw
         }
-        val tweetIsAPreviousVersion =
-          editOptions.map(_.previousTweetId).exists(tweetEditChain.contains)
+        vaw tweetisapweviousvewsion =
+          editoptions.map(_.pwevioustweetid).exists(tweeteditchain.contains)
 
-        val tweetIsStale = EditControlUtil.isLatestEdit(tweet.editControl, tweet.id) match {
-          case Return(false) => true
-          case _ => false
+        v-vaw tweetisstawe = e-editcontwowutiw.iswatestedit(tweet.editcontwow, (˘ω˘) tweet.id) match {
+          case wetuwn(fawse) => t-twue
+          case _ => fawse
         }
 
-        !(tweetIsStale || tweetIsAPreviousVersion)
-      } else {
-        // If not an edit request, this condition is true as duplication checking is not blocked
-        true
+        !(tweetisstawe || tweetisapweviousvewsion)
+      } ewse {
+        // if nyot an edit w-wequest, UwU this condition is twue as dupwication c-checking is nyot b-bwocked
+        twue
       }
 
-      // Note that this does not prevent you from tweeting the same
-      // image twice with different text, or the same text twice with
-      // different images, because if you upload the same media twice,
-      // we will store two copies of it, each with a different media
-      // URL and thus different t.co URL, and since the text that
-      // we're checking here has that t.co URL added to it already, it
-      // is necessarily different.
+      // nyote that this does nyot p-pwevent you fwom t-tweeting the same
+      // image twice with diffewent text, >_< o-ow the same text twice with
+      // d-diffewent images, σωσ because if you upwoad the same media twice, 🥺
+      // w-we wiww stowe two copies o-of it, 🥺 each w-with a diffewent media
+      // u-uww and thus diffewent t.co uww, ʘwʘ a-and since the t-text that
+      // w-we'we checking hewe has that t-t.co uww added to i-it awweady, :3 it
+      // is necessawiwy diffewent. (U ﹏ U)
       //
-      // We shouldn't have to check the user id or whether it's a
-      // retweet, because we loaded the tweets from the user's
-      // (non-retweet) timelines, but it doesn't hurt and protects
-      // against possible future changes.
-      (oldestAcceptableTimestamp <= createdAt) &&
-      getShare(tweet).isEmpty &&
-      (getUserId(tweet) == userId) &&
-      isDuplicateText &&
-      isDuplicateReplyToTweetId &&
-      isDuplicateMedia &&
-      isDuplicateCardReference &&
-      isDuplicateConversationControl &&
-      isDuplicateConversationContainerId &&
-      isDuplicateIfEditRequest &&
-      noteTweetOptions.isEmpty // Skip duplicate checks for NoteTweets
+      // w-we shouwdn't h-have to check t-the usew id ow whethew it's a
+      // wetweet, (U ﹏ U) b-because we woaded the tweets fwom t-the usew's
+      // (non-wetweet) t-timewines, but it doesn't huwt and pwotects
+      // against p-possibwe futuwe c-changes. ʘwʘ
+      (owdestacceptabwetimestamp <= cweatedat) &&
+      g-getshawe(tweet).isempty &&
+      (getusewid(tweet) == u-usewid) &&
+      isdupwicatetext &&
+      i-isdupwicatewepwytotweetid &&
+      isdupwicatemedia &&
+      isdupwicatecawdwefewence &&
+      isdupwicateconvewsationcontwow &&
+      isdupwicateconvewsationcontainewid &&
+      isdupwicateifeditwequest &&
+      n-nyotetweetoptions.isempty // skip dupwicate c-checks fow nyotetweets
     }
   }
 
-  object RequestInfo {
+  object wequestinfo {
 
     /**
-     * Extract the information relevant to the DuplicateTweetFinder
-     * from the PostTweetRequest.
+     * e-extwact the infowmation w-wewevant to the dupwicatetweetfindew
+     * f-fwom the posttweetwequest.
      */
-    def fromPostTweetRequest(req: PostTweetRequest, processedText: String): RequestInfo =
-      RequestInfo(
-        userId = req.userId,
-        isNarrowcast = req.narrowcast.nonEmpty,
-        isNullcast = req.nullcast,
-        text = processedText,
-        replyToTweetId = req.inReplyToTweetId,
-        mediaUploadIds = req.mediaUploadIds.getOrElse[Seq[MediaId]](Seq.empty),
-        cardReference = req.additionalFields.flatMap(_.cardReference),
-        conversationControl = req.conversationControl,
-        underlyingCreativesContainer = req.underlyingCreativesContainerId,
-        editOptions = req.editOptions,
-        noteTweetOptions = req.noteTweetOptions
+    d-def fwomposttweetwequest(weq: p-posttweetwequest, p-pwocessedtext: s-stwing): wequestinfo =
+      wequestinfo(
+        usewid = weq.usewid, >w<
+        isnawwowcast = weq.nawwowcast.nonempty, rawr x3
+        i-isnuwwcast = w-weq.nuwwcast, OwO
+        t-text = pwocessedtext, ^•ﻌ•^
+        w-wepwytotweetid = weq.inwepwytotweetid, >_<
+        mediaupwoadids = weq.mediaupwoadids.getowewse[seq[mediaid]](seq.empty), OwO
+        c-cawdwefewence = w-weq.additionawfiewds.fwatmap(_.cawdwefewence), >_<
+        convewsationcontwow = w-weq.convewsationcontwow, (ꈍᴗꈍ)
+        undewwyingcweativescontainew = weq.undewwyingcweativescontainewid, >w<
+        editoptions = w-weq.editoptions, (U ﹏ U)
+        n-nyotetweetoptions = weq.notetweetoptions
       )
   }
 
   /**
-   * Encapsulates the external interactions that we need to do for
-   * duplicate checking.
+   * e-encapsuwates t-the extewnaw intewactions that we nyeed to do fow
+   * dupwicate checking. ^^
    */
-  trait TweetSource {
-    def loadTweets(tweetIds: Seq[TweetId]): Future[Seq[Tweet]]
-    def loadUserTimelineIds(userId: UserId, maxCount: Int): Future[Seq[TweetId]]
-    def loadNarrowcastTimelineIds(userId: UserId, maxCount: Int): Future[Seq[TweetId]]
+  t-twait tweetsouwce {
+    def w-woadtweets(tweetids: s-seq[tweetid]): f-futuwe[seq[tweet]]
+    d-def woadusewtimewineids(usewid: u-usewid, (U ﹏ U) m-maxcount: int): futuwe[seq[tweetid]]
+    def w-woadnawwowcasttimewineids(usewid: u-usewid, :3 maxcount: int): futuwe[seq[tweetid]]
   }
 
-  object TweetSource {
+  o-object tweetsouwce {
 
     /**
-     * Use the provided services to access tweets.
+     * use t-the pwovided sewvices to access t-tweets. (✿oωo)
      */
-    def fromServices(
-      tweetRepo: TweetRepository.Optional,
-      getStatusTimeline: TimelineService.GetStatusTimeline
-    ): TweetSource =
-      new TweetSource {
-        // only fields needed by RequestInfo.isDuplicateOf()
-        private[this] val tweetQueryOption =
-          TweetQuery.Options(
-            TweetQuery.Include(
-              tweetFields = Set(
-                Tweet.CoreDataField.id,
-                Tweet.MediaField.id,
-                Tweet.ConversationControlField.id,
-                Tweet.EditControlField.id
-              ),
-              pastedMedia = true
+    d-def fwomsewvices(
+      tweetwepo: t-tweetwepositowy.optionaw, XD
+      getstatustimewine: timewinesewvice.getstatustimewine
+    ): t-tweetsouwce =
+      n-nyew tweetsouwce {
+        // o-onwy fiewds nyeeded by wequestinfo.isdupwicateof()
+        pwivate[this] vaw tweetquewyoption =
+          t-tweetquewy.options(
+            tweetquewy.incwude(
+              tweetfiewds = s-set(
+                t-tweet.cowedatafiewd.id, >w<
+                tweet.mediafiewd.id, òωó
+                t-tweet.convewsationcontwowfiewd.id, (ꈍᴗꈍ)
+                tweet.editcontwowfiewd.id
+              ), rawr x3
+              pastedmedia = t-twue
             )
           )
 
-        private[this] def loadTimeline(query: tls.TimelineQuery): Future[Seq[Long]] =
-          getStatusTimeline(Seq(query)).map(_.head.entries.map(_.statusId))
+        p-pwivate[this] def woadtimewine(quewy: tws.timewinequewy): futuwe[seq[wong]] =
+          g-getstatustimewine(seq(quewy)).map(_.head.entwies.map(_.statusid))
 
-        override def loadUserTimelineIds(userId: UserId, maxCount: Int): Future[Seq[Long]] =
-          loadTimeline(
-            tls.TimelineQuery(
-              timelineType = tls.TimelineType.User,
-              timelineId = userId,
-              maxCount = maxCount.toShort
+        ovewwide def woadusewtimewineids(usewid: u-usewid, rawr x3 maxcount: i-int): futuwe[seq[wong]] =
+          woadtimewine(
+            t-tws.timewinequewy(
+              timewinetype = t-tws.timewinetype.usew, σωσ
+              t-timewineid = u-usewid, (ꈍᴗꈍ)
+              maxcount = maxcount.toshowt
             )
           )
 
-        override def loadNarrowcastTimelineIds(userId: UserId, maxCount: Int): Future[Seq[Long]] =
-          loadTimeline(
-            tls.TimelineQuery(
-              timelineType = tls.TimelineType.Narrowcasted,
-              timelineId = userId,
-              maxCount = maxCount.toShort
+        ovewwide def woadnawwowcasttimewineids(usewid: usewid, rawr maxcount: int): futuwe[seq[wong]] =
+          woadtimewine(
+            tws.timewinequewy(
+              timewinetype = tws.timewinetype.nawwowcasted, ^^;;
+              timewineid = usewid, rawr x3
+              m-maxcount = m-maxcount.toshowt
             )
           )
 
-        override def loadTweets(tweetIds: Seq[TweetId]): Future[Seq[Tweet]] =
-          if (tweetIds.isEmpty) {
-            Future.value(Seq[Tweet]())
-          } else {
-            Stitch
-              .run(
-                Stitch.traverse(tweetIds) { tweetId => tweetRepo(tweetId, tweetQueryOption) }
+        ovewwide def woadtweets(tweetids: s-seq[tweetid]): f-futuwe[seq[tweet]] =
+          i-if (tweetids.isempty) {
+            futuwe.vawue(seq[tweet]())
+          } e-ewse {
+            stitch
+              .wun(
+                stitch.twavewse(tweetids) { t-tweetid => t-tweetwepo(tweetid, (ˆ ﻌ ˆ)♡ tweetquewyoption) }
               )
-              .map(_.flatten)
+              .map(_.fwatten)
           }
       }
   }
 
-  def apply(settings: Settings, tweetSource: TweetSource): Type = { reqInfo =>
-    if (reqInfo.isNullcast) {
-      // iff nullcast, we bypass duplication logic all together
-      Future.None
-    } else {
-      val oldestAcceptableTimestamp = Time.now - settings.maxDuplicateAge
-      val userTweetIdsFut =
-        tweetSource.loadUserTimelineIds(reqInfo.userId, settings.numTweetsToCheck)
+  d-def appwy(settings: settings, σωσ t-tweetsouwce: t-tweetsouwce): type = { weqinfo =>
+    if (weqinfo.isnuwwcast) {
+      // i-iff nyuwwcast, (U ﹏ U) w-we bypass d-dupwication wogic a-aww togethew
+      f-futuwe.none
+    } e-ewse {
+      v-vaw owdestacceptabwetimestamp = t-time.now - s-settings.maxdupwicateage
+      vaw usewtweetidsfut =
+        tweetsouwce.woadusewtimewineids(weqinfo.usewid, >w< settings.numtweetstocheck)
 
-      // Check the narrowcast timeline iff this is a narrowcasted tweet
-      val narrowcastTweetIdsFut =
-        if (reqInfo.isNarrowcast) {
-          tweetSource.loadNarrowcastTimelineIds(reqInfo.userId, settings.numTweetsToCheck)
-        } else {
-          Future.value(Seq.empty)
+      // c-check the nyawwowcast t-timewine i-iff this is a nyawwowcasted tweet
+      v-vaw nyawwowcasttweetidsfut =
+        if (weqinfo.isnawwowcast) {
+          tweetsouwce.woadnawwowcasttimewineids(weqinfo.usewid, σωσ s-settings.numtweetstocheck)
+        } ewse {
+          f-futuwe.vawue(seq.empty)
         }
 
-      for {
-        userTweetIds <- userTweetIdsFut
-        narrowcastTweetIds <- narrowcastTweetIdsFut
-        candidateTweets <- tweetSource.loadTweets(userTweetIds ++ narrowcastTweetIds)
-      } yield candidateTweets.find(reqInfo.isDuplicateOf(_, oldestAcceptableTimestamp)).map(_.id)
+      f-fow {
+        u-usewtweetids <- usewtweetidsfut
+        n-nyawwowcasttweetids <- nawwowcasttweetidsfut
+        c-candidatetweets <- tweetsouwce.woadtweets(usewtweetids ++ n-nyawwowcasttweetids)
+      } yiewd c-candidatetweets.find(weqinfo.isdupwicateof(_, nyaa~~ owdestacceptabwetimestamp)).map(_.id)
     }
   }
 }

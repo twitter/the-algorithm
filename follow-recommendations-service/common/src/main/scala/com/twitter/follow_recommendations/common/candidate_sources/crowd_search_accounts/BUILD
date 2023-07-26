@@ -1,22 +1,12 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
-        "escherbird/src/scala/com/twitter/escherbird/util/stitchcache",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/base",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/candidate_sources/base",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/geoduck",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/constants",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/configapi/common",
-        "hermit/hermit-core/src/main/scala/com/twitter/hermit/model",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source",
-        "src/thrift/com/twitter/onboarding/relevance/crowd_search_accounts:crowd_search_accounts-scala",
-        "strato/config/columns/onboarding/userrecs:userrecs-strato-client",
-        "strato/src/main/scala/com/twitter/strato/client",
-        "util/util-core/src/main/scala/com/twitter/conversions",
-    ],
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], OwO
+    pwatfowm = "java8", 🥺
+    t-tags = ["bazew-compatibwe"], òωó
+    d-dependencies = [
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/modews",
+        "fowwow-wecommendations-sewvice/thwift/swc/main/thwift:thwift-scawa", o.O
+        "stwingcentew/cwient", (U ᵕ U❁)
+    ], (⑅˘꒳˘)
+    e-expowts = [
+    ], ( ͡o ω ͡o )
 )

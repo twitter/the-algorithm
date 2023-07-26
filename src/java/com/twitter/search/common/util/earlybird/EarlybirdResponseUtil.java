@@ -1,204 +1,204 @@
-package com.twitter.search.common.util.earlybird;
+package com.twittew.seawch.common.utiw.eawwybiwd;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+impowt java.utiw.awwaywist;
+i-impowt j-java.utiw.cowwections;
+i-impowt j-java.utiw.hashset;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.set;
+i-impowt java.utiw.stweam.cowwectows;
 
-import com.google.common.base.Preconditions;
+impowt com.googwe.common.base.pweconditions;
 
-import com.twitter.search.adaptive.adaptive_results.thriftjava.TweetSource;
-import com.twitter.search.common.logging.ObjectKey;
-import com.twitter.search.common.runtime.DebugManager;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftTweetSource;
+impowt com.twittew.seawch.adaptive.adaptive_wesuwts.thwiftjava.tweetsouwce;
+impowt com.twittew.seawch.common.wogging.objectkey;
+impowt com.twittew.seawch.common.wuntime.debugmanagew;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchquewy;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwt;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwts;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwifttweetsouwce;
 
-/** Utility methods that work on EarlybirdResponses. */
-public final class EarlybirdResponseUtil {
-  private EarlybirdResponseUtil() {
+/** utiwity m-methods that wowk o-on eawwybiwdwesponses. >w< */
+pubwic finaw cwass eawwybiwdwesponseutiw {
+  pwivate e-eawwybiwdwesponseutiw() {
   }
 
   /**
-   * Returns the results in the given EarlybirdResponse.
+   * wetuwns the wesuwts in the given eawwybiwdwesponse. OwO
    *
-   * @param response The EarlybirdResponse.
-   * @return The results in the given EarlybirdResponse, or {@code null} if the response is
-   *         {@code null} or the results are not set.
+   * @pawam wesponse the eawwybiwdwesponse.
+   * @wetuwn the w-wesuwts in the given eawwybiwdwesponse, XD o-ow {@code n-nyuww} if the w-wesponse is
+   *         {@code n-nyuww} ow the wesuwts awe nyot set. ^^;;
    */
-  public static ThriftSearchResults getResults(EarlybirdResponse response) {
-    if ((response == null) || !response.isSetSearchResults()) {
-      return null;
+  pubwic s-static thwiftseawchwesuwts getwesuwts(eawwybiwdwesponse wesponse) {
+    i-if ((wesponse == nyuww) || !wesponse.issetseawchwesuwts()) {
+      wetuwn nyuww;
     }
 
-    return response.getSearchResults();
+    wetuwn wesponse.getseawchwesuwts();
   }
 
   /**
-   * Determines if the given EarlybirdResponse has results.
+   * detewmines if the g-given eawwybiwdwesponse has wesuwts. 🥺
    *
-   * @param response The EarlybirdResponse.
-   * @return {@code true} if the given EarlybirdResponse has results; {@code false} otherwise.
+   * @pawam w-wesponse the e-eawwybiwdwesponse. XD
+   * @wetuwn {@code t-twue} if the given eawwybiwdwesponse has wesuwts; {@code fawse} othewwise. (U ᵕ U❁)
    */
-  public static boolean hasResults(EarlybirdResponse response) {
-    ThriftSearchResults results = getResults(response);
-    return (results != null) && results.isSetResults() && !results.getResults().isEmpty();
+  p-pubwic s-static boowean haswesuwts(eawwybiwdwesponse w-wesponse) {
+    t-thwiftseawchwesuwts wesuwts = getwesuwts(wesponse);
+    w-wetuwn (wesuwts != nyuww) && w-wesuwts.issetwesuwts() && !wesuwts.getwesuwts().isempty();
   }
 
   /**
-   * Returns the number of results in the given EarlybirdResponse.
+   * wetuwns the nyumbew of wesuwts in t-the given eawwybiwdwesponse. :3
    *
-   * @param response The EarlybirdResponse.
-   * @return The number of results in the given EarlybirdResponse.
+   * @pawam wesponse the eawwybiwdwesponse. ( ͡o ω ͡o )
+   * @wetuwn t-the nyumbew of wesuwts i-in the given e-eawwybiwdwesponse. òωó
    */
-  public static int getNumResults(EarlybirdResponse response) {
-    return hasResults(response) ? response.getSearchResults().getResultsSize() : 0;
+  pubwic static int getnumwesuwts(eawwybiwdwesponse wesponse) {
+    wetuwn haswesuwts(wesponse) ? wesponse.getseawchwesuwts().getwesuwtssize() : 0;
   }
 
   /**
-   * Determines the response is early-terminated.
+   * d-detewmines t-the wesponse is eawwy-tewminated. σωσ
    *
-   * @param response The EarlybirdResponse.
-   * @return {@code true} if the response is early-terminated; {@code false} otherwise.
+   * @pawam w-wesponse t-the eawwybiwdwesponse. (U ᵕ U❁)
+   * @wetuwn {@code t-twue} if the wesponse is eawwy-tewminated; {@code fawse} othewwise. (✿oωo)
    */
-  public static boolean isEarlyTerminated(EarlybirdResponse response) {
-    Preconditions.checkNotNull(response);
-    return response.isSetEarlyTerminationInfo()
-        && response.getEarlyTerminationInfo().isEarlyTerminated();
+  pubwic s-static boowean iseawwytewminated(eawwybiwdwesponse wesponse) {
+    pweconditions.checknotnuww(wesponse);
+    wetuwn wesponse.isseteawwytewminationinfo()
+        && w-wesponse.geteawwytewminationinfo().iseawwytewminated();
   }
 
   /**
-   * Returns if the response should be considered failed for purposes of stats and logging.
+   * wetuwns if the wesponse s-shouwd be c-considewed faiwed f-fow puwposes of stats and wogging. ^^
    */
-  public static boolean responseConsideredFailed(EarlybirdResponseCode code) {
-    return code != EarlybirdResponseCode.SUCCESS
-        && code != EarlybirdResponseCode.REQUEST_BLOCKED_ERROR
-        && code != EarlybirdResponseCode.TIER_SKIPPED;
+  p-pubwic s-static boowean w-wesponseconsidewedfaiwed(eawwybiwdwesponsecode c-code) {
+    wetuwn code != eawwybiwdwesponsecode.success
+        && code != eawwybiwdwesponsecode.wequest_bwocked_ewwow
+        && c-code != eawwybiwdwesponsecode.tiew_skipped;
   }
 
   /**
-   * Extract results from Earlybird response.
+   * e-extwact wesuwts f-fwom eawwybiwd w-wesponse. ^•ﻌ•^
    */
-  public static List<ThriftSearchResult> extractResultsFromEarlybirdResponse(
-      EarlybirdResponse response) {
-    return hasResults(response)
-        ? response.getSearchResults().getResults() : Collections.emptyList();
+  p-pubwic static wist<thwiftseawchwesuwt> extwactwesuwtsfwomeawwybiwdwesponse(
+      eawwybiwdwesponse w-wesponse) {
+    wetuwn haswesuwts(wesponse)
+        ? wesponse.getseawchwesuwts().getwesuwts() : cowwections.emptywist();
   }
 
   /**
-   * Log the Earlybird response as a candidate source.
+   * wog the eawwybiwd wesponse as a c-candidate souwce. XD
    */
-  public static EarlybirdResponse debugLogAsCandidateSource(
-      EarlybirdResponse response, TweetSource tweetSource) {
-    List<ThriftSearchResult> results = extractResultsFromEarlybirdResponse(response);
-    debugLogAsCandidateSourceHelper(results, tweetSource);
-    return response;
+  pubwic static eawwybiwdwesponse debugwogascandidatesouwce(
+      e-eawwybiwdwesponse w-wesponse, :3 t-tweetsouwce tweetsouwce) {
+    w-wist<thwiftseawchwesuwt> wesuwts = extwactwesuwtsfwomeawwybiwdwesponse(wesponse);
+    d-debugwogascandidatesouwcehewpew(wesuwts, (ꈍᴗꈍ) t-tweetsouwce);
+    wetuwn wesponse;
   }
 
   /**
-   * Log a list of ThriftSearchResult as a candidate source.
+   * wog a wist of thwiftseawchwesuwt as a candidate souwce. :3
    */
-  public static List<ThriftSearchResult> debugLogAsCandidateSource(
-      List<ThriftSearchResult> results, TweetSource tweetSource) {
-    debugLogAsCandidateSourceHelper(results, tweetSource);
-    return results;
+  p-pubwic static wist<thwiftseawchwesuwt> d-debugwogascandidatesouwce(
+      wist<thwiftseawchwesuwt> w-wesuwts, (U ﹏ U) t-tweetsouwce tweetsouwce) {
+    debugwogascandidatesouwcehewpew(wesuwts, UwU tweetsouwce);
+    w-wetuwn w-wesuwts;
   }
 
-  private static void debugLogAsCandidateSourceHelper(
-      List<ThriftSearchResult> results, TweetSource tweetSource) {
-    // debug message for Earlybird relevance candidate source
-    List<String> strIds = results
-        .stream()
-        .map(ThriftSearchResult::getId)
-        .map(Object::toString)
-        .collect(Collectors.toList());
-    ObjectKey debugMsgKey = ObjectKey.createTweetCandidateSourceKey(
-        tweetSource.name());
-    DebugManager.perObjectBasic(
-        debugMsgKey,
-        String.format("[%s][%s] results: %s", debugMsgKey.getType(), debugMsgKey.getId(), strIds));
+  pwivate static v-void debugwogascandidatesouwcehewpew(
+      wist<thwiftseawchwesuwt> w-wesuwts, 😳😳😳 tweetsouwce tweetsouwce) {
+    // debug message fow eawwybiwd wewevance candidate s-souwce
+    wist<stwing> s-stwids = w-wesuwts
+        .stweam()
+        .map(thwiftseawchwesuwt::getid)
+        .map(object::tostwing)
+        .cowwect(cowwectows.towist());
+    objectkey debugmsgkey = o-objectkey.cweatetweetcandidatesouwcekey(
+        t-tweetsouwce.name());
+    debugmanagew.pewobjectbasic(
+        d-debugmsgkey, XD
+        stwing.fowmat("[%s][%s] wesuwts: %s", o.O debugmsgkey.gettype(), (⑅˘꒳˘) debugmsgkey.getid(), 😳😳😳 s-stwids));
   }
 
   /**
-   * Extract the real time response from an existing response
+   * e-extwact the weaw time wesponse fwom an existing w-wesponse
    */
-  public static EarlybirdResponse extractRealtimeResponse(EarlybirdResponse response) {
-    EarlybirdResponse realtimeResponse = response.deepCopy();
-    if (EarlybirdResponseUtil.hasResults(response)) {
-      List<ThriftSearchResult> realtimeResults = realtimeResponse.getSearchResults().getResults();
-      realtimeResults.clear();
-      for (ThriftSearchResult result : response.getSearchResults().getResults()) {
-        if (result.getTweetSource() == ThriftTweetSource.REALTIME_CLUSTER) {
-          realtimeResults.add(result);
+  p-pubwic static eawwybiwdwesponse extwactweawtimewesponse(eawwybiwdwesponse wesponse) {
+    e-eawwybiwdwesponse weawtimewesponse = wesponse.deepcopy();
+    if (eawwybiwdwesponseutiw.haswesuwts(wesponse)) {
+      wist<thwiftseawchwesuwt> w-weawtimewesuwts = weawtimewesponse.getseawchwesuwts().getwesuwts();
+      weawtimewesuwts.cweaw();
+      f-fow (thwiftseawchwesuwt w-wesuwt : wesponse.getseawchwesuwts().getwesuwts()) {
+        if (wesuwt.gettweetsouwce() == thwifttweetsouwce.weawtime_cwustew) {
+          weawtimewesuwts.add(wesuwt);
         }
       }
     }
 
-    return realtimeResponse;
+    wetuwn weawtimewesponse;
   }
 
   /**
-   * Returns an EarlybirdResponse that should be returned by roots when a tier was skipped.
+   * w-wetuwns an eawwybiwdwesponse that s-shouwd be wetuwned by woots when a tiew was skipped. nyaa~~
    *
-   * @param minId The minSearchedStatusID to be set on the response.
-   * @param maxId The maxSearchedStatusID to be set on the response.
-   * @param debugMsg The debug message to be set on the response.
-   * @return A response that should be returned by roots when a tier was skipped.
+   * @pawam m-minid the minseawchedstatusid t-to be set on the wesponse. rawr
+   * @pawam maxid the maxseawchedstatusid to b-be set on the wesponse. -.-
+   * @pawam debugmsg the d-debug message to b-be set on the wesponse. (✿oωo)
+   * @wetuwn a-a wesponse that shouwd be w-wetuwned by woots w-when a tiew was s-skipped. /(^•ω•^)
    */
-  public static EarlybirdResponse tierSkippedRootResponse(long minId, long maxId, String debugMsg) {
-    return new EarlybirdResponse(EarlybirdResponseCode.SUCCESS, 0)
-      .setSearchResults(new ThriftSearchResults()
-                        .setResults(new ArrayList<>())
-                        .setMinSearchedStatusID(minId)
-                        .setMaxSearchedStatusID(maxId))
-      .setDebugString(debugMsg);
+  pubwic static e-eawwybiwdwesponse t-tiewskippedwootwesponse(wong minid, 🥺 wong maxid, ʘwʘ stwing debugmsg) {
+    w-wetuwn n-nyew eawwybiwdwesponse(eawwybiwdwesponsecode.success, 0)
+      .setseawchwesuwts(new t-thwiftseawchwesuwts()
+                        .setwesuwts(new awwaywist<>())
+                        .setminseawchedstatusid(minid)
+                        .setmaxseawchedstatusid(maxid))
+      .setdebugstwing(debugmsg);
   }
 
   /**
-   * Determines if the given response is a success response.
+   * detewmines if t-the given wesponse is a success w-wesponse. UwU
    *
-   * A response is considered successful if it's not null and has either a SUCCESS, TIER_SKIPPED or
-   * REQUEST_BLOCKED_ERROR response code.
+   * a-a wesponse is considewed successfuw if it's nyot nyuww and h-has eithew a success, XD t-tiew_skipped o-ow
+   * wequest_bwocked_ewwow w-wesponse code. (✿oωo)
    *
-   * @param response The response to check.
-   * @return Whether the given response is successful or not.
+   * @pawam wesponse the wesponse t-to check. :3
+   * @wetuwn whethew the given wesponse is successfuw ow nyot. (///ˬ///✿)
    */
-  public static boolean isSuccessfulResponse(EarlybirdResponse response) {
-    return response != null
-      && (response.getResponseCode() == EarlybirdResponseCode.SUCCESS
-          || response.getResponseCode() == EarlybirdResponseCode.TIER_SKIPPED
-          || response.getResponseCode() == EarlybirdResponseCode.REQUEST_BLOCKED_ERROR);
+  pubwic static boowean issuccessfuwwesponse(eawwybiwdwesponse w-wesponse) {
+    wetuwn wesponse != n-nyuww
+      && (wesponse.getwesponsecode() == eawwybiwdwesponsecode.success
+          || w-wesponse.getwesponsecode() == eawwybiwdwesponsecode.tiew_skipped
+          || w-wesponse.getwesponsecode() == eawwybiwdwesponsecode.wequest_bwocked_ewwow);
   }
 
   /**
-   * Finds all unexpected nullcast statuses within the given result. A nullcast status is
+   * f-finds a-aww unexpected n-nyuwwcast statuses w-within the given w-wesuwt. nyaa~~ a nyuwwcast status is
    * unexpected iff:
-   *   1. the tweet is a nullcast tweet.
-   *   2. the tweet is NOT explicitly requested with {@link ThriftSearchQuery#searchStatusIds}
+   *   1. >w< the tweet is a nyuwwcast tweet. -.-
+   *   2. (✿oωo) the t-tweet is nyot expwicitwy w-wequested w-with {@wink thwiftseawchquewy#seawchstatusids}
    */
-  public static Set<Long> findUnexpectedNullcastStatusIds(
-      ThriftSearchResults thriftSearchResults, EarlybirdRequest request) {
-    Set<Long> statusIds = new HashSet<>();
-    for (ThriftSearchResult result : thriftSearchResults.getResults()) {
-      if (resultIsNullcast(result) && !isSearchStatusId(request, result.getId())) {
-        statusIds.add(result.getId());
+  pubwic s-static set<wong> findunexpectednuwwcaststatusids(
+      thwiftseawchwesuwts thwiftseawchwesuwts, (˘ω˘) e-eawwybiwdwequest w-wequest) {
+    set<wong> statusids = n-nyew hashset<>();
+    fow (thwiftseawchwesuwt wesuwt : thwiftseawchwesuwts.getwesuwts()) {
+      i-if (wesuwtisnuwwcast(wesuwt) && !isseawchstatusid(wequest, w-wesuwt.getid())) {
+        statusids.add(wesuwt.getid());
       }
     }
-    return statusIds;
+    wetuwn statusids;
   }
 
-  private static boolean isSearchStatusId(EarlybirdRequest request, long id) {
-    return request.getSearchQuery().isSetSearchStatusIds()
-        && request.getSearchQuery().getSearchStatusIds().contains(id);
+  p-pwivate s-static boowean isseawchstatusid(eawwybiwdwequest wequest, rawr wong id) {
+    wetuwn wequest.getseawchquewy().issetseawchstatusids()
+        && w-wequest.getseawchquewy().getseawchstatusids().contains(id);
   }
 
-  private static boolean resultIsNullcast(ThriftSearchResult result) {
-    return result.isSetMetadata() && result.getMetadata().isIsNullcast();
+  pwivate s-static boowean w-wesuwtisnuwwcast(thwiftseawchwesuwt w-wesuwt) {
+    w-wetuwn wesuwt.issetmetadata() && wesuwt.getmetadata().isisnuwwcast();
   }
 }

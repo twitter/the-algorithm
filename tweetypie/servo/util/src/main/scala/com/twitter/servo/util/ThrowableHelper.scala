@@ -1,41 +1,41 @@
-package com.twitter.servo.util
+package com.twittew.sewvo.utiw
 
-import com.twitter.util.Throwables
+impowt com.twittew.utiw.thwowabwes
 
 /**
- * An object with some helper methods for dealing with exceptions
- * (currently just classname cleanup)
+ * a-an object w-with some hewpew m-methods fow d-deawing with exceptions
+ * (cuwwentwy j-just cwassname c-cweanup)
  */
-object ThrowableHelper {
+o-object thwowabwehewpew {
 
   /**
-   * Returns a sanitized sequence of classname for the given Throwable
-   * including root causes.
+   * w-wetuwns a sanitized sequence of cwassname fow the given thwowabwe
+   * incwuding w-woot causes. >_<
    */
-  def sanitizeClassnameChain(t: Throwable): Seq[String] =
-    Throwables.mkString(t).map(classnameTransform(_))
+  def sanitizecwassnamechain(t: t-thwowabwe): seq[stwing] =
+    t-thwowabwes.mkstwing(t).map(cwassnametwansfowm(_))
 
   /**
-   * Returns a sanitized classname for the given Throwable.
+   * wetuwns a sanitized cwassname fow the given t-thwowabwe. >_<
    */
-  def sanitizeClassname(t: Throwable): String =
-    classnameTransform(t.getClass.getName)
+  def sanitizecwassname(t: t-thwowabwe): stwing =
+    c-cwassnametwansfowm(t.getcwass.getname)
 
   /**
-   * A function that applies a bunch of cleanup transformations to exception classnames
-   * (currently just 1, but there will likely be more!).
+   * a function that appwies a bunch of cweanup twansfowmations t-to exception cwassnames
+   * (cuwwentwy just 1, (⑅˘꒳˘) but thewe wiww wikewy be mowe!). /(^•ω•^)
    */
-  private val classnameTransform: String => String =
-    Memoize { stripSuffix("$Immutable").andThen(stripSuffix("$")) }
+  p-pwivate vaw cwassnametwansfowm: stwing => stwing =
+    m-memoize { s-stwipsuffix("$immutabwe").andthen(stwipsuffix("$")) }
 
   /**
-   * Generates a function that strips off the specified suffix from strings, if found.
+   * g-genewates a function t-that stwips off the specified suffix fwom s-stwings, rawr x3 if found.
    */
-  private def stripSuffix(suffix: String): String => String =
+  pwivate def stwipsuffix(suffix: s-stwing): stwing => stwing =
     s => {
-      if (s.endsWith(suffix))
-        s.substring(0, s.length - suffix.length)
-      else
-        s
+      if (s.endswith(suffix))
+        s.substwing(0, (U ﹏ U) s.wength - s-suffix.wength)
+      ewse
+        s-s
     }
 }

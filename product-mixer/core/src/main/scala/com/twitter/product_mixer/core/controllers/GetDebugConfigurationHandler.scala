@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.core.controllers
+package com.twittew.pwoduct_mixew.cowe.contwowwews
 
-import com.twitter.finagle.http.Request
-import com.twitter.scrooge.BinaryThriftStructSerializer
-import com.twitter.scrooge.ThriftMethod
-import com.twitter.scrooge.schema.ThriftDefinitions
-import com.twitter.scrooge.schema.scrooge.scala.CompiledScroogeDefBuilder
-import com.twitter.scrooge.schema.serialization.thrift.ReferenceResolver
-import com.twitter.scrooge.schema.serialization.thrift.ThriftDefinitionsSerializer
-import com.twitter.scrooge.schema.{thriftscala => THRIFT}
+impowt com.twittew.finagwe.http.wequest
+i-impowt c-com.twittew.scwooge.binawythwiftstwuctsewiawizew
+i-impowt com.twittew.scwooge.thwiftmethod
+i-impowt c-com.twittew.scwooge.schema.thwiftdefinitions
+impowt c-com.twittew.scwooge.schema.scwooge.scawa.compiwedscwoogedefbuiwdew
+i-impowt c-com.twittew.scwooge.schema.sewiawization.thwift.wefewencewesowvew
+impowt com.twittew.scwooge.schema.sewiawization.thwift.thwiftdefinitionssewiawizew
+impowt com.twittew.scwooge.schema.{thwiftscawa => thwift}
 
 /**
- * Endpoint to expose a Mixer's expected query configuration, including the request schema.
+ * endpoint t-to expose a mixew's expected quewy configuwation, (˘ω˘) i-incwuding the wequest schema. >_<
  *
- * @param debugEndpoint the debug Thrift endpoint. Passing [[None]] disables the query debugging
- *                      feature.
- * @tparam ServiceIface a thrift service containing the [[debugEndpoint]]
+ * @pawam d-debugendpoint the debug thwift endpoint. -.- passing [[none]] d-disabwes the quewy debugging
+ *                      f-featuwe. 🥺
+ * @tpawam s-sewviceiface a thwift sewvice containing the [[debugendpoint]]
  */
-case class GetDebugConfigurationHandler[ServiceIface](
-  thriftMethod: ThriftMethod
+case cwass getdebugconfiguwationhandwew[sewviceiface](
+  thwiftmethod: t-thwiftmethod
 )(
-  implicit val serviceIFace: Manifest[ServiceIface]) {
+  impwicit vaw sewviceiface: manifest[sewviceiface]) {
 
-  // We need to binary encode the service def because the underlying Thrift isn't sufficiently
-  // annotated to be serialized/deserialized by Jackson
-  private val serviceDef = {
-    val fullServiceDefinition: ThriftDefinitions.ServiceDef = CompiledScroogeDefBuilder
-      .build(serviceIFace).asInstanceOf[ThriftDefinitions.ServiceDef]
+  // we nyeed t-to binawy encode the sewvice def b-because the undewwying t-thwift isn't s-sufficientwy
+  // a-annotated to be sewiawized/desewiawized by jackson
+  pwivate v-vaw sewvicedef = {
+    vaw fuwwsewvicedefinition: thwiftdefinitions.sewvicedef = c-compiwedscwoogedefbuiwdew
+      .buiwd(sewviceiface).asinstanceof[thwiftdefinitions.sewvicedef]
 
-    val endpointDefinition: ThriftDefinitions.ServiceEndpointDef =
-      fullServiceDefinition.endpointsByName(thriftMethod.name)
+    vaw endpointdefinition: thwiftdefinitions.sewviceendpointdef =
+      fuwwsewvicedefinition.endpointsbyname(thwiftmethod.name)
 
-    // Create a service definition which just contains the debug endpoint. At a bare minimum, we need
-    // to give callers a way to identify the debug endpoint. Sending back all the endpoints is
-    // redundant.
-    val serviceDefinition: ThriftDefinitions.ServiceDef =
-      fullServiceDefinition.copy(endpoints = Seq(endpointDefinition))
+    // cweate a sewvice definition which just contains t-the debug endpoint. (U ﹏ U) at a bawe minimum, >w< w-we nyeed
+    // t-to give cawwews a-a way to identify the debug endpoint. mya sending back aww the e-endpoints is
+    // w-wedundant. >w<
+    vaw sewvicedefinition: t-thwiftdefinitions.sewvicedef =
+      f-fuwwsewvicedefinition.copy(endpoints = seq(endpointdefinition))
 
-    val thriftDefinitionsSerializer = {
-      // We don't make use of references but a reference resolver is required by the Scrooge API
-      val noopReferenceResolver: ReferenceResolver =
-        (_: THRIFT.ReferenceDef) => throw new Exception("no references")
+    v-vaw thwiftdefinitionssewiawizew = {
+      // we don't make u-use of wefewences but a wefewence wesowvew is wequiwed b-by the scwooge api
+      v-vaw nyoopwefewencewesowvew: wefewencewesowvew =
+        (_: t-thwift.wefewencedef) => t-thwow nyew exception("no wefewences")
 
-      new ThriftDefinitionsSerializer(noopReferenceResolver, enableReferences = false)
+      nyew thwiftdefinitionssewiawizew(noopwefewencewesowvew, nyaa~~ enabwewefewences = fawse)
     }
 
-    val thriftBinarySerializer = BinaryThriftStructSerializer.apply(THRIFT.Definition)
+    vaw thwiftbinawysewiawizew = binawythwiftstwuctsewiawizew.appwy(thwift.definition)
 
-    val serializedServiceDef = thriftDefinitionsSerializer(serviceDefinition)
+    v-vaw sewiawizedsewvicedef = t-thwiftdefinitionssewiawizew(sewvicedefinition)
 
-    thriftBinarySerializer.toBytes(serializedServiceDef)
+    thwiftbinawysewiawizew.tobytes(sewiawizedsewvicedef)
   }
 
-  def apply(request: Request): DebugConfigurationResponse =
-    DebugConfigurationResponse(thriftMethod.name, serviceDef)
+  d-def appwy(wequest: w-wequest): debugconfiguwationwesponse =
+    d-debugconfiguwationwesponse(thwiftmethod.name, sewvicedef)
 }
 
-case class DebugConfigurationResponse(
-  debugEndpointName: String,
-  serviceDefinition: Array[Byte])
+case cwass debugconfiguwationwesponse(
+  d-debugendpointname: stwing, (✿oωo)
+  sewvicedefinition: awway[byte])

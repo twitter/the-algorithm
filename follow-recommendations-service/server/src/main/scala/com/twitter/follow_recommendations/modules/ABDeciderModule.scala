@@ -1,31 +1,31 @@
-package com.twitter.follow_recommendations.modules
+package com.twittew.fowwow_wecommendations.moduwes
 
-import com.google.inject.Provides
-import com.google.inject.name.Named
-import com.twitter.abdecider.ABDeciderFactory
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.inject.TwitterModule
-import com.twitter.logging.LoggerFactory
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.googwe.inject.name.named
+i-impowt c-com.twittew.abdecidew.abdecidewfactowy
+i-impowt com.twittew.abdecidew.woggingabdecidew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.constants.guicenamedconstants
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt com.twittew.wogging.woggewfactowy
+impowt javax.inject.singweton
 
-object ABDeciderModule extends TwitterModule {
-  @Provides
-  @Singleton
-  def provideABDecider(
-    stats: StatsReceiver,
-    @Named(GuiceNamedConstants.CLIENT_EVENT_LOGGER) factory: LoggerFactory
-  ): LoggingABDecider = {
+object abdecidewmoduwe extends t-twittewmoduwe {
+  @pwovides
+  @singweton
+  def pwovideabdecidew(
+    s-stats: statsweceivew, XD
+    @named(guicenamedconstants.cwient_event_woggew) factowy: woggewfactowy
+  ): w-woggingabdecidew = {
 
-    val ymlPath = "/usr/local/config/abdecider/abdecider.yml"
+    vaw ymwpath = "/usw/wocaw/config/abdecidew/abdecidew.ymw"
 
-    val abDeciderFactory = ABDeciderFactory(
-      abDeciderYmlPath = ymlPath,
-      scribeLogger = Some(factory()),
-      environment = Some("production")
+    vaw abdecidewfactowy = abdecidewfactowy(
+      a-abdecidewymwpath = ymwpath, :3
+      s-scwibewoggew = s-some(factowy()), 😳😳😳
+      enviwonment = some("pwoduction")
     )
 
-    abDeciderFactory.buildWithLogging()
+    abdecidewfactowy.buiwdwithwogging()
   }
 }

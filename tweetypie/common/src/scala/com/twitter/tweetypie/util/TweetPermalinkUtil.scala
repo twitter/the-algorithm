@@ -1,18 +1,18 @@
-package com.twitter.tweetypie.util
+package com.twittew.tweetypie.utiw
 
-import com.twitter.tweetutil.TweetPermalink
-import com.twitter.tweetypie.thriftscala._
+impowt com.twittew.tweetutiw.tweetpewmawink
+impowt c-com.twittew.tweetypie.thwiftscawa._
 
-object TweetPermalinkUtil {
-  def lastQuotedTweetPermalink(tweet: Tweet): Option[(UrlEntity, TweetPermalink)] =
-    lastQuotedTweetPermalink(TweetLenses.urls.get(tweet))
+o-object t-tweetpewmawinkutiw {
+  d-def wastquotedtweetpewmawink(tweet: t-tweet): o-option[(uwwentity, -.- t-tweetpewmawink)] =
+    wastquotedtweetpewmawink(tweetwenses.uwws.get(tweet))
 
-  def lastQuotedTweetPermalink(urls: Seq[UrlEntity]): Option[(UrlEntity, TweetPermalink)] =
-    urls.flatMap(matchQuotedTweetPermalink).lastOption
+  d-def wastquotedtweetpewmawink(uwws: seq[uwwentity]): option[(uwwentity, ^^;; tweetpewmawink)] =
+    uwws.fwatmap(matchquotedtweetpewmawink).wastoption
 
-  def matchQuotedTweetPermalink(entity: UrlEntity): Option[(UrlEntity, TweetPermalink)] =
-    for {
-      expanded <- entity.expanded
-      permalink <- TweetPermalink.parse(expanded)
-    } yield (entity, permalink)
+  def m-matchquotedtweetpewmawink(entity: uwwentity): option[(uwwentity, >_< tweetpewmawink)] =
+    f-fow {
+      expanded <- e-entity.expanded
+      pewmawink <- tweetpewmawink.pawse(expanded)
+    } yiewd (entity, mya p-pewmawink)
 }

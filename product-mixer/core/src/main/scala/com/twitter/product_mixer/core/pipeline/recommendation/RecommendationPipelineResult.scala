@@ -1,84 +1,84 @@
-package com.twitter.product_mixer.core.pipeline.recommendation
+package com.twittew.pwoduct_mixew.cowe.pipewine.wecommendation
 
-import com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineResult
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutorResults
-import com.twitter.product_mixer.core.service.candidate_decorator_executor.CandidateDecoratorExecutorResult
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutorResult
-import com.twitter.product_mixer.core.service.candidate_pipeline_executor.CandidatePipelineExecutorResult
-import com.twitter.product_mixer.core.service.domain_marshaller_executor.DomainMarshallerExecutor
-import com.twitter.product_mixer.core.service.filter_executor.FilterExecutorResult
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutorResult
-import com.twitter.product_mixer.core.service.pipeline_result_side_effect_executor.PipelineResultSideEffectExecutor
-import com.twitter.product_mixer.core.service.quality_factor_executor.QualityFactorExecutorResult
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.scoring_pipeline_executor.ScoringPipelineExecutorResult
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutorResult
-import com.twitter.product_mixer.core.service.transport_marshaller_executor.TransportMarshallerExecutor
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.asyncfeatuwemap.asyncfeatuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.hasmawshawwing
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinewesuwt
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.async_featuwe_map_executow.asyncfeatuwemapexecutowwesuwts
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_decowatow_executow.candidatedecowatowexecutowwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_featuwe_hydwatow_executow.candidatefeatuwehydwatowexecutowwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_pipewine_executow.candidatepipewineexecutowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.domain_mawshawwew_executow.domainmawshawwewexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.fiwtew_executow.fiwtewexecutowwesuwt
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow.gateexecutowwesuwt
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_wesuwt_side_effect_executow.pipewinewesuwtsideeffectexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.quawity_factow_executow.quawityfactowexecutowwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.quewy_featuwe_hydwatow_executow.quewyfeatuwehydwatowexecutow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.scowing_pipewine_executow.scowingpipewineexecutowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.sewectow_executow.sewectowexecutowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.twanspowt_mawshawwew_executow.twanspowtmawshawwewexecutow
 
-case class RecommendationPipelineResult[Candidate <: UniversalNoun[Any], ResultType](
-  qualityFactorResult: Option[QualityFactorExecutorResult],
-  gateResult: Option[GateExecutorResult],
-  queryFeatures: Option[QueryFeatureHydratorExecutor.Result],
-  queryFeaturesPhase2: Option[QueryFeatureHydratorExecutor.Result],
-  mergedAsyncQueryFeatures: Option[AsyncFeatureMap],
-  candidatePipelineResults: Option[CandidatePipelineExecutorResult],
-  dependentCandidatePipelineResults: Option[CandidatePipelineExecutorResult],
-  postCandidatePipelinesSelectorResults: Option[SelectorExecutorResult],
-  postCandidatePipelinesFeatureHydrationResults: Option[
-    CandidateFeatureHydratorExecutorResult[Candidate]
-  ],
-  globalFilterResults: Option[FilterExecutorResult[Candidate]],
-  scoringPipelineResults: Option[ScoringPipelineExecutorResult[Candidate]],
-  resultSelectorResults: Option[SelectorExecutorResult],
-  postSelectionFilterResults: Option[FilterExecutorResult[Candidate]],
-  candidateDecoratorResult: Option[CandidateDecoratorExecutorResult],
-  domainMarshallerResults: Option[DomainMarshallerExecutor.Result[HasMarshalling]],
-  resultSideEffectResults: Option[PipelineResultSideEffectExecutor.Result],
-  asyncFeatureHydrationResults: Option[AsyncFeatureMapExecutorResults],
-  transportMarshallerResults: Option[TransportMarshallerExecutor.Result[ResultType]],
-  failure: Option[PipelineFailure],
-  result: Option[ResultType])
-    extends PipelineResult[ResultType] {
-  override val resultSize: Int = result match {
-    case Some(seqResult @ Seq(_)) => seqResult.length
-    case Some(_) => 1
-    case None => 0
+case cwass wecommendationpipewinewesuwt[candidate <: univewsawnoun[any], (U ﹏ U) wesuwttype](
+  quawityfactowwesuwt: o-option[quawityfactowexecutowwesuwt],
+  gatewesuwt: option[gateexecutowwesuwt], 😳
+  quewyfeatuwes: option[quewyfeatuwehydwatowexecutow.wesuwt], (ˆ ﻌ ˆ)♡
+  q-quewyfeatuwesphase2: option[quewyfeatuwehydwatowexecutow.wesuwt], 😳😳😳
+  m-mewgedasyncquewyfeatuwes: o-option[asyncfeatuwemap], (U ﹏ U)
+  c-candidatepipewinewesuwts: option[candidatepipewineexecutowwesuwt], (///ˬ///✿)
+  d-dependentcandidatepipewinewesuwts: option[candidatepipewineexecutowwesuwt], 😳
+  postcandidatepipewinessewectowwesuwts: option[sewectowexecutowwesuwt], 😳
+  p-postcandidatepipewinesfeatuwehydwationwesuwts: option[
+    candidatefeatuwehydwatowexecutowwesuwt[candidate]
+  ], σωσ
+  gwobawfiwtewwesuwts: o-option[fiwtewexecutowwesuwt[candidate]], rawr x3
+  scowingpipewinewesuwts: option[scowingpipewineexecutowwesuwt[candidate]], OwO
+  wesuwtsewectowwesuwts: option[sewectowexecutowwesuwt], /(^•ω•^)
+  postsewectionfiwtewwesuwts: o-option[fiwtewexecutowwesuwt[candidate]], 😳😳😳
+  candidatedecowatowwesuwt: o-option[candidatedecowatowexecutowwesuwt], ( ͡o ω ͡o )
+  d-domainmawshawwewwesuwts: o-option[domainmawshawwewexecutow.wesuwt[hasmawshawwing]], >_<
+  wesuwtsideeffectwesuwts: option[pipewinewesuwtsideeffectexecutow.wesuwt], >w<
+  asyncfeatuwehydwationwesuwts: o-option[asyncfeatuwemapexecutowwesuwts], rawr
+  twanspowtmawshawwewwesuwts: o-option[twanspowtmawshawwewexecutow.wesuwt[wesuwttype]], 😳
+  faiwuwe: option[pipewinefaiwuwe], >w<
+  w-wesuwt: o-option[wesuwttype])
+    extends p-pipewinewesuwt[wesuwttype] {
+  ovewwide vaw wesuwtsize: i-int = wesuwt match {
+    case some(seqwesuwt @ s-seq(_)) => seqwesuwt.wength
+    c-case some(_) => 1
+    case n-nyone => 0
   }
 
-  override def withFailure(
-    failure: PipelineFailure
-  ): RecommendationPipelineResult[Candidate, ResultType] =
-    copy(failure = Some(failure))
-  override def withResult(result: ResultType): RecommendationPipelineResult[Candidate, ResultType] =
-    copy(result = Some(result))
+  o-ovewwide def withfaiwuwe(
+    faiwuwe: pipewinefaiwuwe
+  ): wecommendationpipewinewesuwt[candidate, (⑅˘꒳˘) wesuwttype] =
+    copy(faiwuwe = some(faiwuwe))
+  o-ovewwide d-def withwesuwt(wesuwt: wesuwttype): w-wecommendationpipewinewesuwt[candidate, OwO w-wesuwttype] =
+    c-copy(wesuwt = some(wesuwt))
 }
 
-object RecommendationPipelineResult {
-  def empty[A <: UniversalNoun[Any], B]: RecommendationPipelineResult[A, B] =
-    RecommendationPipelineResult(
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None
+object wecommendationpipewinewesuwt {
+  def empty[a <: u-univewsawnoun[any], b]: wecommendationpipewinewesuwt[a, (ꈍᴗꈍ) b] =
+    wecommendationpipewinewesuwt(
+      nyone, 😳
+      n-nyone, 😳😳😳
+      nyone, mya
+      n-nyone, mya
+      n-nyone, (⑅˘꒳˘)
+      nyone,
+      n-nyone, (U ﹏ U)
+      nyone, mya
+      n-nyone, ʘwʘ
+      n-nyone, (˘ω˘)
+      nyone, (U ﹏ U)
+      n-nyone, ^•ﻌ•^
+      n-nyone, (˘ω˘)
+      nyone, :3
+      nyone,
+      n-nyone, ^^;;
+      nyone, 🥺
+      n-nyone, (⑅˘꒳˘)
+      n-nyone, nyaa~~
+      n-nyone
     )
 }

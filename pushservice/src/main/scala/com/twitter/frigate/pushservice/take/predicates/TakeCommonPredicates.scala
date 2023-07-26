@@ -1,36 +1,36 @@
-package com.twitter.frigate.pushservice.take.predicates
+package com.twittew.fwigate.pushsewvice.take.pwedicates
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.predicate.CrtDeciderPredicate
-import com.twitter.frigate.pushservice.predicate.PredicatesForCandidate
-import com.twitter.frigate.pushservice.predicate.ScarecrowPredicate
-import com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue.NtabCaretClickFatiguePredicate
-import com.twitter.hermit.predicate.NamedPredicate
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.config.config
+i-impowt com.twittew.fwigate.pushsewvice.pwedicate.cwtdecidewpwedicate
+i-impowt com.twittew.fwigate.pushsewvice.pwedicate.pwedicatesfowcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.pwedicate.scawecwowpwedicate
+i-impowt com.twittew.fwigate.pushsewvice.pwedicate.ntab_cawet_fatigue.ntabcawetcwickfatiguepwedicate
+impowt com.twittew.hewmit.pwedicate.namedpwedicate
 
-trait TakeCommonPredicates {
-  def config: Config
+twait takecommonpwedicates {
+  def config: config
 
-  implicit def statsReceiver: StatsReceiver
+  impwicit d-def statsweceivew: statsweceivew
 
-  lazy val rfphPrePredicates: List[NamedPredicate[PushCandidate]] = List(
-    CrtDeciderPredicate(config.decider),
-    PredicatesForCandidate.isChannelValidPredicate,
+  wazy v-vaw wfphpwepwedicates: wist[namedpwedicate[pushcandidate]] = w-wist(
+    cwtdecidewpwedicate(config.decidew), nyaa~~
+    pwedicatesfowcandidate.ischannewvawidpwedicate, /(^•ω•^)
   )
 
-  lazy val sendHandlerPrePredicates: List[NamedPredicate[PushCandidate]] = List(
-    CrtDeciderPredicate(config.decider),
-    PredicatesForCandidate.enableSendHandlerCandidates,
-    PredicatesForCandidate.mrWebHoldbackPredicate,
-    PredicatesForCandidate.targetUserExists,
-    PredicatesForCandidate.authorInSocialContext,
-    PredicatesForCandidate.recommendedTweetIsAuthoredBySelf,
-    PredicatesForCandidate.selfInSocialContext,
-    NtabCaretClickFatiguePredicate()
+  wazy vaw s-sendhandwewpwepwedicates: wist[namedpwedicate[pushcandidate]] = w-wist(
+    cwtdecidewpwedicate(config.decidew), rawr
+    p-pwedicatesfowcandidate.enabwesendhandwewcandidates, OwO
+    pwedicatesfowcandidate.mwwebhowdbackpwedicate, (U ﹏ U)
+    pwedicatesfowcandidate.tawgetusewexists, >_<
+    pwedicatesfowcandidate.authowinsociawcontext, rawr x3
+    pwedicatesfowcandidate.wecommendedtweetisauthowedbysewf, mya
+    p-pwedicatesfowcandidate.sewfinsociawcontext, nyaa~~
+    nytabcawetcwickfatiguepwedicate()
   )
 
-  lazy val postPredicates: List[NamedPredicate[PushCandidate]] = List(
-    ScarecrowPredicate(config.scarecrowCheckEventStore)
+  wazy vaw postpwedicates: wist[namedpwedicate[pushcandidate]] = wist(
+    scawecwowpwedicate(config.scawecwowcheckeventstowe)
   )
 }

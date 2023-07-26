@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.media
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.media.AspectRatio
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.render.{thriftscala => urt}
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.media.aspectwatio
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
 
-@Singleton
-class AspectRatioMarshaller @Inject() () {
+@singweton
+cwass a-aspectwatiomawshawwew @inject() () {
 
-  def apply(aspectRatio: AspectRatio): urt.AspectRatio = urt.AspectRatio(
-    numerator = aspectRatio.numerator,
-    denominator = aspectRatio.denominator
+  def appwy(aspectwatio: aspectwatio): uwt.aspectwatio = u-uwt.aspectwatio(
+    nyumewatow = aspectwatio.numewatow, :3
+    d-denominatow = aspectwatio.denominatow
   )
 }

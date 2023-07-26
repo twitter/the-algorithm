@@ -1,49 +1,49 @@
-package com.twitter.simclusters_v2.hdfs_sources
+package com.twittew.simcwustews_v2.hdfs_souwces
 
-object DataPaths {
+object datapaths {
 
-  val InterestedIn2020Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_interested_in_20M_145K_2020"
+  v-vaw intewestedin2020path =
+    "/usew/cassowawy/manhattan_sequence_fiwes/simcwustews_v2_intewested_in_20m_145k_2020"
 
-  val InterestedIn2020ThriftPath =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_interested_in_20M_145K_2020_thrift"
+  v-vaw i-intewestedin2020thwiftpath =
+    "/usew/cassowawy/manhattan_sequence_fiwes/simcwustews_v2_intewested_in_20m_145k_2020_thwift"
 
-  val InterestedInLite2020Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_interested_in_lite_20M_145K_2020"
+  v-vaw intewestedinwite2020path =
+    "/usew/cassowawy/manhattan_sequence_fiwes/simcwustews_v2_intewested_in_wite_20m_145k_2020"
 
-  val InterestedInLite2020ThriftPath =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_interested_in_lite_20M_145K_2020_thrift"
+  v-vaw intewestedinwite2020thwiftpath =
+    "/usew/cassowawy/manhattan_sequence_fiwes/simcwustews_v2_intewested_in_wite_20m_145k_2020_thwift"
 
-  val KnownFor2020Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_known_for_20M_145K_2020"
+  v-vaw knownfow2020path =
+    "/usew/cassowawy/manhattan_sequence_fiwes/simcwustews_v2_known_fow_20m_145k_2020"
 
-  // keep this inside /user/cassowary/manhattan_sequence_files/ to use the latest 3 retention policy
-  val KnownFor2020ThriftDatasetPath =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_known_for_20M_145K_2020_thrift"
+  // k-keep this inside /usew/cassowawy/manhattan_sequence_fiwes/ t-to use the watest 3 wetention powicy
+  vaw knownfow2020thwiftdatasetpath =
+    "/usew/cassowawy/manhattan_sequence_fiwes/simcwustews_v2_known_fow_20m_145k_2020_thwift"
 
-  val OfflineClusterTopMediaTweets2020DatasetPath =
-    "/user/cassowary/manhattan_sequence_files/cluster_top_media_tweets_20M_145K_2020"
+  vaw offwinecwustewtopmediatweets2020datasetpath =
+    "/usew/cassowawy/manhattan_sequence_fiwes/cwustew_top_media_tweets_20m_145k_2020"
 }
 
 /**
- * These should only be accessed from simclusters_v2 data pipeline for intermediate data, these
- * are not opt-out compliant and shouldn't be exposed externally.
+ * these s-shouwd onwy be accessed fwom simcwustews_v2 data p-pipewine fow intewmediate data, OwO t-these
+ * awe nyot opt-out compwiant and shouwdn't be exposed e-extewnawwy. (U ﹏ U)
  */
-object InternalDataPaths {
-  // Internal versions, not to be read or written outside of simcluster_v2
+object intewnawdatapaths {
+  // i-intewnaw vewsions, >_< n-nyot to be wead ow wwitten outside of simcwustew_v2
 
-  private[simclusters_v2] val RawInterestedIn2020Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_raw_interested_in_20M_145K_2020"
+  pwivate[simcwustews_v2] vaw wawintewestedin2020path =
+    "/usew/cassowawy/manhattan_sequence_fiwes/simcwustews_v2_waw_intewested_in_20m_145k_2020"
 
-  private[simclusters_v2] val RawInterestedInLite2020Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_raw_interested_in_lite_20M_145K_2020"
+  p-pwivate[simcwustews_v2] vaw wawintewestedinwite2020path =
+    "/usew/cassowawy/manhattan_sequence_fiwes/simcwustews_v2_waw_intewested_in_wite_20m_145k_2020"
 
-  private[simclusters_v2] val RawKnownForDec11Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_raw_known_for_20M_145K_dec11"
+  pwivate[simcwustews_v2] vaw wawknownfowdec11path =
+    "/usew/cassowawy/manhattan_sequence_fiwes/simcwustews_v2_waw_known_fow_20m_145k_dec11"
 
-  private[simclusters_v2] val RawKnownForUpdatedPath =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_raw_known_for_20M_145K_updated"
+  pwivate[simcwustews_v2] v-vaw wawknownfowupdatedpath =
+    "/usew/cassowawy/manhattan_sequence_fiwes/simcwustews_v2_waw_known_fow_20m_145k_updated"
 
-  private[simclusters_v2] val RawKnownFor2020Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_raw_known_for_20M_145K_2020"
+  pwivate[simcwustews_v2] v-vaw wawknownfow2020path =
+    "/usew/cassowawy/manhattan_sequence_fiwes/simcwustews_v2_waw_known_fow_20m_145k_2020"
 }

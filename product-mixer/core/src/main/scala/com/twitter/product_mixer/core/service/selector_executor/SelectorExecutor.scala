@@ -1,105 +1,105 @@
-package com.twitter.product_mixer.core.service.selector_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.sewectow_executow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.SelectorIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.stitch.Arrow
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.sewectowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.iwwegawstatefaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+impowt com.twittew.stitch.awwow
 
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
 /**
- * Applies a `Seq[Selector]` in sequential order.
- * Returns the results, and also a detailed list each selector's results (for debugging / understandability).
+ * appwies a `seq[sewectow]` i-in sequentiaw owdew. mya
+ * w-wetuwns the wesuwts, ʘwʘ and awso a detaiwed wist each sewectow's w-wesuwts (fow debugging / undewstandabiwity). (˘ω˘)
  */
-@Singleton
-class SelectorExecutor @Inject() (override val statsReceiver: StatsReceiver) extends Executor {
-  def arrow[Query <: PipelineQuery](
-    selectors: Seq[Selector[Query]],
-    context: Executor.Context
-  ): Arrow[SelectorExecutor.Inputs[Query], SelectorExecutorResult] = {
+@singweton
+c-cwass s-sewectowexecutow @inject() (ovewwide vaw statsweceivew: statsweceivew) extends executow {
+  def a-awwow[quewy <: pipewinequewy](
+    sewectows: seq[sewectow[quewy]], (U ﹏ U)
+    context: e-executow.context
+  ): awwow[sewectowexecutow.inputs[quewy], ^•ﻌ•^ sewectowexecutowwesuwt] = {
 
-    if (selectors.isEmpty) {
-      throw PipelineFailure(
-        IllegalStateFailure,
-        "Must provide a non-empty Seq of Selectors. Check the config indicated by the componentStack and ensure that a non-empty Selector Seq is provided.",
-        componentStack = Some(context.componentStack)
+    i-if (sewectows.isempty) {
+      thwow p-pipewinefaiwuwe(
+        i-iwwegawstatefaiwuwe, (˘ω˘)
+        "must p-pwovide a nyon-empty seq of sewectows. check the c-config indicated by the componentstack and ensuwe t-that a nyon-empty sewectow seq is pwovided.", :3
+        componentstack = some(context.componentstack)
       )
     }
 
-    val selectorArrows =
-      selectors.zipWithIndex.foldLeft(Arrow.identity[(Query, IndexedSeq[SelectorResult])]) {
-        case (previousSelectorArrows, (selector, index)) =>
-          val selectorResult = getIndividualSelectorIsoArrow(selector, index, context)
-          previousSelectorArrows.andThen(selectorResult)
+    vaw sewectowawwows =
+      s-sewectows.zipwithindex.fowdweft(awwow.identity[(quewy, ^^;; indexedseq[sewectowwesuwt])]) {
+        c-case (pwevioussewectowawwows, 🥺 (sewectow, i-index)) =>
+          v-vaw sewectowwesuwt = getindividuawsewectowisoawwow(sewectow, (⑅˘꒳˘) index, context)
+          pwevioussewectowawwows.andthen(sewectowwesuwt)
       }
 
-    Arrow
-      .zipWithArg(
-        Arrow
-          .map[SelectorExecutor.Inputs[Query], (Query, IndexedSeq[SelectorResult])] {
-            case SelectorExecutor.Inputs(query, candidates) =>
-              (query, IndexedSeq(SelectorResult(candidates, Seq.empty)))
-          }.andThen(selectorArrows)).map {
-        case (inputs, (_, selectorResults)) =>
-          // the last results, safe because it's always non-empty since it starts with 1 element in it
-          val SelectorResult(remainingCandidates, result) = selectorResults.last
+    a-awwow
+      .zipwithawg(
+        a-awwow
+          .map[sewectowexecutow.inputs[quewy], nyaa~~ (quewy, indexedseq[sewectowwesuwt])] {
+            case s-sewectowexecutow.inputs(quewy, :3 c-candidates) =>
+              (quewy, ( ͡o ω ͡o ) indexedseq(sewectowwesuwt(candidates, mya s-seq.empty)))
+          }.andthen(sewectowawwows)).map {
+        case (inputs, (///ˬ///✿) (_, s-sewectowwesuwts)) =>
+          // the wast wesuwts, (˘ω˘) safe because i-it's awways nyon-empty since it s-stawts with 1 ewement in it
+          v-vaw sewectowwesuwt(wemainingcandidates, ^^;; wesuwt) = s-sewectowwesuwts.wast
 
-          val resultsAndRemainingCandidates =
-            (result.iterator ++ remainingCandidates.iterator).toSet
+          vaw wesuwtsandwemainingcandidates =
+            (wesuwt.itewatow ++ wemainingcandidates.itewatow).toset
 
-          // the droppedCandidates are all the candidates which are in neither the result or remainingCandidates
-          val droppedCandidates = inputs.candidatesWithDetails.iterator
-            .filterNot(resultsAndRemainingCandidates.contains)
-            .toIndexedSeq
+          // the dwoppedcandidates awe aww the candidates which awe in nyeithew t-the wesuwt ow w-wemainingcandidates
+          vaw d-dwoppedcandidates = i-inputs.candidateswithdetaiws.itewatow
+            .fiwtewnot(wesuwtsandwemainingcandidates.contains)
+            .toindexedseq
 
-          SelectorExecutorResult(
-            selectedCandidates = result,
-            remainingCandidates = remainingCandidates,
-            droppedCandidates = droppedCandidates,
-            individualSelectorResults =
-              selectorResults.tail // `.tail` to remove the initial state we had
+          s-sewectowexecutowwesuwt(
+            sewectedcandidates = wesuwt, (✿oωo)
+            wemainingcandidates = w-wemainingcandidates, (U ﹏ U)
+            dwoppedcandidates = dwoppedcandidates, -.-
+            individuawsewectowwesuwts =
+              sewectowwesuwts.taiw // `.taiw` t-to wemove the initiaw state we h-had
           )
       }
   }
 
-  private def getIndividualSelectorIsoArrow[Query <: PipelineQuery](
-    selector: Selector[Query],
-    index: Int,
-    context: Executor.Context
-  ): Arrow.Iso[(Query, IndexedSeq[SelectorResult])] = {
-    val identifier = SelectorIdentifier(selector.getClass.getSimpleName, index)
+  pwivate d-def getindividuawsewectowisoawwow[quewy <: p-pipewinequewy](
+    sewectow: s-sewectow[quewy], ^•ﻌ•^
+    i-index: int, rawr
+    c-context: executow.context
+  ): a-awwow.iso[(quewy, (˘ω˘) indexedseq[sewectowwesuwt])] = {
+    vaw identifiew = s-sewectowidentifiew(sewectow.getcwass.getsimpwename, nyaa~~ i-index)
 
-    val arrow = Arrow
-      .identity[(Query, IndexedSeq[SelectorResult])]
+    vaw a-awwow = awwow
+      .identity[(quewy, i-indexedseq[sewectowwesuwt])]
       .map {
-        case (query, previousResults) =>
-          // last is safe here because we pass in a non-empty IndexedSeq
-          val previousResult = previousResults.last
-          val currentResult = selector.apply(
-            query,
-            previousResult.remainingCandidates,
-            previousResult.result
+        c-case (quewy, UwU pweviouswesuwts) =>
+          // wast is safe hewe because w-we pass in a nyon-empty indexedseq
+          vaw pweviouswesuwt = pweviouswesuwts.wast
+          vaw cuwwentwesuwt = s-sewectow.appwy(
+            quewy, :3
+            pweviouswesuwt.wemainingcandidates, (⑅˘꒳˘)
+            pweviouswesuwt.wesuwt
           )
-          (query, previousResults :+ currentResult)
+          (quewy, (///ˬ///✿) p-pweviouswesuwts :+ c-cuwwentwesuwt)
       }
 
-    wrapComponentsWithTracingOnly(context, identifier)(
-      wrapWithErrorHandling(context, identifier)(
-        arrow
+    w-wwapcomponentswithtwacingonwy(context, ^^;; identifiew)(
+      w-wwapwithewwowhandwing(context, >_< identifiew)(
+        a-awwow
       )
     )
   }
 }
 
-object SelectorExecutor {
-  case class Inputs[Query <: PipelineQuery](
-    query: Query,
-    candidatesWithDetails: Seq[CandidateWithDetails])
+o-object sewectowexecutow {
+  case cwass inputs[quewy <: pipewinequewy](
+    quewy: quewy, rawr x3
+    candidateswithdetaiws: s-seq[candidatewithdetaiws])
 }

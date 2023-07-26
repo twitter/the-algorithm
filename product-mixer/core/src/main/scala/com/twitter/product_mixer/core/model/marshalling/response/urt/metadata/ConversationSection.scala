@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata
 
-sealed trait ConversationSection
+seawed twait convewsationsection
 
-case object HighQuality extends ConversationSection
-case object LowQuality extends ConversationSection
-case object AbusiveQuality extends ConversationSection
-case object RelatedTweet extends ConversationSection
+c-case object highquawity e-extends c-convewsationsection
+c-case object w-wowquawity extends c-convewsationsection
+c-case object a-abusivequawity extends convewsationsection
+case object wewatedtweet extends convewsationsection

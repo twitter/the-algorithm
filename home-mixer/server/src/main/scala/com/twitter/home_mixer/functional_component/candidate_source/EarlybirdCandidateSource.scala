@@ -1,44 +1,44 @@
-package com.twitter.home_mixer.functional_component.candidate_source
+package com.twittew.home_mixew.functionaw_component.candidate_souwce
 
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.search.earlybird.{thriftscala => t}
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwcewithextwactedfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidateswithsouwcefeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt c-com.twittew.seawch.eawwybiwd.{thwiftscawa => t}
+impowt com.twittew.stitch.stitch
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-case object EarlybirdResponseTruncatedFeature
-    extends FeatureWithDefaultOnFailure[t.EarlybirdRequest, Boolean] {
-  override val defaultValue: Boolean = false
+case o-object eawwybiwdwesponsetwuncatedfeatuwe
+    extends featuwewithdefauwtonfaiwuwe[t.eawwybiwdwequest, (///ˬ///✿) boowean] {
+  o-ovewwide vaw defauwtvawue: b-boowean = fawse
 }
 
-case object EarlybirdBottomTweetFeature
-    extends FeatureWithDefaultOnFailure[t.EarlybirdRequest, Option[Long]] {
-  override val defaultValue: Option[Long] = None
+case object eawwybiwdbottomtweetfeatuwe
+    extends featuwewithdefauwtonfaiwuwe[t.eawwybiwdwequest, 😳😳😳 option[wong]] {
+  o-ovewwide vaw defauwtvawue: o-option[wong] = n-nyone
 }
 
-@Singleton
-case class EarlybirdCandidateSource @Inject() (
-  earlybird: t.EarlybirdService.MethodPerEndpoint)
-    extends CandidateSourceWithExtractedFeatures[t.EarlybirdRequest, t.ThriftSearchResult] {
+@singweton
+case cwass eawwybiwdcandidatesouwce @inject() (
+  eawwybiwd: t.eawwybiwdsewvice.methodpewendpoint)
+    e-extends candidatesouwcewithextwactedfeatuwes[t.eawwybiwdwequest, 🥺 t.thwiftseawchwesuwt] {
 
-  override val identifier = CandidateSourceIdentifier("Earlybird")
+  ovewwide vaw identifiew = candidatesouwceidentifiew("eawwybiwd")
 
-  override def apply(
-    request: t.EarlybirdRequest
-  ): Stitch[CandidatesWithSourceFeatures[t.ThriftSearchResult]] = {
-    Stitch.callFuture(earlybird.search(request)).map { response =>
-      val candidates = response.searchResults.map(_.results).getOrElse(Seq.empty)
+  o-ovewwide def appwy(
+    w-wequest: t.eawwybiwdwequest
+  ): s-stitch[candidateswithsouwcefeatuwes[t.thwiftseawchwesuwt]] = {
+    s-stitch.cawwfutuwe(eawwybiwd.seawch(wequest)).map { w-wesponse =>
+      vaw candidates = wesponse.seawchwesuwts.map(_.wesuwts).getowewse(seq.empty)
 
-      val features = FeatureMapBuilder()
-        .add(EarlybirdResponseTruncatedFeature, candidates.size == request.searchQuery.numResults)
-        .add(EarlybirdBottomTweetFeature, candidates.lastOption.map(_.id))
-        .build()
+      v-vaw featuwes = featuwemapbuiwdew()
+        .add(eawwybiwdwesponsetwuncatedfeatuwe, mya candidates.size == w-wequest.seawchquewy.numwesuwts)
+        .add(eawwybiwdbottomtweetfeatuwe, 🥺 candidates.wastoption.map(_.id))
+        .buiwd()
 
-      CandidatesWithSourceFeatures(candidates, features)
+      candidateswithsouwcefeatuwes(candidates, featuwes)
     }
   }
 }

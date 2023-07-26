@@ -1,39 +1,39 @@
-package com.twitter.search.earlybird.config;
+package com.twittew.seawch.eawwybiwd.config;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+impowt j-java.utiw.awwaywist;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.set;
 
-import javax.inject.Inject;
+i-impowt javax.inject.inject;
 
-import com.twitter.search.common.util.zookeeper.ZooKeeperProxy;
+i-impowt com.twittew.seawch.common.utiw.zookeepew.zookeepewpwoxy;
 
-public class TierInfoSource {
-  private final ZooKeeperProxy zkClient;
+p-pubwic cwass t-tiewinfosouwce {
+  pwivate finaw zookeepewpwoxy zkcwient;
 
-  @Inject
-  public TierInfoSource(ZooKeeperProxy sZooKeeperClient) {
-    this.zkClient = sZooKeeperClient;
+  @inject
+  pubwic t-tiewinfosouwce(zookeepewpwoxy szookeepewcwient) {
+    this.zkcwient = s-szookeepewcwient;
   }
 
-  public List<TierInfo> getTierInformation() {
-    return getTierInfoWithPrefix("tier");
+  pubwic wist<tiewinfo> g-gettiewinfowmation() {
+    wetuwn gettiewinfowithpwefix("tiew");
   }
 
-  public String getConfigFileType() {
-    return TierConfig.getConfigFileName();
+  pubwic stwing getconfigfiwetype() {
+    w-wetuwn tiewconfig.getconfigfiwename();
   }
 
-  private List<TierInfo> getTierInfoWithPrefix(String tierPrefix) {
-    Set<String> tierNames = TierConfig.getTierNames();
-    List<TierInfo> tierInfos = new ArrayList<>();
-    for (String name : tierNames) {
-      if (name.startsWith(tierPrefix)) {
-        TierInfo tierInfo = TierConfig.getTierInfo(name);
-        tierInfos.add(tierInfo);
+  pwivate wist<tiewinfo> g-gettiewinfowithpwefix(stwing t-tiewpwefix) {
+    set<stwing> tiewnames = tiewconfig.gettiewnames();
+    wist<tiewinfo> tiewinfos = n-nyew awwaywist<>();
+    fow (stwing nyame : tiewnames) {
+      if (name.stawtswith(tiewpwefix)) {
+        t-tiewinfo tiewinfo = tiewconfig.gettiewinfo(name);
+        tiewinfos.add(tiewinfo);
       }
     }
-    return tierInfos;
+    w-wetuwn t-tiewinfos;
   }
 
 }

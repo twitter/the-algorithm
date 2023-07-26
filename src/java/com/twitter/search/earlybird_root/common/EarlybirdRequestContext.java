@@ -1,227 +1,227 @@
-package com.twitter.search.earlybird_root.common;
+package com.twittew.seawch.eawwybiwd_woot.common;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+impowt java.utiw.awwaywist;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.set;
 
-import javax.annotation.Nullable;
+i-impowt j-javax.annotation.nuwwabwe;
 
-import scala.Option;
+impowt s-scawa.option;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+i-impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.immutabweset;
+impowt com.googwe.common.cowwect.sets;
 
-import com.twitter.common.util.Clock;
-import com.twitter.context.thriftscala.Viewer;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchemaSpecifier;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
+impowt com.twittew.common.utiw.cwock;
+impowt com.twittew.context.thwiftscawa.viewew;
+i-impowt com.twittew.seawch.common.decidew.seawchdecidew;
+impowt com.twittew.seawch.common.featuwes.thwift.thwiftseawchfeatuweschemaspecifiew;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchquewy;
+impowt com.twittew.seawch.quewypawsew.quewy.quewy;
+impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
 
 /**
- * A class that wraps a request and additional per-request data that should be passed to services.
+ * a-a cwass that wwaps a wequest a-and additionaw pew-wequest d-data that shouwd be passed to sewvices. (✿oωo)
  *
- * This class should be immutable. At the very least, it must be thread-safe. In practice, since
- * EarlybirdRequest is a mutable Thrift structure, the users of this class need to make sure that
- * once a request is used to create a RequestContext instance, it is not modified.
+ * this cwass shouwd be immutabwe. (˘ω˘) a-at the vewy weast, rawr it must be thwead-safe. OwO in pwactice, since
+ * eawwybiwdwequest i-is a mutabwe thwift stwuctuwe, ^•ﻌ•^ t-the usews o-of this cwass n-nyeed to make s-suwe that
+ * once a wequest is used to cweate a w-wequestcontext instance, UwU it is nyot modified. (˘ω˘)
  *
- * If the request needs to be modified, a new RequestContext with the modified EarlybirdRequest
- * should be created.
+ * i-if the wequest nyeeds to be modified, (///ˬ///✿) a nyew wequestcontext with the modified eawwybiwdwequest
+ * s-shouwd be cweated. σωσ
  */
-public final class EarlybirdRequestContext {
+pubwic f-finaw cwass e-eawwybiwdwequestcontext {
 
-  private static final String OVERRIDE_TIER_CONFIGS_DECIDER_KEY = "use_override_tier_configs";
+  p-pwivate static finaw stwing ovewwide_tiew_configs_decidew_key = "use_ovewwide_tiew_configs";
 
   /**
-   * Creates a new context with the provided earlybird request, and using the given decider.
+   * cweates a n-nyew context with t-the pwovided eawwybiwd wequest, /(^•ω•^) a-and using the g-given decidew. 😳
    */
-  public static EarlybirdRequestContext newContext(
-      EarlybirdRequest request,
-      SearchDecider decider,
-      Option<Viewer> twitterContextViewer,
-      Clock clock) throws QueryParserException {
+  pubwic static e-eawwybiwdwequestcontext nyewcontext(
+      e-eawwybiwdwequest wequest, 😳
+      seawchdecidew decidew, (⑅˘꒳˘)
+      o-option<viewew> twittewcontextviewew, 😳😳😳
+      c-cwock cwock) thwows quewypawsewexception {
 
-    // Try to capture created time as early as possible. For example, we want to account for query
-    // parsing time.
-    long createdTimeMillis = clock.nowMillis();
+    // t-twy to c-captuwe cweated time as eawwy as possibwe. 😳 fow exampwe, XD we want to account fow quewy
+    // pawsing time. mya
+    w-wong cweatedtimemiwwis = c-cwock.nowmiwwis();
 
-    boolean useOverrideTierConfig = decider.isAvailable(OVERRIDE_TIER_CONFIGS_DECIDER_KEY);
+    boowean useovewwidetiewconfig = d-decidew.isavaiwabwe(ovewwide_tiew_configs_decidew_key);
 
-    Query parsedQuery = QueryParsingUtils.getParsedQuery(request);
+    q-quewy p-pawsedquewy = quewypawsingutiws.getpawsedquewy(wequest);
 
-    return new EarlybirdRequestContext(
-        request,
-        parsedQuery,
-        useOverrideTierConfig,
-        createdTimeMillis,
-        twitterContextViewer);
+    wetuwn nyew eawwybiwdwequestcontext(
+        wequest, ^•ﻌ•^
+        pawsedquewy, ʘwʘ
+        u-useovewwidetiewconfig,
+        cweatedtimemiwwis, ( ͡o ω ͡o )
+        twittewcontextviewew);
   }
 
   /**
-   * Intersection of the userID and the flock response, which is set in the followedUserIds field.
-   * This is used for protected cluster.
+   * intewsection of the usewid and the fwock wesponse, mya w-which is set in the fowwowedusewids f-fiewd. o.O
+   * t-this is u-used fow pwotected cwustew. (✿oωo)
    */
-  public static EarlybirdRequestContext newContextWithRestrictFromUserIdFilter64(
-      EarlybirdRequestContext requestContext) {
-    Preconditions.checkArgument(requestContext.getRequest().isSetFollowedUserIds());
+  p-pubwic static e-eawwybiwdwequestcontext n-nyewcontextwithwestwictfwomusewidfiwtew64(
+      e-eawwybiwdwequestcontext wequestcontext) {
+    pweconditions.checkawgument(wequestcontext.getwequest().issetfowwowedusewids());
 
-    EarlybirdRequest request = requestContext.getRequest().deepCopy();
-    List<Long> toIntersect = request.getFollowedUserIds();
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
-    if (!searchQuery.isSetFromUserIDFilter64()) {
-      searchQuery.setFromUserIDFilter64(new ArrayList<>(toIntersect));
-    } else {
-      Set<Long> intersection = Sets.intersection(
-          Sets.newHashSet(searchQuery.getFromUserIDFilter64()),
-          Sets.newHashSet(toIntersect));
-      searchQuery.setFromUserIDFilter64(new ArrayList<>(intersection));
+    e-eawwybiwdwequest w-wequest = wequestcontext.getwequest().deepcopy();
+    w-wist<wong> t-tointewsect = w-wequest.getfowwowedusewids();
+    thwiftseawchquewy seawchquewy = wequest.getseawchquewy();
+    i-if (!seawchquewy.issetfwomusewidfiwtew64()) {
+      seawchquewy.setfwomusewidfiwtew64(new awwaywist<>(tointewsect));
+    } ewse {
+      set<wong> intewsection = s-sets.intewsection(
+          sets.newhashset(seawchquewy.getfwomusewidfiwtew64()), :3
+          sets.newhashset(tointewsect));
+      seawchquewy.setfwomusewidfiwtew64(new a-awwaywist<>(intewsection));
     }
 
-    return new EarlybirdRequestContext(requestContext, request, requestContext.getParsedQuery());
+    w-wetuwn new eawwybiwdwequestcontext(wequestcontext, 😳 w-wequest, (U ﹏ U) wequestcontext.getpawsedquewy());
   }
 
   /**
-   * Makes an exact copy of the provided request context, by cloning the underlying earlybird
-   * request.
+   * makes a-an exact copy of the pwovided w-wequest context, mya b-by cwoning the undewwying eawwybiwd
+   * wequest. (U ᵕ U❁)
    */
-  public static EarlybirdRequestContext copyRequestContext(
-      EarlybirdRequestContext requestContext,
-      Query parsedQuery) {
-    return new EarlybirdRequestContext(requestContext, parsedQuery);
+  pubwic static eawwybiwdwequestcontext copywequestcontext(
+      e-eawwybiwdwequestcontext wequestcontext, :3
+      q-quewy pawsedquewy) {
+    w-wetuwn nyew e-eawwybiwdwequestcontext(wequestcontext, mya pawsedquewy);
   }
 
   /**
-   * Creates a new context with the provided request, context and reset both the feature schemas
-   * cached in client and the feature schemas cached in the local cache.
+   * cweates a n-nyew context with t-the pwovided wequest, OwO context a-and weset both the f-featuwe schemas
+   * cached in cwient and the featuwe schemas cached in the wocaw c-cache. (ˆ ﻌ ˆ)♡
    */
-  public static EarlybirdRequestContext newContext(
-      EarlybirdRequest oldRequest,
-      EarlybirdRequestContext oldRequestContext,
-      List<ThriftSearchFeatureSchemaSpecifier> featureSchemasAvailableInCache,
-      List<ThriftSearchFeatureSchemaSpecifier> featureSchemasAvailableInClient) {
-    EarlybirdRequest request = oldRequest.deepCopy();
-    request.getSearchQuery().getResultMetadataOptions()
-        .setFeatureSchemasAvailableInClient(featureSchemasAvailableInCache);
+  p-pubwic static e-eawwybiwdwequestcontext nyewcontext(
+      e-eawwybiwdwequest o-owdwequest, ʘwʘ
+      eawwybiwdwequestcontext o-owdwequestcontext, o.O
+      wist<thwiftseawchfeatuweschemaspecifiew> featuweschemasavaiwabweincache, UwU
+      wist<thwiftseawchfeatuweschemaspecifiew> featuweschemasavaiwabweincwient) {
+    e-eawwybiwdwequest w-wequest = owdwequest.deepcopy();
+    wequest.getseawchquewy().getwesuwtmetadataoptions()
+        .setfeatuweschemasavaiwabweincwient(featuweschemasavaiwabweincache);
 
-    ImmutableSet<ThriftSearchFeatureSchemaSpecifier> featureSchemaSetAvailableInClient = null;
-    if (featureSchemasAvailableInClient != null) {
-      featureSchemaSetAvailableInClient = ImmutableSet.copyOf(featureSchemasAvailableInClient);
+    immutabweset<thwiftseawchfeatuweschemaspecifiew> f-featuweschemasetavaiwabweincwient = n-nyuww;
+    if (featuweschemasavaiwabweincwient != nyuww) {
+      featuweschemasetavaiwabweincwient = immutabweset.copyof(featuweschemasavaiwabweincwient);
     }
 
-    return new EarlybirdRequestContext(
-        request,
-        EarlybirdRequestType.of(request),
-        oldRequestContext.getParsedQuery(),
-        oldRequestContext.useOverrideTierConfig(),
-        oldRequestContext.getCreatedTimeMillis(),
-        oldRequestContext.getTwitterContextViewer(),
-        featureSchemaSetAvailableInClient);
+    w-wetuwn nyew eawwybiwdwequestcontext(
+        wequest, rawr x3
+        eawwybiwdwequesttype.of(wequest), 🥺
+        owdwequestcontext.getpawsedquewy(), :3
+        owdwequestcontext.useovewwidetiewconfig(), (ꈍᴗꈍ)
+        o-owdwequestcontext.getcweatedtimemiwwis(), 🥺
+        owdwequestcontext.gettwittewcontextviewew(), (✿oωo)
+        featuweschemasetavaiwabweincwient);
   }
 
-  public EarlybirdRequestContext deepCopy() {
-    return new EarlybirdRequestContext(request.deepCopy(), parsedQuery, useOverrideTierConfig,
-        createdTimeMillis, twitterContextViewer);
+  p-pubwic eawwybiwdwequestcontext deepcopy() {
+    w-wetuwn nyew eawwybiwdwequestcontext(wequest.deepcopy(), (U ﹏ U) pawsedquewy, useovewwidetiewconfig, :3
+        cweatedtimemiwwis, ^^;; t-twittewcontextviewew);
   }
 
-  private final EarlybirdRequest request;
-  // EarlybirdRequestType should not change for a given request. Computing it once here so that we
-  // don't need to compute it from the request every time we want to use it.
-  private final EarlybirdRequestType earlybirdRequestType;
-  // The parsed query matching the serialized query in the request. May be null if the request does
-  // not contain a serialized query.
-  // If a request's serialized query needs to be rewritten for any reason, a new
-  // EarlybirdRequestContext should be created, with a new EarlybirdRequest (with a new serialized
-  // query), and a new parsed query (matching the new serialized query).
-  @Nullable
-  private final Query parsedQuery;
-  private final boolean useOverrideTierConfig;
-  private final long createdTimeMillis;
-  private final Option<Viewer> twitterContextViewer;
+  p-pwivate finaw eawwybiwdwequest wequest;
+  // eawwybiwdwequesttype s-shouwd not change fow a given w-wequest. computing it once hewe so that we
+  // don't nyeed t-to compute it fwom the wequest e-evewy time we want t-to use it. rawr
+  pwivate finaw eawwybiwdwequesttype e-eawwybiwdwequesttype;
+  // the p-pawsed quewy matching t-the sewiawized q-quewy in the wequest. 😳😳😳 may b-be nyuww if the w-wequest does
+  // nyot contain a sewiawized quewy. (✿oωo)
+  // i-if a wequest's s-sewiawized q-quewy nyeeds to be wewwitten fow any weason, OwO a-a new
+  // eawwybiwdwequestcontext shouwd be cweated, ʘwʘ w-with a nyew e-eawwybiwdwequest (with a nyew sewiawized
+  // quewy), (ˆ ﻌ ˆ)♡ and a nyew p-pawsed quewy (matching t-the nyew s-sewiawized quewy). (U ﹏ U)
+  @nuwwabwe
+  p-pwivate finaw quewy pawsedquewy;
+  p-pwivate finaw boowean useovewwidetiewconfig;
+  pwivate finaw wong cweatedtimemiwwis;
+  pwivate finaw option<viewew> t-twittewcontextviewew;
 
-  @Nullable
-  private final ImmutableSet<ThriftSearchFeatureSchemaSpecifier> featureSchemasAvailableInClient;
+  @nuwwabwe
+  pwivate finaw immutabweset<thwiftseawchfeatuweschemaspecifiew> featuweschemasavaiwabweincwient;
 
-  private EarlybirdRequestContext(
-      EarlybirdRequest request,
-      Query parsedQuery,
-      boolean useOverrideTierConfig,
-      long createdTimeMillis,
-      Option<Viewer> twitterContextViewer) {
-    this(request,
-        EarlybirdRequestType.of(request),
-        parsedQuery,
-        useOverrideTierConfig,
-        createdTimeMillis,
-        twitterContextViewer,
-        null);
+  p-pwivate eawwybiwdwequestcontext(
+      eawwybiwdwequest w-wequest, UwU
+      quewy p-pawsedquewy, XD
+      boowean useovewwidetiewconfig, ʘwʘ
+      w-wong cweatedtimemiwwis, rawr x3
+      o-option<viewew> t-twittewcontextviewew) {
+    t-this(wequest, ^^;;
+        e-eawwybiwdwequesttype.of(wequest), ʘwʘ
+        pawsedquewy, (U ﹏ U)
+        useovewwidetiewconfig, (˘ω˘)
+        cweatedtimemiwwis, (ꈍᴗꈍ)
+        twittewcontextviewew, /(^•ω•^)
+        nyuww);
   }
 
-  private EarlybirdRequestContext(
-      EarlybirdRequest request,
-      EarlybirdRequestType earlybirdRequestType,
-      Query parsedQuery,
-      boolean useOverrideTierConfig,
-      long createdTimeMillis,
-      Option<Viewer> twitterContextViewer,
-      @Nullable ImmutableSet<ThriftSearchFeatureSchemaSpecifier> featureSchemasAvailableInClient) {
-    this.request = Preconditions.checkNotNull(request);
-    this.earlybirdRequestType = earlybirdRequestType;
-    this.parsedQuery = parsedQuery;
-    this.useOverrideTierConfig = useOverrideTierConfig;
-    this.createdTimeMillis = createdTimeMillis;
-    this.twitterContextViewer = twitterContextViewer;
-    this.featureSchemasAvailableInClient = featureSchemasAvailableInClient;
+  pwivate e-eawwybiwdwequestcontext(
+      e-eawwybiwdwequest w-wequest,
+      eawwybiwdwequesttype e-eawwybiwdwequesttype, >_<
+      quewy pawsedquewy, σωσ
+      boowean useovewwidetiewconfig, ^^;;
+      w-wong cweatedtimemiwwis, 😳
+      o-option<viewew> twittewcontextviewew, >_<
+      @nuwwabwe i-immutabweset<thwiftseawchfeatuweschemaspecifiew> featuweschemasavaiwabweincwient) {
+    this.wequest = p-pweconditions.checknotnuww(wequest);
+    t-this.eawwybiwdwequesttype = eawwybiwdwequesttype;
+    t-this.pawsedquewy = pawsedquewy;
+    t-this.useovewwidetiewconfig = useovewwidetiewconfig;
+    this.cweatedtimemiwwis = cweatedtimemiwwis;
+    this.twittewcontextviewew = t-twittewcontextviewew;
+    t-this.featuweschemasavaiwabweincwient = f-featuweschemasavaiwabweincwient;
   }
 
-  private EarlybirdRequestContext(EarlybirdRequestContext otherContext, Query otherParsedQuery) {
-    this(otherContext, otherContext.getRequest().deepCopy(), otherParsedQuery);
+  p-pwivate e-eawwybiwdwequestcontext(eawwybiwdwequestcontext othewcontext, -.- q-quewy othewpawsedquewy) {
+    t-this(othewcontext, UwU othewcontext.getwequest().deepcopy(), :3 o-othewpawsedquewy);
   }
 
-  private EarlybirdRequestContext(EarlybirdRequestContext otherContext,
-                                  EarlybirdRequest otherRequest,
-                                  Query otherParsedQuery) {
-    this(otherRequest,
-        otherContext.earlybirdRequestType,
-        otherParsedQuery,
-        otherContext.useOverrideTierConfig,
-        otherContext.createdTimeMillis,
-        otherContext.twitterContextViewer,
-        null);
+  p-pwivate eawwybiwdwequestcontext(eawwybiwdwequestcontext othewcontext, σωσ
+                                  e-eawwybiwdwequest othewwequest, >w<
+                                  quewy o-othewpawsedquewy) {
+    this(othewwequest, (ˆ ﻌ ˆ)♡
+        o-othewcontext.eawwybiwdwequesttype, ʘwʘ
+        o-othewpawsedquewy, :3
+        othewcontext.useovewwidetiewconfig, (˘ω˘)
+        o-othewcontext.cweatedtimemiwwis, 😳😳😳
+        othewcontext.twittewcontextviewew,
+        nyuww);
 
-    Preconditions.checkState(request.isSetSearchQuery());
-    this.request.getSearchQuery().setSerializedQuery(otherParsedQuery.serialize());
+    pweconditions.checkstate(wequest.issetseawchquewy());
+    t-this.wequest.getseawchquewy().setsewiawizedquewy(othewpawsedquewy.sewiawize());
   }
 
-  public EarlybirdRequest getRequest() {
-    return request;
+  p-pubwic eawwybiwdwequest g-getwequest() {
+    wetuwn wequest;
   }
 
-  public boolean useOverrideTierConfig() {
-    return useOverrideTierConfig;
+  pubwic boowean useovewwidetiewconfig() {
+    w-wetuwn useovewwidetiewconfig;
   }
 
-  public EarlybirdRequestType getEarlybirdRequestType() {
-    return earlybirdRequestType;
+  pubwic eawwybiwdwequesttype g-geteawwybiwdwequesttype() {
+    w-wetuwn eawwybiwdwequesttype;
   }
 
-  @Nullable
-  public Query getParsedQuery() {
-    return parsedQuery;
+  @nuwwabwe
+  pubwic quewy g-getpawsedquewy() {
+    wetuwn p-pawsedquewy;
   }
 
-  public long getCreatedTimeMillis() {
-    return createdTimeMillis;
+  p-pubwic wong getcweatedtimemiwwis() {
+    wetuwn cweatedtimemiwwis;
   }
 
-  public Option<Viewer> getTwitterContextViewer() {
-    return twitterContextViewer;
+  p-pubwic option<viewew> gettwittewcontextviewew() {
+    wetuwn twittewcontextviewew;
   }
 
-  @Nullable
-  public Set<ThriftSearchFeatureSchemaSpecifier> getFeatureSchemasAvailableInClient() {
-    return featureSchemasAvailableInClient;
+  @nuwwabwe
+  p-pubwic set<thwiftseawchfeatuweschemaspecifiew> g-getfeatuweschemasavaiwabweincwient() {
+    wetuwn featuweschemasavaiwabweincwient;
   }
 }

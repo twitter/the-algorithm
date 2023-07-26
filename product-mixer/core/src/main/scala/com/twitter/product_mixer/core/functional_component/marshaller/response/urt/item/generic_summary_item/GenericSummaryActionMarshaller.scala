@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.generic_summary_item
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.genewic_summawy_item
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.GenericSummaryAction
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.cwienteventinfomawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.uwwmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.genewic_summawy.genewicsummawyaction
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class GenericSummaryActionMarshaller @Inject() (
-  urlMarshaller: UrlMarshaller,
-  clientEventInfoMarshaller: ClientEventInfoMarshaller) {
+@singweton
+cwass genewicsummawyactionmawshawwew @inject() (
+  uwwmawshawwew: uwwmawshawwew, (U ᵕ U❁)
+  c-cwienteventinfomawshawwew: cwienteventinfomawshawwew) {
 
-  def apply(genericSummaryItemAction: GenericSummaryAction): urt.GenericSummaryAction =
-    urt.GenericSummaryAction(
-      url = urlMarshaller(genericSummaryItemAction.url),
-      clientEventInfo = genericSummaryItemAction.clientEventInfo.map(clientEventInfoMarshaller(_))
+  def appwy(genewicsummawyitemaction: g-genewicsummawyaction): uwt.genewicsummawyaction =
+    u-uwt.genewicsummawyaction(
+      uww = uwwmawshawwew(genewicsummawyitemaction.uww), -.-
+      cwienteventinfo = genewicsummawyitemaction.cwienteventinfo.map(cwienteventinfomawshawwew(_))
     )
 }

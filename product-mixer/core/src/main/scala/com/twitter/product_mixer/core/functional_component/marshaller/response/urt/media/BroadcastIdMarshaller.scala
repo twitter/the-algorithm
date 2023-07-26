@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.media
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.media.BroadcastId
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.media.bwoadcastid
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class BroadcastIdMarshaller @Inject() () {
+@singweton
+cwass b-bwoadcastidmawshawwew @inject() () {
 
-  def apply(broadcastId: BroadcastId): urt.BroadcastId = urt.BroadcastId(
-    id = broadcastId.id
+  d-def a-appwy(bwoadcastid: bwoadcastid): uwt.bwoadcastid = uwt.bwoadcastid(
+    id = bwoadcastid.id
   )
 }

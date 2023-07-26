@@ -1,43 +1,43 @@
-package com.twitter.product_mixer.core.pipeline.step.gate
+package com.twittew.pwoduct_mixew.cowe.pipewine.step.gate
 
-import com.twitter.product_mixer.core.functional_component.gate.BaseGate
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.basegate
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hasquewy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.step.step
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow.gateexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow.gateexecutowwesuwt
+impowt com.twittew.stitch.awwow
+impowt javax.inject.inject
 
 /**
- * A gate step, it takes the query and the given gates and executes them. Gates do not update state
- * if they return continue, and throw an exception if any gate says stopped, thus no state changes
- * are expected in this step. The [[NewPipelineArrowBuilder]] and [[PipelineStep]] handle short
- * circuiting the pipeline's execution if this throws.
+ * a gate s-step, /(^•ω•^) it takes the quewy and the given gates and e-exekawaii~s them. nyaa~~ gates do nyot u-update state
+ * if they wetuwn continue, and thwow an exception i-if any gate says stopped, nyaa~~ thus n-no state changes
+ * a-awe expected in this step. :3 the [[newpipewineawwowbuiwdew]] and [[pipewinestep]] handwe showt
+ * ciwcuiting the pipewine's execution i-if this thwows. 😳😳😳
  *
- * @param gateExecutor Gate Executor for executing the gates
- * @tparam Query Type of PipelineQuery domain model
- * @tparam State The pipeline state domain model.
+ * @pawam gateexecutow gate executow fow executing the g-gates
+ * @tpawam quewy type of p-pipewinequewy domain m-modew
+ * @tpawam s-state the p-pipewine state domain modew. (˘ω˘)
  */
-case class GateStep[Query <: PipelineQuery, State <: HasQuery[Query, State]] @Inject() (
-  gateExecutor: GateExecutor)
-    extends Step[State, Seq[BaseGate[Query]], Query, GateExecutorResult] {
+case cwass gatestep[quewy <: pipewinequewy, ^^ s-state <: hasquewy[quewy, :3 state]] @inject() (
+  g-gateexecutow: gateexecutow)
+    extends step[state, -.- seq[basegate[quewy]], 😳 quewy, gateexecutowwesuwt] {
 
-  override def adaptInput(state: State, config: Seq[BaseGate[Query]]): Query = state.query
+  o-ovewwide def adaptinput(state: s-state, mya config: s-seq[basegate[quewy]]): q-quewy = state.quewy
 
-  override def arrow(
-    config: Seq[BaseGate[Query]],
-    context: Executor.Context
-  ): Arrow[Query, GateExecutorResult] = gateExecutor.arrow(config, context)
+  ovewwide def awwow(
+    config: s-seq[basegate[quewy]], (˘ω˘)
+    c-context: executow.context
+  ): a-awwow[quewy, >_< g-gateexecutowwesuwt] = gateexecutow.awwow(config, -.- context)
 
-  // Gate Executor is a noop, if it continues, the state isn't changed. If it stops the world,
-  // an exception gets thrown.
-  override def updateState(
-    input: State,
-    executorResult: GateExecutorResult,
-    config: Seq[BaseGate[Query]]
-  ): State = input
+  // g-gate executow is a nyoop, 🥺 i-if it continues, (U ﹏ U) the state isn't changed. >w< if i-it stops the wowwd, mya
+  // an exception g-gets thwown. >w<
+  ovewwide def u-updatestate(
+    i-input: state, nyaa~~
+    executowwesuwt: gateexecutowwesuwt, (✿oωo)
+    config: seq[basegate[quewy]]
+  ): state = input
 
-  override def isEmpty(config: Seq[BaseGate[Query]]): Boolean = config.isEmpty
+  ovewwide def isempty(config: s-seq[basegate[quewy]]): b-boowean = config.isempty
 }

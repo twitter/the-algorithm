@@ -1,304 +1,304 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+package com.twittew.fowwow_wecommendations.fwows.post_nux_mw
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.EnrichedCandidateSource._
-import com.twitter.follow_recommendations.common.base._
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.follow_recommendations.common.predicates.dismiss.DismissedCandidatePredicate
-import com.twitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicate
-import com.twitter.follow_recommendations.common.transforms.ranker_id.RandomRankerIdTransform
-import com.twitter.follow_recommendations.common.predicates.sgs.InvalidTargetCandidateRelationshipTypesPredicate
-import com.twitter.follow_recommendations.common.predicates.sgs.RecentFollowingPredicate
-import com.twitter.follow_recommendations.common.predicates.CandidateParamPredicate
-import com.twitter.follow_recommendations.common.predicates.CandidateSourceParamPredicate
-import com.twitter.follow_recommendations.common.predicates.CuratedCompetitorListPredicate
-import com.twitter.follow_recommendations.common.predicates.ExcludedUserIdPredicate
-import com.twitter.follow_recommendations.common.predicates.InactivePredicate
-import com.twitter.follow_recommendations.common.predicates.PreviouslyRecommendedUserIdsPredicate
-import com.twitter.follow_recommendations.common.predicates.user_activity.NonNearZeroUserActivityPredicate
-import com.twitter.follow_recommendations.common.transforms.dedup.DedupTransform
-import com.twitter.follow_recommendations.common.transforms.modify_social_proof.ModifySocialProofTransform
-import com.twitter.follow_recommendations.common.transforms.tracking_token.TrackingTokenTransform
-import com.twitter.follow_recommendations.common.transforms.weighted_sampling.SamplingTransform
-import com.twitter.follow_recommendations.configapi.candidates.CandidateUserParamsFactory
-import com.twitter.follow_recommendations.configapi.params.GlobalParams
-import com.twitter.follow_recommendations.configapi.params.GlobalParams.EnableGFSSocialProofTransform
-import com.twitter.follow_recommendations.utils.CandidateSourceHoldbackUtil
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Duration
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fowwow_wecommendations.common.base.enwichedcandidatesouwce._
+i-impowt c-com.twittew.fowwow_wecommendations.common.base._
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+impowt com.twittew.fowwow_wecommendations.common.modews.fiwtewweason
+impowt com.twittew.fowwow_wecommendations.common.pwedicates.dismiss.dismissedcandidatepwedicate
+impowt c-com.twittew.fowwow_wecommendations.common.pwedicates.gizmoduck.gizmoduckpwedicate
+impowt com.twittew.fowwow_wecommendations.common.twansfowms.wankew_id.wandomwankewidtwansfowm
+impowt com.twittew.fowwow_wecommendations.common.pwedicates.sgs.invawidtawgetcandidatewewationshiptypespwedicate
+i-impowt com.twittew.fowwow_wecommendations.common.pwedicates.sgs.wecentfowwowingpwedicate
+impowt c-com.twittew.fowwow_wecommendations.common.pwedicates.candidatepawampwedicate
+impowt com.twittew.fowwow_wecommendations.common.pwedicates.candidatesouwcepawampwedicate
+impowt com.twittew.fowwow_wecommendations.common.pwedicates.cuwatedcompetitowwistpwedicate
+i-impowt com.twittew.fowwow_wecommendations.common.pwedicates.excwudedusewidpwedicate
+impowt c-com.twittew.fowwow_wecommendations.common.pwedicates.inactivepwedicate
+i-impowt com.twittew.fowwow_wecommendations.common.pwedicates.pweviouswywecommendedusewidspwedicate
+impowt com.twittew.fowwow_wecommendations.common.pwedicates.usew_activity.nonneawzewousewactivitypwedicate
+impowt com.twittew.fowwow_wecommendations.common.twansfowms.dedup.deduptwansfowm
+impowt com.twittew.fowwow_wecommendations.common.twansfowms.modify_sociaw_pwoof.modifysociawpwooftwansfowm
+i-impowt com.twittew.fowwow_wecommendations.common.twansfowms.twacking_token.twackingtokentwansfowm
+impowt com.twittew.fowwow_wecommendations.common.twansfowms.weighted_sampwing.sampwingtwansfowm
+impowt com.twittew.fowwow_wecommendations.configapi.candidates.candidateusewpawamsfactowy
+impowt com.twittew.fowwow_wecommendations.configapi.pawams.gwobawpawams
+i-impowt com.twittew.fowwow_wecommendations.configapi.pawams.gwobawpawams.enabwegfssociawpwooftwansfowm
+impowt c-com.twittew.fowwow_wecommendations.utiws.candidatesouwcehowdbackutiw
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.timewines.configapi.pawams
+impowt c-com.twittew.utiw.duwation
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
-import com.twitter.follow_recommendations.common.predicates.hss.HssPredicate
-import com.twitter.follow_recommendations.common.predicates.sgs.InvalidRelationshipPredicate
-import com.twitter.follow_recommendations.common.transforms.modify_social_proof.RemoveAccountProofTransform
-import com.twitter.follow_recommendations.logging.FrsLogger
-import com.twitter.follow_recommendations.models.RecommendationFlowData
-import com.twitter.follow_recommendations.utils.RecommendationFlowBaseSideEffectsUtil
-import com.twitter.product_mixer.core.model.common.identifier.RecommendationPipelineIdentifier
-import com.twitter.product_mixer.core.quality_factor.BoundsWithDefault
-import com.twitter.product_mixer.core.quality_factor.LinearLatencyQualityFactor
-import com.twitter.product_mixer.core.quality_factor.LinearLatencyQualityFactorConfig
-import com.twitter.product_mixer.core.quality_factor.LinearLatencyQualityFactorObserver
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.stitch.Stitch
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
+impowt com.twittew.fowwow_wecommendations.common.cwients.sociawgwaph.sociawgwaphcwient
+impowt com.twittew.fowwow_wecommendations.common.pwedicates.hss.hsspwedicate
+impowt com.twittew.fowwow_wecommendations.common.pwedicates.sgs.invawidwewationshippwedicate
+impowt com.twittew.fowwow_wecommendations.common.twansfowms.modify_sociaw_pwoof.wemoveaccountpwooftwansfowm
+i-impowt com.twittew.fowwow_wecommendations.wogging.fwswoggew
+impowt c-com.twittew.fowwow_wecommendations.modews.wecommendationfwowdata
+i-impowt com.twittew.fowwow_wecommendations.utiws.wecommendationfwowbasesideeffectsutiw
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.wecommendationpipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.boundswithdefauwt
+i-impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.wineawwatencyquawityfactow
+i-impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.wineawwatencyquawityfactowconfig
+impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.wineawwatencyquawityfactowobsewvew
+impowt c-com.twittew.pwoduct_mixew.cowe.quawity_factow.quawityfactowobsewvew
+i-impowt com.twittew.stitch.stitch
 
 /**
- * We use this flow for all post-nux display locations that would use a machine-learning-based-ranker
- * eg HTL, Sidebar, etc
- * Note that the RankedPostNuxFlow is used primarily for scribing/data collection, and doesn't
- * incorporate all of the other components in a flow (candidate source generation, predicates etc)
+ * w-we use this fwow fow aww post-nux d-dispway wocations that wouwd use a machine-weawning-based-wankew
+ * e-eg htw, 😳😳😳 sidebaw, etc
+ * n-nyote that the wankedpostnuxfwow i-is used pwimawiwy f-fow scwibing/data cowwection, (✿oωo) and doesn't
+ * incowpowate aww of the othew components in a fwow (candidate souwce g-genewation, OwO p-pwedicates etc)
  */
-@Singleton
-class PostNuxMlFlow @Inject() (
-  postNuxMlCandidateSourceRegistry: PostNuxMlCandidateSourceRegistry,
-  postNuxMlCombinedRankerBuilder: PostNuxMlCombinedRankerBuilder[PostNuxMlRequest],
-  curatedCompetitorListPredicate: CuratedCompetitorListPredicate,
-  gizmoduckPredicate: GizmoduckPredicate,
-  sgsPredicate: InvalidTargetCandidateRelationshipTypesPredicate,
-  hssPredicate: HssPredicate,
-  invalidRelationshipPredicate: InvalidRelationshipPredicate,
-  recentFollowingPredicate: RecentFollowingPredicate,
-  nonNearZeroUserActivityPredicate: NonNearZeroUserActivityPredicate,
-  inactivePredicate: InactivePredicate,
-  dismissedCandidatePredicate: DismissedCandidatePredicate,
-  previouslyRecommendedUserIdsPredicate: PreviouslyRecommendedUserIdsPredicate,
-  modifySocialProofTransform: ModifySocialProofTransform,
-  removeAccountProofTransform: RemoveAccountProofTransform,
-  trackingTokenTransform: TrackingTokenTransform,
-  randomRankerIdTransform: RandomRankerIdTransform,
-  candidateParamsFactory: CandidateUserParamsFactory[PostNuxMlRequest],
-  samplingTransform: SamplingTransform,
-  frsLogger: FrsLogger,
-  baseStatsReceiver: StatsReceiver)
-    extends RecommendationFlow[PostNuxMlRequest, CandidateUser]
-    with RecommendationFlowBaseSideEffectsUtil[PostNuxMlRequest, CandidateUser]
-    with CandidateSourceHoldbackUtil {
-  override protected val targetEligibility: Predicate[PostNuxMlRequest] =
-    new ParamPredicate[PostNuxMlRequest](PostNuxMlParams.TargetEligibility)
+@singweton
+cwass postnuxmwfwow @inject() (
+  p-postnuxmwcandidatesouwcewegistwy: p-postnuxmwcandidatesouwcewegistwy, ʘwʘ
+  p-postnuxmwcombinedwankewbuiwdew: postnuxmwcombinedwankewbuiwdew[postnuxmwwequest], (ˆ ﻌ ˆ)♡
+  cuwatedcompetitowwistpwedicate: cuwatedcompetitowwistpwedicate, (U ﹏ U)
+  g-gizmoduckpwedicate: gizmoduckpwedicate, UwU
+  sgspwedicate: invawidtawgetcandidatewewationshiptypespwedicate, XD
+  hsspwedicate: h-hsspwedicate, ʘwʘ
+  invawidwewationshippwedicate: i-invawidwewationshippwedicate, rawr x3
+  w-wecentfowwowingpwedicate: w-wecentfowwowingpwedicate, ^^;;
+  nyonneawzewousewactivitypwedicate: nyonneawzewousewactivitypwedicate, ʘwʘ
+  i-inactivepwedicate: i-inactivepwedicate, (U ﹏ U)
+  d-dismissedcandidatepwedicate: d-dismissedcandidatepwedicate, (˘ω˘)
+  pweviouswywecommendedusewidspwedicate: pweviouswywecommendedusewidspwedicate, (ꈍᴗꈍ)
+  modifysociawpwooftwansfowm: m-modifysociawpwooftwansfowm, /(^•ω•^)
+  w-wemoveaccountpwooftwansfowm: wemoveaccountpwooftwansfowm, >_<
+  t-twackingtokentwansfowm: t-twackingtokentwansfowm, σωσ
+  w-wandomwankewidtwansfowm: wandomwankewidtwansfowm,
+  candidatepawamsfactowy: candidateusewpawamsfactowy[postnuxmwwequest], ^^;;
+  s-sampwingtwansfowm: sampwingtwansfowm, 😳
+  fwswoggew: fwswoggew, >_<
+  basestatsweceivew: statsweceivew)
+    extends wecommendationfwow[postnuxmwwequest, -.- candidateusew]
+    with wecommendationfwowbasesideeffectsutiw[postnuxmwwequest, UwU candidateusew]
+    with candidatesouwcehowdbackutiw {
+  o-ovewwide pwotected vaw tawgetewigibiwity: pwedicate[postnuxmwwequest] =
+    nyew pawampwedicate[postnuxmwwequest](postnuxmwpawams.tawgetewigibiwity)
 
-  override val statsReceiver: StatsReceiver = baseStatsReceiver.scope("post_nux_ml_flow")
+  ovewwide v-vaw statsweceivew: s-statsweceivew = b-basestatsweceivew.scope("post_nux_mw_fwow")
 
-  override val qualityFactorObserver: Option[QualityFactorObserver] = {
-    val config = LinearLatencyQualityFactorConfig(
-      qualityFactorBounds =
-        BoundsWithDefault(minInclusive = 0.1, maxInclusive = 1.0, default = 1.0),
-      initialDelay = 60.seconds,
-      targetLatency = 700.milliseconds,
-      targetLatencyPercentile = 95.0,
-      delta = 0.001
+  ovewwide v-vaw quawityfactowobsewvew: option[quawityfactowobsewvew] = {
+    v-vaw config = w-wineawwatencyquawityfactowconfig(
+      quawityfactowbounds =
+        boundswithdefauwt(minincwusive = 0.1, :3 maxincwusive = 1.0, σωσ defauwt = 1.0), >w<
+      initiawdeway = 60.seconds,
+      t-tawgetwatency = 700.miwwiseconds, (ˆ ﻌ ˆ)♡
+      tawgetwatencypewcentiwe = 95.0,
+      d-dewta = 0.001
     )
-    val qualityFactor = LinearLatencyQualityFactor(config)
-    val observer = LinearLatencyQualityFactorObserver(qualityFactor)
-    statsReceiver.provideGauge("quality_factor")(qualityFactor.currentValue.toFloat)
-    Some(observer)
+    vaw q-quawityfactow = w-wineawwatencyquawityfactow(config)
+    vaw obsewvew = wineawwatencyquawityfactowobsewvew(quawityfactow)
+    s-statsweceivew.pwovidegauge("quawity_factow")(quawityfactow.cuwwentvawue.tofwoat)
+    s-some(obsewvew)
   }
 
-  override protected def updateTarget(request: PostNuxMlRequest): Stitch[PostNuxMlRequest] = {
-    Stitch.value(
-      request.copy(qualityFactor = qualityFactorObserver.map(_.qualityFactor.currentValue))
+  ovewwide p-pwotected def u-updatetawget(wequest: postnuxmwwequest): stitch[postnuxmwwequest] = {
+    stitch.vawue(
+      wequest.copy(quawityfactow = q-quawityfactowobsewvew.map(_.quawityfactow.cuwwentvawue))
     )
   }
 
-  private[post_nux_ml] def getCandidateSourceIdentifiers(
-    params: Params
-  ): Set[CandidateSourceIdentifier] = {
-    PostNuxMlFlowCandidateSourceWeights.getWeights(params).keySet
+  p-pwivate[post_nux_mw] d-def getcandidatesouwceidentifiews(
+    pawams: p-pawams
+  ): s-set[candidatesouwceidentifiew] = {
+    postnuxmwfwowcandidatesouwceweights.getweights(pawams).keyset
   }
 
-  override protected def candidateSources(
-    request: PostNuxMlRequest
-  ): Seq[CandidateSource[PostNuxMlRequest, CandidateUser]] = {
-    val identifiers = getCandidateSourceIdentifiers(request.params)
-    val selected: Set[CandidateSource[PostNuxMlRequest, CandidateUser]] =
-      postNuxMlCandidateSourceRegistry.select(identifiers)
-    val budget: Duration = request.params(PostNuxMlParams.FetchCandidateSourceBudget)
-    filterCandidateSources(
-      request,
-      selected.map(c => c.failOpenWithin(budget, statsReceiver)).toSeq)
+  o-ovewwide pwotected def candidatesouwces(
+    wequest: postnuxmwwequest
+  ): s-seq[candidatesouwce[postnuxmwwequest, ʘwʘ candidateusew]] = {
+    v-vaw identifiews = getcandidatesouwceidentifiews(wequest.pawams)
+    vaw sewected: s-set[candidatesouwce[postnuxmwwequest, :3 candidateusew]] =
+      p-postnuxmwcandidatesouwcewegistwy.sewect(identifiews)
+    vaw budget: duwation = wequest.pawams(postnuxmwpawams.fetchcandidatesouwcebudget)
+    fiwtewcandidatesouwces(
+      w-wequest, (˘ω˘)
+      sewected.map(c => c.faiwopenwithin(budget, 😳😳😳 statsweceivew)).toseq)
   }
 
-  override protected val preRankerCandidateFilter: Predicate[(PostNuxMlRequest, CandidateUser)] = {
-    val stats = statsReceiver.scope("pre_ranker")
+  ovewwide p-pwotected vaw pwewankewcandidatefiwtew: pwedicate[(postnuxmwwequest, c-candidateusew)] = {
+    v-vaw stats = statsweceivew.scope("pwe_wankew")
 
-    object excludeNearZeroUserPredicate
-        extends GatedPredicateBase[(PostNuxMlRequest, CandidateUser)](
-          nonNearZeroUserActivityPredicate,
-          stats.scope("exclude_near_zero_predicate")
+    object excwudeneawzewousewpwedicate
+        extends gatedpwedicatebase[(postnuxmwwequest, rawr x3 candidateusew)](
+          nyonneawzewousewactivitypwedicate, (✿oωo)
+          s-stats.scope("excwude_neaw_zewo_pwedicate")
         ) {
-      override def gate(item: (PostNuxMlRequest, CandidateUser)): Boolean =
-        item._1.params(PostNuxMlParams.ExcludeNearZeroCandidates)
+      o-ovewwide def gate(item: (postnuxmwwequest, (ˆ ﻌ ˆ)♡ candidateusew)): boowean =
+        item._1.pawams(postnuxmwpawams.excwudeneawzewocandidates)
     }
 
-    object invalidRelationshipGatedPredicate
-        extends GatedPredicateBase[(PostNuxMlRequest, CandidateUser)](
-          invalidRelationshipPredicate,
-          stats.scope("invalid_relationship_predicate")
+    o-object invawidwewationshipgatedpwedicate
+        extends g-gatedpwedicatebase[(postnuxmwwequest, :3 candidateusew)](
+          invawidwewationshippwedicate, (U ᵕ U❁)
+          stats.scope("invawid_wewationship_pwedicate")
         ) {
-      override def gate(item: (PostNuxMlRequest, CandidateUser)): Boolean =
-        item._1.params(PostNuxMlParams.EnableInvalidRelationshipPredicate)
+      o-ovewwide def gate(item: (postnuxmwwequest, ^^;; c-candidateusew)): b-boowean =
+        item._1.pawams(postnuxmwpawams.enabweinvawidwewationshippwedicate)
     }
 
-    ExcludedUserIdPredicate
-      .observe(stats.scope("exclude_user_id_predicate"))
-      .andThen(
-        recentFollowingPredicate.observe(stats.scope("recent_following_predicate"))
+    e-excwudedusewidpwedicate
+      .obsewve(stats.scope("excwude_usew_id_pwedicate"))
+      .andthen(
+        wecentfowwowingpwedicate.obsewve(stats.scope("wecent_fowwowing_pwedicate"))
       )
-      .andThen(
-        dismissedCandidatePredicate.observe(stats.scope("dismissed_candidate_predicate"))
+      .andthen(
+        d-dismissedcandidatepwedicate.obsewve(stats.scope("dismissed_candidate_pwedicate"))
       )
-      .andThen(
-        previouslyRecommendedUserIdsPredicate.observe(
-          stats.scope("previously_recommended_user_ids_predicate"))
+      .andthen(
+        p-pweviouswywecommendedusewidspwedicate.obsewve(
+          s-stats.scope("pweviouswy_wecommended_usew_ids_pwedicate"))
       )
-      .andThen(
-        invalidRelationshipGatedPredicate.observe(stats.scope("invalid_relationship_predicate"))
+      .andthen(
+        invawidwewationshipgatedpwedicate.obsewve(stats.scope("invawid_wewationship_pwedicate"))
       )
-      .andThen(
-        excludeNearZeroUserPredicate.observe(stats.scope("exclude_near_zero_user_state"))
+      .andthen(
+        excwudeneawzewousewpwedicate.obsewve(stats.scope("excwude_neaw_zewo_usew_state"))
       )
-      .observe(stats.scope("overall_pre_ranker_candidate_filter"))
+      .obsewve(stats.scope("ovewaww_pwe_wankew_candidate_fiwtew"))
   }
 
-  override protected def selectRanker(
-    request: PostNuxMlRequest
-  ): Ranker[PostNuxMlRequest, CandidateUser] = {
-    postNuxMlCombinedRankerBuilder.build(
-      request,
-      PostNuxMlFlowCandidateSourceWeights.getWeights(request.params))
+  o-ovewwide p-pwotected def sewectwankew(
+    wequest: postnuxmwwequest
+  ): w-wankew[postnuxmwwequest, mya c-candidateusew] = {
+    p-postnuxmwcombinedwankewbuiwdew.buiwd(
+      wequest, 😳😳😳
+      postnuxmwfwowcandidatesouwceweights.getweights(wequest.pawams))
   }
 
-  override protected val postRankerTransform: Transform[PostNuxMlRequest, CandidateUser] = {
-    new DedupTransform[PostNuxMlRequest, CandidateUser]
-      .observe(statsReceiver.scope("dedupping"))
-      .andThen(
-        samplingTransform
-          .gated(PostNuxMlParams.SamplingTransformEnabled)
-          .observe(statsReceiver.scope("samplingtransform")))
+  ovewwide pwotected v-vaw postwankewtwansfowm: twansfowm[postnuxmwwequest, OwO c-candidateusew] = {
+    n-nyew deduptwansfowm[postnuxmwwequest, rawr candidateusew]
+      .obsewve(statsweceivew.scope("dedupping"))
+      .andthen(
+        sampwingtwansfowm
+          .gated(postnuxmwpawams.sampwingtwansfowmenabwed)
+          .obsewve(statsweceivew.scope("sampwingtwansfowm")))
   }
 
-  override protected val validateCandidates: Predicate[(PostNuxMlRequest, CandidateUser)] = {
-    val stats = statsReceiver.scope("validate_candidates")
-    val competitorPredicate =
-      curatedCompetitorListPredicate.map[(PostNuxMlRequest, CandidateUser)](_._2)
+  ovewwide pwotected v-vaw vawidatecandidates: p-pwedicate[(postnuxmwwequest, XD c-candidateusew)] = {
+    v-vaw stats = statsweceivew.scope("vawidate_candidates")
+    v-vaw competitowpwedicate =
+      cuwatedcompetitowwistpwedicate.map[(postnuxmwwequest, candidateusew)](_._2)
 
-    val producerHoldbackPredicate = new CandidateParamPredicate[CandidateUser](
-      GlobalParams.KeepUserCandidate,
-      FilterReason.CandidateSideHoldback
-    ).map[(PostNuxMlRequest, CandidateUser)] {
-      case (request, user) => candidateParamsFactory(user, request)
+    vaw pwoducewhowdbackpwedicate = nyew candidatepawampwedicate[candidateusew](
+      gwobawpawams.keepusewcandidate, (U ﹏ U)
+      f-fiwtewweason.candidatesidehowdback
+    ).map[(postnuxmwwequest, (˘ω˘) candidateusew)] {
+      c-case (wequest, UwU usew) => candidatepawamsfactowy(usew, >_< w-wequest)
     }
-    val pymkProducerHoldbackPredicate = new CandidateSourceParamPredicate(
-      GlobalParams.KeepSocialUserCandidate,
-      FilterReason.CandidateSideHoldback,
-      CandidateSourceHoldbackUtil.SocialCandidateSourceIds
-    ).map[(PostNuxMlRequest, CandidateUser)] {
-      case (request, user) => candidateParamsFactory(user, request)
+    vaw pymkpwoducewhowdbackpwedicate = n-nyew candidatesouwcepawampwedicate(
+      g-gwobawpawams.keepsociawusewcandidate, σωσ
+      f-fiwtewweason.candidatesidehowdback, 🥺
+      c-candidatesouwcehowdbackutiw.sociawcandidatesouwceids
+    ).map[(postnuxmwwequest, 🥺 c-candidateusew)] {
+      c-case (wequest, ʘwʘ usew) => candidatepawamsfactowy(usew, :3 wequest)
     }
-    val sgsPredicateStats = stats.scope("sgs_predicate")
-    object sgsGatedPredicate
-        extends GatedPredicateBase[(PostNuxMlRequest, CandidateUser)](
-          sgsPredicate.observe(sgsPredicateStats),
-          sgsPredicateStats
+    vaw sgspwedicatestats = stats.scope("sgs_pwedicate")
+    object s-sgsgatedpwedicate
+        e-extends g-gatedpwedicatebase[(postnuxmwwequest, (U ﹏ U) candidateusew)](
+          s-sgspwedicate.obsewve(sgspwedicatestats),
+          sgspwedicatestats
         ) {
 
       /**
-       * When SGS predicate is turned off, only query SGS exists API for (user, candidate, relationship)
-       * when the user's number of invalid relationships exceeds the threshold during request
-       * building step. This is to minimize load to SGS and underlying Flock DB.
+       * when sgs pwedicate is tuwned o-off, onwy quewy s-sgs exists api fow (usew, (U ﹏ U) candidate, ʘwʘ w-wewationship)
+       * when the usew's nyumbew of invawid w-wewationships e-exceeds the thweshowd duwing wequest
+       * b-buiwding step. >w< this i-is to minimize woad to sgs and undewwying fwock db. rawr x3
        */
-      override def gate(item: (PostNuxMlRequest, CandidateUser)): Boolean =
-        item._1.params(PostNuxMlParams.EnableSGSPredicate) ||
-          SocialGraphClient.enablePostRankerSgsPredicate(
-            item._1.invalidRelationshipUserIds.getOrElse(Set.empty).size)
+      ovewwide d-def gate(item: (postnuxmwwequest, OwO c-candidateusew)): b-boowean =
+        i-item._1.pawams(postnuxmwpawams.enabwesgspwedicate) ||
+          s-sociawgwaphcwient.enabwepostwankewsgspwedicate(
+            item._1.invawidwewationshipusewids.getowewse(set.empty).size)
     }
 
-    val hssPredicateStats = stats.scope("hss_predicate")
-    object hssGatedPredicate
-        extends GatedPredicateBase[(PostNuxMlRequest, CandidateUser)](
-          hssPredicate.observe(hssPredicateStats),
-          hssPredicateStats
+    v-vaw hsspwedicatestats = s-stats.scope("hss_pwedicate")
+    object hssgatedpwedicate
+        e-extends gatedpwedicatebase[(postnuxmwwequest, ^•ﻌ•^ c-candidateusew)](
+          hsspwedicate.obsewve(hsspwedicatestats), >_<
+          h-hsspwedicatestats
         ) {
-      override def gate(item: (PostNuxMlRequest, CandidateUser)): Boolean =
-        item._1.params(PostNuxMlParams.EnableHssPredicate)
+      ovewwide def gate(item: (postnuxmwwequest, OwO c-candidateusew)): boowean =
+        i-item._1.pawams(postnuxmwpawams.enabwehsspwedicate)
     }
 
-    Predicate
-      .andConcurrently[(PostNuxMlRequest, CandidateUser)](
-        Seq(
-          competitorPredicate.observe(stats.scope("curated_competitor_predicate")),
-          gizmoduckPredicate.observe(stats.scope("gizmoduck_predicate")),
-          sgsGatedPredicate,
-          hssGatedPredicate,
-          inactivePredicate.observe(stats.scope("inactive_predicate")),
+    p-pwedicate
+      .andconcuwwentwy[(postnuxmwwequest, >_< candidateusew)](
+        s-seq(
+          competitowpwedicate.obsewve(stats.scope("cuwated_competitow_pwedicate")), (ꈍᴗꈍ)
+          gizmoduckpwedicate.obsewve(stats.scope("gizmoduck_pwedicate")), >w<
+          s-sgsgatedpwedicate, (U ﹏ U)
+          h-hssgatedpwedicate, ^^
+          i-inactivepwedicate.obsewve(stats.scope("inactive_pwedicate")), (U ﹏ U)
         )
       )
-      // to avoid dilutions, we need to apply the receiver holdback predicates at the very last step
-      .andThen(pymkProducerHoldbackPredicate.observe(stats.scope("pymk_receiver_side_holdback")))
-      .andThen(producerHoldbackPredicate.observe(stats.scope("receiver_side_holdback")))
-      .observe(stats.scope("overall_validate_candidates"))
+      // to avoid diwutions, :3 we nyeed to appwy t-the weceivew howdback pwedicates at the vewy w-wast step
+      .andthen(pymkpwoducewhowdbackpwedicate.obsewve(stats.scope("pymk_weceivew_side_howdback")))
+      .andthen(pwoducewhowdbackpwedicate.obsewve(stats.scope("weceivew_side_howdback")))
+      .obsewve(stats.scope("ovewaww_vawidate_candidates"))
   }
 
-  override protected val transformResults: Transform[PostNuxMlRequest, CandidateUser] = {
-    modifySocialProofTransform
-      .gated(EnableGFSSocialProofTransform)
-      .andThen(trackingTokenTransform)
-      .andThen(randomRankerIdTransform.gated(PostNuxMlParams.LogRandomRankerId))
-      .andThen(removeAccountProofTransform.gated(PostNuxMlParams.EnableRemoveAccountProofTransform))
+  o-ovewwide pwotected vaw twansfowmwesuwts: t-twansfowm[postnuxmwwequest, (✿oωo) candidateusew] = {
+    m-modifysociawpwooftwansfowm
+      .gated(enabwegfssociawpwooftwansfowm)
+      .andthen(twackingtokentwansfowm)
+      .andthen(wandomwankewidtwansfowm.gated(postnuxmwpawams.wogwandomwankewid))
+      .andthen(wemoveaccountpwooftwansfowm.gated(postnuxmwpawams.enabwewemoveaccountpwooftwansfowm))
   }
 
-  override protected def resultsConfig(request: PostNuxMlRequest): RecommendationResultsConfig = {
-    RecommendationResultsConfig(
-      request.maxResults.getOrElse(request.params(PostNuxMlParams.ResultSizeParam)),
-      request.params(PostNuxMlParams.BatchSizeParam)
+  ovewwide p-pwotected def wesuwtsconfig(wequest: postnuxmwwequest): w-wecommendationwesuwtsconfig = {
+    wecommendationwesuwtsconfig(
+      wequest.maxwesuwts.getowewse(wequest.pawams(postnuxmwpawams.wesuwtsizepawam)), XD
+      w-wequest.pawams(postnuxmwpawams.batchsizepawam)
     )
   }
 
-  override def applySideEffects(
-    target: PostNuxMlRequest,
-    candidateSources: Seq[CandidateSource[PostNuxMlRequest, CandidateUser]],
-    candidatesFromCandidateSources: Seq[CandidateUser],
-    mergedCandidates: Seq[CandidateUser],
-    filteredCandidates: Seq[CandidateUser],
-    rankedCandidates: Seq[CandidateUser],
-    transformedCandidates: Seq[CandidateUser],
-    truncatedCandidates: Seq[CandidateUser],
-    results: Seq[CandidateUser]
-  ): Stitch[Unit] = {
-    frsLogger.logRecommendationFlowData[PostNuxMlRequest](
-      target,
-      RecommendationFlowData[PostNuxMlRequest](
-        target,
-        PostNuxMlFlow.identifier,
-        candidateSources,
-        candidatesFromCandidateSources,
-        mergedCandidates,
-        filteredCandidates,
-        rankedCandidates,
-        transformedCandidates,
-        truncatedCandidates,
-        results
+  o-ovewwide def appwysideeffects(
+    t-tawget: postnuxmwwequest, >w<
+    c-candidatesouwces: s-seq[candidatesouwce[postnuxmwwequest, òωó c-candidateusew]],
+    candidatesfwomcandidatesouwces: seq[candidateusew], (ꈍᴗꈍ)
+    mewgedcandidates: seq[candidateusew], rawr x3
+    fiwtewedcandidates: seq[candidateusew], rawr x3
+    wankedcandidates: seq[candidateusew], σωσ
+    twansfowmedcandidates: seq[candidateusew], (ꈍᴗꈍ)
+    twuncatedcandidates: seq[candidateusew], rawr
+    w-wesuwts: s-seq[candidateusew]
+  ): stitch[unit] = {
+    fwswoggew.wogwecommendationfwowdata[postnuxmwwequest](
+      t-tawget, ^^;;
+      w-wecommendationfwowdata[postnuxmwwequest](
+        t-tawget, rawr x3
+        postnuxmwfwow.identifiew, (ˆ ﻌ ˆ)♡
+        candidatesouwces, σωσ
+        c-candidatesfwomcandidatesouwces, (U ﹏ U)
+        mewgedcandidates, >w<
+        f-fiwtewedcandidates, σωσ
+        w-wankedcandidates, nyaa~~
+        twansfowmedcandidates, 🥺
+        t-twuncatedcandidates, rawr x3
+        wesuwts
       )
     )
-    super.applySideEffects(
-      target,
-      candidateSources,
-      candidatesFromCandidateSources,
-      mergedCandidates,
-      filteredCandidates,
-      rankedCandidates,
-      transformedCandidates,
-      truncatedCandidates,
-      results
+    s-supew.appwysideeffects(
+      t-tawget, σωσ
+      candidatesouwces, (///ˬ///✿)
+      candidatesfwomcandidatesouwces, (U ﹏ U)
+      m-mewgedcandidates, ^^;;
+      f-fiwtewedcandidates, 🥺
+      w-wankedcandidates, òωó
+      t-twansfowmedcandidates, XD
+      t-twuncatedcandidates, :3
+      w-wesuwts
     )
   }
 }
 
-object PostNuxMlFlow {
-  val identifier = RecommendationPipelineIdentifier("PostNuxMlFlow")
+o-object postnuxmwfwow {
+  v-vaw identifiew = w-wecommendationpipewineidentifiew("postnuxmwfwow")
 }

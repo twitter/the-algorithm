@@ -1,75 +1,75 @@
-package com.twitter.servo.util
+package com.twittew.sewvo.utiw
 
 /**
- * A collection of FunctionArrow factory functions.
+ * a cowwection o-of functionawwow f-factowy functions. (U ﹏ U)
  */
-object FunctionArrow {
-  def apply[A, B](f: A => B): FunctionArrow[A, B] = fromFunction(f)
+o-object f-functionawwow {
+  d-def appwy[a, 😳 b-b](f: a => b): f-functionawwow[a, (ˆ ﻌ ˆ)♡ b-b] = fwomfunction(f)
 
   /**
-   * Produce an FunctionArrow from a function `A => B`.
+   * pwoduce an functionawwow fwom a function `a => b`. 😳😳😳
    */
-  def fromFunction[A, B](f: A => B): FunctionArrow[A, B] =
-    new FunctionArrow[A, B] {
-      def apply(a: A): B = f(a)
+  def f-fwomfunction[a, (U ﹏ U) b](f: a => b): functionawwow[a, (///ˬ///✿) b-b] =
+    nyew functionawwow[a, 😳 b] {
+      def appwy(a: a-a): b = f(a)
     }
 
   /**
-   * Produces a FunctionArrow with no side-effects that simply returns its argument.
+   * pwoduces a functionawwow w-with nyo side-effects that simpwy w-wetuwns its awgument. 😳
    */
-  def identity[A]: FunctionArrow[A, A] = apply(Predef.identity[A])
+  d-def identity[a]: functionawwow[a, σωσ a] = appwy(pwedef.identity[a])
 
   /**
-   * Appends two FunctionArrows together.
+   * appends two functionawwows t-togethew.
    *
-   * This forms a monoid with 'identity'.
+   * this fowms a monoid with 'identity'. rawr x3
    */
-  def append[A, B, C](a: FunctionArrow[A, B], b: FunctionArrow[B, C]): FunctionArrow[A, C] =
-    a.andThen(b)
+  def append[a, OwO b-b, c](a: functionawwow[a, /(^•ω•^) b-b], b: functionawwow[b, 😳😳😳 c-c]): functionawwow[a, ( ͡o ω ͡o ) c] =
+    a-a.andthen(b)
 
   /**
-   * Produce an FunctionArrow that applies an Effect, returning the argument
-   * value as-is.
+   * p-pwoduce an functionawwow that appwies an effect, >_< w-wetuwning the awgument
+   * vawue as-is. >w<
    */
-  def effect[A](effect: Effect[A]): FunctionArrow[A, A] = apply { a =>
+  d-def effect[a](effect: effect[a]): functionawwow[a, rawr a] = appwy { a =>
     effect(a); a
   }
 
   /**
-   * Produces an FunctionArrow that proxies to one of two others, depending on a
-   * predicate.
+   * p-pwoduces an functionawwow t-that pwoxies t-to one of two othews, 😳 d-depending on a
+   * pwedicate. >w<
    */
-  def choose[A, B](
-    predicate: A => Boolean,
-    ifTrue: FunctionArrow[A, B],
-    ifFalse: FunctionArrow[A, B]
-  ): FunctionArrow[A, B] =
-    apply { a: A =>
-      if (predicate(a)) ifTrue(a) else ifFalse(a)
+  def choose[a, (⑅˘꒳˘) b](
+    p-pwedicate: a => b-boowean, OwO
+    iftwue: functionawwow[a, (ꈍᴗꈍ) b-b],
+    i-iffawse: functionawwow[a, 😳 b]
+  ): f-functionawwow[a, 😳😳😳 b] =
+    appwy { a-a: a =>
+      if (pwedicate(a)) iftwue(a) ewse i-iffawse(a)
     }
 
   /**
-   * Produces an FunctionArrow whose application is guarded by a predicate. `f` is
-   * applied if the predicate returns true, otherwise the argument is simply
-   * returned.
+   * pwoduces an functionawwow w-whose appwication is g-guawded by a pwedicate. mya `f` i-is
+   * appwied if the pwedicate wetuwns twue, mya othewwise the awgument is simpwy
+   * wetuwned. (⑅˘꒳˘)
    */
-  def onlyIf[A](predicate: A => Boolean, f: FunctionArrow[A, A]): FunctionArrow[A, A] =
-    choose(predicate, f, identity[A])
+  d-def onwyif[a](pwedicate: a-a => boowean, (U ﹏ U) f: functionawwow[a, mya a-a]): f-functionawwow[a, ʘwʘ a-a] =
+    choose(pwedicate, (˘ω˘) f, identity[a])
 }
 
 /**
- * A function encapsulating a computation.
+ * a function encapsuwating a-a computation. (U ﹏ U)
  *
- * Background on the Arrow abstraction:
- * http://en.wikipedia.org/wiki/Arrow_(computer_science)
+ * backgwound on the awwow abstwaction:
+ * http://en.wikipedia.owg/wiki/awwow_(computew_science)
  */
-trait FunctionArrow[-A, +B] extends (A => B) { self =>
+twait functionawwow[-a, ^•ﻌ•^ +b] extends (a => b-b) { sewf =>
 
   /**
-   * Composes two FunctionArrows. Produces a new FunctionArrow that performs both in series.
+   * composes t-two functionawwows. (˘ω˘) p-pwoduces a-a nyew functionawwow that pewfowms b-both in sewies. :3
    */
-  def andThen[C](next: FunctionArrow[B, C]): FunctionArrow[A, C] =
-    new FunctionArrow[A, C] {
-      override def apply(a: A) = next.apply(self(a))
+  d-def a-andthen[c](next: f-functionawwow[b, ^^;; c]): functionawwow[a, 🥺 c] =
+    n-new functionawwow[a, (⑅˘꒳˘) c-c] {
+      o-ovewwide def appwy(a: a-a) = nyext.appwy(sewf(a))
     }
 }

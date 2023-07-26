@@ -1,82 +1,82 @@
-package com.twitter.follow_recommendations.utils
+package com.twittew.fowwow_wecommendations.utiws
 
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook._
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopCountrySource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopCountryBackFillSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeoSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeohashSource
-import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.recent_engagement.RecentEngagementNonDirectFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims.SwitchingSimsSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentEngagementSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentFollowingSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentStrongEngagementDirectFollowSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.socialgraph.RecentFollowingRecentFollowingExpansionSource
-import com.twitter.follow_recommendations.common.candidate_sources.stp.MutualFollowStrongTiePredictionSource
-import com.twitter.follow_recommendations.common.candidate_sources.stp.OfflineStrongTiePredictionSource
-import com.twitter.follow_recommendations.common.candidate_sources.stp.BaseOnlineSTPSource
-import com.twitter.follow_recommendations.common.candidate_sources.stp.SocialProofEnforcedOfflineStrongTiePredictionSource
-import com.twitter.follow_recommendations.common.candidate_sources.triangular_loops.TriangularLoopsSource
-import com.twitter.follow_recommendations.common.candidate_sources.two_hop_random_walk.TwoHopRandomWalkSource
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.configapi.params.GlobalParams
-import com.twitter.follow_recommendations.models.CandidateSourceType
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.timelines.configapi.HasParams
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.addwessbook._
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.geo.popcountwysouwce
+i-impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.geo.popcountwybackfiwwsouwce
+i-impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.geo.popgeosouwce
+i-impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.geo.popgeohashsouwce
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.ppmi_wocawe_fowwow.ppmiwocawefowwowsouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.wecent_engagement.wecentengagementnondiwectfowwowsouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.sims.switchingsimssouwce
+impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.sims_expansion.wecentengagementsimiwawusewssouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.sims_expansion.wecentfowwowingsimiwawusewssouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.sims_expansion.wecentstwongengagementdiwectfowwowsimiwawusewssouwce
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.sociawgwaph.wecentfowwowingwecentfowwowingexpansionsouwce
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.stp.mutuawfowwowstwongtiepwedictionsouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.stp.offwinestwongtiepwedictionsouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.stp.baseonwinestpsouwce
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.stp.sociawpwoofenfowcedoffwinestwongtiepwedictionsouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.twianguwaw_woops.twianguwawwoopssouwce
+i-impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.two_hop_wandom_wawk.twohopwandomwawksouwce
+impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+impowt com.twittew.fowwow_wecommendations.configapi.pawams.gwobawpawams
+impowt com.twittew.fowwow_wecommendations.modews.candidatesouwcetype
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.timewines.configapi.haspawams
 
-trait CandidateSourceHoldbackUtil {
-  import CandidateSourceHoldbackUtil._
-  def filterCandidateSources[T <: HasParams](
-    request: T,
-    sources: Seq[CandidateSource[T, CandidateUser]]
-  ): Seq[CandidateSource[T, CandidateUser]] = {
-    val typeToFilter = request.params(GlobalParams.CandidateSourcesToFilter)
-    val sourcesToFilter = CandidateSourceTypeToMap.get(typeToFilter).getOrElse(Set.empty)
-    sources.filterNot { source => sourcesToFilter.contains(source.identifier) }
+t-twait candidatesouwcehowdbackutiw {
+  impowt c-candidatesouwcehowdbackutiw._
+  d-def fiwtewcandidatesouwces[t <: h-haspawams](
+    w-wequest: t, :3
+    souwces: seq[candidatesouwce[t, -.- candidateusew]]
+  ): s-seq[candidatesouwce[t, 😳 candidateusew]] = {
+    vaw typetofiwtew = w-wequest.pawams(gwobawpawams.candidatesouwcestofiwtew)
+    vaw souwcestofiwtew = candidatesouwcetypetomap.get(typetofiwtew).getowewse(set.empty)
+    souwces.fiwtewnot { souwce => souwcestofiwtew.contains(souwce.identifiew) }
   }
 }
 
-object CandidateSourceHoldbackUtil {
-  final val ContextualActivityCandidateSourceIds: Set[CandidateSourceIdentifier] =
-    Set(
-      RecentFollowingSimilarUsersSource.Identifier,
-      RecentEngagementNonDirectFollowSource.Identifier,
-      RecentEngagementSimilarUsersSource.Identifier,
-      RecentStrongEngagementDirectFollowSimilarUsersSource.Identifier,
-      SwitchingSimsSource.Identifier,
+object c-candidatesouwcehowdbackutiw {
+  finaw vaw contextuawactivitycandidatesouwceids: s-set[candidatesouwceidentifiew] =
+    s-set(
+      w-wecentfowwowingsimiwawusewssouwce.identifiew, mya
+      wecentengagementnondiwectfowwowsouwce.identifiew, (˘ω˘)
+      wecentengagementsimiwawusewssouwce.identifiew, >_<
+      wecentstwongengagementdiwectfowwowsimiwawusewssouwce.identifiew, -.-
+      s-switchingsimssouwce.identifiew, 🥺
     )
 
-  final val SocialCandidateSourceIds: Set[CandidateSourceIdentifier] =
-    Set(
-      ForwardEmailBookSource.Identifier,
-      ForwardPhoneBookSource.Identifier,
-      ReverseEmailBookSource.Identifier,
-      ReversePhoneBookSource.Identifier,
-      RecentFollowingRecentFollowingExpansionSource.Identifier,
-      BaseOnlineSTPSource.Identifier,
-      MutualFollowStrongTiePredictionSource.Identifier,
-      OfflineStrongTiePredictionSource.Identifier,
-      SocialProofEnforcedOfflineStrongTiePredictionSource.Identifier,
-      TriangularLoopsSource.Identifier,
-      TwoHopRandomWalkSource.Identifier
+  f-finaw vaw sociawcandidatesouwceids: s-set[candidatesouwceidentifiew] =
+    set(
+      f-fowwawdemaiwbooksouwce.identifiew, (U ﹏ U)
+      fowwawdphonebooksouwce.identifiew, >w<
+      w-wevewseemaiwbooksouwce.identifiew, mya
+      wevewsephonebooksouwce.identifiew, >w<
+      w-wecentfowwowingwecentfowwowingexpansionsouwce.identifiew, nyaa~~
+      baseonwinestpsouwce.identifiew, (✿oωo)
+      mutuawfowwowstwongtiepwedictionsouwce.identifiew, ʘwʘ
+      o-offwinestwongtiepwedictionsouwce.identifiew, (ˆ ﻌ ˆ)♡
+      sociawpwoofenfowcedoffwinestwongtiepwedictionsouwce.identifiew, 😳😳😳
+      twianguwawwoopssouwce.identifiew, :3
+      t-twohopwandomwawksouwce.identifiew
     )
 
-  final val GeoCandidateSourceIds: Set[CandidateSourceIdentifier] =
-    Set(
-      PPMILocaleFollowSource.Identifier,
-      PopCountrySource.Identifier,
-      PopGeohashSource.Identifier,
-      PopCountryBackFillSource.Identifier,
-      PopGeoSource.Identifier,
+  finaw vaw g-geocandidatesouwceids: s-set[candidatesouwceidentifiew] =
+    set(
+      ppmiwocawefowwowsouwce.identifiew, OwO
+      popcountwysouwce.identifiew, (U ﹏ U)
+      popgeohashsouwce.identifiew, >w<
+      popcountwybackfiwwsouwce.identifiew, (U ﹏ U)
+      popgeosouwce.identifiew, 😳
     )
 
-  final val CandidateSourceTypeToMap: Map[CandidateSourceType.Value, Set[
-    CandidateSourceIdentifier
+  f-finaw vaw candidatesouwcetypetomap: m-map[candidatesouwcetype.vawue, (ˆ ﻌ ˆ)♡ set[
+    c-candidatesouwceidentifiew
   ]] =
-    Map(
-      CandidateSourceType.Social -> SocialCandidateSourceIds,
-      CandidateSourceType.ActivityContextual -> ContextualActivityCandidateSourceIds,
-      CandidateSourceType.GeoAndInterests -> GeoCandidateSourceIds
+    m-map(
+      c-candidatesouwcetype.sociaw -> sociawcandidatesouwceids, 😳😳😳
+      candidatesouwcetype.activitycontextuaw -> contextuawactivitycandidatesouwceids, (U ﹏ U)
+      candidatesouwcetype.geoandintewests -> geocandidatesouwceids
     )
 }

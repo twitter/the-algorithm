@@ -1,48 +1,48 @@
-package com.twitter.timelines.prediction.common.aggregates
+package com.twittew.timewines.pwediction.common.aggwegates
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.summingbird.batch.BatchID
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.{
-  AggregateStore,
-  AggregationKey,
-  OfflineAggregateInjections,
-  TypedAggregateGroup
+impowt c-com.twittew.mw.api.datawecowd
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection
+impowt c-com.twittew.summingbiwd.batch.batchid
+i-impowt c-com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.{
+  a-aggwegatestowe, nyaa~~
+  a-aggwegationkey, nyaa~~
+  offwineaggwegateinjections, :3
+  t-typedaggwegategwoup
 }
 
-object TimelinesAggregationKeyValInjections extends TimelinesAggregationConfigTrait {
+object timewinesaggwegationkeyvawinjections extends timewinesaggwegationconfigtwait {
 
-  import OfflineAggregateInjections.getInjection
+  impowt offwineaggwegateinjections.getinjection
 
-  type KVInjection = KeyValInjection[AggregationKey, (BatchID, DataRecord)]
+  type k-kvinjection = keyvawinjection[aggwegationkey, 😳😳😳 (batchid, datawecowd)]
 
-  val AuthorTopic: KVInjection = getInjection(filter(AuthorTopicAggregateStore))
-  val UserTopic: KVInjection = getInjection(filter(UserTopicAggregateStore))
-  val UserInferredTopic: KVInjection = getInjection(filter(UserInferredTopicAggregateStore))
-  val User: KVInjection = getInjection(filter(UserAggregateStore))
-  val UserAuthor: KVInjection = getInjection(filter(UserAuthorAggregateStore))
-  val UserOriginalAuthor: KVInjection = getInjection(filter(UserOriginalAuthorAggregateStore))
-  val OriginalAuthor: KVInjection = getInjection(filter(OriginalAuthorAggregateStore))
-  val UserEngager: KVInjection = getInjection(filter(UserEngagerAggregateStore))
-  val UserMention: KVInjection = getInjection(filter(UserMentionAggregateStore))
-  val TwitterWideUser: KVInjection = getInjection(filter(TwitterWideUserAggregateStore))
-  val TwitterWideUserAuthor: KVInjection = getInjection(filter(TwitterWideUserAuthorAggregateStore))
-  val UserRequestHour: KVInjection = getInjection(filter(UserRequestHourAggregateStore))
-  val UserRequestDow: KVInjection = getInjection(filter(UserRequestDowAggregateStore))
-  val UserList: KVInjection = getInjection(filter(UserListAggregateStore))
-  val UserMediaUnderstandingAnnotation: KVInjection = getInjection(
-    filter(UserMediaUnderstandingAnnotationAggregateStore))
+  v-vaw authowtopic: kvinjection = g-getinjection(fiwtew(authowtopicaggwegatestowe))
+  vaw usewtopic: kvinjection = getinjection(fiwtew(usewtopicaggwegatestowe))
+  v-vaw usewinfewwedtopic: kvinjection = getinjection(fiwtew(usewinfewwedtopicaggwegatestowe))
+  v-vaw usew: k-kvinjection = getinjection(fiwtew(usewaggwegatestowe))
+  vaw usewauthow: kvinjection = getinjection(fiwtew(usewauthowaggwegatestowe))
+  vaw usewowiginawauthow: k-kvinjection = getinjection(fiwtew(usewowiginawauthowaggwegatestowe))
+  vaw owiginawauthow: kvinjection = getinjection(fiwtew(owiginawauthowaggwegatestowe))
+  vaw usewengagew: k-kvinjection = getinjection(fiwtew(usewengagewaggwegatestowe))
+  vaw usewmention: k-kvinjection = getinjection(fiwtew(usewmentionaggwegatestowe))
+  v-vaw twittewwideusew: k-kvinjection = g-getinjection(fiwtew(twittewwideusewaggwegatestowe))
+  vaw twittewwideusewauthow: kvinjection = g-getinjection(fiwtew(twittewwideusewauthowaggwegatestowe))
+  vaw usewwequesthouw: kvinjection = g-getinjection(fiwtew(usewwequesthouwaggwegatestowe))
+  vaw usewwequestdow: kvinjection = getinjection(fiwtew(usewwequestdowaggwegatestowe))
+  vaw usewwist: kvinjection = getinjection(fiwtew(usewwistaggwegatestowe))
+  v-vaw usewmediaundewstandingannotation: kvinjection = getinjection(
+    f-fiwtew(usewmediaundewstandingannotationaggwegatestowe))
 
-  private def filter(storeName: String): Set[TypedAggregateGroup[_]] = {
-    val groups = aggregatesToCompute.filter(_.outputStore.name == storeName)
-    require(groups.nonEmpty)
-    groups
+  p-pwivate d-def fiwtew(stowename: stwing): set[typedaggwegategwoup[_]] = {
+    vaw gwoups = a-aggwegatestocompute.fiwtew(_.outputstowe.name == s-stowename)
+    wequiwe(gwoups.nonempty)
+    g-gwoups
   }
 
-  override def outputHdfsPath: String = "/user/timelines/processed/aggregates_v2"
+  ovewwide d-def outputhdfspath: stwing = "/usew/timewines/pwocessed/aggwegates_v2"
 
-  // Since this object is not used to execute any online or offline aggregates job, but is meant
-  // to store all PDT enabled KeyValInjections, we do not need to construct a physical store.
-  // We use the identity operation as a default.
-  override def mkPhysicalStore(store: AggregateStore): AggregateStore = store
+  // s-since this object is nyot used t-to exekawaii~ any onwine ow offwine aggwegates j-job, (˘ω˘) but is meant
+  // to stowe a-aww pdt enabwed keyvawinjections, ^^ w-we do nyot nyeed t-to constwuct a physicaw stowe. :3
+  // we use the identity opewation as a defauwt. -.-
+  ovewwide def mkphysicawstowe(stowe: a-aggwegatestowe): a-aggwegatestowe = stowe
 }

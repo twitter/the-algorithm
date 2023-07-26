@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.alert
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.awewt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.RosettaColor
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.wosettacowow
 
-case class ShowAlertColorConfiguration(
-  background: RosettaColor,
-  text: RosettaColor,
-  border: Option[RosettaColor],
+c-case cwass s-showawewtcowowconfiguwation(
+  backgwound: w-wosettacowow, (U ᵕ U❁)
+  t-text: w-wosettacowow, (⑅˘꒳˘)
+  b-bowdew: option[wosettacowow], ( ͡o ω ͡o )
 )

@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-trait HasRecentFollowedUserIdsWithTime {
-  // user ids that are recently followed by the target user
-  def recentFollowedUserIdsWithTime: Option[Seq[UserIdWithTimestamp]]
+twait haswecentfowwowedusewidswithtime {
+  // u-usew ids t-that awe wecentwy f-fowwowed by the t-tawget usew
+  d-def wecentfowwowedusewidswithtime: o-option[seq[usewidwithtimestamp]]
 
-  lazy val numRecentFollowedUserIdsWithTime: Int =
-    recentFollowedUserIdsWithTime.map(_.size).getOrElse(0)
+  w-wazy vaw n-nyumwecentfowwowedusewidswithtime: int =
+    wecentfowwowedusewidswithtime.map(_.size).getowewse(0)
 }

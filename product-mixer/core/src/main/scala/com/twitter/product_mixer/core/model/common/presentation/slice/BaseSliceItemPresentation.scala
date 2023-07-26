@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.common.presentation.slice
+package com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.swice
 
-import com.twitter.product_mixer.core.model.common.presentation.ItemPresentation
-import com.twitter.product_mixer.core.model.marshalling.response.slice.SliceItem
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.itempwesentation
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.swice.swiceitem
 
-trait BaseSliceItemPresentation extends ItemPresentation {
-  def sliceItem: SliceItem
+t-twait b-baseswiceitempwesentation e-extends i-itempwesentation {
+  d-def swiceitem: s-swiceitem
 }

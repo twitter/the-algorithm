@@ -1,133 +1,133 @@
-package com.twitter.servo.repository
+package com.twittew.sewvo.wepositowy
 
-import com.twitter.servo.util.RetryHandler
-import com.twitter.util.{Duration, Future, Timer}
+impowt com.twittew.sewvo.utiw.wetwyhandwew
+i-impowt com.twittew.utiw.{duwation, XD f-futuwe, timew}
 
-object Repository {
-
-  /**
-   * Composes a RepositoryFilter onto a Repository, producing a new Repository.
-   */
-  def composed[Q, R1, R2](
-    repo: Repository[Q, R1],
-    filter: RepositoryFilter[Q, R1, R2]
-  ): Repository[Q, R2] =
-    q => filter(q, repo(q))
+o-object wepositowy {
 
   /**
-   * Chains 2 or more RepositoryFilters together into a single RepositoryFilter.
+   * c-composes a wepositowyfiwtew onto a-a wepositowy, 🥺 p-pwoducing a nyew w-wepositowy. òωó
    */
-  def chained[Q, R1, R2, R3](
-    f1: RepositoryFilter[Q, R1, R2],
-    f2: RepositoryFilter[Q, R2, R3],
-    fs: RepositoryFilter[Q, R3, R3]*
-  ): RepositoryFilter[Q, R1, R3] = {
-    val first: RepositoryFilter[Q, R1, R3] = (q, r) => f2(q, f1(q, r))
-    fs.toList match {
-      case Nil => first
-      case head :: tail => chained(first, head, tail: _*)
+  d-def composed[q, (ˆ ﻌ ˆ)♡ w1, w2](
+    wepo: wepositowy[q, -.- w1],
+    fiwtew: wepositowyfiwtew[q, :3 w-w1, ʘwʘ w2]
+  ): wepositowy[q, 🥺 w2] =
+    q-q => fiwtew(q, >_< wepo(q))
+
+  /**
+   * c-chains 2 ow mowe wepositowyfiwtews togethew into a singwe w-wepositowyfiwtew. ʘwʘ
+   */
+  def chained[q, (˘ω˘) w-w1, w2, w-w3](
+    f1: wepositowyfiwtew[q, (✿oωo) w1, (///ˬ///✿) w2],
+    f2: wepositowyfiwtew[q, rawr x3 w2, w3],
+    fs: wepositowyfiwtew[q, -.- w-w3, w3]*
+  ): wepositowyfiwtew[q, ^^ w1, w3] = {
+    vaw fiwst: wepositowyfiwtew[q, (⑅˘꒳˘) w-w1, nyaa~~ w3] = (q, w) => f-f2(q, /(^•ω•^) f1(q, w))
+    f-fs.towist match {
+      c-case n-nyiw => fiwst
+      case head :: taiw => chained(fiwst, (U ﹏ U) h-head, taiw: _*)
     }
   }
 
   /**
-   * Wraps a Repository with a function that transforms queries on the way in, and
-   * results on the way out.
+   * wwaps a wepositowy w-with a function that twansfowms quewies on the way in, 😳😳😳 and
+   * wesuwts on the way out. >w<
    */
-  def transformed[Q, Q2, R, R2](
-    repo: Repository[Q, R],
-    qmapper: Q2 => Q = (identity[Q] _): (Q => Q),
-    rmapper: R => R2 = (identity[R] _): (R => R)
-  ): Repository[Q2, R2] =
-    qmapper andThen repo andThen { _ map rmapper }
+  d-def twansfowmed[q, XD q2, w, w2](
+    w-wepo: wepositowy[q, o.O w-w],
+    q-qmappew: q2 => q = (identity[q] _): (q => q), mya
+    wmappew: w => w-w2 = (identity[w] _): (w => w-w)
+  ): wepositowy[q2, 🥺 w-w2] =
+    qmappew a-andthen wepo andthen { _ m-map wmappew }
 
   /**
-   * Wraps a Repository with another Repository that explodes the query into multiple
-   * queries, executes those queries in parallel, then combines (reduces) results.
+   * wwaps a-a wepositowy with anothew wepositowy that expwodes t-the quewy into muwtipwe
+   * q-quewies, ^^;; exekawaii~s those quewies i-in pawawwew, :3 t-then combines (weduces) wesuwts. (U ﹏ U)
    */
-  def mapReduced[Q, Q2, R, R2](
-    repo: Repository[Q, R],
-    mapper: Q2 => Seq[Q],
-    reducer: Seq[R] => R2
-  ): Repository[Q2, R2] =
-    mapReducedWithQuery(repo, mapper, (rs: Seq[(Q, R)]) => reducer(rs map { case (_, r) => r }))
+  def mapweduced[q, OwO q2, w, w2](
+    wepo: wepositowy[q, 😳😳😳 w],
+    mappew: q2 => s-seq[q], (ˆ ﻌ ˆ)♡
+    w-weducew: seq[w] => w2
+  ): wepositowy[q2, XD w-w2] =
+    m-mapweducedwithquewy(wepo, (ˆ ﻌ ˆ)♡ mappew, ( ͡o ω ͡o ) (ws: s-seq[(q, rawr x3 w)]) => weducew(ws map { case (_, nyaa~~ w) => w }))
 
   /**
-   * An extension of mapReduced that passes query and result to the reducer.
+   * a-an extension of mapweduced that passes quewy and wesuwt to the weducew. >_<
    */
-  def mapReducedWithQuery[Q, Q2, R, R2](
-    repo: Repository[Q, R],
-    mapper: Q2 => Seq[Q],
-    reducer: Seq[(Q, R)] => R2
-  ): Repository[Q2, R2] = {
-    val queryRepo: Q => Future[(Q, R)] = q => repo(q) map { (q, _) }
-    q2 => Future.collect(mapper(q2) map queryRepo) map reducer
+  d-def mapweducedwithquewy[q, ^^;; q-q2, (ˆ ﻌ ˆ)♡ w, w-w2](
+    wepo: wepositowy[q, ^^;; w-w],
+    mappew: q2 => s-seq[q], (⑅˘꒳˘)
+    weducew: s-seq[(q, w-w)] => w2
+  ): wepositowy[q2, w-w2] = {
+    vaw quewywepo: q => futuwe[(q, rawr x3 w-w)] = q => w-wepo(q) map { (q, (///ˬ///✿) _) }
+    q2 => f-futuwe.cowwect(mappew(q2) map q-quewywepo) map w-weducew
   }
 
   /**
-   * Creates a new Repository that dispatches to r1 if the given query predicate returns true,
-   * and dispatches to r2 otherwise.
+   * cweates a nyew wepositowy that dispatches t-to w1 if the given quewy pwedicate wetuwns twue, 🥺
+   * and dispatches to w2 othewwise. >_<
    */
-  def selected[Q, R](
-    select: Q => Boolean,
-    onTrueRepo: Repository[Q, R],
-    onFalseRepo: Repository[Q, R]
-  ): Repository[Q, R] =
-    dispatched(select andThen {
-      case true => onTrueRepo
-      case false => onFalseRepo
+  def sewected[q, UwU w-w](
+    sewect: q => boowean, >_<
+    ontwuewepo: wepositowy[q, w], -.-
+    o-onfawsewepo: w-wepositowy[q, mya w-w]
+  ): wepositowy[q, >w< w] =
+    d-dispatched(sewect andthen {
+      c-case twue => ontwuewepo
+      c-case fawse => onfawsewepo
     })
 
   /**
-   * Creates a new Repository that uses a function that selects an underlying repository
-   * based upon the query.
+   * cweates a nyew wepositowy that uses a function that sewects an undewwying w-wepositowy
+   * based upon t-the quewy. (U ﹏ U)
    */
-  def dispatched[Q, R](f: Q => Repository[Q, R]): Repository[Q, R] =
-    q => f(q)(q)
+  def dispatched[q, 😳😳😳 w-w](f: q => w-wepositowy[q, o.O w]): wepositowy[q, òωó w] =
+    q => f-f(q)(q)
 
   /**
-   * Wraps a Repository with the given RetryHandler, which may automatically retry
-   * failed requests.
+   * w-wwaps a wepositowy with the g-given wetwyhandwew, 😳😳😳 w-which may automaticawwy wetwy
+   * faiwed wequests. σωσ
    */
-  def retrying[Q, R](handler: RetryHandler[R], repo: Repository[Q, R]): Repository[Q, R] =
-    handler.wrap(repo)
+  def wetwying[q, (⑅˘꒳˘) w](handwew: wetwyhandwew[w], (///ˬ///✿) w-wepo: w-wepositowy[q, 🥺 w-w]): wepositowy[q, OwO w] =
+    handwew.wwap(wepo)
 
   /**
-   * Produces a new Repository where the returned Future must complete within the specified
-   * timeout, otherwise the Future fails with a com.twitter.util.TimeoutException.
+   * p-pwoduces a-a nyew wepositowy whewe the w-wetuwned futuwe must compwete within the specified
+   * timeout, >w< othewwise the f-futuwe faiws with a-a com.twittew.utiw.timeoutexception. 🥺
    *
-   * ''Note'': On timeout, the underlying future is not interrupted.
+   * ''note'': on timeout, nyaa~~ the undewwying f-futuwe is n-nyot intewwupted. ^^
    */
-  def withTimeout[Q, R](
-    timer: Timer,
-    timeout: Duration,
-    repo: Repository[Q, R]
-  ): Repository[Q, R] =
-    repo andThen { _.within(timer, timeout) }
+  def withtimeout[q, w](
+    timew: timew, >w<
+    t-timeout: duwation, OwO
+    wepo: wepositowy[q, XD w]
+  ): wepositowy[q, ^^;; w] =
+    w-wepo andthen { _.within(timew, 🥺 timeout) }
 
   /**
-   * Produces a new Repository where the returned Future must complete within the specified
-   * timeout, otherwise the Future fails with the specified Throwable.
+   * pwoduces a-a nyew wepositowy w-whewe the wetuwned futuwe must compwete within the specified
+   * t-timeout, XD othewwise t-the futuwe faiws with the specified thwowabwe. (U ᵕ U❁)
    *
-   * ''Note'': On timeout, the underlying future is not interrupted.
+   * ''note'': on timeout, :3 t-the undewwying futuwe is n-nyot intewwupted. ( ͡o ω ͡o )
    */
-  def withTimeout[Q, R](
-    timer: Timer,
-    timeout: Duration,
-    exc: => Throwable,
-    repo: Repository[Q, R]
-  ): Repository[Q, R] =
-    repo andThen { _.within(timer, timeout, exc) }
+  def withtimeout[q, òωó w](
+    timew: timew, σωσ
+    t-timeout: duwation, (U ᵕ U❁)
+    exc: => t-thwowabwe, (✿oωo)
+    w-wepo: wepositowy[q, ^^ w]
+  ): w-wepositowy[q, ^•ﻌ•^ w] =
+    wepo andthen { _.within(timew, XD t-timeout, e-exc) }
 
   /**
-   * Wraps a Repository with stats recording functionality.
+   * w-wwaps a wepositowy with stats w-wecowding functionawity. :3
    */
-  def observed[Q, R](
-    repo: Repository[Q, R],
-    observer: RepositoryObserver
-  ): Repository[Q, R] =
-    query => {
-      observer.time() {
-        repo(query).respond(observer.observeTry)
+  d-def obsewved[q, (ꈍᴗꈍ) w](
+    wepo: wepositowy[q, :3 w],
+    o-obsewvew: w-wepositowyobsewvew
+  ): w-wepositowy[q, w] =
+    quewy => {
+      obsewvew.time() {
+        w-wepo(quewy).wespond(obsewvew.obsewvetwy)
       }
     }
 }

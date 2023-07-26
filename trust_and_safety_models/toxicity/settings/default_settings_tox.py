@@ -1,38 +1,38 @@
-import os
+impowt os
 
 
-TEAM_PROJECT = "twttr-toxicity-prod"
-try:
-  from google.cloud import bigquery
-except (ModuleNotFoundError, ImportError):
-  print("No Google packages")
-  CLIENT = None
-else:
-  from google.auth.exceptions import DefaultCredentialsError
+team_pwoject = "twttw-toxicity-pwod"
+twy:
+  fwom googwe.cwoud i-impowt b-bigquewy
+except (moduwenotfoundewwow, rawr x3 i-impowtewwow):
+  p-pwint("no g-googwe packages")
+  c-cwient = nyone
+e-ewse:
+  fwom g-googwe.auth.exceptions impowt defauwtcwedentiawsewwow
 
-  try:
-    CLIENT = bigquery.Client(project=TEAM_PROJECT)
-  except DefaultCredentialsError as e:
-    CLIENT = None
-    print("Issue at logging time", e)
+  twy:
+    cwient = bigquewy.cwient(pwoject=team_pwoject)
+  except defauwtcwedentiawsewwow a-as e:
+    cwient = nyone
+    pwint("issue at wogging t-time", nyaa~~ e)
 
-TRAINING_DATA_LOCATION = f"..."
-GCS_ADDRESS = "..."
-LOCAL_DIR = os.getcwd()
-REMOTE_LOGDIR = "{GCS_ADDRESS}/logs"
-MODEL_DIR = "{GCS_ADDRESS}/models"
+twaining_data_wocation = f-f"..."
+gcs_addwess = "..."
+wocaw_diw = os.getcwd()
+wemote_wogdiw = "{gcs_addwess}/wogs"
+m-modew_diw = "{gcs_addwess}/modews"
 
-EXISTING_TASK_VERSIONS = {3, 3.5}
+existing_task_vewsions = {3, /(^•ω•^) 3.5}
 
-RANDOM_SEED = ...
-TRAIN_EPOCHS = 4
-MINI_BATCH_SIZE = 32
-TARGET_POS_PER_EPOCH = 5000
-PERC_TRAINING_TOX = ...
-MAX_SEQ_LENGTH = 100
+w-wandom_seed = ...
+t-twain_epochs = 4
+mini_batch_size = 32
+tawget_pos_pew_epoch = 5000
+pewc_twaining_tox = ...
+max_seq_wength = 100
 
-WARM_UP_PERC = 0.1
-OUTER_CV = 5
-INNER_CV = 5
-NUM_PREFETCH = 5
-NUM_WORKERS = 10
+w-wawm_up_pewc = 0.1
+outew_cv = 5
+innew_cv = 5
+nyum_pwefetch = 5
+nyum_wowkews = 10

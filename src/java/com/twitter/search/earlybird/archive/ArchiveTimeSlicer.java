@@ -1,322 +1,322 @@
-package com.twitter.search.earlybird.archive;
+package com.twittew.seawch.eawwybiwd.awchive;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+impowt j-java.io.ioexception;
+i-impowt j-java.utiw.awwaywist;
+i-impowt java.utiw.cawendaw;
+i-impowt java.utiw.cowwections;
+impowt j-java.utiw.compawatow;
+i-impowt j-java.utiw.date;
+impowt java.utiw.wist;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Lists;
+impowt com.googwe.common.annotations.visibwefowtesting;
+impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.base.pwedicate;
+impowt com.googwe.common.cowwect.wists;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.util.io.MergingSortedRecordReader;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.earlybird.config.TierConfig;
-import com.twitter.search.earlybird.document.DocumentFactory;
-import com.twitter.search.earlybird.document.ThriftIndexingEventDocumentFactory;
-import com.twitter.search.earlybird.document.TweetDocument;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingevent;
+impowt com.twittew.seawch.common.utiw.io.mewgingsowtedwecowdweadew;
+i-impowt com.twittew.seawch.common.utiw.io.wecowdweadew.wecowdweadew;
+i-impowt c-com.twittew.seawch.eawwybiwd.config.tiewconfig;
+impowt com.twittew.seawch.eawwybiwd.document.documentfactowy;
+impowt com.twittew.seawch.eawwybiwd.document.thwiftindexingeventdocumentfactowy;
+impowt com.twittew.seawch.eawwybiwd.document.tweetdocument;
 
 
 /**
- * Responsible for taking a number of daily status batches and partitioning them into time slices
- * which will be used to build segments.
+ * wesponsibwe f-fow taking a nyumbew of daiwy status batches and pawtitioning them into time s-swices
+ * which wiww be used to b-buiwd segments. /(^•ω•^)
  *
- * We try to put at most N number of tweets into a time slice.
+ * w-we twy to p-put at most ny n-nyumbew of tweets into a time swice. ^•ﻌ•^
  */
-public class ArchiveTimeSlicer {
-  private static final Logger LOG = LoggerFactory.getLogger(ArchiveTimeSlicer.class);
+pubwic c-cwass awchivetimeswicew {
+  pwivate static finaw w-woggew wog = woggewfactowy.getwoggew(awchivetimeswicew.cwass);
 
-  private static final Comparator<TweetDocument> ASCENDING =
-      (o1, o2) -> Long.compare(o1.getTweetID(), o2.getTweetID());
+  pwivate static finaw compawatow<tweetdocument> ascending =
+      (o1, UwU o2) -> wong.compawe(o1.gettweetid(), 😳😳😳 o-o2.gettweetid());
 
-  private static final Comparator<TweetDocument> DESCENDING =
-      (o1, o2) -> Long.compare(o2.getTweetID(), o1.getTweetID());
+  pwivate static f-finaw compawatow<tweetdocument> d-descending =
+      (o1, OwO o-o2) -> wong.compawe(o2.gettweetid(), ^•ﻌ•^ o1.gettweetid());
 
-  // Represents a number of daily batches which will go into a segment.
-  public static final class ArchiveTimeSlice {
-    private Date startDate;
-    private Date endDate;
-    private int statusCount;
-    private final DailyStatusBatches directory;
-    private final ArchiveEarlybirdIndexConfig earlybirdIndexConfig;
+  // wepwesents a nyumbew of daiwy b-batches which w-wiww go into a segment. (ꈍᴗꈍ)
+  pubwic s-static finaw c-cwass awchivetimeswice {
+    pwivate d-date stawtdate;
+    pwivate d-date enddate;
+    pwivate int statuscount;
+    p-pwivate finaw daiwystatusbatches diwectowy;
+    p-pwivate finaw awchiveeawwybiwdindexconfig eawwybiwdindexconfig;
 
-    // This list is always ordered from oldest day, to the newest day.
-    // For the on-disk archive, we reverse the days in getTweetReaders().
-    private final List<DailyStatusBatch> batches = Lists.newArrayList();
+    // t-this wist i-is awways owdewed fwom owdest day, (⑅˘꒳˘) to the nyewest day. (⑅˘꒳˘)
+    // fow the on-disk awchive, (ˆ ﻌ ˆ)♡ we wevewse the days in g-gettweetweadews(). /(^•ω•^)
+    p-pwivate finaw wist<daiwystatusbatch> b-batches = w-wists.newawwaywist();
 
-    private ArchiveTimeSlice(DailyStatusBatches directory,
-                             ArchiveEarlybirdIndexConfig earlybirdIndexConfig) {
-      this.directory = directory;
-      this.earlybirdIndexConfig = earlybirdIndexConfig;
+    p-pwivate awchivetimeswice(daiwystatusbatches diwectowy, òωó
+                             awchiveeawwybiwdindexconfig eawwybiwdindexconfig) {
+      t-this.diwectowy = diwectowy;
+      this.eawwybiwdindexconfig = eawwybiwdindexconfig;
     }
 
-    public Date getEndDate() {
-      return endDate;
+    pubwic date getenddate() {
+      w-wetuwn enddate;
     }
 
-    public int getStatusCount() {
-      return statusCount;
+    pubwic i-int getstatuscount() {
+      wetuwn s-statuscount;
     }
 
-    public int getNumHashPartitions() {
-      return batches.isEmpty() ? 0 : batches.get(0).getNumHashPartitions();
+    p-pubwic int getnumhashpawtitions() {
+      w-wetuwn batches.isempty() ? 0 : b-batches.get(0).getnumhashpawtitions();
     }
 
     /**
-     * Returns a reader for reading tweets from this timeslice.
+     * w-wetuwns a weadew f-fow weading tweets fwom this timeswice. (⑅˘꒳˘)
      *
-     * @param archiveSegment The segment to which the timeslice belongs.
-     * @param documentFactory The ThriftIndexingEvent to TweetDocument converter.
-     * @param filter A filter that determines what dates should be read.
+     * @pawam a-awchivesegment t-the segment to w-which the timeswice b-bewongs. (U ᵕ U❁)
+     * @pawam d-documentfactowy the thwiftindexingevent to tweetdocument convewtew. >w<
+     * @pawam f-fiwtew a fiwtew that detewmines nyani dates shouwd be wead. σωσ
      */
-    public RecordReader<TweetDocument> getStatusReader(
-        ArchiveSegment archiveSegment,
-        DocumentFactory<ThriftIndexingEvent> documentFactory,
-        Predicate<Date> filter) throws IOException {
-      // We no longer support ThriftStatus based document factories.
-      Preconditions.checkState(documentFactory instanceof ThriftIndexingEventDocumentFactory);
+    pubwic wecowdweadew<tweetdocument> g-getstatusweadew(
+        awchivesegment awchivesegment, -.-
+        documentfactowy<thwiftindexingevent> d-documentfactowy, o.O
+        p-pwedicate<date> f-fiwtew) thwows ioexception {
+      // w-we nyo wongew suppowt t-thwiftstatus based d-document factowies. ^^
+      pweconditions.checkstate(documentfactowy instanceof thwiftindexingeventdocumentfactowy);
 
-      final int hashPartitionID = archiveSegment.getHashPartitionID();
-      List<RecordReader<TweetDocument>> readers = new ArrayList<>(batches.size());
-      List<DailyStatusBatch> orderedForReading = orderBatchesForReading(batches);
-      LOG.info("Creating new status reader for hashPartition: "
-          + hashPartitionID + " timeslice: " + getDescription());
+      finaw int hashpawtitionid = awchivesegment.gethashpawtitionid();
+      wist<wecowdweadew<tweetdocument>> w-weadews = nyew awwaywist<>(batches.size());
+      w-wist<daiwystatusbatch> owdewedfowweading = o-owdewbatchesfowweading(batches);
+      w-wog.info("cweating nyew status weadew fow hashpawtition: "
+          + h-hashpawtitionid + " t-timeswice: " + getdescwiption());
 
-      for (DailyStatusBatch batch : orderedForReading) {
-        if (filter.apply(batch.getDate())) {
-          LOG.info("Adding reader for " + batch.getDate() + " " + getDescription());
-          PartitionedBatch partitionedBatch = batch.getPartition(hashPartitionID);
-          // Don't even try to create a reader if the partition is empty.
-          // There does not seem to be any problem in production now, but HDFS FileSystem's javadoc
-          // does indicate that listStatus() is allowed to throw a FileNotFoundException if the
-          // partition does not exist. This check makes the code more robust against future
-          // HDFS FileSystem implementation changes.
-          if (partitionedBatch.getStatusCount() > 0) {
-            RecordReader<TweetDocument> tweetReaders = partitionedBatch.getTweetReaders(
-                archiveSegment,
-                directory.getStatusPathToUseForDay(batch.getDate()),
-                documentFactory);
-            readers.add(tweetReaders);
+      f-fow (daiwystatusbatch b-batch : owdewedfowweading) {
+        if (fiwtew.appwy(batch.getdate())) {
+          wog.info("adding weadew fow " + batch.getdate() + " " + g-getdescwiption());
+          pawtitionedbatch p-pawtitionedbatch = b-batch.getpawtition(hashpawtitionid);
+          // don't even t-twy to cweate a w-weadew if the pawtition is empty. >_<
+          // thewe d-does nyot seem to be any pwobwem in pwoduction nyow, >w< but hdfs fiwesystem's j-javadoc
+          // d-does indicate that wiststatus() is awwowed t-to thwow a fiwenotfoundexception i-if the
+          // pawtition does nyot exist. >_< this check makes t-the code mowe wobust against futuwe
+          // hdfs fiwesystem impwementation changes. >w<
+          i-if (pawtitionedbatch.getstatuscount() > 0) {
+            wecowdweadew<tweetdocument> tweetweadews = p-pawtitionedbatch.gettweetweadews(
+                a-awchivesegment, rawr
+                diwectowy.getstatuspathtousefowday(batch.getdate()), rawr x3
+                documentfactowy);
+            weadews.add(tweetweadews);
           }
-        } else {
-          LOG.info("Filtered reader for " + batch.getDate() + " " + getDescription());
+        } ewse {
+          wog.info("fiwtewed w-weadew fow " + b-batch.getdate() + " " + getdescwiption());
         }
       }
 
-      LOG.info("Creating reader for timeslice: " + getDescription()
-          + " with " + readers.size() + " readers");
+      wog.info("cweating weadew fow t-timeswice: " + getdescwiption()
+          + " w-with " + weadews.size() + " weadews");
 
-      return new MergingSortedRecordReader<TweetDocument>(getMergingComparator(), readers);
+      wetuwn nyew mewgingsowtedwecowdweadew<tweetdocument>(getmewgingcompawatow(), ( ͡o ω ͡o ) weadews);
     }
 
-    private List<DailyStatusBatch> orderBatchesForReading(List<DailyStatusBatch> orderedBatches) {
-      // For the index formats using stock lucene, we want the most recent days to be indexed first.
-      // In the twitter in-memory optimized indexes, older tweets will be added first, and
-      // optimization will reverse the documents to make most recent tweets be first.
-      return this.earlybirdIndexConfig.isUsingLIFODocumentOrdering()
-          ? orderedBatches : Lists.reverse(orderedBatches);
+    p-pwivate wist<daiwystatusbatch> owdewbatchesfowweading(wist<daiwystatusbatch> o-owdewedbatches) {
+      // f-fow the index fowmats using s-stock wucene, (˘ω˘) we want the most w-wecent days t-to be indexed fiwst. 😳
+      // i-in the twittew in-memowy o-optimized i-indexes, OwO owdew tweets wiww be added fiwst, and
+      // o-optimization w-wiww wevewse t-the documents to make most wecent tweets be fiwst.
+      w-wetuwn this.eawwybiwdindexconfig.isusingwifodocumentowdewing()
+          ? o-owdewedbatches : w-wists.wevewse(owdewedbatches);
     }
 
-    private Comparator<TweetDocument> getMergingComparator() {
-      // We always want to retrieve larger tweet ids first.
-      // LIFO means that the smaller ids get inserted first --> ASCENDING order.
-      // FIFO would mean that we want to first insert the larger ids --> DESCENDING order.
-      return this.earlybirdIndexConfig.isUsingLIFODocumentOrdering()
-          ? ASCENDING : DESCENDING;
+    pwivate compawatow<tweetdocument> getmewgingcompawatow() {
+      // we awways w-want to wetwieve w-wawgew tweet ids f-fiwst. (˘ω˘)
+      // w-wifo means that the smowew ids g-get insewted fiwst --> ascending owdew. òωó
+      // fifo wouwd mean that we want to fiwst insewt the w-wawgew ids --> descending owdew.
+      w-wetuwn this.eawwybiwdindexconfig.isusingwifodocumentowdewing()
+          ? a-ascending : descending;
     }
 
     /**
-     * Returns the smallest indexed tweet ID in this timeslice for the given partition.
+     * w-wetuwns the smowest indexed tweet i-id in this t-timeswice fow the g-given pawtition. ( ͡o ω ͡o )
      *
-     * @param hashPartitionID The partition.
+     * @pawam h-hashpawtitionid t-the pawtition. UwU
      */
-    public long getMinStatusID(int hashPartitionID) {
-      if (batches.isEmpty()) {
-        return 0;
+    pubwic wong getminstatusid(int hashpawtitionid) {
+      if (batches.isempty()) {
+        wetuwn 0;
       }
 
-      for (int i = 0; i < batches.size(); i++) {
-        long minStatusID = batches.get(i).getPartition(hashPartitionID).getMinStatusID();
-        if (minStatusID != DailyStatusBatch.EMPTY_BATCH_STATUS_ID) {
-          return minStatusID;
+      fow (int i = 0; i < batches.size(); i-i++) {
+        w-wong minstatusid = b-batches.get(i).getpawtition(hashpawtitionid).getminstatusid();
+        if (minstatusid != d-daiwystatusbatch.empty_batch_status_id) {
+          wetuwn minstatusid;
         }
       }
 
-      return 0;
+      wetuwn 0;
     }
 
     /**
-     * Returns the highest indexed tweet ID in this timeslice for the given partition.
+     * w-wetuwns the h-highest indexed tweet id in this t-timeswice fow the given pawtition.
      *
-     * @param hashPartitionID The partition.
+     * @pawam hashpawtitionid t-the pawtition. /(^•ω•^)
      */
-    public long getMaxStatusID(int hashPartitionID) {
-      if (batches.isEmpty()) {
-        return Long.MAX_VALUE;
+    p-pubwic wong getmaxstatusid(int h-hashpawtitionid) {
+      i-if (batches.isempty()) {
+        wetuwn wong.max_vawue;
       }
 
-      for (int i = batches.size() - 1; i >= 0; i--) {
-        long maxStatusID = batches.get(i).getPartition(hashPartitionID).getMaxStatusID();
-        if (maxStatusID != DailyStatusBatch.EMPTY_BATCH_STATUS_ID) {
-          return maxStatusID;
+      fow (int i = batches.size() - 1; i >= 0; i--) {
+        w-wong m-maxstatusid = b-batches.get(i).getpawtition(hashpawtitionid).getmaxstatusid();
+        i-if (maxstatusid != d-daiwystatusbatch.empty_batch_status_id) {
+          wetuwn m-maxstatusid;
         }
       }
 
-      return Long.MAX_VALUE;
+      w-wetuwn wong.max_vawue;
     }
 
     /**
-     * Returns a string with some information for this timeslice.
+     * w-wetuwns a-a stwing with some infowmation fow t-this timeswice. (ꈍᴗꈍ)
      */
-    public String getDescription() {
-      StringBuilder builder = new StringBuilder();
-      builder.append("TimeSlice[start date=");
-      builder.append(DailyStatusBatches.DATE_FORMAT.format(startDate));
-      builder.append(", end date=");
-      builder.append(DailyStatusBatches.DATE_FORMAT.format(endDate));
-      builder.append(", status count=");
-      builder.append(statusCount);
-      builder.append(", days count=");
-      builder.append(batches.size());
-      builder.append("]");
-      return builder.toString();
+    pubwic stwing getdescwiption() {
+      stwingbuiwdew b-buiwdew = nyew stwingbuiwdew();
+      b-buiwdew.append("timeswice[stawt d-date=");
+      buiwdew.append(daiwystatusbatches.date_fowmat.fowmat(stawtdate));
+      b-buiwdew.append(", 😳 end date=");
+      buiwdew.append(daiwystatusbatches.date_fowmat.fowmat(enddate));
+      b-buiwdew.append(", mya s-status c-count=");
+      buiwdew.append(statuscount);
+      buiwdew.append(", mya days count=");
+      buiwdew.append(batches.size());
+      b-buiwdew.append("]");
+      wetuwn buiwdew.tostwing();
     }
   }
 
-  private final int maxSegmentSize;
-  private final DailyStatusBatches dailyStatusBatches;
-  private final Date tierStartDate;
-  private final Date tierEndDate;
-  private final ArchiveEarlybirdIndexConfig earlybirdIndexConfig;
+  pwivate f-finaw int maxsegmentsize;
+  p-pwivate finaw daiwystatusbatches d-daiwystatusbatches;
+  pwivate finaw d-date tiewstawtdate;
+  p-pwivate finaw date tiewenddate;
+  pwivate f-finaw awchiveeawwybiwdindexconfig eawwybiwdindexconfig;
 
-  private List<ArchiveTimeSlice> lastCachedTimeslices = null;
+  pwivate w-wist<awchivetimeswice> w-wastcachedtimeswices = nyuww;
 
-  public ArchiveTimeSlicer(int maxSegmentSize,
-                           DailyStatusBatches dailyStatusBatches,
-                           ArchiveEarlybirdIndexConfig earlybirdIndexConfig) {
-    this(maxSegmentSize, dailyStatusBatches, TierConfig.DEFAULT_TIER_START_DATE,
-        TierConfig.DEFAULT_TIER_END_DATE, earlybirdIndexConfig);
+  pubwic a-awchivetimeswicew(int maxsegmentsize, /(^•ω•^)
+                           d-daiwystatusbatches d-daiwystatusbatches, ^^;;
+                           a-awchiveeawwybiwdindexconfig eawwybiwdindexconfig) {
+    this(maxsegmentsize, 🥺 daiwystatusbatches, ^^ tiewconfig.defauwt_tiew_stawt_date, ^•ﻌ•^
+        tiewconfig.defauwt_tiew_end_date, /(^•ω•^) eawwybiwdindexconfig);
   }
 
-  public ArchiveTimeSlicer(int maxSegmentSize,
-                           DailyStatusBatches dailyStatusBatches,
-                           Date tierStartDate,
-                           Date tierEndDate,
-                           ArchiveEarlybirdIndexConfig earlybirdIndexConfig) {
-    this.maxSegmentSize = maxSegmentSize;
-    this.dailyStatusBatches = dailyStatusBatches;
-    this.tierStartDate = tierStartDate;
-    this.tierEndDate = tierEndDate;
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
+  pubwic awchivetimeswicew(int maxsegmentsize, ^^
+                           daiwystatusbatches daiwystatusbatches,
+                           date tiewstawtdate, 🥺
+                           d-date t-tiewenddate,
+                           awchiveeawwybiwdindexconfig eawwybiwdindexconfig) {
+    t-this.maxsegmentsize = m-maxsegmentsize;
+    t-this.daiwystatusbatches = daiwystatusbatches;
+    t-this.tiewstawtdate = tiewstawtdate;
+    t-this.tiewenddate = t-tiewenddate;
+    this.eawwybiwdindexconfig = e-eawwybiwdindexconfig;
   }
 
-  private boolean cacheIsValid() throws IOException {
-    return lastCachedTimeslices != null
-        && !lastCachedTimeslices.isEmpty()
-        && cacheIsValid(lastCachedTimeslices.get(lastCachedTimeslices.size() - 1).endDate);
+  pwivate boowean c-cacheisvawid() t-thwows ioexception {
+    wetuwn wastcachedtimeswices != n-nyuww
+        && !wastcachedtimeswices.isempty()
+        && c-cacheisvawid(wastcachedtimeswices.get(wastcachedtimeswices.size() - 1).enddate);
   }
 
-  private boolean cacheIsValid(Date lastDate) throws IOException {
-    if (lastCachedTimeslices == null || lastCachedTimeslices.isEmpty()) {
-      return false;
+  p-pwivate b-boowean cacheisvawid(date wastdate) t-thwows i-ioexception {
+    i-if (wastcachedtimeswices == n-nyuww || w-wastcachedtimeswices.isempty()) {
+      wetuwn fawse;
     }
 
-    // Check if we have a daily batch newer than the last batch used for the newest timeslice.
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(lastDate);
-    cal.add(Calendar.DATE, 1);
-    Date nextDate = cal.getTime();
+    // c-check i-if we have a daiwy b-batch nyewew than the wast batch u-used fow the nyewest timeswice. (U ᵕ U❁)
+    cawendaw c-caw = cawendaw.getinstance();
+    caw.settime(wastdate);
+    caw.add(cawendaw.date, 😳😳😳 1);
+    d-date n-nyextdate = caw.gettime();
 
-    boolean foundBatch = dailyStatusBatches.hasValidBatchForDay(nextDate);
+    b-boowean foundbatch = daiwystatusbatches.hasvawidbatchfowday(nextdate);
 
-    LOG.info("Checking cache: Looked for valid batch for day {}. Found: {}",
-        DailyStatusBatches.DATE_FORMAT.format(nextDate), foundBatch);
+    wog.info("checking c-cache: wooked fow vawid batch f-fow day {}. nyaa~~ found: {}", (˘ω˘)
+        daiwystatusbatches.date_fowmat.fowmat(nextdate), >_< f-foundbatch);
 
-    return !foundBatch;
+    wetuwn !foundbatch;
   }
 
-  private boolean timesliceIsFull(ArchiveTimeSlice timeSlice, DailyStatusBatch batch) {
-    return timeSlice.statusCount + batch.getMaxPerPartitionStatusCount() > maxSegmentSize;
+  p-pwivate boowean timeswiceisfuww(awchivetimeswice timeswice, XD daiwystatusbatch batch) {
+    wetuwn timeswice.statuscount + b-batch.getmaxpewpawtitionstatuscount() > maxsegmentsize;
   }
 
-  private void doTimeSlicing() throws IOException {
-    dailyStatusBatches.refresh();
+  pwivate void d-dotimeswicing() t-thwows ioexception {
+    daiwystatusbatches.wefwesh();
 
-    lastCachedTimeslices = Lists.newArrayList();
-    ArchiveTimeSlice currentTimeSlice = null;
+    wastcachedtimeswices = wists.newawwaywist();
+    awchivetimeswice c-cuwwenttimeswice = nyuww;
 
-    // Iterate over each day and add it to the current timeslice, until it gets full.
-    for (DailyStatusBatch batch : dailyStatusBatches.getStatusBatches()) {
-      if (!batch.isValid()) {
-        LOG.warn("Skipping hole: " + batch.getDate());
+    // i-itewate ovew e-each day and add i-it to the cuwwent timeswice, rawr x3 untiw it gets fuww. ( ͡o ω ͡o )
+    f-fow (daiwystatusbatch b-batch : daiwystatusbatches.getstatusbatches()) {
+      i-if (!batch.isvawid()) {
+        wog.wawn("skipping howe: " + b-batch.getdate());
         continue;
       }
 
-      if (currentTimeSlice == null || timesliceIsFull(currentTimeSlice, batch)) {
-        if (currentTimeSlice != null) {
-          LOG.info("Filled timeslice: " + currentTimeSlice.getDescription());
+      i-if (cuwwenttimeswice == n-nyuww || t-timeswiceisfuww(cuwwenttimeswice, batch)) {
+        i-if (cuwwenttimeswice != n-nyuww) {
+          w-wog.info("fiwwed t-timeswice: " + cuwwenttimeswice.getdescwiption());
         }
-        currentTimeSlice = new ArchiveTimeSlice(dailyStatusBatches, earlybirdIndexConfig);
-        currentTimeSlice.startDate = batch.getDate();
-        lastCachedTimeslices.add(currentTimeSlice);
+        c-cuwwenttimeswice = n-nyew a-awchivetimeswice(daiwystatusbatches, :3 e-eawwybiwdindexconfig);
+        c-cuwwenttimeswice.stawtdate = b-batch.getdate();
+        w-wastcachedtimeswices.add(cuwwenttimeswice);
       }
 
-      currentTimeSlice.endDate = batch.getDate();
-      currentTimeSlice.statusCount += batch.getMaxPerPartitionStatusCount();
-      currentTimeSlice.batches.add(batch);
+      c-cuwwenttimeswice.enddate = batch.getdate();
+      c-cuwwenttimeswice.statuscount += batch.getmaxpewpawtitionstatuscount();
+      c-cuwwenttimeswice.batches.add(batch);
     }
-    LOG.info("Last timeslice: {}", currentTimeSlice.getDescription());
+    wog.info("wast t-timeswice: {}", mya c-cuwwenttimeswice.getdescwiption());
 
-    LOG.info("Done with time slicing. Number of timeslices: {}",
-        lastCachedTimeslices.size());
+    w-wog.info("done with time swicing. σωσ nyumbew of timeswices: {}", (ꈍᴗꈍ)
+        w-wastcachedtimeswices.size());
   }
 
   /**
-   * Returns all timeslices for this earlybird.
+   * w-wetuwns aww timeswices f-fow this eawwybiwd. OwO
    */
-  public List<ArchiveTimeSlice> getTimeSlices() throws IOException {
-    if (cacheIsValid()) {
-      return lastCachedTimeslices;
+  pubwic wist<awchivetimeswice> gettimeswices() t-thwows ioexception {
+    i-if (cacheisvawid()) {
+      wetuwn wastcachedtimeswices;
     }
 
-    LOG.info("Cache is outdated. Loading new daily batches now...");
+    w-wog.info("cache i-is outdated. o.O woading nyew daiwy batches nyow...");
 
-    doTimeSlicing();
+    d-dotimeswicing();
 
-    return lastCachedTimeslices != null ? Collections.unmodifiableList(lastCachedTimeslices) : null;
+    w-wetuwn w-wastcachedtimeswices != n-nyuww ? cowwections.unmodifiabwewist(wastcachedtimeswices) : nyuww;
   }
 
   /**
-   * Return the timeslices that overlap the tier start/end date ranges if they are specified
+   * wetuwn t-the timeswices t-that ovewwap the tiew stawt/end date wanges i-if they awe specified
    */
-  public List<ArchiveTimeSlice> getTimeSlicesInTierRange() throws IOException {
-    List<ArchiveTimeSlice> timeSlices = getTimeSlices();
-    if (tierStartDate == TierConfig.DEFAULT_TIER_START_DATE
-        && tierEndDate == TierConfig.DEFAULT_TIER_END_DATE) {
-      return timeSlices;
+  pubwic wist<awchivetimeswice> gettimeswicesintiewwange() t-thwows ioexception {
+    wist<awchivetimeswice> t-timeswices = g-gettimeswices();
+    if (tiewstawtdate == tiewconfig.defauwt_tiew_stawt_date
+        && t-tiewenddate == t-tiewconfig.defauwt_tiew_end_date) {
+      wetuwn timeswices;
     }
 
-    List<ArchiveTimeSlice> filteredTimeSlice = Lists.newArrayList();
-    for (ArchiveTimeSlice timeSlice : timeSlices) {
-      if (timeSlice.startDate.before(tierEndDate) && !timeSlice.endDate.before(tierStartDate)) {
-        filteredTimeSlice.add(timeSlice);
+    w-wist<awchivetimeswice> fiwtewedtimeswice = wists.newawwaywist();
+    f-fow (awchivetimeswice timeswice : t-timeswices) {
+      if (timeswice.stawtdate.befowe(tiewenddate) && !timeswice.enddate.befowe(tiewstawtdate)) {
+        f-fiwtewedtimeswice.add(timeswice);
       }
     }
 
-    return filteredTimeSlice;
+    w-wetuwn fiwtewedtimeswice;
   }
 
-  @VisibleForTesting
-  protected DailyStatusBatches getDailyStatusBatches() {
-    return dailyStatusBatches;
+  @visibwefowtesting
+  pwotected d-daiwystatusbatches g-getdaiwystatusbatches() {
+    w-wetuwn daiwystatusbatches;
   }
 }

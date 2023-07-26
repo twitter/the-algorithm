@@ -1,128 +1,128 @@
-package com.twitter.search.earlybird.util;
+package com.twittew.seawch.eawwybiwd.utiw;
 
-import scala.Some;
+impowt s-scawa.some;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+impowt c-com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
 
-import com.twitter.decider.Decider;
-import com.twitter.decider.Decider$;
-import com.twitter.decider.RandomRecipient$;
-import com.twitter.decider.Recipient;
-import com.twitter.decider.decisionmaker.MutableDecisionMaker;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.decider.SearchDeciderFactory;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
+i-impowt com.twittew.decidew.decidew;
+i-impowt c-com.twittew.decidew.decidew$;
+i-impowt c-com.twittew.decidew.wandomwecipient$;
+impowt com.twittew.decidew.wecipient;
+impowt com.twittew.decidew.decisionmakew.mutabwedecisionmakew;
+impowt com.twittew.seawch.common.decidew.decidewutiw;
+i-impowt com.twittew.seawch.common.decidew.seawchdecidewfactowy;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdpwopewty;
 
 /**
- * A Singleton to let any code in Earlybird have the ability to be guarded by a decider key.
+ * a singweton to w-wet any code in eawwybiwd have t-the abiwity to be guawded by a decidew key. o.O
  *
- * EarlybirdDecider is a thin wrapper around the Twitter Decider library to provide global access to a single
- * decider configuration. This way any code anywhere can easily be guarded by a Decider key. The initializer requires
- * EarlybirdConfig to be initialized already. Defaults to a NullDecider, which causes all requests for keys to return
- * false.
+ * eawwybiwddecidew i-is a thin wwappew awound the t-twittew decidew w-wibwawy to pwovide gwobaw access to a singwe
+ * decidew configuwation. >w< this way a-any code anywhewe can easiwy be guawded by a decidew key. 😳 the initiawizew wequiwes
+ * e-eawwybiwdconfig to be initiawized a-awweady. 🥺 d-defauwts to a nuwwdecidew, w-which c-causes aww wequests fow keys to wetuwn
+ * fawse. rawr x3
  */
-public final class EarlybirdDecider {
-  public static final org.slf4j.Logger LOG =
-      org.slf4j.LoggerFactory.getLogger(EarlybirdDecider.class);
-  public static final String DECIDER_CONFIG = "./config/earlybird-decider.yml";
+p-pubwic finaw cwass eawwybiwddecidew {
+  pubwic static finaw o-owg.swf4j.woggew wog =
+      owg.swf4j.woggewfactowy.getwoggew(eawwybiwddecidew.cwass);
+  pubwic static finaw stwing decidew_config = "./config/eawwybiwd-decidew.ymw";
 
-  private static volatile Decider earlybirdDecider = Decider$.MODULE$.NullDecider();
-  private static volatile MutableDecisionMaker mutableDecisionMaker;
+  p-pwivate static vowatiwe d-decidew eawwybiwddecidew = d-decidew$.moduwe$.nuwwdecidew();
+  p-pwivate static vowatiwe mutabwedecisionmakew mutabwedecisionmakew;
 
-  private EarlybirdDecider() { }
+  pwivate e-eawwybiwddecidew() { }
 
   /**
-   * Initializes the global decider accessor. Requires EarlybirdConfig to be initialized.
+   * i-initiawizes the gwobaw decidew a-accessow. o.O wequiwes e-eawwybiwdconfig to be initiawized. rawr
    *
-   * @return the new decider interface.
+   * @wetuwn t-the new decidew intewface. ʘwʘ
    */
-  public static Decider initialize() {
-    return initialize(DECIDER_CONFIG);
+  p-pubwic static decidew initiawize() {
+    w-wetuwn initiawize(decidew_config);
   }
 
   /**
-   * Initializes the global decider accessor. Requires EarlybirdConfig to be initialized.
+   * initiawizes t-the gwobaw decidew accessow. 😳😳😳 w-wequiwes eawwybiwdconfig t-to be initiawized. ^^;;
    *
-   * @param configPath path to the base decider config file.
-   * @return the new decider interface.
+   * @pawam configpath path to the base decidew config fiwe. o.O
+   * @wetuwn the nyew decidew intewface. (///ˬ///✿)
    */
-  @VisibleForTesting public static Decider initialize(String configPath) {
-    synchronized (EarlybirdDecider.class) {
-      Preconditions.checkState(earlybirdDecider == Decider$.MODULE$.NullDecider(),
-                               "EarlybirdDecider can be initialized only once.");
+  @visibwefowtesting p-pubwic static d-decidew initiawize(stwing configpath) {
+    synchwonized (eawwybiwddecidew.cwass) {
+      p-pweconditions.checkstate(eawwybiwddecidew == d-decidew$.moduwe$.nuwwdecidew(), σωσ
+                               "eawwybiwddecidew c-can be initiawized onwy once.");
 
-      mutableDecisionMaker = new MutableDecisionMaker();
+      mutabwedecisionmakew = n-nyew mutabwedecisionmakew();
 
-      if (EarlybirdProperty.USE_DECIDER_OVERLAY.get(false)) {
-        String category = EarlybirdProperty.DECIDER_OVERLAY_CONFIG.get();
-        earlybirdDecider =
-            SearchDeciderFactory.createDeciderWithoutRefreshBaseWithOverlay(
-                configPath, category, mutableDecisionMaker);
-        LOG.info("EarlybirdDecider set to use the decider overlay " + category);
-      } else {
-        earlybirdDecider =
-            SearchDeciderFactory.createDeciderWithRefreshBaseWithoutOverlay(
-                configPath, mutableDecisionMaker);
-        LOG.info("EarlybirdDecider set to only use the base config");
+      if (eawwybiwdpwopewty.use_decidew_ovewway.get(fawse)) {
+        stwing categowy = eawwybiwdpwopewty.decidew_ovewway_config.get();
+        e-eawwybiwddecidew =
+            seawchdecidewfactowy.cweatedecidewwithoutwefweshbasewithovewway(
+                c-configpath, nyaa~~ c-categowy, ^^;; mutabwedecisionmakew);
+        w-wog.info("eawwybiwddecidew set to use t-the decidew ovewway " + c-categowy);
+      } e-ewse {
+        e-eawwybiwddecidew =
+            seawchdecidewfactowy.cweatedecidewwithwefweshbasewithoutovewway(
+                configpath, ^•ﻌ•^ m-mutabwedecisionmakew);
+        w-wog.info("eawwybiwddecidew s-set to onwy use t-the base config");
       }
-      return earlybirdDecider;
+      w-wetuwn eawwybiwddecidew;
     }
   }
 
   /**
-   * Check if feature is available based on randomness
+   * check if featuwe is avaiwabwe based on wandomness
    *
-   * @param feature the feature name to test
-   * @return true if the feature is available, false otherwise
+   * @pawam f-featuwe the featuwe nyame to test
+   * @wetuwn twue if the featuwe is avaiwabwe, σωσ fawse othewwise
    */
-  public static boolean isFeatureAvailable(String feature) {
-    return isFeatureAvailable(feature, RandomRecipient$.MODULE$);
+  pubwic s-static boowean isfeatuweavaiwabwe(stwing featuwe) {
+    wetuwn isfeatuweavaiwabwe(featuwe, -.- w-wandomwecipient$.moduwe$);
   }
 
   /**
-   * Check if the feature is available based on the user
+   * c-check i-if the featuwe is avaiwabwe based o-on the usew
    *
-   * The recipient'd id is hashed and used as the value to compare with the decider percentage. Therefore, the same user
-   * will always get the same result for a given percentage, and higher percentages should always be a superset of the
-   * lower percentage users.
+   * the wecipient'd i-id is h-hashed and used as the vawue to compawe with the decidew pewcentage. ^^;; thewefowe, the same usew
+   * w-wiww awways get the same wesuwt f-fow a given pewcentage, XD and highew p-pewcentages s-shouwd awways be a supewset of the
+   * wowew p-pewcentage usews. 🥺
    *
-   * RandomRecipient can be used to get a random value for every call.
+   * w-wandomwecipient can b-be used to get a w-wandom vawue fow evewy caww. òωó
    *
-   * @param feature the feature name to test
-   * @param recipient the recipient to base a decision on
-   * @return true if the feature is available, false otherwise
+   * @pawam featuwe the featuwe nyame to test
+   * @pawam wecipient t-the wecipient t-to base a decision o-on
+   * @wetuwn twue if t-the featuwe is avaiwabwe, f-fawse othewwise
    */
-  public static boolean isFeatureAvailable(String feature, Recipient recipient) {
-    if (earlybirdDecider == Decider$.MODULE$.NullDecider()) {
-      LOG.warn("EarlybirdDecider is uninitialized but requested feature " + feature);
+  p-pubwic static boowean isfeatuweavaiwabwe(stwing featuwe, (ˆ ﻌ ˆ)♡ wecipient wecipient) {
+    if (eawwybiwddecidew == d-decidew$.moduwe$.nuwwdecidew()) {
+      w-wog.wawn("eawwybiwddecidew is uninitiawized but wequested f-featuwe " + featuwe);
     }
 
-    return earlybirdDecider.isAvailable(feature, Some.apply(recipient));
+    w-wetuwn eawwybiwddecidew.isavaiwabwe(featuwe, some.appwy(wecipient));
   }
 
   /**
-   * Get the raw decider value for a given feature.
+   * get the waw decidew vawue f-fow a given featuwe. -.-
    *
-   * @param feature the feature name
-   * @return the integer value of the decider
+   * @pawam featuwe the featuwe nyame
+   * @wetuwn the integew vawue of t-the decidew
    */
-  public static int getAvailability(String feature) {
-    return DeciderUtil.getAvailability(earlybirdDecider, feature);
+  pubwic static int getavaiwabiwity(stwing featuwe) {
+    w-wetuwn d-decidewutiw.getavaiwabiwity(eawwybiwddecidew, :3 featuwe);
   }
 
-  public static Decider getDecider() {
-    checkInitialized();
-    return earlybirdDecider;
+  pubwic static decidew getdecidew() {
+    c-checkinitiawized();
+    w-wetuwn eawwybiwddecidew;
   }
 
-  public static MutableDecisionMaker getMutableDecisionMaker() {
-    checkInitialized();
-    return mutableDecisionMaker;
+  pubwic static mutabwedecisionmakew getmutabwedecisionmakew() {
+    c-checkinitiawized();
+    wetuwn mutabwedecisionmakew;
   }
 
-  private static void checkInitialized() {
-    Preconditions.checkState(earlybirdDecider != Decider$.MODULE$.NullDecider(),
-        "EarlybirdDecider is not initialized.");
+  p-pwivate static void checkinitiawized() {
+    pweconditions.checkstate(eawwybiwddecidew != decidew$.moduwe$.nuwwdecidew(),
+        "eawwybiwddecidew i-is nyot initiawized.");
   }
 }

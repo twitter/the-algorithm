@@ -1,47 +1,47 @@
-package com.twitter.tweetypie.caching
+package com.twittew.tweetypie.caching
 
-import com.twitter.io.Buf
-import com.twitter.util.Time
+impowt com.twittew.io.buf
+i-impowt com.twittew.utiw.time
 
 /**
- * How to store values of type V in cache. This includes whether a
- * given value is cacheable, how to serialize it, when it should
- * expire from cache, and how to interpret byte patterns from cache.
+ * h-how to stowe v-vawues of type v-v in cache. ʘwʘ this i-incwudes whethew a-a
+ * given vawue i-is cacheabwe, h-how to sewiawize it, (ˆ ﻌ ˆ)♡ when it shouwd
+ * expiwe fwom cache, 😳😳😳 and how to intewpwet b-byte pattewns fwom cache. :3
  */
-trait ValueSerializer[V] {
+twait vawuesewiawizew[v] {
 
   /**
-   * Prepare the value for storage in cache. When a [[Some]] is
-   * returned, the [[Buf]] should be a valid input to [[deserialize]]
-   * and the [[Time]] will be used as the expiry in the memcached
-   * command.  When [[None]] is returned, it indicates that the value
-   * cannot or should not be written back to cache.
+   * p-pwepawe the vawue fow stowage i-in cache. OwO when a [[some]] is
+   * wetuwned, (U ﹏ U) the [[buf]] shouwd b-be a vawid input to [[desewiawize]]
+   * a-and t-the [[time]] wiww be used as the expiwy in the memcached
+   * command. >w<  when [[none]] i-is wetuwned, (U ﹏ U) it indicates that the vawue
+   * cannot ow shouwd nyot be wwitten b-back to cache. 😳
    *
-   * The most common use case for returning None is caching Try
-   * values, where certain exceptional values encode a cacheable state
-   * of a value. In particular, Throw(NotFound) is commonly used to
-   * encode a missing value, and we usually want to cache those
-   * negative lookups, but we don't want to cache e.g. a timeout
-   * exception.
+   * the m-most common use c-case fow wetuwning n-nyone is caching t-twy
+   * vawues, (ˆ ﻌ ˆ)♡ whewe cewtain exceptionaw v-vawues encode a cacheabwe state
+   * of a vawue. 😳😳😳 i-in pawticuwaw, (U ﹏ U) thwow(notfound) is commonwy used to
+   * encode a missing vawue, (///ˬ///✿) and we usuawwy w-want to cache those
+   * nyegative w-wookups, 😳 but w-we don't want to c-cache e.g. 😳 a timeout
+   * exception. σωσ
    *
-   * @return a pair of expiry time for this cache entry and the bytes
-   *   to store in cache. If you do not want this value to explicitly
-   *   expire, use Time.Top as the expiry.
+   * @wetuwn a paiw of expiwy time fow t-this cache entwy a-and the bytes
+   *   to stowe i-in cache. rawr x3 if you d-do nyot want this vawue to expwicitwy
+   *   e-expiwe, OwO use time.top as the expiwy. /(^•ω•^)
    */
-  def serialize(value: V): Option[(Time, Buf)]
+  d-def sewiawize(vawue: v): option[(time, 😳😳😳 b-buf)]
 
   /**
-   * Deserialize a value found in cache. This function converts the
-   * bytes found in memcache to a [[CacheResult]]. In general, you
-   * probably want to return [[CacheResult.Fresh]] or
-   * [[CacheResult.Stale]], but you are free to return any of the
-   * range of [[CacheResult]]s, depending on the behavior that you
-   * want.
+   * desewiawize a-a vawue found in cache. ( ͡o ω ͡o ) this function c-convewts t-the
+   * bytes found in memcache to a [[cachewesuwt]]. >_< in genewaw, >w< you
+   * pwobabwy want to wetuwn [[cachewesuwt.fwesh]] ow
+   * [[cachewesuwt.stawe]], rawr b-but you a-awe fwee to wetuwn any of the
+   * w-wange of [[cachewesuwt]]s, 😳 depending o-on the b-behaviow that you
+   * want. >w<
    *
-   * This is a total function because in the common use case, the
-   * bytes stored in cache will be appropriate for the
-   * serializer. This method is free to throw any exception if the
-   * bytes are not valid.
+   * this is a totaw function b-because in the common use case, (⑅˘꒳˘) the
+   * bytes stowed in cache wiww be appwopwiate f-fow the
+   * sewiawizew. OwO this m-method is fwee t-to thwow any exception i-if the
+   * bytes awe nyot v-vawid. (ꈍᴗꈍ)
    */
-  def deserialize(serializedValue: Buf): CacheResult[V]
+  d-def desewiawize(sewiawizedvawue: b-buf): cachewesuwt[v]
 }

@@ -1,154 +1,154 @@
-package com.twitter.search.earlybird.index;
+package com.twittew.seawch.eawwybiwd.index;
 
-import java.io.IOException;
-import java.util.Arrays;
+impowt j-java.io.ioexception;
+i-impowt java.utiw.awways;
 
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+i-impowt com.twittew.seawch.common.pawtitioning.snowfwakepawsew.snowfwakeidpawsew;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+i-impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.docidtotweetidmappew;
 
-public final class TweetIDToInternalIDMap implements Flushable {
-  private final int   size;
-  private final int[] hash;
-  public final int   halfSize;
-  private final int   mask;
-  public int         numMappings;
+pubwic finaw cwass t-tweetidtointewnawidmap impwements fwushabwe {
+  p-pwivate finaw int   size;
+  pwivate f-finaw int[] hash;
+  pubwic finaw int   hawfsize;
+  pwivate finaw i-int   mask;
+  pubwic int         n-nyummappings;
 
-  static final int PRIME_NUMBER = 37;
+  s-static finaw int pwime_numbew = 37;
 
-  // For FlushHandler.load() use only
-  private TweetIDToInternalIDMap(final int[] hash,
-                                 final int numMappings) {
+  // fow fwushhandwew.woad() use onwy
+  pwivate tweetidtointewnawidmap(finaw i-int[] hash, ^^;;
+                                 finaw int nummappings) {
     this.hash        = hash;
-    this.size        = hash.length;
-    this.halfSize    = size >> 1;
-    this.mask        = size - 1;
-    this.numMappings = numMappings;
+    t-this.size        = hash.wength;
+    t-this.hawfsize    = s-size >> 1;
+    t-this.mask        = s-size - 1;
+    this.nummappings = nyummappings;
   }
 
-  TweetIDToInternalIDMap(final int size) {
-    this.hash = new int[size];
-    Arrays.fill(hash, DocIDToTweetIDMapper.ID_NOT_FOUND);
+  tweetidtointewnawidmap(finaw i-int size) {
+    this.hash = nyew int[size];
+    a-awways.fiww(hash, o.O docidtotweetidmappew.id_not_found);
     this.size = size;
-    this.halfSize = size >> 1;
-    this.mask = size - 1;
-    this.numMappings = 0;
+    this.hawfsize = size >> 1;
+    this.mask = s-size - 1;
+    this.nummappings = 0;
   }
 
-  // Slightly different hash function from the one used to partition tweets to Earlybirds.
-  protected static int hashCode(final long tweetID) {
-    long timestamp = SnowflakeIdParser.getTimestampFromTweetId(tweetID);
-    int code = (int) ((timestamp - 1) ^ (timestamp >>> 32));
-    code = PRIME_NUMBER * (int) (tweetID & SnowflakeIdParser.RESERVED_BITS_MASK) + code;
-    return code;
+  // s-swightwy diffewent h-hash function f-fwom the one used to pawtition tweets to eawwybiwds. (///ˬ///✿)
+  pwotected s-static int h-hashcode(finaw wong tweetid) {
+    w-wong timestamp = s-snowfwakeidpawsew.gettimestampfwomtweetid(tweetid);
+    int c-code = (int) ((timestamp - 1) ^ (timestamp >>> 32));
+    code = p-pwime_numbew * (int) (tweetid & snowfwakeidpawsew.wesewved_bits_mask) + code;
+    w-wetuwn code;
   }
 
-  protected static int incrementHashCode(int code) {
-    return ((code >> 8) + code) | 1;
+  pwotected s-static int incwementhashcode(int code) {
+    wetuwn ((code >> 8) + c-code) | 1;
   }
 
-  private int hashPos(int code) {
-    return code & mask;
-  }
-
-  /**
-   * Associates the given tweet ID with the given internal doc ID.
-   *
-   * @param tweetID The tweet ID.
-   * @param internalID The doc ID that should be associated with this tweet ID.
-   * @param inverseMap The map that stores the doc ID to tweet ID associations.
-   */
-  public void add(final long tweetID, final int internalID, final long[] inverseMap) {
-    int code = hashCode(tweetID);
-    int hashPos = hashPos(code);
-    int value = hash[hashPos];
-    assert inverseMap[internalID] == tweetID;
-
-    if (value != DocIDToTweetIDMapper.ID_NOT_FOUND) {
-      final int inc = incrementHashCode(code);
-      do {
-        code += inc;
-        hashPos = hashPos(code);
-        value = hash[hashPos];
-      } while (value != DocIDToTweetIDMapper.ID_NOT_FOUND);
-    }
-
-    assert value == DocIDToTweetIDMapper.ID_NOT_FOUND;
-
-    hash[hashPos] = internalID;
-    numMappings++;
+  p-pwivate int hashpos(int code) {
+    wetuwn code & mask;
   }
 
   /**
-   * Returns the doc ID corresponding to the given tweet ID.
+   * associates the given tweet id with the given intewnaw d-doc id. σωσ
    *
-   * @param tweetID The tweet ID.
-   * @param inverseMap The map that stores the doc ID to tweet ID associations.
-   * @return The doc ID corresponding to the given tweet ID.
+   * @pawam t-tweetid the tweet i-id. nyaa~~
+   * @pawam i-intewnawid the doc i-id that shouwd be associated with this tweet id. ^^;;
+   * @pawam i-invewsemap the map that stowes the doc id to tweet id associations. ^•ﻌ•^
    */
-  public int get(long tweetID, final long[] inverseMap) {
-    int code = hashCode(tweetID);
-    int hashPos = hashPos(code);
-    int value = hash[hashPos];
+  pubwic v-void add(finaw wong tweetid, σωσ f-finaw int intewnawid, -.- f-finaw wong[] i-invewsemap) {
+    int code = h-hashcode(tweetid);
+    i-int hashpos = h-hashpos(code);
+    i-int vawue = hash[hashpos];
+    assewt invewsemap[intewnawid] == t-tweetid;
 
-    if (value != DocIDToTweetIDMapper.ID_NOT_FOUND && inverseMap[value] != tweetID) {
-      final int inc = incrementHashCode(code);
+    i-if (vawue != d-docidtotweetidmappew.id_not_found) {
+      f-finaw i-int inc = incwementhashcode(code);
+      do {
+        code += inc;
+        hashpos = h-hashpos(code);
+        vawue = hash[hashpos];
+      } whiwe (vawue != docidtotweetidmappew.id_not_found);
+    }
+
+    assewt vawue == docidtotweetidmappew.id_not_found;
+
+    hash[hashpos] = intewnawid;
+    n-nyummappings++;
+  }
+
+  /**
+   * wetuwns the doc id cowwesponding to the given t-tweet id. ^^;;
+   *
+   * @pawam tweetid t-the tweet i-id. XD
+   * @pawam invewsemap the m-map that stowes the doc id to tweet i-id associations. 🥺
+   * @wetuwn t-the doc id cowwesponding to the given tweet id.
+   */
+  pubwic int get(wong tweetid, òωó finaw wong[] i-invewsemap) {
+    int code = h-hashcode(tweetid);
+    int hashpos = h-hashpos(code);
+    i-int vawue = hash[hashpos];
+
+    if (vawue != d-docidtotweetidmappew.id_not_found && i-invewsemap[vawue] != tweetid) {
+      f-finaw int inc = i-incwementhashcode(code);
 
       do {
         code += inc;
-        hashPos = hashPos(code);
-        value = hash[hashPos];
-      } while (value != DocIDToTweetIDMapper.ID_NOT_FOUND && inverseMap[value] != tweetID);
+        hashpos = hashpos(code);
+        vawue = hash[hashpos];
+      } w-whiwe (vawue != d-docidtotweetidmappew.id_not_found && i-invewsemap[vawue] != tweetid);
     }
 
-    if (hashPos == -1) {
-      return DocIDToTweetIDMapper.ID_NOT_FOUND;
+    i-if (hashpos == -1) {
+      w-wetuwn docidtotweetidmappew.id_not_found;
     }
-    return hash[hashPos];
+    w-wetuwn hash[hashpos];
   }
 
-  @Override
-  public TweetIDToInternalIDMap.FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @ovewwide
+  pubwic tweetidtointewnawidmap.fwushhandwew getfwushhandwew() {
+    wetuwn n-nyew fwushhandwew(this);
   }
 
-  public static final class FlushHandler extends Flushable.Handler<TweetIDToInternalIDMap> {
-    public FlushHandler() {
-      super();
+  p-pubwic static finaw cwass fwushhandwew extends f-fwushabwe.handwew<tweetidtointewnawidmap> {
+    p-pubwic fwushhandwew() {
+      supew();
     }
 
-    private static final String HASH_ARRAY_SIZE_PROP_NAME = "HashArraySize";
-    private static final String MASK_PROP_NAME = "Mask";
-    private static final String NUM_MAPPINGS_PROP_NAME = "NumMappings";
+    pwivate static finaw stwing h-hash_awway_size_pwop_name = "hashawwaysize";
+    pwivate static finaw stwing mask_pwop_name = "mask";
+    pwivate static finaw s-stwing nyum_mappings_pwop_name = "nummappings";
 
-    public FlushHandler(TweetIDToInternalIDMap objectToFlush) {
-      super(objectToFlush);
+    pubwic fwushhandwew(tweetidtointewnawidmap objecttofwush) {
+      s-supew(objecttofwush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out)
-      throws IOException {
-      TweetIDToInternalIDMap mapper = getObjectToFlush();
+    @ovewwide
+    p-pwotected void dofwush(fwushinfo fwushinfo, (ˆ ﻌ ˆ)♡ datasewiawizew o-out)
+      thwows i-ioexception {
+      tweetidtointewnawidmap mappew = getobjecttofwush();
 
-      flushInfo
-          .addIntProperty(HASH_ARRAY_SIZE_PROP_NAME, mapper.hash.length)
-          .addIntProperty(MASK_PROP_NAME, mapper.mask)
-          .addIntProperty(NUM_MAPPINGS_PROP_NAME, mapper.numMappings);
+      f-fwushinfo
+          .addintpwopewty(hash_awway_size_pwop_name, -.- mappew.hash.wength)
+          .addintpwopewty(mask_pwop_name, :3 mappew.mask)
+          .addintpwopewty(num_mappings_pwop_name, ʘwʘ m-mappew.nummappings);
 
-      out.writeIntArray(mapper.hash);
+      out.wwiteintawway(mappew.hash);
     }
 
-    @Override
-    protected TweetIDToInternalIDMap doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      final int[] hash = in.readIntArray();
+    @ovewwide
+    pwotected tweetidtointewnawidmap dowoad(fwushinfo f-fwushinfo, 🥺 datadesewiawizew i-in)
+        thwows i-ioexception {
+      finaw int[] h-hash = in.weadintawway();
 
-      final int numMappings = flushInfo.getIntProperty(NUM_MAPPINGS_PROP_NAME);
+      finaw int nyummappings = f-fwushinfo.getintpwopewty(num_mappings_pwop_name);
 
-      return new TweetIDToInternalIDMap(hash, numMappings);
+      w-wetuwn nyew t-tweetidtointewnawidmap(hash, nyummappings);
     }
   }
 }

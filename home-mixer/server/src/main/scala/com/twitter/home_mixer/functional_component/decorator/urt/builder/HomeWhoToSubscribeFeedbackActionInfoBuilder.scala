@@ -1,52 +1,52 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.twittew.home_mixew.functionaw_component.decowatow.uwt.buiwdew
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.metadata.WhoToFollowFeedbackActionInfoBuilder
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.service.{thriftscala => tl}
-import com.twitter.timelines.util.FeedbackRequestSerializer
-import com.twitter.timelineservice.suggests.thriftscala.SuggestType
-import com.twitter.timelineservice.thriftscala.FeedbackType
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.metadata.whotofowwowfeedbackactioninfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.usewcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pwoduct.guice.scope.pwoductscoped
+i-impowt com.twittew.stwingcentew.cwient.stwingcentew
+i-impowt javax.inject.inject
+impowt javax.inject.pwovidew
+impowt javax.inject.singweton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.timewines.sewvice.{thwiftscawa => t-tw}
+impowt com.twittew.timewines.utiw.feedbackwequestsewiawizew
+impowt com.twittew.timewinesewvice.suggests.thwiftscawa.suggesttype
+i-impowt com.twittew.timewinesewvice.thwiftscawa.feedbacktype
 
-object HomeWhoToSubscribeFeedbackActionInfoBuilder {
-  private val FeedbackMetadata = tl.FeedbackMetadata(
-    injectionType = Some(SuggestType.WhoToSubscribe),
-    engagementType = None,
-    entityIds = Seq.empty,
-    ttlMs = None
+object homewhotosubscwibefeedbackactioninfobuiwdew {
+  pwivate vaw feedbackmetadata = t-tw.feedbackmetadata(
+    injectiontype = s-some(suggesttype.whotosubscwibe), ʘwʘ
+    e-engagementtype = nyone, σωσ
+    entityids = seq.empty, OwO
+    ttwms = nyone
   )
-  private val FeedbackRequest =
-    tl.DefaultFeedbackRequest2(FeedbackType.SeeFewer, FeedbackMetadata)
-  private val EncodedFeedbackRequest =
-    FeedbackRequestSerializer.serialize(tl.FeedbackRequest.DefaultFeedbackRequest2(FeedbackRequest))
+  p-pwivate vaw feedbackwequest =
+    tw.defauwtfeedbackwequest2(feedbacktype.seefewew, 😳😳😳 feedbackmetadata)
+  pwivate v-vaw encodedfeedbackwequest =
+    feedbackwequestsewiawizew.sewiawize(tw.feedbackwequest.defauwtfeedbackwequest2(feedbackwequest))
 }
 
-@Singleton
-case class HomeWhoToSubscribeFeedbackActionInfoBuilder @Inject() (
-  feedbackStrings: FeedbackStrings,
-  @ProductScoped stringCenterProvider: Provider[StringCenter])
-    extends BaseFeedbackActionInfoBuilder[PipelineQuery, UserCandidate] {
+@singweton
+c-case cwass homewhotosubscwibefeedbackactioninfobuiwdew @inject() (
+  f-feedbackstwings: f-feedbackstwings, 😳😳😳
+  @pwoductscoped s-stwingcentewpwovidew: pwovidew[stwingcentew])
+    extends b-basefeedbackactioninfobuiwdew[pipewinequewy, o.O usewcandidate] {
 
-  private val whoToSubscribeFeedbackActionInfoBuilder = WhoToFollowFeedbackActionInfoBuilder(
-    seeLessOftenFeedbackString = feedbackStrings.seeLessOftenFeedbackString,
-    seeLessOftenConfirmationFeedbackString = feedbackStrings.seeLessOftenConfirmationFeedbackString,
-    stringCenter = stringCenterProvider.get(),
-    encodedFeedbackRequest =
-      Some(HomeWhoToSubscribeFeedbackActionInfoBuilder.EncodedFeedbackRequest)
+  pwivate vaw w-whotosubscwibefeedbackactioninfobuiwdew = whotofowwowfeedbackactioninfobuiwdew(
+    seewessoftenfeedbackstwing = feedbackstwings.seewessoftenfeedbackstwing, ( ͡o ω ͡o )
+    seewessoftenconfiwmationfeedbackstwing = feedbackstwings.seewessoftenconfiwmationfeedbackstwing, (U ﹏ U)
+    s-stwingcentew = stwingcentewpwovidew.get(), (///ˬ///✿)
+    e-encodedfeedbackwequest =
+      s-some(homewhotosubscwibefeedbackactioninfobuiwdew.encodedfeedbackwequest)
   )
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: UserCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[FeedbackActionInfo] =
-    whoToSubscribeFeedbackActionInfoBuilder.apply(query, candidate, candidateFeatures)
+  o-ovewwide def appwy(
+    quewy: pipewinequewy, >w<
+    candidate: u-usewcandidate, rawr
+    c-candidatefeatuwes: featuwemap
+  ): o-option[feedbackactioninfo] =
+    w-whotosubscwibefeedbackactioninfobuiwdew.appwy(quewy, mya candidate, ^^ candidatefeatuwes)
 }

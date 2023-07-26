@@ -1,24 +1,24 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow.distributed_runtime;
+package tensowfwow.distwibuted_wuntime;
 
-option cc_enable_arenas = true;
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option c-cc_enabwe_awenas = t-twue;
+option g-go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// Used to serialize and transmit tensorflow::Status payloads through
-// grpc::Status `error_details` since grpc::Status lacks payload API.
-// TODO(b/204231601): Use GRPC API once supported.
-message GrpcPayloadContainer {
-  map<string, bytes> payloads = 1;
+// u-used t-to sewiawize and t-twansmit tensowfwow::status paywoads t-thwough
+// g-gwpc::status `ewwow_detaiws` since gwpc::status wacks paywoad api. rawr
+// todo(b/204231601): use g-gwpc api once suppowted. OwO
+message gwpcpaywoadcontainew {
+  m-map<stwing, (U ﹏ U) bytes> paywoads = 1;
 }
 
-// If included as a payload, this message flags the Status to have lost payloads
-// during the GRPC transmission.
-// URI: "type.googleapis.com/tensorflow.distributed_runtime.GrpcPayloadsLost"
-message GrpcPayloadsLost {}
+// i-if incwuded as a paywoad, >_< this message fwags the status to have w-wost paywoads
+// duwing the gwpc t-twansmission. rawr x3
+// u-uwi: "type.googweapis.com/tensowfwow.distwibuted_wuntime.gwpcpaywoadswost"
+message gwpcpaywoadswost {}
 
-// If included as a payload, this message flags the Status to be a possible
-// outcome of a worker restart.
-// URI:
-// "type.googleapis.com/tensorflow.distributed_runtime.WorkerPossiblyRestarted"
-message WorkerPossiblyRestarted {}
+// if incwuded as a paywoad, mya t-this message fwags the status to be a possibwe
+// outcome of a wowkew westawt. nyaa~~
+// u-uwi:
+// "type.googweapis.com/tensowfwow.distwibuted_wuntime.wowkewpossibwywestawted"
+message wowkewpossibwywestawted {}

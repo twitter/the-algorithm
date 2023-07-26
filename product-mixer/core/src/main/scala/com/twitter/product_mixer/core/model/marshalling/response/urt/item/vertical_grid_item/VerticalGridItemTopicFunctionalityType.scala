@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.vewticaw_gwid_item
 
-sealed trait VerticalGridItemTopicFunctionalityType
+seawed t-twait vewticawgwiditemtopicfunctionawitytype
 
-case object PivotVerticalGridItemTopicFunctionalityType
-    extends VerticalGridItemTopicFunctionalityType
-case object RecommendationVerticalGridItemTopicFunctionalityType
-    extends VerticalGridItemTopicFunctionalityType
+c-case object pivotvewticawgwiditemtopicfunctionawitytype
+    extends v-vewticawgwiditemtopicfunctionawitytype
+c-case o-object wecommendationvewticawgwiditemtopicfunctionawitytype
+    e-extends vewticawgwiditemtopicfunctionawitytype

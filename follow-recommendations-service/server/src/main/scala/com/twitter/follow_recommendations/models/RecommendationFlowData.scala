@@ -1,103 +1,103 @@
-package com.twitter.follow_recommendations.models
+package com.twittew.fowwow_wecommendations.modews
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.ClientContextConverter
-import com.twitter.follow_recommendations.common.models.HasUserState
-import com.twitter.follow_recommendations.common.utils.UserSignupUtil
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.RecommendationPipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.util.Time
+impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.cwientcontextconvewtew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.hasusewstate
+i-impowt c-com.twittew.fowwow_wecommendations.common.utiws.usewsignuputiw
+i-impowt com.twittew.fowwow_wecommendations.wogging.{thwiftscawa => o-offwine}
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.wecommendationpipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.hasmawshawwing
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+i-impowt com.twittew.utiw.time
 
-case class RecommendationFlowData[Target <: HasClientContext](
-  request: Target,
-  recommendationFlowIdentifier: RecommendationPipelineIdentifier,
-  candidateSources: Seq[CandidateSource[Target, CandidateUser]],
-  candidatesFromCandidateSources: Seq[CandidateUser],
-  mergedCandidates: Seq[CandidateUser],
-  filteredCandidates: Seq[CandidateUser],
-  rankedCandidates: Seq[CandidateUser],
-  transformedCandidates: Seq[CandidateUser],
-  truncatedCandidates: Seq[CandidateUser],
-  results: Seq[CandidateUser])
-    extends HasMarshalling {
+case cwass wecommendationfwowdata[tawget <: h-hascwientcontext](
+  wequest: t-tawget, >w<
+  wecommendationfwowidentifiew: wecommendationpipewineidentifiew,
+  candidatesouwces: seq[candidatesouwce[tawget, c-candidateusew]], (U ﹏ U)
+  candidatesfwomcandidatesouwces: s-seq[candidateusew], 😳
+  m-mewgedcandidates: seq[candidateusew], (ˆ ﻌ ˆ)♡
+  fiwtewedcandidates: seq[candidateusew], 😳😳😳
+  wankedcandidates: seq[candidateusew], (U ﹏ U)
+  t-twansfowmedcandidates: seq[candidateusew], (///ˬ///✿)
+  twuncatedcandidates: seq[candidateusew], 😳
+  wesuwts: seq[candidateusew])
+    extends hasmawshawwing {
 
-  import RecommendationFlowData._
+  i-impowt wecommendationfwowdata._
 
-  lazy val toRecommendationFlowLogOfflineThrift: offline.RecommendationFlowLog = {
-    val userMetadata = userToOfflineRecommendationFlowUserMetadata(request)
-    val signals = userToOfflineRecommendationFlowSignals(request)
-    val filteredCandidateSourceCandidates =
-      candidatesToOfflineRecommendationFlowCandidateSourceCandidates(
-        candidateSources,
-        filteredCandidates
+  wazy vaw towecommendationfwowwogoffwinethwift: o-offwine.wecommendationfwowwog = {
+    v-vaw usewmetadata = u-usewtooffwinewecommendationfwowusewmetadata(wequest)
+    v-vaw signaws = usewtooffwinewecommendationfwowsignaws(wequest)
+    vaw fiwtewedcandidatesouwcecandidates =
+      c-candidatestooffwinewecommendationfwowcandidatesouwcecandidates(
+        candidatesouwces, 😳
+        fiwtewedcandidates
       )
-    val rankedCandidateSourceCandidates =
-      candidatesToOfflineRecommendationFlowCandidateSourceCandidates(
-        candidateSources,
-        rankedCandidates
+    v-vaw wankedcandidatesouwcecandidates =
+      candidatestooffwinewecommendationfwowcandidatesouwcecandidates(
+        candidatesouwces, σωσ
+        wankedcandidates
       )
-    val truncatedCandidateSourceCandidates =
-      candidatesToOfflineRecommendationFlowCandidateSourceCandidates(
-        candidateSources,
-        truncatedCandidates
+    vaw twuncatedcandidatesouwcecandidates =
+      candidatestooffwinewecommendationfwowcandidatesouwcecandidates(
+        c-candidatesouwces, rawr x3
+        twuncatedcandidates
       )
 
-    offline.RecommendationFlowLog(
-      ClientContextConverter.toFRSOfflineClientContextThrift(request.clientContext),
-      userMetadata,
-      signals,
-      Time.now.inMillis,
-      recommendationFlowIdentifier.name,
-      Some(filteredCandidateSourceCandidates),
-      Some(rankedCandidateSourceCandidates),
-      Some(truncatedCandidateSourceCandidates)
+    o-offwine.wecommendationfwowwog(
+      c-cwientcontextconvewtew.tofwsoffwinecwientcontextthwift(wequest.cwientcontext), OwO
+      u-usewmetadata,
+      signaws, /(^•ω•^)
+      time.now.inmiwwis, 😳😳😳
+      wecommendationfwowidentifiew.name, ( ͡o ω ͡o )
+      s-some(fiwtewedcandidatesouwcecandidates), >_<
+      s-some(wankedcandidatesouwcecandidates), >w<
+      some(twuncatedcandidatesouwcecandidates)
     )
   }
 }
 
-object RecommendationFlowData {
-  def userToOfflineRecommendationFlowUserMetadata[Target <: HasClientContext](
-    request: Target
-  ): Option[offline.OfflineRecommendationFlowUserMetadata] = {
-    val userSignupAge = UserSignupUtil.userSignupAge(request).map(_.inDays)
-    val userState = request match {
-      case req: HasUserState => req.userState.map(_.name)
-      case _ => None
+object wecommendationfwowdata {
+  d-def usewtooffwinewecommendationfwowusewmetadata[tawget <: h-hascwientcontext](
+    wequest: t-tawget
+  ): option[offwine.offwinewecommendationfwowusewmetadata] = {
+    vaw usewsignupage = usewsignuputiw.usewsignupage(wequest).map(_.indays)
+    v-vaw usewstate = wequest match {
+      case w-weq: hasusewstate => weq.usewstate.map(_.name)
+      c-case _ => nyone
     }
-    Some(offline.OfflineRecommendationFlowUserMetadata(userSignupAge, userState))
+    s-some(offwine.offwinewecommendationfwowusewmetadata(usewsignupage, rawr u-usewstate))
   }
 
-  def userToOfflineRecommendationFlowSignals[Target <: HasClientContext](
-    request: Target
-  ): Option[offline.OfflineRecommendationFlowSignals] = {
-    val countryCode = request.getCountryCode
-    Some(offline.OfflineRecommendationFlowSignals(countryCode))
+  def usewtooffwinewecommendationfwowsignaws[tawget <: hascwientcontext](
+    wequest: tawget
+  ): option[offwine.offwinewecommendationfwowsignaws] = {
+    vaw countwycode = wequest.getcountwycode
+    s-some(offwine.offwinewecommendationfwowsignaws(countwycode))
   }
 
-  def candidatesToOfflineRecommendationFlowCandidateSourceCandidates[Target <: HasClientContext](
-    candidateSources: Seq[CandidateSource[Target, CandidateUser]],
-    candidates: Seq[CandidateUser],
-  ): Seq[offline.OfflineRecommendationFlowCandidateSourceCandidates] = {
-    val candidatesGroupedByCandidateSources =
-      candidates.groupBy(
-        _.getPrimaryCandidateSource.getOrElse(CandidateSourceIdentifier("NoCandidateSource")))
+  d-def candidatestooffwinewecommendationfwowcandidatesouwcecandidates[tawget <: hascwientcontext](
+    c-candidatesouwces: s-seq[candidatesouwce[tawget, 😳 c-candidateusew]], >w<
+    candidates: seq[candidateusew], (⑅˘꒳˘)
+  ): seq[offwine.offwinewecommendationfwowcandidatesouwcecandidates] = {
+    v-vaw candidatesgwoupedbycandidatesouwces =
+      candidates.gwoupby(
+        _.getpwimawycandidatesouwce.getowewse(candidatesouwceidentifiew("nocandidatesouwce")))
 
-    candidateSources.map(candidateSource => {
-      val candidates =
-        candidatesGroupedByCandidateSources.get(candidateSource.identifier).toSeq.flatten
-      val candidateUserIds = candidates.map(_.id)
-      val candidateUserScores = candidates.map(_.score).exists(_.nonEmpty) match {
-        case true => Some(candidates.map(_.score.getOrElse(-1.0)))
-        case false => None
+    candidatesouwces.map(candidatesouwce => {
+      vaw candidates =
+        c-candidatesgwoupedbycandidatesouwces.get(candidatesouwce.identifiew).toseq.fwatten
+      vaw c-candidateusewids = c-candidates.map(_.id)
+      vaw c-candidateusewscowes = candidates.map(_.scowe).exists(_.nonempty) m-match {
+        c-case twue => s-some(candidates.map(_.scowe.getowewse(-1.0)))
+        c-case fawse => nyone
       }
-      offline.OfflineRecommendationFlowCandidateSourceCandidates(
-        candidateSource.identifier.name,
-        candidateUserIds,
-        candidateUserScores
+      offwine.offwinewecommendationfwowcandidatesouwcecandidates(
+        c-candidatesouwce.identifiew.name, OwO
+        c-candidateusewids,
+        c-candidateusewscowes
       )
     })
   }

@@ -1,87 +1,87 @@
-package com.twitter.search.earlybird.search.queries;
+package com.twittew.seawch.eawwybiwd.seawch.quewies;
 
-import java.io.IOException;
-import java.util.Objects;
-import java.util.Set;
+impowt java.io.ioexception;
+i-impowt java.utiw.objects;
+i-impowt j-java.utiw.set;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+i-impowt owg.apache.wucene.index.weafweadew;
+i-impowt o-owg.apache.wucene.index.weafweadewcontext;
+impowt o-owg.apache.wucene.index.numewicdocvawues;
+i-impowt owg.apache.wucene.seawch.booweancwause;
+impowt owg.apache.wucene.seawch.booweanquewy;
+impowt owg.apache.wucene.seawch.docidsetitewatow;
+impowt owg.apache.wucene.seawch.indexseawchew;
+i-impowt owg.apache.wucene.seawch.quewy;
+impowt owg.apache.wucene.seawch.scowemode;
+i-impowt owg.apache.wucene.seawch.weight;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
+impowt c-com.twittew.seawch.common.quewy.defauwtfiwtewweight;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.utiw.wangefiwtewdisi;
 
 /**
- * CSFDisjunctionFilter provides an efficient mechanism to query for documents that have a
- * long CSF equal to one of the provided values.
+ * csfdisjunctionfiwtew pwovides a-an efficient mechanism to quewy f-fow documents that h-have a
+ * wong csf equaw to one of the pwovided vawues. >w<
  */
-public final class CSFDisjunctionFilter extends Query {
-  private final String csfField;
-  private final Set<Long> values;
+pubwic finaw cwass c-csfdisjunctionfiwtew extends quewy {
+  pwivate finaw stwing csffiewd;
+  pwivate f-finaw set<wong> vawues;
 
-  public static Query getCSFDisjunctionFilter(String csfField, Set<Long> values) {
-    return new BooleanQuery.Builder()
-        .add(new CSFDisjunctionFilter(csfField, values), BooleanClause.Occur.FILTER)
-        .build();
+  pubwic s-static quewy g-getcsfdisjunctionfiwtew(stwing c-csffiewd, set<wong> v-vawues) {
+    wetuwn nyew booweanquewy.buiwdew()
+        .add(new csfdisjunctionfiwtew(csffiewd, (U ﹏ U) v-vawues), 😳 booweancwause.occuw.fiwtew)
+        .buiwd();
   }
 
-  private CSFDisjunctionFilter(String csfField, Set<Long> values) {
-    this.csfField = csfField;
-    this.values = values;
+  pwivate csfdisjunctionfiwtew(stwing csffiewd, (ˆ ﻌ ˆ)♡ s-set<wong> vawues) {
+    this.csffiewd = csffiewd;
+    this.vawues = vawues;
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        return new CSFDisjunctionFilterDISI(context.reader(), csfField, values);
+  @ovewwide
+  pubwic weight cweateweight(indexseawchew s-seawchew, 😳😳😳 scowemode scowemode, (U ﹏ U) f-fwoat boost) {
+    w-wetuwn n-nyew defauwtfiwtewweight(this) {
+      @ovewwide
+      pwotected docidsetitewatow getdocidsetitewatow(weafweadewcontext c-context) t-thwows ioexception {
+        wetuwn nyew csfdisjunctionfiwtewdisi(context.weadew(), (///ˬ///✿) c-csffiewd, 😳 v-vawues);
       }
     };
   }
 
-  @Override
-  public int hashCode() {
-    return (csfField == null ? 0 : csfField.hashCode()) * 17
-        + (values == null ? 0 : values.hashCode());
+  @ovewwide
+  pubwic i-int hashcode() {
+    wetuwn (csffiewd == n-nyuww ? 0 : csffiewd.hashcode()) * 17
+        + (vawues == nyuww ? 0 : v-vawues.hashcode());
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof CSFDisjunctionFilter)) {
-      return false;
+  @ovewwide
+  pubwic b-boowean equaws(object obj) {
+    i-if (!(obj instanceof c-csfdisjunctionfiwtew)) {
+      wetuwn fawse;
     }
 
-    CSFDisjunctionFilter filter = CSFDisjunctionFilter.class.cast(obj);
-    return Objects.equals(csfField, filter.csfField) && Objects.equals(values, filter.values);
+    csfdisjunctionfiwtew fiwtew = csfdisjunctionfiwtew.cwass.cast(obj);
+    wetuwn objects.equaws(csffiewd, 😳 fiwtew.csffiewd) && objects.equaws(vawues, σωσ fiwtew.vawues);
   }
 
-  @Override
-  public String toString(String field) {
-    return "CSFDisjunctionFilter:" + csfField + ",count:" + values.size();
+  @ovewwide
+  p-pubwic stwing t-tostwing(stwing fiewd) {
+    w-wetuwn "csfdisjunctionfiwtew:" + c-csffiewd + ",count:" + v-vawues.size();
   }
 
-  private static final class CSFDisjunctionFilterDISI extends RangeFilterDISI {
-    private final NumericDocValues docValues;
-    private final Set<Long> values;
+  pwivate static finaw cwass csfdisjunctionfiwtewdisi e-extends wangefiwtewdisi {
+    pwivate finaw nyumewicdocvawues docvawues;
+    pwivate finaw set<wong> vawues;
 
-    private CSFDisjunctionFilterDISI(LeafReader reader, String csfField, Set<Long> values)
-        throws IOException {
-      super(reader);
-      this.values = values;
-      this.docValues = reader.getNumericDocValues(csfField);
+    p-pwivate csfdisjunctionfiwtewdisi(weafweadew weadew, rawr x3 stwing csffiewd, OwO s-set<wong> v-vawues)
+        t-thwows ioexception {
+      supew(weadew);
+      t-this.vawues = v-vawues;
+      this.docvawues = w-weadew.getnumewicdocvawues(csffiewd);
     }
 
-    @Override
-    protected boolean shouldReturnDoc() throws IOException {
-      return docValues.advanceExact(docID()) && values.contains(docValues.longValue());
+    @ovewwide
+    pwotected b-boowean shouwdwetuwndoc() thwows ioexception {
+      w-wetuwn d-docvawues.advanceexact(docid()) && v-vawues.contains(docvawues.wongvawue());
     }
   }
 }

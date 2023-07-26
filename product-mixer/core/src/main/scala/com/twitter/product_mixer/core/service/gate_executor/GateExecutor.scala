@@ -1,107 +1,107 @@
-package com.twitter.product_mixer.core.service.gate_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.gate.BaseGate
-import com.twitter.product_mixer.core.functional_component.gate.GateResult
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Arrow.Iso
-import com.twitter.util.Return
-import com.twitter.util.Throw
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.basegate
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gatewesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.executow
+i-impowt com.twittew.stitch.awwow
+impowt com.twittew.stitch.awwow.iso
+impowt com.twittew.utiw.wetuwn
+impowt com.twittew.utiw.thwow
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.immutable.Queue
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
+impowt scawa.cowwection.immutabwe.queue
 
 /**
- * A GateExecutor takes a Seq[Gate], executes them all sequentially, and
- * determines a final Continue or Stop decision.
+ * a gateexecutow takes a-a seq[gate], ( ͡o ω ͡o ) exekawaii~s them a-aww sequentiawwy, mya and
+ * detewmines a finaw continue ow stop decision. (///ˬ///✿)
  */
-@Singleton
-class GateExecutor @Inject() (override val statsReceiver: StatsReceiver) extends Executor {
+@singweton
+c-cwass gateexecutow @inject() (ovewwide vaw statsweceivew: s-statsweceivew) e-extends executow {
 
-  private val Continue = "continue"
-  private val Skipped = "skipped"
-  private val Stop = "stop"
+  pwivate vaw continue = "continue"
+  pwivate vaw skipped = "skipped"
+  p-pwivate vaw stop = "stop"
 
-  def arrow[Query <: PipelineQuery](
-    gates: Seq[BaseGate[Query]],
-    context: Executor.Context
-  ): Arrow[Query, GateExecutorResult] = {
+  def awwow[quewy <: pipewinequewy](
+    gates: seq[basegate[quewy]], (˘ω˘)
+    c-context: executow.context
+  ): awwow[quewy, ^^;; gateexecutowwesuwt] = {
 
-    val gateArrows = gates.map(getIsoArrowForGate(_, context))
-    val combinedArrow = isoArrowsSequentially(gateArrows)
+    v-vaw gateawwows = g-gates.map(getisoawwowfowgate(_, c-context))
+    v-vaw combinedawwow = isoawwowssequentiawwy(gateawwows)
 
-    Arrow
-      .map { query: Query => (query, GateExecutorResult(Queue.empty)) }
-      .andThen(combinedArrow)
+    awwow
+      .map { q-quewy: quewy => (quewy, (✿oωo) gateexecutowwesuwt(queue.empty)) }
+      .andthen(combinedawwow)
       .map {
-        case (_, gateExecutorResult) =>
-          // materialize the Queue into a List for faster future iterations
-          GateExecutorResult(gateExecutorResult.individualGateResults.toList)
+        case (_, (U ﹏ U) gateexecutowwesuwt) =>
+          // m-matewiawize the queue into a wist fow fastew futuwe itewations
+          gateexecutowwesuwt(gateexecutowwesuwt.individuawgatewesuwts.towist)
       }
   }
 
   /**
-   * Each gate is transformed into a Iso Arrow over (Quest, List[GatewayResult]).
+   * each gate i-is twansfowmed into a iso awwow o-ovew (quest, -.- wist[gatewaywesuwt]). ^•ﻌ•^
    *
-   * This arrow:
-   * - Adapts the input and output types of the underlying Gate arrow (an [[Iso[(Query, QueryResult)]])
-   * - throws a [[StoppedGateException]] if [[GateResult.continue]] is false
-   * - if its not false, prepends the current results to the [[GateExecutorResult.individualGateResults]] list
+   * this a-awwow:
+   * - a-adapts the input and output types of the undewwying gate awwow (an [[iso[(quewy, rawr q-quewywesuwt)]])
+   * - t-thwows a [[stoppedgateexception]] i-if [[gatewesuwt.continue]] i-is fawse
+   * - if its nyot f-fawse, (˘ω˘) pwepends the cuwwent wesuwts t-to the [[gateexecutowwesuwt.individuawgatewesuwts]] wist
    */
-  private def getIsoArrowForGate[Query <: PipelineQuery](
-    gate: BaseGate[Query],
-    context: Executor.Context
-  ): Iso[(Query, GateExecutorResult)] = {
-    val broadcastStatsReceiver =
-      Executor.broadcastStatsReceiver(context, gate.identifier, statsReceiver)
+  pwivate d-def getisoawwowfowgate[quewy <: pipewinequewy](
+    g-gate: basegate[quewy], nyaa~~
+    context: executow.context
+  ): i-iso[(quewy, g-gateexecutowwesuwt)] = {
+    vaw bwoadcaststatsweceivew =
+      executow.bwoadcaststatsweceivew(context, UwU gate.identifiew, :3 statsweceivew)
 
-    val continueCounter = broadcastStatsReceiver.counter(Continue)
-    val skippedCounter = broadcastStatsReceiver.counter(Skipped)
-    val stopCounter = broadcastStatsReceiver.counter(Stop)
+    vaw continuecountew = bwoadcaststatsweceivew.countew(continue)
+    v-vaw skippedcountew = b-bwoadcaststatsweceivew.countew(skipped)
+    vaw s-stopcountew = bwoadcaststatsweceivew.countew(stop)
 
-    val observedArrow = wrapComponentWithExecutorBookkeeping(
-      context,
-      gate.identifier,
-      onSuccess = { gateResult: GateResult =>
-        gateResult match {
-          case GateResult.Continue => continueCounter.incr()
-          case GateResult.Skipped => skippedCounter.incr()
-          case GateResult.Stop => stopCounter.incr()
+    v-vaw obsewvedawwow = w-wwapcomponentwithexecutowbookkeeping(
+      context, (⑅˘꒳˘)
+      gate.identifiew, (///ˬ///✿)
+      onsuccess = { g-gatewesuwt: gatewesuwt =>
+        gatewesuwt match {
+          case g-gatewesuwt.continue => continuecountew.incw()
+          c-case gatewesuwt.skipped => s-skippedcountew.incw()
+          c-case gatewesuwt.stop => stopcountew.incw()
         }
       }
-    )(gate.arrow)
+    )(gate.awwow)
 
-    val inputAdapted: Arrow[(Query, GateExecutorResult), GateResult] =
-      Arrow
-        .map[(Query, GateExecutorResult), Query] { case (query, _) => query }
-        .andThen(observedArrow)
+    v-vaw inputadapted: a-awwow[(quewy, ^^;; g-gateexecutowwesuwt), >_< g-gatewesuwt] =
+      awwow
+        .map[(quewy, rawr x3 gateexecutowwesuwt), /(^•ω•^) q-quewy] { case (quewy, :3 _) => q-quewy }
+        .andthen(obsewvedawwow)
 
-    val zipped = Arrow.zipWithArg(inputAdapted)
+    v-vaw zipped = a-awwow.zipwithawg(inputadapted)
 
-    // at each step, the current `GateExecutorResult.continue` value is correct for all already run gates
-    val withStoppedGatesAsExceptions = zipped.map {
-      case ((query, previousResults), currentResult) if currentResult.continue =>
-        Return(
+    // a-at each step, (ꈍᴗꈍ) the cuwwent `gateexecutowwesuwt.continue` vawue is cowwect fow aww awweady w-wun gates
+    vaw withstoppedgatesasexceptions = zipped.map {
+      case ((quewy, /(^•ω•^) pweviouswesuwts), (⑅˘꒳˘) cuwwentwesuwt) i-if cuwwentwesuwt.continue =>
+        wetuwn(
           (
-            query,
-            GateExecutorResult(
-              previousResults.individualGateResults :+ ExecutedGateResult(
-                gate.identifier,
-                currentResult))
+            quewy, ( ͡o ω ͡o )
+            gateexecutowwesuwt(
+              p-pweviouswesuwts.individuawgatewesuwts :+ e-exekawaii~dgatewesuwt(
+                g-gate.identifiew, òωó
+                cuwwentwesuwt))
           ))
-      case _ => Throw(StoppedGateException(gate.identifier))
-    }.lowerFromTry
+      c-case _ => thwow(stoppedgateexception(gate.identifiew))
+    }.wowewfwomtwy
 
     /**
-     * we gather stats before converting closed gates to exceptions because a closed gate
-     * isn't a failure for the gate, its a normal behavior
-     * but we do want to remap the the [[StoppedGateException]] created because the [[BaseGate]] is closed
-     * to the correct [[com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure]],
-     * so we remap with [[wrapWithErrorHandling]]
+     * w-we gathew stats b-befowe convewting cwosed gates to exceptions because a cwosed gate
+     * isn't a faiwuwe fow the g-gate, (⑅˘꒳˘) its a nyowmaw behaviow
+     * b-but we do want to wemap the t-the [[stoppedgateexception]] c-cweated because the [[basegate]] is cwosed
+     * t-to the cowwect [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe]], XD
+     * s-so we wemap with [[wwapwithewwowhandwing]]
      */
-    wrapWithErrorHandling(context, gate.identifier)(withStoppedGatesAsExceptions)
+    w-wwapwithewwowhandwing(context, -.- g-gate.identifiew)(withstoppedgatesasexceptions)
   }
 }

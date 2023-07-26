@@ -1,34 +1,34 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/bijection:scrooge",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "3rdparty/src/jvm/com/twitter/storehaus:core",
-        "discovery-ds/src/main/thrift/com/twitter/dds/jobs/repeated_profile_visits:profile_visit-scala",
-        "flock-client/src/main/thrift:thrift-scala",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/store/strato",
-        "hermit/hermit-core/src/main/scala/com/twitter/hermit/predicate/socialgraph",
-        "src/scala/com/twitter/scalding_internal/job",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/scala/com/twitter/storehaus_internal/manhattan",
-        "src/scala/com/twitter/storehaus_internal/manhattan/config",
-        "src/scala/com/twitter/storehaus_internal/manhattan2",
-        "src/scala/com/twitter/storehaus_internal/offline",
-        "src/scala/com/twitter/storehaus_internal/util",
-        "src/scala/com/twitter/twistly/common",
-        "src/thrift/com/twitter/experiments/general_metrics:general_metrics-scala",
-        "src/thrift/com/twitter/frigate/data_pipeline:frigate-user-history-thrift-scala",
-        "src/thrift/com/twitter/onboarding/relevance/tweet_engagement:tweet_engagement-scala",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
-        "src/thrift/com/twitter/socialgraph:thrift-scala",
-        "src/thrift/com/twitter/traffic_attribution:traffic_attribution-scala",
-        "strato/src/main/scala/com/twitter/strato/client",
-        "user-signal-service/server/src/main/scala/com/twitter/usersignalservice/base",
-        "user-signal-service/server/src/main/scala/com/twitter/usersignalservice/signals/common",
-        "user-signal-service/thrift/src/main/thrift:thrift-scala",
-        "util/util-core:util-core-util",
-        "util/util-core/src/main/java/com/twitter/util",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], (ꈍᴗꈍ)
+    tags = ["bazew-compatibwe"], ^•ﻌ•^
+    d-dependencies = [
+        "3wdpawty/jvm/com/twittew/bijection:scwooge", OwO
+        "3wdpawty/jvm/javax/inject:javax.inject", 🥺
+        "3wdpawty/swc/jvm/com/twittew/stowehaus:cowe", òωó
+        "discovewy-ds/swc/main/thwift/com/twittew/dds/jobs/wepeated_pwofiwe_visits:pwofiwe_visit-scawa", o.O
+        "fwock-cwient/swc/main/thwift:thwift-scawa", (U ᵕ U❁)
+        "fwigate/fwigate-common/swc/main/scawa/com/twittew/fwigate/common/stowe/stwato", (⑅˘꒳˘)
+        "hewmit/hewmit-cowe/swc/main/scawa/com/twittew/hewmit/pwedicate/sociawgwaph", ( ͡o ω ͡o )
+        "swc/scawa/com/twittew/scawding_intewnaw/job", UwU
+        "swc/scawa/com/twittew/simcwustews_v2/common", rawr x3
+        "swc/scawa/com/twittew/stowehaus_intewnaw/manhattan", rawr
+        "swc/scawa/com/twittew/stowehaus_intewnaw/manhattan/config", σωσ
+        "swc/scawa/com/twittew/stowehaus_intewnaw/manhattan2", σωσ
+        "swc/scawa/com/twittew/stowehaus_intewnaw/offwine", >_<
+        "swc/scawa/com/twittew/stowehaus_intewnaw/utiw", :3
+        "swc/scawa/com/twittew/twistwy/common", (U ﹏ U)
+        "swc/thwift/com/twittew/expewiments/genewaw_metwics:genewaw_metwics-scawa", -.-
+        "swc/thwift/com/twittew/fwigate/data_pipewine:fwigate-usew-histowy-thwift-scawa", (ˆ ﻌ ˆ)♡
+        "swc/thwift/com/twittew/onboawding/wewevance/tweet_engagement:tweet_engagement-scawa", (⑅˘꒳˘)
+        "swc/thwift/com/twittew/simcwustews_v2:simcwustews_v2-thwift-scawa",
+        "swc/thwift/com/twittew/sociawgwaph:thwift-scawa", (U ᵕ U❁)
+        "swc/thwift/com/twittew/twaffic_attwibution:twaffic_attwibution-scawa", -.-
+        "stwato/swc/main/scawa/com/twittew/stwato/cwient", ^^;;
+        "usew-signaw-sewvice/sewvew/swc/main/scawa/com/twittew/usewsignawsewvice/base", >_<
+        "usew-signaw-sewvice/sewvew/swc/main/scawa/com/twittew/usewsignawsewvice/signaws/common",
+        "usew-signaw-sewvice/thwift/swc/main/thwift:thwift-scawa", mya
+        "utiw/utiw-cowe:utiw-cowe-utiw", mya
+        "utiw/utiw-cowe/swc/main/java/com/twittew/utiw", 😳
+        "utiw/utiw-stats/swc/main/scawa/com/twittew/finagwe/stats", XD
     ],
 )

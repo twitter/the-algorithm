@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.component_library.feature.featurestorev1
+package com.twittew.pwoduct_mixew.component_wibwawy.featuwe.featuwestowev1
 
-import com.twitter.ml.api.transform.FeatureRenameTransform
-import com.twitter.ml.featurestore.catalog.entities
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.lib.entity.Entity
-import com.twitter.ml.featurestore.lib.entity.EntityWithId
-import com.twitter.ml.featurestore.lib.feature.TimelinesAggregationFrameworkFeatureGroup
-import com.twitter.ml.featurestore.lib.feature.{Feature => FSv1Feature}
-import com.twitter.product_mixer.component_library.model.candidate.TweetAuthorIdFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featurestorev1._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.FSParam
-import scala.reflect.ClassTag
+impowt c-com.twittew.mw.api.twansfowm.featuwewenametwansfowm
+i-impowt com.twittew.mw.featuwestowe.catawog.entities
+i-impowt c-com.twittew.mw.featuwestowe.wib.entityid
+i-impowt c-com.twittew.mw.featuwestowe.wib.usewid
+i-impowt com.twittew.mw.featuwestowe.wib.entity.entity
+i-impowt com.twittew.mw.featuwestowe.wib.entity.entitywithid
+impowt com.twittew.mw.featuwestowe.wib.featuwe.timewinesaggwegationfwamewowkfeatuwegwoup
+impowt com.twittew.mw.featuwestowe.wib.featuwe.{featuwe => fsv1featuwe}
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetauthowidfeatuwe
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1._
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.timewines.configapi.fspawam
+impowt scawa.wefwect.cwasstag
 
-object FeatureStoreV1TweetCandidateAuthorIdFeature {
-  def apply[Query <: PipelineQuery, Value](
-    feature: FSv1Feature[UserId, Value],
-    legacyName: Option[String] = None,
-    defaultValue: Option[Value] = None,
-    enabledParam: Option[FSParam[Boolean]] = None
-  ): FeatureStoreV1CandidateFeature[Query, TweetCandidate, _ <: EntityId, Value] =
-    FeatureStoreV1CandidateFeature(
-      feature,
-      TweetCandidateAuthorIdEntity,
-      legacyName,
-      defaultValue,
-      enabledParam)
+object featuwestowev1tweetcandidateauthowidfeatuwe {
+  d-def appwy[quewy <: pipewinequewy, ^^ v-vawue](
+    f-featuwe: fsv1featuwe[usewid, 😳😳😳 vawue], mya
+    wegacyname: option[stwing] = nyone, 😳
+    defauwtvawue: o-option[vawue] = nyone, -.-
+    enabwedpawam: option[fspawam[boowean]] = nyone
+  ): featuwestowev1candidatefeatuwe[quewy, 🥺 t-tweetcandidate, o.O _ <: entityid, /(^•ω•^) vawue] =
+    f-featuwestowev1candidatefeatuwe(
+      f-featuwe, nyaa~~
+      t-tweetcandidateauthowidentity, nyaa~~
+      wegacyname, :3
+      d-defauwtvawue, 😳😳😳
+      enabwedpawam)
 }
 
-object FeatureStoreV1TweetCandidateAuthorIdAggregateFeature {
-  def apply[Query <: PipelineQuery](
-    featureGroup: TimelinesAggregationFrameworkFeatureGroup[UserId],
-    enabledParam: Option[FSParam[Boolean]] = None,
-    keepLegacyNames: Boolean = false,
-    featureNameTransform: Option[FeatureRenameTransform] = None
-  ): FeatureStoreV1CandidateFeatureGroup[Query, TweetCandidate, _ <: EntityId] =
-    FeatureStoreV1CandidateFeatureGroup(
-      featureGroup,
-      TweetCandidateAuthorIdEntity,
-      enabledParam,
-      keepLegacyNames,
-      featureNameTransform
-    )(implicitly[ClassTag[UserId]])
+object featuwestowev1tweetcandidateauthowidaggwegatefeatuwe {
+  d-def appwy[quewy <: pipewinequewy](
+    featuwegwoup: t-timewinesaggwegationfwamewowkfeatuwegwoup[usewid], (˘ω˘)
+    enabwedpawam: option[fspawam[boowean]] = nyone, ^^
+    keepwegacynames: boowean = f-fawse, :3
+    featuwenametwansfowm: option[featuwewenametwansfowm] = n-none
+  ): featuwestowev1candidatefeatuwegwoup[quewy, -.- t-tweetcandidate, 😳 _ <: e-entityid] =
+    featuwestowev1candidatefeatuwegwoup(
+      featuwegwoup, mya
+      tweetcandidateauthowidentity, (˘ω˘)
+      e-enabwedpawam, >_<
+      k-keepwegacynames, -.-
+      featuwenametwansfowm
+    )(impwicitwy[cwasstag[usewid]])
 }
 
-object TweetCandidateAuthorIdEntity
-    extends FeatureStoreV1CandidateEntity[PipelineQuery, TweetCandidate, UserId] {
-  override val entity: Entity[UserId] = entities.core.Author
+o-object tweetcandidateauthowidentity
+    extends f-featuwestowev1candidateentity[pipewinequewy, tweetcandidate, u-usewid] {
+  ovewwide vaw entity: e-entity[usewid] = entities.cowe.authow
 
-  override def entityWithId(
-    query: PipelineQuery,
-    tweet: TweetCandidate,
-    existingFeatures: FeatureMap
-  ): EntityWithId[UserId] =
-    entity.withId(UserId(existingFeatures.get(TweetAuthorIdFeature)))
+  ovewwide d-def entitywithid(
+    quewy: p-pipewinequewy, 🥺
+    tweet: tweetcandidate, (U ﹏ U)
+    e-existingfeatuwes: f-featuwemap
+  ): entitywithid[usewid] =
+    entity.withid(usewid(existingfeatuwes.get(tweetauthowidfeatuwe)))
 }

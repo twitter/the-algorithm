@@ -1,21 +1,21 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import javax.inject.Inject;
+impowt j-javax.inject.inject;
 
-import com.twitter.search.common.partitioning.base.PartitionMappingManager;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
+i-impowt com.twittew.seawch.common.pawtitioning.base.pawtitionmappingmanagew;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdfeatuweschemamewgew;
 
 /**
- * The EarlybirdServiceScatterGatherSupport implementation used to fan out requests to the earlybird
- * partitions in the full archive tiers.
+ * t-the e-eawwybiwdsewvicescattewgathewsuppowt i-impwementation u-used to fan out wequests to the eawwybiwd
+ * pawtitions in the fuww awchive t-tiews. mya
  */
-public class EarlybirdFullArchiveScatterGatherSupport extends EarlybirdServiceScatterGatherSupport {
-  /** Creates a new EarlybirdFullArchiveScatterGatherSupport instance. */
-  @Inject
-  EarlybirdFullArchiveScatterGatherSupport(
-      PartitionMappingManager partitionMappingManager,
-      EarlybirdFeatureSchemaMerger featureSchemaMerger) {
-    super(partitionMappingManager, EarlybirdCluster.FULL_ARCHIVE, featureSchemaMerger);
+pubwic cwass eawwybiwdfuwwawchivescattewgathewsuppowt extends eawwybiwdsewvicescattewgathewsuppowt {
+  /** c-cweates a nyew eawwybiwdfuwwawchivescattewgathewsuppowt i-instance. */
+  @inject
+  eawwybiwdfuwwawchivescattewgathewsuppowt(
+      pawtitionmappingmanagew pawtitionmappingmanagew,
+      e-eawwybiwdfeatuweschemamewgew featuweschemamewgew) {
+    s-supew(pawtitionmappingmanagew, 😳 e-eawwybiwdcwustew.fuww_awchive, XD featuweschemamewgew);
   }
 }

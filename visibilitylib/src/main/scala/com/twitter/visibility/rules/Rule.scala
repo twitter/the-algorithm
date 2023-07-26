@@ -1,215 +1,215 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.timelines.configapi.HasParams.DependencyProvider
-import com.twitter.timelines.configapi.Params
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams
-import com.twitter.visibility.configapi.params.RuleParams.EnableLikelyIvsUserLabelDropRule
-import com.twitter.visibility.features._
-import com.twitter.visibility.models.UserLabelValue
-import com.twitter.visibility.models.UserLabelValue.LikelyIvs
-import com.twitter.visibility.rules.Condition._
-import com.twitter.visibility.rules.Reason.Unspecified
-import com.twitter.visibility.rules.RuleActionSourceBuilder.UserSafetyLabelSourceBuilder
-import com.twitter.visibility.rules.State._
-import com.twitter.visibility.util.NamingUtils
+impowt com.twittew.abdecidew.woggingabdecidew
+i-impowt com.twittew.timewines.configapi.haspawams.dependencypwovidew
+i-impowt com.twittew.timewines.configapi.pawams
+i-impowt com.twittew.visibiwity.configapi.pawams.wuwepawam
+i-impowt c-com.twittew.visibiwity.configapi.pawams.wuwepawams
+i-impowt com.twittew.visibiwity.configapi.pawams.wuwepawams.enabwewikewyivsusewwabewdwopwuwe
+i-impowt com.twittew.visibiwity.featuwes._
+i-impowt com.twittew.visibiwity.modews.usewwabewvawue
+impowt com.twittew.visibiwity.modews.usewwabewvawue.wikewyivs
+impowt com.twittew.visibiwity.wuwes.condition._
+i-impowt com.twittew.visibiwity.wuwes.weason.unspecified
+impowt com.twittew.visibiwity.wuwes.wuweactionsouwcebuiwdew.usewsafetywabewsouwcebuiwdew
+i-impowt com.twittew.visibiwity.wuwes.state._
+i-impowt com.twittew.visibiwity.utiw.namingutiws
 
-trait WithGate {
-  def enabled: Seq[RuleParam[Boolean]] = Seq(RuleParams.True)
+twait withgate {
+  def e-enabwed: seq[wuwepawam[boowean]] = seq(wuwepawams.twue)
 
-  def isEnabled(params: Params): Boolean =
-    enabled.forall(enabledParam => params(enabledParam))
+  d-def i-isenabwed(pawams: pawams): boowean =
+    enabwed.fowaww(enabwedpawam => pawams(enabwedpawam))
 
-  def holdbacks: Seq[RuleParam[Boolean]] = Seq(RuleParams.False)
+  def howdbacks: s-seq[wuwepawam[boowean]] = seq(wuwepawams.fawse)
 
-  final def shouldHoldback: DependencyProvider[Boolean] =
-    holdbacks.foldLeft(DependencyProvider.from(RuleParams.False)) { (dp, holdbackParam) =>
-      dp.or(DependencyProvider.from(holdbackParam))
+  finaw def shouwdhowdback: dependencypwovidew[boowean] =
+    howdbacks.fowdweft(dependencypwovidew.fwom(wuwepawams.fawse)) { (dp, :3 howdbackpawam) =>
+      d-dp.ow(dependencypwovidew.fwom(howdbackpawam))
     }
 
-  protected def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(RuleParams.False)
-  def shouldFailClosed(params: Params): Boolean =
-    enableFailClosed.forall(fcParam => params(fcParam))
+  pwotected def e-enabwefaiwcwosed: s-seq[wuwepawam[boowean]] = s-seq(wuwepawams.fawse)
+  d-def shouwdfaiwcwosed(pawams: pawams): boowean =
+    enabwefaiwcwosed.fowaww(fcpawam => p-pawams(fcpawam))
 }
 
-abstract class ActionBuilder[T <: Action] {
-  def actionType: Class[_]
+abstwact cwass actionbuiwdew[t <: action] {
+  def a-actiontype: cwass[_]
 
-  val actionSeverity: Int
-  def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult
+  vaw actionsevewity: int
+  def buiwd(evawuationcontext: evawuationcontext, featuwemap: m-map[featuwe[_], (U ﹏ U) _]): wuwewesuwt
 }
 
-object ActionBuilder {
-  def apply[T <: Action](action: T): ActionBuilder[T] = action match {
-    case _: InterstitialLimitedEngagements => new PublicInterestActionBuilder()
-    case _ => new ConstantActionBuilder(action)
+o-object actionbuiwdew {
+  d-def a-appwy[t <: action](action: t): actionbuiwdew[t] = action match {
+    case _: intewstitiawwimitedengagements => new p-pubwicintewestactionbuiwdew()
+    c-case _ => new constantactionbuiwdew(action)
   }
 }
 
-class ConstantActionBuilder[T <: Action](action: T) extends ActionBuilder[T] {
-  private val result = RuleResult(action, Evaluated)
+c-cwass constantactionbuiwdew[t <: a-action](action: t) extends a-actionbuiwdew[t] {
+  pwivate v-vaw wesuwt = wuwewesuwt(action, UwU evawuated)
 
-  def actionType: Class[_] = action.getClass
+  def actiontype: cwass[_] = a-action.getcwass
 
-  override val actionSeverity = action.severity
-  def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult =
-    result
+  ovewwide v-vaw actionsevewity = action.sevewity
+  d-def b-buiwd(evawuationcontext: evawuationcontext, 😳😳😳 featuwemap: map[featuwe[_], XD _]): wuwewesuwt =
+    wesuwt
 }
 
-object ConstantActionBuilder {
-  def unapply[T <: Action](builder: ConstantActionBuilder[T]): Option[Action] = Some(
-    builder.result.action)
+object constantactionbuiwdew {
+  d-def unappwy[t <: a-action](buiwdew: constantactionbuiwdew[t]): o-option[action] = s-some(
+    b-buiwdew.wesuwt.action)
 }
 
-abstract class Rule(val actionBuilder: ActionBuilder[_ <: Action], val condition: Condition)
-    extends WithGate {
+abstwact cwass wuwe(vaw actionbuiwdew: a-actionbuiwdew[_ <: action], o.O vaw condition: condition)
+    extends withgate {
 
-  import Rule._
-  def isExperimental: Boolean = false
+  i-impowt wuwe._
+  def isexpewimentaw: b-boowean = f-fawse
 
-  def actionSourceBuilder: Option[RuleActionSourceBuilder] = None
+  def actionsouwcebuiwdew: o-option[wuweactionsouwcebuiwdew] = nyone
 
-  lazy val name: String = NamingUtils.getFriendlyName(this)
+  wazy v-vaw nyame: stwing = n-nyamingutiws.getfwiendwyname(this)
 
-  val featureDependencies: Set[Feature[_]] = condition.features
+  v-vaw f-featuwedependencies: set[featuwe[_]] = condition.featuwes
 
-  val optionalFeatureDependencies: Set[Feature[_]] = condition.optionalFeatures
+  v-vaw o-optionawfeatuwedependencies: set[featuwe[_]] = c-condition.optionawfeatuwes
 
-  def preFilter(
-    evaluationContext: EvaluationContext,
-    featureMap: Map[Feature[_], Any],
-    abDecider: LoggingABDecider
-  ): PreFilterResult =
-    condition.preFilter(evaluationContext, featureMap)
+  def p-pwefiwtew(
+    e-evawuationcontext: evawuationcontext, (⑅˘꒳˘)
+    featuwemap: map[featuwe[_], 😳😳😳 a-any],
+    abdecidew: woggingabdecidew
+  ): pwefiwtewwesuwt =
+    condition.pwefiwtew(evawuationcontext, featuwemap)
 
-  def actWhen(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): Boolean =
-    condition(evaluationContext, featureMap).asBoolean
+  def actwhen(evawuationcontext: e-evawuationcontext, nyaa~~ featuwemap: map[featuwe[_], rawr _]): boowean =
+    condition(evawuationcontext, -.- f-featuwemap).asboowean
 
-  val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = None
+  v-vaw fawwbackactionbuiwdew: o-option[actionbuiwdew[_ <: action]] = n-nyone
 
-  final def evaluate(
-    evaluationContext: EvaluationContext,
-    featureMap: Map[Feature[_], _]
-  ): RuleResult = {
-    val missingFeatures = featureDependencies.filterNot(featureMap.contains)
+  finaw def evawuate(
+    e-evawuationcontext: e-evawuationcontext, (✿oωo)
+    featuwemap: map[featuwe[_], /(^•ω•^) _]
+  ): wuwewesuwt = {
+    vaw missingfeatuwes = featuwedependencies.fiwtewnot(featuwemap.contains)
 
-    if (missingFeatures.nonEmpty) {
-      fallbackActionBuilder match {
-        case Some(fallbackAction) =>
-          fallbackAction.build(evaluationContext, featureMap)
-        case None =>
-          RuleResult(NotEvaluated, MissingFeature(missingFeatures))
+    if (missingfeatuwes.nonempty) {
+      f-fawwbackactionbuiwdew match {
+        c-case some(fawwbackaction) =>
+          fawwbackaction.buiwd(evawuationcontext, 🥺 f-featuwemap)
+        c-case nyone =>
+          wuwewesuwt(notevawuated, ʘwʘ missingfeatuwe(missingfeatuwes))
       }
-    } else {
-      try {
-        val act = actWhen(evaluationContext, featureMap)
-        if (!act) {
-          EvaluatedRuleResult
-        } else if (shouldHoldback(evaluationContext)) {
+    } e-ewse {
+      t-twy {
+        vaw act = actwhen(evawuationcontext, UwU f-featuwemap)
+        i-if (!act) {
+          evawuatedwuwewesuwt
+        } ewse if (shouwdhowdback(evawuationcontext)) {
 
-          HeldbackRuleResult
-        } else {
-          actionBuilder.build(evaluationContext, featureMap)
+          hewdbackwuwewesuwt
+        } ewse {
+          a-actionbuiwdew.buiwd(evawuationcontext, XD f-featuwemap)
         }
-      } catch {
-        case t: Throwable =>
-          RuleResult(NotEvaluated, RuleFailed(t))
+      } c-catch {
+        case t: t-thwowabwe =>
+          w-wuwewesuwt(notevawuated, (✿oωo) wuwefaiwed(t))
       }
     }
   }
 }
 
-trait ExperimentalRule extends Rule {
-  override def isExperimental: Boolean = true
+t-twait expewimentawwuwe extends wuwe {
+  ovewwide def isexpewimentaw: boowean = t-twue
 }
 
-object Rule {
+object w-wuwe {
 
-  val HeldbackRuleResult: RuleResult = RuleResult(Allow, Heldback)
-  val EvaluatedRuleResult: RuleResult = RuleResult(Allow, Evaluated)
-  val DisabledRuleResult: RuleResult = RuleResult(NotEvaluated, Disabled)
+  vaw hewdbackwuwewesuwt: wuwewesuwt = w-wuwewesuwt(awwow, :3 h-hewdback)
+  vaw evawuatedwuwewesuwt: wuwewesuwt = wuwewesuwt(awwow, (///ˬ///✿) e-evawuated)
+  vaw disabwedwuwewesuwt: wuwewesuwt = wuwewesuwt(notevawuated, nyaa~~ disabwed)
 
-  def unapply(rule: Rule): Option[(ActionBuilder[_ <: Action], Condition)] =
-    Some((rule.actionBuilder, rule.condition))
+  d-def unappwy(wuwe: wuwe): option[(actionbuiwdew[_ <: action], >w< condition)] =
+    some((wuwe.actionbuiwdew, -.- w-wuwe.condition))
 }
 
-abstract class RuleWithConstantAction(val action: Action, override val condition: Condition)
-    extends Rule(ActionBuilder(action), condition)
+a-abstwact cwass wuwewithconstantaction(vaw action: action, (✿oωo) ovewwide v-vaw condition: condition)
+    e-extends wuwe(actionbuiwdew(action), condition)
 
-abstract class UserHasLabelRule(action: Action, userLabelValue: UserLabelValue)
-    extends RuleWithConstantAction(action, AuthorHasLabel(userLabelValue)) {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    UserSafetyLabelSourceBuilder(userLabelValue))
+abstwact cwass usewhaswabewwuwe(action: a-action, (˘ω˘) usewwabewvawue: usewwabewvawue)
+    e-extends wuwewithconstantaction(action, rawr authowhaswabew(usewwabewvawue)) {
+  ovewwide def actionsouwcebuiwdew: option[wuweactionsouwcebuiwdew] = s-some(
+    usewsafetywabewsouwcebuiwdew(usewwabewvawue))
 }
 
-abstract class ConditionWithUserLabelRule(
-  action: Action,
-  condition: Condition,
-  userLabelValue: UserLabelValue)
-    extends Rule(
-      ActionBuilder(action),
-      And(NonAuthorViewer, AuthorHasLabel(userLabelValue), condition)) {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    UserSafetyLabelSourceBuilder(userLabelValue))
+abstwact c-cwass conditionwithusewwabewwuwe(
+  a-action: action, OwO
+  condition: c-condition, ^•ﻌ•^
+  usewwabewvawue: u-usewwabewvawue)
+    e-extends wuwe(
+      a-actionbuiwdew(action), UwU
+      and(nonauthowviewew, (˘ω˘) a-authowhaswabew(usewwabewvawue), (///ˬ///✿) c-condition)) {
+  ovewwide def actionsouwcebuiwdew: option[wuweactionsouwcebuiwdew] = s-some(
+    usewsafetywabewsouwcebuiwdew(usewwabewvawue))
 }
 
-abstract class WhenAuthorUserLabelPresentRule(action: Action, userLabelValue: UserLabelValue)
-    extends ConditionWithUserLabelRule(action, Condition.True, userLabelValue)
+a-abstwact c-cwass whenauthowusewwabewpwesentwuwe(action: action, σωσ usewwabewvawue: usewwabewvawue)
+    e-extends conditionwithusewwabewwuwe(action, /(^•ω•^) c-condition.twue, 😳 u-usewwabewvawue)
 
-abstract class ConditionWithNotInnerCircleOfFriendsRule(
-  action: Action,
-  condition: Condition)
-    extends RuleWithConstantAction(
-      action,
-      And(Not(DoesHaveInnerCircleOfFriendsRelationship), condition))
+abstwact cwass conditionwithnotinnewciwcweoffwiendswuwe(
+  action: action, 😳
+  c-condition: c-condition)
+    e-extends wuwewithconstantaction(
+      a-action, (⑅˘꒳˘)
+      and(not(doeshaveinnewciwcweoffwiendswewationship), c-condition))
 
-abstract class AuthorLabelWithNotInnerCircleOfFriendsRule(
-  action: Action,
-  userLabelValue: UserLabelValue)
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      action,
-      AuthorHasLabel(userLabelValue)
+abstwact cwass authowwabewwithnotinnewciwcweoffwiendswuwe(
+  action: action, 😳😳😳
+  usewwabewvawue: usewwabewvawue)
+    e-extends conditionwithnotinnewciwcweoffwiendswuwe(
+      a-action, 😳
+      authowhaswabew(usewwabewvawue)
     ) {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    UserSafetyLabelSourceBuilder(userLabelValue))
+  ovewwide d-def actionsouwcebuiwdew: option[wuweactionsouwcebuiwdew] = s-some(
+    usewsafetywabewsouwcebuiwdew(usewwabewvawue))
 }
 
-abstract class OnlyWhenNotAuthorViewerRule(action: Action, condition: Condition)
-    extends RuleWithConstantAction(action, And(NonAuthorViewer, condition))
+a-abstwact cwass o-onwywhennotauthowviewewwuwe(action: a-action, XD c-condition: condition)
+    e-extends wuwewithconstantaction(action, mya and(nonauthowviewew, ^•ﻌ•^ condition))
 
-abstract class AuthorLabelAndNonFollowerViewerRule(action: Action, userLabelValue: UserLabelValue)
-    extends ConditionWithUserLabelRule(action, LoggedOutOrViewerNotFollowingAuthor, userLabelValue)
+abstwact cwass authowwabewandnonfowwowewviewewwuwe(action: action, ʘwʘ usewwabewvawue: u-usewwabewvawue)
+    e-extends c-conditionwithusewwabewwuwe(action, ( ͡o ω ͡o ) woggedoutowviewewnotfowwowingauthow, mya u-usewwabewvawue)
 
-abstract class AlwaysActRule(action: Action) extends Rule(ActionBuilder(action), Condition.True)
+abstwact cwass awwaysactwuwe(action: action) extends w-wuwe(actionbuiwdew(action), o.O c-condition.twue)
 
-abstract class ViewerOptInBlockingOnSearchRule(action: Action, condition: Condition)
-    extends OnlyWhenNotAuthorViewerRule(
-      action,
-      And(condition, ViewerOptInBlockingOnSearch)
+abstwact c-cwass viewewoptinbwockingonseawchwuwe(action: action, (✿oωo) condition: condition)
+    e-extends onwywhennotauthowviewewwuwe(
+      a-action, :3
+      and(condition, 😳 viewewoptinbwockingonseawch)
     )
 
-abstract class ViewerOptInFilteringOnSearchRule(action: Action, condition: Condition)
-    extends OnlyWhenNotAuthorViewerRule(
-      action,
-      And(condition, ViewerOptInFilteringOnSearch)
+a-abstwact cwass v-viewewoptinfiwtewingonseawchwuwe(action: action, (U ﹏ U) condition: condition)
+    extends onwywhennotauthowviewewwuwe(
+      a-action, mya
+      a-and(condition, (U ᵕ U❁) v-viewewoptinfiwtewingonseawch)
     )
 
-abstract class ViewerOptInFilteringOnSearchUserLabelRule(
-  action: Action,
-  userLabelValue: UserLabelValue,
-  prerequisiteCondition: Condition = True)
-    extends ConditionWithUserLabelRule(
-      action,
-      And(prerequisiteCondition, LoggedOutOrViewerOptInFiltering),
-      userLabelValue
+a-abstwact c-cwass viewewoptinfiwtewingonseawchusewwabewwuwe(
+  action: action, :3
+  u-usewwabewvawue: u-usewwabewvawue, mya
+  pwewequisitecondition: c-condition = twue)
+    e-extends conditionwithusewwabewwuwe(
+      action, OwO
+      and(pwewequisitecondition, (ˆ ﻌ ˆ)♡ w-woggedoutowviewewoptinfiwtewing), ʘwʘ
+      usewwabewvawue
     )
 
-abstract class LikelyIvsLabelNonFollowerDropRule
-    extends AuthorLabelAndNonFollowerViewerRule(
-      Drop(Unspecified),
-      LikelyIvs
+abstwact c-cwass wikewyivswabewnonfowwowewdwopwuwe
+    extends a-authowwabewandnonfowwowewviewewwuwe(
+      d-dwop(unspecified), o.O
+      wikewyivs
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableLikelyIvsUserLabelDropRule)
+  o-ovewwide def enabwed: seq[wuwepawam[boowean]] =
+    s-seq(enabwewikewyivsusewwabewdwopwuwe)
 }

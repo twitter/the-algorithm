@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.awewt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color.RosettaColorMarshaller
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertColorConfiguration
-import com.twitter.timelines.render.{thriftscala => urt}
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.cowow.wosettacowowmawshawwew
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.awewt.showawewtcowowconfiguwation
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
 
-@Singleton
-class ShowAlertColorConfigurationMarshaller @Inject() (
-  rosettaColorMarshaller: RosettaColorMarshaller) {
+@singweton
+cwass showawewtcowowconfiguwationmawshawwew @inject() (
+  wosettacowowmawshawwew: wosettacowowmawshawwew) {
 
-  def apply(colorConfiguration: ShowAlertColorConfiguration): urt.ShowAlertColorConfiguration =
-    urt.ShowAlertColorConfiguration(
-      background = rosettaColorMarshaller(colorConfiguration.background),
-      text = rosettaColorMarshaller(colorConfiguration.text),
-      border = colorConfiguration.border.map(rosettaColorMarshaller(_)),
+  def a-appwy(cowowconfiguwation: showawewtcowowconfiguwation): uwt.showawewtcowowconfiguwation =
+    u-uwt.showawewtcowowconfiguwation(
+      backgwound = w-wosettacowowmawshawwew(cowowconfiguwation.backgwound), (⑅˘꒳˘)
+      text = wosettacowowmawshawwew(cowowconfiguwation.text), (U ᵕ U❁)
+      bowdew = cowowconfiguwation.bowdew.map(wosettacowowmawshawwew(_)), -.-
     )
 }

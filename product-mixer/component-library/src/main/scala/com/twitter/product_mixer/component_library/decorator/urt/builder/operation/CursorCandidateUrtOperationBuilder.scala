@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.operation
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.opewation
 
-import com.twitter.product_mixer.component_library.model.candidate.CursorCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorDisplayTreatment
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.cuwsowcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.candidateuwtentwybuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.cuwsowdispwaytweatment
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.cuwsowopewation
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.cuwsowtype
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case class CursorCandidateUrtOperationBuilder[-Query <: PipelineQuery](
-  cursorType: CursorType,
-  displayTreatment: Option[CursorDisplayTreatment] = None,
-  idToReplace: Option[Long] = None)
-    extends CandidateUrtEntryBuilder[Query, CursorCandidate, CursorOperation] {
+case cwass cuwsowcandidateuwtopewationbuiwdew[-quewy <: pipewinequewy](
+  cuwsowtype: c-cuwsowtype, (✿oωo)
+  dispwaytweatment: option[cuwsowdispwaytweatment] = n-nyone, (ˆ ﻌ ˆ)♡
+  idtowepwace: option[wong] = n-nyone)
+    extends candidateuwtentwybuiwdew[quewy, (˘ω˘) cuwsowcandidate, (⑅˘꒳˘) c-cuwsowopewation] {
 
-  override def apply(
-    query: Query,
-    cursorCandidate: CursorCandidate,
-    candidateFeatures: FeatureMap
-  ): CursorOperation = CursorOperation(
-    id = cursorCandidate.id,
-    sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-    value = cursorCandidate.value,
-    cursorType = cursorType,
-    displayTreatment = displayTreatment,
-    idToReplace = idToReplace
+  ovewwide d-def appwy(
+    q-quewy: quewy, (///ˬ///✿)
+    cuwsowcandidate: cuwsowcandidate,
+    candidatefeatuwes: featuwemap
+  ): c-cuwsowopewation = cuwsowopewation(
+    id = cuwsowcandidate.id, 😳😳😳
+    sowtindex = nyone, // sowt indexes a-awe automaticawwy set in the domain m-mawshawwew p-phase
+    vawue = c-cuwsowcandidate.vawue,
+    c-cuwsowtype = cuwsowtype, 🥺
+    dispwaytweatment = d-dispwaytweatment, mya
+    idtowepwace = idtowepwace
   )
 }

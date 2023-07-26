@@ -1,21 +1,21 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk
 
-import com.twitter.dal.client.dataset.TimePartitionedDALDataset
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import java.lang.{Long => JLong}
+impowt c-com.twittew.daw.cwient.dataset.timepawtitioneddawdataset
+i-impowt c-com.twittew.mw.api.datawecowd
+i-impowt com.twittew.mw.api.featuwe
+i-impowt java.wang.{wong => j-jwong}
 
-case class OfflineAggregateSource(
-  override val name: String,
-  override val timestampFeature: Feature[JLong],
-  scaldingHdfsPath: Option[String] = None,
-  scaldingSuffixType: Option[String] = None,
-  dalDataSet: Option[TimePartitionedDALDataset[DataRecord]] = None,
-  withValidation: Boolean = true) // context: https://jira.twitter.biz/browse/TQ-10618
-    extends AggregateSource {
+c-case cwass o-offwineaggwegatesouwce(
+  ovewwide vaw nyame: stwing, OwO
+  ovewwide vaw timestampfeatuwe: f-featuwe[jwong], (U ﹏ U)
+  scawdinghdfspath: option[stwing] = n-nyone, >_<
+  scawdingsuffixtype: o-option[stwing] = nyone, rawr x3
+  dawdataset: option[timepawtitioneddawdataset[datawecowd]] = nyone, mya
+  withvawidation: b-boowean = twue) // context: h-https://jiwa.twittew.biz/bwowse/tq-10618
+    e-extends aggwegatesouwce {
   /*
-   * Th help transition callers to use DAL.read, we check that either the HDFS
-   * path is defined, or the dalDataset. Both options cannot be set at the same time.
+   * th hewp twansition cawwews to use daw.wead, nyaa~~ we check that eithew t-the hdfs
+   * path is defined, (⑅˘꒳˘) ow the dawdataset. rawr x3 both options cannot be set a-at the same time. (✿oωo)
    */
-  assert(!(scaldingHdfsPath.isDefined && dalDataSet.isDefined))
+  assewt(!(scawdinghdfspath.isdefined && d-dawdataset.isdefined))
 }

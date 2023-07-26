@@ -1,64 +1,64 @@
-package com.twitter.cr_mixer.param
+package com.twittew.cw_mixew.pawam
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
-import com.twitter.usersignalservice.thriftscala.SignalType
+impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.wogging.woggew
+i-impowt com.twittew.timewines.configapi.baseconfig
+i-impowt c-com.twittew.timewines.configapi.baseconfigbuiwdew
+i-impowt com.twittew.timewines.configapi.fsenumpawam
+i-impowt com.twittew.timewines.configapi.fsname
+i-impowt com.twittew.timewines.configapi.fspawam
+i-impowt com.twittew.timewines.configapi.featuweswitchovewwideutiw
+impowt com.twittew.timewines.configapi.pawam
+impowt com.twittew.usewsignawsewvice.thwiftscawa.signawtype
 
-object VideoViewTweetsParams {
-  object EnableSourceParam
-      extends FSParam[Boolean](
-        name = "signal_videoviewtweets_enable_source",
-        default = false
+object videoviewtweetspawams {
+  object e-enabwesouwcepawam
+      extends fspawam[boowean](
+        n-nyame = "signaw_videoviewtweets_enabwe_souwce", ʘwʘ
+        defauwt = f-fawse
       )
 
-  object EnableSourceImpressionParam
-      extends FSParam[Boolean](
-        name = "signal_videoviewtweets_enableimpression_source",
-        default = false
+  object enabwesouwceimpwessionpawam
+      extends fspawam[boowean](
+        n-nyame = "signaw_videoviewtweets_enabweimpwession_souwce",
+        defauwt = fawse
       )
 
-  object VideoViewTweetType extends Enumeration {
-    protected case class SignalTypeValue(signalType: SignalType) extends super.Val
-    import scala.language.implicitConversions
-    implicit def valueToSignalTypeValue(x: Value): SignalTypeValue =
-      x.asInstanceOf[SignalTypeValue]
+  o-object v-videoviewtweettype extends enumewation {
+    pwotected case cwass signawtypevawue(signawtype: signawtype) extends s-supew.vaw
+    impowt scawa.wanguage.impwicitconvewsions
+    impwicit def vawuetosignawtypevawue(x: vawue): signawtypevawue =
+      x.asinstanceof[signawtypevawue]
 
-    val VideoTweetQualityView: SignalTypeValue = SignalTypeValue(SignalType.VideoView90dQualityV1)
-    val VideoTweetPlayback50: SignalTypeValue = SignalTypeValue(SignalType.VideoView90dPlayback50V1)
+    v-vaw videotweetquawityview: s-signawtypevawue = s-signawtypevawue(signawtype.videoview90dquawityv1)
+    vaw v-videotweetpwayback50: s-signawtypevawue = signawtypevawue(signawtype.videoview90dpwayback50v1)
   }
 
-  object VideoViewTweetTypeParam
-      extends FSEnumParam[VideoViewTweetType.type](
-        name = "signal_videoviewtweets_videoviewtype_id",
-        default = VideoViewTweetType.VideoTweetQualityView,
-        enum = VideoViewTweetType
+  object videoviewtweettypepawam
+      e-extends fsenumpawam[videoviewtweettype.type](
+        nyame = "signaw_videoviewtweets_videoviewtype_id", σωσ
+        d-defauwt = videoviewtweettype.videotweetquawityview, OwO
+        enum = videoviewtweettype
       )
 
-  val AllParams: Seq[Param[_] with FSName] =
-    Seq(EnableSourceParam, EnableSourceImpressionParam, VideoViewTweetTypeParam)
+  vaw awwpawams: seq[pawam[_] w-with fsname] =
+    seq(enabwesouwcepawam, 😳😳😳 e-enabwesouwceimpwessionpawam, 😳😳😳 v-videoviewtweettypepawam)
 
-  lazy val config: BaseConfig = {
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableSourceParam,
-      EnableSourceImpressionParam,
+  w-wazy vaw config: baseconfig = {
+    vaw booweanovewwides = featuweswitchovewwideutiw.getbooweanfsovewwides(
+      enabwesouwcepawam, o.O
+      e-enabwesouwceimpwessionpawam, ( ͡o ω ͡o )
     )
-    val enumOverrides =
-      FeatureSwitchOverrideUtil.getEnumFSOverrides(
-        NullStatsReceiver,
-        Logger(getClass),
-        VideoViewTweetTypeParam)
+    vaw e-enumovewwides =
+      featuweswitchovewwideutiw.getenumfsovewwides(
+        nyuwwstatsweceivew, (U ﹏ U)
+        w-woggew(getcwass), (///ˬ///✿)
+        v-videoviewtweettypepawam)
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(enumOverrides: _*)
-      .build()
+    baseconfigbuiwdew()
+      .set(booweanovewwides: _*)
+      .set(enumovewwides: _*)
+      .buiwd()
   }
 
 }

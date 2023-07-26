@@ -1,200 +1,200 @@
-package com.twitter.ann.service.loadtest
+package com.twittew.ann.sewvice.woadtest
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.ann.common.thriftscala.AnnQueryService
-import com.twitter.ann.common.thriftscala.NearestNeighborQuery
-import com.twitter.ann.common.thriftscala.NearestNeighborResult
-import com.twitter.ann.common.thriftscala.{Distance => ServiceDistance}
-import com.twitter.ann.common.thriftscala.{RuntimeParams => ServiceRuntimeParams}
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.EntityEmbedding
-import com.twitter.ann.common.Queryable
-import com.twitter.ann.common.RuntimeParams
-import com.twitter.ann.common.ServiceClientQueryable
-import com.twitter.bijection.Injection
-import com.twitter.cortex.ml.embeddings.common.EntityKind
-import com.twitter.finagle.builder.ClientBuilder
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMuxClientSyntax
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.Service
-import com.twitter.finagle.ThriftMux
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.search.common.file.AbstractFile.Filter
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.search.common.file.FileUtils
-import com.twitter.search.common.file.LocalFile
-import com.twitter.util.Future
-import com.twitter.util.logging.Logger
-import java.io.File
-import scala.collection.JavaConversions._
-import scala.collection.mutable
-import scala.util.Random
+impowt c-com.googwe.common.annotations.visibwefowtesting
+i-impowt com.twittew.ann.common.embeddingtype.embeddingvectow
+i-impowt c-com.twittew.ann.common.thwiftscawa.annquewysewvice
+i-impowt com.twittew.ann.common.thwiftscawa.neawestneighbowquewy
+i-impowt com.twittew.ann.common.thwiftscawa.neawestneighbowwesuwt
+i-impowt com.twittew.ann.common.thwiftscawa.{distance => s-sewvicedistance}
+impowt com.twittew.ann.common.thwiftscawa.{wuntimepawams => sewvicewuntimepawams}
+impowt com.twittew.ann.common.distance
+i-impowt com.twittew.ann.common.entityembedding
+impowt com.twittew.ann.common.quewyabwe
+impowt c-com.twittew.ann.common.wuntimepawams
+impowt com.twittew.ann.common.sewvicecwientquewyabwe
+i-impowt com.twittew.bijection.injection
+impowt com.twittew.cowtex.mw.embeddings.common.entitykind
+impowt c-com.twittew.finagwe.buiwdew.cwientbuiwdew
+impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.mtws.cwient.mtwsstackcwient.mtwsthwiftmuxcwientsyntax
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.finagwe.thwift.cwientid
+impowt com.twittew.finagwe.sewvice
+impowt c-com.twittew.finagwe.thwiftmux
+impowt com.twittew.mw.api.embedding.embedding
+impowt com.twittew.seawch.common.fiwe.abstwactfiwe.fiwtew
+impowt com.twittew.seawch.common.fiwe.abstwactfiwe
+i-impowt com.twittew.seawch.common.fiwe.fiweutiws
+i-impowt c-com.twittew.seawch.common.fiwe.wocawfiwe
+i-impowt c-com.twittew.utiw.futuwe
+impowt com.twittew.utiw.wogging.woggew
+i-impowt java.io.fiwe
+impowt scawa.cowwection.javaconvewsions._
+impowt scawa.cowwection.mutabwe
+i-impowt scawa.utiw.wandom
 
-object LoadTestUtils {
-  lazy val Log = Logger(getClass.getName)
+object woadtestutiws {
+  wazy vaw wog = woggew(getcwass.getname)
 
-  private[this] val LocalPath = "."
-  private[this] val RNG = new Random(100)
+  pwivate[this] vaw w-wocawpath = "."
+  pwivate[this] v-vaw wng = nyew w-wandom(100)
 
-  private[loadtest] def getTruthSetMap[Q, I](
-    directory: String,
-    queryIdType: String,
-    indexIdType: String
-  ): Map[Q, Seq[I]] = {
-    Log.info(s"Loading truth set from ${directory}")
-    val queryConverter = getKeyConverter[Q](queryIdType)
-    val indexConverter = getKeyConverter[I](indexIdType)
-    val res = loadKnnDirFileToMap(
-      getLocalFileHandle(directory),
-      // Knn truth file tsv format: [id neighbor:distance neighbor:distance ...]
-      arr => { arr.map(str => indexConverter(str.substring(0, str.lastIndexOf(":")))).toSeq },
-      queryConverter
+  p-pwivate[woadtest] def gettwuthsetmap[q, (U ﹏ U) i](
+    diwectowy: stwing, 😳😳😳
+    q-quewyidtype: s-stwing, o.O
+    indexidtype: stwing
+  ): m-map[q, òωó s-seq[i]] = {
+    wog.info(s"woading t-twuth set fwom ${diwectowy}")
+    vaw quewyconvewtew = g-getkeyconvewtew[q](quewyidtype)
+    vaw indexconvewtew = g-getkeyconvewtew[i](indexidtype)
+    vaw wes = w-woadknndiwfiwetomap(
+      getwocawfiwehandwe(diwectowy), 😳😳😳
+      // k-knn twuth fiwe t-tsv fowmat: [id nyeighbow:distance nyeighbow:distance ...]
+      aww => { aww.map(stw => indexconvewtew(stw.substwing(0, σωσ stw.wastindexof(":")))).toseq }, (⑅˘꒳˘)
+      quewyconvewtew
     )
-    assert(res.nonEmpty, s"Must have some something in the truth set ${directory}")
-    res
+    a-assewt(wes.nonempty, (///ˬ///✿) s-s"must have some something in the t-twuth set ${diwectowy}")
+    w-wes
   }
 
-  private[this] def getLocalFileHandle(
-    directory: String
-  ): AbstractFile = {
-    val fileHandle = FileUtils.getFileHandle(directory)
-    if (fileHandle.isInstanceOf[LocalFile]) {
-      fileHandle
-    } else {
-      val localFileHandle =
-        FileUtils.getFileHandle(s"${LocalPath}${File.separator}${fileHandle.getName}")
-      fileHandle.copyTo(localFileHandle)
-      localFileHandle
+  pwivate[this] d-def getwocawfiwehandwe(
+    diwectowy: stwing
+  ): abstwactfiwe = {
+    vaw fiwehandwe = f-fiweutiws.getfiwehandwe(diwectowy)
+    if (fiwehandwe.isinstanceof[wocawfiwe]) {
+      fiwehandwe
+    } ewse {
+      vaw wocawfiwehandwe =
+        f-fiweutiws.getfiwehandwe(s"${wocawpath}${fiwe.sepawatow}${fiwehandwe.getname}")
+      fiwehandwe.copyto(wocawfiwehandwe)
+      w-wocawfiwehandwe
     }
   }
 
-  private[loadtest] def getEmbeddingsSet[T](
-    directory: String,
-    idType: String
-  ): Seq[EntityEmbedding[T]] = {
-    Log.info(s"Loading embeddings from ${directory}")
-    val res = loadKnnDirFileToMap(
-      getLocalFileHandle(directory),
-      arr => { arr.map(_.toFloat) },
-      getKeyConverter[T](idType)
-    ).map { case (key, value) => EntityEmbedding[T](key, Embedding(value.toArray)) }.toSeq
-    assert(res.nonEmpty, s"Must have some something in the embeddings set ${directory}")
-    res
+  p-pwivate[woadtest] d-def getembeddingsset[t](
+    diwectowy: stwing, 🥺
+    i-idtype: stwing
+  ): s-seq[entityembedding[t]] = {
+    w-wog.info(s"woading e-embeddings fwom ${diwectowy}")
+    vaw wes = woadknndiwfiwetomap(
+      g-getwocawfiwehandwe(diwectowy), OwO
+      a-aww => { a-aww.map(_.tofwoat) }, >w<
+      getkeyconvewtew[t](idtype)
+    ).map { c-case (key, 🥺 v-vawue) => entityembedding[t](key, nyaa~~ embedding(vawue.toawway)) }.toseq
+    assewt(wes.nonempty, ^^ s"must h-have some something in the embeddings set ${diwectowy}")
+    wes
   }
 
-  private[this] def loadKnnDirFileToMap[K, V](
-    directory: AbstractFile,
-    f: Array[String] => Seq[V],
-    converter: String => K
-  ): Map[K, Seq[V]] = {
-    val map = mutable.HashMap[K, Seq[V]]()
-    directory
-      .listFiles(new Filter {
-        override def accept(file: AbstractFile): Boolean =
-          file.getName != AbstractFile.SUCCESS_FILE_NAME
-      }).foreach { file =>
-        asScalaBuffer(file.readLines()).foreach { line =>
-          addToMapFromKnnString(line, f, map, converter)
+  pwivate[this] def woadknndiwfiwetomap[k, >w< v](
+    diwectowy: a-abstwactfiwe, OwO
+    f: awway[stwing] => seq[v], XD
+    convewtew: stwing => k-k
+  ): map[k, ^^;; seq[v]] = {
+    v-vaw m-map = mutabwe.hashmap[k, 🥺 seq[v]]()
+    d-diwectowy
+      .wistfiwes(new fiwtew {
+        o-ovewwide d-def accept(fiwe: abstwactfiwe): boowean =
+          fiwe.getname != abstwactfiwe.success_fiwe_name
+      }).foweach { fiwe =>
+        a-asscawabuffew(fiwe.weadwines()).foweach { wine =>
+          a-addtomapfwomknnstwing(wine, XD f, map, convewtew)
         }
       }
-    map.toMap
+    m-map.tomap
   }
 
-  // Generating random float with value range bounded between minValue and maxValue
-  private[loadtest] def getRandomQuerySet(
-    dimension: Int,
-    totalQueries: Int,
-    minValue: Float,
-    maxValue: Float
-  ): Seq[EmbeddingVector] = {
-    Log.info(
-      s"Generating $totalQueries random queries for dimension $dimension with value between $minValue and $maxValue...")
-    assert(totalQueries > 0, s"Total random queries $totalQueries should be greater than 0")
-    assert(
-      maxValue > minValue,
-      s"Random embedding max value should be greater than min value. min: $minValue max: $maxValue")
-    (1 to totalQueries).map { _ =>
-      val embedding = Array.fill(dimension)(minValue + (maxValue - minValue) * RNG.nextFloat())
-      Embedding(embedding)
+  // g-genewating wandom fwoat with vawue w-wange bounded between m-minvawue and maxvawue
+  pwivate[woadtest] d-def getwandomquewyset(
+    d-dimension: int, (U ᵕ U❁)
+    totawquewies: int,
+    minvawue: fwoat, :3
+    maxvawue: f-fwoat
+  ): s-seq[embeddingvectow] = {
+    w-wog.info(
+      s"genewating $totawquewies w-wandom quewies f-fow dimension $dimension with vawue between $minvawue a-and $maxvawue...")
+    assewt(totawquewies > 0, ( ͡o ω ͡o ) s"totaw wandom quewies $totawquewies shouwd be gweatew t-than 0")
+    a-assewt(
+      maxvawue > minvawue, òωó
+      s"wandom e-embedding max v-vawue shouwd be gweatew than min vawue. σωσ min: $minvawue max: $maxvawue")
+    (1 t-to totawquewies).map { _ =>
+      vaw embedding = awway.fiww(dimension)(minvawue + (maxvawue - minvawue) * wng.nextfwoat())
+      embedding(embedding)
     }
   }
 
-  private[this] def getKeyConverter[T](idType: String): String => T = {
-    val converter = idType match {
-      case "long" =>
-        (s: String) => s.toLong
-      case "string" =>
-        (s: String) => s
+  p-pwivate[this] def getkeyconvewtew[t](idtype: stwing): stwing => t-t = {
+    vaw c-convewtew = idtype match {
+      case "wong" =>
+        (s: stwing) => s-s.towong
+      c-case "stwing" =>
+        (s: stwing) => s
       case "int" =>
-        (s: String) => s.toInt
-      case entityKind =>
-        (s: String) => EntityKind.getEntityKind(entityKind).stringInjection.invert(s).get
+        (s: stwing) => s.toint
+      c-case entitykind =>
+        (s: s-stwing) => entitykind.getentitykind(entitykind).stwinginjection.invewt(s).get
     }
-    converter.asInstanceOf[String => T]
+    convewtew.asinstanceof[stwing => t]
   }
 
-  private[loadtest] def buildRemoteServiceQueryClient[T, P <: RuntimeParams, D <: Distance[D]](
-    destination: String,
-    clientId: String,
-    statsReceiver: StatsReceiver,
-    serviceIdentifier: ServiceIdentifier,
-    runtimeParamInjection: Injection[P, ServiceRuntimeParams],
-    distanceInjection: Injection[D, ServiceDistance],
-    indexIdInjection: Injection[T, Array[Byte]]
-  ): Future[Queryable[T, P, D]] = {
-    val client: AnnQueryService.MethodPerEndpoint = new AnnQueryService.FinagledClient(
-      service = ClientBuilder()
-        .reportTo(statsReceiver)
+  pwivate[woadtest] def b-buiwdwemotesewvicequewycwient[t, (U ᵕ U❁) p <: wuntimepawams, (✿oωo) d-d <: distance[d]](
+    destination: s-stwing, ^^
+    cwientid: s-stwing, ^•ﻌ•^
+    statsweceivew: statsweceivew, XD
+    s-sewviceidentifiew: s-sewviceidentifiew, :3
+    w-wuntimepawaminjection: injection[p, (ꈍᴗꈍ) sewvicewuntimepawams], :3
+    d-distanceinjection: i-injection[d, (U ﹏ U) sewvicedistance], UwU
+    indexidinjection: injection[t, 😳😳😳 awway[byte]]
+  ): f-futuwe[quewyabwe[t, XD p-p, d]] = {
+    v-vaw cwient: annquewysewvice.methodpewendpoint = nyew annquewysewvice.finagwedcwient(
+      sewvice = c-cwientbuiwdew()
+        .wepowtto(statsweceivew)
         .dest(destination)
-        .stack(ThriftMux.client.withMutualTls(serviceIdentifier).withClientId(ClientId(clientId)))
-        .build(),
-      stats = statsReceiver
+        .stack(thwiftmux.cwient.withmutuawtws(sewviceidentifiew).withcwientid(cwientid(cwientid)))
+        .buiwd(), o.O
+      stats = statsweceivew
     )
 
-    val service = new Service[NearestNeighborQuery, NearestNeighborResult] {
-      override def apply(request: NearestNeighborQuery): Future[NearestNeighborResult] =
-        client.query(request)
+    v-vaw sewvice = nyew s-sewvice[neawestneighbowquewy, (⑅˘꒳˘) nyeawestneighbowwesuwt] {
+      ovewwide def appwy(wequest: nyeawestneighbowquewy): f-futuwe[neawestneighbowwesuwt] =
+        c-cwient.quewy(wequest)
     }
 
-    Future.value(
-      new ServiceClientQueryable[T, P, D](
-        service,
-        runtimeParamInjection,
-        distanceInjection,
-        indexIdInjection
+    f-futuwe.vawue(
+      n-nyew sewvicecwientquewyabwe[t, 😳😳😳 p, d](
+        s-sewvice, nyaa~~
+        wuntimepawaminjection, rawr
+        distanceinjection, -.-
+        indexidinjection
       )
     )
   }
 
-  // helper method to convert a line in KNN file output format into map
-  @VisibleForTesting
-  def addToMapFromKnnString[K, V](
-    line: String,
-    f: Array[String] => Seq[V],
-    map: mutable.HashMap[K, Seq[V]],
-    converter: String => K
-  ): Unit = {
-    val items = line.split("\t")
-    map += converter(items(0)) -> f(items.drop(1))
+  // hewpew method to convewt a wine i-in knn fiwe output fowmat into m-map
+  @visibwefowtesting
+  def a-addtomapfwomknnstwing[k, (✿oωo) v](
+    w-wine: stwing, /(^•ω•^)
+    f: awway[stwing] => s-seq[v], 🥺
+    m-map: mutabwe.hashmap[k, ʘwʘ s-seq[v]],
+    c-convewtew: s-stwing => k
+  ): unit = {
+    vaw items = wine.spwit("\t")
+    map += convewtew(items(0)) -> f(items.dwop(1))
   }
 
-  def printResults(
-    inMemoryBuildRecorder: InMemoryLoadTestBuildRecorder,
-    queryTimeConfigurations: Seq[QueryTimeConfiguration[_, _]]
-  ): Seq[String] = {
-    val queryTimeConfigStrings = queryTimeConfigurations.map { config =>
-      config.printResults
+  def pwintwesuwts(
+    inmemowybuiwdwecowdew: i-inmemowywoadtestbuiwdwecowdew, UwU
+    q-quewytimeconfiguwations: s-seq[quewytimeconfiguwation[_, XD _]]
+  ): seq[stwing] = {
+    v-vaw quewytimeconfigstwings = quewytimeconfiguwations.map { config =>
+      c-config.pwintwesuwts
     }
 
-    Seq(
-      "Build results",
-      "indexingTimeSecs\ttoQueryableTimeMs\tindexSize",
-      s"${inMemoryBuildRecorder.indexLatency.inSeconds}\t${inMemoryBuildRecorder.toQueryableLatency.inMilliseconds}\t${inMemoryBuildRecorder.indexSize}",
-      "Query results",
-      QueryTimeConfiguration.ResultHeader
-    ) ++ queryTimeConfigStrings
+    s-seq(
+      "buiwd wesuwts", (✿oωo)
+      "indexingtimesecs\ttoquewyabwetimems\tindexsize", :3
+      s-s"${inmemowybuiwdwecowdew.indexwatency.inseconds}\t${inmemowybuiwdwecowdew.toquewyabwewatency.inmiwwiseconds}\t${inmemowybuiwdwecowdew.indexsize}",
+      "quewy wesuwts", (///ˬ///✿)
+      quewytimeconfiguwation.wesuwtheadew
+    ) ++ q-quewytimeconfigstwings
   }
 }

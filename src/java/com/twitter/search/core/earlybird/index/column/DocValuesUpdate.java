@@ -1,8 +1,8 @@
-package com.twitter.search.core.earlybird.index.column;
+package com.twittew.seawch.cowe.eawwybiwd.index.cowumn;
 
-public interface DocValuesUpdate {
+pubwic intewface d-docvawuesupdate {
   /**
-   * Performs an doc values update on the given document.
+   * p-pewfowms an d-doc vawues update o-on the given d-document. (⑅˘꒳˘)
    */
-  void update(ColumnStrideFieldIndex docValues, int docID);
+  v-void update(cowumnstwidefiewdindex d-docvawues, ( ͡o ω ͡o ) i-int docid);
 }

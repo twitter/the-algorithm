@@ -1,256 +1,256 @@
-package com.twitter.tweetypie
-package config
+package com.twittew.tweetypie
+package c-config
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.transport.S2STransport
-import com.twitter.servo.gate.RateLimitingGate
-import com.twitter.servo.request.ClientRequestAuthorizer.UnauthorizedException
-import com.twitter.servo.request.{ClientRequestAuthorizer, ClientRequestObserver}
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.client_id.PreferForwardedServiceIdentifierForStrato
-import com.twitter.tweetypie.core.RateLimited
-import com.twitter.tweetypie.service.MethodAuthorizer
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt c-com.twittew.finagwe.mtws.twanspowt.s2stwanspowt
+i-impowt com.twittew.sewvo.gate.watewimitinggate
+i-impowt com.twittew.sewvo.wequest.cwientwequestauthowizew.unauthowizedexception
+i-impowt com.twittew.sewvo.wequest.{cwientwequestauthowizew, òωó c-cwientwequestobsewvew}
+impowt com.twittew.tweetypie.cwient_id.cwientidhewpew
+impowt com.twittew.tweetypie.cwient_id.pwefewfowwawdedsewviceidentifiewfowstwato
+impowt c-com.twittew.tweetypie.cowe.watewimited
+impowt com.twittew.tweetypie.sewvice.methodauthowizew
+i-impowt com.twittew.tweetypie.thwiftscawa._
+impowt c-com.twittew.utiw.futuwe
 
 /**
- * Compose a ClientRequestAuthorizer for
- * ClientHandlingTweetService
+ * compose a cwientwequestauthowizew fow
+ * cwienthandwingtweetsewvice
  */
-object ClientHandlingTweetServiceAuthorizer {
-  private val RateLimitExceeded =
-    RateLimited("Your ClientId has exceeded the rate limit for non-allowListed clients.")
+object c-cwienthandwingtweetsewviceauthowizew {
+  pwivate v-vaw watewimitexceeded =
+    w-watewimited("youw cwientid has exceeded the wate wimit fow nyon-awwowwisted cwients.")
 
-  def apply(
-    settings: TweetServiceSettings,
-    dynamicConfig: DynamicConfig,
-    statsReceiver: StatsReceiver,
-    getServiceIdentifier: () => ServiceIdentifier = S2STransport.peerServiceIdentifier _
-  ): ClientRequestAuthorizer = {
-    val authorizer =
-      if (settings.allowlistingRequired) {
-        val limitingGate = RateLimitingGate.uniform(settings.nonAllowListedClientRateLimitPerSec)
-        allowListedOrRateLimitedAuthorizer(dynamicConfig, limitingGate)
-          .andThen(rejectNonAllowListedProdAuthorizer(dynamicConfig))
-          .andThen(permittedMethodsAuthorizer(dynamicConfig))
-          .andThen(allowProductionAuthorizer(settings.allowProductionClients))
-      } else {
-        ClientRequestAuthorizer.withClientId
+  d-def appwy(
+    settings: tweetsewvicesettings, (˘ω˘)
+    dynamicconfig: dynamicconfig, :3
+    s-statsweceivew: statsweceivew, OwO
+    getsewviceidentifiew: () => s-sewviceidentifiew = s2stwanspowt.peewsewviceidentifiew _
+  ): c-cwientwequestauthowizew = {
+    v-vaw authowizew =
+      i-if (settings.awwowwistingwequiwed) {
+        vaw wimitinggate = w-watewimitinggate.unifowm(settings.nonawwowwistedcwientwatewimitpewsec)
+        awwowwistedowwatewimitedauthowizew(dynamicconfig, mya wimitinggate)
+          .andthen(wejectnonawwowwistedpwodauthowizew(dynamicconfig))
+          .andthen(pewmittedmethodsauthowizew(dynamicconfig))
+          .andthen(awwowpwoductionauthowizew(settings.awwowpwoductioncwients))
+      } ewse {
+        c-cwientwequestauthowizew.withcwientid
       }
 
-    val alternativeClientIdHelper = new ClientIdHelper(PreferForwardedServiceIdentifierForStrato)
-    // pass the authorizer into an observed authorizer for stats tracking.
-    // (observed authorizers can't be composed with andThen)
-    ClientRequestAuthorizer.observed(
-      authorizer,
-      new ClientRequestObserver(statsReceiver) {
-        override def apply(
-          methodName: String,
-          clientIdScopesOpt: Option[Seq[String]]
-        ): Future[Unit] = {
-          // Monitor for the migration taking into account forwarded service identifier
-          // as effective client ID for strato.
-          val alternativeClientIdScopes = alternativeClientIdHelper.effectiveClientId.map(Seq(_))
-          if (clientIdScopesOpt != alternativeClientIdScopes) {
-            scopedReceiver.scope(methodName)
-              .scope("before_migration")
-              .scope(clientIdScopesOpt.getOrElse(Seq(ClientIdHelper.UnknownClientId)): _*)
-              .scope("after_migration")
-              .counter(alternativeClientIdScopes.getOrElse(Seq(ClientIdHelper.UnknownClientId)): _*)
-              .incr()
-          } else {
-             scopedReceiver.scope(methodName).counter("migration_indifferent").incr()
+    vaw awtewnativecwientidhewpew = nyew cwientidhewpew(pwefewfowwawdedsewviceidentifiewfowstwato)
+    // pass the authowizew into an obsewved a-authowizew fow stats twacking. (˘ω˘)
+    // (obsewved a-authowizews c-can't be composed w-with andthen)
+    cwientwequestauthowizew.obsewved(
+      authowizew, o.O
+      nyew cwientwequestobsewvew(statsweceivew) {
+        o-ovewwide def a-appwy(
+          methodname: stwing, (✿oωo)
+          c-cwientidscopesopt: o-option[seq[stwing]]
+        ): futuwe[unit] = {
+          // m-monitow fow the migwation taking i-into account fowwawded sewvice identifiew
+          // a-as effective cwient id fow s-stwato. (ˆ ﻌ ˆ)♡
+          vaw awtewnativecwientidscopes = a-awtewnativecwientidhewpew.effectivecwientid.map(seq(_))
+          i-if (cwientidscopesopt != awtewnativecwientidscopes) {
+            scopedweceivew.scope(methodname)
+              .scope("befowe_migwation")
+              .scope(cwientidscopesopt.getowewse(seq(cwientidhewpew.unknowncwientid)): _*)
+              .scope("aftew_migwation")
+              .countew(awtewnativecwientidscopes.getowewse(seq(cwientidhewpew.unknowncwientid)): _*)
+              .incw()
+          } ewse {
+             scopedweceivew.scope(methodname).countew("migwation_indiffewent").incw()
           }
-          super.apply(methodName, clientIdScopesOpt)
+          supew.appwy(methodname, cwientidscopesopt)
         }
 
-        override def authorized(methodName: String, clientIdStr: String): Unit = {
-          // Monitor for the migration of using service identifier
-          // as identity instead of client ID.
-          val serviceIdentifier = getServiceIdentifier()
-          scopedReceiver.counter(
-            "authorized_request",
-            clientIdStr,
-            serviceIdentifier.role,
-            serviceIdentifier.service,
-            serviceIdentifier.environment
-          ).incr()
-          val status = dynamicConfig.byServiceIdentifier(serviceIdentifier).toSeq match {
-            case Seq() => "none"
-            case Seq(client) if client.clientId == clientIdStr => "equal"
-            case Seq(_) => "other"
-            case _ => "ambiguous"
+        o-ovewwide d-def authowized(methodname: stwing, ^^;; cwientidstw: s-stwing): u-unit = {
+          // m-monitow fow the migwation of using sewvice identifiew
+          // a-as identity instead of cwient id. OwO
+          vaw sewviceidentifiew = getsewviceidentifiew()
+          s-scopedweceivew.countew(
+            "authowized_wequest", 🥺
+            cwientidstw, mya
+            s-sewviceidentifiew.wowe, 😳
+            s-sewviceidentifiew.sewvice, òωó
+            s-sewviceidentifiew.enviwonment
+          ).incw()
+          vaw status = d-dynamicconfig.bysewviceidentifiew(sewviceidentifiew).toseq m-match {
+            case s-seq() => "none"
+            c-case seq(cwient) if cwient.cwientid == cwientidstw => "equaw"
+            c-case seq(_) => "othew"
+            c-case _ => "ambiguous"
           }
-          scopedReceiver.counter(
-            "service_id_match_client_id",
-            clientIdStr,
-            serviceIdentifier.role,
-            serviceIdentifier.service,
-            serviceIdentifier.environment,
+          s-scopedweceivew.countew(
+            "sewvice_id_match_cwient_id", /(^•ω•^)
+            c-cwientidstw,
+            s-sewviceidentifiew.wowe, -.-
+            sewviceidentifiew.sewvice, òωó
+            sewviceidentifiew.enviwonment, /(^•ω•^)
             status
-          ).incr()
+          ).incw()
         }
       }
     )
   }
 
   /**
-   * @return A ClientRequestAuthorizer that allows unlimited requests for allowlisted client ids and
-   * rate-limited requests for unknown clients.
+   * @wetuwn a-a cwientwequestauthowizew that awwows unwimited wequests fow awwowwisted cwient ids and
+   * wate-wimited w-wequests fow unknown cwients. /(^•ω•^)
    */
-  def allowListedOrRateLimitedAuthorizer(
-    dynamicConfig: DynamicConfig,
-    nonAllowListedLimiter: Gate[Unit]
-  ): ClientRequestAuthorizer =
-    ClientRequestAuthorizer.filtered(
-      { (_, clientId) =>
-        dynamicConfig.isAllowListedClient(clientId) || nonAllowListedLimiter()
-      },
-      RateLimitExceeded)
+  def awwowwistedowwatewimitedauthowizew(
+    dynamicconfig: d-dynamicconfig, 😳
+    n-nyonawwowwistedwimitew: g-gate[unit]
+  ): cwientwequestauthowizew =
+    c-cwientwequestauthowizew.fiwtewed(
+      { (_, :3 cwientid) =>
+        d-dynamicconfig.isawwowwistedcwient(cwientid) || n-nyonawwowwistedwimitew()
+      }, (U ᵕ U❁)
+      watewimitexceeded)
 
   /**
-   * @return A ClientRequestAuthorizer that rejects requests from non-allowListed prod clients.
+   * @wetuwn a cwientwequestauthowizew that wejects wequests fwom nyon-awwowwisted pwod c-cwients. ʘwʘ
    */
-  def rejectNonAllowListedProdAuthorizer(dynamicConfig: DynamicConfig): ClientRequestAuthorizer = {
-    object UnallowlistedException
-        extends UnauthorizedException(
-          "Traffic is only allowed from allow-listed *.prod clients." +
-            " Please create a ticket to register your clientId to enable production traffic using http://go/tp-new-client."
+  def wejectnonawwowwistedpwodauthowizew(dynamicconfig: d-dynamicconfig): cwientwequestauthowizew = {
+    o-object unawwowwistedexception
+        e-extends unauthowizedexception(
+          "twaffic is onwy awwowed fwom a-awwow-wisted *.pwod c-cwients." +
+            " pwease cweate a-a ticket to wegistew y-youw cwientid to enabwe pwoduction twaffic using http://go/tp-new-cwient."
         )
 
-    def isProdClient(clientId: String): Boolean =
-      clientId.endsWith(".prod") || clientId.endsWith(".production")
+    def ispwodcwient(cwientid: s-stwing): b-boowean =
+      c-cwientid.endswith(".pwod") || cwientid.endswith(".pwoduction")
 
-    ClientRequestAuthorizer.filtered(
-      { (_, clientId) =>
-        !isProdClient(clientId) || dynamicConfig.isAllowListedClient(clientId)
-      },
-      UnallowlistedException)
+    c-cwientwequestauthowizew.fiwtewed(
+      { (_, o.O c-cwientid) =>
+        !ispwodcwient(cwientid) || dynamicconfig.isawwowwistedcwient(cwientid)
+      }, ʘwʘ
+      u-unawwowwistedexception)
   }
 
   /**
-   * @return A ClientRequestAuthorizer that checks if a given client's
-   * permittedMethods field includes the method they are calling
+   * @wetuwn a cwientwequestauthowizew that checks if a given cwient's
+   * pewmittedmethods f-fiewd incwudes the m-method they awe cawwing
    */
-  def permittedMethodsAuthorizer(dynamicConfig: DynamicConfig): ClientRequestAuthorizer =
-    dynamicConfig.clientsByFullyQualifiedId match {
-      case Some(clientsById) => permittedMethodsAuthorizer(dynamicConfig, clientsById)
-      case None => ClientRequestAuthorizer.permissive
+  def pewmittedmethodsauthowizew(dynamicconfig: d-dynamicconfig): c-cwientwequestauthowizew =
+    dynamicconfig.cwientsbyfuwwyquawifiedid match {
+      case some(cwientsbyid) => pewmittedmethodsauthowizew(dynamicconfig, ^^ cwientsbyid)
+      c-case nyone => cwientwequestauthowizew.pewmissive
     }
 
-  private def permittedMethodsAuthorizer(
-    dynamicConfig: DynamicConfig,
-    clientsByFullyQualifiedId: Map[String, Client]
-  ): ClientRequestAuthorizer = {
-    ClientRequestAuthorizer.filtered { (methodName, clientId) =>
-      dynamicConfig.unprotectedEndpoints(methodName) ||
-      (clientsByFullyQualifiedId.get(clientId) match {
-        case Some(client) =>
-          client.accessAllMethods ||
-            client.permittedMethods.contains(methodName)
-        case None =>
-          false // If client id is unknown, don't allow access
+  pwivate def pewmittedmethodsauthowizew(
+    dynamicconfig: d-dynamicconfig, ^•ﻌ•^
+    cwientsbyfuwwyquawifiedid: map[stwing, mya cwient]
+  ): c-cwientwequestauthowizew = {
+    c-cwientwequestauthowizew.fiwtewed { (methodname, UwU cwientid) =>
+      dynamicconfig.unpwotectedendpoints(methodname) ||
+      (cwientsbyfuwwyquawifiedid.get(cwientid) match {
+        c-case s-some(cwient) =>
+          cwient.accessawwmethods ||
+            cwient.pewmittedmethods.contains(methodname)
+        case nyone =>
+          fawse // i-if cwient id is unknown, >_< d-don't awwow access
       })
     }
   }
 
   /**
-   * @return A ClientRequestAuthorizer that fails the
-   * request if it is coming from a production client
-   * and allowProductionClients is false
+   * @wetuwn a cwientwequestauthowizew that faiws the
+   * wequest i-if it is coming fwom a pwoduction c-cwient
+   * and a-awwowpwoductioncwients is fawse
    */
-  def allowProductionAuthorizer(allowProductionClients: Boolean): ClientRequestAuthorizer =
-    ClientRequestAuthorizer.filtered { (_, clientId) =>
-      allowProductionClients || !(clientId.endsWith(".prod") || clientId.endsWith(".production"))
+  d-def awwowpwoductionauthowizew(awwowpwoductioncwients: boowean): cwientwequestauthowizew =
+    c-cwientwequestauthowizew.fiwtewed { (_, /(^•ω•^) c-cwientid) =>
+      a-awwowpwoductioncwients || !(cwientid.endswith(".pwod") || cwientid.endswith(".pwoduction"))
     }
 }
 
 /**
- * Compose a MethodAuthorizer for the `getTweets` endpoint.
+ * compose a-a methodauthowizew f-fow the `gettweets` endpoint. òωó
  */
-object GetTweetsAuthorizer {
-  import ProtectedTweetsAuthorizer.IncludeProtected
+object g-gettweetsauthowizew {
+  i-impowt p-pwotectedtweetsauthowizew.incwudepwotected
 
-  def apply(
-    config: DynamicConfig,
-    maxRequestSize: Int,
-    instanceCount: Int,
-    enforceRateLimitedClients: Gate[Unit],
-    maxRequestWidthEnabled: Gate[Unit],
-    statsReceiver: StatsReceiver,
-  ): MethodAuthorizer[GetTweetsRequest] =
-    MethodAuthorizer.all(
-      Seq(
-        ProtectedTweetsAuthorizer(config.clientsByFullyQualifiedId)
-          .contramap[GetTweetsRequest] { r =>
-            IncludeProtected(r.options.exists(_.bypassVisibilityFiltering))
+  def appwy(
+    config: dynamicconfig,
+    m-maxwequestsize: int, σωσ
+    i-instancecount: i-int, ( ͡o ω ͡o )
+    enfowcewatewimitedcwients: gate[unit], nyaa~~
+    maxwequestwidthenabwed: gate[unit], :3
+    s-statsweceivew: s-statsweceivew,
+  ): m-methodauthowizew[gettweetswequest] =
+    m-methodauthowizew.aww(
+      seq(
+        p-pwotectedtweetsauthowizew(config.cwientsbyfuwwyquawifiedid)
+          .contwamap[gettweetswequest] { w =>
+            incwudepwotected(w.options.exists(_.bypassvisibiwityfiwtewing))
           },
-        RequestSizeAuthorizer(maxRequestSize, maxRequestWidthEnabled)
-          .contramap[GetTweetsRequest](_.tweetIds.size),
-        RateLimiterAuthorizer(config, instanceCount, enforceRateLimitedClients, statsReceiver)
-          .contramap[GetTweetsRequest](_.tweetIds.size)
+        wequestsizeauthowizew(maxwequestsize, UwU maxwequestwidthenabwed)
+          .contwamap[gettweetswequest](_.tweetids.size), o.O
+        watewimitewauthowizew(config, (ˆ ﻌ ˆ)♡ i-instancecount, ^^;; enfowcewatewimitedcwients, ʘwʘ s-statsweceivew)
+          .contwamap[gettweetswequest](_.tweetids.size)
       )
     )
 }
 
 /**
- * Compose a MethodAuthorizer for the `getTweetFields` endpoint.
+ * compose a methodauthowizew fow t-the `gettweetfiewds` endpoint. σωσ
  */
-object GetTweetFieldsAuthorizer {
-  import ProtectedTweetsAuthorizer.IncludeProtected
+o-object gettweetfiewdsauthowizew {
+  impowt p-pwotectedtweetsauthowizew.incwudepwotected
 
-  def apply(
-    config: DynamicConfig,
-    maxRequestSize: Int,
-    instanceCount: Int,
-    enforceRateLimitedClients: Gate[Unit],
-    maxRequestWidthEnabled: Gate[Unit],
-    statsReceiver: StatsReceiver
-  ): MethodAuthorizer[GetTweetFieldsRequest] =
-    MethodAuthorizer.all(
-      Seq(
-        ProtectedTweetsAuthorizer(config.clientsByFullyQualifiedId)
-          .contramap[GetTweetFieldsRequest](r =>
-            IncludeProtected(r.options.visibilityPolicy == TweetVisibilityPolicy.NoFiltering)),
-        RequestSizeAuthorizer(maxRequestSize, maxRequestWidthEnabled)
-          .contramap[GetTweetFieldsRequest](_.tweetIds.size),
-        RateLimiterAuthorizer(config, instanceCount, enforceRateLimitedClients, statsReceiver)
-          .contramap[GetTweetFieldsRequest](_.tweetIds.size)
+  def a-appwy(
+    config: d-dynamicconfig, ^^;;
+    m-maxwequestsize: i-int, ʘwʘ
+    instancecount: int, ^^
+    enfowcewatewimitedcwients: gate[unit], nyaa~~
+    maxwequestwidthenabwed: gate[unit], (///ˬ///✿)
+    statsweceivew: s-statsweceivew
+  ): methodauthowizew[gettweetfiewdswequest] =
+    m-methodauthowizew.aww(
+      s-seq(
+        pwotectedtweetsauthowizew(config.cwientsbyfuwwyquawifiedid)
+          .contwamap[gettweetfiewdswequest](w =>
+            incwudepwotected(w.options.visibiwitypowicy == t-tweetvisibiwitypowicy.nofiwtewing)), XD
+        wequestsizeauthowizew(maxwequestsize, :3 maxwequestwidthenabwed)
+          .contwamap[gettweetfiewdswequest](_.tweetids.size), òωó
+        watewimitewauthowizew(config, ^^ instancecount, e-enfowcewatewimitedcwients, ^•ﻌ•^ s-statsweceivew)
+          .contwamap[gettweetfiewdswequest](_.tweetids.size)
       )
     )
 }
 
-object ProtectedTweetsAuthorizer {
-  case class IncludeProtected(include: Boolean) extends AnyVal
+object pwotectedtweetsauthowizew {
+  c-case cwass incwudepwotected(incwude: boowean) e-extends anyvaw
 
-  class BypassVisibilityFilteringNotAuthorizedException(message: String)
-      extends UnauthorizedException(message)
+  c-cwass bypassvisibiwityfiwtewingnotauthowizedexception(message: stwing)
+      e-extends unauthowizedexception(message)
 
-  def apply(optClientsById: Option[Map[String, Client]]): MethodAuthorizer[IncludeProtected] = {
-    optClientsById match {
-      case Some(clientsByFullyQualifiedId) =>
-        val clientsWithBypassVisibilityFiltering = clientsByFullyQualifiedId.filter {
-          case (_, client) => client.bypassVisibilityFiltering
+  d-def appwy(optcwientsbyid: option[map[stwing, σωσ cwient]]): methodauthowizew[incwudepwotected] = {
+    optcwientsbyid m-match {
+      c-case some(cwientsbyfuwwyquawifiedid) =>
+        v-vaw cwientswithbypassvisibiwityfiwtewing = c-cwientsbyfuwwyquawifiedid.fiwtew {
+          c-case (_, (ˆ ﻌ ˆ)♡ cwient) => cwient.bypassvisibiwityfiwtewing
         }
-        apply(clientId => clientsWithBypassVisibilityFiltering.contains(clientId))
+        appwy(cwientid => c-cwientswithbypassvisibiwityfiwtewing.contains(cwientid))
 
-      case None =>
-        apply((_: String) => true)
+      c-case nyone =>
+        appwy((_: s-stwing) => twue)
     }
   }
 
   /**
-   * A MethodAuthorizer that fails the request if a client requests to bypass visibility
-   * filtering but doesn't have BypassVisibilityFiltering
+   * a-a methodauthowizew that f-faiws the wequest if a cwient wequests to bypass v-visibiwity
+   * fiwtewing but doesn't h-have bypassvisibiwityfiwtewing
    */
-  def apply(protectedTweetsAllowlist: String => Boolean): MethodAuthorizer[IncludeProtected] =
-    MethodAuthorizer { (includeProtected, clientId) =>
-      // There is only one unauthorized case, a client requesting
-      // protected tweets when they are not in the allowlist
-      Future.when(includeProtected.include && !protectedTweetsAllowlist(clientId)) {
-        Future.exception(
-          new BypassVisibilityFilteringNotAuthorizedException(
-            s"$clientId is not authorized to bypass visibility filtering"
+  d-def appwy(pwotectedtweetsawwowwist: s-stwing => boowean): methodauthowizew[incwudepwotected] =
+    methodauthowizew { (incwudepwotected, nyaa~~ cwientid) =>
+      // t-thewe i-is onwy one unauthowized c-case, ʘwʘ a cwient wequesting
+      // pwotected tweets when t-they awe nyot in the awwowwist
+      futuwe.when(incwudepwotected.incwude && !pwotectedtweetsawwowwist(cwientid)) {
+        futuwe.exception(
+          n-nyew b-bypassvisibiwityfiwtewingnotauthowizedexception(
+            s"$cwientid i-is nyot authowized to bypass v-visibiwity f-fiwtewing"
           )
         )
       }
@@ -258,142 +258,142 @@ object ProtectedTweetsAuthorizer {
 }
 
 /**
- * A MethodAuthorizer[Int] that fails large requests.
+ * a methodauthowizew[int] that faiws wawge w-wequests. ^•ﻌ•^
  */
-object RequestSizeAuthorizer {
-  class ExceededMaxWidthException(message: String) extends UnauthorizedException(message)
+object wequestsizeauthowizew {
+  cwass exceededmaxwidthexception(message: s-stwing) e-extends unauthowizedexception(message)
 
-  def apply(
-    maxRequestSize: Int,
-    maxWidthLimitEnabled: Gate[Unit] = Gate.False
-  ): MethodAuthorizer[Int] =
-    MethodAuthorizer { (requestSize, clientId) =>
-      Future.when(requestSize > maxRequestSize && maxWidthLimitEnabled()) {
-        Future.exception(
-          new ExceededMaxWidthException(
-            s"$requestSize exceeds bulk request size limit. $clientId can request at most $maxRequestSize items per request"
+  def a-appwy(
+    maxwequestsize: int, rawr x3
+    m-maxwidthwimitenabwed: g-gate[unit] = g-gate.fawse
+  ): methodauthowizew[int] =
+    methodauthowizew { (wequestsize, 🥺 cwientid) =>
+      futuwe.when(wequestsize > maxwequestsize && maxwidthwimitenabwed()) {
+        futuwe.exception(
+          nyew exceededmaxwidthexception(
+            s"$wequestsize exceeds buwk wequest size wimit. ʘwʘ $cwientid c-can wequest a-at most $maxwequestsize items pew wequest"
           )
         )
       }
     }
 }
 
-object RateLimiterAuthorizer {
+o-object watewimitewauthowizew {
 
-  type ClientId = String
+  t-type cwientid = s-stwing
 
   /**
-   * @return client ID to weighted RateLimitingGate map
+   * @wetuwn cwient id to w-weighted watewimitinggate map
    *
-   * We want to rate-limit based on requests per sec for every instance.
-   * When we allowlist new clients to Tweetypie, we assign tweets per sec quota.
-   * That's why, we compute perInstanceQuota [1] and create a weighted rate-limiting gate [2]
-   * which returns true if acquiring requestSize number of permits is successful. [3]
+   * w-we want t-to wate-wimit based on wequests p-pew sec fow evewy instance. (˘ω˘)
+   * w-when we awwowwist n-nyew cwients to tweetypie, o.O we assign tweets pew s-sec quota. σωσ
+   * t-that's why, (ꈍᴗꈍ) we c-compute pewinstancequota [1] and c-cweate a weighted w-wate-wimiting g-gate [2]
+   * w-which wetuwns twue i-if acquiwing w-wequestsize numbew of pewmits is s-successfuw. (ˆ ﻌ ˆ)♡ [3]
    *
-   * [1] tps quota during allowlisting is for both DCs and instanceCount is for one DC.
-   * Therefore, we are over-compensating perInstanceQuota for all low-priority clients.
-   * this will act a fudge-factor to account for cluster-wide traffic imbalances.
+   * [1] t-tps quota duwing a-awwowwisting is fow both dcs and i-instancecount is fow one dc. o.O
+   * thewefowe, :3 we a-awe ovew-compensating pewinstancequota f-fow aww w-wow-pwiowity cwients. -.-
+   * t-this wiww act a fudge-factow t-to account fow cwustew-wide t-twaffic imbawances. ( ͡o ω ͡o )
    *
-   * val perInstanceQuota : Double = math.max(1.0, math.ceil(tpsLimit.toFloat / instanceCount))
+   * vaw pewinstancequota : d-doubwe = math.max(1.0, /(^•ω•^) m-math.ceiw(tpswimit.tofwoat / instancecount))
    *
-   * We have some clients like deferredRPC with 0K tps quota and rate limiter expects > 0 permits.
+   * we have some cwients wike defewwedwpc with 0k t-tps quota and wate wimitew e-expects > 0 pewmits. (⑅˘꒳˘)
    *
-   * [2] if a client has multiple environments - staging, devel, prod. We provision the
-   * same rate-limits for all envs instead of distributing the tps quota across envs.
+   * [2] i-if a cwient has muwtipwe enviwonments - staging, òωó devew, pwod. 🥺 w-we pwovision the
+   * same wate-wimits f-fow aww e-envs instead of d-distwibuting the tps quota acwoss envs. (ˆ ﻌ ˆ)♡
    *
-   * Example:
+   * e-exampwe:
    *
-   * val c = Client(..., limit = 10k, ...)
-   * Map("foo.prod" -> c, "foo.staging" -> c, "foo.devel" -> c)
+   * v-vaw c = cwient(..., wimit = 10k, -.- ...)
+   * m-map("foo.pwod" -> c, σωσ "foo.staging" -> c, >_< "foo.devew" -> c-c)
    *
-   * Above client config turns into 3 separate RateLimitingGate.weighted(), each with 10k
+   * above cwient c-config tuwns i-into 3 sepawate w-watewimitinggate.weighted(), :3 each w-with 10k
    *
-   * [3] RateLimitingGate will always give permit to the initial request that exceeds
-   * the limit. ex: starting with rate-limit of 1 tps per instance. first request with
-   * 100 batch size is allowed.
+   * [3] w-watewimitinggate w-wiww awways g-give pewmit to the initiaw w-wequest that exceeds
+   * t-the wimit. OwO e-ex: stawting w-with wate-wimit o-of 1 tps pew i-instance. rawr fiwst w-wequest with
+   * 100 b-batch size is awwowed. (///ˬ///✿)
    *
-   * RateLimitFudgeFactor is a multiplier for per-instance quota to account for:
+   * w-watewimitfudgefactow is a m-muwtipwiew fow pew-instance quota t-to account fow:
    *
-   * a) High likelihood of concurrent batches hitting the same tweetypie shard due to
-   * non-uniform load distribution (this can be alleviated by using Deterministic Aperture)
-   * b) Clients with no retry backoffs and custom batching/concurrency.
+   * a-a) h-high wikewihood of concuwwent batches hitting the same tweetypie s-shawd due to
+   * n-nyon-unifowm w-woad distwibution (this can be awweviated by using detewministic a-apewtuwe)
+   * b-b) cwients with nyo wetwy backoffs a-and custom batching/concuwwency. ^^
    *
-   * We are adding default stitch batch size to per instance quota, to give more headroom for low-tps clients.
-   * https://cgit.twitter.biz/source/tree/stitch/stitch-tweetypie/src/main/scala/com/twitter/stitch/tweetypie/TweetyPie.scala#n47
+   * w-we awe adding defauwt stitch batch size to pew instance q-quota, XD to g-give mowe headwoom f-fow wow-tps cwients. UwU
+   * h-https://cgit.twittew.biz/souwce/twee/stitch/stitch-tweetypie/swc/main/scawa/com/twittew/stitch/tweetypie/tweetypie.scawa#n47
    *
    */
-  case class RateLimiterConfig(limitingGate: Gate[Int], enforceRateLimit: Boolean)
+  case cwass watewimitewconfig(wimitinggate: g-gate[int], o.O enfowcewatewimit: boowean)
 
-  def perClientRateLimiters(
-    dynamicConfig: DynamicConfig,
-    instanceCount: Int
-  ): Map[ClientId, RateLimiterConfig] = {
-    val RateLimitFudgeFactor: Double = 1.5
-    val DefaultStitchBatchSize: Double = 25.0
-    dynamicConfig.clientsByFullyQualifiedId match {
-      case Some(clients) =>
-        clients.collect {
-          case (clientId, client) if client.tpsLimit.isDefined =>
-            val perInstanceQuota: Double =
-              math.max(
-                1.0,
-                math.ceil(
-                  client.tpsLimit.get.toFloat / instanceCount)) * RateLimitFudgeFactor + DefaultStitchBatchSize
-            clientId -> RateLimiterConfig(
-              RateLimitingGate.weighted(perInstanceQuota),
-              client.enforceRateLimit
+  d-def pewcwientwatewimitews(
+    dynamicconfig: dynamicconfig, 😳
+    i-instancecount: int
+  ): map[cwientid, (˘ω˘) w-watewimitewconfig] = {
+    vaw w-watewimitfudgefactow: d-doubwe = 1.5
+    vaw defauwtstitchbatchsize: d-doubwe = 25.0
+    d-dynamicconfig.cwientsbyfuwwyquawifiedid match {
+      c-case some(cwients) =>
+        c-cwients.cowwect {
+          c-case (cwientid, 🥺 c-cwient) if c-cwient.tpswimit.isdefined =>
+            vaw pewinstancequota: d-doubwe =
+              m-math.max(
+                1.0, ^^
+                m-math.ceiw(
+                  cwient.tpswimit.get.tofwoat / i-instancecount)) * watewimitfudgefactow + defauwtstitchbatchsize
+            c-cwientid -> w-watewimitewconfig(
+              w-watewimitinggate.weighted(pewinstancequota), >w<
+              cwient.enfowcewatewimit
             )
         }
-      case None => Map.empty
+      case nyone => map.empty
     }
   }
 
   /*
-    enforce rate-limiting on get_tweets and get_tweet_fields requests
-    given enable_rate_limited_clients decider is true and rate limiting gate
-    is not giving any more permits.
+    enfowce wate-wimiting o-on get_tweets and get_tweet_fiewds w-wequests
+    given e-enabwe_wate_wimited_cwients decidew is twue and wate wimiting g-gate
+    is nyot giving any mowe p-pewmits. ^^;;
    */
-  def apply(
-    config: DynamicConfig,
-    limiters: Map[ClientId, RateLimiterConfig],
-    instanceCount: Int,
-    enforceRateLimitedClients: Gate[Unit],
-    statsReceiver: StatsReceiver
-  ): MethodAuthorizer[Int] = {
+  d-def appwy(
+    c-config: dynamicconfig, (˘ω˘)
+    w-wimitews: m-map[cwientid, OwO watewimitewconfig], (ꈍᴗꈍ)
+    instancecount: int, òωó
+    enfowcewatewimitedcwients: g-gate[unit], ʘwʘ
+    statsweceivew: statsweceivew
+  ): m-methodauthowizew[int] = {
 
-    val tpsExceededScope = statsReceiver.scope("tps_exceeded")
-    val tpsRejectedScope = statsReceiver.scope("tps_rejected")
-    val qpsExceededScope = statsReceiver.scope("qps_exceeded")
-    val qpsRejectedScope = statsReceiver.scope("qps_rejected")
+    vaw tpsexceededscope = statsweceivew.scope("tps_exceeded")
+    vaw tpswejectedscope = s-statsweceivew.scope("tps_wejected")
+    vaw qpsexceededscope = statsweceivew.scope("qps_exceeded")
+    vaw qpswejectedscope = s-statsweceivew.scope("qps_wejected")
 
-    MethodAuthorizer { (requestSize, clientId) =>
-      val positiveRequestSize = math.max(1, requestSize)
-      val shouldRateLimit: Boolean = limiters.get(clientId).exists { config =>
-        val exceededLimit = !config.limitingGate(positiveRequestSize)
-        if (exceededLimit) {
-          qpsExceededScope.counter(clientId).incr()
-          tpsExceededScope.counter(clientId).incr(positiveRequestSize)
+    m-methodauthowizew { (wequestsize, ʘwʘ cwientid) =>
+      vaw positivewequestsize = m-math.max(1, wequestsize)
+      vaw shouwdwatewimit: b-boowean = wimitews.get(cwientid).exists { c-config =>
+        vaw e-exceededwimit = !config.wimitinggate(positivewequestsize)
+        if (exceededwimit) {
+          q-qpsexceededscope.countew(cwientid).incw()
+          tpsexceededscope.countew(cwientid).incw(positivewequestsize)
         }
-        exceededLimit && config.enforceRateLimit
+        exceededwimit && config.enfowcewatewimit
       }
 
-      Future.when(shouldRateLimit && enforceRateLimitedClients()) {
-        qpsRejectedScope.counter(clientId).incr()
-        tpsRejectedScope.counter(clientId).incr(positiveRequestSize)
-        Future.exception(
-          RateLimited(s"Your client ID $clientId has exceeded its reserved tps quota.")
+      f-futuwe.when(shouwdwatewimit && enfowcewatewimitedcwients()) {
+        qpswejectedscope.countew(cwientid).incw()
+        t-tpswejectedscope.countew(cwientid).incw(positivewequestsize)
+        f-futuwe.exception(
+          w-watewimited(s"youw cwient id $cwientid has e-exceeded its wesewved tps quota.")
         )
       }
     }
   }
 
-  def apply(
-    config: DynamicConfig,
-    instanceCount: Int,
-    enforceRateLimitedClients: Gate[Unit],
-    statsReceiver: StatsReceiver
-  ): MethodAuthorizer[Int] = {
-    val limiters = perClientRateLimiters(config, instanceCount)
-    apply(config, limiters, instanceCount, enforceRateLimitedClients, statsReceiver)
+  def appwy(
+    config: dynamicconfig, nyaa~~
+    instancecount: i-int, UwU
+    e-enfowcewatewimitedcwients: gate[unit], (⑅˘꒳˘)
+    statsweceivew: s-statsweceivew
+  ): m-methodauthowizew[int] = {
+    vaw wimitews = pewcwientwatewimitews(config, (˘ω˘) instancecount)
+    appwy(config, :3 w-wimitews, (˘ω˘) i-instancecount, nyaa~~ enfowcewatewimitedcwients, (U ﹏ U) statsweceivew)
   }
 }

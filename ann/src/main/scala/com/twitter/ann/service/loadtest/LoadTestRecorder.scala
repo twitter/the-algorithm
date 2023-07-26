@@ -1,231 +1,231 @@
-package com.twitter.ann.service.loadtest
+package com.twittew.ann.sewvice.woadtest
 
-import com.google.common.util.concurrent.AtomicDouble
-import com.twitter.finagle.stats.{MetricsBucketedHistogram, Snapshot, StatsReceiver}
-import com.twitter.util.{Duration, Stopwatch}
-import java.util.concurrent.atomic.{AtomicInteger, AtomicReference}
+impowt c-com.googwe.common.utiw.concuwwent.atomicdoubwe
+impowt c-com.twittew.finagwe.stats.{metwicsbucketedhistogwam, >w< s-snapshot, -.- s-statsweceivew}
+i-impowt com.twittew.utiw.{duwation, (✿oωo) s-stopwatch}
+i-impowt java.utiw.concuwwent.atomic.{atomicintegew, (˘ω˘) a-atomicwefewence}
 
-trait LoadTestQueryRecorder[T] {
-  def recordQueryResult(
-    trueNeighbors: Seq[T],
-    foundNeighbors: Seq[T],
-    queryLatency: Duration
-  ): Unit
+twait woadtestquewywecowdew[t] {
+  def wecowdquewywesuwt(
+    twueneighbows: seq[t], rawr
+    f-foundneighbows: seq[t], OwO
+    quewywatency: duwation
+  ): u-unit
 }
 
-case class LoadTestQueryResults(
-  numResults: Int,
-  top1Recall: Float,
-  top10Recall: Option[Float],
-  overallRecall: Float)
+case cwass woadtestquewywesuwts(
+  n-nyumwesuwts: int, ^•ﻌ•^
+  top1wecaww: fwoat,
+  top10wecaww: option[fwoat], UwU
+  o-ovewawwwecaww: fwoat)
 
-private object LoadTestQueryRecorder {
-  def recordQueryResult[T](
-    trueNeighbors: Seq[T],
-    foundNeighbors: Seq[T]
-  ): LoadTestQueryResults = {
-    // record number of results returned
-    val numResults = foundNeighbors.size
-    if (trueNeighbors.isEmpty) {
-      LoadTestQueryResults(
-        numResults,
-        0f,
-        Option.empty,
+p-pwivate object w-woadtestquewywecowdew {
+  def wecowdquewywesuwt[t](
+    twueneighbows: seq[t], (˘ω˘)
+    foundneighbows: s-seq[t]
+  ): woadtestquewywesuwts = {
+    // wecowd nyumbew of wesuwts wetuwned
+    vaw nyumwesuwts = foundneighbows.size
+    i-if (twueneighbows.isempty) {
+      woadtestquewywesuwts(
+        n-nyumwesuwts,
+        0f, (///ˬ///✿)
+        o-option.empty, σωσ
         0f
       )
-    } else {
-      // record top 1, top 10 and overall recall
-      // recall here is computed as number of true neighbors within the returned points set
-      // divides by the number of required neighbors
-      val top1Recall = foundNeighbors.intersect(Seq(trueNeighbors.head)).size
-      val top10Recall = if (numResults >= 10 && trueNeighbors.size >= 10) {
-        Some(
-          trueNeighbors.take(10).intersect(foundNeighbors).size.toFloat / 10
+    } e-ewse {
+      // w-wecowd top 1, /(^•ω•^) top 10 and ovewaww wecaww
+      // w-wecaww hewe is computed as nyumbew of t-twue nyeighbows within the wetuwned points set
+      // divides by the nyumbew of wequiwed nyeighbows
+      v-vaw top1wecaww = foundneighbows.intewsect(seq(twueneighbows.head)).size
+      v-vaw top10wecaww = i-if (numwesuwts >= 10 && t-twueneighbows.size >= 10) {
+        some(
+          twueneighbows.take(10).intewsect(foundneighbows).size.tofwoat / 10
         )
-      } else {
-        None
+      } ewse {
+        n-nyone
       }
 
-      val overallRecall = trueNeighbors
-        .take(foundNeighbors.size).intersect(foundNeighbors).size.toFloat /
-        Math.min(foundNeighbors.size, trueNeighbors.size)
+      v-vaw ovewawwwecaww = twueneighbows
+        .take(foundneighbows.size).intewsect(foundneighbows).size.tofwoat /
+        m-math.min(foundneighbows.size, 😳 t-twueneighbows.size)
 
-      LoadTestQueryResults(
-        numResults,
-        top1Recall,
-        top10Recall,
-        overallRecall
+      woadtestquewywesuwts(
+        n-nyumwesuwts, 😳
+        top1wecaww, (⑅˘꒳˘)
+        t-top10wecaww, 😳😳😳
+        ovewawwwecaww
       )
     }
   }
 }
 
-class StatsLoadTestQueryRecorder[T](
-  statsReceiver: StatsReceiver)
-    extends LoadTestQueryRecorder[T] {
-  private[this] val numResultsStats = statsReceiver.stat("number_of_results")
-  private[this] val recallStats = statsReceiver.stat("recall")
-  private[this] val top1RecallStats = statsReceiver.stat("top_1_recall")
-  private[this] val top10RecallStats = statsReceiver.stat("top_10_recall")
-  private[this] val queryLatencyMicrosStats = statsReceiver.stat("query_latency_micros")
+cwass statswoadtestquewywecowdew[t](
+  s-statsweceivew: statsweceivew)
+    e-extends woadtestquewywecowdew[t] {
+  p-pwivate[this] v-vaw nyumwesuwtsstats = statsweceivew.stat("numbew_of_wesuwts")
+  pwivate[this] vaw wecawwstats = statsweceivew.stat("wecaww")
+  pwivate[this] vaw top1wecawwstats = statsweceivew.stat("top_1_wecaww")
+  p-pwivate[this] v-vaw top10wecawwstats = statsweceivew.stat("top_10_wecaww")
+  pwivate[this] v-vaw q-quewywatencymicwosstats = s-statsweceivew.stat("quewy_watency_micwos")
 
-  override def recordQueryResult(
-    trueNeighbors: Seq[T],
-    foundNeighbors: Seq[T],
-    queryLatency: Duration
-  ): Unit = {
-    val results = LoadTestQueryRecorder.recordQueryResult(trueNeighbors, foundNeighbors)
-    numResultsStats.add(results.numResults)
-    recallStats.add(results.overallRecall * 100)
-    results.top10Recall.foreach { top10Recall =>
-      top10RecallStats.add(top10Recall * 100)
+  ovewwide def wecowdquewywesuwt(
+    twueneighbows: s-seq[t], 😳
+    foundneighbows: seq[t], XD
+    quewywatency: duwation
+  ): u-unit = {
+    vaw wesuwts = woadtestquewywecowdew.wecowdquewywesuwt(twueneighbows, mya f-foundneighbows)
+    n-nyumwesuwtsstats.add(wesuwts.numwesuwts)
+    w-wecawwstats.add(wesuwts.ovewawwwecaww * 100)
+    wesuwts.top10wecaww.foweach { t-top10wecaww =>
+      t-top10wecawwstats.add(top10wecaww * 100)
     }
-    top1RecallStats.add(results.top1Recall * 100)
-    queryLatencyMicrosStats.add(queryLatency.inMicroseconds)
+    t-top1wecawwstats.add(wesuwts.top1wecaww * 100)
+    q-quewywatencymicwosstats.add(quewywatency.inmicwoseconds)
   }
 }
 
-trait LoadTestBuildRecorder {
-  def recordIndexCreation(
-    indexSize: Int,
-    indexLatency: Duration,
-    toQueryableLatency: Duration
-  ): Unit
+twait woadtestbuiwdwecowdew {
+  d-def wecowdindexcweation(
+    i-indexsize: i-int, ^•ﻌ•^
+    indexwatency: d-duwation,
+    t-toquewyabwewatency: duwation
+  ): unit
 }
 
-class StatsLoadTestBuildRecorder(
-  statsReceiver: StatsReceiver)
-    extends LoadTestBuildRecorder {
-  private[this] val indexLatencyGauge = statsReceiver.addGauge("index_latency_ms")(_)
-  private[this] val indexSizeGauge = statsReceiver.addGauge("index_size")(_)
-  private[this] val toQueryableGauge = statsReceiver.addGauge("to_queryable_latency_ms")(_)
+cwass statswoadtestbuiwdwecowdew(
+  s-statsweceivew: statsweceivew)
+    extends woadtestbuiwdwecowdew {
+  pwivate[this] vaw indexwatencygauge = s-statsweceivew.addgauge("index_watency_ms")(_)
+  pwivate[this] vaw indexsizegauge = statsweceivew.addgauge("index_size")(_)
+  p-pwivate[this] v-vaw toquewyabwegauge = s-statsweceivew.addgauge("to_quewyabwe_watency_ms")(_)
 
-  override def recordIndexCreation(
-    indexSize: Int,
-    indexLatency: Duration,
-    toQueryableLatency: Duration
-  ): Unit = {
-    indexLatencyGauge(indexLatency.inMillis)
-    indexSizeGauge(indexSize)
-    toQueryableGauge(toQueryableLatency.inMillis)
+  ovewwide d-def wecowdindexcweation(
+    indexsize: int, ʘwʘ
+    i-indexwatency: d-duwation, ( ͡o ω ͡o )
+    toquewyabwewatency: duwation
+  ): unit = {
+    indexwatencygauge(indexwatency.inmiwwis)
+    indexsizegauge(indexsize)
+    toquewyabwegauge(toquewyabwewatency.inmiwwis)
   }
 }
 
-class QueryRecorderSnapshot(snapshot: Snapshot) {
-  def avgQueryLatencyMicros: Double = snapshot.average
-  def p50QueryLatencyMicros: Double =
-    snapshot.percentiles.find(_.quantile == .5).get.value
-  def p90QueryLatencyMicros: Double =
-    snapshot.percentiles.find(_.quantile == .9).get.value
-  def p99QueryLatencyMicros: Double =
-    snapshot.percentiles.find(_.quantile == .99).get.value
+cwass q-quewywecowdewsnapshot(snapshot: snapshot) {
+  d-def avgquewywatencymicwos: doubwe = s-snapshot.avewage
+  d-def p50quewywatencymicwos: doubwe =
+    snapshot.pewcentiwes.find(_.quantiwe == .5).get.vawue
+  d-def p90quewywatencymicwos: d-doubwe =
+    snapshot.pewcentiwes.find(_.quantiwe == .9).get.vawue
+  d-def p99quewywatencymicwos: d-doubwe =
+    snapshot.pewcentiwes.find(_.quantiwe == .99).get.vawue
 }
 
-class InMemoryLoadTestQueryRecorder[T](
-  // You have to specify a name of the histogram even though it is not used
-  // Use latch period of bottom. We will compute a new snapshot every time we call computeSnapshot
-  private[this] val latencyHistogram: MetricsBucketedHistogram =
-    new MetricsBucketedHistogram("latencyhistogram", latchPeriod = Duration.Bottom))
-    extends LoadTestQueryRecorder[T] {
-  private[this] val counter = new AtomicInteger(0)
-  private[this] val countMoreThan10Results = new AtomicInteger(0)
-  private[this] val recallSum = new AtomicDouble(0.0)
-  private[this] val top1RecallSum = new AtomicDouble(0.0)
-  private[this] val top10RecallSum = new AtomicDouble(0.0)
-  private[this] val elapsedTimeFun = new AtomicReference[(Stopwatch.Elapsed, Duration)]()
-  private[this] val elapsedTime = new AtomicReference[Duration](Duration.Zero)
+cwass inmemowywoadtestquewywecowdew[t](
+  // you have t-to specify a nyame o-of the histogwam e-even though it is nyot used
+  // u-use watch p-pewiod of bottom. mya we wiww compute a-a nyew snapshot evewy time we caww computesnapshot
+  pwivate[this] vaw watencyhistogwam: m-metwicsbucketedhistogwam =
+    n-nyew metwicsbucketedhistogwam("watencyhistogwam", o.O watchpewiod = d-duwation.bottom))
+    e-extends woadtestquewywecowdew[t] {
+  pwivate[this] vaw countew = nyew atomicintegew(0)
+  p-pwivate[this] vaw countmowethan10wesuwts = nyew atomicintegew(0)
+  pwivate[this] vaw wecawwsum = n-nyew atomicdoubwe(0.0)
+  pwivate[this] v-vaw top1wecawwsum = n-nyew atomicdoubwe(0.0)
+  pwivate[this] vaw top10wecawwsum = nyew atomicdoubwe(0.0)
+  p-pwivate[this] v-vaw ewapsedtimefun = nyew atomicwefewence[(stopwatch.ewapsed, (✿oωo) duwation)]()
+  p-pwivate[this] vaw ewapsedtime = n-nyew atomicwefewence[duwation](duwation.zewo)
 
   /**
-   * Compute a snapshot of what happened between the time that this was called and the previous time
-   * it was called.
-   * @return
+   * compute a snapshot of nani happened between the t-time that this was cawwed and the p-pwevious time
+   * i-it was cawwed. :3
+   * @wetuwn
    */
-  def computeSnapshot(): QueryRecorderSnapshot = {
-    new QueryRecorderSnapshot(latencyHistogram.snapshot())
+  def computesnapshot(): q-quewywecowdewsnapshot = {
+    nyew q-quewywecowdewsnapshot(watencyhistogwam.snapshot())
   }
 
-  def recall: Double =
-    if (counter.get() != 0) {
-      recallSum.get * 100 / counter.get()
-    } else { 0 }
+  d-def w-wecaww: doubwe =
+    if (countew.get() != 0) {
+      w-wecawwsum.get * 100 / c-countew.get()
+    } ewse { 0 }
 
-  def top1Recall: Double =
-    if (counter.get() != 0) {
-      top1RecallSum.get * 100 / counter.get()
-    } else { 0 }
-  def top10Recall: Double =
-    if (countMoreThan10Results.get() != 0) {
-      top10RecallSum.get * 100 / countMoreThan10Results.get()
-    } else { 0 }
+  def top1wecaww: doubwe =
+    i-if (countew.get() != 0) {
+      t-top1wecawwsum.get * 100 / c-countew.get()
+    } ewse { 0 }
+  def top10wecaww: d-doubwe =
+    if (countmowethan10wesuwts.get() != 0) {
+      t-top10wecawwsum.get * 100 / c-countmowethan10wesuwts.get()
+    } ewse { 0 }
 
-  def avgRPS: Double =
-    if (elapsedTime.get() != Duration.Zero) {
-      (counter.get().toDouble * 1e9) / elapsedTime.get().inNanoseconds
-    } else { 0 }
+  def avgwps: doubwe =
+    if (ewapsedtime.get() != d-duwation.zewo) {
+      (countew.get().todoubwe * 1e9) / e-ewapsedtime.get().innanoseconds
+    } ewse { 0 }
 
-  override def recordQueryResult(
-    trueNeighbors: Seq[T],
-    foundNeighbors: Seq[T],
-    queryLatency: Duration
-  ): Unit = {
-    elapsedTimeFun.compareAndSet(null, (Stopwatch.start(), queryLatency))
-    val results = LoadTestQueryRecorder.recordQueryResult(trueNeighbors, foundNeighbors)
-    top1RecallSum.addAndGet(results.top1Recall)
-    results.top10Recall.foreach { top10Recall =>
-      top10RecallSum.addAndGet(top10Recall)
-      countMoreThan10Results.incrementAndGet()
+  o-ovewwide d-def wecowdquewywesuwt(
+    twueneighbows: s-seq[t], 😳
+    foundneighbows: seq[t], (U ﹏ U)
+    quewywatency: duwation
+  ): unit = {
+    ewapsedtimefun.compaweandset(nuww, mya (stopwatch.stawt(), (U ᵕ U❁) q-quewywatency))
+    vaw wesuwts = w-woadtestquewywecowdew.wecowdquewywesuwt(twueneighbows, :3 foundneighbows)
+    t-top1wecawwsum.addandget(wesuwts.top1wecaww)
+    wesuwts.top10wecaww.foweach { t-top10wecaww =>
+      top10wecawwsum.addandget(top10wecaww)
+      c-countmowethan10wesuwts.incwementandget()
     }
-    recallSum.addAndGet(results.overallRecall)
-    latencyHistogram.add(queryLatency.inMicroseconds)
-    counter.incrementAndGet()
-    // Requests are assumed to have started around the time time of the first time record was called
-    // plus the time it took for that query to hhave completed.
-    val (elapsedSinceFirstCall, firstQueryLatency) = elapsedTimeFun.get()
-    val durationSoFar = elapsedSinceFirstCall() + firstQueryLatency
-    elapsedTime.set(durationSoFar)
+    w-wecawwsum.addandget(wesuwts.ovewawwwecaww)
+    w-watencyhistogwam.add(quewywatency.inmicwoseconds)
+    c-countew.incwementandget()
+    // w-wequests awe assumed to have stawted awound the time time of the fiwst time wecowd was cawwed
+    // p-pwus the time it t-took fow that q-quewy to hhave compweted. mya
+    vaw (ewapsedsincefiwstcaww, OwO f-fiwstquewywatency) = ewapsedtimefun.get()
+    vaw duwationsofaw = ewapsedsincefiwstcaww() + fiwstquewywatency
+    e-ewapsedtime.set(duwationsofaw)
   }
 }
 
-class InMemoryLoadTestBuildRecorder extends LoadTestBuildRecorder {
-  var indexLatency: Duration = Duration.Zero
-  var indexSize: Int = 0
-  var toQueryableLatency: Duration = Duration.Zero
+c-cwass inmemowywoadtestbuiwdwecowdew extends woadtestbuiwdwecowdew {
+  v-vaw indexwatency: duwation = duwation.zewo
+  v-vaw indexsize: i-int = 0
+  vaw toquewyabwewatency: d-duwation = d-duwation.zewo
 
-  override def recordIndexCreation(
-    size: Int,
-    indexLatencyArg: Duration,
-    toQueryableLatencyArg: Duration
-  ): Unit = {
-    indexLatency = indexLatencyArg
-    indexSize = size
-    toQueryableLatency = toQueryableLatencyArg
-  }
-}
-
-/**
- * A LoadTestRecorder that be composed by other recorders
- */
-class ComposedLoadTestQueryRecorder[T](
-  recorders: Seq[LoadTestQueryRecorder[T]])
-    extends LoadTestQueryRecorder[T] {
-  override def recordQueryResult(
-    trueNeighbors: Seq[T],
-    foundNeighbors: Seq[T],
-    queryLatency: Duration
-  ): Unit = recorders.foreach {
-    _.recordQueryResult(trueNeighbors, foundNeighbors, queryLatency)
+  ovewwide def wecowdindexcweation(
+    size: int, (ˆ ﻌ ˆ)♡
+    indexwatencyawg: duwation, ʘwʘ
+    t-toquewyabwewatencyawg: d-duwation
+  ): u-unit = {
+    i-indexwatency = i-indexwatencyawg
+    indexsize = s-size
+    t-toquewyabwewatency = toquewyabwewatencyawg
   }
 }
 
 /**
- * A LoadTestRecorder that be composed by other recorders
+ * a-a woadtestwecowdew t-that be composed by o-othew wecowdews
  */
-class ComposedLoadTestBuildRecorder(
-  recorders: Seq[LoadTestBuildRecorder])
-    extends LoadTestBuildRecorder {
-  override def recordIndexCreation(
-    indexSize: Int,
-    indexLatency: Duration,
-    toQueryableLatency: Duration
-  ): Unit = recorders.foreach { _.recordIndexCreation(indexSize, indexLatency, toQueryableLatency) }
+cwass composedwoadtestquewywecowdew[t](
+  wecowdews: s-seq[woadtestquewywecowdew[t]])
+    extends w-woadtestquewywecowdew[t] {
+  o-ovewwide def wecowdquewywesuwt(
+    twueneighbows: s-seq[t], o.O
+    foundneighbows: seq[t], UwU
+    quewywatency: d-duwation
+  ): u-unit = wecowdews.foweach {
+    _.wecowdquewywesuwt(twueneighbows, rawr x3 f-foundneighbows, 🥺 quewywatency)
+  }
+}
+
+/**
+ * a woadtestwecowdew that be c-composed by othew wecowdews
+ */
+cwass composedwoadtestbuiwdwecowdew(
+  w-wecowdews: s-seq[woadtestbuiwdwecowdew])
+    extends woadtestbuiwdwecowdew {
+  o-ovewwide def wecowdindexcweation(
+    i-indexsize: i-int, :3
+    indexwatency: duwation, (ꈍᴗꈍ)
+    toquewyabwewatency: duwation
+  ): u-unit = wecowdews.foweach { _.wecowdindexcweation(indexsize, 🥺 indexwatency, (✿oωo) t-toquewyabwewatency) }
 }

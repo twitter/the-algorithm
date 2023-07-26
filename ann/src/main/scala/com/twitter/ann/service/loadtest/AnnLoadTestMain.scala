@@ -1,379 +1,379 @@
-package com.twitter.ann.service.loadtest
+package com.twittew.ann.sewvice.woadtest
 
-import com.twitter.ann.annoy.AnnoyCommon
-import com.twitter.ann.annoy.AnnoyRuntimeParams
-import com.twitter.ann.annoy.TypedAnnoyIndex
-import com.twitter.ann.common._
-import com.twitter.ann.common.thriftscala.{Distance => ServiceDistance}
-import com.twitter.ann.common.thriftscala.{RuntimeParams => ServiceRuntimeParams}
-import com.twitter.ann.faiss.FaissCommon
-import com.twitter.ann.faiss.FaissParams
-import com.twitter.ann.hnsw.HnswCommon
-import com.twitter.ann.hnsw.HnswParams
-import com.twitter.ann.hnsw.TypedHnswIndex
-import com.twitter.bijection.Injection
-import com.twitter.cortex.ml.embeddings.common.EntityKind
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.finatra.mtls.modules.ServiceIdentifierModule
-import com.twitter.inject.server.TwitterServer
-import com.twitter.util._
-import java.util.concurrent.TimeUnit
+impowt c-com.twittew.ann.annoy.annoycommon
+i-impowt com.twittew.ann.annoy.annoywuntimepawams
+i-impowt com.twittew.ann.annoy.typedannoyindex
+impowt c-com.twittew.ann.common._
+impowt c-com.twittew.ann.common.thwiftscawa.{distance => s-sewvicedistance}
+i-impowt com.twittew.ann.common.thwiftscawa.{wuntimepawams => s-sewvicewuntimepawams}
+impowt com.twittew.ann.faiss.faisscommon
+impowt com.twittew.ann.faiss.faisspawams
+impowt c-com.twittew.ann.hnsw.hnswcommon
+impowt com.twittew.ann.hnsw.hnswpawams
+impowt c-com.twittew.ann.hnsw.typedhnswindex
+impowt com.twittew.bijection.injection
+i-impowt com.twittew.cowtex.mw.embeddings.common.entitykind
+impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+impowt com.twittew.finagwe.utiw.defauwttimew
+i-impowt com.twittew.finatwa.mtws.moduwes.sewviceidentifiewmoduwe
+impowt com.twittew.inject.sewvew.twittewsewvew
+i-impowt com.twittew.utiw._
+i-impowt java.utiw.concuwwent.timeunit
 
 /**
- * To build and upload:
- *  $ ./bazel bundle ann/src/main/scala/com/twitter/ann/service/loadtest:bin --bundle-jvm-archive=zip
- *  $ packer add_version --cluster=smf1 $USER ann-loadtest dist/ann-loadtest.zip
+ * to buiwd and upwoad:
+ *  $ ./bazew bundwe a-ann/swc/main/scawa/com/twittew/ann/sewvice/woadtest:bin --bundwe-jvm-awchive=zip
+ *  $ packew add_vewsion --cwustew=smf1 $usew ann-woadtest dist/ann-woadtest.zip
  */
-object AnnLoadTestMain extends TwitterServer {
-  private[this] val algo =
-    flag[String]("algo", "load test server types: [annoy/hnsw]")
-  private[this] val targetQPS =
-    flag[Int]("qps", "target QPS for load test")
-  private[this] val queryIdType =
-    flag[String](
-      "query_id_type",
-      "query id type for load test: [long/string/int/user/tweet/word/url/tfwId]")
-  private[this] val indexIdType =
-    flag[String](
-      "index_id_type",
-      "index id type for load test: [long/string/int/user/tweet/word/url/tfwId]")
-  private[this] val metric =
-    flag[String]("metric", "metric type for load test: [Cosine/L2/InnerProduct]")
-  private[this] val durationSec =
-    flag[Int]("duration_sec", "duration for the load test in sec")
-  private[this] val numberOfNeighbors =
-    flag[Seq[Int]]("number_of_neighbors", Seq(), "number of neighbors")
-  private[this] val dimension = flag[Int]("embedding_dimension", "dimension of embeddings")
-  private[this] val querySetDir =
-    flag[String]("query_set_dir", "", "Directory containing the queries")
-  private[this] val indexSetDir =
-    flag[String](
-      "index_set_dir",
-      "",
-      "Directory containing the embeddings to be indexed"
+object a-annwoadtestmain extends twittewsewvew {
+  p-pwivate[this] v-vaw awgo =
+    f-fwag[stwing]("awgo", ʘwʘ "woad t-test sewvew types: [annoy/hnsw]")
+  pwivate[this] vaw tawgetqps =
+    f-fwag[int]("qps", ^•ﻌ•^ "tawget qps fow woad test")
+  pwivate[this] v-vaw quewyidtype =
+    fwag[stwing](
+      "quewy_id_type", OwO
+      "quewy id type fow woad test: [wong/stwing/int/usew/tweet/wowd/uww/tfwid]")
+  pwivate[this] vaw indexidtype =
+    f-fwag[stwing](
+      "index_id_type", (U ﹏ U)
+      "index id type f-fow woad test: [wong/stwing/int/usew/tweet/wowd/uww/tfwid]")
+  p-pwivate[this] vaw m-metwic =
+    fwag[stwing]("metwic", (ˆ ﻌ ˆ)♡ "metwic type fow woad test: [cosine/w2/innewpwoduct]")
+  pwivate[this] vaw d-duwationsec =
+    f-fwag[int]("duwation_sec", (⑅˘꒳˘) "duwation fow the w-woad test in sec")
+  p-pwivate[this] vaw nyumbewofneighbows =
+    f-fwag[seq[int]]("numbew_of_neighbows", (U ﹏ U) seq(), "numbew o-of nyeighbows")
+  pwivate[this] vaw dimension = f-fwag[int]("embedding_dimension", o.O "dimension of embeddings")
+  p-pwivate[this] vaw quewysetdiw =
+    f-fwag[stwing]("quewy_set_diw", mya "", "diwectowy c-containing the quewies")
+  pwivate[this] vaw indexsetdiw =
+    fwag[stwing](
+      "index_set_diw",
+      "", XD
+      "diwectowy containing the embeddings to b-be indexed"
     )
-  private[this] val truthSetDir =
-    flag[String]("truth_set_dir", "", "Directory containing the truth data")
-  private[this] val loadTestType =
-    flag[String]("loadtest_type", "Load test type [server/local]")
-  private[this] val serviceDestination =
-    flag[String]("service_destination", "wily address of remote query service")
-  private[this] val concurrencyLevel =
-    flag[Int]("concurrency_level", 8, "number of concurrent operations on the index")
+  p-pwivate[this] vaw twuthsetdiw =
+    f-fwag[stwing]("twuth_set_diw", òωó "", "diwectowy c-containing t-the twuth data")
+  pwivate[this] vaw woadtesttype =
+    fwag[stwing]("woadtest_type", (˘ω˘) "woad t-test type [sewvew/wocaw]")
+  pwivate[this] vaw sewvicedestination =
+    fwag[stwing]("sewvice_destination", :3 "wiwy a-addwess of wemote q-quewy sewvice")
+  p-pwivate[this] v-vaw concuwwencywevew =
+    fwag[int]("concuwwency_wevew", OwO 8, "numbew o-of concuwwent o-opewations on t-the index")
 
-  // Queries with random embeddings
-  private[this] val withRandomQueries =
-    flag[Boolean]("with_random_queries", false, "query with random embeddings")
-  private[this] val randomQueriesCount =
-    flag[Int]("random_queries_count", 50000, "total random queries")
-  private[this] val randomEmbeddingMinValue =
-    flag[Float]("random_embedding_min_value", -1.0f, "Min value of random embeddings")
-  private[this] val randomEmbeddingMaxValue =
-    flag[Float]("random_embedding_max_value", 1.0f, "Max value of random embeddings")
+  // q-quewies with wandom embeddings
+  pwivate[this] v-vaw withwandomquewies =
+    f-fwag[boowean]("with_wandom_quewies", mya f-fawse, (˘ω˘) "quewy w-with wandom embeddings")
+  p-pwivate[this] vaw wandomquewiescount =
+    fwag[int]("wandom_quewies_count", o.O 50000, "totaw wandom quewies")
+  p-pwivate[this] vaw wandomembeddingminvawue =
+    fwag[fwoat]("wandom_embedding_min_vawue", (✿oωo) -1.0f, "min vawue of wandom embeddings")
+  pwivate[this] vaw w-wandomembeddingmaxvawue =
+    fwag[fwoat]("wandom_embedding_max_vawue", (ˆ ﻌ ˆ)♡ 1.0f, ^^;; "max vawue of wandom embeddings")
 
-  // parameters for annoy
-  private[this] val numOfNodesToExplore =
-    flag[Seq[Int]]("annoy_num_of_nodes_to_explore", Seq(), "number of nodes to explore")
-  private[this] val numOfTrees =
-    flag[Int]("annoy_num_trees", 0, "number of trees to build")
+  // pawametews f-fow annoy
+  pwivate[this] v-vaw n-nyumofnodestoexpwowe =
+    fwag[seq[int]]("annoy_num_of_nodes_to_expwowe", OwO s-seq(), "numbew of nyodes t-to expwowe")
+  p-pwivate[this] vaw nyumoftwees =
+    fwag[int]("annoy_num_twees", 🥺 0, "numbew of twees to buiwd")
 
-  // parameters for HNSW
-  private[this] val efConstruction = flag[Int]("hnsw_ef_construction", "ef for Hnsw construction")
-  private[this] val ef = flag[Seq[Int]]("hnsw_ef", Seq(), "ef for Hnsw query")
-  private[this] val maxM = flag[Int]("hnsw_max_m", "maxM for Hnsw")
+  // pawametews fow hnsw
+  pwivate[this] v-vaw efconstwuction = f-fwag[int]("hnsw_ef_constwuction", mya "ef fow hnsw c-constwuction")
+  p-pwivate[this] vaw ef = fwag[seq[int]]("hnsw_ef", 😳 seq(), "ef fow h-hnsw quewy")
+  p-pwivate[this] vaw maxm = fwag[int]("hnsw_max_m", òωó "maxm f-fow hnsw")
 
-  // FAISS
-  private[this] val nprobe = flag[Seq[Int]]("faiss_nprobe", Seq(), "nprobe for faiss query")
-  private[this] val quantizerEf =
-    flag[Seq[Int]]("faiss_quantizerEf", Seq(0), "quantizerEf for faiss query")
-  private[this] val quantizerKfactorRF =
-    flag[Seq[Int]]("faiss_quantizerKfactorRF", Seq(0), "quantizerEf for faiss query")
-  private[this] val quantizerNprobe =
-    flag[Seq[Int]]("faiss_quantizerNprobe", Seq(0), "quantizerNprobe for faiss query")
-  private[this] val ht =
-    flag[Seq[Int]]("faiss_ht", Seq(0), "ht for faiss query")
+  // f-faiss
+  pwivate[this] vaw nypwobe = fwag[seq[int]]("faiss_npwobe", /(^•ω•^) seq(), -.- "npwobe fow faiss q-quewy")
+  pwivate[this] v-vaw q-quantizewef =
+    fwag[seq[int]]("faiss_quantizewef", òωó s-seq(0), /(^•ω•^) "quantizewef f-fow faiss quewy")
+  p-pwivate[this] vaw quantizewkfactowwf =
+    fwag[seq[int]]("faiss_quantizewkfactowwf", seq(0), /(^•ω•^) "quantizewef fow faiss q-quewy")
+  pwivate[this] v-vaw quantizewnpwobe =
+    fwag[seq[int]]("faiss_quantizewnpwobe", 😳 seq(0), :3 "quantizewnpwobe f-fow faiss q-quewy")
+  pwivate[this] vaw ht =
+    fwag[seq[int]]("faiss_ht", (U ᵕ U❁) seq(0), "ht fow f-faiss quewy")
 
-  implicit val timer: Timer = DefaultTimer
+  impwicit vaw timew: timew = defauwttimew
 
-  override def start(): Unit = {
-    logger.info("Starting load test..")
-    logger.info(flag.getAll().mkString("\t"))
+  ovewwide def stawt(): unit = {
+    w-woggew.info("stawting woad test..")
+    woggew.info(fwag.getaww().mkstwing("\t"))
 
-    assert(numberOfNeighbors().nonEmpty, "number_of_neighbors not defined")
-    assert(dimension() > 0, s"Invalid dimension ${dimension()}")
+    a-assewt(numbewofneighbows().nonempty, ʘwʘ "numbew_of_neighbows n-nyot defined")
+    assewt(dimension() > 0, o.O s"invawid dimension ${dimension()}")
 
-    val inMemoryBuildRecorder = new InMemoryLoadTestBuildRecorder
+    v-vaw inmemowybuiwdwecowdew = n-nyew inmemowywoadtestbuiwdwecowdew
 
-    val queryableFuture = buildQueryable(inMemoryBuildRecorder)
-    val queryConfig = getQueryRuntimeConfig
-    val result = queryableFuture.flatMap { queryable =>
-      performQueries(queryable, queryConfig, getQueries)
+    vaw quewyabwefutuwe = buiwdquewyabwe(inmemowybuiwdwecowdew)
+    v-vaw quewyconfig = getquewywuntimeconfig
+    v-vaw wesuwt = quewyabwefutuwe.fwatmap { quewyabwe =>
+      pewfowmquewies(quewyabwe, ʘwʘ quewyconfig, ^^ g-getquewies)
     }
 
-    Await.result(result)
-    System.out.println(s"Target QPS: ${targetQPS()}")
-    System.out.println(s"Duration per test: ${durationSec()}")
-    System.out.println(s"Concurrency Level: ${concurrencyLevel()}")
+    await.wesuwt(wesuwt)
+    s-system.out.pwintwn(s"tawget q-qps: ${tawgetqps()}")
+    system.out.pwintwn(s"duwation pew t-test: ${duwationsec()}")
+    system.out.pwintwn(s"concuwwency wevew: ${concuwwencywevew()}")
 
-    LoadTestUtils
-      .printResults(inMemoryBuildRecorder, queryConfig)
-      .foreach(System.out.println)
+    w-woadtestutiws
+      .pwintwesuwts(inmemowybuiwdwecowdew, ^•ﻌ•^ q-quewyconfig)
+      .foweach(system.out.pwintwn)
 
-    Await.result(close())
-    System.exit(0)
+    a-await.wesuwt(cwose())
+    system.exit(0)
   }
 
-  private[this] def getQueries[Q, I]: Seq[Query[I]] = {
-    if (withRandomQueries()) {
-      assert(
-        truthSetDir().isEmpty,
-        "Cannot use truth set when query with random embeddings enabled"
+  p-pwivate[this] def g-getquewies[q, mya i]: seq[quewy[i]] = {
+    if (withwandomquewies()) {
+      a-assewt(
+        t-twuthsetdiw().isempty, UwU
+        "cannot u-use twuth set when quewy with wandom embeddings e-enabwed"
       )
-      val queries = LoadTestUtils.getRandomQuerySet(
-        dimension(),
-        randomQueriesCount(),
-        randomEmbeddingMinValue(),
-        randomEmbeddingMaxValue()
+      vaw quewies = w-woadtestutiws.getwandomquewyset(
+        d-dimension(), >_<
+        wandomquewiescount(), /(^•ω•^)
+        wandomembeddingminvawue(), òωó
+        wandomembeddingmaxvawue()
       )
 
-      queries.map(Query[I](_))
-    } else {
-      assert(querySetDir().nonEmpty, "Query set path is empty")
-      assert(queryIdType().nonEmpty, "Query id type is empty")
-      val queries = LoadTestUtils.getEmbeddingsSet[Q](querySetDir(), queryIdType())
+      q-quewies.map(quewy[i](_))
+    } ewse {
+      a-assewt(quewysetdiw().nonempty, σωσ "quewy s-set path is empty")
+      a-assewt(quewyidtype().nonempty, ( ͡o ω ͡o ) "quewy id type is empty")
+      v-vaw quewies = woadtestutiws.getembeddingsset[q](quewysetdiw(), nyaa~~ quewyidtype())
 
-      if (truthSetDir().nonEmpty) {
-        // Join the queries with truth set data.
-        assert(indexIdType().nonEmpty, "Index id type is empty")
-        val truthSetMap =
-          LoadTestUtils.getTruthSetMap[Q, I](truthSetDir(), queryIdType(), indexIdType())
-        queries.map(entity => Query[I](entity.embedding, truthSetMap(entity.id)))
-      } else {
-        queries.map(entity => Query[I](entity.embedding))
+      if (twuthsetdiw().nonempty) {
+        // join the quewies with twuth s-set data. :3
+        assewt(indexidtype().nonempty, UwU "index i-id type is empty")
+        v-vaw twuthsetmap =
+          woadtestutiws.gettwuthsetmap[q, o.O i-i](twuthsetdiw(), (ˆ ﻌ ˆ)♡ quewyidtype(), ^^;; i-indexidtype())
+        q-quewies.map(entity => q-quewy[i](entity.embedding, ʘwʘ t-twuthsetmap(entity.id)))
+      } e-ewse {
+        quewies.map(entity => quewy[i](entity.embedding))
       }
     }
   }
 
-  private[this] def getQueryRuntimeConfig[
-    T,
-    P <: RuntimeParams
-  ]: Seq[QueryTimeConfiguration[T, P]] = {
-    val queryTimeConfig = algo() match {
+  pwivate[this] def getquewywuntimeconfig[
+    t,
+    p <: wuntimepawams
+  ]: seq[quewytimeconfiguwation[t, σωσ p-p]] = {
+    v-vaw quewytimeconfig = a-awgo() match {
       case "annoy" =>
-        assert(numOfNodesToExplore().nonEmpty, "Must specify the num_of_nodes_to_explore")
-        logger.info(s"Querying annoy index with num_of_nodes_to_explore ${numOfNodesToExplore()}")
-        for {
-          numNodes <- numOfNodesToExplore()
-          numOfNeighbors <- numberOfNeighbors()
-        } yield {
-          buildQueryTimeConfig[T, AnnoyRuntimeParams](
-            numOfNeighbors,
-            AnnoyRuntimeParams(Some(numNodes)),
-            Map(
-              "numNodes" -> numNodes.toString,
-              "numberOfNeighbors" -> numOfNeighbors.toString
+        a-assewt(numofnodestoexpwowe().nonempty, ^^;; "must specify the nyum_of_nodes_to_expwowe")
+        woggew.info(s"quewying a-annoy index with n-nyum_of_nodes_to_expwowe ${numofnodestoexpwowe()}")
+        fow {
+          n-nyumnodes <- numofnodestoexpwowe()
+          numofneighbows <- n-nyumbewofneighbows()
+        } y-yiewd {
+          buiwdquewytimeconfig[t, ʘwʘ a-annoywuntimepawams](
+            n-nyumofneighbows, ^^
+            annoywuntimepawams(some(numnodes)), nyaa~~
+            map(
+              "numnodes" -> nyumnodes.tostwing, (///ˬ///✿)
+              "numbewofneighbows" -> numofneighbows.tostwing
             )
-          ).asInstanceOf[QueryTimeConfiguration[T, P]]
+          ).asinstanceof[quewytimeconfiguwation[t, XD p-p]]
         }
-      case "hnsw" =>
-        assert(ef().nonEmpty, "Must specify ef")
-        logger.info(s"Querying hnsw index with ef ${ef()}")
-        for {
-          ef <- ef()
-          numOfNeighbors <- numberOfNeighbors()
-        } yield {
-          buildQueryTimeConfig[T, HnswParams](
-            numOfNeighbors,
-            HnswParams(ef),
-            Map(
-              "efConstruction" -> ef.toString,
-              "numberOfNeighbors" -> numOfNeighbors.toString
+      c-case "hnsw" =>
+        a-assewt(ef().nonempty, :3 "must s-specify e-ef")
+        woggew.info(s"quewying h-hnsw index w-with ef ${ef()}")
+        fow {
+          e-ef <- e-ef()
+          nyumofneighbows <- n-nyumbewofneighbows()
+        } yiewd {
+          buiwdquewytimeconfig[t, òωó hnswpawams](
+            n-nyumofneighbows, ^^
+            hnswpawams(ef), ^•ﻌ•^
+            m-map(
+              "efconstwuction" -> e-ef.tostwing, σωσ
+              "numbewofneighbows" -> nyumofneighbows.tostwing
             )
-          ).asInstanceOf[QueryTimeConfiguration[T, P]]
+          ).asinstanceof[quewytimeconfiguwation[t, p-p]]
         }
       case "faiss" =>
-        assert(nprobe().nonEmpty, "Must specify nprobe")
-        def toNonZeroOptional(x: Int): Option[Int] = if (x != 0) Some(x) else None
-        for {
-          numOfNeighbors <- numberOfNeighbors()
-          runNProbe <- nprobe()
-          runQEF <- quantizerEf()
-          runKFactorEF <- quantizerKfactorRF()
-          runQNProbe <- quantizerNprobe()
-          runHT <- ht()
-        } yield {
-          val params = FaissParams(
-            Some(runNProbe),
-            toNonZeroOptional(runQEF),
-            toNonZeroOptional(runKFactorEF),
-            toNonZeroOptional(runQNProbe),
-            toNonZeroOptional(runHT))
-          buildQueryTimeConfig[T, FaissParams](
-            numOfNeighbors,
-            params,
-            Map(
-              "nprobe" -> params.nprobe.toString,
-              "quantizer_efSearch" -> params.quantizerEf.toString,
-              "quantizer_k_factor_rf" -> params.quantizerKFactorRF.toString,
-              "quantizer_nprobe" -> params.quantizerNprobe.toString,
-              "ht" -> params.ht.toString,
-              "numberOfNeighbors" -> numOfNeighbors.toString,
+        assewt(npwobe().nonempty, (ˆ ﻌ ˆ)♡ "must s-specify nypwobe")
+        d-def tononzewooptionaw(x: i-int): option[int] = if (x != 0) some(x) ewse nyone
+        fow {
+          n-nyumofneighbows <- nyumbewofneighbows()
+          wunnpwobe <- nypwobe()
+          w-wunqef <- quantizewef()
+          w-wunkfactowef <- quantizewkfactowwf()
+          w-wunqnpwobe <- quantizewnpwobe()
+          w-wunht <- h-ht()
+        } yiewd {
+          vaw pawams = f-faisspawams(
+            some(wunnpwobe), nyaa~~
+            tononzewooptionaw(wunqef), ʘwʘ
+            t-tononzewooptionaw(wunkfactowef), ^•ﻌ•^
+            t-tononzewooptionaw(wunqnpwobe), rawr x3
+            tononzewooptionaw(wunht))
+          b-buiwdquewytimeconfig[t, 🥺 faisspawams](
+            n-nyumofneighbows, ʘwʘ
+            p-pawams, (˘ω˘)
+            map(
+              "npwobe" -> p-pawams.npwobe.tostwing, o.O
+              "quantizew_efseawch" -> pawams.quantizewef.tostwing, σωσ
+              "quantizew_k_factow_wf" -> pawams.quantizewkfactowwf.tostwing, (ꈍᴗꈍ)
+              "quantizew_npwobe" -> pawams.quantizewnpwobe.tostwing, (ˆ ﻌ ˆ)♡
+              "ht" -> pawams.ht.tostwing, o.O
+              "numbewofneighbows" -> nyumofneighbows.tostwing, :3
             )
-          ).asInstanceOf[QueryTimeConfiguration[T, P]]
+          ).asinstanceof[quewytimeconfiguwation[t, -.- p]]
         }
-      case _ => throw new IllegalArgumentException(s"server type: $algo is not supported yet")
+      case _ => thwow nyew iwwegawawgumentexception(s"sewvew type: $awgo is nyot suppowted yet")
     }
 
-    queryTimeConfig
+    quewytimeconfig
   }
 
-  private def buildQueryable[T, P <: RuntimeParams, D <: Distance[D]](
-    inMemoryBuildRecorder: InMemoryLoadTestBuildRecorder
-  ): Future[Queryable[T, P, D]] = {
-    val queryable = loadTestType() match {
-      case "remote" => {
-        assert(serviceDestination().nonEmpty, "Service destination not defined")
-        logger.info(s"Running load test with remote service ${serviceDestination()}")
-        LoadTestUtils.buildRemoteServiceQueryClient[T, P, D](
-          serviceDestination(),
-          "ann-load-test",
-          statsReceiver,
-          injector.instance[ServiceIdentifier],
-          getRuntimeParamInjection[P],
-          getDistanceInjection[D],
-          getIndexIdInjection[T]
+  pwivate def buiwdquewyabwe[t, ( ͡o ω ͡o ) p-p <: wuntimepawams, /(^•ω•^) d-d <: distance[d]](
+    inmemowybuiwdwecowdew: inmemowywoadtestbuiwdwecowdew
+  ): futuwe[quewyabwe[t, (⑅˘꒳˘) p-p, òωó d-d]] = {
+    vaw q-quewyabwe = woadtesttype() match {
+      c-case "wemote" => {
+        assewt(sewvicedestination().nonempty, 🥺 "sewvice d-destination nyot d-defined")
+        woggew.info(s"wunning w-woad test with wemote s-sewvice ${sewvicedestination()}")
+        w-woadtestutiws.buiwdwemotesewvicequewycwient[t, (ˆ ﻌ ˆ)♡ p, -.- d](
+          sewvicedestination(), σωσ
+          "ann-woad-test", >_<
+          s-statsweceivew, :3
+          i-injectow.instance[sewviceidentifiew], OwO
+          g-getwuntimepawaminjection[p], rawr
+          g-getdistanceinjection[d], (///ˬ///✿)
+          g-getindexidinjection[t]
         )
       }
-      case "local" => {
-        logger.info("Running load test locally..")
-        assert(indexSetDir().nonEmpty, "Index set path is empty")
-        val statsLoadTestBuildRecorder = new StatsLoadTestBuildRecorder(statsReceiver)
-        val buildRecorder =
-          new ComposedLoadTestBuildRecorder(Seq(inMemoryBuildRecorder, statsLoadTestBuildRecorder))
-        indexEmbeddingsAndGetQueryable[T, P, D](
-          buildRecorder,
-          LoadTestUtils.getEmbeddingsSet(indexSetDir(), indexIdType())
+      c-case "wocaw" => {
+        w-woggew.info("wunning w-woad test w-wocawwy..")
+        assewt(indexsetdiw().nonempty, ^^ "index s-set p-path is empty")
+        v-vaw statswoadtestbuiwdwecowdew = nyew statswoadtestbuiwdwecowdew(statsweceivew)
+        v-vaw buiwdwecowdew =
+          nyew composedwoadtestbuiwdwecowdew(seq(inmemowybuiwdwecowdew, XD s-statswoadtestbuiwdwecowdew))
+        indexembeddingsandgetquewyabwe[t, UwU p-p, d](
+          b-buiwdwecowdew, o.O
+          w-woadtestutiws.getembeddingsset(indexsetdiw(), 😳 indexidtype())
         )
       }
     }
-    queryable
+    q-quewyabwe
   }
 
-  private def indexEmbeddingsAndGetQueryable[T, P <: RuntimeParams, D <: Distance[D]](
-    buildRecorder: LoadTestBuildRecorder,
-    indexSet: Seq[EntityEmbedding[T]]
-  ): Future[Queryable[T, P, D]] = {
-    logger.info(s"Indexing entity embeddings in index set with size ${indexSet.size}")
-    val metric = getDistanceMetric[D]
-    val indexIdInjection = getIndexIdInjection[T]
-    val indexBuilder = new AnnIndexBuildLoadTest(buildRecorder)
-    val appendable = algo() match {
-      case "annoy" =>
-        assert(numOfTrees() > 0, "Must specify the number of trees for annoy")
-        logger.info(
-          s"Creating annoy index locally with num_of_trees: ${numOfTrees()}"
+  pwivate def i-indexembeddingsandgetquewyabwe[t, (˘ω˘) p <: wuntimepawams, 🥺 d-d <: distance[d]](
+    buiwdwecowdew: woadtestbuiwdwecowdew, ^^
+    i-indexset: seq[entityembedding[t]]
+  ): futuwe[quewyabwe[t, >w< p, d]] = {
+    woggew.info(s"indexing e-entity embeddings in i-index set with size ${indexset.size}")
+    v-vaw metwic = getdistancemetwic[d]
+    vaw indexidinjection = getindexidinjection[t]
+    v-vaw indexbuiwdew = nyew annindexbuiwdwoadtest(buiwdwecowdew)
+    v-vaw appendabwe = a-awgo() match {
+      c-case "annoy" =>
+        assewt(numoftwees() > 0, ^^;; "must specify the nyumbew o-of twees fow a-annoy")
+        woggew.info(
+          s-s"cweating annoy index wocawwy with nyum_of_twees: ${numoftwees()}"
         )
-        TypedAnnoyIndex
-          .indexBuilder(
-            dimension(),
-            numOfTrees(),
-            metric,
-            indexIdInjection,
-            FuturePool.interruptibleUnboundedPool
+        typedannoyindex
+          .indexbuiwdew(
+            d-dimension(), (˘ω˘)
+            nyumoftwees(),
+            m-metwic, OwO
+            i-indexidinjection, (ꈍᴗꈍ)
+            f-futuwepoow.intewwuptibweunboundedpoow
           )
       case "hnsw" =>
-        assert(efConstruction() > 0 && maxM() > 0, "Must specify ef_construction and max_m")
-        logger.info(
-          s"Creating hnsw index locally with max_m: ${maxM()} and ef_construction: ${efConstruction()}"
+        a-assewt(efconstwuction() > 0 && m-maxm() > 0, òωó "must s-specify e-ef_constwuction and max_m")
+        w-woggew.info(
+          s-s"cweating h-hnsw index w-wocawwy with m-max_m: ${maxm()} a-and ef_constwuction: ${efconstwuction()}"
         )
-        TypedHnswIndex
-          .index[T, D](
-            dimension(),
-            metric,
-            efConstruction(),
-            maxM(),
-            indexSet.size,
-            ReadWriteFuturePool(FuturePool.interruptibleUnboundedPool)
+        t-typedhnswindex
+          .index[t, d-d](
+            dimension(), ʘwʘ
+            m-metwic, ʘwʘ
+            efconstwuction(), nyaa~~
+            m-maxm(), UwU
+            indexset.size, (⑅˘꒳˘)
+            weadwwitefutuwepoow(futuwepoow.intewwuptibweunboundedpoow)
           )
     }
 
-    indexBuilder
-      .indexEmbeddings(appendable, indexSet, concurrencyLevel())
-      .asInstanceOf[Future[Queryable[T, P, D]]]
+    i-indexbuiwdew
+      .indexembeddings(appendabwe, (˘ω˘) i-indexset, c-concuwwencywevew())
+      .asinstanceof[futuwe[quewyabwe[t, :3 p, (˘ω˘) d]]]
   }
 
-  private[this] def performQueries[T, P <: RuntimeParams, D <: Distance[D]](
-    queryable: Queryable[T, P, D],
-    queryTimeConfig: Seq[QueryTimeConfiguration[T, P]],
-    queries: Seq[Query[T]]
-  ): Future[Unit] = {
-    val indexQuery = new AnnIndexQueryLoadTest()
-    val duration = Duration(durationSec().toLong, TimeUnit.SECONDS)
-    indexQuery.performQueries(
-      queryable,
-      targetQPS(),
-      duration,
-      queries,
-      concurrencyLevel(),
-      queryTimeConfig
+  pwivate[this] def pewfowmquewies[t, nyaa~~ p-p <: wuntimepawams, (U ﹏ U) d-d <: distance[d]](
+    q-quewyabwe: quewyabwe[t, nyaa~~ p, d], ^^;;
+    quewytimeconfig: seq[quewytimeconfiguwation[t, OwO p-p]],
+    quewies: s-seq[quewy[t]]
+  ): futuwe[unit] = {
+    v-vaw i-indexquewy = nyew annindexquewywoadtest()
+    vaw duwation = duwation(duwationsec().towong, nyaa~~ t-timeunit.seconds)
+    i-indexquewy.pewfowmquewies(
+      q-quewyabwe, UwU
+      t-tawgetqps(), 😳
+      duwation, 😳
+      quewies, (ˆ ﻌ ˆ)♡
+      c-concuwwencywevew(), (✿oωo)
+      q-quewytimeconfig
     )
   }
 
-  // provide index id injection based on argument
-  private[this] def getIndexIdInjection[T]: Injection[T, Array[Byte]] = {
-    val injection = indexIdType() match {
-      case "long" => AnnInjections.LongInjection
-      case "string" => AnnInjections.StringInjection
-      case "int" => AnnInjections.IntInjection
-      case entityKind => EntityKind.getEntityKind(entityKind).byteInjection
+  // pwovide index id injection based o-on awgument
+  pwivate[this] def getindexidinjection[t]: i-injection[t, awway[byte]] = {
+    v-vaw injection = i-indexidtype() match {
+      c-case "wong" => a-anninjections.wonginjection
+      case "stwing" => a-anninjections.stwinginjection
+      case "int" => a-anninjections.intinjection
+      c-case e-entitykind => entitykind.getentitykind(entitykind).byteinjection
     }
-    injection.asInstanceOf[Injection[T, Array[Byte]]]
+    i-injection.asinstanceof[injection[t, nyaa~~ awway[byte]]]
   }
 
-  private[this] def getRuntimeParamInjection[
-    P <: RuntimeParams
-  ]: Injection[P, ServiceRuntimeParams] = {
-    val injection = algo() match {
-      case "annoy" => AnnoyCommon.RuntimeParamsInjection
-      case "hnsw" => HnswCommon.RuntimeParamsInjection
-      case "faiss" => FaissCommon.RuntimeParamsInjection
+  p-pwivate[this] d-def getwuntimepawaminjection[
+    p-p <: wuntimepawams
+  ]: injection[p, ^^ s-sewvicewuntimepawams] = {
+    vaw injection = awgo() match {
+      c-case "annoy" => a-annoycommon.wuntimepawamsinjection
+      c-case "hnsw" => hnswcommon.wuntimepawamsinjection
+      case "faiss" => faisscommon.wuntimepawamsinjection
     }
 
-    injection.asInstanceOf[Injection[P, ServiceRuntimeParams]]
+    injection.asinstanceof[injection[p, (///ˬ///✿) sewvicewuntimepawams]]
   }
 
-  // provide distance injection based on argument
-  private[this] def getDistanceInjection[D <: Distance[D]]: Injection[D, ServiceDistance] = {
-    Metric.fromString(metric()).asInstanceOf[Injection[D, ServiceDistance]]
+  // p-pwovide distance injection based o-on awgument
+  pwivate[this] d-def getdistanceinjection[d <: distance[d]]: i-injection[d, 😳 sewvicedistance] = {
+    metwic.fwomstwing(metwic()).asinstanceof[injection[d, òωó s-sewvicedistance]]
   }
 
-  private[this] def getDistanceMetric[D <: Distance[D]]: Metric[D] = {
-    Metric.fromString(metric()).asInstanceOf[Metric[D]]
+  p-pwivate[this] d-def g-getdistancemetwic[d <: d-distance[d]]: metwic[d] = {
+    metwic.fwomstwing(metwic()).asinstanceof[metwic[d]]
   }
 
-  private[this] def buildQueryTimeConfig[T, P <: RuntimeParams](
-    numOfNeighbors: Int,
-    params: P,
-    config: Map[String, String]
-  ): QueryTimeConfiguration[T, P] = {
-    val printableQueryRecorder = new InMemoryLoadTestQueryRecorder[T]()
-    val scope = config.flatMap { case (key, value) => Seq(key, value.toString) }.toSeq
-    val statsLoadTestQueryRecorder = new StatsLoadTestQueryRecorder[T](
-      // Put the run time params in the stats receiver names so that we can tell the difference when
-      // we look at them later.
-      statsReceiver.scope(algo()).scope(scope: _*)
+  pwivate[this] def buiwdquewytimeconfig[t, ^^;; p-p <: wuntimepawams](
+    n-nyumofneighbows: int, rawr
+    pawams: p, (ˆ ﻌ ˆ)♡
+    config: map[stwing, XD s-stwing]
+  ): quewytimeconfiguwation[t, >_< p] = {
+    vaw pwintabwequewywecowdew = nyew inmemowywoadtestquewywecowdew[t]()
+    vaw s-scope = config.fwatmap { c-case (key, (˘ω˘) vawue) => seq(key, 😳 v-vawue.tostwing) }.toseq
+    vaw statswoadtestquewywecowdew = nyew statswoadtestquewywecowdew[t](
+      // p-put the wun time p-pawams in the stats weceivew n-nyames so that we can teww the diffewence w-when
+      // we wook at them watew. o.O
+      statsweceivew.scope(awgo()).scope(scope: _*)
     )
-    val queryRecorder = new ComposedLoadTestQueryRecorder(
-      Seq(printableQueryRecorder, statsLoadTestQueryRecorder)
+    v-vaw quewywecowdew = nyew composedwoadtestquewywecowdew(
+      s-seq(pwintabwequewywecowdew, (ꈍᴗꈍ) s-statswoadtestquewywecowdew)
     )
-    QueryTimeConfiguration(
-      queryRecorder,
-      params,
-      numOfNeighbors,
-      printableQueryRecorder
+    q-quewytimeconfiguwation(
+      quewywecowdew, rawr x3
+      pawams,
+      nyumofneighbows, ^^
+      p-pwintabwequewywecowdew
     )
   }
 
-  override protected def modules: Seq[com.google.inject.Module] = Seq(ServiceIdentifierModule)
+  ovewwide pwotected def moduwes: seq[com.googwe.inject.moduwe] = seq(sewviceidentifiewmoduwe)
 }

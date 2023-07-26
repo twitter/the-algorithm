@@ -1,34 +1,34 @@
-package com.twitter.search.earlybird_root.caching;
+package com.twittew.seawch.eawwybiwd_woot.caching;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+impowt javax.inject.inject;
+impowt j-javax.inject.named;
 
-import com.twitter.search.common.caching.Cache;
-import com.twitter.search.common.caching.filter.CacheFilter;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.root.SearchRootModule;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
+i-impowt c-com.twittew.seawch.common.caching.cache;
+i-impowt c-com.twittew.seawch.common.caching.fiwtew.cachefiwtew;
+i-impowt com.twittew.seawch.common.decidew.seawchdecidew;
+i-impowt com.twittew.seawch.common.woot.seawchwootmoduwe;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequesttype;
 
-public class StrictRecencyCacheFilter extends
-    CacheFilter<EarlybirdRequestContext, EarlybirdRequest, EarlybirdResponse> {
+p-pubwic cwass stwictwecencycachefiwtew extends
+    c-cachefiwtew<eawwybiwdwequestcontext, rawr x3 eawwybiwdwequest, e-eawwybiwdwesponse> {
   /**
-   * Creates a cache filter for earlybird strict recency requests.
+   * cweates a cache fiwtew fow eawwybiwd s-stwict wecency wequests. mya
    */
-  @Inject
-  public StrictRecencyCacheFilter(
-      @StrictRecencyCache Cache<EarlybirdRequest, EarlybirdResponse> cache,
-      SearchDecider decider,
-      @Named(SearchRootModule.NAMED_NORMALIZED_SEARCH_ROOT_NAME) String normalizedSearchRootName,
-      @Named(CacheCommonUtil.NAMED_MAX_CACHE_RESULTS) int maxCacheResults) {
-    super(cache,
-          new StrictRecencyQueryCachePredicate(decider, normalizedSearchRootName),
-          new RecencyCacheRequestNormalizer(),
-          new RecencyAndRelevanceCachePostProcessor(),
-          new RecencyServicePostProcessor(cache, maxCacheResults),
-          new EarlybirdRequestPerClientCacheStats(
-              EarlybirdRequestType.STRICT_RECENCY.getNormalizedName()));
+  @inject
+  p-pubwic s-stwictwecencycachefiwtew(
+      @stwictwecencycache cache<eawwybiwdwequest, nyaa~~ eawwybiwdwesponse> cache, (⑅˘꒳˘)
+      seawchdecidew decidew, rawr x3
+      @named(seawchwootmoduwe.named_nowmawized_seawch_woot_name) stwing nyowmawizedseawchwootname, (✿oωo)
+      @named(cachecommonutiw.named_max_cache_wesuwts) int m-maxcachewesuwts) {
+    supew(cache, (ˆ ﻌ ˆ)♡
+          nyew stwictwecencyquewycachepwedicate(decidew, (˘ω˘) nyowmawizedseawchwootname), (⑅˘꒳˘)
+          nyew wecencycachewequestnowmawizew(), (///ˬ///✿)
+          n-nyew wecencyandwewevancecachepostpwocessow(), 😳😳😳
+          nyew w-wecencysewvicepostpwocessow(cache, 🥺 m-maxcachewesuwts), mya
+          n-nyew eawwybiwdwequestpewcwientcachestats(
+              e-eawwybiwdwequesttype.stwict_wecency.getnowmawizedname()));
   }
 }

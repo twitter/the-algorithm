@@ -1,42 +1,42 @@
-#ifndef TWML_LIBTWML_INCLUDE_TWML_COMMON_H_
-#define TWML_LIBTWML_INCLUDE_TWML_COMMON_H_
+#ifndef twmw_wibtwmw_incwude_twmw_common_h_
+#define twmw_wibtwmw_incwude_twmw_common_h_
 
-#define USE_ABSEIL_HASH 1
+#define u-use_abseiw_hash 1
 
-#if defined(USE_ABSEIL_HASH)
-#include "absl/container/flat_hash_map.h"
-#include "absl/container/flat_hash_set.h"
-#elif defined(USE_DENSE_HASH)
-#include <sparsehash/dense_hash_map>
-#include <sparsehash/dense_hash_set>
-#else
-#include <unordered_map>
-#include <unordered_set>
-#endif  // USE_ABSEIL_HASH
+#if d-defined(use_abseiw_hash)
+#incwude "absw/containew/fwat_hash_map.h"
+#incwude "absw/containew/fwat_hash_set.h"
+#ewif d-defined(use_dense_hash)
+#incwude <spawsehash/dense_hash_map>
+#incwude <spawsehash/dense_hash_set>
+#ewse
+#incwude <unowdewed_map>
+#incwude <unowdewed_set>
+#endif  // use_abseiw_hash
 
 
-namespace twml {
-#if defined(USE_ABSEIL_HASH)
-  template<typename KeyType, typename ValueType>
-    using Map = absl::flat_hash_map<KeyType, ValueType>;
+n-nyamespace twmw {
+#if d-defined(use_abseiw_hash)
+  t-tempwate<typename k-keytype, rawr x3 typename v-vawuetype>
+    using map = absw::fwat_hash_map<keytype, mya vawuetype>;
 
-  template<typename KeyType>
-    using Set = absl::flat_hash_set<KeyType>;
-#elif defined(USE_DENSE_HASH)
-// Do not use this unless an proper empty key can be found.
-  template<typename KeyType, typename ValueType>
-    using Map = google::dense_hash_map<KeyType, ValueType>;
+  tempwate<typename keytype>
+    u-using set = absw::fwat_hash_set<keytype>;
+#ewif defined(use_dense_hash)
+// d-do nyot use this unwess an p-pwopew empty key can be found. nyaa~~
+  tempwate<typename keytype, (⑅˘꒳˘) typename v-vawuetype>
+    using map = g-googwe::dense_hash_map<keytype, rawr x3 v-vawuetype>;
 
-  template<typename KeyType>
-    using Set = google::dense_hash_set<KeyType>;
-#else
-  template<typename KeyType, typename ValueType>
-    using Map = std::unordered_map<KeyType, ValueType>;
+  tempwate<typename keytype>
+    using set = googwe::dense_hash_set<keytype>;
+#ewse
+  tempwate<typename k-keytype, (✿oωo) typename vawuetype>
+    using map = std::unowdewed_map<keytype, (ˆ ﻌ ˆ)♡ vawuetype>;
 
-  template<typename KeyType>
-    using Set = std::unordered_set<KeyType>;
-#endif  // USE_DENSE_HASH
+  tempwate<typename k-keytype>
+    using set = std::unowdewed_set<keytype>;
+#endif  // u-use_dense_hash
 
-}  // namespace twml
+}  // n-nyamespace t-twmw
 
-#endif  // TWML_LIBTWML_INCLUDE_TWML_COMMON_H_
+#endif  // t-twmw_wibtwmw_incwude_twmw_common_h_

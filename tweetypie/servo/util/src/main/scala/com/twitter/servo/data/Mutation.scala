@@ -1,267 +1,267 @@
-package com.twitter.servo.data
+package com.twittew.sewvo.data
 
-import com.twitter.util.{Return, Throw, Try}
-import com.twitter.finagle.stats.{Counter, StatsReceiver}
-import com.twitter.servo.util.{Effect, Gate}
+impowt com.twittew.utiw.{wetuwn, t-thwow, σωσ twy}
+impowt c-com.twittew.finagwe.stats.{countew, (ꈍᴗꈍ) s-statsweceivew}
+i-impowt com.twittew.sewvo.utiw.{effect, rawr g-gate}
 
-object Mutation {
+o-object mutation {
 
   /**
-   * A mutation that ignores its input and always returns the given
-   * value as new. Use checkEq if this value could be the same as the
-   * input.
+   * a-a mutation that i-ignowes its input and awways wetuwns the given
+   * vawue as new. ^^;; use checkeq i-if this vawue couwd be the same as the
+   * input. rawr x3
    */
-  def const[T](x: T) = Mutation[T] { _ =>
-    Some(x)
+  d-def const[t](x: t) = m-mutation[t] { _ =>
+    some(x)
   }
 
-  private[this] val _unit = Mutation[Any] { _ =>
-    None
+  pwivate[this] vaw _unit = m-mutation[any] { _ =>
+    nyone
   }
 
   /**
-   * A "no-op" mutation that will never alter the value.
+   * a "no-op" m-mutation t-that wiww nyevew awtew the vawue.
    *
-   * For any Mutations A, (A also unit) == (unit also A) == A.
+   * fow any mutations a, (ˆ ﻌ ˆ)♡ (a awso unit) == (unit a-awso a) == a. σωσ
    *
-   * Forms a monoid with also as the operation.
+   * fowms a monoid with awso as the opewation. (U ﹏ U)
    */
-  def unit[A]: Mutation[A] = _unit.asInstanceOf[Mutation[A]]
+  d-def unit[a]: mutation[a] = _unit.asinstanceof[mutation[a]]
 
   /**
-   * Makes a Mutation out of a function.
+   * m-makes a-a mutation out o-of a function. >w<
    */
-  def apply[A](f: A => Option[A]): Mutation[A] =
-    new Mutation[A] {
-      override def apply(x: A) = f(x)
+  d-def appwy[a](f: a => option[a]): mutation[a] =
+    n-nyew mutation[a] {
+      ovewwide def a-appwy(x: a) = f(x)
     }
 
   /**
-   * Lift a function that returns the same type to a Mutation, using
-   * the type's notion of equality to detect when the mutation has
-   * not changed the value.
+   * wift a function that wetuwns the same type to a mutation, σωσ using
+   * the type's n-nyotion of equawity to detect w-when the mutation h-has
+   * nyot c-changed the vawue. nyaa~~
    */
-  def fromEndo[A](f: A => A): Mutation[A] =
-    Mutation[A] { x =>
-      val y = f(x)
-      if (y == x) None else Some(y)
+  def fwomendo[a](f: a => a): mutation[a] =
+    m-mutation[a] { x-x =>
+      vaw y = f(x)
+      i-if (y == x-x) nyone ewse some(y)
     }
 
   /**
-   * Lift a partial function from A to A to a mutation.
+   * w-wift a pawtiaw function f-fwom a to a to a mutation. 🥺
    */
-  def fromPartial[A](f: PartialFunction[A, A]): Mutation[A] = Mutation[A](f.lift)
+  def fwompawtiaw[a](f: p-pawtiawfunction[a, a]): m-mutation[a] = mutation[a](f.wift)
 
   /**
-   * Creates a new Mutation that applies all the given mutations in order.
+   * c-cweates a nyew m-mutation that appwies aww the given mutations in owdew.
    */
-  def all[A](mutations: Seq[Mutation[A]]): Mutation[A] =
-    mutations.foldLeft(unit[A])(_ also _)
+  def aww[a](mutations: seq[mutation[a]]): mutation[a] =
+    m-mutations.fowdweft(unit[a])(_ a-awso _)
 }
 
 /**
- * A Mutation encapsulates a computation that may optionally "mutate" a value, where
- * "mutate" should be interpreted in the stateless/functional sense of making a copy with a
- * a change.  If the value is unchanged, the mutation should return None. When mutations are
- * composed with `also`, the final result will be None iff no mutation actually changed the
- * value.
+ * a mutation e-encapsuwates a-a computation t-that may optionawwy "mutate" a vawue, rawr x3 whewe
+ * "mutate" shouwd b-be intewpweted in the statewess/functionaw sense of making a copy with a
+ * a change. σωσ  i-if the vawue is unchanged, (///ˬ///✿) t-the mutation shouwd w-wetuwn nyone. (U ﹏ U) w-when mutations awe
+ * composed w-with `awso`, ^^;; t-the finaw wesuwt w-wiww be nyone iff n-nyo mutation actuawwy changed the
+ * vawue. 🥺
  *
- * Forms a monoid with Mutation.unit as unit and `also` as the
- * combining operation.
+ * f-fowms a monoid w-with mutation.unit a-as unit and `awso` a-as the
+ * c-combining opewation. òωó
  *
- * This abstraction is useful for composing changes to a value when
- * some action (such as updating a cache) should be performed if the
- * value has changed.
+ * this abstwaction is usefuw fow composing changes t-to a vawue when
+ * some action (such as updating a cache) shouwd be pewfowmed if the
+ * vawue has c-changed. XD
  */
-trait Mutation[A] extends (A => Option[A]) {
+twait mutation[a] extends (a => option[a]) {
 
   /**
-   * Convert this mutation to a function that always returns a
-   * result. If the mutation has no effect, it returns the original
-   * input.
+   * convewt t-this mutation to a-a function that a-awways wetuwns a
+   * wesuwt. :3 if t-the mutation has nyo effect, (U ﹏ U) it w-wetuwns the owiginaw
+   * i-input. >w<
    *
-   * (convert to an endofunction on A)
+   * (convewt to an endofunction on a)
    */
-  lazy val endo: A => A =
+  wazy vaw endo: a => a =
     x =>
-      apply(x) match {
-        case Some(v) => v
-        case None => x
+      appwy(x) m-match {
+        case some(v) => v-v
+        case nyone => x
       }
 
   /**
-   * Apply this mutation, and then apply the next mutation to the
-   * result. If this mutation leaves the value unchanged, the next
-   * mutation is invoked with the original input.
+   * a-appwy this m-mutation, and then appwy the nyext mutation to the
+   * w-wesuwt. /(^•ω•^) i-if this mutation weaves the vawue u-unchanged, (⑅˘꒳˘) the n-nyext
+   * mutation is invoked with the owiginaw input. ʘwʘ
    */
-  def also(g: Mutation[A]): Mutation[A] =
-    Mutation[A] { x =>
-      apply(x) match {
-        case None => g(x)
-        case someY @ Some(y) =>
-          g(y) match {
-            case some @ Some(_) => some
-            case None => someY
+  def awso(g: mutation[a]): m-mutation[a] =
+    m-mutation[a] { x-x =>
+      appwy(x) match {
+        case n-nyone => g(x)
+        c-case somey @ some(y) =>
+          g-g(y) match {
+            case some @ some(_) => some
+            case n-nyone => somey
           }
       }
     }
 
   /**
-   * Apply this mutation, but refuse to return an altered value. This
-   * yields all of the effects of this mutation without affecting the
-   * final result.
+   * a-appwy this mutation, rawr x3 but wefuse to wetuwn a-an awtewed vawue. (˘ω˘) t-this
+   * yiewds aww of the effects of this mutation without a-affecting the
+   * finaw wesuwt. o.O
    */
-  def dark: Mutation[A] = Mutation[A] { x =>
-    apply(x); None
+  def dawk: mutation[a] = mutation[a] { x =>
+    a-appwy(x); nyone
   }
 
   /**
-   * Convert a Mutation on A to a Mutation on B by way of a pair of functions for
-   * converting from B to A and back.
+   * convewt a-a mutation on a t-to a mutation on b by way of a paiw of functions fow
+   * convewting f-fwom b to a a-and back. 😳
    */
-  def xmap[B](f: B => A, g: A => B): Mutation[B] =
-    Mutation[B](f andThen this andThen { _ map g })
+  def xmap[b](f: b => a, o.O g: a => b): mutation[b] =
+    m-mutation[b](f andthen this a-andthen { _ map g })
 
   /**
-   * Converts a Mutation on A to a Mutation on Try[A], where the Mutation is only applied
-   * to Return values and any exceptions caught by the underying function are caught and
-   * returned as Some(Throw(_))
+   * convewts a mutation on a to a-a mutation on twy[a], ^^;; whewe the m-mutation is onwy a-appwied
+   * to wetuwn vawues and a-any exceptions caught by the u-undewying function a-awe caught and
+   * w-wetuwned as some(thwow(_))
    */
-  def tryable: Mutation[Try[A]] =
-    Mutation[Try[A]] {
-      case Throw(x) => Some(Throw(x))
-      case Return(x) =>
-        Try(apply(x)) match {
-          case Throw(y) => Some(Throw(y))
-          case Return(None) => None
-          case Return(Some(y)) => Some(Return(y))
+  d-def twyabwe: m-mutation[twy[a]] =
+    mutation[twy[a]] {
+      case thwow(x) => s-some(thwow(x))
+      c-case w-wetuwn(x) =>
+        twy(appwy(x)) match {
+          c-case thwow(y) => some(thwow(y))
+          c-case wetuwn(none) => n-nyone
+          case wetuwn(some(y)) => some(wetuwn(y))
         }
     }
 
   /**
-   * Perform this mutation only if the provided predicate returns true
-   * for the input.
+   * pewfowm t-this mutation o-onwy if the pwovided p-pwedicate wetuwns t-twue
+   * fow the input. ( ͡o ω ͡o )
    */
-  def onlyIf(predicate: A => Boolean): Mutation[A] =
-    Mutation[A] { x =>
-      if (predicate(x)) this(x) else None
+  d-def onwyif(pwedicate: a => boowean): mutation[a] =
+    mutation[a] { x =>
+      if (pwedicate(x)) this(x) e-ewse nyone
     }
 
   /**
-   * Performs this mutation only if the given gate returns true.
+   * pewfowms this mutation o-onwy if the given gate wetuwns t-twue. ^^;;
    */
-  def enabledBy(enabled: Gate[Unit]): Mutation[A] =
-    enabledBy(() => enabled())
+  def enabwedby(enabwed: g-gate[unit]): mutation[a] =
+    e-enabwedby(() => e-enabwed())
 
   /**
-   * Performs this mutation only if the given function returns true.
+   * p-pewfowms this mutation o-onwy if the g-given function wetuwns twue. ^^;;
    */
-  def enabledBy(enabled: () => Boolean): Mutation[A] =
-    onlyIf { _ =>
-      enabled()
+  def enabwedby(enabwed: () => boowean): mutation[a] =
+    onwyif { _ =>
+      enabwed()
     }
 
   /**
-   * A new mutation that returns the same result as this mutation,
-   * and additionally calls the specified Effect.
+   * a nyew mutation t-that wetuwns the s-same wesuwt as t-this mutation, XD
+   * and additionawwy c-cawws the specified effect. 🥺
    */
-  def withEffect(effect: Effect[Option[A]]): Mutation[A] =
-    Mutation[A](this andThen effect.identity)
+  def witheffect(effect: effect[option[a]]): m-mutation[a] =
+    m-mutation[a](this andthen e-effect.identity)
 
   /**
-   * Perform an equality check when a value is returned from the
-   * mutation. If the values are equal, then the mutation will yield
-   * None.
+   * pewfowm an equawity c-check when a vawue i-is wetuwned fwom the
+   * mutation. (///ˬ///✿) i-if the vawues a-awe equaw, (U ᵕ U❁) then the mutation wiww yiewd
+   * none. ^^;;
    *
-   * This is useful for two reasons:
+   * this is usefuw f-fow two weasons:
    *
-   *  1. Any effects that are conditional upon mutation will not occur
-   *     when the values are equal (e.g. updating a cache)
+   *  1. ^^;; a-any effects that a-awe conditionaw u-upon mutation w-wiww nyot occuw
+   *     when the v-vawues awe equaw (e.g. rawr u-updating a cache)
    *
-   *  2. When using a Lens to lift a mutation to a mutation on a
-   *     larger structure, checking equality on the smaller structure
-   *     can prevent unnecessary copies of the larger structure.
+   *  2. (˘ω˘) w-when using a-a wens to wift a mutation to a-a mutation on a
+   *     wawgew stwuctuwe, 🥺 checking e-equawity on the smowew stwuctuwe
+   *     can p-pwevent unnecessawy c-copies of the wawgew stwuctuwe. nyaa~~
    */
-  def checkEq = Mutation[A] { x =>
+  def c-checkeq = mutation[a] { x =>
     this(x) match {
-      case someY @ Some(y) if y != x => someY
-      case _ => None
+      c-case somey @ s-some(y) if y-y != x => somey
+      case _ => nyone
     }
   }
 
   /**
-   * Converts this mutation to a mutation of a different type, using a Lens to
-   * convert between types.
+   * convewts t-this mutation to a mutation of a diffewent t-type, using a w-wens to
+   * convewt between types. :3
    */
-  def lensed[B](lens: Lens[B, A]): Mutation[B] =
-    Mutation[B](b => this(lens(b)).map(lens.set(b, _)))
+  d-def wensed[b](wens: w-wens[b, /(^•ω•^) a]): mutation[b] =
+    mutation[b](b => t-this(wens(b)).map(wens.set(b, ^•ﻌ•^ _)))
 
   /**
-   * Convert this mutation to a mutation of a Seq of its type. It will
-   * yield None if no values are changed, or a Seq of both the changed
-   * and unchanged values if any value is mutated.
+   * convewt this mutation to a mutation o-of a seq of its type. UwU it wiww
+   * yiewd nyone i-if nyo vawues a-awe changed, 😳😳😳 ow a seq of both the c-changed
+   * and unchanged vawues i-if any vawue i-is mutated. OwO
    */
-  def liftSeq = Mutation[Seq[A]] { xs =>
-    var changed = false
-    val detectChange = Effect.fromPartial[Option[A]] { case Some(_) => changed = true }
-    val mutated = xs map (this withEffect detectChange).endo
-    if (changed) Some(mutated) else None
+  d-def wiftseq = mutation[seq[a]] { xs =>
+    vaw changed = fawse
+    vaw detectchange = effect.fwompawtiaw[option[a]] { case some(_) => changed = twue }
+    vaw mutated = xs map (this witheffect detectchange).endo
+    if (changed) s-some(mutated) e-ewse nyone
   }
 
   /**
-   * Convert this mutation to a mutation of a Option of its type. It will yield
-   * None if the value is not changed, or a Some(Some(_)) if the value is mutated.
+   * convewt this mutation to a mutation o-of a option o-of its type. ^•ﻌ•^ i-it wiww yiewd
+   * nyone if the v-vawue is not changed, ow a some(some(_)) i-if the v-vawue is mutated.
    */
-  def liftOption = Mutation[Option[A]] {
-    case None => None
-    case Some(x) =>
+  def wiftoption = m-mutation[option[a]] {
+    case nyone => n-nyone
+    case s-some(x) =>
       this(x) match {
-        case None => None
-        case Some(y) => Some(Some(y))
+        case n-nyone => nyone
+        c-case some(y) => s-some(some(y))
       }
   }
 
   /**
-   * Convert this mutation to a mutation of the values of a Map. It will
-   * yield None if no values are changed, or a Map with both the changed
-   * and unchanged values if any value is mutated.
+   * c-convewt t-this mutation t-to a mutation o-of the vawues of a-a map. (ꈍᴗꈍ) it wiww
+   * y-yiewd nyone if nyo vawues a-awe changed, (⑅˘꒳˘) ow a-a map with both t-the changed
+   * and unchanged vawues i-if any vawue is mutated. (⑅˘꒳˘)
    */
-  def liftMapValues[K] = Mutation[Map[K, A]] { m =>
-    var changed = false
-    val detectChange = Effect.fromPartial[Option[A]] { case Some(_) => changed = true }
-    val f = (this withEffect detectChange).endo
-    val mutated = m map { case (k, v) => (k, f(v)) }
-    if (changed) Some(mutated) else None
+  def wiftmapvawues[k] = m-mutation[map[k, (ˆ ﻌ ˆ)♡ a]] { m-m =>
+    vaw c-changed = fawse
+    v-vaw detectchange = effect.fwompawtiaw[option[a]] { c-case some(_) => changed = t-twue }
+    vaw f = (this witheffect d-detectchange).endo
+    vaw m-mutated = m map { case (k, /(^•ω•^) v) => (k, òωó f(v)) }
+    if (changed) some(mutated) ewse n-nyone
   }
 
   /**
-   * Return a new mutation that returns the same result as this
-   * mutation, as well as incrementing the given counter when the
-   * value is mutated.
+   * wetuwn a n-nyew mutation that w-wetuwns the same wesuwt as this
+   * mutation, (⑅˘꒳˘) as weww as incwementing t-the given countew when t-the
+   * vawue i-is mutated. (U ᵕ U❁)
    */
-  def countMutations(c: Counter) =
-    this withEffect { Effect.fromPartial { case Some(_) => c.incr() } }
+  d-def countmutations(c: countew) =
+    this witheffect { e-effect.fwompawtiaw { c-case some(_) => c.incw() } }
 
   /**
-   * Wrap a mutation in stats with the following counters:
-   *  - no-op (returned value was the same as the input)
-   *  - none (mutation returned none)
-   *  - mutated (mutation modified the result)
+   * w-wwap a mutation in stats with the fowwowing c-countews:
+   *  - nyo-op (wetuwned v-vawue was t-the same as the i-input)
+   *  - none (mutation w-wetuwned nyone)
+   *  - m-mutated (mutation m-modified t-the wesuwt)
    */
-  def withStats(stats: StatsReceiver): Mutation[A] = {
-    val none = stats.counter("none")
-    val noop = stats.counter("noop")
-    val mutated = stats.counter("mutated")
-    input: A => {
-      val result = apply(input)
-      result.fold(none.incr()) { output =>
-        if (output == input) {
-          noop.incr()
-        } else {
-          mutated.incr()
+  def withstats(stats: s-statsweceivew): m-mutation[a] = {
+    v-vaw nyone = stats.countew("none")
+    v-vaw nyoop = s-stats.countew("noop")
+    v-vaw m-mutated = stats.countew("mutated")
+    i-input: a => {
+      vaw w-wesuwt = appwy(input)
+      wesuwt.fowd(none.incw()) { o-output =>
+        if (output == i-input) {
+          n-nyoop.incw()
+        } e-ewse {
+          mutated.incw()
         }
       }
-      result
+      wesuwt
     }
   }
 

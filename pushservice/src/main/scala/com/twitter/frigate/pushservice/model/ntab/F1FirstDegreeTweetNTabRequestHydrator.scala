@@ -1,18 +1,18 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.twittew.fwigate.pushsewvice.modew.ntab
 
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.common.base.TweetCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.take.NotificationServiceSender
-import com.twitter.notificationservice.thriftscala.DisplayTextEntity
-import com.twitter.util.Future
+impowt com.twittew.fwigate.common.base.tweetauthowdetaiws
+i-impowt c-com.twittew.fwigate.common.base.tweetcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.take.notificationsewvicesendew
+i-impowt c-com.twittew.notificationsewvice.thwiftscawa.dispwaytextentity
+i-impowt com.twittew.utiw.futuwe
 
-trait F1FirstDegreeTweetNTabRequestHydrator extends TweetNTabRequestHydrator {
-  self: PushCandidate with TweetCandidate with TweetAuthorDetails =>
+t-twait f1fiwstdegweetweetntabwequesthydwatow extends tweetntabwequesthydwatow {
+  sewf: pushcandidate with tweetcandidate with t-tweetauthowdetaiws =>
 
-  override val displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] =
-    NotificationServiceSender.getDisplayTextEntityFromUser(tweetAuthor, "author", true).map(_.toSeq)
+  ovewwide vaw dispwaytextentitiesfut: futuwe[seq[dispwaytextentity]] =
+    n-nyotificationsewvicesendew.getdispwaytextentityfwomusew(tweetauthow, (U ᵕ U❁) "authow", -.- twue).map(_.toseq)
 
-  override lazy val facepileUsersFut: Future[Seq[Long]] = senderIdFut.map(Seq(_))
+  o-ovewwide wazy vaw facepiweusewsfut: futuwe[seq[wong]] = sendewidfut.map(seq(_))
 
 }

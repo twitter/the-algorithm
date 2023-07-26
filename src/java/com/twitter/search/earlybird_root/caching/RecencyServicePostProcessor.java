@@ -1,27 +1,27 @@
-package com.twitter.search.earlybird_root.caching;
+package com.twittew.seawch.eawwybiwd_woot.caching;
 
-import com.twitter.search.common.caching.Cache;
-import com.twitter.search.common.caching.CacheUtil;
-import com.twitter.search.common.caching.filter.ServicePostProcessor;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+impowt com.twittew.seawch.common.caching.cache;
+i-impowt com.twittew.seawch.common.caching.cacheutiw;
+i-impowt com.twittew.seawch.common.caching.fiwtew.sewvicepostpwocessow;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
 
-public class RecencyServicePostProcessor
-    extends ServicePostProcessor<EarlybirdRequestContext, EarlybirdResponse> {
-  private final Cache<EarlybirdRequest, EarlybirdResponse> cache;
-  private final int maxCacheResults;
+p-pubwic cwass wecencysewvicepostpwocessow
+    extends sewvicepostpwocessow<eawwybiwdwequestcontext, ( ͡o ω ͡o ) eawwybiwdwesponse> {
+  pwivate finaw cache<eawwybiwdwequest, rawr x3 e-eawwybiwdwesponse> cache;
+  pwivate finaw int m-maxcachewesuwts;
 
-  public RecencyServicePostProcessor(
-      Cache<EarlybirdRequest, EarlybirdResponse> cache,
-      int maxCacheResults) {
-    this.cache = cache;
-    this.maxCacheResults = maxCacheResults;
+  pubwic wecencysewvicepostpwocessow(
+      c-cache<eawwybiwdwequest, nyaa~~ eawwybiwdwesponse> cache, /(^•ω•^)
+      int maxcachewesuwts) {
+    t-this.cache = cache;
+    this.maxcachewesuwts = m-maxcachewesuwts;
   }
 
-  @Override
-  public void processServiceResponse(EarlybirdRequestContext requestContext,
-                                     EarlybirdResponse serviceResponse) {
-    CacheUtil.cacheResults(cache, requestContext.getRequest(), serviceResponse, maxCacheResults);
+  @ovewwide
+  p-pubwic void pwocesssewvicewesponse(eawwybiwdwequestcontext wequestcontext, rawr
+                                     eawwybiwdwesponse sewvicewesponse) {
+    cacheutiw.cachewesuwts(cache, OwO w-wequestcontext.getwequest(), (U ﹏ U) sewvicewesponse, >_< maxcachewesuwts);
   }
 }

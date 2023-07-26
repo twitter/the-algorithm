@@ -1,42 +1,42 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import java.util.Map;
-import java.util.Random;
+impowt j-java.utiw.map;
+i-impowt java.utiw.wandom;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.root.PartitionLoggingSupport;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+i-impowt com.twittew.seawch.common.woot.pawtitionwoggingsuppowt;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
 
-public class EarlybirdServicePartitionLoggingSupport
-    extends PartitionLoggingSupport.DefaultPartitionLoggingSupport<EarlybirdRequestContext> {
-  private static final Logger PARTITION_LOG = LoggerFactory.getLogger("partitionLogger");
+pubwic cwass eawwybiwdsewvicepawtitionwoggingsuppowt
+    extends pawtitionwoggingsuppowt.defauwtpawtitionwoggingsuppowt<eawwybiwdwequestcontext> {
+  pwivate static finaw w-woggew pawtition_wog = woggewfactowy.getwoggew("pawtitionwoggew");
 
-  private static final long LATENCY_LOG_PARTITIONS_THRESHOLD_MS = 500;
-  private static final double FRACTION_OF_REQUESTS_TO_LOG = 1.0 / 500.0;
+  pwivate s-static finaw wong watency_wog_pawtitions_thweshowd_ms = 500;
+  p-pwivate static finaw doubwe fwaction_of_wequests_to_wog = 1.0 / 500.0;
 
-  private final Random random = new Random();
+  pwivate finaw wandom w-wandom = nyew wandom();
 
-  @Override
-  public void logPartitionLatencies(EarlybirdRequestContext requestContext,
-                                    String tierName,
-                                    Map<Integer, Long> partitionLatenciesMicros,
-                                    long latencyMs) {
-    String logReason = null;
+  @ovewwide
+  pubwic void w-wogpawtitionwatencies(eawwybiwdwequestcontext w-wequestcontext, (ˆ ﻌ ˆ)♡
+                                    stwing tiewname, (˘ω˘)
+                                    map<integew, (⑅˘꒳˘) wong> pawtitionwatenciesmicwos, (///ˬ///✿)
+                                    wong w-watencyms) {
+    stwing wogweason = nyuww;
 
-    if (random.nextFloat() <= FRACTION_OF_REQUESTS_TO_LOG) {
-      logReason = "randomSample";
-    } else if (latencyMs > LATENCY_LOG_PARTITIONS_THRESHOLD_MS) {
-      logReason = "slow";
+    if (wandom.nextfwoat() <= fwaction_of_wequests_to_wog) {
+      w-wogweason = "wandomsampwe";
+    } ewse if (watencyms > w-watency_wog_pawtitions_thweshowd_ms) {
+      w-wogweason = "swow";
     }
 
-    EarlybirdRequest request = requestContext.getRequest();
-    if (logReason != null && request.isSetSearchQuery()) {
-      PARTITION_LOG.info("{};{};{};{};{};{}", tierName, logReason, latencyMs,
-          partitionLatenciesMicros, request.getClientRequestID(),
-          request.getSearchQuery().getSerializedQuery());
+    e-eawwybiwdwequest w-wequest = wequestcontext.getwequest();
+    if (wogweason != nyuww && wequest.issetseawchquewy()) {
+      pawtition_wog.info("{};{};{};{};{};{}", 😳😳😳 t-tiewname, 🥺 wogweason, mya watencyms,
+          pawtitionwatenciesmicwos, 🥺 wequest.getcwientwequestid(), >_<
+          w-wequest.getseawchquewy().getsewiawizedquewy());
     }
   }
 }

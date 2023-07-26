@@ -1,44 +1,44 @@
-package com.twitter.usersignalservice.signals
+package com.twittew.usewsignawsewvice.signaws
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.socialgraph.thriftscala.SocialGraphService
-import com.twitter.twistly.common.UserId
-import com.twitter.usersignalservice.base.BaseSignalFetcher
-import com.twitter.usersignalservice.base.Query
-import com.twitter.usersignalservice.signals.common.SGSUtils
-import com.twitter.usersignalservice.thriftscala.Signal
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.util.Future
-import com.twitter.util.Timer
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.sociawgwaph.thwiftscawa.wewationshiptype
+i-impowt c-com.twittew.sociawgwaph.thwiftscawa.sociawgwaphsewvice
+i-impowt com.twittew.twistwy.common.usewid
+i-impowt com.twittew.usewsignawsewvice.base.basesignawfetchew
+i-impowt com.twittew.usewsignawsewvice.base.quewy
+impowt com.twittew.usewsignawsewvice.signaws.common.sgsutiws
+impowt c-com.twittew.usewsignawsewvice.thwiftscawa.signaw
+impowt com.twittew.usewsignawsewvice.thwiftscawa.signawtype
+impowt c-com.twittew.utiw.futuwe
+impowt c-com.twittew.utiw.timew
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-case class AccountFollowsFetcher @Inject() (
-  sgsClient: SocialGraphService.MethodPerEndpoint,
-  timer: Timer,
-  stats: StatsReceiver)
-    extends BaseSignalFetcher {
+@singweton
+case c-cwass accountfowwowsfetchew @inject() (
+  sgscwient: s-sociawgwaphsewvice.methodpewendpoint, 🥺
+  t-timew: timew, mya
+  stats: statsweceivew)
+    extends basesignawfetchew {
 
-  override type RawSignalType = Signal
-  override val name: String = this.getClass.getCanonicalName
-  override val statsReceiver: StatsReceiver = stats.scope(this.name)
+  ovewwide t-type wawsignawtype = signaw
+  ovewwide vaw nyame: stwing = this.getcwass.getcanonicawname
+  ovewwide vaw statsweceivew: s-statsweceivew = stats.scope(this.name)
 
-  override def getRawSignals(
-    userId: UserId
-  ): Future[Option[Seq[RawSignalType]]] = {
-    SGSUtils.getSGSRawSignals(
-      userId,
-      sgsClient,
-      RelationshipType.Following,
-      SignalType.AccountFollow)
+  o-ovewwide def g-getwawsignaws(
+    u-usewid: usewid
+  ): f-futuwe[option[seq[wawsignawtype]]] = {
+    sgsutiws.getsgswawsignaws(
+      usewid, 🥺
+      s-sgscwient, >_<
+      wewationshiptype.fowwowing, >_<
+      signawtype.accountfowwow)
   }
 
-  override def process(
-    query: Query,
-    rawSignals: Future[Option[Seq[RawSignalType]]]
-  ): Future[Option[Seq[Signal]]] = {
-    rawSignals.map(_.map(_.take(query.maxResults.getOrElse(Int.MaxValue))))
+  o-ovewwide def pwocess(
+    quewy: quewy, (⑅˘꒳˘)
+    wawsignaws: futuwe[option[seq[wawsignawtype]]]
+  ): futuwe[option[seq[signaw]]] = {
+    wawsignaws.map(_.map(_.take(quewy.maxwesuwts.getowewse(int.maxvawue))))
   }
 }

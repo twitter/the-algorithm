@@ -1,58 +1,58 @@
-package com.twitter.search.common.query;
+package com.twittew.seawch.common.quewy;
 
-import java.io.IOException;
-import java.util.Set;
+impowt j-java.io.ioexception;
+i-impowt java.utiw.set;
 
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.Weight;
+i-impowt o-owg.apache.wucene.index.weafweadewcontext;
+i-impowt o-owg.apache.wucene.index.tewm;
+impowt owg.apache.wucene.seawch.expwanation;
+impowt owg.apache.wucene.seawch.scowew;
+impowt owg.apache.wucene.seawch.weight;
 
 /**
- * Weight implementation that adds attribute collection support for an underlying query.
- * Meant to be used in conjunction with {@link IdentifiableQuery}.
+ * w-weight impwementation that adds attwibute c-cowwection suppowt fow an undewwying q-quewy. mya
+ * meant to be used in conjunction with {@wink identifiabwequewy}. ^^
  */
-public class IdentifiableQueryWeight extends Weight {
-  private final Weight inner;
-  private final FieldRankHitInfo queryId;
-  private final HitAttributeCollector attrCollector;
+p-pubwic cwass identifiabwequewyweight e-extends w-weight {
+  pwivate finaw weight innew;
+  pwivate finaw fiewdwankhitinfo quewyid;
+  p-pwivate finaw hitattwibutecowwectow attwcowwectow;
 
-  /** Creates a new IdentifiableQueryWeight instance. */
-  public IdentifiableQueryWeight(IdentifiableQuery query, Weight inner, FieldRankHitInfo queryId,
-                                 HitAttributeCollector attrCollector) {
-    super(query);
-    this.inner = inner;
-    this.queryId = queryId;
-    this.attrCollector = Preconditions.checkNotNull(attrCollector);
+  /** cweates a nyew identifiabwequewyweight i-instance. 😳😳😳 */
+  pubwic identifiabwequewyweight(identifiabwequewy q-quewy, mya weight i-innew, 😳 fiewdwankhitinfo q-quewyid, -.-
+                                 h-hitattwibutecowwectow attwcowwectow) {
+    supew(quewy);
+    this.innew = innew;
+    t-this.quewyid = quewyid;
+    this.attwcowwectow = p-pweconditions.checknotnuww(attwcowwectow);
   }
 
-  @Override
-  public Explanation explain(LeafReaderContext context, int doc)
-      throws IOException {
-    return inner.explain(context, doc);
+  @ovewwide
+  pubwic expwanation expwain(weafweadewcontext context, 🥺 int doc)
+      thwows ioexception {
+    w-wetuwn innew.expwain(context, o.O doc);
   }
 
-  @Override
-  public Scorer scorer(LeafReaderContext context) throws IOException {
-    attrCollector.clearHitAttributions(context, queryId);
-    Scorer innerScorer = inner.scorer(context);
-    if (innerScorer != null) {
-      return new IdentifiableQueryScorer(this, innerScorer, queryId, attrCollector);
-    } else {
-      return null;
+  @ovewwide
+  p-pubwic s-scowew scowew(weafweadewcontext c-context) thwows ioexception {
+    attwcowwectow.cweawhitattwibutions(context, /(^•ω•^) quewyid);
+    s-scowew innewscowew = i-innew.scowew(context);
+    if (innewscowew != n-nyuww) {
+      w-wetuwn nyew identifiabwequewyscowew(this, nyaa~~ innewscowew, nyaa~~ q-quewyid, attwcowwectow);
+    } e-ewse {
+      wetuwn nyuww;
     }
   }
 
-  @Override
-  public void extractTerms(Set<Term> terms) {
-    inner.extractTerms(terms);
+  @ovewwide
+  pubwic v-void extwacttewms(set<tewm> tewms) {
+    innew.extwacttewms(tewms);
   }
 
-  @Override
-  public boolean isCacheable(LeafReaderContext ctx) {
-    return inner.isCacheable(ctx);
+  @ovewwide
+  p-pubwic boowean iscacheabwe(weafweadewcontext c-ctx) {
+    w-wetuwn innew.iscacheabwe(ctx);
   }
 }

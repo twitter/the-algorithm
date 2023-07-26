@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.component_library.module
+package com.twittew.pwoduct_mixew.component_wibwawy.moduwe
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.annotations.Flags
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.search.earlybird.{thriftscala => t}
-import com.twitter.util.Duration
-import org.apache.thrift.protocol.TCompactProtocol
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.convewsions.pewcentops._
+i-impowt com.twittew.finagwe.thwiftmux
+i-impowt c-com.twittew.finagwe.thwiftmux.methodbuiwdew
+i-impowt c-com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwscwient
+i-impowt com.twittew.inject.injectow
+impowt com.twittew.inject.annotations.fwags
+impowt com.twittew.inject.thwift.moduwes.thwiftmethodbuiwdewcwientmoduwe
+i-impowt com.twittew.seawch.eawwybiwd.{thwiftscawa => t}
+impowt com.twittew.utiw.duwation
+impowt o-owg.apache.thwift.pwotocow.tcompactpwotocow
 
-object EarlybirdModule
-    extends ThriftMethodBuilderClientModule[
-      t.EarlybirdService.ServicePerEndpoint,
-      t.EarlybirdService.MethodPerEndpoint
+object e-eawwybiwdmoduwe
+    extends thwiftmethodbuiwdewcwientmoduwe[
+      t.eawwybiwdsewvice.sewvicepewendpoint, ( ͡o ω ͡o )
+      t-t.eawwybiwdsewvice.methodpewendpoint
     ]
-    with MtlsClient {
-  final val EarlybirdTimeoutPerRequest = "earlybird.timeout_per_request"
-  final val EarlybirdTimeoutTotal = "earlybird.timeout_total"
+    with mtwscwient {
+  f-finaw vaw e-eawwybiwdtimeoutpewwequest = "eawwybiwd.timeout_pew_wequest"
+  finaw vaw eawwybiwdtimeouttotaw = "eawwybiwd.timeout_totaw"
 
-  flag[Duration](
-    name = EarlybirdTimeoutPerRequest,
-    default = 200.milliseconds,
-    help = "Timeout per request for Earlybird")
+  fwag[duwation](
+    nyame = eawwybiwdtimeoutpewwequest, (U ﹏ U)
+    defauwt = 200.miwwiseconds, (///ˬ///✿)
+    hewp = "timeout p-pew wequest fow eawwybiwd")
 
-  flag[Duration](
-    name = EarlybirdTimeoutTotal,
-    default = 400.milliseconds,
-    help = "Timeout total for Earlybird")
+  fwag[duwation](
+    nyame = eawwybiwdtimeouttotaw, >w<
+    d-defauwt = 400.miwwiseconds, rawr
+    hewp = "timeout t-totaw fow eawwybiwd")
 
-  override val dest = "/s/earlybird-root-superroot/root-superroot"
-  override val label = "earlybird"
+  o-ovewwide v-vaw dest = "/s/eawwybiwd-woot-supewwoot/woot-supewwoot"
+  o-ovewwide vaw wabew = "eawwybiwd"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    val timeOutPerRequest: Duration = injector
-      .instance[Duration](Flags.named(EarlybirdTimeoutPerRequest))
-    val timeOutTotal: Duration = injector.instance[Duration](Flags.named(EarlybirdTimeoutTotal))
-    methodBuilder
-    // See TL-14313 for load testing details that led to 200ms being selected as request timeout
-      .withTimeoutPerRequest(timeOutPerRequest)
-      .withTimeoutTotal(timeOutTotal)
-      .idempotent(5.percent)
+  ovewwide pwotected d-def configuwemethodbuiwdew(
+    injectow: injectow, mya
+    methodbuiwdew: m-methodbuiwdew
+  ): methodbuiwdew = {
+    vaw timeoutpewwequest: duwation = injectow
+      .instance[duwation](fwags.named(eawwybiwdtimeoutpewwequest))
+    vaw timeouttotaw: d-duwation = injectow.instance[duwation](fwags.named(eawwybiwdtimeouttotaw))
+    m-methodbuiwdew
+    // s-see t-tw-14313 fow woad testing detaiws that wed to 200ms being sewected a-as wequest timeout
+      .withtimeoutpewwequest(timeoutpewwequest)
+      .withtimeouttotaw(timeouttotaw)
+      .idempotent(5.pewcent)
   }
 
-  override def configureThriftMuxClient(
-    injector: Injector,
-    client: ThriftMux.Client
-  ): ThriftMux.Client =
-    super
-      .configureThriftMuxClient(injector, client)
-      .withProtocolFactory(new TCompactProtocol.Factory())
+  o-ovewwide def configuwethwiftmuxcwient(
+    injectow: i-injectow, ^^
+    c-cwient: thwiftmux.cwient
+  ): thwiftmux.cwient =
+    s-supew
+      .configuwethwiftmuxcwient(injectow, 😳😳😳 cwient)
+      .withpwotocowfactowy(new tcompactpwotocow.factowy())
 
-  override protected def sessionAcquisitionTimeout: Duration = 1.seconds
+  o-ovewwide pwotected def sessionacquisitiontimeout: d-duwation = 1.seconds
 }

@@ -1,66 +1,66 @@
-package com.twitter.tweetypie
-package service
-package observer
+package com.twittew.tweetypie
+package s-sewvice
+package o-obsewvew
 
-import com.twitter.tweetypie.thriftscala.GetStoredTweetsByUserRequest
-import com.twitter.tweetypie.thriftscala.GetStoredTweetsByUserResult
+impowt c-com.twittew.tweetypie.thwiftscawa.getstowedtweetsbyusewwequest
+i-impowt com.twittew.tweetypie.thwiftscawa.getstowedtweetsbyusewwesuwt
 
-private[service] object GetStoredTweetsByUserObserver extends StoredTweetsObserver {
+p-pwivate[sewvice] o-object g-getstowedtweetsbyusewobsewvew e-extends stowedtweetsobsewvew {
 
-  type Type = ObserveExchange[GetStoredTweetsByUserRequest, GetStoredTweetsByUserResult]
-  val firstTweetTimestamp: Long = 1142974200L
+  type type = obsewveexchange[getstowedtweetsbyusewwequest, 😳 getstowedtweetsbyusewwesuwt]
+  vaw fiwsttweettimestamp: w-wong = 1142974200w
 
-  def observeRequest(stats: StatsReceiver): Effect[GetStoredTweetsByUserRequest] = {
-    val optionsScope = stats.scope("options")
-    val bypassVisibilityFilteringCounter = optionsScope.counter("bypass_visibility_filtering")
-    val forUserIdCounter = optionsScope.counter("set_for_user_id")
-    val timeRangeStat = optionsScope.stat("time_range_seconds")
-    val cursorCounter = optionsScope.counter("cursor")
-    val startFromOldestCounter = optionsScope.counter("start_from_oldest")
-    val additionalFieldsScope = optionsScope.scope("additional_fields")
+  def obsewvewequest(stats: statsweceivew): e-effect[getstowedtweetsbyusewwequest] = {
+    vaw optionsscope = s-stats.scope("options")
+    vaw bypassvisibiwityfiwtewingcountew = optionsscope.countew("bypass_visibiwity_fiwtewing")
+    vaw fowusewidcountew = o-optionsscope.countew("set_fow_usew_id")
+    vaw timewangestat = o-optionsscope.stat("time_wange_seconds")
+    v-vaw cuwsowcountew = optionsscope.countew("cuwsow")
+    vaw stawtfwomowdestcountew = optionsscope.countew("stawt_fwom_owdest")
+    vaw additionawfiewdsscope = o-optionsscope.scope("additionaw_fiewds")
 
-    Effect { request =>
-      if (request.options.isDefined) {
-        val options = request.options.get
+    effect { wequest =>
+      if (wequest.options.isdefined) {
+        vaw options = wequest.options.get
 
-        if (options.bypassVisibilityFiltering) bypassVisibilityFilteringCounter.incr()
-        if (options.setForUserId) forUserIdCounter.incr()
-        if (options.cursor.isDefined) {
-          cursorCounter.incr()
-        } else {
-          // We only add a time range stat once, when there's no cursor in the request (i.e. this
-          // isn't a repeat request for a subsequent batch of results)
-          val startTimeSeconds: Long =
-            options.startTimeMsec.map(_ / 1000).getOrElse(firstTweetTimestamp)
-          val endTimeSeconds: Long = options.endTimeMsec.map(_ / 1000).getOrElse(Time.now.inSeconds)
-          timeRangeStat.add(endTimeSeconds - startTimeSeconds)
+        i-if (options.bypassvisibiwityfiwtewing) bypassvisibiwityfiwtewingcountew.incw()
+        i-if (options.setfowusewid) f-fowusewidcountew.incw()
+        i-if (options.cuwsow.isdefined) {
+          c-cuwsowcountew.incw()
+        } ewse {
+          // we onwy a-add a time wange stat once, mya when thewe's nyo cuwsow i-in the wequest (i.e. (˘ω˘) this
+          // isn't a wepeat wequest fow a subsequent batch of wesuwts)
+          v-vaw stawttimeseconds: wong =
+            o-options.stawttimemsec.map(_ / 1000).getowewse(fiwsttweettimestamp)
+          v-vaw endtimeseconds: w-wong = options.endtimemsec.map(_ / 1000).getowewse(time.now.inseconds)
+          timewangestat.add(endtimeseconds - stawttimeseconds)
 
-          // We use the startFromOldest parameter when the cursor isn't defined
-          if (options.startFromOldest) startFromOldestCounter.incr()
+          // w-we u-use the stawtfwomowdest pawametew w-when the cuwsow i-isn't defined
+          if (options.stawtfwomowdest) s-stawtfwomowdestcountew.incw()
         }
-        options.additionalFieldIds.foreach { id =>
-          additionalFieldsScope.counter(id.toString).incr()
+        options.additionawfiewdids.foweach { i-id =>
+          additionawfiewdsscope.countew(id.tostwing).incw()
         }
       }
     }
   }
 
-  def observeResult(stats: StatsReceiver): Effect[GetStoredTweetsByUserResult] = {
-    val resultScope = stats.scope("result")
+  def o-obsewvewesuwt(stats: statsweceivew): e-effect[getstowedtweetsbyusewwesuwt] = {
+    vaw wesuwtscope = s-stats.scope("wesuwt")
 
-    Effect { result =>
-      observeStoredTweets(result.storedTweets, resultScope)
+    e-effect { wesuwt =>
+      obsewvestowedtweets(wesuwt.stowedtweets, >_< wesuwtscope)
     }
   }
 
-  def observeExchange(stats: StatsReceiver): Effect[Type] = {
-    val resultStateStats = ResultStateStats(stats)
+  def obsewveexchange(stats: statsweceivew): effect[type] = {
+    v-vaw w-wesuwtstatestats = wesuwtstatestats(stats)
 
-    Effect {
-      case (request, response) =>
-        response match {
-          case Return(_) => resultStateStats.success()
-          case Throw(_) => resultStateStats.failed()
+    e-effect {
+      case (wequest, -.- w-wesponse) =>
+        w-wesponse match {
+          case wetuwn(_) => wesuwtstatestats.success()
+          c-case thwow(_) => wesuwtstatestats.faiwed()
         }
     }
   }

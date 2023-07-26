@@ -1,34 +1,34 @@
-## InteractionGraphAddressBook Dataflow Job
+## intewactiongwaphaddwessbook datafwow j-job
 
-#### IntelliJ
+#### i-intewwij
 ```
-./bazel idea src/scala/com/twitter/interaction_graph/scio/agg_address_book:interaction_graph_address_book_scio
-```
-
-#### Compile
-```
-./bazel build src/scala/com/twitter/interaction_graph/scio/agg_address_book:interaction_graph_address_book_scio
+./bazew i-idea swc/scawa/com/twittew/intewaction_gwaph/scio/agg_addwess_book:intewaction_gwaph_addwess_book_scio
 ```
 
-#### Build Jar
+#### c-compiwe
 ```
-./bazel bundle src/scala/com/twitter/interaction_graph/scio/agg_address_book:interaction_graph_address_book_scio
+./bazew b-buiwd s-swc/scawa/com/twittew/intewaction_gwaph/scio/agg_addwess_book:intewaction_gwaph_addwess_book_scio
 ```
 
-#### Run Scheduled Job
+#### b-buiwd j-jaw
 ```
-export PROJECTID=twttr-recos-ml-prod
-export REGION=us-central1
-export JOB_NAME=interaction-graph-address-book-dataflow
+./bazew bundwe swc/scawa/com/twittew/intewaction_gwaph/scio/agg_addwess_book:intewaction_gwaph_addwess_book_scio
+```
 
-bin/d6w schedule \
-  ${PROJECTID}/${REGION}/${JOB_NAME} \
-  src/scala/com/twitter/interaction_graph/scio/agg_address_book/config.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.project=${PROJECTID} \
-  --bind=profile.region=${REGION} \
-  --bind=profile.job_name=${JOB_NAME} \
-  --bind=profile.environment=prod \
-  --bind=profile.date=2022-04-13 \
-  --bind=profile.output_path=processed/interaction_graph_agg_address_book_dataflow
+#### wun scheduwed job
+```
+expowt pwojectid=twttw-wecos-mw-pwod
+e-expowt wegion=us-centwaw1
+expowt job_name=intewaction-gwaph-addwess-book-datafwow
+
+b-bin/d6w scheduwe \
+  ${pwojectid}/${wegion}/${job_name} \
+  swc/scawa/com/twittew/intewaction_gwaph/scio/agg_addwess_book/config.d6w \
+  --bind=pwofiwe.usew_name=cassowawy \
+  --bind=pwofiwe.pwoject=${pwojectid} \
+  --bind=pwofiwe.wegion=${wegion} \
+  --bind=pwofiwe.job_name=${job_name} \
+  --bind=pwofiwe.enviwonment=pwod \
+  --bind=pwofiwe.date=2022-04-13 \
+  --bind=pwofiwe.output_path=pwocessed/intewaction_gwaph_agg_addwess_book_datafwow
 ```

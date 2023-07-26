@@ -1,93 +1,93 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala.QuotedTweet
+impowt c-com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.wepositowy._
+i-impowt c-com.twittew.tweetypie.thwiftscawa.quotedtweet
 
 /**
- * Enforce that users are not shown quoted tweets where the author of the
- * inner quoted tweet blocks the author of the outer quote tweet or the author
- * of the inner quoted tweet is otherwise not visible to the outer author.
+ * e-enfowce t-that usews awe n-nyot shown quoted tweets whewe the authow of the
+ * innew quoted tweet bwocks the a-authow of the outew quote tweet ow the authow
+ * o-of the innew quoted tweet is o-othewwise nyot visibwe to the outew authow. >w<
  *
- * In the example below, QuoteTweetVisibilityHydrator checks if @jack
- * blocks @trollmaster.
+ * in the exampwe b-bewow, mya quotetweetvisibiwityhydwatow checks if @jack
+ * b-bwocks @twowwmastew. >w<
  *
  * {{{
- *   @viewer
+ *   @viewew
  *   +------------------------------+
- *   | @trollmaster                 | <-- OUTER QUOTE TWEET
- *   | lol u can't spell twitter    |
+ *   | @twowwmastew                 | <-- o-outew quote tweet
+ *   | wow u can't speww twittew    |
  *   | +--------------------------+ |
- *   | | @jack                    | <---- INNER QUOTED TWEET
- *   | | just setting up my twttr | |
+ *   | | @jack                    | <---- innew q-quoted tweet
+ *   | | just setting up my twttw | |
  *   | +--------------------------+ |
  *   +------------------------------+
  * }}}
  *
- * In the example below, QuoteTweetVisibilityHydrator checks if @h4x0r can view
- * user @protectedUser.
+ * in the exampwe bewow, nyaa~~ quotetweetvisibiwityhydwatow c-checks if @h4x0w can view
+ * usew @pwotectedusew. (✿oωo)
  *
  * {{{
- *   @viewer
+ *   @viewew
  *   +------------------------------+
- *   | @h4x0r                       | <-- OUTER QUOTE TWEET
- *   | lol nice password            |
+ *   | @h4x0w                       | <-- o-outew q-quote tweet
+ *   | w-wow nyice passwowd            |
  *   | +--------------------------+ |
- *   | | @protectedUser           | <---- INNER QUOTED TWEET
- *   | | my password is 1234      | |
+ *   | | @pwotectedusew           | <---- i-innew quoted tweet
+ *   | | my passwowd is 1234      | |
  *   | +--------------------------+ |
  *   +------------------------------+
  * }}}
  *
  *
- * In the example below, QuoteTweetVisibilityHydrator checks if @viewer blocks @jack:
+ * i-in the exampwe bewow, ʘwʘ quotetweetvisibiwityhydwatow checks i-if @viewew bwocks @jack:
  *
  * {{{
- *   @viewer
+ *   @viewew
  *   +------------------------------+
- *   | @sometweeter                 | <-- OUTER QUOTE TWEET
- *   | This is a historic tweet     |
+ *   | @sometweetew                 | <-- outew quote tweet
+ *   | this is a histowic tweet     |
  *   | +--------------------------+ |
- *   | | @jack                    | <---- INNER QUOTED TWEET
- *   | | just setting up my twttr | |
+ *   | | @jack                    | <---- innew quoted tweet
+ *   | | j-just setting up my twttw | |
  *   | +--------------------------+ |
  *   +------------------------------+
  * }}}
  *
  */
-object QuoteTweetVisibilityHydrator {
-  type Type = ValueHydrator[Option[FilteredState.Unavailable], TweetCtx]
+o-object q-quotetweetvisibiwityhydwatow {
+  t-type type = vawuehydwatow[option[fiwtewedstate.unavaiwabwe], (ˆ ﻌ ˆ)♡ tweetctx]
 
-  def apply(repo: QuotedTweetVisibilityRepository.Type): QuoteTweetVisibilityHydrator.Type =
-    ValueHydrator[Option[FilteredState.Unavailable], TweetCtx] { (_, ctx) =>
-      val innerTweet: QuotedTweet = ctx.quotedTweet.get
-      val request = QuotedTweetVisibilityRepository.Request(
-        outerTweetId = ctx.tweetId,
-        outerAuthorId = ctx.userId,
-        innerTweetId = innerTweet.tweetId,
-        innerAuthorId = innerTweet.userId,
-        viewerId = ctx.opts.forUserId,
-        safetyLevel = ctx.opts.safetyLevel
+  def appwy(wepo: q-quotedtweetvisibiwitywepositowy.type): q-quotetweetvisibiwityhydwatow.type =
+    vawuehydwatow[option[fiwtewedstate.unavaiwabwe], 😳😳😳 tweetctx] { (_, :3 c-ctx) =>
+      vaw i-innewtweet: quotedtweet = ctx.quotedtweet.get
+      v-vaw wequest = quotedtweetvisibiwitywepositowy.wequest(
+        o-outewtweetid = ctx.tweetid, OwO
+        outewauthowid = c-ctx.usewid, (U ﹏ U)
+        innewtweetid = i-innewtweet.tweetid, >w<
+        innewauthowid = i-innewtweet.usewid, (U ﹏ U)
+        v-viewewid = ctx.opts.fowusewid, 😳
+        safetywevew = ctx.opts.safetywevew
       )
 
-      repo(request).liftToTry.map {
-        case Return(Some(f: FilteredState.Unavailable)) =>
-          ValueState.modified(Some(f))
+      wepo(wequest).wifttotwy.map {
+        case wetuwn(some(f: fiwtewedstate.unavaiwabwe)) =>
+          vawuestate.modified(some(f))
 
-        // For tweet::quotedTweet relationships, all other FilteredStates
-        // allow the quotedTweet to be hydrated and filtered independently
-        case Return(_) =>
-          ValueState.UnmodifiedNone
+        // fow tweet::quotedtweet wewationships, (ˆ ﻌ ˆ)♡ a-aww o-othew fiwtewedstates
+        // awwow the quotedtweet t-to be hydwated a-and fiwtewed i-independentwy
+        case wetuwn(_) =>
+          vawuestate.unmodifiednone
 
-        // On VF failure, gracefully degrade to no filtering
-        case Throw(_) =>
-          ValueState.UnmodifiedNone
+        // on vf f-faiwuwe, 😳😳😳 gwacefuwwy degwade to nyo fiwtewing
+        case thwow(_) =>
+          vawuestate.unmodifiednone
       }
-    }.onlyIf { (_, ctx) =>
-      !ctx.isRetweet &&
-      ctx.tweetFieldRequested(Tweet.QuotedTweetField) &&
-      ctx.opts.enforceVisibilityFiltering &&
-      ctx.quotedTweet.isDefined
+    }.onwyif { (_, (U ﹏ U) c-ctx) =>
+      !ctx.iswetweet &&
+      ctx.tweetfiewdwequested(tweet.quotedtweetfiewd) &&
+      c-ctx.opts.enfowcevisibiwityfiwtewing &&
+      c-ctx.quotedtweet.isdefined
     }
 }

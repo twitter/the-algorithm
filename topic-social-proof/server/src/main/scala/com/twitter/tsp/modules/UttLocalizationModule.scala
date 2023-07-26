@@ -1,27 +1,27 @@
-package com.twitter.tsp.modules
+package com.twittew.tsp.moduwes
 
-import com.google.inject.Provides
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.topiclisting.TopicListing
-import com.twitter.topiclisting.clients.utt.UttClient
-import com.twitter.topiclisting.utt.UttLocalization
-import com.twitter.topiclisting.utt.UttLocalizationImpl
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt c-com.twittew.topicwisting.topicwisting
+i-impowt com.twittew.topicwisting.cwients.utt.uttcwient
+i-impowt c-com.twittew.topicwisting.utt.uttwocawization
+i-impowt com.twittew.topicwisting.utt.uttwocawizationimpw
+impowt javax.inject.singweton
 
-object UttLocalizationModule extends TwitterModule {
+object uttwocawizationmoduwe extends twittewmoduwe {
 
-  @Provides
-  @Singleton
-  def providesUttLocalization(
-    topicListing: TopicListing,
-    uttClient: UttClient,
-    statsReceiver: StatsReceiver
-  ): UttLocalization = {
-    new UttLocalizationImpl(
-      topicListing,
-      uttClient,
-      statsReceiver
+  @pwovides
+  @singweton
+  def pwovidesuttwocawization(
+    t-topicwisting: topicwisting, >_<
+    uttcwient: u-uttcwient, mya
+    statsweceivew: s-statsweceivew
+  ): uttwocawization = {
+    nyew uttwocawizationimpw(
+      t-topicwisting, mya
+      uttcwient, 😳
+      s-statsweceivew
     )
   }
 }

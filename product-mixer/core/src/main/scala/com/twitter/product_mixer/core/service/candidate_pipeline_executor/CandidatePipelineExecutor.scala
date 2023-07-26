@@ -1,82 +1,82 @@
-package com.twitter.product_mixer.core.service.candidate_pipeline_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.candidate_pipewine_executow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.pipeline.CandidatePipelineResults
-import com.twitter.product_mixer.core.pipeline.FailOpenPolicy
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipeline
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineResult
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.stitch.Arrow
-import com.twitter.util.logging.Logging
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.candidatepipewinewesuwts
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.faiwopenpowicy
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewine
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewinewesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.quawityfactowobsewvew
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+i-impowt com.twittew.stitch.awwow
+impowt com.twittew.utiw.wogging.wogging
 
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
-@Singleton
-class CandidatePipelineExecutor @Inject() (override val statsReceiver: StatsReceiver)
-    extends Executor
-    with Logging {
+@singweton
+cwass candidatepipewineexecutow @inject() (ovewwide v-vaw statsweceivew: s-statsweceivew)
+    extends executow
+    with wogging {
 
-  def arrow[Query <: PipelineQuery](
-    candidatePipelines: Seq[CandidatePipeline[Query]],
-    defaultFailOpenPolicy: FailOpenPolicy,
-    failOpenPolicies: Map[CandidatePipelineIdentifier, FailOpenPolicy],
-    qualityFactorObserverByPipeline: Map[ComponentIdentifier, QualityFactorObserver],
-    context: Executor.Context
-  ): Arrow[CandidatePipeline.Inputs[Query], CandidatePipelineExecutorResult] = {
+  def awwow[quewy <: p-pipewinequewy](
+    candidatepipewines: seq[candidatepipewine[quewy]], (ˆ ﻌ ˆ)♡
+    defauwtfaiwopenpowicy: faiwopenpowicy, 😳😳😳
+    f-faiwopenpowicies: map[candidatepipewineidentifiew, (U ﹏ U) f-faiwopenpowicy], (///ˬ///✿)
+    q-quawityfactowobsewvewbypipewine: m-map[componentidentifiew, 😳 q-quawityfactowobsewvew],
+    context: executow.context
+  ): a-awwow[candidatepipewine.inputs[quewy], 😳 candidatepipewineexecutowwesuwt] = {
 
-    // Get the `.arrow` of each Candidate Pipeline, and wrap it in a ResultObserver
-    val observedArrows: Seq[Arrow[CandidatePipeline.Inputs[Query], CandidatePipelineResult]] =
-      candidatePipelines.map { pipeline =>
-        wrapPipelineWithExecutorBookkeeping(
-          context = context,
-          currentComponentIdentifier = pipeline.identifier,
-          qualityFactorObserver = qualityFactorObserverByPipeline.get(pipeline.identifier),
-          failOpenPolicy = failOpenPolicies.getOrElse(pipeline.identifier, defaultFailOpenPolicy)
-        )(pipeline.arrow)
+    // get the `.awwow` o-of each candidate pipewine, σωσ and wwap it in a wesuwtobsewvew
+    vaw obsewvedawwows: seq[awwow[candidatepipewine.inputs[quewy], rawr x3 candidatepipewinewesuwt]] =
+      candidatepipewines.map { p-pipewine =>
+        wwappipewinewithexecutowbookkeeping(
+          c-context = c-context, OwO
+          c-cuwwentcomponentidentifiew = pipewine.identifiew,
+          quawityfactowobsewvew = quawityfactowobsewvewbypipewine.get(pipewine.identifiew), /(^•ω•^)
+          f-faiwopenpowicy = f-faiwopenpowicies.getowewse(pipewine.identifiew, 😳😳😳 defauwtfaiwopenpowicy)
+        )(pipewine.awwow)
       }
 
-    // Collect the results from all the candidate pipelines together
-    Arrow.zipWithArg(Arrow.collect(observedArrows)).map {
-      case (input: CandidatePipeline.Inputs[Query], results: Seq[CandidatePipelineResult]) =>
-        val candidateWithDetails = results.flatMap(_.result.getOrElse(Seq.empty))
-        val previousCandidateWithDetails = input.query.features
-          .map(_.getOrElse(CandidatePipelineResults, Seq.empty))
-          .getOrElse(Seq.empty)
+    // c-cowwect the w-wesuwts fwom aww the candidate pipewines t-togethew
+    awwow.zipwithawg(awwow.cowwect(obsewvedawwows)).map {
+      c-case (input: candidatepipewine.inputs[quewy], wesuwts: seq[candidatepipewinewesuwt]) =>
+        vaw candidatewithdetaiws = w-wesuwts.fwatmap(_.wesuwt.getowewse(seq.empty))
+        vaw pweviouscandidatewithdetaiws = i-input.quewy.featuwes
+          .map(_.getowewse(candidatepipewinewesuwts, ( ͡o ω ͡o ) seq.empty))
+          .getowewse(seq.empty)
 
-        val featureMapWithCandidates = FeatureMapBuilder()
-          .add(CandidatePipelineResults, previousCandidateWithDetails ++ candidateWithDetails)
-          .build()
+        v-vaw featuwemapwithcandidates = f-featuwemapbuiwdew()
+          .add(candidatepipewinewesuwts, >_< pweviouscandidatewithdetaiws ++ candidatewithdetaiws)
+          .buiwd()
 
-        // Merge the query feature hydrator and candidate source query features back in. While this
-        // is done internally in the pipeline, we have to pass it back since we don't expose the
-        // updated pipeline query today.
-        val queryFeatureHydratorFeatureMaps =
-          results
-            .flatMap(result => Seq(result.queryFeatures, result.queryFeaturesPhase2))
-            .collect { case Some(result) => result.featureMap }
-        val asyncFeatureHydratorFeatureMaps =
-          results
-            .flatMap(_.asyncFeatureHydrationResults)
-            .flatMap(_.featureMapsByStep.values)
+        // mewge the quewy featuwe hydwatow and candidate souwce quewy f-featuwes back i-in. >w< whiwe this
+        // is done i-intewnawwy in t-the pipewine, rawr we h-have to pass it back since we don't expose the
+        // updated p-pipewine quewy today. 😳
+        vaw quewyfeatuwehydwatowfeatuwemaps =
+          wesuwts
+            .fwatmap(wesuwt => seq(wesuwt.quewyfeatuwes, >w< w-wesuwt.quewyfeatuwesphase2))
+            .cowwect { case some(wesuwt) => w-wesuwt.featuwemap }
+        v-vaw asyncfeatuwehydwatowfeatuwemaps =
+          w-wesuwts
+            .fwatmap(_.asyncfeatuwehydwationwesuwts)
+            .fwatmap(_.featuwemapsbystep.vawues)
 
-        val candidateSourceFeatureMaps =
-          results
-            .flatMap(_.candidateSourceResult)
-            .map(_.candidateSourceFeatureMap)
+        vaw candidatesouwcefeatuwemaps =
+          w-wesuwts
+            .fwatmap(_.candidatesouwcewesuwt)
+            .map(_.candidatesouwcefeatuwemap)
 
-        val featureMaps =
-          (featureMapWithCandidates +: queryFeatureHydratorFeatureMaps) ++ asyncFeatureHydratorFeatureMaps ++ candidateSourceFeatureMaps
-        val mergedFeatureMap = FeatureMap.merge(featureMaps)
-        CandidatePipelineExecutorResult(
-          candidatePipelineResults = results,
-          queryFeatureMap = mergedFeatureMap)
+        v-vaw featuwemaps =
+          (featuwemapwithcandidates +: q-quewyfeatuwehydwatowfeatuwemaps) ++ a-asyncfeatuwehydwatowfeatuwemaps ++ candidatesouwcefeatuwemaps
+        vaw mewgedfeatuwemap = f-featuwemap.mewge(featuwemaps)
+        c-candidatepipewineexecutowwesuwt(
+          c-candidatepipewinewesuwts = w-wesuwts, (⑅˘꒳˘)
+          q-quewyfeatuwemap = mewgedfeatuwemap)
     }
   }
 }

@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.thread
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.thwead
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.entwynamespace
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineitem
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
 
-object ThreadHeaderItem {
-  val ThreadHeaderEntryNamespace = EntryNamespace("threadheader")
+o-object thweadheadewitem {
+  vaw thweadheadewentwynamespace = entwynamespace("thweadheadew")
 }
 
-case class ThreadHeaderItem(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  override val isPinned: Option[Boolean],
-  content: ThreadHeaderContent)
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace = ThreadHeaderItem.ThreadHeaderEntryNamespace
+case cwass t-thweadheadewitem(
+  ovewwide vaw id: wong, >_<
+  o-ovewwide vaw sowtindex: option[wong], rawr x3
+  o-ovewwide vaw cwienteventinfo: option[cwienteventinfo], mya
+  ovewwide vaw f-feedbackactioninfo: option[feedbackactioninfo], nyaa~~
+  o-ovewwide vaw ispinned: o-option[boowean], (⑅˘꒳˘)
+  content: thweadheadewcontent)
+    extends timewineitem {
+  o-ovewwide vaw entwynamespace: entwynamespace = thweadheadewitem.thweadheadewentwynamespace
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  ovewwide def w-withsowtindex(sowtindex: wong): t-timewineentwy = c-copy(sowtindex = s-some(sowtindex))
 }

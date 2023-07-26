@@ -1,19 +1,19 @@
-package com.twitter.follow_recommendations.common.predicates.sgs
+package com.twittew.fowwow_wecommendations.common.pwedicates.sgs
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
-import com.twitter.conversions.DurationOps._
+impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt com.twittew.timewines.configapi.duwationconvewsion
+i-impowt com.twittew.timewines.configapi.hasduwationconvewsion
+i-impowt c-com.twittew.utiw.duwation
+impowt c-com.twittew.convewsions.duwationops._
 
-object SgsPredicateParams {
-  case object SgsRelationshipsPredicateTimeout
-      extends FSBoundedParam[Duration](
-        name = "sgs_predicate_relationships_timeout_in_millis",
-        default = 300.millisecond,
-        min = 1.millisecond,
-        max = 1000.millisecond)
-      with HasDurationConversion {
-    override def durationConversion: DurationConversion = DurationConversion.FromMillis
+o-object s-sgspwedicatepawams {
+  c-case object sgswewationshipspwedicatetimeout
+      extends fsboundedpawam[duwation](
+        nyame = "sgs_pwedicate_wewationships_timeout_in_miwwis", (⑅˘꒳˘)
+        d-defauwt = 300.miwwisecond, (U ᵕ U❁)
+        min = 1.miwwisecond, -.-
+        max = 1000.miwwisecond)
+      w-with hasduwationconvewsion {
+    ovewwide d-def duwationconvewsion: duwationconvewsion = duwationconvewsion.fwommiwwis
   }
 }

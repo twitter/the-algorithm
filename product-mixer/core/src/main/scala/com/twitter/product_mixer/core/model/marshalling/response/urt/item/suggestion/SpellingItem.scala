@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.suggestion
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.suggestion
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.entwynamespace
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineitem
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
 
-object SpellingItem {
-  val SpellingEntryNamespace = EntryNamespace("spelling")
+object s-spewwingitem {
+  vaw spewwingentwynamespace = entwynamespace("spewwing")
 }
 
 /**
- * Represents a Spelling Suggestion URT item. This is primary used by Search timelines for
- * displaying Spelling correction information.
+ * wepwesents a spewwing suggestion u-uwt item. (⑅˘꒳˘) this is pwimawy used by seawch t-timewines fow
+ * dispwaying spewwing c-cowwection infowmation. (///ˬ///✿)
  *
- * URT API Reference: https://docbird.twitter.biz/unified_rich_timelines_urt/gen/com/twitter/timelines/render/thriftscala/Spelling.html
+ * uwt api wefewence: https://docbiwd.twittew.biz/unified_wich_timewines_uwt/gen/com/twittew/timewines/wendew/thwiftscawa/spewwing.htmw
  */
-case class SpellingItem(
-  override val id: String,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  textResult: TextResult,
-  spellingActionType: Option[SpellingActionType],
-  originalQuery: Option[String])
-    extends TimelineItem {
+case c-cwass spewwingitem(
+  ovewwide v-vaw id: stwing, 😳😳😳
+  o-ovewwide vaw sowtindex: option[wong], 🥺
+  ovewwide vaw cwienteventinfo: option[cwienteventinfo],
+  o-ovewwide vaw feedbackactioninfo: option[feedbackactioninfo], mya
+  textwesuwt: textwesuwt, 🥺
+  spewwingactiontype: o-option[spewwingactiontype], >_<
+  owiginawquewy: o-option[stwing])
+    e-extends timewineitem {
 
-  override val entryNamespace: EntryNamespace = SpellingItem.SpellingEntryNamespace
+  o-ovewwide v-vaw entwynamespace: entwynamespace = spewwingitem.spewwingentwynamespace
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  o-ovewwide def withsowtindex(sowtindex: wong): t-timewineentwy = copy(sowtindex = some(sowtindex))
 }

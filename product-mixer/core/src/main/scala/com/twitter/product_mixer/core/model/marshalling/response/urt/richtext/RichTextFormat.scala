@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.richtext
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext
 
-sealed trait RichTextFormat {
-  def name: String
+seawed twait wichtextfowmat {
+  def n-nyame: stwing
 }
 
-case object Plain extends RichTextFormat {
-  override val name: String = "Plain"
+c-case object p-pwain extends wichtextfowmat {
+  o-ovewwide vaw nyame: s-stwing = "pwain"
 }
 
-case object Strong extends RichTextFormat {
-  override val name: String = "Strong"
+c-case object s-stwong extends w-wichtextfowmat {
+  ovewwide vaw nyame: stwing = "stwong"
 }

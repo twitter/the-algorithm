@@ -1,36 +1,36 @@
-package com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker
+package com.twittew.fowwow_wecommendations.common.wankews.weighted_candidate_souwce_wankew
 
-import com.twitter.follow_recommendations.common.utils.RandomUtil
-import scala.util.Random
+impowt c-com.twittew.fowwow_wecommendations.common.utiws.wandomutiw
+i-impowt s-scawa.utiw.wandom
 
-sealed trait CandidateShuffler[T] {
-  def shuffle(seed: Option[Long])(input: Seq[T]): Seq[T]
+s-seawed twait c-candidateshuffwew[t] {
+  d-def s-shuffwe(seed: option[wong])(input: s-seq[t]): seq[t]
 }
 
-class NoShuffle[T]() extends CandidateShuffler[T] {
-  def shuffle(seed: Option[Long])(input: Seq[T]): Seq[T] = input
+cwass nyoshuffwe[t]() extends candidateshuffwew[t] {
+  def s-shuffwe(seed: option[wong])(input: seq[t]): seq[t] = i-input
 }
 
-class RandomShuffler[T]() extends CandidateShuffler[T] {
-  def shuffle(seed: Option[Long])(input: Seq[T]): Seq[T] = {
-    seed.map(new Random(_)).getOrElse(Random).shuffle(input)
+cwass wandomshuffwew[t]() e-extends candidateshuffwew[t] {
+  def shuffwe(seed: option[wong])(input: s-seq[t]): seq[t] = {
+    seed.map(new w-wandom(_)).getowewse(wandom).shuffwe(input)
   }
 }
 
-trait RankWeightedRandomShuffler[T] extends CandidateShuffler[T] {
+t-twait wankweightedwandomshuffwew[t] extends candidateshuffwew[t] {
 
-  def rankToWeight(rank: Int): Double
-  def shuffle(seed: Option[Long])(input: Seq[T]): Seq[T] = {
-    val candWeights = input.zipWithIndex.map {
-      case (candidate, rank) => (candidate, rankToWeight(rank))
+  def wanktoweight(wank: i-int): doubwe
+  def shuffwe(seed: option[wong])(input: seq[t]): seq[t] = {
+    v-vaw candweights = input.zipwithindex.map {
+      c-case (candidate, 🥺 w-wank) => (candidate, w-wanktoweight(wank))
     }
-    RandomUtil.weightedRandomShuffle(candWeights, seed.map(new Random(_))).unzip._1
+    w-wandomutiw.weightedwandomshuffwe(candweights, seed.map(new wandom(_))).unzip._1
   }
 }
 
-class ExponentialShuffler[T]() extends RankWeightedRandomShuffler[T] {
-  def rankToWeight(rank: Int): Double = {
+c-cwass exponentiawshuffwew[t]() extends wankweightedwandomshuffwew[t] {
+  def wanktoweight(wank: i-int): doubwe = {
     1 / math
-      .pow(rank.toDouble, 2.0) // this function was proved to be effective in previous DDGs
+      .pow(wank.todoubwe, mya 2.0) // this function was pwoved to be effective in pwevious ddgs
   }
 }

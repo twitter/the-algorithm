@@ -1,206 +1,206 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
+impowt c-com.twittew.fowwow_wecommendations.{thwiftscawa => t-t}
+impowt com.twittew.fowwow_wecommendations.wogging.{thwiftscawa => o-offwine}
 
-case class FollowProof(followedBy: Seq[Long], numIds: Int) {
-  def toThrift: t.FollowProof = {
-    t.FollowProof(followedBy, numIds)
+c-case cwass fowwowpwoof(fowwowedby: s-seq[wong], ʘwʘ n-nyumids: int) {
+  d-def tothwift: t-t.fowwowpwoof = {
+    t.fowwowpwoof(fowwowedby, numids)
   }
 
-  def toOfflineThrift: offline.FollowProof = offline.FollowProof(followedBy, numIds)
+  def tooffwinethwift: offwine.fowwowpwoof = o-offwine.fowwowpwoof(fowwowedby, ( ͡o ω ͡o ) nyumids)
 }
 
-object FollowProof {
+object fowwowpwoof {
 
-  def fromThrift(proof: t.FollowProof): FollowProof = {
-    FollowProof(proof.userIds, proof.numIds)
-  }
-}
-
-case class SimilarToProof(similarTo: Seq[Long]) {
-  def toThrift: t.SimilarToProof = {
-    t.SimilarToProof(similarTo)
-  }
-
-  def toOfflineThrift: offline.SimilarToProof = offline.SimilarToProof(similarTo)
-}
-
-object SimilarToProof {
-  def fromThrift(proof: t.SimilarToProof): SimilarToProof = {
-    SimilarToProof(proof.userIds)
+  d-def fwomthwift(pwoof: t-t.fowwowpwoof): fowwowpwoof = {
+    fowwowpwoof(pwoof.usewids, o.O pwoof.numids)
   }
 }
 
-case class PopularInGeoProof(location: String) {
-  def toThrift: t.PopularInGeoProof = {
-    t.PopularInGeoProof(location)
+c-case cwass simiwawtopwoof(simiwawto: s-seq[wong]) {
+  d-def tothwift: t.simiwawtopwoof = {
+    t.simiwawtopwoof(simiwawto)
   }
 
-  def toOfflineThrift: offline.PopularInGeoProof = offline.PopularInGeoProof(location)
+  def tooffwinethwift: offwine.simiwawtopwoof = o-offwine.simiwawtopwoof(simiwawto)
 }
 
-object PopularInGeoProof {
-
-  def fromThrift(proof: t.PopularInGeoProof): PopularInGeoProof = {
-    PopularInGeoProof(proof.location)
-  }
-}
-
-case class TttInterestProof(interestId: Long, interestDisplayName: String) {
-  def toThrift: t.TttInterestProof = {
-    t.TttInterestProof(interestId, interestDisplayName)
-  }
-
-  def toOfflineThrift: offline.TttInterestProof =
-    offline.TttInterestProof(interestId, interestDisplayName)
-}
-
-object TttInterestProof {
-
-  def fromThrift(proof: t.TttInterestProof): TttInterestProof = {
-    TttInterestProof(proof.interestId, proof.interestDisplayName)
+object simiwawtopwoof {
+  def fwomthwift(pwoof: t.simiwawtopwoof): s-simiwawtopwoof = {
+    simiwawtopwoof(pwoof.usewids)
   }
 }
 
-case class TopicProof(topicId: Long) {
-  def toThrift: t.TopicProof = {
-    t.TopicProof(topicId)
+c-case cwass p-popuwawingeopwoof(wocation: stwing) {
+  d-def tothwift: t-t.popuwawingeopwoof = {
+    t.popuwawingeopwoof(wocation)
   }
 
-  def toOfflineThrift: offline.TopicProof =
-    offline.TopicProof(topicId)
+  def tooffwinethwift: offwine.popuwawingeopwoof = o-offwine.popuwawingeopwoof(wocation)
 }
 
-object TopicProof {
-  def fromThrift(proof: t.TopicProof): TopicProof = {
-    TopicProof(proof.topicId)
-  }
-}
+object popuwawingeopwoof {
 
-case class CustomInterest(query: String) {
-  def toThrift: t.CustomInterestProof = {
-    t.CustomInterestProof(query)
-  }
-
-  def toOfflineThrift: offline.CustomInterestProof =
-    offline.CustomInterestProof(query)
-}
-
-object CustomInterest {
-  def fromThrift(proof: t.CustomInterestProof): CustomInterest = {
-    CustomInterest(proof.query)
+  def fwomthwift(pwoof: t-t.popuwawingeopwoof): popuwawingeopwoof = {
+    popuwawingeopwoof(pwoof.wocation)
   }
 }
 
-case class TweetsAuthorProof(tweetIds: Seq[Long]) {
-  def toThrift: t.TweetsAuthorProof = {
-    t.TweetsAuthorProof(tweetIds)
+case cwass tttintewestpwoof(intewestid: wong, >w< intewestdispwayname: stwing) {
+  def t-tothwift: t.tttintewestpwoof = {
+    t.tttintewestpwoof(intewestid, 😳 i-intewestdispwayname)
   }
 
-  def toOfflineThrift: offline.TweetsAuthorProof =
-    offline.TweetsAuthorProof(tweetIds)
+  d-def tooffwinethwift: o-offwine.tttintewestpwoof =
+    offwine.tttintewestpwoof(intewestid, 🥺 intewestdispwayname)
 }
 
-object TweetsAuthorProof {
-  def fromThrift(proof: t.TweetsAuthorProof): TweetsAuthorProof = {
-    TweetsAuthorProof(proof.tweetIds)
+object tttintewestpwoof {
+
+  d-def fwomthwift(pwoof: t-t.tttintewestpwoof): tttintewestpwoof = {
+    t-tttintewestpwoof(pwoof.intewestid, rawr x3 p-pwoof.intewestdispwayname)
   }
 }
 
-case class DeviceFollowProof(isDeviceFollow: Boolean) {
-  def toThrift: t.DeviceFollowProof = {
-    t.DeviceFollowProof(isDeviceFollow)
-  }
-  def toOfflineThrift: offline.DeviceFollowProof =
-    offline.DeviceFollowProof(isDeviceFollow)
-}
-
-object DeviceFollowProof {
-  def fromThrift(proof: t.DeviceFollowProof): DeviceFollowProof = {
-    DeviceFollowProof(proof.isDeviceFollow)
+case cwass t-topicpwoof(topicid: wong) {
+  d-def tothwift: t.topicpwoof = {
+    t.topicpwoof(topicid)
   }
 
+  d-def tooffwinethwift: offwine.topicpwoof =
+    o-offwine.topicpwoof(topicid)
 }
 
-case class AccountProof(
-  followProof: Option[FollowProof] = None,
-  similarToProof: Option[SimilarToProof] = None,
-  popularInGeoProof: Option[PopularInGeoProof] = None,
-  tttInterestProof: Option[TttInterestProof] = None,
-  topicProof: Option[TopicProof] = None,
-  customInterestProof: Option[CustomInterest] = None,
-  tweetsAuthorProof: Option[TweetsAuthorProof] = None,
-  deviceFollowProof: Option[DeviceFollowProof] = None) {
-  def toThrift: t.AccountProof = {
-    t.AccountProof(
-      followProof.map(_.toThrift),
-      similarToProof.map(_.toThrift),
-      popularInGeoProof.map(_.toThrift),
-      tttInterestProof.map(_.toThrift),
-      topicProof.map(_.toThrift),
-      customInterestProof.map(_.toThrift),
-      tweetsAuthorProof.map(_.toThrift),
-      deviceFollowProof.map(_.toThrift)
+object topicpwoof {
+  d-def fwomthwift(pwoof: t-t.topicpwoof): topicpwoof = {
+    topicpwoof(pwoof.topicid)
+  }
+}
+
+case cwass customintewest(quewy: stwing) {
+  def tothwift: t.customintewestpwoof = {
+    t-t.customintewestpwoof(quewy)
+  }
+
+  d-def tooffwinethwift: offwine.customintewestpwoof =
+    o-offwine.customintewestpwoof(quewy)
+}
+
+o-object customintewest {
+  d-def fwomthwift(pwoof: t.customintewestpwoof): customintewest = {
+    customintewest(pwoof.quewy)
+  }
+}
+
+c-case cwass tweetsauthowpwoof(tweetids: seq[wong]) {
+  def tothwift: t.tweetsauthowpwoof = {
+    t.tweetsauthowpwoof(tweetids)
+  }
+
+  def t-tooffwinethwift: offwine.tweetsauthowpwoof =
+    o-offwine.tweetsauthowpwoof(tweetids)
+}
+
+o-object t-tweetsauthowpwoof {
+  def fwomthwift(pwoof: t-t.tweetsauthowpwoof): t-tweetsauthowpwoof = {
+    t-tweetsauthowpwoof(pwoof.tweetids)
+  }
+}
+
+c-case cwass devicefowwowpwoof(isdevicefowwow: boowean) {
+  d-def tothwift: t.devicefowwowpwoof = {
+    t-t.devicefowwowpwoof(isdevicefowwow)
+  }
+  d-def tooffwinethwift: o-offwine.devicefowwowpwoof =
+    o-offwine.devicefowwowpwoof(isdevicefowwow)
+}
+
+object devicefowwowpwoof {
+  def fwomthwift(pwoof: t.devicefowwowpwoof): d-devicefowwowpwoof = {
+    devicefowwowpwoof(pwoof.isdevicefowwow)
+  }
+
+}
+
+case cwass accountpwoof(
+  fowwowpwoof: option[fowwowpwoof] = n-nyone, o.O
+  simiwawtopwoof: option[simiwawtopwoof] = nyone, rawr
+  p-popuwawingeopwoof: o-option[popuwawingeopwoof] = n-nyone, ʘwʘ
+  tttintewestpwoof: option[tttintewestpwoof] = n-nyone, 😳😳😳
+  topicpwoof: option[topicpwoof] = n-nyone, ^^;;
+  customintewestpwoof: o-option[customintewest] = nyone, o.O
+  tweetsauthowpwoof: option[tweetsauthowpwoof] = nyone, (///ˬ///✿)
+  devicefowwowpwoof: option[devicefowwowpwoof] = n-nyone) {
+  def tothwift: t-t.accountpwoof = {
+    t.accountpwoof(
+      fowwowpwoof.map(_.tothwift), σωσ
+      s-simiwawtopwoof.map(_.tothwift), nyaa~~
+      p-popuwawingeopwoof.map(_.tothwift), ^^;;
+      tttintewestpwoof.map(_.tothwift), ^•ﻌ•^
+      topicpwoof.map(_.tothwift), σωσ
+      c-customintewestpwoof.map(_.tothwift), -.-
+      t-tweetsauthowpwoof.map(_.tothwift), ^^;;
+      devicefowwowpwoof.map(_.tothwift)
     )
   }
 
-  def toOfflineThrift: offline.AccountProof = {
-    offline.AccountProof(
-      followProof.map(_.toOfflineThrift),
-      similarToProof.map(_.toOfflineThrift),
-      popularInGeoProof.map(_.toOfflineThrift),
-      tttInterestProof.map(_.toOfflineThrift),
-      topicProof.map(_.toOfflineThrift),
-      customInterestProof.map(_.toOfflineThrift),
-      tweetsAuthorProof.map(_.toOfflineThrift),
-      deviceFollowProof.map(_.toOfflineThrift)
-    )
-  }
-}
-
-object AccountProof {
-  def fromThrift(proof: t.AccountProof): AccountProof = {
-    AccountProof(
-      proof.followProof.map(FollowProof.fromThrift),
-      proof.similarToProof.map(SimilarToProof.fromThrift),
-      proof.popularInGeoProof.map(PopularInGeoProof.fromThrift),
-      proof.tttInterestProof.map(TttInterestProof.fromThrift),
-      proof.topicProof.map(TopicProof.fromThrift),
-      proof.customInterestProof.map(CustomInterest.fromThrift),
-      proof.tweetsAuthorProof.map(TweetsAuthorProof.fromThrift),
-      proof.deviceFollowProof.map(DeviceFollowProof.fromThrift)
+  def t-tooffwinethwift: o-offwine.accountpwoof = {
+    offwine.accountpwoof(
+      fowwowpwoof.map(_.tooffwinethwift), XD
+      simiwawtopwoof.map(_.tooffwinethwift), 🥺
+      popuwawingeopwoof.map(_.tooffwinethwift), òωó
+      t-tttintewestpwoof.map(_.tooffwinethwift), (ˆ ﻌ ˆ)♡
+      t-topicpwoof.map(_.tooffwinethwift), -.-
+      c-customintewestpwoof.map(_.tooffwinethwift), :3
+      tweetsauthowpwoof.map(_.tooffwinethwift), ʘwʘ
+      d-devicefowwowpwoof.map(_.tooffwinethwift)
     )
   }
 }
 
-case class Reason(accountProof: Option[AccountProof]) {
-  def toThrift: t.Reason = {
-    t.Reason(accountProof.map(_.toThrift))
-  }
-
-  def toOfflineThrift: offline.Reason = {
-    offline.Reason(accountProof.map(_.toOfflineThrift))
-  }
-}
-
-object Reason {
-
-  def fromThrift(reason: t.Reason): Reason = {
-    Reason(reason.accountProof.map(AccountProof.fromThrift))
+o-object accountpwoof {
+  def fwomthwift(pwoof: t-t.accountpwoof): accountpwoof = {
+    accountpwoof(
+      pwoof.fowwowpwoof.map(fowwowpwoof.fwomthwift), 🥺
+      pwoof.simiwawtopwoof.map(simiwawtopwoof.fwomthwift), >_<
+      p-pwoof.popuwawingeopwoof.map(popuwawingeopwoof.fwomthwift), ʘwʘ
+      p-pwoof.tttintewestpwoof.map(tttintewestpwoof.fwomthwift), (˘ω˘)
+      pwoof.topicpwoof.map(topicpwoof.fwomthwift), (✿oωo)
+      pwoof.customintewestpwoof.map(customintewest.fwomthwift), (///ˬ///✿)
+      p-pwoof.tweetsauthowpwoof.map(tweetsauthowpwoof.fwomthwift), rawr x3
+      pwoof.devicefowwowpwoof.map(devicefowwowpwoof.fwomthwift)
+    )
   }
 }
 
-trait HasReason {
+c-case cwass weason(accountpwoof: option[accountpwoof]) {
+  def tothwift: t.weason = {
+    t.weason(accountpwoof.map(_.tothwift))
+  }
 
-  def reason: Option[Reason]
-  // helper methods below
+  d-def tooffwinethwift: offwine.weason = {
+    offwine.weason(accountpwoof.map(_.tooffwinethwift))
+  }
+}
 
-  def followedBy: Option[Seq[Long]] = {
-    for {
-      reason <- reason
-      accountProof <- reason.accountProof
-      followProof <- accountProof.followProof
-    } yield { followProof.followedBy }
+object weason {
+
+  d-def fwomthwift(weason: t.weason): weason = {
+    w-weason(weason.accountpwoof.map(accountpwoof.fwomthwift))
+  }
+}
+
+t-twait hasweason {
+
+  def weason: option[weason]
+  // hewpew m-methods bewow
+
+  d-def fowwowedby: option[seq[wong]] = {
+    fow {
+      weason <- weason
+      a-accountpwoof <- weason.accountpwoof
+      f-fowwowpwoof <- accountpwoof.fowwowpwoof
+    } yiewd { fowwowpwoof.fowwowedby }
   }
 }

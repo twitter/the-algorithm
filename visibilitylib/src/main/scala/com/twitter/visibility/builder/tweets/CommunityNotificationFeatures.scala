@@ -1,64 +1,64 @@
-package com.twitter.visibility.builder.tweets
+package com.twittew.visibiwity.buiwdew.tweets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.notificationservice.model.notification.ActivityNotification
-import com.twitter.notificationservice.model.notification.MentionNotification
-import com.twitter.notificationservice.model.notification.MentionQuoteNotification
-import com.twitter.notificationservice.model.notification.Notification
-import com.twitter.notificationservice.model.notification.QuoteTweetNotification
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.TweetSource
-import com.twitter.visibility.features.NotificationIsOnCommunityTweet
-import com.twitter.visibility.models.CommunityTweet
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.notificationsewvice.modew.notification.activitynotification
+i-impowt c-com.twittew.notificationsewvice.modew.notification.mentionnotification
+i-impowt c-com.twittew.notificationsewvice.modew.notification.mentionquotenotification
+i-impowt com.twittew.notificationsewvice.modew.notification.notification
+impowt com.twittew.notificationsewvice.modew.notification.quotetweetnotification
+impowt com.twittew.sewvo.utiw.gate
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+impowt com.twittew.visibiwity.common.tweetsouwce
+i-impowt com.twittew.visibiwity.featuwes.notificationisoncommunitytweet
+impowt com.twittew.visibiwity.modews.communitytweet
 
-object CommunityNotificationFeatures {
-  def ForNonCommunityTweetNotification: FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(NotificationIsOnCommunityTweet, false)
+o-object communitynotificationfeatuwes {
+  def fownoncommunitytweetnotification: featuwemapbuiwdew => f-featuwemapbuiwdew = {
+    _.withconstantfeatuwe(notificationisoncommunitytweet, nyaa~~ fawse)
   }
 }
 
-class CommunityNotificationFeatures(
-  tweetSource: TweetSource,
-  enableCommunityTweetHydration: Gate[Long],
-  statsReceiver: StatsReceiver) {
+cwass c-communitynotificationfeatuwes(
+  t-tweetsouwce: tweetsouwce, :3
+  enabwecommunitytweethydwation: gate[wong], 😳😳😳
+  statsweceivew: statsweceivew) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("community_notification_features")
-  private[this] val requestsCounter = scopedStatsReceiver.counter("requests")
-  private[this] val hydrationsCounter = scopedStatsReceiver.counter("hydrations")
-  private[this] val notificationIsOnCommunityTweetCounter =
-    scopedStatsReceiver.scope(NotificationIsOnCommunityTweet.name).counter("true")
-  private[this] val notificationIsNotOnCommunityTweetCounter =
-    scopedStatsReceiver.scope(NotificationIsOnCommunityTweet.name).counter("false")
+  p-pwivate[this] vaw scopedstatsweceivew = statsweceivew.scope("community_notification_featuwes")
+  pwivate[this] vaw wequestscountew = s-scopedstatsweceivew.countew("wequests")
+  pwivate[this] vaw h-hydwationscountew = s-scopedstatsweceivew.countew("hydwations")
+  p-pwivate[this] v-vaw nyotificationisoncommunitytweetcountew =
+    scopedstatsweceivew.scope(notificationisoncommunitytweet.name).countew("twue")
+  pwivate[this] v-vaw nyotificationisnotoncommunitytweetcountew =
+    scopedstatsweceivew.scope(notificationisoncommunitytweet.name).countew("fawse")
 
-  def forNotification(notification: Notification): FeatureMapBuilder => FeatureMapBuilder = {
-    requestsCounter.incr()
-    val isCommunityTweetResult = getTweetIdOption(notification) match {
-      case Some(tweetId) if enableCommunityTweetHydration(notification.target) =>
-        hydrationsCounter.incr()
-        tweetSource
-          .getTweet(tweetId)
+  def fownotification(notification: n-nyotification): featuwemapbuiwdew => featuwemapbuiwdew = {
+    wequestscountew.incw()
+    vaw iscommunitytweetwesuwt = gettweetidoption(notification) match {
+      case s-some(tweetid) if enabwecommunitytweethydwation(notification.tawget) =>
+        h-hydwationscountew.incw()
+        t-tweetsouwce
+          .gettweet(tweetid)
           .map {
-            case Some(tweet) if CommunityTweet(tweet).nonEmpty =>
-              notificationIsOnCommunityTweetCounter.incr()
-              true
-            case _ =>
-              notificationIsNotOnCommunityTweetCounter.incr()
-              false
+            c-case some(tweet) if communitytweet(tweet).nonempty =>
+              nyotificationisoncommunitytweetcountew.incw()
+              twue
+            c-case _ =>
+              n-nyotificationisnotoncommunitytweetcountew.incw()
+              fawse
           }
-      case _ => Stitch.False
+      c-case _ => s-stitch.fawse
     }
-    _.withFeature(NotificationIsOnCommunityTweet, isCommunityTweetResult)
+    _.withfeatuwe(notificationisoncommunitytweet, (˘ω˘) iscommunitytweetwesuwt)
   }
 
-  private[this] def getTweetIdOption(notification: Notification): Option[Long] = {
-    notification match {
-      case n: MentionNotification => Some(n.mentioningTweetId)
-      case n: MentionQuoteNotification => Some(n.mentioningTweetId)
-      case n: QuoteTweetNotification => Some(n.quotedTweetId)
-      case n: ActivityNotification[_] if n.visibilityTweets.contains(n.objectId) => Some(n.objectId)
-      case _ => None
+  p-pwivate[this] def gettweetidoption(notification: n-nyotification): option[wong] = {
+    nyotification m-match {
+      case ny: m-mentionnotification => some(n.mentioningtweetid)
+      c-case ny: m-mentionquotenotification => some(n.mentioningtweetid)
+      case ny: quotetweetnotification => some(n.quotedtweetid)
+      case ny: activitynotification[_] i-if n-ny.visibiwitytweets.contains(n.objectid) => some(n.objectid)
+      c-case _ => nyone
     }
   }
 }

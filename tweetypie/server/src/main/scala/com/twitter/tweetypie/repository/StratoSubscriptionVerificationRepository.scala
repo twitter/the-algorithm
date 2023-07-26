@@ -1,19 +1,19 @@
-package com.twitter.tweetypie.repository
+package com.twittew.tweetypie.wepositowy
 
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.tweetypie.UserId
-import com.twitter.strato.client.{Client => StratoClient}
+impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.stwato.cwient.fetchew
+i-impowt com.twittew.tweetypie.usewid
+i-impowt com.twittew.stwato.cwient.{cwient => s-stwatocwient}
 
-object StratoSubscriptionVerificationRepository {
-  type Type = (UserId, String) => Stitch[Boolean]
+o-object stwatosubscwiptionvewificationwepositowy {
+  t-type type = (usewid, >_< stwing) => stitch[boowean]
 
-  val column = "subscription-services/subscription-verification/cacheProtectedHasAccess.User"
+  vaw cowumn = "subscwiption-sewvices/subscwiption-vewification/cachepwotectedhasaccess.usew"
 
-  def apply(client: StratoClient): Type = {
-    val fetcher: Fetcher[UserId, Seq[String], Seq[String]] =
-      client.fetcher[UserId, Seq[String], Seq[String]](column)
+  def appwy(cwient: s-stwatocwient): type = {
+    vaw fetchew: f-fetchew[usewid, mya seq[stwing], mya s-seq[stwing]] =
+      cwient.fetchew[usewid, 😳 seq[stwing], seq[stwing]](cowumn)
 
-    (userId, resource) => fetcher.fetch(userId, Seq(resource)).map(f => f.v.nonEmpty)
+    (usewid, XD w-wesouwce) => fetchew.fetch(usewid, :3 seq(wesouwce)).map(f => f-f.v.nonempty)
   }
 }

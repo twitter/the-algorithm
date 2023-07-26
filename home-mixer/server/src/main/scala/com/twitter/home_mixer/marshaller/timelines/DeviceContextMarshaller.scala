@@ -1,34 +1,34 @@
-package com.twitter.home_mixer.marshaller.timelines
+package com.twittew.home_mixew.mawshawwew.timewines
 
-import com.twitter.home_mixer.model.request.DeviceContext
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.timelineservice.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.modew.wequest.devicecontext
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.cwientcontext
+i-impowt c-com.twittew.timewinesewvice.{thwiftscawa => t}
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class DeviceContextMarshaller @Inject() () {
+@singweton
+c-cwass devicecontextmawshawwew @inject() () {
 
-  def apply(deviceContext: DeviceContext, clientContext: ClientContext): t.DeviceContext = {
-    t.DeviceContext(
-      countryCode = clientContext.countryCode,
-      languageCode = clientContext.languageCode,
-      clientAppId = clientContext.appId,
-      ipAddress = clientContext.ipAddress,
-      guestId = clientContext.guestId,
-      userAgent = clientContext.userAgent,
-      deviceId = clientContext.deviceId,
-      isPolling = deviceContext.isPolling,
-      requestContext = deviceContext.requestContext,
-      referrer = None,
-      tfeAuthHeader = None,
-      mobileDeviceId = clientContext.mobileDeviceId,
-      isSessionStart = None,
-      latestControlAvailable = deviceContext.latestControlAvailable,
-      guestIdMarketing = clientContext.guestIdMarketing,
-      isInternalOrTwoffice = clientContext.isTwoffice,
-      guestIdAds = clientContext.guestIdAds,
-      isUrtRequest = Some(true)
+  def appwy(devicecontext: devicecontext, (˘ω˘) cwientcontext: cwientcontext): t.devicecontext = {
+    t-t.devicecontext(
+      countwycode = cwientcontext.countwycode, (⑅˘꒳˘)
+      w-wanguagecode = cwientcontext.wanguagecode, (///ˬ///✿)
+      c-cwientappid = cwientcontext.appid, 😳😳😳
+      ipaddwess = cwientcontext.ipaddwess, 🥺
+      g-guestid = cwientcontext.guestid, mya
+      usewagent = c-cwientcontext.usewagent, 🥺
+      d-deviceid = cwientcontext.deviceid, >_<
+      ispowwing = devicecontext.ispowwing, >_<
+      wequestcontext = devicecontext.wequestcontext, (⑅˘꒳˘)
+      w-wefewwew = nyone, /(^•ω•^)
+      tfeauthheadew = nyone, rawr x3
+      mobiwedeviceid = c-cwientcontext.mobiwedeviceid,
+      issessionstawt = n-nyone,
+      w-watestcontwowavaiwabwe = d-devicecontext.watestcontwowavaiwabwe, (U ﹏ U)
+      g-guestidmawketing = cwientcontext.guestidmawketing, (U ﹏ U)
+      isintewnawowtwoffice = c-cwientcontext.istwoffice, (⑅˘꒳˘)
+      guestidads = cwientcontext.guestidads, òωó
+      i-isuwtwequest = some(twue)
     )
   }
 }

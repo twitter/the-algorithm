@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.models
+package com.twittew.fowwow_wecommendations.modews
 
-import com.twitter.timelines.configapi.Params
+impowt com.twittew.timewines.configapi.pawams
 
-case class CandidateUserDebugParams(paramsMap: Map[Long, Params])
+c-case cwass candidateusewdebugpawams(pawamsmap: m-map[wong, ^•ﻌ•^ pawams])

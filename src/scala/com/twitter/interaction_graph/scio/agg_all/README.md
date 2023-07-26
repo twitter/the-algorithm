@@ -1,38 +1,38 @@
-## InteractionGraphAggregationJob Dataflow Job
+## intewactiongwaphaggwegationjob datafwow job
 
-This job aggregates the previous day's history with today's activities, and outputs an updated
-history. This history is joined with the explicit scores from real graph's BQML pipeline, and
-exported as features for timelines (which is why we're using their thrift).
+this j-job aggwegates t-the pwevious d-day's histowy with t-today's activities, /(^•ω•^) a-and outputs a-an updated
+histowy. rawr t-this histowy i-is joined with the expwicit scowes fwom weaw gwaph's bqmw pipewine, OwO and
+expowted a-as featuwes fow timewines (which is why we'we u-using theiw thwift). (U ﹏ U)
 
-#### IntelliJ
+#### intewwij
 ```
-fastpass create --name rg_agg_all --intellij src/scala/com/twitter/interaction_graph/scio/agg_all:interaction_graph_aggregation_job_scio
-```
-
-#### Compile
-```
-bazel build src/scala/com/twitter/interaction_graph/scio/agg_all:interaction_graph_aggregation_job_scio
+f-fastpass cweate --name wg_agg_aww --intewwij swc/scawa/com/twittew/intewaction_gwaph/scio/agg_aww:intewaction_gwaph_aggwegation_job_scio
 ```
 
-#### Build Jar
+#### c-compiwe
 ```
-bazel bundle src/scala/com/twitter/interaction_graph/scio/agg_all:interaction_graph_aggregation_job_scio
+bazew b-buiwd swc/scawa/com/twittew/intewaction_gwaph/scio/agg_aww:intewaction_gwaph_aggwegation_job_scio
 ```
 
-#### Run Scheduled Job
+#### b-buiwd jaw
 ```
-export PROJECTID=twttr-recos-ml-prod
-export REGION=us-central1
-export JOB_NAME=interaction-graph-aggregation-dataflow
+bazew bundwe swc/scawa/com/twittew/intewaction_gwaph/scio/agg_aww:intewaction_gwaph_aggwegation_job_scio
+```
 
-bin/d6w schedule \
-  ${PROJECTID}/${REGION}/${JOB_NAME} \
-  src/scala/com/twitter/interaction_graph/scio/agg_all/config.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.project=${PROJECTID} \
-  --bind=profile.region=${REGION} \
-  --bind=profile.job_name=${JOB_NAME} \
-  --bind=profile.environment=prod \
-  --bind=profile.date=2022-11-08 \
-  --bind=profile.output_path=processed/interaction_graph_aggregation_dataflow
+#### wun scheduwed job
+```
+e-expowt pwojectid=twttw-wecos-mw-pwod
+expowt wegion=us-centwaw1
+expowt job_name=intewaction-gwaph-aggwegation-datafwow
+
+bin/d6w scheduwe \
+  ${pwojectid}/${wegion}/${job_name} \
+  s-swc/scawa/com/twittew/intewaction_gwaph/scio/agg_aww/config.d6w \
+  --bind=pwofiwe.usew_name=cassowawy \
+  --bind=pwofiwe.pwoject=${pwojectid} \
+  --bind=pwofiwe.wegion=${wegion} \
+  --bind=pwofiwe.job_name=${job_name} \
+  --bind=pwofiwe.enviwonment=pwod \
+  --bind=pwofiwe.date=2022-11-08 \
+  --bind=pwofiwe.output_path=pwocessed/intewaction_gwaph_aggwegation_datafwow
 ```

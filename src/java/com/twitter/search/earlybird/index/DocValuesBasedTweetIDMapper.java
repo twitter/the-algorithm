@@ -1,149 +1,149 @@
-package com.twitter.search.earlybird.index;
+package com.twittew.seawch.eawwybiwd.index;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.search.DocIdSetIterator;
+i-impowt owg.apache.wucene.index.weafweadew;
+i-impowt owg.apache.wucene.index.numewicdocvawues;
+i-impowt owg.apache.wucene.seawch.docidsetitewatow;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.util.analysis.SortableLongTermAttributeImpl;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldIndex;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants;
+i-impowt com.twittew.seawch.common.utiw.anawysis.sowtabwewongtewmattwibuteimpw;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.docidtotweetidmappew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.cowumn.cowumnstwidefiewdindex;
 
 /**
- * A few caveats when using this class:
- *   - Before actually using this class, one must call prepareToRead() with a Lucene AtomicReader
- *   - prepareToRead() will load docID to tweetID mapping into memory, if not already done.
+ * a f-few caveats when using this cwass:
+ *   - b-befowe actuawwy using this cwass, :3 one must caww pwepawetowead() w-with a wucene atomicweadew
+ *   - p-pwepawetowead() w-wiww woad docid to tweetid mapping into memowy, ʘwʘ if not awweady done. 🥺
  */
-public class DocValuesBasedTweetIDMapper extends TweetIDMapper implements Flushable {
-  private LeafReader reader;
-  private ColumnStrideFieldIndex docValues;
+p-pubwic cwass docvawuesbasedtweetidmappew extends tweetidmappew impwements fwushabwe {
+  p-pwivate weafweadew w-weadew;
+  pwivate c-cowumnstwidefiewdindex d-docvawues;
 
   /**
-   * When indexing finishes, this method should be called with a index reader that
-   * can see all documents.
-   * @param leafReader Lucene index reader used to access TweetID to internal ID mapping
+   * w-when indexing finishes, this method shouwd be cawwed w-with a index weadew that
+   * can see aww documents. >_<
+   * @pawam w-weafweadew wucene index weadew used to access tweetid to intewnaw id mapping
    */
-  public void initializeWithLuceneReader(LeafReader leafReader, ColumnStrideFieldIndex csf)
-      throws IOException {
-    reader = Preconditions.checkNotNull(leafReader);
-    docValues = Preconditions.checkNotNull(csf);
+  pubwic v-void initiawizewithwuceneweadew(weafweadew weafweadew, ʘwʘ c-cowumnstwidefiewdindex c-csf)
+      thwows i-ioexception {
+    weadew = pweconditions.checknotnuww(weafweadew);
+    docvawues = pweconditions.checknotnuww(csf);
 
-    NumericDocValues onDiskDocValues = reader.getNumericDocValues(
-        EarlybirdFieldConstants.EarlybirdFieldConstant.ID_CSF_FIELD.getFieldName());
-    for (int i = 0; i < reader.maxDoc(); ++i) {
-      Preconditions.checkArgument(onDiskDocValues.advanceExact(i));
-      docValues.setValue(i, onDiskDocValues.longValue());
+    n-nyumewicdocvawues o-ondiskdocvawues = weadew.getnumewicdocvawues(
+        eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.id_csf_fiewd.getfiewdname());
+    f-fow (int i = 0; i-i < weadew.maxdoc(); ++i) {
+      pweconditions.checkawgument(ondiskdocvawues.advanceexact(i));
+      d-docvawues.setvawue(i, (˘ω˘) ondiskdocvawues.wongvawue());
     }
 
-    // In the archive, tweets are always sorted in descending order of tweet ID.
-    setMinTweetID(docValues.get(reader.maxDoc() - 1));
-    setMaxTweetID(docValues.get(0));
-    setMinDocID(0);
-    setMaxDocID(reader.maxDoc() - 1);
-    setNumDocs(reader.maxDoc());
+    // i-in the awchive, (✿oωo) tweets awe awways sowted i-in descending owdew of tweet i-id. (///ˬ///✿)
+    setmintweetid(docvawues.get(weadew.maxdoc() - 1));
+    setmaxtweetid(docvawues.get(0));
+    s-setmindocid(0);
+    s-setmaxdocid(weadew.maxdoc() - 1);
+    setnumdocs(weadew.maxdoc());
   }
 
-  @Override
-  public int getDocID(long tweetID) throws IOException {
-    int docId = DocValuesHelper.getFirstDocIdWithValue(
-        reader,
-        EarlybirdFieldConstants.EarlybirdFieldConstant.ID_FIELD.getFieldName(),
-        SortableLongTermAttributeImpl.copyIntoNewBytesRef(tweetID));
-    if (docId == DocIdSetIterator.NO_MORE_DOCS) {
-      return ID_NOT_FOUND;
+  @ovewwide
+  pubwic int getdocid(wong tweetid) thwows ioexception {
+    int docid = docvawueshewpew.getfiwstdocidwithvawue(
+        w-weadew, rawr x3
+        e-eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.id_fiewd.getfiewdname(), -.-
+        sowtabwewongtewmattwibuteimpw.copyintonewbyteswef(tweetid));
+    i-if (docid == d-docidsetitewatow.no_mowe_docs) {
+      w-wetuwn id_not_found;
     }
-    return docId;
+    wetuwn docid;
   }
 
-  @Override
-  protected int getNextDocIDInternal(int docID) {
-    // The doc IDs are consecutive and TweetIDMapper already checked the boundary conditions.
-    return docID + 1;
+  @ovewwide
+  p-pwotected int getnextdocidintewnaw(int docid) {
+    // the doc ids awe consecutive and t-tweetidmappew awweady checked t-the boundawy conditions. ^^
+    w-wetuwn d-docid + 1;
   }
 
-  @Override
-  protected int getPreviousDocIDInternal(int docID) {
-    // The doc IDs are consecutive and TweetIDMapper already checked the boundary conditions.
-    return docID - 1;
+  @ovewwide
+  pwotected int g-getpweviousdocidintewnaw(int d-docid) {
+    // t-the d-doc ids awe consecutive and tweetidmappew awweady c-checked the b-boundawy conditions. (⑅˘꒳˘)
+    w-wetuwn d-docid - 1;
   }
 
-  @Override
-  public long getTweetID(int internalID) {
-    if (internalID < 0 || internalID > getMaxDocID()) {
-      return ID_NOT_FOUND;
+  @ovewwide
+  p-pubwic wong gettweetid(int intewnawid) {
+    if (intewnawid < 0 || i-intewnawid > getmaxdocid()) {
+      wetuwn id_not_found;
     }
-    return docValues.get(internalID);
+    wetuwn docvawues.get(intewnawid);
   }
 
-  @Override
-  protected int addMappingInternal(long tweetID) {
-    throw new UnsupportedOperationException(
-        "ArchiveTweetIDMapper should be written through Lucene instead of TweetIDMappingWriter");
+  @ovewwide
+  pwotected int addmappingintewnaw(wong tweetid) {
+    thwow n-nyew unsuppowtedopewationexception(
+        "awchivetweetidmappew shouwd be wwitten thwough wucene instead of t-tweetidmappingwwitew");
   }
 
-  @Override
-  protected final int findDocIDBoundInternal(long tweetID,
-                                             boolean findMaxDocID) throws IOException {
-    // TermsEnum has a seekCeil() method, but doesn't have a seekFloor() method, so the best we can
-    // do here is ignore findLow and always return the ceiling if the tweet ID cannot be found.
-    // However, in practice, we do a seekExact() in both cases: see the inner classes in
-    // com.twitter.search.core.earlybird.index.inverted.RealtimeIndexTerms.
-    int docId = DocValuesHelper.getLargestDocIdWithCeilOfValue(
-        reader,
-        EarlybirdFieldConstants.EarlybirdFieldConstant.ID_FIELD.getFieldName(),
-        SortableLongTermAttributeImpl.copyIntoNewBytesRef(tweetID));
-    if (docId == DocIdSetIterator.NO_MORE_DOCS) {
-      return ID_NOT_FOUND;
-    }
-
-    // The docId is the upper bound of the search, so if we want the lower bound,
-    // because doc IDs are dense, we subtract one.
-    return findMaxDocID ? docId : docId - 1;
-  }
-
-  @Override
-  public DocIDToTweetIDMapper optimize() {
-    // DocValuesBasedTweetIDMapper instances are not flushed or loaded,
-    // so their optimization is a no-op.
-    return this;
-  }
-
-  @Override
-  public Flushable.Handler<DocValuesBasedTweetIDMapper> getFlushHandler() {
-    // EarlybirdIndexSegmentData will still try to flush the DocValuesBasedTweetIDMapper
-    // for the respective segment, so we need to pass in a DocValuesBasedTweetIDMapper instance to
-    // this flusher: otherwise, Flushable.Handler.flush() will throw a NullPointerException.
-    return new FlushHandler(new DocValuesBasedTweetIDMapper());
-  }
-
-  // Full archive earlybirds don't actually flush or load the DocValuesBasedTweetIDMapper. This is
-  // why doFlush() is a no-op, and doLoad() returns a new DocValuesBasedTweetIDMapper instance
-  // (initializeWithLuceneReader() will be called at load time to initialize this new
-  // DocValuesBasedTweetIDMapper instance).
-  public static class FlushHandler extends Flushable.Handler<DocValuesBasedTweetIDMapper> {
-    public FlushHandler() {
-      super();
+  @ovewwide
+  p-pwotected f-finaw int finddocidboundintewnaw(wong t-tweetid,
+                                             boowean findmaxdocid) t-thwows i-ioexception {
+    // tewmsenum has a seekceiw() method, nyaa~~ but doesn't have a seekfwoow() method, /(^•ω•^) so t-the best we can
+    // do hewe i-is ignowe findwow and awways wetuwn t-the ceiwing i-if the tweet id cannot be found. (U ﹏ U)
+    // howevew, 😳😳😳 i-in pwactice, >w< we d-do a seekexact() in both cases: s-see the innew c-cwasses in
+    // com.twittew.seawch.cowe.eawwybiwd.index.invewted.weawtimeindextewms. XD
+    int docid = docvawueshewpew.getwawgestdocidwithceiwofvawue(
+        weadew, o.O
+        eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.id_fiewd.getfiewdname(), mya
+        sowtabwewongtewmattwibuteimpw.copyintonewbyteswef(tweetid));
+    if (docid == docidsetitewatow.no_mowe_docs) {
+      w-wetuwn id_not_found;
     }
 
-    public FlushHandler(DocValuesBasedTweetIDMapper objectToFlush) {
-      super(objectToFlush);
+    // t-the docid i-is the uppew bound of the seawch, 🥺 s-so if we want t-the wowew bound, ^^;;
+    // because d-doc ids awe dense, :3 we subtwact one. (U ﹏ U)
+    wetuwn findmaxdocid ? docid : docid - 1;
+  }
+
+  @ovewwide
+  p-pubwic docidtotweetidmappew o-optimize() {
+    // docvawuesbasedtweetidmappew instances awe nyot f-fwushed ow woaded, OwO
+    // s-so theiw optimization is a nyo-op. 😳😳😳
+    wetuwn this;
+  }
+
+  @ovewwide
+  p-pubwic fwushabwe.handwew<docvawuesbasedtweetidmappew> getfwushhandwew() {
+    // eawwybiwdindexsegmentdata wiww stiww twy to fwush the docvawuesbasedtweetidmappew
+    // fow t-the wespective segment, (ˆ ﻌ ˆ)♡ so we nyeed to pass in a-a docvawuesbasedtweetidmappew i-instance to
+    // this fwushew: othewwise, XD fwushabwe.handwew.fwush() wiww thwow a-a nyuwwpointewexception. (ˆ ﻌ ˆ)♡
+    w-wetuwn new fwushhandwew(new docvawuesbasedtweetidmappew());
+  }
+
+  // fuww awchive e-eawwybiwds don't actuawwy fwush o-ow woad the docvawuesbasedtweetidmappew. ( ͡o ω ͡o ) this is
+  // why dofwush() is a nyo-op, rawr x3 a-and dowoad() wetuwns a nyew docvawuesbasedtweetidmappew i-instance
+  // (initiawizewithwuceneweadew() w-wiww be cawwed at woad time t-to initiawize this nyew
+  // docvawuesbasedtweetidmappew i-instance). nyaa~~
+  p-pubwic static c-cwass fwushhandwew extends f-fwushabwe.handwew<docvawuesbasedtweetidmappew> {
+    p-pubwic fwushhandwew() {
+      supew();
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) {
+    pubwic fwushhandwew(docvawuesbasedtweetidmappew o-objecttofwush) {
+      supew(objecttofwush);
     }
 
-    @Override
-    protected DocValuesBasedTweetIDMapper doLoad(FlushInfo flushInfo, DataDeserializer in) {
-      return new DocValuesBasedTweetIDMapper();
+    @ovewwide
+    p-pwotected v-void dofwush(fwushinfo fwushinfo, >_< datasewiawizew out) {
+    }
+
+    @ovewwide
+    p-pwotected docvawuesbasedtweetidmappew dowoad(fwushinfo f-fwushinfo, ^^;; datadesewiawizew i-in) {
+      wetuwn nyew docvawuesbasedtweetidmappew();
     }
   }
 }

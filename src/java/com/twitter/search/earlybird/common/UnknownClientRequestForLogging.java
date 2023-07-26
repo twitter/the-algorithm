@@ -1,77 +1,77 @@
-package com.twitter.search.earlybird.common;
+package com.twittew.seawch.eawwybiwd.common;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.thrift.TException;
-import org.apache.thrift.TSerializer;
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.slf4j.Logger;
+impowt o-owg.apache.commons.codec.binawy.base64;
+i-impowt o-owg.apache.thwift.texception;
+i-impowt owg.apache.thwift.tsewiawizew;
+i-impowt owg.apache.thwift.pwotocow.tbinawypwotocow;
+i-impowt o-owg.swf4j.woggew;
 
-import com.twitter.search.common.util.FinagleUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
+i-impowt com.twittew.seawch.common.utiw.finagweutiw;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
 
 /**
- * This class logs all requests that misses either the finagle Id or the client Id.
+ * this cwass wogs aww wequests that misses e-eithew the finagwe id ow the cwient id. >w<
  */
-public final class UnknownClientRequestForLogging {
-  private static final Logger GENERAL_LOG = org.slf4j.LoggerFactory.getLogger(
-      UnknownClientRequestForLogging.class);
-  private static final Logger LOG = org.slf4j.LoggerFactory.getLogger(
-      UnknownClientRequestForLogging.class.getName() + ".unknownClientRequests");
+p-pubwic finaw cwass unknowncwientwequestfowwogging {
+  p-pwivate static finaw woggew genewaw_wog = owg.swf4j.woggewfactowy.getwoggew(
+      u-unknowncwientwequestfowwogging.cwass);
+  pwivate static f-finaw woggew wog = o-owg.swf4j.woggewfactowy.getwoggew(
+      unknowncwientwequestfowwogging.cwass.getname() + ".unknowncwientwequests");
 
-  private final String logLine;
-  private final EarlybirdRequest request;
-  private final String clientId;
-  private final String finagleId;
+  pwivate finaw stwing wogwine;
+  pwivate f-finaw eawwybiwdwequest wequest;
+  pwivate finaw stwing cwientid;
+  pwivate f-finaw stwing finagweid;
 
-  private final Base64 base64 = new Base64();
-  private final TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
+  pwivate f-finaw base64 b-base64 = nyew base64();
+  p-pwivate f-finaw tsewiawizew sewiawizew = nyew tsewiawizew(new t-tbinawypwotocow.factowy());
 
-  private UnknownClientRequestForLogging(
-      String logLine,
-      EarlybirdRequest request,
-      String clientId,
-      String finagleId) {
+  pwivate unknowncwientwequestfowwogging(
+      stwing wogwine, rawr
+      e-eawwybiwdwequest wequest, 😳
+      stwing cwientid, >w<
+      stwing finagweid) {
 
-    this.logLine = logLine;
-    this.request = request;
-    this.clientId = clientId;
-    this.finagleId = finagleId;
+    this.wogwine = w-wogwine;
+    this.wequest = w-wequest;
+    t-this.cwientid = c-cwientid;
+    this.finagweid = finagweid;
   }
 
   /**
-   * Returns an UnknownClientRequestForLogging instance if a client ID is not set on the given
-   * earlybird request. If the request has a client ID set, {@code null} is returned.
+   * wetuwns an unknowncwientwequestfowwogging i-instance if a-a cwient id is nyot set on the g-given
+   * eawwybiwd w-wequest. (⑅˘꒳˘) if the wequest has a-a cwient id set, {@code nyuww} i-is wetuwned. OwO
    *
-   * @param logLine Additional information to propagate to the log file, when logging this request.
-   * @param request The earlybird request.
+   * @pawam wogwine additionaw i-infowmation to pwopagate to the w-wog fiwe, (ꈍᴗꈍ) when wogging this wequest. 😳
+   * @pawam w-wequest the eawwybiwd w-wequest. 😳😳😳
    */
-  public static UnknownClientRequestForLogging unknownClientRequest(
-      String logLine, EarlybirdRequest request) {
-    String clientId = ClientIdUtil.getClientIdFromRequest(request);
-    String finagleId = FinagleUtil.getFinagleClientName();
+  pubwic static unknowncwientwequestfowwogging unknowncwientwequest(
+      stwing wogwine, mya eawwybiwdwequest wequest) {
+    s-stwing cwientid = c-cwientidutiw.getcwientidfwomwequest(wequest);
+    stwing finagweid = f-finagweutiw.getfinagwecwientname();
 
-    if (clientId.equals(ClientIdUtil.UNSET_CLIENT_ID)) {
-      return new UnknownClientRequestForLogging(logLine, request, clientId, finagleId);
-    } else {
-      return null;
+    i-if (cwientid.equaws(cwientidutiw.unset_cwient_id)) {
+      w-wetuwn nyew unknowncwientwequestfowwogging(wogwine, mya wequest, cwientid, (⑅˘꒳˘) finagweid);
+    } e-ewse {
+      wetuwn nyuww;
     }
   }
 
-  private String asBase64() {
-    try {
-      // Need to make a deepCopy() here, because the request may still be in use (e.g. if we are
-      // doing this in the pre-logger), and we should not be modifying crucial fields on the
-      // EarlybirdRequest in place.
-      EarlybirdRequest clearedRequest = request.deepCopy();
-      clearedRequest.unsetClientRequestTimeMs();
-      return base64.encodeToString(serializer.serialize(clearedRequest));
-    } catch (TException e) {
-      GENERAL_LOG.error("Failed to serialize request for logging.", e);
-      return "failed_to_serialize";
+  pwivate stwing asbase64() {
+    twy {
+      // n-nyeed to make a deepcopy() h-hewe, (U ﹏ U) because t-the wequest m-may stiww be in use (e.g. mya if we a-awe
+      // doing t-this in the p-pwe-woggew), and w-we shouwd nyot be modifying cwuciaw fiewds on t-the
+      // eawwybiwdwequest i-in p-pwace. ʘwʘ
+      eawwybiwdwequest cweawedwequest = w-wequest.deepcopy();
+      c-cweawedwequest.unsetcwientwequesttimems();
+      wetuwn base64.encodetostwing(sewiawizew.sewiawize(cweawedwequest));
+    } catch (texception e-e) {
+      genewaw_wog.ewwow("faiwed to sewiawize wequest fow wogging.", e);
+      wetuwn "faiwed_to_sewiawize";
     }
   }
 
-  public void log() {
-    LOG.info("{},{},{},{}", clientId, finagleId, logLine, asBase64());
+  p-pubwic void wog() {
+    wog.info("{},{},{},{}", (˘ω˘) cwientid, (U ﹏ U) finagweid, wogwine, ^•ﻌ•^ a-asbase64());
   }
 }

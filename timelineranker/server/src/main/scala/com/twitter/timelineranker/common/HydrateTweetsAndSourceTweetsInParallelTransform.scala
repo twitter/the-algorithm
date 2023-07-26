@@ -1,30 +1,30 @@
-package com.twitter.timelineranker.common
+package com.twittew.timewinewankew.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.util.Future
+impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.timewinewankew.cowe.candidateenvewope
+i-impowt c-com.twittew.utiw.futuwe
 
 /**
- * Transform that explicitly hydrates candidate tweets and fetches source tweets in parallel
- * and then joins the results back into the original Envelope
- * @param candidateTweetHydration Pipeline that hydrates candidate tweets
- * @param sourceTweetHydration Pipeline that fetches and hydrates source tweets
+ * t-twansfowm that e-expwicitwy hydwates c-candidate t-tweets and fetches souwce tweets in pawawwew
+ * and then joins the wesuwts back i-into the owiginaw envewope
+ * @pawam candidatetweethydwation p-pipewine that hydwates c-candidate tweets
+ * @pawam souwcetweethydwation pipewine that fetches and hydwates s-souwce tweets
  */
-class HydrateTweetsAndSourceTweetsInParallelTransform(
-  candidateTweetHydration: FutureArrow[CandidateEnvelope, CandidateEnvelope],
-  sourceTweetHydration: FutureArrow[CandidateEnvelope, CandidateEnvelope])
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    Future
+cwass h-hydwatetweetsandsouwcetweetsinpawawwewtwansfowm(
+  c-candidatetweethydwation: futuweawwow[candidateenvewope, (⑅˘꒳˘) candidateenvewope], (///ˬ///✿)
+  souwcetweethydwation: futuweawwow[candidateenvewope, 😳😳😳 c-candidateenvewope])
+    extends futuweawwow[candidateenvewope, 🥺 candidateenvewope] {
+  ovewwide d-def appwy(envewope: candidateenvewope): f-futuwe[candidateenvewope] = {
+    futuwe
       .join(
-        candidateTweetHydration(envelope),
-        sourceTweetHydration(envelope)
+        c-candidatetweethydwation(envewope), mya
+        s-souwcetweethydwation(envewope)
       ).map {
-        case (candidateTweetEnvelope, sourceTweetEnvelope) =>
-          envelope.copy(
-            hydratedTweets = candidateTweetEnvelope.hydratedTweets,
-            sourceSearchResults = sourceTweetEnvelope.sourceSearchResults,
-            sourceHydratedTweets = sourceTweetEnvelope.sourceHydratedTweets
+        c-case (candidatetweetenvewope, 🥺 souwcetweetenvewope) =>
+          envewope.copy(
+            h-hydwatedtweets = candidatetweetenvewope.hydwatedtweets, >_<
+            souwceseawchwesuwts = s-souwcetweetenvewope.souwceseawchwesuwts, >_<
+            souwcehydwatedtweets = souwcetweetenvewope.souwcehydwatedtweets
           )
       }
   }

@@ -1,96 +1,96 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.twittew.home_mixew.functionaw_component.featuwe_hydwatow
 
-import com.twitter.gizmoduck.{thriftscala => gt}
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.FavoritedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.FollowedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.RealNamesFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScreenNamesFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableNahFeedbackInfoParam
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.gizmoduck.Gizmoduck
-import com.twitter.util.Return
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.gizmoduck.{thwiftscawa => g-gt}
+impowt com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.favowitedbyusewidsfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.fowwowedbyusewidsfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.weawnamesfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.scweennamesfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.souwceusewidfeatuwe
+impowt com.twittew.home_mixew.modew.wequest.fowwowingpwoduct
+impowt com.twittew.home_mixew.pawam.homegwobawpawams.enabwenahfeedbackinfopawam
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.conditionawwy
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stitch.gizmoduck.gizmoduck
+impowt com.twittew.utiw.wetuwn
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-protected case class ProfileNames(screenName: String, realName: String)
+p-pwotected case cwass pwofiwenames(scweenname: stwing, >_< weawname: stwing)
 
-@Singleton
-class NamesFeatureHydrator @Inject() (gizmoduck: Gizmoduck)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate]
-    with Conditionally[PipelineQuery] {
+@singweton
+cwass n-nyamesfeatuwehydwatow @inject() (gizmoduck: gizmoduck)
+    e-extends buwkcandidatefeatuwehydwatow[pipewinequewy, >w< t-tweetcandidate]
+    w-with conditionawwy[pipewinequewy] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("Names")
+  ovewwide v-vaw identifiew: featuwehydwatowidentifiew = featuwehydwatowidentifiew("names")
 
-  override val features: Set[Feature[_, _]] = Set(ScreenNamesFeature, RealNamesFeature)
+  o-ovewwide vaw featuwes: set[featuwe[_, rawr _]] = s-set(scweennamesfeatuwe, 😳 weawnamesfeatuwe)
 
-  override def onlyIf(query: PipelineQuery): Boolean = query.product match {
-    case FollowingProduct => query.params(EnableNahFeedbackInfoParam)
-    case _ => true
+  ovewwide def onwyif(quewy: pipewinequewy): boowean = quewy.pwoduct m-match {
+    case fowwowingpwoduct => q-quewy.pawams(enabwenahfeedbackinfopawam)
+    c-case _ => t-twue
   }
 
-  private val queryFields: Set[gt.QueryFields] = Set(gt.QueryFields.Profile)
+  pwivate vaw quewyfiewds: set[gt.quewyfiewds] = set(gt.quewyfiewds.pwofiwe)
 
   /**
-   * The UI currently only ever displays the first 2 names in social context lines
-   * E.g. "User and 3 others like" or "UserA and UserB liked"
+   * t-the ui cuwwentwy o-onwy evew dispways the fiwst 2 n-nyames in sociaw c-context wines
+   * e.g. >w< "usew a-and 3 othews wike" ow "usewa a-and usewb wiked"
    */
-  private val MaxCountUsers = 2
+  pwivate vaw maxcountusews = 2
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
+  o-ovewwide def appwy(
+    q-quewy: pipewinequewy, (⑅˘꒳˘)
+    candidates: s-seq[candidatewithfeatuwes[tweetcandidate]]
+  ): s-stitch[seq[featuwemap]] = {
 
-    val candidateUserIdsMap = candidates.map { candidate =>
+    vaw candidateusewidsmap = candidates.map { candidate =>
       candidate.candidate.id ->
-        (candidate.features.getOrElse(FavoritedByUserIdsFeature, Nil).take(MaxCountUsers) ++
-          candidate.features.getOrElse(FollowedByUserIdsFeature, Nil).take(MaxCountUsers) ++
-          candidate.features.getOrElse(AuthorIdFeature, None) ++
-          candidate.features.getOrElse(SourceUserIdFeature, None)).distinct
-    }.toMap
+        (candidate.featuwes.getowewse(favowitedbyusewidsfeatuwe, OwO nyiw).take(maxcountusews) ++
+          candidate.featuwes.getowewse(fowwowedbyusewidsfeatuwe, (ꈍᴗꈍ) n-nyiw).take(maxcountusews) ++
+          c-candidate.featuwes.getowewse(authowidfeatuwe, 😳 nyone) ++
+          c-candidate.featuwes.getowewse(souwceusewidfeatuwe, 😳😳😳 n-nyone)).distinct
+    }.tomap
 
-    val distinctUserIds = candidateUserIdsMap.values.flatten.toSeq.distinct
+    v-vaw distinctusewids = candidateusewidsmap.vawues.fwatten.toseq.distinct
 
-    Stitch
-      .collectToTry(distinctUserIds.map(userId => gizmoduck.getUserById(userId, queryFields)))
-      .map { allUsers =>
-        val idToProfileNamesMap = allUsers.flatMap {
-          case Return(allUser) =>
-            allUser.profile
-              .map(profile => allUser.id -> ProfileNames(profile.screenName, profile.name))
-          case _ => None
-        }.toMap
+    stitch
+      .cowwecttotwy(distinctusewids.map(usewid => g-gizmoduck.getusewbyid(usewid, mya quewyfiewds)))
+      .map { awwusews =>
+        vaw idtopwofiwenamesmap = awwusews.fwatmap {
+          c-case wetuwn(awwusew) =>
+            awwusew.pwofiwe
+              .map(pwofiwe => a-awwusew.id -> p-pwofiwenames(pwofiwe.scweenname, mya p-pwofiwe.name))
+          case _ => nyone
+        }.tomap
 
-        val validUserIds = idToProfileNamesMap.keySet
+        v-vaw v-vawidusewids = idtopwofiwenamesmap.keyset
 
-        candidates.map { candidate =>
-          val combinedMap = candidateUserIdsMap
-            .getOrElse(candidate.candidate.id, Nil)
-            .flatMap {
-              case userId if validUserIds.contains(userId) =>
-                idToProfileNamesMap.get(userId).map(profileNames => userId -> profileNames)
-              case _ => None
+        c-candidates.map { c-candidate =>
+          vaw combinedmap = candidateusewidsmap
+            .getowewse(candidate.candidate.id, (⑅˘꒳˘) n-nyiw)
+            .fwatmap {
+              c-case u-usewid if vawidusewids.contains(usewid) =>
+                i-idtopwofiwenamesmap.get(usewid).map(pwofiwenames => usewid -> p-pwofiwenames)
+              case _ => nyone
             }
 
-          val perCandidateRealNameMap = combinedMap.map { case (k, v) => k -> v.realName }.toMap
-          val perCandidateScreenNameMap = combinedMap.map { case (k, v) => k -> v.screenName }.toMap
+          vaw pewcandidateweawnamemap = c-combinedmap.map { case (k, (U ﹏ U) v) => k -> v.weawname }.tomap
+          vaw pewcandidatescweennamemap = combinedmap.map { case (k, mya v) => k-k -> v.scweenname }.tomap
 
-          FeatureMapBuilder()
-            .add(ScreenNamesFeature, perCandidateScreenNameMap)
-            .add(RealNamesFeature, perCandidateRealNameMap)
-            .build()
+          featuwemapbuiwdew()
+            .add(scweennamesfeatuwe, pewcandidatescweennamemap)
+            .add(weawnamesfeatuwe, ʘwʘ pewcandidateweawnamemap)
+            .buiwd()
         }
       }
   }

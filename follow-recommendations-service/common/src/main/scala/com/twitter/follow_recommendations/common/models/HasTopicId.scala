@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-trait HasTopicId {
-  def topicId: Long
+twait hastopicid {
+  d-def t-topicid: wong
 }

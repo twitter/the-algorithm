@@ -1,15 +1,15 @@
-package com.twitter.timelineranker.common
+package com.twittew.timewinewankew.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.util.Future
+impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.timewinewankew.cowe.candidateenvewope
+i-impowt c-com.twittew.timewinewankew.modew.wecapquewy
+i-impowt com.twittew.utiw.futuwe
 
 /**
- * Create a CandidateEnvelope based on the incoming RecapQuery
+ * c-cweate a c-candidateenvewope b-based on the incoming wecapquewy
  */
-object CreateCandidateEnvelopeTransform extends FutureArrow[RecapQuery, CandidateEnvelope] {
-  override def apply(query: RecapQuery): Future[CandidateEnvelope] = {
-    Future.value(CandidateEnvelope(query))
+object cweatecandidateenvewopetwansfowm extends futuweawwow[wecapquewy, σωσ candidateenvewope] {
+  ovewwide def a-appwy(quewy: wecapquewy): futuwe[candidateenvewope] = {
+    futuwe.vawue(candidateenvewope(quewy))
   }
 }

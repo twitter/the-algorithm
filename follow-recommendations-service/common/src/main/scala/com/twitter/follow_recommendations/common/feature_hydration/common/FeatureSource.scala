@@ -1,23 +1,23 @@
-package com.twitter.follow_recommendations.common.feature_hydration.common
+package com.twittew.fowwow_wecommendations.common.featuwe_hydwation.common
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.hasdispwaywocation
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.hassimiwawtocontext
+i-impowt com.twittew.mw.api.datawecowd
+i-impowt c-com.twittew.mw.api.featuwecontext
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.configapi.haspawams
 
-trait FeatureSource {
-  def id: FeatureSourceId
-  def featureContext: FeatureContext
-  def hydrateFeatures(
-    target: HasClientContext
-      with HasPreFetchedFeature
-      with HasParams
-      with HasSimilarToContext
-      with HasDisplayLocation,
-    candidates: Seq[CandidateUser]
-  ): Stitch[Map[CandidateUser, DataRecord]]
+twait featuwesouwce {
+  d-def id: featuwesouwceid
+  def featuwecontext: f-featuwecontext
+  def hydwatefeatuwes(
+    t-tawget: hascwientcontext
+      with haspwefetchedfeatuwe
+      with haspawams
+      w-with hassimiwawtocontext
+      w-with h-hasdispwaywocation, :3
+    candidates: seq[candidateusew]
+  ): stitch[map[candidateusew, 😳😳😳 datawecowd]]
 }

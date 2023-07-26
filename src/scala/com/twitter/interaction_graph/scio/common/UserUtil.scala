@@ -1,76 +1,76 @@
-package com.twitter.interaction_graph.scio.common
+package com.twittew.intewaction_gwaph.scio.common
 
-import com.spotify.scio.coders.Coder
-import com.spotify.scio.values.SCollection
-import com.twitter.twadoop.user.gen.thriftscala.CombinedUser
-import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
+impowt com.spotify.scio.codews.codew
+i-impowt com.spotify.scio.vawues.scowwection
+i-impowt com.twittew.twadoop.usew.gen.thwiftscawa.combinedusew
+impowt c-com.twittew.usewsouwce.snapshot.fwat.thwiftscawa.fwatusew
 
-object UserUtil {
+o-object usewutiw {
 
   /**
-   * placeholder for the destId when representing vertex features with no dest (eg create tweet)
-   * this will only be aggregated and saved in the vertex datasets but not the edge datasets
+   * pwacehowdew f-fow the d-destid when wepwesenting v-vewtex f-featuwes with nyo dest (eg cweate tweet)
+   * this wiww onwy be aggwegated and s-saved in the vewtex datasets but nyot the edge d-datasets
    */
-  val DUMMY_USER_ID = -1L
-  def getValidUsers(users: SCollection[CombinedUser]): SCollection[Long] = {
-    users
-      .flatMap { u =>
-        for {
-          user <- u.user
-          if user.id != 0
-          safety <- user.safety
-          if !(safety.suspended || safety.deactivated || safety.restricted ||
-            safety.nsfwUser || safety.nsfwAdmin || safety.erased)
-        } yield {
-          user.id
+  vaw dummy_usew_id = -1w
+  d-def getvawidusews(usews: scowwection[combinedusew]): scowwection[wong] = {
+    u-usews
+      .fwatmap { u =>
+        fow {
+          usew <- u-u.usew
+          i-if usew.id != 0
+          safety <- usew.safety
+          if !(safety.suspended || safety.deactivated || safety.westwicted ||
+            s-safety.nsfwusew || safety.nsfwadmin || safety.ewased)
+        } yiewd {
+          usew.id
         }
       }
   }
 
-  def getValidFlatUsers(users: SCollection[FlatUser]): SCollection[Long] = {
-    users
-      .flatMap { u =>
-        for {
+  d-def getvawidfwatusews(usews: scowwection[fwatusew]): s-scowwection[wong] = {
+    u-usews
+      .fwatmap { u-u =>
+        f-fow {
           id <- u.id
-          if id != 0 && u.validUser.contains(true)
-        } yield {
+          if i-id != 0 && u.vawidusew.contains(twue)
+        } yiewd {
           id
         }
       }
   }
 
-  def getInvalidUsers(users: SCollection[FlatUser]): SCollection[Long] = {
-    users
-      .flatMap { user =>
-        for {
-          valid <- user.validUser
-          if !valid
-          id <- user.id
-        } yield id
+  d-def getinvawidusews(usews: scowwection[fwatusew]): scowwection[wong] = {
+    usews
+      .fwatmap { usew =>
+        f-fow {
+          vawid <- usew.vawidusew
+          i-if !vawid
+          i-id <- usew.id
+        } y-yiewd id
       }
   }
 
-  def filterUsersByIdMapping[T: Coder](
-    input: SCollection[T],
-    usersToBeFiltered: SCollection[Long],
-    userIdMapping: T => Long
-  ): SCollection[T] = {
+  def fiwtewusewsbyidmapping[t: codew](
+    input: scowwection[t], (˘ω˘)
+    u-usewstobefiwtewed: s-scowwection[wong], ^^
+    usewidmapping: t-t => wong
+  ): s-scowwection[t] = {
     input
-      .withName("filter users by id")
-      .keyBy(userIdMapping(_))
-      .leftOuterJoin[Long](usersToBeFiltered.map(x => (x, x)))
-      .collect {
-        // only return data if the key is not in the list of usersToBeFiltered
-        case (_, (data, None)) => data
+      .withname("fiwtew u-usews by id")
+      .keyby(usewidmapping(_))
+      .weftoutewjoin[wong](usewstobefiwtewed.map(x => (x, :3 x-x)))
+      .cowwect {
+        // onwy wetuwn data if the key is n-not in the wist of usewstobefiwtewed
+        c-case (_, -.- (data, 😳 nyone)) => d-data
       }
   }
 
-  def filterUsersByMultipleIdMappings[T: Coder](
-    input: SCollection[T],
-    usersToBeFiltered: SCollection[Long],
-    userIdMappings: Seq[T => Long]
-  ): SCollection[T] = {
-    userIdMappings.foldLeft(input)((data, mapping) =>
-      filterUsersByIdMapping(data, usersToBeFiltered, mapping))
+  d-def fiwtewusewsbymuwtipweidmappings[t: codew](
+    input: scowwection[t], mya
+    usewstobefiwtewed: scowwection[wong], (˘ω˘)
+    usewidmappings: s-seq[t => wong]
+  ): s-scowwection[t] = {
+    usewidmappings.fowdweft(input)((data, >_< m-mapping) =>
+      f-fiwtewusewsbyidmapping(data, -.- u-usewstobefiwtewed, 🥺 mapping))
   }
 }

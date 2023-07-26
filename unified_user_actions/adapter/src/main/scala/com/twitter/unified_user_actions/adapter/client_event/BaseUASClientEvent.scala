@@ -1,62 +1,62 @@
-package com.twitter.unified_user_actions.adapter.client_event
+package com.twittew.unified_usew_actions.adaptew.cwient_event
 
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.clientapp.thriftscala.{Item => LogEventItem}
-import com.twitter.logbase.thriftscala.LogBase
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import com.twitter.unified_user_actions.thriftscala._
+impowt c-com.twittew.cwientapp.thwiftscawa.wogevent
+i-impowt com.twittew.cwientapp.thwiftscawa.{item => w-wogeventitem}
+i-impowt com.twittew.wogbase.thwiftscawa.wogbase
+impowt c-com.twittew.unified_usew_actions.thwiftscawa.actiontype
+i-impowt c-com.twittew.unified_usew_actions.thwiftscawa.unifiedusewaction
+i-impowt com.twittew.unified_usew_actions.thwiftscawa._
 
-abstract class BaseUASClientEvent(actionType: ActionType)
-    extends BaseClientEvent(actionType = actionType) {
+abstwact cwass baseuascwientevent(actiontype: actiontype)
+    extends b-basecwientevent(actiontype = actiontype) {
 
-  override def toUnifiedUserAction(logEvent: LogEvent): Seq[UnifiedUserAction] = {
-    val logBase: Option[LogBase] = logEvent.logBase
-    val ceItem = LogEventItem.unsafeEmpty
+  ovewwide def tounifiedusewaction(wogevent: w-wogevent): seq[unifiedusewaction] = {
+    v-vaw wogbase: option[wogbase] = wogevent.wogbase
+    vaw ceitem = w-wogeventitem.unsafeempty
 
-    val uuaOpt: Option[UnifiedUserAction] = for {
-      eventTimestamp <- logBase.flatMap(getSourceTimestamp)
-      uuaItem <- getUuaItem(ceItem, logEvent)
-    } yield {
-      val userIdentifier: UserIdentifier = UserIdentifier(
-        userId = logBase.flatMap(_.userId),
-        guestIdMarketing = logBase.flatMap(_.guestIdMarketing))
+    vaw uuaopt: option[unifiedusewaction] = f-fow {
+      e-eventtimestamp <- wogbase.fwatmap(getsouwcetimestamp)
+      uuaitem <- getuuaitem(ceitem, -.- wogevent)
+    } yiewd {
+      vaw u-usewidentifiew: usewidentifiew = usewidentifiew(
+        usewid = wogbase.fwatmap(_.usewid), 🥺
+        g-guestidmawketing = wogbase.fwatmap(_.guestidmawketing))
 
-      val productSurface: Option[ProductSurface] = ProductSurfaceUtils
-        .getProductSurface(logEvent.eventNamespace)
+      v-vaw pwoductsuwface: o-option[pwoductsuwface] = p-pwoductsuwfaceutiws
+        .getpwoductsuwface(wogevent.eventnamespace)
 
-      val eventMetaData: EventMetadata = ClientEventCommonUtils
-        .getEventMetadata(
-          eventTimestamp = eventTimestamp,
-          logEvent = logEvent,
-          ceItem = ceItem,
-          productSurface = productSurface
+      v-vaw eventmetadata: eventmetadata = cwienteventcommonutiws
+        .geteventmetadata(
+          e-eventtimestamp = eventtimestamp, o.O
+          wogevent = w-wogevent, /(^•ω•^)
+          ceitem = ceitem, nyaa~~
+          pwoductsuwface = pwoductsuwface
         )
 
-      UnifiedUserAction(
-        userIdentifier = userIdentifier,
-        item = uuaItem,
-        actionType = actionType,
-        eventMetadata = eventMetaData,
-        productSurface = productSurface,
-        productSurfaceInfo =
-          ProductSurfaceUtils.getProductSurfaceInfo(productSurface, ceItem, logEvent)
+      unifiedusewaction(
+        u-usewidentifiew = usewidentifiew, nyaa~~
+        i-item = u-uuaitem, :3
+        a-actiontype = actiontype, 😳😳😳
+        eventmetadata = eventmetadata, (˘ω˘)
+        p-pwoductsuwface = p-pwoductsuwface, ^^
+        pwoductsuwfaceinfo =
+          p-pwoductsuwfaceutiws.getpwoductsuwfaceinfo(pwoductsuwface, :3 c-ceitem, -.- wogevent)
       )
     }
 
-    uuaOpt match {
-      case Some(uua) => Seq(uua)
-      case _ => Nil
+    u-uuaopt match {
+      case some(uua) => s-seq(uua)
+      case _ => nyiw
     }
   }
 
-  override def getUuaItem(
-    ceItem: LogEventItem,
-    logEvent: LogEvent
-  ): Option[Item] = for {
-    performanceDetails <- logEvent.performanceDetails
-    duration <- performanceDetails.durationMs
-  } yield {
-    Item.UasInfo(UASInfo(timeSpentMs = duration))
+  o-ovewwide def getuuaitem(
+    c-ceitem: wogeventitem, 😳
+    wogevent: w-wogevent
+  ): o-option[item] = fow {
+    pewfowmancedetaiws <- wogevent.pewfowmancedetaiws
+    duwation <- pewfowmancedetaiws.duwationms
+  } yiewd {
+    item.uasinfo(uasinfo(timespentms = duwation))
   }
 }

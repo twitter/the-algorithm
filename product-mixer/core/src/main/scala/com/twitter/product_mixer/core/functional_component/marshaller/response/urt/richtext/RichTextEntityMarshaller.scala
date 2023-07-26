@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.wichtext
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextEntity
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtextentity
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class RichTextEntityMarshaller @Inject() (
-  referenceObjectMarshaller: ReferenceObjectMarshaller,
-  richTextFormatMarshaller: RichTextFormatMarshaller) {
+@singweton
+c-cwass wichtextentitymawshawwew @inject() (
+  wefewenceobjectmawshawwew: wefewenceobjectmawshawwew, ^^;;
+  wichtextfowmatmawshawwew: wichtextfowmatmawshawwew) {
 
-  def apply(entity: RichTextEntity): urt.RichTextEntity = urt.RichTextEntity(
-    fromIndex = entity.fromIndex,
-    toIndex = entity.toIndex,
-    ref = entity.ref.map(referenceObjectMarshaller(_)),
-    format = entity.format.map(richTextFormatMarshaller(_))
+  d-def appwy(entity: wichtextentity): uwt.wichtextentity = u-uwt.wichtextentity(
+    fwomindex = e-entity.fwomindex, >_<
+    toindex = entity.toindex, mya
+    wef = entity.wef.map(wefewenceobjectmawshawwew(_)),
+    f-fowmat = entity.fowmat.map(wichtextfowmatmawshawwew(_))
   )
 }

@@ -1,70 +1,70 @@
-package com.twitter.simclustersann
+package com.twittew.simcwustewsann
 
-import com.google.inject.Module
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.mtls.thriftmux.Mtls
-import com.twitter.finatra.thrift.ThriftServer
-import com.twitter.finatra.thrift.filters._
-import com.twitter.finatra.thrift.routing.ThriftRouter
-import com.twitter.inject.thrift.modules.ThriftClientIdModule
-import com.twitter.relevance_platform.common.exceptions._
-import com.twitter.simclustersann.controllers.SimClustersANNController
-import com.twitter.simclustersann.exceptions.InvalidRequestForSimClustersAnnVariantExceptionMapper
-import com.twitter.simclustersann.modules._
-import com.twitter.simclustersann.thriftscala.SimClustersANNService
-import com.twitter.finagle.Filter
-import com.twitter.finatra.annotations.DarkTrafficFilterType
-import com.twitter.inject.annotations.Flags
-import com.twitter.relevance_platform.common.filters.DarkTrafficFilterModule
-import com.twitter.relevance_platform.common.filters.ClientStatsFilter
-import com.twitter.simclustersann.common.FlagNames.DisableWarmup
+impowt com.googwe.inject.moduwe
+i-impowt com.twittew.finatwa.decidew.moduwes.decidewmoduwe
+i-impowt c-com.twittew.finatwa.mtws.thwiftmux.mtws
+i-impowt c-com.twittew.finatwa.thwift.thwiftsewvew
+i-impowt c-com.twittew.finatwa.thwift.fiwtews._
+i-impowt com.twittew.finatwa.thwift.wouting.thwiftwoutew
+impowt com.twittew.inject.thwift.moduwes.thwiftcwientidmoduwe
+impowt com.twittew.wewevance_pwatfowm.common.exceptions._
+i-impowt com.twittew.simcwustewsann.contwowwews.simcwustewsanncontwowwew
+impowt com.twittew.simcwustewsann.exceptions.invawidwequestfowsimcwustewsannvawiantexceptionmappew
+impowt c-com.twittew.simcwustewsann.moduwes._
+impowt c-com.twittew.simcwustewsann.thwiftscawa.simcwustewsannsewvice
+impowt com.twittew.finagwe.fiwtew
+impowt com.twittew.finatwa.annotations.dawktwafficfiwtewtype
+impowt c-com.twittew.inject.annotations.fwags
+impowt c-com.twittew.wewevance_pwatfowm.common.fiwtews.dawktwafficfiwtewmoduwe
+i-impowt com.twittew.wewevance_pwatfowm.common.fiwtews.cwientstatsfiwtew
+impowt com.twittew.simcwustewsann.common.fwagnames.disabwewawmup
 
-object SimClustersAnnServerMain extends SimClustersAnnServer
+object simcwustewsannsewvewmain extends simcwustewsannsewvew
 
-class SimClustersAnnServer extends ThriftServer with Mtls {
-  flag(
-    name = DisableWarmup,
-    default = false,
-    help = "If true, no warmup will be run."
+c-cwass simcwustewsannsewvew extends thwiftsewvew with mtws {
+  fwag(
+    n-nyame = disabwewawmup, 😳😳😳
+    defauwt = fawse, o.O
+    h-hewp = "if t-twue, ( ͡o ω ͡o ) nyo wawmup w-wiww be wun."
   )
 
-  override val name = "simclusters-ann-server"
+  o-ovewwide vaw nyame = "simcwustews-ann-sewvew"
 
-  override val modules: Seq[Module] = Seq(
-    CacheModule,
-    ServiceNameMapperModule,
-    ClusterConfigMapperModule,
-    ClusterConfigModule,
-    ClusterTweetIndexProviderModule,
-    DeciderModule,
-    EmbeddingStoreModule,
-    FlagsModule,
-    FuturePoolProvider,
-    RateLimiterModule,
-    SimClustersANNCandidateSourceModule,
-    StratoClientProviderModule,
-    ThriftClientIdModule,
-    new CustomMtlsThriftWebFormsModule[SimClustersANNService.MethodPerEndpoint](this),
-    new DarkTrafficFilterModule[SimClustersANNService.ReqRepServicePerEndpoint]()
+  ovewwide v-vaw moduwes: seq[moduwe] = seq(
+    cachemoduwe, (U ﹏ U)
+    s-sewvicenamemappewmoduwe, (///ˬ///✿)
+    cwustewconfigmappewmoduwe, >w<
+    cwustewconfigmoduwe, rawr
+    cwustewtweetindexpwovidewmoduwe, mya
+    decidewmoduwe, ^^
+    embeddingstowemoduwe, 😳😳😳
+    f-fwagsmoduwe, mya
+    futuwepoowpwovidew,
+    w-watewimitewmoduwe, 😳
+    s-simcwustewsanncandidatesouwcemoduwe, -.-
+    s-stwatocwientpwovidewmoduwe, 🥺
+    thwiftcwientidmoduwe,
+    nyew custommtwsthwiftwebfowmsmoduwe[simcwustewsannsewvice.methodpewendpoint](this), o.O
+    nyew dawktwafficfiwtewmoduwe[simcwustewsannsewvice.weqwepsewvicepewendpoint]()
   )
 
-  def configureThrift(router: ThriftRouter): Unit = {
-    router
-      .filter[LoggingMDCFilter]
-      .filter[TraceIdMDCFilter]
-      .filter[ThriftMDCFilter]
-      .filter[ClientStatsFilter]
-      .filter[ExceptionMappingFilter]
-      .filter[Filter.TypeAgnostic, DarkTrafficFilterType]
-      .exceptionMapper[InvalidRequestForSimClustersAnnVariantExceptionMapper]
-      .exceptionMapper[DeadlineExceededExceptionMapper]
-      .exceptionMapper[UnhandledExceptionMapper]
-      .add[SimClustersANNController]
+  d-def c-configuwethwift(woutew: thwiftwoutew): u-unit = {
+    w-woutew
+      .fiwtew[woggingmdcfiwtew]
+      .fiwtew[twaceidmdcfiwtew]
+      .fiwtew[thwiftmdcfiwtew]
+      .fiwtew[cwientstatsfiwtew]
+      .fiwtew[exceptionmappingfiwtew]
+      .fiwtew[fiwtew.typeagnostic, /(^•ω•^) dawktwafficfiwtewtype]
+      .exceptionmappew[invawidwequestfowsimcwustewsannvawiantexceptionmappew]
+      .exceptionmappew[deadwineexceededexceptionmappew]
+      .exceptionmappew[unhandwedexceptionmappew]
+      .add[simcwustewsanncontwowwew]
   }
 
-  override protected def warmup(): Unit = {
-    if (!injector.instance[Boolean](Flags.named(DisableWarmup))) {
-      handle[SimclustersAnnWarmupHandler]()
+  o-ovewwide pwotected def wawmup(): u-unit = {
+    if (!injectow.instance[boowean](fwags.named(disabwewawmup))) {
+      handwe[simcwustewsannwawmuphandwew]()
     }
   }
 }

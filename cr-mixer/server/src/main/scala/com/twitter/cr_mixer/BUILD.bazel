@@ -1,48 +1,48 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "3rdparty/jvm/net/codingwell:scala-guice",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "cr-mixer/server/src/main/resources",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/candidate_generation",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/controller",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/featureswitch",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/logging",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/module",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/param",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/scribe",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/similarity_engine",
-        "cr-mixer/thrift/src/main/thrift:thrift-scala",
-        "decider/src/main/scala",
-        "finagle/finagle-core/src/main",
-        "finagle/finagle-http/src/main/scala",
-        "finagle/finagle-thriftmux/src/main/scala",
-        "finatra-internal/mtls-http/src/main/scala",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "finatra/http-core/src/main/java/com/twitter/finatra/http",
-        "finatra/inject/inject-app/src/main/scala",
-        "finatra/inject/inject-core/src/main/scala",
-        "finatra/inject/inject-server/src/main/scala",
-        "finatra/inject/inject-utils/src/main/scala",
-        "finatra/utils/src/main/java/com/twitter/finatra/annotations",
-        "hydra/common/libraries/src/main/scala/com/twitter/hydra/common/model_config",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/controllers",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/module",
-        "product-mixer/core/src/main/thrift/com/twitter/product_mixer/core:thrift-scala",
-        "relevance-platform/src/main/scala/com/twitter/relevance_platform/common/filters",
-        "src/thrift/com/twitter/timelines/render:thrift-scala",
-        "thrift-web-forms/src/main/scala/com/twitter/thriftwebforms",
-        "thrift-web-forms/src/main/scala/com/twitter/thriftwebforms/view",
-        "timelines/src/main/scala/com/twitter/timelines/features/app",
-        "twitter-server-internal",
-        "twitter-server/server/src/main/scala",
-        "util/util-app/src/main/scala",
-        "util/util-core:scala",
-        "util/util-slf4j-api/src/main/scala",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    s-stwict_deps = t-twue, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/inject:guice", (⑅˘꒳˘)
+        "3wdpawty/jvm/javax/inject:javax.inject",
+        "3wdpawty/jvm/net/codingweww:scawa-guice", ( ͡o ω ͡o )
+        "3wdpawty/jvm/owg/swf4j:swf4j-api", UwU
+        "cw-mixew/sewvew/swc/main/wesouwces", rawr x3
+        "cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/candidate_genewation", rawr
+        "cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/contwowwew", σωσ
+        "cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/featuweswitch", σωσ
+        "cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/wogging", >_<
+        "cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/moduwe", :3
+        "cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/pawam", (U ﹏ U)
+        "cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/scwibe",
+        "cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/simiwawity_engine", -.-
+        "cw-mixew/thwift/swc/main/thwift:thwift-scawa", (ˆ ﻌ ˆ)♡
+        "decidew/swc/main/scawa", (⑅˘꒳˘)
+        "finagwe/finagwe-cowe/swc/main", (U ᵕ U❁)
+        "finagwe/finagwe-http/swc/main/scawa", -.-
+        "finagwe/finagwe-thwiftmux/swc/main/scawa", ^^;;
+        "finatwa-intewnaw/mtws-http/swc/main/scawa", >_<
+        "finatwa-intewnaw/mtws-thwiftmux/swc/main/scawa", mya
+        "finatwa/http-cowe/swc/main/java/com/twittew/finatwa/http", mya
+        "finatwa/inject/inject-app/swc/main/scawa", 😳
+        "finatwa/inject/inject-cowe/swc/main/scawa", XD
+        "finatwa/inject/inject-sewvew/swc/main/scawa", :3
+        "finatwa/inject/inject-utiws/swc/main/scawa",
+        "finatwa/utiws/swc/main/java/com/twittew/finatwa/annotations", 😳😳😳
+        "hydwa/common/wibwawies/swc/main/scawa/com/twittew/hydwa/common/modew_config", -.-
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/contwowwews", ( ͡o ω ͡o )
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/moduwe", rawr x3
+        "pwoduct-mixew/cowe/swc/main/thwift/com/twittew/pwoduct_mixew/cowe:thwift-scawa", nyaa~~
+        "wewevance-pwatfowm/swc/main/scawa/com/twittew/wewevance_pwatfowm/common/fiwtews", /(^•ω•^)
+        "swc/thwift/com/twittew/timewines/wendew:thwift-scawa", rawr
+        "thwift-web-fowms/swc/main/scawa/com/twittew/thwiftwebfowms", OwO
+        "thwift-web-fowms/swc/main/scawa/com/twittew/thwiftwebfowms/view", (U ﹏ U)
+        "timewines/swc/main/scawa/com/twittew/timewines/featuwes/app", >_<
+        "twittew-sewvew-intewnaw", rawr x3
+        "twittew-sewvew/sewvew/swc/main/scawa", mya
+        "utiw/utiw-app/swc/main/scawa", nyaa~~
+        "utiw/utiw-cowe:scawa", (⑅˘꒳˘)
+        "utiw/utiw-swf4j-api/swc/main/scawa", rawr x3
+    ], (✿oωo)
 )

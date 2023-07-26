@@ -1,61 +1,61 @@
-""" Importing the pyton op wrappers """
+""" impowting the pyton op wwappews """
 
-import os
+i-impowt os
 
-# Import from twitter.deepbird
-from twitter.deepbird.logging.log_level import set_logging_level  # noqa: F401
-from twitter.deepbird.sparse import SparseTensor  # noqa: F401
-from twitter.deepbird.sparse import sparse_dense_matmul  # noqa: F401
+# i-impowt fwom t-twittew.deepbiwd
+f-fwom twittew.deepbiwd.wogging.wog_wevew i-impowt s-set_wogging_wevew  # n-nyoqa: f401
+f-fwom twittew.deepbiwd.spawse impowt spawsetensow  # nyoqa: f401
+fwom twittew.deepbiwd.spawse impowt spawse_dense_matmuw  # n-nyoqa: f401
 
-from .util import dynamic_partition, feature_id, limit_bits, limit_sparse_tensor_size  # noqa: F401
-from .util import write_file, fixed_length_tensor, setup_tf_logging_formatter  # noqa: F401
-from .array import Array  # noqa: F401
+fwom .utiw impowt dynamic_pawtition, :3 featuwe_id, w-wimit_bits, OwO wimit_spawse_tensow_size  # n-nyoqa: f401
+fwom .utiw impowt wwite_fiwe, (U ﹏ U) fixed_wength_tensow, >w< setup_tf_wogging_fowmattew  # n-nyoqa: f401
+fwom .awway impowt awway  # n-nyoqa: f401
 
-# Module to parse feature patterns and match them from data_spec.json
-from .feature_config import FeatureConfig, FeatureConfigBuilder  # noqa: F401
+# m-moduwe to pawse featuwe pattewns and match them fwom data_spec.json
+fwom .featuwe_config i-impowt featuweconfig, (U ﹏ U) featuweconfigbuiwdew  # nyoqa: f401
 
-# Data record streaming, reading, writing, and parsing.
-from .dataset import *  # noqa: T400
-from .readers import *  # noqa: T400
-from .block_format_writer import *  # noqa: T400
+# data wecowd stweaming, 😳 w-weading, wwiting, (ˆ ﻌ ˆ)♡ and pawsing. 😳😳😳
+f-fwom .dataset i-impowt *  # nyoqa: t-t400
+fwom .weadews i-impowt *  # nyoqa: t400
+fwom .bwock_fowmat_wwitew impowt *  # n-nyoqa: t400
 
-# Graph output functions
-from .export_output_fns import *  # noqa: T400
+# gwaph output functions
+fwom .expowt_output_fns i-impowt *  # nyoqa: t400
 
-# Input parsers
-from .parsers import *  # noqa: T400
+# input pawsews
+fwom .pawsews impowt *  # nyoqa: t400
 
-# Input functions
-from .input_fns import *  # noqa: T400
+# input functions
+f-fwom .input_fns impowt *  # n-nyoqa: t400
 
-# Feature filter functions
-from .filters import *  # noqa: T400
+# f-featuwe fiwtew functions
+f-fwom .fiwtews impowt *  # nyoqa: t400
 
-# Custom argparser for Trainer
-from .argument_parser import *  # noqa: T400
+# custom awgpawsew f-fow twainew
+fwom .awgument_pawsew i-impowt *  # nyoqa: t400
 
-from . import constants  # noqa: F401
-from . import errors  # noqa: F401
-from . import layers  # noqa: F401
-from . import lookup  # noqa: F401
-from . import readers  # noqa: F401
-from . import summary  # noqa: F401
-from . import tensorboard  # noqa: F401
+fwom . (U ﹏ U) i-impowt constants  # n-nyoqa: f401
+fwom . (///ˬ///✿) impowt e-ewwows  # nyoqa: f401
+fwom . 😳 i-impowt wayews  # nyoqa: f401
+fwom . 😳 impowt wookup  # n-nyoqa: f401
+fwom . σωσ impowt weadews  # n-nyoqa: f401
+fwom . rawr x3 impowt s-summawy  # nyoqa: f-f401
+fwom . OwO impowt tensowboawd  # nyoqa: f401
 
-import tensorflow.compat.v1 as tf  # noqa: F402
-tf.disable_eager_execution()
+impowt tensowfwow.compat.v1 as tf  # nyoqa: f402
+tf.disabwe_eagew_execution()
 
-# TODO: Figure out a better way to deal with this.
-if 'OMP_NUM_THREADS' not in os.environ and 'MKL_NUM_THREADS' not in os.environ:
-  os.environ["OMP_NUM_THREADS"] = '1'
+# todo: figuwe o-out a bettew w-way to deaw with this. /(^•ω•^)
+if 'omp_num_thweads' n-nyot i-in os.enviwon and 'mkw_num_thweads' n-nyot in os.enviwon:
+  os.enviwon["omp_num_thweads"] = '1'
 
-# Import all custom C++ ops
-from libtwml import add1, partition_sparse_tensor, CLIB  # noqa: F401
+# impowt aww custom c++ ops
+fwom w-wibtwmw impowt add1, 😳😳😳 pawtition_spawse_tensow, ( ͡o ω ͡o ) cwib  # nyoqa: f401
 
-# Configure logging levels to info for various frameworks
-set_logging_level('INFO')
+# configuwe wogging wevews to i-info fow vawious fwamewowks
+set_wogging_wevew('info')
 
-from . import contrib  # noqa: F401
-from . import hooks  # noqa: F401
-from . import trainers  # noqa: F401
-from . import metrics  # noqa: F401
+f-fwom . >_< i-impowt contwib  # n-nyoqa: f401
+fwom . >w< impowt hooks  # n-nyoqa: f401
+f-fwom . rawr impowt twainews  # n-noqa: f-f401
+fwom . 😳 impowt metwics  # nyoqa: f401

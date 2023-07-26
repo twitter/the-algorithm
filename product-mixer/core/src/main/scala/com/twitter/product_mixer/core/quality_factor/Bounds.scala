@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.core.quality_factor
+package com.twittew.pwoduct_mixew.cowe.quawity_factow
 
 /**
- * Provides a way to apply inclusive min/max bounds to a given value.
+ * pwovides a-a way to appwy i-incwusive min/max b-bounds to a-a given vawue. 😳😳😳
  */
-case class Bounds[T](minInclusive: T, maxInclusive: T)(implicit ordering: Ordering[T]) {
+c-case cwass bounds[t](minincwusive: t-t, 🥺 maxincwusive: t-t)(impwicit o-owdewing: owdewing[t]) {
 
-  def apply(value: T): T = ordering.min(maxInclusive, ordering.max(minInclusive, value))
+  def appwy(vawue: t): t = owdewing.min(maxincwusive, mya owdewing.max(minincwusive, 🥺 vawue))
 
-  def isWithin(value: T): Boolean =
-    ordering.gteq(value, minInclusive) && ordering.lteq(value, maxInclusive)
+  def iswithin(vawue: t-t): boowean =
+    owdewing.gteq(vawue, >_< m-minincwusive) && owdewing.wteq(vawue, >_< m-maxincwusive)
 
-  def throwIfOutOfBounds(value: T, messagePrefix: String): Unit =
-    require(isWithin(value), s"$messagePrefix: value must be within $toString")
+  def thwowifoutofbounds(vawue: t, (⑅˘꒳˘) messagepwefix: s-stwing): unit =
+    w-wequiwe(iswithin(vawue), /(^•ω•^) s-s"$messagepwefix: vawue must be within $tostwing")
 
-  override def toString: String = s"[$minInclusive, $maxInclusive]"
+  ovewwide def tostwing: stwing = s"[$minincwusive, rawr x3 $maxincwusive]"
 }
 
-object BoundsWithDefault {
-  def apply[T](
-    minInclusive: T,
-    maxInclusive: T,
-    default: T
+o-object boundswithdefauwt {
+  def appwy[t](
+    minincwusive: t, (U ﹏ U)
+    maxincwusive: t, (U ﹏ U)
+    defauwt: t-t
   )(
-    implicit ordering: Ordering[T]
-  ): BoundsWithDefault[T] = BoundsWithDefault(Bounds(minInclusive, maxInclusive), default)
+    impwicit owdewing: o-owdewing[t]
+  ): b-boundswithdefauwt[t] = b-boundswithdefauwt(bounds(minincwusive, (⑅˘꒳˘) m-maxincwusive), òωó defauwt)
 }
 
-case class BoundsWithDefault[T](bounds: Bounds[T], default: T)(implicit ordering: Ordering[T]) {
-  bounds.throwIfOutOfBounds(default, "default")
+case cwass boundswithdefauwt[t](bounds: b-bounds[t], ʘwʘ defauwt: t)(impwicit owdewing: o-owdewing[t]) {
+  bounds.thwowifoutofbounds(defauwt, "defauwt")
 
-  def apply(valueOpt: Option[T]): T = valueOpt.map(bounds.apply).getOrElse(default)
+  def appwy(vawueopt: option[t]): t = vawueopt.map(bounds.appwy).getowewse(defauwt)
 }

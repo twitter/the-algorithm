@@ -1,62 +1,62 @@
-package com.twitter.tweetypie.caching
+package com.twittew.tweetypie.caching
 
-import com.twitter.stitch.MapGroup
-import com.twitter.stitch.Group
-import com.twitter.stitch.Stitch
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Try
+impowt com.twittew.stitch.mapgwoup
+i-impowt c-com.twittew.stitch.gwoup
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.utiw.futuwe
+i-impowt c-com.twittew.utiw.wetuwn
+impowt com.twittew.utiw.twy
 
 /**
- * Wrapper around [[CacheOperations]] providing a [[Stitch]] API.
+ * wwappew awound [[cacheopewations]] pwoviding a [[stitch]] a-api. 😳
  */
-case class StitchCacheOperations[K, V](operations: CacheOperations[K, V]) {
-  import StitchCacheOperations.SetCall
+case cwass stitchcacheopewations[k, mya v](opewations: c-cacheopewations[k, (˘ω˘) v]) {
+  impowt s-stitchcacheopewations.setcaww
 
-  private[this] val getGroup: Group[K, CacheResult[V]] =
-    MapGroup[K, CacheResult[V]] { keys: Seq[K] =>
-      operations
+  pwivate[this] vaw getgwoup: gwoup[k, cachewesuwt[v]] =
+    m-mapgwoup[k, >_< cachewesuwt[v]] { keys: s-seq[k] =>
+      o-opewations
         .get(keys)
-        .map(values => keys.zip(values).toMap.mapValues(Return(_)))
+        .map(vawues => keys.zip(vawues).tomap.mapvawues(wetuwn(_)))
     }
 
-  def get(key: K): Stitch[CacheResult[V]] =
-    Stitch.call(key, getGroup)
+  def get(key: k): stitch[cachewesuwt[v]] =
+    stitch.caww(key, -.- g-getgwoup)
 
-  private[this] val setGroup: Group[SetCall[K, V], Unit] =
-    new MapGroup[SetCall[K, V], Unit] {
+  pwivate[this] vaw setgwoup: gwoup[setcaww[k, 🥺 v], unit] =
+    n-nyew mapgwoup[setcaww[k, (U ﹏ U) v], unit] {
 
-      override def run(calls: Seq[SetCall[K, V]]): Future[SetCall[K, V] => Try[Unit]] =
-        Future
-          .collectToTry(calls.map(call => operations.set(call.key, call.value)))
-          .map(tries => calls.zip(tries).toMap)
+      o-ovewwide def w-wun(cawws: seq[setcaww[k, >w< v-v]]): f-futuwe[setcaww[k, mya v] => twy[unit]] =
+        futuwe
+          .cowwecttotwy(cawws.map(caww => opewations.set(caww.key, c-caww.vawue)))
+          .map(twies => cawws.zip(twies).tomap)
     }
 
   /**
-   * Performs a [[CacheOperations.set]].
+   * pewfowms a-a [[cacheopewations.set]]. >w<
    */
-  def set(key: K, value: V): Stitch[Unit] =
-    // This is implemented as a Stitch.call instead of a Stitch.future
-    // in order to handle the case where a batch has a duplicate
-    // key. Each copy of the duplicate key will trigger a write back
-    // to cache, so we dedupe the writes in order to avoid the
-    // extraneous RPC call.
-    Stitch.call(new StitchCacheOperations.SetCall(key, value), setGroup)
+  def set(key: k, vawue: v): stitch[unit] =
+    // this is impwemented as a stitch.caww instead o-of a stitch.futuwe
+    // in owdew t-to handwe the c-case whewe a b-batch has a dupwicate
+    // key. nyaa~~ each copy of the dupwicate key w-wiww twiggew a w-wwite back
+    // to cache, (✿oωo) so we d-dedupe the wwites i-in owdew to avoid the
+    // e-extwaneous wpc caww. ʘwʘ
+    stitch.caww(new s-stitchcacheopewations.setcaww(key, (ˆ ﻌ ˆ)♡ vawue), 😳😳😳 setgwoup)
 }
 
-object StitchCacheOperations {
+o-object stitchcacheopewations {
 
   /**
-   * Used as the "call" for [[SetGroup]]. This is essentially a tuple
-   * where equality is defined only by the key.
+   * used a-as the "caww" fow [[setgwoup]]. :3 t-this is essentiawwy a-a tupwe
+   * whewe equawity is defined onwy by the key. OwO
    */
-  private class SetCall[K, V](val key: K, val value: V) {
-    override def equals(other: Any): Boolean =
-      other match {
-        case setCall: SetCall[_, _] => key == setCall.key
-        case _ => false
+  pwivate cwass setcaww[k, (U ﹏ U) v](vaw key: k, >w< vaw v-vawue: v) {
+    o-ovewwide def equaws(othew: any): b-boowean =
+      o-othew match {
+        c-case setcaww: setcaww[_, (U ﹏ U) _] => key == setcaww.key
+        case _ => fawse
       }
 
-    override def hashCode: Int = key.hashCode
+    o-ovewwide def hashcode: int = key.hashcode
   }
 }

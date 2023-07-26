@@ -1,6 +1,6 @@
 #!/bin/sh
-RUST_LOG=info LD_LIBRARY_PATH=so/tf2 cargo run --bin navi --features tf -- --port 30 --num-worker-threads 8 --intra-op-parallelism 8 --inter-op-parallelism 8 \
-    --model-check-interval-secs 30 \
-    --model-dir models/click/ \
+wust_wog=info wd_wibwawy_path=so/tf2 c-cawgo w-wun --bin nyavi --featuwes tf -- --powt 30 --num-wowkew-thweads 8 --intwa-op-pawawwewism 8 --intew-op-pawawwewism 8 \
+    --modew-check-intewvaw-secs 30 \
+    --modew-diw modews/cwick/ \
     --input "" \
-    --output output_0
+    --output o-output_0

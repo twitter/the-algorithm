@@ -1,43 +1,43 @@
-package com.twitter.simclusters_v2.scio
-package multi_type_graph.multi_type_graph_sims
+package com.twittew.simcwustews_v2.scio
+package muwti_type_gwaph.muwti_type_gwaph_sims
 
-import com.twitter.dal.client.dataset.SnapshotDALDataset
-import com.twitter.simclusters_v2.hdfs_sources.RightNodeSimHashScioScalaDataset
-import com.twitter.simclusters_v2.thriftscala.RightNodeSimHashSketch
+i-impowt com.twittew.daw.cwient.dataset.snapshotdawdataset
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.wightnodesimhashscioscawadataset
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.wightnodesimhashsketch
 
 /**
-Build:
-./bazel bundle src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/multi_type_graph_sims:multi-type-graph-sim-hash-scio-adhoc-app
+b-buiwd:
+./bazew b-bundwe s-swc/scawa/com/twittew/simcwustews_v2/scio/muwti_type_gwaph/muwti_type_gwaph_sims:muwti-type-gwaph-sim-hash-scio-adhoc-app
 
-To kick off an adhoc run:
-bin/d6w create \
-  ${GCP_PROJECT_NAME}/us-central1/multi-type-graph-sim-hash-scio-adhoc-app \
-  src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/multi_type_graph_sims/sim-hash-scio-adhoc.d6w \
-  --jar dist/multi-type-graph-sim-hash-scio-adhoc-app.jar \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=${USER} \
-  --bind=profile.date="2021-12-01" \
-  --bind=profile.machine="n2d-highmem-16" --ignore-existing
+t-to kick o-off an adhoc wun:
+bin/d6w cweate \
+  ${gcp_pwoject_name}/us-centwaw1/muwti-type-gwaph-sim-hash-scio-adhoc-app \
+  swc/scawa/com/twittew/simcwustews_v2/scio/muwti_type_gwaph/muwti_type_gwaph_sims/sim-hash-scio-adhoc.d6w \
+  --jaw dist/muwti-type-gwaph-sim-hash-scio-adhoc-app.jaw \
+  --bind=pwofiwe.pwoject=${gcp_pwoject_name} \
+  --bind=pwofiwe.usew_name=${usew} \
+  --bind=pwofiwe.date="2021-12-01" \
+  --bind=pwofiwe.machine="n2d-highmem-16" --ignowe-existing
  */
-object RightNodeSimHashScioAdhocApp extends RightNodeSimHashScioBaseApp {
-  override val isAdhoc: Boolean = true
-  override val rightNodeSimHashSnapshotDataset: SnapshotDALDataset[RightNodeSimHashSketch] =
-    RightNodeSimHashScioAdhocScalaDataset
+object wightnodesimhashscioadhocapp e-extends wightnodesimhashsciobaseapp {
+  ovewwide vaw isadhoc: b-boowean = twue
+  ovewwide v-vaw wightnodesimhashsnapshotdataset: snapshotdawdataset[wightnodesimhashsketch] =
+    wightnodesimhashscioadhocscawadataset
 }
 
 /**
-To deploy the job:
+to depwoy the j-job:
 
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/multi-type-graph-sim-hash-scio-batch-app \
-  src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/multi_type_graph_sims/sim-hash-scio-batch.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=recos-platform \
-  --bind=profile.date="2021-12-01" \
-  --bind=profile.machine="n2d-highmem-16"
+bin/d6w scheduwe \
+  ${gcp_pwoject_name}/us-centwaw1/muwti-type-gwaph-sim-hash-scio-batch-app \
+  s-swc/scawa/com/twittew/simcwustews_v2/scio/muwti_type_gwaph/muwti_type_gwaph_sims/sim-hash-scio-batch.d6w \
+  --bind=pwofiwe.pwoject=${gcp_pwoject_name} \
+  --bind=pwofiwe.usew_name=wecos-pwatfowm \
+  --bind=pwofiwe.date="2021-12-01" \
+  --bind=pwofiwe.machine="n2d-highmem-16"
  */
-object RightNodeSimHashScioBatchApp extends RightNodeSimHashScioBaseApp {
-  override val isAdhoc: Boolean = false
-  override val rightNodeSimHashSnapshotDataset: SnapshotDALDataset[RightNodeSimHashSketch] =
-    RightNodeSimHashScioScalaDataset
+o-object wightnodesimhashsciobatchapp extends wightnodesimhashsciobaseapp {
+  ovewwide vaw isadhoc: boowean = fawse
+  ovewwide v-vaw wightnodesimhashsnapshotdataset: snapshotdawdataset[wightnodesimhashsketch] =
+    wightnodesimhashscioscawadataset
 }

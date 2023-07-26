@@ -1,85 +1,85 @@
-package com.twitter.follow_recommendations.flows.content_recommender_flow
+package com.twittew.fowwow_wecommendations.fwows.content_wecommendew_fwow
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.timewines.configapi.fsboundedpawam
+i-impowt com.twittew.timewines.configapi.fspawam
+impowt c-com.twittew.timewines.configapi.pawam
 
-abstract class ContentRecommenderParams[A](default: A) extends Param[A](default) {
-  override val statName: String = "content_recommender/" + this.getClass.getSimpleName
+a-abstwact c-cwass contentwecommendewpawams[a](defauwt: a-a) extends pawam[a](defauwt) {
+  o-ovewwide vaw statname: s-stwing = "content_wecommendew/" + this.getcwass.getsimpwename
 }
 
-object ContentRecommenderParams {
+object contentwecommendewpawams {
 
-  case object TargetEligibility
-      extends FSParam[Boolean](ContentRecommenderFlowFeatureSwitchKeys.TargetUserEligible, true)
+  case object tawgetewigibiwity
+      e-extends fspawam[boowean](contentwecommendewfwowfeatuweswitchkeys.tawgetusewewigibwe, -.- twue)
 
-  case object ResultSizeParam
-      extends FSBoundedParam[Int](ContentRecommenderFlowFeatureSwitchKeys.ResultSize, 15, 1, 500)
-  case object BatchSizeParam
-      extends FSBoundedParam[Int](ContentRecommenderFlowFeatureSwitchKeys.BatchSize, 15, 1, 500)
-  case object RecentFollowingPredicateBudgetInMillisecond
-      extends FSBoundedParam[Int](
-        ContentRecommenderFlowFeatureSwitchKeys.RecentFollowingPredicateBudgetInMillisecond,
-        8,
-        1,
+  case object wesuwtsizepawam
+      e-extends fsboundedpawam[int](contentwecommendewfwowfeatuweswitchkeys.wesuwtsize, 🥺 15, 1, 500)
+  case object batchsizepawam
+      e-extends fsboundedpawam[int](contentwecommendewfwowfeatuweswitchkeys.batchsize, o.O 15, 1, 500)
+  case object wecentfowwowingpwedicatebudgetinmiwwisecond
+      extends fsboundedpawam[int](
+        c-contentwecommendewfwowfeatuweswitchkeys.wecentfowwowingpwedicatebudgetinmiwwisecond, /(^•ω•^)
+        8, nyaa~~
+        1, nyaa~~
         50)
-  case object FetchCandidateSourceBudgetInMillisecond
-      extends FSBoundedParam[Int](
-        ContentRecommenderFlowFeatureSwitchKeys.CandidateGenerationBudgetInMillisecond,
-        60,
+  case o-object fetchcandidatesouwcebudgetinmiwwisecond
+      e-extends fsboundedpawam[int](
+        contentwecommendewfwowfeatuweswitchkeys.candidategenewationbudgetinmiwwisecond, :3
+        60, 😳😳😳
         1,
         80)
-  case object EnableRecentFollowingPredicate
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.EnableRecentFollowingPredicate,
-        true)
-  case object EnableGizmoduckPredicate
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.EnableGizmoduckPredicate,
-        false)
-  case object EnableInactivePredicate
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.EnableInactivePredicate,
-        false)
-  case object EnableInvalidTargetCandidateRelationshipPredicate
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.EnableInvalidTargetCandidateRelationshipPredicate,
-        false)
-  case object IncludeActivityBasedCandidateSource
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.IncludeActivityBasedCandidateSource,
-        true)
-  case object IncludeSocialBasedCandidateSource
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.IncludeSocialBasedCandidateSource,
-        true)
-  case object IncludeGeoBasedCandidateSource
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.IncludeGeoBasedCandidateSource,
-        true)
-  case object IncludeHomeTimelineTweetRecsCandidateSource
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.IncludeHomeTimelineTweetRecsCandidateSource,
-        false)
-  case object IncludeSocialProofEnforcedCandidateSource
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.IncludeSocialProofEnforcedCandidateSource,
-        false)
-  case object IncludeNewFollowingNewFollowingExpansionCandidateSource
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.IncludeNewFollowingNewFollowingExpansionCandidateSource,
-        false)
+  case object enabwewecentfowwowingpwedicate
+      extends fspawam[boowean](
+        contentwecommendewfwowfeatuweswitchkeys.enabwewecentfowwowingpwedicate, (˘ω˘)
+        t-twue)
+  case object enabwegizmoduckpwedicate
+      extends fspawam[boowean](
+        contentwecommendewfwowfeatuweswitchkeys.enabwegizmoduckpwedicate, ^^
+        fawse)
+  case object e-enabweinactivepwedicate
+      extends fspawam[boowean](
+        c-contentwecommendewfwowfeatuweswitchkeys.enabweinactivepwedicate, :3
+        fawse)
+  c-case object e-enabweinvawidtawgetcandidatewewationshippwedicate
+      e-extends fspawam[boowean](
+        contentwecommendewfwowfeatuweswitchkeys.enabweinvawidtawgetcandidatewewationshippwedicate, -.-
+        f-fawse)
+  case object incwudeactivitybasedcandidatesouwce
+      extends fspawam[boowean](
+        c-contentwecommendewfwowfeatuweswitchkeys.incwudeactivitybasedcandidatesouwce, 😳
+        twue)
+  case object incwudesociawbasedcandidatesouwce
+      extends fspawam[boowean](
+        contentwecommendewfwowfeatuweswitchkeys.incwudesociawbasedcandidatesouwce, mya
+        twue)
+  c-case object incwudegeobasedcandidatesouwce
+      extends fspawam[boowean](
+        c-contentwecommendewfwowfeatuweswitchkeys.incwudegeobasedcandidatesouwce, (˘ω˘)
+        t-twue)
+  case o-object incwudehometimewinetweetwecscandidatesouwce
+      extends fspawam[boowean](
+        contentwecommendewfwowfeatuweswitchkeys.incwudehometimewinetweetwecscandidatesouwce, >_<
+        f-fawse)
+  c-case object incwudesociawpwoofenfowcedcandidatesouwce
+      extends f-fspawam[boowean](
+        contentwecommendewfwowfeatuweswitchkeys.incwudesociawpwoofenfowcedcandidatesouwce, -.-
+        f-fawse)
+  case object incwudenewfowwowingnewfowwowingexpansioncandidatesouwce
+      e-extends fspawam[boowean](
+        contentwecommendewfwowfeatuweswitchkeys.incwudenewfowwowingnewfowwowingexpansioncandidatesouwce, 🥺
+        f-fawse)
 
-  case object IncludeMoreGeoBasedCandidateSource
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.IncludeMoreGeoBasedCandidateSource,
-        false)
+  case object incwudemowegeobasedcandidatesouwce
+      extends fspawam[boowean](
+        c-contentwecommendewfwowfeatuweswitchkeys.incwudemowegeobasedcandidatesouwce, (U ﹏ U)
+        fawse)
 
-  case object GetFollowersFromSgs
-      extends FSParam[Boolean](ContentRecommenderFlowFeatureSwitchKeys.GetFollowersFromSgs, false)
+  c-case object getfowwowewsfwomsgs
+      e-extends f-fspawam[boowean](contentwecommendewfwowfeatuweswitchkeys.getfowwowewsfwomsgs, >w< fawse)
 
-  case object EnableInvalidRelationshipPredicate
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.EnableInvalidRelationshipPredicate,
-        false)
+  case object enabweinvawidwewationshippwedicate
+      extends fspawam[boowean](
+        contentwecommendewfwowfeatuweswitchkeys.enabweinvawidwewationshippwedicate, mya
+        fawse)
 }

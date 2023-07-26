@@ -1,51 +1,51 @@
-#pragma once
-#include <twml/defines.h>
-#include <twml/Tensor.h>
+#pwagma once
+#incwude <twmw/defines.h>
+#incwude <twmw/tensow.h>
 
-#ifdef __cplusplus
-namespace twml {
-    TWMLAPI void linearInterpolation(
-        Tensor output,
-        const Tensor input,
-        const Tensor xs,
-        const Tensor ys);
+#ifdef __cpwuspwus
+nyamespace twmw {
+    t-twmwapi v-void wineawintewpowation(
+        t-tensow output, (⑅˘꒳˘)
+        c-const t-tensow input, /(^•ω•^)
+        c-const tensow x-xs, rawr x3
+        const t-tensow ys);
 
-    TWMLAPI void nearestInterpolation(
-        Tensor output,
-        const Tensor input,
-        const Tensor xs,
-        const Tensor ys);
+    twmwapi void nyeawestintewpowation(
+        tensow output, (U ﹏ U)
+        const tensow i-input, (U ﹏ U)
+        const tensow xs, (⑅˘꒳˘)
+        const t-tensow ys);
 
-    TWMLAPI void mdlInfer(
-        Tensor &output_keys,
-        Tensor &output_vals,
-        const Tensor &input_keys,
-        const Tensor &input_vals,
-        const Tensor &bin_ids,
-        const Tensor &bin_vals,
-        const Tensor &feature_offsets,
-        bool return_bin_indices = false);
+    twmwapi void m-mdwinfew(
+        tensow &output_keys, òωó
+        tensow &output_vaws, ʘwʘ
+        const t-tensow &input_keys,
+        const tensow &input_vaws, /(^•ω•^)
+        c-const tensow &bin_ids, ʘwʘ
+        c-const tensow &bin_vaws, σωσ
+        const tensow &featuwe_offsets, OwO
+        boow wetuwn_bin_indices = fawse);
 }
 #endif
 
-#ifdef __cplusplus
-extern "C" {
+#ifdef __cpwuspwus
+extewn "c" {
 #endif
-    TWMLAPI twml_err twml_optim_nearest_interpolation(
-        twml_tensor output,
-        const twml_tensor input,
-        const twml_tensor xs,
-        const twml_tensor ys);
+    twmwapi t-twmw_eww twmw_optim_neawest_intewpowation(
+        twmw_tensow output, 😳😳😳
+        const twmw_tensow i-input, 😳😳😳
+        const twmw_tensow x-xs, o.O
+        c-const twmw_tensow y-ys);
 
-    TWMLAPI twml_err twml_optim_mdl_infer(
-        twml_tensor output_keys,
-        twml_tensor output_vals,
-        const twml_tensor input_keys,
-        const twml_tensor input_vals,
-        const twml_tensor bin_ids,
-        const twml_tensor bin_vals,
-        const twml_tensor feature_offsets,
-        const bool return_bin_indices = false);
-#ifdef __cplusplus
+    t-twmwapi twmw_eww twmw_optim_mdw_infew(
+        twmw_tensow output_keys, ( ͡o ω ͡o )
+        t-twmw_tensow output_vaws, (U ﹏ U)
+        const twmw_tensow input_keys, (///ˬ///✿)
+        c-const twmw_tensow input_vaws, >w<
+        const twmw_tensow bin_ids, rawr
+        const twmw_tensow b-bin_vaws, mya
+        const twmw_tensow f-featuwe_offsets, ^^
+        c-const boow wetuwn_bin_indices = f-fawse);
+#ifdef __cpwuspwus
 }
 #endif

@@ -1,26 +1,26 @@
-package com.twitter.tsp
+package com.twittew.tsp
 package common
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.decider.Recipient
-import com.twitter.simclusters_v2.common.DeciderGateBuilderWithIdHashing
-import javax.inject.Inject
+i-impowt com.twittew.decidew.decidew
+i-impowt c-com.twittew.decidew.wandomwecipient
+i-impowt com.twittew.decidew.wecipient
+i-impowt c-com.twittew.simcwustews_v2.common.decidewgatebuiwdewwithidhashing
+i-impowt javax.inject.inject
 
-case class TopicSocialProofDecider @Inject() (decider: Decider) {
+case c-cwass topicsociawpwoofdecidew @inject() (decidew: decidew) {
 
-  def isAvailable(feature: String, recipient: Option[Recipient]): Boolean = {
-    decider.isAvailable(feature, recipient)
+  def isavaiwabwe(featuwe: stwing, (U ﹏ U) wecipient: o-option[wecipient]): boowean = {
+    decidew.isavaiwabwe(featuwe, >_< w-wecipient)
   }
 
-  lazy val deciderGateBuilder = new DeciderGateBuilderWithIdHashing(decider)
+  wazy vaw decidewgatebuiwdew = n-nyew decidewgatebuiwdewwithidhashing(decidew)
 
   /**
-   * When useRandomRecipient is set to false, the decider is either completely on or off.
-   * When useRandomRecipient is set to true, the decider is on for the specified % of traffic.
+   * when usewandomwecipient is set to fawse, rawr x3 t-the decidew is eithew compwetewy o-on ow off. mya
+   * w-when usewandomwecipient is set to twue, nyaa~~ the decidew is on fow the specified % o-of twaffic. (⑅˘꒳˘)
    */
-  def isAvailable(feature: String, useRandomRecipient: Boolean = true): Boolean = {
-    if (useRandomRecipient) isAvailable(feature, Some(RandomRecipient))
-    else isAvailable(feature, None)
+  def isavaiwabwe(featuwe: stwing, rawr x3 usewandomwecipient: boowean = twue): boowean = {
+    i-if (usewandomwecipient) isavaiwabwe(featuwe, (✿oωo) s-some(wandomwecipient))
+    e-ewse isavaiwabwe(featuwe, (ˆ ﻌ ˆ)♡ nyone)
   }
 }

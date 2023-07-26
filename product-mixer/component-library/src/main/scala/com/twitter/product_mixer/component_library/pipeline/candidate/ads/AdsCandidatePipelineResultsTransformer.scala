@@ -1,39 +1,39 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+package com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.ads
 
-import com.twitter.adserver.thriftscala.AdImpression
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsTweetCandidate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.UnexpectedCandidateResult
+impowt c-com.twittew.adsewvew.thwiftscawa.adimpwession
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.ads.adscandidate
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.ads.adstweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinewesuwtstwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.unexpectedcandidatewesuwt
 
-object AdsCandidatePipelineResultsTransformer
-    extends CandidatePipelineResultsTransformer[AdImpression, AdsCandidate] {
+o-object adscandidatepipewinewesuwtstwansfowmew
+    extends candidatepipewinewesuwtstwansfowmew[adimpwession, /(^•ω•^) adscandidate] {
 
-  override def transform(sourceResult: AdImpression): AdsCandidate =
-    (sourceResult.nativeRtbCreative, sourceResult.promotedTweetId) match {
-      case (None, Some(promotedTweetId)) =>
-        AdsTweetCandidate(
-          id = promotedTweetId,
-          adImpression = sourceResult
+  ovewwide def twansfowm(souwcewesuwt: adimpwession): adscandidate =
+    (souwcewesuwt.nativewtbcweative, rawr x3 s-souwcewesuwt.pwomotedtweetid) match {
+      case (none, (U ﹏ U) s-some(pwomotedtweetid)) =>
+        adstweetcandidate(
+          i-id = pwomotedtweetid, (U ﹏ U)
+          adimpwession = souwcewesuwt
         )
-      case (Some(_), None) =>
-        throw unsupportedAdImpressionPipelineFailure(
-          impression = sourceResult,
-          reason = "Received ad impression with rtbCreative")
-      case (Some(_), Some(_)) =>
-        throw unsupportedAdImpressionPipelineFailure(
-          impression = sourceResult,
-          reason = "Received ad impression with both rtbCreative and promoted tweetId")
-      case (None, None) =>
-        throw unsupportedAdImpressionPipelineFailure(
-          impression = sourceResult,
-          reason = "Received ad impression with neither rtbCreative nor promoted tweetId")
+      case (some(_), (⑅˘꒳˘) n-nyone) =>
+        thwow u-unsuppowtedadimpwessionpipewinefaiwuwe(
+          i-impwession = souwcewesuwt, òωó
+          weason = "weceived ad impwession with w-wtbcweative")
+      case (some(_), ʘwʘ some(_)) =>
+        thwow unsuppowtedadimpwessionpipewinefaiwuwe(
+          impwession = souwcewesuwt, /(^•ω•^)
+          w-weason = "weceived ad impwession w-with both w-wtbcweative and p-pwomoted tweetid")
+      c-case (none, ʘwʘ nyone) =>
+        thwow unsuppowtedadimpwessionpipewinefaiwuwe(
+          impwession = s-souwcewesuwt, σωσ
+          weason = "weceived ad impwession w-with nyeithew wtbcweative nyow pwomoted tweetid")
     }
 
-  private def unsupportedAdImpressionPipelineFailure(impression: AdImpression, reason: String) =
-    PipelineFailure(
-      UnexpectedCandidateResult,
-      reason =
-        s"Unsupported AdImpression ($reason). impressionString: ${impression.impressionString}")
+  pwivate def unsuppowtedadimpwessionpipewinefaiwuwe(impwession: adimpwession, OwO weason: stwing) =
+    p-pipewinefaiwuwe(
+      unexpectedcandidatewesuwt, 😳😳😳
+      w-weason =
+        s-s"unsuppowted a-adimpwession ($weason). 😳😳😳 impwessionstwing: ${impwession.impwessionstwing}")
 }

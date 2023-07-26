@@ -1,39 +1,39 @@
-package com.twitter.visibility.builder.users
+package com.twittew.visibiwity.buiwdew.usews
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.UserDeviceSource
-import com.twitter.visibility.features.AuthorHasConfirmedEmail
-import com.twitter.visibility.features.AuthorHasVerifiedPhone
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.gizmoduck.thwiftscawa.usew
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+i-impowt com.twittew.visibiwity.common.usewdevicesouwce
+impowt com.twittew.visibiwity.featuwes.authowhasconfiwmedemaiw
+impowt com.twittew.visibiwity.featuwes.authowhasvewifiedphone
 
-class AuthorDeviceFeatures(userDeviceSource: UserDeviceSource, statsReceiver: StatsReceiver) {
-  private[this] val scopedStatsReceiver = statsReceiver.scope("author_device_features")
+cwass authowdevicefeatuwes(usewdevicesouwce: u-usewdevicesouwce, (ˆ ﻌ ˆ)♡ statsweceivew: statsweceivew) {
+  p-pwivate[this] vaw scopedstatsweceivew = s-statsweceivew.scope("authow_device_featuwes")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  pwivate[this] vaw wequests = scopedstatsweceivew.countew("wequests")
 
-  private[this] val authorHasConfirmedEmailRequests =
-    scopedStatsReceiver.scope(AuthorHasConfirmedEmail.name).counter("requests")
-  private[this] val authorHasVerifiedPhoneRequests =
-    scopedStatsReceiver.scope(AuthorHasVerifiedPhone.name).counter("requests")
+  pwivate[this] v-vaw authowhasconfiwmedemaiwwequests =
+    scopedstatsweceivew.scope(authowhasconfiwmedemaiw.name).countew("wequests")
+  pwivate[this] v-vaw a-authowhasvewifiedphonewequests =
+    scopedstatsweceivew.scope(authowhasvewifiedphone.name).countew("wequests")
 
-  def forAuthor(author: User): FeatureMapBuilder => FeatureMapBuilder = forAuthorId(author.id)
+  def fowauthow(authow: usew): featuwemapbuiwdew => f-featuwemapbuiwdew = fowauthowid(authow.id)
 
-  def forAuthorId(authorId: Long): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+  def fowauthowid(authowid: wong): featuwemapbuiwdew => f-featuwemapbuiwdew = {
+    wequests.incw()
 
-    _.withFeature(AuthorHasConfirmedEmail, authorHasConfirmedEmail(authorId))
-      .withFeature(AuthorHasVerifiedPhone, authorHasVerifiedPhone(authorId))
+    _.withfeatuwe(authowhasconfiwmedemaiw, a-authowhasconfiwmedemaiw(authowid))
+      .withfeatuwe(authowhasvewifiedphone, a-authowhasvewifiedphone(authowid))
   }
 
-  def authorHasConfirmedEmail(authorId: Long): Stitch[Boolean] = {
-    authorHasConfirmedEmailRequests.incr()
-    userDeviceSource.hasConfirmedEmail(authorId)
+  d-def authowhasconfiwmedemaiw(authowid: w-wong): stitch[boowean] = {
+    authowhasconfiwmedemaiwwequests.incw()
+    u-usewdevicesouwce.hasconfiwmedemaiw(authowid)
   }
 
-  def authorHasVerifiedPhone(authorId: Long): Stitch[Boolean] = {
-    authorHasVerifiedPhoneRequests.incr()
-    userDeviceSource.hasConfirmedPhone(authorId)
+  def authowhasvewifiedphone(authowid: wong): stitch[boowean] = {
+    authowhasvewifiedphonewequests.incw()
+    u-usewdevicesouwce.hasconfiwmedphone(authowid)
   }
 }

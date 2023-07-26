@@ -1,74 +1,74 @@
-# checkstyle: noqa
-from twml.feature_config import FeatureConfigBuilder
+# checkstywe: nyoqa
+fwom twmw.featuwe_config i-impowt f-featuweconfigbuiwdew
 
 
-def get_feature_config(data_spec_path, label):
-  return FeatureConfigBuilder(data_spec_path=data_spec_path, debug=True) \
-    .batch_add_features(
+d-def get_featuwe_config(data_spec_path, -.- w-wabew):
+  wetuwn f-featuweconfigbuiwdew(data_spec_path=data_spec_path, d-debug=twue) \
+    .batch_add_featuwes(
     [
-      ("ebd.has_diff_lang", "A"),
-      ("ebd.tweet_age_in_secs", "A"),
-      ("encoded_tweet_features.composer_source_is_camera_flag", "A"),
-      ("encoded_tweet_features.favorite_count", "A"),
-      ("encoded_tweet_features.has_card_flag", "A"),
-      ("encoded_tweet_features.has_image_url_flag", "A"),
-      ("encoded_tweet_features.has_native_image_flag", "A"),
-      ("encoded_tweet_features.has_news_url_flag", "A"),
-      ("encoded_tweet_features.has_periscope_flag", "A"),
-      ("encoded_tweet_features.has_pro_video_flag", "A"),
-      ("encoded_tweet_features.has_quote_flag", "A"),
-      ("encoded_tweet_features.has_video_url_flag", "A"),
-      ("encoded_tweet_features.has_vine_flag", "A"),
-      ("encoded_tweet_features.has_visible_link_flag", "A"),
-      ("encoded_tweet_features.is_sensitive_content", "A"),
-      ("encoded_tweet_features.is_user_spam_flag", "A"),
-      ("encoded_tweet_features.link_language", "A"),
-      ("encoded_tweet_features.num_hashtags", "A"),
-      ("encoded_tweet_features.num_mentions", "A"),
-      ("encoded_tweet_features.reply_count", "A"),
-      ("encoded_tweet_features.retweet_count", "A"),
-      ("encoded_tweet_features.text_score", "A"),
-      ("encoded_tweet_features.user_reputation", "A"),
-      ("extended_encoded_tweet_features.decayed_favorite_count", "A"),
-      ("extended_encoded_tweet_features.decayed_quote_count", "A"),
-      ("extended_encoded_tweet_features.decayed_reply_count", "A"),
-      ("extended_encoded_tweet_features.decayed_retweet_count", "A"),
-      ("extended_encoded_tweet_features.embeds_impression_count_v2", "A"),
-      ("extended_encoded_tweet_features.embeds_url_count_v2", "A"),
-      ("extended_encoded_tweet_features.fake_favorite_count", "A"),
-      ("extended_encoded_tweet_features.fake_quote_count", "A"),
-      ("extended_encoded_tweet_features.fake_reply_count", "A"),
-      ("extended_encoded_tweet_features.fake_retweet_count", "A"),
-      ("extended_encoded_tweet_features.favorite_count_v2", "A"),
-      ("extended_encoded_tweet_features.label_dup_content_flag", "A"),
-      ("extended_encoded_tweet_features.label_nsfw_hi_prc_flag", "A"),
-      ("extended_encoded_tweet_features.label_nsfw_hi_rcl_flag", "A"),
-      ("extended_encoded_tweet_features.label_spam_hi_rcl_flag", "A"),
-      ("extended_encoded_tweet_features.periscope_exists", "A"),
-      ("extended_encoded_tweet_features.periscope_has_been_featured", "A"),
-      ("extended_encoded_tweet_features.periscope_is_currently_featured", "A"),
-      ("extended_encoded_tweet_features.periscope_is_from_quality_source", "A"),
-      ("extended_encoded_tweet_features.periscope_is_live", "A"),
-      ("extended_encoded_tweet_features.quote_count", "A"),
-      ("extended_encoded_tweet_features.reply_count_v2", "A"),
-      ("extended_encoded_tweet_features.retweet_count_v2", "A"),
-      ("extended_encoded_tweet_features.weighted_favorite_count", "A"),
-      ("extended_encoded_tweet_features.weighted_quote_count", "A"),
-      ("extended_encoded_tweet_features.weighted_reply_count", "A"),
-      ("extended_encoded_tweet_features.weighted_retweet_count", "A"),
-      ("timelines.earlybird.visible_token_ratio", "A")
+      ("ebd.has_diff_wang", ^^;; "a"), >_<
+      ("ebd.tweet_age_in_secs", mya "a"),
+      ("encoded_tweet_featuwes.composew_souwce_is_camewa_fwag", mya "a"),
+      ("encoded_tweet_featuwes.favowite_count", 😳 "a"), XD
+      ("encoded_tweet_featuwes.has_cawd_fwag", :3 "a"),
+      ("encoded_tweet_featuwes.has_image_uww_fwag", 😳😳😳 "a"), -.-
+      ("encoded_tweet_featuwes.has_native_image_fwag", ( ͡o ω ͡o ) "a"),
+      ("encoded_tweet_featuwes.has_news_uww_fwag", rawr x3 "a"),
+      ("encoded_tweet_featuwes.has_pewiscope_fwag", nyaa~~ "a"), /(^•ω•^)
+      ("encoded_tweet_featuwes.has_pwo_video_fwag", rawr "a"),
+      ("encoded_tweet_featuwes.has_quote_fwag", OwO "a"), (U ﹏ U)
+      ("encoded_tweet_featuwes.has_video_uww_fwag", >_< "a"),
+      ("encoded_tweet_featuwes.has_vine_fwag", rawr x3 "a"), mya
+      ("encoded_tweet_featuwes.has_visibwe_wink_fwag", nyaa~~ "a"),
+      ("encoded_tweet_featuwes.is_sensitive_content", (⑅˘꒳˘) "a"),
+      ("encoded_tweet_featuwes.is_usew_spam_fwag", rawr x3 "a"), (✿oωo)
+      ("encoded_tweet_featuwes.wink_wanguage", (ˆ ﻌ ˆ)♡ "a"),
+      ("encoded_tweet_featuwes.num_hashtags", (˘ω˘) "a"),
+      ("encoded_tweet_featuwes.num_mentions", (⑅˘꒳˘) "a"),
+      ("encoded_tweet_featuwes.wepwy_count", (///ˬ///✿) "a"), 😳😳😳
+      ("encoded_tweet_featuwes.wetweet_count", 🥺 "a"),
+      ("encoded_tweet_featuwes.text_scowe", mya "a"),
+      ("encoded_tweet_featuwes.usew_weputation", 🥺 "a"), >_<
+      ("extended_encoded_tweet_featuwes.decayed_favowite_count", >_< "a"),
+      ("extended_encoded_tweet_featuwes.decayed_quote_count", (⑅˘꒳˘) "a"),
+      ("extended_encoded_tweet_featuwes.decayed_wepwy_count", /(^•ω•^) "a"),
+      ("extended_encoded_tweet_featuwes.decayed_wetweet_count", "a"), rawr x3
+      ("extended_encoded_tweet_featuwes.embeds_impwession_count_v2", (U ﹏ U) "a"), (U ﹏ U)
+      ("extended_encoded_tweet_featuwes.embeds_uww_count_v2", (⑅˘꒳˘) "a"), òωó
+      ("extended_encoded_tweet_featuwes.fake_favowite_count", ʘwʘ "a"),
+      ("extended_encoded_tweet_featuwes.fake_quote_count", /(^•ω•^) "a"),
+      ("extended_encoded_tweet_featuwes.fake_wepwy_count", ʘwʘ "a"),
+      ("extended_encoded_tweet_featuwes.fake_wetweet_count", σωσ "a"),
+      ("extended_encoded_tweet_featuwes.favowite_count_v2", OwO "a"),
+      ("extended_encoded_tweet_featuwes.wabew_dup_content_fwag", 😳😳😳 "a"),
+      ("extended_encoded_tweet_featuwes.wabew_nsfw_hi_pwc_fwag", 😳😳😳 "a"),
+      ("extended_encoded_tweet_featuwes.wabew_nsfw_hi_wcw_fwag", o.O "a"), ( ͡o ω ͡o )
+      ("extended_encoded_tweet_featuwes.wabew_spam_hi_wcw_fwag", (U ﹏ U) "a"),
+      ("extended_encoded_tweet_featuwes.pewiscope_exists", (///ˬ///✿) "a"),
+      ("extended_encoded_tweet_featuwes.pewiscope_has_been_featuwed", >w< "a"),
+      ("extended_encoded_tweet_featuwes.pewiscope_is_cuwwentwy_featuwed", rawr "a"),
+      ("extended_encoded_tweet_featuwes.pewiscope_is_fwom_quawity_souwce", mya "a"),
+      ("extended_encoded_tweet_featuwes.pewiscope_is_wive", ^^ "a"),
+      ("extended_encoded_tweet_featuwes.quote_count", 😳😳😳 "a"),
+      ("extended_encoded_tweet_featuwes.wepwy_count_v2", mya "a"),
+      ("extended_encoded_tweet_featuwes.wetweet_count_v2", 😳 "a"),
+      ("extended_encoded_tweet_featuwes.weighted_favowite_count", -.- "a"),
+      ("extended_encoded_tweet_featuwes.weighted_quote_count", 🥺 "a"), o.O
+      ("extended_encoded_tweet_featuwes.weighted_wepwy_count", /(^•ω•^) "a"),
+      ("extended_encoded_tweet_featuwes.weighted_wetweet_count", nyaa~~ "a"), nyaa~~
+      ("timewines.eawwybiwd.visibwe_token_watio", :3 "a")
     ]
-  ).add_labels([
-    label,                                 # Tensor index: 0
-    "itl.engagement.is_clicked",           # Tensor index: 1
-    "itl.engagement.is_favorited",         # Tensor index: 2
-    "itl.engagement.is_open_linked",       # Tensor index: 3
-    "itl.engagement.is_photo_expanded",    # Tensor index: 4
-    "itl.engagement.is_profile_clicked",   # Tensor index: 5
-    "itl.engagement.is_replied",           # Tensor index: 6
-    "itl.engagement.is_retweeted",         # Tensor index: 7
-    "itl.engagement.is_video_playback_50",  # Tensor index: 8
-    "timelines.earlybird_score",           # Tensor index: 9
+  ).add_wabews([
+    w-wabew, 😳😳😳                                 # t-tensow index: 0
+    "itw.engagement.is_cwicked", (˘ω˘)           # tensow index: 1
+    "itw.engagement.is_favowited",         # tensow index: 2
+    "itw.engagement.is_open_winked", ^^       # t-tensow index: 3
+    "itw.engagement.is_photo_expanded", :3    # tensow index: 4
+    "itw.engagement.is_pwofiwe_cwicked", -.-   # tensow index: 5
+    "itw.engagement.is_wepwied", 😳           # t-tensow index: 6
+    "itw.engagement.is_wetweeted", mya         # t-tensow index: 7
+    "itw.engagement.is_video_pwayback_50", (˘ω˘)  # tensow index: 8
+    "timewines.eawwybiwd_scowe",           # t-tensow index: 9
   ]) \
-    .define_weight("meta.record_weight/type=earlybird") \
-    .build()
+    .define_weight("meta.wecowd_weight/type=eawwybiwd") \
+    .buiwd()

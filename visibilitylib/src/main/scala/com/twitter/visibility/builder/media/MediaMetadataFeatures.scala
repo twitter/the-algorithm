@@ -1,79 +1,79 @@
-package com.twitter.visibility.builder.media
+package com.twittew.visibiwity.buiwdew.media
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.mediaservices.media_util.GenericMediaKey
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.MediaMetadataSource
-import com.twitter.visibility.features.HasDmcaMediaFeature
-import com.twitter.visibility.features.MediaGeoRestrictionsAllowList
-import com.twitter.visibility.features.MediaGeoRestrictionsDenyList
-import com.twitter.visibility.features.AuthorId
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.mediasewvices.media_utiw.genewicmediakey
+i-impowt com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+i-impowt com.twittew.visibiwity.common.mediametadatasouwce
+i-impowt c-com.twittew.visibiwity.featuwes.hasdmcamediafeatuwe
+i-impowt com.twittew.visibiwity.featuwes.mediageowestwictionsawwowwist
+impowt com.twittew.visibiwity.featuwes.mediageowestwictionsdenywist
+impowt com.twittew.visibiwity.featuwes.authowid
 
-class MediaMetadataFeatures(
-  mediaMetadataSource: MediaMetadataSource,
-  statsReceiver: StatsReceiver) {
+c-cwass mediametadatafeatuwes(
+  mediametadatasouwce: m-mediametadatasouwce, mya
+  statsweceivew: s-statsweceivew) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("media_metadata_features")
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  pwivate[this] vaw scopedstatsweceivew = statsweceivew.scope("media_metadata_featuwes")
+  p-pwivate[this] vaw wequests = s-scopedstatsweceivew.countew("wequests")
 
-  private[this] val hasDmcaMedia =
-    scopedStatsReceiver.scope(HasDmcaMediaFeature.name).counter("requests")
-  private[this] val mediaGeoAllowList =
-    scopedStatsReceiver.scope(MediaGeoRestrictionsAllowList.name).counter("requests")
-  private[this] val mediaGeoDenyList =
-    scopedStatsReceiver.scope(MediaGeoRestrictionsDenyList.name).counter("requests")
-  private[this] val uploaderId =
-    scopedStatsReceiver.scope(AuthorId.name).counter("requests")
+  p-pwivate[this] vaw hasdmcamedia =
+    scopedstatsweceivew.scope(hasdmcamediafeatuwe.name).countew("wequests")
+  pwivate[this] vaw mediageoawwowwist =
+    s-scopedstatsweceivew.scope(mediageowestwictionsawwowwist.name).countew("wequests")
+  pwivate[this] vaw mediageodenywist =
+    scopedstatsweceivew.scope(mediageowestwictionsdenywist.name).countew("wequests")
+  pwivate[this] v-vaw upwoadewid =
+    scopedstatsweceivew.scope(authowid.name).countew("wequests")
 
-  def forGenericMediaKey(
-    genericMediaKey: GenericMediaKey
-  ): FeatureMapBuilder => FeatureMapBuilder = { featureMapBuilder =>
-    requests.incr()
+  d-def fowgenewicmediakey(
+    g-genewicmediakey: g-genewicmediakey
+  ): f-featuwemapbuiwdew => featuwemapbuiwdew = { featuwemapbuiwdew =>
+    wequests.incw()
 
-    featureMapBuilder.withFeature(
-      HasDmcaMediaFeature,
-      mediaIsDmca(genericMediaKey)
+    f-featuwemapbuiwdew.withfeatuwe(
+      hasdmcamediafeatuwe, ^^
+      mediaisdmca(genewicmediakey)
     )
 
-    featureMapBuilder.withFeature(
-      MediaGeoRestrictionsAllowList,
-      geoRestrictionsAllowList(genericMediaKey)
+    f-featuwemapbuiwdew.withfeatuwe(
+      mediageowestwictionsawwowwist, 😳😳😳
+      geowestwictionsawwowwist(genewicmediakey)
     )
 
-    featureMapBuilder.withFeature(
-      MediaGeoRestrictionsDenyList,
-      geoRestrictionsDenyList(genericMediaKey)
+    featuwemapbuiwdew.withfeatuwe(
+      mediageowestwictionsdenywist, mya
+      geowestwictionsdenywist(genewicmediakey)
     )
 
-    featureMapBuilder.withFeature(
-      AuthorId,
-      mediaUploaderId(genericMediaKey)
+    f-featuwemapbuiwdew.withfeatuwe(
+      authowid, 😳
+      m-mediaupwoadewid(genewicmediakey)
     )
   }
 
-  private def mediaIsDmca(genericMediaKey: GenericMediaKey) = {
-    hasDmcaMedia.incr()
-    mediaMetadataSource.getMediaIsDmca(genericMediaKey)
+  p-pwivate d-def mediaisdmca(genewicmediakey: genewicmediakey) = {
+    hasdmcamedia.incw()
+    mediametadatasouwce.getmediaisdmca(genewicmediakey)
   }
 
-  private def geoRestrictionsAllowList(genericMediaKey: GenericMediaKey) = {
-    mediaGeoAllowList.incr()
-    mediaMetadataSource.getGeoRestrictionsAllowList(genericMediaKey).map { allowListOpt =>
-      allowListOpt.getOrElse(Nil)
+  p-pwivate def geowestwictionsawwowwist(genewicmediakey: g-genewicmediakey) = {
+    mediageoawwowwist.incw()
+    mediametadatasouwce.getgeowestwictionsawwowwist(genewicmediakey).map { a-awwowwistopt =>
+      a-awwowwistopt.getowewse(niw)
     }
   }
 
-  private def geoRestrictionsDenyList(genericMediaKey: GenericMediaKey) = {
-    mediaGeoDenyList.incr()
-    mediaMetadataSource.getGeoRestrictionsDenyList(genericMediaKey).map { denyListOpt =>
-      denyListOpt.getOrElse(Nil)
+  pwivate def geowestwictionsdenywist(genewicmediakey: g-genewicmediakey) = {
+    mediageodenywist.incw()
+    m-mediametadatasouwce.getgeowestwictionsdenywist(genewicmediakey).map { denywistopt =>
+      denywistopt.getowewse(niw)
     }
   }
 
-  private def mediaUploaderId(genericMediaKey: GenericMediaKey) = {
-    uploaderId.incr()
-    mediaMetadataSource.getMediaUploaderId(genericMediaKey).map { uploaderIdOpt =>
-      uploaderIdOpt.map(Set(_)).getOrElse(Set.empty)
+  pwivate d-def mediaupwoadewid(genewicmediakey: genewicmediakey) = {
+    u-upwoadewid.incw()
+    mediametadatasouwce.getmediaupwoadewid(genewicmediakey).map { u-upwoadewidopt =>
+      u-upwoadewidopt.map(set(_)).getowewse(set.empty)
     }
   }
 }

@@ -1,739 +1,739 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.io.IOException;
-import java.util.Random;
+impowt j-java.io.ioexception;
+i-impowt java.utiw.wandom;
 
-import javax.annotation.Nullable;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
+i-impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
 
-import static com.twitter.search.core.earlybird.index.inverted.PayloadUtil.EMPTY_PAYLOAD;
+i-impowt static com.twittew.seawch.cowe.eawwybiwd.index.invewted.paywoadutiw.empty_paywoad;
 
 /**
- * This is a skip list container implementation backed by {@link IntBlockPool}.
+ * this is a skip wist c-containew impwementation backed b-by {@wink intbwockpoow}. (ˆ ﻌ ˆ)♡
  *
- * Skip list is a data structure similar to linked list, but with a hierarchy of lists
- * each skipping over fewer elements, and the bottom hierarchy does NOT skip any elements.
- * @see <a href="http://en.wikipedia.org/wiki/Skip_list">Skip List Wikipedia</a>
+ * skip wist is a data stwuctuwe simiwaw to winked w-wist, (✿oωo) but with a hiewawchy of w-wists
+ * each skipping o-ovew fewew ewements, (✿oωo) and the bottom hiewawchy does nyot skip any ewements. òωó
+ * @see <a h-hwef="http://en.wikipedia.owg/wiki/skip_wist">skip wist wikipedia</a>
  *
- * This implementation is lock free and thread safe with ONE writer thread and MULTIPLE reader
- * threads.
+ * this impwementation is wock fwee and thwead s-safe with one wwitew thwead a-and muwtipwe weadew
+ * t-thweads. (˘ω˘)
  *
- * This implementation could contain one or more skip lists, and they are all backed by
- * the same {@link IntBlockPool}.
+ * t-this impwementation c-couwd contain one ow mowe skip wists, (ˆ ﻌ ˆ)♡ a-and they awe aww backed by
+ * the same {@wink i-intbwockpoow}. ( ͡o ω ͡o )
  *
- * Values are actually stored as integers; however search key is implemented as a generic type.
- * Inserts of values that already exist are stored as subsequent elements. This is used to support
- * positions and term frequency.
+ * vawues awe actuawwy stowed as integews; howevew seawch key is impwemented as a-a genewic type.
+ * insewts of v-vawues that awweady e-exist awe stowed a-as subsequent ewements. rawr x3 this is used to suppowt
+ * positions a-and tewm fwequency. (˘ω˘)
  *
- * Also reserve the integer after value to store next ordinal pointer information. We avoid storing
- * pointers to the next element in the tower by allocating them contiguously. To descend the tower,
- * we just increment the pointer.
+ * a-awso wesewve the integew a-aftew vawue t-to stowe nyext owdinaw pointew i-infowmation. òωó we avoid stowing
+ * p-pointews to the next ewement in the towew by awwocating t-them contiguouswy. ( ͡o ω ͡o ) to descend t-the towew, σωσ
+ * we just incwement t-the pointew. (U ﹏ U)
  *
- * This skip list can also store positions as integers. It allocates them before it allocates the
- * value (the value is a doc ID if we are using positions). This means that we can access the
- * position by simply decrementing the value pointer.
+ * t-this skip wist can awso stowe positions as integews. rawr it awwocates them befowe it awwocates the
+ * vawue (the v-vawue is a-a doc id if we awe using positions). -.- t-this means t-that we can access t-the
+ * position by simpwy decwementing the vawue pointew. ( ͡o ω ͡o )
  *
- * To understand how the skip list works, first understand how insert works, then the rest will be
- * more comprehendable.
+ * t-to undewstand how the skip wist wowks, >_< fiwst undewstand how insewt wowks, o.O then t-the west wiww be
+ * mowe compwehendabwe. σωσ
  *
- * A skip list will be implemented in a circle linked way:
- *   - the list head node will have the sentinel value, which is the advisory greatest value
- *     provided by comparator.
- *   - Real first value will be pointed by the list head node.
- *   - Real last value will point to the list head.
+ * a-a skip wist wiww b-be impwemented i-in a ciwcwe winked way:
+ *   - t-the wist head nyode w-wiww have the s-sentinew vawue, -.- w-which is the advisowy gweatest vawue
+ *     pwovided b-by compawatow. σωσ
+ *   - w-weaw f-fiwst vawue wiww b-be pointed by t-the wist head nyode. :3
+ *   - weaw wast vawue wiww point to the wist h-head. ^^
  *
- * Constraints:
- *   - Does NOT support negative value.
+ * constwaints:
+ *   - does nyot suppowt nyegative vawue. òωó
  *
- * Simple Viz:
+ * simpwe viz:
  *
- * Empty list with max tower height 5. S = Sentinel value, I = Initial value.
- *    | s| 0| 0| 0| 0| 0| i| i| i| i| i| i| i| i| i| i|
+ * empty w-wist with max towew height 5. (ˆ ﻌ ˆ)♡ s = sentinew vawue, XD i = initiaw v-vawue. òωó
+ *    | s-s| 0| 0| 0| 0| 0| i-i| i| i| i| i| i| i| i| i| i|
  *
- * One possible situation after inserting 4, 6, 5.
- *    | s| 6| 6| 9| 0| 0| 4|13|13| 6| 0| 0| 0| 5| 9| 9|
+ * o-one possibwe situation aftew i-insewting 4, (ꈍᴗꈍ) 6, UwU 5.
+ *    | s-s| 6| 6| 9| 0| 0| 4|13|13| 6| 0| 0| 0| 5| 9| 9|
  */
-public class SkipListContainer<K> implements Flushable {
+pubwic cwass skipwistcontainew<k> impwements fwushabwe {
   /**
-   * The list head of first skip list in the container, this is for convenient usage,
-   * so application use only one skip list does not need to keep track of the list head.
+   * the wist h-head of fiwst skip wist in the c-containew, >w< this is fow convenient u-usage, ʘwʘ
+   * so a-appwication use onwy one skip wist does nyot nyeed t-to keep twack o-of the wist head. :3
    */
-  static final int FIRST_LIST_HEAD = 0;
+  static f-finaw int fiwst_wist_head = 0;
 
   /**
-   * Initial value used when initialize int block pool. Notice -1 is not used here in order to give
-   * application more freedom because -1 is a special value when doing bit manipulations.
+   * i-initiaw vawue used when initiawize int bwock poow. ^•ﻌ•^ nyotice -1 is nyot u-used hewe in o-owdew to give
+   * a-appwication mowe fweedom because -1 i-is a speciaw v-vawue when doing bit manipuwations. (ˆ ﻌ ˆ)♡
    */
-  static final int INITIAL_VALUE = -2;
+  s-static finaw int initiaw_vawue = -2;
 
   /**
-   *  Maximum tower height of this skip list and chance to grow tower by level.
+   *  maximum towew height of this skip wist and chance t-to gwow towew b-by wevew. 🥺
    *
-   *  Notice these two values could affect the memory usage and the performance.
-   *  Ideally they should be calculated based on the potential size of the skip list.
+   *  nyotice these two vawues c-couwd affect the m-memowy usage and the pewfowmance. OwO
+   *  ideawwy they shouwd be c-cawcuwated based on the potentiaw size of the skip wist. 🥺
    *
-   *  Given n is the number of elements in the skip list, the memory usage is in O(n).
+   *  given ny is t-the nyumbew of ewements in the skip wist, OwO the memowy u-usage is in o-o(n). (U ᵕ U❁)
    *
-   *  More precisely,
+   *  mowe pwecisewy, ( ͡o ω ͡o )
    *
-   *  the memory is mainly used for the following data:
+   *  the memowy is mainwy u-used fow the f-fowwowing data:
    *
-   *  header_tower  = O(maxTowerHeight + 1)
-   *  value         = O(n)
-   *  next_pointers = O(n * (1 - growTowerChance^(maxTowerHeight + 1)) / (1 - growTowerChance))
+   *  headew_towew  = o(maxtowewheight + 1)
+   *  vawue         = o-o(n)
+   *  nyext_pointews = o-o(n * (1 - gwowtowewchance^(maxtowewheight + 1)) / (1 - gwowtowewchance))
    *
-   * thus, the total memory usage is in O(header_tower + value + next_pointers).
+   * thus, ^•ﻌ•^ the totaw memowy usage i-is in o(headew_towew + vawue + n-nyext_pointews). o.O
    *
-   * Default value for maximum tower height and grow tower chance, these two numbers are chosen
-   * arbitrarily now.
+   * d-defauwt vawue fow m-maximum towew height and gwow towew c-chance, (⑅˘꒳˘) these t-two nyumbews awe c-chosen
+   * awbitwawiwy nyow. (ˆ ﻌ ˆ)♡
    */
-  @VisibleForTesting
-  public static final int MAX_TOWER_HEIGHT = 10;
-  private static final float GROW_TOWER_CHANCE = 0.2f;
+  @visibwefowtesting
+  p-pubwic s-static finaw int max_towew_height = 10;
+  pwivate static finaw f-fwoat gwow_towew_chance = 0.2f;
 
-  public enum HasPositions {
-    YES,
-    NO
+  p-pubwic enum h-haspositions {
+    yes, :3
+    nyo
   }
 
-  public enum HasPayloads {
-    YES,
-    NO
+  pubwic e-enum haspaywoads {
+    yes, /(^•ω•^)
+    n-no
   }
 
-  static final int INVALID_POSITION = -3;
+  static f-finaw int invawid_position = -3;
 
-  /** Memory barrier. */
-  private volatile int maxPoolPointer;
+  /** memowy bawwiew. òωó */
+  pwivate vowatiwe i-int maxpoowpointew;
 
-  /** Actual storage data structure. */
-  private final IntBlockPool blockPool;
+  /** a-actuaw s-stowage data stwuctuwe. */
+  pwivate f-finaw intbwockpoow bwockpoow;
 
   /**
-   * Default comparator used to determine the order between two given values or between one key and
-   * another value.
+   * d-defauwt compawatow used to detewmine the owdew between two given vawues ow between one key and
+   * a-anothew vawue.
    *
-   * Notice this comparator is shared by all threads using this skip list, so it is not thread safe
-   * if it is maintaining some states. However, {@link #search}, {@link #insert}, and
-   * {@link #searchCeil} support passed in comparator as a parameter, which should be thread safe if
-   * managed by the caller properly.
+   * nyotice t-this compawatow is shawed b-by aww thweads using this skip wist, :3 s-so it is nyot thwead safe
+   * i-if it is maintaining s-some states. (˘ω˘) h-howevew, 😳 {@wink #seawch}, σωσ {@wink #insewt}, UwU a-and
+   * {@wink #seawchceiw} s-suppowt passed in compawatow as a pawametew, -.- which shouwd be thwead safe if
+   * managed by the cawwew p-pwopewwy. 🥺
    */
-  private final SkipListComparator<K> defaultComparator;
+  p-pwivate finaw s-skipwistcompawatow<k> defauwtcompawatow;
 
-  /** Random generator used to decide if to grow tower by one level or not. */
-  private final Random random = new Random();
+  /** w-wandom genewatow used to decide if to gwow towew by one wevew o-ow nyot. 😳😳😳 */
+  p-pwivate finaw wandom wandom = nyew w-wandom();
 
   /**
-   * Used by writer thread to record last pointers at each level. Notice it is ok to have it as an
-   * instance field because we would only have one writer thread.
+   * used by wwitew thwead t-to wecowd wast pointews a-at each wevew. 🥺 nyotice it i-is ok to have i-it as an
+   * instance fiewd because we wouwd onwy have one wwitew thwead. ^^
    */
-  private final int[] lastPointers;
+  p-pwivate finaw i-int[] wastpointews;
 
   /**
-   * Whether the skip list contains positions. Used for text fields.
+   * w-whethew the skip w-wist contains p-positions. ^^;; used fow text fiewds. >w<
    */
-  private final HasPositions hasPositions;
+  p-pwivate f-finaw haspositions haspositions;
 
-  private final HasPayloads hasPayloads;
+  p-pwivate finaw h-haspaywoads haspaywoads;
 
   /**
-   * Creates a new probabilistic skip list, using the provided comparator to compare keys
-   * of type K.
+   * cweates a-a nyew pwobabiwistic skip wist, σωσ using the pwovided c-compawatow to compawe keys
+   * o-of type k. >w<
    *
-   * @param comparator a comparator used to compare integer values.
+   * @pawam compawatow a-a compawatow used to compawe i-integew vawues. (⑅˘꒳˘)
    */
-  public SkipListContainer(
-      SkipListComparator<K> comparator,
-      HasPositions hasPositions,
-      HasPayloads hasPayloads,
-      String name
+  pubwic skipwistcontainew(
+      skipwistcompawatow<k> compawatow, òωó
+      h-haspositions h-haspositions, (⑅˘꒳˘)
+      h-haspaywoads haspaywoads, (ꈍᴗꈍ)
+      stwing nyame
   ) {
-    this(comparator, new IntBlockPool(INITIAL_VALUE, name), hasPositions, hasPayloads);
+    this(compawatow, rawr x3 nyew i-intbwockpoow(initiaw_vawue, ( ͡o ω ͡o ) nyame), haspositions, UwU haspaywoads);
   }
 
   /**
-   * Base constructor, also used by flush handler.
+   * b-base constwuctow, ^^ a-awso used by fwush handwew. (˘ω˘)
    */
-  private SkipListContainer(
-      SkipListComparator<K> comparator,
-      IntBlockPool blockPool,
-      HasPositions hasPositions,
-      HasPayloads hasPayloads) {
-    // Sentinel value specified by the comparator cannot equal to INITIAL_VALUE.
-    Preconditions.checkArgument(comparator.getSentinelValue() != INITIAL_VALUE);
+  p-pwivate skipwistcontainew(
+      s-skipwistcompawatow<k> c-compawatow, (ˆ ﻌ ˆ)♡
+      intbwockpoow bwockpoow, OwO
+      h-haspositions haspositions, 😳
+      haspaywoads haspaywoads) {
+    // sentinew vawue s-specified by t-the compawatow cannot equaw to initiaw_vawue. UwU
+    p-pweconditions.checkawgument(compawatow.getsentinewvawue() != initiaw_vawue);
 
-    this.defaultComparator = comparator;
-    this.lastPointers = new int[MAX_TOWER_HEIGHT];
-    this.blockPool = blockPool;
-    this.hasPositions = hasPositions;
-    this.hasPayloads = hasPayloads;
+    this.defauwtcompawatow = c-compawatow;
+    t-this.wastpointews = n-nyew int[max_towew_height];
+    this.bwockpoow = bwockpoow;
+    this.haspositions = haspositions;
+    this.haspaywoads = haspaywoads;
   }
 
   /**
-   * Search for the index of the greatest value which has key less than or equal to the given key.
+   * seawch fow the index of the gweatest vawue which has key wess than ow equaw to the given k-key. 🥺
    *
-   * This is more like a floor search function. See {@link #searchCeil} for ceil search.
+   * this i-is mowe wike a fwoow seawch function. 😳😳😳 see {@wink #seawchceiw} f-fow ceiw seawch. ʘwʘ
    *
-   * @param key target key will be searched.
-   * @param skipListHead index of the header tower of the skip list will be searched.
-   * @param comparator comparator used for comparison when traversing through the skip list.
-   * @param searchFinger {@link SkipListSearchFinger} to accelerate search speed,
-   *                     notice the search finger must be before the key.
-   * @return the index of the greatest value which is less than or equal to given value,
-   *         will return skipListHead if given value has no greater or equal values.
+   * @pawam k-key tawget key w-wiww be seawched. /(^•ω•^)
+   * @pawam skipwisthead index o-of the headew towew of the skip w-wist wiww be s-seawched. :3
+   * @pawam compawatow c-compawatow used fow compawison w-when twavewsing t-thwough the skip wist. :3
+   * @pawam seawchfingew {@wink s-skipwistseawchfingew} t-to a-accewewate seawch s-speed, mya
+   *                     n-nyotice the seawch f-fingew must b-be befowe the k-key. (///ˬ///✿)
+   * @wetuwn t-the index of the gweatest vawue w-which is wess t-than ow equaw to g-given vawue, (⑅˘꒳˘)
+   *         wiww w-wetuwn skipwisthead if given vawue has nyo gweatew o-ow equaw vawues. :3
    */
-  public int search(
-      K key,
-      int skipListHead,
-      SkipListComparator<K> comparator,
-      @Nullable SkipListSearchFinger searchFinger) {
-    assert comparator != null;
-    // Start at the header tower.
-    int currentPointer = skipListHead;
+  pubwic i-int seawch(
+      k-k key,
+      i-int skipwisthead, /(^•ω•^)
+      skipwistcompawatow<k> c-compawatow, ^^;;
+      @nuwwabwe skipwistseawchfingew s-seawchfingew) {
+    assewt compawatow != n-nyuww;
+    // stawt at t-the headew towew. (U ᵕ U❁)
+    int cuwwentpointew = skipwisthead;
 
-    // Instantiate nextPointer and nextValue outside of the for loop so we can use the value
-    // directly after for loop.
-    int nextPointer = getForwardPointer(currentPointer, MAX_TOWER_HEIGHT - 1);
-    int nextValue = getValue(nextPointer);
+    // instantiate nextpointew and nextvawue o-outside of the fow woop s-so we can use the v-vawue
+    // diwectwy aftew fow woop. (U ﹏ U)
+    int nyextpointew = getfowwawdpointew(cuwwentpointew, mya m-max_towew_height - 1);
+    int n-nyextvawue = getvawue(nextpointew);
 
-    // Top down traversal.
-    for (int currentLevel = MAX_TOWER_HEIGHT - 1; currentLevel >= 0; currentLevel--) {
-      nextPointer = getForwardPointer(currentPointer, currentLevel);
-      nextValue = getValue(nextPointer);
+    // t-top d-down twavewsaw. ^•ﻌ•^
+    fow (int cuwwentwevew = max_towew_height - 1; c-cuwwentwevew >= 0; c-cuwwentwevew--) {
+      nyextpointew = g-getfowwawdpointew(cuwwentpointew, cuwwentwevew);
+      nyextvawue = g-getvawue(nextpointew);
 
-      // Jump to search finger at current level.
-      if (searchFinger != null) {
-        final int fingerPointer = searchFinger.getPointer(currentLevel);
-         assert searchFinger.isInitialPointer(fingerPointer)
-            || comparator.compareKeyWithValue(key, getValue(fingerPointer), INVALID_POSITION) >= 0;
+      // jump to seawch f-fingew at cuwwent w-wevew. (U ﹏ U)
+      if (seawchfingew != n-nyuww) {
+        finaw int fingewpointew = s-seawchfingew.getpointew(cuwwentwevew);
+         a-assewt s-seawchfingew.isinitiawpointew(fingewpointew)
+            || c-compawatow.compawekeywithvawue(key, :3 getvawue(fingewpointew), i-invawid_position) >= 0;
 
-        if (!searchFinger.isInitialPointer(fingerPointer)
-            && comparator.compareValues(getValue(fingerPointer), nextValue) >= 0) {
-          currentPointer = fingerPointer;
-          nextPointer = getForwardPointer(currentPointer, currentLevel);
-          nextValue = getValue(nextPointer);
+        if (!seawchfingew.isinitiawpointew(fingewpointew)
+            && c-compawatow.compawevawues(getvawue(fingewpointew), rawr x3 n-nyextvawue) >= 0) {
+          c-cuwwentpointew = f-fingewpointew;
+          n-nyextpointew = g-getfowwawdpointew(cuwwentpointew, 😳😳😳 c-cuwwentwevew);
+          nyextvawue = g-getvawue(nextpointew);
         }
       }
 
-      // Move forward.
-      while (comparator.compareKeyWithValue(key, nextValue, INVALID_POSITION) > 0) {
-        currentPointer = nextPointer;
+      // move fowwawd. >w<
+      w-whiwe (compawatow.compawekeywithvawue(key, òωó nyextvawue, 😳 invawid_position) > 0) {
+        c-cuwwentpointew = n-nyextpointew;
 
-        nextPointer = getForwardPointer(currentPointer, currentLevel);
-        nextValue = getValue(nextPointer);
+        n-nextpointew = getfowwawdpointew(cuwwentpointew, (✿oωo) cuwwentwevew);
+        nyextvawue = getvawue(nextpointew);
       }
 
-      // Advance search finger.
-      if (searchFinger != null && currentPointer != skipListHead) {
-        final int currentValue = getValue(currentPointer);
-        final int fingerPointer = searchFinger.getPointer(currentLevel);
+      // a-advance seawch f-fingew. OwO
+      i-if (seawchfingew != nyuww && cuwwentpointew != skipwisthead) {
+        finaw int c-cuwwentvawue = g-getvawue(cuwwentpointew);
+        finaw int fingewpointew = s-seawchfingew.getpointew(cuwwentwevew);
 
-        if (searchFinger.isInitialPointer(fingerPointer)
-            || comparator.compareValues(currentValue, getValue(fingerPointer)) > 0) {
-          searchFinger.setPointer(currentLevel, currentPointer);
+        i-if (seawchfingew.isinitiawpointew(fingewpointew)
+            || compawatow.compawevawues(cuwwentvawue, (U ﹏ U) getvawue(fingewpointew)) > 0) {
+          seawchfingew.setpointew(cuwwentwevew, (ꈍᴗꈍ) cuwwentpointew);
         }
       }
     }
 
-    // Return next pointer if next value matches searched value; otherwise return currentPointer.
-    return comparator.compareKeyWithValue(key, nextValue, INVALID_POSITION) == 0
-        ? nextPointer : currentPointer;
+    // w-wetuwn nyext p-pointew if nyext v-vawue matches s-seawched vawue; othewwise wetuwn cuwwentpointew. rawr
+    w-wetuwn compawatow.compawekeywithvawue(key, ^^ n-nyextvawue, rawr invawid_position) == 0
+        ? nyextpointew : cuwwentpointew;
   }
 
   /**
-   * Perform search with {@link #defaultComparator}.
-   * Notice {@link #defaultComparator} is not thread safe if it is keeping some states.
+   * pewfowm s-seawch with {@wink #defauwtcompawatow}. nyaa~~
+   * nyotice {@wink #defauwtcompawatow} is nyot thwead s-safe if it is keeping some s-states. nyaa~~
    */
-  public int search(K key, int skipListHead, @Nullable SkipListSearchFinger searchFinger) {
-    return search(key, skipListHead, this.defaultComparator, searchFinger);
+  p-pubwic int seawch(k key, o.O int skipwisthead, òωó @nuwwabwe s-skipwistseawchfingew s-seawchfingew) {
+    wetuwn s-seawch(key, ^^;; skipwisthead, rawr this.defauwtcompawatow, ^•ﻌ•^ s-seawchfingew);
   }
 
   /**
-   * Ceil search on given {@param key}.
+   * c-ceiw seawch o-on given {@pawam k-key}. nyaa~~
    *
-   * @param key target key will be searched.
-   * @param skipListHead index of the header tower of the skip list will be searched.
-   * @param comparator comparator used for comparison when traversing through the skip list.
-   * @param searchFinger {@link SkipListSearchFinger} to accelerate search speed.
-   * @return index of the smallest value with key greater or equal to the given key.
+   * @pawam key tawget k-key wiww be s-seawched. nyaa~~
+   * @pawam s-skipwisthead index of the h-headew towew of the skip wist wiww be seawched. 😳😳😳
+   * @pawam c-compawatow c-compawatow u-used fow compawison when twavewsing thwough the skip wist. 😳😳😳
+   * @pawam seawchfingew {@wink s-skipwistseawchfingew} to accewewate s-seawch speed. σωσ
+   * @wetuwn i-index of the smowest vawue with key g-gweatew ow equaw to the given key. o.O
    */
-  public int searchCeil(
-      K key,
-      int skipListHead,
-      SkipListComparator<K> comparator,
-      @Nullable SkipListSearchFinger searchFinger) {
-    assert comparator != null;
+  p-pubwic i-int seawchceiw(
+      k-k key, σωσ
+      i-int skipwisthead, nyaa~~
+      s-skipwistcompawatow<k> compawatow, rawr x3
+      @nuwwabwe skipwistseawchfingew seawchfingew) {
+    assewt c-compawatow != nyuww;
 
-    // Perform regular search.
-    final int foundPointer = search(key, skipListHead, comparator, searchFinger);
+    // pewfowm w-weguwaw seawch. (///ˬ///✿)
+    finaw int foundpointew = seawch(key, o.O skipwisthead, òωó c-compawatow, OwO seawchfingew);
 
-    // Return foundPointer if it is not the list head and the pointed value has key equal to the
-    // given key; otherwise, return next pointer.
-    if (foundPointer != skipListHead
-        && comparator.compareKeyWithValue(key, getValue(foundPointer), INVALID_POSITION) == 0) {
-      return foundPointer;
-    } else {
-      return getNextPointer(foundPointer);
+    // wetuwn foundpointew if it is nyot the wist head and t-the pointed vawue h-has key equaw to the
+    // g-given key; othewwise, σωσ wetuwn nyext pointew. nyaa~~
+    i-if (foundpointew != s-skipwisthead
+        && compawatow.compawekeywithvawue(key, OwO g-getvawue(foundpointew), ^^ invawid_position) == 0) {
+      w-wetuwn foundpointew;
+    } ewse {
+      wetuwn getnextpointew(foundpointew);
     }
   }
 
   /**
-   * Perform searchCeil with {@link #defaultComparator}.
-   * Notice {@link #defaultComparator} is not thread safe if it is keeping some states.
+   * p-pewfowm seawchceiw with {@wink #defauwtcompawatow}. (///ˬ///✿)
+   * nyotice {@wink #defauwtcompawatow} i-is nyot t-thwead safe if it i-is keeping some states. σωσ
    */
-  public int searchCeil(
-      K key, int skipListHead, @Nullable SkipListSearchFinger searchFinger) {
-    return searchCeil(key, skipListHead, this.defaultComparator, searchFinger);
+  pubwic int seawchceiw(
+      k k-key, int skipwisthead, rawr x3 @nuwwabwe skipwistseawchfingew seawchfingew) {
+    wetuwn seawchceiw(key, (ˆ ﻌ ˆ)♡ s-skipwisthead, 🥺 t-this.defauwtcompawatow, (⑅˘꒳˘) s-seawchfingew);
   }
 
   /**
-   * Insert a new value into the skip list.
+   * i-insewt a nyew vawue into the skip wist. 😳😳😳
    *
-   * Notice inserting supports duplicate keys and duplicate values.
+   * n-nyotice i-insewting suppowts dupwicate keys and dupwicate v-vawues. /(^•ω•^)
    *
-   * Duplicate keys with different values or positions will be inserted consecutively.
-   * Duplciate keys with identical values will be ignored, and the duplicate will not be stored in
-   * the posting list.
+   * dupwicate keys with diffewent v-vawues ow positions wiww be insewted consecutivewy. >w<
+   * d-dupwciate k-keys with identicaw vawues wiww b-be ignowed, a-and the dupwicate w-wiww not be stowed in
+   * the posting wist. ^•ﻌ•^
    *
-   * @param key is the key of the given value.
-   * @param value is the value will be inserted, cannot be {@link #getSentinelValue()}.
-   * @param skipListHead index of the header tower of the skip list will accept the new value.
-   * @param comparator comparator used for comparison when traversing through the skip list.
-   * @return whether this value exists in the posting list. Note that this will return true even
-   * if it is a new position.
+   * @pawam k-key is the key of the given vawue. 😳😳😳
+   * @pawam vawue is the vawue w-wiww be insewted, :3 cannot be {@wink #getsentinewvawue()}. (ꈍᴗꈍ)
+   * @pawam skipwisthead index of the h-headew towew of t-the skip wist wiww a-accept the nyew v-vawue. ^•ﻌ•^
+   * @pawam c-compawatow compawatow used f-fow compawison when twavewsing thwough the skip w-wist. >w<
+   * @wetuwn whethew this v-vawue exists in the posting wist. ^^;; nyote that this w-wiww wetuwn t-twue even
+   * if it is a nyew position. (✿oωo)
    */
-  public boolean insert(K key, int value, int position, int[] payload, int skipListHead,
-                    SkipListComparator<K> comparator) {
-    Preconditions.checkArgument(comparator != null);
-    Preconditions.checkArgument(value != getSentinelValue());
+  p-pubwic boowean insewt(k key, òωó int v-vawue, ^^ int position, ^^ i-int[] paywoad, rawr int skipwisthead, XD
+                    s-skipwistcompawatow<k> c-compawatow) {
+    pweconditions.checkawgument(compawatow != n-nyuww);
+    pweconditions.checkawgument(vawue != getsentinewvawue());
 
-    // Start at the header tower.
-    int currentPointer = skipListHead;
+    // stawt at the headew t-towew. rawr
+    int cuwwentpointew = skipwisthead;
 
-    // Initialize lastPointers.
-    for (int i = 0; i < MAX_TOWER_HEIGHT; i++) {
-      this.lastPointers[i] = INITIAL_VALUE;
+    // i-initiawize wastpointews. 😳
+    fow (int i = 0; i-i < max_towew_height; i-i++) {
+      t-this.wastpointews[i] = initiaw_vawue;
     }
-    int nextPointer = INITIAL_VALUE;
+    i-int nyextpointew = i-initiaw_vawue;
 
-    // Top down traversal.
-    for (int currentLevel = MAX_TOWER_HEIGHT - 1; currentLevel >= 0; currentLevel--) {
-      nextPointer = getForwardPointer(currentPointer, currentLevel);
-      int nextValue = getValue(nextPointer);
+    // top down twavewsaw. 🥺
+    f-fow (int cuwwentwevew = m-max_towew_height - 1; cuwwentwevew >= 0; c-cuwwentwevew--) {
+      n-nyextpointew = getfowwawdpointew(cuwwentpointew, cuwwentwevew);
+      int nyextvawue = getvawue(nextpointew);
 
-      int nextPosition = getPosition(nextPointer);
-      while (comparator.compareKeyWithValue(key, nextValue, nextPosition) > 0) {
-        currentPointer = nextPointer;
+      i-int nyextposition = g-getposition(nextpointew);
+      whiwe (compawatow.compawekeywithvawue(key, (U ᵕ U❁) nyextvawue, 😳 nyextposition) > 0) {
+        cuwwentpointew = n-nyextpointew;
 
-        nextPointer = getForwardPointer(currentPointer, currentLevel);
-        nextValue = getValue(nextPointer);
-        nextPosition = getPosition(nextPointer);
+        nyextpointew = g-getfowwawdpointew(cuwwentpointew, 🥺 c-cuwwentwevew);
+        nyextvawue = getvawue(nextpointew);
+        nyextposition = getposition(nextpointew);
       }
 
-      // Store last pointers.
-      lastPointers[currentLevel] = currentPointer;
+      // stowe wast p-pointews. (///ˬ///✿)
+      wastpointews[cuwwentwevew] = cuwwentpointew;
     }
 
-    // we use isDuplicateValue to determine if a value already exists in a posting list (even if it
-    // is a new position). We need to check both current pointer and next pointer in case this is
-    // the largest position we have seen for this value in this skip list. In that case, nextPointer
-    // will point to a larger value, but we want to check the smaller one to see if it is the same
-    // value. For example, if we have [(1, 2), (2, 4)] and we want to insert (1, 3), then
-    // nextPointer will point to (2, 4), but we want to check the doc ID of (1, 2) to see if it has
-    // the same document ID.
-    boolean isDuplicateValue = getValue(currentPointer) == value || getValue(nextPointer) == value;
+    // we u-use isdupwicatevawue to detewmine i-if a vawue awweady e-exists in a posting wist (even i-if it
+    // i-is a nyew position). mya w-we nyeed to c-check both cuwwent p-pointew and n-nyext pointew in case this is
+    // the wawgest position we have seen fow this vawue in this skip w-wist. (✿oωo) in that c-case, ^•ﻌ•^ nextpointew
+    // w-wiww p-point to a wawgew v-vawue, o.O but we w-want to check the smowew one to see if it is the same
+    // vawue. o.O fow exampwe, XD i-if we have [(1, ^•ﻌ•^ 2), (2, ʘwʘ 4)] a-and we want to insewt (1, (U ﹏ U) 3), then
+    // nyextpointew w-wiww point to (2, 😳😳😳 4), b-but we w-want to check the doc id of (1, 🥺 2) to see if it h-has
+    // the same document id. (///ˬ///✿)
+    boowean isdupwicatevawue = g-getvawue(cuwwentpointew) == v-vawue || getvawue(nextpointew) == vawue;
 
-    if (comparator.compareKeyWithValue(key, getValue(nextPointer), getPosition(nextPointer)) != 0) {
-      if (hasPayloads == HasPayloads.YES) {
-        Preconditions.checkNotNull(payload);
-        // If this skip list has payloads, we store the payload immediately before the document ID
-        // and position (iff the position exists) in the block pool. We store payloads before
-        // positions because they are variable length, and reading past them would require knowing
-        // the size of the payload. We don't store payloads after the doc ID because we have a
-        // variable number of pointers after the doc ID, and we would have no idea where the
-        // pointers stop and the payload starts.
-        for (int n : payload) {
-          this.blockPool.add(n);
+    if (compawatow.compawekeywithvawue(key, (˘ω˘) g-getvawue(nextpointew), :3 getposition(nextpointew)) != 0) {
+      i-if (haspaywoads == h-haspaywoads.yes) {
+        pweconditions.checknotnuww(paywoad);
+        // i-if this skip wist h-has paywoads, /(^•ω•^) w-we stowe the paywoad i-immediatewy b-befowe the document i-id
+        // and position (iff t-the position e-exists) in the bwock poow. :3 we s-stowe paywoads befowe
+        // positions because they awe vawiabwe w-wength, mya and weading past them w-wouwd wequiwe knowing
+        // t-the size of t-the paywoad. XD we don't stowe paywoads aftew the doc i-id because we have a
+        // vawiabwe nyumbew o-of pointews a-aftew the doc id, and we wouwd have nyo idea whewe t-the
+        // p-pointews stop and the paywoad s-stawts. (///ˬ///✿)
+        fow (int ny : paywoad) {
+          this.bwockpoow.add(n);
         }
       }
 
-      if (hasPositions == HasPositions.YES) {
-        // If this skip list has positions, we store the position before the document ID in the
-        // block pool.
-        this.blockPool.add(position);
+      i-if (haspositions == h-haspositions.yes) {
+        // if this skip w-wist has positions, 🥺 w-we stowe the position befowe the document i-id in the
+        // b-bwock poow. o.O
+        t-this.bwockpoow.add(position);
       }
 
-      // Insert value.
-      final int insertedPointer = this.blockPool.add(value);
+      // i-insewt vawue. mya
+      finaw int insewtedpointew = this.bwockpoow.add(vawue);
 
-      // Insert outgoing pointers.
-      final int height = getRandomTowerHeight();
-      for (int currentLevel = 0; currentLevel < height; currentLevel++) {
-        this.blockPool.add(getForwardPointer(lastPointers[currentLevel], currentLevel));
+      // insewt outgoing pointews. rawr x3
+      finaw int height = getwandomtowewheight();
+      f-fow (int cuwwentwevew = 0; c-cuwwentwevew < h-height; c-cuwwentwevew++) {
+        t-this.bwockpoow.add(getfowwawdpointew(wastpointews[cuwwentwevew], 😳 c-cuwwentwevew));
       }
 
       this.sync();
 
-      // Update incoming pointers.
-      for (int currentLevel = 0; currentLevel < height; currentLevel++) {
-        setForwardPointer(lastPointers[currentLevel], currentLevel, insertedPointer);
+      // u-update incoming p-pointews. 😳😳😳
+      fow (int cuwwentwevew = 0; c-cuwwentwevew < h-height; cuwwentwevew++) {
+        setfowwawdpointew(wastpointews[cuwwentwevew], >_< cuwwentwevew, >w< i-insewtedpointew);
       }
 
       this.sync();
     }
 
-    return isDuplicateValue;
+    wetuwn isdupwicatevawue;
   }
 
   /**
-   * Delete a given key from skip list
+   * d-dewete a given key f-fwom skip wist
    *
-   * @param key the key of the given value
-   * @param skipListHead index of the header tower of the skip list will accept the new value
-   * @param comparator comparator used for comparison when traversing through the skip list
-   * @return smallest value in the container. Returns {@link #INITIAL_VALUE} if the
-   * key does not exist.
+   * @pawam k-key the key of the given vawue
+   * @pawam s-skipwisthead i-index of t-the headew towew of the skip wist w-wiww accept the n-nyew vawue
+   * @pawam compawatow c-compawatow used fow compawison w-when twavewsing t-thwough the s-skip wist
+   * @wetuwn smowest vawue i-in the containew. rawr x3 wetuwns {@wink #initiaw_vawue} if the
+   * k-key does nyot exist. XD
    */
-  public int delete(K key, int skipListHead, SkipListComparator<K> comparator) {
-    boolean foundKey = false;
+  pubwic int dewete(k key, ^^ int skipwisthead, skipwistcompawatow<k> compawatow) {
+    boowean foundkey = f-fawse;
 
-    for (int currentLevel = MAX_TOWER_HEIGHT - 1; currentLevel >= 0; currentLevel--) {
-      int currentPointer = skipListHead;
-      int nextValue = getValue(getForwardPointer(currentPointer, currentLevel));
+    fow (int cuwwentwevew = max_towew_height - 1; cuwwentwevew >= 0; cuwwentwevew--) {
+      int cuwwentpointew = skipwisthead;
+      int nyextvawue = getvawue(getfowwawdpointew(cuwwentpointew, (✿oωo) cuwwentwevew));
 
-      // First we skip over all the nodes that are smaller than our key.
-      while (comparator.compareKeyWithValue(key, nextValue, INVALID_POSITION) > 0) {
-        currentPointer = getForwardPointer(currentPointer, currentLevel);
-        nextValue = getValue(getForwardPointer(currentPointer, currentLevel));
+      // f-fiwst we skip ovew aww the nyodes that a-awe smowew than ouw key. >w<
+      whiwe (compawatow.compawekeywithvawue(key, 😳😳😳 n-nyextvawue, (ꈍᴗꈍ) invawid_position) > 0) {
+        cuwwentpointew = g-getfowwawdpointew(cuwwentpointew, (✿oωo) cuwwentwevew);
+        n-nextvawue = getvawue(getfowwawdpointew(cuwwentpointew, (˘ω˘) cuwwentwevew));
       }
 
-      Preconditions.checkState(currentPointer != INITIAL_VALUE);
+      p-pweconditions.checkstate(cuwwentpointew != i-initiaw_vawue);
 
-      // If we don't find the node at this level that's OK, keep searching on a lower one.
-      if (comparator.compareKeyWithValue(key, nextValue, INVALID_POSITION) != 0) {
+      // if we don't find the n-node at this wevew that's ok, nyaa~~ keep seawching on a wowew one. ( ͡o ω ͡o )
+      i-if (compawatow.compawekeywithvawue(key, 🥺 nyextvawue, (U ﹏ U) i-invawid_position) != 0) {
         continue;
       }
 
-      // We found an element to delete.
-      foundKey = true;
+      // w-we found an ewement to dewete. ( ͡o ω ͡o )
+      f-foundkey = t-twue;
 
-      // Otherwise, save the current pointer. Right now, current pointer points to the first element
-      // that has the same value as key.
-      int savedPointer = currentPointer;
+      // othewwise, (///ˬ///✿) save the cuwwent p-pointew. (///ˬ///✿) wight nyow, (✿oωo) cuwwent pointew points to t-the fiwst ewement
+      // that has the same vawue as key. (U ᵕ U❁)
+      int savedpointew = c-cuwwentpointew;
 
-      currentPointer = getForwardPointer(currentPointer, currentLevel);
-      // Then, walk over every element that is equal to the key.
-      while (comparator.compareKeyWithValue(key, getValue(currentPointer), INVALID_POSITION) == 0) {
-        currentPointer = getForwardPointer(currentPointer, currentLevel);
+      c-cuwwentpointew = getfowwawdpointew(cuwwentpointew, ʘwʘ cuwwentwevew);
+      // t-then, ʘwʘ wawk o-ovew evewy ewement that is equaw t-to the key. XD
+      whiwe (compawatow.compawekeywithvawue(key, getvawue(cuwwentpointew), (✿oωo) invawid_position) == 0) {
+        cuwwentpointew = g-getfowwawdpointew(cuwwentpointew, ^•ﻌ•^ cuwwentwevew);
       }
 
-      // update the saved pointer to point to the first non-equal element of the skip list.
-      setForwardPointer(savedPointer, currentLevel, currentPointer);
+      // u-update the saved pointew to point t-to the fiwst nyon-equaw e-ewement of the skip wist. ^•ﻌ•^
+      s-setfowwawdpointew(savedpointew, >_< cuwwentwevew, mya cuwwentpointew);
     }
 
-    // Something has changed, need to sync up here.
-    if (foundKey) {
+    // s-something has changed, σωσ nyeed to sync up hewe. rawr
+    i-if (foundkey) {
       this.sync();
-      // return smallest value, might be used as first postings later
-      return getSmallestValue(skipListHead);
+      // w-wetuwn smowest vawue, (✿oωo) might be used as fiwst p-postings watew
+      wetuwn getsmowestvawue(skipwisthead);
     }
 
-    return INITIAL_VALUE;
+    wetuwn initiaw_vawue;
   }
 
   /**
-   * Perform insert with {@link #defaultComparator}.
-   * Notice {@link #defaultComparator} is not thread safe if it is keeping some states.
+   * pewfowm insewt with {@wink #defauwtcompawatow}.
+   * nyotice {@wink #defauwtcompawatow} is nyot thwead safe if it i-is keeping some s-states. :3
    */
-  public boolean insert(K key, int value, int skipListHead) {
-    return insert(key, value, INVALID_POSITION, EMPTY_PAYLOAD, skipListHead,
-        this.defaultComparator);
+  pubwic boowean insewt(k k-key, rawr x3 int v-vawue, ^^ int skipwisthead) {
+    wetuwn insewt(key, ^^ v-vawue, OwO invawid_position, ʘwʘ empty_paywoad, /(^•ω•^) skipwisthead, ʘwʘ
+        this.defauwtcompawatow);
   }
 
-  public boolean insert(K key, int value, int position, int[] payload, int skipListHead) {
-    return insert(key, value, position, payload, skipListHead, this.defaultComparator);
+  pubwic boowean insewt(k key, (⑅˘꒳˘) int v-vawue, UwU int position, -.- int[] paywoad, :3 int skipwisthead) {
+    wetuwn insewt(key, >_< v-vawue, nyaa~~ position, ( ͡o ω ͡o ) p-paywoad, skipwisthead, o.O t-this.defauwtcompawatow);
   }
 
   /**
-   * Perform delete with {@link #defaultComparator}.
-   * Notice {@link #defaultComparator} is not thread safe if it is keeping some states.
+   * pewfowm dewete with {@wink #defauwtcompawatow}. :3
+   * notice {@wink #defauwtcompawatow} i-is nyot t-thwead safe if i-it is keeping some states. (˘ω˘)
    */
-  public int delete(K key, int skipListHead) {
-    return delete(key, skipListHead, this.defaultComparator);
+  p-pubwic int dewete(k key, rawr x3 int s-skipwisthead) {
+    wetuwn dewete(key, (U ᵕ U❁) s-skipwisthead, 🥺 this.defauwtcompawatow);
   }
 
   /**
-   * Get the pointer of next value pointed by the given pointer.
+   * g-get the pointew of nyext vawue pointed b-by the given pointew. >_<
    *
-   * @param pointer reference to the current value.
-   * @return pointer of next value.
+   * @pawam p-pointew w-wefewence to the cuwwent vawue. :3
+   * @wetuwn p-pointew of nyext v-vawue. :3
    */
-  public int getNextPointer(int pointer) {
-    return getForwardPointer(pointer, 0);
+  pubwic int getnextpointew(int pointew) {
+    w-wetuwn getfowwawdpointew(pointew, (ꈍᴗꈍ) 0);
   }
 
   /**
-   * Get the value pointed by a pointer, this is a dereference process.
+   * g-get the vawue pointed by a pointew, σωσ t-this is a-a dewefewence pwocess. 😳
    *
-   * @param pointer is an array index on this.blockPool.
-   * @return value pointed pointed by the pointer.
+   * @pawam pointew is an awway index o-on this.bwockpoow. mya
+   * @wetuwn vawue pointed pointed by the pointew. (///ˬ///✿)
    */
-  public int getValue(int pointer) {
-    int value = blockPool.get(pointer);
+  pubwic int getvawue(int pointew) {
+    int vawue = bwockpoow.get(pointew);
 
-    // Visibility race
-    if (value == INITIAL_VALUE) {
-      // Volatile read to cross the memory barrier again.
-      final boolean isSafe = isPointerSafe(pointer);
-      assert isSafe;
+    // visibiwity wace
+    i-if (vawue == initiaw_vawue) {
+      // vowatiwe w-wead to cwoss the memowy b-bawwiew again. ^^
+      finaw boowean issafe = ispointewsafe(pointew);
+      a-assewt issafe;
 
-      // Re-read the pointer again
-      value = blockPool.get(pointer);
+      // we-wead the pointew a-again
+      vawue = bwockpoow.get(pointew);
     }
 
-    return value;
+    wetuwn v-vawue;
   }
 
-  public int getSmallestValue(int skipListHeader) {
-    return getValue(getForwardPointer(skipListHeader, 0));
-  }
-
-  /**
-   * Builder of a forward search finger with header tower index.
-   *
-   * @return a new {@link SkipListSearchFinger} object.
-   */
-  public SkipListSearchFinger buildSearchFinger() {
-    return new SkipListSearchFinger(MAX_TOWER_HEIGHT);
+  pubwic int getsmowestvawue(int skipwistheadew) {
+    w-wetuwn getvawue(getfowwawdpointew(skipwistheadew, (✿oωo) 0));
   }
 
   /**
-   * Added another skip list into the int pool.
+   * buiwdew of a fowwawd seawch fingew w-with headew towew i-index. ( ͡o ω ͡o )
    *
-   * @return index of the header tower of the newly created skip list.
+   * @wetuwn a nyew {@wink skipwistseawchfingew} o-object. ^^;;
    */
-  public int newSkipList() {
-    // Virtual value of header.
-    final int sentinelValue = getSentinelValue();
-    if (hasPositions == HasPositions.YES) {
-      this.blockPool.add(INVALID_POSITION);
+  p-pubwic skipwistseawchfingew buiwdseawchfingew() {
+    w-wetuwn nyew s-skipwistseawchfingew(max_towew_height);
+  }
+
+  /**
+   * added anothew skip wist i-into the int poow. :3
+   *
+   * @wetuwn index of the headew towew o-of the nyewwy cweated skip wist. 😳
+   */
+  pubwic int nyewskipwist() {
+    // v-viwtuaw v-vawue of headew. XD
+    f-finaw int sentinewvawue = getsentinewvawue();
+    if (haspositions == h-haspositions.yes) {
+      this.bwockpoow.add(invawid_position);
     }
-    final int skipListHead = this.blockPool.add(sentinelValue);
+    f-finaw int skipwisthead = t-this.bwockpoow.add(sentinewvawue);
 
-    // Build header tower, initially point all the pointers to
-    //   itself since no value has been inserted.
-    for (int i = 0; i < MAX_TOWER_HEIGHT; i++) {
-      this.blockPool.add(skipListHead);
+    // buiwd h-headew towew, (///ˬ///✿) initiawwy point aww the pointews to
+    //   itsewf since nyo vawue has been i-insewted. o.O
+    fow (int i-i = 0; i < max_towew_height; i++) {
+      t-this.bwockpoow.add(skipwisthead);
     }
 
     this.sync();
 
-    return skipListHead;
+    wetuwn skipwisthead;
   }
 
   /**
-   * Check if the block pool has been initiated by {@link #newSkipList}.
+   * c-check if the b-bwock poow has b-been initiated b-by {@wink #newskipwist}. o.O
    */
-  public boolean isEmpty() {
-    return this.blockPool.length() == 0;
+  p-pubwic boowean i-isempty() {
+    wetuwn this.bwockpoow.wength() == 0;
   }
 
   /**
-   * Write to the volatile variable to cross memory barrier. maxPoolPointer is the memory barrier
-   * for new appends.
+   * wwite to the v-vowatiwe vawiabwe t-to cwoss memowy b-bawwiew. XD maxpoowpointew i-is the m-memowy bawwiew
+   * f-fow nyew appends. ^^;;
    */
-  private void sync() {
-    this.maxPoolPointer = this.blockPool.length();
+  p-pwivate void sync() {
+    t-this.maxpoowpointew = t-this.bwockpoow.wength();
   }
 
   /**
-   * Read from volatile variable to cross memory barrier.
+   * wead fwom vowatiwe vawiabwe t-to cwoss memowy bawwiew. 😳😳😳
    *
-   * @param pointer is an block pool index.
-   * @return boolean indicate if given pointer is within the range of max pool pointer.
+   * @pawam pointew is an bwock p-poow index. (U ᵕ U❁)
+   * @wetuwn boowean indicate if g-given pointew is w-within the wange of max poow pointew. /(^•ω•^)
    */
-  private boolean isPointerSafe(int pointer) {
-    return pointer <= this.maxPoolPointer;
+  pwivate boowean ispointewsafe(int p-pointew) {
+    w-wetuwn pointew <= this.maxpoowpointew;
   }
 
   /**
-   * Get the position associated with the doc ID pointed to by pointer.
-   * @param pointer aka doc ID pointer.
-   * @return The value of the position for that doc ID. Returns INVALID_POSITION if the skip list
-   * does not have positions, or if there is no position for that pointer.
+   * g-get the p-position associated with the doc id pointed to by pointew. 😳😳😳
+   * @pawam p-pointew aka d-doc id pointew. rawr x3
+   * @wetuwn the vawue of the position fow that d-doc id. ʘwʘ wetuwns i-invawid_position if the skip wist
+   * does nyot h-have positions, UwU ow if thewe is nyo position fow that pointew. (⑅˘꒳˘)
    */
-  public int getPosition(int pointer) {
-    if (hasPositions == HasPositions.NO) {
-      return INVALID_POSITION;
+  pubwic int getposition(int p-pointew) {
+    if (haspositions == haspositions.no) {
+      w-wetuwn invawid_position;
     }
-    // if this skip list has positions, the position will always be inserted into the block pool
-    // immediately before the doc ID.
-    return getValue(pointer - 1);
+    // i-if this skip w-wist has positions, the position w-wiww awways b-be insewted into t-the bwock poow
+    // i-immediatewy b-befowe the doc id. ^^
+    wetuwn getvawue(pointew - 1);
   }
 
   /**
-   * Get the payload pointer from a normal pointer (e.g. one returned from the {@link this#search}
-   * method).
+   * g-get the p-paywoad pointew f-fwom a nyowmaw pointew (e.g. 😳😳😳 one w-wetuwned fwom t-the {@wink this#seawch}
+   * m-method). òωó
    */
-  public int getPayloadPointer(int pointer) {
-    Preconditions.checkState(hasPayloads == HasPayloads.YES,
-        "getPayloadPointer() should only be called on a skip list that supports payloads.");
+  pubwic i-int getpaywoadpointew(int pointew) {
+    p-pweconditions.checkstate(haspaywoads == h-haspaywoads.yes, ^^;;
+        "getpaywoadpointew() s-shouwd onwy b-be cawwed on a skip wist that suppowts p-paywoads.");
 
-    // if this skip list has payloads, the payload will always be inserted into the block pool
-    // before the doc ID, and before the position if there is a position.
-    int positionOffset = hasPositions == HasPositions.YES ? 1 : 0;
+    // if this s-skip wist has p-paywoads, (✿oωo) the paywoad wiww awways be insewted into the bwock poow
+    // b-befowe t-the doc id, and befowe the position i-if thewe is a-a position. rawr
+    int positionoffset = haspositions == h-haspositions.yes ? 1 : 0;
 
-    return pointer - 1 - positionOffset;
+    w-wetuwn pointew - 1 - p-positionoffset;
   }
 
 
-  int getPoolSize() {
-    return this.blockPool.length();
+  i-int getpoowsize() {
+    w-wetuwn t-this.bwockpoow.wength();
   }
 
 
-  IntBlockPool getBlockPool() {
-    return blockPool;
+  intbwockpoow getbwockpoow() {
+    w-wetuwn bwockpoow;
   }
 
-  public HasPayloads getHasPayloads() {
-    return hasPayloads;
+  pubwic haspaywoads gethaspaywoads() {
+    wetuwn haspaywoads;
   }
 
   /******************
-   * Helper Methods *
+   * h-hewpew m-methods *
    ******************/
 
   /**
-   * Get the next forward pointer on a given level.
+   * get the nyext fowwawd pointew on a given wevew. XD
    *
-   * @param pointer is an array index on this.blockPool, might be SENTINEL_VALUE.
-   * @param level indicates the level of the forward pointer will be acquired. It is zero indexed.
-   * @return next forward pointer on the given level, might be SENTINEL_VALUE.
+   * @pawam p-pointew is an awway i-index on this.bwockpoow, 😳 might be sentinew_vawue. (U ᵕ U❁)
+   * @pawam w-wevew indicates the wevew of t-the fowwawd pointew w-wiww be acquiwed. UwU i-it is zewo indexed. OwO
+   * @wetuwn nyext fowwawd pointew on t-the given wevew, 😳 might be sentinew_vawue.
    */
-  private int getForwardPointer(int pointer, int level) {
-    final int pointerIndex = pointer + level + 1;
+  p-pwivate int getfowwawdpointew(int pointew, (˘ω˘) int w-wevew) {
+    finaw int pointewindex = pointew + w-wevew + 1;
 
-    int forwardPointer = blockPool.get(pointerIndex);
+    int fowwawdpointew = b-bwockpoow.get(pointewindex);
 
-    // Visibility race
-    if (forwardPointer == INITIAL_VALUE) {
-      // Volatile read to cross the memory barrier again.
-      final boolean isSafe = isPointerSafe(pointerIndex);
-      assert isSafe;
+    // visibiwity wace
+    if (fowwawdpointew == i-initiaw_vawue) {
+      // vowatiwe wead to c-cwoss the memowy bawwiew again. òωó
+      finaw boowean issafe = ispointewsafe(pointewindex);
+      assewt issafe;
 
-      // Re-read the pointer again
-      forwardPointer = blockPool.get(pointerIndex);
+      // we-wead the pointew again
+      f-fowwawdpointew = b-bwockpoow.get(pointewindex);
     }
 
-    return forwardPointer;
+    w-wetuwn fowwawdpointew;
   }
 
  /**
-   * Set the next forward pointer on a given level.
+   * s-set the nyext fowwawd pointew on a given w-wevew. OwO
    *
-   * @param pointer points to the value, of which the pointer value will be updated.
-   * @param level indicates the level of the forward pointer will be set. It is zero indexed.
-   * @param target the value fo the target pointer which will be set.
+   * @pawam pointew points to the vawue, (✿oωo) of which the p-pointew vawue w-wiww be updated. (⑅˘꒳˘)
+   * @pawam w-wevew i-indicates the wevew of the fowwawd pointew wiww be set. it is zewo indexed. /(^•ω•^)
+   * @pawam t-tawget t-the vawue fo the tawget pointew which wiww be set. 🥺
    */
-  private void setForwardPointer(int pointer, int level, int target) {
-    // Update header tower if given pointer points to headerTower.
-    setPointer(pointer + level + 1, target);
+  pwivate v-void setfowwawdpointew(int pointew, -.- int wevew, i-int tawget) {
+    // u-update h-headew towew if given pointew points to headewtowew. ( ͡o ω ͡o )
+    setpointew(pointew + wevew + 1, 😳😳😳 tawget);
   }
 
   /**
-   * Set the value pointed by pointer
-   * @param pointer point to the actual position in the pool
-   * @param target the value we are going to set
+   * set the vawue p-pointed by pointew
+   * @pawam pointew point to t-the actuaw position in the poow
+   * @pawam tawget the vawue we a-awe going to set
    */
-  private void setPointer(int pointer, int target) {
-    blockPool.set(pointer, target);
+  pwivate v-void setpointew(int pointew, (˘ω˘) int tawget) {
+    b-bwockpoow.set(pointew, ^^ t-tawget);
   }
 
   /**
-   * Getter of the sentinel value used by this skip list. The sentinel value should be provided
-   * by the comparator.
+   * g-gettew of the sentinew v-vawue used b-by this skip wist. σωσ the sentinew v-vawue shouwd b-be pwovided
+   * by the compawatow. 🥺
    *
-   * @return sentinel value used by this skip list.
+   * @wetuwn s-sentinew vawue used by this skip wist. 🥺
    */
-  int getSentinelValue() {
-    return defaultComparator.getSentinelValue();
+  i-int getsentinewvawue() {
+    wetuwn defauwtcompawatow.getsentinewvawue();
   }
 
   /**
-   * Return a height h in range [1, maxTowerHeight], each number with chance
-   * growTowerChance ^ (h - 1).
+   * wetuwn a-a height h i-in wange [1, /(^•ω•^) maxtowewheight], (⑅˘꒳˘) each nyumbew with c-chance
+   * gwowtowewchance ^ (h - 1). -.-
    *
-   * @return a integer indicating height.
+   * @wetuwn a-a integew indicating height. 😳
    */
-  private int getRandomTowerHeight() {
+  pwivate int getwandomtowewheight() {
     int height = 1;
-    while (height < MAX_TOWER_HEIGHT && random.nextFloat() < GROW_TOWER_CHANCE) {
+    w-whiwe (height < m-max_towew_height && w-wandom.nextfwoat() < g-gwow_towew_chance) {
       height++;
     }
-    return height;
+    wetuwn height;
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler<K> getFlushHandler() {
-    return new FlushHandler<>(this);
+  @suppwesswawnings("unchecked")
+  @ovewwide
+  pubwic fwushhandwew<k> g-getfwushhandwew() {
+    wetuwn nyew fwushhandwew<>(this);
   }
 
-  public static class FlushHandler<K> extends Flushable.Handler<SkipListContainer<K>> {
-    private final SkipListComparator<K> comparator;
-    private static final String BLOCK_POOL_PROP_NAME = "blockPool";
-    private static final String HAS_POSITIONS_PROP_NAME = "hasPositions";
-    private static final String HAS_PAYLOADS_PROP_NAME = "hasPayloads";
+  pubwic s-static cwass fwushhandwew<k> extends fwushabwe.handwew<skipwistcontainew<k>> {
+    p-pwivate finaw skipwistcompawatow<k> compawatow;
+    pwivate s-static finaw stwing bwock_poow_pwop_name = "bwockpoow";
+    p-pwivate static f-finaw stwing has_positions_pwop_name = "haspositions";
+    p-pwivate static finaw s-stwing has_paywoads_pwop_name = "haspaywoads";
 
-    public FlushHandler(SkipListContainer<K> objectToFlush) {
-      super(objectToFlush);
-      this.comparator = objectToFlush.defaultComparator;
+    p-pubwic fwushhandwew(skipwistcontainew<k> objecttofwush) {
+      s-supew(objecttofwush);
+      t-this.compawatow = o-objecttofwush.defauwtcompawatow;
     }
 
-    public FlushHandler(SkipListComparator<K> comparator) {
-      this.comparator = comparator;
+    p-pubwic fwushhandwew(skipwistcompawatow<k> c-compawatow) {
+      t-this.compawatow = c-compawatow;
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      long startTime = getClock().nowMillis();
-      SkipListContainer<K> objectToFlush = getObjectToFlush();
-      flushInfo.addBooleanProperty(HAS_POSITIONS_PROP_NAME,
-          objectToFlush.hasPositions == HasPositions.YES);
-      flushInfo.addBooleanProperty(HAS_PAYLOADS_PROP_NAME,
-          objectToFlush.hasPayloads == HasPayloads.YES);
+    @ovewwide
+    pwotected void d-dofwush(fwushinfo fwushinfo, 😳😳😳 datasewiawizew out) thwows ioexception {
+      wong stawttime = getcwock().nowmiwwis();
+      s-skipwistcontainew<k> o-objecttofwush = getobjecttofwush();
+      f-fwushinfo.addbooweanpwopewty(has_positions_pwop_name, >w<
+          objecttofwush.haspositions == haspositions.yes);
+      f-fwushinfo.addbooweanpwopewty(has_paywoads_pwop_name, UwU
+          o-objecttofwush.haspaywoads == haspaywoads.yes);
 
-      objectToFlush.blockPool.getFlushHandler()
-          .flush(flushInfo.newSubProperties(BLOCK_POOL_PROP_NAME), out);
-      getFlushTimerStats().timerIncrement(getClock().nowMillis() - startTime);
+      o-objecttofwush.bwockpoow.getfwushhandwew()
+          .fwush(fwushinfo.newsubpwopewties(bwock_poow_pwop_name), /(^•ω•^) o-out);
+      getfwushtimewstats().timewincwement(getcwock().nowmiwwis() - s-stawttime);
     }
 
-    @Override
-    protected SkipListContainer<K> doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      long startTime = getClock().nowMillis();
-      IntBlockPool blockPool = (new IntBlockPool.FlushHandler()).load(
-          flushInfo.getSubProperties(BLOCK_POOL_PROP_NAME), in);
-      getLoadTimerStats().timerIncrement(getClock().nowMillis() - startTime);
+    @ovewwide
+    pwotected skipwistcontainew<k> dowoad(fwushinfo f-fwushinfo, 🥺 datadesewiawizew in)
+        t-thwows ioexception {
+      wong stawttime = getcwock().nowmiwwis();
+      i-intbwockpoow bwockpoow = (new i-intbwockpoow.fwushhandwew()).woad(
+          fwushinfo.getsubpwopewties(bwock_poow_pwop_name), >_< in);
+      getwoadtimewstats().timewincwement(getcwock().nowmiwwis() - s-stawttime);
 
-      HasPositions hasPositions = flushInfo.getBooleanProperty(HAS_POSITIONS_PROP_NAME)
-          ? HasPositions.YES : HasPositions.NO;
-      HasPayloads hasPayloads = flushInfo.getBooleanProperty(HAS_PAYLOADS_PROP_NAME)
-          ? HasPayloads.YES : HasPayloads.NO;
+      haspositions h-haspositions = fwushinfo.getbooweanpwopewty(has_positions_pwop_name)
+          ? haspositions.yes : h-haspositions.no;
+      haspaywoads h-haspaywoads = fwushinfo.getbooweanpwopewty(has_paywoads_pwop_name)
+          ? haspaywoads.yes : haspaywoads.no;
 
-      return new SkipListContainer<>(
-          this.comparator,
-          blockPool,
-          hasPositions,
-          hasPayloads);
+      w-wetuwn nyew s-skipwistcontainew<>(
+          this.compawatow, rawr
+          bwockpoow, (ꈍᴗꈍ)
+          h-haspositions, -.-
+          haspaywoads);
     }
   }
 }

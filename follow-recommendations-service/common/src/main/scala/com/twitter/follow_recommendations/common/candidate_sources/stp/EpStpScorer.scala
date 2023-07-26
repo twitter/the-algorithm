@@ -1,65 +1,65 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.stp
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.thrift.BinaryThriftCodec
-import com.twitter.relevance.ep_model.scorer.EPScorer
-import com.twitter.relevance.ep_model.scorer.ScorerUtil
-import com.twitter.relevance.ep_model.thrift
-import com.twitter.relevance.ep_model.thriftscala.EPScoringOptions
-import com.twitter.relevance.ep_model.thriftscala.EPScoringRequest
-import com.twitter.relevance.ep_model.thriftscala.EPScoringResponse
-import com.twitter.relevance.ep_model.thriftscala.Record
-import com.twitter.stitch.Stitch
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
-import scala.util.Success
+impowt com.twittew.bijection.scwooge.binawyscawacodec
+i-impowt c-com.twittew.bijection.thwift.binawythwiftcodec
+i-impowt com.twittew.wewevance.ep_modew.scowew.epscowew
+i-impowt c-com.twittew.wewevance.ep_modew.scowew.scowewutiw
+i-impowt com.twittew.wewevance.ep_modew.thwift
+impowt c-com.twittew.wewevance.ep_modew.thwiftscawa.epscowingoptions
+i-impowt com.twittew.wewevance.ep_modew.thwiftscawa.epscowingwequest
+impowt com.twittew.wewevance.ep_modew.thwiftscawa.epscowingwesponse
+impowt com.twittew.wewevance.ep_modew.thwiftscawa.wecowd
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.utiw.futuwe
+impowt javax.inject.inject
+impowt j-javax.inject.singweton
+impowt s-scawa.cowwection.javaconvewtews._
+impowt scawa.utiw.success
 
-case class ScoredResponse(score: Double, featuresBreakdown: Option[String] = None)
+case cwass scowedwesponse(scowe: doubwe, /(^•ω•^) featuwesbweakdown: o-option[stwing] = nyone)
 
 /**
- * STP ML ranker trained using prehistoric ML framework
+ * s-stp mw w-wankew twained using pwehistowic mw fwamewowk
  */
-@Singleton
-class EpStpScorer @Inject() (epScorer: EPScorer) {
-  private def getScore(responses: List[EPScoringResponse]): Option[ScoredResponse] =
-    responses.headOption
-      .flatMap { response =>
-        response.scores.flatMap {
-          _.headOption.map(score => ScoredResponse(ScorerUtil.normalize(score)))
+@singweton
+cwass epstpscowew @inject() (epscowew: epscowew) {
+  p-pwivate def getscowe(wesponses: wist[epscowingwesponse]): option[scowedwesponse] =
+    wesponses.headoption
+      .fwatmap { w-wesponse =>
+        wesponse.scowes.fwatmap {
+          _.headoption.map(scowe => s-scowedwesponse(scowewutiw.nowmawize(scowe)))
         }
       }
 
-  def getScoredResponse(
-    record: Record,
-    details: Boolean = false
-  ): Stitch[Option[ScoredResponse]] = {
-    val scoringOptions = EPScoringOptions(
-      addFeaturesBreakDown = details,
-      addTransformerIntermediateRecords = details
+  d-def getscowedwesponse(
+    w-wecowd: wecowd, ʘwʘ
+    d-detaiws: boowean = fawse
+  ): stitch[option[scowedwesponse]] = {
+    v-vaw scowingoptions = epscowingoptions(
+      addfeatuwesbweakdown = d-detaiws, σωσ
+      addtwansfowmewintewmediatewecowds = detaiws
     )
-    val request = EPScoringRequest(auxFeatures = Some(Seq(record)), options = Some(scoringOptions))
+    vaw wequest = epscowingwequest(auxfeatuwes = some(seq(wecowd)), OwO options = some(scowingoptions))
 
-    Stitch.callFuture(
-      BinaryThriftCodec[thrift.EPScoringRequest]
-        .invert(BinaryScalaCodec(EPScoringRequest).apply(request))
-        .map { thriftRequest: thrift.EPScoringRequest =>
-          val responsesF = epScorer
-            .score(List(thriftRequest).asJava)
+    s-stitch.cawwfutuwe(
+      binawythwiftcodec[thwift.epscowingwequest]
+        .invewt(binawyscawacodec(epscowingwequest).appwy(wequest))
+        .map { t-thwiftwequest: t-thwift.epscowingwequest =>
+          v-vaw wesponsesf = epscowew
+            .scowe(wist(thwiftwequest).asjava)
             .map(
-              _.asScala.toList
-                .map(response =>
-                  BinaryScalaCodec(EPScoringResponse)
-                    .invert(BinaryThriftCodec[thrift.EPScoringResponse].apply(response)))
-                .collect { case Success(response) => response }
+              _.asscawa.towist
+                .map(wesponse =>
+                  binawyscawacodec(epscowingwesponse)
+                    .invewt(binawythwiftcodec[thwift.epscowingwesponse].appwy(wesponse)))
+                .cowwect { case success(wesponse) => w-wesponse }
             )
-          responsesF.map(getScore)
+          w-wesponsesf.map(getscowe)
         }
-        .getOrElse(Future(None)))
+        .getowewse(futuwe(none)))
   }
 }
 
-object EpStpScorer {
-  val WithFeaturesBreakDown = false
+object epstpscowew {
+  v-vaw withfeatuwesbweakdown = f-fawse
 }

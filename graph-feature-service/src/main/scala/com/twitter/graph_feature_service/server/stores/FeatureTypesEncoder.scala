@@ -1,16 +1,16 @@
-package com.twitter.graph_feature_service.server.stores
+package com.twittew.gwaph_featuwe_sewvice.sewvew.stowes
 
-import com.twitter.graph_feature_service.common.Configs.RandomSeed
-import com.twitter.graph_feature_service.thriftscala.FeatureType
-import scala.util.hashing.MurmurHash3
+impowt com.twittew.gwaph_featuwe_sewvice.common.configs.wandomseed
+i-impowt c-com.twittew.gwaph_featuwe_sewvice.thwiftscawa.featuwetype
+i-impowt s-scawa.utiw.hashing.muwmuwhash3
 
-object FeatureTypesEncoder {
+o-object featuwetypesencodew {
 
-  def apply(featureTypes: Seq[FeatureType]): String = {
-    val byteArray = featureTypes.flatMap { featureType =>
-      Array(featureType.leftEdgeType.getValue.toByte, featureType.rightEdgeType.getValue.toByte)
-    }.toArray
-    (MurmurHash3.bytesHash(byteArray, RandomSeed) & 0x7fffffff).toString // keep positive
+  d-def appwy(featuwetypes: s-seq[featuwetype]): s-stwing = {
+    vaw byteawway = featuwetypes.fwatmap { featuwetype =>
+      awway(featuwetype.weftedgetype.getvawue.tobyte, :3 f-featuwetype.wightedgetype.getvawue.tobyte)
+    }.toawway
+    (muwmuwhash3.byteshash(byteawway, (U ﹏ U) wandomseed) & 0x7fffffff).tostwing // keep p-positive
   }
 
 }

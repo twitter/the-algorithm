@@ -1,88 +1,88 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow.serving;
+package tensowfwow.sewving;
 
-// Config proto for FileSystemStoragePathSource.
-message FileSystemStoragePathSourceConfig {
-  // A policy that dictates which version(s) of a servable should be served.
-  message ServableVersionPolicy {
-    // Serve the latest versions (i.e. the ones with the highest version
-    // numbers), among those found on disk.
+// config pwoto f-fow fiwesystemstowagepathsouwce. (⑅˘꒳˘)
+m-message fiwesystemstowagepathsouwceconfig {
+  // a-a powicy that d-dictates which vewsion(s) o-of a sewvabwe s-shouwd be s-sewved. XD
+  message s-sewvabwevewsionpowicy {
+    // sewve the watest vewsions (i.e. -.- the ones with the highest vewsion
+    // n-nyumbews), :3 among those found on disk. nyaa~~
     //
-    // This is the default policy, with the default number of versions as 1.
-    message Latest {
-      // Number of latest versions to serve. (The default is 1.)
-      uint32 num_versions = 1;
+    // t-this is the defauwt powicy, with t-the defauwt nyumbew of vewsions as 1. 😳
+    message watest {
+      // n-nyumbew of watest vewsions t-to sewve. (⑅˘꒳˘) (the defauwt i-is 1.)
+      uint32 nyum_vewsions = 1;
     }
 
-    // Serve all versions found on disk.
-    message All {
+    // sewve aww vewsions found on disk. nyaa~~
+    m-message aww {
     }
 
-    // Serve a specific version (or set of versions).
+    // sewve a specific vewsion (ow set of vewsions). OwO
     //
-    // This policy is useful for rolling back to a specific version, or for
-    // canarying a specific version while still serving a separate stable
-    // version.
-    message Specific {
-      // The version numbers to serve.
-      repeated int64 versions = 1;
+    // t-this powicy is usefuw f-fow wowwing back t-to a specific v-vewsion, rawr x3 ow fow
+    // c-canawying a specific vewsion whiwe stiww s-sewving a sepawate stabwe
+    // vewsion. XD
+    message s-specific {
+      // the vewsion nyumbews to sewve. σωσ
+      wepeated int64 vewsions = 1;
     }
 
-    oneof policy_choice {
-      Latest latest = 100;
-      All all = 101;
-      Specific specific = 102;
+    oneof powicy_choice {
+      w-watest watest = 100;
+      aww a-aww = 101;
+      s-specific specific = 102;
     }
   }
 
-  // A servable name and base path to look for versions of the servable.
-  message ServableToMonitor {
-    // The servable name to supply in aspired-versions callback calls. Child
-    // paths of 'base_path' are considered to be versions of this servable.
-    string servable_name = 1;
+  // a-a sewvabwe nyame and base path to wook fow vewsions o-of the sewvabwe. (U ᵕ U❁)
+  m-message sewvabwetomonitow {
+    // the sewvabwe n-nyame to suppwy i-in aspiwed-vewsions cawwback c-cawws. (U ﹏ U) chiwd
+    // paths of 'base_path' a-awe considewed to be vewsions of this sewvabwe. :3
+    s-stwing sewvabwe_name = 1;
 
-    // The path to monitor, i.e. look for child paths of the form base_path/123.
-    string base_path = 2;
+    // the p-path to monitow, ( ͡o ω ͡o ) i.e. wook fow c-chiwd paths of t-the fowm base_path/123. σωσ
+    stwing base_path = 2;
 
-    // The policy to determines the number of versions of the servable to be
-    // served at the same time.
-    tensorflow.serving.FileSystemStoragePathSourceConfig.ServableVersionPolicy
-        servable_version_policy = 4;
+    // the powicy to detewmines the nyumbew of vewsions of the s-sewvabwe to be
+    // s-sewved at the same time. >w<
+    t-tensowfwow.sewving.fiwesystemstowagepathsouwceconfig.sewvabwevewsionpowicy
+        s-sewvabwe_vewsion_powicy = 4;
 
-    reserved 3;  // Legacy version_policy definition.
+    w-wesewved 3;  // wegacy vewsion_powicy definition. 😳😳😳
   }
 
-  // The servables to monitor for new versions, and aspire.
-  repeated ServableToMonitor servables = 5;
+  // t-the sewvabwes to monitow fow nyew vewsions, OwO and aspiwe. 😳
+  wepeated sewvabwetomonitow s-sewvabwes = 5;
 
-  // A single servable name/base_path pair to monitor.
-  // DEPRECATED: Use 'servables' instead.
-  // TODO(b/30898016): Stop using these fields, and ultimately remove them here.
-  string servable_name = 1 [deprecated = true];
-  string base_path = 2 [deprecated = true];
+  // a singwe sewvabwe n-nyame/base_path p-paiw to monitow. 😳😳😳
+  // d-depwecated: use 'sewvabwes' i-instead. (˘ω˘)
+  // t-todo(b/30898016): s-stop using t-these fiewds, ʘwʘ and uwtimatewy wemove them hewe. ( ͡o ω ͡o )
+  s-stwing sewvabwe_name = 1 [depwecated = t-twue];
+  s-stwing base_path = 2 [depwecated = t-twue];
 
-  // How long to wait between file-system polling to look for children of
-  // 'base_path', in seconds.
+  // h-how wong to wait between fiwe-system powwing to wook fow chiwdwen o-of
+  // 'base_path', o.O in seconds. >w<
   //
-  // If set to zero, filesystem will be polled exactly once. If set to a
-  // negative value (for testing use only), polling will be entirely disabled.
-  int64 file_system_poll_wait_seconds = 3;
+  // if set to zewo, 😳 fiwesystem wiww be powwed exactwy o-once. 🥺 if set to a
+  // nyegative vawue (fow testing use onwy), rawr x3 powwing w-wiww be entiwewy d-disabwed. o.O
+  i-int64 fiwe_system_poww_wait_seconds = 3;
 
-  // If true, then FileSystemStoragePathSource::Create() and ::UpdateConfig()
-  // fail if, for any configured servables, the file system doesn't currently
-  // contain at least one version under the base path.
-  // (Otherwise, it will emit a warning and keep pinging the file system to
-  // check for a version to appear later.)
-  // DEPRECATED: Use 'servable_versions_always_present' instead, which includes
-  // this behavior.
-  // TODO(b/30898016): Remove 2019-10-31 or later.
-  bool fail_if_zero_versions_at_startup = 4 [deprecated = true];
+  // if twue, rawr then f-fiwesystemstowagepathsouwce::cweate() and ::updateconfig()
+  // f-faiw if, ʘwʘ fow any c-configuwed sewvabwes, 😳😳😳 the fiwe system doesn't cuwwentwy
+  // contain at weast one vewsion undew t-the base path. ^^;;
+  // (othewwise, o.O it wiww emit a w-wawning and keep pinging the fiwe s-system to
+  // c-check fow a vewsion to appeaw watew.)
+  // depwecated: u-use 'sewvabwe_vewsions_awways_pwesent' i-instead, (///ˬ///✿) which incwudes
+  // this b-behaviow. σωσ
+  // t-todo(b/30898016): wemove 2019-10-31 ow watew. nyaa~~
+  boow faiw_if_zewo_vewsions_at_stawtup = 4 [depwecated = twue];
 
-  // If true, the servable is always expected to exist on the underlying
-  // filesystem. FileSystemStoragePathSource::Create() and ::UpdateConfig() will
-  // fail if, for any configured servables, the file system doesn't currently
-  // contain at least one version under the base path. In addition, if a polling
-  // loop find the base path empty, it will not unload existing servables.
-  bool servable_versions_always_present = 6;
+  // i-if twue, ^^;; the s-sewvabwe is awways e-expected to exist on the undewwying
+  // fiwesystem. ^•ﻌ•^ f-fiwesystemstowagepathsouwce::cweate() a-and ::updateconfig() wiww
+  // f-faiw if, σωσ fow any configuwed sewvabwes, -.- the fiwe system doesn't cuwwentwy
+  // contain a-at weast one v-vewsion undew the base path. ^^;; in addition, XD if a-a powwing
+  // woop f-find the base path empty, it wiww nyot unwoad existing sewvabwes. 🥺
+  b-boow sewvabwe_vewsions_awways_pwesent = 6;
 }

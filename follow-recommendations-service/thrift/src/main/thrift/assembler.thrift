@@ -1,42 +1,42 @@
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+namespace java com.twittew.fowwow_wecommendations.thwiftjava
+#@namespace scawa com.twittew.fowwow_wecommendations.thwiftscawa
+#@namespace s-stwato c-com.twittew.fowwow_wecommendations
 
-struct Header {
- 1: required Title title
+s-stwuct headew {
+ 1: w-wequiwed t-titwe titwe
 }
 
-struct Title {
- 1: required string text
+s-stwuct titwe {
+ 1: w-wequiwed stwing t-text
 }
 
-struct Footer {
- 1: optional Action action
+stwuct footew {
+ 1: optionaw action action
 }
 
-struct Action {
- 1: required string text
- 2: required string actionURL
+stwuct action {
+ 1: wequiwed s-stwing text
+ 2: wequiwed stwing actionuww
 }
 
-struct UserList {
-  1: required bool userBioEnabled
-  2: required bool userBioTruncated
-  3: optional i64 userBioMaxLines
-  4: optional FeedbackAction feedbackAction
+s-stwuct usewwist {
+  1: wequiwed b-boow usewbioenabwed
+  2: wequiwed boow usewbiotwuncated
+  3: optionaw i64 usewbiomaxwines
+  4: o-optionaw feedbackaction feedbackaction
 }
 
-struct Carousel {
-  1: optional FeedbackAction feedbackAction
+s-stwuct c-cawousew {
+  1: optionaw feedbackaction feedbackaction
 }
 
-union WTFPresentation {
-  1: UserList userBioList
-  2: Carousel carousel
+union wtfpwesentation {
+  1: u-usewwist usewbiowist
+  2: cawousew cawousew
 }
 
-struct DismissUserId {}
+stwuct dismissusewid {}
 
-union FeedbackAction {
- 1: DismissUserId dismissUserId
+u-union feedbackaction {
+ 1: dismissusewid d-dismissusewid
 }

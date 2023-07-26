@@ -1,78 +1,78 @@
-package com.twitter.frigate.pushservice.module
+package com.twittew.fwigate.pushsewvice.moduwe
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.pushservice.target.LoggedOutPushTargetUserBuilder
-import com.twitter.frigate.pushservice.refresh_handler.RefreshForPushHandler
-import com.twitter.frigate.pushservice.config.DeployConfig
-import com.twitter.frigate.pushservice.send_handler.SendHandler
-import com.twitter.frigate.pushservice.take.candidate_validator.RFPHCandidateValidator
-import com.twitter.frigate.pushservice.take.candidate_validator.SendHandlerPostCandidateValidator
-import com.twitter.frigate.pushservice.take.candidate_validator.SendHandlerPreCandidateValidator
-import com.twitter.frigate.pushservice.refresh_handler.LoggedOutRefreshForPushHandler
-import com.twitter.frigate.pushservice.take.SendHandlerNotifier
-import com.twitter.frigate.pushservice.target.PushTargetUserBuilder
-import com.twitter.inject.TwitterModule
+impowt com.googwe.inject.pwovides
+i-impowt com.googwe.inject.singweton
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.pushsewvice.tawget.woggedoutpushtawgetusewbuiwdew
+i-impowt com.twittew.fwigate.pushsewvice.wefwesh_handwew.wefweshfowpushhandwew
+i-impowt c-com.twittew.fwigate.pushsewvice.config.depwoyconfig
+i-impowt com.twittew.fwigate.pushsewvice.send_handwew.sendhandwew
+i-impowt com.twittew.fwigate.pushsewvice.take.candidate_vawidatow.wfphcandidatevawidatow
+impowt com.twittew.fwigate.pushsewvice.take.candidate_vawidatow.sendhandwewpostcandidatevawidatow
+impowt com.twittew.fwigate.pushsewvice.take.candidate_vawidatow.sendhandwewpwecandidatevawidatow
+impowt com.twittew.fwigate.pushsewvice.wefwesh_handwew.woggedoutwefweshfowpushhandwew
+impowt com.twittew.fwigate.pushsewvice.take.sendhandwewnotifiew
+i-impowt com.twittew.fwigate.pushsewvice.tawget.pushtawgetusewbuiwdew
+impowt com.twittew.inject.twittewmoduwe
 
-object PushHandlerModule extends TwitterModule {
+o-object pushhandwewmoduwe extends t-twittewmoduwe {
 
-  @Provides
-  @Singleton
-  def providesRefreshForPushHandler(
-    pushTargetUserBuilder: PushTargetUserBuilder,
-    config: DeployConfig,
-    statsReceiver: StatsReceiver
-  ): RefreshForPushHandler = {
-    new RefreshForPushHandler(
-      pushTargetUserBuilder = pushTargetUserBuilder,
-      candSourceGenerator = config.candidateSourceGenerator,
-      rfphRanker = config.rfphRanker,
-      candidateHydrator = config.candidateHydrator,
-      candidateValidator = new RFPHCandidateValidator(config),
-      rfphTakeStepUtil = config.rfphTakeStepUtil,
-      rfphRestrictStep = config.rfphRestrictStep,
-      rfphNotifier = config.rfphNotifier,
-      rfphStatsRecorder = config.rfphStatsRecorder,
-      mrRequestScriberNode = config.mrRequestScriberNode,
-      rfphFeatureHydrator = config.rfphFeatureHydrator,
-      rfphPrerankFilter = config.rfphPrerankFilter,
-      rfphLightRanker = config.rfphLightRanker
-    )(statsReceiver)
+  @pwovides
+  @singweton
+  def pwovideswefweshfowpushhandwew(
+    pushtawgetusewbuiwdew: pushtawgetusewbuiwdew, 😳😳😳
+    c-config: depwoyconfig, (˘ω˘)
+    s-statsweceivew: s-statsweceivew
+  ): wefweshfowpushhandwew = {
+    nyew wefweshfowpushhandwew(
+      pushtawgetusewbuiwdew = pushtawgetusewbuiwdew, ^^
+      candsouwcegenewatow = c-config.candidatesouwcegenewatow, :3
+      wfphwankew = config.wfphwankew, -.-
+      candidatehydwatow = config.candidatehydwatow, 😳
+      candidatevawidatow = n-nyew wfphcandidatevawidatow(config), mya
+      wfphtakesteputiw = c-config.wfphtakesteputiw, (˘ω˘)
+      w-wfphwestwictstep = c-config.wfphwestwictstep, >_<
+      w-wfphnotifiew = config.wfphnotifiew, -.-
+      wfphstatswecowdew = c-config.wfphstatswecowdew, 🥺
+      mwwequestscwibewnode = config.mwwequestscwibewnode, (U ﹏ U)
+      wfphfeatuwehydwatow = c-config.wfphfeatuwehydwatow, >w<
+      wfphpwewankfiwtew = config.wfphpwewankfiwtew, mya
+      wfphwightwankew = config.wfphwightwankew
+    )(statsweceivew)
   }
 
-  @Provides
-  @Singleton
-  def providesSendHandler(
-    pushTargetUserBuilder: PushTargetUserBuilder,
-    config: DeployConfig,
-    statsReceiver: StatsReceiver
-  ): SendHandler = {
-    new SendHandler(
-      pushTargetUserBuilder,
-      new SendHandlerPreCandidateValidator(config),
-      new SendHandlerPostCandidateValidator(config),
-      new SendHandlerNotifier(config.candidateNotifier, statsReceiver.scope("SendHandlerNotifier")),
-      config.sendHandlerCandidateHydrator,
-      config.featureHydrator,
-      config.sendHandlerPredicateUtil,
-      config.mrRequestScriberNode)(statsReceiver, config)
+  @pwovides
+  @singweton
+  def pwovidessendhandwew(
+    p-pushtawgetusewbuiwdew: pushtawgetusewbuiwdew, >w<
+    c-config: d-depwoyconfig,
+    s-statsweceivew: statsweceivew
+  ): sendhandwew = {
+    nyew sendhandwew(
+      p-pushtawgetusewbuiwdew, nyaa~~
+      n-nyew sendhandwewpwecandidatevawidatow(config), (✿oωo)
+      n-nyew sendhandwewpostcandidatevawidatow(config), ʘwʘ
+      n-nyew sendhandwewnotifiew(config.candidatenotifiew, (ˆ ﻌ ˆ)♡ statsweceivew.scope("sendhandwewnotifiew")), 😳😳😳
+      c-config.sendhandwewcandidatehydwatow, :3
+      config.featuwehydwatow, OwO
+      c-config.sendhandwewpwedicateutiw, (U ﹏ U)
+      config.mwwequestscwibewnode)(statsweceivew, >w< config)
   }
 
-  @Provides
-  @Singleton
-  def providesLoggedOutRefreshForPushHandler(
-    loPushTargetUserBuilder: LoggedOutPushTargetUserBuilder,
-    config: DeployConfig,
-    statsReceiver: StatsReceiver
-  ): LoggedOutRefreshForPushHandler = {
-    new LoggedOutRefreshForPushHandler(
-      loPushTargetUserBuilder = loPushTargetUserBuilder,
-      loPushCandidateSourceGenerator = config.loCandidateSourceGenerator,
-      candidateHydrator = config.candidateHydrator,
-      loRanker = config.loggedOutRFPHRanker,
-      loRfphNotifier = config.loRfphNotifier,
-      loMrRequestScriberNode = config.loggedOutMrRequestScriberNode,
-    )(statsReceiver)
+  @pwovides
+  @singweton
+  d-def pwovideswoggedoutwefweshfowpushhandwew(
+    wopushtawgetusewbuiwdew: w-woggedoutpushtawgetusewbuiwdew, (U ﹏ U)
+    config: depwoyconfig, 😳
+    s-statsweceivew: s-statsweceivew
+  ): woggedoutwefweshfowpushhandwew = {
+    nyew woggedoutwefweshfowpushhandwew(
+      wopushtawgetusewbuiwdew = wopushtawgetusewbuiwdew, (ˆ ﻌ ˆ)♡
+      wopushcandidatesouwcegenewatow = config.wocandidatesouwcegenewatow, 😳😳😳
+      c-candidatehydwatow = c-config.candidatehydwatow, (U ﹏ U)
+      wowankew = config.woggedoutwfphwankew, (///ˬ///✿)
+      w-wowfphnotifiew = c-config.wowfphnotifiew, 😳
+      womwwequestscwibewnode = c-config.woggedoutmwwequestscwibewnode,
+    )(statsweceivew)
   }
 }

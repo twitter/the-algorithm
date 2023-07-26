@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.covew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CenterCoverHalfCoverDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverHalfCoverDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCoverDisplayType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.centewcovewhawfcovewdispwaytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.covewhawfcovewdispwaytype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.hawfcovewdispwaytype
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class HalfCoverDisplayTypeMarshaller @Inject() () {
+@singweton
+cwass hawfcovewdispwaytypemawshawwew @inject() () {
 
-  def apply(halfCoverDisplayType: HalfCoverDisplayType): urt.HalfCoverDisplayType =
-    halfCoverDisplayType match {
-      case CenterCoverHalfCoverDisplayType => urt.HalfCoverDisplayType.CenterCover
-      case CoverHalfCoverDisplayType => urt.HalfCoverDisplayType.Cover
+  def appwy(hawfcovewdispwaytype: hawfcovewdispwaytype): u-uwt.hawfcovewdispwaytype =
+    hawfcovewdispwaytype match {
+      c-case centewcovewhawfcovewdispwaytype => uwt.hawfcovewdispwaytype.centewcovew
+      c-case covewhawfcovewdispwaytype => uwt.hawfcovewdispwaytype.covew
     }
 }

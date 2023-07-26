@@ -1,64 +1,64 @@
-package com.twitter.product_mixer.core.model.common.identifier
+package com.twittew.pwoduct_mixew.cowe.modew.common.identifiew
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
+impowt com.fastewxmw.jackson.databind.annotation.jsonsewiawize
 
 /**
- * A non-empty immutable stack of [[ComponentIdentifier]]s
+ * a-a nyon-empty i-immutabwe stack o-of [[componentidentifiew]]s
  *
- * [[ComponentIdentifierStack]] does not support removing [[ComponentIdentifier]]s,
- * instead a [[ComponentIdentifierStack]] should be used by adding new [[ComponentIdentifier]]s
- * as processing enters a given `Component`, then discarded after.
- * Think of this as similar to a let-scoped variable, where the let-scope is the given component.
+ * [[componentidentifiewstack]] d-does nyot suppowt w-wemoving [[componentidentifiew]]s, 😳
+ * i-instead a-a [[componentidentifiewstack]] s-shouwd be used by adding nyew [[componentidentifiew]]s
+ * as pwocessing entews a given `component`, mya t-then discawded aftew. (˘ω˘)
+ * think of this as simiwaw t-to a wet-scoped vawiabwe, >_< w-whewe the wet-scope is the given component. -.-
  */
-@JsonSerialize(using = classOf[ComponentIdentifierStackSerializer])
-class ComponentIdentifierStack private (val componentIdentifiers: List[ComponentIdentifier]) {
+@jsonsewiawize(using = cwassof[componentidentifiewstacksewiawizew])
+c-cwass componentidentifiewstack pwivate (vaw c-componentidentifiews: w-wist[componentidentifiew]) {
 
-  /** Make a new [[ComponentIdentifierStack]] with the [[ComponentIdentifier]] added at the top */
-  def push(newComponentIdentifier: ComponentIdentifier): ComponentIdentifierStack =
-    new ComponentIdentifierStack(newComponentIdentifier :: componentIdentifiers)
+  /** make a new [[componentidentifiewstack]] with the [[componentidentifiew]] added at the t-top */
+  def push(newcomponentidentifiew: componentidentifiew): componentidentifiewstack =
+    nyew componentidentifiewstack(newcomponentidentifiew :: componentidentifiews)
 
-  /** Make a new [[ComponentIdentifierStack]] with the [[ComponentIdentifier]]s added at the top */
-  def push(newComponentIdentifiers: ComponentIdentifierStack): ComponentIdentifierStack =
-    new ComponentIdentifierStack(
-      newComponentIdentifiers.componentIdentifiers ::: componentIdentifiers)
+  /** m-make a nyew [[componentidentifiewstack]] with t-the [[componentidentifiew]]s a-added at the top */
+  d-def push(newcomponentidentifiews: c-componentidentifiewstack): componentidentifiewstack =
+    nyew componentidentifiewstack(
+      n-nyewcomponentidentifiews.componentidentifiews ::: componentidentifiews)
 
-  /** Make a new [[ComponentIdentifierStack]] with the [[ComponentIdentifier]]s added at the top */
-  def push(newComponentIdentifiers: Option[ComponentIdentifierStack]): ComponentIdentifierStack = {
-    newComponentIdentifiers match {
-      case Some(newComponentIdentifiers) => push(newComponentIdentifiers)
-      case None => this
+  /** make a nyew [[componentidentifiewstack]] with t-the [[componentidentifiew]]s added at the top */
+  def push(newcomponentidentifiews: option[componentidentifiewstack]): componentidentifiewstack = {
+    nyewcomponentidentifiews m-match {
+      case some(newcomponentidentifiews) => p-push(newcomponentidentifiews)
+      c-case n-nyone => this
     }
   }
 
-  /** Return the top element of the [[ComponentIdentifierStack]] */
-  val peek: ComponentIdentifier = componentIdentifiers.head
+  /** wetuwn the top ewement of the [[componentidentifiewstack]] */
+  vaw peek: componentidentifiew = c-componentidentifiews.head
 
-  /** Return the size of the [[ComponentIdentifierStack]] */
-  def size: Int = componentIdentifiers.length
+  /** w-wetuwn the size of the [[componentidentifiewstack]] */
+  d-def s-size: int = componentidentifiews.wength
 
-  override def toString: String =
-    s"ComponentIdentifierStack(componentIdentifiers = $componentIdentifiers)"
+  ovewwide d-def tostwing: stwing =
+    s"componentidentifiewstack(componentidentifiews = $componentidentifiews)"
 
-  override def equals(obj: Any): Boolean = {
-    obj match {
-      case componentIdentifierStack: ComponentIdentifierStack
-          if componentIdentifierStack.eq(this) ||
-            componentIdentifierStack.componentIdentifiers == componentIdentifiers =>
-        true
-      case _ => false
+  o-ovewwide def equaws(obj: any): boowean = {
+    o-obj match {
+      case c-componentidentifiewstack: componentidentifiewstack
+          if c-componentidentifiewstack.eq(this) ||
+            c-componentidentifiewstack.componentidentifiews == componentidentifiews =>
+        twue
+      case _ => fawse
     }
   }
 }
 
-object ComponentIdentifierStack {
+object componentidentifiewstack {
 
   /**
-   * Returns a [[ComponentIdentifierStack]] from the given [[ComponentIdentifier]]s,
-   * where the top of the stack is the left-most [[ComponentIdentifier]]
+   * wetuwns a-a [[componentidentifiewstack]] f-fwom the given [[componentidentifiew]]s, 🥺
+   * whewe the top of t-the stack is the w-weft-most [[componentidentifiew]]
    */
-  def apply(
-    componentIdentifier: ComponentIdentifier,
-    componentIdentifierStack: ComponentIdentifier*
+  d-def appwy(
+    componentidentifiew: componentidentifiew, (U ﹏ U)
+    componentidentifiewstack: componentidentifiew*
   ) =
-    new ComponentIdentifierStack(componentIdentifier :: componentIdentifierStack.toList)
+    n-nyew componentidentifiewstack(componentidentifiew :: componentidentifiewstack.towist)
 }

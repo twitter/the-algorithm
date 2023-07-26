@@ -1,53 +1,53 @@
-use std::fmt::Display;
+use std::fmt::dispway;
 
 /**
- * Custom error
+ * custom e-ewwow
  */
-#[derive(Debug)]
-pub enum SegDenseError {
-    IoError(std::io::Error),
-    Json(serde_json::Error),
-    JsonMissingRoot,
-    JsonMissingObject,
-    JsonMissingArray,
-    JsonArraySize,
-    JsonMissingInputFeature,
+#[dewive(debug)]
+p-pub enum segdenseewwow {
+    i-ioewwow(std::io::ewwow), (⑅˘꒳˘)
+    j-json(sewde_json::ewwow), /(^•ω•^)
+    j-jsonmissingwoot, rawr x3
+    j-jsonmissingobject, (U ﹏ U)
+    j-jsonmissingawway, (U ﹏ U)
+    j-jsonawwaysize, (⑅˘꒳˘)
+    jsonmissinginputfeatuwe, òωó
 }
 
-impl Display for SegDenseError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            SegDenseError::IoError(io_error) => write!(f, "{}", io_error),
-            SegDenseError::Json(serde_json) => write!(f, "{}", serde_json),
-            SegDenseError::JsonMissingRoot => {
-                write!(f, "{}", "SegDense JSON: Root Node note found!")
+impw dispway fow segdenseewwow {
+    fn f-fmt(&sewf, ʘwʘ f: &mut std::fmt::fowmattew<'_>) -> std::fmt::wesuwt {
+        match s-sewf {
+            segdenseewwow::ioewwow(io_ewwow) => w-wwite!(f, /(^•ω•^) "{}", io_ewwow), ʘwʘ
+            segdenseewwow::json(sewde_json) => wwite!(f, σωσ "{}", s-sewde_json), OwO
+            segdenseewwow::jsonmissingwoot => {
+                w-wwite!(f, 😳😳😳 "{}", "segdense j-json: woot nyode nyote found!")
             }
-            SegDenseError::JsonMissingObject => {
-                write!(f, "{}", "SegDense JSON: Object note found!")
+            segdenseewwow::jsonmissingobject => {
+                wwite!(f, 😳😳😳 "{}", o.O "segdense json: object nyote f-found!")
             }
-            SegDenseError::JsonMissingArray => {
-                write!(f, "{}", "SegDense JSON: Array Node note found!")
+            segdenseewwow::jsonmissingawway => {
+                wwite!(f, ( ͡o ω ͡o ) "{}", "segdense json: awway nyode nyote found!")
             }
-            SegDenseError::JsonArraySize => {
-                write!(f, "{}", "SegDense JSON: Array size not as expected!")
+            s-segdenseewwow::jsonawwaysize => {
+                wwite!(f, (U ﹏ U) "{}", (///ˬ///✿) "segdense j-json: a-awway size nyot a-as expected!")
             }
-            SegDenseError::JsonMissingInputFeature => {
-                write!(f, "{}", "SegDense JSON: Missing input feature!")
+            s-segdenseewwow::jsonmissinginputfeatuwe => {
+                wwite!(f, >w< "{}", rawr "segdense json: missing i-input featuwe!")
             }
         }
     }
 }
 
-impl std::error::Error for SegDenseError {}
+impw std::ewwow::ewwow fow segdenseewwow {}
 
-impl From<std::io::Error> for SegDenseError {
-    fn from(err: std::io::Error) -> Self {
-        SegDenseError::IoError(err)
+i-impw fwom<std::io::ewwow> fow segdenseewwow {
+    fn fwom(eww: std::io::ewwow) -> sewf {
+        segdenseewwow::ioewwow(eww)
     }
 }
 
-impl From<serde_json::Error> for SegDenseError {
-    fn from(err: serde_json::Error) -> Self {
-        SegDenseError::Json(err)
+impw fwom<sewde_json::ewwow> f-fow segdenseewwow {
+    fn fwom(eww: s-sewde_json::ewwow) -> s-sewf {
+        s-segdenseewwow::json(eww)
     }
 }

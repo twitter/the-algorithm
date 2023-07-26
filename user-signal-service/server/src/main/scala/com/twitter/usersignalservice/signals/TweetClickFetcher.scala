@@ -1,94 +1,94 @@
-package com.twitter.usersignalservice.signals
+package com.twittew.usewsignawsewvice.signaws
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.strato.client.Client
-import com.twitter.strato.data.Conv
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.twistly.thriftscala.RecentTweetClickImpressEvents
-import com.twitter.twistly.thriftscala.TweetClickImpressEvent
-import com.twitter.usersignalservice.base.Query
-import com.twitter.usersignalservice.base.StratoSignalFetcher
-import com.twitter.usersignalservice.thriftscala.Signal
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.util.Future
-import com.twitter.util.Timer
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.simcwustews_v2.common.usewid
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+i-impowt com.twittew.stwato.cwient.cwient
+i-impowt c-com.twittew.stwato.data.conv
+impowt com.twittew.stwato.thwift.scwoogeconv
+impowt com.twittew.twistwy.thwiftscawa.wecenttweetcwickimpwessevents
+impowt com.twittew.twistwy.thwiftscawa.tweetcwickimpwessevent
+impowt com.twittew.usewsignawsewvice.base.quewy
+i-impowt com.twittew.usewsignawsewvice.base.stwatosignawfetchew
+impowt com.twittew.usewsignawsewvice.thwiftscawa.signaw
+impowt com.twittew.usewsignawsewvice.thwiftscawa.signawtype
+i-impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.timew
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-case class TweetClickFetcher @Inject() (
-  stratoClient: Client,
-  timer: Timer,
-  stats: StatsReceiver)
-    extends StratoSignalFetcher[(UserId, Long), Unit, RecentTweetClickImpressEvents] {
+@singweton
+case cwass t-tweetcwickfetchew @inject() (
+  stwatocwient: cwient, (U ﹏ U)
+  t-timew: t-timew, >w<
+  stats: statsweceivew)
+    extends stwatosignawfetchew[(usewid, (U ﹏ U) wong), unit, 😳 wecenttweetcwickimpwessevents] {
 
-  import TweetClickFetcher._
+  i-impowt tweetcwickfetchew._
 
-  override type RawSignalType = TweetClickImpressEvent
-  override val name: String = this.getClass.getCanonicalName
-  override val statsReceiver: StatsReceiver = stats.scope(name)
+  ovewwide type wawsignawtype = tweetcwickimpwessevent
+  o-ovewwide vaw nyame: s-stwing = this.getcwass.getcanonicawname
+  o-ovewwide v-vaw statsweceivew: s-statsweceivew = stats.scope(name)
 
-  override val stratoColumnPath: String = stratoPath
-  override val stratoView: Unit = None
+  ovewwide v-vaw stwatocowumnpath: stwing = stwatopath
+  o-ovewwide vaw stwatoview: unit = nyone
 
-  override protected val keyConv: Conv[(UserId, Long)] = Conv.ofType
-  override protected val viewConv: Conv[Unit] = Conv.ofType
-  override protected val valueConv: Conv[RecentTweetClickImpressEvents] =
-    ScroogeConv.fromStruct[RecentTweetClickImpressEvents]
+  ovewwide pwotected vaw keyconv: conv[(usewid, (ˆ ﻌ ˆ)♡ wong)] = c-conv.oftype
+  ovewwide pwotected v-vaw viewconv: c-conv[unit] = conv.oftype
+  o-ovewwide pwotected vaw vawueconv: conv[wecenttweetcwickimpwessevents] =
+    scwoogeconv.fwomstwuct[wecenttweetcwickimpwessevents]
 
-  override protected def toStratoKey(userId: UserId): (UserId, Long) = (userId, defaultVersion)
+  o-ovewwide pwotected d-def tostwatokey(usewid: usewid): (usewid, 😳😳😳 w-wong) = (usewid, (U ﹏ U) defauwtvewsion)
 
-  override protected def toRawSignals(
-    stratoValue: RecentTweetClickImpressEvents
-  ): Seq[TweetClickImpressEvent] = {
-    stratoValue.events
+  o-ovewwide pwotected def towawsignaws(
+    s-stwatovawue: wecenttweetcwickimpwessevents
+  ): s-seq[tweetcwickimpwessevent] = {
+    stwatovawue.events
   }
 
-  override def process(
-    query: Query,
-    rawSignals: Future[Option[Seq[TweetClickImpressEvent]]]
-  ): Future[Option[Seq[Signal]]] =
-    rawSignals.map { events =>
-      events.map { clicks =>
-        clicks
-          .filter(dwelltimeFilter(_, query.signalType))
-          .map(signalFromTweetClick(_, query.signalType))
-          .sortBy(-_.timestamp)
-          .take(query.maxResults.getOrElse(Int.MaxValue))
+  ovewwide def pwocess(
+    q-quewy: quewy, (///ˬ///✿)
+    wawsignaws: f-futuwe[option[seq[tweetcwickimpwessevent]]]
+  ): futuwe[option[seq[signaw]]] =
+    w-wawsignaws.map { e-events =>
+      events.map { cwicks =>
+        cwicks
+          .fiwtew(dwewwtimefiwtew(_, 😳 quewy.signawtype))
+          .map(signawfwomtweetcwick(_, 😳 quewy.signawtype))
+          .sowtby(-_.timestamp)
+          .take(quewy.maxwesuwts.getowewse(int.maxvawue))
       }
     }
 }
 
-object TweetClickFetcher {
+object tweetcwickfetchew {
 
-  val stratoPath = "recommendations/twistly/userRecentTweetClickImpress"
-  private val defaultVersion = 0L
+  v-vaw stwatopath = "wecommendations/twistwy/usewwecenttweetcwickimpwess"
+  pwivate v-vaw defauwtvewsion = 0w
 
-  private val minDwellTimeMap: Map[SignalType, Long] = Map(
-    SignalType.GoodTweetClick -> 2 * 1000L,
-    SignalType.GoodTweetClick5s -> 5 * 1000L,
-    SignalType.GoodTweetClick10s -> 10 * 1000L,
-    SignalType.GoodTweetClick30s -> 30 * 1000L,
+  pwivate vaw mindwewwtimemap: map[signawtype, σωσ wong] = m-map(
+    s-signawtype.goodtweetcwick -> 2 * 1000w, rawr x3
+    s-signawtype.goodtweetcwick5s -> 5 * 1000w, OwO
+    signawtype.goodtweetcwick10s -> 10 * 1000w, /(^•ω•^)
+    signawtype.goodtweetcwick30s -> 30 * 1000w, 😳😳😳
   )
 
-  def signalFromTweetClick(
-    tweetClickImpressEvent: TweetClickImpressEvent,
-    signalType: SignalType
-  ): Signal = {
-    Signal(
-      signalType,
-      tweetClickImpressEvent.engagedAt,
-      Some(InternalId.TweetId(tweetClickImpressEvent.entityId))
+  def s-signawfwomtweetcwick(
+    tweetcwickimpwessevent: tweetcwickimpwessevent, ( ͡o ω ͡o )
+    signawtype: signawtype
+  ): signaw = {
+    s-signaw(
+      signawtype, >_<
+      t-tweetcwickimpwessevent.engagedat, >w<
+      s-some(intewnawid.tweetid(tweetcwickimpwessevent.entityid))
     )
   }
 
-  def dwelltimeFilter(
-    tweetClickImpressEvent: TweetClickImpressEvent,
-    signalType: SignalType
-  ): Boolean = {
-    val goodClickDwellTime = minDwellTimeMap(signalType)
-    tweetClickImpressEvent.clickImpressEventMetadata.totalDwellTime >= goodClickDwellTime
+  d-def dwewwtimefiwtew(
+    tweetcwickimpwessevent: t-tweetcwickimpwessevent,
+    s-signawtype: s-signawtype
+  ): b-boowean = {
+    vaw goodcwickdwewwtime = mindwewwtimemap(signawtype)
+    t-tweetcwickimpwessevent.cwickimpwesseventmetadata.totawdwewwtime >= g-goodcwickdwewwtime
   }
 }

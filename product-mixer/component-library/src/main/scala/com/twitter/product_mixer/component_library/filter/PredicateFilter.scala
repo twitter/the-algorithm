@@ -1,62 +1,62 @@
-package com.twitter.product_mixer.component_library.filter
+package com.twittew.pwoduct_mixew.component_wibwawy.fiwtew
 
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
 
 /**
- * Predicate which will be applied to each candidate. True indicates that the candidate will be
- * @tparam Candidate - the type of the candidate
+ * pwedicate which w-wiww be appwied to each candidate. (˘ω˘) twue indicates t-that the candidate wiww be
+ * @tpawam c-candidate - the type of the candidate
  */
-trait ShouldKeepCandidate[Candidate] {
-  def apply(candidate: Candidate): Boolean
+twait shouwdkeepcandidate[candidate] {
+  d-def appwy(candidate: c-candidate): boowean
 }
 
-object PredicateFilter {
+o-object pwedicatefiwtew {
 
   /**
-   * Builds a simple Filter out of a predicate function from the candidate to a boolean. For clarity,
-   * we recommend including the name of the shouldKeepCandidate parameter.
+   * buiwds a simpwe fiwtew out of a pwedicate f-function fwom the candidate to a boowean. fow cwawity, ^^
+   * we wecommend i-incwuding the name of the shouwdkeepcandidate pawametew. :3
    *
    *  {{{
-   *  Filter.fromPredicate(
-   *    FilterIdentifier("SomeFilter"),
-   *    shouldKeepCandidate = { candidate: UserCandidate => candidate.id % 2 == 0L }
+   *  fiwtew.fwompwedicate(
+   *    f-fiwtewidentifiew("somefiwtew"), -.-
+   *    s-shouwdkeepcandidate = { c-candidate: u-usewcandidate => candidate.id % 2 == 0w }
    *  )
    *  }}}
    *
-   * @param identifier A FilterIdentifier for the new filter
-   * @param shouldKeepCandidate A predicate function from the candidate. Candidates will be kept
-   *                            when this function returns True.
+   * @pawam identifiew a-a fiwtewidentifiew fow the nyew fiwtew
+   * @pawam s-shouwdkeepcandidate a pwedicate function fwom the candidate. 😳 candidates wiww be kept
+   *                            w-when this function wetuwns t-twue. mya
    */
-  def fromPredicate[Candidate <: UniversalNoun[Any]](
-    identifier: FilterIdentifier,
-    shouldKeepCandidate: ShouldKeepCandidate[Candidate]
-  ): Filter[PipelineQuery, Candidate] = {
-    val i = identifier
+  d-def fwompwedicate[candidate <: u-univewsawnoun[any]](
+    identifiew: fiwtewidentifiew, (˘ω˘)
+    shouwdkeepcandidate: s-shouwdkeepcandidate[candidate]
+  ): f-fiwtew[pipewinequewy, >_< candidate] = {
+    v-vaw i-i = identifiew
 
-    new Filter[PipelineQuery, Candidate] {
-      override val identifier: FilterIdentifier = i
+    nyew fiwtew[pipewinequewy, -.- c-candidate] {
+      ovewwide vaw i-identifiew: fiwtewidentifiew = i
 
       /**
-       * Filter the list of candidates
+       * fiwtew the wist of candidates
        *
-       * @return a FilterResult including both the list of kept candidate and the list of removed candidates
+       * @wetuwn a-a fiwtewwesuwt incwuding b-both the wist of kept candidate a-and the wist o-of wemoved candidates
        */
-      override def apply(
-        query: PipelineQuery,
-        candidates: Seq[CandidateWithFeatures[Candidate]]
-      ): Stitch[FilterResult[Candidate]] = {
-        val (keptCandidates, removedCandidates) = candidates.map(_.candidate).partition {
-          filterCandidate =>
-            shouldKeepCandidate(filterCandidate)
+      ovewwide def appwy(
+        quewy: pipewinequewy, 🥺
+        candidates: seq[candidatewithfeatuwes[candidate]]
+      ): stitch[fiwtewwesuwt[candidate]] = {
+        vaw (keptcandidates, (U ﹏ U) wemovedcandidates) = c-candidates.map(_.candidate).pawtition {
+          f-fiwtewcandidate =>
+            shouwdkeepcandidate(fiwtewcandidate)
         }
 
-        Stitch.value(FilterResult(kept = keptCandidates, removed = removedCandidates))
+        s-stitch.vawue(fiwtewwesuwt(kept = k-keptcandidates, >w< w-wemoved = wemovedcandidates))
       }
     }
   }

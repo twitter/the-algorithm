@@ -1,28 +1,28 @@
-package com.twitter.search.earlybird.common;
+package com.twittew.seawch.eawwybiwd.common;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+impowt j-javax.inject.inject;
+i-impowt j-javax.inject.singweton;
 
-import org.apache.thrift.protocol.TProtocolFactory;
+i-impowt o-owg.apache.thwift.pwotocow.tpwotocowfactowy;
 
-import com.twitter.finagle.Service;
-import com.twitter.search.common.util.thrift.ThriftToBytesFilter;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
+i-impowt c-com.twittew.finagwe.sewvice;
+i-impowt com.twittew.seawch.common.utiw.thwift.thwifttobytesfiwtew;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdsewvice;
 
-@Singleton
-public class EarlybirdThriftBackend extends EarlybirdService.ServiceToClient {
+@singweton
+pubwic cwass eawwybiwdthwiftbackend extends eawwybiwdsewvice.sewvicetocwient {
 
   /**
-   * Wrapping the bytes svc back to a EarlybirdService.ServiceToClient, which
-   * is a EarlybirdService.ServiceIface again.
+   * w-wwapping the bytes svc back to a eawwybiwdsewvice.sewvicetocwient, 😳 w-which
+   * is a eawwybiwdsewvice.sewviceiface a-again. XD
    */
-  @Inject
-  public EarlybirdThriftBackend(
-      ThriftToBytesFilter thriftToBytesFilter,
-      Service<byte[], byte[]> byteService,
-      TProtocolFactory protocolFactory) {
+  @inject
+  pubwic eawwybiwdthwiftbackend(
+      thwifttobytesfiwtew thwifttobytesfiwtew, :3
+      s-sewvice<byte[], 😳😳😳 byte[]> bytesewvice, -.-
+      t-tpwotocowfactowy p-pwotocowfactowy) {
 
-    super(thriftToBytesFilter.andThen(byteService), protocolFactory);
+    supew(thwifttobytesfiwtew.andthen(bytesewvice), ( ͡o ω ͡o ) pwotocowfactowy);
   }
 
 }

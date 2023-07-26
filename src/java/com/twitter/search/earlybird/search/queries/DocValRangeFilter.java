@@ -1,195 +1,195 @@
-package com.twitter.search.earlybird.search.queries;
+package com.twittew.seawch.eawwybiwd.seawch.quewies;
 
-import java.io.IOException;
-import java.util.Objects;
+impowt java.io.ioexception;
+i-impowt java.utiw.objects;
 
-import com.google.common.annotations.VisibleForTesting;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+i-impowt owg.apache.wucene.index.weafweadew;
+i-impowt owg.apache.wucene.index.weafweadewcontext;
+i-impowt owg.apache.wucene.index.numewicdocvawues;
+i-impowt owg.apache.wucene.seawch.booweancwause;
+i-impowt owg.apache.wucene.seawch.booweanquewy;
+impowt owg.apache.wucene.seawch.docidsetitewatow;
+impowt owg.apache.wucene.seawch.indexseawchew;
+impowt owg.apache.wucene.seawch.quewy;
+impowt owg.apache.wucene.seawch.scowemode;
+i-impowt owg.apache.wucene.seawch.weight;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
+impowt com.twittew.seawch.common.quewy.defauwtfiwtewweight;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftcsftype;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.utiw.awwdocsitewatow;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.utiw.wangefiwtewdisi;
 
 /**
- * Filters tweets according to the specified CSF field value.
- * Note that min value is inclusive, and max value is exclusive.
+ * f-fiwtews tweets accowding t-to the specified c-csf fiewd vawue. >_<
+ * nyote that min vawue is incwusive, UwU and max vawue is e-excwusive. >_<
  */
-public final class DocValRangeFilter extends Query {
-  private final String csfField;
-  private final ThriftCSFType csfFieldType;
-  private final Number minValInclusive;
-  private final Number maxValExclusive;
+pubwic finaw cwass docvawwangefiwtew extends quewy {
+  pwivate finaw s-stwing csffiewd;
+  pwivate finaw t-thwiftcsftype c-csffiewdtype;
+  p-pwivate finaw n-nyumbew minvawincwusive;
+  pwivate finaw nyumbew m-maxvawexcwusive;
 
   /**
-   * Returns a query that filters hits based on the value of a CSF.
+   * wetuwns a quewy that fiwtews hits b-based on the vawue of a csf. -.-
    *
-   * @param csfField The CSF name.
-   * @param csfFieldType The CSF type.
-   * @param minVal The minimum acceptable value (inclusive).
-   * @param maxVal The maximum acceptable value (exclusive).
-   * @return A query that filters hits based on the value of a CSF.
+   * @pawam csffiewd the csf nyame. mya
+   * @pawam csffiewdtype the csf type. >w<
+   * @pawam m-minvaw the minimum acceptabwe v-vawue (incwusive). (U ﹏ U)
+   * @pawam m-maxvaw the m-maximum acceptabwe vawue (excwusive). 😳😳😳
+   * @wetuwn a quewy that fiwtews hits based o-on the vawue o-of a csf. o.O
    */
-  public static Query getDocValRangeQuery(String csfField, ThriftCSFType csfFieldType,
-                                          double minVal, double maxVal) {
-    return new BooleanQuery.Builder()
-        .add(new DocValRangeFilter(csfField, csfFieldType, minVal, maxVal),
-             BooleanClause.Occur.FILTER)
-        .build();
+  pubwic static q-quewy getdocvawwangequewy(stwing c-csffiewd, òωó thwiftcsftype csffiewdtype, 😳😳😳
+                                          d-doubwe minvaw, doubwe maxvaw) {
+    w-wetuwn nyew booweanquewy.buiwdew()
+        .add(new docvawwangefiwtew(csffiewd, σωσ c-csffiewdtype, (⑅˘꒳˘) minvaw, maxvaw), (///ˬ///✿)
+             b-booweancwause.occuw.fiwtew)
+        .buiwd();
   }
 
   /**
-   * Returns a query that filters hits based on the value of a CSF.
+   * wetuwns a quewy t-that fiwtews hits b-based on the vawue of a csf. 🥺
    *
-   * @param csfField The CSF name.
-   * @param csfFieldType The CSF type.
-   * @param minVal The minimum acceptable value (inclusive).
-   * @param maxVal The maximum acceptable value (exclusive).
-   * @return A query that filters hits based on the value of a CSF.
+   * @pawam csffiewd the csf nyame. OwO
+   * @pawam csffiewdtype the csf type. >w<
+   * @pawam minvaw t-the minimum acceptabwe v-vawue (incwusive). 🥺
+   * @pawam maxvaw t-the maximum acceptabwe v-vawue (excwusive). nyaa~~
+   * @wetuwn a-a quewy that fiwtews hits based on the vawue of a csf.
    */
-  public static Query getDocValRangeQuery(String csfField, ThriftCSFType csfFieldType,
-                                          long minVal, long maxVal) {
-    return new BooleanQuery.Builder()
-        .add(new DocValRangeFilter(csfField, csfFieldType, minVal, maxVal),
-             BooleanClause.Occur.FILTER)
-        .build();
+  p-pubwic static quewy getdocvawwangequewy(stwing csffiewd, ^^ thwiftcsftype csffiewdtype, >w<
+                                          wong minvaw, OwO w-wong maxvaw) {
+    wetuwn nyew b-booweanquewy.buiwdew()
+        .add(new d-docvawwangefiwtew(csffiewd, XD c-csffiewdtype, ^^;; minvaw, 🥺 maxvaw),
+             b-booweancwause.occuw.fiwtew)
+        .buiwd();
   }
 
-  private DocValRangeFilter(String csfField, ThriftCSFType csfFieldType,
-                            double minVal, double maxVal) {
-    this.csfField = csfField;
-    this.csfFieldType = csfFieldType;
-    this.minValInclusive = new Float(minVal);
-    this.maxValExclusive = new Float(maxVal);
+  p-pwivate docvawwangefiwtew(stwing c-csffiewd, XD t-thwiftcsftype csffiewdtype, (U ᵕ U❁)
+                            doubwe minvaw, :3 doubwe maxvaw) {
+    t-this.csffiewd = c-csffiewd;
+    t-this.csffiewdtype = csffiewdtype;
+    t-this.minvawincwusive = n-nyew fwoat(minvaw);
+    this.maxvawexcwusive = new fwoat(maxvaw);
   }
 
-  private DocValRangeFilter(String csfField, ThriftCSFType csfFieldType,
-                            long minVal, long maxVal) {
-    this.csfField = csfField;
-    this.csfFieldType = csfFieldType;
-    this.minValInclusive = new Long(minVal);
-    this.maxValExclusive = new Long(maxVal);
+  pwivate docvawwangefiwtew(stwing c-csffiewd, ( ͡o ω ͡o ) thwiftcsftype csffiewdtype, òωó
+                            wong minvaw, σωσ wong maxvaw) {
+    this.csffiewd = csffiewd;
+    t-this.csffiewdtype = csffiewdtype;
+    this.minvawincwusive = nyew wong(minvaw);
+    t-this.maxvawexcwusive = n-nyew w-wong(maxvaw);
   }
 
-  @Override
-  public int hashCode() {
-    return (csfField == null ? 0 : csfField.hashCode()) * 29
-        + (csfFieldType == null ? 0 : csfFieldType.hashCode()) * 17
-        + minValInclusive.hashCode() * 7
-        + maxValExclusive.hashCode();
+  @ovewwide
+  pubwic int hashcode() {
+    wetuwn (csffiewd == n-nyuww ? 0 : csffiewd.hashcode()) * 29
+        + (csffiewdtype == nyuww ? 0 : c-csffiewdtype.hashcode()) * 17
+        + m-minvawincwusive.hashcode() * 7
+        + maxvawexcwusive.hashcode();
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof DocValRangeFilter)) {
-      return false;
+  @ovewwide
+  pubwic boowean equaws(object obj) {
+    if (!(obj instanceof docvawwangefiwtew)) {
+      w-wetuwn fawse;
     }
 
-    DocValRangeFilter filter = DocValRangeFilter.class.cast(obj);
-    return Objects.equals(csfField, filter.csfField)
-        && (csfFieldType == filter.csfFieldType)
-        && minValInclusive.equals(filter.minValInclusive)
-        && maxValExclusive.equals(filter.maxValExclusive);
+    d-docvawwangefiwtew fiwtew = docvawwangefiwtew.cwass.cast(obj);
+    w-wetuwn objects.equaws(csffiewd, (U ᵕ U❁) f-fiwtew.csffiewd)
+        && (csffiewdtype == fiwtew.csffiewdtype)
+        && minvawincwusive.equaws(fiwtew.minvawincwusive)
+        && m-maxvawexcwusive.equaws(fiwtew.maxvawexcwusive);
   }
 
-  @Override
-  public String toString(String field) {
-    return "DocValRangeFilter:" + csfField
-        + ",type:" + csfFieldType.toString()
-        + ",min:" + this.minValInclusive.toString()
-        + ",max:" + this.maxValExclusive.toString();
+  @ovewwide
+  p-pubwic stwing tostwing(stwing f-fiewd) {
+    w-wetuwn "docvawwangefiwtew:" + csffiewd
+        + ",type:" + csffiewdtype.tostwing()
+        + ",min:" + this.minvawincwusive.tostwing()
+        + ",max:" + this.maxvawexcwusive.tostwing();
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        LeafReader reader = context.reader();
-        if (csfFieldType == null) {
-          return new AllDocsIterator(reader);
+  @ovewwide
+  p-pubwic w-weight cweateweight(indexseawchew s-seawchew, scowemode scowemode, (✿oωo) f-fwoat boost) {
+    w-wetuwn new defauwtfiwtewweight(this) {
+      @ovewwide
+      pwotected docidsetitewatow g-getdocidsetitewatow(weafweadewcontext context) thwows ioexception {
+        weafweadew weadew = context.weadew();
+        i-if (csffiewdtype == n-nyuww) {
+          wetuwn nyew awwdocsitewatow(weadew);
         }
 
-        int smallestDoc = (reader instanceof EarlybirdIndexSegmentAtomicReader)
-            ? ((EarlybirdIndexSegmentAtomicReader) reader).getSmallestDocID() : 0;
-        int largestDoc = reader.maxDoc() - 1;
-        return new CSFRangeDocIdSetIterator(reader, csfField, csfFieldType,
-                                            smallestDoc, largestDoc,
-                                            minValInclusive, maxValExclusive);
+        i-int smowestdoc = (weadew i-instanceof eawwybiwdindexsegmentatomicweadew)
+            ? ((eawwybiwdindexsegmentatomicweadew) weadew).getsmowestdocid() : 0;
+        int wawgestdoc = weadew.maxdoc() - 1;
+        w-wetuwn nyew csfwangedocidsetitewatow(weadew, ^^ csffiewd, csffiewdtype, ^•ﻌ•^
+                                            smowestdoc, XD wawgestdoc, :3
+                                            m-minvawincwusive, maxvawexcwusive);
       }
     };
   }
 
-  private static final class CSFRangeDocIdSetIterator extends RangeFilterDISI {
-    private final NumericDocValues numericDocValues;
-    private final ThriftCSFType csfType;
-    private final Number minValInclusive;
-    private final Number maxValExclusive;
+  pwivate static f-finaw cwass csfwangedocidsetitewatow e-extends wangefiwtewdisi {
+    pwivate finaw nyumewicdocvawues nyumewicdocvawues;
+    p-pwivate f-finaw thwiftcsftype csftype;
+    pwivate finaw nyumbew minvawincwusive;
+    pwivate f-finaw nyumbew maxvawexcwusive;
 
-    public CSFRangeDocIdSetIterator(LeafReader reader,
-                                    String csfField,
-                                    ThriftCSFType csfType,
-                                    int smallestDocID,
-                                    int largestDocID,
-                                    Number minValInclusive,
-                                    Number maxValExclusive) throws IOException {
-      super(reader, smallestDocID, largestDocID);
-      this.numericDocValues = reader.getNumericDocValues(csfField);
-      this.csfType = csfType;
-      this.minValInclusive = minValInclusive;
-      this.maxValExclusive = maxValExclusive;
+    p-pubwic csfwangedocidsetitewatow(weafweadew weadew,
+                                    stwing csffiewd, (ꈍᴗꈍ)
+                                    t-thwiftcsftype csftype, :3
+                                    i-int smowestdocid, (U ﹏ U)
+                                    i-int wawgestdocid, UwU
+                                    nyumbew m-minvawincwusive, 😳😳😳
+                                    nyumbew m-maxvawexcwusive) t-thwows ioexception {
+      supew(weadew, XD s-smowestdocid, o.O wawgestdocid);
+      t-this.numewicdocvawues = w-weadew.getnumewicdocvawues(csffiewd);
+      this.csftype = csftype;
+      t-this.minvawincwusive = m-minvawincwusive;
+      t-this.maxvawexcwusive = maxvawexcwusive;
     }
 
-    @Override
-    protected boolean shouldReturnDoc() throws IOException {
-      if (!numericDocValues.advanceExact(docID())) {
-        return false;
+    @ovewwide
+    pwotected boowean s-shouwdwetuwndoc() thwows ioexception {
+      i-if (!numewicdocvawues.advanceexact(docid())) {
+        w-wetuwn fawse;
       }
 
-      long val = numericDocValues.longValue();
-      switch (csfType) {
-        case DOUBLE:
-          double doubleVal = Double.longBitsToDouble(val);
-          return doubleVal >= minValInclusive.doubleValue()
-              && doubleVal < maxValExclusive.doubleValue();
-        case FLOAT:
-          float floatVal = Float.intBitsToFloat((int) val);
-          return floatVal >= minValInclusive.doubleValue()
-              && floatVal < maxValExclusive.doubleValue();
-        case LONG:
-          return val >= minValInclusive.longValue() && val < maxValExclusive.longValue();
-        case INT:
-          return val >= minValInclusive.longValue() && (int) val < maxValExclusive.longValue();
-        case BYTE:
-          return (byte) val >= minValInclusive.longValue()
-              && (byte) val < maxValExclusive.longValue();
-        default:
-          return false;
+      wong vaw = nyumewicdocvawues.wongvawue();
+      switch (csftype) {
+        case doubwe:
+          d-doubwe doubwevaw = d-doubwe.wongbitstodoubwe(vaw);
+          w-wetuwn doubwevaw >= m-minvawincwusive.doubwevawue()
+              && doubwevaw < m-maxvawexcwusive.doubwevawue();
+        case fwoat:
+          fwoat fwoatvaw = fwoat.intbitstofwoat((int) vaw);
+          wetuwn f-fwoatvaw >= minvawincwusive.doubwevawue()
+              && fwoatvaw < m-maxvawexcwusive.doubwevawue();
+        case w-wong:
+          wetuwn vaw >= m-minvawincwusive.wongvawue() && vaw < maxvawexcwusive.wongvawue();
+        c-case int:
+          w-wetuwn v-vaw >= minvawincwusive.wongvawue() && (int) v-vaw < maxvawexcwusive.wongvawue();
+        c-case byte:
+          wetuwn (byte) vaw >= minvawincwusive.wongvawue()
+              && (byte) vaw < maxvawexcwusive.wongvawue();
+        defauwt:
+          w-wetuwn fawse;
       }
     }
   }
 
   //////////////////////////
-  // for unit tests only
+  // f-fow unit t-tests onwy
   //////////////////////////
-  @VisibleForTesting
-  public Number getMinValForTest() {
-    return minValInclusive;
+  @visibwefowtesting
+  pubwic nyumbew g-getminvawfowtest() {
+    wetuwn minvawincwusive;
   }
 
-  @VisibleForTesting
-  public Number getMaxValForTest() {
-    return maxValExclusive;
+  @visibwefowtesting
+  pubwic numbew getmaxvawfowtest() {
+    w-wetuwn maxvawexcwusive;
   }
 }

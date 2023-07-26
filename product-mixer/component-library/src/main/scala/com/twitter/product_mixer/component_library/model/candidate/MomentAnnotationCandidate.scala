@@ -1,86 +1,86 @@
-package com.twitter.product_mixer.component_library.model.candidate
+package com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
 
 /**
- * Canonical MomentAnnotationCandidate model. Always prefer this version over all other variants.
+ * c-canonicaw m-momentannotationcandidate m-modew. XD awways pwefew t-this vewsion o-ovew aww othew v-vawiants. -.-
  *
- * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]
- *       on the candidate's [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
- *       features come from the candidate source itself (as opposed to hydrated via a
- *       [[com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator]]),
- *       then [[com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
- *       can be used to extract features from the candidate source response.
+ * @note a-any additionaw f-fiewds shouwd be added as a [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwe]]
+ *       on the candidate's [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap]]. :3 if the
+ *       f-featuwes come fwom the candidate souwce itsewf (as o-opposed to hydwated via a
+ *       [[com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.candidatefeatuwehydwatow]]), nyaa~~
+ *       t-then [[com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig.featuwesfwomcandidatesouwcetwansfowmews]]
+ *       can be used to extwact featuwes fwom t-the candidate souwce wesponse. 😳
  *
- * @note This class should always remain `final`. If for any reason the `final` modifier is removed,
- *       the equals() implementation must be updated in order to handle class inheritor equality
- *       (see note on the equals method below)
+ * @note t-this c-cwass shouwd awways wemain `finaw`. if fow any weason the `finaw` modifiew is wemoved, (⑅˘꒳˘)
+ *       t-the equaws() impwementation must be updated in owdew to handwe cwass inhewitow equawity
+ *       (see n-nyote on the equaws method b-bewow)
  */
-final class MomentAnnotationCandidate private (
-  override val id: Long,
-  val text: Option[String],
-  val header: Option[String])
-    extends UniversalNoun[Long] {
+finaw c-cwass momentannotationcandidate p-pwivate (
+  ovewwide v-vaw id: wong, nyaa~~
+  vaw text: option[stwing], OwO
+  v-vaw headew: option[stwing])
+    extends univewsawnoun[wong] {
 
   /**
-   * @inheritdoc
+   * @inhewitdoc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[MomentAnnotationCandidate]
+  ovewwide def canequaw(that: a-any): boowean = that.isinstanceof[momentannotationcandidate]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * high pewfowmance impwementation of equaws method that wevewages:
+   *  - wefewentiaw e-equawity showt ciwcuit
+   *  - c-cached h-hashcode equawity s-showt ciwcuit
+   *  - fiewd vawues awe onwy checked if the hashcodes a-awe equaw t-to handwe the unwikewy case
+   *    o-of a hashcode c-cowwision
+   *  - wemovaw of c-check fow `that` being an equaws-compatibwe d-descendant since this cwass is finaw
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @note `candidate.canequaw(this)` i-is not nyecessawy because t-this cwass is finaw
+   * @see [[http://www.awtima.com/pins1ed/object-equawity.htmw p-pwogwamming i-in scawa, rawr x3
+   *      chaptew 28]] fow discussion and design. XD
    */
-  override def equals(that: Any): Boolean =
-    that match {
-      case candidate: MomentAnnotationCandidate =>
+  ovewwide def equaws(that: any): boowean =
+    t-that match {
+      c-case candidate: momentannotationcandidate =>
         (
-          (this eq candidate)
-            || ((hashCode == candidate.hashCode)
-              && (id == candidate.id && text == candidate.text && header == candidate.header))
+          (this e-eq candidate)
+            || ((hashcode == c-candidate.hashcode)
+              && (id == c-candidate.id && text == candidate.text && headew == candidate.headew))
         )
-      case _ =>
-        false
+      c-case _ =>
+        fawse
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * wevewage domain-specific constwaints (see n-nyotes bewow) to safewy constwuct a-and cache t-the
+   * hashcode a-as a vaw, σωσ such that it is instantiated o-once on o-object constwuction. (U ᵕ U❁) t-this pwevents t-the
+   * nyeed to wecompute the hashcode on e-each hashcode() i-invocation, (U ﹏ U) which i-is the behaviow o-of the
+   * scawa c-compiwew case cwass-genewated hashcode() since it cannot make a-assumptions wegawding fiewd
+   * object mutabiwity and hashcode impwementations. :3
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated candidate
-   *       (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       data structure), assuming stable hashCode implementations for these objects
+   * @note caching the hashcode i-is onwy safe if aww of the fiewds used to constwuct the h-hashcode
+   *       a-awe immutabwe. ( ͡o ω ͡o ) t-this incwudes:
+   *       - inabiwity to mutate t-the object wefewence on fow an e-existing instantiated c-candidate
+   *       (i.e. σωσ each fiewd is a vaw)
+   *       - inabiwity to mutate the fiewd object instance i-itsewf (i.e. each fiewd is an i-immutabwe
+   *       - inabiwity t-to mutate the f-fiewd object instance itsewf (i.e. >w< each fiewd is a-an immutabwe
+   *       d-data stwuctuwe), 😳😳😳 assuming s-stabwe hashcode i-impwementations fow these objects
    *
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @note in owdew fow the hashcode to be consistent w-with object equawity, OwO `##` m-must b-be used fow
+   *       boxed nyumewic t-types and n-nyuww. 😳 as such, 😳😳😳 awways pwefew `.##` o-ovew `.hashcode()`. (˘ω˘)
    */
-  override val hashCode: Int =
+  ovewwide vaw hashcode: int =
     31 * (
       31 * (
         id.##
       ) + text.##
-    ) + header.##
+    ) + h-headew.##
 }
 
-object MomentAnnotationCandidate {
-  def apply(
-    id: Long,
-    text: Option[String],
-    header: Option[String]
-  ): MomentAnnotationCandidate = new MomentAnnotationCandidate(id, text, header)
+o-object momentannotationcandidate {
+  def appwy(
+    id: w-wong, ʘwʘ
+    text: o-option[stwing], ( ͡o ω ͡o )
+    headew: option[stwing]
+  ): momentannotationcandidate = nyew m-momentannotationcandidate(id, o.O text, headew)
 }

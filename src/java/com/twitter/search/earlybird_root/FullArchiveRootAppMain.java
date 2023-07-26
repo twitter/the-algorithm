@@ -1,40 +1,40 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import java.util.Arrays;
-import java.util.Collection;
+impowt j-java.utiw.awways;
+i-impowt java.utiw.cowwection;
 
-import com.google.inject.Module;
+i-impowt com.googwe.inject.moduwe;
 
-import com.twitter.search.common.root.SearchRootAppMain;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
+i-impowt com.twittew.seawch.common.woot.seawchwootappmain;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdsewvice;
 
-public class FullArchiveRootAppMain extends SearchRootAppMain<FullArchiveRootServer> {
+p-pubwic c-cwass fuwwawchivewootappmain extends seawchwootappmain<fuwwawchivewootsewvew> {
   /**
-   * Boilerplate for the Java-friendly AbstractTwitterServer
+   * boiwewpwate fow the java-fwiendwy abstwacttwittewsewvew
    */
-  public static class Main {
-    public static void main(String[] args) {
-      new FullArchiveRootAppMain().main(args);
+  p-pubwic static cwass main {
+    pubwic s-static void main(stwing[] awgs) {
+      n-nyew fuwwawchivewootappmain().main(awgs);
     }
   }
 
-  @Override
-  protected Collection<? extends Module> getAdditionalModules() {
-    return Arrays.asList(
-        new EarlybirdCommonModule(),
-        new EarlybirdCacheCommonModule(),
-        new FullArchiveRootModule(),
-        new QuotaModule()
+  @ovewwide
+  pwotected cowwection<? e-extends moduwe> getadditionawmoduwes() {
+    w-wetuwn awways.aswist(
+        n-new eawwybiwdcommonmoduwe(), /(^•ω•^)
+        nyew eawwybiwdcachecommonmoduwe(), rawr
+        nyew fuwwawchivewootmoduwe(), OwO
+        nyew quotamoduwe()
     );
   }
 
-  @Override
-  protected Class<FullArchiveRootServer> getSearchRootServerClass() {
-    return FullArchiveRootServer.class;
+  @ovewwide
+  pwotected cwass<fuwwawchivewootsewvew> g-getseawchwootsewvewcwass() {
+    wetuwn fuwwawchivewootsewvew.cwass;
   }
 
-  @Override
-  protected Class<?> getServiceIfaceClass() {
-    return EarlybirdService.ServiceIface.class;
+  @ovewwide
+  pwotected cwass<?> getsewviceifacecwass() {
+    w-wetuwn eawwybiwdsewvice.sewviceiface.cwass;
   }
 }

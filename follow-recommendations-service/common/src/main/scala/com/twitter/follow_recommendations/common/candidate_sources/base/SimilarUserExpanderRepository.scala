@@ -1,313 +1,313 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.base
 
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.DefaultEnableImplicitEngagedExpansion
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.DefaultExpansionInputCount
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.DefaultFinalCandidatesReturnedCount
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.EnableNonDirectFollowExpansion
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.EnableSimsExpandSeedAccountsSort
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderRepository.DefaultCandidateBuilder
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderRepository.DefaultScore
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.EngagementType
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.follow_recommendations.common.models.SimilarToProof
-import com.twitter.follow_recommendations.common.models.UserCandidateSourceDetails
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
+impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.base.simiwawusewexpandewpawams.defauwtenabweimpwicitengagedexpansion
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.base.simiwawusewexpandewpawams.defauwtexpansioninputcount
+i-impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.base.simiwawusewexpandewpawams.defauwtfinawcandidateswetuwnedcount
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.base.simiwawusewexpandewpawams.enabwenondiwectfowwowexpansion
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.base.simiwawusewexpandewpawams.enabwesimsexpandseedaccountssowt
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.base.simiwawusewexpandewwepositowy.defauwtcandidatebuiwdew
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.base.simiwawusewexpandewwepositowy.defauwtscowe
+impowt com.twittew.fowwow_wecommendations.common.modews.accountpwoof
+impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.engagementtype
+impowt com.twittew.fowwow_wecommendations.common.modews.fowwowpwoof
+impowt c-com.twittew.fowwow_wecommendations.common.modews.weason
+impowt c-com.twittew.fowwow_wecommendations.common.modews.simiwawtopwoof
+impowt com.twittew.fowwow_wecommendations.common.modews.usewcandidatesouwcedetaiws
+impowt com.twittew.hewmit.candidate.thwiftscawa.candidates
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.cwient.fetchew
+i-impowt com.twittew.timewines.configapi.fsboundedpawam
+impowt com.twittew.timewines.configapi.fspawam
+impowt com.twittew.timewines.configapi.haspawams
+impowt com.twittew.timewines.configapi.pawams
 
-case class SecondDegreeCandidate(userId: Long, score: Double, socialProof: Option[Seq[Long]])
+case cwass s-seconddegweecandidate(usewid: wong, 🥺 scowe: doubwe, (✿oωo) sociawpwoof: option[seq[wong]])
 
-abstract class SimilarUserExpanderRepository[-Request <: HasParams](
-  override val identifier: CandidateSourceIdentifier,
-  similarToCandidatesFetcher: Fetcher[
-    Long,
-    Unit,
-    Candidates
-  ],
-  expansionInputSizeParam: FSBoundedParam[Int] = DefaultExpansionInputCount,
-  candidatesReturnedSizeParam: FSBoundedParam[Int] = DefaultFinalCandidatesReturnedCount,
-  enableImplicitEngagedExpansion: FSParam[Boolean] = DefaultEnableImplicitEngagedExpansion,
-  thresholdToAvoidExpansion: Int = 30,
-  maxExpansionPerCandidate: Option[Int] = None,
-  includingOriginalCandidates: Boolean = false,
-  scorer: (Double, Double) => Double = SimilarUserExpanderRepository.DefaultScorer,
-  aggregator: (Seq[Double]) => Double = ScoreAggregator.Max,
-  candidateBuilder: (Long, CandidateSourceIdentifier, Double, CandidateUser) => CandidateUser =
-    DefaultCandidateBuilder)
-    extends TwoHopExpansionCandidateSource[
-      Request,
-      CandidateUser,
-      SecondDegreeCandidate,
-      CandidateUser
+abstwact cwass s-simiwawusewexpandewwepositowy[-wequest <: haspawams](
+  o-ovewwide v-vaw identifiew: c-candidatesouwceidentifiew, (U ﹏ U)
+  s-simiwawtocandidatesfetchew: fetchew[
+    wong, :3
+    u-unit, ^^;;
+    candidates
+  ], rawr
+  expansioninputsizepawam: fsboundedpawam[int] = d-defauwtexpansioninputcount, 😳😳😳
+  candidateswetuwnedsizepawam: fsboundedpawam[int] = defauwtfinawcandidateswetuwnedcount, (✿oωo)
+  enabweimpwicitengagedexpansion: fspawam[boowean] = d-defauwtenabweimpwicitengagedexpansion,
+  thweshowdtoavoidexpansion: int = 30, OwO
+  m-maxexpansionpewcandidate: o-option[int] = n-nyone, ʘwʘ
+  incwudingowiginawcandidates: boowean = fawse, (ˆ ﻌ ˆ)♡
+  scowew: (doubwe, (U ﹏ U) doubwe) => d-doubwe = s-simiwawusewexpandewwepositowy.defauwtscowew, UwU
+  aggwegatow: (seq[doubwe]) => d-doubwe = s-scoweaggwegatow.max, XD
+  candidatebuiwdew: (wong, ʘwʘ c-candidatesouwceidentifiew, rawr x3 doubwe, ^^;; candidateusew) => c-candidateusew =
+    defauwtcandidatebuiwdew)
+    extends twohopexpansioncandidatesouwce[
+      w-wequest, ʘwʘ
+      candidateusew, (U ﹏ U)
+      s-seconddegweecandidate, (˘ω˘)
+      candidateusew
     ] {
 
-  val originalCandidateSource: CandidateSource[Request, CandidateUser]
-  val backupOriginalCandidateSource: Option[CandidateSource[Request, CandidateUser]] = None
+  v-vaw owiginawcandidatesouwce: c-candidatesouwce[wequest, (ꈍᴗꈍ) candidateusew]
+  vaw backupowiginawcandidatesouwce: option[candidatesouwce[wequest, /(^•ω•^) candidateusew]] = none
 
-  override def firstDegreeNodes(request: Request): Stitch[Seq[CandidateUser]] = {
+  ovewwide def fiwstdegweenodes(wequest: wequest): s-stitch[seq[candidateusew]] = {
 
-    val originalCandidatesStitch: Stitch[Seq[CandidateUser]] =
-      originalCandidateSource(request)
+    v-vaw owiginawcandidatesstitch: s-stitch[seq[candidateusew]] =
+      o-owiginawcandidatesouwce(wequest)
 
-    val backupCandidatesStitch: Stitch[Seq[CandidateUser]] =
-      if (request.params(EnableNonDirectFollowExpansion)) {
-        backupOriginalCandidateSource.map(_.apply(request)).getOrElse(Stitch.Nil)
-      } else {
-        Stitch.Nil
+    v-vaw backupcandidatesstitch: stitch[seq[candidateusew]] =
+      if (wequest.pawams(enabwenondiwectfowwowexpansion)) {
+        backupowiginawcandidatesouwce.map(_.appwy(wequest)).getowewse(stitch.niw)
+      } e-ewse {
+        stitch.niw
       }
 
-    val firstDegreeCandidatesCombinedStitch: Stitch[Seq[CandidateUser]] =
-      Stitch
-        .join(originalCandidatesStitch, backupCandidatesStitch).map {
-          case (firstDegreeOrigCandidates, backupFirstDegreeCandidates) =>
-            if (request.params(EnableSimsExpandSeedAccountsSort)) {
-              firstDegreeOrigCandidates ++ backupFirstDegreeCandidates sortBy {
-                -_.score.getOrElse(DefaultScore)
+    vaw fiwstdegweecandidatescombinedstitch: stitch[seq[candidateusew]] =
+      stitch
+        .join(owiginawcandidatesstitch, >_< b-backupcandidatesstitch).map {
+          case (fiwstdegweeowigcandidates, σωσ b-backupfiwstdegweecandidates) =>
+            i-if (wequest.pawams(enabwesimsexpandseedaccountssowt)) {
+              f-fiwstdegweeowigcandidates ++ backupfiwstdegweecandidates s-sowtby {
+                -_.scowe.getowewse(defauwtscowe)
               }
-            } else {
-              firstDegreeOrigCandidates ++ backupFirstDegreeCandidates
+            } e-ewse {
+              f-fiwstdegweeowigcandidates ++ b-backupfiwstdegweecandidates
             }
         }
 
-    val candidatesAfterImplicitEngagementsRemovalStitch: Stitch[Seq[CandidateUser]] =
-      getCandidatesAfterImplicitEngagementFiltering(
-        request.params,
-        firstDegreeCandidatesCombinedStitch)
+    vaw candidatesaftewimpwicitengagementswemovawstitch: s-stitch[seq[candidateusew]] =
+      g-getcandidatesaftewimpwicitengagementfiwtewing(
+        w-wequest.pawams, ^^;;
+        f-fiwstdegweecandidatescombinedstitch)
 
-    val firstDegreeCandidatesCombinedTrimmed = candidatesAfterImplicitEngagementsRemovalStitch.map {
-      candidates: Seq[CandidateUser] =>
-        candidates.take(request.params(expansionInputSizeParam))
+    v-vaw fiwstdegweecandidatescombinedtwimmed = candidatesaftewimpwicitengagementswemovawstitch.map {
+      candidates: s-seq[candidateusew] =>
+        candidates.take(wequest.pawams(expansioninputsizepawam))
     }
 
-    firstDegreeCandidatesCombinedTrimmed.map { firstDegreeResults: Seq[CandidateUser] =>
-      if (firstDegreeResults.nonEmpty && firstDegreeResults.size < thresholdToAvoidExpansion) {
-        firstDegreeResults
-          .groupBy(_.id).mapValues(
-            _.maxBy(_.score)
-          ).values.toSeq
-      } else {
-        Nil
+    fiwstdegweecandidatescombinedtwimmed.map { fiwstdegweewesuwts: seq[candidateusew] =>
+      if (fiwstdegweewesuwts.nonempty && f-fiwstdegweewesuwts.size < thweshowdtoavoidexpansion) {
+        fiwstdegweewesuwts
+          .gwoupby(_.id).mapvawues(
+            _.maxby(_.scowe)
+          ).vawues.toseq
+      } ewse {
+        nyiw
       }
     }
 
   }
 
-  override def secondaryDegreeNodes(
-    request: Request,
-    firstDegreeCandidate: CandidateUser
-  ): Stitch[Seq[SecondDegreeCandidate]] = {
-    similarToCandidatesFetcher.fetch(firstDegreeCandidate.id).map(_.v).map { candidateListOption =>
-      candidateListOption
-        .map { candidatesList =>
-          candidatesList.candidates.map(candidate =>
-            SecondDegreeCandidate(candidate.userId, candidate.score, candidate.socialProof))
-        }.getOrElse(Nil)
+  o-ovewwide d-def secondawydegweenodes(
+    w-wequest: wequest, 😳
+    fiwstdegweecandidate: c-candidateusew
+  ): stitch[seq[seconddegweecandidate]] = {
+    simiwawtocandidatesfetchew.fetch(fiwstdegweecandidate.id).map(_.v).map { c-candidatewistoption =>
+      c-candidatewistoption
+        .map { candidateswist =>
+          candidateswist.candidates.map(candidate =>
+            seconddegweecandidate(candidate.usewid, >_< candidate.scowe, -.- candidate.sociawpwoof))
+        }.getowewse(niw)
     }
 
   }
 
-  override def aggregateAndScore(
-    req: Request,
-    firstDegreeToSecondDegreeNodesMap: Map[CandidateUser, Seq[SecondDegreeCandidate]]
-  ): Stitch[Seq[CandidateUser]] = {
+  o-ovewwide def aggwegateandscowe(
+    w-weq: wequest, UwU
+    fiwstdegweetoseconddegweenodesmap: m-map[candidateusew, :3 seq[seconddegweecandidate]]
+  ): s-stitch[seq[candidateusew]] = {
 
-    val similarExpanderResults = firstDegreeToSecondDegreeNodesMap.flatMap {
-      case (firstDegreeCandidate, seqOfSecondDegreeCandidates) =>
-        val sourceScore = firstDegreeCandidate.score.getOrElse(DefaultScore)
-        val results: Seq[CandidateUser] = seqOfSecondDegreeCandidates.map { secondDegreeCandidate =>
-          val score = scorer(sourceScore, secondDegreeCandidate.score)
-          candidateBuilder(secondDegreeCandidate.userId, identifier, score, firstDegreeCandidate)
+    vaw simiwawexpandewwesuwts = fiwstdegweetoseconddegweenodesmap.fwatmap {
+      c-case (fiwstdegweecandidate, σωσ seqofseconddegweecandidates) =>
+        v-vaw souwcescowe = fiwstdegweecandidate.scowe.getowewse(defauwtscowe)
+        v-vaw wesuwts: s-seq[candidateusew] = seqofseconddegweecandidates.map { seconddegweecandidate =>
+          vaw scowe = scowew(souwcescowe, >w< s-seconddegweecandidate.scowe)
+          c-candidatebuiwdew(seconddegweecandidate.usewid, (ˆ ﻌ ˆ)♡ i-identifiew, ʘwʘ scowe, fiwstdegweecandidate)
         }
-        maxExpansionPerCandidate match {
-          case None => results
-          case Some(limit) => results.sortBy(-_.score.getOrElse(DefaultScore)).take(limit)
+        m-maxexpansionpewcandidate m-match {
+          case nyone => w-wesuwts
+          case some(wimit) => wesuwts.sowtby(-_.scowe.getowewse(defauwtscowe)).take(wimit)
         }
-    }.toSeq
+    }.toseq
 
-    val allCandidates = {
-      if (includingOriginalCandidates)
-        firstDegreeToSecondDegreeNodesMap.keySet.toSeq
-      else
-        Nil
-    } ++ similarExpanderResults
+    vaw awwcandidates = {
+      if (incwudingowiginawcandidates)
+        fiwstdegweetoseconddegweenodesmap.keyset.toseq
+      e-ewse
+        n-nyiw
+    } ++ simiwawexpandewwesuwts
 
-    val groupedCandidates: Seq[CandidateUser] = allCandidates
-      .groupBy(_.id)
-      .flatMap {
-        case (_, candidates) =>
-          val finalScore = aggregator(candidates.map(_.score.getOrElse(DefaultScore)))
-          val candidateSourceDetailsCombined = aggregateCandidateSourceDetails(candidates)
-          val accountSocialProofcombined = aggregateAccountSocialProof(candidates)
+    vaw gwoupedcandidates: s-seq[candidateusew] = a-awwcandidates
+      .gwoupby(_.id)
+      .fwatmap {
+        case (_, :3 candidates) =>
+          vaw f-finawscowe = aggwegatow(candidates.map(_.scowe.getowewse(defauwtscowe)))
+          vaw candidatesouwcedetaiwscombined = aggwegatecandidatesouwcedetaiws(candidates)
+          vaw accountsociawpwoofcombined = aggwegateaccountsociawpwoof(candidates)
 
-          candidates.headOption.map(
+          c-candidates.headoption.map(
             _.copy(
-              score = Some(finalScore),
-              reason = accountSocialProofcombined,
-              userCandidateSourceDetails = candidateSourceDetailsCombined)
-              .withCandidateSource(identifier))
+              scowe = some(finawscowe), (˘ω˘)
+              weason = a-accountsociawpwoofcombined, 😳😳😳
+              u-usewcandidatesouwcedetaiws = candidatesouwcedetaiwscombined)
+              .withcandidatesouwce(identifiew))
       }
-      .toSeq
+      .toseq
 
-    Stitch.value(
-      groupedCandidates
-        .sortBy { -_.score.getOrElse(DefaultScore) }.take(req.params(candidatesReturnedSizeParam))
+    stitch.vawue(
+      gwoupedcandidates
+        .sowtby { -_.scowe.getowewse(defauwtscowe) }.take(weq.pawams(candidateswetuwnedsizepawam))
     )
   }
 
-  def aggregateCandidateSourceDetails(
-    candidates: Seq[CandidateUser]
-  ): Option[UserCandidateSourceDetails] = {
+  d-def aggwegatecandidatesouwcedetaiws(
+    c-candidates: seq[candidateusew]
+  ): option[usewcandidatesouwcedetaiws] = {
     candidates
       .map { candidate =>
-        candidate.userCandidateSourceDetails.map(_.candidateSourceScores).getOrElse(Map.empty)
-      }.reduceLeftOption { (scoreMap1, scoreMap2) =>
-        scoreMap1 ++ scoreMap2
+        c-candidate.usewcandidatesouwcedetaiws.map(_.candidatesouwcescowes).getowewse(map.empty)
+      }.weduceweftoption { (scowemap1, rawr x3 scowemap2) =>
+        s-scowemap1 ++ scowemap2
       }.map {
-        UserCandidateSourceDetails(primaryCandidateSource = None, _)
+        usewcandidatesouwcedetaiws(pwimawycandidatesouwce = none, (✿oωo) _)
       }
 
   }
 
-  def aggregateAccountSocialProof(candidates: Seq[CandidateUser]): Option[Reason] = {
-    candidates
-      .map { candidate =>
+  def aggwegateaccountsociawpwoof(candidates: s-seq[candidateusew]): option[weason] = {
+    c-candidates
+      .map { c-candidate =>
         (
-          candidate.reason
-            .flatMap(_.accountProof.flatMap(_.similarToProof.map(_.similarTo))).getOrElse(Nil),
-          candidate.reason
-            .flatMap(_.accountProof.flatMap(_.followProof.map(_.followedBy))).getOrElse(Nil),
-          candidate.reason
-            .flatMap(_.accountProof.flatMap(_.followProof.map(_.numIds))).getOrElse(0)
+          candidate.weason
+            .fwatmap(_.accountpwoof.fwatmap(_.simiwawtopwoof.map(_.simiwawto))).getowewse(niw), (ˆ ﻌ ˆ)♡
+          c-candidate.weason
+            .fwatmap(_.accountpwoof.fwatmap(_.fowwowpwoof.map(_.fowwowedby))).getowewse(niw), :3
+          candidate.weason
+            .fwatmap(_.accountpwoof.fwatmap(_.fowwowpwoof.map(_.numids))).getowewse(0)
         )
-      }.reduceLeftOption { (accountProofOne, accountProofTwo) =>
+      }.weduceweftoption { (accountpwoofone, (U ᵕ U❁) a-accountpwooftwo) =>
         (
-          // merge similarToIds
-          accountProofOne._1 ++ accountProofTwo._1,
-          // merge followedByIds
-          accountProofOne._2 ++ accountProofTwo._2,
-          // add numIds
-          accountProofOne._3 + accountProofTwo._3)
-      }.map { proofs =>
-        Reason(accountProof = Some(
-          AccountProof(
-            similarToProof = Some(SimilarToProof(proofs._1)),
-            followProof = if (proofs._2.nonEmpty) Some(FollowProof(proofs._2, proofs._3)) else None
+          // m-mewge s-simiwawtoids
+          accountpwoofone._1 ++ a-accountpwooftwo._1, ^^;;
+          // mewge f-fowwowedbyids
+          accountpwoofone._2 ++ accountpwooftwo._2, mya
+          // a-add nyumids
+          a-accountpwoofone._3 + accountpwooftwo._3)
+      }.map { p-pwoofs =>
+        weason(accountpwoof = some(
+          a-accountpwoof(
+            simiwawtopwoof = s-some(simiwawtopwoof(pwoofs._1)), 😳😳😳
+            f-fowwowpwoof = if (pwoofs._2.nonempty) some(fowwowpwoof(pwoofs._2, OwO pwoofs._3)) ewse none
           )))
       }
   }
 
-  def getCandidatesAfterImplicitEngagementFiltering(
-    params: Params,
-    firstDegreeCandidatesStitch: Stitch[Seq[CandidateUser]]
-  ): Stitch[Seq[CandidateUser]] = {
+  d-def getcandidatesaftewimpwicitengagementfiwtewing(
+    p-pawams: p-pawams, rawr
+    f-fiwstdegweecandidatesstitch: stitch[seq[candidateusew]]
+  ): s-stitch[seq[candidateusew]] = {
 
-    if (!params(enableImplicitEngagedExpansion)) {
+    if (!pawams(enabweimpwicitengagedexpansion)) {
 
       /**
-       * Remove candidates whose engagement types only contain implicit engagements
-       * (e.g. Profile View, Tweet Click) and only expand those candidates who contain explicit
-       * engagements.
+       * wemove candidates whose engagement types onwy contain impwicit e-engagements
+       * (e.g. XD pwofiwe view, (U ﹏ U) tweet c-cwick) and onwy expand those c-candidates who contain expwicit
+       * e-engagements. (˘ω˘)
        */
-      firstDegreeCandidatesStitch.map { candidates =>
-        candidates.filter { cand =>
-          cand.engagements.exists(engage =>
-            engage == EngagementType.Like || engage == EngagementType.Retweet || engage == EngagementType.Mention)
+      fiwstdegweecandidatesstitch.map { c-candidates =>
+        c-candidates.fiwtew { c-cand =>
+          c-cand.engagements.exists(engage =>
+            e-engage == engagementtype.wike || engage == engagementtype.wetweet || engage == engagementtype.mention)
         }
       }
-    } else {
-      firstDegreeCandidatesStitch
+    } ewse {
+      fiwstdegweecandidatesstitch
     }
   }
 
 }
 
-object SimilarUserExpanderRepository {
-  val DefaultScorer: (Double, Double) => Double = (sourceScore: Double, similarScore: Double) =>
-    similarScore
-  val MultiplyScorer: (Double, Double) => Double = (sourceScore: Double, similarScore: Double) =>
-    sourceScore * similarScore
-  val SourceScorer: (Double, Double) => Double = (sourceScore: Double, similarScore: Double) =>
-    sourceScore
+object simiwawusewexpandewwepositowy {
+  vaw defauwtscowew: (doubwe, UwU d-doubwe) => d-doubwe = (souwcescowe: doubwe, >_< s-simiwawscowe: doubwe) =>
+    s-simiwawscowe
+  vaw muwtipwyscowew: (doubwe, σωσ doubwe) => doubwe = (souwcescowe: doubwe, 🥺 simiwawscowe: d-doubwe) =>
+    s-souwcescowe * simiwawscowe
+  v-vaw souwcescowew: (doubwe, 🥺 doubwe) => doubwe = (souwcescowe: doubwe, ʘwʘ simiwawscowe: d-doubwe) =>
+    s-souwcescowe
 
-  val DefaultScore = 0.0d
+  vaw defauwtscowe = 0.0d
 
-  val DefaultCandidateBuilder: (
-    Long,
-    CandidateSourceIdentifier,
-    Double,
-    CandidateUser
-  ) => CandidateUser =
+  v-vaw defauwtcandidatebuiwdew: (
+    w-wong, :3
+    candidatesouwceidentifiew, (U ﹏ U)
+    doubwe, (U ﹏ U)
+    candidateusew
+  ) => candidateusew =
     (
-      userId: Long,
-      _: CandidateSourceIdentifier,
-      score: Double,
-      candidate: CandidateUser
+      usewid: w-wong, ʘwʘ
+      _: c-candidatesouwceidentifiew, >w<
+      s-scowe: doubwe, rawr x3
+      c-candidate: c-candidateusew
     ) => {
-      val originalCandidateSourceDetails =
-        candidate.userCandidateSourceDetails.flatMap { candSourceDetails =>
-          candSourceDetails.primaryCandidateSource.map { primaryCandidateSource =>
-            UserCandidateSourceDetails(
-              primaryCandidateSource = None,
-              candidateSourceScores = Map(primaryCandidateSource -> candidate.score))
+      vaw owiginawcandidatesouwcedetaiws =
+        c-candidate.usewcandidatesouwcedetaiws.fwatmap { c-candsouwcedetaiws =>
+          candsouwcedetaiws.pwimawycandidatesouwce.map { p-pwimawycandidatesouwce =>
+            u-usewcandidatesouwcedetaiws(
+              pwimawycandidatesouwce = n-nyone,
+              candidatesouwcescowes = map(pwimawycandidatesouwce -> c-candidate.scowe))
           }
         }
-      CandidateUser(
-        id = userId,
-        score = Some(score),
-        userCandidateSourceDetails = originalCandidateSourceDetails,
-        reason =
-          Some(Reason(Some(AccountProof(similarToProof = Some(SimilarToProof(Seq(candidate.id)))))))
+      candidateusew(
+        i-id = usewid, OwO
+        s-scowe = some(scowe), ^•ﻌ•^
+        u-usewcandidatesouwcedetaiws = owiginawcandidatesouwcedetaiws,
+        weason =
+          s-some(weason(some(accountpwoof(simiwawtopwoof = s-some(simiwawtopwoof(seq(candidate.id)))))))
       )
     }
 
-  val FollowClusterCandidateBuilder: (
-    Long,
-    CandidateSourceIdentifier,
-    Double,
-    CandidateUser
-  ) => CandidateUser =
-    (userId: Long, _: CandidateSourceIdentifier, score: Double, candidate: CandidateUser) => {
-      val originalCandidateSourceDetails =
-        candidate.userCandidateSourceDetails.flatMap { candSourceDetails =>
-          candSourceDetails.primaryCandidateSource.map { primaryCandidateSource =>
-            UserCandidateSourceDetails(
-              primaryCandidateSource = None,
-              candidateSourceScores = Map(primaryCandidateSource -> candidate.score))
+  v-vaw fowwowcwustewcandidatebuiwdew: (
+    wong, >_<
+    candidatesouwceidentifiew, OwO
+    doubwe, >_<
+    candidateusew
+  ) => c-candidateusew =
+    (usewid: wong, (ꈍᴗꈍ) _: candidatesouwceidentifiew, >w< s-scowe: d-doubwe, (U ﹏ U) candidate: candidateusew) => {
+      v-vaw owiginawcandidatesouwcedetaiws =
+        candidate.usewcandidatesouwcedetaiws.fwatmap { c-candsouwcedetaiws =>
+          c-candsouwcedetaiws.pwimawycandidatesouwce.map { pwimawycandidatesouwce =>
+            usewcandidatesouwcedetaiws(
+              p-pwimawycandidatesouwce = nyone, ^^
+              candidatesouwcescowes = m-map(pwimawycandidatesouwce -> candidate.scowe))
           }
         }
 
-      val originalFollowCluster = candidate.reason
-        .flatMap(_.accountProof.flatMap(_.followProof.map(_.followedBy)))
+      v-vaw owiginawfowwowcwustew = c-candidate.weason
+        .fwatmap(_.accountpwoof.fwatmap(_.fowwowpwoof.map(_.fowwowedby)))
 
-      CandidateUser(
-        id = userId,
-        score = Some(score),
-        userCandidateSourceDetails = originalCandidateSourceDetails,
-        reason = Some(
-          Reason(
-            Some(
-              AccountProof(
-                similarToProof = Some(SimilarToProof(Seq(candidate.id))),
-                followProof = originalFollowCluster.map(follows =>
-                  FollowProof(follows, follows.size)))))
+      candidateusew(
+        i-id = usewid, (U ﹏ U)
+        s-scowe = s-some(scowe), :3
+        usewcandidatesouwcedetaiws = owiginawcandidatesouwcedetaiws,
+        weason = some(
+          weason(
+            some(
+              accountpwoof(
+                simiwawtopwoof = some(simiwawtopwoof(seq(candidate.id))), (✿oωo)
+                fowwowpwoof = owiginawfowwowcwustew.map(fowwows =>
+                  fowwowpwoof(fowwows, XD f-fowwows.size)))))
         )
       )
     }
 }
 
-object ScoreAggregator {
-  // aggregate the same candidates with same id by taking the one with largest score
-  val Max: Seq[Double] => Double = (candidateScores: Seq[Double]) => { candidateScores.max }
+o-object scoweaggwegatow {
+  // aggwegate t-the same candidates w-with same i-id by taking the one with wawgest s-scowe
+  vaw max: seq[doubwe] => d-doubwe = (candidatescowes: s-seq[doubwe]) => { candidatescowes.max }
 
-  // aggregate the same candidates with same id by taking the sum of the scores
-  val Sum: Seq[Double] => Double = (candidateScores: Seq[Double]) => { candidateScores.sum }
+  // aggwegate t-the same candidates with same i-id by taking t-the sum of the scowes
+  vaw sum: seq[doubwe] => d-doubwe = (candidatescowes: s-seq[doubwe]) => { c-candidatescowes.sum }
 }

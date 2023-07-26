@@ -1,89 +1,89 @@
-package com.twitter.search.earlybird.config;
+package com.twittew.seawch.eawwybiwd.config;
 
-import java.util.Date;
+impowt j-java.utiw.date;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
 /**
- * A simple wrapper around TierInfo that returns the "real" or the "overriden" values from the given
- * {@code TierInfo} instance, based on the given {@code useOverrideTierConfig} flag.
+ * a-a simpwe w-wwappew awound t-tiewinfo that w-wetuwns the "weaw" o-ow the "ovewwiden" v-vawues fwom the given
+ * {@code tiewinfo} instance, 🥺 based on the given {@code u-useovewwidetiewconfig} fwag. (U ﹏ U)
  */
-public class TierInfoWrapper implements ServingRange {
-  private final TierInfo tierInfo;
-  private final boolean useOverrideTierConfig;
+pubwic cwass t-tiewinfowwappew impwements sewvingwange {
+  p-pwivate finaw tiewinfo tiewinfo;
+  pwivate finaw boowean u-useovewwidetiewconfig;
 
-  public TierInfoWrapper(TierInfo tierInfo, boolean useOverrideTierConfig) {
-    this.tierInfo = Preconditions.checkNotNull(tierInfo);
-    this.useOverrideTierConfig = useOverrideTierConfig;
+  pubwic tiewinfowwappew(tiewinfo t-tiewinfo, >w< boowean u-useovewwidetiewconfig) {
+    this.tiewinfo = pweconditions.checknotnuww(tiewinfo);
+    this.useovewwidetiewconfig = useovewwidetiewconfig;
   }
 
-  public String getTierName() {
-    return tierInfo.getTierName();
+  p-pubwic stwing gettiewname() {
+    wetuwn tiewinfo.gettiewname();
   }
 
-  public Date getDataStartDate() {
-    return tierInfo.getDataStartDate();
+  pubwic date getdatastawtdate() {
+    w-wetuwn tiewinfo.getdatastawtdate();
   }
 
-  public Date getDataEndDate() {
-    return tierInfo.getDataEndDate();
+  pubwic d-date getdataenddate() {
+    w-wetuwn tiewinfo.getdataenddate();
   }
 
-  public int getNumPartitions() {
-    return tierInfo.getNumPartitions();
+  p-pubwic i-int getnumpawtitions() {
+    wetuwn tiewinfo.getnumpawtitions();
   }
 
-  public int getMaxTimeslices() {
-    return tierInfo.getMaxTimeslices();
+  p-pubwic int getmaxtimeswices() {
+    wetuwn t-tiewinfo.getmaxtimeswices();
   }
 
-  public TierConfig.ConfigSource getSource() {
-    return tierInfo.getSource();
+  pubwic tiewconfig.configsouwce getsouwce() {
+    wetuwn tiewinfo.getsouwce();
   }
 
-  public boolean isEnabled() {
-    return tierInfo.isEnabled();
+  pubwic boowean isenabwed() {
+    w-wetuwn tiewinfo.isenabwed();
   }
 
-  public boolean isDarkRead() {
-    return getReadType() == TierInfo.RequestReadType.DARK;
+  p-pubwic boowean i-isdawkwead() {
+    w-wetuwn getweadtype() == tiewinfo.wequestweadtype.dawk;
   }
 
-  public TierInfo.RequestReadType getReadType() {
-    return useOverrideTierConfig ? tierInfo.getReadTypeOverride() : tierInfo.getReadType();
+  pubwic tiewinfo.wequestweadtype getweadtype() {
+    w-wetuwn useovewwidetiewconfig ? t-tiewinfo.getweadtypeovewwide() : tiewinfo.getweadtype();
   }
 
-  public long getServingRangeSinceId() {
-    return useOverrideTierConfig
-      ? tierInfo.getServingRangeOverrideSinceId()
-      : tierInfo.getServingRangeSinceId();
+  p-pubwic wong g-getsewvingwangesinceid() {
+    wetuwn useovewwidetiewconfig
+      ? t-tiewinfo.getsewvingwangeovewwidesinceid()
+      : tiewinfo.getsewvingwangesinceid();
   }
 
-  public long getServingRangeMaxId() {
-    return useOverrideTierConfig
-      ? tierInfo.getServingRangeOverrideMaxId()
-      : tierInfo.getServingRangeMaxId();
+  p-pubwic wong getsewvingwangemaxid() {
+    wetuwn useovewwidetiewconfig
+      ? t-tiewinfo.getsewvingwangeovewwidemaxid()
+      : tiewinfo.getsewvingwangemaxid();
   }
 
-  public long getServingRangeSinceTimeSecondsFromEpoch() {
-    return useOverrideTierConfig
-      ? tierInfo.getServingRangeOverrideSinceTimeSecondsFromEpoch()
-      : tierInfo.getServingRangeSinceTimeSecondsFromEpoch();
+  p-pubwic wong getsewvingwangesincetimesecondsfwomepoch() {
+    w-wetuwn useovewwidetiewconfig
+      ? t-tiewinfo.getsewvingwangeovewwidesincetimesecondsfwomepoch()
+      : tiewinfo.getsewvingwangesincetimesecondsfwomepoch();
   }
 
-  public long getServingRangeUntilTimeSecondsFromEpoch() {
-    return useOverrideTierConfig
-      ? tierInfo.getServingRangeOverrideUntilTimeSecondsFromEpoch()
-      : tierInfo.getServingRangeUntilTimeSecondsFromEpoch();
+  pubwic wong getsewvingwangeuntiwtimesecondsfwomepoch() {
+    wetuwn useovewwidetiewconfig
+      ? tiewinfo.getsewvingwangeovewwideuntiwtimesecondsfwomepoch()
+      : tiewinfo.getsewvingwangeuntiwtimesecondsfwomepoch();
   }
 
-  public static boolean servingRangesOverlap(TierInfoWrapper tier1, TierInfoWrapper tier2) {
-    return (tier1.getServingRangeMaxId() > tier2.getServingRangeSinceId())
-      && (tier2.getServingRangeMaxId() > tier1.getServingRangeSinceId());
+  p-pubwic s-static boowean sewvingwangesovewwap(tiewinfowwappew t-tiew1, mya tiewinfowwappew t-tiew2) {
+    w-wetuwn (tiew1.getsewvingwangemaxid() > tiew2.getsewvingwangesinceid())
+      && (tiew2.getsewvingwangemaxid() > tiew1.getsewvingwangesinceid());
   }
 
-  public static boolean servingRangesHaveGap(TierInfoWrapper tier1, TierInfoWrapper tier2) {
-    return (tier1.getServingRangeMaxId() < tier2.getServingRangeSinceId())
-      || (tier2.getServingRangeMaxId() < tier1.getServingRangeSinceId());
+  pubwic static boowean s-sewvingwangeshavegap(tiewinfowwappew tiew1, >w< tiewinfowwappew tiew2) {
+    wetuwn (tiew1.getsewvingwangemaxid() < t-tiew2.getsewvingwangesinceid())
+      || (tiew2.getsewvingwangemaxid() < tiew1.getsewvingwangesinceid());
   }
 }

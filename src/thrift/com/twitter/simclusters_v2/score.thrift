@@ -1,71 +1,71 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.score
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namespace java com.twittew.simcwustews_v2.thwiftjava
+nyamespace py g-gen.twittew.simcwustews_v2.scowe
+#@namespace scawa c-com.twittew.simcwustews_v2.thwiftscawa
+#@namespace s-stwato com.twittew.simcwustews_v2
 
-include "com/twitter/simclusters_v2/embedding.thrift"
-include "com/twitter/simclusters_v2/identifier.thrift"
-
-/**
-  * The algorithm type to identify the score algorithm.
-  * Assume that a algorithm support and only support one kind
-  * of [[ScoreInternalId]]
-  **/
-enum ScoringAlgorithm {
-	// Reserve 0001 - 999 for Basic Pairwise Scoring Calculation
-	PairEmbeddingDotProduct = 1,
-	PairEmbeddingCosineSimilarity = 2,
-	PairEmbeddingJaccardSimilarity = 3,
-	PairEmbeddingEuclideanDistance = 4,
-	PairEmbeddingManhattanDistance = 5,
-  PairEmbeddingLogCosineSimilarity = 6,
-  PairEmbeddingExpScaledCosineSimilarity = 7,
-
-	// Reserve 1000 - 1999 for Tweet Similarity Model
-  TagSpaceCosineSimilarity = 1000,
-	WeightedSumTagSpaceRankingExperiment1 = 1001, //deprecated
-	WeightedSumTagSpaceRankingExperiment2 = 1002, //deprecated
-  WeightedSumTagSpaceANNExperiment = 1003,      //deprecated 
-
-	// Reserved for 10001 - 20000 for Aggregate scoring
-	WeightedSumTopicTweetRanking = 10001,
-	CortexTopicTweetLabel = 10002,
-	// Reserved 20001 - 30000 for Topic Tweet scores 
-	CertoNormalizedDotProductScore = 20001,
-	CertoNormalizedCosineScore = 20002
-}(hasPersonalData = 'false')
+i-incwude "com/twittew/simcwustews_v2/embedding.thwift"
+i-incwude "com/twittew/simcwustews_v2/identifiew.thwift"
 
 /**
-  * The identifier type for the score between a pair of SimClusters Embedding.
-  * Used as the persistent key of a SimClustersEmbedding score.
-  * Support score between different [[EmbeddingType]] / [[ModelVersion]]
+  * t-the awgowithm type t-to identify t-the scowe awgowithm. /(^•ω•^)
+  * assume that a awgowithm suppowt and onwy suppowt one kind
+  * o-of [[scoweintewnawid]]
   **/
-struct SimClustersEmbeddingPairScoreId {
-  1: required identifier.SimClustersEmbeddingId id1
-  2: required identifier.SimClustersEmbeddingId id2
-}(hasPersonalData = 'true')
+enum scowingawgowithm {
+	// wesewve 0001 - 999 f-fow basic paiwwise scowing cawcuwation
+	p-paiwembeddingdotpwoduct = 1, nyaa~~
+	paiwembeddingcosinesimiwawity = 2, nyaa~~
+	paiwembeddingjaccawdsimiwawity = 3, :3
+	paiwembeddingeucwideandistance = 4, 😳😳😳
+	p-paiwembeddingmanhattandistance = 5, (˘ω˘)
+  paiwembeddingwogcosinesimiwawity = 6, ^^
+  p-paiwembeddingexpscawedcosinesimiwawity = 7, :3
+
+	// w-wesewve 1000 - 1999 fow tweet simiwawity modew
+  tagspacecosinesimiwawity = 1000, -.-
+	weightedsumtagspacewankingexpewiment1 = 1001, 😳 //depwecated
+	w-weightedsumtagspacewankingexpewiment2 = 1002, mya //depwecated
+  weightedsumtagspaceannexpewiment = 1003, (˘ω˘)      //depwecated 
+
+	// wesewved fow 10001 - 20000 fow aggwegate scowing
+	w-weightedsumtopictweetwanking = 10001, >_<
+	cowtextopictweetwabew = 10002, -.-
+	// wesewved 20001 - 30000 f-fow topic t-tweet scowes 
+	cewtonowmawizeddotpwoductscowe = 20001, 🥺
+	c-cewtonowmawizedcosinescowe = 20002
+}(haspewsonawdata = 'fawse')
 
 /**
-  * The identifier type for the score between a pair of InternalId.
+  * t-the identifiew type fow the scowe between a paiw o-of simcwustews embedding. (U ﹏ U)
+  * used as the pewsistent k-key of a simcwustewsembedding scowe. >w<
+  * suppowt scowe between diffewent [[embeddingtype]] / [[modewvewsion]]
   **/
-struct GenericPairScoreId {
-  1: required identifier.InternalId id1
-  2: required identifier.InternalId id2
-}(hasPersonalData = 'true')
+stwuct s-simcwustewsembeddingpaiwscoweid {
+  1: wequiwed i-identifiew.simcwustewsembeddingid i-id1
+  2: wequiwed i-identifiew.simcwustewsembeddingid id2
+}(haspewsonawdata = 'twue')
 
-union ScoreInternalId {
-  1: GenericPairScoreId genericPairScoreId
-  2: SimClustersEmbeddingPairScoreId simClustersEmbeddingPairScoreId
+/**
+  * the identifiew type fow the scowe b-between a paiw o-of intewnawid. mya
+  **/
+stwuct genewicpaiwscoweid {
+  1: w-wequiwed i-identifiew.intewnawid id1
+  2: w-wequiwed identifiew.intewnawid id2
+}(haspewsonawdata = 'twue')
+
+union scoweintewnawid {
+  1: g-genewicpaiwscoweid genewicpaiwscoweid
+  2: simcwustewsembeddingpaiwscoweid s-simcwustewsembeddingpaiwscoweid
 }
 
 /**
-  * A uniform Identifier type for all kinds of Calculation Score
+  * a unifowm identifiew t-type fow aww kinds of cawcuwation s-scowe
   **/
-struct ScoreId {
-  1: required ScoringAlgorithm algorithm
-  2: required ScoreInternalId internalId
-}(hasPersonalData = 'true')
+s-stwuct scoweid {
+  1: wequiwed scowingawgowithm awgowithm
+  2: wequiwed scoweintewnawid intewnawid
+}(haspewsonawdata = 'twue')
 
-struct Score {
-  1: required double score
-}(hasPersonalData = 'false')
+stwuct scowe {
+  1: w-wequiwed d-doubwe scowe
+}(haspewsonawdata = 'fawse')

@@ -1,183 +1,183 @@
-package com.twitter.servo.cache
+package com.twittew.sewvo.cache
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.{Duration, Future}
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.utiw.{duwation, XD f-futuwe}
 
-case class ByteCountingMemcacheFactory(
-  memcacheFactory: MemcacheFactory,
-  statsReceiver: StatsReceiver,
-  delimiter: String = constants.Colon,
-  checksumSize: Int = 8) // memcached checksums are u64s
-    extends MemcacheFactory {
+case c-cwass bytecountingmemcachefactowy(
+  m-memcachefactowy: m-memcachefactowy, o.O
+  s-statsweceivew: s-statsweceivew, mya
+  d-dewimitew: stwing = constants.cowon, 🥺
+  checksumsize: int = 8) // memcached checksums awe u-u64s
+    extends memcachefactowy {
 
-  def apply() =
-    new ByteCountingMemcache(memcacheFactory(), statsReceiver, delimiter, checksumSize)
+  def appwy() =
+    n-nyew bytecountingmemcache(memcachefactowy(), ^^;; statsweceivew, :3 d-dewimitew, (U ﹏ U) checksumsize)
 }
 
 /**
- * A decorator around a Memcache that counts the rough number
- * of bytes transferred, bucketed & rolled up by in/out, method name,
- * and key prefix
+ * a decowatow awound a memcache t-that counts the wough nyumbew
+ * o-of bytes t-twansfewwed, OwO bucketed & wowwed up by in/out, 😳😳😳 method nyame, (ˆ ﻌ ˆ)♡
+ * and key pwefix
  */
-class ByteCountingMemcache(
-  underlying: Memcache,
-  statsReceiver: StatsReceiver,
-  delimiter: String,
-  checksumSize: Int)
-    extends Memcache {
-  val scopedReceiver = statsReceiver.scope("memcache").scope("bytes")
+c-cwass bytecountingmemcache(
+  undewwying: memcache, XD
+  statsweceivew: statsweceivew, (ˆ ﻌ ˆ)♡
+  dewimitew: s-stwing, ( ͡o ω ͡o )
+  checksumsize: int)
+    e-extends memcache {
+  v-vaw scopedweceivew = s-statsweceivew.scope("memcache").scope("bytes")
 
-  val outStat = scopedReceiver.stat("out")
-  val outReceiver = scopedReceiver.scope("out")
+  v-vaw outstat = scopedweceivew.stat("out")
+  vaw outweceivew = scopedweceivew.scope("out")
 
-  val inStat = scopedReceiver.stat("in")
-  val inReceiver = scopedReceiver.scope("in")
+  v-vaw instat = scopedweceivew.stat("in")
+  vaw inweceivew = s-scopedweceivew.scope("in")
 
-  val getOutStat = outReceiver.stat("get")
-  val getOutReceiver = outReceiver.scope("get")
+  vaw getoutstat = outweceivew.stat("get")
+  vaw getoutweceivew = outweceivew.scope("get")
 
-  val getInStat = inReceiver.stat("get")
-  val getInReceiver = inReceiver.scope("get")
-  val getInHitsStat = getInReceiver.stat("hits")
-  val getInHitsReceiver = getInReceiver.scope("hits")
-  val getInMissesStat = getInReceiver.stat("misses")
-  val getInMissesReceiver = getInReceiver.scope("misses")
+  vaw getinstat = i-inweceivew.stat("get")
+  vaw getinweceivew = i-inweceivew.scope("get")
+  v-vaw getinhitsstat = g-getinweceivew.stat("hits")
+  vaw getinhitsweceivew = getinweceivew.scope("hits")
+  vaw g-getinmissesstat = g-getinweceivew.stat("misses")
+  vaw getinmissesweceivew = g-getinweceivew.scope("misses")
 
-  val gwcOutStat = outReceiver.stat("get_with_checksum")
-  val gwcOutReceiver = outReceiver.scope("get_with_checksum")
+  v-vaw gwcoutstat = outweceivew.stat("get_with_checksum")
+  v-vaw gwcoutweceivew = outweceivew.scope("get_with_checksum")
 
-  val gwcInStat = inReceiver.stat("get_with_checksum")
-  val gwcInReceiver = inReceiver.scope("get_with_checksum")
-  val gwcInHitsStat = gwcOutReceiver.stat("hits")
-  val gwcInHitsReceiver = gwcOutReceiver.scope("hits")
-  val gwcInMissesStat = gwcOutReceiver.stat("misses")
-  val gwcInMissesReceiver = gwcOutReceiver.scope("misses")
+  v-vaw gwcinstat = inweceivew.stat("get_with_checksum")
+  vaw g-gwcinweceivew = inweceivew.scope("get_with_checksum")
+  v-vaw gwcinhitsstat = gwcoutweceivew.stat("hits")
+  v-vaw gwcinhitsweceivew = g-gwcoutweceivew.scope("hits")
+  vaw gwcinmissesstat = gwcoutweceivew.stat("misses")
+  vaw gwcinmissesweceivew = gwcoutweceivew.scope("misses")
 
-  val addStat = outReceiver.stat("add")
-  val addReceiver = outReceiver.scope("add")
+  vaw addstat = outweceivew.stat("add")
+  v-vaw a-addweceivew = outweceivew.scope("add")
 
-  val setStat = outReceiver.stat("set")
-  val setReceiver = outReceiver.scope("set")
+  vaw setstat = o-outweceivew.stat("set")
+  v-vaw setweceivew = o-outweceivew.scope("set")
 
-  val replaceStat = outReceiver.stat("replace")
-  val replaceReceiver = outReceiver.scope("replace")
+  vaw wepwacestat = outweceivew.stat("wepwace")
+  vaw wepwaceweceivew = o-outweceivew.scope("wepwace")
 
-  val casStat = outReceiver.stat("check_and_set")
-  val casReceiver = outReceiver.scope("check_and_set")
+  vaw casstat = outweceivew.stat("check_and_set")
+  vaw casweceivew = outweceivew.scope("check_and_set")
 
-  def release() = underlying.release()
+  d-def wewease() = undewwying.wewease()
 
-  // get namespace from key
-  protected[this] def ns(key: String) = {
-    val idx = math.min(key.size - 1, math.max(key.lastIndexOf(delimiter), 0))
-    key.substring(0, idx).replaceAll(delimiter, "_")
+  // g-get nyamespace f-fwom key
+  p-pwotected[this] def nys(key: s-stwing) = {
+    v-vaw idx = math.min(key.size - 1, rawr x3 m-math.max(key.wastindexof(dewimitew), nyaa~~ 0))
+    k-key.substwing(0, >_< idx).wepwaceaww(dewimitew, "_")
   }
 
-  override def get(keys: Seq[String]): Future[KeyValueResult[String, Array[Byte]]] = {
-    keys foreach { key =>
-      val size = key.size
-      outStat.add(size)
-      getOutStat.add(size)
-      getOutReceiver.stat(ns(key)).add(size)
+  ovewwide d-def get(keys: seq[stwing]): f-futuwe[keyvawuewesuwt[stwing, ^^;; a-awway[byte]]] = {
+    k-keys foweach { k-key =>
+      vaw size = key.size
+      outstat.add(size)
+      getoutstat.add(size)
+      getoutweceivew.stat(ns(key)).add(size)
     }
-    underlying.get(keys) onSuccess { lr =>
-      lr.found foreach {
-        case (key, bytes) =>
-          val size = key.size + bytes.length
-          inStat.add(size)
-          getInStat.add(size)
-          getInHitsStat.add(size)
-          getInHitsReceiver.stat(ns(key)).add(size)
+    u-undewwying.get(keys) onsuccess { ww =>
+      ww.found foweach {
+        case (key, (ˆ ﻌ ˆ)♡ bytes) =>
+          vaw size = key.size + b-bytes.wength
+          instat.add(size)
+          getinstat.add(size)
+          getinhitsstat.add(size)
+          getinhitsweceivew.stat(ns(key)).add(size)
       }
-      lr.notFound foreach { key =>
-        val size = key.size
-        inStat.add(size)
-        getInStat.add(size)
-        getInMissesStat.add(size)
-        getInMissesReceiver.stat(ns(key)).add(size)
-      }
-    }
-  }
-
-  override def getWithChecksum(
-    keys: Seq[String]
-  ): Future[CsKeyValueResult[String, Array[Byte]]] = {
-    keys foreach { key =>
-      val size = key.size
-      outStat.add(size)
-      gwcOutStat.add(size)
-      gwcOutReceiver.stat(ns(key)).add(size)
-    }
-    underlying.getWithChecksum(keys) onSuccess { lr =>
-      lr.found foreach {
-        case (key, (bytes, _)) =>
-          val size = key.size + (bytes map { _.length } getOrElse (0)) + checksumSize
-          inStat.add(size)
-          gwcInStat.add(size)
-          gwcInHitsStat.add(size)
-          gwcInHitsReceiver.stat(ns(key)).add(size)
-      }
-      lr.notFound foreach { key =>
-        val size = key.size
-        inStat.add(size)
-        gwcInStat.add(size)
-        gwcInMissesStat.add(size)
-        gwcInMissesReceiver.stat(ns(key)).add(size)
+      w-ww.notfound foweach { k-key =>
+        v-vaw size = key.size
+        i-instat.add(size)
+        getinstat.add(size)
+        g-getinmissesstat.add(size)
+        g-getinmissesweceivew.stat(ns(key)).add(size)
       }
     }
   }
 
-  override def add(key: String, value: Array[Byte], ttl: Duration): Future[Boolean] = {
-    val size = key.size + value.size
-    outStat.add(size)
-    addStat.add(size)
-    addReceiver.stat(ns(key)).add(size)
-    underlying.add(key, value, ttl)
+  ovewwide def getwithchecksum(
+    keys: seq[stwing]
+  ): futuwe[cskeyvawuewesuwt[stwing, ^^;; a-awway[byte]]] = {
+    keys foweach { k-key =>
+      vaw size = k-key.size
+      o-outstat.add(size)
+      gwcoutstat.add(size)
+      gwcoutweceivew.stat(ns(key)).add(size)
+    }
+    u-undewwying.getwithchecksum(keys) o-onsuccess { ww =>
+      ww.found f-foweach {
+        c-case (key, (⑅˘꒳˘) (bytes, _)) =>
+          vaw size = key.size + (bytes map { _.wength } getowewse (0)) + c-checksumsize
+          i-instat.add(size)
+          g-gwcinstat.add(size)
+          gwcinhitsstat.add(size)
+          g-gwcinhitsweceivew.stat(ns(key)).add(size)
+      }
+      w-ww.notfound foweach { key =>
+        v-vaw size = key.size
+        instat.add(size)
+        gwcinstat.add(size)
+        gwcinmissesstat.add(size)
+        gwcinmissesweceivew.stat(ns(key)).add(size)
+      }
+    }
   }
 
-  override def checkAndSet(
-    key: String,
-    value: Array[Byte],
-    checksum: Checksum,
-    ttl: Duration
-  ): Future[Boolean] = {
-    val size = key.size + value.size + checksumSize
-    outStat.add(size)
-    casStat.add(size)
-    casReceiver.stat(ns(key)).add(size)
-    underlying.checkAndSet(key, value, checksum, ttl)
+  o-ovewwide d-def add(key: stwing, rawr x3 vawue: awway[byte], (///ˬ///✿) t-ttw: duwation): f-futuwe[boowean] = {
+    vaw size = key.size + vawue.size
+    outstat.add(size)
+    a-addstat.add(size)
+    addweceivew.stat(ns(key)).add(size)
+    undewwying.add(key, 🥺 vawue, ttw)
   }
 
-  override def set(key: String, value: Array[Byte], ttl: Duration): Future[Unit] = {
-    val size = key.size + value.size
-    outStat.add(size)
-    setStat.add(size)
-    setReceiver.stat(ns(key)).add(size)
-    underlying.set(key, value, ttl)
+  ovewwide d-def checkandset(
+    key: stwing, >_<
+    vawue: awway[byte], UwU
+    checksum: c-checksum, >_<
+    t-ttw: duwation
+  ): futuwe[boowean] = {
+    vaw size = key.size + vawue.size + c-checksumsize
+    o-outstat.add(size)
+    casstat.add(size)
+    casweceivew.stat(ns(key)).add(size)
+    undewwying.checkandset(key, -.- v-vawue, checksum, mya ttw)
   }
 
-  override def replace(key: String, value: Array[Byte], ttl: Duration): Future[Boolean] = {
-    val size = key.size + value.size
-    outStat.add(size)
-    replaceStat.add(size)
-    replaceReceiver.stat(ns(key)).add(size)
-    underlying.replace(key, value, ttl)
+  o-ovewwide def set(key: stwing, >w< vawue: awway[byte], (U ﹏ U) ttw: duwation): f-futuwe[unit] = {
+    vaw size = k-key.size + v-vawue.size
+    outstat.add(size)
+    setstat.add(size)
+    s-setweceivew.stat(ns(key)).add(size)
+    undewwying.set(key, 😳😳😳 v-vawue, ttw)
   }
 
-  override def delete(key: String): Future[Boolean] = {
-    outStat.add(key.size)
-    underlying.delete(key)
+  o-ovewwide d-def wepwace(key: stwing, o.O vawue: a-awway[byte], òωó t-ttw: duwation): futuwe[boowean] = {
+    vaw size = k-key.size + vawue.size
+    o-outstat.add(size)
+    w-wepwacestat.add(size)
+    wepwaceweceivew.stat(ns(key)).add(size)
+    undewwying.wepwace(key, 😳😳😳 v-vawue, σωσ ttw)
   }
 
-  override def incr(key: String, delta: Long = 1): Future[Option[Long]] = {
-    val size = key.size + 8
-    outStat.add(size)
-    underlying.incr(key, delta)
+  ovewwide def d-dewete(key: stwing): f-futuwe[boowean] = {
+    outstat.add(key.size)
+    undewwying.dewete(key)
   }
 
-  override def decr(key: String, delta: Long = 1): Future[Option[Long]] = {
-    val size = key.size + 8
-    outStat.add(size)
-    underlying.decr(key, delta)
+  ovewwide def i-incw(key: stwing, (⑅˘꒳˘) d-dewta: wong = 1): f-futuwe[option[wong]] = {
+    v-vaw size = key.size + 8
+    outstat.add(size)
+    u-undewwying.incw(key, (///ˬ///✿) dewta)
+  }
+
+  ovewwide def decw(key: stwing, 🥺 dewta: wong = 1): futuwe[option[wong]] = {
+    v-vaw size = key.size + 8
+    o-outstat.add(size)
+    undewwying.decw(key, OwO d-dewta)
   }
 }

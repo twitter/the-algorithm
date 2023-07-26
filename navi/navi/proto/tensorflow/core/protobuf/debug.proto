@@ -1,94 +1,94 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "DebugProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option cc_enabwe_awenas = t-twue;
+option java_outew_cwassname = "debugpwotos";
+o-option java_muwtipwe_fiwes = t-twue;
+option java_package = "owg.tensowfwow.fwamewowk";
+o-option g-go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// Option for watching a node in TensorFlow Debugger (tfdbg).
-message DebugTensorWatch {
-  // Name of the node to watch.
-  // Use "*" for wildcard. But note: currently, regex is not supported in
-  // general.
-  string node_name = 1;
+// o-option f-fow watching a n-nyode in tensowfwow debuggew (tfdbg). nyaa~~
+message debugtensowwatch {
+  // nyame of the nyode to watch. 😳
+  // u-use "*" fow wiwdcawd. (⑅˘꒳˘) but nyote: cuwwentwy, nyaa~~ w-wegex is nyot suppowted in
+  // g-genewaw. OwO
+  stwing nyode_name = 1;
 
-  // Output slot to watch.
-  // The semantics of output_slot == -1 is that all outputs of the node
-  // will be watched (i.e., a wildcard).
-  // Other negative values of output_slot are invalid and will lead to
-  // errors currently.
-  int32 output_slot = 2;
+  // output swot to watch. rawr x3
+  // t-the semantics of output_swot == -1 i-is that a-aww outputs of the nyode
+  // wiww be watched (i.e., a wiwdcawd). XD
+  // othew n-nyegative vawues of output_swot awe invawid and wiww wead to
+  // ewwows cuwwentwy. σωσ
+  i-int32 output_swot = 2;
 
-  // Name(s) of the debugging op(s).
-  // One or more than one probes on a tensor.
-  // e.g., {"DebugIdentity", "DebugNanCount"}
-  repeated string debug_ops = 3;
+  // nyame(s) of the d-debugging op(s). (U ᵕ U❁)
+  // o-one ow m-mowe than one pwobes o-on a tensow. (U ﹏ U)
+  // e.g., {"debugidentity", :3 "debugnancount"}
+  wepeated stwing d-debug_ops = 3;
 
-  // URL(s) for debug targets(s).
+  // uww(s) fow debug tawgets(s). ( ͡o ω ͡o )
   //
-  // Supported URL formats are:
-  //   - file:///foo/tfdbg_dump: Writes out Event content to file
-  //     /foo/tfdbg_dump.  Assumes all directories can be created if they don't
-  //     already exist.
-  //   - grpc://localhost:11011: Sends an RPC request to an EventListener
-  //     service running at localhost:11011 with the event.
-  //   - memcbk:///event_key: Routes tensors to clients using the
-  //     callback registered with the DebugCallbackRegistry for event_key.
+  // s-suppowted uww fowmats awe:
+  //   - fiwe:///foo/tfdbg_dump: wwites out event content t-to fiwe
+  //     /foo/tfdbg_dump. σωσ  assumes aww d-diwectowies can b-be cweated if t-they don't
+  //     awweady exist. >w<
+  //   - gwpc://wocawhost:11011: sends an wpc w-wequest to an eventwistenew
+  //     s-sewvice wunning at wocawhost:11011 w-with the e-event. 😳😳😳
+  //   - memcbk:///event_key: w-woutes tensows to cwients u-using the
+  //     cawwback wegistewed with the d-debugcawwbackwegistwy fow event_key. OwO
   //
-  // Each debug op listed in debug_ops will publish its output tensor (debug
-  // signal) to all URLs in debug_urls.
+  // e-each debug op wisted in debug_ops w-wiww pubwish its o-output tensow (debug
+  // signaw) to aww uwws in debug_uwws. 😳
   //
-  // N.B. Session::Run() supports concurrent invocations of the same inputs
-  // (feed keys), outputs and target nodes. If such concurrent invocations
-  // are to be debugged, the callers of Session::Run() must use distinct
-  // debug_urls to make sure that the streamed or dumped events do not overlap
-  // among the invocations.
-  // TODO(cais): More visible documentation of this in g3docs.
-  repeated string debug_urls = 4;
+  // ny.b. 😳😳😳 session::wun() suppowts concuwwent i-invocations of t-the same inputs
+  // (feed keys), o-outputs and t-tawget nyodes. (˘ω˘) if s-such concuwwent invocations
+  // awe to be debugged, ʘwʘ the cawwews o-of session::wun() must use distinct
+  // debug_uwws to make suwe that the stweamed o-ow dumped events do not ovewwap
+  // a-among t-the invocations. ( ͡o ω ͡o )
+  // t-todo(cais): mowe visibwe d-documentation of t-this in g3docs. o.O
+  w-wepeated stwing d-debug_uwws = 4;
 
-  // Do not error out if debug op creation fails (e.g., due to dtype
-  // incompatibility). Instead, just log the failure.
-  bool tolerate_debug_op_creation_failures = 5;
+  // do nyot ewwow out if debug o-op cweation f-faiws (e.g., due t-to dtype
+  // incompatibiwity). >w< i-instead, 😳 just wog t-the faiwuwe. 🥺
+  boow towewate_debug_op_cweation_faiwuwes = 5;
 }
 
-// Options for initializing DebuggerState in TensorFlow Debugger (tfdbg).
-message DebugOptions {
-  // Debugging options
-  repeated DebugTensorWatch debug_tensor_watch_opts = 4;
+// options fow initiawizing debuggewstate i-in tensowfwow debuggew (tfdbg). rawr x3
+message debugoptions {
+  // debugging options
+  wepeated d-debugtensowwatch debug_tensow_watch_opts = 4;
 
-  // Caller-specified global step count.
-  // Note that this is distinct from the session run count and the executor
-  // step count.
-  int64 global_step = 10;
+  // cawwew-specified gwobaw s-step count. o.O
+  // n-nyote that this i-is distinct fwom the session w-wun count and the executow
+  // s-step count. rawr
+  int64 g-gwobaw_step = 10;
 
-  // Whether the total disk usage of tfdbg is to be reset to zero
-  // in this Session.run call. This is used by wrappers and hooks
-  // such as the local CLI ones to indicate that the dumped tensors
-  // are cleaned up from the disk after each Session.run.
-  bool reset_disk_byte_usage = 11;
+  // whethew the totaw disk usage of tfdbg is to be weset to zewo
+  // in t-this session.wun caww. ʘwʘ this is u-used by wwappews and hooks
+  // s-such as the wocaw c-cwi ones to indicate that the dumped tensows
+  // a-awe cweaned u-up fwom the disk aftew each session.wun. 😳😳😳
+  b-boow w-weset_disk_byte_usage = 11;
 }
 
-message DebuggedSourceFile {
-  // The host name on which a source code file is located.
-  string host = 1;
+message debuggedsouwcefiwe {
+  // the host nyame on which a souwce code fiwe is wocated. ^^;;
+  s-stwing h-host = 1;
 
-  // Path to the source code file.
-  string file_path = 2;
+  // p-path to the souwce code fiwe. o.O
+  s-stwing fiwe_path = 2;
 
-  // The timestamp at which the source code file is last modified.
-  int64 last_modified = 3;
+  // t-the timestamp at which t-the souwce code fiwe is wast modified. (///ˬ///✿)
+  int64 wast_modified = 3;
 
-  // Byte size of the file.
-  int64 bytes = 4;
+  // byte s-size of the fiwe. σωσ
+  i-int64 bytes = 4;
 
-  // Line-by-line content of the source code file.
-  repeated string lines = 5;
+  // wine-by-wine content o-of the souwce code f-fiwe. nyaa~~
+  wepeated stwing wines = 5;
 }
 
-message DebuggedSourceFiles {
-  // A collection of source code files.
-  repeated DebuggedSourceFile source_files = 1;
+message debuggedsouwcefiwes {
+  // a-a cowwection of souwce code fiwes. ^^;;
+  wepeated debuggedsouwcefiwe souwce_fiwes = 1;
 }

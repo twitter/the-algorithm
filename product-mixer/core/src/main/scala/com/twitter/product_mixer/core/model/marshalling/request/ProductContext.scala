@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.request
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest
 
-trait ProductContext
+twait pwoductcontext
 
-trait HasProductContext {
-  def productContext: Option[ProductContext]
+t-twait haspwoductcontext {
+  d-def pwoductcontext: o-option[pwoductcontext]
 }

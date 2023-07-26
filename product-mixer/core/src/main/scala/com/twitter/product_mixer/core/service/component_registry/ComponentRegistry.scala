@@ -1,182 +1,182 @@
-package com.twitter.product_mixer.core.service.component_registry
+package com.twittew.pwoduct_mixew.cowe.sewvice.component_wegistwy
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.util.Activity
-import com.twitter.util.Future
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
-import java.util.concurrent.ConcurrentHashMap
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.component
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiewstack
+i-impowt com.twittew.utiw.activity
+i-impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.twy
+i-impowt com.twittew.utiw.wogging.wogging
+impowt java.utiw.concuwwent.concuwwenthashmap
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
+impowt scawa.cowwection.javaconvewtews._
 
 /**
- * The [[ComponentRegistry]] works closely with [[ComponentIdentifier]]s and the [[com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry]]
- * to provide the Product Mixer framework information about the [[com.twitter.product_mixer.core.pipeline.Pipeline]]s and [[Component]]s
- * that make up an application.
+ * the [[componentwegistwy]] w-wowks cwosewy with [[componentidentifiew]]s a-and the [[com.twittew.pwoduct_mixew.cowe.pwoduct.wegistwy.pwoductpipewinewegistwy]]
+ * to pwovide the pwoduct mixew fwamewowk infowmation a-about the [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewine]]s and [[component]]s
+ * t-that make u-up an appwication. OwO
  *
- * This registration allows us to configure alerts and dashboards,
- * to query your application structure letting us display the graph of the execution and the results of queries,
- * and to garner insight into usages.
+ * this wegistwation awwows us to configuwe awewts and d-dashboawds, rawr
+ * to quewy youw appwication stwuctuwe wetting us dispway the gwaph o-of the execution and the wesuwts o-of quewies, XD
+ * a-and to gawnew insight i-into usages. (U ﹏ U)
  *
- * The registry is a snapshot of the state of the world when pipelines were last built successfully.
- * For most services, this only happens once on startup. However, some services may rebuild their
- * pipelines dynamically later on.
+ * t-the wegistwy is a snapshot of the state o-of the wowwd when pipewines wewe wast buiwt successfuwwy. (˘ω˘)
+ * f-fow most sewvices, UwU this onwy happens once on stawtup. howevew, >_< some sewvices may webuiwd t-theiw
+ * pipewines dynamicawwy w-watew on.
  */
 
-@Singleton
-class ComponentRegistry @Inject() (statsReceiver: StatsReceiver) {
-  // Initially pending until the first snapshot is built by [[ProductPipelineRegistry]]
-  private val (snapshotActivity, snapshotWitness) = Activity[ComponentRegistrySnapshot]()
-  private val snapshotCount = statsReceiver.counter("ComponentRegistry", "SnapshotCount")
+@singweton
+c-cwass componentwegistwy @inject() (statsweceivew: s-statsweceivew) {
+  // initiawwy pending untiw the fiwst snapshot i-is buiwt by [[pwoductpipewinewegistwy]]
+  p-pwivate vaw (snapshotactivity, σωσ s-snapshotwitness) = activity[componentwegistwysnapshot]()
+  p-pwivate vaw snapshotcount = s-statsweceivew.countew("componentwegistwy", 🥺 "snapshotcount")
 
-  def get: Future[ComponentRegistrySnapshot] = snapshotActivity.values.toFuture.lowerFromTry
-  private[core] def set(snapshot: ComponentRegistrySnapshot): Unit = {
-    snapshotCount.incr()
-    snapshotWitness.notify(Try(snapshot))
+  def get: futuwe[componentwegistwysnapshot] = snapshotactivity.vawues.tofutuwe.wowewfwomtwy
+  pwivate[cowe] d-def set(snapshot: componentwegistwysnapshot): unit = {
+    s-snapshotcount.incw()
+    snapshotwitness.notify(twy(snapshot))
   }
 }
 
-class ComponentRegistrySnapshot() extends Logging {
+c-cwass componentwegistwysnapshot() e-extends wogging {
 
-  /** for storing the [[RegisteredComponent]]s */
-  private[this] val componentRegistry =
-    new ConcurrentHashMap[ComponentIdentifier, RegisteredComponent]
+  /** f-fow stowing the [[wegistewedcomponent]]s */
+  pwivate[this] vaw componentwegistwy =
+    nyew concuwwenthashmap[componentidentifiew, 🥺 wegistewedcomponent]
 
-  /** for determining the children of a [[ComponentIdentifier]] */
-  private[this] val componentChildren =
-    new ConcurrentHashMap[ComponentIdentifier, Set[ComponentIdentifier]]
+  /** fow detewmining t-the chiwdwen o-of a [[componentidentifiew]] */
+  pwivate[this] v-vaw componentchiwdwen =
+    n-nyew concuwwenthashmap[componentidentifiew, ʘwʘ s-set[componentidentifiew]]
 
-  /** for determining [[ComponentIdentifier]] uniqueness within a given [[ComponentIdentifierStack]] */
-  private[this] val componentHierarchy =
-    new ConcurrentHashMap[ComponentIdentifierStack, Set[ComponentIdentifier]]
+  /** fow detewmining [[componentidentifiew]] uniqueness within a given [[componentidentifiewstack]] */
+  p-pwivate[this] vaw componenthiewawchy =
+    nyew concuwwenthashmap[componentidentifiewstack, :3 set[componentidentifiew]]
 
   /**
-   * Register the given [[Component]] at the end of path provided by `parentIdentifierStack`
-   * or throws an exception if adding the component results in an invalid configuration.
+   * wegistew the g-given [[component]] at the end o-of path pwovided b-by `pawentidentifiewstack`
+   * o-ow thwows an exception if adding t-the component w-wesuwts in an invawid c-configuwation. (U ﹏ U)
    *
-   * @throws ChildComponentCollisionException if a [[Component]] with the same [[ComponentIdentifier]] is registered
-   *                                          more than once under the same parent.
-   *                                          e.g. if you register `ComponentA` under `ProductA -> PipelineA` twice,
-   *                                          this exception will be thrown when registering `ComponentA` the second
-   *                                          time. This is pretty much always a configuration error due to copy-pasting
-   *                                          and forgetting to update the identifier, or accidentally using the same
-   *                                          component twice under the same parent. If this didn't throw, stats from
-   *                                          these 2 components would be indistinguishable.
+   * @thwows c-chiwdcomponentcowwisionexception if a [[component]] with t-the same [[componentidentifiew]] i-is wegistewed
+   *                                          m-mowe t-than once undew t-the same pawent. (U ﹏ U)
+   *                                          e.g. ʘwʘ if you wegistew `componenta` undew `pwoducta -> pipewinea` t-twice, >w<
+   *                                          this exception wiww be thwown when wegistewing `componenta` the second
+   *                                          time. rawr x3 t-this is pwetty much awways a configuwation ewwow due to copy-pasting
+   *                                          a-and fowgetting t-to update the i-identifiew, OwO ow accidentawwy using t-the same
+   *                                          component t-twice undew t-the same pawent. if this didn't thwow, ^•ﻌ•^ stats fwom
+   *                                          these 2 components wouwd be indistinguishabwe. >_<
    *
-   * @throws ComponentIdentifierCollisionException if a [[Component]] with the same [[ComponentIdentifier]] is registered
-   *                                               but it's type is not the same as a previously registered [[Component]]
-   *                                               with the same [[ComponentIdentifier]]
-   *                                               e.g. if you register 2 [[Component]]s with the same [[ComponentIdentifier]]
-   *                                               such as `new Component` and an instance of
-   *                                               `class MyComponent extends Component` the `new Component` will have a
-   *                                               type of `Component` and the other one will have a type of `MyComponent`
-   *                                               which will throw. This is usually due to copy-pasting a component as
-   *                                               a starting point and forgetting to update the identifier. If this
-   *                                               didn't throw, absolute stats from these 2 components would be
-   *                                               indistinguishable.
+   * @thwows componentidentifiewcowwisionexception i-if a [[component]] with t-the same [[componentidentifiew]] is wegistewed
+   *                                               b-but it's type i-is nyot the same as a pweviouswy wegistewed [[component]]
+   *                                               w-with t-the same [[componentidentifiew]]
+   *                                               e.g. OwO if you w-wegistew 2 [[component]]s w-with the same [[componentidentifiew]]
+   *                                               such as `new component` and an instance of
+   *                                               `cwass m-mycomponent e-extends component` t-the `new component` wiww h-have a
+   *                                               t-type of `component` a-and the othew one wiww have a type of `mycomponent`
+   *                                               which wiww thwow. >_< this is u-usuawwy due to c-copy-pasting a component as
+   *                                               a stawting point a-and fowgetting to u-update the identifiew. (ꈍᴗꈍ) if this
+   *                                               didn't thwow, >w< absowute stats f-fwom these 2 components wouwd be
+   *                                               indistinguishabwe. (U ﹏ U)
    *
    *
-   * @note this will log details of component identifier reuse if the underling components are not equal, but otherwise are of the same class.
-   *       Their stats will be merged and indistinguishable but since they are the same name and same class, we assume the differences are
-   *       minor enough that this is okay, but make a note in the log at startup in case someone sees unexpected metrics, we can look
-   *       back at the logs and see the details.
+   * @note this wiww wog detaiws o-of component identifiew weuse if the undewwing c-components awe n-nyot equaw, ^^ but othewwise awe of the same cwass. (U ﹏ U)
+   *       theiw s-stats wiww be m-mewged and indistinguishabwe but since they awe the same nyame a-and same cwass, we assume the diffewences a-awe
+   *       minow enough that this is okay, :3 but make a-a nyote in the wog at stawtup i-in case someone s-sees unexpected metwics, (✿oωo) we can w-wook
+   *       back at the wogs a-and see the detaiws. XD
    *
-   * @param component the component to register
-   * @param parentIdentifierStack the complete [[ComponentIdentifierStack]] excluding the current [[Component]]'s [[ComponentIdentifier]]
+   * @pawam c-component t-the component to wegistew
+   * @pawam p-pawentidentifiewstack t-the compwete [[componentidentifiewstack]] excwuding t-the cuwwent [[component]]'s [[componentidentifiew]]
    */
-  def register(
-    component: Component,
-    parentIdentifierStack: ComponentIdentifierStack
-  ): Unit = synchronized {
-    val identifier = component.identifier
-    val parentIdentifier = parentIdentifierStack.peek
+  d-def w-wegistew(
+    component: component, >w<
+    pawentidentifiewstack: c-componentidentifiewstack
+  ): unit = s-synchwonized {
+    v-vaw identifiew = component.identifiew
+    vaw pawentidentifiew = pawentidentifiewstack.peek
 
-    val registeredComponent =
-      RegisteredComponent(identifier, component, component.identifier.file.value)
+    v-vaw wegistewedcomponent =
+      w-wegistewedcomponent(identifiew, òωó c-component, (ꈍᴗꈍ) c-component.identifiew.fiwe.vawue)
 
-    componentRegistry.asScala
-      .get(identifier)
-      .filter(_.component != component) // only do the foreach if the components aren't equal
-      .foreach {
-        case existingComponent if existingComponent.component.getClass != component.getClass =>
+    componentwegistwy.asscawa
+      .get(identifiew)
+      .fiwtew(_.component != c-component) // onwy do the foweach if the components awen't equaw
+      .foweach {
+        case existingcomponent i-if existingcomponent.component.getcwass != component.getcwass =>
           /**
-           * The same component may be registered under different parent components.
-           * However, different component types cannot use the same component identifier.
+           * t-the same component may be wegistewed u-undew diffewent pawent c-components. rawr x3
+           * howevew, rawr x3 d-diffewent component t-types cannot u-use the same c-component identifiew. σωσ
            *
-           * This catches some copy-pasting of a config or component and forgetting to update the identifier.
+           * t-this catches some copy-pasting of a config ow component and fowgetting to update the identifiew. (ꈍᴗꈍ)
            */
-          throw new ComponentIdentifierCollisionException(
-            componentIdentifier = identifier,
-            component = registeredComponent,
-            existingComponent = componentRegistry.get(identifier),
-            parentIdentifierStack = parentIdentifierStack,
-            existingIdentifierStack = componentHierarchy.search[ComponentIdentifierStack](
-              1,
-              (stack, identifiers) => if (identifiers.contains(identifier)) stack else null)
+          thwow n-nyew componentidentifiewcowwisionexception(
+            c-componentidentifiew = i-identifiew, rawr
+            component = w-wegistewedcomponent, ^^;;
+            existingcomponent = componentwegistwy.get(identifiew), rawr x3
+            pawentidentifiewstack = p-pawentidentifiewstack, (ˆ ﻌ ˆ)♡
+            e-existingidentifiewstack = componenthiewawchy.seawch[componentidentifiewstack](
+              1, σωσ
+              (stack, (U ﹏ U) i-identifiews) => if (identifiews.contains(identifiew)) stack e-ewse nyuww)
           )
-        case existingComponent =>
+        c-case existingcomponent =>
           /**
-           * The same component may be registered under different parent components.
-           * However, if the components are not equal it __may be__ a configuration error
-           * so we log a detailed description of the issue in case they need to debug.
+           * the same c-component may be w-wegistewed undew diffewent pawent components. >w<
+           * howevew, σωσ if the components a-awe nyot e-equaw it __may b-be__ a configuwation e-ewwow
+           * s-so we wog a detaiwed descwiption o-of the i-issue in case they nyeed to debug. nyaa~~
            *
-           * This warns customers of some copy-pasting of a config or component and forgetting to update the
-           * identifier and of reusing components with hard-coded values which are configured differently.
+           * t-this w-wawns customews of some copy-pasting o-of a config ow component and fowgetting to u-update the
+           * identifiew a-and of weusing c-components with hawd-coded vawues w-which awe configuwed diffewentwy. 🥺
            */
-          val existingIdentifierStack = componentHierarchy.search[ComponentIdentifierStack](
-            1,
-            (stack, identifiers) => if (identifiers.contains(identifier)) stack else null)
-          logger.info(
-            s"Found duplicate identifiers for non-equal components, $identifier from ${registeredComponent.sourceFile} " +
-              s"under ${parentIdentifierStack.componentIdentifiers.reverse.mkString(" -> ")} " +
-              s"was already defined and is unequal to ${existingComponent.sourceFile} " +
-              s"under ${existingIdentifierStack.componentIdentifiers.reverse.mkString(" -> ")}. " +
-              s"Merging these components in the registry, this will result in their metrics being merged. " +
-              s"If these components should have separate metrics, consider providing unique identifiers for them instead."
+          vaw existingidentifiewstack = c-componenthiewawchy.seawch[componentidentifiewstack](
+            1, rawr x3
+            (stack, σωσ i-identifiews) => i-if (identifiews.contains(identifiew)) stack ewse nyuww)
+          woggew.info(
+            s-s"found dupwicate identifiews fow nyon-equaw components, $identifiew f-fwom ${wegistewedcomponent.souwcefiwe} " +
+              s"undew ${pawentidentifiewstack.componentidentifiews.wevewse.mkstwing(" -> ")} " +
+              s-s"was awweady defined and is unequaw t-to ${existingcomponent.souwcefiwe} " +
+              s"undew ${existingidentifiewstack.componentidentifiews.wevewse.mkstwing(" -> ")}. (///ˬ///✿) " +
+              s-s"mewging t-these components in the wegistwy, (U ﹏ U) this wiww w-wesuwt in theiw metwics being mewged. ^^;; " +
+              s-s"if t-these components shouwd have sepawate m-metwics, 🥺 considew pwoviding u-unique identifiews f-fow them instead."
           )
       }
 
-    /** The same component may not be registered multiple times under the same parent */
-    if (componentHierarchy.getOrDefault(parentIdentifierStack, Set.empty).contains(identifier))
-      throw new ChildComponentCollisionException(identifier, parentIdentifierStack)
+    /** t-the same component may nyot be wegistewed muwtipwe times undew the same pawent */
+    if (componenthiewawchy.getowdefauwt(pawentidentifiewstack, òωó set.empty).contains(identifiew))
+      thwow nyew chiwdcomponentcowwisionexception(identifiew, XD pawentidentifiewstack)
 
-    // add component to registry
-    componentRegistry.putIfAbsent(identifier, registeredComponent)
-    // add component to parent's `children` set for easy lookup
-    componentChildren.merge(parentIdentifier, Set(identifier), _ ++ _)
-    // add the component to the hierarchy under it's parent's identifier stack
-    componentHierarchy.merge(parentIdentifierStack, Set(identifier), _ ++ _)
+    // add component to wegistwy
+    componentwegistwy.putifabsent(identifiew, :3 w-wegistewedcomponent)
+    // a-add component to pawent's `chiwdwen` set f-fow easy wookup
+    c-componentchiwdwen.mewge(pawentidentifiew, (U ﹏ U) s-set(identifiew), >w< _ ++ _)
+    // add the component t-to the hiewawchy undew it's pawent's i-identifiew s-stack
+    componenthiewawchy.mewge(pawentidentifiewstack, /(^•ω•^) set(identifiew), (⑅˘꒳˘) _ ++ _)
   }
 
-  def getAllRegisteredComponents: Seq[RegisteredComponent] =
-    componentRegistry.values.asScala.toSeq.sorted
+  d-def getawwwegistewedcomponents: s-seq[wegistewedcomponent] =
+    c-componentwegistwy.vawues.asscawa.toseq.sowted
 
-  def getChildComponents(component: ComponentIdentifier): Seq[ComponentIdentifier] =
-    Option(componentChildren.get(component)) match {
-      case Some(components) => components.toSeq.sorted(ComponentIdentifier.ordering)
-      case None => Seq.empty
+  def getchiwdcomponents(component: c-componentidentifiew): s-seq[componentidentifiew] =
+    o-option(componentchiwdwen.get(component)) m-match {
+      c-case some(components) => c-components.toseq.sowted(componentidentifiew.owdewing)
+      case n-nyone => seq.empty
     }
 }
 
-class ComponentIdentifierCollisionException(
-  componentIdentifier: ComponentIdentifier,
-  component: RegisteredComponent,
-  existingComponent: RegisteredComponent,
-  parentIdentifierStack: ComponentIdentifierStack,
-  existingIdentifierStack: ComponentIdentifierStack)
-    extends IllegalArgumentException(
-      s"Tried to register component $componentIdentifier: of type ${component.component.getClass} from ${component.sourceFile} " +
-        s"under ${parentIdentifierStack.componentIdentifiers.reverse.mkString(" -> ")} " +
-        s"but it was already defined with a different type ${existingComponent.component.getClass} from ${existingComponent.sourceFile} " +
-        s"under ${existingIdentifierStack.componentIdentifiers.reverse.mkString(" -> ")}. " +
-        s"Ensure you aren't reusing a component identifier which can happen when copy-pasting existing component code by accident")
+c-cwass componentidentifiewcowwisionexception(
+  componentidentifiew: c-componentidentifiew, ʘwʘ
+  component: w-wegistewedcomponent, rawr x3
+  e-existingcomponent: w-wegistewedcomponent, (˘ω˘)
+  pawentidentifiewstack: c-componentidentifiewstack, o.O
+  existingidentifiewstack: componentidentifiewstack)
+    e-extends iwwegawawgumentexception(
+      s"twied t-to wegistew component $componentidentifiew: o-of t-type ${component.component.getcwass} fwom ${component.souwcefiwe} " +
+        s-s"undew ${pawentidentifiewstack.componentidentifiews.wevewse.mkstwing(" -> ")} " +
+        s"but it w-was awweady defined with a diffewent t-type ${existingcomponent.component.getcwass} fwom ${existingcomponent.souwcefiwe} " +
+        s-s"undew ${existingidentifiewstack.componentidentifiews.wevewse.mkstwing(" -> ")}. 😳 " +
+        s"ensuwe you awen't weusing a component identifiew which can h-happen when copy-pasting existing c-component code b-by accident")
 
-class ChildComponentCollisionException(
-  componentIdentifier: ComponentIdentifier,
-  parentIdentifierStack: ComponentIdentifierStack)
-    extends IllegalArgumentException(
-      s"Component $componentIdentifier already defined under parent component $parentIdentifierStack")
+cwass chiwdcomponentcowwisionexception(
+  componentidentifiew: componentidentifiew, o.O
+  pawentidentifiewstack: c-componentidentifiewstack)
+    extends i-iwwegawawgumentexception(
+      s-s"component $componentidentifiew a-awweady defined undew pawent component $pawentidentifiewstack")

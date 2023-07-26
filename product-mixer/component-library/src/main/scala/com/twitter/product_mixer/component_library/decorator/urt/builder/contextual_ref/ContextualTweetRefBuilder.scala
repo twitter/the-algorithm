@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.contextual_ref
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.contextuaw_wef
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.ContextualTweetRef
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.TweetHydrationContext
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetweetcandidate
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.contextuaw_wef.contextuawtweetwef
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.contextuaw_wef.tweethydwationcontext
 
-case class ContextualTweetRefBuilder[-Candidate <: BaseTweetCandidate](
-  tweetHydrationContext: TweetHydrationContext) {
+c-case cwass contextuawtweetwefbuiwdew[-candidate <: b-basetweetcandidate](
+  t-tweethydwationcontext: t-tweethydwationcontext) {
 
-  def apply(candidate: Candidate): Option[ContextualTweetRef] =
-    Some(ContextualTweetRef(candidate.id, Some(tweetHydrationContext)))
+  d-def appwy(candidate: candidate): option[contextuawtweetwef] =
+    some(contextuawtweetwef(candidate.id, rawr some(tweethydwationcontext)))
 }

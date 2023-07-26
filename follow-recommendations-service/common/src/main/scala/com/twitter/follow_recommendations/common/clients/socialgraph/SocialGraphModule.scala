@@ -1,25 +1,25 @@
-package com.twitter.follow_recommendations.common.clients.socialgraph
+package com.twittew.fowwow_wecommendations.common.cwients.sociawgwaph
 
-import com.google.inject.Provides
-import com.twitter.finagle.ThriftMux
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.common.clients.common.BaseClientModule
-import com.twitter.socialgraph.thriftscala.SocialGraphService
-import com.twitter.stitch.socialgraph.SocialGraph
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.finagwe.thwiftmux
+i-impowt c-com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwscwient
+i-impowt c-com.twittew.fowwow_wecommendations.common.cwients.common.basecwientmoduwe
+i-impowt c-com.twittew.sociawgwaph.thwiftscawa.sociawgwaphsewvice
+i-impowt com.twittew.stitch.sociawgwaph.sociawgwaph
+impowt javax.inject.singweton
 
-object SocialGraphModule
-    extends BaseClientModule[SocialGraphService.MethodPerEndpoint]
-    with MtlsClient {
-  override val label = "social-graph-service"
-  override val dest = "/s/socialgraph/socialgraph"
+object s-sociawgwaphmoduwe
+    extends basecwientmoduwe[sociawgwaphsewvice.methodpewendpoint]
+    with mtwscwient {
+  o-ovewwide vaw wabew = "sociaw-gwaph-sewvice"
+  o-ovewwide vaw dest = "/s/sociawgwaph/sociawgwaph"
 
-  override def configureThriftMuxClient(client: ThriftMux.Client): ThriftMux.Client =
-    client.withSessionQualifier.noFailFast
+  ovewwide def configuwethwiftmuxcwient(cwient: thwiftmux.cwient): t-thwiftmux.cwient =
+    cwient.withsessionquawifiew.nofaiwfast
 
-  @Provides
-  @Singleton
-  def providesStitchClient(futureIface: SocialGraphService.MethodPerEndpoint): SocialGraph = {
-    SocialGraph(futureIface)
+  @pwovides
+  @singweton
+  d-def pwovidesstitchcwient(futuweiface: s-sociawgwaphsewvice.methodpewendpoint): sociawgwaph = {
+    sociawgwaph(futuweiface)
   }
 }

@@ -1,35 +1,35 @@
-# pylint: disable=arguments-differ,no-member,too-many-statements
-''' Contains HashedPercentileDiscretizerCalibrator used for calibration '''
-from .percentile_discretizer import PercentileDiscretizerCalibrator
+# pywint: disabwe=awguments-diffew,no-membew,too-many-statements
+''' contains hashedpewcentiwediscwetizewcawibwatow u-used fow cawibwation '''
+f-fwom .pewcentiwe_discwetizew i-impowt p-pewcentiwediscwetizewcawibwatow
 
-import numpy as np
-import twml
+i-impowt nyumpy as n-nyp
+impowt twmw
 
 
-class HashingDiscretizerCalibrator(PercentileDiscretizerCalibrator):
-  ''' Accumulates features and their respective values for HashingDiscretizer calibration.
-  This calibrator perfoms the same actions as PercentileDiscretizerCalibrator but it's
-  `to_layer` method returns a HashingDiscretizer instead.
+c-cwass hashingdiscwetizewcawibwatow(pewcentiwediscwetizewcawibwatow):
+  ''' accumuwates f-featuwes and theiw wespective vawues fow hashingdiscwetizew cawibwation. òωó
+  t-this cawibwatow pewfoms the same actions as p-pewcentiwediscwetizewcawibwatow but it's
+  `to_wayew` m-method wetuwns a hashingdiscwetizew instead. ʘwʘ
   '''
 
-  def _create_discretizer_layer(self, n_feature, hash_map_keys, hash_map_values,
-                                feature_offsets, name):
-    # Need to sort hash_map_keys according to hash_map_values
-    # just in case they're not in order of being put in the dict
-    # hash_map_values is already 0 through len(hash_map_values)-1
-    hash_map_keys = hash_map_keys.flatten()
-    # why is this float32 in PercentileDiscretizerCalibrator.to_layer ????
-    # need int for indexing
-    hash_map_values = hash_map_values.flatten().astype(np.int32)
-    feature_ids = np.zeros((len(hash_map_keys),), dtype=np.int64)
-    for idx in range(len(hash_map_keys)):
-      feature_ids[hash_map_values[idx]] = hash_map_keys[idx]
+  def _cweate_discwetizew_wayew(sewf, /(^•ω•^) n-ny_featuwe, ʘwʘ hash_map_keys, σωσ hash_map_vawues, OwO
+                                f-featuwe_offsets, 😳😳😳 nyame):
+    # n-nyeed to sowt hash_map_keys accowding to hash_map_vawues
+    # just i-in case they'we nyot in owdew of being put in the dict
+    # hash_map_vawues is a-awweady 0 thwough wen(hash_map_vawues)-1
+    h-hash_map_keys = h-hash_map_keys.fwatten()
+    # w-why i-is this fwoat32 in pewcentiwediscwetizewcawibwatow.to_wayew ????
+    # nyeed int f-fow indexing
+    hash_map_vawues = hash_map_vawues.fwatten().astype(np.int32)
+    f-featuwe_ids = nyp.zewos((wen(hash_map_keys),), 😳😳😳 dtype=np.int64)
+    fow idx in wange(wen(hash_map_keys)):
+      featuwe_ids[hash_map_vawues[idx]] = h-hash_map_keys[idx]
 
-    return twml.contrib.layers.HashingDiscretizer(
-      feature_ids=feature_ids,
-      bin_vals=self._bin_vals.flatten(),
-      n_bin=self._n_bin + 1,  # (self._n_bin + 1) bin_vals for each feature_id
-      out_bits=self._out_bits,
-      cost_per_unit=500,
-      name=name
+    wetuwn t-twmw.contwib.wayews.hashingdiscwetizew(
+      f-featuwe_ids=featuwe_ids, o.O
+      b-bin_vaws=sewf._bin_vaws.fwatten(), ( ͡o ω ͡o )
+      ny_bin=sewf._n_bin + 1, (U ﹏ U)  # (sewf._n_bin + 1) bin_vaws fow each featuwe_id
+      o-out_bits=sewf._out_bits, (///ˬ///✿)
+      c-cost_pew_unit=500, >w<
+      nyame=name
     )

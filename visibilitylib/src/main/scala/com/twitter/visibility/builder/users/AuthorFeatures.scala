@@ -1,221 +1,221 @@
-package com.twitter.visibility.builder.users
+package com.twittew.visibiwity.buiwdew.usews
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.Label
-import com.twitter.gizmoduck.thriftscala.Labels
-import com.twitter.gizmoduck.thriftscala.Profile
-import com.twitter.gizmoduck.thriftscala.Safety
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tseng.withholding.thriftscala.TakedownReason
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.features._
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.gizmoduck.thwiftscawa.wabew
+i-impowt c-com.twittew.gizmoduck.thwiftscawa.wabews
+i-impowt c-com.twittew.gizmoduck.thwiftscawa.pwofiwe
+i-impowt com.twittew.gizmoduck.thwiftscawa.safety
+impowt com.twittew.gizmoduck.thwiftscawa.usew
+impowt c-com.twittew.stitch.notfound
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tseng.withhowding.thwiftscawa.takedownweason
+i-impowt com.twittew.utiw.duwation
+impowt com.twittew.utiw.time
+impowt c-com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+impowt com.twittew.visibiwity.common.usewsouwce
+i-impowt com.twittew.visibiwity.featuwes._
 
-class AuthorFeatures(userSource: UserSource, statsReceiver: StatsReceiver) {
-  private[this] val scopedStatsReceiver = statsReceiver.scope("author_features")
+c-cwass authowfeatuwes(usewsouwce: usewsouwce, mya statsweceivew: statsweceivew) {
+  pwivate[this] v-vaw scopedstatsweceivew = statsweceivew.scope("authow_featuwes")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  pwivate[this] vaw wequests = scopedstatsweceivew.countew("wequests")
 
-  private[this] val authorUserLabels =
-    scopedStatsReceiver.scope(AuthorUserLabels.name).counter("requests")
-  private[this] val authorIsSuspended =
-    scopedStatsReceiver.scope(AuthorIsSuspended.name).counter("requests")
-  private[this] val authorIsProtected =
-    scopedStatsReceiver.scope(AuthorIsProtected.name).counter("requests")
-  private[this] val authorIsDeactivated =
-    scopedStatsReceiver.scope(AuthorIsDeactivated.name).counter("requests")
-  private[this] val authorIsErased =
-    scopedStatsReceiver.scope(AuthorIsErased.name).counter("requests")
-  private[this] val authorIsOffboarded =
-    scopedStatsReceiver.scope(AuthorIsOffboarded.name).counter("requests")
-  private[this] val authorIsNsfwUser =
-    scopedStatsReceiver.scope(AuthorIsNsfwUser.name).counter("requests")
-  private[this] val authorIsNsfwAdmin =
-    scopedStatsReceiver.scope(AuthorIsNsfwAdmin.name).counter("requests")
-  private[this] val authorTakedownReasons =
-    scopedStatsReceiver.scope(AuthorTakedownReasons.name).counter("requests")
-  private[this] val authorHasDefaultProfileImage =
-    scopedStatsReceiver.scope(AuthorHasDefaultProfileImage.name).counter("requests")
-  private[this] val authorAccountAge =
-    scopedStatsReceiver.scope(AuthorAccountAge.name).counter("requests")
-  private[this] val authorIsVerified =
-    scopedStatsReceiver.scope(AuthorIsVerified.name).counter("requests")
-  private[this] val authorScreenName =
-    scopedStatsReceiver.scope(AuthorScreenName.name).counter("requests")
-  private[this] val authorIsBlueVerified =
-    scopedStatsReceiver.scope(AuthorIsBlueVerified.name).counter("requests")
+  pwivate[this] v-vaw authowusewwabews =
+    scopedstatsweceivew.scope(authowusewwabews.name).countew("wequests")
+  p-pwivate[this] v-vaw authowissuspended =
+    s-scopedstatsweceivew.scope(authowissuspended.name).countew("wequests")
+  p-pwivate[this] vaw authowispwotected =
+    scopedstatsweceivew.scope(authowispwotected.name).countew("wequests")
+  p-pwivate[this] vaw authowisdeactivated =
+    scopedstatsweceivew.scope(authowisdeactivated.name).countew("wequests")
+  p-pwivate[this] vaw authowisewased =
+    scopedstatsweceivew.scope(authowisewased.name).countew("wequests")
+  pwivate[this] vaw authowisoffboawded =
+    scopedstatsweceivew.scope(authowisoffboawded.name).countew("wequests")
+  p-pwivate[this] vaw authowisnsfwusew =
+    s-scopedstatsweceivew.scope(authowisnsfwusew.name).countew("wequests")
+  p-pwivate[this] vaw a-authowisnsfwadmin =
+    scopedstatsweceivew.scope(authowisnsfwadmin.name).countew("wequests")
+  pwivate[this] vaw authowtakedownweasons =
+    s-scopedstatsweceivew.scope(authowtakedownweasons.name).countew("wequests")
+  p-pwivate[this] vaw authowhasdefauwtpwofiweimage =
+    s-scopedstatsweceivew.scope(authowhasdefauwtpwofiweimage.name).countew("wequests")
+  p-pwivate[this] vaw authowaccountage =
+    s-scopedstatsweceivew.scope(authowaccountage.name).countew("wequests")
+  pwivate[this] v-vaw authowisvewified =
+    scopedstatsweceivew.scope(authowisvewified.name).countew("wequests")
+  pwivate[this] v-vaw authowscweenname =
+    scopedstatsweceivew.scope(authowscweenname.name).countew("wequests")
+  p-pwivate[this] vaw authowisbwuevewified =
+    s-scopedstatsweceivew.scope(authowisbwuevewified.name).countew("wequests")
 
-  def forAuthor(author: User): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+  d-def fowauthow(authow: usew): featuwemapbuiwdew => featuwemapbuiwdew = {
+    wequests.incw()
 
-    _.withConstantFeature(AuthorId, Set(author.id))
-      .withConstantFeature(AuthorUserLabels, authorUserLabels(author))
-      .withConstantFeature(AuthorIsProtected, authorIsProtected(author))
-      .withConstantFeature(AuthorIsSuspended, authorIsSuspended(author))
-      .withConstantFeature(AuthorIsDeactivated, authorIsDeactivated(author))
-      .withConstantFeature(AuthorIsErased, authorIsErased(author))
-      .withConstantFeature(AuthorIsOffboarded, authorIsOffboarded(author))
-      .withConstantFeature(AuthorTakedownReasons, authorTakedownReasons(author))
-      .withConstantFeature(AuthorHasDefaultProfileImage, authorHasDefaultProfileImage(author))
-      .withConstantFeature(AuthorAccountAge, authorAccountAge(author))
-      .withConstantFeature(AuthorIsNsfwUser, authorIsNsfwUser(author))
-      .withConstantFeature(AuthorIsNsfwAdmin, authorIsNsfwAdmin(author))
-      .withConstantFeature(AuthorIsVerified, authorIsVerified(author))
-      .withConstantFeature(AuthorScreenName, authorScreenName(author))
-      .withConstantFeature(AuthorIsBlueVerified, authorIsBlueVerified(author))
+    _.withconstantfeatuwe(authowid, 🥺 set(authow.id))
+      .withconstantfeatuwe(authowusewwabews, ^^;; authowusewwabews(authow))
+      .withconstantfeatuwe(authowispwotected, :3 authowispwotected(authow))
+      .withconstantfeatuwe(authowissuspended, (U ﹏ U) a-authowissuspended(authow))
+      .withconstantfeatuwe(authowisdeactivated, OwO a-authowisdeactivated(authow))
+      .withconstantfeatuwe(authowisewased, 😳😳😳 authowisewased(authow))
+      .withconstantfeatuwe(authowisoffboawded, (ˆ ﻌ ˆ)♡ a-authowisoffboawded(authow))
+      .withconstantfeatuwe(authowtakedownweasons, XD a-authowtakedownweasons(authow))
+      .withconstantfeatuwe(authowhasdefauwtpwofiweimage, (ˆ ﻌ ˆ)♡ a-authowhasdefauwtpwofiweimage(authow))
+      .withconstantfeatuwe(authowaccountage, ( ͡o ω ͡o ) authowaccountage(authow))
+      .withconstantfeatuwe(authowisnsfwusew, rawr x3 authowisnsfwusew(authow))
+      .withconstantfeatuwe(authowisnsfwadmin, nyaa~~ authowisnsfwadmin(authow))
+      .withconstantfeatuwe(authowisvewified, >_< authowisvewified(authow))
+      .withconstantfeatuwe(authowscweenname, a-authowscweenname(authow))
+      .withconstantfeatuwe(authowisbwuevewified, ^^;; authowisbwuevewified(authow))
   }
 
-  def forAuthorNoDefaults(author: User): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+  def fowauthownodefauwts(authow: usew): f-featuwemapbuiwdew => featuwemapbuiwdew = {
+    w-wequests.incw()
 
-    _.withConstantFeature(AuthorId, Set(author.id))
-      .withConstantFeature(AuthorUserLabels, authorUserLabelsOpt(author))
-      .withConstantFeature(AuthorIsProtected, authorIsProtectedOpt(author))
-      .withConstantFeature(AuthorIsSuspended, authorIsSuspendedOpt(author))
-      .withConstantFeature(AuthorIsDeactivated, authorIsDeactivatedOpt(author))
-      .withConstantFeature(AuthorIsErased, authorIsErasedOpt(author))
-      .withConstantFeature(AuthorIsOffboarded, authorIsOffboarded(author))
-      .withConstantFeature(AuthorTakedownReasons, authorTakedownReasons(author))
-      .withConstantFeature(AuthorHasDefaultProfileImage, authorHasDefaultProfileImage(author))
-      .withConstantFeature(AuthorAccountAge, authorAccountAge(author))
-      .withConstantFeature(AuthorIsNsfwUser, authorIsNsfwUserOpt(author))
-      .withConstantFeature(AuthorIsNsfwAdmin, authorIsNsfwAdminOpt(author))
-      .withConstantFeature(AuthorIsVerified, authorIsVerifiedOpt(author))
-      .withConstantFeature(AuthorScreenName, authorScreenName(author))
-      .withConstantFeature(AuthorIsBlueVerified, authorIsBlueVerified(author))
+    _.withconstantfeatuwe(authowid, (ˆ ﻌ ˆ)♡ s-set(authow.id))
+      .withconstantfeatuwe(authowusewwabews, a-authowusewwabewsopt(authow))
+      .withconstantfeatuwe(authowispwotected, ^^;; authowispwotectedopt(authow))
+      .withconstantfeatuwe(authowissuspended, (⑅˘꒳˘) a-authowissuspendedopt(authow))
+      .withconstantfeatuwe(authowisdeactivated, rawr x3 a-authowisdeactivatedopt(authow))
+      .withconstantfeatuwe(authowisewased, (///ˬ///✿) a-authowisewasedopt(authow))
+      .withconstantfeatuwe(authowisoffboawded, 🥺 a-authowisoffboawded(authow))
+      .withconstantfeatuwe(authowtakedownweasons, >_< authowtakedownweasons(authow))
+      .withconstantfeatuwe(authowhasdefauwtpwofiweimage, UwU authowhasdefauwtpwofiweimage(authow))
+      .withconstantfeatuwe(authowaccountage, >_< a-authowaccountage(authow))
+      .withconstantfeatuwe(authowisnsfwusew, -.- a-authowisnsfwusewopt(authow))
+      .withconstantfeatuwe(authowisnsfwadmin, mya a-authowisnsfwadminopt(authow))
+      .withconstantfeatuwe(authowisvewified, a-authowisvewifiedopt(authow))
+      .withconstantfeatuwe(authowscweenname, >w< a-authowscweenname(authow))
+      .withconstantfeatuwe(authowisbwuevewified, (U ﹏ U) authowisbwuevewified(authow))
   }
 
-  def forAuthorId(authorId: Long): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+  def fowauthowid(authowid: wong): f-featuwemapbuiwdew => featuwemapbuiwdew = {
+    wequests.incw()
 
-    _.withConstantFeature(AuthorId, Set(authorId))
-      .withFeature(AuthorUserLabels, authorUserLabels(authorId))
-      .withFeature(AuthorIsProtected, authorIsProtected(authorId))
-      .withFeature(AuthorIsSuspended, authorIsSuspended(authorId))
-      .withFeature(AuthorIsDeactivated, authorIsDeactivated(authorId))
-      .withFeature(AuthorIsErased, authorIsErased(authorId))
-      .withFeature(AuthorIsOffboarded, authorIsOffboarded(authorId))
-      .withFeature(AuthorTakedownReasons, authorTakedownReasons(authorId))
-      .withFeature(AuthorHasDefaultProfileImage, authorHasDefaultProfileImage(authorId))
-      .withFeature(AuthorAccountAge, authorAccountAge(authorId))
-      .withFeature(AuthorIsNsfwUser, authorIsNsfwUser(authorId))
-      .withFeature(AuthorIsNsfwAdmin, authorIsNsfwAdmin(authorId))
-      .withFeature(AuthorIsVerified, authorIsVerified(authorId))
-      .withFeature(AuthorScreenName, authorScreenName(authorId))
-      .withFeature(AuthorIsBlueVerified, authorIsBlueVerified(authorId))
+    _.withconstantfeatuwe(authowid, 😳😳😳 set(authowid))
+      .withfeatuwe(authowusewwabews, o.O authowusewwabews(authowid))
+      .withfeatuwe(authowispwotected, òωó authowispwotected(authowid))
+      .withfeatuwe(authowissuspended, 😳😳😳 a-authowissuspended(authowid))
+      .withfeatuwe(authowisdeactivated, σωσ authowisdeactivated(authowid))
+      .withfeatuwe(authowisewased, (⑅˘꒳˘) authowisewased(authowid))
+      .withfeatuwe(authowisoffboawded, (///ˬ///✿) authowisoffboawded(authowid))
+      .withfeatuwe(authowtakedownweasons, a-authowtakedownweasons(authowid))
+      .withfeatuwe(authowhasdefauwtpwofiweimage, 🥺 a-authowhasdefauwtpwofiweimage(authowid))
+      .withfeatuwe(authowaccountage, OwO a-authowaccountage(authowid))
+      .withfeatuwe(authowisnsfwusew, >w< authowisnsfwusew(authowid))
+      .withfeatuwe(authowisnsfwadmin, 🥺 a-authowisnsfwadmin(authowid))
+      .withfeatuwe(authowisvewified, nyaa~~ authowisvewified(authowid))
+      .withfeatuwe(authowscweenname, ^^ a-authowscweenname(authowid))
+      .withfeatuwe(authowisbwuevewified, >w< a-authowisbwuevewified(authowid))
   }
 
-  def forNoAuthor(): FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(AuthorId, Set.empty[Long])
-      .withConstantFeature(AuthorUserLabels, Seq.empty)
-      .withConstantFeature(AuthorIsProtected, false)
-      .withConstantFeature(AuthorIsSuspended, false)
-      .withConstantFeature(AuthorIsDeactivated, false)
-      .withConstantFeature(AuthorIsErased, false)
-      .withConstantFeature(AuthorIsOffboarded, false)
-      .withConstantFeature(AuthorTakedownReasons, Seq.empty)
-      .withConstantFeature(AuthorHasDefaultProfileImage, false)
-      .withConstantFeature(AuthorAccountAge, Duration.Zero)
-      .withConstantFeature(AuthorIsNsfwUser, false)
-      .withConstantFeature(AuthorIsNsfwAdmin, false)
-      .withConstantFeature(AuthorIsVerified, false)
-      .withConstantFeature(AuthorIsBlueVerified, false)
+  def fownoauthow(): featuwemapbuiwdew => featuwemapbuiwdew = {
+    _.withconstantfeatuwe(authowid, OwO set.empty[wong])
+      .withconstantfeatuwe(authowusewwabews, XD seq.empty)
+      .withconstantfeatuwe(authowispwotected, ^^;; fawse)
+      .withconstantfeatuwe(authowissuspended, 🥺 f-fawse)
+      .withconstantfeatuwe(authowisdeactivated, XD fawse)
+      .withconstantfeatuwe(authowisewased, (U ᵕ U❁) f-fawse)
+      .withconstantfeatuwe(authowisoffboawded, :3 fawse)
+      .withconstantfeatuwe(authowtakedownweasons, ( ͡o ω ͡o ) s-seq.empty)
+      .withconstantfeatuwe(authowhasdefauwtpwofiweimage, òωó f-fawse)
+      .withconstantfeatuwe(authowaccountage, σωσ duwation.zewo)
+      .withconstantfeatuwe(authowisnsfwusew, (U ᵕ U❁) fawse)
+      .withconstantfeatuwe(authowisnsfwadmin, (✿oωo) f-fawse)
+      .withconstantfeatuwe(authowisvewified, ^^ f-fawse)
+      .withconstantfeatuwe(authowisbwuevewified, ^•ﻌ•^ fawse)
   }
 
-  def authorUserLabels(author: User): Seq[Label] =
-    authorUserLabels(author.labels)
+  d-def authowusewwabews(authow: u-usew): seq[wabew] =
+    authowusewwabews(authow.wabews)
 
-  def authorIsSuspended(authorId: Long): Stitch[Boolean] =
-    userSource.getSafety(authorId).map(safety => authorIsSuspended(Some(safety)))
+  def authowissuspended(authowid: wong): stitch[boowean] =
+    usewsouwce.getsafety(authowid).map(safety => a-authowissuspended(some(safety)))
 
-  def authorIsSuspendedOpt(author: User): Option[Boolean] = {
-    authorIsSuspended.incr()
-    author.safety.map(_.suspended)
+  d-def a-authowissuspendedopt(authow: usew): option[boowean] = {
+    a-authowissuspended.incw()
+    a-authow.safety.map(_.suspended)
   }
 
-  private def authorIsSuspended(safety: Option[Safety]): Boolean = {
-    authorIsSuspended.incr()
+  pwivate def authowissuspended(safety: o-option[safety]): boowean = {
+    authowissuspended.incw()
     safety.exists(_.suspended)
   }
 
-  def authorIsProtected(author: User): Boolean =
-    authorIsProtected(author.safety)
+  def authowispwotected(authow: u-usew): boowean =
+    a-authowispwotected(authow.safety)
 
-  def authorIsDeactivated(authorId: Long): Stitch[Boolean] =
-    userSource.getSafety(authorId).map(safety => authorIsDeactivated(Some(safety)))
+  def authowisdeactivated(authowid: w-wong): stitch[boowean] =
+    u-usewsouwce.getsafety(authowid).map(safety => authowisdeactivated(some(safety)))
 
-  def authorIsDeactivatedOpt(author: User): Option[Boolean] = {
-    authorIsDeactivated.incr()
-    author.safety.map(_.deactivated)
+  def authowisdeactivatedopt(authow: usew): option[boowean] = {
+    a-authowisdeactivated.incw()
+    authow.safety.map(_.deactivated)
   }
 
-  private def authorIsDeactivated(safety: Option[Safety]): Boolean = {
-    authorIsDeactivated.incr()
+  pwivate def authowisdeactivated(safety: option[safety]): b-boowean = {
+    authowisdeactivated.incw()
     safety.exists(_.deactivated)
   }
 
-  def authorIsErased(author: User): Boolean = {
-    authorIsErased.incr()
-    author.safety.exists(_.erased)
+  d-def authowisewased(authow: u-usew): boowean = {
+    authowisewased.incw()
+    authow.safety.exists(_.ewased)
   }
 
-  def authorIsOffboarded(authorId: Long): Stitch[Boolean] = {
-    userSource.getSafety(authorId).map(safety => authorIsOffboarded(Some(safety)))
+  def authowisoffboawded(authowid: w-wong): stitch[boowean] = {
+    u-usewsouwce.getsafety(authowid).map(safety => authowisoffboawded(some(safety)))
   }
 
-  def authorIsNsfwUser(author: User): Boolean = {
-    authorIsNsfwUser(author.safety)
+  def authowisnsfwusew(authow: u-usew): boowean = {
+    a-authowisnsfwusew(authow.safety)
   }
 
-  def authorIsNsfwUser(authorId: Long): Stitch[Boolean] = {
-    userSource.getSafety(authorId).map(safety => authorIsNsfwUser(Some(safety)))
+  def authowisnsfwusew(authowid: wong): stitch[boowean] = {
+    usewsouwce.getsafety(authowid).map(safety => a-authowisnsfwusew(some(safety)))
   }
 
-  def authorIsNsfwUser(safety: Option[Safety]): Boolean = {
-    authorIsNsfwUser.incr()
-    safety.exists(_.nsfwUser)
+  def authowisnsfwusew(safety: o-option[safety]): b-boowean = {
+    authowisnsfwusew.incw()
+    s-safety.exists(_.nsfwusew)
   }
 
-  def authorIsNsfwAdminOpt(author: User): Option[Boolean] = {
-    authorIsNsfwAdmin.incr()
-    author.safety.map(_.nsfwAdmin)
+  def authowisnsfwadminopt(authow: u-usew): option[boowean] = {
+    a-authowisnsfwadmin.incw()
+    a-authow.safety.map(_.nsfwadmin)
   }
 
-  def authorTakedownReasons(authorId: Long): Stitch[Seq[TakedownReason]] = {
-    authorTakedownReasons.incr()
-    userSource.getTakedownReasons(authorId)
+  def authowtakedownweasons(authowid: w-wong): s-stitch[seq[takedownweason]] = {
+    authowtakedownweasons.incw()
+    usewsouwce.gettakedownweasons(authowid)
   }
 
-  def authorHasDefaultProfileImage(authorId: Long): Stitch[Boolean] =
-    userSource.getProfile(authorId).map(profile => authorHasDefaultProfileImage(Some(profile)))
+  d-def authowhasdefauwtpwofiweimage(authowid: w-wong): stitch[boowean] =
+    usewsouwce.getpwofiwe(authowid).map(pwofiwe => a-authowhasdefauwtpwofiweimage(some(pwofiwe)))
 
-  def authorAccountAge(authorId: Long): Stitch[Duration] =
-    userSource.getCreatedAtMsec(authorId).map(authorAccountAgeFromTimestamp)
+  def authowaccountage(authowid: w-wong): stitch[duwation] =
+    u-usewsouwce.getcweatedatmsec(authowid).map(authowaccountagefwomtimestamp)
 
-  def authorIsVerified(authorId: Long): Stitch[Boolean] =
-    userSource.getSafety(authorId).map(safety => authorIsVerified(Some(safety)))
+  d-def authowisvewified(authowid: wong): stitch[boowean] =
+    usewsouwce.getsafety(authowid).map(safety => authowisvewified(some(safety)))
 
-  def authorIsVerifiedOpt(author: User): Option[Boolean] = {
-    authorIsVerified.incr()
-    author.safety.map(_.verified)
+  d-def authowisvewifiedopt(authow: u-usew): option[boowean] = {
+    a-authowisvewified.incw()
+    a-authow.safety.map(_.vewified)
   }
 
-  private def authorIsVerified(safety: Option[Safety]): Boolean = {
-    authorIsVerified.incr()
-    safety.exists(_.verified)
+  pwivate def authowisvewified(safety: o-option[safety]): boowean = {
+    authowisvewified.incw()
+    safety.exists(_.vewified)
   }
 
-  def authorScreenName(author: User): Option[String] = {
-    authorScreenName.incr()
-    author.profile.map(_.screenName)
+  def authowscweenname(authow: usew): option[stwing] = {
+    a-authowscweenname.incw()
+    authow.pwofiwe.map(_.scweenname)
   }
 
-  def authorScreenName(authorId: Long): Stitch[String] = {
-    authorScreenName.incr()
-    userSource.getProfile(authorId).map(profile => profile.screenName)
+  d-def authowscweenname(authowid: wong): stitch[stwing] = {
+    a-authowscweenname.incw()
+    usewsouwce.getpwofiwe(authowid).map(pwofiwe => p-pwofiwe.scweenname)
   }
 }

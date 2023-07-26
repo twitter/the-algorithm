@@ -1,23 +1,23 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.fwexibwe_injection_pipewine
 
-import com.twitter.product_mixer.component_library.decorator.urt.GroupByKey
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptInjectionsFeature
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptOffsetInModuleFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.gwoupbykey
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.fwexibwe_injection_pipewine.twansfowmew.fwippwomptinjectionsfeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.fwexibwe_injection_pipewine.twansfowmew.fwippwomptoffsetinmoduwefeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object FlipPromptModuleGrouping extends GroupByKey[PipelineQuery, UniversalNoun[Any], Int] {
-  override def apply(
-    query: PipelineQuery,
-    candidate: UniversalNoun[Any],
-    candidateFeatures: FeatureMap
-  ): Option[Int] = {
-    val injection = candidateFeatures.get(FlipPromptInjectionsFeature)
-    val offsetInModule = candidateFeatures.getOrElse(FlipPromptOffsetInModuleFeature, None)
+object fwippwomptmoduwegwouping extends gwoupbykey[pipewinequewy, (⑅˘꒳˘) univewsawnoun[any], rawr x3 i-int] {
+  ovewwide def appwy(
+    quewy: pipewinequewy, (✿oωo)
+    c-candidate: univewsawnoun[any], (ˆ ﻌ ˆ)♡
+    c-candidatefeatuwes: featuwemap
+  ): option[int] = {
+    vaw injection = c-candidatefeatuwes.get(fwippwomptinjectionsfeatuwe)
+    vaw offsetinmoduwe = c-candidatefeatuwes.getowewse(fwippwomptoffsetinmoduwefeatuwe, (˘ω˘) n-nyone)
 
-    // We return None for any candidate that doesn't have an offsetInModule, so that they are left as independent items.
-    // Otherwise, we return a hash of the injection instance which will be used to aggregate candidates with matching values into a module.
-    offsetInModule.map(_ => injection.hashCode())
+    // we wetuwn nyone fow any candidate that doesn't have an offsetinmoduwe, (⑅˘꒳˘) s-so that they awe weft as independent items. (///ˬ///✿)
+    // othewwise, 😳😳😳 we wetuwn a h-hash of the injection instance w-which wiww be used t-to aggwegate c-candidates with m-matching vawues into a moduwe. 🥺
+    offsetinmoduwe.map(_ => i-injection.hashcode())
   }
 }

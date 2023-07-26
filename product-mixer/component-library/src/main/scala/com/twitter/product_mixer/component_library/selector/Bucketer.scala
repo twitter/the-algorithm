@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
 
 /**
- * Given a [[CandidateWithDetails]] return the corresponding [[Bucket]]
- * it should be associated with when used in a `pattern` or `ratio`
- * in [[InsertAppendPatternResults]] or [[InsertAppendRatioResults]]
+ * g-given a [[candidatewithdetaiws]] w-wetuwn the c-cowwesponding [[bucket]]
+ * i-it shouwd b-be associated w-with when used in a `pattewn` ow `watio`
+ * in [[insewtappendpattewnwesuwts]] ow [[insewtappendwatiowesuwts]]
  */
-trait Bucketer[Bucket] {
-  def apply(candidateWithDetails: CandidateWithDetails): Bucket
+t-twait bucketew[bucket] {
+  def appwy(candidatewithdetaiws: candidatewithdetaiws): b-bucket
 }
 
-object Bucketer {
+object bucketew {
 
-  /** A [[Bucketer]] that buckets by [[CandidateWithDetails.source]] */
-  val ByCandidateSource: Bucketer[CandidatePipelineIdentifier] =
-    (candidateWithDetails: CandidateWithDetails) => candidateWithDetails.source
+  /** a-a [[bucketew]] that buckets by [[candidatewithdetaiws.souwce]] */
+  vaw bycandidatesouwce: b-bucketew[candidatepipewineidentifiew] =
+    (candidatewithdetaiws: candidatewithdetaiws) => c-candidatewithdetaiws.souwce
 }

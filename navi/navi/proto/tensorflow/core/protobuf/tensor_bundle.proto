@@ -1,66 +1,66 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/tensor_slice.proto";
-import "tensorflow/core/framework/types.proto";
-import "tensorflow/core/framework/versions.proto";
+impowt "tensowfwow/cowe/fwamewowk/tensow_shape.pwoto";
+impowt "tensowfwow/cowe/fwamewowk/tensow_swice.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/types.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/vewsions.pwoto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "TensorBundleProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.util";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+o-option c-cc_enabwe_awenas = t-twue;
+option j-java_outew_cwassname = "tensowbundwepwotos";
+o-option j-java_muwtipwe_fiwes = twue;
+option java_package = "owg.tensowfwow.utiw";
+option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// Protos used in the tensor bundle module (tf/core/util/tensor_bundle/).
+// pwotos u-used in the tensow bundwe moduwe (tf/cowe/utiw/tensow_bundwe/). 😳
 
-// Special header that is associated with a bundle.
+// s-speciaw headew that is a-associated with a bundwe. σωσ
 //
-// TODO(zongheng,zhifengc): maybe in the future, we can add information about
-// which binary produced this checkpoint, timestamp, etc. Sometime, these can be
-// valuable debugging information. And if needed, these can be used as defensive
-// information ensuring reader (binary version) of the checkpoint and the writer
-// (binary version) must match within certain range, etc.
-message BundleHeaderProto {
-  // Number of data files in the bundle.
-  int32 num_shards = 1;
+// todo(zongheng,zhifengc): maybe i-in the futuwe, rawr x3 we can add infowmation a-about
+// which b-binawy pwoduced this checkpoint, OwO timestamp, etc. /(^•ω•^) sometime, these can be
+// v-vawuabwe debugging infowmation. 😳😳😳 and if nyeeded, ( ͡o ω ͡o ) these can be used as defensive
+// i-infowmation ensuwing weadew (binawy v-vewsion) of t-the checkpoint a-and the wwitew
+// (binawy v-vewsion) must match within cewtain wange, >_< e-etc. >w<
+message bundweheadewpwoto {
+  // nyumbew o-of data fiwes in the bundwe. rawr
+  int32 nyum_shawds = 1;
 
-  // An enum indicating the endianness of the platform that produced this
-  // bundle.  A bundle can only be read by a platform with matching endianness.
-  // Defaults to LITTLE, as most modern platforms are little-endian.
+  // an enum indicating the endianness of the pwatfowm t-that pwoduced this
+  // bundwe. 😳  a-a bundwe can onwy b-be wead by a p-pwatfowm with matching endianness. >w<
+  // defauwts to wittwe, (⑅˘꒳˘) as m-most modewn pwatfowms a-awe wittwe-endian. OwO
   //
-  // Affects the binary tensor data bytes only, not the metadata in protobufs.
-  enum Endianness {
-    LITTLE = 0;
-    BIG = 1;
+  // affects the binawy t-tensow data b-bytes onwy, (ꈍᴗꈍ) nyot the metadata i-in pwotobufs. 😳
+  enum endianness {
+    w-wittwe = 0;
+    big = 1;
   }
-  Endianness endianness = 2;
+  endianness e-endianness = 2;
 
-  // Versioning of the tensor bundle format.
-  VersionDef version = 3;
+  // vewsioning o-of the tensow bundwe fowmat. 😳😳😳
+  v-vewsiondef vewsion = 3;
 }
 
-// Describes the metadata related to a checkpointed tensor.
-message BundleEntryProto {
-  // The tensor dtype and shape.
-  DataType dtype = 1;
-  TensorShapeProto shape = 2;
-  // The binary content of the tensor lies in:
-  //   File "shard_id": bytes [offset, offset + size).
-  int32 shard_id = 3;
+// d-descwibes the metadata wewated to a checkpointed tensow. mya
+message bundweentwypwoto {
+  // the tensow dtype and shape. mya
+  d-datatype dtype = 1;
+  t-tensowshapepwoto shape = 2;
+  // t-the b-binawy content of t-the tensow wies in:
+  //   fiwe "shawd_id": bytes [offset, (⑅˘꒳˘) offset + s-size). (U ﹏ U)
+  int32 shawd_id = 3;
   int64 offset = 4;
   int64 size = 5;
 
-  // The CRC32C checksum of the tensor bytes.
-  fixed32 crc32c = 6;
+  // the cwc32c checksum o-of the tensow bytes. mya
+  fixed32 c-cwc32c = 6;
 
-  // Iff present, this entry represents a partitioned tensor.  The previous
-  // fields are interpreted as follows:
+  // i-iff pwesent, ʘwʘ t-this entwy wepwesents a pawtitioned t-tensow. (˘ω˘)  the p-pwevious
+  // f-fiewds awe intewpweted a-as fowwows:
   //
-  //   "dtype", "shape": describe the full tensor.
-  //   "shard_id", "offset", "size", "crc32c": all IGNORED.
-  //      These information for each slice can be looked up in their own
-  //      BundleEntryProto, keyed by each "slice_name".
-  repeated TensorSliceProto slices = 7;
+  //   "dtype", (U ﹏ U) "shape": descwibe the fuww tensow. ^•ﻌ•^
+  //   "shawd_id", (˘ω˘) "offset", "size", :3 "cwc32c": a-aww ignowed. ^^;;
+  //      t-these infowmation f-fow each swice c-can be wooked u-up in theiw own
+  //      bundweentwypwoto, 🥺 keyed by each "swice_name". (⑅˘꒳˘)
+  w-wepeated tensowswicepwoto swices = 7;
 }

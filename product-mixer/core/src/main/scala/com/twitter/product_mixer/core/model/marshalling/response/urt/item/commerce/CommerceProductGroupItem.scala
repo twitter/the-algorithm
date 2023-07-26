@@ -1,23 +1,23 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.commerce
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.commewce
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.commerce.CommerceProductGroupItem.CommerceProductGroupEntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.entwynamespace
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineitem
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.commewce.commewcepwoductgwoupitem.commewcepwoductgwoupentwynamespace
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
 
-object CommerceProductGroupItem {
-  val CommerceProductGroupEntryNamespace: EntryNamespace = EntryNamespace("commerce-product-group")
+object commewcepwoductgwoupitem {
+  vaw commewcepwoductgwoupentwynamespace: e-entwynamespace = entwynamespace("commewce-pwoduct-gwoup")
 }
 
-case class CommerceProductGroupItem(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo])
-    extends TimelineItem {
+case cwass c-commewcepwoductgwoupitem(
+  ovewwide v-vaw id: wong, rawr x3
+  ovewwide vaw sowtindex: option[wong], nyaa~~
+  ovewwide v-vaw cwienteventinfo: option[cwienteventinfo], /(^•ω•^)
+  o-ovewwide vaw f-feedbackactioninfo: option[feedbackactioninfo])
+    extends timewineitem {
 
-  val entryNamespace: EntryNamespace = CommerceProductGroupEntryNamespace
-  def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  vaw entwynamespace: entwynamespace = c-commewcepwoductgwoupentwynamespace
+  def withsowtindex(sowtindex: wong): timewineentwy = copy(sowtindex = some(sowtindex))
 }

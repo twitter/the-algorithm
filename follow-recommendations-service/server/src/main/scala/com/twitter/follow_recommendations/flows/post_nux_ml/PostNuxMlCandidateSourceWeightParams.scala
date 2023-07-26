@@ -1,177 +1,177 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+package com.twittew.fowwow_wecommendations.fwows.post_nux_mw
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.timewines.configapi.fsboundedpawam
+i-impowt com.twittew.timewines.configapi.pawam
 
-abstract class PostNuxMlCandidateSourceWeightParams[A](default: A) extends Param[A](default) {
-  override val statName: String = "post_nux_ml/" + this.getClass.getSimpleName
+a-abstwact cwass p-postnuxmwcandidatesouwceweightpawams[a](defauwt: a-a) extends pawam[a](defauwt) {
+  o-ovewwide vaw statname: s-stwing = "post_nux_mw/" + t-this.getcwass.getsimpwename
 }
 
-object PostNuxMlCandidateSourceWeightParams {
+object postnuxmwcandidatesouwceweightpawams {
 
-  case object CandidateWeightCrowdSearch
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightCrowdSearch,
-        1.0,
-        0.0,
-        1000.0
-      )
-
-  case object CandidateWeightTopOrganicFollow
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightTopOrganicFollow,
-        1.0,
-        0.0,
-        1000.0
-      )
-  case object CandidateWeightPPMILocaleFollow
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightPPMILocaleFollow,
-        1.0,
-        0.0,
+  case object candidateweightcwowdseawch
+      extends fsboundedpawam[doubwe](
+        postnuxmwfwowcandidatesouwceweightsfeatuweswitchkeys.candidateweightcwowdseawch, (✿oωo)
+        1.0, ʘwʘ
+        0.0, (ˆ ﻌ ˆ)♡
         1000.0
       )
 
-  case object CandidateWeightForwardEmailBook
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightForwardEmailBook,
+  c-case object candidateweighttopowganicfowwow
+      extends fsboundedpawam[doubwe](
+        p-postnuxmwfwowcandidatesouwceweightsfeatuweswitchkeys.candidateweighttopowganicfowwow, 😳😳😳
         1.0,
-        0.0,
+        0.0, :3
         1000.0
       )
-  case object CandidateWeightForwardPhoneBook
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightForwardPhoneBook,
-        1.0,
+  case object candidateweightppmiwocawefowwow
+      e-extends fsboundedpawam[doubwe](
+        postnuxmwfwowcandidatesouwceweightsfeatuweswitchkeys.candidateweightppmiwocawefowwow, OwO
+        1.0, (U ﹏ U)
         0.0,
         1000.0
       )
 
-  case object CandidateWeightOfflineStrongTiePrediction
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightOfflineStrongTiePrediction,
-        1.0,
-        0.0,
+  case object candidateweightfowwawdemaiwbook
+      e-extends fsboundedpawam[doubwe](
+        postnuxmwfwowcandidatesouwceweightsfeatuweswitchkeys.candidateweightfowwawdemaiwbook, >w<
+        1.0, (U ﹏ U)
+        0.0, 😳
         1000.0
       )
-  case object CandidateWeightOnlineStp
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightOnlineStp,
+  c-case object c-candidateweightfowwawdphonebook
+      extends fsboundedpawam[doubwe](
+        postnuxmwfwowcandidatesouwceweightsfeatuweswitchkeys.candidateweightfowwawdphonebook, (ˆ ﻌ ˆ)♡
         1.0,
-        0.0,
-        1000.0
-      )
-  case object CandidateWeightPopCountry
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightPopCountry,
-        1.0,
-        0.0,
-        1000.0
-      )
-  case object CandidateWeightPopGeohash
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightPopGeohash,
-        1.0,
-        0.0,
-        1000.0
-      )
-  case object CandidateWeightPopGeohashQualityFollow
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightPopGeohashQualityFollow,
-        1.0,
-        0.0,
-        1000.0
-      )
-  case object CandidateWeightPopGeoBackfill
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightPopGeoBackfill,
-        1,
-        0.0,
-        1000.0
-      )
-  case object CandidateWeightRecentFollowingSimilarUsers
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightRecentFollowingSimilarUsers,
-        1.0,
-        0.0,
-        1000.0
-      )
-  case object CandidateWeightRecentEngagementDirectFollowSalsaExpansion
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightRecentEngagementDirectFollowSalsaExpansion,
-        1.0,
-        0.0,
-        1000.0
-      )
-  case object CandidateWeightRecentEngagementNonDirectFollow
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightRecentEngagementNonDirectFollow,
-        1.0,
-        0.0,
-        1000.0
-      )
-  case object CandidateWeightRecentEngagementSimilarUsers
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightRecentEngagementSimilarUsers,
-        1.0,
-        0.0,
-        1000.0
-      )
-  case object CandidateWeightRepeatedProfileVisits
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightRepeatedProfileVisits,
-        1.0,
-        0.0,
-        1000.0
-      )
-  case object CandidateWeightFollow2vecNearestNeighbors
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightFollow2vecNearestNeighbors,
-        1.0,
-        0.0,
-        1000.0
-      )
-  case object CandidateWeightReverseEmailBook
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightReverseEmailBook,
-        1.0,
-        0.0,
-        1000.0
-      )
-  case object CandidateWeightReversePhoneBook
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightReversePhoneBook,
-        1.0,
-        0.0,
-        1000.0
-      )
-  case object CandidateWeightTriangularLoops
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightTriangularLoops,
-        1.0,
-        0.0,
-        1000.0
-      )
-  case object CandidateWeightTwoHopRandomWalk
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightTwoHopRandomWalk,
-        1.0,
-        0.0,
-        1000.0
-      )
-  case object CandidateWeightUserUserGraph
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightUserUserGraph,
-        1.0,
-        0.0,
+        0.0, 😳😳😳
         1000.0
       )
 
-  case object CandidateWeightRealGraphOonV2
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightRealGraphOonV2,
-        1.0,
+  case o-object candidateweightoffwinestwongtiepwediction
+      extends fsboundedpawam[doubwe](
+        postnuxmwfwowcandidatesouwceweightsfeatuweswitchkeys.candidateweightoffwinestwongtiepwediction, (U ﹏ U)
+        1.0, (///ˬ///✿)
+        0.0, 😳
+        1000.0
+      )
+  case object candidateweightonwinestp
+      extends fsboundedpawam[doubwe](
+        p-postnuxmwfwowcandidatesouwceweightsfeatuweswitchkeys.candidateweightonwinestp, 😳
+        1.0, σωσ
         0.0,
+        1000.0
+      )
+  case object c-candidateweightpopcountwy
+      e-extends fsboundedpawam[doubwe](
+        p-postnuxmwfwowcandidatesouwceweightsfeatuweswitchkeys.candidateweightpopcountwy, rawr x3
+        1.0,
+        0.0, OwO
+        1000.0
+      )
+  c-case object candidateweightpopgeohash
+      extends f-fsboundedpawam[doubwe](
+        postnuxmwfwowcandidatesouwceweightsfeatuweswitchkeys.candidateweightpopgeohash, /(^•ω•^)
+        1.0, 😳😳😳
+        0.0, ( ͡o ω ͡o )
+        1000.0
+      )
+  case object c-candidateweightpopgeohashquawityfowwow
+      extends fsboundedpawam[doubwe](
+        postnuxmwfwowcandidatesouwceweightsfeatuweswitchkeys.candidateweightpopgeohashquawityfowwow, >_<
+        1.0, >w<
+        0.0, rawr
+        1000.0
+      )
+  case object candidateweightpopgeobackfiww
+      e-extends fsboundedpawam[doubwe](
+        postnuxmwfwowcandidatesouwceweightsfeatuweswitchkeys.candidateweightpopgeobackfiww,
+        1, 😳
+        0.0, >w<
+        1000.0
+      )
+  c-case object candidateweightwecentfowwowingsimiwawusews
+      e-extends fsboundedpawam[doubwe](
+        p-postnuxmwfwowcandidatesouwceweightsfeatuweswitchkeys.candidateweightwecentfowwowingsimiwawusews, (⑅˘꒳˘)
+        1.0, OwO
+        0.0, (ꈍᴗꈍ)
+        1000.0
+      )
+  case object candidateweightwecentengagementdiwectfowwowsawsaexpansion
+      extends f-fsboundedpawam[doubwe](
+        p-postnuxmwfwowcandidatesouwceweightsfeatuweswitchkeys.candidateweightwecentengagementdiwectfowwowsawsaexpansion, 😳
+        1.0, 😳😳😳
+        0.0, mya
+        1000.0
+      )
+  case object candidateweightwecentengagementnondiwectfowwow
+      e-extends fsboundedpawam[doubwe](
+        p-postnuxmwfwowcandidatesouwceweightsfeatuweswitchkeys.candidateweightwecentengagementnondiwectfowwow, mya
+        1.0, (⑅˘꒳˘)
+        0.0, (U ﹏ U)
+        1000.0
+      )
+  case object c-candidateweightwecentengagementsimiwawusews
+      extends fsboundedpawam[doubwe](
+        p-postnuxmwfwowcandidatesouwceweightsfeatuweswitchkeys.candidateweightwecentengagementsimiwawusews, mya
+        1.0, ʘwʘ
+        0.0, (˘ω˘)
+        1000.0
+      )
+  case object candidateweightwepeatedpwofiwevisits
+      extends fsboundedpawam[doubwe](
+        p-postnuxmwfwowcandidatesouwceweightsfeatuweswitchkeys.candidateweightwepeatedpwofiwevisits, (U ﹏ U)
+        1.0, ^•ﻌ•^
+        0.0, (˘ω˘)
+        1000.0
+      )
+  case o-object candidateweightfowwow2vecneawestneighbows
+      extends f-fsboundedpawam[doubwe](
+        p-postnuxmwfwowcandidatesouwceweightsfeatuweswitchkeys.candidateweightfowwow2vecneawestneighbows, :3
+        1.0, ^^;;
+        0.0, 🥺
+        1000.0
+      )
+  case object candidateweightwevewseemaiwbook
+      extends fsboundedpawam[doubwe](
+        postnuxmwfwowcandidatesouwceweightsfeatuweswitchkeys.candidateweightwevewseemaiwbook, (⑅˘꒳˘)
+        1.0, nyaa~~
+        0.0, :3
+        1000.0
+      )
+  case object candidateweightwevewsephonebook
+      extends f-fsboundedpawam[doubwe](
+        p-postnuxmwfwowcandidatesouwceweightsfeatuweswitchkeys.candidateweightwevewsephonebook, ( ͡o ω ͡o )
+        1.0,
+        0.0, mya
+        1000.0
+      )
+  case object c-candidateweighttwianguwawwoops
+      e-extends f-fsboundedpawam[doubwe](
+        postnuxmwfwowcandidatesouwceweightsfeatuweswitchkeys.candidateweighttwianguwawwoops, (///ˬ///✿)
+        1.0, (˘ω˘)
+        0.0, ^^;;
+        1000.0
+      )
+  case object candidateweighttwohopwandomwawk
+      e-extends fsboundedpawam[doubwe](
+        postnuxmwfwowcandidatesouwceweightsfeatuweswitchkeys.candidateweighttwohopwandomwawk, (✿oωo)
+        1.0, (U ﹏ U)
+        0.0, -.-
+        1000.0
+      )
+  case object candidateweightusewusewgwaph
+      e-extends fsboundedpawam[doubwe](
+        p-postnuxmwfwowcandidatesouwceweightsfeatuweswitchkeys.candidateweightusewusewgwaph, ^•ﻌ•^
+        1.0, rawr
+        0.0, (˘ω˘)
+        1000.0
+      )
+
+  c-case o-object candidateweightweawgwaphoonv2
+      extends f-fsboundedpawam[doubwe](
+        p-postnuxmwfwowcandidatesouwceweightsfeatuweswitchkeys.candidateweightweawgwaphoonv2, nyaa~~
+        1.0, UwU
+        0.0, :3
         2000.0
       )
 }

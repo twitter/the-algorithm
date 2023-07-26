@@ -1,59 +1,59 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.flockdb.client._
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.compat.LegacySeqGroup
+i-impowt com.twittew.fwockdb.cwient._
+i-impowt com.twittew.stitch.seqgwoup
+i-impowt com.twittew.stitch.stitch
+i-impowt c-com.twittew.stitch.compat.wegacyseqgwoup
 
-sealed trait TweetCountKey {
-  // The flockdb Select used to calculate the count from TFlock
-  def toSelect: Select[StatusGraph]
+s-seawed t-twait tweetcountkey {
+  // the fwockdb sewect used to cawcuwate the count fwom t-tfwock
+  def tosewect: sewect[statusgwaph]
 
-  // The Tweet id for this count
-  def tweetId: TweetId
+  // the tweet id fow t-this count
+  def tweetid: tweetid
 
-  // com.twitter.servo.cache.MemcacheCache calls toString to turn this key into a cache key
-  def toString: String
+  // c-com.twittew.sewvo.cache.memcachecache cawws tostwing to tuwn this key into a cache key
+  d-def tostwing: stwing
 }
 
-case class RetweetsKey(tweetId: TweetId) extends TweetCountKey {
-  lazy val toSelect: Select[StatusGraph] = RetweetsGraph.from(tweetId)
-  override lazy val toString: String = "cnts:rt:" + tweetId
+case c-cwass wetweetskey(tweetid: t-tweetid) extends tweetcountkey {
+  wazy vaw tosewect: sewect[statusgwaph] = w-wetweetsgwaph.fwom(tweetid)
+  ovewwide wazy vaw tostwing: stwing = "cnts:wt:" + tweetid
 }
 
-case class RepliesKey(tweetId: TweetId) extends TweetCountKey {
-  lazy val toSelect: Select[StatusGraph] = RepliesToTweetsGraph.from(tweetId)
-  override lazy val toString: String = "cnts:re:" + tweetId
+c-case cwass wepwieskey(tweetid: tweetid) extends t-tweetcountkey {
+  w-wazy vaw tosewect: s-sewect[statusgwaph] = w-wepwiestotweetsgwaph.fwom(tweetid)
+  ovewwide wazy vaw tostwing: stwing = "cnts:we:" + t-tweetid
 }
 
-case class FavsKey(tweetId: TweetId) extends TweetCountKey {
-  lazy val toSelect: Select[StatusGraph] = FavoritesGraph.to(tweetId)
-  override lazy val toString: String = "cnts:fv:" + tweetId
+case cwass favskey(tweetid: tweetid) e-extends tweetcountkey {
+  wazy vaw tosewect: sewect[statusgwaph] = favowitesgwaph.to(tweetid)
+  ovewwide wazy v-vaw tostwing: stwing = "cnts:fv:" + t-tweetid
 }
 
-case class QuotesKey(tweetId: TweetId) extends TweetCountKey {
-  lazy val toSelect: Select[StatusGraph] = QuotersGraph.from(tweetId)
-  override lazy val toString: String = "cnts:qt:" + tweetId
+c-case cwass quoteskey(tweetid: tweetid) e-extends tweetcountkey {
+  wazy vaw tosewect: sewect[statusgwaph] = q-quotewsgwaph.fwom(tweetid)
+  o-ovewwide wazy vaw tostwing: s-stwing = "cnts:qt:" + t-tweetid
 }
 
-case class BookmarksKey(tweetId: TweetId) extends TweetCountKey {
-  lazy val toSelect: Select[StatusGraph] = BookmarksGraph.to(tweetId)
-  override lazy val toString: String = "cnts:bm:" + tweetId
+case cwass b-bookmawkskey(tweetid: tweetid) extends t-tweetcountkey {
+  wazy vaw tosewect: sewect[statusgwaph] = b-bookmawksgwaph.to(tweetid)
+  ovewwide wazy vaw t-tostwing: stwing = "cnts:bm:" + tweetid
 }
 
-object TweetCountsRepository {
-  type Type = TweetCountKey => Stitch[Count]
+object t-tweetcountswepositowy {
+  t-type type = tweetcountkey => stitch[count]
 
-  def apply(tflock: TFlockClient, maxRequestSize: Int): Type = {
-    object RequestGroup extends SeqGroup[TweetCountKey, Count] {
-      override def run(keys: Seq[TweetCountKey]): Future[Seq[Try[MediaId]]] = {
-        val selects = MultiSelect[StatusGraph]() ++= keys.map(_.toSelect)
-        LegacySeqGroup.liftToSeqTry(tflock.multiCount(selects).map(counts => counts.map(_.toLong)))
+  def appwy(tfwock: tfwockcwient, >w< maxwequestsize: int): t-type = {
+    object w-wequestgwoup extends seqgwoup[tweetcountkey, mya c-count] {
+      o-ovewwide def wun(keys: s-seq[tweetcountkey]): futuwe[seq[twy[mediaid]]] = {
+        vaw sewects = muwtisewect[statusgwaph]() ++= k-keys.map(_.tosewect)
+        wegacyseqgwoup.wifttoseqtwy(tfwock.muwticount(sewects).map(counts => counts.map(_.towong)))
       }
-      override val maxSize: Int = maxRequestSize
+      ovewwide vaw maxsize: int = m-maxwequestsize
     }
 
-    key => Stitch.call(key, RequestGroup)
+    key => s-stitch.caww(key, >w< w-wequestgwoup)
   }
 }

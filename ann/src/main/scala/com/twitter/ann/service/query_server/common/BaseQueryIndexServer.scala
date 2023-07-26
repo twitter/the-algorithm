@@ -1,53 +1,53 @@
-package com.twitter.ann.service.query_server.common
+package com.twittew.ann.sewvice.quewy_sewvew.common
 
-import com.google.inject.Module
-import com.twitter.ann.common.thriftscala.AnnQueryService
-import com.twitter.app.Flag
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.thrift.ThriftServer
-import com.twitter.finatra.mtls.thriftmux.Mtls
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule
-import com.twitter.finatra.thrift.filters.{
-  AccessLoggingFilter,
-  LoggingMDCFilter,
-  StatsFilter,
-  ThriftMDCFilter,
-  TraceIdMDCFilter
+impowt com.googwe.inject.moduwe
+i-impowt com.twittew.ann.common.thwiftscawa.annquewysewvice
+i-impowt c-com.twittew.app.fwag
+i-impowt c-com.twittew.finatwa.decidew.moduwes.decidewmoduwe
+i-impowt com.twittew.finatwa.thwift.thwiftsewvew
+i-impowt com.twittew.finatwa.mtws.thwiftmux.mtws
+i-impowt com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwsthwiftwebfowmsmoduwe
+impowt com.twittew.finatwa.thwift.fiwtews.{
+  accesswoggingfiwtew, σωσ
+  woggingmdcfiwtew, OwO
+  s-statsfiwtew, 😳😳😳
+  thwiftmdcfiwtew, 😳😳😳
+  twaceidmdcfiwtew
 }
-import com.twitter.finatra.thrift.routing.ThriftRouter
+i-impowt com.twittew.finatwa.thwift.wouting.thwiftwoutew
 
 /**
- * This class provides most of the configuration needed for logging, stats, deciders etc.
+ * t-this cwass pwovides most of the configuwation nyeeded fow w-wogging, o.O stats, decidews etc. ( ͡o ω ͡o )
  */
-abstract class BaseQueryIndexServer extends ThriftServer with Mtls {
+a-abstwact cwass b-basequewyindexsewvew extends thwiftsewvew with mtws {
 
-  protected val environment: Flag[String] = flag[String]("environment", "service environment")
-
-  /**
-   * Override with method to provide more module to guice.
-   */
-  protected def additionalModules: Seq[Module]
+  pwotected vaw enviwonment: f-fwag[stwing] = fwag[stwing]("enviwonment", (U ﹏ U) "sewvice enviwonment")
 
   /**
-   * Override this method to add the controller to the thrift router. BaseQueryIndexServer takes
-   * care of most of the other configuration for you.
-   * @param router
+   * ovewwide with method to pwovide m-mowe moduwe to guice. (///ˬ///✿)
    */
-  protected def addController(router: ThriftRouter): Unit
+  p-pwotected def a-additionawmoduwes: s-seq[moduwe]
 
-  override protected final lazy val modules: Seq[Module] = Seq(
-    DeciderModule,
-    new MtlsThriftWebFormsModule[AnnQueryService.MethodPerEndpoint](this)
-  ) ++ additionalModules
+  /**
+   * o-ovewwide this method to add the contwowwew t-to the thwift woutew. >w< basequewyindexsewvew takes
+   * cawe o-of most of the othew configuwation fow you. rawr
+   * @pawam woutew
+   */
+  pwotected def addcontwowwew(woutew: t-thwiftwoutew): unit
 
-  override protected final def configureThrift(router: ThriftRouter): Unit = {
-    router
-      .filter[LoggingMDCFilter]
-      .filter[TraceIdMDCFilter]
-      .filter[ThriftMDCFilter]
-      .filter[AccessLoggingFilter]
-      .filter[StatsFilter]
+  o-ovewwide pwotected f-finaw wazy v-vaw moduwes: seq[moduwe] = seq(
+    decidewmoduwe, mya
+    nyew mtwsthwiftwebfowmsmoduwe[annquewysewvice.methodpewendpoint](this)
+  ) ++ a-additionawmoduwes
 
-    addController(router)
+  o-ovewwide pwotected f-finaw def configuwethwift(woutew: t-thwiftwoutew): unit = {
+    woutew
+      .fiwtew[woggingmdcfiwtew]
+      .fiwtew[twaceidmdcfiwtew]
+      .fiwtew[thwiftmdcfiwtew]
+      .fiwtew[accesswoggingfiwtew]
+      .fiwtew[statsfiwtew]
+
+    a-addcontwowwew(woutew)
   }
 }

@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted
 
-import scala.collection.Map
+impowt scawa.cowwection.map
 
-case class ClickTrackingInfo(
-  urlParams: Map[String, String],
-  urlOverride: Option[String],
-  urlOverrideType: Option[UrlOverrideType])
+c-case c-cwass cwicktwackinginfo(
+  u-uwwpawams: m-map[stwing, (⑅˘꒳˘) s-stwing], ( ͡o ω ͡o )
+  uwwuvwwide: o-option[stwing], UwU
+  u-uwwuvwwidetype: o-option[uwwuvwwidetype])

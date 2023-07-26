@@ -1,150 +1,150 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.kv.DeniedManhattanException
-import com.twitter.tweetypie.storage.Response.TweetResponseCode
-import com.twitter.tweetypie.storage.TweetUtils._
-import com.twitter.tweetypie.storage_internal.thriftscala.StoredTweet
-import com.twitter.tweetypie.thriftscala.DeletedTweet
-import scala.util.control.NonFatal
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stowage.cwient.manhattan.kv.deniedmanhattanexception
+i-impowt c-com.twittew.tweetypie.stowage.wesponse.tweetwesponsecode
+i-impowt c-com.twittew.tweetypie.stowage.tweetutiws._
+i-impowt com.twittew.tweetypie.stowage_intewnaw.thwiftscawa.stowedtweet
+i-impowt com.twittew.tweetypie.thwiftscawa.dewetedtweet
+impowt scawa.utiw.contwow.nonfataw
 
-sealed trait DeleteState
-object DeleteState {
-
-  /**
-   * This tweet is deleted but has not been permanently deleted from Manhattan. Tweets in this state
-   * may be undeleted.
-   */
-  case object SoftDeleted extends DeleteState
+seawed twait dewetestate
+object d-dewetestate {
 
   /**
-   * This tweet is deleted after being bounced for violating the Twitter Rules but has not been
-   * permanently deleted from Manhattan. Tweets in this state may NOT be undeleted.
+   * this tweet is deweted b-but has nyot been pewmanentwy deweted f-fwom manhattan. -.- tweets in this state
+   * may be undeweted. :3
    */
-  case object BounceDeleted extends DeleteState
+  c-case object softdeweted e-extends dewetestate
 
   /**
-   * This tweet has been permanently deleted from Manhattan.
+   * t-this tweet is deweted aftew being bounced fow viowating the twittew wuwes but h-has nyot been
+   * pewmanentwy deweted fwom manhattan. nyaa~~ tweets in this state may n-nyot be undeweted. 😳
    */
-  case object HardDeleted extends DeleteState
+  case o-object bouncedeweted e-extends dewetestate
 
   /**
-   * There is no data in Manhattan to distinguish this tweet id from one that never existed.
+   * t-this tweet h-has been pewmanentwy deweted fwom manhattan. (⑅˘꒳˘)
    */
-  case object NotFound extends DeleteState
+  c-case object hawddeweted extends dewetestate
 
   /**
-   * This tweet exists and is not in a deleted state.
+   * t-thewe is nyo data in manhattan to distinguish this tweet id fwom one that nyevew existed. nyaa~~
    */
-  case object NotDeleted extends DeleteState
+  case o-object nyotfound extends dewetestate
+
+  /**
+   * t-this tweet e-exists and is nyot i-in a deweted state. OwO
+   */
+  case object nyotdeweted extends dewetestate
 }
 
-case class DeletedTweetResponse(
-  tweetId: TweetId,
-  overallResponse: TweetResponseCode,
-  deleteState: DeleteState,
-  tweet: Option[DeletedTweet])
+c-case c-cwass dewetedtweetwesponse(
+  tweetid: tweetid, rawr x3
+  o-ovewawwwesponse: t-tweetwesponsecode, XD
+  dewetestate: d-dewetestate, σωσ
+  tweet: option[dewetedtweet])
 
-object GetDeletedTweetsHandler {
-  def apply(
-    read: ManhattanOperations.Read,
-    stats: StatsReceiver
-  ): TweetStorageClient.GetDeletedTweets =
-    (unfilteredTweetIds: Seq[TweetId]) => {
-      val tweetIds = unfilteredTweetIds.filter(_ > 0)
+o-object getdewetedtweetshandwew {
+  def appwy(
+    wead: manhattanopewations.wead, (U ᵕ U❁)
+    s-stats: statsweceivew
+  ): t-tweetstowagecwient.getdewetedtweets =
+    (unfiwtewedtweetids: seq[tweetid]) => {
+      v-vaw t-tweetids = unfiwtewedtweetids.fiwtew(_ > 0)
 
-      Stats.addWidthStat("getDeletedTweets", "tweetIds", tweetIds.size, stats)
+      stats.addwidthstat("getdewetedtweets", (U ﹏ U) "tweetids", tweetids.size, :3 stats)
 
-      val stitches = tweetIds.map { tweetId =>
-        read(tweetId)
-          .map { mhRecords =>
-            val storedTweet = buildStoredTweet(tweetId, mhRecords)
+      vaw stitches = tweetids.map { tweetid =>
+        w-wead(tweetid)
+          .map { m-mhwecowds =>
+            vaw s-stowedtweet = buiwdstowedtweet(tweetid, ( ͡o ω ͡o ) m-mhwecowds)
 
-            TweetStateRecord.mostRecent(mhRecords) match {
-              case Some(m: TweetStateRecord.SoftDeleted) => softDeleted(m, storedTweet)
-              case Some(m: TweetStateRecord.BounceDeleted) => bounceDeleted(m, storedTweet)
-              case Some(m: TweetStateRecord.HardDeleted) => hardDeleted(m, storedTweet)
-              case _ if storedTweet.getFieldBlobs(expectedFields).isEmpty => notFound(tweetId)
-              case _ => notDeleted(tweetId, storedTweet)
+            t-tweetstatewecowd.mostwecent(mhwecowds) match {
+              case some(m: tweetstatewecowd.softdeweted) => s-softdeweted(m, σωσ stowedtweet)
+              case some(m: tweetstatewecowd.bouncedeweted) => bouncedeweted(m, >w< s-stowedtweet)
+              case some(m: tweetstatewecowd.hawddeweted) => h-hawddeweted(m, 😳😳😳 stowedtweet)
+              c-case _ i-if stowedtweet.getfiewdbwobs(expectedfiewds).isempty => nyotfound(tweetid)
+              c-case _ => n-nyotdeweted(tweetid, OwO s-stowedtweet)
             }
           }
-          .handle {
-            case _: DeniedManhattanException =>
-              DeletedTweetResponse(
-                tweetId,
-                TweetResponseCode.OverCapacity,
-                DeleteState.NotFound,
-                None
+          .handwe {
+            c-case _: deniedmanhattanexception =>
+              dewetedtweetwesponse(
+                tweetid, 😳
+                t-tweetwesponsecode.ovewcapacity, 😳😳😳
+                d-dewetestate.notfound, (˘ω˘)
+                n-nyone
               )
 
-            case NonFatal(ex) =>
-              TweetUtils.log.warning(
-                ex,
-                s"Unhandled exception in GetDeletedTweetsHandler for tweetId: $tweetId"
+            c-case nyonfataw(ex) =>
+              t-tweetutiws.wog.wawning(
+                ex, ʘwʘ
+                s"unhandwed exception i-in getdewetedtweetshandwew fow tweetid: $tweetid"
               )
-              DeletedTweetResponse(tweetId, TweetResponseCode.Failure, DeleteState.NotFound, None)
+              dewetedtweetwesponse(tweetid, ( ͡o ω ͡o ) tweetwesponsecode.faiwuwe, o.O dewetestate.notfound, >w< nyone)
           }
       }
 
-      Stitch.collect(stitches)
+      stitch.cowwect(stitches)
     }
 
-  private def notFound(tweetId: TweetId) =
-    DeletedTweetResponse(
-      tweetId = tweetId,
-      overallResponse = TweetResponseCode.Success,
-      deleteState = DeleteState.NotFound,
-      tweet = None
+  p-pwivate def nyotfound(tweetid: tweetid) =
+    dewetedtweetwesponse(
+      tweetid = t-tweetid, 😳
+      o-ovewawwwesponse = t-tweetwesponsecode.success, 🥺
+      dewetestate = d-dewetestate.notfound, rawr x3
+      tweet = nyone
     )
 
-  private def softDeleted(record: TweetStateRecord.SoftDeleted, storedTweet: StoredTweet) =
-    DeletedTweetResponse(
-      record.tweetId,
-      TweetResponseCode.Success,
-      DeleteState.SoftDeleted,
-      Some(
-        StorageConversions
-          .toDeletedTweet(storedTweet)
-          .copy(deletedAtMsec = Some(record.createdAt))
+  p-pwivate d-def softdeweted(wecowd: tweetstatewecowd.softdeweted, o.O stowedtweet: stowedtweet) =
+    dewetedtweetwesponse(
+      wecowd.tweetid, rawr
+      t-tweetwesponsecode.success, ʘwʘ
+      dewetestate.softdeweted, 😳😳😳
+      s-some(
+        stowageconvewsions
+          .todewetedtweet(stowedtweet)
+          .copy(dewetedatmsec = s-some(wecowd.cweatedat))
       )
     )
 
-  private def bounceDeleted(record: TweetStateRecord.BounceDeleted, storedTweet: StoredTweet) =
-    DeletedTweetResponse(
-      record.tweetId,
-      TweetResponseCode.Success,
-      DeleteState.BounceDeleted,
-      Some(
-        StorageConversions
-          .toDeletedTweet(storedTweet)
-          .copy(deletedAtMsec = Some(record.createdAt))
+  p-pwivate def bouncedeweted(wecowd: tweetstatewecowd.bouncedeweted, ^^;; s-stowedtweet: s-stowedtweet) =
+    dewetedtweetwesponse(
+      w-wecowd.tweetid, o.O
+      tweetwesponsecode.success, (///ˬ///✿)
+      d-dewetestate.bouncedeweted, σωσ
+      some(
+        stowageconvewsions
+          .todewetedtweet(stowedtweet)
+          .copy(dewetedatmsec = some(wecowd.cweatedat))
       )
     )
 
-  private def hardDeleted(record: TweetStateRecord.HardDeleted, storedTweet: StoredTweet) =
-    DeletedTweetResponse(
-      record.tweetId,
-      TweetResponseCode.Success,
-      DeleteState.HardDeleted,
-      Some(
-        StorageConversions
-          .toDeletedTweet(storedTweet)
+  pwivate def hawddeweted(wecowd: tweetstatewecowd.hawddeweted, nyaa~~ s-stowedtweet: stowedtweet) =
+    d-dewetedtweetwesponse(
+      w-wecowd.tweetid,
+      tweetwesponsecode.success, ^^;;
+      d-dewetestate.hawddeweted, ^•ﻌ•^
+      s-some(
+        stowageconvewsions
+          .todewetedtweet(stowedtweet)
           .copy(
-            hardDeletedAtMsec = Some(record.createdAt),
-            deletedAtMsec = Some(record.deletedAt)
+            h-hawddewetedatmsec = some(wecowd.cweatedat), σωσ
+            dewetedatmsec = some(wecowd.dewetedat)
           )
       )
     )
 
   /**
-   * notDeleted returns a tweet to simplify tweetypie.handler.UndeleteTweetHandler
+   * nyotdeweted wetuwns a tweet to simpwify t-tweetypie.handwew.undewetetweethandwew
    */
-  private def notDeleted(tweetId: TweetId, storedTweet: StoredTweet) =
-    DeletedTweetResponse(
-      tweetId = tweetId,
-      overallResponse = TweetResponseCode.Success,
-      deleteState = DeleteState.NotDeleted,
-      tweet = Some(StorageConversions.toDeletedTweet(storedTweet))
+  p-pwivate def notdeweted(tweetid: tweetid, -.- stowedtweet: stowedtweet) =
+    d-dewetedtweetwesponse(
+      t-tweetid = tweetid, ^^;;
+      ovewawwwesponse = tweetwesponsecode.success,
+      d-dewetestate = dewetestate.notdeweted, XD
+      tweet = some(stowageconvewsions.todewetedtweet(stowedtweet))
     )
 }

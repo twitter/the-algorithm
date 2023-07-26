@@ -1,33 +1,33 @@
-package com.twitter.tsp.modules
+package com.twittew.tsp.moduwes
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.app.Flag
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.storehaus_internal.memcache.MemcacheStore
-import com.twitter.storehaus_internal.util.ClientName
-import com.twitter.storehaus_internal.util.ZkEndPoint
+impowt com.googwe.inject.pwovides
+i-impowt com.googwe.inject.singweton
+i-impowt com.twittew.app.fwag
+i-impowt com.twittew.finagwe.memcached.cwient
+i-impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.inject.twittewmoduwe
+impowt com.twittew.stowehaus_intewnaw.memcache.memcachestowe
+impowt com.twittew.stowehaus_intewnaw.utiw.cwientname
+impowt com.twittew.stowehaus_intewnaw.utiw.zkendpoint
 
-object UnifiedCacheClient extends TwitterModule {
-  val tspUnifiedCacheDest: Flag[String] = flag[String](
-    name = "tsp.unifiedCacheDest",
-    default = "/srv#/prod/local/cache/topic_social_proof_unified",
-    help = "Wily path to topic social proof unified cache"
+object u-unifiedcachecwient extends twittewmoduwe {
+  v-vaw tspunifiedcachedest: fwag[stwing] = f-fwag[stwing](
+    nyame = "tsp.unifiedcachedest", >_<
+    defauwt = "/swv#/pwod/wocaw/cache/topic_sociaw_pwoof_unified", rawr x3
+    hewp = "wiwy p-path to topic sociaw pwoof unified c-cache"
   )
 
-  @Provides
-  @Singleton
-  def provideUnifiedCacheClient(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver,
-  ): Client =
-    MemcacheStore.memcachedClient(
-      name = ClientName("topic-social-proof-unified-memcache"),
-      dest = ZkEndPoint(tspUnifiedCacheDest()),
-      statsReceiver = statsReceiver.scope("cache_client"),
-      serviceIdentifier = serviceIdentifier
+  @pwovides
+  @singweton
+  d-def pwovideunifiedcachecwient(
+    sewviceidentifiew: sewviceidentifiew,
+    statsweceivew: statsweceivew, mya
+  ): c-cwient =
+    memcachestowe.memcachedcwient(
+      nyame = cwientname("topic-sociaw-pwoof-unified-memcache"), nyaa~~
+      dest = z-zkendpoint(tspunifiedcachedest()), (⑅˘꒳˘)
+      statsweceivew = s-statsweceivew.scope("cache_cwient"), rawr x3
+      s-sewviceidentifiew = s-sewviceidentifiew
     )
 }

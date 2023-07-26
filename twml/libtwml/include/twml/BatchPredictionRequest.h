@@ -1,44 +1,44 @@
-#pragma once
+#pwagma once
 
-#ifdef __cplusplus
+#ifdef __cpwuspwus
 
-#include <twml/DataRecord.h>
-#include <twml/HashedDataRecord.h>
-#include <twml/Tensor.h>
+#incwude <twmw/datawecowd.h>
+#incwude <twmw/hasheddatawecowd.h>
+#incwude <twmw/tensow.h>
 
-namespace twml {
+nyamespace t-twmw {
 
-template<class RecordType>
-class GenericBatchPredictionRequest {
- static_assert(std::is_same<RecordType, HashedDataRecord>::value ||
-               std::is_same<RecordType, DataRecord>::value,
-               "RecordType has to be HashedDatarecord or DataRecord");
- public:
-  typedef typename RecordType::Reader Reader;
-  GenericBatchPredictionRequest(int numOfLabels=0, int numOfWeights=0):
-      m_common_features(), m_requests(),
-      num_labels(numOfLabels), num_weights(numOfWeights)
+tempwate<cwass w-wecowdtype>
+c-cwass genewicbatchpwedictionwequest {
+ s-static_assewt(std::is_same<wecowdtype, >_< h-hasheddatawecowd>::vawue ||
+               s-std::is_same<wecowdtype, rawr x3 d-datawecowd>::vawue, mya
+               "wecowdtype h-has to be hasheddatawecowd ow datawecowd");
+ pubwic:
+  typedef typename w-wecowdtype::weadew weadew;
+  genewicbatchpwedictionwequest(int nyumofwabews=0, nyaa~~ i-int nyumofweights=0):
+      m_common_featuwes(), (⑅˘꒳˘) m-m_wequests(), rawr x3
+      nyum_wabews(numofwabews), (✿oωo) nyum_weights(numofweights)
   {}
 
-  void decode(Reader &reader);
+  void decode(weadew &weadew);
 
-  std::vector<RecordType>& requests() {
-    return m_requests;
+  s-std::vectow<wecowdtype>& wequests() {
+    w-wetuwn m-m_wequests;
   }
 
-  RecordType& common() {
-    return m_common_features;
+  wecowdtype& common() {
+    wetuwn m_common_featuwes;
   }
 
- private:
-  RecordType m_common_features;
-  std::vector<RecordType> m_requests;
-  int num_labels;
-  int num_weights;
+ pwivate:
+  wecowdtype m-m_common_featuwes;
+  std::vectow<wecowdtype> m_wequests;
+  int nyum_wabews;
+  int nyum_weights;
 };
 
-using HashedBatchPredictionRequest = GenericBatchPredictionRequest<HashedDataRecord>;
-using BatchPredictionRequest = GenericBatchPredictionRequest<DataRecord>;
+u-using hashedbatchpwedictionwequest = g-genewicbatchpwedictionwequest<hasheddatawecowd>;
+u-using batchpwedictionwequest = g-genewicbatchpwedictionwequest<datawecowd>;
 
 }
 

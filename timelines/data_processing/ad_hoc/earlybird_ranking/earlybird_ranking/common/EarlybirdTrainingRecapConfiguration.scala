@@ -1,17 +1,17 @@
-package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common
+package com.twittew.timewines.data_pwocessing.ad_hoc.eawwybiwd_wanking.common
 
-import com.twitter.ml.api.Feature
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
+impowt c-com.twittew.mw.api.featuwe
+i-impowt com.twittew.timewines.pwediction.featuwes.wecap.wecapfeatuwes
 
-class EarlybirdTrainingRecapConfiguration extends EarlybirdTrainingConfiguration {
-  override val labels: Map[String, Feature.Binary] = Map(
-    "detail_expanded" -> RecapFeatures.IS_CLICKED,
-    "favorited" -> RecapFeatures.IS_FAVORITED,
-    "open_linked" -> RecapFeatures.IS_OPEN_LINKED,
-    "photo_expanded" -> RecapFeatures.IS_PHOTO_EXPANDED,
-    "profile_clicked" -> RecapFeatures.IS_PROFILE_CLICKED,
-    "replied" -> RecapFeatures.IS_REPLIED,
-    "retweeted" -> RecapFeatures.IS_RETWEETED,
-    "video_playback50" -> RecapFeatures.IS_VIDEO_PLAYBACK_50
+c-cwass eawwybiwdtwainingwecapconfiguwation e-extends eawwybiwdtwainingconfiguwation {
+  o-ovewwide v-vaw wabews: m-map[stwing, :3 featuwe.binawy] = m-map(
+    "detaiw_expanded" -> wecapfeatuwes.is_cwicked, (U ﹏ U)
+    "favowited" -> wecapfeatuwes.is_favowited, -.-
+    "open_winked" -> wecapfeatuwes.is_open_winked, (ˆ ﻌ ˆ)♡
+    "photo_expanded" -> wecapfeatuwes.is_photo_expanded, (⑅˘꒳˘)
+    "pwofiwe_cwicked" -> w-wecapfeatuwes.is_pwofiwe_cwicked, (U ᵕ U❁)
+    "wepwied" -> wecapfeatuwes.is_wepwied, -.-
+    "wetweeted" -> wecapfeatuwes.is_wetweeted, ^^;;
+    "video_pwayback50" -> w-wecapfeatuwes.is_video_pwayback_50
   )
 }

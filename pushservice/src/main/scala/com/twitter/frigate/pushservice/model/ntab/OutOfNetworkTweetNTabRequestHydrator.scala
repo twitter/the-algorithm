@@ -1,78 +1,78 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.twittew.fwigate.pushsewvice.modew.ntab
 
-import com.twitter.frigate.common.base.TopicCandidate
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.common.base.TweetCandidate
-import com.twitter.frigate.common.base.TweetDetails
-import com.twitter.frigate.common.rec_types.RecTypes._
-import com.twitter.frigate.common.util.MrNtabCopyObjects
-import com.twitter.frigate.pushservice.exception.TweetNTabRequestHydratorException
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.take.NotificationServiceSender
-import com.twitter.notificationservice.thriftscala.DisplayText
-import com.twitter.notificationservice.thriftscala.DisplayTextEntity
-import com.twitter.notificationservice.thriftscala.TextValue
-import com.twitter.util.Future
+impowt com.twittew.fwigate.common.base.topiccandidate
+i-impowt c-com.twittew.fwigate.common.base.tweetauthowdetaiws
+i-impowt com.twittew.fwigate.common.base.tweetcandidate
+i-impowt c-com.twittew.fwigate.common.base.tweetdetaiws
+i-impowt c-com.twittew.fwigate.common.wec_types.wectypes._
+i-impowt com.twittew.fwigate.common.utiw.mwntabcopyobjects
+impowt com.twittew.fwigate.pushsewvice.exception.tweetntabwequesthydwatowexception
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.fwigate.pushsewvice.take.notificationsewvicesendew
+impowt com.twittew.notificationsewvice.thwiftscawa.dispwaytext
+i-impowt com.twittew.notificationsewvice.thwiftscawa.dispwaytextentity
+impowt com.twittew.notificationsewvice.thwiftscawa.textvawue
+i-impowt com.twittew.utiw.futuwe
 
-trait OutOfNetworkTweetNTabRequestHydrator extends TweetNTabRequestHydrator {
-  self: PushCandidate
-    with TweetCandidate
-    with TweetAuthorDetails
-    with TopicCandidate
-    with TweetDetails =>
+twait outofnetwowktweetntabwequesthydwatow extends tweetntabwequesthydwatow {
+  s-sewf: pushcandidate
+    with tweetcandidate
+    w-with tweetauthowdetaiws
+    w-with topiccandidate
+    with tweetdetaiws =>
 
-  lazy val useTopicCopyForMBCGNtab = mrModelingBasedTypes.contains(commonRecType) && target.params(
-    PushFeatureSwitchParams.EnableMrModelingBasedCandidatesTopicCopy)
-  lazy val useTopicCopyForFrsNtab = frsTypes.contains(commonRecType) && target.params(
-    PushFeatureSwitchParams.EnableFrsTweetCandidatesTopicCopy)
-  lazy val useTopicCopyForTagspaceNtab = tagspaceTypes.contains(commonRecType) && target.params(
-    PushFeatureSwitchParams.EnableHashspaceCandidatesTopicCopy)
+  wazy vaw usetopiccopyfowmbcgntab = m-mwmodewingbasedtypes.contains(commonwectype) && tawget.pawams(
+    pushfeatuweswitchpawams.enabwemwmodewingbasedcandidatestopiccopy)
+  wazy vaw usetopiccopyfowfwsntab = f-fwstypes.contains(commonwectype) && tawget.pawams(
+    p-pushfeatuweswitchpawams.enabwefwstweetcandidatestopiccopy)
+  w-wazy v-vaw usetopiccopyfowtagspacentab = t-tagspacetypes.contains(commonwectype) && tawget.pawams(
+    pushfeatuweswitchpawams.enabwehashspacecandidatestopiccopy)
 
-  override lazy val tapThroughFut: Future[String] = {
-    if (hasVideo && self.target.params(
-        PushFeatureSwitchParams.EnableLaunchVideosInImmersiveExplore)) {
-      Future.value(
-        s"i/immersive_timeline?display_location=notification&include_pinned_tweet=true&pinned_tweet_id=${tweetId}&tl_type=imv")
-    } else {
-      tweetAuthor.map {
-        case Some(author) =>
-          val authorProfile = author.profile.getOrElse(
-            throw new TweetNTabRequestHydratorException(
-              s"Unable to obtain author profile for: ${author.id}"))
-          s"${authorProfile.screenName}/status/${tweetId.toString}"
-        case _ =>
-          throw new TweetNTabRequestHydratorException(
-            s"Unable to obtain author and target details to generate tap through for Tweet: $tweetId")
+  o-ovewwide wazy vaw tapthwoughfut: futuwe[stwing] = {
+    i-if (hasvideo && sewf.tawget.pawams(
+        pushfeatuweswitchpawams.enabwewaunchvideosinimmewsiveexpwowe)) {
+      futuwe.vawue(
+        s"i/immewsive_timewine?dispway_wocation=notification&incwude_pinned_tweet=twue&pinned_tweet_id=${tweetid}&tw_type=imv")
+    } ewse {
+      tweetauthow.map {
+        c-case some(authow) =>
+          vaw authowpwofiwe = a-authow.pwofiwe.getowewse(
+            thwow n-nyew tweetntabwequesthydwatowexception(
+              s-s"unabwe to obtain authow pwofiwe fow: ${authow.id}"))
+          s"${authowpwofiwe.scweenname}/status/${tweetid.tostwing}"
+        c-case _ =>
+          t-thwow nyew tweetntabwequesthydwatowexception(
+            s"unabwe t-to obtain authow a-and tawget detaiws to genewate t-tap thwough fow tweet: $tweetid")
       }
     }
   }
 
-  override lazy val displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] =
-    if (localizedUttEntity.isDefined &&
-      (useTopicCopyForMBCGNtab || useTopicCopyForFrsNtab || useTopicCopyForTagspaceNtab)) {
-      NotificationServiceSender
-        .getDisplayTextEntityFromUser(tweetAuthor, "tweetAuthorName", isBold = true).map(_.toSeq)
-    } else {
-      NotificationServiceSender
-        .getDisplayTextEntityFromUser(tweetAuthor, "author", isBold = true).map(_.toSeq)
+  o-ovewwide wazy vaw dispwaytextentitiesfut: futuwe[seq[dispwaytextentity]] =
+    i-if (wocawizeduttentity.isdefined &&
+      (usetopiccopyfowmbcgntab || usetopiccopyfowfwsntab || u-usetopiccopyfowtagspacentab)) {
+      notificationsewvicesendew
+        .getdispwaytextentityfwomusew(tweetauthow, >w< "tweetauthowname", nyaa~~ i-isbowd = twue).map(_.toseq)
+    } e-ewse {
+      nyotificationsewvicesendew
+        .getdispwaytextentityfwomusew(tweetauthow, (✿oωo) "authow", isbowd = twue).map(_.toseq)
     }
 
-  override lazy val refreshableType: Option[String] = {
-    if (localizedUttEntity.isDefined &&
-      (useTopicCopyForMBCGNtab || useTopicCopyForFrsNtab || useTopicCopyForTagspaceNtab)) {
-      MrNtabCopyObjects.TopicTweet.refreshableType
-    } else ntabCopy.refreshableType
+  ovewwide wazy vaw wefweshabwetype: option[stwing] = {
+    i-if (wocawizeduttentity.isdefined &&
+      (usetopiccopyfowmbcgntab || u-usetopiccopyfowfwsntab || usetopiccopyfowtagspacentab)) {
+      m-mwntabcopyobjects.topictweet.wefweshabwetype
+    } e-ewse nytabcopy.wefweshabwetype
   }
 
-  override def socialProofDisplayText: Option[DisplayText] = {
-    if (localizedUttEntity.isDefined &&
-      (useTopicCopyForMBCGNtab || useTopicCopyForFrsNtab || useTopicCopyForTagspaceNtab)) {
-      localizedUttEntity.map(uttEntity =>
-        DisplayText(values =
-          Seq(DisplayTextEntity("topic_name", TextValue.Text(uttEntity.localizedNameForDisplay)))))
-    } else None
+  o-ovewwide def sociawpwoofdispwaytext: option[dispwaytext] = {
+    if (wocawizeduttentity.isdefined &&
+      (usetopiccopyfowmbcgntab || u-usetopiccopyfowfwsntab || usetopiccopyfowtagspacentab)) {
+      wocawizeduttentity.map(uttentity =>
+        dispwaytext(vawues =
+          seq(dispwaytextentity("topic_name", t-textvawue.text(uttentity.wocawizednamefowdispway)))))
+    } ewse nyone
   }
 
-  override lazy val facepileUsersFut: Future[Seq[Long]] = senderIdFut.map(Seq(_))
+  o-ovewwide w-wazy vaw facepiweusewsfut: f-futuwe[seq[wong]] = sendewidfut.map(seq(_))
 }

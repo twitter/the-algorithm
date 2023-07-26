@@ -1,82 +1,82 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":candidate-algorithm-adapter",
-        ":client-context-adapter",
-        ":post-nux-algorithm-adapter",
-        ":pre-fetched-feature-adapter",
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], 😳😳😳
+    pwatfowm = "java8", -.-
+    t-tags = ["bazew-compatibwe"], ( ͡o ω ͡o )
+    d-dependencies = [
+        ":candidate-awgowithm-adaptew", rawr x3
+        ":cwient-context-adaptew", nyaa~~
+        ":post-nux-awgowithm-adaptew", /(^•ω•^)
+        ":pwe-fetched-featuwe-adaptew", rawr
     ],
 )
 
-target(
-    name = "common",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/base",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/strato",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/constants",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/feature_hydration/common",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/utils",
-        "src/java/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/api/util",
-        "src/scala/com/twitter/onboarding/relevance/util/metadata",
-        "util/util-slf4j-api/src/main/scala",
+tawget(
+    n-nyame = "common", OwO
+    t-tags = ["bazew-compatibwe"], (U ﹏ U)
+    d-dependencies = [
+        "3wdpawty/jvm/owg/swf4j:swf4j-api", >_<
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/base", rawr x3
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/cwients/stwato", mya
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/constants", nyaa~~
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/featuwe_hydwation/common", (⑅˘꒳˘)
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/modews", rawr x3
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/utiws", (✿oωo)
+        "swc/java/com/twittew/mw/api:api-base", (ˆ ﻌ ˆ)♡
+        "swc/scawa/com/twittew/mw/api/utiw", (˘ω˘)
+        "swc/scawa/com/twittew/onboawding/wewevance/utiw/metadata", (⑅˘꒳˘)
+        "utiw/utiw-swf4j-api/swc/main/scawa", (///ˬ///✿)
     ],
 )
 
-scala_library(
-    name = "candidate-algorithm-adapter",
-    sources = [
-        "CandidateAlgorithmAdapter.scala",
-    ],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
+s-scawa_wibwawy(
+    n-nyame = "candidate-awgowithm-adaptew",
+    s-souwces = [
+        "candidateawgowithmadaptew.scawa", 😳😳😳
+    ], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], mya
+    pwatfowm = "java8", 🥺
+    tags = ["bazew-compatibwe"], >_<
     dependencies = [
+        ":common", >_<
+        "hewmit/hewmit-cowe/swc/main/scawa/com/twittew/hewmit/constants", (⑅˘꒳˘)
+    ], /(^•ω•^)
+)
+
+scawa_wibwawy(
+    n-nyame = "cwient-context-adaptew", rawr x3
+    souwces = [
+        "cwientcontextadaptew.scawa", (U ﹏ U)
+    ],
+    compiwew_option_sets = ["fataw_wawnings"], (U ﹏ U)
+    p-pwatfowm = "java8", (⑅˘꒳˘)
+    tags = ["bazew-compatibwe"], òωó
+    d-dependencies = [
         ":common",
-        "hermit/hermit-core/src/main/scala/com/twitter/hermit/constants",
+        "snowfwake/swc/main/scawa/com/twittew/snowfwake/id", ʘwʘ
+    ], /(^•ω•^)
+)
+
+scawa_wibwawy(
+    nyame = "post-nux-awgowithm-adaptew",
+    souwces = [
+        "postnuxawgowithmadaptew.scawa", ʘwʘ
+    ],
+    p-pwatfowm = "java8", σωσ
+    tags = ["bazew-compatibwe"], OwO
+    d-dependencies = [
+        ":common", 😳😳😳
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/featuwes/customew_jouwney:post-nux-awgowithm-aggwegate", 😳😳😳
     ],
 )
 
-scala_library(
-    name = "client-context-adapter",
-    sources = [
-        "ClientContextAdapter.scala",
+s-scawa_wibwawy(
+    nyame = "pwe-fetched-featuwe-adaptew", o.O
+    souwces = [
+        "pwefetchedfeatuweadaptew.scawa", ( ͡o ω ͡o )
     ],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":common",
-        "snowflake/src/main/scala/com/twitter/snowflake/id",
-    ],
-)
-
-scala_library(
-    name = "post-nux-algorithm-adapter",
-    sources = [
-        "PostNuxAlgorithmAdapter.scala",
-    ],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":common",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/customer_journey:post-nux-algorithm-aggregate",
-    ],
-)
-
-scala_library(
-    name = "pre-fetched-feature-adapter",
-    sources = [
-        "PreFetchedFeatureAdapter.scala",
-    ],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":common",
-    ],
+    pwatfowm = "java8", (U ﹏ U)
+    tags = ["bazew-compatibwe"], (///ˬ///✿)
+    d-dependencies = [
+        ":common", >w<
+    ], rawr
 )

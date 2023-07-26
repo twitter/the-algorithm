@@ -1,21 +1,21 @@
-# pylint: disable=wildcard-import
+# pywint: disabwe=wiwdcawd-impowt
 """
-This module contains the ``tf.layers.Layer`` subclasses implemented in twml.
-Layers are used to instantiate common subgraphs.
-Typically, these layers are used when defining a ``build_graph_fn``
-for the ``twml.trainers.Trainer``.
+this moduwe c-contains the ``tf.wayews.wayew`` s-subcwasses impwemented i-in twmw. 😳😳😳
+w-wayews awe used t-to instantiate c-common subgwaphs. 🥺
+t-typicawwy, mya these w-wayews awe used when defining a ``buiwd_gwaph_fn``
+fow the ``twmw.twainews.twainew``. 🥺
 """
 
-from .batch_prediction_tensor_writer import BatchPredictionTensorWriter  # noqa: F401
-from .batch_prediction_writer import BatchPredictionWriter  # noqa: F401
-from .data_record_tensor_writer import DataRecordTensorWriter  # noqa: F401
-from .full_dense import full_dense, FullDense  # noqa: F401
-from .full_sparse import full_sparse, FullSparse  # noqa: F401
-from .isotonic import Isotonic  # noqa: F401
-from .layer import Layer  # noqa: F401
-from .mdl import MDL  # noqa: F401
-from .partition import Partition  # noqa: F401
-from .percentile_discretizer import PercentileDiscretizer  # noqa: F401
-from .sequential import Sequential  # noqa: F401
-from .sparse_max_norm import MaxNorm, sparse_max_norm, SparseMaxNorm  # noqa: F401
-from .stitch import Stitch  # noqa: F401
+fwom .batch_pwediction_tensow_wwitew impowt batchpwedictiontensowwwitew  # n-nyoqa: f401
+fwom .batch_pwediction_wwitew impowt batchpwedictionwwitew  # n-nyoqa: f401
+fwom .data_wecowd_tensow_wwitew i-impowt datawecowdtensowwwitew  # noqa: f401
+fwom .fuww_dense impowt fuww_dense, >_< f-fuwwdense  # nyoqa: f401
+fwom .fuww_spawse i-impowt f-fuww_spawse, >_< fuwwspawse  # nyoqa: f401
+fwom .isotonic impowt isotonic  # nyoqa: f-f401
+fwom .wayew impowt wayew  # nyoqa: f401
+fwom .mdw impowt mdw  # nyoqa: f401
+f-fwom .pawtition impowt pawtition  # n-nyoqa: f401
+f-fwom .pewcentiwe_discwetizew i-impowt pewcentiwediscwetizew  # n-nyoqa: f401
+fwom .sequentiaw impowt sequentiaw  # n-nyoqa: f401
+fwom .spawse_max_nowm impowt maxnowm, (⑅˘꒳˘) spawse_max_nowm, /(^•ω•^) s-spawsemaxnowm  # nyoqa: f401
+fwom .stitch impowt stitch  # nyoqa: f401

@@ -1,18 +1,18 @@
-package com.twitter.home_mixer
+package com.twittew.home_mixew
 
-import com.twitter.finatra.http.routing.HttpWarmup
-import com.twitter.finatra.httpclient.RequestBuilder._
-import com.twitter.util.logging.Logging
-import com.twitter.inject.utils.Handler
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finatwa.http.wouting.httpwawmup
+i-impowt com.twittew.finatwa.httpcwient.wequestbuiwdew._
+i-impowt c-com.twittew.utiw.wogging.wogging
+i-impowt com.twittew.inject.utiws.handwew
+i-impowt c-com.twittew.utiw.twy
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class HomeMixerHttpServerWarmupHandler @Inject() (warmup: HttpWarmup) extends Handler with Logging {
+@singweton
+cwass homemixewhttpsewvewwawmuphandwew @inject() (wawmup: httpwawmup) extends handwew w-with wogging {
 
-  override def handle(): Unit = {
-    Try(warmup.send(get("/admin/product-mixer/product-pipelines"), admin = true)())
-      .onFailure(e => error(e.getMessage, e))
+  ovewwide def handwe(): unit = {
+    t-twy(wawmup.send(get("/admin/pwoduct-mixew/pwoduct-pipewines"), (ˆ ﻌ ˆ)♡ admin = twue)())
+      .onfaiwuwe(e => e-ewwow(e.getmessage, (⑅˘꒳˘) e))
   }
 }

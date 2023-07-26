@@ -1,72 +1,72 @@
-package com.twitter.recos.user_tweet_entity_graph
+package com.twittew.wecos.usew_tweet_entity_gwaph
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.graphjet.algorithms.RecommendationInfo
-import com.twitter.graphjet.algorithms.socialproof.{SocialProofResult => SocialProofJavaResult}
-import com.twitter.recos.decider.UserTweetEntityGraphDecider
-import com.twitter.recos.util.Stats
-import com.twitter.recos.util.Stats._
-import com.twitter.recos.recos_common.thriftscala.{SocialProofType => SocialProofThriftType}
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.TweetRecommendation
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.{
-  SocialProofRequest => SocialProofThriftRequest
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.utiw.statsutiw
+i-impowt com.twittew.gwaphjet.awgowithms.wecommendationinfo
+i-impowt c-com.twittew.gwaphjet.awgowithms.sociawpwoof.{sociawpwoofwesuwt => s-sociawpwoofjavawesuwt}
+i-impowt c-com.twittew.wecos.decidew.usewtweetentitygwaphdecidew
+i-impowt com.twittew.wecos.utiw.stats
+impowt com.twittew.wecos.utiw.stats._
+impowt com.twittew.wecos.wecos_common.thwiftscawa.{sociawpwooftype => s-sociawpwoofthwifttype}
+impowt com.twittew.wecos.usew_tweet_entity_gwaph.thwiftscawa.tweetwecommendation
+impowt com.twittew.wecos.usew_tweet_entity_gwaph.thwiftscawa.{
+  s-sociawpwoofwequest => sociawpwoofthwiftwequest
 }
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.{
-  SocialProofResponse => SocialProofThriftResponse
+i-impowt com.twittew.wecos.usew_tweet_entity_gwaph.thwiftscawa.{
+  sociawpwoofwesponse => sociawpwoofthwiftwesponse
 }
-import com.twitter.servo.request.RequestHandler
-import com.twitter.util.Future
-import scala.collection.JavaConverters._
+impowt com.twittew.sewvo.wequest.wequesthandwew
+i-impowt com.twittew.utiw.futuwe
+impowt scawa.cowwection.javaconvewtews._
 
-class TweetSocialProofHandler(
-  tweetSocialProofRunner: TweetSocialProofRunner,
-  decider: UserTweetEntityGraphDecider,
-  statsReceiver: StatsReceiver)
-    extends RequestHandler[SocialProofThriftRequest, SocialProofThriftResponse] {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
+c-cwass tweetsociawpwoofhandwew(
+  t-tweetsociawpwoofwunnew: tweetsociawpwoofwunnew, o.O
+  decidew: usewtweetentitygwaphdecidew, /(^•ω•^)
+  statsweceivew: statsweceivew)
+    e-extends wequesthandwew[sociawpwoofthwiftwequest, nyaa~~ sociawpwoofthwiftwesponse] {
+  pwivate vaw stats = s-statsweceivew.scope(this.getcwass.getsimpwename)
 
-  def getThriftSocialProof(
-    tweetSocialProof: SocialProofJavaResult
-  ): Map[SocialProofThriftType, Seq[Long]] = {
-    Option(tweetSocialProof.getSocialProof) match {
-      case Some(socialProof) if socialProof.isEmpty =>
-        stats.counter(Stats.EmptyResult).incr()
-        Map.empty[SocialProofThriftType, Seq[Long]]
-      case Some(socialProof) if !socialProof.isEmpty =>
-        socialProof.asScala.map {
-          case (socialProofType, connectingUsers) =>
+  def getthwiftsociawpwoof(
+    t-tweetsociawpwoof: s-sociawpwoofjavawesuwt
+  ): m-map[sociawpwoofthwifttype, nyaa~~ s-seq[wong]] = {
+    option(tweetsociawpwoof.getsociawpwoof) match {
+      c-case some(sociawpwoof) if sociawpwoof.isempty =>
+        stats.countew(stats.emptywesuwt).incw()
+        m-map.empty[sociawpwoofthwifttype, :3 seq[wong]]
+      case some(sociawpwoof) if !sociawpwoof.isempty =>
+        sociawpwoof.asscawa.map {
+          case (sociawpwooftype, c-connectingusews) =>
             (
-              SocialProofThriftType(socialProofType.toInt),
-              connectingUsers.asScala.map { Long2long }.toSeq)
-        }.toMap
-      case _ =>
-        throw new Exception("TweetSocialProofHandler gets wrong TweetSocialProof response")
+              sociawpwoofthwifttype(sociawpwooftype.toint),
+              c-connectingusews.asscawa.map { w-wong2wong }.toseq)
+        }.tomap
+      c-case _ =>
+        thwow new exception("tweetsociawpwoofhandwew gets wwong t-tweetsociawpwoof w-wesponse")
     }
   }
 
-  def apply(request: SocialProofThriftRequest): Future[SocialProofThriftResponse] = {
-    StatsUtil.trackBlockStats(stats) {
-      if (decider.tweetSocialProof) {
-        val socialProofsFuture = tweetSocialProofRunner(request)
+  def appwy(wequest: s-sociawpwoofthwiftwequest): f-futuwe[sociawpwoofthwiftwesponse] = {
+    statsutiw.twackbwockstats(stats) {
+      i-if (decidew.tweetsociawpwoof) {
+        vaw sociawpwoofsfutuwe = t-tweetsociawpwoofwunnew(wequest)
 
-        socialProofsFuture map { socialProofs: Seq[RecommendationInfo] =>
-          stats.counter(Stats.Served).incr(socialProofs.size)
-          SocialProofThriftResponse(
-            socialProofs.flatMap { tweetSocialProof: RecommendationInfo =>
-              val tweetSocialProofJavaResult = tweetSocialProof.asInstanceOf[SocialProofJavaResult]
-              Some(
-                TweetRecommendation(
-                  tweetSocialProofJavaResult.getNode,
-                  tweetSocialProofJavaResult.getWeight,
-                  getThriftSocialProof(tweetSocialProofJavaResult)
+        sociawpwoofsfutuwe map { sociawpwoofs: s-seq[wecommendationinfo] =>
+          stats.countew(stats.sewved).incw(sociawpwoofs.size)
+          sociawpwoofthwiftwesponse(
+            s-sociawpwoofs.fwatmap { tweetsociawpwoof: wecommendationinfo =>
+              v-vaw tweetsociawpwoofjavawesuwt = t-tweetsociawpwoof.asinstanceof[sociawpwoofjavawesuwt]
+              some(
+                tweetwecommendation(
+                  tweetsociawpwoofjavawesuwt.getnode,
+                  tweetsociawpwoofjavawesuwt.getweight, 😳😳😳
+                  getthwiftsociawpwoof(tweetsociawpwoofjavawesuwt)
                 )
               )
             }
           )
         }
-      } else {
-        Future.value(SocialProofThriftResponse())
+      } ewse {
+        f-futuwe.vawue(sociawpwoofthwiftwesponse())
       }
     }
   }

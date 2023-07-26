@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.component_library.selector.sorter
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow.sowtew
 
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
 
 /**
- * Reverse candidates.
+ * w-wevewse candidates. rawr x3
  *
- * @example `UpdateSortResults(ReverseSorter())`
+ * @exampwe `updatesowtwesuwts(wevewsesowtew())`
  */
-object ReverseSorter extends SorterProvider with Sorter {
+o-object w-wevewsesowtew e-extends sowtewpwovidew w-with sowtew {
 
-  override def sort[Candidate <: CandidateWithDetails](candidates: Seq[Candidate]): Seq[Candidate] =
-    candidates.reverse
+  o-ovewwide d-def sowt[candidate <: c-candidatewithdetaiws](candidates: seq[candidate]): seq[candidate] =
+    candidates.wevewse
 }

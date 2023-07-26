@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.suggestion
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.suggestion
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.suggestion._
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.suggestion._
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => uwt}
+i-impowt javax.inject.singweton
 
-@Singleton
-class SpellingActionTypeMarshaller {
+@singweton
+c-cwass s-spewwingactiontypemawshawwew {
 
-  def apply(spellingActionType: SpellingActionType): urt.SpellingActionType =
-    spellingActionType match {
-      case ReplaceSpellingActionType => urt.SpellingActionType.Replace
-      case ExpandSpellingActionType => urt.SpellingActionType.Expand
-      case SuggestSpellingActionType => urt.SpellingActionType.Suggest
+  d-def appwy(spewwingactiontype: s-spewwingactiontype): u-uwt.spewwingactiontype =
+    spewwingactiontype match {
+      case wepwacespewwingactiontype => uwt.spewwingactiontype.wepwace
+      c-case expandspewwingactiontype => uwt.spewwingactiontype.expand
+      case suggestspewwingactiontype => u-uwt.spewwingactiontype.suggest
     }
 }

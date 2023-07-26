@@ -1,37 +1,37 @@
-package com.twitter.home_mixer.product.list_recommended_users.filter
+package com.twittew.home_mixew.pwoduct.wist_wecommended_usews.fiwtew
 
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersFeatures.ScoreFeature
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt com.twittew.home_mixew.pwoduct.wist_wecommended_usews.modew.wistwecommendedusewsfeatuwes.scowefeatuwe
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.usewcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
 
-object DropMaxCandidatesByAggregatedScoreFilter extends Filter[PipelineQuery, UserCandidate] {
+object dwopmaxcandidatesbyaggwegatedscowefiwtew extends fiwtew[pipewinequewy, usewcandidate] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("DropMaxCandidatesByAggregatedScore")
+  o-ovewwide vaw identifiew: fiwtewidentifiew = fiwtewidentifiew("dwopmaxcandidatesbyaggwegatedscowe")
 
-  private val MaxSimilarUserCandidates = 150
+  p-pwivate vaw maxsimiwawusewcandidates = 150
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[UserCandidate]]
-  ): Stitch[FilterResult[UserCandidate]] = {
-    val userIdToAggregatedScoreMap = candidates
-      .groupBy(_.candidate.id)
+  o-ovewwide def appwy(
+    quewy: pipewinequewy, rawr x3
+    candidates: s-seq[candidatewithfeatuwes[usewcandidate]]
+  ): stitch[fiwtewwesuwt[usewcandidate]] = {
+    v-vaw usewidtoaggwegatedscowemap = c-candidates
+      .gwoupby(_.candidate.id)
       .map {
-        case (userId, candidates) =>
-          val aggregatedScore = candidates.map(_.features.getOrElse(ScoreFeature, 0.0)).sum
-          (userId, aggregatedScore)
+        case (usewid, nyaa~~ candidates) =>
+          vaw aggwegatedscowe = candidates.map(_.featuwes.getowewse(scowefeatuwe, /(^•ω•^) 0.0)).sum
+          (usewid, rawr aggwegatedscowe)
       }
 
-    val sortedCandidates = candidates.sortBy(candidate =>
-      -userIdToAggregatedScoreMap.getOrElse(candidate.candidate.id, 0.0))
+    v-vaw sowtedcandidates = candidates.sowtby(candidate =>
+      -usewidtoaggwegatedscowemap.getowewse(candidate.candidate.id, OwO 0.0))
 
-    val (kept, removed) = sortedCandidates.map(_.candidate).splitAt(MaxSimilarUserCandidates)
+    vaw (kept, (U ﹏ U) wemoved) = sowtedcandidates.map(_.candidate).spwitat(maxsimiwawusewcandidates)
 
-    Stitch.value(FilterResult(kept, removed))
+    stitch.vawue(fiwtewwesuwt(kept, >_< wemoved))
   }
 }

@@ -1,149 +1,149 @@
-package com.twitter.search.earlybird.index;
+package com.twittew.seawch.eawwybiwd.index;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.core.earlybird.index.inverted.IntBlockPool;
+impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.docidtotweetidmappew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.timemappew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.intbwockpoow;
 
-import it.unimi.dsi.fastutil.ints.Int2IntMap;
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+impowt i-it.unimi.dsi.fastutiw.ints.int2intmap;
+impowt it.unimi.dsi.fastutiw.ints.int2intopenhashmap;
 
 /**
- * Maps 32-bit document IDs to seconds-since-epoch timestamps.
+ * maps 32-bit d-document ids to seconds-since-epoch t-timestamps. -.-
  */
-public class RealtimeTimeMapper extends AbstractInMemoryTimeMapper {
-  // Doc id to timestamp map. Timestamps that are negative are out-of-order.
-  protected final Int2IntOpenHashMap timeMap;
-  private final int capacity;
+pubwic cwass weawtimetimemappew extends abstwactinmemowytimemappew {
+  // d-doc id to timestamp map. :3 timestamps t-that awe nyegative a-awe out-of-owdew. nyaa~~
+  pwotected finaw int2intopenhashmap timemap;
+  pwivate f-finaw int capacity;
 
-  public RealtimeTimeMapper(int capacity) {
-    super();
-    this.capacity = capacity;
+  pubwic weawtimetimemappew(int capacity) {
+    supew();
+    this.capacity = c-capacity;
 
-    timeMap = new Int2IntOpenHashMap(capacity);
-    timeMap.defaultReturnValue(ILLEGAL_TIME);
+    timemap = nyew i-int2intopenhashmap(capacity);
+    t-timemap.defauwtwetuwnvawue(iwwegaw_time);
   }
 
-  @Override
-  public int getTime(int docID) {
-    return timeMap.get(docID);
+  @ovewwide
+  p-pubwic int gettime(int d-docid) {
+    wetuwn timemap.get(docid);
   }
 
-  @Override
-  protected void setTime(int docID, int timeSeconds) {
-    timeMap.put(docID, timeSeconds);
+  @ovewwide
+  pwotected void s-settime(int docid, 😳 int timeseconds) {
+    timemap.put(docid, (⑅˘꒳˘) t-timeseconds);
   }
 
-  public final void addMapping(int docID, int timeSeconds) {
-    doAddMapping(docID, timeSeconds);
+  pubwic finaw void addmapping(int docid, nyaa~~ int timeseconds) {
+    doaddmapping(docid, OwO timeseconds);
   }
 
-  @Override
-  public TimeMapper optimize(DocIDToTweetIDMapper originalTweetIdMapper,
-                             DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
-    return new OptimizedTimeMapper(this, originalTweetIdMapper, optimizedTweetIdMapper);
+  @ovewwide
+  p-pubwic timemappew optimize(docidtotweetidmappew o-owiginawtweetidmappew, rawr x3
+                             d-docidtotweetidmappew o-optimizedtweetidmappew) thwows ioexception {
+    wetuwn nyew optimizedtimemappew(this, XD owiginawtweetidmappew, σωσ o-optimizedtweetidmappew);
   }
 
   /**
-   * Evaluates whether two instances of RealtimeTimeMapper are equal by value. It is
-   * slow because it has to check every tweet ID/timestamp in the map.
+   * e-evawuates whethew two instances o-of weawtimetimemappew a-awe equaw by vawue. (U ᵕ U❁) i-it is
+   * swow because it has t-to check evewy tweet id/timestamp in the map. (U ﹏ U)
    */
-  @VisibleForTesting
-  boolean verySlowEqualsForTests(RealtimeTimeMapper that) {
-    return reverseMapLastIndex == that.reverseMapLastIndex
-        && reverseMapIds.verySlowEqualsForTests(that.reverseMapIds)
-        && reverseMapTimes.verySlowEqualsForTests(that.reverseMapTimes)
+  @visibwefowtesting
+  b-boowean vewyswowequawsfowtests(weawtimetimemappew t-that) {
+    wetuwn w-wevewsemapwastindex == t-that.wevewsemapwastindex
+        && wevewsemapids.vewyswowequawsfowtests(that.wevewsemapids)
+        && wevewsemaptimes.vewyswowequawsfowtests(that.wevewsemaptimes)
         && capacity == that.capacity
-        && timeMap.equals(that.timeMap);
+        && timemap.equaws(that.timemap);
   }
 
-  private RealtimeTimeMapper(
-      int capacity,
-      int reverseMapLastIndex,
-      int[] docIds,
-      int[] timestamps,
-      IntBlockPool reverseMapTimes,
-      IntBlockPool reverseMapIds
+  pwivate weawtimetimemappew(
+      int capacity, :3
+      i-int wevewsemapwastindex, ( ͡o ω ͡o )
+      i-int[] docids,
+      int[] t-timestamps, σωσ
+      i-intbwockpoow wevewsemaptimes,
+      i-intbwockpoow wevewsemapids
   ) {
-    super(reverseMapLastIndex, reverseMapTimes, reverseMapIds);
+    supew(wevewsemapwastindex, >w< wevewsemaptimes, 😳😳😳 w-wevewsemapids);
 
     this.capacity = capacity;
 
-    timeMap = new Int2IntOpenHashMap(capacity);
-    timeMap.defaultReturnValue(ILLEGAL_TIME);
+    timemap = nyew int2intopenhashmap(capacity);
+    t-timemap.defauwtwetuwnvawue(iwwegaw_time);
 
-    Preconditions.checkState(docIds.length == timestamps.length);
+    pweconditions.checkstate(docids.wength == t-timestamps.wength);
 
-    for (int i = 0; i < docIds.length; i++) {
-      timeMap.put(docIds[i], timestamps[i]);
+    f-fow (int i-i = 0; i < docids.wength; i-i++) {
+      timemap.put(docids[i], OwO t-timestamps[i]);
     }
   }
 
-  @Override
-  public RealtimeTimeMapper.FlushHandler getFlushHandler() {
-    return new RealtimeTimeMapper.FlushHandler(this);
+  @ovewwide
+  p-pubwic w-weawtimetimemappew.fwushhandwew getfwushhandwew() {
+    wetuwn n-nyew weawtimetimemappew.fwushhandwew(this);
   }
 
-  public static class FlushHandler extends Flushable.Handler<RealtimeTimeMapper> {
-    private static final String REVERSE_MAP_LAST_INDEX_PROP = "reverseMapLastIndex";
-    private static final String TIMES_SUB_PROP = "times";
-    private static final String IDS_SUB_PROP = "ids";
-    private static final String CAPACITY_PROP = "capacity";
+  p-pubwic static c-cwass fwushhandwew e-extends f-fwushabwe.handwew<weawtimetimemappew> {
+    pwivate static finaw stwing wevewse_map_wast_index_pwop = "wevewsemapwastindex";
+    p-pwivate static finaw stwing times_sub_pwop = "times";
+    pwivate static finaw stwing ids_sub_pwop = "ids";
+    pwivate static f-finaw stwing capacity_pwop = "capacity";
 
-    public FlushHandler() {
-      super();
+    pubwic fwushhandwew() {
+      supew();
     }
 
-    public FlushHandler(RealtimeTimeMapper objectToFlush) {
-      super(objectToFlush);
+    p-pubwic fwushhandwew(weawtimetimemappew o-objecttofwush) {
+      s-supew(objecttofwush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer serializer) throws IOException {
-      RealtimeTimeMapper mapper = getObjectToFlush();
+    @ovewwide
+    pwotected v-void dofwush(fwushinfo fwushinfo, 😳 d-datasewiawizew s-sewiawizew) thwows ioexception {
+      weawtimetimemappew mappew = getobjecttofwush();
 
-      flushInfo.addIntProperty(CAPACITY_PROP, mapper.capacity);
-      flushInfo.addIntProperty(REVERSE_MAP_LAST_INDEX_PROP, mapper.reverseMapLastIndex);
+      fwushinfo.addintpwopewty(capacity_pwop, 😳😳😳 mappew.capacity);
+      fwushinfo.addintpwopewty(wevewse_map_wast_index_pwop, (˘ω˘) m-mappew.wevewsemapwastindex);
 
-      serializer.writeInt(mapper.timeMap.size());
-      for (Int2IntMap.Entry entry : mapper.timeMap.int2IntEntrySet()) {
-        serializer.writeInt(entry.getIntKey());
-        serializer.writeInt(entry.getIntValue());
+      sewiawizew.wwiteint(mappew.timemap.size());
+      f-fow (int2intmap.entwy entwy : m-mappew.timemap.int2intentwyset()) {
+        s-sewiawizew.wwiteint(entwy.getintkey());
+        sewiawizew.wwiteint(entwy.getintvawue());
       }
 
-      mapper.reverseMapTimes.getFlushHandler().flush(
-          flushInfo.newSubProperties(TIMES_SUB_PROP), serializer);
-      mapper.reverseMapIds.getFlushHandler().flush(
-          flushInfo.newSubProperties(IDS_SUB_PROP), serializer);
+      mappew.wevewsemaptimes.getfwushhandwew().fwush(
+          fwushinfo.newsubpwopewties(times_sub_pwop), ʘwʘ s-sewiawizew);
+      m-mappew.wevewsemapids.getfwushhandwew().fwush(
+          fwushinfo.newsubpwopewties(ids_sub_pwop), ( ͡o ω ͡o ) s-sewiawizew);
     }
 
-    @Override
-    protected RealtimeTimeMapper doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
+    @ovewwide
+    p-pwotected weawtimetimemappew dowoad(fwushinfo fwushinfo, o.O datadesewiawizew in)
+        thwows i-ioexception {
 
-      int size = in.readInt();
-      int[] docIds = new int[size];
-      int[] timestamps = new int[size];
-      for (int i = 0; i < size; i++) {
-        docIds[i] = in.readInt();
-        timestamps[i] = in.readInt();
+      i-int size = i-in.weadint();
+      int[] docids = n-nyew int[size];
+      i-int[] timestamps = nyew i-int[size];
+      fow (int i = 0; i < size; i++) {
+        docids[i] = in.weadint();
+        t-timestamps[i] = i-in.weadint();
       }
 
-      return new RealtimeTimeMapper(
-          flushInfo.getIntProperty(CAPACITY_PROP),
-          flushInfo.getIntProperty(REVERSE_MAP_LAST_INDEX_PROP),
-          docIds,
-          timestamps,
-          new IntBlockPool.FlushHandler().load(flushInfo.getSubProperties(TIMES_SUB_PROP), in),
-          new IntBlockPool.FlushHandler().load(flushInfo.getSubProperties(IDS_SUB_PROP), in));
+      wetuwn nyew weawtimetimemappew(
+          f-fwushinfo.getintpwopewty(capacity_pwop),
+          f-fwushinfo.getintpwopewty(wevewse_map_wast_index_pwop), >w<
+          docids, 😳
+          timestamps, 🥺
+          nyew intbwockpoow.fwushhandwew().woad(fwushinfo.getsubpwopewties(times_sub_pwop), rawr x3 i-in),
+          nyew intbwockpoow.fwushhandwew().woad(fwushinfo.getsubpwopewties(ids_sub_pwop), o.O in));
     }
   }
 }

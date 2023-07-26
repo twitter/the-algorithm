@@ -1,411 +1,411 @@
-package com.twitter.home_mixer.util.earlybird
+package com.twittew.home_mixew.utiw.eawwybiwd
 
-import com.twitter.search.common.constants.{thriftscala => scc}
-import com.twitter.search.common.features.{thriftscala => sc}
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant._
-import com.twitter.search.common.util.lang.ThriftLanguageUtil
-import com.twitter.search.earlybird.{thriftscala => eb}
-import com.twitter.timelines.earlybird.common.utils.InNetworkEngagement
+impowt c-com.twittew.seawch.common.constants.{thwiftscawa => s-scc}
+impowt c-com.twittew.seawch.common.featuwes.{thwiftscawa => s-sc}
+impowt c-com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant
+i-impowt c-com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant._
+i-impowt com.twittew.seawch.common.utiw.wang.thwiftwanguageutiw
+impowt com.twittew.seawch.eawwybiwd.{thwiftscawa => eb}
+impowt com.twittew.timewines.eawwybiwd.common.utiws.innetwowkengagement
 
-object EarlybirdResponseUtil {
+object eawwybiwdwesponseutiw {
 
-  private[earlybird] val Mentions: String = "mentions"
-  private[earlybird] val Hashtags: String = "hashtags"
-  private val CharsToRemoveFromMentions: Set[Char] = "@".toSet
-  private val CharsToRemoveFromHashtags: Set[Char] = "#".toSet
+  p-pwivate[eawwybiwd] vaw mentions: stwing = "mentions"
+  p-pwivate[eawwybiwd] vaw hashtags: s-stwing = "hashtags"
+  pwivate vaw chawstowemovefwommentions: set[chaw] = "@".toset
+  pwivate v-vaw chawstowemovefwomhashtags: set[chaw] = "#".toset
 
-  // Default value of settings of ThriftTweetFeatures.
-  private[earlybird] val DefaultEarlybirdFeatures: sc.ThriftTweetFeatures = sc.ThriftTweetFeatures()
-  private[earlybird] val DefaultCount = 0
-  private[earlybird] val DefaultLanguage = 0
-  private[earlybird] val DefaultScore = 0.0
+  // d-defauwt vawue of s-settings of thwifttweetfeatuwes. :3
+  pwivate[eawwybiwd] vaw defauwteawwybiwdfeatuwes: sc.thwifttweetfeatuwes = sc.thwifttweetfeatuwes()
+  pwivate[eawwybiwd] v-vaw defauwtcount = 0
+  pwivate[eawwybiwd] vaw defauwtwanguage = 0
+  pwivate[eawwybiwd] v-vaw defauwtscowe = 0.0
 
-  private[earlybird] def getTweetCountByAuthorId(
-    searchResults: Seq[eb.ThriftSearchResult]
-  ): Map[Long, Int] = {
-    searchResults
-      .groupBy { result =>
-        result.metadata.map(_.fromUserId).getOrElse(0L)
-      }.mapValues(_.size).withDefaultValue(0)
+  pwivate[eawwybiwd] d-def gettweetcountbyauthowid(
+    s-seawchwesuwts: s-seq[eb.thwiftseawchwesuwt]
+  ): m-map[wong, OwO int] = {
+    seawchwesuwts
+      .gwoupby { wesuwt =>
+        w-wesuwt.metadata.map(_.fwomusewid).getowewse(0w)
+      }.mapvawues(_.size).withdefauwtvawue(0)
   }
 
-  private[earlybird] def getLanguage(uiLanguageCode: Option[String]): Option[scc.ThriftLanguage] = {
-    uiLanguageCode.flatMap { languageCode =>
-      scc.ThriftLanguage.get(ThriftLanguageUtil.getThriftLanguageOf(languageCode).getValue)
+  pwivate[eawwybiwd] def getwanguage(uiwanguagecode: o-option[stwing]): option[scc.thwiftwanguage] = {
+    uiwanguagecode.fwatmap { wanguagecode =>
+      scc.thwiftwanguage.get(thwiftwanguageutiw.getthwiftwanguageof(wanguagecode).getvawue)
     }
   }
 
-  private def getMentions(result: eb.ThriftSearchResult): Seq[String] = {
-    val facetLabels = result.metadata.flatMap(_.facetLabels).getOrElse(Seq.empty)
-    getFacets(facetLabels, Mentions, CharsToRemoveFromMentions)
+  pwivate def g-getmentions(wesuwt: eb.thwiftseawchwesuwt): seq[stwing] = {
+    v-vaw facetwabews = w-wesuwt.metadata.fwatmap(_.facetwabews).getowewse(seq.empty)
+    g-getfacets(facetwabews, mentions, mya chawstowemovefwommentions)
   }
 
-  private def getHashtags(result: eb.ThriftSearchResult): Seq[String] = {
-    val facetLabels = result.metadata.flatMap(_.facetLabels).getOrElse(Seq.empty)
-    getFacets(facetLabels, Hashtags, CharsToRemoveFromHashtags)
+  pwivate d-def gethashtags(wesuwt: e-eb.thwiftseawchwesuwt): seq[stwing] = {
+    v-vaw facetwabews = w-wesuwt.metadata.fwatmap(_.facetwabews).getowewse(seq.empty)
+    getfacets(facetwabews, (˘ω˘) h-hashtags, o.O chawstowemovefwomhashtags)
   }
 
-  private def getFacets(
-    facetLabels: Seq[eb.ThriftFacetLabel],
-    facetName: String,
-    charsToRemove: Set[Char]
-  ): Seq[String] = {
-    facetLabels.filter(_.fieldName == facetName).map(_.label.filterNot(charsToRemove))
+  p-pwivate def getfacets(
+    facetwabews: s-seq[eb.thwiftfacetwabew], (✿oωo)
+    facetname: stwing, (ˆ ﻌ ˆ)♡
+    c-chawstowemove: set[chaw]
+  ): s-seq[stwing] = {
+    f-facetwabews.fiwtew(_.fiewdname == facetname).map(_.wabew.fiwtewnot(chawstowemove))
   }
 
-  private def isUserMentioned(
-    screenName: Option[String],
-    mentions: Seq[String],
-    mentionsInSourceTweet: Seq[String]
-  ): Boolean =
-    isUserMentioned(screenName, mentions) || isUserMentioned(screenName, mentionsInSourceTweet)
+  pwivate def isusewmentioned(
+    scweenname: option[stwing], ^^;;
+    mentions: seq[stwing], OwO
+    mentionsinsouwcetweet: seq[stwing]
+  ): b-boowean =
+    i-isusewmentioned(scweenname, 🥺 mentions) || isusewmentioned(scweenname, mya m-mentionsinsouwcetweet)
 
-  private def isUserMentioned(
-    screenName: Option[String],
-    mentions: Seq[String]
-  ): Boolean = {
-    screenName
-      .exists { screenName => mentions.exists(_.equalsIgnoreCase(screenName)) }
+  p-pwivate def isusewmentioned(
+    s-scweenname: option[stwing], 😳
+    mentions: seq[stwing]
+  ): boowean = {
+    scweenname
+      .exists { scweenname => m-mentions.exists(_.equawsignowecase(scweenname)) }
   }
 
-  private[earlybird] def isUsersMainLanguage(
-    tweetLanguage: scc.ThriftLanguage,
-    userLanguages: Seq[scc.ThriftLanguage]
-  ): Boolean = {
-    (tweetLanguage != scc.ThriftLanguage.Unknown) && userLanguages.headOption.contains(
-      tweetLanguage)
+  pwivate[eawwybiwd] def isusewsmainwanguage(
+    tweetwanguage: scc.thwiftwanguage, òωó
+    u-usewwanguages: seq[scc.thwiftwanguage]
+  ): b-boowean = {
+    (tweetwanguage != s-scc.thwiftwanguage.unknown) && u-usewwanguages.headoption.contains(
+      tweetwanguage)
   }
 
-  private[earlybird] def isUsersLanguage(
-    tweetLanguage: scc.ThriftLanguage,
-    userLanguages: Seq[scc.ThriftLanguage]
-  ): Boolean = {
-    (tweetLanguage != scc.ThriftLanguage.Unknown) && userLanguages.contains(tweetLanguage)
+  p-pwivate[eawwybiwd] d-def isusewswanguage(
+    t-tweetwanguage: scc.thwiftwanguage, /(^•ω•^)
+    u-usewwanguages: seq[scc.thwiftwanguage]
+  ): boowean = {
+    (tweetwanguage != s-scc.thwiftwanguage.unknown) && u-usewwanguages.contains(tweetwanguage)
   }
 
-  private[earlybird] def isUILanguage(
-    tweetLanguage: scc.ThriftLanguage,
-    uiLanguage: Option[scc.ThriftLanguage]
-  ): Boolean = {
-    (tweetLanguage != scc.ThriftLanguage.Unknown) && uiLanguage.contains(tweetLanguage)
+  p-pwivate[eawwybiwd] d-def isuiwanguage(
+    t-tweetwanguage: scc.thwiftwanguage, -.-
+    uiwanguage: option[scc.thwiftwanguage]
+  ): boowean = {
+    (tweetwanguage != scc.thwiftwanguage.unknown) && u-uiwanguage.contains(tweetwanguage)
   }
 
-  private def getBooleanOptFeature(
-    featureName: EarlybirdFieldConstant,
-    resultMapOpt: Option[scala.collection.Map[Int, Boolean]],
-    defaultValue: Boolean = false,
-  ): Option[Boolean] = {
-    resultMapOpt.map {
-      _.getOrElse(featureName.getFieldId, defaultValue)
+  pwivate def getbooweanoptfeatuwe(
+    featuwename: eawwybiwdfiewdconstant, òωó
+    wesuwtmapopt: o-option[scawa.cowwection.map[int, /(^•ω•^) boowean]], /(^•ω•^)
+    defauwtvawue: boowean = fawse, 😳
+  ): o-option[boowean] = {
+    w-wesuwtmapopt.map {
+      _.getowewse(featuwename.getfiewdid, :3 d-defauwtvawue)
     }
   }
 
-  private def getDoubleAsIntOptFeature(
-    featureName: EarlybirdFieldConstant,
-    resultMapOpt: Option[scala.collection.Map[Int, Double]]
-  ): Option[Int] = {
-    if (resultMapOpt.exists(_.contains(featureName.getFieldId)))
-      resultMapOpt
+  pwivate d-def getdoubweasintoptfeatuwe(
+    featuwename: e-eawwybiwdfiewdconstant, (U ᵕ U❁)
+    w-wesuwtmapopt: option[scawa.cowwection.map[int, ʘwʘ doubwe]]
+  ): option[int] = {
+    if (wesuwtmapopt.exists(_.contains(featuwename.getfiewdid)))
+      wesuwtmapopt
         .map {
-          _.get(featureName.getFieldId)
+          _.get(featuwename.getfiewdid)
         }
-        .flatMap { doubleValue =>
-          doubleValue.map(_.toInt)
+        .fwatmap { d-doubwevawue =>
+          doubwevawue.map(_.toint)
         }
-    else
-      None
+    e-ewse
+      nyone
   }
 
-  private def getIntOptFeature(
-    featureName: EarlybirdFieldConstant,
-    resultMapOpt: Option[scala.collection.Map[Int, Int]]
-  ): Option[Int] = {
-    if (resultMapOpt.exists(_.contains(featureName.getFieldId)))
-      resultMapOpt.flatMap {
-        _.get(featureName.getFieldId)
+  pwivate d-def getintoptfeatuwe(
+    f-featuwename: eawwybiwdfiewdconstant, o.O
+    wesuwtmapopt: o-option[scawa.cowwection.map[int, ʘwʘ i-int]]
+  ): option[int] = {
+    if (wesuwtmapopt.exists(_.contains(featuwename.getfiewdid)))
+      w-wesuwtmapopt.fwatmap {
+        _.get(featuwename.getfiewdid)
       }
-    else
-      None
+    e-ewse
+      nyone
   }
 
-  def getTweetThriftFeaturesByTweetId(
-    searcherUserId: Long,
-    screenName: Option[String],
-    userLanguages: Seq[scc.ThriftLanguage],
-    uiLanguageCode: Option[String] = None,
-    followedUserIds: Set[Long],
-    mutuallyFollowingUserIds: Set[Long],
-    searchResults: Seq[eb.ThriftSearchResult],
-    sourceTweetSearchResults: Seq[eb.ThriftSearchResult],
-  ): Map[Long, sc.ThriftTweetFeatures] = {
+  def gettweetthwiftfeatuwesbytweetid(
+    seawchewusewid: wong, ^^
+    scweenname: option[stwing], ^•ﻌ•^
+    u-usewwanguages: s-seq[scc.thwiftwanguage], mya
+    u-uiwanguagecode: option[stwing] = n-nyone, UwU
+    f-fowwowedusewids: set[wong], >_<
+    m-mutuawwyfowwowingusewids: set[wong],
+    seawchwesuwts: seq[eb.thwiftseawchwesuwt], /(^•ω•^)
+    souwcetweetseawchwesuwts: s-seq[eb.thwiftseawchwesuwt], òωó
+  ): m-map[wong, σωσ sc.thwifttweetfeatuwes] = {
 
-    val allSearchResults = searchResults ++ sourceTweetSearchResults
-    val sourceTweetSearchResultById =
-      sourceTweetSearchResults.map(result => (result.id -> result)).toMap
-    val inNetworkEngagement =
-      InNetworkEngagement(followedUserIds.toSeq, mutuallyFollowingUserIds, allSearchResults)
-    searchResults.map { searchResult =>
-      val features = getThriftTweetFeaturesFromSearchResult(
-        searcherUserId,
-        screenName,
-        userLanguages,
-        getLanguage(uiLanguageCode),
-        getTweetCountByAuthorId(searchResults),
-        followedUserIds,
-        mutuallyFollowingUserIds,
-        sourceTweetSearchResultById,
-        inNetworkEngagement,
-        searchResult
+    vaw awwseawchwesuwts = seawchwesuwts ++ s-souwcetweetseawchwesuwts
+    v-vaw souwcetweetseawchwesuwtbyid =
+      souwcetweetseawchwesuwts.map(wesuwt => (wesuwt.id -> wesuwt)).tomap
+    vaw innetwowkengagement =
+      i-innetwowkengagement(fowwowedusewids.toseq, ( ͡o ω ͡o ) mutuawwyfowwowingusewids, nyaa~~ awwseawchwesuwts)
+    seawchwesuwts.map { seawchwesuwt =>
+      vaw featuwes = getthwifttweetfeatuwesfwomseawchwesuwt(
+        s-seawchewusewid, :3
+        scweenname, UwU
+        usewwanguages, o.O
+        g-getwanguage(uiwanguagecode),
+        g-gettweetcountbyauthowid(seawchwesuwts), (ˆ ﻌ ˆ)♡
+        fowwowedusewids, ^^;;
+        mutuawwyfowwowingusewids, ʘwʘ
+        souwcetweetseawchwesuwtbyid, σωσ
+        i-innetwowkengagement, ^^;;
+        s-seawchwesuwt
       )
-      (searchResult.id -> features)
-    }.toMap
+      (seawchwesuwt.id -> featuwes)
+    }.tomap
   }
 
-  private[earlybird] def getThriftTweetFeaturesFromSearchResult(
-    searcherUserId: Long,
-    screenName: Option[String],
-    userLanguages: Seq[scc.ThriftLanguage],
-    uiLanguage: Option[scc.ThriftLanguage],
-    tweetCountByAuthorId: Map[Long, Int],
-    followedUserIds: Set[Long],
-    mutuallyFollowingUserIds: Set[Long],
-    sourceTweetSearchResultById: Map[Long, eb.ThriftSearchResult],
-    inNetworkEngagement: InNetworkEngagement,
-    searchResult: eb.ThriftSearchResult,
-  ): sc.ThriftTweetFeatures = {
-    val applyFeatures = (applyUserIndependentFeatures(
-      searchResult
-    )(_)).andThen(
-      applyUserDependentFeatures(
-        searcherUserId,
-        screenName,
-        userLanguages,
-        uiLanguage,
-        tweetCountByAuthorId,
-        followedUserIds,
-        mutuallyFollowingUserIds,
-        sourceTweetSearchResultById,
-        inNetworkEngagement,
-        searchResult
+  pwivate[eawwybiwd] def g-getthwifttweetfeatuwesfwomseawchwesuwt(
+    seawchewusewid: w-wong, ʘwʘ
+    scweenname: option[stwing], ^^
+    usewwanguages: s-seq[scc.thwiftwanguage], nyaa~~
+    uiwanguage: option[scc.thwiftwanguage], (///ˬ///✿)
+    t-tweetcountbyauthowid: m-map[wong, XD int],
+    fowwowedusewids: s-set[wong], :3
+    mutuawwyfowwowingusewids: s-set[wong], òωó
+    s-souwcetweetseawchwesuwtbyid: m-map[wong, ^^ eb.thwiftseawchwesuwt],
+    i-innetwowkengagement: i-innetwowkengagement, ^•ﻌ•^
+    seawchwesuwt: eb.thwiftseawchwesuwt, σωσ
+  ): s-sc.thwifttweetfeatuwes = {
+    v-vaw appwyfeatuwes = (appwyusewindependentfeatuwes(
+      s-seawchwesuwt
+    )(_)).andthen(
+      appwyusewdependentfeatuwes(
+        seawchewusewid, (ˆ ﻌ ˆ)♡
+        s-scweenname, nyaa~~
+        usewwanguages, ʘwʘ
+        u-uiwanguage, ^•ﻌ•^
+        t-tweetcountbyauthowid, rawr x3
+        fowwowedusewids, 🥺
+        mutuawwyfowwowingusewids, ʘwʘ
+        souwcetweetseawchwesuwtbyid, (˘ω˘)
+        i-innetwowkengagement, o.O
+        s-seawchwesuwt
       )(_)
     )
-    val tweetFeatures = searchResult.tweetFeatures.getOrElse(DefaultEarlybirdFeatures)
-    applyFeatures(tweetFeatures)
+    v-vaw tweetfeatuwes = s-seawchwesuwt.tweetfeatuwes.getowewse(defauwteawwybiwdfeatuwes)
+    appwyfeatuwes(tweetfeatuwes)
   }
 
-  private[earlybird] def applyUserIndependentFeatures(
-    result: eb.ThriftSearchResult
+  p-pwivate[eawwybiwd] def appwyusewindependentfeatuwes(
+    wesuwt: eb.thwiftseawchwesuwt
   )(
-    thriftTweetFeatures: sc.ThriftTweetFeatures
-  ): sc.ThriftTweetFeatures = {
+    thwifttweetfeatuwes: sc.thwifttweetfeatuwes
+  ): sc.thwifttweetfeatuwes = {
 
-    val features = result.metadata
-      .map { metadata =>
-        val isRetweet = metadata.isRetweet.getOrElse(false)
-        val isReply = metadata.isReply.getOrElse(false)
+    v-vaw featuwes = wesuwt.metadata
+      .map { m-metadata =>
+        vaw i-iswetweet = metadata.iswetweet.getowewse(fawse)
+        vaw iswepwy = m-metadata.iswepwy.getowewse(fawse)
 
-        // Facets.
-        val mentions = getMentions(result)
-        val hashtags = getHashtags(result)
+        // facets.
+        v-vaw mentions = g-getmentions(wesuwt)
+        v-vaw hashtags = g-gethashtags(wesuwt)
 
-        val searchResultSchemaFeatures = metadata.extraMetadata.flatMap(_.features)
-        val booleanSearchResultSchemaFeatures = searchResultSchemaFeatures.flatMap(_.boolValues)
-        val intSearchResultSchemaFeatures = searchResultSchemaFeatures.flatMap(_.intValues)
-        val doubleSearchResultSchemaFeatures = searchResultSchemaFeatures.flatMap(_.doubleValues)
+        v-vaw seawchwesuwtschemafeatuwes = metadata.extwametadata.fwatmap(_.featuwes)
+        vaw booweanseawchwesuwtschemafeatuwes = seawchwesuwtschemafeatuwes.fwatmap(_.boowvawues)
+        vaw intseawchwesuwtschemafeatuwes = seawchwesuwtschemafeatuwes.fwatmap(_.intvawues)
+        v-vaw d-doubweseawchwesuwtschemafeatuwes = s-seawchwesuwtschemafeatuwes.fwatmap(_.doubwevawues)
 
-        thriftTweetFeatures.copy(
-          // Info about the Tweet.
-          isRetweet = isRetweet,
-          isOffensive = metadata.isOffensive.getOrElse(false),
-          isReply = isReply,
-          fromVerifiedAccount = metadata.fromVerifiedAccount.getOrElse(false),
-          cardType = metadata.cardType,
-          signature = metadata.signature,
-          language = metadata.language,
-          isAuthorNSFW = metadata.isUserNSFW.getOrElse(false),
-          isAuthorBot = metadata.isUserBot.getOrElse(false),
-          isAuthorSpam = metadata.isUserSpam.getOrElse(false),
-          isSensitiveContent =
-            metadata.extraMetadata.flatMap(_.isSensitiveContent).getOrElse(false),
-          isAuthorProfileEgg = metadata.extraMetadata.flatMap(_.profileIsEggFlag).getOrElse(false),
-          isAuthorNew = metadata.extraMetadata.flatMap(_.isUserNewFlag).getOrElse(false),
-          linkLanguage = metadata.extraMetadata.flatMap(_.linkLanguage).getOrElse(DefaultLanguage),
-          // Info about Tweet content/media.
-          hasCard = metadata.hasCard.getOrElse(false),
-          hasImage = metadata.hasImage.getOrElse(false),
-          hasNews = metadata.hasNews.getOrElse(false),
-          hasVideo = metadata.hasVideo.getOrElse(false),
-          hasConsumerVideo = metadata.hasConsumerVideo.getOrElse(false),
-          hasProVideo = metadata.hasProVideo.getOrElse(false),
-          hasVine = metadata.hasVine.getOrElse(false),
-          hasPeriscope = metadata.hasPeriscope.getOrElse(false),
-          hasNativeVideo = metadata.hasNativeVideo.getOrElse(false),
-          hasNativeImage = metadata.hasNativeImage.getOrElse(false),
-          hasLink = metadata.hasLink.getOrElse(false),
-          hasVisibleLink = metadata.hasVisibleLink.getOrElse(false),
-          hasTrend = metadata.hasTrend.getOrElse(false),
-          hasMultipleHashtagsOrTrends = metadata.hasMultipleHashtagsOrTrends.getOrElse(false),
-          hasQuote = metadata.extraMetadata.flatMap(_.hasQuote),
-          urlsList = metadata.tweetUrls.map {
-            _.map(_.originalUrl)
-          },
-          hasMultipleMedia =
-            metadata.extraMetadata.flatMap(_.hasMultipleMediaFlag).getOrElse(false),
-          visibleTokenRatio = getIntOptFeature(VISIBLE_TOKEN_RATIO, intSearchResultSchemaFeatures),
-          // Various counts.
-          favCount = metadata.favCount.getOrElse(DefaultCount),
-          replyCount = metadata.replyCount.getOrElse(DefaultCount),
-          retweetCount = metadata.retweetCount.getOrElse(DefaultCount),
-          quoteCount = metadata.extraMetadata.flatMap(_.quotedCount),
-          embedsImpressionCount = metadata.embedsImpressionCount.getOrElse(DefaultCount),
-          embedsUrlCount = metadata.embedsUrlCount.getOrElse(DefaultCount),
-          videoViewCount = metadata.videoViewCount.getOrElse(DefaultCount),
-          numMentions = metadata.extraMetadata.flatMap(_.numMentions).getOrElse(DefaultCount),
-          numHashtags = metadata.extraMetadata.flatMap(_.numHashtags).getOrElse(DefaultCount),
-          favCountV2 = metadata.extraMetadata.flatMap(_.favCountV2),
-          replyCountV2 = metadata.extraMetadata.flatMap(_.replyCountV2),
-          retweetCountV2 = metadata.extraMetadata.flatMap(_.retweetCountV2),
-          weightedFavoriteCount = metadata.extraMetadata.flatMap(_.weightedFavCount),
-          weightedReplyCount = metadata.extraMetadata.flatMap(_.weightedReplyCount),
-          weightedRetweetCount = metadata.extraMetadata.flatMap(_.weightedRetweetCount),
-          weightedQuoteCount = metadata.extraMetadata.flatMap(_.weightedQuoteCount),
-          embedsImpressionCountV2 =
-            getDoubleAsIntOptFeature(EMBEDS_IMPRESSION_COUNT_V2, doubleSearchResultSchemaFeatures),
-          embedsUrlCountV2 =
-            getDoubleAsIntOptFeature(EMBEDS_URL_COUNT_V2, doubleSearchResultSchemaFeatures),
-          decayedFavoriteCount =
-            getDoubleAsIntOptFeature(DECAYED_FAVORITE_COUNT, doubleSearchResultSchemaFeatures),
-          decayedRetweetCount =
-            getDoubleAsIntOptFeature(DECAYED_RETWEET_COUNT, doubleSearchResultSchemaFeatures),
-          decayedReplyCount =
-            getDoubleAsIntOptFeature(DECAYED_REPLY_COUNT, doubleSearchResultSchemaFeatures),
-          decayedQuoteCount =
-            getDoubleAsIntOptFeature(DECAYED_QUOTE_COUNT, doubleSearchResultSchemaFeatures),
-          fakeFavoriteCount =
-            getDoubleAsIntOptFeature(FAKE_FAVORITE_COUNT, doubleSearchResultSchemaFeatures),
-          fakeRetweetCount =
-            getDoubleAsIntOptFeature(FAKE_RETWEET_COUNT, doubleSearchResultSchemaFeatures),
-          fakeReplyCount =
-            getDoubleAsIntOptFeature(FAKE_REPLY_COUNT, doubleSearchResultSchemaFeatures),
-          fakeQuoteCount =
-            getDoubleAsIntOptFeature(FAKE_QUOTE_COUNT, doubleSearchResultSchemaFeatures),
-          // Scores.
-          textScore = metadata.textScore.getOrElse(DefaultScore),
-          earlybirdScore = metadata.score.getOrElse(DefaultScore),
-          parusScore = metadata.parusScore.getOrElse(DefaultScore),
-          userRep = metadata.userRep.getOrElse(DefaultScore),
-          pBlockScore = metadata.extraMetadata.flatMap(_.pBlockScore),
-          toxicityScore = metadata.extraMetadata.flatMap(_.toxicityScore),
-          pSpammyTweetScore = metadata.extraMetadata.flatMap(_.pSpammyTweetScore),
-          pReportedTweetScore = metadata.extraMetadata.flatMap(_.pReportedTweetScore),
-          pSpammyTweetContent = metadata.extraMetadata.flatMap(_.spammyTweetContentScore),
-          // Safety Signals
-          labelAbusiveFlag =
-            getBooleanOptFeature(LABEL_ABUSIVE_FLAG, booleanSearchResultSchemaFeatures),
-          labelAbusiveHiRclFlag =
-            getBooleanOptFeature(LABEL_ABUSIVE_HI_RCL_FLAG, booleanSearchResultSchemaFeatures),
-          labelDupContentFlag =
-            getBooleanOptFeature(LABEL_DUP_CONTENT_FLAG, booleanSearchResultSchemaFeatures),
-          labelNsfwHiPrcFlag =
-            getBooleanOptFeature(LABEL_NSFW_HI_PRC_FLAG, booleanSearchResultSchemaFeatures),
-          labelNsfwHiRclFlag =
-            getBooleanOptFeature(LABEL_NSFW_HI_RCL_FLAG, booleanSearchResultSchemaFeatures),
-          labelSpamFlag = getBooleanOptFeature(LABEL_SPAM_FLAG, booleanSearchResultSchemaFeatures),
-          labelSpamHiRclFlag =
-            getBooleanOptFeature(LABEL_SPAM_HI_RCL_FLAG, booleanSearchResultSchemaFeatures),
-          // Periscope Features
-          periscopeExists =
-            getBooleanOptFeature(PERISCOPE_EXISTS, booleanSearchResultSchemaFeatures),
-          periscopeHasBeenFeatured =
-            getBooleanOptFeature(PERISCOPE_HAS_BEEN_FEATURED, booleanSearchResultSchemaFeatures),
-          periscopeIsCurrentlyFeatured = getBooleanOptFeature(
-            PERISCOPE_IS_CURRENTLY_FEATURED,
-            booleanSearchResultSchemaFeatures),
-          periscopeIsFromQualitySource = getBooleanOptFeature(
-            PERISCOPE_IS_FROM_QUALITY_SOURCE,
-            booleanSearchResultSchemaFeatures),
-          periscopeIsLive =
-            getBooleanOptFeature(PERISCOPE_IS_LIVE, booleanSearchResultSchemaFeatures),
-          // Last Engagement Features
-          lastFavSinceCreationHrs =
-            getIntOptFeature(LAST_FAVORITE_SINCE_CREATION_HRS, intSearchResultSchemaFeatures),
-          lastRetweetSinceCreationHrs =
-            getIntOptFeature(LAST_RETWEET_SINCE_CREATION_HRS, intSearchResultSchemaFeatures),
-          lastReplySinceCreationHrs =
-            getIntOptFeature(LAST_REPLY_SINCE_CREATION_HRS, intSearchResultSchemaFeatures),
-          lastQuoteSinceCreationHrs =
-            getIntOptFeature(LAST_QUOTE_SINCE_CREATION_HRS, intSearchResultSchemaFeatures),
-          likedByUserIds = metadata.extraMetadata.flatMap(_.likedByUserIds),
-          mentionsList = if (mentions.nonEmpty) Some(mentions) else None,
-          hashtagsList = if (hashtags.nonEmpty) Some(hashtags) else None,
-          isComposerSourceCamera =
-            getBooleanOptFeature(COMPOSER_SOURCE_IS_CAMERA_FLAG, booleanSearchResultSchemaFeatures),
+        thwifttweetfeatuwes.copy(
+          // i-info about the tweet. σωσ
+          iswetweet = iswetweet, (ꈍᴗꈍ)
+          i-isoffensive = m-metadata.isoffensive.getowewse(fawse), (ˆ ﻌ ˆ)♡
+          iswepwy = i-iswepwy, o.O
+          fwomvewifiedaccount = metadata.fwomvewifiedaccount.getowewse(fawse), :3
+          c-cawdtype = metadata.cawdtype, -.-
+          s-signatuwe = metadata.signatuwe, ( ͡o ω ͡o )
+          w-wanguage = m-metadata.wanguage, /(^•ω•^)
+          isauthownsfw = metadata.isusewnsfw.getowewse(fawse), (⑅˘꒳˘)
+          isauthowbot = metadata.isusewbot.getowewse(fawse), òωó
+          i-isauthowspam = m-metadata.isusewspam.getowewse(fawse), 🥺
+          i-issensitivecontent =
+            m-metadata.extwametadata.fwatmap(_.issensitivecontent).getowewse(fawse), (ˆ ﻌ ˆ)♡
+          i-isauthowpwofiweegg = metadata.extwametadata.fwatmap(_.pwofiweiseggfwag).getowewse(fawse), -.-
+          isauthownew = m-metadata.extwametadata.fwatmap(_.isusewnewfwag).getowewse(fawse), σωσ
+          w-winkwanguage = metadata.extwametadata.fwatmap(_.winkwanguage).getowewse(defauwtwanguage), >_<
+          // i-info about tweet c-content/media. :3
+          hascawd = m-metadata.hascawd.getowewse(fawse), OwO
+          hasimage = metadata.hasimage.getowewse(fawse), rawr
+          hasnews = m-metadata.hasnews.getowewse(fawse), (///ˬ///✿)
+          hasvideo = metadata.hasvideo.getowewse(fawse), ^^
+          h-hasconsumewvideo = m-metadata.hasconsumewvideo.getowewse(fawse), XD
+          haspwovideo = m-metadata.haspwovideo.getowewse(fawse), UwU
+          hasvine = metadata.hasvine.getowewse(fawse), o.O
+          haspewiscope = m-metadata.haspewiscope.getowewse(fawse),
+          h-hasnativevideo = m-metadata.hasnativevideo.getowewse(fawse), 😳
+          hasnativeimage = metadata.hasnativeimage.getowewse(fawse), (˘ω˘)
+          haswink = metadata.haswink.getowewse(fawse), 🥺
+          hasvisibwewink = m-metadata.hasvisibwewink.getowewse(fawse), ^^
+          hastwend = metadata.hastwend.getowewse(fawse), >w<
+          hasmuwtipwehashtagsowtwends = m-metadata.hasmuwtipwehashtagsowtwends.getowewse(fawse), ^^;;
+          h-hasquote = metadata.extwametadata.fwatmap(_.hasquote), (˘ω˘)
+          u-uwwswist = metadata.tweetuwws.map {
+            _.map(_.owiginawuww)
+          }, OwO
+          h-hasmuwtipwemedia =
+            m-metadata.extwametadata.fwatmap(_.hasmuwtipwemediafwag).getowewse(fawse), (ꈍᴗꈍ)
+          visibwetokenwatio = getintoptfeatuwe(visibwe_token_watio, òωó i-intseawchwesuwtschemafeatuwes), ʘwʘ
+          // vawious counts.
+          f-favcount = m-metadata.favcount.getowewse(defauwtcount), ʘwʘ
+          wepwycount = m-metadata.wepwycount.getowewse(defauwtcount), nyaa~~
+          wetweetcount = m-metadata.wetweetcount.getowewse(defauwtcount), UwU
+          q-quotecount = m-metadata.extwametadata.fwatmap(_.quotedcount), (⑅˘꒳˘)
+          embedsimpwessioncount = metadata.embedsimpwessioncount.getowewse(defauwtcount), (˘ω˘)
+          embedsuwwcount = metadata.embedsuwwcount.getowewse(defauwtcount), :3
+          videoviewcount = metadata.videoviewcount.getowewse(defauwtcount),
+          nyummentions = metadata.extwametadata.fwatmap(_.nummentions).getowewse(defauwtcount),
+          nyumhashtags = metadata.extwametadata.fwatmap(_.numhashtags).getowewse(defauwtcount),
+          favcountv2 = metadata.extwametadata.fwatmap(_.favcountv2), (˘ω˘)
+          w-wepwycountv2 = m-metadata.extwametadata.fwatmap(_.wepwycountv2), nyaa~~
+          wetweetcountv2 = metadata.extwametadata.fwatmap(_.wetweetcountv2), (U ﹏ U)
+          w-weightedfavowitecount = metadata.extwametadata.fwatmap(_.weightedfavcount), nyaa~~
+          w-weightedwepwycount = m-metadata.extwametadata.fwatmap(_.weightedwepwycount),
+          weightedwetweetcount = m-metadata.extwametadata.fwatmap(_.weightedwetweetcount), ^^;;
+          weightedquotecount = m-metadata.extwametadata.fwatmap(_.weightedquotecount), OwO
+          e-embedsimpwessioncountv2 =
+            getdoubweasintoptfeatuwe(embeds_impwession_count_v2, nyaa~~ d-doubweseawchwesuwtschemafeatuwes), UwU
+          embedsuwwcountv2 =
+            g-getdoubweasintoptfeatuwe(embeds_uww_count_v2, 😳 d-doubweseawchwesuwtschemafeatuwes), 😳
+          decayedfavowitecount =
+            getdoubweasintoptfeatuwe(decayed_favowite_count, (ˆ ﻌ ˆ)♡ d-doubweseawchwesuwtschemafeatuwes), (✿oωo)
+          d-decayedwetweetcount =
+            g-getdoubweasintoptfeatuwe(decayed_wetweet_count, nyaa~~ d-doubweseawchwesuwtschemafeatuwes), ^^
+          d-decayedwepwycount =
+            g-getdoubweasintoptfeatuwe(decayed_wepwy_count, d-doubweseawchwesuwtschemafeatuwes), (///ˬ///✿)
+          d-decayedquotecount =
+            g-getdoubweasintoptfeatuwe(decayed_quote_count, 😳 doubweseawchwesuwtschemafeatuwes), òωó
+          f-fakefavowitecount =
+            g-getdoubweasintoptfeatuwe(fake_favowite_count, d-doubweseawchwesuwtschemafeatuwes), ^^;;
+          fakewetweetcount =
+            g-getdoubweasintoptfeatuwe(fake_wetweet_count, rawr doubweseawchwesuwtschemafeatuwes),
+          fakewepwycount =
+            getdoubweasintoptfeatuwe(fake_wepwy_count, (ˆ ﻌ ˆ)♡ d-doubweseawchwesuwtschemafeatuwes), XD
+          fakequotecount =
+            g-getdoubweasintoptfeatuwe(fake_quote_count, >_< d-doubweseawchwesuwtschemafeatuwes),
+          // s-scowes. (˘ω˘)
+          textscowe = m-metadata.textscowe.getowewse(defauwtscowe), 😳
+          eawwybiwdscowe = m-metadata.scowe.getowewse(defauwtscowe),
+          pawusscowe = metadata.pawusscowe.getowewse(defauwtscowe), o.O
+          u-usewwep = metadata.usewwep.getowewse(defauwtscowe), (ꈍᴗꈍ)
+          pbwockscowe = m-metadata.extwametadata.fwatmap(_.pbwockscowe), rawr x3
+          toxicityscowe = metadata.extwametadata.fwatmap(_.toxicityscowe), ^^
+          pspammytweetscowe = metadata.extwametadata.fwatmap(_.pspammytweetscowe), OwO
+          p-pwepowtedtweetscowe = metadata.extwametadata.fwatmap(_.pwepowtedtweetscowe), ^^
+          p-pspammytweetcontent = m-metadata.extwametadata.fwatmap(_.spammytweetcontentscowe), :3
+          // safety signaws
+          wabewabusivefwag =
+            g-getbooweanoptfeatuwe(wabew_abusive_fwag, o.O booweanseawchwesuwtschemafeatuwes), -.-
+          w-wabewabusivehiwcwfwag =
+            getbooweanoptfeatuwe(wabew_abusive_hi_wcw_fwag, (U ﹏ U) booweanseawchwesuwtschemafeatuwes), o.O
+          w-wabewdupcontentfwag =
+            getbooweanoptfeatuwe(wabew_dup_content_fwag, OwO b-booweanseawchwesuwtschemafeatuwes), ^•ﻌ•^
+          wabewnsfwhipwcfwag =
+            getbooweanoptfeatuwe(wabew_nsfw_hi_pwc_fwag, ʘwʘ b-booweanseawchwesuwtschemafeatuwes), :3
+          w-wabewnsfwhiwcwfwag =
+            getbooweanoptfeatuwe(wabew_nsfw_hi_wcw_fwag, 😳 b-booweanseawchwesuwtschemafeatuwes), òωó
+          wabewspamfwag = getbooweanoptfeatuwe(wabew_spam_fwag, 🥺 b-booweanseawchwesuwtschemafeatuwes),
+          wabewspamhiwcwfwag =
+            g-getbooweanoptfeatuwe(wabew_spam_hi_wcw_fwag, rawr x3 b-booweanseawchwesuwtschemafeatuwes),
+          // p-pewiscope featuwes
+          pewiscopeexists =
+            g-getbooweanoptfeatuwe(pewiscope_exists, ^•ﻌ•^ b-booweanseawchwesuwtschemafeatuwes), :3
+          p-pewiscopehasbeenfeatuwed =
+            g-getbooweanoptfeatuwe(pewiscope_has_been_featuwed, booweanseawchwesuwtschemafeatuwes), (ˆ ﻌ ˆ)♡
+          p-pewiscopeiscuwwentwyfeatuwed = g-getbooweanoptfeatuwe(
+            p-pewiscope_is_cuwwentwy_featuwed, (U ᵕ U❁)
+            b-booweanseawchwesuwtschemafeatuwes), :3
+          p-pewiscopeisfwomquawitysouwce = g-getbooweanoptfeatuwe(
+            p-pewiscope_is_fwom_quawity_souwce, ^^;;
+            b-booweanseawchwesuwtschemafeatuwes), ( ͡o ω ͡o )
+          pewiscopeiswive =
+            g-getbooweanoptfeatuwe(pewiscope_is_wive, o.O booweanseawchwesuwtschemafeatuwes), ^•ﻌ•^
+          // w-wast engagement featuwes
+          wastfavsincecweationhws =
+            g-getintoptfeatuwe(wast_favowite_since_cweation_hws, i-intseawchwesuwtschemafeatuwes), XD
+          w-wastwetweetsincecweationhws =
+            getintoptfeatuwe(wast_wetweet_since_cweation_hws, ^^ intseawchwesuwtschemafeatuwes), o.O
+          wastwepwysincecweationhws =
+            g-getintoptfeatuwe(wast_wepwy_since_cweation_hws, ( ͡o ω ͡o ) i-intseawchwesuwtschemafeatuwes),
+          w-wastquotesincecweationhws =
+            getintoptfeatuwe(wast_quote_since_cweation_hws, /(^•ω•^) intseawchwesuwtschemafeatuwes), 🥺
+          wikedbyusewids = m-metadata.extwametadata.fwatmap(_.wikedbyusewids), nyaa~~
+          m-mentionswist = if (mentions.nonempty) some(mentions) e-ewse n-nyone, mya
+          hashtagswist = if (hashtags.nonempty) some(hashtags) e-ewse nyone, XD
+          iscomposewsouwcecamewa =
+            g-getbooweanoptfeatuwe(composew_souwce_is_camewa_fwag, nyaa~~ b-booweanseawchwesuwtschemafeatuwes), ʘwʘ
         )
       }
-      .getOrElse(thriftTweetFeatures)
+      .getowewse(thwifttweetfeatuwes)
 
-    features
+    f-featuwes
   }
 
-  private def applyUserDependentFeatures(
-    searcherUserId: Long,
-    screenName: Option[String],
-    userLanguages: Seq[scc.ThriftLanguage],
-    uiLanguage: Option[scc.ThriftLanguage],
-    tweetCountByAuthorId: Map[Long, Int],
-    followedUserIds: Set[Long],
-    mutuallyFollowingUserIds: Set[Long],
-    sourceTweetSearchResultById: Map[Long, eb.ThriftSearchResult],
-    inNetworkEngagement: InNetworkEngagement,
-    result: eb.ThriftSearchResult
+  pwivate def appwyusewdependentfeatuwes(
+    s-seawchewusewid: w-wong, (⑅˘꒳˘)
+    scweenname: option[stwing], :3
+    usewwanguages: seq[scc.thwiftwanguage], -.-
+    u-uiwanguage: option[scc.thwiftwanguage], 😳😳😳
+    tweetcountbyauthowid: m-map[wong, (U ﹏ U) int],
+    f-fowwowedusewids: s-set[wong], o.O
+    mutuawwyfowwowingusewids: s-set[wong], ( ͡o ω ͡o )
+    s-souwcetweetseawchwesuwtbyid: map[wong, òωó e-eb.thwiftseawchwesuwt], 🥺
+    innetwowkengagement: i-innetwowkengagement, /(^•ω•^)
+    w-wesuwt: e-eb.thwiftseawchwesuwt
   )(
-    thriftTweetFeatures: sc.ThriftTweetFeatures
-  ): sc.ThriftTweetFeatures = {
-    result.metadata
-      .map { metadata =>
-        val isRetweet = metadata.isRetweet.getOrElse(false)
-        val sourceTweet =
-          if (isRetweet) sourceTweetSearchResultById.get(metadata.sharedStatusId)
-          else None
-        val mentionsInSourceTweet = sourceTweet.map(getMentions).getOrElse(Seq.empty)
+    t-thwifttweetfeatuwes: sc.thwifttweetfeatuwes
+  ): s-sc.thwifttweetfeatuwes = {
+    w-wesuwt.metadata
+      .map { m-metadata =>
+        vaw iswetweet = m-metadata.iswetweet.getowewse(fawse)
+        vaw souwcetweet =
+          if (iswetweet) s-souwcetweetseawchwesuwtbyid.get(metadata.shawedstatusid)
+          e-ewse n-nyone
+        vaw mentionsinsouwcetweet = souwcetweet.map(getmentions).getowewse(seq.empty)
 
-        val isReply = metadata.isReply.getOrElse(false)
-        val replyToSearcher = isReply && (metadata.referencedTweetAuthorId == searcherUserId)
-        val replyOther = isReply && !replyToSearcher
-        val retweetOther = isRetweet && (metadata.referencedTweetAuthorId != searcherUserId)
-        val tweetLanguage = metadata.language.getOrElse(scc.ThriftLanguage.Unknown)
+        vaw iswepwy = metadata.iswepwy.getowewse(fawse)
+        v-vaw wepwytoseawchew = iswepwy && (metadata.wefewencedtweetauthowid == s-seawchewusewid)
+        v-vaw wepwyothew = iswepwy && !wepwytoseawchew
+        vaw wetweetothew = i-iswetweet && (metadata.wefewencedtweetauthowid != seawchewusewid)
+        v-vaw tweetwanguage = m-metadata.wanguage.getowewse(scc.thwiftwanguage.unknown)
 
-        val referencedTweetAuthorId =
-          if (metadata.referencedTweetAuthorId > 0) Some(metadata.referencedTweetAuthorId) else None
-        val inReplyToUserId = if (!isRetweet) referencedTweetAuthorId else None
+        v-vaw wefewencedtweetauthowid =
+          i-if (metadata.wefewencedtweetauthowid > 0) s-some(metadata.wefewencedtweetauthowid) ewse nyone
+        vaw inwepwytousewid = if (!iswetweet) w-wefewencedtweetauthowid ewse nyone
 
-        thriftTweetFeatures.copy(
-          // Info about the Tweet.
-          fromSearcher = metadata.fromUserId == searcherUserId,
-          probablyFromFollowedAuthor = followedUserIds.contains(metadata.fromUserId),
-          fromMutualFollow = mutuallyFollowingUserIds.contains(metadata.fromUserId),
-          replySearcher = replyToSearcher,
-          replyOther = replyOther,
-          retweetOther = retweetOther,
-          mentionSearcher = isUserMentioned(screenName, getMentions(result), mentionsInSourceTweet),
-          // Info about Tweet content/media.
-          matchesSearcherMainLang = isUsersMainLanguage(tweetLanguage, userLanguages),
-          matchesSearcherLangs = isUsersLanguage(tweetLanguage, userLanguages),
-          matchesUILang = isUILanguage(tweetLanguage, uiLanguage),
-          // Various counts.
-          prevUserTweetEngagement =
-            metadata.extraMetadata.flatMap(_.prevUserTweetEngagement).getOrElse(DefaultCount),
-          tweetCountFromUserInSnapshot = tweetCountByAuthorId(metadata.fromUserId),
-          bidirectionalReplyCount = inNetworkEngagement.biDirectionalReplyCounts(result.id),
-          unidirectionalReplyCount = inNetworkEngagement.uniDirectionalReplyCounts(result.id),
-          bidirectionalRetweetCount = inNetworkEngagement.biDirectionalRetweetCounts(result.id),
-          unidirectionalRetweetCount = inNetworkEngagement.uniDirectionalRetweetCounts(result.id),
-          conversationCount = inNetworkEngagement.descendantReplyCounts(result.id),
-          directedAtUserIdIsInFirstDegree =
-            if (isReply) inReplyToUserId.map(followedUserIds.contains) else None,
+        t-thwifttweetfeatuwes.copy(
+          // info about the tweet.
+          fwomseawchew = m-metadata.fwomusewid == seawchewusewid, 😳😳😳
+          pwobabwyfwomfowwowedauthow = fowwowedusewids.contains(metadata.fwomusewid), ^•ﻌ•^
+          fwommutuawfowwow = m-mutuawwyfowwowingusewids.contains(metadata.fwomusewid), nyaa~~
+          w-wepwyseawchew = wepwytoseawchew, OwO
+          w-wepwyothew = wepwyothew, ^•ﻌ•^
+          wetweetothew = wetweetothew, σωσ
+          m-mentionseawchew = i-isusewmentioned(scweenname, -.- getmentions(wesuwt), (˘ω˘) m-mentionsinsouwcetweet), rawr x3
+          // info about tweet c-content/media. rawr x3
+          matchesseawchewmainwang = isusewsmainwanguage(tweetwanguage, σωσ usewwanguages), nyaa~~
+          m-matchesseawchewwangs = isusewswanguage(tweetwanguage, (ꈍᴗꈍ) usewwanguages), ^•ﻌ•^
+          m-matchesuiwang = i-isuiwanguage(tweetwanguage, >_< uiwanguage), ^^;;
+          // v-vawious counts. ^^;;
+          pwevusewtweetengagement =
+            m-metadata.extwametadata.fwatmap(_.pwevusewtweetengagement).getowewse(defauwtcount), /(^•ω•^)
+          tweetcountfwomusewinsnapshot = tweetcountbyauthowid(metadata.fwomusewid), nyaa~~
+          bidiwectionawwepwycount = innetwowkengagement.bidiwectionawwepwycounts(wesuwt.id), (✿oωo)
+          u-unidiwectionawwepwycount = i-innetwowkengagement.unidiwectionawwepwycounts(wesuwt.id), ( ͡o ω ͡o )
+          b-bidiwectionawwetweetcount = i-innetwowkengagement.bidiwectionawwetweetcounts(wesuwt.id), (U ᵕ U❁)
+          unidiwectionawwetweetcount = innetwowkengagement.unidiwectionawwetweetcounts(wesuwt.id), òωó
+          c-convewsationcount = i-innetwowkengagement.descendantwepwycounts(wesuwt.id), σωσ
+          diwectedatusewidisinfiwstdegwee =
+            if (iswepwy) i-inwepwytousewid.map(fowwowedusewids.contains) ewse nyone, :3
         )
       }
-      .getOrElse(thriftTweetFeatures)
+      .getowewse(thwifttweetfeatuwes)
   }
 }

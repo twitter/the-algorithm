@@ -1,36 +1,36 @@
-package com.twitter.search.common.schema.earlybird;
+package com.twittew.seawch.common.schema.eawwybiwd;
 
-import com.twitter.search.common.encoding.docvalues.CSFTypeUtil;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
+impowt com.twittew.seawch.common.encoding.docvawues.csftypeutiw;
+i-impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
 
-public final class EarlybirdEncodedFeaturesUtil {
-  private EarlybirdEncodedFeaturesUtil() {
+p-pubwic f-finaw cwass e-eawwybiwdencodedfeatuwesutiw {
+  p-pwivate eawwybiwdencodedfeatuwesutiw() {
   }
 
   /**
-   * Returns a byte array that can be stored in a ThriftDocument as bytesField.
+   * w-wetuwns a-a byte awway that c-can be stowed in a thwiftdocument as bytesfiewd. mya
    */
-  public static byte[] toBytesForThriftDocument(EarlybirdEncodedFeatures features) {
-    int numInts = features.getNumInts();
-    byte[] serializedFeatures = new byte[numInts * Integer.BYTES];
-    for (int i = 0; i < numInts; i++) {
-      CSFTypeUtil.convertToBytes(serializedFeatures, i, features.getInt(i));
+  pubwic static byte[] t-tobytesfowthwiftdocument(eawwybiwdencodedfeatuwes featuwes) {
+    int nyumints = f-featuwes.getnumints();
+    byte[] s-sewiawizedfeatuwes = nyew byte[numints * integew.bytes];
+    fow (int i = 0; i-i < nyumints; i++) {
+      csftypeutiw.convewttobytes(sewiawizedfeatuwes, 🥺 i-i, featuwes.getint(i));
     }
-    return serializedFeatures;
+    w-wetuwn sewiawizedfeatuwes;
   }
 
   /**
-   * Converts data in a given byte array (starting at the provided offset) into
-   * EarlybirdEncodedFeatures.
+   * convewts data in a given byte awway (stawting a-at the pwovided offset) into
+   * eawwybiwdencodedfeatuwes. >_<
    */
-  public static EarlybirdEncodedFeatures fromBytes(
-      ImmutableSchemaInterface schema, EarlybirdFieldConstants.EarlybirdFieldConstant baseField,
-      byte[] data, int offset) {
-    EarlybirdEncodedFeatures features = EarlybirdEncodedFeatures.newEncodedTweetFeatures(
-        schema, baseField);
-    for (int idx = 0; idx < features.getNumInts(); ++idx) {
-      features.setInt(idx, CSFTypeUtil.convertFromBytes(data, offset, idx));
+  pubwic static eawwybiwdencodedfeatuwes f-fwombytes(
+      immutabweschemaintewface s-schema, >_< e-eawwybiwdfiewdconstants.eawwybiwdfiewdconstant b-basefiewd, (⑅˘꒳˘)
+      b-byte[] data, /(^•ω•^) int offset) {
+    eawwybiwdencodedfeatuwes f-featuwes = eawwybiwdencodedfeatuwes.newencodedtweetfeatuwes(
+        schema, rawr x3 basefiewd);
+    f-fow (int idx = 0; idx < featuwes.getnumints(); ++idx) {
+      featuwes.setint(idx, (U ﹏ U) csftypeutiw.convewtfwombytes(data, (U ﹏ U) offset, (⑅˘꒳˘) idx));
     }
-    return features;
+    w-wetuwn featuwes;
   }
 }

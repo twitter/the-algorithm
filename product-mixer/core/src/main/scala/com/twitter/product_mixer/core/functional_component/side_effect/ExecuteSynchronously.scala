@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.side_effect
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.side_effect
 
 /**
- * A modifier for any [[SideEffect]] so that the request waits for it to complete before being returned
+ * a modifiew fow any [[sideeffect]] s-so that the wequest w-waits fow it t-to compwete befowe b-being wetuwned
  *
- * @note this will make the [[SideEffect]]'s latency impact the overall request's latency
+ * @note t-this wiww make the [[sideeffect]]'s w-watency impact t-the ovewaww wequest's w-watency
  *
- * @example {{{
- * class MySideEffect extends PipelineResultSideEffect[T] with ExecuteSynchronously {...}
+ * @exampwe {{{
+ * cwass mysideeffect extends pipewinewesuwtsideeffect[t] with e-exekawaii~synchwonouswy {...}
  * }}}
  *
- * @example {{{
- * class MySideEffect extends ScribeLogEventSideEffect[T] with ExecuteSynchronously {...}
+ * @exampwe {{{
+ * cwass mysideeffect e-extends scwibewogeventsideeffect[t] with exekawaii~synchwonouswy {...}
  * }}}
  */
-trait ExecuteSynchronously { _: SideEffect[_] => }
+t-twait exekawaii~synchwonouswy { _: sideeffect[_] => }
 
 /**
- * A modifier for any [[ExecuteSynchronously]] [[SideEffect]] that makes it so failures will be
- * reported in the results but wont cause the request as a whole to fail.
+ * a modifiew fow any [[exekawaii~synchwonouswy]] [[sideeffect]] that m-makes it so faiwuwes wiww be
+ * w-wepowted in t-the wesuwts but wont cause the wequest as a whowe to faiw. 😳😳😳
  */
-trait FailOpen { _: ExecuteSynchronously => }
+twait faiwopen { _: e-exekawaii~synchwonouswy => }

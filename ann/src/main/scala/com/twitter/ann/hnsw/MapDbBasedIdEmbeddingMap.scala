@@ -1,81 +1,81 @@
-package com.twitter.ann.hnsw
+package com.twittew.ann.hnsw
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.bijection.Injection
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.search.common.file.AbstractFile
-import java.io.OutputStream
-import org.mapdb.DBMaker
-import org.mapdb.HTreeMap
-import org.mapdb.Serializer
-import scala.collection.JavaConverters._
+impowt c-com.twittew.ann.common.embeddingtype.embeddingvectow
+i-impowt c-com.twittew.bijection.injection
+i-impowt com.twittew.mw.api.embedding.embedding
+i-impowt c-com.twittew.seawch.common.fiwe.abstwactfiwe
+i-impowt java.io.outputstweam
+i-impowt owg.mapdb.dbmakew
+impowt owg.mapdb.htweemap
+impowt owg.mapdb.sewiawizew
+impowt s-scawa.cowwection.javaconvewtews._
 
 /**
- * This class currently only support querying and creates map db on fly from thrift serialized embedding mapping
- * Implement index creation with this or altogether replace mapdb with some better performing solution as it takes a lot of time to create/query or precreate while serializing thrift embeddings
+ * this cwass cuwwentwy o-onwy suppowt quewying and cweates m-map db on fwy fwom thwift sewiawized embedding mapping
+ * impwement i-index cweation with this o-ow awtogethew wepwace m-mapdb with some bettew pewfowming sowution as it takes a wot of time to cweate/quewy o-ow pwecweate whiwe sewiawizing thwift embeddings
  */
-private[hnsw] object MapDbBasedIdEmbeddingMap {
+pwivate[hnsw] object m-mapdbbasedidembeddingmap {
 
   /**
-   * Loads id embedding mapping in mapDB based container leveraging memory mapped files.
-   * @param embeddingFile: Local/Hdfs file path for embeddings
-   * @param injection : Injection for typed Id T to Array[Byte]
+   * woads i-id embedding m-mapping in mapdb b-based containew w-wevewaging memowy mapped fiwes. (U ﹏ U)
+   * @pawam embeddingfiwe: w-wocaw/hdfs fiwe path fow embeddings
+   * @pawam i-injection : injection fow typed id t to awway[byte]
    */
-  def loadAsReadonly[T](
-    embeddingFile: AbstractFile,
-    injection: Injection[T, Array[Byte]]
-  ): IdEmbeddingMap[T] = {
-    val diskDb = DBMaker
-      .tempFileDB()
-      .concurrencyScale(32)
-      .fileMmapEnable()
-      .fileMmapEnableIfSupported()
-      .fileMmapPreclearDisable()
-      .cleanerHackEnable()
-      .closeOnJvmShutdown()
+  def woadasweadonwy[t](
+    embeddingfiwe: a-abstwactfiwe, >w<
+    injection: injection[t, (U ﹏ U) a-awway[byte]]
+  ): i-idembeddingmap[t] = {
+    v-vaw diskdb = dbmakew
+      .tempfiwedb()
+      .concuwwencyscawe(32)
+      .fiwemmapenabwe()
+      .fiwemmapenabweifsuppowted()
+      .fiwemmappwecweawdisabwe()
+      .cweanewhackenabwe()
+      .cwoseonjvmshutdown()
       .make()
 
-    val mapDb = diskDb
-      .hashMap("mapdb", Serializer.BYTE_ARRAY, Serializer.FLOAT_ARRAY)
-      .createOrOpen()
+    vaw mapdb = diskdb
+      .hashmap("mapdb", 😳 sewiawizew.byte_awway, (ˆ ﻌ ˆ)♡ s-sewiawizew.fwoat_awway)
+      .cweateowopen()
 
-    HnswIOUtil.loadEmbeddings(
-      embeddingFile,
-      injection,
-      new MapDbBasedIdEmbeddingMap(mapDb, injection)
+    h-hnswioutiw.woadembeddings(
+      embeddingfiwe,
+      i-injection, 😳😳😳
+      new m-mapdbbasedidembeddingmap(mapdb, (U ﹏ U) injection)
     )
   }
 }
 
-private[this] class MapDbBasedIdEmbeddingMap[T](
-  mapDb: HTreeMap[Array[Byte], Array[Float]],
-  injection: Injection[T, Array[Byte]])
-    extends IdEmbeddingMap[T] {
-  override def putIfAbsent(id: T, embedding: EmbeddingVector): EmbeddingVector = {
-    val value = mapDb.putIfAbsent(injection.apply(id), embedding.toArray)
-    if (value == null) null else Embedding(value)
+p-pwivate[this] cwass mapdbbasedidembeddingmap[t](
+  m-mapdb: htweemap[awway[byte], (///ˬ///✿) awway[fwoat]], 😳
+  i-injection: injection[t, 😳 a-awway[byte]])
+    extends idembeddingmap[t] {
+  o-ovewwide def p-putifabsent(id: t, σωσ embedding: embeddingvectow): embeddingvectow = {
+    vaw vawue = mapdb.putifabsent(injection.appwy(id), rawr x3 embedding.toawway)
+    if (vawue == n-nyuww) nyuww ewse e-embedding(vawue)
   }
 
-  override def put(id: T, embedding: EmbeddingVector): EmbeddingVector = {
-    val value = mapDb.put(injection.apply(id), embedding.toArray)
-    if (value == null) null else Embedding(value)
+  ovewwide d-def put(id: t, e-embedding: embeddingvectow): embeddingvectow = {
+    v-vaw vawue = mapdb.put(injection.appwy(id), OwO embedding.toawway)
+    if (vawue == n-nyuww) nyuww ewse embedding(vawue)
   }
 
-  override def get(id: T): EmbeddingVector = {
-    Embedding(mapDb.get(injection.apply(id)))
+  ovewwide def get(id: t): embeddingvectow = {
+    embedding(mapdb.get(injection.appwy(id)))
   }
 
-  override def iter(): Iterator[(T, EmbeddingVector)] = {
-    mapDb
-      .entrySet()
-      .iterator()
-      .asScala
-      .map(entry => (injection.invert(entry.getKey).get, Embedding(entry.getValue)))
+  o-ovewwide def itew(): itewatow[(t, /(^•ω•^) e-embeddingvectow)] = {
+    m-mapdb
+      .entwyset()
+      .itewatow()
+      .asscawa
+      .map(entwy => (injection.invewt(entwy.getkey).get, 😳😳😳 e-embedding(entwy.getvawue)))
   }
 
-  override def size(): Int = mapDb.size()
+  ovewwide def s-size(): int = mapdb.size()
 
-  override def toDirectory(embeddingFile: OutputStream): Unit = {
-    HnswIOUtil.saveEmbeddings(embeddingFile, injection, iter())
+  o-ovewwide d-def todiwectowy(embeddingfiwe: o-outputstweam): unit = {
+    hnswioutiw.saveembeddings(embeddingfiwe, ( ͡o ω ͡o ) i-injection, >_< i-itew())
   }
 }

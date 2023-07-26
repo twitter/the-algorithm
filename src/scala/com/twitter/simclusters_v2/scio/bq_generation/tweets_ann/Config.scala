@@ -1,33 +1,33 @@
-package com.twitter.simclusters_v2.scio.bq_generation.tweets_ann
+package com.twittew.simcwustews_v2.scio.bq_genewation.tweets_ann
 
-object Config {
+object config {
   /*
-   * Common root path
+   * c-common w-woot path
    */
-  val RootMHPath: String = "manhattan_sequence_files/offline_sann/"
-  val RootThriftPath: String = "processed/offline_sann/"
-  val AdhocRootPath = "adhoc/offline_sann/"
-
-  /*
-   * Variables for MH output path
-   */
-  val IIKFANNOutputPath: String = "tweets_ann/iikf"
-  val IIKFHL0EL15ANNOutputPath: String = "tweets_ann/iikf_hl_0_el_15"
-  val IIKFHL2EL15ANNOutputPath: String = "tweets_ann/iikf_hl_2_el_15"
-  val IIKFHL2EL50ANNOutputPath: String = "tweets_ann/iikf_hl_2_el_50"
-  val IIKFHL8EL50ANNOutputPath: String = "tweets_ann/iikf_hl_8_el_50"
-  val MTSConsumerEmbeddingsANNOutputPath: String = "tweets_ann/mts_consumer_embeddings"
+  v-vaw wootmhpath: s-stwing = "manhattan_sequence_fiwes/offwine_sann/"
+  v-vaw wootthwiftpath: s-stwing = "pwocessed/offwine_sann/"
+  v-vaw adhocwootpath = "adhoc/offwine_sann/"
 
   /*
-   * Variables for tweet embeddings generation
+   * v-vawiabwes fow mh output path
    */
-  val SimClustersTweetEmbeddingsGenerationHalfLife: Int = 28800000 // 8hrs in ms
-  val SimClustersTweetEmbeddingsGenerationEmbeddingLength: Int = 15
+  vaw iikfannoutputpath: stwing = "tweets_ann/iikf"
+  vaw iikfhw0ew15annoutputpath: s-stwing = "tweets_ann/iikf_hw_0_ew_15"
+  vaw iikfhw2ew15annoutputpath: stwing = "tweets_ann/iikf_hw_2_ew_15"
+  v-vaw iikfhw2ew50annoutputpath: stwing = "tweets_ann/iikf_hw_2_ew_50"
+  v-vaw iikfhw8ew50annoutputpath: stwing = "tweets_ann/iikf_hw_8_ew_50"
+  vaw mtsconsumewembeddingsannoutputpath: stwing = "tweets_ann/mts_consumew_embeddings"
 
   /*
-   * Variables for ANN
+   * vawiabwes fow tweet embeddings g-genewation
    */
-  val SimClustersANNTopNClustersPerSourceEmbedding: Int = 20
-  val SimClustersANNTopMTweetsPerCluster: Int = 50
-  val SimClustersANNTopKTweetsPerUserRequest: Int = 200
+  vaw simcwustewstweetembeddingsgenewationhawfwife: i-int = 28800000 // 8hws i-in ms
+  vaw simcwustewstweetembeddingsgenewationembeddingwength: int = 15
+
+  /*
+   * vawiabwes fow ann
+   */
+  vaw simcwustewsanntopncwustewspewsouwceembedding: i-int = 20
+  vaw simcwustewsanntopmtweetspewcwustew: int = 50
+  vaw simcwustewsanntopktweetspewusewwequest: int = 200
 }

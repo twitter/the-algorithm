@@ -1,39 +1,39 @@
 {
-  "role": "discode",
-  "name": "uua-ads-callback-engagements-staging",
-  "config-files": [
-    "uua-ads-callback-engagements.aurora"
-  ],
-  "build": {
-    "play": true,
+  "wowe": "discode", XD
+  "name": "uua-ads-cawwback-engagements-staging", >_<
+  "config-fiwes": [
+    "uua-ads-cawwback-engagements.auwowa"
+  ], (ꈍᴗꈍ)
+  "buiwd": {
+    "pway": twue, ^•ﻌ•^
     "dependencies": [
       {
-        "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "wowe": "packew", OwO
+        "name": "packew-cwient-no-pex", 🥺
+        "vewsion": "watest"
       }
-    ],
+    ], òωó
     "steps": [
       {
-        "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-ads-callback-engagements"
-      },
+        "type": "bazew-bundwe", o.O
+        "name": "bundwe", (U ᵕ U❁)
+        "tawget": "unified_usew_actions/sewvice/swc/main/scawa:uua-ads-cawwback-engagements"
+      }, (⑅˘꒳˘)
       {
-        "type": "packer",
-        "name": "uua-ads-callback-engagements-staging",
-        "artifact": "./dist/uua-ads-callback-engagements.zip"
+        "type": "packew", ( ͡o ω ͡o )
+        "name": "uua-ads-cawwback-engagements-staging", UwU
+        "awtifact": "./dist/uua-ads-cawwback-engagements.zip"
       }
     ]
-  },
-  "targets": [
+  }, rawr x3
+  "tawgets": [
     {
-      "type": "group",
-      "name": "staging",
-      "targets": [
+      "type": "gwoup", rawr
+      "name": "staging", σωσ
+      "tawgets": [
         {
-          "name": "uua-ads-callback-engagements-staging-pdxa",
-          "key": "pdxa/discode/staging/uua-ads-callback-engagements"
+          "name": "uua-ads-cawwback-engagements-staging-pdxa", σωσ
+          "key": "pdxa/discode/staging/uua-ads-cawwback-engagements"
         }
       ]
     }

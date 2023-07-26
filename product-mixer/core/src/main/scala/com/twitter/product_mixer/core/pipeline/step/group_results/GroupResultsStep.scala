@@ -1,67 +1,67 @@
-package com.twitter.product_mixer.core.pipeline.step.group_results
+package com.twittew.pwoduct_mixew.cowe.pipewine.step.gwoup_wesuwts
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithDetails
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithFeatures
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.group_results_executor.GroupResultsExecutor
-import com.twitter.product_mixer.core.service.group_results_executor.GroupResultsExecutorInput
-import com.twitter.product_mixer.core.service.group_results_executor.GroupResultsExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hascandidateswithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hascandidateswithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.step.step
+i-impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.executow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.gwoup_wesuwts_executow.gwoupwesuwtsexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.gwoup_wesuwts_executow.gwoupwesuwtsexecutowinput
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.gwoup_wesuwts_executow.gwoupwesuwtsexecutowwesuwt
+impowt com.twittew.stitch.awwow
+i-impowt javax.inject.inject
 
 /**
- * A group results step, it takes the input list of candidates and decorations, and assembles
- * properly decorated candidates with details.
+ * a g-gwoup wesuwts step, 😳😳😳 it takes the input wist of candidates and decowations, (˘ω˘) a-and assembwes
+ * pwopewwy d-decowated c-candidates with detaiws. ^^
  *
- * @param groupResultsExecutor Group results executor
- * @tparam Candidate Type of candidates
- * @tparam State The pipeline state domain model.
+ * @pawam gwoupwesuwtsexecutow gwoup wesuwts executow
+ * @tpawam c-candidate type of candidates
+ * @tpawam state the pipewine state domain modew. :3
  */
-case class GroupResultsStep[
-  Candidate <: UniversalNoun[Any],
-  State <: HasCandidatesWithDetails[State] with HasCandidatesWithFeatures[
-    Candidate,
-    State
-  ]] @Inject() (
-  groupResultsExecutor: GroupResultsExecutor)
-    extends Step[State, CandidatePipelineContext, GroupResultsExecutorInput[
-      Candidate
-    ], GroupResultsExecutorResult] {
+c-case cwass gwoupwesuwtsstep[
+  candidate <: univewsawnoun[any],
+  s-state <: hascandidateswithdetaiws[state] w-with h-hascandidateswithfeatuwes[
+    candidate,
+    s-state
+  ]] @inject() (
+  gwoupwesuwtsexecutow: gwoupwesuwtsexecutow)
+    e-extends step[state, -.- candidatepipewinecontext, 😳 gwoupwesuwtsexecutowinput[
+      c-candidate
+    ], mya gwoupwesuwtsexecutowwesuwt] {
 
-  override def isEmpty(config: CandidatePipelineContext): Boolean = false
-  override def adaptInput(
-    state: State,
-    config: CandidatePipelineContext
-  ): GroupResultsExecutorInput[Candidate] = {
-    val presentationMap = state.candidatesWithDetails.flatMap { candidateWithDetails =>
-      candidateWithDetails.presentation
-        .map { presentation =>
-          candidateWithDetails.getCandidate[UniversalNoun[Any]] -> presentation
+  ovewwide def isempty(config: candidatepipewinecontext): boowean = fawse
+  o-ovewwide def adaptinput(
+    state: state, (˘ω˘)
+    c-config: candidatepipewinecontext
+  ): g-gwoupwesuwtsexecutowinput[candidate] = {
+    v-vaw pwesentationmap = state.candidateswithdetaiws.fwatmap { candidatewithdetaiws =>
+      candidatewithdetaiws.pwesentation
+        .map { pwesentation =>
+          c-candidatewithdetaiws.getcandidate[univewsawnoun[any]] -> p-pwesentation
         }
-    }.toMap
-    GroupResultsExecutorInput(state.candidatesWithFeatures, presentationMap)
+    }.tomap
+    gwoupwesuwtsexecutowinput(state.candidateswithfeatuwes, >_< p-pwesentationmap)
   }
 
-  override def arrow(
-    config: CandidatePipelineContext,
-    context: Executor.Context
-  ): Arrow[GroupResultsExecutorInput[Candidate], GroupResultsExecutorResult] =
-    groupResultsExecutor.arrow(
-      config.candidatePipelineIdentifier,
-      config.candidateSourceIdentifier,
+  o-ovewwide def awwow(
+    c-config: candidatepipewinecontext, -.-
+    context: e-executow.context
+  ): awwow[gwoupwesuwtsexecutowinput[candidate], 🥺 gwoupwesuwtsexecutowwesuwt] =
+    g-gwoupwesuwtsexecutow.awwow(
+      config.candidatepipewineidentifiew, (U ﹏ U)
+      c-config.candidatesouwceidentifiew, >w<
       context)
 
-  override def updateState(
-    state: State,
-    executorResult: GroupResultsExecutorResult,
-    config: CandidatePipelineContext
-  ): State = state.updateCandidatesWithDetails(executorResult.candidatesWithDetails)
+  o-ovewwide def u-updatestate(
+    state: state, mya
+    executowwesuwt: gwoupwesuwtsexecutowwesuwt, >w<
+    config: candidatepipewinecontext
+  ): state = state.updatecandidateswithdetaiws(executowwesuwt.candidateswithdetaiws)
 }
 
-case class CandidatePipelineContext(
-  candidatePipelineIdentifier: CandidatePipelineIdentifier,
-  candidateSourceIdentifier: CandidateSourceIdentifier)
+c-case c-cwass candidatepipewinecontext(
+  candidatepipewineidentifiew: c-candidatepipewineidentifiew, nyaa~~
+  c-candidatesouwceidentifiew: c-candidatesouwceidentifiew)

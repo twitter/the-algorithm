@@ -1,16 +1,16 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.twittew.fwigate.pushsewvice.modew.ntab
 
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.MagicFanoutEventHydratedCandidate
-import com.twitter.notificationservice.thriftscala.DisplayTextEntity
-import com.twitter.notificationservice.thriftscala.TextValue
-import com.twitter.util.Future
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.magicfanouteventhydwatedcandidate
+i-impowt com.twittew.notificationsewvice.thwiftscawa.dispwaytextentity
+i-impowt c-com.twittew.notificationsewvice.thwiftscawa.textvawue
+i-impowt c-com.twittew.utiw.futuwe
 
-trait MagicFanoutNewsEventNTabRequestHydrator extends EventNTabRequestHydrator {
-  self: PushCandidate with MagicFanoutEventHydratedCandidate =>
-  override lazy val tapThroughFut: Future[String] = Future.value(s"i/events/$eventId")
-  override lazy val displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] =
-    eventTitleFut.map { eventTitle =>
-      Seq(DisplayTextEntity(name = "title", value = TextValue.Text(eventTitle)))
+t-twait magicfanoutnewseventntabwequesthydwatow e-extends eventntabwequesthydwatow {
+  sewf: pushcandidate with magicfanouteventhydwatedcandidate =>
+  ovewwide w-wazy vaw tapthwoughfut: futuwe[stwing] = futuwe.vawue(s"i/events/$eventid")
+  o-ovewwide wazy vaw dispwaytextentitiesfut: f-futuwe[seq[dispwaytextentity]] =
+    eventtitwefut.map { eventtitwe =>
+      seq(dispwaytextentity(name = "titwe", -.- v-vawue = textvawue.text(eventtitwe)))
     }
 }

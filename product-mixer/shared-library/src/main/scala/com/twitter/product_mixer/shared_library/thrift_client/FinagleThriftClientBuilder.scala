@@ -1,198 +1,198 @@
-package com.twitter.product_mixer.shared_library.thrift_client
+package com.twittew.pwoduct_mixew.shawed_wibwawy.thwift_cwient
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.thrift.service.Filterable
-import com.twitter.finagle.thrift.service.MethodPerEndpointBuilder
-import com.twitter.finagle.thrift.service.ServicePerEndpointBuilder
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.util.Duration
-import org.apache.thrift.protocol.TProtocolFactory
+impowt com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.finagwe.thwiftmux
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.mtws.cwient.mtwsstackcwient._
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.finagwe.thwift.cwientid
+impowt com.twittew.finagwe.thwift.sewvice.fiwtewabwe
+impowt com.twittew.finagwe.thwift.sewvice.methodpewendpointbuiwdew
+impowt c-com.twittew.finagwe.thwift.sewvice.sewvicepewendpointbuiwdew
+impowt com.twittew.finagwe.thwiftmux.methodbuiwdew
+impowt com.twittew.utiw.duwation
+i-impowt owg.apache.thwift.pwotocow.tpwotocowfactowy
 
-sealed trait Idempotency
-case object NonIdempotent extends Idempotency
-case class Idempotent(maxExtraLoadPercent: Double) extends Idempotency
+seawed t-twait idempotency
+case object nyonidempotent extends idempotency
+c-case cwass idempotent(maxextwawoadpewcent: doubwe) e-extends idempotency
 
-object FinagleThriftClientBuilder {
+o-object finagwethwiftcwientbuiwdew {
 
   /**
-   * Library to build a Finagle Thrift method per endpoint client is a less error-prone way when
-   * compared to the builders in Finagle. This is achieved by requiring values for fields that should
-   * always be set in practice. For example, request timeouts in Finagle are unbounded when not
-   * explicitly set, and this method requires that timeout durations are passed into the method and
-   * set on the Finagle builder.
+   * wibwawy to buiwd a finagwe thwift method p-pew endpoint cwient is a wess ewwow-pwone way when
+   * compawed to the buiwdews i-in finagwe. ^^;; this is achieved b-by wequiwing vawues f-fow fiewds that s-shouwd
+   * a-awways be set in pwactice. ʘwʘ fow exampwe, wequest t-timeouts in finagwe awe unbounded when nyot
+   * e-expwicitwy set, (U ﹏ U) and this method wequiwes that timeout duwations awe passed into the method and
+   * s-set on the finagwe buiwdew. (˘ω˘)
    *
-   * Usage of
-   * [[com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule]] is almost always preferred,
-   * and the Product Mixer component library [[com.twitter.product_mixer.component_library.module]]
-   * package contains numerous examples. However, if multiple versions of a client are needed e.g.
-   * for different timeout settings, this method is useful to easily provide multiple variants.
+   * u-usage o-of
+   * [[com.twittew.inject.thwift.moduwes.thwiftmethodbuiwdewcwientmoduwe]] is a-awmost awways pwefewwed, (ꈍᴗꈍ)
+   * and the pwoduct mixew component w-wibwawy [[com.twittew.pwoduct_mixew.component_wibwawy.moduwe]]
+   * p-package contains nyumewous exampwes. /(^•ω•^) h-howevew, i-if muwtipwe vewsions of a cwient a-awe nyeeded e.g. >_<
+   * fow diffewent t-timeout settings, σωσ this method is usefuw to e-easiwy pwovide muwtipwe vawiants. ^^;;
    *
-   * @example
+   * @exampwe
    * {{{
-   *   final val SampleServiceClientName = "SampleServiceClient"
-   *   @Provides
-   *   @Singleton
-   *   @Named(SampleServiceClientName)
-   *   def provideSampleServiceClient(
-   *     serviceIdentifier: ServiceIdentifier,
-   *     clientId: ClientId,
-   *     statsReceiver: StatsReceiver,
-   *   ): SampleService.MethodPerEndpoint =
-   *     buildFinagleMethodPerEndpoint[SampleService.ServicePerEndpoint, SampleService.MethodPerEndpoint](
-   *       serviceIdentifier = serviceIdentifier,
-   *       clientId = clientId,
-   *       dest = "/s/sample/sample",
-   *       label = "sample",
-   *       statsReceiver = statsReceiver,
-   *       idempotency = Idempotent(5.percent),
-   *       timeoutPerRequest = 200.milliseconds,
-   *       timeoutTotal = 400.milliseconds
+   *   f-finaw vaw sampwesewvicecwientname = "sampwesewvicecwient"
+   *   @pwovides
+   *   @singweton
+   *   @named(sampwesewvicecwientname)
+   *   d-def pwovidesampwesewvicecwient(
+   *     s-sewviceidentifiew: sewviceidentifiew, 😳
+   *     cwientid: cwientid, >_<
+   *     statsweceivew: statsweceivew, -.-
+   *   ): sampwesewvice.methodpewendpoint =
+   *     buiwdfinagwemethodpewendpoint[sampwesewvice.sewvicepewendpoint, UwU s-sampwesewvice.methodpewendpoint](
+   *       s-sewviceidentifiew = sewviceidentifiew, :3
+   *       c-cwientid = c-cwientid, σωσ
+   *       d-dest = "/s/sampwe/sampwe", >w<
+   *       wabew = "sampwe", (ˆ ﻌ ˆ)♡
+   *       statsweceivew = statsweceivew, ʘwʘ
+   *       idempotency = i-idempotent(5.pewcent), :3
+   *       timeoutpewwequest = 200.miwwiseconds,
+   *       timeouttotaw = 400.miwwiseconds
    *     )
    * }}}
-   * @param serviceIdentifier         Service ID used to S2S Auth
-   * @param clientId                  Client ID
-   * @param dest                      Destination as a Wily path e.g. "/s/sample/sample"
-   * @param label                     Label of the client
-   * @param statsReceiver             Stats
-   * @param idempotency               Idempotency semantics of the client
-   * @param timeoutPerRequest         Thrift client timeout per request. The Finagle default is
-   *                                  unbounded which is almost never optimal.
-   * @param timeoutTotal              Thrift client total timeout. The Finagle default is
-   *                                  unbounded which is almost never optimal.
-   *                                  If the client is set as idempotent, which adds a
-   *                                  [[com.twitter.finagle.client.BackupRequestFilter]],
-   *                                  be sure to leave enough room for the backup request. A
-   *                                  reasonable (albeit usually too large) starting point is to
-   *                                  make the total timeout 2x relative to the per request timeout.
-   *                                  If the client is set as non-idempotent, the total timeout and
-   *                                  the per request timeout should be the same, as there will be
-   *                                  no backup requests.
-   * @param connectTimeout            Thrift client transport connect timeout. The Finagle default
-   *                                  of one second is reasonable but we lower this to match
-   *                                  acquisitionTimeout for consistency.
-   * @param acquisitionTimeout        Thrift client session acquisition timeout. The Finagle default
-   *                                  is unbounded which is almost never optimal.
-   * @param protocolFactoryOverride   Override the default protocol factory
-   *                                  e.g. [[org.apache.thrift.protocol.TCompactProtocol.Factory]]
-   * @param servicePerEndpointBuilder implicit service per endpoint builder
-   * @param methodPerEndpointBuilder  implicit method per endpoint builder
+   * @pawam sewviceidentifiew         sewvice id used t-to s2s auth
+   * @pawam cwientid                  c-cwient id
+   * @pawam d-dest                      d-destination as a wiwy path e.g. (˘ω˘) "/s/sampwe/sampwe"
+   * @pawam w-wabew                     w-wabew o-of the cwient
+   * @pawam s-statsweceivew             stats
+   * @pawam idempotency               i-idempotency semantics o-of the cwient
+   * @pawam t-timeoutpewwequest         t-thwift c-cwient timeout pew wequest. 😳😳😳 the finagwe defauwt is
+   *                                  u-unbounded which is awmost nyevew optimaw. rawr x3
+   * @pawam timeouttotaw              thwift cwient totaw t-timeout. (✿oωo) the finagwe defauwt is
+   *                                  unbounded which is awmost n-nyevew optimaw. (ˆ ﻌ ˆ)♡
+   *                                  i-if the cwient i-is set as idempotent, :3 which a-adds a
+   *                                  [[com.twittew.finagwe.cwient.backupwequestfiwtew]], (U ᵕ U❁)
+   *                                  be suwe to w-weave enough woom f-fow the backup wequest. ^^;; a
+   *                                  weasonabwe (awbeit usuawwy too wawge) stawting point is to
+   *                                  m-make the totaw timeout 2x wewative t-to the pew wequest timeout. mya
+   *                                  i-if the c-cwient is set as nyon-idempotent, 😳😳😳 the totaw timeout a-and
+   *                                  the p-pew wequest timeout shouwd be t-the same, OwO as thewe w-wiww be
+   *                                  nyo backup wequests. rawr
+   * @pawam connecttimeout            thwift cwient twanspowt c-connect timeout. XD t-the finagwe d-defauwt
+   *                                  of one second is w-weasonabwe but w-we wowew this to match
+   *                                  a-acquisitiontimeout fow consistency. (U ﹏ U)
+   * @pawam acquisitiontimeout        thwift cwient session acquisition t-timeout. (˘ω˘) t-the finagwe defauwt
+   *                                  is unbounded which is a-awmost nyevew o-optimaw. UwU
+   * @pawam pwotocowfactowyovewwide   ovewwide the defauwt pwotocow factowy
+   *                                  e-e.g. >_< [[owg.apache.thwift.pwotocow.tcompactpwotocow.factowy]]
+   * @pawam sewvicepewendpointbuiwdew impwicit sewvice pew endpoint buiwdew
+   * @pawam m-methodpewendpointbuiwdew  impwicit method pew endpoint b-buiwdew
    *
-   * @see [[https://twitter.github.io/finagle/guide/MethodBuilder.html user guide]]
-   * @see [[https://twitter.github.io/finagle/guide/MethodBuilder.html#idempotency user guide]]
-   * @return method per endpoint Finagle Thrift Client
+   * @see [[https://twittew.github.io/finagwe/guide/methodbuiwdew.htmw u-usew guide]]
+   * @see [[https://twittew.github.io/finagwe/guide/methodbuiwdew.htmw#idempotency usew guide]]
+   * @wetuwn m-method pew e-endpoint finagwe thwift cwient
    */
-  def buildFinagleMethodPerEndpoint[
-    ServicePerEndpoint <: Filterable[ServicePerEndpoint],
-    MethodPerEndpoint
+  def buiwdfinagwemethodpewendpoint[
+    sewvicepewendpoint <: f-fiwtewabwe[sewvicepewendpoint], σωσ
+    methodpewendpoint
   ](
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    dest: String,
-    label: String,
-    statsReceiver: StatsReceiver,
-    idempotency: Idempotency,
-    timeoutPerRequest: Duration,
-    timeoutTotal: Duration,
-    connectTimeout: Duration = 500.milliseconds,
-    acquisitionTimeout: Duration = 500.milliseconds,
-    protocolFactoryOverride: Option[TProtocolFactory] = None,
+    s-sewviceidentifiew: sewviceidentifiew, 🥺
+    cwientid: cwientid, 🥺
+    d-dest: stwing, ʘwʘ
+    wabew: stwing, :3
+    s-statsweceivew: s-statsweceivew,
+    idempotency: i-idempotency,
+    timeoutpewwequest: d-duwation, (U ﹏ U)
+    t-timeouttotaw: d-duwation, (U ﹏ U)
+    connecttimeout: d-duwation = 500.miwwiseconds, ʘwʘ
+    a-acquisitiontimeout: duwation = 500.miwwiseconds, >w<
+    pwotocowfactowyovewwide: o-option[tpwotocowfactowy] = n-nyone,
   )(
-    implicit servicePerEndpointBuilder: ServicePerEndpointBuilder[ServicePerEndpoint],
-    methodPerEndpointBuilder: MethodPerEndpointBuilder[ServicePerEndpoint, MethodPerEndpoint]
-  ): MethodPerEndpoint = {
-    val service: ServicePerEndpoint = buildFinagleServicePerEndpoint(
-      serviceIdentifier = serviceIdentifier,
-      clientId = clientId,
-      dest = dest,
-      label = label,
-      statsReceiver = statsReceiver,
-      idempotency = idempotency,
-      timeoutPerRequest = timeoutPerRequest,
-      timeoutTotal = timeoutTotal,
-      connectTimeout = connectTimeout,
-      acquisitionTimeout = acquisitionTimeout,
-      protocolFactoryOverride = protocolFactoryOverride
+    i-impwicit sewvicepewendpointbuiwdew: sewvicepewendpointbuiwdew[sewvicepewendpoint], rawr x3
+    methodpewendpointbuiwdew: m-methodpewendpointbuiwdew[sewvicepewendpoint, OwO methodpewendpoint]
+  ): methodpewendpoint = {
+    v-vaw sewvice: sewvicepewendpoint = b-buiwdfinagwesewvicepewendpoint(
+      sewviceidentifiew = sewviceidentifiew,
+      cwientid = c-cwientid, ^•ﻌ•^
+      d-dest = dest, >_<
+      w-wabew = wabew, OwO
+      s-statsweceivew = statsweceivew,
+      i-idempotency = idempotency, >_<
+      timeoutpewwequest = timeoutpewwequest,
+      timeouttotaw = timeouttotaw, (ꈍᴗꈍ)
+      connecttimeout = connecttimeout, >w<
+      a-acquisitiontimeout = acquisitiontimeout, (U ﹏ U)
+      p-pwotocowfactowyovewwide = pwotocowfactowyovewwide
     )
 
-    ThriftMux.Client.methodPerEndpoint(service)
+    thwiftmux.cwient.methodpewendpoint(sewvice)
   }
 
   /**
-   * Build a Finagle Thrift service per endpoint client.
+   * b-buiwd a finagwe thwift s-sewvice pew endpoint cwient. ^^
    *
-   * @note [[buildFinagleMethodPerEndpoint]] should be preferred over the service per endpoint variant
+   * @note [[buiwdfinagwemethodpewendpoint]] s-shouwd be pwefewwed o-ovew the s-sewvice pew endpoint v-vawiant
    *
-   * @param serviceIdentifier       Service ID used to S2S Auth
-   * @param clientId                Client ID
-   * @param dest                    Destination as a Wily path e.g. "/s/sample/sample"
-   * @param label                   Label of the client
-   * @param statsReceiver           Stats
-   * @param idempotency             Idempotency semantics of the client
-   * @param timeoutPerRequest       Thrift client timeout per request. The Finagle default is
-   *                                unbounded which is almost never optimal.
-   * @param timeoutTotal            Thrift client total timeout. The Finagle default is
-   *                                unbounded which is almost never optimal.
-   *                                If the client is set as idempotent, which adds a
-   *                                [[com.twitter.finagle.client.BackupRequestFilter]],
-   *                                be sure to leave enough room for the backup request. A
-   *                                reasonable (albeit usually too large) starting point is to
-   *                                make the total timeout 2x relative to the per request timeout.
-   *                                If the client is set as non-idempotent, the total timeout and
-   *                                the per request timeout should be the same, as there will be
-   *                                no backup requests.
-   * @param connectTimeout          Thrift client transport connect timeout. The Finagle default
-   *                                of one second is reasonable but we lower this to match
-   *                                acquisitionTimeout for consistency.
-   * @param acquisitionTimeout      Thrift client session acquisition timeout. The Finagle default
-   *                                is unbounded which is almost never optimal.
-   * @param protocolFactoryOverride Override the default protocol factory
-   *                                e.g. [[org.apache.thrift.protocol.TCompactProtocol.Factory]]
+   * @pawam sewviceidentifiew       s-sewvice id used to s2s auth
+   * @pawam cwientid                cwient id
+   * @pawam dest                    destination as a wiwy path e.g. (U ﹏ U) "/s/sampwe/sampwe"
+   * @pawam w-wabew                   w-wabew o-of the cwient
+   * @pawam statsweceivew           s-stats
+   * @pawam idempotency             idempotency semantics o-of the cwient
+   * @pawam t-timeoutpewwequest       thwift cwient t-timeout pew wequest. :3 the finagwe defauwt is
+   *                                u-unbounded which i-is awmost nyevew optimaw. (✿oωo)
+   * @pawam t-timeouttotaw            t-thwift cwient totaw timeout. XD the finagwe defauwt is
+   *                                unbounded w-which is awmost n-nyevew optimaw. >w<
+   *                                i-if the cwient i-is set as i-idempotent, òωó which adds a
+   *                                [[com.twittew.finagwe.cwient.backupwequestfiwtew]], (ꈍᴗꈍ)
+   *                                b-be suwe to w-weave enough woom fow the backup w-wequest. rawr x3 a
+   *                                w-weasonabwe (awbeit usuawwy too wawge) s-stawting point is to
+   *                                make the totaw timeout 2x w-wewative to the pew wequest t-timeout. rawr x3
+   *                                i-if the cwient is set as nyon-idempotent, σωσ t-the totaw timeout and
+   *                                the pew wequest t-timeout shouwd b-be the same, (ꈍᴗꈍ) a-as thewe wiww be
+   *                                nyo backup wequests. rawr
+   * @pawam connecttimeout          thwift c-cwient twanspowt connect timeout. ^^;; the finagwe d-defauwt
+   *                                o-of one second is weasonabwe but w-we wowew this to match
+   *                                a-acquisitiontimeout f-fow consistency. rawr x3
+   * @pawam acquisitiontimeout      t-thwift cwient session acquisition timeout. the f-finagwe defauwt
+   *                                i-is unbounded which is awmost n-nyevew optimaw. (ˆ ﻌ ˆ)♡
+   * @pawam pwotocowfactowyovewwide ovewwide t-the defauwt pwotocow f-factowy
+   *                                e-e.g. σωσ [[owg.apache.thwift.pwotocow.tcompactpwotocow.factowy]]
    *
-   * @return service per endpoint Finagle Thrift Client
+   * @wetuwn sewvice pew endpoint finagwe thwift cwient
    */
-  def buildFinagleServicePerEndpoint[ServicePerEndpoint <: Filterable[ServicePerEndpoint]](
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    dest: String,
-    label: String,
-    statsReceiver: StatsReceiver,
-    idempotency: Idempotency,
-    timeoutPerRequest: Duration,
-    timeoutTotal: Duration,
-    connectTimeout: Duration = 500.milliseconds,
-    acquisitionTimeout: Duration = 500.milliseconds,
-    protocolFactoryOverride: Option[TProtocolFactory] = None,
+  def buiwdfinagwesewvicepewendpoint[sewvicepewendpoint <: fiwtewabwe[sewvicepewendpoint]](
+    sewviceidentifiew: sewviceidentifiew, (U ﹏ U)
+    cwientid: cwientid, >w<
+    dest: stwing, σωσ
+    wabew: stwing, nyaa~~
+    statsweceivew: s-statsweceivew, 🥺
+    i-idempotency: idempotency, rawr x3
+    timeoutpewwequest: d-duwation, σωσ
+    t-timeouttotaw: d-duwation, (///ˬ///✿)
+    connecttimeout: d-duwation = 500.miwwiseconds, (U ﹏ U)
+    acquisitiontimeout: d-duwation = 500.miwwiseconds, ^^;;
+    p-pwotocowfactowyovewwide: option[tpwotocowfactowy] = nyone, 🥺
   )(
-    implicit servicePerEndpointBuilder: ServicePerEndpointBuilder[ServicePerEndpoint]
-  ): ServicePerEndpoint = {
-    val thriftMux: ThriftMux.Client = ThriftMux.client
-      .withMutualTls(serviceIdentifier)
-      .withClientId(clientId)
-      .withLabel(label)
-      .withStatsReceiver(statsReceiver)
-      .withTransport.connectTimeout(connectTimeout)
-      .withSession.acquisitionTimeout(acquisitionTimeout)
+    impwicit s-sewvicepewendpointbuiwdew: sewvicepewendpointbuiwdew[sewvicepewendpoint]
+  ): s-sewvicepewendpoint = {
+    v-vaw thwiftmux: thwiftmux.cwient = thwiftmux.cwient
+      .withmutuawtws(sewviceidentifiew)
+      .withcwientid(cwientid)
+      .withwabew(wabew)
+      .withstatsweceivew(statsweceivew)
+      .withtwanspowt.connecttimeout(connecttimeout)
+      .withsession.acquisitiontimeout(acquisitiontimeout)
 
-    val protocolThriftMux: ThriftMux.Client = protocolFactoryOverride
-      .map { protocolFactory =>
-        thriftMux.withProtocolFactory(protocolFactory)
-      }.getOrElse(thriftMux)
+    v-vaw p-pwotocowthwiftmux: t-thwiftmux.cwient = p-pwotocowfactowyovewwide
+      .map { p-pwotocowfactowy =>
+        t-thwiftmux.withpwotocowfactowy(pwotocowfactowy)
+      }.getowewse(thwiftmux)
 
-    val methodBuilder: MethodBuilder = protocolThriftMux
-      .methodBuilder(dest)
-      .withTimeoutPerRequest(timeoutPerRequest)
-      .withTimeoutTotal(timeoutTotal)
+    v-vaw methodbuiwdew: m-methodbuiwdew = p-pwotocowthwiftmux
+      .methodbuiwdew(dest)
+      .withtimeoutpewwequest(timeoutpewwequest)
+      .withtimeouttotaw(timeouttotaw)
 
-    val idempotencyMethodBuilder: MethodBuilder = idempotency match {
-      case NonIdempotent => methodBuilder.nonIdempotent
-      case Idempotent(maxExtraLoad) => methodBuilder.idempotent(maxExtraLoad = maxExtraLoad)
+    vaw idempotencymethodbuiwdew: m-methodbuiwdew = i-idempotency match {
+      c-case nyonidempotent => m-methodbuiwdew.nonidempotent
+      case idempotent(maxextwawoad) => methodbuiwdew.idempotent(maxextwawoad = m-maxextwawoad)
     }
 
-    idempotencyMethodBuilder.servicePerEndpoint[ServicePerEndpoint]
+    idempotencymethodbuiwdew.sewvicepewendpoint[sewvicepewendpoint]
   }
 }

@@ -1,27 +1,27 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.spam.rtf.thriftscala.FilteredReason
-import com.twitter.tweetypie.core.FilteredState
-import com.twitter.tweetypie.core.ValueState
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.visibility.results.counts.EngagementCounts
+impowt c-com.twittew.spam.wtf.thwiftscawa.fiwtewedweason
+i-impowt com.twittew.tweetypie.cowe.fiwtewedstate
+i-impowt com.twittew.tweetypie.cowe.vawuestate
+i-impowt com.twittew.tweetypie.thwiftscawa._
+i-impowt c-com.twittew.visibiwity.wesuwts.counts.engagementcounts
 
 /**
- * Redact Tweet.counts (StatusCounts) for some visibility results
+ * w-wedact tweet.counts (statuscounts) fow some visibiwity wesuwts
  */
-object ScrubEngagementHydrator {
-  type Type = ValueHydrator[Option[StatusCounts], Ctx]
+object scwubengagementhydwatow {
+  type type = v-vawuehydwatow[option[statuscounts], -.- ctx]
 
-  case class Ctx(filteredState: Option[FilteredState.Suppress])
+  case cwass ctx(fiwtewedstate: o-option[fiwtewedstate.suppwess])
 
-  def apply(): Type =
-    ValueHydrator.map[Option[StatusCounts], Ctx] { (curr: Option[StatusCounts], ctx: Ctx) =>
-      ctx.filteredState match {
-        case Some(FilteredState.Suppress(FilteredReason.SafetyResult(result))) if curr.nonEmpty =>
-          ValueState.delta(curr, EngagementCounts.scrubEngagementCounts(result.action, curr))
-        case _ =>
-          ValueState.unmodified(curr)
+  def appwy(): t-type =
+    vawuehydwatow.map[option[statuscounts], ( ͡o ω ͡o ) ctx] { (cuww: option[statuscounts], rawr x3 ctx: ctx) =>
+      c-ctx.fiwtewedstate match {
+        c-case s-some(fiwtewedstate.suppwess(fiwtewedweason.safetywesuwt(wesuwt))) if cuww.nonempty =>
+          vawuestate.dewta(cuww, nyaa~~ engagementcounts.scwubengagementcounts(wesuwt.action, /(^•ω•^) cuww))
+        c-case _ =>
+          vawuestate.unmodified(cuww)
       }
     }
 }

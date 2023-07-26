@@ -1,62 +1,62 @@
-package com.twitter.timelineranker.common
+package com.twittew.timewinewankew.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.util.SourceTweetsUtil
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.seawch.eawwybiwd.thwiftscawa.thwiftseawchwesuwt
+i-impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.timewinewankew.cowe.candidateenvewope
+impowt c-com.twittew.timewinewankew.modew.wecapquewy.dependencypwovidew
+i-impowt com.twittew.timewinewankew.utiw.souwcetweetsutiw
+impowt com.twittew.timewines.cwients.wewevance_seawch.seawchcwient
+impowt com.twittew.timewines.utiw.faiwopenhandwew
+impowt com.twittew.utiw.futuwe
 
-object SourceTweetsSearchResultsTransform {
-  val EmptySearchResults: Seq[ThriftSearchResult] = Seq.empty[ThriftSearchResult]
-  val EmptySearchResultsFuture: Future[Seq[ThriftSearchResult]] = Future.value(EmptySearchResults)
+o-object souwcetweetsseawchwesuwtstwansfowm {
+  vaw emptyseawchwesuwts: seq[thwiftseawchwesuwt] = s-seq.empty[thwiftseawchwesuwt]
+  vaw emptyseawchwesuwtsfutuwe: f-futuwe[seq[thwiftseawchwesuwt]] = futuwe.vawue(emptyseawchwesuwts)
 }
 
 /**
- * Fetch source tweets for a given set of search results
- * Collects ids of source tweets, including extended reply and reply source tweets if needed,
- * fetches those tweets from search and populates them into the envelope
+ * fetch souwce tweets f-fow a given set of seawch wesuwts
+ * c-cowwects ids o-of souwce tweets, -.- incwuding extended wepwy and wepwy souwce tweets if nyeeded, 😳
+ * f-fetches those tweets fwom seawch and popuwates them into the envewope
  */
-class SourceTweetsSearchResultsTransform(
-  searchClient: SearchClient,
-  failOpenHandler: FailOpenHandler,
-  hydrateReplyRootTweetProvider: DependencyProvider[Boolean],
-  perRequestSourceSearchClientIdProvider: DependencyProvider[Option[String]],
-  statsReceiver: StatsReceiver)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  import SourceTweetsSearchResultsTransform._
+cwass s-souwcetweetsseawchwesuwtstwansfowm(
+  seawchcwient: s-seawchcwient, mya
+  f-faiwopenhandwew: f-faiwopenhandwew, (˘ω˘)
+  h-hydwatewepwywoottweetpwovidew: dependencypwovidew[boowean], >_<
+  pewwequestsouwceseawchcwientidpwovidew: d-dependencypwovidew[option[stwing]], -.-
+  statsweceivew: statsweceivew)
+    e-extends futuweawwow[candidateenvewope, 🥺 candidateenvewope] {
+  impowt souwcetweetsseawchwesuwtstwansfowm._
 
-  private val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
+  pwivate v-vaw scopedstatsweceivew = statsweceivew.scope(getcwass.getsimpwename)
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    failOpenHandler {
-      envelope.followGraphData.followedUserIdsFuture.flatMap { followedUserIds =>
-        // NOTE: tweetIds are pre-computed as a performance optimisation.
-        val searchResultsTweetIds = envelope.searchResults.map(_.id).toSet
-        val sourceTweetIds = SourceTweetsUtil.getSourceTweetIds(
-          searchResults = envelope.searchResults,
-          searchResultsTweetIds = searchResultsTweetIds,
-          followedUserIds = followedUserIds,
-          shouldIncludeReplyRootTweets = hydrateReplyRootTweetProvider(envelope.query),
-          statsReceiver = scopedStatsReceiver
+  o-ovewwide d-def appwy(envewope: c-candidateenvewope): futuwe[candidateenvewope] = {
+    faiwopenhandwew {
+      envewope.fowwowgwaphdata.fowwowedusewidsfutuwe.fwatmap { f-fowwowedusewids =>
+        // n-nyote: tweetids awe pwe-computed a-as a p-pewfowmance optimisation. (U ﹏ U)
+        vaw seawchwesuwtstweetids = envewope.seawchwesuwts.map(_.id).toset
+        v-vaw souwcetweetids = s-souwcetweetsutiw.getsouwcetweetids(
+          seawchwesuwts = envewope.seawchwesuwts, >w<
+          s-seawchwesuwtstweetids = seawchwesuwtstweetids, mya
+          f-fowwowedusewids = fowwowedusewids, >w<
+          s-shouwdincwudewepwywoottweets = h-hydwatewepwywoottweetpwovidew(envewope.quewy), nyaa~~
+          statsweceivew = scopedstatsweceivew
         )
-        if (sourceTweetIds.isEmpty) {
-          EmptySearchResultsFuture
-        } else {
-          searchClient.getTweetsScoredForRecap(
-            userId = envelope.query.userId,
-            tweetIds = sourceTweetIds,
-            earlybirdOptions = envelope.query.earlybirdOptions,
-            logSearchDebugInfo = false,
-            searchClientId = perRequestSourceSearchClientIdProvider(envelope.query)
+        if (souwcetweetids.isempty) {
+          emptyseawchwesuwtsfutuwe
+        } ewse {
+          seawchcwient.gettweetsscowedfowwecap(
+            usewid = envewope.quewy.usewid, (✿oωo)
+            t-tweetids = souwcetweetids, ʘwʘ
+            e-eawwybiwdoptions = envewope.quewy.eawwybiwdoptions, (ˆ ﻌ ˆ)♡
+            w-wogseawchdebuginfo = f-fawse, 😳😳😳
+            s-seawchcwientid = pewwequestsouwceseawchcwientidpwovidew(envewope.quewy)
           )
         }
       }
-    } { _: Throwable => EmptySearchResultsFuture }.map { sourceSearchResults =>
-      envelope.copy(sourceSearchResults = sourceSearchResults)
+    } { _: thwowabwe => emptyseawchwesuwtsfutuwe }.map { souwceseawchwesuwts =>
+      envewope.copy(souwceseawchwesuwts = s-souwceseawchwesuwts)
     }
   }
 }

@@ -1,68 +1,68 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.Gate
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
-import com.twitter.visibility.configapi.VisibilityParams
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.UnitOfDiversion
-import com.twitter.visibility.models.ViewerContext
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.sewvo.utiw.gate
+i-impowt com.twittew.timewines.configapi.haspawams
+i-impowt com.twittew.timewines.configapi.pawams
+i-impowt com.twittew.visibiwity.configapi.visibiwitypawams
+impowt c-com.twittew.visibiwity.modews.safetywevew
+i-impowt com.twittew.visibiwity.modews.unitofdivewsion
+i-impowt com.twittew.visibiwity.modews.viewewcontext
 
-case class EvaluationContext(
-  visibilityPolicy: VisibilityPolicy,
-  params: Params,
-  statsReceiver: StatsReceiver)
-    extends HasParams {
+c-case cwass evawuationcontext(
+  visibiwitypowicy: visibiwitypowicy, >w<
+  pawams: pawams, rawr
+  s-statsweceivew: statsweceivew)
+    extends haspawams {
 
-  def ruleEnabledInContext(rule: Rule): Boolean = {
-    visibilityPolicy.policyRuleParams
-      .get(rule)
-      .filter(_.ruleParams.nonEmpty)
-      .map(policyRuleParams => {
-        (policyRuleParams.force || rule.enabled.forall(params(_))) &&
-          policyRuleParams.ruleParams.forall(params(_))
+  d-def wuweenabwedincontext(wuwe: wuwe): b-boowean = {
+    visibiwitypowicy.powicywuwepawams
+      .get(wuwe)
+      .fiwtew(_.wuwepawams.nonempty)
+      .map(powicywuwepawams => {
+        (powicywuwepawams.fowce || wuwe.enabwed.fowaww(pawams(_))) &&
+          powicywuwepawams.wuwepawams.fowaww(pawams(_))
       })
-      .getOrElse(rule.isEnabled(params))
+      .getowewse(wuwe.isenabwed(pawams))
   }
 }
 
-object EvaluationContext {
+o-object evawuationcontext {
 
-  def apply(
-    safetyLevel: SafetyLevel,
-    params: Params,
-    statsReceiver: StatsReceiver
-  ): EvaluationContext = {
-    val visibilityPolicy = RuleBase.RuleMap(safetyLevel)
-    new EvaluationContext(visibilityPolicy, params, statsReceiver)
+  def a-appwy(
+    safetywevew: s-safetywevew, mya
+    pawams: pawams, ^^
+    statsweceivew: statsweceivew
+  ): evawuationcontext = {
+    v-vaw visibiwitypowicy = wuwebase.wuwemap(safetywevew)
+    nyew evawuationcontext(visibiwitypowicy, 😳😳😳 pawams, mya statsweceivew)
   }
 
-  case class Builder(
-    statsReceiver: StatsReceiver,
-    visibilityParams: VisibilityParams,
-    viewerContext: ViewerContext,
-    unitsOfDiversion: Seq[UnitOfDiversion] = Seq.empty,
-    memoizeParams: Gate[Unit] = Gate.False,
+  c-case cwass buiwdew(
+    s-statsweceivew: s-statsweceivew, 😳
+    v-visibiwitypawams: v-visibiwitypawams, -.-
+    viewewcontext: viewewcontext, 🥺
+    unitsofdivewsion: s-seq[unitofdivewsion] = seq.empty, o.O
+    memoizepawams: g-gate[unit] = gate.fawse, /(^•ω•^)
   ) {
 
-    private[this] val emptyContentToUoDCounter =
-      statsReceiver.counter("empty_content_id_to_unit_of_diversion")
+    pwivate[this] vaw emptycontenttouodcountew =
+      statsweceivew.countew("empty_content_id_to_unit_of_divewsion")
 
-    def build(safetyLevel: SafetyLevel): EvaluationContext = {
-      val policy = RuleBase.RuleMap(safetyLevel)
-      val params = if (memoizeParams()) {
-        visibilityParams.memoized(viewerContext, safetyLevel, unitsOfDiversion)
-      } else {
-        visibilityParams(viewerContext, safetyLevel, unitsOfDiversion)
+    def buiwd(safetywevew: s-safetywevew): evawuationcontext = {
+      v-vaw powicy = wuwebase.wuwemap(safetywevew)
+      v-vaw pawams = i-if (memoizepawams()) {
+        visibiwitypawams.memoized(viewewcontext, nyaa~~ safetywevew, nyaa~~ unitsofdivewsion)
+      } ewse {
+        visibiwitypawams(viewewcontext, :3 s-safetywevew, 😳😳😳 u-unitsofdivewsion)
       }
-      new EvaluationContext(policy, params, statsReceiver)
+      nyew e-evawuationcontext(powicy, (˘ω˘) p-pawams, statsweceivew)
     }
 
-    def withUnitOfDiversion(unitOfDiversion: UnitOfDiversion*): Builder =
-      this.copy(unitsOfDiversion = unitOfDiversion)
+    d-def withunitofdivewsion(unitofdivewsion: u-unitofdivewsion*): buiwdew =
+      this.copy(unitsofdivewsion = u-unitofdivewsion)
 
-    def withMemoizedParams(memoizeParams: Gate[Unit]) = this.copy(memoizeParams = memoizeParams)
+    def withmemoizedpawams(memoizepawams: g-gate[unit]) = this.copy(memoizepawams = memoizepawams)
   }
 
 }

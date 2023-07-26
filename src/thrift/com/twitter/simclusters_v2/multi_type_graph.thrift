@@ -1,110 +1,110 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.multi_type_graph
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namespace java com.twittew.simcwustews_v2.thwiftjava
+nyamespace py g-gen.twittew.simcwustews_v2.muwti_type_gwaph
+#@namespace s-scawa c-com.twittew.simcwustews_v2.thwiftscawa
+#@namespace s-stwato com.twittew.simcwustews_v2
 
-include "entity.thrift"
+i-incwude "entity.thwift"
 
-union LeftNode {
-  1: i64 userId(personalDataType = 'UserId')
-}(persisted = 'true', hasPersonalData = 'true')
+union w-weftnode {
+  1: i-i64 usewid(pewsonawdatatype = 'usewid')
+}(pewsisted = 'twue', 🥺 h-haspewsonawdata = 'twue')
 
-struct RightNode {
-  1: required RightNodeType rightNodeType(personalDataType = 'EngagementsPublic')
-  2: required Noun noun
-}(persisted = 'true', hasPersonalData = 'true')
+stwuct wightnode {
+  1: wequiwed wightnodetype wightnodetype(pewsonawdatatype = 'engagementspubwic')
+  2: w-wequiwed nyoun nyoun
+}(pewsisted = 'twue', (⑅˘꒳˘) haspewsonawdata = 'twue')
 
-struct RightNodeWithEdgeWeight {
-  1: required RightNode rightNode
-  2: required double weight(personalDataType = 'EngagementScore')
-}(persisted = 'true', hasPersonalData = 'true')
+s-stwuct wightnodewithedgeweight {
+  1: w-wequiwed wightnode wightnode
+  2: wequiwed doubwe weight(pewsonawdatatype = 'engagementscowe')
+}(pewsisted = 'twue', nyaa~~ h-haspewsonawdata = 'twue')
 
-enum RightNodeType {
-  FollowUser = 1,
-  FavUser = 2,
-  BlockUser = 3,
-  AbuseReportUser = 4,
-  SpamReportUser = 5,
-  FollowTopic = 6,
-  SignUpCountry = 7,
-  ConsumedLanguage = 8,
-  FavTweet = 9,
-  ReplyTweet = 10,
-  RetweetTweet = 11,
-  NotifOpenOrClickTweet = 12,
-  SearchQuery = 13
-}(persisted = 'true')
+enum wightnodetype {
+  f-fowwowusew = 1, :3
+  f-favusew = 2, ( ͡o ω ͡o )
+  bwockusew = 3, mya
+  abusewepowtusew = 4, (///ˬ///✿)
+  spamwepowtusew = 5, (˘ω˘)
+  fowwowtopic = 6, ^^;;
+  s-signupcountwy = 7, (✿oωo)
+  consumedwanguage = 8, (U ﹏ U)
+  favtweet = 9, -.-
+  wepwytweet = 10, ^•ﻌ•^
+  wetweettweet = 11, rawr
+  n-notifopenowcwicktweet = 12, (˘ω˘)
+  seawchquewy = 13
+}(pewsisted = 'twue')
 
-union Noun {
-// Note: Each of the following needs to have an ordering defined in Ordering[Noun]
-// in file: multi_type_graph/assemble_multi_type_graph/AssembleMultiTypeGraph.scala
-// Please take note to make changes to Ordering[Noun] when modifying/adding new noun type here
-  1: i64 userId(personalDataType = 'UserId')
-  2: string country(personalDataType = 'InferredCountry')
-  3: string language(personalDataType = 'InferredLanguage')
-  4: i64 topicId(personalDataType = 'TopicFollow')
-  5: i64 tweetId(personalDataType = 'TweetId')
-  6: string query(personalDataType = 'SearchQuery')
-}(persisted = 'true', hasPersonalData = 'true')
+u-union nyoun {
+// n-nyote: e-each of the fowwowing n-nyeeds to have an owdewing defined in owdewing[noun]
+// i-in fiwe: muwti_type_gwaph/assembwe_muwti_type_gwaph/assembwemuwtitypegwaph.scawa
+// pwease take nyote t-to make changes to owdewing[noun] when modifying/adding nyew nyoun type hewe
+  1: i64 usewid(pewsonawdatatype = 'usewid')
+  2: s-stwing countwy(pewsonawdatatype = 'infewwedcountwy')
+  3: stwing w-wanguage(pewsonawdatatype = 'infewwedwanguage')
+  4: i-i64 topicid(pewsonawdatatype = 'topicfowwow')
+  5: i-i64 tweetid(pewsonawdatatype = 'tweetid')
+  6: stwing quewy(pewsonawdatatype = 'seawchquewy')
+}(pewsisted = 'twue', nyaa~~ h-haspewsonawdata = 'twue')
 
-struct RightNodeWithEdgeWeightList {
-  1: required list<RightNodeWithEdgeWeight> rightNodeWithEdgeWeightList
-}(persisted = 'true', hasPersonalData = 'true')
+s-stwuct wightnodewithedgeweightwist {
+  1: w-wequiwed wist<wightnodewithedgeweight> w-wightnodewithedgeweightwist
+}(pewsisted = 'twue', UwU haspewsonawdata = 'twue')
 
-struct NounWithFrequency {
-  1: required Noun noun
-  2: required double frequency (personalDataType = 'EngagementScore')
-}(persisted = 'true', hasPersonalData = 'true')
+s-stwuct nyounwithfwequency {
+  1: w-wequiwed nyoun nyoun
+  2: wequiwed doubwe f-fwequency (pewsonawdatatype = 'engagementscowe')
+}(pewsisted = 'twue', :3 haspewsonawdata = 'twue')
 
-struct NounWithFrequencyList {
-  1: required list<NounWithFrequency> nounWithFrequencyList
-}(persisted = 'true', hasPersonalData = 'true')
+s-stwuct nyounwithfwequencywist {
+  1: wequiwed w-wist<nounwithfwequency> n-nounwithfwequencywist
+}(pewsisted = 'twue', haspewsonawdata = 'twue')
 
-struct RightNodeTypeStruct {
-   1: required RightNodeType rightNodeType
-}(persisted = 'true', hasPersonalData = 'false')
+stwuct wightnodetypestwuct {
+   1: wequiwed wightnodetype wightnodetype
+}(pewsisted = 'twue', (⑅˘꒳˘) haspewsonawdata = 'fawse')
 
-struct MultiTypeGraphEdge{
-   1: required LeftNode leftNode
-   2: required RightNodeWithEdgeWeight rightNodeWithEdgeWeight
-}(persisted = 'true', hasPersonalData = 'true')
+stwuct m-muwtitypegwaphedge{
+   1: w-wequiwed weftnode w-weftnode
+   2: wequiwed w-wightnodewithedgeweight w-wightnodewithedgeweight
+}(pewsisted = 'twue', haspewsonawdata = 'twue')
 
-struct LeftNodeToRightNodeWithEdgeWeightList{
-   1: required LeftNode leftNode
-   2: required RightNodeWithEdgeWeightList rightNodeWithEdgeWeightList
-}(persisted = 'true', hasPersonalData = 'true')
+stwuct weftnodetowightnodewithedgeweightwist{
+   1: w-wequiwed weftnode weftnode
+   2: wequiwed wightnodewithedgeweightwist wightnodewithedgeweightwist
+}(pewsisted = 'twue', (///ˬ///✿) h-haspewsonawdata = 'twue')
 
-struct RightNodeSimHashSketch {
-  1: required RightNode rightNode
-  2: required list<byte> simHashOfEngagers
-  3: optional double normalizer
-}(persisted='true', hasPersonalData = 'false')
+stwuct wightnodesimhashsketch {
+  1: w-wequiwed wightnode w-wightnode
+  2: w-wequiwed wist<byte> simhashofengagews
+  3: o-optionaw doubwe n-nyowmawizew
+}(pewsisted='twue', ^^;; h-haspewsonawdata = 'fawse')
 
-struct SimilarRightNode {
-  1: required RightNode rightNode
-  2: required double score (personalDataType = 'EngagementScore')
-}(persisted='true', hasPersonalData = 'true')
+s-stwuct simiwawwightnode {
+  1: wequiwed w-wightnode w-wightnode
+  2: wequiwed d-doubwe scowe (pewsonawdatatype = 'engagementscowe')
+}(pewsisted='twue', >_< h-haspewsonawdata = 'twue')
 
-struct SimilarRightNodes {
-  1: required list<SimilarRightNode> rightNodesWithScores
-}(persisted='true', hasPersonalData = 'true')
+s-stwuct simiwawwightnodes {
+  1: wequiwed wist<simiwawwightnode> w-wightnodeswithscowes
+}(pewsisted='twue', rawr x3 haspewsonawdata = 'twue')
 
-struct RightNodeWithScore {
-  1: required RightNode rightNode
-  2: required double clusterScore (personalDataType = 'EngagementScore')
-}(persisted='true', hasPersonalData = 'true')
+stwuct wightnodewithscowe {
+  1: wequiwed wightnode wightnode
+  2: wequiwed doubwe c-cwustewscowe (pewsonawdatatype = 'engagementscowe')
+}(pewsisted='twue', /(^•ω•^) haspewsonawdata = 'twue')
 
-struct RightNodeWithScoreList {
-  1: required list<RightNodeWithScore> rightNodeWithScoreList
-}(persisted='true', hasPersonalData = 'true')
+stwuct wightnodewithscowewist {
+  1: wequiwed w-wist<wightnodewithscowe> w-wightnodewithscowewist
+}(pewsisted='twue', :3 h-haspewsonawdata = 'twue')
 
-struct RightNodeWithClusters {
-  1: required RightNode rightNode
-  2: required string modelVersion (personalDataType = 'EngagementId')
-  3: required map<i32, double> clusterIdToScores (personalDataTypeKey = 'EngagementId', personalDataTypeValue = 'EngagementScore')
-}(persisted="true", hasPersonalData = 'true')
+stwuct wightnodewithcwustews {
+  1: w-wequiwed wightnode wightnode
+  2: w-wequiwed s-stwing modewvewsion (pewsonawdatatype = 'engagementid')
+  3: wequiwed map<i32, (ꈍᴗꈍ) doubwe> cwustewidtoscowes (pewsonawdatatypekey = 'engagementid', /(^•ω•^) pewsonawdatatypevawue = 'engagementscowe')
+}(pewsisted="twue", (⑅˘꒳˘) haspewsonawdata = 'twue')
 
-struct ModelVersionWithClusterScores {
-  1: required string modelVersion (personalDataType = 'EngagementId')
-  2: required map<i32, double> clusterIdToScores (personalDataTypeKey = 'EngagementId', personalDataTypeValue = 'EngagementScore')
-}(persisted = 'true', hasPersonalData = 'true')
+s-stwuct modewvewsionwithcwustewscowes {
+  1: w-wequiwed stwing modewvewsion (pewsonawdatatype = 'engagementid')
+  2: w-wequiwed m-map<i32, ( ͡o ω ͡o ) doubwe> cwustewidtoscowes (pewsonawdatatypekey = 'engagementid', òωó pewsonawdatatypevawue = 'engagementscowe')
+}(pewsisted = 'twue', (⑅˘꒳˘) h-haspewsonawdata = 'twue')

@@ -1,266 +1,266 @@
-package com.twitter.visibility.engine
+package com.twittew.visibiwity.engine
 
-import com.twitter.servo.util.Gate
-import com.twitter.spam.rtf.thriftscala.{SafetyLevel => ThriftSafetyLevel}
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.VisibilityResultBuilder
-import com.twitter.visibility.features._
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.SafetyLevel.DeprecatedSafetyLevel
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.State._
-import com.twitter.visibility.rules._
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
-import com.twitter.visibility.rules.providers.PolicyProvider
+impowt com.twittew.sewvo.utiw.gate
+i-impowt c-com.twittew.spam.wtf.thwiftscawa.{safetywevew => t-thwiftsafetywevew}
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.visibiwity.buiwdew.visibiwitywesuwt
+i-impowt c-com.twittew.visibiwity.buiwdew.visibiwitywesuwtbuiwdew
+i-impowt com.twittew.visibiwity.featuwes._
+impowt com.twittew.visibiwity.modews.safetywevew
+impowt com.twittew.visibiwity.modews.safetywevew.depwecatedsafetywevew
+impowt c-com.twittew.visibiwity.wuwes.evawuationcontext
+impowt com.twittew.visibiwity.wuwes.state._
+impowt c-com.twittew.visibiwity.wuwes._
+impowt com.twittew.visibiwity.wuwes.pwovidews.pwovidedevawuationcontext
+i-impowt com.twittew.visibiwity.wuwes.pwovidews.powicypwovidew
 
-class VisibilityRuleEngine private[VisibilityRuleEngine] (
-  rulePreprocessor: VisibilityRulePreprocessor,
-  metricsRecorder: VisibilityResultsMetricRecorder,
-  enableComposableActions: Gate[Unit],
-  enableFailClosed: Gate[Unit],
-  policyProviderOpt: Option[PolicyProvider] = None)
-    extends DeciderableVisibilityRuleEngine {
+cwass visibiwitywuweengine pwivate[visibiwitywuweengine] (
+  w-wuwepwepwocessow: visibiwitywuwepwepwocessow, XD
+  m-metwicswecowdew: v-visibiwitywesuwtsmetwicwecowdew, o.O
+  enabwecomposabweactions: gate[unit], (⑅˘꒳˘)
+  enabwefaiwcwosed: gate[unit], 😳😳😳
+  p-powicypwovidewopt: option[powicypwovidew] = nyone)
+    extends decidewabwevisibiwitywuweengine {
 
-  private[visibility] def apply(
-    evaluationContext: ProvidedEvaluationContext,
-    visibilityPolicy: VisibilityPolicy,
-    visibilityResultBuilder: VisibilityResultBuilder,
-    enableShortCircuiting: Gate[Unit],
-    preprocessedRules: Option[Seq[Rule]]
-  ): Stitch[VisibilityResult] = {
-    val (resultBuilder, rules) = preprocessedRules match {
-      case Some(r) =>
-        (visibilityResultBuilder, r)
-      case None =>
-        rulePreprocessor.evaluate(evaluationContext, visibilityPolicy, visibilityResultBuilder)
+  p-pwivate[visibiwity] def appwy(
+    e-evawuationcontext: p-pwovidedevawuationcontext, nyaa~~
+    v-visibiwitypowicy: v-visibiwitypowicy, rawr
+    visibiwitywesuwtbuiwdew: visibiwitywesuwtbuiwdew, -.-
+    e-enabweshowtciwcuiting: gate[unit], (✿oωo)
+    pwepwocessedwuwes: option[seq[wuwe]]
+  ): stitch[visibiwitywesuwt] = {
+    v-vaw (wesuwtbuiwdew, /(^•ω•^) wuwes) = pwepwocessedwuwes match {
+      case some(w) =>
+        (visibiwitywesuwtbuiwdew, 🥺 w)
+      c-case nyone =>
+        wuwepwepwocessow.evawuate(evawuationcontext, ʘwʘ v-visibiwitypowicy, UwU v-visibiwitywesuwtbuiwdew)
     }
-    evaluate(evaluationContext, resultBuilder, rules, enableShortCircuiting)
+    e-evawuate(evawuationcontext, XD wesuwtbuiwdew, (✿oωo) wuwes, enabweshowtciwcuiting)
   }
 
-  def apply(
-    evaluationContext: EvaluationContext,
-    safetyLevel: SafetyLevel,
-    visibilityResultBuilder: VisibilityResultBuilder,
-    enableShortCircuiting: Gate[Unit] = Gate.True,
-    preprocessedRules: Option[Seq[Rule]] = None
-  ): Stitch[VisibilityResult] = {
-    val visibilityPolicy = policyProviderOpt match {
-      case Some(policyProvider) =>
-        policyProvider.policyForSurface(safetyLevel)
-      case None => RuleBase.RuleMap(safetyLevel)
+  def appwy(
+    e-evawuationcontext: e-evawuationcontext, :3
+    safetywevew: s-safetywevew, (///ˬ///✿)
+    v-visibiwitywesuwtbuiwdew: visibiwitywesuwtbuiwdew, nyaa~~
+    e-enabweshowtciwcuiting: gate[unit] = g-gate.twue, >w<
+    pwepwocessedwuwes: option[seq[wuwe]] = n-none
+  ): stitch[visibiwitywesuwt] = {
+    vaw v-visibiwitypowicy = powicypwovidewopt m-match {
+      c-case some(powicypwovidew) =>
+        powicypwovidew.powicyfowsuwface(safetywevew)
+      case nyone => wuwebase.wuwemap(safetywevew)
     }
-    if (evaluationContext.params(safetyLevel.enabledParam)) {
-      apply(
-        ProvidedEvaluationContext.injectRuntimeRulesIntoEvaluationContext(
-          evaluationContext = evaluationContext,
-          safetyLevel = Some(safetyLevel),
-          policyProviderOpt = policyProviderOpt
-        ),
-        visibilityPolicy,
-        visibilityResultBuilder,
-        enableShortCircuiting,
-        preprocessedRules
-      ).onSuccess { result =>
-          metricsRecorder.recordSuccess(safetyLevel, result)
+    if (evawuationcontext.pawams(safetywevew.enabwedpawam)) {
+      appwy(
+        pwovidedevawuationcontext.injectwuntimewuwesintoevawuationcontext(
+          e-evawuationcontext = e-evawuationcontext,
+          safetywevew = s-some(safetywevew), -.-
+          p-powicypwovidewopt = p-powicypwovidewopt
+        ), (✿oωo)
+        visibiwitypowicy, (˘ω˘)
+        visibiwitywesuwtbuiwdew, rawr
+        enabweshowtciwcuiting, OwO
+        p-pwepwocessedwuwes
+      ).onsuccess { wesuwt =>
+          metwicswecowdew.wecowdsuccess(safetywevew, ^•ﻌ•^ wesuwt)
         }
-        .onFailure { _ =>
-          metricsRecorder.recordAction(safetyLevel, "failure")
+        .onfaiwuwe { _ =>
+          metwicswecowdew.wecowdaction(safetywevew, UwU "faiwuwe")
         }
-    } else {
-      metricsRecorder.recordAction(safetyLevel, "disabled")
-      val rules: Seq[Rule] = visibilityPolicy.forContentId(visibilityResultBuilder.contentId)
-      Stitch.value(
-        visibilityResultBuilder
-          .withRuleResultMap(rules.map(r => r -> RuleResult(Allow, Skipped)).toMap)
-          .withVerdict(verdict = Allow)
-          .withFinished(finished = true)
-          .build
+    } e-ewse {
+      metwicswecowdew.wecowdaction(safetywevew, (˘ω˘) "disabwed")
+      v-vaw wuwes: s-seq[wuwe] = visibiwitypowicy.fowcontentid(visibiwitywesuwtbuiwdew.contentid)
+      s-stitch.vawue(
+        visibiwitywesuwtbuiwdew
+          .withwuwewesuwtmap(wuwes.map(w => w-w -> w-wuwewesuwt(awwow, (///ˬ///✿) s-skipped)).tomap)
+          .withvewdict(vewdict = a-awwow)
+          .withfinished(finished = twue)
+          .buiwd
       )
     }
   }
 
-  def apply(
-    evaluationContext: EvaluationContext,
-    thriftSafetyLevel: ThriftSafetyLevel,
-    visibilityResultBuilder: VisibilityResultBuilder
-  ): Stitch[VisibilityResult] = {
-    val safetyLevel: SafetyLevel = SafetyLevel.fromThrift(thriftSafetyLevel)
-    safetyLevel match {
-      case DeprecatedSafetyLevel =>
-        metricsRecorder.recordUnknownSafetyLevel(safetyLevel)
-        Stitch.value(
-          visibilityResultBuilder
-            .withVerdict(verdict = Allow)
-            .withFinished(finished = true)
-            .build
+  def a-appwy(
+    evawuationcontext: e-evawuationcontext, σωσ
+    t-thwiftsafetywevew: t-thwiftsafetywevew, /(^•ω•^)
+    visibiwitywesuwtbuiwdew: v-visibiwitywesuwtbuiwdew
+  ): stitch[visibiwitywesuwt] = {
+    vaw safetywevew: safetywevew = s-safetywevew.fwomthwift(thwiftsafetywevew)
+    safetywevew match {
+      case depwecatedsafetywevew =>
+        metwicswecowdew.wecowdunknownsafetywevew(safetywevew)
+        stitch.vawue(
+          v-visibiwitywesuwtbuiwdew
+            .withvewdict(vewdict = awwow)
+            .withfinished(finished = twue)
+            .buiwd
         )
 
-      case thriftSafetyLevel: SafetyLevel =>
-        this(
-          ProvidedEvaluationContext.injectRuntimeRulesIntoEvaluationContext(
-            evaluationContext = evaluationContext,
-            safetyLevel = Some(safetyLevel),
-            policyProviderOpt = policyProviderOpt
-          ),
-          thriftSafetyLevel,
-          visibilityResultBuilder
+      case thwiftsafetywevew: s-safetywevew =>
+        t-this(
+          p-pwovidedevawuationcontext.injectwuntimewuwesintoevawuationcontext(
+            evawuationcontext = e-evawuationcontext, 😳
+            safetywevew = s-some(safetywevew), 😳
+            p-powicypwovidewopt = powicypwovidewopt
+          ), (⑅˘꒳˘)
+          thwiftsafetywevew, 😳😳😳
+          visibiwitywesuwtbuiwdew
         )
     }
   }
 
-  private[visibility] def evaluateRules(
-    evaluationContext: ProvidedEvaluationContext,
-    resolvedFeatureMap: Map[Feature[_], Any],
-    failedFeatures: Map[Feature[_], Throwable],
-    resultBuilderWithoutFailedFeatures: VisibilityResultBuilder,
-    preprocessedRules: Seq[Rule],
-    enableShortCircuiting: Gate[Unit]
-  ): VisibilityResultBuilder = {
-    preprocessedRules
-      .foldLeft(resultBuilderWithoutFailedFeatures) { (builder, rule) =>
-        builder.ruleResults.get(rule) match {
-          case Some(RuleResult(_, state)) if state == Evaluated || state == ShortCircuited =>
-            builder
+  pwivate[visibiwity] def evawuatewuwes(
+    e-evawuationcontext: pwovidedevawuationcontext, 😳
+    wesowvedfeatuwemap: m-map[featuwe[_], XD any],
+    faiwedfeatuwes: m-map[featuwe[_], t-thwowabwe], mya
+    wesuwtbuiwdewwithoutfaiwedfeatuwes: visibiwitywesuwtbuiwdew, ^•ﻌ•^
+    p-pwepwocessedwuwes: s-seq[wuwe], ʘwʘ
+    enabweshowtciwcuiting: gate[unit]
+  ): v-visibiwitywesuwtbuiwdew = {
+    p-pwepwocessedwuwes
+      .fowdweft(wesuwtbuiwdewwithoutfaiwedfeatuwes) { (buiwdew, ( ͡o ω ͡o ) wuwe) =>
+        buiwdew.wuwewesuwts.get(wuwe) match {
+          case some(wuwewesuwt(_, mya s-state)) if state == e-evawuated || s-state == showtciwcuited =>
+            buiwdew
 
-          case _ =>
-            val failedFeatureDependencies: Map[Feature[_], Throwable] =
-              failedFeatures.filterKeys(key => rule.featureDependencies.contains(key))
+          c-case _ =>
+            v-vaw faiwedfeatuwedependencies: map[featuwe[_], o.O t-thwowabwe] =
+              faiwedfeatuwes.fiwtewkeys(key => wuwe.featuwedependencies.contains(key))
 
-            val shortCircuit =
-              builder.finished && enableShortCircuiting() &&
-                !(enableComposableActions() && builder.isVerdictComposable())
+            vaw showtciwcuit =
+              buiwdew.finished && e-enabweshowtciwcuiting() &&
+                !(enabwecomposabweactions() && b-buiwdew.isvewdictcomposabwe())
 
-            if (failedFeatureDependencies.nonEmpty && rule.fallbackActionBuilder.isEmpty) {
-              metricsRecorder.recordRuleFailedFeatures(rule.name, failedFeatureDependencies)
-              builder.withRuleResult(
-                rule,
-                RuleResult(NotEvaluated, FeatureFailed(failedFeatureDependencies)))
+            if (faiwedfeatuwedependencies.nonempty && wuwe.fawwbackactionbuiwdew.isempty) {
+              m-metwicswecowdew.wecowdwuwefaiwedfeatuwes(wuwe.name, (✿oωo) faiwedfeatuwedependencies)
+              b-buiwdew.withwuwewesuwt(
+                wuwe, :3
+                wuwewesuwt(notevawuated, 😳 featuwefaiwed(faiwedfeatuwedependencies)))
 
-            } else if (shortCircuit) {
+            } ewse if (showtciwcuit) {
 
-              metricsRecorder.recordRuleEvaluation(rule.name, NotEvaluated, ShortCircuited)
-              builder.withRuleResult(rule, RuleResult(builder.verdict, ShortCircuited))
-            } else {
+              m-metwicswecowdew.wecowdwuweevawuation(wuwe.name, (U ﹏ U) nyotevawuated, mya showtciwcuited)
+              buiwdew.withwuwewesuwt(wuwe, (U ᵕ U❁) wuwewesuwt(buiwdew.vewdict, :3 s-showtciwcuited))
+            } ewse {
 
-              if (failedFeatureDependencies.nonEmpty && rule.fallbackActionBuilder.nonEmpty) {
-                metricsRecorder.recordRuleFallbackAction(rule.name)
+              if (faiwedfeatuwedependencies.nonempty && w-wuwe.fawwbackactionbuiwdew.nonempty) {
+                m-metwicswecowdew.wecowdwuwefawwbackaction(wuwe.name)
               }
 
 
-              val ruleResult =
-                rule.evaluate(evaluationContext, resolvedFeatureMap)
-              metricsRecorder
-                .recordRuleEvaluation(rule.name, ruleResult.action, ruleResult.state)
-              val nextBuilder = (ruleResult.action, builder.finished) match {
-                case (NotEvaluated | Allow, _) =>
-                  ruleResult.state match {
-                    case Heldback =>
-                      metricsRecorder.recordRuleHoldBack(rule.name)
-                    case RuleFailed(_) =>
-                      metricsRecorder.recordRuleFailed(rule.name)
-                    case _ =>
+              vaw wuwewesuwt =
+                wuwe.evawuate(evawuationcontext, mya wesowvedfeatuwemap)
+              m-metwicswecowdew
+                .wecowdwuweevawuation(wuwe.name, OwO w-wuwewesuwt.action, (ˆ ﻌ ˆ)♡ wuwewesuwt.state)
+              vaw nyextbuiwdew = (wuwewesuwt.action, ʘwʘ buiwdew.finished) m-match {
+                case (notevawuated | awwow, o.O _) =>
+                  w-wuwewesuwt.state match {
+                    case hewdback =>
+                      metwicswecowdew.wecowdwuwehowdback(wuwe.name)
+                    c-case wuwefaiwed(_) =>
+                      metwicswecowdew.wecowdwuwefaiwed(wuwe.name)
+                    c-case _ =>
                   }
-                  builder.withRuleResult(rule, ruleResult)
+                  b-buiwdew.withwuwewesuwt(wuwe, UwU wuwewesuwt)
 
-                case (_, true) =>
-                  builder
-                    .withRuleResult(rule, ruleResult)
-                    .withSecondaryVerdict(ruleResult.action, rule)
+                c-case (_, rawr x3 twue) =>
+                  b-buiwdew
+                    .withwuwewesuwt(wuwe, 🥺 w-wuwewesuwt)
+                    .withsecondawyvewdict(wuwewesuwt.action, :3 w-wuwe)
 
                 case _ =>
-                  builder
-                    .withRuleResult(rule, ruleResult)
-                    .withVerdict(ruleResult.action, Some(rule))
-                    .withFinished(true)
+                  b-buiwdew
+                    .withwuwewesuwt(wuwe, w-wuwewesuwt)
+                    .withvewdict(wuwewesuwt.action, (ꈍᴗꈍ) some(wuwe))
+                    .withfinished(twue)
               }
 
-              nextBuilder
+              nyextbuiwdew
             }
         }
-      }.withResolvedFeatureMap(resolvedFeatureMap)
+      }.withwesowvedfeatuwemap(wesowvedfeatuwemap)
   }
 
-  private[visibility] def evaluateFailClosed(
-    evaluationContext: ProvidedEvaluationContext
-  ): VisibilityResultBuilder => Stitch[VisibilityResultBuilder] = { builder =>
-    builder.failClosedException(evaluationContext) match {
-      case Some(e: FailClosedException) if enableFailClosed() =>
-        metricsRecorder.recordFailClosed(e.getRuleName, e.getState);
-        Stitch.exception(e)
-      case _ => Stitch.value(builder)
+  p-pwivate[visibiwity] d-def evawuatefaiwcwosed(
+    e-evawuationcontext: pwovidedevawuationcontext
+  ): visibiwitywesuwtbuiwdew => s-stitch[visibiwitywesuwtbuiwdew] = { buiwdew =>
+    b-buiwdew.faiwcwosedexception(evawuationcontext) match {
+      c-case some(e: faiwcwosedexception) if enabwefaiwcwosed() =>
+        metwicswecowdew.wecowdfaiwcwosed(e.getwuwename, e-e.getstate);
+        s-stitch.exception(e)
+      case _ => s-stitch.vawue(buiwdew)
     }
   }
 
-  private[visibility] def checkMarkFinished(
-    builder: VisibilityResultBuilder
-  ): VisibilityResult = {
-    val allRulesEvaluated: Boolean = builder.ruleResults.values.forall {
-      case RuleResult(_, state) =>
-        state == Evaluated || state == Disabled || state == Skipped
+  p-pwivate[visibiwity] def checkmawkfinished(
+    b-buiwdew: visibiwitywesuwtbuiwdew
+  ): visibiwitywesuwt = {
+    vaw awwwuwesevawuated: boowean = buiwdew.wuwewesuwts.vawues.fowaww {
+      case wuwewesuwt(_, 🥺 s-state) =>
+        state == e-evawuated || state == disabwed || s-state == skipped
       case _ =>
-        false
+        f-fawse
     }
 
-    if (allRulesEvaluated) {
-      builder.withFinished(true).build
-    } else {
-      builder.build
+    if (awwwuwesevawuated) {
+      buiwdew.withfinished(twue).buiwd
+    } e-ewse {
+      b-buiwdew.buiwd
     }
   }
 
-  private[visibility] def evaluate(
-    evaluationContext: ProvidedEvaluationContext,
-    visibilityResultBuilder: VisibilityResultBuilder,
-    preprocessedRules: Seq[Rule],
-    enableShortCircuiting: Gate[Unit] = Gate.True
-  ): Stitch[VisibilityResult] = {
+  p-pwivate[visibiwity] d-def evawuate(
+    e-evawuationcontext: pwovidedevawuationcontext, (✿oωo)
+    visibiwitywesuwtbuiwdew: visibiwitywesuwtbuiwdew, (U ﹏ U)
+    pwepwocessedwuwes: seq[wuwe], :3
+    enabweshowtciwcuiting: g-gate[unit] = g-gate.twue
+  ): s-stitch[visibiwitywesuwt] = {
 
-    val finalBuilder =
-      FeatureMap.resolve(visibilityResultBuilder.features, evaluationContext.statsReceiver).map {
-        resolvedFeatureMap =>
-          val (failedFeatureMap, successfulFeatureMap) = resolvedFeatureMap.constantMap.partition({
-            case (_, _: FeatureFailedPlaceholderObject) => true
-            case _ => false
+    vaw finawbuiwdew =
+      f-featuwemap.wesowve(visibiwitywesuwtbuiwdew.featuwes, ^^;; evawuationcontext.statsweceivew).map {
+        wesowvedfeatuwemap =>
+          vaw (faiwedfeatuwemap, rawr successfuwfeatuwemap) = wesowvedfeatuwemap.constantmap.pawtition({
+            c-case (_, 😳😳😳 _: f-featuwefaiwedpwacehowdewobject) => twue
+            c-case _ => fawse
           })
 
-          val failedFeatures: Map[Feature[_], Throwable] =
-            failedFeatureMap.mapValues({
-              case failurePlaceholder: FeatureFailedPlaceholderObject =>
-                failurePlaceholder.throwable
+          vaw faiwedfeatuwes: m-map[featuwe[_], (✿oωo) t-thwowabwe] =
+            faiwedfeatuwemap.mapvawues({
+              c-case faiwuwepwacehowdew: f-featuwefaiwedpwacehowdewobject =>
+                faiwuwepwacehowdew.thwowabwe
             })
 
-          val resultBuilderWithoutFailedFeatures =
-            visibilityResultBuilder.withFeatureMap(ResolvedFeatureMap(successfulFeatureMap))
+          vaw wesuwtbuiwdewwithoutfaiwedfeatuwes =
+            visibiwitywesuwtbuiwdew.withfeatuwemap(wesowvedfeatuwemap(successfuwfeatuwemap))
 
-          evaluateRules(
-            evaluationContext,
-            successfulFeatureMap,
-            failedFeatures,
-            resultBuilderWithoutFailedFeatures,
-            preprocessedRules,
-            enableShortCircuiting
+          evawuatewuwes(
+            e-evawuationcontext, OwO
+            s-successfuwfeatuwemap, ʘwʘ
+            f-faiwedfeatuwes, (ˆ ﻌ ˆ)♡
+            w-wesuwtbuiwdewwithoutfaiwedfeatuwes, (U ﹏ U)
+            p-pwepwocessedwuwes, UwU
+            enabweshowtciwcuiting
           )
       }
 
-    finalBuilder.flatMap(evaluateFailClosed(evaluationContext)).map(checkMarkFinished)
+    finawbuiwdew.fwatmap(evawuatefaiwcwosed(evawuationcontext)).map(checkmawkfinished)
   }
 }
 
-object VisibilityRuleEngine {
+o-object visibiwitywuweengine {
 
-  def apply(
-    rulePreprocessor: Option[VisibilityRulePreprocessor] = None,
-    metricsRecorder: VisibilityResultsMetricRecorder = NullVisibilityResultsMetricsRecorder,
-    enableComposableActions: Gate[Unit] = Gate.False,
-    enableFailClosed: Gate[Unit] = Gate.False,
-    policyProviderOpt: Option[PolicyProvider] = None,
-  ): VisibilityRuleEngine = {
-    new VisibilityRuleEngine(
-      rulePreprocessor.getOrElse(VisibilityRulePreprocessor(metricsRecorder)),
-      metricsRecorder,
-      enableComposableActions,
-      enableFailClosed,
-      policyProviderOpt = policyProviderOpt)
+  d-def appwy(
+    wuwepwepwocessow: o-option[visibiwitywuwepwepwocessow] = nyone, XD
+    m-metwicswecowdew: visibiwitywesuwtsmetwicwecowdew = n-nyuwwvisibiwitywesuwtsmetwicswecowdew, ʘwʘ
+    enabwecomposabweactions: gate[unit] = gate.fawse,
+    e-enabwefaiwcwosed: gate[unit] = gate.fawse, rawr x3
+    p-powicypwovidewopt: o-option[powicypwovidew] = nyone, ^^;;
+  ): v-visibiwitywuweengine = {
+    nyew visibiwitywuweengine(
+      wuwepwepwocessow.getowewse(visibiwitywuwepwepwocessow(metwicswecowdew)), ʘwʘ
+      m-metwicswecowdew, (U ﹏ U)
+      e-enabwecomposabweactions, (˘ω˘)
+      e-enabwefaiwcwosed, (ꈍᴗꈍ)
+      powicypwovidewopt = powicypwovidewopt)
   }
 }

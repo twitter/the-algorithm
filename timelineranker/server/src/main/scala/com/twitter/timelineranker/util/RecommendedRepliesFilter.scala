@@ -1,28 +1,28 @@
-package com.twitter.timelineranker.util
+package com.twittew.timewinewankew.utiw
 
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.model.tweet.HydratedTweet
+impowt com.twittew.timewines.modew.usewid
+i-impowt com.twittew.timewines.modew.tweet.hydwatedtweet
 
-object RecommendedRepliesFilter {
-  private[util] def isRecommendedReply(
-    tweet: HydratedTweet,
-    followedUserIds: Seq[UserId]
-  ): Boolean = {
-    tweet.hasReply && tweet.inReplyToTweetId.nonEmpty &&
-    (!followedUserIds.contains(tweet.userId))
+o-object w-wecommendedwepwiesfiwtew {
+  p-pwivate[utiw] d-def i-iswecommendedwepwy(
+    t-tweet: hydwatedtweet, ^^;;
+    f-fowwowedusewids: seq[usewid]
+  ): boowean = {
+    tweet.haswepwy && tweet.inwepwytotweetid.nonempty &&
+    (!fowwowedusewids.contains(tweet.usewid))
   }
 
-  private[util] def isRecommendedReplyToNotFollowedUser(
-    tweet: HydratedTweet,
-    viewingUserId: UserId,
-    followedUserIds: Seq[UserId],
-    mutedUserIds: Set[UserId]
-  ): Boolean = {
-    val isValidRecommendedReply =
-      !tweet.isRetweet &&
-        tweet.inReplyToUserId.exists(followedUserIds.contains(_)) &&
-        !mutedUserIds.contains(tweet.userId)
+  p-pwivate[utiw] def iswecommendedwepwytonotfowwowedusew(
+    t-tweet: hydwatedtweet, >_<
+    v-viewingusewid: usewid,
+    fowwowedusewids: seq[usewid], mya
+    mutedusewids: set[usewid]
+  ): boowean = {
+    vaw isvawidwecommendedwepwy =
+      !tweet.iswetweet &&
+        tweet.inwepwytousewid.exists(fowwowedusewids.contains(_)) &&
+        !mutedusewids.contains(tweet.usewid)
 
-    isRecommendedReply(tweet, followedUserIds) && !isValidRecommendedReply
+    i-iswecommendedwepwy(tweet, fowwowedusewids) && !isvawidwecommendedwepwy
   }
 }

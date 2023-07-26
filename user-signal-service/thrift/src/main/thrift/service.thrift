@@ -1,23 +1,23 @@
-namespace java com.twitter.usersignalservice.thriftjava
-namespace py gen.twitter.usersignalservice.service
-#@namespace scala com.twitter.usersignalservice.thriftscala
-#@namespace strato com.twitter.usersignalservice.strato
+namespace java com.twittew.usewsignawsewvice.thwiftjava
+nyamespace p-py gen.twittew.usewsignawsewvice.sewvice
+#@namespace s-scawa com.twittew.usewsignawsewvice.thwiftscawa
+#@namespace s-stwato com.twittew.usewsignawsewvice.stwato
 
-include "signal.thrift"
-include "client_identifier.thrift"
+i-incwude "signaw.thwift"
+i-incwude "cwient_identifiew.thwift"
 
-struct SignalRequest {
-  1: optional i64 maxResults
-  2: required signal.SignalType signalType
+s-stwuct s-signawwequest {
+  1: o-optionaw i64 maxwesuwts
+  2: wequiwed signaw.signawtype signawtype
 }
 
-struct BatchSignalRequest {
-  1: required i64 userId(personalDataType = "UserId")
-  2: required list<SignalRequest> signalRequest
-  # make sure to populate the clientId, otherwise the service would throw exceptions
-  3: optional client_identifier.ClientIdentifier clientId
-}(hasPersonalData='true')
+stwuct batchsignawwequest {
+  1: wequiwed i-i64 usewid(pewsonawdatatype = "usewid")
+  2: wequiwed wist<signawwequest> signawwequest
+  # m-make suwe to popuwate the cwientid, :3 o-othewwise the sewvice wouwd thwow exceptions
+  3: optionaw c-cwient_identifiew.cwientidentifiew cwientid
+}(haspewsonawdata='twue')
 
-struct BatchSignalResponse {
-  1: required map<signal.SignalType, list<signal.Signal>> signalResponse
+s-stwuct b-batchsignawwesponse {
+  1: wequiwed map<signaw.signawtype, 😳😳😳 wist<signaw.signaw>> signawwesponse
 }

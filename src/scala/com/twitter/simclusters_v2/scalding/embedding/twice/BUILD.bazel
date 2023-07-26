@@ -1,166 +1,166 @@
-scala_library(
-    sources = [
-        "*.scala",
-        "common/*.scala",
-    ],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-only",
-    ],
-    dependencies = [
-        "src/scala/com/twitter/simclusters_v2/common/clustering",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:aggregatable_producer_simclusters_embeddings_by_log_fav_score-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:clusters_members_connected_components_ape_similarity-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:clusters_members_largest_dim_ape_similarity-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:clusters_members_largest_dim_ape_similarity_2_day_update-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:clusters_members_louvain_ape_similarity-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:interested_in_twice_by_largest_dim-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:interested_in_twice_by_largest_dim_2_day_update-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:interested_in_twice_by_largest_dim_fav_score-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:interested_in_twice_connected_components-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:interested_in_twice_louvain-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:user_user_normalized_graph-scala",
-        "src/scala/com/twitter/simclusters_v2/scalding/common",
-        "src/scala/com/twitter/simclusters_v2/scalding/embedding",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:execution_app",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:sources",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:stats_util",
-    ],
+scawa_wibwawy(
+    souwces = [
+        "*.scawa", (U ﹏ U)
+        "common/*.scawa", (⑅˘꒳˘)
+    ], òωó
+    compiwew_option_sets = ["fataw_wawnings"], ʘwʘ
+    p-pwatfowm = "java8", /(^•ω•^)
+    t-tags = [
+        "bazew-compatibwe", ʘwʘ
+        "bazew-onwy", σωσ
+    ], OwO
+    d-dependencies = [
+        "swc/scawa/com/twittew/simcwustews_v2/common/cwustewing", 😳😳😳
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:aggwegatabwe_pwoducew_simcwustews_embeddings_by_wog_fav_scowe-scawa", 😳😳😳
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:cwustews_membews_connected_components_ape_simiwawity-scawa", o.O
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:cwustews_membews_wawgest_dim_ape_simiwawity-scawa", ( ͡o ω ͡o )
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:cwustews_membews_wawgest_dim_ape_simiwawity_2_day_update-scawa",
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:cwustews_membews_wouvain_ape_simiwawity-scawa", (U ﹏ U)
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:intewested_in_twice_by_wawgest_dim-scawa", (///ˬ///✿)
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:intewested_in_twice_by_wawgest_dim_2_day_update-scawa", >w<
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:intewested_in_twice_by_wawgest_dim_fav_scowe-scawa", rawr
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:intewested_in_twice_connected_components-scawa",
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:intewested_in_twice_wouvain-scawa", mya
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:usew_usew_nowmawized_gwaph-scawa", ^^
+        "swc/scawa/com/twittew/simcwustews_v2/scawding/common", 😳😳😳
+        "swc/scawa/com/twittew/simcwustews_v2/scawding/embedding",
+        "swc/scawa/com/twittew/wtf/scawding/jobs/common:execution_app", mya
+        "swc/scawa/com/twittew/wtf/scawding/jobs/common:souwces", 😳
+        "swc/scawa/com/twittew/wtf/scawding/jobs/common:stats_utiw", -.-
+    ], 🥺
 )
 
 # ========================
-# ADHOC JOB CONFIGURATIONS
-# Note: Please change mapreduce.job.reduces and --num-reducers together.
+# a-adhoc job configuwations
+# n-nyote: p-pwease change m-mapweduce.job.weduces a-and --num-weducews togethew. o.O
 # ========================
-scalding_job(
-    name = "interested_in_twice_largest_dim-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.embedding.twice.InterestedInTwiceLargestDimAdhocApp",
-    args = [
-        "--date 2021-08-31",
-        "--num-reducers 4000",
+scawding_job(
+    name = "intewested_in_twice_wawgest_dim-adhoc",
+    main = "com.twittew.simcwustews_v2.scawding.embedding.twice.intewestedintwicewawgestdimadhocapp", /(^•ω•^)
+    a-awgs = [
+        "--date 2021-08-31", nyaa~~
+        "--num-weducews 4000", nyaa~~
     ],
     config = [
-        ("hadoop.combine-input", "true"),
-        ("hadoop.map.jvm.total-memory", "3072m"),
-        ("hadoop.reduce.jvm.total-memory", "3072m"),
-        ("hadoop.submitter.jvm.total-memory", "5120m"),
-        ("submitter.tier", "preemptible"),
+        ("hadoop.combine-input", :3 "twue"), 😳😳😳
+        ("hadoop.map.jvm.totaw-memowy", (˘ω˘) "3072m"), ^^
+        ("hadoop.weduce.jvm.totaw-memowy", :3 "3072m"), -.-
+        ("hadoop.submittew.jvm.totaw-memowy", 😳 "5120m"),
+        ("submittew.tiew", mya "pweemptibwe"), (˘ω˘)
+    ], >_<
+    hadoop_cwustew = "qus1-bwuebiwd", -.-
+    h-hadoop_pwopewties = [
+        ("mapweduce.job.weduce.swowstawt.compwetedmaps", 🥺 "1.0"), (U ﹏ U)
+        ("scawding.with.weducews.set.expwicitwy", >w< "twue"),
+        ("mapweduce.job.weduces", mya "4000"),
+        ("mapweduce.task.timeout", >w< "0"), nyaa~~
     ],
-    hadoop_cluster = "qus1-bluebird",
-    hadoop_properties = [
-        ("mapreduce.job.reduce.slowstart.completedmaps", "1.0"),
-        ("scalding.with.reducers.set.explicitly", "true"),
-        ("mapreduce.job.reduces", "4000"),
-        ("mapreduce.task.timeout", "0"),
-    ],
-    platform = "java8",
-    role = "cassowary",
-    runtime_platform = "java8",
+    pwatfowm = "java8", (✿oωo)
+    w-wowe = "cassowawy", ʘwʘ
+    wuntime_pwatfowm = "java8", (ˆ ﻌ ˆ)♡
     tags = [
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe:migwated", 😳😳😳
+        "bazew-onwy", :3
     ],
+    dependencies = [":twice"], OwO
+)
+
+s-scawding_job(
+    nyame = "intewested_in_twice_wawgest_dim_fav_scowe-adhoc", (U ﹏ U)
+    m-main = "com.twittew.simcwustews_v2.scawding.embedding.twice.intewestedintwicewawgestdimmaxfavscoweadhocapp",
+    a-awgs = [
+        "--date 2022-07-01", >w<
+        "--num-weducews 4000", (U ﹏ U)
+    ], 😳
+    config = [
+        ("hadoop.combine-input", (ˆ ﻌ ˆ)♡ "twue"),
+        ("hadoop.map.jvm.totaw-memowy", 😳😳😳 "3072m"),
+        ("hadoop.weduce.jvm.totaw-memowy", (U ﹏ U) "3072m"), (///ˬ///✿)
+        ("hadoop.submittew.jvm.totaw-memowy", "5120m"), 😳
+        ("submittew.tiew", 😳 "pweemptibwe"), σωσ
+    ],
+    hadoop_cwustew = "qus1-bwuebiwd", rawr x3
+    hadoop_pwopewties = [
+        ("mapweduce.job.weduce.swowstawt.compwetedmaps", OwO "1.0"),
+        ("scawding.with.weducews.set.expwicitwy", /(^•ω•^) "twue"), 😳😳😳
+        ("mapweduce.job.weduces", ( ͡o ω ͡o ) "4000"), >_<
+        ("mapweduce.task.timeout", >w< "0"),
+    ], rawr
+    pwatfowm = "java8", 😳
+    w-wowe = "cassowawy", >w<
+    wuntime_pwatfowm = "java8", (⑅˘꒳˘)
+    tags = [
+        "bazew-compatibwe:migwated", OwO
+        "bazew-onwy", (ꈍᴗꈍ)
+    ], 😳
+    dependencies = [":twice"], 😳😳😳
+)
+
+scawding_job(
+    n-nyame = "intewested_in_twice_wouvain-adhoc", mya
+    main = "com.twittew.simcwustews_v2.scawding.embedding.twice.intewestedintwicewouvainadhocapp", mya
+    a-awgs = [
+        "--date 2021-08-31", (⑅˘꒳˘)
+        "--num-weducews 4000", (U ﹏ U)
+        "--cosine_simiwawity_thweshowd 0.5", mya
+    ],
+    c-config = [
+        ("hadoop.combine-input", ʘwʘ "twue"), (˘ω˘)
+        ("hadoop.map.jvm.totaw-memowy", (U ﹏ U) "3072m"), ^•ﻌ•^
+        ("hadoop.weduce.jvm.totaw-memowy", (˘ω˘) "3072m"),
+        ("hadoop.submittew.jvm.totaw-memowy", :3 "5120m"), ^^;;
+        ("submittew.tiew", 🥺 "pweemptibwe"), (⑅˘꒳˘)
+    ], nyaa~~
+    h-hadoop_cwustew = "qus1-bwuebiwd", :3
+    h-hadoop_pwopewties = [
+        ("mapweduce.job.weduce.swowstawt.compwetedmaps", ( ͡o ω ͡o ) "1.0"),
+        ("scawding.with.weducews.set.expwicitwy", mya "twue"), (///ˬ///✿)
+        ("mapweduce.job.weduces", (˘ω˘) "4000"),
+        ("mapweduce.task.timeout", ^^;; "0"),
+    ],
+    pwatfowm = "java8", (✿oωo)
+    wowe = "cassowawy",
+    w-wuntime_pwatfowm = "java8", (U ﹏ U)
+    tags = [
+        "bazew-compatibwe:migwated", -.-
+        "bazew-onwy", ^•ﻌ•^
+    ], rawr
     dependencies = [":twice"],
 )
 
-scalding_job(
-    name = "interested_in_twice_largest_dim_fav_score-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.embedding.twice.InterestedInTwiceLargestDimMaxFavScoreAdhocApp",
-    args = [
-        "--date 2022-07-01",
-        "--num-reducers 4000",
+s-scawding_job(
+    nyame = "intewested_in_twice_connected_components-adhoc", (˘ω˘)
+    main = "com.twittew.simcwustews_v2.scawding.embedding.twice.intewestedintwiceconnectedcomponentsadhocapp",
+    awgs = [
+        "--date 2021-08-31", nyaa~~
+        "--num-weducews 4000", UwU
+        "--cosine_simiwawity_thweshowd 0.5", :3
     ],
     config = [
-        ("hadoop.combine-input", "true"),
-        ("hadoop.map.jvm.total-memory", "3072m"),
-        ("hadoop.reduce.jvm.total-memory", "3072m"),
-        ("hadoop.submitter.jvm.total-memory", "5120m"),
-        ("submitter.tier", "preemptible"),
+        ("hadoop.combine-input", (⑅˘꒳˘) "twue"), (///ˬ///✿)
+        ("hadoop.map.jvm.totaw-memowy", ^^;; "3072m"), >_<
+        ("hadoop.weduce.jvm.totaw-memowy", rawr x3 "3072m"),
+        ("hadoop.submittew.jvm.totaw-memowy", /(^•ω•^) "5120m"), :3
+        ("submittew.tiew", "pweemptibwe"),
+    ], (ꈍᴗꈍ)
+    hadoop_cwustew = "qus1-bwuebiwd", /(^•ω•^)
+    hadoop_pwopewties = [
+        ("mapweduce.job.weduce.swowstawt.compwetedmaps", "1.0"), (⑅˘꒳˘)
+        ("scawding.with.weducews.set.expwicitwy", ( ͡o ω ͡o ) "twue"), òωó
+        ("mapweduce.job.weduces", (⑅˘꒳˘) "4000"),
+        ("mapweduce.task.timeout", XD "0"),
     ],
-    hadoop_cluster = "qus1-bluebird",
-    hadoop_properties = [
-        ("mapreduce.job.reduce.slowstart.completedmaps", "1.0"),
-        ("scalding.with.reducers.set.explicitly", "true"),
-        ("mapreduce.job.reduces", "4000"),
-        ("mapreduce.task.timeout", "0"),
-    ],
-    platform = "java8",
-    role = "cassowary",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [":twice"],
-)
-
-scalding_job(
-    name = "interested_in_twice_louvain-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.embedding.twice.InterestedInTwiceLouvainAdhocApp",
-    args = [
-        "--date 2021-08-31",
-        "--num-reducers 4000",
-        "--cosine_similarity_threshold 0.5",
-    ],
-    config = [
-        ("hadoop.combine-input", "true"),
-        ("hadoop.map.jvm.total-memory", "3072m"),
-        ("hadoop.reduce.jvm.total-memory", "3072m"),
-        ("hadoop.submitter.jvm.total-memory", "5120m"),
-        ("submitter.tier", "preemptible"),
-    ],
-    hadoop_cluster = "qus1-bluebird",
-    hadoop_properties = [
-        ("mapreduce.job.reduce.slowstart.completedmaps", "1.0"),
-        ("scalding.with.reducers.set.explicitly", "true"),
-        ("mapreduce.job.reduces", "4000"),
-        ("mapreduce.task.timeout", "0"),
-    ],
-    platform = "java8",
-    role = "cassowary",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [":twice"],
-)
-
-scalding_job(
-    name = "interested_in_twice_connected_components-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.embedding.twice.InterestedInTwiceConnectedComponentsAdhocApp",
-    args = [
-        "--date 2021-08-31",
-        "--num-reducers 4000",
-        "--cosine_similarity_threshold 0.5",
-    ],
-    config = [
-        ("hadoop.combine-input", "true"),
-        ("hadoop.map.jvm.total-memory", "3072m"),
-        ("hadoop.reduce.jvm.total-memory", "3072m"),
-        ("hadoop.submitter.jvm.total-memory", "5120m"),
-        ("submitter.tier", "preemptible"),
-    ],
-    hadoop_cluster = "qus1-bluebird",
-    hadoop_properties = [
-        ("mapreduce.job.reduce.slowstart.completedmaps", "1.0"),
-        ("scalding.with.reducers.set.explicitly", "true"),
-        ("mapreduce.job.reduces", "4000"),
-        ("mapreduce.task.timeout", "0"),
-    ],
-    platform = "java8",
-    role = "cassowary",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [":twice"],
+    p-pwatfowm = "java8", -.-
+    wowe = "cassowawy",
+    w-wuntime_pwatfowm = "java8", :3
+    t-tags = [
+        "bazew-compatibwe:migwated", nyaa~~
+        "bazew-onwy", 😳
+    ], (⑅˘꒳˘)
+    d-dependencies = [":twice"], nyaa~~
 )
 
 # ============================
-# SCHEDULED JOB CONFIGURATIONS
-# Twice jobs have been descheduled
+# scheduwed job configuwations
+# twice jobs have b-been descheduwed
 # ============================

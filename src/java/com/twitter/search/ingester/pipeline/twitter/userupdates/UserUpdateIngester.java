@@ -1,292 +1,292 @@
-package com.twitter.search.ingester.pipeline.twitter.userupdates;
+package com.twittew.seawch.ingestew.pipewine.twittew.usewupdates;
 
-import java.util.AbstractMap;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+impowt java.utiw.abstwactmap;
+i-impowt java.utiw.cowwection;
+i-impowt j-java.utiw.cowwections;
+i-impowt j-java.utiw.enumset;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.map;
+impowt java.utiw.objects;
+impowt java.utiw.set;
+impowt java.utiw.function.function;
+i-impowt java.utiw.stweam.cowwectows;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
+impowt com.googwe.common.cowwect.immutabwemap;
+i-impowt com.googwe.common.cowwect.sets;
 
-import org.apache.commons.text.CaseUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.apache.commons.text.caseutiws;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.decider.Decider;
-import com.twitter.finagle.util.DefaultTimer;
-import com.twitter.gizmoduck.thriftjava.LifecycleChangeReason;
-import com.twitter.gizmoduck.thriftjava.LookupContext;
-import com.twitter.gizmoduck.thriftjava.QueryFields;
-import com.twitter.gizmoduck.thriftjava.Safety;
-import com.twitter.gizmoduck.thriftjava.UpdateDiffItem;
-import com.twitter.gizmoduck.thriftjava.User;
-import com.twitter.gizmoduck.thriftjava.UserModification;
-import com.twitter.gizmoduck.thriftjava.UserService;
-import com.twitter.gizmoduck.thriftjava.UserType;
-import com.twitter.search.common.indexing.thriftjava.AntisocialUserUpdate;
-import com.twitter.search.common.indexing.thriftjava.UserUpdateType;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.util.Duration;
-import com.twitter.util.Future;
-import com.twitter.util.TimeoutException;
+i-impowt com.twittew.common.cowwections.paiw;
+impowt com.twittew.decidew.decidew;
+i-impowt com.twittew.finagwe.utiw.defauwttimew;
+i-impowt com.twittew.gizmoduck.thwiftjava.wifecycwechangeweason;
+impowt com.twittew.gizmoduck.thwiftjava.wookupcontext;
+impowt com.twittew.gizmoduck.thwiftjava.quewyfiewds;
+impowt com.twittew.gizmoduck.thwiftjava.safety;
+impowt c-com.twittew.gizmoduck.thwiftjava.updatediffitem;
+impowt com.twittew.gizmoduck.thwiftjava.usew;
+impowt com.twittew.gizmoduck.thwiftjava.usewmodification;
+impowt com.twittew.gizmoduck.thwiftjava.usewsewvice;
+impowt com.twittew.gizmoduck.thwiftjava.usewtype;
+i-impowt com.twittew.seawch.common.indexing.thwiftjava.antisociawusewupdate;
+impowt com.twittew.seawch.common.indexing.thwiftjava.usewupdatetype;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt c-com.twittew.seawch.common.metwics.seawchwonggauge;
+i-impowt com.twittew.utiw.duwation;
+impowt com.twittew.utiw.futuwe;
+i-impowt com.twittew.utiw.timeoutexception;
 
 /**
- * This class ingests {@link UserModification} events and transforms them into a possibly empty list
- * of {@link AntisocialUserUpdate}s to be indexed by Earlybirds.
+ * this c-cwass ingests {@wink usewmodification} events and twansfowms them into a possibwy empty wist
+ * o-of {@wink antisociawusewupdate}s to be indexed b-by eawwybiwds. rawr x3
  */
-public class UserUpdateIngester {
-  private static final Logger LOG = LoggerFactory.getLogger(UserUpdateIngester.class);
-  private static final Duration RESULT_TIMEOUT = Duration.fromSeconds(3);
+p-pubwic cwass u-usewupdateingestew {
+  pwivate static finaw woggew wog = woggewfactowy.getwoggew(usewupdateingestew.cwass);
+  p-pwivate s-static finaw duwation wesuwt_timeout = d-duwation.fwomseconds(3);
 
-  private static final List<AntisocialUserUpdate> NO_UPDATE = Collections.emptyList();
+  p-pwivate static finaw wist<antisociawusewupdate> n-nyo_update = cowwections.emptywist();
 
-  // Map from UserUpdateType to a set of Safety fields to examine.
-  private static final Map<UserUpdateType, Set<Safety._Fields>> SAFETY_FIELDS_MAP =
-      ImmutableMap.of(
-          UserUpdateType.ANTISOCIAL,
-          Sets.immutableEnumSet(
-              Safety._Fields.SUSPENDED, Safety._Fields.DEACTIVATED, Safety._Fields.OFFBOARDED),
-          UserUpdateType.NSFW,
-          Sets.immutableEnumSet(Safety._Fields.NSFW_USER, Safety._Fields.NSFW_ADMIN),
-          UserUpdateType.PROTECTED, Sets.immutableEnumSet(Safety._Fields.IS_PROTECTED));
+  // m-map fwom usewupdatetype to a set of safety f-fiewds to examine. 🥺
+  pwivate static f-finaw map<usewupdatetype, :3 set<safety._fiewds>> s-safety_fiewds_map =
+      i-immutabwemap.of(
+          usewupdatetype.antisociaw, (ꈍᴗꈍ)
+          sets.immutabweenumset(
+              safety._fiewds.suspended, 🥺 safety._fiewds.deactivated, safety._fiewds.offboawded), (✿oωo)
+          usewupdatetype.nsfw, (U ﹏ U)
+          s-sets.immutabweenumset(safety._fiewds.nsfw_usew, :3 s-safety._fiewds.nsfw_admin), ^^;;
+          usewupdatetype.pwotected, rawr s-sets.immutabweenumset(safety._fiewds.is_pwotected));
 
-  private static final Function<Safety._Fields, String> FIELD_TO_FIELD_NAME_FUNCTION =
-      field -> "safety." + CaseUtils.toCamelCase(field.name(), false, '_');
+  p-pwivate static f-finaw function<safety._fiewds, 😳😳😳 stwing> fiewd_to_fiewd_name_function =
+      fiewd -> "safety." + caseutiws.tocamewcase(fiewd.name(), (✿oωo) f-fawse, OwO '_');
 
-  private static final Map<String, UserUpdateType> FIELD_NAME_TO_TYPE_MAP =
-      SAFETY_FIELDS_MAP.entrySet().stream()
-          .flatMap(
-              entry -> entry.getValue().stream()
-                  .map(field -> new AbstractMap.SimpleEntry<>(
-                      FIELD_TO_FIELD_NAME_FUNCTION.apply(field),
-                      entry.getKey())))
-          .collect(Collectors.toMap(
-              AbstractMap.SimpleEntry::getKey,
-              AbstractMap.SimpleEntry::getValue));
+  pwivate static finaw map<stwing, ʘwʘ usewupdatetype> fiewd_name_to_type_map =
+      s-safety_fiewds_map.entwyset().stweam()
+          .fwatmap(
+              entwy -> entwy.getvawue().stweam()
+                  .map(fiewd -> n-nyew abstwactmap.simpweentwy<>(
+                      f-fiewd_to_fiewd_name_function.appwy(fiewd), (ˆ ﻌ ˆ)♡
+                      e-entwy.getkey())))
+          .cowwect(cowwectows.tomap(
+              abstwactmap.simpweentwy::getkey, (U ﹏ U)
+              abstwactmap.simpweentwy::getvawue));
 
-  private static final Map<String, Safety._Fields> FIELD_NAME_TO_FIELD_MAP =
-      SAFETY_FIELDS_MAP.values().stream()
-          .flatMap(Collection::stream)
-          .collect(Collectors.toMap(
-              FIELD_TO_FIELD_NAME_FUNCTION,
-              Function.identity()));
+  p-pwivate static f-finaw map<stwing, UwU s-safety._fiewds> f-fiewd_name_to_fiewd_map =
+      safety_fiewds_map.vawues().stweam()
+          .fwatmap(cowwection::stweam)
+          .cowwect(cowwectows.tomap(
+              fiewd_to_fiewd_name_function, XD
+              f-function.identity()));
 
-  private static final LookupContext LOOKUP_CONTEXT = new LookupContext()
-      .setInclude_deactivated(true)
-      .setInclude_erased(true)
-      .setInclude_suspended(true)
-      .setInclude_offboarded(true)
-      .setInclude_protected(true);
+  p-pwivate s-static finaw w-wookupcontext wookup_context = n-nyew wookupcontext()
+      .setincwude_deactivated(twue)
+      .setincwude_ewased(twue)
+      .setincwude_suspended(twue)
+      .setincwude_offboawded(twue)
+      .setincwude_pwotected(twue);
 
-  private final UserService.ServiceToClient userService;
-  private final Decider decider;
+  pwivate finaw usewsewvice.sewvicetocwient usewsewvice;
+  p-pwivate finaw decidew decidew;
 
-  private final SearchLongGauge userModificationLatency;
-  private final SearchCounter unsuccessfulUserModificationCount;
-  private final SearchCounter byInactiveAccountDeactivationUserModificationCount;
-  private final SearchCounter irrelevantUserModificationCount;
-  private final SearchCounter notNormalUserCount;
-  private final SearchCounter missingSafetyCount;
-  private final SearchCounter userServiceRequests;
-  private final SearchCounter userServiceSuccesses;
-  private final SearchCounter userServiceNoResults;
-  private final SearchCounter userServiceFailures;
-  private final SearchCounter userServiceTimeouts;
-  private final Map<Pair<UserUpdateType, Boolean>, SearchCounter> counterMap;
+  pwivate finaw seawchwonggauge usewmodificationwatency;
+  pwivate finaw s-seawchcountew unsuccessfuwusewmodificationcount;
+  pwivate finaw seawchcountew b-byinactiveaccountdeactivationusewmodificationcount;
+  p-pwivate f-finaw seawchcountew iwwewevantusewmodificationcount;
+  p-pwivate finaw seawchcountew n-nyotnowmawusewcount;
+  p-pwivate finaw seawchcountew missingsafetycount;
+  pwivate finaw seawchcountew usewsewvicewequests;
+  p-pwivate finaw seawchcountew usewsewvicesuccesses;
+  p-pwivate finaw seawchcountew u-usewsewvicenowesuwts;
+  p-pwivate finaw seawchcountew usewsewvicefaiwuwes;
+  p-pwivate f-finaw seawchcountew usewsewvicetimeouts;
+  pwivate f-finaw map<paiw<usewupdatetype, ʘwʘ b-boowean>, seawchcountew> countewmap;
 
-  public UserUpdateIngester(
-      String statPrefix,
-      UserService.ServiceToClient userService,
-      Decider decider
+  pubwic usewupdateingestew(
+      stwing statpwefix,
+      u-usewsewvice.sewvicetocwient u-usewsewvice, rawr x3
+      d-decidew decidew
   ) {
-    this.userService = userService;
-    this.decider = decider;
+    this.usewsewvice = u-usewsewvice;
+    t-this.decidew = decidew;
 
-    userModificationLatency =
-        SearchLongGauge.export(statPrefix + "_user_modification_latency_ms");
-    unsuccessfulUserModificationCount =
-        SearchCounter.export(statPrefix + "_unsuccessful_user_modification_count");
-    byInactiveAccountDeactivationUserModificationCount =
-        SearchCounter.export(statPrefix
-                + "_by_inactive_account_deactivation_user_modification_count");
-    irrelevantUserModificationCount =
-        SearchCounter.export(statPrefix + "_irrelevant_user_modification_count");
-    notNormalUserCount =
-        SearchCounter.export(statPrefix + "_not_normal_user_count");
-    missingSafetyCount =
-        SearchCounter.export(statPrefix + "_missing_safety_count");
-    userServiceRequests =
-        SearchCounter.export(statPrefix + "_user_service_requests");
-    userServiceSuccesses =
-        SearchCounter.export(statPrefix + "_user_service_successes");
-    userServiceNoResults =
-        SearchCounter.export(statPrefix + "_user_service_no_results");
-    userServiceFailures =
-        SearchCounter.export(statPrefix + "_user_service_failures");
-    userServiceTimeouts =
-        SearchCounter.export(statPrefix + "_user_service_timeouts");
-    counterMap = ImmutableMap.<Pair<UserUpdateType, Boolean>, SearchCounter>builder()
-        .put(Pair.of(UserUpdateType.ANTISOCIAL, true),
-            SearchCounter.export(statPrefix + "_antisocial_set_count"))
-        .put(Pair.of(UserUpdateType.ANTISOCIAL, false),
-            SearchCounter.export(statPrefix + "_antisocial_unset_count"))
-        .put(Pair.of(UserUpdateType.NSFW, true),
-            SearchCounter.export(statPrefix + "_nsfw_set_count"))
-        .put(Pair.of(UserUpdateType.NSFW, false),
-            SearchCounter.export(statPrefix + "_nsfw_unset_count"))
-        .put(Pair.of(UserUpdateType.PROTECTED, true),
-            SearchCounter.export(statPrefix + "_protected_set_count"))
-        .put(Pair.of(UserUpdateType.PROTECTED, false),
-            SearchCounter.export(statPrefix + "_protected_unset_count"))
-        .build();
+    u-usewmodificationwatency =
+        seawchwonggauge.expowt(statpwefix + "_usew_modification_watency_ms");
+    unsuccessfuwusewmodificationcount =
+        seawchcountew.expowt(statpwefix + "_unsuccessfuw_usew_modification_count");
+    byinactiveaccountdeactivationusewmodificationcount =
+        s-seawchcountew.expowt(statpwefix
+                + "_by_inactive_account_deactivation_usew_modification_count");
+    i-iwwewevantusewmodificationcount =
+        seawchcountew.expowt(statpwefix + "_iwwewevant_usew_modification_count");
+    notnowmawusewcount =
+        s-seawchcountew.expowt(statpwefix + "_not_nowmaw_usew_count");
+    m-missingsafetycount =
+        seawchcountew.expowt(statpwefix + "_missing_safety_count");
+    usewsewvicewequests =
+        seawchcountew.expowt(statpwefix + "_usew_sewvice_wequests");
+    u-usewsewvicesuccesses =
+        seawchcountew.expowt(statpwefix + "_usew_sewvice_successes");
+    usewsewvicenowesuwts =
+        seawchcountew.expowt(statpwefix + "_usew_sewvice_no_wesuwts");
+    usewsewvicefaiwuwes =
+        s-seawchcountew.expowt(statpwefix + "_usew_sewvice_faiwuwes");
+    usewsewvicetimeouts =
+        seawchcountew.expowt(statpwefix + "_usew_sewvice_timeouts");
+    countewmap = i-immutabwemap.<paiw<usewupdatetype, ^^;; b-boowean>, ʘwʘ seawchcountew>buiwdew()
+        .put(paiw.of(usewupdatetype.antisociaw, (U ﹏ U) twue), (˘ω˘)
+            seawchcountew.expowt(statpwefix + "_antisociaw_set_count"))
+        .put(paiw.of(usewupdatetype.antisociaw, (ꈍᴗꈍ) fawse), /(^•ω•^)
+            s-seawchcountew.expowt(statpwefix + "_antisociaw_unset_count"))
+        .put(paiw.of(usewupdatetype.nsfw, >_< t-twue),
+            seawchcountew.expowt(statpwefix + "_nsfw_set_count"))
+        .put(paiw.of(usewupdatetype.nsfw, σωσ fawse), ^^;;
+            seawchcountew.expowt(statpwefix + "_nsfw_unset_count"))
+        .put(paiw.of(usewupdatetype.pwotected, 😳 t-twue),
+            seawchcountew.expowt(statpwefix + "_pwotected_set_count"))
+        .put(paiw.of(usewupdatetype.pwotected, >_< f-fawse),
+            seawchcountew.expowt(statpwefix + "_pwotected_unset_count"))
+        .buiwd();
   }
 
   /**
-   * Convert a UserModification event into a (possibly empty) list of antisocial updates for
-   * Earlybird.
+   * convewt a usewmodification e-event into a (possibwy empty) w-wist of antisociaw u-updates fow
+   * eawwybiwd. -.-
    */
-  public Future<List<AntisocialUserUpdate>> transform(UserModification userModification) {
-    userModificationLatency.set(System.currentTimeMillis() - userModification.getUpdated_at_msec());
+  p-pubwic futuwe<wist<antisociawusewupdate>> t-twansfowm(usewmodification u-usewmodification) {
+    u-usewmodificationwatency.set(system.cuwwenttimemiwwis() - usewmodification.getupdated_at_msec());
 
-    if (!userModification.isSuccess()) {
-      unsuccessfulUserModificationCount.increment();
-      return Future.value(NO_UPDATE);
+    if (!usewmodification.issuccess()) {
+      u-unsuccessfuwusewmodificationcount.incwement();
+      w-wetuwn futuwe.vawue(no_update);
     }
 
-    // To avoid UserTable gets overflowed, we exclude traffic from ByInactiveAccountDeactivation
-    if (userModification.getUser_audit_data() != null
-        && userModification.getUser_audit_data().getReason() != null
-        && userModification.getUser_audit_data().getReason()
-            == LifecycleChangeReason.BY_INACTIVE_ACCOUNT_DEACTIVATION) {
-      byInactiveAccountDeactivationUserModificationCount.increment();
-      return Future.value(NO_UPDATE);
+    // to avoid u-usewtabwe gets o-ovewfwowed, UwU we e-excwude twaffic fwom byinactiveaccountdeactivation
+    if (usewmodification.getusew_audit_data() != n-nyuww
+        && usewmodification.getusew_audit_data().getweason() != n-nyuww
+        && u-usewmodification.getusew_audit_data().getweason()
+            == wifecycwechangeweason.by_inactive_account_deactivation) {
+      byinactiveaccountdeactivationusewmodificationcount.incwement();
+      wetuwn futuwe.vawue(no_update);
     }
 
-    long userId = userModification.getUser_id();
-    Set<UserUpdateType> userUpdateTypes = getUserUpdateTypes(userModification);
-    if (userUpdateTypes.isEmpty()) {
-      irrelevantUserModificationCount.increment();
-      return Future.value(NO_UPDATE);
+    w-wong u-usewid = usewmodification.getusew_id();
+    set<usewupdatetype> u-usewupdatetypes = g-getusewupdatetypes(usewmodification);
+    if (usewupdatetypes.isempty()) {
+      iwwewevantusewmodificationcount.incwement();
+      w-wetuwn futuwe.vawue(no_update);
     }
 
-    Future<User> userFuture = userModification.isSetCreate()
-        ? Future.value(userModification.getCreate())
-        : getUser(userId);
+    futuwe<usew> usewfutuwe = usewmodification.issetcweate()
+        ? futuwe.vawue(usewmodification.getcweate())
+        : getusew(usewid);
 
-    return userFuture
-        .map(user -> {
-          if (user == null) {
-            return NO_UPDATE;
-          } else if (user.getUser_type() != UserType.NORMAL) {
-            LOG.info("User with id={} is not a normal user.", userId);
-            notNormalUserCount.increment();
-            return NO_UPDATE;
-          } else if (!user.isSetSafety()) {
-            LOG.info("Safety for User with id={} is missing.", userId);
-            missingSafetyCount.increment();
-            return NO_UPDATE;
+    w-wetuwn usewfutuwe
+        .map(usew -> {
+          if (usew == n-nyuww) {
+            wetuwn nyo_update;
+          } e-ewse if (usew.getusew_type() != usewtype.nowmaw) {
+            w-wog.info("usew with id={} is n-nyot a nowmaw usew.", :3 u-usewid);
+            n-nyotnowmawusewcount.incwement();
+            w-wetuwn n-nyo_update;
+          } ewse if (!usew.issetsafety()) {
+            wog.info("safety fow usew with id={} is missing.", σωσ usewid);
+            missingsafetycount.incwement();
+            w-wetuwn nyo_update;
           }
 
-          if (userModification.isSetUpdate()) {
-            // Apply relevant updates from UserModification as User returned from Gizmoduck may not
-            // have reflected them yet.
-            applyUpdates(user, userModification);
+          i-if (usewmodification.issetupdate()) {
+            // a-appwy wewevant updates fwom u-usewmodification as usew wetuwned fwom gizmoduck may nyot
+            // h-have w-wefwected them yet. >w<
+            a-appwyupdates(usew, (ˆ ﻌ ˆ)♡ usewmodification);
           }
 
-          return userUpdateTypes.stream()
-              .map(userUpdateType ->
-                  convertToAntiSocialUserUpdate(
-                      user, userUpdateType, userModification.getUpdated_at_msec()))
+          wetuwn u-usewupdatetypes.stweam()
+              .map(usewupdatetype ->
+                  c-convewttoantisociawusewupdate(
+                      usew, ʘwʘ u-usewupdatetype, u-usewmodification.getupdated_at_msec()))
               .peek(update ->
-                  counterMap.get(Pair.of(update.getType(), update.isValue())).increment())
-              .collect(Collectors.toList());
+                  countewmap.get(paiw.of(update.gettype(), :3 update.isvawue())).incwement())
+              .cowwect(cowwectows.towist());
         })
-        .onFailure(com.twitter.util.Function.cons(exception -> {
-          if (exception instanceof UserNotFoundException) {
-            userServiceNoResults.increment();
-          } else if (exception instanceof TimeoutException) {
-            userServiceTimeouts.increment();
-            LOG.error("UserService.get timed out for user id=" + userId, exception);
-          } else {
-            userServiceFailures.increment();
-            LOG.error("UserService.get failed for user id=" + userId, exception);
+        .onfaiwuwe(com.twittew.utiw.function.cons(exception -> {
+          if (exception instanceof usewnotfoundexception) {
+            u-usewsewvicenowesuwts.incwement();
+          } e-ewse if (exception i-instanceof timeoutexception) {
+            u-usewsewvicetimeouts.incwement();
+            w-wog.ewwow("usewsewvice.get timed out f-fow usew id=" + u-usewid, (˘ω˘) exception);
+          } ewse {
+            u-usewsewvicefaiwuwes.incwement();
+            w-wog.ewwow("usewsewvice.get faiwed f-fow usew id=" + usewid, exception);
           }
         }));
   }
 
-  private static Set<UserUpdateType> getUserUpdateTypes(UserModification userModification) {
-    Set<UserUpdateType> types = EnumSet.noneOf(UserUpdateType.class);
+  pwivate static s-set<usewupdatetype> getusewupdatetypes(usewmodification u-usewmodification) {
+    s-set<usewupdatetype> types = e-enumset.noneof(usewupdatetype.cwass);
 
-    if (userModification.isSetUpdate()) {
-      userModification.getUpdate().stream()
-          .map(UpdateDiffItem::getField_name)
-          .map(FIELD_NAME_TO_TYPE_MAP::get)
-          .filter(Objects::nonNull)
-          .collect(Collectors.toCollection(() -> types));
-    } else if (userModification.isSetCreate() && userModification.getCreate().isSetSafety()) {
-      Safety safety = userModification.getCreate().getSafety();
-      if (safety.isSuspended()) {
-        types.add(UserUpdateType.ANTISOCIAL);
+    if (usewmodification.issetupdate()) {
+      usewmodification.getupdate().stweam()
+          .map(updatediffitem::getfiewd_name)
+          .map(fiewd_name_to_type_map::get)
+          .fiwtew(objects::nonnuww)
+          .cowwect(cowwectows.tocowwection(() -> t-types));
+    } e-ewse i-if (usewmodification.issetcweate() && usewmodification.getcweate().issetsafety()) {
+      safety safety = usewmodification.getcweate().getsafety();
+      i-if (safety.issuspended()) {
+        types.add(usewupdatetype.antisociaw);
       }
-      if (safety.isNsfw_admin() || safety.isNsfw_user()) {
-        types.add(UserUpdateType.NSFW);
+      if (safety.isnsfw_admin() || safety.isnsfw_usew()) {
+        t-types.add(usewupdatetype.nsfw);
       }
-      if (safety.isIs_protected()) {
-        types.add(UserUpdateType.PROTECTED);
+      i-if (safety.isis_pwotected()) {
+        types.add(usewupdatetype.pwotected);
       }
     }
 
-    return types;
+    w-wetuwn types;
   }
 
-  private Future<User> getUser(long userId) {
-    userServiceRequests.increment();
-    return userService.get(
-        LOOKUP_CONTEXT,
-        Collections.singletonList(userId),
-        Collections.singleton(QueryFields.SAFETY))
-        .within(DefaultTimer.getInstance(), RESULT_TIMEOUT)
-        .flatMap(userResults -> {
-          if (userResults.size() != 1 || !userResults.get(0).isSetUser()) {
-            return Future.exception(new UserNotFoundException(userId));
+  p-pwivate futuwe<usew> g-getusew(wong usewid) {
+    usewsewvicewequests.incwement();
+    w-wetuwn usewsewvice.get(
+        wookup_context, 😳😳😳
+        cowwections.singwetonwist(usewid), rawr x3
+        cowwections.singweton(quewyfiewds.safety))
+        .within(defauwttimew.getinstance(), (✿oωo) w-wesuwt_timeout)
+        .fwatmap(usewwesuwts -> {
+          i-if (usewwesuwts.size() != 1 || !usewwesuwts.get(0).issetusew()) {
+            wetuwn f-futuwe.exception(new usewnotfoundexception(usewid));
           }
 
-          userServiceSuccesses.increment();
-          return Future.value(userResults.get(0).getUser());
+          u-usewsewvicesuccesses.incwement();
+          w-wetuwn f-futuwe.vawue(usewwesuwts.get(0).getusew());
         });
   }
 
-  private static void applyUpdates(User user, UserModification userModification) {
-    userModification.getUpdate().stream()
-        .filter(update -> FIELD_NAME_TO_FIELD_MAP.containsKey(update.getField_name()))
-        .filter(UpdateDiffItem::isSetAfter)
-        .forEach(update ->
-            user.getSafety().setFieldValue(
-                FIELD_NAME_TO_FIELD_MAP.get(update.getField_name()),
-                Boolean.valueOf(update.getAfter()))
+  pwivate static void appwyupdates(usew usew, (ˆ ﻌ ˆ)♡ usewmodification usewmodification) {
+    usewmodification.getupdate().stweam()
+        .fiwtew(update -> fiewd_name_to_fiewd_map.containskey(update.getfiewd_name()))
+        .fiwtew(updatediffitem::issetaftew)
+        .foweach(update ->
+            usew.getsafety().setfiewdvawue(
+                fiewd_name_to_fiewd_map.get(update.getfiewd_name()), :3
+                boowean.vawueof(update.getaftew()))
         );
   }
 
-  private AntisocialUserUpdate convertToAntiSocialUserUpdate(
-      User user,
-      UserUpdateType userUpdateType,
-      long updatedAt) {
-    boolean value = SAFETY_FIELDS_MAP.get(userUpdateType).stream()
-        .anyMatch(safetyField -> (boolean) user.getSafety().getFieldValue(safetyField));
-    return new AntisocialUserUpdate(user.getId(), userUpdateType, value, updatedAt);
+  pwivate antisociawusewupdate convewttoantisociawusewupdate(
+      usew usew, (U ᵕ U❁)
+      u-usewupdatetype u-usewupdatetype, ^^;;
+      wong updatedat) {
+    boowean v-vawue = safety_fiewds_map.get(usewupdatetype).stweam()
+        .anymatch(safetyfiewd -> (boowean) u-usew.getsafety().getfiewdvawue(safetyfiewd));
+    w-wetuwn nyew antisociawusewupdate(usew.getid(), mya u-usewupdatetype, 😳😳😳 vawue, u-updatedat);
   }
 
-  class UserNotFoundException extends Exception {
-    UserNotFoundException(long userId) {
-      super("User " + userId + " not found.");
+  c-cwass usewnotfoundexception extends exception {
+    u-usewnotfoundexception(wong usewid) {
+      s-supew("usew " + u-usewid + " not found.");
     }
   }
 }

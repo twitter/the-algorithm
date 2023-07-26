@@ -1,48 +1,48 @@
-package com.twitter.home_mixer.functional_component.gate
+package com.twittew.home_mixew.functionaw_component.gate
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinemixer.clients.manhattan.DismissInfo
-import com.twitter.timelineservice.suggests.thriftscala.SuggestType
-import com.twitter.util.Duration
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.gateidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.timewinemixew.cwients.manhattan.dismissinfo
+impowt c-com.twittew.timewinesewvice.suggests.thwiftscawa.suggesttype
+impowt com.twittew.utiw.duwation
 
-object DismissFatigueGate {
-  // how long a dismiss action from user needs to be respected
-  val DefaultBaseDismissDuration = 7.days
-  val MaximumDismissalCountMultiplier = 4
+object dismissfatiguegate {
+  // h-how wong a dismiss action fwom u-usew nyeeds to be wespected
+  vaw defauwtbasedismissduwation = 7.days
+  vaw maximumdismissawcountmuwtipwiew = 4
 }
 
-case class DismissFatigueGate(
-  suggestType: SuggestType,
-  dismissInfoFeature: Feature[PipelineQuery, Map[SuggestType, Option[DismissInfo]]],
-  baseDismissDuration: Duration = DismissFatigueGate.DefaultBaseDismissDuration,
-) extends Gate[PipelineQuery] {
+c-case cwass dismissfatiguegate(
+  suggesttype: s-suggesttype, 😳😳😳
+  d-dismissinfofeatuwe: featuwe[pipewinequewy, 😳😳😳 map[suggesttype, o.O option[dismissinfo]]],
+  basedismissduwation: d-duwation = dismissfatiguegate.defauwtbasedismissduwation, ( ͡o ω ͡o )
+) extends gate[pipewinequewy] {
 
-  override val identifier: GateIdentifier = GateIdentifier("DismissFatigue")
+  ovewwide vaw identifiew: g-gateidentifiew = gateidentifiew("dismissfatigue")
 
-  override def shouldContinue(query: PipelineQuery): Stitch[Boolean] = {
-    val dismissInfoMap = query.features.map(
-      _.getOrElse(dismissInfoFeature, Map.empty[SuggestType, Option[DismissInfo]]))
+  o-ovewwide def s-shouwdcontinue(quewy: p-pipewinequewy): s-stitch[boowean] = {
+    vaw dismissinfomap = quewy.featuwes.map(
+      _.getowewse(dismissinfofeatuwe, (U ﹏ U) m-map.empty[suggesttype, (///ˬ///✿) option[dismissinfo]]))
 
-    val isVisible = dismissInfoMap
-      .flatMap(_.get(suggestType))
-      .flatMap(_.map { info =>
-        val currentDismissalDuration = query.queryTime.since(info.lastDismissed)
-        val targetDismissalDuration = dismissDurationForCount(info.count, baseDismissDuration)
+    vaw isvisibwe = d-dismissinfomap
+      .fwatmap(_.get(suggesttype))
+      .fwatmap(_.map { info =>
+        vaw cuwwentdismissawduwation = quewy.quewytime.since(info.wastdismissed)
+        vaw t-tawgetdismissawduwation = dismissduwationfowcount(info.count, >w< basedismissduwation)
 
-        currentDismissalDuration > targetDismissalDuration
-      }).getOrElse(true)
-    Stitch.value(isVisible)
+        c-cuwwentdismissawduwation > t-tawgetdismissawduwation
+      }).getowewse(twue)
+    s-stitch.vawue(isvisibwe)
   }
 
-  private def dismissDurationForCount(
-    dismissCount: Int,
-    dismissDuration: Duration
-  ): Duration =
-    // limit to maximum dismissal duration
-    dismissDuration * Math.min(dismissCount, DismissFatigueGate.MaximumDismissalCountMultiplier)
+  pwivate def dismissduwationfowcount(
+    dismisscount: i-int, rawr
+    dismissduwation: d-duwation
+  ): duwation =
+    // w-wimit t-to maximum dismissaw duwation
+    d-dismissduwation * math.min(dismisscount, mya d-dismissfatiguegate.maximumdismissawcountmuwtipwiew)
 }

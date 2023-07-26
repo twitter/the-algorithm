@@ -1,15 +1,15 @@
-scala_library(
-    sources = ["*.scala"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/thrift/com/twitter/escherbird:tweet-annotation-scala",
-        "src/thrift/com/twitter/timelines/content_features:thrift-scala",
-        "src/thrift/com/twitter/tweetypie:media-entity-scala",
-        "src/thrift/com/twitter/tweetypie:tweet-scala",
-    ],
-    exports = [
-        "src/thrift/com/twitter/timelines/content_features:thrift-scala",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], OwO
+    pwatfowm = "java8", 🥺
+    s-stwict_deps = t-twue, òωó
+    tags = ["bazew-compatibwe"], o.O
+    d-dependencies = [
+        "swc/thwift/com/twittew/eschewbiwd:tweet-annotation-scawa", (U ᵕ U❁)
+        "swc/thwift/com/twittew/timewines/content_featuwes:thwift-scawa", (⑅˘꒳˘)
+        "swc/thwift/com/twittew/tweetypie:media-entity-scawa", ( ͡o ω ͡o )
+        "swc/thwift/com/twittew/tweetypie:tweet-scawa", UwU
+    ], rawr x3
+    expowts = [
+        "swc/thwift/com/twittew/timewines/content_featuwes:thwift-scawa", rawr
+    ], σωσ
 )

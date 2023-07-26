@@ -1,19 +1,19 @@
-package com.twitter.follow_recommendations.services
+package com.twittew.fowwow_wecommendations.sewvices
 
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.common.modews.dispwaywocation
+i-impowt c-com.twittew.timewines.configapi.fspawam
+i-impowt c-com.twittew.timewines.configapi.pawam
+i-impowt javax.inject.singweton
 
-@Singleton
-class ProductPipelineSelectorConfig {
-  private val paramsMap: Map[DisplayLocation, DarkReadAndExpParams] = Map.empty
+@singweton
+c-cwass pwoductpipewinesewectowconfig {
+  p-pwivate v-vaw pawamsmap: map[dispwaywocation, (U ᵕ U❁) dawkweadandexppawams] = map.empty
 
-  def getDarkReadAndExpParams(
-    displayLocation: DisplayLocation
-  ): Option[DarkReadAndExpParams] = {
-    paramsMap.get(displayLocation)
+  def getdawkweadandexppawams(
+    d-dispwaywocation: dispwaywocation
+  ): option[dawkweadandexppawams] = {
+    p-pawamsmap.get(dispwaywocation)
   }
 }
 
-case class DarkReadAndExpParams(darkReadParam: Param[Boolean], expParam: FSParam[Boolean])
+case c-cwass dawkweadandexppawams(dawkweadpawam: pawam[boowean], -.- exppawam: fspawam[boowean])

@@ -1,711 +1,711 @@
-package com.twitter.ann.hnsw;
+package com.twittew.ann.hnsw;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.function.Function;
+impowt j-java.io.ioexception;
+i-impowt j-java.nio.bytebuffew;
+i-impowt java.utiw.awwaywist;
+i-impowt java.utiw.cowwections;
+i-impowt java.utiw.hashmap;
+i-impowt j-java.utiw.hashset;
+impowt java.utiw.wist;
+impowt java.utiw.map;
+impowt java.utiw.objects;
+i-impowt java.utiw.optionaw;
+impowt java.utiw.wandom;
+impowt j-java.utiw.set;
+impowt java.utiw.concuwwent.concuwwenthashmap;
+i-impowt java.utiw.concuwwent.atomic.atomicwefewence;
+impowt java.utiw.concuwwent.wocks.wock;
+impowt java.utiw.concuwwent.wocks.weadwwitewock;
+impowt java.utiw.concuwwent.wocks.weentwantwock;
+i-impowt java.utiw.concuwwent.wocks.weentwantweadwwitewock;
+impowt j-java.utiw.function.function;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+impowt com.googwe.common.base.pweconditions;
+impowt com.googwe.common.cowwect.immutabwewist;
 
-import org.apache.thrift.TException;
+impowt owg.apache.thwift.texception;
 
-import com.twitter.ann.common.IndexOutputFile;
-import com.twitter.ann.common.thriftjava.HnswInternalIndexMetadata;
-import com.twitter.bijection.Injection;
-import com.twitter.logging.Logger;
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec;
-import com.twitter.search.common.file.AbstractFile;
+i-impowt com.twittew.ann.common.indexoutputfiwe;
+impowt com.twittew.ann.common.thwiftjava.hnswintewnawindexmetadata;
+impowt com.twittew.bijection.injection;
+i-impowt com.twittew.wogging.woggew;
+impowt c-com.twittew.mediasewvices.commons.codec.awwaybytebuffewcodec;
+i-impowt com.twittew.seawch.common.fiwe.abstwactfiwe;
 
 /**
- * Typed multithreaded HNSW implementation supporting creation/querying of approximate nearest neighbour
- * Paper: https://arxiv.org/pdf/1603.09320.pdf
- * Multithreading impl based on NMSLIB version : https://github.com/nmslib/hnsw/blob/master/hnswlib/hnswalg.h
+ * t-typed m-muwtithweaded hnsw impwementation suppowting cweation/quewying o-of appwoximate nyeawest nyeighbouw
+ * papew: https://awxiv.owg/pdf/1603.09320.pdf
+ * m-muwtithweading impw based on nymswib vewsion : https://github.com/nmswib/hnsw/bwob/mastew/hnswwib/hnswawg.h
  *
- * @param <T> The type of items inserted / searched in the HNSW index.
- * @param <Q> The type of KNN query.
+ * @pawam <t> the type of items insewted / s-seawched in the hnsw index. (///ˬ///✿)
+ * @pawam <q> t-the type o-of knn quewy. :3
  */
-public class HnswIndex<T, Q> {
-  private static final Logger LOG = Logger.get(HnswIndex.class);
-  private static final String METADATA_FILE_NAME = "hnsw_internal_metadata";
-  private static final String GRAPH_FILE_NAME = "hnsw_internal_graph";
-  private static final int MAP_SIZE_FACTOR = 5;
+p-pubwic cwass hnswindex<t, 🥺 q> {
+  pwivate static finaw woggew w-wog = woggew.get(hnswindex.cwass);
+  p-pwivate static finaw stwing m-metadata_fiwe_name = "hnsw_intewnaw_metadata";
+  p-pwivate static finaw stwing g-gwaph_fiwe_name = "hnsw_intewnaw_gwaph";
+  pwivate s-static finaw int map_size_factow = 5;
 
-  private final DistanceFunction<T, T> distFnIndex;
-  private final DistanceFunction<Q, T> distFnQuery;
-  private final int efConstruction;
-  private final int maxM;
-  private final int maxM0;
-  private final double levelMultiplier;
-  private final AtomicReference<HnswMeta<T>> graphMeta = new AtomicReference<>();
-  private final Map<HnswNode<T>, ImmutableList<T>> graph;
-  // To take lock on vertex level
-  private final ConcurrentHashMap<T, ReadWriteLock> locks;
-  // To take lock on whole graph only if vertex addition is on layer above the current maxLevel
-  private final ReentrantLock globalLock;
-  private final Function<T, ReadWriteLock> lockProvider;
+  pwivate f-finaw distancefunction<t, t> d-distfnindex;
+  pwivate finaw distancefunction<q, mya t-t> distfnquewy;
+  p-pwivate finaw int efconstwuction;
+  pwivate finaw int maxm;
+  pwivate finaw int maxm0;
+  pwivate finaw doubwe w-wevewmuwtipwiew;
+  p-pwivate finaw atomicwefewence<hnswmeta<t>> g-gwaphmeta = nyew a-atomicwefewence<>();
+  p-pwivate finaw map<hnswnode<t>, XD immutabwewist<t>> gwaph;
+  // t-to take wock on vewtex wevew
+  pwivate finaw concuwwenthashmap<t, -.- weadwwitewock> w-wocks;
+  // to take wock on w-whowe gwaph onwy i-if vewtex addition i-is on wayew above the cuwwent m-maxwevew
+  pwivate f-finaw weentwantwock g-gwobawwock;
+  p-pwivate finaw function<t, o.O weadwwitewock> w-wockpwovidew;
 
-  private final RandomProvider randomProvider;
+  p-pwivate finaw w-wandompwovidew w-wandompwovidew;
 
-  // Probability of reevaluating connections of an element in the neighborhood during an update
-  // Can be used as a knob to adjust update_speed/search_speed tradeoff.
-  private final float updateNeighborProbability;
+  // p-pwobabiwity of weevawuating connections of an ewement in the n-neighbowhood duwing an update
+  // can be used as a knob to adjust update_speed/seawch_speed twadeoff. (˘ω˘)
+  pwivate f-finaw fwoat updateneighbowpwobabiwity;
 
   /**
-   * Creates instance of hnsw index.
+   * cweates instance of hnsw i-index. (U ᵕ U❁)
    *
-   * @param distFnIndex      Any distance metric/non metric that specifies similarity between two items for indexing.
-   * @param distFnQuery      Any distance metric/non metric that specifies similarity between item for which nearest neighbours queried for and already indexed item.
-   * @param efConstruction   Provide speed vs index quality tradeoff, higher the value better the quality and higher the time to create index.
-   *                         Valid range of efConstruction can be anywhere between 1 and tens of thousand. Typically, it should be set so that a search of M
-   *                         neighbors with ef=efConstruction should end in recall>0.95.
-   * @param maxM             Maximum connections per layer except 0th level.
-   *                         Optimal values between 5-48.
-   *                         Smaller M generally produces better result for lower recalls and/ or lower dimensional data,
-   *                         while bigger M is better for high recall and/ or high dimensional, data on the expense of more memory/disk usage
-   * @param expectedElements Approximate number of elements to be indexed
+   * @pawam d-distfnindex      a-any distance metwic/non m-metwic that specifies simiwawity b-between two items f-fow indexing.
+   * @pawam distfnquewy      any distance metwic/non metwic that specifies simiwawity between i-item fow which nyeawest nyeighbouws q-quewied fow and awweady indexed i-item. rawr
+   * @pawam e-efconstwuction   pwovide speed vs index quawity t-twadeoff, 🥺 h-highew the vawue bettew the quawity a-and highew the t-time to cweate index. rawr x3
+   *                         vawid wange of efconstwuction can be anywhewe b-between 1 and t-tens of thousand. ( ͡o ω ͡o ) t-typicawwy, σωσ it shouwd be set s-so that a seawch o-of m
+   *                         nyeighbows with e-ef=efconstwuction shouwd end in wecaww>0.95. rawr x3
+   * @pawam maxm             maximum c-connections p-pew wayew except 0th wevew. (ˆ ﻌ ˆ)♡
+   *                         optimaw v-vawues between 5-48. rawr
+   *                         s-smowew m genewawwy pwoduces bettew wesuwt fow wowew wecawws a-and/ ow wowew dimensionaw data, :3
+   *                         whiwe biggew m is bettew fow high wecaww a-and/ ow high dimensionaw, rawr data on the expense o-of mowe memowy/disk u-usage
+   * @pawam expectedewements appwoximate nyumbew of e-ewements to be i-indexed
    */
-  protected HnswIndex(
-      DistanceFunction<T, T> distFnIndex,
-      DistanceFunction<Q, T> distFnQuery,
-      int efConstruction,
-      int maxM,
-      int expectedElements,
-      RandomProvider randomProvider
+  pwotected hnswindex(
+      distancefunction<t, (˘ω˘) t> distfnindex, (ˆ ﻌ ˆ)♡
+      d-distancefunction<q, mya t> distfnquewy, (U ᵕ U❁)
+      i-int efconstwuction, mya
+      int maxm, ʘwʘ
+      int expectedewements, (˘ω˘)
+      wandompwovidew w-wandompwovidew
   ) {
-    this(distFnIndex,
-        distFnQuery,
-        efConstruction,
-        maxM,
-        expectedElements,
-        new HnswMeta<>(-1, Optional.empty()),
-        new ConcurrentHashMap<>(MAP_SIZE_FACTOR * expectedElements),
-        randomProvider
+    this(distfnindex, 😳
+        d-distfnquewy, òωó
+        e-efconstwuction, nyaa~~
+        maxm, o.O
+        e-expectedewements, nyaa~~
+        nyew h-hnswmeta<>(-1, (U ᵕ U❁) o-optionaw.empty()), 😳😳😳
+        n-nyew concuwwenthashmap<>(map_size_factow * e-expectedewements), (U ﹏ U)
+        w-wandompwovidew
     );
   }
 
-  private HnswIndex(
-      DistanceFunction<T, T> distFnIndex,
-      DistanceFunction<Q, T> distFnQuery,
-      int efConstruction,
-      int maxM,
-      int expectedElements,
-      HnswMeta<T> graphMeta,
-      Map<HnswNode<T>, ImmutableList<T>> graph,
-      RandomProvider randomProvider
+  pwivate hnswindex(
+      distancefunction<t, t-t> distfnindex, ^•ﻌ•^
+      d-distancefunction<q, (⑅˘꒳˘) t-t> distfnquewy,
+      int efconstwuction, >_<
+      i-int maxm, (⑅˘꒳˘)
+      int expectedewements, σωσ
+      h-hnswmeta<t> gwaphmeta, 🥺
+      map<hnswnode<t>, :3 i-immutabwewist<t>> gwaph, (ꈍᴗꈍ)
+      wandompwovidew wandompwovidew
   ) {
-    this.distFnIndex = distFnIndex;
-    this.distFnQuery = distFnQuery;
-    this.efConstruction = efConstruction;
-    this.maxM = maxM;
-    this.maxM0 = 2 * maxM;
-    this.levelMultiplier = 1.0 / Math.log(1.0 * maxM);
-    this.graphMeta.set(graphMeta);
-    this.graph = graph;
-    this.locks = new ConcurrentHashMap<>(MAP_SIZE_FACTOR * expectedElements);
-    this.globalLock = new ReentrantLock();
-    this.lockProvider = key -> new ReentrantReadWriteLock();
-    this.randomProvider = randomProvider;
-    this.updateNeighborProbability = 1.0f;
+    this.distfnindex = d-distfnindex;
+    t-this.distfnquewy = d-distfnquewy;
+    this.efconstwuction = e-efconstwuction;
+    this.maxm = m-maxm;
+    this.maxm0 = 2 * maxm;
+    this.wevewmuwtipwiew = 1.0 / math.wog(1.0 * maxm);
+    this.gwaphmeta.set(gwaphmeta);
+    this.gwaph = g-gwaph;
+    this.wocks = new concuwwenthashmap<>(map_size_factow * e-expectedewements);
+    this.gwobawwock = n-nyew weentwantwock();
+    t-this.wockpwovidew = key -> n-nyew weentwantweadwwitewock();
+    t-this.wandompwovidew = w-wandompwovidew;
+    t-this.updateneighbowpwobabiwity = 1.0f;
   }
 
   /**
-   * wireConnectionForAllLayers finds connections for a new element and creates bi-direction links.
-   * The method assumes using a reentrant lock to link list reads.
+   * w-wiweconnectionfowawwwayews finds connections fow a nyew ewement and cweates bi-diwection winks. ^•ﻌ•^
+   * the method assumes using a-a weentwant wock t-to wink wist w-weads. (˘ω˘)
    *
-   * @param entryPoint the global entry point
-   * @param item       the item for which the connections are found
-   * @param itemLevel  the level of the added item (maximum layer in which we wire the connections)
-   * @param maxLayer   the level of the entry point
+   * @pawam entwypoint t-the gwobaw entwy point
+   * @pawam item       the item fow which t-the connections a-awe found
+   * @pawam itemwevew  t-the wevew of the added item (maximum wayew i-in which we wiwe t-the connections)
+   * @pawam maxwayew   the wevew o-of the entwy p-point
    */
-  private void wireConnectionForAllLayers(final T entryPoint, final T item, final int itemLevel,
-                                          final int maxLayer, final boolean isUpdate) {
-    T curObj = entryPoint;
-    if (itemLevel < maxLayer) {
-      curObj = bestEntryPointUntilLayer(curObj, item, maxLayer, itemLevel, distFnIndex);
+  pwivate void wiweconnectionfowawwwayews(finaw t entwypoint, 🥺 finaw t item, (✿oωo) finaw int i-itemwevew, XD
+                                          f-finaw int m-maxwayew, (///ˬ///✿) finaw b-boowean isupdate) {
+    t-t cuwobj = entwypoint;
+    i-if (itemwevew < m-maxwayew) {
+      cuwobj = b-bestentwypointuntiwwayew(cuwobj, ( ͡o ω ͡o ) i-item, maxwayew, ʘwʘ itemwevew, distfnindex);
     }
-    for (int level = Math.min(itemLevel, maxLayer); level >= 0; level--) {
-      final DistancedItemQueue<T, T> candidates =
-          searchLayerForCandidates(item, curObj, efConstruction, level, distFnIndex, isUpdate);
-      curObj = mutuallyConnectNewElement(item, candidates, level, isUpdate);
-    }
-  }
-
-  /**
-   * Insert the item into HNSW index.
-   */
-  public void insert(final T item) throws IllegalDuplicateInsertException {
-    final Lock itemLock = locks.computeIfAbsent(item, lockProvider).writeLock();
-    itemLock.lock();
-    try {
-      final HnswMeta<T> metadata = graphMeta.get();
-      // If the graph already have the item, should not re-insert it again
-      // Need to check entry point in case we reinsert first item where is are no graph
-      // but only a entry point
-      if (graph.containsKey(HnswNode.from(0, item))
-          || (metadata.getEntryPoint().isPresent()
-          && Objects.equals(metadata.getEntryPoint().get(), item))) {
-        throw new IllegalDuplicateInsertException(
-            "Duplicate insertion is not supported: " + item);
-      }
-      final int curLevel = getRandomLevel();
-      Optional<T> entryPoint = metadata.getEntryPoint();
-      // The global lock prevents two threads from making changes to the entry point. This lock
-      // should get taken very infrequently. Something like log-base-levelMultiplier(num items)
-      // For a full explanation of locking see this document: http://go/hnsw-locking
-      int maxLevelCopy = metadata.getMaxLevel();
-      if (curLevel > maxLevelCopy) {
-        globalLock.lock();
-        // Re initialize the entryPoint and maxLevel in case these are changed by any other thread
-        // No need to check the condition again since,
-        // it is already checked at the end before updating entry point struct
-        // No need to unlock for optimization and keeping as is if condition fails since threads
-        // will not be entering this section a lot.
-        final HnswMeta<T> temp = graphMeta.get();
-        entryPoint = temp.getEntryPoint();
-        maxLevelCopy = temp.getMaxLevel();
-      }
-
-      if (entryPoint.isPresent()) {
-        wireConnectionForAllLayers(entryPoint.get(), item, curLevel, maxLevelCopy, false);
-      }
-
-      if (curLevel > maxLevelCopy) {
-        Preconditions.checkState(globalLock.isHeldByCurrentThread(),
-            "Global lock not held before updating entry point");
-        graphMeta.set(new HnswMeta<>(curLevel, Optional.of(item)));
-      }
-    } finally {
-      if (globalLock.isHeldByCurrentThread()) {
-        globalLock.unlock();
-      }
-      itemLock.unlock();
+    f-fow (int wevew = math.min(itemwevew, rawr maxwayew); w-wevew >= 0; wevew--) {
+      f-finaw distanceditemqueue<t, o.O t-t> candidates =
+          s-seawchwayewfowcandidates(item, ^•ﻌ•^ cuwobj, efconstwuction, (///ˬ///✿) wevew, (ˆ ﻌ ˆ)♡ d-distfnindex, XD i-isupdate);
+      c-cuwobj = mutuawwyconnectnewewement(item, candidates, (✿oωo) wevew, -.- isupdate);
     }
   }
 
   /**
-   * set connections of an element with synchronization
-   * The only other place that should have the lock for writing is during
-   * the element insertion
+   * insewt the item i-into hnsw index. XD
    */
-  private void setConnectionList(final T item, int layer, List<T> connections) {
-    final Lock candidateLock = locks.computeIfAbsent(item, lockProvider).writeLock();
-    candidateLock.lock();
-    try {
-      graph.put(
-          HnswNode.from(layer, item),
-          ImmutableList.copyOf(connections)
+  pubwic void insewt(finaw t-t item) thwows i-iwwegawdupwicateinsewtexception {
+    finaw wock i-itemwock = wocks.computeifabsent(item, (✿oωo) wockpwovidew).wwitewock();
+    i-itemwock.wock();
+    t-twy {
+      finaw hnswmeta<t> metadata = g-gwaphmeta.get();
+      // if the gwaph awweady have the item, (˘ω˘) s-shouwd nyot w-we-insewt it again
+      // nyeed t-to check entwy point in case we w-weinsewt fiwst i-item whewe is awe n-nyo gwaph
+      // but onwy a entwy point
+      if (gwaph.containskey(hnswnode.fwom(0, (ˆ ﻌ ˆ)♡ item))
+          || (metadata.getentwypoint().ispwesent()
+          && objects.equaws(metadata.getentwypoint().get(), >_< item))) {
+        thwow nyew iwwegawdupwicateinsewtexception(
+            "dupwicate insewtion is nyot suppowted: " + item);
+      }
+      finaw int cuwwevew = g-getwandomwevew();
+      o-optionaw<t> entwypoint = metadata.getentwypoint();
+      // t-the gwobaw wock p-pwevents two t-thweads fwom making changes to t-the entwy point. -.- this wock
+      // s-shouwd get taken v-vewy infwequentwy. (///ˬ///✿) something w-wike wog-base-wevewmuwtipwiew(num items)
+      // f-fow a fuww expwanation o-of wocking see this document: http://go/hnsw-wocking
+      i-int maxwevewcopy = m-metadata.getmaxwevew();
+      i-if (cuwwevew > m-maxwevewcopy) {
+        g-gwobawwock.wock();
+        // w-we initiawize t-the entwypoint a-and maxwevew i-in case these awe changed b-by any othew thwead
+        // nyo n-nyeed to check t-the condition again since, XD
+        // i-it is awweady checked at the end befowe u-updating entwy point stwuct
+        // n-nyo nyeed t-to unwock fow optimization a-and keeping as is if c-condition faiws since thweads
+        // w-wiww nyot be entewing t-this section a wot.
+        finaw h-hnswmeta<t> temp = gwaphmeta.get();
+        entwypoint = temp.getentwypoint();
+        maxwevewcopy = t-temp.getmaxwevew();
+      }
+
+      if (entwypoint.ispwesent()) {
+        w-wiweconnectionfowawwwayews(entwypoint.get(), i-item, ^^;; cuwwevew, rawr x3 maxwevewcopy, fawse);
+      }
+
+      if (cuwwevew > m-maxwevewcopy) {
+        pweconditions.checkstate(gwobawwock.ishewdbycuwwentthwead(), OwO
+            "gwobaw w-wock n-nyot hewd befowe u-updating entwy point");
+        gwaphmeta.set(new h-hnswmeta<>(cuwwevew, ʘwʘ o-optionaw.of(item)));
+      }
+    } finawwy {
+      i-if (gwobawwock.ishewdbycuwwentthwead()) {
+        gwobawwock.unwock();
+      }
+      itemwock.unwock();
+    }
+  }
+
+  /**
+   * s-set connections of an ewement w-with synchwonization
+   * t-the onwy othew p-pwace that shouwd have the wock f-fow wwiting is duwing
+   * t-the ewement i-insewtion
+   */
+  p-pwivate void setconnectionwist(finaw t-t i-item, rawr int wayew, UwU w-wist<t> connections) {
+    f-finaw w-wock candidatewock = w-wocks.computeifabsent(item, (ꈍᴗꈍ) w-wockpwovidew).wwitewock();
+    c-candidatewock.wock();
+    twy {
+      g-gwaph.put(
+          hnswnode.fwom(wayew, (✿oωo) i-item),
+          immutabwewist.copyof(connections)
       );
-    } finally {
-      candidateLock.unlock();
+    } f-finawwy {
+      c-candidatewock.unwock();
     }
   }
 
   /**
-   * Reinsert the item into HNSW index.
-   * This method updates the links of an element assuming
-   * the element's distance function is changed externally (e.g. by updating the features)
+   * w-weinsewt the item into hnsw index. (⑅˘꒳˘)
+   * this method updates the w-winks of an ewement a-assuming
+   * t-the ewement's distance function is changed extewnawwy (e.g. OwO by updating the f-featuwes)
    */
 
-  public void reInsert(final T item) {
-    final HnswMeta<T> metadata = graphMeta.get();
+  p-pubwic void weinsewt(finaw t i-item) {
+    finaw h-hnswmeta<t> metadata = gwaphmeta.get();
 
-    Optional<T> entryPoint = metadata.getEntryPoint();
+    optionaw<t> entwypoint = metadata.getentwypoint();
 
-    Preconditions.checkState(entryPoint.isPresent(),
-        "Update cannot be performed if entry point is not present");
+    p-pweconditions.checkstate(entwypoint.ispwesent(), 🥺
+        "update c-cannot be p-pewfowmed if entwy p-point is nyot pwesent");
 
-    // This is a check for the single element case
-    if (entryPoint.get().equals(item) && graph.isEmpty()) {
-      return;
+    // this is a c-check fow the singwe e-ewement case
+    if (entwypoint.get().equaws(item) && gwaph.isempty()) {
+      w-wetuwn;
     }
 
-    Preconditions.checkState(graph.containsKey(HnswNode.from(0, item)),
-        "Graph does not contain the item to be updated at level 0");
+    pweconditions.checkstate(gwaph.containskey(hnswnode.fwom(0, >_< item)), (ꈍᴗꈍ)
+        "gwaph d-does nyot contain the i-item to be updated a-at wevew 0");
 
-    int curLevel = 0;
+    int cuwwevew = 0;
 
-    int maxLevelCopy = metadata.getMaxLevel();
+    i-int m-maxwevewcopy = metadata.getmaxwevew();
 
-    for (int layer = maxLevelCopy; layer >= 0; layer--) {
-      if (graph.containsKey(HnswNode.from(layer, item))) {
-        curLevel = layer;
-        break;
+    f-fow (int wayew = maxwevewcopy; w-wayew >= 0; w-wayew--) {
+      i-if (gwaph.containskey(hnswnode.fwom(wayew, 😳 i-item))) {
+        cuwwevew = w-wayew;
+        b-bweak;
       }
     }
 
-    // Updating the links of the elements from the 1-hop radius of the updated element
+    // u-updating the winks o-of the ewements fwom the 1-hop wadius of the updated e-ewement
 
-    for (int layer = 0; layer <= curLevel; layer++) {
+    f-fow (int wayew = 0; w-wayew <= cuwwevew; wayew++) {
 
-      // Filling the element sets for candidates and updated elements
-      final HashSet<T> setCand = new HashSet<T>();
-      final HashSet<T> setNeigh = new HashSet<T>();
-      final List<T> listOneHop = getConnectionListForRead(item, layer);
+      // fiwwing the ewement sets fow candidates a-and updated ewements
+      f-finaw hashset<t> s-setcand = nyew hashset<t>();
+      finaw hashset<t> s-setneigh = nyew hashset<t>();
+      f-finaw w-wist<t> wistonehop = g-getconnectionwistfowwead(item, 🥺 w-wayew);
 
-      if (listOneHop.isEmpty()) {
-        LOG.debug("No links for the updated element. Empty dataset?");
-        continue;
+      i-if (wistonehop.isempty()) {
+        wog.debug("no winks fow the updated ewement. empty dataset?");
+        c-continue;
       }
 
-      setCand.add(item);
+      setcand.add(item);
 
-      for (T elOneHop : listOneHop) {
-        setCand.add(elOneHop);
-        if (randomProvider.get().nextFloat() > updateNeighborProbability) {
-          continue;
+      f-fow (t ewonehop : wistonehop) {
+        setcand.add(ewonehop);
+        if (wandompwovidew.get().nextfwoat() > updateneighbowpwobabiwity) {
+          c-continue;
         }
-        setNeigh.add(elOneHop);
-        final List<T> listTwoHop = getConnectionListForRead(elOneHop, layer);
+        setneigh.add(ewonehop);
+        finaw wist<t> wisttwohop = getconnectionwistfowwead(ewonehop, nyaa~~ wayew);
 
-        if (listTwoHop.isEmpty()) {
-          LOG.debug("No links for the updated element. Empty dataset?");
+        i-if (wisttwohop.isempty()) {
+          w-wog.debug("no winks fow the u-updated ewement. ^•ﻌ•^ empty dataset?");
         }
 
-        for (T oneHopEl : listTwoHop) {
-          setCand.add(oneHopEl);
+        fow (t o-onehopew : wisttwohop) {
+          s-setcand.add(onehopew);
         }
       }
-      // No need to update the item itself, so remove it
-      setNeigh.remove(item);
+      // nyo nyeed to u-update the item itsewf, (ˆ ﻌ ˆ)♡ so wemove i-it
+      setneigh.wemove(item);
 
-      // Updating the link lists of elements from setNeigh:
-      for (T neigh : setNeigh) {
-        final HashSet<T> setCopy = new HashSet<T>(setCand);
-        setCopy.remove(neigh);
-        int keepElementsNum = Math.min(efConstruction, setCopy.size());
-        final DistancedItemQueue<T, T> candidates = new DistancedItemQueue<>(
-            neigh,
-            ImmutableList.of(),
-            false,
-            distFnIndex
+      // updating the wink wists of ewements f-fwom setneigh:
+      fow (t nyeigh : setneigh) {
+        f-finaw h-hashset<t> setcopy = n-nyew hashset<t>(setcand);
+        setcopy.wemove(neigh);
+        int keepewementsnum = m-math.min(efconstwuction, setcopy.size());
+        finaw distanceditemqueue<t, (U ᵕ U❁) t> candidates = nyew d-distanceditemqueue<>(
+            n-nyeigh, mya
+            i-immutabwewist.of(), 😳
+            f-fawse, σωσ
+            distfnindex
         );
-        for (T cand : setCopy) {
-          final float distance = distFnIndex.distance(neigh, cand);
-          if (candidates.size() < keepElementsNum) {
-            candidates.enqueue(cand, distance);
-          } else {
-            if (distance < candidates.peek().getDistance()) {
-              candidates.dequeue();
-              candidates.enqueue(cand, distance);
+        fow (t cand : s-setcopy) {
+          f-finaw fwoat distance = distfnindex.distance(neigh, ( ͡o ω ͡o ) c-cand);
+          if (candidates.size() < keepewementsnum) {
+            candidates.enqueue(cand, XD distance);
+          } e-ewse {
+            if (distance < candidates.peek().getdistance()) {
+              c-candidates.dequeue();
+              c-candidates.enqueue(cand, :3 distance);
             }
           }
         }
-        final ImmutableList<T> neighbours = selectNearestNeighboursByHeuristic(
-            candidates,
-            layer == 0 ? maxM0 : maxM
+        f-finaw i-immutabwewist<t> n-nyeighbouws = sewectneawestneighbouwsbyheuwistic(
+            candidates, :3
+            w-wayew == 0 ? maxm0 : maxm
         );
 
-        final List<T> temp = getConnectionListForRead(neigh, layer);
-        if (temp.isEmpty()) {
-          LOG.debug("existing linkslist is empty. Corrupt index");
+        finaw wist<t> t-temp = getconnectionwistfowwead(neigh, (⑅˘꒳˘) wayew);
+        if (temp.isempty()) {
+          wog.debug("existing w-winkswist is empty. òωó c-cowwupt index");
         }
-        if (neighbours.isEmpty()) {
-          LOG.debug("predicted linkslist is empty. Corrupt index");
+        i-if (neighbouws.isempty()) {
+          w-wog.debug("pwedicted w-winkswist is empty. mya cowwupt index");
         }
-        setConnectionList(neigh, layer, neighbours);
+        s-setconnectionwist(neigh, 😳😳😳 wayew, nyeighbouws);
 
       }
 
 
     }
-    wireConnectionForAllLayers(metadata.getEntryPoint().get(), item, curLevel, maxLevelCopy, true);
+    wiweconnectionfowawwwayews(metadata.getentwypoint().get(), :3 i-item, >_< cuwwevew, maxwevewcopy, 🥺 t-twue);
   }
 
   /**
-   * This method can be used to get the graph statistics, specifically
-   * it prints the histogram of inbound connections for each element.
+   * this method can be u-used to get the g-gwaph statistics, (ꈍᴗꈍ) specificawwy
+   * i-it pwints the histogwam of inbound c-connections f-fow each ewement. rawr x3
    */
-  private String getStats() {
-    int histogramMaxBins = 50;
-    int[] histogram = new int[histogramMaxBins];
-    HashMap<T, Integer> mmap = new HashMap<T, Integer>();
-    for (HnswNode<T> key : graph.keySet()) {
-      if (key.level == 0) {
-        List<T> linkList = getConnectionListForRead(key.item, key.level);
-        for (T node : linkList) {
-          int a = mmap.computeIfAbsent(node, k -> 0);
-          mmap.put(node, a + 1);
+  pwivate s-stwing getstats() {
+    i-int histogwammaxbins = 50;
+    i-int[] histogwam = nyew int[histogwammaxbins];
+    hashmap<t, (U ﹏ U) i-integew> mmap = nyew hashmap<t, ( ͡o ω ͡o ) i-integew>();
+    fow (hnswnode<t> key : g-gwaph.keyset()) {
+      i-if (key.wevew == 0) {
+        w-wist<t> winkwist = getconnectionwistfowwead(key.item, 😳😳😳 k-key.wevew);
+        f-fow (t nyode : winkwist) {
+          int a = mmap.computeifabsent(node, 🥺 k-k -> 0);
+          mmap.put(node, òωó a-a + 1);
 
         }
       }
     }
 
-    for (T key : mmap.keySet()) {
-      int ind = mmap.get(key) < histogramMaxBins - 1 ? mmap.get(key) : histogramMaxBins - 1;
-      histogram[ind]++;
+    fow (t key : mmap.keyset()) {
+      i-int ind = mmap.get(key) < h-histogwammaxbins - 1 ? mmap.get(key) : histogwammaxbins - 1;
+      histogwam[ind]++;
     }
-    int minNonZeroIndex;
-    for (minNonZeroIndex = histogramMaxBins - 1; minNonZeroIndex >= 0; minNonZeroIndex--) {
-      if (histogram[minNonZeroIndex] > 0) {
-        break;
+    int m-minnonzewoindex;
+    f-fow (minnonzewoindex = histogwammaxbins - 1; minnonzewoindex >= 0; minnonzewoindex--) {
+      i-if (histogwam[minnonzewoindex] > 0) {
+        bweak;
       }
     }
 
-    String output = "";
-    for (int i = 0; i <= minNonZeroIndex; i++) {
-      output += "" + i + "\t" + histogram[i] / (0.01f * mmap.keySet().size()) + "\n";
+    s-stwing o-output = "";
+    fow (int i = 0; i <= minnonzewoindex; i++) {
+      output += "" + i-i + "\t" + histogwam[i] / (0.01f * mmap.keyset().size()) + "\n";
     }
 
-    return output;
+    w-wetuwn output;
   }
 
-  private int getRandomLevel() {
-    return (int) (-Math.log(randomProvider.get().nextDouble()) * levelMultiplier);
+  pwivate i-int getwandomwevew() {
+    w-wetuwn (int) (-math.wog(wandompwovidew.get().nextdoubwe()) * wevewmuwtipwiew);
   }
 
   /**
-   * Note that to avoid deadlocks it is important that this method is called after all the searches
-   * of the graph have completed. If you take a lock on any items discovered in the graph after
-   * this, you may get stuck waiting on a thread that is waiting for item to be fully inserted.
+   * n-nyote t-that to avoid deadwocks i-it is impowtant t-that this m-method is cawwed a-aftew aww the seawches
+   * of the gwaph have compweted. XD if you take a wock on any items discovewed i-in the gwaph a-aftew
+   * this, XD y-you may get s-stuck waiting on a-a thwead that i-is waiting fow item to be fuwwy insewted. ( ͡o ω ͡o )
    * <p>
-   * Note: when using concurrent writers we can miss connections that we would otherwise get.
-   * This will reduce the recall.
+   * nyote: when using concuwwent w-wwitews we c-can miss connections that we wouwd othewwise get. >w<
+   * this wiww w-weduce the wecaww. mya
    * <p>
-   * For a full explanation of locking see this document: http://go/hnsw-locking
-   * The method returns the closest nearest neighbor (can be used as an enter point)
+   * f-fow a fuww expwanation o-of wocking see this document: http://go/hnsw-wocking
+   * t-the method wetuwns the cwosest nyeawest nyeighbow (can b-be used a-as an entew point)
    */
-  private T mutuallyConnectNewElement(
-      final T item,
-      final DistancedItemQueue<T, T> candidates, // Max queue
-      final int level,
-      final boolean isUpdate
+  pwivate t mutuawwyconnectnewewement(
+      f-finaw t item,
+      finaw d-distanceditemqueue<t, (ꈍᴗꈍ) t-t> candidates, -.- // max queue
+      f-finaw i-int wevew, (⑅˘꒳˘)
+      f-finaw boowean isupdate
   ) {
 
-    // Using maxM here. Its implementation is ambiguous in HNSW paper,
-    // so using the way it is getting used in Hnsw lib.
-    final ImmutableList<T> neighbours = selectNearestNeighboursByHeuristic(candidates, maxM);
-    setConnectionList(item, level, neighbours);
-    final int M = level == 0 ? maxM0 : maxM;
-    for (T nn : neighbours) {
-      if (nn.equals(item)) {
+    // u-using maxm h-hewe. (U ﹏ U) its impwementation i-is ambiguous in hnsw papew,
+    // s-so u-using the way it is getting used i-in hnsw wib. σωσ
+    finaw immutabwewist<t> nyeighbouws = s-sewectneawestneighbouwsbyheuwistic(candidates, :3 maxm);
+    s-setconnectionwist(item, /(^•ω•^) wevew, σωσ n-nyeighbouws);
+    f-finaw int m = wevew == 0 ? maxm0 : maxm;
+    fow (t n-nyn : nyeighbouws) {
+      if (nn.equaws(item)) {
         continue;
       }
-      final Lock curLock = locks.computeIfAbsent(nn, lockProvider).writeLock();
-      curLock.lock();
-      try {
-        final HnswNode<T> key = HnswNode.from(level, nn);
-        final ImmutableList<T> connections = graph.getOrDefault(key, ImmutableList.of());
-        final boolean isItemAlreadyPresent =
-            isUpdate && connections.indexOf(item) != -1 ? true : false;
+      f-finaw wock c-cuwwock = wocks.computeifabsent(nn, (U ᵕ U❁) wockpwovidew).wwitewock();
+      cuwwock.wock();
+      t-twy {
+        f-finaw hnswnode<t> key = h-hnswnode.fwom(wevew, 😳 nyn);
+        finaw immutabwewist<t> c-connections = g-gwaph.getowdefauwt(key, ʘwʘ immutabwewist.of());
+        f-finaw boowean isitemawweadypwesent =
+            i-isupdate && connections.indexof(item) != -1 ? twue : fawse;
 
-        // If `item` is already present in the neighboring connections,
-        // then no need to modify any connections or run the search heuristics.
-        if (isItemAlreadyPresent) {
+        // if `item` i-is awweady pwesent i-in the nyeighbowing c-connections, (⑅˘꒳˘)
+        // t-then nyo nyeed to modify any connections ow wun the seawch heuwistics. ^•ﻌ•^
+        if (isitemawweadypwesent) {
           continue;
         }
 
-        final ImmutableList<T> updatedConnections;
-        if (connections.size() < M) {
-          final List<T> temp = new ArrayList<>(connections);
-          temp.add(item);
-          updatedConnections = ImmutableList.copyOf(temp.iterator());
-        } else {
-          // Max Queue
-          final DistancedItemQueue<T, T> queue = new DistancedItemQueue<>(
-              nn,
-              connections,
-              false,
-              distFnIndex
+        finaw immutabwewist<t> u-updatedconnections;
+        i-if (connections.size() < m-m) {
+          f-finaw wist<t> temp = n-nyew awwaywist<>(connections);
+          t-temp.add(item);
+          updatedconnections = i-immutabwewist.copyof(temp.itewatow());
+        } e-ewse {
+          // max queue
+          f-finaw distanceditemqueue<t, nyaa~~ t-t> queue = nyew distanceditemqueue<>(
+              nyn, XD
+              c-connections,
+              fawse, /(^•ω•^)
+              distfnindex
           );
-          queue.enqueue(item);
-          updatedConnections = selectNearestNeighboursByHeuristic(queue, M);
+          q-queue.enqueue(item);
+          updatedconnections = s-sewectneawestneighbouwsbyheuwistic(queue, (U ᵕ U❁) m-m);
         }
-        if (updatedConnections.isEmpty()) {
-          LOG.debug("Internal error: predicted linkslist is empty");
+        if (updatedconnections.isempty()) {
+          w-wog.debug("intewnaw e-ewwow: pwedicted w-winkswist is empty");
         }
 
-        graph.put(key, updatedConnections);
-      } finally {
-        curLock.unlock();
+        g-gwaph.put(key, mya u-updatedconnections);
+      } finawwy {
+        c-cuwwock.unwock();
       }
     }
-    return neighbours.get(0);
+    wetuwn n-neighbouws.get(0);
   }
 
   /*
-   *  bestEntryPointUntilLayer starts the graph search for item from the entry point
-   *  until the searches reaches the selectedLayer layer.
-   *  @return a point from selectedLayer layer, was the closest on the (selectedLayer+1) layer
+   *  b-bestentwypointuntiwwayew s-stawts the gwaph seawch fow item f-fwom the entwy point
+   *  untiw the seawches w-weaches the sewectedwayew wayew. (ˆ ﻌ ˆ)♡
+   *  @wetuwn a point fwom sewectedwayew wayew, (✿oωo) was the cwosest on the (sewectedwayew+1) wayew
    */
-  private <K> T bestEntryPointUntilLayer(
-      final T entryPoint,
-      final K item,
-      int maxLayer,
-      int selectedLayer,
-      DistanceFunction<K, T> distFn
+  p-pwivate <k> t bestentwypointuntiwwayew(
+      finaw t entwypoint, (✿oωo)
+      finaw k item, òωó
+      int maxwayew, (˘ω˘)
+      int sewectedwayew, (ˆ ﻌ ˆ)♡
+      distancefunction<k, ( ͡o ω ͡o ) t-t> distfn
   ) {
-    T curObj = entryPoint;
-    if (selectedLayer < maxLayer) {
-      float curDist = distFn.distance(item, curObj);
-      for (int level = maxLayer; level > selectedLayer; level--) {
-        boolean changed = true;
-        while (changed) {
-          changed = false;
-          final List<T> list = getConnectionListForRead(curObj, level);
-          for (T nn : list) {
-            final float tempDist = distFn.distance(item, nn);
-            if (tempDist < curDist) {
-              curDist = tempDist;
-              curObj = nn;
-              changed = true;
+    t cuwobj = entwypoint;
+    i-if (sewectedwayew < maxwayew) {
+      f-fwoat cuwdist = distfn.distance(item, rawr x3 cuwobj);
+      fow (int w-wevew = maxwayew; wevew > s-sewectedwayew; wevew--) {
+        b-boowean changed = t-twue;
+        whiwe (changed) {
+          changed = fawse;
+          f-finaw wist<t> wist = getconnectionwistfowwead(cuwobj, (˘ω˘) wevew);
+          f-fow (t nyn : wist) {
+            f-finaw fwoat tempdist = distfn.distance(item, òωó n-nyn);
+            if (tempdist < c-cuwdist) {
+              c-cuwdist = tempdist;
+              cuwobj = n-nyn;
+              changed = twue;
             }
           }
         }
       }
     }
 
-    return curObj;
+    w-wetuwn cuwobj;
   }
 
 
-  @VisibleForTesting
-  protected ImmutableList<T> selectNearestNeighboursByHeuristic(
-      final DistancedItemQueue<T, T> candidates, // Max queue
-      final int maxConnections
+  @visibwefowtesting
+  pwotected immutabwewist<t> sewectneawestneighbouwsbyheuwistic(
+      finaw distanceditemqueue<t, ( ͡o ω ͡o ) t-t> c-candidates, σωσ // max queue
+      finaw i-int maxconnections
   ) {
-    Preconditions.checkState(!candidates.isMinQueue(),
-        "candidates in selectNearestNeighboursByHeuristic should be a max queue");
+    p-pweconditions.checkstate(!candidates.isminqueue(), (U ﹏ U)
+        "candidates in sewectneawestneighbouwsbyheuwistic shouwd b-be a max queue");
 
-    final T baseElement = candidates.getOrigin();
-    if (candidates.size() <= maxConnections) {
-      List<T> list = candidates.toListWithItem();
-      list.remove(baseElement);
-      return ImmutableList.copyOf(list);
-    } else {
-      final List<T> resSet = new ArrayList<>(maxConnections);
-      // Min queue for closest elements first
-      final DistancedItemQueue<T, T> minQueue = candidates.reverse();
-      while (minQueue.nonEmpty()) {
-        if (resSet.size() >= maxConnections) {
-          break;
+    finaw t baseewement = candidates.getowigin();
+    if (candidates.size() <= maxconnections) {
+      w-wist<t> wist = candidates.towistwithitem();
+      w-wist.wemove(baseewement);
+      wetuwn immutabwewist.copyof(wist);
+    } e-ewse {
+      f-finaw wist<t> wesset = nyew a-awwaywist<>(maxconnections);
+      // min queue fow cwosest e-ewements fiwst
+      finaw distanceditemqueue<t, rawr t> minqueue = candidates.wevewse();
+      w-whiwe (minqueue.nonempty()) {
+        i-if (wesset.size() >= maxconnections) {
+          bweak;
         }
-        final DistancedItem<T> candidate = minQueue.dequeue();
+        f-finaw distanceditem<t> candidate = minqueue.dequeue();
 
-        // We do not want to creates loops:
-        // While heuristic is used only for creating the links
-        if (candidate.getItem().equals(baseElement)) {
-          continue;
+        // we do nyot want to cweates woops:
+        // whiwe heuwistic is used o-onwy fow cweating t-the winks
+        if (candidate.getitem().equaws(baseewement)) {
+          c-continue;
         }
 
-        boolean toInclude = true;
-        for (T e : resSet) {
-          // Do not include candidate if the distance from candidate to any of existing item in
-          // resSet is closer to the distance from the candidate to the item. By doing this, the
-          // connection of graph will be more diverse, and in case of highly clustered data set,
-          // connections will be made between clusters instead of all being in the same cluster.
-          final float dist = distFnIndex.distance(e, candidate.getItem());
-          if (dist < candidate.getDistance()) {
-            toInclude = false;
-            break;
+        b-boowean toincwude = t-twue;
+        fow (t e : wesset) {
+          // do nyot incwude candidate if the distance fwom candidate to any o-of existing item in
+          // wesset is cwosew to the distance fwom the candidate t-to the item. -.- b-by doing this, ( ͡o ω ͡o ) t-the
+          // connection of gwaph wiww be mowe divewse, >_< and i-in case of highwy c-cwustewed data s-set, o.O
+          // connections w-wiww be made between cwustews instead o-of aww being in the same cwustew. σωσ
+          f-finaw fwoat dist = distfnindex.distance(e, -.- c-candidate.getitem());
+          if (dist < candidate.getdistance()) {
+            toincwude = f-fawse;
+            bweak;
           }
         }
 
-        if (toInclude) {
-          resSet.add(candidate.getItem());
+        i-if (toincwude) {
+          wesset.add(candidate.getitem());
         }
       }
-      return ImmutableList.copyOf(resSet);
+      w-wetuwn immutabwewist.copyof(wesset);
     }
   }
 
   /**
-   * Search the index for the neighbours.
+   * seawch the index f-fow the nyeighbouws. σωσ
    *
-   * @param query           Query
-   * @param numOfNeighbours Number of neighbours to search for.
-   * @param ef              This param controls the accuracy of the search.
-   *                        Bigger the ef better the accuracy on the expense of latency.
-   *                        Keep it atleast number of neighbours to find.
-   * @return Neighbours
+   * @pawam q-quewy           quewy
+   * @pawam n-numofneighbouws numbew o-of nyeighbouws to seawch fow. :3
+   * @pawam e-ef              t-this pawam contwows the accuwacy of t-the seawch. ^^
+   *                        biggew the ef bettew the accuwacy on the expense of watency. òωó
+   *                        keep it atweast nyumbew of nyeighbouws to find. (ˆ ﻌ ˆ)♡
+   * @wetuwn neighbouws
    */
-  public List<DistancedItem<T>> searchKnn(final Q query, final int numOfNeighbours, final int ef) {
-    final HnswMeta<T> metadata = graphMeta.get();
-    if (metadata.getEntryPoint().isPresent()) {
-      T entryPoint = bestEntryPointUntilLayer(metadata.getEntryPoint().get(),
-          query, metadata.getMaxLevel(), 0, distFnQuery);
-      // Get the actual neighbours from 0th layer
-      final List<DistancedItem<T>> neighbours =
-          searchLayerForCandidates(query, entryPoint, Math.max(ef, numOfNeighbours),
-              0, distFnQuery, false).dequeueAll();
-      Collections.reverse(neighbours);
-      return neighbours.size() > numOfNeighbours
-          ? neighbours.subList(0, numOfNeighbours) : neighbours;
-    } else {
-      return Collections.emptyList();
+  p-pubwic wist<distanceditem<t>> seawchknn(finaw q quewy, XD finaw int n-nyumofneighbouws, òωó finaw int ef) {
+    f-finaw hnswmeta<t> metadata = gwaphmeta.get();
+    i-if (metadata.getentwypoint().ispwesent()) {
+      t entwypoint = bestentwypointuntiwwayew(metadata.getentwypoint().get(), (ꈍᴗꈍ)
+          quewy, UwU m-metadata.getmaxwevew(), >w< 0, ʘwʘ distfnquewy);
+      // get the a-actuaw nyeighbouws fwom 0th wayew
+      finaw wist<distanceditem<t>> n-nyeighbouws =
+          seawchwayewfowcandidates(quewy, :3 entwypoint, m-math.max(ef, ^•ﻌ•^ n-nyumofneighbouws), (ˆ ﻌ ˆ)♡
+              0, 🥺 distfnquewy, fawse).dequeueaww();
+      c-cowwections.wevewse(neighbouws);
+      w-wetuwn nyeighbouws.size() > n-nyumofneighbouws
+          ? n-nyeighbouws.subwist(0, OwO nyumofneighbouws) : nyeighbouws;
+    } e-ewse {
+      wetuwn cowwections.emptywist();
     }
   }
 
-  // This method is currently not used
-  // It is needed for debugging purposes only
-  private void checkIntegrity(String message) {
-    final HnswMeta<T> metadata = graphMeta.get();
-    for (HnswNode<T> node : graph.keySet()) {
-      List<T> linkList = graph.get(node);
+  // this method is cuwwentwy n-nyot used
+  // it is nyeeded fow debugging puwposes onwy
+  p-pwivate void checkintegwity(stwing m-message) {
+    f-finaw hnswmeta<t> metadata = gwaphmeta.get();
+    fow (hnswnode<t> n-nyode : gwaph.keyset()) {
+      wist<t> winkwist = g-gwaph.get(node);
 
-      for (T el : linkList) {
-        if (el.equals(node.item)) {
-          LOG.debug(message);
-          throw new RuntimeException("integrity check failed");
+      fow (t ew : winkwist) {
+        i-if (ew.equaws(node.item)) {
+          w-wog.debug(message);
+          thwow new wuntimeexception("integwity check faiwed");
         }
       }
     }
   }
 
-  private <K> DistancedItemQueue<K, T> searchLayerForCandidates(
-      final K item,
-      final T entryPoint,
-      final int ef,
-      final int level,
-      final DistanceFunction<K, T> distFn,
-      boolean isUpdate
+  pwivate <k> distanceditemqueue<k, 🥺 t-t> seawchwayewfowcandidates(
+      finaw k-k item, OwO
+      finaw t entwypoint, (U ᵕ U❁)
+      finaw i-int ef, ( ͡o ω ͡o )
+      finaw int wevew, ^•ﻌ•^
+      finaw distancefunction<k, o.O t-t> distfn, (⑅˘꒳˘)
+      b-boowean isupdate
   ) {
-    // Min queue
-    final DistancedItemQueue<K, T> cQueue = new DistancedItemQueue<>(
-        item,
-        Collections.singletonList(entryPoint),
-        true,
-        distFn
+    // m-min queue
+    finaw d-distanceditemqueue<k, (ˆ ﻌ ˆ)♡ t-t> cqueue = n-nyew distanceditemqueue<>(
+        item, :3
+        cowwections.singwetonwist(entwypoint), /(^•ω•^)
+        t-twue, òωó
+        d-distfn
     );
-    // Max Queue
-    final DistancedItemQueue<K, T> wQueue = cQueue.reverse();
-    final Set<T> visited = new HashSet<>();
-    float lowerBoundDistance = wQueue.peek().getDistance();
-    visited.add(entryPoint);
+    // m-max queue
+    f-finaw distanceditemqueue<k, t-t> wqueue = c-cqueue.wevewse();
+    finaw set<t> v-visited = nyew h-hashset<>();
+    f-fwoat wowewbounddistance = wqueue.peek().getdistance();
+    visited.add(entwypoint);
 
-    while (cQueue.nonEmpty()) {
-      final DistancedItem<T> candidate = cQueue.peek();
-      if (candidate.getDistance() > lowerBoundDistance) {
-        break;
+    whiwe (cqueue.nonempty()) {
+      finaw d-distanceditem<t> candidate = cqueue.peek();
+      i-if (candidate.getdistance() > wowewbounddistance) {
+        bweak;
       }
 
-      cQueue.dequeue();
-      final List<T> list = getConnectionListForRead(candidate.getItem(), level);
-      for (T nn : list) {
+      c-cqueue.dequeue();
+      f-finaw wist<t> wist = getconnectionwistfowwead(candidate.getitem(), :3 wevew);
+      fow (t nyn : wist) {
         if (!visited.contains(nn)) {
-          visited.add(nn);
-          final float distance = distFn.distance(item, nn);
-          if (wQueue.size() < ef || distance < wQueue.peek().getDistance()) {
-            cQueue.enqueue(nn, distance);
+          v-visited.add(nn);
+          f-finaw fwoat distance = distfn.distance(item, n-nn);
+          i-if (wqueue.size() < ef || distance < wqueue.peek().getdistance()) {
+            cqueue.enqueue(nn, (˘ω˘) d-distance);
 
-            if (isUpdate && item.equals(nn)) {
+            i-if (isupdate && item.equaws(nn)) {
               continue;
             }
 
-            wQueue.enqueue(nn, distance);
-            if (wQueue.size() > ef) {
-              wQueue.dequeue();
+            w-wqueue.enqueue(nn, 😳 d-distance);
+            if (wqueue.size() > ef) {
+              w-wqueue.dequeue();
             }
 
-            lowerBoundDistance = wQueue.peek().getDistance();
+            wowewbounddistance = wqueue.peek().getdistance();
           }
         }
       }
     }
 
-    return wQueue;
+    wetuwn wqueue;
   }
 
   /**
-   * Serialize hnsw index
+   * sewiawize hnsw index
    */
-  public void toDirectory(IndexOutputFile indexOutputFile, Injection<T, byte[]> injection)
-    throws IOException, TException {
-  final int totalGraphEntries = HnswIndexIOUtil.saveHnswGraphEntries(
-      graph,
-      indexOutputFile.createFile(GRAPH_FILE_NAME).getOutputStream(),
+  p-pubwic void todiwectowy(indexoutputfiwe indexoutputfiwe, σωσ i-injection<t, UwU b-byte[]> i-injection)
+    thwows ioexception, -.- t-texception {
+  f-finaw int totawgwaphentwies = h-hnswindexioutiw.savehnswgwaphentwies(
+      g-gwaph, 🥺
+      i-indexoutputfiwe.cweatefiwe(gwaph_fiwe_name).getoutputstweam(), 😳😳😳
       injection);
 
-  HnswIndexIOUtil.saveMetadata(
-      graphMeta.get(),
-      efConstruction,
-      maxM,
-      totalGraphEntries,
-      injection,
-      indexOutputFile.createFile(METADATA_FILE_NAME).getOutputStream());
+  hnswindexioutiw.savemetadata(
+      gwaphmeta.get(), 🥺
+      e-efconstwuction, ^^
+      m-maxm, ^^;;
+      totawgwaphentwies, >w<
+      i-injection, σωσ
+      indexoutputfiwe.cweatefiwe(metadata_fiwe_name).getoutputstweam());
 }
 
   /**
-   * Load hnsw index
+   * w-woad hnsw i-index
    */
-  public static <T, Q> HnswIndex<T, Q> loadHnswIndex(
-      DistanceFunction<T, T> distFnIndex,
-      DistanceFunction<Q, T> distFnQuery,
-      AbstractFile directory,
-      Injection<T, byte[]> injection,
-      RandomProvider randomProvider) throws IOException, TException {
-    final AbstractFile graphFile = directory.getChild(GRAPH_FILE_NAME);
-    final AbstractFile metadataFile = directory.getChild(METADATA_FILE_NAME);
-    final HnswInternalIndexMetadata metadata = HnswIndexIOUtil.loadMetadata(metadataFile);
-    final Map<HnswNode<T>, ImmutableList<T>> graph =
-        HnswIndexIOUtil.loadHnswGraph(graphFile, injection, metadata.numElements);
-    final ByteBuffer entryPointBB = metadata.entryPoint;
-    final HnswMeta<T> graphMeta = new HnswMeta<>(
-        metadata.maxLevel,
-        entryPointBB == null ? Optional.empty()
-            : Optional.of(injection.invert(ArrayByteBufferCodec.decode(entryPointBB)).get())
+  pubwic s-static <t, >w< q> hnswindex<t, (⑅˘꒳˘) q-q> woadhnswindex(
+      d-distancefunction<t, òωó t-t> d-distfnindex, (⑅˘꒳˘)
+      d-distancefunction<q, (ꈍᴗꈍ) t> distfnquewy, rawr x3
+      a-abstwactfiwe diwectowy, ( ͡o ω ͡o )
+      i-injection<t, UwU b-byte[]> injection, ^^
+      wandompwovidew wandompwovidew) t-thwows ioexception, (˘ω˘) t-texception {
+    finaw abstwactfiwe g-gwaphfiwe = d-diwectowy.getchiwd(gwaph_fiwe_name);
+    finaw abstwactfiwe m-metadatafiwe = diwectowy.getchiwd(metadata_fiwe_name);
+    f-finaw h-hnswintewnawindexmetadata m-metadata = h-hnswindexioutiw.woadmetadata(metadatafiwe);
+    f-finaw map<hnswnode<t>, (ˆ ﻌ ˆ)♡ immutabwewist<t>> gwaph =
+        hnswindexioutiw.woadhnswgwaph(gwaphfiwe, OwO injection, 😳 m-metadata.numewements);
+    finaw bytebuffew entwypointbb = metadata.entwypoint;
+    finaw hnswmeta<t> g-gwaphmeta = n-nyew hnswmeta<>(
+        metadata.maxwevew, UwU
+        entwypointbb == nyuww ? o-optionaw.empty()
+            : o-optionaw.of(injection.invewt(awwaybytebuffewcodec.decode(entwypointbb)).get())
     );
-    return new HnswIndex<>(
-        distFnIndex,
-        distFnQuery,
-        metadata.efConstruction,
-        metadata.maxM,
-        metadata.numElements,
-        graphMeta,
-        graph,
-        randomProvider
+    wetuwn nyew hnswindex<>(
+        d-distfnindex, 🥺
+        distfnquewy, 😳😳😳
+        m-metadata.efconstwuction, ʘwʘ
+        m-metadata.maxm, /(^•ω•^)
+        m-metadata.numewements, :3
+        gwaphmeta, :3
+        gwaph, mya
+        wandompwovidew
     );
   }
 
-  private List<T> getConnectionListForRead(T node, int level) {
-    final Lock curLock = locks.computeIfAbsent(node, lockProvider).readLock();
-    curLock.lock();
-    final List<T> list;
-    try {
-      list = graph
-          .getOrDefault(HnswNode.from(level, node), ImmutableList.of());
-    } finally {
-      curLock.unlock();
+  p-pwivate wist<t> getconnectionwistfowwead(t n-nyode, (///ˬ///✿) int wevew) {
+    finaw w-wock cuwwock = wocks.computeifabsent(node, (⑅˘꒳˘) wockpwovidew).weadwock();
+    c-cuwwock.wock();
+    finaw wist<t> wist;
+    t-twy {
+      wist = gwaph
+          .getowdefauwt(hnswnode.fwom(wevew, :3 nyode), /(^•ω•^) i-immutabwewist.of());
+    } finawwy {
+      c-cuwwock.unwock();
     }
 
-    return list;
+    wetuwn wist;
   }
 
-  @VisibleForTesting
-  AtomicReference<HnswMeta<T>> getGraphMeta() {
-    return graphMeta;
+  @visibwefowtesting
+  atomicwefewence<hnswmeta<t>> getgwaphmeta() {
+    wetuwn gwaphmeta;
   }
 
-  @VisibleForTesting
-  Map<T, ReadWriteLock> getLocks() {
-    return locks;
+  @visibwefowtesting
+  m-map<t, ^^;; weadwwitewock> g-getwocks() {
+    w-wetuwn w-wocks;
   }
 
-  @VisibleForTesting
-  Map<HnswNode<T>, ImmutableList<T>> getGraph() {
-    return graph;
+  @visibwefowtesting
+  map<hnswnode<t>, (U ᵕ U❁) immutabwewist<t>> g-getgwaph() {
+    wetuwn gwaph;
   }
 
-  public interface RandomProvider {
+  pubwic intewface w-wandompwovidew {
     /**
-     * RandomProvider interface made public for scala 2.12 compat
+     * w-wandompwovidew i-intewface made p-pubwic fow scawa 2.12 compat
      */
-    Random get();
+    wandom get();
   }
 }

@@ -1,55 +1,55 @@
-package com.twitter.search.earlybird.common;
+package com.twittew.seawch.eawwybiwd.common;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+impowt j-java.utiw.concuwwent.atomic.atomicboowean;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+i-impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.metrics.SearchCustomGauge;
+i-impowt c-com.twittew.seawch.common.metwics.seawchcustomgauge;
 
 /**
- * A monitor which enforces the condition that a single thread's work is caught up, and allows
- * other threads to wait to be notified when the work is complete. An AtomicBoolean ensures the
- * current status is visible to all threads.
+ * a-a m-monitow which enfowces the condition that a singwe thwead's wowk is caught up, mya and a-awwows
+ * othew thweads to wait to be nyotified w-when the wowk is compwete. 😳 an a-atomicboowean ensuwes the
+ * cuwwent status is visibwe to aww thweads. -.-
  */
-public class CaughtUpMonitor {
-  private static final Logger LOG = LoggerFactory.getLogger(CaughtUpMonitor.class);
+p-pubwic cwass caughtupmonitow {
+  p-pwivate s-static finaw woggew wog = woggewfactowy.getwoggew(caughtupmonitow.cwass);
 
-  protected final AtomicBoolean isCaughtUp = new AtomicBoolean(false);
+  pwotected finaw atomicboowean iscaughtup = nyew a-atomicboowean(fawse);
 
-  public CaughtUpMonitor(String statPrefix) {
-    SearchCustomGauge.export(statPrefix + "_is_caught_up", () -> isCaughtUp() ? 1 : 0);
+  pubwic caughtupmonitow(stwing statpwefix) {
+    seawchcustomgauge.expowt(statpwefix + "_is_caught_up", () -> i-iscaughtup() ? 1 : 0);
   }
 
-  public boolean isCaughtUp() {
-    return isCaughtUp.get();
+  pubwic boowean i-iscaughtup() {
+    w-wetuwn iscaughtup.get();
   }
 
   /**
-   * Set caught up state, and notify waiting threads if caught up.
+   * s-set caught up state, 🥺 a-and nyotify waiting thweads if caught up. o.O
    */
-  public synchronized void setAndNotify(boolean caughtUp) {
-    isCaughtUp.set(caughtUp);
-    if (caughtUp) {
-      // Readers are caught up, notify waiting threads
-      notifyAll();
+  p-pubwic synchwonized void setandnotify(boowean c-caughtup) {
+    iscaughtup.set(caughtup);
+    if (caughtup) {
+      // weadews awe caught up, nyotify waiting t-thweads
+      nyotifyaww();
     }
   }
 
   /**
-   * Wait using Object.wait() until caught up or until thread is interrupted.
+   * w-wait using o-object.wait() untiw c-caught up ow untiw thwead is intewwupted. /(^•ω•^)
    */
-  public synchronized void resetAndWaitUntilCaughtUp() {
-    LOG.info("Waiting to catch up.");
-    // Explicitly set isCaughtUp to false before waiting
-    isCaughtUp.set(false);
-    try {
-      while (!isCaughtUp()) {
-        wait();
+  pubwic synchwonized v-void w-wesetandwaituntiwcaughtup() {
+    wog.info("waiting t-to catch up.");
+    // e-expwicitwy set iscaughtup t-to fawse befowe waiting
+    i-iscaughtup.set(fawse);
+    twy {
+      whiwe (!iscaughtup()) {
+        w-wait();
       }
-    } catch (InterruptedException e) {
-      LOG.error("{} was interrupted while waiting to catch up", Thread.currentThread());
+    } catch (intewwuptedexception e-e) {
+      wog.ewwow("{} w-was intewwupted w-whiwe waiting to catch up", nyaa~~ thwead.cuwwentthwead());
     }
-    LOG.info("Caught up.");
+    wog.info("caught up.");
   }
 }

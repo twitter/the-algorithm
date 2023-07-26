@@ -1,72 +1,72 @@
-package com.twitter.search.earlybird.segment;
+package com.twittew.seawch.eawwybiwd.segment;
 
-import java.util.Optional;
+impowt j-java.utiw.optionaw;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.util.io.EmptyRecordReader;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.partition.SegmentInfo;
+i-impowt c-com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
+i-impowt com.twittew.seawch.common.utiw.io.emptywecowdweadew;
+i-impowt com.twittew.seawch.common.utiw.io.wecowdweadew.wecowdweadew;
+i-impowt com.twittew.seawch.eawwybiwd.document.tweetdocument;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.segmentinfo;
 
 /**
- * A SegmentDataReaderSet that returns no data. Uses a DocumentReader that is
- * always caught up, but never gets exhausted.
- * Can be used for bringing up an earlybird against a static set of segments,
- * and will not incorporate any new updates.
+ * a-a segmentdataweadewset that wetuwns nyo data. 😳😳😳 uses a documentweadew that is
+ * a-awways caught up, 😳😳😳 but nyevew gets exhausted. o.O
+ * c-can be used fow bwinging up a-an eawwybiwd against a static set of segments, ( ͡o ω ͡o )
+ * and wiww nyot i-incowpowate any nyew updates. (U ﹏ U)
  */
-public class EmptySegmentDataReaderSet implements SegmentDataReaderSet {
-  public static final EmptySegmentDataReaderSet INSTANCE = new EmptySegmentDataReaderSet();
+p-pubwic cwass emptysegmentdataweadewset i-impwements segmentdataweadewset {
+  pubwic static finaw emptysegmentdataweadewset i-instance = nyew emptysegmentdataweadewset();
 
-  @Override
-  public void attachDocumentReaders(SegmentInfo segmentInfo) {
+  @ovewwide
+  pubwic void attachdocumentweadews(segmentinfo segmentinfo) {
   }
 
-  @Override
-  public void attachUpdateReaders(SegmentInfo segmentInfo) {
+  @ovewwide
+  p-pubwic void attachupdateweadews(segmentinfo s-segmentinfo) {
   }
 
-  @Override
-  public void completeSegmentDocs(SegmentInfo segmentInfo) {
+  @ovewwide
+  p-pubwic void c-compwetesegmentdocs(segmentinfo s-segmentinfo) {
   }
 
-  @Override
-  public void stopSegmentUpdates(SegmentInfo segmentInfo) {
+  @ovewwide
+  pubwic void stopsegmentupdates(segmentinfo segmentinfo) {
   }
 
-  @Override
-  public void stopAll() {
+  @ovewwide
+  p-pubwic void stopaww() {
   }
 
-  @Override
-  public boolean allCaughtUp() {
-    // ALWAYS CAUGHT UP
-    return true;
+  @ovewwide
+  pubwic boowean awwcaughtup() {
+    // a-awways caught up
+    wetuwn twue;
   }
 
-  @Override
-  public RecordReader<TweetDocument> newDocumentReader(SegmentInfo segmentInfo)
-      throws Exception {
-    return null;
+  @ovewwide
+  pubwic wecowdweadew<tweetdocument> nyewdocumentweadew(segmentinfo segmentinfo)
+      thwows e-exception {
+    wetuwn nyuww;
   }
 
-  @Override
-  public RecordReader<TweetDocument> getDocumentReader() {
-    return new EmptyRecordReader<>();
+  @ovewwide
+  p-pubwic wecowdweadew<tweetdocument> g-getdocumentweadew() {
+    w-wetuwn nyew emptywecowdweadew<>();
   }
 
-  @Override
-  public RecordReader<ThriftVersionedEvents> getUpdateEventsReader() {
-    return null;
+  @ovewwide
+  pubwic wecowdweadew<thwiftvewsionedevents> getupdateeventsweadew() {
+    wetuwn nyuww;
   }
 
-  @Override
-  public RecordReader<ThriftVersionedEvents> getUpdateEventsReaderForSegment(
-      SegmentInfo segmentInfo) {
-    return null;
+  @ovewwide
+  p-pubwic wecowdweadew<thwiftvewsionedevents> g-getupdateeventsweadewfowsegment(
+      segmentinfo segmentinfo) {
+    w-wetuwn nuww;
   }
 
-  @Override
-  public Optional<Long> getUpdateEventsStreamOffsetForSegment(SegmentInfo segmentInfo) {
-    return Optional.of(0L);
+  @ovewwide
+  p-pubwic optionaw<wong> getupdateeventsstweamoffsetfowsegment(segmentinfo s-segmentinfo) {
+    wetuwn o-optionaw.of(0w);
   }
 }

@@ -1,26 +1,26 @@
-package com.twitter.unified_user_actions.adapter.ads_callback_engagements
+package com.twittew.unified_usew_actions.adaptew.ads_cawwback_engagements
 
-import com.twitter.ads.spendserver.thriftscala.SpendServerEvent
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.Item
-import com.twitter.unified_user_actions.thriftscala.ProfileInfo
+impowt c-com.twittew.ads.spendsewvew.thwiftscawa.spendsewvewevent
+i-impowt c-com.twittew.unified_usew_actions.thwiftscawa.actiontype
+i-impowt c-com.twittew.unified_usew_actions.thwiftscawa.item
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.pwofiweinfo
 
-abstract class ProfileAdsCallbackEngagement(actionType: ActionType)
-    extends BaseAdsCallbackEngagement(actionType) {
+a-abstwact cwass p-pwofiweadscawwbackengagement(actiontype: actiontype)
+    extends baseadscawwbackengagement(actiontype) {
 
-  override protected def getItem(input: SpendServerEvent): Option[Item] = {
-    input.engagementEvent.flatMap { e =>
-      e.impressionData.flatMap { i =>
-        getProfileInfo(i.advertiserId)
+  ovewwide p-pwotected def getitem(input: spendsewvewevent): o-option[item] = {
+    input.engagementevent.fwatmap { e-e =>
+      e.impwessiondata.fwatmap { i =>
+        getpwofiweinfo(i.advewtisewid)
       }
     }
   }
 
-  protected def getProfileInfo(advertiserId: Long): Option[Item] = {
-    Some(
-      Item.ProfileInfo(
-        ProfileInfo(
-          actionProfileId = advertiserId
+  pwotected def g-getpwofiweinfo(advewtisewid: wong): o-option[item] = {
+    s-some(
+      item.pwofiweinfo(
+        pwofiweinfo(
+          actionpwofiweid = advewtisewid
         )))
   }
 }

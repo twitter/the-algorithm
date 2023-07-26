@@ -1,18 +1,15 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "abdecider/src/main/scala",
-        "decider",
-        "featureswitches/featureswitches-core/src/main/scala",
-        "featureswitches/featureswitches-core/src/main/scala/com/twitter/featureswitches/v2/builder",
-        "stitch/stitch-core",
-        "twitter-config/yaml",
-        "util-internal/scribe",
-        "util/util-logging/src/main/scala",
-        "util/util-stats/src/main/scala",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    p-pwatfowm = "java8", o.O
+    s-stwict_deps = t-twue, (U ᵕ U❁)
+    tags = ["bazew-compatibwe"], (⑅˘꒳˘)
+    d-dependencies = [
+        "finagwe-intewnaw/mtws/swc/main/scawa/com/twittew/finagwe/mtws/authentication", ( ͡o ω ͡o )
+        "finagwe-intewnaw/mtws/swc/main/scawa/com/twittew/finagwe/mtws/twanspowt", UwU
+        "finagwe/finagwe-thwift/swc/main/scawa", rawr x3
+        "tweetypie/sewvo/utiw/swc/main/scawa:exception", rawr
+        "stwato/swc/main/scawa/com/twittew/stwato/access", σωσ
+        "stwato/swc/main/scawa/com/twittew/stwato/data", σωσ
+    ], >_<
 )

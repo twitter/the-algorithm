@@ -1,66 +1,66 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+package com.twittew.seawch.common.utiw.mw.pwediction_engine;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.function.Supplier;
+impowt j-java.utiw.cowwections;
+i-impowt j-java.utiw.map;
+i-impowt java.utiw.function.suppwiew;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import com.twitter.ml.prediction.core.PredictionEngine;
-import com.twitter.ml.prediction.core.PredictionEngineFactory;
-import com.twitter.ml.prediction.core.PredictionEngineLoadingException;
-import com.twitter.ml.vw.constant.SnapshotConstants;
-import com.twitter.search.common.file.AbstractFile;
-import com.twitter.search.common.util.ml.models_manager.BaseModelsManager;
+i-impowt com.twittew.mw.pwediction.cowe.pwedictionengine;
+i-impowt c-com.twittew.mw.pwediction.cowe.pwedictionenginefactowy;
+impowt com.twittew.mw.pwediction.cowe.pwedictionenginewoadingexception;
+impowt com.twittew.mw.vw.constant.snapshotconstants;
+impowt com.twittew.seawch.common.fiwe.abstwactfiwe;
+i-impowt com.twittew.seawch.common.utiw.mw.modews_managew.basemodewsmanagew;
 
 /**
- * Loads PredictionEngine models from a model provider (config or fixed directory)
- * and keeps them in memory. Can also reload models periodically by querying the
- * same model provider source.
+ * woads pwedictionengine m-modews fwom a modew pwovidew (config o-ow fixed diwectowy)
+ * and keeps them in memowy. nyaa~~ can a-awso wewoad modews pewiodicawwy b-by quewying the
+ * s-same modew pwovidew souwce. (✿oωo)
  */
-public class PredictionEngineModelsManager extends BaseModelsManager<PredictionEngine> {
+pubwic cwass pwedictionenginemodewsmanagew extends b-basemodewsmanagew<pwedictionengine> {
 
-  PredictionEngineModelsManager(
-      Supplier<Map<String, AbstractFile>> activeModelsSupplier,
-      boolean shouldUnloadInactiveModels,
-      String statsPrefix) {
-    super(activeModelsSupplier, shouldUnloadInactiveModels, statsPrefix);
+  pwedictionenginemodewsmanagew(
+      suppwiew<map<stwing, ʘwʘ abstwactfiwe>> activemodewssuppwiew, (ˆ ﻌ ˆ)♡
+      boowean shouwdunwoadinactivemodews, 😳😳😳
+      s-stwing statspwefix) {
+    s-supew(activemodewssuppwiew, :3 s-shouwdunwoadinactivemodews, OwO s-statspwefix);
   }
 
-  @Override
-  public PredictionEngine readModelFromDirectory(AbstractFile modelBaseDir)
-      throws PredictionEngineLoadingException {
-    // We need to add the 'hdfs://' prefix, otherwise PredictionEngine will treat it as a
-    // path in the local filesystem.
-    PredictionEngine predictionEngine = new PredictionEngineFactory()
-        .createFromSnapshot(
-            "hdfs://" + modelBaseDir.getPath(), SnapshotConstants.FIXED_PATH);
+  @ovewwide
+  p-pubwic pwedictionengine weadmodewfwomdiwectowy(abstwactfiwe modewbasediw)
+      t-thwows pwedictionenginewoadingexception {
+    // we nyeed to add the 'hdfs://' p-pwefix, (U ﹏ U) othewwise pwedictionengine wiww tweat it as a
+    // path in the wocaw fiwesystem. >w<
+    pwedictionengine pwedictionengine = n-nyew pwedictionenginefactowy()
+        .cweatefwomsnapshot(
+            "hdfs://" + modewbasediw.getpath(), (U ﹏ U) snapshotconstants.fixed_path);
 
-    predictionEngine.initialize();
+    p-pwedictionengine.initiawize();
 
-    return predictionEngine;
+    w-wetuwn pwedictionengine;
   }
 
   /**
-   * Creates an instance that loads the models specified in a configuration file.
+   * c-cweates an instance that woads the modews specified in a configuwation f-fiwe. 😳
    *
-   * Note that if the configuration file changes and it doesn't include a model that was present
-   * before, the model will be removed (i.e. it unloads models that are not active anymore).
+   * n-nyote that if the configuwation f-fiwe changes a-and it doesn't incwude a modew t-that was pwesent
+   * befowe, (ˆ ﻌ ˆ)♡ t-the modew wiww be wemoved (i.e. 😳😳😳 it unwoads modews t-that awe nyot active anymowe). (U ﹏ U)
    */
-  public static PredictionEngineModelsManager createUsingConfigFile(
-      AbstractFile configFile, String statsPrefix) {
-    Preconditions.checkArgument(
-        configFile.canRead(), "Config file is not readable: %s", configFile.getPath());
-    return new PredictionEngineModelsManager(new ConfigSupplier(configFile), true, statsPrefix);
+  p-pubwic static pwedictionenginemodewsmanagew c-cweateusingconfigfiwe(
+      a-abstwactfiwe configfiwe, (///ˬ///✿) stwing statspwefix) {
+    pweconditions.checkawgument(
+        configfiwe.canwead(), 😳 "config fiwe is nyot weadabwe: %s", 😳 c-configfiwe.getpath());
+    w-wetuwn nyew pwedictionenginemodewsmanagew(new configsuppwiew(configfiwe), σωσ t-twue, s-statspwefix);
   }
 
   /**
-   * Creates a no-op instance. It can be used for tests or when the models are disabled.
+   * c-cweates a nyo-op instance. rawr x3 it can be used fow tests o-ow when the modews awe disabwed. OwO
    */
-  public static PredictionEngineModelsManager createNoOp(String statsPrefix) {
-    return new PredictionEngineModelsManager(Collections::emptyMap, false, statsPrefix) {
-      @Override
-      public void run() { }
+  pubwic static pwedictionenginemodewsmanagew cweatenoop(stwing s-statspwefix) {
+    wetuwn n-nyew pwedictionenginemodewsmanagew(cowwections::emptymap, /(^•ω•^) f-fawse, s-statspwefix) {
+      @ovewwide
+      pubwic v-void wun() { }
     };
   }
 

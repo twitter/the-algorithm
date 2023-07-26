@@ -1,88 +1,88 @@
-package com.twitter.search.earlybird.archive;
+package com.twittew.seawch.eawwybiwd.awchive;
 
-import java.io.IOException;
-import java.util.Date;
+impowt j-java.io.ioexception;
+i-impowt j-java.utiw.date;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
+i-impowt com.googwe.common.base.pwedicate;
+i-impowt c-com.googwe.common.base.pwedicates;
 
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.common.partitioning.base.TimeSlice;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.earlybird.archive.ArchiveTimeSlicer.ArchiveTimeSlice;
-import com.twitter.search.earlybird.document.DocumentFactory;
-import com.twitter.search.earlybird.document.TweetDocument;
+i-impowt com.twittew.seawch.common.pawtitioning.base.segment;
+i-impowt com.twittew.seawch.common.pawtitioning.base.timeswice;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingevent;
+impowt com.twittew.seawch.common.utiw.io.wecowdweadew.wecowdweadew;
+impowt com.twittew.seawch.eawwybiwd.awchive.awchivetimeswicew.awchivetimeswice;
+i-impowt com.twittew.seawch.eawwybiwd.document.documentfactowy;
+impowt c-com.twittew.seawch.eawwybiwd.document.tweetdocument;
 
-public class ArchiveSegment extends Segment {
-  private final ArchiveTimeSlice archiveTimeSlice;
+pubwic cwass a-awchivesegment extends segment {
+  pwivate finaw awchivetimeswice a-awchivetimeswice;
 
-  public static final Predicate<Date> MATCH_ALL_DATE_PREDICATE = input -> true;
+  pubwic s-static finaw pwedicate<date> match_aww_date_pwedicate = i-input -> twue;
 
-  // Constructor used for indexing an archive segment
-  public ArchiveSegment(ArchiveTimeSlice archiveTimeSlice,
-                        int hashPartitionID,
-                        int maxSegmentSize) {
-    super(new TimeSlice(archiveTimeSlice.getMinStatusID(hashPartitionID),
-            maxSegmentSize, hashPartitionID,
-            archiveTimeSlice.getNumHashPartitions()),
-        archiveTimeSlice.getEndDate().getTime());
-    this.archiveTimeSlice = archiveTimeSlice;
+  // constwuctow used fow indexing an awchive segment
+  p-pubwic awchivesegment(awchivetimeswice awchivetimeswice, >_<
+                        int hashpawtitionid, >w<
+                        int maxsegmentsize) {
+    supew(new t-timeswice(awchivetimeswice.getminstatusid(hashpawtitionid),
+            maxsegmentsize, rawr h-hashpawtitionid, 😳
+            a-awchivetimeswice.getnumhashpawtitions()), >w<
+        a-awchivetimeswice.getenddate().gettime());
+    t-this.awchivetimeswice = awchivetimeswice;
   }
 
   /**
-   * Constructor used for loading a flushed segment. Only be used by SegmentBuilder; Earlybird
-   * does not use this.
+   * constwuctow used f-fow woading a fwushed segment. (⑅˘꒳˘) onwy be used b-by segmentbuiwdew; eawwybiwd
+   * does nyot use this. OwO
    */
-  ArchiveSegment(long timeSliceId,
-                 int maxSegmentSize,
-                 int partitions,
-                 int hashPartitionID,
-                 Date dataEndDate) {
-    super(new TimeSlice(timeSliceId, maxSegmentSize, hashPartitionID, partitions),
-        dataEndDate.getTime());
-    // No archive timeslice is needed for loading.
-    this.archiveTimeSlice = null;
+  awchivesegment(wong timeswiceid, (ꈍᴗꈍ)
+                 int maxsegmentsize,
+                 i-int pawtitions, 😳
+                 int hashpawtitionid, 😳😳😳
+                 d-date d-dataenddate) {
+    s-supew(new timeswice(timeswiceid, mya maxsegmentsize, mya hashpawtitionid, (⑅˘꒳˘) pawtitions), (U ﹏ U)
+        d-dataenddate.gettime());
+    // n-nyo awchive timeswice i-is nyeeded fow woading. mya
+    t-this.awchivetimeswice = nyuww;
   }
 
   /**
-   * Returns the tweets reader for this segment.
+   * w-wetuwns the tweets weadew f-fow this segment. ʘwʘ
    *
-   * @param documentFactory The factory that converts ThriftDocuments to Lucene documents.
+   * @pawam documentfactowy the factowy t-that convewts thwiftdocuments t-to wucene documents. (˘ω˘)
    */
-  public RecordReader<TweetDocument> getStatusRecordReader(
-      DocumentFactory<ThriftIndexingEvent> documentFactory) throws IOException {
-    return getStatusRecordReader(documentFactory, Predicates.<Date>alwaysTrue());
+  pubwic wecowdweadew<tweetdocument> g-getstatuswecowdweadew(
+      documentfactowy<thwiftindexingevent> d-documentfactowy) thwows ioexception {
+    wetuwn getstatuswecowdweadew(documentfactowy, (U ﹏ U) pwedicates.<date>awwaystwue());
   }
 
   /**
-   * Returns the tweets reader for this segment.
+   * wetuwns the tweets weadew f-fow this segment. ^•ﻌ•^
    *
-   * @param documentFactory The factory that converts ThriftDocuments to Lucene documents.
-   * @param filter A predicate that filters tweets based on the date they were created on.
+   * @pawam d-documentfactowy the factowy t-that convewts t-thwiftdocuments t-to wucene documents. (˘ω˘)
+   * @pawam fiwtew a pwedicate that fiwtews tweets based o-on the date they wewe cweated on. :3
    */
-  public RecordReader<TweetDocument> getStatusRecordReader(
-      DocumentFactory<ThriftIndexingEvent> documentFactory,
-      Predicate<Date> filter) throws IOException {
-    if (archiveTimeSlice != null) {
-      return archiveTimeSlice.getStatusReader(this, documentFactory, filter);
-    } else {
-      throw new IllegalStateException("ArchiveSegment has no associated ArchiveTimeslice."
-          + "This ArchiveSegment can only be used for loading flushed segments.");
+  pubwic wecowdweadew<tweetdocument> getstatuswecowdweadew(
+      d-documentfactowy<thwiftindexingevent> documentfactowy, ^^;;
+      p-pwedicate<date> f-fiwtew) thwows i-ioexception {
+    if (awchivetimeswice != n-nyuww) {
+      wetuwn a-awchivetimeswice.getstatusweadew(this, 🥺 d-documentfactowy, f-fiwtew);
+    } ewse {
+      thwow n-nyew iwwegawstateexception("awchivesegment h-has nyo a-associated awchivetimeswice."
+          + "this a-awchivesegment c-can onwy be used fow woading fwushed segments.");
     }
   }
 
-  public Date getDataEndDate() {
-    return archiveTimeSlice == null
-        ? new Date(getDataEndDateInclusiveMillis()) : archiveTimeSlice.getEndDate();
+  pubwic date getdataenddate() {
+    w-wetuwn awchivetimeswice == nyuww
+        ? nyew date(getdataenddateincwusivemiwwis()) : awchivetimeswice.getenddate();
   }
 
-  public ArchiveTimeSlice getArchiveTimeSlice() {
-    return archiveTimeSlice;
+  pubwic awchivetimeswice getawchivetimeswice() {
+    wetuwn awchivetimeswice;
   }
 
-  @Override
-  public String toString() {
-    return super.toString() + " " + archiveTimeSlice.getDescription();
+  @ovewwide
+  p-pubwic stwing tostwing() {
+    wetuwn supew.tostwing() + " " + awchivetimeswice.getdescwiption();
   }
 }

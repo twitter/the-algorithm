@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.common.presentation
+package com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation
 
-trait ItemPresentation extends UniversalPresentation {
-  // Optional field which if populated, will group the items into the specified module
-  def modulePresentation: Option[ModulePresentation] = None
+twait itempwesentation e-extends u-univewsawpwesentation {
+  // o-optionaw f-fiewd which i-if popuwated, rawr x3 w-wiww gwoup the items i-into the specified m-moduwe
+  def moduwepwesentation: option[moduwepwesentation] = nyone
 }

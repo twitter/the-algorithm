@@ -1,39 +1,39 @@
 {
-  "role": "discode",
-  "name": "uua-user-modification-staging",
-  "config-files": [
-    "uua-user-modification.aurora"
-  ],
-  "build": {
-    "play": true,
+  "wowe": "discode", XD
+  "name": "uua-usew-modification-staging", >_<
+  "config-fiwes": [
+    "uua-usew-modification.auwowa"
+  ], (ꈍᴗꈍ)
+  "buiwd": {
+    "pway": twue, ^•ﻌ•^
     "dependencies": [
       {
-        "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "wowe": "packew", OwO
+        "name": "packew-cwient-no-pex", 🥺
+        "vewsion": "watest"
       }
-    ],
+    ], òωó
     "steps": [
       {
-        "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-user-modification"
-      },
+        "type": "bazew-bundwe", o.O
+        "name": "bundwe", (U ᵕ U❁)
+        "tawget": "unified_usew_actions/sewvice/swc/main/scawa:uua-usew-modification"
+      }, (⑅˘꒳˘)
       {
-        "type": "packer",
-        "name": "uua-user-modification-staging",
-        "artifact": "./dist/uua-user-modification.zip"
+        "type": "packew", ( ͡o ω ͡o )
+        "name": "uua-usew-modification-staging", UwU
+        "awtifact": "./dist/uua-usew-modification.zip"
       }
     ]
-  },
-  "targets": [
+  }, rawr x3
+  "tawgets": [
     {
-      "type": "group",
-      "name": "staging",
-      "targets": [
+      "type": "gwoup",
+      "name": "staging", rawr
+      "tawgets": [
         {
-          "name": "uua-user-modification-staging-pdxa",
-          "key": "pdxa/discode/staging/uua-user-modification"
+          "name": "uua-usew-modification-staging-pdxa", σωσ
+          "key": "pdxa/discode/staging/uua-usew-modification"
         }
       ]
     }

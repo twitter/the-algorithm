@@ -1,179 +1,179 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.featureswitches.v2.FeatureSwitchResults
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.timelineservice.TimelineService.GetPerspectives.Query
-import com.twitter.tweetypie.core.ValueState
-import com.twitter.tweetypie.repository.PerspectiveRepository
-import com.twitter.tweetypie.thriftscala.EditControl
-import com.twitter.tweetypie.thriftscala.FieldByPath
-import com.twitter.tweetypie.thriftscala.StatusPerspective
-import com.twitter.tweetypie.thriftscala.TweetPerspective
+impowt c-com.twittew.featuweswitches.v2.featuweswitchwesuwts
+i-impowt c-com.twittew.spam.wtf.thwiftscawa.safetywevew
+i-impowt c-com.twittew.stitch.stitch
+impowt c-com.twittew.stitch.timewinesewvice.timewinesewvice.getpewspectives.quewy
+impowt c-com.twittew.tweetypie.cowe.vawuestate
+impowt com.twittew.tweetypie.wepositowy.pewspectivewepositowy
+impowt com.twittew.tweetypie.thwiftscawa.editcontwow
+impowt c-com.twittew.tweetypie.thwiftscawa.fiewdbypath
+impowt com.twittew.tweetypie.thwiftscawa.statuspewspective
+impowt com.twittew.tweetypie.thwiftscawa.tweetpewspective
 
-object EditPerspectiveHydrator {
+o-object editpewspectivehydwatow {
 
-  type Type = ValueHydrator[Option[TweetPerspective], Ctx]
-  val HydratedField: FieldByPath = fieldByPath(Tweet.EditPerspectiveField)
+  t-type type = vawuehydwatow[option[tweetpewspective], ʘwʘ ctx]
+  vaw hydwatedfiewd: fiewdbypath = f-fiewdbypath(tweet.editpewspectivefiewd)
 
-  case class Ctx(
-    currentTweetPerspective: Option[StatusPerspective],
-    editControl: Option[EditControl],
-    featureSwitchResults: Option[FeatureSwitchResults],
-    underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy
+  case cwass c-ctx(
+    cuwwenttweetpewspective: o-option[statuspewspective], ( ͡o ω ͡o )
+    editcontwow: option[editcontwow], o.O
+    featuweswitchwesuwts: option[featuweswitchwesuwts], >w<
+    undewwyingtweetctx: tweetctx)
+      e-extends tweetctx.pwoxy
 
-  // Timeline safety levels determine some part of high level traffic
-  // that we might want to turn off with a decider if edits traffic
-  // is too big for perspectives to handle. The decider allows us
-  // to turn down the traffic without the impact on tweet detail.
-  val TimelinesSafetyLevels: Set[SafetyLevel] = Set(
-    SafetyLevel.TimelineFollowingActivity,
-    SafetyLevel.TimelineHome,
-    SafetyLevel.TimelineConversations,
-    SafetyLevel.DeprecatedTimelineConnect,
-    SafetyLevel.TimelineMentions,
-    SafetyLevel.DeprecatedTimelineActivity,
-    SafetyLevel.TimelineFavorites,
-    SafetyLevel.TimelineLists,
-    SafetyLevel.TimelineInjection,
-    SafetyLevel.StickersTimeline,
-    SafetyLevel.LiveVideoTimeline,
-    SafetyLevel.QuoteTweetTimeline,
-    SafetyLevel.TimelineHomeLatest,
-    SafetyLevel.TimelineLikedBy,
-    SafetyLevel.TimelineRetweetedBy,
-    SafetyLevel.TimelineBookmark,
-    SafetyLevel.TimelineMedia,
-    SafetyLevel.TimelineReactiveBlending,
-    SafetyLevel.TimelineProfile,
-    SafetyLevel.TimelineFocalTweet,
-    SafetyLevel.TimelineHomeRecommendations,
-    SafetyLevel.NotificationsTimelineDeviceFollow,
-    SafetyLevel.TimelineConversationsDownranking,
-    SafetyLevel.TimelineHomeTopicFollowRecommendations,
-    SafetyLevel.TimelineHomeHydration,
-    SafetyLevel.FollowedTopicsTimeline,
-    SafetyLevel.ModeratedTweetsTimeline,
-    SafetyLevel.TimelineModeratedTweetsHydration,
-    SafetyLevel.ElevatedQuoteTweetTimeline,
-    SafetyLevel.TimelineConversationsDownrankingMinimal,
-    SafetyLevel.BirdwatchNoteTweetsTimeline,
-    SafetyLevel.TimelineSuperLikedBy,
-    SafetyLevel.UserScopedTimeline,
-    SafetyLevel.TweetScopedTimeline,
-    SafetyLevel.TimelineHomePromotedHydration,
-    SafetyLevel.NearbyTimeline,
-    SafetyLevel.TimelineProfileAll,
-    SafetyLevel.TimelineProfileSuperFollows,
-    SafetyLevel.SpaceTweetAvatarHomeTimeline,
-    SafetyLevel.SpaceHomeTimelineUpranking,
-    SafetyLevel.BlockMuteUsersTimeline,
-    SafetyLevel.RitoActionedTweetTimeline,
-    SafetyLevel.TimelineScorer,
-    SafetyLevel.ArticleTweetTimeline,
-    SafetyLevel.DesQuoteTweetTimeline,
-    SafetyLevel.EditHistoryTimeline,
-    SafetyLevel.DirectMessagesConversationTimeline,
-    SafetyLevel.DesHomeTimeline,
-    SafetyLevel.TimelineContentControls,
-    SafetyLevel.TimelineFavoritesSelfView,
-    SafetyLevel.TimelineProfileSpaces,
+  // timewine safety wevews detewmine some pawt of high wevew twaffic
+  // t-that we might want to tuwn o-off with a decidew i-if edits twaffic
+  // i-is too b-big fow pewspectives to handwe. 😳 the decidew awwows u-us
+  // to tuwn down the twaffic without the i-impact on tweet detaiw. 🥺
+  vaw timewinessafetywevews: set[safetywevew] = set(
+    safetywevew.timewinefowwowingactivity, rawr x3
+    safetywevew.timewinehome, o.O
+    s-safetywevew.timewineconvewsations, rawr
+    safetywevew.depwecatedtimewineconnect, ʘwʘ
+    s-safetywevew.timewinementions, 😳😳😳
+    safetywevew.depwecatedtimewineactivity, ^^;;
+    s-safetywevew.timewinefavowites, o.O
+    s-safetywevew.timewinewists, (///ˬ///✿)
+    safetywevew.timewineinjection,
+    safetywevew.stickewstimewine, σωσ
+    safetywevew.wivevideotimewine, nyaa~~
+    s-safetywevew.quotetweettimewine, ^^;;
+    s-safetywevew.timewinehomewatest, ^•ﻌ•^
+    safetywevew.timewinewikedby, σωσ
+    s-safetywevew.timewinewetweetedby, -.-
+    s-safetywevew.timewinebookmawk, ^^;;
+    safetywevew.timewinemedia, XD
+    s-safetywevew.timewineweactivebwending, 🥺
+    safetywevew.timewinepwofiwe, òωó
+    safetywevew.timewinefocawtweet, (ˆ ﻌ ˆ)♡
+    s-safetywevew.timewinehomewecommendations, -.-
+    safetywevew.notificationstimewinedevicefowwow, :3
+    safetywevew.timewineconvewsationsdownwanking, ʘwʘ
+    s-safetywevew.timewinehometopicfowwowwecommendations, 🥺
+    safetywevew.timewinehomehydwation, >_<
+    s-safetywevew.fowwowedtopicstimewine, ʘwʘ
+    safetywevew.modewatedtweetstimewine, (˘ω˘)
+    s-safetywevew.timewinemodewatedtweetshydwation, (✿oωo)
+    s-safetywevew.ewevatedquotetweettimewine, (///ˬ///✿)
+    safetywevew.timewineconvewsationsdownwankingminimaw,
+    safetywevew.biwdwatchnotetweetstimewine, rawr x3
+    safetywevew.timewinesupewwikedby, -.-
+    safetywevew.usewscopedtimewine, ^^
+    safetywevew.tweetscopedtimewine, (⑅˘꒳˘)
+    safetywevew.timewinehomepwomotedhydwation, nyaa~~
+    safetywevew.neawbytimewine, /(^•ω•^)
+    s-safetywevew.timewinepwofiweaww, (U ﹏ U)
+    s-safetywevew.timewinepwofiwesupewfowwows,
+    safetywevew.spacetweetavatawhometimewine, 😳😳😳
+    s-safetywevew.spacehometimewineupwanking, >w<
+    s-safetywevew.bwockmuteusewstimewine, XD
+    s-safetywevew.witoactionedtweettimewine, o.O
+    safetywevew.timewinescowew, mya
+    safetywevew.awticwetweettimewine, 🥺
+    safetywevew.desquotetweettimewine,
+    s-safetywevew.edithistowytimewine, ^^;;
+    safetywevew.diwectmessagesconvewsationtimewine, :3
+    safetywevew.deshometimewine, (U ﹏ U)
+    safetywevew.timewinecontentcontwows, OwO
+    safetywevew.timewinefavowitessewfview,
+    s-safetywevew.timewinepwofiwespaces, 😳😳😳
   )
-  val TweetDetailSafetyLevels: Set[SafetyLevel] = Set(
-    SafetyLevel.TweetDetail,
-    SafetyLevel.TweetDetailNonToo,
-    SafetyLevel.TweetDetailWithInjectionsHydration,
-    SafetyLevel.DesTweetDetail,
+  vaw tweetdetaiwsafetywevews: s-set[safetywevew] = s-set(
+    s-safetywevew.tweetdetaiw, (ˆ ﻌ ˆ)♡
+    safetywevew.tweetdetaiwnontoo, XD
+    safetywevew.tweetdetaiwwithinjectionshydwation, (ˆ ﻌ ˆ)♡
+    s-safetywevew.destweetdetaiw,
   )
 
-  def apply(
-    repo: PerspectiveRepository.Type,
-    timelinesGate: Gate[Unit],
-    tweetDetailsGate: Gate[Unit],
-    otherSafetyLevelsGate: Gate[Unit],
-    bookmarksGate: Gate[Long],
-    stats: StatsReceiver
-  ): Type = {
+  d-def appwy(
+    w-wepo: pewspectivewepositowy.type, ( ͡o ω ͡o )
+    t-timewinesgate: gate[unit], rawr x3
+    tweetdetaiwsgate: gate[unit], nyaa~~
+    othewsafetywevewsgate: g-gate[unit], >_<
+    b-bookmawksgate: g-gate[wong], ^^;;
+    s-stats: statsweceivew
+  ): type = {
 
-    val statsByLevel =
-      SafetyLevel.list.map { level =>
-        (level, stats.counter("perspective_by_safety_label", level.name, "calls"))
-      }.toMap
-    val editsAggregated = stats.counter("edit_perspective", "edits_aggregated")
+    v-vaw statsbywevew =
+      safetywevew.wist.map { wevew =>
+        (wevew, (ˆ ﻌ ˆ)♡ s-stats.countew("pewspective_by_safety_wabew", ^^;; wevew.name, "cawws"))
+      }.tomap
+    vaw editsaggwegated = stats.countew("edit_pewspective", (⑅˘꒳˘) "edits_aggwegated")
 
-    ValueHydrator[Option[TweetPerspective], Ctx] { (curr, ctx) =>
-      val safetyLevel = ctx.opts.safetyLevel
-      val lookupsDecider =
-        if (TimelinesSafetyLevels.contains(safetyLevel)) timelinesGate
-        else if (TweetDetailSafetyLevels.contains(safetyLevel)) tweetDetailsGate
-        else otherSafetyLevelsGate
+    vawuehydwatow[option[tweetpewspective], rawr x3 ctx] { (cuww, (///ˬ///✿) c-ctx) =>
+      vaw safetywevew = ctx.opts.safetywevew
+      vaw w-wookupsdecidew =
+        i-if (timewinessafetywevews.contains(safetywevew)) t-timewinesgate
+        ewse if (tweetdetaiwsafetywevews.contains(safetywevew)) t-tweetdetaiwsgate
+        ewse othewsafetywevewsgate
 
-      val tweetIds: Seq[TweetId] = if (lookupsDecider()) tweetIdsToAggregate(ctx).toSeq else Seq()
-      statsByLevel
-        .getOrElse(
-          safetyLevel,
-          stats.counter("perspective_by_safety_label", safetyLevel.name, "calls"))
-        .incr(tweetIds.size)
-      editsAggregated.incr(tweetIds.size)
+      v-vaw tweetids: s-seq[tweetid] = if (wookupsdecidew()) tweetidstoaggwegate(ctx).toseq ewse seq()
+      statsbywevew
+        .getowewse(
+          safetywevew, 🥺
+          s-stats.countew("pewspective_by_safety_wabew", >_< safetywevew.name, UwU "cawws"))
+        .incw(tweetids.size)
+      e-editsaggwegated.incw(tweetids.size)
 
-      Stitch
-        .traverse(tweetIds) { id =>
-          repo(
-            Query(
-              ctx.opts.forUserId.get,
-              id,
-              PerspectiveHydrator.evaluatePerspectiveTypes(
-                ctx.opts.forUserId.get,
-                bookmarksGate,
-                ctx.featureSwitchResults))).liftToTry
+      stitch
+        .twavewse(tweetids) { i-id =>
+          w-wepo(
+            quewy(
+              ctx.opts.fowusewid.get, >_<
+              i-id, -.-
+              p-pewspectivehydwatow.evawuatepewspectivetypes(
+                ctx.opts.fowusewid.get, mya
+                b-bookmawksgate, >w<
+                c-ctx.featuweswitchwesuwts))).wifttotwy
         }.map { seq =>
-          if (seq.isEmpty) {
-            val editPerspective = ctx.currentTweetPerspective.map { c =>
-              TweetPerspective(
-                c.favorited,
-                c.retweeted,
-                c.bookmarked
+          if (seq.isempty) {
+            vaw editpewspective = ctx.cuwwenttweetpewspective.map { c =>
+              t-tweetpewspective(
+                c-c.favowited, (U ﹏ U)
+                c-c.wetweeted, 😳😳😳
+                c.bookmawked
               )
             }
-            ValueState.delta(curr, editPerspective)
-          } else {
-            val returns = seq.collect { case Return(r) => r }
-            val aggregate = Some(
-              TweetPerspective(
-                favorited =
-                  returns.exists(_.favorited) || ctx.currentTweetPerspective.exists(_.favorited),
-                retweeted =
-                  returns.exists(_.retweeted) || ctx.currentTweetPerspective.exists(_.retweeted),
-                bookmarked = Some(
-                  returns.exists(_.bookmarked.contains(true)) || ctx.currentTweetPerspective.exists(
-                    _.bookmarked.contains(true)))
+            v-vawuestate.dewta(cuww, o.O e-editpewspective)
+          } ewse {
+            v-vaw wetuwns = seq.cowwect { case wetuwn(w) => w }
+            vaw aggwegate = s-some(
+              t-tweetpewspective(
+                favowited =
+                  wetuwns.exists(_.favowited) || c-ctx.cuwwenttweetpewspective.exists(_.favowited), òωó
+                w-wetweeted =
+                  wetuwns.exists(_.wetweeted) || ctx.cuwwenttweetpewspective.exists(_.wetweeted), 😳😳😳
+                bookmawked = s-some(
+                  wetuwns.exists(_.bookmawked.contains(twue)) || ctx.cuwwenttweetpewspective.exists(
+                    _.bookmawked.contains(twue)))
               )
             )
 
-            if (seq.exists(_.isThrow)) {
-              ValueState.partial(aggregate, HydratedField)
-            } else {
-              ValueState.modified(aggregate)
+            if (seq.exists(_.isthwow)) {
+              vawuestate.pawtiaw(aggwegate, σωσ h-hydwatedfiewd)
+            } ewse {
+              vawuestate.modified(aggwegate)
             }
           }
         }
-    }.onlyIf { (curr, ctx) =>
-      curr.isEmpty &&
-      ctx.opts.forUserId.isDefined &&
-      ctx.tweetFieldRequested(Tweet.EditPerspectiveField)
+    }.onwyif { (cuww, (⑅˘꒳˘) ctx) =>
+      c-cuww.isempty &&
+      c-ctx.opts.fowusewid.isdefined &&
+      ctx.tweetfiewdwequested(tweet.editpewspectivefiewd)
     }
   }
 
-  private def tweetIdsToAggregate(ctx: Ctx): Set[TweetId] = {
-    ctx.editControl
-      .flatMap {
-        case EditControl.Initial(initial) => Some(initial)
-        case EditControl.Edit(edit) => edit.editControlInitial
-        case _ => None
+  pwivate def tweetidstoaggwegate(ctx: c-ctx): s-set[tweetid] = {
+    ctx.editcontwow
+      .fwatmap {
+        case editcontwow.initiaw(initiaw) => some(initiaw)
+        c-case editcontwow.edit(edit) => e-edit.editcontwowinitiaw
+        case _ => nyone
       }
-      .map(_.editTweetIds.toSet)
-      .getOrElse(Set()) - ctx.tweetId
+      .map(_.edittweetids.toset)
+      .getowewse(set()) - ctx.tweetid
   }
 }

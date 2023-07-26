@@ -1,148 +1,148 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+impowt java.utiw.concuwwent.concuwwenthashmap;
+i-impowt java.utiw.concuwwent.concuwwentmap;
 
-import javax.inject.Inject;
+i-impowt j-javax.inject.inject;
 
-import com.google.common.annotations.VisibleForTesting;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.clientstats.RequestCounters;
-import com.twitter.search.common.clientstats.RequestCountersEventListener;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.FinagleUtil;
-import com.twitter.search.common.util.earlybird.ThriftSearchQueryUtil;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.util.Future;
+i-impowt com.twittew.common.cowwections.paiw;
+i-impowt com.twittew.common.utiw.cwock;
+i-impowt com.twittew.finagwe.sewvice;
+impowt com.twittew.finagwe.simpwefiwtew;
+impowt com.twittew.seawch.common.cwientstats.wequestcountews;
+impowt com.twittew.seawch.common.cwientstats.wequestcountewseventwistenew;
+i-impowt com.twittew.seawch.common.decidew.seawchdecidew;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.utiw.finagweutiw;
+impowt c-com.twittew.seawch.common.utiw.eawwybiwd.thwiftseawchquewyutiw;
+impowt com.twittew.seawch.eawwybiwd.common.cwientidutiw;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+i-impowt com.twittew.utiw.futuwe;
 
-/** Tracks the number of queries we get from each client. */
-public class ClientIdTrackingFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  // Be careful when changing the names of these stats or adding new ones: make sure that they have
-  // prefixes/suffixes that will allow us to group them in Viz, without pulling in other stats.
-  // For example, we'll probably have a Viz graph for client_id_tracker_qps_for_client_id_*_all.
-  // So if you add a new stat named client_id_tracker_qps_for_client_id_%s_and_new_field_%s_all,
-  // then the graph will be grouping up the values from both stats, instead of grouping up the
-  // values only for client_id_tracker_qps_for_client_id_%s_all.
-  @VisibleForTesting
-  static final String QPS_ALL_STAT_PATTERN = "client_id_tracker_qps_for_%s_all";
+/** twacks the nyumbew of quewies we get fwom each c-cwient. ʘwʘ */
+pubwic cwass cwientidtwackingfiwtew extends simpwefiwtew<eawwybiwdwequest, (˘ω˘) eawwybiwdwesponse> {
+  // be cawefuw when c-changing the nyames of these stats o-ow adding nyew o-ones: make suwe t-that they have
+  // p-pwefixes/suffixes that wiww awwow us to gwoup t-them in viz, (✿oωo) without puwwing in othew stats. (///ˬ///✿)
+  // f-fow exampwe, rawr x3 we'ww pwobabwy have a viz gwaph fow cwient_id_twackew_qps_fow_cwient_id_*_aww. -.-
+  // so if you add a nyew stat n-nyamed cwient_id_twackew_qps_fow_cwient_id_%s_and_new_fiewd_%s_aww, ^^
+  // then the g-gwaph wiww be g-gwouping up the v-vawues fwom both stats, (⑅˘꒳˘) instead of gwouping up the
+  // vawues o-onwy fow cwient_id_twackew_qps_fow_cwient_id_%s_aww. nyaa~~
+  @visibwefowtesting
+  s-static finaw stwing q-qps_aww_stat_pattewn = "cwient_id_twackew_qps_fow_%s_aww";
 
-  @VisibleForTesting
-  static final String QPS_LOGGED_IN_STAT_PATTERN = "client_id_tracker_qps_for_%s_logged_in";
+  @visibwefowtesting
+  s-static finaw stwing qps_wogged_in_stat_pattewn = "cwient_id_twackew_qps_fow_%s_wogged_in";
 
-  @VisibleForTesting
-  static final String QPS_LOGGED_OUT_STAT_PATTERN = "client_id_tracker_qps_for_%s_logged_out";
+  @visibwefowtesting
+  s-static finaw stwing qps_wogged_out_stat_pattewn = "cwient_id_twackew_qps_fow_%s_wogged_out";
 
-  static final String SUPERROOT_REJECT_REQUESTS_WITH_UNKNOWN_FINAGLE_ID =
-      "superroot_reject_requests_with_unknown_finagle_id";
+  s-static finaw stwing supewwoot_weject_wequests_with_unknown_finagwe_id =
+      "supewwoot_weject_wequests_with_unknown_finagwe_id";
 
-  static final String UNKNOWN_FINAGLE_ID_DEBUG_STRING = "Please specify a finagle client id.";
+  static f-finaw stwing unknown_finagwe_id_debug_stwing = "pwease s-specify a finagwe cwient i-id.";
 
-  private final ConcurrentMap<String, RequestCounters> requestCountersByClientId =
-    new ConcurrentHashMap<>();
-  private final ConcurrentMap<Pair<String, String>, RequestCounters>
-      requestCountersByFinagleIdAndClientId = new ConcurrentHashMap<>();
-  private final Clock clock;
-  private final SearchDecider decider;
+  pwivate f-finaw concuwwentmap<stwing, /(^•ω•^) wequestcountews> wequestcountewsbycwientid =
+    nyew concuwwenthashmap<>();
+  pwivate finaw concuwwentmap<paiw<stwing, stwing>, (U ﹏ U) wequestcountews>
+      w-wequestcountewsbyfinagweidandcwientid = n-nyew concuwwenthashmap<>();
+  pwivate f-finaw cwock c-cwock;
+  pwivate f-finaw seawchdecidew decidew;
 
-  @Inject
-  public ClientIdTrackingFilter(SearchDecider decider) {
-    this(decider, Clock.SYSTEM_CLOCK);
+  @inject
+  pubwic cwientidtwackingfiwtew(seawchdecidew d-decidew) {
+    this(decidew, 😳😳😳 cwock.system_cwock);
   }
 
-  @VisibleForTesting
-  ClientIdTrackingFilter(SearchDecider decider, Clock clock) {
-    this.decider = decider;
-    this.clock = clock;
+  @visibwefowtesting
+  cwientidtwackingfiwtew(seawchdecidew decidew, >w< c-cwock cwock) {
+    this.decidew = d-decidew;
+    t-this.cwock = c-cwock;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    String clientId = ClientIdUtil.getClientIdFromRequest(request);
-    String finagleId = FinagleUtil.getFinagleClientName();
-    boolean isLoggedIn = ThriftSearchQueryUtil.requestInitiatedByLoggedInUser(request);
-    incrementCounters(clientId, finagleId, isLoggedIn);
+  @ovewwide
+  pubwic f-futuwe<eawwybiwdwesponse> a-appwy(eawwybiwdwequest w-wequest, XD
+                                         s-sewvice<eawwybiwdwequest, o.O eawwybiwdwesponse> sewvice) {
+    stwing cwientid = c-cwientidutiw.getcwientidfwomwequest(wequest);
+    s-stwing finagweid = f-finagweutiw.getfinagwecwientname();
+    b-boowean iswoggedin = t-thwiftseawchquewyutiw.wequestinitiatedbywoggedinusew(wequest);
+    incwementcountews(cwientid, mya finagweid, iswoggedin);
 
-    if (decider.isAvailable(SUPERROOT_REJECT_REQUESTS_WITH_UNKNOWN_FINAGLE_ID)
-        && finagleId.equals(FinagleUtil.UNKNOWN_CLIENT_NAME)) {
-      EarlybirdResponse response = new EarlybirdResponse(
-          EarlybirdResponseCode.QUOTA_EXCEEDED_ERROR, 0)
-          .setDebugString(UNKNOWN_FINAGLE_ID_DEBUG_STRING);
-      return Future.value(response);
+    if (decidew.isavaiwabwe(supewwoot_weject_wequests_with_unknown_finagwe_id)
+        && f-finagweid.equaws(finagweutiw.unknown_cwient_name)) {
+      eawwybiwdwesponse wesponse = nyew eawwybiwdwesponse(
+          eawwybiwdwesponsecode.quota_exceeded_ewwow, 🥺 0)
+          .setdebugstwing(unknown_finagwe_id_debug_stwing);
+      wetuwn futuwe.vawue(wesponse);
     }
 
-    RequestCounters clientCounters = getClientCounters(clientId);
-    RequestCountersEventListener<EarlybirdResponse> clientCountersEventListener =
-        new RequestCountersEventListener<>(
-            clientCounters, clock, EarlybirdSuccessfulResponseHandler.INSTANCE);
-    RequestCounters finagleIdAndClientCounters = getFinagleIdClientCounters(clientId, finagleId);
-    RequestCountersEventListener<EarlybirdResponse> finagleIdAndClientCountersEventListener =
-        new RequestCountersEventListener<>(
-            finagleIdAndClientCounters, clock, EarlybirdSuccessfulResponseHandler.INSTANCE);
+    w-wequestcountews cwientcountews = getcwientcountews(cwientid);
+    wequestcountewseventwistenew<eawwybiwdwesponse> c-cwientcountewseventwistenew =
+        n-nyew wequestcountewseventwistenew<>(
+            c-cwientcountews, ^^;; cwock, :3 eawwybiwdsuccessfuwwesponsehandwew.instance);
+    w-wequestcountews finagweidandcwientcountews = g-getfinagweidcwientcountews(cwientid, (U ﹏ U) f-finagweid);
+    wequestcountewseventwistenew<eawwybiwdwesponse> finagweidandcwientcountewseventwistenew =
+        nyew wequestcountewseventwistenew<>(
+            finagweidandcwientcountews, OwO cwock, 😳😳😳 eawwybiwdsuccessfuwwesponsehandwew.instance);
 
-    return service.apply(request)
-        .addEventListener(clientCountersEventListener)
-        .addEventListener(finagleIdAndClientCountersEventListener);
+    w-wetuwn sewvice.appwy(wequest)
+        .addeventwistenew(cwientcountewseventwistenew)
+        .addeventwistenew(finagweidandcwientcountewseventwistenew);
   }
 
-  // Returns the RequestCounters instance tracking the requests from the given client ID.
-  private RequestCounters getClientCounters(String clientId) {
-    RequestCounters clientCounters = requestCountersByClientId.get(clientId);
-    if (clientCounters == null) {
-      clientCounters = new RequestCounters(ClientIdUtil.formatClientId(clientId));
-      RequestCounters existingCounters =
-        requestCountersByClientId.putIfAbsent(clientId, clientCounters);
-      if (existingCounters != null) {
-        clientCounters = existingCounters;
+  // w-wetuwns the wequestcountews i-instance t-twacking the wequests fwom the given cwient id. (ˆ ﻌ ˆ)♡
+  p-pwivate wequestcountews g-getcwientcountews(stwing cwientid) {
+    w-wequestcountews c-cwientcountews = wequestcountewsbycwientid.get(cwientid);
+    if (cwientcountews == nyuww) {
+      cwientcountews = n-nyew wequestcountews(cwientidutiw.fowmatcwientid(cwientid));
+      w-wequestcountews e-existingcountews =
+        wequestcountewsbycwientid.putifabsent(cwientid, XD c-cwientcountews);
+      i-if (existingcountews != nyuww) {
+        c-cwientcountews = existingcountews;
       }
     }
-    return clientCounters;
+    wetuwn cwientcountews;
   }
 
-  // Returns the RequestCounters instance tracking the requests from the given client ID.
-  private RequestCounters getFinagleIdClientCounters(String clientId, String finagleId) {
-    Pair<String, String> clientKey = Pair.of(clientId, finagleId);
-    RequestCounters counters = requestCountersByFinagleIdAndClientId.get(clientKey);
-    if (counters == null) {
-      counters = new RequestCounters(ClientIdUtil.formatFinagleClientIdAndClientId(
-          finagleId, clientId));
-      RequestCounters existingCounters = requestCountersByFinagleIdAndClientId.putIfAbsent(
-          clientKey, counters);
-      if (existingCounters != null) {
-        counters = existingCounters;
+  // wetuwns t-the wequestcountews i-instance twacking the wequests fwom the g-given cwient id. (ˆ ﻌ ˆ)♡
+  p-pwivate wequestcountews getfinagweidcwientcountews(stwing cwientid, ( ͡o ω ͡o ) stwing finagweid) {
+    paiw<stwing, rawr x3 s-stwing> cwientkey = paiw.of(cwientid, nyaa~~ finagweid);
+    wequestcountews c-countews = wequestcountewsbyfinagweidandcwientid.get(cwientkey);
+    if (countews == nyuww) {
+      c-countews = n-nyew wequestcountews(cwientidutiw.fowmatfinagwecwientidandcwientid(
+          finagweid, >_< cwientid));
+      wequestcountews existingcountews = wequestcountewsbyfinagweidandcwientid.putifabsent(
+          c-cwientkey, ^^;; c-countews);
+      if (existingcountews != nyuww) {
+        countews = existingcountews;
       }
     }
-    return counters;
+    w-wetuwn countews;
   }
 
-  // Increments the correct counters, based on the given clientId, finagleId, and whether or not the
-  // request came from a logged in user.
-  private static void incrementCounters(String clientId, String finagleId, boolean isLoggedIn) {
-    String clientIdForStats = ClientIdUtil.formatClientId(clientId);
-    String finagleClientIdAndClientIdForStats =
-      ClientIdUtil.formatFinagleClientIdAndClientId(finagleId, clientId);
-    SearchCounter.export(String.format(QPS_ALL_STAT_PATTERN, clientIdForStats)).increment();
-    SearchCounter.export(String.format(QPS_ALL_STAT_PATTERN, finagleClientIdAndClientIdForStats))
-      .increment();
-    if (isLoggedIn) {
-      SearchCounter.export(String.format(QPS_LOGGED_IN_STAT_PATTERN, clientIdForStats)).increment();
-      SearchCounter.export(
-          String.format(QPS_LOGGED_IN_STAT_PATTERN, finagleClientIdAndClientIdForStats))
-        .increment();
-    } else {
-      SearchCounter.export(String.format(QPS_LOGGED_OUT_STAT_PATTERN, clientIdForStats))
-        .increment();
-      SearchCounter.export(
-          String.format(QPS_LOGGED_OUT_STAT_PATTERN, finagleClientIdAndClientIdForStats))
-        .increment();
+  // incwements t-the cowwect countews, (ˆ ﻌ ˆ)♡ based on the given cwientid, ^^;; finagweid, (⑅˘꒳˘) a-and whethew ow nyot the
+  // w-wequest came fwom a-a wogged in usew. rawr x3
+  pwivate static v-void incwementcountews(stwing cwientid, (///ˬ///✿) stwing f-finagweid, 🥺 b-boowean iswoggedin) {
+    s-stwing cwientidfowstats = c-cwientidutiw.fowmatcwientid(cwientid);
+    stwing f-finagwecwientidandcwientidfowstats =
+      cwientidutiw.fowmatfinagwecwientidandcwientid(finagweid, >_< cwientid);
+    s-seawchcountew.expowt(stwing.fowmat(qps_aww_stat_pattewn, UwU c-cwientidfowstats)).incwement();
+    s-seawchcountew.expowt(stwing.fowmat(qps_aww_stat_pattewn, >_< finagwecwientidandcwientidfowstats))
+      .incwement();
+    if (iswoggedin) {
+      seawchcountew.expowt(stwing.fowmat(qps_wogged_in_stat_pattewn, -.- c-cwientidfowstats)).incwement();
+      seawchcountew.expowt(
+          s-stwing.fowmat(qps_wogged_in_stat_pattewn, mya f-finagwecwientidandcwientidfowstats))
+        .incwement();
+    } ewse {
+      seawchcountew.expowt(stwing.fowmat(qps_wogged_out_stat_pattewn, >w< cwientidfowstats))
+        .incwement();
+      s-seawchcountew.expowt(
+          s-stwing.fowmat(qps_wogged_out_stat_pattewn, (U ﹏ U) f-finagwecwientidandcwientidfowstats))
+        .incwement();
     }
   }
 }

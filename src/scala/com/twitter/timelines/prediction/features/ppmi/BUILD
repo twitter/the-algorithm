@@ -1,8 +1,8 @@
-scala_library(
-    sources = ["*.scala"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/java/com/twitter/ml/api:api-base",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "swc/java/com/twittew/mw/api:api-base", òωó
+    ], o.O
 )

@@ -1,6 +1,6 @@
-package com.twitter.visibility.util
+package com.twittew.visibiwity.utiw
 
-object NamingUtils {
-  def getFriendlyName(a: Any): String = getFriendlyNameFromClass(a.getClass)
-  def getFriendlyNameFromClass(a: Class[_]): String = a.getSimpleName.stripSuffix("$")
+object nyamingutiws {
+  d-def g-getfwiendwyname(a: a-any): stwing = g-getfwiendwynamefwomcwass(a.getcwass)
+  d-def getfwiendwynamefwomcwass(a: c-cwass[_]): s-stwing = a.getsimpwename.stwipsuffix("$")
 }

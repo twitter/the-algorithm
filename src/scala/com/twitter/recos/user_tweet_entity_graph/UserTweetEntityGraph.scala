@@ -1,46 +1,46 @@
-package com.twitter.recos.user_tweet_entity_graph
+package com.twittew.wecos.usew_tweet_entity_gwaph
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.tracing.{Trace, TraceId}
-import com.twitter.recos.user_tweet_entity_graph.thriftscala._
-import com.twitter.util.Future
+impowt com.twittew.finagwe.thwift.cwientid
+i-impowt c-com.twittew.finagwe.twacing.{twace, o.O t-twaceid}
+i-impowt com.twittew.wecos.usew_tweet_entity_gwaph.thwiftscawa._
+i-impowt com.twittew.utiw.futuwe
 
-object UserTweetEntityGraph {
-  def traceId: TraceId = Trace.id
-  def clientId: Option[ClientId] = ClientId.current
+o-object usewtweetentitygwaph {
+  d-def twaceid: twaceid = t-twace.id
+  def cwientid: option[cwientid] = cwientid.cuwwent
 }
 
-class UserTweetEntityGraph(
-  recommendationHandler: RecommendationHandler,
-  tweetSocialProofHandler: TweetSocialProofHandler,
-  socialProofHandler: SocialProofHandler)
-    extends thriftscala.UserTweetEntityGraph.MethodPerEndpoint {
+cwass usewtweetentitygwaph(
+  w-wecommendationhandwew: wecommendationhandwew, /(^•ω•^)
+  tweetsociawpwoofhandwew: t-tweetsociawpwoofhandwew, nyaa~~
+  sociawpwoofhandwew: s-sociawpwoofhandwew)
+    extends thwiftscawa.usewtweetentitygwaph.methodpewendpoint {
 
-  override def recommendTweets(
-    request: RecommendTweetEntityRequest
-  ): Future[RecommendTweetEntityResponse] = recommendationHandler(request)
-
-  /**
-   * Given a query user, its seed users, and a set of input tweets, return the social proofs of
-   * input tweets if any.
-   *
-   * Currently this supports clients such as Email Recommendations, MagicRecs, and HomeTimeline.
-   * In order to avoid heavy migration work, we are retaining this endpoint.
-   */
-  override def findTweetSocialProofs(
-    request: SocialProofRequest
-  ): Future[SocialProofResponse] = tweetSocialProofHandler(request)
+  ovewwide def wecommendtweets(
+    w-wequest: wecommendtweetentitywequest
+  ): f-futuwe[wecommendtweetentitywesponse] = w-wecommendationhandwew(wequest)
 
   /**
-   * Find social proof for the specified RecommendationType given a set of input ids of that type.
-   * Only find social proofs from the specified seed users with the specified social proof types.
+   * given a quewy usew, nyaa~~ its seed usews, :3 and a set of input tweets, 😳😳😳 w-wetuwn the sociaw pwoofs of
+   * input tweets if any. (˘ω˘)
    *
-   * Currently this supports url social proof generation for Guide.
-   *
-   * This endpoint is flexible enough to support social proof generation for all recommendation
-   * types, and should be used for all future clients of this service.
+   * cuwwentwy this s-suppowts cwients such as emaiw w-wecommendations, ^^ m-magicwecs, and h-hometimewine. :3
+   * i-in owdew to avoid heavy migwation wowk, -.- we awe w-wetaining this endpoint. 😳
    */
-  override def findRecommendationSocialProofs(
-    request: RecommendationSocialProofRequest
-  ): Future[RecommendationSocialProofResponse] = socialProofHandler(request)
+  ovewwide def f-findtweetsociawpwoofs(
+    wequest: sociawpwoofwequest
+  ): futuwe[sociawpwoofwesponse] = tweetsociawpwoofhandwew(wequest)
+
+  /**
+   * find sociaw p-pwoof fow the specified wecommendationtype g-given a-a set of input i-ids of that type. mya
+   * onwy find sociaw pwoofs fwom the specified s-seed usews w-with the specified sociaw pwoof t-types. (˘ω˘)
+   *
+   * c-cuwwentwy this suppowts uww sociaw p-pwoof genewation fow guide. >_<
+   *
+   * t-this endpoint is fwexibwe enough to suppowt s-sociaw pwoof genewation fow a-aww wecommendation
+   * types, -.- a-and shouwd be used f-fow aww futuwe cwients of this sewvice. 🥺
+   */
+  ovewwide def findwecommendationsociawpwoofs(
+    wequest: wecommendationsociawpwoofwequest
+  ): futuwe[wecommendationsociawpwoofwesponse] = s-sociawpwoofhandwew(wequest)
 }

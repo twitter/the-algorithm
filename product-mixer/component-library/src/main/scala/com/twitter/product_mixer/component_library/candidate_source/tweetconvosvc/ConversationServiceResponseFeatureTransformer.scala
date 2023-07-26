@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.component_library.candidate_source.tweetconvosvc
+package com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.tweetconvosvc
 
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.timelineservice.suggests.thriftscala.SuggestType
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twansfowmewidentifiew
+impowt com.twittew.timewinesewvice.suggests.thwiftscawa.suggesttype
 
-object AuthorIdFeature extends Feature[TweetCandidate, Option[Long]]
-object AncestorIdsFeature extends Feature[TweetCandidate, Seq[Long]]
-object ConversationModuleFocalTweetIdFeature extends Feature[TweetCandidate, Option[Long]]
-object InReplyToFeature extends Feature[TweetCandidate, Option[Long]]
-object IsRetweetFeature extends Feature[TweetCandidate, Boolean]
-object SourceTweetIdFeature extends Feature[TweetCandidate, Option[Long]]
-object SourceUserIdFeature extends Feature[TweetCandidate, Option[Long]]
-object SuggestTypeFeature extends Feature[TweetCandidate, Option[SuggestType]]
+object authowidfeatuwe extends featuwe[tweetcandidate, OwO o-option[wong]]
+object ancestowidsfeatuwe e-extends featuwe[tweetcandidate, 😳😳😳 seq[wong]]
+o-object convewsationmoduwefocawtweetidfeatuwe extends featuwe[tweetcandidate, 😳😳😳 option[wong]]
+o-object inwepwytofeatuwe e-extends featuwe[tweetcandidate, o.O o-option[wong]]
+object iswetweetfeatuwe extends featuwe[tweetcandidate, ( ͡o ω ͡o ) boowean]
+o-object souwcetweetidfeatuwe extends featuwe[tweetcandidate, (U ﹏ U) option[wong]]
+object s-souwceusewidfeatuwe extends featuwe[tweetcandidate, (///ˬ///✿) o-option[wong]]
+o-object suggesttypefeatuwe extends f-featuwe[tweetcandidate, >w< option[suggesttype]]
 
-object ConversationServiceResponseFeatureTransformer
-    extends CandidateFeatureTransformer[TweetWithConversationMetadata] {
-  override val identifier: TransformerIdentifier =
-    TransformerIdentifier("ConversationServiceResponse")
+o-object convewsationsewvicewesponsefeatuwetwansfowmew
+    extends candidatefeatuwetwansfowmew[tweetwithconvewsationmetadata] {
+  o-ovewwide vaw identifiew: twansfowmewidentifiew =
+    twansfowmewidentifiew("convewsationsewvicewesponse")
 
-  override val features: Set[Feature[_, _]] =
-    Set(
-      AuthorIdFeature,
-      InReplyToFeature,
-      IsRetweetFeature,
-      SourceTweetIdFeature,
-      SourceUserIdFeature,
-      ConversationModuleFocalTweetIdFeature,
-      AncestorIdsFeature,
-      SuggestTypeFeature
+  o-ovewwide vaw featuwes: set[featuwe[_, rawr _]] =
+    set(
+      authowidfeatuwe, mya
+      inwepwytofeatuwe, ^^
+      iswetweetfeatuwe, 😳😳😳
+      souwcetweetidfeatuwe, mya
+      s-souwceusewidfeatuwe, 😳
+      convewsationmoduwefocawtweetidfeatuwe,
+      a-ancestowidsfeatuwe, -.-
+      s-suggesttypefeatuwe
     )
 
-  override def transform(candidate: TweetWithConversationMetadata): FeatureMap = {
-    FeatureMapBuilder()
-      .add(AuthorIdFeature, candidate.userId)
-      .add(InReplyToFeature, candidate.inReplyToTweetId)
-      .add(IsRetweetFeature, candidate.sourceTweetId.isDefined)
-      .add(SourceTweetIdFeature, candidate.sourceTweetId)
-      .add(SourceUserIdFeature, candidate.sourceUserId)
-      .add(ConversationModuleFocalTweetIdFeature, candidate.conversationId)
-      .add(AncestorIdsFeature, candidate.ancestors.map(_.tweetId))
-      .add(SuggestTypeFeature, Some(SuggestType.OrganicConversation))
-      .build()
+  o-ovewwide def twansfowm(candidate: tweetwithconvewsationmetadata): featuwemap = {
+    f-featuwemapbuiwdew()
+      .add(authowidfeatuwe, 🥺 c-candidate.usewid)
+      .add(inwepwytofeatuwe, o.O candidate.inwepwytotweetid)
+      .add(iswetweetfeatuwe, /(^•ω•^) c-candidate.souwcetweetid.isdefined)
+      .add(souwcetweetidfeatuwe, nyaa~~ candidate.souwcetweetid)
+      .add(souwceusewidfeatuwe, nyaa~~ c-candidate.souwceusewid)
+      .add(convewsationmoduwefocawtweetidfeatuwe, :3 candidate.convewsationid)
+      .add(ancestowidsfeatuwe, 😳😳😳 c-candidate.ancestows.map(_.tweetid))
+      .add(suggesttypefeatuwe, (˘ω˘) some(suggesttype.owganicconvewsation))
+      .buiwd()
   }
 }

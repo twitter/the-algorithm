@@ -1,105 +1,105 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.twittew.fwigate.pushsewvice.modew.ntab
 
-import com.twitter.frigate.common.base.SpaceCandidate
-import com.twitter.frigate.common.util.MrNtabCopyObjects
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.ScheduledSpaceSpeakerPushCandidate
-import com.twitter.frigate.pushservice.model.ScheduledSpaceSubscriberPushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.take.NotificationServiceSender
-import com.twitter.frigate.thriftscala.SpaceNotificationType
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.notificationservice.thriftscala._
-import com.twitter.util.Future
-import com.twitter.util.Time
+impowt com.twittew.fwigate.common.base.spacecandidate
+i-impowt c-com.twittew.fwigate.common.utiw.mwntabcopyobjects
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.scheduwedspacespeakewpushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.scheduwedspacesubscwibewpushcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.fwigate.pushsewvice.take.notificationsewvicesendew
+impowt com.twittew.fwigate.thwiftscawa.spacenotificationtype
+impowt com.twittew.gizmoduck.thwiftscawa.usew
+impowt com.twittew.notificationsewvice.thwiftscawa._
+impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.time
 
-trait ScheduledSpaceSpeakerNTabRequestHydrator extends ScheduledSpaceNTabRequestHydrator {
-  self: PushCandidate with ScheduledSpaceSpeakerPushCandidate =>
+twait scheduwedspacespeakewntabwequesthydwatow extends scheduwedspacentabwequesthydwatow {
+  s-sewf: pushcandidate with scheduwedspacespeakewpushcandidate =>
 
-  override def refreshableType: Option[String] = {
-    frigateNotification.spaceNotification.flatMap { spaceNotification =>
-      spaceNotification.spaceNotificationType.flatMap {
-        case SpaceNotificationType.PreSpaceBroadcast =>
-          MrNtabCopyObjects.ScheduledSpaceSpeakerSoon.refreshableType
-        case SpaceNotificationType.AtSpaceBroadcast =>
-          MrNtabCopyObjects.ScheduledSpaceSpeakerNow.refreshableType
+  o-ovewwide def wefweshabwetype: option[stwing] = {
+    fwigatenotification.spacenotification.fwatmap { spacenotification =>
+      s-spacenotification.spacenotificationtype.fwatmap {
+        case s-spacenotificationtype.pwespacebwoadcast =>
+          m-mwntabcopyobjects.scheduwedspacespeakewsoon.wefweshabwetype
+        case spacenotificationtype.atspacebwoadcast =>
+          mwntabcopyobjects.scheduwedspacespeakewnow.wefweshabwetype
         case _ =>
-          throw new IllegalStateException(s"Unexpected SpaceNotificationType")
+          thwow n-nyew iwwegawstateexception(s"unexpected spacenotificationtype")
       }
     }
   }
 
-  override lazy val facepileUsersFut: Future[Seq[Long]] = Future.Nil
+  ovewwide wazy vaw facepiweusewsfut: futuwe[seq[wong]] = f-futuwe.niw
 
-  override val socialProofDisplayText: Option[DisplayText] = Some(DisplayText())
+  ovewwide v-vaw sociawpwoofdispwaytext: o-option[dispwaytext] = s-some(dispwaytext())
 }
 
-trait ScheduledSpaceSubscriberNTabRequestHydrator extends ScheduledSpaceNTabRequestHydrator {
-  self: PushCandidate with ScheduledSpaceSubscriberPushCandidate =>
+t-twait scheduwedspacesubscwibewntabwequesthydwatow extends scheduwedspacentabwequesthydwatow {
+  s-sewf: pushcandidate with scheduwedspacesubscwibewpushcandidate =>
 
-  override lazy val facepileUsersFut: Future[Seq[Long]] = {
-    hostId match {
-      case Some(spaceHostId) => Future.value(Seq(spaceHostId))
+  o-ovewwide wazy vaw facepiweusewsfut: futuwe[seq[wong]] = {
+    hostid match {
+      case some(spacehostid) => futuwe.vawue(seq(spacehostid))
       case _ =>
-        Future.exception(
-          new IllegalStateException(
-            "Unable to get host id for ScheduledSpaceSubscriberNTabRequestHydrator"))
+        f-futuwe.exception(
+          nyew iwwegawstateexception(
+            "unabwe t-to get host id f-fow scheduwedspacesubscwibewntabwequesthydwatow"))
     }
   }
 
-  override val socialProofDisplayText: Option[DisplayText] = None
+  o-ovewwide vaw sociawpwoofdispwaytext: option[dispwaytext] = nyone
 }
 
-trait ScheduledSpaceNTabRequestHydrator extends NTabRequestHydrator {
-  self: PushCandidate with SpaceCandidate =>
+twait scheduwedspacentabwequesthydwatow e-extends n-nytabwequesthydwatow {
+  sewf: p-pushcandidate w-with spacecandidate =>
 
-  def hydratedHost: Option[User]
+  def h-hydwatedhost: option[usew]
 
-  override lazy val senderIdFut: Future[Long] = {
-    hostId match {
-      case Some(spaceHostId) => Future.value(spaceHostId)
-      case _ => throw new IllegalStateException(s"No Space Host Id")
+  ovewwide w-wazy vaw sendewidfut: futuwe[wong] = {
+    hostid match {
+      c-case some(spacehostid) => futuwe.vawue(spacehostid)
+      c-case _ => thwow nyew iwwegawstateexception(s"no s-space host id")
     }
   }
 
-  override lazy val tapThroughFut: Future[String] = Future.value(s"i/spaces/$spaceId")
+  o-ovewwide wazy vaw tapthwoughfut: futuwe[stwing] = futuwe.vawue(s"i/spaces/$spaceid")
 
-  override lazy val displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] =
-    NotificationServiceSender
-      .getDisplayTextEntityFromUser(
-        Future.value(hydratedHost),
-        fieldName = "space_host_name",
-        isBold = true
-      ).map(_.toSeq)
+  ovewwide wazy vaw dispwaytextentitiesfut: futuwe[seq[dispwaytextentity]] =
+    n-nyotificationsewvicesendew
+      .getdispwaytextentityfwomusew(
+        f-futuwe.vawue(hydwatedhost), mya
+        fiewdname = "space_host_name", (⑅˘꒳˘)
+        i-isbowd = t-twue
+      ).map(_.toseq)
 
-  override val storyContext: Option[StoryContext] = None
+  o-ovewwide vaw stowycontext: option[stowycontext] = nyone
 
-  override val inlineCard: Option[InlineCard] = None
+  ovewwide v-vaw inwinecawd: option[inwinecawd] = nyone
 
-  override lazy val ntabRequest: Future[Option[CreateGenericNotificationRequest]] = {
-    Future.join(senderIdFut, displayTextEntitiesFut, facepileUsersFut, tapThroughFut).map {
-      case (senderId, displayTextEntities, facepileUsers, tapThrough) =>
-        val expiryTimeMillis = if (target.params(PushFeatureSwitchParams.EnableSpacesTtlForNtab)) {
-          Some(
-            (Time.now + target.params(
-              PushFeatureSwitchParams.SpaceNotificationsTTLDurationForNTab)).inMillis)
-        } else None
+  ovewwide wazy vaw nytabwequest: f-futuwe[option[cweategenewicnotificationwequest]] = {
+    futuwe.join(sendewidfut, (U ﹏ U) d-dispwaytextentitiesfut, mya f-facepiweusewsfut, ʘwʘ t-tapthwoughfut).map {
+      case (sendewid, (˘ω˘) d-dispwaytextentities, (U ﹏ U) f-facepiweusews, ^•ﻌ•^ t-tapthwough) =>
+        v-vaw expiwytimemiwwis = if (tawget.pawams(pushfeatuweswitchpawams.enabwespacesttwfowntab)) {
+          some(
+            (time.now + t-tawget.pawams(
+              p-pushfeatuweswitchpawams.spacenotificationsttwduwationfowntab)).inmiwwis)
+        } e-ewse nyone
 
-        Some(
-          CreateGenericNotificationRequest(
-            userId = target.targetId,
-            senderId = senderId,
-            genericType = GenericType.RefreshableNotification,
-            displayText = DisplayText(values = displayTextEntities),
-            facepileUsers = facepileUsers,
-            timestampMillis = Time.now.inMillis,
-            tapThroughAction = Some(TapThroughAction(Some(tapThrough))),
-            impressionId = Some(impressionId),
-            socialProofText = socialProofDisplayText,
-            context = storyContext,
-            inlineCard = inlineCard,
-            refreshableType = refreshableType,
-            expiryTimeMillis = expiryTimeMillis
+        s-some(
+          c-cweategenewicnotificationwequest(
+            usewid = tawget.tawgetid,
+            sendewid = s-sendewid, (˘ω˘)
+            genewictype = genewictype.wefweshabwenotification, :3
+            dispwaytext = dispwaytext(vawues = dispwaytextentities), ^^;;
+            facepiweusews = f-facepiweusews, 🥺
+            timestampmiwwis = time.now.inmiwwis, (⑅˘꒳˘)
+            tapthwoughaction = some(tapthwoughaction(some(tapthwough))), nyaa~~
+            i-impwessionid = s-some(impwessionid), :3
+            s-sociawpwooftext = sociawpwoofdispwaytext, ( ͡o ω ͡o )
+            c-context = stowycontext, mya
+            i-inwinecawd = inwinecawd, (///ˬ///✿)
+            w-wefweshabwetype = wefweshabwetype, (˘ω˘)
+            expiwytimemiwwis = expiwytimemiwwis
           ))
     }
   }

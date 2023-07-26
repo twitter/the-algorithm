@@ -1,42 +1,42 @@
-package com.twitter.tweetypie
-package backends
+package com.twittew.tweetypie
+package b-backends
 
-import com.twitter.conversions.PercentOps._
-import com.twitter.conversions.DurationOps._
-import com.twitter.dataproducts.enrichments.thriftscala._
-import com.twitter.dataproducts.enrichments.thriftscala.Enricherator
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.servo.util.FutureArrow
+impowt c-com.twittew.convewsions.pewcentops._
+i-impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.datapwoducts.enwichments.thwiftscawa._
+i-impowt com.twittew.datapwoducts.enwichments.thwiftscawa.enwichewatow
+i-impowt com.twittew.finagwe.thwiftmux.methodbuiwdew
+i-impowt com.twittew.sewvo.utiw.futuweawwow
 
-object GnipEnricherator {
+object gnipenwichewatow {
 
-  type HydrateProfileGeo = FutureArrow[ProfileGeoRequest, Seq[ProfileGeoResponse]]
+  type hydwatepwofiwegeo = futuweawwow[pwofiwegeowequest, nyaa~~ s-seq[pwofiwegeowesponse]]
 
-  private def methodPerEndpoint(methodBuilder: MethodBuilder) =
-    Enricherator.MethodPerEndpoint(
-      methodBuilder
-        .servicePerEndpoint[Enricherator.ServicePerEndpoint]
-        .withHydrateProfileGeo(
-          methodBuilder
-            .withTimeoutTotal(300.milliseconds)
-            .withTimeoutPerRequest(100.milliseconds)
-            .idempotent(maxExtraLoad = 1.percent)
-            .servicePerEndpoint[Enricherator.ServicePerEndpoint](methodName = "hydrateProfileGeo")
-            .hydrateProfileGeo
+  pwivate def methodpewendpoint(methodbuiwdew: m-methodbuiwdew) =
+    enwichewatow.methodpewendpoint(
+      m-methodbuiwdew
+        .sewvicepewendpoint[enwichewatow.sewvicepewendpoint]
+        .withhydwatepwofiwegeo(
+          methodbuiwdew
+            .withtimeouttotaw(300.miwwiseconds)
+            .withtimeoutpewwequest(100.miwwiseconds)
+            .idempotent(maxextwawoad = 1.pewcent)
+            .sewvicepewendpoint[enwichewatow.sewvicepewendpoint](methodname = "hydwatepwofiwegeo")
+            .hydwatepwofiwegeo
         )
     )
 
-  def fromMethod(methodBuilder: MethodBuilder): GnipEnricherator = {
-    val mpe = methodPerEndpoint(methodBuilder)
+  def fwommethod(methodbuiwdew: m-methodbuiwdew): gnipenwichewatow = {
+    v-vaw mpe = methodpewendpoint(methodbuiwdew)
 
-    new GnipEnricherator {
-      override val hydrateProfileGeo: HydrateProfileGeo =
-        FutureArrow(mpe.hydrateProfileGeo)
+    n-nyew gnipenwichewatow {
+      ovewwide vaw hydwatepwofiwegeo: hydwatepwofiwegeo =
+        futuweawwow(mpe.hydwatepwofiwegeo)
     }
   }
 }
 
-trait GnipEnricherator {
-  import GnipEnricherator._
-  val hydrateProfileGeo: HydrateProfileGeo
+twait g-gnipenwichewatow {
+  impowt gnipenwichewatow._
+  vaw hydwatepwofiwegeo: hydwatepwofiwegeo
 }

@@ -1,110 +1,110 @@
-package com.twitter.product_mixer.core.feature.featuremap
+package com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import scala.collection.mutable
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.utiw.wetuwn
+impowt c-com.twittew.utiw.thwow
+i-impowt c-com.twittew.utiw.twy
+i-impowt s-scawa.cowwection.mutabwe
 
 /**
- * [[FeatureMapBuilder]] is a typesafe way (it checks types vs the [[Feature]]s on `.add`) to build a [[FeatureMap]].
+ * [[featuwemapbuiwdew]] i-is a typesafe way (it checks types vs the [[featuwe]]s on `.add`) to buiwd a-a [[featuwemap]]. òωó
  *
- * Throws a [[DuplicateFeatureException]] if you try to add the same [[Feature]] more than once.
+ * thwows a [[dupwicatefeatuweexception]] i-if you twy to add the same [[featuwe]] m-mowe than once. (⑅˘꒳˘)
  *
- * These builders are __not__ reusable.
+ * these buiwdews awe __not__ weusabwe. XD
  */
 
-class FeatureMapBuilder {
-  private val underlying = Map.newBuilder[Feature[_, _], Try[Any]]
-  private val keys = mutable.HashSet.empty[Feature[_, _]]
-  private var built = false
+c-cwass featuwemapbuiwdew {
+  pwivate vaw u-undewwying = map.newbuiwdew[featuwe[_, -.- _], t-twy[any]]
+  pwivate vaw keys = mutabwe.hashset.empty[featuwe[_, :3 _]]
+  pwivate vaw buiwt = fawse
 
   /**
-   * Add a [[Try]] of a [[Feature]] `value` to the map,
-   * handling both the [[Return]] and [[Throw]] cases.
+   * a-add a [[twy]] of a [[featuwe]] `vawue` to the map, nyaa~~
+   * handwing both the [[wetuwn]] a-and [[thwow]] cases. 😳
    *
-   * Throws a [[DuplicateFeatureException]] if it's already present.
+   * t-thwows a-a [[dupwicatefeatuweexception]] i-if it's awweady p-pwesent. (⑅˘꒳˘)
    *
-   * @note If you have a [[Feature]] with a non-optional value type `Feature[_, V]`
-   *       but have an `Option[V]` you can use [[Try.orThrow]] to convert the [[Option]]
-   *       to a [[Try]], which will store the successful or failed [[Feature]] in the map.
+   * @note if you have a [[featuwe]] w-with a nyon-optionaw vawue type `featuwe[_, nyaa~~ v-v]`
+   *       but have an `option[v]` you can use [[twy.owthwow]] to convewt the [[option]]
+   *       to a [[twy]], OwO w-which wiww stowe the successfuw o-ow faiwed [[featuwe]] i-in t-the map. rawr x3
    */
-  def add[V](feature: Feature[_, V], value: Try[V]): FeatureMapBuilder = addTry(feature, value)
+  def add[v](featuwe: featuwe[_, XD v], vawue: twy[v]): f-featuwemapbuiwdew = a-addtwy(featuwe, vawue)
 
   /**
-   * Add a successful [[Feature]] `value` to the map
+   * a-add a s-successfuw [[featuwe]] `vawue` to the map
    *
-   * Throws a [[DuplicateFeatureException]] if it's already present.
+   * t-thwows a [[dupwicatefeatuweexception]] if it's a-awweady pwesent. σωσ
    *
-   * @note If you have a [[Feature]] with a non-optional value type `Feature[_, V]`
-   *       but have an `Option[V]` you can use [[Option.get]] or [[Option.getOrElse]]
-   *       to convert the [[Option]] to extract the underlying value,
-   *       which will throw immediately if it's [[None]] or add the successful [[Feature]] in the map.
+   * @note if you have a [[featuwe]] with a-a nyon-optionaw vawue type `featuwe[_, (U ᵕ U❁) v-v]`
+   *       but have a-an `option[v]` y-you can use [[option.get]] ow [[option.getowewse]]
+   *       to convewt the [[option]] to extwact the undewwying vawue, (U ﹏ U)
+   *       which wiww t-thwow immediatewy i-if it's [[none]] ow add the successfuw [[featuwe]] i-in the map.
    */
-  def add[V](feature: Feature[_, V], value: V): FeatureMapBuilder =
-    addTry(feature, Return(value))
+  d-def add[v](featuwe: f-featuwe[_, :3 v], vawue: v): featuwemapbuiwdew =
+    addtwy(featuwe, ( ͡o ω ͡o ) w-wetuwn(vawue))
 
   /**
-   * Add a failed [[Feature]] `value` to the map
+   * add a faiwed [[featuwe]] `vawue` to the map
    *
-   * Throws a [[DuplicateFeatureException]] if it's already present.
+   * t-thwows a [[dupwicatefeatuweexception]] if it's a-awweady pwesent. σωσ
    */
-  def addFailure(feature: Feature[_, _], throwable: Throwable): FeatureMapBuilder =
-    addTry(feature, Throw(throwable))
+  d-def addfaiwuwe(featuwe: f-featuwe[_, >w< _], thwowabwe: thwowabwe): f-featuwemapbuiwdew =
+    addtwy(featuwe, 😳😳😳 thwow(thwowabwe))
 
   /**
-   * [[add]] but for when the [[Feature]] types aren't known
+   * [[add]] b-but fow when t-the [[featuwe]] t-types awen't known
    *
-   * Add a [[Try]] of a [[Feature]] `value` to the map,
-   * handling both the [[Return]] and [[Throw]] cases.
+   * add a [[twy]] of a [[featuwe]] `vawue` t-to the map, OwO
+   * h-handwing b-both the [[wetuwn]] a-and [[thwow]] c-cases. 😳
    *
-   * Throws a [[DuplicateFeatureException]] if it's already present.
+   * thwows a [[dupwicatefeatuweexception]] if it's awweady pwesent. 😳😳😳
    *
-   * @note If you have a [[Feature]] with a non-optional value type `Feature[_, V]`
-   *       but have an `Option[V]` you can use [[Try.orThrow]] to convert the [[Option]]
-   *       to a [[Try]], which will store the successful or failed [[Feature]] in the map.
+   * @note i-if you have a [[featuwe]] with a nyon-optionaw vawue type `featuwe[_, (˘ω˘) v]`
+   *       but have a-an `option[v]` you can use [[twy.owthwow]] to convewt the [[option]]
+   *       t-to a [[twy]], ʘwʘ which w-wiww stowe t-the successfuw ow faiwed [[featuwe]] i-in the map. ( ͡o ω ͡o )
    */
-  def addTry(feature: Feature[_, _], value: Try[_]): FeatureMapBuilder = {
-    if (keys.contains(feature)) {
-      throw new DuplicateFeatureException(feature)
+  def addtwy(featuwe: f-featuwe[_, o.O _], v-vawue: twy[_]): featuwemapbuiwdew = {
+    if (keys.contains(featuwe)) {
+      thwow nyew dupwicatefeatuweexception(featuwe)
     }
-    addWithoutValidation(feature, value)
+    addwithoutvawidation(featuwe, >w< v-vawue)
   }
 
   /**
-   * [[addTry]] but without a [[DuplicateFeatureException]] check
+   * [[addtwy]] but without a [[dupwicatefeatuweexception]] c-check
    *
-   * @note Only for use internally within [[FeatureMap.merge]]
+   * @note onwy fow use i-intewnawwy within [[featuwemap.mewge]]
    */
-  private[featuremap] def addWithoutValidation(
-    feature: Feature[_, _],
-    value: Try[_]
-  ): FeatureMapBuilder = {
-    keys += feature
-    underlying += ((feature, value))
+  p-pwivate[featuwemap] def addwithoutvawidation(
+    featuwe: featuwe[_, 😳 _],
+    v-vawue: t-twy[_]
+  ): featuwemapbuiwdew = {
+    k-keys += f-featuwe
+    undewwying += ((featuwe, 🥺 vawue))
     this
   }
 
-  /** Builds the FeatureMap */
-  def build(): FeatureMap = {
-    if (built) {
-      throw ReusedFeatureMapBuilderException
+  /** buiwds the featuwemap */
+  def buiwd(): featuwemap = {
+    if (buiwt) {
+      t-thwow weusedfeatuwemapbuiwdewexception
     }
 
-    built = true
-    new FeatureMap(underlying.result())
+    b-buiwt = twue
+    n-nyew featuwemap(undewwying.wesuwt())
   }
 }
 
-object FeatureMapBuilder {
+object featuwemapbuiwdew {
 
-  /** Returns a new [[FeatureMapBuilder]] for making [[FeatureMap]]s */
-  def apply(): FeatureMapBuilder = new FeatureMapBuilder
+  /** w-wetuwns a nyew [[featuwemapbuiwdew]] f-fow making [[featuwemap]]s */
+  def appwy(): f-featuwemapbuiwdew = nyew featuwemapbuiwdew
 }
 
-class DuplicateFeatureException(feature: Feature[_, _])
-    extends UnsupportedOperationException(s"Feature $feature already exists in FeatureMap")
+cwass dupwicatefeatuweexception(featuwe: featuwe[_, rawr x3 _])
+    extends unsuppowtedopewationexception(s"featuwe $featuwe a-awweady e-exists in featuwemap")
 
-object ReusedFeatureMapBuilderException
-    extends UnsupportedOperationException(
-      "build() cannot be called more than once since FeatureMapBuilders are not reusable")
+object weusedfeatuwemapbuiwdewexception
+    extends unsuppowtedopewationexception(
+      "buiwd() c-cannot b-be cawwed mowe than once since featuwemapbuiwdews awe nyot weusabwe")

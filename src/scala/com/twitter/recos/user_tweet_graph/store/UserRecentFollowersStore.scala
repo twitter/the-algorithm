@@ -1,50 +1,50 @@
-package com.twitter.recos.user_tweet_graph.store
+package com.twittew.wecos.usew_tweet_gwaph.stowe
 
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.socialgraph.thriftscala.EdgesRequest
-import com.twitter.socialgraph.thriftscala.EdgesResult
-import com.twitter.socialgraph.thriftscala.PageRequest
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.socialgraph.thriftscala.SrcRelationship
-import com.twitter.socialgraph.thriftscala.SocialGraphService
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
+impowt com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.sociawgwaph.thwiftscawa.edgeswequest
+i-impowt c-com.twittew.sociawgwaph.thwiftscawa.edgeswesuwt
+i-impowt com.twittew.sociawgwaph.thwiftscawa.pagewequest
+i-impowt com.twittew.sociawgwaph.thwiftscawa.wewationshiptype
+i-impowt com.twittew.sociawgwaph.thwiftscawa.swcwewationship
+i-impowt c-com.twittew.sociawgwaph.thwiftscawa.sociawgwaphsewvice
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.utiw.duwation
+impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.time
 
-class UserRecentFollowersStore(
-  sgsClient: SocialGraphService.MethodPerEndpoint)
-    extends ReadableStore[UserRecentFollowersStore.Query, Seq[UserId]] {
+cwass usewwecentfowwowewsstowe(
+  sgscwient: s-sociawgwaphsewvice.methodpewendpoint)
+    extends w-weadabwestowe[usewwecentfowwowewsstowe.quewy, ʘwʘ seq[usewid]] {
 
-  override def get(key: UserRecentFollowersStore.Query): Future[Option[Seq[UserId]]] = {
-    val edgeRequest = EdgesRequest(
-      relationship = SrcRelationship(key.userId, RelationshipType.FollowedBy),
-      // Could have a better guess at count when k.maxAge != None
-      pageRequest = Some(PageRequest(count = key.maxResults))
+  ovewwide def get(key: usewwecentfowwowewsstowe.quewy): f-futuwe[option[seq[usewid]]] = {
+    vaw edgewequest = e-edgeswequest(
+      w-wewationship = swcwewationship(key.usewid, /(^•ω•^) wewationshiptype.fowwowedby), ʘwʘ
+      // couwd have a bettew guess a-at count when k.maxage != nyone
+      pagewequest = some(pagewequest(count = key.maxwesuwts))
     )
 
-    val lookbackThresholdMillis = key.maxAge
-      .map(maxAge => (Time.now - maxAge).inMilliseconds)
-      .getOrElse(0L)
+    v-vaw wookbackthweshowdmiwwis = key.maxage
+      .map(maxage => (time.now - m-maxage).inmiwwiseconds)
+      .getowewse(0w)
 
-    sgsClient
-      .edges(Seq(edgeRequest))
-      .map(_.flatMap {
-        case EdgesResult(edges, _, _) =>
-          edges.collect {
-            case e if e.createdAt >= lookbackThresholdMillis =>
-              e.target
+    s-sgscwient
+      .edges(seq(edgewequest))
+      .map(_.fwatmap {
+        c-case e-edgeswesuwt(edges, σωσ _, OwO _) =>
+          edges.cowwect {
+            case e if e.cweatedat >= w-wookbackthweshowdmiwwis =>
+              e.tawget
           }
       })
-      .map(Some(_))
+      .map(some(_))
   }
 }
 
-object UserRecentFollowersStore {
-  case class Query(
-    userId: UserId,
-    // maxResults - if Some(count), we return only the `count` most recent follows
-    maxResults: Option[Int] = None,
-    // maxAge - if Some(duration), return only follows since `Time.now - duration`
-    maxAge: Option[Duration] = None)
+object usewwecentfowwowewsstowe {
+  c-case cwass quewy(
+    usewid: usewid, 😳😳😳
+    // maxwesuwts - if some(count), 😳😳😳 we wetuwn onwy the `count` m-most wecent fowwows
+    m-maxwesuwts: option[int] = n-nyone, o.O
+    // m-maxage - if some(duwation), ( ͡o ω ͡o ) wetuwn onwy fowwows since `time.now - d-duwation`
+    m-maxage: option[duwation] = n-nyone)
 }

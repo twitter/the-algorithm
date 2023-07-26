@@ -1,29 +1,29 @@
-package com.twitter.search.earlybird.search.queries;
+package com.twittew.seawch.eawwybiwd.seawch.quewies;
 
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.TermQuery;
+impowt owg.apache.wucene.index.tewm;
+i-impowt o-owg.apache.wucene.seawch.tewmquewy;
 
 /**
- * Work around an issue where IntTerms and LongTerms are not valid utf8,
- * so calling toString on any TermQuery containing an IntTerm or a LongTerm may cause exceptions.
- * This code should produce the same output as TermQuery.toString
+ * w-wowk a-awound an issue w-whewe inttewms a-and wongtewms awe n-nyot vawid utf8, mya
+ * s-so cawwing tostwing on any tewmquewy containing an inttewm ow a wongtewm m-may cause exceptions. nyaa~~
+ * this code shouwd pwoduce t-the same output as tewmquewy.tostwing
  */
-public final class TermQueryWithSafeToString extends TermQuery {
-  private final String termValueForToString;
+p-pubwic finaw cwass tewmquewywithsafetostwing extends tewmquewy {
+  pwivate f-finaw stwing tewmvawuefowtostwing;
 
-  public TermQueryWithSafeToString(Term term, String termValueForToString) {
-    super(term);
-    this.termValueForToString = termValueForToString;
+  p-pubwic t-tewmquewywithsafetostwing(tewm tewm, (⑅˘꒳˘) stwing tewmvawuefowtostwing) {
+    supew(tewm);
+    this.tewmvawuefowtostwing = t-tewmvawuefowtostwing;
   }
 
-  @Override
-  public String toString(String field) {
-    StringBuilder buffer = new StringBuilder();
-    if (!getTerm().field().equals(field)) {
-      buffer.append(getTerm().field());
-      buffer.append(":");
+  @ovewwide
+  pubwic stwing tostwing(stwing fiewd) {
+    stwingbuiwdew buffew = n-nyew stwingbuiwdew();
+    if (!gettewm().fiewd().equaws(fiewd)) {
+      b-buffew.append(gettewm().fiewd());
+      b-buffew.append(":");
     }
-    buffer.append(termValueForToString);
-    return buffer.toString();
+    b-buffew.append(tewmvawuefowtostwing);
+    w-wetuwn buffew.tostwing();
   }
 }

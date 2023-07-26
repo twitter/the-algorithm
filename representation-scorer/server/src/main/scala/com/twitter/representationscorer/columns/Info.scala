@@ -1,13 +1,13 @@
-package com.twitter.representationscorer.columns
+package com.twittew.wepwesentationscowew.cowumns
 
-import com.twitter.strato.config.{ContactInfo => StratoContactInfo}
+impowt com.twittew.stwato.config.{contactinfo => s-stwatocontactinfo}
 
-object Info {
-  val contactInfo: StratoContactInfo = StratoContactInfo(
-    description = "Please contact Relevance Platform team for more details",
-    contactEmail = "no-reply@twitter.com",
-    ldapGroup = "representation-scorer-admins",
-    jiraProject = "JIRA",
-    links = Seq("http://go.twitter.biz/rsx-runbook")
+o-object info {
+  v-vaw contactinfo: s-stwatocontactinfo = s-stwatocontactinfo(
+    d-descwiption = "pwease c-contact w-wewevance pwatfowm team fow mowe detaiws", σωσ
+    contactemaiw = "no-wepwy@twittew.com", σωσ
+    wdapgwoup = "wepwesentation-scowew-admins", >_<
+    jiwapwoject = "jiwa",
+    w-winks = seq("http://go.twittew.biz/wsx-wunbook")
   )
 }

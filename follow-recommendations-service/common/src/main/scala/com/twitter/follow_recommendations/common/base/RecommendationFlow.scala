@@ -1,250 +1,250 @@
-package com.twitter.follow_recommendations.common.base
+package com.twittew.fowwow_wecommendations.common.base
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.RecommendationPipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.recommendation.RecommendationPipelineResult
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.stitch.Stitch
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.wecommendationpipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.wecommendation.wecommendationpipewinewesuwt
+i-impowt c-com.twittew.pwoduct_mixew.cowe.quawity_factow.quawityfactowobsewvew
+i-impowt com.twittew.stitch.stitch
 
 /**
- * configs for results generated from the recommendation flow
+ * c-configs fow wesuwts genewated fwom the wecommendation fwow
  *
- * @param desiredCandidateCount num of desired candidates to return
- * @param batchForCandidatesCheck batch size for candidates check
+ * @pawam desiwedcandidatecount num o-of desiwed candidates to wetuwn
+ * @pawam batchfowcandidatescheck b-batch size fow candidates check
  */
-case class RecommendationResultsConfig(desiredCandidateCount: Int, batchForCandidatesCheck: Int)
+c-case cwass wecommendationwesuwtsconfig(desiwedcandidatecount: int, (ˆ ﻌ ˆ)♡ batchfowcandidatescheck: int)
 
-trait BaseRecommendationFlow[Target, Candidate <: UniversalNoun[Long]] {
-  val identifier = RecommendationPipelineIdentifier("RecommendationFlow")
+twait b-basewecommendationfwow[tawget, ʘwʘ candidate <: univewsawnoun[wong]] {
+  v-vaw identifiew = w-wecommendationpipewineidentifiew("wecommendationfwow")
 
-  def process(
-    pipelineRequest: Target
-  ): Stitch[RecommendationPipelineResult[Candidate, Seq[Candidate]]]
+  def pwocess(
+    pipewinewequest: tawget
+  ): stitch[wecommendationpipewinewesuwt[candidate, :3 seq[candidate]]]
 
-  def mapKey[Target2](fn: Target2 => Target): BaseRecommendationFlow[Target2, Candidate] = {
-    val original = this
-    new BaseRecommendationFlow[Target2, Candidate] {
-      override def process(
-        pipelineRequest: Target2
-      ): Stitch[RecommendationPipelineResult[Candidate, Seq[Candidate]]] =
-        original.process(fn(pipelineRequest))
+  d-def mapkey[tawget2](fn: tawget2 => tawget): basewecommendationfwow[tawget2, (˘ω˘) candidate] = {
+    vaw owiginaw = t-this
+    nyew basewecommendationfwow[tawget2, 😳😳😳 candidate] {
+      o-ovewwide def pwocess(
+        pipewinewequest: t-tawget2
+      ): s-stitch[wecommendationpipewinewesuwt[candidate, rawr x3 s-seq[candidate]]] =
+        owiginaw.pwocess(fn(pipewinewequest))
     }
   }
 }
 
 /**
- * Defines a typical recommendation flow to fetch, filter, rank and transform candidates.
+ * defines a typicaw w-wecommendation fwow to fetch, (✿oωo) fiwtew, (ˆ ﻌ ˆ)♡ wank a-and twansfowm candidates. :3
  *
- * 1. targetEligibility: determine the eligibility of target request
- * 2. candidateSources: fetch candidates from candidate sources based on target type
- * 3. preRankerCandidateFilter: light filtering of candidates
- * 4. ranker: ranking of candidates (could be composed of multiple stages, light ranking, heavy ranking and etc)
- * 5. postRankerTransform: deduping, grouping, rule based promotion / demotions and etc
- * 6. validateCandidates: heavy filters to determine the eligibility of the candidates.
- *    will only be applied to candidates that we expect to return.
- * 7. transformResults: transform the individual candidates into desired format (e.g. hydrate social proof)
+ * 1. (U ᵕ U❁) tawgetewigibiwity: detewmine the ewigibiwity of tawget wequest
+ * 2. ^^;; c-candidatesouwces: fetch c-candidates fwom c-candidate souwces b-based on tawget type
+ * 3. mya pwewankewcandidatefiwtew: wight fiwtewing of candidates
+ * 4. 😳😳😳 w-wankew: w-wanking of candidates (couwd b-be composed of m-muwtipwe stages, OwO wight wanking, rawr h-heavy wanking and etc)
+ * 5. XD postwankewtwansfowm: d-deduping, (U ﹏ U) gwouping, (˘ω˘) wuwe based pwomotion / demotions a-and etc
+ * 6. UwU vawidatecandidates: h-heavy fiwtews to detewmine t-the ewigibiwity o-of the candidates.
+ *    wiww onwy be appwied to candidates that we expect to wetuwn. >_<
+ * 7. twansfowmwesuwts: t-twansfowm the i-individuaw candidates into desiwed f-fowmat (e.g. σωσ h-hydwate sociaw p-pwoof)
  *
- * Note that the actual implementations may not need to implement all the steps if not needed
- * (could just leave to IdentityRanker if ranking is not needed).
+ * nyote that the actuaw impwementations may nyot nyeed t-to impwement aww the steps if nyot nyeeded
+ * (couwd just weave to identitywankew i-if wanking is nyot nyeeded). 🥺
  *
- * Theoretically, the actual implementation could override the above flow to add
- * more steps (e.g. add a transform step before ranking).
- * But it is recommended to add the additional steps into this base flow if the step proves
- * to have significant justification, or merge it into an existing step if it is a minor change.
+ * t-theoweticawwy, 🥺 t-the actuaw i-impwementation couwd ovewwide the a-above fwow to a-add
+ * mowe steps (e.g. ʘwʘ a-add a twansfowm s-step befowe wanking). :3
+ * but it is wecommended t-to add the a-additionaw steps i-into this base f-fwow if the step p-pwoves
+ * to have significant justification, (U ﹏ U) ow mewge it into a-an existing step if it is a minow change. (U ﹏ U)
  *
- * @tparam Target type of target request
- * @tparam Candidate type of candidate to return
+ * @tpawam tawget type of tawget wequest
+ * @tpawam c-candidate type of candidate to wetuwn
  */
-trait RecommendationFlow[Target, Candidate <: UniversalNoun[Long]]
-    extends BaseRecommendationFlow[Target, Candidate]
-    with SideEffectsUtil[Target, Candidate] {
+twait wecommendationfwow[tawget, c-candidate <: u-univewsawnoun[wong]]
+    e-extends basewecommendationfwow[tawget, ʘwʘ candidate]
+    w-with sideeffectsutiw[tawget, >w< candidate] {
 
   /**
-   * optionally update or enrich the request before executing the flows
+   * o-optionawwy update o-ow enwich the wequest befowe executing the fwows
    */
-  protected def updateTarget(target: Target): Stitch[Target] = Stitch.value(target)
+  pwotected def updatetawget(tawget: tawget): s-stitch[tawget] = stitch.vawue(tawget)
 
   /**
-   *  check if the target is eligible for the flow
+   *  c-check if the tawget is e-ewigibwe fow the f-fwow
    */
-  protected def targetEligibility: Predicate[Target]
+  pwotected def tawgetewigibiwity: pwedicate[tawget]
 
   /**
-   *  define the candidate sources that should be used for the given target
+   *  define t-the candidate s-souwces that shouwd be used f-fow the given tawget
    */
-  protected def candidateSources(target: Target): Seq[CandidateSource[Target, Candidate]]
+  p-pwotected def candidatesouwces(tawget: tawget): seq[candidatesouwce[tawget, rawr x3 candidate]]
 
   /**
-   *  filter invalid candidates before the ranking phase.
+   *  fiwtew invawid c-candidates befowe t-the wanking phase. OwO
    */
-  protected def preRankerCandidateFilter: Predicate[(Target, Candidate)]
+  p-pwotected def pwewankewcandidatefiwtew: p-pwedicate[(tawget, ^•ﻌ•^ c-candidate)]
 
   /**
-   * rank the candidates
+   * wank the candidates
    */
-  protected def selectRanker(target: Target): Ranker[Target, Candidate]
+  p-pwotected def sewectwankew(tawget: tawget): wankew[tawget, >_< candidate]
 
   /**
-   * transform the candidates after ranking (e.g. dedupping, grouping and etc)
+   * twansfowm the candidates a-aftew wanking (e.g. OwO d-dedupping, >_< gwouping and etc)
    */
-  protected def postRankerTransform: Transform[Target, Candidate]
+  p-pwotected def postwankewtwansfowm: t-twansfowm[tawget, (ꈍᴗꈍ) candidate]
 
   /**
-   *  filter invalid candidates before returning the results.
+   *  fiwtew invawid candidates b-befowe wetuwning the wesuwts. >w<
    *
-   *  Some heavy filters e.g. SGS filter could be applied in this step
+   *  some heavy fiwtews e.g. (U ﹏ U) sgs fiwtew couwd be appwied i-in this step
    */
-  protected def validateCandidates: Predicate[(Target, Candidate)]
+  pwotected def vawidatecandidates: p-pwedicate[(tawget, ^^ candidate)]
 
   /**
-   * transform the candidates into results and return
+   * t-twansfowm the candidates into wesuwts and wetuwn
    */
-  protected def transformResults: Transform[Target, Candidate]
+  p-pwotected def twansfowmwesuwts: t-twansfowm[tawget, candidate]
 
   /**
-   *  configuration for recommendation results
+   *  configuwation fow wecommendation w-wesuwts
    */
-  protected def resultsConfig(target: Target): RecommendationResultsConfig
+  pwotected d-def wesuwtsconfig(tawget: tawget): wecommendationwesuwtsconfig
 
   /**
-   * track the quality factor the recommendation pipeline
+   * twack the quawity factow the wecommendation p-pipewine
    */
-  protected def qualityFactorObserver: Option[QualityFactorObserver] = None
+  pwotected d-def quawityfactowobsewvew: o-option[quawityfactowobsewvew] = nyone
 
-  def statsReceiver: StatsReceiver
+  def statsweceivew: s-statsweceivew
 
   /**
-   * high level monitoring for the whole flow
-   * (make sure to add monitoring for each individual component by yourself)
+   * high wevew m-monitowing fow t-the whowe fwow
+   * (make s-suwe to add monitowing f-fow each individuaw c-component by youwsewf)
    *
-   * additional candidates: count, stats, non_empty_count
-   * target eligibility: latency, success, failures, request, count, valid_count, invalid_count, invalid_reasons
-   * candidate generation: latency, success, failures, request, count, non_empty_count, results_stat
-   * pre ranker filter: latency, success, failures, request, count, non_empty_count, results_stat
-   * ranker: latency, success, failures, request, count, non_empty_count, results_stat
-   * post ranker: latency, success, failures, request, count, non_empty_count, results_stat
-   * filter and take: latency, success, failures, request, count, non_empty_count, results_stat, batch count
-   * transform results: latency, success, failures, request, count, non_empty_count, results_stat
+   * additionaw c-candidates: count, (U ﹏ U) s-stats, :3 nyon_empty_count
+   * t-tawget ewigibiwity: watency, (✿oωo) success, XD faiwuwes, w-wequest, >w< count, vawid_count, òωó i-invawid_count, (ꈍᴗꈍ) invawid_weasons
+   * c-candidate genewation: watency, rawr x3 success, faiwuwes, rawr x3 wequest, count, σωσ n-nyon_empty_count, (ꈍᴗꈍ) w-wesuwts_stat
+   * p-pwe wankew f-fiwtew: watency, rawr success, ^^;; faiwuwes, rawr x3 w-wequest, count, (ˆ ﻌ ˆ)♡ nyon_empty_count, σωσ wesuwts_stat
+   * wankew: watency, (U ﹏ U) success, >w< faiwuwes, w-wequest, σωσ count, nyon_empty_count, nyaa~~ w-wesuwts_stat
+   * post wankew: w-watency, 🥺 success, rawr x3 faiwuwes, wequest, σωσ c-count, nyon_empty_count, (///ˬ///✿) wesuwts_stat
+   * f-fiwtew and take: w-watency, (U ﹏ U) success, f-faiwuwes, ^^;; wequest, c-count, 🥺 nyon_empty_count, òωó w-wesuwts_stat, XD batch count
+   * twansfowm wesuwts: watency, :3 success, (U ﹏ U) faiwuwes, wequest, >w< count, nyon_empty_count, /(^•ω•^) wesuwts_stat
    */
-  import RecommendationFlow._
-  lazy val additionalCandidatesStats = statsReceiver.scope(AdditionalCandidatesStats)
-  lazy val targetEligibilityStats = statsReceiver.scope(TargetEligibilityStats)
-  lazy val candidateGenerationStats = statsReceiver.scope(CandidateGenerationStats)
-  lazy val preRankerFilterStats = statsReceiver.scope(PreRankerFilterStats)
-  lazy val rankerStats = statsReceiver.scope(RankerStats)
-  lazy val postRankerTransformStats = statsReceiver.scope(PostRankerTransformStats)
-  lazy val filterAndTakeStats = statsReceiver.scope(FilterAndTakeStats)
-  lazy val transformResultsStats = statsReceiver.scope(TransformResultsStats)
+  i-impowt wecommendationfwow._
+  w-wazy vaw additionawcandidatesstats = s-statsweceivew.scope(additionawcandidatesstats)
+  wazy vaw t-tawgetewigibiwitystats = statsweceivew.scope(tawgetewigibiwitystats)
+  wazy vaw candidategenewationstats = s-statsweceivew.scope(candidategenewationstats)
+  w-wazy vaw pwewankewfiwtewstats = s-statsweceivew.scope(pwewankewfiwtewstats)
+  wazy vaw wankewstats = s-statsweceivew.scope(wankewstats)
+  w-wazy vaw postwankewtwansfowmstats = statsweceivew.scope(postwankewtwansfowmstats)
+  w-wazy vaw f-fiwtewandtakestats = statsweceivew.scope(fiwtewandtakestats)
+  wazy vaw twansfowmwesuwtsstats = statsweceivew.scope(twansfowmwesuwtsstats)
 
-  lazy val overallStats = statsReceiver.scope(OverallStats)
+  wazy vaw ovewawwstats = s-statsweceivew.scope(ovewawwstats)
 
-  import StatsUtil._
+  i-impowt s-statsutiw._
 
-  override def process(
-    pipelineRequest: Target
-  ): Stitch[RecommendationPipelineResult[Candidate, Seq[Candidate]]] = {
+  o-ovewwide def pwocess(
+    p-pipewinewequest: tawget
+  ): s-stitch[wecommendationpipewinewesuwt[candidate, (⑅˘꒳˘) s-seq[candidate]]] = {
 
-    observeStitchQualityFactor(
-      profileStitchSeqResults(
-        updateTarget(pipelineRequest).flatMap { target =>
-          profilePredicateResult(targetEligibility(target), targetEligibilityStats).flatMap {
-            case PredicateResult.Valid => processValidTarget(target, Seq.empty)
-            case PredicateResult.Invalid(_) => Stitch.Nil
+    obsewvestitchquawityfactow(
+      p-pwofiwestitchseqwesuwts(
+        u-updatetawget(pipewinewequest).fwatmap { tawget =>
+          p-pwofiwepwedicatewesuwt(tawgetewigibiwity(tawget), ʘwʘ tawgetewigibiwitystats).fwatmap {
+            case pwedicatewesuwt.vawid => pwocessvawidtawget(tawget, s-seq.empty)
+            case pwedicatewesuwt.invawid(_) => s-stitch.niw
           }
         },
-        overallStats
+        o-ovewawwstats
       ).map { candidates =>
-        RecommendationPipelineResult.empty.withResult(candidates)
-      },
-      qualityFactorObserver,
-      overallStats
+        wecommendationpipewinewesuwt.empty.withwesuwt(candidates)
+      }, rawr x3
+      q-quawityfactowobsewvew, (˘ω˘)
+      ovewawwstats
     )
   }
 
-  protected def processValidTarget(
-    target: Target,
-    additionalCandidates: Seq[Candidate]
-  ): Stitch[Seq[Candidate]] = {
+  pwotected def pwocessvawidtawget(
+    t-tawget: tawget, o.O
+    a-additionawcandidates: seq[candidate]
+  ): s-stitch[seq[candidate]] = {
 
     /**
-     * A basic recommendation flow looks like this:
+     * a basic wecommendation fwow wooks w-wike this:
      *
-     * 1. fetch candidates from candidate sources
-     * 2. blend candidates with existing candidates
-     * 3. filter the candidates (light filters) before ranking
-     * 4. ranking
-     * 5. filter and truncate the candidates using postRankerCandidateFilter
-     * 6. transform the candidates based on product requirement
+     * 1. 😳 fetch candidates fwom c-candidate souwces
+     * 2. o.O b-bwend candidates with e-existing candidates
+     * 3. ^^;; fiwtew the candidates (wight fiwtews) b-befowe wanking
+     * 4. ( ͡o ω ͡o ) w-wanking
+     * 5. ^^;; fiwtew and twuncate the candidates u-using postwankewcandidatefiwtew
+     * 6. ^^;; twansfowm the candidates based on p-pwoduct wequiwement
      */
-    val candidateSourcesToFetch = candidateSources(target)
-    for {
-      candidates <- profileStitchSeqResults(
-        Stitch.traverse(candidateSourcesToFetch)(_(target)).map(_.flatten),
-        candidateGenerationStats
+    v-vaw candidatesouwcestofetch = candidatesouwces(tawget)
+    f-fow {
+      candidates <- p-pwofiwestitchseqwesuwts(
+        s-stitch.twavewse(candidatesouwcestofetch)(_(tawget)).map(_.fwatten), XD
+        c-candidategenewationstats
       )
-      mergedCandidates =
-        profileSeqResults(additionalCandidates, additionalCandidatesStats) ++
+      mewgedcandidates =
+        pwofiweseqwesuwts(additionawcandidates, 🥺 additionawcandidatesstats) ++
           candidates
-      filteredCandidates <- profileStitchSeqResults(
-        Predicate.filter(target, mergedCandidates, preRankerCandidateFilter),
-        preRankerFilterStats
+      fiwtewedcandidates <- pwofiwestitchseqwesuwts(
+        pwedicate.fiwtew(tawget, (///ˬ///✿) mewgedcandidates, (U ᵕ U❁) pwewankewcandidatefiwtew), ^^;;
+        pwewankewfiwtewstats
       )
-      rankedCandidates <- profileStitchSeqResults(
-        selectRanker(target).rank(target, filteredCandidates),
-        rankerStats
+      wankedcandidates <- pwofiwestitchseqwesuwts(
+        sewectwankew(tawget).wank(tawget, ^^;; f-fiwtewedcandidates), rawr
+        w-wankewstats
       )
-      transformed <- profileStitchSeqResults(
-        postRankerTransform.transform(target, rankedCandidates),
-        postRankerTransformStats
+      twansfowmed <- pwofiwestitchseqwesuwts(
+        p-postwankewtwansfowm.twansfowm(tawget, (˘ω˘) w-wankedcandidates), 🥺
+        p-postwankewtwansfowmstats
       )
-      truncated <- profileStitchSeqResults(
-        take(target, transformed, resultsConfig(target)),
-        filterAndTakeStats
+      twuncated <- p-pwofiwestitchseqwesuwts(
+        take(tawget, nyaa~~ t-twansfowmed, :3 wesuwtsconfig(tawget)), /(^•ω•^)
+        f-fiwtewandtakestats
       )
-      results <- profileStitchSeqResults(
-        transformResults.transform(target, truncated),
-        transformResultsStats
+      wesuwts <- p-pwofiwestitchseqwesuwts(
+        twansfowmwesuwts.twansfowm(tawget, ^•ﻌ•^ t-twuncated), UwU
+        t-twansfowmwesuwtsstats
       )
-      _ <- applySideEffects(
-        target,
-        candidateSourcesToFetch,
-        candidates,
-        mergedCandidates,
-        filteredCandidates,
-        rankedCandidates,
-        transformed,
-        truncated,
-        results)
-    } yield results
+      _ <- appwysideeffects(
+        tawget,
+        c-candidatesouwcestofetch, 😳😳😳
+        c-candidates, OwO
+        m-mewgedcandidates, ^•ﻌ•^
+        f-fiwtewedcandidates, (ꈍᴗꈍ)
+        wankedcandidates, (⑅˘꒳˘)
+        t-twansfowmed, (⑅˘꒳˘)
+        t-twuncated, (ˆ ﻌ ˆ)♡
+        w-wesuwts)
+    } y-yiewd wesuwts
   }
 
-  private[this] def take(
-    target: Target,
-    candidates: Seq[Candidate],
-    config: RecommendationResultsConfig
-  ): Stitch[Seq[Candidate]] = {
-    Predicate
-      .batchFilterTake(
-        candidates.map(c => (target, c)),
-        validateCandidates,
-        config.batchForCandidatesCheck,
-        config.desiredCandidateCount,
-        statsReceiver
+  p-pwivate[this] def take(
+    t-tawget: tawget, /(^•ω•^)
+    c-candidates: s-seq[candidate], òωó
+    config: wecommendationwesuwtsconfig
+  ): s-stitch[seq[candidate]] = {
+    pwedicate
+      .batchfiwtewtake(
+        candidates.map(c => (tawget, (⑅˘꒳˘) c-c)),
+        vawidatecandidates, (U ᵕ U❁)
+        c-config.batchfowcandidatescheck, >w<
+        c-config.desiwedcandidatecount, σωσ
+        s-statsweceivew
       ).map(_.map(_._2))
   }
 }
 
-object RecommendationFlow {
+object w-wecommendationfwow {
 
-  val AdditionalCandidatesStats = "additional_candidates"
-  val TargetEligibilityStats = "target_eligibility"
-  val CandidateGenerationStats = "candidate_generation"
-  val PreRankerFilterStats = "pre_ranker_filter"
-  val RankerStats = "ranker"
-  val PostRankerTransformStats = "post_ranker_transform"
-  val FilterAndTakeStats = "filter_and_take"
-  val TransformResultsStats = "transform_results"
-  val OverallStats = "overall"
+  vaw additionawcandidatesstats = "additionaw_candidates"
+  v-vaw tawgetewigibiwitystats = "tawget_ewigibiwity"
+  vaw candidategenewationstats = "candidate_genewation"
+  v-vaw pwewankewfiwtewstats = "pwe_wankew_fiwtew"
+  vaw w-wankewstats = "wankew"
+  vaw postwankewtwansfowmstats = "post_wankew_twansfowm"
+  vaw fiwtewandtakestats = "fiwtew_and_take"
+  vaw twansfowmwesuwtsstats = "twansfowm_wesuwts"
+  v-vaw ovewawwstats = "ovewaww"
 }

@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.component_library.model.presentation.urt
+package com.twittew.pwoduct_mixew.component_wibwawy.modew.pwesentation.uwt
 
-import com.twitter.product_mixer.core.model.common.presentation.urt.BaseUrtModulePresentation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.uwt.baseuwtmoduwepwesentation
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewinemoduwe
 
-final case class UrtModulePresentation(
-  override val timelineModule: TimelineModule)
-    extends BaseUrtModulePresentation
+f-finaw c-case cwass uwtmoduwepwesentation(
+  o-ovewwide v-vaw timewinemoduwe: t-timewinemoduwe)
+    extends baseuwtmoduwepwesentation

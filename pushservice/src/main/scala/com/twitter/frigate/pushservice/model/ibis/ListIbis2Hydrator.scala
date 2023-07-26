@@ -1,21 +1,21 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.twittew.fwigate.pushsewvice.modew.ibis
 
-import com.twitter.frigate.pushservice.model.ListRecommendationPushCandidate
-import com.twitter.util.Future
+impowt com.twittew.fwigate.pushsewvice.modew.wistwecommendationpushcandidate
+i-impowt com.twittew.utiw.futuwe
 
-trait ListIbis2Hydrator extends Ibis2HydratorForCandidate {
-  self: ListRecommendationPushCandidate =>
+t-twait wistibis2hydwatow e-extends i-ibis2hydwatowfowcandidate {
+  s-sewf: w-wistwecommendationpushcandidate =>
 
-  override lazy val senderId: Option[Long] = Some(0L)
+  o-ovewwide w-wazy vaw sendewid: option[wong] = some(0w)
 
-  override lazy val modelValues: Future[Map[String, String]] =
-    Future.join(listName, listOwnerId).map {
-      case (nameOpt, authorId) =>
-        Map(
-          "list" -> listId.toString,
-          "list_name" -> nameOpt
-            .getOrElse(""),
-          "list_author" -> s"${authorId.getOrElse(0L)}"
+  ovewwide wazy vaw modewvawues: f-futuwe[map[stwing, -.- stwing]] =
+    futuwe.join(wistname, ^^;; w-wistownewid).map {
+      case (nameopt, >_< a-authowid) =>
+        map(
+          "wist" -> wistid.tostwing, mya
+          "wist_name" -> nyameopt
+            .getowewse(""), mya
+          "wist_authow" -> s-s"${authowid.getowewse(0w)}"
         )
     }
 }

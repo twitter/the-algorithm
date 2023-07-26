@@ -1,30 +1,30 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xmw vewsion="1.0" encoding="utf-8"?>
   
 
 <!--
-     This indexer reads UserModification from user_modification Kafka topic, converts the
-     data into AntisocialUserUpdate by querying Gizmoduck and then writes the data to the
-     the search_user_updates Kafka topic.
+     t-this indexew w-weads usewmodification f-fwom usew_modification kafka t-topic, :3 convewts t-the
+     data i-into antisociawusewupdate b-by q-quewying gizmoduck and then wwites the data to the
+     the seawch_usew_updates kafka topic. 😳😳😳
 -->
-<pipeline>
-  <property
-      propName="validator"
-      className="org.apache.commons.pipeline.validation.SimplePipelineValidator"/>
-  <listener className="org.apache.commons.pipeline.listener.ObjectProcessedEventCounter"/>
-  <driverFactory
-      className="org.apache.commons.pipeline.driver.DedicatedThreadStageDriverFactory"
-      id="pipeline">
+<pipewine>
+  <pwopewty
+      p-pwopname="vawidatow"
+      cwassname="owg.apache.commons.pipewine.vawidation.simpwepipewinevawidatow"/>
+  <wistenew cwassname="owg.apache.commons.pipewine.wistenew.objectpwocessedeventcountew"/>
+  <dwivewfactowy
+      c-cwassname="owg.apache.commons.pipewine.dwivew.dedicatedthweadstagedwivewfactowy"
+      id="pipewine">
 
-    <!-- This queue is a factor of batchSize larger than inner queues because it is unbatched -->
-    <property
-        propName="queueFactory"
-        className="org.apache.commons.pipeline.util.BlockingQueueFactory$ArrayBlockingQueueFactory"
-        capacity="500"
-        fair="false"/>
-  </driverFactory>
+    <!-- this queue i-is a factow of batchsize wawgew than innew queues because it i-is unbatched -->
+    <pwopewty
+        pwopname="queuefactowy"
+        c-cwassname="owg.apache.commons.pipewine.utiw.bwockingqueuefactowy$awwaybwockingqueuefactowy"
+        c-capacity="500"
+        faiw="fawse"/>
+  </dwivewfactowy>
 
   <stage
-    className="com.twitter.search.ingester.pipeline.twitter.userupdates.UserUpdatesPipelineStage"
-    environment="prod"
-    driverFactoryId="pipeline"/>
-</pipeline>
+    cwassname="com.twittew.seawch.ingestew.pipewine.twittew.usewupdates.usewupdatespipewinestage"
+    enviwonment="pwod"
+    dwivewfactowyid="pipewine"/>
+</pipewine>

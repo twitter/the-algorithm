@@ -1,13 +1,13 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+package com.twittew.seawch.eawwybiwd.awchive.segmentbuiwdew;
 
-import com.google.common.annotations.VisibleForTesting;
+impowt c-com.googwe.common.annotations.visibwefowtesting;
 
 /**
- * Used when when SegmentUpdater fails processing segments.
+ * u-used w-when when segmentupdatew f-faiws p-pwocessing segments.
  */
-@VisibleForTesting
-class SegmentUpdaterException extends Exception {
-  SegmentUpdaterException(String msg) {
-    super(msg);
+@visibwefowtesting
+c-cwass s-segmentupdatewexception e-extends exception {
+  segmentupdatewexception(stwing msg) {
+    supew(msg);
   }
 }

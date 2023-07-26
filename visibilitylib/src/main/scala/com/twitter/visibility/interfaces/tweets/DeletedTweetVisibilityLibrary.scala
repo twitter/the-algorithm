@@ -1,59 +1,59 @@
-package com.twitter.visibility.interfaces.tweets
+package com.twittew.visibiwity.intewfaces.tweets
 
-import com.twitter.decider.Decider
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.features.TweetDeleteReason
-import com.twitter.visibility.features.TweetIsInnerQuotedTweet
-import com.twitter.visibility.features.TweetIsRetweet
-import com.twitter.visibility.generators.TombstoneGenerator
-import com.twitter.visibility.models.ContentId.DeleteTweetId
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.TweetDeleteReason.TweetDeleteReason
-import com.twitter.visibility.models.ViewerContext
+impowt com.twittew.decidew.decidew
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.visibiwity.visibiwitywibwawy
+i-impowt com.twittew.visibiwity.buiwdew.visibiwitywesuwt
+i-impowt c-com.twittew.visibiwity.featuwes.tweetdeweteweason
+i-impowt com.twittew.visibiwity.featuwes.tweetisinnewquotedtweet
+i-impowt com.twittew.visibiwity.featuwes.tweetiswetweet
+i-impowt com.twittew.visibiwity.genewatows.tombstonegenewatow
+impowt com.twittew.visibiwity.modews.contentid.dewetetweetid
+impowt com.twittew.visibiwity.modews.safetywevew
+impowt com.twittew.visibiwity.modews.tweetdeweteweason.tweetdeweteweason
+i-impowt com.twittew.visibiwity.modews.viewewcontext
 
-object DeletedTweetVisibilityLibrary {
-  type Type = DeletedTweetVisibilityLibrary.Request => Stitch[VisibilityResult]
+object dewetedtweetvisibiwitywibwawy {
+  t-type type = dewetedtweetvisibiwitywibwawy.wequest => stitch[visibiwitywesuwt]
 
-  case class Request(
-    tweetId: Long,
-    safetyLevel: SafetyLevel,
-    viewerContext: ViewerContext,
-    tweetDeleteReason: TweetDeleteReason,
-    isRetweet: Boolean,
-    isInnerQuotedTweet: Boolean,
+  c-case cwass wequest(
+    tweetid: wong, >_<
+    safetywevew: s-safetywevew, (⑅˘꒳˘)
+    viewewcontext: v-viewewcontext, /(^•ω•^)
+    t-tweetdeweteweason: tweetdeweteweason, rawr x3
+    iswetweet: boowean,
+    isinnewquotedtweet: boowean, (U ﹏ U)
   )
 
-  def apply(
-    visibilityLibrary: VisibilityLibrary,
-    decider: Decider,
-    tombstoneGenerator: TombstoneGenerator,
-  ): Type = {
-    val vfEngineCounter = visibilityLibrary.statsReceiver.counter("vf_engine_requests")
+  d-def appwy(
+    visibiwitywibwawy: visibiwitywibwawy, (U ﹏ U)
+    decidew: decidew, (⑅˘꒳˘)
+    tombstonegenewatow: tombstonegenewatow, òωó
+  ): t-type = {
+    vaw vfenginecountew = v-visibiwitywibwawy.statsweceivew.countew("vf_engine_wequests")
 
-    (request: Request) => {
-      vfEngineCounter.incr()
-      val contentId = DeleteTweetId(request.tweetId)
-      val language = request.viewerContext.requestLanguageCode.getOrElse("en")
+    (wequest: w-wequest) => {
+      v-vfenginecountew.incw()
+      v-vaw contentid = dewetetweetid(wequest.tweetid)
+      vaw w-wanguage = wequest.viewewcontext.wequestwanguagecode.getowewse("en")
 
-      val featureMap =
-        visibilityLibrary.featureMapBuilder(
-          Seq(
-            _.withConstantFeature(TweetIsInnerQuotedTweet, request.isInnerQuotedTweet),
-            _.withConstantFeature(TweetIsRetweet, request.isRetweet),
-            _.withConstantFeature(TweetDeleteReason, request.tweetDeleteReason)
+      vaw featuwemap =
+        v-visibiwitywibwawy.featuwemapbuiwdew(
+          seq(
+            _.withconstantfeatuwe(tweetisinnewquotedtweet, ʘwʘ wequest.isinnewquotedtweet), /(^•ω•^)
+            _.withconstantfeatuwe(tweetiswetweet, ʘwʘ wequest.iswetweet), σωσ
+            _.withconstantfeatuwe(tweetdeweteweason, OwO wequest.tweetdeweteweason)
           )
         )
 
-      visibilityLibrary
-        .runRuleEngine(
-          contentId,
-          featureMap,
-          request.viewerContext,
-          request.safetyLevel
+      visibiwitywibwawy
+        .wunwuweengine(
+          c-contentid, 😳😳😳
+          featuwemap, 😳😳😳
+          wequest.viewewcontext, o.O
+          w-wequest.safetywevew
         )
-        .map(tombstoneGenerator(_, language))
+        .map(tombstonegenewatow(_, ( ͡o ω ͡o ) w-wanguage))
     }
   }
 }

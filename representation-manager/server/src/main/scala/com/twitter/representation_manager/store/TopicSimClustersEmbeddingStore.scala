@@ -1,197 +1,197 @@
-package com.twitter.representation_manager.store
+package com.twittew.wepwesentation_managew.stowe
 
-import com.twitter.contentrecommender.store.ApeEntityEmbeddingStore
-import com.twitter.contentrecommender.store.InterestsOptOutStore
-import com.twitter.contentrecommender.store.SemanticCoreTopicSeedStore
-import com.twitter.conversions.DurationOps._
-import com.twitter.escherbird.util.uttclient.CachedUttClientV2
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.frigate.common.util.SeqLongInjection
-import com.twitter.hermit.store.common.ObservedCachedReadableStore
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.interests.thriftscala.InterestsThriftService
-import com.twitter.representation_manager.common.MemCacheConfig
-import com.twitter.representation_manager.common.RepresentationManagerDecider
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.stores.SimClustersEmbeddingStore
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType._
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.ModelVersion._
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.simclusters_v2.thriftscala.LocaleEntityId
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.tweetypie.util.UserId
-import javax.inject.Inject
+impowt com.twittew.contentwecommendew.stowe.apeentityembeddingstowe
+i-impowt com.twittew.contentwecommendew.stowe.intewestsoptoutstowe
+i-impowt com.twittew.contentwecommendew.stowe.semanticcowetopicseedstowe
+i-impowt c-com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.eschewbiwd.utiw.uttcwient.cacheduttcwientv2
+i-impowt c-com.twittew.finagwe.memcached.cwient
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.fwigate.common.stowe.stwato.stwatofetchabwestowe
+impowt com.twittew.fwigate.common.utiw.seqwonginjection
+impowt com.twittew.hewmit.stowe.common.obsewvedcachedweadabwestowe
+i-impowt com.twittew.hewmit.stowe.common.obsewvedmemcachedweadabwestowe
+impowt com.twittew.hewmit.stowe.common.obsewvedweadabwestowe
+i-impowt com.twittew.intewests.thwiftscawa.inteweststhwiftsewvice
+impowt com.twittew.wepwesentation_managew.common.memcacheconfig
+i-impowt com.twittew.wepwesentation_managew.common.wepwesentationmanagewdecidew
+impowt com.twittew.simcwustews_v2.common.simcwustewsembedding
+impowt com.twittew.simcwustews_v2.stowes.simcwustewsembeddingstowe
+impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype._
+impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.modewvewsion._
+impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembeddingid
+impowt com.twittew.simcwustews_v2.thwiftscawa.topicid
+impowt com.twittew.simcwustews_v2.thwiftscawa.wocaweentityid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.{simcwustewsembedding => thwiftsimcwustewsembedding}
+impowt com.twittew.stowage.cwient.manhattan.kv.manhattankvcwientmtwspawams
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.stwato.cwient.{cwient => s-stwatocwient}
+impowt c-com.twittew.tweetypie.utiw.usewid
+i-impowt javax.inject.inject
 
-class TopicSimClustersEmbeddingStore @Inject() (
-  stratoClient: StratoClient,
-  cacheClient: Client,
-  globalStats: StatsReceiver,
-  mhMtlsParams: ManhattanKVClientMtlsParams,
-  rmsDecider: RepresentationManagerDecider,
-  interestService: InterestsThriftService.MethodPerEndpoint,
-  uttClient: CachedUttClientV2) {
+c-cwass topicsimcwustewsembeddingstowe @inject() (
+  s-stwatocwient: stwatocwient, >_<
+  cachecwient: cwient, ʘwʘ
+  g-gwobawstats: statsweceivew, (˘ω˘)
+  mhmtwspawams: m-manhattankvcwientmtwspawams, (✿oωo)
+  wmsdecidew: wepwesentationmanagewdecidew, (///ˬ///✿)
+  intewestsewvice: inteweststhwiftsewvice.methodpewendpoint, rawr x3
+  uttcwient: cacheduttcwientv2) {
 
-  private val stats = globalStats.scope(this.getClass.getSimpleName)
-  private val interestsOptOutStore = InterestsOptOutStore(interestService)
+  pwivate vaw stats = g-gwobawstats.scope(this.getcwass.getsimpwename)
+  pwivate vaw i-intewestsoptoutstowe = i-intewestsoptoutstowe(intewestsewvice)
 
   /**
-   * Note this is NOT an embedding store. It is a list of author account ids we use to represent
+   * n-nyote this is nyot an embedding stowe. -.- it is a wist of a-authow account ids w-we use to wepwesent
    * topics
    */
-  private val semanticCoreTopicSeedStore: ReadableStore[
-    SemanticCoreTopicSeedStore.Key,
-    Seq[UserId]
+  p-pwivate v-vaw semanticcowetopicseedstowe: weadabwestowe[
+    s-semanticcowetopicseedstowe.key, ^^
+    seq[usewid]
   ] = {
     /*
-      Up to 1000 Long seeds per topic/language = 62.5kb per topic/language (worst case)
-      Assume ~10k active topic/languages ~= 650MB (worst case)
+      u-up to 1000 wong seeds pew topic/wanguage = 62.5kb p-pew topic/wanguage (wowst c-case)
+      assume ~10k active t-topic/wanguages ~= 650mb (wowst c-case)
      */
-    val underlying = new SemanticCoreTopicSeedStore(uttClient, interestsOptOutStore)(
-      stats.scope("semantic_core_topic_seed_store"))
+    vaw undewwying = nyew semanticcowetopicseedstowe(uttcwient, (⑅˘꒳˘) intewestsoptoutstowe)(
+      stats.scope("semantic_cowe_topic_seed_stowe"))
 
-    val memcacheStore = ObservedMemcachedReadableStore.fromCacheClient(
-      backingStore = underlying,
-      cacheClient = cacheClient,
-      ttl = 12.hours)(
-      valueInjection = SeqLongInjection,
-      statsReceiver = stats.scope("topic_producer_seed_store_mem_cache"),
-      keyToString = { k => s"tpss:${k.entityId}_${k.languageCode}" }
+    vaw memcachestowe = obsewvedmemcachedweadabwestowe.fwomcachecwient(
+      backingstowe = u-undewwying, nyaa~~
+      c-cachecwient = cachecwient, /(^•ω•^)
+      ttw = 12.houws)(
+      v-vawueinjection = s-seqwonginjection, (U ﹏ U)
+      s-statsweceivew = stats.scope("topic_pwoducew_seed_stowe_mem_cache"), 😳😳😳
+      keytostwing = { k => s-s"tpss:${k.entityid}_${k.wanguagecode}" }
     )
 
-    ObservedCachedReadableStore.from[SemanticCoreTopicSeedStore.Key, Seq[UserId]](
-      store = memcacheStore,
-      ttl = 6.hours,
-      maxKeys = 20e3.toInt,
-      cacheName = "topic_producer_seed_store_cache",
-      windowSize = 5000
-    )(stats.scope("topic_producer_seed_store_cache"))
+    obsewvedcachedweadabwestowe.fwom[semanticcowetopicseedstowe.key, >w< seq[usewid]](
+      stowe = memcachestowe, XD
+      t-ttw = 6.houws, o.O
+      maxkeys = 20e3.toint, mya
+      c-cachename = "topic_pwoducew_seed_stowe_cache", 🥺
+      w-windowsize = 5000
+    )(stats.scope("topic_pwoducew_seed_stowe_cache"))
   }
 
-  private val favBasedTfgTopicEmbedding20m145k2020Store: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  p-pwivate vaw favbasedtfgtopicembedding20m145k2020stowe: w-weadabwestowe[
+    s-simcwustewsembeddingid, ^^;;
+    s-simcwustewsembedding
   ] = {
-    val rawStore =
-      StratoFetchableStore
-        .withUnitView[SimClustersEmbeddingId, ThriftSimClustersEmbedding](
-          stratoClient,
-          "recommendations/simclusters_v2/embeddings/favBasedTFGTopic20M145K2020").mapValues(
-          embedding => SimClustersEmbedding(embedding, truncate = 50).toThrift)
-        .composeKeyMapping[LocaleEntityId] { localeEntityId =>
-          SimClustersEmbeddingId(
-            FavTfgTopic,
-            Model20m145k2020,
-            InternalId.LocaleEntityId(localeEntityId))
+    v-vaw wawstowe =
+      stwatofetchabwestowe
+        .withunitview[simcwustewsembeddingid, :3 thwiftsimcwustewsembedding](
+          s-stwatocwient, (U ﹏ U)
+          "wecommendations/simcwustews_v2/embeddings/favbasedtfgtopic20m145k2020").mapvawues(
+          e-embedding => s-simcwustewsembedding(embedding, OwO t-twuncate = 50).tothwift)
+        .composekeymapping[wocaweentityid] { w-wocaweentityid =>
+          simcwustewsembeddingid(
+            favtfgtopic, 😳😳😳
+            modew20m145k2020, (ˆ ﻌ ˆ)♡
+            i-intewnawid.wocaweentityid(wocaweentityid))
         }
 
-    buildLocaleEntityIdMemCacheStore(rawStore, FavTfgTopic, Model20m145k2020)
+    buiwdwocaweentityidmemcachestowe(wawstowe, XD favtfgtopic, (ˆ ﻌ ˆ)♡ modew20m145k2020)
   }
 
-  private val logFavBasedApeEntity20M145K2020EmbeddingStore: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pwivate vaw wogfavbasedapeentity20m145k2020embeddingstowe: w-weadabwestowe[
+    simcwustewsembeddingid, ( ͡o ω ͡o )
+    simcwustewsembedding
   ] = {
-    val apeStore = StratoFetchableStore
-      .withUnitView[SimClustersEmbeddingId, ThriftSimClustersEmbedding](
-        stratoClient,
-        "recommendations/simclusters_v2/embeddings/logFavBasedAPE20M145K2020")
-      .mapValues(embedding => SimClustersEmbedding(embedding, truncate = 50))
-      .composeKeyMapping[UserId]({ id =>
-        SimClustersEmbeddingId(
-          AggregatableLogFavBasedProducer,
-          Model20m145k2020,
-          InternalId.UserId(id))
+    vaw apestowe = s-stwatofetchabwestowe
+      .withunitview[simcwustewsembeddingid, rawr x3 t-thwiftsimcwustewsembedding](
+        s-stwatocwient, nyaa~~
+        "wecommendations/simcwustews_v2/embeddings/wogfavbasedape20m145k2020")
+      .mapvawues(embedding => simcwustewsembedding(embedding, t-twuncate = 50))
+      .composekeymapping[usewid]({ id =>
+        s-simcwustewsembeddingid(
+          a-aggwegatabwewogfavbasedpwoducew, >_<
+          modew20m145k2020, ^^;;
+          intewnawid.usewid(id))
       })
-    val rawStore = new ApeEntityEmbeddingStore(
-      semanticCoreSeedStore = semanticCoreTopicSeedStore,
-      aggregatableProducerEmbeddingStore = apeStore,
-      statsReceiver = stats.scope("log_fav_based_ape_entity_2020_embedding_store"))
-      .mapValues(embedding => SimClustersEmbedding(embedding.toThrift, truncate = 50).toThrift)
-      .composeKeyMapping[TopicId] { topicId =>
-        SimClustersEmbeddingId(
-          LogFavBasedKgoApeTopic,
-          Model20m145k2020,
-          InternalId.TopicId(topicId))
+    vaw wawstowe = nyew apeentityembeddingstowe(
+      semanticcoweseedstowe = s-semanticcowetopicseedstowe, (ˆ ﻌ ˆ)♡
+      aggwegatabwepwoducewembeddingstowe = a-apestowe, ^^;;
+      statsweceivew = s-stats.scope("wog_fav_based_ape_entity_2020_embedding_stowe"))
+      .mapvawues(embedding => s-simcwustewsembedding(embedding.tothwift, (⑅˘꒳˘) twuncate = 50).tothwift)
+      .composekeymapping[topicid] { topicid =>
+        s-simcwustewsembeddingid(
+          wogfavbasedkgoapetopic, rawr x3
+          m-modew20m145k2020, (///ˬ///✿)
+          intewnawid.topicid(topicid))
       }
 
-    buildTopicIdMemCacheStore(rawStore, LogFavBasedKgoApeTopic, Model20m145k2020)
+    b-buiwdtopicidmemcachestowe(wawstowe, 🥺 w-wogfavbasedkgoapetopic, >_< modew20m145k2020)
   }
 
-  private def buildTopicIdMemCacheStore(
-    rawStore: ReadableStore[TopicId, ThriftSimClustersEmbedding],
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion
-  ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
-    val observedStore: ObservedReadableStore[TopicId, ThriftSimClustersEmbedding] =
-      ObservedReadableStore(
-        store = rawStore
-      )(stats.scope(embeddingType.name).scope(modelVersion.name))
+  pwivate def buiwdtopicidmemcachestowe(
+    wawstowe: w-weadabwestowe[topicid, UwU t-thwiftsimcwustewsembedding], >_<
+    e-embeddingtype: embeddingtype, -.-
+    m-modewvewsion: m-modewvewsion
+  ): weadabwestowe[simcwustewsembeddingid, mya s-simcwustewsembedding] = {
+    vaw obsewvedstowe: obsewvedweadabwestowe[topicid, >w< thwiftsimcwustewsembedding] =
+      obsewvedweadabwestowe(
+        s-stowe = wawstowe
+      )(stats.scope(embeddingtype.name).scope(modewvewsion.name))
 
-    val storeWithKeyMapping = observedStore.composeKeyMapping[SimClustersEmbeddingId] {
-      case SimClustersEmbeddingId(_, _, InternalId.TopicId(topicId)) =>
-        topicId
+    v-vaw stowewithkeymapping = obsewvedstowe.composekeymapping[simcwustewsembeddingid] {
+      c-case simcwustewsembeddingid(_, (U ﹏ U) _, i-intewnawid.topicid(topicid)) =>
+        topicid
     }
 
-    MemCacheConfig.buildMemCacheStoreForSimClustersEmbedding(
-      storeWithKeyMapping,
-      cacheClient,
-      embeddingType,
-      modelVersion,
+    memcacheconfig.buiwdmemcachestowefowsimcwustewsembedding(
+      stowewithkeymapping, 😳😳😳
+      c-cachecwient, o.O
+      embeddingtype, òωó
+      modewvewsion, 😳😳😳
       stats
     )
   }
 
-  private def buildLocaleEntityIdMemCacheStore(
-    rawStore: ReadableStore[LocaleEntityId, ThriftSimClustersEmbedding],
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion
-  ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
-    val observedStore: ObservedReadableStore[LocaleEntityId, ThriftSimClustersEmbedding] =
-      ObservedReadableStore(
-        store = rawStore
-      )(stats.scope(embeddingType.name).scope(modelVersion.name))
+  pwivate d-def buiwdwocaweentityidmemcachestowe(
+    wawstowe: weadabwestowe[wocaweentityid, σωσ thwiftsimcwustewsembedding], (⑅˘꒳˘)
+    e-embeddingtype: e-embeddingtype,
+    modewvewsion: modewvewsion
+  ): weadabwestowe[simcwustewsembeddingid, (///ˬ///✿) s-simcwustewsembedding] = {
+    v-vaw obsewvedstowe: obsewvedweadabwestowe[wocaweentityid, 🥺 thwiftsimcwustewsembedding] =
+      o-obsewvedweadabwestowe(
+        stowe = w-wawstowe
+      )(stats.scope(embeddingtype.name).scope(modewvewsion.name))
 
-    val storeWithKeyMapping = observedStore.composeKeyMapping[SimClustersEmbeddingId] {
-      case SimClustersEmbeddingId(_, _, InternalId.LocaleEntityId(localeEntityId)) =>
-        localeEntityId
+    vaw stowewithkeymapping = obsewvedstowe.composekeymapping[simcwustewsembeddingid] {
+      case s-simcwustewsembeddingid(_, OwO _, >w< intewnawid.wocaweentityid(wocaweentityid)) =>
+        w-wocaweentityid
     }
 
-    MemCacheConfig.buildMemCacheStoreForSimClustersEmbedding(
-      storeWithKeyMapping,
-      cacheClient,
-      embeddingType,
-      modelVersion,
-      stats
+    m-memcacheconfig.buiwdmemcachestowefowsimcwustewsembedding(
+      stowewithkeymapping, 🥺
+      c-cachecwient,
+      embeddingtype, nyaa~~
+      m-modewvewsion, ^^
+      s-stats
     )
   }
 
-  private val underlyingStores: Map[
-    (EmbeddingType, ModelVersion),
-    ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-  ] = Map(
-    // Topic Embeddings
-    (FavTfgTopic, Model20m145k2020) -> favBasedTfgTopicEmbedding20m145k2020Store,
-    (LogFavBasedKgoApeTopic, Model20m145k2020) -> logFavBasedApeEntity20M145K2020EmbeddingStore,
+  p-pwivate vaw undewwyingstowes: m-map[
+    (embeddingtype, >w< modewvewsion),
+    w-weadabwestowe[simcwustewsembeddingid, OwO simcwustewsembedding]
+  ] = map(
+    // t-topic embeddings
+    (favtfgtopic, XD m-modew20m145k2020) -> f-favbasedtfgtopicembedding20m145k2020stowe, ^^;;
+    (wogfavbasedkgoapetopic, 🥺 modew20m145k2020) -> wogfavbasedapeentity20m145k2020embeddingstowe, XD
   )
 
-  val topicSimClustersEmbeddingStore: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  v-vaw topicsimcwustewsembeddingstowe: weadabwestowe[
+    simcwustewsembeddingid, (U ᵕ U❁)
+    s-simcwustewsembedding
   ] = {
-    SimClustersEmbeddingStore.buildWithDecider(
-      underlyingStores = underlyingStores,
-      decider = rmsDecider.decider,
-      statsReceiver = stats
+    simcwustewsembeddingstowe.buiwdwithdecidew(
+      u-undewwyingstowes = undewwyingstowes, :3
+      decidew = wmsdecidew.decidew, ( ͡o ω ͡o )
+      s-statsweceivew = s-stats
     )
   }
 

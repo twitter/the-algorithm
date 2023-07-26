@@ -1,24 +1,24 @@
-package com.twitter.unified_user_actions.service.module
+package com.twittew.unified_usew_actions.sewvice.moduwe
 
-import com.google.inject.Provides
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt c-com.twittew.finagwe.thwift.cwientid
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt c-com.twittew.inject.annotations.fwag
+i-impowt javax.inject.singweton
 
-object ClientIdModule extends TwitterModule {
-  private final val flagName = "thrift.client.id"
+o-object cwientidmoduwe e-extends twittewmoduwe {
+  pwivate finaw vaw fwagname = "thwift.cwient.id"
 
-  flag[String](
-    name = flagName,
-    help = "Thrift Client ID"
+  fwag[stwing](
+    n-nyame = fwagname,
+    hewp = "thwift c-cwient id"
   )
 
-  @Provides
-  @Singleton
-  def providesClientId(
-    @Flag(flagName) thriftClientId: String,
-  ): ClientId = ClientId(
-    name = thriftClientId
+  @pwovides
+  @singweton
+  def p-pwovidescwientid(
+    @fwag(fwagname) thwiftcwientid: stwing, ^^;;
+  ): cwientid = cwientid(
+    n-nyame = thwiftcwientid
   )
 }

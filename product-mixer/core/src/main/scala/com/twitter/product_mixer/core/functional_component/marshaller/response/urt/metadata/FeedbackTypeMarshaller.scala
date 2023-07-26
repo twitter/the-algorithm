@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata._
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata._
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class FeedbackTypeMarshaller @Inject() () {
+@singweton
+c-cwass f-feedbacktypemawshawwew @inject() () {
 
-  def apply(feedbackType: FeedbackType): urt.FeedbackType = feedbackType match {
-    case Dismiss => urt.FeedbackType.Dismiss
-    case SeeFewer => urt.FeedbackType.SeeFewer
-    case DontLike => urt.FeedbackType.DontLike
-    case NotRelevant => urt.FeedbackType.NotRelevant
-    case SeeMore => urt.FeedbackType.SeeMore
-    case NotCredible => urt.FeedbackType.NotCredible
-    case GiveFeedback => urt.FeedbackType.GiveFeedback
-    case NotRecent => urt.FeedbackType.NotRecent
-    case UnfollowEntity => urt.FeedbackType.UnfollowEntity
-    case Relevant => urt.FeedbackType.Relevant
-    case Moderate => urt.FeedbackType.Moderate
-    case RichBehavior => urt.FeedbackType.RichBehavior
-    case NotAboutTopic => urt.FeedbackType.NotAboutTopic
-    case Generic => urt.FeedbackType.Generic
+  d-def appwy(feedbacktype: feedbacktype): uwt.feedbacktype = feedbacktype match {
+    case d-dismiss => uwt.feedbacktype.dismiss
+    case seefewew => uwt.feedbacktype.seefewew
+    c-case dontwike => uwt.feedbacktype.dontwike
+    c-case nyotwewevant => uwt.feedbacktype.notwewevant
+    case seemowe => uwt.feedbacktype.seemowe
+    c-case notcwedibwe => uwt.feedbacktype.notcwedibwe
+    c-case givefeedback => u-uwt.feedbacktype.givefeedback
+    case nyotwecent => uwt.feedbacktype.notwecent
+    case unfowwowentity => uwt.feedbacktype.unfowwowentity
+    c-case wewevant => uwt.feedbacktype.wewevant
+    case modewate => uwt.feedbacktype.modewate
+    case wichbehaviow => u-uwt.feedbacktype.wichbehaviow
+    case nyotabouttopic => u-uwt.feedbacktype.notabouttopic
+    c-case genewic => u-uwt.feedbacktype.genewic
   }
 }

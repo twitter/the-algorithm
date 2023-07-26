@@ -1,82 +1,82 @@
-package com.twitter.servo.forked
+package com.twittew.sewvo.fowked
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.servo.util.ExceptionCounter
-import com.twitter.util.{Duration, Time, Local, TimeoutException}
-import java.util.concurrent.{LinkedBlockingQueue, TimeUnit, CountDownLatch}
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.wogging.woggew
+i-impowt com.twittew.sewvo.utiw.exceptioncountew
+i-impowt com.twittew.utiw.{duwation, 😳😳😳 t-time, ( ͡o ω ͡o ) wocaw, t-timeoutexception}
+i-impowt java.utiw.concuwwent.{winkedbwockingqueue, >_< t-timeunit, countdownwatch}
 
 /**
- * A forking action executor that executes the actions in a separate
- * thread, using a bounded queue as the communication channel. If the
- * queue is full (the secondary thread is slow to drain it), then the
- * items will be dropped rather than enqueued.
+ * a-a fowking action executow that exekawaii~s the actions in a sepawate
+ * thwead, >w< u-using a bounded queue as the communication c-channew. rawr if the
+ * queue is fuww (the s-secondawy thwead is swow to dwain it), 😳 then the
+ * items w-wiww be dwopped wathew than enqueued. >w<
  */
-class QueueExecutor(maxQueueSize: Int, stats: StatsReceiver) extends Forked.Executor {
-  private val forkExceptionsCounter = new ExceptionCounter(stats)
-  private val enqueuedCounter = stats.counter("forked_actions_enqueued")
-  private val droppedCounter = stats.counter("forked_actions_dropped")
-  private val log = Logger.get("Forked.QueueExecutor")
+c-cwass q-queueexecutow(maxqueuesize: int, (⑅˘꒳˘) stats: statsweceivew) extends fowked.executow {
+  p-pwivate vaw fowkexceptionscountew = nyew exceptioncountew(stats)
+  pwivate vaw enqueuedcountew = s-stats.countew("fowked_actions_enqueued")
+  pwivate vaw dwoppedcountew = s-stats.countew("fowked_actions_dwopped")
+  p-pwivate vaw w-wog = woggew.get("fowked.queueexecutow")
 
-  @volatile private var isStopped = false
-  private val releaseCountDownLatch = new CountDownLatch(1)
-  private val queue = new LinkedBlockingQueue[() => Unit](maxQueueSize)
-  private val thread = new Thread {
-    override def run(): Unit = {
-      while (!isStopped) {
-        try {
-          queue.take()()
+  @vowatiwe p-pwivate vaw isstopped = fawse
+  pwivate v-vaw weweasecountdownwatch = nyew countdownwatch(1)
+  p-pwivate vaw queue = nyew winkedbwockingqueue[() => unit](maxqueuesize)
+  pwivate vaw thwead = nyew thwead {
+    ovewwide def w-wun(): unit = {
+      whiwe (!isstopped) {
+        t-twy {
+          q-queue.take()()
         } catch {
-          // Ignore interrupts from other threads
-          case _: InterruptedException =>
-          // TODO: handle fatal errors more seriously
-          case e: Throwable =>
-            forkExceptionsCounter(e)
-            log.error(e, "Executing queued action")
+          // i-ignowe intewwupts fwom othew thweads
+          case _: intewwuptedexception =>
+          // t-todo: handwe fataw e-ewwows mowe sewiouswy
+          case e: thwowabwe =>
+            f-fowkexceptionscountew(e)
+            w-wog.ewwow(e, OwO "executing queued action")
         }
       }
-      releaseCountDownLatch.countDown()
+      w-weweasecountdownwatch.countdown()
     }
   }
 
-  thread.setDaemon(true)
-  thread.start()
+  thwead.setdaemon(twue)
+  t-thwead.stawt()
 
   /**
-   * Interrupts the thread and directs it to stop processing. This
-   * method will not return until the processing thread has finished
-   * or the timeout occurs. Ok to call multiple times.
+   * intewwupts the thwead a-and diwects it to stop pwocessing. (ꈍᴗꈍ) t-this
+   * method wiww nyot w-wetuwn untiw the p-pwocessing thwead has finished
+   * ow the timeout occuws. 😳 ok to caww muwtipwe times. 😳😳😳
    */
-  def release(timeout: Duration): Unit = {
-    if (!isStopped) {
-      isStopped = true
-      thread.interrupt()
-      releaseCountDownLatch.await(timeout.inMilliseconds, TimeUnit.MILLISECONDS) || {
-        throw new TimeoutException(timeout.toString)
+  def wewease(timeout: d-duwation): unit = {
+    i-if (!isstopped) {
+      isstopped = t-twue
+      thwead.intewwupt()
+      w-weweasecountdownwatch.await(timeout.inmiwwiseconds, mya t-timeunit.miwwiseconds) || {
+        thwow nyew timeoutexception(timeout.tostwing)
       }
     }
   }
 
   /**
-   * Blocks until all the items currently in the queue have been
-   * executed, or the timeout occurs. Mostly useful during testing.
+   * bwocks untiw a-aww the items cuwwentwy in the queue have been
+   * exekawaii~d, mya ow the timeout o-occuws. (⑅˘꒳˘) mostwy usefuw duwing t-testing. (U ﹏ U)
    */
-  def waitForQueueToDrain(timeout: Duration): Unit = {
-    val latch = new CountDownLatch(1)
-    val start = Time.now
-    queue.offer(() => latch.countDown(), timeout.inMilliseconds, TimeUnit.MILLISECONDS)
-    val remaining = timeout - (Time.now - start)
-    latch.await(remaining.inMilliseconds, TimeUnit.MILLISECONDS) || {
-      throw new TimeoutException(remaining.toString)
+  d-def waitfowqueuetodwain(timeout: d-duwation): unit = {
+    vaw w-watch = nyew countdownwatch(1)
+    v-vaw stawt = time.now
+    q-queue.offew(() => w-watch.countdown(), mya timeout.inmiwwiseconds, ʘwʘ timeunit.miwwiseconds)
+    v-vaw wemaining = t-timeout - (time.now - s-stawt)
+    w-watch.await(wemaining.inmiwwiseconds, (˘ω˘) t-timeunit.miwwiseconds) || {
+      thwow nyew timeoutexception(wemaining.tostwing)
     }
   }
 
   /**
-   * Queue the action for execution in this object's thread.
+   * queue the action f-fow execution in this object's thwead. (U ﹏ U)
    */
-  def apply(action: () => Unit) =
-    if (queue.offer(Local.closed(action)))
-      enqueuedCounter.incr()
-    else
-      droppedCounter.incr()
+  def appwy(action: () => unit) =
+    if (queue.offew(wocaw.cwosed(action)))
+      e-enqueuedcountew.incw()
+    ewse
+      dwoppedcountew.incw()
 }

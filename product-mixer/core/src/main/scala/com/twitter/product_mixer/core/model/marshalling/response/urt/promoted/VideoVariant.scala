@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted
 
-case class VideoVariant(
-  url: Option[String],
-  contentType: Option[String],
-  bitrate: Option[Int])
+case cwass videovawiant(
+  u-uww: option[stwing], OwO
+  c-contenttype: option[stwing], 🥺
+  b-bitwate: option[int])

@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.query.logged_in_only
+package com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.quewy.wogged_in_onwy
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.awewt
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.conditionawwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
 
 /**
- * A [[QueryFeatureHydrator]] with [[Conditionally]] to run only for logged in users
+ * a [[quewyfeatuwehydwatow]] w-with [[conditionawwy]] to wun onwy fow wogged in usews
  *
- * @param queryFeatureHydrator the underlying [[QueryFeatureHydrator]] to run when query.isLoggedOut is false
- * @tparam Query The domain model for the query or request
- * @tparam Result The type of the candidates
+ * @pawam q-quewyfeatuwehydwatow the undewwying [[quewyfeatuwehydwatow]] to w-wun when quewy.iswoggedout is fawse
+ * @tpawam quewy the domain m-modew fow the quewy ow wequest
+ * @tpawam w-wesuwt t-the type of the candidates
  */
-case class LoggedInOnlyQueryFeatureHydrator[-Query <: PipelineQuery, Result <: UniversalNoun[Any]](
-  queryFeatureHydrator: QueryFeatureHydrator[Query])
-    extends QueryFeatureHydrator[Query]
-    with Conditionally[Query] {
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    "LoggedInOnly" + queryFeatureHydrator.identifier.name)
-  override val alerts: Seq[Alert] = queryFeatureHydrator.alerts
-  override val features: Set[Feature[_, _]] = queryFeatureHydrator.features
-  override def onlyIf(query: Query): Boolean =
-    Conditionally.and(query, queryFeatureHydrator, !query.isLoggedOut)
-  override def hydrate(query: Query): Stitch[FeatureMap] = queryFeatureHydrator.hydrate(query)
+case cwass woggedinonwyquewyfeatuwehydwatow[-quewy <: pipewinequewy, 🥺 wesuwt <: u-univewsawnoun[any]](
+  quewyfeatuwehydwatow: quewyfeatuwehydwatow[quewy])
+    extends quewyfeatuwehydwatow[quewy]
+    with conditionawwy[quewy] {
+  o-ovewwide vaw identifiew: featuwehydwatowidentifiew = f-featuwehydwatowidentifiew(
+    "woggedinonwy" + q-quewyfeatuwehydwatow.identifiew.name)
+  o-ovewwide vaw awewts: s-seq[awewt] = quewyfeatuwehydwatow.awewts
+  ovewwide vaw featuwes: s-set[featuwe[_, >_< _]] = quewyfeatuwehydwatow.featuwes
+  ovewwide d-def onwyif(quewy: quewy): boowean =
+    conditionawwy.and(quewy, >_< quewyfeatuwehydwatow, (⑅˘꒳˘) !quewy.iswoggedout)
+  ovewwide def hydwate(quewy: q-quewy): stitch[featuwemap] = quewyfeatuwehydwatow.hydwate(quewy)
 }

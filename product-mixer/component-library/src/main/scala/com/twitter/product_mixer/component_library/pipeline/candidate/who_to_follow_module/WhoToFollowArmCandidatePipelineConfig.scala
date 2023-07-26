@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+package com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.who_to_fowwow_moduwe
 
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
 
-object WhoToFollowArmCandidatePipelineConfig {
-  val MinCandidatesSize = 3
-  val MaxCandidatesSize = 20
+o-object whotofowwowawmcandidatepipewineconfig {
+  v-vaw mincandidatessize = 3
+  v-vaw maxcandidatessize = 20
 
-  val identifier: CandidatePipelineIdentifier = CandidatePipelineIdentifier("WhoToFollowArm")
+  v-vaw identifiew: c-candidatepipewineidentifiew = c-candidatepipewineidentifiew("whotofowwowawm")
 }

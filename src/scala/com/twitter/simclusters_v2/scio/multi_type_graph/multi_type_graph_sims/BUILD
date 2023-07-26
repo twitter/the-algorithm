@@ -1,92 +1,92 @@
-scala_library(
-    name = "multi-type-graph-scio-sims-lib",
-    sources = ["*.scala"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":right_node_cosine_similarity_scio_adhoc-scala",
-        ":right_node_sim_hash_scio_adhoc-scala",
-        "3rdparty/jvm/com/twitter/bijection:scrooge",
-        "beam-internal/src/main/scala/com/twitter/beam/io/dal",
-        "beam-internal/src/main/scala/com/twitter/beam/io/manhattan",
-        "beam-internal/src/main/scala/com/twitter/beam/job",
-        "beam-internal/src/main/scala/com/twitter/beam/transform",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/common",
-        "src/scala/com/twitter/wtf/dataflow/cosine_similarity/common",
+scawa_wibwawy(
+    nyame = "muwti-type-gwaph-scio-sims-wib", nyaa~~
+    souwces = ["*.scawa"], (⑅˘꒳˘)
+    p-pwatfowm = "java8", rawr x3
+    t-tags = ["bazew-compatibwe"], (✿oωo)
+    d-dependencies = [
+        ":wight_node_cosine_simiwawity_scio_adhoc-scawa", (ˆ ﻌ ˆ)♡
+        ":wight_node_sim_hash_scio_adhoc-scawa", (˘ω˘)
+        "3wdpawty/jvm/com/twittew/bijection:scwooge", (⑅˘꒳˘)
+        "beam-intewnaw/swc/main/scawa/com/twittew/beam/io/daw", (///ˬ///✿)
+        "beam-intewnaw/swc/main/scawa/com/twittew/beam/io/manhattan", 😳😳😳
+        "beam-intewnaw/swc/main/scawa/com/twittew/beam/job", 🥺
+        "beam-intewnaw/swc/main/scawa/com/twittew/beam/twansfowm", mya
+        "beam-intewnaw/swc/main/scawa/com/twittew/scio_intewnaw/wunnew/datafwow", 🥺
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces", >_<
+        "swc/scawa/com/twittew/simcwustews_v2/scio/muwti_type_gwaph/common", >_<
+        "swc/scawa/com/twittew/wtf/datafwow/cosine_simiwawity/common", (⑅˘꒳˘)
     ],
 )
 
-jvm_binary(
-    name = "multi-type-graph-sim-hash-scio-adhoc-app",
-    main = "com.twitter.simclusters_v2.scio.multi_type_graph.multi_type_graph_sims.RightNodeSimHashScioAdhocApp",
-    platform = "java8",
+j-jvm_binawy(
+    n-nyame = "muwti-type-gwaph-sim-hash-scio-adhoc-app", /(^•ω•^)
+    m-main = "com.twittew.simcwustews_v2.scio.muwti_type_gwaph.muwti_type_gwaph_sims.wightnodesimhashscioadhocapp", rawr x3
+    p-pwatfowm = "java8", (U ﹏ U)
+    d-dependencies = [
+        ":muwti-type-gwaph-scio-sims-wib", (U ﹏ U)
+        "beam-intewnaw/swc/main/scawa/com/twittew/beam/wunnew/datafwow",
+    ], (⑅˘꒳˘)
+)
+
+jvm_binawy(
+    nyame = "muwti-type-gwaph-sim-hash-scio-batch-app", òωó
+    main = "com.twittew.simcwustews_v2.scio.muwti_type_gwaph.muwti_type_gwaph_sims.wightnodesimhashsciobatchapp",
+    pwatfowm = "java8", ʘwʘ
+    t-tags = ["bazew-compatibwe"], /(^•ω•^)
     dependencies = [
-        ":multi-type-graph-scio-sims-lib",
-        "beam-internal/src/main/scala/com/twitter/beam/runner/dataflow",
+        ":muwti-type-gwaph-scio-sims-wib", ʘwʘ
+        "beam-intewnaw/swc/main/scawa/com/twittew/beam/wunnew/datafwow", σωσ
     ],
 )
 
-jvm_binary(
-    name = "multi-type-graph-sim-hash-scio-batch-app",
-    main = "com.twitter.simclusters_v2.scio.multi_type_graph.multi_type_graph_sims.RightNodeSimHashScioBatchApp",
-    platform = "java8",
-    tags = ["bazel-compatible"],
+jvm_binawy(
+    n-nyame = "muwti-type-gwaph-cosine-simiwawity-scio-adhoc-app", OwO
+    main = "com.twittew.simcwustews_v2.scio.muwti_type_gwaph.muwti_type_gwaph_sims.wightnodecosinesimiwawityscioadhocapp", 😳😳😳
+    p-pwatfowm = "java8", 😳😳😳
     dependencies = [
-        ":multi-type-graph-scio-sims-lib",
-        "beam-internal/src/main/scala/com/twitter/beam/runner/dataflow",
+        ":muwti-type-gwaph-scio-sims-wib", o.O
+        "beam-intewnaw/swc/main/scawa/com/twittew/beam/wunnew/datafwow", ( ͡o ω ͡o )
+    ], (U ﹏ U)
+)
+
+jvm_binawy(
+    nyame = "muwti-type-gwaph-cosine-simiwawity-scio-batch-app", (///ˬ///✿)
+    main = "com.twittew.simcwustews_v2.scio.muwti_type_gwaph.muwti_type_gwaph_sims.wightnodecosinesimiwawitysciobatchapp", >w<
+    pwatfowm = "java8", rawr
+    t-tags = ["bazew-compatibwe"], mya
+    dependencies = [
+        ":muwti-type-gwaph-scio-sims-wib", ^^
+        "beam-intewnaw/swc/main/scawa/com/twittew/beam/wunnew/datafwow", 😳😳😳
     ],
 )
 
-jvm_binary(
-    name = "multi-type-graph-cosine-similarity-scio-adhoc-app",
-    main = "com.twitter.simclusters_v2.scio.multi_type_graph.multi_type_graph_sims.RightNodeCosineSimilarityScioAdhocApp",
-    platform = "java8",
-    dependencies = [
-        ":multi-type-graph-scio-sims-lib",
-        "beam-internal/src/main/scala/com/twitter/beam/runner/dataflow",
-    ],
-)
-
-jvm_binary(
-    name = "multi-type-graph-cosine-similarity-scio-batch-app",
-    main = "com.twitter.simclusters_v2.scio.multi_type_graph.multi_type_graph_sims.RightNodeCosineSimilarityScioBatchApp",
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":multi-type-graph-scio-sims-lib",
-        "beam-internal/src/main/scala/com/twitter/beam/runner/dataflow",
-    ],
-)
-
-create_datasets(
-    base_name = "right_node_sim_hash_scio_adhoc",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.RightNodeSimHashSketch",
-    platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.RightNodeSimHashSketch",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
+c-cweate_datasets(
+    b-base_name = "wight_node_sim_hash_scio_adhoc", mya
+    java_schema = "com.twittew.simcwustews_v2.thwiftjava.wightnodesimhashsketch", 😳
+    pwatfowm = "java8", -.-
+    wowe = "cassowawy", 🥺
+    scawa_schema = "com.twittew.simcwustews_v2.thwiftscawa.wightnodesimhashsketch", o.O
+    s-segment_type = "snapshot", /(^•ω•^)
+    tags = ["bazew-compatibwe"], nyaa~~
     java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
-    ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
-    ],
+        "swc/thwift/com/twittew/simcwustews_v2:simcwustews_v2-thwift-java",
+    ], nyaa~~
+    scawa_dependencies = [
+        "swc/thwift/com/twittew/simcwustews_v2:simcwustews_v2-thwift-scawa", :3
+    ], 😳😳😳
 )
 
-create_datasets(
-    base_name = "right_node_cosine_similarity_scio_adhoc",
-    key_type = "com.twitter.simclusters_v2.thriftscala.RightNode",
-    platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.MultiTypeGraphInjections.similarRightNodesInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimilarRightNodes",
-    scala_dependencies = [
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+cweate_datasets(
+    base_name = "wight_node_cosine_simiwawity_scio_adhoc", (˘ω˘)
+    k-key_type = "com.twittew.simcwustews_v2.thwiftscawa.wightnode", ^^
+    pwatfowm = "java8", :3
+    w-wowe = "cassowawy", -.-
+    s-scawa_schema = "com.twittew.simcwustews_v2.hdfs_souwces.injections.muwtitypegwaphinjections.simiwawwightnodesinjection", 😳
+    s-segment_type = "snapshot", mya
+    t-tags = ["bazew-compatibwe"], (˘ω˘)
+    vaw_type = "com.twittew.simcwustews_v2.thwiftscawa.simiwawwightnodes", >_<
+    scawa_dependencies = [
+        "swc/scawa/com/twittew/scawding_intewnaw/muwtifowmat/fowmat", -.-
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces/injections", 🥺
     ],
 )

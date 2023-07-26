@@ -1,72 +1,24 @@
-scala_library(
-    sources = ["*.scala"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/bijection:core",
-        "3rdparty/jvm/com/twitter/bijection:json",
-        "3rdparty/jvm/com/twitter/bijection:netty",
-        "3rdparty/jvm/com/twitter/bijection:scrooge",
-        "3rdparty/jvm/com/twitter/bijection:thrift",
-        "3rdparty/jvm/com/twitter/bijection:util",
-        "3rdparty/jvm/com/twitter/chill:bijection",
-        "3rdparty/jvm/com/twitter/storehaus:algebra",
-        "3rdparty/jvm/com/twitter/storehaus:core",
-        "3rdparty/jvm/org/apache/hadoop:hadoop-client-default",
-        "3rdparty/src/jvm/com/twitter/scalding:args",
-        "3rdparty/src/jvm/com/twitter/scalding:commons",
-        "3rdparty/src/jvm/com/twitter/scalding:core",
-        "3rdparty/src/jvm/com/twitter/summingbird:batch",
-        "3rdparty/src/jvm/com/twitter/summingbird:batch-hadoop",
-        "3rdparty/src/jvm/com/twitter/summingbird:chill",
-        "3rdparty/src/jvm/com/twitter/summingbird:core",
-        "3rdparty/src/jvm/com/twitter/summingbird:scalding",
-        "finagle/finagle-core/src/main",
-        "gizmoduck/snapshot/src/main/scala/com/twitter/gizmoduck/snapshot:deleted_user-scala",
-        "src/java/com/twitter/ml/api:api-base",
-        "src/java/com/twitter/ml/api/constant",
-        "src/scala/com/twitter/ml/api/util",
-        "src/scala/com/twitter/scalding_internal/dalv2",
-        "src/scala/com/twitter/scalding_internal/job/analytics_batch",
-        "src/scala/com/twitter/scalding_internal/util",
-        "src/scala/com/twitter/storehaus_internal/manhattan/config",
-        "src/scala/com/twitter/storehaus_internal/offline",
-        "src/scala/com/twitter/storehaus_internal/util",
-        "src/scala/com/twitter/summingbird_internal/bijection",
-        "src/scala/com/twitter/summingbird_internal/bijection:bijection-implicits",
-        "src/scala/com/twitter/summingbird_internal/dalv2",
-        "src/scala/com/twitter/summingbird_internal/runner/common",
-        "src/scala/com/twitter/summingbird_internal/runner/scalding",
-        "src/scala/com/twitter/summingbird_internal/runner/store_config",
-        "src/scala/com/twitter/summingbird_internal/runner/store_config/versioned_store",
-        "src/scala/com/twitter/summingbird_internal/sources/common",
-        "src/thrift/com/twitter/ml/api:data-java",
-        "src/thrift/com/twitter/ml/api:interpretable-model-java",
-        "src/thrift/com/twitter/statebird:compiled-v2-java",
-        "timelines/data_processing/ml_util/aggregation_framework:common_types",
-        "timelines/data_processing/ml_util/aggregation_framework:user_job",
-        "timelines/data_processing/ml_util/aggregation_framework/scalding/sources",
-        "timelines/data_processing/ml_util/sampling:sampling_utils",
+jvm_binawy(
+    name = "bin", rawr x3
+    basename = "topic-sociaw-pwoof", rawr
+    main = "com.twittew.tsp.topicsociawpwoofstwatofedsewvewmain", σωσ
+    w-wuntime_pwatfowm = "java11", σωσ
+    t-tags = [
+        "bazew-compatibwe", >_<
     ],
-    exports = [
-        "3rdparty/src/jvm/com/twitter/summingbird:scalding",
-        "src/scala/com/twitter/storehaus_internal/manhattan/config",
-        "src/scala/com/twitter/summingbird_internal/runner/store_config",
-    ],
+    d-dependencies = [
+        "stwato/swc/main/scawa/com/twittew/stwato/wogging/wogback", :3
+        "topic-sociaw-pwoof/sewvew/swc/main/wesouwces", (U ﹏ U)
+        "topic-sociaw-pwoof/sewvew/swc/main/scawa/com/twittew/tsp",
+    ], -.-
 )
 
-hadoop_binary(
-    name = "bin",
-    basename = "aggregation_framework_scalding-deploy",
-    main = "com.twitter.scalding.Tool",
-    platform = "java8",
-    runtime_platform = "java8",
+#  a-auwowa wowkfwows b-buiwd phase c-convention wequiwes a-a jvm_app n-nyamed with ${pwoject-name}-app
+jvm_app(
+    nyame = "topic-sociaw-pwoof-app", (ˆ ﻌ ˆ)♡
+    awchive = "zip", (⑅˘꒳˘)
+    binawy = ":bin", (U ᵕ U❁)
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [
-        ":scalding",
+        "bazew-compatibwe", -.-
     ],
 )

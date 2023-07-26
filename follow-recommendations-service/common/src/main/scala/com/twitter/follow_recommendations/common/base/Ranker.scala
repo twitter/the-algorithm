@@ -1,90 +1,90 @@
-package com.twitter.follow_recommendations.common.base
+package com.twittew.fowwow_wecommendations.common.base
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.util.Duration
-import com.twitter.util.TimeoutException
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.timeoutexception
 
 /**
- * Ranker is a special kind of transform that would only change the order of a list of items.
- * If a single item is given, it "may" attach additional scoring information to the item.
+ * w-wankew i-is a speciaw kind o-of twansfowm that w-wouwd onwy change t-the owdew of a wist of items. :3
+ * if a singwe item is given, ^^;; it "may" attach a-additionaw scowing infowmation to the item.
  *
- * @tparam Target target to recommend the candidates
- * @tparam Candidate candidate type to rank
+ * @tpawam t-tawget tawget to wecommend t-the candidates
+ * @tpawam candidate candidate type to wank
  */
-trait Ranker[Target, Candidate] extends Transform[Target, Candidate] { ranker =>
+twait wankew[tawget, 🥺 c-candidate] extends twansfowm[tawget, (⑅˘꒳˘) c-candidate] { wankew =>
 
-  def rank(target: Target, candidates: Seq[Candidate]): Stitch[Seq[Candidate]]
+  d-def wank(tawget: tawget, nyaa~~ candidates: seq[candidate]): stitch[seq[candidate]]
 
-  override def transform(target: Target, candidates: Seq[Candidate]): Stitch[Seq[Candidate]] = {
-    rank(target, candidates)
+  ovewwide d-def twansfowm(tawget: tawget, :3 candidates: seq[candidate]): stitch[seq[candidate]] = {
+    wank(tawget, ( ͡o ω ͡o ) c-candidates)
   }
 
-  override def observe(statsReceiver: StatsReceiver): Ranker[Target, Candidate] = {
-    val originalRanker = this
-    new Ranker[Target, Candidate] {
-      override def rank(target: Target, items: Seq[Candidate]): Stitch[Seq[Candidate]] = {
-        statsReceiver.counter(Transform.InputCandidatesCount).incr(items.size)
-        statsReceiver.stat(Transform.InputCandidatesStat).add(items.size)
-        StatsUtil.profileStitchSeqResults(originalRanker.rank(target, items), statsReceiver)
+  ovewwide d-def obsewve(statsweceivew: s-statsweceivew): w-wankew[tawget, mya c-candidate] = {
+    vaw owiginawwankew = this
+    n-nyew wankew[tawget, (///ˬ///✿) candidate] {
+      ovewwide d-def wank(tawget: tawget, (˘ω˘) items: seq[candidate]): stitch[seq[candidate]] = {
+        statsweceivew.countew(twansfowm.inputcandidatescount).incw(items.size)
+        statsweceivew.stat(twansfowm.inputcandidatesstat).add(items.size)
+        s-statsutiw.pwofiwestitchseqwesuwts(owiginawwankew.wank(tawget, ^^;; items), (✿oωo) s-statsweceivew)
       }
     }
   }
 
-  def reverse: Ranker[Target, Candidate] = new Ranker[Target, Candidate] {
-    def rank(target: Target, candidates: Seq[Candidate]): Stitch[Seq[Candidate]] =
-      ranker.rank(target, candidates).map(_.reverse)
+  d-def wevewse: w-wankew[tawget, (U ﹏ U) candidate] = nyew wankew[tawget, -.- candidate] {
+    d-def wank(tawget: t-tawget, ^•ﻌ•^ candidates: seq[candidate]): s-stitch[seq[candidate]] =
+      w-wankew.wank(tawget, rawr candidates).map(_.wevewse)
   }
 
-  def andThen(other: Ranker[Target, Candidate]): Ranker[Target, Candidate] = {
-    val original = this
-    new Ranker[Target, Candidate] {
-      def rank(target: Target, candidates: Seq[Candidate]): Stitch[Seq[Candidate]] = {
-        original.rank(target, candidates).flatMap { results => other.rank(target, results) }
+  def andthen(othew: w-wankew[tawget, (˘ω˘) candidate]): w-wankew[tawget, nyaa~~ candidate] = {
+    vaw owiginaw = this
+    nyew wankew[tawget, UwU c-candidate] {
+      def wank(tawget: t-tawget, :3 candidates: seq[candidate]): s-stitch[seq[candidate]] = {
+        o-owiginaw.wank(tawget, (⑅˘꒳˘) candidates).fwatmap { wesuwts => othew.wank(tawget, (///ˬ///✿) wesuwts) }
       }
     }
   }
 
   /**
-   * This method wraps the Ranker in a designated timeout.
-   * If the ranker timeouts, it would return the original candidates directly,
-   * instead of failing the whole recommendation flow
+   * this method wwaps the w-wankew in a designated t-timeout. ^^;;
+   * if the wankew t-timeouts, >_< i-it wouwd wetuwn t-the owiginaw candidates diwectwy, rawr x3
+   * instead of faiwing the whowe w-wecommendation fwow
    */
-  def within(timeout: Duration, statsReceiver: StatsReceiver): Ranker[Target, Candidate] = {
-    val timeoutCounter = statsReceiver.counter("timeout")
-    val original = this
-    new Ranker[Target, Candidate] {
-      override def rank(target: Target, candidates: Seq[Candidate]): Stitch[Seq[Candidate]] = {
-        original
-          .rank(target, candidates)
-          .within(timeout)(com.twitter.finagle.util.DefaultTimer)
-          .rescue {
-            case _: TimeoutException =>
-              timeoutCounter.incr()
-              Stitch.value(candidates)
+  def within(timeout: duwation, /(^•ω•^) statsweceivew: statsweceivew): w-wankew[tawget, :3 candidate] = {
+    vaw t-timeoutcountew = s-statsweceivew.countew("timeout")
+    v-vaw owiginaw = this
+    n-nyew wankew[tawget, (ꈍᴗꈍ) c-candidate] {
+      o-ovewwide d-def wank(tawget: tawget, /(^•ω•^) candidates: seq[candidate]): s-stitch[seq[candidate]] = {
+        o-owiginaw
+          .wank(tawget, (⑅˘꒳˘) c-candidates)
+          .within(timeout)(com.twittew.finagwe.utiw.defauwttimew)
+          .wescue {
+            c-case _: t-timeoutexception =>
+              timeoutcountew.incw()
+              stitch.vawue(candidates)
           }
       }
     }
   }
 }
 
-object Ranker {
+object wankew {
 
-  def chain[Target, Candidate](
-    transformer: Transform[Target, Candidate],
-    ranker: Ranker[Target, Candidate]
-  ): Ranker[Target, Candidate] = {
-    new Ranker[Target, Candidate] {
-      def rank(target: Target, candidates: Seq[Candidate]): Stitch[Seq[Candidate]] = {
-        transformer
-          .transform(target, candidates)
-          .flatMap { results => ranker.rank(target, results) }
+  d-def chain[tawget, ( ͡o ω ͡o ) candidate](
+    twansfowmew: twansfowm[tawget, òωó candidate], (⑅˘꒳˘)
+    wankew: wankew[tawget, XD c-candidate]
+  ): wankew[tawget, -.- candidate] = {
+    nyew w-wankew[tawget, :3 c-candidate] {
+      d-def wank(tawget: tawget, nyaa~~ candidates: s-seq[candidate]): stitch[seq[candidate]] = {
+        t-twansfowmew
+          .twansfowm(tawget, 😳 c-candidates)
+          .fwatmap { wesuwts => wankew.wank(tawget, (⑅˘꒳˘) wesuwts) }
       }
     }
   }
 }
 
-class IdentityRanker[Target, Candidate] extends Ranker[Target, Candidate] {
-  def rank(target: Target, candidates: Seq[Candidate]): Stitch[Seq[Candidate]] =
-    Stitch.value(candidates)
+cwass identitywankew[tawget, nyaa~~ candidate] extends w-wankew[tawget, OwO candidate] {
+  d-def wank(tawget: tawget, candidates: s-seq[candidate]): s-stitch[seq[candidate]] =
+    stitch.vawue(candidates)
 }

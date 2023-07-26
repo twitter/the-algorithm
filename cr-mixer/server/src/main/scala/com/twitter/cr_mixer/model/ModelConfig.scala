@@ -1,77 +1,77 @@
-package com.twitter.cr_mixer.model
+package com.twittew.cw_mixew.modew
 
 /**
- * A Configuration class for all Model Based Candidate Sources.
+ * a configuwation c-cwass f-fow aww modew based c-candidate souwces. mya
  *
- * The Model Name Guideline. Please your modelId as "Algorithm_Product_Date"
- * If your model is used for multiple product surfaces, name it as all
- * Don't name your algorithm as MBCG. All the algorithms here are MBCG =.=
+ * t-the m-modew nyame guidewine. >w< p-pwease youw m-modewid as "awgowithm_pwoduct_date"
+ * i-if youw modew is used fow muwtipwe pwoduct suwfaces, name it as aww
+ * d-don't nyame youw awgowithm as mbcg. nyaa~~ aww the awgowithms h-hewe awe mbcg =.=
  *
- * Don't forgot to add your new models into allHnswANNSimilarityEngineModelIds list.
+ * d-don't fowgot to add youw nyew modews into awwhnswannsimiwawityenginemodewids wist. (✿oωo)
  */
-object ModelConfig {
-  // Offline SimClusters CG Experiment related Model Ids
-  val OfflineInterestedInFromKnownFor2020: String = "OfflineIIKF_ALL_20220414"
-  val OfflineInterestedInFromKnownFor2020Hl0El15: String = "OfflineIIKF_ALL_20220414_Hl0_El15"
-  val OfflineInterestedInFromKnownFor2020Hl2El15: String = "OfflineIIKF_ALL_20220414_Hl2_El15"
-  val OfflineInterestedInFromKnownFor2020Hl2El50: String = "OfflineIIKF_ALL_20220414_Hl2_El50"
-  val OfflineInterestedInFromKnownFor2020Hl8El50: String = "OfflineIIKF_ALL_20220414_Hl8_El50"
-  val OfflineMTSConsumerEmbeddingsFav90P20M: String =
-    "OfflineMTSConsumerEmbeddingsFav90P20M_ALL_20220414"
+o-object modewconfig {
+  // offwine simcwustews c-cg expewiment w-wewated modew ids
+  vaw offwineintewestedinfwomknownfow2020: stwing = "offwineiikf_aww_20220414"
+  vaw offwineintewestedinfwomknownfow2020hw0ew15: stwing = "offwineiikf_aww_20220414_hw0_ew15"
+  v-vaw offwineintewestedinfwomknownfow2020hw2ew15: stwing = "offwineiikf_aww_20220414_hw2_ew15"
+  vaw offwineintewestedinfwomknownfow2020hw2ew50: stwing = "offwineiikf_aww_20220414_hw2_ew50"
+  vaw offwineintewestedinfwomknownfow2020hw8ew50: s-stwing = "offwineiikf_aww_20220414_hw8_ew50"
+  vaw offwinemtsconsumewembeddingsfav90p20m: s-stwing =
+    "offwinemtsconsumewembeddingsfav90p20m_aww_20220414"
 
-  // Twhin Model Ids
-  val ConsumerBasedTwHINRegularUpdateAll20221024: String =
-    "ConsumerBasedTwHINRegularUpdate_All_20221024"
+  // t-twhin modew i-ids
+  vaw consumewbasedtwhinweguwawupdateaww20221024: s-stwing =
+    "consumewbasedtwhinweguwawupdate_aww_20221024"
 
-  // Averaged Twhin Model Ids
-  val TweetBasedTwHINRegularUpdateAll20221024: String =
-    "TweetBasedTwHINRegularUpdate_All_20221024"
+  // avewaged twhin modew ids
+  v-vaw tweetbasedtwhinweguwawupdateaww20221024: stwing =
+    "tweetbasedtwhinweguwawupdate_aww_20221024"
 
-  // Collaborative Filtering Twhin Model Ids
-  val TwhinCollabFilterForFollow: String =
-    "TwhinCollabFilterForFollow"
-  val TwhinCollabFilterForEngagement: String =
-    "TwhinCollabFilterForEngagement"
-  val TwhinMultiClusterForFollow: String =
-    "TwhinMultiClusterForFollow"
-  val TwhinMultiClusterForEngagement: String =
-    "TwhinMultiClusterForEngagement"
+  // cowwabowative fiwtewing t-twhin modew ids
+  vaw twhincowwabfiwtewfowfowwow: stwing =
+    "twhincowwabfiwtewfowfowwow"
+  vaw twhincowwabfiwtewfowengagement: stwing =
+    "twhincowwabfiwtewfowengagement"
+  vaw twhinmuwticwustewfowfowwow: s-stwing =
+    "twhinmuwticwustewfowfowwow"
+  vaw twhinmuwticwustewfowengagement: s-stwing =
+    "twhinmuwticwustewfowengagement"
 
-  // Two Tower model Ids
-  val TwoTowerFavALL20220808: String =
-    "TwoTowerFav_ALL_20220808"
+  // two t-towew modew ids
+  v-vaw twotowewfavaww20220808: stwing =
+    "twotowewfav_aww_20220808"
 
-  // Debugger Demo-Only Model Ids
-  val DebuggerDemo: String = "DebuggerDemo"
+  // debuggew demo-onwy modew ids
+  vaw d-debuggewdemo: s-stwing = "debuggewdemo"
 
-  // ColdStartLookalike - this is not really a model name, it is as a placeholder to
-  // indicate ColdStartLookalike candidate source, which is currently being pluged into
-  // CustomizedRetrievalCandidateGeneration temporarily.
-  val ColdStartLookalikeModelName: String = "ConsumersBasedUtgColdStartLookalike20220707"
+  // cowdstawtwookawike - t-this is nyot w-weawwy a modew nyame, ʘwʘ it is as a p-pwacehowdew to
+  // indicate cowdstawtwookawike c-candidate souwce, (ˆ ﻌ ˆ)♡ which is cuwwentwy being pwuged i-into
+  // customizedwetwievawcandidategenewation tempowawiwy. 😳😳😳
+  v-vaw cowdstawtwookawikemodewname: stwing = "consumewsbasedutgcowdstawtwookawike20220707"
 
-  // consumersBasedUTG-RealGraphOon Model Id
-  val ConsumersBasedUtgRealGraphOon20220705: String = "ConsumersBasedUtgRealGraphOon_All_20220705"
-  // consumersBasedUAG-RealGraphOon Model Id
-  val ConsumersBasedUagRealGraphOon20221205: String = "ConsumersBasedUagRealGraphOon_All_20221205"
+  // c-consumewsbasedutg-weawgwaphoon m-modew id
+  vaw consumewsbasedutgweawgwaphoon20220705: stwing = "consumewsbasedutgweawgwaphoon_aww_20220705"
+  // consumewsbaseduag-weawgwaphoon modew id
+  vaw consumewsbaseduagweawgwaphoon20221205: stwing = "consumewsbaseduagweawgwaphoon_aww_20221205"
 
-  // FTR
-  val OfflineFavDecayedSum: String = "OfflineFavDecayedSum"
-  val OfflineFtrAt5Pop1000RnkDcy11: String = "OfflineFtrAt5Pop1000RnkDcy11"
-  val OfflineFtrAt5Pop10000RnkDcy11: String = "OfflineFtrAt5Pop10000RnkDcy11"
+  // ftw
+  vaw offwinefavdecayedsum: stwing = "offwinefavdecayedsum"
+  v-vaw offwineftwat5pop1000wnkdcy11: s-stwing = "offwineftwat5pop1000wnkdcy11"
+  vaw offwineftwat5pop10000wnkdcy11: s-stwing = "offwineftwat5pop10000wnkdcy11"
 
-  // All Model Ids of HnswANNSimilarityEngines
-  val allHnswANNSimilarityEngineModelIds = Seq(
-    ConsumerBasedTwHINRegularUpdateAll20221024,
-    TwoTowerFavALL20220808,
-    DebuggerDemo
+  // a-aww modew ids o-of hnswannsimiwawityengines
+  vaw awwhnswannsimiwawityenginemodewids = seq(
+    c-consumewbasedtwhinweguwawupdateaww20221024,
+    twotowewfavaww20220808, :3
+    debuggewdemo
   )
 
-  val ConsumerLogFavBasedInterestedInEmbedding: String =
-    "ConsumerLogFavBasedInterestedIn_ALL_20221228"
-  val ConsumerFollowBasedInterestedInEmbedding: String =
-    "ConsumerFollowBasedInterestedIn_ALL_20221228"
+  vaw consumewwogfavbasedintewestedinembedding: stwing =
+    "consumewwogfavbasedintewestedin_aww_20221228"
+  v-vaw consumewfowwowbasedintewestedinembedding: s-stwing =
+    "consumewfowwowbasedintewestedin_aww_20221228"
 
-  val RetweetBasedDiffusion: String =
-    "RetweetBasedDiffusion"
+  v-vaw wetweetbaseddiffusion: s-stwing =
+    "wetweetbaseddiffusion"
 
 }

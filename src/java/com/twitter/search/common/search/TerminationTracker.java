@@ -1,202 +1,202 @@
-package com.twitter.search.common.search;
+package com.twittew.seawch.common.seawch;
 
-import java.util.HashSet;
-import java.util.Set;
+impowt j-java.utiw.hashset;
+i-impowt java.utiw.set;
 
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.query.thriftjava.CollectorTerminationParams;
+i-impowt c-com.twittew.common.utiw.cwock;
+impowt c-com.twittew.seawch.common.quewy.thwiftjava.cowwectowtewminationpawams;
 
 /**
- * Used for tracking termination criteria for earlybird queries.
+ * u-used fow twacking tewmination cwitewia fow eawwybiwd quewies. -.-
  *
- * Currently this tracks the query time out and query cost, if they are set on the
- * {@link com.twitter.search.common.query.thriftjava.CollectorTerminationParams}.
+ * cuwwentwy t-this twacks the quewy time out and quewy cost, (✿oωo) i-if they awe set on the
+ * {@wink c-com.twittew.seawch.common.quewy.thwiftjava.cowwectowtewminationpawams}. /(^•ω•^)
  */
-public class TerminationTracker {
-  /** Query start time provided by client. */
-  private final long clientStartTimeMillis;
+pubwic cwass tewminationtwackew {
+  /** quewy stawt time pwovided b-by cwient. 🥺 */
+  pwivate finaw wong c-cwientstawttimemiwwis;
 
-  /** Timeout end times, calculated from {@link #clientStartTimeMillis}. */
-  private final long timeoutEndTimeMillis;
+  /** t-timeout end times, ʘwʘ cawcuwated fwom {@wink #cwientstawttimemiwwis}. UwU */
+  pwivate finaw wong timeoutendtimemiwwis;
 
-  /** Query start time recorded at earlybird server. */
-  private final long localStartTimeMillis;
+  /** q-quewy stawt time wecowded at eawwybiwd sewvew. XD */
+  pwivate finaw wong w-wocawstawttimemiwwis;
 
-  /** Tracking query cost */
-  private final double maxQueryCost;
+  /** twacking q-quewy cost */
+  p-pwivate finaw d-doubwe maxquewycost;
 
-  // Sometimes, we want to early terminate before timeoutEndTimeMillis, to reserve time for
-  // work that needs to be done after early termination (E.g. merging results).
-  private final int postTerminationOverheadMillis;
+  // s-sometimes, (✿oωo) we want to eawwy tewminate befowe timeoutendtimemiwwis, :3 t-to wesewve time fow
+  // wowk that nyeeds to b-be done aftew eawwy tewmination (e.g. (///ˬ///✿) mewging wesuwts). nyaa~~
+  pwivate finaw int posttewminationovewheadmiwwis;
 
-  // We don't check for early termination often enough. Some times requests timeout in between
-  // early termination checks. This buffer time is also substracted from deadline.
-  // To illustrate how this is used, let's use a simple example:
-  // If we spent 750ms searching 5 segments, a rough estimate is that we need 150ms to search
-  // one segment. If the timeout is set to 800ms, we should not starting searching the next segment.
-  // In this case, on can set preTerminationSafeBufferTimeMillis to 150ms, so that when early
-  // termination check computes the deadline, this buffer is also subtracted. See SEARCH-29723.
-  private int preTerminationSafeBufferTimeMillis = 0;
+  // we don't check f-fow eawwy tewmination often enough. >w< s-some times wequests t-timeout i-in between
+  // eawwy tewmination checks. -.- this buffew time is awso s-substwacted fwom d-deadwine. (✿oωo)
+  // to iwwustwate h-how this is used, (˘ω˘) w-wet's use a simpwe exampwe:
+  // i-if we spent 750ms seawching 5 s-segments, rawr a wough estimate is that we nyeed 150ms t-to seawch
+  // one segment. OwO i-if the timeout is set to 800ms, ^•ﻌ•^ w-we shouwd nyot stawting s-seawching the nyext segment. UwU
+  // in this case, on can set pwetewminationsafebuffewtimemiwwis to 150ms, (˘ω˘) so that when eawwy
+  // t-tewmination c-check computes the deadwine, (///ˬ///✿) t-this buffew is a-awso subtwacted. σωσ s-see seawch-29723. /(^•ω•^)
+  pwivate int pwetewminationsafebuffewtimemiwwis = 0;
 
-  private EarlyTerminationState earlyTerminationState = EarlyTerminationState.COLLECTING;
+  pwivate e-eawwytewminationstate eawwytewminationstate = eawwytewminationstate.cowwecting;
 
-  // This flag determines whether the last searched doc ID trackers should be consulted when a
-  // timeout occurs.
-  private final boolean useLastSearchedDocIdOnTimeout;
+  // this fwag detewmines whethew t-the wast seawched doc id t-twackews shouwd b-be consuwted when a-a
+  // timeout occuws. 😳
+  pwivate f-finaw boowean u-usewastseawcheddocidontimeout;
 
-  private final Set<DocIdTracker> lastSearchedDocIdTrackers = new HashSet<>();
+  p-pwivate finaw s-set<docidtwackew> wastseawcheddocidtwackews = nyew hashset<>();
 
   /**
-   * Creates a new termination tracker that will not specify a timeout or max query cost.
-   * Can be used for queries that explicitly do not want to use a timeout. Meant to be used for
-   * tests, and background queries running for the query cache.
+   * c-cweates a-a nyew tewmination t-twackew t-that wiww nyot specify a-a timeout ow max quewy cost. 😳
+   * can be used fow quewies t-that expwicitwy do nyot want to use a timeout. meant to be used fow
+   * tests, (⑅˘꒳˘) and backgwound q-quewies wunning fow the quewy cache. 😳😳😳
    */
-  public TerminationTracker(Clock clock) {
-    this.clientStartTimeMillis = clock.nowMillis();
-    this.localStartTimeMillis = clientStartTimeMillis;
-    this.timeoutEndTimeMillis = Long.MAX_VALUE;
-    this.maxQueryCost = Double.MAX_VALUE;
-    this.postTerminationOverheadMillis = 0;
-    this.useLastSearchedDocIdOnTimeout = false;
+  pubwic tewminationtwackew(cwock c-cwock) {
+    t-this.cwientstawttimemiwwis = c-cwock.nowmiwwis();
+    this.wocawstawttimemiwwis = c-cwientstawttimemiwwis;
+    this.timeoutendtimemiwwis = w-wong.max_vawue;
+    t-this.maxquewycost = doubwe.max_vawue;
+    this.posttewminationovewheadmiwwis = 0;
+    this.usewastseawcheddocidontimeout = fawse;
   }
 
   /**
-   * Convenient method overloading for
-   * {@link #TerminationTracker(CollectorTerminationParams, long, Clock, int)}.
+   * convenient method ovewwoading f-fow
+   * {@wink #tewminationtwackew(cowwectowtewminationpawams, 😳 wong, cwock, XD i-int)}.
    */
-  public TerminationTracker(
-      CollectorTerminationParams terminationParams, Clock clock,
-      int postTerminationOverheadMillis) {
-    this(terminationParams, clock.nowMillis(), clock, postTerminationOverheadMillis);
+  pubwic tewminationtwackew(
+      c-cowwectowtewminationpawams t-tewminationpawams, mya cwock cwock, ^•ﻌ•^
+      int posttewminationovewheadmiwwis) {
+    t-this(tewminationpawams, ʘwʘ c-cwock.nowmiwwis(), ( ͡o ω ͡o ) cwock, posttewminationovewheadmiwwis);
   }
 
   /**
-   * Convenient method overloading for
-   * {@link #TerminationTracker(CollectorTerminationParams, long, Clock, int)}.
+   * c-convenient m-method ovewwoading fow
+   * {@wink #tewminationtwackew(cowwectowtewminationpawams, mya wong, cwock, o.O int)}.
    */
-  public TerminationTracker(
-      CollectorTerminationParams terminationParams, int postTerminationOverheadMillis) {
+  pubwic tewminationtwackew(
+      c-cowwectowtewminationpawams t-tewminationpawams, (✿oωo) i-int posttewminationovewheadmiwwis) {
     this(
-        terminationParams,
-        System.currentTimeMillis(),
-        Clock.SYSTEM_CLOCK,
-        postTerminationOverheadMillis);
+        tewminationpawams, :3
+        s-system.cuwwenttimemiwwis(), 😳
+        c-cwock.system_cwock, (U ﹏ U)
+        posttewminationovewheadmiwwis);
   }
 
   /**
-   * Creates a new TerminationTracker instance.
+   * c-cweates a nyew tewminationtwackew instance. mya
    *
-   * @param terminationParams  CollectorParams.CollectorTerminationParams carrying parameters
-   *                           about early termination.
-   * @param clientStartTimeMillis The query start time (in millis) specified by client. This is used
-   *                              to calculate timeout end time, like {@link #timeoutEndTimeMillis}.
-   * @param clock used to sample {@link #localStartTimeMillis}.
-   * @param postTerminationOverheadMillis How much time should be reserved.  E.g. if request time
-   *                                      out is 800ms, and this is set to 200ms, early termination
-   *                                      will kick in at 600ms mark.
+   * @pawam tewminationpawams  cowwectowpawams.cowwectowtewminationpawams c-cawwying pawametews
+   *                           a-about eawwy tewmination. (U ᵕ U❁)
+   * @pawam cwientstawttimemiwwis t-the quewy stawt t-time (in miwwis) specified by cwient. :3 this is used
+   *                              t-to cawcuwate timeout end time, mya wike {@wink #timeoutendtimemiwwis}. OwO
+   * @pawam cwock used to sampwe {@wink #wocawstawttimemiwwis}. (ˆ ﻌ ˆ)♡
+   * @pawam p-posttewminationovewheadmiwwis how much time shouwd be wesewved. ʘwʘ  e-e.g. o.O if wequest t-time
+   *                                      out is 800ms, UwU and this is set to 200ms, rawr x3 eawwy t-tewmination
+   *                                      w-wiww kick in at 600ms mawk. 🥺
    */
-  public TerminationTracker(
-      CollectorTerminationParams terminationParams,
-      long clientStartTimeMillis,
-      Clock clock,
-      int postTerminationOverheadMillis) {
-    Preconditions.checkNotNull(terminationParams);
-    Preconditions.checkArgument(postTerminationOverheadMillis >= 0);
+  pubwic tewminationtwackew(
+      cowwectowtewminationpawams t-tewminationpawams, :3
+      wong cwientstawttimemiwwis, (ꈍᴗꈍ)
+      c-cwock cwock, 🥺
+      int posttewminationovewheadmiwwis) {
+    pweconditions.checknotnuww(tewminationpawams);
+    pweconditions.checkawgument(posttewminationovewheadmiwwis >= 0);
 
-    this.clientStartTimeMillis = clientStartTimeMillis;
-    this.localStartTimeMillis = clock.nowMillis();
+    t-this.cwientstawttimemiwwis = cwientstawttimemiwwis;
+    t-this.wocawstawttimemiwwis = c-cwock.nowmiwwis();
 
-    if (terminationParams.isSetTimeoutMs()
-        && terminationParams.getTimeoutMs() > 0) {
-      Preconditions.checkState(terminationParams.getTimeoutMs() >= postTerminationOverheadMillis);
-      this.timeoutEndTimeMillis = this.clientStartTimeMillis + terminationParams.getTimeoutMs();
-    } else {
-      // Effectively no timeout.
-      this.timeoutEndTimeMillis = Long.MAX_VALUE;
+    if (tewminationpawams.issettimeoutms()
+        && t-tewminationpawams.gettimeoutms() > 0) {
+      pweconditions.checkstate(tewminationpawams.gettimeoutms() >= p-posttewminationovewheadmiwwis);
+      t-this.timeoutendtimemiwwis = t-this.cwientstawttimemiwwis + tewminationpawams.gettimeoutms();
+    } e-ewse {
+      // e-effectivewy nyo timeout. (✿oωo)
+      this.timeoutendtimemiwwis = w-wong.max_vawue;
     }
 
-    // Tracking query cost
-    if (terminationParams.isSetMaxQueryCost()
-        && terminationParams.getMaxQueryCost() > 0) {
-      maxQueryCost = terminationParams.getMaxQueryCost();
-    } else {
-      maxQueryCost = Double.MAX_VALUE;
+    // t-twacking quewy c-cost
+    if (tewminationpawams.issetmaxquewycost()
+        && tewminationpawams.getmaxquewycost() > 0) {
+      maxquewycost = t-tewminationpawams.getmaxquewycost();
+    } ewse {
+      m-maxquewycost = d-doubwe.max_vawue;
     }
 
-    this.useLastSearchedDocIdOnTimeout = terminationParams.isEnforceQueryTimeout();
-    this.postTerminationOverheadMillis = postTerminationOverheadMillis;
+    this.usewastseawcheddocidontimeout = tewminationpawams.isenfowcequewytimeout();
+    this.posttewminationovewheadmiwwis = p-posttewminationovewheadmiwwis;
   }
 
   /**
-   * Returns the reserve time to perform post termination work. Return the deadline timestamp
-   * with postTerminationWorkEstimate subtracted.
+   * w-wetuwns t-the wesewve t-time to pewfowm post tewmination w-wowk. (U ﹏ U) wetuwn the deadwine timestamp
+   * with posttewminationwowkestimate subtwacted. :3
    */
-  public long getTimeoutEndTimeWithReservation() {
-    // Return huge value if time out is disabled.
-    if (timeoutEndTimeMillis == Long.MAX_VALUE) {
-      return timeoutEndTimeMillis;
-    } else {
-      return timeoutEndTimeMillis
-          - postTerminationOverheadMillis
-          - preTerminationSafeBufferTimeMillis;
+  pubwic wong gettimeoutendtimewithwesewvation() {
+    // wetuwn huge v-vawue if time out is disabwed. ^^;;
+    i-if (timeoutendtimemiwwis == wong.max_vawue) {
+      w-wetuwn timeoutendtimemiwwis;
+    } e-ewse {
+      wetuwn t-timeoutendtimemiwwis
+          - p-posttewminationovewheadmiwwis
+          - p-pwetewminationsafebuffewtimemiwwis;
     }
   }
 
-  public void setPreTerminationSafeBufferTimeMillis(int preTerminationSafeBufferTimeMillis) {
-    Preconditions.checkArgument(preTerminationSafeBufferTimeMillis >= 0);
+  p-pubwic v-void setpwetewminationsafebuffewtimemiwwis(int pwetewminationsafebuffewtimemiwwis) {
+    pweconditions.checkawgument(pwetewminationsafebuffewtimemiwwis >= 0);
 
-    this.preTerminationSafeBufferTimeMillis = preTerminationSafeBufferTimeMillis;
+    this.pwetewminationsafebuffewtimemiwwis = pwetewminationsafebuffewtimemiwwis;
   }
 
-  public long getLocalStartTimeMillis() {
-    return localStartTimeMillis;
+  pubwic wong getwocawstawttimemiwwis() {
+    w-wetuwn w-wocawstawttimemiwwis;
   }
 
-  public long getClientStartTimeMillis() {
-    return clientStartTimeMillis;
+  p-pubwic wong getcwientstawttimemiwwis() {
+    w-wetuwn cwientstawttimemiwwis;
   }
 
-  public double getMaxQueryCost() {
-    return maxQueryCost;
+  pubwic doubwe getmaxquewycost() {
+    wetuwn maxquewycost;
   }
 
-  public boolean isEarlyTerminated() {
-    return earlyTerminationState.isTerminated();
+  p-pubwic boowean i-iseawwytewminated() {
+    wetuwn e-eawwytewminationstate.istewminated();
   }
 
-  public EarlyTerminationState getEarlyTerminationState() {
-    return earlyTerminationState;
+  pubwic eawwytewminationstate g-geteawwytewminationstate() {
+    w-wetuwn eawwytewminationstate;
   }
 
-  public void setEarlyTerminationState(EarlyTerminationState earlyTerminationState) {
-    this.earlyTerminationState = earlyTerminationState;
-  }
-
-  /**
-   * Return the minimum searched doc ID amongst all registered trackers, or -1 if there aren't any
-   * trackers. Doc IDs are stored in ascending order, and trackers update their doc IDs as they
-   * search, so the minimum doc ID reflects the most recent fully searched doc ID.
-   */
-  int getLastSearchedDocId() {
-    return lastSearchedDocIdTrackers.stream()
-        .mapToInt(DocIdTracker::getCurrentDocId).min().orElse(-1);
-  }
-
-  void resetDocIdTrackers() {
-    lastSearchedDocIdTrackers.clear();
+  p-pubwic void seteawwytewminationstate(eawwytewminationstate e-eawwytewminationstate) {
+    this.eawwytewminationstate = eawwytewminationstate;
   }
 
   /**
-   * Add a DocIdTracker, to keep track of the last fully-searched doc ID when early termination
-   * occurs.
+   * wetuwn the minimum s-seawched doc id a-amongst aww wegistewed t-twackews, rawr o-ow -1 if thewe a-awen't any
+   * twackews. 😳😳😳 doc ids a-awe stowed in a-ascending owdew, (✿oωo) and twackews update t-theiw doc ids a-as they
+   * seawch, OwO so the minimum d-doc id wefwects the most wecent fuwwy seawched d-doc id. ʘwʘ
    */
-  public void addDocIdTracker(DocIdTracker docIdTracker) {
-    lastSearchedDocIdTrackers.add(docIdTracker);
+  int getwastseawcheddocid() {
+    w-wetuwn wastseawcheddocidtwackews.stweam()
+        .maptoint(docidtwackew::getcuwwentdocid).min().owewse(-1);
   }
 
-  public boolean useLastSearchedDocIdOnTimeout() {
-    return useLastSearchedDocIdOnTimeout;
+  v-void wesetdocidtwackews() {
+    w-wastseawcheddocidtwackews.cweaw();
+  }
+
+  /**
+   * add a docidtwackew, t-to keep twack o-of the wast fuwwy-seawched d-doc id when eawwy tewmination
+   * occuws. (ˆ ﻌ ˆ)♡
+   */
+  pubwic v-void adddocidtwackew(docidtwackew docidtwackew) {
+    wastseawcheddocidtwackews.add(docidtwackew);
+  }
+
+  pubwic b-boowean usewastseawcheddocidontimeout() {
+    w-wetuwn usewastseawcheddocidontimeout;
   }
 }

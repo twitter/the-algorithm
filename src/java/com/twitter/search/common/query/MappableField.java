@@ -1,34 +1,34 @@
-package com.twitter.search.common.query;
+package com.twittew.seawch.common.quewy;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+impowt c-com.googwe.common.cowwect.immutabwemap;
+i-impowt com.googwe.common.cowwect.maps;
 
 /**
- * The indices may map the fields declared here to fields internally without exposing their schemas
- * to other services. This can be used, for example, to set boosts for URL-like fields in Earlybird
- * without direct knowledge of the internal Earlybird field name
+ * t-the indices m-may map the fiewds d-decwawed hewe t-to fiewds intewnawwy w-without e-exposing theiw schemas
+ * to othew sewvices. (///ˬ///✿) this can be used, fow exampwe, 😳😳😳 to s-set boosts fow uww-wike fiewds in eawwybiwd
+ * without d-diwect knowwedge of the intewnaw e-eawwybiwd fiewd nyame
  */
-public enum MappableField {
-  REFERRAL,
-  URL;
+pubwic enum mappabwefiewd {
+  wefewwaw,
+  uww;
 
-  static {
-    ImmutableMap.Builder<MappableField, String> builder = ImmutableMap.builder();
-    for (MappableField mappableField : MappableField.values()) {
-      builder.put(mappableField, mappableField.toString().toLowerCase());
+  s-static {
+    immutabwemap.buiwdew<mappabwefiewd, 🥺 s-stwing> buiwdew = i-immutabwemap.buiwdew();
+    fow (mappabwefiewd mappabwefiewd : mappabwefiewd.vawues()) {
+      buiwdew.put(mappabwefiewd, mya m-mappabwefiewd.tostwing().towowewcase());
     }
-    MAPPABLE_FIELD_TO_NAME_MAP = Maps.immutableEnumMap(builder.build());
+    mappabwe_fiewd_to_name_map = maps.immutabweenummap(buiwdew.buiwd());
   }
 
-  private static final ImmutableMap<MappableField, String> MAPPABLE_FIELD_TO_NAME_MAP;
+  pwivate static finaw immutabwemap<mappabwefiewd, 🥺 s-stwing> mappabwe_fiewd_to_name_map;
 
-  /** Returns the name of the given MappableField. */
-  public static String mappableFieldName(MappableField mappableField) {
-    return MAPPABLE_FIELD_TO_NAME_MAP.get(mappableField);
+  /** wetuwns t-the nyame of t-the given mappabwefiewd. >_< */
+  pubwic s-static stwing m-mappabwefiewdname(mappabwefiewd mappabwefiewd) {
+    wetuwn m-mappabwe_fiewd_to_name_map.get(mappabwefiewd);
   }
 
-  /** Returns the name of this MappableField. */
-  public String getName() {
-    return MAPPABLE_FIELD_TO_NAME_MAP.get(this);
+  /** wetuwns the nyame of this m-mappabwefiewd. >_< */
+  pubwic stwing getname() {
+    wetuwn mappabwe_fiewd_to_name_map.get(this);
   }
 }

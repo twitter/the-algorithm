@@ -1,32 +1,32 @@
-package com.twitter.graph_feature_service.worker.util
+package com.twittew.gwaph_featuwe_sewvice.wowkew.utiw
 
-import com.twitter.graph_feature_service.thriftscala.EdgeType
-import com.twitter.graph_feature_service.thriftscala.EdgeType._
+impowt com.twittew.gwaph_featuwe_sewvice.thwiftscawa.edgetype
+i-impowt com.twittew.gwaph_featuwe_sewvice.thwiftscawa.edgetype._
 
-sealed trait GraphKey {
+s-seawed twait g-gwaphkey {
 
-  def edgeType: EdgeType
+  d-def edgetype: edgetype
 }
 
-sealed trait PartialValueGraph extends GraphKey
+s-seawed t-twait pawtiawvawuegwaph e-extends g-gwaphkey
 
 /**
- * Follow Graphs
+ * fowwow gwaphs
  */
-object FollowingPartialValueGraph extends PartialValueGraph {
+object fowwowingpawtiawvawuegwaph extends pawtiawvawuegwaph {
 
-  override def edgeType: EdgeType = Following
+  ovewwide def e-edgetype: edgetype = fowwowing
 }
 
-object FollowedByPartialValueGraph extends PartialValueGraph {
+object fowwowedbypawtiawvawuegwaph e-extends pawtiawvawuegwaph {
 
-  override def edgeType: EdgeType = FollowedBy
+  ovewwide def e-edgetype: edgetype = fowwowedby
 }
 
 /**
- * Mutual Follow Graphs
+ * mutuaw fowwow gwaphs
  */
-object MutualFollowPartialValueGraph extends PartialValueGraph {
+o-object mutuawfowwowpawtiawvawuegwaph extends p-pawtiawvawuegwaph {
 
-  override def edgeType: EdgeType = MutualFollow
+  o-ovewwide def edgetype: edgetype = mutuawfowwow
 }

@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.core.pipeline.scoring
+package com.twittew.pwoduct_mixew.cowe.pipewine.scowing
 
-import com.twitter.product_mixer.core.functional_component.scorer.ScoredCandidateResult
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineResult
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutorResult
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutorResult
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutorResult
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.scowew.scowedcandidatewesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinewesuwt
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.candidate_featuwe_hydwatow_executow.candidatefeatuwehydwatowexecutowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow.gateexecutowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.sewectow_executow.sewectowexecutowwesuwt
 
 /**
- * The Results of every step during the ScoringPipeline process. The end result contains
- * only the candidates that were actually scored (e.g, not dropped by a filter) with an updated,
- * combined feature map of all features that were passed in with the candidate plus all features
- * returned as part of scoring.
+ * t-the wesuwts o-of evewy step duwing the scowingpipewine pwocess. o.O the end wesuwt contains
+ * onwy t-the candidates that wewe actuawwy scowed (e.g, ( ͡o ω ͡o ) n-nyot dwopped by a fiwtew) with a-an updated, (U ﹏ U)
+ * combined featuwe map of aww featuwes that wewe p-passed in with the candidate pwus a-aww featuwes
+ * w-wetuwned as pawt of scowing. (///ˬ///✿)
  */
-case class ScoringPipelineResult[Candidate <: UniversalNoun[Any]](
-  gateResults: Option[GateExecutorResult],
-  selectorResults: Option[SelectorExecutorResult],
-  preScoringHydrationPhase1Result: Option[CandidateFeatureHydratorExecutorResult[Candidate]],
-  preScoringHydrationPhase2Result: Option[CandidateFeatureHydratorExecutorResult[Candidate]],
-  scorerResults: Option[CandidateFeatureHydratorExecutorResult[
-    Candidate
-  ]],
-  failure: Option[PipelineFailure],
-  result: Option[Seq[ScoredCandidateResult[Candidate]]])
-    extends PipelineResult[Seq[ScoredCandidateResult[Candidate]]] {
-  override val resultSize: Int = result.map(_.size).getOrElse(0)
+case cwass scowingpipewinewesuwt[candidate <: univewsawnoun[any]](
+  gatewesuwts: o-option[gateexecutowwesuwt], >w<
+  sewectowwesuwts: option[sewectowexecutowwesuwt], rawr
+  pwescowinghydwationphase1wesuwt: option[candidatefeatuwehydwatowexecutowwesuwt[candidate]],
+  p-pwescowinghydwationphase2wesuwt: option[candidatefeatuwehydwatowexecutowwesuwt[candidate]],
+  s-scowewwesuwts: o-option[candidatefeatuwehydwatowexecutowwesuwt[
+    c-candidate
+  ]], mya
+  f-faiwuwe: option[pipewinefaiwuwe],
+  wesuwt: option[seq[scowedcandidatewesuwt[candidate]]])
+    e-extends pipewinewesuwt[seq[scowedcandidatewesuwt[candidate]]] {
+  ovewwide vaw wesuwtsize: i-int = wesuwt.map(_.size).getowewse(0)
 
-  override def withFailure(
-    failure: PipelineFailure
-  ): ScoringPipelineResult[Candidate] =
-    copy(failure = Some(failure))
-  override def withResult(
-    result: Seq[ScoredCandidateResult[Candidate]]
-  ): ScoringPipelineResult[Candidate] =
-    copy(result = Some(result))
+  ovewwide def withfaiwuwe(
+    faiwuwe: pipewinefaiwuwe
+  ): scowingpipewinewesuwt[candidate] =
+    c-copy(faiwuwe = some(faiwuwe))
+  o-ovewwide d-def withwesuwt(
+    w-wesuwt: seq[scowedcandidatewesuwt[candidate]]
+  ): scowingpipewinewesuwt[candidate] =
+    copy(wesuwt = s-some(wesuwt))
 }
 
-object ScoringPipelineResult {
-  def empty[Candidate <: UniversalNoun[Any]]: ScoringPipelineResult[Candidate] =
-    ScoringPipelineResult(
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None
+o-object scowingpipewinewesuwt {
+  def empty[candidate <: u-univewsawnoun[any]]: scowingpipewinewesuwt[candidate] =
+    s-scowingpipewinewesuwt(
+      nyone, ^^
+      n-nyone, 😳😳😳
+      nyone, mya
+      nyone,
+      n-nyone, 😳
+      nyone, -.-
+      nyone
     )
 }

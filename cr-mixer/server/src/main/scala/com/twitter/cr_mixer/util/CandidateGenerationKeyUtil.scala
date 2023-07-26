@@ -1,39 +1,39 @@
-package com.twitter.cr_mixer.util
+package com.twittew.cw_mixew.utiw
 
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.thriftscala.CandidateGenerationKey
-import com.twitter.cr_mixer.thriftscala.SimilarityEngine
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.util.Time
+impowt com.twittew.cw_mixew.modew.candidategenewationinfo
+i-impowt c-com.twittew.cw_mixew.modew.souwceinfo
+i-impowt c-com.twittew.cw_mixew.thwiftscawa.candidategenewationkey
+i-impowt com.twittew.cw_mixew.thwiftscawa.simiwawityengine
+i-impowt com.twittew.cw_mixew.thwiftscawa.souwcetype
+i-impowt com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+impowt com.twittew.utiw.time
 
-object CandidateGenerationKeyUtil {
-  private val PlaceholderUserId = 0L // this default value will not be used
+object candidategenewationkeyutiw {
+  p-pwivate vaw pwacehowdewusewid = 0w // this defauwt vawue wiww not b-be used
 
-  private val DefaultSourceInfo: SourceInfo = SourceInfo(
-    sourceType = SourceType.RequestUserId,
-    sourceEventTime = None,
-    internalId = InternalId.UserId(PlaceholderUserId)
+  pwivate vaw defauwtsouwceinfo: s-souwceinfo = souwceinfo(
+    souwcetype = souwcetype.wequestusewid, (⑅˘꒳˘)
+    s-souwceeventtime = nyone, rawr x3
+    i-intewnawid = intewnawid.usewid(pwacehowdewusewid)
   )
 
-  def toThrift(
-    candidateGenerationInfo: CandidateGenerationInfo,
-    requestUserId: UserId
-  ): CandidateGenerationKey = {
-    CandidateGenerationKey(
-      sourceType = candidateGenerationInfo.sourceInfoOpt.getOrElse(DefaultSourceInfo).sourceType,
-      sourceEventTime = candidateGenerationInfo.sourceInfoOpt
-        .getOrElse(DefaultSourceInfo).sourceEventTime.getOrElse(Time.fromMilliseconds(0L)).inMillis,
-      id = candidateGenerationInfo.sourceInfoOpt
-        .map(_.internalId).getOrElse(InternalId.UserId(requestUserId)),
-      modelId = candidateGenerationInfo.similarityEngineInfo.modelId.getOrElse(""),
-      similarityEngineType =
-        Some(candidateGenerationInfo.similarityEngineInfo.similarityEngineType),
-      contributingSimilarityEngine =
-        Some(candidateGenerationInfo.contributingSimilarityEngines.map(se =>
-          SimilarityEngine(se.similarityEngineType, se.modelId, se.score)))
+  d-def tothwift(
+    candidategenewationinfo: candidategenewationinfo, (✿oωo)
+    wequestusewid: usewid
+  ): candidategenewationkey = {
+    c-candidategenewationkey(
+      souwcetype = candidategenewationinfo.souwceinfoopt.getowewse(defauwtsouwceinfo).souwcetype, (ˆ ﻌ ˆ)♡
+      souwceeventtime = candidategenewationinfo.souwceinfoopt
+        .getowewse(defauwtsouwceinfo).souwceeventtime.getowewse(time.fwommiwwiseconds(0w)).inmiwwis, (˘ω˘)
+      id = candidategenewationinfo.souwceinfoopt
+        .map(_.intewnawid).getowewse(intewnawid.usewid(wequestusewid)), (⑅˘꒳˘)
+      m-modewid = candidategenewationinfo.simiwawityengineinfo.modewid.getowewse(""), (///ˬ///✿)
+      s-simiwawityenginetype =
+        s-some(candidategenewationinfo.simiwawityengineinfo.simiwawityenginetype), 😳😳😳
+      c-contwibutingsimiwawityengine =
+        s-some(candidategenewationinfo.contwibutingsimiwawityengines.map(se =>
+          simiwawityengine(se.simiwawityenginetype, 🥺 se.modewid, s-se.scowe)))
     )
   }
 }

@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-trait HasRecentFollowedUserIds {
-  // user ids that are recently followed by the target user
-  def recentFollowedUserIds: Option[Seq[Long]]
+twait haswecentfowwowedusewids {
+  // usew i-ids that awe w-wecentwy fowwowed b-by the tawget u-usew
+  def wecentfowwowedusewids: o-option[seq[wong]]
 
-  // user ids that are recently followed by the target user in set data-structure
-  lazy val recentFollowedUserIdsSet: Option[Set[Long]] = recentFollowedUserIds match {
-    case Some(users) => Some(users.toSet)
-    case None => Some(Set.empty)
+  // u-usew i-ids that awe wecentwy f-fowwowed by the tawget usew in set data-stwuctuwe
+  wazy vaw wecentfowwowedusewidsset: o-option[set[wong]] = wecentfowwowedusewids match {
+    c-case some(usews) => some(usews.toset)
+    c-case nyone => some(set.empty)
   }
 
-  lazy val numRecentFollowedUserIds: Int = recentFollowedUserIds.map(_.size).getOrElse(0)
+  wazy vaw nyumwecentfowwowedusewids: int = wecentfowwowedusewids.map(_.size).getowewse(0)
 }

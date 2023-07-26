@@ -1,85 +1,85 @@
 """
-Feature configuration for DeepBird jobs returns dictionary of sparse and dense Features
+featuwe configuwation fow deepbiwd j-jobs wetuwns d-dictionawy of s-spawse and dense f-featuwes
 """
-from twitter.deepbird.io.legacy.contrib import feature_config
-import twml
+fwom t-twittew.deepbiwd.io.wegacy.contwib i-impowt featuwe_config
+i-impowt t-twmw
 
 
-class FeatureConfig(feature_config.FeatureConfig):
-  def get_feature_spec(self):
+cwass featuweconfig(featuwe_config.featuweconfig):
+  def get_featuwe_spec(sewf):
     """
-    Generates a serialization-friendly dict representing this FeatureConfig.
+    genewates a sewiawization-fwiendwy d-dict wepwesenting this featuweconfig. 😳
     """
-    doc = super(FeatureConfig, self).get_feature_spec()
+    d-doc = supew(featuweconfig, mya s-sewf).get_featuwe_spec()
 
-    # Override the class in the spec.
-    doc["class"] = "twml.contrib.FeatureConfig"
+    # ovewwide the cwass in the spec. (˘ω˘)
+    doc["cwass"] = "twmw.contwib.featuweconfig"
 
-    return doc
+    w-wetuwn doc
 
 
-class FeatureConfigBuilder(feature_config.FeatureConfigBuilder):
-  # Overwrite self.build() to return twml.FeatureConfig instead
-  def build(self):
+cwass f-featuweconfigbuiwdew(featuwe_config.featuweconfigbuiwdew):
+  # ovewwwite s-sewf.buiwd() to wetuwn twmw.featuweconfig instead
+  def buiwd(sewf):
     """
-    Returns an instance of FeatureConfig with the features passed to the FeatureConfigBuilder.
+    w-wetuwns an instance of featuweconfig with the featuwes passed to the featuweconfigbuiwdew. >_<
     """
 
     (
-      keep_tensors,
-      keep_sparse_tensors,
-      feature_map,
-      features_add,
-      feature_name_to_feature_parser,
-      feature_in_bq_name,
-    ) = self._build()
+      k-keep_tensows, -.-
+      keep_spawse_tensows, 🥺
+      f-featuwe_map, (U ﹏ U)
+      f-featuwes_add, >w<
+      f-featuwe_name_to_featuwe_pawsew, mya
+      f-featuwe_in_bq_name, >w<
+    ) = sewf._buiwd()
 
-    discretize_dict = {}
-    for config in self._sparse_extraction_configs:
-      if config.discretize_num_bins and config.discretize_output_size_bits:
-        if config.discretize_type == "percentile":
-          calibrator = twml.contrib.calibrators.PercentileDiscretizerCalibrator
-        elif config.discretize_type == "hashed_percentile":
-          calibrator = twml.contrib.calibrators.HashedPercentileDiscretizerCalibrator
-        elif config.discretize_type == "hashing":
-          calibrator = twml.contrib.calibrators.HashingDiscretizerCalibrator
-        else:
-          raise ValueError("Unsupported discretizer type: " + config.discretize_type)
-        discretize_dict[config.output_name] = calibrator(
-          config.discretize_num_bins,
-          config.discretize_output_size_bits,
-          allow_empty_calibration=config.allow_empty_calibration,
+    discwetize_dict = {}
+    f-fow config in sewf._spawse_extwaction_configs:
+      if config.discwetize_num_bins a-and config.discwetize_output_size_bits:
+        if config.discwetize_type == "pewcentiwe":
+          cawibwatow = twmw.contwib.cawibwatows.pewcentiwediscwetizewcawibwatow
+        ewif config.discwetize_type == "hashed_pewcentiwe":
+          cawibwatow = twmw.contwib.cawibwatows.hashedpewcentiwediscwetizewcawibwatow
+        e-ewif config.discwetize_type == "hashing":
+          cawibwatow = t-twmw.contwib.cawibwatows.hashingdiscwetizewcawibwatow
+        e-ewse:
+          w-waise vawueewwow("unsuppowted discwetizew type: " + config.discwetize_type)
+        discwetize_dict[config.output_name] = cawibwatow(
+          c-config.discwetize_num_bins, nyaa~~
+          c-config.discwetize_output_size_bits, (✿oωo)
+          awwow_empty_cawibwation=config.awwow_empty_cawibwation, ʘwʘ
         )
-      elif config.discretize_num_bins or config.discretize_output_size_bits:
-        raise ValueError(
-          "Discretize_num_bins AND discretize_output_size_bits need to be in the FeatureConfig"
+      e-ewif config.discwetize_num_bins o-ow config.discwetize_output_size_bits:
+        waise vawueewwow(
+          "discwetize_num_bins a-and discwetize_output_size_bits nyeed to be in t-the featuweconfig"
         )
 
-    return FeatureConfig(
-      features={},
-      labels=self._labels,
-      weight=self._weight,
-      filters=self._filter_features,
-      tensor_types=keep_tensors,
-      sparse_tensor_types=keep_sparse_tensors,
-      feature_types=feature_map,
-      sparse_extraction_configs=self._sparse_extraction_configs,
-      feature_extraction_configs=self._feature_extraction_configs,
-      feature_group_extraction_configs=self._feature_group_extraction_configs,
-      image_configs=self._image_configs,
-      discretize_config=discretize_dict,
-      feature_ids=features_add,
-      decode_mode=self._decode_mode,
-      legacy_sparse=self._legacy_sparse,
-      feature_name_to_feature_parser=feature_name_to_feature_parser,
-      feature_in_bq_name=feature_in_bq_name,
+    wetuwn featuweconfig(
+      featuwes={}, (ˆ ﻌ ˆ)♡
+      w-wabews=sewf._wabews, 😳😳😳
+      weight=sewf._weight, :3
+      f-fiwtews=sewf._fiwtew_featuwes, OwO
+      tensow_types=keep_tensows, (U ﹏ U)
+      s-spawse_tensow_types=keep_spawse_tensows, >w<
+      f-featuwe_types=featuwe_map, (U ﹏ U)
+      spawse_extwaction_configs=sewf._spawse_extwaction_configs,
+      featuwe_extwaction_configs=sewf._featuwe_extwaction_configs, 😳
+      featuwe_gwoup_extwaction_configs=sewf._featuwe_gwoup_extwaction_configs, (ˆ ﻌ ˆ)♡
+      image_configs=sewf._image_configs, 😳😳😳
+      discwetize_config=discwetize_dict, (U ﹏ U)
+      featuwe_ids=featuwes_add, (///ˬ///✿)
+      d-decode_mode=sewf._decode_mode, 😳
+      w-wegacy_spawse=sewf._wegacy_spawse, 😳
+      featuwe_name_to_featuwe_pawsew=featuwe_name_to_featuwe_pawsew, σωσ
+      f-featuwe_in_bq_name=featuwe_in_bq_name, rawr x3
     )
 
 
-TensorExtractionConfig = feature_config.TensorExtractionConfig
+t-tensowextwactionconfig = f-featuwe_config.tensowextwactionconfig
 
-FeatureGroupExtractionConfig = feature_config.FeatureGroupExtractionConfig
+featuwegwoupextwactionconfig = featuwe_config.featuwegwoupextwactionconfig
 
-ImageExtractionConfig = feature_config.ImageExtractionConfig
+imageextwactionconfig = f-featuwe_config.imageextwactionconfig
 
-_set_tensor_namedtuple = feature_config._set_tensor_namedtuple
+_set_tensow_namedtupwe = featuwe_config._set_tensow_namedtupwe

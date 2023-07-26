@@ -1,22 +1,22 @@
-package com.twitter.home_mixer.functional_component.gate
+package com.twittew.home_mixew.functionaw_component.gate
 
-import com.twitter.home_mixer.model.request.DeviceContext.RequestContext
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.home_mixew.modew.wequest.devicecontext.wequestcontext
+i-impowt com.twittew.home_mixew.modew.wequest.hasdevicecontext
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.gateidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt c-com.twittew.stitch.stitch
 
 /**
- * Gate that fetches the request context from the device context and
- * continues if the request context matches *any* of the specified ones.
+ * g-gate that fetches the wequest context fwom the device context and
+ * continues i-if the wequest context matches *any* of the s-specified ones. ( ͡o ω ͡o )
  */
-case class RequestContextGate(requestContexts: Seq[RequestContext.Value])
-    extends Gate[PipelineQuery with HasDeviceContext] {
+case cwass w-wequestcontextgate(wequestcontexts: seq[wequestcontext.vawue])
+    extends gate[pipewinequewy with hasdevicecontext] {
 
-  override val identifier: GateIdentifier = GateIdentifier("RequestContext")
+  o-ovewwide vaw identifiew: g-gateidentifiew = g-gateidentifiew("wequestcontext")
 
-  override def shouldContinue(query: PipelineQuery with HasDeviceContext): Stitch[Boolean] =
-    Stitch.value(
-      requestContexts.exists(query.deviceContext.flatMap(_.requestContextValue).contains))
+  ovewwide def shouwdcontinue(quewy: pipewinequewy with hasdevicecontext): s-stitch[boowean] =
+    stitch.vawue(
+      wequestcontexts.exists(quewy.devicecontext.fwatmap(_.wequestcontextvawue).contains))
 }

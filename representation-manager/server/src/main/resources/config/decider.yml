@@ -1,219 +1,219 @@
-# ---------- traffic percentage by embedding type and model version ----------
-# Decider strings are build dynamically following the rule in there
-# i.e. s"enable_${embeddingType.name}_${modelVersion.name}"
-# Hence this should be updated accordingly if usage is changed in the embedding stores
+# ---------- twaffic pewcentage by e-embedding type a-and modew vewsion ----------
+# d-decidew stwings a-awe buiwd dynamicawwy f-fowwowing t-the wuwe in thewe
+# i-i.e. (U ﹏ U) s"enabwe_${embeddingtype.name}_${modewvewsion.name}"
+# h-hence this shouwd be updated accowdingwy if usage is changed in the embedding stowes
 
-# Tweet embeddings
-"enable_LogFavBasedTweet_Model20m145k2020":
-  comment: "Enable x% read traffic (0<=x<=10000, e.g. 1000=10%) for LogFavBasedTweet - Model20m145k2020. 0 means return EMPTY for all requests."
-  default_availability: 10000
+# t-tweet embeddings
+"enabwe_wogfavbasedtweet_modew20m145k2020":
+  comment: "enabwe x% wead t-twaffic (0<=x<=10000, (U ﹏ U) e.g. 1000=10%) f-fow wogfavbasedtweet - modew20m145k2020. ʘwʘ 0 means wetuwn empty fow aww wequests."
+  d-defauwt_avaiwabiwity: 10000
 
-"enable_LogFavBasedTweet_Model20m145kUpdated":
-  comment: "Enable x% read traffic (0<=x<=10000, e.g. 1000=10%) for LogFavBasedTweet - Model20m145kUpdated. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_wogfavbasedtweet_modew20m145kupdated":
+  comment: "enabwe x-x% wead twaffic (0<=x<=10000, >w< e-e.g. rawr x3 1000=10%) fow wogfavbasedtweet - modew20m145kupdated. OwO 0 means wetuwn empty fow aww wequests."
+  d-defauwt_avaiwabiwity: 10000
 
-"enable_LogFavLongestL2EmbeddingTweet_Model20m145k2020":
-  comment: "Enable x% read traffic (0<=x<=10000, e.g. 1000=10%) for LogFavLongestL2EmbeddingTweet - Model20m145k2020. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_wogfavwongestw2embeddingtweet_modew20m145k2020":
+  comment: "enabwe x% wead twaffic (0<=x<=10000, ^•ﻌ•^ e.g. >_< 1000=10%) fow wogfavwongestw2embeddingtweet - m-modew20m145k2020. OwO 0 means wetuwn e-empty fow aww w-wequests."
+  d-defauwt_avaiwabiwity: 10000
 
-"enable_LogFavLongestL2EmbeddingTweet_Model20m145kUpdated":
-  comment: "Enable x% read traffic (0<=x<=10000, e.g. 1000=10%) for LogFavLongestL2EmbeddingTweet - Model20m145kUpdated. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_wogfavwongestw2embeddingtweet_modew20m145kupdated":
+  c-comment: "enabwe x% wead twaffic (0<=x<=10000, >_< e-e.g. 1000=10%) fow wogfavwongestw2embeddingtweet - modew20m145kupdated. (ꈍᴗꈍ) 0 m-means wetuwn empty fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-# Topic embeddings
-"enable_FavTfgTopic_Model20m145k2020":
-  comment: "Enable the read traffic to FavTfgTopic - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+# topic embeddings
+"enabwe_favtfgtopic_modew20m145k2020":
+  comment: "enabwe t-the wead twaffic to favtfgtopic - m-modew20m145k2020 f-fwom 0% t-to 100%. >w< 0 means wetuwn empty fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-"enable_LogFavBasedKgoApeTopic_Model20m145k2020":
-  comment: "Enable the read traffic to LogFavBasedKgoApeTopic - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_wogfavbasedkgoapetopic_modew20m145k2020":
+  c-comment: "enabwe t-the wead twaffic to wogfavbasedkgoapetopic - m-modew20m145k2020 f-fwom 0% to 100%. (U ﹏ U) 0 means wetuwn e-empty fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-# User embeddings - KnownFor
-"enable_FavBasedProducer_Model20m145kUpdated":
-  comment: "Enable the read traffic to FavBasedProducer - Model20m145kUpdated from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+# u-usew embeddings - knownfow
+"enabwe_favbasedpwoducew_modew20m145kupdated":
+  c-comment: "enabwe the wead t-twaffic to favbasedpwoducew - modew20m145kupdated f-fwom 0% to 100%. ^^ 0 m-means wetuwn empty fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-"enable_FavBasedProducer_Model20m145k2020":
-  comment: "Enable the read traffic to FavBasedProducer - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_favbasedpwoducew_modew20m145k2020":
+  comment: "enabwe the wead twaffic to f-favbasedpwoducew - m-modew20m145k2020 fwom 0% to 100%. (U ﹏ U) 0 m-means wetuwn e-empty fow aww w-wequests."
+  defauwt_avaiwabiwity: 10000
 
-"enable_FollowBasedProducer_Model20m145k2020":
-  comment: "Enable the read traffic to FollowBasedProducer - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_fowwowbasedpwoducew_modew20m145k2020":
+  comment: "enabwe the wead twaffic t-to fowwowbasedpwoducew - modew20m145k2020 fwom 0% to 100%. :3 0 means wetuwn empty f-fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-"enable_AggregatableFavBasedProducer_Model20m145kUpdated":
-  comment: "Enable the read traffic to AggregatableFavBasedProducer - Model20m145kUpdated from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_aggwegatabwefavbasedpwoducew_modew20m145kupdated":
+  comment: "enabwe t-the wead twaffic t-to aggwegatabwefavbasedpwoducew - m-modew20m145kupdated fwom 0% to 100%. (✿oωo) 0 m-means w-wetuwn empty fow a-aww wequests."
+  d-defauwt_avaiwabiwity: 10000
 
-"enable_AggregatableFavBasedProducer_Model20m145k2020":
-  comment: "Enable the read traffic to AggregatableFavBasedProducer - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_aggwegatabwefavbasedpwoducew_modew20m145k2020":
+  comment: "enabwe the wead t-twaffic to aggwegatabwefavbasedpwoducew - m-modew20m145k2020 f-fwom 0% t-to 100%. XD 0 m-means wetuwn empty fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-"enable_AggregatableLogFavBasedProducer_Model20m145kUpdated":
-  comment: "Enable the read traffic to AggregatableLogFavBasedProducer - Model20m145kUpdated from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_aggwegatabwewogfavbasedpwoducew_modew20m145kupdated":
+  comment: "enabwe t-the wead twaffic to aggwegatabwewogfavbasedpwoducew - modew20m145kupdated fwom 0% to 100%. >w< 0 means wetuwn empty fow aww wequests."
+  d-defauwt_avaiwabiwity: 10000
 
-"enable_AggregatableLogFavBasedProducer_Model20m145k2020":
-  comment: "Enable the read traffic to AggregatableLogFavBasedProducer - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_aggwegatabwewogfavbasedpwoducew_modew20m145k2020":
+  comment: "enabwe the wead twaffic to aggwegatabwewogfavbasedpwoducew - m-modew20m145k2020 f-fwom 0% t-to 100%. òωó 0 means wetuwn empty f-fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-enable_RelaxedAggregatableLogFavBasedProducer_Model20m145kUpdated:
-  comment: "Enable the read traffic to RelaxedAggregatableLogFavBasedProducer - Model20m145kUpdated from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+e-enabwe_wewaxedaggwegatabwewogfavbasedpwoducew_modew20m145kupdated:
+  c-comment: "enabwe the wead twaffic to wewaxedaggwegatabwewogfavbasedpwoducew - modew20m145kupdated fwom 0% t-to 100%. (ꈍᴗꈍ) 0 means wetuwn empty f-fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-enable_RelaxedAggregatableLogFavBasedProducer_Model20m145k2020:
-  comment: "Enable the read traffic to RelaxedAggregatableLogFavBasedProducer - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+e-enabwe_wewaxedaggwegatabwewogfavbasedpwoducew_modew20m145k2020:
+  c-comment: "enabwe the wead twaffic to wewaxedaggwegatabwewogfavbasedpwoducew - m-modew20m145k2020 f-fwom 0% to 100%. rawr x3 0 means wetuwn e-empty fow a-aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-# User embeddings - InterestedIn
-"enable_LogFavBasedUserInterestedInFromAPE_Model20m145k2020":
-  comment: "Enable the read traffic to LogFavBasedUserInterestedInFromAPE - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+# usew embeddings - intewestedin
+"enabwe_wogfavbasedusewintewestedinfwomape_modew20m145k2020":
+  comment: "enabwe the wead twaffic t-to wogfavbasedusewintewestedinfwomape - m-modew20m145k2020 f-fwom 0% to 100%. rawr x3 0 means w-wetuwn empty f-fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-"enable_FollowBasedUserInterestedInFromAPE_Model20m145k2020":
-  comment: "Enable the read traffic to FollowBasedUserInterestedInFromAPE - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_fowwowbasedusewintewestedinfwomape_modew20m145k2020":
+  c-comment: "enabwe the wead twaffic to fowwowbasedusewintewestedinfwomape - modew20m145k2020 fwom 0% t-to 100%. σωσ 0 m-means wetuwn empty fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-"enable_FavBasedUserInterestedIn_Model20m145kUpdated":
-  comment: "Enable the read traffic to FavBasedUserInterestedIn - Model20m145kUpdated from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_favbasedusewintewestedin_modew20m145kupdated":
+  c-comment: "enabwe the w-wead twaffic to favbasedusewintewestedin - modew20m145kupdated fwom 0% to 100%. (ꈍᴗꈍ) 0 m-means wetuwn empty fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-"enable_FavBasedUserInterestedIn_Model20m145k2020":
-  comment: "Enable the read traffic to FavBasedUserInterestedIn - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_favbasedusewintewestedin_modew20m145k2020":
+  comment: "enabwe the wead twaffic t-to favbasedusewintewestedin - modew20m145k2020 fwom 0% to 100%. rawr 0 m-means wetuwn e-empty fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-"enable_FollowBasedUserInterestedIn_Model20m145k2020":
-  comment: "Enable the read traffic to FollowBasedUserInterestedIn - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_fowwowbasedusewintewestedin_modew20m145k2020":
+  comment: "enabwe the wead twaffic t-to fowwowbasedusewintewestedin - m-modew20m145k2020 fwom 0% to 100%. ^^;; 0 means wetuwn empty fow a-aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-"enable_LogFavBasedUserInterestedIn_Model20m145k2020":
-  comment: "Enable the read traffic to LogFavBasedUserInterestedIn - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_wogfavbasedusewintewestedin_modew20m145k2020":
+  c-comment: "enabwe the wead twaffic to wogfavbasedusewintewestedin - modew20m145k2020 f-fwom 0% to 100%. 0 means w-wetuwn empty f-fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-"enable_FavBasedUserInterestedInFromPE_Model20m145kUpdated":
-  comment: "Enable the read traffic to FavBasedUserInterestedInFromPE - Model20m145kUpdated from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_favbasedusewintewestedinfwompe_modew20m145kupdated":
+  c-comment: "enabwe the wead twaffic t-to favbasedusewintewestedinfwompe - m-modew20m145kupdated f-fwom 0% to 100%. rawr x3 0 means w-wetuwn empty f-fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-"enable_FilteredUserInterestedIn_Model20m145kUpdated":
-  comment: "Enable the read traffic to FilteredUserInterestedIn - Model20m145kUpdated from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_fiwtewedusewintewestedin_modew20m145kupdated":
+  comment: "enabwe t-the w-wead twaffic to f-fiwtewedusewintewestedin - modew20m145kupdated fwom 0% to 100%. (ˆ ﻌ ˆ)♡ 0 m-means wetuwn empty fow aww wequests."
+  d-defauwt_avaiwabiwity: 10000
 
-"enable_FilteredUserInterestedIn_Model20m145k2020":
-  comment: "Enable the read traffic to FilteredUserInterestedIn - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_fiwtewedusewintewestedin_modew20m145k2020":
+  comment: "enabwe t-the wead twaffic to fiwtewedusewintewestedin - modew20m145k2020 fwom 0% to 100%. σωσ 0 means wetuwn e-empty fow aww wequests."
+  d-defauwt_avaiwabiwity: 10000
 
-"enable_FilteredUserInterestedInFromPE_Model20m145kUpdated":
-  comment: "Enable the read traffic to FilteredUserInterestedInFromPE - Model20m145kUpdated from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_fiwtewedusewintewestedinfwompe_modew20m145kupdated":
+  c-comment: "enabwe t-the wead twaffic to fiwtewedusewintewestedinfwompe - m-modew20m145kupdated fwom 0% to 100%. (U ﹏ U) 0 means wetuwn empty fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-"enable_UnfilteredUserInterestedIn_Model20m145kUpdated":
-  comment: "Enable the read traffic to UnfilteredUserInterestedIn - Model20m145kUpdated from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_unfiwtewedusewintewestedin_modew20m145kupdated":
+  comment: "enabwe t-the wead twaffic to unfiwtewedusewintewestedin - m-modew20m145kupdated fwom 0% t-to 100%. >w< 0 means wetuwn empty f-fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-"enable_UnfilteredUserInterestedIn_Model20m145k2020":
-  comment: "Enable the read traffic to UnfilteredUserInterestedIn - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_unfiwtewedusewintewestedin_modew20m145k2020":
+  c-comment: "enabwe t-the wead t-twaffic to unfiwtewedusewintewestedin - m-modew20m145k2020 f-fwom 0% to 100%. σωσ 0 means wetuwn empty fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-"enable_UserNextInterestedIn_Model20m145k2020":
-  comment: "Enable the read traffic to UserNextInterestedIn - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_usewnextintewestedin_modew20m145k2020":
+  comment: "enabwe the wead t-twaffic to usewnextintewestedin - m-modew20m145k2020 f-fwom 0% to 100%. nyaa~~ 0 means wetuwn e-empty fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-"enable_LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE_Model20m145k2020":
-  comment: "Enable the read traffic to LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_wogfavbasedusewintewestedmaxpoowingaddwessbookfwomiiape_modew20m145k2020":
+  comment: "enabwe the wead twaffic t-to wogfavbasedusewintewestedmaxpoowingaddwessbookfwomiiape - m-modew20m145k2020 fwom 0% to 100%. 🥺 0 m-means wetuwn empty fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-"enable_LogFavBasedUserInterestedAverageAddressBookFromIIAPE_Model20m145k2020":
-  comment: "Enable the read traffic to LogFavBasedUserInterestedAverageAddressBookFromIIAPE - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_wogfavbasedusewintewestedavewageaddwessbookfwomiiape_modew20m145k2020":
+  c-comment: "enabwe t-the wead twaffic to w-wogfavbasedusewintewestedavewageaddwessbookfwomiiape - m-modew20m145k2020 fwom 0% to 100%. rawr x3 0 means wetuwn empty fow aww wequests."
+  d-defauwt_avaiwabiwity: 10000
 
-"enable_LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE_Model20m145k2020":
-  comment: "Enable the read traffic to LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_wogfavbasedusewintewestedbooktypemaxpoowingaddwessbookfwomiiape_modew20m145k2020":
+  c-comment: "enabwe t-the w-wead twaffic to w-wogfavbasedusewintewestedmaxpoowingaddwessbookfwomiiape - modew20m145k2020 f-fwom 0% t-to 100%. σωσ 0 means wetuwn empty f-fow aww wequests."
+  d-defauwt_avaiwabiwity: 10000
 
-"enable_LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE_Model20m145k2020":
-  comment: "Enable the read traffic to LogFavBasedUserInterestedAverageAddressBookFromIIAPE - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_wogfavbasedusewintewestedwawgestdimmaxpoowingaddwessbookfwomiiape_modew20m145k2020":
+  comment: "enabwe t-the wead twaffic to wogfavbasedusewintewestedavewageaddwessbookfwomiiape - modew20m145k2020 f-fwom 0% to 100%. (///ˬ///✿) 0 means wetuwn e-empty fow aww wequests."
+  d-defauwt_avaiwabiwity: 10000
 
-"enable_LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020":
-  comment: "Enable the read traffic to LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_wogfavbasedusewintewestedwouvainmaxpoowingaddwessbookfwomiiape_modew20m145k2020":
+  comment: "enabwe t-the wead twaffic to wogfavbasedusewintewestedmaxpoowingaddwessbookfwomiiape - modew20m145k2020 f-fwom 0% to 100%. (U ﹏ U) 0 m-means wetuwn e-empty fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-"enable_LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE_Model20m145k2020":
-  comment: "Enable the read traffic to LogFavBasedUserInterestedAverageAddressBookFromIIAPE - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+"enabwe_wogfavbasedusewintewestedconnectedmaxpoowingaddwessbookfwomiiape_modew20m145k2020":
+  comment: "enabwe t-the wead twaffic to wogfavbasedusewintewestedavewageaddwessbookfwomiiape - m-modew20m145k2020 f-fwom 0% to 100%. ^^;; 0 means w-wetuwn empty fow aww wequests."
+  d-defauwt_avaiwabiwity: 10000
 
-# ---------- load shedding by caller id ----------
-# To create a new decider, add here with the same format and caller's details :
-# "representation-manager_load_shed_by_caller_id_twtr:{{role}}:{{name}}:{{environment}}:{{cluster}}"
-# All the deciders below are generated by this script:
-# ./strato/bin/fed deciders representation-manager --service-role=representation-manager --service-name=representation-manager
-# If you need to run the script and paste the output, add ONLY the prod deciders here.
-"representation-manager_load_shed_by_caller_id_all":
-  comment: "Reject all traffic from caller id: all"
-  default_availability: 0
+# ---------- w-woad shedding by cawwew id ----------
+# t-to cweate a nyew decidew, 🥺 add hewe with the s-same fowmat and c-cawwew's detaiws :
+# "wepwesentation-managew_woad_shed_by_cawwew_id_twtw:{{wowe}}:{{name}}:{{enviwonment}}:{{cwustew}}"
+# aww the d-decidews bewow awe genewated b-by this scwipt:
+# ./stwato/bin/fed d-decidews wepwesentation-managew --sewvice-wowe=wepwesentation-managew --sewvice-name=wepwesentation-managew
+# i-if you nyeed to wun the scwipt and paste the output, òωó add onwy the pwod decidews hewe. XD
+"wepwesentation-managew_woad_shed_by_cawwew_id_aww":
+  comment: "weject aww twaffic fwom cawwew id: aww"
+  defauwt_avaiwabiwity: 0
 
-"representation-manager_load_shed_by_caller_id_twtr:svc:cr-mixer:cr-mixer:prod:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:cr-mixer:cr-mixer:prod:atla"
-  default_availability: 0
+"wepwesentation-managew_woad_shed_by_cawwew_id_twtw:svc:cw-mixew:cw-mixew:pwod:atwa":
+  comment: "weject aww twaffic fwom cawwew id: t-twtw:svc:cw-mixew:cw-mixew:pwod:atwa"
+  d-defauwt_avaiwabiwity: 0
 
-"representation-manager_load_shed_by_caller_id_twtr:svc:cr-mixer:cr-mixer:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:cr-mixer:cr-mixer:prod:pdxa"
-  default_availability: 0
+"wepwesentation-managew_woad_shed_by_cawwew_id_twtw:svc:cw-mixew:cw-mixew:pwod:pdxa":
+  comment: "weject aww twaffic f-fwom cawwew i-id: twtw:svc:cw-mixew:cw-mixew:pwod:pdxa"
+  d-defauwt_avaiwabiwity: 0
 
-"representation-manager_load_shed_by_caller_id_twtr:svc:simclusters-ann:simclusters-ann-1:prod:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:simclusters-ann:simclusters-ann-1:prod:atla"
-  default_availability: 0
+"wepwesentation-managew_woad_shed_by_cawwew_id_twtw:svc:simcwustews-ann:simcwustews-ann-1:pwod:atwa":
+  comment: "weject aww twaffic fwom c-cawwew id: twtw:svc:simcwustews-ann:simcwustews-ann-1:pwod:atwa"
+  defauwt_avaiwabiwity: 0
 
-"representation-manager_load_shed_by_caller_id_twtr:svc:simclusters-ann:simclusters-ann-1:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:simclusters-ann:simclusters-ann-1:prod:pdxa"
-  default_availability: 0
+"wepwesentation-managew_woad_shed_by_cawwew_id_twtw:svc:simcwustews-ann:simcwustews-ann-1:pwod:pdxa":
+  c-comment: "weject a-aww twaffic fwom cawwew id: t-twtw:svc:simcwustews-ann:simcwustews-ann-1:pwod:pdxa"
+  defauwt_avaiwabiwity: 0
 
-"representation-manager_load_shed_by_caller_id_twtr:svc:simclusters-ann:simclusters-ann-3:prod:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:simclusters-ann:simclusters-ann-3:prod:atla"
-  default_availability: 0
+"wepwesentation-managew_woad_shed_by_cawwew_id_twtw:svc:simcwustews-ann:simcwustews-ann-3:pwod:atwa":
+  c-comment: "weject a-aww twaffic fwom cawwew id: twtw:svc:simcwustews-ann:simcwustews-ann-3:pwod:atwa"
+  d-defauwt_avaiwabiwity: 0
 
-"representation-manager_load_shed_by_caller_id_twtr:svc:simclusters-ann:simclusters-ann-3:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:simclusters-ann:simclusters-ann-3:prod:pdxa"
-  default_availability: 0
+"wepwesentation-managew_woad_shed_by_cawwew_id_twtw:svc:simcwustews-ann:simcwustews-ann-3:pwod:pdxa":
+  c-comment: "weject a-aww twaffic fwom c-cawwew id: twtw:svc:simcwustews-ann:simcwustews-ann-3:pwod:pdxa"
+  d-defauwt_avaiwabiwity: 0
 
-"representation-manager_load_shed_by_caller_id_twtr:svc:simclusters-ann:simclusters-ann-4:prod:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:simclusters-ann:simclusters-ann-4:prod:atla"
-  default_availability: 0
+"wepwesentation-managew_woad_shed_by_cawwew_id_twtw:svc:simcwustews-ann:simcwustews-ann-4:pwod:atwa":
+  c-comment: "weject a-aww twaffic f-fwom cawwew i-id: twtw:svc:simcwustews-ann:simcwustews-ann-4:pwod:atwa"
+  defauwt_avaiwabiwity: 0
 
-"representation-manager_load_shed_by_caller_id_twtr:svc:simclusters-ann:simclusters-ann-4:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:simclusters-ann:simclusters-ann-4:prod:pdxa"
-  default_availability: 0
+"wepwesentation-managew_woad_shed_by_cawwew_id_twtw:svc:simcwustews-ann:simcwustews-ann-4:pwod:pdxa":
+  c-comment: "weject a-aww t-twaffic fwom cawwew id: twtw:svc:simcwustews-ann:simcwustews-ann-4:pwod:pdxa"
+  d-defauwt_avaiwabiwity: 0
 
-"representation-manager_load_shed_by_caller_id_twtr:svc:simclusters-ann:simclusters-ann-experimental:prod:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:simclusters-ann:simclusters-ann-experimental:prod:atla"
-  default_availability: 0
+"wepwesentation-managew_woad_shed_by_cawwew_id_twtw:svc:simcwustews-ann:simcwustews-ann-expewimentaw:pwod:atwa":
+  comment: "weject aww twaffic fwom c-cawwew id: twtw:svc:simcwustews-ann:simcwustews-ann-expewimentaw:pwod:atwa"
+  defauwt_avaiwabiwity: 0
 
-"representation-manager_load_shed_by_caller_id_twtr:svc:simclusters-ann:simclusters-ann-experimental:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:simclusters-ann:simclusters-ann-experimental:prod:pdxa"
-  default_availability: 0
+"wepwesentation-managew_woad_shed_by_cawwew_id_twtw:svc:simcwustews-ann:simcwustews-ann-expewimentaw:pwod:pdxa":
+  c-comment: "weject a-aww twaffic f-fwom cawwew id: twtw:svc:simcwustews-ann:simcwustews-ann-expewimentaw:pwod:pdxa"
+  d-defauwt_avaiwabiwity: 0
 
-"representation-manager_load_shed_by_caller_id_twtr:svc:simclusters-ann:simclusters-ann:prod:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:simclusters-ann:simclusters-ann:prod:atla"
-  default_availability: 0
+"wepwesentation-managew_woad_shed_by_cawwew_id_twtw:svc:simcwustews-ann:simcwustews-ann:pwod:atwa":
+  comment: "weject a-aww twaffic fwom cawwew i-id: twtw:svc:simcwustews-ann:simcwustews-ann:pwod:atwa"
+  defauwt_avaiwabiwity: 0
 
-"representation-manager_load_shed_by_caller_id_twtr:svc:simclusters-ann:simclusters-ann:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:simclusters-ann:simclusters-ann:prod:pdxa"
-  default_availability: 0
+"wepwesentation-managew_woad_shed_by_cawwew_id_twtw:svc:simcwustews-ann:simcwustews-ann:pwod:pdxa":
+  c-comment: "weject aww twaffic fwom cawwew id: twtw:svc:simcwustews-ann:simcwustews-ann:pwod:pdxa"
+  defauwt_avaiwabiwity: 0
 
-"representation-manager_load_shed_by_caller_id_twtr:svc:stratostore:stratoapi:prod:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:stratostore:stratoapi:prod:atla"
-  default_availability: 0
+"wepwesentation-managew_woad_shed_by_cawwew_id_twtw:svc:stwatostowe:stwatoapi:pwod:atwa":
+  c-comment: "weject aww twaffic f-fwom cawwew id: t-twtw:svc:stwatostowe:stwatoapi:pwod:atwa"
+  defauwt_avaiwabiwity: 0
 
-"representation-manager_load_shed_by_caller_id_twtr:svc:stratostore:stratoserver:prod:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:stratostore:stratoserver:prod:atla"
-  default_availability: 0
+"wepwesentation-managew_woad_shed_by_cawwew_id_twtw:svc:stwatostowe:stwatosewvew:pwod:atwa":
+  comment: "weject aww twaffic f-fwom cawwew id: twtw:svc:stwatostowe:stwatosewvew:pwod:atwa"
+  d-defauwt_avaiwabiwity: 0
 
-"representation-manager_load_shed_by_caller_id_twtr:svc:stratostore:stratoserver:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:stratostore:stratoserver:prod:pdxa"
-  default_availability: 0
+"wepwesentation-managew_woad_shed_by_cawwew_id_twtw:svc:stwatostowe:stwatosewvew:pwod:pdxa":
+  c-comment: "weject a-aww twaffic fwom cawwew id: twtw:svc:stwatostowe:stwatosewvew:pwod:pdxa"
+  d-defauwt_avaiwabiwity: 0
 
-# ---------- Dark Traffic Proxy ----------
-representation-manager_forward_dark_traffic:
-  comment: "Defines the percentage of traffic to forward to diffy-proxy. Set to 0 to disable dark traffic forwarding"
-  default_availability: 0
+# ---------- d-dawk twaffic pwoxy ----------
+w-wepwesentation-managew_fowwawd_dawk_twaffic:
+  comment: "defines the pewcentage o-of twaffic to fowwawd to d-diffy-pwoxy. :3 set t-to 0 to disabwe d-dawk twaffic fowwawding"
+  defauwt_avaiwabiwity: 0

@@ -1,188 +1,188 @@
-package com.twitter.frigate.pushservice.adaptor
+package com.twittew.fwigate.pushsewvice.adaptow
 
-import com.twitter.content_mixer.thriftscala.ContentMixerProductResponse
-import com.twitter.content_mixer.thriftscala.ContentMixerRequest
-import com.twitter.content_mixer.thriftscala.ContentMixerResponse
-import com.twitter.content_mixer.thriftscala.NotificationsTripTweetsProductContext
-import com.twitter.content_mixer.thriftscala.Product
-import com.twitter.content_mixer.thriftscala.ProductContext
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.frigate.common.base.CandidateSourceEligible
-import com.twitter.frigate.common.predicate.CommonOutNetworkTweetCandidatesSourcePredicates.filterOutReplyTweet
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.pushservice.util.MediaCRT
-import com.twitter.frigate.pushservice.util.PushAdaptorUtil
-import com.twitter.frigate.pushservice.util.PushDeviceUtil
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.geoduck.util.country.CountryInfo
-import com.twitter.product_mixer.core.thriftscala.ClientContext
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripDomain
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripTweets
-import com.twitter.util.Future
+impowt com.twittew.content_mixew.thwiftscawa.contentmixewpwoductwesponse
+i-impowt c-com.twittew.content_mixew.thwiftscawa.contentmixewwequest
+i-impowt c-com.twittew.content_mixew.thwiftscawa.contentmixewwesponse
+i-impowt c-com.twittew.content_mixew.thwiftscawa.notificationstwiptweetspwoductcontext
+impowt c-com.twittew.content_mixew.thwiftscawa.pwoduct
+i-impowt com.twittew.content_mixew.thwiftscawa.pwoductcontext
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.fwigate.common.base.candidatesouwce
+impowt com.twittew.fwigate.common.base.candidatesouwceewigibwe
+impowt com.twittew.fwigate.common.pwedicate.commonoutnetwowktweetcandidatessouwcepwedicates.fiwtewoutwepwytweet
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+impowt c-com.twittew.fwigate.pushsewvice.pawams.pushpawams
+impowt com.twittew.fwigate.pushsewvice.utiw.mediacwt
+impowt com.twittew.fwigate.pushsewvice.utiw.pushadaptowutiw
+i-impowt com.twittew.fwigate.pushsewvice.utiw.pushdeviceutiw
+impowt com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+i-impowt com.twittew.geoduck.utiw.countwy.countwyinfo
+i-impowt com.twittew.pwoduct_mixew.cowe.thwiftscawa.cwientcontext
+impowt com.twittew.stitch.tweetypie.tweetypie.tweetypiewesuwt
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.twends.twip_v1.twip_tweets.thwiftscawa.twipdomain
+impowt com.twittew.twends.twip_v1.twip_tweets.thwiftscawa.twiptweets
+i-impowt com.twittew.utiw.futuwe
 
-case class TripGeoCandidatesAdaptor(
-  tripTweetCandidateStore: ReadableStore[TripDomain, TripTweets],
-  contentMixerStore: ReadableStore[ContentMixerRequest, ContentMixerResponse],
-  tweetyPieStore: ReadableStore[Long, TweetyPieResult],
-  tweetyPieStoreNoVF: ReadableStore[Long, TweetyPieResult],
-  statsReceiver: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
-    with CandidateSourceEligible[Target, RawCandidate] {
+case cwass twipgeocandidatesadaptow(
+  twiptweetcandidatestowe: w-weadabwestowe[twipdomain, σωσ twiptweets],
+  c-contentmixewstowe: w-weadabwestowe[contentmixewwequest, nyaa~~ c-contentmixewwesponse], ^^;;
+  t-tweetypiestowe: weadabwestowe[wong, ^•ﻌ•^ tweetypiewesuwt], σωσ
+  t-tweetypiestowenovf: weadabwestowe[wong, -.- tweetypiewesuwt], ^^;;
+  s-statsweceivew: statsweceivew)
+    extends candidatesouwce[tawget, XD wawcandidate]
+    with candidatesouwceewigibwe[tawget, 🥺 wawcandidate] {
 
-  override def name: String = this.getClass.getSimpleName
+  o-ovewwide def nyame: stwing = this.getcwass.getsimpwename
 
-  private val stats = statsReceiver.scope(name.stripSuffix("$"))
+  p-pwivate v-vaw stats = s-statsweceivew.scope(name.stwipsuffix("$"))
 
-  private val contentMixerRequests = stats.counter("getTripCandidatesContentMixerRequests")
-  private val loggedOutTripTweetIds = stats.counter("logged_out_trip_tweet_ids_count")
-  private val loggedOutRawCandidates = stats.counter("logged_out_raw_candidates_count")
-  private val rawCandidates = stats.counter("raw_candidates_count")
-  private val loggedOutEmptyplaceId = stats.counter("logged_out_empty_place_id_count")
-  private val loggedOutPlaceId = stats.counter("logged_out_place_id_count")
-  private val nonReplyTweetsCounter = stats.counter("non_reply_tweets")
+  pwivate vaw contentmixewwequests = stats.countew("gettwipcandidatescontentmixewwequests")
+  pwivate v-vaw woggedouttwiptweetids = stats.countew("wogged_out_twip_tweet_ids_count")
+  p-pwivate vaw woggedoutwawcandidates = stats.countew("wogged_out_waw_candidates_count")
+  p-pwivate v-vaw wawcandidates = stats.countew("waw_candidates_count")
+  p-pwivate vaw woggedoutemptypwaceid = s-stats.countew("wogged_out_empty_pwace_id_count")
+  pwivate vaw woggedoutpwaceid = s-stats.countew("wogged_out_pwace_id_count")
+  pwivate vaw nyonwepwytweetscountew = s-stats.countew("non_wepwy_tweets")
 
-  override def isCandidateSourceAvailable(target: Target): Future[Boolean] = {
-    if (target.isLoggedOutUser) {
-      Future.True
-    } else {
-      for {
-        isRecommendationsSettingEnabled <- PushDeviceUtil.isRecommendationsEligible(target)
-        inferredLanguage <- target.inferredUserDeviceLanguage
-      } yield {
-        isRecommendationsSettingEnabled &&
-        inferredLanguage.nonEmpty &&
-        target.params(PushParams.TripGeoTweetCandidatesDecider)
+  ovewwide d-def iscandidatesouwceavaiwabwe(tawget: t-tawget): futuwe[boowean] = {
+    if (tawget.iswoggedoutusew) {
+      futuwe.twue
+    } ewse {
+      fow {
+        iswecommendationssettingenabwed <- pushdeviceutiw.iswecommendationsewigibwe(tawget)
+        i-infewwedwanguage <- t-tawget.infewwedusewdevicewanguage
+      } yiewd {
+        i-iswecommendationssettingenabwed &&
+        i-infewwedwanguage.nonempty &&
+        t-tawget.pawams(pushpawams.twipgeotweetcandidatesdecidew)
       }
     }
 
   }
 
-  private def buildRawCandidate(target: Target, tweetyPieResult: TweetyPieResult): RawCandidate = {
-    PushAdaptorUtil.generateOutOfNetworkTweetCandidates(
-      inputTarget = target,
-      id = tweetyPieResult.tweet.id,
-      mediaCRT = MediaCRT(
-        CommonRecommendationType.TripGeoTweet,
-        CommonRecommendationType.TripGeoTweet,
-        CommonRecommendationType.TripGeoTweet
-      ),
-      result = Some(tweetyPieResult),
-      localizedEntity = None
+  pwivate def buiwdwawcandidate(tawget: tawget, òωó t-tweetypiewesuwt: tweetypiewesuwt): wawcandidate = {
+    pushadaptowutiw.genewateoutofnetwowktweetcandidates(
+      inputtawget = t-tawget, (ˆ ﻌ ˆ)♡
+      id = tweetypiewesuwt.tweet.id, -.-
+      m-mediacwt = m-mediacwt(
+        c-commonwecommendationtype.twipgeotweet, :3
+        commonwecommendationtype.twipgeotweet, ʘwʘ
+        c-commonwecommendationtype.twipgeotweet
+      ), 🥺
+      w-wesuwt = s-some(tweetypiewesuwt), >_<
+      w-wocawizedentity = nyone
     )
   }
 
-  override def get(target: Target): Future[Option[Seq[RawCandidate]]] = {
-    if (target.isLoggedOutUser) {
-      for {
-        tripTweetIds <- getTripCandidatesForLoggedOutTarget(target)
-        tweetyPieResults <- Future.collect(tweetyPieStoreNoVF.multiGet(tripTweetIds))
-      } yield {
-        val candidates = tweetyPieResults.values.flatten.map(buildRawCandidate(target, _))
-        if (candidates.nonEmpty) {
-          loggedOutRawCandidates.incr(candidates.size)
-          Some(candidates.toSeq)
-        } else None
+  ovewwide def get(tawget: tawget): f-futuwe[option[seq[wawcandidate]]] = {
+    i-if (tawget.iswoggedoutusew) {
+      f-fow {
+        t-twiptweetids <- g-gettwipcandidatesfowwoggedouttawget(tawget)
+        tweetypiewesuwts <- futuwe.cowwect(tweetypiestowenovf.muwtiget(twiptweetids))
+      } yiewd {
+        v-vaw candidates = tweetypiewesuwts.vawues.fwatten.map(buiwdwawcandidate(tawget, ʘwʘ _))
+        if (candidates.nonempty) {
+          woggedoutwawcandidates.incw(candidates.size)
+          some(candidates.toseq)
+        } ewse nyone
       }
-    } else {
-      for {
-        tripTweetIds <- getTripCandidatesContentMixer(target)
-        tweetyPieResults <-
-          Future.collect((target.params(PushFeatureSwitchParams.EnableVFInTweetypie) match {
-            case true => tweetyPieStore
-            case false => tweetyPieStoreNoVF
-          }).multiGet(tripTweetIds))
-      } yield {
-        val nonReplyTweets = filterOutReplyTweet(tweetyPieResults, nonReplyTweetsCounter)
-        val candidates = nonReplyTweets.values.flatten.map(buildRawCandidate(target, _))
-        if (candidates.nonEmpty && target.params(
-            PushFeatureSwitchParams.TripTweetCandidateReturnEnable)) {
-          rawCandidates.incr(candidates.size)
-          Some(candidates.toSeq)
-        } else None
+    } e-ewse {
+      fow {
+        twiptweetids <- gettwipcandidatescontentmixew(tawget)
+        t-tweetypiewesuwts <-
+          f-futuwe.cowwect((tawget.pawams(pushfeatuweswitchpawams.enabwevfintweetypie) m-match {
+            case twue => tweetypiestowe
+            c-case fawse => tweetypiestowenovf
+          }).muwtiget(twiptweetids))
+      } y-yiewd {
+        v-vaw nyonwepwytweets = fiwtewoutwepwytweet(tweetypiewesuwts, (˘ω˘) nyonwepwytweetscountew)
+        vaw candidates = nyonwepwytweets.vawues.fwatten.map(buiwdwawcandidate(tawget, (✿oωo) _))
+        if (candidates.nonempty && t-tawget.pawams(
+            pushfeatuweswitchpawams.twiptweetcandidatewetuwnenabwe)) {
+          w-wawcandidates.incw(candidates.size)
+          some(candidates.toseq)
+        } e-ewse nyone
       }
     }
   }
 
-  private def getTripCandidatesContentMixer(
-    target: Target
-  ): Future[Set[Long]] = {
-    contentMixerRequests.incr()
-    Future
+  p-pwivate def gettwipcandidatescontentmixew(
+    tawget: tawget
+  ): f-futuwe[set[wong]] = {
+    c-contentmixewwequests.incw()
+    futuwe
       .join(
-        target.inferredUserDeviceLanguage,
-        target.deviceInfo
+        t-tawget.infewwedusewdevicewanguage, (///ˬ///✿)
+        t-tawget.deviceinfo
       )
-      .flatMap {
-        case (languageOpt, deviceInfoOpt) =>
-          contentMixerStore
+      .fwatmap {
+        case (wanguageopt, rawr x3 deviceinfoopt) =>
+          contentmixewstowe
             .get(
-              ContentMixerRequest(
-                clientContext = ClientContext(
-                  userId = Some(target.targetId),
-                  languageCode = languageOpt,
-                  userAgent = deviceInfoOpt.flatMap(_.guessedPrimaryDeviceUserAgent.map(_.toString))
-                ),
-                product = Product.NotificationsTripTweets,
-                productContext = Some(
-                  ProductContext.NotificationsTripTweetsProductContext(
-                    NotificationsTripTweetsProductContext()
-                  )),
-                cursor = None,
-                maxResults =
-                  Some(target.params(PushFeatureSwitchParams.TripTweetMaxTotalCandidates))
+              contentmixewwequest(
+                cwientcontext = c-cwientcontext(
+                  u-usewid = some(tawget.tawgetid), -.-
+                  w-wanguagecode = wanguageopt, ^^
+                  u-usewagent = d-deviceinfoopt.fwatmap(_.guessedpwimawydeviceusewagent.map(_.tostwing))
+                ), (⑅˘꒳˘)
+                pwoduct = p-pwoduct.notificationstwiptweets,
+                pwoductcontext = some(
+                  pwoductcontext.notificationstwiptweetspwoductcontext(
+                    nyotificationstwiptweetspwoductcontext()
+                  )), nyaa~~
+                cuwsow = n-nyone, /(^•ω•^)
+                m-maxwesuwts =
+                  some(tawget.pawams(pushfeatuweswitchpawams.twiptweetmaxtotawcandidates))
               )
             ).map {
-              _.map { rawResponse =>
-                val tripResponse =
-                  rawResponse.contentMixerProductResponse
-                    .asInstanceOf[
-                      ContentMixerProductResponse.NotificationsTripTweetsProductResponse]
-                    .notificationsTripTweetsProductResponse
+              _.map { wawwesponse =>
+                v-vaw twipwesponse =
+                  w-wawwesponse.contentmixewpwoductwesponse
+                    .asinstanceof[
+                      contentmixewpwoductwesponse.notificationstwiptweetspwoductwesponse]
+                    .notificationstwiptweetspwoductwesponse
 
-                tripResponse.results.map(_.tweetResult.tweetId).toSet
-              }.getOrElse(Set.empty)
+                twipwesponse.wesuwts.map(_.tweetwesuwt.tweetid).toset
+              }.getowewse(set.empty)
             }
       }
   }
 
-  private def getTripCandidatesForLoggedOutTarget(
-    target: Target
-  ): Future[Set[Long]] = {
-    Future.join(target.targetLanguage, target.countryCode).flatMap {
-      case (Some(lang), Some(country)) =>
-        val placeId = CountryInfo.lookupByCode(country).map(_.placeIdLong)
-        if (placeId.nonEmpty) {
-          loggedOutPlaceId.incr()
-        } else {
-          loggedOutEmptyplaceId.incr()
+  pwivate def gettwipcandidatesfowwoggedouttawget(
+    t-tawget: tawget
+  ): futuwe[set[wong]] = {
+    futuwe.join(tawget.tawgetwanguage, (U ﹏ U) tawget.countwycode).fwatmap {
+      c-case (some(wang), 😳😳😳 some(countwy)) =>
+        vaw p-pwaceid = countwyinfo.wookupbycode(countwy).map(_.pwaceidwong)
+        i-if (pwaceid.nonempty) {
+          woggedoutpwaceid.incw()
+        } ewse {
+          woggedoutemptypwaceid.incw()
         }
-        val tripSource = "TOP_GEO_V3_LR"
-        val tripQuery = TripDomain(
-          sourceId = tripSource,
-          language = Some(lang),
-          placeId = placeId,
-          topicId = None
+        v-vaw t-twipsouwce = "top_geo_v3_ww"
+        vaw twipquewy = twipdomain(
+          souwceid = t-twipsouwce, >w<
+          wanguage = s-some(wang), XD
+          pwaceid = pwaceid, o.O
+          topicid = n-nyone
         )
-        val response = tripTweetCandidateStore.get(tripQuery)
-        val tripTweetIds =
-          response.map { res =>
-            if (res.isDefined) {
-              res.get.tweets
-                .sortBy(_.score)(Ordering[Double].reverse).map(_.tweetId).toSet
-            } else {
-              Set.empty[Long]
+        vaw w-wesponse = twiptweetcandidatestowe.get(twipquewy)
+        v-vaw twiptweetids =
+          wesponse.map { w-wes =>
+            if (wes.isdefined) {
+              w-wes.get.tweets
+                .sowtby(_.scowe)(owdewing[doubwe].wevewse).map(_.tweetid).toset
+            } e-ewse {
+              set.empty[wong]
             }
           }
-        tripTweetIds.map { ids => loggedOutTripTweetIds.incr(ids.size) }
-        tripTweetIds
+        t-twiptweetids.map { ids => woggedouttwiptweetids.incw(ids.size) }
+        t-twiptweetids
 
-      case (_, _) => Future.value(Set.empty)
+      c-case (_, mya _) => futuwe.vawue(set.empty)
     }
   }
 }
